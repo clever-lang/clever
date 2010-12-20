@@ -29,6 +29,10 @@
 #define CLEVER_TYPES_H
 #include "config.h"
 
+#define DISALLOW_COPY_AND_ASSIGN(TypeName) \
+	TypeName(const TypeName&);             \
+	void operator=(const TypeName&)
+
 namespace Clever {
 
 struct Value {

@@ -41,6 +41,7 @@ namespace Clever { namespace Ast {
 class ExprAST {
 public:
 	virtual ~ExprAST() { }
+	
 	/*
 	 * Method for generating the expression IR
 	 */
@@ -62,6 +63,8 @@ public:
 		delete LHS;
 		delete RHS;
 	}
+	
+	DISALLOW_COPY_AND_ASSIGN(BinaryExprAST);
 
 	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
 	
@@ -77,6 +80,8 @@ public:
 	NumberExprAST(double val)
 		: value(val) { }
 		
+	DISALLOW_COPY_AND_ASSIGN(NumberExprAST);
+	
 	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
 
 private:
@@ -92,6 +97,8 @@ public:
 		delete type;
 		delete variable;
 	}
+	
+	DISALLOW_COPY_AND_ASSIGN(VariableDeclAST);
 		
 	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
 
@@ -105,6 +112,8 @@ class IdentifierAST : public ExprAST {
 public:
 	IdentifierAST(const std::string& name_)
 		: name(name_) { }
+		
+	DISALLOW_COPY_AND_ASSIGN(IdentifierAST);
 		
 	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
 private:
@@ -120,6 +129,8 @@ public:
 	~TypeCreationAST() {
 		delete type;
 	}
+	
+	DISALLOW_COPY_AND_ASSIGN(TypeCreationAST);
 	
 	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
 private:
