@@ -59,8 +59,10 @@ class Driver;
 
 %code {
 #include "driver.h"
+#include "compiler.h"
 
-std::vector<Clever::Ast::ExprAST*> nodes;
+Clever::Ast::AstList nodes;
+Clever::Compiler compiler;
 }
 
 %token END  0      "end of file"
@@ -95,15 +97,9 @@ std::vector<Clever::Ast::ExprAST*> nodes;
 
 %start top_statements;
 
-top_statements: statement_list { 
-	std::vector<Clever::Ast::ExprAST*>::iterator it = nodes.begin();
-	
-	while (it < nodes.end()) {
-		std::cout << (*it)->debug() << std::endl;
-		delete *it;
-		++it;
-	} 
-} ;
+top_statements:
+		statement_list { compiler.Init(nodes); }
+;
 
 statement_list:
 		/* empty */
@@ -120,6 +116,7 @@ expr:	expr '-' expr { nodes.push_back(new Clever::Ast::BinaryExprAST('-', $1, $3
 	|	expr '*' expr { nodes.push_back(new Clever::Ast::BinaryExprAST('*', $1, $3)); }
 	|	expr '%' expr { nodes.push_back(new Clever::Ast::BinaryExprAST('%', $1, $3)); }
 	|	NUM_INTEGER   { $$ = $1; }
+	|	NUM_DOUBLE    { $$ = $1; }
 ;
 
 %%

@@ -25,61 +25,18 @@
  * $Id$
  */
 
-#ifndef CLEVER_AST_H
-#define CLEVER_AST_H
+#ifndef CLEVER_COMPILER_H
+#define CLEVER_COMPILER_H
 
-#include <string>
-#include <vector>
-#include "types.h"
+#include "ast.h"
 
-namespace Clever { namespace Ast {
-	
-class ExprAST {
+namespace Clever {
+
+class Compiler {
 public:
-	virtual ~ExprAST() { }
-	/*
-	 * Method for generating the expression IR
-	 */
-	virtual Value *codeGen() = 0;
-	/*
-	 * Method for debug purpose
-	 */
-	virtual std::string debug() = 0;
+	Compiler() { }
+	void Init(Ast::AstList);
 };
 
-typedef std::vector<Clever::Ast::ExprAST*> AstList;
-
-class BinaryExprAST : public ExprAST {
-public:
-	BinaryExprAST(char op_, ExprAST *lhs, ExprAST *rhs)
-		: op(op_), LHS(lhs), RHS(rhs) { }
-		
-	~BinaryExprAST() {
-		delete LHS;
-		delete RHS;
-	}
-
-	virtual Value *codeGen();
-	virtual std::string debug();
-	
-private:
-	char op;
-	ExprAST *LHS, *RHS;
-	std::string value;
-};
-
-class NumberExprAST : public ExprAST {
-public:
-	NumberExprAST(double val)
-		: value(val) { }
-		
-	virtual Value *codeGen();
-	virtual std::string debug();
-
-private:
-	double value;
-};
-
-}} // Clever::Ast
-
-#endif // CLEVER_AST_H
+}
+#endif // CLEVER_COMPILER_H

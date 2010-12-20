@@ -16,7 +16,7 @@ SRCDIR=core/
 # Testrunner dir
 EXTRADIR=extra/
 
-OBJECTS=$(BUILDDIR)parser.o $(BUILDDIR)scanner.o $(BUILDDIR)driver.o $(BUILDDIR)types.o $(BUILDDIR)ast.o $(BUILDDIR)main.o
+OBJECTS=$(BUILDDIR)parser.o $(BUILDDIR)scanner.o $(BUILDDIR)driver.o $(BUILDDIR)types.o $(BUILDDIR)ast.o $(BUILDDIR)compiler.o $(BUILDDIR)main.o
 
 clever: $(OBJECTS)
 	$(LD) $(LFLAGS) -o clever $(BUILDDIR)*.o
@@ -46,6 +46,9 @@ $(BUILDDIR)scanner.o: $(BUILDDIR)scanner.cpp
 	
 $(BUILDDIR)ast.o: $(SRCDIR)ast.cpp
 	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)ast.o $(SRCDIR)ast.cpp
+	
+$(BUILDDIR)compiler.o: $(SRCDIR)compiler.cpp
+	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)compiler.o $(SRCDIR)compiler.cpp
 
 clean:
 	rm -f clever $(BUILDDIR)*
