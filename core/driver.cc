@@ -35,21 +35,18 @@ namespace clever {
 
 std::stack<ScannerState*> Driver::scanners;
 
-void Interpreter::execute(void)
-{
-//	compiler_p->finalize();	
+void Interpreter::execute(void) {
+
 }
 
-void Interpreter::shutdown(void)
-{
-//	compiler_p->shutdown();
+void Interpreter::shutdown(void) {
+
 }
 
 /**
  * Read the file defined in file property
  */
-void Driver::read_file(void)
-{
+void Driver::read_file(void) {
 	std::string line;
 	std::fstream filep;
 
@@ -72,8 +69,7 @@ void Driver::read_file(void)
  * Parses a file
  * @param filename the file name
  */
-int Driver::parse_file(const std::string& filename)
-{
+int Driver::parse_file(const std::string& filename) {
 	ScannerState* new_scanner = new ScannerState;
 	clever::Parser parser(*this, new_scanner);
 	int result = 0;
@@ -101,8 +97,7 @@ int Driver::parse_file(const std::string& filename)
  * Parses a string
  * @param source the string to be parsed
  */
-int Driver::parse_str(const std::string& code)
-{
+int Driver::parse_str(const std::string& code) {
 	ScannerState* new_scanner = new ScannerState;
 	clever::Parser parser(*this, new_scanner);
 	int result = 0;
@@ -128,8 +123,7 @@ int Driver::parse_str(const std::string& code)
  * @param location the location
  * @param message the message to be printed
  */
-void Driver::error(const clever::location& location, const std::string& message) const
-{
+void Driver::error(const clever::location& location, const std::string& message) const {
 	clever::position last = location.end - 1;
 
 	if (input.size()) {
@@ -143,8 +137,7 @@ void Driver::error(const clever::location& location, const std::string& message)
  * Prints an error message
  * @param message the message to be printed
  */
-void Driver::error(const std::string& message) const
-{
+void Driver::error(const std::string& message) const {
 	std::cout << message << std::endl;
 }
 

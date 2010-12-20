@@ -32,4 +32,4 @@
 
 namespace clever {
 
-} // Clever
+} // clever

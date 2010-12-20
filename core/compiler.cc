@@ -30,8 +30,7 @@
 
 namespace clever {
 
-void Compiler::Init(ast::AstList nodes)
-{
+void Compiler::Init(ast::AstList nodes) {
 	ast::AstList::iterator it = nodes.begin();
 	
 	while (it < nodes.end()) {

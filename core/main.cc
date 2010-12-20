@@ -37,8 +37,7 @@
 		exit(1); \
 	}
 
-static void show_usage(void)
-{
+static void show_usage(void) {
 	std::cout << "Usage: clever <options>" << std::endl;
 	std::cout << "\t-f Execute the file" << std::endl;
 	std::cout << "\t-r Run the code" << std::endl;
@@ -48,8 +47,7 @@ static void show_usage(void)
 	std::cout << "\t-h Help" << std::endl;
 }
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
 	clever::Interpreter clever;
 
 	if (argc == 1) {

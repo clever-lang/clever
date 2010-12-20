@@ -55,8 +55,7 @@ typedef clever::Parser::token token;
 
 clever::Parser::token_type yylex(clever::Parser::semantic_type* yylval,
 	clever::Parser::location_type* yylloc, clever::Driver& driver,
-	clever::ScannerState* s)
-{
+	clever::ScannerState* s) {
 	const char* cursor = s->cur;
 	int yylen;
 

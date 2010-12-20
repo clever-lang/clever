@@ -33,13 +33,11 @@ namespace clever { namespace ast {
 /*
  * NumberExprAST
  */
-Value* NumberExprAST::codeGen(void)
-{
+Value* NumberExprAST::codeGen(void) {
 	return NULL;
 }
 
-std::string NumberExprAST::debug(void)
-{
+std::string NumberExprAST::debug(void) {
 	std::stringstream str;
 	
 	str << value;
@@ -50,13 +48,11 @@ std::string NumberExprAST::debug(void)
 /*
  * BinaryExprAST
  */
-Value* BinaryExprAST::codeGen(void)
-{
+Value* BinaryExprAST::codeGen(void) {
 	return NULL;
 }
 
-std::string BinaryExprAST::debug(void)
-{
+std::string BinaryExprAST::debug(void) {
 	return std::string(LHS->debug() + " " + op + " " + RHS->debug());
 }
 
@@ -64,13 +60,11 @@ std::string BinaryExprAST::debug(void)
 /*
  * VariableDeclAST
  */
-Value* VariableDeclAST::codeGen(void)
-{
+Value* VariableDeclAST::codeGen(void) {
 	
 }
 
-std::string VariableDeclAST::debug(void)
-{
+std::string VariableDeclAST::debug(void) {
 	return type->debug() + " " + variable->debug();
 }
 
@@ -78,13 +72,11 @@ std::string VariableDeclAST::debug(void)
  * IdentifierAST
  */
 
-Value* IdentifierAST::codeGen(void)
-{
+Value* IdentifierAST::codeGen(void) {
 	
 }
 
-std::string IdentifierAST::debug(void)
-{
+std::string IdentifierAST::debug(void) {
 	return name;
 }
 
@@ -92,13 +84,11 @@ std::string IdentifierAST::debug(void)
  * TypeCreationAST
  */
 
-Value* TypeCreationAST::codeGen(void)
-{
+Value* TypeCreationAST::codeGen(void) {
 	
 }
 
-std::string TypeCreationAST::debug(void)
-{
+std::string TypeCreationAST::debug(void) {
 	return type->debug();
 }
 
