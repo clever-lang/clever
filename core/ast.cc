@@ -65,7 +65,7 @@ Value* VariableDeclAST::codeGen(void) {
 }
 
 std::string VariableDeclAST::debug(void) {
-	return type->debug() + " " + variable->debug();
+	return type->debug() + " " + variable->debug() + " = " + initialization->debug();
 }
 
 /*

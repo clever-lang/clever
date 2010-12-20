@@ -124,7 +124,7 @@ arguments:
 ;
 
 type_creation:
-		TYPE '(' arguments ')' { nodes.push_back(new clever::ast::TypeCreationAST($1, $3)); }
+		TYPE '(' arguments ')' { $$ = new clever::ast::TypeCreationAST($1, $3); }
 ;
 
 expr:	expr '-' expr { nodes.push_back(new clever::ast::BinaryExprAST('-', $1, $3)); }
