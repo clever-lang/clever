@@ -25,7 +25,7 @@
 
 #include "config.h"
 #include "scanner.h"
-#include "parser.hpp"
+#include "parser.hh"
 #include "ast.h"
 
 enum YYCONDTYPE {
@@ -51,11 +51,11 @@ enum YYCONDTYPE {
 #define SKIP() { s->cur = s->yylex + 1; goto next_token; }
 #define RET(i) { s->cur = cursor; return i; }
 
-typedef Clever::Parser::token token;
+typedef clever::Parser::token token;
 
-Clever::Parser::token_type yylex(Clever::Parser::semantic_type* yylval,
-	Clever::Parser::location_type* yylloc, Clever::Driver& driver,
-	Clever::ScannerState* s)
+clever::Parser::token_type yylex(clever::Parser::semantic_type* yylval,
+	clever::Parser::location_type* yylloc, clever::Driver& driver,
+	clever::ScannerState* s)
 {
 	const char* cursor = s->cur;
 	int yylen;
@@ -81,7 +81,7 @@ next_token:
 	<*>SPACE { yylloc->step(); SKIP(); }
 	<*>[\n]+ { yylloc->lines(yylen); yylloc->step(); SKIP(); }
 	
-	<INITIAL>TOKEN { RET(Clever::Parser::token_type(s->yylex[0])); }
+	<INITIAL>TOKEN { RET(clever::Parser::token_type(s->yylex[0])); }
 	
 	<INITIAL>">=" { RET(token::GREATER_EQUAL); }
 
@@ -148,12 +148,12 @@ next_token:
 	<ST_MULTILINE_COMMENT>"*" { SKIP(); }
 
 	<INITIAL>IDENTIFIER {
-		*yylval = new Clever::Ast::IdentifierAST(std::string(s->yylex, yylen));
+		*yylval = new clever::ast::IdentifierAST(std::string(s->yylex, yylen));
 		RET(token::IDENT);
 	}
 	
 	<INITIAL>TYPE {
-		*yylval = new Clever::Ast::IdentifierAST(std::string(s->yylex, yylen));
+		*yylval = new clever::ast::IdentifierAST(std::string(s->yylex, yylen));
 		RET(token::TYPE);
 	}
 	
@@ -190,7 +190,7 @@ next_token:
 	<INITIAL>INTEGER { 
 		long n = strtol(std::string(s->yylex, yylen).c_str(), NULL, 10);
 		
-		*yylval = new Clever::Ast::NumberExprAST(n);
+		*yylval = new clever::ast::NumberExprAST(n);
 		RET(token::NUM_INTEGER);
 	}
 
@@ -198,7 +198,7 @@ next_token:
 		long n = 0;
 
 		sscanf(std::string(s->yylex+2, yylen).c_str(), "%x", (unsigned long *)&n);		
-		*yylval = new Clever::Ast::NumberExprAST(n);
+		*yylval = new clever::ast::NumberExprAST(n);
 
 		RET(token::NUM_INTEGER);
 	}
@@ -207,7 +207,7 @@ next_token:
 		long n = 0;
 		
 		sscanf(std::string(s->yylex+1, yylen), "%o", &n);
-		*yylval = new Clever::Ast::NumberExprAST(n);
+		*yylval = new clever::ast::NumberExprAST(n);
 
 		RET(token::NUM_INTEGER);
 	}
@@ -216,12 +216,12 @@ next_token:
 		double n = 0;
 		
 		n = strtod(std::string(s->yylex, yylen).c_str(), NULL);
-		*yylval = new Clever::Ast::NumberExprAST(n);
+		*yylval = new clever::ast::NumberExprAST(n);
 		
 		RET(token::NUM_DOUBLE);
 	}
 
-	<*>[^]     { RET(Clever::Parser::token_type(s->yylex[0])); }
+	<*>[^]     { RET(clever::Parser::token_type(s->yylex[0])); }
 	<*>"\000"  { RET(token::END); }
 */
 }

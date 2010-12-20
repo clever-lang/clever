@@ -28,7 +28,7 @@
 #include "ast.h"
 #include <sstream>
 
-namespace Clever { namespace Ast {
+namespace clever { namespace ast {
 
 /*
  * NumberExprAST
@@ -102,4 +102,4 @@ std::string TypeCreationAST::debug(void)
 	return type->debug();
 }
 
-}} // Clever::Ast
+}} // clever::ast

@@ -29,7 +29,8 @@
 #define CLEVER_SCANNER_H
 #include <fstream>
 
-namespace Clever { 
+namespace clever { 
+	
 class ScannerState {
 public:
 	ScannerState() : state(0) { }
@@ -40,6 +41,6 @@ public:
 	const char *cur, *yylex, *ctx;
 };
 
-} // Clever
+} // clever
 
 #endif // CLEVER_SCANNER_H

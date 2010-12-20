@@ -32,7 +32,7 @@
 #include <vector>
 #include "types.h"
 
-namespace Clever { namespace Ast {
+namespace clever { namespace ast {
 	
 #define CLEVER_AST_PURE_VIRTUAL_MEMBERS \
 	virtual Value *codeGen();           \
@@ -52,7 +52,7 @@ public:
 	virtual std::string debug() = 0;
 };
 
-typedef std::vector<Clever::Ast::ExprAST*> AstList;
+typedef std::vector<clever::ast::ExprAST*> AstList;
 
 class BinaryExprAST : public ExprAST {
 public:
@@ -138,6 +138,6 @@ private:
 	ExprAST* arguments;	
 };
 
-}} // Clever::Ast
+}} // clever::ast
 
 #endif // CLEVER_AST_H

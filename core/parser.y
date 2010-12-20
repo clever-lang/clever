@@ -1,7 +1,7 @@
 %skeleton "lalr1.cc"
 %require "2.4.1"
 %defines
-%define namespace "Clever"
+%define namespace "clever"
 %define parser_class_name "Parser"
 
 %code requires {
@@ -35,18 +35,18 @@
 #include "types.h"
 #include "ast.h"
 
-#define YYSTYPE Clever::Ast::ExprAST*
+#define YYSTYPE clever::ast::ExprAST*
 
-namespace Clever {
+namespace clever {
 class Driver;
 }
 }
 
 // The parsing context.
-%parse-param { Clever::Driver& driver }
-%parse-param { Clever::ScannerState* state }
-%lex-param   { Clever::Driver& driver }
-%lex-param   { Clever::ScannerState* state }
+%parse-param { clever::Driver& driver }
+%parse-param { clever::ScannerState* state }
+%lex-param   { clever::Driver& driver }
+%lex-param   { clever::ScannerState* state }
      
 %locations
 %initial-action {
@@ -61,8 +61,8 @@ class Driver;
 #include "driver.h"
 #include "compiler.h"
 
-Clever::Ast::AstList nodes;
-Clever::Compiler compiler;
+clever::ast::AstList nodes;
+clever::Compiler compiler;
 }
 
 %token END  0       "end of file"
@@ -114,7 +114,7 @@ statements:
 ;
 
 variable_declaration:
-		TYPE IDENT "=" type_creation { nodes.push_back(new Clever::Ast::VariableDeclAST($1, $2, $4)); }
+		TYPE IDENT "=" type_creation { nodes.push_back(new clever::ast::VariableDeclAST($1, $2, $4)); }
 ;
 
 arguments:
@@ -124,21 +124,21 @@ arguments:
 ;
 
 type_creation:
-	TYPE '(' arguments ')' { nodes.push_back(new Clever::Ast::TypeCreationAST($1, $3)); }
+		TYPE '(' arguments ')' { nodes.push_back(new clever::ast::TypeCreationAST($1, $3)); }
 ;
 
-expr:	expr '-' expr { nodes.push_back(new Clever::Ast::BinaryExprAST('-', $1, $3)); }
-	|	expr '+' expr { nodes.push_back(new Clever::Ast::BinaryExprAST('+', $1, $3)); }
-	|	expr '/' expr { nodes.push_back(new Clever::Ast::BinaryExprAST('/', $1, $3)); }
-	|	expr '*' expr { nodes.push_back(new Clever::Ast::BinaryExprAST('*', $1, $3)); }
-	|	expr '%' expr { nodes.push_back(new Clever::Ast::BinaryExprAST('%', $1, $3)); }
+expr:	expr '-' expr { nodes.push_back(new clever::ast::BinaryExprAST('-', $1, $3)); }
+	|	expr '+' expr { nodes.push_back(new clever::ast::BinaryExprAST('+', $1, $3)); }
+	|	expr '/' expr { nodes.push_back(new clever::ast::BinaryExprAST('/', $1, $3)); }
+	|	expr '*' expr { nodes.push_back(new clever::ast::BinaryExprAST('*', $1, $3)); }
+	|	expr '%' expr { nodes.push_back(new clever::ast::BinaryExprAST('%', $1, $3)); }
 	|	NUM_INTEGER   { $$ = $1; }
 	|	NUM_DOUBLE    { $$ = $1; }
 ;
 
 %%
 
-void Clever::Parser::error(const Clever::Parser::location_type& line, const std::string& message)
+void clever::Parser::error(const clever::Parser::location_type& line, const std::string& message)
 {
 	driver.error(line, message);
 }

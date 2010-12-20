@@ -29,18 +29,18 @@
 #define CLEVER_DRIVER_H
 #include <string>
 #include <stack>
-#include "parser.hpp"
+#include "parser.hh"
 
-namespace Clever {
+namespace clever {
 class ScannerState;
 }
 
 // Scanner prototype
-Clever::Parser::token_type yylex(Clever::Parser::semantic_type*,
-		Clever::Parser::location_type*, Clever::Driver&,
-		Clever::ScannerState*);
+clever::Parser::token_type yylex(clever::Parser::semantic_type*,
+		clever::Parser::location_type*, clever::Driver&,
+		clever::ScannerState*);
 
-namespace Clever {
+namespace clever {
 	
 class Driver {
 public:
@@ -57,7 +57,7 @@ public:
 	// Debug option
 	bool trace_parsing;
 	// Scanners stack
-	static std::stack<Clever::ScannerState*> scanners;
+	static std::stack<clever::ScannerState*> scanners;
 
 	Driver() : is_file(false), trace_parsing(false) { }
 	virtual ~Driver() { }
@@ -70,7 +70,7 @@ public:
 	int parse_file(const std::string&);
 
 	// Error handling
-	void error(const Clever::location&, const std::string&) const;
+	void error(const clever::location&, const std::string&) const;
 	void error(const std::string&) const;
 };
 
@@ -82,6 +82,6 @@ public:
 	void shutdown(void);
 };
 
-} // Clever
+} // clever
 
 #endif // CLEVER_DRIVER_H

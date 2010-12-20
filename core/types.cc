@@ -30,6 +30,6 @@
 #include <cassert>
 #include "types.h"
 
-namespace Clever {
+namespace clever {
 
 } // Clever

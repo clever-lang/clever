@@ -30,15 +30,16 @@
 
 #include "ast.h"
 
-namespace Clever {
+namespace clever {
 
 class Compiler {
 public:
 	Compiler() { }
-	void Init(Ast::AstList);
+	void Init(ast::AstList);
 	
 	DISALLOW_COPY_AND_ASSIGN(Compiler);
 };
 
-}
+} // clever
+
 #endif // CLEVER_COMPILER_H

@@ -23,37 +23,32 @@ clever: $(OBJECTS)
 
 all: clever test
 
-$(BUILDDIR)driver.o: $(SRCDIR)driver.cpp $(BUILDDIR)parser.o
-	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)driver.o $(SRCDIR)driver.cpp
+$(BUILDDIR)driver.o: $(SRCDIR)driver.cc $(BUILDDIR)parser.o
+	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)driver.o $(SRCDIR)driver.cc
 
-$(BUILDDIR)types.o: $(SRCDIR)types.cpp
-	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)types.o $(SRCDIR)types.cpp
+$(BUILDDIR)types.o: $(SRCDIR)types.cc
+	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)types.o $(SRCDIR)types.cc
 
-$(BUILDDIR)main.o: $(SRCDIR)main.cpp
-	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)main.o $(SRCDIR)main.cpp
+$(BUILDDIR)main.o: $(SRCDIR)main.cc
+	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)main.o $(SRCDIR)main.cc
 
-$(BUILDDIR)parser.cpp: $(SRCDIR)parser.y
-	$(BISON) -d -o$(BUILDDIR)parser.cpp $(SRCDIR)parser.y
+$(BUILDDIR)parser.cc: $(SRCDIR)parser.y
+	$(BISON) -d -o$(BUILDDIR)parser.cc $(SRCDIR)parser.y
 	
-$(BUILDDIR)parser.o: $(BUILDDIR)parser.cpp
-	$(CXX) $(CPPFLAGS3) -o $(BUILDDIR)parser.o $(BUILDDIR)parser.cpp
+$(BUILDDIR)parser.o: $(BUILDDIR)parser.cc
+	$(CXX) $(CPPFLAGS3) -o $(BUILDDIR)parser.o $(BUILDDIR)parser.cc
  
-$(BUILDDIR)scanner.cpp: $(SRCDIR)scanner.re $(BUILDDIR)parser.o
-	$(RE2C) --case-insensitive -b -c -o $(BUILDDIR)scanner.cpp $(SRCDIR)scanner.re
+$(BUILDDIR)scanner.cc: $(SRCDIR)scanner.re $(BUILDDIR)parser.o
+	$(RE2C) --case-insensitive -b -c -o $(BUILDDIR)scanner.cc $(SRCDIR)scanner.re
 
-$(BUILDDIR)scanner.o: $(BUILDDIR)scanner.cpp
-	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)scanner.o $(BUILDDIR)scanner.cpp
+$(BUILDDIR)scanner.o: $(BUILDDIR)scanner.cc
+	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)scanner.o $(BUILDDIR)scanner.cc
 	
-$(BUILDDIR)ast.o: $(SRCDIR)ast.cpp
-	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)ast.o $(SRCDIR)ast.cpp
+$(BUILDDIR)ast.o: $(SRCDIR)ast.cc
+	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)ast.o $(SRCDIR)ast.cc
 	
-$(BUILDDIR)compiler.o: $(SRCDIR)compiler.cpp
-	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)compiler.o $(SRCDIR)compiler.cpp
+$(BUILDDIR)compiler.o: $(SRCDIR)compiler.cc
+	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)compiler.o $(SRCDIR)compiler.cc
 
 clean:
 	rm -f clever $(BUILDDIR)*
-
-clean-tests:
-	rm -rf tests/*.log tests/*.mem
-	
-clean-all: clean clean-tests

@@ -28,11 +28,11 @@
 #include <vector>
 #include "compiler.h"
 
-namespace Clever {
+namespace clever {
 
-void Compiler::Init(Ast::AstList nodes)
+void Compiler::Init(ast::AstList nodes)
 {
-	Clever::Ast::AstList::iterator it = nodes.begin();
+	ast::AstList::iterator it = nodes.begin();
 	
 	while (it < nodes.end()) {
 		std::cout << (*it)->debug() << std::endl;
@@ -41,4 +41,4 @@ void Compiler::Init(Ast::AstList nodes)
 	}
 }
 
-}
+} // clever

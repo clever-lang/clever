@@ -50,7 +50,7 @@ static void show_usage(void)
 
 int main(int argc, char *argv[])
 {
-	Clever::Interpreter clever;
+	clever::Interpreter clever;
 
 	if (argc == 1) {
 		std::cout << "Clever Programming Language" << std::endl;

@@ -33,7 +33,7 @@
 	TypeName(const TypeName&);             \
 	void operator=(const TypeName&)
 
-namespace Clever {
+namespace clever {
 
 struct Value {
 	
