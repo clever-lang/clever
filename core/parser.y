@@ -1,6 +1,7 @@
 %skeleton "lalr1.cc"
 %require "2.4.1"
 %defines
+%define namespace "Clever"
 %define parser_class_name "Parser"
 
 %code requires {
@@ -43,9 +44,9 @@ class Driver;
 
 // The parsing context.
 %parse-param { Clever::Driver& driver }
-%parse-param { ScannerState* state }
+%parse-param { Clever::ScannerState* state }
 %lex-param   { Clever::Driver& driver }
-%lex-param   { ScannerState* state }
+%lex-param   { Clever::ScannerState* state }
      
 %locations
 %initial-action {
@@ -123,7 +124,7 @@ expr:	expr '-' expr { nodes.push_back(new Clever::Ast::BinaryExprAST('-', $1, $3
 
 %%
 
-void yy::Parser::error(const yy::Parser::location_type& line, const std::string& message)
+void Clever::Parser::error(const Clever::Parser::location_type& line, const std::string& message)
 {
 	driver.error(line, message);
 }

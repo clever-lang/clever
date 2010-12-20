@@ -33,7 +33,7 @@ namespace Clever { namespace Ast {
 /*
  * NumberExprAST
  */
-Value *NumberExprAST::codeGen(void)
+Value* NumberExprAST::codeGen(void)
 {
 	return NULL;
 }
@@ -50,7 +50,7 @@ std::string NumberExprAST::debug(void)
 /*
  * BinaryExprAST
  */
-Value *BinaryExprAST::codeGen(void)
+Value* BinaryExprAST::codeGen(void)
 {
 	return NULL;
 }

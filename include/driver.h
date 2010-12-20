@@ -31,12 +31,14 @@
 #include <stack>
 #include "parser.hpp"
 
-struct ScannerState;
+namespace Clever {
+class ScannerState;
+}
 
 // Scanner prototype
-yy::Parser::token_type yylex(yy::Parser::semantic_type*,
-		yy::Parser::location_type*, Clever::Driver&,
-		ScannerState*);
+Clever::Parser::token_type yylex(Clever::Parser::semantic_type*,
+		Clever::Parser::location_type*, Clever::Driver&,
+		Clever::ScannerState*);
 
 namespace Clever {
 	
@@ -55,7 +57,7 @@ public:
 	// Debug option
 	bool trace_parsing;
 	// Scanners stack
-	static std::stack<ScannerState*> scanners;
+	static std::stack<Clever::ScannerState*> scanners;
 
 	Driver() : is_file(false), trace_parsing(false) { }
 	virtual ~Driver() { }
@@ -68,7 +70,7 @@ public:
 	int parse_file(const std::string&);
 
 	// Error handling
-	void error(const yy::location&, const std::string&) const;
+	void error(const Clever::location&, const std::string&) const;
 	void error(const std::string&) const;
 };
 

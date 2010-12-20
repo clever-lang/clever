@@ -75,7 +75,7 @@ void Driver::read_file(void)
 int Driver::parse_file(const std::string& filename)
 {
 	ScannerState* new_scanner = new ScannerState;
-	yy::Parser parser(*this, /*typeman, */new_scanner/*, compiler*/);
+	Clever::Parser parser(*this, new_scanner);
 	int result = 0;
 
 	is_file = true;
@@ -104,7 +104,7 @@ int Driver::parse_file(const std::string& filename)
 int Driver::parse_str(const std::string& code)
 {
 	ScannerState* new_scanner = new ScannerState;
-	yy::Parser parser(*this, /*typeman,*/ new_scanner /*, compiler*/);
+	Clever::Parser parser(*this, new_scanner);
 	int result = 0;
 
 	// Save the source code
@@ -128,9 +128,9 @@ int Driver::parse_str(const std::string& code)
  * @param location the location
  * @param message the message to be printed
  */
-void Driver::error(const yy::location& location, const std::string& message) const
+void Driver::error(const Clever::location& location, const std::string& message) const
 {
-	yy::position last = location.end - 1;
+	Clever::position last = location.end - 1;
 
 	if (input.size()) {
 		std::cout << message << " on line " << last.line << std::endl;

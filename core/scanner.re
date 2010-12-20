@@ -35,9 +35,6 @@ enum YYCONDTYPE {
 	yycST_END_OF_SCRIPT
 };
 
-#define IF_NOT_IN_DEAD_BLOCK() \
-	if (compiler.blk_states.top().dead == false)
-
 #define YYGETCONDITION()  s->state
 #define YYSETCONDITION(x) s->state = yyc##x
 
@@ -54,13 +51,13 @@ enum YYCONDTYPE {
 #define SKIP() { s->cur = s->yylex + 1; goto next_token; }
 #define RET(i) { s->cur = cursor; return i; }
 
-typedef yy::Parser::token token;
+typedef Clever::Parser::token token;
 
-yy::Parser::token_type yylex(yy::Parser::semantic_type* yylval,
-	yy::Parser::location_type* yylloc, Clever::Driver& driver,
-	ScannerState* s)
+Clever::Parser::token_type yylex(Clever::Parser::semantic_type* yylval,
+	Clever::Parser::location_type* yylloc, Clever::Driver& driver,
+	Clever::ScannerState* s)
 {
-	const char *cursor = s->cur;
+	const char* cursor = s->cur;
 	int yylen;
 
 next_token:
@@ -214,7 +211,7 @@ next_token:
 		RET(token::NUM_DOUBLE);
 	}
 
-	<*>[^]     { RET(yy::Parser::token_type(s->yylex[0])); }	
+	<*>[^]     { RET(Clever::Parser::token_type(s->yylex[0])); }
 	<*>"\000"  { RET(token::END); }
 */
 }

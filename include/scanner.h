@@ -29,13 +29,17 @@
 #define CLEVER_SCANNER_H
 #include <fstream>
 
-struct ScannerState {
-	int state;
-	const char *cur, *yylex, *ctx;	
-	
+namespace Clever { 
+class ScannerState {
+public:
 	ScannerState() : state(0) { }
 	
 	void set_cursor(const char* cursor) { cur = cursor; }
+	
+	int state;
+	const char *cur, *yylex, *ctx;
 };
+
+} // Clever
 
 #endif // CLEVER_SCANNER_H
