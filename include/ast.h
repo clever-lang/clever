@@ -77,7 +77,7 @@ private:
 
 class NumberExprAST : public ExprAST {
 public:
-	NumberExprAST(double val)
+	explicit NumberExprAST(double val)
 		: value(val) { }
 		
 	DISALLOW_COPY_AND_ASSIGN(NumberExprAST);
@@ -110,7 +110,7 @@ private:
 
 class IdentifierAST : public ExprAST {
 public:
-	IdentifierAST(const std::string& name_)
+	explicit IdentifierAST(const std::string& name_)
 		: name(name_) { }
 		
 	DISALLOW_COPY_AND_ASSIGN(IdentifierAST);

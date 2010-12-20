@@ -76,6 +76,8 @@ public:
 
 class Interpreter : public Driver {
 public:
+	Interpreter() { }
+	
 	void execute(void);
 	void shutdown(void);
 };

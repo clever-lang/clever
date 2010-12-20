@@ -36,6 +36,8 @@ class Compiler {
 public:
 	Compiler() { }
 	void Init(Ast::AstList);
+	
+	DISALLOW_COPY_AND_ASSIGN(Compiler);
 };
 
 }
