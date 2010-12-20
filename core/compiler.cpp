@@ -30,8 +30,9 @@
 
 namespace Clever {
 
-void Compiler::Init(Ast::AstList nodes) {
-	std::vector<Clever::Ast::ExprAST*>::iterator it = nodes.begin();
+void Compiler::Init(Ast::AstList nodes)
+{
+	Clever::Ast::AstList::iterator it = nodes.begin();
 	
 	while (it < nodes.end()) {
 		std::cout << (*it)->debug() << std::endl;

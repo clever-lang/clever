@@ -34,6 +34,10 @@
 
 namespace Clever { namespace Ast {
 	
+#define CLEVER_AST_PURE_VIRTUAL_MEMBERS \
+	virtual Value *codeGen();           \
+	virtual std::string debug();
+
 class ExprAST {
 public:
 	virtual ~ExprAST() { }
@@ -51,7 +55,7 @@ typedef std::vector<Clever::Ast::ExprAST*> AstList;
 
 class BinaryExprAST : public ExprAST {
 public:
-	BinaryExprAST(char op_, ExprAST *lhs, ExprAST *rhs)
+	BinaryExprAST(char op_, ExprAST* lhs, ExprAST* rhs)
 		: op(op_), LHS(lhs), RHS(rhs) { }
 		
 	~BinaryExprAST() {
@@ -59,12 +63,12 @@ public:
 		delete RHS;
 	}
 
-	virtual Value *codeGen();
-	virtual std::string debug();
+	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
 	
 private:
 	char op;
-	ExprAST *LHS, *RHS;
+	ExprAST* LHS;
+	ExprAST* RHS;
 	std::string value;
 };
 
@@ -73,11 +77,54 @@ public:
 	NumberExprAST(double val)
 		: value(val) { }
 		
-	virtual Value *codeGen();
-	virtual std::string debug();
+	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
 
 private:
 	double value;
+};
+
+class VariableDeclAST : public ExprAST {
+public:
+	VariableDeclAST(ExprAST* type_, ExprAST* variable_, ExprAST* initialization_)
+		: type(type_), variable(variable_), initialization(initialization_) { }
+	
+	~VariableDeclAST() {
+		delete type;
+		delete variable;
+	}
+		
+	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
+
+private:
+	ExprAST* type;
+	ExprAST* variable;
+	ExprAST* initialization;
+};
+
+class IdentifierAST : public ExprAST {
+public:
+	IdentifierAST(const std::string& name_)
+		: name(name_) { }
+		
+	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
+private:
+	const std::string name;
+	Value* value;
+};
+
+class TypeCreationAST : public ExprAST {
+public:
+	TypeCreationAST(ExprAST* type_, ExprAST* arguments_)
+		: type(type_), arguments(arguments_) { }
+		
+	~TypeCreationAST() {
+		delete type;
+	}
+	
+	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
+private:
+	ExprAST* type;
+	ExprAST* arguments;	
 };
 
 }} // Clever::Ast

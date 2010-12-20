@@ -66,18 +66,22 @@ next_token:
 /*!re2c
 	re2c:yyfill:enable = 0;
 
-	IDENTIFIER = [a-zA-Z_][a-zA-Z0-9_]*;
+	IDENTIFIER = [a-z][a-zA-Z0-9_]*;
 	INTEGER    = [0-9]+;
 	DOUBLE     = [0-9]+[.][0-9]+;
 	HEXINT     = [0][x][0-9a-zA-Z]+;
 	OCTINT     = [0][0-7]+;
 	SPACE 	   = [\r\t\v ]+;
 	STRING     = (["]([^\\"]*|"\\"["]?)*["]|[']([^\\']*|"\\"[']?)*[']);
+	TOKEN      = [(),];
+	TYPE       = [A-Z][a-zA-Z0-9_]*;
 	
 	<!*> { yylen = cursor - s->yylex; }
 		 
 	<*>SPACE { yylloc->step(); SKIP(); }
 	<*>[\n]+ { yylloc->lines(yylen); yylloc->step(); SKIP(); }
+	
+	<INITIAL>TOKEN { RET(Clever::Parser::token_type(s->yylex[0])); }
 	
 	<INITIAL>">=" { RET(token::GREATER_EQUAL); }
 
@@ -144,7 +148,13 @@ next_token:
 	<ST_MULTILINE_COMMENT>"*" { SKIP(); }
 
 	<INITIAL>IDENTIFIER {
+		*yylval = new Clever::Ast::IdentifierAST(std::string(s->yylex, yylen));
 		RET(token::IDENT);
+	}
+	
+	<INITIAL>TYPE {
+		*yylval = new Clever::Ast::IdentifierAST(std::string(s->yylex, yylen));
+		RET(token::TYPE);
 	}
 	
 	<INITIAL>STRING {

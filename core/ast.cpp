@@ -60,4 +60,46 @@ std::string BinaryExprAST::debug(void)
 	return std::string(LHS->debug() + " " + op + " " + RHS->debug());
 }
 
+
+/*
+ * VariableDeclAST
+ */
+Value* VariableDeclAST::codeGen(void)
+{
+	
+}
+
+std::string VariableDeclAST::debug(void)
+{
+	return type->debug() + " " + variable->debug();
+}
+
+/*
+ * IdentifierAST
+ */
+
+Value* IdentifierAST::codeGen(void)
+{
+	
+}
+
+std::string IdentifierAST::debug(void)
+{
+	return name;
+}
+
+/*
+ * TypeCreationAST
+ */
+
+Value* TypeCreationAST::codeGen(void)
+{
+	
+}
+
+std::string TypeCreationAST::debug(void)
+{
+	return type->debug();
+}
+
 }} // Clever::Ast

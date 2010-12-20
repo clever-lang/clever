@@ -65,12 +65,14 @@ Clever::Ast::AstList nodes;
 Clever::Compiler compiler;
 }
 
-%token END  0      "end of file"
-%token EXIT        "exit"
-%token IDENT
-%token NUM_DOUBLE
-%token STR
-%token NUM_INTEGER
+%token END  0       "end of file"
+%token EXIT         "exit"
+%token TYPE         "type specification"
+%token IDENT        "identifier"
+%token NUM_INTEGER  "number"
+%token NUM_DOUBLE   "float-number"
+%token STR          "string"
+%token ASSIGN       "="
 
 
 %left ',';
@@ -107,7 +109,22 @@ statement_list:
 ;
 
 statements:
-		expr
+		expr ';'
+	|	variable_declaration ';'
+;
+
+variable_declaration:
+		TYPE IDENT "=" type_creation { nodes.push_back(new Clever::Ast::VariableDeclAST($1, $2, $4)); }
+;
+
+arguments:
+		/* empty */
+	|	arguments ',' expr
+	|	expr
+;
+
+type_creation:
+	TYPE '(' arguments ')' { nodes.push_back(new Clever::Ast::TypeCreationAST($1, $3)); }
 ;
 
 expr:	expr '-' expr { nodes.push_back(new Clever::Ast::BinaryExprAST('-', $1, $3)); }
