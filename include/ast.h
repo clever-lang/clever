@@ -28,7 +28,6 @@
 #ifndef CLEVER_AST_H
 #define CLEVER_AST_H
 
-#include <iostream>
 #include <string>
 #include <vector>
 #include "types.h"
