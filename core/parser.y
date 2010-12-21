@@ -129,7 +129,8 @@ type_creation:
 		TYPE '(' arguments ')' { $$ = new clever::ast::TypeCreationAST($1, $3); }
 ;
 
-expr:	expr '-' expr { $$ = new clever::ast::BinaryExprAST('-', $1, $3); nodes.add($$); }
+expr:
+		expr '-' expr { $$ = new clever::ast::BinaryExprAST('-', $1, $3); nodes.add($$); }
 	|	expr '+' expr { $$ = new clever::ast::BinaryExprAST('+', $1, $3); nodes.add($$); }
 	|	expr '/' expr { $$ = new clever::ast::BinaryExprAST('/', $1, $3); nodes.add($$); }
 	|	expr '*' expr { $$ = new clever::ast::BinaryExprAST('*', $1, $3); nodes.add($$); }
