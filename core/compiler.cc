@@ -33,7 +33,6 @@ namespace clever {
 void Compiler::Init(ast::TreeNode::nodeList nodes) {
 	int level = 0;
 	ast::TreeNode::nodeList::iterator it = nodes.begin();
-	ast::TreeNode::nodeList::reverse_iterator rit = nodes.rbegin();
 	std::string prefix("");
 
 	while (it < nodes.end()) {
