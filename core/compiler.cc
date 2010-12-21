@@ -30,9 +30,10 @@
 
 namespace clever {
 
-void Compiler::Init(ast::AstList nodes) {
+void Compiler::Init(ast::TreeNode::nodeList nodes) {
 	int level = 0;
-	ast::AstList::iterator it = nodes.begin();
+	ast::TreeNode::nodeList::iterator it = nodes.begin();
+	ast::TreeNode::nodeList::reverse_iterator rit = nodes.rbegin();
 	std::string prefix("");
 
 	while (it < nodes.end()) {
@@ -44,9 +45,11 @@ void Compiler::Init(ast::AstList nodes) {
 			prefix = std::string(level, ' ');
 		}
 
-		std::cout << prefix << (*it)->debug() << std::endl;
+		std::cout << prefix << "(" << (*it)->refCount() << ") " << (*it)->debug() << std::endl;
 
-		delete *it;
+		if (!(*it)->delRef()) {
+			delete *it;
+		}
 		++it;
 	}
 }

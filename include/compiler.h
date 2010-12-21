@@ -35,7 +35,7 @@ namespace clever {
 class Compiler {
 public:
 	Compiler() { }
-	void Init(ast::AstList);
+	void Init(ast::TreeNode::nodeList);
 
 	DISALLOW_COPY_AND_ASSIGN(Compiler);
 };

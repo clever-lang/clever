@@ -61,7 +61,7 @@ class Driver;
 #include "driver.h"
 #include "compiler.h"
 
-clever::ast::AstList nodes;
+clever::ast::TreeNode nodes;
 clever::Compiler compiler;
 }
 
@@ -100,7 +100,7 @@ clever::Compiler compiler;
 %start top_statements;
 
 top_statements:
-		statement_list { compiler.Init(nodes); }
+		statement_list { compiler.Init(nodes.getNodeList()); }
 ;
 
 statement_list:
@@ -111,12 +111,12 @@ statement_list:
 statements:
 		expr ';'
 	|	variable_declaration ';'
-	|	'{' { nodes.push_back(new clever::ast::NewBlockAST()); } statement_list '}'
-		{ nodes.push_back(new clever::ast::EndBlockAST()); }
+	|	'{' { nodes.add(new clever::ast::NewBlockAST()); } statement_list '}'
+		{ nodes.add(new clever::ast::EndBlockAST()); }
 ;
 
 variable_declaration:
-		TYPE IDENT "=" type_creation { nodes.push_back(new clever::ast::VariableDeclAST($1, $2, $4)); }
+		TYPE IDENT "=" type_creation { nodes.add(new clever::ast::VariableDeclAST($1, $2, $4)); }
 ;
 
 arguments:
@@ -129,11 +129,11 @@ type_creation:
 		TYPE '(' arguments ')' { $$ = new clever::ast::TypeCreationAST($1, $3); }
 ;
 
-expr:	expr '-' expr { nodes.push_back(new clever::ast::BinaryExprAST('-', $1, $3)); }
-	|	expr '+' expr { nodes.push_back(new clever::ast::BinaryExprAST('+', $1, $3)); }
-	|	expr '/' expr { nodes.push_back(new clever::ast::BinaryExprAST('/', $1, $3)); }
-	|	expr '*' expr { nodes.push_back(new clever::ast::BinaryExprAST('*', $1, $3)); }
-	|	expr '%' expr { nodes.push_back(new clever::ast::BinaryExprAST('%', $1, $3)); }
+expr:	expr '-' expr { $$ = new clever::ast::BinaryExprAST('-', $1, $3); nodes.add($$); }
+	|	expr '+' expr { $$ = new clever::ast::BinaryExprAST('+', $1, $3); nodes.add($$); }
+	|	expr '/' expr { $$ = new clever::ast::BinaryExprAST('/', $1, $3); nodes.add($$); }
+	|	expr '*' expr { $$ = new clever::ast::BinaryExprAST('*', $1, $3); nodes.add($$); }
+	|	expr '%' expr { $$ = new clever::ast::BinaryExprAST('%', $1, $3); nodes.add($$); }
 	|	NUM_INTEGER   { $$ = $1; }
 	|	NUM_DOUBLE    { $$ = $1; }
 ;
