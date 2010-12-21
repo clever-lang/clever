@@ -1,7 +1,7 @@
 /*
- * Clever language 
+ * Clever language
  * Copyright (c) 2010 Clever Team
- * 
+ *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without
@@ -21,7 +21,7 @@
  * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  * $Id$
  */
 
@@ -36,7 +36,7 @@
 namespace clever {
 
 struct Value {
-	
+
 };
 
 struct NamedValue : Value {
@@ -68,7 +68,6 @@ class Type {
 		inline bool is_concrete() const { return m_kind & ABSTRACT; };
 		inline bool is_built_in() const { return m_kind & BUILT_IN; };
 
-		std::string to_string() { return name(); };
 	private:
 		Type() {};
 		DISALLOW_COPY_AND_ASSIGN(Type);
