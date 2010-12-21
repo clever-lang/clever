@@ -144,14 +144,20 @@ private:
 
 class NewBlockAST : public ExprAST {
 public:
-	explicit NewBlockAST(ExprAST* statements)
-		: m_statements(statements) { }
+	NewBlockAST() { }
 
 	DISALLOW_COPY_AND_ASSIGN(NewBlockAST);
 
 	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
-private:
-	ExprAST* m_statements;
+};
+
+class EndBlockAST : public ExprAST {
+public:
+	EndBlockAST() { }
+
+	DISALLOW_COPY_AND_ASSIGN(EndBlockAST);
+
+	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
 };
 
 }} // clever::ast

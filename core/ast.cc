@@ -71,7 +71,6 @@ std::string VariableDeclAST::debug(void) {
 /*
  * IdentifierAST
  */
-
 Value* IdentifierAST::codeGen(void) {
 
 }
@@ -83,7 +82,6 @@ std::string IdentifierAST::debug(void) {
 /*
  * TypeCreationAST
  */
-
 Value* TypeCreationAST::codeGen(void) {
 	return NULL;
 }
@@ -95,13 +93,23 @@ std::string TypeCreationAST::debug(void) {
 /*
  * NewBlockAST
  */
-
 Value* NewBlockAST::codeGen(void) {
 	return NULL;
 }
 
 std::string NewBlockAST::debug(void) {
-	return std::string("{ new block }");
+	return std::string("{");
+}
+
+/*
+ * EndBlockAST
+ */
+Value* EndBlockAST::codeGen(void) {
+	return NULL;
+}
+
+std::string EndBlockAST::debug(void) {
+	return std::string("}");
 }
 
 }} // clever::ast

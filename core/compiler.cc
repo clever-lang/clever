@@ -1,7 +1,7 @@
 /*
- * Clever language 
+ * Clever language
  * Copyright (c) 2010 Clever Team
- * 
+ *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without
@@ -21,7 +21,7 @@
  * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  * $Id$
  */
 #include <iostream>
@@ -31,10 +31,21 @@
 namespace clever {
 
 void Compiler::Init(ast::AstList nodes) {
+	int level = 0;
 	ast::AstList::iterator it = nodes.begin();
-	
+	std::string prefix("");
+
 	while (it < nodes.end()) {
-		std::cout << (*it)->debug() << std::endl;
+		if (!(*it)->debug().compare("{")) {
+			prefix = std::string(level, ' ');
+			++level;
+		} else if (!(*it)->debug().compare("}")) {
+			--level;
+			prefix = std::string(level, ' ');
+		}
+
+		std::cout << prefix << (*it)->debug() << std::endl;
+
 		delete *it;
 		++it;
 	}
