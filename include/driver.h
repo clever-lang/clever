@@ -1,7 +1,7 @@
 /*
- * Clever language 
+ * Clever language
  * Copyright (c) 2010 Clever Team
- * 
+ *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without
@@ -21,7 +21,7 @@
  * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  * $Id$
  */
 
@@ -41,27 +41,12 @@ clever::Parser::token_type yylex(clever::Parser::semantic_type*,
 		clever::ScannerState*);
 
 namespace clever {
-	
+
 class Driver {
 public:
-	// Compiler pointer
-	//Clever::Compiler* compiler_p;
-	// Indicates if it's a file is being parsed
-	bool is_file;
-	// The file path -f
-	std::string file;
-	// The source
-	std::string source;
-	// The source as input -r
-	std::string input;
-	// Debug option
-	bool trace_parsing;
-	// Scanners stack
-	static std::stack<clever::ScannerState*> scanners;
-
-	Driver() : is_file(false), trace_parsing(false) { }
+	Driver() : m_is_file(false), m_trace_parsing(false) { }
 	virtual ~Driver() { }
-	
+
 	// Read file to the scanner
 	void read_file(void);
 
@@ -72,12 +57,27 @@ public:
 	// Error handling
 	void error(const clever::location&, const std::string&) const;
 	void error(const std::string&) const;
+
+	typedef std::stack<clever::ScannerState*> ScannerStack;
+
+	// Indicates if it's a file is being parsed
+	bool m_is_file;
+	// The file path -f
+	std::string m_file;
+	// The source
+	std::string m_source;
+	// The source as input -r
+	std::string m_input;
+	// Debug option
+	bool m_trace_parsing;
+	// Scanners stack
+	static ScannerStack m_scanners;
 };
 
 class Interpreter : public Driver {
 public:
 	Interpreter() { }
-	
+
 	void execute(void);
 	void shutdown(void);
 };

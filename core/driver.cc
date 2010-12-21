@@ -1,7 +1,7 @@
 /*
- * Clever language 
+ * Clever language
  * Copyright (c) 2010 Clever Team
- * 
+ *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without
@@ -21,7 +21,7 @@
  * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  * $Id$
  */
 
@@ -33,7 +33,7 @@
 
 namespace clever {
 
-std::stack<ScannerState*> Driver::scanners;
+Driver::ScannerStack Driver::m_scanners;
 
 void Interpreter::execute(void) {
 
@@ -50,18 +50,18 @@ void Driver::read_file(void) {
 	std::string line;
 	std::fstream filep;
 
-	filep.open(file.c_str());
+	filep.open(m_file.c_str());
 
 	if (!filep) {
-		std::cout << "Couldn't open file " << file << std::endl;
+		std::cout << "Couldn't open file " << m_file << std::endl;
 		exit(1);
 	}
 
 	while (!filep.eof()) {
 		getline(filep, line);
-		source += line + '\n';
+		m_source += line + '\n';
 	}
-	
+
 	filep.close();
 }
 
@@ -71,25 +71,25 @@ void Driver::read_file(void) {
  */
 int Driver::parse_file(const std::string& filename) {
 	ScannerState* new_scanner = new ScannerState;
-	clever::Parser parser(*this, new_scanner);
+	Parser parser(*this, new_scanner);
 	int result = 0;
 
-	is_file = true;
+	m_is_file = true;
 	// Save the filename
-	file = filename;	
+	m_file = filename;
 	// Read the file
 	read_file();
 	// Set the file source to scanner read it
-	scanners.push(new_scanner);
-	scanners.top()->set_cursor(source.c_str());
+	m_scanners.push(new_scanner);
+	m_scanners.top()->set_cursor(m_source.c_str());
 	// Bison debug option
-	parser.set_debug_level(trace_parsing);
-	
+	parser.set_debug_level(m_trace_parsing);
+
 	result = parser.parse();
-	
+
 	delete new_scanner;
-	scanners.pop();
-	
+	m_scanners.pop();
+
 	return result;
 }
 
@@ -103,18 +103,18 @@ int Driver::parse_str(const std::string& code) {
 	int result = 0;
 
 	// Save the source code
-	source = code;
+	m_source = code;
 	// Set the source code to scanner read it
-	scanners.push(new_scanner);
-	scanners.top()->set_cursor(source.c_str());
+	m_scanners.push(new_scanner);
+	m_scanners.top()->set_cursor(m_source.c_str());
 	// Bison debug option
-	parser.set_debug_level(trace_parsing);
-	
+	parser.set_debug_level(m_trace_parsing);
+
 	result = parser.parse();
-	
+
 	delete new_scanner;
-	scanners.pop();
-	
+	m_scanners.pop();
+
 	return result;
 }
 
@@ -126,7 +126,7 @@ int Driver::parse_str(const std::string& code) {
 void Driver::error(const clever::location& location, const std::string& message) const {
 	clever::position last = location.end - 1;
 
-	if (input.size()) {
+	if (m_input.size()) {
 		std::cout << message << " on line " << last.line << std::endl;
 	} else {
 		std::cout << message << " in " << *last.filename << " on line " << last.line << std::endl;
