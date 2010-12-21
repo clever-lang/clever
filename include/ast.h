@@ -1,7 +1,7 @@
 /*
- * Clever language 
+ * Clever language
  * Copyright (c) 2010 Clever Team
- * 
+ *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without
@@ -21,7 +21,7 @@
  * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  * $Id$
  */
 
@@ -33,7 +33,7 @@
 #include "types.h"
 
 namespace clever { namespace ast {
-	
+
 #define CLEVER_AST_PURE_VIRTUAL_MEMBERS \
 	virtual Value *codeGen();           \
 	virtual std::string debug();
@@ -41,7 +41,7 @@ namespace clever { namespace ast {
 class ExprAST {
 public:
 	virtual ~ExprAST() { }
-	
+
 	/*
 	 * Method for generating the expression IR
 	 */
@@ -58,16 +58,16 @@ class BinaryExprAST : public ExprAST {
 public:
 	BinaryExprAST(char op_, ExprAST* lhs, ExprAST* rhs)
 		: op(op_), LHS(lhs), RHS(rhs) { }
-		
+
 	~BinaryExprAST() {
 		delete LHS;
 		delete RHS;
 	}
-	
+
 	DISALLOW_COPY_AND_ASSIGN(BinaryExprAST);
 
 	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
-	
+
 private:
 	char op;
 	ExprAST* LHS;
@@ -79,9 +79,9 @@ class NumberExprAST : public ExprAST {
 public:
 	explicit NumberExprAST(double val)
 		: value(val) { }
-		
+
 	DISALLOW_COPY_AND_ASSIGN(NumberExprAST);
-	
+
 	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
 
 private:
@@ -92,14 +92,18 @@ class VariableDeclAST : public ExprAST {
 public:
 	VariableDeclAST(ExprAST* type_, ExprAST* variable_, ExprAST* initialization_)
 		: type(type_), variable(variable_), initialization(initialization_) { }
-	
+
 	~VariableDeclAST() {
 		delete type;
 		delete variable;
+
+		if (initialization) {
+			delete initialization;
+		}
 	}
-	
+
 	DISALLOW_COPY_AND_ASSIGN(VariableDeclAST);
-		
+
 	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
 
 private:
@@ -112,9 +116,9 @@ class IdentifierAST : public ExprAST {
 public:
 	explicit IdentifierAST(const std::string& name_)
 		: name(name_) { }
-		
+
 	DISALLOW_COPY_AND_ASSIGN(IdentifierAST);
-		
+
 	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
 private:
 	const std::string name;
@@ -125,17 +129,17 @@ class TypeCreationAST : public ExprAST {
 public:
 	TypeCreationAST(ExprAST* type_, ExprAST* arguments_)
 		: type(type_), arguments(arguments_) { }
-		
+
 	~TypeCreationAST() {
 		delete type;
 	}
-	
+
 	DISALLOW_COPY_AND_ASSIGN(TypeCreationAST);
-	
+
 	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
 private:
 	ExprAST* type;
-	ExprAST* arguments;	
+	ExprAST* arguments;
 };
 
 }} // clever::ast

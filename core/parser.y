@@ -6,9 +6,9 @@
 
 %code requires {
 /*
- * Clever language 
+ * Clever language
  * Copyright (c) 2010 Clever Team
- * 
+ *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without
@@ -47,7 +47,7 @@ class Driver;
 %parse-param { clever::ScannerState* state }
 %lex-param   { clever::Driver& driver }
 %lex-param   { clever::ScannerState* state }
-     
+
 %locations
 %initial-action {
 // Initialize the initial location.
@@ -105,7 +105,7 @@ top_statements:
 
 statement_list:
 		/* empty */
-	|	statement_list statements	
+	|	statement_list statements
 ;
 
 statements:
@@ -118,9 +118,9 @@ variable_declaration:
 ;
 
 arguments:
-		/* empty */
-	|	arguments ',' expr
-	|	expr
+		/* empty */          { $$ = NULL; }
+	|	arguments ',' expr   { $$ = $3;   }
+	|	expr                 { $$ = $1;   }
 ;
 
 type_creation:
