@@ -99,7 +99,7 @@ int Driver::parse_file(const std::string& filename) {
  */
 int Driver::parse_str(const std::string& code) {
 	ScannerState* new_scanner = new ScannerState;
-	clever::Parser parser(*this, new_scanner);
+	Parser parser(*this, new_scanner);
 	int result = 0;
 
 	// Save the source code
@@ -124,7 +124,7 @@ int Driver::parse_str(const std::string& code) {
  * @param message the message to be printed
  */
 void Driver::error(const clever::location& location, const std::string& message) const {
-	clever::position last = location.end - 1;
+	position last = location.end - 1;
 
 	if (m_input.size()) {
 		std::cout << message << " on line " << last.line << std::endl;

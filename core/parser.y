@@ -111,6 +111,7 @@ statement_list:
 statements:
 		expr ';'
 	|	variable_declaration ';'
+	|	'{' { nodes.push_back(new clever::ast::NewBlockAST(NULL)); } statement_list '}'
 ;
 
 variable_declaration:

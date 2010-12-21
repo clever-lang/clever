@@ -85,11 +85,23 @@ std::string IdentifierAST::debug(void) {
  */
 
 Value* TypeCreationAST::codeGen(void) {
-
+	return NULL;
 }
 
 std::string TypeCreationAST::debug(void) {
 	return m_type->debug();
+}
+
+/*
+ * NewBlockAST
+ */
+
+Value* NewBlockAST::codeGen(void) {
+	return NULL;
+}
+
+std::string NewBlockAST::debug(void) {
+	return std::string("{ new block }");
 }
 
 }} // clever::ast

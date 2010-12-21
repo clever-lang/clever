@@ -1,7 +1,7 @@
 /*
- * Clever language 
+ * Clever language
  * Copyright (c) 2010 Clever Team
- * 
+ *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without
@@ -21,7 +21,7 @@
  * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  * $Id$
  */
 
@@ -74,7 +74,7 @@ int main(int argc, char *argv[]) {
 			break;
 		} else if (argv[i] == std::string("-i")) {
 			std::string input_line;
-			
+
 			while (std::cin) {
 				getline(std::cin, input_line);
 				clever.parse_str(input_line + '\n');
@@ -84,16 +84,16 @@ int main(int argc, char *argv[]) {
 		} else if (argv[i] == std::string("-h")) {
 			show_usage();
 		} else if (argv[i] == std::string("-v")) {
-			std::cout << "Clever - 0-dev version" << std::endl;
+			std::cout << "Clever - development version" << std::endl;
 #ifdef _WIN32
 		} else if (argv[i] == std::string("-b")) {
 			if (GetConsoleWindow()) {
 				std::string cline;
-				
+
 				for (int j = 0; j < argc; ++j) {
 					cline = cline + std::string(argv[j]) + " ";
 				}
-				
+
 				CreateBackgroundProcess(cline);
 				return 0;
 			}
@@ -102,6 +102,6 @@ int main(int argc, char *argv[]) {
 			std::cout << "Unknown option '" << argv[i] << "'" << std::endl;
 		}
 	}
-   			
+
 	return 0;
 }

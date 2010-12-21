@@ -142,6 +142,18 @@ private:
 	ExprAST* m_arguments;
 };
 
+class NewBlockAST : public ExprAST {
+public:
+	explicit NewBlockAST(ExprAST* statements)
+		: m_statements(statements) { }
+
+	DISALLOW_COPY_AND_ASSIGN(NewBlockAST);
+
+	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
+private:
+	ExprAST* m_statements;
+};
+
 }} // clever::ast
 
 #endif // CLEVER_AST_H
