@@ -39,14 +39,31 @@ namespace clever { namespace ast {
 	virtual std::string debug();
 
 class ExprAST {
-	int m_reference;
 public:
 	ExprAST() : m_reference(0) { }
+
 	virtual ~ExprAST() { }
 
-	inline int refCount() { return m_reference; }
-	inline void addRef() { ++m_reference; }
-	inline int delRef() { return --m_reference; }
+	/*
+	 * Returns the number of references
+	 */
+	inline int refCount() const {
+		return m_reference;
+	}
+
+	/*
+	 * Increments the reference to the object
+	 */
+	inline void addRef() {
+		++m_reference;
+	}
+
+	/*
+	 * Decrements the reference to the object
+	 */
+	inline int delRef() {
+		return --m_reference;
+	}
 
 	/*
 	 * Method for generating the expression IR
@@ -56,6 +73,8 @@ public:
 	 * Method for debug purpose
 	 */
 	virtual std::string debug() = 0;
+private:
+	int m_reference;
 };
 
 
@@ -65,8 +84,13 @@ public:
 
 	TreeNode() { }
 
-	inline void add(ExprAST* node) { node->addRef(); nodes.push_back(node); }
-	inline nodeList getNodeList() { return nodes; }
+	inline void add(ExprAST* node) {
+		node->addRef();
+		nodes.push_back(node);
+	}
+	inline nodeList getNodeList() const {
+		return nodes;
+	}
 private:
 	nodeList nodes;
 };
@@ -115,11 +139,11 @@ private:
 
 class VariableDeclAST : public ExprAST {
 public:
-	VariableDeclAST(ExprAST* type, ExprAST* variable, ExprAST* initialization)
-		: m_type(type), m_variable(variable), m_initialization(initialization) {
+	VariableDeclAST(ExprAST* type, ExprAST* variable, ExprAST* rhs)
+		: m_type(type), m_variable(variable), m_rhs(rhs) {
 		m_type->addRef();
 		m_variable->addRef();
-		m_initialization->addRef();
+		m_rhs->addRef();
 	}
 
 	~VariableDeclAST() {
@@ -129,8 +153,8 @@ public:
 		if (!m_variable->delRef()) {
 			delete m_variable;
 		}
-		if (m_initialization && !m_initialization->delRef()) {
-			delete m_initialization;
+		if (m_rhs && !m_rhs->delRef()) {
+			delete m_rhs;
 		}
 	}
 
@@ -141,7 +165,7 @@ public:
 private:
 	ExprAST* m_type;
 	ExprAST* m_variable;
-	ExprAST* m_initialization;
+	ExprAST* m_rhs;
 };
 
 class IdentifierAST : public ExprAST {
