@@ -17,6 +17,7 @@ public:
 	void run(void);
 
 	void echo_stmt(Opcode* opcode);
+	void plus_stmt(Opcode* opcode);
 private:
 	std::vector<Opcode*>* m_opcodes;
 };

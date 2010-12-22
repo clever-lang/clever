@@ -22,4 +22,8 @@ void VM::echo_stmt(Opcode* opcode) {
 	std::cout << opcode->get_op1()->toString() << std::endl;
 }
 
+void VM::plus_stmt(Opcode* opcode) {
+	opcode->get_result()->set_value(new ConstantValue(2.0));
+}
+
 } // clever

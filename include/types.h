@@ -28,6 +28,7 @@
 #ifndef CLEVER_TYPES_H
 #define CLEVER_TYPES_H
 
+#include <iostream>
 #include <sstream>
 #include <string>
 #include "config.h"
@@ -42,13 +43,15 @@ struct Value {
 	virtual std::string toString(void) {
 		return std::string();
 	}
+	virtual void set_value(Value* value) {
+	}
 };
 
-struct NamedValue : Value {
+struct NamedValue : public Value {
 	std::string name;
 };
 
-struct ConstantValue : Value {
+struct ConstantValue : public Value {
 	enum {
 		INTEGER,
 		STRING
@@ -62,10 +65,12 @@ struct ConstantValue : Value {
 		m_type = INTEGER;
 		m_data.l_value = l_value;
 	}
+
 	ConstantValue(std::string s_value) {
 		m_type = STRING;
 		m_data.s_value = (char*)s_value.c_str();
 	}
+
 	std::string toString(void) {
 		if (m_type == INTEGER) {
 			std::stringstream str;
@@ -76,6 +81,20 @@ struct ConstantValue : Value {
 		} else {
 			return std::string(m_data.s_value);
 		}
+	}
+};
+
+struct ExprValue : public Value {
+	Value* m_value;
+
+	void set_value(Value* value) {
+		m_value = value;
+	}
+
+	std::string toString() {
+		ConstantValue* value = static_cast<ConstantValue*>(m_value);
+
+		return value->toString();
 	}
 };
 

@@ -116,6 +116,7 @@ public:
 		: m_op(op_), m_lhs(lhs), m_rhs(rhs) {
 		m_lhs->addRef();
 		m_rhs->addRef();
+		m_result = new ExprValue;
 	}
 
 	~BinaryExprAST() {
@@ -123,6 +124,7 @@ public:
 		destroy(m_rhs);
 	}
 
+	Opcode* opcodeGen(void);
 	DISALLOW_COPY_AND_ASSIGN(BinaryExprAST);
 
 	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
@@ -131,6 +133,7 @@ private:
 	char m_op;
 	ExprAST* m_lhs;
 	ExprAST* m_rhs;
+	Value* m_result;
 };
 
 class NumberExprAST : public ExprAST {

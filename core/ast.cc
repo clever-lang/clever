@@ -59,8 +59,12 @@ std::string NumberExprAST::debug(void) {
 /*
  * BinaryExprAST
  */
+Opcode* BinaryExprAST::opcodeGen(void) {
+	return new Opcode(OP_PLUS, &VM::plus_stmt, m_lhs->codeGen(), m_rhs->codeGen(), m_result);
+}
+
 Value* BinaryExprAST::codeGen(void) {
-	return NULL;
+	return m_result;
 }
 
 std::string BinaryExprAST::debug(void) {
