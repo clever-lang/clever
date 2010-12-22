@@ -27,6 +27,9 @@
 
 #ifndef CLEVER_TYPES_H
 #define CLEVER_TYPES_H
+
+#include <sstream>
+#include <string>
 #include "config.h"
 
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
@@ -36,11 +39,44 @@
 namespace clever {
 
 struct Value {
-
+	virtual std::string toString(void) {
+		return std::string();
+	}
 };
 
 struct NamedValue : Value {
 	std::string name;
+};
+
+struct ConstantValue : Value {
+	enum {
+		INTEGER,
+		STRING
+	} m_type;
+	union {
+		double l_value;
+		char* s_value;
+	} m_data;
+
+	ConstantValue(double l_value) {
+		m_type = INTEGER;
+		m_data.l_value = l_value;
+	}
+	ConstantValue(std::string s_value) {
+		m_type = STRING;
+		m_data.s_value = (char*)s_value.c_str();
+	}
+	std::string toString(void) {
+		if (m_type == INTEGER) {
+			std::stringstream str;
+
+			str << m_data.l_value;
+
+			return str.str();
+		} else {
+			return std::string(m_data.s_value);
+		}
+	}
 };
 
 class Type {

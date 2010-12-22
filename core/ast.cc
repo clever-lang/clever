@@ -25,8 +25,10 @@
  * $Id$
  */
 
-#include "ast.h"
 #include <sstream>
+#include "ast.h"
+#include "opcodes.h"
+#include "vm.h"
 
 namespace clever { namespace ast {
 
@@ -43,7 +45,7 @@ TreeNode::~TreeNode(void) {
  * NumberExprAST
  */
 Value* NumberExprAST::codeGen(void) {
-	return NULL;
+	return new ConstantValue(m_value);
 }
 
 std::string NumberExprAST::debug(void) {
@@ -81,7 +83,7 @@ std::string VariableDeclAST::debug(void) {
  * IdentifierAST
  */
 Value* IdentifierAST::codeGen(void) {
-
+	return new ConstantValue(m_name);
 }
 
 std::string IdentifierAST::debug(void) {
@@ -126,6 +128,10 @@ std::string EndBlockAST::debug(void) {
  */
 Value* CommandAST::codeGen(void) {
 	return NULL;
+}
+
+Opcode* CommandAST::opcodeGen(void) {
+	return new Opcode(OP_ECHO, &VM::echo_stmt, m_value->codeGen());
 }
 
 std::string CommandAST::debug(void) {

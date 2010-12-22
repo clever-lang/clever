@@ -29,6 +29,7 @@
 #define CLEVER_COMPILER_H
 
 #include "ast.h"
+#include "opcodes.h"
 
 namespace clever {
 
@@ -38,10 +39,12 @@ public:
 
 	void Init(ast::TreeNode::nodeList);
 	void dumpAST(void);
+	void buildIR(void);
 
 	DISALLOW_COPY_AND_ASSIGN(Compiler);
 private:
 	ast::TreeNode::nodeList m_ast;
+	std::vector<Opcode*> m_opcodes;
 };
 
 } // clever

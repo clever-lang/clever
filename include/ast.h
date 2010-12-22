@@ -31,6 +31,7 @@
 #include <string>
 #include <vector>
 #include "types.h"
+#include "opcodes.h"
 
 namespace clever { namespace ast {
 
@@ -77,11 +78,15 @@ public:
 	/*
 	 * Method for generating the expression IR
 	 */
-	virtual Value *codeGen() = 0;
+	virtual Value* codeGen() = 0;
 	/*
 	 * Method for debug purpose
 	 */
 	virtual std::string debug() = 0;
+
+	virtual Opcode* opcodeGen() {
+		return NULL;
+	}
 private:
 	int m_reference;
 };
@@ -232,6 +237,8 @@ public:
 		destroy(m_command);
 		destroy(m_value);
 	}
+
+	Opcode* opcodeGen();
 
 	DISALLOW_COPY_AND_ASSIGN(CommandAST);
 

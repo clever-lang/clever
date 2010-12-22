@@ -37,6 +37,23 @@ void Compiler::Init(ast::TreeNode::nodeList nodes) {
 	m_ast = nodes;
 }
 
+void Compiler::buildIR() {
+	ast::TreeNode::nodeList::iterator it = m_ast.begin();
+
+	while (it < m_ast.end()) {
+		Opcode* opcode = (*it)->opcodeGen();
+
+		if (opcode) {
+			m_opcodes.push_back(opcode);
+		}
+		++it;
+	}
+
+	VM vm(&m_opcodes);
+
+	vm.run();
+}
+
 /*
  * Dumps the AST
  */

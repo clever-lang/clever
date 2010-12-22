@@ -101,7 +101,7 @@ clever::Compiler compiler;
 %start top_statements;
 
 top_statements:
-		statement_list { compiler.Init(nodes.getNodeList()); compiler.dumpAST(); }
+		statement_list { compiler.Init(nodes.getNodeList()); compiler.buildIR(); /* compiler.dumpAST(); */ }
 ;
 
 statement_list:
@@ -141,6 +141,7 @@ expr:
 	|	NUM_INTEGER   { $$ = $1; }
 	|	NUM_DOUBLE    { $$ = $1; }
 	|	IDENT         { $$ = $1; }
+	|	STR           { $$ = $1; }
 ;
 
 echo_stmt:

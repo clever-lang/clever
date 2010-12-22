@@ -188,6 +188,8 @@ next_token:
 				}
 			}
 		}
+
+		*yylval = new clever::ast::IdentifierAST(strtext);
 		RET(token::STR);
 	}
 
