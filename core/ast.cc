@@ -64,6 +64,7 @@ Opcode* BinaryExprAST::opcodeGen(void) {
 }
 
 Value* BinaryExprAST::codeGen(void) {
+	m_result->addRef();
 	return m_result;
 }
 

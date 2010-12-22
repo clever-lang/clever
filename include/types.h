@@ -41,12 +41,36 @@ namespace clever {
 
 class Value {
 public:
+	Value() : reference(1) { }
+
+	virtual ~Value() { }
+
 	virtual std::string toString(void) {
 		return std::string();
 	}
 
 	virtual void set_value(Value* value) {
 	}
+
+	inline int refCount(void) {
+		return reference;
+	}
+
+	inline void addRef(void) {
+		++reference;
+	}
+
+	inline int delRef(void) {
+		return --reference;
+	}
+
+	inline void destroy(Value* value) {
+		if (value && !value->delRef()) {
+			delete value;
+		}
+	}
+private:
+	int reference;
 };
 
 class NamedValue : public Value {
@@ -84,10 +108,16 @@ private:
 	} m_data;
 };
 
-struct ExprValue : public Value {
-	Value* m_value;
+class ExprValue : public Value {
+public:
+	ExprValue() : m_value(NULL) { }
+
+	~ExprValue() {
+		destroy(m_value);
+	}
 
 	void set_value(Value* value) {
+		destroy(m_value);
 		m_value = value;
 	}
 
@@ -96,6 +126,8 @@ struct ExprValue : public Value {
 
 		return value->toString();
 	}
+private:
+	Value* m_value;
 };
 
 class Type {

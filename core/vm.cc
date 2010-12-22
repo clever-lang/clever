@@ -8,6 +8,18 @@ VM::~VM(void) {
 	OpcodeList::iterator it = m_opcodes->begin();
 
 	while (it < m_opcodes->end()) {
+		if ((*it)->get_op1()) {
+			std::cout << (*it)->get_op1() << " (refcount: " << (*it)->get_op1()->refCount() << ")" << std::endl;
+			(*it)->get_op1()->destroy((*it)->get_op1());
+		}
+		if ((*it)->get_op2()) {
+			std::cout << (*it)->get_op2() << " (refcount: " << (*it)->get_op2()->refCount() << ")" << std::endl;
+			(*it)->get_op2()->destroy((*it)->get_op2());
+		}
+		if ((*it)->get_result()) {
+			std::cout << (*it)->get_result() << " (refcount: " << (*it)->get_result()->refCount() << ")" << std::endl;
+			(*it)->get_result()->destroy((*it)->get_result());
+		}
 		delete *it;
 		++it;
 	}

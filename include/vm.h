@@ -12,7 +12,7 @@ public:
 	typedef void (VM::*vm_handler)(Opcode* opcode);
 	typedef std::vector<Opcode*> OpcodeList;
 
-	VM() { }
+	VM() : m_opcodes(NULL) { }
 	~VM();
 	explicit VM(OpcodeList* opcodes)
 		: m_opcodes(opcodes) { }
