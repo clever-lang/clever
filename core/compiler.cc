@@ -30,12 +30,22 @@
 
 namespace clever {
 
+/*
+ * Initializes the compiler data
+ */
 void Compiler::Init(ast::TreeNode::nodeList nodes) {
+	m_ast = nodes;
+}
+
+/*
+ * Dumps the AST
+ */
+void Compiler::dumpAST(void) {
 	int level = 0;
-	ast::TreeNode::nodeList::iterator it = nodes.begin();
+	ast::TreeNode::nodeList::iterator it = m_ast.begin();
 	std::string prefix("");
 
-	while (it < nodes.end()) {
+	while (it < m_ast.end()) {
 		if (!(*it)->debug().compare("{")) {
 			prefix = std::string(level, ' ');
 			++level;
@@ -46,7 +56,6 @@ void Compiler::Init(ast::TreeNode::nodeList nodes) {
 
 		std::cout << prefix << "(" << (*it)->refCount() << ") " << (*it)->debug() << std::endl;
 
-		(*it)->destroy(*it);
 		++it;
 	}
 }

@@ -92,6 +92,7 @@ public:
 	typedef std::vector<ExprAST*> nodeList;
 
 	TreeNode() { }
+	~TreeNode();
 
 	inline void add(ExprAST* node) {
 		node->addRef();

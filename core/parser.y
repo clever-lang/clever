@@ -101,7 +101,7 @@ clever::Compiler compiler;
 %start top_statements;
 
 top_statements:
-		statement_list { compiler.Init(nodes.getNodeList()); }
+		statement_list { compiler.Init(nodes.getNodeList()); compiler.dumpAST(); }
 ;
 
 statement_list:
