@@ -86,7 +86,7 @@ public:
 
 	explicit ConstantValue(std::string s_value) {
 		m_type = STRING;
-		m_data.s_value = (char*)s_value.c_str();
+		m_data.s_value = const_cast<char*>(s_value.c_str());
 	}
 
 	std::string toString(void) {
