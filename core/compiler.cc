@@ -38,6 +38,7 @@ void Compiler::Init(ast::TreeNode::nodeList nodes) {
 }
 
 void Compiler::buildIR() {
+	VM vm;
 	ast::TreeNode::nodeList::iterator it = m_ast.begin();
 
 	while (it < m_ast.end()) {
@@ -49,8 +50,7 @@ void Compiler::buildIR() {
 		++it;
 	}
 
-	VM vm(&m_opcodes);
-
+	vm.setOpcodes(&m_opcodes);
 	vm.run();
 }
 

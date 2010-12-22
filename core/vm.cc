@@ -4,6 +4,15 @@
 
 namespace clever {
 
+VM::~VM(void) {
+	OpcodeList::iterator it = m_opcodes->begin();
+
+	while (it < m_opcodes->end()) {
+		delete *it;
+		++it;
+	}
+}
+
 void VM::run(void) {
 	std::vector<Opcode*>::iterator it = m_opcodes->begin();
 

@@ -122,6 +122,7 @@ public:
 	~BinaryExprAST() {
 		destroy(m_lhs);
 		destroy(m_rhs);
+		delete m_result;
 	}
 
 	Opcode* opcodeGen(void);

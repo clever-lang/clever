@@ -10,20 +10,26 @@ class Opcode;
 class VM {
 public:
 	typedef void (VM::*vm_handler)(Opcode* opcode);
+	typedef std::vector<Opcode*> OpcodeList;
 
-	VM(std::vector<Opcode*>* opcodes)
+	VM() { }
+	~VM();
+	explicit VM(OpcodeList* opcodes)
 		: m_opcodes(opcodes) { }
 
 	void run(void);
 
+	inline void setOpcodes(std::vector<Opcode*>* opcodes) {
+		m_opcodes = opcodes;
+	}
+
+	/* Opcode handlers */
 	void echo_stmt(Opcode* opcode);
 	void plus_stmt(Opcode* opcode);
 private:
-	std::vector<Opcode*>* m_opcodes;
+	OpcodeList* m_opcodes;
 };
 
-
 } // clever
-
 
 #endif // CLEVER_VM_H

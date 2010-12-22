@@ -11,7 +11,8 @@ enum Opcodes {
 	OP_PLUS
 };
 
-struct Opcode {
+class Opcode {
+public:
 	Opcode(Opcodes op_type, VM::vm_handler handler, Value* op1)
 		: m_op_type(op_type), m_handler(handler), m_op1(op1), m_op2(NULL), m_result(NULL) { }
 

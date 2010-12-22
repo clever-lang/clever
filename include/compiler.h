@@ -44,7 +44,7 @@ public:
 	DISALLOW_COPY_AND_ASSIGN(Compiler);
 private:
 	ast::TreeNode::nodeList m_ast;
-	std::vector<Opcode*> m_opcodes;
+	VM::OpcodeList m_opcodes;
 };
 
 } // clever

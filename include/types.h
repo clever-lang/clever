@@ -39,34 +39,28 @@
 
 namespace clever {
 
-struct Value {
+class Value {
+public:
 	virtual std::string toString(void) {
 		return std::string();
 	}
+
 	virtual void set_value(Value* value) {
 	}
 };
 
-struct NamedValue : public Value {
+class NamedValue : public Value {
 	std::string name;
 };
 
-struct ConstantValue : public Value {
-	enum {
-		INTEGER,
-		STRING
-	} m_type;
-	union {
-		double l_value;
-		char* s_value;
-	} m_data;
-
-	ConstantValue(double l_value) {
+class ConstantValue : public Value {
+public:
+	explicit ConstantValue(double l_value) {
 		m_type = INTEGER;
 		m_data.l_value = l_value;
 	}
 
-	ConstantValue(std::string s_value) {
+	explicit ConstantValue(std::string s_value) {
 		m_type = STRING;
 		m_data.s_value = (char*)s_value.c_str();
 	}
@@ -82,6 +76,12 @@ struct ConstantValue : public Value {
 			return std::string(m_data.s_value);
 		}
 	}
+private:
+	enum { INTEGER,	STRING } m_type;
+	union {
+		double l_value;
+		char* s_value;
+	} m_data;
 };
 
 struct ExprValue : public Value {
