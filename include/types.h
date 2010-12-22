@@ -45,11 +45,10 @@ public:
 
 	virtual ~Value() { }
 
+	virtual void set_value(Value* value) { }
+
 	virtual std::string toString(void) {
 		return std::string();
-	}
-
-	virtual void set_value(Value* value) {
 	}
 
 	inline int refCount(void) {
@@ -122,46 +121,48 @@ public:
 	}
 
 	std::string toString() {
-		ConstantValue* value = static_cast<ConstantValue*>(m_value);
-
-		return value->toString();
+		if (m_value) {
+			return m_value->toString();
+		} else {
+			return std::string();
+		}
 	}
 private:
 	Value* m_value;
 };
 
 class Type {
-	public:
-		enum {
-			ABSTRACT  = 0,
-			CONCRETE  = 1,
-			INTERFACE = 2,
-			BUILT_IN  = 4
-		};
+public:
+	enum {
+		ABSTRACT  = 0,
+		CONCRETE  = 1,
+		INTERFACE = 2,
+		BUILT_IN  = 4
+	};
 
-		Type(const std::string& name, int kind)
-			: m_name(name), m_kind(kind) {};
-		Type(const std::string& package, const std::string& name, int kind)
-			: m_package(name), m_name(name), m_kind(kind) {};
+	Type(const std::string& name, int kind)
+		: m_name(name), m_kind(kind) {};
+	Type(const std::string& package, const std::string& name, int kind)
+		: m_package(name), m_name(name), m_kind(kind) {};
 
-		virtual ~Type();
+	virtual ~Type();
 
-		virtual void Init();
+	virtual void Init();
 
-		inline std::string package() const { return m_package; };
-		inline std::string name() const { return m_name; };
-		inline bool is_interface() const { return m_kind & INTERFACE; };
-		inline bool is_abstract() const { return m_kind & ABSTRACT; };
-		inline bool is_concrete() const { return m_kind & ABSTRACT; };
-		inline bool is_built_in() const { return m_kind & BUILT_IN; };
+	inline std::string package() const { return m_package; };
+	inline std::string name() const { return m_name; };
+	inline bool is_interface() const { return m_kind & INTERFACE; };
+	inline bool is_abstract() const { return m_kind & ABSTRACT; };
+	inline bool is_concrete() const { return m_kind & ABSTRACT; };
+	inline bool is_built_in() const { return m_kind & BUILT_IN; };
 
-	private:
-		Type() {};
-		DISALLOW_COPY_AND_ASSIGN(Type);
+private:
+	Type() {};
+	DISALLOW_COPY_AND_ASSIGN(Type);
 
-		std::string m_package;
-		std::string m_name;
-		int m_kind;
+	std::string m_package;
+	std::string m_name;
+	int m_kind;
 };
 
 } // Clever
