@@ -66,6 +66,15 @@ public:
 	}
 
 	/*
+	 * Destroy the object when the reference reaches zero
+	 */
+	inline void destroy(ExprAST* expr) {
+		if (expr && !expr->delRef()) {
+			delete expr;
+		}
+	}
+
+	/*
 	 * Method for generating the expression IR
 	 */
 	virtual Value *codeGen() = 0;
@@ -104,12 +113,8 @@ public:
 	}
 
 	~BinaryExprAST() {
-		if (!m_lhs->delRef()) {
-			delete m_lhs;
-		}
-		if (!m_rhs->delRef()) {
-			delete m_rhs;
-		}
+		destroy(m_lhs);
+		destroy(m_rhs);
 	}
 
 	DISALLOW_COPY_AND_ASSIGN(BinaryExprAST);
@@ -147,15 +152,9 @@ public:
 	}
 
 	~VariableDeclAST() {
-		if (!m_type->delRef()) {
-			delete m_type;
-		}
-		if (!m_variable->delRef()) {
-			delete m_variable;
-		}
-		if (m_rhs && !m_rhs->delRef()) {
-			delete m_rhs;
-		}
+		destroy(m_type);
+		destroy(m_variable);
+		destroy(m_rhs);
 	}
 
 	DISALLOW_COPY_AND_ASSIGN(VariableDeclAST);
@@ -190,12 +189,8 @@ public:
 	}
 
 	~TypeCreationAST() {
-		if (!m_type->delRef()) {
-			delete m_type;
-		}
-		if (m_arguments && !m_arguments->delRef()) {
-			delete m_arguments;
-		}
+		destroy(m_type);
+		destroy(m_arguments);
 	}
 
 	DISALLOW_COPY_AND_ASSIGN(TypeCreationAST);
@@ -222,6 +217,27 @@ public:
 	DISALLOW_COPY_AND_ASSIGN(EndBlockAST);
 
 	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
+};
+
+class CommandAST : public ExprAST {
+public:
+	CommandAST(ExprAST* command, ExprAST* value)
+		: m_command(command), m_value(value) {
+		m_command->addRef();
+		m_value->addRef();
+	}
+
+	~CommandAST() {
+		destroy(m_command);
+		destroy(m_value);
+	}
+
+	DISALLOW_COPY_AND_ASSIGN(CommandAST);
+
+	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
+private:
+	ExprAST* m_command;
+	ExprAST* m_value;
 };
 
 }} // clever::ast

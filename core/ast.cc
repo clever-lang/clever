@@ -112,4 +112,15 @@ std::string EndBlockAST::debug(void) {
 	return std::string("}");
 }
 
+/*
+ * CommandAST
+ */
+Value* CommandAST::codeGen(void) {
+	return NULL;
+}
+
+std::string CommandAST::debug(void) {
+	return m_command->debug() + " " + m_value->debug();
+}
+
 }} // clever::ast

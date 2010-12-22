@@ -73,6 +73,7 @@ clever::Compiler compiler;
 %token NUM_DOUBLE   "float-number"
 %token STR          "string"
 %token ASSIGN       "="
+%token ECHO         "echo"
 
 
 %left ',';
@@ -111,12 +112,14 @@ statement_list:
 statements:
 		expr ';'
 	|	variable_declaration ';'
+	|	echo_stmt ';'
 	|	'{' { nodes.add(new clever::ast::NewBlockAST()); } statement_list '}'
 		{ nodes.add(new clever::ast::EndBlockAST()); }
 ;
 
 variable_declaration:
 		TYPE IDENT "=" type_creation { nodes.add(new clever::ast::VariableDeclAST($1, $2, $4)); }
+	|	TYPE IDENT "=" expr          { nodes.add(new clever::ast::VariableDeclAST($1, $2, $4)); }
 ;
 
 arguments:
@@ -137,6 +140,11 @@ expr:
 	|	expr '%' expr { $$ = new clever::ast::BinaryExprAST('%', $1, $3); nodes.add($$); }
 	|	NUM_INTEGER   { $$ = $1; }
 	|	NUM_DOUBLE    { $$ = $1; }
+	|	IDENT         { $$ = $1; }
+;
+
+echo_stmt:
+		ECHO expr { $$ = new clever::ast::CommandAST($1, $2); nodes.add($$); }
 ;
 
 %%

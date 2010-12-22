@@ -146,6 +146,11 @@ next_token:
 
 	<ST_MULTILINE_COMMENT>"*" { SKIP(); }
 
+	<INITIAL>"echo" {
+		*yylval = new clever::ast::IdentifierAST(std::string(s->yylex, yylen));
+		RET(token::ECHO);
+	}
+
 	<INITIAL>IDENTIFIER {
 		*yylval = new clever::ast::IdentifierAST(std::string(s->yylex, yylen));
 		RET(token::IDENT);

@@ -46,9 +46,7 @@ void Compiler::Init(ast::TreeNode::nodeList nodes) {
 
 		std::cout << prefix << "(" << (*it)->refCount() << ") " << (*it)->debug() << std::endl;
 
-		if (!(*it)->delRef()) {
-			delete *it;
-		}
+		(*it)->destroy(*it);
 		++it;
 	}
 }
