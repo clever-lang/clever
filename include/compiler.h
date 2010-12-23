@@ -33,6 +33,10 @@
 
 namespace clever {
 
+#define GET_CONST_TYPE(x)         (x)->get_type()
+#define SAME_CONST_TYPE(x, y, t)  (GET_CONST_TYPE(x) == (t) && GET_CONST_TYPE(y) == (t))
+#define HAS_SAME_CONST_TYPE(x, y) (GET_CONST_TYPE(x) == GET_CONST_TYPE(y))
+
 class Compiler {
 public:
 	Compiler() { }
@@ -41,6 +45,8 @@ public:
 	void dumpAST(void);
 	void buildIR(void);
 
+	static void error(const char*);
+	static bool checkCompatibleTypes(Value*, Value*);
 	static ConstantValue* constantFolding(char, Value*, Value*);
 
 	DISALLOW_COPY_AND_ASSIGN(Compiler);

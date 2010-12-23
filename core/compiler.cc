@@ -26,6 +26,7 @@
  */
 #include <iostream>
 #include <vector>
+#include <cstdlib>
 #include "compiler.h"
 
 namespace clever {
@@ -38,6 +39,30 @@ void Compiler::Init(ast::TreeNode::nodeList nodes) {
 }
 
 /*
+ * Displays an error message
+ */
+void Compiler::error(const char* message) {
+	std::cout << message << std::endl;
+	exit(1);
+}
+
+/*
+ * Performs a type compatible checking
+ */
+bool Compiler::checkCompatibleTypes(Value* lhs, Value* rhs) {
+	if (lhs->get_value_type() == rhs->get_value_type()
+		&& lhs->get_value_type() == Value::CONST_VALUE) {
+		ConstantValue* clhs = static_cast<ConstantValue*>(lhs);
+		ConstantValue* crhs = static_cast<ConstantValue*>(rhs);
+
+		if (!HAS_SAME_CONST_TYPE(clhs, crhs)) {
+			return false;
+		}
+	}
+	return true;
+}
+
+/*
  * Performs a constant folding optimization
  */
 ConstantValue* Compiler::constantFolding(char op, Value* lhs, Value* rhs) {
@@ -46,14 +71,35 @@ ConstantValue* Compiler::constantFolding(char op, Value* lhs, Value* rhs) {
 
 	switch (op) {
 		case '+':
-			return new ConstantValue(clhs->get_int() + crhs->get_int());
+			if (GET_CONST_TYPE(clhs) == ConstantValue::INTEGER) {
+				return new ConstantValue(clhs->get_int() + crhs->get_int());
+			} else if (GET_CONST_TYPE(clhs) == ConstantValue::STRING) {
+				return new ConstantValue(clhs->get_string() + crhs->get_string());
+			}
+			break;
 		case '-':
-			return new ConstantValue(clhs->get_int() - crhs->get_int());
+			if (GET_CONST_TYPE(clhs) == ConstantValue::INTEGER) {
+				return new ConstantValue(clhs->get_int() - crhs->get_int());
+			} else {
+				return NULL;
+			}
+			break;
 		case '/':
-			return new ConstantValue(clhs->get_int() / crhs->get_int());
+			if (GET_CONST_TYPE(clhs) == ConstantValue::INTEGER) {
+				return new ConstantValue(clhs->get_int() / crhs->get_int());
+			} else {
+				return NULL;
+			}
+			break;
 		case '*':
-			return new ConstantValue(clhs->get_int() * crhs->get_int());
+			if (GET_CONST_TYPE(clhs) == ConstantValue::INTEGER) {
+				return new ConstantValue(clhs->get_int() * crhs->get_int());
+			} else {
+				return NULL;
+			}
+			break;
 	}
+	return NULL;
 }
 
 void Compiler::buildIR() {

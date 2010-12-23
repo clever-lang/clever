@@ -55,16 +55,26 @@ std::string NumberExprAST::debug(void) {
 
 BinaryExprAST::BinaryExprAST(char op_, ExprAST* lhs, ExprAST* rhs)
 		: ExprAST(), m_op(op_), m_lhs(lhs), m_rhs(rhs), m_value(NULL), optimized(false) {
+	Value* tmp_lhs = lhs->codeGen();
+	Value* tmp_rhs = rhs->codeGen();
+
 	m_rhs->addRef();
 	m_lhs->addRef();
 
+	if (!Compiler::checkCompatibleTypes(tmp_lhs, tmp_rhs)) {
+		Compiler::error("Type mismatch!");
+	}
+
 	/* Checking if we can optimize a constant operation */
-	if (lhs->codeGen()->get_value_type() == lhs->codeGen()->get_value_type()
-		&& lhs->codeGen()->get_value_type() == Value::CONST_VALUE) {
+	if (tmp_lhs->get_value_type() == tmp_rhs->get_value_type()
+		&& tmp_lhs->get_value_type() == Value::CONST_VALUE) {
+
+		m_value = Compiler::constantFolding(m_op, lhs->codeGen(), rhs->codeGen());
+	}
+	if (m_value) {
 		/* No opcode must be generated */
 		optimized = true;
 
-		m_value = Compiler::constantFolding(m_op, lhs->codeGen(), rhs->codeGen());
 		m_rhs->delRef();
 		m_lhs->delRef();
 		m_lhs = NULL;
