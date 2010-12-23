@@ -50,12 +50,12 @@ void Compiler::error(const char* message) {
  * Performs a type compatible checking
  */
 bool Compiler::checkCompatibleTypes(Value* lhs, Value* rhs) {
-	if (lhs->get_value_type() == rhs->get_value_type()
-		&& lhs->get_value_type() == Value::CONST_VALUE) {
+	if (lhs->get_kind() == rhs->get_kind()
+		&& lhs->isConst()) {
 		ConstantValue* clhs = static_cast<ConstantValue*>(lhs);
 		ConstantValue* crhs = static_cast<ConstantValue*>(rhs);
 
-		if (!HAS_SAME_CONST_TYPE(clhs, crhs)) {
+		if (!clhs->hasSameKind(crhs)) {
 			return false;
 		}
 	}
@@ -71,29 +71,29 @@ ConstantValue* Compiler::constantFolding(char op, Value* lhs, Value* rhs) {
 
 	switch (op) {
 		case '+':
-			if (GET_CONST_TYPE(clhs) == ConstantValue::INTEGER) {
-				return new ConstantValue(clhs->get_int() + crhs->get_int());
-			} else if (GET_CONST_TYPE(clhs) == ConstantValue::STRING) {
-				return new ConstantValue(clhs->get_string() + crhs->get_string());
+			if (clhs->isInteger()) {
+				return new ConstantValue(clhs->getInteger() + crhs->getInteger());
+			} else if (clhs->isString()) {
+				return new ConstantValue(clhs->getString() + crhs->getString());
 			}
 			break;
 		case '-':
-			if (GET_CONST_TYPE(clhs) == ConstantValue::INTEGER) {
-				return new ConstantValue(clhs->get_int() - crhs->get_int());
+			if (clhs->isInteger()) {
+				return new ConstantValue(clhs->getInteger() - crhs->getInteger());
 			} else {
 				return NULL;
 			}
 			break;
 		case '/':
-			if (GET_CONST_TYPE(clhs) == ConstantValue::INTEGER) {
-				return new ConstantValue(clhs->get_int() / crhs->get_int());
+			if (clhs->isInteger()) {
+				return new ConstantValue(clhs->getInteger() / crhs->getInteger());
 			} else {
 				return NULL;
 			}
 			break;
 		case '*':
-			if (GET_CONST_TYPE(clhs) == ConstantValue::INTEGER) {
-				return new ConstantValue(clhs->get_int() * crhs->get_int());
+			if (clhs->isInteger()) {
+				return new ConstantValue(clhs->getInteger() * crhs->getInteger());
 			} else {
 				return NULL;
 			}

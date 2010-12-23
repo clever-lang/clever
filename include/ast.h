@@ -111,6 +111,11 @@ private:
 
 class NumberExprAST : public ExprAST {
 public:
+	explicit NumberExprAST(int64_t val)
+		: ExprAST() {
+		m_value = new ConstantValue(val);
+	}
+
 	explicit NumberExprAST(double val)
 		: ExprAST() {
 		m_value = new ConstantValue(val);

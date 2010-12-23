@@ -28,6 +28,7 @@
 #ifndef CLEVER_TYPES_H
 #define CLEVER_TYPES_H
 
+#include <stdint.h>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -42,33 +43,84 @@ namespace clever {
 
 class Value : public RefCounted {
 public:
-	Value() : m_value_type(NO_VALUE), RefCounted(1) { }
+	enum { SET, UNSET, MODIFIED };
+	enum { NONE, INTEGER, DOUBLE, STRING, BOOLEAN, USER };
+	enum { UNKNOWN, CONST, TEMP_VALUE };
 
-	explicit Value(int type) : m_value_type(type), RefCounted(1) { }
+	Value() : RefCounted(1), m_status(UNSET), m_type(UNKNOWN), m_kind(UNKNOWN), m_name() {}
+	explicit Value(int kind) : RefCounted(1), m_status(UNSET), m_type(UNKNOWN), m_kind(kind), m_name() {}
 
-	virtual ~Value() { }
-
-	virtual void set_value(Value* value) { }
-
-	int get_value_type(void) {
-		return m_value_type;
+	virtual ~Value() {
+		if (isString()) {
+			delete m_data.s_value;
+		}
 	}
+
+	inline void set_name(std::string& name) { m_name.assign(name); }
+	inline std::string get_name() const { return m_name; }
+
+	inline void set_type(int type) { m_type = type; }
+	inline int get_type() const { return m_type; }
+
+	inline int get_kind() const { return m_kind; }
+	inline void set_kind(int kind) { m_kind = kind; }
+	
+	inline int get_status() { return m_status; }
+	inline void set_status(int status) { m_status = status; }
+
+
+	inline bool hasSameKind(Value* value) { return get_kind() == value->get_kind(); }
+
+	inline bool isConst() const { return m_kind == CONST; }
+
+	inline bool isInteger(void) const { return m_type == INTEGER; }
+	inline bool isString(void) const { return m_type == STRING; }
+	inline bool isDouble(void) const { return m_type == DOUBLE; }
+	inline bool isUserValue(void) const { return m_type == USER; }
+
+	inline bool isSet(void) const { return m_status != UNSET; }
+	inline bool isModified(void) const { return m_status == MODIFIED; }
+
+	inline void setInteger(int64_t i) { m_data.l_value = i; }
+	inline void setDouble(double d) { m_data.d_value = d; }
+	inline void setString(std::string* s) { m_data.s_value = s;	}
+
+	inline int64_t getInteger(void) const { return m_data.l_value; }
+	inline double getDouble(void) const { return m_data.d_value; }
+	inline std::string* getStringP(void) const { return m_data.s_value; }
+	inline std::string getString(void) const { return *m_data.s_value; }
+	
+	virtual void set_value(Value* value) { }
 
 	virtual Value* get_value(void) {
 		return this;
 	}
 
 	virtual std::string toString(void) {
-		return std::string();
+		if (isInteger()) {
+			std::stringstream str;
+
+			str << getInteger();
+
+			return str.str();
+		} else {
+			return getString();
+		}
 	}
 
-	enum { NO_VALUE, NAMED_VALUE, CONST_VALUE, TEMP_VALUE };
+private:
+	int m_status;
+	int m_type;
+	int m_kind;
 
-	int m_value_type;
-};
+	std::string m_name;
 
-class NamedValue : public Value {
-	std::string name;
+	union {
+		int64_t l_value;
+		double d_value;
+		std::string* s_value;
+	} m_data;
+
 };
 
 /*
@@ -76,53 +128,24 @@ class NamedValue : public Value {
  */
 class ConstantValue : public Value {
 public:
-	explicit ConstantValue(double l_value)
-		: Value(CONST_VALUE) {
-		m_type = INTEGER;
-		m_data.l_value = l_value;
+	explicit ConstantValue(double value) : Value(CONST) {
+		set_type(DOUBLE);
+		setDouble(value);
 	}
 
-	explicit ConstantValue(std::string s_value)
-		: Value(CONST_VALUE) {
-		m_type = STRING;
-		m_data.s_value = new std::string(s_value);
+	explicit ConstantValue(int64_t value) : Value(CONST) {
+		set_type(INTEGER);
+		setInteger(value);
 	}
+
+	explicit ConstantValue(std::string value) : Value(CONST) {
+		set_type(STRING);
+		setString(new std::string(value));
+	}
+
 	~ConstantValue() {
-		if (m_type == STRING) {
-			delete m_data.s_value;
-		}
 	}
 
-	inline int get_type() const {
-		return m_type;
-	}
-
-	inline double get_int(void) const {
-		return m_data.l_value;
-	}
-
-	inline std::string get_string(void) const {
-		return *m_data.s_value;
-	}
-
-	std::string toString(void) {
-		if (m_type == INTEGER) {
-			std::stringstream str;
-
-			str << m_data.l_value;
-
-			return str.str();
-		} else {
-			return *m_data.s_value;
-		}
-	}
-	enum { INTEGER,	STRING };
-private:
-	int m_type;
-	union {
-		double l_value;
-		std::string* s_value;
-	} m_data;
 };
 
 /*
@@ -181,10 +204,10 @@ public:
 
 	inline std::string package() const { return m_package; };
 	inline std::string name() const { return m_name; };
-	inline bool is_interface() const { return m_kind & INTERFACE; };
-	inline bool is_abstract() const { return m_kind & ABSTRACT; };
-	inline bool is_concrete() const { return m_kind & ABSTRACT; };
-	inline bool is_built_in() const { return m_kind & BUILT_IN; };
+	inline bool isInterface() const { return m_kind & INTERFACE; };
+	inline bool isAbstract() const { return m_kind & ABSTRACT; };
+	inline bool isConcrete() const { return m_kind & ABSTRACT; };
+	inline bool isBuilt_in() const { return m_kind & BUILT_IN; };
 
 private:
 	Type() {};

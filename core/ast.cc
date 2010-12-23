@@ -66,8 +66,8 @@ BinaryExprAST::BinaryExprAST(char op_, ExprAST* lhs, ExprAST* rhs)
 	}
 
 	/* Checking if we can optimize a constant operation */
-	if (tmp_lhs->get_value_type() == tmp_rhs->get_value_type()
-		&& tmp_lhs->get_value_type() == Value::CONST_VALUE) {
+	if (tmp_lhs->get_kind() == tmp_rhs->get_kind()
+		&& tmp_lhs->isConst()) {
 
 		m_value = Compiler::constantFolding(m_op, lhs->codeGen(), rhs->codeGen());
 	}
