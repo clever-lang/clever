@@ -103,7 +103,7 @@ clever::Compiler compiler;
 %start top_statements;
 
 top_statements:
-		statement_list { compiler.Init(nodes.getNodeList());  compiler.dumpAST(); compiler.buildIR(); }
+		statement_list { compiler.Init(nodes.getNodeList()); /* compiler.dumpAST(); */ compiler.buildIR(); }
 ;
 
 statement_list:

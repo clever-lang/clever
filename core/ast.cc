@@ -122,11 +122,11 @@ std::string VariableDeclAST::debug(void) {
  * IdentifierAST
  */
 Value* IdentifierAST::codeGen(void) {
-	return new ConstantValue(m_name);
+	return m_value;
 }
 
 std::string IdentifierAST::debug(void) {
-	return m_name;
+	return m_value->toString();
 }
 
 /*

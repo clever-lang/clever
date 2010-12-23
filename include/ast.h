@@ -156,15 +156,19 @@ private:
 class IdentifierAST : public ExprAST {
 public:
 	explicit IdentifierAST(std::string name)
-		: ExprAST(), m_name(name) { }
+		: ExprAST() {
+		m_value = new ConstantValue(name);
+	}
 
-	~IdentifierAST() { }
+	~IdentifierAST() {
+		m_value->delRef();
+	}
 
 	DISALLOW_COPY_AND_ASSIGN(IdentifierAST);
 
 	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
 private:
-	const std::string m_name;
+	ConstantValue* m_value;
 };
 
 class TypeCreationAST : public ExprAST {

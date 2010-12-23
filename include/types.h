@@ -87,6 +87,11 @@ public:
 		m_type = STRING;
 		m_data.s_value = new std::string(s_value);
 	}
+	~ConstantValue() {
+		if (m_type == STRING) {
+			delete m_data.s_value;
+		}
+	}
 
 	inline int get_type() const {
 		return m_type;
