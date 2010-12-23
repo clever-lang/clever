@@ -104,6 +104,12 @@ public:
 			str << getInteger();
 
 			return str.str();
+		} else if (isDouble()) {
+			std::stringstream str;
+
+			str << getDouble();
+
+			return str.str();
 		} else {
 			return getString();
 		}

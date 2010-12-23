@@ -65,11 +65,9 @@ BinaryExprAST::BinaryExprAST(char op_, ExprAST* lhs, ExprAST* rhs)
 		Compiler::error("Type mismatch!");
 	}
 
-	/* Checking if we can optimize a constant operation */
-	if (tmp_lhs->get_kind() == tmp_rhs->get_kind()
-		&& tmp_lhs->isConst()) {
-
-		m_value = Compiler::constantFolding(m_op, lhs->codeGen(), rhs->codeGen());
+	/* Checking if we can perform constant folding optimization */
+	if (tmp_lhs->isConst()) {
+		m_value = Compiler::constantFolding(m_op, tmp_lhs, tmp_rhs);
 	}
 	if (m_value) {
 		/* No opcode must be generated */
@@ -77,8 +75,7 @@ BinaryExprAST::BinaryExprAST(char op_, ExprAST* lhs, ExprAST* rhs)
 
 		m_rhs->delRef();
 		m_lhs->delRef();
-		m_lhs = NULL;
-		m_rhs = NULL;
+		m_rhs = m_lhs = NULL;
 	} else {
 		m_result = new TempValue();
 	}
@@ -115,7 +112,6 @@ std::string BinaryExprAST::debug(void) {
 		return std::string(m_lhs->debug() + " " + m_op + " " + m_rhs->debug());
 	}
 }
-
 
 /*
  * VariableDeclAST

@@ -51,7 +51,7 @@ void Compiler::error(const char* message) {
  */
 bool Compiler::checkCompatibleTypes(Value* lhs, Value* rhs) {
 	/* Constants with different type cannot performs operation */
-	if (lhs->isConst() && lhs->get_kind() == rhs->get_kind() && !lhs->hasSameType(rhs)) {
+	if (lhs->isConst() && lhs->hasSameKind(rhs) && !lhs->hasSameType(rhs)) {
 		return false;
 	}
 	return true;
@@ -61,36 +61,35 @@ bool Compiler::checkCompatibleTypes(Value* lhs, Value* rhs) {
  * Performs a constant folding optimization
  */
 ConstantValue* Compiler::constantFolding(char op, Value* lhs, Value* rhs) {
-	ConstantValue* clhs = static_cast<ConstantValue*>(lhs);
-	ConstantValue* crhs = static_cast<ConstantValue*>(rhs);
-
 	switch (op) {
 		case '+':
-			if (clhs->isInteger()) {
-				return new ConstantValue(clhs->getInteger() + crhs->getInteger());
-			} else if (clhs->isString()) {
-				return new ConstantValue(clhs->getString() + crhs->getString());
+			if (lhs->isInteger()) {
+				return new ConstantValue(lhs->getInteger() + rhs->getInteger());
+			} else if (lhs->isString()) {
+				return new ConstantValue(lhs->getString() + rhs->getString());
+			} else if (lhs->isDouble()) {
+				return new ConstantValue(lhs->getDouble() + rhs->getDouble());
 			}
 			break;
 		case '-':
-			if (clhs->isInteger()) {
-				return new ConstantValue(clhs->getInteger() - crhs->getInteger());
-			} else {
-				return NULL;
+			if (lhs->isInteger()) {
+				return new ConstantValue(lhs->getInteger() - rhs->getInteger());
+			} else if (lhs->isDouble()) {
+				return new ConstantValue(lhs->getDouble() - rhs->getDouble());
 			}
 			break;
 		case '/':
-			if (clhs->isInteger()) {
-				return new ConstantValue(clhs->getInteger() / crhs->getInteger());
-			} else {
-				return NULL;
+			if (lhs->isInteger()) {
+				return new ConstantValue(lhs->getInteger() / rhs->getInteger());
+			} else if (lhs->isDouble()) {
+				return new ConstantValue(lhs->getDouble() / rhs->getDouble());
 			}
 			break;
 		case '*':
-			if (clhs->isInteger()) {
-				return new ConstantValue(clhs->getInteger() * crhs->getInteger());
-			} else {
-				return NULL;
+			if (lhs->isInteger()) {
+				return new ConstantValue(lhs->getInteger() * rhs->getInteger());
+			} else if (lhs->isDouble()) {
+				return new ConstantValue(lhs->getDouble() * rhs->getDouble());
 			}
 			break;
 	}
