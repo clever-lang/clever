@@ -83,7 +83,7 @@ class BinaryExprAST : public ExprAST {
 public:
 	BinaryExprAST(char op_, ExprAST* lhs, ExprAST* rhs)
 		: ExprAST(), m_op(op_), m_lhs(lhs), m_rhs(rhs) {
-		m_result = new ExprValue();
+		m_result = new TempValue();
 		m_rhs->addRef();
 		m_lhs->addRef();
 	}
@@ -106,7 +106,7 @@ private:
 	char m_op;
 	ExprAST* m_lhs;
 	ExprAST* m_rhs;
-	ExprValue* m_result;
+	TempValue* m_result;
 };
 
 class NumberExprAST : public ExprAST {

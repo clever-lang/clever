@@ -44,6 +44,8 @@ class Value : public RefCounted {
 public:
 	Value() : m_value_type(NO_VALUE), RefCounted(1) { }
 
+	explicit Value(int type) : m_value_type(type), RefCounted(1) { }
+
 	virtual ~Value() { }
 
 	virtual void set_value(Value* value) { }
@@ -69,18 +71,19 @@ class NamedValue : public Value {
 	std::string name;
 };
 
+/*
+ * Constant values used for opcodes
+ */
 class ConstantValue : public Value {
 public:
-	explicit ConstantValue(double l_value) : Value() {
+	explicit ConstantValue(double l_value) : Value(CONST_VALUE) {
 		m_type = INTEGER;
 		m_data.l_value = l_value;
-		m_value_type = CONST_VALUE;
 	}
 
-	explicit ConstantValue(std::string s_value) : Value() {
+	explicit ConstantValue(std::string s_value) : Value(CONST_VALUE) {
 		m_type = STRING;
 		m_data.s_value = new std::string(s_value);
-		m_value_type = CONST_VALUE;
 	}
 
 	inline int get_type() const {
@@ -115,14 +118,21 @@ private:
 	} m_data;
 };
 
-class ExprValue : public Value {
+/*
+ * Temporary storage used for opcodes to storage results
+ */
+class TempValue : public Value {
 public:
-	ExprValue() : Value(), m_value(NULL) { }
+	TempValue() : Value(TEMP_VALUE), m_value(NULL) { }
 
-	~ExprValue() {
+	~TempValue() {
 		if (m_value) {
 			m_value->delRef();
 		}
+	}
+
+	Value* get_value(void) {
+		return m_value;
 	}
 
 	void set_value(Value* value) {

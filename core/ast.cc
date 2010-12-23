@@ -36,9 +36,7 @@ TreeNode::~TreeNode(void) {
 	TreeNode::nodeList::iterator it = nodes.begin();
 
 	while (it < nodes.end()) {
-		//std::cout << (*it)->refCount() << std::endl;
 		(*it)->delRef();
-		//delete *it;
 		++it;
 	}
 }
