@@ -37,6 +37,25 @@ void Compiler::Init(ast::TreeNode::nodeList nodes) {
 	m_ast = nodes;
 }
 
+/*
+ * Performs a constant folding optimization
+ */
+ConstantValue* Compiler::constantFolding(char op, Value* lhs, Value* rhs) {
+	ConstantValue* clhs = static_cast<ConstantValue*>(lhs);
+	ConstantValue* crhs = static_cast<ConstantValue*>(rhs);
+
+	switch (op) {
+		case '+':
+			return new ConstantValue(clhs->get_int() + crhs->get_int());
+		case '-':
+			return new ConstantValue(clhs->get_int() - crhs->get_int());
+		case '/':
+			return new ConstantValue(clhs->get_int() / crhs->get_int());
+		case '*':
+			return new ConstantValue(clhs->get_int() * crhs->get_int());
+	}
+}
+
 void Compiler::buildIR() {
 	VM vm;
 	ast::TreeNode::nodeList::iterator it = m_ast.begin();

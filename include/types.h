@@ -76,12 +76,14 @@ class NamedValue : public Value {
  */
 class ConstantValue : public Value {
 public:
-	explicit ConstantValue(double l_value) : Value(CONST_VALUE) {
+	explicit ConstantValue(double l_value)
+		: Value(CONST_VALUE) {
 		m_type = INTEGER;
 		m_data.l_value = l_value;
 	}
 
-	explicit ConstantValue(std::string s_value) : Value(CONST_VALUE) {
+	explicit ConstantValue(std::string s_value)
+		: Value(CONST_VALUE) {
 		m_type = STRING;
 		m_data.s_value = new std::string(s_value);
 	}

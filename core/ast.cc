@@ -27,6 +27,7 @@
 
 #include <sstream>
 #include "ast.h"
+#include "compiler.h"
 #include "opcodes.h"
 #include "vm.h"
 
@@ -45,21 +46,38 @@ TreeNode::~TreeNode(void) {
  * NumberExprAST
  */
 Value* NumberExprAST::codeGen(void) {
-	return new ConstantValue(m_value);
+	return m_value;
 }
 
 std::string NumberExprAST::debug(void) {
-	std::stringstream str;
+	return m_value->toString();
+}
 
-	str << m_value;
+BinaryExprAST::BinaryExprAST(char op_, ExprAST* lhs, ExprAST* rhs)
+		: ExprAST(), m_op(op_), m_lhs(lhs), m_rhs(rhs), optimized(false) {
 
-	return str.str();
+	m_rhs->addRef();
+	m_lhs->addRef();
+
+	/* Checking if we can optimize a constant operation */
+	if (lhs->codeGen()->get_value_type() == lhs->codeGen()->get_value_type()
+		&& lhs->codeGen()->get_value_type() == Value::CONST_VALUE) {
+		/* No opcode must be generated */
+		optimized = true;
+
+		m_value = Compiler::constantFolding(m_op, lhs->codeGen(), rhs->codeGen());
+	} else {
+		m_result = new TempValue();
+	}
 }
 
 /*
  * BinaryExprAST
  */
 Opcode* BinaryExprAST::opcodeGen(void) {
+	if (optimized) {
+		return NULL;
+	}
 	switch (m_op) {
 		case '+':
 			return new Opcode(OP_PLUS, &VM::plus_handler, m_lhs->codeGen(), m_rhs->codeGen(), m_result);
@@ -69,12 +87,21 @@ Opcode* BinaryExprAST::opcodeGen(void) {
 }
 
 Value* BinaryExprAST::codeGen(void) {
-	m_result->addRef();
-	return m_result;
+	if (optimized) {
+		m_value->addRef();
+		return m_value;
+	} else {
+		m_result->addRef();
+		return m_result;
+	}
 }
 
 std::string BinaryExprAST::debug(void) {
-	return std::string(m_lhs->debug() + " " + m_op + " " + m_rhs->debug());
+	if (optimized) {
+		return m_value->toString();
+	} else {
+		return std::string(m_lhs->debug() + " " + m_op + " " + m_rhs->debug());
+	}
 }
 
 

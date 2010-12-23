@@ -58,6 +58,6 @@ private:
 	int m_reference;
 };
 
-}
+} // clever
 
 #endif /* CLEVER_REFCOUNTED_H */

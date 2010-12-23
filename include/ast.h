@@ -81,14 +81,12 @@ private:
 
 class BinaryExprAST : public ExprAST {
 public:
-	BinaryExprAST(char op_, ExprAST* lhs, ExprAST* rhs)
-		: ExprAST(), m_op(op_), m_lhs(lhs), m_rhs(rhs) {
-		m_result = new TempValue();
-		m_rhs->addRef();
-		m_lhs->addRef();
-	}
+	BinaryExprAST(char, ExprAST*, ExprAST*);
 
 	~BinaryExprAST() {
+		if (optimized) {
+			delete m_value;
+		}
 		if (m_lhs) {
 			m_lhs->delRef();
 		}
@@ -104,24 +102,30 @@ public:
 
 private:
 	char m_op;
+	bool optimized;
 	ExprAST* m_lhs;
 	ExprAST* m_rhs;
 	TempValue* m_result;
+	ConstantValue* m_value;
 };
 
 class NumberExprAST : public ExprAST {
 public:
 	explicit NumberExprAST(double val)
-		: ExprAST(), m_value(val) { }
+		: ExprAST() {
+		m_value = new ConstantValue(val);
+	}
 
-	~NumberExprAST() { }
+	~NumberExprAST() {
+		delete m_value;
+	}
 
 	DISALLOW_COPY_AND_ASSIGN(NumberExprAST);
 
 	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
 
 private:
-	double m_value;
+	Value* m_value;
 };
 
 class VariableDeclAST : public ExprAST {

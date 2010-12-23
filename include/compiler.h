@@ -41,6 +41,8 @@ public:
 	void dumpAST(void);
 	void buildIR(void);
 
+	static ConstantValue* constantFolding(char, Value*, Value*);
+
 	DISALLOW_COPY_AND_ASSIGN(Compiler);
 private:
 	ast::TreeNode::nodeList m_ast;
