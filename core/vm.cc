@@ -82,62 +82,12 @@ void VM::echo_handler(CLEVER_VM_HANDLER_ARGS) {
  * x + y
  */
 void VM::plus_handler(CLEVER_VM_HANDLER_ARGS) {
-	if (opcode->get_op1()->isConst()) {
-		ConstantValue* op1 = static_cast<ConstantValue*>(opcode->get_op1());
-
-		switch (opcode->get_op2()->get_kind()) {
-			case Value::CONST:
-				{
-					ConstantValue* op2 = static_cast<ConstantValue*>(opcode->get_op2());
-
-					switch (op1->get_type()) {
-						case Value::INTEGER:
-							opcode->get_result()->set_value(new ConstantValue(op1->getInteger() + op2->getInteger()));
-							break;
-						case Value::DOUBLE:
-							opcode->get_result()->set_value(new ConstantValue(op1->getDouble() + op2->getDouble()));
-							break;
-						default: /* XXX: default to string, but this isn't safe. */
-						opcode->get_result()->set_value(new ConstantValue(op1->getString() + op2->getString()));
-					}
-				}
-				break;
-			case Value::TEMP_VALUE:
-				switch (opcode->get_op2()->get_value()->get_kind()) {
-					case Value::CONST:
-					{
-						ConstantValue* op2 = static_cast<ConstantValue*>(opcode->get_op2()->get_value());
-
-						opcode->get_result()->set_value(new ConstantValue(op1->getInteger() + op2->getInteger()));
-					}
-					break;
-				}
-				break;
-		}
-	}
 }
 
 /*
  * x / y
  */
 void VM::div_handler(CLEVER_VM_HANDLER_ARGS) {
-	switch (opcode->get_op1()->get_kind()) {
-		case Value::CONST:
-			ConstantValue* op1 = static_cast<ConstantValue*>(opcode->get_op1());
-			ConstantValue* op2 = static_cast<ConstantValue*>(opcode->get_op2());
-
-			switch (op1->get_type()) {
-				case Value::INTEGER:
-					opcode->get_result()->set_value(new ConstantValue(op1->getInteger() / op2->getInteger()));
-					break;
-				case Value::DOUBLE:
-					opcode->get_result()->set_value(new ConstantValue(op1->getDouble() / op2->getDouble()));
-					break;
-				default: /* XXX: / not allowed for strings */
-					break;
-			}
-			break;
-	}
 }
 
 } // clever
