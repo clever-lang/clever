@@ -84,8 +84,8 @@ public:
 	BinaryExprAST(char, ExprAST*, ExprAST*);
 
 	~BinaryExprAST() {
-		if (optimized) {
-			delete m_value;
+		if (m_value) {
+			m_value->delRef();
 		}
 		if (m_lhs) {
 			m_lhs->delRef();
@@ -117,7 +117,7 @@ public:
 	}
 
 	~NumberExprAST() {
-		delete m_value;
+		m_value->delRef();
 	}
 
 	DISALLOW_COPY_AND_ASSIGN(NumberExprAST);
@@ -125,7 +125,7 @@ public:
 	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
 
 private:
-	Value* m_value;
+	ConstantValue* m_value;
 };
 
 class VariableDeclAST : public ExprAST {

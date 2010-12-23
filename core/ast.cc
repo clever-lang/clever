@@ -54,8 +54,7 @@ std::string NumberExprAST::debug(void) {
 }
 
 BinaryExprAST::BinaryExprAST(char op_, ExprAST* lhs, ExprAST* rhs)
-		: ExprAST(), m_op(op_), m_lhs(lhs), m_rhs(rhs), optimized(false) {
-
+		: ExprAST(), m_op(op_), m_lhs(lhs), m_rhs(rhs), m_value(NULL), optimized(false) {
 	m_rhs->addRef();
 	m_lhs->addRef();
 
@@ -66,6 +65,10 @@ BinaryExprAST::BinaryExprAST(char op_, ExprAST* lhs, ExprAST* rhs)
 		optimized = true;
 
 		m_value = Compiler::constantFolding(m_op, lhs->codeGen(), rhs->codeGen());
+		m_rhs->delRef();
+		m_lhs->delRef();
+		m_lhs = NULL;
+		m_rhs = NULL;
 	} else {
 		m_result = new TempValue();
 	}
@@ -88,7 +91,6 @@ Opcode* BinaryExprAST::opcodeGen(void) {
 
 Value* BinaryExprAST::codeGen(void) {
 	if (optimized) {
-		m_value->addRef();
 		return m_value;
 	} else {
 		m_result->addRef();
@@ -168,7 +170,9 @@ Value* CommandAST::codeGen(void) {
 }
 
 Opcode* CommandAST::opcodeGen(void) {
-	return new Opcode(OP_ECHO, &VM::echo_handler, m_value->codeGen());
+	Value* value = m_value->codeGen();
+	value->addRef();
+	return new Opcode(OP_ECHO, &VM::echo_handler, value);
 }
 
 std::string CommandAST::debug(void) {
