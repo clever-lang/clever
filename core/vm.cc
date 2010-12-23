@@ -31,20 +31,23 @@
 
 namespace clever {
 
+/*
+ * Destroy the opcodes data
+ */
 VM::~VM(void) {
 	OpcodeList::iterator it = m_opcodes->begin();
 
 	while (it < m_opcodes->end()) {
 		if ((*it)->get_op1()) {
-			std::cout << (*it)->get_op1() << " (refcount: " << (*it)->get_op1()->refCount() << ")" << std::endl;
+			// std::cout << (*it)->get_op1() << " (refcount: " << (*it)->get_op1()->refCount() << ")" << std::endl;
 			(*it)->get_op1()->delRef();
 		}
 		if ((*it)->get_op2()) {
-			std::cout << (*it)->get_op2() << " (refcount: " << (*it)->get_op2()->refCount() << ")" << std::endl;
+			// std::cout << (*it)->get_op2() << " (refcount: " << (*it)->get_op2()->refCount() << ")" << std::endl;
 			(*it)->get_op2()->delRef();
 		}
 		if ((*it)->get_result()) {
-			std::cout << (*it)->get_result() << " (refcount: " << (*it)->get_result()->refCount() << ")" << std::endl;
+			// std::cout << (*it)->get_result() << " (refcount: " << (*it)->get_result()->refCount() << ")" << std::endl;
 			(*it)->get_result()->delRef();
 		}
 		delete *it;
@@ -52,6 +55,9 @@ VM::~VM(void) {
 	}
 }
 
+/*
+ * Execute the collected opcodes
+ */
 void VM::run(void) {
 	std::vector<Opcode*>::iterator it = m_opcodes->begin();
 
@@ -63,15 +69,65 @@ void VM::run(void) {
 		}
 		++it;
 	}
-
 }
 
-void VM::echo_stmt(Opcode* opcode) {
+/*
+ * echo statemenet
+ */
+void VM::echo_handler(CLEVER_VM_HANDLER_ARGS) {
 	std::cout << opcode->get_op1()->toString() << std::endl;
 }
 
-void VM::plus_stmt(Opcode* opcode) {
-	opcode->get_result()->set_value(new ConstantValue(2.0));
+/*
+ * x + y
+ */
+void VM::plus_handler(CLEVER_VM_HANDLER_ARGS) {
+	if (opcode->get_op1()->get_value_type() == Value::CONST_VALUE) {
+		ConstantValue* op1 = static_cast<ConstantValue*>(opcode->get_op1());
+
+		switch (opcode->get_op2()->get_value_type()) {
+			case Value::CONST_VALUE:
+				{
+					ConstantValue* op2 = static_cast<ConstantValue*>(opcode->get_op2());
+
+					if (op1->get_type() == ConstantValue::INTEGER) {
+						opcode->get_result()->set_value(new ConstantValue(op1->get_int() + op2->get_int()));
+					} else {
+						opcode->get_result()->set_value(new ConstantValue(op1->get_string() + op2->get_string()));
+					}
+				}
+				break;
+			case Value::TEMP_VALUE:
+				switch (opcode->get_op2()->get_value()->get_value_type()) {
+					case Value::CONST_VALUE:
+					{
+						ConstantValue* op2 = static_cast<ConstantValue*>(opcode->get_op2()->get_value());
+
+						opcode->get_result()->set_value(new ConstantValue(op1->get_int() + op2->get_int()));
+					}
+					break;
+				}
+				break;
+		}
+	}
+}
+
+/*
+ * x / y
+ */
+void VM::div_handler(CLEVER_VM_HANDLER_ARGS) {
+	switch (opcode->get_op1()->get_value_type()) {
+		case Value::CONST_VALUE:
+			ConstantValue* op1 = static_cast<ConstantValue*>(opcode->get_op1());
+			ConstantValue* op2 = static_cast<ConstantValue*>(opcode->get_op2());
+
+			if (op1->get_type() == ConstantValue::INTEGER) {
+				opcode->get_result()->set_value(new ConstantValue(op1->get_int() / op2->get_int()));
+			} else {
+				opcode->get_result()->set_value(new ConstantValue(op1->get_string() + op2->get_string()));
+			}
+			break;
+	}
 }
 
 } // clever

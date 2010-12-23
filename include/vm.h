@@ -30,13 +30,15 @@
 
 #include <vector>
 
+#define CLEVER_VM_HANDLER_ARGS Opcode* opcode
+
 namespace clever {
 
 class Opcode;
 
 class VM {
 public:
-	typedef void (VM::*vm_handler)(Opcode* opcode);
+	typedef void (VM::*vm_handler)(CLEVER_VM_HANDLER_ARGS);
 	typedef std::vector<Opcode*> OpcodeList;
 
 	VM() : m_opcodes(NULL) { }
@@ -46,13 +48,14 @@ public:
 
 	void run(void);
 
-	inline void setOpcodes(std::vector<Opcode*>* opcodes) {
+	inline void setOpcodes(OpcodeList* opcodes) {
 		m_opcodes = opcodes;
 	}
 
 	/* Opcode handlers */
-	void echo_stmt(Opcode* opcode);
-	void plus_stmt(Opcode* opcode);
+	void echo_handler(CLEVER_VM_HANDLER_ARGS);
+	void plus_handler(CLEVER_VM_HANDLER_ARGS);
+	void div_handler(CLEVER_VM_HANDLER_ARGS);
 private:
 	OpcodeList* m_opcodes;
 };

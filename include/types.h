@@ -42,15 +42,27 @@ namespace clever {
 
 class Value : public RefCounted {
 public:
-	Value() : RefCounted(1) { }
+	Value() : m_value_type(NO_VALUE), RefCounted(1) { }
 
 	virtual ~Value() { }
 
 	virtual void set_value(Value* value) { }
 
+	int get_value_type(void) {
+		return m_value_type;
+	}
+
+	virtual Value* get_value(void) {
+		return this;
+	}
+
 	virtual std::string toString(void) {
 		return std::string();
 	}
+
+	enum { NO_VALUE, NAMED_VALUE, CONST_VALUE, TEMP_VALUE };
+
+	int m_value_type;
 };
 
 class NamedValue : public Value {
@@ -62,11 +74,25 @@ public:
 	explicit ConstantValue(double l_value) : Value() {
 		m_type = INTEGER;
 		m_data.l_value = l_value;
+		m_value_type = CONST_VALUE;
 	}
 
 	explicit ConstantValue(std::string s_value) : Value() {
 		m_type = STRING;
-		m_data.s_value = const_cast<char*>(s_value.c_str());
+		m_data.s_value = new std::string(s_value);
+		m_value_type = CONST_VALUE;
+	}
+
+	inline int get_type() const {
+		return m_type;
+	}
+
+	inline double get_int(void) const {
+		return m_data.l_value;
+	}
+
+	inline std::string get_string(void) const {
+		return *m_data.s_value;
 	}
 
 	std::string toString(void) {
@@ -77,14 +103,15 @@ public:
 
 			return str.str();
 		} else {
-			return std::string(m_data.s_value);
+			return *m_data.s_value;
 		}
 	}
+	enum { INTEGER,	STRING };
 private:
-	enum { INTEGER,	STRING } m_type;
+	int m_type;
 	union {
 		double l_value;
-		char* s_value;
+		std::string* s_value;
 	} m_data;
 };
 
@@ -93,16 +120,17 @@ public:
 	ExprValue() : Value(), m_value(NULL) { }
 
 	~ExprValue() {
-		m_value->delRef();
+		if (m_value) {
+			m_value->delRef();
+		}
 	}
 
 	void set_value(Value* value) {
 		if (m_value) {
 			m_value->delRef();
 		}
-		
+
 		m_value = value;
-		value->addRef();
 	}
 
 	std::string toString() {

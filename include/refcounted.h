@@ -29,25 +29,27 @@
 #define CLEVER_REFCOUNTED_H
 
 namespace clever {
-#include <stdio.h>
+
 class RefCounted {
 public:
-	RefCounted(int references = 1)
-		: m_reference(references) {	printf("n %p\n", this); }
+	RefCounted()
+		: m_reference(1) {	}
+
+	explicit RefCounted(int references)
+		: m_reference(references) {	}
+
+	virtual ~RefCounted() { }
 
 	inline int refCount(void) {
 		return m_reference;
 	}
 
 	inline void addRef(void) {
-		printf("+ %p\n", this);
 		++m_reference;
 	}
 
-	inline void delRef(void) {
-		printf("- %p\n", this);
+	virtual inline void delRef(void) {
 		if (--m_reference == 0) {
-			printf("d %p\n", this);
 			delete this;
 		}
 	}

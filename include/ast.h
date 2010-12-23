@@ -42,7 +42,7 @@ namespace clever { namespace ast {
 
 class ExprAST : public RefCounted {
 public:
-	ExprAST() : RefCounted(1) { }
+	ExprAST() : RefCounted(0) { }
 
 	virtual ~ExprAST() { }
 
@@ -83,15 +83,18 @@ class BinaryExprAST : public ExprAST {
 public:
 	BinaryExprAST(char op_, ExprAST* lhs, ExprAST* rhs)
 		: ExprAST(), m_op(op_), m_lhs(lhs), m_rhs(rhs) {
-		m_lhs->addRef();
-		m_rhs->addRef();
 		m_result = new ExprValue();
-		m_result->addRef();
+		m_rhs->addRef();
+		m_lhs->addRef();
 	}
 
 	~BinaryExprAST() {
-		m_lhs->delRef();
-		m_rhs->delRef();
+		if (m_lhs) {
+			m_lhs->delRef();
+		}
+		if (m_rhs) {
+			m_rhs->delRef();
+		}
 	}
 
 	Opcode* opcodeGen(void);
@@ -148,15 +151,16 @@ private:
 
 class IdentifierAST : public ExprAST {
 public:
-	explicit IdentifierAST(const std::string& name)
+	explicit IdentifierAST(std::string name)
 		: ExprAST(), m_name(name) { }
+
+	~IdentifierAST() { }
 
 	DISALLOW_COPY_AND_ASSIGN(IdentifierAST);
 
 	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
 private:
 	const std::string m_name;
-	Value* m_value;
 };
 
 class TypeCreationAST : public ExprAST {

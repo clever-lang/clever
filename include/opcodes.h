@@ -35,7 +35,8 @@ namespace clever {
 
 enum Opcodes {
 	OP_ECHO,
-	OP_PLUS
+	OP_PLUS,
+	OP_DIV
 };
 
 class Opcode {

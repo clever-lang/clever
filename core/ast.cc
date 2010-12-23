@@ -36,7 +36,9 @@ TreeNode::~TreeNode(void) {
 	TreeNode::nodeList::iterator it = nodes.begin();
 
 	while (it < nodes.end()) {
+		//std::cout << (*it)->refCount() << std::endl;
 		(*it)->delRef();
+		//delete *it;
 		++it;
 	}
 }
@@ -60,7 +62,12 @@ std::string NumberExprAST::debug(void) {
  * BinaryExprAST
  */
 Opcode* BinaryExprAST::opcodeGen(void) {
-	return new Opcode(OP_PLUS, &VM::plus_stmt, m_lhs->codeGen(), m_rhs->codeGen(), m_result);
+	switch (m_op) {
+		case '+':
+			return new Opcode(OP_PLUS, &VM::plus_handler, m_lhs->codeGen(), m_rhs->codeGen(), m_result);
+		case '/':
+			return new Opcode(OP_DIV, &VM::div_handler, m_lhs->codeGen(), m_rhs->codeGen(), m_result);
+	}
 }
 
 Value* BinaryExprAST::codeGen(void) {
@@ -136,7 +143,7 @@ Value* CommandAST::codeGen(void) {
 }
 
 Opcode* CommandAST::opcodeGen(void) {
-	return new Opcode(OP_ECHO, &VM::echo_stmt, m_value->codeGen());
+	return new Opcode(OP_ECHO, &VM::echo_handler, m_value->codeGen());
 }
 
 std::string CommandAST::debug(void) {
