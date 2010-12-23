@@ -33,10 +33,6 @@
 
 namespace clever {
 
-#define GET_CONST_TYPE(x)         (x)->get_kind()
-#define SAME_CONST_TYPE(x, y, t)  (GET_CONST_TYPE(x) == (t) && GET_CONST_TYPE(y) == (t))
-#define HAS_SAME_CONST_TYPE(x, y) (GET_CONST_TYPE(x) == GET_CONST_TYPE(y))
-
 class Compiler {
 public:
 	Compiler() { }

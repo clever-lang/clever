@@ -45,7 +45,7 @@ class Value : public RefCounted {
 public:
 	enum { SET, UNSET, MODIFIED };
 	enum { NONE, INTEGER, DOUBLE, STRING, BOOLEAN, USER };
-	enum { UNKNOWN, NAMED, CONST, TEMP_VALUE };
+	enum { UNKNOWN, NAMED, CONST, TEMP };
 
 	Value() : RefCounted(1), m_status(UNSET), m_type(UNKNOWN), m_kind(UNKNOWN) {}
 	explicit Value(int kind) : RefCounted(1), m_status(UNSET), m_type(UNKNOWN), m_kind(kind) {}
@@ -174,7 +174,7 @@ public:
  */
 class TempValue : public Value {
 public:
-	TempValue() : Value(TEMP_VALUE), m_value(NULL) { }
+	TempValue() : Value(TEMP), m_value(NULL) { }
 
 	~TempValue() {
 		if (m_value) {
