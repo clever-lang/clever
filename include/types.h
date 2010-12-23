@@ -45,19 +45,16 @@ class Value : public RefCounted {
 public:
 	enum { SET, UNSET, MODIFIED };
 	enum { NONE, INTEGER, DOUBLE, STRING, BOOLEAN, USER };
-	enum { UNKNOWN, CONST, TEMP_VALUE };
+	enum { UNKNOWN, NAMED, CONST, TEMP_VALUE };
 
-	Value() : RefCounted(1), m_status(UNSET), m_type(UNKNOWN), m_kind(UNKNOWN), m_name() {}
-	explicit Value(int kind) : RefCounted(1), m_status(UNSET), m_type(UNKNOWN), m_kind(kind), m_name() {}
+	Value() : RefCounted(1), m_status(UNSET), m_type(UNKNOWN), m_kind(UNKNOWN) {}
+	explicit Value(int kind) : RefCounted(1), m_status(UNSET), m_type(UNKNOWN), m_kind(kind) {}
 
 	virtual ~Value() {
 		if (isString()) {
 			delete m_data.s_value;
 		}
 	}
-
-	inline void set_name(std::string& name) { m_name.assign(name); }
-	inline std::string get_name() const { return m_name; }
 
 	inline void set_type(int type) { m_type = type; }
 	inline int get_type() const { return m_type; }
@@ -68,7 +65,6 @@ public:
 
 	inline int get_status() { return m_status; }
 	inline void set_status(int status) { m_status = status; }
-
 
 	inline bool hasSameKind(Value* value) { return get_kind() == value->get_kind(); }
 
@@ -98,20 +94,29 @@ public:
 	}
 
 	virtual std::string toString(void) {
-		if (isInteger()) {
-			std::stringstream str;
 
-			str << getInteger();
+		std::stringstream str;
 
-			return str.str();
-		} else if (isDouble()) {
-			std::stringstream str;
+		switch (get_type()) {
+			case INTEGER:
+				{
+					str << getInteger();
 
-			str << getDouble();
+					return str.str();
+				}
+			case DOUBLE:
+				{
+					str << getDouble();
 
-			return str.str();
-		} else {
-			return getString();
+					return str.str();
+				}
+			case STRING:
+				{
+					return getString();
+				}
+			default:
+				/* die */
+				break;
 		}
 	}
 
@@ -120,14 +125,24 @@ private:
 	int m_type;
 	int m_kind;
 
-	std::string m_name;
 
 	union {
 		int64_t l_value;
 		double d_value;
 		std::string* s_value;
 	} m_data;
+};
 
+class NamedValue : public Value {
+public:
+	NamedValue() : Value(), m_name() {}
+	NamedValue(int kind) : Value(kind), m_name() {}
+
+	inline void set_name(std::string& name) { m_name.assign(name); }
+	inline std::string get_name() const { return m_name; }
+
+private:
+	std::string m_name;
 };
 
 /*
@@ -152,7 +167,6 @@ public:
 
 	~ConstantValue() {
 	}
-
 };
 
 /*
