@@ -59,14 +59,12 @@ VM::~VM(void) {
  * Execute the collected opcodes
  */
 void VM::run(void) {
-	std::vector<Opcode*>::iterator it = m_opcodes->begin();
+	OpcodeList::iterator it = m_opcodes->begin();
 
 	while (it < m_opcodes->end()) {
 		Opcode* opcode = *it;
 
-		if (opcode->m_handler) {
-			(this->*((*it)->m_handler))(*it);
-		}
+		(this->*((*it)->get_handler()))(*it);
 		++it;
 	}
 }
@@ -89,5 +87,18 @@ void VM::plus_handler(CLEVER_VM_HANDLER_ARGS) {
  */
 void VM::div_handler(CLEVER_VM_HANDLER_ARGS) {
 }
+
+/*
+ * x - y
+ */
+void VM::minus_handler(CLEVER_VM_HANDLER_ARGS) {
+}
+
+/*
+ * x * y
+ */
+void VM::mult_handler(CLEVER_VM_HANDLER_ARGS) {
+}
+
 
 } // clever

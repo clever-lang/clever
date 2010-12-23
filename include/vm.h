@@ -38,7 +38,7 @@ class Opcode;
 
 class VM {
 public:
-	typedef void (VM::*vm_handler)(CLEVER_VM_HANDLER_ARGS);
+	typedef void (VM::*opcode_handler)(CLEVER_VM_HANDLER_ARGS);
 	typedef std::vector<Opcode*> OpcodeList;
 
 	VM() : m_opcodes(NULL) { }
@@ -56,6 +56,8 @@ public:
 	void echo_handler(CLEVER_VM_HANDLER_ARGS);
 	void plus_handler(CLEVER_VM_HANDLER_ARGS);
 	void div_handler(CLEVER_VM_HANDLER_ARGS);
+	void mult_handler(CLEVER_VM_HANDLER_ARGS);
+	void minus_handler(CLEVER_VM_HANDLER_ARGS);
 private:
 	OpcodeList* m_opcodes;
 };

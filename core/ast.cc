@@ -93,6 +93,10 @@ Opcode* BinaryExprAST::opcodeGen(void) {
 			return new Opcode(OP_PLUS, &VM::plus_handler, m_lhs->codeGen(), m_rhs->codeGen(), m_result);
 		case '/':
 			return new Opcode(OP_DIV, &VM::div_handler, m_lhs->codeGen(), m_rhs->codeGen(), m_result);
+		case '*':
+			return new Opcode(OP_MULT, &VM::mult_handler, m_lhs->codeGen(), m_rhs->codeGen(), m_result);
+		case '-':
+			return new Opcode(OP_MINUS, &VM::minus_handler, m_lhs->codeGen(), m_rhs->codeGen(), m_result);
 	}
 }
 
