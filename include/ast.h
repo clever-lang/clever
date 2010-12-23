@@ -32,6 +32,7 @@
 #include <vector>
 #include "types.h"
 #include "opcodes.h"
+#include "refcounted.h"
 
 namespace clever { namespace ast {
 
@@ -39,41 +40,11 @@ namespace clever { namespace ast {
 	virtual Value *codeGen();           \
 	virtual std::string debug();
 
-class ExprAST {
+class ExprAST : public RefCounted {
 public:
-	ExprAST() : m_reference(0) { }
+	ExprAST() : RefCounted(1) { }
 
 	virtual ~ExprAST() { }
-
-	/*
-	 * Returns the number of references
-	 */
-	inline int refCount() const {
-		return m_reference;
-	}
-
-	/*
-	 * Increments the reference to the object
-	 */
-	inline void addRef() {
-		++m_reference;
-	}
-
-	/*
-	 * Decrements the reference to the object
-	 */
-	inline int delRef() {
-		return --m_reference;
-	}
-
-	/*
-	 * Destroy the object when the reference reaches zero
-	 */
-	inline void destroy(ExprAST* expr) {
-		if (expr && !expr->delRef()) {
-			delete expr;
-		}
-	}
 
 	/*
 	 * Method for generating the expression IR
@@ -87,8 +58,6 @@ public:
 	virtual Opcode* opcodeGen() {
 		return NULL;
 	}
-private:
-	int m_reference;
 };
 
 
@@ -113,15 +82,16 @@ private:
 class BinaryExprAST : public ExprAST {
 public:
 	BinaryExprAST(char op_, ExprAST* lhs, ExprAST* rhs)
-		: m_op(op_), m_lhs(lhs), m_rhs(rhs) {
+		: ExprAST(), m_op(op_), m_lhs(lhs), m_rhs(rhs) {
 		m_lhs->addRef();
 		m_rhs->addRef();
 		m_result = new ExprValue();
+		m_result->addRef();
 	}
 
 	~BinaryExprAST() {
-		destroy(m_lhs);
-		destroy(m_rhs);
+		m_lhs->delRef();
+		m_rhs->delRef();
 	}
 
 	Opcode* opcodeGen(void);
@@ -139,7 +109,7 @@ private:
 class NumberExprAST : public ExprAST {
 public:
 	explicit NumberExprAST(double val)
-		: m_value(val) { }
+		: ExprAST(), m_value(val) { }
 
 	~NumberExprAST() { }
 
@@ -154,16 +124,16 @@ private:
 class VariableDeclAST : public ExprAST {
 public:
 	VariableDeclAST(ExprAST* type, ExprAST* variable, ExprAST* rhs)
-		: m_type(type), m_variable(variable), m_rhs(rhs) {
+		: ExprAST(), m_type(type), m_variable(variable), m_rhs(rhs) {
 		m_type->addRef();
 		m_variable->addRef();
 		m_rhs->addRef();
 	}
 
 	~VariableDeclAST() {
-		destroy(m_type);
-		destroy(m_variable);
-		destroy(m_rhs);
+		m_type->delRef();
+		m_variable->delRef();
+		m_rhs->delRef();
 	}
 
 	DISALLOW_COPY_AND_ASSIGN(VariableDeclAST);
@@ -179,7 +149,7 @@ private:
 class IdentifierAST : public ExprAST {
 public:
 	explicit IdentifierAST(const std::string& name)
-		: m_name(name) { }
+		: ExprAST(), m_name(name) { }
 
 	DISALLOW_COPY_AND_ASSIGN(IdentifierAST);
 
@@ -192,14 +162,14 @@ private:
 class TypeCreationAST : public ExprAST {
 public:
 	TypeCreationAST(ExprAST* type, ExprAST* arguments)
-		: m_type(type), m_arguments(arguments) {
+		: ExprAST(), m_type(type), m_arguments(arguments) {
 		m_type->addRef();
 		m_arguments->addRef();
 	}
 
 	~TypeCreationAST() {
-		destroy(m_type);
-		destroy(m_arguments);
+		m_type->delRef();
+		m_arguments->delRef();
 	}
 
 	DISALLOW_COPY_AND_ASSIGN(TypeCreationAST);
@@ -212,7 +182,7 @@ private:
 
 class NewBlockAST : public ExprAST {
 public:
-	NewBlockAST() { }
+	NewBlockAST() : ExprAST() { }
 
 	DISALLOW_COPY_AND_ASSIGN(NewBlockAST);
 
@@ -221,7 +191,7 @@ public:
 
 class EndBlockAST : public ExprAST {
 public:
-	EndBlockAST() { }
+	EndBlockAST() : ExprAST() { }
 
 	DISALLOW_COPY_AND_ASSIGN(EndBlockAST);
 
@@ -231,14 +201,14 @@ public:
 class CommandAST : public ExprAST {
 public:
 	CommandAST(ExprAST* command, ExprAST* value)
-		: m_command(command), m_value(value) {
+		: ExprAST(), m_command(command), m_value(value) {
 		m_command->addRef();
 		m_value->addRef();
 	}
 
 	~CommandAST() {
-		destroy(m_command);
-		destroy(m_value);
+		m_command->delRef();
+		m_value->delRef();
 	}
 
 	Opcode* opcodeGen();

@@ -32,6 +32,7 @@
 #include <sstream>
 #include <string>
 #include "config.h"
+#include "refcounted.h"
 
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
 	TypeName(const TypeName&);             \
@@ -39,9 +40,9 @@
 
 namespace clever {
 
-class Value {
+class Value : public RefCounted {
 public:
-	Value() : reference(1) { }
+	Value() : RefCounted(1) { }
 
 	virtual ~Value() { }
 
@@ -50,26 +51,6 @@ public:
 	virtual std::string toString(void) {
 		return std::string();
 	}
-
-	inline int refCount(void) {
-		return reference;
-	}
-
-	inline void addRef(void) {
-		++reference;
-	}
-
-	inline int delRef(void) {
-		return --reference;
-	}
-
-	inline void destroy(Value* value) {
-		if (value && !value->delRef()) {
-			delete value;
-		}
-	}
-private:
-	int reference;
 };
 
 class NamedValue : public Value {
@@ -78,12 +59,12 @@ class NamedValue : public Value {
 
 class ConstantValue : public Value {
 public:
-	explicit ConstantValue(double l_value) {
+	explicit ConstantValue(double l_value) : Value() {
 		m_type = INTEGER;
 		m_data.l_value = l_value;
 	}
 
-	explicit ConstantValue(std::string s_value) {
+	explicit ConstantValue(std::string s_value) : Value() {
 		m_type = STRING;
 		m_data.s_value = const_cast<char*>(s_value.c_str());
 	}
@@ -109,15 +90,19 @@ private:
 
 class ExprValue : public Value {
 public:
-	ExprValue() : m_value(NULL) { }
+	ExprValue() : Value(), m_value(NULL) { }
 
 	~ExprValue() {
-		destroy(m_value);
+		m_value->delRef();
 	}
 
 	void set_value(Value* value) {
-		destroy(m_value);
+		if (m_value) {
+			m_value->delRef();
+		}
+		
 		m_value = value;
+		value->addRef();
 	}
 
 	std::string toString() {

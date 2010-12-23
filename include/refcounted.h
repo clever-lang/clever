@@ -22,47 +22,40 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * $Id$
+ * $Id:$
  */
 
-#ifndef CLEVER_OPCODES_H
-#define CLEVER_OPCODES_H
-
-#include "types.h"
-#include "vm.h"
+#ifndef CLEVER_REFCOUNTED_H
+#define CLEVER_REFCOUNTED_H
 
 namespace clever {
-
-enum Opcodes {
-	OP_ECHO,
-	OP_PLUS
-};
-
-class Opcode {
+#include <stdio.h>
+class RefCounted {
 public:
-	Opcode(Opcodes op_type, VM::vm_handler handler, Value* op1)
-		: m_op_type(op_type), m_handler(handler), m_op1(op1), m_op2(NULL), m_result(NULL) { }
+	RefCounted(int references = 1)
+		: m_reference(references) {	printf("n %p\n", this); }
 
-	Opcode(Opcodes op_type, VM::vm_handler handler, Value* op1, Value* op2)
-		: m_op_type(op_type), m_handler(handler), m_op1(op1), m_op2(op2), m_result(NULL) { }
+	inline int refCount(void) {
+		return m_reference;
+	}
 
-	Opcode(Opcodes op_type, VM::vm_handler handler, Value* op1, Value* op2, Value* result)
-		: m_op_type(op_type), m_handler(handler), m_op1(op1), m_op2(op2), m_result(result) { }
+	inline void addRef(void) {
+		printf("+ %p\n", this);
+		++m_reference;
+	}
 
-	VM::vm_handler m_handler;
-
-	Value* get_op1() { return m_op1; }
-	Value* get_op2() { return m_op2; }
-	Value* get_result() { return m_result; }
-	void set_result(Value* value) { value->addRef(); m_result = value; }
+	inline void delRef(void) {
+		printf("- %p\n", this);
+		if (--m_reference == 0) {
+			printf("d %p\n", this);
+			delete this;
+		}
+	}
 
 private:
-	Opcodes m_op_type;
-	Value* m_op1;
-	Value* m_op2;
-	Value* m_result;
+	int m_reference;
 };
 
-} // clever
+}
 
-#endif // CLEVER_OPCODES_H
+#endif /* CLEVER_REFCOUNTED_H */

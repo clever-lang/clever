@@ -36,7 +36,7 @@ TreeNode::~TreeNode(void) {
 	TreeNode::nodeList::iterator it = nodes.begin();
 
 	while (it < nodes.end()) {
-		(*it)->destroy(*it);
+		(*it)->delRef();
 		++it;
 	}
 }
