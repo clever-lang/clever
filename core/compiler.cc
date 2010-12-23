@@ -50,14 +50,9 @@ void Compiler::error(const char* message) {
  * Performs a type compatible checking
  */
 bool Compiler::checkCompatibleTypes(Value* lhs, Value* rhs) {
-	if (lhs->get_kind() == rhs->get_kind()
-		&& lhs->isConst()) {
-		ConstantValue* clhs = static_cast<ConstantValue*>(lhs);
-		ConstantValue* crhs = static_cast<ConstantValue*>(rhs);
-
-		if (!clhs->hasSameKind(crhs)) {
-			return false;
-		}
+	/* Constants with different type cannot performs operation */
+	if (lhs->isConst() && lhs->get_kind() == rhs->get_kind() && !lhs->hasSameType(rhs)) {
+		return false;
 	}
 	return true;
 }

@@ -76,10 +76,14 @@ clever::Compiler compiler;
 %token STR          "string"
 %token ASSIGN       "="
 %token ECHO         "echo"
-
+%token IN           "in"
+%token FOR          "for"
+%token WHILE        "while"
+%token IF           "if"
+%token ELSE         "else"
+%token ELSEIF       "else if"
 
 %left ',';
-%left BW_OR BW_AND BW_XOR;
 %left ASSIGN;
 %left ':';
 %left '|';
@@ -94,7 +98,7 @@ clever::Compiler compiler;
 %right '!';
 %right '~' INCREMENT DECREMENT;
 %right '[' '{';
-%left ELSIF;
+%left ELSEIF;
 %left ELSE;
 %left UMINUS;
 
@@ -111,17 +115,29 @@ statement_list:
 	|	statement_list statements
 ;
 
+block_stmt:
+		'{' { nodes.add(new clever::ast::NewBlockAST()); } statement_list '}'
+				{ nodes.add(new clever::ast::EndBlockAST()); }
+;
+
 statements:
 		expr ';'
 	|	variable_declaration ';'
 	|	echo_stmt ';'
-	|	'{' { nodes.add(new clever::ast::NewBlockAST()); } statement_list '}'
-		{ nodes.add(new clever::ast::EndBlockAST()); }
+	|	if_stmt
+	|	for_stmt
+	|	while_stmt
+	|	block_stmt
+;
+
+variable_declaration_no_init:
+		TYPE IDENT	{ nodes.add(new clever::ast::VariableDeclAST($1, $2, NULL)); }
 ;
 
 variable_declaration:
-		TYPE IDENT "=" type_creation { nodes.add(new clever::ast::VariableDeclAST($1, $2, $4)); }
-	|	TYPE IDENT "=" expr          { nodes.add(new clever::ast::VariableDeclAST($1, $2, $4)); }
+		TYPE IDENT '=' type_creation { nodes.add(new clever::ast::VariableDeclAST($1, $2, $4)); }
+	|	TYPE IDENT '=' expr          { nodes.add(new clever::ast::VariableDeclAST($1, $2, $4)); }
+	|	variable_declaration_no_init
 ;
 
 arguments:
@@ -140,6 +156,13 @@ expr:
 	|	expr '/' expr { $$ = new clever::ast::BinaryExprAST('/', $1, $3); nodes.add($$); }
 	|	expr '*' expr { $$ = new clever::ast::BinaryExprAST('*', $1, $3); nodes.add($$); }
 	|	expr '%' expr { $$ = new clever::ast::BinaryExprAST('%', $1, $3); nodes.add($$); }
+	|	expr '|' expr
+	|	expr '&' expr
+	|	expr '^' expr
+	|	'-' expr %prec UMINUS
+	|	'+' expr %prec UMINUS
+	|	'!' expr
+	|	'~' expr
 	|	NUM_INTEGER   { $$ = $1; }
 	|	NUM_DOUBLE    { $$ = $1; }
 	|	IDENT         { $$ = $1; }
@@ -148,6 +171,20 @@ expr:
 
 echo_stmt:
 		ECHO expr { $$ = new clever::ast::CommandAST($1, $2); nodes.add($$); }
+;
+
+for_stmt:
+		FOR '(' variable_declaration_no_init IN  IDENT ')' block_stmt
+;
+
+while_stmt:
+		WHILE '(' expr ')' block_stmt
+;
+
+if_stmt:
+		IF '(' expr ')' block_stmt ELSEIF block_stmt ELSE block_stmt
+	|	IF '(' expr ')' block_stmt ELSEIF block_stmt
+	|	IF '(' expr ')' block_stmt ELSE block_stmt
 ;
 
 %%

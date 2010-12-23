@@ -61,10 +61,11 @@ public:
 
 	inline void set_type(int type) { m_type = type; }
 	inline int get_type() const { return m_type; }
+	inline int hasSameType(Value* value) const { return m_type == value->get_type(); }
 
 	inline int get_kind() const { return m_kind; }
 	inline void set_kind(int kind) { m_kind = kind; }
-	
+
 	inline int get_status() { return m_status; }
 	inline void set_status(int status) { m_status = status; }
 
@@ -89,7 +90,7 @@ public:
 	inline double getDouble(void) const { return m_data.d_value; }
 	inline std::string* getStringP(void) const { return m_data.s_value; }
 	inline std::string getString(void) const { return *m_data.s_value; }
-	
+
 	virtual void set_value(Value* value) { }
 
 	virtual Value* get_value(void) {
