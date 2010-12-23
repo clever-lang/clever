@@ -99,24 +99,17 @@ public:
 
 		switch (get_type()) {
 			case INTEGER:
-				{
-					str << getInteger();
+				str << getInteger();
 
-					return str.str();
-				}
+				return str.str();
 			case DOUBLE:
-				{
-					str << getDouble();
+				str << getDouble();
 
-					return str.str();
-				}
+				return str.str();
 			case STRING:
-				{
-					return getString();
-				}
+				return getString();
 			default:
-				/* die */
-				break;
+				return std::string();
 		}
 	}
 
