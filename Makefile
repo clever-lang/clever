@@ -1,8 +1,8 @@
 # Compiler
 CXX?=g++
-CPPFLAGS=-c -ggdb -ansi -Iinclude/ -Ibuild/ -Imodules/ -I.
+CPPFLAGS=-c -ggdb -ansi -Iinclude/ -Ibuild/ -Imodules/ -I. -fno-rtti
 CPPFLAGS2=-ggdb -ansi
-CPPFLAGS3=-c -ggdb -ansi -Iinclude/ -Ibuild/ -I.
+CPPFLAGS3=-c -ggdb -ansi -Iinclude/ -Ibuild/ -I. -fno-rtti
 # Linker
 LD=g++
 LFLAGS=-ggdb -O2
