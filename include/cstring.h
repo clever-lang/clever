@@ -49,9 +49,15 @@ public:
 
 	CString* intern();
 
-	bool hasSameId(CString* cstring) const { return get_id() == cstring->get_id(); }
-	long get_id() const { return m_id; }
-	void set_id(long id) {
+	inline bool hasSameId(CString* cstring) const {
+		return get_id() == cstring->get_id();
+	}
+
+	inline long get_id() const {
+		return m_id;
+	}
+
+	inline void set_id(long id) {
 		if (m_id == -1)  {
 			m_id = id;
 		}
@@ -91,7 +97,7 @@ public:
 	}
 
 	long insert(CString* cstring) {
-		int id = hash(*cstring);
+		long id = hash(*cstring);
 
 		cstring->set_id(id);
 
