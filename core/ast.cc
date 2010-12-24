@@ -229,7 +229,7 @@ Opcode* CommandAST::opcodeGen(void) {
 }
 
 std::string CommandAST::debug(void) {
-	return m_command->debug() + " " + m_value->debug();
+	return "echo " + m_value->debug();
 }
 
 }} // clever::ast

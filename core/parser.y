@@ -171,7 +171,7 @@ expr:
 ;
 
 echo_stmt:
-		ECHO expr { $$ = new clever::ast::CommandAST($1, $2); nodes.add($$); }
+		ECHO expr { $$ = new clever::ast::CommandAST($2); nodes.add($$); }
 ;
 
 for_stmt:

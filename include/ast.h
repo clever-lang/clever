@@ -95,7 +95,7 @@ public:
 		}
 	}
 
-	Opcode* opcodeGen(void);
+	Opcode* opcodeGen();
 	DISALLOW_COPY_AND_ASSIGN(BinaryExprAST);
 
 	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
@@ -241,14 +241,12 @@ public:
 
 class CommandAST : public ExprAST {
 public:
-	CommandAST(ExprAST* command, ExprAST* value)
-		: ExprAST(), m_command(command), m_value(value) {
-		m_command->addRef();
+	CommandAST(ExprAST* value)
+		: ExprAST(), m_value(value) {
 		m_value->addRef();
 	}
 
 	~CommandAST() {
-		m_command->delRef();
 		m_value->delRef();
 	}
 
@@ -258,7 +256,6 @@ public:
 
 	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
 private:
-	ExprAST* m_command;
 	ExprAST* m_value;
 };
 
