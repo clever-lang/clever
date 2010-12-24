@@ -1,6 +1,6 @@
 # Compiler
 CXX?=g++
-CPPFLAGS=-c -ggdb -ansi -Iinclude/ -Ibuild/ -Imodules/ -I. -fno-rtti
+CPPFLAGS=-c -ggdb -ansi -Iinclude/ -Ibuild/ -Imodules/ -Iwin32/ -I. -fno-rtti
 CPPFLAGS2=-ggdb -ansi
 CPPFLAGS3=-c -ggdb -ansi -Iinclude/ -Ibuild/ -I. -fno-rtti
 # Linker
@@ -13,10 +13,12 @@ RE2C=re2c
 BUILDDIR=build/
 # Core source dir
 SRCDIR=core/
+# Win32 port dir
+WINDIR=win32/
 # Testrunner dir
 EXTRADIR=extra/
 
-OBJECTS=$(BUILDDIR)parser.o $(BUILDDIR)scanner.o $(BUILDDIR)driver.o $(BUILDDIR)types.o $(BUILDDIR)ast.o $(BUILDDIR)compiler.o $(BUILDDIR)vm.o $(BUILDDIR)main.o
+OBJECTS=$(BUILDDIR)parser.o $(BUILDDIR)scanner.o $(BUILDDIR)driver.o $(BUILDDIR)types.o $(BUILDDIR)ast.o $(BUILDDIR)compiler.o $(BUILDDIR)vm.o $(BUILDDIR)main.o $(BUILDDIR)win32.o
 
 clever: $(OBJECTS)
 	$(LD) $(LFLAGS) -o clever $(BUILDDIR)*.o
@@ -52,6 +54,9 @@ $(BUILDDIR)compiler.o: $(SRCDIR)compiler.cc
 
 $(BUILDDIR)vm.o: $(SRCDIR)vm.cc
 	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)vm.o $(SRCDIR)vm.cc
+
+$(BUILDDIR)win32.o: $(WINDIR)win32.cc
+	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)win32.o $(WINDIR)win32.cc
 
 clean:
 	rm -f clever $(BUILDDIR)*
