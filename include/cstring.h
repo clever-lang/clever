@@ -32,19 +32,25 @@
 #include <vector>
 #include <algorithm>
 
+#define CSTRING(xstring) (CString(xstring).intern())
+
 namespace clever {
 
 class CStringTable;
 
 class CString : public std::string {
 public:
-	CString(std::string& str) : std::string(str) { store(); }
-	CString(char* str) : std::string(str) { store(); }
+	CString(const std::string& str) : std::string(str) { store(); }
+	CString(const char* str) : std::string(str) { store(); }
 
-	const CString& intern();
+	CString& intern();
 
 	bool hasSameId(const CString& cstring) const { return get_id() == cstring.get_id(); }
 	int get_id() const { return m_id; }
+	
+	bool operator==(const CString& cstring) {
+		return hasSameId(cstring);
+	}
 
 private:
 	static CStringTable table;
@@ -57,11 +63,11 @@ typedef std::vector<CString> CStringVector;
 
 class CStringTable : public CStringVector {
 public:
-	CStringTable() : CStringVector() {  }
+	CStringTable() : CStringVector() { reserve(256); }
 
 	bool contains(const CString& cstring) const {
 		int id = cstring.get_id();
-		return id != -1 && id < size() && at(id).hasSameId(cstring);
+		return id != -1 && id < (signed)size() && at(id).hasSameId(cstring);
 	}
 
 	int findId(const CString& cstring) const {
@@ -74,7 +80,7 @@ public:
 		return distance(begin(), it);
 	}
 
-	const CString& getCString(int id) const {
+	CString& getCString(int id) {
 		return at(id);
 	}
 

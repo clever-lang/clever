@@ -35,7 +35,7 @@ void CString::store() {
 	m_id = table.push_back(*this);
 }
 
-const CString& CString::intern() {
+CString& CString::intern() {
 	return table.getCString(get_id());
 }
 
