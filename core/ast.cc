@@ -54,7 +54,7 @@ std::string NumberExprAST::debug(void) {
 }
 
 BinaryExprAST::BinaryExprAST(char op_, ExprAST* lhs, ExprAST* rhs)
-		: ExprAST(), m_op(op_), m_lhs(lhs), m_rhs(rhs), m_value(NULL), optimized(false) {
+		: ExprAST(), m_op(op_), m_lhs(lhs), m_rhs(rhs), m_result(NULL), m_value(NULL), optimized(false) {
 	Value* tmp_lhs = lhs->codeGen();
 	Value* tmp_rhs = rhs->codeGen();
 
@@ -66,7 +66,7 @@ BinaryExprAST::BinaryExprAST(char op_, ExprAST* lhs, ExprAST* rhs)
 	}
 
 	/* Checking if we can perform constant folding optimization */
-	if (tmp_lhs->isConst()) {
+	if (tmp_lhs->isConst() && tmp_rhs->isConst()) {
 		m_value = Compiler::constantFolding(m_op, tmp_lhs, tmp_rhs);
 	}
 	if (m_value) {
@@ -85,18 +85,28 @@ BinaryExprAST::BinaryExprAST(char op_, ExprAST* lhs, ExprAST* rhs)
  * BinaryExprAST
  */
 Opcode* BinaryExprAST::opcodeGen(void) {
+	Value* lhs;
+	Value* rhs;
+
 	if (optimized) {
 		return NULL;
 	}
+
+	lhs = m_lhs->codeGen();
+	rhs = m_rhs->codeGen();
+
+	lhs->addRef();
+	rhs->addRef();
+
 	switch (m_op) {
 		case '+':
-			return new Opcode(OP_PLUS, &VM::plus_handler, m_lhs->codeGen(), m_rhs->codeGen(), m_result);
+			return new Opcode(OP_PLUS, &VM::plus_handler, lhs, rhs, m_result);
 		case '/':
-			return new Opcode(OP_DIV, &VM::div_handler, m_lhs->codeGen(), m_rhs->codeGen(), m_result);
+			return new Opcode(OP_DIV, &VM::div_handler, lhs, rhs, m_result);
 		case '*':
-			return new Opcode(OP_MULT, &VM::mult_handler, m_lhs->codeGen(), m_rhs->codeGen(), m_result);
+			return new Opcode(OP_MULT, &VM::mult_handler, lhs, rhs, m_result);
 		case '-':
-			return new Opcode(OP_MINUS, &VM::minus_handler, m_lhs->codeGen(), m_rhs->codeGen(), m_result);
+			return new Opcode(OP_MINUS, &VM::minus_handler, lhs, rhs, m_result);
 	}
 }
 
@@ -104,7 +114,6 @@ Value* BinaryExprAST::codeGen(void) {
 	if (optimized) {
 		return m_value;
 	} else {
-		m_result->addRef();
 		return m_result;
 	}
 }

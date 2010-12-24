@@ -128,6 +128,9 @@ private:
 	} m_data;
 };
 
+/*
+ * Symbol names used for opcodes
+ */
 class NamedValue : public Value {
 public:
 	NamedValue()

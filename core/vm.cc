@@ -87,24 +87,64 @@ void VM::echo_handler(CLEVER_VM_HANDLER_ARGS) {
  * x + y
  */
 void VM::plus_handler(CLEVER_VM_HANDLER_ARGS) {
+	Value* op1 = getValue(opcode->get_op1());
+	Value* op2 = getValue(opcode->get_op2());
+
+	if (op1->isConst() && op1->hasSameKind(op2) && op1->hasSameType(op2)) {
+		switch (op1->get_type()) {
+			case Value::INTEGER:
+				opcode->get_result()->set_value(new ConstantValue(op1->getInteger() + op2->getInteger()));
+				break;
+		}
+	}
 }
 
 /*
  * x / y
  */
 void VM::div_handler(CLEVER_VM_HANDLER_ARGS) {
+	Value* op1 = getValue(opcode->get_op1());
+	Value* op2 = getValue(opcode->get_op2());
+
+	if (op1->isConst() && op1->hasSameKind(op2) && op1->hasSameType(op2)) {
+		switch (op1->get_type()) {
+			case Value::INTEGER:
+				opcode->get_result()->set_value(new ConstantValue(op1->getInteger() / op2->getInteger()));
+				break;
+		}
+	}
 }
 
 /*
  * x - y
  */
 void VM::minus_handler(CLEVER_VM_HANDLER_ARGS) {
+	Value* op1 = getValue(opcode->get_op1());
+	Value* op2 = getValue(opcode->get_op2());
+
+	if (op1->isConst() && op1->hasSameKind(op2) && op1->hasSameType(op2)) {
+		switch (op1->get_type()) {
+			case Value::INTEGER:
+				opcode->get_result()->set_value(new ConstantValue(op1->getInteger() - op2->getInteger()));
+				break;
+		}
+	}
 }
 
 /*
  * x * y
  */
 void VM::mult_handler(CLEVER_VM_HANDLER_ARGS) {
+	Value* op1 = getValue(opcode->get_op1());
+	Value* op2 = getValue(opcode->get_op2());
+
+	if (op1->isConst() && op1->hasSameKind(op2) && op1->hasSameType(op2)) {
+		switch (op1->get_type()) {
+			case Value::INTEGER:
+				opcode->get_result()->set_value(new ConstantValue(op1->getInteger() * op2->getInteger()));
+				break;
+		}
+	}
 }
 
 void VM::new_scope_handler(CLEVER_VM_HANDLER_ARGS) {

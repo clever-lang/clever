@@ -87,6 +87,21 @@ public:
 		m_opcodes = opcodes;
 	}
 
+	/*
+	 * Returns the value from a Value pointer according to Value type
+	 */
+	inline Value* getValue(Value* op) {
+		switch (op->get_kind()) {
+			case Value::NAMED:
+				return m_symbols.get_var(op->getString());
+			case Value::CONST:
+				return op;
+			case Value::TEMP:
+				return op->get_value();
+		}
+		return NULL;
+	}
+
 	/* Opcode handlers */
 	void echo_handler(CLEVER_VM_HANDLER_ARGS);
 	void plus_handler(CLEVER_VM_HANDLER_ARGS);

@@ -163,6 +163,7 @@ expr:
 	|	'+' expr %prec UMINUS
 	|	'!' expr
 	|	'~' expr
+	|	'(' expr ')'  { $$ = $2; }
 	|	NUM_INTEGER   { $$ = $1; }
 	|	NUM_DOUBLE    { $$ = $1; }
 	|	IDENT         { $$ = $1; }
