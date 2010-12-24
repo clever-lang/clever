@@ -32,7 +32,7 @@ namespace clever {
 CStringTable CString::table;
 
 void CString::store() {
-	m_id = table.push_back(*this);
+	m_id = table.insert(*this);
 }
 
 CString& CString::intern() {
