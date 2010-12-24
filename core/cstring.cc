@@ -31,11 +31,20 @@ namespace clever {
 
 CStringTable CString::table;
 
-void CString::store() {
-	m_id = table.insert(*this);
+CStringTable::~CStringTable() {
+	CStringTableBase::iterator it = begin();
+
+	while (it != end()) {
+		delete it->second;
+		++it;
+	}
 }
 
-CString& CString::intern() {
+void CString::store() {
+	m_id = table.insert(this);
+}
+
+CString* CString::intern() {
 	return table.getCString(get_id());
 }
 

@@ -32,7 +32,7 @@
 #include <map>
 #include <locale>
 
-#define CSTRING(xstring) (CString(xstring).intern())
+#define CSTRING(xstring) (clever::CString(xstring).intern())
 
 namespace clever {
 
@@ -40,21 +40,24 @@ class CStringTable;
 
 class CString : public std::string {
 public:
-	CString(const CString& str) : std::string(str), m_id(-1) { store();	}
-	CString(const std::string& str) : std::string(str), m_id(-1) { store(); }
-	CString(const char* str) : std::string(str), m_id(-1) { store(); }
+	CString(const CString& str, long id)
+		: std::string(str), m_id(id) { }
 
-	CString& intern();
+	//explicit CString(const CString& str) : std::string(str), m_id(-1) { store(); }
+	explicit CString(std::string str) : std::string(str), m_id(-1) { store(); }
+	//explicit CString(const char* str) : std::string(str), m_id(-1) { store(); }
 
-	bool hasSameId(const CString& cstring) const { return get_id() == cstring.get_id(); }
+	CString* intern();
+
+	bool hasSameId(CString* cstring) const { return get_id() == cstring->get_id(); }
 	long get_id() const { return m_id; }
-	void set_id(long id) { 
+	void set_id(long id) {
 		if (m_id == -1)  {
 			m_id = id;
 		}
 	}
-	
-	bool operator==(const CString& cstring) {
+
+	bool operator==(CString* cstring) {
 		return hasSameId(cstring);
 	}
 
@@ -69,30 +72,35 @@ private:
 	void store();
 };
 
-typedef std::map<long, CString> CStringTableBase;
+typedef std::map<long, CString*> CStringTableBase;
 
 class CStringTable : public CStringTableBase {
 public:
-	CStringTable() : CStringTableBase() { 
-		//reserve(256);
+	CStringTable() : CStringTableBase() {
 		coll = &std::use_facet<std::collate<char> >(loc);
 	}
+	~CStringTable();
 
-	bool contains(const CString& cstring) const {
-		int id = cstring.get_id();
-		return id != -1 && id < (signed)size() && (*find(id)).second.hasSameId(cstring);
+	bool contains(CString* cstring) const {
+		int id = cstring->get_id();
+		return id != -1 && id < (signed)size() && (*find(id)).second->hasSameId(cstring);
 	}
-	
-	CString& getCString(long id) {
+
+	CString* getCString(long id) {
 		return (*find(id)).second;
 	}
 
-	long insert(CString& cstring) {
-		int id = hash(cstring);
-		cstring.set_id(id);
+	long insert(CString* cstring) {
+		int id = hash(*cstring);
 
-		/* assume conflicts are not possible. */
-		CStringTableBase::insert(std::pair<long, CString>(id, cstring));
+		cstring->set_id(id);
+
+		if (CStringTableBase::find(id) == end()) {
+			CString* new_string = new CString(*cstring, id);
+
+			/* assume conflicts are not possible. */
+			CStringTableBase::insert(std::pair<long, CString*>(id, new_string));
+		}
 
 		return id;
 	}
@@ -100,7 +108,7 @@ private:
 	std::locale loc;
 	const std::collate<char>* coll;
 
-	long hash(const CString& cstring) const {
+	inline long hash(CString& cstring) const {
 		return coll->hash(cstring.data(), cstring.data()+cstring.length());
 	}
 };

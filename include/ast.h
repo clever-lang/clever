@@ -31,6 +31,7 @@
 #include <string>
 #include <vector>
 #include "types.h"
+#include "cstring.h"
 #include "opcodes.h"
 #include "refcounted.h"
 
@@ -162,7 +163,7 @@ private:
 
 class IdentifierAST : public ExprAST {
 public:
-	explicit IdentifierAST(std::string name)
+	explicit IdentifierAST(CString* name)
 		: ExprAST() {
 		m_value = new NamedValue(name);
 	}
@@ -180,7 +181,7 @@ private:
 
 class StringLiteralAST : public ExprAST {
 public:
-	explicit StringLiteralAST(std::string name)
+	explicit StringLiteralAST(CString* name)
 		: ExprAST() {
 		m_value = new ConstantValue(name);
 	}

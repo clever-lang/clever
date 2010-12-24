@@ -66,7 +66,7 @@ ConstantValue* Compiler::constantFolding(char op, Value* lhs, Value* rhs) {
 			if (lhs->isInteger()) {
 				return new ConstantValue(lhs->getInteger() + rhs->getInteger());
 			} else if (lhs->isString()) {
-				return new ConstantValue(lhs->getString() + rhs->getString());
+				return new ConstantValue(CSTRING(lhs->getString() + rhs->getString()));
 			} else if (lhs->isDouble()) {
 				return new ConstantValue(lhs->getDouble() + rhs->getDouble());
 			}

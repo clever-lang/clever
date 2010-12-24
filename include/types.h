@@ -34,6 +34,7 @@
 #include <string>
 #include "config.h"
 #include "refcounted.h"
+#include "cstring.h"
 
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
 	TypeName(const TypeName&);             \
@@ -51,9 +52,6 @@ public:
 	explicit Value(int kind) : RefCounted(1), m_status(UNSET), m_type(UNKNOWN), m_kind(kind) {}
 
 	virtual ~Value() {
-		if (isString()) {
-			delete m_data.s_value;
-		}
 	}
 
 	inline void set_type(int type) { m_type = type; }
@@ -82,7 +80,7 @@ public:
 	inline bool isUserValue(void) const { return m_type == USER; }
 
 	inline void setInteger(int64_t i) { m_data.l_value = i; }
-	inline void setString(std::string* s) { m_data.s_value = s;	}
+	inline void setString(CString* s) { m_data.s_value = s;	}
 	inline void setDouble(double d) { m_data.d_value = d; }
 	inline void setBoolean(bool b) { m_data.b_value = b; }
 
@@ -117,7 +115,7 @@ public:
 				return std::string();
 		}
 	}
-	
+
 private:
 	int m_status;
 	int m_type;
@@ -127,7 +125,7 @@ private:
 		int64_t l_value;
 		double d_value;
 		bool b_value;
-		std::string* s_value;
+		CString* s_value;
 		void* u_value;
 	} m_data;
 };
@@ -142,10 +140,10 @@ public:
 	NamedValue()
 		: Value(NAMED) { }
 
-	explicit NamedValue(std::string name)
+	explicit NamedValue(CString* name)
 		: Value(NAMED) {
 		set_type(STRING);
-		setString(new std::string(name));
+		setString(name);
 	}
 };
 
@@ -164,9 +162,9 @@ public:
 		setInteger(value);
 	}
 
-	explicit ConstantValue(std::string value) : Value(CONST) {
+	explicit ConstantValue(CString* value) : Value(CONST) {
 		set_type(STRING);
-		setString(new std::string(value));
+		setString(value);
 	}
 
 	~ConstantValue() {

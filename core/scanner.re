@@ -29,6 +29,7 @@
 #include "scanner.h"
 #include "parser.hh"
 #include "ast.h"
+#include "cstring.h"
 
 enum YYCONDTYPE {
 	yycINITIAL,
@@ -165,12 +166,12 @@ next_token:
 	}
 
 	<INITIAL>IDENTIFIER {
-		*yylval = new clever::ast::IdentifierAST(std::string(s->yylex, yylen));
+		*yylval = new clever::ast::IdentifierAST(CSTRING(std::string(s->yylex, yylen)));
 		RET(token::IDENT);
 	}
 
 	<INITIAL>TYPE {
-		*yylval = new clever::ast::IdentifierAST(std::string(s->yylex, yylen));
+		*yylval = new clever::ast::IdentifierAST(CSTRING(std::string(s->yylex, yylen)));
 		RET(token::TYPE);
 	}
 
@@ -202,7 +203,7 @@ next_token:
 			}
 		}
 
-		*yylval = new clever::ast::StringLiteralAST(strtext);
+		*yylval = new clever::ast::StringLiteralAST(CSTRING(strtext));
 		RET(token::STR);
 	}
 
