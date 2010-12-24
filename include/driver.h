@@ -59,10 +59,6 @@ public:
 	void error(const clever::location&, const std::string&) const;
 	void error(const std::string&) const;
 
-	inline void compilerInit(ast::TreeNode::nodeList& nodes) {
-		compiler.Init(nodes);
-	}
-
 	typedef std::stack<clever::ScannerState*> ScannerStack;
 
 	// Indicates if it's a file is being parsed
