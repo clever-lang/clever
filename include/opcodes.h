@@ -38,11 +38,17 @@ enum Opcodes {
 	OP_PLUS,
 	OP_DIV,
 	OP_MULT,
-	OP_MINUS
+	OP_MINUS,
+	OP_NEW_SCOPE,
+	OP_END_SCOPE,
+	OP_VAR_DECL
 };
 
 class Opcode {
 public:
+	Opcode(Opcodes op_type, VM::opcode_handler handler)
+		: m_op_type(op_type), m_handler(handler), m_op1(NULL), m_op2(NULL), m_result(NULL) { }
+
 	Opcode(Opcodes op_type, VM::opcode_handler handler, Value* op1)
 		: m_op_type(op_type), m_handler(handler), m_op1(op1), m_op2(NULL), m_result(NULL) { }
 

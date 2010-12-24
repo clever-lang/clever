@@ -203,7 +203,7 @@ next_token:
 			}
 		}
 
-		*yylval = new clever::ast::IdentifierAST(strtext);
+		*yylval = new clever::ast::StringLiteralAST(strtext);
 		RET(token::STR);
 	}
 

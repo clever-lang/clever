@@ -69,6 +69,8 @@ public:
 	inline bool hasSameKind(Value* value) { return get_kind() == value->get_kind(); }
 
 	inline bool isConst() const { return m_kind == CONST; }
+	inline bool isNamedValue(void) const { return m_kind == NAMED; }
+	inline bool isTempValue(void) const { return m_kind == TEMP; }
 
 	inline bool isInteger(void) const { return m_type == INTEGER; }
 	inline bool isString(void) const { return m_type == STRING; }
@@ -128,14 +130,14 @@ private:
 
 class NamedValue : public Value {
 public:
-	NamedValue() : Value(), m_name() {}
-	NamedValue(int kind) : Value(kind), m_name() {}
+	NamedValue()
+		: Value(NAMED) { }
 
-	inline void set_name(std::string& name) { m_name.assign(name); }
-	inline std::string get_name() const { return m_name; }
-
-private:
-	std::string m_name;
+	explicit NamedValue(std::string name)
+		: Value(NAMED) {
+		set_type(STRING);
+		setString(new std::string(name));
+	}
 };
 
 /*

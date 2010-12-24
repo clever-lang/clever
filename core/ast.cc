@@ -120,8 +120,23 @@ std::string BinaryExprAST::debug(void) {
 /*
  * VariableDeclAST
  */
-Value* VariableDeclAST::codeGen(void) {
+Opcode* VariableDeclAST::opcodeGen(void) {
+	/* Check if the declaration contains initialization */
+	if (m_rhs) {
+		Value* variable = m_variable->codeGen();
+		Value* value = m_rhs->codeGen();
 
+		variable->addRef();
+		value->addRef();
+
+		return new Opcode(OP_VAR_DECL, &VM::var_decl_handler, variable, value);
+	} else {
+		return new Opcode(OP_VAR_DECL, &VM::var_decl_handler, m_variable->codeGen());
+	}
+}
+
+Value* VariableDeclAST::codeGen(void) {
+	return NULL;
 }
 
 std::string VariableDeclAST::debug(void) {
@@ -140,6 +155,17 @@ std::string IdentifierAST::debug(void) {
 }
 
 /*
+ * StringLiteralAST
+ */
+Value* StringLiteralAST::codeGen(void) {
+	return m_value;
+}
+
+std::string StringLiteralAST::debug(void) {
+	return m_value->toString();
+}
+
+/*
  * TypeCreationAST
  */
 Value* TypeCreationAST::codeGen(void) {
@@ -153,6 +179,10 @@ std::string TypeCreationAST::debug(void) {
 /*
  * NewBlockAST
  */
+Opcode* NewBlockAST::opcodeGen(void) {
+	return new Opcode(OP_NEW_SCOPE, &VM::new_scope_handler);
+}
+
 Value* NewBlockAST::codeGen(void) {
 	return NULL;
 }
@@ -164,6 +194,10 @@ std::string NewBlockAST::debug(void) {
 /*
  * EndBlockAST
  */
+Opcode* EndBlockAST::opcodeGen(void) {
+	return new Opcode(OP_END_SCOPE, &VM::end_scope_handler);
+}
+
 Value* EndBlockAST::codeGen(void) {
 	return NULL;
 }

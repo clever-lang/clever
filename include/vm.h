@@ -28,13 +28,48 @@
 #ifndef CLEVER_VM_H
 #define CLEVER_VM_H
 
+#include <stack>
+#include <map>
 #include <vector>
+#include "types.h"
 
 #define CLEVER_VM_HANDLER_ARGS Opcode* opcode
 
 namespace clever {
 
 class Opcode;
+
+struct SymbolTable {
+public:
+	typedef std::map<std::string, Value*> var_map;
+
+	inline void register_var(std::string name, Value* value) {
+		m_variables.top().insert(std::pair<std::string, Value*>(name, value));
+	}
+
+	inline Value* get_var(std::string name) {
+		var_map::iterator it = m_variables.top().find(name);
+
+		return it->second;
+	}
+
+	inline void pushVarMap(var_map map) {
+		m_variables.push(map);
+	}
+
+	inline void popVarMap() {
+		var_map::iterator it = m_variables.top().begin();
+
+		while (it != m_variables.top().end()) {
+			it->second->delRef();
+			++it;
+		}
+		m_variables.pop();
+	}
+
+private:
+	std::stack<var_map> m_variables;
+};
 
 class VM {
 public:
@@ -58,8 +93,12 @@ public:
 	void div_handler(CLEVER_VM_HANDLER_ARGS);
 	void mult_handler(CLEVER_VM_HANDLER_ARGS);
 	void minus_handler(CLEVER_VM_HANDLER_ARGS);
+	void new_scope_handler(CLEVER_VM_HANDLER_ARGS);
+	void end_scope_handler(CLEVER_VM_HANDLER_ARGS);
+	void var_decl_handler(CLEVER_VM_HANDLER_ARGS);
 private:
 	OpcodeList* m_opcodes;
+	SymbolTable m_symbols;
 };
 
 } // clever

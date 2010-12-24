@@ -39,15 +39,12 @@ VM::~VM(void) {
 
 	while (it < m_opcodes->end()) {
 		if ((*it)->get_op1()) {
-			// std::cout << (*it)->get_op1() << " (refcount: " << (*it)->get_op1()->refCount() << ")" << std::endl;
 			(*it)->get_op1()->delRef();
 		}
 		if ((*it)->get_op2()) {
-			// std::cout << (*it)->get_op2() << " (refcount: " << (*it)->get_op2()->refCount() << ")" << std::endl;
 			(*it)->get_op2()->delRef();
 		}
 		if ((*it)->get_result()) {
-			// std::cout << (*it)->get_result() << " (refcount: " << (*it)->get_result()->refCount() << ")" << std::endl;
 			(*it)->get_result()->delRef();
 		}
 		delete *it;
@@ -61,19 +58,29 @@ VM::~VM(void) {
 void VM::run(void) {
 	OpcodeList::iterator it = m_opcodes->begin();
 
+	m_symbols.pushVarMap(SymbolTable::var_map());
+
 	while (it < m_opcodes->end()) {
 		Opcode* opcode = *it;
 
 		(this->*((*it)->get_handler()))(*it);
 		++it;
 	}
+
+	m_symbols.popVarMap();
 }
 
 /*
  * echo statemenet
  */
 void VM::echo_handler(CLEVER_VM_HANDLER_ARGS) {
-	std::cout << opcode->get_op1()->toString() << std::endl;
+	Value* op1 = opcode->get_op1();
+
+	if (op1->isNamedValue()) {
+		std::cout << m_symbols.get_var(op1->toString())->toString() << std::endl;
+	} else {
+		std::cout << opcode->get_op1()->toString() << std::endl;
+	}
 }
 
 /*
@@ -100,5 +107,18 @@ void VM::minus_handler(CLEVER_VM_HANDLER_ARGS) {
 void VM::mult_handler(CLEVER_VM_HANDLER_ARGS) {
 }
 
+void VM::new_scope_handler(CLEVER_VM_HANDLER_ARGS) {
+}
+
+void VM::end_scope_handler(CLEVER_VM_HANDLER_ARGS) {
+}
+
+void VM::var_decl_handler(CLEVER_VM_HANDLER_ARGS) {
+	Value* value = opcode->get_op2();
+
+	value->addRef();
+
+	m_symbols.register_var(opcode->get_op1()->toString(), value);
+}
 
 } // clever

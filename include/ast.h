@@ -148,6 +148,8 @@ public:
 		m_rhs->delRef();
 	}
 
+	Opcode* opcodeGen();
+
 	DISALLOW_COPY_AND_ASSIGN(VariableDeclAST);
 
 	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
@@ -162,7 +164,7 @@ class IdentifierAST : public ExprAST {
 public:
 	explicit IdentifierAST(std::string name)
 		: ExprAST() {
-		m_value = new ConstantValue(name);
+		m_value = new NamedValue(name);
 	}
 
 	~IdentifierAST() {
@@ -170,6 +172,24 @@ public:
 	}
 
 	DISALLOW_COPY_AND_ASSIGN(IdentifierAST);
+
+	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
+private:
+	NamedValue* m_value;
+};
+
+class StringLiteralAST : public ExprAST {
+public:
+	explicit StringLiteralAST(std::string name)
+		: ExprAST() {
+		m_value = new ConstantValue(name);
+	}
+
+	~StringLiteralAST() {
+		m_value->delRef();
+	}
+
+	DISALLOW_COPY_AND_ASSIGN(StringLiteralAST);
 
 	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
 private:
@@ -201,6 +221,8 @@ class NewBlockAST : public ExprAST {
 public:
 	NewBlockAST() : ExprAST() { }
 
+	Opcode* opcodeGen();
+
 	DISALLOW_COPY_AND_ASSIGN(NewBlockAST);
 
 	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
@@ -209,6 +231,8 @@ public:
 class EndBlockAST : public ExprAST {
 public:
 	EndBlockAST() : ExprAST() { }
+
+	Opcode* opcodeGen();
 
 	DISALLOW_COPY_AND_ASSIGN(EndBlockAST);
 
