@@ -72,22 +72,25 @@ public:
 	inline bool isNamedValue(void) const { return m_kind == NAMED; }
 	inline bool isTempValue(void) const { return m_kind == TEMP; }
 
-	inline bool isInteger(void) const { return m_type == INTEGER; }
-	inline bool isString(void) const { return m_type == STRING; }
-	inline bool isDouble(void) const { return m_type == DOUBLE; }
-	inline bool isUserValue(void) const { return m_type == USER; }
-
 	inline bool isSet(void) const { return m_status != UNSET; }
 	inline bool isModified(void) const { return m_status == MODIFIED; }
 
+	inline bool isInteger(void) const { return m_type == INTEGER; }
+	inline bool isString(void) const { return m_type == STRING; }
+	inline bool isDouble(void) const { return m_type == DOUBLE; }
+	inline bool isBoolean(void) const { return m_type == BOOLEAN; }
+	inline bool isUserValue(void) const { return m_type == USER; }
+
 	inline void setInteger(int64_t i) { m_data.l_value = i; }
-	inline void setDouble(double d) { m_data.d_value = d; }
 	inline void setString(std::string* s) { m_data.s_value = s;	}
+	inline void setDouble(double d) { m_data.d_value = d; }
+	inline void setBoolean(bool b) { m_data.b_value = b; }
 
 	inline int64_t getInteger(void) const { return m_data.l_value; }
-	inline double getDouble(void) const { return m_data.d_value; }
 	inline std::string* getStringP(void) const { return m_data.s_value; }
 	inline std::string getString(void) const { return *m_data.s_value; }
+	inline double getDouble(void) const { return m_data.d_value; }
+	inline double getBoolean(void) const { return m_data.d_value; }
 
 	virtual void set_value(Value* value) { }
 
@@ -120,16 +123,19 @@ private:
 	int m_type;
 	int m_kind;
 
-
 	union {
 		int64_t l_value;
 		double d_value;
+		bool b_value;
 		std::string* s_value;
+		void* u_value;
 	} m_data;
 };
 
-/*
- * Symbol names used for opcodes
+/**
+ * Symbol names used for opcodes.
+ *
+ * e.g. Functions and Variables.
  */
 class NamedValue : public Value {
 public:
@@ -143,7 +149,7 @@ public:
 	}
 };
 
-/*
+/**
  * Constant values used for opcodes
  */
 class ConstantValue : public Value {
