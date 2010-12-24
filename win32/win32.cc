@@ -26,6 +26,7 @@
  */
 
 // If this is not a Windows host, don't compile this file.
+
 #ifdef _WIN32
 
 #include <iostream>
