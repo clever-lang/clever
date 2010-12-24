@@ -39,7 +39,7 @@ namespace clever {
 
 class Opcode;
 
-struct SymbolTable {
+class SymbolTable {
 public:
 	typedef std::map<std::string, Value*> var_map;
 
