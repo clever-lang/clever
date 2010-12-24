@@ -30,6 +30,7 @@
 #include <string>
 #include <stack>
 #include "parser.hh"
+#include "compiler.h"
 
 namespace clever {
 class ScannerState;
@@ -48,15 +49,19 @@ public:
 	virtual ~Driver() { }
 
 	// Read file to the scanner
-	void read_file(void);
+	void readFile(void);
 
 	// Run the parser
-	int parse_str(const std::string&);
-	int parse_file(const std::string&);
+	int parseStr(const std::string&);
+	int parseFile(const std::string&);
 
 	// Error handling
 	void error(const clever::location&, const std::string&) const;
 	void error(const std::string&) const;
+
+	inline void compilerInit(ast::TreeNode::nodeList& nodes) {
+		compiler.Init(nodes);
+	}
 
 	typedef std::stack<clever::ScannerState*> ScannerStack;
 
@@ -72,6 +77,8 @@ public:
 	bool m_trace_parsing;
 	// Scanners stack
 	static ScannerStack m_scanners;
+	// Compiler
+	Compiler compiler;
 };
 
 class Interpreter : public Driver {

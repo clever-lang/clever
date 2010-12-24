@@ -72,7 +72,7 @@ public:
 		node->addRef();
 		nodes.push_back(node);
 	}
-	inline nodeList getNodeList() const {
+	inline nodeList& getNodeList() {
 		return nodes;
 	}
 private:

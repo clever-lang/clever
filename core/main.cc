@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) {
 	for (int i = 1; i < argc; ++i) {
 		if (argv[i] == std::string("-f")) {
 			MORE_ARG();
-			clever.parse_file(argv[i]);
+			clever.parseFile(argv[i]);
 			clever.execute();
 			clever.shutdown();
 			break;
@@ -68,7 +68,7 @@ int main(int argc, char *argv[]) {
 #endif
 		} else if (argv[i] == std::string("-r")) {
 			MORE_ARG();
-			clever.parse_str(argv[i]);
+			clever.parseStr(argv[i]);
 			clever.execute();
 			clever.shutdown();
 			break;
@@ -77,7 +77,7 @@ int main(int argc, char *argv[]) {
 
 			while (std::cin) {
 				getline(std::cin, input_line);
-				clever.parse_str(input_line + '\n');
+				clever.parseStr(input_line + '\n');
 				clever.execute();
   			}
   			clever.shutdown();

@@ -37,7 +37,7 @@ class Compiler {
 public:
 	Compiler() { }
 
-	void Init(ast::TreeNode::nodeList);
+	void Init(ast::TreeNode::nodeList&);
 	void dumpAST(void);
 	void buildIR(void);
 

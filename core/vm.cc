@@ -74,13 +74,9 @@ void VM::run(void) {
  * echo statemenet
  */
 void VM::echo_handler(CLEVER_VM_HANDLER_ARGS) {
-	Value* op1 = opcode->get_op1();
+	Value* op1 = getValue(opcode->get_op1());
 
-	if (op1->isNamedValue()) {
-		std::cout << m_symbols.get_var(op1->toString())->toString() << std::endl;
-	} else {
-		std::cout << opcode->get_op1()->toString() << std::endl;
-	}
+	std::cout << op1->toString() << std::endl;
 }
 
 /*

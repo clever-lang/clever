@@ -61,10 +61,8 @@ class Driver;
 
 %code {
 #include "driver.h"
-#include "compiler.h"
 
 clever::ast::TreeNode nodes;
-clever::Compiler compiler;
 }
 
 %token END  0       "end of file"
@@ -107,7 +105,7 @@ clever::Compiler compiler;
 %start top_statements;
 
 top_statements:
-		statement_list { compiler.Init(nodes.getNodeList()); /* compiler.dumpAST(); */ compiler.buildIR(); }
+		statement_list { driver.compiler.Init(nodes.getNodeList()); }
 ;
 
 statement_list:

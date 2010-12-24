@@ -36,7 +36,8 @@ namespace clever {
 Driver::ScannerStack Driver::m_scanners;
 
 void Interpreter::execute(void) {
-
+	// compiler.dumpAST();
+	compiler.buildIR();
 }
 
 void Interpreter::shutdown(void) {
@@ -46,7 +47,7 @@ void Interpreter::shutdown(void) {
 /**
  * Read the file defined in file property
  */
-void Driver::read_file(void) {
+void Driver::readFile(void) {
 	std::string line;
 	std::fstream filep;
 
@@ -69,7 +70,7 @@ void Driver::read_file(void) {
  * Parses a file
  * @param filename the file name
  */
-int Driver::parse_file(const std::string& filename) {
+int Driver::parseFile(const std::string& filename) {
 	ScannerState* new_scanner = new ScannerState;
 	Parser parser(*this, new_scanner);
 	int result = 0;
@@ -78,7 +79,7 @@ int Driver::parse_file(const std::string& filename) {
 	// Save the filename
 	m_file = filename;
 	// Read the file
-	read_file();
+	readFile();
 	// Set the file source to scanner read it
 	m_scanners.push(new_scanner);
 	m_scanners.top()->set_cursor(m_source.c_str());
@@ -97,7 +98,7 @@ int Driver::parse_file(const std::string& filename) {
  * Parses a string
  * @param source the string to be parsed
  */
-int Driver::parse_str(const std::string& code) {
+int Driver::parseStr(const std::string& code) {
 	ScannerState* new_scanner = new ScannerState;
 	Parser parser(*this, new_scanner);
 	int result = 0;

@@ -34,7 +34,7 @@ namespace clever {
 /*
  * Initializes the compiler data
  */
-void Compiler::Init(ast::TreeNode::nodeList nodes) {
+void Compiler::Init(ast::TreeNode::nodeList& nodes) {
 	m_ast = nodes;
 }
 
