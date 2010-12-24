@@ -117,7 +117,7 @@ public:
 				return std::string();
 		}
 	}
-
+	
 private:
 	int m_status;
 	int m_type;
