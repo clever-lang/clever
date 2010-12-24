@@ -25,6 +25,7 @@
  * $Id: parser.y 67 2010-12-22 18:55:54Z felipensp $
  */
 
+#include <cstdlib>
 #include <iostream>
 #include "opcodes.h"
 #include "vm.h"
@@ -50,6 +51,14 @@ VM::~VM(void) {
 		delete *it;
 		++it;
 	}
+}
+
+/*
+ * Displays an error message
+ */
+void VM::error(const char* message) const {
+	std::cout << "Runtime error: " << message << std::endl;
+	exit(1);
 }
 
 /*
@@ -88,8 +97,14 @@ void VM::plus_handler(CLEVER_VM_HANDLER_ARGS) {
 
 	if (op1->isConst() && op1->hasSameKind(op2) && op1->hasSameType(op2)) {
 		switch (op1->get_type()) {
+			case Value::STRING:
+				opcode->get_result()->set_value(new ConstantValue(CSTRING(op1->getString() + op2->getString())));
+				break;
 			case Value::INTEGER:
 				opcode->get_result()->set_value(new ConstantValue(op1->getInteger() + op2->getInteger()));
+				break;
+			case Value::DOUBLE:
+				opcode->get_result()->set_value(new ConstantValue(op1->getDouble() + op2->getDouble()));
 				break;
 		}
 	}
@@ -104,8 +119,14 @@ void VM::div_handler(CLEVER_VM_HANDLER_ARGS) {
 
 	if (op1->isConst() && op1->hasSameKind(op2) && op1->hasSameType(op2)) {
 		switch (op1->get_type()) {
+			case Value::STRING:
+				error("Operation not allow in strings!");
+				break;
 			case Value::INTEGER:
 				opcode->get_result()->set_value(new ConstantValue(op1->getInteger() / op2->getInteger()));
+				break;
+			case Value::DOUBLE:
+				opcode->get_result()->set_value(new ConstantValue(op1->getDouble() + op2->getDouble()));
 				break;
 		}
 	}
@@ -120,8 +141,14 @@ void VM::minus_handler(CLEVER_VM_HANDLER_ARGS) {
 
 	if (op1->isConst() && op1->hasSameKind(op2) && op1->hasSameType(op2)) {
 		switch (op1->get_type()) {
+			case Value::STRING:
+				error("Operation not allow in strings!");
+				break;
 			case Value::INTEGER:
 				opcode->get_result()->set_value(new ConstantValue(op1->getInteger() - op2->getInteger()));
+				break;
+			case Value::DOUBLE:
+				opcode->get_result()->set_value(new ConstantValue(op1->getDouble() + op2->getDouble()));
 				break;
 		}
 	}
@@ -136,8 +163,14 @@ void VM::mult_handler(CLEVER_VM_HANDLER_ARGS) {
 
 	if (op1->isConst() && op1->hasSameKind(op2) && op1->hasSameType(op2)) {
 		switch (op1->get_type()) {
+			case Value::STRING:
+				error("Operation not allow in strings!");
+				break;
 			case Value::INTEGER:
 				opcode->get_result()->set_value(new ConstantValue(op1->getInteger() * op2->getInteger()));
+				break;
+			case Value::DOUBLE:
+				opcode->get_result()->set_value(new ConstantValue(op1->getDouble() + op2->getDouble()));
 				break;
 		}
 	}

@@ -98,6 +98,7 @@ public:
 		: m_opcodes(opcodes) { }
 
 	void run(void);
+	void error(const char*) const;
 
 	inline void setOpcodes(OpcodeList* opcodes) {
 		m_opcodes = opcodes;
