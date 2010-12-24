@@ -144,9 +144,11 @@ void VM::mult_handler(CLEVER_VM_HANDLER_ARGS) {
 }
 
 void VM::new_scope_handler(CLEVER_VM_HANDLER_ARGS) {
+	m_symbols.pushVarMap(SymbolTable::var_map());
 }
 
 void VM::end_scope_handler(CLEVER_VM_HANDLER_ARGS) {
+	m_symbols.popVarMap();
 }
 
 void VM::var_decl_handler(CLEVER_VM_HANDLER_ARGS) {
