@@ -92,4 +92,5 @@ public:
 
 } // clever
 
-#endif /* CLEVER_REFCOUNTED_H */
+#endif /* CLEVER_CSTRING_H */
+
