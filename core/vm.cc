@@ -95,7 +95,10 @@ void VM::plus_handler(CLEVER_VM_HANDLER_ARGS) {
 	Value* op1 = getValue(opcode->get_op1());
 	Value* op2 = getValue(opcode->get_op2());
 
-	if (op1->isConst() && op1->hasSameKind(op2) && op1->hasSameType(op2)) {
+	if (op1->isConst() && op1->hasSameKind(op2)) {
+		if (!op1->hasSameType(op2)) {
+			error("Type mismatch!");
+		}
 		switch (op1->get_type()) {
 			case Value::STRING:
 				opcode->get_result()->set_value(new ConstantValue(CSTRING(op1->getString() + op2->getString())));
@@ -117,7 +120,10 @@ void VM::div_handler(CLEVER_VM_HANDLER_ARGS) {
 	Value* op1 = getValue(opcode->get_op1());
 	Value* op2 = getValue(opcode->get_op2());
 
-	if (op1->isConst() && op1->hasSameKind(op2) && op1->hasSameType(op2)) {
+	if (op1->isConst() && op1->hasSameKind(op2)) {
+		if (!op1->hasSameType(op2)) {
+			error("Type mismatch!");
+		}
 		switch (op1->get_type()) {
 			case Value::STRING:
 				error("Operation not allow in strings!");
@@ -139,7 +145,10 @@ void VM::minus_handler(CLEVER_VM_HANDLER_ARGS) {
 	Value* op1 = getValue(opcode->get_op1());
 	Value* op2 = getValue(opcode->get_op2());
 
-	if (op1->isConst() && op1->hasSameKind(op2) && op1->hasSameType(op2)) {
+	if (op1->isConst() && op1->hasSameKind(op2)) {
+		if (!op1->hasSameType(op2)) {
+			error("Type mismatch!");
+		}
 		switch (op1->get_type()) {
 			case Value::STRING:
 				error("Operation not allow in strings!");
@@ -161,7 +170,10 @@ void VM::mult_handler(CLEVER_VM_HANDLER_ARGS) {
 	Value* op1 = getValue(opcode->get_op1());
 	Value* op2 = getValue(opcode->get_op2());
 
-	if (op1->isConst() && op1->hasSameKind(op2) && op1->hasSameType(op2)) {
+	if (op1->isConst() && op1->hasSameKind(op2)) {
+		if (!op1->hasSameType(op2)) {
+			error("Type mismatch!");
+		}
 		switch (op1->get_type()) {
 			case Value::STRING:
 				error("Operation not allow in strings!");
