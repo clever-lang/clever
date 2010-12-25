@@ -28,8 +28,6 @@
 #ifndef CLEVER_TYPES_H
 #define CLEVER_TYPES_H
 
-#include <stdint.h>
-#include <iostream>
 #include <sstream>
 #include <string>
 #include "config.h"

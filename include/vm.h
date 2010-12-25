@@ -31,7 +31,6 @@
 #include <deque>
 #include <map>
 #include <vector>
-#include "types.h"
 
 #define CLEVER_VM_HANDLER_ARGS Opcode* opcode
 
