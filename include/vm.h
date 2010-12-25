@@ -107,6 +107,9 @@ public:
 	 * Returns the value from a Value pointer according to Value type
 	 */
 	inline Value* getValue(Value* op) {
+		if (!op) {
+			return NULL;
+		}
 		switch (op->get_kind()) {
 			case Value::NAMED:
 				return m_symbols.get_var(op->getString());

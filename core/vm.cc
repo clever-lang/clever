@@ -275,8 +275,12 @@ void VM::end_scope_handler(CLEVER_VM_HANDLER_ARGS) {
  * Type var
  */
 void VM::var_decl_handler(CLEVER_VM_HANDLER_ARGS) {
-	Value* value = opcode->get_op2();
+	Value* value = getValue(opcode->get_op2());
 
+	/* TODO: Make the type initialization here */
+	if (!value) {
+		error("Uninitialized variable!");
+	}
 	value->addRef();
 
 	m_symbols.register_var(opcode->get_op1()->toString(), value);

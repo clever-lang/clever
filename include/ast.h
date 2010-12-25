@@ -177,13 +177,19 @@ public:
 		: Expression(), m_type(type), m_variable(variable), m_initial_value(rhs) {
 		m_type->addRef();
 		m_variable->addRef();
-		m_initial_value->addRef();
+
+		if (m_initial_value) {
+			m_initial_value->addRef();
+		}
 	}
 
 	~VariableDecl() {
 		m_type->delRef();
 		m_variable->delRef();
-		m_initial_value->delRef();
+
+		if (m_initial_value) {
+			m_initial_value->delRef();
+		}
 	}
 
 	Expression* get_variable() {
