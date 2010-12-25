@@ -61,36 +61,38 @@ bool Compiler::checkCompatibleTypes(Value* lhs, Value* rhs) {
  * Performs a constant folding optimization
  */
 ConstantValue* Compiler::constantFolding(char op, Value* lhs, Value* rhs) {
+#define DO_NUM_OPERATION(_op, type, x, y) \
+	if (x->is##type()) return new ConstantValue(x->get##type() _op y->get##type());
+
+#define DO_STR_OPERATION(_op, x, y) \
+	if (x->isString()) return new ConstantValue(CSTRING(x->getString() _op y->getString()));
+
 	switch (op) {
 		case '+':
-			if (lhs->isInteger()) {
-				return new ConstantValue(lhs->getInteger() + rhs->getInteger());
-			} else if (lhs->isString()) {
-				return new ConstantValue(CSTRING(lhs->getString() + rhs->getString()));
-			} else if (lhs->isDouble()) {
-				return new ConstantValue(lhs->getDouble() + rhs->getDouble());
-			}
+			DO_NUM_OPERATION(+, Integer, lhs, rhs);
+			DO_STR_OPERATION(+, lhs, rhs);
+			DO_NUM_OPERATION(+, Double, lhs, rhs);
 			break;
 		case '-':
-			if (lhs->isInteger()) {
-				return new ConstantValue(lhs->getInteger() - rhs->getInteger());
-			} else if (lhs->isDouble()) {
-				return new ConstantValue(lhs->getDouble() - rhs->getDouble());
-			}
+			DO_NUM_OPERATION(-, Integer, lhs, rhs);
+			DO_NUM_OPERATION(-, Double, lhs, rhs);
 			break;
 		case '/':
-			if (lhs->isInteger()) {
-				return new ConstantValue(lhs->getInteger() / rhs->getInteger());
-			} else if (lhs->isDouble()) {
-				return new ConstantValue(lhs->getDouble() / rhs->getDouble());
-			}
+			DO_NUM_OPERATION(/, Integer, lhs, rhs);
+			DO_NUM_OPERATION(/, Double, lhs, rhs);
 			break;
 		case '*':
-			if (lhs->isInteger()) {
-				return new ConstantValue(lhs->getInteger() * rhs->getInteger());
-			} else if (lhs->isDouble()) {
-				return new ConstantValue(lhs->getDouble() * rhs->getDouble());
-			}
+			DO_NUM_OPERATION(*, Integer, lhs, rhs);
+			DO_NUM_OPERATION(*, Double, lhs, rhs);
+			break;
+		case '|':
+			DO_NUM_OPERATION(|, Integer, lhs, rhs);
+			break;
+		case '^':
+			DO_NUM_OPERATION(^, Integer, lhs, rhs);
+			break;
+		case '&':
+			DO_NUM_OPERATION(&, Integer, lhs, rhs);
 			break;
 	}
 	return NULL;
