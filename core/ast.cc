@@ -43,18 +43,18 @@ TreeNode::~TreeNode(void) {
 }
 
 /*
- * NumberExprAST
+ * NumberLiteral
  */
-Value* NumberExprAST::codeGen(void) {
+Value* NumberLiteral::codeGen(void) {
 	return m_value;
 }
 
-std::string NumberExprAST::debug(void) {
+std::string NumberLiteral::debug(void) {
 	return m_value->toString();
 }
 
-BinaryExprAST::BinaryExprAST(char op_, ExprAST* lhs, ExprAST* rhs)
-		: ExprAST(), m_op(op_), m_lhs(lhs), m_rhs(rhs), m_result(NULL), m_value(NULL), optimized(false) {
+BinaryExpression::BinaryExpression(char op_, Expression* lhs, Expression* rhs)
+		: Expression(), m_op(op_), m_lhs(lhs), m_rhs(rhs), m_result(NULL), m_value(NULL), optimized(false) {
 	Value* tmp_lhs = lhs->codeGen();
 	Value* tmp_rhs = rhs->codeGen();
 
@@ -82,9 +82,9 @@ BinaryExprAST::BinaryExprAST(char op_, ExprAST* lhs, ExprAST* rhs)
 }
 
 /*
- * BinaryExprAST
+ * BinaryExpression
  */
-Opcode* BinaryExprAST::opcodeGen(void) {
+Opcode* BinaryExpression::opcodeGen(void) {
 	Value* lhs;
 	Value* rhs;
 
@@ -109,7 +109,7 @@ Opcode* BinaryExprAST::opcodeGen(void) {
 	}
 }
 
-Value* BinaryExprAST::codeGen(void) {
+Value* BinaryExpression::codeGen(void) {
 	if (optimized) {
 		return m_value;
 	} else {
@@ -117,7 +117,7 @@ Value* BinaryExprAST::codeGen(void) {
 	}
 }
 
-std::string BinaryExprAST::debug(void) {
+std::string BinaryExpression::debug(void) {
 	if (optimized) {
 		return m_value->toString();
 	} else {
@@ -126,9 +126,9 @@ std::string BinaryExprAST::debug(void) {
 }
 
 /*
- * VariableDeclAST
+ * VariableDecl
  */
-Opcode* VariableDeclAST::opcodeGen(void) {
+Opcode* VariableDecl::opcodeGen(void) {
 	/* Check if the declaration contains initialization */
 	if (m_rhs) {
 		Value* variable = m_variable->codeGen();
@@ -143,91 +143,91 @@ Opcode* VariableDeclAST::opcodeGen(void) {
 	}
 }
 
-Value* VariableDeclAST::codeGen(void) {
+Value* VariableDecl::codeGen(void) {
 	return NULL;
 }
 
-std::string VariableDeclAST::debug(void) {
+std::string VariableDecl::debug(void) {
 	return m_type->debug() + " " + m_variable->debug() + " = " + m_rhs->debug();
 }
 
 /*
- * IdentifierAST
+ * Identifier
  */
-Value* IdentifierAST::codeGen(void) {
+Value* Identifier::codeGen(void) {
 	return m_value;
 }
 
-std::string IdentifierAST::debug(void) {
+std::string Identifier::debug(void) {
 	return m_value->toString();
 }
 
 /*
- * StringLiteralAST
+ * StringLiteral
  */
-Value* StringLiteralAST::codeGen(void) {
+Value* StringLiteral::codeGen(void) {
 	return m_value;
 }
 
-std::string StringLiteralAST::debug(void) {
+std::string StringLiteral::debug(void) {
 	return m_value->toString();
 }
 
 /*
- * TypeCreationAST
+ * TypeCreation
  */
-Value* TypeCreationAST::codeGen(void) {
+Value* TypeCreation::codeGen(void) {
 	return NULL;
 }
 
-std::string TypeCreationAST::debug(void) {
+std::string TypeCreation::debug(void) {
 	return m_type->debug();
 }
 
 /*
- * NewBlockAST
+ * NewBlock
  */
-Opcode* NewBlockAST::opcodeGen(void) {
+Opcode* NewBlock::opcodeGen(void) {
 	return new Opcode(OP_NEW_SCOPE, &VM::new_scope_handler);
 }
 
-Value* NewBlockAST::codeGen(void) {
+Value* NewBlock::codeGen(void) {
 	return NULL;
 }
 
-std::string NewBlockAST::debug(void) {
+std::string NewBlock::debug(void) {
 	return std::string("{");
 }
 
 /*
- * EndBlockAST
+ * EndBlock
  */
-Opcode* EndBlockAST::opcodeGen(void) {
+Opcode* EndBlock::opcodeGen(void) {
 	return new Opcode(OP_END_SCOPE, &VM::end_scope_handler);
 }
 
-Value* EndBlockAST::codeGen(void) {
+Value* EndBlock::codeGen(void) {
 	return NULL;
 }
 
-std::string EndBlockAST::debug(void) {
+std::string EndBlock::debug(void) {
 	return std::string("}");
 }
 
 /*
- * CommandAST
+ * Command
  */
-Value* CommandAST::codeGen(void) {
+Value* Command::codeGen(void) {
 	return NULL;
 }
 
-Opcode* CommandAST::opcodeGen(void) {
+Opcode* Command::opcodeGen(void) {
 	Value* value = m_value->codeGen();
 	value->addRef();
 	return new Opcode(OP_ECHO, &VM::echo_handler, value);
 }
 
-std::string CommandAST::debug(void) {
+std::string Command::debug(void) {
 	return "echo " + m_value->debug();
 }
 

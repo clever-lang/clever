@@ -166,12 +166,12 @@ next_token:
 	}
 
 	<INITIAL>IDENTIFIER {
-		*yylval = new clever::ast::IdentifierAST(CSTRING(std::string(s->yylex, yylen)));
+		*yylval = new clever::ast::Identifier(CSTRING(std::string(s->yylex, yylen)));
 		RET(token::IDENT);
 	}
 
 	<INITIAL>TYPE {
-		*yylval = new clever::ast::IdentifierAST(CSTRING(std::string(s->yylex, yylen)));
+		*yylval = new clever::ast::Identifier(CSTRING(std::string(s->yylex, yylen)));
 		RET(token::TYPE);
 	}
 
@@ -203,14 +203,14 @@ next_token:
 			}
 		}
 
-		*yylval = new clever::ast::StringLiteralAST(CSTRING(strtext));
+		*yylval = new clever::ast::StringLiteral(CSTRING(strtext));
 		RET(token::STR);
 	}
 
 	<INITIAL>INTEGER {
 		int64_t n = strtol(std::string(s->yylex, yylen).c_str(), NULL, 10);
 
-		*yylval = new clever::ast::NumberExprAST(n);
+		*yylval = new clever::ast::NumberLiteral(n);
 		RET(token::NUM_INTEGER);
 	}
 
@@ -218,7 +218,7 @@ next_token:
 		int64_t n = 0;
 
 		sscanf(std::string(s->yylex+2, yylen).c_str(), "%x", (unsigned long *)&n);
-		*yylval = new clever::ast::NumberExprAST(n);
+		*yylval = new clever::ast::NumberLiteral(n);
 
 		RET(token::NUM_INTEGER);
 	}
@@ -227,7 +227,7 @@ next_token:
 		int64_t n = 0;
 
 		sscanf(std::string(s->yylex+1, yylen), "%o", &n);
-		*yylval = new clever::ast::NumberExprAST(n);
+		*yylval = new clever::ast::NumberLiteral(n);
 
 		RET(token::NUM_INTEGER);
 	}
@@ -236,7 +236,7 @@ next_token:
 		double n = 0;
 
 		n = strtod(std::string(s->yylex, yylen).c_str(), NULL);
-		*yylval = new clever::ast::NumberExprAST(n);
+		*yylval = new clever::ast::NumberLiteral(n);
 
 		RET(token::NUM_DOUBLE);
 	}

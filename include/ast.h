@@ -42,11 +42,16 @@ namespace clever { namespace ast {
 	virtual Value *codeGen();           \
 	virtual std::string debug();
 
-class ExprAST : public RefCounted {
+class Expression : public RefCounted {
 public:
-	ExprAST() : RefCounted(0) { }
+	Expression() : RefCounted(0) { }
 
-	virtual ~ExprAST() { }
+	virtual ~Expression() { }
+
+	virtual bool isLiteral() const { return false; }
+
+	virtual bool hasValue() const { return false; }
+	virtual Value* get_value() const { return NULL; }
 
 	/*
 	 * Method for generating the expression IR
@@ -62,15 +67,14 @@ public:
 	}
 };
 
-
 class TreeNode {
 public:
-	typedef std::vector<ExprAST*> nodeList;
+	typedef std::vector<Expression*> nodeList;
 
 	TreeNode() { }
 	~TreeNode();
 
-	inline void add(ExprAST* node) {
+	inline void add(Expression* node) {
 		node->addRef();
 		nodes.push_back(node);
 	}
@@ -81,11 +85,22 @@ private:
 	nodeList nodes;
 };
 
-class BinaryExprAST : public ExprAST {
-public:
-	BinaryExprAST(char, ExprAST*, ExprAST*);
 
-	~BinaryExprAST() {
+class Literal : public Expression {
+public:
+	Literal() : Expression() { }
+	virtual ~Literal() { }
+
+	bool isLiteral() const { return true; }
+	virtual bool hasValue() const { return true; }
+	virtual Value* get_value() const { return NULL; }
+};
+
+class BinaryExpression : public Expression {
+public:
+	BinaryExpression(char, Expression*, Expression*);
+
+	~BinaryExpression() {
 		if (m_value) {
 			m_value->delRef();
 		}
@@ -97,37 +112,42 @@ public:
 		}
 	}
 
+	bool hasValue() const { return true; }
+	Value* get_value() const { return m_value; }
+
 	Opcode* opcodeGen();
-	DISALLOW_COPY_AND_ASSIGN(BinaryExprAST);
+	DISALLOW_COPY_AND_ASSIGN(BinaryExpression);
 
 	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
 
 private:
 	char m_op;
 	bool optimized;
-	ExprAST* m_lhs;
-	ExprAST* m_rhs;
+	Expression* m_lhs;
+	Expression* m_rhs;
 	TempValue* m_result;
 	ConstantValue* m_value;
 };
 
-class NumberExprAST : public ExprAST {
+class NumberLiteral : public Literal {
 public:
-	explicit NumberExprAST(int64_t val)
-		: ExprAST() {
+	explicit NumberLiteral(int64_t val)
+		: Literal() {
 		m_value = new ConstantValue(val);
 	}
 
-	explicit NumberExprAST(double val)
-		: ExprAST() {
+	explicit NumberLiteral(double val)
+		: Literal() {
 		m_value = new ConstantValue(val);
 	}
 
-	~NumberExprAST() {
+	~NumberLiteral() {
 		m_value->delRef();
 	}
+	
+	Value* get_value() { return m_value; };
 
-	DISALLOW_COPY_AND_ASSIGN(NumberExprAST);
+	DISALLOW_COPY_AND_ASSIGN(NumberLiteral);
 
 	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
 
@@ -135,16 +155,16 @@ private:
 	ConstantValue* m_value;
 };
 
-class VariableDeclAST : public ExprAST {
+class VariableDecl : public Expression {
 public:
-	VariableDeclAST(ExprAST* type, ExprAST* variable, ExprAST* rhs)
-		: ExprAST(), m_type(type), m_variable(variable), m_rhs(rhs) {
+	VariableDecl(Expression* type, Expression* variable, Expression* rhs)
+		: Expression(), m_type(type), m_variable(variable), m_rhs(rhs) {
 		m_type->addRef();
 		m_variable->addRef();
 		m_rhs->addRef();
 	}
 
-	~VariableDeclAST() {
+	~VariableDecl() {
 		m_type->delRef();
 		m_variable->delRef();
 		m_rhs->delRef();
@@ -152,113 +172,118 @@ public:
 
 	Opcode* opcodeGen();
 
-	DISALLOW_COPY_AND_ASSIGN(VariableDeclAST);
+	DISALLOW_COPY_AND_ASSIGN(VariableDecl);
 
 	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
 
 private:
-	ExprAST* m_type;
-	ExprAST* m_variable;
-	ExprAST* m_rhs;
+	Expression* m_type;
+	Expression* m_variable;
+	Expression* m_rhs;
 };
 
-class IdentifierAST : public ExprAST {
+class Identifier : public Expression {
 public:
-	explicit IdentifierAST(CString* name)
-		: ExprAST() {
+	explicit Identifier(CString* name)
+		: Expression() {
 		m_value = new NamedValue(name);
 	}
 
-	~IdentifierAST() {
+	~Identifier() {
 		m_value->delRef();
 	}
+	
+	bool hasValue() const { return true; }
+	Value* get_value() const { return m_value; }
 
-	DISALLOW_COPY_AND_ASSIGN(IdentifierAST);
+	DISALLOW_COPY_AND_ASSIGN(Identifier);
 
 	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
 private:
 	NamedValue* m_value;
 };
 
-class StringLiteralAST : public ExprAST {
+class StringLiteral : public Literal {
 public:
-	explicit StringLiteralAST(CString* name)
-		: ExprAST() {
+	explicit StringLiteral(CString* name)
+		: Literal() {
 		m_value = new ConstantValue(name);
 	}
 
-	~StringLiteralAST() {
+	Value* get_value() { return m_value; };
+
+	~StringLiteral() {
 		m_value->delRef();
 	}
 
-	DISALLOW_COPY_AND_ASSIGN(StringLiteralAST);
+	DISALLOW_COPY_AND_ASSIGN(StringLiteral);
 
 	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
 private:
 	ConstantValue* m_value;
 };
 
-class TypeCreationAST : public ExprAST {
+class TypeCreation : public Expression {
 public:
-	TypeCreationAST(ExprAST* type, ExprAST* arguments)
-		: ExprAST(), m_type(type), m_arguments(arguments) {
+	TypeCreation(Expression* type, Expression* arguments)
+		: Expression(), m_type(type), m_arguments(arguments) {
 		m_type->addRef();
 		m_arguments->addRef();
 	}
 
-	~TypeCreationAST() {
+	~TypeCreation() {
 		m_type->delRef();
 		m_arguments->delRef();
 	}
 
-	DISALLOW_COPY_AND_ASSIGN(TypeCreationAST);
+	DISALLOW_COPY_AND_ASSIGN(TypeCreation);
 
 	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
 private:
-	ExprAST* m_type;
-	ExprAST* m_arguments;
+	Expression* m_type;
+	Expression* m_arguments;
 };
 
-class NewBlockAST : public ExprAST {
+class NewBlock : public Expression {
 public:
-	NewBlockAST() : ExprAST() { }
+	NewBlock() : Expression() { }
 
 	Opcode* opcodeGen();
 
-	DISALLOW_COPY_AND_ASSIGN(NewBlockAST);
+	DISALLOW_COPY_AND_ASSIGN(NewBlock);
 
 	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
 };
 
-class EndBlockAST : public ExprAST {
+class EndBlock : public Expression {
 public:
-	EndBlockAST() : ExprAST() { }
+	EndBlock() : Expression() { }
 
 	Opcode* opcodeGen();
 
-	DISALLOW_COPY_AND_ASSIGN(EndBlockAST);
+	DISALLOW_COPY_AND_ASSIGN(EndBlock);
 
 	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
 };
 
-class CommandAST : public ExprAST {
+class Command : public Expression {
 public:
-	CommandAST(ExprAST* value)
-		: ExprAST(), m_value(value) {
+	Command(Expression* value)
+		: Expression(), m_value(value) {
 		m_value->addRef();
 	}
 
-	~CommandAST() {
+	~Command() {
 		m_value->delRef();
 	}
 
 	Opcode* opcodeGen();
 
-	DISALLOW_COPY_AND_ASSIGN(CommandAST);
+	DISALLOW_COPY_AND_ASSIGN(Command);
 
 	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
 private:
-	ExprAST* m_value;
+	Expression* m_value;
 };
 
 }} // clever::ast

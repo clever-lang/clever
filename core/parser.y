@@ -37,7 +37,7 @@
 #include "types.h"
 #include "ast.h"
 
-#define YYSTYPE clever::ast::ExprAST*
+#define YYSTYPE clever::ast::Expression*
 
 namespace clever {
 class Driver;
@@ -113,8 +113,8 @@ statement_list:
 ;
 
 block_stmt:
-		'{' { nodes.add(new clever::ast::NewBlockAST()); } statement_list '}'
-				{ nodes.add(new clever::ast::EndBlockAST()); }
+		'{' { nodes.add(new clever::ast::NewBlock()); } statement_list '}'
+				{ nodes.add(new clever::ast::EndBlock()); }
 ;
 
 statements:
@@ -128,12 +128,12 @@ statements:
 ;
 
 variable_declaration_no_init:
-		TYPE IDENT	{ nodes.add(new clever::ast::VariableDeclAST($1, $2, NULL)); }
+		TYPE IDENT	{ nodes.add(new clever::ast::VariableDecl($1, $2, NULL)); }
 ;
 
 variable_declaration:
-		TYPE IDENT '=' type_creation { nodes.add(new clever::ast::VariableDeclAST($1, $2, $4)); }
-	|	TYPE IDENT '=' expr          { nodes.add(new clever::ast::VariableDeclAST($1, $2, $4)); }
+		TYPE IDENT '=' type_creation { nodes.add(new clever::ast::VariableDecl($1, $2, $4)); }
+	|	TYPE IDENT '=' expr          { nodes.add(new clever::ast::VariableDecl($1, $2, $4)); }
 	|	variable_declaration_no_init
 ;
 
@@ -144,18 +144,18 @@ arguments:
 ;
 
 type_creation:
-		TYPE '(' arguments ')' { $$ = new clever::ast::TypeCreationAST($1, $3); }
+		TYPE '(' arguments ')' { $$ = new clever::ast::TypeCreation($1, $3); }
 ;
 
 expr:
-		expr '-' expr { $$ = new clever::ast::BinaryExprAST('-', $1, $3); nodes.add($$); }
-	|	expr '+' expr { $$ = new clever::ast::BinaryExprAST('+', $1, $3); nodes.add($$); }
-	|	expr '/' expr { $$ = new clever::ast::BinaryExprAST('/', $1, $3); nodes.add($$); }
-	|	expr '*' expr { $$ = new clever::ast::BinaryExprAST('*', $1, $3); nodes.add($$); }
-	|	expr '%' expr { $$ = new clever::ast::BinaryExprAST('%', $1, $3); nodes.add($$); }
-	|	expr '|' expr { $$ = new clever::ast::BinaryExprAST('|', $1, $3); nodes.add($$); }
-	|	expr '&' expr { $$ = new clever::ast::BinaryExprAST('&', $1, $3); nodes.add($$); }
-	|	expr '^' expr { $$ = new clever::ast::BinaryExprAST('^', $1, $3); nodes.add($$); }
+		expr '-' expr { $$ = new clever::ast::BinaryExpression('-', $1, $3); nodes.add($$); }
+	|	expr '+' expr { $$ = new clever::ast::BinaryExpression('+', $1, $3); nodes.add($$); }
+	|	expr '/' expr { $$ = new clever::ast::BinaryExpression('/', $1, $3); nodes.add($$); }
+	|	expr '*' expr { $$ = new clever::ast::BinaryExpression('*', $1, $3); nodes.add($$); }
+	|	expr '%' expr { $$ = new clever::ast::BinaryExpression('%', $1, $3); nodes.add($$); }
+	|	expr '|' expr { $$ = new clever::ast::BinaryExpression('|', $1, $3); nodes.add($$); }
+	|	expr '&' expr { $$ = new clever::ast::BinaryExpression('&', $1, $3); nodes.add($$); }
+	|	expr '^' expr { $$ = new clever::ast::BinaryExpression('^', $1, $3); nodes.add($$); }
 	|	'-' expr %prec UMINUS
 	|	'+' expr %prec UMINUS
 	|	'!' expr
@@ -168,7 +168,7 @@ expr:
 ;
 
 echo_stmt:
-		ECHO expr { $$ = new clever::ast::CommandAST($2); nodes.add($$); }
+		ECHO expr { $$ = new clever::ast::Command($2); nodes.add($$); }
 ;
 
 for_stmt:
