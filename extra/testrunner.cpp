@@ -47,9 +47,11 @@ void TestRunner::show_result(void) const
         std::cout << "-----------------------------------" << std::endl;
         std::cout << "Passed tests: " << pass << std::endl;
         std::cout << "Failed tests: " << fail << std::endl;
+		#ifndef _WIN32
         if (valgrind) {
                 std::cout << "Leaked tests: " << leak << std::endl;
         }
+		#endif
         std::cout << "-----------------------------------" << std::endl;
         std::cout << "Time taken: " << (((double)clock() - start_time) / CLOCKS_PER_SEC) << " seconds" << std::endl;
         std::cout << "-----------------------------------" << std::endl;
@@ -111,6 +113,7 @@ void TestRunner::run(void)
 
                 write_file(tmp_file, source);
 
+				#ifndef _WIN32
                 if (valgrind) {
                         command = std::string("valgrind -q --tool=memcheck --leak-check=yes --num-callers=30 --log-file=") + file_name + std::string(".mem");
                         command = command + std::string(" ./clever -f ") + tmp_file;
@@ -119,10 +122,16 @@ void TestRunner::run(void)
                         command = std::string("./clever -f ") + tmp_file;
                         fp = popen(command.c_str(), "r");
                 }
+				#else
+				command = std::string("clever.exe -f ") + tmp_file;
+				fp = popen(command.c_str(), "r");
+				#endif
+
                 fread(result, 1, sizeof(result)-1, fp);
                 fclose(fp);
 
                 // Valgrind log is empty?
+				#ifndef _WIN32
                 if (valgrind) {
                         filesize = file_size(file_name + std::string(".mem"));
                         if (filesize == 0) {
@@ -132,6 +141,7 @@ void TestRunner::run(void)
                                 leak++;
                         }
                 }
+				#endif
 
                 if (pcrecpp::RE(expect).FullMatch(result)) {
                         if ((valgrind && filesize == 0) || !valgrind) {
@@ -263,7 +273,9 @@ void usage(void)
 {
         std::cout << "Clever Language - Testrunner" << std::endl;
         std::cout << "Usage: testrunner [options] path-of-test-file/dir" << std::endl;
+		#ifndef _WIN32
         std::cout << "\t-m: run valgrind on each test" << std::endl;
+		#endif
 }
 
 int main(int argc, char *argv[])
@@ -275,6 +287,7 @@ int main(int argc, char *argv[])
                 usage();
                 return 1;
         } else {
+				#ifndef _WIN32
                 if (std::string(argv[1]) == std::string("-m")) {
                         if (argc == 2) {
                                 // ./testrunner -m?
@@ -284,6 +297,12 @@ int main(int argc, char *argv[])
                         // ./testrunner -m <something here>?
                         testrunner.valgrind = true;
                         start_paths = 2;
+				#else
+				if (argc == 1) {
+						// ./testrunner -m?
+						usage();
+						return 1;
+				#endif
                 } else {
                         // ./testrunner <something here>
                         testrunner.valgrind = false;
