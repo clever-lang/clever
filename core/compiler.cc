@@ -42,7 +42,7 @@ void Compiler::Init(ast::TreeNode::nodeList& nodes) {
  * Displays an error message
  */
 void Compiler::error(const char* message) {
-	std::cout << message << std::endl;
+	std::cout << "Compile error: " << message << std::endl;
 	exit(1);
 }
 

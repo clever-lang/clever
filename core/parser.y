@@ -72,7 +72,6 @@ clever::ast::TreeNode nodes;
 %token NUM_INTEGER  "number"
 %token NUM_DOUBLE   "float-number"
 %token STR          "string"
-%token ASSIGN       "="
 %token ECHO         "echo"
 %token IN           "in"
 %token FOR          "for"
@@ -82,7 +81,7 @@ clever::ast::TreeNode nodes;
 %token ELSEIF       "else if"
 
 %left ',';
-%left ASSIGN;
+%left '=';
 %left ':';
 %left '|';
 %left '^';
@@ -154,9 +153,9 @@ expr:
 	|	expr '/' expr { $$ = new clever::ast::BinaryExprAST('/', $1, $3); nodes.add($$); }
 	|	expr '*' expr { $$ = new clever::ast::BinaryExprAST('*', $1, $3); nodes.add($$); }
 	|	expr '%' expr { $$ = new clever::ast::BinaryExprAST('%', $1, $3); nodes.add($$); }
-	|	expr '|' expr
-	|	expr '&' expr
-	|	expr '^' expr
+	|	expr '|' expr { $$ = new clever::ast::BinaryExprAST('|', $1, $3); nodes.add($$); }
+	|	expr '&' expr { $$ = new clever::ast::BinaryExprAST('&', $1, $3); nodes.add($$); }
+	|	expr '^' expr { $$ = new clever::ast::BinaryExprAST('^', $1, $3); nodes.add($$); }
 	|	'-' expr %prec UMINUS
 	|	'+' expr %prec UMINUS
 	|	'!' expr

@@ -99,14 +99,13 @@ Opcode* BinaryExprAST::opcodeGen(void) {
 	rhs->addRef();
 
 	switch (m_op) {
-		case '+':
-			return new Opcode(OP_PLUS, &VM::plus_handler, lhs, rhs, m_result);
-		case '/':
-			return new Opcode(OP_DIV, &VM::div_handler, lhs, rhs, m_result);
-		case '*':
-			return new Opcode(OP_MULT, &VM::mult_handler, lhs, rhs, m_result);
-		case '-':
-			return new Opcode(OP_MINUS, &VM::minus_handler, lhs, rhs, m_result);
+		case '+': return new Opcode(OP_PLUS, &VM::plus_handler, lhs, rhs, m_result);
+		case '/': return new Opcode(OP_DIV, &VM::div_handler, lhs, rhs, m_result);
+		case '*': return new Opcode(OP_MULT, &VM::mult_handler, lhs, rhs, m_result);
+		case '-': return new Opcode(OP_MINUS, &VM::minus_handler, lhs, rhs, m_result);
+		case '^': return new Opcode(OP_BW_XOR, &VM::bw_xor_handler, lhs, rhs, m_result);
+		case '|': return new Opcode(OP_BW_OR, &VM::bw_or_handler, lhs, rhs, m_result);
+		case '&': return new Opcode(OP_BW_AND, &VM::bw_and_handler, lhs, rhs, m_result);
 	}
 }
 

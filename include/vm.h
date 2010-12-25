@@ -128,6 +128,9 @@ public:
 	void new_scope_handler(CLEVER_VM_HANDLER_ARGS);
 	void end_scope_handler(CLEVER_VM_HANDLER_ARGS);
 	void var_decl_handler(CLEVER_VM_HANDLER_ARGS);
+	void bw_and_handler(CLEVER_VM_HANDLER_ARGS);
+	void bw_or_handler(CLEVER_VM_HANDLER_ARGS);
+	void bw_xor_handler(CLEVER_VM_HANDLER_ARGS);
 private:
 	OpcodeList* m_opcodes;
 	SymbolTable m_symbols;

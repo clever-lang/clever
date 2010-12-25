@@ -132,7 +132,7 @@ void VM::div_handler(CLEVER_VM_HANDLER_ARGS) {
 				opcode->set_result(new ConstantValue(op1->getInteger() / op2->getInteger()));
 				break;
 			case Value::DOUBLE:
-				opcode->set_result(new ConstantValue(op1->getDouble() + op2->getDouble()));
+				opcode->set_result(new ConstantValue(op1->getDouble() / op2->getDouble()));
 				break;
 		}
 	}
@@ -157,7 +157,7 @@ void VM::minus_handler(CLEVER_VM_HANDLER_ARGS) {
 				opcode->set_result(new ConstantValue(op1->getInteger() - op2->getInteger()));
 				break;
 			case Value::DOUBLE:
-				opcode->set_result(new ConstantValue(op1->getDouble() + op2->getDouble()));
+				opcode->set_result(new ConstantValue(op1->getDouble() - op2->getDouble()));
 				break;
 		}
 	}
@@ -182,7 +182,67 @@ void VM::mult_handler(CLEVER_VM_HANDLER_ARGS) {
 				opcode->set_result(new ConstantValue(op1->getInteger() * op2->getInteger()));
 				break;
 			case Value::DOUBLE:
-				opcode->set_result(new ConstantValue(op1->getDouble() + op2->getDouble()));
+				opcode->set_result(new ConstantValue(op1->getDouble() * op2->getDouble()));
+				break;
+		}
+	}
+}
+
+void VM::bw_and_handler(CLEVER_VM_HANDLER_ARGS) {
+	Value* op1 = getValue(opcode->get_op1());
+	Value* op2 = getValue(opcode->get_op2());
+
+	if (op1->isConst() && op1->hasSameKind(op2)) {
+		if (!op1->hasSameType(op2)) {
+			error("Type mismatch!");
+		}
+		switch (op1->get_type()) {
+			case Value::STRING:
+			case Value::DOUBLE:
+				error("Operation not allow for such type!");
+				break;
+			case Value::INTEGER:
+				opcode->set_result(new ConstantValue(op1->getInteger() & op2->getInteger()));
+				break;
+		}
+	}
+}
+
+void VM::bw_xor_handler(CLEVER_VM_HANDLER_ARGS) {
+	Value* op1 = getValue(opcode->get_op1());
+	Value* op2 = getValue(opcode->get_op2());
+
+	if (op1->isConst() && op1->hasSameKind(op2)) {
+		if (!op1->hasSameType(op2)) {
+			error("Type mismatch!");
+		}
+		switch (op1->get_type()) {
+			case Value::STRING:
+			case Value::DOUBLE:
+				error("Operation not allow for such type!");
+				break;
+			case Value::INTEGER:
+				opcode->set_result(new ConstantValue(op1->getInteger() ^ op2->getInteger()));
+				break;
+		}
+	}
+}
+
+void VM::bw_or_handler(CLEVER_VM_HANDLER_ARGS) {
+	Value* op1 = getValue(opcode->get_op1());
+	Value* op2 = getValue(opcode->get_op2());
+
+	if (op1->isConst() && op1->hasSameKind(op2)) {
+		if (!op1->hasSameType(op2)) {
+			error("Type mismatch!");
+		}
+		switch (op1->get_type()) {
+			case Value::STRING:
+			case Value::DOUBLE:
+				error("Operation not allow for such type!");
+				break;
+			case Value::INTEGER:
+				opcode->set_result(new ConstantValue(op1->getInteger() | op2->getInteger()));
 				break;
 		}
 	}

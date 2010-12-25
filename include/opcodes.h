@@ -41,7 +41,10 @@ enum Opcodes {
 	OP_MINUS,
 	OP_NEW_SCOPE,
 	OP_END_SCOPE,
-	OP_VAR_DECL
+	OP_VAR_DECL,
+	OP_BW_OR,
+	OP_BW_AND,
+	OP_BW_XOR
 };
 
 class Opcode {
