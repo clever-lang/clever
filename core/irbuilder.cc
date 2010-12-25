@@ -102,4 +102,44 @@ Opcode* IRBuilder::command(ast::Command* expr) {
 	return new Opcode(OP_ECHO, &VM::echo_handler, value);
 }
 
+/*
+ * Generates the pre increment opcode
+ */
+Opcode* IRBuilder::preIncrement(ast::PreIncrement* expr) {
+	Value* value = expr->get_expr()->get_value();
+
+	value->addRef();
+	return new Opcode(OP_PRE_INC, &VM::pre_inc_handler, value, NULL, expr->get_value());
+}
+
+/*
+ * Generates the pos increment opcode
+ */
+Opcode* IRBuilder::posIncrement(ast::PosIncrement* expr) {
+	Value* value = expr->get_expr()->get_value();
+
+	value->addRef();
+	return new Opcode(OP_POS_INC, &VM::pos_inc_handler, value, NULL, expr->get_value());
+}
+
+/*
+ * Generates the pre decrement opcode
+ */
+Opcode* IRBuilder::preDecrement(ast::PreDecrement* expr) {
+	Value* value = expr->get_expr()->get_value();
+
+	value->addRef();
+	return new Opcode(OP_PRE_DEC, &VM::pre_dec_handler, value, NULL, expr->get_value());
+}
+
+/*
+ * Generates the pos decrement opcode
+ */
+Opcode* IRBuilder::posDecrement(ast::PosDecrement* expr) {
+	Value* value = expr->get_expr()->get_value();
+
+	value->addRef();
+	return new Opcode(OP_POS_DEC, &VM::pos_dec_handler, value, NULL, expr->get_value());
+}
+
 } // clever

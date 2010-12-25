@@ -78,14 +78,6 @@ Opcode* BinaryExpression::codeGen(IRBuilder& builder) {
 	return builder.binaryExpression(this);
 }
 
-Value* BinaryExpression::get_value(void) const {
-	if (optimized) {
-		return m_value;
-	} else {
-		return m_result;
-	}
-}
-
 std::string BinaryExpression::debug(void) {
 	if (optimized) {
 		return m_value->toString();
@@ -126,5 +118,35 @@ Opcode* Command::codeGen(IRBuilder& builder) {
 std::string Command::debug(void) {
 	return "echo " + m_expr->debug();
 }
+
+/*
+ * PreIncrement
+ */
+Opcode* PreIncrement::codeGen(IRBuilder& builder) {
+	return builder.preIncrement(this);
+}
+
+/*
+ * PosIncrement
+ */
+Opcode* PosIncrement::codeGen(IRBuilder& builder) {
+	return builder.posIncrement(this);
+}
+
+/*
+ * PosDecrement
+ */
+Opcode* PreDecrement::codeGen(IRBuilder& builder) {
+	return builder.preDecrement(this);
+}
+
+
+/*
+ * PosDecrement
+ */
+Opcode* PosDecrement::codeGen(IRBuilder& builder) {
+	return builder.posDecrement(this);
+}
+
 
 }} // clever::ast

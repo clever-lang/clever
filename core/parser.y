@@ -158,6 +158,10 @@ expr:
 	|	expr '^' expr { $$ = new clever::ast::BinaryExpression('^', $1, $3); nodes.add($$); }
 	|	'-' expr %prec UMINUS
 	|	'+' expr %prec UMINUS
+	|	INCREMENT IDENT { $$ = new clever::ast::PreIncrement($2); nodes.add($$); }
+	|	IDENT INCREMENT { $$ = new clever::ast::PosIncrement($1); nodes.add($$); }
+	|	DECREMENT IDENT { $$ = new clever::ast::PreDecrement($2); nodes.add($$); }
+	|	IDENT DECREMENT { $$ = new clever::ast::PosDecrement($1); nodes.add($$); }
 	|	'!' expr
 	|	'~' expr
 	|	'(' expr ')'  { $$ = $2; }

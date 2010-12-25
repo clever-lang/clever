@@ -124,7 +124,13 @@ public:
 		return m_op;
 	}
 
-	Value* get_value() const;
+	inline Value* get_value() const {
+		if (optimized) {
+			return m_value;
+		} else {
+			return m_result;
+		}
+	}
 
 	std::string debug();
 
@@ -313,6 +319,110 @@ public:
 	DISALLOW_COPY_AND_ASSIGN(Command);
 private:
 	Expression* m_expr;
+};
+
+class PreIncrement : public Expression {
+public:
+	PreIncrement(Expression* expr)
+		: m_expr(expr) {
+		m_expr->addRef();
+		m_result = new TempValue();
+	}
+
+	~PreIncrement() {
+		m_expr->delRef();
+	}
+
+	inline Value* get_value() const {
+		return m_result;
+	}
+
+	inline Expression* get_expr() {
+		return m_expr;
+	}
+
+	Opcode* codeGen(IRBuilder&);
+private:
+	Expression* m_expr;
+	TempValue* m_result;
+};
+
+class PosIncrement : public Expression {
+public:
+	PosIncrement(Expression* expr)
+		: m_expr(expr) {
+		m_expr->addRef();
+		m_result = new TempValue();
+	}
+
+	~PosIncrement() {
+		m_expr->delRef();
+	}
+
+	inline Value* get_value() const {
+		return m_result;
+	}
+
+	inline Expression* get_expr() {
+		return m_expr;
+	}
+
+	Opcode* codeGen(IRBuilder&);
+private:
+	Expression* m_expr;
+	TempValue* m_result;
+};
+
+class PreDecrement : public Expression {
+public:
+	PreDecrement(Expression* expr)
+		: m_expr(expr) {
+		m_expr->addRef();
+		m_result = new TempValue();
+	}
+
+	~PreDecrement() {
+		m_expr->delRef();
+	}
+
+	inline Expression* get_expr() {
+		return m_expr;
+	}
+
+	inline Value* get_value() const {
+		return m_result;
+	}
+
+	Opcode* codeGen(IRBuilder&);
+private:
+	Expression* m_expr;
+	TempValue* m_result;
+};
+
+class PosDecrement : public Expression {
+public:
+	PosDecrement(Expression* expr)
+		: m_expr(expr) {
+		m_expr->addRef();
+		m_result = new TempValue();
+	}
+
+	~PosDecrement() {
+		m_expr->delRef();
+	}
+
+	inline Value* get_value() const {
+		return m_result;
+	}
+
+	inline Expression* get_expr() {
+		return m_expr;
+	}
+
+	Opcode* codeGen(IRBuilder&);
+private:
+	Expression* m_expr;
+	TempValue* m_result;
 };
 
 }} // clever::ast

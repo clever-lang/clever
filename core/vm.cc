@@ -188,6 +188,9 @@ void VM::mult_handler(CLEVER_VM_HANDLER_ARGS) {
 	}
 }
 
+/*
+ * x & y
+ */
 void VM::bw_and_handler(CLEVER_VM_HANDLER_ARGS) {
 	Value* op1 = getValue(opcode->get_op1());
 	Value* op2 = getValue(opcode->get_op2());
@@ -208,6 +211,9 @@ void VM::bw_and_handler(CLEVER_VM_HANDLER_ARGS) {
 	}
 }
 
+/*
+ * x ^ y
+ */
 void VM::bw_xor_handler(CLEVER_VM_HANDLER_ARGS) {
 	Value* op1 = getValue(opcode->get_op1());
 	Value* op2 = getValue(opcode->get_op2());
@@ -228,6 +234,9 @@ void VM::bw_xor_handler(CLEVER_VM_HANDLER_ARGS) {
 	}
 }
 
+/*
+ * x | y
+ */
 void VM::bw_or_handler(CLEVER_VM_HANDLER_ARGS) {
 	Value* op1 = getValue(opcode->get_op1());
 	Value* op2 = getValue(opcode->get_op2());
@@ -248,20 +257,121 @@ void VM::bw_or_handler(CLEVER_VM_HANDLER_ARGS) {
 	}
 }
 
+/*
+ * {
+ */
 void VM::new_scope_handler(CLEVER_VM_HANDLER_ARGS) {
 	m_symbols.pushVarMap(SymbolTable::var_map());
 }
 
+/*
+ * }
+ */
 void VM::end_scope_handler(CLEVER_VM_HANDLER_ARGS) {
 	m_symbols.popVarMap();
 }
 
+/*
+ * Type var
+ */
 void VM::var_decl_handler(CLEVER_VM_HANDLER_ARGS) {
 	Value* value = opcode->get_op2();
 
 	value->addRef();
 
 	m_symbols.register_var(opcode->get_op1()->toString(), value);
+}
+
+/*
+ * ++x
+ */
+void VM::pre_inc_handler(CLEVER_VM_HANDLER_ARGS) {
+	Value* value = getValue(opcode->get_op1());
+
+	if (value->isConst()) {
+		switch (value->get_type()) {
+			case Value::INTEGER:
+				value->setInteger(value->getInteger()+1);
+				opcode->set_result(new ConstantValue(value->getInteger()));
+				break;
+			case Value::DOUBLE:
+				value->setDouble(value->getDouble()+1);
+				opcode->set_result(new ConstantValue(value->getDouble()));
+				break;
+			default:
+				error("Operation unsupported for such type");
+				break;
+		}
+	}
+}
+
+/*
+ * x++
+ */
+void VM::pos_inc_handler(CLEVER_VM_HANDLER_ARGS) {
+	Value* value = getValue(opcode->get_op1());
+
+	if (value->isConst()) {
+		switch (value->get_type()) {
+			case Value::INTEGER:
+				opcode->set_result(new ConstantValue(value->getInteger()));
+				value->setInteger(value->getInteger()+1);
+				break;
+			case Value::DOUBLE:
+				opcode->set_result(new ConstantValue(value->getDouble()));
+				value->setDouble(value->getDouble()+1);
+				break;
+			default:
+				error("Operation unsupported for such type");
+				break;
+		}
+	}
+}
+
+/*
+ * --x
+ */
+void VM::pre_dec_handler(CLEVER_VM_HANDLER_ARGS) {
+	Value* value = getValue(opcode->get_op1());
+
+	if (value->isConst()) {
+		switch (value->get_type()) {
+			case Value::INTEGER:
+				value->setInteger(value->getInteger()-1);
+				opcode->set_result(new ConstantValue(value->getInteger()));
+				break;
+			case Value::DOUBLE:
+				value->setDouble(value->getDouble()-1);
+				opcode->set_result(new ConstantValue(value->getDouble()));
+				break;
+			default:
+				error("Operation unsupported for such type");
+				break;
+		}
+	}
+}
+
+/*
+ * x--
+ */
+void VM::pos_dec_handler(CLEVER_VM_HANDLER_ARGS) {
+	Value* value = getValue(opcode->get_op1());
+
+	if (value->isConst()) {
+		switch (value->get_type()) {
+			case Value::INTEGER:
+				opcode->set_result(new ConstantValue(value->getInteger()));
+				value->setInteger(value->getInteger()-1);
+				break;
+			case Value::DOUBLE:
+				opcode->set_result(new ConstantValue(value->getDouble()));
+				value->setDouble(value->getDouble()-1);
+				break;
+			default:
+				error("Operation unsupported for such type");
+				break;
+		}
+	}
 }
 
 } // clever

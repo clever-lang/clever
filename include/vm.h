@@ -130,6 +130,10 @@ public:
 	void bw_and_handler(CLEVER_VM_HANDLER_ARGS);
 	void bw_or_handler(CLEVER_VM_HANDLER_ARGS);
 	void bw_xor_handler(CLEVER_VM_HANDLER_ARGS);
+	void pre_inc_handler(CLEVER_VM_HANDLER_ARGS);
+	void pre_dec_handler(CLEVER_VM_HANDLER_ARGS);
+	void pos_inc_handler(CLEVER_VM_HANDLER_ARGS);
+	void pos_dec_handler(CLEVER_VM_HANDLER_ARGS);
 private:
 	OpcodeList* m_opcodes;
 	SymbolTable m_symbols;
