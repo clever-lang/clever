@@ -1,0 +1,6 @@
+Simple assignment
+==CODE==
+Int i = 10;
+echo i;
+==RESULT==
+10
