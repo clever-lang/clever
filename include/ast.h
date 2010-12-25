@@ -86,7 +86,7 @@ private:
 
 class Literal : public Expression {
 public:
-	Literal() : Expression() { }
+	Literal() { }
 	virtual ~Literal() { }
 
 	bool isLiteral() const { return true; }
@@ -201,8 +201,7 @@ private:
 
 class Identifier : public Expression {
 public:
-	explicit Identifier(CString* name)
-		: Expression() {
+	explicit Identifier(CString* name) {
 		m_value = new NamedValue(name);
 	}
 
@@ -224,8 +223,7 @@ private:
 
 class StringLiteral : public Literal {
 public:
-	explicit StringLiteral(CString* name)
-		: Literal() {
+	explicit StringLiteral(CString* name) {
 		m_value = new ConstantValue(name);
 	}
 
@@ -247,7 +245,7 @@ private:
 class TypeCreation : public Expression {
 public:
 	TypeCreation(Expression* type, Expression* arguments)
-		: Expression(), m_type(type), m_arguments(arguments) {
+		: m_type(type), m_arguments(arguments) {
 		m_type->addRef();
 		m_arguments->addRef();
 	}
@@ -269,7 +267,7 @@ private:
 
 class NewBlock : public Expression {
 public:
-	NewBlock() : Expression() { }
+	NewBlock() { }
 
 	Opcode* codeGen(Compiler*);
 
@@ -282,7 +280,7 @@ public:
 
 class EndBlock : public Expression {
 public:
-	EndBlock() : Expression() { }
+	EndBlock() { }
 
 	Opcode* codeGen(Compiler*);
 
@@ -296,7 +294,7 @@ public:
 class Command : public Expression {
 public:
 	Command(Expression* expr)
-		: Expression(), m_expr(expr) {
+		: m_expr(expr) {
 		m_expr->addRef();
 	}
 
