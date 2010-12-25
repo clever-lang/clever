@@ -28,6 +28,7 @@
 #ifndef CLEVER_OPCODES_H
 #define CLEVER_OPCODES_H
 
+#include "values.h"
 #include "types.h"
 #include "vm.h"
 

@@ -31,6 +31,7 @@
 #include <string>
 #include <vector>
 #include "types.h"
+#include "values.h"
 #include "cstring.h"
 #include "opcodes.h"
 #include "refcounted.h"
