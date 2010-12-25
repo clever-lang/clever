@@ -114,10 +114,10 @@ void TestRunner::run(void)
                 if (valgrind) {
                         command = std::string("valgrind -q --tool=memcheck --leak-check=yes --num-callers=30 --log-file=") + file_name + std::string(".mem");
                         command = command + std::string(" ./clever -f ") + tmp_file;
-                        fp = _popen(command.c_str(), "r");
+                        fp = popen(command.c_str(), "r");
                 } else {
                         command = std::string("./clever -f ") + tmp_file;
-                        fp = _popen(command.c_str(), "r");
+                        fp = popen(command.c_str(), "r");
                 }
                 fread(result, 1, sizeof(result)-1, fp);
                 fclose(fp);
