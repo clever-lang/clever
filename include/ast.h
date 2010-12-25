@@ -201,7 +201,10 @@ public:
 	}
 
 	Opcode* codeGen(IRBuilder&);
-	std::string debug();
+
+	std::string debug() {
+		return m_type->debug() + " " + m_variable->debug() + " = " + m_initial_value->debug();
+	}
 
 	DISALLOW_COPY_AND_ASSIGN(VariableDecl);
 
@@ -320,7 +323,9 @@ public:
 
 	Opcode* codeGen(IRBuilder&);
 
-	std::string debug();
+	std::string debug() {
+		return "echo " + m_expr->debug();
+	}
 
 	DISALLOW_COPY_AND_ASSIGN(Command);
 private:

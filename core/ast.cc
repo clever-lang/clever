@@ -37,6 +37,7 @@ namespace clever { namespace ast {
 TreeNode::~TreeNode(void) {
 	TreeNode::nodeList::iterator it = nodes.begin();
 
+	/* Remove the AST nodes */
 	while (it < nodes.end()) {
 		(*it)->delRef();
 		++it;
@@ -86,12 +87,11 @@ std::string BinaryExpression::debug(void) {
 	}
 }
 
+/*
+ * VariableDecl
+ */
 Opcode* VariableDecl::codeGen(IRBuilder& builder) {
 	return builder.variableDecl(this);
-}
-
-std::string VariableDecl::debug(void) {
-	return m_type->debug() + " " + m_variable->debug() + " = " + m_initial_value->debug();
 }
 
 /*
@@ -115,10 +115,6 @@ Opcode* Command::codeGen(IRBuilder& builder) {
 	return builder.command(this);
 }
 
-std::string Command::debug(void) {
-	return "echo " + m_expr->debug();
-}
-
 /*
  * PreIncrement
  */
@@ -139,7 +135,6 @@ Opcode* PosIncrement::codeGen(IRBuilder& builder) {
 Opcode* PreDecrement::codeGen(IRBuilder& builder) {
 	return builder.preDecrement(this);
 }
-
 
 /*
  * PosDecrement
