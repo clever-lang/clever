@@ -1,0 +1,15 @@
+Pre and pos increment operation
+==CODE==
+Int i = 10;
+echo ++i + ++i;
+echo i;
+echo ++i;
+
+Int j = 20;
+
+echo ++i + ++j;
+==RESULT==
+23
+12
+13
+35
