@@ -47,7 +47,7 @@ TreeNode::~TreeNode(void) {
  * BinaryExpression
  */
 BinaryExpression::BinaryExpression(char op_, Expression* lhs, Expression* rhs)
-		: Expression(), m_op(op_), m_lhs(lhs), m_rhs(rhs), m_result(NULL), m_value(NULL), optimized(false) {
+		: m_op(op_), m_lhs(lhs), m_rhs(rhs), m_result(NULL), m_value(NULL), optimized(false) {
 	Value* tmp_lhs = lhs->get_value();
 	Value* tmp_rhs = rhs->get_value();
 
