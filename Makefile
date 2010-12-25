@@ -3,6 +3,7 @@ CXX?=g++
 CPPFLAGS=-c -ggdb -ansi -Iinclude/ -Ibuild/ -Imodules/ -Iwin32/ -I. -fno-rtti
 CPPFLAGS2=-ggdb -ansi
 CPPFLAGS3=-c -ggdb -ansi -Iinclude/ -Ibuild/ -I. -fno-rtti
+CPPFLAGS4=-ggdb
 # Linker
 LD=g++
 LFLAGS=-ggdb -O2
@@ -64,5 +65,9 @@ $(BUILDDIR)vm.o: $(SRCDIR)vm.cc
 $(BUILDDIR)win32.o: $(WINDIR)win32.cc
 	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)win32.o $(WINDIR)win32.cc
 
+test: $(EXTRADIR)testrunner.cpp
+	$(CXX) $(CPPFLAGS4) -o $(EXTRADIR)testrunner $(EXTRADIR)testrunner.cpp -lpcrecpp
+
 clean:
-	rm -f clever $(BUILDDIR)*
+	rm -rf clever clever.exe $(EXTRADIR)testrunner $(EXTRADIR)testrunner.exe
+	rm -f $(BUILDDIR)*
