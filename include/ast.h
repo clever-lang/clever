@@ -36,11 +36,11 @@
 #include "opcodes.h"
 #include "refcounted.h"
 
-namespace clever { namespace ast {
+namespace clever {
+class Compiler;
+}
 
-#define CLEVER_AST_PURE_VIRTUAL_MEMBERS \
-	virtual Value *codeGen();           \
-	virtual std::string debug();
+namespace clever { namespace ast {
 
 class Expression : public RefCounted {
 public:
@@ -51,20 +51,18 @@ public:
 	virtual bool isLiteral() const { return false; }
 
 	virtual bool hasValue() const { return false; }
+	/*
+	 * Method for getting the value representation
+	 */
 	virtual Value* get_value() const { return NULL; }
-
 	/*
 	 * Method for generating the expression IR
 	 */
-	virtual Value* codeGen() = 0;
+	virtual Opcode* codeGen(Compiler*) { return NULL; };
 	/*
 	 * Method for debug purpose
 	 */
-	virtual std::string debug() = 0;
-
-	virtual Opcode* opcodeGen() {
-		return NULL;
-	}
+	virtual std::string debug() { return std::string(); }
 };
 
 class TreeNode {
@@ -93,7 +91,7 @@ public:
 
 	bool isLiteral() const { return true; }
 	virtual bool hasValue() const { return true; }
-	virtual Value* get_value() const { return NULL; }
+	virtual Value* get_value() const = 0;
 };
 
 class BinaryExpression : public Expression {
@@ -113,16 +111,30 @@ public:
 	}
 
 	bool hasValue() const { return true; }
-	Value* get_value() const { return m_value; }
 
-	Opcode* opcodeGen();
+	inline Expression* get_lhs() {
+		return m_lhs;
+	}
+
+	inline Expression* get_rhs() {
+		return m_rhs;
+	}
+
+	inline char get_op() {
+		return m_op;
+	}
+
+	Value* get_value() const;
+
+	std::string debug();
+
+	Opcode* codeGen(Compiler*);
+
 	DISALLOW_COPY_AND_ASSIGN(BinaryExpression);
 
-	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
-
+	bool optimized;
 private:
 	char m_op;
-	bool optimized;
 	Expression* m_lhs;
 	Expression* m_rhs;
 	TempValue* m_result;
@@ -131,25 +143,23 @@ private:
 
 class NumberLiteral : public Literal {
 public:
-	explicit NumberLiteral(int64_t val)
-		: Literal() {
+	explicit NumberLiteral(int64_t val) {
 		m_value = new ConstantValue(val);
 	}
 
-	explicit NumberLiteral(double val)
-		: Literal() {
+	explicit NumberLiteral(double val) {
 		m_value = new ConstantValue(val);
 	}
 
 	~NumberLiteral() {
 		m_value->delRef();
 	}
-	
-	Value* get_value() { return m_value; };
+
+	Value* get_value() const { return m_value; };
+
+	std::string debug(void) { return m_value->toString(); }
 
 	DISALLOW_COPY_AND_ASSIGN(NumberLiteral);
-
-	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
 
 private:
 	ConstantValue* m_value;
@@ -158,28 +168,35 @@ private:
 class VariableDecl : public Expression {
 public:
 	VariableDecl(Expression* type, Expression* variable, Expression* rhs)
-		: Expression(), m_type(type), m_variable(variable), m_rhs(rhs) {
+		: Expression(), m_type(type), m_variable(variable), m_initial_value(rhs) {
 		m_type->addRef();
 		m_variable->addRef();
-		m_rhs->addRef();
+		m_initial_value->addRef();
 	}
 
 	~VariableDecl() {
 		m_type->delRef();
 		m_variable->delRef();
-		m_rhs->delRef();
+		m_initial_value->delRef();
 	}
 
-	Opcode* opcodeGen();
+	Expression* get_variable() {
+		return m_variable;
+	}
+
+	Expression* get_initial_value() {
+		return m_initial_value;
+	}
+
+	Opcode* codeGen(Compiler*);
+	std::string debug();
 
 	DISALLOW_COPY_AND_ASSIGN(VariableDecl);
-
-	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
 
 private:
 	Expression* m_type;
 	Expression* m_variable;
-	Expression* m_rhs;
+	Expression* m_initial_value;
 };
 
 class Identifier : public Expression {
@@ -192,13 +209,15 @@ public:
 	~Identifier() {
 		m_value->delRef();
 	}
-	
+
 	bool hasValue() const { return true; }
 	Value* get_value() const { return m_value; }
 
-	DISALLOW_COPY_AND_ASSIGN(Identifier);
+	std::string debug(void) {
+		return m_value->toString();
+	}
 
-	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
+	DISALLOW_COPY_AND_ASSIGN(Identifier);
 private:
 	NamedValue* m_value;
 };
@@ -210,15 +229,17 @@ public:
 		m_value = new ConstantValue(name);
 	}
 
-	Value* get_value() { return m_value; };
-
 	~StringLiteral() {
 		m_value->delRef();
 	}
 
-	DISALLOW_COPY_AND_ASSIGN(StringLiteral);
+	Value* get_value() const { return m_value; };
 
-	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
+	std::string debug(void) {
+		return m_value->toString();
+	}
+
+	DISALLOW_COPY_AND_ASSIGN(StringLiteral);
 private:
 	ConstantValue* m_value;
 };
@@ -236,9 +257,11 @@ public:
 		m_arguments->delRef();
 	}
 
-	DISALLOW_COPY_AND_ASSIGN(TypeCreation);
+	std::string debug(void) {
+		return m_type->debug();
+	}
 
-	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
+	DISALLOW_COPY_AND_ASSIGN(TypeCreation);
 private:
 	Expression* m_type;
 	Expression* m_arguments;
@@ -248,42 +271,50 @@ class NewBlock : public Expression {
 public:
 	NewBlock() : Expression() { }
 
-	Opcode* opcodeGen();
+	Opcode* codeGen(Compiler*);
+
+	std::string debug() {
+		return std::string("{");
+	}
 
 	DISALLOW_COPY_AND_ASSIGN(NewBlock);
-
-	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
 };
 
 class EndBlock : public Expression {
 public:
 	EndBlock() : Expression() { }
 
-	Opcode* opcodeGen();
+	Opcode* codeGen(Compiler*);
+
+	std::string debug() {
+		return std::string("}");
+	}
 
 	DISALLOW_COPY_AND_ASSIGN(EndBlock);
-
-	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
 };
 
 class Command : public Expression {
 public:
-	Command(Expression* value)
-		: Expression(), m_value(value) {
-		m_value->addRef();
+	Command(Expression* expr)
+		: Expression(), m_expr(expr) {
+		m_expr->addRef();
 	}
 
 	~Command() {
-		m_value->delRef();
+		m_expr->delRef();
 	}
 
-	Opcode* opcodeGen();
+	Expression* get_expr() {
+		return m_expr;
+	}
+
+	Opcode* codeGen(Compiler*);
+
+	std::string debug();
 
 	DISALLOW_COPY_AND_ASSIGN(Command);
-
-	CLEVER_AST_PURE_VIRTUAL_MEMBERS;
 private:
-	Expression* m_value;
+	Expression* m_expr;
 };
 
 }} // clever::ast

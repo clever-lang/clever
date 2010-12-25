@@ -45,18 +45,15 @@ TreeNode::~TreeNode(void) {
 /*
  * NumberLiteral
  */
-Value* NumberLiteral::codeGen(void) {
-	return m_value;
-}
 
-std::string NumberLiteral::debug(void) {
-	return m_value->toString();
-}
 
+/*
+ * BinaryExpression
+ */
 BinaryExpression::BinaryExpression(char op_, Expression* lhs, Expression* rhs)
 		: Expression(), m_op(op_), m_lhs(lhs), m_rhs(rhs), m_result(NULL), m_value(NULL), optimized(false) {
-	Value* tmp_lhs = lhs->codeGen();
-	Value* tmp_rhs = rhs->codeGen();
+	Value* tmp_lhs = lhs->get_value();
+	Value* tmp_rhs = rhs->get_value();
 
 	m_rhs->addRef();
 	m_lhs->addRef();
@@ -81,35 +78,11 @@ BinaryExpression::BinaryExpression(char op_, Expression* lhs, Expression* rhs)
 	}
 }
 
-/*
- * BinaryExpression
- */
-Opcode* BinaryExpression::opcodeGen(void) {
-	Value* lhs;
-	Value* rhs;
-
-	if (optimized) {
-		return NULL;
-	}
-
-	lhs = m_lhs->codeGen();
-	rhs = m_rhs->codeGen();
-
-	lhs->addRef();
-	rhs->addRef();
-
-	switch (m_op) {
-		case '+': return new Opcode(OP_PLUS, &VM::plus_handler, lhs, rhs, m_result);
-		case '/': return new Opcode(OP_DIV, &VM::div_handler, lhs, rhs, m_result);
-		case '*': return new Opcode(OP_MULT, &VM::mult_handler, lhs, rhs, m_result);
-		case '-': return new Opcode(OP_MINUS, &VM::minus_handler, lhs, rhs, m_result);
-		case '^': return new Opcode(OP_BW_XOR, &VM::bw_xor_handler, lhs, rhs, m_result);
-		case '|': return new Opcode(OP_BW_OR, &VM::bw_or_handler, lhs, rhs, m_result);
-		case '&': return new Opcode(OP_BW_AND, &VM::bw_and_handler, lhs, rhs, m_result);
-	}
+Opcode* BinaryExpression::codeGen(Compiler* compiler) {
+	return compiler->binaryExpression(this);
 }
 
-Value* BinaryExpression::codeGen(void) {
+Value* BinaryExpression::get_value(void) const {
 	if (optimized) {
 		return m_value;
 	} else {
@@ -125,110 +98,37 @@ std::string BinaryExpression::debug(void) {
 	}
 }
 
-/*
- * VariableDecl
- */
-Opcode* VariableDecl::opcodeGen(void) {
-	/* Check if the declaration contains initialization */
-	if (m_rhs) {
-		Value* variable = m_variable->codeGen();
-		Value* value = m_rhs->codeGen();
-
-		variable->addRef();
-		value->addRef();
-
-		return new Opcode(OP_VAR_DECL, &VM::var_decl_handler, variable, value);
-	} else {
-		return new Opcode(OP_VAR_DECL, &VM::var_decl_handler, m_variable->codeGen());
-	}
-}
-
-Value* VariableDecl::codeGen(void) {
-	return NULL;
+Opcode* VariableDecl::codeGen(Compiler* compiler) {
+	return compiler->variableDecl(this);
 }
 
 std::string VariableDecl::debug(void) {
-	return m_type->debug() + " " + m_variable->debug() + " = " + m_rhs->debug();
-}
-
-/*
- * Identifier
- */
-Value* Identifier::codeGen(void) {
-	return m_value;
-}
-
-std::string Identifier::debug(void) {
-	return m_value->toString();
-}
-
-/*
- * StringLiteral
- */
-Value* StringLiteral::codeGen(void) {
-	return m_value;
-}
-
-std::string StringLiteral::debug(void) {
-	return m_value->toString();
-}
-
-/*
- * TypeCreation
- */
-Value* TypeCreation::codeGen(void) {
-	return NULL;
-}
-
-std::string TypeCreation::debug(void) {
-	return m_type->debug();
+	return m_type->debug() + " " + m_variable->debug() + " = " + m_initial_value->debug();
 }
 
 /*
  * NewBlock
  */
-Opcode* NewBlock::opcodeGen(void) {
-	return new Opcode(OP_NEW_SCOPE, &VM::new_scope_handler);
-}
-
-Value* NewBlock::codeGen(void) {
-	return NULL;
-}
-
-std::string NewBlock::debug(void) {
-	return std::string("{");
+Opcode* NewBlock::codeGen(Compiler* compiler) {
+	return compiler->newBlock();
 }
 
 /*
  * EndBlock
  */
-Opcode* EndBlock::opcodeGen(void) {
-	return new Opcode(OP_END_SCOPE, &VM::end_scope_handler);
-}
-
-Value* EndBlock::codeGen(void) {
-	return NULL;
-}
-
-std::string EndBlock::debug(void) {
-	return std::string("}");
+Opcode* EndBlock::codeGen(Compiler* compiler) {
+	return compiler->endBlock();
 }
 
 /*
  * Command
  */
-Value* Command::codeGen(void) {
-	return NULL;
-}
-
-Opcode* Command::opcodeGen(void) {
-	Value* value = m_value->codeGen();
-	value->addRef();
-	return new Opcode(OP_ECHO, &VM::echo_handler, value);
+Opcode* Command::codeGen(Compiler* compiler) {
+	return compiler->command(this);
 }
 
 std::string Command::debug(void) {
-	return "echo " + m_value->debug();
+	return "echo " + m_expr->debug();
 }
 
 }} // clever::ast

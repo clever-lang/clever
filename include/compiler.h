@@ -38,12 +38,23 @@ public:
 	Compiler() { }
 
 	void Init(ast::TreeNode::nodeList&);
-	void dumpAST(void);
-	void buildIR(void);
+	void dumpAST();
+	void buildIR();
+
+	VM::OpcodeList* get_opcodes() {
+		return &m_opcodes;
+	}
 
 	static void error(const char*);
 	static bool checkCompatibleTypes(Value*, Value*);
 	static ConstantValue* constantFolding(char, Value*, Value*);
+
+	/* Opcode generators */
+	Opcode* binaryExpression(ast::BinaryExpression*);
+	Opcode* variableDecl(ast::VariableDecl*);
+	Opcode* command(ast::Command*);
+	Opcode* newBlock();
+	Opcode* endBlock();
 
 	DISALLOW_COPY_AND_ASSIGN(Compiler);
 private:

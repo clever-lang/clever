@@ -58,7 +58,7 @@ public:
 	Opcode(Opcodes op_type, VM::opcode_handler handler, Value* op1, Value* op2)
 		: m_op_type(op_type), m_handler(handler), m_op1(op1), m_op2(op2), m_result(NULL) { }
 
-	Opcode(Opcodes op_type, VM::opcode_handler handler, Value* op1, Value* op2, TempValue* result)
+	Opcode(Opcodes op_type, VM::opcode_handler handler, Value* op1, Value* op2, Value* result)
 		: m_op_type(op_type), m_handler(handler), m_op1(op1), m_op2(op2), m_result(result) { }
 
 	Value* get_op1() { return m_op1; }
@@ -75,7 +75,7 @@ private:
 	Opcodes m_op_type;
 	Value* m_op1;
 	Value* m_op2;
-	TempValue* m_result;
+	Value* m_result;
 };
 
 } // clever

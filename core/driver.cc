@@ -30,14 +30,20 @@
 #include "position.hh"
 #include "types.h"
 #include "scanner.h"
+#include "vm.h"
 
 namespace clever {
 
 Driver::ScannerStack Driver::m_scanners;
 
 void Interpreter::execute(void) {
-	// compiler.dumpAST();
+	VM vm;
+
 	compiler.buildIR();
+	//compiler.dumpAST();
+
+	vm.setOpcodes(compiler.get_opcodes());
+	vm.run();
 }
 
 void Interpreter::shutdown(void) {
