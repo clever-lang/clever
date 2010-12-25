@@ -30,6 +30,7 @@
 #include "compiler.h"
 #include "opcodes.h"
 #include "vm.h"
+#include "irbuilder.h"
 
 namespace clever { namespace ast {
 
@@ -41,11 +42,6 @@ TreeNode::~TreeNode(void) {
 		++it;
 	}
 }
-
-/*
- * NumberLiteral
- */
-
 
 /*
  * BinaryExpression
@@ -78,8 +74,8 @@ BinaryExpression::BinaryExpression(char op_, Expression* lhs, Expression* rhs)
 	}
 }
 
-Opcode* BinaryExpression::codeGen(Compiler* compiler) {
-	return compiler->binaryExpression(this);
+Opcode* BinaryExpression::codeGen(IRBuilder& builder) {
+	return builder.binaryExpression(this);
 }
 
 Value* BinaryExpression::get_value(void) const {
@@ -98,8 +94,8 @@ std::string BinaryExpression::debug(void) {
 	}
 }
 
-Opcode* VariableDecl::codeGen(Compiler* compiler) {
-	return compiler->variableDecl(this);
+Opcode* VariableDecl::codeGen(IRBuilder& builder) {
+	return builder.variableDecl(this);
 }
 
 std::string VariableDecl::debug(void) {
@@ -109,22 +105,22 @@ std::string VariableDecl::debug(void) {
 /*
  * NewBlock
  */
-Opcode* NewBlock::codeGen(Compiler* compiler) {
-	return compiler->newBlock();
+Opcode* NewBlock::codeGen(IRBuilder& builder) {
+	return builder.newBlock();
 }
 
 /*
  * EndBlock
  */
-Opcode* EndBlock::codeGen(Compiler* compiler) {
-	return compiler->endBlock();
+Opcode* EndBlock::codeGen(IRBuilder& builder) {
+	return builder.endBlock();
 }
 
 /*
  * Command
  */
-Opcode* Command::codeGen(Compiler* compiler) {
-	return compiler->command(this);
+Opcode* Command::codeGen(IRBuilder& builder) {
+	return builder.command(this);
 }
 
 std::string Command::debug(void) {

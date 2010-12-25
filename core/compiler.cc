@@ -105,7 +105,7 @@ void Compiler::buildIR() {
 	ast::TreeNode::nodeList::iterator it = m_ast.begin();
 
 	while (it < m_ast.end()) {
-		Opcode* opcode = (*it)->codeGen(this);
+		Opcode* opcode = (*it)->codeGen(m_builder);
 
 		if (opcode) {
 			m_opcodes.push_back(opcode);
@@ -135,79 +135,6 @@ void Compiler::dumpAST(void) {
 
 		++it;
 	}
-}
-
-/*
- * Generates the binary expression opcode
- */
-Opcode* Compiler::binaryExpression(ast::BinaryExpression* expr) {
-	Value* lhs;
-	Value* rhs;
-
-	if (expr->optimized) {
-		return NULL;
-	}
-
-	lhs = expr->get_lhs()->get_value();
-	rhs = expr->get_rhs()->get_value();
-
-	lhs->addRef();
-	rhs->addRef();
-
-	switch (expr->get_op()) {
-		case '+': return new Opcode(OP_PLUS, &VM::plus_handler, lhs, rhs, expr->get_value());
-		case '/': return new Opcode(OP_DIV, &VM::div_handler, lhs, rhs, expr->get_value());
-		case '*': return new Opcode(OP_MULT, &VM::mult_handler, lhs, rhs, expr->get_value());
-		case '-': return new Opcode(OP_MINUS, &VM::minus_handler, lhs, rhs, expr->get_value());
-		case '^': return new Opcode(OP_BW_XOR, &VM::bw_xor_handler, lhs, rhs, expr->get_value());
-		case '|': return new Opcode(OP_BW_OR, &VM::bw_or_handler, lhs, rhs, expr->get_value());
-		case '&': return new Opcode(OP_BW_AND, &VM::bw_and_handler, lhs, rhs, expr->get_value());
-	}
-}
-
-/*
- * Generates the variable declaration opcode
- */
-Opcode* Compiler::variableDecl(ast::VariableDecl* expr) {
-	ast::Expression* var_expr = expr->get_variable();
-	ast::Expression* rhs_expr = expr->get_initial_value();
-	Value* variable = var_expr->get_value();
-
-	/* Check if the declaration contains initialization */
-	if (rhs_expr) {
-		Value* value = rhs_expr->get_value();
-
-		variable->addRef();
-		value->addRef();
-
-		return new Opcode(OP_VAR_DECL, &VM::var_decl_handler, variable, value);
-	} else {
-		return new Opcode(OP_VAR_DECL, &VM::var_decl_handler, variable);
-	}
-}
-
-/*
- * Generates the new block opcode
- */
-Opcode* Compiler::newBlock() {
-	return new Opcode(OP_NEW_SCOPE, &VM::new_scope_handler);
-}
-
-/*
- * Generates the end block opcode
- */
-Opcode* Compiler::endBlock() {
-	return new Opcode(OP_END_SCOPE, &VM::end_scope_handler);
-}
-
-/*
- * Generates the command opcode
- */
-Opcode* Compiler::command(ast::Command* expr) {
-	Value* value = expr->get_expr()->get_value();
-
-	value->addRef();
-	return new Opcode(OP_ECHO, &VM::echo_handler, value);
 }
 
 } // clever

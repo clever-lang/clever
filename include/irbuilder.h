@@ -25,38 +25,26 @@
  * $Id$
  */
 
-#ifndef CLEVER_COMPILER_H
-#define CLEVER_COMPILER_H
-
+#ifndef CLEVER_IRBUILDER_H
+#define CLEVER_IRBUILDER_H
 #include "ast.h"
-#include "opcodes.h"
-#include "irbuilder.h"
 
 namespace clever {
 
-class Compiler {
+class Opcode;
+
+class IRBuilder {
 public:
-	Compiler() { }
+	IRBuilder() { }
 
-	void Init(ast::TreeNode::nodeList&);
-	void dumpAST();
-	void buildIR();
-
-	VM::OpcodeList* get_opcodes() {
-		return &m_opcodes;
-	}
-
-	static void error(const char*);
-	static bool checkCompatibleTypes(Value*, Value*);
-	static ConstantValue* constantFolding(char, Value*, Value*);
-
-	DISALLOW_COPY_AND_ASSIGN(Compiler);
-private:
-	ast::TreeNode::nodeList m_ast;
-	VM::OpcodeList m_opcodes;
-	IRBuilder m_builder;
+	/* Opcode generators */
+	Opcode* binaryExpression(ast::BinaryExpression*);
+	Opcode* variableDecl(ast::VariableDecl*);
+	Opcode* command(ast::Command*);
+	Opcode* newBlock();
+	Opcode* endBlock();
 };
 
 } // clever
 
-#endif // CLEVER_COMPILER_H
+#endif // CLEVER_IRBUILDER_H

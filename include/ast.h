@@ -37,7 +37,7 @@
 #include "refcounted.h"
 
 namespace clever {
-class Compiler;
+class IRBuilder;
 }
 
 namespace clever { namespace ast {
@@ -58,7 +58,7 @@ public:
 	/*
 	 * Method for generating the expression IR
 	 */
-	virtual Opcode* codeGen(Compiler*) { return NULL; };
+	virtual Opcode* codeGen(IRBuilder&) { return NULL; };
 	/*
 	 * Method for debug purpose
 	 */
@@ -128,7 +128,7 @@ public:
 
 	std::string debug();
 
-	Opcode* codeGen(Compiler*);
+	Opcode* codeGen(IRBuilder&);
 
 	DISALLOW_COPY_AND_ASSIGN(BinaryExpression);
 
@@ -188,7 +188,7 @@ public:
 		return m_initial_value;
 	}
 
-	Opcode* codeGen(Compiler*);
+	Opcode* codeGen(IRBuilder&);
 	std::string debug();
 
 	DISALLOW_COPY_AND_ASSIGN(VariableDecl);
@@ -269,7 +269,7 @@ class NewBlock : public Expression {
 public:
 	NewBlock() { }
 
-	Opcode* codeGen(Compiler*);
+	Opcode* codeGen(IRBuilder&);
 
 	std::string debug() {
 		return std::string("{");
@@ -282,7 +282,7 @@ class EndBlock : public Expression {
 public:
 	EndBlock() { }
 
-	Opcode* codeGen(Compiler*);
+	Opcode* codeGen(IRBuilder&);
 
 	std::string debug() {
 		return std::string("}");
@@ -306,7 +306,7 @@ public:
 		return m_expr;
 	}
 
-	Opcode* codeGen(Compiler*);
+	Opcode* codeGen(IRBuilder&);
 
 	std::string debug();
 
