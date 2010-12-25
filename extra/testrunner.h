@@ -34,25 +34,27 @@
 #include <pcrecpp.h>
 
 class TestRunner {
-        unsigned int pass, fail, leak;
-        clock_t start_time;
-        std::vector<std::string> files;
-        std::vector<std::string> tmp_files;
+	unsigned int pass, fail, leak;
+	clock_t start_time;
+	std::vector<std::string> files;
+	std::vector<std::string> tmp_files;
 
-        void load_folder(const char* dir);
-        std::string extract_folder(const char* file) const;
-        void write_log(std::string testname, std::string message);
-        unsigned int file_size(std::string file);
+	bool file_exists(std::string file);
+	std::string extract_folder(const char* file) const;
+	unsigned int file_size(std::string file);
+	void load_folder(const char* dir);
+	void write_log(std::string testname, std::string message);
 public:
-        TestRunner() : pass(0), fail(0), leak(0), valgrind(false) { start_time = clock(); }
-        ~TestRunner();
-        void write_file(std::string&, std::string&);
-        std::string read_file(const char*) const;
-        void show_result(void) const;
-        void find(char* dir);
-        void run(void);
+	TestRunner() : pass(0), fail(0), leak(0), valgrind(false) { start_time = clock(); }
+	~TestRunner();
 
-        bool valgrind;
+	std::string read_file(const char*) const;
+	void find(char* dir);
+	void run(void);
+	void show_result(void) const;
+	void write_file(std::string&, std::string&);
+
+	bool valgrind;
 };
 
 #endif // CLEVER_TESTRUNNER_H
