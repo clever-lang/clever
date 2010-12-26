@@ -298,13 +298,11 @@ void VM::pre_inc_handler(CLEVER_VM_HANDLER_ARGS) {
 		switch (value->get_type()) {
 			case Value::INTEGER:
 				value->setInteger(value->getInteger()+1);
-				opcode->set_result(value);
-				value->addRef();
+				opcode->set_result(new ConstantValue(value->getInteger()));
 				break;
 			case Value::DOUBLE:
 				value->setDouble(value->getDouble()+1);
-				opcode->set_result(value);
-				value->addRef();
+				opcode->set_result(new ConstantValue(value->getDouble()));
 				break;
 			default:
 				error("Operation unsupported for such type");
@@ -346,13 +344,11 @@ void VM::pre_dec_handler(CLEVER_VM_HANDLER_ARGS) {
 		switch (value->get_type()) {
 			case Value::INTEGER:
 				value->setInteger(value->getInteger()-1);
-				opcode->set_result(value);
-				value->addRef();
+				opcode->set_result(new ConstantValue(value->getInteger()));
 				break;
 			case Value::DOUBLE:
 				value->setDouble(value->getDouble()-1);
-				opcode->set_result(value);
-				value->addRef();
+				opcode->set_result(new ConstantValue(value->getDouble()));
 				break;
 			default:
 				error("Operation unsupported for such type");
