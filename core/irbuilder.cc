@@ -186,12 +186,13 @@ Opcode* IRBuilder::elseExpression(ast::ElseExpression* expr) {
 /*
  * Just set the jmp address of if-elsif-else to end of control structure
  */
-Opcode* IRBuilder::endIfExpression(ast::EndIfExpression* expr) {
+Opcode* IRBuilder::endIfExpression() {
 	Jmp jmp = m_jmps.top();
 
 	while (!jmp.empty()) {
 		Opcode* opcode = jmp.top();
 
+		/* Points to out of if-elsif-else block */
 		opcode->set_jmp_addr2(getOpNum()+1);
 
 		jmp.pop();
@@ -201,5 +202,49 @@ Opcode* IRBuilder::endIfExpression(ast::EndIfExpression* expr) {
 
 	return NULL;
 }
+
+/*
+ * Generates the JMPZ opcode for WHILE expression
+ */
+Opcode* IRBuilder::whileExpression(ast::WhileExpression* expr) {
+	Value* value = expr->get_expr()->get_value();
+	Opcode* opcode = new Opcode(OP_JMPZ, &VM::jmpz_handler, value);
+	Jmp jmp;
+
+	jmp.push(opcode);
+	m_jmps.push(jmp);
+
+	value->addRef();
+	return opcode;
+}
+
+/*
+ * Just set the end jmp addr of WHILE expression
+ */
+Opcode* IRBuilder::endWhileExpression(ast::EndWhileExpression* expr) {
+	Opcode* opcode = new Opcode(OP_JMP, &VM::jmp_handler);
+	ast::StartLoop* start_loop = static_cast<ast::StartLoop*>(expr->get_expr());
+
+	/* Points to out of WHILE block */
+	m_jmps.top().top()->set_jmp_addr1(getOpNum()+2);
+
+	/* Points to start of WHILE expression */
+	opcode->set_jmp_addr2(start_loop->get_op_num());
+
+	m_jmps.top().pop();
+	m_jmps.pop();
+
+	return opcode;
+}
+
+/*
+ * Just hold the current op number before the WHILE expression
+ */
+Opcode* IRBuilder::startLoop(ast::StartLoop* expr) {
+	expr->set_op_num(getOpNum());
+
+	return NULL;
+}
+
 
 } // clever

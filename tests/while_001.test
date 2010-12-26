@@ -1,0 +1,9 @@
+Testing while loop
+==CODE==
+Int i = 5; while (--i) { echo i; } echo "done";
+==RESULT==
+4
+3
+2
+1
+done

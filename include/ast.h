@@ -477,7 +477,6 @@ private:
 	Expression* m_expr;
 };
 
-
 class ElseExpression : public Expression {
 public:
 	ElseExpression() { }
@@ -487,6 +486,26 @@ public:
 	Opcode* codeGen(IRBuilder&);
 };
 
+class WhileExpression : public Expression {
+public:
+	WhileExpression(Expression* expr)
+		: m_expr(expr) {
+		m_expr->addRef();
+	}
+
+	~WhileExpression() {
+		m_expr->delRef();
+	}
+
+	inline Expression* get_expr() {
+		return m_expr;
+	}
+
+	Opcode* codeGen(IRBuilder&);
+private:
+	Expression* m_expr;
+};
+
 class EndIfExpression : public Expression {
 public:
 	EndIfExpression() { }
@@ -494,6 +513,46 @@ public:
 	~EndIfExpression() { }
 
 	Opcode* codeGen(IRBuilder&);
+};
+
+
+class EndWhileExpression : public Expression {
+public:
+	EndWhileExpression(Expression* expr)
+		: m_expr(expr) {
+		m_expr->addRef();
+	}
+
+	~EndWhileExpression() {
+		m_expr->delRef();
+	}
+
+	inline Expression* get_expr() {
+		return m_expr;
+	}
+
+	Opcode* codeGen(IRBuilder&);
+private:
+	Expression* m_expr;
+};
+
+class StartLoop : public Expression {
+public:
+	StartLoop() { }
+
+	~StartLoop() { }
+
+	inline void set_op_num(unsigned int op_num) {
+		m_op_num = op_num;
+	}
+
+	inline unsigned int get_op_num() {
+		return m_op_num;
+	}
+
+	Opcode* codeGen(IRBuilder&);
+private:
+	unsigned int m_op_num;
 };
 
 }} // clever::ast

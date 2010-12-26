@@ -180,7 +180,9 @@ for_stmt:
 ;
 
 while_stmt:
-		WHILE '(' expr ')' block_stmt
+		WHILE '(' { $2 = new clever::ast::StartLoop(); nodes.add($2); }
+		expr { nodes.add(new clever::ast::WhileExpression($4)); } ')'
+		block_stmt { nodes.add(new clever::ast::EndWhileExpression($2)); }
 ;
 
 if_stmt:

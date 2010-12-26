@@ -64,7 +64,10 @@ public:
 	Opcode* ifExpression(ast::IfExpression*);
 	Opcode* elseIfExpression(ast::ElseIfExpression*);
 	Opcode* elseExpression(ast::ElseExpression*);
-	Opcode* endIfExpression(ast::EndIfExpression*);
+	Opcode* endIfExpression();
+	Opcode* whileExpression(ast::WhileExpression*);
+	Opcode* endWhileExpression(ast::EndWhileExpression*);
+	Opcode* startLoop(ast::StartLoop*);
 
 	typedef std::stack<Opcode*> Jmp;
 	typedef std::stack<Jmp> JmpStack;

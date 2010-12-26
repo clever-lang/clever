@@ -168,7 +168,28 @@ Opcode* ElseExpression::codeGen(IRBuilder& builder) {
  * EndIfExpression
  */
 Opcode* EndIfExpression::codeGen(IRBuilder& builder) {
-	return builder.endIfExpression(this);
+	return builder.endIfExpression();
+}
+
+/*
+ * StartLoop
+ */
+Opcode* StartLoop::codeGen(IRBuilder& builder) {
+	return builder.startLoop(this);
+}
+
+/*
+ * WhileExpression
+ */
+Opcode* WhileExpression::codeGen(IRBuilder& builder) {
+	return builder.whileExpression(this);
+}
+
+/*
+ * EndWhileExpression
+ */
+Opcode* EndWhileExpression::codeGen(IRBuilder& builder) {
+	return builder.endWhileExpression(this);
 }
 
 }} // clever::ast
