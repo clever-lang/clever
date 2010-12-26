@@ -68,6 +68,11 @@ $(BUILDDIR)win32.o: $(WINDIR)win32.cc
 test: $(EXTRADIR)testrunner.cpp
 	$(CXX) $(CPPFLAGS4) -o $(EXTRADIR)testrunner $(EXTRADIR)testrunner.cpp -lpcrecpp
 
+clean-all: clean clean-test
+
 clean:
-	rm -rf clever clever.exe $(EXTRADIR)testrunner $(EXTRADIR)testrunner.exe
+	rm -rf clever clever.exe 
 	rm -f $(BUILDDIR)*
+
+clean-test:
+	rm -rf $(EXTRADIR)testrunner $(EXTRADIR)testrunner.exe
