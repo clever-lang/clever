@@ -1,4 +1,4 @@
-Pos-increment operation
+Pos increment operation
 ==CODE==
 Int i = 10;
 echo i++ + i++;

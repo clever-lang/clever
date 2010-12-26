@@ -1,4 +1,4 @@
-Pre decrement operation
+Pos decrement operation
 ==CODE==
 Int i = 10;
 echo i-- + i--;
