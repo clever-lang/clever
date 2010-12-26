@@ -1,7 +1,8 @@
 Testing while loop
 ==CODE==
-Int i = 5; while (--i) { echo i; } echo "done";
+Int i = 5; echo "start"; while (--i) { echo i; } echo "done";
 ==RESULT==
+start
 4
 3
 2

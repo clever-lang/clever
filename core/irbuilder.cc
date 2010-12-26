@@ -241,7 +241,7 @@ Opcode* IRBuilder::endWhileExpression(ast::EndWhileExpression* expr) {
  * Just hold the current op number before the WHILE expression
  */
 Opcode* IRBuilder::startLoop(ast::StartLoop* expr) {
-	expr->set_op_num(getOpNum());
+	expr->set_op_num(getOpNum()+1);
 
 	return NULL;
 }
