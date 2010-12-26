@@ -27,6 +27,7 @@
 
 #ifndef CLEVER_IRBUILDER_H
 #define CLEVER_IRBUILDER_H
+#include <stack>
 #include "ast.h"
 
 namespace clever {
@@ -36,6 +37,19 @@ class Opcode;
 class IRBuilder {
 public:
 	IRBuilder() { }
+
+	inline VM::OpcodeList* get_opcodes() {
+		return &m_opcodes;
+	}
+
+	inline void push(Opcode* opcode) {
+		m_opcodes.push_back(opcode);
+		opcode->set_op_num(getOpNum());
+	}
+
+	inline unsigned int getOpNum() {
+		return m_opcodes.size()-1;
+	}
 
 	/* Opcode generators */
 	Opcode* binaryExpression(ast::BinaryExpression*);
@@ -47,6 +61,17 @@ public:
 	Opcode* posDecrement(ast::PosDecrement*);
 	Opcode* newBlock();
 	Opcode* endBlock();
+	Opcode* ifExpression(ast::IfExpression*);
+	Opcode* elseIfExpression(ast::ElseIfExpression*);
+	Opcode* elseExpression(ast::ElseExpression*);
+	Opcode* endIfExpression(ast::EndIfExpression*);
+
+	typedef std::stack<Opcode*> Jmp;
+	typedef std::stack<Jmp> JmpStack;
+
+	JmpStack m_jmps;
+private:
+	VM::OpcodeList m_opcodes;
 };
 
 } // clever

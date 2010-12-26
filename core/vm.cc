@@ -65,15 +65,17 @@ void VM::error(const char* message) const {
  * Execute the collected opcodes
  */
 void VM::run(void) {
-	OpcodeList::iterator it = m_opcodes->begin();
+	unsigned int next_op, last_op = m_opcodes->size();
 
 	m_symbols.pushVarMap(SymbolTable::var_map());
 
-	while (it < m_opcodes->end()) {
-		Opcode* opcode = *it;
+	// std::cout << "Opcodes: " << last_op << std::endl;
 
-		(this->*((*it)->get_handler()))(*it);
-		++it;
+	for (next_op = 0; next_op < last_op; ++next_op) {
+		Opcode* opcode = (*m_opcodes)[next_op];
+
+		(this->*(opcode->get_handler()))(&next_op, opcode);
+		// std::cout << "next: " << next_op+1 << std::endl;
 	}
 
 	m_symbols.popVarMap();
@@ -376,6 +378,32 @@ void VM::pos_dec_handler(CLEVER_VM_HANDLER_ARGS) {
 				break;
 		}
 	}
+}
+
+/*
+ * JMPZ
+ */
+void VM::jmpz_handler(CLEVER_VM_HANDLER_ARGS) {
+	Value* value = getValue(opcode->get_op1());
+
+	if (value->isConst()) {
+		switch (value->get_type()) {
+			case Value::INTEGER:
+				if (value->getInteger() == 0) {
+					// std::cout << "jmp to " << opcode->get_jmp_addr1() << std::endl;
+					VM_GOTO(opcode->get_jmp_addr1());
+				}
+				break;
+		}
+	}
+}
+
+/*
+ * JMP
+ */
+void VM::jmp_handler(CLEVER_VM_HANDLER_ARGS) {
+	// std::cout << "> jmp to " << opcode->get_jmp_addr2()-1 <<  std::endl;
+	VM_GOTO(opcode->get_jmp_addr2());
 }
 
 } // clever

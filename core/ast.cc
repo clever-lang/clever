@@ -143,5 +143,20 @@ Opcode* PosDecrement::codeGen(IRBuilder& builder) {
 	return builder.posDecrement(this);
 }
 
+Opcode* IfExpression::codeGen(IRBuilder& builder) {
+	return builder.ifExpression(this);
+}
+
+Opcode* ElseIfExpression::codeGen(IRBuilder& builder) {
+	return builder.elseIfExpression(this);
+}
+
+Opcode* ElseExpression::codeGen(IRBuilder& builder) {
+	return builder.elseExpression(this);
+}
+
+Opcode* EndIfExpression::codeGen(IRBuilder& builder) {
+	return builder.endIfExpression(this);
+}
 
 }} // clever::ast

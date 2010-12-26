@@ -108,7 +108,7 @@ void Compiler::buildIR() {
 		Opcode* opcode = (*it)->codeGen(m_builder);
 
 		if (opcode) {
-			m_opcodes.push_back(opcode);
+			m_builder.push(opcode);
 		}
 		++it;
 	}

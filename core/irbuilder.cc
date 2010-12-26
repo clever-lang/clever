@@ -142,4 +142,52 @@ Opcode* IRBuilder::posDecrement(ast::PosDecrement* expr) {
 	return new Opcode(OP_POS_DEC, &VM::pos_dec_handler, value, NULL, expr->get_value());
 }
 
+Opcode* IRBuilder::ifExpression(ast::IfExpression* expr) {
+	Value* value = expr->get_expr()->get_value();
+	Opcode* opcode = new Opcode(OP_JMPZ, &VM::jmpz_handler, value);
+	Jmp jmp;
+
+	jmp.push(opcode);
+	m_jmps.push(jmp);
+
+	value->addRef();
+	return opcode;
+}
+
+Opcode* IRBuilder::elseIfExpression(ast::ElseIfExpression* expr) {
+	Value* value = expr->get_expr()->get_value();
+	Opcode* opcode = new Opcode(OP_JMPZ, &VM::jmpz_handler, value);
+
+	m_jmps.top().top()->set_jmp_addr1(getOpNum()+2);
+	m_jmps.top().push(opcode);
+
+	value->addRef();
+	return opcode;
+}
+
+Opcode* IRBuilder::elseExpression(ast::ElseExpression* expr) {
+	Opcode* opcode = new Opcode(OP_JMP, &VM::jmp_handler);
+
+	m_jmps.top().top()->set_jmp_addr1(getOpNum()+2);
+	m_jmps.top().push(opcode);
+
+	return opcode;
+}
+
+Opcode* IRBuilder::endIfExpression(ast::EndIfExpression* expr) {
+	Jmp jmp = m_jmps.top();
+
+	while (!jmp.empty()) {
+		Opcode* opcode = jmp.top();
+
+		opcode->set_jmp_addr2(getOpNum()+1);
+
+		jmp.pop();
+	}
+
+	m_jmps.pop();
+
+	return NULL;
+}
+
 } // clever

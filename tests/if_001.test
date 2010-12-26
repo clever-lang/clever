@@ -1,0 +1,25 @@
+Testing if-else and variable scope
+==CODE==
+Int i = 5;
+
+if (0) {
+	echo 2;
+} else {
+	echo i;
+}
+
+if (1) {
+	Int i = 100;
+
+	echo i;
+
+	if (0) {
+	} else {
+		Int i = 30;
+		echo i;
+	}
+}
+==RESULT==
+5
+100
+30

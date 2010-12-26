@@ -184,9 +184,18 @@ while_stmt:
 ;
 
 if_stmt:
-		IF '(' expr ')' block_stmt ELSEIF block_stmt ELSE block_stmt
-	|	IF '(' expr ')' block_stmt ELSEIF block_stmt
-	|	IF '(' expr ')' block_stmt ELSE block_stmt
+		IF '(' expr { $2 = new clever::ast::IfExpression($3); nodes.add($2); } ')' block_stmt
+		elseif_opt else_opt { nodes.add(new clever::ast::EndIfExpression()); }
+;
+
+elseif_opt:
+		/* empty */
+	|	ELSEIF '(' expr { nodes.add(new clever::ast::ElseIfExpression($3)); } ')' block_stmt
+;
+
+else_opt:
+		/* empty */
+	|	ELSE { nodes.add(new clever::ast::ElseExpression()); } block_stmt
 ;
 
 %%

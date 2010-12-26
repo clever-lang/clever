@@ -42,8 +42,8 @@ public:
 	void dumpAST();
 	void buildIR();
 
-	VM::OpcodeList* get_opcodes() {
-		return &m_opcodes;
+	VM::OpcodeList* getOpcodes() {
+		return m_builder.get_opcodes();
 	}
 
 	static void error(const char*);
@@ -53,7 +53,6 @@ public:
 	DISALLOW_COPY_AND_ASSIGN(Compiler);
 private:
 	ast::TreeNode::nodeList m_ast;
-	VM::OpcodeList m_opcodes;
 	IRBuilder m_builder;
 };
 

@@ -1,0 +1,19 @@
+Testing if-elsif-else and scopes
+==CODE==
+if (1) {
+	Int i = 20;
+
+	if (0) {
+		echo 2;
+	} else if (i) {
+		echo i+10;
+
+		Int i = 40;
+	} else {
+		echo i - 1;
+	}
+	echo i;
+}
+==RESULT==
+30
+20

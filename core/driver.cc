@@ -42,7 +42,7 @@ void Interpreter::execute(void) {
 	compiler.buildIR();
 	//compiler.dumpAST();
 
-	vm.setOpcodes(compiler.get_opcodes());
+	vm.setOpcodes(compiler.getOpcodes());
 	vm.run();
 }
 
@@ -138,6 +138,7 @@ void Driver::error(const clever::location& location, const std::string& message)
 	} else {
 		std::cout << message << " in " << *last.filename << " on line " << last.line << std::endl;
 	}
+	exit(1);
 }
 
 /**

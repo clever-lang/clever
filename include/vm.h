@@ -32,7 +32,8 @@
 #include <map>
 #include <vector>
 
-#define CLEVER_VM_HANDLER_ARGS Opcode* opcode
+#define CLEVER_VM_HANDLER_ARGS unsigned int* next_op, Opcode* opcode
+#define VM_GOTO(x) *next_op = (x)-1; return
 
 namespace clever {
 
@@ -137,6 +138,8 @@ public:
 	void pre_dec_handler(CLEVER_VM_HANDLER_ARGS);
 	void pos_inc_handler(CLEVER_VM_HANDLER_ARGS);
 	void pos_dec_handler(CLEVER_VM_HANDLER_ARGS);
+	void jmpz_handler(CLEVER_VM_HANDLER_ARGS);
+	void jmp_handler(CLEVER_VM_HANDLER_ARGS);
 private:
 	OpcodeList* m_opcodes;
 	SymbolTable m_symbols;

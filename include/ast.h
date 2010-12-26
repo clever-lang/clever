@@ -436,6 +436,66 @@ private:
 	TempValue* m_result;
 };
 
+class IfExpression : public Expression {
+public:
+	IfExpression(Expression* expr)
+		: m_expr(expr) {
+		m_expr->addRef();
+	}
+
+	~IfExpression() {
+		m_expr->delRef();
+	}
+
+	inline Expression* get_expr() {
+		return m_expr;
+	}
+
+	Opcode* codeGen(IRBuilder&);
+
+private:
+	Expression* m_expr;
+};
+
+class ElseIfExpression : public Expression {
+public:
+	ElseIfExpression(Expression* expr)
+		: m_expr(expr) {
+		m_expr->addRef();
+	}
+
+	~ElseIfExpression() {
+		m_expr->delRef();
+	}
+
+	inline Expression* get_expr() {
+		return m_expr;
+	}
+
+	Opcode* codeGen(IRBuilder&);
+private:
+	Expression* m_expr;
+};
+
+
+class ElseExpression : public Expression {
+public:
+	ElseExpression() { }
+
+	~ElseExpression() { }
+
+	Opcode* codeGen(IRBuilder&);
+};
+
+class EndIfExpression : public Expression {
+public:
+	EndIfExpression() { }
+
+	~EndIfExpression() { }
+
+	Opcode* codeGen(IRBuilder&);
+};
+
 }} // clever::ast
 
 #endif // CLEVER_AST_H
