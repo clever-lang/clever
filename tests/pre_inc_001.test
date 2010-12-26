@@ -1,4 +1,4 @@
-Pre and pos increment operation
+Pre increment operation
 ==CODE==
 Int i = 10;
 echo ++i + ++i;
