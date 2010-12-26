@@ -142,6 +142,9 @@ Opcode* IRBuilder::posDecrement(ast::PosDecrement* expr) {
 	return new Opcode(OP_POS_DEC, &VM::pos_dec_handler, value, NULL, expr->get_value());
 }
 
+/*
+ * Generates the JMPZ opcode for IF expression
+ */
 Opcode* IRBuilder::ifExpression(ast::IfExpression* expr) {
 	Value* value = expr->get_expr()->get_value();
 	Opcode* opcode = new Opcode(OP_JMPZ, &VM::jmpz_handler, value);
@@ -154,6 +157,9 @@ Opcode* IRBuilder::ifExpression(ast::IfExpression* expr) {
 	return opcode;
 }
 
+/*
+ * Generates a JMPZ opcode for ELSEIF expression
+ */
 Opcode* IRBuilder::elseIfExpression(ast::ElseIfExpression* expr) {
 	Value* value = expr->get_expr()->get_value();
 	Opcode* opcode = new Opcode(OP_JMPZ, &VM::jmpz_handler, value);
@@ -165,6 +171,9 @@ Opcode* IRBuilder::elseIfExpression(ast::ElseIfExpression* expr) {
 	return opcode;
 }
 
+/*
+ * Generates a JMP opcode for ELSE expression
+ */
 Opcode* IRBuilder::elseExpression(ast::ElseExpression* expr) {
 	Opcode* opcode = new Opcode(OP_JMP, &VM::jmp_handler);
 
@@ -174,6 +183,9 @@ Opcode* IRBuilder::elseExpression(ast::ElseExpression* expr) {
 	return opcode;
 }
 
+/*
+ * Just set the jmp address of if-elsif-else to end of control structure
+ */
 Opcode* IRBuilder::endIfExpression(ast::EndIfExpression* expr) {
 	Jmp jmp = m_jmps.top();
 

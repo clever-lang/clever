@@ -143,18 +143,30 @@ Opcode* PosDecrement::codeGen(IRBuilder& builder) {
 	return builder.posDecrement(this);
 }
 
+/*
+ * IfExpression
+ */
 Opcode* IfExpression::codeGen(IRBuilder& builder) {
 	return builder.ifExpression(this);
 }
 
+/*
+ * ElseIfExpression
+ */
 Opcode* ElseIfExpression::codeGen(IRBuilder& builder) {
 	return builder.elseIfExpression(this);
 }
 
+/*
+ * ElseExpression
+ */
 Opcode* ElseExpression::codeGen(IRBuilder& builder) {
 	return builder.elseExpression(this);
 }
 
+/*
+ * EndIfExpression
+ */
 Opcode* EndIfExpression::codeGen(IRBuilder& builder) {
 	return builder.endIfExpression(this);
 }
