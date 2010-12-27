@@ -32,6 +32,9 @@ namespace clever {
 void IRBuilder::init() {
 	/* Initializes global scope */
 	m_symbols.pushVarMap(SymbolTable::var_map());
+
+	/* Reserve space for 10 opcodes */
+	m_opcodes.reserve(10);
 }
 
 void IRBuilder::shutdown() {
