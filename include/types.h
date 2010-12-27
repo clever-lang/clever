@@ -43,10 +43,10 @@ namespace clever {
 class Type {
 public:
 	enum {
-		ABSTRACT  = 0,
-		CONCRETE  = 1,
-		INTERFACE = 2,
-		BUILT_IN  = 4
+		ABSTRACT  = 0x0,
+		CONCRETE  = 0x1 << 1,
+		INTERFACE = 0x1 << 2,
+		BUILT_IN  = 0x1 << 3
 	};
 
 	Type(const std::string& name, int kind)
@@ -62,7 +62,7 @@ public:
 	inline std::string name() const { return m_name; };
 	inline bool isInterface() const { return m_kind & INTERFACE; };
 	inline bool isAbstract() const { return m_kind & ABSTRACT; };
-	inline bool isConcrete() const { return m_kind & ABSTRACT; };
+	inline bool isConcrete() const { return m_kind & CONCRETE; };
 	inline bool isBuilt_in() const { return m_kind & BUILT_IN; };
 
 private:
