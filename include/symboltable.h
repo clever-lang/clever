@@ -24,7 +24,7 @@
  *
  * $Id$
  */
- 
+
 #ifndef CLEVER_SYMBOLTABLE_H
 #define CLEVER_SYMBOLTABLE_H
 
@@ -32,7 +32,7 @@
 #include <deque>
 
 namespace clever {
-	
+
 class Value;
 
 class SymbolTable {
@@ -78,6 +78,8 @@ public:
 		m_variables.pop_back();
 		--m_var_at;
 	}
+
+	DISALLOW_COPY_AND_ASSIGN(SymbolTable);
 private:
 	var_scope m_variables;
 	int m_var_at;

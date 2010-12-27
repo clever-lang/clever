@@ -55,7 +55,7 @@ public:
 
 	explicit VM(OpcodeList* opcodes)
 		: m_opcodes(opcodes) { }
-		
+
 	~VM();
 
 	void run(void);
@@ -101,6 +101,8 @@ public:
 	void pos_dec_handler(CLEVER_VM_HANDLER_ARGS);
 	void jmpz_handler(CLEVER_VM_HANDLER_ARGS);
 	void jmp_handler(CLEVER_VM_HANDLER_ARGS);
+
+	DISALLOW_COPY_AND_ASSIGN(VM);
 private:
 	OpcodeList* m_opcodes;
 	SymbolTable m_symbols;

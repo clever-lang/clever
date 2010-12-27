@@ -34,6 +34,9 @@ namespace clever {
 
 class Opcode;
 
+/**
+ * Opcode builder
+ */
 class IRBuilder {
 public:
 	IRBuilder() { }
@@ -73,6 +76,8 @@ public:
 	typedef std::stack<Jmp> JmpStack;
 
 	JmpStack m_jmps;
+
+	DISALLOW_COPY_AND_ASSIGN(IRBuilder);
 private:
 	VM::OpcodeList m_opcodes;
 };

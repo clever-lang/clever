@@ -33,6 +33,9 @@
 
 namespace clever {
 
+/**
+ * Opcodes
+ */
 enum Opcodes {
 	OP_ECHO,
 	OP_PLUS,
@@ -53,6 +56,9 @@ enum Opcodes {
 	OP_JMP
 };
 
+/**
+ * Opcode representation
+ */
 class Opcode {
 public:
 	Opcode(Opcodes op_type, VM::opcode_handler handler)
