@@ -43,16 +43,31 @@ public:
 	SymbolTable() :
 		m_var_at(-1) { }
 
-	inline void register_var(std::string name, Value* value) {
-		m_variables.at(m_var_at).insert(std::pair<std::string, Value*>(name, value));
+	inline void register_var(Value* var) {
+		m_variables.at(m_var_at).insert(std::pair<std::string, Value*>(var->getString(), var));
 	}
 
-	inline Value* get_var(std::string name) {
+	inline void register_var(Value* var, Value* value) {
+		m_variables.at(m_var_at).insert(std::pair<std::string, Value*>(var->getString(), value));
+		var->set_value(value);
+	}
+
+	inline Value* get_var(Value* var) {
+		Value* value = var->isNamedValue() ? var->get_value() : NULL;
+		std::string name;
+
+		if (value) {
+			return value;
+		}
+
+		name = var->getString();
+
 		/* Searchs for the variable in the inner and out scopes */
 		for (int i = m_var_at; i >= 0; --i) {
 			var_map::iterator it = m_variables.at(i).find(name);
 
 			if (it != m_variables.at(i).end()) {
+				var->set_value(it->second);
 				return it->second;
 			}
 		}

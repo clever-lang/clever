@@ -141,13 +141,23 @@ private:
 class NamedValue : public Value {
 public:
 	NamedValue()
-		: Value(NAMED) { }
+		: Value(NAMED), m_value(NULL) { }
 
 	explicit NamedValue(CString* name)
-		: Value(NAMED) {
+		: Value(NAMED), m_value(NULL) {
 		set_type(STRING);
 		setString(name);
 	}
+
+	inline void set_value(Value* value) {
+		m_value = value;
+	}
+
+	Value* get_value(void) {
+		return m_value;
+	}
+private:
+	Value* m_value;
 };
 
 /**

@@ -29,6 +29,16 @@
 
 namespace clever {
 
+void IRBuilder::init() {
+	/* Initializes global scope */
+	m_symbols.pushVarMap(SymbolTable::var_map());
+}
+
+void IRBuilder::shutdown() {
+	/* Pop global scope */
+	m_symbols.popVarMap();
+}
+
 /*
  * Generates the binary expression opcode
  */
@@ -69,6 +79,9 @@ Opcode* IRBuilder::variableDecl(ast::VariableDecl* expr) {
 	if (rhs_expr) {
 		Value* value = rhs_expr->get_value();
 
+		m_symbols.register_var(variable);
+
+		variable->addRef();
 		variable->addRef();
 		value->addRef();
 
@@ -82,6 +95,9 @@ Opcode* IRBuilder::variableDecl(ast::VariableDecl* expr) {
  * Generates the new block opcode
  */
 Opcode* IRBuilder::newBlock() {
+	/* Initializes new scope */
+	m_symbols.pushVarMap(SymbolTable::var_map());
+
 	return new Opcode(OP_NEW_SCOPE, &VM::new_scope_handler);
 }
 
@@ -89,6 +105,9 @@ Opcode* IRBuilder::newBlock() {
  * Generates the end block opcode
  */
 Opcode* IRBuilder::endBlock() {
+	/* Pop current scope */
+	m_symbols.popVarMap();
+
 	return new Opcode(OP_END_SCOPE, &VM::end_scope_handler);
 }
 
@@ -127,6 +146,14 @@ Opcode* IRBuilder::posIncrement(ast::PosIncrement* expr) {
  */
 Opcode* IRBuilder::preDecrement(ast::PreDecrement* expr) {
 	Value* value = expr->get_expr()->get_value();
+
+	if (value->isNamedValue()) {
+		Value* val_tmp = m_symbols.get_var(value);
+
+		if (val_tmp) {
+			value = val_tmp;
+		}
+	}
 
 	value->addRef();
 	return new Opcode(OP_PRE_DEC, &VM::pre_dec_handler, value, NULL, expr->get_value());

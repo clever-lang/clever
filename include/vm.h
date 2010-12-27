@@ -74,7 +74,7 @@ public:
 		}
 		switch (op->get_kind()) {
 			case Value::NAMED:
-				return m_symbols.get_var(op->getString());
+				return m_symbols.get_var(op);
 			case Value::CONST:
 				return op;
 			case Value::TEMP:

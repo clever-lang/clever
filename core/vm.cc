@@ -288,7 +288,7 @@ void VM::var_decl_handler(CLEVER_VM_HANDLER_ARGS) {
 	value->addRef();
 
 	/* Register the variable in the current scope */
-	m_symbols.register_var(opcode->get_op1()->toString(), value);
+	m_symbols.register_var(opcode->get_op1(), value);
 }
 
 /*
@@ -346,8 +346,16 @@ void VM::pre_dec_handler(CLEVER_VM_HANDLER_ARGS) {
 	if (value->isConst()) {
 		switch (value->get_type()) {
 			case Value::INTEGER:
-				value->setInteger(value->getInteger()-1);
+				value->setInteger(value->getInteger()-1);/*
+				if (opcode->get_result()->get_value()) {
+					if (opcode->get_result()->get_value()->refCount() == 1) {
+						opcode->set_result(value);
+						value->addRef();
+						break;
+					}
+				}*/
 				opcode->set_result(new ConstantValue(value->getInteger()));
+
 				break;
 			case Value::DOUBLE:
 				value->setDouble(value->getDouble()-1);

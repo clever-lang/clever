@@ -46,6 +46,9 @@ public:
 
 	~IRBuilder() { }
 
+	void init();
+	void shutdown();
+
 	inline VM::OpcodeList* get_opcodes() {
 		return &m_opcodes;
 	}
@@ -81,6 +84,7 @@ public:
 	DISALLOW_COPY_AND_ASSIGN(IRBuilder);
 private:
 	VM::OpcodeList m_opcodes;
+	SymbolTable m_symbols;
 	JmpStack m_jmps;
 };
 
