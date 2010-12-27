@@ -53,7 +53,7 @@ class Driver;
 %locations
 %initial-action {
 // Initialize the initial location.
-@$.begin.filename = @$.end.filename = &driver.m_file;
+@$.begin.filename = @$.end.filename = &driver.get_file();
 };
 
 %debug
@@ -104,7 +104,7 @@ clever::ast::TreeNode nodes;
 %start top_statements;
 
 top_statements:
-		statement_list { driver.compiler.Init(nodes.getNodeList()); }
+		statement_list { driver.initCompiler(nodes.getNodeList()); }
 ;
 
 statement_list:

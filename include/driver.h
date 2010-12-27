@@ -31,52 +31,74 @@
 #include <stack>
 #include "parser.hh"
 #include "compiler.h"
+#include "ast.h"
 
 namespace clever {
 class ScannerState;
 }
 
-// Scanner prototype
+/**
+ * Lexer prototype
+ */
 clever::Parser::token_type yylex(clever::Parser::semantic_type*,
 		clever::Parser::location_type*, clever::Driver&,
 		clever::ScannerState*);
 
 namespace clever {
 
+/**
+ * Driver - Handles the lexer, parser and compiler
+ */
 class Driver {
 public:
-	Driver() : m_is_file(false), m_trace_parsing(false) { }
+	typedef std::stack<ScannerState*> ScannerStack;
+
+	Driver()
+		: m_is_file(false), m_trace_parsing(false) { }
+
 	virtual ~Driver() { }
 
-	// Read file to the scanner
+	/* Initializes the compiler with AST nodes */
+	inline void initCompiler(ast::TreeNode::nodeList& nodes) {
+		m_compiler.Init(nodes);
+	}
+
+	/* Returns the parsed file */
+	inline std::string& get_file() {
+		return m_file;
+	}
+
+	/* Read file to the scanner */
 	void readFile(void);
 
-	// Run the parser
+	/* Run the parser */
 	int parseStr(const std::string&);
 	int parseFile(const std::string&);
 
-	// Error handling
+	/* Error handling */
 	void error(const clever::location&, const std::string&) const;
 	void error(const std::string&) const;
-
-	typedef std::stack<clever::ScannerState*> ScannerStack;
-
-	// Indicates if it's a file is being parsed
+private:
+	/* Indicates if it's a file is being parsed */
 	bool m_is_file;
-	// The file path -f
-	std::string m_file;
-	// The source
-	std::string m_source;
-	// The source as input -r
-	std::string m_input;
-	// Debug option
+	/* Debug option */
 	bool m_trace_parsing;
-	// Scanners stack
+	/* Scanners stack */
 	static ScannerStack m_scanners;
-	// Compiler
-	Compiler compiler;
+protected:
+	/* The file path -f */
+	std::string m_file;
+	/* The source */
+	std::string m_source;
+	/* The source as input -r */
+	std::string m_input;
+	/* Compiler */
+	Compiler m_compiler;
 };
 
+/**
+ * Interpreter
+ */
 class Interpreter : public Driver {
 public:
 	Interpreter() { }

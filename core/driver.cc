@@ -36,13 +36,16 @@ namespace clever {
 
 Driver::ScannerStack Driver::m_scanners;
 
+/**
+ * Executes the script
+ */
 void Interpreter::execute(void) {
 	VM vm;
 
-	compiler.buildIR();
-	//compiler.dumpAST();
+	m_compiler.buildIR();
+	// compiler.dumpAST();
 
-	vm.setOpcodes(compiler.getOpcodes());
+	vm.setOpcodes(m_compiler.getOpcodes());
 	vm.run();
 }
 
@@ -74,7 +77,6 @@ void Driver::readFile(void) {
 
 /**
  * Parses a file
- * @param filename the file name
  */
 int Driver::parseFile(const std::string& filename) {
 	ScannerState* new_scanner = new ScannerState;
@@ -102,33 +104,33 @@ int Driver::parseFile(const std::string& filename) {
 
 /**
  * Parses a string
- * @param source the string to be parsed
  */
 int Driver::parseStr(const std::string& code) {
 	ScannerState* new_scanner = new ScannerState;
 	Parser parser(*this, new_scanner);
 	int result = 0;
 
-	// Save the source code
+	/* Save the source code */
 	m_source = code;
-	// Set the source code to scanner read it
+
+	/* Set the source code to scanner read it */
 	m_scanners.push(new_scanner);
 	m_scanners.top()->set_cursor(m_source.c_str());
-	// Bison debug option
+
+	/* Bison debug option */
 	parser.set_debug_level(m_trace_parsing);
 
 	result = parser.parse();
 
 	delete new_scanner;
+
 	m_scanners.pop();
 
 	return result;
 }
 
 /**
- * Prints an error message
- * @param location the location
- * @param message the message to be printed
+ * Prints an error message and exit
  */
 void Driver::error(const clever::location& location, const std::string& message) const {
 	position last = location.end - 1;
@@ -143,7 +145,6 @@ void Driver::error(const clever::location& location, const std::string& message)
 
 /**
  * Prints an error message
- * @param message the message to be printed
  */
 void Driver::error(const std::string& message) const {
 	std::cout << message << std::endl;
