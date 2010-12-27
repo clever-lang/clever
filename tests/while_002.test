@@ -1,6 +1,6 @@
 Testing nested while loop
 ==CODE==
-Int i = 2
+Int i = 2;
 
 while (--i) {
 	Int j = -2;
@@ -8,10 +8,10 @@ while (--i) {
 	echo i;
 
 	while (j++) {
-		echo j
+		echo j;
 	}
 }
-==RESULT=
+==RESULT==
 2
 -1
 1
