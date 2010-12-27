@@ -28,64 +28,16 @@
 #ifndef CLEVER_VM_H
 #define CLEVER_VM_H
 
-#include <deque>
-#include <map>
 #include <vector>
+#include "symboltable.h"
 
 #define CLEVER_VM_HANDLER_ARGS unsigned int* next_op, Opcode* opcode
 #define VM_GOTO(x) *next_op = (x)-1; return
 
 namespace clever {
 
+class SymbolTable;
 class Opcode;
-
-class SymbolTable {
-public:
-	typedef std::map<std::string, Value*> var_map;
-	typedef std::deque<var_map> var_scope;
-
-	SymbolTable() :
-		m_var_at(-1) { }
-
-	inline void register_var(std::string name, Value* value) {
-		m_variables.at(m_var_at).insert(std::pair<std::string, Value*>(name, value));
-	}
-
-	inline Value* get_var(std::string name) {
-		/* Searchs for the variable in the inner and out scopes */
-		for (int i = m_var_at; i >= 0; --i) {
-			var_map::iterator it = m_variables.at(i).find(name);
-
-			if (it != m_variables.at(i).end()) {
-				return it->second;
-			}
-		}
-		return NULL;
-	}
-
-	inline void pushVarMap(var_map map) {
-		m_variables.push_back(map);
-		++m_var_at;
-	}
-
-	inline var_map& topVarMap() {
-		return m_variables.at(m_var_at);
-	}
-
-	inline void popVarMap() {
-		var_map::iterator it = topVarMap().begin();
-
-		while (it != topVarMap().end()) {
-			it->second->delRef();
-			++it;
-		}
-		m_variables.pop_back();
-		--m_var_at;
-	}
-private:
-	var_scope m_variables;
-	int m_var_at;
-};
 
 class VM {
 public:
