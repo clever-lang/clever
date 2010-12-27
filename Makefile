@@ -66,7 +66,10 @@ $(BUILDDIR)vm.o: $(SRCDIR)vm.cc
 
 $(BUILDDIR)win32.o: $(WINDIR)win32.cc
 	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)win32.o $(WINDIR)win32.cc
-	
+
+run-mem-tests:
+	$(EXTRADIR)testrunner -m tests/
+		
 run-tests:
 	$(EXTRADIR)testrunner tests/
 
