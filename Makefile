@@ -1,5 +1,5 @@
 # $Id$
-# 
+#
 # Compiler
 CXX?=g++
 CPPFLAGS=-c -ggdb -ansi -Iinclude/ -Ibuild/ -Imodules/ -Iwin32/ -I. -fno-rtti
@@ -21,7 +21,7 @@ WINDIR=win32/
 # Testrunner dir
 EXTRADIR=extra/
 
-OBJECTS=$(BUILDDIR)parser.o $(BUILDDIR)scanner.o $(BUILDDIR)driver.o $(BUILDDIR)types.o $(BUILDDIR)cstring.o $(BUILDDIR)irbuilder.o $(BUILDDIR)ast.o $(BUILDDIR)compiler.o $(BUILDDIR)vm.o $(BUILDDIR)main.o $(BUILDDIR)win32.o
+OBJECTS=$(BUILDDIR)parser.o $(BUILDDIR)scanner.o $(BUILDDIR)driver.o $(BUILDDIR)types.o $(BUILDDIR)cstring.o $(BUILDDIR)irbuilder.o $(BUILDDIR)ast.o $(BUILDDIR)compiler.o $(BUILDDIR)vm.o $(BUILDDIR)opcodes.o $(BUILDDIR)main.o $(BUILDDIR)win32.o
 
 clever: $(OBJECTS)
 	$(LD) $(LFLAGS) -o clever $(BUILDDIR)*.o
@@ -64,12 +64,15 @@ $(BUILDDIR)compiler.o: $(SRCDIR)compiler.cc
 $(BUILDDIR)vm.o: $(SRCDIR)vm.cc
 	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)vm.o $(SRCDIR)vm.cc
 
+$(BUILDDIR)opcodes.o: $(SRCDIR)opcodes.cc
+	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)opcodes.o $(SRCDIR)opcodes.cc
+
 $(BUILDDIR)win32.o: $(WINDIR)win32.cc
 	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)win32.o $(WINDIR)win32.cc
 
 run-mem-tests:
 	$(EXTRADIR)testrunner -m tests/
-		
+
 run-tests:
 	$(EXTRADIR)testrunner tests/
 
@@ -79,7 +82,7 @@ test: $(EXTRADIR)testrunner.cpp
 clean-all: clean clean-test
 
 clean:
-	rm -rf clever clever.exe 
+	rm -rf clever clever.exe
 	rm -f $(BUILDDIR)*
 
 clean-test:

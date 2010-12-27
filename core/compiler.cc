@@ -39,6 +39,26 @@ void Compiler::Init(ast::TreeNode::nodeList& nodes) {
 }
 
 /*
+ * Collects all opcode
+ */
+void Compiler::buildIR() {
+	ast::TreeNode::nodeList::const_iterator it = m_ast.begin();
+
+	m_builder.init();
+
+	while (it < m_ast.end()) {
+		Opcode* opcode = (*it)->codeGen(m_builder);
+
+		if (opcode) {
+			m_builder.push(opcode);
+		}
+		++it;
+	}
+
+	m_builder.shutdown();
+}
+
+/*
  * Displays an error message
  */
 void Compiler::error(const char* message) {
@@ -96,26 +116,6 @@ ConstantValue* Compiler::constantFolding(char op, Value* lhs, Value* rhs) {
 			break;
 	}
 	return NULL;
-}
-
-/*
- * Collects all opcode
- */
-void Compiler::buildIR() {
-	ast::TreeNode::nodeList::const_iterator it = m_ast.begin();
-
-	m_builder.init();
-
-	while (it < m_ast.end()) {
-		Opcode* opcode = (*it)->codeGen(m_builder);
-
-		if (opcode) {
-			m_builder.push(opcode);
-		}
-		++it;
-	}
-
-	m_builder.shutdown();
 }
 
 /*

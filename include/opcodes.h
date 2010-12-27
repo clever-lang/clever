@@ -111,6 +111,11 @@ public:
 	unsigned int get_jmp_addr2() {
 		return m_jmp_addr.jmp2;
 	}
+
+	/* Debug */
+	void dump();
+	const char* getOpName(Opcodes);
+	const char* dumpOp(const char*, Value*);
 private:
 	VM::opcode_handler m_handler;
 	Opcodes m_op_type;

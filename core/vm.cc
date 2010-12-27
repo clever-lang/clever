@@ -39,6 +39,8 @@ VM::~VM(void) {
 	OpcodeList::iterator it = m_opcodes->begin();
 
 	while (it < m_opcodes->end()) {
+		// (*it)->dump();
+
 		if ((*it)->get_op1()) {
 			(*it)->get_op1()->delRef();
 		}
@@ -72,6 +74,8 @@ void VM::run(void) {
 
 	for (next_op = 0; next_op < last_op; ++next_op) {
 		Opcode* opcode = (*m_opcodes)[next_op];
+
+		// opcode->dump();
 
 		/* Invoke the opcode handler */
 		(this->*(opcode->get_handler()))(&next_op, opcode);
