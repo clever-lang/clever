@@ -39,7 +39,12 @@ class Opcode;
  */
 class IRBuilder {
 public:
+	typedef std::stack<Opcode*> Jmp;
+	typedef std::stack<Jmp> JmpStack;
+
 	IRBuilder() { }
+
+	~IRBuilder() { }
 
 	inline VM::OpcodeList* get_opcodes() {
 		return &m_opcodes;
@@ -47,6 +52,7 @@ public:
 
 	inline void push(Opcode* opcode) {
 		m_opcodes.push_back(opcode);
+		/* Sets the opcode number, which is used by JMP opcodes */
 		opcode->set_op_num(getOpNum());
 	}
 
@@ -72,14 +78,10 @@ public:
 	Opcode* endWhileExpression(ast::EndWhileExpression*);
 	Opcode* startLoop(ast::StartLoop*);
 
-	typedef std::stack<Opcode*> Jmp;
-	typedef std::stack<Jmp> JmpStack;
-
-	JmpStack m_jmps;
-
 	DISALLOW_COPY_AND_ASSIGN(IRBuilder);
 private:
 	VM::OpcodeList m_opcodes;
+	JmpStack m_jmps;
 };
 
 } // clever
