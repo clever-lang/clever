@@ -37,34 +37,34 @@ class Value;
 
 class SymbolTable {
 public:
-	typedef std::map<std::string, Value*> var_map;
+	typedef std::map<long, Value*> var_map;
 	typedef std::deque<var_map> var_scope;
 
 	SymbolTable() :
 		m_var_at(-1) { }
 
 	inline void register_var(Value* var) {
-		m_variables.at(m_var_at).insert(std::pair<std::string, Value*>(var->getString(), var));
+		m_variables.at(m_var_at).insert(std::pair<long, Value*>(var->getString().get_id(), var));
 	}
 
 	inline void register_var(Value* var, Value* value) {
-		m_variables.at(m_var_at).insert(std::pair<std::string, Value*>(var->getString(), value));
+		m_variables.at(m_var_at).insert(std::pair<long, Value*>(var->getString().get_id(), value));
 		var->set_value(value);
 	}
 
 	inline Value* get_var(Value* var) {
 		Value* value = var->isNamedValue() ? var->get_value() : NULL;
-		std::string name;
+		long name_id;
 
 		if (value) {
 			return value;
 		}
 
-		name = var->getString();
+		name_id = var->getString().get_id();
 
 		/* Searchs for the variable in the inner and out scopes */
 		for (int i = m_var_at; i >= 0; --i) {
-			var_map::iterator it = m_variables.at(i).find(name);
+			var_map::iterator it = m_variables.at(i).find(name_id);
 
 			if (it != m_variables.at(i).end()) {
 				var->set_value(it->second);
