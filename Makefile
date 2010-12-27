@@ -1,3 +1,5 @@
+# $Id$
+# 
 # Compiler
 CXX?=g++
 CPPFLAGS=-c -ggdb -ansi -Iinclude/ -Ibuild/ -Imodules/ -Iwin32/ -I. -fno-rtti
@@ -64,6 +66,9 @@ $(BUILDDIR)vm.o: $(SRCDIR)vm.cc
 
 $(BUILDDIR)win32.o: $(WINDIR)win32.cc
 	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)win32.o $(WINDIR)win32.cc
+	
+run-tests:
+	$(EXTRADIR)testrunner tests/
 
 test: $(EXTRADIR)testrunner.cpp
 	$(CXX) $(CPPFLAGS4) -o $(EXTRADIR)testrunner $(EXTRADIR)testrunner.cpp -lpcrecpp
