@@ -102,7 +102,7 @@ ConstantValue* Compiler::constantFolding(char op, Value* lhs, Value* rhs) {
  * Collects all opcode
  */
 void Compiler::buildIR() {
-	ast::TreeNode::nodeList::iterator it = m_ast.begin();
+	ast::TreeNode::nodeList::const_iterator it = m_ast.begin();
 
 	m_builder.init();
 

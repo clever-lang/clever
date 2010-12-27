@@ -115,7 +115,7 @@ Opcode* IRBuilder::endBlock() {
  * Generates the command opcode
  */
 Opcode* IRBuilder::command(ast::Command* expr) {
-	Value* value = expr->get_expr()->get_value();
+	Value* value = getValue(expr->get_expr());
 
 	value->addRef();
 	return new Opcode(OP_ECHO, &VM::echo_handler, value);
@@ -125,7 +125,7 @@ Opcode* IRBuilder::command(ast::Command* expr) {
  * Generates the pre increment opcode
  */
 Opcode* IRBuilder::preIncrement(ast::PreIncrement* expr) {
-	Value* value = expr->get_expr()->get_value();
+	Value* value = getValue(expr->get_expr());
 
 	value->addRef();
 	return new Opcode(OP_PRE_INC, &VM::pre_inc_handler, value, NULL, expr->get_value());
@@ -135,7 +135,7 @@ Opcode* IRBuilder::preIncrement(ast::PreIncrement* expr) {
  * Generates the pos increment opcode
  */
 Opcode* IRBuilder::posIncrement(ast::PosIncrement* expr) {
-	Value* value = expr->get_expr()->get_value();
+	Value* value = getValue(expr->get_expr());
 
 	value->addRef();
 	return new Opcode(OP_POS_INC, &VM::pos_inc_handler, value, NULL, expr->get_value());
@@ -145,15 +145,7 @@ Opcode* IRBuilder::posIncrement(ast::PosIncrement* expr) {
  * Generates the pre decrement opcode
  */
 Opcode* IRBuilder::preDecrement(ast::PreDecrement* expr) {
-	Value* value = expr->get_expr()->get_value();
-
-	if (value->isNamedValue()) {
-		Value* val_tmp = m_symbols.get_var(value);
-
-		if (val_tmp) {
-			value = val_tmp;
-		}
-	}
+	Value* value = getValue(expr->get_expr());
 
 	value->addRef();
 	return new Opcode(OP_PRE_DEC, &VM::pre_dec_handler, value, NULL, expr->get_value());
@@ -163,7 +155,7 @@ Opcode* IRBuilder::preDecrement(ast::PreDecrement* expr) {
  * Generates the pos decrement opcode
  */
 Opcode* IRBuilder::posDecrement(ast::PosDecrement* expr) {
-	Value* value = expr->get_expr()->get_value();
+	Value* value = getValue(expr->get_expr());
 
 	value->addRef();
 	return new Opcode(OP_POS_DEC, &VM::pos_dec_handler, value, NULL, expr->get_value());
@@ -173,7 +165,7 @@ Opcode* IRBuilder::posDecrement(ast::PosDecrement* expr) {
  * Generates the JMPZ opcode for IF expression
  */
 Opcode* IRBuilder::ifExpression(ast::IfExpression* expr) {
-	Value* value = expr->get_expr()->get_value();
+	Value* value = getValue(expr->get_expr());
 	Opcode* opcode = new Opcode(OP_JMPZ, &VM::jmpz_handler, value);
 	Jmp jmp;
 
@@ -188,7 +180,7 @@ Opcode* IRBuilder::ifExpression(ast::IfExpression* expr) {
  * Generates a JMPZ opcode for ELSEIF expression
  */
 Opcode* IRBuilder::elseIfExpression(ast::ElseIfExpression* expr) {
-	Value* value = expr->get_expr()->get_value();
+	Value* value = getValue(expr->get_expr());
 	Opcode* opcode = new Opcode(OP_JMPZ, &VM::jmpz_handler, value);
 
 	m_jmps.top().top()->set_jmp_addr1(getOpNum()+2);
@@ -234,7 +226,7 @@ Opcode* IRBuilder::endIfExpression() {
  * Generates the JMPZ opcode for WHILE expression
  */
 Opcode* IRBuilder::whileExpression(ast::WhileExpression* expr) {
-	Value* value = expr->get_expr()->get_value();
+	Value* value = getValue(expr->get_expr());
 	Opcode* opcode = new Opcode(OP_JMPZ, &VM::jmpz_handler, value);
 	Jmp jmp;
 

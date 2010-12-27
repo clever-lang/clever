@@ -33,6 +33,7 @@
 namespace clever {
 
 class Opcode;
+class Value;
 
 /**
  * Opcode builder
@@ -63,6 +64,15 @@ public:
 		return m_opcodes.size()-1;
 	}
 
+	inline Value* getValue(ast::Expression* expr) {
+		Value* value = expr->get_value();
+
+		if (value->isNamedValue()) {
+			return m_symbols.get_var(value);
+		}
+		return value;
+	}
+
 	/* Opcode generators */
 	Opcode* binaryExpression(ast::BinaryExpression*);
 	Opcode* variableDecl(ast::VariableDecl*);
@@ -83,8 +93,11 @@ public:
 
 	DISALLOW_COPY_AND_ASSIGN(IRBuilder);
 private:
+	/* Opcode vector */
 	VM::OpcodeList m_opcodes;
+	/* Symbol table map */
 	SymbolTable m_symbols;
+	/* Stack used for control structures */
 	JmpStack m_jmps;
 };
 
