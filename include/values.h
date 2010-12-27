@@ -42,6 +42,9 @@
 
 namespace clever {
 
+/**
+ * Base class for value representation
+ */
 class Value : public RefCounted {
 public:
 	enum { SET, UNSET, MODIFIED };
@@ -152,26 +155,28 @@ public:
  */
 class ConstantValue : public Value {
 public:
-	explicit ConstantValue(double value) : Value(CONST) {
+	explicit ConstantValue(double value)
+		: Value(CONST) {
 		set_type(DOUBLE);
 		setDouble(value);
 	}
 
-	explicit ConstantValue(int64_t value) : Value(CONST) {
+	explicit ConstantValue(int64_t value)
+		: Value(CONST) {
 		set_type(INTEGER);
 		setInteger(value);
 	}
 
-	explicit ConstantValue(CString* value) : Value(CONST) {
+	explicit ConstantValue(CString* value)
+		: Value(CONST) {
 		set_type(STRING);
 		setString(value);
 	}
 
-	~ConstantValue() {
-	}
+	~ConstantValue() { }
 };
 
-/*
+/**
  * Temporary storage used for opcodes to storage results
  */
 class TempValue : public Value {
