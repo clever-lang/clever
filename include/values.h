@@ -113,7 +113,8 @@ public:
 
 				return str.str();
 			case STRING:
-				return getString();
+				// @TODO: fix this
+				return std::string(getString().c_str());
 			default:
 				return std::string();
 		}

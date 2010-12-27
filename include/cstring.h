@@ -43,6 +43,7 @@ public:
 	CString(const CString& str, long id)
 		: std::string(str), m_id(id) { }
 
+	CString(const CString& str) : std::string(str), m_id(-1) { store(); }
 	CString(CString& str) : std::string(str), m_id(-1) { store(); }
 	explicit CString(std::string str) : std::string(str), m_id(-1) { store(); }
 	explicit CString(const char* str) : std::string(str), m_id(-1) { store(); }
