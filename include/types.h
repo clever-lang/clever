@@ -44,9 +44,9 @@ class Type {
 public:
 	enum {
 		ABSTRACT  = 0x0,
-		CONCRETE  = 0x1 << 1,
-		INTERFACE = 0x1 << 2,
-		BUILT_IN  = 0x1 << 3
+		CONCRETE  = 0x1,
+		INTERFACE = 0x1 << 1,
+		BUILT_IN  = 0x1 << 2
 	};
 
 	Type(const std::string& name, int kind)
