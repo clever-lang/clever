@@ -75,7 +75,7 @@ public:
 
 	~Opcode() { }
 
-	inline int get_type() { return m_op_type; }
+	inline int get_op_type() { return m_op_type; }
 
 	inline Value* get_op1() { return m_op1; }
 	inline void set_op1(Value* op1) { m_op1 = op1; }

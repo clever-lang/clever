@@ -112,8 +112,14 @@ statement_list:
 	|	statement_list statements
 ;
 
+statement_list_non_empty:
+		statements
+	|	statement_list_non_empty statements
+;
+
 block_stmt:
-		'{' { nodes.add(new clever::ast::NewBlock()); } statement_list '}'
+		'{' '}'
+	|	'{' { nodes.add(new clever::ast::NewBlock()); } statement_list_non_empty '}'
 				{ nodes.add(new clever::ast::EndBlock()); }
 ;
 
