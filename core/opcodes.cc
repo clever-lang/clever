@@ -36,7 +36,7 @@ namespace clever {
 void Opcode::dump() {
 	printf("%-15s | ", getOpName(m_op_type));
 	printf("%-15s | ", dumpOp("op1", m_op1));
-	printf("%-15s | ", dumpOp("op2", m_op1));
+	printf("%-15s | ", dumpOp("op2", m_op2));
 	printf("%-15s\n", dumpOp("result", m_result));
 }
 
