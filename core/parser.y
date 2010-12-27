@@ -198,7 +198,7 @@ if_stmt:
 
 elseif_opt:
 		/* empty */
-	|	ELSEIF '(' expr { nodes.add(new clever::ast::ElseIfExpression($3)); } ')' block_stmt
+	|	elseif_opt ELSEIF '(' expr { nodes.add(new clever::ast::ElseIfExpression($4)); } ')' block_stmt
 ;
 
 else_opt:

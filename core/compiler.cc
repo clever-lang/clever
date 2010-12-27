@@ -51,6 +51,7 @@ void Compiler::buildIR() {
 
 		if (opcode) {
 			m_builder.push(opcode);
+			// opcode->dump();
 		}
 		++it;
 	}

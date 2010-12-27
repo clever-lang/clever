@@ -186,7 +186,7 @@ Opcode* IRBuilder::elseIfExpression(ast::ElseIfExpression* expr) {
 	Value* value = getValue(expr->get_expr());
 	Opcode* opcode = new Opcode(OP_JMPZ, &VM::jmpz_handler, value);
 
-	m_jmps.top().top()->set_jmp_addr1(getOpNum()+2);
+	m_jmps.top().top()->set_jmp_addr1(getOpNum()+1);
 	m_jmps.top().push(opcode);
 
 	value->addRef();
