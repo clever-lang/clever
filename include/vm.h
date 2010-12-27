@@ -31,7 +31,14 @@
 #include <vector>
 #include "symboltable.h"
 
+/**
+ * Opcode handler arguments
+ */
 #define CLEVER_VM_HANDLER_ARGS unsigned int* next_op, Opcode* opcode
+
+/**
+ * Change the executor flow to run another opcode
+ */
 #define VM_GOTO(x) *next_op = (x)-1; return
 
 namespace clever {
@@ -45,9 +52,11 @@ public:
 	typedef std::vector<Opcode*> OpcodeList;
 
 	VM() : m_opcodes(NULL) { }
-	~VM();
+
 	explicit VM(OpcodeList* opcodes)
 		: m_opcodes(opcodes) { }
+		
+	~VM();
 
 	void run(void);
 	void error(const char*) const;

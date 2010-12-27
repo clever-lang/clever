@@ -67,17 +67,17 @@ void VM::error(const char* message) const {
 void VM::run(void) {
 	unsigned int next_op, last_op = m_opcodes->size();
 
+	/* Initializes global scope */
 	m_symbols.pushVarMap(SymbolTable::var_map());
-
-	// std::cout << "Opcodes: " << last_op << std::endl;
 
 	for (next_op = 0; next_op < last_op; ++next_op) {
 		Opcode* opcode = (*m_opcodes)[next_op];
 
+		/* Invoke the opcode handler */
 		(this->*(opcode->get_handler()))(&next_op, opcode);
-		// std::cout << "next: " << next_op+1 << std::endl;
 	}
 
+	/* Pop global scope */
 	m_symbols.popVarMap();
 }
 
@@ -263,6 +263,7 @@ void VM::bw_or_handler(CLEVER_VM_HANDLER_ARGS) {
  * {
  */
 void VM::new_scope_handler(CLEVER_VM_HANDLER_ARGS) {
+	/* Create a new scope */
 	m_symbols.pushVarMap(SymbolTable::var_map());
 }
 
@@ -270,11 +271,12 @@ void VM::new_scope_handler(CLEVER_VM_HANDLER_ARGS) {
  * }
  */
 void VM::end_scope_handler(CLEVER_VM_HANDLER_ARGS) {
+	/* Remove the newest scope */
 	m_symbols.popVarMap();
 }
 
 /*
- * Type var
+ * Type var [= value ]
  */
 void VM::var_decl_handler(CLEVER_VM_HANDLER_ARGS) {
 	Value* value = getValue(opcode->get_op2());
@@ -285,6 +287,7 @@ void VM::var_decl_handler(CLEVER_VM_HANDLER_ARGS) {
 	}
 	value->addRef();
 
+	/* Register the variable in the current scope */
 	m_symbols.register_var(opcode->get_op1()->toString(), value);
 }
 
@@ -389,8 +392,12 @@ void VM::jmpz_handler(CLEVER_VM_HANDLER_ARGS) {
 	if (value->isConst()) {
 		switch (value->get_type()) {
 			case Value::INTEGER:
-				if (value->getInteger() == 0) {
-					// std::cout << "jmp to " << opcode->get_jmp_addr1() << std::endl;
+				if (!value->getInteger()) {
+					VM_GOTO(opcode->get_jmp_addr1());
+				}
+				break;
+			case Value::DOUBLE:
+				if (!value->getDouble()) {
 					VM_GOTO(opcode->get_jmp_addr1());
 				}
 				break;
@@ -402,7 +409,6 @@ void VM::jmpz_handler(CLEVER_VM_HANDLER_ARGS) {
  * JMP
  */
 void VM::jmp_handler(CLEVER_VM_HANDLER_ARGS) {
-	// std::cout << "> jmp to " << opcode->get_jmp_addr2()-1 <<  std::endl;
 	VM_GOTO(opcode->get_jmp_addr2());
 }
 
