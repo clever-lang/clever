@@ -1,0 +1,15 @@
+Testing unary operation
+==CODE=
+Int i = 2;
+Int j = -2;
+
+echo 1 + -i;
+echo -i + -i;
+echo -i - -i;
+echo +j;
+
+==RESULT==
+-1
+-4
+0
+-2

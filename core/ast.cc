@@ -77,8 +77,15 @@ LogicExpression::LogicExpression(int op, Expression* lhs, Expression* rhs)
  */
 BinaryExpression::BinaryExpression(char op_, Expression* lhs, Expression* rhs)
 		: m_op(op_), m_lhs(lhs), m_rhs(rhs), m_result(NULL), m_value(NULL) {
-	Value* tmp_lhs = lhs->get_value();
+	Value* tmp_lhs;
 	Value* tmp_rhs = rhs->get_value();
+
+	/* Check if it is an unary operation */
+	if (m_lhs == NULL) {
+		m_lhs = lhs = new ast::NumberLiteral(int64_t(0));
+	}
+
+	tmp_lhs = lhs->get_value();
 
 	m_rhs->addRef();
 	m_lhs->addRef();

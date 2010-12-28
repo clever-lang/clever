@@ -170,8 +170,8 @@ expr:
 	|	expr ">=" expr  { $$ = new clever::ast::LogicExpression(ast::GREATER_EQUAL, $1, $3); nodes.add($$); }
 	|	expr "<" expr   { $$ = new clever::ast::LogicExpression(ast::LESS, $1, $3); nodes.add($$); }
 	|	expr "<=" expr  { $$ = new clever::ast::LogicExpression(ast::LESS_EQUAL, $1, $3); nodes.add($$); }
-	|	'-' expr %prec UMINUS
-	|	'+' expr %prec UMINUS
+	|	'-' expr %prec UMINUS { $$ = new clever::ast::BinaryExpression('-', NULL, $2); nodes.add($$); }
+	|	'+' expr %prec UMINUS { $$ = new clever::ast::BinaryExpression('+', NULL, $2); nodes.add($$); }
 	|	INCREMENT IDENT { $$ = new clever::ast::PreIncrement($2); nodes.add($$); }
 	|	IDENT INCREMENT { $$ = new clever::ast::PosIncrement($1); nodes.add($$); }
 	|	DECREMENT IDENT { $$ = new clever::ast::PreDecrement($2); nodes.add($$); }
