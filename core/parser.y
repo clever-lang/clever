@@ -167,7 +167,7 @@ expr:
 	|	expr '&' expr { $$ = new clever::ast::BinaryExpression('&', $1, $3); nodes.add($$); }
 	|	expr '^' expr { $$ = new clever::ast::BinaryExpression('^', $1, $3); nodes.add($$); }
 	|	expr ">" expr   { $$ = new clever::ast::LogicExpression(ast::GREATER, $1, $3); nodes.add($$); }
-	|	expr ">=" expr { $$ = new clever::ast::LogicExpression(ast::GREATER_EQUAL, $1, $3); nodes.add($$); }
+	|	expr ">=" expr  { $$ = new clever::ast::LogicExpression(ast::GREATER_EQUAL, $1, $3); nodes.add($$); }
 	|	expr "<" expr   { $$ = new clever::ast::LogicExpression(ast::LESS, $1, $3); nodes.add($$); }
 	|	expr "<=" expr  { $$ = new clever::ast::LogicExpression(ast::LESS_EQUAL, $1, $3); nodes.add($$); }
 	|	'-' expr %prec UMINUS
@@ -194,7 +194,7 @@ for_stmt:
 ;
 
 while_stmt:
-		WHILE '(' { $2 = new clever::ast::StartLoop(); nodes.add($2); }
+		WHILE '(' { $2 = new clever::ast::StartExpr(); nodes.add($2); }
 		expr { nodes.add(new clever::ast::WhileExpression($4)); } ')'
 		block_stmt { nodes.add(new clever::ast::EndWhileExpression($2)); }
 ;
@@ -206,7 +206,8 @@ if_stmt:
 
 elseif_opt:
 		/* empty */
-	|	elseif_opt ELSEIF '(' expr { nodes.add(new clever::ast::ElseIfExpression($4)); } ')' block_stmt
+	|	elseif_opt ELSEIF '(' { $3 = new clever::ast::StartExpr(); nodes.add($3); }
+		expr { nodes.add(new clever::ast::ElseIfExpression($3, $5)); } ')' block_stmt
 ;
 
 else_opt:

@@ -466,22 +466,29 @@ private:
 
 class ElseIfExpression : public Expression {
 public:
-	ElseIfExpression(Expression* expr)
-		: m_expr(expr) {
+	ElseIfExpression(Expression* start_expr, Expression* expr)
+		: m_start_expr(start_expr), m_expr(expr) {
 		m_expr->addRef();
+		m_start_expr->addRef();
 	}
 
 	~ElseIfExpression() {
 		m_expr->delRef();
+		m_start_expr->delRef();
 	}
 
 	inline Expression* get_expr() {
 		return m_expr;
 	}
 
+	inline Expression* get_start_expr() {
+		return m_start_expr;
+	}
+
 	Opcode* codeGen(IRBuilder&);
 private:
 	Expression* m_expr;
+	Expression* m_start_expr;
 };
 
 class ElseExpression : public Expression {
@@ -543,11 +550,11 @@ private:
 	Expression* m_expr;
 };
 
-class StartLoop : public Expression {
+class StartExpr : public Expression {
 public:
-	StartLoop() { }
+	StartExpr() { }
 
-	~StartLoop() { }
+	~StartExpr() { }
 
 	inline void set_op_num(unsigned int op_num) {
 		m_op_num = op_num;

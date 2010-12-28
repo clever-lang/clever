@@ -401,10 +401,6 @@ void VM::pos_dec_handler(CLEVER_VM_HANDLER_ARGS) {
 void VM::jmpz_handler(CLEVER_VM_HANDLER_ARGS) {
 	Value* value = getValue(opcode->get_op1());
 
-	if (!value) {
-		error("NULL");
-	}
-
 	if (value->isConst()) {
 		switch (value->get_type()) {
 			case Value::INTEGER:

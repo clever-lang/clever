@@ -185,8 +185,10 @@ Opcode* IRBuilder::ifExpression(ast::IfExpression* expr) {
 Opcode* IRBuilder::elseIfExpression(ast::ElseIfExpression* expr) {
 	Value* value = getValue(expr->get_expr());
 	Opcode* opcode = new Opcode(OP_JMPZ, &VM::jmpz_handler, value);
+	ast::StartExpr* start_expr = static_cast<ast::StartExpr*>(expr->get_start_expr());
 
-	m_jmps.top().top()->set_jmp_addr1(getOpNum()+1);
+	/* Sets the if jmp to start of the ELSEIF expr */
+	m_jmps.top().top()->set_jmp_addr1(start_expr->get_op_num());
 	m_jmps.top().push(opcode);
 
 	value->addRef();
@@ -250,7 +252,7 @@ Opcode* IRBuilder::whileExpression(ast::WhileExpression* expr) {
  */
 Opcode* IRBuilder::endWhileExpression(ast::EndWhileExpression* expr) {
 	Opcode* opcode = new Opcode(OP_JMP, &VM::jmp_handler);
-	ast::StartLoop* start_loop = static_cast<ast::StartLoop*>(expr->get_expr());
+	ast::StartExpr* start_loop = static_cast<ast::StartExpr*>(expr->get_expr());
 
 	/* Points to out of WHILE block */
 	m_jmps.top().top()->set_jmp_addr1(getOpNum()+2);
@@ -267,7 +269,7 @@ Opcode* IRBuilder::endWhileExpression(ast::EndWhileExpression* expr) {
 /*
  * Just hold the current op number before the WHILE expression
  */
-Opcode* IRBuilder::startLoop(ast::StartLoop* expr) {
+Opcode* IRBuilder::startExpr(ast::StartExpr* expr) {
 	expr->set_op_num(getOpNum()+1);
 
 	return NULL;

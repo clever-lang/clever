@@ -89,7 +89,7 @@ public:
 	Opcode* endIfExpression();
 	Opcode* whileExpression(ast::WhileExpression*);
 	Opcode* endWhileExpression(ast::EndWhileExpression*);
-	Opcode* startLoop(ast::StartLoop*);
+	Opcode* startExpr(ast::StartExpr*);
 	Opcode* logicExpression(ast::LogicExpression*);
 
 	DISALLOW_COPY_AND_ASSIGN(IRBuilder);

@@ -174,8 +174,8 @@ Opcode* EndIfExpression::codeGen(IRBuilder& builder) {
 /*
  * StartLoop
  */
-Opcode* StartLoop::codeGen(IRBuilder& builder) {
-	return builder.startLoop(this);
+Opcode* StartExpr::codeGen(IRBuilder& builder) {
+	return builder.startExpr(this);
 }
 
 /*
