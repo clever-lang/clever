@@ -628,6 +628,15 @@ private:
 	Value* m_value;
 };
 
+class BreakExpression : public Expression {
+public:
+	BreakExpression() { }
+
+	~BreakExpression() { }
+
+	Opcode* codeGen(IRBuilder&);
+};
+
 }} // clever::ast
 
 #endif // CLEVER_AST_H

@@ -83,6 +83,7 @@ clever::ast::TreeNode nodes;
 %token GREATER_EQUAL ">="
 %token LESS          "<"
 %token GREATER       ">"
+%token BREAK         "break"
 
 %left ',';
 %left '=';
@@ -135,6 +136,7 @@ statements:
 	|	for_stmt
 	|	while_stmt
 	|	block_stmt
+	|	break_stmt ';'
 ;
 
 variable_declaration_no_init:
@@ -213,6 +215,10 @@ elseif_opt:
 else_opt:
 		/* empty */
 	|	ELSE { nodes.add(new clever::ast::ElseExpression()); } block_stmt
+;
+
+break_stmt:
+		BREAK { nodes.add(new clever::ast::BreakExpression()); }
 ;
 
 %%

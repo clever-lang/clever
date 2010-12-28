@@ -91,6 +91,7 @@ public:
 	Opcode* endWhileExpression(ast::EndWhileExpression*);
 	Opcode* startExpr(ast::StartExpr*);
 	Opcode* logicExpression(ast::LogicExpression*);
+	Opcode* breakExpression();
 
 	DISALLOW_COPY_AND_ASSIGN(IRBuilder);
 private:

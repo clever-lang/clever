@@ -1,0 +1,31 @@
+Testing break statement
+==CODE==
+while (1) {
+	echo 1;
+
+	while (0) {
+		break;
+	}
+
+	if (1) {
+		if (1) {
+			Int i = 2;
+
+			while (i) {
+
+				echo i;
+
+
+				if (--i <= 0) {
+					echo "break!";
+				}
+			}
+		}
+	}
+	break;
+}
+==RESULT==
+1
+2
+1
+break!

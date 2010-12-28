@@ -429,6 +429,9 @@ void VM::jmp_handler(CLEVER_VM_HANDLER_ARGS) {
 	VM_GOTO(opcode->get_jmp_addr2());
 }
 
+/*
+ * x > y
+ */
 void VM::greater_handler(CLEVER_VM_HANDLER_ARGS) {
 	Value* op1 = getValue(opcode->get_op1());
 	Value* op2 = getValue(opcode->get_op2());
@@ -445,6 +448,9 @@ void VM::greater_handler(CLEVER_VM_HANDLER_ARGS) {
 	}
 }
 
+/*
+ * x >= y
+ */
 void VM::greater_equal_handler(CLEVER_VM_HANDLER_ARGS) {
 	Value* op1 = getValue(opcode->get_op1());
 	Value* op2 = getValue(opcode->get_op2());
@@ -461,6 +467,9 @@ void VM::greater_equal_handler(CLEVER_VM_HANDLER_ARGS) {
 	}
 }
 
+/*
+ * x < y
+ */
 void VM::less_handler(CLEVER_VM_HANDLER_ARGS) {
 	Value* op1 = getValue(opcode->get_op1());
 	Value* op2 = getValue(opcode->get_op2());
@@ -477,6 +486,9 @@ void VM::less_handler(CLEVER_VM_HANDLER_ARGS) {
 	}
 }
 
+/*
+ * x <= y
+ */
 void VM::less_equal_handler(CLEVER_VM_HANDLER_ARGS) {
 	Value* op1 = getValue(opcode->get_op1());
 	Value* op2 = getValue(opcode->get_op2());
@@ -491,6 +503,13 @@ void VM::less_equal_handler(CLEVER_VM_HANDLER_ARGS) {
 				break;
 		}
 	}
+}
+
+/*
+ * break
+ */
+void VM::break_handler(CLEVER_VM_HANDLER_ARGS) {
+	VM_GOTO(opcode->get_jmp_addr1());
 }
 
 } // clever

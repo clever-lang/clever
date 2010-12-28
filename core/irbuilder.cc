@@ -255,12 +255,13 @@ Opcode* IRBuilder::endWhileExpression(ast::EndWhileExpression* expr) {
 	ast::StartExpr* start_loop = static_cast<ast::StartExpr*>(expr->get_expr());
 
 	/* Points to out of WHILE block */
-	m_jmps.top().top()->set_jmp_addr1(getOpNum()+2);
+	while (!m_jmps.top().empty()) {
+		m_jmps.top().top()->set_jmp_addr1(getOpNum()+2);
+		m_jmps.top().pop();
+	}
 
 	/* Points to start of WHILE expression */
 	opcode->set_jmp_addr2(start_loop->get_op_num());
-
-	m_jmps.top().pop();
 	m_jmps.pop();
 
 	return opcode;
@@ -295,6 +296,14 @@ Opcode* IRBuilder::logicExpression(ast::LogicExpression* expr) {
 		case ast::GREATER_EQUAL: return new Opcode(OP_GREATER_EQUAL, &VM::greater_equal_handler, lhs, rhs, expr->get_value());
 		case ast::LESS_EQUAL:    return new Opcode(OP_LESS_EQUAL,    &VM::less_equal_handler,    lhs, rhs, expr->get_value());
 	}
+}
+
+Opcode* IRBuilder::breakExpression() {
+	Opcode* opcode = new Opcode(OP_JMPZ, &VM::break_handler);
+
+	m_jmps.top().push(opcode);
+
+	return opcode;
 }
 
 

@@ -142,6 +142,10 @@ next_token:
 
 	<ST_MULTILINE_COMMENT>"*" { SKIP(); }
 
+	<INITIAL>"break" {
+		RET(token::BREAK);
+	}
+
 	<INITIAL>"echo" {
 		RET(token::ECHO);
 	}

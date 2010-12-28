@@ -44,6 +44,9 @@ TreeNode::~TreeNode(void) {
 	}
 }
 
+/*
+ * LogicExpression
+ */
 LogicExpression::LogicExpression(int op, Expression* lhs, Expression* rhs)
 	: m_op(op), m_lhs(lhs), m_rhs(rhs), m_value(NULL) {
 	Value* tmp_lhs = lhs->get_value();
@@ -70,6 +73,10 @@ LogicExpression::LogicExpression(int op, Expression* lhs, Expression* rhs)
 	} else {
 		m_result = new TempValue();
 	}
+}
+
+Opcode* LogicExpression::codeGen(IRBuilder& builder) {
+	return builder.logicExpression(this);
 }
 
 /*
@@ -227,8 +234,11 @@ Opcode* EndWhileExpression::codeGen(IRBuilder& builder) {
 	return builder.endWhileExpression(this);
 }
 
-Opcode* LogicExpression::codeGen(IRBuilder& builder) {
-	return builder.logicExpression(this);
+/*
+ * BreakExpression
+ */
+Opcode* BreakExpression::codeGen(IRBuilder& builder) {
+	return builder.breakExpression();
 }
 
 }} // clever::ast
