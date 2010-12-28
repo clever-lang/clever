@@ -32,7 +32,6 @@
 #include "vm.h"
 
 namespace clever {
-
 /**
  * Opcodes
  */

@@ -30,9 +30,13 @@
 
 #include <sstream>
 #include <string>
+#include <vector>
 #include "config.h"
 #include "refcounted.h"
 #include "cstring.h"
+#include "values.h"
+#include "opcodes.h"
+#include "symboltable.h"
 
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
 	TypeName(const TypeName&);             \
@@ -40,8 +44,12 @@
 
 namespace clever {
 
+class Method;
+
 class Type {
 public:
+	typedef std::map<CString, Method*> MethodTable;
+	
 	enum {
 		ABSTRACT  = 0x0,
 		CONCRETE  = 0x1,
@@ -49,17 +57,18 @@ public:
 		BUILT_IN  = 0x1 << 2
 	};
 
-	Type(const std::string& name, int kind)
+	Type(const CString& name, int kind)
 		: m_name(name), m_kind(kind) {};
-	Type(const std::string& package, const std::string& name, int kind)
+		
+	Type(const CString& package, const CString& name, int kind)
 		: m_package(name), m_name(name), m_kind(kind) {};
 
 	virtual ~Type();
 
 	virtual void Init();
 
-	inline std::string package() const { return m_package; };
-	inline std::string name() const { return m_name; };
+	inline const CString& package() const { return m_package; };
+	inline const CString& name() const { return m_name; };
 	inline bool isInterface() const { return m_kind & INTERFACE; };
 	inline bool isAbstract() const { return m_kind & ABSTRACT; };
 	inline bool isConcrete() const { return m_kind & CONCRETE; };
@@ -69,10 +78,143 @@ private:
 	Type() {};
 	DISALLOW_COPY_AND_ASSIGN(Type);
 
-	std::string m_package;
-	std::string m_name;
+	CString m_package;
+	CString m_name;
 	int m_kind;
+	Type* m_parent;
+	MethodTable m_methods;
 };
+
+/**
+ * This data structure represents a virtual parameter of 
+ * 	a method declaration
+ */
+struct Parameter {
+	const Type* m_type;
+	const CString* m_name;
+	
+	Parameter(const Type* type, const CString* name) : 
+		m_type(type), m_name(name) {}
+};
+
+/**
+ * Checks if the type 'from' can be converted in type 'to' 
+ * 	(is 'to' is equal 'from' or inherited from 'from'?)
+ *
+ * @TODO: add verification
+ */
+inline bool isTypeConvertible(const Type* from, const Type* to)
+{
+	return true;
+}
+
+/**
+ * This class is a representation of a class method.
+ */
+class Method {
+public:
+	/**
+	 * Constructor.
+	 * @param return_type: the method's return type
+	 * @param parameters: the parameter
+	 * @param opcodes: the method's body
+	 */
+	Method(Type* return_type, std::vector<Parameter*> parameters, 
+		std::vector<Opcode*> opcodes) : 
+			m_return_type(return_type),
+			m_parameters(parameters),
+			m_opcodes(opcodes) {}
+	
+	/**
+	 * Do a verification if the type of values passed by parameter match with
+	 * 	method's parameters types.
+	 * This verification can be done in parsing time to show the error to the user.
+	 *
+	 * @param parameters: a vector with Value* passed to the method
+	 * @param error: (OUT) error variable is not NULL before this function call 
+	 * 	means that the parameters do not match.
+	 * @return: true if the parameters given match with this method
+	 */		
+	bool verify(std::vector<Value*>* parameters, CString* error)
+	{
+		error = NULL;
+		if (parameters->size() != m_parameters.size()) {
+			error = new CString("Number of arguments mismatch");
+			return false;
+		}
+		
+		int sz = parameters->size();
+		
+		for (int i = 0; i < sz; ++i) {
+			if (!isTypeConvertible(parameters->at(i)->getType(), 
+				m_parameters[i]->m_type)) {
+				
+				error = new CString("Argument type mismatch");
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * This method performs a Clever's method call
+	 *
+	 * @param parameters: the value of the parameters passed to this method
+	 * @param error: if this CString* is not null, an error occurred
+	 * @return: a Value* with the method's return value
+	 */
+	Value* run(std::vector<Value*>* parameters, CString* error)
+	{
+		int sz = m_parameters.size();
+		
+		SymbolTable::var_map method_scope;
+		
+		// Fills the map with pair [parameter_name, value]
+		for (int i = 0; i < sz; ++i) {
+			method_scope[m_parameters[i]->m_name->get_id()] = parameters->at(i);
+		}	
+		
+		/**
+		 * @TODO: We need to push the scope and run the opcodes
+		 */
+		
+		return NULL;
+	}
+
+private:
+	const Type* m_return_type;
+	const std::vector<Parameter*> m_parameters;
+	const std::vector<Opcode*> m_opcodes;
+};
+
+/*
+Types Table:
+
+namespace std { using namespace __gnu_cxx; }
+
+namespace __gnu_cxx {
+/**
+ * Specialization of std::hash<> for working with CStrings
+ * /
+template <>
+class hash<clever::CString*> {
+public:
+	size_t operator()(const clever::CString* key) {
+		hash<const char*> h;
+		return h(key->c_str());
+	}
+};
+}*/
+
+//typedef std::hash_map<const CString*, Type*> CTypesTable;
+/**
+ * The types table
+ * 
+ * How to find a type:
+ * const CTypesTable::iterator type = types_table.find(the_type);
+ */
+//CTypesTable g_types_table;
 
 } // Clever
 

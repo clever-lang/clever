@@ -31,9 +31,6 @@ all: clever test
 $(BUILDDIR)driver.o: $(SRCDIR)driver.cc $(BUILDDIR)parser.o
 	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)driver.o $(SRCDIR)driver.cc
 
-$(BUILDDIR)types.o: $(SRCDIR)types.cc
-	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)types.o $(SRCDIR)types.cc
-
 $(BUILDDIR)main.o: $(SRCDIR)main.cc
 	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)main.o $(SRCDIR)main.cc
 
@@ -66,6 +63,9 @@ $(BUILDDIR)vm.o: $(SRCDIR)vm.cc
 
 $(BUILDDIR)opcodes.o: $(SRCDIR)opcodes.cc
 	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)opcodes.o $(SRCDIR)opcodes.cc
+
+$(BUILDDIR)types.o: $(SRCDIR)types.cc
+	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)types.o $(SRCDIR)types.cc
 
 $(BUILDDIR)win32.o: $(WINDIR)win32.cc
 	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)win32.o $(WINDIR)win32.cc

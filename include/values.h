@@ -41,6 +41,7 @@
 	void operator=(const TypeName&)
 
 namespace clever {
+class Type;
 
 /**
  * Base class for value representation
@@ -50,7 +51,7 @@ public:
 	enum { SET, UNSET, MODIFIED };
 	enum { NONE, INTEGER, DOUBLE, STRING, BOOLEAN, USER };
 	enum { UNKNOWN, NAMED, CONST, TEMP };
-
+	
 	Value() : RefCounted(1), m_status(UNSET), m_type(UNKNOWN), m_kind(UNKNOWN) {}
 	explicit Value(int kind) : RefCounted(1), m_status(UNSET), m_type(UNKNOWN), m_kind(kind) {}
 
@@ -120,11 +121,13 @@ public:
 				return std::string();
 		}
 	}
-
+	
+	virtual Type* getType() { return m_type_ptr; }
 private:
 	int m_status;
 	int m_type;
 	int m_kind;
+	Type* m_type_ptr;
 
 	union {
 		int64_t l_value;
