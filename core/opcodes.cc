@@ -64,6 +64,10 @@ const char* Opcode::getOpName(Opcodes op) {
 		CASE(OP_POS_DEC);
 		CASE(OP_JMPZ);
 		CASE(OP_JMP);
+		CASE(OP_GREATER);
+		CASE(OP_GREATER_EQUAL);
+		CASE(OP_LESS);
+		CASE(OP_LESS_EQUAL);
 		default:
 			return "UNKNOWN";
 	}

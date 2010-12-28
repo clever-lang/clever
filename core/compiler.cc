@@ -89,31 +89,35 @@ ConstantValue* Compiler::constantFolding(char op, Value* lhs, Value* rhs) {
 	if (x->isString()) return new ConstantValue(CSTRING(x->getString() _op y->getString()));
 
 	switch (op) {
-		case '+':
+		case ast::PLUS:
 			DO_NUM_OPERATION(+, Integer, lhs, rhs);
 			DO_STR_OPERATION(+, lhs, rhs);
 			DO_NUM_OPERATION(+, Double, lhs, rhs);
 			break;
-		case '-':
+		case ast::MINUS:
 			DO_NUM_OPERATION(-, Integer, lhs, rhs);
 			DO_NUM_OPERATION(-, Double, lhs, rhs);
 			break;
-		case '/':
+		case ast::DIV:
 			DO_NUM_OPERATION(/, Integer, lhs, rhs);
 			DO_NUM_OPERATION(/, Double, lhs, rhs);
 			break;
-		case '*':
+		case ast::MULT:
 			DO_NUM_OPERATION(*, Integer, lhs, rhs);
 			DO_NUM_OPERATION(*, Double, lhs, rhs);
 			break;
-		case '|':
+		case ast::OR:
 			DO_NUM_OPERATION(|, Integer, lhs, rhs);
 			break;
-		case '^':
+		case ast::XOR:
 			DO_NUM_OPERATION(^, Integer, lhs, rhs);
 			break;
-		case '&':
+		case ast::AND:
 			DO_NUM_OPERATION(&, Integer, lhs, rhs);
+			break;
+		case ast::GREATER:
+			DO_NUM_OPERATION(>, Integer, lhs, rhs);
+			DO_NUM_OPERATION(>, Double, lhs, rhs);
 			break;
 	}
 	return NULL;

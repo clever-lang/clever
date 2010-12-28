@@ -43,6 +43,14 @@ class IRBuilder;
 namespace clever { namespace ast {
 
 enum {
+	MINUS,
+	PLUS,
+	MULT,
+	DIV,
+	MOD,
+	OR,
+	XOR,
+	AND,
 	GREATER,
 	GREATER_EQUAL,
 	LESS,
@@ -51,13 +59,18 @@ enum {
 
 class Expression : public RefCounted {
 public:
-	Expression() : RefCounted(0) { }
+	Expression()
+		: RefCounted(0), m_optimized(false) { }
 
 	virtual ~Expression() { }
 
 	virtual bool isLiteral() const { return false; }
 
 	virtual bool hasValue() const { return false; }
+
+	inline bool isOptimized() const { return m_optimized; }
+
+	inline bool isOptimized(bool value) { m_optimized = value; }
 	/*
 	 * Method for getting the value representation
 	 */
@@ -70,6 +83,8 @@ public:
 	 * Method for debug purpose
 	 */
 	virtual std::string debug() { return std::string(); }
+private:
+	bool m_optimized;
 };
 
 class TreeNode {
@@ -132,7 +147,7 @@ public:
 	}
 
 	inline Value* get_value() const {
-		if (optimized) {
+		if (isOptimized()) {
 			return m_value;
 		} else {
 			return m_result;
@@ -144,8 +159,6 @@ public:
 	Opcode* codeGen(IRBuilder&);
 
 	DISALLOW_COPY_AND_ASSIGN(BinaryExpression);
-
-	bool optimized;
 private:
 	char m_op;
 	Expression* m_lhs;
@@ -572,16 +585,18 @@ private:
 
 class LogicExpression : public Expression {
 public:
-	LogicExpression(int op, Expression* lhs, Expression* rhs)
-		: m_op(op), m_lhs(lhs), m_rhs(rhs) {
-		m_lhs->addRef();
-		m_rhs->addRef();
-		m_result = new TempValue();
-	}
+	LogicExpression(int, Expression*, Expression*);
 
 	~LogicExpression() {
-		m_lhs->delRef();
-		m_rhs->delRef();
+		if (m_value) {
+			m_value->delRef();
+		}
+		if (m_lhs) {
+			m_lhs->delRef();
+		}
+		if (m_rhs) {
+			m_rhs->delRef();
+		}
 	}
 
 	int get_op() {
@@ -597,7 +612,11 @@ public:
 	}
 
 	inline Value* get_value() const {
-		return m_result;
+		if (isOptimized()) {
+			return m_value;
+		} else {
+			return m_result;
+		}
 	}
 
 	Opcode* codeGen(IRBuilder&);
@@ -606,6 +625,7 @@ private:
 	Expression* m_lhs;
 	Expression* m_rhs;
 	TempValue* m_result;
+	Value* m_value;
 };
 
 }} // clever::ast

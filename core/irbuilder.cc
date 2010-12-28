@@ -49,7 +49,7 @@ Opcode* IRBuilder::binaryExpression(ast::BinaryExpression* expr) {
 	Value* lhs;
 	Value* rhs;
 
-	if (expr->optimized) {
+	if (expr->isOptimized()) {
 		return NULL;
 	}
 
@@ -276,8 +276,15 @@ Opcode* IRBuilder::startExpr(ast::StartExpr* expr) {
 }
 
 Opcode* IRBuilder::logicExpression(ast::LogicExpression* expr) {
-	Value* lhs = getValue(expr->get_lhs());
-	Value* rhs = getValue(expr->get_rhs());
+	Value* lhs;
+	Value* rhs;
+
+	if (expr->isOptimized()) {
+		return NULL;
+	}
+
+	lhs = getValue(expr->get_lhs());
+	rhs = getValue(expr->get_rhs());
 
 	lhs->addRef();
 	rhs->addRef();

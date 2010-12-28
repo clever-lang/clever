@@ -44,11 +44,8 @@ TreeNode::~TreeNode(void) {
 	}
 }
 
-/*
- * BinaryExpression
- */
-BinaryExpression::BinaryExpression(char op_, Expression* lhs, Expression* rhs)
-		: m_op(op_), m_lhs(lhs), m_rhs(rhs), m_result(NULL), m_value(NULL), optimized(false) {
+LogicExpression::LogicExpression(int op, Expression* lhs, Expression* rhs)
+	: m_op(op), m_lhs(lhs), m_rhs(rhs), m_value(NULL) {
 	Value* tmp_lhs = lhs->get_value();
 	Value* tmp_rhs = rhs->get_value();
 
@@ -65,7 +62,38 @@ BinaryExpression::BinaryExpression(char op_, Expression* lhs, Expression* rhs)
 	}
 	if (m_value) {
 		/* No opcode must be generated */
-		optimized = true;
+		isOptimized(true);
+
+		m_rhs->delRef();
+		m_lhs->delRef();
+		m_rhs = m_lhs = NULL;
+	} else {
+		m_result = new TempValue();
+	}
+}
+
+/*
+ * BinaryExpression
+ */
+BinaryExpression::BinaryExpression(char op_, Expression* lhs, Expression* rhs)
+		: m_op(op_), m_lhs(lhs), m_rhs(rhs), m_result(NULL), m_value(NULL) {
+	Value* tmp_lhs = lhs->get_value();
+	Value* tmp_rhs = rhs->get_value();
+
+	m_rhs->addRef();
+	m_lhs->addRef();
+
+	if (!Compiler::checkCompatibleTypes(tmp_lhs, tmp_rhs)) {
+		Compiler::error("Type mismatch!");
+	}
+
+	/* Checking if we can perform constant folding optimization */
+	if (tmp_lhs->isConst() && tmp_rhs->isConst()) {
+		m_value = Compiler::constantFolding(m_op, tmp_lhs, tmp_rhs);
+	}
+	if (m_value) {
+		/* No opcode must be generated */
+		isOptimized(true);
 
 		m_rhs->delRef();
 		m_lhs->delRef();
@@ -80,7 +108,7 @@ Opcode* BinaryExpression::codeGen(IRBuilder& builder) {
 }
 
 std::string BinaryExpression::debug(void) {
-	if (optimized) {
+	if (isOptimized()) {
 		return m_value->toString();
 	} else {
 		return std::string(m_lhs->debug() + " " + m_op + " " + m_rhs->debug());
