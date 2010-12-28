@@ -67,7 +67,7 @@ public:
 	inline Value* getValue(ast::Expression* expr) {
 		Value* value = expr->get_value();
 
-		if (value->isNamedValue()) {
+		if (value && value->isNamedValue()) {
 			return m_symbols.get_var(value);
 		}
 		return value;
@@ -90,6 +90,7 @@ public:
 	Opcode* whileExpression(ast::WhileExpression*);
 	Opcode* endWhileExpression(ast::EndWhileExpression*);
 	Opcode* startLoop(ast::StartLoop*);
+	Opcode* logicExpression(ast::LogicExpression*);
 
 	DISALLOW_COPY_AND_ASSIGN(IRBuilder);
 private:

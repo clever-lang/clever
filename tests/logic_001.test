@@ -1,0 +1,16 @@
+Testing logical expression
+==CODE==
+Int i = 10;
+Int j = 20;
+
+if (i > 10) {
+	echo 12;
+} else {
+	if (j < 20) {
+		echo 2;
+	} else if (j >= 20) {
+		echo j;
+	}
+}
+==RESULT==
+20

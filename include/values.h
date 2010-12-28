@@ -91,7 +91,7 @@ public:
 	inline CString* getStringP(void) const { return m_data.s_value; }
 	inline CString getString(void) const { return *m_data.s_value; }
 	inline double getDouble(void) const { return m_data.d_value; }
-	inline double getBoolean(void) const { return m_data.d_value; }
+	inline bool getBoolean(void) const { return m_data.b_value; }
 
 	virtual void set_value(Value* value) { }
 
@@ -112,6 +112,8 @@ public:
 				str << getDouble();
 
 				return str.str();
+			case BOOLEAN:
+				return std::string(getBoolean() ? "true" : "false");
 			case STRING:
 				return getString();
 			default:
@@ -181,6 +183,12 @@ public:
 		: Value(CONST) {
 		set_type(STRING);
 		setString(value);
+	}
+
+	explicit ConstantValue(bool value)
+		: Value(CONST) {
+		set_type(BOOLEAN);
+		setBoolean(value);
 	}
 
 	~ConstantValue() { }

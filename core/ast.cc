@@ -192,4 +192,8 @@ Opcode* EndWhileExpression::codeGen(IRBuilder& builder) {
 	return builder.endWhileExpression(this);
 }
 
+Opcode* LogicExpression::codeGen(IRBuilder& builder) {
+	return builder.logicExpression(this);
+}
+
 }} // clever::ast

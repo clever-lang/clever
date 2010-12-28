@@ -42,6 +42,13 @@ class IRBuilder;
 
 namespace clever { namespace ast {
 
+enum {
+	GREATER,
+	GREATER_EQUAL,
+	LESS,
+	LESS_EQUAL
+};
+
 class Expression : public RefCounted {
 public:
 	Expression() : RefCounted(0) { }
@@ -553,6 +560,45 @@ public:
 	Opcode* codeGen(IRBuilder&);
 private:
 	unsigned int m_op_num;
+};
+
+
+class LogicExpression : public Expression {
+public:
+	LogicExpression(int op, Expression* lhs, Expression* rhs)
+		: m_op(op), m_lhs(lhs), m_rhs(rhs) {
+		m_lhs->addRef();
+		m_rhs->addRef();
+		m_result = new TempValue();
+	}
+
+	~LogicExpression() {
+		m_lhs->delRef();
+		m_rhs->delRef();
+	}
+
+	int get_op() {
+		return m_op;
+	}
+
+	Expression* get_lhs() {
+		return m_lhs;
+	}
+
+	Expression* get_rhs() {
+		return m_rhs;
+	}
+
+	inline Value* get_value() const {
+		return m_result;
+	}
+
+	Opcode* codeGen(IRBuilder&);
+private:
+	int m_op;
+	Expression* m_lhs;
+	Expression* m_rhs;
+	TempValue* m_result;
 };
 
 }} // clever::ast

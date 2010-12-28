@@ -101,6 +101,10 @@ public:
 	void pos_dec_handler(CLEVER_VM_HANDLER_ARGS);
 	void jmpz_handler(CLEVER_VM_HANDLER_ARGS);
 	void jmp_handler(CLEVER_VM_HANDLER_ARGS);
+	void greater_handler(CLEVER_VM_HANDLER_ARGS);
+	void greater_equal_handler(CLEVER_VM_HANDLER_ARGS);
+	void less_handler(CLEVER_VM_HANDLER_ARGS);
+	void less_equal_handler(CLEVER_VM_HANDLER_ARGS);
 
 	DISALLOW_COPY_AND_ASSIGN(VM);
 private:

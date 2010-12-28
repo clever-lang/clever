@@ -401,6 +401,10 @@ void VM::pos_dec_handler(CLEVER_VM_HANDLER_ARGS) {
 void VM::jmpz_handler(CLEVER_VM_HANDLER_ARGS) {
 	Value* value = getValue(opcode->get_op1());
 
+	if (!value) {
+		error("NULL");
+	}
+
 	if (value->isConst()) {
 		switch (value->get_type()) {
 			case Value::INTEGER:
@@ -413,6 +417,11 @@ void VM::jmpz_handler(CLEVER_VM_HANDLER_ARGS) {
 					VM_GOTO(opcode->get_jmp_addr1());
 				}
 				break;
+			case Value::BOOLEAN:
+				if (!value->getBoolean()) {
+					VM_GOTO(opcode->get_jmp_addr1());
+				}
+				break;
 		}
 	}
 }
@@ -422,6 +431,70 @@ void VM::jmpz_handler(CLEVER_VM_HANDLER_ARGS) {
  */
 void VM::jmp_handler(CLEVER_VM_HANDLER_ARGS) {
 	VM_GOTO(opcode->get_jmp_addr2());
+}
+
+void VM::greater_handler(CLEVER_VM_HANDLER_ARGS) {
+	Value* op1 = getValue(opcode->get_op1());
+	Value* op2 = getValue(opcode->get_op2());
+
+	if (op1->isConst() && op1->hasSameKind(op2) && op1->hasSameType(op2)) {
+		switch (op1->get_type()) {
+			case Value::INTEGER:
+				opcode->set_result(new ConstantValue(bool(op1->getInteger() > op2->getInteger())));
+				break;
+			case Value::DOUBLE:
+				opcode->set_result(new ConstantValue(op1->getDouble() > op2->getDouble()));
+				break;
+		}
+	}
+}
+
+void VM::greater_equal_handler(CLEVER_VM_HANDLER_ARGS) {
+	Value* op1 = getValue(opcode->get_op1());
+	Value* op2 = getValue(opcode->get_op2());
+
+	if (op1->isConst() && op1->hasSameKind(op2) && op1->hasSameType(op2)) {
+		switch (op1->get_type()) {
+			case Value::INTEGER:
+				opcode->set_result(new ConstantValue(op1->getInteger() >= op2->getInteger()));
+				break;
+			case Value::DOUBLE:
+				opcode->set_result(new ConstantValue(op1->getDouble() >= op2->getDouble()));
+				break;
+		}
+	}
+}
+
+void VM::less_handler(CLEVER_VM_HANDLER_ARGS) {
+	Value* op1 = getValue(opcode->get_op1());
+	Value* op2 = getValue(opcode->get_op2());
+
+	if (op1->isConst() && op1->hasSameKind(op2) && op1->hasSameType(op2)) {
+		switch (op1->get_type()) {
+			case Value::INTEGER:
+				opcode->set_result(new ConstantValue(op1->getInteger() < op2->getInteger()));
+				break;
+			case Value::DOUBLE:
+				opcode->set_result(new ConstantValue(op1->getDouble() < op2->getDouble()));
+				break;
+		}
+	}
+}
+
+void VM::less_equal_handler(CLEVER_VM_HANDLER_ARGS) {
+	Value* op1 = getValue(opcode->get_op1());
+	Value* op2 = getValue(opcode->get_op2());
+
+	if (op1->isConst() && op1->hasSameKind(op2) && op1->hasSameType(op2)) {
+		switch (op1->get_type()) {
+			case Value::INTEGER:
+				opcode->set_result(new ConstantValue(op1->getInteger() <= op2->getInteger()));
+				break;
+			case Value::DOUBLE:
+				opcode->set_result(new ConstantValue(op1->getDouble() <= op2->getDouble()));
+				break;
+		}
+	}
 }
 
 } // clever

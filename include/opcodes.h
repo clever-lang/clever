@@ -53,7 +53,11 @@ enum Opcodes {
 	OP_POS_INC,
 	OP_POS_DEC,
 	OP_JMPZ,
-	OP_JMP
+	OP_JMP,
+	OP_GREATER,
+	OP_GREATER_EQUAL,
+	OP_LESS,
+	OP_LESS_EQUAL
 };
 
 /**

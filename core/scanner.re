@@ -76,7 +76,7 @@ next_token:
 	OCTINT     = [0][0-7]+;
 	SPACE 	   = [\r\t\v ]+;
 	STRING     = (["]([^\\"]*|"\\"["]?)*["]|[']([^\\']*|"\\"[']?)*[']);
-	SPECIAL    = [;(),{}&~^|<>=+*/-];
+	SPECIAL    = [;(),{}&~^|=+*/-];
 	TYPE       = [A-Z][a-zA-Z0-9_]*;
 
 	<!*> { yylen = cursor - s->yylex; }
@@ -88,6 +88,8 @@ next_token:
 
 	<INITIAL>">=" { RET(token::GREATER_EQUAL); }
 
+	<INITIAL>">" { RET(token::GREATER); }
+
 	<INITIAL>"|=" { RET(token::BW_OR_EQUAL); }
 
 	<INITIAL>"&=" { RET(token::BW_AND_EQUAL); }
@@ -95,6 +97,8 @@ next_token:
 	<INITIAL>"^=" { RET(token::XOR_EQUAL); }
 
 	<INITIAL>"<=" { RET(token::LESS_EQUAL); }
+
+	<INITIAL>"<" { RET(token::LESS); }
 
 	<INITIAL>"++" { RET(token::INCREMENT); }
 

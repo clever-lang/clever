@@ -211,6 +211,11 @@ Opcode* IRBuilder::elseExpression(ast::ElseExpression* expr) {
 Opcode* IRBuilder::endIfExpression() {
 	Jmp jmp = m_jmps.top();
 
+	/* Sets the jmp addr for the IF when there is no ELSE */
+	if (m_jmps.top().size() == 1) {
+		m_jmps.top().top()->set_jmp_addr1(getOpNum()+1);
+	}
+
 	while (!jmp.empty()) {
 		Opcode* opcode = jmp.top();
 
@@ -266,6 +271,21 @@ Opcode* IRBuilder::startLoop(ast::StartLoop* expr) {
 	expr->set_op_num(getOpNum()+1);
 
 	return NULL;
+}
+
+Opcode* IRBuilder::logicExpression(ast::LogicExpression* expr) {
+	Value* lhs = getValue(expr->get_lhs());
+	Value* rhs = getValue(expr->get_rhs());
+
+	lhs->addRef();
+	rhs->addRef();
+
+	switch (expr->get_op()) {
+		case ast::GREATER:       return new Opcode(OP_GREATER,       &VM::greater_handler,       lhs, rhs, expr->get_value());
+		case ast::LESS:          return new Opcode(OP_LESS,          &VM::less_handler,          lhs, rhs, expr->get_value());
+		case ast::GREATER_EQUAL: return new Opcode(OP_GREATER_EQUAL, &VM::greater_equal_handler, lhs, rhs, expr->get_value());
+		case ast::LESS_EQUAL:    return new Opcode(OP_LESS_EQUAL,    &VM::less_equal_handler,    lhs, rhs, expr->get_value());
+	}
 }
 
 
