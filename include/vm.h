@@ -43,6 +43,8 @@
 
 namespace clever {
 
+enum { BLK_UNUSED, BLK_USED };
+
 class SymbolTable;
 class Opcode;
 

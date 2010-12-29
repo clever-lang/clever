@@ -101,6 +101,7 @@ private:
 	SymbolTable m_symbols;
 	/* Stack used for control structures */
 	JmpStack m_jmps;
+	JmpStack m_brks;
 };
 
 } // clever

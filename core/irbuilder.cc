@@ -53,8 +53,8 @@ Opcode* IRBuilder::binaryExpression(ast::BinaryExpression* expr) {
 		return NULL;
 	}
 
-	lhs = expr->get_lhs()->get_value();
-	rhs = expr->get_rhs()->get_value();
+	lhs = getValue(expr->get_lhs());
+	rhs = getValue(expr->get_rhs());
 
 	lhs->addRef();
 	rhs->addRef();
@@ -99,13 +99,13 @@ Opcode* IRBuilder::variableDecl(ast::VariableDecl* expr) {
  */
 Opcode* IRBuilder::newBlock() {
 	Opcode* opcode = new Opcode(OP_NEW_SCOPE, &VM::new_scope_handler);
-	//Jmp jmp;
+	Jmp jmp;
 
 	/* Initializes new scope */
 	m_symbols.pushVarMap(SymbolTable::var_map());
 
-	//jmp.push(opcode);
-	//m_jmps.push(jmp);
+	jmp.push(opcode);
+	m_jmps.push(jmp);
 
 	return opcode;
 }
@@ -114,25 +114,27 @@ Opcode* IRBuilder::newBlock() {
  * Generates the end block opcode
  */
 Opcode* IRBuilder::endBlock() {
-	bool gen_opcode = true;
+	Opcode* opcode = new Opcode(OP_END_SCOPE, &VM::end_scope_handler);
+	Opcode* start_block = m_jmps.top().top();
 
 	/*
-	// No variable was defined in the scope, so let remove the scope opcodes
+	 * No variable was defined in the scope, so let to set a flag
+	 * to do not push-pop scope in runtime
+	 */
 	if (m_symbols.topVarMap().size() == 0) {
-		Opcode* start_block = m_jmps.top().top();
-
-		m_opcodes.erase(m_opcodes.begin()+start_block->get_op_num());
-		// No opcode should be generated
-		gen_opcode = false;
+		start_block->set_flags(BLK_UNUSED);
+		opcode->set_flags(BLK_UNUSED);
+	} else {
+		start_block->set_flags(BLK_USED);
+		opcode->set_flags(BLK_USED);
 	}
 
 	m_jmps.pop();
-	*/
 
 	/* Pop current scope */
 	m_symbols.popVarMap();
 
-	return gen_opcode ? new Opcode(OP_END_SCOPE, &VM::end_scope_handler) : NULL;
+	return opcode;
 }
 
 /*
@@ -263,6 +265,7 @@ Opcode* IRBuilder::whileExpression(ast::WhileExpression* expr) {
 
 	jmp.push(opcode);
 	m_jmps.push(jmp);
+	m_brks.push(Jmp());
 
 	value->addRef();
 	return opcode;
@@ -276,14 +279,17 @@ Opcode* IRBuilder::endWhileExpression(ast::EndWhileExpression* expr) {
 	ast::StartExpr* start_loop = static_cast<ast::StartExpr*>(expr->get_expr());
 
 	/* Points to out of WHILE block */
-	while (!m_jmps.top().empty()) {
-		m_jmps.top().top()->set_jmp_addr1(getOpNum()+2);
-		m_jmps.top().pop();
+	while (!m_brks.top().empty()) {
+		m_brks.top().top()->set_jmp_addr1(getOpNum()+2);
+		m_brks.top().pop();
 	}
+	m_jmps.top().top()->set_jmp_addr1(getOpNum()+2);
+	m_jmps.top().pop();
 
 	/* Points to start of WHILE expression */
 	opcode->set_jmp_addr2(start_loop->get_op_num());
 	m_jmps.pop();
+	m_brks.pop();
 
 	return opcode;
 }
@@ -322,7 +328,7 @@ Opcode* IRBuilder::logicExpression(ast::LogicExpression* expr) {
 Opcode* IRBuilder::breakExpression() {
 	Opcode* opcode = new Opcode(OP_JMPZ, &VM::break_handler);
 
-	m_jmps.top().push(opcode);
+	m_brks.top().push(opcode);
 
 	return opcode;
 }

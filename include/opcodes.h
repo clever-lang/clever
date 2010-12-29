@@ -100,19 +100,27 @@ public:
 	}
 
 	void set_jmp_addr1(unsigned int jmp_addr) {
-		m_jmp_addr.jmp1 = jmp_addr;
+		m_extra.jmp1 = jmp_addr;
 	}
 
 	void set_jmp_addr2(unsigned int jmp_addr) {
-		m_jmp_addr.jmp2 = jmp_addr;
+		m_extra.jmp2 = jmp_addr;
+	}
+
+	void set_flags(unsigned int flags) {
+		m_extra.flags = flags;
 	}
 
 	unsigned int get_jmp_addr1() {
-		return m_jmp_addr.jmp1;
+		return m_extra.jmp1;
 	}
 
 	unsigned int get_jmp_addr2() {
-		return m_jmp_addr.jmp2;
+		return m_extra.jmp2;
+	}
+
+	unsigned int get_flags() {
+		return m_extra.flags;
 	}
 
 	/* Debug */
@@ -123,7 +131,7 @@ private:
 	VM::opcode_handler m_handler;
 	Opcodes m_op_type;
 	unsigned int m_op_num;
-	struct { unsigned int jmp1, jmp2; } m_jmp_addr;
+	struct { unsigned int jmp1, jmp2, flags; } m_extra;
 	Value* m_op1;
 	Value* m_op2;
 	Value* m_result;

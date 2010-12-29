@@ -267,16 +267,20 @@ void VM::bw_or_handler(CLEVER_VM_HANDLER_ARGS) {
  * {
  */
 void VM::new_scope_handler(CLEVER_VM_HANDLER_ARGS) {
-	/* Create a new scope */
-	m_symbols.pushVarMap(SymbolTable::var_map());
+	if (opcode->get_flags() == BLK_USED) {
+		/* Create a new scope */
+		m_symbols.pushVarMap(SymbolTable::var_map());
+	}
 }
 
 /*
  * }
  */
 void VM::end_scope_handler(CLEVER_VM_HANDLER_ARGS) {
-	/* Remove the newest scope */
-	m_symbols.popVarMap();
+	if (opcode->get_flags() == BLK_USED) {
+		/* Remove the newest scope */
+		m_symbols.popVarMap();
+	}
 }
 
 /*
