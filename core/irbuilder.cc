@@ -98,20 +98,41 @@ Opcode* IRBuilder::variableDecl(ast::VariableDecl* expr) {
  * Generates the new block opcode
  */
 Opcode* IRBuilder::newBlock() {
+	Opcode* opcode = new Opcode(OP_NEW_SCOPE, &VM::new_scope_handler);
+	//Jmp jmp;
+
 	/* Initializes new scope */
 	m_symbols.pushVarMap(SymbolTable::var_map());
 
-	return new Opcode(OP_NEW_SCOPE, &VM::new_scope_handler);
+	//jmp.push(opcode);
+	//m_jmps.push(jmp);
+
+	return opcode;
 }
 
 /*
  * Generates the end block opcode
  */
 Opcode* IRBuilder::endBlock() {
+	bool gen_opcode = true;
+
+	/*
+	// No variable was defined in the scope, so let remove the scope opcodes
+	if (m_symbols.topVarMap().size() == 0) {
+		Opcode* start_block = m_jmps.top().top();
+
+		m_opcodes.erase(m_opcodes.begin()+start_block->get_op_num());
+		// No opcode should be generated
+		gen_opcode = false;
+	}
+
+	m_jmps.pop();
+	*/
+
 	/* Pop current scope */
 	m_symbols.popVarMap();
 
-	return new Opcode(OP_END_SCOPE, &VM::end_scope_handler);
+	return gen_opcode ? new Opcode(OP_END_SCOPE, &VM::end_scope_handler) : NULL;
 }
 
 /*
