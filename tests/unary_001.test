@@ -1,5 +1,5 @@
 Testing unary operation
-==CODE=
+==CODE==
 Int i = 2;
 Int j = -2;
 
