@@ -129,6 +129,7 @@ Opcode* IRBuilder::endBlock() {
 		opcode->set_flags(BLK_USED);
 	}
 
+	m_jmps.top().pop();
 	m_jmps.pop();
 
 	/* Pop current scope */
