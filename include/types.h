@@ -171,7 +171,7 @@ public:
 
 		// Fills the map with pair [parameter_name, value]
 		for (int i = 0; i < sz; ++i) {
-			method_scope[m_parameters[i]->m_name->get_id()] = parameters->at(i);
+			method_scope[m_parameters[i]->m_name] = parameters->at(i);
 		}
 
 		/**

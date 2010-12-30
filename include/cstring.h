@@ -131,7 +131,7 @@ private:
 namespace boost {
 
 template <>
-class hash<clever::CString*> {
+class hash<const clever::CString*> {
 public:
 	size_t operator()(const clever::CString* key) const {
 		hash<const char*> h;
