@@ -31,7 +31,6 @@
 #include <sstream>
 #include <string>
 #include <vector>
-#include "config.h"
 #include "refcounted.h"
 #include "cstring.h"
 #include "values.h"
@@ -49,7 +48,7 @@ class Method;
 class Type {
 public:
 	typedef std::map<CString, Method*> MethodTable;
-	
+
 	enum {
 		ABSTRACT  = 0x0,
 		CONCRETE  = 0x1,
@@ -59,7 +58,7 @@ public:
 
 	Type(const CString& name, int kind)
 		: m_name(name), m_kind(kind) {};
-		
+
 	Type(const CString& package, const CString& name, int kind)
 		: m_package(name), m_name(name), m_kind(kind) {};
 
@@ -86,19 +85,19 @@ private:
 };
 
 /**
- * This data structure represents a virtual parameter of 
+ * This data structure represents a virtual parameter of
  * 	a method declaration
  */
 struct Parameter {
 	const Type* m_type;
 	const CString* m_name;
-	
-	Parameter(const Type* type, const CString* name) : 
+
+	Parameter(const Type* type, const CString* name) :
 		m_type(type), m_name(name) {}
 };
 
 /**
- * Checks if the type 'from' can be converted in type 'to' 
+ * Checks if the type 'from' can be converted in type 'to'
  * 	(is 'to' is equal 'from' or inherited from 'from'?)
  *
  * @TODO: add verification
@@ -119,22 +118,22 @@ public:
 	 * @param parameters: the parameter
 	 * @param opcodes: the method's body
 	 */
-	Method(Type* return_type, std::vector<Parameter*> parameters, 
-		std::vector<Opcode*> opcodes) : 
+	Method(Type* return_type, std::vector<Parameter*> parameters,
+		std::vector<Opcode*> opcodes) :
 			m_return_type(return_type),
 			m_parameters(parameters),
 			m_opcodes(opcodes) {}
-	
+
 	/**
 	 * Do a verification if the type of values passed by parameter match with
 	 * 	method's parameters types.
 	 * This verification can be done in parsing time to show the error to the user.
 	 *
 	 * @param parameters: a vector with Value* passed to the method
-	 * @param error: (OUT) error variable is not NULL before this function call 
+	 * @param error: (OUT) error variable is not NULL before this function call
 	 * 	means that the parameters do not match.
 	 * @return: true if the parameters given match with this method
-	 */		
+	 */
 	bool verify(std::vector<Value*>* parameters, CString* error)
 	{
 		error = NULL;
@@ -142,21 +141,21 @@ public:
 			error = new CString("Number of arguments mismatch");
 			return false;
 		}
-		
+
 		int sz = parameters->size();
-		
+
 		for (int i = 0; i < sz; ++i) {
-			if (!isTypeConvertible(parameters->at(i)->getType(), 
+			if (!isTypeConvertible(parameters->at(i)->getType(),
 				m_parameters[i]->m_type)) {
-				
+
 				error = new CString("Argument type mismatch");
 				return false;
 			}
 		}
-		
+
 		return true;
 	}
-	
+
 	/**
 	 * This method performs a Clever's method call
 	 *
@@ -167,18 +166,18 @@ public:
 	Value* run(std::vector<Value*>* parameters, CString* error)
 	{
 		int sz = m_parameters.size();
-		
+
 		SymbolTable::var_map method_scope;
-		
+
 		// Fills the map with pair [parameter_name, value]
 		for (int i = 0; i < sz; ++i) {
 			method_scope[m_parameters[i]->m_name->get_id()] = parameters->at(i);
-		}	
-		
+		}
+
 		/**
 		 * @TODO: We need to push the scope and run the opcodes
 		 */
-		
+
 		return NULL;
 	}
 
@@ -210,7 +209,7 @@ public:
 //typedef std::hash_map<const CString*, Type*> CTypesTable;
 /**
  * The types table
- * 
+ *
  * How to find a type:
  * const CTypesTable::iterator type = types_table.find(the_type);
  */

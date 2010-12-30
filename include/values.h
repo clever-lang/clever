@@ -32,7 +32,6 @@
 #include <iostream>
 #include <sstream>
 #include <string>
-#include "config.h"
 #include "refcounted.h"
 #include "cstring.h"
 
@@ -51,7 +50,7 @@ public:
 	enum { SET, UNSET, MODIFIED };
 	enum { NONE, INTEGER, DOUBLE, STRING, BOOLEAN, USER };
 	enum { UNKNOWN, NAMED, CONST, TEMP };
-	
+
 	Value() : RefCounted(1), m_status(UNSET), m_type(UNKNOWN), m_kind(UNKNOWN) {}
 	explicit Value(int kind) : RefCounted(1), m_status(UNSET), m_type(UNKNOWN), m_kind(kind) {}
 
@@ -121,7 +120,7 @@ public:
 				return std::string();
 		}
 	}
-	
+
 	virtual Type* getType() { return m_type_ptr; }
 private:
 	int m_status;

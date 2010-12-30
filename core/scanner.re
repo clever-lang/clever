@@ -25,7 +25,6 @@
  * $Id$
  */
 
-#include "config.h"
 #include "scanner.h"
 #include "parser.hh"
 #include "ast.h"
