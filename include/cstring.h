@@ -28,9 +28,11 @@
 #ifndef CLEVER_CSTRING_H
 #define CLEVER_CSTRING_H
 
-#include <string>
-#include <map>
 #include <locale>
+#include <map>
+#include <string>
+#include <boost/functional/hash.hpp>
+#include <boost/unordered_map.hpp>
 
 #define CSTRING(xstring) (clever::CString(xstring).intern())
 
@@ -121,6 +123,23 @@ private:
 };
 
 } // clever
+
+
+/**
+ * Specialization of boost::hash<> for working with CStrings
+ */
+namespace boost {
+
+template <>
+class hash<clever::CString*> {
+public:
+	size_t operator()(const clever::CString* key) const {
+		hash<const char*> h;
+		return h(key->c_str());
+	}
+};
+
+} // boost
 
 #endif /* CLEVER_CSTRING_H */
 

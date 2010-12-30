@@ -187,34 +187,6 @@ private:
 	const std::vector<Opcode*> m_opcodes;
 };
 
-/*
-Types Table:
-
-namespace std { using namespace __gnu_cxx; }
-
-namespace __gnu_cxx {
-/**
- * Specialization of std::hash<> for working with CStrings
- * /
-template <>
-class hash<clever::CString*> {
-public:
-	size_t operator()(const clever::CString* key) {
-		hash<const char*> h;
-		return h(key->c_str());
-	}
-};
-}*/
-
-//typedef std::hash_map<const CString*, Type*> CTypesTable;
-/**
- * The types table
- *
- * How to find a type:
- * const CTypesTable::iterator type = types_table.find(the_type);
- */
-//CTypesTable g_types_table;
-
 } // Clever
 
 #endif // CLEVER_TYPES_H
