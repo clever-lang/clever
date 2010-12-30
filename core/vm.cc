@@ -88,7 +88,7 @@ void VM::run(void) {
 /*
  * echo statemenet
  */
-void VM::echo_handler(CLEVER_VM_HANDLER_ARGS) {
+CLEVER_VM_HANDLER(VM::echo_handler) {
 	Value* op1 = getValue(opcode->get_op1());
 
 	std::cout << op1->toString() << std::endl;
@@ -97,7 +97,7 @@ void VM::echo_handler(CLEVER_VM_HANDLER_ARGS) {
 /*
  * x + y
  */
-void VM::plus_handler(CLEVER_VM_HANDLER_ARGS) {
+CLEVER_VM_HANDLER(VM::plus_handler) {
 	Value* op1 = getValue(opcode->get_op1());
 	Value* op2 = getValue(opcode->get_op2());
 
@@ -122,7 +122,7 @@ void VM::plus_handler(CLEVER_VM_HANDLER_ARGS) {
 /*
  * x / y
  */
-void VM::div_handler(CLEVER_VM_HANDLER_ARGS) {
+CLEVER_VM_HANDLER(VM::div_handler) {
 	Value* op1 = getValue(opcode->get_op1());
 	Value* op2 = getValue(opcode->get_op2());
 
@@ -147,7 +147,7 @@ void VM::div_handler(CLEVER_VM_HANDLER_ARGS) {
 /*
  * x - y
  */
-void VM::minus_handler(CLEVER_VM_HANDLER_ARGS) {
+CLEVER_VM_HANDLER(VM::minus_handler) {
 	Value* op1 = getValue(opcode->get_op1());
 	Value* op2 = getValue(opcode->get_op2());
 
@@ -172,7 +172,7 @@ void VM::minus_handler(CLEVER_VM_HANDLER_ARGS) {
 /*
  * x * y
  */
-void VM::mult_handler(CLEVER_VM_HANDLER_ARGS) {
+CLEVER_VM_HANDLER(VM::mult_handler) {
 	Value* op1 = getValue(opcode->get_op1());
 	Value* op2 = getValue(opcode->get_op2());
 
@@ -197,7 +197,7 @@ void VM::mult_handler(CLEVER_VM_HANDLER_ARGS) {
 /*
  * x & y
  */
-void VM::bw_and_handler(CLEVER_VM_HANDLER_ARGS) {
+CLEVER_VM_HANDLER(VM::bw_and_handler) {
 	Value* op1 = getValue(opcode->get_op1());
 	Value* op2 = getValue(opcode->get_op2());
 
@@ -220,7 +220,7 @@ void VM::bw_and_handler(CLEVER_VM_HANDLER_ARGS) {
 /*
  * x ^ y
  */
-void VM::bw_xor_handler(CLEVER_VM_HANDLER_ARGS) {
+CLEVER_VM_HANDLER(VM::bw_xor_handler) {
 	Value* op1 = getValue(opcode->get_op1());
 	Value* op2 = getValue(opcode->get_op2());
 
@@ -243,7 +243,7 @@ void VM::bw_xor_handler(CLEVER_VM_HANDLER_ARGS) {
 /*
  * x | y
  */
-void VM::bw_or_handler(CLEVER_VM_HANDLER_ARGS) {
+CLEVER_VM_HANDLER(VM::bw_or_handler) {
 	Value* op1 = getValue(opcode->get_op1());
 	Value* op2 = getValue(opcode->get_op2());
 
@@ -266,7 +266,7 @@ void VM::bw_or_handler(CLEVER_VM_HANDLER_ARGS) {
 /*
  * {
  */
-void VM::new_scope_handler(CLEVER_VM_HANDLER_ARGS) {
+CLEVER_VM_HANDLER(VM::new_scope_handler) {
 	if (opcode->get_flags() == BLK_USED) {
 		/* Create a new scope */
 		m_symbols.pushVarMap(SymbolTable::var_map());
@@ -276,7 +276,7 @@ void VM::new_scope_handler(CLEVER_VM_HANDLER_ARGS) {
 /*
  * }
  */
-void VM::end_scope_handler(CLEVER_VM_HANDLER_ARGS) {
+CLEVER_VM_HANDLER(VM::end_scope_handler) {
 	if (opcode->get_flags() == BLK_USED) {
 		/* Remove the newest scope */
 		m_symbols.popVarMap();
@@ -286,7 +286,7 @@ void VM::end_scope_handler(CLEVER_VM_HANDLER_ARGS) {
 /*
  * Type var [= value ]
  */
-void VM::var_decl_handler(CLEVER_VM_HANDLER_ARGS) {
+CLEVER_VM_HANDLER(VM::var_decl_handler) {
 	Value* value = getValue(opcode->get_op2());
 
 	/* TODO: Make the type initialization here */
@@ -302,7 +302,7 @@ void VM::var_decl_handler(CLEVER_VM_HANDLER_ARGS) {
 /*
  * ++x
  */
-void VM::pre_inc_handler(CLEVER_VM_HANDLER_ARGS) {
+CLEVER_VM_HANDLER(VM::pre_inc_handler) {
 	Value* value = getValue(opcode->get_op1());
 
 	if (value->isConst()) {
@@ -325,7 +325,7 @@ void VM::pre_inc_handler(CLEVER_VM_HANDLER_ARGS) {
 /*
  * x++
  */
-void VM::pos_inc_handler(CLEVER_VM_HANDLER_ARGS) {
+CLEVER_VM_HANDLER(VM::pos_inc_handler) {
 	Value* value = getValue(opcode->get_op1());
 
 	if (value->isConst()) {
@@ -348,7 +348,7 @@ void VM::pos_inc_handler(CLEVER_VM_HANDLER_ARGS) {
 /*
  * --x
  */
-void VM::pre_dec_handler(CLEVER_VM_HANDLER_ARGS) {
+CLEVER_VM_HANDLER(VM::pre_dec_handler) {
 	Value* value = getValue(opcode->get_op1());
 
 	if (value->isConst()) {
@@ -379,7 +379,7 @@ void VM::pre_dec_handler(CLEVER_VM_HANDLER_ARGS) {
 /*
  * x--
  */
-void VM::pos_dec_handler(CLEVER_VM_HANDLER_ARGS) {
+CLEVER_VM_HANDLER(VM::pos_dec_handler) {
 	Value* value = getValue(opcode->get_op1());
 
 	if (value->isConst()) {
@@ -402,24 +402,24 @@ void VM::pos_dec_handler(CLEVER_VM_HANDLER_ARGS) {
 /*
  * JMPZ
  */
-void VM::jmpz_handler(CLEVER_VM_HANDLER_ARGS) {
+CLEVER_VM_HANDLER(VM::jmpz_handler) {
 	Value* value = getValue(opcode->get_op1());
 
 	if (value->isConst()) {
 		switch (value->get_type()) {
 			case Value::INTEGER:
 				if (!value->getInteger()) {
-					VM_GOTO(opcode->get_jmp_addr1());
+					CLEVER_VM_GOTO(opcode->get_jmp_addr1());
 				}
 				break;
 			case Value::DOUBLE:
 				if (!value->getDouble()) {
-					VM_GOTO(opcode->get_jmp_addr1());
+					CLEVER_VM_GOTO(opcode->get_jmp_addr1());
 				}
 				break;
 			case Value::BOOLEAN:
 				if (!value->getBoolean()) {
-					VM_GOTO(opcode->get_jmp_addr1());
+					CLEVER_VM_GOTO(opcode->get_jmp_addr1());
 				}
 				break;
 		}
@@ -429,14 +429,14 @@ void VM::jmpz_handler(CLEVER_VM_HANDLER_ARGS) {
 /*
  * JMP
  */
-void VM::jmp_handler(CLEVER_VM_HANDLER_ARGS) {
-	VM_GOTO(opcode->get_jmp_addr2());
+CLEVER_VM_HANDLER(VM::jmp_handler) {
+	CLEVER_VM_GOTO(opcode->get_jmp_addr2());
 }
 
 /*
  * x > y
  */
-void VM::greater_handler(CLEVER_VM_HANDLER_ARGS) {
+CLEVER_VM_HANDLER(VM::greater_handler) {
 	Value* op1 = getValue(opcode->get_op1());
 	Value* op2 = getValue(opcode->get_op2());
 
@@ -455,7 +455,7 @@ void VM::greater_handler(CLEVER_VM_HANDLER_ARGS) {
 /*
  * x >= y
  */
-void VM::greater_equal_handler(CLEVER_VM_HANDLER_ARGS) {
+CLEVER_VM_HANDLER(VM::greater_equal_handler) {
 	Value* op1 = getValue(opcode->get_op1());
 	Value* op2 = getValue(opcode->get_op2());
 
@@ -474,7 +474,7 @@ void VM::greater_equal_handler(CLEVER_VM_HANDLER_ARGS) {
 /*
  * x < y
  */
-void VM::less_handler(CLEVER_VM_HANDLER_ARGS) {
+CLEVER_VM_HANDLER(VM::less_handler) {
 	Value* op1 = getValue(opcode->get_op1());
 	Value* op2 = getValue(opcode->get_op2());
 
@@ -493,7 +493,7 @@ void VM::less_handler(CLEVER_VM_HANDLER_ARGS) {
 /*
  * x <= y
  */
-void VM::less_equal_handler(CLEVER_VM_HANDLER_ARGS) {
+CLEVER_VM_HANDLER(VM::less_equal_handler) {
 	Value* op1 = getValue(opcode->get_op1());
 	Value* op2 = getValue(opcode->get_op2());
 
@@ -512,14 +512,14 @@ void VM::less_equal_handler(CLEVER_VM_HANDLER_ARGS) {
 /*
  * break
  */
-void VM::break_handler(CLEVER_VM_HANDLER_ARGS) {
-	VM_GOTO(opcode->get_jmp_addr1());
+CLEVER_VM_HANDLER(VM::break_handler) {
+	CLEVER_VM_GOTO(opcode->get_jmp_addr1());
 }
 
 /*
  * x == y
  */
-void VM::equal_handler(CLEVER_VM_HANDLER_ARGS) {
+CLEVER_VM_HANDLER(VM::equal_handler) {
 	Value* op1 = getValue(opcode->get_op1());
 	Value* op2 = getValue(opcode->get_op2());
 
@@ -538,7 +538,7 @@ void VM::equal_handler(CLEVER_VM_HANDLER_ARGS) {
 /*
  * x != y
  */
-void VM::not_equal_handler(CLEVER_VM_HANDLER_ARGS) {
+CLEVER_VM_HANDLER(VM::not_equal_handler) {
 	Value* op1 = getValue(opcode->get_op1());
 	Value* op2 = getValue(opcode->get_op2());
 

@@ -35,11 +35,12 @@
  * Opcode handler arguments
  */
 #define CLEVER_VM_HANDLER_ARGS unsigned int* next_op, Opcode* opcode
+#define CLEVER_VM_HANDLER(name) void name(CLEVER_VM_HANDLER_ARGS)
 
 /**
  * Change the executor flow to run another opcode
  */
-#define VM_GOTO(x) *next_op = (x)-1; return
+#define CLEVER_VM_GOTO(x) *next_op = (x)-1; return
 
 namespace clever {
 
@@ -86,30 +87,30 @@ public:
 	}
 
 	/* Opcode handlers */
-	void echo_handler(CLEVER_VM_HANDLER_ARGS);
-	void plus_handler(CLEVER_VM_HANDLER_ARGS);
-	void div_handler(CLEVER_VM_HANDLER_ARGS);
-	void mult_handler(CLEVER_VM_HANDLER_ARGS);
-	void minus_handler(CLEVER_VM_HANDLER_ARGS);
-	void new_scope_handler(CLEVER_VM_HANDLER_ARGS);
-	void end_scope_handler(CLEVER_VM_HANDLER_ARGS);
-	void var_decl_handler(CLEVER_VM_HANDLER_ARGS);
-	void bw_and_handler(CLEVER_VM_HANDLER_ARGS);
-	void bw_or_handler(CLEVER_VM_HANDLER_ARGS);
-	void bw_xor_handler(CLEVER_VM_HANDLER_ARGS);
-	void pre_inc_handler(CLEVER_VM_HANDLER_ARGS);
-	void pre_dec_handler(CLEVER_VM_HANDLER_ARGS);
-	void pos_inc_handler(CLEVER_VM_HANDLER_ARGS);
-	void pos_dec_handler(CLEVER_VM_HANDLER_ARGS);
-	void jmpz_handler(CLEVER_VM_HANDLER_ARGS);
-	void jmp_handler(CLEVER_VM_HANDLER_ARGS);
-	void greater_handler(CLEVER_VM_HANDLER_ARGS);
-	void greater_equal_handler(CLEVER_VM_HANDLER_ARGS);
-	void less_handler(CLEVER_VM_HANDLER_ARGS);
-	void less_equal_handler(CLEVER_VM_HANDLER_ARGS);
-	void break_handler(CLEVER_VM_HANDLER_ARGS);
-	void equal_handler(CLEVER_VM_HANDLER_ARGS);
-	void not_equal_handler(CLEVER_VM_HANDLER_ARGS);
+	CLEVER_VM_HANDLER(echo_handler);
+	CLEVER_VM_HANDLER(plus_handler);
+	CLEVER_VM_HANDLER(div_handler);
+	CLEVER_VM_HANDLER(mult_handler);
+	CLEVER_VM_HANDLER(minus_handler);
+	CLEVER_VM_HANDLER(new_scope_handler);
+	CLEVER_VM_HANDLER(end_scope_handler);
+	CLEVER_VM_HANDLER(var_decl_handler);
+	CLEVER_VM_HANDLER(bw_and_handler);
+	CLEVER_VM_HANDLER(bw_or_handler);
+	CLEVER_VM_HANDLER(bw_xor_handler);
+	CLEVER_VM_HANDLER(pre_inc_handler);
+	CLEVER_VM_HANDLER(pre_dec_handler);
+	CLEVER_VM_HANDLER(pos_inc_handler);
+	CLEVER_VM_HANDLER(pos_dec_handler);
+	CLEVER_VM_HANDLER(jmpz_handler);
+	CLEVER_VM_HANDLER(jmp_handler);
+	CLEVER_VM_HANDLER(greater_handler);
+	CLEVER_VM_HANDLER(greater_equal_handler);
+	CLEVER_VM_HANDLER(less_handler);
+	CLEVER_VM_HANDLER(less_equal_handler);
+	CLEVER_VM_HANDLER(break_handler);
+	CLEVER_VM_HANDLER(equal_handler);
+	CLEVER_VM_HANDLER(not_equal_handler);
 
 	DISALLOW_COPY_AND_ASSIGN(VM);
 private:
