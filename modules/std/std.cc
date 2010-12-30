@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * $Id: cstring.h 210 2010-12-30 19:51:03Z muriloufg $
+ * $Id$
  */
 
 #include <iostream>
