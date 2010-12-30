@@ -108,6 +108,8 @@ public:
 	void less_handler(CLEVER_VM_HANDLER_ARGS);
 	void less_equal_handler(CLEVER_VM_HANDLER_ARGS);
 	void break_handler(CLEVER_VM_HANDLER_ARGS);
+	void equal_handler(CLEVER_VM_HANDLER_ARGS);
+	void not_equal_handler(CLEVER_VM_HANDLER_ARGS);
 
 	DISALLOW_COPY_AND_ASSIGN(VM);
 private:

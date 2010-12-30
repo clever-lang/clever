@@ -1,0 +1,16 @@
+Testing equal and not equal operators
+==CODE==
+Int i = 10;
+
+if (--i == 9) {
+	echo i;
+}
+
+if (i != 9) {
+	echo 'fail!';
+} else {
+	echo 'ok!';
+}
+==RESULT==
+9
+ok!

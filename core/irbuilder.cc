@@ -323,7 +323,10 @@ Opcode* IRBuilder::logicExpression(ast::LogicExpression* expr) {
 		case ast::LESS:          return new Opcode(OP_LESS,          &VM::less_handler,          lhs, rhs, expr->get_value());
 		case ast::GREATER_EQUAL: return new Opcode(OP_GREATER_EQUAL, &VM::greater_equal_handler, lhs, rhs, expr->get_value());
 		case ast::LESS_EQUAL:    return new Opcode(OP_LESS_EQUAL,    &VM::less_equal_handler,    lhs, rhs, expr->get_value());
+		case ast::EQUAL:         return new Opcode(OP_EQUAL,         &VM::equal_handler,         lhs, rhs, expr->get_value());
+		case ast::NOT_EQUAL:     return new Opcode(OP_NOT_EQUAL,     &VM::not_equal_handler, lhs, rhs, expr->get_value());
 	}
+	return NULL;
 }
 
 Opcode* IRBuilder::breakExpression() {

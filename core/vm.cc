@@ -516,4 +516,42 @@ void VM::break_handler(CLEVER_VM_HANDLER_ARGS) {
 	VM_GOTO(opcode->get_jmp_addr1());
 }
 
+/*
+ * x == y
+ */
+void VM::equal_handler(CLEVER_VM_HANDLER_ARGS) {
+	Value* op1 = getValue(opcode->get_op1());
+	Value* op2 = getValue(opcode->get_op2());
+
+	if (op1->isConst() && op1->hasSameKind(op2) && op1->hasSameType(op2)) {
+		switch (op1->get_type()) {
+			case Value::INTEGER:
+				opcode->set_result(new ConstantValue(op1->getInteger() == op2->getInteger()));
+				break;
+			case Value::DOUBLE:
+				opcode->set_result(new ConstantValue(op1->getDouble() == op2->getDouble()));
+				break;
+		}
+	}
+}
+
+/*
+ * x != y
+ */
+void VM::not_equal_handler(CLEVER_VM_HANDLER_ARGS) {
+	Value* op1 = getValue(opcode->get_op1());
+	Value* op2 = getValue(opcode->get_op2());
+
+	if (op1->isConst() && op1->hasSameKind(op2) && op1->hasSameType(op2)) {
+		switch (op1->get_type()) {
+			case Value::INTEGER:
+				opcode->set_result(new ConstantValue(op1->getInteger() != op2->getInteger()));
+				break;
+			case Value::DOUBLE:
+				opcode->set_result(new ConstantValue(op1->getDouble() != op2->getDouble()));
+				break;
+		}
+	}
+}
+
 } // clever

@@ -84,6 +84,8 @@ clever::ast::TreeNode nodes;
 %token LESS          "<"
 %token GREATER       ">"
 %token BREAK         "break"
+%token EQUAL         "=="
+%token NOT_EQUAL     "!="
 
 %left ',';
 %left '=';
@@ -172,6 +174,8 @@ expr:
 	|	expr ">=" expr  { $$ = new clever::ast::LogicExpression(ast::GREATER_EQUAL, $1, $3); nodes.add($$); }
 	|	expr "<" expr   { $$ = new clever::ast::LogicExpression(ast::LESS, $1, $3); nodes.add($$); }
 	|	expr "<=" expr  { $$ = new clever::ast::LogicExpression(ast::LESS_EQUAL, $1, $3); nodes.add($$); }
+	|	expr "==" expr  { $$ = new clever::ast::LogicExpression(ast::EQUAL, $1, $3); nodes.add($$); }
+	|	expr "!=" expr  { $$ = new clever::ast::LogicExpression(ast::NOT_EQUAL, $1, $3); nodes.add($$); }
 	|	'-' expr %prec UMINUS { $$ = new clever::ast::BinaryExpression(ast::MINUS, NULL, $2); nodes.add($$); }
 	|	'+' expr %prec UMINUS { $$ = new clever::ast::BinaryExpression(ast::PLUS, NULL, $2); nodes.add($$); }
 	|	INCREMENT IDENT { $$ = new clever::ast::PreIncrement($2); nodes.add($$); }

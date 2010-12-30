@@ -42,6 +42,9 @@ class IRBuilder;
 
 namespace clever { namespace ast {
 
+/*
+ * Operators
+ */
 enum {
 	MINUS,
 	PLUS,
@@ -54,7 +57,9 @@ enum {
 	GREATER,
 	GREATER_EQUAL,
 	LESS,
-	LESS_EQUAL
+	LESS_EQUAL,
+	EQUAL,
+	NOT_EQUAL
 };
 
 class Expression : public RefCounted {
