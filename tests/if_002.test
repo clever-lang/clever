@@ -1,4 +1,4 @@
-Testing if-elsif-else and scopes
+Testing if-elseif-else and scopes
 ==CODE==
 if (1) {
 	Int i = 20;

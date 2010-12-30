@@ -206,7 +206,7 @@ while_stmt:
 ;
 
 if_stmt:
-		IF '(' expr { $2 = new clever::ast::IfExpression($3); nodes.add($2); } ')' block_stmt
+		IF '(' expr { nodes.add(new clever::ast::IfExpression($3)); } ')' block_stmt
 		elseif_opt else_opt { nodes.add(new clever::ast::EndIfExpression()); }
 ;
 

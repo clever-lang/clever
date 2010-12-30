@@ -40,8 +40,8 @@ public:
 	typedef std::map<long, Value*> var_map;
 	typedef std::deque<var_map> var_scope;
 
-	SymbolTable() :
-		m_var_at(-1) { }
+	SymbolTable()
+		: m_var_at(-1) { }
 
 	inline void register_var(Value* var) {
 		m_variables.at(m_var_at).insert(std::pair<long, Value*>(var->getString().get_id(), var));

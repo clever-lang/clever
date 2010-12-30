@@ -278,19 +278,20 @@ Opcode* IRBuilder::whileExpression(ast::WhileExpression* expr) {
 Opcode* IRBuilder::endWhileExpression(ast::EndWhileExpression* expr) {
 	Opcode* opcode = new Opcode(OP_JMP, &VM::jmp_handler);
 	ast::StartExpr* start_loop = static_cast<ast::StartExpr*>(expr->get_expr());
+	unsigned int scope_out = getOpNum()+2;
 
 	/* Points to out of WHILE block */
 	while (!m_brks.top().empty()) {
-		m_brks.top().top()->set_jmp_addr1(getOpNum()+2);
+		m_brks.top().top()->set_jmp_addr1(scope_out);
 		m_brks.top().pop();
 	}
-	m_jmps.top().top()->set_jmp_addr1(getOpNum()+2);
+	m_jmps.top().top()->set_jmp_addr1(scope_out);
 	m_jmps.top().pop();
+	m_jmps.pop();
+	m_brks.pop();
 
 	/* Points to start of WHILE expression */
 	opcode->set_jmp_addr2(start_loop->get_op_num());
-	m_jmps.pop();
-	m_brks.pop();
 
 	return opcode;
 }

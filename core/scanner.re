@@ -84,8 +84,6 @@ next_token:
 	<*>SPACE { yylloc->step(); SKIP(); }
 	<*>[\n]+ { yylloc->lines(yylen); yylloc->step(); SKIP(); }
 
-	<INITIAL>SPECIAL { RET(clever::Parser::token_type(s->yylex[0])); }
-
 	<INITIAL>">=" { RET(token::GREATER_EQUAL); }
 
 	<INITIAL>">" { RET(token::GREATER); }
@@ -183,6 +181,8 @@ next_token:
 		*yylval = new clever::ast::Identifier(CSTRING(std::string(s->yylex, yylen)));
 		RET(token::TYPE);
 	}
+
+	<INITIAL>SPECIAL { RET(clever::Parser::token_type(s->yylex[0])); }
 
 	<INITIAL>STRING {
 		std::string strtext(s->yylex+1, yylen-2);
