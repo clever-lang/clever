@@ -60,13 +60,13 @@ Opcode* IRBuilder::binaryExpression(ast::BinaryExpression* expr) {
 	rhs->addRef();
 
 	switch (expr->get_op()) {
-		case '+': return new Opcode(OP_PLUS, &VM::plus_handler, lhs, rhs, expr->get_value());
-		case '/': return new Opcode(OP_DIV, &VM::div_handler, lhs, rhs, expr->get_value());
-		case '*': return new Opcode(OP_MULT, &VM::mult_handler, lhs, rhs, expr->get_value());
-		case '-': return new Opcode(OP_MINUS, &VM::minus_handler, lhs, rhs, expr->get_value());
-		case '^': return new Opcode(OP_BW_XOR, &VM::bw_xor_handler, lhs, rhs, expr->get_value());
-		case '|': return new Opcode(OP_BW_OR, &VM::bw_or_handler, lhs, rhs, expr->get_value());
-		case '&': return new Opcode(OP_BW_AND, &VM::bw_and_handler, lhs, rhs, expr->get_value());
+		case ast::PLUS:  return new Opcode(OP_PLUS, &VM::plus_handler, lhs, rhs, expr->get_value());
+		case ast::DIV:   return new Opcode(OP_DIV, &VM::div_handler, lhs, rhs, expr->get_value());
+		case ast::MULT:  return new Opcode(OP_MULT, &VM::mult_handler, lhs, rhs, expr->get_value());
+		case ast::MINUS: return new Opcode(OP_MINUS, &VM::minus_handler, lhs, rhs, expr->get_value());
+		case ast::XOR:   return new Opcode(OP_BW_XOR, &VM::bw_xor_handler, lhs, rhs, expr->get_value());
+		case ast::OR:    return new Opcode(OP_BW_OR, &VM::bw_or_handler, lhs, rhs, expr->get_value());
+		case ast::AND:   return new Opcode(OP_BW_AND, &VM::bw_and_handler, lhs, rhs, expr->get_value());
 	}
 }
 

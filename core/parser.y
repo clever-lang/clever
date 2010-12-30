@@ -160,20 +160,20 @@ type_creation:
 ;
 
 expr:
-		expr '-' expr { $$ = new clever::ast::BinaryExpression('-', $1, $3); nodes.add($$); }
-	|	expr '+' expr { $$ = new clever::ast::BinaryExpression('+', $1, $3); nodes.add($$); }
-	|	expr '/' expr { $$ = new clever::ast::BinaryExpression('/', $1, $3); nodes.add($$); }
-	|	expr '*' expr { $$ = new clever::ast::BinaryExpression('*', $1, $3); nodes.add($$); }
-	|	expr '%' expr { $$ = new clever::ast::BinaryExpression('%', $1, $3); nodes.add($$); }
-	|	expr '|' expr { $$ = new clever::ast::BinaryExpression('|', $1, $3); nodes.add($$); }
-	|	expr '&' expr { $$ = new clever::ast::BinaryExpression('&', $1, $3); nodes.add($$); }
-	|	expr '^' expr { $$ = new clever::ast::BinaryExpression('^', $1, $3); nodes.add($$); }
+		expr '-' expr { $$ = new clever::ast::BinaryExpression(ast::MINUS, $1, $3); nodes.add($$); }
+	|	expr '+' expr { $$ = new clever::ast::BinaryExpression(ast::PLUS, $1, $3); nodes.add($$); }
+	|	expr '/' expr { $$ = new clever::ast::BinaryExpression(ast::DIV, $1, $3); nodes.add($$); }
+	|	expr '*' expr { $$ = new clever::ast::BinaryExpression(ast::MULT, $1, $3); nodes.add($$); }
+	|	expr '%' expr { $$ = new clever::ast::BinaryExpression(ast::MOD, $1, $3); nodes.add($$); }
+	|	expr '|' expr { $$ = new clever::ast::BinaryExpression(ast::OR, $1, $3); nodes.add($$); }
+	|	expr '&' expr { $$ = new clever::ast::BinaryExpression(ast::AND, $1, $3); nodes.add($$); }
+	|	expr '^' expr { $$ = new clever::ast::BinaryExpression(ast::XOR, $1, $3); nodes.add($$); }
 	|	expr ">" expr   { $$ = new clever::ast::LogicExpression(ast::GREATER, $1, $3); nodes.add($$); }
 	|	expr ">=" expr  { $$ = new clever::ast::LogicExpression(ast::GREATER_EQUAL, $1, $3); nodes.add($$); }
 	|	expr "<" expr   { $$ = new clever::ast::LogicExpression(ast::LESS, $1, $3); nodes.add($$); }
 	|	expr "<=" expr  { $$ = new clever::ast::LogicExpression(ast::LESS_EQUAL, $1, $3); nodes.add($$); }
-	|	'-' expr %prec UMINUS { $$ = new clever::ast::BinaryExpression('-', NULL, $2); nodes.add($$); }
-	|	'+' expr %prec UMINUS { $$ = new clever::ast::BinaryExpression('+', NULL, $2); nodes.add($$); }
+	|	'-' expr %prec UMINUS { $$ = new clever::ast::BinaryExpression(ast::MINUS, NULL, $2); nodes.add($$); }
+	|	'+' expr %prec UMINUS { $$ = new clever::ast::BinaryExpression(ast::PLUS, NULL, $2); nodes.add($$); }
 	|	INCREMENT IDENT { $$ = new clever::ast::PreIncrement($2); nodes.add($$); }
 	|	IDENT INCREMENT { $$ = new clever::ast::PosIncrement($1); nodes.add($$); }
 	|	DECREMENT IDENT { $$ = new clever::ast::PreDecrement($2); nodes.add($$); }
