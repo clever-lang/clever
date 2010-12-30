@@ -30,7 +30,6 @@
 
 #include <locale>
 #include <string>
-#include <iostream>
 #include <boost/functional/hash.hpp>
 #include <boost/unordered_map.hpp>
 
