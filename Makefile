@@ -16,19 +16,21 @@ RE2C=re2c
 BUILDDIR=build/
 # Core source dir
 SRCDIR=core/
+# Module dir
+MODDIR=modules/
 # Win32 port dir
 WINDIR=win32/
 # Testrunner dir
 EXTRADIR=extra/
 
-OBJECTS=$(BUILDDIR)parser.o $(BUILDDIR)scanner.o $(BUILDDIR)driver.o $(BUILDDIR)types.o $(BUILDDIR)cstring.o $(BUILDDIR)irbuilder.o $(BUILDDIR)ast.o $(BUILDDIR)compiler.o $(BUILDDIR)vm.o $(BUILDDIR)opcodes.o $(BUILDDIR)main.o $(BUILDDIR)win32.o
+OBJECTS=$(BUILDDIR)parser.o $(BUILDDIR)scanner.o $(BUILDDIR)driver.o $(BUILDDIR)types.o $(BUILDDIR)cstring.o $(BUILDDIR)irbuilder.o $(BUILDDIR)ast.o $(BUILDDIR)std.o $(BUILDDIR)compiler.o $(BUILDDIR)vm.o $(BUILDDIR)opcodes.o $(BUILDDIR)main.o $(BUILDDIR)win32.o
 
 clever: $(OBJECTS)
 	$(LD) $(LFLAGS) -o clever $(BUILDDIR)*.o
 
 all: clever test
 
-$(BUILDDIR)driver.o: $(SRCDIR)driver.cc $(BUILDDIR)parser.o
+$(BUILDDIR)driver.o: $(SRCDIR)driver.cc $(BUILDDIR)parser.o $(BUILDDIR)std.o
 	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)driver.o $(SRCDIR)driver.cc
 
 $(BUILDDIR)main.o: $(SRCDIR)main.cc
@@ -66,6 +68,9 @@ $(BUILDDIR)opcodes.o: $(SRCDIR)opcodes.cc
 
 $(BUILDDIR)types.o: $(SRCDIR)types.cc
 	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)types.o $(SRCDIR)types.cc
+
+$(BUILDDIR)std.o: $(MODDIR)std/std.cc
+	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)std.o $(MODDIR)std/std.cc
 
 $(BUILDDIR)win32.o: $(WINDIR)win32.cc
 	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)win32.o $(WINDIR)win32.cc

@@ -24,10 +24,12 @@
  *
  * $Id$
  */
+
 #include <iostream>
 #include <vector>
 #include <cstdlib>
 #include "compiler.h"
+#include "std/std.h"
 
 namespace clever {
 
@@ -36,6 +38,48 @@ namespace clever {
  */
 void Compiler::Init(ast::TreeNode::nodeList& nodes) {
 	m_ast = nodes;
+
+	/* Standard module */
+	m_modules.push_back(g_std_module);
+
+	loadModules();
+}
+
+/*
+ * Load the modules
+ */
+void Compiler::loadModules() {
+	ModuleList::iterator it = m_modules.begin();
+
+	while (it != m_modules.end()) {
+		FunctionList& functions = (*it)->get_functions();
+		FunctionList::iterator it2 = functions.begin();
+
+		while (it2 != functions.end()) {
+			/* Add the module functions to the global function table */
+			m_functions.insert(std::pair<const std::string, Function*>((*it2)->get_name(), *it2));
+			++it2;
+		}
+		++it;
+	}
+}
+
+/*
+ * Deallocs memory used by compiler data
+ */
+Compiler::~Compiler() {
+	FunctionTable::iterator it = m_functions.begin();
+	ModuleList::iterator it2 = m_modules.begin();
+
+	while (it != m_functions.end()) {
+		delete it->second;
+		++it;
+	}
+
+	while (it2 != m_modules.end()) {
+		delete *it2;
+		++it2;
+	}
 }
 
 /*

@@ -25,50 +25,66 @@
  * $Id$
  */
 
-#ifndef CLEVER_COMPILER_H
-#define CLEVER_COMPILER_H
+#ifndef CLEVER_MODULE_H
+#define CLEVER_MODULE_H
 
-#include <boost/unordered_map.hpp>
-#include "ast.h"
-#include "opcodes.h"
-#include "irbuilder.h"
-#include "module.h"
+#include <string>
+#include <list>
 
 namespace clever {
 
-class Compiler {
+class Module;
+struct Function;
+
+typedef std::list<Function*> FunctionList;
+typedef std::list<Module*> ModuleList;
+
+/**
+ * Module function prototype
+ */
+typedef void (*module_function)();
+
+/**
+ * Function representation
+ */
+class Function {
 public:
-	typedef boost::unordered_map<const std::string, Function*> FunctionTable;
+	Function(std::string name, module_function func)
+		: m_name(name), m_func(func) { }
 
-	Compiler() { }
+	~Function() { }
 
-	~Compiler();
+	inline const std::string get_name() { return m_name; }
+	inline module_function get_func() { return m_func; }
+private:
+	const std::string m_name;
+	module_function m_func;
+};
 
-	void Init(ast::TreeNode::nodeList&);
-	void loadModules();
-	void dumpAST();
-	void buildIR();
+/**
+ * Module representation
+ */
+class Module {
+public:
+	Module(std::string name, Function* func)
+		: m_name(name) {
+		addFunction(func);
+	}
 
-	inline FunctionTable& get_functions() {
+	~Module() { }
+
+	inline FunctionList& get_functions() {
 		return m_functions;
 	}
 
-	VM::OpcodeList* getOpcodes() {
-		return m_builder.get_opcodes();
+	inline void addFunction(Function* func) {
+		m_functions.push_back(func);
 	}
-
-	static void error(const char*);
-	static bool checkCompatibleTypes(Value*, Value*);
-	static ConstantValue* constantFolding(char, Value*, Value*);
-
-	DISALLOW_COPY_AND_ASSIGN(Compiler);
 private:
-	ast::TreeNode::nodeList m_ast;
-	IRBuilder m_builder;
-	ModuleList m_modules;
-	FunctionTable m_functions;
+	const std::string m_name;
+	FunctionList m_functions;
 };
 
 } // clever
 
-#endif // CLEVER_COMPILER_H
+#endif // CLEVER_MODULE_H
