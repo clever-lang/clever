@@ -304,6 +304,9 @@ Opcode* IRBuilder::startExpr(ast::StartExpr* expr) {
 	return NULL;
 }
 
+/*
+ * Generates opcode for logic expression which weren't optimized
+ */
 Opcode* IRBuilder::logicExpression(ast::LogicExpression* expr) {
 	Value* lhs;
 	Value* rhs;
@@ -329,6 +332,9 @@ Opcode* IRBuilder::logicExpression(ast::LogicExpression* expr) {
 	return NULL;
 }
 
+/*
+ * Generates opcode for break statement
+ */
 Opcode* IRBuilder::breakExpression() {
 	Opcode* opcode = new Opcode(OP_JMPZ, &VM::break_handler);
 
