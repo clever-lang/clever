@@ -58,7 +58,8 @@ enum Opcodes {
 	OP_LESS,
 	OP_LESS_EQUAL,
 	OP_EQUAL,
-	OP_NOT_EQUAL
+	OP_NOT_EQUAL,
+	OP_BREAK
 };
 
 /**

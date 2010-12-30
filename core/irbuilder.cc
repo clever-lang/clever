@@ -336,7 +336,7 @@ Opcode* IRBuilder::logicExpression(ast::LogicExpression* expr) {
  * Generates opcode for break statement
  */
 Opcode* IRBuilder::breakExpression() {
-	Opcode* opcode = new Opcode(OP_JMPZ, &VM::break_handler);
+	Opcode* opcode = new Opcode(OP_BREAK, &VM::break_handler);
 
 	m_brks.top().push(opcode);
 
