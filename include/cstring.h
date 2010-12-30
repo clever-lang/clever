@@ -29,8 +29,8 @@
 #define CLEVER_CSTRING_H
 
 #include <locale>
-#include <map>
 #include <string>
+#include <iostream>
 #include <boost/functional/hash.hpp>
 #include <boost/unordered_map.hpp>
 
@@ -42,8 +42,10 @@ class CStringTable;
 
 class CString : public std::string {
 public:	
+	typedef std::size_t IdType;
+	
 	CString() : std::string(), m_id(-1) { store(); };
-	CString(const CString& str, long id)
+	CString(const CString& str, IdType id)
 		: std::string(str), m_id(id) { }
 	CString(const CString& str) : std::string(str), m_id(-1) { store(); }
 	CString(CString& str) : std::string(str), m_id(-1) { store(); }
@@ -56,11 +58,11 @@ public:
 		return get_id() == cstring->get_id();
 	}
 
-	inline long get_id() const {
+	inline IdType get_id() const {
 		return m_id;
 	}
 
-	inline void set_id(long id) {
+	inline void set_id(IdType id) {
 		if (m_id == -1)  {
 			m_id = id;
 		}
@@ -76,54 +78,12 @@ public:
 
 private:
 	static CStringTable table;
-	long m_id;
+	IdType m_id;
 
 	void store();
 };
 
-typedef std::map<long, CString*> CStringTableBase;
-
-class CStringTable : public CStringTableBase {
-public:
-	CStringTable() {
-		coll = &std::use_facet<std::collate<char> >(loc);
-	}
-	~CStringTable();
-
-	bool contains(CString* cstring) const {
-		int id = cstring->get_id();
-		return id != -1 && id < (signed)size() && (*find(id)).second->hasSameId(cstring);
-	}
-
-	CString* getCString(long id) {
-		return (*find(id)).second;
-	}
-
-	long insert(CString* cstring) {
-		long id = hash(*cstring);
-
-		cstring->set_id(id);
-
-		if (CStringTableBase::find(id) == end()) {
-			CString* new_string = new CString(*cstring, id);
-
-			/* assume conflicts are not possible. */
-			CStringTableBase::insert(std::pair<long, CString*>(id, new_string));
-		}
-
-		return id;
-	}
-private:
-	std::locale loc;
-	const std::collate<char>* coll;
-
-	inline long hash(CString& cstring) const {
-		return coll->hash(cstring.data(), cstring.data()+cstring.length());
-	}
-};
-
 } // clever
-
 
 /**
  * Specialization of boost::hash<> for working with CStrings
@@ -131,15 +91,54 @@ private:
 namespace boost {
 
 template <>
-class hash<const clever::CString*> {
+class hash<clever::CString*> {
 public:
 	size_t operator()(const clever::CString* key) const {
-		hash<const char*> h;
-		return h(key->c_str());
+		hash<std::string> h;
+		
+		return h(*(std::string*)key);
 	}
 };
 
 } // boost
+
+namespace clever {
+
+typedef boost::unordered_map<std::size_t, CString*> CStringTableBase;
+
+class CStringTable : public CStringTableBase {
+public:
+	typedef CString::IdType IdType;
+	
+	CStringTable() {}
+	~CStringTable();
+
+	bool contains(CString* cstring) const {
+		IdType id = cstring->get_id();
+		return id != -1 && id < (signed)size() && (*find(id)).second->hasSameId(cstring);
+	}
+
+	CString* getCString(long id) {
+		return (*find(id)).second;
+	}
+
+	IdType insert(CString* cstring) {
+		boost::hash<CString*> hash;
+		IdType id = hash(cstring);
+		
+		cstring->set_id(id);
+
+		if (CStringTableBase::find(id) == end()) {
+			CString* new_string = new CString(*cstring, id);
+			
+			CStringTableBase::insert(std::pair<IdType, CString*>(id, new_string));
+		}
+
+		return id;
+	}
+};
+
+} // clever
 
 #endif /* CLEVER_CSTRING_H */
 

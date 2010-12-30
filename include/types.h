@@ -31,6 +31,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <boost/unordered_map.hpp>
 #include "refcounted.h"
 #include "cstring.h"
 #include "values.h"
@@ -47,7 +48,7 @@ class Method;
 
 class Type {
 public:
-	typedef std::map<CString, Method*> MethodTable;
+	typedef boost::unordered_map<CString*, Method*> MethodTable;
 
 	enum {
 		ABSTRACT  = 0x0,
