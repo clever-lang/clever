@@ -83,6 +83,8 @@ public:
 
 	inline int get_op_type() { return m_op_type; }
 
+	inline VM::opcode_handler get_handler() { return m_handler; }
+
 	inline Value* get_op1() { return m_op1; }
 	inline void set_op1(Value* op1) { m_op1 = op1; }
 
@@ -90,41 +92,19 @@ public:
 	inline void set_op2(Value* op2) { m_op2 = op2; }
 
 	inline Value* get_result() { return m_result; }
-	inline void set_result(Value* value) {
-		m_result->set_value(value);
-	}
-
-	inline VM::opcode_handler get_handler() { return m_handler; }
+	inline void set_result(Value* value) { m_result->set_value(value); }
 
 	inline int64_t get_op_num() { return m_op_num; }
+	inline void set_op_num(unsigned int op_num) { m_op_num = op_num; }
 
-	void set_op_num(unsigned int op_num) {
-		m_op_num = op_num;
-	}
+	inline void set_jmp_addr1(unsigned int jmp_addr) { m_extra.jmp1 = jmp_addr; }
+	inline unsigned int get_jmp_addr1() { return m_extra.jmp1; }
 
-	void set_jmp_addr1(unsigned int jmp_addr) {
-		m_extra.jmp1 = jmp_addr;
-	}
+	inline void set_jmp_addr2(unsigned int jmp_addr) { m_extra.jmp2 = jmp_addr; }
+	inline unsigned int get_jmp_addr2() { return m_extra.jmp2; }
 
-	void set_jmp_addr2(unsigned int jmp_addr) {
-		m_extra.jmp2 = jmp_addr;
-	}
-
-	void set_flags(unsigned int flags) {
-		m_extra.flags = flags;
-	}
-
-	unsigned int get_jmp_addr1() {
-		return m_extra.jmp1;
-	}
-
-	unsigned int get_jmp_addr2() {
-		return m_extra.jmp2;
-	}
-
-	unsigned int get_flags() {
-		return m_extra.flags;
-	}
+	inline void set_flags(unsigned int flags) {	m_extra.flags = flags; }
+	inline unsigned int get_flags() { return m_extra.flags; }
 
 	/* Debug */
 	void dump();
