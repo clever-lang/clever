@@ -63,9 +63,13 @@ public:
 
 	DISALLOW_COPY_AND_ASSIGN(Compiler);
 private:
+	/* AST nodes */
 	ast::TreeNode::nodeList m_ast;
+	/* IR Builder */
 	IRBuilder m_builder;
+	/* Module list */
 	ModuleList m_modules;
+	/* Global function table */
 	FunctionTable m_functions;
 };
 

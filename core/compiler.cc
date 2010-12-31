@@ -40,6 +40,7 @@ void Compiler::Init(ast::TreeNode::nodeList& nodes) {
 	m_ast = nodes;
 
 	/* Standard module */
+	g_std_module->Init();
 	m_modules.push_back(g_std_module);
 
 	loadModules();

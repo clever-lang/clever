@@ -34,10 +34,14 @@
 namespace clever {
 
 class Module;
-struct Function;
+class Function;
 
 typedef std::list<Function*> FunctionList;
 typedef std::list<Module*> ModuleList;
+
+#define CLEVER_FUNCTION_ARGS
+#define CLEVER_FUNC_NAME(name) clv_##name
+#define CLEVER_FUNCTION(name) void CLEVER_FUNC_NAME(name)(CLEVER_FUNCTION_ARGS)
 
 /**
  * Module function prototype
@@ -66,10 +70,8 @@ private:
  */
 class Module {
 public:
-	Module(std::string name, Function* func)
-		: m_name(name) {
-		addFunction(func);
-	}
+	Module(std::string name)
+		: m_name(name) { }
 
 	~Module() { }
 
@@ -80,8 +82,13 @@ public:
 	inline void addFunction(Function* func) {
 		m_functions.push_back(func);
 	}
+
+	/* Module initialization */
+	virtual void Init() = 0;
 private:
+	/* Module name */
 	const std::string m_name;
+	/* Module function list */
 	FunctionList m_functions;
 };
 

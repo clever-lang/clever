@@ -28,9 +28,17 @@
 #ifndef CLEVER_STD_H
 #define CLEVER_STD_H
 
+#include "module.h"
+
 namespace clever {
 
-class Module;
+class StdModule : public Module {
+public:
+	StdModule()
+		: Module("Standard") { }
+
+	void Init();
+};
 
 extern Module* g_std_module;
 

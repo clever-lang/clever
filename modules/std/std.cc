@@ -31,10 +31,18 @@
 
 namespace clever {
 
-void clever_print() {
-	std::cout << "ok" << std::endl;
+Module* g_std_module = new StdModule;
+
+CLEVER_FUNCTION(print) {
 }
 
-Module* g_std_module = new Module("Standard", new Function("print", &clever_print));
+CLEVER_FUNCTION(printf) {
+}
+
+void StdModule::Init() {
+	/* Module functions */
+	addFunction(new Function("print", &CLEVER_FUNC_NAME(print)));
+	addFunction(new Function("printf", &CLEVER_FUNC_NAME(printf)));
+}
 
 } // clever
