@@ -39,6 +39,9 @@ CLEVER_FUNCTION(print) {
 CLEVER_FUNCTION(printf) {
 }
 
+/*
+ * Initializes Standard module
+ */
 void StdModule::Init() {
 	/* Module functions */
 	addFunction(new Function("print", &CLEVER_FUNC_NAME(print)));

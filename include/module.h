@@ -73,7 +73,11 @@ public:
 	Module(std::string name)
 		: m_name(name) { }
 
-	~Module() { }
+	virtual ~Module() { }
+
+	const std::string get_name() {
+		return m_name;
+	}
 
 	inline FunctionList& get_functions() {
 		return m_functions;
@@ -85,6 +89,9 @@ public:
 
 	/* Module initialization */
 	virtual void Init() = 0;
+
+	/* Module version */
+	virtual const char* getVersion() { return NULL; }
 private:
 	/* Module name */
 	const std::string m_name;
