@@ -33,6 +33,8 @@
 
 namespace clever {
 
+FunctionTable Compiler::s_func_table;
+
 /*
  * Initializes the compiler data
  */
@@ -58,7 +60,7 @@ void Compiler::loadModules() {
 
 		while (it2 != functions.end()) {
 			/* Add the module functions to the global function table */
-			m_functions.insert(std::pair<const std::string, Function*>((*it2)->get_name(), *it2));
+			s_func_table.insert(std::pair<const std::string, Function*>((*it2)->get_name(), *it2));
 			++it2;
 		}
 		++it;
@@ -69,10 +71,10 @@ void Compiler::loadModules() {
  * Deallocs memory used by compiler data
  */
 Compiler::~Compiler() {
-	FunctionTable::iterator it = m_functions.begin();
+	FunctionTable::iterator it = s_func_table.begin();
 	ModuleList::iterator it2 = m_modules.begin();
 
-	while (it != m_functions.end()) {
+	while (it != s_func_table.end()) {
 		delete it->second;
 		++it;
 	}

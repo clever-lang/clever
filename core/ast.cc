@@ -241,4 +241,11 @@ Opcode* BreakExpression::codeGen(IRBuilder& builder) {
 	return builder.breakExpression();
 }
 
+/*
+ * FunctionCall
+ */
+Opcode* FunctionCall::codeGen(IRBuilder& builder) {
+	return builder.functionCall(this);
+}
+
 }} // clever::ast

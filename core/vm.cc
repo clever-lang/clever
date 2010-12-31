@@ -27,6 +27,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include "compiler.h"
 #include "opcodes.h"
 #include "vm.h"
 
@@ -552,6 +553,22 @@ CLEVER_VM_HANDLER(VM::not_equal_handler) {
 				break;
 		}
 	}
+}
+
+/*
+ * func()
+ */
+CLEVER_VM_HANDLER(VM::fcall_handler) {
+	Function* func = Compiler::getFunction(opcode->get_op1()->getString());
+	Value* args = opcode->get_op2();
+	FunctionArgs func_args;
+
+	if (args) {
+		func_args.push_back(args);
+	}
+
+	/* Call the function */
+	func->get_func()(func_args);
 }
 
 } // clever

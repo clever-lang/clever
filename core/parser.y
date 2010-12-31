@@ -141,6 +141,15 @@ statements:
 	|	break_stmt ';'
 ;
 
+arg_list:
+		arg_list ',' expr  { $$ = $3; }
+	|	expr               { $$ = $1; }
+;
+func_call:
+		IDENT '(' ')'          { $$ = new clever::ast::FunctionCall($1); nodes.add($$); }
+	|	IDENT '(' arg_list ')' { $$ = new clever::ast::FunctionCall($1, $3); nodes.add($$); }
+;
+
 variable_declaration_no_init:
 		TYPE IDENT	{ nodes.add(new clever::ast::VariableDecl($1, $2, NULL)); }
 ;
@@ -185,6 +194,7 @@ expr:
 	|	'!' expr
 	|	'~' expr
 	|	'(' expr ')'  { $$ = $2; }
+	|	func_call     { $$ = $1; }
 	|	NUM_INTEGER   { $$ = $1; }
 	|	NUM_DOUBLE    { $$ = $1; }
 	|	IDENT         { $$ = $1; }

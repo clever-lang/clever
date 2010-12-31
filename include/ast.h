@@ -186,7 +186,7 @@ public:
 		m_value->delRef();
 	}
 
-	Value* get_value() const { return m_value; };
+	inline Value* get_value() const { return m_value; };
 
 	std::string debug(void) { return m_value->toString(); }
 
@@ -243,6 +243,7 @@ class Identifier : public Expression {
 public:
 	explicit Identifier(CString* name) {
 		m_value = new NamedValue(name);
+		m_name = name;
 	}
 
 	~Identifier() {
@@ -251,6 +252,7 @@ public:
 
 	bool hasValue() const { return true; }
 	Value* get_value() const { return m_value; }
+	CString* get_name() { return m_name; }
 
 	std::string debug(void) {
 		return m_value->toString();
@@ -259,6 +261,7 @@ public:
 	DISALLOW_COPY_AND_ASSIGN(Identifier);
 private:
 	NamedValue* m_value;
+	CString* m_name;
 };
 
 class StringLiteral : public Literal {
@@ -640,6 +643,42 @@ public:
 	~BreakExpression() { }
 
 	Opcode* codeGen(IRBuilder&);
+};
+
+class FunctionCall : public Expression {
+public:
+	FunctionCall(Expression* name)
+		: m_name(name), m_args(NULL) {
+		m_name->addRef();
+	}
+	FunctionCall(Expression* name, Expression* args)
+		: m_name(name), m_args(args) {
+		m_name->addRef();
+		m_args->addRef();
+	}
+
+	~FunctionCall() {
+		m_name->delRef();
+		if (m_args) {
+			m_args->delRef();
+		}
+	}
+
+	inline Value* get_value() const {
+		return m_name->get_value();
+	}
+
+	inline Value* get_value_args() {
+		if (m_args) {
+			return m_args->get_value();
+		}
+		return NULL;
+	}
+
+	Opcode* codeGen(IRBuilder&);
+private:
+	Expression* m_name;
+	Expression* m_args;
 };
 
 }} // clever::ast

@@ -36,10 +36,13 @@
 
 namespace clever {
 
+/*
+ * Function table
+ */
+typedef boost::unordered_map<const std::string, Function*> FunctionTable;
+
 class Compiler {
 public:
-	typedef boost::unordered_map<const std::string, Function*> FunctionTable;
-
 	Compiler() { }
 
 	~Compiler();
@@ -50,16 +53,29 @@ public:
 	void buildIR();
 
 	inline FunctionTable& get_functions() {
-		return m_functions;
+		return s_func_table;
 	}
 
 	VM::OpcodeList* getOpcodes() {
 		return m_builder.get_opcodes();
 	}
+	/*
+	 * Checks if a function exists
+	 */
+	static inline bool functionExists(const std::string& name) {
+		return s_func_table.find(name) != s_func_table.end();
+	}
+	/*
+	 * Returns the a Function pointer
+	 */
+	static inline Function* getFunction(const std::string& name) {
+		return s_func_table.find(name)->second;
+	}
 
 	static void error(const char*);
 	static bool checkCompatibleTypes(Value*, Value*);
 	static ConstantValue* constantFolding(char, Value*, Value*);
+
 
 	DISALLOW_COPY_AND_ASSIGN(Compiler);
 private:
@@ -70,7 +86,7 @@ private:
 	/* Module list */
 	ModuleList m_modules;
 	/* Global function table */
-	FunctionTable m_functions;
+	static FunctionTable s_func_table;
 };
 
 } // clever

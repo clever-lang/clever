@@ -28,20 +28,28 @@
 #ifndef CLEVER_MODULE_H
 #define CLEVER_MODULE_H
 
+#include <vector>
 #include <string>
 #include <list>
+#include "values.h"
 
 namespace clever {
 
+class Value;
 class Module;
 class Function;
 
 typedef std::list<Function*> FunctionList;
 typedef std::list<Module*> ModuleList;
 
-#define CLEVER_FUNCTION_ARGS
+#define CLEVER_FUNCTION_ARGS const FunctionArgs& args
 #define CLEVER_FUNC_NAME(name) clv_##name
 #define CLEVER_FUNCTION(name) void CLEVER_FUNC_NAME(name)(CLEVER_FUNCTION_ARGS)
+
+/**
+ * Function arguments type
+ */
+typedef std::vector<Value*> FunctionArgs;
 
 /**
  * Module function prototype

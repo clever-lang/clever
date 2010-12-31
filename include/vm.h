@@ -111,6 +111,7 @@ public:
 	CLEVER_VM_HANDLER(break_handler);
 	CLEVER_VM_HANDLER(equal_handler);
 	CLEVER_VM_HANDLER(not_equal_handler);
+	CLEVER_VM_HANDLER(fcall_handler);
 
 	DISALLOW_COPY_AND_ASSIGN(VM);
 private:

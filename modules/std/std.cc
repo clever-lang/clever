@@ -34,9 +34,11 @@ namespace clever {
 Module* g_std_module = new StdModule;
 
 CLEVER_FUNCTION(print) {
+	std::cout << args.at(0)->toString();
 }
 
 CLEVER_FUNCTION(printf) {
+	printf(args.at(0)->toString().c_str(), args.at(1)->toString().c_str());
 }
 
 /*

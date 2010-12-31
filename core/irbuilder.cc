@@ -26,6 +26,7 @@
  */
 
 #include "irbuilder.h"
+#include "compiler.h"
 
 namespace clever {
 
@@ -342,6 +343,25 @@ Opcode* IRBuilder::breakExpression() {
 	m_brks.top().push(opcode);
 
 	return opcode;
+}
+
+/*
+ * Generates opcode for function call
+ */
+Opcode* IRBuilder::functionCall(ast::FunctionCall* expr) {
+	Value* name_expr = expr->get_value();
+	Value* args = expr->get_value_args();
+	const std::string* name = name_expr->getStringP();
+
+	if (!Compiler::functionExists(*name)) {
+		Compiler::error("Function does not exists!");
+	}
+
+	name_expr->addRef();
+	if (args) {
+		args->addRef();
+	}
+	return new Opcode(OP_FCALL, &VM::fcall_handler, name_expr, args);
 }
 
 
