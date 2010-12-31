@@ -63,7 +63,7 @@ void Driver::readFile(void) {
 	filep.open(m_file.c_str());
 
 	if (!filep) {
-		std::cout << "Couldn't open file " << m_file << std::endl;
+		std::cerr << "Couldn't open file " << m_file << std::endl;
 		exit(1);
 	}
 
@@ -136,9 +136,9 @@ void Driver::error(const clever::location& location, const std::string& message)
 	position last = location.end - 1;
 
 	if (m_input.size()) {
-		std::cout << message << " on line " << last.line << std::endl;
+		std::cerr << message << " on line " << last.line << std::endl;
 	} else {
-		std::cout << message << " in " << *last.filename << " on line " << last.line << std::endl;
+		std::cerr << message << " in " << *last.filename << " on line " << last.line << std::endl;
 	}
 	exit(1);
 }
@@ -147,7 +147,7 @@ void Driver::error(const clever::location& location, const std::string& message)
  * Prints an error message
  */
 void Driver::error(const std::string& message) const {
-	std::cout << message << std::endl;
+	std::cerr << message << std::endl;
 }
 
 } // clever

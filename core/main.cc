@@ -33,7 +33,7 @@
 
 #define MORE_ARG() \
 	if (!(++i < argc)) { \
-		std::cout << "Missing parameter for option " << argv[i-1] << std::endl; \
+		std::cerr << "Missing parameter for option " << argv[i-1] << std::endl; \
 		exit(1); \
 	}
 
@@ -99,7 +99,7 @@ int main(int argc, char *argv[]) {
 			}
 #endif
 		} else {
-			std::cout << "Unknown option '" << argv[i] << "'" << std::endl;
+			std::cerr << "Unknown option '" << argv[i] << "'" << std::endl;
 		}
 	}
 
