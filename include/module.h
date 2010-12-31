@@ -46,7 +46,7 @@ typedef std::list<Module*> ModuleList;
 /**
  * Module function prototype
  */
-typedef void (*module_function)();
+typedef void (*module_function)(CLEVER_FUNCTION_ARGS);
 
 /**
  * Function representation
