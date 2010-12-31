@@ -30,7 +30,7 @@ clever: $(OBJECTS)
 
 all: clever test
 
-$(BUILDDIR)driver.o: $(SRCDIR)driver.cc $(BUILDDIR)parser.o $(BUILDDIR)std.o
+$(BUILDDIR)driver.o: $(SRCDIR)driver.cc $(BUILDDIR)parser.o 
 	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)driver.o $(SRCDIR)driver.cc
 
 $(BUILDDIR)main.o: $(SRCDIR)main.cc
