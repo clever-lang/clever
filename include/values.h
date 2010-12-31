@@ -116,7 +116,6 @@ public:
 	}
 
 	virtual std::string toString(void) {
-
 		std::stringstream str;
 
 		switch (get_type()) {

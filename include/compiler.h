@@ -47,7 +47,7 @@ public:
 
 	~Compiler();
 
-	void Init(ast::TreeNode::nodeList&);
+	void Init(ast::TreeNode&);
 	void loadModules();
 	void dumpAST();
 	void buildIR();
@@ -80,7 +80,7 @@ public:
 	DISALLOW_COPY_AND_ASSIGN(Compiler);
 private:
 	/* AST nodes */
-	ast::TreeNode::nodeList m_ast;
+	ast::TreeNode m_ast;
 	/* IR Builder */
 	IRBuilder m_builder;
 	/* Module list */

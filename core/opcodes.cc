@@ -35,9 +35,9 @@ namespace clever {
  */
 void Opcode::dump() {
 	printf("%-15s | ", getOpName(m_op_type));
-	printf("%-15s | ", dumpOp("op1", m_op1));
-	printf("%-15s | ", dumpOp("op2", m_op2));
-	printf("%-15s\n", dumpOp("result", m_result));
+	printf("%-15s | ", dumpOp("op1", m_op1).c_str());
+	printf("%-15s | ", dumpOp("op2", m_op2).c_str());
+	printf("%-15s\n", dumpOp("result", m_result).c_str());
 }
 
 /*
@@ -76,11 +76,14 @@ const char* Opcode::getOpName(Opcodes op) {
 	}
 }
 
-const char* Opcode::dumpOp(const char* label, Value* op) {
+std::string Opcode::dumpOp(const char* label, Value* op) {
 	if (op) {
-		return std::string(std::string(label) + ": " + op->toString()).c_str();
+		std::stringstream str;
+
+		str << op->refCount();
+		return std::string(std::string(label) + ": " + op->toString() + " (ref:" + str.str() + ")");
 	} else {
-		return std::string(std::string(label) + ": UNUSED").c_str();
+		return std::string(std::string(label) + ": UNUSED");
 	}
 }
 

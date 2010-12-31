@@ -34,11 +34,14 @@
 
 namespace clever { namespace ast {
 
-TreeNode::~TreeNode(void) {
+/*
+ * Clear the AST nodes
+ */
+void TreeNode::clear(void) {
 	TreeNode::nodeList::iterator it = nodes.begin();
 
 	/* Remove the AST nodes */
-	while (it < nodes.end()) {
+	while (it != nodes.end()) {
 		(*it)->delRef();
 		++it;
 	}

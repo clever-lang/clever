@@ -101,8 +101,9 @@ public:
 	typedef std::vector<Expression*> nodeList;
 
 	TreeNode() { }
-	~TreeNode();
+	~TreeNode() { }
 
+	void clear();
 	inline void add(Expression* node) {
 		node->addRef();
 		nodes.push_back(node);

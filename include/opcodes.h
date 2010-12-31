@@ -109,7 +109,7 @@ public:
 	/* Debug */
 	void dump();
 	const char* getOpName(Opcodes);
-	const char* dumpOp(const char*, Value*);
+	std::string dumpOp(const char*, Value*);
 private:
 	VM::opcode_handler m_handler;
 	Opcodes m_op_type;

@@ -38,7 +38,7 @@ FunctionTable Compiler::s_func_table;
 /*
  * Initializes the compiler data
  */
-void Compiler::Init(ast::TreeNode::nodeList& nodes) {
+void Compiler::Init(ast::TreeNode& nodes) {
 	m_ast = nodes;
 
 	/* Standard module */
@@ -89,11 +89,12 @@ Compiler::~Compiler() {
  * Collects all opcode
  */
 void Compiler::buildIR() {
-	ast::TreeNode::nodeList::const_iterator it = m_ast.begin();
+	ast::TreeNode::nodeList& ast_nodes = m_ast.getNodeList();
+	ast::TreeNode::nodeList::const_iterator it = ast_nodes.begin();
 
 	m_builder.init();
 
-	while (it < m_ast.end()) {
+	while (it != ast_nodes.end()) {
 		Opcode* opcode = (*it)->codeGen(m_builder);
 
 		if (opcode) {
@@ -104,13 +105,14 @@ void Compiler::buildIR() {
 	}
 
 	m_builder.shutdown();
+	m_ast.clear();
 }
 
 /*
  * Displays an error message
  */
 void Compiler::error(const char* message) {
-	std::cout << "Compile error: " << message << std::endl;
+	std::cerr << "Compile error: " << message << std::endl;
 	exit(1);
 }
 
@@ -196,10 +198,11 @@ ConstantValue* Compiler::constantFolding(char op, Value* lhs, Value* rhs) {
  */
 void Compiler::dumpAST(void) {
 	int level = 0;
-	ast::TreeNode::nodeList::iterator it = m_ast.begin();
+	ast::TreeNode::nodeList ast_nodes = m_ast.getNodeList();
+	ast::TreeNode::nodeList::iterator it = ast_nodes.begin();
 	std::string prefix("");
 
-	while (it < m_ast.end()) {
+	while (it != ast_nodes.end()) {
 		if (!(*it)->debug().compare("{")) {
 			prefix = std::string(level, ' ');
 			++level;
@@ -209,7 +212,6 @@ void Compiler::dumpAST(void) {
 		}
 
 		std::cout << prefix << "(" << (*it)->refCount() << ") " << (*it)->debug() << std::endl;
-
 		++it;
 	}
 }
