@@ -36,7 +36,6 @@ namespace clever {
  * Opcodes
  */
 enum Opcodes {
-	OP_ECHO,
 	OP_PLUS,
 	OP_DIV,
 	OP_MULT,

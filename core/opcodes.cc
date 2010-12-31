@@ -47,7 +47,6 @@ const char* Opcode::getOpName(Opcodes op) {
 #define CASE(x) case x: return #x
 
 	switch (op) {
-		CASE(OP_ECHO);
 		CASE(OP_PLUS);
 		CASE(OP_DIV);
 		CASE(OP_MULT);

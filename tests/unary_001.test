@@ -3,11 +3,10 @@ Testing unary operation
 Int i = 2;
 Int j = -2;
 
-echo 1 + -i;
-echo -i + -i;
-echo -i - -i;
-echo +j;
-
+println(1 + -i);
+println(-i + -i);
+println(-i - -i);
+println(+j);
 ==RESULT==
 -1
 -4

@@ -87,7 +87,6 @@ public:
 	}
 
 	/* Opcode handlers */
-	CLEVER_VM_HANDLER(echo_handler);
 	CLEVER_VM_HANDLER(plus_handler);
 	CLEVER_VM_HANDLER(div_handler);
 	CLEVER_VM_HANDLER(mult_handler);

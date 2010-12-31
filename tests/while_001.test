@@ -1,6 +1,10 @@
 Testing while loop
 ==CODE==
-Int i = 5; echo "start"; while (--i) { echo i; } echo "done";
+Int i = 5;
+
+println("start");
+while (--i) { println(i); }
+println("done");
 ==RESULT==
 start
 4

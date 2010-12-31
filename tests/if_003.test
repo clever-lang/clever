@@ -3,33 +3,33 @@ Testing nested if-elseif-else
 Int i = 10;
 
 if (0) {
-	echo 12;
+	println(12);
 }
-echo "ok!";
+println("ok!");
 
 if (0) {
 	if (1) {
 		if (1 > 0) {
-			echo "ok!";
+			println("ok!");
 		} else {
-			echo "fail 1!";
+			println("fail 1!");
 		}
 	} else if (1) {
-		echo "fail 2!";
+		println("fail 2!");
 	} else {
-		echo "fail 3!";
+		println("fail 3!");
 	}
 } else if (2 < 2) {
-	echo "fail 4!";
+	println("fail 4!");
 } else if (3 > 1) {
-	echo "ok!";
+	println("ok!");
 
 	if (4 > 5) {
 	} else {
 		if (0 > 1) {
 
 		} else if (4 > 0) {
-			echo "ok!";
+			println("ok!");
 		}
 	}
 }

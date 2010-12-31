@@ -4,15 +4,15 @@ if (1) {
 	Int i = 20;
 
 	if (0) {
-		echo 2;
+		println(2);
 	} else if (i) {
-		echo i+10;
+		println(i+10);
 
 		Int i = 40;
 	} else {
-		echo i - 1;
+		println(i - 1);
 	}
-	echo i;
+	println(i);
 }
 ==RESULT==
 30

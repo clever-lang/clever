@@ -151,13 +151,6 @@ Opcode* EndBlock::codeGen(IRBuilder& builder) {
 }
 
 /*
- * Command
- */
-Opcode* Command::codeGen(IRBuilder& builder) {
-	return builder.command(this);
-}
-
-/*
  * PreIncrement
  */
 Opcode* PreIncrement::codeGen(IRBuilder& builder) {

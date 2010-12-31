@@ -76,7 +76,6 @@ public:
 	/* Opcode generators */
 	Opcode* binaryExpression(ast::BinaryExpression*);
 	Opcode* variableDecl(ast::VariableDecl*);
-	Opcode* command(ast::Command*);
 	Opcode* preIncrement(ast::PreIncrement*);
 	Opcode* posIncrement(ast::PosIncrement*);
 	Opcode* preDecrement(ast::PreDecrement*);

@@ -140,16 +140,6 @@ Opcode* IRBuilder::endBlock() {
 }
 
 /*
- * Generates the command opcode
- */
-Opcode* IRBuilder::command(ast::Command* expr) {
-	Value* value = getValue(expr->get_expr());
-
-	value->addRef();
-	return new Opcode(OP_ECHO, &VM::echo_handler, value);
-}
-
-/*
  * Generates the pre increment opcode
  */
 Opcode* IRBuilder::preIncrement(ast::PreIncrement* expr) {

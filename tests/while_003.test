@@ -4,9 +4,9 @@ Int i = 10;
 
 while (--i) {
 	if (i > 6) {
-		echo i;
+		println(i);
 	}
-	echo '-';
+	println('-');
 }
 ==RESULT==
 9

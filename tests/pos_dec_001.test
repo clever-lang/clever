@@ -1,13 +1,13 @@
 Pos decrement operation
 ==CODE==
 Int i = 10;
-echo i-- + i--;
-echo i;
-echo i--;
+println(i-- + i--);
+println(i);
+println(i--);
 
 Int j = 20;
 
-echo j-- + i--;
+println(j-- + i--);
 ==RESULT==
 19
 8

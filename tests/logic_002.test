@@ -3,13 +3,13 @@ Testing equal and not equal operators
 Int i = 10;
 
 if (--i == 9) {
-	echo i;
+	println(i);
 }
 
 if (i != 9) {
-	echo 'fail!';
+	println('fail!');
 } else {
-	echo 'ok!';
+	println('ok!');
 }
 ==RESULT==
 9

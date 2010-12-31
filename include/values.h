@@ -32,6 +32,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <vector>
 #include "refcounted.h"
 #include "cstring.h"
 
@@ -41,6 +42,9 @@
 
 namespace clever {
 class Type;
+class Value;
+
+typedef std::vector<Value*> ValueVector;
 
 /**
  * Base class for value representation
@@ -48,13 +52,22 @@ class Type;
 class Value : public RefCounted {
 public:
 	enum { SET, UNSET, MODIFIED };
-	enum { NONE, INTEGER, DOUBLE, STRING, BOOLEAN, USER };
+	enum { NONE, INTEGER, DOUBLE, STRING, BOOLEAN, VECTOR, USER };
 	enum { UNKNOWN, NAMED, CONST, TEMP };
 
 	Value() : RefCounted(1), m_status(UNSET), m_type(UNKNOWN), m_kind(UNKNOWN) {}
 	explicit Value(int kind) : RefCounted(1), m_status(UNSET), m_type(UNKNOWN), m_kind(kind) {}
 
 	virtual ~Value() {
+		if (isVector()) {
+			ValueVector::iterator it = m_data.v_value->begin();
+
+			while (it != m_data.v_value->end()) {
+				(*it)->delRef();
+				++it;
+			}
+			delete m_data.v_value;
+		}
 	}
 
 	inline void set_type(int type) { m_type = type; }
@@ -80,18 +93,21 @@ public:
 	inline bool isString(void) const { return m_type == STRING; }
 	inline bool isDouble(void) const { return m_type == DOUBLE; }
 	inline bool isBoolean(void) const { return m_type == BOOLEAN; }
+	inline bool isVector(void) const { return m_type == VECTOR; }
 	inline bool isUserValue(void) const { return m_type == USER; }
 
 	inline void setInteger(int64_t i) { m_data.l_value = i; }
 	inline void setString(CString* s) { m_data.s_value = s;	}
 	inline void setDouble(double d) { m_data.d_value = d; }
 	inline void setBoolean(bool b) { m_data.b_value = b; }
+	inline void setVector(ValueVector* v) { m_data.v_value = v; }
 
 	inline int64_t getInteger(void) const { return m_data.l_value; }
 	inline CString* getStringP(void) const { return m_data.s_value; }
 	inline CString getString(void) const { return *m_data.s_value; }
 	inline double getDouble(void) const { return m_data.d_value; }
 	inline bool getBoolean(void) const { return m_data.b_value; }
+	inline ValueVector* getVector(void) const { return m_data.v_value; }
 
 	virtual void set_value(Value* value) { }
 
@@ -134,6 +150,7 @@ private:
 		bool b_value;
 		CString* s_value;
 		void* u_value;
+		ValueVector* v_value;
 	} m_data;
 };
 

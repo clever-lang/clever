@@ -1,13 +1,13 @@
 Simple assignment
 ==CODE==
 Int i = 10;
-echo i;
+println(i);
 
 Int j = 20;
-echo j;
+println(j);
 
 Int h = 30;
-echo h;
+println(h);
 ==RESULT==
 10
 20

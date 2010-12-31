@@ -133,7 +133,6 @@ block_stmt:
 statements:
 		expr ';'
 	|	variable_declaration ';'
-	|	echo_stmt ';'
 	|	if_stmt
 	|	for_stmt
 	|	while_stmt
@@ -142,9 +141,10 @@ statements:
 ;
 
 arg_list:
-		arg_list ',' expr  { $$ = $3; }
-	|	expr               { $$ = $1; }
+		arg_list ',' expr  { clever::ast::ArgumentList* args = static_cast<clever::ast::ArgumentList*>($1); args->push($3); $$ = args; }
+	|	expr               { clever::ast::ArgumentList* args = new clever::ast::ArgumentList(); args->push($1); $$ = args;}
 ;
+
 func_call:
 		IDENT '(' ')'          { $$ = new clever::ast::FunctionCall($1); nodes.add($$); }
 	|	IDENT '(' arg_list ')' { $$ = new clever::ast::FunctionCall($1, $3); nodes.add($$); }
@@ -199,10 +199,6 @@ expr:
 	|	NUM_DOUBLE    { $$ = $1; }
 	|	IDENT         { $$ = $1; }
 	|	STR           { $$ = $1; }
-;
-
-echo_stmt:
-		ECHO expr { $$ = new clever::ast::Command($2); nodes.add($$); }
 ;
 
 for_stmt:

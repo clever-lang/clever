@@ -87,15 +87,6 @@ void VM::run(void) {
 }
 
 /*
- * echo statemenet
- */
-CLEVER_VM_HANDLER(VM::echo_handler) {
-	Value* op1 = getValue(opcode->get_op1());
-
-	std::cout << op1->toString() << std::endl;
-}
-
-/*
  * x + y
  */
 CLEVER_VM_HANDLER(VM::plus_handler) {
@@ -564,7 +555,13 @@ CLEVER_VM_HANDLER(VM::fcall_handler) {
 	FunctionArgs func_args;
 
 	if (args) {
-		func_args.push_back(args);
+		ValueVector* vec_args = args->getVector();
+		ValueVector::iterator it = vec_args->begin();
+
+		while (it != vec_args->end()) {
+			func_args.push_back(getValue(*it));
+			++it;
+		}
 	}
 
 	/* Call the function */

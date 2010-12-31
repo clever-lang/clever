@@ -62,6 +62,10 @@ enum {
 	NOT_EQUAL
 };
 
+class Expression;
+
+typedef std::vector<Expression*> Arguments;
+
 class Expression : public RefCounted {
 public:
 	Expression()
@@ -332,32 +336,6 @@ public:
 	}
 
 	DISALLOW_COPY_AND_ASSIGN(EndBlock);
-};
-
-class Command : public Expression {
-public:
-	Command(Expression* expr)
-		: m_expr(expr) {
-		m_expr->addRef();
-	}
-
-	~Command() {
-		m_expr->delRef();
-	}
-
-	Expression* get_expr() {
-		return m_expr;
-	}
-
-	Opcode* codeGen(IRBuilder&);
-
-	std::string debug() {
-		return "echo " + m_expr->debug();
-	}
-
-	DISALLOW_COPY_AND_ASSIGN(Command);
-private:
-	Expression* m_expr;
 };
 
 class PreIncrement : public Expression {
@@ -643,6 +621,33 @@ public:
 	~BreakExpression() { }
 
 	Opcode* codeGen(IRBuilder&);
+};
+
+class ArgumentList : public Expression {
+public:
+	ArgumentList() {
+		m_value = new Value;
+		m_value->set_type(clever::Value::VECTOR);
+		m_value->setVector(new ValueVector);
+	}
+
+	~ArgumentList() {
+		m_value->delRef();
+	}
+
+	inline void push(Expression* expr) {
+		Value* val = expr->get_value();
+		val->addRef();
+		expr->addRef();
+		m_value->getVector()->push_back(val);
+		expr->delRef();
+	}
+
+	inline Value* get_value() const {
+		return m_value;
+	}
+private:
+	Value* m_value;
 };
 
 class FunctionCall : public Expression {

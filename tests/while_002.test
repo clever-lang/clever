@@ -5,10 +5,10 @@ Int i = 2;
 while (--i) {
 	Int j = -2;
 
-	echo i;
+	println(i);
 
 	while (j++) {
-		echo j;
+		println(j);
 	}
 }
 ==RESULT==

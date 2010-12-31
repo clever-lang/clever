@@ -1,7 +1,7 @@
 Testing break statement
 ==CODE==
 while (1) {
-	echo 1;
+	println(1);
 
 	while (0) {
 		break;
@@ -13,11 +13,11 @@ while (1) {
 
 			while (i) {
 
-				echo i;
+				println(i);
 
 
 				if (--i <= 0) {
-					echo "break!";
+					println("break!");
 				}
 			}
 		}
