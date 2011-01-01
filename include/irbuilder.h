@@ -60,7 +60,7 @@ public:
 		opcode->set_op_num(getOpNum());
 	}
 
-	inline unsigned int getOpNum() {
+	inline unsigned int getOpNum() const {
 		return m_opcodes.size()-1;
 	}
 

@@ -40,7 +40,7 @@ public:
 
 	virtual ~RefCounted() { }
 
-	inline int refCount(void) {
+	inline int refCount(void) const {
 		return m_reference;
 	}
 

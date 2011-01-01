@@ -52,7 +52,7 @@ public:
 	void dumpAST();
 	void buildIR();
 
-	inline FunctionTable& get_functions() {
+	inline FunctionTable& get_functions() const {
 		return s_func_table;
 	}
 

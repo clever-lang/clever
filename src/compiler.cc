@@ -56,9 +56,9 @@ void Compiler::loadModules() {
 
 	while (it != m_modules.end()) {
 		FunctionList& functions = (*it)->get_functions();
-		FunctionList::iterator it2 = functions.begin();
+		FunctionList::const_iterator it2 = functions.begin(), end(functions.end());
 
-		while (it2 != functions.end()) {
+		while (it2 != end) {
 			/* Add the module functions to the global function table */
 			s_func_table.insert(std::pair<const std::string, Function*>((*it2)->get_name(), *it2));
 			++it2;
@@ -71,15 +71,15 @@ void Compiler::loadModules() {
  * Deallocs memory used by compiler data
  */
 Compiler::~Compiler() {
-	FunctionTable::iterator it = s_func_table.begin();
-	ModuleList::iterator it2 = m_modules.begin();
+	FunctionTable::iterator it = s_func_table.begin(), end_func(s_func_table.end());
+	ModuleList::iterator it2 = m_modules.begin(), end_module(m_modules.end());
 
-	while (it != s_func_table.end()) {
+	while (it != end_func) {
 		delete it->second;
 		++it;
 	}
 
-	while (it2 != m_modules.end()) {
+	while (it2 != end_module) {
 		delete *it2;
 		++it2;
 	}
@@ -90,11 +90,11 @@ Compiler::~Compiler() {
  */
 void Compiler::buildIR() {
 	ast::TreeNode::nodeList& ast_nodes = m_ast.getNodeList();
-	ast::TreeNode::nodeList::const_iterator it = ast_nodes.begin();
+	ast::TreeNode::nodeList::const_iterator it = ast_nodes.begin(), end(ast_nodes.end());
 
 	m_builder.init();
 
-	while (it != ast_nodes.end()) {
+	while (it != end) {
 		Opcode* opcode = (*it)->codeGen(m_builder);
 
 		if (opcode) {
@@ -199,10 +199,10 @@ ConstantValue* Compiler::constantFolding(char op, Value* lhs, Value* rhs) {
 void Compiler::dumpAST(void) {
 	int level = 0;
 	ast::TreeNode::nodeList ast_nodes = m_ast.getNodeList();
-	ast::TreeNode::nodeList::iterator it = ast_nodes.begin();
+	ast::TreeNode::nodeList::const_iterator it = ast_nodes.begin(), end(ast_nodes.end());
 	std::string prefix("");
 
-	while (it != ast_nodes.end()) {
+	while (it != end) {
 		if (!(*it)->debug().compare("{")) {
 			prefix = std::string(level, ' ');
 			++level;

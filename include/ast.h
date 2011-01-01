@@ -144,15 +144,15 @@ public:
 
 	bool hasValue() const { return true; }
 
-	inline Expression* get_lhs() {
+	inline Expression* get_lhs() const {
 		return m_lhs;
 	}
 
-	inline Expression* get_rhs() {
+	inline Expression* get_rhs() const {
 		return m_rhs;
 	}
 
-	inline char get_op() {
+	inline char get_op() const {
 		return m_op;
 	}
 
@@ -222,11 +222,11 @@ public:
 		}
 	}
 
-	Expression* get_variable() {
+	Expression* get_variable() const {
 		return m_variable;
 	}
 
-	Expression* get_initial_value() {
+	Expression* get_initial_value() const {
 		return m_initial_value;
 	}
 
@@ -257,7 +257,7 @@ public:
 
 	bool hasValue() const { return true; }
 	Value* get_value() const { return m_value; }
-	CString* get_name() { return m_name; }
+	CString* get_name() const { return m_name; }
 
 	std::string debug(void) {
 		return m_value->toString();
@@ -355,7 +355,7 @@ public:
 		return m_result;
 	}
 
-	inline Expression* get_expr() {
+	inline Expression* get_expr() const {
 		return m_expr;
 	}
 
@@ -381,7 +381,7 @@ public:
 		return m_result;
 	}
 
-	inline Expression* get_expr() {
+	inline Expression* get_expr() const {
 		return m_expr;
 	}
 
@@ -403,7 +403,7 @@ public:
 		m_expr->delRef();
 	}
 
-	inline Expression* get_expr() {
+	inline Expression* get_expr() const {
 		return m_expr;
 	}
 
@@ -433,7 +433,7 @@ public:
 		return m_result;
 	}
 
-	inline Expression* get_expr() {
+	inline Expression* get_expr() const {
 		return m_expr;
 	}
 
@@ -454,7 +454,7 @@ public:
 		m_expr->delRef();
 	}
 
-	inline Expression* get_expr() {
+	inline Expression* get_expr() const {
 		return m_expr;
 	}
 
@@ -477,11 +477,11 @@ public:
 		m_start_expr->delRef();
 	}
 
-	inline Expression* get_expr() {
+	inline Expression* get_expr() const {
 		return m_expr;
 	}
 
-	inline Expression* get_start_expr() {
+	inline Expression* get_start_expr() const {
 		return m_start_expr;
 	}
 
@@ -511,7 +511,7 @@ public:
 		m_expr->delRef();
 	}
 
-	inline Expression* get_expr() {
+	inline Expression* get_expr() const {
 		return m_expr;
 	}
 
@@ -541,7 +541,7 @@ public:
 		m_expr->delRef();
 	}
 
-	inline Expression* get_expr() {
+	inline Expression* get_expr() const {
 		return m_expr;
 	}
 
@@ -560,7 +560,7 @@ public:
 		m_op_num = op_num;
 	}
 
-	inline unsigned int get_op_num() {
+	inline unsigned int get_op_num() const {
 		return m_op_num;
 	}
 
@@ -586,15 +586,15 @@ public:
 		}
 	}
 
-	int get_op() {
+	int get_op() const {
 		return m_op;
 	}
 
-	Expression* get_lhs() {
+	Expression* get_lhs() const {
 		return m_lhs;
 	}
 
-	Expression* get_rhs() {
+	Expression* get_rhs() const {
 		return m_rhs;
 	}
 

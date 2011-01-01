@@ -592,11 +592,11 @@ CLEVER_VM_HANDLER(VM::fcall_handler) {
 
 	if (args) {
 		ValueVector* vec_args = args->getVector();
-		ValueVector::iterator it = vec_args->begin();
+		ValueVector::const_iterator it = vec_args->begin(), end(vec_args->end());
 
 		func_args.reserve(2);
 
-		while (it != vec_args->end()) {
+		while (it != end) {
 			func_args.push_back(getValue(*it));
 			++it;
 		}
