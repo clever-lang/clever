@@ -15,7 +15,7 @@ RE2C=re2c
 # Build dir
 BUILDDIR=build/
 # Core source dir
-SRCDIR=core/
+SRCDIR=src/
 # Module dir
 MODDIR=modules/
 # Win32 port dir
