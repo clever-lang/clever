@@ -30,12 +30,13 @@
 
 #include <vector>
 #include "symboltable.h"
+#include "global.h"
 
 /**
  * Opcode handler arguments
  */
 #define CLEVER_VM_HANDLER_ARGS unsigned int* next_op, Opcode* opcode
-#define CLEVER_VM_HANDLER(name) void name(CLEVER_VM_HANDLER_ARGS)
+#define CLEVER_VM_HANDLER(name) void name(CLEVER_VM_HANDLER_ARGS) CLEVER_NOTHROW
 
 /**
  * Change the executor flow to run another opcode

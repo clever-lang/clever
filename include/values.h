@@ -35,6 +35,7 @@
 #include <vector>
 #include "refcounted.h"
 #include "cstring.h"
+#include "global.h"
 
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
 	TypeName(const TypeName&);             \
@@ -49,7 +50,7 @@ typedef std::vector<Value*> ValueVector;
 /**
  * Base class for value representation
  */
-class Value : public RefCounted {
+class NO_INIT_VTABLE Value : public RefCounted {
 public:
 	enum { SET, UNSET, MODIFIED };
 	enum { NONE, INTEGER, DOUBLE, STRING, BOOLEAN, VECTOR, USER };

@@ -66,7 +66,7 @@ class Expression;
 
 typedef std::vector<Expression*> Arguments;
 
-class Expression : public RefCounted {
+class NO_INIT_VTABLE Expression : public RefCounted {
 public:
 	Expression()
 		: RefCounted(0), m_optimized(false) { }

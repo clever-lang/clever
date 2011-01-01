@@ -35,13 +35,13 @@ Module* g_std_module = new StdModule;
 
 CLEVER_FUNCTION(print) {
 	for (int i = 0; i < args.size(); ++i) {
-		std::cout << args.at(i)->toString();
+		printf("%s", args.at(i)->toString().c_str());
 	}
 }
 
 CLEVER_FUNCTION(println) {
 	for (int i = 0; i < args.size(); ++i) {
-		std::cout << args.at(i)->toString() << std::endl;
+		printf("%s\n", args.at(i)->toString().c_str());
 	}
 }
 

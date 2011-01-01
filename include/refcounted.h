@@ -28,9 +28,11 @@
 #ifndef CLEVER_REFCOUNTED_H
 #define CLEVER_REFCOUNTED_H
 
+#include "global.h"
+
 namespace clever {
 
-class RefCounted {
+class NO_INIT_VTABLE RefCounted {
 public:
 	RefCounted()
 		: m_reference(1) {	}

@@ -34,12 +34,29 @@
 # define CLEVER_GCC_VERSION 0
 #endif
 
+/**
+ * Try to use register to pass parameters
+ */
 #if defined(__GNUC__) && CLEVER_GCC_VERSION >= 3004 && defined(__i386__)
 # define CLEVER_FASTCALL __attribute__((fastcall))
 #elif defined(_MSC_VER) && defined(_M_IX86)
 # define CLEVER_FASTCALL __fastcall
 #else
 # define CLEVER_FASTCALL
+#endif
+
+/**
+ * Indicates that don't throw exceptions
+ */
+#define CLEVER_NOTHROW throw()
+
+/**
+ * Disable VTable initialization (Microsoft-specific)
+ */
+#if defined(_MSC_VER)
+# define NO_INIT_VTABLE __declspec(novtable)
+#else
+# define NO_INIT_VTABLE
 #endif
 
 #endif // CLEVER_GLOBAL_H
