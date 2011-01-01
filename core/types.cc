@@ -1,6 +1,6 @@
 /*
  * Clever language 
- * Copyright (c) 2010 Clever Team
+ * Copyright (c) 2011 Clever Team
  * 
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
