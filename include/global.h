@@ -28,6 +28,10 @@
 #ifndef CLEVER_GLOBAL_H
 #define CLEVER_GLOBAL_H
 
+#define DISALLOW_COPY_AND_ASSIGN(TypeName) \
+	TypeName(const TypeName&);             \
+	void operator=(const TypeName&)
+
 #ifdef __GNUC__
 # define CLEVER_GCC_VERSION (__GNUC__ * 1000 + __GNUC_MINOR__)
 #else

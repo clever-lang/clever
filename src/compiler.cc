@@ -52,13 +52,13 @@ void Compiler::Init(ast::TreeNode& nodes) throw() {
  * Load the modules
  */
 void Compiler::loadModules() throw() {
-	ModuleList::iterator it = m_modules.begin();
+	ModuleList::const_iterator it = m_modules.begin(), end_module(m_modules.end());
 
-	while (it != m_modules.end()) {
+	while (it != end_module) {
 		FunctionList& functions = (*it)->get_functions();
-		FunctionList::const_iterator it2 = functions.begin(), end(functions.end());
+		FunctionList::const_iterator it2 = functions.begin(), end_func(functions.end());
 
-		while (it2 != end) {
+		while (it2 != end_func) {
 			/* Add the module functions to the global function table */
 			s_func_table.insert(std::pair<const std::string, Function*>((*it2)->get_name(), *it2));
 			++it2;
@@ -71,8 +71,8 @@ void Compiler::loadModules() throw() {
  * Deallocs memory used by compiler data
  */
 Compiler::~Compiler() {
-	FunctionTable::iterator it = s_func_table.begin(), end_func(s_func_table.end());
-	ModuleList::iterator it2 = m_modules.begin(), end_module(m_modules.end());
+	FunctionTable::const_iterator it = s_func_table.begin(), end_func(s_func_table.end());
+	ModuleList::const_iterator it2 = m_modules.begin(), end_module(m_modules.end());
 
 	while (it != end_func) {
 		delete it->second;
@@ -89,7 +89,7 @@ Compiler::~Compiler() {
  * Collects all opcode
  */
 void Compiler::buildIR() throw() {
-	ast::TreeNode::nodeList& ast_nodes = m_ast.getNodeList();
+	const ast::TreeNode::nodeList& ast_nodes = m_ast.getNodeList();
 	ast::TreeNode::nodeList::const_iterator it = ast_nodes.begin(), end(ast_nodes.end());
 
 	m_builder.init();

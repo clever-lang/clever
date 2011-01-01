@@ -34,11 +34,11 @@
 #include "values.h"
 #include "cstring.h"
 #include "refcounted.h"
+#include "irbuilder.h"
 
 namespace clever {
-class IRBuilder;
 class Opcode;
-}
+} // clever
 
 namespace clever { namespace ast {
 
@@ -79,7 +79,7 @@ public:
 
 	inline bool isOptimized() const { return m_optimized; }
 
-	inline bool isOptimized(bool value) { m_optimized = value; }
+	inline bool set_optimized(bool value) { m_optimized = value; }
 	/*
 	 * Method for getting the value representation
 	 */
@@ -87,7 +87,7 @@ public:
 	/*
 	 * Method for generating the expression IR
 	 */
-	virtual Opcode* codeGen(IRBuilder&) throw() { return NULL; };
+	virtual Opcode* codeGen(IRBuilder& builder) throw() { return NULL; };
 private:
 	bool m_optimized;
 };
@@ -160,7 +160,9 @@ public:
 		}
 	}
 
-	Opcode* codeGen(IRBuilder&) throw();
+	inline Opcode* codeGen(IRBuilder& builder) throw() {
+		return builder.binaryExpression(this);
+	}
 
 	DISALLOW_COPY_AND_ASSIGN(BinaryExpression);
 private:
@@ -222,7 +224,9 @@ public:
 		return m_initial_value;
 	}
 
-	Opcode* codeGen(IRBuilder&) throw();
+	inline Opcode* codeGen(IRBuilder& builder) throw() {
+		return builder.variableDecl(this);
+	}
 
 	DISALLOW_COPY_AND_ASSIGN(VariableDecl);
 
@@ -293,7 +297,9 @@ class NewBlock : public Expression {
 public:
 	NewBlock() { }
 
-	Opcode* codeGen(IRBuilder&) throw();
+	inline Opcode* codeGen(IRBuilder& builder) throw() {
+		return builder.newBlock();
+	}
 
 	DISALLOW_COPY_AND_ASSIGN(NewBlock);
 };
@@ -302,7 +308,9 @@ class EndBlock : public Expression {
 public:
 	EndBlock() { }
 
-	Opcode* codeGen(IRBuilder&) throw();
+	inline Opcode* codeGen(IRBuilder& builder) throw() {
+		return builder.endBlock();
+	}
 
 	DISALLOW_COPY_AND_ASSIGN(EndBlock);
 };
@@ -327,7 +335,9 @@ public:
 		return m_expr;
 	}
 
-	Opcode* codeGen(IRBuilder&) throw();
+	inline Opcode* codeGen(IRBuilder& builder) throw() {
+		return builder.preIncrement(this);
+	}
 private:
 	Expression* m_expr;
 	TempValue* m_result;
@@ -353,7 +363,9 @@ public:
 		return m_expr;
 	}
 
-	Opcode* codeGen(IRBuilder&) throw();
+	inline Opcode* codeGen(IRBuilder& builder) throw() {
+		return builder.posIncrement(this);
+	}
 private:
 	Expression* m_expr;
 	TempValue* m_result;
@@ -379,7 +391,9 @@ public:
 		return m_result;
 	}
 
-	Opcode* codeGen(IRBuilder&) throw();
+	inline Opcode* codeGen(IRBuilder& builder) throw() {
+		return builder.preDecrement(this);
+	}
 private:
 	Expression* m_expr;
 	TempValue* m_result;
@@ -405,7 +419,9 @@ public:
 		return m_expr;
 	}
 
-	Opcode* codeGen(IRBuilder&) throw();
+	inline Opcode* codeGen(IRBuilder& builder) throw() {
+		return builder.posDecrement(this);
+	}
 private:
 	Expression* m_expr;
 	TempValue* m_result;
@@ -426,8 +442,9 @@ public:
 		return m_expr;
 	}
 
-	Opcode* codeGen(IRBuilder&) throw();
-
+	inline Opcode* codeGen(IRBuilder& builder) throw() {
+		return builder.ifExpression(this);
+	}
 private:
 	Expression* m_expr;
 };
@@ -453,7 +470,9 @@ public:
 		return m_start_expr;
 	}
 
-	Opcode* codeGen(IRBuilder&) throw();
+	inline Opcode* codeGen(IRBuilder& builder) throw() {
+		return builder.elseIfExpression(this);
+	}
 private:
 	Expression* m_expr;
 	Expression* m_start_expr;
@@ -465,7 +484,9 @@ public:
 
 	~ElseExpression() { }
 
-	Opcode* codeGen(IRBuilder&) throw();
+	inline Opcode* codeGen(IRBuilder& builder) throw() {
+		return builder.elseExpression(this);
+	}
 };
 
 class WhileExpression : public Expression {
@@ -483,7 +504,9 @@ public:
 		return m_expr;
 	}
 
-	Opcode* codeGen(IRBuilder&) throw();
+	inline Opcode* codeGen(IRBuilder& builder) throw() {
+		return builder.whileExpression(this);
+	}
 private:
 	Expression* m_expr;
 };
@@ -494,7 +517,9 @@ public:
 
 	~EndIfExpression() { }
 
-	Opcode* codeGen(IRBuilder&) throw();
+	inline Opcode* codeGen(IRBuilder& builder) throw() {
+		return builder.endIfExpression();
+	}
 };
 
 
@@ -513,7 +538,9 @@ public:
 		return m_expr;
 	}
 
-	Opcode* codeGen(IRBuilder&) throw();
+	inline Opcode* codeGen(IRBuilder& builder) throw() {
+		return builder.endWhileExpression(this);
+	}
 private:
 	Expression* m_expr;
 };
@@ -532,7 +559,9 @@ public:
 		return m_op_num;
 	}
 
-	Opcode* codeGen(IRBuilder&) throw();
+	inline Opcode* codeGen(IRBuilder& builder) throw() {
+		return builder.startExpr(this);
+	}
 private:
 	unsigned int m_op_num;
 };
@@ -574,7 +603,9 @@ public:
 		}
 	}
 
-	Opcode* codeGen(IRBuilder&) throw();
+	inline Opcode* codeGen(IRBuilder& builder) throw() {
+		return builder.logicExpression(this);
+	}
 private:
 	int m_op;
 	Expression* m_lhs;
@@ -589,7 +620,9 @@ public:
 
 	~BreakExpression() { }
 
-	Opcode* codeGen(IRBuilder&) throw();
+	inline Opcode* codeGen(IRBuilder& builder) throw() {
+		return builder.breakExpression();
+	}
 };
 
 class ArgumentList : public Expression {
@@ -649,7 +682,9 @@ public:
 		return NULL;
 	}
 
-	Opcode* codeGen(IRBuilder&) throw();
+	inline Opcode* codeGen(IRBuilder& builder) throw() {
+		return builder.functionCall(this);
+	}
 private:
 	Expression* m_name;
 	Expression* m_args;

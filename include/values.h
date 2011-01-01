@@ -37,10 +37,6 @@
 #include "cstring.h"
 #include "global.h"
 
-#define DISALLOW_COPY_AND_ASSIGN(TypeName) \
-	TypeName(const TypeName&);             \
-	void operator=(const TypeName&)
-
 namespace clever {
 class Type;
 class Value;

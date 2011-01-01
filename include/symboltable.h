@@ -30,10 +30,12 @@
 
 #include <deque>
 #include <boost/unordered_map.hpp>
+#include "global.h"
+#include "values.h"
 
 namespace clever {
 
-class Value;
+class CString;
 
 class SymbolTable {
 public:

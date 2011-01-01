@@ -38,10 +38,10 @@ namespace clever { namespace ast {
  * Clear the AST nodes
  */
 void TreeNode::clear(void) throw() {
-	TreeNode::nodeList::iterator it = nodes.begin();
+	TreeNode::nodeList::const_iterator it = nodes.begin(), end(nodes.end());
 
 	/* Remove the AST nodes */
-	while (it != nodes.end()) {
+	while (it != end) {
 		(*it)->delRef();
 		++it;
 	}
@@ -68,7 +68,7 @@ LogicExpression::LogicExpression(int op, Expression* lhs, Expression* rhs)
 	}
 	if (m_value) {
 		/* No opcode must be generated */
-		isOptimized(true);
+		set_optimized(true);
 
 		m_rhs->delRef();
 		m_lhs->delRef();
@@ -76,10 +76,6 @@ LogicExpression::LogicExpression(int op, Expression* lhs, Expression* rhs)
 	} else {
 		m_result = new TempValue();
 	}
-}
-
-Opcode* LogicExpression::codeGen(IRBuilder& builder) throw() {
-	return builder.logicExpression(this);
 }
 
 /*
@@ -110,7 +106,7 @@ BinaryExpression::BinaryExpression(char op_, Expression* lhs, Expression* rhs)
 	}
 	if (m_value) {
 		/* No opcode must be generated */
-		isOptimized(true);
+		set_optimized(true);
 
 		m_rhs->delRef();
 		m_lhs->delRef();
@@ -118,122 +114,6 @@ BinaryExpression::BinaryExpression(char op_, Expression* lhs, Expression* rhs)
 	} else {
 		m_result = new TempValue();
 	}
-}
-
-Opcode* BinaryExpression::codeGen(IRBuilder& builder) throw() {
-	return builder.binaryExpression(this);
-}
-
-/*
- * VariableDecl
- */
-Opcode* VariableDecl::codeGen(IRBuilder& builder) throw() {
-	return builder.variableDecl(this);
-}
-
-/*
- * NewBlock
- */
-Opcode* NewBlock::codeGen(IRBuilder& builder) throw() {
-	return builder.newBlock();
-}
-
-/*
- * EndBlock
- */
-Opcode* EndBlock::codeGen(IRBuilder& builder) throw() {
-	return builder.endBlock();
-}
-
-/*
- * PreIncrement
- */
-Opcode* PreIncrement::codeGen(IRBuilder& builder) throw() {
-	return builder.preIncrement(this);
-}
-
-/*
- * PosIncrement
- */
-Opcode* PosIncrement::codeGen(IRBuilder& builder) throw() {
-	return builder.posIncrement(this);
-}
-
-/*
- * PosDecrement
- */
-Opcode* PreDecrement::codeGen(IRBuilder& builder) throw() {
-	return builder.preDecrement(this);
-}
-
-/*
- * PosDecrement
- */
-Opcode* PosDecrement::codeGen(IRBuilder& builder) throw() {
-	return builder.posDecrement(this);
-}
-
-/*
- * IfExpression
- */
-Opcode* IfExpression::codeGen(IRBuilder& builder) throw() {
-	return builder.ifExpression(this);
-}
-
-/*
- * ElseIfExpression
- */
-Opcode* ElseIfExpression::codeGen(IRBuilder& builder) throw() {
-	return builder.elseIfExpression(this);
-}
-
-/*
- * ElseExpression
- */
-Opcode* ElseExpression::codeGen(IRBuilder& builder) throw() {
-	return builder.elseExpression(this);
-}
-
-/*
- * EndIfExpression
- */
-Opcode* EndIfExpression::codeGen(IRBuilder& builder) throw() {
-	return builder.endIfExpression();
-}
-
-/*
- * StartLoop
- */
-Opcode* StartExpr::codeGen(IRBuilder& builder) throw() {
-	return builder.startExpr(this);
-}
-
-/*
- * WhileExpression
- */
-Opcode* WhileExpression::codeGen(IRBuilder& builder) throw() {
-	return builder.whileExpression(this);
-}
-
-/*
- * EndWhileExpression
- */
-Opcode* EndWhileExpression::codeGen(IRBuilder& builder) throw() {
-	return builder.endWhileExpression(this);
-}
-
-/*
- * BreakExpression
- */
-Opcode* BreakExpression::codeGen(IRBuilder& builder) throw() {
-	return builder.breakExpression();
-}
-
-/*
- * FunctionCall
- */
-Opcode* FunctionCall::codeGen(IRBuilder& builder) throw() {
-	return builder.functionCall(this);
 }
 
 }} // clever::ast

@@ -28,7 +28,28 @@
 #ifndef CLEVER_IRBUILDER_H
 #define CLEVER_IRBUILDER_H
 #include <stack>
-#include "ast.h"
+#include "vm.h"
+#include "opcode.h"
+
+namespace clever { namespace ast {
+
+class Expression;
+class BinaryExpression;
+class VariableDecl;
+class PosIncrement;
+class PosDecrement;
+class PreIncrement;
+class PreDecrement;
+class IfExpression;
+class ElseIfExpression;
+class ElseExpression;
+class WhileExpression;
+class EndWhileExpression;
+class StartExpr;
+class LogicExpression;
+class FunctionCall;
+
+}} // clever::ast
 
 namespace clever {
 
@@ -64,14 +85,7 @@ public:
 		return m_opcodes.size()-1;
 	}
 
-	inline Value* getValue(ast::Expression* expr) throw() {
-		Value* value = expr->get_value();
-
-		if (value && value->isNamedValue()) {
-			return m_symbols.get_var(value);
-		}
-		return value;
-	}
+	Value* getValue(ast::Expression*) throw();
 
 	/* Opcode generators */
 	Opcode* binaryExpression(ast::BinaryExpression*) throw();
@@ -101,6 +115,7 @@ private:
 	SymbolTable m_symbols;
 	/* Stack used for control structures */
 	JmpStack m_jmps;
+	/* Stack used for break in loops */
 	JmpStack m_brks;
 };
 

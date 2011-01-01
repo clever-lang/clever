@@ -43,6 +43,16 @@ void IRBuilder::shutdown() throw() {
 	m_symbols.popVarMap();
 }
 
+
+Value* IRBuilder::getValue(ast::Expression* expr) throw() {
+	Value* value = expr->get_value();
+
+	if (value && value->isNamedValue()) {
+		return m_symbols.get_var(value);
+	}
+	return value;
+}
+
 /*
  * Generates the binary expression opcode
  */
