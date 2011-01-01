@@ -81,7 +81,7 @@ public:
 
 	~Opcode() { }
 
-	inline int get_op_type() { return m_op_type; }
+	inline int get_op_type() const { return m_op_type; }
 
 	inline VM::opcode_handler get_handler() const { return m_handler; }
 
@@ -107,9 +107,9 @@ public:
 	inline unsigned int get_flags() const { return m_extra.flags; }
 
 	/* Debug */
-	void dump();
-	const char* getOpName(Opcodes);
-	std::string dumpOp(const char*, Value*);
+	void dump() const throw();
+	const char* getOpName(Opcodes) const throw();
+	std::string dumpOp(const char*, Value*) const throw();
 private:
 	VM::opcode_handler m_handler;
 	Opcodes m_op_type;

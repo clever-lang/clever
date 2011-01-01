@@ -83,15 +83,11 @@ public:
 	/*
 	 * Method for getting the value representation
 	 */
-	virtual Value* get_value() const { return NULL; }
+	virtual Value* get_value() const throw() { return NULL; }
 	/*
 	 * Method for generating the expression IR
 	 */
-	virtual Opcode* codeGen(IRBuilder&) { return NULL; };
-	/*
-	 * Method for debug purpose
-	 */
-	virtual std::string debug() { return std::string(); }
+	virtual Opcode* codeGen(IRBuilder&) throw() { return NULL; };
 private:
 	bool m_optimized;
 };
@@ -103,12 +99,12 @@ public:
 	TreeNode() { }
 	~TreeNode() { }
 
-	void clear();
-	inline void add(Expression* node) {
+	void clear() throw();
+	inline void add(Expression* node) throw() {
 		node->addRef();
 		nodes.push_back(node);
 	}
-	inline nodeList& getNodeList() {
+	inline nodeList& getNodeList() throw() {
 		return nodes;
 	}
 private:
@@ -123,7 +119,7 @@ public:
 
 	bool isLiteral() const { return true; }
 	virtual bool hasValue() const { return true; }
-	virtual Value* get_value() const = 0;
+	virtual Value* get_value() const throw() = 0;
 };
 
 class BinaryExpression : public Expression {
@@ -156,7 +152,7 @@ public:
 		return m_op;
 	}
 
-	inline Value* get_value() const {
+	inline Value* get_value() const throw() {
 		if (isOptimized()) {
 			return m_value;
 		} else {
@@ -164,9 +160,7 @@ public:
 		}
 	}
 
-	std::string debug();
-
-	Opcode* codeGen(IRBuilder&);
+	Opcode* codeGen(IRBuilder&) throw();
 
 	DISALLOW_COPY_AND_ASSIGN(BinaryExpression);
 private:
@@ -191,9 +185,7 @@ public:
 		m_value->delRef();
 	}
 
-	inline Value* get_value() const { return m_value; };
-
-	std::string debug(void) { return m_value->toString(); }
+	inline Value* get_value() const throw() { return m_value; };
 
 	DISALLOW_COPY_AND_ASSIGN(NumberLiteral);
 
@@ -230,11 +222,7 @@ public:
 		return m_initial_value;
 	}
 
-	Opcode* codeGen(IRBuilder&);
-
-	std::string debug() {
-		return m_type->debug() + " " + m_variable->debug() + " = " + m_initial_value->debug();
-	}
+	Opcode* codeGen(IRBuilder&) throw();
 
 	DISALLOW_COPY_AND_ASSIGN(VariableDecl);
 
@@ -256,12 +244,8 @@ public:
 	}
 
 	bool hasValue() const { return true; }
-	Value* get_value() const { return m_value; }
+	Value* get_value() const throw() { return m_value; }
 	CString* get_name() const { return m_name; }
-
-	std::string debug(void) {
-		return m_value->toString();
-	}
 
 	DISALLOW_COPY_AND_ASSIGN(Identifier);
 private:
@@ -279,11 +263,7 @@ public:
 		m_value->delRef();
 	}
 
-	Value* get_value() const { return m_value; };
-
-	std::string debug(void) {
-		return m_value->toString();
-	}
+	Value* get_value() const throw() { return m_value; };
 
 	DISALLOW_COPY_AND_ASSIGN(StringLiteral);
 private:
@@ -303,10 +283,6 @@ public:
 		m_arguments->delRef();
 	}
 
-	std::string debug(void) {
-		return m_type->debug();
-	}
-
 	DISALLOW_COPY_AND_ASSIGN(TypeCreation);
 private:
 	Expression* m_type;
@@ -317,11 +293,7 @@ class NewBlock : public Expression {
 public:
 	NewBlock() { }
 
-	Opcode* codeGen(IRBuilder&);
-
-	std::string debug() {
-		return std::string("{");
-	}
+	Opcode* codeGen(IRBuilder&) throw();
 
 	DISALLOW_COPY_AND_ASSIGN(NewBlock);
 };
@@ -330,11 +302,7 @@ class EndBlock : public Expression {
 public:
 	EndBlock() { }
 
-	Opcode* codeGen(IRBuilder&);
-
-	std::string debug() {
-		return std::string("}");
-	}
+	Opcode* codeGen(IRBuilder&) throw();
 
 	DISALLOW_COPY_AND_ASSIGN(EndBlock);
 };
@@ -351,7 +319,7 @@ public:
 		m_expr->delRef();
 	}
 
-	inline Value* get_value() const {
+	inline Value* get_value() const throw() {
 		return m_result;
 	}
 
@@ -359,7 +327,7 @@ public:
 		return m_expr;
 	}
 
-	Opcode* codeGen(IRBuilder&);
+	Opcode* codeGen(IRBuilder&) throw();
 private:
 	Expression* m_expr;
 	TempValue* m_result;
@@ -377,7 +345,7 @@ public:
 		m_expr->delRef();
 	}
 
-	inline Value* get_value() const {
+	inline Value* get_value() const throw() {
 		return m_result;
 	}
 
@@ -385,7 +353,7 @@ public:
 		return m_expr;
 	}
 
-	Opcode* codeGen(IRBuilder&);
+	Opcode* codeGen(IRBuilder&) throw();
 private:
 	Expression* m_expr;
 	TempValue* m_result;
@@ -407,11 +375,11 @@ public:
 		return m_expr;
 	}
 
-	inline Value* get_value() const {
+	inline Value* get_value() const throw() {
 		return m_result;
 	}
 
-	Opcode* codeGen(IRBuilder&);
+	Opcode* codeGen(IRBuilder&) throw();
 private:
 	Expression* m_expr;
 	TempValue* m_result;
@@ -429,7 +397,7 @@ public:
 		m_expr->delRef();
 	}
 
-	inline Value* get_value() const {
+	inline Value* get_value() const throw() {
 		return m_result;
 	}
 
@@ -437,7 +405,7 @@ public:
 		return m_expr;
 	}
 
-	Opcode* codeGen(IRBuilder&);
+	Opcode* codeGen(IRBuilder&) throw();
 private:
 	Expression* m_expr;
 	TempValue* m_result;
@@ -458,7 +426,7 @@ public:
 		return m_expr;
 	}
 
-	Opcode* codeGen(IRBuilder&);
+	Opcode* codeGen(IRBuilder&) throw();
 
 private:
 	Expression* m_expr;
@@ -485,7 +453,7 @@ public:
 		return m_start_expr;
 	}
 
-	Opcode* codeGen(IRBuilder&);
+	Opcode* codeGen(IRBuilder&) throw();
 private:
 	Expression* m_expr;
 	Expression* m_start_expr;
@@ -497,7 +465,7 @@ public:
 
 	~ElseExpression() { }
 
-	Opcode* codeGen(IRBuilder&);
+	Opcode* codeGen(IRBuilder&) throw();
 };
 
 class WhileExpression : public Expression {
@@ -515,7 +483,7 @@ public:
 		return m_expr;
 	}
 
-	Opcode* codeGen(IRBuilder&);
+	Opcode* codeGen(IRBuilder&) throw();
 private:
 	Expression* m_expr;
 };
@@ -526,7 +494,7 @@ public:
 
 	~EndIfExpression() { }
 
-	Opcode* codeGen(IRBuilder&);
+	Opcode* codeGen(IRBuilder&) throw();
 };
 
 
@@ -545,7 +513,7 @@ public:
 		return m_expr;
 	}
 
-	Opcode* codeGen(IRBuilder&);
+	Opcode* codeGen(IRBuilder&) throw();
 private:
 	Expression* m_expr;
 };
@@ -564,7 +532,7 @@ public:
 		return m_op_num;
 	}
 
-	Opcode* codeGen(IRBuilder&);
+	Opcode* codeGen(IRBuilder&) throw();
 private:
 	unsigned int m_op_num;
 };
@@ -598,7 +566,7 @@ public:
 		return m_rhs;
 	}
 
-	inline Value* get_value() const {
+	inline Value* get_value() const throw() {
 		if (isOptimized()) {
 			return m_value;
 		} else {
@@ -606,7 +574,7 @@ public:
 		}
 	}
 
-	Opcode* codeGen(IRBuilder&);
+	Opcode* codeGen(IRBuilder&) throw();
 private:
 	int m_op;
 	Expression* m_lhs;
@@ -621,7 +589,7 @@ public:
 
 	~BreakExpression() { }
 
-	Opcode* codeGen(IRBuilder&);
+	Opcode* codeGen(IRBuilder&) throw();
 };
 
 class ArgumentList : public Expression {
@@ -644,7 +612,7 @@ public:
 		expr->delRef();
 	}
 
-	inline Value* get_value() const {
+	inline Value* get_value() const throw() {
 		return m_value;
 	}
 private:
@@ -670,18 +638,18 @@ public:
 		}
 	}
 
-	inline Value* get_value() const {
+	inline Value* get_value() const throw() {
 		return m_name->get_value();
 	}
 
-	inline Value* get_value_args() {
+	inline Value* get_value_args() throw() {
 		if (m_args) {
 			return m_args->get_value();
 		}
 		return NULL;
 	}
 
-	Opcode* codeGen(IRBuilder&);
+	Opcode* codeGen(IRBuilder&) throw();
 private:
 	Expression* m_name;
 	Expression* m_args;

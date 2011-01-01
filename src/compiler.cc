@@ -38,7 +38,7 @@ FunctionTable Compiler::s_func_table;
 /*
  * Initializes the compiler data
  */
-void Compiler::Init(ast::TreeNode& nodes) {
+void Compiler::Init(ast::TreeNode& nodes) throw() {
 	m_ast = nodes;
 
 	/* Standard module */
@@ -51,7 +51,7 @@ void Compiler::Init(ast::TreeNode& nodes) {
 /*
  * Load the modules
  */
-void Compiler::loadModules() {
+void Compiler::loadModules() throw() {
 	ModuleList::iterator it = m_modules.begin();
 
 	while (it != m_modules.end()) {
@@ -88,7 +88,7 @@ Compiler::~Compiler() {
 /*
  * Collects all opcode
  */
-void Compiler::buildIR() {
+void Compiler::buildIR() throw() {
 	ast::TreeNode::nodeList& ast_nodes = m_ast.getNodeList();
 	ast::TreeNode::nodeList::const_iterator it = ast_nodes.begin(), end(ast_nodes.end());
 
@@ -111,7 +111,7 @@ void Compiler::buildIR() {
 /*
  * Displays an error message
  */
-void Compiler::error(const char* message) {
+void Compiler::error(const char* message) throw() {
 	std::cerr << "Compile error: " << message << std::endl;
 	exit(1);
 }
@@ -119,7 +119,7 @@ void Compiler::error(const char* message) {
 /*
  * Performs a type compatible checking
  */
-bool Compiler::checkCompatibleTypes(Value* lhs, Value* rhs) {
+bool Compiler::checkCompatibleTypes(Value* lhs, Value* rhs) throw() {
 	/* Constants with different type cannot performs operation */
 	if (lhs->isConst() && lhs->hasSameKind(rhs) && !lhs->hasSameType(rhs)) {
 		return false;
@@ -130,7 +130,7 @@ bool Compiler::checkCompatibleTypes(Value* lhs, Value* rhs) {
 /*
  * Performs a constant folding optimization
  */
-ConstantValue* Compiler::constantFolding(char op, Value* lhs, Value* rhs) {
+ConstantValue* Compiler::constantFolding(char op, Value* lhs, Value* rhs) throw() {
 
 #define DO_NUM_OPERATION(_op, type, x, y) \
 	if (x->is##type()) return new ConstantValue(x->get##type() _op y->get##type());
@@ -191,29 +191,6 @@ ConstantValue* Compiler::constantFolding(char op, Value* lhs, Value* rhs) {
 			break;
 	}
 	return NULL;
-}
-
-/*
- * Dumps the AST
- */
-void Compiler::dumpAST(void) {
-	int level = 0;
-	ast::TreeNode::nodeList ast_nodes = m_ast.getNodeList();
-	ast::TreeNode::nodeList::const_iterator it = ast_nodes.begin(), end(ast_nodes.end());
-	std::string prefix("");
-
-	while (it != end) {
-		if (!(*it)->debug().compare("{")) {
-			prefix = std::string(level, ' ');
-			++level;
-		} else if (!(*it)->debug().compare("}")) {
-			--level;
-			prefix = std::string(level, ' ');
-		}
-
-		std::cout << prefix << "(" << (*it)->refCount() << ") " << (*it)->debug() << std::endl;
-		++it;
-	}
 }
 
 } // clever

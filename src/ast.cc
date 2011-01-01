@@ -37,7 +37,7 @@ namespace clever { namespace ast {
 /*
  * Clear the AST nodes
  */
-void TreeNode::clear(void) {
+void TreeNode::clear(void) throw() {
 	TreeNode::nodeList::iterator it = nodes.begin();
 
 	/* Remove the AST nodes */
@@ -78,7 +78,7 @@ LogicExpression::LogicExpression(int op, Expression* lhs, Expression* rhs)
 	}
 }
 
-Opcode* LogicExpression::codeGen(IRBuilder& builder) {
+Opcode* LogicExpression::codeGen(IRBuilder& builder) throw() {
 	return builder.logicExpression(this);
 }
 
@@ -120,127 +120,119 @@ BinaryExpression::BinaryExpression(char op_, Expression* lhs, Expression* rhs)
 	}
 }
 
-Opcode* BinaryExpression::codeGen(IRBuilder& builder) {
+Opcode* BinaryExpression::codeGen(IRBuilder& builder) throw() {
 	return builder.binaryExpression(this);
-}
-
-std::string BinaryExpression::debug(void) {
-	if (isOptimized()) {
-		return m_value->toString();
-	} else {
-		return std::string(m_lhs->debug() + " " + m_op + " " + m_rhs->debug());
-	}
 }
 
 /*
  * VariableDecl
  */
-Opcode* VariableDecl::codeGen(IRBuilder& builder) {
+Opcode* VariableDecl::codeGen(IRBuilder& builder) throw() {
 	return builder.variableDecl(this);
 }
 
 /*
  * NewBlock
  */
-Opcode* NewBlock::codeGen(IRBuilder& builder) {
+Opcode* NewBlock::codeGen(IRBuilder& builder) throw() {
 	return builder.newBlock();
 }
 
 /*
  * EndBlock
  */
-Opcode* EndBlock::codeGen(IRBuilder& builder) {
+Opcode* EndBlock::codeGen(IRBuilder& builder) throw() {
 	return builder.endBlock();
 }
 
 /*
  * PreIncrement
  */
-Opcode* PreIncrement::codeGen(IRBuilder& builder) {
+Opcode* PreIncrement::codeGen(IRBuilder& builder) throw() {
 	return builder.preIncrement(this);
 }
 
 /*
  * PosIncrement
  */
-Opcode* PosIncrement::codeGen(IRBuilder& builder) {
+Opcode* PosIncrement::codeGen(IRBuilder& builder) throw() {
 	return builder.posIncrement(this);
 }
 
 /*
  * PosDecrement
  */
-Opcode* PreDecrement::codeGen(IRBuilder& builder) {
+Opcode* PreDecrement::codeGen(IRBuilder& builder) throw() {
 	return builder.preDecrement(this);
 }
 
 /*
  * PosDecrement
  */
-Opcode* PosDecrement::codeGen(IRBuilder& builder) {
+Opcode* PosDecrement::codeGen(IRBuilder& builder) throw() {
 	return builder.posDecrement(this);
 }
 
 /*
  * IfExpression
  */
-Opcode* IfExpression::codeGen(IRBuilder& builder) {
+Opcode* IfExpression::codeGen(IRBuilder& builder) throw() {
 	return builder.ifExpression(this);
 }
 
 /*
  * ElseIfExpression
  */
-Opcode* ElseIfExpression::codeGen(IRBuilder& builder) {
+Opcode* ElseIfExpression::codeGen(IRBuilder& builder) throw() {
 	return builder.elseIfExpression(this);
 }
 
 /*
  * ElseExpression
  */
-Opcode* ElseExpression::codeGen(IRBuilder& builder) {
+Opcode* ElseExpression::codeGen(IRBuilder& builder) throw() {
 	return builder.elseExpression(this);
 }
 
 /*
  * EndIfExpression
  */
-Opcode* EndIfExpression::codeGen(IRBuilder& builder) {
+Opcode* EndIfExpression::codeGen(IRBuilder& builder) throw() {
 	return builder.endIfExpression();
 }
 
 /*
  * StartLoop
  */
-Opcode* StartExpr::codeGen(IRBuilder& builder) {
+Opcode* StartExpr::codeGen(IRBuilder& builder) throw() {
 	return builder.startExpr(this);
 }
 
 /*
  * WhileExpression
  */
-Opcode* WhileExpression::codeGen(IRBuilder& builder) {
+Opcode* WhileExpression::codeGen(IRBuilder& builder) throw() {
 	return builder.whileExpression(this);
 }
 
 /*
  * EndWhileExpression
  */
-Opcode* EndWhileExpression::codeGen(IRBuilder& builder) {
+Opcode* EndWhileExpression::codeGen(IRBuilder& builder) throw() {
 	return builder.endWhileExpression(this);
 }
 
 /*
  * BreakExpression
  */
-Opcode* BreakExpression::codeGen(IRBuilder& builder) {
+Opcode* BreakExpression::codeGen(IRBuilder& builder) throw() {
 	return builder.breakExpression();
 }
 
 /*
  * FunctionCall
  */
-Opcode* FunctionCall::codeGen(IRBuilder& builder) {
+Opcode* FunctionCall::codeGen(IRBuilder& builder) throw() {
 	return builder.functionCall(this);
 }
 

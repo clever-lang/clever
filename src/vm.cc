@@ -59,7 +59,7 @@ VM::~VM(void) {
 /*
  * Displays an error message
  */
-void VM::error(const char* message) const {
+void VM::error(const char* message) const throw() {
 	std::cout << "Runtime error: " << message << std::endl;
 	exit(1);
 }
@@ -67,7 +67,7 @@ void VM::error(const char* message) const {
 /*
  * Execute the collected opcodes
  */
-void VM::run(void) {
+void VM::run(void) throw() {
 	unsigned int next_op, last_op = m_opcodes->size();
 
 	/* Initializes global scope */
@@ -594,7 +594,7 @@ CLEVER_VM_HANDLER(VM::fcall_handler) {
 		ValueVector* vec_args = args->getVector();
 		ValueVector::const_iterator it = vec_args->begin(), end(vec_args->end());
 
-		func_args.reserve(2);
+		func_args.reserve(vec_args->size());
 
 		while (it != end) {
 			func_args.push_back(getValue(*it));

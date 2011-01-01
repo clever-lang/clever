@@ -47,12 +47,11 @@ public:
 
 	~Compiler();
 
-	void Init(ast::TreeNode&);
-	void loadModules();
-	void dumpAST();
-	void buildIR();
+	void Init(ast::TreeNode&) throw();
+	void loadModules() throw();
+	void buildIR() throw();
 
-	inline FunctionTable& get_functions() const {
+	inline FunctionTable& get_functions() const throw() {
 		return s_func_table;
 	}
 
@@ -62,19 +61,19 @@ public:
 	/*
 	 * Checks if a function exists
 	 */
-	static inline bool functionExists(const std::string& name) {
+	static inline bool functionExists(const std::string& name) throw() {
 		return s_func_table.find(name) != s_func_table.end();
 	}
 	/*
 	 * Returns the a Function pointer
 	 */
-	static inline Function* getFunction(const std::string& name) {
+	static inline Function* getFunction(const std::string& name) throw() {
 		return s_func_table.find(name)->second;
 	}
 
-	static void error(const char*);
-	static bool checkCompatibleTypes(Value*, Value*);
-	static ConstantValue* constantFolding(char, Value*, Value*);
+	static void error(const char*) throw();
+	static bool checkCompatibleTypes(Value*, Value*) throw();
+	static ConstantValue* constantFolding(char, Value*, Value*) throw();
 
 
 	DISALLOW_COPY_AND_ASSIGN(Compiler);

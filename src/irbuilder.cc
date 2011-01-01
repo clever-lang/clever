@@ -30,7 +30,7 @@
 
 namespace clever {
 
-void IRBuilder::init() {
+void IRBuilder::init() throw() {
 	/* Initializes global scope */
 	m_symbols.pushVarMap(SymbolTable::var_map());
 
@@ -38,7 +38,7 @@ void IRBuilder::init() {
 	m_opcodes.reserve(10);
 }
 
-void IRBuilder::shutdown() {
+void IRBuilder::shutdown() throw() {
 	/* Pop global scope */
 	m_symbols.popVarMap();
 }
@@ -46,7 +46,7 @@ void IRBuilder::shutdown() {
 /*
  * Generates the binary expression opcode
  */
-Opcode* IRBuilder::binaryExpression(ast::BinaryExpression* expr) {
+Opcode* IRBuilder::binaryExpression(ast::BinaryExpression* expr) throw() {
 	Value* lhs;
 	Value* rhs;
 
@@ -74,7 +74,7 @@ Opcode* IRBuilder::binaryExpression(ast::BinaryExpression* expr) {
 /*
  * Generates the variable declaration opcode
  */
-Opcode* IRBuilder::variableDecl(ast::VariableDecl* expr) {
+Opcode* IRBuilder::variableDecl(ast::VariableDecl* expr) throw() {
 	ast::Expression* var_expr = expr->get_variable();
 	ast::Expression* rhs_expr = expr->get_initial_value();
 	Value* variable = var_expr->get_value();
@@ -98,7 +98,7 @@ Opcode* IRBuilder::variableDecl(ast::VariableDecl* expr) {
 /*
  * Generates the new block opcode
  */
-Opcode* IRBuilder::newBlock() {
+Opcode* IRBuilder::newBlock() throw() {
 	Opcode* opcode = new Opcode(OP_NEW_SCOPE, &VM::new_scope_handler);
 	Jmp jmp;
 
@@ -114,7 +114,7 @@ Opcode* IRBuilder::newBlock() {
 /*
  * Generates the end block opcode
  */
-Opcode* IRBuilder::endBlock() {
+Opcode* IRBuilder::endBlock() throw() {
 	Opcode* opcode = new Opcode(OP_END_SCOPE, &VM::end_scope_handler);
 	Opcode* start_block = m_jmps.top().top();
 
@@ -142,7 +142,7 @@ Opcode* IRBuilder::endBlock() {
 /*
  * Generates the pre increment opcode
  */
-Opcode* IRBuilder::preIncrement(ast::PreIncrement* expr) {
+Opcode* IRBuilder::preIncrement(ast::PreIncrement* expr) throw() {
 	Value* value = getValue(expr->get_expr());
 
 	value->addRef();
@@ -152,7 +152,7 @@ Opcode* IRBuilder::preIncrement(ast::PreIncrement* expr) {
 /*
  * Generates the pos increment opcode
  */
-Opcode* IRBuilder::posIncrement(ast::PosIncrement* expr) {
+Opcode* IRBuilder::posIncrement(ast::PosIncrement* expr) throw() {
 	Value* value = getValue(expr->get_expr());
 
 	value->addRef();
@@ -162,7 +162,7 @@ Opcode* IRBuilder::posIncrement(ast::PosIncrement* expr) {
 /*
  * Generates the pre decrement opcode
  */
-Opcode* IRBuilder::preDecrement(ast::PreDecrement* expr) {
+Opcode* IRBuilder::preDecrement(ast::PreDecrement* expr) throw() {
 	Value* value = getValue(expr->get_expr());
 
 	value->addRef();
@@ -172,7 +172,7 @@ Opcode* IRBuilder::preDecrement(ast::PreDecrement* expr) {
 /*
  * Generates the pos decrement opcode
  */
-Opcode* IRBuilder::posDecrement(ast::PosDecrement* expr) {
+Opcode* IRBuilder::posDecrement(ast::PosDecrement* expr) throw(){
 	Value* value = getValue(expr->get_expr());
 
 	value->addRef();
@@ -182,7 +182,7 @@ Opcode* IRBuilder::posDecrement(ast::PosDecrement* expr) {
 /*
  * Generates the JMPZ opcode for IF expression
  */
-Opcode* IRBuilder::ifExpression(ast::IfExpression* expr) {
+Opcode* IRBuilder::ifExpression(ast::IfExpression* expr) throw() {
 	Value* value = getValue(expr->get_expr());
 	Opcode* opcode = new Opcode(OP_JMPZ, &VM::jmpz_handler, value);
 	Jmp jmp;
@@ -197,7 +197,7 @@ Opcode* IRBuilder::ifExpression(ast::IfExpression* expr) {
 /*
  * Generates a JMPZ opcode for ELSEIF expression
  */
-Opcode* IRBuilder::elseIfExpression(ast::ElseIfExpression* expr) {
+Opcode* IRBuilder::elseIfExpression(ast::ElseIfExpression* expr) throw() {
 	Value* value = getValue(expr->get_expr());
 	Opcode* opcode = new Opcode(OP_JMPZ, &VM::jmpz_handler, value);
 	ast::StartExpr* start_expr = static_cast<ast::StartExpr*>(expr->get_start_expr());
@@ -213,7 +213,7 @@ Opcode* IRBuilder::elseIfExpression(ast::ElseIfExpression* expr) {
 /*
  * Generates a JMP opcode for ELSE expression
  */
-Opcode* IRBuilder::elseExpression(ast::ElseExpression* expr) {
+Opcode* IRBuilder::elseExpression(ast::ElseExpression* expr) throw() {
 	Opcode* opcode = new Opcode(OP_JMP, &VM::jmp_handler);
 
 	m_jmps.top().top()->set_jmp_addr1(getOpNum()+2);
@@ -225,7 +225,7 @@ Opcode* IRBuilder::elseExpression(ast::ElseExpression* expr) {
 /*
  * Just set the jmp address of if-elsif-else to end of control structure
  */
-Opcode* IRBuilder::endIfExpression() {
+Opcode* IRBuilder::endIfExpression() throw() {
 	Jmp jmp = m_jmps.top();
 
 	/* Sets the jmp addr for the IF when there is no ELSE */
@@ -250,7 +250,7 @@ Opcode* IRBuilder::endIfExpression() {
 /*
  * Generates the JMPZ opcode for WHILE expression
  */
-Opcode* IRBuilder::whileExpression(ast::WhileExpression* expr) {
+Opcode* IRBuilder::whileExpression(ast::WhileExpression* expr) throw() {
 	Value* value = getValue(expr->get_expr());
 	Opcode* opcode = new Opcode(OP_JMPZ, &VM::jmpz_handler, value);
 	Jmp jmp;
@@ -266,7 +266,7 @@ Opcode* IRBuilder::whileExpression(ast::WhileExpression* expr) {
 /*
  * Just set the end jmp addr of WHILE expression
  */
-Opcode* IRBuilder::endWhileExpression(ast::EndWhileExpression* expr) {
+Opcode* IRBuilder::endWhileExpression(ast::EndWhileExpression* expr) throw() {
 	Opcode* opcode = new Opcode(OP_JMP, &VM::jmp_handler);
 	ast::StartExpr* start_loop = static_cast<ast::StartExpr*>(expr->get_expr());
 	unsigned int scope_out = getOpNum()+2;
@@ -290,7 +290,7 @@ Opcode* IRBuilder::endWhileExpression(ast::EndWhileExpression* expr) {
 /*
  * Just hold the current op number before the WHILE expression
  */
-Opcode* IRBuilder::startExpr(ast::StartExpr* expr) {
+Opcode* IRBuilder::startExpr(ast::StartExpr* expr) throw() {
 	expr->set_op_num(getOpNum()+1);
 
 	return NULL;
@@ -299,7 +299,7 @@ Opcode* IRBuilder::startExpr(ast::StartExpr* expr) {
 /*
  * Generates opcode for logic expression which weren't optimized
  */
-Opcode* IRBuilder::logicExpression(ast::LogicExpression* expr) {
+Opcode* IRBuilder::logicExpression(ast::LogicExpression* expr) throw() {
 	Value* lhs;
 	Value* rhs;
 
@@ -327,7 +327,7 @@ Opcode* IRBuilder::logicExpression(ast::LogicExpression* expr) {
 /*
  * Generates opcode for break statement
  */
-Opcode* IRBuilder::breakExpression() {
+Opcode* IRBuilder::breakExpression() throw() {
 	Opcode* opcode = new Opcode(OP_BREAK, &VM::break_handler);
 
 	m_brks.top().push(opcode);
@@ -338,7 +338,7 @@ Opcode* IRBuilder::breakExpression() {
 /*
  * Generates opcode for function call
  */
-Opcode* IRBuilder::functionCall(ast::FunctionCall* expr) {
+Opcode* IRBuilder::functionCall(ast::FunctionCall* expr) throw() {
 	Value* name_expr = expr->get_value();
 	Value* args = expr->get_value_args();
 	const std::string* name = name_expr->getStringP();

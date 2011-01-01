@@ -36,7 +36,7 @@
  * Opcode handler arguments
  */
 #define CLEVER_VM_HANDLER_ARGS unsigned int& next_op, Opcode& opcode
-#define CLEVER_VM_HANDLER(name) void name(CLEVER_VM_HANDLER_ARGS) CLEVER_NOTHROW
+#define CLEVER_VM_HANDLER(name) void name(CLEVER_VM_HANDLER_ARGS) throw()
 
 /**
  * Change the executor flow to run another opcode
@@ -62,8 +62,8 @@ public:
 
 	~VM();
 
-	void run(void);
-	void error(const char*) const;
+	void run(void) throw();
+	void error(const char*) const throw();
 
 	inline void setOpcodes(OpcodeList* opcodes) {
 		m_opcodes = opcodes;
@@ -72,7 +72,7 @@ public:
 	/*
 	 * Returns the value from a Value pointer according to Value type
 	 */
-	inline Value* getValue(Value* op) {
+	inline Value* getValue(Value* op) throw() {
 		if (!op) {
 			return NULL;
 		}

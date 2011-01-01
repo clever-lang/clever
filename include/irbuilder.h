@@ -47,24 +47,24 @@ public:
 
 	~IRBuilder() { }
 
-	void init();
-	void shutdown();
+	void init() throw();
+	void shutdown() throw();
 
-	inline VM::OpcodeList* get_opcodes() {
+	inline VM::OpcodeList* get_opcodes() throw() {
 		return &m_opcodes;
 	}
 
-	inline void push(Opcode* opcode) {
+	inline void push(Opcode* opcode) throw() {
 		m_opcodes.push_back(opcode);
 		/* Sets the opcode number, which is used by JMP opcodes */
 		opcode->set_op_num(getOpNum());
 	}
 
-	inline unsigned int getOpNum() const {
+	inline unsigned int getOpNum() const throw() {
 		return m_opcodes.size()-1;
 	}
 
-	inline Value* getValue(ast::Expression* expr) {
+	inline Value* getValue(ast::Expression* expr) throw() {
 		Value* value = expr->get_value();
 
 		if (value && value->isNamedValue()) {
@@ -74,24 +74,24 @@ public:
 	}
 
 	/* Opcode generators */
-	Opcode* binaryExpression(ast::BinaryExpression*);
-	Opcode* variableDecl(ast::VariableDecl*);
-	Opcode* preIncrement(ast::PreIncrement*);
-	Opcode* posIncrement(ast::PosIncrement*);
-	Opcode* preDecrement(ast::PreDecrement*);
-	Opcode* posDecrement(ast::PosDecrement*);
-	Opcode* newBlock();
-	Opcode* endBlock();
-	Opcode* ifExpression(ast::IfExpression*);
-	Opcode* elseIfExpression(ast::ElseIfExpression*);
-	Opcode* elseExpression(ast::ElseExpression*);
-	Opcode* endIfExpression();
-	Opcode* whileExpression(ast::WhileExpression*);
-	Opcode* endWhileExpression(ast::EndWhileExpression*);
-	Opcode* startExpr(ast::StartExpr*);
-	Opcode* logicExpression(ast::LogicExpression*);
-	Opcode* breakExpression();
-	Opcode* functionCall(ast::FunctionCall*);
+	Opcode* binaryExpression(ast::BinaryExpression*) throw();
+	Opcode* variableDecl(ast::VariableDecl*) throw();
+	Opcode* preIncrement(ast::PreIncrement*) throw();
+	Opcode* posIncrement(ast::PosIncrement*) throw();
+	Opcode* preDecrement(ast::PreDecrement*) throw();
+	Opcode* posDecrement(ast::PosDecrement*) throw();
+	Opcode* newBlock() throw();
+	Opcode* endBlock() throw();
+	Opcode* ifExpression(ast::IfExpression*) throw();
+	Opcode* elseIfExpression(ast::ElseIfExpression*) throw();
+	Opcode* elseExpression(ast::ElseExpression*) throw();
+	Opcode* endIfExpression() throw();
+	Opcode* whileExpression(ast::WhileExpression*) throw();
+	Opcode* endWhileExpression(ast::EndWhileExpression*) throw();
+	Opcode* startExpr(ast::StartExpr*) throw();
+	Opcode* logicExpression(ast::LogicExpression*) throw();
+	Opcode* breakExpression() throw();
+	Opcode* functionCall(ast::FunctionCall*) throw();
 
 	DISALLOW_COPY_AND_ASSIGN(IRBuilder);
 private:

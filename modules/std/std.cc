@@ -34,13 +34,13 @@ namespace clever {
 Module* g_std_module = new StdModule;
 
 CLEVER_FUNCTION(print) {
-	for (int i = 0; i < args.size(); ++i) {
+	for (int i = 0, size = args.size(); i < size; ++i) {
 		printf("%s", args.at(i)->toString().c_str());
 	}
 }
 
 CLEVER_FUNCTION(println) {
-	for (int i = 0; i < args.size(); ++i) {
+	for (int i = 0, size = args.size(); i < size; ++i) {
 		printf("%s\n", args.at(i)->toString().c_str());
 	}
 }

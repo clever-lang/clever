@@ -46,11 +46,6 @@
 #endif
 
 /**
- * Indicates that don't throw exceptions
- */
-#define CLEVER_NOTHROW throw()
-
-/**
  * Disable VTable initialization (Microsoft-specific)
  */
 #if defined(_MSC_VER)

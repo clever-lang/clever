@@ -40,9 +40,9 @@ namespace clever {
 class CStringTable;
 
 class CString : public std::string {
-public:	
+public:
 	typedef std::size_t IdType;
-	
+
 	CString() : std::string(), m_id(-1) { store(); };
 	CString(const CString& str, IdType id)
 		: std::string(str), m_id(id) { }
@@ -94,7 +94,7 @@ class hash<clever::CString*> {
 public:
 	size_t operator()(const clever::CString* key) const {
 		hash<std::string> h;
-		
+
 		return h(*(std::string*)key);
 	}
 };
@@ -108,7 +108,7 @@ typedef boost::unordered_map<std::size_t, CString*> CStringTableBase;
 class CStringTable : public CStringTableBase {
 public:
 	typedef CString::IdType IdType;
-	
+
 	CStringTable() {}
 	~CStringTable();
 
@@ -117,19 +117,19 @@ public:
 		return id != -1 && id < (signed)size() && (*find(id)).second->hasSameId(cstring);
 	}
 
-	CString* getCString(long id) {
+	CString* getCString(long id) const throw() {
 		return (*find(id)).second;
 	}
 
-	IdType insert(CString* cstring) {
+	IdType insert(CString* cstring) throw() {
 		boost::hash<CString*> hash;
 		IdType id = hash(cstring);
-		
+
 		cstring->set_id(id);
 
 		if (CStringTableBase::find(id) == end()) {
 			CString* new_string = new CString(*cstring, id);
-			
+
 			CStringTableBase::insert(std::pair<IdType, CString*>(id, new_string));
 		}
 
