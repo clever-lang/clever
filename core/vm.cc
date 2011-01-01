@@ -296,15 +296,26 @@ CLEVER_VM_HANDLER(VM::var_decl_handler) {
  */
 CLEVER_VM_HANDLER(VM::pre_inc_handler) {
 	Value* value = getValue(opcode->get_op1());
+	Value* result = getValue(opcode->get_result());
 
 	if (value->isConst()) {
 		switch (value->get_type()) {
 			case Value::INTEGER:
 				value->setInteger(value->getInteger()+1);
+
+				if (result && result->refCount() == 1 && result->hasSameType(value)) {
+					result->setInteger(value->getInteger());
+					break;
+				}
 				opcode->set_result(new ConstantValue(value->getInteger()));
 				break;
 			case Value::DOUBLE:
 				value->setDouble(value->getDouble()+1);
+
+				if (result && result->refCount() == 1 && result->hasSameType(value)) {
+					result->setDouble(value->getDouble());
+					break;
+				}
 				opcode->set_result(new ConstantValue(value->getDouble()));
 				break;
 			default:
@@ -319,15 +330,24 @@ CLEVER_VM_HANDLER(VM::pre_inc_handler) {
  */
 CLEVER_VM_HANDLER(VM::pos_inc_handler) {
 	Value* value = getValue(opcode->get_op1());
+	Value* result = getValue(opcode->get_result());
 
 	if (value->isConst()) {
 		switch (value->get_type()) {
 			case Value::INTEGER:
-				opcode->set_result(new ConstantValue(value->getInteger()));
+				if (result && result->refCount() == 1 && result->hasSameType(value)) {
+					result->setInteger(value->getInteger());
+				} else {
+					opcode->set_result(new ConstantValue(value->getInteger()));
+				}
 				value->setInteger(value->getInteger()+1);
 				break;
 			case Value::DOUBLE:
-				opcode->set_result(new ConstantValue(value->getDouble()));
+				if (result && result->refCount() == 1 && result->hasSameType(value)) {
+					result->setDouble(value->getDouble());
+				} else {
+					opcode->set_result(new ConstantValue(value->getDouble()));
+				}
 				value->setDouble(value->getDouble()+1);
 				break;
 			default:
@@ -342,23 +362,30 @@ CLEVER_VM_HANDLER(VM::pos_inc_handler) {
  */
 CLEVER_VM_HANDLER(VM::pre_dec_handler) {
 	Value* value = getValue(opcode->get_op1());
+	Value* result = getValue(opcode->get_result());
 
 	if (value->isConst()) {
 		switch (value->get_type()) {
 			case Value::INTEGER:
-				value->setInteger(value->getInteger()-1);/*
-				if (opcode->get_result()->get_value()) {
-					if (opcode->get_result()->get_value()->refCount() == 1) {
-						opcode->set_result(value);
-						value->addRef();
-						break;
-					}
-				}*/
-				opcode->set_result(new ConstantValue(value->getInteger()));
+				value->setInteger(value->getInteger()-1);
 
+				/*
+				 * The result has only 1 reference, i.e. it's used only in this opcode,
+				 * so let just change the current value instead of alloc'ing new memory
+				 */
+				if (result && result->refCount() == 1 && result->hasSameType(value)) {
+					result->setInteger(value->getInteger());
+					break;
+				}
+				opcode->set_result(new ConstantValue(value->getInteger()));
 				break;
 			case Value::DOUBLE:
 				value->setDouble(value->getDouble()-1);
+
+				if (result && result->refCount() == 1 && result->hasSameType(value)) {
+					result->setDouble(value->getDouble());
+					break;
+				}
 				opcode->set_result(new ConstantValue(value->getDouble()));
 				break;
 			default:
@@ -373,15 +400,24 @@ CLEVER_VM_HANDLER(VM::pre_dec_handler) {
  */
 CLEVER_VM_HANDLER(VM::pos_dec_handler) {
 	Value* value = getValue(opcode->get_op1());
+	Value* result = getValue(opcode->get_result());
 
 	if (value->isConst()) {
 		switch (value->get_type()) {
 			case Value::INTEGER:
-				opcode->set_result(new ConstantValue(value->getInteger()));
+				if (result && result->refCount() == 1 && result->hasSameType(value)) {
+					result->setInteger(value->getInteger());
+				} else {
+					opcode->set_result(new ConstantValue(value->getInteger()));
+				}
 				value->setInteger(value->getInteger()-1);
 				break;
 			case Value::DOUBLE:
-				opcode->set_result(new ConstantValue(value->getDouble()));
+				if (result && result->refCount() == 1 && result->hasSameType(value)) {
+					result->setDouble(value->getDouble());
+				} else {
+					opcode->set_result(new ConstantValue(value->getDouble()));
+				}
 				value->setDouble(value->getDouble()-1);
 				break;
 			default:
