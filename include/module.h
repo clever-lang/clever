@@ -31,6 +31,7 @@
 #include <vector>
 #include <string>
 #include <list>
+#include "global.h"
 #include "values.h"
 
 namespace clever {
@@ -44,7 +45,7 @@ typedef std::list<Module*> ModuleList;
 
 #define CLEVER_FUNCTION_ARGS const FunctionArgs& args
 #define CLEVER_FUNC_NAME(name) clv_##name
-#define CLEVER_FUNCTION(name) void CLEVER_FUNC_NAME(name)(CLEVER_FUNCTION_ARGS)
+#define CLEVER_FUNCTION(name) void CLEVER_FASTCALL CLEVER_FUNC_NAME(name)(CLEVER_FUNCTION_ARGS)
 
 /**
  * Function arguments type
@@ -54,7 +55,7 @@ typedef std::vector<Value*> FunctionArgs;
 /**
  * Module function prototype
  */
-typedef void (*module_function)(CLEVER_FUNCTION_ARGS);
+typedef void (CLEVER_FASTCALL *module_function)(CLEVER_FUNCTION_ARGS);
 
 /**
  * Function representation

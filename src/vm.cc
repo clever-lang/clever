@@ -594,6 +594,8 @@ CLEVER_VM_HANDLER(VM::fcall_handler) {
 		ValueVector* vec_args = args->getVector();
 		ValueVector::iterator it = vec_args->begin();
 
+		func_args.reserve(2);
+
 		while (it != vec_args->end()) {
 			func_args.push_back(getValue(*it));
 			++it;
