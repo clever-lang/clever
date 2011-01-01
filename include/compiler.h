@@ -30,7 +30,6 @@
 
 #include <boost/unordered_map.hpp>
 #include "ast.h"
-#include "opcodes.h"
 #include "irbuilder.h"
 #include "module.h"
 

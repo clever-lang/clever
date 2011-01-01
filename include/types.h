@@ -35,7 +35,7 @@
 #include "refcounted.h"
 #include "cstring.h"
 #include "values.h"
-#include "opcodes.h"
+#include "opcode.h"
 #include "symboltable.h"
 
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \

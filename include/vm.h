@@ -45,6 +45,9 @@
 
 namespace clever {
 
+/**
+ * OP_NEW_SCOPE flags
+ */
 enum { BLK_UNUSED, BLK_USED };
 
 class SymbolTable;

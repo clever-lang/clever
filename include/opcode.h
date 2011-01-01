@@ -93,6 +93,7 @@ public:
 
 	inline Value* get_result() const { return m_result; }
 	inline void set_result(Value* value) { m_result->set_value(value); }
+	void set_result(Value* result, Value* value) const throw();
 
 	inline int64_t get_op_num() const { return m_op_num; }
 	inline void set_op_num(unsigned int op_num) { m_op_num = op_num; }

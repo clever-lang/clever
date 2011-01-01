@@ -28,7 +28,7 @@
 #include <cstdlib>
 #include <iostream>
 #include "compiler.h"
-#include "opcodes.h"
+#include "opcode.h"
 #include "vm.h"
 
 namespace clever {
@@ -60,7 +60,7 @@ VM::~VM(void) {
  * Displays an error message
  */
 void VM::error(const char* message) const throw() {
-	std::cout << "Runtime error: " << message << std::endl;
+	std::cerr << "Runtime error: " << message << std::endl;
 	exit(1);
 }
 
@@ -74,12 +74,12 @@ void VM::run(void) throw() {
 	m_symbols.pushVarMap(SymbolTable::var_map());
 
 	for (next_op = 0; next_op < last_op; ++next_op) {
-		Opcode* opcode = (*m_opcodes)[next_op];
+		Opcode& opcode = *(*m_opcodes)[next_op];
 
 		// opcode.dump();
 
 		/* Invoke the opcode handler */
-		(this->*(opcode->get_handler()))(next_op, *opcode);
+		(this->*(opcode.get_handler()))(next_op, opcode);
 	}
 
 	/* Pop global scope */
@@ -259,6 +259,10 @@ CLEVER_VM_HANDLER(VM::bw_or_handler) {
  * {
  */
 CLEVER_VM_HANDLER(VM::new_scope_handler) {
+	/*
+	 * Just create a new scope if a variable was created in the block
+	 * (detected in compile-time)
+	 */
 	if (opcode.get_flags() == BLK_USED) {
 		/* Create a new scope */
 		m_symbols.pushVarMap(SymbolTable::var_map());
@@ -350,9 +354,6 @@ CLEVER_VM_HANDLER(VM::pos_inc_handler) {
 				}
 				value->setDouble(value->getDouble()+1);
 				break;
-			default:
-				error("Operation unsupported for such type");
-				break;
 		}
 	}
 }
@@ -368,28 +369,11 @@ CLEVER_VM_HANDLER(VM::pre_dec_handler) {
 		switch (value->get_type()) {
 			case Value::INTEGER:
 				value->setInteger(value->getInteger()-1);
-
-				/*
-				 * The result has only 1 reference, i.e. it's used only in this opcode,
-				 * so let just change the current value instead of alloc'ing new memory
-				 */
-				if (result && result->refCount() == 1 && result->hasSameType(value)) {
-					result->setInteger(value->getInteger());
-					break;
-				}
-				opcode.set_result(new ConstantValue(value->getInteger()));
+				opcode.set_result(result, value);
 				break;
 			case Value::DOUBLE:
 				value->setDouble(value->getDouble()-1);
-
-				if (result && result->refCount() == 1 && result->hasSameType(value)) {
-					result->setDouble(value->getDouble());
-					break;
-				}
-				opcode.set_result(new ConstantValue(value->getDouble()));
-				break;
-			default:
-				error("Operation unsupported for such type");
+				opcode.set_result(result, value);
 				break;
 		}
 	}
@@ -405,23 +389,12 @@ CLEVER_VM_HANDLER(VM::pos_dec_handler) {
 	if (value->isConst()) {
 		switch (value->get_type()) {
 			case Value::INTEGER:
-				if (result && result->refCount() == 1 && result->hasSameType(value)) {
-					result->setInteger(value->getInteger());
-				} else {
-					opcode.set_result(new ConstantValue(value->getInteger()));
-				}
+				opcode.set_result(result, value);
 				value->setInteger(value->getInteger()-1);
 				break;
 			case Value::DOUBLE:
-				if (result && result->refCount() == 1 && result->hasSameType(value)) {
-					result->setDouble(value->getDouble());
-				} else {
-					opcode.set_result(new ConstantValue(value->getDouble()));
-				}
+				opcode.set_result(result, value);
 				value->setDouble(value->getDouble()-1);
-				break;
-			default:
-				error("Operation unsupported for such type");
 				break;
 		}
 	}

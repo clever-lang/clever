@@ -33,11 +33,11 @@
 #include "types.h"
 #include "values.h"
 #include "cstring.h"
-#include "opcodes.h"
 #include "refcounted.h"
 
 namespace clever {
 class IRBuilder;
+class Opcode;
 }
 
 namespace clever { namespace ast {

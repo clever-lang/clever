@@ -28,7 +28,7 @@
 #include <sstream>
 #include "ast.h"
 #include "compiler.h"
-#include "opcodes.h"
+#include "opcode.h"
 #include "vm.h"
 #include "irbuilder.h"
 
