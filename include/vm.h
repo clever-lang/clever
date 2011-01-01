@@ -35,13 +35,13 @@
 /**
  * Opcode handler arguments
  */
-#define CLEVER_VM_HANDLER_ARGS unsigned int* next_op, Opcode* opcode
+#define CLEVER_VM_HANDLER_ARGS unsigned int& next_op, Opcode& opcode
 #define CLEVER_VM_HANDLER(name) void name(CLEVER_VM_HANDLER_ARGS) CLEVER_NOTHROW
 
 /**
  * Change the executor flow to run another opcode
  */
-#define CLEVER_VM_GOTO(x) *next_op = (x)-1; return
+#define CLEVER_VM_GOTO(x) next_op = (x)-1; return
 
 namespace clever {
 
