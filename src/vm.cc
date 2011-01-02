@@ -218,6 +218,22 @@ CLEVER_VM_HANDLER(VM::bw_or_handler) {
 }
 
 /*
+ * x % y
+ */
+CLEVER_VM_HANDLER(VM::mod_handler) {
+	Value* op1 = getValue(opcode.get_op1());
+	Value* op2 = getValue(opcode.get_op2());
+
+	if (op1->isConst() && op1->hasSameKind(op2)) {
+		switch (op1->get_type()) {
+			case Value::INTEGER:
+				opcode.set_result(new ConstantValue(op1->getInteger() % op2->getInteger()));
+				break;
+		}
+	}
+}
+
+/*
  * {
  */
 CLEVER_VM_HANDLER(VM::new_scope_handler) {

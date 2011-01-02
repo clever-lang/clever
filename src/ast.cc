@@ -81,8 +81,8 @@ LogicExpression::LogicExpression(int op, Expression* lhs, Expression* rhs)
 /*
  * BinaryExpression
  */
-BinaryExpression::BinaryExpression(char op_, Expression* lhs, Expression* rhs)
-		: m_op(op_), m_lhs(lhs), m_rhs(rhs), m_result(NULL), m_value(NULL) {
+BinaryExpression::BinaryExpression(int op, Expression* lhs, Expression* rhs)
+		: m_op(op), m_lhs(lhs), m_rhs(rhs), m_result(NULL), m_value(NULL) {
 	Value* tmp_lhs;
 	Value* tmp_rhs = rhs->get_value();
 

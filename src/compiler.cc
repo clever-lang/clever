@@ -130,7 +130,7 @@ bool Compiler::checkCompatibleTypes(Value* lhs, Value* rhs) throw() {
 /*
  * Performs a constant folding optimization
  */
-ConstantValue* Compiler::constantFolding(char op, Value* lhs, Value* rhs) throw() {
+ConstantValue* Compiler::constantFolding(int op, Value* lhs, Value* rhs) throw() {
 
 #define DO_NUM_OPERATION(_op, type, x, y) \
 	if (x->is##type()) return new ConstantValue(x->get##type() _op y->get##type());
@@ -188,6 +188,9 @@ ConstantValue* Compiler::constantFolding(char op, Value* lhs, Value* rhs) throw(
 		case ast::NOT_EQUAL:
 			DO_NUM_OPERATION(!=, Integer, lhs, rhs);
 			DO_NUM_OPERATION(!=, Double, lhs, rhs);
+			break;
+		case ast::MOD:
+			DO_NUM_OPERATION(%, Integer, lhs, rhs);
 			break;
 	}
 	return NULL;

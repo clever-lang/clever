@@ -40,6 +40,7 @@ enum Opcodes {
 	OP_DIV,
 	OP_MULT,
 	OP_MINUS,
+	OP_MOD,
 	OP_NEW_SCOPE,
 	OP_END_SCOPE,
 	OP_VAR_DECL,

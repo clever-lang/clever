@@ -130,7 +130,7 @@ public:
 
 class BinaryExpression : public Expression {
 public:
-	BinaryExpression(char, Expression*, Expression*);
+	BinaryExpression(int, Expression*, Expression*);
 
 	~BinaryExpression() {
 		if (m_value) {
@@ -154,7 +154,7 @@ public:
 		return m_rhs;
 	}
 
-	inline char get_op() const {
+	inline int get_op() const {
 		return m_op;
 	}
 
@@ -172,7 +172,7 @@ public:
 
 	DISALLOW_COPY_AND_ASSIGN(BinaryExpression);
 private:
-	char m_op;
+	int m_op;
 	Expression* m_lhs;
 	Expression* m_rhs;
 	TempValue* m_result;
@@ -609,15 +609,15 @@ public:
 		}
 	}
 
-	int get_op() const {
+	inline int get_op() const {
 		return m_op;
 	}
 
-	Expression* get_lhs() const {
+	inline Expression* get_lhs() const {
 		return m_lhs;
 	}
 
-	Expression* get_rhs() const {
+	inline Expression* get_rhs() const {
 		return m_rhs;
 	}
 

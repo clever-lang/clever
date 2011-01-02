@@ -77,6 +77,7 @@ const char* Opcode::getOpName(Opcodes op) const throw() {
 		CASE(OP_DIV);
 		CASE(OP_MULT);
 		CASE(OP_MINUS);
+		CASE(OP_MOD);
 		CASE(OP_NEW_SCOPE);
 		CASE(OP_END_SCOPE);
 		CASE(OP_VAR_DECL);

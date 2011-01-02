@@ -72,7 +72,7 @@ public:
 
 	static void error(const char*) throw();
 	static bool checkCompatibleTypes(Value*, Value*) throw();
-	static ConstantValue* constantFolding(char, Value*, Value*) throw();
+	static ConstantValue* constantFolding(int, Value*, Value*) throw();
 
 
 	DISALLOW_COPY_AND_ASSIGN(Compiler);
