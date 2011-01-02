@@ -46,7 +46,7 @@ public:
 
 	~Compiler();
 
-	void Init(ast::TreeNode&) throw();
+	void Init(ast::TreeNode*) throw();
 	void loadModules() throw();
 	void buildIR() throw();
 
@@ -66,8 +66,8 @@ public:
 	/*
 	 * Returns the a Function pointer
 	 */
-	static inline Function* getFunction(const std::string& name) throw() {
-		return s_func_table.find(name)->second;
+	static inline const Function& getFunction(const std::string& name) throw() {
+		return *s_func_table.find(name)->second;
 	}
 
 	static void error(const char*) throw();
@@ -78,7 +78,7 @@ public:
 	DISALLOW_COPY_AND_ASSIGN(Compiler);
 private:
 	/* AST nodes */
-	ast::TreeNode m_ast;
+	ast::TreeNode* m_ast;
 	/* IR Builder */
 	IRBuilder m_builder;
 	/* Module list */

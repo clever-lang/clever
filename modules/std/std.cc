@@ -48,7 +48,7 @@ static CLEVER_FUNCTION(println) {
 /*
  * Initializes Standard module
  */
-void StdModule::Init() {
+void StdModule::Init() throw() {
 	/* Module functions */
 	addFunction(new Function("print", &CLEVER_FUNC_NAME(print)));
 	addFunction(new Function("println", &CLEVER_FUNC_NAME(println)));

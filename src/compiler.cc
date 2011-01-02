@@ -38,7 +38,7 @@ FunctionTable Compiler::s_func_table;
 /*
  * Initializes the compiler data
  */
-void Compiler::Init(ast::TreeNode& nodes) throw() {
+void Compiler::Init(ast::TreeNode* nodes) throw() {
 	m_ast = nodes;
 
 	/* Standard module */
@@ -89,7 +89,7 @@ Compiler::~Compiler() {
  * Collects all opcode
  */
 void Compiler::buildIR() throw() {
-	const ast::TreeNode::nodeList& ast_nodes = m_ast.getNodeList();
+	const ast::TreeNode::nodeList& ast_nodes = m_ast->getNodeList();
 	ast::TreeNode::nodeList::const_iterator it = ast_nodes.begin(), end(ast_nodes.end());
 
 	m_builder.init();
@@ -105,7 +105,7 @@ void Compiler::buildIR() throw() {
 	}
 
 	m_builder.shutdown();
-	m_ast.clear();
+	m_ast->clear();
 }
 
 /*

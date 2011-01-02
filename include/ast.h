@@ -88,6 +88,8 @@ public:
 	 * Method for generating the expression IR
 	 */
 	virtual Opcode* codeGen(IRBuilder& builder) throw() { return NULL; };
+
+	DISALLOW_COPY_AND_ASSIGN(Expression);
 private:
 	bool m_optimized;
 };
@@ -107,6 +109,8 @@ public:
 	inline nodeList& getNodeList() throw() {
 		return nodes;
 	}
+
+	DISALLOW_COPY_AND_ASSIGN(TreeNode);
 private:
 	nodeList nodes;
 };
@@ -120,6 +124,8 @@ public:
 	bool isLiteral() const { return true; }
 	virtual bool hasValue() const { return true; }
 	virtual Value* get_value() const throw() = 0;
+
+	DISALLOW_COPY_AND_ASSIGN(Literal);
 };
 
 class BinaryExpression : public Expression {
@@ -190,7 +196,6 @@ public:
 	inline Value* get_value() const throw() { return m_value; };
 
 	DISALLOW_COPY_AND_ASSIGN(NumberLiteral);
-
 private:
 	ConstantValue* m_value;
 };
@@ -229,7 +234,6 @@ public:
 	}
 
 	DISALLOW_COPY_AND_ASSIGN(VariableDecl);
-
 private:
 	Expression* m_type;
 	Expression* m_variable;
@@ -338,6 +342,8 @@ public:
 	inline Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.preIncrement(this);
 	}
+
+	DISALLOW_COPY_AND_ASSIGN(PreIncrement);
 private:
 	Expression* m_expr;
 	TempValue* m_result;
@@ -366,6 +372,8 @@ public:
 	inline Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.posIncrement(this);
 	}
+
+	DISALLOW_COPY_AND_ASSIGN(PosIncrement);
 private:
 	Expression* m_expr;
 	TempValue* m_result;
@@ -394,6 +402,8 @@ public:
 	inline Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.preDecrement(this);
 	}
+
+	DISALLOW_COPY_AND_ASSIGN(PreDecrement);
 private:
 	Expression* m_expr;
 	TempValue* m_result;
@@ -422,6 +432,8 @@ public:
 	inline Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.posDecrement(this);
 	}
+
+	DISALLOW_COPY_AND_ASSIGN(PosDecrement);
 private:
 	Expression* m_expr;
 	TempValue* m_result;
@@ -445,6 +457,8 @@ public:
 	inline Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.ifExpression(this);
 	}
+
+	DISALLOW_COPY_AND_ASSIGN(IfExpression);
 private:
 	Expression* m_expr;
 };
@@ -473,6 +487,8 @@ public:
 	inline Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.elseIfExpression(this);
 	}
+
+	DISALLOW_COPY_AND_ASSIGN(ElseIfExpression);
 private:
 	Expression* m_start_expr;
 	Expression* m_expr;
@@ -487,6 +503,8 @@ public:
 	inline Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.elseExpression(this);
 	}
+
+	DISALLOW_COPY_AND_ASSIGN(ElseExpression);
 };
 
 class WhileExpression : public Expression {
@@ -507,6 +525,8 @@ public:
 	inline Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.whileExpression(this);
 	}
+
+	DISALLOW_COPY_AND_ASSIGN(WhileExpression);
 private:
 	Expression* m_expr;
 };
@@ -520,6 +540,8 @@ public:
 	inline Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.endIfExpression();
 	}
+
+	DISALLOW_COPY_AND_ASSIGN(EndIfExpression);
 };
 
 
@@ -541,6 +563,8 @@ public:
 	inline Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.endWhileExpression(this);
 	}
+
+	DISALLOW_COPY_AND_ASSIGN(EndWhileExpression);
 private:
 	Expression* m_expr;
 };
@@ -562,6 +586,8 @@ public:
 	inline Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.startExpr(this);
 	}
+
+	DISALLOW_COPY_AND_ASSIGN(StartExpr);
 private:
 	unsigned int m_op_num;
 };
@@ -606,6 +632,8 @@ public:
 	inline Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.logicExpression(this);
 	}
+
+	DISALLOW_COPY_AND_ASSIGN(LogicExpression);
 private:
 	int m_op;
 	Expression* m_lhs;
@@ -623,6 +651,8 @@ public:
 	inline Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.breakExpression();
 	}
+
+	DISALLOW_COPY_AND_ASSIGN(BreakExpression);
 };
 
 class ArgumentList : public Expression {
@@ -648,6 +678,8 @@ public:
 	inline Value* get_value() const throw() {
 		return m_value;
 	}
+
+	DISALLOW_COPY_AND_ASSIGN(ArgumentList);
 private:
 	Value* m_value;
 };
@@ -685,6 +717,8 @@ public:
 	inline Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.functionCall(this);
 	}
+
+	DISALLOW_COPY_AND_ASSIGN(FunctionCall);
 private:
 	Expression* m_name;
 	Expression* m_args;

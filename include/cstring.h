@@ -43,43 +43,52 @@ class CString : public std::string {
 public:
 	typedef std::size_t IdType;
 
-	CString() : std::string(), m_id(0) { store(); };
+	CString()
+		: std::string(), m_id(0) { store(); };
+
 	CString(const CString& str, IdType id)
 		: std::string(str), m_id(id) { }
-	CString(const CString& str) : std::string(str), m_id(0) { store(); }
-	CString(CString& str) : std::string(str), m_id(0) { store(); }
-	explicit CString(std::string str) : std::string(str), m_id(0) { store(); }
-	explicit CString(const char* str) : std::string(str), m_id(0) { store(); }
 
-	CString* intern();
+	CString(const CString& str)
+		: std::string(str), m_id(0) { store(); }
 
-	inline bool hasSameId(CString* cstring) const {
+	CString(CString& str)
+		: std::string(str), m_id(0) { store(); }
+
+	explicit CString(std::string str)
+		: std::string(str), m_id(0) { store(); }
+
+	explicit CString(const char* str)
+		: std::string(str), m_id(0) { store(); }
+
+	CString* intern() const throw();
+
+	inline bool hasSameId(CString* cstring) const throw() {
 		return get_id() == cstring->get_id();
 	}
 
-	inline IdType get_id() const {
+	inline IdType get_id() const throw() {
 		return m_id;
 	}
 
-	inline void set_id(IdType id) {
+	inline void set_id(IdType id) throw() {
 		if (m_id == 0)  {
 			m_id = id;
 		}
 	}
 
-	bool operator==(CString* cstring) {
+	bool operator==(CString* cstring) throw() {
 		return hasSameId(cstring);
 	}
 
-	bool operator==(const std::string& string) {
+	bool operator==(const std::string& string) throw() {
 		return compare(string) == 0;
 	}
-
 private:
-	static CStringTable table;
-	IdType m_id;
+	void store() throw();
 
-	void store();
+	static CStringTable s_table;
+	IdType m_id;
 };
 
 } // clever
@@ -92,7 +101,7 @@ namespace boost {
 template <>
 class hash<clever::CString*> {
 public:
-	size_t operator()(const clever::CString* key) const {
+	size_t operator()(const clever::CString* key) const throw() {
 		hash<std::string> h;
 
 		return h(*(std::string*)key);
@@ -112,12 +121,12 @@ public:
 	CStringTable() {}
 	~CStringTable();
 
-	bool contains(CString* cstring) const {
+	inline bool contains(CString* cstring) const {
 		IdType id = cstring->get_id();
 		return id != 0 && id < size() && (*find(id)).second->hasSameId(cstring);
 	}
 
-	CString* getCString(long id) const throw() {
+	inline CString* getCString(long id) const throw() {
 		return (*find(id)).second;
 	}
 

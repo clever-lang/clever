@@ -43,6 +43,9 @@ class Function;
 typedef std::list<Function*> FunctionList;
 typedef std::list<Module*> ModuleList;
 
+/**
+ * Macros to help on module function declaration
+ */
 #define CLEVER_FUNCTION_ARGS const FunctionArgs& args
 #define CLEVER_FUNC_NAME(name) clv_##name
 #define CLEVER_FUNCTION(name) void CLEVER_FASTCALL CLEVER_FUNC_NAME(name)(CLEVER_FUNCTION_ARGS) throw()
@@ -67,10 +70,14 @@ public:
 
 	~Function() { }
 
-	inline const std::string get_name() { return m_name; }
-	inline module_function get_func() { return m_func; }
+	inline const std::string get_name() const throw() { return m_name; }
+	inline module_function get_func() const throw() { return m_func; }
+
+	DISALLOW_COPY_AND_ASSIGN(Function);
 private:
+	/* Function name */
 	const std::string m_name;
+	/* Function pointer */
 	module_function m_func;
 };
 
@@ -84,23 +91,25 @@ public:
 
 	virtual ~Module() { }
 
-	const std::string get_name() {
+	inline const std::string& get_name() const throw() {
 		return m_name;
 	}
 
-	inline FunctionList& get_functions() {
+	inline FunctionList& get_functions() throw() {
 		return m_functions;
 	}
 
-	inline void addFunction(Function* func) {
+	inline void addFunction(Function* func) throw() {
 		m_functions.push_back(func);
 	}
 
 	/* Module initialization */
-	virtual void Init() = 0;
+	virtual void Init() throw() = 0;
 
 	/* Module version */
-	virtual const char* getVersion() { return NULL; }
+	virtual const char* getVersion() const { return NULL; }
+
+	DISALLOW_COPY_AND_ASSIGN(Module);
 private:
 	/* Module name */
 	const std::string m_name;

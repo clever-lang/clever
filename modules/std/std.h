@@ -37,7 +37,9 @@ public:
 	StdModule()
 		: Module("Standard") { }
 
-	void Init();
+	void Init() throw();
+
+	DISALLOW_COPY_AND_ASSIGN(StdModule);
 };
 
 extern Module* g_std_module;

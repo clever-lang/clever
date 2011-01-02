@@ -56,6 +56,7 @@ public:
 		}
 	}
 
+	DISALLOW_COPY_AND_ASSIGN(RefCounted);
 private:
 	int m_reference;
 };

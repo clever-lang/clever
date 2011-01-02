@@ -111,7 +111,7 @@ clever::ast::TreeNode nodes;
 %start top_statements;
 
 top_statements:
-		statement_list { driver.initCompiler(nodes); }
+		statement_list { driver.initCompiler(&nodes); }
 ;
 
 statement_list:

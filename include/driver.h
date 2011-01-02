@@ -59,7 +59,7 @@ public:
 	virtual ~Driver() { }
 
 	/* Initializes the compiler with AST nodes */
-	inline void initCompiler(ast::TreeNode& nodes) {
+	inline void initCompiler(ast::TreeNode* nodes) {
 		m_compiler.Init(nodes);
 	}
 
