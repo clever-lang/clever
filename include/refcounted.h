@@ -50,7 +50,7 @@ public:
 		++m_reference;
 	}
 
-	virtual inline void delRef(void) throw() {
+	inline void delRef(void) throw() {
 		if (--m_reference == 0) {
 			delete this;
 		}

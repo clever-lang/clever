@@ -45,16 +45,16 @@ public:
 	SymbolTable()
 		: m_var_at(-1) { }
 
-	inline void register_var(Value* var) {
+	inline void register_var(Value* var) throw() {
 		m_variables.at(m_var_at).insert(std::pair<CString*, Value*>(var->getStringP(), var));
 	}
 
-	inline void register_var(Value* var, Value* value) {
+	inline void register_var(Value* var, Value* value) throw() {
 		m_variables.at(m_var_at).insert(std::pair<CString*, Value*>(var->getStringP(), value));
 		var->set_value(value);
 	}
 
-	inline Value* get_var(Value* var) {
+	inline Value* get_var(Value* var) throw() {
 		Value* value = var->isNamedValue() ? var->get_value() : NULL;
 		CString* name;
 
@@ -76,16 +76,16 @@ public:
 		return NULL;
 	}
 
-	inline void pushVarMap(var_map map) {
+	inline void pushVarMap(var_map map) throw() {
 		m_variables.push_back(map);
 		++m_var_at;
 	}
 
-	inline var_map& topVarMap() {
+	inline var_map& topVarMap() throw() {
 		return m_variables.at(m_var_at);
 	}
 
-	inline void popVarMap() {
+	inline void popVarMap() throw() {
 		var_map::iterator it = topVarMap().begin();
 
 		while (it != topVarMap().end()) {

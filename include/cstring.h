@@ -102,9 +102,7 @@ template <>
 class hash<clever::CString*> {
 public:
 	size_t operator()(const clever::CString* key) const throw() {
-		hash<std::string> h;
-
-		return h(*(std::string*)key);
+		return hash<std::string>()(*(std::string*)key);
 	}
 };
 

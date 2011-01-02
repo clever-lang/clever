@@ -59,32 +59,32 @@ public:
 	virtual ~Driver() { }
 
 	/* Initializes the compiler with AST nodes */
-	inline void initCompiler(ast::TreeNode* nodes) {
+	inline void initCompiler(ast::TreeNode* nodes) throw() {
 		m_compiler.Init(nodes);
 	}
 
 	/* Returns the parsed file */
-	inline std::string& get_file() {
+	inline std::string& get_file() throw() {
 		return m_file;
 	}
 
 	/* Read file to the scanner */
-	void readFile(void);
+	void readFile(void) throw();
 
 	/* Run the parser */
 	int parseStr(const std::string&);
 	int parseFile(const std::string&);
 
 	/* Error handling */
-	void error(const clever::location&, const std::string&) const;
-	void error(const std::string&) const;
+	void error(const clever::location&, const std::string&) const throw();
+	void error(const std::string&) const throw();
 private:
 	/* Indicates if it's a file is being parsed */
 	bool m_is_file;
 	/* Debug option */
 	bool m_trace_parsing;
 	/* Scanners stack */
-	static ScannerStack m_scanners;
+	static ScannerStack s_scanners;
 protected:
 	/* The file path -f */
 	std::string m_file;

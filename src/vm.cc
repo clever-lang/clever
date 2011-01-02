@@ -40,16 +40,20 @@ VM::~VM(void) {
 	OpcodeList::const_iterator it = m_opcodes->begin(), end(m_opcodes->end());
 
 	while (it != end) {
+		Value* op1 = (*it)->get_op1();
+		Value* op2 = (*it)->get_op2();
+		Value* result = (*it)->get_result();
+
 		// (*it)->dump();
 
-		if ((*it)->get_op1()) {
-			(*it)->get_op1()->delRef();
+		if (op1) {
+			op1->delRef();
 		}
-		if ((*it)->get_op2()) {
-			(*it)->get_op2()->delRef();
+		if (op2) {
+			op2->delRef();
 		}
-		if ((*it)->get_result()) {
-			(*it)->get_result()->delRef();
+		if (result) {
+			result->delRef();
 		}
 		delete *it;
 		++it;
@@ -94,9 +98,6 @@ CLEVER_VM_HANDLER(VM::plus_handler) {
 	Value* op2 = getValue(opcode.get_op2());
 
 	if (op1->isConst() && op1->hasSameKind(op2)) {
-		if (!op1->hasSameType(op2)) {
-			error("Type mismatch!");
-		}
 		switch (op1->get_type()) {
 			case Value::STRING:
 				opcode.set_result(new ConstantValue(CSTRING(op1->getString() + op2->getString())));
@@ -119,13 +120,7 @@ CLEVER_VM_HANDLER(VM::div_handler) {
 	Value* op2 = getValue(opcode.get_op2());
 
 	if (op1->isConst() && op1->hasSameKind(op2)) {
-		if (!op1->hasSameType(op2)) {
-			error("Type mismatch!");
-		}
 		switch (op1->get_type()) {
-			case Value::STRING:
-				error("Operation not allow in strings!");
-				break;
 			case Value::INTEGER:
 				opcode.set_result(new ConstantValue(op1->getInteger() / op2->getInteger()));
 				break;
@@ -144,13 +139,7 @@ CLEVER_VM_HANDLER(VM::minus_handler) {
 	Value* op2 = getValue(opcode.get_op2());
 
 	if (op1->isConst() && op1->hasSameKind(op2)) {
-		if (!op1->hasSameType(op2)) {
-			error("Type mismatch!");
-		}
 		switch (op1->get_type()) {
-			case Value::STRING:
-				error("Operation not allow in strings!");
-				break;
 			case Value::INTEGER:
 				opcode.set_result(new ConstantValue(op1->getInteger() - op2->getInteger()));
 				break;
@@ -169,13 +158,7 @@ CLEVER_VM_HANDLER(VM::mult_handler) {
 	Value* op2 = getValue(opcode.get_op2());
 
 	if (op1->isConst() && op1->hasSameKind(op2)) {
-		if (!op1->hasSameType(op2)) {
-			error("Type mismatch!");
-		}
 		switch (op1->get_type()) {
-			case Value::STRING:
-				error("Operation not allow in strings!");
-				break;
 			case Value::INTEGER:
 				opcode.set_result(new ConstantValue(op1->getInteger() * op2->getInteger()));
 				break;
@@ -194,14 +177,7 @@ CLEVER_VM_HANDLER(VM::bw_and_handler) {
 	Value* op2 = getValue(opcode.get_op2());
 
 	if (op1->isConst() && op1->hasSameKind(op2)) {
-		if (!op1->hasSameType(op2)) {
-			error("Type mismatch!");
-		}
 		switch (op1->get_type()) {
-			case Value::STRING:
-			case Value::DOUBLE:
-				error("Operation not allow for such type!");
-				break;
 			case Value::INTEGER:
 				opcode.set_result(new ConstantValue(op1->getInteger() & op2->getInteger()));
 				break;
@@ -217,14 +193,7 @@ CLEVER_VM_HANDLER(VM::bw_xor_handler) {
 	Value* op2 = getValue(opcode.get_op2());
 
 	if (op1->isConst() && op1->hasSameKind(op2)) {
-		if (!op1->hasSameType(op2)) {
-			error("Type mismatch!");
-		}
 		switch (op1->get_type()) {
-			case Value::STRING:
-			case Value::DOUBLE:
-				error("Operation not allow for such type!");
-				break;
 			case Value::INTEGER:
 				opcode.set_result(new ConstantValue(op1->getInteger() ^ op2->getInteger()));
 				break;
@@ -240,14 +209,7 @@ CLEVER_VM_HANDLER(VM::bw_or_handler) {
 	Value* op2 = getValue(opcode.get_op2());
 
 	if (op1->isConst() && op1->hasSameKind(op2)) {
-		if (!op1->hasSameType(op2)) {
-			error("Type mismatch!");
-		}
 		switch (op1->get_type()) {
-			case Value::STRING:
-			case Value::DOUBLE:
-				error("Operation not allow for such type!");
-				break;
 			case Value::INTEGER:
 				opcode.set_result(new ConstantValue(op1->getInteger() | op2->getInteger()));
 				break;
@@ -306,26 +268,12 @@ CLEVER_VM_HANDLER(VM::pre_inc_handler) {
 		switch (value->get_type()) {
 			case Value::INTEGER:
 				value->setInteger(value->getInteger()+1);
-
-				if (result && result->refCount() == 1 && result->hasSameType(value)) {
-					result->setInteger(value->getInteger());
-					break;
-				}
-				opcode.set_result(new ConstantValue(value->getInteger()));
 				break;
 			case Value::DOUBLE:
 				value->setDouble(value->getDouble()+1);
-
-				if (result && result->refCount() == 1 && result->hasSameType(value)) {
-					result->setDouble(value->getDouble());
-					break;
-				}
-				opcode.set_result(new ConstantValue(value->getDouble()));
-				break;
-			default:
-				error("Operation unsupported for such type");
 				break;
 		}
+		opcode.set_result(result, value);
 	}
 }
 
@@ -337,21 +285,12 @@ CLEVER_VM_HANDLER(VM::pos_inc_handler) {
 	Value* result = getValue(opcode.get_result());
 
 	if (value->isConst()) {
+		opcode.set_result(result, value);
 		switch (value->get_type()) {
 			case Value::INTEGER:
-				if (result && result->refCount() == 1 && result->hasSameType(value)) {
-					result->setInteger(value->getInteger());
-				} else {
-					opcode.set_result(new ConstantValue(value->getInteger()));
-				}
 				value->setInteger(value->getInteger()+1);
 				break;
 			case Value::DOUBLE:
-				if (result && result->refCount() == 1 && result->hasSameType(value)) {
-					result->setDouble(value->getDouble());
-				} else {
-					opcode.set_result(new ConstantValue(value->getDouble()));
-				}
 				value->setDouble(value->getDouble()+1);
 				break;
 		}
@@ -369,13 +308,12 @@ CLEVER_VM_HANDLER(VM::pre_dec_handler) {
 		switch (value->get_type()) {
 			case Value::INTEGER:
 				value->setInteger(value->getInteger()-1);
-				opcode.set_result(result, value);
 				break;
 			case Value::DOUBLE:
 				value->setDouble(value->getDouble()-1);
-				opcode.set_result(result, value);
 				break;
 		}
+		opcode.set_result(result, value);
 	}
 }
 
@@ -387,13 +325,12 @@ CLEVER_VM_HANDLER(VM::pos_dec_handler) {
 	Value* result = getValue(opcode.get_result());
 
 	if (value->isConst()) {
+		opcode.set_result(result, value);
 		switch (value->get_type()) {
 			case Value::INTEGER:
-				opcode.set_result(result, value);
 				value->setInteger(value->getInteger()-1);
 				break;
 			case Value::DOUBLE:
-				opcode.set_result(result, value);
 				value->setDouble(value->getDouble()-1);
 				break;
 		}

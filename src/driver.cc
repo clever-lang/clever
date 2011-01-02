@@ -34,7 +34,7 @@
 
 namespace clever {
 
-Driver::ScannerStack Driver::m_scanners;
+Driver::ScannerStack Driver::s_scanners;
 
 /**
  * Executes the script
@@ -56,11 +56,9 @@ void Interpreter::shutdown(void) {
 /**
  * Read the file defined in file property
  */
-void Driver::readFile(void) {
+void Driver::readFile(void) throw() {
 	std::string line;
-	std::fstream filep;
-
-	filep.open(m_file.c_str());
+	std::fstream filep(m_file.c_str());
 
 	if (!filep) {
 		std::cerr << "Couldn't open file " << m_file << std::endl;
@@ -69,7 +67,8 @@ void Driver::readFile(void) {
 
 	while (!filep.eof()) {
 		getline(filep, line);
-		m_source += line + '\n';
+		m_source += line;
+		m_source += '\n';
 	}
 
 	filep.close();
@@ -89,15 +88,15 @@ int Driver::parseFile(const std::string& filename) {
 	// Read the file
 	readFile();
 	// Set the file source to scanner read it
-	m_scanners.push(new_scanner);
-	m_scanners.top()->set_cursor(m_source.c_str());
+	s_scanners.push(new_scanner);
+	s_scanners.top()->set_cursor(m_source.c_str());
 	// Bison debug option
 	parser.set_debug_level(m_trace_parsing);
 
 	result = parser.parse();
 
 	delete new_scanner;
-	m_scanners.pop();
+	s_scanners.pop();
 
 	return result;
 }
@@ -114,8 +113,8 @@ int Driver::parseStr(const std::string& code) {
 	m_source = code;
 
 	/* Set the source code to scanner read it */
-	m_scanners.push(new_scanner);
-	m_scanners.top()->set_cursor(m_source.c_str());
+	s_scanners.push(new_scanner);
+	s_scanners.top()->set_cursor(m_source.c_str());
 
 	/* Bison debug option */
 	parser.set_debug_level(m_trace_parsing);
@@ -124,7 +123,7 @@ int Driver::parseStr(const std::string& code) {
 
 	delete new_scanner;
 
-	m_scanners.pop();
+	s_scanners.pop();
 
 	return result;
 }
@@ -132,7 +131,7 @@ int Driver::parseStr(const std::string& code) {
 /**
  * Prints an error message and exit
  */
-void Driver::error(const clever::location& location, const std::string& message) const {
+void Driver::error(const clever::location& location, const std::string& message) const throw() {
 	position last = location.end - 1;
 
 	if (m_input.size()) {
@@ -146,7 +145,7 @@ void Driver::error(const clever::location& location, const std::string& message)
 /**
  * Prints an error message
  */
-void Driver::error(const std::string& message) const {
+void Driver::error(const std::string& message) const throw() {
 	std::cerr << message << std::endl;
 }
 
