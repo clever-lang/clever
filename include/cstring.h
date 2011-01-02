@@ -43,13 +43,13 @@ class CString : public std::string {
 public:
 	typedef std::size_t IdType;
 
-	CString() : std::string(), m_id(-1) { store(); };
+	CString() : std::string(), m_id(0) { store(); };
 	CString(const CString& str, IdType id)
 		: std::string(str), m_id(id) { }
-	CString(const CString& str) : std::string(str), m_id(-1) { store(); }
-	CString(CString& str) : std::string(str), m_id(-1) { store(); }
-	explicit CString(std::string str) : std::string(str), m_id(-1) { store(); }
-	explicit CString(const char* str) : std::string(str), m_id(-1) { store(); }
+	CString(const CString& str) : std::string(str), m_id(0) { store(); }
+	CString(CString& str) : std::string(str), m_id(0) { store(); }
+	explicit CString(std::string str) : std::string(str), m_id(0) { store(); }
+	explicit CString(const char* str) : std::string(str), m_id(0) { store(); }
 
 	CString* intern();
 
@@ -62,7 +62,7 @@ public:
 	}
 
 	inline void set_id(IdType id) {
-		if (m_id == -1)  {
+		if (m_id == 0)  {
 			m_id = id;
 		}
 	}
@@ -114,7 +114,7 @@ public:
 
 	bool contains(CString* cstring) const {
 		IdType id = cstring->get_id();
-		return id != -1 && id < (signed)size() && (*find(id)).second->hasSameId(cstring);
+		return id != 0 && id < size() && (*find(id)).second->hasSameId(cstring);
 	}
 
 	CString* getCString(long id) const throw() {

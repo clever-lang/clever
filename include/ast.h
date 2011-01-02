@@ -79,7 +79,7 @@ public:
 
 	inline bool isOptimized() const { return m_optimized; }
 
-	inline bool set_optimized(bool value) { m_optimized = value; }
+	inline void set_optimized(bool value) { m_optimized = value; }
 	/*
 	 * Method for getting the value representation
 	 */
@@ -474,8 +474,8 @@ public:
 		return builder.elseIfExpression(this);
 	}
 private:
-	Expression* m_expr;
 	Expression* m_start_expr;
+	Expression* m_expr;
 };
 
 class ElseExpression : public Expression {

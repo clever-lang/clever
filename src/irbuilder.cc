@@ -79,6 +79,7 @@ Opcode* IRBuilder::binaryExpression(ast::BinaryExpression* expr) throw() {
 		case ast::OR:    return new Opcode(OP_BW_OR,  &VM::bw_or_handler,  lhs, rhs, expr->get_value());
 		case ast::AND:   return new Opcode(OP_BW_AND, &VM::bw_and_handler, lhs, rhs, expr->get_value());
 	}
+	return NULL;
 }
 
 /*

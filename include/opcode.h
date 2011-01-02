@@ -112,13 +112,13 @@ public:
 	const char* getOpName(Opcodes) const throw();
 	std::string dumpOp(const char*, Value*) const throw();
 private:
-	VM::opcode_handler m_handler;
 	Opcodes m_op_type;
-	unsigned int m_op_num;
-	struct { unsigned int jmp1, jmp2, flags; } m_extra;
+	VM::opcode_handler m_handler;
 	Value* m_op1;
 	Value* m_op2;
 	Value* m_result;
+	unsigned int m_op_num;
+	struct { unsigned int jmp1, jmp2, flags; } m_extra;
 };
 
 } // clever

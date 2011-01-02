@@ -2,13 +2,12 @@
 #
 # Compiler
 CXX?=g++
-CPPFLAGS=-c -ggdb -ansi -Iinclude/ -Ibuild/ -Imodules/ -Iwin32/ -I. -fno-rtti
-CPPFLAGS2=-ggdb -ansi
-CPPFLAGS3=-c -ggdb -ansi -Iinclude/ -Ibuild/ -I. -fno-rtti
-CPPFLAGS4=-ggdb
+CPPFLAGS=-c -O3 -ggdb -ansi -Iinclude/ -Ibuild/ -Imodules/ -Iwin32/ -I. -fno-rtti -pedantic
+CPPFLAGS2=-c -O3 -ggdb -ansi -Iinclude/ -Ibuild/ -I. -fno-rtti -pedantic
+CPPFLAGS3=-ggdb
 # Linker
 LD=g++
-LFLAGS=-ggdb -O2
+LFLAGS=
 # Bison, re2c
 BISON=bison
 RE2C=re2c
@@ -40,7 +39,7 @@ $(BUILDDIR)parser.cc: $(SRCDIR)parser.y
 	$(BISON) -d -o$(BUILDDIR)parser.cc $(SRCDIR)parser.y
 
 $(BUILDDIR)parser.o: $(BUILDDIR)parser.cc
-	$(CXX) $(CPPFLAGS3) -o $(BUILDDIR)parser.o $(BUILDDIR)parser.cc
+	$(CXX) $(CPPFLAGS2) -o $(BUILDDIR)parser.o $(BUILDDIR)parser.cc
 
 $(BUILDDIR)scanner.cc: $(SRCDIR)scanner.re $(BUILDDIR)parser.o
 	$(RE2C) --case-insensitive -b -c -o $(BUILDDIR)scanner.cc $(SRCDIR)scanner.re
@@ -82,7 +81,7 @@ run-tests:
 	$(EXTRADIR)testrunner tests/
 
 test: $(EXTRADIR)testrunner.cpp
-	$(CXX) $(CPPFLAGS4) -o $(EXTRADIR)testrunner $(EXTRADIR)testrunner.cpp -lpcrecpp
+	$(CXX) $(CPPFLAGS3) -o $(EXTRADIR)testrunner $(EXTRADIR)testrunner.cpp -lpcrecpp
 
 clean-all: clean clean-test
 

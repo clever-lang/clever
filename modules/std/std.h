@@ -40,10 +40,6 @@ public:
 	void Init();
 };
 
-/* Module functions */
-static CLEVER_FUNCTION(print);
-static CLEVER_FUNCTION(println);
-
 extern Module* g_std_module;
 
 } // clever
