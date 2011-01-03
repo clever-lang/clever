@@ -47,73 +47,14 @@ void TreeNode::clear(void) throw() {
 	}
 }
 
-/*
- * LogicExpression
- */
-LogicExpression::LogicExpression(int op, Expression* lhs, Expression* rhs)
-	: m_op(op), m_lhs(lhs), m_rhs(rhs), m_value(NULL) {
-	Value* tmp_lhs = lhs->get_value();
-	Value* tmp_rhs = rhs->get_value();
+ArgumentList::~ArgumentList() {
+	Arguments::const_iterator it = m_args.begin(), end(m_args.end());
 
-	m_rhs->addRef();
-	m_lhs->addRef();
-
-	if (!Compiler::checkCompatibleTypes(tmp_lhs, tmp_rhs)) {
-		Compiler::error("Type mismatch!");
+	while (it != end) {
+		(*it)->delRef();
+		++it;
 	}
-
-	/* Checking if we can perform constant folding optimization */
-	if (tmp_lhs->isConst() && tmp_rhs->isConst()) {
-		m_value = Compiler::constantFolding(m_op, tmp_lhs, tmp_rhs);
-	}
-	if (m_value) {
-		/* No opcode must be generated */
-		set_optimized(true);
-
-		m_rhs->delRef();
-		m_lhs->delRef();
-		m_rhs = m_lhs = NULL;
-	} else {
-		m_result = new TempValue();
-	}
-}
-
-/*
- * BinaryExpression
- */
-BinaryExpression::BinaryExpression(int op, Expression* lhs, Expression* rhs)
-		: m_op(op), m_lhs(lhs), m_rhs(rhs), m_result(NULL), m_value(NULL) {
-	Value* tmp_lhs;
-	Value* tmp_rhs = rhs->get_value();
-
-	/* Check if it is an unary operation */
-	if (m_lhs == NULL) {
-		m_lhs = lhs = new ast::NumberLiteral(int64_t(0));
-	}
-
-	tmp_lhs = lhs->get_value();
-
-	m_rhs->addRef();
-	m_lhs->addRef();
-
-	if (!Compiler::checkCompatibleTypes(tmp_lhs, tmp_rhs)) {
-		Compiler::error("Type mismatch!");
-	}
-
-	/* Checking if we can perform constant folding optimization */
-	if (tmp_lhs->isConst() && tmp_rhs->isConst()) {
-		m_value = Compiler::constantFolding(m_op, tmp_lhs, tmp_rhs);
-	}
-	if (m_value) {
-		/* No opcode must be generated */
-		set_optimized(true);
-
-		m_rhs->delRef();
-		m_lhs->delRef();
-		m_rhs = m_lhs = NULL;
-	} else {
-		m_result = new TempValue();
-	}
+	m_args.clear();
 }
 
 }} // clever::ast

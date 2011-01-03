@@ -30,6 +30,8 @@
 #include <stack>
 #include "vm.h"
 #include "opcode.h"
+#include "ssa.h"
+#include "values.h"
 
 namespace clever { namespace ast {
 
@@ -48,6 +50,8 @@ class EndWhileExpression;
 class StartExpr;
 class LogicExpression;
 class FunctionCall;
+
+typedef std::vector<Expression*> Arguments;
 
 }} // clever::ast
 
@@ -86,6 +90,7 @@ public:
 	}
 
 	Value* getValue(ast::Expression*) throw();
+	ValueVector* functionArgs(const ast::Arguments*) throw();
 
 	/* Opcode generators */
 	Opcode* binaryExpression(ast::BinaryExpression*) throw();
@@ -111,8 +116,8 @@ public:
 private:
 	/* Opcode vector */
 	VM::OpcodeList m_opcodes;
-	/* Symbol table map */
-	SymbolTable m_symbols;
+	/* SSA form */
+	SSA m_ssa;
 	/* Stack used for control structures */
 	JmpStack m_jmps;
 	/* Stack used for break in loops */

@@ -185,8 +185,8 @@ expr:
 	|	expr "<=" expr  { $$ = new clever::ast::LogicExpression(ast::LESS_EQUAL, $1, $3); nodes.add($$); }
 	|	expr "==" expr  { $$ = new clever::ast::LogicExpression(ast::EQUAL, $1, $3); nodes.add($$); }
 	|	expr "!=" expr  { $$ = new clever::ast::LogicExpression(ast::NOT_EQUAL, $1, $3); nodes.add($$); }
-	|	'-' expr %prec UMINUS { $$ = new clever::ast::BinaryExpression(ast::MINUS, NULL, $2); nodes.add($$); }
-	|	'+' expr %prec UMINUS { $$ = new clever::ast::BinaryExpression(ast::PLUS, NULL, $2); nodes.add($$); }
+	|	'-' expr %prec UMINUS { $$ = new clever::ast::BinaryExpression(ast::MINUS, $2); nodes.add($$); }
+	|	'+' expr %prec UMINUS { $$ = new clever::ast::BinaryExpression(ast::PLUS, $2); nodes.add($$); }
 	|	INCREMENT IDENT { $$ = new clever::ast::PreIncrement($2); nodes.add($$); }
 	|	IDENT INCREMENT { $$ = new clever::ast::PosIncrement($1); nodes.add($$); }
 	|	DECREMENT IDENT { $$ = new clever::ast::PreDecrement($2); nodes.add($$); }

@@ -37,7 +37,9 @@
 #include "irbuilder.h"
 
 namespace clever {
+
 class Opcode;
+
 } // clever
 
 namespace clever { namespace ast {
@@ -63,8 +65,6 @@ enum {
 };
 
 class Expression;
-
-typedef std::vector<Expression*> Arguments;
 
 class NO_INIT_VTABLE Expression : public RefCounted {
 public:
@@ -128,9 +128,41 @@ public:
 	DISALLOW_COPY_AND_ASSIGN(Literal);
 };
 
+class NumberLiteral : public Literal {
+public:
+	explicit NumberLiteral(int64_t val) {
+		m_value = new ConstantValue(val);
+	}
+
+	explicit NumberLiteral(double val) {
+		m_value = new ConstantValue(val);
+	}
+
+	~NumberLiteral() {
+		m_value->delRef();
+	}
+
+	inline Value* get_value() const throw() { return m_value; };
+
+	DISALLOW_COPY_AND_ASSIGN(NumberLiteral);
+private:
+	ConstantValue* m_value;
+};
+
 class BinaryExpression : public Expression {
 public:
-	BinaryExpression(int, Expression*, Expression*);
+	BinaryExpression(int op, Expression* lhs, Expression* rhs)
+		: m_op(op), m_lhs(lhs), m_rhs(rhs), m_value(NULL), m_result(NULL) {
+		m_lhs->addRef();
+		m_rhs->addRef();
+	}
+
+	BinaryExpression(int op, Expression* rhs)
+		: m_op(op), m_lhs(NULL), m_rhs(rhs), m_value(NULL), m_result(NULL) {
+		m_lhs = new NumberLiteral(int64_t(0));
+		m_lhs->addRef();
+		m_rhs->addRef();
+	}
 
 	~BinaryExpression() {
 		if (m_value) {
@@ -166,6 +198,14 @@ public:
 		}
 	}
 
+	inline void set_result(ConstantValue* value) {
+		m_value = value;
+	}
+
+	inline void set_result(TempValue* value) {
+		m_result = value;
+	}
+
 	inline Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.binaryExpression(this);
 	}
@@ -175,29 +215,8 @@ private:
 	int m_op;
 	Expression* m_lhs;
 	Expression* m_rhs;
+	ConstantValue* m_value;
 	TempValue* m_result;
-	ConstantValue* m_value;
-};
-
-class NumberLiteral : public Literal {
-public:
-	explicit NumberLiteral(int64_t val) {
-		m_value = new ConstantValue(val);
-	}
-
-	explicit NumberLiteral(double val) {
-		m_value = new ConstantValue(val);
-	}
-
-	~NumberLiteral() {
-		m_value->delRef();
-	}
-
-	inline Value* get_value() const throw() { return m_value; };
-
-	DISALLOW_COPY_AND_ASSIGN(NumberLiteral);
-private:
-	ConstantValue* m_value;
 };
 
 class VariableDecl : public Expression {
@@ -595,7 +614,11 @@ private:
 
 class LogicExpression : public Expression {
 public:
-	LogicExpression(int, Expression*, Expression*);
+	LogicExpression(int op, Expression* lhs, Expression* rhs)
+		: m_op(op), m_lhs(lhs), m_rhs(rhs), m_result(NULL), m_value(NULL) {
+		m_lhs->addRef();
+		m_rhs->addRef();
+	}
 
 	~LogicExpression() {
 		if (m_value) {
@@ -619,6 +642,14 @@ public:
 
 	inline Expression* get_rhs() const {
 		return m_rhs;
+	}
+
+	inline void set_result(ConstantValue* value) {
+		m_value = value;
+	}
+
+	inline void set_result(TempValue* value) {
+		m_result = value;
 	}
 
 	inline Value* get_value() const throw() {
@@ -657,31 +688,23 @@ public:
 
 class ArgumentList : public Expression {
 public:
-	ArgumentList() {
-		m_value = new Value;
-		m_value->set_type(clever::Value::VECTOR);
-		m_value->setVector(new ValueVector);
-	}
+	ArgumentList() { }
 
-	~ArgumentList() {
-		m_value->delRef();
-	}
+	~ArgumentList();
 
 	inline void push(Expression* expr) {
-		Value* val = expr->get_value();
-		val->addRef();
 		expr->addRef();
-		m_value->getVector()->push_back(val);
-		expr->delRef();
+		m_args.push_back(expr);
 	}
 
-	inline Value* get_value() const throw() {
-		return m_value;
+	inline Arguments* get_args() throw() {
+		return &m_args;
 	}
 
 	DISALLOW_COPY_AND_ASSIGN(ArgumentList);
 private:
 	Value* m_value;
+	Arguments m_args;
 };
 
 class FunctionCall : public Expression {
@@ -707,11 +730,14 @@ public:
 		return m_name->get_value();
 	}
 
-	inline Value* get_value_args() throw() {
-		if (m_args) {
-			return m_args->get_value();
+	inline Arguments* get_args() throw() {
+		ArgumentList* args;
+
+		if (!m_args) {
+			return NULL;
 		}
-		return NULL;
+		args = static_cast<ArgumentList*>(m_args);
+		return args->get_args();
 	}
 
 	inline Opcode* codeGen(IRBuilder& builder) throw() {

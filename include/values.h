@@ -86,6 +86,9 @@ public:
 	inline bool isSet(void) const { return m_status != UNSET; }
 	inline bool isModified(void) const { return m_status == MODIFIED; }
 
+	inline void setSet(void) { m_status = SET; }
+	inline void setModified(void) { m_status = MODIFIED; }
+
 	inline bool isInteger(void) const { return m_type == INTEGER; }
 	inline bool isString(void) const { return m_type == STRING; }
 	inline bool isDouble(void) const { return m_type == DOUBLE; }

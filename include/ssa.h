@@ -25,48 +25,42 @@
  * $Id$
  */
 
-#ifndef CLEVER_SYMBOLTABLE_H
-#define CLEVER_SYMBOLTABLE_H
+#ifndef CLEVER_SSA_H
+#define CLEVER_SSA_H
 
-#include <deque>
 #include <boost/unordered_map.hpp>
-#include "global.h"
-#include "values.h"
+#include <deque>
 
 namespace clever {
 
-class CString;
+class Value;
 
-class SymbolTable {
+/**
+ * SSA form
+ */
+class SSA {
 public:
-	typedef boost::unordered_map<const CString*, Value*> var_map;
+	typedef std::pair<Value*, Value*> VarTrack;
+	typedef boost::unordered_map<const CString*, VarTrack> var_map;
 	typedef std::deque<var_map> var_scope;
 
-	SymbolTable()
+	SSA()
 		: m_var_at(-1) { }
+	~SSA() { }
 
 	inline void register_var(Value* var, Value* value) throw() {
-		m_variables.at(m_var_at).insert(std::pair<CString*, Value*>(var->getStringP(), value));
-		var->set_value(value);
+		m_variables.at(m_var_at).insert(std::pair<CString*, VarTrack>(var->getStringP(), VarTrack(var, value)));
 	}
 
-	inline Value* get_var(Value* var) throw() {
-		Value* value = var->isNamedValue() ? var->get_value() : NULL;
-		CString* name;
-
-		if (value) {
-			return value;
-		}
-
-		name = var->getStringP();
+	inline VarTrack* get_var(Value* var) throw() {
+		CString* name = var->getStringP();
 
 		/* Searchs for the variable in the inner and out scopes */
 		for (int i = m_var_at; i >= 0; --i) {
 			var_map::iterator it = m_variables.at(i).find(name);
 
 			if (it != m_variables.at(i).end()) {
-				var->set_value(it->second);
-				return it->second;
+				return &it->second;
 			}
 		}
 		return NULL;
@@ -85,14 +79,12 @@ public:
 		var_map::iterator it = topVarMap().begin();
 
 		while (it != topVarMap().end()) {
-			it->second->delRef();
+			it->second.first->delRef();
 			++it;
 		}
 		m_variables.pop_back();
 		--m_var_at;
 	}
-
-	DISALLOW_COPY_AND_ASSIGN(SymbolTable);
 private:
 	var_scope m_variables;
 	int m_var_at;
@@ -100,4 +92,4 @@ private:
 
 } // clever
 
-#endif // CLEVER_SYMBOLTABLE_H
+#endif // CLEVER_SSA_H

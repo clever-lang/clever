@@ -27,12 +27,14 @@
 
 #include "irbuilder.h"
 #include "compiler.h"
+#include "ssa.h"
+#include "values.h"
 
 namespace clever {
 
 void IRBuilder::init() throw() {
 	/* Initializes global scope */
-	m_symbols.pushVarMap(SymbolTable::var_map());
+	m_ssa.pushVarMap(SSA::var_map());
 
 	/* Reserve space for 10 opcodes */
 	m_opcodes.reserve(10);
@@ -40,7 +42,7 @@ void IRBuilder::init() throw() {
 
 void IRBuilder::shutdown() throw() {
 	/* Pop global scope */
-	m_symbols.popVarMap();
+	m_ssa.popVarMap();
 }
 
 
@@ -48,7 +50,18 @@ Value* IRBuilder::getValue(ast::Expression* expr) throw() {
 	Value* value = expr->get_value();
 
 	if (value && value->isNamedValue()) {
-		return m_symbols.get_var(value);
+		SSA::VarTrack* var = m_ssa.get_var(value);
+
+		/* Just return the variable value when it can be predicted */
+		if (var && !var->first->isModified() && var->second) {
+			return var->second;
+		} else {
+			/*
+			 * The variable value is not known, because it has been changed,
+			 * so just return the variable address
+			 */
+			return var->first;
+		}
 	}
 	return value;
 }
@@ -57,15 +70,23 @@ Value* IRBuilder::getValue(ast::Expression* expr) throw() {
  * Generates the binary expression opcode
  */
 Opcode* IRBuilder::binaryExpression(ast::BinaryExpression* expr) throw() {
-	Value* lhs;
-	Value* rhs;
+	Value* lhs = getValue(expr->get_lhs());
+	Value* rhs = getValue(expr->get_rhs());
+	ConstantValue* result = NULL;
 
-	if (expr->isOptimized()) {
-		return NULL;
+	if (!Compiler::checkCompatibleTypes(lhs, rhs)) {
+		Compiler::error("Type mismatch!");
 	}
 
-	lhs = getValue(expr->get_lhs());
-	rhs = getValue(expr->get_rhs());
+	if (lhs->isConst() && rhs->isConst()) {
+		result = Compiler::constantFolding(expr->get_op(), lhs, rhs);
+	}
+	if (result) {
+		expr->set_optimized(true);
+		expr->set_result(result);
+		return NULL;
+	}
+	expr->set_result(new TempValue);
 
 	lhs->addRef();
 	rhs->addRef();
@@ -95,8 +116,9 @@ Opcode* IRBuilder::variableDecl(ast::VariableDecl* expr) throw() {
 	if (rhs_expr) {
 		Value* value = rhs_expr->get_value();
 
-		m_symbols.register_var(variable);
+		m_ssa.register_var(variable, value);
 
+		variable->setSet();
 		variable->addRef();
 		variable->addRef();
 		value->addRef();
@@ -115,7 +137,7 @@ Opcode* IRBuilder::newBlock() throw() {
 	Jmp jmp;
 
 	/* Initializes new scope */
-	m_symbols.pushVarMap(SymbolTable::var_map());
+	m_ssa.pushVarMap(SSA::var_map());
 
 	jmp.push(opcode);
 	m_jmps.push(jmp);
@@ -134,7 +156,7 @@ Opcode* IRBuilder::endBlock() throw() {
 	 * No variable was defined in the scope, so let to set a flag
 	 * to do not push-pop scope in runtime
 	 */
-	if (m_symbols.topVarMap().size() == 0) {
+	if (m_ssa.topVarMap().size() == 0) {
 		start_block->set_flags(BLK_UNUSED);
 		opcode->set_flags(BLK_UNUSED);
 	} else {
@@ -146,7 +168,7 @@ Opcode* IRBuilder::endBlock() throw() {
 	m_jmps.pop();
 
 	/* Pop current scope */
-	m_symbols.popVarMap();
+	m_ssa.popVarMap();
 
 	return opcode;
 }
@@ -157,6 +179,11 @@ Opcode* IRBuilder::endBlock() throw() {
 Opcode* IRBuilder::preIncrement(ast::PreIncrement* expr) throw() {
 	Value* value = getValue(expr->get_expr());
 
+	if (expr->get_expr()->get_value()->isNamedValue()) {
+		SSA::VarTrack* var = m_ssa.get_var(expr->get_expr()->get_value());
+
+		var->first->setModified();
+	}
 	value->addRef();
 	return new Opcode(OP_PRE_INC, &VM::pre_inc_handler, value, NULL, expr->get_value());
 }
@@ -167,6 +194,11 @@ Opcode* IRBuilder::preIncrement(ast::PreIncrement* expr) throw() {
 Opcode* IRBuilder::posIncrement(ast::PosIncrement* expr) throw() {
 	Value* value = getValue(expr->get_expr());
 
+	if (expr->get_expr()->get_value()->isNamedValue()) {
+		SSA::VarTrack* var = m_ssa.get_var(expr->get_expr()->get_value());
+
+		var->first->setModified();
+	}
 	value->addRef();
 	return new Opcode(OP_POS_INC, &VM::pos_inc_handler, value, NULL, expr->get_value());
 }
@@ -177,6 +209,11 @@ Opcode* IRBuilder::posIncrement(ast::PosIncrement* expr) throw() {
 Opcode* IRBuilder::preDecrement(ast::PreDecrement* expr) throw() {
 	Value* value = getValue(expr->get_expr());
 
+	if (expr->get_expr()->get_value()->isNamedValue()) {
+		SSA::VarTrack* var = m_ssa.get_var(expr->get_expr()->get_value());
+
+		var->first->setModified();
+	}
 	value->addRef();
 	return new Opcode(OP_PRE_DEC, &VM::pre_dec_handler, value, NULL, expr->get_value());
 }
@@ -187,6 +224,11 @@ Opcode* IRBuilder::preDecrement(ast::PreDecrement* expr) throw() {
 Opcode* IRBuilder::posDecrement(ast::PosDecrement* expr) throw(){
 	Value* value = getValue(expr->get_expr());
 
+	if (expr->get_expr()->get_value()->isNamedValue()) {
+		SSA::VarTrack* var = m_ssa.get_var(expr->get_expr()->get_value());
+
+		var->first->setModified();
+	}
 	value->addRef();
 	return new Opcode(OP_POS_DEC, &VM::pos_dec_handler, value, NULL, expr->get_value());
 }
@@ -312,15 +354,24 @@ Opcode* IRBuilder::startExpr(ast::StartExpr* expr) throw() {
  * Generates opcode for logic expression which weren't optimized
  */
 Opcode* IRBuilder::logicExpression(ast::LogicExpression* expr) throw() {
-	Value* lhs;
-	Value* rhs;
+	Value* lhs = getValue(expr->get_lhs());
+	Value* rhs = getValue(expr->get_rhs());
+	ConstantValue* result = NULL;
 
-	if (expr->isOptimized()) {
+	if (!Compiler::checkCompatibleTypes(lhs, rhs)) {
+		Compiler::error("Type mismatch!");
+	}
+
+	if (lhs->isConst() && rhs->isConst()) {
+		result = Compiler::constantFolding(expr->get_op(), lhs, rhs);
+	}
+	if (result) {
+		expr->set_optimized(true);
+		expr->set_result(result);
 		return NULL;
 	}
 
-	lhs = getValue(expr->get_lhs());
-	rhs = getValue(expr->get_rhs());
+	expr->set_result(new TempValue);
 
 	lhs->addRef();
 	rhs->addRef();
@@ -347,23 +398,48 @@ Opcode* IRBuilder::breakExpression() throw() {
 	return opcode;
 }
 
+ValueVector* IRBuilder::functionArgs(const ast::Arguments* args) throw() {
+	ValueVector* values = new ValueVector();
+	ast::Arguments::const_iterator it = args->begin(), end(args->end());
+
+	values->reserve(args->size());
+
+	while (it != end) {
+		Value* value = getValue(*it);
+
+		if (value) {
+			value->addRef();
+		}
+		values->push_back(value);
+		++it;
+	}
+
+	return values;
+}
+
 /*
  * Generates opcode for function call
  */
 Opcode* IRBuilder::functionCall(ast::FunctionCall* expr) throw() {
+	Value* arg_values = NULL;
 	Value* name_expr = expr->get_value();
-	Value* args = expr->get_value_args();
+	ast::Arguments* args = expr->get_args();
 	const std::string* name = name_expr->getStringP();
+
 
 	if (!Compiler::functionExists(*name)) {
 		Compiler::error("Function does not exists!");
 	}
 
 	name_expr->addRef();
+
 	if (args) {
-		args->addRef();
+		arg_values = new Value;
+		arg_values->set_type(Value::VECTOR);
+		arg_values->setVector(functionArgs(args));
 	}
-	return new Opcode(OP_FCALL, &VM::fcall_handler, name_expr, args);
+
+	return new Opcode(OP_FCALL, &VM::fcall_handler, name_expr, arg_values);
 }
 
 

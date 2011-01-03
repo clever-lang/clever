@@ -89,8 +89,8 @@ Compiler::~Compiler() {
  * Collects all opcode
  */
 void Compiler::buildIR() throw() {
-	const ast::TreeNode::nodeList& ast_nodes = m_ast->getNodeList();
-	ast::TreeNode::nodeList::const_iterator it = ast_nodes.begin(), end(ast_nodes.end());
+	ast::TreeNode::nodeList& ast_nodes = m_ast->getNodeList();
+	ast::TreeNode::nodeList::iterator it = ast_nodes.begin(), end(ast_nodes.end());
 
 	m_builder.init();
 
