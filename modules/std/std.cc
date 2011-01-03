@@ -26,6 +26,7 @@
  */
 
 #include <iostream>
+#include <cstdio>
 #include "module.h"
 #include "std/std.h"
 
