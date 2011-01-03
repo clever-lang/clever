@@ -25,6 +25,7 @@
  * $Id$
  */
 
+#include <cstdio>
 #include <string>
 #include "opcode.h"
 
