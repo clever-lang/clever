@@ -116,7 +116,7 @@ public:
 	}
 
 	virtual std::string toString(void) {
-		std::stringstream str;
+		std::ostringstream str;
 
 		switch (get_type()) {
 			case INTEGER:
@@ -130,7 +130,7 @@ public:
 			case BOOLEAN:
 				return std::string(getBoolean() ? "true" : "false");
 			case STRING:
-				return getString();
+				return getString().c_str();
 			default:
 				return std::string();
 		}
