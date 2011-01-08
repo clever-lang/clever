@@ -60,7 +60,8 @@ enum Opcodes {
 	OP_EQUAL,
 	OP_NOT_EQUAL,
 	OP_BREAK,
-	OP_FCALL
+	OP_FCALL,
+	OP_MCALL
 };
 
 /**

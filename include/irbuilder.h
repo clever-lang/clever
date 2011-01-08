@@ -50,6 +50,7 @@ class EndWhileExpression;
 class StartExpr;
 class LogicExpression;
 class FunctionCall;
+class MethodCall;
 
 typedef std::vector<Expression*> Arguments;
 
@@ -111,6 +112,7 @@ public:
 	Opcode* logicExpression(ast::LogicExpression*) throw();
 	Opcode* breakExpression() throw();
 	Opcode* functionCall(ast::FunctionCall*) throw();
+	Opcode* methodCall(ast::MethodCall*) throw();
 
 	DISALLOW_COPY_AND_ASSIGN(IRBuilder);
 private:

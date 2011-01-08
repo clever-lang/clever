@@ -447,5 +447,21 @@ Opcode* IRBuilder::functionCall(ast::FunctionCall* expr) throw() {
 	return new Opcode(OP_FCALL, &VM::fcall_handler, name_expr, arg_values);
 }
 
+Opcode* IRBuilder::methodCall(ast::MethodCall* expr) throw() {
+	Value* arg_values = NULL;
+	Value* var = getValue(expr->get_variable());
+	Value* method = new ConstantValue(expr->get_method()->get_value()->getStringP());
+	ast::Arguments* args = expr->get_args();
+
+	if (args) {
+		arg_values = new Value;
+		arg_values->set_type(Value::VECTOR);
+		arg_values->setVector(functionArgs(args));
+	}
+
+	var->addRef();
+
+	return new Opcode(OP_MCALL, &VM::mcall_handler, var, method, arg_values);
+}
 
 } // clever

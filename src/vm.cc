@@ -532,4 +532,11 @@ CLEVER_VM_HANDLER(VM::fcall_handler) {
 	func.get_func()(func_args);
 }
 
+/*
+ * var.method()
+ */
+CLEVER_VM_HANDLER(VM::mcall_handler) {
+
+}
+
 } // clever

@@ -246,7 +246,7 @@ public:
 	Expression* get_initial_value() const {
 		return m_initial_value;
 	}
-	
+
 	Expression* get_type() const {
 		return m_type;
 	}
@@ -750,6 +750,56 @@ public:
 	DISALLOW_COPY_AND_ASSIGN(FunctionCall);
 private:
 	Expression* m_name;
+	Expression* m_args;
+};
+
+class MethodCall : public Expression {
+public:
+	MethodCall(Expression* var, Expression* method)
+		: m_var(var), m_method(method), m_args(NULL) {
+		m_var->addRef();
+		m_method->addRef();
+	}
+
+	MethodCall(Expression* var, Expression* method, Expression* args)
+		: m_var(var), m_method(method), m_args(args) {
+		m_var->addRef();
+		m_method->addRef();
+		m_args->addRef();
+	}
+
+	~MethodCall() {
+		m_var->delRef();
+		m_method->delRef();
+		if (m_args) {
+			m_args->delRef();
+		}
+	}
+
+	inline Expression* get_variable() const throw() {
+		return m_var;
+	}
+
+	inline Expression* get_method() const throw() {
+		return m_method;
+	}
+
+	inline Arguments* get_args() const throw() {
+		ArgumentList* args;
+
+		if (!m_args) {
+			return NULL;
+		}
+		args = static_cast<ArgumentList*>(m_args);
+		return args->get_args();
+	}
+
+	inline Opcode* codeGen(IRBuilder& builder) throw() {
+		return builder.methodCall(this);
+	}
+private:
+	Expression* m_var;
+	Expression* m_method;
 	Expression* m_args;
 };
 
