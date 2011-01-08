@@ -31,12 +31,14 @@
 #include "compiler.h"
 #include "modules.h"
 #include "int.h"
-#include "typestable.h"
+#include "typetable.h"
 
 namespace clever {
 
+TypeTable* g_type_table = new TypeTable;
+
 FunctionTable Compiler::s_func_table;
-CTypesTable g_types_table;
+TypeMap TypeTable::s_type_table;
 
 /*
  * Initializes the compiler data
@@ -55,7 +57,7 @@ void Compiler::Init(ast::TreeNode* nodes) throw() {
 }
 
 void Compiler::loadTypes() throw() {
-	g_types_table.insert(std::pair<const CString*, Type*>(CSTRING("Int"), g_int_type));
+	TypeTable::insert(CSTRING("Int"), g_int_type);
 }
 
 /*
@@ -83,7 +85,6 @@ void Compiler::loadModules() throw() {
 Compiler::~Compiler() {
 	FunctionTable::const_iterator it = s_func_table.begin(), end_func(s_func_table.end());
 	ModuleList::const_iterator it2 = m_modules.begin(), end_module(m_modules.end());
-	CTypesTable::const_iterator it3 = g_types_table.begin(), end_types(g_types_table.end()); 
 
 	while (it != end_func) {
 		delete it->second;
@@ -94,11 +95,8 @@ Compiler::~Compiler() {
 		delete *it2;
 		++it2;
 	}
-	
-	while (it3 != end_types) {
-		delete it3->second;
-		++it3;
-	}
+
+	delete g_type_table;
 }
 
 /*
