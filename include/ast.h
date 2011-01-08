@@ -30,7 +30,6 @@
 
 #include <string>
 #include <vector>
-#include "types.h"
 #include "values.h"
 #include "cstring.h"
 #include "refcounted.h"
@@ -246,6 +245,10 @@ public:
 
 	Expression* get_initial_value() const {
 		return m_initial_value;
+	}
+	
+	Expression* get_type() const {
+		return m_type;
 	}
 
 	inline Opcode* codeGen(IRBuilder& builder) throw() {

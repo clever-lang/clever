@@ -161,10 +161,10 @@ private:
 class NamedValue : public Value {
 public:
 	NamedValue()
-		: Value(NAMED), m_value(NULL) { }
+		: Value(NAMED), m_value(NULL), m_var_type(NULL) { }
 
 	explicit NamedValue(CString* name)
-		: Value(NAMED), m_value(NULL) {
+		: Value(NAMED), m_value(NULL), m_var_type(NULL) {
 		set_type(STRING);
 		setString(name);
 	}
@@ -172,12 +172,17 @@ public:
 	inline void set_value(Value* value) {
 		m_value = value;
 	}
+	
+	inline void set_var_type(Type* type) {
+		m_var_type = type;
+	}
 
 	Value* get_value(void) {
 		return m_value;
 	}
 private:
 	Value* m_value;
+	Type* m_var_type;
 };
 
 /**

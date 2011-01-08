@@ -29,6 +29,7 @@
 #include "compiler.h"
 #include "ssa.h"
 #include "values.h"
+#include "typestable.h"
 
 namespace clever {
 
@@ -108,13 +109,17 @@ Opcode* IRBuilder::binaryExpression(ast::BinaryExpression* expr) throw() {
  * Generates the variable declaration opcode
  */
 Opcode* IRBuilder::variableDecl(ast::VariableDecl* expr) throw() {
+	ast::Expression* var_type = expr->get_type();
 	ast::Expression* var_expr = expr->get_variable();
-	ast::Expression* rhs_expr = expr->get_initial_value();
-	Value* variable = var_expr->get_value();
+	ast::Expression* rhs_expr = expr->get_initial_value();	
+	NamedValue* variable = static_cast<NamedValue*>(var_expr->get_value());
+	Type* type = Compiler::getType(var_type->get_value()->getStringP());
 
 	/* Check if the declaration contains initialization */
 	if (rhs_expr) {
 		Value* value = rhs_expr->get_value();
+		
+		variable->set_var_type(type);
 
 		m_ssa.register_var(variable, value);
 

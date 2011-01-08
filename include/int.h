@@ -1,6 +1,6 @@
 /*
  * Clever language
- * Copyright (c) 2010 Clever Team
+ * Copyright (c) 2011 Clever Team
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -25,37 +25,25 @@
  * $Id$
  */
 
-#include <iostream>
-#include <cstdio>
-#include "module.h"
-#include "std/std.h"
+#ifndef CLEVER_INT_H
+#define CLEVER_INT_H
+
+#include "type.h"
 
 namespace clever {
 
-Module* g_std_module = new StdModule;
+class Integer : public Type {
+public:
+	Integer() :
+		Type("Int") { }
+	
+	~Integer() { }
+	
+	void Init();
+};
 
-static CLEVER_FUNCTION(print) {
-	//std::cout.sync_with_stdio(false);
-	std::ios::sync_with_stdio(false);
-	for (int i = 0, size = args.size(); i < size; ++i) {
-		std::cout << args.at(i)->toString();
-		// printf("%s", args.at(i)->toString().c_str());
-	}
-}
-
-static CLEVER_FUNCTION(println) {
-	for (int i = 0, size = args.size(); i < size; ++i) {
-		printf("%s\n", args.at(i)->toString().c_str());
-	}
-}
-
-/*
- * Initializes Standard module
- */
-void StdModule::Init() throw() {
-	/* Module functions */
-	addFunction(new Function("print", &CLEVER_FUNC_NAME(print)));
-	addFunction(new Function("println", &CLEVER_FUNC_NAME(println)));
-}
+extern Integer* g_int_type;
 
 } // clever
+
+#endif // CLEVER_INT_H

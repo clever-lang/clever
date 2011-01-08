@@ -28,7 +28,6 @@
 #include "driver.h"
 #include "parser.hh"
 #include "position.hh"
-#include "types.h"
 #include "scanner.h"
 #include "vm.h"
 

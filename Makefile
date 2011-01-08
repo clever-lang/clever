@@ -22,7 +22,7 @@ WINDIR=win32/
 # Testrunner dir
 EXTRADIR=extra/
 
-OBJECTS=$(BUILDDIR)parser.o $(BUILDDIR)scanner.o $(BUILDDIR)driver.o $(BUILDDIR)types.o $(BUILDDIR)cstring.o $(BUILDDIR)irbuilder.o $(BUILDDIR)ast.o $(BUILDDIR)std.o $(BUILDDIR)compiler.o $(BUILDDIR)vm.o $(BUILDDIR)opcode.o $(BUILDDIR)main.o $(BUILDDIR)win32.o
+OBJECTS=$(BUILDDIR)parser.o $(BUILDDIR)scanner.o $(BUILDDIR)driver.o $(BUILDDIR)cstring.o $(BUILDDIR)int.o $(BUILDDIR)irbuilder.o $(BUILDDIR)ast.o $(BUILDDIR)std.o $(BUILDDIR)compiler.o $(BUILDDIR)vm.o $(BUILDDIR)opcode.o $(BUILDDIR)main.o $(BUILDDIR)win32.o
 
 clever: $(OBJECTS)
 	$(LD) $(LFLAGS) -o clever $(BUILDDIR)*.o
@@ -64,9 +64,9 @@ $(BUILDDIR)vm.o: $(SRCDIR)vm.cc
 
 $(BUILDDIR)opcode.o: $(SRCDIR)opcode.cc
 	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)opcode.o $(SRCDIR)opcode.cc
-
-$(BUILDDIR)types.o: $(SRCDIR)types.cc
-	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)types.o $(SRCDIR)types.cc
+	
+$(BUILDDIR)int.o: $(SRCDIR)int.cc
+	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)int.o $(SRCDIR)int.cc
 
 $(BUILDDIR)std.o: $(MODDIR)std/std.cc
 	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)std.o $(MODDIR)std/std.cc

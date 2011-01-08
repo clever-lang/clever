@@ -34,7 +34,6 @@
 
 #include <vector>
 #include "scanner.h"
-#include "types.h"
 #include "ast.h"
 
 #define YYSTYPE clever::ast::Expression*

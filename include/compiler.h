@@ -32,6 +32,7 @@
 #include "ast.h"
 #include "irbuilder.h"
 #include "module.h"
+#include "typestable.h"
 
 namespace clever {
 
@@ -47,6 +48,7 @@ public:
 	~Compiler();
 
 	void Init(ast::TreeNode*) throw();
+	void loadTypes() throw();
 	void loadModules() throw();
 	void buildIR() throw();
 
@@ -56,6 +58,17 @@ public:
 
 	VM::OpcodeList* getOpcodes() {
 		return m_builder.get_opcodes();
+	}
+	/*
+	 * Returns the Type pointer
+	 */
+	static inline Type* getType(const CString* name) throw() {
+		CTypesTable::const_iterator it = g_types_table.find(name);
+		
+		if (it != g_types_table.end()) {
+			return it->second;
+		}
+		return NULL;
 	}
 	/*
 	 * Checks if a function exists
