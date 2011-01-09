@@ -115,11 +115,11 @@ Opcode* IRBuilder::variableDecl(ast::VariableDecl* expr) throw() {
 	NamedValue* variable = static_cast<NamedValue*>(var_expr->get_value());
 	Type* type = TypeTable::getType(var_type->get_value()->getStringP());
 
+	variable->set_var_type(type);
+
 	/* Check if the declaration contains initialization */
 	if (rhs_expr) {
 		Value* value = rhs_expr->get_value();
-
-		variable->set_var_type(type);
 
 		m_ssa.register_var(variable, value);
 
@@ -449,7 +449,7 @@ Opcode* IRBuilder::functionCall(ast::FunctionCall* expr) throw() {
 
 Opcode* IRBuilder::methodCall(ast::MethodCall* expr) throw() {
 	Value* arg_values = NULL;
-	Value* var = getValue(expr->get_variable());
+	SSA::VarTrack* variable = m_ssa.get_var(expr->get_variable()->get_value());
 	Value* method = new ConstantValue(expr->get_method()->get_value()->getStringP());
 	ast::Arguments* args = expr->get_args();
 
@@ -459,9 +459,9 @@ Opcode* IRBuilder::methodCall(ast::MethodCall* expr) throw() {
 		arg_values->setVector(functionArgs(args));
 	}
 
-	var->addRef();
+	variable->first->addRef();
 
-	return new Opcode(OP_MCALL, &VM::mcall_handler, var, method, arg_values);
+	return new Opcode(OP_MCALL, &VM::mcall_handler, variable->first, method, arg_values);
 }
 
 } // clever

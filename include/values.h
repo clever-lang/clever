@@ -172,13 +172,17 @@ public:
 	inline void set_value(Value* value) {
 		m_value = value;
 	}
-	
+
+	Value* get_value(void) {
+		return m_value;
+	}
+
 	inline void set_var_type(Type* type) {
 		m_var_type = type;
 	}
 
-	Value* get_value(void) {
-		return m_value;
+	inline Type* get_var_type() {
+		return m_var_type;
 	}
 private:
 	Value* m_value;

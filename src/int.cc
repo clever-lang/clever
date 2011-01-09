@@ -25,14 +25,22 @@
  * $Id: compiler.h 238 2011-01-02 16:57:07Z felipensp $
  */
 
+#include <iostream>
+#include "cstring.h"
+#include "type.h"
 #include "int.h"
+#include "modules.h"
 
 namespace clever {
 
 Integer* g_int_type = new Integer;
 
+CLEVER_METHOD(Integer::toString) {
+	std::cout << "called!" << std::endl;
+}
+
 void Integer::Init() {
-	
+	addMethod(new Method(CSTRING("tostring"), (MethodPtr)&Integer::toString));
 }
 
 } // clever

@@ -28,6 +28,7 @@
 #ifndef CLEVER_INT_H
 #define CLEVER_INT_H
 
+#include "module.h"
 #include "type.h"
 
 namespace clever {
@@ -36,10 +37,11 @@ class Integer : public Type {
 public:
 	Integer() :
 		Type("Int") { }
-	
-	~Integer() { }
-	
+
 	void Init();
+
+	/* Type methods */
+	CLEVER_METHOD(toString);
 };
 
 extern Integer* g_int_type;

@@ -57,6 +57,7 @@ void Compiler::Init(ast::TreeNode* nodes) throw() {
 }
 
 void Compiler::loadTypes() throw() {
+	g_int_type->Init();
 	TypeTable::insert(CSTRING("Int"), g_int_type);
 }
 

@@ -2,8 +2,8 @@
 #
 # Compiler
 CXX?=g++
-CPPFLAGS=-c -O3 -ggdb -ansi -Iinclude/ -Ibuild/ -Imodules/ -Iwin32/ -I. -fno-rtti -pedantic
-CPPFLAGS2=-c -O3 -ggdb -ansi -Iinclude/ -Ibuild/ -I. -fno-rtti -pedantic
+CPPFLAGS=-c -O2 -ggdb -ansi -Iinclude/ -Ibuild/ -Imodules/ -Iwin32/ -I. -fno-rtti -pedantic
+CPPFLAGS2=-c -O2 -ggdb -ansi -Iinclude/ -Ibuild/ -I. -fno-rtti -pedantic
 CPPFLAGS3=-ggdb
 # Linker
 LD=g++
@@ -64,7 +64,7 @@ $(BUILDDIR)vm.o: $(SRCDIR)vm.cc
 
 $(BUILDDIR)opcode.o: $(SRCDIR)opcode.cc
 	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)opcode.o $(SRCDIR)opcode.cc
-	
+
 $(BUILDDIR)int.o: $(SRCDIR)int.cc
 	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)int.o $(SRCDIR)int.cc
 
