@@ -28,15 +28,20 @@
 #ifndef CLEVER_CSTRING_H
 #define CLEVER_CSTRING_H
 
-#include <locale>
 #include <string>
 #include <boost/functional/hash.hpp>
 #include <boost/unordered_map.hpp>
 
+/**
+ * Returns the CString* pointer to a string
+ */
 #define CSTRING(xstring) (clever::CString(xstring).intern())
 
 namespace clever {
 
+/**
+ * String interning implementation
+ */
 class CStringTable;
 
 class CString : public std::string {

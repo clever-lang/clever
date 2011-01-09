@@ -36,7 +36,7 @@
 
 namespace clever {
 
-/*
+/**
  * Function table
  */
 typedef boost::unordered_map<const std::string, Function*> FunctionTable;
@@ -52,30 +52,42 @@ public:
 	void loadModules() throw();
 	void buildIR() throw();
 
+	/**
+	 * Returns the reference to static member function table
+	 */
 	FunctionTable& get_functions() const throw() {
 		return s_func_table;
 	}
-
+	/**
+	 * Returns the pointer to opcode vector
+	 */
 	VM::OpcodeList* getOpcodes() {
 		return m_builder.get_opcodes();
 	}
-	/*
+	/**
 	 * Checks if a function exists
 	 */
 	static bool functionExists(const std::string& name) throw() {
 		return s_func_table.find(name) != s_func_table.end();
 	}
-	/*
+	/**
 	 * Returns the a Function pointer
 	 */
 	static const Function& getFunction(const std::string& name) throw() {
 		return *s_func_table.find(name)->second;
 	}
-
+	/**
+	 * Displays the error message and exits the program
+	 */
 	static void error(const char*) throw();
+	/**
+	 * Checks if two operands has compatible types to perform some operation
+	 */
 	static bool checkCompatibleTypes(Value*, Value*) throw();
+	/**
+	 * Performs the constant folding and constant propagation optimization
+	 */
 	static ConstantValue* constantFolding(int, Value*, Value*) throw();
-
 
 	DISALLOW_COPY_AND_ASSIGN(Compiler);
 private:

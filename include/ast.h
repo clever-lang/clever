@@ -43,8 +43,8 @@ class Opcode;
 
 namespace clever { namespace ast {
 
-/*
- * Operators
+/**
+ * Operators (logical and binary)
  */
 enum {
 	MINUS,
@@ -63,27 +63,25 @@ enum {
 	NOT_EQUAL
 };
 
-class Expression;
-
 class NO_INIT_VTABLE Expression : public RefCounted {
 public:
 	Expression()
 		: RefCounted(0), m_optimized(false) { }
 
 	virtual ~Expression() { }
-
-	virtual bool isLiteral() const { return false; }
-
-	virtual bool hasValue() const { return false; }
-
-	bool isOptimized() const { return m_optimized; }
-
-	void set_optimized(bool value) { m_optimized = value; }
-	/*
+	/**
+	 * Indicates if the node is optimized
+	 */
+	bool isOptimized() const throw() { return m_optimized; }
+	/**
+	 * Change the node optimize status
+	 */
+	void set_optimized(bool value) throw() { m_optimized = value; }
+	/**
 	 * Method for getting the value representation
 	 */
 	virtual Value* get_value() const throw() { return NULL; }
-	/*
+	/**
 	 * Method for generating the expression IR
 	 */
 	virtual Opcode* codeGen(IRBuilder& builder) throw() { return NULL; };
@@ -100,6 +98,9 @@ public:
 	TreeNode() { }
 	~TreeNode() { }
 
+	/**
+	 * Remove the AST nodes (called after building the IRs)
+	 */
 	void clear() throw() {
 		TreeNode::nodeList::const_iterator it = nodes.begin(), end(nodes.end());
 
@@ -108,11 +109,16 @@ public:
 			++it;
 		}
 	}
-
+	/**
+	 * Add a new AST node (incrementing the node reference)
+	 */
 	void add(Expression* node) throw() {
 		node->addRef();
 		nodes.push_back(node);
 	}
+	/**
+	 * Get reference to the AST nodes vector
+	 */
 	nodeList& getNodeList() throw() {
 		return nodes;
 	}
