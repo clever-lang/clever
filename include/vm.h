@@ -80,14 +80,17 @@ public:
 			return NULL;
 		}
 		switch (op->get_kind()) {
-			case Value::NAMED:
-				return m_symbols.get_var(op);
 			case Value::CONST:
 				return op;
 			case Value::TEMP:
 				return op->get_value();
+			default:
+				if (!op->hasName()) {
+					error("Value name not known.");
+				}
+
+				return m_symbols.fetchValue(op->get_name());
 		}
-		return NULL;
 	}
 
 	/* Opcode handlers */
@@ -121,7 +124,7 @@ public:
 	DISALLOW_COPY_AND_ASSIGN(VM);
 private:
 	OpcodeList* m_opcodes;
-	SymbolTable m_symbols;
+	ScopeManager m_symbols;
 };
 
 } // clever

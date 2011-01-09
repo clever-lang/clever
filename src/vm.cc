@@ -75,7 +75,7 @@ void VM::run(void) throw() {
 	unsigned int next_op, last_op = m_opcodes->size();
 
 	/* Initializes global scope */
-	m_symbols.pushVarMap(SymbolTable::var_map());
+	m_symbols.enter();
 
 	for (next_op = 0; next_op < last_op; ++next_op) {
 		Opcode& opcode = *(*m_opcodes)[next_op];
@@ -87,7 +87,7 @@ void VM::run(void) throw() {
 	}
 
 	/* Pop global scope */
-	m_symbols.popVarMap();
+	m_symbols.leave();
 }
 
 /*
@@ -243,7 +243,7 @@ CLEVER_VM_HANDLER(VM::new_scope_handler) {
 	 */
 	if (opcode.get_flags() == BLK_USED) {
 		/* Create a new scope */
-		m_symbols.pushVarMap(SymbolTable::var_map());
+		m_symbols.enter();
 	}
 }
 
@@ -253,7 +253,7 @@ CLEVER_VM_HANDLER(VM::new_scope_handler) {
 CLEVER_VM_HANDLER(VM::end_scope_handler) {
 	if (opcode.get_flags() == BLK_USED) {
 		/* Remove the newest scope */
-		m_symbols.popVarMap();
+		m_symbols.leave();
 	}
 }
 
@@ -267,10 +267,12 @@ CLEVER_VM_HANDLER(VM::var_decl_handler) {
 	if (!value) {
 		error("Uninitialized variable!");
 	}
-	value->addRef();
-
+	//value->addRef();
+	opcode.get_op1()->addRef();
 	/* Register the variable in the current scope */
-	m_symbols.register_var(opcode.get_op1(), value);
+	//m_symbols.register_var(opcode.get_op1(), value);
+	opcode.get_op1()->copy(value);
+	m_symbols.pushValue(opcode.get_op1());
 }
 
 /*
@@ -537,7 +539,7 @@ CLEVER_VM_HANDLER(VM::fcall_handler) {
  */
 CLEVER_VM_HANDLER(VM::mcall_handler) {
 	NamedValue* var = static_cast<NamedValue*>(opcode.get_op1());
-	Type* var_type = var->get_var_type();
+	Type* var_type = var->get_type_ptr();
 	Method* method = var_type->getMethod(opcode.get_op2()->getStringP());
 	Value* retval = NULL;
 

@@ -37,6 +37,104 @@ namespace clever {
 
 class CString;
 
+class Scope;
+
+typedef boost::unordered_map<const CString*, Value*> ScopeBase;
+typedef std::deque<Scope> ScopeManagerBase;
+
+class Scope: public ScopeBase {
+public:
+	Scope() { }
+	~Scope() {
+		Scope::iterator it = begin();
+
+		while (it != end()) {
+		//	Scope::value_type p = *it;
+			it->second->delRef();
+			++it;
+		}
+	}
+
+	void push(const CString* name, Value* value) {
+		insert(std::pair<const CString*, Value*>(name, value));
+	}
+
+	void push(Value* value) {
+		if (!value->hasName()) {
+			// TODO: THROW ERROR HERE
+		}
+		push(value->get_name(), value);
+	}
+
+	Value* fetch(const CString* name) {
+		if (!empty()) {
+			Scope::iterator it = find(name);
+
+			if (it != end())
+				return it->second;
+		}
+		
+		return NULL;
+	}
+};
+
+class ScopeManager: public ScopeManagerBase {
+public:
+	ScopeManager() : m_scope(-1) { }
+	
+	inline void pushValue(CString* name, Value* value) {
+		at(m_scope).push(name, value);
+	}
+
+	inline void pushValue(Value* value) {
+		at(m_scope).push(value);
+	}
+
+	Value* fetchValue(CString* name) {
+		if (m_scope == -1) {
+			// XXX: hm, maybe we should throw a warning here?
+			return NULL;
+		}
+
+		Value* value = at(m_scope).fetch(name);
+
+		if (value == NULL) {
+			value = deepValueSearch(name);
+		}
+		return value;
+	}
+
+	inline void enter() {
+		push_back(Scope());
+		++m_scope;
+	}
+
+	inline void leave() {
+		if (m_scope == -1) {
+			// TODO: throw error
+		}
+
+		pop_back();
+		--m_scope;
+	}
+
+	DISALLOW_COPY_AND_ASSIGN(ScopeManager);
+private:
+	int m_scope;
+
+	Value* deepValueSearch(CString* name) {
+		for (int i = m_scope-1; i >= 0; --i) {
+			Value* value = at(i).fetch(name);
+
+			if (value) {
+				return value;
+			}
+		}
+
+		return NULL;
+	}
+};
+/*
 class SymbolTable {
 public:
 	typedef boost::unordered_map<const CString*, Value*> var_map;
@@ -60,7 +158,7 @@ public:
 
 		name = var->getStringP();
 
-		/* Searchs for the variable in the inner and out scopes */
+		* Searchs for the variable in the inner and out scopes *
 		for (int i = m_var_at; i >= 0; --i) {
 			var_map::iterator it = m_variables.at(i).find(name);
 
@@ -97,7 +195,7 @@ private:
 	var_scope m_variables;
 	int m_var_at;
 };
-
+*/
 } // clever
 
 #endif // CLEVER_SYMBOLTABLE_H

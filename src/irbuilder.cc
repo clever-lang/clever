@@ -50,7 +50,7 @@ void IRBuilder::shutdown() throw() {
 Value* IRBuilder::getValue(ast::Expression* expr) throw() {
 	Value* value = expr->get_value();
 
-	if (value && value->isNamedValue()) {
+	if (value && value->hasName()) {
 		SSA::VarTrack* var = m_ssa.get_var(value);
 
 		/* Just return the variable value when it can be predicted */
@@ -113,9 +113,9 @@ Opcode* IRBuilder::variableDecl(ast::VariableDecl* expr) throw() {
 	ast::Expression* var_expr = expr->get_variable();
 	ast::Expression* rhs_expr = expr->get_initial_value();
 	NamedValue* variable = static_cast<NamedValue*>(var_expr->get_value());
-	Type* type = TypeTable::getType(var_type->get_value()->getStringP());
+	Type* type = TypeTable::getType(var_type->get_value()->get_name());
 
-	variable->set_var_type(type);
+	variable->set_type_ptr(type);
 
 	/* Check if the declaration contains initialization */
 	if (rhs_expr) {
@@ -184,7 +184,7 @@ Opcode* IRBuilder::endBlock() throw() {
 Opcode* IRBuilder::preIncrement(ast::PreIncrement* expr) throw() {
 	Value* value = getValue(expr->get_expr());
 
-	if (expr->get_expr()->get_value()->isNamedValue()) {
+	if (expr->get_expr()->get_value()->hasName()) {
 		SSA::VarTrack* var = m_ssa.get_var(expr->get_expr()->get_value());
 
 		var->first->setModified();
@@ -199,7 +199,7 @@ Opcode* IRBuilder::preIncrement(ast::PreIncrement* expr) throw() {
 Opcode* IRBuilder::posIncrement(ast::PosIncrement* expr) throw() {
 	Value* value = getValue(expr->get_expr());
 
-	if (expr->get_expr()->get_value()->isNamedValue()) {
+	if (expr->get_expr()->get_value()->hasName()) {
 		SSA::VarTrack* var = m_ssa.get_var(expr->get_expr()->get_value());
 
 		var->first->setModified();
@@ -214,7 +214,7 @@ Opcode* IRBuilder::posIncrement(ast::PosIncrement* expr) throw() {
 Opcode* IRBuilder::preDecrement(ast::PreDecrement* expr) throw() {
 	Value* value = getValue(expr->get_expr());
 
-	if (expr->get_expr()->get_value()->isNamedValue()) {
+	if (expr->get_expr()->get_value()->hasName()) {
 		SSA::VarTrack* var = m_ssa.get_var(expr->get_expr()->get_value());
 
 		var->first->setModified();
@@ -229,7 +229,7 @@ Opcode* IRBuilder::preDecrement(ast::PreDecrement* expr) throw() {
 Opcode* IRBuilder::posDecrement(ast::PosDecrement* expr) throw(){
 	Value* value = getValue(expr->get_expr());
 
-	if (expr->get_expr()->get_value()->isNamedValue()) {
+	if (expr->get_expr()->get_value()->hasName()) {
 		SSA::VarTrack* var = m_ssa.get_var(expr->get_expr()->get_value());
 
 		var->first->setModified();

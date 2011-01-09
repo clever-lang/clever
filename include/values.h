@@ -50,7 +50,7 @@ class NO_INIT_VTABLE Value : public RefCounted {
 public:
 	enum { SET, UNSET, MODIFIED };
 	enum { NONE, INTEGER, DOUBLE, STRING, BOOLEAN, VECTOR, USER };
-	enum { UNKNOWN, NAMED, CONST, TEMP };
+	enum { UNKNOWN, CONST, TEMP };
 
 	Value() : RefCounted(1), m_status(UNSET), m_type(UNKNOWN), m_kind(UNKNOWN) {}
 	explicit Value(int kind) : RefCounted(1), m_status(UNSET), m_type(UNKNOWN), m_kind(kind) {}
@@ -69,19 +69,25 @@ public:
 
 	void set_type(int type) { m_type = type; }
 	int get_type() const { return m_type; }
+	Type* get_type_ptr() const { return m_type_ptr; }
+	void set_type_ptr(Type* ptr) { m_type_ptr = ptr; }
+
 	int hasSameType(Value* value) const { return m_type == value->get_type(); }
 
+	virtual bool hasName() const { return false; }
+	virtual CString* get_name() const { return NULL; }
+	virtual void set_name(CString* name) { /* TODO: throw error */ }
+	
 	int get_kind() const { return m_kind; }
 	void set_kind(int kind) { m_kind = kind; }
+	
+	bool hasSameKind(Value* value) const { return get_kind() == value->get_kind(); }
+
+	bool isConst() const { return m_kind == CONST; }
+	bool isTempValue(void) const { return m_kind == TEMP; }
 
 	int get_status() { return m_status; }
 	void set_status(int status) { m_status = status; }
-
-	bool hasSameKind(Value* value) { return get_kind() == value->get_kind(); }
-
-	bool isConst() const { return m_kind == CONST; }
-	bool isNamedValue(void) const { return m_kind == NAMED; }
-	bool isTempValue(void) const { return m_kind == TEMP; }
 
 	bool isSet(void) const { return m_status != UNSET; }
 	bool isModified(void) const { return m_status == MODIFIED; }
@@ -108,6 +114,15 @@ public:
 	double getDouble(void) const { return m_data.d_value; }
 	bool getBoolean(void) const { return m_data.b_value; }
 	ValueVector* getVector(void) const { return m_data.v_value; }
+
+	void copy(const Value* value) {
+		switch (value->get_type()) {
+			case INTEGER: setInteger(getInteger()); break;
+			case DOUBLE: setDouble(getDouble()); break;
+			case STRING: setString(getStringP()); break;
+		}
+		set_type(value->get_type());
+	}
 
 	virtual void set_value(Value* value) { }
 
@@ -136,7 +151,6 @@ public:
 		}
 	}
 
-	virtual Type* getType() { return m_type_ptr; }
 private:
 	int m_status;
 	int m_type;
@@ -161,32 +175,17 @@ private:
 class NamedValue : public Value {
 public:
 	NamedValue()
-		: Value(NAMED), m_value(NULL), m_var_type(NULL) { }
+		: Value() { }
 
 	explicit NamedValue(CString* name)
-		: Value(NAMED), m_value(NULL), m_var_type(NULL) {
-		set_type(STRING);
-		setString(name);
-	}
+		: Value(), m_name(name) { }
+	
+	bool hasName() const { return true; }
+	CString* get_name() const { return m_name; }
+	void set_name(CString* name) { m_name = name; }
 
-	void set_value(Value* value) {
-		m_value = value;
-	}
-
-	Value* get_value(void) {
-		return m_value;
-	}
-
-	void set_var_type(Type* type) {
-		m_var_type = type;
-	}
-
-	Type* get_var_type() {
-		return m_var_type;
-	}
 private:
-	Value* m_value;
-	Type* m_var_type;
+	CString* m_name;
 };
 
 /**
