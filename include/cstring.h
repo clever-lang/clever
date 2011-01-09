@@ -63,15 +63,15 @@ public:
 
 	CString* intern() const throw();
 
-	inline bool hasSameId(CString* cstring) const throw() {
+	bool hasSameId(CString* cstring) const throw() {
 		return get_id() == cstring->get_id();
 	}
 
-	inline IdType get_id() const throw() {
+	IdType get_id() const throw() {
 		return m_id;
 	}
 
-	inline void set_id(IdType id) throw() {
+	void set_id(IdType id) throw() {
 		if (m_id == 0)  {
 			m_id = id;
 		}
@@ -119,12 +119,12 @@ public:
 	CStringTable() {}
 	~CStringTable();
 
-	inline bool contains(CString* cstring) const {
+	bool contains(CString* cstring) const {
 		IdType id = cstring->get_id();
 		return id != 0 && id < size() && (*find(id)).second->hasSameId(cstring);
 	}
 
-	inline CString* getCString(long id) const throw() {
+	CString* getCString(long id) const throw() {
 		return (*find(id)).second;
 	}
 

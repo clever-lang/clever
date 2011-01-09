@@ -48,11 +48,11 @@ public:
 		: m_var_at(-1) { }
 	~SSA() { }
 
-	inline void register_var(Value* var, Value* value) throw() {
+	void register_var(Value* var, Value* value) throw() {
 		m_variables.at(m_var_at).insert(std::pair<CString*, VarTrack>(var->getStringP(), VarTrack(var, value)));
 	}
 
-	inline VarTrack* get_var(Value* var) throw() {
+	VarTrack* get_var(Value* var) throw() {
 		CString* name = var->getStringP();
 
 		/* Searchs for the variable in the inner and out scopes */
@@ -66,16 +66,16 @@ public:
 		return NULL;
 	}
 
-	inline void pushVarMap(var_map map) throw() {
+	void pushVarMap(var_map map) throw() {
 		m_variables.push_back(map);
 		++m_var_at;
 	}
 
-	inline var_map& topVarMap() throw() {
+	var_map& topVarMap() throw() {
 		return m_variables.at(m_var_at);
 	}
 
-	inline void popVarMap() throw() {
+	void popVarMap() throw() {
 		var_map::iterator it = topVarMap().begin();
 
 		while (it != topVarMap().end()) {

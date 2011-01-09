@@ -37,20 +37,20 @@ public:
 	RefCounted()
 		: m_reference(1) {	}
 
-	explicit RefCounted(int references)
-		: m_reference(references) {	}
+	explicit RefCounted(int reference)
+		: m_reference(reference) {	}
 
 	virtual ~RefCounted() { }
 
-	inline int refCount(void) const throw() {
+	int refCount(void) const throw() {
 		return m_reference;
 	}
 
-	inline void addRef(void) throw() {
+	void addRef(void) throw() {
 		++m_reference;
 	}
 
-	inline void delRef(void) throw() {
+	void delRef(void) throw() {
 		if (--m_reference == 0) {
 			delete this;
 		}

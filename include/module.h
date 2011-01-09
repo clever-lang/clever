@@ -74,8 +74,8 @@ public:
 
 	~Function() { }
 
-	inline const std::string get_name() const throw() { return m_name; }
-	inline module_function get_func() const throw() { return m_func; }
+	const std::string get_name() const throw() { return m_name; }
+	module_function get_func() const throw() { return m_func; }
 
 	DISALLOW_COPY_AND_ASSIGN(Function);
 private:
@@ -95,15 +95,15 @@ public:
 
 	virtual ~Module() { }
 
-	inline const std::string& get_name() const throw() {
+	const std::string& get_name() const throw() {
 		return m_name;
 	}
 
-	inline FunctionList& get_functions() throw() {
+	FunctionList& get_functions() throw() {
 		return m_functions;
 	}
 
-	inline void addFunction(Function* func) throw() {
+	void addFunction(Function* func) throw() {
 		m_functions.push_back(func);
 	}
 

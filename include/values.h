@@ -67,47 +67,47 @@ public:
 		}
 	}
 
-	inline void set_type(int type) { m_type = type; }
-	inline int get_type() const { return m_type; }
-	inline int hasSameType(Value* value) const { return m_type == value->get_type(); }
+	void set_type(int type) { m_type = type; }
+	int get_type() const { return m_type; }
+	int hasSameType(Value* value) const { return m_type == value->get_type(); }
 
-	inline int get_kind() const { return m_kind; }
-	inline void set_kind(int kind) { m_kind = kind; }
+	int get_kind() const { return m_kind; }
+	void set_kind(int kind) { m_kind = kind; }
 
-	inline int get_status() { return m_status; }
-	inline void set_status(int status) { m_status = status; }
+	int get_status() { return m_status; }
+	void set_status(int status) { m_status = status; }
 
-	inline bool hasSameKind(Value* value) { return get_kind() == value->get_kind(); }
+	bool hasSameKind(Value* value) { return get_kind() == value->get_kind(); }
 
-	inline bool isConst() const { return m_kind == CONST; }
-	inline bool isNamedValue(void) const { return m_kind == NAMED; }
-	inline bool isTempValue(void) const { return m_kind == TEMP; }
+	bool isConst() const { return m_kind == CONST; }
+	bool isNamedValue(void) const { return m_kind == NAMED; }
+	bool isTempValue(void) const { return m_kind == TEMP; }
 
-	inline bool isSet(void) const { return m_status != UNSET; }
-	inline bool isModified(void) const { return m_status == MODIFIED; }
+	bool isSet(void) const { return m_status != UNSET; }
+	bool isModified(void) const { return m_status == MODIFIED; }
 
-	inline void setSet(void) { m_status = SET; }
-	inline void setModified(void) { m_status = MODIFIED; }
+	void setSet(void) { m_status = SET; }
+	void setModified(void) { m_status = MODIFIED; }
 
-	inline bool isInteger(void) const { return m_type == INTEGER; }
-	inline bool isString(void) const { return m_type == STRING; }
-	inline bool isDouble(void) const { return m_type == DOUBLE; }
-	inline bool isBoolean(void) const { return m_type == BOOLEAN; }
-	inline bool isVector(void) const { return m_type == VECTOR; }
-	inline bool isUserValue(void) const { return m_type == USER; }
+	bool isInteger(void) const { return m_type == INTEGER; }
+	bool isString(void) const { return m_type == STRING; }
+	bool isDouble(void) const { return m_type == DOUBLE; }
+	bool isBoolean(void) const { return m_type == BOOLEAN; }
+	bool isVector(void) const { return m_type == VECTOR; }
+	bool isUserValue(void) const { return m_type == USER; }
 
-	inline void setInteger(int64_t i) { m_data.l_value = i; }
-	inline void setString(CString* s) { m_data.s_value = s;	}
-	inline void setDouble(double d) { m_data.d_value = d; }
-	inline void setBoolean(bool b) { m_data.b_value = b; }
-	inline void setVector(ValueVector* v) { m_data.v_value = v; }
+	void setInteger(int64_t i) { m_data.l_value = i; }
+	void setString(CString* s) { m_data.s_value = s;	}
+	void setDouble(double d) { m_data.d_value = d; }
+	void setBoolean(bool b) { m_data.b_value = b; }
+	void setVector(ValueVector* v) { m_data.v_value = v; }
 
-	inline int64_t getInteger(void) const { return m_data.l_value; }
-	inline CString* getStringP(void) const { return m_data.s_value; }
-	inline CString getString(void) const { return *m_data.s_value; }
-	inline double getDouble(void) const { return m_data.d_value; }
-	inline bool getBoolean(void) const { return m_data.b_value; }
-	inline ValueVector* getVector(void) const { return m_data.v_value; }
+	int64_t getInteger(void) const { return m_data.l_value; }
+	CString* getStringP(void) const { return m_data.s_value; }
+	CString getString(void) const { return *m_data.s_value; }
+	double getDouble(void) const { return m_data.d_value; }
+	bool getBoolean(void) const { return m_data.b_value; }
+	ValueVector* getVector(void) const { return m_data.v_value; }
 
 	virtual void set_value(Value* value) { }
 
@@ -169,7 +169,7 @@ public:
 		setString(name);
 	}
 
-	inline void set_value(Value* value) {
+	void set_value(Value* value) {
 		m_value = value;
 	}
 
@@ -177,11 +177,11 @@ public:
 		return m_value;
 	}
 
-	inline void set_var_type(Type* type) {
+	void set_var_type(Type* type) {
 		m_var_type = type;
 	}
 
-	inline Type* get_var_type() {
+	Type* get_var_type() {
 		return m_var_type;
 	}
 private:

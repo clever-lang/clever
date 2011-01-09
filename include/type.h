@@ -20,11 +20,11 @@ public:
 
 	~Method() { }
 
-	inline const CString* get_name() const throw() {
+	const CString* get_name() const throw() {
 		return m_name;
 	}
 
-	inline MethodPtr get_method() const throw() {
+	MethodPtr get_method() const throw() {
 		return m_method;
 	}
 private:
@@ -50,11 +50,11 @@ public:
 		}
 	}
 
-	inline void addMethod(Method* method) throw() {
+	void addMethod(Method* method) throw() {
 		m_methods.insert(std::pair<const CString*, Method*>(method->get_name(), method));
 	}
 
-	inline Method* getMethod(const CString* name) throw() {
+	Method* getMethod(const CString* name) throw() {
 		MethodMap::iterator it = m_methods.find(name);
 
 		if (it != m_methods.end()) {
@@ -63,7 +63,7 @@ public:
 		return NULL;
 	}
 
-	inline std::string get_name() const throw() {
+	std::string get_name() const throw() {
 		return m_name;
 	}
 

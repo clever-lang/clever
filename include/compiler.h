@@ -52,7 +52,7 @@ public:
 	void loadModules() throw();
 	void buildIR() throw();
 
-	inline FunctionTable& get_functions() const throw() {
+	FunctionTable& get_functions() const throw() {
 		return s_func_table;
 	}
 
@@ -62,13 +62,13 @@ public:
 	/*
 	 * Checks if a function exists
 	 */
-	static inline bool functionExists(const std::string& name) throw() {
+	static bool functionExists(const std::string& name) throw() {
 		return s_func_table.find(name) != s_func_table.end();
 	}
 	/*
 	 * Returns the a Function pointer
 	 */
-	static inline const Function& getFunction(const std::string& name) throw() {
+	static const Function& getFunction(const std::string& name) throw() {
 		return *s_func_table.find(name)->second;
 	}
 

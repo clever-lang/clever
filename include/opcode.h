@@ -83,31 +83,31 @@ public:
 
 	~Opcode() { }
 
-	inline int get_op_type() const { return m_op_type; }
+	int get_op_type() const { return m_op_type; }
 
-	inline VM::opcode_handler get_handler() const { return m_handler; }
+	VM::opcode_handler get_handler() const { return m_handler; }
 
-	inline Value* get_op1() const { return m_op1; }
-	inline void set_op1(Value* op1) { m_op1 = op1; }
+	Value* get_op1() const { return m_op1; }
+	void set_op1(Value* op1) { m_op1 = op1; }
 
-	inline Value* get_op2() const { return m_op2; }
-	inline void set_op2(Value* op2) { m_op2 = op2; }
+	Value* get_op2() const { return m_op2; }
+	void set_op2(Value* op2) { m_op2 = op2; }
 
-	inline Value* get_result() const { return m_result; }
-	inline void set_result(Value* value) { m_result->set_value(value); }
+	Value* get_result() const { return m_result; }
+	void set_result(Value* value) { m_result->set_value(value); }
 	void set_result(Value* result, Value* value) const throw();
 
-	inline int64_t get_op_num() const { return m_op_num; }
-	inline void set_op_num(unsigned int op_num) { m_op_num = op_num; }
+	int64_t get_op_num() const { return m_op_num; }
+	void set_op_num(unsigned int op_num) { m_op_num = op_num; }
 
-	inline void set_jmp_addr1(unsigned int jmp_addr) { m_extra.jmp1 = jmp_addr; }
-	inline unsigned int get_jmp_addr1() const { return m_extra.jmp1; }
+	void set_jmp_addr1(unsigned int jmp_addr) { m_extra.jmp1 = jmp_addr; }
+	unsigned int get_jmp_addr1() const { return m_extra.jmp1; }
 
-	inline void set_jmp_addr2(unsigned int jmp_addr) { m_extra.jmp2 = jmp_addr; }
-	inline unsigned int get_jmp_addr2() const { return m_extra.jmp2; }
+	void set_jmp_addr2(unsigned int jmp_addr) { m_extra.jmp2 = jmp_addr; }
+	unsigned int get_jmp_addr2() const { return m_extra.jmp2; }
 
-	inline void set_flags(unsigned int flags) {	m_extra.flags = flags; }
-	inline unsigned int get_flags() const { return m_extra.flags; }
+	void set_flags(unsigned int flags) {	m_extra.flags = flags; }
+	unsigned int get_flags() const { return m_extra.flags; }
 
 	/* Debug */
 	void dump() const throw();

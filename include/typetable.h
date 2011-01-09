@@ -50,14 +50,14 @@ public:
 		}
 	}
 
-	static inline void insert(const CString* name, Type* type) {
+	static void insert(const CString* name, Type* type) {
 		s_type_table.insert(std::pair<const CString*, Type*>(name, type));
 	}
 
 	/*
 	 * Returns the Type pointer
 	 */
-	static inline Type* getType(const CString* name) throw() {
+	static Type* getType(const CString* name) throw() {
 		TypeMap::const_iterator it = s_type_table.find(name);
 
 		if (it != s_type_table.end()) {

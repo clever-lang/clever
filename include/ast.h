@@ -76,9 +76,9 @@ public:
 
 	virtual bool hasValue() const { return false; }
 
-	inline bool isOptimized() const { return m_optimized; }
+	bool isOptimized() const { return m_optimized; }
 
-	inline void set_optimized(bool value) { m_optimized = value; }
+	void set_optimized(bool value) { m_optimized = value; }
 	/*
 	 * Method for getting the value representation
 	 */
@@ -101,11 +101,11 @@ public:
 	~TreeNode() { }
 
 	void clear() throw();
-	inline void add(Expression* node) throw() {
+	void add(Expression* node) throw() {
 		node->addRef();
 		nodes.push_back(node);
 	}
-	inline nodeList& getNodeList() throw() {
+	nodeList& getNodeList() throw() {
 		return nodes;
 	}
 
@@ -141,7 +141,7 @@ public:
 		m_value->delRef();
 	}
 
-	inline Value* get_value() const throw() { return m_value; };
+	Value* get_value() const throw() { return m_value; };
 
 	DISALLOW_COPY_AND_ASSIGN(NumberLiteral);
 private:
@@ -177,19 +177,19 @@ public:
 
 	bool hasValue() const { return true; }
 
-	inline Expression* get_lhs() const {
+	Expression* get_lhs() const {
 		return m_lhs;
 	}
 
-	inline Expression* get_rhs() const {
+	Expression* get_rhs() const {
 		return m_rhs;
 	}
 
-	inline int get_op() const {
+	int get_op() const {
 		return m_op;
 	}
 
-	inline Value* get_value() const throw() {
+	Value* get_value() const throw() {
 		if (isOptimized()) {
 			return m_value;
 		} else {
@@ -197,15 +197,15 @@ public:
 		}
 	}
 
-	inline void set_result(ConstantValue* value) {
+	void set_result(ConstantValue* value) {
 		m_value = value;
 	}
 
-	inline void set_result(TempValue* value) {
+	void set_result(TempValue* value) {
 		m_result = value;
 	}
 
-	inline Opcode* codeGen(IRBuilder& builder) throw() {
+	Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.binaryExpression(this);
 	}
 
@@ -251,7 +251,7 @@ public:
 		return m_type;
 	}
 
-	inline Opcode* codeGen(IRBuilder& builder) throw() {
+	Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.variableDecl(this);
 	}
 
@@ -323,7 +323,7 @@ class NewBlock : public Expression {
 public:
 	NewBlock() { }
 
-	inline Opcode* codeGen(IRBuilder& builder) throw() {
+	Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.newBlock();
 	}
 
@@ -334,7 +334,7 @@ class EndBlock : public Expression {
 public:
 	EndBlock() { }
 
-	inline Opcode* codeGen(IRBuilder& builder) throw() {
+	Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.endBlock();
 	}
 
@@ -353,15 +353,15 @@ public:
 		m_expr->delRef();
 	}
 
-	inline Value* get_value() const throw() {
+	Value* get_value() const throw() {
 		return m_result;
 	}
 
-	inline Expression* get_expr() const {
+	Expression* get_expr() const {
 		return m_expr;
 	}
 
-	inline Opcode* codeGen(IRBuilder& builder) throw() {
+	Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.preIncrement(this);
 	}
 
@@ -383,15 +383,15 @@ public:
 		m_expr->delRef();
 	}
 
-	inline Value* get_value() const throw() {
+	Value* get_value() const throw() {
 		return m_result;
 	}
 
-	inline Expression* get_expr() const {
+	Expression* get_expr() const {
 		return m_expr;
 	}
 
-	inline Opcode* codeGen(IRBuilder& builder) throw() {
+	Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.posIncrement(this);
 	}
 
@@ -413,15 +413,15 @@ public:
 		m_expr->delRef();
 	}
 
-	inline Expression* get_expr() const {
+	Expression* get_expr() const {
 		return m_expr;
 	}
 
-	inline Value* get_value() const throw() {
+	Value* get_value() const throw() {
 		return m_result;
 	}
 
-	inline Opcode* codeGen(IRBuilder& builder) throw() {
+	Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.preDecrement(this);
 	}
 
@@ -443,15 +443,15 @@ public:
 		m_expr->delRef();
 	}
 
-	inline Value* get_value() const throw() {
+	Value* get_value() const throw() {
 		return m_result;
 	}
 
-	inline Expression* get_expr() const {
+	Expression* get_expr() const {
 		return m_expr;
 	}
 
-	inline Opcode* codeGen(IRBuilder& builder) throw() {
+	Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.posDecrement(this);
 	}
 
@@ -472,11 +472,11 @@ public:
 		m_expr->delRef();
 	}
 
-	inline Expression* get_expr() const {
+	Expression* get_expr() const {
 		return m_expr;
 	}
 
-	inline Opcode* codeGen(IRBuilder& builder) throw() {
+	Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.ifExpression(this);
 	}
 
@@ -498,15 +498,15 @@ public:
 		m_start_expr->delRef();
 	}
 
-	inline Expression* get_expr() const {
+	Expression* get_expr() const {
 		return m_expr;
 	}
 
-	inline Expression* get_start_expr() const {
+	Expression* get_start_expr() const {
 		return m_start_expr;
 	}
 
-	inline Opcode* codeGen(IRBuilder& builder) throw() {
+	Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.elseIfExpression(this);
 	}
 
@@ -522,7 +522,7 @@ public:
 
 	~ElseExpression() { }
 
-	inline Opcode* codeGen(IRBuilder& builder) throw() {
+	Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.elseExpression(this);
 	}
 
@@ -540,11 +540,11 @@ public:
 		m_expr->delRef();
 	}
 
-	inline Expression* get_expr() const {
+	Expression* get_expr() const {
 		return m_expr;
 	}
 
-	inline Opcode* codeGen(IRBuilder& builder) throw() {
+	Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.whileExpression(this);
 	}
 
@@ -559,7 +559,7 @@ public:
 
 	~EndIfExpression() { }
 
-	inline Opcode* codeGen(IRBuilder& builder) throw() {
+	Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.endIfExpression();
 	}
 
@@ -578,11 +578,11 @@ public:
 		m_expr->delRef();
 	}
 
-	inline Expression* get_expr() const {
+	Expression* get_expr() const {
 		return m_expr;
 	}
 
-	inline Opcode* codeGen(IRBuilder& builder) throw() {
+	Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.endWhileExpression(this);
 	}
 
@@ -597,15 +597,15 @@ public:
 
 	~StartExpr() { }
 
-	inline void set_op_num(unsigned int op_num) {
+	void set_op_num(unsigned int op_num) {
 		m_op_num = op_num;
 	}
 
-	inline unsigned int get_op_num() const {
+	unsigned int get_op_num() const {
 		return m_op_num;
 	}
 
-	inline Opcode* codeGen(IRBuilder& builder) throw() {
+	Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.startExpr(this);
 	}
 
@@ -635,27 +635,27 @@ public:
 		}
 	}
 
-	inline int get_op() const {
+	int get_op() const {
 		return m_op;
 	}
 
-	inline Expression* get_lhs() const {
+	Expression* get_lhs() const {
 		return m_lhs;
 	}
 
-	inline Expression* get_rhs() const {
+	Expression* get_rhs() const {
 		return m_rhs;
 	}
 
-	inline void set_result(ConstantValue* value) {
+	void set_result(ConstantValue* value) {
 		m_value = value;
 	}
 
-	inline void set_result(TempValue* value) {
+	void set_result(TempValue* value) {
 		m_result = value;
 	}
 
-	inline Value* get_value() const throw() {
+	Value* get_value() const throw() {
 		if (isOptimized()) {
 			return m_value;
 		} else {
@@ -663,7 +663,7 @@ public:
 		}
 	}
 
-	inline Opcode* codeGen(IRBuilder& builder) throw() {
+	Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.logicExpression(this);
 	}
 
@@ -682,7 +682,7 @@ public:
 
 	~BreakExpression() { }
 
-	inline Opcode* codeGen(IRBuilder& builder) throw() {
+	Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.breakExpression();
 	}
 
@@ -695,12 +695,12 @@ public:
 
 	~ArgumentList();
 
-	inline void push(Expression* expr) {
+	void push(Expression* expr) {
 		expr->addRef();
 		m_args.push_back(expr);
 	}
 
-	inline Arguments* get_args() throw() {
+	Arguments* get_args() throw() {
 		return &m_args;
 	}
 
@@ -729,11 +729,11 @@ public:
 		}
 	}
 
-	inline Value* get_value() const throw() {
+	Value* get_value() const throw() {
 		return m_name->get_value();
 	}
 
-	inline Arguments* get_args() throw() {
+	Arguments* get_args() throw() {
 		ArgumentList* args;
 
 		if (!m_args) {
@@ -743,7 +743,7 @@ public:
 		return args->get_args();
 	}
 
-	inline Opcode* codeGen(IRBuilder& builder) throw() {
+	Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.functionCall(this);
 	}
 
@@ -776,15 +776,15 @@ public:
 		}
 	}
 
-	inline Expression* get_variable() const throw() {
+	Expression* get_variable() const throw() {
 		return m_var;
 	}
 
-	inline Expression* get_method() const throw() {
+	Expression* get_method() const throw() {
 		return m_method;
 	}
 
-	inline Arguments* get_args() const throw() {
+	Arguments* get_args() const throw() {
 		ArgumentList* args;
 
 		if (!m_args) {
@@ -794,7 +794,7 @@ public:
 		return args->get_args();
 	}
 
-	inline Opcode* codeGen(IRBuilder& builder) throw() {
+	Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.methodCall(this);
 	}
 private:

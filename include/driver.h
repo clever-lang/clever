@@ -59,12 +59,12 @@ public:
 	virtual ~Driver() { }
 
 	/* Initializes the compiler with AST nodes */
-	inline void initCompiler(ast::TreeNode* nodes) throw() {
+	void initCompiler(ast::TreeNode* nodes) throw() {
 		m_compiler.Init(nodes);
 	}
 
 	/* Returns the parsed file */
-	inline std::string& get_file() throw() {
+	std::string& get_file() throw() {
 		return m_file;
 	}
 

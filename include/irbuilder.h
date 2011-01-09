@@ -76,17 +76,17 @@ public:
 	void init() throw();
 	void shutdown() throw();
 
-	inline VM::OpcodeList* get_opcodes() throw() {
+	VM::OpcodeList* get_opcodes() throw() {
 		return &m_opcodes;
 	}
 
-	inline void push(Opcode* opcode) throw() {
+	void push(Opcode* opcode) throw() {
 		m_opcodes.push_back(opcode);
 		/* Sets the opcode number, which is used by JMP opcodes */
 		opcode->set_op_num(getOpNum());
 	}
 
-	inline unsigned int getOpNum() const throw() {
+	unsigned int getOpNum() const throw() {
 		return m_opcodes.size()-1;
 	}
 

@@ -68,14 +68,14 @@ public:
 	void run(void) throw();
 	void error(const char*) const throw();
 
-	inline void setOpcodes(OpcodeList* opcodes) {
+	void setOpcodes(OpcodeList* opcodes) {
 		m_opcodes = opcodes;
 	}
 
 	/*
 	 * Returns the value from a Value pointer according to Value type
 	 */
-	inline Value* getValue(Value* op) throw() {
+	Value* getValue(Value* op) throw() {
 		if (!op) {
 			return NULL;
 		}
