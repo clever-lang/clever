@@ -100,7 +100,15 @@ public:
 	TreeNode() { }
 	~TreeNode() { }
 
-	void clear() throw();
+	void clear() throw() {
+		TreeNode::nodeList::const_iterator it = nodes.begin(), end(nodes.end());
+
+		while (it != end) {
+			(*it)->delRef();
+			++it;
+		}
+	}
+
 	void add(Expression* node) throw() {
 		node->addRef();
 		nodes.push_back(node);
@@ -693,7 +701,15 @@ class ArgumentList : public Expression {
 public:
 	ArgumentList() { }
 
-	~ArgumentList();
+	~ArgumentList() {
+		Arguments::const_iterator it = m_args.begin(), end(m_args.end());
+
+		while (it != end) {
+			(*it)->delRef();
+			++it;
+		}
+		m_args.clear();
+	}
 
 	void push(Expression* expr) {
 		expr->addRef();
