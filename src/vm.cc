@@ -514,7 +514,7 @@ CLEVER_VM_HANDLER(VM::not_equal_handler) {
  * func()
  */
 CLEVER_VM_HANDLER(VM::fcall_handler) {
-	const Function& func = Compiler::getFunction(opcode.get_op1()->getString());
+	const Function& func = Compiler::getFunction(*opcode.get_op1()->get_name());
 	Value* args = opcode.get_op2();
 	FunctionArgs func_args;
 
@@ -540,7 +540,7 @@ CLEVER_VM_HANDLER(VM::fcall_handler) {
 CLEVER_VM_HANDLER(VM::mcall_handler) {
 	NamedValue* var = static_cast<NamedValue*>(opcode.get_op1());
 	Type* var_type = var->get_type_ptr();
-	Method* method = var_type->getMethod(opcode.get_op2()->getStringP());
+	Method* method = var_type->getMethod(opcode.get_op2()->get_name());
 	Value* retval = NULL;
 
 	if (method) {

@@ -429,8 +429,7 @@ Opcode* IRBuilder::functionCall(ast::FunctionCall* expr) throw() {
 	Value* arg_values = NULL;
 	Value* name_expr = expr->get_value();
 	ast::Arguments* args = expr->get_args();
-	const std::string* name = name_expr->getStringP();
-
+	const std::string* name = name_expr->get_name();
 
 	if (!Compiler::functionExists(*name)) {
 		Compiler::error("Function does not exists!");
