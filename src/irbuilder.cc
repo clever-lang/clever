@@ -46,14 +46,20 @@ void IRBuilder::shutdown() throw() {
 	m_ssa.popVarMap();
 }
 
-
+/**
+ * Return the Value pointer related to value type
+ */
 Value* IRBuilder::getValue(ast::Expression* expr) throw() {
 	Value* value = expr->get_value();
 
 	if (value && value->hasName()) {
 		Value* var = m_ssa.fetchVar(value);
 
-		if (var) {
+		/**
+		 * If the variable is found, we should use its pointer instead of
+		 * fetching on runtime
+		 */
+		if (EXPECTED(var != NULL)) {
 			return var;
 		}
 		Compiler::error("Inexistent variable!");
@@ -61,7 +67,7 @@ Value* IRBuilder::getValue(ast::Expression* expr) throw() {
 	return value;
 }
 
-/*
+/**
  * Generates the binary expression opcode
  */
 Opcode* IRBuilder::binaryExpression(ast::BinaryExpression* expr) throw() {
@@ -99,7 +105,7 @@ Opcode* IRBuilder::binaryExpression(ast::BinaryExpression* expr) throw() {
 	return NULL;
 }
 
-/*
+/**
  * Generates the variable declaration opcode
  */
 Opcode* IRBuilder::variableDecl(ast::VariableDecl* expr) throw() {
@@ -127,7 +133,7 @@ Opcode* IRBuilder::variableDecl(ast::VariableDecl* expr) throw() {
 	}
 }
 
-/*
+/**
  * Generates the new block opcode
  */
 Opcode* IRBuilder::newBlock() throw() {
@@ -143,14 +149,14 @@ Opcode* IRBuilder::newBlock() throw() {
 	return opcode;
 }
 
-/*
+/**
  * Generates the end block opcode
  */
 Opcode* IRBuilder::endBlock() throw() {
 	Opcode* opcode = new Opcode(OP_END_SCOPE, &VM::end_scope_handler);
 	Opcode* start_block = m_jmps.top().top();
 
-	/*
+	/**
 	 * No variable was defined in the scope, so let to set a flag
 	 * to do not push-pop scope in runtime
 	 */
@@ -171,7 +177,7 @@ Opcode* IRBuilder::endBlock() throw() {
 	return opcode;
 }
 
-/*
+/**
  * Generates the pre increment opcode
  */
 Opcode* IRBuilder::preIncrement(ast::PreIncrement* expr) throw() {
@@ -186,7 +192,7 @@ Opcode* IRBuilder::preIncrement(ast::PreIncrement* expr) throw() {
 	return new Opcode(OP_PRE_INC, &VM::pre_inc_handler, value, NULL, expr->get_value());
 }
 
-/*
+/**
  * Generates the pos increment opcode
  */
 Opcode* IRBuilder::posIncrement(ast::PosIncrement* expr) throw() {
@@ -201,7 +207,7 @@ Opcode* IRBuilder::posIncrement(ast::PosIncrement* expr) throw() {
 	return new Opcode(OP_POS_INC, &VM::pos_inc_handler, value, NULL, expr->get_value());
 }
 
-/*
+/**
  * Generates the pre decrement opcode
  */
 Opcode* IRBuilder::preDecrement(ast::PreDecrement* expr) throw() {
@@ -216,7 +222,7 @@ Opcode* IRBuilder::preDecrement(ast::PreDecrement* expr) throw() {
 	return new Opcode(OP_PRE_DEC, &VM::pre_dec_handler, value, NULL, expr->get_value());
 }
 
-/*
+/**
  * Generates the pos decrement opcode
  */
 Opcode* IRBuilder::posDecrement(ast::PosDecrement* expr) throw(){
@@ -231,7 +237,7 @@ Opcode* IRBuilder::posDecrement(ast::PosDecrement* expr) throw(){
 	return new Opcode(OP_POS_DEC, &VM::pos_dec_handler, value, NULL, expr->get_value());
 }
 
-/*
+/**
  * Generates the JMPZ opcode for IF expression
  */
 Opcode* IRBuilder::ifExpression(ast::IfExpression* expr) throw() {
@@ -246,7 +252,7 @@ Opcode* IRBuilder::ifExpression(ast::IfExpression* expr) throw() {
 	return opcode;
 }
 
-/*
+/**
  * Generates a JMPZ opcode for ELSEIF expression
  */
 Opcode* IRBuilder::elseIfExpression(ast::ElseIfExpression* expr) throw() {
@@ -262,7 +268,7 @@ Opcode* IRBuilder::elseIfExpression(ast::ElseIfExpression* expr) throw() {
 	return opcode;
 }
 
-/*
+/**
  * Generates a JMP opcode for ELSE expression
  */
 Opcode* IRBuilder::elseExpression(ast::ElseExpression* expr) throw() {
@@ -274,7 +280,7 @@ Opcode* IRBuilder::elseExpression(ast::ElseExpression* expr) throw() {
 	return opcode;
 }
 
-/*
+/**
  * Just set the jmp address of if-elsif-else to end of control structure
  */
 Opcode* IRBuilder::endIfExpression() throw() {
@@ -299,7 +305,7 @@ Opcode* IRBuilder::endIfExpression() throw() {
 	return NULL;
 }
 
-/*
+/**
  * Generates the JMPZ opcode for WHILE expression
  */
 Opcode* IRBuilder::whileExpression(ast::WhileExpression* expr) throw() {
@@ -315,7 +321,7 @@ Opcode* IRBuilder::whileExpression(ast::WhileExpression* expr) throw() {
 	return opcode;
 }
 
-/*
+/**
  * Just set the end jmp addr of WHILE expression
  */
 Opcode* IRBuilder::endWhileExpression(ast::EndWhileExpression* expr) throw() {
@@ -339,7 +345,7 @@ Opcode* IRBuilder::endWhileExpression(ast::EndWhileExpression* expr) throw() {
 	return opcode;
 }
 
-/*
+/**
  * Just hold the current op number before the WHILE expression
  */
 Opcode* IRBuilder::startExpr(ast::StartExpr* expr) throw() {
@@ -348,7 +354,7 @@ Opcode* IRBuilder::startExpr(ast::StartExpr* expr) throw() {
 	return NULL;
 }
 
-/*
+/**
  * Generates opcode for logic expression which weren't optimized
  */
 Opcode* IRBuilder::logicExpression(ast::LogicExpression* expr) throw() {
@@ -385,7 +391,7 @@ Opcode* IRBuilder::logicExpression(ast::LogicExpression* expr) throw() {
 	return NULL;
 }
 
-/*
+/**
  * Generates opcode for break statement
  */
 Opcode* IRBuilder::breakExpression() throw() {
@@ -415,7 +421,7 @@ ValueVector* IRBuilder::functionArgs(const ast::Arguments* args) throw() {
 	return values;
 }
 
-/*
+/**
  * Generates opcode for function call
  */
 Opcode* IRBuilder::functionCall(ast::FunctionCall* expr) throw() {
@@ -440,10 +446,10 @@ Opcode* IRBuilder::functionCall(ast::FunctionCall* expr) throw() {
 }
 
 Opcode* IRBuilder::methodCall(ast::MethodCall* expr) throw() {
-	Value* arg_values = NULL;
 	Value* variable = m_ssa.fetchVar(expr->get_variable()->get_value());
 	Value* method = new ConstantValue(expr->get_method()->get_value()->get_name());
 /*
+	Value* arg_values = NULL;
 	ast::Arguments* args = expr->get_args();
 
 	if (args) {

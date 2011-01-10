@@ -503,7 +503,6 @@ CLEVER_VM_HANDLER(VM::fcall_handler) {
 CLEVER_VM_HANDLER(VM::mcall_handler) {
 	Type* var_type = opcode.get_op1()->get_type_ptr();
 	Method* method = var_type->getMethod(opcode.get_op2()->getStringP());
-	Value* retval = NULL;
 
 	if (method) {
 		(var_type->*(method->get_method()))();
