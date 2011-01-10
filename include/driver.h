@@ -69,7 +69,7 @@ public:
 	}
 
 	/* Read file to the scanner */
-	void readFile(void) throw();
+	void readFile() throw();
 
 	/* Run the parser */
 	int parseStr(const std::string&);
@@ -103,8 +103,8 @@ class Interpreter : public Driver {
 public:
 	Interpreter() { }
 
-	void execute(void);
-	void shutdown(void);
+	void execute();
+	void shutdown();
 };
 
 } // clever

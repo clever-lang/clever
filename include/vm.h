@@ -65,7 +65,7 @@ public:
 
 	~VM();
 
-	void run(void) throw();
+	void run() throw();
 	void error(const char*) const throw();
 
 	void setOpcodes(OpcodeList* opcodes) {

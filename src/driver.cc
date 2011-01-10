@@ -38,7 +38,7 @@ Driver::ScannerStack Driver::s_scanners;
 /**
  * Executes the script
  */
-void Interpreter::execute(void) {
+void Interpreter::execute() {
 	VM vm;
 
 	m_compiler.buildIR();
@@ -48,14 +48,14 @@ void Interpreter::execute(void) {
 	vm.run();
 }
 
-void Interpreter::shutdown(void) {
+void Interpreter::shutdown() {
 
 }
 
 /**
  * Read the file defined in file property
  */
-void Driver::readFile(void) throw() {
+void Driver::readFile() throw() {
 	std::string line;
 	std::fstream filep(m_file.c_str());
 

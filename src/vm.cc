@@ -36,7 +36,7 @@ namespace clever {
 /*
  * Destroy the opcodes data
  */
-VM::~VM(void) {
+VM::~VM() {
 	OpcodeList::const_iterator it = m_opcodes->begin(), end(m_opcodes->end());
 
 	while (it != end) {
@@ -71,7 +71,7 @@ void VM::error(const char* message) const throw() {
 /*
  * Execute the collected opcodes
  */
-void VM::run(void) throw() {
+void VM::run() throw() {
 	unsigned int next_op, last_op = m_opcodes->size();
 
 	/* Initializes global scope */

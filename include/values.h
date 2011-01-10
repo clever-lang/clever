@@ -84,25 +84,25 @@ public:
 	bool hasSameKind(Value* value) const { return get_kind() == value->get_kind(); }
 
 	bool isConst() const { return m_kind == CONST; }
-	bool isTempValue(void) const { return m_kind == TEMP; }
+	bool isTempValue() const { return m_kind == TEMP; }
 
 	int get_status() { return m_status; }
 	void set_status(int status) { m_status = status; }
 
-	bool isInitialized(void) const { return m_status == SET; }
-	bool isUninitialized(void) const { return m_status == UNSET; }
-	bool isModified(void) const { return m_status == MODIFIED; }
+	bool isInitialized() const { return m_status == SET; }
+	bool isUninitialized() const { return m_status == UNSET; }
+	bool isModified() const { return m_status == MODIFIED; }
 
-	void setInitialized(void) { m_status = SET; }
-	void setUninitialized(void) { m_status = UNSET; }
-	void setModified(void) { m_status = MODIFIED; }
+	void setInitialized() { m_status = SET; }
+	void setUninitialized() { m_status = UNSET; }
+	void setModified() { m_status = MODIFIED; }
 
-	bool isInteger(void) const { return m_type == INTEGER; }
-	bool isString(void) const { return m_type == STRING; }
-	bool isDouble(void) const { return m_type == DOUBLE; }
-	bool isBoolean(void) const { return m_type == BOOLEAN; }
-	bool isVector(void) const { return m_type == VECTOR; }
-	bool isUserValue(void) const { return m_type == USER; }
+	bool isInteger() const { return m_type == INTEGER; }
+	bool isString() const { return m_type == STRING; }
+	bool isDouble() const { return m_type == DOUBLE; }
+	bool isBoolean() const { return m_type == BOOLEAN; }
+	bool isVector() const { return m_type == VECTOR; }
+	bool isUserValue() const { return m_type == USER; }
 
 	void setInteger(int64_t i) { m_data.l_value = i; }
 	void setString(CString* s) { m_data.s_value = s;	}
@@ -110,12 +110,12 @@ public:
 	void setBoolean(bool b) { m_data.b_value = b; }
 	void setVector(ValueVector* v) { m_data.v_value = v; }
 
-	int64_t getInteger(void) const { return m_data.l_value; }
-	CString* getStringP(void) const { return m_data.s_value; }
-	CString getString(void) const { return *m_data.s_value; }
-	double getDouble(void) const { return m_data.d_value; }
-	bool getBoolean(void) const { return m_data.b_value; }
-	ValueVector* getVector(void) const { return m_data.v_value; }
+	int64_t getInteger() const { return m_data.l_value; }
+	CString* getStringP() const { return m_data.s_value; }
+	CString getString() const { return *m_data.s_value; }
+	double getDouble() const { return m_data.d_value; }
+	bool getBoolean() const { return m_data.b_value; }
+	ValueVector* getVector() const { return m_data.v_value; }
 
 	void copy(const Value* value) {
 		switch (value->get_type()) {
@@ -128,11 +128,11 @@ public:
 
 	virtual void set_value(Value* value) { }
 
-	virtual Value* get_value(void) {
+	virtual Value* get_value() {
 		return this;
 	}
 
-	virtual std::string toString(void) {
+	virtual std::string toString() {
 		std::ostringstream str;
 
 		switch (get_type()) {
@@ -235,7 +235,7 @@ public:
 		}
 	}
 
-	Value* get_value(void) {
+	Value* get_value() {
 		return m_value;
 	}
 
