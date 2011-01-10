@@ -33,7 +33,7 @@
 
 namespace clever {
 
-/*
+/**
  * Destroy the opcodes data
  */
 VM::~VM() {
@@ -60,15 +60,15 @@ VM::~VM() {
 	}
 }
 
-/*
- * Displays an error message
+/**
+ * Displays an error message and exits
  */
 void VM::error(const char* message) const throw() {
 	std::cerr << "Runtime error: " << message << std::endl;
 	exit(1);
 }
 
-/*
+/**
  * Execute the collected opcodes
  */
 void VM::run() throw() {
@@ -90,7 +90,7 @@ void VM::run() throw() {
 	m_symbols.leave();
 }
 
-/*
+/**
  * x + y
  */
 CLEVER_VM_HANDLER(VM::plus_handler) {
@@ -110,7 +110,7 @@ CLEVER_VM_HANDLER(VM::plus_handler) {
 	}
 }
 
-/*
+/**
  * x / y
  */
 CLEVER_VM_HANDLER(VM::div_handler) {
@@ -127,7 +127,7 @@ CLEVER_VM_HANDLER(VM::div_handler) {
 	}
 }
 
-/*
+/**
  * x - y
  */
 CLEVER_VM_HANDLER(VM::minus_handler) {
@@ -144,7 +144,7 @@ CLEVER_VM_HANDLER(VM::minus_handler) {
 	}
 }
 
-/*
+/**
  * x * y
  */
 CLEVER_VM_HANDLER(VM::mult_handler) {
@@ -161,7 +161,7 @@ CLEVER_VM_HANDLER(VM::mult_handler) {
 	}
 }
 
-/*
+/**
  * x & y
  */
 CLEVER_VM_HANDLER(VM::bw_and_handler) {
@@ -175,7 +175,7 @@ CLEVER_VM_HANDLER(VM::bw_and_handler) {
 	}
 }
 
-/*
+/**
  * x ^ y
  */
 CLEVER_VM_HANDLER(VM::bw_xor_handler) {
@@ -189,7 +189,7 @@ CLEVER_VM_HANDLER(VM::bw_xor_handler) {
 	}
 }
 
-/*
+/**
  * x | y
  */
 CLEVER_VM_HANDLER(VM::bw_or_handler) {
@@ -203,7 +203,7 @@ CLEVER_VM_HANDLER(VM::bw_or_handler) {
 	}
 }
 
-/*
+/**
  * x % y
  */
 CLEVER_VM_HANDLER(VM::mod_handler) {
@@ -217,11 +217,11 @@ CLEVER_VM_HANDLER(VM::mod_handler) {
 	}
 }
 
-/*
+/**
  * {
  */
 CLEVER_VM_HANDLER(VM::new_scope_handler) {
-	/*
+	/**
 	 * Just create a new scope if a variable was created in the block
 	 * (detected in compile-time)
 	 */
@@ -231,7 +231,7 @@ CLEVER_VM_HANDLER(VM::new_scope_handler) {
 	}
 }
 
-/*
+/**
  * }
  */
 CLEVER_VM_HANDLER(VM::end_scope_handler) {
@@ -241,7 +241,7 @@ CLEVER_VM_HANDLER(VM::end_scope_handler) {
 	}
 }
 
-/*
+/**
  * Type var [= value ]
  */
 CLEVER_VM_HANDLER(VM::var_decl_handler) {
@@ -251,16 +251,14 @@ CLEVER_VM_HANDLER(VM::var_decl_handler) {
 	if (!value) {
 		error("Uninitialized variable!");
 	}
-	//value->addRef();
 	opcode.get_op1()->addRef();
-	/* Register the variable in the current scope */
-	//m_symbols.register_var(opcode.get_op1(), value);
 	opcode.get_op1()->copy(value);
 
+	/* Register the variable in the current scope */
 	m_symbols.pushValue(opcode.get_op1());
 }
 
-/*
+/**
  * ++x
  */
 CLEVER_VM_HANDLER(VM::pre_inc_handler) {
@@ -278,7 +276,7 @@ CLEVER_VM_HANDLER(VM::pre_inc_handler) {
 	opcode.set_result(result, value);
 }
 
-/*
+/**
  * x++
  */
 CLEVER_VM_HANDLER(VM::pos_inc_handler) {
@@ -296,7 +294,7 @@ CLEVER_VM_HANDLER(VM::pos_inc_handler) {
 	}
 }
 
-/*
+/**
  * --x
  */
 CLEVER_VM_HANDLER(VM::pre_dec_handler) {
@@ -314,7 +312,7 @@ CLEVER_VM_HANDLER(VM::pre_dec_handler) {
 	opcode.set_result(result, value);
 }
 
-/*
+/**
  * x--
  */
 CLEVER_VM_HANDLER(VM::pos_dec_handler) {
@@ -332,7 +330,7 @@ CLEVER_VM_HANDLER(VM::pos_dec_handler) {
 	}
 }
 
-/*
+/**
  * JMPZ
  */
 CLEVER_VM_HANDLER(VM::jmpz_handler) {
@@ -357,14 +355,14 @@ CLEVER_VM_HANDLER(VM::jmpz_handler) {
 	}
 }
 
-/*
+/**
  * JMP
  */
 CLEVER_VM_HANDLER(VM::jmp_handler) {
 	CLEVER_VM_GOTO(opcode.get_jmp_addr2());
 }
 
-/*
+/**
  * x > y
  */
 CLEVER_VM_HANDLER(VM::greater_handler) {
@@ -381,7 +379,7 @@ CLEVER_VM_HANDLER(VM::greater_handler) {
 	}
 }
 
-/*
+/**
  * x >= y
  */
 CLEVER_VM_HANDLER(VM::greater_equal_handler) {
@@ -398,7 +396,7 @@ CLEVER_VM_HANDLER(VM::greater_equal_handler) {
 	}
 }
 
-/*
+/**
  * x < y
  */
 CLEVER_VM_HANDLER(VM::less_handler) {
@@ -415,7 +413,7 @@ CLEVER_VM_HANDLER(VM::less_handler) {
 	}
 }
 
-/*
+/**
  * x <= y
  */
 CLEVER_VM_HANDLER(VM::less_equal_handler) {
@@ -432,14 +430,14 @@ CLEVER_VM_HANDLER(VM::less_equal_handler) {
 	}
 }
 
-/*
+/**
  * break
  */
 CLEVER_VM_HANDLER(VM::break_handler) {
 	CLEVER_VM_GOTO(opcode.get_jmp_addr1());
 }
 
-/*
+/**
  * x == y
  */
 CLEVER_VM_HANDLER(VM::equal_handler) {
@@ -456,7 +454,7 @@ CLEVER_VM_HANDLER(VM::equal_handler) {
 	}
 }
 
-/*
+/**
  * x != y
  */
 CLEVER_VM_HANDLER(VM::not_equal_handler) {
@@ -473,7 +471,7 @@ CLEVER_VM_HANDLER(VM::not_equal_handler) {
 	}
 }
 
-/*
+/**
  * func()
  */
 CLEVER_VM_HANDLER(VM::fcall_handler) {
@@ -497,7 +495,7 @@ CLEVER_VM_HANDLER(VM::fcall_handler) {
 	func.get_func()(func_args);
 }
 
-/*
+/**
  * var.method()
  */
 CLEVER_VM_HANDLER(VM::mcall_handler) {

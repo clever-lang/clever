@@ -53,30 +53,40 @@ enum { BLK_UNUSED, BLK_USED };
 class SymbolTable;
 class Opcode;
 
+/**
+ * Virtual machine representation
+ */
 class VM {
 public:
+	/**
+	 * Opcode handler prototype
+	 */
 	typedef void (VM::*opcode_handler)(CLEVER_VM_HANDLER_ARGS);
 	typedef std::vector<Opcode*> OpcodeList;
 
 	VM() : m_opcodes(NULL) { }
 
-	explicit VM(OpcodeList* opcodes)
-		: m_opcodes(opcodes) { }
-
 	~VM();
 
+	/**
+	 * Execute the opcode (call the its related handlers)
+	 */
 	void run() throw();
+	/**
+	 * Displays an error message and exists
+	 */
 	void error(const char*) const throw();
-
-	void setOpcodes(OpcodeList* opcodes) {
+	/**
+	 * Set the opcode vector
+	 */
+	void set_opcodes(OpcodeList* opcodes) throw() {
 		m_opcodes = opcodes;
 	}
-
-	/*
-	 * Returns the value from a Value pointer according to Value type
+	/**
+	 * Returns the value from a Value pointer according to its type
 	 */
 	Value* getValue(Value* op) throw() {
-		if (!op) {
+		if (UNEXPECTED(op == NULL)) {
 			return NULL;
 		}
 		switch (op->get_kind()) {
@@ -92,7 +102,9 @@ public:
 		}
 	}
 
-	/* Opcode handlers */
+	/**
+	 * Opcode handlers
+	 */
 	CLEVER_VM_HANDLER(plus_handler);
 	CLEVER_VM_HANDLER(div_handler);
 	CLEVER_VM_HANDLER(mult_handler);
