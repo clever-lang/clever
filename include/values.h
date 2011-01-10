@@ -89,10 +89,12 @@ public:
 	int get_status() { return m_status; }
 	void set_status(int status) { m_status = status; }
 
-	bool isSet(void) const { return m_status != UNSET; }
+	bool isInitialized(void) const { return m_status == SET; }
+	bool isUninitialized(void) const { return m_status == UNSET; }
 	bool isModified(void) const { return m_status == MODIFIED; }
 
-	void setSet(void) { m_status = SET; }
+	void setInitialized(void) { m_status = SET; }
+	void setUninitialized(void) { m_status = UNSET; }
 	void setModified(void) { m_status = MODIFIED; }
 
 	bool isInteger(void) const { return m_type == INTEGER; }

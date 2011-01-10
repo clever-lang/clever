@@ -40,19 +40,18 @@ class Value;
  */
 class SSA {
 public:
-	typedef std::pair<Value*, Value*> VarTrack;
-	typedef boost::unordered_map<const CString*, VarTrack> var_map;
+	typedef boost::unordered_map<const CString*, Value*> var_map;
 	typedef std::deque<var_map> var_scope;
 
 	SSA()
 		: m_var_at(-1) { }
 	~SSA() { }
 
-	void register_var(Value* var, Value* value) throw() {
-		m_variables.at(m_var_at).insert(std::pair<CString*, VarTrack>(var->get_name(), VarTrack(var, value)));
+	void registerVar(Value* var) throw() {
+		m_variables.at(m_var_at).insert(std::pair<CString*, Value*>(var->get_name(), var));
 	}
 
-	VarTrack* get_var(Value* var) throw() {
+	Value* fetchVar(Value* var) throw() {
 		CString* name = var->get_name();
 
 		/* Searchs for the variable in the inner and out scopes */
@@ -60,7 +59,7 @@ public:
 			var_map::iterator it = m_variables.at(i).find(name);
 
 			if (it != m_variables.at(i).end()) {
-				return &it->second;
+				return it->second;
 			}
 		}
 		return NULL;
@@ -78,10 +77,6 @@ public:
 	void popVarMap() throw() {
 		var_map::iterator it = topVarMap().begin();
 
-		while (it != topVarMap().end()) {
-			it->second.first->delRef();
-			++it;
-		}
 		m_variables.pop_back();
 		--m_var_at;
 	}

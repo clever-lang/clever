@@ -51,22 +51,12 @@ Value* IRBuilder::getValue(ast::Expression* expr) throw() {
 	Value* value = expr->get_value();
 
 	if (value && value->hasName()) {
-		SSA::VarTrack* var = m_ssa.get_var(value);
+		Value* var = m_ssa.fetchVar(value);
 
 		if (var) {
-			return var->first;
+			return var;
 		}
-
-		/* Just return the variable value when it can be predicted */
-		if (var && !var->first->isModified() && var->second) {
-			return var->second;
-		} else {
-			/*
-			 * The variable value is not known, because it has been changed,
-			 * so just return the variable address
-			 */
-			return var->first;
-		}
+		Compiler::error("Inexistent variable!");
 	}
 	return value;
 }
@@ -125,10 +115,9 @@ Opcode* IRBuilder::variableDecl(ast::VariableDecl* expr) throw() {
 	if (rhs_expr) {
 		Value* value = rhs_expr->get_value();
 
-		m_ssa.register_var(variable, value);
+		m_ssa.registerVar(variable);
 
-		variable->setSet();
-		variable->addRef();
+		variable->setInitialized();
 		variable->addRef();
 		value->addRef();
 
@@ -189,9 +178,9 @@ Opcode* IRBuilder::preIncrement(ast::PreIncrement* expr) throw() {
 	Value* value = getValue(expr->get_expr());
 
 	if (expr->get_expr()->get_value()->hasName()) {
-		SSA::VarTrack* var = m_ssa.get_var(expr->get_expr()->get_value());
+		Value* var = m_ssa.fetchVar(expr->get_expr()->get_value());
 
-		var->first->setModified();
+		var->setModified();
 	}
 	value->addRef();
 	return new Opcode(OP_PRE_INC, &VM::pre_inc_handler, value, NULL, expr->get_value());
@@ -204,9 +193,9 @@ Opcode* IRBuilder::posIncrement(ast::PosIncrement* expr) throw() {
 	Value* value = getValue(expr->get_expr());
 
 	if (expr->get_expr()->get_value()->hasName()) {
-		SSA::VarTrack* var = m_ssa.get_var(expr->get_expr()->get_value());
+		Value* var = m_ssa.fetchVar(expr->get_expr()->get_value());
 
-		var->first->setModified();
+		var->setModified();
 	}
 	value->addRef();
 	return new Opcode(OP_POS_INC, &VM::pos_inc_handler, value, NULL, expr->get_value());
@@ -219,9 +208,9 @@ Opcode* IRBuilder::preDecrement(ast::PreDecrement* expr) throw() {
 	Value* value = getValue(expr->get_expr());
 
 	if (expr->get_expr()->get_value()->hasName()) {
-		SSA::VarTrack* var = m_ssa.get_var(expr->get_expr()->get_value());
+		Value* var = m_ssa.fetchVar(expr->get_expr()->get_value());
 
-		var->first->setModified();
+		var->setModified();
 	}
 	value->addRef();
 	return new Opcode(OP_PRE_DEC, &VM::pre_dec_handler, value, NULL, expr->get_value());
@@ -234,9 +223,9 @@ Opcode* IRBuilder::posDecrement(ast::PosDecrement* expr) throw(){
 	Value* value = getValue(expr->get_expr());
 
 	if (expr->get_expr()->get_value()->hasName()) {
-		SSA::VarTrack* var = m_ssa.get_var(expr->get_expr()->get_value());
+		Value* var = m_ssa.fetchVar(expr->get_expr()->get_value());
 
-		var->first->setModified();
+		var->setModified();
 	}
 	value->addRef();
 	return new Opcode(OP_POS_DEC, &VM::pos_dec_handler, value, NULL, expr->get_value());
@@ -452,7 +441,7 @@ Opcode* IRBuilder::functionCall(ast::FunctionCall* expr) throw() {
 
 Opcode* IRBuilder::methodCall(ast::MethodCall* expr) throw() {
 	Value* arg_values = NULL;
-	SSA::VarTrack* variable = m_ssa.get_var(expr->get_variable()->get_value());
+	Value* variable = m_ssa.fetchVar(expr->get_variable()->get_value());
 	Value* method = new ConstantValue(expr->get_method()->get_value()->getStringP());
 	ast::Arguments* args = expr->get_args();
 
@@ -462,9 +451,9 @@ Opcode* IRBuilder::methodCall(ast::MethodCall* expr) throw() {
 		arg_values->setVector(functionArgs(args));
 	}
 
-	variable->first->addRef();
+	variable->addRef();
 
-	return new Opcode(OP_MCALL, &VM::mcall_handler, variable->first, method, arg_values);
+	return new Opcode(OP_MCALL, &VM::mcall_handler, variable, method, arg_values);
 }
 
 } // clever
