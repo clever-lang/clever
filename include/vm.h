@@ -88,7 +88,6 @@ public:
 				if (!op->hasName()) {
 					error("Value name not known.");
 				}
-
 				return m_symbols.fetchValue(op->get_name());
 		}
 	}

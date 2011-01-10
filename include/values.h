@@ -77,10 +77,10 @@ public:
 	virtual bool hasName() const { return false; }
 	virtual CString* get_name() const { return NULL; }
 	virtual void set_name(CString* name) { /* TODO: throw error */ }
-	
+
 	int get_kind() const { return m_kind; }
 	void set_kind(int kind) { m_kind = kind; }
-	
+
 	bool hasSameKind(Value* value) const { return get_kind() == value->get_kind(); }
 
 	bool isConst() const { return m_kind == CONST; }
@@ -117,9 +117,9 @@ public:
 
 	void copy(const Value* value) {
 		switch (value->get_type()) {
-			case INTEGER: setInteger(getInteger()); break;
-			case DOUBLE: setDouble(getDouble()); break;
-			case STRING: setString(getStringP()); break;
+			case INTEGER: setInteger(value->getInteger()); break;
+			case DOUBLE: setDouble(value->getDouble()); break;
+			case STRING: setString(value->getStringP()); break;
 		}
 		set_type(value->get_type());
 	}
@@ -179,7 +179,7 @@ public:
 
 	explicit NamedValue(CString* name)
 		: Value(), m_name(name) { }
-	
+
 	bool hasName() const { return true; }
 	CString* get_name() const { return m_name; }
 	void set_name(CString* name) { m_name = name; }

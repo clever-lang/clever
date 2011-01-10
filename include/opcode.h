@@ -87,7 +87,7 @@ public:
 
 	VM::opcode_handler get_handler() const { return m_handler; }
 
-	Value* get_op1() const { return m_op1; }
+	Value* get_op1() { return m_op1; }
 	void set_op1(Value* op1) { m_op1 = op1; }
 
 	Value* get_op2() const { return m_op2; }

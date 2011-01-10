@@ -97,18 +97,16 @@ CLEVER_VM_HANDLER(VM::plus_handler) {
 	Value* op1 = getValue(opcode.get_op1());
 	Value* op2 = getValue(opcode.get_op2());
 
-	if (op1->isConst() && op1->hasSameKind(op2)) {
-		switch (op1->get_type()) {
-			case Value::STRING:
-				opcode.set_result(new ConstantValue(CSTRING(op1->getString() + op2->getString())));
-				break;
-			case Value::INTEGER:
-				opcode.set_result(new ConstantValue(op1->getInteger() + op2->getInteger()));
-				break;
-			case Value::DOUBLE:
-				opcode.set_result(new ConstantValue(op1->getDouble() + op2->getDouble()));
-				break;
-		}
+	switch (op1->get_type()) {
+		case Value::STRING:
+			opcode.set_result(new ConstantValue(CSTRING(op1->getString() + op2->getString())));
+			break;
+		case Value::INTEGER:
+			opcode.set_result(new ConstantValue(op1->getInteger() + op2->getInteger()));
+			break;
+		case Value::DOUBLE:
+			opcode.set_result(new ConstantValue(op1->getDouble() + op2->getDouble()));
+			break;
 	}
 }
 
@@ -119,15 +117,13 @@ CLEVER_VM_HANDLER(VM::div_handler) {
 	Value* op1 = getValue(opcode.get_op1());
 	Value* op2 = getValue(opcode.get_op2());
 
-	if (op1->isConst() && op1->hasSameKind(op2)) {
-		switch (op1->get_type()) {
-			case Value::INTEGER:
-				opcode.set_result(new ConstantValue(op1->getInteger() / op2->getInteger()));
-				break;
-			case Value::DOUBLE:
-				opcode.set_result(new ConstantValue(op1->getDouble() / op2->getDouble()));
-				break;
-		}
+	switch (op1->get_type()) {
+		case Value::INTEGER:
+			opcode.set_result(new ConstantValue(op1->getInteger() / op2->getInteger()));
+			break;
+		case Value::DOUBLE:
+			opcode.set_result(new ConstantValue(op1->getDouble() / op2->getDouble()));
+			break;
 	}
 }
 
@@ -138,15 +134,13 @@ CLEVER_VM_HANDLER(VM::minus_handler) {
 	Value* op1 = getValue(opcode.get_op1());
 	Value* op2 = getValue(opcode.get_op2());
 
-	if (op1->isConst() && op1->hasSameKind(op2)) {
-		switch (op1->get_type()) {
-			case Value::INTEGER:
-				opcode.set_result(new ConstantValue(op1->getInteger() - op2->getInteger()));
-				break;
-			case Value::DOUBLE:
-				opcode.set_result(new ConstantValue(op1->getDouble() - op2->getDouble()));
-				break;
-		}
+	switch (op1->get_type()) {
+		case Value::INTEGER:
+			opcode.set_result(new ConstantValue(op1->getInteger() - op2->getInteger()));
+			break;
+		case Value::DOUBLE:
+			opcode.set_result(new ConstantValue(op1->getDouble() - op2->getDouble()));
+			break;
 	}
 }
 
@@ -157,15 +151,13 @@ CLEVER_VM_HANDLER(VM::mult_handler) {
 	Value* op1 = getValue(opcode.get_op1());
 	Value* op2 = getValue(opcode.get_op2());
 
-	if (op1->isConst() && op1->hasSameKind(op2)) {
-		switch (op1->get_type()) {
-			case Value::INTEGER:
-				opcode.set_result(new ConstantValue(op1->getInteger() * op2->getInteger()));
-				break;
-			case Value::DOUBLE:
-				opcode.set_result(new ConstantValue(op1->getDouble() * op2->getDouble()));
-				break;
-		}
+	switch (op1->get_type()) {
+		case Value::INTEGER:
+			opcode.set_result(new ConstantValue(op1->getInteger() * op2->getInteger()));
+			break;
+		case Value::DOUBLE:
+			opcode.set_result(new ConstantValue(op1->getDouble() * op2->getDouble()));
+			break;
 	}
 }
 
@@ -176,12 +168,10 @@ CLEVER_VM_HANDLER(VM::bw_and_handler) {
 	Value* op1 = getValue(opcode.get_op1());
 	Value* op2 = getValue(opcode.get_op2());
 
-	if (op1->isConst() && op1->hasSameKind(op2)) {
-		switch (op1->get_type()) {
-			case Value::INTEGER:
-				opcode.set_result(new ConstantValue(op1->getInteger() & op2->getInteger()));
-				break;
-		}
+	switch (op1->get_type()) {
+		case Value::INTEGER:
+			opcode.set_result(new ConstantValue(op1->getInteger() & op2->getInteger()));
+			break;
 	}
 }
 
@@ -192,12 +182,10 @@ CLEVER_VM_HANDLER(VM::bw_xor_handler) {
 	Value* op1 = getValue(opcode.get_op1());
 	Value* op2 = getValue(opcode.get_op2());
 
-	if (op1->isConst() && op1->hasSameKind(op2)) {
-		switch (op1->get_type()) {
-			case Value::INTEGER:
-				opcode.set_result(new ConstantValue(op1->getInteger() ^ op2->getInteger()));
-				break;
-		}
+	switch (op1->get_type()) {
+		case Value::INTEGER:
+			opcode.set_result(new ConstantValue(op1->getInteger() ^ op2->getInteger()));
+			break;
 	}
 }
 
@@ -208,12 +196,10 @@ CLEVER_VM_HANDLER(VM::bw_or_handler) {
 	Value* op1 = getValue(opcode.get_op1());
 	Value* op2 = getValue(opcode.get_op2());
 
-	if (op1->isConst() && op1->hasSameKind(op2)) {
-		switch (op1->get_type()) {
-			case Value::INTEGER:
-				opcode.set_result(new ConstantValue(op1->getInteger() | op2->getInteger()));
-				break;
-		}
+	switch (op1->get_type()) {
+		case Value::INTEGER:
+			opcode.set_result(new ConstantValue(op1->getInteger() | op2->getInteger()));
+			break;
 	}
 }
 
@@ -224,12 +210,10 @@ CLEVER_VM_HANDLER(VM::mod_handler) {
 	Value* op1 = getValue(opcode.get_op1());
 	Value* op2 = getValue(opcode.get_op2());
 
-	if (op1->isConst() && op1->hasSameKind(op2)) {
-		switch (op1->get_type()) {
-			case Value::INTEGER:
-				opcode.set_result(new ConstantValue(op1->getInteger() % op2->getInteger()));
-				break;
-		}
+	switch (op1->get_type()) {
+		case Value::INTEGER:
+			opcode.set_result(new ConstantValue(op1->getInteger() % op2->getInteger()));
+			break;
 	}
 }
 
@@ -272,6 +256,7 @@ CLEVER_VM_HANDLER(VM::var_decl_handler) {
 	/* Register the variable in the current scope */
 	//m_symbols.register_var(opcode.get_op1(), value);
 	opcode.get_op1()->copy(value);
+
 	m_symbols.pushValue(opcode.get_op1());
 }
 
@@ -282,17 +267,15 @@ CLEVER_VM_HANDLER(VM::pre_inc_handler) {
 	Value* value = getValue(opcode.get_op1());
 	Value* result = getValue(opcode.get_result());
 
-	if (value->isConst()) {
-		switch (value->get_type()) {
-			case Value::INTEGER:
-				value->setInteger(value->getInteger()+1);
-				break;
-			case Value::DOUBLE:
-				value->setDouble(value->getDouble()+1);
-				break;
-		}
-		opcode.set_result(result, value);
+	switch (value->get_type()) {
+		case Value::INTEGER:
+			value->setInteger(value->getInteger()+1);
+			break;
+		case Value::DOUBLE:
+			value->setDouble(value->getDouble()+1);
+			break;
 	}
+	opcode.set_result(result, value);
 }
 
 /*
@@ -302,16 +285,14 @@ CLEVER_VM_HANDLER(VM::pos_inc_handler) {
 	Value* value = getValue(opcode.get_op1());
 	Value* result = getValue(opcode.get_result());
 
-	if (value->isConst()) {
-		opcode.set_result(result, value);
-		switch (value->get_type()) {
-			case Value::INTEGER:
-				value->setInteger(value->getInteger()+1);
-				break;
-			case Value::DOUBLE:
-				value->setDouble(value->getDouble()+1);
-				break;
-		}
+	opcode.set_result(result, value);
+	switch (value->get_type()) {
+		case Value::INTEGER:
+			value->setInteger(value->getInteger()+1);
+			break;
+		case Value::DOUBLE:
+			value->setDouble(value->getDouble()+1);
+			break;
 	}
 }
 
@@ -322,17 +303,15 @@ CLEVER_VM_HANDLER(VM::pre_dec_handler) {
 	Value* value = getValue(opcode.get_op1());
 	Value* result = getValue(opcode.get_result());
 
-	if (value->isConst()) {
-		switch (value->get_type()) {
-			case Value::INTEGER:
-				value->setInteger(value->getInteger()-1);
-				break;
-			case Value::DOUBLE:
-				value->setDouble(value->getDouble()-1);
-				break;
-		}
-		opcode.set_result(result, value);
+	switch (value->get_type()) {
+		case Value::INTEGER:
+			value->setInteger(value->getInteger()-1);
+			break;
+		case Value::DOUBLE:
+			value->setDouble(value->getDouble()-1);
+			break;
 	}
+	opcode.set_result(result, value);
 }
 
 /*
@@ -342,16 +321,14 @@ CLEVER_VM_HANDLER(VM::pos_dec_handler) {
 	Value* value = getValue(opcode.get_op1());
 	Value* result = getValue(opcode.get_result());
 
-	if (value->isConst()) {
-		opcode.set_result(result, value);
-		switch (value->get_type()) {
-			case Value::INTEGER:
-				value->setInteger(value->getInteger()-1);
-				break;
-			case Value::DOUBLE:
-				value->setDouble(value->getDouble()-1);
-				break;
-		}
+	opcode.set_result(result, value);
+	switch (value->get_type()) {
+		case Value::INTEGER:
+			value->setInteger(value->getInteger()-1);
+			break;
+		case Value::DOUBLE:
+			value->setDouble(value->getDouble()-1);
+			break;
 	}
 }
 
@@ -361,24 +338,22 @@ CLEVER_VM_HANDLER(VM::pos_dec_handler) {
 CLEVER_VM_HANDLER(VM::jmpz_handler) {
 	Value* value = getValue(opcode.get_op1());
 
-	if (value->isConst()) {
-		switch (value->get_type()) {
-			case Value::INTEGER:
-				if (!value->getInteger()) {
-					CLEVER_VM_GOTO(opcode.get_jmp_addr1());
-				}
-				break;
-			case Value::DOUBLE:
-				if (!value->getDouble()) {
-					CLEVER_VM_GOTO(opcode.get_jmp_addr1());
-				}
-				break;
-			case Value::BOOLEAN:
-				if (!value->getBoolean()) {
-					CLEVER_VM_GOTO(opcode.get_jmp_addr1());
-				}
-				break;
-		}
+	switch (value->get_type()) {
+		case Value::INTEGER:
+			if (!value->getInteger()) {
+				CLEVER_VM_GOTO(opcode.get_jmp_addr1());
+			}
+			break;
+		case Value::DOUBLE:
+			if (!value->getDouble()) {
+				CLEVER_VM_GOTO(opcode.get_jmp_addr1());
+			}
+			break;
+		case Value::BOOLEAN:
+			if (!value->getBoolean()) {
+				CLEVER_VM_GOTO(opcode.get_jmp_addr1());
+			}
+			break;
 	}
 }
 
@@ -396,15 +371,13 @@ CLEVER_VM_HANDLER(VM::greater_handler) {
 	Value* op1 = getValue(opcode.get_op1());
 	Value* op2 = getValue(opcode.get_op2());
 
-	if (op1->isConst() && op1->hasSameKind(op2) && op1->hasSameType(op2)) {
-		switch (op1->get_type()) {
-			case Value::INTEGER:
-				opcode.set_result(new ConstantValue(bool(op1->getInteger() > op2->getInteger())));
-				break;
-			case Value::DOUBLE:
-				opcode.set_result(new ConstantValue(op1->getDouble() > op2->getDouble()));
-				break;
-		}
+	switch (op1->get_type()) {
+		case Value::INTEGER:
+			opcode.set_result(new ConstantValue(bool(op1->getInteger() > op2->getInteger())));
+			break;
+		case Value::DOUBLE:
+			opcode.set_result(new ConstantValue(op1->getDouble() > op2->getDouble()));
+			break;
 	}
 }
 
@@ -415,15 +388,13 @@ CLEVER_VM_HANDLER(VM::greater_equal_handler) {
 	Value* op1 = getValue(opcode.get_op1());
 	Value* op2 = getValue(opcode.get_op2());
 
-	if (op1->isConst() && op1->hasSameKind(op2) && op1->hasSameType(op2)) {
-		switch (op1->get_type()) {
-			case Value::INTEGER:
-				opcode.set_result(new ConstantValue(op1->getInteger() >= op2->getInteger()));
-				break;
-			case Value::DOUBLE:
-				opcode.set_result(new ConstantValue(op1->getDouble() >= op2->getDouble()));
-				break;
-		}
+	switch (op1->get_type()) {
+		case Value::INTEGER:
+			opcode.set_result(new ConstantValue(op1->getInteger() >= op2->getInteger()));
+			break;
+		case Value::DOUBLE:
+			opcode.set_result(new ConstantValue(op1->getDouble() >= op2->getDouble()));
+			break;
 	}
 }
 
@@ -434,15 +405,13 @@ CLEVER_VM_HANDLER(VM::less_handler) {
 	Value* op1 = getValue(opcode.get_op1());
 	Value* op2 = getValue(opcode.get_op2());
 
-	if (op1->isConst() && op1->hasSameKind(op2) && op1->hasSameType(op2)) {
-		switch (op1->get_type()) {
-			case Value::INTEGER:
-				opcode.set_result(new ConstantValue(op1->getInteger() < op2->getInteger()));
-				break;
-			case Value::DOUBLE:
-				opcode.set_result(new ConstantValue(op1->getDouble() < op2->getDouble()));
-				break;
-		}
+	switch (op1->get_type()) {
+		case Value::INTEGER:
+			opcode.set_result(new ConstantValue(op1->getInteger() < op2->getInteger()));
+			break;
+		case Value::DOUBLE:
+			opcode.set_result(new ConstantValue(op1->getDouble() < op2->getDouble()));
+			break;
 	}
 }
 
@@ -453,15 +422,13 @@ CLEVER_VM_HANDLER(VM::less_equal_handler) {
 	Value* op1 = getValue(opcode.get_op1());
 	Value* op2 = getValue(opcode.get_op2());
 
-	if (op1->isConst() && op1->hasSameKind(op2) && op1->hasSameType(op2)) {
-		switch (op1->get_type()) {
-			case Value::INTEGER:
-				opcode.set_result(new ConstantValue(op1->getInteger() <= op2->getInteger()));
-				break;
-			case Value::DOUBLE:
-				opcode.set_result(new ConstantValue(op1->getDouble() <= op2->getDouble()));
-				break;
-		}
+	switch (op1->get_type()) {
+		case Value::INTEGER:
+			opcode.set_result(new ConstantValue(op1->getInteger() <= op2->getInteger()));
+			break;
+		case Value::DOUBLE:
+			opcode.set_result(new ConstantValue(op1->getDouble() <= op2->getDouble()));
+			break;
 	}
 }
 
@@ -479,15 +446,13 @@ CLEVER_VM_HANDLER(VM::equal_handler) {
 	Value* op1 = getValue(opcode.get_op1());
 	Value* op2 = getValue(opcode.get_op2());
 
-	if (op1->isConst() && op1->hasSameKind(op2) && op1->hasSameType(op2)) {
-		switch (op1->get_type()) {
-			case Value::INTEGER:
-				opcode.set_result(new ConstantValue(op1->getInteger() == op2->getInteger()));
-				break;
-			case Value::DOUBLE:
-				opcode.set_result(new ConstantValue(op1->getDouble() == op2->getDouble()));
-				break;
-		}
+	switch (op1->get_type()) {
+		case Value::INTEGER:
+			opcode.set_result(new ConstantValue(op1->getInteger() == op2->getInteger()));
+			break;
+		case Value::DOUBLE:
+			opcode.set_result(new ConstantValue(op1->getDouble() == op2->getDouble()));
+			break;
 	}
 }
 
@@ -498,15 +463,13 @@ CLEVER_VM_HANDLER(VM::not_equal_handler) {
 	Value* op1 = getValue(opcode.get_op1());
 	Value* op2 = getValue(opcode.get_op2());
 
-	if (op1->isConst() && op1->hasSameKind(op2) && op1->hasSameType(op2)) {
-		switch (op1->get_type()) {
-			case Value::INTEGER:
-				opcode.set_result(new ConstantValue(op1->getInteger() != op2->getInteger()));
-				break;
-			case Value::DOUBLE:
-				opcode.set_result(new ConstantValue(op1->getDouble() != op2->getDouble()));
-				break;
-		}
+	switch (op1->get_type()) {
+		case Value::INTEGER:
+			opcode.set_result(new ConstantValue(op1->getInteger() != op2->getInteger()));
+			break;
+		case Value::DOUBLE:
+			opcode.set_result(new ConstantValue(op1->getDouble() != op2->getDouble()));
+			break;
 	}
 }
 

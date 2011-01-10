@@ -53,6 +53,10 @@ Value* IRBuilder::getValue(ast::Expression* expr) throw() {
 	if (value && value->hasName()) {
 		SSA::VarTrack* var = m_ssa.get_var(value);
 
+		if (var) {
+			return var->first;
+		}
+
 		/* Just return the variable value when it can be predicted */
 		if (var && !var->first->isModified() && var->second) {
 			return var->second;
