@@ -442,7 +442,8 @@ Opcode* IRBuilder::functionCall(ast::FunctionCall* expr) throw() {
 Opcode* IRBuilder::methodCall(ast::MethodCall* expr) throw() {
 	Value* arg_values = NULL;
 	Value* variable = m_ssa.fetchVar(expr->get_variable()->get_value());
-	Value* method = new ConstantValue(expr->get_method()->get_value()->getStringP());
+	Value* method = new ConstantValue(expr->get_method()->get_value()->get_name());
+/*
 	ast::Arguments* args = expr->get_args();
 
 	if (args) {
@@ -450,10 +451,10 @@ Opcode* IRBuilder::methodCall(ast::MethodCall* expr) throw() {
 		arg_values->set_type(Value::VECTOR);
 		arg_values->setVector(functionArgs(args));
 	}
-
+*/
 	variable->addRef();
 
-	return new Opcode(OP_MCALL, &VM::mcall_handler, variable, method, arg_values);
+	return new Opcode(OP_MCALL, &VM::mcall_handler, variable, method);
 }
 
 } // clever

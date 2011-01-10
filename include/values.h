@@ -105,7 +105,7 @@ public:
 	bool isUserValue() const { return m_type == USER; }
 
 	void setInteger(int64_t i) { m_data.l_value = i; }
-	void setString(CString* s) { m_data.s_value = s;	}
+	void setString(CString* s) { m_data.s_value = s; }
 	void setDouble(double d) { m_data.d_value = d; }
 	void setBoolean(bool b) { m_data.b_value = b; }
 	void setVector(ValueVector* v) { m_data.v_value = v; }

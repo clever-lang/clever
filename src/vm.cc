@@ -501,9 +501,8 @@ CLEVER_VM_HANDLER(VM::fcall_handler) {
  * var.method()
  */
 CLEVER_VM_HANDLER(VM::mcall_handler) {
-	NamedValue* var = static_cast<NamedValue*>(opcode.get_op1());
-	Type* var_type = var->get_type_ptr();
-	Method* method = var_type->getMethod(opcode.get_op2()->get_name());
+	Type* var_type = opcode.get_op1()->get_type_ptr();
+	Method* method = var_type->getMethod(opcode.get_op2()->getStringP());
 	Value* retval = NULL;
 
 	if (method) {
