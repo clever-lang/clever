@@ -57,9 +57,9 @@ public:
 
 	virtual ~Value() {
 		if (isVector()) {
-			ValueVector::iterator it = m_data.v_value->begin();
+			ValueVector::const_iterator it = m_data.v_value->begin(), end = m_data.v_value->end();
 
-			while (it != m_data.v_value->end()) {
+			while (it != end) {
 				(*it)->delRef();
 				++it;
 			}
@@ -135,10 +135,7 @@ public:
 	}
 
 	virtual void set_value(Value* value) { }
-
-	virtual Value* get_value() {
-		return this;
-	}
+	virtual Value* get_value() { return this; }
 
 	virtual std::string toString() {
 		std::ostringstream str;
