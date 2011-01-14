@@ -245,7 +245,7 @@ CLEVER_VM_HANDLER(VM::end_scope_handler) {
  * Type var [= value ]
  */
 CLEVER_VM_HANDLER(VM::var_decl_handler) {
-	Value* value = getValue(opcode.get_op2());
+	const Value* value = getValue(opcode.get_op2());
 
 	/* TODO: Make the type initialization here */
 	if (!value) {
