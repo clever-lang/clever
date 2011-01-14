@@ -97,6 +97,13 @@ public:
 	void setUninitialized() { m_status = UNSET; }
 	void setModified() { m_status = MODIFIED; }
 
+	bool isPrimitive() const {
+		return m_type == INTEGER || 
+			m_type == DOUBLE || 
+			m_type == BOOLEAN ||
+			m_type == STRING; 
+	} 
+
 	bool isInteger() const { return m_type == INTEGER; }
 	bool isString() const { return m_type == STRING; }
 	bool isDouble() const { return m_type == DOUBLE; }
@@ -118,12 +125,13 @@ public:
 	ValueVector* getVector() const { return m_data.v_value; }
 
 	void copy(const Value* value) {
-		switch (value->get_type()) {
+		int type = value->get_type();
+		switch (type) {
 			case INTEGER: setInteger(value->getInteger()); break;
 			case DOUBLE: setDouble(value->getDouble()); break;
 			case STRING: setString(value->getStringP()); break;
 		}
-		set_type(value->get_type());
+		set_type(type);
 	}
 
 	virtual void set_value(Value* value) { }
