@@ -36,29 +36,10 @@ namespace clever {
 
 class CString;
 class Method;
-class Type;
 
-typedef void (Type::*MethodPtr)(CLEVER_METHOD_ARGS);
-
-class Method {
-public:
-	Method(const CString* name, MethodPtr method)
-		: m_name(name), m_method(method) { }
-
-	~Method() { }
-
-	const CString* get_name() const throw() {
-		return m_name;
-	}
-
-	MethodPtr get_method() const throw() {
-		return m_method;
-	}
-private:
-	const CString* m_name;
-	MethodPtr m_method;
-};
-
+/**
+ * Type representation
+ */
 class Type {
 public:
 	typedef boost::unordered_map<const CString*, Method*> MethodMap;

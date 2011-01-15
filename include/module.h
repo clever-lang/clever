@@ -36,7 +36,6 @@
 
 namespace clever {
 
-class Value;
 class Module;
 class Function;
 
@@ -48,9 +47,7 @@ typedef std::list<Module*> ModuleList;
  */
 #define CLEVER_FUNCTION_ARGS const FunctionArgs& args
 #define CLEVER_METHOD_ARGS
-
 #define CLEVER_FUNC_NAME(name) clv_##name
-
 #define CLEVER_FUNCTION(name) void CLEVER_FASTCALL CLEVER_FUNC_NAME(name)(CLEVER_FUNCTION_ARGS) throw()
 #define CLEVER_METHOD(name) void CLEVER_FASTCALL name(CLEVER_METHOD_ARGS) throw()
 
@@ -63,6 +60,30 @@ typedef std::vector<Value*> FunctionArgs;
  * Module function prototype
  */
 typedef void (CLEVER_FASTCALL *module_function)(CLEVER_FUNCTION_ARGS);
+
+typedef void (Type::*MethodPtr)(CLEVER_METHOD_ARGS);
+
+/**
+ * Method representation
+ */
+class Method {
+public:
+	Method(const CString* name, MethodPtr method)
+		: m_name(name), m_method(method) { }
+
+	~Method() { }
+
+	const CString* get_name() const throw() {
+		return m_name;
+	}
+
+	MethodPtr get_method() const throw() {
+		return m_method;
+	}
+private:
+	const CString* m_name;
+	MethodPtr m_method;
+};
 
 /**
  * Function representation
