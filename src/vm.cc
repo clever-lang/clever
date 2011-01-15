@@ -478,7 +478,7 @@ CLEVER_VM_HANDLER(VM::not_equal_handler) {
 CLEVER_VM_HANDLER(VM::fcall_handler) {
 	const Function* func = static_cast<CallableValue*>(opcode.get_op1())->get_function();
 	Value* args = opcode.get_op2();
-	FunctionArgs func_args;
+	CallArgs func_args;
 
 	if (args) {
 		ValueVector* vec_args = args->getVector();
@@ -503,7 +503,7 @@ CLEVER_VM_HANDLER(VM::mcall_handler) {
 	Type* var_type = opcode.get_op1()->get_type_ptr();
 	const Method* method = static_cast<CallableValue*>(opcode.get_op1())->get_method();
 	Value* args = opcode.get_op2();
-	FunctionArgs func_args;
+	CallArgs func_args;
 
 	if (args) {
 		ValueVector* vec_args = args->getVector();

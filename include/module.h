@@ -45,16 +45,16 @@ typedef std::list<Module*> ModuleList;
 /**
  * Macros to help on module function declaration
  */
-#define CLEVER_FUNCTION_ARGS const FunctionArgs& args
-#define CLEVER_METHOD_ARGS const FunctionArgs& args
+#define CLEVER_FUNCTION_ARGS const CallArgs& args
+#define CLEVER_METHOD_ARGS const CallArgs& args
 #define CLEVER_FUNC_NAME(name) clv_##name
 #define CLEVER_FUNCTION(name) void CLEVER_FASTCALL CLEVER_FUNC_NAME(name)(CLEVER_FUNCTION_ARGS) throw()
 #define CLEVER_METHOD(name) void name(CLEVER_METHOD_ARGS) throw()
 
 /**
- * Function arguments type
+ * Function/method arguments vector
  */
-typedef std::vector<Value*> FunctionArgs;
+typedef std::vector<Value*> CallArgs;
 
 /**
  * Module function prototype
@@ -73,13 +73,10 @@ public:
 
 	~Method() { }
 
-	const CString* get_name() const throw() {
-		return m_name;
-	}
+	const CString* get_name() const throw() { return m_name; }
+	MethodPtr get_method() const throw() { return m_method; }
 
-	MethodPtr get_method() const throw() {
-		return m_method;
-	}
+	DISALLOW_COPY_AND_ASSIGN(Method);
 private:
 	const CString* m_name;
 	MethodPtr m_method;
