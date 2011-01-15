@@ -38,19 +38,13 @@
 #include "global.h"
 
 namespace clever {
+
 class Type;
 class Value;
 class Method;
 class Function;
 
 typedef std::vector<Value*> ValueVector;
-
-enum CallType { FUNCTION, METHOD };
-
-union ValueCallback {
-	const Function* func;
-	const Method* method;
-};
 
 /**
  * Base class for value representation
@@ -180,12 +174,12 @@ public:
 		}
 	}
 
+	DISALLOW_COPY_AND_ASSIGN(Value);
 private:
 	int m_status;
 	int m_type;
 	int m_kind;
 	Type* m_type_ptr;
-
 	ValueData m_data;
 };
 
@@ -219,6 +213,8 @@ public:
 	}
 
 	~ConstantValue() { }
+
+	DISALLOW_COPY_AND_ASSIGN(ConstantValue);
 };
 
 /**
@@ -237,6 +233,7 @@ public:
 	CString* get_name() const { return m_name; }
 	void set_name(CString* name) { m_name = name; }
 
+	DISALLOW_COPY_AND_ASSIGN(NamedValue);
 private:
 	CString* m_name;
 };
@@ -255,19 +252,29 @@ public:
 	void set_callback(const Function*& callback) throw() { m_callback.func = callback; }
 	void set_callback(const Method*& callback) throw() { m_callback.method = callback; }
 
-	const Function* get_function() const throw() { return m_callback.func; }
-	const Method* get_method() const throw() { return m_callback.method; }
+	const Function* get_function() throw() {
+		m_type = FUNCTION;
+		return m_callback.func;
+	}
+	const Method* get_method() throw() {
+		m_type = METHOD;
+		return m_callback.method;
+	}
 
 	bool isCallable() const { return true; }
 
 	/* TODO: improve/fix this. */
 	void call() { }
 
+	DISALLOW_COPY_AND_ASSIGN(CallableValue);
 private:
 	/* TODO: merge Function/Method */
-	ValueCallback m_callback;
+	union {
+		const Function* func;
+		const Method* method;
+	} m_callback;
 	/* TODO: kill this. */
-	CallType m_type;
+	enum { FUNCTION, METHOD } m_type;
 };
 
 /**
@@ -275,7 +282,8 @@ private:
  */
 class TempValue : public Value {
 public:
-	TempValue() : Value(TEMP), m_value(NULL) { }
+	TempValue()
+		: Value(TEMP), m_value(NULL) { }
 
 	~TempValue() {
 		if (m_value) {
@@ -302,6 +310,8 @@ public:
 			return std::string();
 		}
 	}
+
+	DISALLOW_COPY_AND_ASSIGN(TempValue);
 private:
 	Value* m_value;
 };
