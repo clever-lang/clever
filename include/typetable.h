@@ -41,7 +41,9 @@ class TypeTable {
 public:
 	TypeTable() { }
 
-	~TypeTable() {
+	~TypeTable() { }
+
+	static void clear() {
 		TypeMap::const_iterator it = s_type_table.begin(), end_type(s_type_table.end());
 
 		while (it != end_type) {
@@ -68,8 +70,6 @@ public:
 
 	static TypeMap s_type_table;
 };
-
-extern TypeTable* g_type_table;
 
 } // clever
 

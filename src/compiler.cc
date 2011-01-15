@@ -35,8 +35,6 @@
 
 namespace clever {
 
-TypeTable* g_type_table = new TypeTable;
-
 FunctionTable Compiler::s_func_table;
 TypeMap TypeTable::s_type_table;
 
@@ -96,8 +94,7 @@ Compiler::~Compiler() {
 		delete *it2;
 		++it2;
 	}
-
-	delete g_type_table;
+	TypeTable::clear();
 }
 
 /*
