@@ -122,10 +122,10 @@ public:
 			m_type == STRING;
 	}
 
-	virtual void set_callback(const CString* name, const Method*& callback) { }
-	virtual void set_callback(const CString* name, const Function*& callback) { }
-	virtual const Function* get_function() const { return NULL; }
-	virtual const Method* get_method() const { return NULL; }
+	virtual void set_callback(const CString* name, const Method*& callback) throw() { }
+	virtual void set_callback(const CString* name, const Function*& callback) throw() { }
+	virtual const Function* get_function() const throw() { return NULL; }
+	virtual const Method* get_method() const throw() { return NULL; }
 
 	bool isInteger() const { return m_type == INTEGER; }
 	bool isString() const { return m_type == STRING; }
@@ -284,16 +284,16 @@ public:
 
 	~CallValue() { }
 
-	void set_callback(const CString* name, const Function*& callback) {
+	void set_callback(const CString* name, const Function*& callback) throw() {
 		m_name = name;
 		m_callback.func = callback;
 	}
-	void set_callback(const CString* name, const Method*& callback) {
+	void set_callback(const CString* name, const Method*& callback) throw() {
 		m_name = name;
 		m_callback.method = callback;
 	}
-	const Function* get_function() const { return m_callback.func; }
-	const Method* get_method() const { return m_callback.method; }
+	const Function* get_function() const throw() { return m_callback.func; }
+	const Method* get_method() const throw() { return m_callback.method; }
 private:
 	const CString* m_name;
 	CallType m_type;
