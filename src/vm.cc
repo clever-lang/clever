@@ -502,8 +502,23 @@ CLEVER_VM_HANDLER(VM::fcall_handler) {
 CLEVER_VM_HANDLER(VM::mcall_handler) {
 	Type* var_type = opcode.get_op1()->get_type_ptr();
 	const Method* method = static_cast<CallableValue*>(opcode.get_op1())->get_method();
+	Value* args = opcode.get_op2();
+	FunctionArgs func_args;
 
-	(var_type->*(method->get_method()))();
+	if (args) {
+		ValueVector* vec_args = args->getVector();
+		ValueVector::const_iterator it = vec_args->begin(), end(vec_args->end());
+
+		func_args.reserve(vec_args->size());
+
+		while (it != end) {
+			func_args.push_back(getValue(*it));
+			++it;
+		}
+	}
+
+	/* Call the method */
+	(var_type->*(method->get_method()))(func_args);
 }
 
 } // clever

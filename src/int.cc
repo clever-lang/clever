@@ -36,7 +36,7 @@ namespace clever {
 Integer* g_int_type = new Integer;
 
 CLEVER_METHOD(Integer::toString) {
-	std::cout << "called!" << std::endl;
+	std::cout << "called! " << args.size() << std::endl;
 }
 
 void Integer::Init() {

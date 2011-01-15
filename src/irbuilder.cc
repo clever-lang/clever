@@ -435,6 +435,8 @@ Opcode* IRBuilder::methodCall(ast::MethodCall* expr) throw() {
 	Value* variable = getValue(expr->get_variable());
 	CallableValue* call = new CallableValue(expr->get_method()->get_value()->get_name());
 	const Method* method = variable->get_type_ptr()->getMethod(call->get_name());
+	ast::Arguments* args = expr->get_args();
+	Value* arg_values = NULL;
 
 	if (!method) {
 		Compiler::error("Method not found!");
@@ -442,18 +444,13 @@ Opcode* IRBuilder::methodCall(ast::MethodCall* expr) throw() {
 
 	call->set_type_ptr(variable->get_type_ptr());
 	call->set_callback(method);
-/*
-	Value* arg_values = NULL;
-	ast::Arguments* args = expr->get_args();
 
 	if (args) {
 		arg_values = new Value;
 		arg_values->set_type(Value::VECTOR);
 		arg_values->setVector(functionArgs(args));
 	}
-*/
-
-	return new Opcode(OP_MCALL, &VM::mcall_handler, call);
+	return new Opcode(OP_MCALL, &VM::mcall_handler, call, arg_values);
 }
 
 } // clever
