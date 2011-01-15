@@ -183,11 +183,7 @@ Opcode* IRBuilder::endBlock() throw() {
 Opcode* IRBuilder::preIncrement(ast::PreIncrement* expr) throw() {
 	Value* value = getValue(expr->get_expr());
 
-	if (expr->get_expr()->get_value()->hasName()) {
-		Value* var = m_ssa.fetchVar(expr->get_expr()->get_value());
-
-		var->setModified();
-	}
+	value->setModified();
 	value->addRef();
 	return new Opcode(OP_PRE_INC, &VM::pre_inc_handler, value, NULL, expr->get_value());
 }
@@ -198,11 +194,7 @@ Opcode* IRBuilder::preIncrement(ast::PreIncrement* expr) throw() {
 Opcode* IRBuilder::posIncrement(ast::PosIncrement* expr) throw() {
 	Value* value = getValue(expr->get_expr());
 
-	if (expr->get_expr()->get_value()->hasName()) {
-		Value* var = m_ssa.fetchVar(expr->get_expr()->get_value());
-
-		var->setModified();
-	}
+	value->setModified();
 	value->addRef();
 	return new Opcode(OP_POS_INC, &VM::pos_inc_handler, value, NULL, expr->get_value());
 }
@@ -213,12 +205,9 @@ Opcode* IRBuilder::posIncrement(ast::PosIncrement* expr) throw() {
 Opcode* IRBuilder::preDecrement(ast::PreDecrement* expr) throw() {
 	Value* value = getValue(expr->get_expr());
 
-	if (expr->get_expr()->get_value()->hasName()) {
-		Value* var = m_ssa.fetchVar(expr->get_expr()->get_value());
-
-		var->setModified();
-	}
+	value->setModified();
 	value->addRef();
+
 	return new Opcode(OP_PRE_DEC, &VM::pre_dec_handler, value, NULL, expr->get_value());
 }
 
@@ -228,11 +217,7 @@ Opcode* IRBuilder::preDecrement(ast::PreDecrement* expr) throw() {
 Opcode* IRBuilder::posDecrement(ast::PosDecrement* expr) throw(){
 	Value* value = getValue(expr->get_expr());
 
-	if (expr->get_expr()->get_value()->hasName()) {
-		Value* var = m_ssa.fetchVar(expr->get_expr()->get_value());
-
-		var->setModified();
-	}
+	value->setModified();
 	value->addRef();
 	return new Opcode(OP_POS_DEC, &VM::pos_dec_handler, value, NULL, expr->get_value());
 }
