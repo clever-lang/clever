@@ -30,6 +30,7 @@
 #include "compiler.h"
 #include "opcode.h"
 #include "vm.h"
+#include "type.h"
 
 namespace clever {
 

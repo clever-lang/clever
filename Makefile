@@ -50,10 +50,10 @@ $(BUILDDIR)scanner.o: $(BUILDDIR)scanner.cc $(BUILDDIR)cstring.o
 $(BUILDDIR)cstring.o: $(SRCDIR)cstring.cc
 	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)cstring.o $(SRCDIR)cstring.cc
 
-$(BUILDDIR)irbuilder.o: $(SRCDIR)irbuilder.cc
+$(BUILDDIR)irbuilder.o: $(SRCDIR)irbuilder.cc $(BUILDDIR)compiler.o
 	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)irbuilder.o $(SRCDIR)irbuilder.cc
 
-$(BUILDDIR)compiler.o: $(SRCDIR)compiler.cc
+$(BUILDDIR)compiler.o: $(SRCDIR)compiler.cc $(BUILDDIR)int.o $(BUILDDIR)std.o
 	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)compiler.o $(SRCDIR)compiler.cc
 
 $(BUILDDIR)vm.o: $(SRCDIR)vm.cc
