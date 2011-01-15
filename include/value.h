@@ -228,8 +228,7 @@ public:
  */
 class NamedValue : public Value {
 public:
-	NamedValue()
-		: Value() { }
+	NamedValue() { }
 
 	explicit NamedValue(CString* name)
 		: Value(), m_name(name) { }
@@ -248,19 +247,19 @@ private:
 class CallableValue : public NamedValue {
 public:
 	/* TODO: generate name for anonymous functions, disable set_name(). */
-	CallableValue() : NamedValue() {}
+	CallableValue() {}
 	explicit CallableValue(CString* name) : NamedValue(name) {}
 
 	~CallableValue() {}
 
 	void set_callback(const Function*& callback) throw() { m_callback.func = callback; }
 	void set_callback(const Method*& callback) throw() { m_callback.method = callback; }
-	
+
 	const Function* get_function() const throw() { return m_callback.func; }
 	const Method* get_method() const throw() { return m_callback.method; }
 
 	bool isCallable() const { return true; }
-	
+
 	/* TODO: improve/fix this. */
 	void call() { }
 
