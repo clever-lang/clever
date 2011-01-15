@@ -31,7 +31,7 @@
 #include <stdint.h>
 #include <iostream>
 #include <sstream>
-#include <string>
+#include <cstring>
 #include <vector>
 #include "refcounted.h"
 #include "cstring.h"
@@ -48,6 +48,15 @@ typedef std::vector<Value*> ValueVector;
  */
 class NO_INIT_VTABLE Value : public RefCounted {
 public:
+	typedef union {
+		int64_t l_value;
+		double d_value;
+		bool b_value;
+		CString* s_value;
+		void* u_value;
+		ValueVector* v_value;
+	} ValueData;
+
 	enum { SET, UNSET, MODIFIED };
 	enum { NONE, INTEGER, DOUBLE, STRING, BOOLEAN, VECTOR, USER };
 	enum { UNKNOWN, CONST, TEMP };
@@ -124,14 +133,12 @@ public:
 	bool getBoolean() const { return m_data.b_value; }
 	ValueVector* getVector() const { return m_data.v_value; }
 
+	const ValueData *get_data() const { return &m_data; }
+
 	void copy(const Value* value) {
-		int type = value->get_type();
-		switch (type) {
-			case INTEGER: setInteger(value->getInteger()); break;
-			case DOUBLE: setDouble(value->getDouble()); break;
-			case STRING: setString(value->getStringP()); break;
-		}
-		set_type(type);
+		std::memcpy(&m_data, value->get_data(), sizeof(ValueData));
+		m_type_ptr = value->get_type_ptr();
+		m_type = value->get_type();
 	}
 
 	virtual void set_value(Value* value) { }
@@ -164,14 +171,7 @@ private:
 	int m_kind;
 	Type* m_type_ptr;
 
-	union {
-		int64_t l_value;
-		double d_value;
-		bool b_value;
-		CString* s_value;
-		void* u_value;
-		ValueVector* v_value;
-	} m_data;
+	ValueData m_data;
 };
 
 /**
