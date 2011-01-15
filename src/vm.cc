@@ -501,13 +501,9 @@ CLEVER_VM_HANDLER(VM::fcall_handler) {
  */
 CLEVER_VM_HANDLER(VM::mcall_handler) {
 	Type* var_type = opcode.get_op1()->get_type_ptr();
-	Method* method = var_type->getMethod(opcode.get_op2()->getStringP());
+	const Method* method = static_cast<CallableValue*>(opcode.get_op1())->get_method();
 
-	if (method) {
-		(var_type->*(method->get_method()))();
-	} else {
-		error("Method not found!");
-	}
+	(var_type->*(method->get_method()))();
 }
 
 } // clever

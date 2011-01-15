@@ -432,8 +432,16 @@ Opcode* IRBuilder::functionCall(ast::FunctionCall* expr) throw() {
 }
 
 Opcode* IRBuilder::methodCall(ast::MethodCall* expr) throw() {
-	Value* variable = m_ssa.fetchVar(expr->get_variable()->get_value());
-	Value* method = new ConstantValue(expr->get_method()->get_value()->get_name());
+	Value* variable = getValue(expr->get_variable());
+	CallableValue* call = new CallableValue(expr->get_method()->get_value()->get_name());
+	const Method* method = variable->get_type_ptr()->getMethod(call->get_name());
+
+	if (!method) {
+		Compiler::error("Method not found!");
+	}
+
+	call->set_type_ptr(variable->get_type_ptr());
+	call->set_callback(method);
 /*
 	Value* arg_values = NULL;
 	ast::Arguments* args = expr->get_args();
@@ -444,9 +452,8 @@ Opcode* IRBuilder::methodCall(ast::MethodCall* expr) throw() {
 		arg_values->setVector(functionArgs(args));
 	}
 */
-	variable->addRef();
 
-	return new Opcode(OP_MCALL, &VM::mcall_handler, variable, method);
+	return new Opcode(OP_MCALL, &VM::mcall_handler, call);
 }
 
 } // clever

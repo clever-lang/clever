@@ -46,7 +46,7 @@ public:
 	typedef std::pair<const CString*, Method*> MethodPair;
 
 
-	explicit Type(const std::string& name)
+	explicit Type(const char* name)
 		: m_name(name) { }
 
 	virtual ~Type() {
@@ -71,14 +71,14 @@ public:
 		return NULL;
 	}
 
-	std::string get_name() const throw() {
+	const char* get_name() const throw() {
 		return m_name;
 	}
 
 	virtual void Init() = 0;
 private:
 	MethodMap m_methods;
-	const std::string& m_name;
+	const char* m_name;
 };
 
 } // clever
