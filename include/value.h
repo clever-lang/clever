@@ -25,8 +25,8 @@
  * $Id$
  */
 
-#ifndef CLEVER_VALUES_H
-#define CLEVER_VALUES_H
+#ifndef CLEVER_VALUE_H
+#define CLEVER_VALUE_H
 
 #include <stdint.h>
 #include <iostream>
@@ -40,8 +40,17 @@
 namespace clever {
 class Type;
 class Value;
+class Method;
+class Function;
 
 typedef std::vector<Value*> ValueVector;
+
+enum CallType { FUNCTION, METHOD };
+
+union ValueCallback {
+	const Function* func;
+	const Method* method;
+};
 
 /**
  * Base class for value representation
@@ -107,11 +116,16 @@ public:
 	void setModified() { m_status = MODIFIED; }
 
 	bool isPrimitive() const {
-		return m_type == INTEGER || 
-			m_type == DOUBLE || 
+		return m_type == INTEGER ||
+			m_type == DOUBLE ||
 			m_type == BOOLEAN ||
-			m_type == STRING; 
-	} 
+			m_type == STRING;
+	}
+
+	virtual void set_callback(const CString* name, const Method*& callback) { }
+	virtual void set_callback(const CString* name, const Function*& callback) { }
+	virtual const Function* get_function() const { return NULL; }
+	virtual const Method* get_method() const { return NULL; }
 
 	bool isInteger() const { return m_type == INTEGER; }
 	bool isString() const { return m_type == STRING; }
@@ -263,6 +277,30 @@ private:
 	Value* m_value;
 };
 
-} /* clever */
-#endif /* CLEVER_VALUES_H */
+class CallValue : public Value {
+public:
+	explicit CallValue(CallType type)
+		: m_type(type), m_name(NULL) { }
+
+	~CallValue() { }
+
+	void set_callback(const CString* name, const Function*& callback) {
+		m_name = name;
+		m_callback.func = callback;
+	}
+	void set_callback(const CString* name, const Method*& callback) {
+		m_name = name;
+		m_callback.method = callback;
+	}
+	const Function* get_function() const { return m_callback.func; }
+	const Method* get_method() const { return m_callback.method; }
+private:
+	const CString* m_name;
+	CallType m_type;
+	ValueCallback m_callback;
+};
+
+} // clever
+
+#endif // CLEVER_VALUE_H
 

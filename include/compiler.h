@@ -73,8 +73,8 @@ public:
 	/**
 	 * Returns the a Function pointer
 	 */
-	static const Function& getFunction(const std::string& name) throw() {
-		return *s_func_table.find(name)->second;
+	static Function* getFunction(const std::string& name) throw() {
+		return s_func_table.find(name)->second;
 	}
 	/**
 	 * Displays the error message and exits the program

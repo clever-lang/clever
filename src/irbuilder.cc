@@ -28,7 +28,7 @@
 #include "irbuilder.h"
 #include "compiler.h"
 #include "ssa.h"
-#include "values.h"
+#include "value.h"
 #include "typetable.h"
 
 namespace clever {
@@ -425,16 +425,17 @@ ValueVector* IRBuilder::functionArgs(const ast::Arguments* args) throw() {
  * Generates opcode for function call
  */
 Opcode* IRBuilder::functionCall(ast::FunctionCall* expr) throw() {
-	Value* arg_values = NULL;
-	Value* name_expr = expr->get_value();
+	const CString* name = expr->get_value()->get_name();
+	const Function* func = Compiler::getFunction(*name);
+	Value* call = new CallValue(FUNCTION);
 	ast::Arguments* args = expr->get_args();
-	const std::string* name = name_expr->get_name();
+	Value* arg_values = NULL;
 
-	if (!Compiler::functionExists(*name)) {
+	if (!func) {
 		Compiler::error("Function does not exists!");
 	}
 
-	name_expr->addRef();
+	call->set_callback(name, func);
 
 	if (args) {
 		arg_values = new Value;
@@ -442,7 +443,7 @@ Opcode* IRBuilder::functionCall(ast::FunctionCall* expr) throw() {
 		arg_values->setVector(functionArgs(args));
 	}
 
-	return new Opcode(OP_FCALL, &VM::fcall_handler, name_expr, arg_values);
+	return new Opcode(OP_FCALL, &VM::fcall_handler, call, arg_values);
 }
 
 Opcode* IRBuilder::methodCall(ast::MethodCall* expr) throw() {
