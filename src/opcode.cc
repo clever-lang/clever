@@ -36,15 +36,8 @@ void Opcode::set_result(Value* result, Value* value) const throw() {
 	 * The result has only 1 reference, i.e. it's used only in this opcode,
 	 * so let just change the current value instead of alloc'ing new memory
 	 */
-	if (result && result->refCount() == 1 && result->hasSameType(value)) {
-		switch (value->get_type()) {
-			case Value::INTEGER:
-				result->setInteger(value->getInteger());
-				break;
-			case Value::DOUBLE:
-				result->setDouble(value->getDouble());
-				break;
-		}
+	if (result && result->refCount() == 1 && result->hasSameType(value) && value->isPrimitive()) {
+		result->copy(value);
 	} else {
 		switch (value->get_type()) {
 			case Value::INTEGER:
