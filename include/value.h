@@ -70,8 +70,8 @@ public:
 	enum { NONE, INTEGER, DOUBLE, STRING, BOOLEAN, VECTOR, USER };
 	enum { UNKNOWN, CONST, TEMP };
 
-	Value() : RefCounted(1), m_status(UNSET), m_type(UNKNOWN), m_kind(UNKNOWN) {}
-	explicit Value(int kind) : RefCounted(1), m_status(UNSET), m_type(UNKNOWN), m_kind(kind) {}
+	Value() : RefCounted(1), m_status(UNSET), m_type(UNKNOWN), m_kind(UNKNOWN), m_type_ptr(NULL) {}
+	explicit Value(int kind) : RefCounted(1), m_status(UNSET), m_type(UNKNOWN), m_kind(kind), m_type_ptr(NULL) {}
 
 	virtual ~Value() {
 		if (isVector()) {
@@ -152,7 +152,7 @@ public:
 
 	void copy(const Value* value) {
 		std::memcpy(&m_data, value->get_data(), sizeof(ValueData));
-		m_type_ptr = value->get_type_ptr();
+		/* m_type_ptr = value->get_type_ptr(); */
 		m_type = value->get_type();
 	}
 
