@@ -122,10 +122,11 @@ public:
 			m_type == STRING;
 	}
 
-	virtual void set_callback(const CString* name, const Method*& callback) throw() { }
-	virtual void set_callback(const CString* name, const Function*& callback) throw() { }
-	virtual const Function* get_function() const throw() { return NULL; }
-	virtual const Method* get_method() const throw() { return NULL; }
+	/*
+	 * Avoid using this check. Type your variables as a
+	 * callable value instead of Value to ensure you can call it.
+	 */
+	virtual bool isCallable() const { return false; }
 
 	bool isInteger() const { return m_type == INTEGER; }
 	bool isString() const { return m_type == STRING; }
@@ -189,27 +190,6 @@ private:
 };
 
 /**
- * Symbol names used for opcodes.
- *
- * e.g. Functions and Variables.
- */
-class NamedValue : public Value {
-public:
-	NamedValue()
-		: Value() { }
-
-	explicit NamedValue(CString* name)
-		: Value(), m_name(name) { }
-
-	bool hasName() const { return true; }
-	CString* get_name() const { return m_name; }
-	void set_name(CString* name) { m_name = name; }
-
-private:
-	CString* m_name;
-};
-
-/**
  * Constant values used for opcodes
  */
 class ConstantValue : public Value {
@@ -239,6 +219,56 @@ public:
 	}
 
 	~ConstantValue() { }
+};
+
+/**
+ * Symbol names used for opcodes.
+ *
+ * e.g. Functions and Variables.
+ */
+class NamedValue : public Value {
+public:
+	NamedValue()
+		: Value() { }
+
+	explicit NamedValue(CString* name)
+		: Value(), m_name(name) { }
+
+	virtual bool hasName() const { return true; }
+	CString* get_name() const { return m_name; }
+	void set_name(CString* name) { m_name = name; }
+
+private:
+	CString* m_name;
+};
+
+/**
+ * Class that represents the values of functions and methods.
+ */
+class CallableValue : public NamedValue {
+public:
+	/* TODO: generate name for anonymous functions, disable set_name(). */
+	CallableValue() : NamedValue() {}
+	explicit CallableValue(CString* name) : NamedValue(name) {}
+
+	~CallableValue() {}
+
+	void set_callback(const Function*& callback) throw() { m_callback.func = callback; }
+	void set_callback(const Method*& callback) throw() { m_callback.method = callback; }
+	
+	const Function* get_function() const throw() { return m_callback.func; }
+	const Method* get_method() const throw() { return m_callback.method; }
+
+	bool isCallable() const { return true; }
+	
+	/* TODO: improve/fix this. */
+	void call() { }
+
+private:
+	/* TODO: merge Function/Method */
+	ValueCallback m_callback;
+	/* TODO: kill this. */
+	CallType m_type;
 };
 
 /**
@@ -275,29 +305,6 @@ public:
 	}
 private:
 	Value* m_value;
-};
-
-class CallValue : public Value {
-public:
-	explicit CallValue(CallType type)
-		: m_type(type), m_name(NULL) { }
-
-	~CallValue() { }
-
-	void set_callback(const CString* name, const Function*& callback) throw() {
-		m_name = name;
-		m_callback.func = callback;
-	}
-	void set_callback(const CString* name, const Method*& callback) throw() {
-		m_name = name;
-		m_callback.method = callback;
-	}
-	const Function* get_function() const throw() { return m_callback.func; }
-	const Method* get_method() const throw() { return m_callback.method; }
-private:
-	const CString* m_name;
-	CallType m_type;
-	ValueCallback m_callback;
 };
 
 } // clever

@@ -476,7 +476,7 @@ CLEVER_VM_HANDLER(VM::not_equal_handler) {
  * func()
  */
 CLEVER_VM_HANDLER(VM::fcall_handler) {
-	const Function* func = opcode.get_op1()->get_function();
+	const Function* func = ((CallableValue*)opcode.get_op1())->get_function();
 	Value* args = opcode.get_op2();
 	FunctionArgs func_args;
 

@@ -425,9 +425,9 @@ ValueVector* IRBuilder::functionArgs(const ast::Arguments* args) throw() {
  * Generates opcode for function call
  */
 Opcode* IRBuilder::functionCall(ast::FunctionCall* expr) throw() {
-	const CString* name = expr->get_value()->get_name();
+	CString* name = expr->get_value()->get_name();
 	const Function* func = Compiler::getFunction(*name);
-	Value* call = new CallValue(FUNCTION);
+	CallableValue* call = new CallableValue(name);
 	ast::Arguments* args = expr->get_args();
 	Value* arg_values = NULL;
 
@@ -435,7 +435,7 @@ Opcode* IRBuilder::functionCall(ast::FunctionCall* expr) throw() {
 		Compiler::error("Function does not exists!");
 	}
 
-	call->set_callback(name, func);
+	call->set_callback(func);
 
 	if (args) {
 		arg_values = new Value;
