@@ -142,44 +142,20 @@ Opcode* IRBuilder::variableDecl(ast::VariableDecl* expr) throw() {
  * Generates the new block opcode
  */
 Opcode* IRBuilder::newBlock() throw() {
-	Opcode* opcode = new Opcode(OP_NEW_SCOPE, &VM::new_scope_handler);
-	Jmp jmp;
-
 	/* Initializes new scope */
 	m_ssa.newBlock();
 
-	jmp.push(opcode);
-	m_jmps.push(jmp);
-
-	return opcode;
+	return NULL;
 }
 
 /**
  * Generates the end block opcode
  */
 Opcode* IRBuilder::endBlock() throw() {
-	Opcode* opcode = new Opcode(OP_END_SCOPE, &VM::end_scope_handler);
-	Opcode* start_block = m_jmps.top().top();
-
-	/**
-	 * No variable was defined in the scope, so let to set a flag
-	 * to do not push-pop scope in runtime
-	 */
-	if (m_ssa.topBlock().size() == 0) {
-		start_block->set_flags(BLK_UNUSED);
-		opcode->set_flags(BLK_UNUSED);
-	} else {
-		start_block->set_flags(BLK_USED);
-		opcode->set_flags(BLK_USED);
-	}
-
-	m_jmps.top().pop();
-	m_jmps.pop();
-
 	/* Pop current scope */
 	m_ssa.endBlock();
 
-	return opcode;
+	return NULL;
 }
 
 /**

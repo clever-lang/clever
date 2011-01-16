@@ -78,9 +78,6 @@ void VM::run() throw() {
 	/* Deactivate synchronization of iostream and cstdio streams */
 	std::ios::sync_with_stdio(false);
 
-	/* Initializes global scope */
-	m_symbols.enter();
-
 	for (next_op = 0; next_op < last_op; ++next_op) {
 		Opcode& opcode = *(*m_opcodes)[next_op];
 
@@ -89,9 +86,6 @@ void VM::run() throw() {
 		/* Invoke the opcode handler */
 		(this->*(opcode.get_handler()))(next_op, opcode);
 	}
-
-	/* Pop global scope */
-	m_symbols.leave();
 }
 
 /**
@@ -222,30 +216,6 @@ CLEVER_VM_HANDLER(VM::mod_handler) {
 }
 
 /**
- * {
- */
-CLEVER_VM_HANDLER(VM::new_scope_handler) {
-	/**
-	 * Just create a new scope if a variable was created in the block
-	 * (detected in compile-time)
-	 */
-	if (opcode.get_flags() == BLK_USED) {
-		/* Create a new scope */
-		m_symbols.enter();
-	}
-}
-
-/**
- * }
- */
-CLEVER_VM_HANDLER(VM::end_scope_handler) {
-	if (opcode.get_flags() == BLK_USED) {
-		/* Remove the newest scope */
-		m_symbols.leave();
-	}
-}
-
-/**
  * Type var [= value ]
  */
 CLEVER_VM_HANDLER(VM::var_decl_handler) {
@@ -255,11 +225,7 @@ CLEVER_VM_HANDLER(VM::var_decl_handler) {
 	if (!value) {
 		error("Uninitialized variable!");
 	}
-	opcode.get_op1()->addRef();
 	opcode.get_op1()->copy(value);
-
-	/* Register the variable in the current scope */
-	m_symbols.pushValue(opcode.get_op1());
 }
 
 /**

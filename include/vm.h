@@ -107,8 +107,6 @@ public:
 	CLEVER_VM_HANDLER(mult_handler);
 	CLEVER_VM_HANDLER(minus_handler);
 	CLEVER_VM_HANDLER(mod_handler);
-	CLEVER_VM_HANDLER(new_scope_handler);
-	CLEVER_VM_HANDLER(end_scope_handler);
 	CLEVER_VM_HANDLER(var_decl_handler);
 	CLEVER_VM_HANDLER(bw_and_handler);
 	CLEVER_VM_HANDLER(bw_or_handler);
