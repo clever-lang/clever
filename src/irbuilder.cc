@@ -113,7 +113,7 @@ Opcode* IRBuilder::variableDecl(ast::VariableDecl* expr) throw() {
 	ast::Expression* var_expr = expr->get_variable();
 	ast::Expression* rhs_expr = expr->get_initial_value();
 	NamedValue* variable = static_cast<NamedValue*>(var_expr->get_value());
-	Type* type = TypeTable::getType(var_type->get_value()->get_name());
+	const Type* type = TypeTable::getType(var_type->get_value()->get_name());
 
 	variable->set_type_ptr(type);
 
@@ -413,7 +413,7 @@ Opcode* IRBuilder::functionCall(ast::FunctionCall* expr) throw() {
 	const CString* name = expr->get_value()->get_name();
 	const Function* func = Compiler::getFunction(*name);
 	CallableValue* call = new CallableValue(name);
-	ast::Arguments* args = expr->get_args();
+	const ast::Arguments* args = expr->get_args();
 	Value* arg_values = NULL;
 
 	if (!func) {
@@ -435,7 +435,7 @@ Opcode* IRBuilder::methodCall(ast::MethodCall* expr) throw() {
 	Value* variable = getValue(expr->get_variable());
 	CallableValue* call = new CallableValue(expr->get_method()->get_value()->get_name());
 	const Method* method = variable->get_type_ptr()->getMethod(call->get_name());
-	ast::Arguments* args = expr->get_args();
+	const ast::Arguments* args = expr->get_args();
 	Value* arg_values = NULL;
 
 	if (!method) {

@@ -62,8 +62,8 @@ public:
 		m_methods.insert(std::pair<const CString*, Method*>(method->get_name(), method));
 	}
 
-	Method* getMethod(const CString* name) throw() {
-		MethodMap::iterator it = m_methods.find(name);
+	Method* getMethod(const CString* name) const throw() {
+		MethodMap::const_iterator it = m_methods.find(name);
 
 		if (it != m_methods.end()) {
 			return it->second;

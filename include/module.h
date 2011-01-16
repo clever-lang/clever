@@ -49,7 +49,7 @@ typedef std::list<Module*> ModuleList;
 #define CLEVER_METHOD_ARGS const CallArgs& args
 #define CLEVER_FUNC_NAME(name) clv_##name
 #define CLEVER_FUNCTION(name) void CLEVER_FASTCALL CLEVER_FUNC_NAME(name)(CLEVER_FUNCTION_ARGS) throw()
-#define CLEVER_METHOD(name) void name(CLEVER_METHOD_ARGS) throw()
+#define CLEVER_METHOD(name) void name(CLEVER_METHOD_ARGS) const throw()
 
 /**
  * Function/method arguments vector
@@ -61,7 +61,7 @@ typedef std::vector<Value*> CallArgs;
  */
 typedef void (CLEVER_FASTCALL *module_function)(CLEVER_FUNCTION_ARGS);
 
-typedef void (Type::*MethodPtr)(CLEVER_METHOD_ARGS);
+typedef void (Type::*MethodPtr)(CLEVER_METHOD_ARGS) const;
 
 /**
  * Method representation

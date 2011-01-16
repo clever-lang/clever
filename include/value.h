@@ -81,8 +81,8 @@ public:
 
 	void set_type(int type) { m_type = type; }
 	int get_type() const { return m_type; }
-	Type* get_type_ptr() const { return m_type_ptr; }
-	void set_type_ptr(Type* ptr) { m_type_ptr = ptr; }
+	const Type* get_type_ptr() const { return m_type_ptr; }
+	void set_type_ptr(const Type* ptr) { m_type_ptr = ptr; }
 
 	int hasSameType(Value* value) const { return m_type == value->get_type(); }
 
@@ -179,7 +179,7 @@ private:
 	int m_status;
 	int m_type;
 	int m_kind;
-	Type* m_type_ptr;
+	const Type* m_type_ptr;
 	ValueData m_data;
 };
 

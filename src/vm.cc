@@ -500,7 +500,7 @@ CLEVER_VM_HANDLER(VM::fcall_handler) {
  * var.method()
  */
 CLEVER_VM_HANDLER(VM::mcall_handler) {
-	Type* var_type = opcode.get_op1()->get_type_ptr();
+	const Type* var_type = opcode.get_op1()->get_type_ptr();
 	const Method* method = static_cast<CallableValue*>(opcode.get_op1())->get_method();
 	Value* args = opcode.get_op2();
 	CallArgs func_args;

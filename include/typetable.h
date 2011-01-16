@@ -37,12 +37,18 @@ class CString;
 
 typedef boost::unordered_map<const CString*, Type*> TypeMap;
 
+/**
+ * Internal and user type table
+ */
 class TypeTable {
 public:
 	TypeTable() { }
 
 	~TypeTable() { }
 
+	/**
+	 * Removes all types
+	 */
 	static void clear() {
 		TypeMap::const_iterator it = s_type_table.begin(), end_type(s_type_table.end());
 
@@ -51,15 +57,16 @@ public:
 			++it;
 		}
 	}
-
+	/**
+	 * Inserts a new type
+	 */
 	static void insert(const CString* name, Type* type) {
 		s_type_table.insert(std::pair<const CString*, Type*>(name, type));
 	}
-
-	/*
+	/**
 	 * Returns the Type pointer
 	 */
-	static Type* getType(const CString* name) throw() {
+	static const Type* getType(const CString* name) throw() {
 		TypeMap::const_iterator it = s_type_table.find(name);
 
 		if (it != s_type_table.end()) {
