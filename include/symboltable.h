@@ -82,7 +82,7 @@ class ScopeManager: public ScopeManagerBase {
 public:
 	ScopeManager() : m_scope(-1) { }
 	
-	inline void pushValue(CString* name, Value* value) {
+	inline void pushValue(const CString* name, Value* value) {
 		at(m_scope).push(name, value);
 	}
 
@@ -90,7 +90,7 @@ public:
 		at(m_scope).push(value);
 	}
 
-	Value* fetchValue(CString* name) {
+	Value* fetchValue(const CString* name) {
 		if (m_scope == -1) {
 			// XXX: hm, maybe we should throw a warning here?
 			return NULL;
@@ -122,7 +122,7 @@ public:
 private:
 	int m_scope;
 
-	Value* deepValueSearch(CString* name) {
+	Value* deepValueSearch(const CString* name) {
 		for (int i = m_scope-1; i >= 0; --i) {
 			Value* value = at(i).fetch(name);
 

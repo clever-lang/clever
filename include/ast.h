@@ -277,7 +277,7 @@ private:
 
 class Identifier : public Expression {
 public:
-	explicit Identifier(CString* name) {
+	explicit Identifier(const CString* name) {
 		m_value = new NamedValue(name);
 		m_name = name;
 	}
@@ -288,17 +288,17 @@ public:
 
 	bool hasValue() const { return true; }
 	Value* get_value() const throw() { return m_value; }
-	CString* get_name() const { return m_name; }
+	const CString* get_name() const { return m_name; }
 
 	DISALLOW_COPY_AND_ASSIGN(Identifier);
 private:
 	NamedValue* m_value;
-	CString* m_name;
+	const CString* m_name;
 };
 
 class StringLiteral : public Literal {
 public:
-	explicit StringLiteral(CString* name) {
+	explicit StringLiteral(const CString* name) {
 		m_value = new ConstantValue(name);
 	}
 

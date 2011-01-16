@@ -55,7 +55,7 @@ public:
 		int64_t l_value;
 		double d_value;
 		bool b_value;
-		CString* s_value;
+		const CString* s_value;
 		void* u_value;
 		ValueVector* v_value;
 	} ValueData;
@@ -87,8 +87,8 @@ public:
 	int hasSameType(Value* value) const { return m_type == value->get_type(); }
 
 	virtual bool hasName() const { return false; }
-	virtual CString* get_name() const { return NULL; }
-	virtual void set_name(CString* name) { /* TODO: throw error */ }
+	virtual const CString* get_name() const { return NULL; }
+	virtual void set_name(const CString* name) { /* TODO: throw error */ }
 
 	int get_kind() const { return m_kind; }
 	void set_kind(int kind) { m_kind = kind; }
@@ -130,13 +130,13 @@ public:
 	bool isUserValue() const { return m_type == USER; }
 
 	void setInteger(int64_t i) { m_data.l_value = i; }
-	void setString(CString* s) { m_data.s_value = s; }
+	void setString(const CString* s) { m_data.s_value = s; }
 	void setDouble(double d) { m_data.d_value = d; }
 	void setBoolean(bool b) { m_data.b_value = b; }
 	void setVector(ValueVector* v) { m_data.v_value = v; }
 
 	int64_t getInteger() const { return m_data.l_value; }
-	CString* getStringP() const { return m_data.s_value; }
+	const CString* getStringP() const { return m_data.s_value; }
 	CString getString() const { return *m_data.s_value; }
 	double getDouble() const { return m_data.d_value; }
 	bool getBoolean() const { return m_data.b_value; }
@@ -200,7 +200,7 @@ public:
 		setInteger(value);
 	}
 
-	explicit ConstantValue(CString* value)
+	explicit ConstantValue(const CString* value)
 		: Value(CONST) {
 		set_type(STRING);
 		setString(value);
@@ -226,16 +226,16 @@ class NamedValue : public Value {
 public:
 	NamedValue() { }
 
-	explicit NamedValue(CString* name)
+	explicit NamedValue(const CString* name)
 		: Value(), m_name(name) { }
 
 	virtual bool hasName() const { return true; }
-	CString* get_name() const { return m_name; }
-	void set_name(CString* name) { m_name = name; }
+	const CString* get_name() const { return m_name; }
+	void set_name(const CString* name) { m_name = name; }
 
 	DISALLOW_COPY_AND_ASSIGN(NamedValue);
 private:
-	CString* m_name;
+	const CString* m_name;
 };
 
 /**
@@ -245,7 +245,7 @@ class CallableValue : public NamedValue {
 public:
 	/* TODO: generate name for anonymous functions, disable set_name(). */
 	CallableValue() {}
-	explicit CallableValue(CString* name) : NamedValue(name) {}
+	explicit CallableValue(const CString* name) : NamedValue(name) {}
 
 	~CallableValue() {}
 

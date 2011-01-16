@@ -48,11 +48,11 @@ public:
 	~SSA() { }
 
 	void registerVar(Value* var) throw() {
-		m_variables.at(m_var_at).insert(std::pair<CString*, Value*>(var->get_name(), var));
+		m_variables.at(m_var_at).insert(std::pair<const CString*, Value*>(var->get_name(), var));
 	}
 
 	Value* fetchVar(Value* var) throw() {
-		CString* name = var->get_name();
+		const CString* name = var->get_name();
 
 		/* Searchs for the variable in the inner and out scopes */
 		for (int i = m_var_at; i >= 0; --i) {

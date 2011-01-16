@@ -410,7 +410,7 @@ ValueVector* IRBuilder::functionArgs(const ast::Arguments* args) throw() {
  * Generates opcode for function call
  */
 Opcode* IRBuilder::functionCall(ast::FunctionCall* expr) throw() {
-	CString* name = expr->get_value()->get_name();
+	const CString* name = expr->get_value()->get_name();
 	const Function* func = Compiler::getFunction(*name);
 	CallableValue* call = new CallableValue(name);
 	ast::Arguments* args = expr->get_args();
