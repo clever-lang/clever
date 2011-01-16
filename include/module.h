@@ -59,7 +59,7 @@ typedef std::vector<Value*> CallArgs;
 /**
  * Module function prototype
  */
-typedef void (CLEVER_FASTCALL *module_function)(CLEVER_FUNCTION_ARGS);
+typedef void (CLEVER_FASTCALL *FunctionPtr)(CLEVER_FUNCTION_ARGS);
 
 typedef void (Type::*MethodPtr)(CLEVER_METHOD_ARGS) const;
 
@@ -87,20 +87,20 @@ private:
  */
 class Function {
 public:
-	Function(std::string name, module_function func)
+	Function(std::string name, FunctionPtr func)
 		: m_name(name), m_func(func) { }
 
 	~Function() { }
 
 	const std::string get_name() const throw() { return m_name; }
-	module_function get_func() const throw() { return m_func; }
+	FunctionPtr get_func() const throw() { return m_func; }
 
 	DISALLOW_COPY_AND_ASSIGN(Function);
 private:
 	/* Function name */
 	const std::string m_name;
 	/* Function pointer */
-	module_function m_func;
+	FunctionPtr m_func;
 };
 
 /**
