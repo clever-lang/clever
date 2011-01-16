@@ -75,6 +75,9 @@ void VM::error(const char* message) const throw() {
 void VM::run() throw() {
 	unsigned int next_op, last_op = m_opcodes->size();
 
+	/* Deactivate synchronization of iostream and cstdio streams */
+	std::ios::sync_with_stdio(false);
+
 	/* Initializes global scope */
 	m_symbols.enter();
 

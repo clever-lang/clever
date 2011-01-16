@@ -40,8 +40,6 @@ Module* g_std_module = new StdModule;
  * Prints the object values without trailing newline
  */
 static CLEVER_FUNCTION(print) {
-	std::ios::sync_with_stdio(false);
-
 	for (int i = 0, size = args.size(); i < size; ++i) {
 		std::cout << args.at(i)->toString();
 	}
