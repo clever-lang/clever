@@ -27,6 +27,7 @@
 
 #include <iostream>
 #include <cstdio>
+#include <cmath>
 #include "module.h"
 #include "std/std.h"
 
@@ -34,19 +35,35 @@ namespace clever {
 
 Module* g_std_module = new StdModule;
 
+/**
+ * println(object a, [ ...])
+ * Prints the object values without trailing newline
+ */
 static CLEVER_FUNCTION(print) {
-	//std::cout.sync_with_stdio(false);
 	std::ios::sync_with_stdio(false);
+
 	for (int i = 0, size = args.size(); i < size; ++i) {
 		std::cout << args.at(i)->toString();
-		// printf("%s", args.at(i)->toString().c_str());
 	}
 }
 
+/**
+ * println(object a, [ ...])
+ * Prints the object values with trailing newline
+ */
 static CLEVER_FUNCTION(println) {
 	for (int i = 0, size = args.size(); i < size; ++i) {
 		printf("%s\n", args.at(i)->toString().c_str());
 	}
+}
+
+/**
+ * sqrt(int x)
+ * Returns the square root of a number x
+ */
+static CLEVER_FUNCTION(sqrt) {
+	retval->setDouble(std::sqrt(double(args.at(0)->getInteger())));
+	retval->set_type(Value::DOUBLE);
 }
 
 /*
@@ -54,8 +71,9 @@ static CLEVER_FUNCTION(println) {
  */
 void StdModule::Init() throw() {
 	/* Module functions */
-	addFunction(new Function("print", &CLEVER_FUNC_NAME(print)));
+	addFunction(new Function("print",   &CLEVER_FUNC_NAME(print)));
 	addFunction(new Function("println", &CLEVER_FUNC_NAME(println)));
+	addFunction(new Function("sqrt",    &CLEVER_FUNC_NAME(sqrt)));
 }
 
 } // clever

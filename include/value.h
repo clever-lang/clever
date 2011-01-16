@@ -233,10 +233,10 @@ public:
 	virtual bool hasName() const { return true; }
 	const CString* get_name() const { return m_name; }
 	void set_name(const CString* name) { m_name = name; }
-
-	DISALLOW_COPY_AND_ASSIGN(NamedValue);
 private:
 	const CString* m_name;
+
+	DISALLOW_COPY_AND_ASSIGN(NamedValue);
 };
 
 /**
@@ -253,6 +253,9 @@ public:
 	void set_callback(const Function*& callback) throw() { m_callback.func = callback; }
 	void set_callback(const Method*& callback) throw() { m_callback.method = callback; }
 
+	void set_context(Value* value) throw() { m_context = value; }
+	Value* get_context() const throw() { return m_context; }
+
 	const Function* get_function() throw() {
 		m_type = FUNCTION;
 		return m_callback.func;
@@ -266,8 +269,6 @@ public:
 
 	/* TODO: improve/fix this. */
 	void call() { }
-
-	DISALLOW_COPY_AND_ASSIGN(CallableValue);
 private:
 	/* TODO: merge Function/Method */
 	union {
@@ -276,6 +277,9 @@ private:
 	} m_callback;
 	/* TODO: kill this. */
 	enum { FUNCTION, METHOD } m_type;
+	Value* m_context;
+
+	DISALLOW_COPY_AND_ASSIGN(CallableValue);
 };
 
 /**
@@ -300,7 +304,6 @@ public:
 		if (m_value) {
 			m_value->delRef();
 		}
-
 		m_value = value;
 	}
 
@@ -311,10 +314,10 @@ public:
 			return std::string();
 		}
 	}
-
-	DISALLOW_COPY_AND_ASSIGN(TempValue);
 private:
 	Value* m_value;
+
+	DISALLOW_COPY_AND_ASSIGN(TempValue);
 };
 
 } // clever

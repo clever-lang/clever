@@ -479,6 +479,7 @@ CLEVER_VM_HANDLER(VM::fcall_handler) {
 	const Function* func = static_cast<CallableValue*>(opcode.get_op1())->get_function();
 	Value* args = opcode.get_op2();
 	CallArgs func_args;
+	Value* result = new ConstantValue(int64_t(0));
 
 	if (args) {
 		ValueVector* vec_args = args->getVector();
@@ -493,16 +494,20 @@ CLEVER_VM_HANDLER(VM::fcall_handler) {
 	}
 
 	/* Call the function */
-	func->get_func()(func_args);
+	func->get_func()(result, func_args);
+
+	opcode.set_result(result);
 }
 
 /**
  * var.method()
  */
 CLEVER_VM_HANDLER(VM::mcall_handler) {
-	const Type* var_type = opcode.get_op1()->get_type_ptr();
-	const Method* method = static_cast<CallableValue*>(opcode.get_op1())->get_method();
+	CallableValue* var = static_cast<CallableValue*>(opcode.get_op1());
+	const Type* var_type = var->get_type_ptr();
+	const Method* method = var->get_method();
 	Value* args = opcode.get_op2();
+	Value* result = new ConstantValue(int64_t(0));
 	CallArgs func_args;
 
 	if (args) {
@@ -518,7 +523,9 @@ CLEVER_VM_HANDLER(VM::mcall_handler) {
 	}
 
 	/* Call the method */
-	(var_type->*(method->get_method()))(func_args);
+	(var_type->*(method->get_method()))(result, var->get_context(), func_args);
+
+	opcode.set_result(result);
 }
 
 } // clever

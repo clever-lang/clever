@@ -35,8 +35,13 @@ namespace clever {
 
 Integer* g_int_type = new Integer;
 
+/**
+ * Int::toString()
+ * Converts the number to string
+ */
 CLEVER_METHOD(Integer::toString) {
-	std::cout << "called! " << args.size() << std::endl;
+	retval->setString(CSTRING(value->toString()));
+	retval->set_type(Value::STRING);
 }
 
 void Integer::Init() {

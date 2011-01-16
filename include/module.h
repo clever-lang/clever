@@ -45,8 +45,8 @@ typedef std::list<Module*> ModuleList;
 /**
  * Macros to help on module function declaration
  */
-#define CLEVER_FUNCTION_ARGS const CallArgs& args
-#define CLEVER_METHOD_ARGS const CallArgs& args
+#define CLEVER_FUNCTION_ARGS Value* retval, const CallArgs& args
+#define CLEVER_METHOD_ARGS Value* retval, Value* value, const CallArgs& args
 #define CLEVER_FUNC_NAME(name) clv_##name
 #define CLEVER_FUNCTION(name) void CLEVER_FASTCALL CLEVER_FUNC_NAME(name)(CLEVER_FUNCTION_ARGS) throw()
 #define CLEVER_METHOD(name) void name(CLEVER_METHOD_ARGS) const throw()

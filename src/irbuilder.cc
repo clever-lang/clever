@@ -419,7 +419,7 @@ ValueVector* IRBuilder::functionArgs(const ast::Arguments* args) throw() {
  * Generates opcode for function call
  */
 Opcode* IRBuilder::functionCall(ast::FunctionCall* expr) throw() {
-	const CString* name = expr->get_value()->get_name();
+	const CString* name = expr->get_func()->get_name();
 	const Function* func = Compiler::getFunction(*name);
 	CallableValue* call = new CallableValue(name);
 	const ast::Arguments* args = expr->get_args();
@@ -437,7 +437,7 @@ Opcode* IRBuilder::functionCall(ast::FunctionCall* expr) throw() {
 		arg_values->setVector(functionArgs(args));
 	}
 
-	return new Opcode(OP_FCALL, &VM::fcall_handler, call, arg_values);
+	return new Opcode(OP_FCALL, &VM::fcall_handler, call, arg_values, expr->get_value());
 }
 
 Opcode* IRBuilder::methodCall(ast::MethodCall* expr) throw() {
@@ -453,13 +453,14 @@ Opcode* IRBuilder::methodCall(ast::MethodCall* expr) throw() {
 
 	call->set_type_ptr(variable->get_type_ptr());
 	call->set_callback(method);
+	call->set_context(variable);
 
 	if (args) {
 		arg_values = new Value;
 		arg_values->set_type(Value::VECTOR);
 		arg_values->setVector(functionArgs(args));
 	}
-	return new Opcode(OP_MCALL, &VM::mcall_handler, call, arg_values);
+	return new Opcode(OP_MCALL, &VM::mcall_handler, call, arg_values, expr->get_value());
 }
 
 } // clever

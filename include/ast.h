@@ -740,11 +740,13 @@ public:
 	FunctionCall(Expression* name)
 		: m_name(name), m_args(NULL) {
 		m_name->addRef();
+		m_result = new TempValue;
 	}
 	FunctionCall(Expression* name, Expression* args)
 		: m_name(name), m_args(args) {
 		m_name->addRef();
 		m_args->addRef();
+		m_result = new TempValue;
 	}
 
 	~FunctionCall() {
@@ -755,6 +757,10 @@ public:
 	}
 
 	Value* get_value() const throw() {
+		return m_result;
+	}
+
+	Value* get_func() const throw() {
 		return m_name->get_value();
 	}
 
@@ -774,6 +780,7 @@ public:
 private:
 	Expression* m_name;
 	Expression* m_args;
+	Value* m_result;
 
 	DISALLOW_COPY_AND_ASSIGN(FunctionCall);
 };
@@ -784,6 +791,7 @@ public:
 		: m_var(var), m_method(method), m_args(NULL) {
 		m_var->addRef();
 		m_method->addRef();
+		m_result = new TempValue;
 	}
 
 	MethodCall(Expression* var, Expression* method, Expression* args)
@@ -791,6 +799,7 @@ public:
 		m_var->addRef();
 		m_method->addRef();
 		m_args->addRef();
+		m_result = new TempValue;
 	}
 
 	~MethodCall() {
@@ -819,6 +828,10 @@ public:
 		return args->get_args();
 	}
 
+	Value* get_value() const throw() {
+		return m_result;
+	}
+
 	Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.methodCall(this);
 	}
@@ -826,6 +839,7 @@ private:
 	Expression* m_var;
 	Expression* m_method;
 	Expression* m_args;
+	Value* m_result;
 
 	DISALLOW_COPY_AND_ASSIGN(MethodCall);
 };
