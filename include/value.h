@@ -174,14 +174,14 @@ public:
 				return std::string();
 		}
 	}
-
-	DISALLOW_COPY_AND_ASSIGN(Value);
 private:
 	int m_status;
 	int m_type;
 	int m_kind;
 	const Type* m_type_ptr;
 	ValueData m_data;
+
+	DISALLOW_COPY_AND_ASSIGN(Value);
 };
 
 /**

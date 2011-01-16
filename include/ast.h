@@ -84,10 +84,10 @@ public:
 	 * Method for generating the expression IR
 	 */
 	virtual Opcode* codeGen(IRBuilder& builder) throw() { return NULL; };
-
-	DISALLOW_COPY_AND_ASSIGN(Expression);
 private:
 	bool m_optimized;
+
+	DISALLOW_COPY_AND_ASSIGN(Expression);
 };
 
 class TreeNode {
@@ -121,10 +121,10 @@ public:
 	nodeList& getNodeList() throw() {
 		return nodes;
 	}
-
-	DISALLOW_COPY_AND_ASSIGN(TreeNode);
 private:
 	nodeList nodes;
+
+	DISALLOW_COPY_AND_ASSIGN(TreeNode);
 };
 
 
@@ -136,7 +136,7 @@ public:
 	bool isLiteral() const { return true; }
 	virtual bool hasValue() const { return true; }
 	virtual Value* get_value() const throw() = 0;
-
+private:
 	DISALLOW_COPY_AND_ASSIGN(Literal);
 };
 
@@ -155,10 +155,10 @@ public:
 	}
 
 	Value* get_value() const throw() { return m_value; };
-
-	DISALLOW_COPY_AND_ASSIGN(NumberLiteral);
 private:
 	ConstantValue* m_value;
+
+	DISALLOW_COPY_AND_ASSIGN(NumberLiteral);
 };
 
 class BinaryExpression : public Expression {
@@ -221,14 +221,14 @@ public:
 	Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.binaryExpression(this);
 	}
-
-	DISALLOW_COPY_AND_ASSIGN(BinaryExpression);
 private:
 	int m_op;
 	Expression* m_lhs;
 	Expression* m_rhs;
 	ConstantValue* m_value;
 	TempValue* m_result;
+
+	DISALLOW_COPY_AND_ASSIGN(BinaryExpression);
 };
 
 class VariableDecl : public Expression {
@@ -267,12 +267,12 @@ public:
 	Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.variableDecl(this);
 	}
-
-	DISALLOW_COPY_AND_ASSIGN(VariableDecl);
 private:
 	Expression* m_type;
 	Expression* m_variable;
 	Expression* m_initial_value;
+
+	DISALLOW_COPY_AND_ASSIGN(VariableDecl);
 };
 
 class Identifier : public Expression {
@@ -289,11 +289,11 @@ public:
 	bool hasValue() const { return true; }
 	Value* get_value() const throw() { return m_value; }
 	const CString* get_name() const { return m_name; }
-
-	DISALLOW_COPY_AND_ASSIGN(Identifier);
 private:
 	NamedValue* m_value;
 	const CString* m_name;
+
+	DISALLOW_COPY_AND_ASSIGN(Identifier);
 };
 
 class StringLiteral : public Literal {
@@ -307,10 +307,10 @@ public:
 	}
 
 	Value* get_value() const throw() { return m_value; };
-
-	DISALLOW_COPY_AND_ASSIGN(StringLiteral);
 private:
 	ConstantValue* m_value;
+
+	DISALLOW_COPY_AND_ASSIGN(StringLiteral);
 };
 
 class TypeCreation : public Expression {
@@ -325,21 +325,23 @@ public:
 		m_type->delRef();
 		m_arguments->delRef();
 	}
-
-	DISALLOW_COPY_AND_ASSIGN(TypeCreation);
 private:
 	Expression* m_type;
 	Expression* m_arguments;
+
+	DISALLOW_COPY_AND_ASSIGN(TypeCreation);
 };
 
 class NewBlock : public Expression {
 public:
 	NewBlock() { }
 
+	~NewBlock() { }
+
 	Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.newBlock();
 	}
-
+private:
 	DISALLOW_COPY_AND_ASSIGN(NewBlock);
 };
 
@@ -347,10 +349,12 @@ class EndBlock : public Expression {
 public:
 	EndBlock() { }
 
+	~EndBlock() { }
+
 	Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.endBlock();
 	}
-
+private:
 	DISALLOW_COPY_AND_ASSIGN(EndBlock);
 };
 
@@ -377,11 +381,11 @@ public:
 	Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.preIncrement(this);
 	}
-
-	DISALLOW_COPY_AND_ASSIGN(PreIncrement);
 private:
 	Expression* m_expr;
 	TempValue* m_result;
+
+	DISALLOW_COPY_AND_ASSIGN(PreIncrement);
 };
 
 class PosIncrement : public Expression {
@@ -407,11 +411,11 @@ public:
 	Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.posIncrement(this);
 	}
-
-	DISALLOW_COPY_AND_ASSIGN(PosIncrement);
 private:
 	Expression* m_expr;
 	TempValue* m_result;
+
+	DISALLOW_COPY_AND_ASSIGN(PosIncrement);
 };
 
 class PreDecrement : public Expression {
@@ -437,11 +441,11 @@ public:
 	Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.preDecrement(this);
 	}
-
-	DISALLOW_COPY_AND_ASSIGN(PreDecrement);
 private:
 	Expression* m_expr;
 	TempValue* m_result;
+
+	DISALLOW_COPY_AND_ASSIGN(PreDecrement);
 };
 
 class PosDecrement : public Expression {
@@ -467,11 +471,11 @@ public:
 	Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.posDecrement(this);
 	}
-
-	DISALLOW_COPY_AND_ASSIGN(PosDecrement);
 private:
 	Expression* m_expr;
 	TempValue* m_result;
+
+	DISALLOW_COPY_AND_ASSIGN(PosDecrement);
 };
 
 class IfExpression : public Expression {
@@ -492,10 +496,10 @@ public:
 	Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.ifExpression(this);
 	}
-
-	DISALLOW_COPY_AND_ASSIGN(IfExpression);
 private:
 	Expression* m_expr;
+
+	DISALLOW_COPY_AND_ASSIGN(IfExpression);
 };
 
 class ElseIfExpression : public Expression {
@@ -522,11 +526,11 @@ public:
 	Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.elseIfExpression(this);
 	}
-
-	DISALLOW_COPY_AND_ASSIGN(ElseIfExpression);
 private:
 	Expression* m_start_expr;
 	Expression* m_expr;
+
+	DISALLOW_COPY_AND_ASSIGN(ElseIfExpression);
 };
 
 class ElseExpression : public Expression {
@@ -538,7 +542,7 @@ public:
 	Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.elseExpression(this);
 	}
-
+private:
 	DISALLOW_COPY_AND_ASSIGN(ElseExpression);
 };
 
@@ -560,10 +564,10 @@ public:
 	Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.whileExpression(this);
 	}
-
-	DISALLOW_COPY_AND_ASSIGN(WhileExpression);
 private:
 	Expression* m_expr;
+
+	DISALLOW_COPY_AND_ASSIGN(WhileExpression);
 };
 
 class EndIfExpression : public Expression {
@@ -575,7 +579,7 @@ public:
 	Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.endIfExpression();
 	}
-
+private:
 	DISALLOW_COPY_AND_ASSIGN(EndIfExpression);
 };
 
@@ -598,10 +602,10 @@ public:
 	Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.endWhileExpression(this);
 	}
-
-	DISALLOW_COPY_AND_ASSIGN(EndWhileExpression);
 private:
 	Expression* m_expr;
+
+	DISALLOW_COPY_AND_ASSIGN(EndWhileExpression);
 };
 
 class StartExpr : public Expression {
@@ -621,10 +625,10 @@ public:
 	Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.startExpr(this);
 	}
-
-	DISALLOW_COPY_AND_ASSIGN(StartExpr);
 private:
 	unsigned int m_op_num;
+
+	DISALLOW_COPY_AND_ASSIGN(StartExpr);
 };
 
 
@@ -679,14 +683,14 @@ public:
 	Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.logicExpression(this);
 	}
-
-	DISALLOW_COPY_AND_ASSIGN(LogicExpression);
 private:
 	int m_op;
 	Expression* m_lhs;
 	Expression* m_rhs;
 	TempValue* m_result;
 	Value* m_value;
+
+	DISALLOW_COPY_AND_ASSIGN(LogicExpression);
 };
 
 class BreakExpression : public Expression {
@@ -698,7 +702,7 @@ public:
 	Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.breakExpression();
 	}
-
+private:
 	DISALLOW_COPY_AND_ASSIGN(BreakExpression);
 };
 
@@ -724,11 +728,11 @@ public:
 	Arguments* get_args() throw() {
 		return &m_args;
 	}
-
-	DISALLOW_COPY_AND_ASSIGN(ArgumentList);
 private:
 	Value* m_value;
 	Arguments m_args;
+
+	DISALLOW_COPY_AND_ASSIGN(ArgumentList);
 };
 
 class FunctionCall : public Expression {
@@ -767,11 +771,11 @@ public:
 	Opcode* codeGen(IRBuilder& builder) throw() {
 		return builder.functionCall(this);
 	}
-
-	DISALLOW_COPY_AND_ASSIGN(FunctionCall);
 private:
 	Expression* m_name;
 	Expression* m_args;
+
+	DISALLOW_COPY_AND_ASSIGN(FunctionCall);
 };
 
 class MethodCall : public Expression {
@@ -822,6 +826,8 @@ private:
 	Expression* m_var;
 	Expression* m_method;
 	Expression* m_args;
+
+	DISALLOW_COPY_AND_ASSIGN(MethodCall);
 };
 
 }} // clever::ast

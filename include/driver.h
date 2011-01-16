@@ -27,6 +27,7 @@
 
 #ifndef CLEVER_DRIVER_H
 #define CLEVER_DRIVER_H
+
 #include <string>
 #include <stack>
 #include "parser.hh"
@@ -78,13 +79,6 @@ public:
 	/* Error handling */
 	void error(const clever::location&, const std::string&) const throw();
 	void error(const std::string&) const throw();
-private:
-	/* Indicates if it's a file is being parsed */
-	bool m_is_file;
-	/* Debug option */
-	bool m_trace_parsing;
-	/* Scanners stack */
-	static ScannerStack s_scanners;
 protected:
 	/* The file path -f */
 	std::string m_file;
@@ -94,6 +88,15 @@ protected:
 	std::string m_input;
 	/* Compiler */
 	Compiler m_compiler;
+private:
+	/* Indicates if it's a file is being parsed */
+	bool m_is_file;
+	/* Debug option */
+	bool m_trace_parsing;
+	/* Scanners stack */
+	static ScannerStack s_scanners;
+
+	DISALLOW_COPY_AND_ASSIGN(Driver);
 };
 
 /**
@@ -105,6 +108,8 @@ public:
 
 	void execute();
 	void shutdown();
+private:
+	DISALLOW_COPY_AND_ASSIGN(Interpreter);
 };
 
 } // clever

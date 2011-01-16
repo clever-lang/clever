@@ -116,10 +116,7 @@ public:
 		--m_scope;
 	}
 
-	DISALLOW_COPY_AND_ASSIGN(ScopeManager);
 private:
-	int m_scope;
-
 	Value* deepValueSearch(const CString* name) {
 		for (int i = m_scope-1; i >= 0; --i) {
 			Value* value = at(i).fetch(name);
@@ -131,6 +128,10 @@ private:
 
 		return NULL;
 	}
+
+	int m_scope;
+
+	DISALLOW_COPY_AND_ASSIGN(ScopeManager);
 };
 
 } // clever

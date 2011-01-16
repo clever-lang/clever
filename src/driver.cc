@@ -25,6 +25,7 @@
  * $Id$
  */
 
+#include <fstream>
 #include "driver.h"
 #include "parser.hh"
 #include "position.hh"

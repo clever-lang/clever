@@ -131,11 +131,11 @@ public:
 	CLEVER_VM_HANDLER(not_equal_handler);
 	CLEVER_VM_HANDLER(fcall_handler);
 	CLEVER_VM_HANDLER(mcall_handler);
-
-	DISALLOW_COPY_AND_ASSIGN(VM);
 private:
 	OpcodeList* m_opcodes;
 	ScopeManager m_symbols;
+
+	DISALLOW_COPY_AND_ASSIGN(VM);
 };
 
 } // clever

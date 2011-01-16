@@ -88,8 +88,6 @@ public:
 	 * Performs the constant folding and constant propagation optimization
 	 */
 	static ConstantValue* constantFolding(int, Value*, Value*) throw();
-
-	DISALLOW_COPY_AND_ASSIGN(Compiler);
 private:
 	/* AST nodes */
 	ast::TreeNode* m_ast;
@@ -99,6 +97,8 @@ private:
 	ModuleList m_modules;
 	/* Global function table */
 	static FunctionTable s_func_table;
+
+	DISALLOW_COPY_AND_ASSIGN(Compiler);
 };
 
 } // clever

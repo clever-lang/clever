@@ -76,6 +76,8 @@ public:
 	}
 
 	static TypeMap s_type_table;
+private:
+	DISALLOW_COPY_AND_ASSIGN(TypeTable);
 };
 
 } // clever

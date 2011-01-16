@@ -31,6 +31,7 @@
 #include <string>
 #include <boost/functional/hash.hpp>
 #include <boost/unordered_map.hpp>
+#include "global.h"
 
 /**
  * Returns the CString* pointer to a string
@@ -147,6 +148,8 @@ public:
 
 		return id;
 	}
+private:
+	DISALLOW_COPY_AND_ASSIGN(CStringTable);
 };
 
 } // clever

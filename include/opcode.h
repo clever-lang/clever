@@ -120,6 +120,8 @@ private:
 	Value* m_result;
 	unsigned int m_op_num;
 	struct { unsigned int jmp1, jmp2, flags; } m_extra;
+
+	DISALLOW_COPY_AND_ASSIGN(Opcode);
 };
 
 } // clever

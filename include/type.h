@@ -45,7 +45,6 @@ public:
 	typedef boost::unordered_map<const CString*, Method*> MethodMap;
 	typedef std::pair<const CString*, Method*> MethodPair;
 
-
 	explicit Type(const char* name)
 		: m_name(name) { }
 
@@ -75,10 +74,15 @@ public:
 		return m_name;
 	}
 
+	/**
+	 * Pure virtual methods
+	 */
 	virtual void Init() = 0;
 private:
 	MethodMap m_methods;
 	const char* m_name;
+
+	DISALLOW_COPY_AND_ASSIGN(Type);
 };
 
 } // clever

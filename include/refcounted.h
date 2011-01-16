@@ -55,10 +55,10 @@ public:
 			delete this;
 		}
 	}
-
-	DISALLOW_COPY_AND_ASSIGN(RefCounted);
 private:
 	int m_reference;
+
+	DISALLOW_COPY_AND_ASSIGN(RefCounted);
 };
 
 } // clever

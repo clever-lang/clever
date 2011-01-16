@@ -95,6 +95,8 @@ public:
 private:
 	VarScope m_variables;
 	int m_var_at;
+
+	DISALLOW_COPY_AND_ASSIGN(SSA);
 };
 
 } // clever
