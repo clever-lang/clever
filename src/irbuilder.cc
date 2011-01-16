@@ -360,6 +360,10 @@ Opcode* IRBuilder::logicExpression(ast::LogicExpression* expr) throw() {
 		result = Compiler::constantFolding(expr->get_op(), lhs, rhs);
 	}
 	if (result) {
+		/**
+		 * Don't generate the opcode, the expression was evaluated in
+		 * compile-time
+		 */
 		expr->set_optimized(true);
 		expr->set_result(result);
 		return NULL;
