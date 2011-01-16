@@ -58,11 +58,11 @@ static CLEVER_FUNCTION(println) {
 }
 
 /**
- * sqrt(int x)
+ * sqrt(double x)
  * Returns the square root of a number x
  */
 static CLEVER_FUNCTION(sqrt) {
-	retval->setDouble(std::sqrt(double(args.at(0)->getInteger())));
+	retval->setDouble(std::sqrt(args.at(0)->getDouble()));
 	retval->set_type(Value::DOUBLE);
 }
 
