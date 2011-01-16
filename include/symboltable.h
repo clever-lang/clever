@@ -36,7 +36,6 @@
 namespace clever {
 
 class CString;
-
 class Scope;
 
 typedef boost::unordered_map<const CString*, Value*> ScopeBase;
@@ -46,10 +45,9 @@ class Scope: public ScopeBase {
 public:
 	Scope() { }
 	~Scope() {
-		Scope::iterator it = begin();
+		Scope::const_iterator it = begin(), end_it = end();
 
-		while (it != end()) {
-		//	Scope::value_type p = *it;
+		while (it != end_it) {
 			it->second->delRef();
 			++it;
 		}
@@ -73,7 +71,7 @@ public:
 			if (it != end())
 				return it->second;
 		}
-		
+
 		return NULL;
 	}
 };
@@ -81,7 +79,7 @@ public:
 class ScopeManager: public ScopeManagerBase {
 public:
 	ScopeManager() : m_scope(-1) { }
-	
+
 	inline void pushValue(const CString* name, Value* value) {
 		at(m_scope).push(name, value);
 	}
