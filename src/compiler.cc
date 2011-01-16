@@ -149,6 +149,13 @@ ConstantValue* Compiler::constantFolding(int op, Value* lhs, Value* rhs) throw()
 
 #define DO_STR_OPERATION(_op, x, y) \
 	if (x->isString()) return new ConstantValue(CSTRING(x->getString() _op y->getString()));
+	
+	/**
+	 * Check if the variable value can be predicted
+	 */
+	if ((lhs->hasName() && lhs->isModified()) || (rhs->hasName() && rhs->isModified())) {
+		return NULL;
+	}
 
 	switch (op) {
 		case ast::PLUS:

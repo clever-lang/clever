@@ -78,11 +78,14 @@ Opcode* IRBuilder::binaryExpression(ast::BinaryExpression* expr) throw() {
 	if (!Compiler::checkCompatibleTypes(lhs, rhs)) {
 		Compiler::error("Type mismatch!");
 	}
-
-	if (lhs->isConst() && rhs->isConst()) {
+	if (lhs->isPrimitive()) {
 		result = Compiler::constantFolding(expr->get_op(), lhs, rhs);
 	}
 	if (result) {
+		/**
+		 * Don't generate the opcode, the expression was evaluated in
+		 * compile-time
+		 */
 		expr->set_optimized(true);
 		expr->set_result(result);
 		return NULL;
@@ -124,8 +127,10 @@ Opcode* IRBuilder::variableDecl(ast::VariableDecl* expr) throw() {
 		m_ssa.registerVar(variable);
 
 		variable->setInitialized();
+		variable->copy(value);
+		
 		variable->addRef();
-		value->addRef();
+		value->addRef();		
 
 		return new Opcode(OP_VAR_DECL, &VM::var_decl_handler, variable, value);
 	} else {

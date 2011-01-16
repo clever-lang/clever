@@ -148,6 +148,7 @@ public:
 		std::memcpy(&m_data, value->get_data(), sizeof(ValueData));
 		/* m_type_ptr = value->get_type_ptr(); */
 		m_type = value->get_type();
+		m_kind = value->get_kind();
 	}
 
 	virtual void set_value(Value* value) { }
