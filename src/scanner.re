@@ -25,6 +25,7 @@
  * $Id$
  */
 
+#include <cstdio>
 #include "scanner.h"
 #include "parser.hh"
 #include "ast.h"
@@ -225,7 +226,7 @@ next_token:
 	<INITIAL>HEXINT {
 		int64_t n = 0;
 
-		sscanf(std::string(s->yylex+2, yylen).c_str(), "%x", (unsigned long *)&n);
+		std::sscanf(std::string(s->yylex+2, yylen).c_str(), "%x", (unsigned long *)&n);
 		*yylval = new clever::ast::NumberLiteral(n);
 
 		RET(token::NUM_INTEGER);
