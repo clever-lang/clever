@@ -35,7 +35,7 @@ namespace clever {
 
 void IRBuilder::init() throw() {
 	/* Initializes global scope */
-	m_ssa.pushVarMap(SSA::var_map());
+	m_ssa.newBlock();
 
 	/* Reserve space for 10 opcodes */
 	m_opcodes.reserve(10);
@@ -43,7 +43,7 @@ void IRBuilder::init() throw() {
 
 void IRBuilder::shutdown() throw() {
 	/* Pop global scope */
-	m_ssa.popVarMap();
+	m_ssa.endBlock();
 }
 
 /**
@@ -146,7 +146,7 @@ Opcode* IRBuilder::newBlock() throw() {
 	Jmp jmp;
 
 	/* Initializes new scope */
-	m_ssa.pushVarMap(SSA::var_map());
+	m_ssa.newBlock();
 
 	jmp.push(opcode);
 	m_jmps.push(jmp);
@@ -165,7 +165,7 @@ Opcode* IRBuilder::endBlock() throw() {
 	 * No variable was defined in the scope, so let to set a flag
 	 * to do not push-pop scope in runtime
 	 */
-	if (m_ssa.topVarMap().size() == 0) {
+	if (m_ssa.topBlock().size() == 0) {
 		start_block->set_flags(BLK_UNUSED);
 		opcode->set_flags(BLK_UNUSED);
 	} else {
@@ -177,7 +177,7 @@ Opcode* IRBuilder::endBlock() throw() {
 	m_jmps.pop();
 
 	/* Pop current scope */
-	m_ssa.popVarMap();
+	m_ssa.endBlock();
 
 	return opcode;
 }

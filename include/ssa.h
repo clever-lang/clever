@@ -33,30 +33,38 @@
 
 namespace clever {
 
+class CString;
 class Value;
 
 /**
- * SSA form
+ * Minimal SSA form
  */
 class SSA {
 public:
-	typedef boost::unordered_map<const CString*, Value*> var_map;
-	typedef std::deque<var_map> var_scope;
+	typedef boost::unordered_map<const CString*, Value*> VarMap;
+	typedef std::deque<VarMap> VarScope;
+	typedef std::pair<const CString*, Value*> VarPair;
 
 	SSA()
 		: m_var_at(-1) { }
+
 	~SSA() { }
 
-	void registerVar(Value* var) throw() {
-		m_variables.at(m_var_at).insert(std::pair<const CString*, Value*>(var->get_name(), var));
+	/**
+	 * Adds a new variable to current scope
+	 */
+	void pushVar(Value* var) throw() {
+		m_variables.at(m_var_at).insert(VarPair(var->get_name(), var));
 	}
-
+	/**
+	 * Returns the Value* pointer if the name is found
+	 */
 	Value* fetchVar(Value* var) throw() {
 		const CString* name = var->get_name();
 
 		/* Searchs for the variable in the inner and out scopes */
 		for (int i = m_var_at; i >= 0; --i) {
-			var_map::iterator it = m_variables.at(i).find(name);
+			VarMap::const_iterator it = m_variables.at(i).find(name);
 
 			if (it != m_variables.at(i).end()) {
 				return it->second;
@@ -64,24 +72,28 @@ public:
 		}
 		return NULL;
 	}
-
-	void pushVarMap(var_map map) throw() {
-		m_variables.push_back(map);
+	/**
+	 * Creates a new scope block
+	 */
+	void newBlock() throw() {
+		m_variables.push_back(VarMap());
 		++m_var_at;
 	}
-
-	var_map& topVarMap() throw() {
+	/**
+	 * Returns the current scope block
+	 */
+	VarMap& topBlock() throw() {
 		return m_variables.at(m_var_at);
 	}
-
-	void popVarMap() throw() {
-		var_map::iterator it = topVarMap().begin();
-
+	/**
+	 * Terminates the current block
+	 */
+	void endBlock() throw() {
 		m_variables.pop_back();
 		--m_var_at;
 	}
 private:
-	var_scope m_variables;
+	VarScope m_variables;
 	int m_var_at;
 };
 
