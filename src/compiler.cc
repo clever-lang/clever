@@ -31,6 +31,7 @@
 #include "compiler.h"
 #include "modules.h"
 #include "int.h"
+#include "double.h"
 #include "typetable.h"
 
 namespace clever {
@@ -56,7 +57,10 @@ void Compiler::Init(ast::TreeNode* nodes) throw() {
 
 void Compiler::loadTypes() throw() {
 	g_int_type->Init();
+	g_double_type->Init();
+
 	TypeTable::insert(CSTRING("Int"), g_int_type);
+	TypeTable::insert(CSTRING("Double"), g_double_type);
 }
 
 /*
@@ -149,7 +153,7 @@ ConstantValue* Compiler::constantFolding(int op, Value* lhs, Value* rhs) throw()
 
 #define DO_STR_OPERATION(_op, x, y) \
 	if (x->isString()) return new ConstantValue(CSTRING(x->getString() _op y->getString()));
-	
+
 	/**
 	 * Check if the variable value can be predicted
 	 */

@@ -22,7 +22,7 @@ WINDIR=win32/
 # Testrunner dir
 EXTRADIR=extra/
 
-OBJECTS=$(BUILDDIR)parser.o $(BUILDDIR)scanner.o $(BUILDDIR)driver.o $(BUILDDIR)cstring.o $(BUILDDIR)int.o $(BUILDDIR)irbuilder.o $(BUILDDIR)std.o $(BUILDDIR)compiler.o $(BUILDDIR)vm.o $(BUILDDIR)opcode.o $(BUILDDIR)main.o $(BUILDDIR)win32.o
+OBJECTS=$(BUILDDIR)parser.o $(BUILDDIR)scanner.o $(BUILDDIR)driver.o $(BUILDDIR)cstring.o $(BUILDDIR)double.o $(BUILDDIR)int.o $(BUILDDIR)irbuilder.o $(BUILDDIR)std.o $(BUILDDIR)compiler.o $(BUILDDIR)vm.o $(BUILDDIR)opcode.o $(BUILDDIR)main.o $(BUILDDIR)win32.o
 
 clever: $(OBJECTS)
 	$(LD) $(LFLAGS) -o clever $(BUILDDIR)*.o
@@ -53,7 +53,7 @@ $(BUILDDIR)cstring.o: $(SRCDIR)cstring.cc
 $(BUILDDIR)irbuilder.o: $(SRCDIR)irbuilder.cc $(BUILDDIR)compiler.o
 	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)irbuilder.o $(SRCDIR)irbuilder.cc
 
-$(BUILDDIR)compiler.o: $(SRCDIR)compiler.cc $(BUILDDIR)int.o $(BUILDDIR)std.o
+$(BUILDDIR)compiler.o: $(SRCDIR)compiler.cc $(BUILDDIR)int.o $(BUILDDIR)double.o $(BUILDDIR)std.o
 	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)compiler.o $(SRCDIR)compiler.cc
 
 $(BUILDDIR)vm.o: $(SRCDIR)vm.cc
@@ -61,6 +61,9 @@ $(BUILDDIR)vm.o: $(SRCDIR)vm.cc
 
 $(BUILDDIR)opcode.o: $(SRCDIR)opcode.cc
 	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)opcode.o $(SRCDIR)opcode.cc
+
+$(BUILDDIR)double.o: $(SRCDIR)double.cc
+	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)double.o $(SRCDIR)double.cc
 
 $(BUILDDIR)int.o: $(SRCDIR)int.cc
 	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)int.o $(SRCDIR)int.cc
