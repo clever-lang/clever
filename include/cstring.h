@@ -66,9 +66,9 @@ public:
 	explicit CString(const char* str)
 		: std::string(str), m_id(0) { store(); }
 
-	CString* intern() const throw();
+	const CString* intern() const throw();
 
-	bool hasSameId(CString* cstring) const throw() {
+	bool hasSameId(const CString* cstring) const throw() {
 		return get_id() == cstring->get_id();
 	}
 
@@ -82,7 +82,7 @@ public:
 		}
 	}
 
-	bool operator==(CString* cstring) throw() {
+	bool operator==(const CString* cstring) throw() {
 		return hasSameId(cstring);
 	}
 
@@ -107,7 +107,7 @@ template <>
 class hash<clever::CString*> {
 public:
 	size_t operator()(const clever::CString* key) const throw() {
-		return hash<std::string>()(*(std::string*)key);
+		return hash<std::string>()(*(const std::string*)key);
 	}
 };
 
@@ -115,7 +115,7 @@ public:
 
 namespace clever {
 
-typedef boost::unordered_map<std::size_t, CString*> CStringTableBase;
+typedef boost::unordered_map<std::size_t, const CString*> CStringTableBase;
 
 class CStringTable : public CStringTableBase {
 public:
@@ -124,12 +124,12 @@ public:
 	CStringTable() {}
 	~CStringTable();
 
-	bool contains(CString* cstring) const {
+	bool contains(const CString* cstring) const {
 		IdType id = cstring->get_id();
 		return id != 0 && id < size() && (*find(id)).second->hasSameId(cstring);
 	}
 
-	CString* getCString(long id) const throw() {
+	const CString* getCString(long id) const throw() {
 		return (*find(id)).second;
 	}
 
@@ -140,9 +140,9 @@ public:
 		cstring->set_id(id);
 
 		if (CStringTableBase::find(id) == end()) {
-			CString* new_string = new CString(*cstring, id);
+			const CString* new_string = new CString(*cstring, id);
 
-			CStringTableBase::insert(std::pair<IdType, CString*>(id, new_string));
+			CStringTableBase::insert(std::pair<IdType, const CString*>(id, new_string));
 		}
 
 		return id;

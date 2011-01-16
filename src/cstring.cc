@@ -53,7 +53,7 @@ void CString::store() throw() {
 /**
  * Get the CString pointer by hash
  */
-CString* CString::intern() const throw() {
+const CString* CString::intern() const throw() {
 	return s_table.getCString(get_id());
 }
 
