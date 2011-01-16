@@ -122,15 +122,15 @@ Opcode* IRBuilder::variableDecl(ast::VariableDecl* expr) throw() {
 
 	/* Check if the declaration contains initialization */
 	if (rhs_expr) {
-		Value* value = rhs_expr->get_value();
+		Value* value = getValue(rhs_expr);
 
-		m_ssa.registerVar(variable);
+		m_ssa.pushVar(variable);
 
 		variable->setInitialized();
 		variable->copy(value);
-		
+
 		variable->addRef();
-		value->addRef();		
+		value->addRef();
 
 		return new Opcode(OP_VAR_DECL, &VM::var_decl_handler, variable, value);
 	} else {
@@ -356,7 +356,7 @@ Opcode* IRBuilder::logicExpression(ast::LogicExpression* expr) throw() {
 		Compiler::error("Type mismatch!");
 	}
 
-	if (lhs->isConst() && rhs->isConst()) {
+	if (lhs->isPrimitive()) {
 		result = Compiler::constantFolding(expr->get_op(), lhs, rhs);
 	}
 	if (result) {
