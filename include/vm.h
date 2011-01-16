@@ -95,10 +95,7 @@ public:
 			case Value::TEMP:
 				return op->get_value();
 			default:
-				if (!op->hasName()) {
-					error("Value name not known.");
-				}
-				return m_symbols.fetchValue(op->get_name());
+				return op;
 		}
 	}
 
