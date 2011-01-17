@@ -372,6 +372,9 @@ Opcode* IRBuilder::breakExpression() throw() {
 	return opcode;
 }
 
+/**
+ * Creates a vector with the current value from a Value* pointers
+ */
 ValueVector* IRBuilder::functionArgs(const ast::Arguments* args) throw() {
 	ValueVector* values = new ValueVector();
 	ast::Arguments::const_iterator it = args->begin(), end(args->end());
@@ -416,6 +419,9 @@ Opcode* IRBuilder::functionCall(ast::FunctionCall* expr) throw() {
 	return new Opcode(OP_FCALL, &VM::fcall_handler, call, arg_values, expr->get_value());
 }
 
+/**
+ * Generates opcode for method call
+ */
 Opcode* IRBuilder::methodCall(ast::MethodCall* expr) throw() {
 	Value* variable = getValue(expr->get_variable());
 	CallableValue* call = new CallableValue(expr->get_method()->get_value()->get_name());
@@ -439,6 +445,9 @@ Opcode* IRBuilder::methodCall(ast::MethodCall* expr) throw() {
 	return new Opcode(OP_MCALL, &VM::mcall_handler, call, arg_values, expr->get_value());
 }
 
+/**
+ * Generates opcode for variable assignment
+ */
 Opcode* IRBuilder::assignment(ast::Assignment* expr) throw() {
 	Value* lhs = getValue(expr->get_lhs());
 	Value* rhs = getValue(expr->get_rhs());
