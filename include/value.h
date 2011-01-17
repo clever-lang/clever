@@ -245,25 +245,28 @@ private:
 class CallableValue : public NamedValue {
 public:
 	/* TODO: generate name for anonymous functions, disable set_name(). */
-	CallableValue() {}
-	explicit CallableValue(const CString* name) : NamedValue(name) {}
+	CallableValue()
+		: m_type(UNKNOWN), m_context(NULL) { }
 
-	~CallableValue() {}
+	explicit CallableValue(const CString* name)
+		: NamedValue(name), m_type(UNKNOWN), m_context(NULL) { }
 
-	void set_callback(const Function*& callback) throw() { m_callback.func = callback; }
-	void set_callback(const Method*& callback) throw() { m_callback.method = callback; }
+	~CallableValue() { }
+
+	void set_callback(const Function*& callback) throw() {
+		m_type = FUNCTION;
+		m_callback.func = callback;
+	}
+	void set_callback(const Method*& callback) throw() {
+		m_type = METHOD;
+		m_callback.method = callback;
+	}
 
 	void set_context(Value* value) throw() { m_context = value; }
 	Value* get_context() const throw() { return m_context; }
 
-	const Function* get_function() throw() {
-		m_type = FUNCTION;
-		return m_callback.func;
-	}
-	const Method* get_method() throw() {
-		m_type = METHOD;
-		return m_callback.method;
-	}
+	const Function* get_function() const throw() { return m_callback.func; }
+	const Method* get_method() const throw() { return m_callback.method; }
 
 	bool isCallable() const { return true; }
 
@@ -276,7 +279,7 @@ private:
 		const Method* method;
 	} m_callback;
 	/* TODO: kill this. */
-	enum { FUNCTION, METHOD } m_type;
+	enum { UNKNOWN, FUNCTION, METHOD } m_type;
 	Value* m_context;
 
 	DISALLOW_COPY_AND_ASSIGN(CallableValue);
