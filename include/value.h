@@ -280,14 +280,14 @@ public:
 		if (m_type == FUNCTION) {
 			m_callback_ptr.f_ptr(result, args);
 		} else {
-			(get_type_ptr()->*m_callback_ptr.m_ptr)(result, get_context(), args);
+			(get_type_ptr()->*m_callback_ptr.m_ptr)(result, m_context, args);
 		}
 	}
 	/**
 	 * Invokes the method pointer
 	 */
 	void callWithContext(Value* result, const CallArgs& args) const throw() {
-		(get_type_ptr()->*m_callback_ptr.m_ptr)(result, get_context(), args);
+		(get_type_ptr()->*m_callback_ptr.m_ptr)(result, m_context, args);
 	}
 private:
 	/* TODO: merge Function/Method */
