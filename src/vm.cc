@@ -75,9 +75,6 @@ void VM::error(const char* message) const throw() {
 void VM::run() throw() {
 	unsigned int next_op, last_op = m_opcodes->size();
 
-	/* Deactivate synchronization of iostream and cstdio streams */
-	std::ios::sync_with_stdio(false);
-
 	for (next_op = 0; next_op < last_op; ++next_op) {
 		Opcode& opcode = *(*m_opcodes)[next_op];
 
