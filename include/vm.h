@@ -126,6 +126,7 @@ public:
 	CLEVER_VM_HANDLER(not_equal_handler);
 	CLEVER_VM_HANDLER(fcall_handler);
 	CLEVER_VM_HANDLER(mcall_handler);
+	CLEVER_VM_HANDLER(assign_handler);
 private:
 	OpcodeList* m_opcodes;
 	ScopeManager m_symbols;

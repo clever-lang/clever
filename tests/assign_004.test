@@ -1,0 +1,18 @@
+Testing variable assignment
+==CODE==
+Int i = 10;
+Int j = 2;
+
+j = i;
+println(j);
+
+i = j;
+println(i);
+
+i = i * j;
+println(i);
+
+==RESULT==
+10
+10
+100

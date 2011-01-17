@@ -844,6 +844,31 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(MethodCall);
 };
 
+class Assignment : public Expression {
+public:
+	Assignment(Expression* lhs, Expression *rhs)
+		: m_lhs(lhs), m_rhs(rhs) {
+		m_lhs->addRef();
+		m_rhs->addRef();
+	}
+	~Assignment() {
+		m_lhs->delRef();
+		m_rhs->delRef();
+	}
+
+	Expression* get_lhs() const throw() { return m_lhs; }
+	Expression* get_rhs() const throw() { return m_rhs; }
+
+	Opcode* codeGen(IRBuilder& builder) throw() {
+		return builder.assignment(this);
+	}
+private:
+	Expression* m_lhs;
+	Expression* m_rhs;
+
+	DISALLOW_COPY_AND_ASSIGN(Assignment);
+};
+
 }} // clever::ast
 
 #endif // CLEVER_AST_H

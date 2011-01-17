@@ -50,6 +50,7 @@ class StartExpr;
 class LogicExpression;
 class FunctionCall;
 class MethodCall;
+class Assignment;
 
 typedef std::vector<Expression*> Arguments;
 
@@ -112,6 +113,7 @@ public:
 	Opcode* breakExpression() throw();
 	Opcode* functionCall(ast::FunctionCall*) throw();
 	Opcode* methodCall(ast::MethodCall*) throw();
+	Opcode* assignment(ast::Assignment*) throw();
 
 	DISALLOW_COPY_AND_ASSIGN(IRBuilder);
 private:

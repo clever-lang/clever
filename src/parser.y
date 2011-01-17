@@ -137,6 +137,7 @@ statements:
 	|	while_stmt
 	|	block_stmt
 	|	break_stmt ';'
+	|	assign_stmt ';'
 ;
 
 arg_list:
@@ -162,6 +163,10 @@ variable_declaration:
 		TYPE IDENT '=' type_creation { nodes.add(new clever::ast::VariableDecl($1, $2, $4)); }
 	|	TYPE IDENT '=' expr          { nodes.add(new clever::ast::VariableDecl($1, $2, $4)); }
 	|	variable_declaration_no_init
+;
+
+assign_stmt:
+		IDENT '=' expr { nodes.add(new clever::ast::Assignment($1, $3)); }
 ;
 
 arguments:

@@ -439,4 +439,16 @@ Opcode* IRBuilder::methodCall(ast::MethodCall* expr) throw() {
 	return new Opcode(OP_MCALL, &VM::mcall_handler, call, arg_values, expr->get_value());
 }
 
+Opcode* IRBuilder::assignment(ast::Assignment* expr) throw() {
+	Value* lhs = getValue(expr->get_lhs());
+	Value* rhs = getValue(expr->get_rhs());
+
+	lhs->setModified();
+
+	lhs->addRef();
+	rhs->addRef();
+
+	return new Opcode(OP_ASSIGN, &VM::assign_handler, lhs, rhs);
+}
+
 } // clever
