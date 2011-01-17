@@ -29,6 +29,7 @@
 #define CLEVER_STD_H
 
 #include "module.h"
+#include "value.h"
 
 namespace clever {
 

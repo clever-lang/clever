@@ -30,6 +30,7 @@
 
 #include "module.h"
 #include "type.h"
+#include "value.h"
 
 namespace clever {
 

@@ -36,6 +36,7 @@
 #include "refcounted.h"
 #include "cstring.h"
 #include "global.h"
+#include "module.h"
 
 namespace clever {
 
@@ -256,10 +257,12 @@ public:
 	void set_callback(const Function*& callback) throw() {
 		m_type = FUNCTION;
 		m_callback.func = callback;
+		m_callback_ptr.f_ptr = callback->get_ptr();
 	}
 	void set_callback(const Method*& callback) throw() {
 		m_type = METHOD;
 		m_callback.method = callback;
+		m_callback_ptr.m_ptr = callback->get_ptr();
 	}
 
 	void set_context(Value* value) throw() { m_context = value; }
@@ -270,14 +273,32 @@ public:
 
 	bool isCallable() const { return true; }
 
-	/* TODO: improve/fix this. */
-	void call() { }
+	/**
+	 * Invokes the method/function pointer according with the type
+	 */
+	void call(Value* result, const CallArgs& args) const throw() {
+		if (m_type == FUNCTION) {
+			m_callback_ptr.f_ptr(result, args);
+		} else {
+			(get_type_ptr()->*m_callback_ptr.m_ptr)(result, get_context(), args);
+		}
+	}
+	/**
+	 * Invokes the method pointer
+	 */
+	void callWithContext(Value* result, const CallArgs& args) const throw() {
+		(get_type_ptr()->*m_callback_ptr.m_ptr)(result, get_context(), args);
+	}
 private:
 	/* TODO: merge Function/Method */
 	union {
 		const Function* func;
 		const Method* method;
 	} m_callback;
+	union {
+		FunctionPtr f_ptr;
+		MethodPtr m_ptr;
+	} m_callback_ptr;
 	/* TODO: kill this. */
 	enum { UNKNOWN, FUNCTION, METHOD } m_type;
 	Value* m_context;

@@ -32,15 +32,22 @@
 #include <string>
 #include <list>
 #include "global.h"
-#include "value.h"
 
 namespace clever {
 
+class CString;
 class Module;
 class Function;
+class Value;
+class Type;
 
 typedef std::list<Function*> FunctionList;
 typedef std::list<Module*> ModuleList;
+
+/**
+ * Function/method arguments vector
+ */
+typedef std::vector<Value*> CallArgs;
 
 /**
  * Macros to help on module function declaration
@@ -50,11 +57,6 @@ typedef std::list<Module*> ModuleList;
 #define CLEVER_FUNC_NAME(name) clv_##name
 #define CLEVER_FUNCTION(name) void CLEVER_FASTCALL CLEVER_FUNC_NAME(name)(CLEVER_FUNCTION_ARGS) throw()
 #define CLEVER_METHOD(name) void name(CLEVER_METHOD_ARGS) const throw()
-
-/**
- * Function/method arguments vector
- */
-typedef std::vector<Value*> CallArgs;
 
 /**
  * Module function prototype
@@ -69,17 +71,17 @@ typedef void (Type::*MethodPtr)(CLEVER_METHOD_ARGS) const;
 class Method {
 public:
 	Method(const CString* name, MethodPtr method)
-		: m_name(name), m_method(method) { }
+		: m_name(name), m_ptr(method) { }
 
 	~Method() { }
 
 	const CString* get_name() const throw() { return m_name; }
-	MethodPtr get_method() const throw() { return m_method; }
+	MethodPtr get_ptr() const throw() { return m_ptr; }
 
 	DISALLOW_COPY_AND_ASSIGN(Method);
 private:
 	const CString* m_name;
-	MethodPtr m_method;
+	MethodPtr m_ptr;
 };
 
 /**
@@ -88,19 +90,19 @@ private:
 class Function {
 public:
 	Function(std::string name, FunctionPtr func)
-		: m_name(name), m_func(func) { }
+		: m_name(name), m_ptr(func) { }
 
 	~Function() { }
 
 	const std::string get_name() const throw() { return m_name; }
-	FunctionPtr get_func() const throw() { return m_func; }
+	FunctionPtr get_ptr() const throw() { return m_ptr; }
 
 	DISALLOW_COPY_AND_ASSIGN(Function);
 private:
 	/* Function name */
 	const std::string m_name;
 	/* Function pointer */
-	FunctionPtr m_func;
+	FunctionPtr m_ptr;
 };
 
 /**

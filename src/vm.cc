@@ -442,7 +442,7 @@ CLEVER_VM_HANDLER(VM::not_equal_handler) {
  * func()
  */
 CLEVER_VM_HANDLER(VM::fcall_handler) {
-	const Function* func = static_cast<CallableValue*>(opcode.get_op1())->get_function();
+	CallableValue* func = static_cast<CallableValue*>(opcode.get_op1());
 	Value* args = opcode.get_op2();
 	CallArgs func_args;
 	Value* result = new ConstantValue(int64_t(0));
@@ -460,7 +460,7 @@ CLEVER_VM_HANDLER(VM::fcall_handler) {
 	}
 
 	/* Call the function */
-	func->get_func()(result, func_args);
+	func->call(result, func_args);
 
 	opcode.set_result(result);
 }
@@ -489,7 +489,7 @@ CLEVER_VM_HANDLER(VM::mcall_handler) {
 	}
 
 	/* Call the method */
-	(var_type->*(method->get_method()))(result, var->get_context(), func_args);
+	var->call(result, func_args);
 
 	opcode.set_result(result);
 }
