@@ -90,8 +90,6 @@ public:
 			return NULL;
 		}
 		switch (op->get_kind()) {
-			case Value::CONST:
-				return op;
 			case Value::TEMP:
 				return op->get_value();
 			default:

@@ -498,9 +498,7 @@ CLEVER_VM_HANDLER(VM::mcall_handler) {
  * x = y
  */
 CLEVER_VM_HANDLER(VM::assign_handler) {
-	Value* rhs = getValue(opcode.get_op2());
-
-	opcode.get_op1()->copy(rhs);
+	opcode.get_op1()->copy(getValue(opcode.get_op2()));
 }
 
 } // clever
