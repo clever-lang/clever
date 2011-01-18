@@ -38,7 +38,7 @@ namespace clever {
 FunctionTable Compiler::s_func_table;
 TypeMap TypeTable::s_type_table;
 
-/*
+/**
  * Initializes the compiler data
  */
 void Compiler::Init(ast::TreeNode* nodes) throw() {
@@ -49,16 +49,15 @@ void Compiler::Init(ast::TreeNode* nodes) throw() {
 	 */
 	m_pkgmanager.Init(&s_func_table);
 
-	/* Standard module */
-	//std_module::g_std_module->Init();
-//	m_modules.push_back(std_module::g_std_module);
-
-	/* Load the primitive data types */
+	/**
+	 * Load the primitive data types
+	 */
 	loadTypes();
-	/* Load internal modules */
-	// loadModules();
 }
 
+/**
+ * Loads native types
+ */
 void Compiler::loadTypes() throw() {
 	g_int_type->Init();
 	g_double_type->Init();
@@ -67,19 +66,17 @@ void Compiler::loadTypes() throw() {
 	TypeTable::insert(CSTRING("Double"), g_double_type);
 }
 
-/*
+/**
  * Deallocs memory used by compiler data
  */
 Compiler::~Compiler() {
 	FunctionTable::const_iterator it = s_func_table.begin(), end_func(s_func_table.end());
-	//ModuleList::const_iterator it2 = m_modules.begin(), end_module(m_modules.end());
 
 	while (it != end_func) {
 		++it;
 	}
 
 	TypeTable::clear();
-
 	m_pkgmanager.shutdown();
 }
 
@@ -97,7 +94,7 @@ void Compiler::import(const CString* package, const CString* module) throw() {
 	m_pkgmanager.loadModule(package, module);
 }
 
-/*
+/**
  * Collects all opcode
  */
 void Compiler::buildIR() throw() {
@@ -120,7 +117,7 @@ void Compiler::buildIR() throw() {
 	m_ast->clear();
 }
 
-/*
+/**
  * Displays an error message
  */
 void Compiler::error(const char* message) throw() {
@@ -128,18 +125,20 @@ void Compiler::error(const char* message) throw() {
 	exit(1);
 }
 
-/*
+/**
  * Performs a type compatible checking
  */
 bool Compiler::checkCompatibleTypes(Value* lhs, Value* rhs) throw() {
-	/* Constants with different type cannot performs operation */
+	/**
+	 * Constants with different type cannot performs operation
+	 */
 	if (lhs->isConst() && lhs->hasSameKind(rhs) && !lhs->hasSameType(rhs)) {
 		return false;
 	}
 	return true;
 }
 
-/*
+/**
  * Performs a constant folding optimization
  */
 ConstantValue* Compiler::constantFolding(int op, Value* lhs, Value* rhs) throw() {

@@ -32,12 +32,18 @@
 
 namespace clever {
 
+/**
+ * Loads native packages
+ */
 void PackageManager::Init(FunctionTable* ftable) throw() {
 	m_ftable = ftable;
 
 	addPackage(CSTRING("std"), std_pkg::g_std_package);
 }
 
+/**
+ * Load an entire package
+ */
 void PackageManager::loadPackage(const CString* package) throw() {
 	PackageMap::iterator it = m_packages.find(package);
 
@@ -61,6 +67,9 @@ void PackageManager::loadPackage(const CString* package) throw() {
 	}
 }
 
+/**
+ * Loads an specific module
+ */
 void PackageManager::loadModule(Module* module) throw() {
 	/**
 	 * Initializes the module
@@ -82,6 +91,9 @@ void PackageManager::loadModule(Module* module) throw() {
 	}
 }
 
+/**
+ * Loads an specific module package by supplying the package and module names
+ */
 void PackageManager::loadModule(const CString* package, const CString* module) throw() {
 	PackageMap::iterator it = m_packages.find(package);
 
@@ -102,6 +114,9 @@ void PackageManager::loadModule(const CString* package, const CString* module) t
 	}
 }
 
+/**
+ * Removes the packages and its modules
+ */
 void PackageManager::shutdown() throw() {
 	PackageMap::const_iterator it = m_packages.begin(), end = m_packages.end();
 

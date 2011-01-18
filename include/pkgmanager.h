@@ -33,16 +33,15 @@
 
 namespace clever {
 
-/**
- * Function table
- */
-typedef boost::unordered_map<const std::string, FunctionPtr> FunctionTable;
-
 class CString;
 
+typedef boost::unordered_map<const std::string, FunctionPtr> FunctionTable;
 typedef boost::unordered_map<const CString*, Package*> PackageMap;
 typedef std::pair<const CString*, Package*> PackagePair;
 
+/**
+ * Package manager representation
+ */
 class PackageManager {
 public:
 	PackageManager() { }
