@@ -869,6 +869,42 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(Assignment);
 };
 
+class Import : public Expression {
+public:
+	Import(Expression* package)
+		: m_package(package), m_module(NULL) {
+		m_package->addRef();
+	}
+	Import(Expression* package, Expression* module)
+		: m_package(package), m_module(module) {
+		m_package->addRef();
+		m_module->addRef();
+	}
+	~Import() {
+		m_package->delRef();
+		if (m_module) {
+			m_module->delRef();
+		}
+	}
+
+	Expression* get_package() throw() {
+		return m_package;
+	}
+
+	Expression* get_module() throw() {
+		return m_module;
+	}
+
+	Opcode* codeGen(IRBuilder& builder) throw() {
+		return builder.import(this);
+	}
+private:
+	Expression* m_package;
+	Expression* m_module;
+
+	DISALLOW_COPY_AND_ASSIGN(Import);
+};
+
 }} // clever::ast
 
 #endif // CLEVER_AST_H

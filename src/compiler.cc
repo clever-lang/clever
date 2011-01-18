@@ -45,14 +45,19 @@ TypeMap TypeTable::s_type_table;
 void Compiler::Init(ast::TreeNode* nodes) throw() {
 	m_ast = nodes;
 
+	/**
+	 * Load package list
+	 */
+	m_pkgmanager.Init(&s_func_table);
+
 	/* Standard module */
-	std_module::g_std_module->Init();
-	m_modules.push_back(std_module::g_std_module);
+	//std_module::g_std_module->Init();
+//	m_modules.push_back(std_module::g_std_module);
 
 	/* Load the primitive data types */
 	loadTypes();
 	/* Load internal modules */
-	loadModules();
+	// loadModules();
 }
 
 void Compiler::loadTypes() throw() {
@@ -64,40 +69,33 @@ void Compiler::loadTypes() throw() {
 }
 
 /*
- * Load the modules
- */
-void Compiler::loadModules() throw() {
-	ModuleList::const_iterator it = m_modules.begin(), end_module(m_modules.end());
-
-	while (it != end_module) {
-		FunctionList& functions = (*it)->get_functions();
-		FunctionList::const_iterator it2 = functions.begin(), end_func(functions.end());
-
-		while (it2 != end_func) {
-			/* Add the module functions to the global function table */
-			s_func_table.insert(std::pair<const std::string, FunctionPtr>(it2->first, it2->second));
-			++it2;
-		}
-		++it;
-	}
-}
-
-/*
  * Deallocs memory used by compiler data
  */
 Compiler::~Compiler() {
 	FunctionTable::const_iterator it = s_func_table.begin(), end_func(s_func_table.end());
-	ModuleList::const_iterator it2 = m_modules.begin(), end_module(m_modules.end());
+	//ModuleList::const_iterator it2 = m_modules.begin(), end_module(m_modules.end());
 
 	while (it != end_func) {
 		++it;
 	}
 
-	while (it2 != end_module) {
-		delete *it2;
-		++it2;
-	}
 	TypeTable::clear();
+
+	m_pkgmanager.shutdown();
+}
+
+/**
+ * Import a package
+ */
+void Compiler::import(const CString* package) throw() {
+	m_pkgmanager.loadPackage(package);
+}
+
+/**
+ * Import a package module
+ */
+void Compiler::import(const CString* package, const CString* module) throw() {
+	m_pkgmanager.loadModule(package, module);
 }
 
 /*
@@ -107,7 +105,7 @@ void Compiler::buildIR() throw() {
 	ast::TreeNode::nodeList& ast_nodes = m_ast->getNodeList();
 	ast::TreeNode::nodeList::iterator it = ast_nodes.begin(), end(ast_nodes.end());
 
-	m_builder.init();
+	m_builder.init(this);
 
 	while (it != end) {
 		Opcode* opcode = (*it)->codeGen(m_builder);

@@ -33,12 +33,14 @@
 
 namespace clever {
 
-void IRBuilder::init() throw() {
+void IRBuilder::init(Compiler* const compiler) throw() {
 	/* Initializes global scope */
 	m_ssa.newBlock();
 
 	/* Reserve space for 10 opcodes */
 	m_opcodes.reserve(10);
+
+	m_compiler = compiler;
 }
 
 void IRBuilder::shutdown() throw() {
@@ -459,5 +461,24 @@ Opcode* IRBuilder::assignment(ast::Assignment* expr) throw() {
 
 	return new Opcode(OP_ASSIGN, &VM::assign_handler, lhs, rhs);
 }
+
+/**
+ * Import statement
+ */
+Opcode* IRBuilder::import(ast::Import* expr) throw() {
+	const CString* package = expr->get_package()->get_value()->get_name();
+	ast::Expression* module = expr->get_module();
+
+	if (module) {
+		const CString* module_name = module->get_value()->get_name();
+
+		m_compiler->import(package, module_name);
+	} else {
+		m_compiler->import(package);
+	}
+
+	return NULL;
+}
+
 
 } // clever

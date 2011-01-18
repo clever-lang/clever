@@ -29,7 +29,9 @@
 #include "module.h"
 #include "std/math.h"
 
-namespace clever { namespace std_module {
+namespace clever { namespace std_pkg {
+
+Module* g_math_module = new Math;
 
 /**
  * sqrt(double x)
@@ -94,5 +96,18 @@ CLEVER_FUNCTION(ceil) {
 	retval->set_type(Value::DOUBLE);
 }
 
+/**
+ * Load module data
+ */
+void Math::Init() throw() {
+	addFunction("sqrt", &CLEVER_FUNC_NAME(sqrt));
+	addFunction("sin",  &CLEVER_FUNC_NAME(sin));
+	addFunction("cos",  &CLEVER_FUNC_NAME(cos));
+	addFunction("tan",  &CLEVER_FUNC_NAME(tan));
+	addFunction("atan", &CLEVER_FUNC_NAME(atan));
+	addFunction("pow",  &CLEVER_FUNC_NAME(pow));
+	addFunction("ceil", &CLEVER_FUNC_NAME(ceil));
+}
 
-}} // clever::std_module
+
+}} // clever::std_package

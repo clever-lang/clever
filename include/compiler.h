@@ -33,13 +33,9 @@
 #include "irbuilder.h"
 #include "module.h"
 #include "typetable.h"
+#include "pkgmanager.h"
 
 namespace clever {
-
-/**
- * Function table
- */
-typedef boost::unordered_map<const std::string, FunctionPtr> FunctionTable;
 
 class Compiler {
 public:
@@ -51,6 +47,9 @@ public:
 	void loadTypes() throw();
 	void loadModules() throw();
 	void buildIR() throw();
+
+	void import(const CString*) throw();
+	void import(const CString*, const CString*) throw();
 
 	/**
 	 * Returns the reference to static member function table
@@ -73,9 +72,14 @@ public:
 	/**
 	 * Returns the a Function pointer
 	 */
-	//static Function* getFunction(const std::string& name) throw() {
 	static FunctionPtr getFunction(const std::string& name) throw() {
-		return s_func_table.find(name)->second;
+		FunctionTable::const_iterator it = s_func_table.find(name);
+
+		if (it != s_func_table.end()) {
+			return it->second;
+		} else {
+			return NULL;
+		}
 	}
 	/**
 	 * Displays the error message and exits the program
@@ -94,8 +98,8 @@ private:
 	ast::TreeNode* m_ast;
 	/* IR Builder */
 	IRBuilder m_builder;
-	/* Module list */
-	ModuleList m_modules;
+	/* Package manager */
+	PackageManager m_pkgmanager;
 	/* Global function table */
 	static FunctionTable s_func_table;
 

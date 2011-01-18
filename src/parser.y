@@ -85,6 +85,7 @@ clever::ast::TreeNode nodes;
 %token BREAK         "break"
 %token EQUAL         "=="
 %token NOT_EQUAL     "!="
+%token IMPORT        "import"
 
 %left ',';
 %left '=';
@@ -138,6 +139,7 @@ statements:
 	|	block_stmt
 	|	break_stmt ';'
 	|	assign_stmt ';'
+	|	import_stmt ';'
 ;
 
 arg_list:
@@ -239,6 +241,11 @@ else_opt:
 
 break_stmt:
 		BREAK { nodes.add(new clever::ast::BreakExpression()); }
+;
+
+import_stmt:
+		IMPORT IDENT { nodes.add(new clever::ast::Import($2)); }
+	|	IMPORT IDENT '.' IDENT { nodes.add(new clever::ast::Import($2, $4)); }
 ;
 
 %%

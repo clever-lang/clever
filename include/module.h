@@ -32,6 +32,7 @@
 #include <string>
 #include <list>
 #include <map>
+#include <boost/unordered_map.hpp>
 #include "global.h"
 
 namespace clever {
@@ -62,8 +63,46 @@ typedef void (CLEVER_FASTCALL *FunctionPtr)(CLEVER_FUNCTION_ARGS);
 
 typedef void (Type::*MethodPtr)(CLEVER_METHOD_ARGS) const;
 
-typedef std::map<const std::string, FunctionPtr> FunctionList;
-typedef std::list<Module*> ModuleList;
+typedef boost::unordered_map<const std::string, FunctionPtr> FunctionMap;
+typedef boost::unordered_map<const CString*, Module*> ModuleMap;
+typedef std::pair<const CString*, Module*> ModulePair;
+
+/**
+ * Package representation
+ */
+class Package {
+public:
+	Package(std::string name)
+		: m_name(name) { }
+
+	virtual ~Package() { }
+
+	/**
+	 * Add a new package module
+	 */
+	void addModule(const CString* name, Module* module) throw() {
+		m_modules.insert(ModulePair(name, module));
+	}
+	/**
+	 * Returns the package modules map
+	 */
+	ModuleMap& get_modules() {
+		return m_modules;
+	}
+	/**
+	 * Initializes package data
+	 */
+	virtual void Init() throw() = 0;
+	/**
+	 * Package version
+	 */
+	virtual const char* getVersion() const { return NULL; }
+private:
+	const std::string& m_name;
+	ModuleMap m_modules;
+
+	DISALLOW_COPY_AND_ASSIGN(Package);
+};
 
 /**
  * Module representation
@@ -79,7 +118,7 @@ public:
 		return m_name;
 	}
 
-	FunctionList& get_functions() throw() {
+	FunctionMap& get_functions() throw() {
 		return m_functions;
 	}
 
@@ -92,13 +131,13 @@ public:
 
 	/* Module version */
 	virtual const char* getVersion() const { return NULL; }
-
-	DISALLOW_COPY_AND_ASSIGN(Module);
 private:
 	/* Module name */
 	const std::string m_name;
 	/* Module function list */
-	FunctionList m_functions;
+	FunctionMap m_functions;
+
+	DISALLOW_COPY_AND_ASSIGN(Module);
 };
 
 } // clever

@@ -172,6 +172,10 @@ next_token:
 		RET(token::ELSE);
 	}
 
+	<INITIAL>"import" {
+		RET(token::IMPORT);
+	}
+
 	<INITIAL>IDENTIFIER {
 		*yylval = new clever::ast::Identifier(CSTRING(std::string(s->yylex, yylen)));
 		RET(token::IDENT);

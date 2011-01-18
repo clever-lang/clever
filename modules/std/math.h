@@ -32,7 +32,19 @@
 #include "module.h"
 #include "value.h"
 
-namespace clever { namespace std_module {
+namespace clever { namespace std_pkg {
+
+class Math : public Module {
+public:
+	Math()
+		: Module("Math") { }
+
+	~Math() { }
+
+	void Init() throw();
+};
+
+extern Module* g_math_module;
 
 CLEVER_FUNCTION(sqrt);
 CLEVER_FUNCTION(cos);
@@ -42,6 +54,6 @@ CLEVER_FUNCTION(atan);
 CLEVER_FUNCTION(pow);
 CLEVER_FUNCTION(ceil);
 
-}} // clever::std_module
+}} // clever::std_pkg
 
 #endif // CLEVER_STD_MATH_H

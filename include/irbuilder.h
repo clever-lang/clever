@@ -51,6 +51,7 @@ class LogicExpression;
 class FunctionCall;
 class MethodCall;
 class Assignment;
+class Import;
 
 typedef std::vector<Expression*> Arguments;
 
@@ -60,6 +61,7 @@ namespace clever {
 
 class Opcode;
 class Value;
+class Compiler;
 
 /**
  * Opcode builder
@@ -73,7 +75,7 @@ public:
 
 	~IRBuilder() { }
 
-	void init() throw();
+	void init(Compiler* const compiler) throw();
 	void shutdown() throw();
 
 	VM::OpcodeList* get_opcodes() throw() {
@@ -114,9 +116,12 @@ public:
 	Opcode* functionCall(ast::FunctionCall*) throw();
 	Opcode* methodCall(ast::MethodCall*) throw();
 	Opcode* assignment(ast::Assignment*) throw();
+	Opcode* import(ast::Import*) throw();
 
 	DISALLOW_COPY_AND_ASSIGN(IRBuilder);
 private:
+	/* Compiler */
+	Compiler* m_compiler;
 	/* Opcode vector */
 	VM::OpcodeList m_opcodes;
 	/* SSA form */

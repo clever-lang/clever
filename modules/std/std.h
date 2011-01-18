@@ -30,20 +30,22 @@
 
 #include "module.h"
 
-namespace clever { namespace std_module {
+namespace clever { namespace std_pkg {
 
-class StdModule : public Module {
+class Core : public Module {
 public:
-	StdModule()
-		: Module("Standard") { }
+	Core()
+		: Module("Core") { }
+
+	~Core() { }
 
 	void Init() throw();
 private:
-	DISALLOW_COPY_AND_ASSIGN(StdModule);
+	DISALLOW_COPY_AND_ASSIGN(Core);
 };
 
-extern Module* g_std_module;
+extern Module* g_core_module;
 
-}} // clever::std_module
+}} // clever::std_pkg
 
 #endif // CLEVER_STD_H
