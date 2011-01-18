@@ -247,20 +247,30 @@ class CallableValue : public NamedValue {
 public:
 	/* TODO: generate name for anonymous functions, disable set_name(). */
 	CallableValue()
-		: m_type(UNKNOWN), m_context(NULL) { }
+		: m_context(NULL) { }
 
+	/**
+	 * Create a CallableValue to represent a named function.
+	 */
 	explicit CallableValue(const CString* name)
-		: NamedValue(name), m_type(UNKNOWN), m_context(NULL) { }
+		: NamedValue(name), m_context(NULL) { }
+
+	/**
+	 * Create a CallableValue able to represent a method.
+	 */
+	CallableValue(const CString* name, Type* type)
+		: NamedValue(name), m_context(NULL) {
+		set_type_ptr(type);
+	}
 
 	~CallableValue() { }
 
 	void set_callback(const Function*& callback) throw() {
-		m_type = FUNCTION;
 		m_callback.func = callback;
 		m_callback_ptr.f_ptr = callback->get_ptr();
 	}
+
 	void set_callback(const Method*& callback) throw() {
-		m_type = METHOD;
 		m_callback.method = callback;
 		m_callback_ptr.m_ptr = callback->get_ptr();
 	}
@@ -274,33 +284,36 @@ public:
 	bool isCallable() const { return true; }
 
 	/**
-	 * Invokes the method/function pointer according with the type
+	 * Invokes the method/function pointer according with the type.
+	 *
+	 * Remember to set a context before calling a non-static method.
 	 */
 	void call(Value* result, const CallArgs& args) const throw() {
-		if (m_type == FUNCTION) {
+		const Type* type_ptr = get_type_ptr();
+
+		if (type_ptr == NULL) {
 			m_callback_ptr.f_ptr(result, args);
 		} else {
-			(get_type_ptr()->*m_callback_ptr.m_ptr)(result, m_context, args);
+			(type_ptr->*m_callback_ptr.m_ptr)(result, m_context, args);
 		}
 	}
-	/**
-	 * Invokes the method pointer
-	 */
-	void callWithContext(Value* result, const CallArgs& args) const throw() {
-		(get_type_ptr()->*m_callback_ptr.m_ptr)(result, m_context, args);
+
+	void callWithContext(Value* context, Value* result, const CallArgs& args) const throw() {
+		(get_type_ptr()->*m_callback_ptr.m_ptr)(result, context ,args);
 	}
+
 private:
 	/* TODO: merge Function/Method */
 	union {
 		const Function* func;
 		const Method* method;
 	} m_callback;
+
 	union {
 		FunctionPtr f_ptr;
 		MethodPtr m_ptr;
 	} m_callback_ptr;
-	/* TODO: kill this. */
-	enum { UNKNOWN, FUNCTION, METHOD } m_type;
+	
 	Value* m_context;
 
 	DISALLOW_COPY_AND_ASSIGN(CallableValue);
