@@ -1,5 +1,7 @@
 Testing while and if
 ==CODE==
+import std.io;
+
 Int i = 10;
 
 while (--i) {

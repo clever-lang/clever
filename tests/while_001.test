@@ -1,5 +1,7 @@
 Testing while loop
 ==CODE==
+import std.io;
+
 Int i = 5;
 
 println("start");

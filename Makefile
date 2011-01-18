@@ -23,7 +23,7 @@ WINDIR=win32/
 # Testrunner dir
 EXTRADIR=extra/
 
-OBJECTS=$(BUILDDIR)parser.o $(BUILDDIR)scanner.o $(BUILDDIR)driver.o $(BUILDDIR)cstring.o $(BUILDDIR)double.o $(BUILDDIR)std_pkg.o $(BUILDDIR)int.o $(BUILDDIR)irbuilder.o $(BUILDDIR)std.o $(BUILDDIR)math.o $(BUILDDIR)pkgmanager.o $(BUILDDIR)compiler.o $(BUILDDIR)vm.o $(BUILDDIR)opcode.o $(BUILDDIR)main.o $(BUILDDIR)win32.o
+OBJECTS=$(BUILDDIR)parser.o $(BUILDDIR)scanner.o $(BUILDDIR)driver.o $(BUILDDIR)cstring.o $(BUILDDIR)double.o $(BUILDDIR)std_pkg.o $(BUILDDIR)int.o $(BUILDDIR)irbuilder.o $(BUILDDIR)io.o $(BUILDDIR)math.o $(BUILDDIR)pkgmanager.o $(BUILDDIR)compiler.o $(BUILDDIR)vm.o $(BUILDDIR)opcode.o $(BUILDDIR)main.o $(BUILDDIR)win32.o
 
 clever: $(OBJECTS)
 	$(LD) $(LFLAGS) -o clever $(BUILDDIR)*.o
@@ -73,11 +73,11 @@ $(BUILDDIR)pkgmanager.o: $(SRCDIR)pkgmanager.cc $(BUILDDIR)std_pkg.o
 	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)pkgmanager.o $(SRCDIR)pkgmanager.cc
 
 # Standard package
-$(BUILDDIR)std_pkg.o: $(MODDIR)std/std.cc $(MODDIR)std/math.cc $(MODDIR)std/package.cc
+$(BUILDDIR)std_pkg.o: $(MODDIR)std/io.cc $(MODDIR)std/math.cc $(MODDIR)std/package.cc
 	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)std_pkg.o $(MODDIR)std/package.cc
 
-$(BUILDDIR)std.o: $(BUILDDIR)pkgmanager.o $(MODDIR)std/std.cc
-	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)std.o $(MODDIR)std/std.cc
+$(BUILDDIR)io.o: $(BUILDDIR)pkgmanager.o $(MODDIR)std/io.cc
+	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)io.o $(MODDIR)std/io.cc
 
 $(BUILDDIR)math.o: $(BUILDDIR)pkgmanager.o $(MODDIR)std/math.cc
 	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)math.o $(MODDIR)std/math.cc

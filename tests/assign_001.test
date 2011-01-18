@@ -1,5 +1,7 @@
 Simple assignment
 ==CODE==
+import std.io;
+
 Int i = 10;
 println(i);
 

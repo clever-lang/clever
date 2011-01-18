@@ -1,5 +1,7 @@
 Testing nested if
 ==CODE==
+import std.io;
+
 if (1 > 0) {
 	if (1 < 2) {
 		if (1 >= 1) {

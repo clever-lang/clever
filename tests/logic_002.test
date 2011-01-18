@@ -1,5 +1,7 @@
 Testing equal and not equal operators
 ==CODE==
+import std.io;
+
 Int i = 10;
 
 if (--i == 9) {

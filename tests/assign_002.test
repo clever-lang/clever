@@ -1,5 +1,7 @@
 Testing expression on variable initialization
 ==CODE==
+import std.io;
+
 Int i = 10 + 2;
 Int j = i / 2;
 Int h = --j + i++;

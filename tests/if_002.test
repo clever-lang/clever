@@ -1,5 +1,7 @@
 Testing if-elseif-else and scopes
 ==CODE==
+import std.io;
+
 if (1) {
 	Int i = 20;
 

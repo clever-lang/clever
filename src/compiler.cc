@@ -29,7 +29,6 @@
 #include <vector>
 #include <cstdlib>
 #include "compiler.h"
-#include "modules.h"
 #include "int.h"
 #include "double.h"
 #include "typetable.h"

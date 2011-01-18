@@ -1,5 +1,7 @@
 Testing loop and variable scope
 ==CODE==
+import std.io;
+
 Int i = 4;
 
 while (--i) {

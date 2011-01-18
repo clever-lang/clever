@@ -1,5 +1,7 @@
 Testing break statement
 ==CODE==
+import std.io;
+
 while (1) {
 	println(1);
 

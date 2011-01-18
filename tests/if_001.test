@@ -1,5 +1,7 @@
 Testing if-else and variable scope
 ==CODE==
+import std.io;
+
 Int i = 5;
 
 if (0) {

@@ -1,5 +1,7 @@
 Testing nested while loop
 ==CODE==
+import std.io;
+
 Int i = 2;
 
 while (--i) {

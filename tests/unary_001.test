@@ -1,5 +1,7 @@
 Testing unary operation
 ==CODE==
+import std.io;
+
 Int i = 2;
 Int j = -2;
 

@@ -1,5 +1,7 @@
 Pre increment operation
 ==CODE==
+import std.io;
+
 Int i = 10;
 println(++i + ++i);
 println(i);

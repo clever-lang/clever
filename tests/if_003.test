@@ -1,5 +1,7 @@
 Testing nested if-elseif-else
 ==CODE==
+import std.io;
+
 Int i = 10;
 
 if (0) {

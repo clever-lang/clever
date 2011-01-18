@@ -25,42 +25,27 @@
  * $Id$
  */
 
-#include <iostream>
+#ifndef CLEVER_STD_H
+#define CLEVER_STD_H
+
 #include "module.h"
-#include "std/std.h"
-#include "std/math.h"
 
 namespace clever { namespace std_pkg {
 
-Module* g_core_module = new Core;
+class IOModule : public Module {
+public:
+	IOModule()
+		: Module("IO") { }
 
-/**
- * println(object a, [ ...])
- * Prints the object values without trailing newline
- */
-static CLEVER_FUNCTION(print) {
-	for (int i = 0, size = args.size(); i < size; ++i) {
-		std::cout << args.at(i)->toString();
-	}
-}
+	~IOModule() { }
 
-/**
- * println(object a, [ ...])
- * Prints the object values with trailing newline
- */
-static CLEVER_FUNCTION(println) {
-	for (int i = 0, size = args.size(); i < size; ++i) {
-		std::cout << args.at(i)->toString() << std::endl;
-	}
-}
+	void Init() throw();
+private:
+	DISALLOW_COPY_AND_ASSIGN(IOModule);
+};
 
-/**
- * Initializes Standard module
- */
-void Core::Init() throw() {
-	// Standard functions
-	addFunction("print", &CLEVER_FUNC_NAME(print));
-	addFunction("println", &CLEVER_FUNC_NAME(println));
-}
+extern Module* g_io_module;
 
 }} // clever::std_pkg
+
+#endif // CLEVER_STD_H

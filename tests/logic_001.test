@@ -1,5 +1,7 @@
 Testing logical expression
 ==CODE==
+import std.io;
+
 Int i = 10;
 Int j = 20;
 
