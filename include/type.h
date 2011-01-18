@@ -35,15 +35,14 @@
 namespace clever {
 
 class CString;
-class Method;
 
 /**
  * Type representation
  */
 class Type {
 public:
-	typedef boost::unordered_map<const CString*, Method*> MethodMap;
-	typedef std::pair<const CString*, Method*> MethodPair;
+	typedef boost::unordered_map<const CString*, MethodPtr> MethodMap;
+	typedef std::pair<const CString*, MethodPtr> MethodPair;
 
 	explicit Type(const char* name)
 		: m_name(name) { }
@@ -52,16 +51,15 @@ public:
 		MethodMap::const_iterator it = m_methods.begin(), end = m_methods.end();
 
 		while (it != end) {
-			delete it->second;
 			++it;
 		}
 	}
 
-	void addMethod(Method* method) throw() {
-		m_methods.insert(std::pair<const CString*, Method*>(method->get_name(), method));
+	void addMethod(const CString* name, MethodPtr method) throw() {
+		m_methods.insert(std::pair<const CString*, MethodPtr>(name, method));
 	}
 
-	Method* getMethod(const CString* name) const throw() {
+	MethodPtr getMethod(const CString* name) const throw() {
 		MethodMap::const_iterator it = m_methods.find(name);
 
 		if (it != m_methods.end()) {

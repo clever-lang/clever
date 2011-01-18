@@ -471,7 +471,6 @@ CLEVER_VM_HANDLER(VM::fcall_handler) {
 CLEVER_VM_HANDLER(VM::mcall_handler) {
 	CallableValue* var = static_cast<CallableValue*>(opcode.get_op1());
 	const Type* var_type = var->get_type_ptr();
-	const Method* method = var->get_method();
 	Value* args = opcode.get_op2();
 	Value* result = new ConstantValue(int64_t(0));
 	CallArgs func_args;

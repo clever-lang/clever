@@ -75,7 +75,7 @@ void Compiler::loadModules() throw() {
 
 		while (it2 != end_func) {
 			/* Add the module functions to the global function table */
-			s_func_table.insert(std::pair<const std::string, Function*>((*it2)->get_name(), *it2));
+			s_func_table.insert(std::pair<const std::string, FunctionPtr>(it2->first, it2->second));
 			++it2;
 		}
 		++it;
@@ -90,7 +90,6 @@ Compiler::~Compiler() {
 	ModuleList::const_iterator it2 = m_modules.begin(), end_module(m_modules.end());
 
 	while (it != end_func) {
-		delete it->second;
 		++it;
 	}
 

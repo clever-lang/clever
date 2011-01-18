@@ -42,8 +42,6 @@ namespace clever {
 
 class Type;
 class Value;
-class Method;
-class Function;
 
 typedef std::vector<Value*> ValueVector;
 
@@ -265,21 +263,19 @@ public:
 
 	~CallableValue() { }
 
-	void set_callback(const Function*& callback) throw() {
-		m_callback.func = callback;
-		m_callback_ptr.f_ptr = callback->get_ptr();
+	void set_callback(FunctionPtr callback) throw() {
+		m_callback_ptr.f_ptr = callback;
 	}
 
-	void set_callback(const Method*& callback) throw() {
-		m_callback.method = callback;
-		m_callback_ptr.m_ptr = callback->get_ptr();
+	void set_callback(MethodPtr callback) throw() {
+		m_callback_ptr.m_ptr = callback;
 	}
 
 	void set_context(Value* value) throw() { m_context = value; }
 	Value* get_context() const throw() { return m_context; }
 
-	const Function* get_function() const throw() { return m_callback.func; }
-	const Method* get_method() const throw() { return m_callback.method; }
+	const FunctionPtr get_function() const throw() { return m_callback_ptr.f_ptr; }
+	const MethodPtr get_method() const throw() { return m_callback_ptr.m_ptr; }
 
 	bool isCallable() const { return true; }
 
@@ -303,12 +299,6 @@ public:
 	}
 
 private:
-	/* TODO: merge Function/Method */
-	union {
-		const Function* func;
-		const Method* method;
-	} m_callback;
-
 	union {
 		FunctionPtr f_ptr;
 		MethodPtr m_ptr;

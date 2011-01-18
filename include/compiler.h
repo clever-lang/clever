@@ -39,7 +39,7 @@ namespace clever {
 /**
  * Function table
  */
-typedef boost::unordered_map<const std::string, Function*> FunctionTable;
+typedef boost::unordered_map<const std::string, FunctionPtr> FunctionTable;
 
 class Compiler {
 public:
@@ -73,7 +73,8 @@ public:
 	/**
 	 * Returns the a Function pointer
 	 */
-	static Function* getFunction(const std::string& name) throw() {
+	//static Function* getFunction(const std::string& name) throw() {
+	static FunctionPtr getFunction(const std::string& name) throw() {
 		return s_func_table.find(name)->second;
 	}
 	/**

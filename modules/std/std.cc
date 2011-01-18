@@ -59,17 +59,17 @@ static CLEVER_FUNCTION(println) {
  */
 void StdModule::Init() throw() {
 	// Standard functions
-	addFunction(new Function("print",   &CLEVER_FUNC_NAME(print)));
-	addFunction(new Function("println", &CLEVER_FUNC_NAME(println)));
+	addFunction("print", &CLEVER_FUNC_NAME(print));
+	addFunction("println", &CLEVER_FUNC_NAME(println));
 
 	// Math functions
-	addFunction(new Function("sqrt",   &CLEVER_FUNC_NAME(sqrt)));
-	addFunction(new Function("sin",    &CLEVER_FUNC_NAME(sin)));
-	addFunction(new Function("cos",    &CLEVER_FUNC_NAME(cos)));
-	addFunction(new Function("tan",    &CLEVER_FUNC_NAME(tan)));
-	addFunction(new Function("atan",   &CLEVER_FUNC_NAME(atan)));
-	addFunction(new Function("pow",    &CLEVER_FUNC_NAME(pow)));
-	addFunction(new Function("ceil",   &CLEVER_FUNC_NAME(ceil)));
+	addFunction("sqrt", &CLEVER_FUNC_NAME(sqrt));
+	addFunction("sin",  &CLEVER_FUNC_NAME(sin));
+	addFunction("cos",  &CLEVER_FUNC_NAME(cos));
+	addFunction("tan",  &CLEVER_FUNC_NAME(tan));
+	addFunction("atan", &CLEVER_FUNC_NAME(atan));
+	addFunction("pow",  &CLEVER_FUNC_NAME(pow));
+	addFunction("ceil", &CLEVER_FUNC_NAME(ceil));
 }
 
 }} // clever::std_module

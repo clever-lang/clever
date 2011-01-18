@@ -31,23 +31,15 @@
 #include <vector>
 #include <string>
 #include <list>
+#include <map>
 #include "global.h"
 
 namespace clever {
 
 class CString;
 class Module;
-class Function;
 class Value;
 class Type;
-
-typedef std::list<Function*> FunctionList;
-typedef std::list<Module*> ModuleList;
-
-/**
- * Function/method arguments vector
- */
-typedef std::vector<Value*> CallArgs;
 
 /**
  * Macros to help on module function declaration
@@ -59,51 +51,19 @@ typedef std::vector<Value*> CallArgs;
 #define CLEVER_METHOD(name) void name(CLEVER_METHOD_ARGS) const throw()
 
 /**
+ * Function/method arguments vector
+ */
+typedef std::vector<Value*> CallArgs;
+
+/**
  * Module function prototype
  */
 typedef void (CLEVER_FASTCALL *FunctionPtr)(CLEVER_FUNCTION_ARGS);
 
 typedef void (Type::*MethodPtr)(CLEVER_METHOD_ARGS) const;
 
-/**
- * Method representation
- */
-class Method {
-public:
-	Method(const CString* name, MethodPtr method)
-		: m_name(name), m_ptr(method) { }
-
-	~Method() { }
-
-	const CString* get_name() const throw() { return m_name; }
-	MethodPtr get_ptr() const throw() { return m_ptr; }
-
-	DISALLOW_COPY_AND_ASSIGN(Method);
-private:
-	const CString* m_name;
-	MethodPtr m_ptr;
-};
-
-/**
- * Function representation
- */
-class Function {
-public:
-	Function(std::string name, FunctionPtr func)
-		: m_name(name), m_ptr(func) { }
-
-	~Function() { }
-
-	const std::string get_name() const throw() { return m_name; }
-	FunctionPtr get_ptr() const throw() { return m_ptr; }
-
-	DISALLOW_COPY_AND_ASSIGN(Function);
-private:
-	/* Function name */
-	const std::string m_name;
-	/* Function pointer */
-	FunctionPtr m_ptr;
-};
+typedef std::map<const std::string, FunctionPtr> FunctionList;
+typedef std::list<Module*> ModuleList;
 
 /**
  * Module representation
@@ -123,8 +83,8 @@ public:
 		return m_functions;
 	}
 
-	void addFunction(Function* func) throw() {
-		m_functions.push_back(func);
+	void addFunction(const std::string& name, FunctionPtr func) throw() {
+		m_functions.insert(std::pair<const std::string, FunctionPtr>(name, func));
 	}
 
 	/* Module initialization */

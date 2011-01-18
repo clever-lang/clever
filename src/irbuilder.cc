@@ -399,7 +399,7 @@ ValueVector* IRBuilder::functionArgs(const ast::Arguments* args) throw() {
  */
 Opcode* IRBuilder::functionCall(ast::FunctionCall* expr) throw() {
 	const CString* name = expr->get_func()->get_name();
-	const Function* func = Compiler::getFunction(*name);
+	FunctionPtr func = Compiler::getFunction(*name);
 	CallableValue* call = new CallableValue(name);
 	const ast::Arguments* args = expr->get_args();
 	Value* arg_values = NULL;
@@ -425,7 +425,7 @@ Opcode* IRBuilder::functionCall(ast::FunctionCall* expr) throw() {
 Opcode* IRBuilder::methodCall(ast::MethodCall* expr) throw() {
 	Value* variable = getValue(expr->get_variable());
 	CallableValue* call = new CallableValue(expr->get_method()->get_value()->get_name());
-	const Method* method = variable->get_type_ptr()->getMethod(call->get_name());
+	const MethodPtr method = variable->get_type_ptr()->getMethod(call->get_name());
 	const ast::Arguments* args = expr->get_args();
 	Value* arg_values = NULL;
 

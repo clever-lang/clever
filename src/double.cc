@@ -54,8 +54,8 @@ CLEVER_METHOD(Double::sqrt) {
 }
 
 void Double::Init() {
-	addMethod(new Method(CSTRING("tostring"), (MethodPtr)&Double::toString));
-	addMethod(new Method(CSTRING("sqrt"), (MethodPtr)&Double::sqrt));
+	addMethod(CSTRING("tostring"), (MethodPtr)&Double::toString);
+	addMethod(CSTRING("sqrt"), (MethodPtr)&Double::sqrt);
 }
 
 } // clever

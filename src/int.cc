@@ -45,7 +45,7 @@ CLEVER_METHOD(Integer::toString) {
 }
 
 void Integer::Init() {
-	addMethod(new Method(CSTRING("tostring"), (MethodPtr)&Integer::toString));
+	addMethod(CSTRING("tostring"), (MethodPtr)&Integer::toString);
 }
 
 } // clever

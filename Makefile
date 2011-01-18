@@ -1,5 +1,6 @@
 # $Id$
 #
+
 # Compiler
 CXX?=g++
 CPPFLAGS=-c -O2 -ggdb -ansi -Iinclude/ -Ibuild/ -Imodules/ -Iwin32/ -I. -fno-rtti -pedantic
