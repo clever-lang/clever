@@ -25,25 +25,23 @@
  * $Id$
  */
 
-#ifndef CLEVER_STD_H
-#define CLEVER_STD_H
+
+#ifndef CLEVER_STD_MATH_H
+#define CLEVER_STD_MATH_H
 
 #include "module.h"
+#include "value.h"
 
 namespace clever { namespace std_module {
 
-class StdModule : public Module {
-public:
-	StdModule()
-		: Module("Standard") { }
-
-	void Init() throw();
-private:
-	DISALLOW_COPY_AND_ASSIGN(StdModule);
-};
-
-extern Module* g_std_module;
+CLEVER_FUNCTION(sqrt);
+CLEVER_FUNCTION(cos);
+CLEVER_FUNCTION(sin);
+CLEVER_FUNCTION(tan);
+CLEVER_FUNCTION(atan);
+CLEVER_FUNCTION(pow);
+CLEVER_FUNCTION(ceil);
 
 }} // clever::std_module
 
-#endif // CLEVER_STD_H
+#endif // CLEVER_STD_MATH_H

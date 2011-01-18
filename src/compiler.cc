@@ -46,8 +46,8 @@ void Compiler::Init(ast::TreeNode* nodes) throw() {
 	m_ast = nodes;
 
 	/* Standard module */
-	g_std_module->Init();
-	m_modules.push_back(g_std_module);
+	std_module::g_std_module->Init();
+	m_modules.push_back(std_module::g_std_module);
 
 	/* Load the primitive data types */
 	loadTypes();

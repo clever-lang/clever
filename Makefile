@@ -22,7 +22,7 @@ WINDIR=win32/
 # Testrunner dir
 EXTRADIR=extra/
 
-OBJECTS=$(BUILDDIR)parser.o $(BUILDDIR)scanner.o $(BUILDDIR)driver.o $(BUILDDIR)cstring.o $(BUILDDIR)double.o $(BUILDDIR)int.o $(BUILDDIR)irbuilder.o $(BUILDDIR)std.o $(BUILDDIR)compiler.o $(BUILDDIR)vm.o $(BUILDDIR)opcode.o $(BUILDDIR)main.o $(BUILDDIR)win32.o
+OBJECTS=$(BUILDDIR)parser.o $(BUILDDIR)scanner.o $(BUILDDIR)driver.o $(BUILDDIR)cstring.o $(BUILDDIR)double.o $(BUILDDIR)int.o $(BUILDDIR)irbuilder.o $(BUILDDIR)std.o $(BUILDDIR)math.o $(BUILDDIR)compiler.o $(BUILDDIR)vm.o $(BUILDDIR)opcode.o $(BUILDDIR)main.o $(BUILDDIR)win32.o
 
 clever: $(OBJECTS)
 	$(LD) $(LFLAGS) -o clever $(BUILDDIR)*.o
@@ -68,8 +68,11 @@ $(BUILDDIR)double.o: $(SRCDIR)double.cc
 $(BUILDDIR)int.o: $(SRCDIR)int.cc
 	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)int.o $(SRCDIR)int.cc
 
-$(BUILDDIR)std.o: $(MODDIR)std/std.cc
+$(BUILDDIR)std.o: $(MODDIR)std/std.cc $(BUILDDIR)math.o
 	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)std.o $(MODDIR)std/std.cc
+
+$(BUILDDIR)math.o: $(MODDIR)std/math.cc
+	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)math.o $(MODDIR)std/math.cc
 
 $(BUILDDIR)win32.o: $(WINDIR)win32.cc
 	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)win32.o $(WINDIR)win32.cc

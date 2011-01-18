@@ -26,12 +26,11 @@
  */
 
 #include <iostream>
-#include <cstdio>
-#include <cmath>
 #include "module.h"
 #include "std/std.h"
+#include "std/math.h"
 
-namespace clever {
+namespace clever { namespace std_module {
 
 Module* g_std_module = new StdModule;
 
@@ -51,27 +50,26 @@ static CLEVER_FUNCTION(print) {
  */
 static CLEVER_FUNCTION(println) {
 	for (int i = 0, size = args.size(); i < size; ++i) {
-		printf("%s\n", args.at(i)->toString().c_str());
+		std::cout << args.at(i)->toString() << std::endl;
 	}
 }
 
 /**
- * sqrt(double x)
- * Returns the square root of a number x
- */
-static CLEVER_FUNCTION(sqrt) {
-	retval->setDouble(std::sqrt(args.at(0)->getDouble()));
-	retval->set_type(Value::DOUBLE);
-}
-
-/*
  * Initializes Standard module
  */
 void StdModule::Init() throw() {
-	/* Module functions */
+	// Standard functions
 	addFunction(new Function("print",   &CLEVER_FUNC_NAME(print)));
 	addFunction(new Function("println", &CLEVER_FUNC_NAME(println)));
-	addFunction(new Function("sqrt",    &CLEVER_FUNC_NAME(sqrt)));
+
+	// Math functions
+	addFunction(new Function("sqrt",   &CLEVER_FUNC_NAME(sqrt)));
+	addFunction(new Function("sin",    &CLEVER_FUNC_NAME(sin)));
+	addFunction(new Function("cos",    &CLEVER_FUNC_NAME(cos)));
+	addFunction(new Function("tan",    &CLEVER_FUNC_NAME(tan)));
+	addFunction(new Function("atan",   &CLEVER_FUNC_NAME(atan)));
+	addFunction(new Function("pow",    &CLEVER_FUNC_NAME(pow)));
+	addFunction(new Function("ceil",   &CLEVER_FUNC_NAME(ceil)));
 }
 
-} // clever
+}} // clever::std_module
