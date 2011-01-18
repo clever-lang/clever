@@ -6,7 +6,7 @@
 
 %code requires {
 /*
- * Clever language
+ * Clever programming language
  * Copyright (c) 2011 Clever Team
  *
  * Permission is hereby granted, free of charge, to any person

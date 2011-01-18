@@ -1,6 +1,6 @@
 /*
- * Clever language
- * Copyright (c) 2010 Clever Team
+ * Clever programming language
+ * Copyright (c) 2011 Clever Team
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -34,11 +34,11 @@
 #include "win32.h"
 
 void GetLastErrorStr(LPTSTR pszFunction, std::string &err)
-{ 
+{
     LPTSTR pszMessage;
-    DWORD dwLastError = GetLastError(); 
+    DWORD dwLastError = GetLastError();
     FormatMessage(
-        FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+        FORMAT_MESSAGE_ALLOCATE_BUFFER |
         FORMAT_MESSAGE_FROM_SYSTEM |
         FORMAT_MESSAGE_IGNORE_INSERTS,
         NULL,
@@ -54,12 +54,12 @@ void CreateBackgroundProcess(std::string cline) {
 	PROCESS_INFORMATION ProcInfo;
 	STARTUPINFO StartupInfo;
 	std::string err;
-	
+
 	memset(&StartupInfo, 0, sizeof(StartupInfo));
 	StartupInfo.cb = sizeof(STARTUPINFO);
 	StartupInfo.dwFlags = STARTF_USESHOWWINDOW;
 	StartupInfo.wShowWindow = SW_HIDE;
-	
+
 	if (CreateProcess(NULL, LPSTR(cline.c_str()), NULL, NULL, false, CREATE_NO_WINDOW, NULL, NULL, &StartupInfo, &ProcInfo)) {
 		std::cout << "Background process created (PID: " << ProcInfo.dwProcessId << ")";
 	} else {
