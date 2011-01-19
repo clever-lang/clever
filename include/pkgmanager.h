@@ -75,6 +75,8 @@ private:
 	PackageMap m_packages;
 
 	FunctionTable* m_ftable;
+
+	DISALLOW_COPY_AND_ASSIGN(PackageManager);
 };
 
 } // clever

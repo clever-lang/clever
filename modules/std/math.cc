@@ -37,7 +37,7 @@ Module* g_math_module = new Math;
  * sqrt(double x)
  * Returns the square root of a number x
  */
-CLEVER_FUNCTION(sqrt) {
+static CLEVER_FUNCTION(sqrt) {
 	retval->setDouble(std::sqrt(args.at(0)->getDouble()));
 	retval->set_type(Value::DOUBLE);
 }
@@ -46,7 +46,7 @@ CLEVER_FUNCTION(sqrt) {
  * cos(double x)
  * Returns the cosine of an angle of x radians
  */
-CLEVER_FUNCTION(cos) {
+static CLEVER_FUNCTION(cos) {
 	retval->setDouble(std::cos(args.at(0)->getDouble()));
 	retval->set_type(Value::DOUBLE);
 }
@@ -55,7 +55,7 @@ CLEVER_FUNCTION(cos) {
  * sin(double x)
  * Returns the sine of an angle of x radians
  */
-CLEVER_FUNCTION(sin) {
+static CLEVER_FUNCTION(sin) {
 	retval->setDouble(std::sin(args.at(0)->getDouble()));
 	retval->set_type(Value::DOUBLE);
 }
@@ -64,7 +64,7 @@ CLEVER_FUNCTION(sin) {
  * tan(double x)
  * Returns the tangent of an angle of x radians
  */
-CLEVER_FUNCTION(tan) {
+static CLEVER_FUNCTION(tan) {
 	retval->setDouble(std::tan(args.at(0)->getDouble()));
 	retval->set_type(Value::DOUBLE);
 }
@@ -73,7 +73,7 @@ CLEVER_FUNCTION(tan) {
  * atan(double x)
  * Returns the arc tangent of an angle of x radians
  */
-CLEVER_FUNCTION(atan) {
+static CLEVER_FUNCTION(atan) {
 	retval->setDouble(std::atan(args.at(0)->getDouble()));
 	retval->set_type(Value::DOUBLE);
 }
@@ -82,7 +82,7 @@ CLEVER_FUNCTION(atan) {
  * pow(double x, double y)
  * Returns x raised to the power y
  */
-CLEVER_FUNCTION(pow) {
+static CLEVER_FUNCTION(pow) {
 	retval->setDouble(std::pow(args.at(0)->getDouble(), args.at(1)->getDouble()));
 	retval->set_type(Value::DOUBLE);
 }
@@ -91,7 +91,7 @@ CLEVER_FUNCTION(pow) {
  * ceil(double x)
  * Returns the smallest integral value that is not less than x
  */
-CLEVER_FUNCTION(ceil) {
+static CLEVER_FUNCTION(ceil) {
 	retval->setDouble(std::ceil(args.at(0)->getDouble()));
 	retval->set_type(Value::DOUBLE);
 }

@@ -44,6 +44,8 @@ public:
 	void Init() throw();
 
 	const char* getVersion() const { return NULL; }
+private:
+	DISALLOW_COPY_AND_ASSIGN(Std);
 };
 
 extern Package* g_std_package;

@@ -45,7 +45,7 @@ void PackageManager::Init(FunctionTable* ftable) throw() {
  * Load an entire package
  */
 void PackageManager::loadPackage(const CString* package) throw() {
-	PackageMap::iterator it = m_packages.find(package);
+	PackageMap::const_iterator it = m_packages.find(package);
 
 	if (it != m_packages.end()) {
 		/**
@@ -55,7 +55,7 @@ void PackageManager::loadPackage(const CString* package) throw() {
 
 		{
 			ModuleMap& modules = it->second->get_modules();
-			ModuleMap::iterator it = modules.begin(), end = modules.end();
+			ModuleMap::const_iterator it = modules.begin(), end = modules.end();
 
 			while (it != end) {
 				loadModule(it->second);
@@ -78,7 +78,7 @@ void PackageManager::loadModule(Module* module) throw() {
 
 	{
 		FunctionMap& funcs = module->get_functions();
-		FunctionMap::iterator it = funcs.begin(), end = funcs.end();
+		FunctionMap::const_iterator it = funcs.begin(), end = funcs.end();
 
 
 		/**
@@ -95,7 +95,7 @@ void PackageManager::loadModule(Module* module) throw() {
  * Loads an specific module package by supplying the package and module names
  */
 void PackageManager::loadModule(const CString* package, const CString* module) throw() {
-	PackageMap::iterator it = m_packages.find(package);
+	PackageMap::const_iterator it = m_packages.find(package);
 
 	if (it != m_packages.end()) {
 		/**
@@ -105,7 +105,7 @@ void PackageManager::loadModule(const CString* package, const CString* module) t
 
 		{
 			ModuleMap& modules = it->second->get_modules();
-			ModuleMap::iterator it_mod = modules.find(module);
+			ModuleMap::const_iterator it_mod = modules.find(module);
 
 			if (it_mod != modules.end()) {
 				loadModule(it_mod->second);

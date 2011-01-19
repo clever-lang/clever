@@ -32,6 +32,9 @@ namespace clever { namespace std_pkg {
 
 Package* g_std_package = new Std;
 
+/**
+ * Initializes Std package
+ */
 void Std::Init() throw() {
 	addModule(CSTRING("io"), g_io_module);
 	addModule(CSTRING("math"), g_math_module);
