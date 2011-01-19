@@ -407,7 +407,7 @@ Opcode* IRBuilder::functionCall(ast::FunctionCall* expr) throw() {
 	Value* arg_values = NULL;
 
 	if (!func) {
-		Compiler::error("Function does not exists!");
+		Compiler::error("Function '" + *name + "' does not exists!");
 	}
 
 	call->set_callback(func);

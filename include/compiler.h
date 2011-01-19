@@ -94,7 +94,7 @@ public:
 	/**
 	 * Displays the error message and exits the program
 	 */
-	static void error(const char*) throw();
+	static void error(std::string) throw();
 	/**
 	 * Checks if two operands has compatible types to perform some operation
 	 */

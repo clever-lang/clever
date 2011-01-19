@@ -106,7 +106,7 @@ void Compiler::buildIR() throw() {
 /**
  * Displays an error message
  */
-void Compiler::error(const char* message) throw() {
+void Compiler::error(std::string message) throw() {
 	std::cerr << "Compile error: " << message << std::endl;
 	exit(1);
 }
