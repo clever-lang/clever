@@ -81,20 +81,6 @@ Compiler::~Compiler() {
 }
 
 /**
- * Import a package
- */
-void Compiler::import(const CString* package) throw() {
-	m_pkgmanager.loadPackage(package);
-}
-
-/**
- * Import a package module
- */
-void Compiler::import(const CString* package, const CString* module) throw() {
-	m_pkgmanager.loadModule(package, module);
-}
-
-/**
  * Collects all opcode
  */
 void Compiler::buildIR() throw() {

@@ -45,12 +45,22 @@ public:
 
 	void Init(ast::TreeNode*) throw();
 	void loadTypes() throw();
-	void loadModules() throw();
+	/**
+	 * Generates the intermediate representation
+	 */
 	void buildIR() throw();
-
-	void import(const CString*) throw();
-	void import(const CString*, const CString*) throw();
-
+	/**
+	 * Import a package
+	 */
+	void import(const CString* package) throw() {
+		m_pkgmanager.loadPackage(package);
+	}
+	/**
+	 * Import a package module
+	 */
+	void import(const CString* package, const CString* module) throw() {
+		m_pkgmanager.loadModule(package, module);
+	}
 	/**
 	 * Returns the reference to static member function table
 	 */
