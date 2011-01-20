@@ -42,19 +42,16 @@ class Module;
 class Value;
 class Type;
 
+typedef std::vector<Value*> ValueVector;
+
 /**
  * Macros to help on module function declaration
  */
-#define CLEVER_FUNCTION_ARGS Value* retval, const CallArgs& args
-#define CLEVER_METHOD_ARGS Value* retval, Value* value, const CallArgs& args
+#define CLEVER_FUNCTION_ARGS Value* retval, const ValueVector* args
+#define CLEVER_METHOD_ARGS Value* retval, Value* value, const ValueVector* args
 #define CLEVER_FUNC_NAME(name) clv_##name
 #define CLEVER_FUNCTION(name) void CLEVER_FASTCALL CLEVER_FUNC_NAME(name)(CLEVER_FUNCTION_ARGS) throw()
 #define CLEVER_METHOD(name) void name(CLEVER_METHOD_ARGS) const throw()
-
-/**
- * Function/method arguments vector
- */
-typedef std::vector<Value*> CallArgs;
 
 /**
  * Module function prototype
@@ -70,7 +67,7 @@ typedef std::pair<const CString*, Module*> ModulePair;
 /**
  * Package representation
  */
-class Package {
+class NO_INIT_VTABLE Package {
 public:
 	enum { UNLOADED, LOADED, FULLY_LOADED };
 
@@ -130,7 +127,7 @@ private:
 /**
  * Module representation
  */
-class Module {
+class NO_INIT_VTABLE Module {
 public:
 	enum { UNLOADED, LOADED };
 

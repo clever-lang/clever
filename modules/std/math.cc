@@ -38,7 +38,7 @@ Module* g_math_module = new Math;
  * Returns the square root of a number x
  */
 static CLEVER_FUNCTION(sqrt) {
-	retval->setDouble(std::sqrt(args.at(0)->getDouble()));
+	retval->setDouble(std::sqrt(args->at(0)->getDouble()));
 	retval->set_type(Value::DOUBLE);
 }
 
@@ -47,7 +47,7 @@ static CLEVER_FUNCTION(sqrt) {
  * Returns the cosine of an angle of x radians
  */
 static CLEVER_FUNCTION(cos) {
-	retval->setDouble(std::cos(args.at(0)->getDouble()));
+	retval->setDouble(std::cos(args->at(0)->getDouble()));
 	retval->set_type(Value::DOUBLE);
 }
 
@@ -56,7 +56,7 @@ static CLEVER_FUNCTION(cos) {
  * Returns the sine of an angle of x radians
  */
 static CLEVER_FUNCTION(sin) {
-	retval->setDouble(std::sin(args.at(0)->getDouble()));
+	retval->setDouble(std::sin(args->at(0)->getDouble()));
 	retval->set_type(Value::DOUBLE);
 }
 
@@ -65,7 +65,7 @@ static CLEVER_FUNCTION(sin) {
  * Returns the tangent of an angle of x radians
  */
 static CLEVER_FUNCTION(tan) {
-	retval->setDouble(std::tan(args.at(0)->getDouble()));
+	retval->setDouble(std::tan(args->at(0)->getDouble()));
 	retval->set_type(Value::DOUBLE);
 }
 
@@ -74,7 +74,7 @@ static CLEVER_FUNCTION(tan) {
  * Returns the arc tangent of an angle of x radians
  */
 static CLEVER_FUNCTION(atan) {
-	retval->setDouble(std::atan(args.at(0)->getDouble()));
+	retval->setDouble(std::atan(args->at(0)->getDouble()));
 	retval->set_type(Value::DOUBLE);
 }
 
@@ -83,7 +83,7 @@ static CLEVER_FUNCTION(atan) {
  * Returns x raised to the power y
  */
 static CLEVER_FUNCTION(pow) {
-	retval->setDouble(std::pow(args.at(0)->getDouble(), args.at(1)->getDouble()));
+	retval->setDouble(std::pow(args->at(0)->getDouble(), args->at(1)->getDouble()));
 	retval->set_type(Value::DOUBLE);
 }
 
@@ -92,7 +92,7 @@ static CLEVER_FUNCTION(pow) {
  * Returns the smallest integral value that is not less than x
  */
 static CLEVER_FUNCTION(ceil) {
-	retval->setDouble(std::ceil(args.at(0)->getDouble()));
+	retval->setDouble(std::ceil(args->at(0)->getDouble()));
 	retval->set_type(Value::DOUBLE);
 }
 

@@ -39,8 +39,8 @@ Module* g_io_module = new IOModule;
  * Prints the object values without trailing newline
  */
 static CLEVER_FUNCTION(print) {
-	for (int i = 0, size = args.size(); i < size; ++i) {
-		std::cout << args.at(i)->toString();
+	for (int i = 0, size = args->size(); i < size; ++i) {
+		std::cout << args->at(i)->toString();
 	}
 }
 
@@ -49,8 +49,8 @@ static CLEVER_FUNCTION(print) {
  * Prints the object values with trailing newline
  */
 static CLEVER_FUNCTION(println) {
-	for (int i = 0, size = args.size(); i < size; ++i) {
-		std::cout << args.at(i)->toString() << std::endl;
+	for (int i = 0, size = args->size(); i < size; ++i) {
+		std::cout << args->at(i)->toString() << std::endl;
 	}
 }
 

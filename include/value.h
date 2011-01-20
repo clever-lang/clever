@@ -43,7 +43,7 @@ namespace clever {
 class Type;
 class Value;
 
-typedef std::vector<Value*> ValueVector;
+// typedef std::vector<Value*> ValueVector;
 
 /**
  * Base class for value representation
@@ -78,12 +78,29 @@ public:
 		}
 	}
 
+	void initialize() throw() {
+		switch (m_type) {
+			case Value::DOUBLE:
+				m_data.d_value = 0;
+				break;
+			case Value::INTEGER:
+				m_data.l_value = 0;
+				break;
+			case Value::BOOLEAN:
+				m_data.b_value = false;
+				break;
+			case Value::STRING:
+				m_data.s_value = CSTRING("");
+				break;
+		}
+	}
+
 	void set_type(int type) { m_type = type; }
 	int get_type() const { return m_type; }
+	int hasSameType(Value* value) const { return m_type == value->get_type(); }
+
 	const Type* get_type_ptr() const { return m_type_ptr; }
 	void set_type_ptr(const Type* ptr) { m_type_ptr = ptr; }
-
-	int hasSameType(Value* value) const { return m_type == value->get_type(); }
 
 	virtual bool hasName() const { return false; }
 	virtual const CString* get_name() const { return NULL; }
@@ -287,7 +304,7 @@ public:
 	 *
 	 * Remember to set a context before calling a non-static method.
 	 */
-	void call(Value* result, const CallArgs& args) const throw() {
+	void call(Value* result, const ValueVector* args) const throw() {
 		const Type* type_ptr = get_type_ptr();
 
 		if (type_ptr == NULL) {
@@ -297,7 +314,7 @@ public:
 		}
 	}
 
-	void callWithContext(Value* context, Value* result, const CallArgs& args) const throw() {
+	void callWithContext(Value* context, Value* result, const ValueVector* args) const throw() {
 		(get_type_ptr()->*m_callback_ptr.m_ptr)(result, context ,args);
 	}
 

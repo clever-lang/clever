@@ -484,26 +484,12 @@ CLEVER_VM_HANDLER(VM::fcall_handler) {
 	CallableValue* func = static_cast<CallableValue*>(opcode.get_op1());
 	Value* args = opcode.get_op2();
 	Value* result = opcode.get_result();
-	CallArgs func_args;
-	Value* retval = new ConstantValue(int64_t(0));
+	const ValueVector* func_args = args ? args->getVector() : NULL;
 
-	if (args) {
-		ValueVector* vec_args = args->getVector();
-		ValueVector::const_iterator it = vec_args->begin(), end(vec_args->end());
-
-		func_args.reserve(vec_args->size());
-
-		while (it != end) {
-			func_args.push_back(*it);
-			++it;
-		}
-	}
+	result->initialize();
 
 	/* Call the function */
-	func->call(retval, func_args);
-
-	result->copy(retval);
-	retval->delRef();
+	func->call(result, func_args);
 }
 
 /**
@@ -514,26 +500,12 @@ CLEVER_VM_HANDLER(VM::mcall_handler) {
 	const Type* var_type = var->get_type_ptr();
 	Value* args = opcode.get_op2();
 	Value* result = opcode.get_result();
-	Value* retval = new ConstantValue(int64_t(0));
-	CallArgs func_args;
+	const ValueVector* func_args = args ? args->getVector() : NULL;
 
-	if (args) {
-		ValueVector* vec_args = args->getVector();
-		ValueVector::const_iterator it = vec_args->begin(), end(vec_args->end());
-
-		func_args.reserve(vec_args->size());
-
-		while (it != end) {
-			func_args.push_back(*it);
-			++it;
-		}
-	}
+	result->initialize();
 
 	/* Call the method */
-	var->call(retval, func_args);
-
-	result->copy(retval);
-	retval->delRef();
+	var->call(result, func_args);
 }
 
 /**
