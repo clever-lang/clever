@@ -86,6 +86,14 @@ clever::ast::TreeNode nodes;
 %token EQUAL         "=="
 %token NOT_EQUAL     "!="
 %token IMPORT        "import"
+%token PLUS_EQUAL    "+="
+%token MULT_EQUAL    "*="
+%token DIV_EQUAL     "/="
+%token MINUS_EQUAL   "-="
+%token MOD_EQUAL     "%="
+%token BW_AND_EQUAL  "&="
+%token BW_OR_EQUAL   "|="
+%token BW_XOR_EQUAL  "^="
 
 %left ',';
 %left '=';
@@ -169,6 +177,14 @@ variable_declaration:
 
 assign_stmt:
 		IDENT '=' expr { nodes.add(new clever::ast::Assignment($1, $3)); }
+	|	IDENT "+=" expr { nodes.add(new clever::ast::BinaryExpression(ast::PLUS, $1, $3, true)); }
+	|	IDENT "-=" expr { nodes.add(new clever::ast::BinaryExpression(ast::MINUS, $1, $3, true)); }
+	|	IDENT "/=" expr { nodes.add(new clever::ast::BinaryExpression(ast::DIV, $1, $3, true)); }
+	|	IDENT "*=" expr { nodes.add(new clever::ast::BinaryExpression(ast::MULT, $1, $3, true)); }
+	|	IDENT "%=" expr { nodes.add(new clever::ast::BinaryExpression(ast::MOD, $1, $3, true)); }
+	|	IDENT "&=" expr { nodes.add(new clever::ast::BinaryExpression(ast::AND, $1, $3, true)); }
+	|	IDENT "|=" expr { nodes.add(new clever::ast::BinaryExpression(ast::OR, $1, $3, true)); }
+	|	IDENT "^=" expr { nodes.add(new clever::ast::BinaryExpression(ast::XOR, $1, $3, true)); }
 ;
 
 arguments:

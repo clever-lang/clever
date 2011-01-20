@@ -92,7 +92,14 @@ public:
 	void set_op2(Value* op2) { m_op2 = op2; }
 
 	Value* get_result() const { return m_result; }
-	void set_result(Value* value) { m_result->set_value(value); }
+	void set_result(Value* value) {
+		if (m_result->isTempValue()) {
+			m_result->set_value(value);
+		} else {
+			m_result->copy(value);
+			value->delRef();
+		}
+	}
 	void set_result(Value* result, Value* value) const throw();
 
 	int64_t get_op_num() const { return m_op_num; }

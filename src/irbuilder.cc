@@ -80,7 +80,7 @@ Opcode* IRBuilder::binaryExpression(ast::BinaryExpression* expr) throw() {
 	if (!Compiler::checkCompatibleTypes(lhs, rhs)) {
 		Compiler::error("Type mismatch!");
 	}
-	if (lhs->isPrimitive()) {
+	if (lhs->isPrimitive() && !expr->isAssigned()) {
 		result = Compiler::constantFolding(expr->get_op(), lhs, rhs);
 	}
 	if (result) {
@@ -92,7 +92,13 @@ Opcode* IRBuilder::binaryExpression(ast::BinaryExpression* expr) throw() {
 		expr->set_result(result);
 		return NULL;
 	}
-	expr->set_result(new TempValue);
+	if (expr->isAssigned()) {
+		expr->set_result(lhs);
+		lhs->addRef();
+		lhs->setModified();
+	} else {
+		expr->set_result(new TempValue);
+	}
 
 	lhs->addRef();
 	rhs->addRef();
@@ -105,7 +111,7 @@ Opcode* IRBuilder::binaryExpression(ast::BinaryExpression* expr) throw() {
 		case ast::XOR:   return new Opcode(OP_BW_XOR, &VM::bw_xor_handler, lhs, rhs, expr->get_value());
 		case ast::OR:    return new Opcode(OP_BW_OR,  &VM::bw_or_handler,  lhs, rhs, expr->get_value());
 		case ast::AND:   return new Opcode(OP_BW_AND, &VM::bw_and_handler, lhs, rhs, expr->get_value());
-		case ast::MOD:   return new Opcode(OP_MOD,    &VM::bw_and_handler, lhs, rhs, expr->get_value());
+		case ast::MOD:   return new Opcode(OP_MOD,    &VM::mod_handler,    lhs, rhs, expr->get_value());
 	}
 	return NULL;
 }

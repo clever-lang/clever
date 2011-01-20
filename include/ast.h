@@ -164,21 +164,26 @@ private:
 class BinaryExpression : public Expression {
 public:
 	BinaryExpression(int op, Expression* lhs, Expression* rhs)
-		: m_op(op), m_lhs(lhs), m_rhs(rhs), m_value(NULL), m_result(NULL) {
+		: m_op(op), m_lhs(lhs), m_rhs(rhs), m_result(NULL), m_assign(false) {
+		m_lhs->addRef();
+		m_rhs->addRef();
+	}
+	BinaryExpression(int op, Expression* lhs, Expression* rhs, bool assign)
+		: m_op(op), m_lhs(lhs), m_rhs(rhs), m_result(NULL), m_assign(assign) {
 		m_lhs->addRef();
 		m_rhs->addRef();
 	}
 
 	BinaryExpression(int op, Expression* rhs)
-		: m_op(op), m_lhs(NULL), m_rhs(rhs), m_value(NULL), m_result(NULL) {
+		: m_op(op), m_lhs(NULL), m_rhs(rhs), m_result(NULL), m_assign(false) {
 		m_lhs = new NumberLiteral(int64_t(0));
 		m_lhs->addRef();
 		m_rhs->addRef();
 	}
 
 	~BinaryExpression() {
-		if (m_value) {
-			m_value->delRef();
+		if (isOptimized()) {
+			m_result->delRef();
 		}
 		if (m_lhs) {
 			m_lhs->delRef();
@@ -189,6 +194,8 @@ public:
 	}
 
 	bool hasValue() const { return true; }
+
+	bool isAssigned() const { return m_assign; }
 
 	Expression* get_lhs() const {
 		return m_lhs;
@@ -203,18 +210,9 @@ public:
 	}
 
 	Value* get_value() const throw() {
-		if (isOptimized()) {
-			return m_value;
-		} else {
-			return m_result;
-		}
+		return m_result;
 	}
-
-	void set_result(ConstantValue* value) {
-		m_value = value;
-	}
-
-	void set_result(TempValue* value) {
+	void set_result(Value* value) {
 		m_result = value;
 	}
 
@@ -225,8 +223,8 @@ private:
 	int m_op;
 	Expression* m_lhs;
 	Expression* m_rhs;
-	ConstantValue* m_value;
-	TempValue* m_result;
+	Value* m_result;
+	bool m_assign;
 
 	DISALLOW_COPY_AND_ASSIGN(BinaryExpression);
 };
