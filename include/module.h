@@ -72,8 +72,10 @@ typedef std::pair<const CString*, Module*> ModulePair;
  */
 class Package {
 public:
+	enum { UNLOADED, LOADED, FULLY_LOADED };
+
 	Package(std::string name)
-		: m_name(name) { }
+		: m_state(UNLOADED), m_name(name) { }
 
 	virtual ~Package() { }
 
@@ -90,6 +92,26 @@ public:
 		return m_modules;
 	}
 	/**
+	 * Check if the package is loaded
+	 */
+	bool isLoaded() const {	return m_state == LOADED || m_state == FULLY_LOADED; }
+	/**
+	 * Check if the package is unloaded
+	 */
+	bool isUnloaded() const { return m_state == UNLOADED; }
+	/**
+	 * Check if the package was fully loaded
+	 */
+	bool isFullyLoaded() const { return m_state == FULLY_LOADED; }
+	/**
+	 * Set the package state to loaded
+	 */
+	void setLoaded() { m_state = LOADED; }
+	/**
+	 * Set the package state to fully loaded
+	 */
+	void setFullyLoaded() { m_state = FULLY_LOADED; }
+	/**
 	 * Initializes package data
 	 */
 	virtual void Init() throw() = 0;
@@ -98,6 +120,7 @@ public:
 	 */
 	virtual const char* getVersion() const { return NULL; }
 private:
+	bool m_state;
 	const std::string& m_name;
 	ModuleMap m_modules;
 
@@ -109,8 +132,10 @@ private:
  */
 class Module {
 public:
+	enum { UNLOADED, LOADED };
+
 	Module(std::string name)
-		: m_name(name) { }
+		: m_state(UNLOADED), m_name(name) { }
 
 	virtual ~Module() { }
 
@@ -125,6 +150,18 @@ public:
 	void addFunction(std::string name, FunctionPtr func) throw() {
 		m_functions.insert(std::pair<std::string, FunctionPtr>(name, func));
 	}
+	/**
+	 * Check if the module is loaded
+	 */
+	bool isLoaded() const {	return m_state == LOADED; }
+	/**
+	 * Check if the package is unloaded
+	 */
+	bool isUnloaded() const { return m_state == UNLOADED; }
+	/**
+	 * Set the module state to loaded
+	 */
+	void setLoaded() { m_state = LOADED; }
 
 	/* Module initialization */
 	virtual void Init() throw() = 0;
@@ -132,6 +169,8 @@ public:
 	/* Module version */
 	virtual const char* getVersion() const { return NULL; }
 private:
+	/* Module state */
+	bool m_state;
 	/* Module name */
 	const std::string m_name;
 	/* Module function list */

@@ -49,10 +49,15 @@ void PackageManager::loadPackage(const CString* package) throw() {
 
 	if (it != m_packages.end()) {
 		/**
+		 * Check if the package already has been loaded
+		 */
+		if (it->second->isLoaded()) {
+			return;
+		}
+		/**
 		 * Initializes the package
 		 */
 		it->second->Init();
-
 		{
 			ModuleMap& modules = it->second->get_modules();
 			ModuleMap::const_iterator it = modules.begin(), end = modules.end();
@@ -62,6 +67,10 @@ void PackageManager::loadPackage(const CString* package) throw() {
 				++it;
 			}
 		}
+		/**
+		 * Sets the package state to fully loaded
+		 */
+		it->second->setFullyLoaded();
 	} else {
 		std::cerr << "package '" << *package << "' not found" << std::endl;
 	}
@@ -72,14 +81,18 @@ void PackageManager::loadPackage(const CString* package) throw() {
  */
 void PackageManager::loadModule(Module* module) throw() {
 	/**
+	 * Checks if the module already has been loaded
+	 */
+	if (module->isLoaded()) {
+		return;
+	}
+	/**
 	 * Initializes the module
 	 */
 	module->Init();
-
 	{
 		FunctionMap& funcs = module->get_functions();
 		FunctionMap::const_iterator it = funcs.begin(), end = funcs.end();
-
 
 		/**
 		 * Inserts the function into the global function table
@@ -89,6 +102,10 @@ void PackageManager::loadModule(Module* module) throw() {
 			++it;
 		}
 	}
+	/**
+	 * Sets the module state to loaded
+	 */
+	module->setLoaded();
 }
 
 /**
@@ -99,18 +116,29 @@ void PackageManager::loadModule(const CString* package, const CString* module) t
 
 	if (it != m_packages.end()) {
 		/**
-		 * Initializes the package
+		 * Checks if the package is unloaded, in this case initialize it
 		 */
-		it->second->Init();
-
-		{
+		if (it->second->isUnloaded()) {
+			it->second->Init();
+		}
+		/**
+		 * Check if the package already has been fully loaded
+		 */
+		if (!it->second->isFullyLoaded()) {
 			ModuleMap& modules = it->second->get_modules();
 			ModuleMap::const_iterator it_mod = modules.find(module);
 
+			/**
+			 * Loads the module if it has been found
+			 */
 			if (it_mod != modules.end()) {
 				loadModule(it_mod->second);
 			}
 		}
+		/**
+		 * Change the package state to loaded
+		 */
+		it->second->setLoaded();
 	}
 }
 
@@ -122,12 +150,18 @@ void PackageManager::shutdown() throw() {
 
 	while (it != end) {
 		ModuleMap& modules = it->second->get_modules();
-		ModuleMap::const_iterator it2 = modules.begin(), end2 = modules.end();
+		ModuleMap::const_iterator it_module = modules.begin(), end_module = modules.end();
 
-		while (it2 != end2) {
-			delete it2->second;
-			++it2;
+		/**
+		 * Deletes the module entries
+		 */
+		while (it_module != end_module) {
+			delete it_module->second;
+			++it_module;
 		}
+		/**
+		 * Deletes the package
+		 */
 		delete it->second;
 		++it;
 	}
