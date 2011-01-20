@@ -61,7 +61,7 @@ public:
 
 	enum { SET, UNSET, MODIFIED };
 	enum { NONE, INTEGER, DOUBLE, STRING, BOOLEAN, VECTOR, USER };
-	enum { UNKNOWN, CONST, TEMP };
+	enum { UNKNOWN, CONST };
 
 	Value() : RefCounted(1), m_status(UNSET), m_type(UNKNOWN), m_kind(UNKNOWN), m_type_ptr(NULL) {}
 	explicit Value(int kind) : RefCounted(1), m_status(UNSET), m_type(UNKNOWN), m_kind(kind), m_type_ptr(NULL) {}
@@ -112,7 +112,6 @@ public:
 	bool hasSameKind(Value* value) const { return get_kind() == value->get_kind(); }
 
 	bool isConst() const { return m_kind == CONST; }
-	bool isTempValue() const { return m_kind == TEMP; }
 
 	int get_status() { return m_status; }
 	void set_status(int status) { m_status = status; }
