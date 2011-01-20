@@ -636,14 +636,14 @@ private:
 class LogicExpression : public Expression {
 public:
 	LogicExpression(int op, Expression* lhs, Expression* rhs)
-		: m_op(op), m_lhs(lhs), m_rhs(rhs), m_result(NULL), m_value(NULL) {
+		: m_op(op), m_lhs(lhs), m_rhs(rhs), m_result(NULL) {
 		m_lhs->addRef();
 		m_rhs->addRef();
 	}
 
 	~LogicExpression() {
-		if (m_value) {
-			m_value->delRef();
+		if (isOptimized()) {
+			m_result->delRef();
 		}
 		if (m_lhs) {
 			m_lhs->delRef();
@@ -665,20 +665,12 @@ public:
 		return m_rhs;
 	}
 
-	void set_result(ConstantValue* value) {
-		m_value = value;
-	}
-
 	void set_result(Value* value) {
 		m_result = value;
 	}
 
 	Value* get_value() const throw() {
-		if (isOptimized()) {
-			return m_value;
-		} else {
-			return m_result;
-		}
+		return m_result;
 	}
 
 	Opcode* codeGen(IRBuilder& builder) throw() {
@@ -689,7 +681,6 @@ private:
 	Expression* m_lhs;
 	Expression* m_rhs;
 	Value* m_result;
-	Value* m_value;
 
 	DISALLOW_COPY_AND_ASSIGN(LogicExpression);
 };
