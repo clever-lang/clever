@@ -83,21 +83,6 @@ public:
 		m_opcodes = opcodes;
 	}
 	/**
-	 * Returns the value from a Value pointer according to its type
-	 */
-	Value* getValue(Value* op) throw() {
-		if (UNEXPECTED(op == NULL)) {
-			return NULL;
-		}
-		switch (op->get_kind()) {
-			case Value::TEMP:
-				return op->get_value();
-			default:
-				return op;
-		}
-	}
-
-	/**
 	 * Opcode handlers
 	 */
 	CLEVER_VM_HANDLER(plus_handler);

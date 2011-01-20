@@ -89,18 +89,22 @@ void VM::run() throw() {
  * x + y
  */
 CLEVER_VM_HANDLER(VM::plus_handler) {
-	Value* op1 = getValue(opcode.get_op1());
-	Value* op2 = getValue(opcode.get_op2());
+	Value* op1 = opcode.get_op1();
+	Value* op2 = opcode.get_op2();
+	Value* result = opcode.get_result();
 
 	switch (op1->get_type()) {
 		case Value::STRING:
-			opcode.set_result(new ConstantValue(CSTRING(op1->getString() + op2->getString())));
+			result->set_type(Value::STRING);
+			result->setString(CSTRING(op1->getString() + op2->getString()));
 			break;
 		case Value::INTEGER:
-			opcode.set_result(new ConstantValue(op1->getInteger() + op2->getInteger()));
+			result->set_type(Value::INTEGER);
+			result->setInteger(op1->getInteger() + op2->getInteger());
 			break;
 		case Value::DOUBLE:
-			opcode.set_result(new ConstantValue(op1->getDouble() + op2->getDouble()));
+			result->set_type(Value::DOUBLE);
+			result->setDouble(op1->getDouble() + op2->getDouble());
 			break;
 	}
 }
@@ -109,15 +113,18 @@ CLEVER_VM_HANDLER(VM::plus_handler) {
  * x / y
  */
 CLEVER_VM_HANDLER(VM::div_handler) {
-	Value* op1 = getValue(opcode.get_op1());
-	Value* op2 = getValue(opcode.get_op2());
+	Value* op1 = opcode.get_op1();
+	Value* op2 = opcode.get_op2();
+	Value* result = opcode.get_result();
 
 	switch (op1->get_type()) {
 		case Value::INTEGER:
-			opcode.set_result(new ConstantValue(op1->getInteger() / op2->getInteger()));
+			result->set_type(Value::INTEGER);
+			result->setInteger(op1->getInteger() / op2->getInteger());
 			break;
 		case Value::DOUBLE:
-			opcode.set_result(new ConstantValue(op1->getDouble() / op2->getDouble()));
+			result->set_type(Value::DOUBLE);
+			result->setDouble(op1->getDouble() / op2->getDouble());
 			break;
 	}
 }
@@ -126,15 +133,18 @@ CLEVER_VM_HANDLER(VM::div_handler) {
  * x - y
  */
 CLEVER_VM_HANDLER(VM::minus_handler) {
-	Value* op1 = getValue(opcode.get_op1());
-	Value* op2 = getValue(opcode.get_op2());
+	Value* op1 = opcode.get_op1();
+	Value* op2 = opcode.get_op2();
+	Value* result = opcode.get_result();
 
 	switch (op1->get_type()) {
 		case Value::INTEGER:
-			opcode.set_result(new ConstantValue(op1->getInteger() - op2->getInteger()));
+			result->set_type(Value::INTEGER);
+			result->setInteger(op1->getInteger() - op2->getInteger());
 			break;
 		case Value::DOUBLE:
-			opcode.set_result(new ConstantValue(op1->getDouble() - op2->getDouble()));
+			result->set_type(Value::DOUBLE);
+			result->setDouble(op1->getDouble() - op2->getDouble());
 			break;
 	}
 }
@@ -143,15 +153,18 @@ CLEVER_VM_HANDLER(VM::minus_handler) {
  * x * y
  */
 CLEVER_VM_HANDLER(VM::mult_handler) {
-	Value* op1 = getValue(opcode.get_op1());
-	Value* op2 = getValue(opcode.get_op2());
+	Value* op1 = opcode.get_op1();
+	Value* op2 = opcode.get_op2();
+	Value* result = opcode.get_result();
 
 	switch (op1->get_type()) {
 		case Value::INTEGER:
-			opcode.set_result(new ConstantValue(op1->getInteger() * op2->getInteger()));
+			result->set_type(Value::INTEGER);
+			result->setInteger(op1->getInteger() * op2->getInteger());
 			break;
 		case Value::DOUBLE:
-			opcode.set_result(new ConstantValue(op1->getDouble() * op2->getDouble()));
+			result->set_type(Value::INTEGER);
+			result->setDouble(op1->getDouble() * op2->getDouble());
 			break;
 	}
 }
@@ -160,12 +173,14 @@ CLEVER_VM_HANDLER(VM::mult_handler) {
  * x & y
  */
 CLEVER_VM_HANDLER(VM::bw_and_handler) {
-	Value* op1 = getValue(opcode.get_op1());
-	Value* op2 = getValue(opcode.get_op2());
+	Value* op1 = opcode.get_op1();
+	Value* op2 = opcode.get_op2();
+	Value* result = opcode.get_result();
 
 	switch (op1->get_type()) {
 		case Value::INTEGER:
-			opcode.set_result(new ConstantValue(op1->getInteger() & op2->getInteger()));
+			result->set_type(Value::INTEGER);
+			result->setInteger(op1->getInteger() & op2->getInteger());
 			break;
 	}
 }
@@ -174,12 +189,14 @@ CLEVER_VM_HANDLER(VM::bw_and_handler) {
  * x ^ y
  */
 CLEVER_VM_HANDLER(VM::bw_xor_handler) {
-	Value* op1 = getValue(opcode.get_op1());
-	Value* op2 = getValue(opcode.get_op2());
+	Value* op1 = opcode.get_op1();
+	Value* op2 = opcode.get_op2();
+	Value* result = opcode.get_result();
 
 	switch (op1->get_type()) {
 		case Value::INTEGER:
-			opcode.set_result(new ConstantValue(op1->getInteger() ^ op2->getInteger()));
+			result->set_type(Value::INTEGER);
+			result->setInteger(op1->getInteger() ^ op2->getInteger());
 			break;
 	}
 }
@@ -188,12 +205,14 @@ CLEVER_VM_HANDLER(VM::bw_xor_handler) {
  * x | y
  */
 CLEVER_VM_HANDLER(VM::bw_or_handler) {
-	Value* op1 = getValue(opcode.get_op1());
-	Value* op2 = getValue(opcode.get_op2());
+	Value* op1 = opcode.get_op1();
+	Value* op2 = opcode.get_op2();
+	Value* result = opcode.get_result();
 
 	switch (op1->get_type()) {
 		case Value::INTEGER:
-			opcode.set_result(new ConstantValue(op1->getInteger() | op2->getInteger()));
+			result->set_type(Value::INTEGER);
+			result->setInteger(op1->getInteger() | op2->getInteger());
 			break;
 	}
 }
@@ -202,12 +221,14 @@ CLEVER_VM_HANDLER(VM::bw_or_handler) {
  * x % y
  */
 CLEVER_VM_HANDLER(VM::mod_handler) {
-	Value* op1 = getValue(opcode.get_op1());
-	Value* op2 = getValue(opcode.get_op2());
+	Value* op1 = opcode.get_op1();
+	Value* op2 = opcode.get_op2();
+	Value* result = opcode.get_result();
 
 	switch (op1->get_type()) {
 		case Value::INTEGER:
-			opcode.set_result(new ConstantValue(op1->getInteger() % op2->getInteger()));
+			result->set_type(Value::INTEGER);
+			result->setInteger(op1->getInteger() % op2->getInteger());
 			break;
 	}
 }
@@ -216,7 +237,7 @@ CLEVER_VM_HANDLER(VM::mod_handler) {
  * Type var [= value ]
  */
 CLEVER_VM_HANDLER(VM::var_decl_handler) {
-	const Value* value = getValue(opcode.get_op2());
+	const Value* value = opcode.get_op2();
 
 	/* TODO: Make the type initialization here */
 	if (!value) {
@@ -229,8 +250,8 @@ CLEVER_VM_HANDLER(VM::var_decl_handler) {
  * ++x
  */
 CLEVER_VM_HANDLER(VM::pre_inc_handler) {
-	Value* value = getValue(opcode.get_op1());
-	Value* result = getValue(opcode.get_result());
+	Value* value = opcode.get_op1();
+	Value* result = opcode.get_result();
 
 	switch (value->get_type()) {
 		case Value::INTEGER:
@@ -240,17 +261,17 @@ CLEVER_VM_HANDLER(VM::pre_inc_handler) {
 			value->setDouble(value->getDouble()+1);
 			break;
 	}
-	opcode.set_result(result, value);
+	result->copy(value);
 }
 
 /**
  * x++
  */
 CLEVER_VM_HANDLER(VM::pos_inc_handler) {
-	Value* value = getValue(opcode.get_op1());
-	Value* result = getValue(opcode.get_result());
+	Value* value = opcode.get_op1();
+	Value* result = opcode.get_result();
 
-	opcode.set_result(result, value);
+	result->copy(value);
 	switch (value->get_type()) {
 		case Value::INTEGER:
 			value->setInteger(value->getInteger()+1);
@@ -265,8 +286,8 @@ CLEVER_VM_HANDLER(VM::pos_inc_handler) {
  * --x
  */
 CLEVER_VM_HANDLER(VM::pre_dec_handler) {
-	Value* value = getValue(opcode.get_op1());
-	Value* result = getValue(opcode.get_result());
+	Value* value = opcode.get_op1();
+	Value* result = opcode.get_result();
 
 	switch (value->get_type()) {
 		case Value::INTEGER:
@@ -276,17 +297,17 @@ CLEVER_VM_HANDLER(VM::pre_dec_handler) {
 			value->setDouble(value->getDouble()-1);
 			break;
 	}
-	opcode.set_result(result, value);
+	result->copy(value);
 }
 
 /**
  * x--
  */
 CLEVER_VM_HANDLER(VM::pos_dec_handler) {
-	Value* value = getValue(opcode.get_op1());
-	Value* result = getValue(opcode.get_result());
+	Value* value = opcode.get_op1();
+	Value* result = opcode.get_result();
 
-	opcode.set_result(result, value);
+	result->copy(value);
 	switch (value->get_type()) {
 		case Value::INTEGER:
 			value->setInteger(value->getInteger()-1);
@@ -301,7 +322,7 @@ CLEVER_VM_HANDLER(VM::pos_dec_handler) {
  * JMPZ
  */
 CLEVER_VM_HANDLER(VM::jmpz_handler) {
-	Value* value = getValue(opcode.get_op1());
+	Value* value = opcode.get_op1();
 
 	switch (value->get_type()) {
 		case Value::INTEGER:
@@ -333,15 +354,18 @@ CLEVER_VM_HANDLER(VM::jmp_handler) {
  * x > y
  */
 CLEVER_VM_HANDLER(VM::greater_handler) {
-	Value* op1 = getValue(opcode.get_op1());
-	Value* op2 = getValue(opcode.get_op2());
+	Value* op1 = opcode.get_op1();
+	Value* op2 = opcode.get_op2();
+	Value* result = opcode.get_result();
+
+	result->set_type(Value::BOOLEAN);
 
 	switch (op1->get_type()) {
 		case Value::INTEGER:
-			opcode.set_result(new ConstantValue(bool(op1->getInteger() > op2->getInteger())));
+			result->setBoolean(op1->getInteger() > op2->getInteger());
 			break;
 		case Value::DOUBLE:
-			opcode.set_result(new ConstantValue(op1->getDouble() > op2->getDouble()));
+			result->setBoolean(op1->getDouble() > op2->getDouble());
 			break;
 	}
 }
@@ -350,15 +374,18 @@ CLEVER_VM_HANDLER(VM::greater_handler) {
  * x >= y
  */
 CLEVER_VM_HANDLER(VM::greater_equal_handler) {
-	Value* op1 = getValue(opcode.get_op1());
-	Value* op2 = getValue(opcode.get_op2());
+	Value* op1 = opcode.get_op1();
+	Value* op2 = opcode.get_op2();
+	Value* result = opcode.get_result();
+
+	result->set_type(Value::BOOLEAN);
 
 	switch (op1->get_type()) {
 		case Value::INTEGER:
-			opcode.set_result(new ConstantValue(op1->getInteger() >= op2->getInteger()));
+			result->setBoolean(op1->getInteger() >= op2->getInteger());
 			break;
 		case Value::DOUBLE:
-			opcode.set_result(new ConstantValue(op1->getDouble() >= op2->getDouble()));
+			result->setBoolean(op1->getDouble() >= op2->getDouble());
 			break;
 	}
 }
@@ -367,15 +394,18 @@ CLEVER_VM_HANDLER(VM::greater_equal_handler) {
  * x < y
  */
 CLEVER_VM_HANDLER(VM::less_handler) {
-	Value* op1 = getValue(opcode.get_op1());
-	Value* op2 = getValue(opcode.get_op2());
+	Value* op1 = opcode.get_op1();
+	Value* op2 = opcode.get_op2();
+	Value* result = opcode.get_result();
+
+	result->set_type(Value::BOOLEAN);
 
 	switch (op1->get_type()) {
 		case Value::INTEGER:
-			opcode.set_result(new ConstantValue(op1->getInteger() < op2->getInteger()));
+			result->setBoolean(op1->getInteger() < op2->getInteger());
 			break;
 		case Value::DOUBLE:
-			opcode.set_result(new ConstantValue(op1->getDouble() < op2->getDouble()));
+			result->setBoolean(op1->getDouble() < op2->getDouble());
 			break;
 	}
 }
@@ -384,15 +414,18 @@ CLEVER_VM_HANDLER(VM::less_handler) {
  * x <= y
  */
 CLEVER_VM_HANDLER(VM::less_equal_handler) {
-	Value* op1 = getValue(opcode.get_op1());
-	Value* op2 = getValue(opcode.get_op2());
+	Value* op1 = opcode.get_op1();
+	Value* op2 = opcode.get_op2();
+	Value* result = opcode.get_result();
+
+	result->set_type(Value::BOOLEAN);
 
 	switch (op1->get_type()) {
 		case Value::INTEGER:
-			opcode.set_result(new ConstantValue(op1->getInteger() <= op2->getInteger()));
+			result->setBoolean(op1->getInteger() <= op2->getInteger());
 			break;
 		case Value::DOUBLE:
-			opcode.set_result(new ConstantValue(op1->getDouble() <= op2->getDouble()));
+			result->setBoolean(op1->getDouble() <= op2->getDouble());
 			break;
 	}
 }
@@ -408,15 +441,18 @@ CLEVER_VM_HANDLER(VM::break_handler) {
  * x == y
  */
 CLEVER_VM_HANDLER(VM::equal_handler) {
-	Value* op1 = getValue(opcode.get_op1());
-	Value* op2 = getValue(opcode.get_op2());
+	Value* op1 = opcode.get_op1();
+	Value* op2 = opcode.get_op2();
+	Value* result = opcode.get_result();
+
+	result->set_type(Value::BOOLEAN);
 
 	switch (op1->get_type()) {
 		case Value::INTEGER:
-			opcode.set_result(new ConstantValue(op1->getInteger() == op2->getInteger()));
+			result->setBoolean(op1->getInteger() == op2->getInteger());
 			break;
 		case Value::DOUBLE:
-			opcode.set_result(new ConstantValue(op1->getDouble() == op2->getDouble()));
+			result->setBoolean(op1->getDouble() == op2->getDouble());
 			break;
 	}
 }
@@ -425,15 +461,18 @@ CLEVER_VM_HANDLER(VM::equal_handler) {
  * x != y
  */
 CLEVER_VM_HANDLER(VM::not_equal_handler) {
-	Value* op1 = getValue(opcode.get_op1());
-	Value* op2 = getValue(opcode.get_op2());
+	Value* op1 = opcode.get_op1();
+	Value* op2 = opcode.get_op2();
+	Value* result = opcode.get_result();
+
+	result->set_type(Value::BOOLEAN);
 
 	switch (op1->get_type()) {
 		case Value::INTEGER:
-			opcode.set_result(new ConstantValue(op1->getInteger() != op2->getInteger()));
+			result->setBoolean(op1->getInteger() != op2->getInteger());
 			break;
 		case Value::DOUBLE:
-			opcode.set_result(new ConstantValue(op1->getDouble() != op2->getDouble()));
+			result->setBoolean(op1->getDouble() != op2->getDouble());
 			break;
 	}
 }
@@ -444,8 +483,9 @@ CLEVER_VM_HANDLER(VM::not_equal_handler) {
 CLEVER_VM_HANDLER(VM::fcall_handler) {
 	CallableValue* func = static_cast<CallableValue*>(opcode.get_op1());
 	Value* args = opcode.get_op2();
+	Value* result = opcode.get_result();
 	CallArgs func_args;
-	Value* result = new ConstantValue(int64_t(0));
+	Value* retval = new ConstantValue(int64_t(0));
 
 	if (args) {
 		ValueVector* vec_args = args->getVector();
@@ -454,15 +494,16 @@ CLEVER_VM_HANDLER(VM::fcall_handler) {
 		func_args.reserve(vec_args->size());
 
 		while (it != end) {
-			func_args.push_back(getValue(*it));
+			func_args.push_back(*it);
 			++it;
 		}
 	}
 
 	/* Call the function */
-	func->call(result, func_args);
+	func->call(retval, func_args);
 
-	opcode.set_result(result);
+	result->copy(retval);
+	retval->delRef();
 }
 
 /**
@@ -472,7 +513,8 @@ CLEVER_VM_HANDLER(VM::mcall_handler) {
 	CallableValue* var = static_cast<CallableValue*>(opcode.get_op1());
 	const Type* var_type = var->get_type_ptr();
 	Value* args = opcode.get_op2();
-	Value* result = new ConstantValue(int64_t(0));
+	Value* result = opcode.get_result();
+	Value* retval = new ConstantValue(int64_t(0));
 	CallArgs func_args;
 
 	if (args) {
@@ -482,22 +524,23 @@ CLEVER_VM_HANDLER(VM::mcall_handler) {
 		func_args.reserve(vec_args->size());
 
 		while (it != end) {
-			func_args.push_back(getValue(*it));
+			func_args.push_back(*it);
 			++it;
 		}
 	}
 
 	/* Call the method */
-	var->call(result, func_args);
+	var->call(retval, func_args);
 
-	opcode.set_result(result);
+	result->copy(retval);
+	retval->delRef();
 }
 
 /**
  * x = y
  */
 CLEVER_VM_HANDLER(VM::assign_handler) {
-	opcode.get_op1()->copy(getValue(opcode.get_op2()));
+	opcode.get_op1()->copy(opcode.get_op2());
 }
 
 } // clever

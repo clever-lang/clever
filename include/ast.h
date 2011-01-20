@@ -364,7 +364,7 @@ public:
 	PreIncrement(Expression* expr)
 		: m_expr(expr) {
 		m_expr->addRef();
-		m_result = new TempValue();
+		m_result = new Value();
 	}
 
 	~PreIncrement() {
@@ -384,7 +384,7 @@ public:
 	}
 private:
 	Expression* m_expr;
-	TempValue* m_result;
+	Value* m_result;
 
 	DISALLOW_COPY_AND_ASSIGN(PreIncrement);
 };
@@ -394,7 +394,7 @@ public:
 	PosIncrement(Expression* expr)
 		: m_expr(expr) {
 		m_expr->addRef();
-		m_result = new TempValue();
+		m_result = new Value();
 	}
 
 	~PosIncrement() {
@@ -414,7 +414,7 @@ public:
 	}
 private:
 	Expression* m_expr;
-	TempValue* m_result;
+	Value* m_result;
 
 	DISALLOW_COPY_AND_ASSIGN(PosIncrement);
 };
@@ -424,7 +424,7 @@ public:
 	PreDecrement(Expression* expr)
 		: m_expr(expr) {
 		m_expr->addRef();
-		m_result = new TempValue();
+		m_result = new Value();
 	}
 
 	~PreDecrement() {
@@ -444,7 +444,7 @@ public:
 	}
 private:
 	Expression* m_expr;
-	TempValue* m_result;
+	Value* m_result;
 
 	DISALLOW_COPY_AND_ASSIGN(PreDecrement);
 };
@@ -454,7 +454,7 @@ public:
 	PosDecrement(Expression* expr)
 		: m_expr(expr) {
 		m_expr->addRef();
-		m_result = new TempValue();
+		m_result = new Value();
 	}
 
 	~PosDecrement() {
@@ -474,7 +474,7 @@ public:
 	}
 private:
 	Expression* m_expr;
-	TempValue* m_result;
+	Value* m_result;
 
 	DISALLOW_COPY_AND_ASSIGN(PosDecrement);
 };
@@ -669,7 +669,7 @@ public:
 		m_value = value;
 	}
 
-	void set_result(TempValue* value) {
+	void set_result(Value* value) {
 		m_result = value;
 	}
 
@@ -688,7 +688,7 @@ private:
 	int m_op;
 	Expression* m_lhs;
 	Expression* m_rhs;
-	TempValue* m_result;
+	Value* m_result;
 	Value* m_value;
 
 	DISALLOW_COPY_AND_ASSIGN(LogicExpression);
@@ -741,13 +741,13 @@ public:
 	FunctionCall(Expression* name)
 		: m_name(name), m_args(NULL) {
 		m_name->addRef();
-		m_result = new TempValue;
+		m_result = new Value;
 	}
 	FunctionCall(Expression* name, Expression* args)
 		: m_name(name), m_args(args) {
 		m_name->addRef();
 		m_args->addRef();
-		m_result = new TempValue;
+		m_result = new Value;
 	}
 
 	~FunctionCall() {
@@ -792,7 +792,7 @@ public:
 		: m_var(var), m_method(method), m_args(NULL) {
 		m_var->addRef();
 		m_method->addRef();
-		m_result = new TempValue;
+		m_result = new Value;
 	}
 
 	MethodCall(Expression* var, Expression* method, Expression* args)
@@ -800,7 +800,7 @@ public:
 		m_var->addRef();
 		m_method->addRef();
 		m_args->addRef();
-		m_result = new TempValue;
+		m_result = new Value;
 	}
 
 	~MethodCall() {

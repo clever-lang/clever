@@ -31,25 +31,6 @@
 
 namespace clever {
 
-void Opcode::set_result(Value* result, Value* value) const throw() {
-	/*
-	 * The result has only 1 reference, i.e. it's used only in this opcode,
-	 * so let just change the current value instead of alloc'ing new memory
-	 */
-	if (result && result->refCount() == 1 && result->hasSameType(value) && value->isPrimitive()) {
-		result->copy(value);
-	} else {
-		switch (value->get_type()) {
-			case Value::INTEGER:
-				m_result->set_value(new ConstantValue(value->getInteger()));
-				break;
-			case Value::DOUBLE:
-				m_result->set_value(new ConstantValue(value->getDouble()));
-				break;
-		}
-	}
-}
-
 /*
  * Dumps an opcode
  */

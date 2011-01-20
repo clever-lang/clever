@@ -149,8 +149,11 @@ public:
 		m_type = value->get_type();
 		/* m_kind = value->get_kind(); */
 	}
+	void copy(Value& value) {
+		std::memcpy(&m_data, value.get_data(), sizeof(ValueData));
+		m_type = value.get_type();
+	}
 
-	virtual void set_value(Value* value) { }
 	virtual Value* get_value() { return this; }
 
 	virtual std::string toString() {
@@ -303,48 +306,10 @@ private:
 		FunctionPtr f_ptr;
 		MethodPtr m_ptr;
 	} m_callback_ptr;
-	
+
 	Value* m_context;
 
 	DISALLOW_COPY_AND_ASSIGN(CallableValue);
-};
-
-/**
- * Temporary storage used for opcodes to storage results
- */
-class TempValue : public Value {
-public:
-	TempValue()
-		: Value(TEMP), m_value(NULL) { }
-
-	~TempValue() {
-		if (m_value) {
-			m_value->delRef();
-		}
-	}
-
-	Value* get_value() {
-		return m_value;
-	}
-
-	void set_value(Value* value) {
-		if (m_value) {
-			m_value->delRef();
-		}
-		m_value = value;
-	}
-
-	std::string toString() {
-		if (m_value) {
-			return m_value->toString();
-		} else {
-			return std::string();
-		}
-	}
-private:
-	Value* m_value;
-
-	DISALLOW_COPY_AND_ASSIGN(TempValue);
 };
 
 } // clever

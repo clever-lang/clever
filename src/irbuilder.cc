@@ -97,7 +97,7 @@ Opcode* IRBuilder::binaryExpression(ast::BinaryExpression* expr) throw() {
 		lhs->addRef();
 		lhs->setModified();
 	} else {
-		expr->set_result(new TempValue);
+		expr->set_result(new Value);
 	}
 
 	lhs->addRef();
@@ -353,7 +353,7 @@ Opcode* IRBuilder::logicExpression(ast::LogicExpression* expr) throw() {
 		return NULL;
 	}
 
-	expr->set_result(new TempValue);
+	expr->set_result(new Value);
 
 	lhs->addRef();
 	rhs->addRef();
