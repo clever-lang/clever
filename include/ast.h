@@ -233,14 +233,17 @@ private:
 
 class VariableDecl : public Expression {
 public:
+	VariableDecl(Expression* type, Expression* variable)
+		: Expression(), m_type(type), m_variable(variable), m_initial_value(NULL) {
+		m_type->addRef();
+		m_variable->addRef();
+	}
+
 	VariableDecl(Expression* type, Expression* variable, Expression* rhs)
 		: Expression(), m_type(type), m_variable(variable), m_initial_value(rhs) {
 		m_type->addRef();
 		m_variable->addRef();
-
-		if (m_initial_value) {
-			m_initial_value->addRef();
-		}
+		m_initial_value->addRef();
 	}
 
 	~VariableDecl() {

@@ -144,7 +144,7 @@ statements:
 
 arg_list:
 		arg_list ',' expr  { clever::ast::ArgumentList* args = static_cast<clever::ast::ArgumentList*>($1); args->push($3); $$ = args; }
-	|	expr               { clever::ast::ArgumentList* args = new clever::ast::ArgumentList(); args->push($1); $$ = args;}
+	|	expr               { clever::ast::ArgumentList* args = new clever::ast::ArgumentList(); args->push($1); $$ = args; }
 ;
 
 func_call:
@@ -158,7 +158,7 @@ method_call:
 ;
 
 variable_declaration_no_init:
-		TYPE IDENT	{ nodes.add(new clever::ast::VariableDecl($1, $2, NULL)); }
+		TYPE IDENT	{ nodes.add(new clever::ast::VariableDecl($1, $2)); }
 ;
 
 variable_declaration:
