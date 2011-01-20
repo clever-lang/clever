@@ -32,7 +32,7 @@
 #include <string>
 #include <list>
 #include <map>
-#include <boost/unordered_map.hpp>
+#include <tr1/unordered_map>
 #include "global.h"
 
 namespace clever {
@@ -63,8 +63,8 @@ typedef void (CLEVER_FASTCALL *FunctionPtr)(CLEVER_FUNCTION_ARGS);
 
 typedef void (Type::*MethodPtr)(CLEVER_METHOD_ARGS) const;
 
-typedef boost::unordered_map<const std::string, FunctionPtr> FunctionMap;
-typedef boost::unordered_map<const CString*, Module*> ModuleMap;
+typedef std::tr1::unordered_map<std::string, FunctionPtr> FunctionMap;
+typedef std::tr1::unordered_map<const CString*, Module*> ModuleMap;
 typedef std::pair<const CString*, Module*> ModulePair;
 
 /**
@@ -122,8 +122,8 @@ public:
 		return m_functions;
 	}
 
-	void addFunction(const std::string& name, FunctionPtr func) throw() {
-		m_functions.insert(std::pair<const std::string, FunctionPtr>(name, func));
+	void addFunction(std::string name, FunctionPtr func) throw() {
+		m_functions.insert(std::pair<std::string, FunctionPtr>(name, func));
 	}
 
 	/* Module initialization */

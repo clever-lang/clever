@@ -28,7 +28,7 @@
 #ifndef CLEVER_SSA_H
 #define CLEVER_SSA_H
 
-#include <boost/unordered_map.hpp>
+#include <tr1/unordered_map>
 #include <deque>
 
 namespace clever {
@@ -41,7 +41,7 @@ class Value;
  */
 class SSA {
 public:
-	typedef boost::unordered_map<const CString*, Value*> VarMap;
+	typedef std::tr1::unordered_map<const CString*, Value*> VarMap;
 	typedef std::deque<VarMap> VarScope;
 	typedef std::pair<const CString*, Value*> VarPair;
 

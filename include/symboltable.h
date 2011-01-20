@@ -29,7 +29,7 @@
 #define CLEVER_SYMBOLTABLE_H
 
 #include <deque>
-#include <boost/unordered_map.hpp>
+#include <tr1/unordered_map>
 #include "global.h"
 #include "value.h"
 
@@ -38,7 +38,7 @@ namespace clever {
 class CString;
 class Scope;
 
-typedef boost::unordered_map<const CString*, Value*> ScopeBase;
+typedef std::tr1::unordered_map<const CString*, Value*> ScopeBase;
 typedef std::deque<Scope> ScopeManagerBase;
 
 class Scope : public ScopeBase {

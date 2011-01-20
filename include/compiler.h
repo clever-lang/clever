@@ -28,7 +28,7 @@
 #ifndef CLEVER_COMPILER_H
 #define CLEVER_COMPILER_H
 
-#include <boost/unordered_map.hpp>
+#include <tr1/unordered_map>
 #include "ast.h"
 #include "irbuilder.h"
 #include "module.h"

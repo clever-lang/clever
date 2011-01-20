@@ -29,8 +29,7 @@
 #define CLEVER_CSTRING_H
 
 #include <string>
-#include <boost/functional/hash.hpp>
-#include <boost/unordered_map.hpp>
+#include <tr1/unordered_map>
 #include "global.h"
 
 /**
@@ -102,21 +101,21 @@ private:
 /**
  * Specialization of boost::hash<> for working with CStrings
  */
-namespace boost {
+namespace std { namespace tr1 {
 
 template <>
-class hash<clever::CString*> {
+struct hash<clever::CString*> : public unary_function<clever::CString*, size_t> {
 public:
 	size_t operator()(const clever::CString* key) const throw() {
-		return hash<std::string>()(*(const std::string*)key);
+		return hash<std::string>()(*static_cast<const std::string*>(key));
 	}
 };
 
-} // boost
+}} // std::tr1
 
 namespace clever {
 
-typedef boost::unordered_map<std::size_t, const CString*> CStringTableBase;
+typedef std::tr1::unordered_map<std::size_t, const CString*> CStringTableBase;
 
 class CStringTable : public CStringTableBase {
 public:
@@ -135,7 +134,7 @@ public:
 	}
 
 	IdType insert(CString* cstring) throw() {
-		boost::hash<CString*> hash;
+		std::tr1::hash<CString*> hash;
 		IdType id = hash(cstring);
 
 		cstring->set_id(id);

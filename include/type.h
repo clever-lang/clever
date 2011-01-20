@@ -29,7 +29,7 @@
 #define CLEVER_TYPE_H
 
 #include <string>
-#include <boost/unordered_map.hpp>
+#include <tr1/unordered_map>
 #include "module.h"
 
 namespace clever {
@@ -41,7 +41,7 @@ class CString;
  */
 class Type {
 public:
-	typedef boost::unordered_map<const CString*, MethodPtr> MethodMap;
+	typedef std::tr1::unordered_map<const CString*, MethodPtr> MethodMap;
 	typedef std::pair<const CString*, MethodPtr> MethodPair;
 
 	explicit Type(const char* name)

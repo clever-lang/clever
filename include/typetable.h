@@ -28,14 +28,14 @@
 #ifndef CLEVER_TYPETABLE_H
 #define CLEVER_TYPETABLE_H
 
-#include <boost/unordered_map.hpp>
+#include <tr1/unordered_map>
 #include "type.h"
 
 namespace clever {
 
 class CString;
 
-typedef boost::unordered_map<const CString*, Type*> TypeMap;
+typedef std::tr1::unordered_map<const CString*, Type*> TypeMap;
 
 /**
  * Internal and user type table

@@ -28,15 +28,15 @@
 #ifndef CLEVER_PKGMANAGER_H
 #define CLEVER_PKGMANAGER_H
 
-#include <boost/unordered_map.hpp>
+#include <tr1/unordered_map>
 #include "module.h"
 
 namespace clever {
 
 class CString;
 
-typedef boost::unordered_map<const std::string, FunctionPtr> FunctionTable;
-typedef boost::unordered_map<const CString*, Package*> PackageMap;
+typedef std::tr1::unordered_map<std::string, FunctionPtr> FunctionTable;
+typedef std::tr1::unordered_map<const CString*, Package*> PackageMap;
 typedef std::pair<const CString*, Package*> PackagePair;
 
 /**
