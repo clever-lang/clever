@@ -81,7 +81,7 @@ void VM::run() throw() {
 		// opcode.dump();
 
 		/* Invoke the opcode handler */
-		opcode.get_handler()(next_op, opcode);
+		opcode.get_handler()(opcode, next_op);
 	}
 }
 
