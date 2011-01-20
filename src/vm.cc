@@ -64,7 +64,7 @@ VM::~VM() {
 /**
  * Displays an error message and exits
  */
-void VM::error(const char* message) const throw() {
+void VM::error(const char* message) throw() {
 	std::cerr << "Runtime error: " << message << std::endl;
 	exit(1);
 }
@@ -81,7 +81,7 @@ void VM::run() throw() {
 		// opcode.dump();
 
 		/* Invoke the opcode handler */
-		(this->*(opcode.get_handler()))(next_op, opcode);
+		opcode.get_handler()(next_op, opcode);
 	}
 }
 

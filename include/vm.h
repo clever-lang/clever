@@ -36,7 +36,7 @@
  * Opcode handler arguments
  */
 #define CLEVER_VM_HANDLER_ARGS unsigned int& next_op, Opcode& opcode
-#define CLEVER_VM_HANDLER(name) void name(CLEVER_VM_HANDLER_ARGS) throw()
+#define CLEVER_VM_HANDLER(name) void CLEVER_FASTCALL name(CLEVER_VM_HANDLER_ARGS) throw()
 
 /**
  * Change the executor flow to run another opcode
@@ -50,7 +50,6 @@ namespace clever {
  */
 enum { BLK_UNUSED, BLK_USED };
 
-class SymbolTable;
 class Opcode;
 
 /**
@@ -61,7 +60,7 @@ public:
 	/**
 	 * Opcode handler prototype
 	 */
-	typedef void (VM::*opcode_handler)(CLEVER_VM_HANDLER_ARGS);
+	typedef void (CLEVER_FASTCALL *opcode_handler)(CLEVER_VM_HANDLER_ARGS);
 	typedef std::vector<Opcode*> OpcodeList;
 
 	VM() : m_opcodes(NULL) { }
@@ -75,7 +74,7 @@ public:
 	/**
 	 * Displays an error message and exists
 	 */
-	void error(const char*) const throw();
+	static void error(const char*) throw();
 	/**
 	 * Set the opcode vector
 	 */
@@ -85,34 +84,33 @@ public:
 	/**
 	 * Opcode handlers
 	 */
-	CLEVER_VM_HANDLER(plus_handler);
-	CLEVER_VM_HANDLER(div_handler);
-	CLEVER_VM_HANDLER(mult_handler);
-	CLEVER_VM_HANDLER(minus_handler);
-	CLEVER_VM_HANDLER(mod_handler);
-	CLEVER_VM_HANDLER(var_decl_handler);
-	CLEVER_VM_HANDLER(bw_and_handler);
-	CLEVER_VM_HANDLER(bw_or_handler);
-	CLEVER_VM_HANDLER(bw_xor_handler);
-	CLEVER_VM_HANDLER(pre_inc_handler);
-	CLEVER_VM_HANDLER(pre_dec_handler);
-	CLEVER_VM_HANDLER(pos_inc_handler);
-	CLEVER_VM_HANDLER(pos_dec_handler);
-	CLEVER_VM_HANDLER(jmpz_handler);
-	CLEVER_VM_HANDLER(jmp_handler);
-	CLEVER_VM_HANDLER(greater_handler);
-	CLEVER_VM_HANDLER(greater_equal_handler);
-	CLEVER_VM_HANDLER(less_handler);
-	CLEVER_VM_HANDLER(less_equal_handler);
-	CLEVER_VM_HANDLER(break_handler);
-	CLEVER_VM_HANDLER(equal_handler);
-	CLEVER_VM_HANDLER(not_equal_handler);
-	CLEVER_VM_HANDLER(fcall_handler);
-	CLEVER_VM_HANDLER(mcall_handler);
-	CLEVER_VM_HANDLER(assign_handler);
+	static CLEVER_VM_HANDLER(plus_handler);
+	static CLEVER_VM_HANDLER(div_handler);
+	static CLEVER_VM_HANDLER(mult_handler);
+	static CLEVER_VM_HANDLER(minus_handler);
+	static CLEVER_VM_HANDLER(mod_handler);
+	static CLEVER_VM_HANDLER(var_decl_handler);
+	static CLEVER_VM_HANDLER(bw_and_handler);
+	static CLEVER_VM_HANDLER(bw_or_handler);
+	static CLEVER_VM_HANDLER(bw_xor_handler);
+	static CLEVER_VM_HANDLER(pre_inc_handler);
+	static CLEVER_VM_HANDLER(pre_dec_handler);
+	static CLEVER_VM_HANDLER(pos_inc_handler);
+	static CLEVER_VM_HANDLER(pos_dec_handler);
+	static CLEVER_VM_HANDLER(jmpz_handler);
+	static CLEVER_VM_HANDLER(jmp_handler);
+	static CLEVER_VM_HANDLER(greater_handler);
+	static CLEVER_VM_HANDLER(greater_equal_handler);
+	static CLEVER_VM_HANDLER(less_handler);
+	static CLEVER_VM_HANDLER(less_equal_handler);
+	static CLEVER_VM_HANDLER(break_handler);
+	static CLEVER_VM_HANDLER(equal_handler);
+	static CLEVER_VM_HANDLER(not_equal_handler);
+	static CLEVER_VM_HANDLER(fcall_handler);
+	static CLEVER_VM_HANDLER(mcall_handler);
+	static CLEVER_VM_HANDLER(assign_handler);
 private:
 	OpcodeList* m_opcodes;
-	ScopeManager m_symbols;
 
 	DISALLOW_COPY_AND_ASSIGN(VM);
 };
