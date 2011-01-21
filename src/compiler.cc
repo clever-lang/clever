@@ -97,7 +97,7 @@ Value* Compiler::getValue(ast::Expression* expr) throw() {
 		if (EXPECTED(var != NULL)) {
 			return var;
 		}
-		Compiler::error("Inexistent variable!");
+		error("Inexistent variable!");
 	}
 	return value;
 }
@@ -238,11 +238,11 @@ Opcode* Compiler::binaryExpression(ast::BinaryExpression* expr) throw() {
 	Value* rhs = getValue(expr->get_rhs());
 	ConstantValue* result = NULL;
 
-	if (!Compiler::checkCompatibleTypes(lhs, rhs)) {
-		Compiler::error("Type mismatch!");
+	if (!checkCompatibleTypes(lhs, rhs)) {
+		error("Type mismatch!");
 	}
 	if (lhs->isPrimitive() && !expr->isAssigned()) {
-		result = Compiler::constantFolding(expr->get_op(), lhs, rhs);
+		result = constantFolding(expr->get_op(), lhs, rhs);
 	}
 	if (result) {
 		/**
@@ -497,12 +497,12 @@ Opcode* Compiler::logicExpression(ast::LogicExpression* expr) throw() {
 	Value* rhs = getValue(expr->get_rhs());
 	ConstantValue* result = NULL;
 
-	if (!Compiler::checkCompatibleTypes(lhs, rhs)) {
-		Compiler::error("Type mismatch!");
+	if (!checkCompatibleTypes(lhs, rhs)) {
+		error("Type mismatch!");
 	}
 
 	if (lhs->isPrimitive()) {
-		result = Compiler::constantFolding(expr->get_op(), lhs, rhs);
+		result = constantFolding(expr->get_op(), lhs, rhs);
 	}
 	if (result) {
 		/**
@@ -568,13 +568,13 @@ ValueVector* Compiler::functionArgs(const ast::Arguments* args) throw() {
  */
 Opcode* Compiler::functionCall(ast::FunctionCall* expr) throw() {
 	const CString* name = expr->get_func()->get_name();
-	FunctionPtr func = Compiler::getFunction(*name);
+	FunctionPtr func = getFunction(*name);
 	CallableValue* call = new CallableValue(name);
 	const ast::Arguments* args = expr->get_args();
 	Value* arg_values = NULL;
 
 	if (!func) {
-		Compiler::error("Function '" + *name + "' does not exists!");
+		error("Function '" + *name + "' does not exists!");
 	}
 
 	call->set_callback(func);
@@ -599,7 +599,7 @@ Opcode* Compiler::methodCall(ast::MethodCall* expr) throw() {
 	Value* arg_values = NULL;
 
 	if (!method) {
-		Compiler::error("Method not found!");
+		error("Method not found!");
 	}
 
 	call->set_type_ptr(variable->get_type_ptr());

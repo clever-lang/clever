@@ -73,24 +73,37 @@ public:
 
 	~Compiler();
 
+	/**
+	 * Initializes compiler data
+	 */
 	void Init(ast::TreeNode*) throw();
+	/**
+	 * Loads primitive data types
+	 */
 	void loadTypes() throw();
 	/**
 	 * Generates the intermediate representation
 	 */
 	void buildIR() throw();
-
-	VM::OpcodeList* get_opcodes() throw() {
-		return &m_opcodes;
-	}
-
-	unsigned int getOpNum() const throw() {
-		return m_opcodes.size()-1;
-	}
-
+	/**
+	 * Returns the opcode list
+	 */
+	VM::OpcodeList* get_opcodes() throw() {	return &m_opcodes; }
+	/**
+	 * Returns the opcode number
+	 */
+	unsigned int getOpNum() const throw() {	return m_opcodes.size()-1; }
+	/**
+	 * Returns the Value pointer according with value type
+	 */
 	Value* getValue(ast::Expression*) throw();
+	/**
+	 * Builds the function arguments vector
+	 */
 	ValueVector* functionArgs(const ast::Arguments*) throw();
-
+	/**
+	 * Pushes the opcode to list
+	 */
 	void pushOpcode(Opcode* opcode) throw() {
 		m_opcodes.push_back(opcode);
 		/**
@@ -119,13 +132,13 @@ public:
 	/**
 	 * Checks if a function exists
 	 */
-	static bool functionExists(const std::string& name) throw() {
+	bool functionExists(const std::string& name) throw() {
 		return s_func_table.find(name) != s_func_table.end();
 	}
 	/**
 	 * Returns the a Function pointer
 	 */
-	static FunctionPtr getFunction(const std::string& name) throw() {
+	FunctionPtr getFunction(const std::string& name) throw() {
 		FunctionTable::const_iterator it = s_func_table.find(name);
 
 		if (it != s_func_table.end()) {
@@ -137,15 +150,15 @@ public:
 	/**
 	 * Displays the error message and exits the program
 	 */
-	static void error(std::string) throw();
+	void error(std::string) throw();
 	/**
 	 * Checks if two operands has compatible types to perform some operation
 	 */
-	static bool checkCompatibleTypes(Value*, Value*) throw();
+	bool checkCompatibleTypes(Value*, Value*) throw();
 	/**
 	 * Performs the constant folding and constant propagation optimization
 	 */
-	static ConstantValue* constantFolding(int, Value*, Value*) throw();
+	ConstantValue* constantFolding(int, Value*, Value*) throw();
 
 	/**
 	 * Opcode generators
@@ -172,15 +185,13 @@ public:
 	Opcode* assignment(ast::Assignment*) throw();
 	Opcode* import(ast::Import*) throw();
 private:
-	/* AST nodes */
 	ast::TreeNode* m_ast;
 	VM::OpcodeList m_opcodes;
 	SSA m_ssa;
 	JmpStack m_jmps;
 	JmpStack m_brks;
-	/* Package manager */
 	PackageManager m_pkgmanager;
-	/* Global function table */
+
 	static FunctionTable s_func_table;
 
 	DISALLOW_COPY_AND_ASSIGN(Compiler);
