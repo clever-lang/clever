@@ -29,9 +29,10 @@
 #define CLEVER_AST_H
 
 #include <vector>
+#include "value.h"
 #include "cstring.h"
 #include "refcounted.h"
-#include "irbuilder.h"
+#include "compiler.h"
 
 namespace clever {
 
@@ -82,7 +83,7 @@ public:
 	/**
 	 * Method for generating the expression IR
 	 */
-	virtual Opcode* codeGen(IRBuilder& builder) throw() { return NULL; };
+	virtual Opcode* codeGen(Compiler* compiler) throw() { return NULL; };
 private:
 	bool m_optimized;
 
@@ -215,8 +216,8 @@ public:
 		m_result = value;
 	}
 
-	Opcode* codeGen(IRBuilder& builder) throw() {
-		return builder.binaryExpression(this);
+	Opcode* codeGen(Compiler* compiler) throw() {
+		return compiler->binaryExpression(this);
 	}
 private:
 	int m_op;
@@ -264,8 +265,8 @@ public:
 		return m_type;
 	}
 
-	Opcode* codeGen(IRBuilder& builder) throw() {
-		return builder.variableDecl(this);
+	Opcode* codeGen(Compiler* compiler) throw() {
+		return compiler->variableDecl(this);
 	}
 private:
 	Expression* m_type;
@@ -338,8 +339,8 @@ public:
 
 	~NewBlock() { }
 
-	Opcode* codeGen(IRBuilder& builder) throw() {
-		return builder.newBlock();
+	Opcode* codeGen(Compiler* compiler) throw() {
+		return compiler->newBlock();
 	}
 private:
 	DISALLOW_COPY_AND_ASSIGN(NewBlock);
@@ -351,8 +352,8 @@ public:
 
 	~EndBlock() { }
 
-	Opcode* codeGen(IRBuilder& builder) throw() {
-		return builder.endBlock();
+	Opcode* codeGen(Compiler* compiler) throw() {
+		return compiler->endBlock();
 	}
 private:
 	DISALLOW_COPY_AND_ASSIGN(EndBlock);
@@ -378,8 +379,8 @@ public:
 		return m_expr;
 	}
 
-	Opcode* codeGen(IRBuilder& builder) throw() {
-		return builder.preIncrement(this);
+	Opcode* codeGen(Compiler* compiler) throw() {
+		return compiler->preIncrement(this);
 	}
 private:
 	Expression* m_expr;
@@ -408,8 +409,8 @@ public:
 		return m_expr;
 	}
 
-	Opcode* codeGen(IRBuilder& builder) throw() {
-		return builder.posIncrement(this);
+	Opcode* codeGen(Compiler* compiler) throw() {
+		return compiler->posIncrement(this);
 	}
 private:
 	Expression* m_expr;
@@ -438,8 +439,8 @@ public:
 		return m_result;
 	}
 
-	Opcode* codeGen(IRBuilder& builder) throw() {
-		return builder.preDecrement(this);
+	Opcode* codeGen(Compiler* compiler) throw() {
+		return compiler->preDecrement(this);
 	}
 private:
 	Expression* m_expr;
@@ -468,8 +469,8 @@ public:
 		return m_expr;
 	}
 
-	Opcode* codeGen(IRBuilder& builder) throw() {
-		return builder.posDecrement(this);
+	Opcode* codeGen(Compiler* compiler) throw() {
+		return compiler->posDecrement(this);
 	}
 private:
 	Expression* m_expr;
@@ -493,8 +494,8 @@ public:
 		return m_expr;
 	}
 
-	Opcode* codeGen(IRBuilder& builder) throw() {
-		return builder.ifExpression(this);
+	Opcode* codeGen(Compiler* compiler) throw() {
+		return compiler->ifExpression(this);
 	}
 private:
 	Expression* m_expr;
@@ -523,8 +524,8 @@ public:
 		return m_start_expr;
 	}
 
-	Opcode* codeGen(IRBuilder& builder) throw() {
-		return builder.elseIfExpression(this);
+	Opcode* codeGen(Compiler* compiler) throw() {
+		return compiler->elseIfExpression(this);
 	}
 private:
 	Expression* m_start_expr;
@@ -539,8 +540,8 @@ public:
 
 	~ElseExpression() { }
 
-	Opcode* codeGen(IRBuilder& builder) throw() {
-		return builder.elseExpression(this);
+	Opcode* codeGen(Compiler* compiler) throw() {
+		return compiler->elseExpression(this);
 	}
 private:
 	DISALLOW_COPY_AND_ASSIGN(ElseExpression);
@@ -561,8 +562,8 @@ public:
 		return m_expr;
 	}
 
-	Opcode* codeGen(IRBuilder& builder) throw() {
-		return builder.whileExpression(this);
+	Opcode* codeGen(Compiler* compiler) throw() {
+		return compiler->whileExpression(this);
 	}
 private:
 	Expression* m_expr;
@@ -576,8 +577,8 @@ public:
 
 	~EndIfExpression() { }
 
-	Opcode* codeGen(IRBuilder& builder) throw() {
-		return builder.endIfExpression();
+	Opcode* codeGen(Compiler* compiler) throw() {
+		return compiler->endIfExpression();
 	}
 private:
 	DISALLOW_COPY_AND_ASSIGN(EndIfExpression);
@@ -599,8 +600,8 @@ public:
 		return m_expr;
 	}
 
-	Opcode* codeGen(IRBuilder& builder) throw() {
-		return builder.endWhileExpression(this);
+	Opcode* codeGen(Compiler* compiler) throw() {
+		return compiler->endWhileExpression(this);
 	}
 private:
 	Expression* m_expr;
@@ -622,8 +623,8 @@ public:
 		return m_op_num;
 	}
 
-	Opcode* codeGen(IRBuilder& builder) throw() {
-		return builder.startExpr(this);
+	Opcode* codeGen(Compiler* compiler) throw() {
+		return compiler->startExpr(this);
 	}
 private:
 	unsigned int m_op_num;
@@ -672,8 +673,8 @@ public:
 		return m_result;
 	}
 
-	Opcode* codeGen(IRBuilder& builder) throw() {
-		return builder.logicExpression(this);
+	Opcode* codeGen(Compiler* compiler) throw() {
+		return compiler->logicExpression(this);
 	}
 private:
 	int m_op;
@@ -690,8 +691,8 @@ public:
 
 	~BreakExpression() { }
 
-	Opcode* codeGen(IRBuilder& builder) throw() {
-		return builder.breakExpression();
+	Opcode* codeGen(Compiler* compiler) throw() {
+		return compiler->breakExpression();
 	}
 private:
 	DISALLOW_COPY_AND_ASSIGN(BreakExpression);
@@ -765,8 +766,8 @@ public:
 		return args->get_args();
 	}
 
-	Opcode* codeGen(IRBuilder& builder) throw() {
-		return builder.functionCall(this);
+	Opcode* codeGen(Compiler* compiler) throw() {
+		return compiler->functionCall(this);
 	}
 private:
 	Expression* m_name;
@@ -823,8 +824,8 @@ public:
 		return m_result;
 	}
 
-	Opcode* codeGen(IRBuilder& builder) throw() {
-		return builder.methodCall(this);
+	Opcode* codeGen(Compiler* compiler) throw() {
+		return compiler->methodCall(this);
 	}
 private:
 	Expression* m_var;
@@ -850,8 +851,8 @@ public:
 	Expression* get_lhs() const throw() { return m_lhs; }
 	Expression* get_rhs() const throw() { return m_rhs; }
 
-	Opcode* codeGen(IRBuilder& builder) throw() {
-		return builder.assignment(this);
+	Opcode* codeGen(Compiler* compiler) throw() {
+		return compiler->assignment(this);
 	}
 private:
 	Expression* m_lhs;
@@ -886,8 +887,8 @@ public:
 		return m_module;
 	}
 
-	Opcode* codeGen(IRBuilder& builder) throw() {
-		return builder.import(this);
+	Opcode* codeGen(Compiler* compiler) throw() {
+		return compiler->import(this);
 	}
 private:
 	Expression* m_package;

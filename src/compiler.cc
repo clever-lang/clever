@@ -29,6 +29,7 @@
 #include <vector>
 #include <cstdlib>
 #include "compiler.h"
+#include "ast.h"
 #include "int.h"
 #include "double.h"
 #include "typetable.h"
@@ -43,7 +44,6 @@ TypeMap TypeTable::s_type_table;
  */
 void Compiler::Init(ast::TreeNode* nodes) throw() {
 	m_ast = nodes;
-
 	/**
 	 * Load package list
 	 */
@@ -77,7 +77,29 @@ Compiler::~Compiler() {
 	}
 
 	TypeTable::clear();
+
 	m_pkgmanager.shutdown();
+}
+
+/**
+ * Return the Value pointer related to value type
+ */
+Value* Compiler::getValue(ast::Expression* expr) throw() {
+	Value* value = expr->get_value();
+
+	if (value && value->hasName()) {
+		Value* var = m_ssa.fetchVar(value);
+
+		/**
+		 * If the variable is found, we should use its pointer instead of
+		 * fetching on runtime
+		 */
+		if (EXPECTED(var != NULL)) {
+			return var;
+		}
+		Compiler::error("Inexistent variable!");
+	}
+	return value;
 }
 
 /**
@@ -87,19 +109,26 @@ void Compiler::buildIR() throw() {
 	ast::TreeNode::nodeList& ast_nodes = m_ast->getNodeList();
 	ast::TreeNode::nodeList::iterator it = ast_nodes.begin(), end(ast_nodes.end());
 
-	m_builder.init(this);
+	/* Initializes global scope */
+	m_ssa.newBlock();
+
+	/* Reserve space for 10 opcodes */
+	m_opcodes.reserve(10);
 
 	while (it != end) {
-		Opcode* opcode = (*it)->codeGen(m_builder);
+		Compiler* c = this;
+		Opcode* opcode = (*it)->codeGen(c);
 
 		if (opcode) {
-			m_builder.push(opcode);
+			pushOpcode(opcode);
 			// opcode->dump();
 		}
 		++it;
 	}
 
-	m_builder.shutdown();
+	/* Pop global scope */
+	m_ssa.endBlock();
+
 	m_ast->clear();
 }
 
@@ -197,6 +226,424 @@ ConstantValue* Compiler::constantFolding(int op, Value* lhs, Value* rhs) throw()
 			DO_NUM_OPERATION(%, Integer, lhs, rhs);
 			break;
 	}
+	return NULL;
+}
+
+
+/**
+ * Generates the binary expression opcode
+ */
+Opcode* Compiler::binaryExpression(ast::BinaryExpression* expr) throw() {
+	Value* lhs = getValue(expr->get_lhs());
+	Value* rhs = getValue(expr->get_rhs());
+	ConstantValue* result = NULL;
+
+	if (!Compiler::checkCompatibleTypes(lhs, rhs)) {
+		Compiler::error("Type mismatch!");
+	}
+	if (lhs->isPrimitive() && !expr->isAssigned()) {
+		result = Compiler::constantFolding(expr->get_op(), lhs, rhs);
+	}
+	if (result) {
+		/**
+		 * Don't generate the opcode, the expression was evaluated in
+		 * compile-time
+		 */
+		expr->set_optimized(true);
+		expr->set_result(result);
+		return NULL;
+	}
+	if (expr->isAssigned()) {
+		expr->set_result(lhs);
+		lhs->addRef();
+		lhs->setModified();
+	} else {
+		expr->set_result(new Value);
+	}
+
+	lhs->addRef();
+	rhs->addRef();
+
+	switch (expr->get_op()) {
+		case ast::PLUS:  return new Opcode(OP_PLUS,   &VM::plus_handler,   lhs, rhs, expr->get_value());
+		case ast::DIV:   return new Opcode(OP_DIV,    &VM::div_handler,    lhs, rhs, expr->get_value());
+		case ast::MULT:  return new Opcode(OP_MULT,   &VM::mult_handler,   lhs, rhs, expr->get_value());
+		case ast::MINUS: return new Opcode(OP_MINUS,  &VM::minus_handler,  lhs, rhs, expr->get_value());
+		case ast::XOR:   return new Opcode(OP_BW_XOR, &VM::bw_xor_handler, lhs, rhs, expr->get_value());
+		case ast::OR:    return new Opcode(OP_BW_OR,  &VM::bw_or_handler,  lhs, rhs, expr->get_value());
+		case ast::AND:   return new Opcode(OP_BW_AND, &VM::bw_and_handler, lhs, rhs, expr->get_value());
+		case ast::MOD:   return new Opcode(OP_MOD,    &VM::mod_handler,    lhs, rhs, expr->get_value());
+	}
+	return NULL;
+}
+
+/**
+ * Generates the variable declaration opcode
+ */
+Opcode* Compiler::variableDecl(ast::VariableDecl* expr) throw() {
+	ast::Expression* var_type = expr->get_type();
+	ast::Expression* var_expr = expr->get_variable();
+	ast::Expression* rhs_expr = expr->get_initial_value();
+	NamedValue* variable = static_cast<NamedValue*>(var_expr->get_value());
+	const Type* type = TypeTable::getType(var_type->get_value()->get_name());
+
+	variable->set_type_ptr(type);
+
+	/* Check if the declaration contains initialization */
+	if (rhs_expr) {
+		Value* value = getValue(rhs_expr);
+
+		m_ssa.pushVar(variable);
+
+		variable->setInitialized();
+		variable->copy(value);
+
+		variable->addRef();
+		value->addRef();
+
+		return new Opcode(OP_VAR_DECL, &VM::var_decl_handler, variable, value);
+	} else {
+		return new Opcode(OP_VAR_DECL, &VM::var_decl_handler, variable);
+	}
+}
+
+/**
+ * Generates the new block opcode
+ */
+Opcode* Compiler::newBlock() throw() {
+	/* Initializes new scope */
+	m_ssa.newBlock();
+
+	return NULL;
+}
+
+/**
+ * Generates the end block opcode
+ */
+Opcode* Compiler::endBlock() throw() {
+	/* Pop current scope */
+	m_ssa.endBlock();
+
+	return NULL;
+}
+
+/**
+ * Generates the pre increment opcode
+ */
+Opcode* Compiler::preIncrement(ast::PreIncrement* expr) throw() {
+	Value* value = getValue(expr->get_expr());
+
+	value->setModified();
+	value->addRef();
+	return new Opcode(OP_PRE_INC, &VM::pre_inc_handler, value, NULL, expr->get_value());
+}
+
+/**
+ * Generates the pos increment opcode
+ */
+Opcode* Compiler::posIncrement(ast::PosIncrement* expr) throw() {
+	Value* value = getValue(expr->get_expr());
+
+	value->setModified();
+	value->addRef();
+	return new Opcode(OP_POS_INC, &VM::pos_inc_handler, value, NULL, expr->get_value());
+}
+
+/**
+ * Generates the pre decrement opcode
+ */
+Opcode* Compiler::preDecrement(ast::PreDecrement* expr) throw() {
+	Value* value = getValue(expr->get_expr());
+
+	value->setModified();
+	value->addRef();
+
+	return new Opcode(OP_PRE_DEC, &VM::pre_dec_handler, value, NULL, expr->get_value());
+}
+
+/**
+ * Generates the pos decrement opcode
+ */
+Opcode* Compiler::posDecrement(ast::PosDecrement* expr) throw(){
+	Value* value = getValue(expr->get_expr());
+
+	value->setModified();
+	value->addRef();
+	return new Opcode(OP_POS_DEC, &VM::pos_dec_handler, value, NULL, expr->get_value());
+}
+
+/**
+ * Generates the JMPZ opcode for IF expression
+ */
+Opcode* Compiler::ifExpression(ast::IfExpression* expr) throw() {
+	Value* value = getValue(expr->get_expr());
+	Opcode* opcode = new Opcode(OP_JMPZ, &VM::jmpz_handler, value);
+	Jmp jmp;
+
+	jmp.push(opcode);
+	m_jmps.push(jmp);
+
+	value->addRef();
+	return opcode;
+}
+
+/**
+ * Generates a JMPZ opcode for ELSEIF expression
+ */
+Opcode* Compiler::elseIfExpression(ast::ElseIfExpression* expr) throw() {
+	Value* value = getValue(expr->get_expr());
+	Opcode* opcode = new Opcode(OP_JMPZ, &VM::jmpz_handler, value);
+	ast::StartExpr* start_expr = static_cast<ast::StartExpr*>(expr->get_start_expr());
+
+	/* Sets the if jmp to start of the ELSEIF expr */
+	m_jmps.top().top()->set_jmp_addr1(start_expr->get_op_num());
+	m_jmps.top().push(opcode);
+
+	value->addRef();
+	return opcode;
+}
+
+/**
+ * Generates a JMP opcode for ELSE expression
+ */
+Opcode* Compiler::elseExpression(ast::ElseExpression* expr) throw() {
+	Opcode* opcode = new Opcode(OP_JMP, &VM::jmp_handler);
+
+	m_jmps.top().top()->set_jmp_addr1(getOpNum()+2);
+	m_jmps.top().push(opcode);
+
+	return opcode;
+}
+
+/**
+ * Just set the jmp address of if-elsif-else to end of control structure
+ */
+Opcode* Compiler::endIfExpression() throw() {
+	Jmp jmp = m_jmps.top();
+
+	/* Sets the jmp addr for the IF when there is no ELSE */
+	if (m_jmps.top().size() == 1) {
+		m_jmps.top().top()->set_jmp_addr1(getOpNum()+1);
+	}
+
+	while (!jmp.empty()) {
+		Opcode* opcode = jmp.top();
+
+		/* Points to out of if-elsif-else block */
+		opcode->set_jmp_addr2(getOpNum()+1);
+
+		jmp.pop();
+	}
+
+	m_jmps.pop();
+
+	return NULL;
+}
+
+/**
+ * Generates the JMPZ opcode for WHILE expression
+ */
+Opcode* Compiler::whileExpression(ast::WhileExpression* expr) throw() {
+	Value* value = getValue(expr->get_expr());
+	Opcode* opcode = new Opcode(OP_JMPZ, &VM::jmpz_handler, value);
+	Jmp jmp;
+
+	jmp.push(opcode);
+	m_jmps.push(jmp);
+	m_brks.push(Jmp());
+
+	value->addRef();
+	return opcode;
+}
+
+/**
+ * Just set the end jmp addr of WHILE expression
+ */
+Opcode* Compiler::endWhileExpression(ast::EndWhileExpression* expr) throw() {
+	Opcode* opcode = new Opcode(OP_JMP, &VM::jmp_handler);
+	ast::StartExpr* start_loop = static_cast<ast::StartExpr*>(expr->get_expr());
+	unsigned int scope_out = getOpNum()+2;
+
+	/* Points to out of WHILE block */
+	while (!m_brks.top().empty()) {
+		m_brks.top().top()->set_jmp_addr1(scope_out);
+		m_brks.top().pop();
+	}
+	m_jmps.top().top()->set_jmp_addr1(scope_out);
+	m_jmps.top().pop();
+	m_jmps.pop();
+	m_brks.pop();
+
+	/* Points to start of WHILE expression */
+	opcode->set_jmp_addr2(start_loop->get_op_num());
+
+	return opcode;
+}
+
+/**
+ * Just hold the current op number before the WHILE expression
+ */
+Opcode* Compiler::startExpr(ast::StartExpr* expr) throw() {
+	expr->set_op_num(getOpNum()+1);
+
+	return NULL;
+}
+
+/**
+ * Generates opcode for logic expression which weren't optimized
+ */
+Opcode* Compiler::logicExpression(ast::LogicExpression* expr) throw() {
+	Value* lhs = getValue(expr->get_lhs());
+	Value* rhs = getValue(expr->get_rhs());
+	ConstantValue* result = NULL;
+
+	if (!Compiler::checkCompatibleTypes(lhs, rhs)) {
+		Compiler::error("Type mismatch!");
+	}
+
+	if (lhs->isPrimitive()) {
+		result = Compiler::constantFolding(expr->get_op(), lhs, rhs);
+	}
+	if (result) {
+		/**
+		 * Don't generate the opcode, the expression was evaluated in
+		 * compile-time
+		 */
+		expr->set_optimized(true);
+		expr->set_result(result);
+		return NULL;
+	}
+
+	expr->set_result(new Value);
+
+	lhs->addRef();
+	rhs->addRef();
+
+	switch (expr->get_op()) {
+		case ast::GREATER:       return new Opcode(OP_GREATER,       &VM::greater_handler,       lhs, rhs, expr->get_value());
+		case ast::LESS:          return new Opcode(OP_LESS,          &VM::less_handler,          lhs, rhs, expr->get_value());
+		case ast::GREATER_EQUAL: return new Opcode(OP_GREATER_EQUAL, &VM::greater_equal_handler, lhs, rhs, expr->get_value());
+		case ast::LESS_EQUAL:    return new Opcode(OP_LESS_EQUAL,    &VM::less_equal_handler,    lhs, rhs, expr->get_value());
+		case ast::EQUAL:         return new Opcode(OP_EQUAL,         &VM::equal_handler,         lhs, rhs, expr->get_value());
+		case ast::NOT_EQUAL:     return new Opcode(OP_NOT_EQUAL,     &VM::not_equal_handler,     lhs, rhs, expr->get_value());
+	}
+	return NULL;
+}
+
+/**
+ * Generates opcode for break statement
+ */
+Opcode* Compiler::breakExpression() throw() {
+	Opcode* opcode = new Opcode(OP_BREAK, &VM::break_handler);
+
+	m_brks.top().push(opcode);
+
+	return opcode;
+}
+
+/**
+ * Creates a vector with the current value from a Value* pointers
+ */
+ValueVector* Compiler::functionArgs(const ast::Arguments* args) throw() {
+	ValueVector* values = new ValueVector();
+	ast::Arguments::const_iterator it = args->begin(), end(args->end());
+
+	values->reserve(args->size());
+
+	while (it != end) {
+		Value* value = getValue(*it);
+
+		if (value) {
+			value->addRef();
+		}
+		values->push_back(value);
+		++it;
+	}
+
+	return values;
+}
+
+/**
+ * Generates opcode for function call
+ */
+Opcode* Compiler::functionCall(ast::FunctionCall* expr) throw() {
+	const CString* name = expr->get_func()->get_name();
+	FunctionPtr func = Compiler::getFunction(*name);
+	CallableValue* call = new CallableValue(name);
+	const ast::Arguments* args = expr->get_args();
+	Value* arg_values = NULL;
+
+	if (!func) {
+		Compiler::error("Function '" + *name + "' does not exists!");
+	}
+
+	call->set_callback(func);
+
+	if (args) {
+		arg_values = new Value;
+		arg_values->set_type(Value::VECTOR);
+		arg_values->setVector(functionArgs(args));
+	}
+
+	return new Opcode(OP_FCALL, &VM::fcall_handler, call, arg_values, expr->get_value());
+}
+
+/**
+ * Generates opcode for method call
+ */
+Opcode* Compiler::methodCall(ast::MethodCall* expr) throw() {
+	Value* variable = getValue(expr->get_variable());
+	CallableValue* call = new CallableValue(expr->get_method()->get_value()->get_name());
+	const MethodPtr method = variable->get_type_ptr()->getMethod(call->get_name());
+	const ast::Arguments* args = expr->get_args();
+	Value* arg_values = NULL;
+
+	if (!method) {
+		Compiler::error("Method not found!");
+	}
+
+	call->set_type_ptr(variable->get_type_ptr());
+	call->set_callback(method);
+	call->set_context(variable);
+
+	if (args) {
+		arg_values = new Value;
+		arg_values->set_type(Value::VECTOR);
+		arg_values->setVector(functionArgs(args));
+	}
+	return new Opcode(OP_MCALL, &VM::mcall_handler, call, arg_values, expr->get_value());
+}
+
+/**
+ * Generates opcode for variable assignment
+ */
+Opcode* Compiler::assignment(ast::Assignment* expr) throw() {
+	Value* lhs = getValue(expr->get_lhs());
+	Value* rhs = getValue(expr->get_rhs());
+
+	lhs->setModified();
+
+	lhs->addRef();
+	rhs->addRef();
+
+	return new Opcode(OP_ASSIGN, &VM::assign_handler, lhs, rhs);
+}
+
+/**
+ * Import statement
+ */
+Opcode* Compiler::import(ast::Import* expr) throw() {
+	const CString* package = expr->get_package()->get_value()->get_name();
+	ast::Expression* module = expr->get_module();
+
+	if (module) {
+		const CString* module_name = module->get_value()->get_name();
+
+		import(package, module_name);
+	} else {
+		import(package);
+	}
+
 	return NULL;
 }
 

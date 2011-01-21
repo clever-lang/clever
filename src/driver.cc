@@ -45,7 +45,7 @@ void Interpreter::execute() {
 	m_compiler.buildIR();
 	// compiler.dumpAST();
 
-	vm.set_opcodes(m_compiler.getOpcodes());
+	vm.set_opcodes(m_compiler.get_opcodes());
 	vm.run();
 }
 

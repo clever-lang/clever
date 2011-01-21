@@ -23,14 +23,14 @@ WINDIR=win32/
 # Testrunner dir
 EXTRADIR=extra/
 
-OBJECTS=$(BUILDDIR)parser.o $(BUILDDIR)scanner.o $(BUILDDIR)driver.o $(BUILDDIR)cstring.o $(BUILDDIR)double.o $(BUILDDIR)std_pkg.o $(BUILDDIR)int.o $(BUILDDIR)irbuilder.o $(BUILDDIR)io.o $(BUILDDIR)math.o $(BUILDDIR)pkgmanager.o $(BUILDDIR)compiler.o $(BUILDDIR)vm.o $(BUILDDIR)opcode.o $(BUILDDIR)main.o $(BUILDDIR)win32.o
+OBJECTS=$(BUILDDIR)parser.o $(BUILDDIR)scanner.o $(BUILDDIR)driver.o $(BUILDDIR)cstring.o $(BUILDDIR)double.o $(BUILDDIR)std_pkg.o $(BUILDDIR)int.o $(BUILDDIR)io.o $(BUILDDIR)math.o $(BUILDDIR)pkgmanager.o $(BUILDDIR)compiler.o $(BUILDDIR)vm.o $(BUILDDIR)opcode.o $(BUILDDIR)main.o $(BUILDDIR)win32.o
 
 clever: $(OBJECTS)
 	$(LD) $(LFLAGS) -o clever $(BUILDDIR)*.o
 
 all: clever test
 
-$(BUILDDIR)driver.o: $(SRCDIR)driver.cc $(BUILDDIR)parser.o
+$(BUILDDIR)driver.o: $(SRCDIR)driver.cc $(BUILDDIR)parser.o $(BUILDDIR)compiler.o
 	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)driver.o $(SRCDIR)driver.cc
 
 $(BUILDDIR)main.o: $(SRCDIR)main.cc
@@ -50,9 +50,6 @@ $(BUILDDIR)scanner.o: $(BUILDDIR)scanner.cc $(BUILDDIR)cstring.o
 
 $(BUILDDIR)cstring.o: $(SRCDIR)cstring.cc
 	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)cstring.o $(SRCDIR)cstring.cc
-
-$(BUILDDIR)irbuilder.o: $(SRCDIR)irbuilder.cc $(BUILDDIR)compiler.o
-	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)irbuilder.o $(SRCDIR)irbuilder.cc
 
 $(BUILDDIR)compiler.o: $(SRCDIR)compiler.cc $(BUILDDIR)int.o $(BUILDDIR)double.o $(BUILDDIR)pkgmanager.o
 	$(CXX) $(CPPFLAGS) -o $(BUILDDIR)compiler.o $(SRCDIR)compiler.cc
