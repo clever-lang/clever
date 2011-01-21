@@ -72,6 +72,7 @@ const char* Opcode::getOpName(Opcodes op) const throw() {
 		CASE(OP_EQUAL);
 		CASE(OP_NOT_EQUAL);
 		CASE(OP_BREAK);
+		CASE(OP_MCALL);
 		CASE(OP_FCALL);
 		CASE(OP_ASSIGN);
 		default:
