@@ -27,11 +27,13 @@
 
 #include <cstdio>
 #include <string>
+#include <sstream>
 #include "opcode.h"
+#include "value.h"
 
 namespace clever {
 
-/*
+/**
  * Dumps an opcode
  */
 void Opcode::dump() const throw() {
@@ -41,7 +43,7 @@ void Opcode::dump() const throw() {
 	printf("%-15s\n", dumpOp("result", m_result).c_str());
 }
 
-/*
+/**
  * Returns the opcode name
  */
 const char* Opcode::getOpName(Opcodes op) const throw() {
@@ -77,9 +79,12 @@ const char* Opcode::getOpName(Opcodes op) const throw() {
 	}
 }
 
+/**
+ * Dumps an operand
+ */
 std::string Opcode::dumpOp(const char* label, Value* op) const throw() {
 	if (op) {
-		std::stringstream str;
+		std::ostringstream str;
 
 		str << op->refCount();
 		return std::string(std::string(label) + ": " + op->toString() + " (ref:" + str.str() + ")");

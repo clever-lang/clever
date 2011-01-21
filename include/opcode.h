@@ -28,9 +28,13 @@
 #ifndef CLEVER_OPCODES_H
 #define CLEVER_OPCODES_H
 
+#include <string>
 #include "vm.h"
 
 namespace clever {
+
+class Value;
+
 /**
  * Opcodes
  */
@@ -81,32 +85,34 @@ public:
 
 	~Opcode() { }
 
-	int get_op_type() const { return m_op_type; }
+	int get_op_type() const throw() { return m_op_type; }
 
-	VM::opcode_handler get_handler() const { return m_handler; }
+	VM::opcode_handler get_handler() const throw() { return m_handler; }
 
-	Value* get_op1() const { return m_op1; }
-	void set_op1(Value* op1) { m_op1 = op1; }
+	Value* get_op1() const throw() { return m_op1; }
+	void set_op1(Value* op1) throw() { m_op1 = op1; }
 
-	Value* get_op2() const { return m_op2; }
-	void set_op2(Value* op2) { m_op2 = op2; }
+	Value* get_op2() const throw() { return m_op2; }
+	void set_op2(Value* op2) throw() { m_op2 = op2; }
 
-	Value* get_result() const { return m_result; }
-	void set_result(Value* result) { m_result = result; }
+	Value* get_result() const throw() { return m_result; }
+	void set_result(Value* result) throw() { m_result = result; }
 
-	int64_t get_op_num() const { return m_op_num; }
-	void set_op_num(unsigned int op_num) { m_op_num = op_num; }
+	unsigned int get_op_num() const throw() { return m_op_num; }
+	void set_op_num(unsigned int op_num) throw() { m_op_num = op_num; }
 
-	void set_jmp_addr1(unsigned int jmp_addr) { m_extra.jmp1 = jmp_addr; }
-	unsigned int get_jmp_addr1() const { return m_extra.jmp1; }
+	void set_jmp_addr1(unsigned int jmp_addr) throw() { m_extra.jmp1 = jmp_addr; }
+	unsigned int get_jmp_addr1() const throw() { return m_extra.jmp1; }
 
-	void set_jmp_addr2(unsigned int jmp_addr) { m_extra.jmp2 = jmp_addr; }
-	unsigned int get_jmp_addr2() const { return m_extra.jmp2; }
+	void set_jmp_addr2(unsigned int jmp_addr) throw() { m_extra.jmp2 = jmp_addr; }
+	unsigned int get_jmp_addr2() const throw() { return m_extra.jmp2; }
 
-	void set_flags(unsigned int flags) {	m_extra.flags = flags; }
-	unsigned int get_flags() const { return m_extra.flags; }
+	void set_flags(unsigned int flags) throw() { m_extra.flags = flags; }
+	unsigned int get_flags() const throw() { return m_extra.flags; }
 
-	/* Debug */
+	/**
+	 * Methods for debug
+	 */
 	void dump() const throw();
 	const char* getOpName(Opcodes) const throw();
 	std::string dumpOp(const char*, Value*) const throw();

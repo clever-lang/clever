@@ -30,11 +30,11 @@
 
 #include <tr1/unordered_map>
 #include <deque>
+#include "value.h"
 
 namespace clever {
 
 class CString;
-class Value;
 
 /**
  * Minimal SSA form

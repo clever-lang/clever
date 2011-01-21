@@ -29,7 +29,6 @@
 #define CLEVER_VM_H
 
 #include <vector>
-#include "symboltable.h"
 #include "global.h"
 
 /**
@@ -44,11 +43,6 @@
 #define CLEVER_VM_GOTO(x) next_op = (x)-1; return
 
 namespace clever {
-
-/**
- * OP_NEW_SCOPE flags
- */
-enum { BLK_UNUSED, BLK_USED };
 
 class Opcode;
 

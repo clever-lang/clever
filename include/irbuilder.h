@@ -27,6 +27,7 @@
 
 #ifndef CLEVER_IRBUILDER_H
 #define CLEVER_IRBUILDER_H
+
 #include <stack>
 #include "vm.h"
 #include "opcode.h"
@@ -84,7 +85,9 @@ public:
 
 	void push(Opcode* opcode) throw() {
 		m_opcodes.push_back(opcode);
-		/* Sets the opcode number, which is used by JMP opcodes */
+		/**
+		 * Sets the opcode number, which is used by JMP opcodes
+		 */
 		opcode->set_op_num(getOpNum());
 	}
 
@@ -95,7 +98,9 @@ public:
 	Value* getValue(ast::Expression*) throw();
 	ValueVector* functionArgs(const ast::Arguments*) throw();
 
-	/* Opcode generators */
+	/**
+	 * Opcode generators
+	 */
 	Opcode* binaryExpression(ast::BinaryExpression*) throw();
 	Opcode* variableDecl(ast::VariableDecl*) throw();
 	Opcode* preIncrement(ast::PreIncrement*) throw();
@@ -120,15 +125,10 @@ public:
 
 	DISALLOW_COPY_AND_ASSIGN(IRBuilder);
 private:
-	/* Compiler */
 	Compiler* m_compiler;
-	/* Opcode vector */
 	VM::OpcodeList m_opcodes;
-	/* SSA form */
 	SSA m_ssa;
-	/* Stack used for control structures */
 	JmpStack m_jmps;
-	/* Stack used for break in loops */
 	JmpStack m_brks;
 };
 

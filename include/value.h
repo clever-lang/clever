@@ -29,9 +29,8 @@
 #define CLEVER_VALUE_H
 
 #include <stdint.h>
-#include <iostream>
-#include <sstream>
 #include <cstring>
+#include <sstream>
 #include <vector>
 #include "refcounted.h"
 #include "cstring.h"
@@ -42,8 +41,6 @@ namespace clever {
 
 class Type;
 class Value;
-
-// typedef std::vector<Value*> ValueVector;
 
 /**
  * Base class for value representation

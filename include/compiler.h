@@ -29,9 +29,9 @@
 #define CLEVER_COMPILER_H
 
 #include "ast.h"
+#include "value.h"
 #include "irbuilder.h"
 #include "module.h"
-#include "typetable.h"
 #include "pkgmanager.h"
 
 namespace clever {
