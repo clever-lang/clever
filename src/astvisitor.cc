@@ -376,7 +376,9 @@ AST_VISITOR(WhileExpression) {
 	jmpz = new Opcode(OP_JMPZ, &VM::jmpz_handler, value);
 	pushOpcode(jmpz);
 
-	expr->get_block()->accept(*this);
+	if (expr->get_block()) {
+		expr->get_block()->accept(*this);
+	}
 
 	jmp = new Opcode(OP_JMP, &VM::jmp_handler);
 	jmp->set_jmp_addr2(start_pos);
