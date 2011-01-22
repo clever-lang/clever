@@ -29,32 +29,7 @@
 
 namespace clever {
 
-CStringTable CString::s_table;
+CStringTable g_cstring_tbl;
 
-/**
- * Clear the string table
- */
-CStringTable::~CStringTable() {
-	CStringTableBase::const_iterator it = begin(), end_table(end());
-
-	while (it != end_table) {
-		delete it->second;
-		++it;
-	}
-}
-
-/**
- * Store the string (if it doesn't exists) and set its hash
- */
-void CString::store() throw() {
-	m_id = s_table.insert(this);
-}
-
-/**
- * Get the CString pointer by hash
- */
-const CString* CString::intern() const throw() {
-	return s_table.getCString(get_id());
-}
 
 } // clever

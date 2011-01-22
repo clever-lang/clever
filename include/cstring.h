@@ -35,38 +35,30 @@
 /**
  * Returns the CString* pointer to a string
  */
-#define CSTRING(xstring) (clever::CString(xstring).intern())
+//#define CSTRING(xstring) (clever::CString(xstring).intern())
+
+#define CSTRING(xstring) (clever::g_cstring_tbl.intern(xstring))
 
 namespace clever {
 
 /**
  * String interning implementation
  */
-class CStringTable;
-
 class CString : public std::string {
 public:
 	typedef std::size_t IdType;
 
 	CString()
-		: std::string(), m_id(0) { store(); };
+		: std::string(), m_id(0) { };
 
-	CString(const CString& str, IdType id)
+	CString(const std::string& str, IdType id)
 		: std::string(str), m_id(id) { }
 
 	CString(const CString& str)
-		: std::string(str), m_id(0) { store(); }
+		: std::string(str), m_id(0) { }
 
-	CString(CString& str)
-		: std::string(str), m_id(0) { store(); }
-
-	explicit CString(std::string str)
-		: std::string(str), m_id(0) { store(); }
-
-	explicit CString(const char* str)
-		: std::string(str), m_id(0) { store(); }
-
-	const CString* intern() const throw();
+	explicit CString(const std::string& str)
+		: std::string(str), m_id(0) { }
 
 	bool hasSameId(const CString* cstring) const throw() {
 		return get_id() == cstring->get_id();
@@ -74,12 +66,6 @@ public:
 
 	IdType get_id() const throw() {
 		return m_id;
-	}
-
-	void set_id(IdType id) throw() {
-		if (m_id == 0)  {
-			m_id = id;
-		}
 	}
 
 	bool operator==(const CString* cstring) throw() {
@@ -90,9 +76,6 @@ public:
 		return compare(string) == 0;
 	}
 private:
-	void store() throw();
-
-	static CStringTable s_table;
 	IdType m_id;
 };
 
@@ -115,6 +98,10 @@ public:
 
 namespace clever {
 
+class CStringTable;
+
+extern CStringTable g_cstring_tbl;
+
 typedef std::tr1::unordered_map<std::size_t, const CString*> CStringTableBase;
 
 class CStringTable : public CStringTableBase {
@@ -122,31 +109,52 @@ public:
 	typedef CString::IdType IdType;
 
 	CStringTable() {}
-	~CStringTable();
+
+	~CStringTable() {
+		CStringTableBase::const_iterator it(begin()), end_table(end());
+
+		while (it != end_table) {
+			delete it->second;
+			++it;
+		}
+	}
 
 	bool contains(const CString* cstring) const {
 		IdType id = cstring->get_id();
-		return id != 0 && id < size() && (*find(id)).second->hasSameId(cstring);
+		return id != 0 && id < size() && find(id)->second->hasSameId(cstring);
 	}
 
 	const CString* getCString(long id) const throw() {
-		return (*find(id)).second;
+		return find(id)->second;
 	}
 
-	IdType insert(CString* cstring) throw() {
-		std::tr1::hash<CString*> hash;
-		IdType id = hash(cstring);
+	const CString* intern(const std::string& needle) throw() {
+		std::tr1::hash<std::string> hash;
+		const CString* str;
 
-		cstring->set_id(id);
+		IdType id = hash(needle);
+		CStringTable::const_iterator it(find(id));
 
-		if (CStringTableBase::find(id) == end()) {
-			const CString* new_string = new CString(*cstring, id);
-
-			CStringTableBase::insert(std::pair<IdType, const CString*>(id, new_string));
+		if (it == end()) {
+			str = new CString(needle, id);
+			insert(std::pair<IdType, const CString*>(id, str));
+		} else {
+			str = it->second;
 		}
 
-		return id;
+		return str;
 	}
+
+	const CString* intern(const CString& needle) throw() {
+		IdType id = needle.get_id();
+
+		if (id) {
+			return find(id)->second;
+		}
+
+		return intern(static_cast<std::string>(needle));
+	}
+
 private:
 	DISALLOW_COPY_AND_ASSIGN(CStringTable);
 };
