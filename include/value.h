@@ -149,7 +149,7 @@ public:
 
 	int64_t getInteger() const { return m_data.l_value; }
 	const CString* getStringP() const { return m_data.s_value; }
-	CString getString() const { return *m_data.s_value; }
+	const CString& getString() const { return *m_data.s_value; }
 	double getDouble() const { return m_data.d_value; }
 	bool getBoolean() const { return m_data.b_value; }
 	ValueVector* getVector() const { return m_data.v_value; }
@@ -169,24 +169,24 @@ public:
 
 	virtual Value* get_value() { return this; }
 
-	virtual std::string toString() {
+	virtual const CString& toString() {
 		std::ostringstream str;
 
 		switch (get_type()) {
 			case INTEGER:
 				str << getInteger();
 
-				return str.str();
+				return *CSTRING(str.str());
 			case DOUBLE:
 				str << getDouble();
 
-				return str.str();
+				return *CSTRING(str.str());
 			case BOOLEAN:
-				return std::string(getBoolean() ? "true" : "false");
+				return *CSTRING(getBoolean() ? "true" : "false");
 			case STRING:
-				return getString().c_str();
+				return getString();
 			default:
-				return std::string();
+				return *CSTRING("");
 		}
 	}
 private:

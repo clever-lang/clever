@@ -35,8 +35,6 @@
 /**
  * Returns the CString* pointer to a string
  */
-//#define CSTRING(xstring) (clever::CString(xstring).intern())
-
 #define CSTRING(xstring) (clever::g_cstring_tbl.intern(xstring))
 
 namespace clever {
