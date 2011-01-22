@@ -33,6 +33,7 @@
 #include "cstring.h"
 #include "refcounted.h"
 #include "compiler.h"
+#include "astvisitor.h"
 
 namespace clever {
 
@@ -41,6 +42,10 @@ class Opcode;
 } // clever
 
 namespace clever { namespace ast {
+
+class Expression;
+
+typedef std::vector<Expression*> NodeList;
 
 /**
  * Operators (logical and binary)
@@ -62,12 +67,21 @@ enum {
 	NOT_EQUAL
 };
 
+
 class NO_INIT_VTABLE Expression : public RefCounted {
 public:
 	Expression()
 		: RefCounted(0), m_optimized(false) { }
 
 	virtual ~Expression() { }
+
+	void add(Expression* node) {
+		node->addRef();
+		m_nodes.push_back(node);
+	}
+	NodeList& getChildren() {
+		return m_nodes;
+	}
 	/**
 	 * Indicates if the node is optimized
 	 */
@@ -83,50 +97,22 @@ public:
 	/**
 	 * Method for generating the expression IR
 	 */
-	virtual Opcode* codeGen(Compiler* compiler) throw() { return NULL; };
+	virtual void accept(ASTVisitor& visitor) { }
 private:
+	NodeList m_nodes;
 	bool m_optimized;
 
 	DISALLOW_COPY_AND_ASSIGN(Expression);
 };
 
-class TreeNode {
+class TopExpression : public Expression {
 public:
-	typedef std::vector<Expression*> nodeList;
+	TopExpression() { }
 
-	TreeNode() { }
-	~TreeNode() { }
-
-	/**
-	 * Remove the AST nodes (called after building the IRs)
-	 */
-	void clear() throw() {
-		TreeNode::nodeList::const_iterator it = nodes.begin(), end(nodes.end());
-
-		while (it != end) {
-			(*it)->delRef();
-			++it;
-		}
-	}
-	/**
-	 * Add a new AST node (incrementing the node reference)
-	 */
-	void add(Expression* node) throw() {
-		node->addRef();
-		nodes.push_back(node);
-	}
-	/**
-	 * Get reference to the AST nodes vector
-	 */
-	nodeList& getNodeList() throw() {
-		return nodes;
-	}
+	~TopExpression() { }
 private:
-	nodeList nodes;
-
-	DISALLOW_COPY_AND_ASSIGN(TreeNode);
+	NodeList m_nodes;
 };
-
 
 class Literal : public Expression {
 public:
@@ -216,8 +202,8 @@ public:
 		m_result = value;
 	}
 
-	Opcode* codeGen(Compiler* compiler) throw() {
-		return compiler->binaryExpression(this);
+	void accept(ASTVisitor& visitor) throw() {
+		return visitor.visit(this);
 	}
 private:
 	int m_op;
@@ -265,8 +251,8 @@ public:
 		return m_type;
 	}
 
-	Opcode* codeGen(Compiler* compiler) throw() {
-		return compiler->variableDecl(this);
+	void accept(ASTVisitor& visitor) throw() {
+		visitor.visit(this);
 	}
 private:
 	Expression* m_type;
@@ -339,8 +325,8 @@ public:
 
 	~NewBlock() { }
 
-	Opcode* codeGen(Compiler* compiler) throw() {
-		return compiler->newBlock();
+	void accept(ASTVisitor& visitor) throw() {
+		visitor.visit(this);
 	}
 private:
 	DISALLOW_COPY_AND_ASSIGN(NewBlock);
@@ -352,8 +338,8 @@ public:
 
 	~EndBlock() { }
 
-	Opcode* codeGen(Compiler* compiler) throw() {
-		return compiler->endBlock();
+	void accept(ASTVisitor& visitor) throw() {
+		visitor.visit(this);
 	}
 private:
 	DISALLOW_COPY_AND_ASSIGN(EndBlock);
@@ -379,8 +365,8 @@ public:
 		return m_expr;
 	}
 
-	Opcode* codeGen(Compiler* compiler) throw() {
-		return compiler->preIncrement(this);
+	void accept(ASTVisitor& visitor) throw() {
+		visitor.visit(this);
 	}
 private:
 	Expression* m_expr;
@@ -409,8 +395,8 @@ public:
 		return m_expr;
 	}
 
-	Opcode* codeGen(Compiler* compiler) throw() {
-		return compiler->posIncrement(this);
+	void accept(ASTVisitor& visitor) throw() {
+		visitor.visit(this);
 	}
 private:
 	Expression* m_expr;
@@ -439,8 +425,8 @@ public:
 		return m_result;
 	}
 
-	Opcode* codeGen(Compiler* compiler) throw() {
-		return compiler->preDecrement(this);
+	void accept(ASTVisitor& visitor) throw() {
+		visitor.visit(this);
 	}
 private:
 	Expression* m_expr;
@@ -469,8 +455,8 @@ public:
 		return m_expr;
 	}
 
-	Opcode* codeGen(Compiler* compiler) throw() {
-		return compiler->posDecrement(this);
+	void accept(ASTVisitor& visitor) throw() {
+		visitor.visit(this);
 	}
 private:
 	Expression* m_expr;
@@ -494,8 +480,8 @@ public:
 		return m_expr;
 	}
 
-	Opcode* codeGen(Compiler* compiler) throw() {
-		return compiler->ifExpression(this);
+	void accept(ASTVisitor& visitor) throw() {
+		visitor.visit(this);
 	}
 private:
 	Expression* m_expr;
@@ -524,8 +510,8 @@ public:
 		return m_start_expr;
 	}
 
-	Opcode* codeGen(Compiler* compiler) throw() {
-		return compiler->elseIfExpression(this);
+	void accept(ASTVisitor& visitor) throw() {
+		visitor.visit(this);
 	}
 private:
 	Expression* m_start_expr;
@@ -540,8 +526,8 @@ public:
 
 	~ElseExpression() { }
 
-	Opcode* codeGen(Compiler* compiler) throw() {
-		return compiler->elseExpression(this);
+	void accept(ASTVisitor& visitor) throw() {
+		visitor.visit(this);
 	}
 private:
 	DISALLOW_COPY_AND_ASSIGN(ElseExpression);
@@ -562,11 +548,16 @@ public:
 		return m_expr;
 	}
 
-	Opcode* codeGen(Compiler* compiler) throw() {
-		return compiler->whileExpression(this);
+	NodeList& getChildren() {
+		return m_nodes;
+	}
+
+	void accept(ASTVisitor& visitor) throw() {
+		visitor.visit(this);
 	}
 private:
 	Expression* m_expr;
+	NodeList m_nodes;
 
 	DISALLOW_COPY_AND_ASSIGN(WhileExpression);
 };
@@ -577,8 +568,8 @@ public:
 
 	~EndIfExpression() { }
 
-	Opcode* codeGen(Compiler* compiler) throw() {
-		return compiler->endIfExpression();
+	void accept(ASTVisitor& visitor) throw() {
+		visitor.visit(this);
 	}
 private:
 	DISALLOW_COPY_AND_ASSIGN(EndIfExpression);
@@ -600,8 +591,8 @@ public:
 		return m_expr;
 	}
 
-	Opcode* codeGen(Compiler* compiler) throw() {
-		return compiler->endWhileExpression(this);
+	void accept(ASTVisitor& visitor) throw() {
+		visitor.visit(this);
 	}
 private:
 	Expression* m_expr;
@@ -623,8 +614,8 @@ public:
 		return m_op_num;
 	}
 
-	Opcode* codeGen(Compiler* compiler) throw() {
-		return compiler->startExpr(this);
+	void accept(ASTVisitor& visitor) throw() {
+		visitor.visit(this);
 	}
 private:
 	unsigned int m_op_num;
@@ -673,8 +664,8 @@ public:
 		return m_result;
 	}
 
-	Opcode* codeGen(Compiler* compiler) throw() {
-		return compiler->logicExpression(this);
+	void accept(ASTVisitor& visitor) throw() {
+		visitor.visit(this);
 	}
 private:
 	int m_op;
@@ -691,8 +682,8 @@ public:
 
 	~BreakExpression() { }
 
-	Opcode* codeGen(Compiler* compiler) throw() {
-		return compiler->breakExpression();
+	void accept(ASTVisitor& visitor) throw() {
+		visitor.visit(this);
 	}
 private:
 	DISALLOW_COPY_AND_ASSIGN(BreakExpression);
@@ -766,8 +757,8 @@ public:
 		return args->get_args();
 	}
 
-	Opcode* codeGen(Compiler* compiler) throw() {
-		return compiler->functionCall(this);
+	void accept(ASTVisitor& visitor) throw() {
+		visitor.visit(this);
 	}
 private:
 	Expression* m_name;
@@ -824,8 +815,8 @@ public:
 		return m_result;
 	}
 
-	Opcode* codeGen(Compiler* compiler) throw() {
-		return compiler->methodCall(this);
+	void accept(ASTVisitor& visitor) throw() {
+		visitor.visit(this);
 	}
 private:
 	Expression* m_var;
@@ -851,8 +842,8 @@ public:
 	Expression* get_lhs() const throw() { return m_lhs; }
 	Expression* get_rhs() const throw() { return m_rhs; }
 
-	Opcode* codeGen(Compiler* compiler) throw() {
-		return compiler->assignment(this);
+	void accept(ASTVisitor& visitor) throw() {
+		visitor.visit(this);
 	}
 private:
 	Expression* m_lhs;
@@ -887,8 +878,8 @@ public:
 		return m_module;
 	}
 
-	Opcode* codeGen(Compiler* compiler) throw() {
-		return compiler->import(this);
+	void accept(ASTVisitor& visitor) throw() {
+		visitor.visit(this);
 	}
 private:
 	Expression* m_package;

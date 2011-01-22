@@ -39,26 +39,7 @@
 namespace clever { namespace ast {
 
 class Expression;
-class BinaryExpression;
-class VariableDecl;
-class PosIncrement;
-class PosDecrement;
-class PreIncrement;
-class PreDecrement;
-class IfExpression;
-class ElseIfExpression;
-class ElseExpression;
-class WhileExpression;
-class EndWhileExpression;
-class StartExpr;
-class LogicExpression;
-class FunctionCall;
-class MethodCall;
-class Assignment;
-class Import;
-class TreeNode;
-
-typedef std::vector<Expression*> Arguments;
+class ASTVisitor;
 
 }} // clever::ast
 
@@ -66,17 +47,15 @@ namespace clever {
 
 class Compiler {
 public:
-	typedef std::stack<Opcode*> Jmp;
-	typedef std::stack<Jmp> JmpStack;
-
-	Compiler() { }
+	Compiler()
+		: m_ast(NULL), m_visitor(NULL) { }
 
 	~Compiler();
 
 	/**
 	 * Initializes compiler data
 	 */
-	void Init(ast::TreeNode*) throw();
+	void Init(ast::Expression*) throw();
 	/**
 	 * Loads primitive data types
 	 */
@@ -88,57 +67,35 @@ public:
 	/**
 	 * Returns the opcode list
 	 */
-	VM::OpcodeList* get_opcodes() throw() {	return &m_opcodes; }
-	/**
-	 * Returns the opcode number
-	 */
-	unsigned int getOpNum() const throw() {	return m_opcodes.size()-1; }
-	/**
-	 * Returns the Value pointer according with value type
-	 */
-	Value* getValue(ast::Expression*) throw();
-	/**
-	 * Builds the function arguments vector
-	 */
-	ValueVector* functionArgs(const ast::Arguments*) throw();
-	/**
-	 * Pushes the opcode to list
-	 */
-	void pushOpcode(Opcode* opcode) throw() {
-		m_opcodes.push_back(opcode);
-		/**
-		 * Sets the opcode number, which is used by JMP opcodes
-		 */
-		opcode->set_op_num(getOpNum());
-	}
+	OpcodeList& getOpcodes() throw();
 	/**
 	 * Import a package
 	 */
-	void import(const CString* package) throw() {
-		m_pkgmanager.loadPackage(package);
+	static void import(const CString* package) throw() {
+		s_pkgmanager.loadPackage(package);
 	}
 	/**
 	 * Import a package module
 	 */
-	void import(const CString* package, const CString* module) throw() {
-		m_pkgmanager.loadModule(package, module);
+	static void import(const CString* package, const CString* module) throw() {
+		s_pkgmanager.loadModule(package, module);
 	}
 	/**
 	 * Returns the reference to static member function table
 	 */
-	FunctionTable& get_functions() const throw() {
+	static FunctionTable& get_functions() throw() {
 		return s_func_table;
 	}
 	/**
 	 * Checks if a function exists
 	 */
-	bool functionExists(const std::string& name) throw() {
+	static bool functionExists(const std::string& name) throw() {
 		return s_func_table.find(name) != s_func_table.end();
 	}
 	/**
 	 * Returns the a Function pointer
 	 */
-	FunctionPtr getFunction(const std::string& name) throw() {
+	static FunctionPtr getFunction(const std::string& name) throw() {
 		FunctionTable::const_iterator it = s_func_table.find(name);
 
 		if (it != s_func_table.end()) {
@@ -147,51 +104,11 @@ public:
 			return NULL;
 		}
 	}
-	/**
-	 * Displays the error message and exits the program
-	 */
-	void error(std::string) throw();
-	/**
-	 * Checks if two operands has compatible types to perform some operation
-	 */
-	bool checkCompatibleTypes(Value*, Value*) throw();
-	/**
-	 * Performs the constant folding and constant propagation optimization
-	 */
-	ConstantValue* constantFolding(int, Value*, Value*) throw();
-
-	/**
-	 * Opcode generators
-	 */
-	Opcode* binaryExpression(ast::BinaryExpression*) throw();
-	Opcode* variableDecl(ast::VariableDecl*) throw();
-	Opcode* preIncrement(ast::PreIncrement*) throw();
-	Opcode* posIncrement(ast::PosIncrement*) throw();
-	Opcode* preDecrement(ast::PreDecrement*) throw();
-	Opcode* posDecrement(ast::PosDecrement*) throw();
-	Opcode* newBlock() throw();
-	Opcode* endBlock() throw();
-	Opcode* ifExpression(ast::IfExpression*) throw();
-	Opcode* elseIfExpression(ast::ElseIfExpression*) throw();
-	Opcode* elseExpression(ast::ElseExpression*) throw();
-	Opcode* endIfExpression() throw();
-	Opcode* whileExpression(ast::WhileExpression*) throw();
-	Opcode* endWhileExpression(ast::EndWhileExpression*) throw();
-	Opcode* startExpr(ast::StartExpr*) throw();
-	Opcode* logicExpression(ast::LogicExpression*) throw();
-	Opcode* breakExpression() throw();
-	Opcode* functionCall(ast::FunctionCall*) throw();
-	Opcode* methodCall(ast::MethodCall*) throw();
-	Opcode* assignment(ast::Assignment*) throw();
-	Opcode* import(ast::Import*) throw();
 private:
-	ast::TreeNode* m_ast;
-	VM::OpcodeList m_opcodes;
-	SSA m_ssa;
-	JmpStack m_jmps;
-	JmpStack m_brks;
-	PackageManager m_pkgmanager;
+	ast::Expression* m_ast;
+	ast::ASTVisitor* m_visitor;
 
+	static PackageManager s_pkgmanager;
 	static FunctionTable s_func_table;
 
 	DISALLOW_COPY_AND_ASSIGN(Compiler);

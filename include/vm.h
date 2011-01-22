@@ -46,6 +46,8 @@ namespace clever {
 
 class Opcode;
 
+typedef std::vector<Opcode*> OpcodeList;
+
 /**
  * Virtual machine representation
  */
@@ -55,7 +57,6 @@ public:
 	 * Opcode handler prototype
 	 */
 	typedef void (CLEVER_FASTCALL *opcode_handler)(CLEVER_VM_HANDLER_ARGS);
-	typedef std::vector<Opcode*> OpcodeList;
 
 	VM() : m_opcodes(NULL) { }
 
@@ -72,9 +73,7 @@ public:
 	/**
 	 * Set the opcode vector
 	 */
-	void set_opcodes(OpcodeList* opcodes) throw() {
-		m_opcodes = opcodes;
-	}
+	void set_opcodes(OpcodeList& opcodes) throw() { m_opcodes = &opcodes; }
 	/**
 	 * Opcode handlers
 	 */
