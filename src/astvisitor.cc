@@ -312,10 +312,10 @@ AST_VISITOR(IfExpression) {
 AST_VISITOR(ElseIfExpression) {
 	Value* value = getValue(expr->get_expr());
 	Opcode* opcode = new Opcode(OP_JMPZ, &VM::jmpz_handler, value);
-	ast::StartExpr* start_expr = static_cast<ast::StartExpr*>(expr->get_start_expr());
+	//ast::IfExpression* start_expr = static_cast<ast::IfExpression*>(expr->get_start_expr());
 
 	/* Sets the if jmp to start of the ELSEIF expr */
-	m_jmps.top().top()->set_jmp_addr1(start_expr->get_op_num());
+	//m_jmps.top().top()->set_jmp_addr1(start_expr->get_op_num());
 	m_jmps.top().push(opcode);
 
 	value->addRef();
@@ -396,13 +396,6 @@ AST_VISITOR(EndWhileExpression) {
 	opcode->set_jmp_addr2(while_expr->get_jmp_start());
 
 	pushOpcode(opcode);
-}
-
-/**
- * Just hold the current op number before the WHILE expression
- */
-AST_VISITOR(StartExpr) {
-	expr->set_op_num(getOpNum()+1);
 }
 
 /**

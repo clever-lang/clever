@@ -479,8 +479,45 @@ public:
 		}
 	}
 
+	unsigned int get_op_num() { return m_op_num; }
+	void set_op_num(unsigned int num) { m_op_num = num; }
+
 	void set_expr(Expression* expr) throw() { m_expr = expr; }
 
+	Expression* get_expr() const { return m_expr; }
+
+	void accept(ASTVisitor& visitor) throw() {
+		NodeList::const_iterator it = m_nodes.begin(), end = m_nodes.end();
+
+		set_op_num(visitor.getOpNum()+1);
+
+		m_expr->accept(visitor);
+
+		visitor.visit(this);
+
+		while (it != end) {
+			(*it)->accept(visitor);
+			++it;
+		}
+	}
+private:
+	Expression* m_expr;
+	unsigned int m_op_num;
+
+	DISALLOW_COPY_AND_ASSIGN(IfExpression);
+};
+
+class ElseIfExpression : public Expression {
+public:
+	ElseIfExpression() { }
+
+	~ElseIfExpression() {
+		if (m_expr) {
+			m_expr->delRef();
+		}
+	}
+
+	void set_expr(Expression* expr) throw() { m_expr = expr; }
 	Expression* get_expr() const { return m_expr; }
 
 	void accept(ASTVisitor& visitor) throw() {
@@ -496,37 +533,6 @@ public:
 		}
 	}
 private:
-	Expression* m_expr;
-
-	DISALLOW_COPY_AND_ASSIGN(IfExpression);
-};
-
-class ElseIfExpression : public Expression {
-public:
-	ElseIfExpression(Expression* start_expr, Expression* expr)
-		: m_start_expr(start_expr), m_expr(expr) {
-		m_expr->addRef();
-		m_start_expr->addRef();
-	}
-
-	~ElseIfExpression() {
-		m_expr->delRef();
-		m_start_expr->delRef();
-	}
-
-	Expression* get_expr() const {
-		return m_expr;
-	}
-
-	Expression* get_start_expr() const {
-		return m_start_expr;
-	}
-
-	void accept(ASTVisitor& visitor) throw() {
-		visitor.visit(this);
-	}
-private:
-	Expression* m_start_expr;
 	Expression* m_expr;
 
 	DISALLOW_COPY_AND_ASSIGN(ElseIfExpression);
@@ -566,12 +572,12 @@ public:
 
 		set_jmp_start(visitor.getOpNum()+1);
 
-		m_expr->accept(visitor);
-
-		visitor.visit(this);
-
 		while (it != end) {
 			(*it)->accept(visitor);
+
+			if (*it == m_expr) {
+				visitor.visit(this);
+			}
 			++it;
 		}
 	}
@@ -619,30 +625,6 @@ private:
 
 	DISALLOW_COPY_AND_ASSIGN(EndWhileExpression);
 };
-
-class StartExpr : public Expression {
-public:
-	StartExpr() { }
-
-	~StartExpr() { }
-
-	void set_op_num(unsigned int op_num) {
-		m_op_num = op_num;
-	}
-
-	unsigned int get_op_num() const {
-		return m_op_num;
-	}
-
-	void accept(ASTVisitor& visitor) throw() {
-		visitor.visit(this);
-	}
-private:
-	unsigned int m_op_num;
-
-	DISALLOW_COPY_AND_ASSIGN(StartExpr);
-};
-
 
 class LogicExpression : public Expression {
 public:
