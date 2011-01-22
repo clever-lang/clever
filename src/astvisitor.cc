@@ -379,7 +379,7 @@ AST_VISITOR(WhileExpression) {
  */
 AST_VISITOR(EndWhileExpression) {
 	Opcode* opcode = new Opcode(OP_JMP, &VM::jmp_handler);
-	ast::StartExpr* start_loop = static_cast<ast::StartExpr*>(expr->get_expr());
+	ast::WhileExpression* while_expr = static_cast<ast::WhileExpression*>(expr->get_expr());
 	unsigned int scope_out = getOpNum()+2;
 
 	/* Points to out of WHILE block */
@@ -393,7 +393,7 @@ AST_VISITOR(EndWhileExpression) {
 	m_brks.pop();
 
 	/* Points to start of WHILE expression */
-	opcode->set_jmp_addr2(start_loop->get_op_num());
+	opcode->set_jmp_addr2(while_expr->get_jmp_start());
 
 	pushOpcode(opcode);
 }

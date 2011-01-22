@@ -28,6 +28,7 @@
 #ifndef CLEVER_AST_H
 #define CLEVER_AST_H
 
+#include <iostream>
 #include <vector>
 #include "value.h"
 #include "cstring.h"
@@ -79,7 +80,8 @@ public:
 		node->addRef();
 		m_nodes.push_back(node);
 	}
-	NodeList& getChildren() {
+
+	NodeList& getNodes() {
 		return m_nodes;
 	}
 	/**
@@ -97,9 +99,12 @@ public:
 	/**
 	 * Method for generating the expression IR
 	 */
-	virtual void accept(ASTVisitor& visitor) { }
-private:
+	virtual void accept(ASTVisitor& visitor) throw() { }
+
+	virtual void set_expr(Expression* expr) throw() { }
+protected:
 	NodeList m_nodes;
+private:
 	bool m_optimized;
 
 	DISALLOW_COPY_AND_ASSIGN(Expression);
@@ -110,8 +115,6 @@ public:
 	TopExpression() { }
 
 	~TopExpression() { }
-private:
-	NodeList m_nodes;
 };
 
 class Literal : public Expression {
@@ -467,21 +470,30 @@ private:
 
 class IfExpression : public Expression {
 public:
-	IfExpression(Expression* expr)
-		: m_expr(expr) {
-		m_expr->addRef();
+	IfExpression() {
 	}
 
 	~IfExpression() {
-		m_expr->delRef();
+		if (m_expr) {
+			m_expr->delRef();
+		}
 	}
 
-	Expression* get_expr() const {
-		return m_expr;
-	}
+	void set_expr(Expression* expr) throw() { m_expr = expr; }
+
+	Expression* get_expr() const { return m_expr; }
 
 	void accept(ASTVisitor& visitor) throw() {
+		NodeList::const_iterator it = m_nodes.begin(), end = m_nodes.end();
+
+		m_expr->accept(visitor);
+
 		visitor.visit(this);
+
+		while (it != end) {
+			(*it)->accept(visitor);
+			++it;
+		}
 	}
 private:
 	Expression* m_expr;
@@ -535,29 +547,37 @@ private:
 
 class WhileExpression : public Expression {
 public:
-	WhileExpression(Expression* expr)
-		: m_expr(expr) {
-		m_expr->addRef();
-	}
+	WhileExpression() {	}
 
 	~WhileExpression() {
-		m_expr->delRef();
+		if (m_expr) {
+			m_expr->delRef();
+		}
 	}
 
-	Expression* get_expr() const {
-		return m_expr;
-	}
+	void set_jmp_start(unsigned int num) { m_jmp_start = num; }
+	unsigned int get_jmp_start() { return m_jmp_start; }
 
-	NodeList& getChildren() {
-		return m_nodes;
-	}
+	void set_expr(Expression* expr) throw() { m_expr = expr; m_expr->addRef(); }
+	Expression* get_expr() throw() { return m_expr; }
 
 	void accept(ASTVisitor& visitor) throw() {
+		NodeList::const_iterator it = m_nodes.begin(), end = m_nodes.end();
+
+		set_jmp_start(visitor.getOpNum()+1);
+
+		m_expr->accept(visitor);
+
 		visitor.visit(this);
+
+		while (it != end) {
+			(*it)->accept(visitor);
+			++it;
+		}
 	}
 private:
 	Expression* m_expr;
-	NodeList m_nodes;
+	unsigned int m_jmp_start;
 
 	DISALLOW_COPY_AND_ASSIGN(WhileExpression);
 };

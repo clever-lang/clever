@@ -88,13 +88,15 @@ Compiler::~Compiler() {
 	s_pkgmanager.shutdown();
 
 	delete m_visitor;
+
+	delete m_ast;
 }
 
 /**
  * Collects all opcode
  */
 void Compiler::buildIR() throw() {
-	ast::NodeList& ast_nodes = m_ast->getChildren();
+	ast::NodeList& ast_nodes = m_ast->getNodes();
 	ast::NodeList::iterator it = ast_nodes.begin(), end(ast_nodes.end());
 
 	m_visitor->init();
@@ -112,11 +114,16 @@ void Compiler::buildIR() throw() {
 	it = ast_nodes.begin();
 
 	while (it != end) {
+		ast::NodeList& nodes = (*it)->getNodes();
+		ast::NodeList::const_iterator it2 = nodes.begin(), end2 = nodes.end();
+
+		while (it2 != end2) {
+			(*it2)->delRef();
+			++it2;
+		}
 		(*it)->delRef();
 		++it;
 	}
-
-	delete m_ast;
 }
 
 } // clever
