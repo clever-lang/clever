@@ -130,22 +130,21 @@ statement_list:
 ;
 
 statement_list_non_empty:
-		statements
-	|	statement_list_non_empty statements
+		statements                          { $$ = $1; }
+	|	statement_list_non_empty statements { $$ = $2; }
 ;
 
 block_stmt:
-		'{' '}'
-	|	'{' { tree.top()->add(new clever::ast::NewBlock()); }
-		statement_list_non_empty '}' { tree.top()->add(new clever::ast::EndBlock()); }
+		'{' '}'                          { $$ = NULL; }
+	|	'{' { $1 = new clever::ast::BlockExpression(); tree.push($1); } statement_list_non_empty '}' { tree.pop(); $$ = $1; }
 ;
 
 statements:
-		expr ';'
-	|	variable_declaration ';'
+		expr ';'	             { tree.top()->add($1); $$ = $1; }
+	|	variable_declaration ';' { tree.top()->add($1); $$ = $1; }
 	|	if_stmt
 	|	for_stmt
-	|	while_stmt
+	|	while_stmt               { tree.top()->add($1); $$ = $1; }
 	|	block_stmt
 	|	break_stmt ';'
 	|	assign_stmt ';'
@@ -158,8 +157,8 @@ arg_list:
 ;
 
 func_call:
-		IDENT '(' ')'          { $$ = new clever::ast::FunctionCall($1); tree.top()->add($$); }
-	|	IDENT '(' arg_list ')' { $$ = new clever::ast::FunctionCall($1, $3); tree.top()->add($$); }
+		IDENT '(' ')'          { $$ = new clever::ast::FunctionCall($1);     }
+	|	IDENT '(' arg_list ')' { $$ = new clever::ast::FunctionCall($1, $3); }
 ;
 
 method_call:
@@ -172,8 +171,8 @@ variable_declaration_no_init:
 ;
 
 variable_declaration:
-		TYPE IDENT '=' type_creation { tree.top()->add(new clever::ast::VariableDecl($1, $2, $4)); }
-	|	TYPE IDENT '=' expr          { tree.top()->add(new clever::ast::VariableDecl($1, $2, $4)); }
+		TYPE IDENT '=' type_creation { $$ = new clever::ast::VariableDecl($1, $2, $4); }
+	|	TYPE IDENT '=' expr          { $$ = new clever::ast::VariableDecl($1, $2, $4); }
 	|	variable_declaration_no_init
 ;
 
@@ -200,35 +199,35 @@ type_creation:
 ;
 
 expr:
-		expr '-' expr { $$ = new clever::ast::BinaryExpression(ast::MINUS, $1, $3); tree.top()->add($$); }
-	|	expr '+' expr { $$ = new clever::ast::BinaryExpression(ast::PLUS, $1, $3); tree.top()->add($$); }
-	|	expr '/' expr { $$ = new clever::ast::BinaryExpression(ast::DIV, $1, $3); tree.top()->add($$); }
-	|	expr '*' expr { $$ = new clever::ast::BinaryExpression(ast::MULT, $1, $3); tree.top()->add($$); }
-	|	expr '%' expr { $$ = new clever::ast::BinaryExpression(ast::MOD, $1, $3); tree.top()->add($$); }
-	|	expr '|' expr { $$ = new clever::ast::BinaryExpression(ast::OR, $1, $3); tree.top()->add($$); }
-	|	expr '&' expr { $$ = new clever::ast::BinaryExpression(ast::AND, $1, $3); tree.top()->add($$); }
-	|	expr '^' expr { $$ = new clever::ast::BinaryExpression(ast::XOR, $1, $3); tree.top()->add($$); }
-	|	expr ">" expr   { $$ = new clever::ast::LogicExpression(ast::GREATER, $1, $3); tree.top()->add($$); }
-	|	expr ">=" expr  { $$ = new clever::ast::LogicExpression(ast::GREATER_EQUAL, $1, $3); tree.top()->add($$); }
-	|	expr "<" expr   { $$ = new clever::ast::LogicExpression(ast::LESS, $1, $3); tree.top()->add($$); }
-	|	expr "<=" expr  { $$ = new clever::ast::LogicExpression(ast::LESS_EQUAL, $1, $3); tree.top()->add($$); }
-	|	expr "==" expr  { $$ = new clever::ast::LogicExpression(ast::EQUAL, $1, $3); tree.top()->add($$); }
-	|	expr "!=" expr  { $$ = new clever::ast::LogicExpression(ast::NOT_EQUAL, $1, $3); tree.top()->add($$); }
-	|	'-' expr %prec UMINUS { $$ = new clever::ast::BinaryExpression(ast::MINUS, $2); tree.top()->add($$); }
-	|	'+' expr %prec UMINUS { $$ = new clever::ast::BinaryExpression(ast::PLUS, $2); tree.top()->add($$); }
-	|	INCREMENT IDENT { $$ = new clever::ast::PreIncrement($2); tree.top()->add($$); }
-	|	IDENT INCREMENT { $$ = new clever::ast::PosIncrement($1); tree.top()->add($$); }
-	|	DECREMENT IDENT { $$ = new clever::ast::PreDecrement($2); tree.top()->add($$); }
-	|	IDENT DECREMENT { $$ = new clever::ast::PosDecrement($1); tree.top()->add($$); }
-	|	'!' expr
-	|	'~' expr
-	|	'(' expr ')'  { $$ = $2; }
-	|	func_call     { $$ = $1; }
-	|	method_call   { $$ = $1; }
-	|	NUM_INTEGER   { $$ = $1; }
-	|	NUM_DOUBLE    { $$ = $1; }
-	|	IDENT         { $$ = $1; }
-	|	STR           { $$ = $1; }
+		expr '-' expr         { $$ = new clever::ast::BinaryExpression(ast::MINUS, $1, $3);        }
+	|	expr '+' expr         { $$ = new clever::ast::BinaryExpression(ast::PLUS, $1, $3);         }
+	|	expr '/' expr         { $$ = new clever::ast::BinaryExpression(ast::DIV, $1, $3);          }
+	|	expr '*' expr         { $$ = new clever::ast::BinaryExpression(ast::MULT, $1, $3);         }
+	|	expr '%' expr         { $$ = new clever::ast::BinaryExpression(ast::MOD, $1, $3);          }
+	|	expr '|' expr         { $$ = new clever::ast::BinaryExpression(ast::OR, $1, $3);           }
+	|	expr '&' expr         { $$ = new clever::ast::BinaryExpression(ast::AND, $1, $3);          }
+	|	expr '^' expr         { $$ = new clever::ast::BinaryExpression(ast::XOR, $1, $3);          }
+	|	expr ">" expr         { $$ = new clever::ast::LogicExpression(ast::GREATER, $1, $3);       }
+	|	expr ">=" expr        { $$ = new clever::ast::LogicExpression(ast::GREATER_EQUAL, $1, $3); }
+	|	expr "<" expr         { $$ = new clever::ast::LogicExpression(ast::LESS, $1, $3);          }
+	|	expr "<=" expr        { $$ = new clever::ast::LogicExpression(ast::LESS_EQUAL, $1, $3);    }
+	|	expr "==" expr        { $$ = new clever::ast::LogicExpression(ast::EQUAL, $1, $3);         }
+	|	expr "!=" expr        { $$ = new clever::ast::LogicExpression(ast::NOT_EQUAL, $1, $3);     }
+	|	'-' expr %prec UMINUS { $$ = new clever::ast::BinaryExpression(ast::MINUS, $2);            }
+	|	'+' expr %prec UMINUS { $$ = new clever::ast::BinaryExpression(ast::PLUS, $2);             }
+	|	INCREMENT IDENT       { $$ = new clever::ast::PreIncrement($2);                            }
+	|	IDENT INCREMENT       { $$ = new clever::ast::PosIncrement($1);                            }
+	|	DECREMENT IDENT       { $$ = new clever::ast::PreDecrement($2);                            }
+	|	IDENT DECREMENT       { $$ = new clever::ast::PosDecrement($1);                            }
+	|	'!' expr              { $$ = $2; }
+	|	'~' expr              { $$ = $2; }
+	|	'(' expr ')'          { $$ = $2; }
+	|	func_call             { $$ = $1; }
+	|	method_call           { $$ = $1; }
+	|	NUM_INTEGER           { $$ = $1; }
+	|	NUM_DOUBLE            { $$ = $1; }
+	|	IDENT                 { $$ = $1; }
+	|	STR                   { $$ = $1; }
 ;
 
 for_stmt:
@@ -236,9 +235,10 @@ for_stmt:
 ;
 
 while_stmt:
-		WHILE '('  { $2 = new clever::ast::WhileExpression(); tree.top()->add($2); tree.push($2); }
-		expr  ')'  { $2->set_expr($4); }
-		block_stmt { $2->add(new clever::ast::EndWhileExpression($2)); tree.pop(); }
+	WHILE '(' expr ')' block_stmt
+	{
+		$$ = new clever::ast::WhileExpression($3, $5);
+	}
 ;
 
 if_stmt:

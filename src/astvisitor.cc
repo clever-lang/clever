@@ -361,42 +361,33 @@ AST_VISITOR(EndIfExpression) {
  * Generates the JMPZ opcode for WHILE expression
  */
 AST_VISITOR(WhileExpression) {
-	Value* value = getValue(expr->get_expr());
-	Opcode* opcode = new Opcode(OP_JMPZ, &VM::jmpz_handler, value);
-	Jmp jmp;
+	Value* value;
+	Opcode* jmpz;
+	Opcode* jmp;
+	unsigned int start_pos = 0;
 
-	jmp.push(opcode);
-	m_jmps.push(jmp);
-	m_brks.push(Jmp());
+	start_pos = getOpNum()+1;
 
+	expr->get_condition()->accept(*this);
+
+	value = getValue(expr->get_condition());
 	value->addRef();
 
-	pushOpcode(opcode);
+	jmpz = new Opcode(OP_JMPZ, &VM::jmpz_handler, value);
+	pushOpcode(jmpz);
+
+	expr->get_block()->accept(*this);
+
+	jmp = new Opcode(OP_JMP, &VM::jmp_handler);
+	jmp->set_jmp_addr2(start_pos);
+
+	pushOpcode(jmp);
+
+	jmpz->set_jmp_addr1(getOpNum()+1);
+
+	m_brks.push(Jmp());
 }
 
-/**
- * Just set the end jmp addr of WHILE expression
- */
-AST_VISITOR(EndWhileExpression) {
-	Opcode* opcode = new Opcode(OP_JMP, &VM::jmp_handler);
-	ast::WhileExpression* while_expr = static_cast<ast::WhileExpression*>(expr->get_expr());
-	unsigned int scope_out = getOpNum()+2;
-
-	/* Points to out of WHILE block */
-	while (!m_brks.top().empty()) {
-		m_brks.top().top()->set_jmp_addr1(scope_out);
-		m_brks.top().pop();
-	}
-	m_jmps.top().top()->set_jmp_addr1(scope_out);
-	m_jmps.top().pop();
-	m_jmps.pop();
-	m_brks.pop();
-
-	/* Points to start of WHILE expression */
-	opcode->set_jmp_addr2(while_expr->get_jmp_start());
-
-	pushOpcode(opcode);
-}
 
 /**
  * Generates opcode for logic expression which weren't optimized

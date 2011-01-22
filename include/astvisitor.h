@@ -45,7 +45,6 @@ class IfExpression;
 class ElseIfExpression;
 class ElseExpression;
 class WhileExpression;
-class EndWhileExpression;
 class StartExpr;
 class LogicExpression;
 class FunctionCall;
@@ -131,7 +130,6 @@ public:
 	AST_VISITOR_DECL(ElseExpression);
 	AST_VISITOR_DECL(EndIfExpression);
 	AST_VISITOR_DECL(WhileExpression);
-	AST_VISITOR_DECL(EndWhileExpression);
 	AST_VISITOR_DECL(LogicExpression);
 	AST_VISITOR_DECL(BreakExpression);
 	AST_VISITOR_DECL(FunctionCall);

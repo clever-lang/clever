@@ -102,6 +102,7 @@ public:
 	virtual void accept(ASTVisitor& visitor) throw() { }
 
 	virtual void set_expr(Expression* expr) throw() { }
+	virtual void set_block(Expression* expr) throw() { }
 protected:
 	NodeList m_nodes;
 private:
@@ -320,6 +321,24 @@ private:
 	Expression* m_arguments;
 
 	DISALLOW_COPY_AND_ASSIGN(TypeCreation);
+};
+
+class BlockExpression : public Expression {
+public:
+	BlockExpression() { }
+
+	~BlockExpression() { }
+
+	void accept(ASTVisitor& visitor) throw() {
+		NodeList::const_iterator it = m_nodes.begin(), end = m_nodes.end();
+
+		while (it != end) {
+			(*it)->accept(visitor);
+			++it;
+		}
+	}
+private:
+	DISALLOW_COPY_AND_ASSIGN(BlockExpression);
 };
 
 class NewBlock : public Expression {
@@ -553,37 +572,32 @@ private:
 
 class WhileExpression : public Expression {
 public:
-	WhileExpression() {	}
+	WhileExpression(Expression* condition, Expression* block)
+		: m_condition(condition), m_block(block) {
+		m_condition->addRef();
+
+		if (m_block) {
+			m_block->addRef();
+		}
+	}
 
 	~WhileExpression() {
-		if (m_expr) {
-			m_expr->delRef();
+		m_condition->delRef();
+
+		if (m_block) {
+			m_block->delRef();
 		}
 	}
 
-	void set_jmp_start(unsigned int num) { m_jmp_start = num; }
-	unsigned int get_jmp_start() { return m_jmp_start; }
-
-	void set_expr(Expression* expr) throw() { m_expr = expr; m_expr->addRef(); }
-	Expression* get_expr() throw() { return m_expr; }
+	Expression* get_condition() throw() { return m_condition; }
+	Expression* get_block() throw() { return m_block; }
 
 	void accept(ASTVisitor& visitor) throw() {
-		NodeList::const_iterator it = m_nodes.begin(), end = m_nodes.end();
-
-		set_jmp_start(visitor.getOpNum()+1);
-
-		while (it != end) {
-			(*it)->accept(visitor);
-
-			if (*it == m_expr) {
-				visitor.visit(this);
-			}
-			++it;
-		}
+		visitor.visit(this);
 	}
 private:
-	Expression* m_expr;
-	unsigned int m_jmp_start;
+	Expression* m_condition;
+	Expression* m_block;
 
 	DISALLOW_COPY_AND_ASSIGN(WhileExpression);
 };
@@ -601,30 +615,6 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(EndIfExpression);
 };
 
-
-class EndWhileExpression : public Expression {
-public:
-	EndWhileExpression(Expression* expr)
-		: m_expr(expr) {
-		m_expr->addRef();
-	}
-
-	~EndWhileExpression() {
-		m_expr->delRef();
-	}
-
-	Expression* get_expr() const {
-		return m_expr;
-	}
-
-	void accept(ASTVisitor& visitor) throw() {
-		visitor.visit(this);
-	}
-private:
-	Expression* m_expr;
-
-	DISALLOW_COPY_AND_ASSIGN(EndWhileExpression);
-};
 
 class LogicExpression : public Expression {
 public:
