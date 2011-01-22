@@ -166,25 +166,25 @@ method_call:
 ;
 
 variable_declaration_no_init:
-		TYPE IDENT	{ nodes->add(new clever::ast::VariableDecl($1, $2)); }
+		TYPE IDENT	{ $0->add(new clever::ast::VariableDecl($1, $2)); }
 ;
 
 variable_declaration:
-		TYPE IDENT '=' type_creation { nodes->add(new clever::ast::VariableDecl($1, $2, $4)); }
-	|	TYPE IDENT '=' expr          { nodes->add(new clever::ast::VariableDecl($1, $2, $4)); }
+		TYPE IDENT '=' type_creation { $0->add(new clever::ast::VariableDecl($1, $2, $4)); }
+	|	TYPE IDENT '=' expr          { $0->add(new clever::ast::VariableDecl($1, $2, $4)); }
 	|	variable_declaration_no_init
 ;
 
 assign_stmt:
-		IDENT '=' expr { nodes->add(new clever::ast::Assignment($1, $3)); }
-	|	IDENT "+=" expr { nodes->add(new clever::ast::BinaryExpression(ast::PLUS, $1, $3, true)); }
-	|	IDENT "-=" expr { nodes->add(new clever::ast::BinaryExpression(ast::MINUS, $1, $3, true)); }
-	|	IDENT "/=" expr { nodes->add(new clever::ast::BinaryExpression(ast::DIV, $1, $3, true)); }
-	|	IDENT "*=" expr { nodes->add(new clever::ast::BinaryExpression(ast::MULT, $1, $3, true)); }
-	|	IDENT "%=" expr { nodes->add(new clever::ast::BinaryExpression(ast::MOD, $1, $3, true)); }
-	|	IDENT "&=" expr { nodes->add(new clever::ast::BinaryExpression(ast::AND, $1, $3, true)); }
-	|	IDENT "|=" expr { nodes->add(new clever::ast::BinaryExpression(ast::OR, $1, $3, true)); }
-	|	IDENT "^=" expr { nodes->add(new clever::ast::BinaryExpression(ast::XOR, $1, $3, true)); }
+		IDENT '=' expr { $0->add(new clever::ast::Assignment($1, $3)); }
+	|	IDENT "+=" expr { $0->add(new clever::ast::BinaryExpression(ast::PLUS, $1, $3, true)); }
+	|	IDENT "-=" expr { $0->add(new clever::ast::BinaryExpression(ast::MINUS, $1, $3, true)); }
+	|	IDENT "/=" expr { $0->add(new clever::ast::BinaryExpression(ast::DIV, $1, $3, true)); }
+	|	IDENT "*=" expr { $0->add(new clever::ast::BinaryExpression(ast::MULT, $1, $3, true)); }
+	|	IDENT "%=" expr { $0->add(new clever::ast::BinaryExpression(ast::MOD, $1, $3, true)); }
+	|	IDENT "&=" expr { $0->add(new clever::ast::BinaryExpression(ast::AND, $1, $3, true)); }
+	|	IDENT "|=" expr { $0->add(new clever::ast::BinaryExpression(ast::OR, $1, $3, true)); }
+	|	IDENT "^=" expr { $0->add(new clever::ast::BinaryExpression(ast::XOR, $1, $3, true)); }
 ;
 
 arguments:
@@ -261,7 +261,7 @@ break_stmt:
 
 import_stmt:
 		IMPORT IDENT { $0->add(new clever::ast::Import($2)); }
-	|	IMPORT IDENT '.' IDENT { nodes->add(new clever::ast::Import($2, $4)); }
+	|	IMPORT IDENT '.' IDENT { $0->add(new clever::ast::Import($2, $4)); }
 ;
 
 %%
