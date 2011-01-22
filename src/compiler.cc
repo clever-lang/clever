@@ -111,19 +111,7 @@ void Compiler::buildIR() throw() {
 
 	m_visitor->shutdown();
 
-	it = ast_nodes.begin();
-
-	while (it != end) {
-		ast::NodeList& nodes = (*it)->getNodes();
-		ast::NodeList::const_iterator it2 = nodes.begin(), end2 = nodes.end();
-
-		while (it2 != end2) {
-			(*it2)->delRef();
-			++it2;
-		}
-		(*it)->delRef();
-		++it;
-	}
+	m_ast->clearNodes();
 }
 
 } // clever

@@ -81,6 +81,15 @@ public:
 		m_nodes.push_back(node);
 	}
 
+	void clearNodes() {
+		NodeList::const_iterator it = m_nodes.begin(), end = m_nodes.end();
+
+		while (it != end) {
+			(*it)->delRef();
+			++it;
+		}
+	}
+
 	NodeList& getNodes() {
 		return m_nodes;
 	}
@@ -327,7 +336,9 @@ class BlockExpression : public Expression {
 public:
 	BlockExpression() { }
 
-	~BlockExpression() { }
+	~BlockExpression() {
+		clearNodes();
+	}
 
 	void accept(ASTVisitor& visitor) throw() {
 		NodeList::const_iterator it = m_nodes.begin(), end = m_nodes.end();
@@ -672,7 +683,7 @@ class BreakExpression : public Expression {
 public:
 	BreakExpression() { }
 
-	~BreakExpression() { }
+	~BreakExpression() { std::cout << "call" << std::endl; }
 
 	void accept(ASTVisitor& visitor) throw() {
 		visitor.visit(this);

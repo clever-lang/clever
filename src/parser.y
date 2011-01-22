@@ -162,8 +162,8 @@ func_call:
 ;
 
 method_call:
-		IDENT '.' IDENT '(' ')'          { $$ = new clever::ast::MethodCall($1, $3); tree.top()->add($$); }
-	|	IDENT '.' IDENT '(' arg_list ')' { $$ = new clever::ast::MethodCall($1, $3, $5); tree.top()->add($$); }
+		IDENT '.' IDENT '(' ')'          { $$ = new clever::ast::MethodCall($1, $3);     }
+	|	IDENT '.' IDENT '(' arg_list ')' { $$ = new clever::ast::MethodCall($1, $3, $5); }
 ;
 
 variable_declaration_no_init:
