@@ -147,7 +147,7 @@ statements:
 	|	while_stmt               { tree.top()->add($1); $$ = $1; }
 	|	block_stmt
 	|	break_stmt ';'
-	|	assign_stmt ';'
+	|	assign_stmt ';'          { tree.top()->add($1); $$ = $1; }
 	|	import_stmt ';'
 ;
 
@@ -177,15 +177,15 @@ variable_declaration:
 ;
 
 assign_stmt:
-		IDENT '=' expr  { tree.top()->add(new clever::ast::Assignment($1, $3)); }
-	|	IDENT "+=" expr { tree.top()->add(new clever::ast::BinaryExpression(ast::PLUS, $1, $3, true)); }
-	|	IDENT "-=" expr { tree.top()->add(new clever::ast::BinaryExpression(ast::MINUS, $1, $3, true)); }
-	|	IDENT "/=" expr { tree.top()->add(new clever::ast::BinaryExpression(ast::DIV, $1, $3, true)); }
-	|	IDENT "*=" expr { tree.top()->add(new clever::ast::BinaryExpression(ast::MULT, $1, $3, true)); }
-	|	IDENT "%=" expr { tree.top()->add(new clever::ast::BinaryExpression(ast::MOD, $1, $3, true)); }
-	|	IDENT "&=" expr { tree.top()->add(new clever::ast::BinaryExpression(ast::AND, $1, $3, true)); }
-	|	IDENT "|=" expr { tree.top()->add(new clever::ast::BinaryExpression(ast::OR, $1, $3, true)); }
-	|	IDENT "^=" expr { tree.top()->add(new clever::ast::BinaryExpression(ast::XOR, $1, $3, true)); }
+		IDENT '=' expr  { $$ = new clever::ast::Assignment($1, $3);                         }
+	|	IDENT "+=" expr { $$ = new clever::ast::BinaryExpression(ast::PLUS, $1, $3, true);  }
+	|	IDENT "-=" expr { $$ = new clever::ast::BinaryExpression(ast::MINUS, $1, $3, true); }
+	|	IDENT "/=" expr { $$ = new clever::ast::BinaryExpression(ast::DIV, $1, $3, true);   }
+	|	IDENT "*=" expr { $$ = new clever::ast::BinaryExpression(ast::MULT, $1, $3, true);  }
+	|	IDENT "%=" expr { $$ = new clever::ast::BinaryExpression(ast::MOD, $1, $3, true);   }
+	|	IDENT "&=" expr { $$ = new clever::ast::BinaryExpression(ast::AND, $1, $3, true);   }
+	|	IDENT "|=" expr { $$ = new clever::ast::BinaryExpression(ast::OR, $1, $3, true);    }
+	|	IDENT "^=" expr { $$ = new clever::ast::BinaryExpression(ast::XOR, $1, $3, true);   }
 ;
 
 arguments:

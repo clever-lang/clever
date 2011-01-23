@@ -216,6 +216,9 @@ public:
 	}
 
 	void accept(ASTVisitor& visitor) throw() {
+		m_lhs->accept(visitor);
+		m_rhs->accept(visitor);
+
 		return visitor.visit(this);
 	}
 private:
