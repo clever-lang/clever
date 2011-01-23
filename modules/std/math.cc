@@ -103,10 +103,10 @@ static CLEVER_FUNCTION(ceil) {
  */
 static CLEVER_FUNCTION(abs) {
 	if (args->at(0)->get_type() == Value::DOUBLE) {
-		retval->setDouble(std::fabs(args->at(0)->getDouble()));
+		retval->setDouble(std::abs(args->at(0)->getDouble()));
 		retval->set_type(Value::DOUBLE);
 	} else {
-		retval->setInteger(std::abs(args->at(0)->getInteger()));
+		retval->setInteger(std::labs(args->at(0)->getInteger()));
 		retval->set_type(Value::INTEGER);
 	}
 }
