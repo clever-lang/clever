@@ -1,0 +1,17 @@
+Absolute value
+==CODE==
+import std.io;
+import std.math;
+
+Int i = -10;
+println(i);
+println(abs(i));
+
+Double d = -5.4321;
+println(d);
+println(abs(d));
+==RESULT==
+-10
+10
+-5.4321
+5.4321

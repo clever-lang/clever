@@ -97,6 +97,20 @@ static CLEVER_FUNCTION(ceil) {
 }
 
 /**
+ * abs(double x)
+ * Returns the absolute value of a number x
+ */
+static CLEVER_FUNCTION(abs) {
+	if (args->at(0)->get_type() == Value::DOUBLE) {
+		retval->setDouble(std::fabs(args->at(0)->getDouble()));
+		retval->set_type(Value::DOUBLE);
+	} else {
+		retval->setInteger(std::abs(args->at(0)->getInteger()));
+		retval->set_type(Value::INTEGER);
+	}
+}
+
+/**
  * Load module data
  */
 void Math::Init() throw() {
@@ -107,6 +121,7 @@ void Math::Init() throw() {
 	addFunction("atan", &CLEVER_FUNC_NAME(atan));
 	addFunction("pow",  &CLEVER_FUNC_NAME(pow));
 	addFunction("ceil", &CLEVER_FUNC_NAME(ceil));
+	addFunction("abs",	&CLEVER_FUNC_NAME(abs));
 }
 
 
