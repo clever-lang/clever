@@ -28,7 +28,7 @@
 #ifndef CLEVER_MODULE_H
 #define CLEVER_MODULE_H
 
-#include <cstring>
+#include <string>
 #include <vector>
 #include <list>
 #include <map>
