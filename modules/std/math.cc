@@ -26,6 +26,7 @@
  */
 
 #include <cmath>
+#include <cstdlib>
 #include "module.h"
 #include "std/math.h"
 
