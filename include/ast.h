@@ -501,7 +501,7 @@ private:
 class IfExpression : public Expression {
 public:
 	IfExpression(Expression* condition, Expression* block)
-		: m_condition(condition), m_block(block) {
+		: m_condition(condition), m_block(block), m_else(NULL) {
 		m_condition->addRef();
 		if (m_block) {
 			m_block->addRef();
@@ -513,9 +513,22 @@ public:
 		if (m_block) {
 			m_block->delRef();
 		}
+		if (m_else) {
+			m_else->delRef();
+		}
 	}
 
+	Expression* get_block() throw() { return m_block; }
 	Expression* get_condition() throw() { return m_condition; }
+
+	Expression* get_else() throw() { return m_else; }
+	void set_else(Expression* expr) {
+		m_else = expr;
+
+		if (m_else) {
+			m_else->addRef();
+		}
+	}
 
 	void addElseIf(Expression* expr) {
 		m_elsif.push_back(expr);
@@ -527,6 +540,7 @@ public:
 private:
 	Expression* m_condition;
 	Expression* m_block;
+	Expression* m_else;
 	NodeList m_elsif;
 
 	DISALLOW_COPY_AND_ASSIGN(IfExpression);
@@ -561,19 +575,6 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(ElseIfExpression);
 };
 
-class ElseExpression : public Expression {
-public:
-	ElseExpression() { }
-
-	~ElseExpression() { }
-
-	void accept(ASTVisitor& visitor) throw() {
-		visitor.visit(this);
-	}
-private:
-	DISALLOW_COPY_AND_ASSIGN(ElseExpression);
-};
-
 class WhileExpression : public Expression {
 public:
 	WhileExpression(Expression* condition, Expression* block)
@@ -605,20 +606,6 @@ private:
 
 	DISALLOW_COPY_AND_ASSIGN(WhileExpression);
 };
-
-class EndIfExpression : public Expression {
-public:
-	EndIfExpression() { }
-
-	~EndIfExpression() { }
-
-	void accept(ASTVisitor& visitor) throw() {
-		visitor.visit(this);
-	}
-private:
-	DISALLOW_COPY_AND_ASSIGN(EndIfExpression);
-};
-
 
 class LogicExpression : public Expression {
 public:

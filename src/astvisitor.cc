@@ -294,16 +294,36 @@ AST_VISITOR(PosDecrement) {
  * Generates the JMPZ opcode for IF expression
  */
 AST_VISITOR(IfExpression) {
-	Value* value = getValue(expr->get_condition());
-	Opcode* opcode = new Opcode(OP_JMPZ, &VM::jmpz_handler, value);
-	Jmp jmp;
+	Value* value;
+	Opcode* jmp_if = new Opcode(OP_JMPZ, &VM::jmpz_handler);
+	Opcode* jmp_else;
 
-	jmp.push(opcode);
-	m_jmps.push(jmp);
+	expr->get_condition()->accept(*this);
 
+	value = getValue(expr->get_condition());
 	value->addRef();
 
-	pushOpcode(opcode);
+	jmp_if->set_op1(value);
+	pushOpcode(jmp_if);
+
+	if (expr->get_block()) {
+		expr->get_block()->accept(*this);
+	}
+
+	if (expr->get_else()) {
+		jmp_else = new Opcode(OP_JMP, &VM::jmp_handler);
+
+		jmp_if->set_jmp_addr1(getOpNum()+2);
+		pushOpcode(jmp_else);
+
+		expr->get_else()->accept(*this);
+
+		jmp_else->set_jmp_addr2(getOpNum()+1);
+	} else {
+		jmp_if->set_jmp_addr1(getOpNum()+1);
+	}
+
+	jmp_if->set_jmp_addr2(getOpNum()+1);
 }
 
 /**
@@ -319,18 +339,6 @@ AST_VISITOR(ElseIfExpression) {
 	m_jmps.top().push(opcode);
 
 	value->addRef();
-	pushOpcode(opcode);
-}
-
-/**
- * Generates a JMP opcode for ELSE expression
- */
-AST_VISITOR(ElseExpression) {
-	Opcode* opcode = new Opcode(OP_JMP, &VM::jmp_handler);
-
-	m_jmps.top().top()->set_jmp_addr1(getOpNum()+2);
-	m_jmps.top().push(opcode);
-
 	pushOpcode(opcode);
 }
 

@@ -43,7 +43,6 @@ class PreIncrement;
 class PreDecrement;
 class IfExpression;
 class ElseIfExpression;
-class ElseExpression;
 class WhileExpression;
 class StartExpr;
 class LogicExpression;
@@ -127,7 +126,6 @@ public:
 	AST_VISITOR_DECL(EndBlock);
 	AST_VISITOR_DECL(IfExpression);
 	AST_VISITOR_DECL(ElseIfExpression);
-	AST_VISITOR_DECL(ElseExpression);
 	AST_VISITOR_DECL(EndIfExpression);
 	AST_VISITOR_DECL(WhileExpression);
 	AST_VISITOR_DECL(LogicExpression);

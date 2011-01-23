@@ -167,7 +167,7 @@ method_call:
 ;
 
 variable_declaration_no_init:
-		TYPE IDENT	{ $0->add(new clever::ast::VariableDecl($1, $2)); }
+		TYPE IDENT	{ tree.top()->add(new clever::ast::VariableDecl($1, $2)); }
 ;
 
 variable_declaration:
@@ -243,7 +243,7 @@ while_stmt:
 
 if_stmt:
 		IF '(' expr ')' block_stmt { $2 = new clever::ast::IfExpression($3, $5); $$ = $2; }
-		elseif_opt else_opt { $$ = $2; }
+		elseif_opt else_opt { static_cast<clever::ast::IfExpression*>($2)->set_else($8); $$ = $2; }
 ;
 
 elseif_opt:
@@ -255,12 +255,12 @@ elseif_opt:
 ;
 
 else_opt:
-		/* empty */
-	|	ELSE block_stmt { $$ = $2; }
+		/* empty */		{ $$ = NULL; }
+	|	ELSE block_stmt { $$ = $2;   }
 ;
 
 break_stmt:
-		BREAK { $0->add(new clever::ast::BreakExpression()); }
+		BREAK { tree.top()->add(new clever::ast::BreakExpression()); }
 ;
 
 import_stmt:
