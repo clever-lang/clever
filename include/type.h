@@ -28,7 +28,7 @@
 #ifndef CLEVER_TYPE_H
 #define CLEVER_TYPE_H
 
-#include <string>
+#include <cstring>
 #include <tr1/unordered_map>
 #include "module.h"
 

@@ -28,8 +28,8 @@
 #ifndef CLEVER_MODULE_H
 #define CLEVER_MODULE_H
 
+#include <cstring>
 #include <vector>
-#include <string>
 #include <list>
 #include <map>
 #include <tr1/unordered_map>

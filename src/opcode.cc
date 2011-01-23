@@ -26,7 +26,6 @@
  */
 
 #include <cstdio>
-#include <string>
 #include <sstream>
 #include "opcode.h"
 #include "value.h"

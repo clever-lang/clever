@@ -28,7 +28,7 @@
 #ifndef CLEVER_DRIVER_H
 #define CLEVER_DRIVER_H
 
-#include <string>
+#include <cstring>
 #include <stack>
 #include "parser.hh"
 #include "compiler.h"

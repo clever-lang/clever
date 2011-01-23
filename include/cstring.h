@@ -28,7 +28,7 @@
 #ifndef CLEVER_CSTRING_H
 #define CLEVER_CSTRING_H
 
-#include <string>
+#include <cstring>
 #include <tr1/unordered_map>
 #include "global.h"
 
