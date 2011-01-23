@@ -40,7 +40,7 @@
 /**
  * Change the executor flow to run another opcode
  */
-#define CLEVER_VM_GOTO(x) next_op = (x)-1; return
+#define CLEVER_VM_GOTO(x) next_op = (x); return
 
 namespace clever {
 

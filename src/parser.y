@@ -135,8 +135,9 @@ statement_list_non_empty:
 ;
 
 block_stmt:
-		'{' '}'                          { $$ = NULL; }
-	|	'{' { $1 = new clever::ast::BlockExpression(); tree.push($1); } statement_list_non_empty '}' { tree.pop(); $$ = $1; }
+		'{' '}'                      { $$ = NULL; }
+	|	'{'                          { $1 = new clever::ast::BlockExpression(); tree.push($1); }
+		statement_list_non_empty '}' { tree.pop(); $$ = $1; }
 ;
 
 statements:
@@ -145,15 +146,15 @@ statements:
 	|	if_stmt                  { tree.top()->add($1); $$ = $1; }
 	|	for_stmt
 	|	while_stmt               { tree.top()->add($1); $$ = $1; }
-	|	block_stmt
+	|	block_stmt               { tree.top()->add($1); $$ = $1; }
 	|	break_stmt ';'           { tree.top()->add($1); $$ = $1; }
 	|	assign_stmt ';'          { tree.top()->add($1); $$ = $1; }
 	|	import_stmt ';'          { tree.top()->add($1); $$ = $1; }
 ;
 
 arg_list:
-		arg_list ',' expr  { clever::ast::ArgumentList* args = static_cast<clever::ast::ArgumentList*>($1); args->push($3); $$ = args; }
-	|	expr               { clever::ast::ArgumentList* args = new clever::ast::ArgumentList(); args->push($1); $$ = args; }
+		arg_list ',' expr  { $1->add($3); $$ = $1; }
+	|	expr               { $$ = new clever::ast::ArgumentList; $$->add($1); }
 ;
 
 func_call:
@@ -235,23 +236,17 @@ for_stmt:
 ;
 
 while_stmt:
-		WHILE '(' expr ')' block_stmt
-		{
-			$$ = new clever::ast::WhileExpression($3, $5);
-		}
+		WHILE '(' expr ')' block_stmt { $$ = new clever::ast::WhileExpression($3, $5); }
 ;
 
 if_stmt:
-		IF '(' expr ')' block_stmt { $2 = new clever::ast::IfExpression($3, $5); $$ = $2; }
-		elseif_opt else_opt { static_cast<clever::ast::IfExpression*>($2)->set_else($8); $$ = $2; }
+		IF '(' expr ')' block_stmt { $2 = new clever::ast::IfExpression($3, $5); $$ = $2;                }
+		elseif_opt else_opt        { static_cast<clever::ast::IfExpression*>($2)->set_else($8); $$ = $2; }
 ;
 
 elseif_opt:
 		/* empty */
-	|	elseif_opt ELSEIF '(' expr ')' block_stmt
-		{
-			static_cast<clever::ast::IfExpression*>($0)->addElseIf(new clever::ast::ElseIfExpression($4, $6));
-		}
+	|	elseif_opt ELSEIF '(' expr ')' block_stmt { $0->add(new clever::ast::ElseIfExpression($4, $6)); }
 ;
 
 else_opt:
@@ -270,7 +265,6 @@ import_stmt:
 
 %%
 
-void clever::Parser::error(const clever::Parser::location_type& line, const std::string& message)
-{
+void clever::Parser::error(const clever::Parser::location_type& line, const std::string& message) {
 	driver.error(line, message);
 }

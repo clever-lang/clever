@@ -76,12 +76,17 @@ public:
 
 	virtual ~Expression() { }
 
-	void add(Expression* node) {
+	/**
+	 * Adds a new child node
+	 */
+	void add(Expression* node) throw() {
 		node->addRef();
 		m_nodes.push_back(node);
 	}
-
-	void clearNodes() {
+	/**
+	 * Calls delRef() for each child node
+	 */
+	void clearNodes() const throw() {
 		NodeList::const_iterator it = m_nodes.begin(), end = m_nodes.end();
 
 		while (it != end) {
@@ -89,10 +94,14 @@ public:
 			++it;
 		}
 	}
-
-	NodeList& getNodes() {
-		return m_nodes;
-	}
+	/**
+	 * Checks if the node has child
+	 */
+	bool hasNodes() const throw() { return m_nodes.size() != 0; }
+	/**
+	 * Returns the node vector
+	 */
+	NodeList& getNodes() throw() { return m_nodes; }
 	/**
 	 * Indicates if the node is optimized
 	 */
@@ -109,7 +118,6 @@ public:
 	 * Method for generating the expression IR
 	 */
 	virtual void accept(ASTVisitor& visitor) throw() { }
-
 	virtual void set_expr(Expression* expr) throw() { }
 	virtual void set_block(Expression* expr) throw() { }
 protected:
@@ -347,12 +355,7 @@ public:
 	}
 
 	void accept(ASTVisitor& visitor) throw() {
-		NodeList::const_iterator it = m_nodes.begin(), end = m_nodes.end();
-
-		while (it != end) {
-			(*it)->accept(visitor);
-			++it;
-		}
+		visitor.visit(this);
 	}
 private:
 	DISALLOW_COPY_AND_ASSIGN(BlockExpression);
@@ -496,28 +499,22 @@ public:
 		if (m_else) {
 			m_else->delRef();
 		}
+		clearNodes();
 	}
 
 	bool hasBlock() throw() { return m_block != NULL; }
 	bool hasElseBlock() throw() { return m_else != NULL; }
+	bool hasElseIf() throw() { return m_nodes.size() != 0; }
 
 	Expression* get_block() throw() { return m_block; }
 	Expression* get_condition() throw() { return m_condition; }
 
 	Expression* get_else() throw() { return m_else; }
 	void set_else(Expression* expr) {
-		m_else = expr;
-
-		if (m_else) {
+		if (expr) {
+			m_else = expr;
 			m_else->addRef();
 		}
-	}
-
-	bool hasElseIf() throw() { return m_elseif.size() != 0; }
-	NodeList& getElseIfNodes() { return m_elseif; }
-
-	void addElseIf(Expression* expr) {
-		m_elseif.push_back(expr);
 	}
 
 	void accept(ASTVisitor& visitor) throw() {
@@ -527,7 +524,6 @@ private:
 	Expression* m_condition;
 	Expression* m_block;
 	Expression* m_else;
-	NodeList m_elseif;
 
 	DISALLOW_COPY_AND_ASSIGN(IfExpression);
 };
@@ -614,25 +610,13 @@ public:
 		}
 	}
 
-	int get_op() const {
-		return m_op;
-	}
+	int get_op() const { return m_op; }
+	Expression* get_lhs() const { return m_lhs; }
+	Expression* get_rhs() const { return m_rhs; }
 
-	Expression* get_lhs() const {
-		return m_lhs;
-	}
+	void set_result(Value* value) { m_result = value; }
 
-	Expression* get_rhs() const {
-		return m_rhs;
-	}
-
-	void set_result(Value* value) {
-		m_result = value;
-	}
-
-	Value* get_value() const throw() {
-		return m_result;
-	}
+	Value* get_value() const throw() { return m_result; }
 
 	void accept(ASTVisitor& visitor) throw() {
 		m_lhs->accept(visitor);
@@ -653,7 +637,7 @@ class BreakExpression : public Expression {
 public:
 	BreakExpression() { }
 
-	~BreakExpression() { std::cout << "call" << std::endl; }
+	~BreakExpression() { }
 
 	void accept(ASTVisitor& visitor) throw() {
 		visitor.visit(this);
@@ -667,27 +651,9 @@ public:
 	ArgumentList() { }
 
 	~ArgumentList() {
-		Arguments::const_iterator it = m_args.begin(), end(m_args.end());
-
-		while (it != end) {
-			(*it)->delRef();
-			++it;
-		}
-		m_args.clear();
-	}
-
-	void push(Expression* expr) {
-		expr->addRef();
-		m_args.push_back(expr);
-	}
-
-	Arguments* get_args() throw() {
-		return &m_args;
+		clearNodes();
 	}
 private:
-	Value* m_value;
-	Arguments m_args;
-
 	DISALLOW_COPY_AND_ASSIGN(ArgumentList);
 };
 
@@ -712,26 +678,13 @@ public:
 		}
 	}
 
-	Value* get_value() const throw() {
-		return m_result;
-	}
+	Value* get_value() const throw() { return m_result; }
 
-	Value* get_func() const throw() {
-		return m_name->get_value();
-	}
+	Value* get_func() const throw() { return m_name->get_value(); }
 
-	Arguments* get_args() throw() {
-		ArgumentList* args;
-
-		if (!m_args) {
-			return NULL;
-		}
-		args = static_cast<ArgumentList*>(m_args);
-		return args->get_args();
-	}
+	Expression* get_args() throw() { return m_args; }
 
 	void accept(ASTVisitor& visitor) throw() {
-
 		visitor.visit(this);
 	}
 private:
@@ -767,27 +720,11 @@ public:
 		}
 	}
 
-	Expression* get_variable() const throw() {
-		return m_var;
-	}
+	Expression* get_variable() const throw() { return m_var; }
+	Expression* get_method() const throw() { return m_method; }
+	Expression* get_args() const throw() { return m_args; }
 
-	Expression* get_method() const throw() {
-		return m_method;
-	}
-
-	Arguments* get_args() const throw() {
-		ArgumentList* args;
-
-		if (!m_args) {
-			return NULL;
-		}
-		args = static_cast<ArgumentList*>(m_args);
-		return args->get_args();
-	}
-
-	Value* get_value() const throw() {
-		return m_result;
-	}
+	Value* get_value() const throw() { return m_result; }
 
 	void accept(ASTVisitor& visitor) throw() {
 		visitor.visit(this);
@@ -817,6 +754,7 @@ public:
 	Expression* get_rhs() const throw() { return m_rhs; }
 
 	void accept(ASTVisitor& visitor) throw() {
+		m_rhs->accept(visitor);
 		visitor.visit(this);
 	}
 private:

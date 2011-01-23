@@ -44,24 +44,25 @@ class PreDecrement;
 class IfExpression;
 class ElseIfExpression;
 class WhileExpression;
-class StartExpr;
 class LogicExpression;
 class FunctionCall;
 class MethodCall;
 class Assignment;
 class Import;
-class EndIfExpression;
 class BreakExpression;
-
-typedef std::vector<Expression*> Arguments;
+class BlockExpression;
+class ArgumentList;
 
 #define AST_VISITOR(type) void ASTVisitor::visit(type* expr) throw()
 #define AST_VISITOR_DECL(type) void visit(type* expr) throw()
 
+/**
+ * AST Visitor
+ */
 class ASTVisitor {
 public:
-	typedef std::stack<Opcode*> Jmp;
-	typedef std::stack<Jmp> JmpStack;
+	typedef std::stack<Opcode*> OpcodeStack;
+	typedef std::stack<OpcodeStack> JmpStack;
 
 	ASTVisitor() { }
 
@@ -78,7 +79,7 @@ public:
 	/**
 	 * Builds the function arguments vector
 	 */
-	ValueVector* functionArgs(const ast::Arguments*) throw();
+	ValueVector* functionArgs(ast::ArgumentList*) throw();
 	/**
 	 * Returns the Value pointer according with value type
 	 */
@@ -120,6 +121,7 @@ public:
 	AST_VISITOR_DECL(PosIncrement);
 	AST_VISITOR_DECL(PreDecrement);
 	AST_VISITOR_DECL(PosDecrement);
+	AST_VISITOR_DECL(BlockExpression);
 	AST_VISITOR_DECL(IfExpression);
 	AST_VISITOR_DECL(WhileExpression);
 	AST_VISITOR_DECL(LogicExpression);
@@ -131,8 +133,9 @@ public:
 private:
 	OpcodeList m_opcodes;
 	SSA m_ssa;
-	JmpStack m_jmps;
 	JmpStack m_brks;
+
+	DISALLOW_COPY_AND_ASSIGN(ASTVisitor);
 };
 
 }} // clever::ast

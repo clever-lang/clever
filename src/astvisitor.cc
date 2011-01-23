@@ -33,7 +33,6 @@
 
 namespace clever { namespace ast {
 
-
 /**
  * Displays an error message
  */
@@ -214,14 +213,28 @@ AST_VISITOR(VariableDecl) {
 
 		m_ssa.pushVar(variable);
 
-		variable->setInitialized();
-		variable->copy(value);
+		if (value->isConst()) {
+			variable->setInitialized();
+			variable->copy(value);
+		}
 
 		variable->addRef();
 		value->addRef();
 
 		pushOpcode(new Opcode(OP_VAR_DECL, &VM::var_decl_handler, variable, value));
 	} else {
+		m_ssa.pushVar(variable);
+
+		/* TODO: fix this */
+		if (type == TypeTable::getType(CSTRING("Int"))) {
+			variable->set_type(Value::INTEGER);
+		}
+
+		variable->initialize();
+		variable->setInitialized();
+
+		variable->addRef();
+
 		pushOpcode(new Opcode(OP_VAR_DECL, &VM::var_decl_handler, variable));
 	}
 }
@@ -275,7 +288,7 @@ AST_VISITOR(PosDecrement) {
 }
 
 /**
- * Generates the JMPZ opcode for IF expression
+ * Generates the opcode for the IF-ELSEIF-ELSE expression
  */
 AST_VISITOR(IfExpression) {
 	Value* value;
@@ -295,13 +308,11 @@ AST_VISITOR(IfExpression) {
 	jmp_ops.push_back(jmp_if);
 
 	if (expr->hasBlock()) {
-		m_ssa.newBlock();
 		expr->get_block()->accept(*this);
-		m_ssa.endBlock();
 	}
 
 	if (expr->hasElseIf()) {
-		NodeList& elseif_nodes = expr->getElseIfNodes();
+		NodeList& elseif_nodes = expr->getNodes();
 		NodeList::const_iterator it = elseif_nodes.begin(), end = elseif_nodes.end();
 		Opcode* last_jmp = jmp_if;
 
@@ -309,11 +320,12 @@ AST_VISITOR(IfExpression) {
 			Value* cond;
 			ast::ElseIfExpression* elseif = static_cast<ast::ElseIfExpression*>(*it);
 
-			last_jmp->set_jmp_addr1(getOpNum()+1);
+			last_jmp->set_jmp_addr1(getOpNum());
 
 			elseif->get_condition()->accept(*this);
 
 			cond = getValue(elseif->get_condition());
+			cond->addRef();
 
 			jmp_elseif = new Opcode(OP_JMPZ, &VM::jmpz_handler, cond);
 			pushOpcode(jmp_elseif);
@@ -321,9 +333,7 @@ AST_VISITOR(IfExpression) {
 			jmp_ops.push_back(jmp_elseif);
 
 			if (elseif->hasBlock()) {
-				m_ssa.newBlock();
 				elseif->get_block()->accept(*this);
-				m_ssa.endBlock();
 			}
 
 			last_jmp = jmp_elseif;
@@ -334,30 +344,55 @@ AST_VISITOR(IfExpression) {
 	if (expr->hasElseBlock()) {
 		jmp_else = new Opcode(OP_JMP, &VM::jmp_handler);
 
-		if (jmp_ops.size() == 1) {
-			jmp_if->set_jmp_addr1(getOpNum()+2);
-		}
-
 		pushOpcode(jmp_else);
+
+		if (jmp_ops.size() == 1) {
+			jmp_if->set_jmp_addr1(getOpNum());
+		}
 
 		jmp_ops.push_back(jmp_else);
 
-		m_ssa.newBlock();
 		expr->get_else()->accept(*this);
-		m_ssa.endBlock();
 	}
 
 	if (jmp_ops.size() == 1) {
-		jmp_if->set_jmp_addr1(getOpNum()+1);
-		jmp_if->set_jmp_addr2(getOpNum()+1);
+		jmp_if->set_jmp_addr1(getOpNum());
+		jmp_if->set_jmp_addr2(getOpNum());
 	} else {
 		OpcodeList::iterator it = jmp_ops.begin(), end = jmp_ops.end();
 
 		while (it != end) {
-			(*it)->set_jmp_addr2(getOpNum()+1);
+			(*it)->set_jmp_addr2(getOpNum());
 			++it;
 		}
 	}
+}
+
+/**
+ * Call the accept method of each block node
+ */
+AST_VISITOR(BlockExpression) {
+	NodeList& nodes = expr->getNodes();
+	NodeList::const_iterator it = nodes.begin(), end = nodes.end();
+	ASTVisitor& visitor = *this;
+
+	/**
+	 * Create a new scope
+	 */
+	m_ssa.newBlock();
+
+	/**
+	 * Iterates statements inside the block
+	 */
+	while (it != end) {
+		(*it)->accept(visitor);
+		++it;
+	}
+
+	/**
+	 * Pops the scope
+	 */
+	m_ssa.endBlock();
 }
 
 /**
@@ -369,7 +404,7 @@ AST_VISITOR(WhileExpression) {
 	Opcode* jmp;
 	unsigned int start_pos = 0;
 
-	start_pos = getOpNum()+1;
+	start_pos = getOpNum();
 
 	expr->get_condition()->accept(*this);
 
@@ -380,19 +415,25 @@ AST_VISITOR(WhileExpression) {
 	pushOpcode(jmpz);
 
 	if (expr->hasBlock()) {
-		m_ssa.newBlock();
+		m_brks.push(OpcodeStack());
+
 		expr->get_block()->accept(*this);
-		m_ssa.endBlock();
+
+		/**
+		 * Points break statements to out of WHILE block
+		 */
+		while (!m_brks.top().empty()) {
+			m_brks.top().top()->set_jmp_addr1(getOpNum()+1);
+			m_brks.top().pop();
+		}
+		m_brks.pop();
 	}
 
 	jmp = new Opcode(OP_JMP, &VM::jmp_handler);
 	jmp->set_jmp_addr2(start_pos);
-
 	pushOpcode(jmp);
 
-	jmpz->set_jmp_addr1(getOpNum()+1);
-
-	m_brks.push(Jmp());
+	jmpz->set_jmp_addr1(getOpNum());
 }
 
 
@@ -450,11 +491,12 @@ AST_VISITOR(BreakExpression) {
 /**
  * Creates a vector with the current value from a Value* pointers
  */
-ValueVector* ASTVisitor::functionArgs(const ast::Arguments* args) throw() {
+ValueVector* ASTVisitor::functionArgs(ast::ArgumentList* args) throw() {
 	ValueVector* values = new ValueVector();
-	ast::Arguments::const_iterator it = args->begin(), end(args->end());
+	const NodeList& nodes = args->getNodes();
+	NodeList::const_iterator it = nodes.begin(), end = nodes.end();
 
-	values->reserve(args->size());
+	values->reserve(nodes.size());
 
 	while (it != end) {
 		Value* value;
@@ -462,10 +504,8 @@ ValueVector* ASTVisitor::functionArgs(const ast::Arguments* args) throw() {
 		(*it)->accept(*this);
 
 		value = getValue(*it);
+		value->addRef();
 
-		if (value) {
-			value->addRef();
-		}
 		values->push_back(value);
 		++it;
 	}
@@ -480,7 +520,7 @@ AST_VISITOR(FunctionCall) {
 	const CString* name = expr->get_func()->get_name();
 	FunctionPtr func = Compiler::getFunction(*name);
 	CallableValue* call = new CallableValue(name);
-	const ast::Arguments* args = expr->get_args();
+	Expression* args = expr->get_args();
 	Value* arg_values = NULL;
 
 	if (!func) {
@@ -492,7 +532,7 @@ AST_VISITOR(FunctionCall) {
 	if (args) {
 		arg_values = new Value;
 		arg_values->set_type(Value::VECTOR);
-		arg_values->setVector(functionArgs(args));
+		arg_values->setVector(functionArgs(static_cast<ArgumentList*>(args)));
 	}
 
 	pushOpcode(new Opcode(OP_FCALL, &VM::fcall_handler, call, arg_values, expr->get_value()));
@@ -505,7 +545,7 @@ AST_VISITOR(MethodCall) {
 	Value* variable = getValue(expr->get_variable());
 	CallableValue* call = new CallableValue(expr->get_method()->get_value()->get_name());
 	const MethodPtr method = variable->get_type_ptr()->getMethod(call->get_name());
-	const ast::Arguments* args = expr->get_args();
+	Expression* args = expr->get_args();
 	Value* arg_values = NULL;
 
 	if (!method) {
@@ -519,7 +559,7 @@ AST_VISITOR(MethodCall) {
 	if (args) {
 		arg_values = new Value;
 		arg_values->set_type(Value::VECTOR);
-		arg_values->setVector(functionArgs(args));
+		arg_values->setVector(functionArgs(static_cast<ArgumentList*>(args)));
 	}
 	pushOpcode(new Opcode(OP_MCALL, &VM::mcall_handler, call, arg_values, expr->get_value()));
 }

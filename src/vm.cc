@@ -239,11 +239,9 @@ CLEVER_VM_HANDLER(VM::mod_handler) {
 CLEVER_VM_HANDLER(VM::var_decl_handler) {
 	const Value* value = opcode.get_op2();
 
-	/* TODO: Make the type initialization here */
-	if (!value) {
-		error("Uninitialized variable!");
+	if (value) {
+		opcode.get_op1()->copy(value);
 	}
-	opcode.get_op1()->copy(value);
 }
 
 /**
