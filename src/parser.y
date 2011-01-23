@@ -146,9 +146,9 @@ statements:
 	|	for_stmt
 	|	while_stmt               { tree.top()->add($1); $$ = $1; }
 	|	block_stmt
-	|	break_stmt ';'
+	|	break_stmt ';'           { tree.top()->add($1); $$ = $1; }
 	|	assign_stmt ';'          { tree.top()->add($1); $$ = $1; }
-	|	import_stmt ';'
+	|	import_stmt ';'          { tree.top()->add($1); $$ = $1; }
 ;
 
 arg_list:
@@ -167,13 +167,13 @@ method_call:
 ;
 
 variable_declaration_no_init:
-		TYPE IDENT	{ tree.top()->add(new clever::ast::VariableDecl($1, $2)); }
+		TYPE IDENT	{ $$ = new clever::ast::VariableDecl($1, $2); }
 ;
 
 variable_declaration:
 		TYPE IDENT '=' type_creation { $$ = new clever::ast::VariableDecl($1, $2, $4); }
 	|	TYPE IDENT '=' expr          { $$ = new clever::ast::VariableDecl($1, $2, $4); }
-	|	variable_declaration_no_init
+	|	variable_declaration_no_init { $$ = $1; }
 ;
 
 assign_stmt:
@@ -260,12 +260,12 @@ else_opt:
 ;
 
 break_stmt:
-		BREAK { tree.top()->add(new clever::ast::BreakExpression()); }
+		BREAK { $$ = new clever::ast::BreakExpression(); }
 ;
 
 import_stmt:
-		IMPORT IDENT { tree.top()->add(new clever::ast::Import($2)); }
-	|	IMPORT IDENT '.' IDENT { tree.top()->add(new clever::ast::Import($2, $4)); }
+		IMPORT IDENT           { $$ = new clever::ast::Import($2);     }
+	|	IMPORT IDENT '.' IDENT { $$ = new clever::ast::Import($2, $4); }
 ;
 
 %%

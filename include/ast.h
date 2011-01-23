@@ -268,6 +268,9 @@ public:
 	}
 
 	void accept(ASTVisitor& visitor) throw() {
+		if (m_initial_value) {
+			m_initial_value->accept(visitor);
+		}
 		visitor.visit(this);
 	}
 private:
@@ -353,32 +356,6 @@ public:
 	}
 private:
 	DISALLOW_COPY_AND_ASSIGN(BlockExpression);
-};
-
-class NewBlock : public Expression {
-public:
-	NewBlock() { }
-
-	~NewBlock() { }
-
-	void accept(ASTVisitor& visitor) throw() {
-		visitor.visit(this);
-	}
-private:
-	DISALLOW_COPY_AND_ASSIGN(NewBlock);
-};
-
-class EndBlock : public Expression {
-public:
-	EndBlock() { }
-
-	~EndBlock() { }
-
-	void accept(ASTVisitor& visitor) throw() {
-		visitor.visit(this);
-	}
-private:
-	DISALLOW_COPY_AND_ASSIGN(EndBlock);
 };
 
 class PreIncrement : public Expression {
@@ -521,6 +498,9 @@ public:
 		}
 	}
 
+	bool hasBlock() throw() { return m_block != NULL; }
+	bool hasElseBlock() throw() { return m_else != NULL; }
+
 	Expression* get_block() throw() { return m_block; }
 	Expression* get_condition() throw() { return m_condition; }
 
@@ -597,6 +577,8 @@ public:
 		}
 	}
 
+	bool hasBlock() throw() { return m_block != NULL; }
+
 	Expression* get_condition() throw() { return m_condition; }
 	Expression* get_block() throw() { return m_block; }
 
@@ -651,6 +633,9 @@ public:
 	}
 
 	void accept(ASTVisitor& visitor) throw() {
+		m_lhs->accept(visitor);
+		m_rhs->accept(visitor);
+
 		visitor.visit(this);
 	}
 private:

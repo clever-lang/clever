@@ -50,8 +50,6 @@ class FunctionCall;
 class MethodCall;
 class Assignment;
 class Import;
-class NewBlock;
-class EndBlock;
 class EndIfExpression;
 class BreakExpression;
 
@@ -122,8 +120,6 @@ public:
 	AST_VISITOR_DECL(PosIncrement);
 	AST_VISITOR_DECL(PreDecrement);
 	AST_VISITOR_DECL(PosDecrement);
-	AST_VISITOR_DECL(NewBlock);
-	AST_VISITOR_DECL(EndBlock);
 	AST_VISITOR_DECL(IfExpression);
 	AST_VISITOR_DECL(ElseIfExpression);
 	AST_VISITOR_DECL(EndIfExpression);

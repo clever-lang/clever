@@ -227,22 +227,6 @@ AST_VISITOR(VariableDecl) {
 }
 
 /**
- * Generates the new block opcode
- */
-AST_VISITOR(NewBlock) {
-	/* Initializes new scope */
-	m_ssa.newBlock();
-}
-
-/**
- * Generates the end block opcode
- */
-AST_VISITOR(EndBlock) {
-	/* Pop current scope */
-	m_ssa.endBlock();
-}
-
-/**
  * Generates the pre increment opcode
  */
 AST_VISITOR(PreIncrement) {
@@ -306,17 +290,21 @@ AST_VISITOR(IfExpression) {
 	jmp_if->set_op1(value);
 	pushOpcode(jmp_if);
 
-	if (expr->get_block()) {
+	if (expr->hasBlock()) {
+		m_ssa.newBlock();
 		expr->get_block()->accept(*this);
+		m_ssa.endBlock();
 	}
 
-	if (expr->get_else()) {
+	if (expr->hasElseBlock()) {
 		jmp_else = new Opcode(OP_JMP, &VM::jmp_handler);
 
 		jmp_if->set_jmp_addr1(getOpNum()+2);
 		pushOpcode(jmp_else);
 
+		m_ssa.newBlock();
 		expr->get_else()->accept(*this);
+		m_ssa.endBlock();
 
 		jmp_else->set_jmp_addr2(getOpNum()+1);
 	} else {
@@ -384,8 +372,10 @@ AST_VISITOR(WhileExpression) {
 	jmpz = new Opcode(OP_JMPZ, &VM::jmpz_handler, value);
 	pushOpcode(jmpz);
 
-	if (expr->get_block()) {
+	if (expr->hasBlock()) {
+		m_ssa.newBlock();
 		expr->get_block()->accept(*this);
+		m_ssa.endBlock();
 	}
 
 	jmp = new Opcode(OP_JMP, &VM::jmp_handler);
