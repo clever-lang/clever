@@ -98,6 +98,7 @@ static CLEVER_FUNCTION(ceil) {
 
 /**
  * abs(double x)
+ * abs(int x)
  * Returns the absolute value of a number x
  */
 static CLEVER_FUNCTION(abs) {
