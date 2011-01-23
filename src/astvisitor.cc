@@ -281,6 +281,8 @@ AST_VISITOR(IfExpression) {
 	Value* value;
 	Opcode* jmp_if = new Opcode(OP_JMPZ, &VM::jmpz_handler);
 	Opcode* jmp_else;
+	Opcode* jmp_elseif;
+	OpcodeList jmp_ops;
 
 	expr->get_condition()->accept(*this);
 
@@ -290,67 +292,72 @@ AST_VISITOR(IfExpression) {
 	jmp_if->set_op1(value);
 	pushOpcode(jmp_if);
 
+	jmp_ops.push_back(jmp_if);
+
 	if (expr->hasBlock()) {
 		m_ssa.newBlock();
 		expr->get_block()->accept(*this);
 		m_ssa.endBlock();
 	}
 
+	if (expr->hasElseIf()) {
+		NodeList& elseif_nodes = expr->getElseIfNodes();
+		NodeList::const_iterator it = elseif_nodes.begin(), end = elseif_nodes.end();
+		Opcode* last_jmp = jmp_if;
+
+		while (it != end) {
+			Value* cond;
+			ast::ElseIfExpression* elseif = static_cast<ast::ElseIfExpression*>(*it);
+
+			last_jmp->set_jmp_addr1(getOpNum()+1);
+
+			elseif->get_condition()->accept(*this);
+
+			cond = getValue(elseif->get_condition());
+
+			jmp_elseif = new Opcode(OP_JMPZ, &VM::jmpz_handler, cond);
+			pushOpcode(jmp_elseif);
+
+			jmp_ops.push_back(jmp_elseif);
+
+			if (elseif->hasBlock()) {
+				m_ssa.newBlock();
+				elseif->get_block()->accept(*this);
+				m_ssa.endBlock();
+			}
+
+			last_jmp = jmp_elseif;
+			++it;
+		}
+	}
+
 	if (expr->hasElseBlock()) {
 		jmp_else = new Opcode(OP_JMP, &VM::jmp_handler);
 
-		jmp_if->set_jmp_addr1(getOpNum()+2);
+		if (jmp_ops.size() == 1) {
+			jmp_if->set_jmp_addr1(getOpNum()+2);
+		}
+
 		pushOpcode(jmp_else);
+
+		jmp_ops.push_back(jmp_else);
 
 		m_ssa.newBlock();
 		expr->get_else()->accept(*this);
 		m_ssa.endBlock();
+	}
 
-		jmp_else->set_jmp_addr2(getOpNum()+1);
-	} else {
+	if (jmp_ops.size() == 1) {
 		jmp_if->set_jmp_addr1(getOpNum()+1);
+		jmp_if->set_jmp_addr2(getOpNum()+1);
+	} else {
+		OpcodeList::iterator it = jmp_ops.begin(), end = jmp_ops.end();
+
+		while (it != end) {
+			(*it)->set_jmp_addr2(getOpNum()+1);
+			++it;
+		}
 	}
-
-	jmp_if->set_jmp_addr2(getOpNum()+1);
-}
-
-/**
- * Generates a JMPZ opcode for ELSEIF expression
- */
-AST_VISITOR(ElseIfExpression) {
-	Value* value = getValue(expr->get_condition());
-	Opcode* opcode = new Opcode(OP_JMPZ, &VM::jmpz_handler, value);
-	//ast::IfExpression* start_expr = static_cast<ast::IfExpression*>(expr->get_start_expr());
-
-	/* Sets the if jmp to start of the ELSEIF expr */
-	//m_jmps.top().top()->set_jmp_addr1(start_expr->get_op_num());
-	m_jmps.top().push(opcode);
-
-	value->addRef();
-	pushOpcode(opcode);
-}
-
-/**
- * Just set the jmp address of if-elsif-else to end of control structure
- */
-AST_VISITOR(EndIfExpression) {
-	Jmp jmp = m_jmps.top();
-
-	/* Sets the jmp addr for the IF when there is no ELSE */
-	if (m_jmps.top().size() == 1) {
-		m_jmps.top().top()->set_jmp_addr1(getOpNum()+1);
-	}
-
-	while (!jmp.empty()) {
-		Opcode* opcode = jmp.top();
-
-		/* Points to out of if-elsif-else block */
-		opcode->set_jmp_addr2(getOpNum()+1);
-
-		jmp.pop();
-	}
-
-	m_jmps.pop();
 }
 
 /**

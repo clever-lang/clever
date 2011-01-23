@@ -513,8 +513,11 @@ public:
 		}
 	}
 
+	bool hasElseIf() throw() { return m_elseif.size() != 0; }
+	NodeList& getElseIfNodes() { return m_elseif; }
+
 	void addElseIf(Expression* expr) {
-		m_elsif.push_back(expr);
+		m_elseif.push_back(expr);
 	}
 
 	void accept(ASTVisitor& visitor) throw() {
@@ -524,7 +527,7 @@ private:
 	Expression* m_condition;
 	Expression* m_block;
 	Expression* m_else;
-	NodeList m_elsif;
+	NodeList m_elseif;
 
 	DISALLOW_COPY_AND_ASSIGN(IfExpression);
 };
@@ -546,11 +549,10 @@ public:
 		}
 	}
 
-	Expression* get_condition() throw() { return m_condition; }
+	bool hasBlock() throw() { return m_block != NULL; }
 
-	void accept(ASTVisitor& visitor) throw() {
-		visitor.visit(this);
-	}
+	Expression* get_condition() throw() { return m_condition; }
+	Expression* get_block() throw() { return m_block; }
 private:
 	Expression* m_condition;
 	Expression* m_block;

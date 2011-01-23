@@ -121,8 +121,6 @@ public:
 	AST_VISITOR_DECL(PreDecrement);
 	AST_VISITOR_DECL(PosDecrement);
 	AST_VISITOR_DECL(IfExpression);
-	AST_VISITOR_DECL(ElseIfExpression);
-	AST_VISITOR_DECL(EndIfExpression);
 	AST_VISITOR_DECL(WhileExpression);
 	AST_VISITOR_DECL(LogicExpression);
 	AST_VISITOR_DECL(BreakExpression);
