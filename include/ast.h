@@ -500,70 +500,63 @@ private:
 
 class IfExpression : public Expression {
 public:
-	IfExpression() {
+	IfExpression(Expression* condition, Expression* block)
+		: m_condition(condition), m_block(block) {
+		m_condition->addRef();
+		if (m_block) {
+			m_block->addRef();
+		}
 	}
 
 	~IfExpression() {
-		if (m_expr) {
-			m_expr->delRef();
+		m_condition->delRef();
+		if (m_block) {
+			m_block->delRef();
 		}
 	}
 
-	unsigned int get_op_num() { return m_op_num; }
-	void set_op_num(unsigned int num) { m_op_num = num; }
+	Expression* get_condition() throw() { return m_condition; }
 
-	void set_expr(Expression* expr) throw() { m_expr = expr; }
-
-	Expression* get_expr() const { return m_expr; }
+	void addElseIf(Expression* expr) {
+		m_elsif.push_back(expr);
+	}
 
 	void accept(ASTVisitor& visitor) throw() {
-		NodeList::const_iterator it = m_nodes.begin(), end = m_nodes.end();
-
-		set_op_num(visitor.getOpNum()+1);
-
-		m_expr->accept(visitor);
-
 		visitor.visit(this);
-
-		while (it != end) {
-			(*it)->accept(visitor);
-			++it;
-		}
 	}
 private:
-	Expression* m_expr;
-	unsigned int m_op_num;
+	Expression* m_condition;
+	Expression* m_block;
+	NodeList m_elsif;
 
 	DISALLOW_COPY_AND_ASSIGN(IfExpression);
 };
 
 class ElseIfExpression : public Expression {
 public:
-	ElseIfExpression() { }
+	ElseIfExpression(Expression* condition, Expression* block)
+		: m_condition(condition), m_block(block) {
+		m_condition->addRef();
+		if (m_block) {
+			m_block->addRef();
+		}
+	}
 
 	~ElseIfExpression() {
-		if (m_expr) {
-			m_expr->delRef();
+		m_condition->delRef();
+		if (m_block) {
+			m_block->delRef();
 		}
 	}
 
-	void set_expr(Expression* expr) throw() { m_expr = expr; }
-	Expression* get_expr() const { return m_expr; }
+	Expression* get_condition() throw() { return m_condition; }
 
 	void accept(ASTVisitor& visitor) throw() {
-		NodeList::const_iterator it = m_nodes.begin(), end = m_nodes.end();
-
-		m_expr->accept(visitor);
-
 		visitor.visit(this);
-
-		while (it != end) {
-			(*it)->accept(visitor);
-			++it;
-		}
 	}
 private:
-	Expression* m_expr;
+	Expression* m_condition;
+	Expression* m_block;
 
 	DISALLOW_COPY_AND_ASSIGN(ElseIfExpression);
 };
@@ -761,6 +754,7 @@ public:
 	}
 
 	void accept(ASTVisitor& visitor) throw() {
+
 		visitor.visit(this);
 	}
 private:

@@ -294,7 +294,7 @@ AST_VISITOR(PosDecrement) {
  * Generates the JMPZ opcode for IF expression
  */
 AST_VISITOR(IfExpression) {
-	Value* value = getValue(expr->get_expr());
+	Value* value = getValue(expr->get_condition());
 	Opcode* opcode = new Opcode(OP_JMPZ, &VM::jmpz_handler, value);
 	Jmp jmp;
 
@@ -310,7 +310,7 @@ AST_VISITOR(IfExpression) {
  * Generates a JMPZ opcode for ELSEIF expression
  */
 AST_VISITOR(ElseIfExpression) {
-	Value* value = getValue(expr->get_expr());
+	Value* value = getValue(expr->get_condition());
 	Opcode* opcode = new Opcode(OP_JMPZ, &VM::jmpz_handler, value);
 	//ast::IfExpression* start_expr = static_cast<ast::IfExpression*>(expr->get_start_expr());
 
@@ -452,7 +452,11 @@ ValueVector* ASTVisitor::functionArgs(const ast::Arguments* args) throw() {
 	values->reserve(args->size());
 
 	while (it != end) {
-		Value* value = getValue(*it);
+		Value* value;
+
+		(*it)->accept(*this);
+
+		value = getValue(*it);
 
 		if (value) {
 			value->addRef();

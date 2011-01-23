@@ -142,7 +142,7 @@ block_stmt:
 statements:
 		expr ';'	             { tree.top()->add($1); $$ = $1; }
 	|	variable_declaration ';' { tree.top()->add($1); $$ = $1; }
-	|	if_stmt
+	|	if_stmt                  { tree.top()->add($1); $$ = $1; }
 	|	for_stmt
 	|	while_stmt               { tree.top()->add($1); $$ = $1; }
 	|	block_stmt
@@ -235,26 +235,28 @@ for_stmt:
 ;
 
 while_stmt:
-	WHILE '(' expr ')' block_stmt
-	{
-		$$ = new clever::ast::WhileExpression($3, $5);
-	}
+		WHILE '(' expr ')' block_stmt
+		{
+			$$ = new clever::ast::WhileExpression($3, $5);
+		}
 ;
 
 if_stmt:
-		IF '(' { $2 = new clever::ast::IfExpression(); $0->add($2); } expr ')' { $2->set_expr($4); $$ = $2; }
-		block_stmt { $$ = $2; } elseif_opt { $$ = $2; } else_opt { $2->add(new clever::ast::EndIfExpression()); }
+		IF '(' expr ')' block_stmt { $2 = new clever::ast::IfExpression($3, $5); $$ = $2; }
+		elseif_opt else_opt { $$ = $2; }
 ;
 
 elseif_opt:
-		/* empty */ { $$ = $0; }
-	|	elseif_opt ELSEIF '(' { $3 = new clever::ast::ElseIfExpression(); $0->add($3); $$ = $0; }
-		expr ')' { $3->set_expr($5); $$ = $0; } block_stmt
+		/* empty */
+	|	elseif_opt ELSEIF '(' expr ')' block_stmt
+		{
+			static_cast<clever::ast::IfExpression*>($0)->addElseIf(new clever::ast::ElseIfExpression($4, $6));
+		}
 ;
 
 else_opt:
 		/* empty */
-	|	ELSE { $0->add(new clever::ast::ElseExpression()); $$ = $0; } block_stmt
+	|	ELSE block_stmt { $$ = $2; }
 ;
 
 break_stmt:
