@@ -41,14 +41,7 @@ typedef std::tr1::unordered_map<const CString*, NamedValue*> ScopeBase;
 class Scope : public ScopeBase {
 public:
 	Scope() { }
-	~Scope() {
-		Scope::const_iterator it = begin(), end_it = end();
-
-		while (it != end_it) {
-			it->second->delRef();
-			++it;
-		}
-	}
+	~Scope() { }
 
 	void push(const CString* name, NamedValue* value) {
 		insert(std::pair<const CString*, NamedValue*>(name, value));
