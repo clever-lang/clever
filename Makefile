@@ -8,7 +8,7 @@ CPPFLAGS2=-c -O2 -ggdb -ansi -Iinclude/ -Ibuild/ -I. -fno-rtti -pedantic
 CPPFLAGS3=-ggdb
 # Linker
 LD=g++
-LFLAGS=
+LFLAGS=-O2 -fno-rtti
 # Bison, re2c
 BISON=bison
 RE2C=re2c

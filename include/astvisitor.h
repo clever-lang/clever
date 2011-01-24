@@ -67,12 +67,12 @@ public:
 	ASTVisitor() { }
 
 	void init() throw() {
-		m_ssa.newBlock();
+		m_ssa.beginScope();
 		m_opcodes.reserve(10);
 	}
 
 	void shutdown() throw() {
-		m_ssa.endBlock();
+		m_ssa.endScope();
 	}
 
 	~ASTVisitor() { }
@@ -81,9 +81,10 @@ public:
 	 */
 	ValueVector* functionArgs(ast::ArgumentList*) throw();
 	/**
-	 * Returns the Value pointer according with value type
+	 * Returns the Value pointer according with value type.
 	 */
 	Value* getValue(ast::Expression*) throw();
+
 	/**
 	 * Displays the error message and exits the program
 	 */

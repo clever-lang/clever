@@ -137,7 +137,7 @@ Value* ASTVisitor::getValue(ast::Expression* expr) throw() {
 	Value* value = expr->get_value();
 
 	if (value && value->hasName()) {
-		Value* var = m_ssa.fetchVar(value);
+		Value* var = m_ssa.fetchVar(static_cast<NamedValue*>(value));
 
 		/**
 		 * If the variable is found, we should use its pointer instead of
@@ -379,7 +379,7 @@ AST_VISITOR(BlockExpression) {
 	/**
 	 * Create a new scope
 	 */
-	m_ssa.newBlock();
+	m_ssa.beginScope();
 
 	/**
 	 * Iterates statements inside the block
@@ -392,7 +392,7 @@ AST_VISITOR(BlockExpression) {
 	/**
 	 * Pops the scope
 	 */
-	m_ssa.endBlock();
+	m_ssa.endScope();
 }
 
 /**

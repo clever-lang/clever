@@ -36,65 +36,130 @@ namespace clever {
 
 class CString;
 
+typedef std::tr1::unordered_map<const CString*, NamedValue*> ScopeBase;
+
+class Scope : public ScopeBase {
+public:
+	Scope() { }
+	~Scope() {
+		Scope::const_iterator it = begin(), end_it = end();
+
+		while (it != end_it) {
+			it->second->delRef();
+			++it;
+		}
+	}
+
+	void push(const CString* name, NamedValue* value) {
+		insert(std::pair<const CString*, NamedValue*>(name, value));
+	}
+
+	void push(NamedValue* value) {
+		if (!value->hasName()) {
+			// TODO: THROW ERROR HERE
+		}
+
+		push(value->get_name(), value);
+	}
+
+	NamedValue* fetch(const CString* name) {
+		if (!empty()) {
+			Scope::iterator it = find(name);
+
+			if (it != end())
+				return it->second;
+		}
+
+		return NULL;
+	}
+
+	NamedValue* fetch(const NamedValue* value) {
+		return fetch(value->get_name());
+	}
+};
+
 /**
  * Minimal SSA form
  */
-class SSA {
+typedef std::deque<Scope> SSABase;
+class SSA : public SSABase {
 public:
-	typedef std::tr1::unordered_map<const CString*, Value*> VarMap;
-	typedef std::deque<VarMap> VarScope;
-	typedef std::pair<const CString*, Value*> VarPair;
-
 	SSA()
-		: m_var_at(-1) { }
+		: m_scope(-1) { }
 
 	~SSA() { }
 
 	/**
 	 * Adds a new variable to current scope
 	 */
-	void pushVar(Value* var) throw() {
-		m_variables.at(m_var_at).insert(VarPair(var->get_name(), var));
+	void pushVar(const CString* name, NamedValue* var) throw() {
+		at(m_scope).push(name, var);
 	}
+
+	void pushVar(NamedValue* var) throw() {
+		at(m_scope).push(var->get_name(), var);
+	}
+
 	/**
 	 * Returns the Value* pointer if the name is found
 	 */
-	Value* fetchVar(Value* var) throw() {
-		const CString* name = var->get_name();
-
-		/* Searchs for the variable in the inner and out scopes */
-		for (int i = m_var_at; i >= 0; --i) {
-			VarMap::const_iterator it = m_variables.at(i).find(name);
-
-			if (it != m_variables.at(i).end()) {
-				return it->second;
-			}
+	NamedValue* fetchVar(const CString* name) throw() {
+		/* There is no scope to search, shit just got real. */
+		if (m_scope == -1) {
+			/* TODO: throw error or warning of unreslved symbol. */
+			return NULL;
 		}
-		return NULL;
+
+		NamedValue* value = at(m_scope).fetch(name);
+
+		if (value == NULL) {
+			value = deepValueSearch(name);
+		}
+
+		return value;
 	}
+
+	NamedValue* fetchVar(NamedValue* value) throw() {
+		return fetchVar(value->get_name());
+	}
+
 	/**
 	 * Creates a new scope block
 	 */
-	void newBlock() throw() {
-		m_variables.push_back(VarMap());
-		++m_var_at;
+	void beginScope() throw() {
+		push_back(Scope());
+		++m_scope;
 	}
-	/**
-	 * Returns the current scope block
-	 */
-	VarMap& topBlock() throw() {
-		return m_variables.at(m_var_at);
-	}
+	
 	/**
 	 * Terminates the current block
 	 */
-	void endBlock() throw() {
-		m_variables.pop_back();
-		--m_var_at;
+	void endScope() throw() {
+		pop_back();
+		--m_scope;
 	}
+
+	/**
+	 * Returns the current scope block
+	 */
+	Scope& currentScope() throw() {
+		return at(m_scope);
+	}
+
 private:
-	VarScope m_variables;
-	int m_var_at;
+	int m_scope;
+	
+	NamedValue* deepValueSearch(const CString* name) {
+		for (int i = m_scope-1; i >= 0; --i) {
+			NamedValue* value = at(i).fetch(name);
+
+			if (value) {
+				return value;
+			}
+		}
+
+		return NULL;
+	}
 
 	DISALLOW_COPY_AND_ASSIGN(SSA);
 };
