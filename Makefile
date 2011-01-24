@@ -3,12 +3,12 @@
 
 # Compiler
 CXX?=g++
-CXXFLAGS=-c -O2 -ggdb -ansi -Iinclude/ -Ibuild/ -Imodules/ -Iwin32/ -I. -fno-rtti -pedantic
-CXXFLAGS2=-c -O2 -ggdb -ansi -Iinclude/ -Ibuild/ -I. -fno-rtti -pedantic
-CXXFLAGS3=-ggdb
+CXXFLAGS=-c -O2 -ggdb -ansi -Iinclude/ -Ibuild/ -Imodules/ -Iwin32/ -I. -fno-rtti -pedantic -fno-exceptions
+CXXFLAGS2=-c -O2 -ggdb -ansi -Iinclude/ -Ibuild/ -I. -fno-rtti -pedantic -fno-exceptions
+CXXFLAGS3=-ggdb -O2
 # Linker
 LD=g++
-LFLAGS=-O2 -fno-rtti
+LFLAGS=-O2 -fno-rtti -fno-exceptions
 # Bison, re2c
 BISON=bison
 RE2C=re2c
