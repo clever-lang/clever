@@ -26,6 +26,7 @@
  */
 
 #include <iostream>
+#include <cstdlib>
 #include <vector>
 #include "compiler.h"
 #include "ast.h"
@@ -112,6 +113,103 @@ void Compiler::buildIR() throw() {
 	m_visitor->shutdown();
 
 	m_ast->clearNodes();
+}
+
+/**
+ * Displays an error message
+ */
+void Compiler::error(std::string message) throw() {
+	std::cerr << "Compile error: " << message << std::endl;
+	exit(1);
+}
+
+/**
+ * Performs a type compatible checking
+ */
+bool Compiler::checkCompatibleTypes(Value* lhs, Value* rhs) throw() {
+	/**
+	 * Constants with different type cannot performs operation
+	 */
+	if (lhs->isConst() && lhs->hasSameKind(rhs) && !lhs->hasSameType(rhs)) {
+		return false;
+	}
+	return true;
+}
+
+/**
+ * Performs a constant folding optimization
+ */
+ConstantValue* Compiler::constantFolding(int op, Value* lhs, Value* rhs) throw() {
+
+#define DO_NUM_OPERATION(_op, type, x, y) \
+	if (x->is##type()) return new ConstantValue(x->get##type() _op y->get##type());
+
+#define DO_STR_OPERATION(_op, x, y) \
+	if (x->isString()) return new ConstantValue(CSTRING(x->getString() _op y->getString()));
+
+	/**
+	 * Check if the variable value can be predicted
+	 */
+	if ((lhs->hasName() && lhs->isModified()) || (rhs->hasName() && rhs->isModified())) {
+		return NULL;
+	}
+
+	switch (op) {
+		case ast::PLUS:
+			DO_NUM_OPERATION(+, Integer, lhs, rhs);
+			DO_STR_OPERATION(+, lhs, rhs);
+			DO_NUM_OPERATION(+, Double, lhs, rhs);
+			break;
+		case ast::MINUS:
+			DO_NUM_OPERATION(-, Integer, lhs, rhs);
+			DO_NUM_OPERATION(-, Double, lhs, rhs);
+			break;
+		case ast::DIV:
+			DO_NUM_OPERATION(/, Integer, lhs, rhs);
+			DO_NUM_OPERATION(/, Double, lhs, rhs);
+			break;
+		case ast::MULT:
+			DO_NUM_OPERATION(*, Integer, lhs, rhs);
+			DO_NUM_OPERATION(*, Double, lhs, rhs);
+			break;
+		case ast::OR:
+			DO_NUM_OPERATION(|, Integer, lhs, rhs);
+			break;
+		case ast::XOR:
+			DO_NUM_OPERATION(^, Integer, lhs, rhs);
+			break;
+		case ast::AND:
+			DO_NUM_OPERATION(&, Integer, lhs, rhs);
+			break;
+		case ast::GREATER:
+			DO_NUM_OPERATION(>, Integer, lhs, rhs);
+			DO_NUM_OPERATION(>, Double, lhs, rhs);
+			break;
+		case ast::LESS:
+			DO_NUM_OPERATION(<, Integer, lhs, rhs);
+			DO_NUM_OPERATION(<, Double, lhs, rhs);
+			break;
+		case ast::GREATER_EQUAL:
+			DO_NUM_OPERATION(>=, Integer, lhs, rhs);
+			DO_NUM_OPERATION(>=, Double, lhs, rhs);
+			break;
+		case ast::LESS_EQUAL:
+			DO_NUM_OPERATION(<=, Integer, lhs, rhs);
+			DO_NUM_OPERATION(<=, Double, lhs, rhs);
+			break;
+		case ast::EQUAL:
+			DO_NUM_OPERATION(==, Integer, lhs, rhs);
+			DO_NUM_OPERATION(==, Double, lhs, rhs);
+			break;
+		case ast::NOT_EQUAL:
+			DO_NUM_OPERATION(!=, Integer, lhs, rhs);
+			DO_NUM_OPERATION(!=, Double, lhs, rhs);
+			break;
+		case ast::MOD:
+			DO_NUM_OPERATION(%, Integer, lhs, rhs);
+			break;
+	}
+	return NULL;
 }
 
 } // clever

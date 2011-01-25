@@ -26,109 +26,12 @@
  */
 
 #include <iostream>
-#include <cstdlib>
 #include "ast.h"
 #include "astvisitor.h"
 #include "typetable.h"
+#include "compiler.h"
 
 namespace clever { namespace ast {
-
-/**
- * Displays an error message
- */
-void ASTVisitor::error(std::string message) throw() {
-	std::cerr << "Compile error: " << message << std::endl;
-	exit(1);
-}
-
-/**
- * Performs a type compatible checking
- */
-bool ASTVisitor::checkCompatibleTypes(Value* lhs, Value* rhs) throw() {
-	/**
-	 * Constants with different type cannot performs operation
-	 */
-	if (lhs->isConst() && lhs->hasSameKind(rhs) && !lhs->hasSameType(rhs)) {
-		return false;
-	}
-	return true;
-}
-
-/**
- * Performs a constant folding optimization
- */
-ConstantValue* ASTVisitor::constantFolding(int op, Value* lhs, Value* rhs) throw() {
-
-#define DO_NUM_OPERATION(_op, type, x, y) \
-	if (x->is##type()) return new ConstantValue(x->get##type() _op y->get##type());
-
-#define DO_STR_OPERATION(_op, x, y) \
-	if (x->isString()) return new ConstantValue(CSTRING(x->getString() _op y->getString()));
-
-	/**
-	 * Check if the variable value can be predicted
-	 */
-	if ((lhs->hasName() && lhs->isModified()) || (rhs->hasName() && rhs->isModified())) {
-		return NULL;
-	}
-
-	switch (op) {
-		case ast::PLUS:
-			DO_NUM_OPERATION(+, Integer, lhs, rhs);
-			DO_STR_OPERATION(+, lhs, rhs);
-			DO_NUM_OPERATION(+, Double, lhs, rhs);
-			break;
-		case ast::MINUS:
-			DO_NUM_OPERATION(-, Integer, lhs, rhs);
-			DO_NUM_OPERATION(-, Double, lhs, rhs);
-			break;
-		case ast::DIV:
-			DO_NUM_OPERATION(/, Integer, lhs, rhs);
-			DO_NUM_OPERATION(/, Double, lhs, rhs);
-			break;
-		case ast::MULT:
-			DO_NUM_OPERATION(*, Integer, lhs, rhs);
-			DO_NUM_OPERATION(*, Double, lhs, rhs);
-			break;
-		case ast::OR:
-			DO_NUM_OPERATION(|, Integer, lhs, rhs);
-			break;
-		case ast::XOR:
-			DO_NUM_OPERATION(^, Integer, lhs, rhs);
-			break;
-		case ast::AND:
-			DO_NUM_OPERATION(&, Integer, lhs, rhs);
-			break;
-		case ast::GREATER:
-			DO_NUM_OPERATION(>, Integer, lhs, rhs);
-			DO_NUM_OPERATION(>, Double, lhs, rhs);
-			break;
-		case ast::LESS:
-			DO_NUM_OPERATION(<, Integer, lhs, rhs);
-			DO_NUM_OPERATION(<, Double, lhs, rhs);
-			break;
-		case ast::GREATER_EQUAL:
-			DO_NUM_OPERATION(>=, Integer, lhs, rhs);
-			DO_NUM_OPERATION(>=, Double, lhs, rhs);
-			break;
-		case ast::LESS_EQUAL:
-			DO_NUM_OPERATION(<=, Integer, lhs, rhs);
-			DO_NUM_OPERATION(<=, Double, lhs, rhs);
-			break;
-		case ast::EQUAL:
-			DO_NUM_OPERATION(==, Integer, lhs, rhs);
-			DO_NUM_OPERATION(==, Double, lhs, rhs);
-			break;
-		case ast::NOT_EQUAL:
-			DO_NUM_OPERATION(!=, Integer, lhs, rhs);
-			DO_NUM_OPERATION(!=, Double, lhs, rhs);
-			break;
-		case ast::MOD:
-			DO_NUM_OPERATION(%, Integer, lhs, rhs);
-			break;
-	}
-	return NULL;
-}
 
 /**
  * Return the Value pointer related to value type
@@ -146,7 +49,7 @@ Value* ASTVisitor::getValue(ast::Node* expr) throw() {
 		if (EXPECTED(var != NULL)) {
 			return var;
 		}
-		error("Inexistent variable!");
+		Compiler::error("Inexistent variable!");
 	}
 	return value;
 }
@@ -156,11 +59,11 @@ AST_VISITOR(BinaryNode) {
 	Value* rhs = getValue(expr->get_rhs());
 	ConstantValue* result = NULL;
 
-	if (!checkCompatibleTypes(lhs, rhs)) {
-		error("Type mismatch!");
+	if (!Compiler::checkCompatibleTypes(lhs, rhs)) {
+		Compiler::error("Type mismatch!");
 	}
 	if (lhs->isPrimitive() && !expr->isAssigned()) {
-		result = constantFolding(expr->get_op(), lhs, rhs);
+		result = Compiler::constantFolding(expr->get_op(), lhs, rhs);
 	}
 	if (result) {
 		/**
@@ -445,12 +348,12 @@ AST_VISITOR(LogicNode) {
 	Value* rhs = getValue(expr->get_rhs());
 	ConstantValue* result = NULL;
 
-	if (!checkCompatibleTypes(lhs, rhs)) {
-		error("Type mismatch!");
+	if (!Compiler::checkCompatibleTypes(lhs, rhs)) {
+		Compiler::error("Type mismatch!");
 	}
 
 	if (lhs->isPrimitive()) {
-		result = constantFolding(expr->get_op(), lhs, rhs);
+		result = Compiler::constantFolding(expr->get_op(), lhs, rhs);
 	}
 	if (result) {
 		/**
@@ -524,7 +427,7 @@ AST_VISITOR(FunctionCall) {
 	Value* arg_values = NULL;
 
 	if (!func) {
-		error("Function '" + *name + "' does not exists!");
+		Compiler::error("Function '" + *name + "' does not exists!");
 	}
 
 	call->set_callback(func);
@@ -549,7 +452,7 @@ AST_VISITOR(MethodCall) {
 	Value* arg_values = NULL;
 
 	if (!method) {
-		error("Method not found!");
+		Compiler::error("Method not found!");
 	}
 
 	call->set_type_ptr(variable->get_type_ptr());
