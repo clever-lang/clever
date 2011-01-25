@@ -34,6 +34,8 @@
 
 namespace clever {
 
+CallStack VM::s_call;
+
 /**
  * Destroy the opcodes data
  */
@@ -486,6 +488,8 @@ CLEVER_VM_HANDLER(VM::fcall_handler) {
 
 	result->initialize();
 
+	s_call.push(&opcode);
+
 	if (func->isUserDefined()) {
 		func->call(next_op);
 	} else {
@@ -515,6 +519,20 @@ CLEVER_VM_HANDLER(VM::mcall_handler) {
  */
 CLEVER_VM_HANDLER(VM::assign_handler) {
 	opcode.get_op1()->copy(opcode.get_op2());
+}
+
+/**
+ * End function marker
+ */
+CLEVER_VM_HANDLER(VM::end_func_handler) {
+	Opcode* op = s_call.top();
+
+	s_call.pop();
+
+	/**
+	 * Go to after the caller command
+	 */
+	CLEVER_VM_GOTO(op->get_op_num());
 }
 
 } // clever

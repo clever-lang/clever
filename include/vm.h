@@ -47,6 +47,7 @@ namespace clever {
 class Opcode;
 
 typedef std::vector<Opcode*> OpcodeList;
+typedef std::stack<Opcode*> CallStack;
 
 /**
  * Virtual machine representation
@@ -102,8 +103,11 @@ public:
 	static CLEVER_VM_HANDLER(fcall_handler);
 	static CLEVER_VM_HANDLER(mcall_handler);
 	static CLEVER_VM_HANDLER(assign_handler);
+	static CLEVER_VM_HANDLER(end_func_handler);
 private:
 	OpcodeList* m_opcodes;
+
+	static CallStack s_call;
 
 	DISALLOW_COPY_AND_ASSIGN(VM);
 };

@@ -525,6 +525,8 @@ AST_VISITOR(FuncDeclaration) {
 
 	expr->get_block()->accept(*this);
 
+	pushOpcode(new Opcode(OP_JMP, &VM::end_func_handler));
+
 	jmp->set_jmp_addr2(getOpNum());
 }
 
