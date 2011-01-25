@@ -29,6 +29,7 @@
 #define CLEVER_VM_H
 
 #include <vector>
+#include <stack>
 #include "global.h"
 
 /**

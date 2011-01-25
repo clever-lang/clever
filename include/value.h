@@ -259,7 +259,10 @@ private:
  */
 class CallableValue : public NamedValue {
 public:
-	enum CallableValueType { USER, INTERNAL };
+	enum CallType {
+		NEAR, /* Invoke compiled functions/methods. */
+		FAR   /* Invoke built-in or loaded functions/methods. (probably faster)*/
+	};
 
 	/* TODO: generate name for anonymous functions, disable set_name(). */
 	CallableValue()
@@ -269,37 +272,38 @@ public:
 	 * Create a CallableValue to represent a named function.
 	 */
 	explicit CallableValue(const CString* name)
-		: NamedValue(name), m_call_type(INTERNAL), m_context(NULL) { }
+		: NamedValue(name), m_call_type(FAR), m_context(NULL) { }
 
 	/**
 	 * Create a CallableValue able to represent a method.
 	 */
 	CallableValue(const CString* name, Type* type)
-		: NamedValue(name), m_call_type(INTERNAL), m_context(NULL) {
+		: NamedValue(name), m_call_type(FAR), m_context(NULL) {
 		set_type_ptr(type);
 	}
 
 	~CallableValue() { }
 
 	void set_callback(FunctionPtr callback) throw() {
-		m_callback_ptr.f_ptr = callback;
+		m_call_type = FAR;
+		m_callback.f_ptr = callback;
 	}
 
 	void set_callback(MethodPtr callback) throw() {
-		m_callback_ptr.m_ptr = callback;
+		m_call_type = FAR;
+		m_callback.m_ptr = callback;
 	}
 
 	void set_context(Value* value) throw() { m_context = value; }
 	Value* get_context() const throw() { return m_context; }
 
-	const FunctionPtr get_function() const throw() { return m_callback_ptr.f_ptr; }
-	const MethodPtr get_method() const throw() { return m_callback_ptr.m_ptr; }
+	const FunctionPtr get_function() const throw() { return m_callback.f_ptr; }
+	const MethodPtr get_method() const throw() { return m_callback.m_ptr; }
 
 	bool isCallable() const { return true; }
 
-	bool setUserDefined() throw() { m_call_type = USER; }
-	bool isUserDefined() const throw() { return m_call_type == USER; }
-	bool isInternalDefined() const throw() { return m_call_type == INTERNAL; }
+	bool isNearCall() const throw() { return m_call_type == NEAR; }
+	bool isFarCall() const throw() { return m_call_type == FAR; }
 
 	/**
 	 * Invokes the method/function pointer according with the type.
@@ -307,38 +311,51 @@ public:
 	 * Remember to set a context before calling a non-static method.
 	 */
 	void call(Value* result, const ValueVector* args) const throw() {
+		
+		if (UNEXPECTED(m_call_type == NEAR)) {
+			/* TODO: throw error here */
+		}
+
 		const Type* type_ptr = get_type_ptr();
 
 		if (type_ptr == NULL) {
-			m_callback_ptr.f_ptr(args, result);
+			m_callback.f_ptr(args, result);
 		} else {
-			m_callback_ptr.m_ptr(args, result, m_context);
+			m_callback.m_ptr(args, result, m_context);
 		}
 	}
 
-	void callWithContext(Value* context, Value* result, const ValueVector* args) const throw() {
-		m_callback_ptr.m_ptr(args, result, context);
+	void call(Value* context, Value* result, const ValueVector* args) const throw() {
+		if (UNEXPECTED(m_call_type == NEAR || get_type_ptr() == NULL)) {
+			/* TODO: throw error here */
+		}
+
+		m_callback.m_ptr(args, result, context);
+	}
+	
+	void call(unsigned int& next_op) const throw() {
+		next_op = m_callback.m_addr;
 	}
 
 	/**
 	 * User defined functions
 	 */
-	void set_start_pos(unsigned int num) throw() { m_start_pos = num; }
-
-	void call(unsigned int& next_op) const throw() {
-		next_op = m_start_pos;
+	void set_addr(unsigned int num) throw() {
+		m_call_type = NEAR;
+		m_callback.m_addr = num;
 	}
+
+
 private:
 	union {
 		FunctionPtr f_ptr;
 		MethodPtr m_ptr;
-	} m_callback_ptr;
+		unsigned int m_addr;
+	} m_callback;
 
 	Value* m_context;
 
-	CallableValueType m_call_type;
-
-	unsigned int m_start_pos;
+	CallType m_call_type;
 
 	DISALLOW_COPY_AND_ASSIGN(CallableValue);
 };

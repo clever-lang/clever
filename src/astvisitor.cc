@@ -431,8 +431,7 @@ AST_VISITOR(FunctionCall) {
 	}
 
 	if (func->isUserDefined()) {
-		call->setUserDefined();
-		call->set_start_pos(func->get_start_pos());
+		call->set_addr(func->get_start_pos());
 	} else {
 		call->set_callback(func->get_ptr());
 	}
@@ -516,8 +515,7 @@ AST_VISITOR(FuncDeclaration) {
 
 	pushOpcode(jmp);
 
-	func->setUserDefined();
-	func->set_start_pos(getOpNum());
+	func->set_addr(getOpNum());
 	user_func->setUserDefined();
 	user_func->set_start_pos(getOpNum());
 

@@ -490,7 +490,7 @@ CLEVER_VM_HANDLER(VM::fcall_handler) {
 
 	s_call.push(&opcode);
 
-	if (func->isUserDefined()) {
+	if (func->isNearCall()) {
 		func->call(next_op);
 	} else {
 		/* Call the function */

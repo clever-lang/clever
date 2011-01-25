@@ -68,7 +68,6 @@ enum {
 	NOT_EQUAL
 };
 
-
 class NO_INIT_VTABLE Node : public RefCounted {
 public:
 	Node()
