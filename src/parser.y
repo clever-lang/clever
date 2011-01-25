@@ -36,7 +36,7 @@
 #include "scanner.h"
 #include "ast.h"
 
-#define YYSTYPE clever::ast::Expression*
+#define YYSTYPE clever::ast::Node*
 
 namespace clever {
 class Driver;
@@ -61,9 +61,9 @@ class Driver;
 %code {
 #include "driver.h"
 
-std::stack<clever::ast::Expression*> tree;
+std::stack<clever::ast::Node*> tree;
 
-clever::ast::Expression* nodes = new clever::ast::TopExpression;
+clever::ast::Node* nodes = new clever::ast::TopNode;
 }
 
 %token END  0       "end of file"
@@ -137,7 +137,7 @@ statement_list_non_empty:
 
 block_stmt:
 		'{' '}'                      { $$ = NULL; }
-	|	'{'                          { $1 = new clever::ast::BlockExpression(); tree.push($1); }
+	|	'{'                          { $1 = new clever::ast::BlockNode(); tree.push($1); }
 		statement_list_non_empty '}' { tree.pop(); $$ = $1; }
 ;
 
@@ -195,14 +195,14 @@ variable_declaration:
 
 assign_stmt:
 		IDENT '=' expr  { $$ = new clever::ast::Assignment($1, $3);                         }
-	|	IDENT "+=" expr { $$ = new clever::ast::BinaryExpression(ast::PLUS, $1, $3, true);  }
-	|	IDENT "-=" expr { $$ = new clever::ast::BinaryExpression(ast::MINUS, $1, $3, true); }
-	|	IDENT "/=" expr { $$ = new clever::ast::BinaryExpression(ast::DIV, $1, $3, true);   }
-	|	IDENT "*=" expr { $$ = new clever::ast::BinaryExpression(ast::MULT, $1, $3, true);  }
-	|	IDENT "%=" expr { $$ = new clever::ast::BinaryExpression(ast::MOD, $1, $3, true);   }
-	|	IDENT "&=" expr { $$ = new clever::ast::BinaryExpression(ast::AND, $1, $3, true);   }
-	|	IDENT "|=" expr { $$ = new clever::ast::BinaryExpression(ast::OR, $1, $3, true);    }
-	|	IDENT "^=" expr { $$ = new clever::ast::BinaryExpression(ast::XOR, $1, $3, true);   }
+	|	IDENT "+=" expr { $$ = new clever::ast::BinaryNode(ast::PLUS, $1, $3, true);  }
+	|	IDENT "-=" expr { $$ = new clever::ast::BinaryNode(ast::MINUS, $1, $3, true); }
+	|	IDENT "/=" expr { $$ = new clever::ast::BinaryNode(ast::DIV, $1, $3, true);   }
+	|	IDENT "*=" expr { $$ = new clever::ast::BinaryNode(ast::MULT, $1, $3, true);  }
+	|	IDENT "%=" expr { $$ = new clever::ast::BinaryNode(ast::MOD, $1, $3, true);   }
+	|	IDENT "&=" expr { $$ = new clever::ast::BinaryNode(ast::AND, $1, $3, true);   }
+	|	IDENT "|=" expr { $$ = new clever::ast::BinaryNode(ast::OR, $1, $3, true);    }
+	|	IDENT "^=" expr { $$ = new clever::ast::BinaryNode(ast::XOR, $1, $3, true);   }
 ;
 
 arguments:
@@ -216,22 +216,22 @@ type_creation:
 ;
 
 expr:
-		expr '-' expr         { $$ = new clever::ast::BinaryExpression(ast::MINUS, $1, $3);        }
-	|	expr '+' expr         { $$ = new clever::ast::BinaryExpression(ast::PLUS, $1, $3);         }
-	|	expr '/' expr         { $$ = new clever::ast::BinaryExpression(ast::DIV, $1, $3);          }
-	|	expr '*' expr         { $$ = new clever::ast::BinaryExpression(ast::MULT, $1, $3);         }
-	|	expr '%' expr         { $$ = new clever::ast::BinaryExpression(ast::MOD, $1, $3);          }
-	|	expr '|' expr         { $$ = new clever::ast::BinaryExpression(ast::OR, $1, $3);           }
-	|	expr '&' expr         { $$ = new clever::ast::BinaryExpression(ast::AND, $1, $3);          }
-	|	expr '^' expr         { $$ = new clever::ast::BinaryExpression(ast::XOR, $1, $3);          }
-	|	expr ">" expr         { $$ = new clever::ast::LogicExpression(ast::GREATER, $1, $3);       }
-	|	expr ">=" expr        { $$ = new clever::ast::LogicExpression(ast::GREATER_EQUAL, $1, $3); }
-	|	expr "<" expr         { $$ = new clever::ast::LogicExpression(ast::LESS, $1, $3);          }
-	|	expr "<=" expr        { $$ = new clever::ast::LogicExpression(ast::LESS_EQUAL, $1, $3);    }
-	|	expr "==" expr        { $$ = new clever::ast::LogicExpression(ast::EQUAL, $1, $3);         }
-	|	expr "!=" expr        { $$ = new clever::ast::LogicExpression(ast::NOT_EQUAL, $1, $3);     }
-	|	'-' expr %prec UMINUS { $$ = new clever::ast::BinaryExpression(ast::MINUS, $2);            }
-	|	'+' expr %prec UMINUS { $$ = new clever::ast::BinaryExpression(ast::PLUS, $2);             }
+		expr '-' expr         { $$ = new clever::ast::BinaryNode(ast::MINUS, $1, $3);        }
+	|	expr '+' expr         { $$ = new clever::ast::BinaryNode(ast::PLUS, $1, $3);         }
+	|	expr '/' expr         { $$ = new clever::ast::BinaryNode(ast::DIV, $1, $3);          }
+	|	expr '*' expr         { $$ = new clever::ast::BinaryNode(ast::MULT, $1, $3);         }
+	|	expr '%' expr         { $$ = new clever::ast::BinaryNode(ast::MOD, $1, $3);          }
+	|	expr '|' expr         { $$ = new clever::ast::BinaryNode(ast::OR, $1, $3);           }
+	|	expr '&' expr         { $$ = new clever::ast::BinaryNode(ast::AND, $1, $3);          }
+	|	expr '^' expr         { $$ = new clever::ast::BinaryNode(ast::XOR, $1, $3);          }
+	|	expr ">" expr         { $$ = new clever::ast::LogicNode(ast::GREATER, $1, $3);       }
+	|	expr ">=" expr        { $$ = new clever::ast::LogicNode(ast::GREATER_EQUAL, $1, $3); }
+	|	expr "<" expr         { $$ = new clever::ast::LogicNode(ast::LESS, $1, $3);          }
+	|	expr "<=" expr        { $$ = new clever::ast::LogicNode(ast::LESS_EQUAL, $1, $3);    }
+	|	expr "==" expr        { $$ = new clever::ast::LogicNode(ast::EQUAL, $1, $3);         }
+	|	expr "!=" expr        { $$ = new clever::ast::LogicNode(ast::NOT_EQUAL, $1, $3);     }
+	|	'-' expr %prec UMINUS { $$ = new clever::ast::BinaryNode(ast::MINUS, $2);            }
+	|	'+' expr %prec UMINUS { $$ = new clever::ast::BinaryNode(ast::PLUS, $2);             }
 	|	INCREMENT IDENT       { $$ = new clever::ast::PreIncrement($2);                            }
 	|	IDENT INCREMENT       { $$ = new clever::ast::PosIncrement($1);                            }
 	|	DECREMENT IDENT       { $$ = new clever::ast::PreDecrement($2);                            }
@@ -252,17 +252,17 @@ for_stmt:
 ;
 
 while_stmt:
-		WHILE '(' expr ')' block_stmt { $$ = new clever::ast::WhileExpression($3, $5); }
+		WHILE '(' expr ')' block_stmt { $$ = new clever::ast::WhileNode($3, $5); }
 ;
 
 if_stmt:
-		IF '(' expr ')' block_stmt { $2 = new clever::ast::IfExpression($3, $5); $$ = $2;                }
-		elseif_opt else_opt        { static_cast<clever::ast::IfExpression*>($2)->set_else($8); $$ = $2; }
+		IF '(' expr ')' block_stmt { $2 = new clever::ast::IfNode($3, $5); $$ = $2;                }
+		elseif_opt else_opt        { static_cast<clever::ast::IfNode*>($2)->set_else($8); $$ = $2; }
 ;
 
 elseif_opt:
 		/* empty */
-	|	elseif_opt ELSEIF '(' expr ')' block_stmt { $0->add(new clever::ast::ElseIfExpression($4, $6)); }
+	|	elseif_opt ELSEIF '(' expr ')' block_stmt { $0->add(new clever::ast::ElseIfNode($4, $6)); }
 ;
 
 else_opt:
@@ -271,7 +271,7 @@ else_opt:
 ;
 
 break_stmt:
-		BREAK { $$ = new clever::ast::BreakExpression(); }
+		BREAK { $$ = new clever::ast::BreakNode(); }
 ;
 
 import_stmt:

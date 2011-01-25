@@ -133,7 +133,7 @@ ConstantValue* ASTVisitor::constantFolding(int op, Value* lhs, Value* rhs) throw
 /**
  * Return the Value pointer related to value type
  */
-Value* ASTVisitor::getValue(ast::Expression* expr) throw() {
+Value* ASTVisitor::getValue(ast::Node* expr) throw() {
 	Value* value = expr->get_value();
 
 	if (value && value->hasName()) {
@@ -151,7 +151,7 @@ Value* ASTVisitor::getValue(ast::Expression* expr) throw() {
 	return value;
 }
 
-AST_VISITOR(BinaryExpression) {
+AST_VISITOR(BinaryNode) {
 	Value* lhs = getValue(expr->get_lhs());
 	Value* rhs = getValue(expr->get_rhs());
 	ConstantValue* result = NULL;
@@ -199,9 +199,9 @@ AST_VISITOR(BinaryExpression) {
  * Generates the variable declaration opcode
  */
 AST_VISITOR(VariableDecl) {
-	ast::Expression* var_type = expr->get_type();
-	ast::Expression* var_expr = expr->get_variable();
-	ast::Expression* rhs_expr = expr->get_initial_value();
+	ast::Node* var_type = expr->get_type();
+	ast::Node* var_expr = expr->get_variable();
+	ast::Node* rhs_expr = expr->get_initial_value();
 	NamedValue* variable = static_cast<NamedValue*>(var_expr->get_value());
 	const Type* type = TypeTable::getType(var_type->get_value()->get_name());
 
@@ -290,7 +290,7 @@ AST_VISITOR(PosDecrement) {
 /**
  * Generates the opcode for the IF-ELSEIF-ELSE expression
  */
-AST_VISITOR(IfExpression) {
+AST_VISITOR(IfNode) {
 	Value* value;
 	Opcode* jmp_if = new Opcode(OP_JMPZ, &VM::jmpz_handler);
 	Opcode* jmp_else;
@@ -318,7 +318,7 @@ AST_VISITOR(IfExpression) {
 
 		while (it != end) {
 			Value* cond;
-			ast::ElseIfExpression* elseif = static_cast<ast::ElseIfExpression*>(*it);
+			ast::ElseIfNode* elseif = static_cast<ast::ElseIfNode*>(*it);
 
 			last_jmp->set_jmp_addr1(getOpNum());
 
@@ -371,7 +371,7 @@ AST_VISITOR(IfExpression) {
 /**
  * Call the accept method of each block node
  */
-AST_VISITOR(BlockExpression) {
+AST_VISITOR(BlockNode) {
 	NodeList& nodes = expr->getNodes();
 	NodeList::const_iterator it = nodes.begin(), end = nodes.end();
 	ASTVisitor& visitor = *this;
@@ -398,7 +398,7 @@ AST_VISITOR(BlockExpression) {
 /**
  * Generates the JMPZ opcode for WHILE expression
  */
-AST_VISITOR(WhileExpression) {
+AST_VISITOR(WhileNode) {
 	Value* value;
 	Opcode* jmpz;
 	Opcode* jmp;
@@ -440,7 +440,7 @@ AST_VISITOR(WhileExpression) {
 /**
  * Generates opcode for logic expression which weren't optimized
  */
-AST_VISITOR(LogicExpression) {
+AST_VISITOR(LogicNode) {
 	Value* lhs = getValue(expr->get_lhs());
 	Value* rhs = getValue(expr->get_rhs());
 	ConstantValue* result = NULL;
@@ -480,7 +480,7 @@ AST_VISITOR(LogicExpression) {
 /**
  * Generates opcode for break statement
  */
-AST_VISITOR(BreakExpression) {
+AST_VISITOR(BreakNode) {
 	Opcode* opcode = new Opcode(OP_BREAK, &VM::break_handler);
 
 	m_brks.top().push(opcode);
@@ -520,7 +520,7 @@ AST_VISITOR(FunctionCall) {
 	const CString* name = expr->get_func()->get_name();
 	FunctionPtr func = Compiler::getFunction(*name);
 	CallableValue* call = new CallableValue(name);
-	Expression* args = expr->get_args();
+	Node* args = expr->get_args();
 	Value* arg_values = NULL;
 
 	if (!func) {
@@ -545,7 +545,7 @@ AST_VISITOR(MethodCall) {
 	Value* variable = getValue(expr->get_variable());
 	CallableValue* call = new CallableValue(expr->get_method()->get_value()->get_name());
 	const MethodPtr method = variable->get_type_ptr()->getMethod(call->get_name());
-	Expression* args = expr->get_args();
+	Node* args = expr->get_args();
 	Value* arg_values = NULL;
 
 	if (!method) {
@@ -584,7 +584,7 @@ AST_VISITOR(Assignment) {
  */
 AST_VISITOR(Import) {
 	const CString* package = expr->get_package()->get_value()->get_name();
-	ast::Expression* module = expr->get_module();
+	ast::Node* module = expr->get_module();
 
 	if (module) {
 		const CString* module_name = module->get_value()->get_name();

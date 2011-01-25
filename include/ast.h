@@ -44,9 +44,9 @@ class Opcode;
 
 namespace clever { namespace ast {
 
-class Expression;
+class Node;
 
-typedef std::vector<Expression*> NodeList;
+typedef std::vector<Node*> NodeList;
 
 /**
  * Operators (logical and binary)
@@ -69,17 +69,17 @@ enum {
 };
 
 
-class NO_INIT_VTABLE Expression : public RefCounted {
+class NO_INIT_VTABLE Node : public RefCounted {
 public:
-	Expression()
+	Node()
 		: RefCounted(0), m_optimized(false) { }
 
-	virtual ~Expression() { }
+	virtual ~Node() { }
 
 	/**
 	 * Adds a new child node
 	 */
-	void add(Expression* node) throw() {
+	void add(Node* node) throw() {
 		node->addRef();
 		m_nodes.push_back(node);
 	}
@@ -118,24 +118,24 @@ public:
 	 * Method for generating the expression IR
 	 */
 	virtual void accept(ASTVisitor& visitor) throw() { }
-	virtual void set_expr(Expression* expr) throw() { }
-	virtual void set_block(Expression* expr) throw() { }
+	virtual void set_expr(Node* expr) throw() { }
+	virtual void set_block(Node* expr) throw() { }
 protected:
 	NodeList m_nodes;
 private:
 	bool m_optimized;
 
-	DISALLOW_COPY_AND_ASSIGN(Expression);
+	DISALLOW_COPY_AND_ASSIGN(Node);
 };
 
-class TopExpression : public Expression {
+class TopNode : public Node {
 public:
-	TopExpression() { }
+	TopNode() { }
 
-	~TopExpression() { }
+	~TopNode() { }
 };
 
-class Literal : public Expression {
+class Literal : public Node {
 public:
 	Literal() { }
 	virtual ~Literal() { }
@@ -168,27 +168,27 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(NumberLiteral);
 };
 
-class BinaryExpression : public Expression {
+class BinaryNode : public Node {
 public:
-	BinaryExpression(int op, Expression* lhs, Expression* rhs)
+	BinaryNode(int op, Node* lhs, Node* rhs)
 		: m_op(op), m_lhs(lhs), m_rhs(rhs), m_result(NULL), m_assign(false) {
 		m_lhs->addRef();
 		m_rhs->addRef();
 	}
-	BinaryExpression(int op, Expression* lhs, Expression* rhs, bool assign)
+	BinaryNode(int op, Node* lhs, Node* rhs, bool assign)
 		: m_op(op), m_lhs(lhs), m_rhs(rhs), m_result(NULL), m_assign(assign) {
 		m_lhs->addRef();
 		m_rhs->addRef();
 	}
 
-	BinaryExpression(int op, Expression* rhs)
+	BinaryNode(int op, Node* rhs)
 		: m_op(op), m_lhs(NULL), m_rhs(rhs), m_result(NULL), m_assign(false) {
 		m_lhs = new NumberLiteral(int64_t(0));
 		m_lhs->addRef();
 		m_rhs->addRef();
 	}
 
-	~BinaryExpression() {
+	~BinaryNode() {
 		if (isOptimized()) {
 			m_result->delRef();
 		}
@@ -204,11 +204,11 @@ public:
 
 	bool isAssigned() const { return m_assign; }
 
-	Expression* get_lhs() const {
+	Node* get_lhs() const {
 		return m_lhs;
 	}
 
-	Expression* get_rhs() const {
+	Node* get_rhs() const {
 		return m_rhs;
 	}
 
@@ -227,28 +227,28 @@ public:
 		m_lhs->accept(visitor);
 		m_rhs->accept(visitor);
 
-		return visitor.visit(this);
+		visitor.visit(this);
 	}
 private:
 	int m_op;
-	Expression* m_lhs;
-	Expression* m_rhs;
+	Node* m_lhs;
+	Node* m_rhs;
 	Value* m_result;
 	bool m_assign;
 
-	DISALLOW_COPY_AND_ASSIGN(BinaryExpression);
+	DISALLOW_COPY_AND_ASSIGN(BinaryNode);
 };
 
-class VariableDecl : public Expression {
+class VariableDecl : public Node {
 public:
-	VariableDecl(Expression* type, Expression* variable)
-		: Expression(), m_type(type), m_variable(variable), m_initial_value(NULL) {
+	VariableDecl(Node* type, Node* variable)
+		: Node(), m_type(type), m_variable(variable), m_initial_value(NULL) {
 		m_type->addRef();
 		m_variable->addRef();
 	}
 
-	VariableDecl(Expression* type, Expression* variable, Expression* rhs)
-		: Expression(), m_type(type), m_variable(variable), m_initial_value(rhs) {
+	VariableDecl(Node* type, Node* variable, Node* rhs)
+		: Node(), m_type(type), m_variable(variable), m_initial_value(rhs) {
 		m_type->addRef();
 		m_variable->addRef();
 		m_initial_value->addRef();
@@ -263,15 +263,15 @@ public:
 		}
 	}
 
-	Expression* get_variable() const {
+	Node* get_variable() const {
 		return m_variable;
 	}
 
-	Expression* get_initial_value() const {
+	Node* get_initial_value() const {
 		return m_initial_value;
 	}
 
-	Expression* get_type() const {
+	Node* get_type() const {
 		return m_type;
 	}
 
@@ -282,14 +282,14 @@ public:
 		visitor.visit(this);
 	}
 private:
-	Expression* m_type;
-	Expression* m_variable;
-	Expression* m_initial_value;
+	Node* m_type;
+	Node* m_variable;
+	Node* m_initial_value;
 
 	DISALLOW_COPY_AND_ASSIGN(VariableDecl);
 };
 
-class Identifier : public Expression {
+class Identifier : public Node {
 public:
 	explicit Identifier(const CString* name) {
 		m_value = new NamedValue(name);
@@ -327,9 +327,9 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(StringLiteral);
 };
 
-class TypeCreation : public Expression {
+class TypeCreation : public Node {
 public:
-	TypeCreation(Expression* type, Expression* arguments)
+	TypeCreation(Node* type, Node* arguments)
 		: m_type(type), m_arguments(arguments) {
 		m_type->addRef();
 		m_arguments->addRef();
@@ -340,17 +340,17 @@ public:
 		m_arguments->delRef();
 	}
 private:
-	Expression* m_type;
-	Expression* m_arguments;
+	Node* m_type;
+	Node* m_arguments;
 
 	DISALLOW_COPY_AND_ASSIGN(TypeCreation);
 };
 
-class BlockExpression : public Expression {
+class BlockNode : public Node {
 public:
-	BlockExpression() { }
+	BlockNode() { }
 
-	~BlockExpression() {
+	~BlockNode() {
 		clearNodes();
 	}
 
@@ -358,12 +358,12 @@ public:
 		visitor.visit(this);
 	}
 private:
-	DISALLOW_COPY_AND_ASSIGN(BlockExpression);
+	DISALLOW_COPY_AND_ASSIGN(BlockNode);
 };
 
-class PreIncrement : public Expression {
+class PreIncrement : public Node {
 public:
-	PreIncrement(Expression* expr)
+	PreIncrement(Node* expr)
 		: m_expr(expr) {
 		m_expr->addRef();
 		m_result = new Value();
@@ -377,7 +377,7 @@ public:
 		return m_result;
 	}
 
-	Expression* get_expr() const {
+	Node* get_expr() const {
 		return m_expr;
 	}
 
@@ -385,15 +385,15 @@ public:
 		visitor.visit(this);
 	}
 private:
-	Expression* m_expr;
+	Node* m_expr;
 	Value* m_result;
 
 	DISALLOW_COPY_AND_ASSIGN(PreIncrement);
 };
 
-class PosIncrement : public Expression {
+class PosIncrement : public Node {
 public:
-	PosIncrement(Expression* expr)
+	PosIncrement(Node* expr)
 		: m_expr(expr) {
 		m_expr->addRef();
 		m_result = new Value();
@@ -407,7 +407,7 @@ public:
 		return m_result;
 	}
 
-	Expression* get_expr() const {
+	Node* get_expr() const {
 		return m_expr;
 	}
 
@@ -415,15 +415,15 @@ public:
 		visitor.visit(this);
 	}
 private:
-	Expression* m_expr;
+	Node* m_expr;
 	Value* m_result;
 
 	DISALLOW_COPY_AND_ASSIGN(PosIncrement);
 };
 
-class PreDecrement : public Expression {
+class PreDecrement : public Node {
 public:
-	PreDecrement(Expression* expr)
+	PreDecrement(Node* expr)
 		: m_expr(expr) {
 		m_expr->addRef();
 		m_result = new Value();
@@ -433,7 +433,7 @@ public:
 		m_expr->delRef();
 	}
 
-	Expression* get_expr() const {
+	Node* get_expr() const {
 		return m_expr;
 	}
 
@@ -445,15 +445,15 @@ public:
 		visitor.visit(this);
 	}
 private:
-	Expression* m_expr;
+	Node* m_expr;
 	Value* m_result;
 
 	DISALLOW_COPY_AND_ASSIGN(PreDecrement);
 };
 
-class PosDecrement : public Expression {
+class PosDecrement : public Node {
 public:
-	PosDecrement(Expression* expr)
+	PosDecrement(Node* expr)
 		: m_expr(expr) {
 		m_expr->addRef();
 		m_result = new Value();
@@ -467,7 +467,7 @@ public:
 		return m_result;
 	}
 
-	Expression* get_expr() const {
+	Node* get_expr() const {
 		return m_expr;
 	}
 
@@ -475,15 +475,15 @@ public:
 		visitor.visit(this);
 	}
 private:
-	Expression* m_expr;
+	Node* m_expr;
 	Value* m_result;
 
 	DISALLOW_COPY_AND_ASSIGN(PosDecrement);
 };
 
-class IfExpression : public Expression {
+class IfNode : public Node {
 public:
-	IfExpression(Expression* condition, Expression* block)
+	IfNode(Node* condition, Node* block)
 		: m_condition(condition), m_block(block), m_else(NULL) {
 		m_condition->addRef();
 		if (m_block) {
@@ -491,7 +491,7 @@ public:
 		}
 	}
 
-	~IfExpression() {
+	~IfNode() {
 		m_condition->delRef();
 		if (m_block) {
 			m_block->delRef();
@@ -506,11 +506,11 @@ public:
 	bool hasElseBlock() throw() { return m_else != NULL; }
 	bool hasElseIf() throw() { return m_nodes.size() != 0; }
 
-	Expression* get_block() throw() { return m_block; }
-	Expression* get_condition() throw() { return m_condition; }
+	Node* get_block() throw() { return m_block; }
+	Node* get_condition() throw() { return m_condition; }
 
-	Expression* get_else() throw() { return m_else; }
-	void set_else(Expression* expr) {
+	Node* get_else() throw() { return m_else; }
+	void set_else(Node* expr) {
 		if (expr) {
 			m_else = expr;
 			m_else->addRef();
@@ -521,16 +521,16 @@ public:
 		visitor.visit(this);
 	}
 private:
-	Expression* m_condition;
-	Expression* m_block;
-	Expression* m_else;
+	Node* m_condition;
+	Node* m_block;
+	Node* m_else;
 
-	DISALLOW_COPY_AND_ASSIGN(IfExpression);
+	DISALLOW_COPY_AND_ASSIGN(IfNode);
 };
 
-class ElseIfExpression : public Expression {
+class ElseIfNode : public Node {
 public:
-	ElseIfExpression(Expression* condition, Expression* block)
+	ElseIfNode(Node* condition, Node* block)
 		: m_condition(condition), m_block(block) {
 		m_condition->addRef();
 		if (m_block) {
@@ -538,7 +538,7 @@ public:
 		}
 	}
 
-	~ElseIfExpression() {
+	~ElseIfNode() {
 		m_condition->delRef();
 		if (m_block) {
 			m_block->delRef();
@@ -547,18 +547,18 @@ public:
 
 	bool hasBlock() throw() { return m_block != NULL; }
 
-	Expression* get_condition() throw() { return m_condition; }
-	Expression* get_block() throw() { return m_block; }
+	Node* get_condition() throw() { return m_condition; }
+	Node* get_block() throw() { return m_block; }
 private:
-	Expression* m_condition;
-	Expression* m_block;
+	Node* m_condition;
+	Node* m_block;
 
-	DISALLOW_COPY_AND_ASSIGN(ElseIfExpression);
+	DISALLOW_COPY_AND_ASSIGN(ElseIfNode);
 };
 
-class WhileExpression : public Expression {
+class WhileNode : public Node {
 public:
-	WhileExpression(Expression* condition, Expression* block)
+	WhileNode(Node* condition, Node* block)
 		: m_condition(condition), m_block(block) {
 		m_condition->addRef();
 
@@ -567,7 +567,7 @@ public:
 		}
 	}
 
-	~WhileExpression() {
+	~WhileNode() {
 		m_condition->delRef();
 
 		if (m_block) {
@@ -577,28 +577,28 @@ public:
 
 	bool hasBlock() throw() { return m_block != NULL; }
 
-	Expression* get_condition() throw() { return m_condition; }
-	Expression* get_block() throw() { return m_block; }
+	Node* get_condition() throw() { return m_condition; }
+	Node* get_block() throw() { return m_block; }
 
 	void accept(ASTVisitor& visitor) throw() {
 		visitor.visit(this);
 	}
 private:
-	Expression* m_condition;
-	Expression* m_block;
+	Node* m_condition;
+	Node* m_block;
 
-	DISALLOW_COPY_AND_ASSIGN(WhileExpression);
+	DISALLOW_COPY_AND_ASSIGN(WhileNode);
 };
 
-class LogicExpression : public Expression {
+class LogicNode : public Node {
 public:
-	LogicExpression(int op, Expression* lhs, Expression* rhs)
+	LogicNode(int op, Node* lhs, Node* rhs)
 		: m_op(op), m_lhs(lhs), m_rhs(rhs), m_result(NULL) {
 		m_lhs->addRef();
 		m_rhs->addRef();
 	}
 
-	~LogicExpression() {
+	~LogicNode() {
 		if (isOptimized()) {
 			m_result->delRef();
 		}
@@ -611,8 +611,8 @@ public:
 	}
 
 	int get_op() const { return m_op; }
-	Expression* get_lhs() const { return m_lhs; }
-	Expression* get_rhs() const { return m_rhs; }
+	Node* get_lhs() const { return m_lhs; }
+	Node* get_rhs() const { return m_rhs; }
 
 	void set_result(Value* value) { m_result = value; }
 
@@ -626,27 +626,27 @@ public:
 	}
 private:
 	int m_op;
-	Expression* m_lhs;
-	Expression* m_rhs;
+	Node* m_lhs;
+	Node* m_rhs;
 	Value* m_result;
 
-	DISALLOW_COPY_AND_ASSIGN(LogicExpression);
+	DISALLOW_COPY_AND_ASSIGN(LogicNode);
 };
 
-class BreakExpression : public Expression {
+class BreakNode : public Node {
 public:
-	BreakExpression() { }
+	BreakNode() { }
 
-	~BreakExpression() { }
+	~BreakNode() { }
 
 	void accept(ASTVisitor& visitor) throw() {
 		visitor.visit(this);
 	}
 private:
-	DISALLOW_COPY_AND_ASSIGN(BreakExpression);
+	DISALLOW_COPY_AND_ASSIGN(BreakNode);
 };
 
-class ArgumentList : public Expression {
+class ArgumentList : public Node {
 public:
 	ArgumentList() { }
 
@@ -657,9 +657,9 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(ArgumentList);
 };
 
-class FuncDeclaration : public Expression {
+class FuncDeclaration : public Node {
 public:
-	FuncDeclaration(Expression* name, Expression* type, Expression* args, Expression* block)
+	FuncDeclaration(Node* name, Node* type, Node* args, Node* block)
 		: m_name(name), m_type(type), m_args(args), m_block(block) {
 		m_name->addRef();
 		m_type->addRef();
@@ -682,29 +682,29 @@ public:
 		}
 	}
 
-	Expression* get_name() const throw() { return m_name; }
-	Expression* get_type() const throw() { return m_type; }
-	Expression* get_args() const throw() { return m_args; }
-	Expression* get_block() const throw() { return m_block; }
+	Node* get_name() const throw() { return m_name; }
+	Node* get_type() const throw() { return m_type; }
+	Node* get_args() const throw() { return m_args; }
+	Node* get_block() const throw() { return m_block; }
 
 	void accept(ASTVisitor& visitor) throw() {
 		visitor.visit(this);
 	}
 private:
-	Expression* m_name;
-	Expression* m_type;
-	Expression* m_args;
-	Expression* m_block;
+	Node* m_name;
+	Node* m_type;
+	Node* m_args;
+	Node* m_block;
 };
 
-class FunctionCall : public Expression {
+class FunctionCall : public Node {
 public:
-	FunctionCall(Expression* name)
+	FunctionCall(Node* name)
 		: m_name(name), m_args(NULL) {
 		m_name->addRef();
 		m_result = new Value;
 	}
-	FunctionCall(Expression* name, Expression* args)
+	FunctionCall(Node* name, Node* args)
 		: m_name(name), m_args(args) {
 		m_name->addRef();
 		m_args->addRef();
@@ -722,29 +722,29 @@ public:
 
 	Value* get_func() const throw() { return m_name->get_value(); }
 
-	Expression* get_args() throw() { return m_args; }
+	Node* get_args() throw() { return m_args; }
 
 	void accept(ASTVisitor& visitor) throw() {
 		visitor.visit(this);
 	}
 private:
-	Expression* m_name;
-	Expression* m_args;
+	Node* m_name;
+	Node* m_args;
 	Value* m_result;
 
 	DISALLOW_COPY_AND_ASSIGN(FunctionCall);
 };
 
-class MethodCall : public Expression {
+class MethodCall : public Node {
 public:
-	MethodCall(Expression* var, Expression* method)
+	MethodCall(Node* var, Node* method)
 		: m_var(var), m_method(method), m_args(NULL) {
 		m_var->addRef();
 		m_method->addRef();
 		m_result = new Value;
 	}
 
-	MethodCall(Expression* var, Expression* method, Expression* args)
+	MethodCall(Node* var, Node* method, Node* args)
 		: m_var(var), m_method(method), m_args(args) {
 		m_var->addRef();
 		m_method->addRef();
@@ -760,9 +760,9 @@ public:
 		}
 	}
 
-	Expression* get_variable() const throw() { return m_var; }
-	Expression* get_method() const throw() { return m_method; }
-	Expression* get_args() const throw() { return m_args; }
+	Node* get_variable() const throw() { return m_var; }
+	Node* get_method() const throw() { return m_method; }
+	Node* get_args() const throw() { return m_args; }
 
 	Value* get_value() const throw() { return m_result; }
 
@@ -770,17 +770,17 @@ public:
 		visitor.visit(this);
 	}
 private:
-	Expression* m_var;
-	Expression* m_method;
-	Expression* m_args;
+	Node* m_var;
+	Node* m_method;
+	Node* m_args;
 	Value* m_result;
 
 	DISALLOW_COPY_AND_ASSIGN(MethodCall);
 };
 
-class Assignment : public Expression {
+class Assignment : public Node {
 public:
-	Assignment(Expression* lhs, Expression *rhs)
+	Assignment(Node* lhs, Node *rhs)
 		: m_lhs(lhs), m_rhs(rhs) {
 		m_lhs->addRef();
 		m_rhs->addRef();
@@ -790,27 +790,27 @@ public:
 		m_rhs->delRef();
 	}
 
-	Expression* get_lhs() const throw() { return m_lhs; }
-	Expression* get_rhs() const throw() { return m_rhs; }
+	Node* get_lhs() const throw() { return m_lhs; }
+	Node* get_rhs() const throw() { return m_rhs; }
 
 	void accept(ASTVisitor& visitor) throw() {
 		m_rhs->accept(visitor);
 		visitor.visit(this);
 	}
 private:
-	Expression* m_lhs;
-	Expression* m_rhs;
+	Node* m_lhs;
+	Node* m_rhs;
 
 	DISALLOW_COPY_AND_ASSIGN(Assignment);
 };
 
-class Import : public Expression {
+class Import : public Node {
 public:
-	Import(Expression* package)
+	Import(Node* package)
 		: m_package(package), m_module(NULL) {
 		m_package->addRef();
 	}
-	Import(Expression* package, Expression* module)
+	Import(Node* package, Node* module)
 		: m_package(package), m_module(module) {
 		m_package->addRef();
 		m_module->addRef();
@@ -822,11 +822,11 @@ public:
 		}
 	}
 
-	Expression* get_package() throw() {
+	Node* get_package() throw() {
 		return m_package;
 	}
 
-	Expression* get_module() throw() {
+	Node* get_module() throw() {
 		return m_module;
 	}
 
@@ -834,8 +834,8 @@ public:
 		visitor.visit(this);
 	}
 private:
-	Expression* m_package;
-	Expression* m_module;
+	Node* m_package;
+	Node* m_module;
 
 	DISALLOW_COPY_AND_ASSIGN(Import);
 };

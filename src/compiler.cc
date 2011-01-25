@@ -43,7 +43,7 @@ TypeMap TypeTable::s_type_table;
 /**
  * Initializes the compiler data
  */
-void Compiler::Init(ast::Expression* nodes) throw() {
+void Compiler::Init(ast::Node* nodes) throw() {
 	m_ast = nodes;
 	/**
 	 * Load package list
@@ -102,7 +102,7 @@ void Compiler::buildIR() throw() {
 	m_visitor->init();
 
 	/**
-	 * Iterating over TopExpression AST node
+	 * Iterating over TopNode AST node
 	 */
 	while (it != end) {
 		(*it)->accept(*m_visitor);

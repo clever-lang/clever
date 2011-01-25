@@ -38,7 +38,7 @@
 
 namespace clever { namespace ast {
 
-class Expression;
+class Node;
 class ASTVisitor;
 
 }} // clever::ast
@@ -55,7 +55,7 @@ public:
 	/**
 	 * Initializes compiler data
 	 */
-	void Init(ast::Expression*) throw();
+	void Init(ast::Node*) throw();
 	/**
 	 * Loads primitive data types
 	 */
@@ -105,7 +105,7 @@ public:
 		}
 	}
 private:
-	ast::Expression* m_ast;
+	ast::Node* m_ast;
 	ast::ASTVisitor* m_visitor;
 
 	static PackageManager s_pkgmanager;

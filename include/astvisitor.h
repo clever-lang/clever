@@ -34,23 +34,23 @@
 
 namespace clever { namespace ast {
 
-class Expression;
-class BinaryExpression;
+class Node;
+class BinaryNode;
 class VariableDecl;
 class PosIncrement;
 class PosDecrement;
 class PreIncrement;
 class PreDecrement;
-class IfExpression;
-class ElseIfExpression;
-class WhileExpression;
-class LogicExpression;
+class IfNode;
+class ElseIfNode;
+class WhileNode;
+class LogicNode;
 class FunctionCall;
 class MethodCall;
 class Assignment;
 class Import;
-class BreakExpression;
-class BlockExpression;
+class BreakNode;
+class BlockNode;
 class ArgumentList;
 class FuncDeclaration;
 
@@ -84,7 +84,7 @@ public:
 	/**
 	 * Returns the Value pointer according with value type.
 	 */
-	Value* getValue(ast::Expression*) throw();
+	Value* getValue(ast::Node*) throw();
 
 	/**
 	 * Displays the error message and exits the program
@@ -117,17 +117,17 @@ public:
 		opcode->set_op_num(getOpNum());
 	}
 
-	AST_VISITOR_DECL(BinaryExpression);
+	AST_VISITOR_DECL(BinaryNode);
 	AST_VISITOR_DECL(VariableDecl);
 	AST_VISITOR_DECL(PreIncrement);
 	AST_VISITOR_DECL(PosIncrement);
 	AST_VISITOR_DECL(PreDecrement);
 	AST_VISITOR_DECL(PosDecrement);
-	AST_VISITOR_DECL(BlockExpression);
-	AST_VISITOR_DECL(IfExpression);
-	AST_VISITOR_DECL(WhileExpression);
-	AST_VISITOR_DECL(LogicExpression);
-	AST_VISITOR_DECL(BreakExpression);
+	AST_VISITOR_DECL(BlockNode);
+	AST_VISITOR_DECL(IfNode);
+	AST_VISITOR_DECL(WhileNode);
+	AST_VISITOR_DECL(LogicNode);
+	AST_VISITOR_DECL(BreakNode);
 	AST_VISITOR_DECL(FunctionCall);
 	AST_VISITOR_DECL(MethodCall);
 	AST_VISITOR_DECL(Assignment);
