@@ -35,7 +35,7 @@ namespace clever {
 
 class CString;
 
-typedef std::tr1::unordered_map<std::string, FunctionPtr> FunctionTable;
+typedef std::tr1::unordered_map<std::string, Function*> FunctionTable;
 typedef std::tr1::unordered_map<const CString*, Package*> PackageMap;
 typedef std::pair<const CString*, Package*> PackagePair;
 

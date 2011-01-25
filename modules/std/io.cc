@@ -59,8 +59,8 @@ static CLEVER_FUNCTION(println) {
  */
 void IOModule::Init() throw() {
 	// Standard functions
-	addFunction("print", &CLEVER_FUNC_NAME(print));
-	addFunction("println", &CLEVER_FUNC_NAME(println));
+	addFunction(new Function("print", &CLEVER_FUNC_NAME(print)));
+	addFunction(new Function("println", &CLEVER_FUNC_NAME(println)));
 }
 
 }} // clever::std_pkg

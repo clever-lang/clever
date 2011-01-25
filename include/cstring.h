@@ -66,8 +66,8 @@ public:
 		return m_id;
 	}
 
-	std::string& str() throw() {
-		return *static_cast<std::string*>(this);
+	const std::string& str() const throw() {
+		return *static_cast<const std::string*>(this);
 	}
 
 	bool operator==(const CString* cstring) throw() {

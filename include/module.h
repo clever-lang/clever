@@ -41,6 +41,7 @@ class CString;
 class Module;
 class Value;
 class Type;
+class Function;
 
 typedef std::vector<Value*> ValueVector;
 
@@ -59,9 +60,46 @@ typedef std::vector<Value*> ValueVector;
 typedef void (CLEVER_FASTCALL *FunctionPtr)(CLEVER_FUNCTION_ARGS);
 typedef void (CLEVER_FASTCALL *MethodPtr)(CLEVER_METHOD_ARGS);
 
-typedef std::tr1::unordered_map<std::string, FunctionPtr> FunctionMap;
+typedef std::tr1::unordered_map<std::string, Function*> FunctionMap;
+typedef std::pair<std::string, Function*> FunctionPair;
+
 typedef std::tr1::unordered_map<const CString*, Module*> ModuleMap;
 typedef std::pair<const CString*, Module*> ModulePair;
+
+/**
+ * Function representation
+ */
+class Function {
+public:
+	enum FunctionType { INTERNAL, USER };
+
+	explicit Function(const std::string& name)
+		: m_name(name), m_type(INTERNAL) { }
+
+	explicit Function(const char* name)
+		: m_name(name), m_type(INTERNAL) { }
+
+	Function(const char* name, FunctionPtr ptr)
+		: m_name(name), m_type(INTERNAL), m_ptr(ptr) { }
+
+	virtual ~Function() { }
+
+	void setInternal() throw() { m_type = INTERNAL; }
+	void setUserDefined() throw() { m_type = USER; }
+	void set_start_pos(unsigned int num) { m_start_pos = num; }
+
+	bool isUserDefined() const throw() { return m_type == USER; }
+	bool isInternal() const throw() { return m_type == INTERNAL; }
+
+	FunctionPtr get_ptr() const throw() { return m_ptr; }
+	const std::string& get_name() const throw() { return m_name; }
+	unsigned int get_start_pos() const throw() { return m_start_pos; }
+private:
+	std::string m_name;
+	FunctionPtr m_ptr;
+	FunctionType m_type;
+	unsigned int m_start_pos;
+};
 
 /**
  * Package representation
@@ -143,8 +181,8 @@ public:
 		return m_functions;
 	}
 
-	void addFunction(std::string name, FunctionPtr func) throw() {
-		m_functions.insert(std::pair<std::string, FunctionPtr>(name, func));
+	void addFunction(Function* func) throw() {
+		m_functions.insert(FunctionPair(func->get_name(), func));
 	}
 	/**
 	 * Check if the module is loaded

@@ -98,7 +98,7 @@ void PackageManager::loadModule(Module* module) throw() {
 		 * Inserts the function into the global function table
 		 */
 		while (it != end) {
-			m_ftable->insert(std::pair<const std::string, FunctionPtr>(it->first, it->second));
+			m_ftable->insert(FunctionPair(it->first, it->second));
 			++it;
 		}
 	}

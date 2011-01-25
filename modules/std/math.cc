@@ -116,14 +116,14 @@ static CLEVER_FUNCTION(abs) {
  * Load module data
  */
 void Math::Init() throw() {
-	addFunction("sqrt", &CLEVER_FUNC_NAME(sqrt));
-	addFunction("sin",  &CLEVER_FUNC_NAME(sin));
-	addFunction("cos",  &CLEVER_FUNC_NAME(cos));
-	addFunction("tan",  &CLEVER_FUNC_NAME(tan));
-	addFunction("atan", &CLEVER_FUNC_NAME(atan));
-	addFunction("pow",  &CLEVER_FUNC_NAME(pow));
-	addFunction("ceil", &CLEVER_FUNC_NAME(ceil));
-	addFunction("abs",	&CLEVER_FUNC_NAME(abs));
+	addFunction(new Function("sqrt", &CLEVER_FUNC_NAME(sqrt)));
+	addFunction(new Function("sin",  &CLEVER_FUNC_NAME(sin)));
+	addFunction(new Function("cos",  &CLEVER_FUNC_NAME(cos)));
+	addFunction(new Function("tan",  &CLEVER_FUNC_NAME(tan)));
+	addFunction(new Function("atan", &CLEVER_FUNC_NAME(atan)));
+	addFunction(new Function("pow",  &CLEVER_FUNC_NAME(pow)));
+	addFunction(new Function("ceil", &CLEVER_FUNC_NAME(ceil)));
+	addFunction(new Function("abs",	&CLEVER_FUNC_NAME(abs)));
 }
 
 

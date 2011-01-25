@@ -80,7 +80,11 @@ OpcodeList& Compiler::getOpcodes() throw() {
 Compiler::~Compiler() {
 	FunctionTable::const_iterator it = s_func_table.begin(), end_func(s_func_table.end());
 
+	/**
+	 * Deallocs memory used by global function table entries
+	 */
 	while (it != end_func) {
+		delete it->second;
 		++it;
 	}
 

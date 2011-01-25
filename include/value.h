@@ -240,24 +240,16 @@ private:
  */
 class NamedValue : public Value {
 public:
-	enum NamedValueType { USER, INTERNAL };
-
 	NamedValue() { }
 
 	explicit NamedValue(const CString* name)
-		: Value(), m_name(name) { }
-
-	NamedValue(const CString* name, NamedValueType type)
-		: Value(), m_name(name) { }
+		: m_name(name) { }
 
 	virtual bool hasName() const { return true; }
 	const CString* get_name() const { return m_name; }
 	void set_name(const CString* name) { m_name = name; }
-	bool isUserDefined() const throw() { return m_type == USER; }
-	bool isInternallyDefined() const throw() { return m_type == INTERNAL; }
 private:
 	const CString* m_name;
-	NamedValueType m_type;
 
 	DISALLOW_COPY_AND_ASSIGN(NamedValue);
 };
@@ -267,6 +259,8 @@ private:
  */
 class CallableValue : public NamedValue {
 public:
+	enum CallableValueType { USER, INTERNAL };
+
 	/* TODO: generate name for anonymous functions, disable set_name(). */
 	CallableValue()
 		: m_context(NULL) { }
@@ -275,13 +269,13 @@ public:
 	 * Create a CallableValue to represent a named function.
 	 */
 	explicit CallableValue(const CString* name)
-		: NamedValue(name, INTERNAL), m_context(NULL) { }
+		: NamedValue(name), m_call_type(INTERNAL), m_context(NULL) { }
 
 	/**
 	 * Create a CallableValue able to represent a method.
 	 */
 	CallableValue(const CString* name, Type* type)
-		: NamedValue(name, INTERNAL), m_context(NULL) {
+		: NamedValue(name), m_call_type(INTERNAL), m_context(NULL) {
 		set_type_ptr(type);
 	}
 
@@ -303,6 +297,10 @@ public:
 
 	bool isCallable() const { return true; }
 
+	bool setUserDefined() throw() { m_call_type = USER; }
+	bool isUserDefined() const throw() { return m_call_type == USER; }
+	bool isInternalDefined() const throw() { return m_call_type == INTERNAL; }
+
 	/**
 	 * Invokes the method/function pointer according with the type.
 	 *
@@ -322,6 +320,14 @@ public:
 		m_callback_ptr.m_ptr(args, result, context);
 	}
 
+	/**
+	 * User defined functions
+	 */
+	void set_start_pos(unsigned int num) throw() { m_start_pos = num; }
+
+	void call(unsigned int& next_op) const throw() {
+		next_op = m_start_pos;
+	}
 private:
 	union {
 		FunctionPtr f_ptr;
@@ -330,24 +336,11 @@ private:
 
 	Value* m_context;
 
-	DISALLOW_COPY_AND_ASSIGN(CallableValue);
-};
+	CallableValueType m_call_type;
 
-
-class UserCallableValue : public NamedValue {
-public:
-	explicit UserCallableValue(const CString* name)
-		: NamedValue(name, USER), m_start_pos(0) { }
-
-	~UserCallableValue() { }
-
-	void set_start_pos(unsigned int num) throw() { m_start_pos = num; }
-
-	void call(unsigned int& next_op) const throw() {
-		next_op = m_start_pos;
-	}
-private:
 	unsigned int m_start_pos;
+
+	DISALLOW_COPY_AND_ASSIGN(CallableValue);
 };
 
 } // clever

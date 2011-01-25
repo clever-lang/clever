@@ -486,8 +486,12 @@ CLEVER_VM_HANDLER(VM::fcall_handler) {
 
 	result->initialize();
 
-	/* Call the function */
-	func->call(result, func_args);
+	if (func->isUserDefined()) {
+		func->call(next_op);
+	} else {
+		/* Call the function */
+		func->call(result, func_args);
+	}
 }
 
 /**

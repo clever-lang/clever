@@ -99,7 +99,7 @@ public:
 	/**
 	 * Returns the a Function pointer
 	 */
-	static FunctionPtr getFunction(const std::string& name) throw() {
+	static const Function* getFunction(const std::string& name) throw() {
 		FunctionTable::const_iterator it = s_func_table.find(name);
 
 		if (it != s_func_table.end()) {
@@ -107,6 +107,12 @@ public:
 		} else {
 			return NULL;
 		}
+	}
+	/**
+	 * Adds a new function into the global function table
+	 */
+	static void addFunction(const std::string& name, Function* func) throw() {
+		s_func_table.insert(FunctionPair(name, func));
 	}
 private:
 	ast::Node* m_ast;

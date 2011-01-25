@@ -421,7 +421,7 @@ ValueVector* ASTVisitor::functionArgs(ast::ArgumentList* args) throw() {
  */
 AST_VISITOR(FunctionCall) {
 	const CString* name = expr->get_func()->get_name();
-	FunctionPtr func = Compiler::getFunction(*name);
+	const Function* func = Compiler::getFunction(*name);
 	CallableValue* call = new CallableValue(name);
 	Node* args = expr->get_args();
 	Value* arg_values = NULL;
@@ -430,7 +430,12 @@ AST_VISITOR(FunctionCall) {
 		Compiler::error("Function '" + *name + "' does not exists!");
 	}
 
-	call->set_callback(func);
+	if (func->isUserDefined()) {
+		call->setUserDefined();
+		call->set_start_pos(func->get_start_pos());
+	} else {
+		call->set_callback(func->get_ptr());
+	}
 
 	if (args) {
 		arg_values = new Value;
@@ -503,12 +508,18 @@ AST_VISITOR(Import) {
  */
 AST_VISITOR(FuncDeclaration) {
 	const CString* name = expr->get_name()->get_value()->get_name();
-	UserCallableValue* func = new UserCallableValue(name);
+	CallableValue* func = new CallableValue(name);
 	Opcode* jmp = new Opcode(OP_JMP, &VM::jmp_handler);
+	Function* user_func = new Function(name->str());
+
+	Compiler::addFunction(name->str(), user_func);
 
 	pushOpcode(jmp);
 
+	func->setUserDefined();
 	func->set_start_pos(getOpNum());
+	user_func->setUserDefined();
+	user_func->set_start_pos(getOpNum());
 
 	m_ssa.pushVar(func);
 
