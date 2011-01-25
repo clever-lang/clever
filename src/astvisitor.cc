@@ -595,4 +595,11 @@ AST_VISITOR(Import) {
 	}
 }
 
+/**
+ * Function declaration
+ */
+AST_VISITOR(FuncDeclaration) {
+
+}
+
 }} // clever::ast

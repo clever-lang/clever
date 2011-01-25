@@ -75,6 +75,7 @@ clever::ast::Expression* nodes = new clever::ast::TopExpression;
 %token STR          "string"
 %token ECHO         "echo"
 %token IN           "in"
+%token FUNCTION     "function"
 %token FOR          "for"
 %token WHILE        "while"
 %token IF           "if"
@@ -143,6 +144,7 @@ block_stmt:
 statements:
 		expr ';'	             { tree.top()->add($1); $$ = $1; }
 	|	variable_declaration ';' { tree.top()->add($1); $$ = $1; }
+	|	func_declaration         { tree.top()->add($1); $$ = $1; }
 	|	if_stmt                  { tree.top()->add($1); $$ = $1; }
 	|	for_stmt
 	|	while_stmt               { tree.top()->add($1); $$ = $1; }
@@ -150,6 +152,20 @@ statements:
 	|	break_stmt ';'           { tree.top()->add($1); $$ = $1; }
 	|	assign_stmt ';'          { tree.top()->add($1); $$ = $1; }
 	|	import_stmt ';'          { tree.top()->add($1); $$ = $1; }
+;
+
+args_declaration_non_empty:
+		TYPE IDENT
+	|	args_declaration ',' TYPE IDENT
+;
+
+args_declaration:
+		/* empty */                { $$ = NULL; }
+	|	args_declaration_non_empty { $$ = $1; }
+;
+
+func_declaration:
+		TYPE FUNCTION IDENT '(' args_declaration ')' block_stmt { $$ = new clever::ast::FuncDeclaration($3, $1, $5, $7); }
 ;
 
 arg_list:

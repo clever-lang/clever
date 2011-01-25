@@ -52,6 +52,7 @@ class Import;
 class BreakExpression;
 class BlockExpression;
 class ArgumentList;
+class FuncDeclaration;
 
 #define AST_VISITOR(type) void ASTVisitor::visit(type* expr) throw()
 #define AST_VISITOR_DECL(type) void visit(type* expr) throw()
@@ -131,6 +132,7 @@ public:
 	AST_VISITOR_DECL(MethodCall);
 	AST_VISITOR_DECL(Assignment);
 	AST_VISITOR_DECL(Import);
+	AST_VISITOR_DECL(FuncDeclaration);
 private:
 	OpcodeList m_opcodes;
 	SSA m_ssa;

@@ -139,6 +139,10 @@ next_token:
 	}
 
 	<ST_MULTILINE_COMMENT>"*" { SKIP(); }
+	
+	<INITIAL>"function" {
+		RET(token::FUNCTION);
+	}
 
 	<INITIAL>"break" {
 		RET(token::BREAK);

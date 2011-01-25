@@ -657,6 +657,46 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(ArgumentList);
 };
 
+class FuncDeclaration : public Expression {
+public:
+	FuncDeclaration(Expression* name, Expression* type, Expression* args, Expression* block)
+		: m_name(name), m_type(type), m_args(args), m_block(block) {
+		m_name->addRef();
+		m_type->addRef();
+		if (m_args) {
+			m_args->addRef();
+		}
+		if (m_block) {
+			m_block->addRef();
+		}
+	}
+
+	~FuncDeclaration() {
+		m_name->delRef();
+		m_type->delRef();
+		if (m_args) {
+			m_args->delRef();
+		}
+		if (m_block) {
+			m_block->delRef();
+		}
+	}
+
+	Expression* get_name() const throw() { return m_name; }
+	Expression* get_type() const throw() { return m_type; }
+	Expression* get_args() const throw() { return m_args; }
+	Expression* get_block() const throw() { return m_block; }
+
+	void accept(ASTVisitor& visitor) throw() {
+		visitor.visit(this);
+	}
+private:
+	Expression* m_name;
+	Expression* m_type;
+	Expression* m_args;
+	Expression* m_block;
+};
+
 class FunctionCall : public Expression {
 public:
 	FunctionCall(Expression* name)
