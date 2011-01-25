@@ -42,7 +42,7 @@ public:
 	void Init();
 
 	/* Type methods */
-	CLEVER_METHOD(toString);
+	static CLEVER_METHOD(toString);
 private:
 	DISALLOW_COPY_AND_ASSIGN(Integer);
 };

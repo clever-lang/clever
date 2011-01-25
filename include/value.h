@@ -312,14 +312,14 @@ public:
 		const Type* type_ptr = get_type_ptr();
 
 		if (type_ptr == NULL) {
-			m_callback_ptr.f_ptr(result, args);
+			m_callback_ptr.f_ptr(args, result);
 		} else {
-			(type_ptr->*m_callback_ptr.m_ptr)(result, m_context, args);
+			m_callback_ptr.m_ptr(args, result, m_context);
 		}
 	}
 
 	void callWithContext(Value* context, Value* result, const ValueVector* args) const throw() {
-		(get_type_ptr()->*m_callback_ptr.m_ptr)(result, context ,args);
+		m_callback_ptr.m_ptr(args, result, context);
 	}
 
 private:

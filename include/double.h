@@ -42,8 +42,8 @@ public:
 	void Init();
 
 	/* Type methods */
-	CLEVER_METHOD(toString);
-	CLEVER_METHOD(sqrt);
+	static CLEVER_METHOD(toString);
+	static CLEVER_METHOD(sqrt);
 private:
 	DISALLOW_COPY_AND_ASSIGN(Double);
 };

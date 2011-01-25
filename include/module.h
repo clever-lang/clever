@@ -47,18 +47,17 @@ typedef std::vector<Value*> ValueVector;
 /**
  * Macros to help on module function declaration
  */
-#define CLEVER_FUNCTION_ARGS Value* retval, const ValueVector* args
-#define CLEVER_METHOD_ARGS Value* retval, Value* value, const ValueVector* args
+#define CLEVER_FUNCTION_ARGS const ValueVector* args, Value* retval
+#define CLEVER_METHOD_ARGS const ValueVector* args, Value* retval, Value* value
 #define CLEVER_FUNC_NAME(name) clv_##name
 #define CLEVER_FUNCTION(name) void CLEVER_FASTCALL CLEVER_FUNC_NAME(name)(CLEVER_FUNCTION_ARGS) throw()
-#define CLEVER_METHOD(name) void name(CLEVER_METHOD_ARGS) const throw()
+#define CLEVER_METHOD(name) void CLEVER_FASTCALL name(CLEVER_METHOD_ARGS) throw()
 
 /**
- * Module function prototype
+ * Module function and method prototype
  */
 typedef void (CLEVER_FASTCALL *FunctionPtr)(CLEVER_FUNCTION_ARGS);
-
-typedef void (Type::*MethodPtr)(CLEVER_METHOD_ARGS) const;
+typedef void (CLEVER_FASTCALL *MethodPtr)(CLEVER_METHOD_ARGS);
 
 typedef std::tr1::unordered_map<std::string, FunctionPtr> FunctionMap;
 typedef std::tr1::unordered_map<const CString*, Module*> ModuleMap;
