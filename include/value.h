@@ -325,6 +325,23 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(CallableValue);
 };
 
+
+class InternCallableValue : public NamedValue {
+public:
+	InternCallableValue(const CString* name)
+		: NamedValue(name), m_start_pos(0) { }
+
+	~InternCallableValue() { }
+
+	void set_start_pos(unsigned int num) throw() { m_start_pos = num; }
+
+	void call(unsigned int& next_op) const throw() {
+		next_op = m_start_pos;
+	}
+private:
+	unsigned int m_start_pos;
+};
+
 } // clever
 
 #endif // CLEVER_VALUE_H

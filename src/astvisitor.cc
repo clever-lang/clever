@@ -599,7 +599,21 @@ AST_VISITOR(Import) {
  * Function declaration
  */
 AST_VISITOR(FuncDeclaration) {
+	const CString* name = expr->get_name()->get_value()->get_name();
+	InternCallableValue* func = new InternCallableValue(name);
+	Opcode* jmp = new Opcode(OP_JMP, &VM::jmp_handler);
 
+	pushOpcode(jmp);
+
+	func->set_start_pos(getOpNum());
+
+	m_ssa.pushVar(func);
+
+	m_ssa.beginScope();
+	expr->get_block()->accept(*this);
+	m_ssa.endScope();
+
+	jmp->set_jmp_addr2(getOpNum());
 }
 
 }} // clever::ast

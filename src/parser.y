@@ -75,7 +75,6 @@ clever::ast::Node* nodes = new clever::ast::TopNode;
 %token STR          "string"
 %token ECHO         "echo"
 %token IN           "in"
-%token FUNCTION     "function"
 %token FOR          "for"
 %token WHILE        "while"
 %token IF           "if"
@@ -165,7 +164,7 @@ args_declaration:
 ;
 
 func_declaration:
-		TYPE FUNCTION IDENT '(' args_declaration ')' block_stmt { $$ = new clever::ast::FuncDeclaration($3, $1, $5, $7); }
+		TYPE IDENT '(' args_declaration ')' block_stmt { $$ = new clever::ast::FuncDeclaration($2, $1, $4, $6); }
 ;
 
 arg_list:
