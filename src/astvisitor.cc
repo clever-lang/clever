@@ -523,9 +523,7 @@ AST_VISITOR(FuncDeclaration) {
 
 	m_ssa.pushVar(func);
 
-	m_ssa.beginScope();
 	expr->get_block()->accept(*this);
-	m_ssa.endScope();
 
 	jmp->set_jmp_addr2(getOpNum());
 }
