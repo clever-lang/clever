@@ -600,7 +600,7 @@ AST_VISITOR(Import) {
  */
 AST_VISITOR(FuncDeclaration) {
 	const CString* name = expr->get_name()->get_value()->get_name();
-	InternCallableValue* func = new InternCallableValue(name);
+	UserCallableValue* func = new UserCallableValue(name);
 	Opcode* jmp = new Opcode(OP_JMP, &VM::jmp_handler);
 
 	pushOpcode(jmp);

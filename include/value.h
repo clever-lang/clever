@@ -240,16 +240,24 @@ private:
  */
 class NamedValue : public Value {
 public:
+	enum NamedValueType { USER, INTERNAL };
+
 	NamedValue() { }
 
 	explicit NamedValue(const CString* name)
 		: Value(), m_name(name) { }
 
+	NamedValue(const CString* name, NamedValueType type)
+		: Value(), m_name(name) { }
+
 	virtual bool hasName() const { return true; }
 	const CString* get_name() const { return m_name; }
 	void set_name(const CString* name) { m_name = name; }
+	bool isUserDefined() const throw() { return m_type == USER; }
+	bool isInternallyDefined() const throw() { return m_type == INTERNAL; }
 private:
 	const CString* m_name;
+	NamedValueType m_type;
 
 	DISALLOW_COPY_AND_ASSIGN(NamedValue);
 };
@@ -267,13 +275,13 @@ public:
 	 * Create a CallableValue to represent a named function.
 	 */
 	explicit CallableValue(const CString* name)
-		: NamedValue(name), m_context(NULL) { }
+		: NamedValue(name, INTERNAL), m_context(NULL) { }
 
 	/**
 	 * Create a CallableValue able to represent a method.
 	 */
 	CallableValue(const CString* name, Type* type)
-		: NamedValue(name), m_context(NULL) {
+		: NamedValue(name, INTERNAL), m_context(NULL) {
 		set_type_ptr(type);
 	}
 
@@ -326,12 +334,12 @@ private:
 };
 
 
-class InternCallableValue : public NamedValue {
+class UserCallableValue : public NamedValue {
 public:
-	InternCallableValue(const CString* name)
-		: NamedValue(name), m_start_pos(0) { }
+	explicit UserCallableValue(const CString* name)
+		: NamedValue(name, USER), m_start_pos(0) { }
 
-	~InternCallableValue() { }
+	~UserCallableValue() { }
 
 	void set_start_pos(unsigned int num) throw() { m_start_pos = num; }
 
@@ -345,4 +353,3 @@ private:
 } // clever
 
 #endif // CLEVER_VALUE_H
-
