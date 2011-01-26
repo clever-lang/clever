@@ -62,7 +62,7 @@ AST_VISITOR(BinaryNode) {
 	if (!Compiler::checkCompatibleTypes(lhs, rhs)) {
 		Compiler::error("Type mismatch!");
 	}
-	if (lhs->isPrimitive() && !expr->isAssigned()) {
+	if (lhs->isPrimitive() && rhs->isPrimitive() && !expr->isAssigned()) {
 		result = Compiler::constantFolding(expr->get_op(), lhs, rhs);
 	}
 	if (result) {
