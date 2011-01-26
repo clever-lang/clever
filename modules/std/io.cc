@@ -32,8 +32,6 @@
 
 namespace clever { namespace std_pkg {
 
-Module* g_io_module = new IOModule;
-
 /**
  * println(object a, [ ...])
  * Prints the object values without trailing newline
@@ -58,7 +56,6 @@ static CLEVER_FUNCTION(println) {
  * Initializes Standard module
  */
 void IOModule::Init() throw() {
-	// Standard functions
 	addFunction(new Function("print", &CLEVER_FUNC_NAME(print)));
 	addFunction(new Function("println", &CLEVER_FUNC_NAME(println)));
 }

@@ -32,8 +32,6 @@
 
 namespace clever { namespace std_pkg {
 
-Module* g_math_module = new Math;
-
 /**
  * sqrt(double x)
  * Returns the square root of a number x
@@ -127,4 +125,4 @@ void Math::Init() throw() {
 }
 
 
-}} // clever::std_package
+}} // clever::std_pkg

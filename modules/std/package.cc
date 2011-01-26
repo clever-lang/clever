@@ -36,8 +36,8 @@ Package* g_std_package = new Std;
  * Initializes Std package
  */
 void Std::Init() throw() {
-	addModule(CSTRING("io"), g_io_module);
-	addModule(CSTRING("math"), g_math_module);
+	addModule(CSTRING("io"), new IOModule);
+	addModule(CSTRING("math"), new Math);
 }
 
 }} // clever::std_pkg
