@@ -105,6 +105,7 @@ public:
 	static CLEVER_VM_HANDLER(mcall_handler);
 	static CLEVER_VM_HANDLER(assign_handler);
 	static CLEVER_VM_HANDLER(end_func_handler);
+	static CLEVER_VM_HANDLER(return_handler);
 private:
 	OpcodeList* m_opcodes;
 

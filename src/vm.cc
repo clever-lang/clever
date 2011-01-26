@@ -535,4 +535,18 @@ CLEVER_VM_HANDLER(VM::end_func_handler) {
 	CLEVER_VM_GOTO(op->get_op_num());
 }
 
+CLEVER_VM_HANDLER(VM::return_handler) {
+	if (!s_call.empty()) {
+		Value* value = opcode.get_op1();
+		Opcode* call = s_call.top();
+
+		call->get_result()->copy(value);
+
+		s_call.pop();
+
+		CLEVER_VM_GOTO(call->get_op_num());
+	}
+	/* TODO: exit */
+}
+
 } // clever

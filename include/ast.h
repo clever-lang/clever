@@ -839,6 +839,33 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(Import);
 };
 
+class ReturnStmt : public Node {
+public:
+	ReturnStmt()
+		: m_expr(NULL) { }
+
+	explicit ReturnStmt(Node* expr)
+		: m_expr(expr) {
+		m_expr->addRef();
+	}
+
+	~ReturnStmt() {
+		if (m_expr) {
+			m_expr->delRef();
+		}
+	}
+
+	Node* get_expr() const throw() { return m_expr; }
+
+	void accept(ASTVisitor& visitor) throw() {
+		m_expr->accept(visitor);
+
+		visitor.visit(this);
+	}
+private:
+	Node* m_expr;
+};
+
 }} // clever::ast
 
 #endif // CLEVER_AST_H

@@ -114,6 +114,7 @@ AST_VISITOR(VariableDecl) {
 	if (rhs_expr) {
 		Value* value = getValue(rhs_expr);
 
+		variable->addRef();
 		m_ssa.pushVar(variable);
 
 		if (value->isConst()) {
@@ -126,6 +127,7 @@ AST_VISITOR(VariableDecl) {
 
 		pushOpcode(new Opcode(OP_VAR_DECL, &VM::var_decl_handler, variable, value));
 	} else {
+		variable->addRef();
 		m_ssa.pushVar(variable);
 
 		/* TODO: fix this */
@@ -526,6 +528,23 @@ AST_VISITOR(FuncDeclaration) {
 	pushOpcode(new Opcode(OP_JMP, &VM::end_func_handler));
 
 	jmp->set_jmp_addr2(getOpNum());
+}
+
+/**
+ * Generates opcode for return statement
+ */
+AST_VISITOR(ReturnStmt) {
+	Node* value = expr->get_expr();
+
+	if (expr) {
+		Value* expr_value = value->get_value();
+
+		expr_value->addRef();
+
+		pushOpcode(new Opcode(OP_RETURN, &VM::return_handler, expr_value));
+	} else {
+		pushOpcode(new Opcode(OP_RETURN, &VM::return_handler));
+	}
 }
 
 }} // clever::ast

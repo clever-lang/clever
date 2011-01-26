@@ -74,6 +74,7 @@ const char* Opcode::getOpName(Opcodes op) const throw() {
 		CASE(OP_MCALL);
 		CASE(OP_FCALL);
 		CASE(OP_ASSIGN);
+		CASE(OP_RETURN);
 		default:
 			return "UNKNOWN";
 	}

@@ -1,0 +1,10 @@
+Testing expression with function call
+==CODE==
+import std.io;
+
+Int bar() { return 3; }
+Int foo() { return bar(); }
+
+println(foo()+foo());
+==RESULT==
+6

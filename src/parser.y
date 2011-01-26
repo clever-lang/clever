@@ -96,6 +96,7 @@ clever::ast::Node* nodes = new clever::ast::TopNode;
 %token BW_AND_EQUAL  "&="
 %token BW_OR_EQUAL   "|="
 %token BW_XOR_EQUAL  "^="
+%token RETURN        "return"
 
 %left ',';
 %left '=';
@@ -151,7 +152,12 @@ statements:
 	|	break_stmt ';'           { tree.top()->add($1); $$ = $1; }
 	|	assign_stmt ';'          { tree.top()->add($1); $$ = $1; }
 	|	import_stmt ';'          { tree.top()->add($1); $$ = $1; }
+	|	return_stmt ';'          { tree.top()->add($1); $$ = $1; }
 ;
+
+return_stmt:
+		RETURN expr { $$ = new clever::ast::ReturnStmt($2); }
+	|	RETURN      { $$ = new clever::ast::ReturnStmt();   }
 
 args_declaration_non_empty:
 		TYPE IDENT

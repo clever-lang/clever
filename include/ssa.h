@@ -41,7 +41,14 @@ typedef std::tr1::unordered_map<const CString*, NamedValue*> ScopeBase;
 class Scope : public ScopeBase {
 public:
 	Scope() { }
-	~Scope() { }
+	~Scope() {
+		ScopeBase::const_iterator it = begin(), end_ = end();
+
+		while (it != end_) {
+			it->second->delRef();
+			++it;
+		}
+	}
 
 	void push(const CString* name, NamedValue* value) {
 		insert(std::pair<const CString*, NamedValue*>(name, value));
@@ -57,12 +64,12 @@ public:
 
 	NamedValue* fetch(const CString* name) {
 		if (!empty()) {
-			Scope::iterator it = find(name);
+			Scope::const_iterator it = find(name);
 
-			if (it != end())
+			if (it != end()) {
 				return it->second;
+			}
 		}
-
 		return NULL;
 	}
 
@@ -123,7 +130,7 @@ public:
 		push_back(Scope());
 		++m_scope;
 	}
-	
+
 	/**
 	 * Terminates the current block
 	 */
@@ -141,7 +148,7 @@ public:
 
 private:
 	int m_scope;
-	
+
 	NamedValue* deepValueSearch(const CString* name) {
 		for (int i = m_scope-1; i >= 0; --i) {
 			NamedValue* value = at(i).fetch(name);
