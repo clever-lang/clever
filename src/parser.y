@@ -237,10 +237,10 @@ expr:
 	|	expr "!=" expr        { $$ = new clever::ast::LogicNode(ast::NOT_EQUAL, $1, $3);     }
 	|	'-' expr %prec UMINUS { $$ = new clever::ast::BinaryNode(ast::MINUS, $2);            }
 	|	'+' expr %prec UMINUS { $$ = new clever::ast::BinaryNode(ast::PLUS, $2);             }
-	|	INCREMENT IDENT       { $$ = new clever::ast::PreIncrement($2);                            }
-	|	IDENT INCREMENT       { $$ = new clever::ast::PosIncrement($1);                            }
-	|	DECREMENT IDENT       { $$ = new clever::ast::PreDecrement($2);                            }
-	|	IDENT DECREMENT       { $$ = new clever::ast::PosDecrement($1);                            }
+	|	INCREMENT IDENT       { $$ = new clever::ast::PreIncrement($2);                      }
+	|	IDENT INCREMENT       { $$ = new clever::ast::PosIncrement($1);                      }
+	|	DECREMENT IDENT       { $$ = new clever::ast::PreDecrement($2);                      }
+	|	IDENT DECREMENT       { $$ = new clever::ast::PosDecrement($1);                      }
 	|	'!' expr              { $$ = $2; }
 	|	'~' expr              { $$ = $2; }
 	|	'(' expr ')'          { $$ = $2; }
