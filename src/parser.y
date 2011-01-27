@@ -199,7 +199,7 @@ variable_declaration:
 ;
 
 assign_stmt:
-		IDENT '=' expr  { $$ = new clever::ast::Assignment($1, $3);                         }
+		IDENT '=' expr  { $$ = new clever::ast::Assignment($1, $3);                   }
 	|	IDENT "+=" expr { $$ = new clever::ast::BinaryNode(ast::PLUS, $1, $3, true);  }
 	|	IDENT "-=" expr { $$ = new clever::ast::BinaryNode(ast::MINUS, $1, $3, true); }
 	|	IDENT "/=" expr { $$ = new clever::ast::BinaryNode(ast::DIV, $1, $3, true);   }
