@@ -864,6 +864,8 @@ public:
 	}
 private:
 	Node* m_expr;
+
+	DISALLOW_COPY_AND_ASSIGN(ReturnStmt);
 };
 
 }} // clever::ast
