@@ -134,7 +134,7 @@ bool Compiler::checkCompatibleTypes(Value* lhs, Value* rhs) throw() {
 	/**
 	 * Constants with different type cannot performs operation
 	 */
-	if (lhs->isPrimitive() && lhs->hasSameKind(rhs) && !lhs->hasSameType(rhs)) {
+	if (lhs->isPrimitive() && rhs->isPrimitive() && !lhs->hasSameType(rhs)) {
 		return false;
 	}
 	return true;
