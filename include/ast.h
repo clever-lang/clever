@@ -291,7 +291,7 @@ private:
 class Identifier : public Node {
 public:
 	explicit Identifier(const CString* name) {
-		m_value = new NamedValue(name);
+		m_value = new Value(name);
 		m_name = name;
 	}
 
@@ -303,7 +303,7 @@ public:
 	Value* get_value() const throw() { return m_value; }
 	const CString* get_name() const { return m_name; }
 private:
-	NamedValue* m_value;
+	Value* m_value;
 	const CString* m_name;
 
 	DISALLOW_COPY_AND_ASSIGN(Identifier);

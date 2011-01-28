@@ -30,13 +30,14 @@
 
 #include <tr1/unordered_map>
 #include <deque>
+#include "global.h"
 #include "value.h"
 
 namespace clever {
 
 class CString;
 
-typedef std::tr1::unordered_map<const CString*, NamedValue*> ScopeBase;
+typedef std::tr1::unordered_map<const CString*, Value*> ScopeBase;
 
 class Scope : public ScopeBase {
 public:
@@ -50,19 +51,22 @@ public:
 		}
 	}
 
-	void push(const CString* name, NamedValue* value) {
-		insert(std::pair<const CString*, NamedValue*>(name, value));
-	}
-
-	void push(NamedValue* value) {
-		if (!value->hasName()) {
-			// TODO: THROW ERROR HERE
+	void push(const CString* name, Value* value) {
+		if (EXPECTED(value->hasName())) {
+			insert(std::pair<const CString*, Value*>(name, value));
 		}
 
-		push(value->get_name(), value);
+		// TODO: THROW ERROR HERE
 	}
 
-	NamedValue* fetch(const CString* name) {
+	void push(Value* value) {
+		if (EXPECTED(value->hasName())) {
+			push(value->get_name(), value);
+		}
+		// TODO: THROW ERROR HERE
+	}
+
+	Value* fetch(const CString* name) {
 		if (!empty()) {
 			Scope::const_iterator it = find(name);
 
@@ -73,7 +77,7 @@ public:
 		return NULL;
 	}
 
-	NamedValue* fetch(const NamedValue* value) {
+	Value* fetch(const Value* value) {
 		return fetch(value->get_name());
 	}
 };
@@ -92,25 +96,25 @@ public:
 	/**
 	 * Adds a new variable to current scope
 	 */
-	void pushVar(const CString* name, NamedValue* var) throw() {
+	void pushVar(const CString* name, Value* var) throw() {
 		at(m_scope).push(name, var);
 	}
 
-	void pushVar(NamedValue* var) throw() {
+	void pushVar(Value* var) throw() {
 		at(m_scope).push(var->get_name(), var);
 	}
 
 	/**
 	 * Returns the Value* pointer if the name is found
 	 */
-	NamedValue* fetchVar(const CString* name) throw() {
+	Value* fetchVar(const CString* name) throw() {
 		/* There is no scope to search, shit just got real. */
 		if (m_scope == -1) {
 			/* TODO: throw error or warning of unreslved symbol. */
 			return NULL;
 		}
 
-		NamedValue* value = at(m_scope).fetch(name);
+		Value* value = at(m_scope).fetch(name);
 
 		if (value == NULL) {
 			value = deepValueSearch(name);
@@ -119,7 +123,7 @@ public:
 		return value;
 	}
 
-	NamedValue* fetchVar(NamedValue* value) throw() {
+	Value* fetchVar(Value* value) throw() {
 		return fetchVar(value->get_name());
 	}
 
@@ -149,9 +153,9 @@ public:
 private:
 	int m_scope;
 
-	NamedValue* deepValueSearch(const CString* name) {
+	Value* deepValueSearch(const CString* name) {
 		for (int i = m_scope-1; i >= 0; --i) {
-			NamedValue* value = at(i).fetch(name);
+			Value* value = at(i).fetch(name);
 
 			if (value) {
 				return value;

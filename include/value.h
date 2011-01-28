@@ -60,8 +60,9 @@ public:
 	enum { NONE, INTEGER, DOUBLE, STRING, BOOLEAN, VECTOR, USER };
 	enum { UNKNOWN, CONST };
 
-	Value() : RefCounted(1), m_status(UNSET), m_type(UNKNOWN), m_kind(UNKNOWN), m_type_ptr(NULL) {}
-	explicit Value(int kind) : RefCounted(1), m_status(UNSET), m_type(UNKNOWN), m_kind(kind), m_type_ptr(NULL) {}
+	Value() : RefCounted(1), m_status(UNSET), m_type(UNKNOWN), m_kind(UNKNOWN), m_type_ptr(NULL), m_name(NULL) {}
+	explicit Value(const CString* name) : RefCounted(1), m_status(UNSET), m_type(UNKNOWN), m_kind(UNKNOWN), m_type_ptr(NULL), m_name(name) {}
+	explicit Value(int kind) : RefCounted(1), m_status(UNSET), m_type(UNKNOWN), m_kind(kind), m_type_ptr(NULL), m_name(NULL) {}
 
 	virtual ~Value() {
 		if (isVector()) {
@@ -99,9 +100,9 @@ public:
 	const Type* get_type_ptr() const { return m_type_ptr; }
 	void set_type_ptr(const Type* ptr) { m_type_ptr = ptr; }
 
-	virtual bool hasName() const { return false; }
-	virtual const CString* get_name() const { return NULL; }
-	virtual void set_name(const CString* name) { /* TODO: throw error */ }
+	bool hasName() const { return m_name != NULL; }
+	const CString* get_name() const { return m_name; }
+	void set_name(const CString* name) { m_name = name; }
 
 	int get_kind() const { return m_kind; }
 	void set_kind(int kind) { m_kind = kind; }
@@ -194,6 +195,7 @@ private:
 	int m_type;
 	int m_kind;
 	const Type* m_type_ptr;
+	const CString* m_name;
 	ValueData m_data;
 
 	DISALLOW_COPY_AND_ASSIGN(Value);
@@ -234,30 +236,9 @@ private:
 };
 
 /**
- * Symbol names used for opcodes.
- *
- * e.g. Functions and Variables.
- */
-class NamedValue : public Value {
-public:
-	NamedValue() { }
-
-	explicit NamedValue(const CString* name)
-		: m_name(name) { }
-
-	virtual bool hasName() const { return true; }
-	const CString* get_name() const { return m_name; }
-	void set_name(const CString* name) { m_name = name; }
-private:
-	const CString* m_name;
-
-	DISALLOW_COPY_AND_ASSIGN(NamedValue);
-};
-
-/**
  * Class that represents the values of functions and methods.
  */
-class CallableValue : public NamedValue {
+class CallableValue : public Value {
 public:
 	enum CallType {
 		NEAR, /* Invoke compiled functions/methods. */
@@ -272,13 +253,13 @@ public:
 	 * Create a CallableValue to represent a named function.
 	 */
 	explicit CallableValue(const CString* name)
-		: NamedValue(name), m_call_type(FAR), m_context(NULL) { }
+		: Value(name), m_call_type(FAR), m_context(NULL) { }
 
 	/**
 	 * Create a CallableValue able to represent a method.
 	 */
 	CallableValue(const CString* name, Type* type)
-		: NamedValue(name), m_call_type(FAR), m_context(NULL) {
+		: Value(name), m_call_type(FAR), m_context(NULL) {
 		set_type_ptr(type);
 	}
 

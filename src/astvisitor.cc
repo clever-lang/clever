@@ -40,7 +40,7 @@ Value* ASTVisitor::getValue(ast::Node* expr) throw() {
 	Value* value = expr->get_value();
 
 	if (value && value->hasName()) {
-		Value* var = m_ssa.fetchVar(static_cast<NamedValue*>(value));
+		Value* var = m_ssa.fetchVar(value);
 
 		/**
 		 * If the variable is found, we should use its pointer instead of
@@ -105,7 +105,7 @@ AST_VISITOR(VariableDecl) {
 	ast::Node* var_type = expr->get_type();
 	ast::Node* var_expr = expr->get_variable();
 	ast::Node* rhs_expr = expr->get_initial_value();
-	NamedValue* variable = static_cast<NamedValue*>(var_expr->get_value());
+	Value* variable = var_expr->get_value();
 	const Type* type = TypeTable::getType(var_type->get_value()->get_name());
 
 	variable->set_type_ptr(type);
