@@ -61,8 +61,24 @@ public:
 	enum { UNKNOWN, CONST };
 
 	Value() : RefCounted(1), m_status(UNSET), m_type(UNKNOWN), m_kind(UNKNOWN), m_type_ptr(NULL), m_name(NULL) {}
-	explicit Value(const CString* name) : RefCounted(1), m_status(UNSET), m_type(UNKNOWN), m_kind(UNKNOWN), m_type_ptr(NULL), m_name(name) {}
-	explicit Value(int kind) : RefCounted(1), m_status(UNSET), m_type(UNKNOWN), m_kind(kind), m_type_ptr(NULL), m_name(NULL) {}
+	explicit Value(double value)
+		: RefCounted(1), m_status(UNSET), m_type(DOUBLE), m_kind(UNKNOWN), m_type_ptr(NULL), m_name(NULL) {
+			setDouble(value);
+		}
+	explicit Value(int64_t value)
+		: RefCounted(1), m_status(UNSET), m_type(INTEGER), m_kind(UNKNOWN), m_type_ptr(NULL), m_name(NULL) {
+			setInteger(value);
+		}
+	explicit Value(bool value)
+		: RefCounted(1), m_status(UNSET), m_type(BOOLEAN), m_kind(UNKNOWN), m_type_ptr(NULL), m_name(NULL) {
+			setBoolean(value);
+		}
+	explicit Value(const CString* value)
+		: RefCounted(1), m_status(UNSET), m_type(STRING), m_kind(UNKNOWN), m_type_ptr(NULL), m_name(NULL) {
+			setString(value);
+		}
+//	explicit Value(const CString* name) : RefCounted(1), m_status(UNSET), m_type(UNKNOWN), m_kind(UNKNOWN), m_type_ptr(NULL), m_name(name) {}
+//	explicit Value(int kind) : RefCounted(1), m_status(UNSET), m_type(UNKNOWN), m_kind(kind), m_type_ptr(NULL), m_name(NULL) {}
 
 	virtual ~Value() {
 		if (isVector()) {
@@ -108,8 +124,6 @@ public:
 	void set_kind(int kind) { m_kind = kind; }
 
 	bool hasSameKind(Value* value) const { return get_kind() == value->get_kind(); }
-
-	bool isConst() const { return m_kind == CONST; }
 
 	int get_status() { return m_status; }
 	void set_status(int status) { m_status = status; }
@@ -202,40 +216,6 @@ private:
 };
 
 /**
- * Constant values used for opcodes
- */
-class ConstantValue : public Value {
-public:
-	explicit ConstantValue(double value)
-		: Value(CONST) {
-		set_type(DOUBLE);
-		setDouble(value);
-	}
-
-	explicit ConstantValue(int64_t value)
-		: Value(CONST) {
-		set_type(INTEGER);
-		setInteger(value);
-	}
-
-	explicit ConstantValue(const CString* value)
-		: Value(CONST) {
-		set_type(STRING);
-		setString(value);
-	}
-
-	explicit ConstantValue(bool value)
-		: Value(CONST) {
-		set_type(BOOLEAN);
-		setBoolean(value);
-	}
-
-	~ConstantValue() { }
-private:
-	DISALLOW_COPY_AND_ASSIGN(ConstantValue);
-};
-
-/**
  * Class that represents the values of functions and methods.
  */
 class CallableValue : public Value {
@@ -253,13 +233,16 @@ public:
 	 * Create a CallableValue to represent a named function.
 	 */
 	explicit CallableValue(const CString* name)
-		: Value(name), m_call_type(FAR), m_context(NULL) { }
+		: Value(), m_call_type(FAR), m_context(NULL) {
+			set_name(name);
+		}
 
 	/**
 	 * Create a CallableValue able to represent a method.
 	 */
 	CallableValue(const CString* name, Type* type)
-		: Value(name), m_call_type(FAR), m_context(NULL) {
+		: Value(), m_call_type(FAR), m_context(NULL) {
+		set_name(name);
 		set_type_ptr(type);
 	}
 

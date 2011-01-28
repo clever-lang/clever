@@ -57,7 +57,7 @@ Value* ASTVisitor::getValue(ast::Node* expr) throw() {
 AST_VISITOR(BinaryNode) {
 	Value* lhs = getValue(expr->get_lhs());
 	Value* rhs = getValue(expr->get_rhs());
-	ConstantValue* result = NULL;
+	Value* result = NULL;
 
 	if (!Compiler::checkCompatibleTypes(lhs, rhs)) {
 		Compiler::error("Type mismatch!");
@@ -117,7 +117,7 @@ AST_VISITOR(VariableDecl) {
 		variable->addRef();
 		m_ssa.pushVar(variable);
 
-		if (value->isConst()) {
+		if (value->isPrimitive()) {
 			variable->setInitialized();
 			variable->copy(value);
 		}
@@ -348,7 +348,7 @@ AST_VISITOR(WhileNode) {
 AST_VISITOR(LogicNode) {
 	Value* lhs = getValue(expr->get_lhs());
 	Value* rhs = getValue(expr->get_rhs());
-	ConstantValue* result = NULL;
+	Value* result = NULL;
 
 	if (!Compiler::checkCompatibleTypes(lhs, rhs)) {
 		Compiler::error("Type mismatch!");

@@ -149,11 +149,11 @@ private:
 class NumberLiteral : public Literal {
 public:
 	explicit NumberLiteral(int64_t val) {
-		m_value = new ConstantValue(val);
+		m_value = new Value(val);
 	}
 
 	explicit NumberLiteral(double val) {
-		m_value = new ConstantValue(val);
+		m_value = new Value(val);
 	}
 
 	~NumberLiteral() {
@@ -162,7 +162,7 @@ public:
 
 	Value* get_value() const throw() { return m_value; };
 private:
-	ConstantValue* m_value;
+	Value* m_value;
 
 	DISALLOW_COPY_AND_ASSIGN(NumberLiteral);
 };
@@ -291,7 +291,8 @@ private:
 class Identifier : public Node {
 public:
 	explicit Identifier(const CString* name) {
-		m_value = new Value(name);
+		m_value = new Value();
+		m_value->set_name(name);
 		m_name = name;
 	}
 
@@ -312,7 +313,7 @@ private:
 class StringLiteral : public Literal {
 public:
 	explicit StringLiteral(const CString* name) {
-		m_value = new ConstantValue(name);
+		m_value = new Value(name);
 	}
 
 	~StringLiteral() {
@@ -321,7 +322,7 @@ public:
 
 	Value* get_value() const throw() { return m_value; };
 private:
-	ConstantValue* m_value;
+	Value* m_value;
 
 	DISALLOW_COPY_AND_ASSIGN(StringLiteral);
 };

@@ -98,7 +98,7 @@ public:
 	/**
 	 * Performs the constant folding and constant propagation optimization
 	 */
-	ConstantValue* constantFolding(int, Value*, Value*) throw();
+	Value* constantFolding(int, Value*, Value*) throw();
 	/**
 	 * Returns the opcode list
 	 */

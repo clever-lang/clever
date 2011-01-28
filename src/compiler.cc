@@ -134,7 +134,7 @@ bool Compiler::checkCompatibleTypes(Value* lhs, Value* rhs) throw() {
 	/**
 	 * Constants with different type cannot performs operation
 	 */
-	if (lhs->isConst() && lhs->hasSameKind(rhs) && !lhs->hasSameType(rhs)) {
+	if (lhs->isPrimitive() && lhs->hasSameKind(rhs) && !lhs->hasSameType(rhs)) {
 		return false;
 	}
 	return true;
@@ -143,13 +143,13 @@ bool Compiler::checkCompatibleTypes(Value* lhs, Value* rhs) throw() {
 /**
  * Performs a constant folding optimization
  */
-ConstantValue* Compiler::constantFolding(int op, Value* lhs, Value* rhs) throw() {
+Value* Compiler::constantFolding(int op, Value* lhs, Value* rhs) throw() {
 
 #define DO_NUM_OPERATION(_op, type, x, y) \
-	if (x->is##type()) return new ConstantValue(x->get##type() _op y->get##type());
+	if (x->is##type()) return new Value(x->get##type() _op y->get##type());
 
 #define DO_STR_OPERATION(_op, x, y) \
-	if (x->isString()) return new ConstantValue(CSTRING(x->getString() _op y->getString()));
+	if (x->isString()) return new Value(CSTRING(x->getString() _op y->getString()));
 
 	/**
 	 * Check if the variable value can be predicted

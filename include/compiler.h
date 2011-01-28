@@ -67,7 +67,7 @@ public:
 
 	static void error(std::string) throw();
 	static bool checkCompatibleTypes(Value*, Value*) throw();
-	static ConstantValue* constantFolding(int, Value*, Value*) throw();
+	static Value* constantFolding(int, Value*, Value*) throw();
 	/**
 	 * Returns the opcode list
 	 */
