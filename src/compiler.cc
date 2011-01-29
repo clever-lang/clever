@@ -222,8 +222,7 @@ void Compiler::checkFunctionArgs(const Function* func, int num_args) throw() {
 /**
  * Formatter
  */
-void Compiler::vsprintf(std::ostringstream& outstr, const char* format, va_list ap) throw()
-{
+void Compiler::vsprintf(std::ostringstream& outstr, const char* format, va_list ap) throw() {
 	char* chr = const_cast<char*>(format);
 
 	if (!chr) {
@@ -263,8 +262,7 @@ void Compiler::vsprintf(std::ostringstream& outstr, const char* format, va_list 
 	}
 }
 
-void Compiler::sprintf(std::ostringstream& outstr, const char* format, ...) throw()
-{
+void Compiler::sprintf(std::ostringstream& outstr, const char* format, ...) throw() {
 	va_list args;
 
 	va_start(args, format);
@@ -274,8 +272,7 @@ void Compiler::sprintf(std::ostringstream& outstr, const char* format, ...) thro
 	va_end(args);
 }
 
-void Compiler::printf(const char* format, ...) throw()
-{
+void Compiler::printf(const char* format, ...) throw() {
 	std::ostringstream out;
 	va_list args;
 
@@ -288,8 +285,7 @@ void Compiler::printf(const char* format, ...) throw()
 	va_end(args);
 }
 
-void Compiler::errorf(const char* format, ...) throw()
-{
+void Compiler::errorf(const char* format, ...) throw() {
 	std::ostringstream out;
 	va_list args;
 
@@ -302,8 +298,7 @@ void Compiler::errorf(const char* format, ...) throw()
 	error(out.str());
 }
 
-void Compiler::printfln(const char* format, ...) throw()
-{
+void Compiler::printfln(const char* format, ...) throw() {
 	std::ostringstream out;
 	va_list args;
 
