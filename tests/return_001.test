@@ -1,0 +1,12 @@
+==TEST==
+Using return to abort execution
+==FILE==
+import std.io;
+
+println(1);
+
+return;
+
+println(2);
+==RESULT==
+1

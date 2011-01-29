@@ -75,9 +75,10 @@ void VM::error(const char* message) throw() {
  * Execute the collected opcodes
  */
 void VM::run() throw() {
-	unsigned int next_op, last_op = m_opcodes->size();
+	long next_op;
+	unsigned int last_op = m_opcodes->size();
 
-	for (next_op = 0; next_op < last_op; ++next_op) {
+	for (next_op = 0; next_op < last_op && next_op >= 0; ++next_op) {
 		Opcode& opcode = *(*m_opcodes)[next_op];
 
 		// opcode.dump();
@@ -544,9 +545,16 @@ CLEVER_VM_HANDLER(VM::return_handler) {
 
 		s_call.pop();
 
+		/**
+		 * Go back to the caller
+		 */
 		CLEVER_VM_GOTO(call->get_op_num());
+	} else {
+		/**
+		 * Terminates the execution
+		 */
+		CLEVER_VM_GOTO(-2);
 	}
-	/* TODO: exit */
 }
 
 } // clever

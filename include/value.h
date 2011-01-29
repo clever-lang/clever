@@ -289,7 +289,7 @@ public:
 		m_callback.m_ptr(args, result, context);
 	}
 
-	void call(unsigned int& next_op) const throw() {
+	void call(long& next_op) const throw() {
 		next_op = m_callback.m_addr;
 	}
 

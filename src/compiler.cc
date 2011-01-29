@@ -42,6 +42,27 @@ FunctionTable Compiler::s_func_table;
 TypeMap TypeTable::s_type_table;
 
 /**
+ * Deallocs memory used by compiler data
+ */
+Compiler::~Compiler() {
+	FunctionTable::const_iterator it = s_func_table.begin(), end_func = s_func_table.end();
+
+	/**
+	 * Deallocs memory used by global function table entries
+	 */
+	while (it != end_func) {
+		delete it->second;
+		++it;
+	}
+	TypeTable::clear();
+
+	s_pkgmanager.shutdown();
+
+	delete m_visitor;
+	delete m_ast;
+}
+
+/**
  * Initializes the compiler data
  */
 void Compiler::Init(ast::Node* nodes) throw() {
@@ -70,31 +91,11 @@ void Compiler::loadTypes() throw() {
 	TypeTable::insert(CSTRING("Double"), g_double_type);
 }
 
+/**
+ * Returns the collected opcodes
+ */
 OpcodeList& Compiler::getOpcodes() throw() {
 	return m_visitor->get_opcodes();
-}
-
-/**
- * Deallocs memory used by compiler data
- */
-Compiler::~Compiler() {
-	FunctionTable::const_iterator it = s_func_table.begin(), end_func(s_func_table.end());
-
-	/**
-	 * Deallocs memory used by global function table entries
-	 */
-	while (it != end_func) {
-		delete it->second;
-		++it;
-	}
-
-	TypeTable::clear();
-
-	s_pkgmanager.shutdown();
-
-	delete m_visitor;
-
-	delete m_ast;
 }
 
 /**

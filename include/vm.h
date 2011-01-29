@@ -35,7 +35,7 @@
 /**
  * Opcode handler arguments
  */
-#define CLEVER_VM_HANDLER_ARGS Opcode& opcode, unsigned int& next_op
+#define CLEVER_VM_HANDLER_ARGS Opcode& opcode, long& next_op
 #define CLEVER_VM_HANDLER(name) void CLEVER_FASTCALL name(CLEVER_VM_HANDLER_ARGS) throw()
 
 /**
