@@ -303,7 +303,7 @@ AST_VISITOR(BlockNode) {
 /**
  * Generates the JMPZ opcode for WHILE expression
  */
-AST_VISITOR(WhileNode) {
+AST_VISITOR(WhileExpr) {
 	Value* value;
 	Opcode* jmpz;
 	Opcode* jmp;
@@ -491,7 +491,7 @@ AST_VISITOR(AssignStmt) {
 /**
  * Import statement
  */
-AST_VISITOR(Import) {
+AST_VISITOR(ImportStmt) {
 	const CString* package = expr->get_package()->get_value()->get_name();
 	ASTNode* module = expr->get_module();
 

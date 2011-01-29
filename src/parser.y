@@ -257,7 +257,7 @@ for_stmt:
 ;
 
 while_stmt:
-		WHILE '(' expr ')' block_stmt { $$ = new clever::ast::WhileNode($3, $5); }
+		WHILE '(' expr ')' block_stmt { $$ = new clever::ast::WhileExpr($3, $5); }
 ;
 
 if_stmt:
@@ -280,8 +280,8 @@ break_stmt:
 ;
 
 import_stmt:
-		IMPORT IDENT           { $$ = new clever::ast::Import($2);     }
-	|	IMPORT IDENT '.' IDENT { $$ = new clever::ast::Import($2, $4); }
+		IMPORT IDENT           { $$ = new clever::ast::ImportStmt($2);     }
+	|	IMPORT IDENT '.' IDENT { $$ = new clever::ast::ImportStmt($2, $4); }
 ;
 
 %%

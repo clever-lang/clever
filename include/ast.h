@@ -549,9 +549,9 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(ElseIfNode);
 };
 
-class WhileNode : public ASTNode {
+class WhileExpr : public ASTNode {
 public:
-	WhileNode(ASTNode* condition, ASTNode* block)
+	WhileExpr(ASTNode* condition, ASTNode* block)
 		: m_condition(condition), m_block(block) {
 		m_condition->addRef();
 
@@ -560,7 +560,7 @@ public:
 		}
 	}
 
-	~WhileNode() {
+	~WhileExpr() {
 		m_condition->delRef();
 
 		if (m_block) {
@@ -580,7 +580,7 @@ private:
 	ASTNode* m_condition;
 	ASTNode* m_block;
 
-	DISALLOW_COPY_AND_ASSIGN(WhileNode);
+	DISALLOW_COPY_AND_ASSIGN(WhileExpr);
 };
 
 class LogicExpr : public ASTNode {
@@ -797,18 +797,18 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(AssignStmt);
 };
 
-class Import : public ASTNode {
+class ImportStmt : public ASTNode {
 public:
-	Import(ASTNode* package)
+	ImportStmt(ASTNode* package)
 		: m_package(package), m_module(NULL) {
 		m_package->addRef();
 	}
-	Import(ASTNode* package, ASTNode* module)
+	ImportStmt(ASTNode* package, ASTNode* module)
 		: m_package(package), m_module(module) {
 		m_package->addRef();
 		m_module->addRef();
 	}
-	~Import() {
+	~ImportStmt() {
 		m_package->delRef();
 		if (m_module) {
 			m_module->delRef();
@@ -830,7 +830,7 @@ private:
 	ASTNode* m_package;
 	ASTNode* m_module;
 
-	DISALLOW_COPY_AND_ASSIGN(Import);
+	DISALLOW_COPY_AND_ASSIGN(ImportStmt);
 };
 
 class ReturnStmt : public ASTNode {

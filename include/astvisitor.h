@@ -44,11 +44,11 @@ class PreIncrement;
 class PreDecrement;
 class IfNode;
 class ElseIfNode;
-class WhileNode;
+class WhileExpr;
 class FunctionCall;
 class MethodCall;
 class AssignStmt;
-class Import;
+class ImportStmt;
 class BreakNode;
 class BlockNode;
 class ArgumentList;
@@ -127,12 +127,12 @@ public:
 	AST_VISITOR_DECL(PosDecrement);
 	AST_VISITOR_DECL(BlockNode);
 	AST_VISITOR_DECL(IfNode);
-	AST_VISITOR_DECL(WhileNode);
+	AST_VISITOR_DECL(WhileExpr);
 	AST_VISITOR_DECL(BreakNode);
 	AST_VISITOR_DECL(FunctionCall);
 	AST_VISITOR_DECL(MethodCall);
 	AST_VISITOR_DECL(AssignStmt);
-	AST_VISITOR_DECL(Import);
+	AST_VISITOR_DECL(ImportStmt);
 	AST_VISITOR_DECL(FuncDeclaration);
 	AST_VISITOR_DECL(ReturnStmt);
 private:
