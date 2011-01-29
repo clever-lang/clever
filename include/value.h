@@ -56,29 +56,38 @@ public:
 		ValueVector* v_value;
 	} ValueData;
 
+	/**
+	 * Variable states
+	 */
 	enum { SET, UNSET, MODIFIED };
-	enum { NONE, INTEGER, DOUBLE, STRING, BOOLEAN, VECTOR, USER };
-	enum { UNKNOWN, CONST };
 
-	Value() : RefCounted(1), m_status(UNSET), m_type(UNKNOWN), m_type_ptr(NULL), m_name(NULL) {}
+	/**
+	 * Data type
+	 */
+	enum { NONE, INTEGER, DOUBLE, STRING, BOOLEAN, VECTOR, USER };
+
+	Value()
+		: RefCounted(1), m_status(UNSET), m_type(NONE), m_type_ptr(NULL), m_name(NULL) { }
+
 	explicit Value(double value)
 		: RefCounted(1), m_status(UNSET), m_type(DOUBLE), m_type_ptr(NULL), m_name(NULL) {
 			setDouble(value);
-		}
+	}
+
 	explicit Value(int64_t value)
 		: RefCounted(1), m_status(UNSET), m_type(INTEGER), m_type_ptr(NULL), m_name(NULL) {
 			setInteger(value);
-		}
+	}
+
 	explicit Value(bool value)
 		: RefCounted(1), m_status(UNSET), m_type(BOOLEAN), m_type_ptr(NULL), m_name(NULL) {
 			setBoolean(value);
-		}
+	}
+
 	explicit Value(const CString* value)
 		: RefCounted(1), m_status(UNSET), m_type(STRING), m_type_ptr(NULL), m_name(NULL) {
 			setString(value);
-		}
-//	explicit Value(const CString* name) : RefCounted(1), m_status(UNSET), m_type(UNKNOWN), m_kind(UNKNOWN), m_type_ptr(NULL), m_name(name) {}
-//	explicit Value(int kind) : RefCounted(1), m_status(UNSET), m_type(UNKNOWN), m_kind(kind), m_type_ptr(NULL), m_name(NULL) {}
+	}
 
 	virtual ~Value() {
 		if (isVector()) {
@@ -166,18 +175,18 @@ public:
 
 	const ValueData *get_data() const { return &m_data; }
 
-	void copy(const Value* value) {
+	void copy(const Value* value) throw() {
 		std::memcpy(&m_data, value->get_data(), sizeof(ValueData));
 		m_type = value->get_type();
 	}
-	void copy(Value& value) {
+	void copy(Value& value) throw() {
 		std::memcpy(&m_data, value.get_data(), sizeof(ValueData));
 		m_type = value.get_type();
 	}
 
-	virtual Value* get_value() { return this; }
+	virtual Value* get_value() throw() { return this; }
 
-	virtual const CString& toString() {
+	virtual const CString& toString() throw() {
 		std::ostringstream str;
 
 		switch (get_type()) {
