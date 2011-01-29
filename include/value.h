@@ -60,21 +60,21 @@ public:
 	enum { NONE, INTEGER, DOUBLE, STRING, BOOLEAN, VECTOR, USER };
 	enum { UNKNOWN, CONST };
 
-	Value() : RefCounted(1), m_status(UNSET), m_type(UNKNOWN), m_kind(UNKNOWN), m_type_ptr(NULL), m_name(NULL) {}
+	Value() : RefCounted(1), m_status(UNSET), m_type(UNKNOWN), m_type_ptr(NULL), m_name(NULL) {}
 	explicit Value(double value)
-		: RefCounted(1), m_status(UNSET), m_type(DOUBLE), m_kind(UNKNOWN), m_type_ptr(NULL), m_name(NULL) {
+		: RefCounted(1), m_status(UNSET), m_type(DOUBLE), m_type_ptr(NULL), m_name(NULL) {
 			setDouble(value);
 		}
 	explicit Value(int64_t value)
-		: RefCounted(1), m_status(UNSET), m_type(INTEGER), m_kind(UNKNOWN), m_type_ptr(NULL), m_name(NULL) {
+		: RefCounted(1), m_status(UNSET), m_type(INTEGER), m_type_ptr(NULL), m_name(NULL) {
 			setInteger(value);
 		}
 	explicit Value(bool value)
-		: RefCounted(1), m_status(UNSET), m_type(BOOLEAN), m_kind(UNKNOWN), m_type_ptr(NULL), m_name(NULL) {
+		: RefCounted(1), m_status(UNSET), m_type(BOOLEAN), m_type_ptr(NULL), m_name(NULL) {
 			setBoolean(value);
 		}
 	explicit Value(const CString* value)
-		: RefCounted(1), m_status(UNSET), m_type(STRING), m_kind(UNKNOWN), m_type_ptr(NULL), m_name(NULL) {
+		: RefCounted(1), m_status(UNSET), m_type(STRING), m_type_ptr(NULL), m_name(NULL) {
 			setString(value);
 		}
 //	explicit Value(const CString* name) : RefCounted(1), m_status(UNSET), m_type(UNKNOWN), m_kind(UNKNOWN), m_type_ptr(NULL), m_name(name) {}
@@ -119,11 +119,6 @@ public:
 	bool hasName() const { return m_name != NULL; }
 	const CString* get_name() const { return m_name; }
 	void set_name(const CString* name) { m_name = name; }
-
-	int get_kind() const { return m_kind; }
-	void set_kind(int kind) { m_kind = kind; }
-
-	bool hasSameKind(Value* value) const { return get_kind() == value->get_kind(); }
 
 	int get_status() { return m_status; }
 	void set_status(int status) { m_status = status; }
@@ -173,9 +168,7 @@ public:
 
 	void copy(const Value* value) {
 		std::memcpy(&m_data, value->get_data(), sizeof(ValueData));
-		/* m_type_ptr = value->get_type_ptr(); */
 		m_type = value->get_type();
-		/* m_kind = value->get_kind(); */
 	}
 	void copy(Value& value) {
 		std::memcpy(&m_data, value.get_data(), sizeof(ValueData));
@@ -207,7 +200,6 @@ public:
 private:
 	int m_status;
 	int m_type;
-	int m_kind;
 	const Type* m_type_ptr;
 	const CString* m_name;
 	ValueData m_data;
@@ -275,7 +267,7 @@ public:
 	 * Remember to set a context before calling a non-static method.
 	 */
 	void call(Value* result, const ValueVector* args) const throw() {
-		
+
 		if (UNEXPECTED(m_call_type == NEAR)) {
 			/* TODO: throw error here */
 		}
@@ -296,7 +288,7 @@ public:
 
 		m_callback.m_ptr(args, result, context);
 	}
-	
+
 	void call(unsigned int& next_op) const throw() {
 		next_op = m_callback.m_addr;
 	}
