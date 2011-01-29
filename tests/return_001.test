@@ -1,6 +1,5 @@
-==TEST==
 Using return to abort execution
-==FILE==
+==CODE==
 import std.io;
 
 println(1);

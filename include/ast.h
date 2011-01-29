@@ -127,13 +127,6 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(Node);
 };
 
-class TopNode : public Node {
-public:
-	TopNode() { }
-
-	~TopNode() { }
-};
-
 class Literal : public Node {
 public:
 	Literal() { }
@@ -859,8 +852,9 @@ public:
 	Node* get_expr() const throw() { return m_expr; }
 
 	void accept(ASTVisitor& visitor) throw() {
-		m_expr->accept(visitor);
-
+		if (m_expr) {
+			m_expr->accept(visitor);
+		}
 		visitor.visit(this);
 	}
 private:

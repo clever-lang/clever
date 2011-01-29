@@ -536,7 +536,7 @@ AST_VISITOR(FuncDeclaration) {
 AST_VISITOR(ReturnStmt) {
 	Node* value = expr->get_expr();
 
-	if (expr) {
+	if (value) {
 		Value* expr_value = value->get_value();
 
 		expr_value->addRef();

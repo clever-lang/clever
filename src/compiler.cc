@@ -102,22 +102,11 @@ OpcodeList& Compiler::getOpcodes() throw() {
  * Collects all opcode
  */
 void Compiler::buildIR() throw() {
-	ast::NodeList& ast_nodes = m_ast->getNodes();
-	ast::NodeList::iterator it = ast_nodes.begin(), end(ast_nodes.end());
-
 	m_visitor->init();
 
-	/**
-	 * Iterating over TopNode AST node
-	 */
-	while (it != end) {
-		(*it)->accept(*m_visitor);
-		++it;
-	}
+	m_ast->accept(*m_visitor);
 
 	m_visitor->shutdown();
-
-	m_ast->clearNodes();
 }
 
 /**

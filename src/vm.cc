@@ -47,8 +47,6 @@ VM::~VM() {
 		Value* op2 = (*it)->get_op2();
 		Value* result = (*it)->get_result();
 
-		// (*it)->dump();
-
 		if (op1) {
 			op1->delRef();
 		}
@@ -536,15 +534,18 @@ CLEVER_VM_HANDLER(VM::end_func_handler) {
 	CLEVER_VM_GOTO(op->get_op_num());
 }
 
+/**
+ * return x
+ */
 CLEVER_VM_HANDLER(VM::return_handler) {
 	if (!s_call.empty()) {
 		Value* value = opcode.get_op1();
 		Opcode* call = s_call.top();
 
-		call->get_result()->copy(value);
-
+		if (value) {
+			call->get_result()->copy(value);
+		}
 		s_call.pop();
-
 		/**
 		 * Go back to the caller
 		 */

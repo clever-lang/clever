@@ -63,7 +63,7 @@ class Driver;
 
 std::stack<clever::ast::Node*> tree;
 
-clever::ast::Node* nodes = new clever::ast::TopNode;
+clever::ast::Node* nodes = new clever::ast::BlockNode;
 }
 
 %token END  0       "end of file"
