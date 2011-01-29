@@ -33,7 +33,6 @@
 #include "value.h"
 #include "cstring.h"
 #include "refcounted.h"
-#include "compiler.h"
 #include "astvisitor.h"
 
 namespace clever {

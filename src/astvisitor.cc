@@ -427,10 +427,13 @@ AST_VISITOR(FunctionCall) {
 	CallableValue* call = new CallableValue(name);
 	ASTNode* args = expr->get_args();
 	Value* arg_values = NULL;
+	int num_args = args ? args->getNodes().size() : 0;
+	long expected_args = func->get_num_args();
 
 	if (!func) {
 		Compiler::error("Function '" + *name + "' does not exists!");
 	}
+	Compiler::checkFunctionArgs(func, num_args);
 
 	if (func->isUserDefined()) {
 		call->set_addr(func->get_start_pos());

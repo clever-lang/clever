@@ -27,6 +27,7 @@
 
 #include <iostream>
 #include <cstdlib>
+#include <cstdarg>
 #include <vector>
 #include "compiler.h"
 #include "ast.h"
@@ -204,6 +205,124 @@ Value* Compiler::constantFolding(int op, Value* lhs, Value* rhs) throw() {
 			break;
 	}
 	return NULL;
+}
+
+/**
+ * Checks the number of arguments supplied to the function on call
+ */
+void Compiler::checkFunctionArgs(const Function* func, int num_args) throw() {
+	int expected_args = func->get_num_args();
+
+	if (expected_args != -1 && num_args != expected_args) {
+		Compiler::errorf("Function `%S' expects %l argument%s, %l supplied",
+			&func->get_name(), expected_args, (expected_args > 1 ? "s" : ""), num_args);
+	}
+}
+
+/**
+ * Formatter
+ */
+void Compiler::vsprintf(std::string& outstr, const char* format, va_list ap)
+{
+	char* chr = const_cast<char*>(format);
+
+	if (!chr) {
+		return;
+	}
+
+	while (*chr) {
+		/* Check for escape %% */
+		if (*chr != '%' || *++chr == '%') {
+			outstr += *chr++;
+			continue;
+		}
+
+		switch (*chr) {
+			/* std::string* */
+			case 'S':
+				outstr += *static_cast<std::string*>(va_arg(ap, std::string*));
+				break;
+			/* Value* */
+			case 'v': {
+				outstr += static_cast<Value*>(va_arg(ap, Value*))->toString();
+				}
+				break;
+			/* const char* */
+			case 's':
+				outstr += static_cast<const char*>(va_arg(ap, const char*));
+				break;
+			/* long */
+			case 'l': {
+				std::stringstream ss;
+
+				ss << va_arg(ap, long);
+				outstr += ss.str();
+				}
+				break;
+			/* double */
+			case 'd': {
+				std::stringstream ss;
+
+				ss << va_arg(ap, double);
+				outstr += ss.str();
+				}
+				break;
+		}
+		++chr;
+	}
+}
+
+void Compiler::sprintf(std::string& outstr, const char* format, ...)
+{
+	va_list args;
+
+	va_start(args, format);
+
+	vsprintf(outstr, format, args);
+
+	va_end(args);
+}
+
+void Compiler::printf(const char* format, ...)
+{
+	std::string out;
+	va_list args;
+
+	va_start(args, format);
+
+	vsprintf(out, format, args);
+
+	std::cout << out;
+
+	va_end(args);
+}
+
+void Compiler::errorf(const char* format, ...)
+{
+	std::string out;
+	va_list args;
+
+	va_start(args, format);
+
+	vsprintf(out, format, args);
+
+	va_end(args);
+
+	error(out);
+}
+
+void Compiler::printfln(const char* format, ...)
+{
+	std::string out;
+	va_list args;
+
+	va_start(args, format);
+
+	vsprintf(out, format, args);
+
+	std::cout << out << std::endl;
+
+	va_end(args);
 }
 
 } // clever

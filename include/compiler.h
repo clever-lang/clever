@@ -114,6 +114,14 @@ public:
 	static void addFunction(const std::string& name, Function* func) throw() {
 		s_func_table.insert(FunctionPair(name, func));
 	}
+
+	static void checkFunctionArgs(const Function*, int) throw();
+
+	static void vsprintf(std::string&, const char*, va_list);
+	static void sprintf(std::string&, const char*, ...);
+	static void printf(const char*, ...);
+	static void printfln(const char*, ...);
+	static void errorf(const char*, ...);
 private:
 	ast::ASTNode* m_ast;
 	ast::ASTVisitor* m_visitor;

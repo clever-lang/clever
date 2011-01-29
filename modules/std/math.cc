@@ -29,6 +29,7 @@
 #include <cstdlib>
 #include "module.h"
 #include "std/math.h"
+#include "typetable.h"
 
 namespace clever { namespace std_pkg {
 
@@ -114,15 +115,32 @@ static CLEVER_FUNCTION(abs) {
  * Load module data
  */
 void Math::Init() throw() {
-	addFunction(new Function("sqrt", &CLEVER_FUNC_NAME(sqrt)));
-	addFunction(new Function("sin",  &CLEVER_FUNC_NAME(sin)));
-	addFunction(new Function("cos",  &CLEVER_FUNC_NAME(cos)));
-	addFunction(new Function("tan",  &CLEVER_FUNC_NAME(tan)));
-	addFunction(new Function("atan", &CLEVER_FUNC_NAME(atan)));
-	addFunction(new Function("pow",  &CLEVER_FUNC_NAME(pow)));
-	addFunction(new Function("ceil", &CLEVER_FUNC_NAME(ceil)));
-	addFunction(new Function("abs",	&CLEVER_FUNC_NAME(abs)));
-}
+	const Type* double_type = TypeTable::getType(CSTRING("Double"));
 
+	addFunction(new Function("sqrt", &CLEVER_FUNC_NAME(sqrt)))
+		->addArg("value", double_type);
+
+	addFunction(new Function("sin",  &CLEVER_FUNC_NAME(sin)))
+		->addArg("value", double_type);
+
+	addFunction(new Function("cos",  &CLEVER_FUNC_NAME(cos)))
+		->addArg("value", double_type);
+
+	addFunction(new Function("tan",  &CLEVER_FUNC_NAME(tan)))
+		->addArg("value", double_type);
+
+	addFunction(new Function("atan", &CLEVER_FUNC_NAME(atan)))
+		->addArg("value", double_type);
+
+	addFunction(new Function("pow",  &CLEVER_FUNC_NAME(pow)))
+		->addArg("x", double_type)
+		->addArg("y", double_type);
+
+	addFunction(new Function("ceil", &CLEVER_FUNC_NAME(ceil)))
+		->addArg("value", double_type);
+
+	addFunction(new Function("abs",	&CLEVER_FUNC_NAME(abs)))
+		->addArg("value", double_type);
+}
 
 }} // clever::std_pkg

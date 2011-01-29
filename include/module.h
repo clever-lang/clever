@@ -66,6 +66,9 @@ typedef std::pair<std::string, Function*> FunctionPair;
 typedef std::tr1::unordered_map<const CString*, Module*> ModuleMap;
 typedef std::pair<const CString*, Module*> ModulePair;
 
+typedef std::tr1::unordered_map<std::string, const Type*> FunctionArgs;
+typedef std::pair<std::string, const Type*> FunctionArgsPair;
+
 /**
  * Function representation
  */
@@ -74,15 +77,29 @@ public:
 	enum FunctionType { INTERNAL, USER };
 
 	explicit Function(const std::string& name)
-		: m_name(name), m_type(INTERNAL) { }
+		: m_name(name), m_type(INTERNAL), m_num_args(0) { }
 
 	explicit Function(const char* name)
-		: m_name(name), m_type(INTERNAL) { }
+		: m_name(name), m_type(INTERNAL), m_num_args(0) { }
 
 	Function(const char* name, FunctionPtr ptr)
-		: m_name(name), m_type(INTERNAL), m_ptr(ptr) { }
+		: m_name(name), m_type(INTERNAL), m_ptr(ptr), m_num_args(0) { }
+
+	Function(const char* name, FunctionPtr ptr, int numargs)
+		: m_name(name), m_type(INTERNAL), m_ptr(ptr), m_num_args(numargs) { }
 
 	virtual ~Function() { }
+
+	Function* addArg(std::string name, const Type* type) throw() {
+		m_args.insert(FunctionArgsPair(name, type));
+		++m_num_args;
+
+		return this;
+	}
+	FunctionArgs& getArgs() throw() {
+		return m_args;
+	}
+	int get_num_args() const { return m_num_args; }
 
 	void setInternal() throw() { m_type = INTERNAL; }
 	void setUserDefined() throw() { m_type = USER; }
@@ -91,14 +108,18 @@ public:
 	bool isUserDefined() const throw() { return m_type == USER; }
 	bool isInternal() const throw() { return m_type == INTERNAL; }
 
+	void setUnlimitedArgs() throw() { m_num_args = -1; }
+
 	FunctionPtr get_ptr() const throw() { return m_ptr; }
 	const std::string& get_name() const throw() { return m_name; }
 	unsigned int get_start_pos() const throw() { return m_start_pos; }
 private:
 	std::string m_name;
+	FunctionArgs m_args;
 	FunctionPtr m_ptr;
 	FunctionType m_type;
 	unsigned int m_start_pos;
+	int m_num_args;
 };
 
 /**
@@ -181,8 +202,10 @@ public:
 		return m_functions;
 	}
 
-	void addFunction(Function* func) throw() {
+	Function* addFunction(Function* func) throw() {
 		m_functions.insert(FunctionPair(func->get_name(), func));
+
+		return func;
 	}
 	/**
 	 * Check if the module is loaded
