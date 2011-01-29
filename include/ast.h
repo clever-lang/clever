@@ -44,9 +44,9 @@ class Opcode;
 
 namespace clever { namespace ast {
 
-class Node;
+class ASTNode;
 
-typedef std::vector<Node*> NodeList;
+typedef std::vector<ASTNode*> NodeList;
 
 /**
  * Operators (logical and binary)
@@ -68,17 +68,17 @@ enum {
 	NOT_EQUAL
 };
 
-class NO_INIT_VTABLE Node : public RefCounted {
+class NO_INIT_VTABLE ASTNode : public RefCounted {
 public:
-	Node()
+	ASTNode()
 		: RefCounted(0), m_optimized(false) { }
 
-	virtual ~Node() { }
+	virtual ~ASTNode() { }
 
 	/**
 	 * Adds a new child node
 	 */
-	void add(Node* node) throw() {
+	void add(ASTNode* node) throw() {
 		node->addRef();
 		m_nodes.push_back(node);
 	}
@@ -117,17 +117,17 @@ public:
 	 * Method for generating the expression IR
 	 */
 	virtual void accept(ASTVisitor& visitor) throw() { }
-	virtual void set_expr(Node* expr) throw() { }
-	virtual void set_block(Node* expr) throw() { }
+	virtual void set_expr(ASTNode* expr) throw() { }
+	virtual void set_block(ASTNode* expr) throw() { }
 protected:
 	NodeList m_nodes;
 private:
 	bool m_optimized;
 
-	DISALLOW_COPY_AND_ASSIGN(Node);
+	DISALLOW_COPY_AND_ASSIGN(ASTNode);
 };
 
-class Literal : public Node {
+class Literal : public ASTNode {
 public:
 	Literal() { }
 	virtual ~Literal() { }
@@ -160,27 +160,27 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(NumberLiteral);
 };
 
-class BinaryNode : public Node {
+class BinaryExpr : public ASTNode {
 public:
-	BinaryNode(int op, Node* lhs, Node* rhs)
+	BinaryExpr(int op, ASTNode* lhs, ASTNode* rhs)
 		: m_op(op), m_lhs(lhs), m_rhs(rhs), m_result(NULL), m_assign(false) {
 		m_lhs->addRef();
 		m_rhs->addRef();
 	}
-	BinaryNode(int op, Node* lhs, Node* rhs, bool assign)
+	BinaryExpr(int op, ASTNode* lhs, ASTNode* rhs, bool assign)
 		: m_op(op), m_lhs(lhs), m_rhs(rhs), m_result(NULL), m_assign(assign) {
 		m_lhs->addRef();
 		m_rhs->addRef();
 	}
 
-	BinaryNode(int op, Node* rhs)
+	BinaryExpr(int op, ASTNode* rhs)
 		: m_op(op), m_lhs(NULL), m_rhs(rhs), m_result(NULL), m_assign(false) {
 		m_lhs = new NumberLiteral(int64_t(0));
 		m_lhs->addRef();
 		m_rhs->addRef();
 	}
 
-	~BinaryNode() {
+	~BinaryExpr() {
 		if (isOptimized()) {
 			m_result->delRef();
 		}
@@ -196,11 +196,11 @@ public:
 
 	bool isAssigned() const { return m_assign; }
 
-	Node* get_lhs() const {
+	ASTNode* get_lhs() const {
 		return m_lhs;
 	}
 
-	Node* get_rhs() const {
+	ASTNode* get_rhs() const {
 		return m_rhs;
 	}
 
@@ -223,24 +223,24 @@ public:
 	}
 private:
 	int m_op;
-	Node* m_lhs;
-	Node* m_rhs;
+	ASTNode* m_lhs;
+	ASTNode* m_rhs;
 	Value* m_result;
 	bool m_assign;
 
-	DISALLOW_COPY_AND_ASSIGN(BinaryNode);
+	DISALLOW_COPY_AND_ASSIGN(BinaryExpr);
 };
 
-class VariableDecl : public Node {
+class VariableDecl : public ASTNode {
 public:
-	VariableDecl(Node* type, Node* variable)
-		: Node(), m_type(type), m_variable(variable), m_initial_value(NULL) {
+	VariableDecl(ASTNode* type, ASTNode* variable)
+		: m_type(type), m_variable(variable), m_initial_value(NULL) {
 		m_type->addRef();
 		m_variable->addRef();
 	}
 
-	VariableDecl(Node* type, Node* variable, Node* rhs)
-		: Node(), m_type(type), m_variable(variable), m_initial_value(rhs) {
+	VariableDecl(ASTNode* type, ASTNode* variable, ASTNode* rhs)
+		: m_type(type), m_variable(variable), m_initial_value(rhs) {
 		m_type->addRef();
 		m_variable->addRef();
 		m_initial_value->addRef();
@@ -255,15 +255,15 @@ public:
 		}
 	}
 
-	Node* get_variable() const {
+	ASTNode* get_variable() const {
 		return m_variable;
 	}
 
-	Node* get_initial_value() const {
+	ASTNode* get_initial_value() const {
 		return m_initial_value;
 	}
 
-	Node* get_type() const {
+	ASTNode* get_type() const {
 		return m_type;
 	}
 
@@ -274,14 +274,14 @@ public:
 		visitor.visit(this);
 	}
 private:
-	Node* m_type;
-	Node* m_variable;
-	Node* m_initial_value;
+	ASTNode* m_type;
+	ASTNode* m_variable;
+	ASTNode* m_initial_value;
 
 	DISALLOW_COPY_AND_ASSIGN(VariableDecl);
 };
 
-class Identifier : public Node {
+class Identifier : public ASTNode {
 public:
 	explicit Identifier(const CString* name) {
 		m_value = new Value();
@@ -320,9 +320,9 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(StringLiteral);
 };
 
-class TypeCreation : public Node {
+class TypeCreation : public ASTNode {
 public:
-	TypeCreation(Node* type, Node* arguments)
+	TypeCreation(ASTNode* type, ASTNode* arguments)
 		: m_type(type), m_arguments(arguments) {
 		m_type->addRef();
 		m_arguments->addRef();
@@ -333,13 +333,13 @@ public:
 		m_arguments->delRef();
 	}
 private:
-	Node* m_type;
-	Node* m_arguments;
+	ASTNode* m_type;
+	ASTNode* m_arguments;
 
 	DISALLOW_COPY_AND_ASSIGN(TypeCreation);
 };
 
-class BlockNode : public Node {
+class BlockNode : public ASTNode {
 public:
 	BlockNode() { }
 
@@ -354,9 +354,9 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(BlockNode);
 };
 
-class PreIncrement : public Node {
+class PreIncrement : public ASTNode {
 public:
-	PreIncrement(Node* expr)
+	PreIncrement(ASTNode* expr)
 		: m_expr(expr) {
 		m_expr->addRef();
 		m_result = new Value();
@@ -370,7 +370,7 @@ public:
 		return m_result;
 	}
 
-	Node* get_expr() const {
+	ASTNode* get_expr() const {
 		return m_expr;
 	}
 
@@ -378,15 +378,15 @@ public:
 		visitor.visit(this);
 	}
 private:
-	Node* m_expr;
+	ASTNode* m_expr;
 	Value* m_result;
 
 	DISALLOW_COPY_AND_ASSIGN(PreIncrement);
 };
 
-class PosIncrement : public Node {
+class PosIncrement : public ASTNode {
 public:
-	PosIncrement(Node* expr)
+	PosIncrement(ASTNode* expr)
 		: m_expr(expr) {
 		m_expr->addRef();
 		m_result = new Value();
@@ -400,7 +400,7 @@ public:
 		return m_result;
 	}
 
-	Node* get_expr() const {
+	ASTNode* get_expr() const {
 		return m_expr;
 	}
 
@@ -408,15 +408,15 @@ public:
 		visitor.visit(this);
 	}
 private:
-	Node* m_expr;
+	ASTNode* m_expr;
 	Value* m_result;
 
 	DISALLOW_COPY_AND_ASSIGN(PosIncrement);
 };
 
-class PreDecrement : public Node {
+class PreDecrement : public ASTNode {
 public:
-	PreDecrement(Node* expr)
+	PreDecrement(ASTNode* expr)
 		: m_expr(expr) {
 		m_expr->addRef();
 		m_result = new Value();
@@ -426,7 +426,7 @@ public:
 		m_expr->delRef();
 	}
 
-	Node* get_expr() const {
+	ASTNode* get_expr() const {
 		return m_expr;
 	}
 
@@ -438,15 +438,15 @@ public:
 		visitor.visit(this);
 	}
 private:
-	Node* m_expr;
+	ASTNode* m_expr;
 	Value* m_result;
 
 	DISALLOW_COPY_AND_ASSIGN(PreDecrement);
 };
 
-class PosDecrement : public Node {
+class PosDecrement : public ASTNode {
 public:
-	PosDecrement(Node* expr)
+	PosDecrement(ASTNode* expr)
 		: m_expr(expr) {
 		m_expr->addRef();
 		m_result = new Value();
@@ -460,7 +460,7 @@ public:
 		return m_result;
 	}
 
-	Node* get_expr() const {
+	ASTNode* get_expr() const {
 		return m_expr;
 	}
 
@@ -468,15 +468,15 @@ public:
 		visitor.visit(this);
 	}
 private:
-	Node* m_expr;
+	ASTNode* m_expr;
 	Value* m_result;
 
 	DISALLOW_COPY_AND_ASSIGN(PosDecrement);
 };
 
-class IfNode : public Node {
+class IfNode : public ASTNode {
 public:
-	IfNode(Node* condition, Node* block)
+	IfNode(ASTNode* condition, ASTNode* block)
 		: m_condition(condition), m_block(block), m_else(NULL) {
 		m_condition->addRef();
 		if (m_block) {
@@ -499,11 +499,11 @@ public:
 	bool hasElseBlock() throw() { return m_else != NULL; }
 	bool hasElseIf() throw() { return m_nodes.size() != 0; }
 
-	Node* get_block() throw() { return m_block; }
-	Node* get_condition() throw() { return m_condition; }
+	ASTNode* get_block() throw() { return m_block; }
+	ASTNode* get_condition() throw() { return m_condition; }
 
-	Node* get_else() throw() { return m_else; }
-	void set_else(Node* expr) {
+	ASTNode* get_else() throw() { return m_else; }
+	void set_else(ASTNode* expr) {
 		if (expr) {
 			m_else = expr;
 			m_else->addRef();
@@ -514,16 +514,16 @@ public:
 		visitor.visit(this);
 	}
 private:
-	Node* m_condition;
-	Node* m_block;
-	Node* m_else;
+	ASTNode* m_condition;
+	ASTNode* m_block;
+	ASTNode* m_else;
 
 	DISALLOW_COPY_AND_ASSIGN(IfNode);
 };
 
-class ElseIfNode : public Node {
+class ElseIfNode : public ASTNode {
 public:
-	ElseIfNode(Node* condition, Node* block)
+	ElseIfNode(ASTNode* condition, ASTNode* block)
 		: m_condition(condition), m_block(block) {
 		m_condition->addRef();
 		if (m_block) {
@@ -540,18 +540,18 @@ public:
 
 	bool hasBlock() throw() { return m_block != NULL; }
 
-	Node* get_condition() throw() { return m_condition; }
-	Node* get_block() throw() { return m_block; }
+	ASTNode* get_condition() throw() { return m_condition; }
+	ASTNode* get_block() throw() { return m_block; }
 private:
-	Node* m_condition;
-	Node* m_block;
+	ASTNode* m_condition;
+	ASTNode* m_block;
 
 	DISALLOW_COPY_AND_ASSIGN(ElseIfNode);
 };
 
-class WhileNode : public Node {
+class WhileNode : public ASTNode {
 public:
-	WhileNode(Node* condition, Node* block)
+	WhileNode(ASTNode* condition, ASTNode* block)
 		: m_condition(condition), m_block(block) {
 		m_condition->addRef();
 
@@ -570,28 +570,28 @@ public:
 
 	bool hasBlock() throw() { return m_block != NULL; }
 
-	Node* get_condition() throw() { return m_condition; }
-	Node* get_block() throw() { return m_block; }
+	ASTNode* get_condition() throw() { return m_condition; }
+	ASTNode* get_block() throw() { return m_block; }
 
 	void accept(ASTVisitor& visitor) throw() {
 		visitor.visit(this);
 	}
 private:
-	Node* m_condition;
-	Node* m_block;
+	ASTNode* m_condition;
+	ASTNode* m_block;
 
 	DISALLOW_COPY_AND_ASSIGN(WhileNode);
 };
 
-class LogicNode : public Node {
+class LogicExpr : public ASTNode {
 public:
-	LogicNode(int op, Node* lhs, Node* rhs)
+	LogicExpr(int op, ASTNode* lhs, ASTNode* rhs)
 		: m_op(op), m_lhs(lhs), m_rhs(rhs), m_result(NULL) {
 		m_lhs->addRef();
 		m_rhs->addRef();
 	}
 
-	~LogicNode() {
+	~LogicExpr() {
 		if (isOptimized()) {
 			m_result->delRef();
 		}
@@ -604,8 +604,8 @@ public:
 	}
 
 	int get_op() const { return m_op; }
-	Node* get_lhs() const { return m_lhs; }
-	Node* get_rhs() const { return m_rhs; }
+	ASTNode* get_lhs() const { return m_lhs; }
+	ASTNode* get_rhs() const { return m_rhs; }
 
 	void set_result(Value* value) { m_result = value; }
 
@@ -619,14 +619,14 @@ public:
 	}
 private:
 	int m_op;
-	Node* m_lhs;
-	Node* m_rhs;
+	ASTNode* m_lhs;
+	ASTNode* m_rhs;
 	Value* m_result;
 
-	DISALLOW_COPY_AND_ASSIGN(LogicNode);
+	DISALLOW_COPY_AND_ASSIGN(LogicExpr);
 };
 
-class BreakNode : public Node {
+class BreakNode : public ASTNode {
 public:
 	BreakNode() { }
 
@@ -639,7 +639,7 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(BreakNode);
 };
 
-class ArgumentList : public Node {
+class ArgumentList : public ASTNode {
 public:
 	ArgumentList() { }
 
@@ -650,9 +650,9 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(ArgumentList);
 };
 
-class FuncDeclaration : public Node {
+class FuncDeclaration : public ASTNode {
 public:
-	FuncDeclaration(Node* name, Node* type, Node* args, Node* block)
+	FuncDeclaration(ASTNode* name, ASTNode* type, ASTNode* args, ASTNode* block)
 		: m_name(name), m_type(type), m_args(args), m_block(block) {
 		m_name->addRef();
 		m_type->addRef();
@@ -675,29 +675,29 @@ public:
 		}
 	}
 
-	Node* get_name() const throw() { return m_name; }
-	Node* get_type() const throw() { return m_type; }
-	Node* get_args() const throw() { return m_args; }
-	Node* get_block() const throw() { return m_block; }
+	ASTNode* get_name() const throw() { return m_name; }
+	ASTNode* get_type() const throw() { return m_type; }
+	ASTNode* get_args() const throw() { return m_args; }
+	ASTNode* get_block() const throw() { return m_block; }
 
 	void accept(ASTVisitor& visitor) throw() {
 		visitor.visit(this);
 	}
 private:
-	Node* m_name;
-	Node* m_type;
-	Node* m_args;
-	Node* m_block;
+	ASTNode* m_name;
+	ASTNode* m_type;
+	ASTNode* m_args;
+	ASTNode* m_block;
 };
 
-class FunctionCall : public Node {
+class FunctionCall : public ASTNode {
 public:
-	FunctionCall(Node* name)
+	FunctionCall(ASTNode* name)
 		: m_name(name), m_args(NULL) {
 		m_name->addRef();
 		m_result = new Value;
 	}
-	FunctionCall(Node* name, Node* args)
+	FunctionCall(ASTNode* name, ASTNode* args)
 		: m_name(name), m_args(args) {
 		m_name->addRef();
 		m_args->addRef();
@@ -715,29 +715,29 @@ public:
 
 	Value* get_func() const throw() { return m_name->get_value(); }
 
-	Node* get_args() throw() { return m_args; }
+	ASTNode* get_args() throw() { return m_args; }
 
 	void accept(ASTVisitor& visitor) throw() {
 		visitor.visit(this);
 	}
 private:
-	Node* m_name;
-	Node* m_args;
+	ASTNode* m_name;
+	ASTNode* m_args;
 	Value* m_result;
 
 	DISALLOW_COPY_AND_ASSIGN(FunctionCall);
 };
 
-class MethodCall : public Node {
+class MethodCall : public ASTNode {
 public:
-	MethodCall(Node* var, Node* method)
+	MethodCall(ASTNode* var, ASTNode* method)
 		: m_var(var), m_method(method), m_args(NULL) {
 		m_var->addRef();
 		m_method->addRef();
 		m_result = new Value;
 	}
 
-	MethodCall(Node* var, Node* method, Node* args)
+	MethodCall(ASTNode* var, ASTNode* method, ASTNode* args)
 		: m_var(var), m_method(method), m_args(args) {
 		m_var->addRef();
 		m_method->addRef();
@@ -753,9 +753,9 @@ public:
 		}
 	}
 
-	Node* get_variable() const throw() { return m_var; }
-	Node* get_method() const throw() { return m_method; }
-	Node* get_args() const throw() { return m_args; }
+	ASTNode* get_variable() const throw() { return m_var; }
+	ASTNode* get_method() const throw() { return m_method; }
+	ASTNode* get_args() const throw() { return m_args; }
 
 	Value* get_value() const throw() { return m_result; }
 
@@ -763,47 +763,47 @@ public:
 		visitor.visit(this);
 	}
 private:
-	Node* m_var;
-	Node* m_method;
-	Node* m_args;
+	ASTNode* m_var;
+	ASTNode* m_method;
+	ASTNode* m_args;
 	Value* m_result;
 
 	DISALLOW_COPY_AND_ASSIGN(MethodCall);
 };
 
-class Assignment : public Node {
+class AssignStmt : public ASTNode {
 public:
-	Assignment(Node* lhs, Node *rhs)
+	AssignStmt(ASTNode* lhs, ASTNode* rhs)
 		: m_lhs(lhs), m_rhs(rhs) {
 		m_lhs->addRef();
 		m_rhs->addRef();
 	}
-	~Assignment() {
+	~AssignStmt() {
 		m_lhs->delRef();
 		m_rhs->delRef();
 	}
 
-	Node* get_lhs() const throw() { return m_lhs; }
-	Node* get_rhs() const throw() { return m_rhs; }
+	ASTNode* get_lhs() const throw() { return m_lhs; }
+	ASTNode* get_rhs() const throw() { return m_rhs; }
 
 	void accept(ASTVisitor& visitor) throw() {
 		m_rhs->accept(visitor);
 		visitor.visit(this);
 	}
 private:
-	Node* m_lhs;
-	Node* m_rhs;
+	ASTNode* m_lhs;
+	ASTNode* m_rhs;
 
-	DISALLOW_COPY_AND_ASSIGN(Assignment);
+	DISALLOW_COPY_AND_ASSIGN(AssignStmt);
 };
 
-class Import : public Node {
+class Import : public ASTNode {
 public:
-	Import(Node* package)
+	Import(ASTNode* package)
 		: m_package(package), m_module(NULL) {
 		m_package->addRef();
 	}
-	Import(Node* package, Node* module)
+	Import(ASTNode* package, ASTNode* module)
 		: m_package(package), m_module(module) {
 		m_package->addRef();
 		m_module->addRef();
@@ -815,11 +815,11 @@ public:
 		}
 	}
 
-	Node* get_package() throw() {
+	ASTNode* get_package() throw() {
 		return m_package;
 	}
 
-	Node* get_module() throw() {
+	ASTNode* get_module() throw() {
 		return m_module;
 	}
 
@@ -827,18 +827,18 @@ public:
 		visitor.visit(this);
 	}
 private:
-	Node* m_package;
-	Node* m_module;
+	ASTNode* m_package;
+	ASTNode* m_module;
 
 	DISALLOW_COPY_AND_ASSIGN(Import);
 };
 
-class ReturnStmt : public Node {
+class ReturnStmt : public ASTNode {
 public:
 	ReturnStmt()
 		: m_expr(NULL) { }
 
-	explicit ReturnStmt(Node* expr)
+	explicit ReturnStmt(ASTNode* expr)
 		: m_expr(expr) {
 		m_expr->addRef();
 	}
@@ -849,7 +849,7 @@ public:
 		}
 	}
 
-	Node* get_expr() const throw() { return m_expr; }
+	ASTNode* get_expr() const throw() { return m_expr; }
 
 	void accept(ASTVisitor& visitor) throw() {
 		if (m_expr) {
@@ -858,7 +858,7 @@ public:
 		visitor.visit(this);
 	}
 private:
-	Node* m_expr;
+	ASTNode* m_expr;
 
 	DISALLOW_COPY_AND_ASSIGN(ReturnStmt);
 };

@@ -36,7 +36,7 @@
 #include "scanner.h"
 #include "ast.h"
 
-#define YYSTYPE clever::ast::Node*
+#define YYSTYPE clever::ast::ASTNode*
 
 namespace clever {
 class Driver;
@@ -61,9 +61,9 @@ class Driver;
 %code {
 #include "driver.h"
 
-std::stack<clever::ast::Node*> tree;
+std::stack<clever::ast::ASTNode*> tree;
 
-clever::ast::Node* nodes = new clever::ast::BlockNode;
+clever::ast::ASTNode* nodes = new clever::ast::BlockNode;
 }
 
 %token END  0       "end of file"
@@ -199,15 +199,15 @@ variable_declaration:
 ;
 
 assign_stmt:
-		IDENT '=' expr  { $$ = new clever::ast::Assignment($1, $3);                   }
-	|	IDENT "+=" expr { $$ = new clever::ast::BinaryNode(ast::PLUS, $1, $3, true);  }
-	|	IDENT "-=" expr { $$ = new clever::ast::BinaryNode(ast::MINUS, $1, $3, true); }
-	|	IDENT "/=" expr { $$ = new clever::ast::BinaryNode(ast::DIV, $1, $3, true);   }
-	|	IDENT "*=" expr { $$ = new clever::ast::BinaryNode(ast::MULT, $1, $3, true);  }
-	|	IDENT "%=" expr { $$ = new clever::ast::BinaryNode(ast::MOD, $1, $3, true);   }
-	|	IDENT "&=" expr { $$ = new clever::ast::BinaryNode(ast::AND, $1, $3, true);   }
-	|	IDENT "|=" expr { $$ = new clever::ast::BinaryNode(ast::OR, $1, $3, true);    }
-	|	IDENT "^=" expr { $$ = new clever::ast::BinaryNode(ast::XOR, $1, $3, true);   }
+		IDENT '=' expr  { $$ = new clever::ast::AssignStmt($1, $3);                   }
+	|	IDENT "+=" expr { $$ = new clever::ast::BinaryExpr(ast::PLUS, $1, $3, true);  }
+	|	IDENT "-=" expr { $$ = new clever::ast::BinaryExpr(ast::MINUS, $1, $3, true); }
+	|	IDENT "/=" expr { $$ = new clever::ast::BinaryExpr(ast::DIV, $1, $3, true);   }
+	|	IDENT "*=" expr { $$ = new clever::ast::BinaryExpr(ast::MULT, $1, $3, true);  }
+	|	IDENT "%=" expr { $$ = new clever::ast::BinaryExpr(ast::MOD, $1, $3, true);   }
+	|	IDENT "&=" expr { $$ = new clever::ast::BinaryExpr(ast::AND, $1, $3, true);   }
+	|	IDENT "|=" expr { $$ = new clever::ast::BinaryExpr(ast::OR, $1, $3, true);    }
+	|	IDENT "^=" expr { $$ = new clever::ast::BinaryExpr(ast::XOR, $1, $3, true);   }
 ;
 
 arguments:
@@ -221,22 +221,22 @@ type_creation:
 ;
 
 expr:
-		expr '-' expr         { $$ = new clever::ast::BinaryNode(ast::MINUS, $1, $3);        }
-	|	expr '+' expr         { $$ = new clever::ast::BinaryNode(ast::PLUS, $1, $3);         }
-	|	expr '/' expr         { $$ = new clever::ast::BinaryNode(ast::DIV, $1, $3);          }
-	|	expr '*' expr         { $$ = new clever::ast::BinaryNode(ast::MULT, $1, $3);         }
-	|	expr '%' expr         { $$ = new clever::ast::BinaryNode(ast::MOD, $1, $3);          }
-	|	expr '|' expr         { $$ = new clever::ast::BinaryNode(ast::OR, $1, $3);           }
-	|	expr '&' expr         { $$ = new clever::ast::BinaryNode(ast::AND, $1, $3);          }
-	|	expr '^' expr         { $$ = new clever::ast::BinaryNode(ast::XOR, $1, $3);          }
-	|	expr ">" expr         { $$ = new clever::ast::LogicNode(ast::GREATER, $1, $3);       }
-	|	expr ">=" expr        { $$ = new clever::ast::LogicNode(ast::GREATER_EQUAL, $1, $3); }
-	|	expr "<" expr         { $$ = new clever::ast::LogicNode(ast::LESS, $1, $3);          }
-	|	expr "<=" expr        { $$ = new clever::ast::LogicNode(ast::LESS_EQUAL, $1, $3);    }
-	|	expr "==" expr        { $$ = new clever::ast::LogicNode(ast::EQUAL, $1, $3);         }
-	|	expr "!=" expr        { $$ = new clever::ast::LogicNode(ast::NOT_EQUAL, $1, $3);     }
-	|	'-' expr %prec UMINUS { $$ = new clever::ast::BinaryNode(ast::MINUS, $2);            }
-	|	'+' expr %prec UMINUS { $$ = new clever::ast::BinaryNode(ast::PLUS, $2);             }
+		expr '-' expr         { $$ = new clever::ast::BinaryExpr(ast::MINUS, $1, $3);        }
+	|	expr '+' expr         { $$ = new clever::ast::BinaryExpr(ast::PLUS, $1, $3);         }
+	|	expr '/' expr         { $$ = new clever::ast::BinaryExpr(ast::DIV, $1, $3);          }
+	|	expr '*' expr         { $$ = new clever::ast::BinaryExpr(ast::MULT, $1, $3);         }
+	|	expr '%' expr         { $$ = new clever::ast::BinaryExpr(ast::MOD, $1, $3);          }
+	|	expr '|' expr         { $$ = new clever::ast::BinaryExpr(ast::OR, $1, $3);           }
+	|	expr '&' expr         { $$ = new clever::ast::BinaryExpr(ast::AND, $1, $3);          }
+	|	expr '^' expr         { $$ = new clever::ast::BinaryExpr(ast::XOR, $1, $3);          }
+	|	expr ">" expr         { $$ = new clever::ast::LogicExpr(ast::GREATER, $1, $3);       }
+	|	expr ">=" expr        { $$ = new clever::ast::LogicExpr(ast::GREATER_EQUAL, $1, $3); }
+	|	expr "<" expr         { $$ = new clever::ast::LogicExpr(ast::LESS, $1, $3);          }
+	|	expr "<=" expr        { $$ = new clever::ast::LogicExpr(ast::LESS_EQUAL, $1, $3);    }
+	|	expr "==" expr        { $$ = new clever::ast::LogicExpr(ast::EQUAL, $1, $3);         }
+	|	expr "!=" expr        { $$ = new clever::ast::LogicExpr(ast::NOT_EQUAL, $1, $3);     }
+	|	'-' expr %prec UMINUS { $$ = new clever::ast::BinaryExpr(ast::MINUS, $2);            }
+	|	'+' expr %prec UMINUS { $$ = new clever::ast::BinaryExpr(ast::PLUS, $2);             }
 	|	INCREMENT IDENT       { $$ = new clever::ast::PreIncrement($2);                      }
 	|	IDENT INCREMENT       { $$ = new clever::ast::PosIncrement($1);                      }
 	|	DECREMENT IDENT       { $$ = new clever::ast::PreDecrement($2);                      }

@@ -38,7 +38,7 @@
 
 namespace clever { namespace ast {
 
-class Node;
+class ASTNode;
 class ASTVisitor;
 
 }} // clever::ast
@@ -55,7 +55,7 @@ public:
 	/**
 	 * Initializes compiler data
 	 */
-	void Init(ast::Node*) throw();
+	void Init(ast::ASTNode*) throw();
 	/**
 	 * Loads primitive data types
 	 */
@@ -115,7 +115,7 @@ public:
 		s_func_table.insert(FunctionPair(name, func));
 	}
 private:
-	ast::Node* m_ast;
+	ast::ASTNode* m_ast;
 	ast::ASTVisitor* m_visitor;
 
 	static PackageManager s_pkgmanager;

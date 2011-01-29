@@ -36,7 +36,7 @@ namespace clever { namespace ast {
 /**
  * Return the Value pointer related to value type
  */
-Value* ASTVisitor::getValue(ast::Node* expr) throw() {
+Value* ASTVisitor::getValue(ASTNode* expr) throw() {
 	Value* value = expr->get_value();
 
 	if (value && value->hasName()) {
@@ -54,7 +54,7 @@ Value* ASTVisitor::getValue(ast::Node* expr) throw() {
 	return value;
 }
 
-AST_VISITOR(BinaryNode) {
+AST_VISITOR(BinaryExpr) {
 	Value* lhs = getValue(expr->get_lhs());
 	Value* rhs = getValue(expr->get_rhs());
 	Value* result = NULL;
@@ -102,9 +102,9 @@ AST_VISITOR(BinaryNode) {
  * Generates the variable declaration opcode
  */
 AST_VISITOR(VariableDecl) {
-	ast::Node* var_type = expr->get_type();
-	ast::Node* var_expr = expr->get_variable();
-	ast::Node* rhs_expr = expr->get_initial_value();
+	ASTNode* var_type = expr->get_type();
+	ASTNode* var_expr = expr->get_variable();
+	ASTNode* rhs_expr = expr->get_initial_value();
 	Value* variable = var_expr->get_value();
 	const Type* type = TypeTable::getType(var_type->get_value()->get_name());
 
@@ -345,7 +345,7 @@ AST_VISITOR(WhileNode) {
 /**
  * Generates opcode for logic expression which weren't optimized
  */
-AST_VISITOR(LogicNode) {
+AST_VISITOR(LogicExpr) {
 	Value* lhs = getValue(expr->get_lhs());
 	Value* rhs = getValue(expr->get_rhs());
 	Value* result = NULL;
@@ -425,7 +425,7 @@ AST_VISITOR(FunctionCall) {
 	const CString* name = expr->get_func()->get_name();
 	const Function* func = Compiler::getFunction(*name);
 	CallableValue* call = new CallableValue(name);
-	Node* args = expr->get_args();
+	ASTNode* args = expr->get_args();
 	Value* arg_values = NULL;
 
 	if (!func) {
@@ -454,7 +454,7 @@ AST_VISITOR(MethodCall) {
 	Value* variable = getValue(expr->get_variable());
 	CallableValue* call = new CallableValue(expr->get_method()->get_value()->get_name());
 	const MethodPtr method = variable->get_type_ptr()->getMethod(call->get_name());
-	Node* args = expr->get_args();
+	ASTNode* args = expr->get_args();
 	Value* arg_values = NULL;
 
 	if (!method) {
@@ -476,7 +476,7 @@ AST_VISITOR(MethodCall) {
 /**
  * Generates opcode for variable assignment
  */
-AST_VISITOR(Assignment) {
+AST_VISITOR(AssignStmt) {
 	Value* lhs = getValue(expr->get_lhs());
 	Value* rhs = getValue(expr->get_rhs());
 
@@ -493,7 +493,7 @@ AST_VISITOR(Assignment) {
  */
 AST_VISITOR(Import) {
 	const CString* package = expr->get_package()->get_value()->get_name();
-	ast::Node* module = expr->get_module();
+	ASTNode* module = expr->get_module();
 
 	if (module) {
 		const CString* module_name = module->get_value()->get_name();
@@ -534,7 +534,7 @@ AST_VISITOR(FuncDeclaration) {
  * Generates opcode for return statement
  */
 AST_VISITOR(ReturnStmt) {
-	Node* value = expr->get_expr();
+	ASTNode* value = expr->get_expr();
 
 	if (value) {
 		Value* expr_value = value->get_value();

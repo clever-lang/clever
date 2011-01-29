@@ -65,7 +65,7 @@ Compiler::~Compiler() {
 /**
  * Initializes the compiler data
  */
-void Compiler::Init(ast::Node* nodes) throw() {
+void Compiler::Init(ast::ASTNode* nodes) throw() {
 	m_ast = nodes;
 	/**
 	 * Load package list

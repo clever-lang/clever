@@ -34,8 +34,9 @@
 
 namespace clever { namespace ast {
 
-class Node;
-class BinaryNode;
+class ASTNode;
+class BinaryExpr;
+class LogicExpr;
 class VariableDecl;
 class PosIncrement;
 class PosDecrement;
@@ -44,10 +45,9 @@ class PreDecrement;
 class IfNode;
 class ElseIfNode;
 class WhileNode;
-class LogicNode;
 class FunctionCall;
 class MethodCall;
-class Assignment;
+class AssignStmt;
 class Import;
 class BreakNode;
 class BlockNode;
@@ -85,7 +85,7 @@ public:
 	/**
 	 * Returns the Value pointer according with value type.
 	 */
-	Value* getValue(ast::Node*) throw();
+	Value* getValue(ast::ASTNode*) throw();
 
 	/**
 	 * Displays the error message and exits the program
@@ -118,7 +118,8 @@ public:
 		opcode->set_op_num(getOpNum());
 	}
 
-	AST_VISITOR_DECL(BinaryNode);
+	AST_VISITOR_DECL(BinaryExpr);
+	AST_VISITOR_DECL(LogicExpr);
 	AST_VISITOR_DECL(VariableDecl);
 	AST_VISITOR_DECL(PreIncrement);
 	AST_VISITOR_DECL(PosIncrement);
@@ -127,11 +128,10 @@ public:
 	AST_VISITOR_DECL(BlockNode);
 	AST_VISITOR_DECL(IfNode);
 	AST_VISITOR_DECL(WhileNode);
-	AST_VISITOR_DECL(LogicNode);
 	AST_VISITOR_DECL(BreakNode);
 	AST_VISITOR_DECL(FunctionCall);
 	AST_VISITOR_DECL(MethodCall);
-	AST_VISITOR_DECL(Assignment);
+	AST_VISITOR_DECL(AssignStmt);
 	AST_VISITOR_DECL(Import);
 	AST_VISITOR_DECL(FuncDeclaration);
 	AST_VISITOR_DECL(ReturnStmt);
