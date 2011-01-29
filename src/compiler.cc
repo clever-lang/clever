@@ -222,7 +222,7 @@ void Compiler::checkFunctionArgs(const Function* func, int num_args) throw() {
 /**
  * Formatter
  */
-void Compiler::vsprintf(std::string& outstr, const char* format, va_list ap)
+void Compiler::vsprintf(std::ostringstream& outstr, const char* format, va_list ap) throw()
 {
 	char* chr = const_cast<char*>(format);
 
@@ -233,46 +233,37 @@ void Compiler::vsprintf(std::string& outstr, const char* format, va_list ap)
 	while (*chr) {
 		/* Check for escape %% */
 		if (*chr != '%' || *++chr == '%') {
-			outstr += *chr++;
+			outstr << *chr++;
 			continue;
 		}
 
 		switch (*chr) {
 			/* std::string* */
 			case 'S':
-				outstr += *static_cast<std::string*>(va_arg(ap, std::string*));
+				outstr << *static_cast<std::string*>(va_arg(ap, std::string*));
 				break;
 			/* Value* */
-			case 'v': {
-				outstr += static_cast<Value*>(va_arg(ap, Value*))->toString();
-				}
+			case 'v':
+				outstr << static_cast<Value*>(va_arg(ap, Value*))->toString();
 				break;
 			/* const char* */
 			case 's':
-				outstr += static_cast<const char*>(va_arg(ap, const char*));
+				outstr << va_arg(ap, const char*);
 				break;
 			/* long */
-			case 'l': {
-				std::stringstream ss;
-
-				ss << va_arg(ap, long);
-				outstr += ss.str();
-				}
+			case 'l':
+				outstr << va_arg(ap, long);
 				break;
 			/* double */
-			case 'd': {
-				std::stringstream ss;
-
-				ss << va_arg(ap, double);
-				outstr += ss.str();
-				}
+			case 'd':
+				outstr << va_arg(ap, double);
 				break;
 		}
 		++chr;
 	}
 }
 
-void Compiler::sprintf(std::string& outstr, const char* format, ...)
+void Compiler::sprintf(std::ostringstream& outstr, const char* format, ...) throw()
 {
 	va_list args;
 
@@ -283,9 +274,9 @@ void Compiler::sprintf(std::string& outstr, const char* format, ...)
 	va_end(args);
 }
 
-void Compiler::printf(const char* format, ...)
+void Compiler::printf(const char* format, ...) throw()
 {
-	std::string out;
+	std::ostringstream out;
 	va_list args;
 
 	va_start(args, format);
@@ -297,9 +288,9 @@ void Compiler::printf(const char* format, ...)
 	va_end(args);
 }
 
-void Compiler::errorf(const char* format, ...)
+void Compiler::errorf(const char* format, ...) throw()
 {
-	std::string out;
+	std::ostringstream out;
 	va_list args;
 
 	va_start(args, format);
@@ -308,12 +299,12 @@ void Compiler::errorf(const char* format, ...)
 
 	va_end(args);
 
-	error(out);
+	error(out.str());
 }
 
-void Compiler::printfln(const char* format, ...)
+void Compiler::printfln(const char* format, ...) throw()
 {
-	std::string out;
+	std::ostringstream out;
 	va_list args;
 
 	va_start(args, format);

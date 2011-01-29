@@ -29,6 +29,7 @@
 #define CLEVER_COMPILER_H
 
 #include <stack>
+#include <sstream>
 #include "value.h"
 #include "module.h"
 #include "pkgmanager.h"
@@ -117,11 +118,11 @@ public:
 
 	static void checkFunctionArgs(const Function*, int) throw();
 
-	static void vsprintf(std::string&, const char*, va_list);
-	static void sprintf(std::string&, const char*, ...);
-	static void printf(const char*, ...);
-	static void printfln(const char*, ...);
-	static void errorf(const char*, ...);
+	static void vsprintf(std::ostringstream&, const char*, va_list) throw();
+	static void sprintf(std::ostringstream&, const char*, ...) throw();
+	static void printf(const char*, ...) throw();
+	static void printfln(const char*, ...) throw();
+	static void errorf(const char*, ...) throw();
 private:
 	ast::ASTNode* m_ast;
 	ast::ASTVisitor* m_visitor;
