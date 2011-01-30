@@ -55,19 +55,57 @@ class ArgumentList;
 class FuncDeclaration;
 class ReturnStmt;
 
-#define AST_VISITOR(type) void ASTVisitor::visit(type* expr) throw()
+#define AST_VISITOR(type, exprtype) void type::visit(exprtype* expr) throw()
+#define AST_VISITOR_DECL_VIRTUAL(type) virtual void visit(type* expr) throw() = 0;
 #define AST_VISITOR_DECL(type) void visit(type* expr) throw()
 
 /**
  * AST Visitor
  */
-class ASTVisitor {
+class NO_INIT_VTABLE ASTVisitor {
+public:
+	ASTVisitor() { }
+	virtual ~ASTVisitor() { }
+
+	virtual void init() throw() = 0;
+	virtual void shutdown() throw() = 0;
+
+	AST_VISITOR_DECL_VIRTUAL(BinaryExpr);
+	AST_VISITOR_DECL_VIRTUAL(LogicExpr);
+	AST_VISITOR_DECL_VIRTUAL(VariableDecl);
+	AST_VISITOR_DECL_VIRTUAL(PreIncrement);
+	AST_VISITOR_DECL_VIRTUAL(PosIncrement);
+	AST_VISITOR_DECL_VIRTUAL(PreDecrement);
+	AST_VISITOR_DECL_VIRTUAL(PosDecrement);
+	AST_VISITOR_DECL_VIRTUAL(BlockNode);
+	AST_VISITOR_DECL_VIRTUAL(IfNode);
+	AST_VISITOR_DECL_VIRTUAL(WhileExpr);
+	AST_VISITOR_DECL_VIRTUAL(BreakNode);
+	AST_VISITOR_DECL_VIRTUAL(FunctionCall);
+	AST_VISITOR_DECL_VIRTUAL(MethodCall);
+	AST_VISITOR_DECL_VIRTUAL(AssignStmt);
+	AST_VISITOR_DECL_VIRTUAL(ImportStmt);
+	AST_VISITOR_DECL_VIRTUAL(FuncDeclaration);
+	AST_VISITOR_DECL_VIRTUAL(ReturnStmt);
+
+protected:
+	/**
+	 * Displays the error message and exits the program
+	 */
+	void error(std::string) throw();
+
+private:
+	DISALLOW_COPY_AND_ASSIGN(ASTVisitor);
+};
+
+class CodeGenVisitor : public ASTVisitor {
 public:
 	typedef std::stack<Opcode*> OpcodeStack;
 	typedef std::stack<OpcodeStack> JmpStack;
 
-	ASTVisitor() { }
-
+	CodeGenVisitor() {}
+	~CodeGenVisitor() {}
+	
 	void init() throw() {
 		m_ssa.beginScope();
 		m_opcodes.reserve(10);
@@ -77,47 +115,21 @@ public:
 		m_ssa.endScope();
 	}
 
-	~ASTVisitor() { }
-	/**
-	 * Builds the function arguments vector
-	 */
-	ValueVector* functionArgs(ast::ArgumentList*) throw();
-	/**
-	 * Returns the Value pointer according with value type.
-	 */
-	Value* getValue(ast::ASTNode*) throw();
-
-	/**
-	 * Displays the error message and exits the program
-	 */
-	void error(std::string) throw();
-	/**
-	 * Checks if two operands has compatible types to perform some operation
-	 */
-	bool checkCompatibleTypes(Value*, Value*) throw();
-	/**
-	 * Performs the constant folding and constant propagation optimization
-	 */
-	Value* constantFolding(int, Value*, Value*) throw();
 	/**
 	 * Returns the opcode list
 	 */
 	OpcodeList& get_opcodes() throw() {	return m_opcodes; }
-	/**
-	 * Returns the opcode number
-	 */
-	unsigned int getOpNum() const throw() {	return m_opcodes.size()-1; }
-	/**
-	 * Pushes the opcode to list
-	 */
-	void pushOpcode(Opcode* opcode) throw() {
-		m_opcodes.push_back(opcode);
-		/**
-		 * Sets the opcode number, which is used by JMP opcodes
-		 */
-		opcode->set_op_num(getOpNum());
-	}
 
+	/**
+	 * Builds the function arguments vector
+	 */
+	ValueVector* functionArgs(ast::ArgumentList*) throw();
+
+	/**
+	 * Returns the Value pointer according with value type.
+	 */
+	Value* getValue(ast::ASTNode*) throw();
+	
 	AST_VISITOR_DECL(BinaryExpr);
 	AST_VISITOR_DECL(LogicExpr);
 	AST_VISITOR_DECL(VariableDecl);
@@ -135,12 +147,40 @@ public:
 	AST_VISITOR_DECL(ImportStmt);
 	AST_VISITOR_DECL(FuncDeclaration);
 	AST_VISITOR_DECL(ReturnStmt);
+
 private:
 	OpcodeList m_opcodes;
 	SSA m_ssa;
 	JmpStack m_brks;
 
-	DISALLOW_COPY_AND_ASSIGN(ASTVisitor);
+	/**
+	 * Output an opcode.
+	 */
+	Opcode* emit(Opcodes type, VM::opcode_handler handler, Value* op1 = NULL, Value* op2 = NULL, Value* result = NULL) {
+		Opcode* opcode = new Opcode(type, handler, op1, op2, result);
+		m_opcodes.push_back(opcode);
+		/**
+		 * Sets the opcode number, which is used by JMP opcodes
+		 */
+		opcode->set_op_num(getOpNum());
+	}
+	
+	/**
+	 * Checks if two operands has compatible types to perform some operation
+	 */
+	bool checkCompatibleTypes(Value*, Value*) throw();
+
+	/**
+	 * Performs the constant folding and constant propagation optimization
+	 */
+	Value* constantFolding(int, Value*, Value*) throw();
+
+	/**
+	 * Returns the opcode number
+	 */
+	unsigned int getOpNum() const throw() {	return m_opcodes.size()-1; }
+
+	DISALLOW_COPY_AND_ASSIGN(CodeGenVisitor);
 };
 
 }} // clever::ast

@@ -28,6 +28,7 @@
 #ifndef CLEVER_COMPILER_H
 #define CLEVER_COMPILER_H
 
+#include <cstdarg>
 #include <stack>
 #include <sstream>
 #include "value.h"
@@ -40,7 +41,7 @@
 namespace clever { namespace ast {
 
 class ASTNode;
-class ASTVisitor;
+class CodeGenVisitor;
 
 }} // clever::ast
 
@@ -49,7 +50,7 @@ namespace clever {
 class Compiler {
 public:
 	Compiler()
-		: m_ast(NULL), m_visitor(NULL) { }
+		: m_ast(NULL), m_cgvisitor(NULL) { }
 
 	~Compiler();
 
@@ -125,7 +126,7 @@ public:
 	static void errorf(const char*, ...) throw();
 private:
 	ast::ASTNode* m_ast;
-	ast::ASTVisitor* m_visitor;
+	ast::CodeGenVisitor* m_cgvisitor;
 
 	static PackageManager s_pkgmanager;
 	static FunctionTable s_func_table;

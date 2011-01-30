@@ -25,7 +25,6 @@
  * $Id: vm.h 341 2011-01-22 14:07:26Z felipensp $
  */
 
-#include <iostream>
 #include "ast.h"
 #include "astvisitor.h"
 #include "typetable.h"
@@ -33,10 +32,36 @@
 
 namespace clever { namespace ast {
 
+
+/**
+ * Creates a vector with the current value from a Value* pointers
+ */
+ValueVector* CodeGenVisitor::functionArgs(ast::ArgumentList* args) throw() {
+	ValueVector* values = new ValueVector();
+	const NodeList& nodes = args->getNodes();
+	NodeList::const_iterator it = nodes.begin(), end = nodes.end();
+
+	values->reserve(nodes.size());
+
+	while (it != end) {
+		Value* value;
+
+		(*it)->accept(*this);
+
+		value = getValue(*it);
+		value->addRef();
+
+		values->push_back(value);
+		++it;
+	}
+
+	return values;
+}
+
 /**
  * Return the Value pointer related to value type
  */
-Value* ASTVisitor::getValue(ASTNode* expr) throw() {
+Value* CodeGenVisitor::getValue(ASTNode* expr) throw() {
 	Value* value = expr->get_value();
 
 	if (value && value->hasName()) {
@@ -54,7 +79,11 @@ Value* ASTVisitor::getValue(ASTNode* expr) throw() {
 	return value;
 }
 
-AST_VISITOR(BinaryExpr) {
+/*
+ * CodeGenVisitor methods ##########
+ */
+
+AST_VISITOR(CodeGenVisitor, BinaryExpr) {
 	Value* lhs = getValue(expr->get_lhs());
 	Value* rhs = getValue(expr->get_rhs());
 	Value* result = NULL;
@@ -86,14 +115,14 @@ AST_VISITOR(BinaryExpr) {
 	rhs->addRef();
 
 	switch (expr->get_op()) {
-		case ast::PLUS:  pushOpcode(new Opcode(OP_PLUS,   &VM::plus_handler,   lhs, rhs, expr->get_value())); break;
-		case ast::DIV:   pushOpcode(new Opcode(OP_DIV,    &VM::div_handler,    lhs, rhs, expr->get_value())); break;
-		case ast::MULT:  pushOpcode(new Opcode(OP_MULT,   &VM::mult_handler,   lhs, rhs, expr->get_value())); break;
-		case ast::MINUS: pushOpcode(new Opcode(OP_MINUS,  &VM::minus_handler,  lhs, rhs, expr->get_value())); break;
-		case ast::XOR:   pushOpcode(new Opcode(OP_BW_XOR, &VM::bw_xor_handler, lhs, rhs, expr->get_value())); break;
-		case ast::OR:    pushOpcode(new Opcode(OP_BW_OR,  &VM::bw_or_handler,  lhs, rhs, expr->get_value())); break;
-		case ast::AND:   pushOpcode(new Opcode(OP_BW_AND, &VM::bw_and_handler, lhs, rhs, expr->get_value())); break;
-		case ast::MOD:   pushOpcode(new Opcode(OP_MOD,    &VM::mod_handler,    lhs, rhs, expr->get_value())); break;
+		case ast::PLUS:  emit(OP_PLUS,   &VM::plus_handler,   lhs, rhs, expr->get_value()); break;
+		case ast::DIV:   emit(OP_DIV,    &VM::div_handler,    lhs, rhs, expr->get_value()); break;
+		case ast::MULT:  emit(OP_MULT,   &VM::mult_handler,   lhs, rhs, expr->get_value()); break;
+		case ast::MINUS: emit(OP_MINUS,  &VM::minus_handler,  lhs, rhs, expr->get_value()); break;
+		case ast::XOR:   emit(OP_BW_XOR, &VM::bw_xor_handler, lhs, rhs, expr->get_value()); break;
+		case ast::OR:    emit(OP_BW_OR,  &VM::bw_or_handler,  lhs, rhs, expr->get_value()); break;
+		case ast::AND:   emit(OP_BW_AND, &VM::bw_and_handler, lhs, rhs, expr->get_value()); break;
+		case ast::MOD:   emit(OP_MOD,    &VM::mod_handler,    lhs, rhs, expr->get_value()); break;
 	}
 }
 
@@ -101,7 +130,7 @@ AST_VISITOR(BinaryExpr) {
 /**
  * Generates the variable declaration opcode
  */
-AST_VISITOR(VariableDecl) {
+AST_VISITOR(CodeGenVisitor, VariableDecl) {
 	ASTNode* var_type = expr->get_type();
 	ASTNode* var_expr = expr->get_variable();
 	ASTNode* rhs_expr = expr->get_initial_value();
@@ -125,7 +154,7 @@ AST_VISITOR(VariableDecl) {
 		variable->addRef();
 		value->addRef();
 
-		pushOpcode(new Opcode(OP_VAR_DECL, &VM::var_decl_handler, variable, value));
+		emit(OP_VAR_DECL, &VM::var_decl_handler, variable, value);
 	} else {
 		variable->addRef();
 		m_ssa.pushVar(variable);
@@ -140,64 +169,64 @@ AST_VISITOR(VariableDecl) {
 
 		variable->addRef();
 
-		pushOpcode(new Opcode(OP_VAR_DECL, &VM::var_decl_handler, variable));
+		emit(OP_VAR_DECL, &VM::var_decl_handler, variable);
 	}
 }
 
 /**
  * Generates the pre increment opcode
  */
-AST_VISITOR(PreIncrement) {
+AST_VISITOR(CodeGenVisitor, PreIncrement) {
 	Value* value = getValue(expr->get_expr());
 
 	value->setModified();
 	value->addRef();
 
-	pushOpcode(new Opcode(OP_PRE_INC, &VM::pre_inc_handler, value, NULL, expr->get_value()));
+	emit(OP_PRE_INC, &VM::pre_inc_handler, value, NULL, expr->get_value());
 }
 
 /**
  * Generates the pos increment opcode
  */
-AST_VISITOR(PosIncrement) {
+AST_VISITOR(CodeGenVisitor, PosIncrement) {
 	Value* value = getValue(expr->get_expr());
 
 	value->setModified();
 	value->addRef();
 
-	pushOpcode(new Opcode(OP_POS_INC, &VM::pos_inc_handler, value, NULL, expr->get_value()));
+	emit(OP_POS_INC, &VM::pos_inc_handler, value, NULL, expr->get_value());
 }
 
 /**
  * Generates the pre decrement opcode
  */
-AST_VISITOR(PreDecrement) {
+AST_VISITOR(CodeGenVisitor, PreDecrement) {
 	Value* value = getValue(expr->get_expr());
 
 	value->setModified();
 	value->addRef();
 
-	pushOpcode(new Opcode(OP_PRE_DEC, &VM::pre_dec_handler, value, NULL, expr->get_value()));
+	emit(OP_PRE_DEC, &VM::pre_dec_handler, value, NULL, expr->get_value());
 }
 
 /**
  * Generates the pos decrement opcode
  */
-AST_VISITOR(PosDecrement) {
+AST_VISITOR(CodeGenVisitor, PosDecrement) {
 	Value* value = getValue(expr->get_expr());
 
 	value->setModified();
 	value->addRef();
 
-	pushOpcode(new Opcode(OP_POS_DEC, &VM::pos_dec_handler, value, NULL, expr->get_value()));
+	emit(OP_POS_DEC, &VM::pos_dec_handler, value, NULL, expr->get_value());
 }
 
 /**
  * Generates the opcode for the IF-ELSEIF-ELSE expression
  */
-AST_VISITOR(IfNode) {
+AST_VISITOR(CodeGenVisitor, IfNode) {
 	Value* value;
-	Opcode* jmp_if = new Opcode(OP_JMPZ, &VM::jmpz_handler);
+	Opcode* jmp_if = emit(OP_JMPZ, &VM::jmpz_handler);
 	Opcode* jmp_else;
 	Opcode* jmp_elseif;
 	OpcodeList jmp_ops;
@@ -208,7 +237,6 @@ AST_VISITOR(IfNode) {
 	value->addRef();
 
 	jmp_if->set_op1(value);
-	pushOpcode(jmp_if);
 
 	jmp_ops.push_back(jmp_if);
 
@@ -232,8 +260,7 @@ AST_VISITOR(IfNode) {
 			cond = getValue(elseif->get_condition());
 			cond->addRef();
 
-			jmp_elseif = new Opcode(OP_JMPZ, &VM::jmpz_handler, cond);
-			pushOpcode(jmp_elseif);
+			jmp_elseif = emit(OP_JMPZ, &VM::jmpz_handler, cond);
 
 			jmp_ops.push_back(jmp_elseif);
 
@@ -247,9 +274,7 @@ AST_VISITOR(IfNode) {
 	}
 
 	if (expr->hasElseBlock()) {
-		jmp_else = new Opcode(OP_JMP, &VM::jmp_handler);
-
-		pushOpcode(jmp_else);
+		jmp_else = emit(OP_JMP, &VM::jmp_handler);
 
 		if (jmp_ops.size() == 1) {
 			jmp_if->set_jmp_addr1(getOpNum());
@@ -276,7 +301,7 @@ AST_VISITOR(IfNode) {
 /**
  * Call the accept method of each block node
  */
-AST_VISITOR(BlockNode) {
+AST_VISITOR(CodeGenVisitor, BlockNode) {
 	NodeList& nodes = expr->getNodes();
 	NodeList::const_iterator it = nodes.begin(), end = nodes.end();
 	ASTVisitor& visitor = *this;
@@ -303,7 +328,7 @@ AST_VISITOR(BlockNode) {
 /**
  * Generates the JMPZ opcode for WHILE expression
  */
-AST_VISITOR(WhileExpr) {
+AST_VISITOR(CodeGenVisitor, WhileExpr) {
 	Value* value;
 	Opcode* jmpz;
 	Opcode* jmp;
@@ -316,8 +341,7 @@ AST_VISITOR(WhileExpr) {
 	value = getValue(expr->get_condition());
 	value->addRef();
 
-	jmpz = new Opcode(OP_JMPZ, &VM::jmpz_handler, value);
-	pushOpcode(jmpz);
+	jmpz = emit(OP_JMPZ, &VM::jmpz_handler, value);
 
 	if (expr->hasBlock()) {
 		m_brks.push(OpcodeStack());
@@ -334,9 +358,8 @@ AST_VISITOR(WhileExpr) {
 		m_brks.pop();
 	}
 
-	jmp = new Opcode(OP_JMP, &VM::jmp_handler);
+	jmp = emit(OP_JMP, &VM::jmp_handler);
 	jmp->set_jmp_addr2(start_pos);
-	pushOpcode(jmp);
 
 	jmpz->set_jmp_addr1(getOpNum());
 }
@@ -345,7 +368,7 @@ AST_VISITOR(WhileExpr) {
 /**
  * Generates opcode for logic expression which weren't optimized
  */
-AST_VISITOR(LogicExpr) {
+AST_VISITOR(CodeGenVisitor, LogicExpr) {
 	Value* lhs = getValue(expr->get_lhs());
 	Value* rhs = getValue(expr->get_rhs());
 	Value* result = NULL;
@@ -373,55 +396,28 @@ AST_VISITOR(LogicExpr) {
 	rhs->addRef();
 
 	switch (expr->get_op()) {
-		case ast::GREATER:       pushOpcode(new Opcode(OP_GREATER,       &VM::greater_handler,       lhs, rhs, expr->get_value())); break;
-		case ast::LESS:          pushOpcode(new Opcode(OP_LESS,          &VM::less_handler,          lhs, rhs, expr->get_value())); break;
-		case ast::GREATER_EQUAL: pushOpcode(new Opcode(OP_GREATER_EQUAL, &VM::greater_equal_handler, lhs, rhs, expr->get_value())); break;
-		case ast::LESS_EQUAL:    pushOpcode(new Opcode(OP_LESS_EQUAL,    &VM::less_equal_handler,    lhs, rhs, expr->get_value())); break;
-		case ast::EQUAL:         pushOpcode(new Opcode(OP_EQUAL,         &VM::equal_handler,         lhs, rhs, expr->get_value())); break;
-		case ast::NOT_EQUAL:     pushOpcode(new Opcode(OP_NOT_EQUAL,     &VM::not_equal_handler,     lhs, rhs, expr->get_value())); break;
+		case ast::GREATER:       emit(OP_GREATER,       &VM::greater_handler,       lhs, rhs, expr->get_value()); break;
+		case ast::LESS:          emit(OP_LESS,          &VM::less_handler,          lhs, rhs, expr->get_value()); break;
+		case ast::GREATER_EQUAL: emit(OP_GREATER_EQUAL, &VM::greater_equal_handler, lhs, rhs, expr->get_value()); break;
+		case ast::LESS_EQUAL:    emit(OP_LESS_EQUAL,    &VM::less_equal_handler,    lhs, rhs, expr->get_value()); break;
+		case ast::EQUAL:         emit(OP_EQUAL,         &VM::equal_handler,         lhs, rhs, expr->get_value()); break;
+		case ast::NOT_EQUAL:     emit(OP_NOT_EQUAL,     &VM::not_equal_handler,     lhs, rhs, expr->get_value()); break;
 	}
 }
 
 /**
  * Generates opcode for break statement
  */
-AST_VISITOR(BreakNode) {
-	Opcode* opcode = new Opcode(OP_BREAK, &VM::break_handler);
+AST_VISITOR(CodeGenVisitor, BreakNode) {
+	Opcode* opcode = emit(OP_BREAK, &VM::break_handler);
 
 	m_brks.top().push(opcode);
-
-	pushOpcode(opcode);
-}
-
-/**
- * Creates a vector with the current value from a Value* pointers
- */
-ValueVector* ASTVisitor::functionArgs(ast::ArgumentList* args) throw() {
-	ValueVector* values = new ValueVector();
-	const NodeList& nodes = args->getNodes();
-	NodeList::const_iterator it = nodes.begin(), end = nodes.end();
-
-	values->reserve(nodes.size());
-
-	while (it != end) {
-		Value* value;
-
-		(*it)->accept(*this);
-
-		value = getValue(*it);
-		value->addRef();
-
-		values->push_back(value);
-		++it;
-	}
-
-	return values;
 }
 
 /**
  * Generates opcode for function call
  */
-AST_VISITOR(FunctionCall) {
+AST_VISITOR(CodeGenVisitor, FunctionCall) {
 	const CString* name = expr->get_func()->get_name();
 	const Function* func = Compiler::getFunction(*name);
 	CallableValue* call = new CallableValue(name);
@@ -447,13 +443,13 @@ AST_VISITOR(FunctionCall) {
 		arg_values->setVector(functionArgs(static_cast<ArgumentList*>(args)));
 	}
 
-	pushOpcode(new Opcode(OP_FCALL, &VM::fcall_handler, call, arg_values, expr->get_value()));
+	emit(OP_FCALL, &VM::fcall_handler, call, arg_values, expr->get_value());
 }
 
 /**
  * Generates opcode for method call
  */
-AST_VISITOR(MethodCall) {
+AST_VISITOR(CodeGenVisitor, MethodCall) {
 	Value* variable = getValue(expr->get_variable());
 	CallableValue* call = new CallableValue(expr->get_method()->get_value()->get_name());
 	const MethodPtr method = variable->get_type_ptr()->getMethod(call->get_name());
@@ -473,13 +469,13 @@ AST_VISITOR(MethodCall) {
 		arg_values->set_type(Value::VECTOR);
 		arg_values->setVector(functionArgs(static_cast<ArgumentList*>(args)));
 	}
-	pushOpcode(new Opcode(OP_MCALL, &VM::mcall_handler, call, arg_values, expr->get_value()));
+	emit(OP_MCALL, &VM::mcall_handler, call, arg_values, expr->get_value());
 }
 
 /**
  * Generates opcode for variable assignment
  */
-AST_VISITOR(AssignStmt) {
+AST_VISITOR(CodeGenVisitor, AssignStmt) {
 	Value* lhs = getValue(expr->get_lhs());
 	Value* rhs = getValue(expr->get_rhs());
 
@@ -488,13 +484,13 @@ AST_VISITOR(AssignStmt) {
 	lhs->addRef();
 	rhs->addRef();
 
-	pushOpcode(new Opcode(OP_ASSIGN, &VM::assign_handler, lhs, rhs));
+	emit(OP_ASSIGN, &VM::assign_handler, lhs, rhs);
 }
 
 /**
  * Import statement
  */
-AST_VISITOR(ImportStmt) {
+AST_VISITOR(CodeGenVisitor, ImportStmt) {
 	const CString* package = expr->get_package()->get_value()->get_name();
 	ASTNode* module = expr->get_module();
 
@@ -510,15 +506,14 @@ AST_VISITOR(ImportStmt) {
 /**
  * Function declaration
  */
-AST_VISITOR(FuncDeclaration) {
+AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
 	const CString* name = expr->get_name()->get_value()->get_name();
 	CallableValue* func = new CallableValue(name);
-	Opcode* jmp = new Opcode(OP_JMP, &VM::jmp_handler);
+	Opcode* jmp = emit(OP_JMP, &VM::jmp_handler);
 	Function* user_func = new Function(name->str());
 
 	Compiler::addFunction(name->str(), user_func);
 
-	pushOpcode(jmp);
 
 	func->set_addr(getOpNum());
 	user_func->setUserDefined();
@@ -528,7 +523,7 @@ AST_VISITOR(FuncDeclaration) {
 
 	expr->get_block()->accept(*this);
 
-	pushOpcode(new Opcode(OP_JMP, &VM::end_func_handler));
+	emit(OP_JMP, &VM::end_func_handler);
 
 	jmp->set_jmp_addr2(getOpNum());
 }
@@ -536,7 +531,7 @@ AST_VISITOR(FuncDeclaration) {
 /**
  * Generates opcode for return statement
  */
-AST_VISITOR(ReturnStmt) {
+AST_VISITOR(CodeGenVisitor, ReturnStmt) {
 	ASTNode* value = expr->get_expr();
 
 	if (value) {
@@ -544,9 +539,9 @@ AST_VISITOR(ReturnStmt) {
 
 		expr_value->addRef();
 
-		pushOpcode(new Opcode(OP_RETURN, &VM::return_handler, expr_value));
+		emit(OP_RETURN, &VM::return_handler, expr_value);
 	} else {
-		pushOpcode(new Opcode(OP_RETURN, &VM::return_handler));
+		emit(OP_RETURN, &VM::return_handler);
 	}
 }
 

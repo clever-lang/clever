@@ -59,7 +59,7 @@ Compiler::~Compiler() {
 
 	s_pkgmanager.shutdown();
 
-	delete m_visitor;
+	delete m_cgvisitor;
 	delete m_ast;
 }
 
@@ -78,7 +78,7 @@ void Compiler::Init(ast::ASTNode* nodes) throw() {
 	 */
 	loadTypes();
 
-	m_visitor = new ast::ASTVisitor;
+	m_cgvisitor = new ast::CodeGenVisitor;
 }
 
 /**
@@ -96,18 +96,18 @@ void Compiler::loadTypes() throw() {
  * Returns the collected opcodes
  */
 OpcodeList& Compiler::getOpcodes() throw() {
-	return m_visitor->get_opcodes();
+	return m_cgvisitor->get_opcodes();
 }
 
 /**
  * Collects all opcode
  */
 void Compiler::buildIR() throw() {
-	m_visitor->init();
+	m_cgvisitor->init();
 
-	m_ast->accept(*m_visitor);
+	m_ast->accept(*m_cgvisitor);
 
-	m_visitor->shutdown();
+	m_cgvisitor->shutdown();
 }
 
 /**
