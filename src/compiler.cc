@@ -77,11 +77,14 @@ void Compiler::Init() throw() {
  * Loads the class representations of native types
  */
 void Compiler::loadTypes() throw() {
-	g_int_type->Init();
-	g_double_type->Init();
+	Integer* int_type = new Integer;
+	Double* double_type = new Double;
 
-	TypeTable::insert(CSTRING("Int"), g_int_type);
-	TypeTable::insert(CSTRING("Double"), g_double_type);
+	int_type->Init();
+	double_type->Init();
+
+	TypeTable::insert(CSTRING("Int"), int_type);
+	TypeTable::insert(CSTRING("Double"), double_type);
 }
 
 /**

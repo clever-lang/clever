@@ -48,8 +48,6 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(Double);
 };
 
-extern Double* g_double_type;
-
 } // clever
 
 #endif // CLEVER_DOUBLE_H

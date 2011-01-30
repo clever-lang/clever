@@ -28,15 +28,19 @@
 #ifndef CLEVER_DRIVER_H
 #define CLEVER_DRIVER_H
 
-#include <cstring>
 #include <stack>
 #include "parser.hh"
 #include "compiler.h"
-#include "ast.h"
-#include "cstring.h"
+
+namespace clever { namespace ast {
+
+class ASTNodes;
+
+}} // clever::ast
 
 namespace clever {
 
+class CString;
 class ScannerState;
 
 /**

@@ -47,8 +47,6 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(Integer);
 };
 
-extern Integer* g_int_type;
-
 } // clever
 
 #endif // CLEVER_INT_H

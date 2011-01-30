@@ -31,11 +31,9 @@
 #include <cstdarg>
 #include <stack>
 #include <sstream>
-#include "value.h"
 #include "module.h"
 #include "pkgmanager.h"
 #include "vm.h"
-#include "ssa.h"
 #include "opcode.h"
 #include "location.hh"
 #include "astvisitor.h"

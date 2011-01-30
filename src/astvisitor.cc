@@ -32,7 +32,6 @@
 
 namespace clever { namespace ast {
 
-
 /**
  * Creates a vector with the current value from a Value* pointers
  */
@@ -79,10 +78,9 @@ Value* CodeGenVisitor::getValue(ASTNode* expr) throw() {
 	return value;
 }
 
-/*
- * CodeGenVisitor methods ##########
+/**
+ * Generates opcode for binary expression
  */
-
 AST_VISITOR(CodeGenVisitor, BinaryExpr) {
 	Value* lhs = getValue(expr->get_lhs());
 	Value* rhs = getValue(expr->get_rhs());

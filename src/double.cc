@@ -33,8 +33,6 @@
 
 namespace clever {
 
-Double* g_double_type = new Double;
-
 /**
  * Double::toString()
  * Converts the number to string

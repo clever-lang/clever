@@ -28,10 +28,8 @@
 #ifndef CLEVER_AST_H
 #define CLEVER_AST_H
 
-#include <iostream>
 #include <vector>
 #include "value.h"
-#include "cstring.h"
 #include "refcounted.h"
 #include "astvisitor.h"
 #include "location.hh"
@@ -39,6 +37,7 @@
 namespace clever {
 
 class Opcode;
+class CString;
 
 } // clever
 

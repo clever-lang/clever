@@ -32,8 +32,6 @@
 
 namespace clever {
 
-Integer* g_int_type = new Integer;
-
 /**
  * Int::toString()
  * Converts the number to string
