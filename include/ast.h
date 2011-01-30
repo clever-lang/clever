@@ -127,9 +127,9 @@ public:
 			m_location.begin.filename = m_location.end.filename = NULL;
 		}
 	}
-	const location& get_location() throw() { return m_location; }
+	const location& get_location() const throw() { return m_location; }
 
-	const std::string* getFileName() throw() { return m_location.end.filename; }
+	const std::string* getFileName() const throw() { return m_location.end.filename; }
 
 	unsigned int getBeginLine() const throw() { return m_location.begin.line; }
 	unsigned int getEndLine() const throw() { return m_location.end.line; }
