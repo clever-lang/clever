@@ -131,10 +131,10 @@ int Driver::parseStr(const std::string& code) {
 void Driver::error(const clever::location& location, const std::string& message) const throw() {
 	position last = location.end - 1;
 
-	if (m_input.size()) {
-		std::cerr << message << " on line " << last.line << std::endl;
-	} else {
+	if (last.filename) {
 		std::cerr << message << " in " << *last.filename << " on line " << last.line << std::endl;
+	} else {
+		std::cerr << message << " on line " << last.line << std::endl;
 	}
 	exit(1);
 }

@@ -59,30 +59,22 @@ Compiler::~Compiler() {
 
 	s_pkgmanager.shutdown();
 
-	delete m_cgvisitor;
 	delete m_ast;
 }
 
 /**
  * Initializes the compiler data
  */
-void Compiler::Init(ast::ASTNode* nodes) throw() {
-	m_ast = nodes;
-	/**
-	 * Load package list
-	 */
+void Compiler::Init() throw() {
+	/* Load package list */
 	s_pkgmanager.Init(&s_func_table);
 
-	/**
-	 * Load the primitive data types
-	 */
+	/* Load the primitive data types */
 	loadTypes();
-
-	m_cgvisitor = new ast::CodeGenVisitor;
 }
 
 /**
- * Loads native types
+ * Loads the class representations of native types
  */
 void Compiler::loadTypes() throw() {
 	g_int_type->Init();
@@ -93,21 +85,14 @@ void Compiler::loadTypes() throw() {
 }
 
 /**
- * Returns the collected opcodes
- */
-OpcodeList& Compiler::getOpcodes() throw() {
-	return m_cgvisitor->get_opcodes();
-}
-
-/**
  * Collects all opcode
  */
 void Compiler::buildIR() throw() {
-	m_cgvisitor->init();
+	m_cgvisitor.init();
 
-	m_ast->accept(*m_cgvisitor);
+	m_ast->accept(m_cgvisitor);
 
-	m_cgvisitor->shutdown();
+	m_cgvisitor.shutdown();
 }
 
 /**
@@ -115,9 +100,9 @@ void Compiler::buildIR() throw() {
  */
 void Compiler::error(std::string message, const location& loc) throw() {
 	if (loc.begin.filename) {
-		std::cerr << "Compile error: " << message << " on " << *loc.begin.filename << ":" << loc.begin.line << std::endl;
+		std::cerr << "Compile error: " << message << " on " << *loc.begin.filename << " line " << loc.begin.line << std::endl;
 	} else {
-		std::cerr << "Compile error: " << message << " on command line:" << loc.begin.line << std::endl;
+		std::cerr << "Compile error: " << message << " on line " << loc.begin.line << std::endl;
 	}
 	exit(1);
 }

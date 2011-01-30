@@ -60,7 +60,8 @@ public:
 
 	/* Initializes the compiler with AST nodes */
 	void initCompiler(ast::ASTNode* nodes) throw() {
-		m_compiler.Init(nodes);
+		m_compiler.Init();
+		m_compiler.set_ast(nodes);
 	}
 
 	/* Returns the parsed file */

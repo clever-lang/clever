@@ -38,6 +38,7 @@
 #include "ssa.h"
 #include "opcode.h"
 #include "location.hh"
+#include "astvisitor.h"
 
 namespace clever { namespace ast {
 
@@ -51,14 +52,18 @@ namespace clever {
 class Compiler {
 public:
 	Compiler()
-		: m_ast(NULL), m_cgvisitor(NULL) { }
+		: m_ast(NULL) { }
 
 	~Compiler();
 
 	/**
 	 * Initializes compiler data
 	 */
-	void Init(ast::ASTNode*) throw();
+	void Init() throw();
+	/**
+	 * Sets the AST tree to be compiled into intermediate representation
+	 */
+	void set_ast(ast::ASTNode* ast) throw() { m_ast = ast; }
 	/**
 	 * Loads primitive data types
 	 */
@@ -67,14 +72,22 @@ public:
 	 * Generates the intermediate representation
 	 */
 	void buildIR() throw();
-
-	static void error(std::string, const location&) throw();
-	static bool checkCompatibleTypes(Value*, Value*) throw();
-	static Value* constantFolding(int, Value*, Value*) throw();
 	/**
-	 * Returns the opcode list
+	 * Returns the collected opcodes
 	 */
-	OpcodeList& getOpcodes() throw();
+	OpcodeList& getOpcodes() throw() { return m_cgvisitor.get_opcodes(); }
+	/**
+	 * Displays an error message and exits
+	 */
+	static void error(std::string, const location&) throw();
+	/**
+	 * Checks if the supplied value pointers are compatibles
+	 */
+	static bool checkCompatibleTypes(Value*, Value*) throw();
+	/**
+	 * Performs a constant folding and constant propagation optimization
+	 */
+	static Value* constantFolding(int, Value*, Value*) throw();
 	/**
 	 * Import a package
 	 */
@@ -117,9 +130,13 @@ public:
 	static void addFunction(const std::string& name, Function* func) throw() {
 		s_func_table.insert(FunctionPair(name, func));
 	}
-
+	/**
+	 * Checks function arguments
+	 */
 	static void checkFunctionArgs(const Function*, int, const location&) throw();
-
+	/**
+	 * Methods for formatted messages
+	 */
 	static void vsprintf(std::ostringstream&, const char*, va_list) throw();
 	static void sprintf(std::ostringstream&, const char*, ...) throw();
 	static void printf(const char*, ...) throw();
@@ -127,7 +144,7 @@ public:
 	static void errorf(const location&, const char*, ...) throw();
 private:
 	ast::ASTNode* m_ast;
-	ast::CodeGenVisitor* m_cgvisitor;
+	ast::CodeGenVisitor m_cgvisitor;
 
 	static PackageManager s_pkgmanager;
 	static FunctionTable s_func_table;

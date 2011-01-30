@@ -30,7 +30,7 @@
 
 #include "vm.h"
 #include "ssa.h"
-#include "compiler.h"
+#include "opcode.h"
 
 namespace clever { namespace ast {
 

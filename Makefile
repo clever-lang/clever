@@ -35,7 +35,7 @@ clever: $(OBJECTS)
 
 all: clever test
 
-$(BUILDDIR)driver.o: $(SRCDIR)driver.cc $(BUILDDIR)parser.o $(BUILDDIR)compiler.o
+$(BUILDDIR)driver.o: $(SRCDIR)driver.cc $(BUILDDIR)parser.o
 	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)driver.o $(SRCDIR)driver.cc
 
 $(BUILDDIR)main.o: $(SRCDIR)main.cc
@@ -56,7 +56,7 @@ $(BUILDDIR)scanner.o: $(BUILDDIR)scanner.cc $(BUILDDIR)cstring.o
 $(BUILDDIR)cstring.o: $(SRCDIR)cstring.cc
 	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)cstring.o $(SRCDIR)cstring.cc
 
-$(BUILDDIR)compiler.o: $(SRCDIR)compiler.cc $(BUILDDIR)int.o $(BUILDDIR)double.o $(BUILDDIR)pkgmanager.o $(BUILDDIR)astvisitor.o
+$(BUILDDIR)compiler.o: $(SRCDIR)compiler.cc $(BUILDDIR)driver.o $(BUILDDIR)int.o $(BUILDDIR)double.o $(BUILDDIR)pkgmanager.o $(BUILDDIR)astvisitor.o
 	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)compiler.o $(SRCDIR)compiler.cc
 
 $(BUILDDIR)astvisitor.o: $(SRCDIR)astvisitor.cc
