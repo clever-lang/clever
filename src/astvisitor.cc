@@ -226,7 +226,7 @@ AST_VISITOR(CodeGenVisitor, PosDecrement) {
  */
 AST_VISITOR(CodeGenVisitor, IfNode) {
 	Value* value;
-	Opcode* jmp_if = emit(OP_JMPZ, &VM::jmpz_handler);
+	Opcode* jmp_if;
 	Opcode* jmp_else;
 	Opcode* jmp_elseif;
 	OpcodeList jmp_ops;
@@ -236,6 +236,7 @@ AST_VISITOR(CodeGenVisitor, IfNode) {
 	value = getValue(expr->get_condition());
 	value->addRef();
 
+	jmp_if = emit(OP_JMPZ, &VM::jmpz_handler);
 	jmp_if->set_op1(value);
 
 	jmp_ops.push_back(jmp_if);
@@ -509,11 +510,12 @@ AST_VISITOR(CodeGenVisitor, ImportStmt) {
 AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
 	const CString* name = expr->get_name()->get_value()->get_name();
 	CallableValue* func = new CallableValue(name);
-	Opcode* jmp = emit(OP_JMP, &VM::jmp_handler);
 	Function* user_func = new Function(name->str());
+	Opcode* jmp;
 
 	Compiler::addFunction(name->str(), user_func);
 
+	jmp = emit(OP_JMP, &VM::jmp_handler);
 
 	func->set_addr(getOpNum());
 	user_func->setUserDefined();
