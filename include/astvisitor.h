@@ -43,7 +43,6 @@ class PosDecrement;
 class PreIncrement;
 class PreDecrement;
 class IfExpr;
-class ElseIfExpr;
 class WhileExpr;
 class FunctionCall;
 class MethodCall;

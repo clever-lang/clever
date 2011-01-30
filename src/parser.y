@@ -162,8 +162,8 @@ return_stmt:
 	|	RETURN      { $$ = new ast::ReturnStmt();   }
 
 args_declaration_non_empty:
-		TYPE IDENT
-	|	args_declaration ',' TYPE IDENT
+		TYPE IDENT                      { $$ = new ast::ArgumentDeclList(); static_cast<ast::ArgumentDeclList*>($$)->addArg($1, $2); }
+	|	args_declaration ',' TYPE IDENT { static_cast<ast::ArgumentDeclList*>($1)->addArg($3, $4); }
 ;
 
 args_declaration:

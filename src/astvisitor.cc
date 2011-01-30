@@ -508,8 +508,18 @@ AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
 	const CString* name = expr->get_name()->get_value()->get_name();
 	CallableValue* func = new CallableValue(name);
 	Function* user_func = new Function(name->str());
+	ast::ArgumentDeclList* args = static_cast<ast::ArgumentDeclList*>(expr->get_args());
 	Opcode* jmp;
 
+	if (args) {
+		ArgumentDecls& arg_nodes = args->get_args();
+		ArgumentDecls::iterator it = arg_nodes.begin(), end = arg_nodes.end();
+
+		while (it != end) {
+			user_func->addArg(*it->first->get_value()->get_name(), TypeTable::getType(it->second->get_value()->get_name()));
+			++it;
+		}
+	}
 	Compiler::addFunction(name->str(), user_func);
 
 	jmp = emit(OP_JMP, &VM::jmp_handler);
@@ -520,7 +530,9 @@ AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
 
 	m_ssa.pushVar(func);
 
-	expr->get_block()->accept(*this);
+	if (expr->hasBlock()) {
+		expr->get_block()->accept(*this);
+	}
 
 	emit(OP_JMP, &VM::end_func_handler);
 

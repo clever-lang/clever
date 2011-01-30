@@ -46,6 +46,8 @@ namespace clever { namespace ast {
 class ASTNode;
 
 typedef std::vector<ASTNode*> NodeList;
+typedef std::pair<ASTNode*, ASTNode*> ArgumentDeclPair;
+typedef std::vector<ArgumentDeclPair> ArgumentDecls;
 
 /**
  * Operators (logical and binary)
@@ -663,6 +665,33 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(ArgumentList);
 };
 
+class ArgumentDeclList : public ASTNode {
+public:
+	ArgumentDeclList() { }
+
+	~ArgumentDeclList() {
+		ArgumentDecls::const_iterator it = m_args.begin(), end = m_args.end();
+
+		while (it != end) {
+			it->first->delRef();
+			it->second->delRef();
+			++it;
+		}
+	}
+
+	void addArg(ASTNode* type, ASTNode* name) throw() {
+		m_args.push_back(ArgumentDeclPair(type, name));
+		type->addRef();
+		name->addRef();
+	}
+
+	ArgumentDecls& get_args() throw() { return m_args; }
+private:
+	ArgumentDecls m_args;
+
+	DISALLOW_COPY_AND_ASSIGN(ArgumentDeclList);
+};
+
 class FuncDeclaration : public ASTNode {
 public:
 	FuncDeclaration(ASTNode* name, ASTNode* type, ASTNode* args, ASTNode* block)
@@ -691,7 +720,9 @@ public:
 	ASTNode* get_name() const throw() { return m_name; }
 	ASTNode* get_type() const throw() { return m_type; }
 	ASTNode* get_args() const throw() { return m_args; }
+
 	ASTNode* get_block() const throw() { return m_block; }
+	bool hasBlock() const throw() { return m_block != NULL; }
 
 	void accept(ASTVisitor& visitor) throw() {
 		visitor.visit(this);
