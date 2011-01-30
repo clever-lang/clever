@@ -113,8 +113,12 @@ void Compiler::buildIR() throw() {
 /**
  * Displays an error message
  */
-void Compiler::error(std::string message) throw() {
-	std::cerr << "Compile error: " << message << std::endl;
+void Compiler::error(std::string message, const location& loc) throw() {
+	if (loc.begin.filename) {
+		std::cerr << "Compile error: " << message << " on " << *loc.begin.filename << ":" << loc.begin.line << std::endl;
+	} else {
+		std::cerr << "Compile error: " << message << " on command line:" << loc.begin.line << std::endl;
+	}
 	exit(1);
 }
 
@@ -214,9 +218,8 @@ void Compiler::checkFunctionArgs(const Function* func, int num_args, const locat
 	int expected_args = func->get_num_args();
 
 	if (expected_args != -1 && num_args != expected_args) {
-		Compiler::errorf("Function `%S' expects %l argument%s, %l supplied on %s:%l",
-			&func->get_name(), expected_args, (expected_args > 1 ? "s" : ""), num_args,
-			(loc.begin.filename ? loc.begin.filename->c_str() : "command line"), loc.begin.line);
+		Compiler::errorf(loc, "Function `%S' expects %l argument%s, %l supplied",
+			&func->get_name(), expected_args, (expected_args > 1 ? "s" : ""), num_args);
 	}
 }
 
@@ -286,7 +289,7 @@ void Compiler::printf(const char* format, ...) throw() {
 	va_end(args);
 }
 
-void Compiler::errorf(const char* format, ...) throw() {
+void Compiler::errorf(const location& loc, const char* format, ...) throw() {
 	std::ostringstream out;
 	va_list args;
 
@@ -296,7 +299,7 @@ void Compiler::errorf(const char* format, ...) throw() {
 
 	va_end(args);
 
-	error(out.str());
+	error(out.str(), loc);
 }
 
 void Compiler::printfln(const char* format, ...) throw() {

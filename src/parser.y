@@ -52,7 +52,7 @@ class Driver;
 %locations
 %initial-action {
 // Initialize the initial location.
-@$.begin.filename = @$.end.filename = &driver.get_file();
+@$.begin.filename = @$.end.filename = driver.get_file();
 };
 
 %debug

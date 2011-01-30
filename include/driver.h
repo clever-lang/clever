@@ -33,6 +33,7 @@
 #include "parser.hh"
 #include "compiler.h"
 #include "ast.h"
+#include "cstring.h"
 
 namespace clever {
 class ScannerState;
@@ -55,7 +56,7 @@ public:
 	typedef std::stack<ScannerState*> ScannerStack;
 
 	Driver()
-		: m_is_file(false), m_trace_parsing(false) { }
+		: m_is_file(false), m_trace_parsing(false), m_file(NULL) { }
 
 	virtual ~Driver() { }
 
@@ -65,8 +66,8 @@ public:
 	}
 
 	/* Returns the parsed file */
-	std::string& get_file() throw() {
-		return m_file;
+	CString* get_file() throw() {
+		return const_cast<CString*>(m_file);
 	}
 
 	/* Read file to the scanner */
@@ -81,7 +82,7 @@ public:
 	void error(const std::string&) const throw();
 protected:
 	/* The file path -f */
-	std::string m_file;
+	const CString* m_file;
 	/* The source */
 	std::string m_source;
 	/* The source as input -r */

@@ -76,11 +76,7 @@ public:
 	ASTNode()
 		: RefCounted(0), m_optimized(false) { }
 
-	virtual ~ASTNode() {
-		if (m_location.begin.filename) {
-			delete m_location.begin.filename;
-		}
-	}
+	virtual ~ASTNode() { }
 
 	/**
 	 * Adds a new child node
@@ -121,11 +117,6 @@ public:
 	 */
 	void set_location(location& locate) throw() {
 		m_location = locate;
-		if (locate.end.filename) {
-			m_location.begin.filename = m_location.end.filename = new std::string(*locate.end.filename);
-		} else {
-			m_location.begin.filename = m_location.end.filename = NULL;
-		}
 	}
 	const location& get_location() const throw() { return m_location; }
 

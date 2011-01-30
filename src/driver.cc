@@ -29,6 +29,7 @@
 #include "driver.h"
 #include "parser.hh"
 #include "position.hh"
+#include "cstring.h"
 #include "scanner.h"
 #include "vm.h"
 
@@ -43,7 +44,6 @@ void Interpreter::execute() {
 	VM vm;
 
 	m_compiler.buildIR();
-	// compiler.dumpAST();
 
 	vm.set_opcodes(m_compiler.getOpcodes());
 	vm.run();
@@ -58,7 +58,7 @@ void Interpreter::shutdown() {
  */
 void Driver::readFile() throw() {
 	std::string line;
-	std::fstream filep(m_file.c_str());
+	std::fstream filep(m_file->c_str());
 
 	if (!filep) {
 		std::cerr << "Couldn't open file " << m_file << std::endl;
@@ -84,7 +84,7 @@ int Driver::parseFile(const std::string& filename) {
 
 	m_is_file = true;
 	// Save the filename
-	m_file = filename;
+	m_file = CSTRING(filename);
 	// Read the file
 	readFile();
 	// Set the file source to scanner read it

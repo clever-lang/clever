@@ -74,7 +74,7 @@ Value* CodeGenVisitor::getValue(ASTNode* expr) throw() {
 		if (EXPECTED(var != NULL)) {
 			return var;
 		}
-		Compiler::error("Inexistent variable!");
+		Compiler::error("Inexistent variable!", expr->get_location());
 	}
 	return value;
 }
@@ -89,7 +89,7 @@ AST_VISITOR(CodeGenVisitor, BinaryExpr) {
 	Value* result = NULL;
 
 	if (!Compiler::checkCompatibleTypes(lhs, rhs)) {
-		Compiler::error("Type mismatch!");
+		Compiler::error("Type mismatch!", expr->get_location());
 	}
 	if (lhs->isPrimitive() && rhs->isPrimitive() && !expr->isAssigned()) {
 		result = Compiler::constantFolding(expr->get_op(), lhs, rhs);
@@ -375,7 +375,7 @@ AST_VISITOR(CodeGenVisitor, LogicExpr) {
 	Value* result = NULL;
 
 	if (!Compiler::checkCompatibleTypes(lhs, rhs)) {
-		Compiler::error("Type mismatch!");
+		Compiler::error("Type mismatch!", expr->get_location());
 	}
 
 	if (lhs->isPrimitive()) {
@@ -425,10 +425,9 @@ AST_VISITOR(CodeGenVisitor, FunctionCall) {
 	ASTNode* args = expr->get_args();
 	Value* arg_values = NULL;
 	int num_args = args ? args->getNodes().size() : 0;
-	long expected_args = func->get_num_args();
 
 	if (!func) {
-		Compiler::error("Function '" + *name + "' does not exists!");
+		Compiler::error("Function '" + *name + "' does not exists!", expr->get_location());
 	}
 	Compiler::checkFunctionArgs(func, num_args, expr->get_location());
 
@@ -458,7 +457,7 @@ AST_VISITOR(CodeGenVisitor, MethodCall) {
 	Value* arg_values = NULL;
 
 	if (!method) {
-		Compiler::error("Method not found!");
+		Compiler::error("Method not found!", expr->get_location());
 	}
 
 	call->set_type_ptr(variable->get_type_ptr());

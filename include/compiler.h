@@ -68,7 +68,7 @@ public:
 	 */
 	void buildIR() throw();
 
-	static void error(std::string) throw();
+	static void error(std::string, const location&) throw();
 	static bool checkCompatibleTypes(Value*, Value*) throw();
 	static Value* constantFolding(int, Value*, Value*) throw();
 	/**
@@ -124,7 +124,7 @@ public:
 	static void sprintf(std::ostringstream&, const char*, ...) throw();
 	static void printf(const char*, ...) throw();
 	static void printfln(const char*, ...) throw();
-	static void errorf(const char*, ...) throw();
+	static void errorf(const location&, const char*, ...) throw();
 private:
 	ast::ASTNode* m_ast;
 	ast::CodeGenVisitor* m_cgvisitor;
