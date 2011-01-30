@@ -87,13 +87,6 @@ public:
 	AST_VISITOR_DECL_VIRTUAL(ImportStmt);
 	AST_VISITOR_DECL_VIRTUAL(FuncDeclaration);
 	AST_VISITOR_DECL_VIRTUAL(ReturnStmt);
-
-protected:
-	/**
-	 * Displays the error message and exits the program
-	 */
-	void error(std::string) throw();
-
 private:
 	DISALLOW_COPY_AND_ASSIGN(ASTVisitor);
 };
@@ -105,7 +98,7 @@ public:
 
 	CodeGenVisitor() {}
 	~CodeGenVisitor() {}
-	
+
 	void init() throw() {
 		m_ssa.beginScope();
 		m_opcodes.reserve(10);
@@ -123,13 +116,13 @@ public:
 	/**
 	 * Builds the function arguments vector
 	 */
-	ValueVector* functionArgs(ast::ArgumentList*) throw();
+	ValueVector* functionArgs(ArgumentList*) throw();
 
 	/**
 	 * Returns the Value pointer according with value type.
 	 */
-	Value* getValue(ast::ASTNode*) throw();
-	
+	Value* getValue(ASTNode*) throw();
+
 	AST_VISITOR_DECL(BinaryExpr);
 	AST_VISITOR_DECL(LogicExpr);
 	AST_VISITOR_DECL(VariableDecl);
@@ -156,7 +149,7 @@ private:
 	/**
 	 * Output an opcode.
 	 */
-	Opcode* emit(Opcodes type, VM::opcode_handler handler, Value* op1 = NULL, Value* op2 = NULL, Value* result = NULL) {
+	Opcode* emit(Opcodes type, VM::opcode_handler handler, Value* op1 = NULL, Value* op2 = NULL, Value* result = NULL) throw() {
 		Opcode* opcode = new Opcode(type, handler, op1, op2, result);
 		m_opcodes.push_back(opcode);
 		/**
@@ -166,16 +159,6 @@ private:
 
 		return opcode;
 	}
-	
-	/**
-	 * Checks if two operands has compatible types to perform some operation
-	 */
-	bool checkCompatibleTypes(Value*, Value*) throw();
-
-	/**
-	 * Performs the constant folding and constant propagation optimization
-	 */
-	Value* constantFolding(int, Value*, Value*) throw();
 
 	/**
 	 * Returns the opcode number

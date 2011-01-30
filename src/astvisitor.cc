@@ -36,7 +36,7 @@ namespace clever { namespace ast {
 /**
  * Creates a vector with the current value from a Value* pointers
  */
-ValueVector* CodeGenVisitor::functionArgs(ast::ArgumentList* args) throw() {
+ValueVector* CodeGenVisitor::functionArgs(ArgumentList* args) throw() {
 	ValueVector* values = new ValueVector();
 	const NodeList& nodes = args->getNodes();
 	NodeList::const_iterator it = nodes.begin(), end = nodes.end();
@@ -115,14 +115,14 @@ AST_VISITOR(CodeGenVisitor, BinaryExpr) {
 	rhs->addRef();
 
 	switch (expr->get_op()) {
-		case ast::PLUS:  emit(OP_PLUS,   &VM::plus_handler,   lhs, rhs, expr->get_value()); break;
-		case ast::DIV:   emit(OP_DIV,    &VM::div_handler,    lhs, rhs, expr->get_value()); break;
-		case ast::MULT:  emit(OP_MULT,   &VM::mult_handler,   lhs, rhs, expr->get_value()); break;
-		case ast::MINUS: emit(OP_MINUS,  &VM::minus_handler,  lhs, rhs, expr->get_value()); break;
-		case ast::XOR:   emit(OP_BW_XOR, &VM::bw_xor_handler, lhs, rhs, expr->get_value()); break;
-		case ast::OR:    emit(OP_BW_OR,  &VM::bw_or_handler,  lhs, rhs, expr->get_value()); break;
-		case ast::AND:   emit(OP_BW_AND, &VM::bw_and_handler, lhs, rhs, expr->get_value()); break;
-		case ast::MOD:   emit(OP_MOD,    &VM::mod_handler,    lhs, rhs, expr->get_value()); break;
+		case PLUS:  emit(OP_PLUS,   &VM::plus_handler,   lhs, rhs, expr->get_value()); break;
+		case DIV:   emit(OP_DIV,    &VM::div_handler,    lhs, rhs, expr->get_value()); break;
+		case MULT:  emit(OP_MULT,   &VM::mult_handler,   lhs, rhs, expr->get_value()); break;
+		case MINUS: emit(OP_MINUS,  &VM::minus_handler,  lhs, rhs, expr->get_value()); break;
+		case XOR:   emit(OP_BW_XOR, &VM::bw_xor_handler, lhs, rhs, expr->get_value()); break;
+		case OR:    emit(OP_BW_OR,  &VM::bw_or_handler,  lhs, rhs, expr->get_value()); break;
+		case AND:   emit(OP_BW_AND, &VM::bw_and_handler, lhs, rhs, expr->get_value()); break;
+		case MOD:   emit(OP_MOD,    &VM::mod_handler,    lhs, rhs, expr->get_value()); break;
 	}
 }
 
@@ -252,7 +252,7 @@ AST_VISITOR(CodeGenVisitor, IfNode) {
 
 		while (it != end) {
 			Value* cond;
-			ast::ElseIfNode* elseif = static_cast<ast::ElseIfNode*>(*it);
+			ElseIfNode* elseif = static_cast<ElseIfNode*>(*it);
 
 			last_jmp->set_jmp_addr1(getOpNum());
 
@@ -397,12 +397,12 @@ AST_VISITOR(CodeGenVisitor, LogicExpr) {
 	rhs->addRef();
 
 	switch (expr->get_op()) {
-		case ast::GREATER:       emit(OP_GREATER,       &VM::greater_handler,       lhs, rhs, expr->get_value()); break;
-		case ast::LESS:          emit(OP_LESS,          &VM::less_handler,          lhs, rhs, expr->get_value()); break;
-		case ast::GREATER_EQUAL: emit(OP_GREATER_EQUAL, &VM::greater_equal_handler, lhs, rhs, expr->get_value()); break;
-		case ast::LESS_EQUAL:    emit(OP_LESS_EQUAL,    &VM::less_equal_handler,    lhs, rhs, expr->get_value()); break;
-		case ast::EQUAL:         emit(OP_EQUAL,         &VM::equal_handler,         lhs, rhs, expr->get_value()); break;
-		case ast::NOT_EQUAL:     emit(OP_NOT_EQUAL,     &VM::not_equal_handler,     lhs, rhs, expr->get_value()); break;
+		case GREATER:       emit(OP_GREATER,       &VM::greater_handler,       lhs, rhs, expr->get_value()); break;
+		case LESS:          emit(OP_LESS,          &VM::less_handler,          lhs, rhs, expr->get_value()); break;
+		case GREATER_EQUAL: emit(OP_GREATER_EQUAL, &VM::greater_equal_handler, lhs, rhs, expr->get_value()); break;
+		case LESS_EQUAL:    emit(OP_LESS_EQUAL,    &VM::less_equal_handler,    lhs, rhs, expr->get_value()); break;
+		case EQUAL:         emit(OP_EQUAL,         &VM::equal_handler,         lhs, rhs, expr->get_value()); break;
+		case NOT_EQUAL:     emit(OP_NOT_EQUAL,     &VM::not_equal_handler,     lhs, rhs, expr->get_value()); break;
 	}
 }
 
