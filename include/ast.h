@@ -34,6 +34,7 @@
 #include "cstring.h"
 #include "refcounted.h"
 #include "astvisitor.h"
+#include "location.hh"
 
 namespace clever {
 
@@ -67,12 +68,19 @@ enum {
 	NOT_EQUAL
 };
 
+/**
+ * AST node representation
+ */
 class NO_INIT_VTABLE ASTNode : public RefCounted {
 public:
 	ASTNode()
 		: RefCounted(0), m_optimized(false) { }
 
-	virtual ~ASTNode() { }
+	virtual ~ASTNode() {
+		if (m_location.begin.filename) {
+			delete m_location.begin.filename;
+		}
+	}
 
 	/**
 	 * Adds a new child node
@@ -109,6 +117,23 @@ public:
 	 */
 	void set_optimized(bool value) throw() { m_optimized = value; }
 	/**
+	 * Method for getting the line where occurs the definition
+	 */
+	void set_location(location& locate) throw() {
+		m_location = locate;
+		if (locate.end.filename) {
+			m_location.begin.filename = m_location.end.filename = new std::string(*locate.end.filename);
+		} else {
+			m_location.begin.filename = m_location.end.filename = NULL;
+		}
+	}
+	const location& get_location() throw() { return m_location; }
+
+	const std::string* getFileName() throw() { return m_location.end.filename; }
+
+	unsigned int getBeginLine() const throw() { return m_location.begin.line; }
+	unsigned int getEndLine() const throw() { return m_location.end.line; }
+	/**
 	 * Method for getting the value representation
 	 */
 	virtual Value* get_value() const throw() { return NULL; }
@@ -120,6 +145,7 @@ public:
 	virtual void set_block(ASTNode* expr) throw() { }
 protected:
 	NodeList m_nodes;
+	location m_location;
 private:
 	bool m_optimized;
 

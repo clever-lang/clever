@@ -37,6 +37,7 @@
 #include "vm.h"
 #include "ssa.h"
 #include "opcode.h"
+#include "location.hh"
 
 namespace clever { namespace ast {
 
@@ -117,7 +118,7 @@ public:
 		s_func_table.insert(FunctionPair(name, func));
 	}
 
-	static void checkFunctionArgs(const Function*, int) throw();
+	static void checkFunctionArgs(const Function*, int, const location&) throw();
 
 	static void vsprintf(std::ostringstream&, const char*, va_list) throw();
 	static void sprintf(std::ostringstream&, const char*, ...) throw();

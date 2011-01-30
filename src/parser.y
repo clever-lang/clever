@@ -179,8 +179,8 @@ arg_list:
 ;
 
 func_call:
-		IDENT '(' ')'          { $$ = new clever::ast::FunctionCall($1);     }
-	|	IDENT '(' arg_list ')' { $$ = new clever::ast::FunctionCall($1, $3); }
+		IDENT '(' ')'          { $$ = new clever::ast::FunctionCall($1); $$->set_location(yylloc); }
+	|	IDENT '(' arg_list ')' { $$ = new clever::ast::FunctionCall($1, $3); $$->set_location(yylloc); }
 ;
 
 method_call:

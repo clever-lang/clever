@@ -430,7 +430,7 @@ AST_VISITOR(CodeGenVisitor, FunctionCall) {
 	if (!func) {
 		Compiler::error("Function '" + *name + "' does not exists!");
 	}
-	Compiler::checkFunctionArgs(func, num_args);
+	Compiler::checkFunctionArgs(func, num_args, expr->get_location());
 
 	if (func->isUserDefined()) {
 		call->set_addr(func->get_start_pos());

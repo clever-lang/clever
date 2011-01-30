@@ -210,12 +210,13 @@ Value* Compiler::constantFolding(int op, Value* lhs, Value* rhs) throw() {
 /**
  * Checks the number of arguments supplied to the function on call
  */
-void Compiler::checkFunctionArgs(const Function* func, int num_args) throw() {
+void Compiler::checkFunctionArgs(const Function* func, int num_args, const location& loc) throw() {
 	int expected_args = func->get_num_args();
 
 	if (expected_args != -1 && num_args != expected_args) {
-		Compiler::errorf("Function `%S' expects %l argument%s, %l supplied",
-			&func->get_name(), expected_args, (expected_args > 1 ? "s" : ""), num_args);
+		Compiler::errorf("Function `%S' expects %l argument%s, %l supplied on %s:%l",
+			&func->get_name(), expected_args, (expected_args > 1 ? "s" : ""), num_args,
+			(loc.begin.filename ? loc.begin.filename->c_str() : "command line"), loc.begin.line);
 	}
 }
 
