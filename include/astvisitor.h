@@ -42,8 +42,8 @@ class PosIncrement;
 class PosDecrement;
 class PreIncrement;
 class PreDecrement;
-class IfNode;
-class ElseIfNode;
+class IfExpr;
+class ElseIfExpr;
 class WhileExpr;
 class FunctionCall;
 class MethodCall;
@@ -78,7 +78,7 @@ public:
 	AST_VISITOR_DECL_VIRTUAL(PreDecrement);
 	AST_VISITOR_DECL_VIRTUAL(PosDecrement);
 	AST_VISITOR_DECL_VIRTUAL(BlockNode);
-	AST_VISITOR_DECL_VIRTUAL(IfNode);
+	AST_VISITOR_DECL_VIRTUAL(IfExpr);
 	AST_VISITOR_DECL_VIRTUAL(WhileExpr);
 	AST_VISITOR_DECL_VIRTUAL(BreakNode);
 	AST_VISITOR_DECL_VIRTUAL(FunctionCall);
@@ -131,7 +131,7 @@ public:
 	AST_VISITOR_DECL(PreDecrement);
 	AST_VISITOR_DECL(PosDecrement);
 	AST_VISITOR_DECL(BlockNode);
-	AST_VISITOR_DECL(IfNode);
+	AST_VISITOR_DECL(IfExpr);
 	AST_VISITOR_DECL(WhileExpr);
 	AST_VISITOR_DECL(BreakNode);
 	AST_VISITOR_DECL(FunctionCall);

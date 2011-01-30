@@ -115,9 +115,7 @@ public:
 	/**
 	 * Method for getting the line where occurs the definition
 	 */
-	void set_location(location& locate) throw() {
-		m_location = locate;
-	}
+	void set_location(location& locate) throw() { m_location = locate; }
 	const location& get_location() const throw() { return m_location; }
 
 	const std::string* getFileName() const throw() { return m_location.end.filename; }
@@ -490,9 +488,9 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(PosDecrement);
 };
 
-class IfNode : public ASTNode {
+class IfExpr : public ASTNode {
 public:
-	IfNode(ASTNode* condition, ASTNode* block)
+	IfExpr(ASTNode* condition, ASTNode* block)
 		: m_condition(condition), m_block(block), m_else(NULL) {
 		m_condition->addRef();
 		if (m_block) {
@@ -500,7 +498,7 @@ public:
 		}
 	}
 
-	~IfNode() {
+	~IfExpr() {
 		m_condition->delRef();
 		if (m_block) {
 			m_block->delRef();
@@ -534,12 +532,12 @@ private:
 	ASTNode* m_block;
 	ASTNode* m_else;
 
-	DISALLOW_COPY_AND_ASSIGN(IfNode);
+	DISALLOW_COPY_AND_ASSIGN(IfExpr);
 };
 
-class ElseIfNode : public ASTNode {
+class ElseIfExpr : public ASTNode {
 public:
-	ElseIfNode(ASTNode* condition, ASTNode* block)
+	ElseIfExpr(ASTNode* condition, ASTNode* block)
 		: m_condition(condition), m_block(block) {
 		m_condition->addRef();
 		if (m_block) {
@@ -547,7 +545,7 @@ public:
 		}
 	}
 
-	~ElseIfNode() {
+	~ElseIfExpr() {
 		m_condition->delRef();
 		if (m_block) {
 			m_block->delRef();
@@ -562,7 +560,7 @@ private:
 	ASTNode* m_condition;
 	ASTNode* m_block;
 
-	DISALLOW_COPY_AND_ASSIGN(ElseIfNode);
+	DISALLOW_COPY_AND_ASSIGN(ElseIfExpr);
 };
 
 class WhileExpr : public ASTNode {

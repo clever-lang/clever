@@ -224,7 +224,7 @@ AST_VISITOR(CodeGenVisitor, PosDecrement) {
 /**
  * Generates the opcode for the IF-ELSEIF-ELSE expression
  */
-AST_VISITOR(CodeGenVisitor, IfNode) {
+AST_VISITOR(CodeGenVisitor, IfExpr) {
 	Value* value;
 	Opcode* jmp_if;
 	Opcode* jmp_else;
@@ -252,7 +252,7 @@ AST_VISITOR(CodeGenVisitor, IfNode) {
 
 		while (it != end) {
 			Value* cond;
-			ElseIfNode* elseif = static_cast<ElseIfNode*>(*it);
+			ElseIfExpr* elseif = static_cast<ElseIfExpr*>(*it);
 
 			last_jmp->set_jmp_addr1(getOpNum());
 
