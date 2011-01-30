@@ -36,17 +36,15 @@
 #include "cstring.h"
 
 namespace clever {
+
 class ScannerState;
-}
 
 /**
  * Lexer prototype
  */
 clever::Parser::token_type yylex(clever::Parser::semantic_type*,
 		clever::Parser::location_type*, clever::Driver&,
-		clever::ScannerState*);
-
-namespace clever {
+		clever::ScannerState&);
 
 /**
  * Driver - Handles the lexer, parser and compiler

@@ -45,9 +45,9 @@ class Driver;
 
 // The parsing context.
 %parse-param { Driver& driver }
-%parse-param { ScannerState* state }
+%parse-param { ScannerState& state }
 %lex-param   { Driver& driver }
-%lex-param   { ScannerState* state }
+%lex-param   { ScannerState& state }
 
 %locations
 %initial-action {

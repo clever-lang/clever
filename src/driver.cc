@@ -78,7 +78,7 @@ void Driver::readFile() throw() {
  * Parses a file
  */
 int Driver::parseFile(const std::string& filename) {
-	ScannerState* new_scanner = new ScannerState;
+	ScannerState new_scanner;
 	Parser parser(*this, new_scanner);
 	int result = 0;
 
@@ -88,14 +88,13 @@ int Driver::parseFile(const std::string& filename) {
 	// Read the file
 	readFile();
 	// Set the file source to scanner read it
-	s_scanners.push(new_scanner);
+	s_scanners.push(&new_scanner);
 	s_scanners.top()->set_cursor(m_source.c_str());
 	// Bison debug option
 	parser.set_debug_level(m_trace_parsing);
 
 	result = parser.parse();
 
-	delete new_scanner;
 	s_scanners.pop();
 
 	return result;
@@ -105,7 +104,7 @@ int Driver::parseFile(const std::string& filename) {
  * Parses a string
  */
 int Driver::parseStr(const std::string& code) {
-	ScannerState* new_scanner = new ScannerState;
+	ScannerState new_scanner;
 	Parser parser(*this, new_scanner);
 	int result = 0;
 
@@ -113,15 +112,13 @@ int Driver::parseStr(const std::string& code) {
 	m_source = code;
 
 	/* Set the source code to scanner read it */
-	s_scanners.push(new_scanner);
+	s_scanners.push(&new_scanner);
 	s_scanners.top()->set_cursor(m_source.c_str());
 
 	/* Bison debug option */
 	parser.set_debug_level(m_trace_parsing);
 
 	result = parser.parse();
-
-	delete new_scanner;
 
 	s_scanners.pop();
 

@@ -25,45 +25,21 @@
  * $Id$
  */
 
-#include <cstdio>
 #include "scanner.h"
 #include "parser.hh"
 #include "ast.h"
 #include "cstring.h"
 
-enum YYCONDTYPE {
-	yycINITIAL,
-	yycST_COMMENT,
-	yycST_MULTILINE_COMMENT,
-	yycST_END_OF_SCRIPT
-};
+namespace clever {
 
-#define YYGETCONDITION()  s->state
-#define YYSETCONDITION(x) s->state = yyc##x
+typedef Parser::token token;
 
-#define YYCTYPE       char
-#define YYMARKER     (s->ctx)
-#define YYCTXMARKER  (s->ctx)
-#define YYCURSOR     cursor
-#define YYLIMIT      cursor
-
-#define SET_TYPE(t_ptr) \
-	yylval->type = t_ptr; \
-	yylval->data = NULL;
-
-#define SKIP() { s->cur = s->yylex + 1; goto next_token; }
-#define RET(i) { s->cur = cursor; return i; }
-
-typedef clever::Parser::token token;
-
-clever::Parser::token_type yylex(clever::Parser::semantic_type* yylval,
-	clever::Parser::location_type* yylloc, clever::Driver& driver,
-	clever::ScannerState* s) {
-	const char* cursor = s->cur;
+Parser::token_type yylex(Parser::semantic_type* yylval, Parser::location_type* yylloc, Driver& driver, ScannerState& s) {
+	const char* cursor = s.cur;
 	int yylen;
 
 next_token:
-	s->yylex = cursor;
+	s.yylex = cursor;
 
 /*!re2c
 	re2c:yyfill:enable = 0;
@@ -79,7 +55,7 @@ next_token:
 	SPECIAL    = [;(),{}&~^|=+*/-];
 	TYPE       = [A-Z][a-zA-Z0-9_]*;
 
-	<!*> { yylen = cursor - s->yylex; }
+	<!*> { yylen = cursor - s.yylex; }
 
 	<*>SPACE { yylloc->step(); SKIP(); }
 	<*>[\n]+ { yylloc->lines(yylen); yylloc->step(); SKIP(); }
@@ -181,19 +157,19 @@ next_token:
 	}
 
 	<INITIAL>IDENTIFIER {
-		*yylval = new clever::ast::Identifier(CSTRING(std::string(s->yylex, yylen)));
+		*yylval = new ast::Identifier(CSTRING(std::string(s.yylex, yylen)));
 		RET(token::IDENT);
 	}
 
 	<INITIAL>TYPE {
-		*yylval = new clever::ast::Identifier(CSTRING(std::string(s->yylex, yylen)));
+		*yylval = new ast::Identifier(CSTRING(std::string(s.yylex, yylen)));
 		RET(token::TYPE);
 	}
 
-	<INITIAL>SPECIAL { RET(clever::Parser::token_type(s->yylex[0])); }
+	<INITIAL>SPECIAL { RET(Parser::token_type(s.yylex[0])); }
 
 	<INITIAL>STRING {
-		std::string strtext(s->yylex+1, yylen-2);
+		std::string strtext(s.yylex+1, yylen-2);
 		size_t found = 0;
 
 		// Handle sequence char
@@ -202,7 +178,7 @@ next_token:
 			if (found == std::string::npos) {
 				break;
 			}
-			if (s->yylex[0] == '"') {
+			if (s.yylex[0] == '"') {
 				switch (strtext[found+1]) {
 					case 'n': strtext.replace(int(found), 2, 1, '\n'); break;
 					case 'r': strtext.replace(int(found), 2, 1, '\r'); break;
@@ -220,22 +196,22 @@ next_token:
 			}
 		}
 
-		*yylval = new clever::ast::StringLiteral(CSTRING(strtext));
+		*yylval = new ast::StringLiteral(CSTRING(strtext));
 		RET(token::STR);
 	}
 
 	<INITIAL>INTEGER {
-		int64_t n = strtol(std::string(s->yylex, yylen).c_str(), NULL, 10);
+		int64_t n = strtol(std::string(s.yylex, yylen).c_str(), NULL, 10);
 
-		*yylval = new clever::ast::NumberLiteral(n);
+		*yylval = new ast::NumberLiteral(n);
 		RET(token::NUM_INTEGER);
 	}
 
 	<INITIAL>HEXINT {
 		int64_t n = 0;
 
-		std::sscanf(std::string(s->yylex+2, yylen).c_str(), "%x", (unsigned long *)&n);
-		*yylval = new clever::ast::NumberLiteral(n);
+		std::sscanf(std::string(s.yylex+2, yylen).c_str(), "%x", (unsigned long *)&n);
+		*yylval = new ast::NumberLiteral(n);
 
 		RET(token::NUM_INTEGER);
 	}
@@ -243,8 +219,8 @@ next_token:
 	<INITIAL>OCTINT {
 		int64_t n = 0;
 
-		sscanf(std::string(s->yylex+1, yylen), "%o", &n);
-		*yylval = new clever::ast::NumberLiteral(n);
+		sscanf(std::string(s.yylex+1, yylen), "%o", &n);
+		*yylval = new ast::NumberLiteral(n);
 
 		RET(token::NUM_INTEGER);
 	}
@@ -252,14 +228,16 @@ next_token:
 	<INITIAL>(DOUBLE|EXP_DOUBLE) {
 		double n = 0;
 
-		n = strtod(std::string(s->yylex, yylen).c_str(), NULL);
-		*yylval = new clever::ast::NumberLiteral(n);
+		n = strtod(std::string(s.yylex, yylen).c_str(), NULL);
+		*yylval = new ast::NumberLiteral(n);
 
 		RET(token::NUM_DOUBLE);
 	}
 
-	<*>[^] { RET(clever::Parser::token_type(s->yylex[0])); }
+	<*>[^] { RET(Parser::token_type(s.yylex[0])); }
 
 	<*>"\000" { RET(token::END); }
 */
 }
+
+} // clever
