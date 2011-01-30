@@ -34,7 +34,7 @@
 
 namespace clever { namespace ast {
 
-class ASTNodes;
+class ASTNode;
 
 }} // clever::ast
 
