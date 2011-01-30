@@ -243,11 +243,11 @@ void Compiler::vsprintf(std::ostringstream& outstr, const char* format, va_list 
 		switch (*chr) {
 			/* std::string* */
 			case 'S':
-				outstr << *static_cast<std::string*>(va_arg(ap, std::string*));
+				outstr << *va_arg(ap, std::string*);
 				break;
 			/* Value* */
 			case 'v':
-				outstr << static_cast<Value*>(va_arg(ap, Value*))->toString();
+				outstr << va_arg(ap, Value*)->toString();
 				break;
 			/* const char* */
 			case 's':

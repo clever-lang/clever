@@ -91,6 +91,9 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(ASTVisitor);
 };
 
+/**
+ * CodeGen Visitor
+ */
 class CodeGenVisitor : public ASTVisitor {
 public:
 	typedef std::stack<Opcode*> OpcodeStack;

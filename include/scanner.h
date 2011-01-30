@@ -59,7 +59,7 @@ class ScannerState {
 public:
 	ScannerState() : state(0) { }
 
-	void set_cursor(const char* cursor) { cur = cursor; }
+	void set_cursor(const char* cursor) throw() { cur = cursor; }
 
 	int state;
 	const char *cur, *yylex, *ctx;
