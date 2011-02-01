@@ -236,8 +236,8 @@ public:
 	 */
 	explicit CallableValue(const CString* name)
 		: Value(), m_call_type(NONE), m_context(NULL) {
-			set_name(name);
-		}
+		set_name(name);
+	}
 
 	/**
 	 * Create a CallableValue able to represent a method.
@@ -248,7 +248,7 @@ public:
 		set_type_ptr(type);
 	}
 
-	~CallableValue() { 
+	~CallableValue() {
 		if (isNearCall() && m_callback_ptr.f_ptr) {
 			delete m_callback_ptr.f_ptr;
 		}
@@ -264,10 +264,10 @@ public:
 		m_callback.m_ptr = callback;
 		m_callback_ptr.f_ptr = NULL;
 	}
-	
+
 	void set_function(const Function* func) throw() {
 		m_callback_ptr.f_ptr = func;
-		
+
 		if (func->isInternal()) {
 			set_callback(func->get_ptr());
 		} else {
@@ -280,7 +280,7 @@ public:
 
 	const FunctionPtr get_function_ptr() const throw() { return m_callback.f_ptr; }
 	const MethodPtr get_method_ptr() const throw() { return m_callback.m_ptr; }
-	
+
 	const Function* get_function() const throw() { return m_callback_ptr.f_ptr; }
 
 	bool isCallable() const { return true; }
@@ -294,12 +294,11 @@ public:
 	 * Remember to set a context before calling a non-static method.
 	 */
 	void call(Value* result, const ValueVector* args) const throw() {
+		const Type* type_ptr = get_type_ptr();
 
 		if (UNEXPECTED(m_call_type == NEAR)) {
 			/* TODO: throw error here */
 		}
-
-		const Type* type_ptr = get_type_ptr();
 
 		if (type_ptr == NULL) {
 			m_callback.f_ptr(args, result);
@@ -333,7 +332,7 @@ private:
 		MethodPtr m_ptr;
 		unsigned int m_addr;
 	} m_callback;
-	
+
 	union {
 		const Function* f_ptr;
 	} m_callback_ptr;

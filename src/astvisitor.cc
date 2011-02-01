@@ -420,7 +420,6 @@ AST_VISITOR(CodeGenVisitor, FunctionCall) {
 	const CString* name = expr->get_func()->get_name();
 	Value* fvalue = m_ssa.fetchVar(name);
 	const Function* func;
-	CallableValue* call = new CallableValue(name);
 	ASTNode* args = expr->get_args();
 	Value* arg_values = NULL;
 	int num_args = args ? args->getNodes().size() : 0;
@@ -429,14 +428,8 @@ AST_VISITOR(CodeGenVisitor, FunctionCall) {
 		Compiler::error("Function '" + *name + "' does not exists!", expr->get_location());
 	}
 	func = static_cast<CallableValue*>(fvalue)->get_function();
-	
-	Compiler::checkFunctionArgs(func, num_args, expr->get_location());
 
-	if (func->isUserDefined()) {
-		call->set_addr(func->get_start_pos());
-	} else {
-		call->set_function(func);
-	}
+	Compiler::checkFunctionArgs(func, num_args, expr->get_location());
 
 	if (args) {
 		arg_values = new Value;
@@ -444,7 +437,8 @@ AST_VISITOR(CodeGenVisitor, FunctionCall) {
 		arg_values->setVector(functionArgs(static_cast<ArgumentList*>(args)));
 	}
 
-	emit(OP_FCALL, &VM::fcall_handler, call, arg_values, expr->get_value());
+	fvalue->addRef();
+	emit(OP_FCALL, &VM::fcall_handler, fvalue, arg_values, expr->get_value());
 }
 
 /**
@@ -528,7 +522,7 @@ AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
 	user_func->setUserDefined();
 	user_func->set_start_pos(getOpNum());
 
-	func->set_addr(getOpNum());	
+	func->set_addr(getOpNum());
 	func->set_function(user_func);
 
 	m_ssa.pushVar(func);
