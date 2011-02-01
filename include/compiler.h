@@ -89,44 +89,14 @@ public:
 	/**
 	 * Import a package
 	 */
-	static void import(const CString* package) throw() {
-		s_pkgmanager.loadPackage(package);
+	static void import(Scope& scope, const CString* package) throw() {
+		s_pkgmanager.loadPackage(scope, package);
 	}
 	/**
 	 * Import a package module
 	 */
-	static void import(const CString* package, const CString* module) throw() {
-		s_pkgmanager.loadModule(package, module);
-	}
-	/**
-	 * Returns the reference to static member function table
-	 */
-	static FunctionTable& get_functions() throw() {
-		return s_func_table;
-	}
-	/**
-	 * Checks if a function exists
-	 */
-	static bool functionExists(const std::string& name) throw() {
-		return s_func_table.find(name) != s_func_table.end();
-	}
-	/**
-	 * Returns the a Function pointer
-	 */
-	static const Function* getFunction(const std::string& name) throw() {
-		FunctionTable::const_iterator it = s_func_table.find(name);
-
-		if (it != s_func_table.end()) {
-			return it->second;
-		} else {
-			return NULL;
-		}
-	}
-	/**
-	 * Adds a new function into the global function table
-	 */
-	static void addFunction(const std::string& name, Function* func) throw() {
-		s_func_table.insert(FunctionPair(name, func));
+	static void import(Scope& scope, const CString* package, const CString* module) throw() {
+		s_pkgmanager.loadModule(scope, package, module);
 	}
 	/**
 	 * Checks function arguments
@@ -145,7 +115,6 @@ private:
 	ast::CodeGenVisitor m_cgvisitor;
 
 	static PackageManager s_pkgmanager;
-	static FunctionTable s_func_table;
 
 	DISALLOW_COPY_AND_ASSIGN(Compiler);
 };

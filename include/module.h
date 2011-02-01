@@ -192,7 +192,14 @@ public:
 	Module(std::string name)
 		: m_state(UNLOADED), m_name(name) { }
 
-	virtual ~Module() { }
+	virtual ~Module() {
+		FunctionMap::const_iterator it = m_functions.begin(), end = m_functions.end();
+		
+		while (it != end) {
+			delete it->second;
+			++it;
+		}	
+	}
 
 	const std::string& get_name() const throw() {
 		return m_name;

@@ -222,19 +222,20 @@ private:
 class CallableValue : public Value {
 public:
 	enum CallType {
+		NONE,
 		NEAR, /* Invoke compiled functions/methods. */
 		FAR   /* Invoke built-in or loaded functions/methods. (probably faster)*/
 	};
 
 	/* TODO: generate name for anonymous functions, disable set_name(). */
 	CallableValue()
-		: m_context(NULL) { }
+		: m_context(NULL), m_call_type(NONE) { }
 
 	/**
 	 * Create a CallableValue to represent a named function.
 	 */
 	explicit CallableValue(const CString* name)
-		: Value(), m_call_type(FAR), m_context(NULL) {
+		: Value(), m_call_type(NONE), m_context(NULL) {
 			set_name(name);
 		}
 
@@ -242,12 +243,16 @@ public:
 	 * Create a CallableValue able to represent a method.
 	 */
 	CallableValue(const CString* name, Type* type)
-		: Value(), m_call_type(FAR), m_context(NULL) {
+		: Value(), m_call_type(NONE), m_context(NULL) {
 		set_name(name);
 		set_type_ptr(type);
 	}
 
-	~CallableValue() { }
+	~CallableValue() { 
+		if (isNearCall() && m_callback_ptr.f_ptr) {
+			delete m_callback_ptr.f_ptr;
+		}
+	}
 
 	void set_callback(FunctionPtr callback) throw() {
 		m_call_type = FAR;
@@ -257,13 +262,26 @@ public:
 	void set_callback(MethodPtr callback) throw() {
 		m_call_type = FAR;
 		m_callback.m_ptr = callback;
+		m_callback_ptr.f_ptr = NULL;
+	}
+	
+	void set_function(const Function* func) throw() {
+		m_callback_ptr.f_ptr = func;
+		
+		if (func->isInternal()) {
+			set_callback(func->get_ptr());
+		} else {
+			m_call_type = NEAR;
+		}
 	}
 
 	void set_context(Value* value) throw() { m_context = value; }
 	Value* get_context() const throw() { return m_context; }
 
-	const FunctionPtr get_function() const throw() { return m_callback.f_ptr; }
-	const MethodPtr get_method() const throw() { return m_callback.m_ptr; }
+	const FunctionPtr get_function_ptr() const throw() { return m_callback.f_ptr; }
+	const MethodPtr get_method_ptr() const throw() { return m_callback.m_ptr; }
+	
+	const Function* get_function() const throw() { return m_callback_ptr.f_ptr; }
 
 	bool isCallable() const { return true; }
 
@@ -309,14 +327,16 @@ public:
 		m_call_type = NEAR;
 		m_callback.m_addr = num;
 	}
-
-
 private:
 	union {
 		FunctionPtr f_ptr;
 		MethodPtr m_ptr;
 		unsigned int m_addr;
 	} m_callback;
+	
+	union {
+		const Function* f_ptr;
+	} m_callback_ptr;
 
 	Value* m_context;
 

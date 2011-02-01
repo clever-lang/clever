@@ -39,22 +39,12 @@
 namespace clever {
 
 PackageManager Compiler::s_pkgmanager;
-FunctionTable Compiler::s_func_table;
 TypeMap TypeTable::s_type_table;
 
 /**
  * Deallocs memory used by compiler data
  */
 Compiler::~Compiler() {
-	FunctionTable::const_iterator it = s_func_table.begin(), end_func = s_func_table.end();
-
-	/**
-	 * Deallocs memory used by global function table entries
-	 */
-	while (it != end_func) {
-		delete it->second;
-		++it;
-	}
 	TypeTable::clear();
 
 	s_pkgmanager.shutdown();
@@ -67,7 +57,7 @@ Compiler::~Compiler() {
  */
 void Compiler::Init() throw() {
 	/* Load package list */
-	s_pkgmanager.Init(&s_func_table);
+	s_pkgmanager.Init();
 
 	/* Load the primitive data types */
 	loadTypes();

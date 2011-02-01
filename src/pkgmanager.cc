@@ -35,16 +35,14 @@ namespace clever {
 /**
  * Loads native packages
  */
-void PackageManager::Init(FunctionTable* ftable) throw() {
-	m_ftable = ftable;
-
+void PackageManager::Init() throw() {
 	addPackage(CSTRING("std"), std_pkg::g_std_package);
 }
 
 /**
  * Load an entire package
  */
-void PackageManager::loadPackage(const CString* package) throw() {
+void PackageManager::loadPackage(Scope& scope, const CString* package) throw() {
 	PackageMap::const_iterator it = m_packages.find(package);
 
 	if (it != m_packages.end()) {
@@ -63,7 +61,7 @@ void PackageManager::loadPackage(const CString* package) throw() {
 			ModuleMap::const_iterator it = modules.begin(), end = modules.end();
 
 			while (it != end) {
-				loadModule(it->second);
+				loadModule(scope, it->second);
 				++it;
 			}
 		}
@@ -79,7 +77,7 @@ void PackageManager::loadPackage(const CString* package) throw() {
 /**
  * Loads an specific module
  */
-void PackageManager::loadModule(Module* module) throw() {
+void PackageManager::loadModule(Scope& scope, Module* module) throw() {
 	/**
 	 * Checks if the module already has been loaded
 	 */
@@ -98,7 +96,10 @@ void PackageManager::loadModule(Module* module) throw() {
 		 * Inserts the function into the global function table
 		 */
 		while (it != end) {
-			m_ftable->insert(FunctionPair(it->first, it->second));
+			CallableValue* fvalue = new CallableValue(CSTRING(it->first));
+			fvalue->set_function(it->second);
+			
+			scope.push(fvalue);
 			++it;
 		}
 	}
@@ -111,7 +112,7 @@ void PackageManager::loadModule(Module* module) throw() {
 /**
  * Loads an specific module package by supplying the package and module names
  */
-void PackageManager::loadModule(const CString* package, const CString* module) throw() {
+void PackageManager::loadModule(Scope& scope, const CString* package, const CString* module) throw() {
 	PackageMap::const_iterator it = m_packages.find(package);
 
 	if (it != m_packages.end()) {
@@ -132,7 +133,7 @@ void PackageManager::loadModule(const CString* package, const CString* module) t
 			 * Loads the module if it has been found
 			 */
 			if (it_mod != modules.end()) {
-				loadModule(it_mod->second);
+				loadModule(scope, it_mod->second);
 			}
 		}
 		/**

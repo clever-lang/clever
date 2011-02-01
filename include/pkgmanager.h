@@ -30,12 +30,12 @@
 
 #include <tr1/unordered_map>
 #include "module.h"
+#include "ssa.h"
 
 namespace clever {
 
 class CString;
 
-typedef std::tr1::unordered_map<std::string, Function*> FunctionTable;
 typedef std::tr1::unordered_map<const CString*, Package*> PackageMap;
 typedef std::pair<const CString*, Package*> PackagePair;
 
@@ -51,7 +51,7 @@ public:
 	/**
 	 * Load package map
 	 */
-	void Init(FunctionTable*) throw();
+	void Init() throw();
 	/**
 	 * Free memory
 	 */
@@ -65,16 +65,14 @@ public:
 	/**
 	 * Load an specific package
 	 */
-	void loadPackage(const CString*) throw();
+	void loadPackage(Scope&, const CString*) throw();
 	/**
 	 * Load an specific package module
 	 */
-	void loadModule(const CString*, const CString*) throw();
-	void loadModule(Module*) throw();
+	void loadModule(Scope&, const CString*, const CString*) throw();
+	void loadModule(Scope&, Module*) throw();
 private:
 	PackageMap m_packages;
-
-	FunctionTable* m_ftable;
 
 	DISALLOW_COPY_AND_ASSIGN(PackageManager);
 };
