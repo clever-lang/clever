@@ -97,7 +97,7 @@ void PackageManager::loadModule(Scope& scope, Module* module) throw() {
 		 */
 		while (it != end) {
 			CallableValue* fvalue = new CallableValue(CSTRING(it->first));
-			fvalue->set_function(it->second);
+			fvalue->set_handler(it->second);
 			
 			scope.push(fvalue);
 			++it;

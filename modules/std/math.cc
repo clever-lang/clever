@@ -27,6 +27,7 @@
 
 #include <cmath>
 #include <cstdlib>
+#include <string>
 #include "module.h"
 #include "std/math.h"
 #include "typetable.h"

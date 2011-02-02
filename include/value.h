@@ -249,39 +249,28 @@ public:
 	}
 
 	~CallableValue() {
-		if (isNearCall() && m_callback_ptr.f_ptr) {
-			delete m_callback_ptr.f_ptr;
-		}
+		/*if (isNearCall() && m_handler_ptr.f_ptr) {
+			delete m_handler_ptr.f_ptr;
+		}*/
 	}
 
-	void set_callback(FunctionPtr callback) throw() {
+	void set_handler(Function* handler) throw() {
+		m_call_type = handler->isInternal() ? FAR : NEAR;
+		m_handler.func = handler;
+	}
+
+	void set_handler(MethodPtr handler) throw() {
 		m_call_type = FAR;
-		m_callback.f_ptr = callback;
-	}
-
-	void set_callback(MethodPtr callback) throw() {
-		m_call_type = FAR;
-		m_callback.m_ptr = callback;
-		m_callback_ptr.f_ptr = NULL;
-	}
-
-	void set_function(const Function* func) throw() {
-		m_callback_ptr.f_ptr = func;
-
-		if (func->isInternal()) {
-			set_callback(func->get_ptr());
-		} else {
-			m_call_type = NEAR;
-		}
+		m_handler.m_ptr = handler;
 	}
 
 	void set_context(Value* value) throw() { m_context = value; }
 	Value* get_context() const throw() { return m_context; }
 
-	const FunctionPtr get_function_ptr() const throw() { return m_callback.f_ptr; }
-	const MethodPtr get_method_ptr() const throw() { return m_callback.m_ptr; }
+	const FunctionPtr get_function_ptr() const throw() { return m_handler.func->get_ptr(); }
+	const MethodPtr get_method_ptr() const throw() { return m_handler.m_ptr; }
 
-	const Function* get_function() const throw() { return m_callback_ptr.f_ptr; }
+	const Function* get_function() const throw() { return m_handler.func; }
 
 	bool isCallable() const { return true; }
 
@@ -301,41 +290,21 @@ public:
 		}
 
 		if (type_ptr == NULL) {
-			m_callback.f_ptr(args, result);
+			m_handler.func->call(args, result);
 		} else {
-			m_callback.m_ptr(args, result, m_context);
+			m_handler.m_ptr(args, result, m_context);
 		}
-	}
-
-	void call(Value* context, Value* result, const ValueVector* args) const throw() {
-		if (UNEXPECTED(m_call_type == NEAR || get_type_ptr() == NULL)) {
-			/* TODO: throw error here */
-		}
-
-		m_callback.m_ptr(args, result, context);
 	}
 
 	void call(long& next_op) const throw() {
-		next_op = m_callback.m_addr;
+		next_op = m_handler.func->call();
 	}
 
-	/**
-	 * User defined functions
-	 */
-	void set_addr(unsigned int num) throw() {
-		m_call_type = NEAR;
-		m_callback.m_addr = num;
-	}
 private:
 	union {
-		FunctionPtr f_ptr;
-		MethodPtr m_ptr;
-		unsigned int m_addr;
-	} m_callback;
-
-	union {
-		const Function* f_ptr;
-	} m_callback_ptr;
+		Function* func;
+		MethodPtr   m_ptr;
+	} m_handler;
 
 	Value* m_context;
 

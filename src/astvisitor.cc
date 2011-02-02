@@ -456,7 +456,7 @@ AST_VISITOR(CodeGenVisitor, MethodCall) {
 	}
 
 	call->set_type_ptr(variable->get_type_ptr());
-	call->set_callback(method);
+	call->set_handler(method);
 	call->set_context(variable);
 
 	if (args) {
@@ -520,10 +520,9 @@ AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
 	jmp = emit(OP_JMP, &VM::jmp_handler);
 
 	user_func->setUserDefined();
-	user_func->set_start_pos(getOpNum());
+	user_func->set_offset(getOpNum());
 
-	func->set_addr(getOpNum());
-	func->set_function(user_func);
+	func->set_handler(user_func);
 
 	m_ssa.pushVar(func);
 

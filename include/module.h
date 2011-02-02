@@ -76,17 +76,20 @@ class Function {
 public:
 	enum FunctionType { INTERNAL, USER };
 
-	explicit Function(const std::string& name)
+	explicit Function(std::string name)
 		: m_name(name), m_type(INTERNAL), m_num_args(0) { }
 
-	explicit Function(const char* name)
-		: m_name(name), m_type(INTERNAL), m_num_args(0) { }
+	Function(std::string name, FunctionPtr ptr)
+		: m_name(name), m_type(INTERNAL), m_num_args(0) { m_info.ptr = ptr; }
 
-	Function(const char* name, FunctionPtr ptr)
-		: m_name(name), m_type(INTERNAL), m_ptr(ptr), m_num_args(0) { }
+	Function(std::string name, FunctionPtr ptr, int numargs)
+		: m_name(name), m_type(INTERNAL), m_num_args(numargs) { m_info.ptr = ptr; }
 
-	Function(const char* name, FunctionPtr ptr, int numargs)
-		: m_name(name), m_type(INTERNAL), m_ptr(ptr), m_num_args(numargs) { }
+	Function(std::string& name, unsigned int offset) 
+		: m_name(name), m_type(USER), m_num_args(0) { m_info.offset = offset; }
+
+	Function(std::string& name, unsigned int offset, int numargs) 
+		: m_name(name), m_type(USER), m_num_args(numargs) { m_info.offset = offset; }
 
 	virtual ~Function() { }
 
@@ -96,29 +99,45 @@ public:
 
 		return this;
 	}
+	
 	FunctionArgs& getArgs() throw() {
 		return m_args;
 	}
+
 	int get_num_args() const { return m_num_args; }
+	void setVariadicArgs() throw() { m_num_args = -1; }
 
 	void setInternal() throw() { m_type = INTERNAL; }
 	void setUserDefined() throw() { m_type = USER; }
-	void set_start_pos(unsigned int num) { m_start_pos = num; }
-
+	
 	bool isUserDefined() const throw() { return m_type == USER; }
 	bool isInternal() const throw() { return m_type == INTERNAL; }
+	
+	void set_offset(unsigned int num) { m_info.offset = num; }
+	unsigned int get_offset() const throw() { return m_info.offset; }
 
-	void setUnlimitedArgs() throw() { m_num_args = -1; }
-
-	FunctionPtr get_ptr() const throw() { return m_ptr; }
+	FunctionPtr get_ptr() const throw() { return m_info.ptr; }
+	
 	const std::string& get_name() const throw() { return m_name; }
-	unsigned int get_start_pos() const throw() { return m_start_pos; }
+
+	void call (const ValueVector* args, Value* result) {
+		m_info.ptr(args, result);
+	}	
+
+	unsigned int call() {
+		return m_info.offset;
+	}
+
 private:
-	std::string m_name;
-	FunctionArgs m_args;
-	FunctionPtr m_ptr;
+	union {
+		FunctionPtr  ptr;
+		unsigned int offset;
+	} m_info;
+
 	FunctionType m_type;
-	unsigned int m_start_pos;
+	FunctionArgs m_args;
+
+	std::string m_name;
 	int m_num_args;
 };
 
