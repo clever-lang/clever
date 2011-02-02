@@ -28,7 +28,7 @@
 #include <iostream>
 #include "pkgmanager.h"
 #include "cstring.h"
-#include "std/package.h"
+#include "std/std_pkg.h"
 
 namespace clever {
 
@@ -36,7 +36,7 @@ namespace clever {
  * Loads native packages
  */
 void PackageManager::Init() throw() {
-	addPackage(CSTRING("std"), std_pkg::g_std_package);
+	addPackage(CSTRING("std"), new std_pkg::Std());
 }
 
 /**
@@ -98,7 +98,7 @@ void PackageManager::loadModule(Scope& scope, Module* module) throw() {
 		while (it != end) {
 			CallableValue* fvalue = new CallableValue(CSTRING(it->first));
 			fvalue->set_handler(it->second);
-			
+
 			scope.push(fvalue);
 			++it;
 		}

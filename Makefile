@@ -78,8 +78,8 @@ $(BUILDDIR)pkgmanager.o: $(SRCDIR)pkgmanager.cc $(BUILDDIR)std_pkg.o
 	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)pkgmanager.o $(SRCDIR)pkgmanager.cc
 
 # Standard package
-$(BUILDDIR)std_pkg.o: $(MODDIR)std/io.cc $(MODDIR)std/math.cc $(MODDIR)std/package.cc
-	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)std_pkg.o $(MODDIR)std/package.cc
+$(BUILDDIR)std_pkg.o: $(MODDIR)std/io.cc $(MODDIR)std/math.cc $(MODDIR)std/std_pkg.cc
+	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)std_pkg.o $(MODDIR)std/std_pkg.cc
 
 $(BUILDDIR)io.o: $(BUILDDIR)pkgmanager.o $(MODDIR)std/io.cc
 	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)io.o $(MODDIR)std/io.cc

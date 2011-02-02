@@ -48,8 +48,6 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(Std);
 };
 
-extern Package* g_std_package;
-
 }} // clever::std_pkg
 
 #endif // CLEVER_STD_PACKAGE_H

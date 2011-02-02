@@ -26,11 +26,9 @@
  */
 
 #include "cstring.h"
-#include "package.h"
+#include "std_pkg.h"
 
 namespace clever { namespace std_pkg {
-
-Package* g_std_package = new Std;
 
 /**
  * Initializes Std package
