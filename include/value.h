@@ -249,9 +249,9 @@ public:
 	}
 
 	~CallableValue() {
-		/*if (isNearCall() && m_handler_ptr.f_ptr) {
-			delete m_handler_ptr.f_ptr;
-		}*/
+		if (isNearCall() && m_handler.func) {
+			delete m_handler.func;
+		}
 	}
 
 	void set_handler(Function* handler) throw() {
