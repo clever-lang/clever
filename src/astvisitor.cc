@@ -508,15 +508,6 @@ AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
 	ast::ArgumentDeclList* args = static_cast<ast::ArgumentDeclList*>(expr->get_args());
 	Opcode* jmp;
 
-	if (args) {
-		ArgumentDecls& arg_nodes = args->get_args();
-		ArgumentDecls::iterator it = arg_nodes.begin(), end = arg_nodes.end();
-
-		while (it != end) {
-			user_func->addArg(*it->first->get_value()->get_name(), TypeTable::getType(it->second->get_value()->get_name()));
-			++it;
-		}
-	}
 	jmp = emit(OP_JMP, &VM::jmp_handler);
 
 	user_func->setUserDefined();
@@ -527,7 +518,33 @@ AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
 	m_ssa.pushVar(func);
 
 	if (expr->hasBlock()) {
+		if (args) {
+			ArgumentDecls& arg_nodes = args->get_args();
+			ArgumentDecls::iterator it = arg_nodes.begin(), end = arg_nodes.end();
+
+			m_ssa.beginScope();
+
+			while (it != end) {
+				Value* var = new Value;
+
+				var->set_name(it->second->get_value()->get_name());
+				var->set_type_ptr(TypeTable::getType(it->first->get_value()->get_name()));
+				var->set_type(Value::INTEGER);
+				var->initialize();
+
+				m_ssa.pushVar(var);
+
+				user_func->addArg(*it->second->get_value()->get_name(), TypeTable::getType(it->first->get_value()->get_name()));
+
+				++it;
+			}
+		}
+
 		expr->get_block()->accept(*this);
+
+		if (args) {
+			m_ssa.endScope();
+		}
 	}
 
 	emit(OP_JMP, &VM::end_func_handler);
