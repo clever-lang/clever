@@ -85,10 +85,10 @@ public:
 	Function(std::string name, FunctionPtr ptr, int numargs)
 		: m_name(name), m_type(INTERNAL), m_num_args(numargs) { m_info.ptr = ptr; }
 
-	Function(std::string& name, unsigned int offset) 
+	Function(std::string& name, unsigned int offset)
 		: m_name(name), m_type(USER), m_num_args(0) { m_info.offset = offset; }
 
-	Function(std::string& name, unsigned int offset, int numargs) 
+	Function(std::string& name, unsigned int offset, int numargs)
 		: m_name(name), m_type(USER), m_num_args(numargs) { m_info.offset = offset; }
 
 	virtual ~Function() { }
@@ -99,30 +99,31 @@ public:
 
 		return this;
 	}
-	
-	FunctionArgs& getArgs() throw() {
-		return m_args;
-	}
+
+	FunctionArgs& getArgs() throw() { return m_args; }
+
+	void set_vars(Value* vars) { m_vars = vars; }
+	Value* get_vars() throw() { return m_vars; }
 
 	int get_num_args() const { return m_num_args; }
 	void setVariadicArgs() throw() { m_num_args = -1; }
 
 	void setInternal() throw() { m_type = INTERNAL; }
 	void setUserDefined() throw() { m_type = USER; }
-	
+
 	bool isUserDefined() const throw() { return m_type == USER; }
 	bool isInternal() const throw() { return m_type == INTERNAL; }
-	
+
 	void set_offset(unsigned int num) { m_info.offset = num; }
 	unsigned int get_offset() const throw() { return m_info.offset; }
 
 	FunctionPtr get_ptr() const throw() { return m_info.ptr; }
-	
+
 	const std::string& get_name() const throw() { return m_name; }
 
 	void call (const ValueVector* args, Value* result) {
 		m_info.ptr(args, result);
-	}	
+	}
 
 	unsigned int call() {
 		return m_info.offset;
@@ -137,6 +138,7 @@ private:
 	FunctionType m_type;
 	FunctionArgs m_args;
 
+	Value* m_vars;
 	std::string m_name;
 	int m_num_args;
 };
@@ -213,11 +215,11 @@ public:
 
 	virtual ~Module() {
 		FunctionMap::const_iterator it = m_functions.begin(), end = m_functions.end();
-		
+
 		while (it != end) {
 			delete it->second;
 			++it;
-		}	
+		}
 	}
 
 	const std::string& get_name() const throw() {

@@ -64,7 +64,8 @@ enum Opcodes {
 	OP_FCALL,
 	OP_MCALL,
 	OP_ASSIGN,
-	OP_RETURN
+	OP_RETURN,
+	OP_RECV
 };
 
 /**

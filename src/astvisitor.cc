@@ -435,6 +435,11 @@ AST_VISITOR(CodeGenVisitor, FunctionCall) {
 		arg_values = new Value;
 		arg_values->set_type(Value::VECTOR);
 		arg_values->setVector(functionArgs(static_cast<ArgumentList*>(args)));
+
+		if (func->isUserDefined()) {
+			arg_values->addRef();
+			emit(OP_RECV, &VM::arg_recv_handler, const_cast<Function*>(func)->get_vars(), arg_values);
+		}
 	}
 
 	fvalue->addRef();
@@ -521,6 +526,10 @@ AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
 		if (args) {
 			ArgumentDecls& arg_nodes = args->get_args();
 			ArgumentDecls::iterator it = arg_nodes.begin(), end = arg_nodes.end();
+			Value* vars = new Value;
+			ValueVector* vec = new ValueVector;
+
+			vars->set_type(Value::VECTOR);
 
 			m_ssa.beginScope();
 
@@ -531,13 +540,19 @@ AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
 				var->set_type_ptr(TypeTable::getType(it->first->get_value()->get_name()));
 				var->set_type(Value::INTEGER);
 				var->initialize();
+				var->setModified();
 
 				m_ssa.pushVar(var);
+				vec->push_back(var);
+				var->addRef();
 
 				user_func->addArg(*it->second->get_value()->get_name(), TypeTable::getType(it->first->get_value()->get_name()));
 
 				++it;
 			}
+
+			vars->setVector(vec);
+			user_func->set_vars(vars);
 		}
 
 		expr->get_block()->accept(*this);

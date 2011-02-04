@@ -498,6 +498,18 @@ CLEVER_VM_HANDLER(VM::fcall_handler) {
 }
 
 /**
+ * Argument receiver
+ */
+CLEVER_VM_HANDLER(VM::arg_recv_handler) {
+	ValueVector* vars = opcode.get_op1()->getVector();
+	ValueVector* func_args = opcode.get_op2()->getVector();
+
+	for (int i = 0, j = vars->size(); i < j; ++i) {
+		vars->at(i)->copy(func_args->at(i));
+	}
+}
+
+/**
  * var.method()
  */
 CLEVER_VM_HANDLER(VM::mcall_handler) {
