@@ -42,13 +42,11 @@ public:
 
 	virtual ~RefCounted() { }
 
-	int refCount() const throw() {
-		return m_reference;
-	}
+	void set_reference(int reference) { m_reference = reference; }
 
-	void addRef() throw() {
-		++m_reference;
-	}
+	int refCount() const throw() { return m_reference; }
+
+	void addRef() throw() { ++m_reference; }
 
 	void delRef() throw() {
 		if (--m_reference == 0) {

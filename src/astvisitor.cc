@@ -437,8 +437,11 @@ AST_VISITOR(CodeGenVisitor, FunctionCall) {
 		arg_values->setVector(functionArgs(static_cast<ArgumentList*>(args)));
 
 		if (func->isUserDefined()) {
+			Value* vars = const_cast<Function*>(func)->get_vars();
+
 			arg_values->addRef();
-			emit(OP_RECV, &VM::arg_recv_handler, const_cast<Function*>(func)->get_vars(), arg_values);
+			vars->addRef();
+			emit(OP_RECV, &VM::arg_recv_handler, vars, arg_values);
 		}
 	}
 
@@ -530,6 +533,7 @@ AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
 			ValueVector* vec = new ValueVector;
 
 			vars->set_type(Value::VECTOR);
+			vars->set_reference(0);
 
 			m_ssa.beginScope();
 
