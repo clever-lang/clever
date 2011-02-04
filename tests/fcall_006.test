@@ -1,0 +1,25 @@
+Testing function call with recursion
+==CODE==
+import std.io;
+
+Void foo(Int x) {
+	if (x == 0) {
+		return;
+	}
+
+	println(x);
+	foo(x-1);
+}
+
+foo(10);
+==RESULT==
+10
+9
+8
+7
+6
+5
+4
+3
+2
+1

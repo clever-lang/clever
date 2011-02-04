@@ -487,9 +487,9 @@ CLEVER_VM_HANDLER(VM::fcall_handler) {
 
 	result->initialize();
 
-	s_call.push(&opcode);
-
 	if (func->isNearCall()) {
+		s_call.push(&opcode);
+
 		func->call(next_op);
 	} else {
 		/* Call the function */
