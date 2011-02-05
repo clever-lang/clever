@@ -514,12 +514,17 @@ AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
 	CallableValue* func = new CallableValue(name);
 	Function* user_func = new Function(name->str());
 	ast::ArgumentDeclList* args = static_cast<ast::ArgumentDeclList*>(expr->get_args());
+	Value* return_type = expr->get_return() ? expr->get_return()->get_value() : NULL;
 	Opcode* jmp;
 
 	jmp = emit(OP_JMP, &VM::jmp_handler);
 
 	user_func->setUserDefined();
 	user_func->set_offset(getOpNum());
+
+	if (return_type) {
+		user_func->set_return(TypeTable::getType(return_type->get_name()));
+	}
 
 	func->set_handler(user_func);
 
@@ -559,7 +564,11 @@ AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
 			user_func->set_vars(vars);
 		}
 
+		m_funcs.push(user_func);
+
 		expr->get_block()->accept(*this);
+
+		m_funcs.pop();
 
 		if (args) {
 			m_ssa.endScope();
@@ -576,6 +585,21 @@ AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
  */
 AST_VISITOR(CodeGenVisitor, ReturnStmt) {
 	ASTNode* value = expr->get_expr();
+	const Function* func = m_funcs.empty() ? NULL : m_funcs.top();
+	const Type* rtype = func ? func->get_return() : NULL;
+
+	/**
+	 * Only for return inside function declaration
+	 */
+	if (func) {
+		if (value && rtype == NULL) {
+			Compiler::errorf(expr->get_location(), "Function `%S' cannot return value, it was declared as Void!",
+				&func->get_name());
+		} else if (value == NULL && rtype) {
+			Compiler::errorf(expr->get_location(), "Function `%S' must return a value of type %s!",
+				&func->get_name(), rtype->get_name());
+		}
+	}
 
 	if (value) {
 		Value* expr_value = value->get_value();

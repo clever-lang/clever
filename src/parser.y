@@ -158,8 +158,8 @@ statements:
 ;
 
 return_stmt:
-		RETURN expr { $$ = new ast::ReturnStmt($2); }
-	|	RETURN      { $$ = new ast::ReturnStmt();   }
+		RETURN expr { $$ = new ast::ReturnStmt($2); $$->set_location(yylloc); }
+	|	RETURN      { $$ = new ast::ReturnStmt();   $$->set_location(yylloc); }
 
 args_declaration_non_empty:
 		TYPE IDENT                      { $$ = new ast::ArgumentDeclList(); static_cast<ast::ArgumentDeclList*>($$)->addArg($1, $2); }

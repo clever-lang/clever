@@ -97,6 +97,7 @@ class CodeGenVisitor : public ASTVisitor {
 public:
 	typedef std::stack<Opcode*> OpcodeStack;
 	typedef std::stack<OpcodeStack> JmpStack;
+	typedef std::stack<Function*> FuncDeclStack;
 
 	CodeGenVisitor() {}
 	~CodeGenVisitor() {}
@@ -147,6 +148,7 @@ private:
 	OpcodeList m_opcodes;
 	SSA m_ssa;
 	JmpStack m_brks;
+	FuncDeclStack m_funcs;
 
 	/**
 	 * Output an opcode.

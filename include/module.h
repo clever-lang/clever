@@ -77,19 +77,25 @@ public:
 	enum FunctionType { INTERNAL, USER };
 
 	explicit Function(std::string name)
-		: m_name(name), m_type(INTERNAL), m_num_args(0) { }
+		: m_name(name), m_type(INTERNAL), m_num_args(0), m_return(NULL) { }
 
 	Function(std::string name, FunctionPtr ptr)
-		: m_name(name), m_type(INTERNAL), m_num_args(0) { m_info.ptr = ptr; }
+		: m_name(name), m_type(INTERNAL), m_num_args(0), m_return(NULL) { m_info.ptr = ptr; }
+
+	Function(std::string name, FunctionPtr ptr, const Type* rtype)
+		: m_name(name), m_type(INTERNAL), m_num_args(0), m_return(rtype) { m_info.ptr = ptr; }
 
 	Function(std::string name, FunctionPtr ptr, int numargs)
-		: m_name(name), m_type(INTERNAL), m_num_args(numargs) { m_info.ptr = ptr; }
+		: m_name(name), m_type(INTERNAL), m_num_args(numargs), m_return(NULL) { m_info.ptr = ptr; }
+
+	Function(std::string name, FunctionPtr ptr, int numargs, const Type* rtype)
+		: m_name(name), m_type(INTERNAL), m_num_args(numargs), m_return(rtype) { m_info.ptr = ptr; }
 
 	Function(std::string& name, unsigned int offset)
-		: m_name(name), m_type(USER), m_num_args(0) { m_info.offset = offset; }
+		: m_name(name), m_type(USER), m_num_args(0), m_return(NULL) { m_info.offset = offset; }
 
 	Function(std::string& name, unsigned int offset, int numargs)
-		: m_name(name), m_type(USER), m_num_args(numargs) { m_info.offset = offset; }
+		: m_name(name), m_type(USER), m_num_args(numargs), m_return(NULL) { m_info.offset = offset; }
 
 	virtual ~Function() { }
 
@@ -117,6 +123,9 @@ public:
 	void set_offset(unsigned int num) { m_info.offset = num; }
 	unsigned int get_offset() const throw() { return m_info.offset; }
 
+	void set_return(const Type* type) { m_return = type; }
+	const Type* get_return() const throw() { return m_return; }
+
 	FunctionPtr get_ptr() const throw() { return m_info.ptr; }
 
 	const std::string& get_name() const throw() { return m_name; }
@@ -135,6 +144,7 @@ private:
 		unsigned int offset;
 	} m_info;
 
+	const Type* m_return;
 	FunctionType m_type;
 	FunctionArgs m_args;
 

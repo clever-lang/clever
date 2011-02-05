@@ -694,10 +694,12 @@ private:
 
 class FuncDeclaration : public ASTNode {
 public:
-	FuncDeclaration(ASTNode* name, ASTNode* type, ASTNode* args, ASTNode* block)
-		: m_name(name), m_type(type), m_args(args), m_block(block) {
+	FuncDeclaration(ASTNode* name, ASTNode* rtype, ASTNode* args, ASTNode* block)
+		: m_name(name), m_return(rtype), m_args(args), m_block(block) {
 		m_name->addRef();
-		m_type->addRef();
+		if (m_return) {
+			m_return->addRef();
+		}
 		if (m_args) {
 			m_args->addRef();
 		}
@@ -708,7 +710,9 @@ public:
 
 	~FuncDeclaration() {
 		m_name->delRef();
-		m_type->delRef();
+		if (m_return) {
+			m_return->delRef();
+		}
 		if (m_args) {
 			m_args->delRef();
 		}
@@ -718,8 +722,8 @@ public:
 	}
 
 	ASTNode* get_name() const throw() { return m_name; }
-	ASTNode* get_type() const throw() { return m_type; }
 	ASTNode* get_args() const throw() { return m_args; }
+	ASTNode* get_return() const throw() { return m_return; }
 
 	ASTNode* get_block() const throw() { return m_block; }
 	bool hasBlock() const throw() { return m_block != NULL; }
@@ -729,7 +733,7 @@ public:
 	}
 private:
 	ASTNode* m_name;
-	ASTNode* m_type;
+	ASTNode* m_return;
 	ASTNode* m_args;
 	ASTNode* m_block;
 };

@@ -1,0 +1,10 @@
+Testing function declaration with Void return
+==CODE==
+import std;
+
+Void foo(Int i) { println(i); return 1+1; }
+
+foo(1);
+
+==RESULT==
+Compile error: Function `foo' cannot return value, it was declared as Void! on \S+ line 3

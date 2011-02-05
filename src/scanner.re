@@ -162,6 +162,11 @@ next_token:
 		RET(token::IDENT);
 	}
 
+	<INITIAL>"Void" {
+		*yylval = NULL;
+		RET(token::TYPE);
+	}
+
 	<INITIAL>TYPE {
 		*yylval = new ast::Identifier(CSTRING(std::string(s.yylex, yylen)));
 		RET(token::TYPE);
