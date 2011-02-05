@@ -439,9 +439,9 @@ AST_VISITOR(CodeGenVisitor, FunctionCall) {
 		if (func->isUserDefined()) {
 			Value* vars = const_cast<Function*>(func)->get_vars();
 
-			arg_values->addRef();
 			vars->addRef();
 			emit(OP_RECV, &VM::arg_recv_handler, vars, arg_values);
+			arg_values = NULL;
 		}
 	}
 
