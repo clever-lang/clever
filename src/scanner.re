@@ -30,6 +30,7 @@
 #include "parser.hh"
 #include "ast.h"
 #include "cstring.h"
+#include "typetable.h"
 
 namespace clever {
 
@@ -210,6 +211,8 @@ next_token:
 		int64_t n = strtol(std::string(s.yylex, yylen).c_str(), NULL, 10);
 
 		*yylval = new ast::NumberLiteral(n);
+		(*yylval)->get_value()->set_type_ptr(TypeTable::getType(CSTRING("Int")));
+
 		RET(token::NUM_INTEGER);
 	}
 
@@ -217,7 +220,9 @@ next_token:
 		int64_t n = 0;
 
 		std::sscanf(std::string(s.yylex+2, yylen).c_str(), "%x", (unsigned long *)&n);
+
 		*yylval = new ast::NumberLiteral(n);
+		(*yylval)->get_value()->set_type_ptr(TypeTable::getType(CSTRING("Int")));
 
 		RET(token::NUM_INTEGER);
 	}
@@ -226,7 +231,9 @@ next_token:
 		int64_t n = 0;
 
 		sscanf(std::string(s.yylex+1, yylen), "%o", &n);
+
 		*yylval = new ast::NumberLiteral(n);
+		(*yylval)->get_value()->set_type_ptr(TypeTable::getType(CSTRING("Int")));
 
 		RET(token::NUM_INTEGER);
 	}
@@ -236,6 +243,7 @@ next_token:
 
 		n = strtod(std::string(s.yylex, yylen).c_str(), NULL);
 		*yylval = new ast::NumberLiteral(n);
+		(*yylval)->get_value()->set_type_ptr(TypeTable::getType(CSTRING("Double")));
 
 		RET(token::NUM_DOUBLE);
 	}

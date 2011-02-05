@@ -106,7 +106,10 @@ AST_VISITOR(CodeGenVisitor, BinaryExpr) {
 		lhs->addRef();
 		lhs->setModified();
 	} else {
-		expr->set_result(new Value);
+		Value* newvalue = new Value;
+
+		newvalue->set_type_ptr(lhs->get_type_ptr());
+		expr->set_result(newvalue);
 	}
 
 	lhs->addRef();
@@ -387,9 +390,12 @@ AST_VISITOR(CodeGenVisitor, LogicExpr) {
 		expr->set_optimized(true);
 		expr->set_result(result);
 		return;
-	}
+	} else {
+		Value* newvalue = new Value;
 
-	expr->set_result(new Value);
+		newvalue->set_type_ptr(lhs->get_type_ptr());
+		expr->set_result(newvalue);
+	}
 
 	lhs->addRef();
 	rhs->addRef();
@@ -428,6 +434,9 @@ AST_VISITOR(CodeGenVisitor, FunctionCall) {
 		Compiler::error("Function '" + *name + "' does not exists!", expr->get_location());
 	}
 	func = static_cast<CallableValue*>(fvalue)->get_function();
+
+	/* Set the return type */
+	expr->get_value()->set_type_ptr(func->get_return());
 
 	Compiler::checkFunctionArgs(func, num_args, expr->get_location());
 
@@ -585,6 +594,7 @@ AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
  */
 AST_VISITOR(CodeGenVisitor, ReturnStmt) {
 	ASTNode* value = expr->get_expr();
+	Value* expr_value = value ? value->get_value() : NULL;
 	const Function* func = m_funcs.empty() ? NULL : m_funcs.top();
 	const Type* rtype = func ? func->get_return() : NULL;
 
@@ -598,18 +608,19 @@ AST_VISITOR(CodeGenVisitor, ReturnStmt) {
 		} else if (value == NULL && rtype) {
 			Compiler::errorf(expr->get_location(), "Function `%S' must return a value of type %s!",
 				&func->get_name(), rtype->get_name());
+		} else if ((expr_value && rtype)) {
+			if (expr_value->get_type_ptr() != rtype) {
+				Compiler::errorf(expr->get_location(), "Function `%S' expects %s value as return, not %s value",
+					&func->get_name(), rtype->get_name(), expr_value->get_type_ptr()->get_name());
+			}
 		}
 	}
 
-	if (value) {
-		Value* expr_value = value->get_value();
-
+	if (expr_value) {
 		expr_value->addRef();
-
-		emit(OP_RETURN, &VM::return_handler, expr_value);
-	} else {
-		emit(OP_RETURN, &VM::return_handler);
 	}
+
+	emit(OP_RETURN, &VM::return_handler, expr_value);
 }
 
 }} // clever::ast

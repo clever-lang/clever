@@ -124,7 +124,7 @@ ast::ASTNode* nodes = new ast::BlockNode;
 %start top_statements;
 
 top_statements:
-		{ tree.push(nodes); } statement_list { driver.initCompiler(nodes); tree.pop(); }
+		{ driver.initCompiler(nodes); tree.push(nodes); } statement_list { tree.pop(); }
 ;
 
 statement_list:
