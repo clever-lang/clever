@@ -121,7 +121,7 @@ public:
 	bool isInternal() const throw() { return m_type == INTERNAL; }
 
 	void set_offset(unsigned int num) { m_info.offset = num; }
-	unsigned int get_offset() const throw() { return m_info.offset; }
+	long get_offset() const throw() { return m_info.offset; }
 
 	void set_return(const Type* type) { m_return = type; }
 	const Type* get_return() const throw() { return m_return; }
@@ -139,7 +139,7 @@ public:
 private:
 	union {
 		FunctionPtr  ptr;
-		unsigned int offset;
+		long offset;
 	} m_info;
 
 	const Type* m_return;
@@ -161,6 +161,8 @@ public:
 	Method(std::string name, MethodPtr ptr)
 		: m_name(name), m_type(INTERNAL) { m_info.ptr = ptr; }
 
+	~Method() { }
+
 	const std::string& get_name() const throw() { return m_name; }
 	MethodPtr get_ptr() const throw() { return m_info.ptr; }
 
@@ -174,11 +176,11 @@ public:
 		m_info.ptr(args, result, context);
 	}
 
-	unsigned int call() const throw() { return m_info.offset; }
+	long call() const throw() { return m_info.offset; }
 private:
 	union {
 		MethodPtr ptr;
-		unsigned int offset;
+		long offset;
 	} m_info;
 
 	std::string m_name;
