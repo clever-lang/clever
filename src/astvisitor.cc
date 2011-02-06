@@ -596,18 +596,7 @@ AST_VISITOR(CodeGenVisitor, ReturnStmt) {
 	 * Only for return inside function declaration
 	 */
 	if (func) {
-		if (value && rtype == NULL) {
-			Compiler::errorf(expr->get_location(), "Function `%S' cannot return value, it was declared as Void!",
-				&func->get_name());
-		} else if (value == NULL && rtype) {
-			Compiler::errorf(expr->get_location(), "Function `%S' must return a value of type %s!",
-				&func->get_name(), rtype->get_name());
-		} else if ((expr_value && rtype)) {
-			if (expr_value->get_type_ptr() != rtype) {
-				Compiler::errorf(expr->get_location(), "Function `%S' expects %s value as return, not %s value",
-					&func->get_name(), rtype->get_name(), expr_value->get_type_ptr()->get_name());
-			}
-		}
+		Compiler::checkFunctionReturn(func, expr_value, rtype, expr->get_location());
 	}
 
 	if (expr_value) {

@@ -190,6 +190,25 @@ Value* Compiler::constantFolding(int op, Value* lhs, Value* rhs) throw() {
 }
 
 /**
+ * Checks the user function return type
+ */
+void Compiler::checkFunctionReturn(const Function* func, const Value* value, const Type* rtype, const location& loc) throw() {
+	if (value && rtype == NULL) {
+		Compiler::errorf(loc, "Function `%S' cannot return value, it was declared as Void!",
+			&func->get_name());
+	} else if (value == NULL && rtype) {
+		Compiler::errorf(loc, "Function `%S' must return a value of type %s!", &func->get_name(), rtype->get_name());
+	} else if (value && rtype) {
+		const Type* vtype = value->get_type_ptr();
+
+		if (vtype != rtype) {
+			Compiler::errorf(loc, "Function `%S' expects %s value as return, not %s value",
+				&func->get_name(), rtype->get_name(), vtype->get_name());
+		}
+	}
+}
+
+/**
  * Checks the number of arguments supplied to the function on call
  */
 void Compiler::checkFunctionArgs(const Function* func, int num_args, const location& loc) throw() {

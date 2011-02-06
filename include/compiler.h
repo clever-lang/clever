@@ -103,6 +103,10 @@ public:
 	 */
 	static void checkFunctionArgs(const Function*, int, const location&) throw();
 	/**
+	 * Checl function return
+	 */
+	static void checkFunctionReturn(const Function*, const Value*, const Type*, const location&) throw();
+	/**
 	 * Methods for formatted messages
 	 */
 	static void vsprintf(std::ostringstream&, const char*, va_list) throw();
