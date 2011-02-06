@@ -106,10 +106,7 @@ AST_VISITOR(CodeGenVisitor, BinaryExpr) {
 		lhs->addRef();
 		lhs->setModified();
 	} else {
-		Value* newvalue = new Value;
-
-		newvalue->set_type_ptr(lhs->get_type_ptr());
-		expr->set_result(newvalue);
+		expr->set_result(new Value(lhs->get_type_ptr()));
 	}
 
 	lhs->addRef();
@@ -391,10 +388,7 @@ AST_VISITOR(CodeGenVisitor, LogicExpr) {
 		expr->set_result(result);
 		return;
 	} else {
-		Value* newvalue = new Value;
-
-		newvalue->set_type_ptr(lhs->get_type_ptr());
-		expr->set_result(newvalue);
+		expr->set_result(new Value(lhs->get_type_ptr()));
 	}
 
 	lhs->addRef();

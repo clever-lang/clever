@@ -164,6 +164,9 @@ public:
 		m_value = new Value(val);
 	}
 
+	explicit NumberLiteral(Value* value)
+		: m_value(value) { }
+
 	~NumberLiteral() {
 		m_value->delRef();
 	}

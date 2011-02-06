@@ -208,42 +208,55 @@ next_token:
 	}
 
 	<INITIAL>INTEGER {
+		Value* newval = new Value(TypeTable::getType(CSTRING("Int")));
 		int64_t n = strtol(std::string(s.yylex, yylen).c_str(), NULL, 10);
 
-		*yylval = new ast::NumberLiteral(n);
-		(*yylval)->get_value()->set_type_ptr(TypeTable::getType(CSTRING("Int")));
+		newval->set_type(Value::INTEGER);
+		newval->setInteger(n);
+
+		*yylval = new ast::NumberLiteral(newval);
 
 		RET(token::NUM_INTEGER);
 	}
 
 	<INITIAL>HEXINT {
+		Value* newval = new Value(TypeTable::getType(CSTRING("Int")));
 		int64_t n = 0;
 
 		std::sscanf(std::string(s.yylex+2, yylen).c_str(), "%x", (unsigned long *)&n);
 
-		*yylval = new ast::NumberLiteral(n);
-		(*yylval)->get_value()->set_type_ptr(TypeTable::getType(CSTRING("Int")));
+		newval->set_type(Value::INTEGER);
+		newval->setInteger(n);
+
+		*yylval = new ast::NumberLiteral(newval);
 
 		RET(token::NUM_INTEGER);
 	}
 
 	<INITIAL>OCTINT {
+		Value* newval = new Value(TypeTable::getType(CSTRING("Int")));
 		int64_t n = 0;
 
 		sscanf(std::string(s.yylex+1, yylen), "%o", &n);
 
-		*yylval = new ast::NumberLiteral(n);
-		(*yylval)->get_value()->set_type_ptr(TypeTable::getType(CSTRING("Int")));
+		newval->set_type(Value::INTEGER);
+		newval->setInteger(n);
+
+		*yylval = new ast::NumberLiteral(newval);
 
 		RET(token::NUM_INTEGER);
 	}
 
 	<INITIAL>(DOUBLE|EXP_DOUBLE) {
+		Value* newval = new Value(TypeTable::getType(CSTRING("Double")));
 		double n = 0;
 
 		n = strtod(std::string(s.yylex, yylen).c_str(), NULL);
-		*yylval = new ast::NumberLiteral(n);
-		(*yylval)->get_value()->set_type_ptr(TypeTable::getType(CSTRING("Double")));
+
+		newval->set_type(Value::DOUBLE);
+		newval->setDouble(n);
+
+		*yylval = new ast::NumberLiteral(newval);
 
 		RET(token::NUM_DOUBLE);
 	}

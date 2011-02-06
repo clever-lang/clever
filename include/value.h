@@ -69,24 +69,27 @@ public:
 	Value()
 		: RefCounted(1), m_status(UNSET), m_type(NONE), m_type_ptr(NULL), m_name(NULL) { }
 
+	explicit Value(const Type* type_ptr)
+		: RefCounted(1), m_status(UNSET), m_type(NONE), m_type_ptr(type_ptr), m_name(NULL) { }
+
 	explicit Value(double value)
 		: RefCounted(1), m_status(UNSET), m_type(DOUBLE), m_type_ptr(NULL), m_name(NULL) {
-			setDouble(value);
+		setDouble(value);
 	}
 
 	explicit Value(int64_t value)
 		: RefCounted(1), m_status(UNSET), m_type(INTEGER), m_type_ptr(NULL), m_name(NULL) {
-			setInteger(value);
+		setInteger(value);
 	}
 
 	explicit Value(bool value)
 		: RefCounted(1), m_status(UNSET), m_type(BOOLEAN), m_type_ptr(NULL), m_name(NULL) {
-			setBoolean(value);
+		setBoolean(value);
 	}
 
 	explicit Value(const CString* value)
 		: RefCounted(1), m_status(UNSET), m_type(STRING), m_type_ptr(NULL), m_name(NULL) {
-			setString(value);
+		setString(value);
 	}
 
 	virtual ~Value() {
