@@ -41,8 +41,8 @@ class CString;
  */
 class Type {
 public:
-	typedef std::tr1::unordered_map<const CString*, MethodPtr> MethodMap;
-	typedef std::pair<const CString*, MethodPtr> MethodPair;
+	typedef std::tr1::unordered_map<std::string, Method*> MethodMap;
+	typedef std::pair<std::string, Method*> MethodPair;
 
 	explicit Type(const char* name)
 		: m_name(name) { }
@@ -51,16 +51,17 @@ public:
 		MethodMap::const_iterator it = m_methods.begin(), end = m_methods.end();
 
 		while (it != end) {
+			delete it->second;
 			++it;
 		}
 	}
 
-	void addMethod(const CString* name, MethodPtr method) throw() {
-		m_methods.insert(std::pair<const CString*, MethodPtr>(name, method));
+	void addMethod(Method* method) throw() {
+		m_methods.insert(MethodPair(method->get_name(), method));
 	}
 
-	MethodPtr getMethod(const CString* name) const throw() {
-		MethodMap::const_iterator it = m_methods.find(name);
+	const Method* getMethod(const CString* name) const throw() {
+		MethodMap::const_iterator it = m_methods.find(*name);
 
 		if (it != m_methods.end()) {
 			return it->second;

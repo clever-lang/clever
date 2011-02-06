@@ -130,13 +130,11 @@ public:
 
 	const std::string& get_name() const throw() { return m_name; }
 
-	void call (const ValueVector* args, Value* result) {
+	void call (const ValueVector* args, Value* result) const {
 		m_info.ptr(args, result);
 	}
 
-	unsigned int call() {
-		return m_info.offset;
-	}
+	unsigned int call() const throw() { return m_info.offset; }
 
 private:
 	union {
@@ -151,6 +149,40 @@ private:
 	Value* m_vars;
 	std::string m_name;
 	int m_num_args;
+};
+
+/**
+ * Method representation
+ */
+class Method {
+public:
+	enum MethodType { INTERNAL, USER };
+
+	Method(std::string name, MethodPtr ptr)
+		: m_name(name), m_type(INTERNAL) { m_info.ptr = ptr; }
+
+	const std::string& get_name() const throw() { return m_name; }
+	MethodPtr get_ptr() const throw() { return m_info.ptr; }
+
+	void setInternal() throw() { m_type = INTERNAL; }
+	void setUserDefined() throw() { m_type = USER; }
+
+	bool isUserDefined() const throw() { return m_type == USER; }
+	bool isInternal() const throw() { return m_type == INTERNAL; }
+
+	void call (const ValueVector* args, Value* result, Value* context) const throw() {
+		m_info.ptr(args, result, context);
+	}
+
+	unsigned int call() const throw() { return m_info.offset; }
+private:
+	union {
+		MethodPtr ptr;
+		unsigned int offset;
+	} m_info;
+
+	std::string m_name;
+	MethodType m_type;
 };
 
 /**

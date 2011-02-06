@@ -262,18 +262,19 @@ public:
 		m_handler.func = handler;
 	}
 
-	void set_handler(MethodPtr handler) throw() {
-		m_call_type = FAR;
-		m_handler.m_ptr = handler;
+	void set_handler(const Method* handler) throw() {
+		m_call_type = handler->isInternal() ? FAR : NEAR;
+		m_handler.method = handler;
 	}
 
 	void set_context(Value* value) throw() { m_context = value; }
 	Value* get_context() const throw() { return m_context; }
 
 	const FunctionPtr get_function_ptr() const throw() { return m_handler.func->get_ptr(); }
-	const MethodPtr get_method_ptr() const throw() { return m_handler.m_ptr; }
+	const MethodPtr get_method_ptr() const throw() { return m_handler.method->get_ptr(); }
 
 	const Function* get_function() const throw() { return m_handler.func; }
+	const Method* get_method() const throw() { return m_handler.method; }
 
 	bool isCallable() const { return true; }
 
@@ -295,18 +296,17 @@ public:
 		if (type_ptr == NULL) {
 			m_handler.func->call(args, result);
 		} else {
-			m_handler.m_ptr(args, result, m_context);
+			m_handler.method->call(args, result, m_context);
 		}
 	}
 
 	void call(long& next_op) const throw() {
 		next_op = m_handler.func->call();
 	}
-
 private:
 	union {
 		Function* func;
-		MethodPtr   m_ptr;
+		const Method* method;
 	} m_handler;
 
 	Value* m_context;

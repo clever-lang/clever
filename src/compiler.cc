@@ -190,12 +190,15 @@ Value* Compiler::constantFolding(int op, Value* lhs, Value* rhs) throw() {
 }
 
 /**
- * Checks the user function return type
+ * Checks the function return type
  */
 void Compiler::checkFunctionReturn(const Function* func, const Value* value, const Type* rtype, const location& loc) throw() {
+	/**
+	 * When the rtype is NULL, the return is expected to be Void
+	 * When value is NULL, the return statement is empty
+	 */
 	if (value && rtype == NULL) {
-		Compiler::errorf(loc, "Function `%S' cannot return value, it was declared as Void!",
-			&func->get_name());
+		Compiler::errorf(loc, "Function `%S' cannot return value, it was declared as Void!", &func->get_name());
 	} else if (value == NULL && rtype) {
 		Compiler::errorf(loc, "Function `%S' must return a value of type %s!", &func->get_name(), rtype->get_name());
 	} else if (value && rtype) {
@@ -238,25 +241,25 @@ void Compiler::vsprintf(std::ostringstream& outstr, const char* format, va_list 
 		}
 
 		switch (*chr) {
-			/* std::string* */
-			case 'S':
-				outstr << *va_arg(ap, std::string*);
-				break;
-			/* Value* */
-			case 'v':
-				outstr << va_arg(ap, Value*)->toString();
-				break;
-			/* const char* */
-			case 's':
-				outstr << va_arg(ap, const char*);
+			/* double */
+			case 'd':
+				outstr << va_arg(ap, double);
 				break;
 			/* long */
 			case 'l':
 				outstr << va_arg(ap, long);
 				break;
-			/* double */
-			case 'd':
-				outstr << va_arg(ap, double);
+			/* std::string* */
+			case 'S':
+				outstr << *va_arg(ap, std::string*);
+				break;
+			/* const char* */
+			case 's':
+				outstr << va_arg(ap, const char*);
+				break;
+			/* Value* */
+			case 'v':
+				outstr << va_arg(ap, Value*)->toString();
 				break;
 		}
 		++chr;

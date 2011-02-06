@@ -38,13 +38,6 @@
 #include "location.hh"
 #include "astvisitor.h"
 
-namespace clever { namespace ast {
-
-class ASTNode;
-class CodeGenVisitor;
-
-}} // clever::ast
-
 namespace clever {
 
 class Compiler {
@@ -99,11 +92,11 @@ public:
 		s_pkgmanager.loadModule(scope, package, module);
 	}
 	/**
-	 * Checks function arguments
+	 * Checks the function arguments
 	 */
 	static void checkFunctionArgs(const Function*, int, const location&) throw();
 	/**
-	 * Checl function return
+	 * Checks the function return
 	 */
 	static void checkFunctionReturn(const Function*, const Value*, const Type*, const location&) throw();
 	/**

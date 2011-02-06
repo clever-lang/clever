@@ -458,7 +458,7 @@ AST_VISITOR(CodeGenVisitor, FunctionCall) {
 AST_VISITOR(CodeGenVisitor, MethodCall) {
 	Value* variable = getValue(expr->get_variable());
 	CallableValue* call = new CallableValue(expr->get_method()->get_value()->get_name());
-	const MethodPtr method = variable->get_type_ptr()->getMethod(call->get_name());
+	const Method* method = variable->get_type_ptr()->getMethod(call->get_name());
 	ASTNode* args = expr->get_args();
 	Value* arg_values = NULL;
 
