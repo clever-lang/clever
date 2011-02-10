@@ -533,49 +533,55 @@ AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
 
 	m_ssa.pushVar(func);
 
-	if (expr->hasBlock()) {
-		if (args) {
-			ArgumentDecls& arg_nodes = args->get_args();
-			ArgumentDecls::iterator it = arg_nodes.begin(), end = arg_nodes.end();
-			Value* vars = new Value;
-			ValueVector* vec = new ValueVector;
+	/* we can't have a function declaration without a block. */
+	if (!expr->hasBlock()) {
+		Compiler::error("Cannot declare a function without a block.", expr->get_location());
+	}
 
-			vars->set_type(Value::VECTOR);
-			vars->set_reference(0);
+	if (args) {
+		ArgumentDecls& arg_nodes = args->get_args();
+		ArgumentDecls::iterator it = arg_nodes.begin(), end = arg_nodes.end();
+		Value* vars = new Value;
+		ValueVector* vec = new ValueVector;
 
-			m_ssa.beginScope();
+		vars->set_type(Value::VECTOR);
+		vars->set_reference(0);
 
-			while (it != end) {
-				Value* var = new Value;
+		m_ssa.beginScope();
 
-				var->set_name(it->second->get_value()->get_name());
-				var->set_type_ptr(TypeTable::getType(it->first->get_value()->get_name()));
-				var->set_type(Value::INTEGER);
-				var->initialize();
-				var->setModified();
+		while (it != end) {
+			Value* var = new Value;
 
-				m_ssa.pushVar(var);
-				vec->push_back(var);
-				var->addRef();
+			const Type* arg_type = TypeTable::getType(it->first->get_value()->get_name());
+			const CString* arg_name = it->second->get_value()->get_name();
 
-				user_func->addArg(*it->second->get_value()->get_name(), TypeTable::getType(it->first->get_value()->get_name()));
+			var->set_name(arg_name);
+			var->set_type_ptr(arg_type);
+			var->set_type(Value::INTEGER);
+			var->initialize();
+			var->setModified();
 
-				++it;
-			}
+			m_ssa.pushVar(var);
+			vec->push_back(var);
+			var->addRef();
 
-			vars->setVector(vec);
-			user_func->set_vars(vars);
+			user_func->addArg(*arg_name, arg_type);
+
+			++it;
 		}
 
-		m_funcs.push(user_func);
+		vars->setVector(vec);
+		user_func->set_vars(vars);
+	}
 
-		expr->get_block()->accept(*this);
+	m_funcs.push(user_func);
 
-		m_funcs.pop();
+	expr->get_block()->accept(*this);
 
-		if (args) {
-			m_ssa.endScope();
-		}
+	m_funcs.pop();
+
+	if (args) {
+		m_ssa.endScope();
 	}
 
 	emit(OP_JMP, &VM::end_func_handler);

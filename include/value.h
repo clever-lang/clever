@@ -163,11 +163,11 @@ public:
 	bool isVector() const { return m_type == VECTOR; }
 	bool isUserValue() const { return m_type == USER; }
 
-	void setInteger(int64_t i) { m_data.l_value = i; }
-	void setString(const CString* s) { m_data.s_value = s; }
-	void setDouble(double d) { m_data.d_value = d; }
-	void setBoolean(bool b) { m_data.b_value = b; }
-	void setVector(ValueVector* v) { m_data.v_value = v; }
+	void setInteger(int64_t i) { m_type = INTEGER; m_data.l_value = i; }
+	void setString(const CString* s) { m_type = STRING; m_data.s_value = s; }
+	void setDouble(double d) { m_type = DOUBLE; m_data.d_value = d; }
+	void setBoolean(bool b) { m_type = BOOLEAN; m_data.b_value = b; }
+	void setVector(ValueVector* v) { m_type = USER; m_data.v_value = v; }
 
 	int64_t getInteger() const { return m_data.l_value; }
 	const CString* getStringP() const { return m_data.s_value; }

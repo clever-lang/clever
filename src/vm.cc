@@ -96,15 +96,12 @@ CLEVER_VM_HANDLER(VM::plus_handler) {
 
 	switch (op1->get_type()) {
 		case Value::STRING:
-			result->set_type(Value::STRING);
 			result->setString(CSTRING(op1->getString() + op2->getString()));
 			break;
 		case Value::INTEGER:
-			result->set_type(Value::INTEGER);
 			result->setInteger(op1->getInteger() + op2->getInteger());
 			break;
 		case Value::DOUBLE:
-			result->set_type(Value::DOUBLE);
 			result->setDouble(op1->getDouble() + op2->getDouble());
 			break;
 	}
@@ -120,11 +117,9 @@ CLEVER_VM_HANDLER(VM::div_handler) {
 
 	switch (op1->get_type()) {
 		case Value::INTEGER:
-			result->set_type(Value::INTEGER);
 			result->setInteger(op1->getInteger() / op2->getInteger());
 			break;
 		case Value::DOUBLE:
-			result->set_type(Value::DOUBLE);
 			result->setDouble(op1->getDouble() / op2->getDouble());
 			break;
 	}
@@ -140,11 +135,9 @@ CLEVER_VM_HANDLER(VM::minus_handler) {
 
 	switch (op1->get_type()) {
 		case Value::INTEGER:
-			result->set_type(Value::INTEGER);
 			result->setInteger(op1->getInteger() - op2->getInteger());
 			break;
 		case Value::DOUBLE:
-			result->set_type(Value::DOUBLE);
 			result->setDouble(op1->getDouble() - op2->getDouble());
 			break;
 	}
@@ -160,11 +153,9 @@ CLEVER_VM_HANDLER(VM::mult_handler) {
 
 	switch (op1->get_type()) {
 		case Value::INTEGER:
-			result->set_type(Value::INTEGER);
 			result->setInteger(op1->getInteger() * op2->getInteger());
 			break;
 		case Value::DOUBLE:
-			result->set_type(Value::INTEGER);
 			result->setDouble(op1->getDouble() * op2->getDouble());
 			break;
 	}
@@ -180,7 +171,6 @@ CLEVER_VM_HANDLER(VM::bw_and_handler) {
 
 	switch (op1->get_type()) {
 		case Value::INTEGER:
-			result->set_type(Value::INTEGER);
 			result->setInteger(op1->getInteger() & op2->getInteger());
 			break;
 	}
@@ -196,7 +186,6 @@ CLEVER_VM_HANDLER(VM::bw_xor_handler) {
 
 	switch (op1->get_type()) {
 		case Value::INTEGER:
-			result->set_type(Value::INTEGER);
 			result->setInteger(op1->getInteger() ^ op2->getInteger());
 			break;
 	}
@@ -212,7 +201,6 @@ CLEVER_VM_HANDLER(VM::bw_or_handler) {
 
 	switch (op1->get_type()) {
 		case Value::INTEGER:
-			result->set_type(Value::INTEGER);
 			result->setInteger(op1->getInteger() | op2->getInteger());
 			break;
 	}
@@ -228,7 +216,6 @@ CLEVER_VM_HANDLER(VM::mod_handler) {
 
 	switch (op1->get_type()) {
 		case Value::INTEGER:
-			result->set_type(Value::INTEGER);
 			result->setInteger(op1->getInteger() % op2->getInteger());
 			break;
 	}
@@ -357,8 +344,6 @@ CLEVER_VM_HANDLER(VM::greater_handler) {
 	Value* op2 = opcode.get_op2();
 	Value* result = opcode.get_result();
 
-	result->set_type(Value::BOOLEAN);
-
 	switch (op1->get_type()) {
 		case Value::INTEGER:
 			result->setBoolean(op1->getInteger() > op2->getInteger());
@@ -376,8 +361,6 @@ CLEVER_VM_HANDLER(VM::greater_equal_handler) {
 	Value* op1 = opcode.get_op1();
 	Value* op2 = opcode.get_op2();
 	Value* result = opcode.get_result();
-
-	result->set_type(Value::BOOLEAN);
 
 	switch (op1->get_type()) {
 		case Value::INTEGER:
@@ -397,8 +380,6 @@ CLEVER_VM_HANDLER(VM::less_handler) {
 	Value* op2 = opcode.get_op2();
 	Value* result = opcode.get_result();
 
-	result->set_type(Value::BOOLEAN);
-
 	switch (op1->get_type()) {
 		case Value::INTEGER:
 			result->setBoolean(op1->getInteger() < op2->getInteger());
@@ -416,8 +397,6 @@ CLEVER_VM_HANDLER(VM::less_equal_handler) {
 	Value* op1 = opcode.get_op1();
 	Value* op2 = opcode.get_op2();
 	Value* result = opcode.get_result();
-
-	result->set_type(Value::BOOLEAN);
 
 	switch (op1->get_type()) {
 		case Value::INTEGER:
@@ -444,8 +423,6 @@ CLEVER_VM_HANDLER(VM::equal_handler) {
 	Value* op2 = opcode.get_op2();
 	Value* result = opcode.get_result();
 
-	result->set_type(Value::BOOLEAN);
-
 	switch (op1->get_type()) {
 		case Value::INTEGER:
 			result->setBoolean(op1->getInteger() == op2->getInteger());
@@ -463,8 +440,6 @@ CLEVER_VM_HANDLER(VM::not_equal_handler) {
 	Value* op1 = opcode.get_op1();
 	Value* op2 = opcode.get_op2();
 	Value* result = opcode.get_result();
-
-	result->set_type(Value::BOOLEAN);
 
 	switch (op1->get_type()) {
 		case Value::INTEGER:
