@@ -95,14 +95,22 @@ ast::ASTNode* nodes = new ast::BlockNode;
 %token DIV_EQUAL     "/="
 %token MINUS_EQUAL   "-="
 %token MOD_EQUAL     "%="
+%token BOOLEAN_OR    "||"
+%token LOGICAL_OR    "or"
+%token BOOLEAN_AND   "&&"
+%token LOGICAL_AND   "and"
 %token BW_AND_EQUAL  "&="
 %token BW_OR_EQUAL   "|="
 %token BW_XOR_EQUAL  "^="
 %token RETURN        "return"
 
 %left ',';
+%left LOGICAL_OR;
+%left LOGICAL_AND;
 %left '=';
 %left ':';
+%left BOOLEAN_OR;
+%left BOOLEAN_AND;
 %left '|';
 %left '^';
 %left '&';
@@ -237,6 +245,10 @@ expr:
 	|	expr "<=" expr        { $$ = new ast::LogicExpr(ast::LESS_EQUAL, $1, $3);    $$->set_location(yylloc); }
 	|	expr "==" expr        { $$ = new ast::LogicExpr(ast::EQUAL, $1, $3);         $$->set_location(yylloc); }
 	|	expr "!=" expr        { $$ = new ast::LogicExpr(ast::NOT_EQUAL, $1, $3);     $$->set_location(yylloc); }
+	|	expr "||" expr
+	|	expr "&&" expr
+	|	expr "or" expr
+	|	expr "and" expr
 	|	'-' expr %prec UMINUS { $$ = new ast::BinaryExpr(ast::MINUS, $2);            $$->set_location(yylloc); }
 	|	'+' expr %prec UMINUS { $$ = new ast::BinaryExpr(ast::PLUS, $2);             $$->set_location(yylloc); }
 	|	INCREMENT IDENT       { $$ = new ast::PreIncrement($2);                      $$->set_location(yylloc); }

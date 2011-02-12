@@ -62,6 +62,14 @@ next_token:
 	<*>SPACE { yylloc->step(); SKIP(); }
 	<*>[\n]+ { yylloc->lines(yylen); yylloc->step(); SKIP(); }
 
+	<INITIAL>"or" { RET(token::LOGICAL_OR); }
+
+	<INITIAL>"||" { RET(token::BOOLEAN_OR); }
+
+	<INITIAL>"and" { RET(token::LOGICAL_AND); }
+
+	<INITIAL>"&&" { RET(token::BOOLEAN_AND); }
+
 	<INITIAL>">=" { RET(token::GREATER_EQUAL); }
 
 	<INITIAL>">" { RET(token::GREATER); }
