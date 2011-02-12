@@ -178,6 +178,35 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(NumberLiteral);
 };
 
+class NO_INIT_VTABLE UnaryExpr : public ASTNode {
+public:
+	UnaryExpr(ASTNode* expr)
+		: m_expr(expr) {
+		m_expr->addRef();
+		m_result = new Value();
+	}
+
+	~UnaryExpr() {
+		m_expr->delRef();
+	}
+	
+	Value* get_value() const throw() {
+		return m_result;
+	}
+
+	ASTNode* get_expr() const {
+		return m_expr;
+	}
+
+	virtual void accept(ASTVisitor& visitor) throw() { }
+private:
+	ASTNode* m_expr;
+	Value* m_result;
+
+	DISALLOW_COPY_AND_ASSIGN(UnaryExpr);
+};
+
+/* TODO: turn this into an "abstract" class if possible */
 class BinaryExpr : public ASTNode {
 public:
 	BinaryExpr(int op, ASTNode* lhs, ASTNode* rhs)
@@ -233,7 +262,7 @@ public:
 		m_result = value;
 	}
 
-	void accept(ASTVisitor& visitor) throw() {
+	virtual void accept(ASTVisitor& visitor) throw() {
 		m_lhs->accept(visitor);
 		m_rhs->accept(visitor);
 
@@ -372,122 +401,68 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(BlockNode);
 };
 
-class PreIncrement : public ASTNode {
+class PreIncrement : public UnaryExpr {
 public:
 	PreIncrement(ASTNode* expr)
-		: m_expr(expr) {
-		m_expr->addRef();
-		m_result = new Value();
+		: UnaryExpr(expr) {
 	}
 
 	~PreIncrement() {
-		m_expr->delRef();
-	}
-
-	Value* get_value() const throw() {
-		return m_result;
-	}
-
-	ASTNode* get_expr() const {
-		return m_expr;
 	}
 
 	void accept(ASTVisitor& visitor) throw() {
 		visitor.visit(this);
 	}
 private:
-	ASTNode* m_expr;
-	Value* m_result;
 
 	DISALLOW_COPY_AND_ASSIGN(PreIncrement);
 };
 
-class PosIncrement : public ASTNode {
+class PosIncrement : public UnaryExpr {
 public:
 	PosIncrement(ASTNode* expr)
-		: m_expr(expr) {
-		m_expr->addRef();
-		m_result = new Value();
+		: UnaryExpr(expr) {
 	}
 
 	~PosIncrement() {
-		m_expr->delRef();
-	}
-
-	Value* get_value() const throw() {
-		return m_result;
-	}
-
-	ASTNode* get_expr() const {
-		return m_expr;
 	}
 
 	void accept(ASTVisitor& visitor) throw() {
 		visitor.visit(this);
 	}
 private:
-	ASTNode* m_expr;
-	Value* m_result;
-
 	DISALLOW_COPY_AND_ASSIGN(PosIncrement);
 };
 
-class PreDecrement : public ASTNode {
+class PreDecrement : public UnaryExpr {
 public:
 	PreDecrement(ASTNode* expr)
-		: m_expr(expr) {
-		m_expr->addRef();
-		m_result = new Value();
+		: UnaryExpr(expr) {
 	}
 
 	~PreDecrement() {
-		m_expr->delRef();
-	}
-
-	ASTNode* get_expr() const {
-		return m_expr;
-	}
-
-	Value* get_value() const throw() {
-		return m_result;
 	}
 
 	void accept(ASTVisitor& visitor) throw() {
 		visitor.visit(this);
 	}
 private:
-	ASTNode* m_expr;
-	Value* m_result;
-
 	DISALLOW_COPY_AND_ASSIGN(PreDecrement);
 };
 
-class PosDecrement : public ASTNode {
+class PosDecrement : public UnaryExpr {
 public:
 	PosDecrement(ASTNode* expr)
-		: m_expr(expr) {
-		m_expr->addRef();
-		m_result = new Value();
+		: UnaryExpr(expr) {
 	}
 
 	~PosDecrement() {
-		m_expr->delRef();
-	}
-
-	Value* get_value() const throw() {
-		return m_result;
-	}
-
-	ASTNode* get_expr() const {
-		return m_expr;
 	}
 
 	void accept(ASTVisitor& visitor) throw() {
 		visitor.visit(this);
 	}
 private:
-	ASTNode* m_expr;
-	Value* m_result;
 
 	DISALLOW_COPY_AND_ASSIGN(PosDecrement);
 };
@@ -601,46 +576,22 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(WhileExpr);
 };
 
-class LogicExpr : public ASTNode {
+class LogicExpr : public BinaryExpr {
 public:
 	LogicExpr(int op, ASTNode* lhs, ASTNode* rhs)
-		: m_op(op), m_lhs(lhs), m_rhs(rhs), m_result(NULL) {
-		m_lhs->addRef();
-		m_rhs->addRef();
+		: BinaryExpr(op, lhs, rhs) {
 	}
 
 	~LogicExpr() {
-		if (isOptimized()) {
-			m_result->delRef();
-		}
-		if (m_lhs) {
-			m_lhs->delRef();
-		}
-		if (m_rhs) {
-			m_rhs->delRef();
-		}
 	}
 
-	int get_op() const { return m_op; }
-	ASTNode* get_lhs() const { return m_lhs; }
-	ASTNode* get_rhs() const { return m_rhs; }
-
-	void set_result(Value* value) { m_result = value; }
-
-	Value* get_value() const throw() { return m_result; }
-
 	void accept(ASTVisitor& visitor) throw() {
-		m_lhs->accept(visitor);
-		m_rhs->accept(visitor);
+		get_lhs()->accept(visitor);
+		get_rhs()->accept(visitor);
 
 		visitor.visit(this);
 	}
 private:
-	int m_op;
-	ASTNode* m_lhs;
-	ASTNode* m_rhs;
-	Value* m_result;
-
 	DISALLOW_COPY_AND_ASSIGN(LogicExpr);
 };
 
