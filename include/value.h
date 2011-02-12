@@ -167,7 +167,7 @@ public:
 	void setString(const CString* s) { m_type = STRING; m_data.s_value = s; }
 	void setDouble(double d) { m_type = DOUBLE; m_data.d_value = d; }
 	void setBoolean(bool b) { m_type = BOOLEAN; m_data.b_value = b; }
-	void setVector(ValueVector* v) { m_type = USER; m_data.v_value = v; }
+	void setVector(ValueVector* v) { m_type = VECTOR; m_data.v_value = v; }
 
 	int64_t getInteger() const { return m_data.l_value; }
 	const CString* getStringP() const { return m_data.s_value; }
