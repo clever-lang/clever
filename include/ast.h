@@ -53,6 +53,7 @@ typedef std::vector<ArgumentDeclPair> ArgumentDecls;
  * Operators (logical and binary)
  */
 enum {
+	ASSIGN,
 	MINUS,
 	PLUS,
 	MULT,
@@ -761,30 +762,21 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(MethodCall);
 };
 
-class AssignStmt : public ASTNode {
+class AssignExpr : public BinaryExpr {
 public:
-	AssignStmt(ASTNode* lhs, ASTNode* rhs)
-		: m_lhs(lhs), m_rhs(rhs) {
-		m_lhs->addRef();
-		m_rhs->addRef();
-	}
-	~AssignStmt() {
-		m_lhs->delRef();
-		m_rhs->delRef();
+	AssignExpr(ASTNode* lhs, ASTNode* rhs)
+		: BinaryExpr(ASSIGN, lhs, rhs) {
 	}
 
-	ASTNode* get_lhs() const throw() { return m_lhs; }
-	ASTNode* get_rhs() const throw() { return m_rhs; }
+	~AssignExpr() {
+	}
 
 	void accept(ASTVisitor& visitor) throw() {
-		m_rhs->accept(visitor);
+		get_rhs()->accept(visitor);
 		visitor.visit(this);
 	}
 private:
-	ASTNode* m_lhs;
-	ASTNode* m_rhs;
-
-	DISALLOW_COPY_AND_ASSIGN(AssignStmt);
+	DISALLOW_COPY_AND_ASSIGN(AssignExpr);
 };
 
 class ImportStmt : public ASTNode {

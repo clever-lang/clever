@@ -503,7 +503,7 @@ AST_VISITOR(CodeGenVisitor, MethodCall) {
 /**
  * Generates opcode for variable assignment
  */
-AST_VISITOR(CodeGenVisitor, AssignStmt) {
+AST_VISITOR(CodeGenVisitor, AssignExpr) {
 	Value* lhs = getValue(expr->get_lhs());
 	Value* rhs = getValue(expr->get_rhs());
 

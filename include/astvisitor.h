@@ -46,7 +46,7 @@ class IfExpr;
 class WhileExpr;
 class FunctionCall;
 class MethodCall;
-class AssignStmt;
+class AssignExpr;
 class ImportStmt;
 class BreakNode;
 class BlockNode;
@@ -82,7 +82,7 @@ public:
 	AST_VISITOR_DECL_VIRTUAL(BreakNode);
 	AST_VISITOR_DECL_VIRTUAL(FunctionCall);
 	AST_VISITOR_DECL_VIRTUAL(MethodCall);
-	AST_VISITOR_DECL_VIRTUAL(AssignStmt);
+	AST_VISITOR_DECL_VIRTUAL(AssignExpr);
 	AST_VISITOR_DECL_VIRTUAL(ImportStmt);
 	AST_VISITOR_DECL_VIRTUAL(FuncDeclaration);
 	AST_VISITOR_DECL_VIRTUAL(ReturnStmt);
@@ -139,7 +139,7 @@ public:
 	AST_VISITOR_DECL(BreakNode);
 	AST_VISITOR_DECL(FunctionCall);
 	AST_VISITOR_DECL(MethodCall);
-	AST_VISITOR_DECL(AssignStmt);
+	AST_VISITOR_DECL(AssignExpr);
 	AST_VISITOR_DECL(ImportStmt);
 	AST_VISITOR_DECL(FuncDeclaration);
 	AST_VISITOR_DECL(ReturnStmt);

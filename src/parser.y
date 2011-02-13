@@ -209,7 +209,7 @@ variable_declaration:
 ;
 
 assign_stmt:
-		IDENT '=' expr  { $$ = new ast::AssignStmt($1, $3);                   $$->set_location(yylloc); }
+		IDENT '=' expr  { $$ = new ast::AssignExpr($1, $3);                   $$->set_location(yylloc); }
 	|	IDENT "+=" expr { $$ = new ast::BinaryExpr(ast::PLUS, $1, $3, true);  $$->set_location(yylloc); }
 	|	IDENT "-=" expr { $$ = new ast::BinaryExpr(ast::MINUS, $1, $3, true); $$->set_location(yylloc); }
 	|	IDENT "/=" expr { $$ = new ast::BinaryExpr(ast::DIV, $1, $3, true);   $$->set_location(yylloc); }
