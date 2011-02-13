@@ -93,9 +93,9 @@ void Compiler::buildIR() throw() {
  */
 void Compiler::error(std::string message, const location& loc) throw() {
 	if (loc.begin.filename) {
-		std::cout << "Compile error: " << message << " on " << *loc.begin.filename << " line " << loc.begin.line << std::endl;
+		std::cerr << "Compile error: " << message << " on " << *loc.begin.filename << " line " << loc.begin.line << std::endl;
 	} else {
-		std::cout << "Compile error: " << message << " on line " << loc.begin.line << std::endl;
+		std::cerr << "Compile error: " << message << " on line " << loc.begin.line << std::endl;
 	}
 	exit(1);
 }
