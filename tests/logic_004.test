@@ -1,0 +1,17 @@
+Testing logical expression
+==CODE==
+import std.io;
+
+if (1+1 and 0) {
+	println('error');
+}
+
+if (0 and 0) {
+	println('error');
+}
+
+if ((10-11) and (1-2)) {
+	println('ok');
+}
+==RESULT==
+ok

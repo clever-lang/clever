@@ -368,9 +368,17 @@ AST_VISITOR(CodeGenVisitor, WhileExpr) {
  * Generates opcode for logic expression which weren't optimized
  */
 AST_VISITOR(CodeGenVisitor, LogicExpr) {
-	Value* lhs = getValue(expr->get_lhs());
-	Value* rhs = getValue(expr->get_rhs());
+	Opcode* opcode;
+	Value* lhs;
+	Value* rhs;
 	Value* result = NULL;
+	long pos_after = 0;
+
+	expr->get_lhs()->accept(*this);
+	expr->get_rhs()->accept(*this);
+
+	lhs = getValue(expr->get_lhs());
+	rhs = getValue(expr->get_rhs());
 
 	if (!Compiler::checkCompatibleTypes(lhs, rhs)) {
 		Compiler::error("Type mismatch!", expr->get_location());
@@ -401,6 +409,20 @@ AST_VISITOR(CodeGenVisitor, LogicExpr) {
 		case LESS_EQUAL:    emit(OP_LESS_EQUAL,    &VM::less_equal_handler,    lhs, rhs, expr->get_value()); break;
 		case EQUAL:         emit(OP_EQUAL,         &VM::equal_handler,         lhs, rhs, expr->get_value()); break;
 		case NOT_EQUAL:     emit(OP_NOT_EQUAL,     &VM::not_equal_handler,     lhs, rhs, expr->get_value()); break;
+		case AND:
+			opcode = emit(OP_JMPNZ, &VM::jmpz_handler, lhs, NULL, expr->get_value());
+			opcode->set_jmp_addr1(getOpNum()+1);
+			opcode = emit(OP_JMPZ, &VM::jmpz_handler, rhs, NULL, expr->get_value());
+			opcode->set_jmp_addr1(getOpNum());
+			expr->get_value()->addRef();
+			break;
+		case OR:
+			opcode = emit(OP_JMPNZ, &VM::jmpnz_handler, lhs, NULL, expr->get_value());
+			opcode->set_jmp_addr1(getOpNum()+1);
+			opcode = emit(OP_JMPNZ, &VM::jmpnz_handler, rhs, NULL, expr->get_value());
+			opcode->set_jmp_addr1(getOpNum());
+			expr->get_value()->addRef();
+			break;
 	}
 }
 

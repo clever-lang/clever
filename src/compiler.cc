@@ -149,13 +149,13 @@ Value* Compiler::constantFolding(int op, Value* lhs, Value* rhs) throw() {
 			DO_NUM_OPERATION(*, Integer, lhs, rhs);
 			DO_NUM_OPERATION(*, Double, lhs, rhs);
 			break;
-		case ast::OR:
+		case ast::BW_OR:
 			DO_NUM_OPERATION(|, Integer, lhs, rhs);
 			break;
 		case ast::XOR:
 			DO_NUM_OPERATION(^, Integer, lhs, rhs);
 			break;
-		case ast::AND:
+		case ast::BW_AND:
 			DO_NUM_OPERATION(&, Integer, lhs, rhs);
 			break;
 		case ast::GREATER:

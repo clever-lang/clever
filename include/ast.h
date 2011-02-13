@@ -59,8 +59,10 @@ enum {
 	DIV,
 	MOD,
 	OR,
-	XOR,
 	AND,
+	BW_OR,
+	BW_AND,
+	XOR,
 	GREATER,
 	GREATER_EQUAL,
 	LESS,
@@ -189,7 +191,7 @@ public:
 	~UnaryExpr() {
 		m_expr->delRef();
 	}
-	
+
 	Value* get_value() const throw() {
 		return m_result;
 	}
@@ -227,7 +229,7 @@ public:
 		m_rhs->addRef();
 	}
 
-	~BinaryExpr() {
+	virtual ~BinaryExpr() {
 		if (isOptimized()) {
 			m_result->delRef();
 		}
@@ -243,24 +245,14 @@ public:
 
 	bool isAssigned() const { return m_assign; }
 
-	ASTNode* get_lhs() const {
-		return m_lhs;
-	}
+	ASTNode* get_lhs() const { return m_lhs; }
+	ASTNode* get_rhs() const { return m_rhs; }
 
-	ASTNode* get_rhs() const {
-		return m_rhs;
-	}
+	int get_op() const { return m_op; }
 
-	int get_op() const {
-		return m_op;
-	}
+	Value* get_value() const throw() { return m_result; }
 
-	Value* get_value() const throw() {
-		return m_result;
-	}
-	void set_result(Value* value) {
-		m_result = value;
-	}
+	void set_result(Value* value) { m_result = value; }
 
 	virtual void accept(ASTVisitor& visitor) throw() {
 		m_lhs->accept(visitor);
@@ -582,13 +574,9 @@ public:
 		: BinaryExpr(op, lhs, rhs) {
 	}
 
-	~LogicExpr() {
-	}
+	~LogicExpr() { }
 
 	void accept(ASTVisitor& visitor) throw() {
-		get_lhs()->accept(visitor);
-		get_rhs()->accept(visitor);
-
 		visitor.visit(this);
 	}
 private:

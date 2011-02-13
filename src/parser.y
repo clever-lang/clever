@@ -236,8 +236,8 @@ expr:
 	|	expr '/' expr         { $$ = new ast::BinaryExpr(ast::DIV, $1, $3);          $$->set_location(yylloc); }
 	|	expr '*' expr         { $$ = new ast::BinaryExpr(ast::MULT, $1, $3);         $$->set_location(yylloc); }
 	|	expr '%' expr         { $$ = new ast::BinaryExpr(ast::MOD, $1, $3);          $$->set_location(yylloc); }
-	|	expr '|' expr         { $$ = new ast::BinaryExpr(ast::OR, $1, $3);           $$->set_location(yylloc); }
-	|	expr '&' expr         { $$ = new ast::BinaryExpr(ast::AND, $1, $3);          $$->set_location(yylloc); }
+	|	expr '|' expr         { $$ = new ast::BinaryExpr(ast::BW_OR, $1, $3);        $$->set_location(yylloc); }
+	|	expr '&' expr         { $$ = new ast::BinaryExpr(ast::BW_AND, $1, $3);       $$->set_location(yylloc); }
 	|	expr '^' expr         { $$ = new ast::BinaryExpr(ast::XOR, $1, $3);          $$->set_location(yylloc); }
 	|	expr ">" expr         { $$ = new ast::LogicExpr(ast::GREATER, $1, $3);       $$->set_location(yylloc); }
 	|	expr ">=" expr        { $$ = new ast::LogicExpr(ast::GREATER_EQUAL, $1, $3); $$->set_location(yylloc); }
@@ -247,8 +247,8 @@ expr:
 	|	expr "!=" expr        { $$ = new ast::LogicExpr(ast::NOT_EQUAL, $1, $3);     $$->set_location(yylloc); }
 	|	expr "||" expr
 	|	expr "&&" expr
-	|	expr "or" expr
-	|	expr "and" expr
+	|	expr "or" expr        { $$ = new ast::LogicExpr(ast::OR, $1, $3);            $$->set_location(yylloc); }
+	|	expr "and" expr       { $$ = new ast::LogicExpr(ast::AND, $1, $3);           $$->set_location(yylloc); }
 	|	'-' expr %prec UMINUS { $$ = new ast::BinaryExpr(ast::MINUS, $2);            $$->set_location(yylloc); }
 	|	'+' expr %prec UMINUS { $$ = new ast::BinaryExpr(ast::PLUS, $2);             $$->set_location(yylloc); }
 	|	INCREMENT IDENT       { $$ = new ast::PreIncrement($2);                      $$->set_location(yylloc); }

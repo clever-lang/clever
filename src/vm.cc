@@ -305,28 +305,70 @@ CLEVER_VM_HANDLER(VM::pos_dec_handler) {
 }
 
 /**
- * JMPZ
+ * JMPZ - Jump if zero
  */
 CLEVER_VM_HANDLER(VM::jmpz_handler) {
 	Value* value = opcode.get_op1();
+	Value* result = opcode.get_result();
 
 	switch (value->get_type()) {
 		case Value::INTEGER:
 			if (!value->getInteger()) {
+				if (result) {
+					result->setBoolean(false);
+				}
 				CLEVER_VM_GOTO(opcode.get_jmp_addr1());
 			}
 			break;
 		case Value::DOUBLE:
 			if (!value->getDouble()) {
+				if (result) {
+					result->setBoolean(false);
+				}
 				CLEVER_VM_GOTO(opcode.get_jmp_addr1());
 			}
 			break;
 		case Value::BOOLEAN:
 			if (!value->getBoolean()) {
+				if (result) {
+					result->setBoolean(false);
+				}
 				CLEVER_VM_GOTO(opcode.get_jmp_addr1());
 			}
 			break;
 	}
+	if (result) {
+		result->setBoolean(true);
+	}
+}
+
+/**
+ * JMPNZ - Jump if non zero
+ */
+CLEVER_VM_HANDLER(VM::jmpnz_handler) {
+	Value* value = opcode.get_op1();
+
+	switch (value->get_type()) {
+		case Value::INTEGER:
+			if (value->getInteger()) {
+				opcode.get_result()->setBoolean(true);
+				CLEVER_VM_GOTO(opcode.get_jmp_addr1());
+			}
+			break;
+		case Value::DOUBLE:
+			if (value->getDouble()) {
+				opcode.get_result()->setBoolean(true);
+				CLEVER_VM_GOTO(opcode.get_jmp_addr1());
+			}
+			break;
+		case Value::BOOLEAN:
+			if (value->getBoolean()) {
+				opcode.get_result()->setBoolean(true);
+				CLEVER_VM_GOTO(opcode.get_jmp_addr1());
+			}
+			break;
+	}
+	opcode.get_result()->setBoolean(false);
 }
 
 /**

@@ -52,6 +52,7 @@ enum Opcodes {
 	OP_PRE_DEC,
 	OP_POS_INC,
 	OP_POS_DEC,
+	OP_JMPNZ,
 	OP_JMPZ,
 	OP_JMP,
 	OP_GREATER,
@@ -100,17 +101,17 @@ public:
 	Value* get_result() const throw() { return m_result; }
 	void set_result(Value* result) throw() { m_result = result; }
 
-	unsigned int get_op_num() const throw() { return m_op_num; }
-	void set_op_num(unsigned int op_num) throw() { m_op_num = op_num; }
+	long get_op_num() const throw() { return m_op_num; }
+	void set_op_num(long op_num) throw() { m_op_num = op_num; }
 
-	void set_jmp_addr1(unsigned int jmp_addr) throw() { m_extra.jmp1 = jmp_addr; }
-	unsigned int get_jmp_addr1() const throw() { return m_extra.jmp1; }
+	void set_jmp_addr1(long jmp_addr) throw() { m_extra.jmp1 = jmp_addr; }
+	long get_jmp_addr1() const throw() { return m_extra.jmp1; }
 
-	void set_jmp_addr2(unsigned int jmp_addr) throw() { m_extra.jmp2 = jmp_addr; }
-	unsigned int get_jmp_addr2() const throw() { return m_extra.jmp2; }
+	void set_jmp_addr2(long jmp_addr) throw() { m_extra.jmp2 = jmp_addr; }
+	long get_jmp_addr2() const throw() { return m_extra.jmp2; }
 
-	void set_flags(unsigned int flags) throw() { m_extra.flags = flags; }
-	unsigned int get_flags() const throw() { return m_extra.flags; }
+	void set_flags(long flags) throw() { m_extra.flags = flags; }
+	long get_flags() const throw() { return m_extra.flags; }
 
 	/**
 	 * Methods for debug
@@ -124,7 +125,7 @@ private:
 	Value* m_op1;
 	Value* m_op2;
 	Value* m_result;
-	unsigned int m_op_num;
+	long m_op_num;
 	struct { unsigned int jmp1, jmp2, flags; } m_extra;
 
 	DISALLOW_COPY_AND_ASSIGN(Opcode);

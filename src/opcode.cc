@@ -62,6 +62,7 @@ const char* Opcode::getOpName(Opcodes op) const throw() {
 		CASE(OP_PRE_DEC);
 		CASE(OP_POS_INC);
 		CASE(OP_POS_DEC);
+		CASE(OP_JMPNZ);
 		CASE(OP_JMPZ);
 		CASE(OP_JMP);
 		CASE(OP_GREATER);
