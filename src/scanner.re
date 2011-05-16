@@ -165,6 +165,23 @@ next_token:
 	<INITIAL>"import" {
 		RET(token::IMPORT);
 	}
+	
+	<INITIAL>"class" {
+		RET(token::CLASS);
+	}
+	
+	<INITIAL>"public" {
+		RET(token::PUBLIC);
+	}
+
+	<INITIAL>"private" {
+		RET(token::PRIVATE);
+	}
+
+	<INITIAL>"protected" {
+		RET(token::PROTECTED);
+	}
+
 
 	<INITIAL>IDENTIFIER {
 		*yylval = new ast::Identifier(CSTRING(std::string(s.yylex, yylen)));
@@ -231,7 +248,7 @@ next_token:
 		Value* newval = new Value(TypeTable::getType(CSTRING("Int")));
 		int64_t n = 0;
 
-		std::sscanf(std::string(s.yylex+2, yylen).c_str(), "%x", (unsigned long *)&n);
+		std::sscanf(std::string(s.yylex+2, yylen).c_str(), "%X", (unsigned*)&n);
 
 		newval->set_type(Value::INTEGER);
 		newval->setInteger(n);

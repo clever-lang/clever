@@ -28,6 +28,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <string>
+#include <iostream>
 #include "module.h"
 #include "std/math.h"
 #include "typetable.h"
@@ -39,7 +40,20 @@ namespace clever { namespace std_pkg {
  * Returns the square root of a number x
  */
 static CLEVER_FUNCTION(sqrt) {
-	retval->setDouble(std::sqrt(args->at(0)->getDouble()));
+	double value;
+	
+	if (args->at(0)->isDouble()) {
+		value = args->at(0)->getDouble();
+	}
+	else if (args->at(0)->isInteger()) {
+		value = double(args->at(0)->getInteger());
+	}
+	else {
+		std::cerr << "Double sqrt(Double num) requires 'num' to be convertible to type Double.\n"; 
+		std::exit(1);
+	}
+
+	retval->setDouble(std::sqrt(value));
 	retval->set_type(Value::DOUBLE);
 }
 

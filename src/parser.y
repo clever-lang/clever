@@ -103,6 +103,10 @@ ast::ASTNode* nodes = new ast::BlockNode;
 %token BW_OR_EQUAL   "|="
 %token BW_XOR_EQUAL  "^="
 %token RETURN        "return"
+%token CLASS 	     "class"
+%token PUBLIC	     "public"
+%token PRIVATE       "private"
+%token PROTECTED     "protected"
 
 %left ',';
 %left LOGICAL_OR;
@@ -163,11 +167,13 @@ statements:
 	|	assign_stmt ';'          { tree.top()->add($1); }
 	|	import_stmt ';'          { tree.top()->add($1); }
 	|	return_stmt ';'          { tree.top()->add($1); }
+	|	class_declaration
 ;
 
 return_stmt:
 		RETURN expr { $$ = new ast::ReturnStmt($2); $$->set_location(yylloc); }
 	|	RETURN      { $$ = new ast::ReturnStmt();   $$->set_location(yylloc); }
+;
 
 args_declaration_non_empty:
 		TYPE IDENT                      { $$ = new ast::ArgumentDeclList(); static_cast<ast::ArgumentDeclList*>($$)->addArg($1, $2); }
@@ -182,6 +188,27 @@ args_declaration:
 func_declaration:
 		TYPE IDENT '(' args_declaration ')' block_stmt { $$ = new ast::FuncDeclaration($2, $1, $4, $6); }
 ;
+
+class_declaration:
+		CLASS TYPE '{' class_stmt '}'
+;
+
+access_modifier:
+		PUBLIC
+	| 	PRIVATE
+	| 	PROTECTED
+;
+
+class_stmt:
+		/* empty */
+	|	class_stmt_no_empty
+;
+
+class_stmt_no_empty:
+		class_stmt access_modifier variable_declaration_no_init ';'
+	|	class_stmt access_modifier func_declaration
+;
+	
 
 arg_list:
 		arg_list ',' expr  { $1->add($3); }
