@@ -86,7 +86,7 @@ public:
 	AST_VISITOR_DECL_VIRTUAL(AssignExpr);
 	AST_VISITOR_DECL_VIRTUAL(ImportStmt);
 	AST_VISITOR_DECL_VIRTUAL(FuncDeclaration);
-        AST_VISITOR_DECL_VIRTUAL(MethodDeclaration);
+	AST_VISITOR_DECL_VIRTUAL(MethodDeclaration);
 	AST_VISITOR_DECL_VIRTUAL(ReturnStmt);
 private:
 	DISALLOW_COPY_AND_ASSIGN(ASTVisitor);

@@ -634,4 +634,11 @@ AST_VISITOR(CodeGenVisitor, ReturnStmt) {
 	emit(OP_RETURN, &VM::return_handler, expr_value);
 }
 
+/**
+ * Generates opcodes for class methods
+ */
+AST_VISITOR(CodeGenVisitor, MethodDeclaration) {
+	
+}
+
 }} // clever::ast
