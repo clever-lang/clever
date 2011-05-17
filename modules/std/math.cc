@@ -28,6 +28,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <string>
+#include <iostream>
 #include "module.h"
 #include "std/math.h"
 #include "typetable.h"
@@ -48,7 +49,8 @@ static CLEVER_FUNCTION(sqrt) {
 		value = double(args->at(0)->getInteger());
 	}
 	else {
-		std::cerr << "Double sqrt(Double num) requires 'num' to be convertible to type Double.\n"; 
+		std::cerr << "Double sqrt(Double num) requires 'num' "
+                    "to be convertible to type Double.\n";
 		std::exit(1);
 	}
 

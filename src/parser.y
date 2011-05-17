@@ -190,25 +190,32 @@ func_declaration:
 ;
 
 class_declaration:
-		CLASS TYPE '{' class_stmt '}'
+		CLASS TYPE '{' class_stmt '}' 
 ;
 
 access_modifier:
-		PUBLIC
-	| 	PRIVATE
-	| 	PROTECTED
+		PUBLIC          { $$ = new ast::IntegralValue(0x1); }
+	| 	PRIVATE         { $$ = new ast::IntegralValue(0x2); }
+	| 	PROTECTED       { $$ = new ast::IntegralValue(0x4); }
 ;
 
 class_stmt:
-		/* empty */
-	|	class_stmt_no_empty
+		/* empty */             { $$ = new ast::ClassStmtList; }
+	|	class_stmt_no_empty     { $$ = $1; }
 ;
 
 class_stmt_no_empty:
-		class_stmt access_modifier variable_declaration_no_init ';'
-	|	class_stmt access_modifier func_declaration
+		class_stmt attribute_declaration        
+	|	class_stmt method_declaration           { static_cast<ast::ClassStmtList*>($1)->addMethod($2); $$ = $1; }
 ;
-	
+
+method_declaration:
+		access_modifier TYPE IDENT '(' args_declaration ')' block_stmt { $$ = new ast::MethodDeclaration($1, $2, $3, $5, $7); }
+;
+
+attribute_declaration:
+                access_modifier TYPE IDENT ';'
+;
 
 arg_list:
 		arg_list ',' expr  { $1->add($3); }

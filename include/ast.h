@@ -29,6 +29,7 @@
 #define CLEVER_AST_H
 
 #include <vector>
+#include <iostream> //debug
 #include "value.h"
 #include "refcounted.h"
 #include "astvisitor.h"
@@ -674,11 +675,27 @@ public:
 	void accept(ASTVisitor& visitor) throw() {
 		visitor.visit(this);
 	}
-private:
+protected:
 	ASTNode* m_name;
 	ASTNode* m_return;
 	ASTNode* m_args;
 	ASTNode* m_block;
+};
+
+class MethodDeclaration: public FuncDeclaration {
+public:
+	MethodDeclaration(ASTNode* modifier, ASTNode* rtype, ASTNode* name,
+                ASTNode* args, ASTNode* block)
+		: FuncDeclaration(name, rtype, args, block), m_modifier(modifier) {
+                    modifier->addRef();
+	}
+
+	~MethodDeclaration() {
+	}
+
+        ASTNode* get_modifier() { return m_modifier; }
+private:
+        ASTNode* m_modifier;
 };
 
 class FunctionCall : public ASTNode {
@@ -843,6 +860,51 @@ private:
 	ASTNode* m_expr;
 
 	DISALLOW_COPY_AND_ASSIGN(ReturnStmt);
+};
+
+class IntegralValue : public ASTNode {
+public:
+	IntegralValue(int value) : m_value(value) { }
+
+	~IntegralValue() {
+	}
+
+	int get_value() throw() { return m_value; }
+private:
+	int m_value;
+
+	DISALLOW_COPY_AND_ASSIGN(IntegralValue);
+};
+
+class ClassStmtList : public ASTNode {
+public:
+	ClassStmtList() { }
+
+	~ClassStmtList() {
+		std::list<MethodDeclaration*>::iterator
+                    it = m_methods_decl.begin(), end = m_methods_decl.end();
+
+		while (it != end) {
+                        (*it)->delRef();
+                        ++it;
+		}
+	}
+
+	void addMethod(ASTNode* method) throw() {
+                MethodDeclaration* m = static_cast<MethodDeclaration*>(method);
+		m_methods_decl.push_back(m);
+                m->addRef();
+
+                std::cout << m->get_name()->get_value()->get_name()->str() << std::endl;
+	}
+
+	std::list<MethodDeclaration*>& get_methods_decl() throw() { 
+                return m_methods_decl;
+        }
+private:
+	std::list<MethodDeclaration*> m_methods_decl;
+
+	DISALLOW_COPY_AND_ASSIGN(ClassStmtList);
 };
 
 }} // clever::ast
