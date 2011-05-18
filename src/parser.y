@@ -190,7 +190,7 @@ func_declaration:
 ;
 
 class_declaration:	
-		CLASS TYPE '{' class_stmt '}' { $$ = $4; }
+		CLASS TYPE '{' class_stmt '}' { $$ = $4; delete $2; }
 ;
 
 access_modifier:
