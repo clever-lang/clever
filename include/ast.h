@@ -329,7 +329,7 @@ public:
 		m_modifier->addRef();
 	}
 	
-	virtual ~AttributeDeclaration() {
+	~AttributeDeclaration() {
 		m_modifier->delRef();
 	}
 private:
@@ -705,7 +705,7 @@ public:
                     m_modifier->addRef();
 	}
 
-	virtual ~MethodDeclaration() {
+	~MethodDeclaration() {
 		m_modifier->delRef();
 	}
 

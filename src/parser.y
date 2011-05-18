@@ -167,7 +167,7 @@ statements:
 	|	assign_stmt ';'          { tree.top()->add($1); }
 	|	import_stmt ';'          { tree.top()->add($1); }
 	|	return_stmt ';'          { tree.top()->add($1); }
-	|	class_declaration
+	|	class_declaration	 { tree.top()->add($1); }
 ;
 
 return_stmt:
@@ -189,8 +189,8 @@ func_declaration:
 		TYPE IDENT '(' args_declaration ')' block_stmt { $$ = new ast::FuncDeclaration($2, $1, $4, $6); }
 ;
 
-class_declaration:
-		CLASS TYPE '{' class_stmt '}' 
+class_declaration:	
+		CLASS TYPE '{' class_stmt '}' { $$ = $4; }
 ;
 
 access_modifier:
