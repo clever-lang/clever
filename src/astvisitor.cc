@@ -635,10 +635,17 @@ AST_VISITOR(CodeGenVisitor, ReturnStmt) {
 }
 
 /**
+ * Generates opcodes for class attributes
+ */
+AST_VISITOR(CodeGenVisitor, AttributeDeclaration) {
+	// @TODO 
+}
+
+/**
  * Generates opcodes for class methods
  */
 AST_VISITOR(CodeGenVisitor, MethodDeclaration) {
-	
+	// @TODO
 }
 
 }} // clever::ast
