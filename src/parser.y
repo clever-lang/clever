@@ -205,7 +205,7 @@ class_stmt:
 ;
 
 class_stmt_no_empty:
-		class_stmt attribute_declaration        
+		class_stmt attribute_declaration        { static_cast<ast::ClassStmtList*>($1)->addAttribute($2); $$ = $1; }
 	|	class_stmt method_declaration           { static_cast<ast::ClassStmtList*>($1)->addMethod($2); $$ = $1; }
 ;
 
@@ -214,7 +214,7 @@ method_declaration:
 ;
 
 attribute_declaration:
-                access_modifier TYPE IDENT ';'
+                access_modifier TYPE IDENT ';'	{ $$ = new ast::AttributeDeclaration($1, $2, $3); }
 ;
 
 arg_list:

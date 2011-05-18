@@ -287,7 +287,7 @@ public:
 		m_initial_value->addRef();
 	}
 
-	~VariableDecl() {
+	virtual ~VariableDecl() {
 		m_type->delRef();
 		m_variable->delRef();
 
@@ -320,6 +320,21 @@ private:
 	ASTNode* m_initial_value;
 
 	DISALLOW_COPY_AND_ASSIGN(VariableDecl);
+};
+
+class AttributeDeclaration : public VariableDecl {
+public:
+	AttributeDeclaration(ASTNode* modifier, ASTNode* type, ASTNode* variable) 
+		: VariableDecl(type, variable), m_modifier(modifier) {
+		m_modifier->addRef();
+	}
+	
+	virtual ~AttributeDeclaration() {
+		m_modifier->delRef();
+	}
+private:
+	ASTNode* m_modifier;
+	DISALLOW_COPY_AND_ASSIGN(AttributeDeclaration);
 };
 
 class Identifier : public ASTNode {
@@ -652,7 +667,7 @@ public:
 		}
 	}
 
-	~FuncDeclaration() {
+	virtual ~FuncDeclaration() {
 		m_name->delRef();
 		if (m_return) {
 			m_return->delRef();
@@ -687,14 +702,15 @@ public:
 	MethodDeclaration(ASTNode* modifier, ASTNode* rtype, ASTNode* name,
                 ASTNode* args, ASTNode* block)
 		: FuncDeclaration(name, rtype, args, block), m_modifier(modifier) {
-                    modifier->addRef();
+                    m_modifier->addRef();
 	}
 
-	~MethodDeclaration() {
+	virtual ~MethodDeclaration() {
+		m_modifier->delRef();
 	}
 
         ASTNode* get_modifier() { return m_modifier; }
-private:
+protected:
         ASTNode* m_modifier;
 };
 
@@ -881,12 +897,24 @@ public:
 	ClassStmtList() { }
 
 	~ClassStmtList() {
-		std::list<MethodDeclaration*>::iterator
-                    it = m_methods_decl.begin(), end = m_methods_decl.end();
+		{
+			std::list<MethodDeclaration*>::iterator
+	                    it = m_methods_decl.begin(), end = m_methods_decl.end();
 
-		while (it != end) {
-                        (*it)->delRef();
-                        ++it;
+			while (it != end) {
+	                        (*it)->delRef();
+	                        ++it;
+			}
+		}
+		
+		{
+			std::list<AttributeDeclaration*>::iterator
+	                    it = m_attrib_decl.begin(), end = m_attrib_decl.end();
+
+			while (it != end) {
+	                        (*it)->delRef();
+	                        ++it;
+			}
 		}
 	}
 
@@ -894,15 +922,30 @@ public:
                 MethodDeclaration* m = static_cast<MethodDeclaration*>(method);
 		m_methods_decl.push_back(m);
                 m->addRef();
-
-                std::cout << m->get_name()->get_value()->get_name()->str() << std::endl;
+		
+                std::cout << "Method: " <<
+			m->get_name()->get_value()->get_name()->str() << std::endl;
+	}
+	
+	void addAttribute(ASTNode* attribute) throw() {
+		AttributeDeclaration* attr = static_cast<AttributeDeclaration*>(attribute);
+		m_attrib_decl.push_back(attr);
+		attr->addRef();
+		
+		std::cout << "Attribute: " <<
+			attr->get_variable()->get_value()->get_name()->str() << std::endl;
 	}
 
 	std::list<MethodDeclaration*>& get_methods_decl() throw() { 
                 return m_methods_decl;
         }
+
+	std::list<AttributeDeclaration*>& get_attrib_decl() throw() { 
+                return m_attrib_decl;
+        }
 private:
 	std::list<MethodDeclaration*> m_methods_decl;
+	std::list<AttributeDeclaration*> m_attrib_decl;
 
 	DISALLOW_COPY_AND_ASSIGN(ClassStmtList);
 };
