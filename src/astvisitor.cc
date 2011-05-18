@@ -29,6 +29,7 @@
 #include "astvisitor.h"
 #include "typetable.h"
 #include "compiler.h"
+#include <iostream> //debug
 
 namespace clever { namespace ast {
 
@@ -635,17 +636,21 @@ AST_VISITOR(CodeGenVisitor, ReturnStmt) {
 }
 
 /**
- * Generates opcodes for class attributes
+ * Generates opcodes for class declaration
  */
-AST_VISITOR(CodeGenVisitor, AttributeDeclaration) {
-	// @TODO 
-}
-
-/**
- * Generates opcodes for class methods
- */
-AST_VISITOR(CodeGenVisitor, MethodDeclaration) {
-	// @TODO
+AST_VISITOR(CodeGenVisitor, ClassDeclaration) {
+	int check = expr->check();
+	const CString* class_name = expr->get_class_name();
+	
+	if (check == 0) {
+		
+	}
+	else if (check == 1) {
+		Compiler::errorf(expr->get_location(), "Attribute redefinition in class %s", class_name->str().c_str());
+	}
+	else {
+		Compiler::errorf(expr->get_location(), "Method redefinition in class %s", class_name->str().c_str());
+	}
 }
 
 }} // clever::ast

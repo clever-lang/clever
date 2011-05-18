@@ -156,7 +156,7 @@ block_stmt:
 ;
 
 statements:
-		expr ';'	             { tree.top()->add($1); }
+		expr ';'	         { tree.top()->add($1); }
 	|	variable_declaration ';' { tree.top()->add($1); }
 	|	func_declaration         { tree.top()->add($1); }
 	|	if_expr                  { tree.top()->add($1); }
@@ -190,7 +190,7 @@ func_declaration:
 ;
 
 class_declaration:	
-		CLASS TYPE '{' class_stmt '}' { $$ = $4; delete $2; }
+		CLASS TYPE '{' class_stmt '}' { $$ = new ast::ClassDeclaration($2, $4); }
 ;
 
 access_modifier:

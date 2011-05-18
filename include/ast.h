@@ -29,7 +29,7 @@
 #define CLEVER_AST_H
 
 #include <vector>
-#include <iostream> //debug
+#include <set>
 #include "value.h"
 #include "refcounted.h"
 #include "astvisitor.h"
@@ -899,55 +899,109 @@ public:
 	~ClassStmtList() {
 		{
 			std::list<MethodDeclaration*>::iterator
-	                    it = m_methods_decl.begin(), end = m_methods_decl.end();
+			it = m_methods_decl.begin(), end = m_methods_decl.end();
 
 			while (it != end) {
-	                        (*it)->delRef();
-	                        ++it;
+				(*it)->delRef();
+				++it;
 			}
 		}
-		
+
 		{
 			std::list<AttributeDeclaration*>::iterator
-	                    it = m_attrib_decl.begin(), end = m_attrib_decl.end();
+				it = m_attrib_decl.begin(), end = m_attrib_decl.end();
 
 			while (it != end) {
-	                        (*it)->delRef();
-	                        ++it;
+				(*it)->delRef();
+				++it;
 			}
 		}
 	}
 
 	void addMethod(ASTNode* method) throw() {
-                MethodDeclaration* m = static_cast<MethodDeclaration*>(method);
+		MethodDeclaration* m = static_cast<MethodDeclaration*>(method);
 		m_methods_decl.push_back(m);
-                m->addRef();
-		
-                std::cout << "Method: " <<
-			m->get_name()->get_value()->get_name()->str() << std::endl;
+		m->addRef();
 	}
 	
 	void addAttribute(ASTNode* attribute) throw() {
 		AttributeDeclaration* attr = static_cast<AttributeDeclaration*>(attribute);
 		m_attrib_decl.push_back(attr);
 		attr->addRef();
-		
-		std::cout << "Attribute: " <<
-			attr->get_variable()->get_value()->get_name()->str() << std::endl;
 	}
 
 	std::list<MethodDeclaration*>& get_methods_decl() throw() { 
-                return m_methods_decl;
+		return m_methods_decl;
         }
 
 	std::list<AttributeDeclaration*>& get_attrib_decl() throw() { 
-                return m_attrib_decl;
+		return m_attrib_decl;
         }
 private:
 	std::list<MethodDeclaration*> m_methods_decl;
 	std::list<AttributeDeclaration*> m_attrib_decl;
 
 	DISALLOW_COPY_AND_ASSIGN(ClassStmtList);
+};
+
+class ClassDeclaration : public ASTNode {
+public:	
+	ClassDeclaration(ASTNode* name, ASTNode* body) 
+		: m_name(name), m_body(body) {
+		m_name->addRef();
+		m_body->addRef();	
+	}
+		
+	~ClassDeclaration() {
+		m_name->delRef();
+		m_body->delRef();
+	}
+	
+	int check() {
+		ClassStmtList* list = static_cast<ClassStmtList*>(m_body);
+		std::list<AttributeDeclaration*>& attribs = list->get_attrib_decl();
+		std::list<AttributeDeclaration*>::const_iterator it;
+		
+		std::set<std::string> s;
+		
+		for (it = attribs.begin(); it != attribs.end(); ++it) {
+			if (s.find((*it)->get_variable()->get_value()->get_name()->str()) == s.end()) {
+				s.insert((*it)->get_variable()->get_value()->get_name()->str());
+			}
+			else {
+				return 1;
+			}
+		}
+		
+		s.clear();
+		
+		std::list<MethodDeclaration*>& methods = list->get_methods_decl();
+		std::list<MethodDeclaration*>::const_iterator it2;
+		
+		for (it2 = methods.begin(); it2 != methods.end(); ++it2) {
+			if (s.find((*it2)->get_name()->get_value()->get_name()->str()) == s.end()) {
+				s.insert((*it2)->get_name()->get_value()->get_name()->str());
+			}
+			else {
+				return 2;
+			}
+		}
+		
+		return 0;
+	}
+	
+	void accept(ASTVisitor& visitor) throw() {
+		visitor.visit(this);
+	}
+	
+	const CString* get_class_name() const {
+		return m_name->get_value()->get_name();
+	}
+	
+private:
+	ASTNode* m_name;
+	ASTNode* m_body;
+	DISALLOW_COPY_AND_ASSIGN(ClassDeclaration);
 };
 
 }} // clever::ast

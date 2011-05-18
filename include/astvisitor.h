@@ -52,8 +52,7 @@ class BreakNode;
 class BlockNode;
 class ArgumentList;
 class FuncDeclaration;
-class MethodDeclaration;
-class AttributeDeclaration;
+class ClassDeclaration;
 class ReturnStmt;
 
 #define AST_VISITOR(type, exprtype) void type::visit(exprtype* expr) throw()
@@ -87,8 +86,7 @@ public:
 	AST_VISITOR_DECL_VIRTUAL(AssignExpr);
 	AST_VISITOR_DECL_VIRTUAL(ImportStmt);
 	AST_VISITOR_DECL_VIRTUAL(FuncDeclaration);
-	AST_VISITOR_DECL_VIRTUAL(MethodDeclaration);
-	AST_VISITOR_DECL_VIRTUAL(AttributeDeclaration);
+	AST_VISITOR_DECL_VIRTUAL(ClassDeclaration);
 	AST_VISITOR_DECL_VIRTUAL(ReturnStmt);
 private:
 	DISALLOW_COPY_AND_ASSIGN(ASTVisitor);
@@ -146,8 +144,7 @@ public:
 	AST_VISITOR_DECL(AssignExpr);
 	AST_VISITOR_DECL(ImportStmt);
 	AST_VISITOR_DECL(FuncDeclaration);
-        AST_VISITOR_DECL(MethodDeclaration);
-	AST_VISITOR_DECL(AttributeDeclaration);
+        AST_VISITOR_DECL(ClassDeclaration);
 	AST_VISITOR_DECL(ReturnStmt);
 
 private:
