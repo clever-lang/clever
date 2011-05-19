@@ -200,7 +200,7 @@ access_modifier:
 ;
 
 class_stmt:
-		/* empty */             { $$ = new ast::ClassStmtList; }
+		/* empty */             { $$ = new ast::ClassStmtList; $$->set_location(yyloc); }
 	|	class_stmt_no_empty     { $$ = $1; }
 ;
 
@@ -210,11 +210,11 @@ class_stmt_no_empty:
 ;
 
 method_declaration:
-		access_modifier TYPE IDENT '(' args_declaration ')' block_stmt { $$ = new ast::MethodDeclaration($1, $2, $3, $5, $7); }
+		access_modifier TYPE IDENT '(' args_declaration ')' block_stmt { $$ = new ast::MethodDeclaration($1, $2, $3, $5, $7); $$->set_location(yyloc); }
 ;
 
 attribute_declaration:
-                access_modifier TYPE IDENT ';'	{ $$ = new ast::AttributeDeclaration($1, $2, $3); }
+                access_modifier TYPE IDENT ';'	{ $$ = new ast::AttributeDeclaration($1, $2, $3); $$->set_location(yyloc); }
 ;
 
 arg_list:

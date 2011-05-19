@@ -946,7 +946,28 @@ private:
 
 class ClassDeclaration : public ASTNode {
 public:	
-	ClassDeclaration(ASTNode* name, ASTNode* body) 
+	
+	class DeclarationError {
+	public:
+		enum error_type { METHOD_DECLARATION, ATTRIBUTE_DECLARATION };
+
+		DeclarationError() {}
+
+		const std::string& get_identifier() { return m_identifier; }
+		const location& get_location() { return m_location; }
+		error_type get_type() { return m_type; }
+
+		void set_identifier(const std::string& ident) { m_identifier = ident; }
+		void set_location(const location& loc) { m_location = loc; }
+		void set_error_type(error_type type) { m_type = type; }
+
+	private:
+		std::string m_identifier;
+		location m_location;
+		error_type m_type;
+	};
+
+	ClassDeclaration(ASTNode* name, ASTNode* body)
 		: m_name(name), m_body(body) {
 		m_name->addRef();
 		m_body->addRef();	
@@ -957,19 +978,24 @@ public:
 		m_body->delRef();
 	}
 	
-	int check() {
+	bool check(DeclarationError& error) {
 		ClassStmtList* list = static_cast<ClassStmtList*>(m_body);
 		std::list<AttributeDeclaration*>& attribs = list->get_attrib_decl();
 		std::list<AttributeDeclaration*>::const_iterator it;
-		
+
 		std::set<std::string> s;
-		
+
 		for (it = attribs.begin(); it != attribs.end(); ++it) {
-			if (s.find((*it)->get_variable()->get_value()->get_name()->str()) == s.end()) {
-				s.insert((*it)->get_variable()->get_value()->get_name()->str());
+			const std::string& str = (*it)->get_variable()->get_value()->get_name()->str();
+			
+			if (s.find(str) == s.end()) {
+				s.insert(str);
 			}
 			else {
-				return 1;
+				error.set_error_type(DeclarationError::ATTRIBUTE_DECLARATION);
+				error.set_identifier(str);
+				error.set_location((*it)->get_location());
+				return false;
 			}
 		}
 		
@@ -979,15 +1005,20 @@ public:
 		std::list<MethodDeclaration*>::const_iterator it2;
 		
 		for (it2 = methods.begin(); it2 != methods.end(); ++it2) {
-			if (s.find((*it2)->get_name()->get_value()->get_name()->str()) == s.end()) {
-				s.insert((*it2)->get_name()->get_value()->get_name()->str());
+			const std::string& str = (*it2)->get_name()->get_value()->get_name()->str();
+			
+			if (s.find(str) == s.end()) {
+				s.insert(str);
 			}
 			else {
-				return 2;
+				error.set_error_type(DeclarationError::METHOD_DECLARATION);
+				error.set_identifier(str);
+				error.set_location((*it2)->get_location());
+				return false;
 			}
 		}
 		
-		return 0;
+		return true;
 	}
 	
 	void accept(ASTVisitor& visitor) throw() {
