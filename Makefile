@@ -1,9 +1,16 @@
 # $Id$
 #
+UNAME := $(shell uname)
 
 # Compiler
 CXX?=g++
+
+ifeq ($(UNAME), Windows)
 CXXFLAGS=-c -O2 -ggdb -ansi -Iinclude/ -Ibuild/ -Imodules/ -Iwin32/ -I. -fno-rtti -pedantic -fno-exceptions
+else
+CXXFLAGS=-c -O2 -ggdb -ansi -Iinclude/ -Ibuild/ -Imodules/ -I. -fno-rtti -pedantic -fno-exceptions
+endif
+
 CXXFLAGS2=-c -O2 -ggdb -ansi -Iinclude/ -Ibuild/ -I. -fno-rtti -pedantic -fno-exceptions
 CXXFLAGS3=-ggdb -O2
 # Linker
@@ -23,12 +30,21 @@ WINDIR=win32/
 # Testrunner dir
 EXTRADIR=extra/
 
+ifeq ($(UNAME), Windows)
 OBJECTS=$(BUILDDIR)parser.o $(BUILDDIR)scanner.o $(BUILDDIR)driver.o \
 	$(BUILDDIR)cstring.o $(BUILDDIR)double.o $(BUILDDIR)std_pkg.o \
 	$(BUILDDIR)int.o $(BUILDDIR)io.o $(BUILDDIR)math.o \
 	$(BUILDDIR)pkgmanager.o $(BUILDDIR)compiler.o \
 	$(BUILDDIR)vm.o $(BUILDDIR)astvisitor.o $(BUILDDIR)opcode.o \
 	$(BUILDDIR)main.o $(BUILDDIR)win32.o
+else
+OBJECTS=$(BUILDDIR)parser.o $(BUILDDIR)scanner.o $(BUILDDIR)driver.o \
+	$(BUILDDIR)cstring.o $(BUILDDIR)double.o $(BUILDDIR)std_pkg.o \
+	$(BUILDDIR)int.o $(BUILDDIR)io.o $(BUILDDIR)math.o \
+	$(BUILDDIR)pkgmanager.o $(BUILDDIR)compiler.o \
+	$(BUILDDIR)vm.o $(BUILDDIR)astvisitor.o $(BUILDDIR)opcode.o \
+	$(BUILDDIR)main.o
+endif
 
 clever: $(OBJECTS)
 	$(LD) $(LFLAGS) -o $@ $(OBJECTS)
@@ -102,8 +118,7 @@ test: $(EXTRADIR)testrunner.cpp
 clean-all: clean clean-test
 
 clean:
-	rm -rf clever clever.exe
-	rm -f $(BUILDDIR)*
+	rm -f clever* $(BUILDDIR)*.o $(BUILDDIR)*.hh $(BUILDDIR)*.cc
 
 clean-test:
 	rm -rf $(EXTRADIR)testrunner $(EXTRADIR)testrunner.exe
