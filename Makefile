@@ -5,7 +5,7 @@ UNAME := $(shell uname)
 # Compiler
 CXX?=g++
 
-ifeq ($(UNAME), Windows)
+ifneq (,$(findstring MINGW,$(UNAME)))
 CXXFLAGS=-c -O2 -ggdb -ansi -Iinclude/ -Ibuild/ -Imodules/ -Iwin32/ -I. -fno-rtti -pedantic -fno-exceptions
 else
 CXXFLAGS=-c -O2 -ggdb -ansi -Iinclude/ -Ibuild/ -Imodules/ -I. -fno-rtti -pedantic -fno-exceptions
@@ -30,7 +30,7 @@ WINDIR=win32/
 # Testrunner dir
 EXTRADIR=extra/
 
-ifeq ($(UNAME), Windows)
+ifneq (,$(findstring MINGW,$(UNAME)))
 OBJECTS=$(BUILDDIR)parser.o $(BUILDDIR)scanner.o $(BUILDDIR)driver.o \
 	$(BUILDDIR)cstring.o $(BUILDDIR)double.o $(BUILDDIR)std_pkg.o \
 	$(BUILDDIR)int.o $(BUILDDIR)io.o $(BUILDDIR)math.o \
