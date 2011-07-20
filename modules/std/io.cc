@@ -29,6 +29,7 @@
 #include "value.h"
 #include "module.h"
 #include "std/io.h"
+#include "typetable.h"
 
 namespace clever { namespace std_pkg {
 
@@ -53,11 +54,27 @@ static CLEVER_FUNCTION(println) {
 }
 
 /**
+ * readln()
+ * Reads a line from the standard input.
+ */
+static CLEVER_FUNCTION(readln) {
+	std::string buffer;
+
+	getline(std::cin, buffer);
+	
+	retval->setString(CSTRING(buffer));
+	retval->set_type(Value::STRING);
+}
+
+/**
  * Initializes Standard module
  */
 void IOModule::Init() throw() {
+	const Type* string_type = TypeTable::getType(CSTRING("String"));
+
 	addFunction(new Function("print", &CLEVER_FUNC_NAME(print), -1));
 	addFunction(new Function("println", &CLEVER_FUNC_NAME(println), -1));
+	addFunction(new Function("readln", &CLEVER_FUNC_NAME(readln), string_type));
 }
 
 }} // clever::std_pkg
