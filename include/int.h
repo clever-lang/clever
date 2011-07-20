@@ -28,7 +28,6 @@
 #ifndef CLEVER_INT_H
 #define CLEVER_INT_H
 
-#include "module.h"
 #include "type.h"
 #include "value.h"
 
@@ -42,7 +41,7 @@ public:
 	void Init();
 
 	/* Type methods */
-	static CLEVER_METHOD(toString);
+	static CLEVER_TYPE_METHOD(toString);
 private:
 	DISALLOW_COPY_AND_ASSIGN(Integer);
 };

@@ -28,7 +28,6 @@
 #ifndef CLEVER_DOUBLE_H
 #define CLEVER_DOUBLE_H
 
-#include "module.h"
 #include "type.h"
 #include "value.h"
 
@@ -42,8 +41,8 @@ public:
 	void Init();
 
 	/* Type methods */
-	static CLEVER_METHOD(toString);
-	static CLEVER_METHOD(sqrt);
+	static CLEVER_TYPE_METHOD(toString);
+	static CLEVER_TYPE_METHOD(sqrt);
 private:
 	DISALLOW_COPY_AND_ASSIGN(Double);
 };

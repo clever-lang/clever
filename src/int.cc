@@ -36,7 +36,7 @@ namespace clever {
  * Int::toString()
  * Converts the number to string
  */
-CLEVER_METHOD(Integer::toString) {
+CLEVER_TYPE_METHOD(Integer::toString) {
 	retval->setString(CSTRING(value->toString()));
 	retval->set_type(Value::STRING);
 }
