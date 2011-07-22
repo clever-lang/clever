@@ -237,7 +237,7 @@ public:
 	/**
 	 * Create a CallableValue to represent a named function.
 	 */
-	explicit CallableValue(const CString* name)
+	explicit CallableValue(const CString* const name)
 		: Value(), m_call_type(NONE), m_context(NULL) {
 		set_name(name);
 	}
@@ -245,7 +245,7 @@ public:
 	/**
 	 * Create a CallableValue able to represent a method.
 	 */
-	CallableValue(const CString* name, Type* type)
+	CallableValue(const CString* const name, const Type* const type)
 		: Value(), m_call_type(NONE), m_context(NULL) {
 		set_name(name);
 		set_type_ptr(type);
@@ -257,17 +257,17 @@ public:
 		}
 	}
 
-	void set_handler(Function* handler) throw() {
+	void set_handler(const Function* const handler) throw() {
 		m_call_type = handler->isInternal() ? FAR : NEAR;
 		m_handler.func = handler;
 	}
 
-	void set_handler(const Method* handler) throw() {
+	void set_handler(const Method* const handler) throw() {
 		m_call_type = handler->isInternal() ? FAR : NEAR;
 		m_handler.method = handler;
 	}
 
-	void set_context(Value* value) throw() { m_context = value; }
+	void set_context(Value* const value) throw() { m_context = value; }
 	Value* get_context() const throw() { return m_context; }
 
 	const FunctionPtr get_function_ptr() const throw() { return m_handler.func->get_ptr(); }
@@ -286,8 +286,8 @@ public:
 	 *
 	 * Remember to set a context before calling a non-static method.
 	 */
-	void call(Value* result, const ValueVector* args) const throw() {
-		const Type* type_ptr = get_type_ptr();
+	void call(Value* const result, const ValueVector* const args) const throw() {
+		const Type* const type_ptr = get_type_ptr();
 
 		if (UNEXPECTED(m_call_type == NEAR)) {
 			/* TODO: throw error here */
@@ -305,7 +305,7 @@ public:
 	}
 private:
 	union {
-		Function* func;
+		const Function* func;
 		const Method* method;
 	} m_handler;
 
