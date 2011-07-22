@@ -117,7 +117,7 @@ public:
 	 */
 	void dump() const throw();
 	const char* getOpName(Opcodes) const throw();
-	std::string dumpOp(const char*, Value*) const throw();
+	std::string dumpOp(const char* const, Value* const) const throw();
 private:
 	Opcodes m_op_type;
 	VM::opcode_handler m_handler;

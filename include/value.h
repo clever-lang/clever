@@ -123,14 +123,14 @@ public:
 
 	void set_type(int type) { m_type = type; }
 	int get_type() const { return m_type; }
-	int hasSameType(Value* value) const { return m_type == value->get_type(); }
+	int hasSameType(const Value* const value) const { return m_type == value->get_type(); }
 
 	const Type* get_type_ptr() const { return m_type_ptr; }
-	void set_type_ptr(const Type* ptr) { m_type_ptr = ptr; }
+	void set_type_ptr(const Type* const ptr) { m_type_ptr = ptr; }
 
 	bool hasName() const { return m_name != NULL; }
 	const CString* get_name() const { return m_name; }
-	void set_name(const CString* name) { m_name = name; }
+	void set_name(const CString* const name) { m_name = name; }
 
 	int get_status() { return m_status; }
 	void set_status(int status) { m_status = status; }
@@ -164,7 +164,7 @@ public:
 	bool isUserValue() const { return m_type == USER; }
 
 	void setInteger(int64_t i) { m_type = INTEGER; m_data.l_value = i; }
-	void setString(const CString* s) { m_type = STRING; m_data.s_value = s; }
+	void setString(const CString* const s) { m_type = STRING; m_data.s_value = s; }
 	void setDouble(double d) { m_type = DOUBLE; m_data.d_value = d; }
 	void setBoolean(bool b) { m_type = BOOLEAN; m_data.b_value = b; }
 	void setVector(ValueVector* v) { m_type = VECTOR; m_data.v_value = v; }
@@ -178,7 +178,7 @@ public:
 
 	const ValueData *get_data() const { return &m_data; }
 
-	void copy(const Value* value) throw() {
+	void copy(const Value* const value) throw() {
 		std::memcpy(&m_data, value->get_data(), sizeof(ValueData));
 		m_type = value->get_type();
 	}

@@ -103,7 +103,7 @@ void Compiler::error(std::string message, const location& loc) throw() {
 /**
  * Performs a type compatible checking
  */
-bool Compiler::checkCompatibleTypes(Value* lhs, Value* rhs) throw() {
+bool Compiler::checkCompatibleTypes(const Value* const lhs, const Value* const rhs) throw() {
 	/**
 	 * Constants with different type cannot performs operation
 	 */

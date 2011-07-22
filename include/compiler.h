@@ -74,7 +74,7 @@ public:
 	/**
 	 * Checks if the supplied value pointers are compatibles
 	 */
-	static bool checkCompatibleTypes(Value*, Value*) throw();
+	static bool checkCompatibleTypes(const Value* const, const Value* const) throw();
 	/**
 	 * Performs a constant folding and constant propagation optimization
 	 */

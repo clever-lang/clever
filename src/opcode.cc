@@ -84,7 +84,7 @@ const char* Opcode::getOpName(Opcodes op) const throw() {
 /**
  * Dumps an operand
  */
-std::string Opcode::dumpOp(const char* label, Value* op) const throw() {
+std::string Opcode::dumpOp(const char* const label, Value* const op) const throw() {
 	if (op) {
 		std::ostringstream str;
 
