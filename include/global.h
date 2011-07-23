@@ -45,6 +45,26 @@
 #endif
 
 /**
+ * Always inline (disregard -O options)
+ */
+#if defined(__GNUC__) && __GNUC__ >= 3
+# define CLEVER_FORCE_INLINE inline __attribute__((always_inline))
+#elif defined(_MSC_VER)
+# define CLEVER_FORCE_INLINE __forceinline
+#else
+# define CLEVER_FORCE_INLINE
+#endif
+
+/**
+ * Attribute for pure function
+ */
+#ifdef __GNUC__
+# define CLEVER_PURE_FUNC __attribute__((pure))
+#else
+# define CLEVER_PURE_FUNC 
+#endif
+
+/**
  * Try to use register to pass parameters
  */
 #if defined(__GNUC__) && CLEVER_GCC_VERSION >= 3004 && defined(__i386__)
