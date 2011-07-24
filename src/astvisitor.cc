@@ -519,12 +519,10 @@ AST_VISITOR(CodeGenVisitor, AssignExpr) {
  * Import statement
  */
 AST_VISITOR(CodeGenVisitor, ImportStmt) {
-	const CString* package = expr->get_package()->get_value()->get_name();
-	ASTNode* module = expr->get_module();
+	const CString* const package = expr->get_package_name();
+	const CString* const module_name = expr->get_module_name();
 
-	if (module) {
-		const CString* module_name = module->get_value()->get_name();
-
+	if (module_name) {
 		Compiler::import(m_ssa.currentScope(), package, module_name);
 	} else {
 		Compiler::import(m_ssa.currentScope(), package);

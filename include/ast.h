@@ -830,12 +830,12 @@ public:
 		}
 	}
 
-	ASTNode* get_package() throw() {
-		return m_package;
+	const CString* const get_package_name() throw() {
+		return m_package->get_value()->get_name();
 	}
 
-	ASTNode* get_module() throw() {
-		return m_module;
+	const CString* const get_module_name() throw() {
+		return m_module ? m_module->get_value()->get_name() : NULL;
 	}
 
 	void accept(ASTVisitor& visitor) throw() {
