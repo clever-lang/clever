@@ -23,6 +23,8 @@ RE2C=re2c
 BUILDDIR=build/
 # Core source dir
 SRCDIR=src/
+# Compiler dir
+COMPDIR=compiler/
 # VM dir
 VMDIR=vm/
 # Type dir
@@ -60,8 +62,8 @@ all: clever test
 $(BUILDDIR)driver.o: $(INTERPDIR)driver.cc $(BUILDDIR)parser.o
 	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)driver.o $(INTERPDIR)driver.cc
 
-$(BUILDDIR)main.o: $(SRCDIR)main.cc
-	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)main.o $(SRCDIR)main.cc
+$(BUILDDIR)main.o: $(INTERPDIR)main.cc
+	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)main.o $(INTERPDIR)main.cc
 
 $(BUILDDIR)parser.cc: $(INTERPDIR)parser.y
 	$(BISON) -d -o$(BUILDDIR)parser.cc $(INTERPDIR)parser.y
@@ -75,11 +77,11 @@ $(BUILDDIR)scanner.cc: $(INTERPDIR)scanner.re $(BUILDDIR)parser.o
 $(BUILDDIR)scanner.o: $(BUILDDIR)scanner.cc $(BUILDDIR)cstring.o
 	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)scanner.o $(BUILDDIR)scanner.cc
 
-$(BUILDDIR)cstring.o: $(SRCDIR)cstring.cc
-	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)cstring.o $(SRCDIR)cstring.cc
+$(BUILDDIR)cstring.o: $(COMPDIR)cstring.cc
+	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)cstring.o $(COMPDIR)cstring.cc
 
-$(BUILDDIR)compiler.o: $(SRCDIR)compiler.cc $(BUILDDIR)driver.o $(BUILDDIR)int.o $(BUILDDIR)double.o $(BUILDDIR)pkgmanager.o $(BUILDDIR)astvisitor.o
-	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)compiler.o $(SRCDIR)compiler.cc
+$(BUILDDIR)compiler.o: $(COMPDIR)compiler.cc $(BUILDDIR)driver.o $(BUILDDIR)int.o $(BUILDDIR)double.o $(BUILDDIR)pkgmanager.o $(BUILDDIR)astvisitor.o
+	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)compiler.o $(COMPDIR)compiler.cc
 
 $(BUILDDIR)astvisitor.o: $(INTERPDIR)astvisitor.cc
 	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)astvisitor.o $(INTERPDIR)astvisitor.cc
@@ -90,8 +92,8 @@ $(BUILDDIR)vm.o: $(VMDIR)vm.cc
 $(BUILDDIR)opcode.o: $(VMDIR)opcode.cc
 	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)opcode.o $(VMDIR)opcode.cc
 
-$(BUILDDIR)pkgmanager.o: $(SRCDIR)pkgmanager.cc $(BUILDDIR)std_pkg.o
-	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)pkgmanager.o $(SRCDIR)pkgmanager.cc
+$(BUILDDIR)pkgmanager.o: $(COMPDIR)pkgmanager.cc $(BUILDDIR)std_pkg.o
+	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)pkgmanager.o $(COMPDIR)pkgmanager.cc
 
 # Types
 $(BUILDDIR)double.o: $(TYPEDIR)double.cc

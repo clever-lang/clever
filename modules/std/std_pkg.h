@@ -30,7 +30,7 @@
 
 #include "std/io.h"
 #include "std/math.h"
-#include "module.h"
+#include "compiler/module.h"
 
 namespace clever { namespace std_pkg {
 

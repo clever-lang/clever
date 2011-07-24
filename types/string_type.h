@@ -27,7 +27,7 @@
 #define CLEVER_STRING_H
 
 #include "type.h"
-#include "value.h"
+#include "compiler/value.h"
 
 namespace clever {
 

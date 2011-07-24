@@ -25,7 +25,7 @@
  * $Id: compiler.cc 315 2011-01-18 23:24:26Z felipensp $
  */
 
-#include "cstring.h"
+#include "compiler/cstring.h"
 #include "std_pkg.h"
 
 namespace clever { namespace std_pkg {

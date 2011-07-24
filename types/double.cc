@@ -25,7 +25,7 @@
 
 #include <iostream>
 #include <cmath>
-#include "cstring.h"
+#include "compiler/cstring.h"
 #include "type.h"
 #include "double.h"
 

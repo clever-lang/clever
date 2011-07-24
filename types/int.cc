@@ -24,7 +24,7 @@
  */
 
 #include <iostream>
-#include "cstring.h"
+#include "compiler/cstring.h"
 #include "type.h"
 #include "int.h"
 

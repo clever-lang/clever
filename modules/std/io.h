@@ -28,7 +28,7 @@
 #ifndef CLEVER_STD_H
 #define CLEVER_STD_H
 
-#include "module.h"
+#include "compiler/module.h"
 
 namespace clever { namespace std_pkg {
 

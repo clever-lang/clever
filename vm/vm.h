@@ -28,7 +28,7 @@
 
 #include <vector>
 #include <stack>
-#include "global.h"
+#include "compiler/global.h"
 
 /**
  * Opcode handler arguments

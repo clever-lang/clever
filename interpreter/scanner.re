@@ -27,8 +27,8 @@
 #include "interpreter/scanner.h"
 #include "parser.hh"
 #include "interpreter/ast.h"
-#include "cstring.h"
-#include "typetable.h"
+#include "compiler/cstring.h"
+#include "compiler/typetable.h"
 
 namespace clever {
 

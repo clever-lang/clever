@@ -28,7 +28,7 @@
 
 #include <stack>
 #include "parser.hh"
-#include "compiler.h"
+#include "compiler/compiler.h"
 
 namespace clever { namespace ast {
 

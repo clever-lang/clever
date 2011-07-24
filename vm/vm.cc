@@ -25,10 +25,10 @@
 
 #include <cstdlib>
 #include <iostream>
-#include "compiler.h"
+#include "compiler/compiler.h"
 #include "opcode.h"
 #include "vm.h"
-#include "type.h"
+#include "types/type.h"
 
 namespace clever {
 

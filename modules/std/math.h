@@ -29,8 +29,8 @@
 #ifndef CLEVER_STD_MATH_H
 #define CLEVER_STD_MATH_H
 
-#include "module.h"
-#include "value.h"
+#include "compiler/module.h"
+#include "compiler/value.h"
 
 namespace clever { namespace std_pkg {
 

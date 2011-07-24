@@ -28,8 +28,8 @@
 
 #include <vector>
 #include <set>
-#include "value.h"
-#include "refcounted.h"
+#include "compiler/value.h"
+#include "compiler/refcounted.h"
 #include "astvisitor.h"
 #include "location.hh"
 

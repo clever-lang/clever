@@ -28,7 +28,7 @@
 
 #include <cstring>
 #include <tr1/unordered_map>
-#include "module.h"
+#include "compiler/module.h"
 
 namespace clever {
 

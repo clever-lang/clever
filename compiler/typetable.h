@@ -27,7 +27,7 @@
 #define CLEVER_TYPETABLE_H
 
 #include <tr1/unordered_map>
-#include "type.h"
+#include "types/type.h"
 
 namespace clever {
 

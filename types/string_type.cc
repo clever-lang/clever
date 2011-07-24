@@ -27,7 +27,7 @@
 #include <sstream>
 #include <cstdlib>
 #include <stdexcept>
-#include "cstring.h"
+#include "compiler/cstring.h"
 #include "type.h"
 #include "string_type.h"
 

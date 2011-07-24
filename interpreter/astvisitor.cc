@@ -25,8 +25,8 @@
 
 #include "ast.h"
 #include "astvisitor.h"
-#include "typetable.h"
-#include "compiler.h"
+#include "compiler/typetable.h"
+#include "compiler/compiler.h"
 
 namespace clever { namespace ast {
 

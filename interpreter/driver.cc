@@ -27,7 +27,7 @@
 #include "driver.h"
 #include "parser.hh"
 #include "position.hh"
-#include "cstring.h"
+#include "compiler/cstring.h"
 #include "scanner.h"
 #include "vm/vm.h"
 
