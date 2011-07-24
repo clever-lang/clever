@@ -101,7 +101,7 @@ int Driver::parseFile(const std::string& filename) {
 /**
  * Parses a string
  */
-int Driver::parseStr(const std::string& code, const bool importStd) {
+int Driver::parseStr(const std::string& code, bool importStd) {
 	ScannerState new_scanner;
 	Parser parser(*this, new_scanner);
 	int result = 0;

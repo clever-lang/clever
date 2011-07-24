@@ -84,6 +84,8 @@ void Compiler::buildIR() throw() {
 	m_ast->accept(m_cgvisitor);
 
 	m_cgvisitor.shutdown();
+	
+	m_ast->clearNodes();
 }
 
 /**
