@@ -75,7 +75,7 @@ public:
 	void readFile() throw();
 
 	/* Run the parser */
-	int parseStr(const std::string&);
+	int parseStr(const std::string&, const bool importStd);
 	int parseFile(const std::string&);
 
 	/* Error handling */
