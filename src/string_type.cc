@@ -34,6 +34,31 @@
 namespace clever {
 
 /**
+ * String:replace()
+ * Replace part of the string and returns the new one.
+ */
+CLEVER_TYPE_METHOD(String::replace) {
+	int needleLength, needlePos;
+	std::string newString = value->toString();
+
+	// Initial replace
+	needlePos = newString.find(args->at(0)->getString(), 0);
+	needleLength = args->at(0)->getString().length();
+
+	do {
+		// Do the replace
+		newString = newString.replace(needlePos, needleLength, args->at(1)->getString());
+
+		// Find the next one
+		needlePos = newString.find(args->at(0)->getString(), 0);
+		needleLength = args->at(0)->getString().length();
+	} while (needlePos != std::string::npos);
+
+	retval->setString(CSTRING(newString));
+	retval->set_type(Value::STRING);
+}
+
+/**
  * String::substring()
  * Retrieves a substring from the original one.
  */
@@ -83,6 +108,7 @@ CLEVER_TYPE_METHOD(String::toInteger) {
 }
 
 void String::Init() {
+	addMethod(new Method("replace", (MethodPtr)&String::replace));
 	addMethod(new Method("substring", (MethodPtr)&String::substring));
 	addMethod(new Method("toFloat", (MethodPtr)&String::toFloat));
 	addMethod(new Method("toInteger", (MethodPtr)&String::toInteger));

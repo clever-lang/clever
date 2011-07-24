@@ -39,6 +39,7 @@ public:
 	void Init();
 
 	/* Type methods */
+	static CLEVER_TYPE_METHOD(replace);
 	static CLEVER_TYPE_METHOD(substring);
 	static CLEVER_TYPE_METHOD(toFloat);
 	static CLEVER_TYPE_METHOD(toInteger);
