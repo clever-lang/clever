@@ -100,6 +100,13 @@ public:
 		}
 	}
 	/**
+	 * Clear the AST tree
+	 */
+	void clear() throw() {
+		clearNodes();
+		m_nodes.resize(0);
+	}
+	/**
 	 * Checks if the node has child
 	 */
 	bool hasNodes() const throw() { return m_nodes.size() != 0; }

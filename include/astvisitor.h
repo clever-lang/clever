@@ -99,17 +99,29 @@ public:
 	typedef std::stack<OpcodeStack> JmpStack;
 	typedef std::stack<Function*> FuncDeclStack;
 
-	CodeGenVisitor() {}
-	~CodeGenVisitor() {}
+	CodeGenVisitor()
+		: m_interactive(false) {
+		m_ssa.beginScope();		
+	}
+	~CodeGenVisitor() {
+		m_ssa.endScope();	
+	}
 
 	void init() throw() {
-		m_ssa.beginScope();
+		m_opcodes.clear();
 		m_opcodes.reserve(10);
 	}
 
-	void shutdown() throw() {
-		m_ssa.endScope();
-	}
+	void shutdown() throw() { }
+	
+	/**
+	 * Set the interactive mode
+	 */
+	void setInteractive() throw() { m_interactive = true; }
+	/**
+	 * Returns the interactive mode state
+	 */
+	bool isInteractive() throw() { return m_interactive; }
 
 	/**
 	 * Returns the opcode list
@@ -142,10 +154,11 @@ public:
 	AST_VISITOR_DECL(AssignExpr);
 	AST_VISITOR_DECL(ImportStmt);
 	AST_VISITOR_DECL(FuncDeclaration);
-        AST_VISITOR_DECL(ClassDeclaration);
+	AST_VISITOR_DECL(ClassDeclaration);
 	AST_VISITOR_DECL(ReturnStmt);
 
 private:
+	bool m_interactive;
 	OpcodeList m_opcodes;
 	SSA m_ssa;
 	JmpStack m_brks;

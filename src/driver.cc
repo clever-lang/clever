@@ -38,9 +38,10 @@ Driver::ScannerStack Driver::s_scanners;
 /**
  * Executes the script
  */
-void Interpreter::execute() {
+void Interpreter::execute(bool interactive) {
 	VM vm;
 
+	m_compiler.setInteractive();
 	m_compiler.buildIR();
 
 	vm.set_opcodes(m_compiler.getOpcodes());

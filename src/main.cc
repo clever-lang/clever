@@ -103,7 +103,7 @@ int main(int argc, char *argv[]) {
 			while (std::cin) {
 				getline(std::cin, input_line);
 				clever.parseStr(input_line + '\n', false);
-				clever.execute();
+				clever.execute(true);
   			}
   			clever.shutdown();
   			return 0;
@@ -125,7 +125,7 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	clever.execute();
+	clever.execute(false);
 	clever.shutdown();
 
 	return 0;

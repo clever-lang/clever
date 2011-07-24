@@ -54,6 +54,10 @@ public:
 	 */
 	void set_ast(ast::ASTNode* ast) throw() { m_ast = ast; }
 	/**
+	 * Set interactive mode ON
+	 */
+	void setInteractive() throw() { m_cgvisitor.setInteractive(); }
+	/**
 	 * Loads primitive data types
 	 */
 	void loadTypes() throw();

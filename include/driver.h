@@ -108,7 +108,7 @@ class Interpreter : public Driver {
 public:
 	Interpreter() { }
 
-	void execute();
+	void execute(bool interactive);
 	void shutdown();
 private:
 	DISALLOW_COPY_AND_ASSIGN(Interpreter);

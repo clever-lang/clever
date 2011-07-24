@@ -530,7 +530,11 @@ AST_VISITOR(CodeGenVisitor, ImportStmt) {
 		 * Importing an entire package
 		 * e.g. import std;
 		 */
-		Compiler::import(m_ssa.currentScope(), package);
+		if (isInteractive() && m_ssa.currentScope().getNumber() == 1) {
+			Compiler::import(m_ssa.fetchScope(0), package);
+		} else {
+			Compiler::import(m_ssa.currentScope(), package);
+		}
 	}
 }
 

@@ -89,7 +89,7 @@ void Compiler::buildIR() throw() {
 
 	m_cgvisitor.shutdown();
 	
-	m_ast->clearNodes();
+	m_ast->clear();
 }
 
 /**
