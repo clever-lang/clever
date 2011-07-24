@@ -313,6 +313,17 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(CallableValue);
 };
 
+class UserTypeValue : public Value {
+public:
+	UserTypeValue(const CString* const name)
+		: m_name(name) { }
+	
+	~UserTypeValue() { }
+private:
+	const CString* m_name;
+	DISALLOW_COPY_AND_ASSIGN(UserTypeValue);
+};
+
 } // clever
 
 #endif // CLEVER_VALUE_H
