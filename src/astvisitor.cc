@@ -520,11 +520,19 @@ AST_VISITOR(CodeGenVisitor, AssignExpr) {
  */
 AST_VISITOR(CodeGenVisitor, ImportStmt) {
 	const CString* const package = expr->get_package_name();
-	const CString* const module_name = expr->get_module_name();
+	const CString* const module = expr->get_module_name();
 
-	if (module_name) {
-		Compiler::import(m_ssa.currentScope(), package, module_name);
+	if (module) {
+		/*
+		 * Importing an specific module
+		 * e.g. import std.io;
+		 */
+		Compiler::import(m_ssa.currentScope(), package, module);
 	} else {
+		/*
+		 * Importing an entire package
+		 * e.g. import std;
+		 */
 		Compiler::import(m_ssa.currentScope(), package);
 	}
 }
