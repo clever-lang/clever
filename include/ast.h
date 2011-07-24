@@ -895,24 +895,18 @@ public:
 	ClassStmtList() { }
 
 	~ClassStmtList() {
-		{
-			std::list<MethodDeclaration*>::iterator
-			it = m_methods_decl.begin(), end = m_methods_decl.end();
+		std::list<MethodDeclaration*>::const_iterator
+			it_method = m_methods_decl.begin(), it_method_end = m_methods_decl.end();
+		std::list<AttributeDeclaration*>::const_iterator
+			it_attrib = m_attrib_decl.begin(), it_attrib_end = m_attrib_decl.end();
 
-			while (it != end) {
-				(*it)->delRef();
-				++it;
-			}
+		while (it_method != it_method_end) {
+			(*it_method)->delRef();
+			++it_method;
 		}
-
-		{
-			std::list<AttributeDeclaration*>::iterator
-				it = m_attrib_decl.begin(), end = m_attrib_decl.end();
-
-			while (it != end) {
-				(*it)->delRef();
-				++it;
-			}
+		while (it_attrib != it_attrib_end) {
+			(*it_attrib)->delRef();
+			++it_attrib;
 		}
 	}
 
@@ -930,11 +924,11 @@ public:
 
 	std::list<MethodDeclaration*>& get_methods_decl() throw() { 
 		return m_methods_decl;
-        }
+	}
 
 	std::list<AttributeDeclaration*>& get_attrib_decl() throw() { 
 		return m_attrib_decl;
-        }
+	}
 private:
 	std::list<MethodDeclaration*> m_methods_decl;
 	std::list<AttributeDeclaration*> m_attrib_decl;

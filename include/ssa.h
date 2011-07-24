@@ -39,7 +39,8 @@ typedef std::tr1::unordered_map<const CString*, Value*> ScopeBase;
 
 class Scope : public ScopeBase {
 public:
-	Scope() { }
+	Scope(int number)
+		: m_number(number) { }
 	~Scope() {
 		ScopeBase::const_iterator it = begin(), end_ = end();
 
@@ -48,6 +49,8 @@ public:
 			++it;
 		}
 	}
+	
+	int getNumber() throw() { return m_number; }
 
 	void push(const CString* name, Value* value) {
 		if (EXPECTED(value->hasName())) {
@@ -78,6 +81,8 @@ public:
 	Value* fetch(const Value* value) {
 		return fetch(value->get_name());
 	}
+private:
+	int m_number;
 };
 
 /**
@@ -124,13 +129,16 @@ public:
 	Value* fetchVar(Value* value) throw() {
 		return fetchVar(value->get_name());
 	}
+	
+	Scope& fetchScope(int number) throw() {
+		return at(number);
+	}
 
 	/**
 	 * Creates a new scope block
 	 */
 	void beginScope() throw() {
-		push_back(Scope());
-		++m_scope;
+		push_back(Scope(++m_scope));
 	}
 
 	/**

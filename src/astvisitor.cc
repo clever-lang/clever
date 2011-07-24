@@ -641,13 +641,17 @@ AST_VISITOR(CodeGenVisitor, ReturnStmt) {
  * Generates opcodes for class declaration
  */
 AST_VISITOR(CodeGenVisitor, ClassDeclaration) {
-	ClassDeclaration::DeclarationError error;
-	
+	UserTypeValue* type = new UserTypeValue(expr->get_class_name());
+	ClassDeclaration::DeclarationError error;	
 	bool ok = expr->check(error);
-	const CString* class_name = expr->get_class_name();
+	const CString* const class_name = expr->get_class_name();
 
 	if (ok) {
 		//@TODO
+		
+		m_ssa.pushVar(type);
+		
+		
 	}
 	else {
 		Compiler::errorf(error.get_location(),
