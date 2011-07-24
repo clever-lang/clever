@@ -31,6 +31,7 @@
 #include "ast.h"
 #include "int.h"
 #include "double.h"
+#include "string_type.h"
 #include "astvisitor.h"
 #include "typetable.h"
 
@@ -67,12 +68,15 @@ void Compiler::Init() throw() {
 void Compiler::loadTypes() throw() {
 	Integer* int_type = new Integer;
 	Double* double_type = new Double;
+	String* string_type = new String;
 
 	int_type->Init();
 	double_type->Init();
+	string_type->Init();
 
 	TypeTable::insert(CSTRING("Int"), int_type);
 	TypeTable::insert(CSTRING("Double"), double_type);
+	TypeTable::insert(CSTRING("String"), string_type);
 }
 
 /**
