@@ -82,6 +82,10 @@ public:
 	void error(const clever::location&, const std::string&) const throw();
 	void error(const std::string&) const throw();
 protected:
+	/* Indicates if it's a file is being parsed */
+	bool m_is_file;
+	/* Debug option */
+	bool m_trace_parsing;
 	/* The file path -f */
 	const CString* m_file;
 	/* The source */
@@ -91,10 +95,6 @@ protected:
 	/* Compiler */
 	Compiler m_compiler;
 private:
-	/* Indicates if it's a file is being parsed */
-	bool m_is_file;
-	/* Debug option */
-	bool m_trace_parsing;
 	/* Scanners stack */
 	static ScannerStack s_scanners;
 

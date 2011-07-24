@@ -72,7 +72,7 @@ void VM::error(const char* message) throw() {
  */
 void VM::run() throw() {
 	long next_op;
-	unsigned int last_op = m_opcodes->size();
+	long last_op = m_opcodes->size();
 
 	for (next_op = 0; next_op < last_op && next_op >= 0; ++next_op) {
 		Opcode& opcode = *(*m_opcodes)[next_op];
@@ -529,7 +529,6 @@ CLEVER_VM_HANDLER(VM::arg_recv_handler) {
  */
 CLEVER_VM_HANDLER(VM::mcall_handler) {
 	CallableValue* var = static_cast<CallableValue*>(opcode.get_op1());
-	const Type* var_type = var->get_type_ptr();
 	Value* args = opcode.get_op2();
 	Value* result = opcode.get_result();
 	const ValueVector* func_args = args ? args->getVector() : NULL;

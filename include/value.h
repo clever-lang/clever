@@ -230,7 +230,7 @@ public:
 
 	/* TODO: generate name for anonymous functions, disable set_name(). */
 	CallableValue()
-		: m_context(NULL), m_call_type(NONE) { }
+		: m_call_type(NONE), m_context(NULL) { }
 
 	/**
 	 * Create a CallableValue to represent a named function.
@@ -307,9 +307,8 @@ private:
 		const Method* method;
 	} m_handler;
 
-	Value* m_context;
-
 	CallType m_call_type;
+	Value* m_context;
 
 	DISALLOW_COPY_AND_ASSIGN(CallableValue);
 };

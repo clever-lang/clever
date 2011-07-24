@@ -370,7 +370,6 @@ AST_VISITOR(CodeGenVisitor, LogicExpr) {
 	Value* lhs;
 	Value* rhs;
 	Value* result = NULL;
-	long pos_after = 0;
 
 	expr->get_lhs()->accept(*this);
 	expr->get_rhs()->accept(*this);

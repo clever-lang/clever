@@ -140,13 +140,13 @@ private:
 		long offset;
 	} m_info;
 
-	const Type* m_return;
-	FunctionType m_type;
-	FunctionArgs m_args;
-
-	Value* m_vars;
 	std::string m_name;
+	FunctionType m_type;
 	int m_num_args;
+	const Type* m_return;
+	FunctionArgs m_args;
+	Value* m_vars;	
+
 };
 
 /**
