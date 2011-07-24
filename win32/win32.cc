@@ -61,10 +61,10 @@ void CreateBackgroundProcess(std::string cline) {
 	StartupInfo.wShowWindow = SW_HIDE;
 
 	if (CreateProcess(NULL, LPSTR(cline.c_str()), NULL, NULL, false, CREATE_NO_WINDOW, NULL, NULL, &StartupInfo, &ProcInfo)) {
-		std::cout << "Background process created (PID: " << ProcInfo.dwProcessId << ")";
+		std::cout << "Background process created (PID: " << ProcInfo.dwProcessId << ")" << std::endl;
 	} else {
 		GetLastErrorStr("CreateProcess",err);
-		std::cout << "Background process creation failed: " << err;
+		std::cout << "Background process creation failed: " << err << std::endl;
 	}
 }
 
