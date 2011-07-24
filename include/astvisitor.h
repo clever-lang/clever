@@ -55,9 +55,9 @@ class FuncDeclaration;
 class ClassDeclaration;
 class ReturnStmt;
 
-#define AST_VISITOR(type, exprtype) void type::visit(exprtype* expr) throw()
-#define AST_VISITOR_DECL_VIRTUAL(type) virtual void visit(type* expr) throw() = 0
-#define AST_VISITOR_DECL(type) void visit(type* expr) throw()
+#define AST_VISITOR(type, exprtype) void type::visit(exprtype* const expr) throw()
+#define AST_VISITOR_DECL_VIRTUAL(type) virtual void visit(type* const expr) throw() = 0
+#define AST_VISITOR_DECL(type) void visit(type* const expr) throw()
 
 /**
  * AST Visitor
