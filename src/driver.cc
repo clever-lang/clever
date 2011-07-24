@@ -101,13 +101,17 @@ int Driver::parseFile(const std::string& filename) {
 /**
  * Parses a string
  */
-int Driver::parseStr(const std::string& code) {
+int Driver::parseStr(const std::string& code, const bool importStd) {
 	ScannerState new_scanner;
 	Parser parser(*this, new_scanner);
 	int result = 0;
 
 	/* Save the source code */
-	m_source = code;
+	if (importStd) {
+		m_source = std::string("import std;") + code;
+	} else {
+		m_source = code;
+	}
 
 	/* Set the source code to scanner read it */
 	s_scanners.push(&new_scanner);
