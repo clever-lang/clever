@@ -524,7 +524,11 @@ AST_VISITOR(CodeGenVisitor, ImportStmt) {
 		 * Importing an specific module
 		 * e.g. import std.io;
 		 */
-		Compiler::import(m_ssa.currentScope(), package, module);
+		if (isInteractive() && m_ssa.currentScope().getNumber() == 1) {
+			Compiler::import(m_ssa.fetchScope(0), package, module);
+		} else {
+			Compiler::import(m_ssa.currentScope(), package, module);
+		}
 	} else {
 		/**
 		 * Importing an entire package

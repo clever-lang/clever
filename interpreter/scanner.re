@@ -24,9 +24,9 @@
  */
 
 #include <cstdio>
-#include "scanner.h"
+#include "interpreter/scanner.h"
 #include "parser.hh"
-#include "ast.h"
+#include "interpreter/ast.h"
 #include "cstring.h"
 #include "typetable.h"
 

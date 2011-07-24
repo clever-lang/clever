@@ -28,11 +28,11 @@
 #include <cstdarg>
 #include <vector>
 #include "compiler.h"
-#include "ast.h"
-#include "int.h"
-#include "double.h"
-#include "string_type.h"
-#include "astvisitor.h"
+#include "interpreter/ast.h"
+#include "types/int.h"
+#include "types/double.h"
+#include "types/string_type.h"
+#include "interpreter/astvisitor.h"
 #include "typetable.h"
 
 namespace clever {

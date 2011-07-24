@@ -24,7 +24,7 @@
  */
 
 #include <iostream>
-#include "driver.h"
+#include "interpreter/driver.h"
 #ifdef _WIN32
 #include "win32.h"
 #endif

@@ -31,10 +31,10 @@
 #include <sstream>
 #include "module.h"
 #include "pkgmanager.h"
-#include "vm.h"
-#include "opcode.h"
+#include "vm/vm.h"
+#include "vm/opcode.h"
 #include "location.hh"
-#include "astvisitor.h"
+#include "interpreter/astvisitor.h"
 
 namespace clever {
 

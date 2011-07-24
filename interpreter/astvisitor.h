@@ -26,9 +26,9 @@
 #ifndef CLEVER_ASTVISITOR_H
 #define CLEVER_ASTVISITOR_H
 
-#include "vm.h"
+#include "vm/vm.h"
 #include "ssa.h"
-#include "opcode.h"
+#include "vm/opcode.h"
 
 namespace clever { namespace ast {
 

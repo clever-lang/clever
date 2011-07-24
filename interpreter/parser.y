@@ -31,8 +31,8 @@
  */
 
 #include <stack>
-#include "scanner.h"
-#include "ast.h"
+#include "interpreter/scanner.h"
+#include "interpreter/ast.h"
 
 #define YYSTYPE ast::ASTNode*
 
@@ -56,7 +56,7 @@ class Driver;
 %error-verbose
 
 %code {
-#include "driver.h"
+#include "interpreter/driver.h"
 
 namespace clever {
 

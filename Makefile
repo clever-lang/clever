@@ -23,6 +23,12 @@ RE2C=re2c
 BUILDDIR=build/
 # Core source dir
 SRCDIR=src/
+# VM dir
+VMDIR=vm/
+# Type dir
+TYPEDIR=types/
+# Interpreter dir
+INTERPDIR=interpreter/
 # Module dir
 MODDIR=modules/
 # Win32 port dir
@@ -51,20 +57,20 @@ clever: $(OBJECTS)
 
 all: clever test
 
-$(BUILDDIR)driver.o: $(SRCDIR)driver.cc $(BUILDDIR)parser.o
-	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)driver.o $(SRCDIR)driver.cc
+$(BUILDDIR)driver.o: $(INTERPDIR)driver.cc $(BUILDDIR)parser.o
+	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)driver.o $(INTERPDIR)driver.cc
 
 $(BUILDDIR)main.o: $(SRCDIR)main.cc
 	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)main.o $(SRCDIR)main.cc
 
-$(BUILDDIR)parser.cc: $(SRCDIR)parser.y
-	$(BISON) -d -o$(BUILDDIR)parser.cc $(SRCDIR)parser.y
+$(BUILDDIR)parser.cc: $(INTERPDIR)parser.y
+	$(BISON) -d -o$(BUILDDIR)parser.cc $(INTERPDIR)parser.y
 
 $(BUILDDIR)parser.o: $(BUILDDIR)parser.cc
 	$(CXX) $(CXXFLAGS2) -o $(BUILDDIR)parser.o $(BUILDDIR)parser.cc
 
-$(BUILDDIR)scanner.cc: $(SRCDIR)scanner.re $(BUILDDIR)parser.o
-	$(RE2C) --case-insensitive -b -c -o $(BUILDDIR)scanner.cc $(SRCDIR)scanner.re
+$(BUILDDIR)scanner.cc: $(INTERPDIR)scanner.re $(BUILDDIR)parser.o
+	$(RE2C) --case-insensitive -b -c -o $(BUILDDIR)scanner.cc $(INTERPDIR)scanner.re
 
 $(BUILDDIR)scanner.o: $(BUILDDIR)scanner.cc $(BUILDDIR)cstring.o
 	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)scanner.o $(BUILDDIR)scanner.cc
@@ -75,27 +81,27 @@ $(BUILDDIR)cstring.o: $(SRCDIR)cstring.cc
 $(BUILDDIR)compiler.o: $(SRCDIR)compiler.cc $(BUILDDIR)driver.o $(BUILDDIR)int.o $(BUILDDIR)double.o $(BUILDDIR)pkgmanager.o $(BUILDDIR)astvisitor.o
 	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)compiler.o $(SRCDIR)compiler.cc
 
-$(BUILDDIR)astvisitor.o: $(SRCDIR)astvisitor.cc
-	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)astvisitor.o $(SRCDIR)astvisitor.cc
+$(BUILDDIR)astvisitor.o: $(INTERPDIR)astvisitor.cc
+	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)astvisitor.o $(INTERPDIR)astvisitor.cc
 
-$(BUILDDIR)vm.o: $(SRCDIR)vm.cc
-	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)vm.o $(SRCDIR)vm.cc
+$(BUILDDIR)vm.o: $(VMDIR)vm.cc
+	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)vm.o $(VMDIR)vm.cc
 
-$(BUILDDIR)opcode.o: $(SRCDIR)opcode.cc
-	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)opcode.o $(SRCDIR)opcode.cc
+$(BUILDDIR)opcode.o: $(VMDIR)opcode.cc
+	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)opcode.o $(VMDIR)opcode.cc
 
 $(BUILDDIR)pkgmanager.o: $(SRCDIR)pkgmanager.cc $(BUILDDIR)std_pkg.o
 	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)pkgmanager.o $(SRCDIR)pkgmanager.cc
 
 # Types
-$(BUILDDIR)double.o: $(SRCDIR)double.cc
-	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)double.o $(SRCDIR)double.cc
+$(BUILDDIR)double.o: $(TYPEDIR)double.cc
+	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)double.o $(TYPEDIR)double.cc
 
-$(BUILDDIR)int.o: $(SRCDIR)int.cc
-	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)int.o $(SRCDIR)int.cc
+$(BUILDDIR)int.o: $(TYPEDIR)int.cc
+	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)int.o $(TYPEDIR)int.cc
 
-$(BUILDDIR)string_type.o: $(SRCDIR)string_type.cc
-	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)string_type.o $(SRCDIR)string_type.cc
+$(BUILDDIR)string_type.o: $(TYPEDIR)string_type.cc
+	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)string_type.o $(TYPEDIR)string_type.cc
 
 # Standard package
 $(BUILDDIR)std_pkg.o: $(MODDIR)std/io.cc $(MODDIR)std/math.cc $(MODDIR)std/std_pkg.cc

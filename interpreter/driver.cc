@@ -29,7 +29,7 @@
 #include "position.hh"
 #include "cstring.h"
 #include "scanner.h"
-#include "vm.h"
+#include "vm/vm.h"
 
 namespace clever {
 
