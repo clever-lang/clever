@@ -437,7 +437,7 @@ AST_VISITOR(CodeGenVisitor, BreakNode) {
  * Generates opcode for function call
  */
 AST_VISITOR(CodeGenVisitor, FunctionCall) {
-	const CString* name = expr->get_func()->get_name();
+	const CString* const name = expr->get_func_name();
 	Value* fvalue = m_ssa.fetchVar(name);
 	const Function* func;
 	ASTNode* args = expr->get_args();
@@ -477,7 +477,7 @@ AST_VISITOR(CodeGenVisitor, FunctionCall) {
  */
 AST_VISITOR(CodeGenVisitor, MethodCall) {
 	Value* variable = getValue(expr->get_variable());
-	CallableValue* call = new CallableValue(expr->get_method()->get_value()->get_name());
+	CallableValue* call = new CallableValue(expr->get_method_name());
 	const Method* method = variable->get_type_ptr()->getMethod(call->get_name());
 	ASTNode* args = expr->get_args();
 	Value* arg_values = NULL;
@@ -521,13 +521,13 @@ AST_VISITOR(CodeGenVisitor, ImportStmt) {
 	const CString* const module = expr->get_module_name();
 
 	if (module) {
-		/*
+		/**
 		 * Importing an specific module
 		 * e.g. import std.io;
 		 */
 		Compiler::import(m_ssa.currentScope(), package, module);
 	} else {
-		/*
+		/**
 		 * Importing an entire package
 		 * e.g. import std;
 		 */
@@ -539,7 +539,7 @@ AST_VISITOR(CodeGenVisitor, ImportStmt) {
  * Function declaration
  */
 AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
-	const CString* name = expr->get_name()->get_value()->get_name();
+	const CString* name = expr->get_name();
 	CallableValue* func = new CallableValue(name);
 	Function* user_func = new Function(name->str());
 	ast::ArgumentDeclList* args = static_cast<ast::ArgumentDeclList*>(expr->get_args());

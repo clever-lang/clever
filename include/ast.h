@@ -678,7 +678,7 @@ public:
 		}
 	}
 
-	ASTNode* get_name() const throw() { return m_name; }
+	const CString* const get_name() const throw() { return m_name->get_value()->get_name(); }
 	ASTNode* get_args() const throw() { return m_args; }
 	ASTNode* get_return() const throw() { return m_return; }
 
@@ -735,7 +735,7 @@ public:
 
 	Value* get_value() const throw() { return m_result; }
 
-	Value* get_func() const throw() { return m_name->get_value(); }
+	const CString* const get_func_name() const throw() { return m_name->get_value()->get_name(); }
 
 	ASTNode* get_args() throw() { return m_args; }
 
@@ -776,7 +776,7 @@ public:
 	}
 
 	ASTNode* get_variable() const throw() { return m_var; }
-	ASTNode* get_method() const throw() { return m_method; }
+	const CString* const get_method_name() const throw() { return m_method->get_value()->get_name(); }
 	ASTNode* get_args() const throw() { return m_args; }
 
 	Value* get_value() const throw() { return m_result; }
@@ -1003,7 +1003,7 @@ public:
 		std::list<MethodDeclaration*>::const_iterator it2;
 		
 		for (it2 = methods.begin(); it2 != methods.end(); ++it2) {
-			const std::string& str = (*it2)->get_name()->get_value()->get_name()->str();
+			const std::string& str = (*it2)->get_name()->str();
 			
 			if (s.find(str) == s.end()) {
 				s.insert(str);
