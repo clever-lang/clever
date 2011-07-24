@@ -36,14 +36,14 @@ OBJECTS=$(BUILDDIR)parser.o $(BUILDDIR)scanner.o $(BUILDDIR)driver.o \
 	$(BUILDDIR)int.o $(BUILDDIR)io.o $(BUILDDIR)math.o \
 	$(BUILDDIR)pkgmanager.o $(BUILDDIR)compiler.o \
 	$(BUILDDIR)vm.o $(BUILDDIR)astvisitor.o $(BUILDDIR)opcode.o \
-	$(BUILDDIR)main.o $(BUILDDIR)win32.o
+	$(BUILDDIR)string_type.o $(BUILDDIR)main.o $(BUILDDIR)win32.o
 else
 OBJECTS=$(BUILDDIR)parser.o $(BUILDDIR)scanner.o $(BUILDDIR)driver.o \
 	$(BUILDDIR)cstring.o $(BUILDDIR)double.o $(BUILDDIR)std_pkg.o \
 	$(BUILDDIR)int.o $(BUILDDIR)io.o $(BUILDDIR)math.o \
 	$(BUILDDIR)pkgmanager.o $(BUILDDIR)compiler.o \
 	$(BUILDDIR)vm.o $(BUILDDIR)astvisitor.o $(BUILDDIR)opcode.o \
-	$(BUILDDIR)main.o
+	$(BUILDDIR)string_type.o $(BUILDDIR)main.o
 endif
 
 clever: $(OBJECTS)
@@ -84,14 +84,18 @@ $(BUILDDIR)vm.o: $(SRCDIR)vm.cc
 $(BUILDDIR)opcode.o: $(SRCDIR)opcode.cc
 	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)opcode.o $(SRCDIR)opcode.cc
 
+$(BUILDDIR)pkgmanager.o: $(SRCDIR)pkgmanager.cc $(BUILDDIR)std_pkg.o
+	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)pkgmanager.o $(SRCDIR)pkgmanager.cc
+
+# Types
 $(BUILDDIR)double.o: $(SRCDIR)double.cc
 	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)double.o $(SRCDIR)double.cc
 
 $(BUILDDIR)int.o: $(SRCDIR)int.cc
 	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)int.o $(SRCDIR)int.cc
 
-$(BUILDDIR)pkgmanager.o: $(SRCDIR)pkgmanager.cc $(BUILDDIR)std_pkg.o
-	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)pkgmanager.o $(SRCDIR)pkgmanager.cc
+$(BUILDDIR)string_type.o: $(SRCDIR)string_type.cc
+	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)string_type.o $(SRCDIR)string_type.cc
 
 # Standard package
 $(BUILDDIR)std_pkg.o: $(MODDIR)std/io.cc $(MODDIR)std/math.cc $(MODDIR)std/std_pkg.cc
