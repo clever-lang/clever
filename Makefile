@@ -43,14 +43,14 @@ OBJECTS=$(BUILDDIR)parser.o $(BUILDDIR)scanner.o $(BUILDDIR)driver.o \
 	$(BUILDDIR)cstring.o $(BUILDDIR)double.o $(BUILDDIR)std_pkg.o \
 	$(BUILDDIR)int.o $(BUILDDIR)io.o $(BUILDDIR)math.o \
 	$(BUILDDIR)pkgmanager.o $(BUILDDIR)compiler.o \
-	$(BUILDDIR)vm.o $(BUILDDIR)astvisitor.o $(BUILDDIR)opcode.o \
+	$(BUILDDIR)vm.o $(BUILDDIR)cgvisitor.o $(BUILDDIR)opcode.o \
 	$(BUILDDIR)string_type.o $(BUILDDIR)main.o $(BUILDDIR)win32.o
 else
 OBJECTS=$(BUILDDIR)parser.o $(BUILDDIR)scanner.o $(BUILDDIR)driver.o \
 	$(BUILDDIR)cstring.o $(BUILDDIR)double.o $(BUILDDIR)std_pkg.o \
 	$(BUILDDIR)int.o $(BUILDDIR)io.o $(BUILDDIR)math.o \
 	$(BUILDDIR)pkgmanager.o $(BUILDDIR)compiler.o \
-	$(BUILDDIR)vm.o $(BUILDDIR)astvisitor.o $(BUILDDIR)opcode.o \
+	$(BUILDDIR)vm.o $(BUILDDIR)cgvisitor.o $(BUILDDIR)opcode.o \
 	$(BUILDDIR)string_type.o $(BUILDDIR)main.o
 endif
 
@@ -80,11 +80,11 @@ $(BUILDDIR)scanner.o: $(BUILDDIR)scanner.cc $(BUILDDIR)cstring.o
 $(BUILDDIR)cstring.o: $(COMPDIR)cstring.cc
 	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)cstring.o $(COMPDIR)cstring.cc
 
-$(BUILDDIR)compiler.o: $(COMPDIR)compiler.cc $(BUILDDIR)driver.o $(BUILDDIR)int.o $(BUILDDIR)double.o $(BUILDDIR)pkgmanager.o $(BUILDDIR)astvisitor.o
+$(BUILDDIR)compiler.o: $(COMPDIR)compiler.cc $(BUILDDIR)driver.o $(BUILDDIR)int.o $(BUILDDIR)double.o $(BUILDDIR)pkgmanager.o $(BUILDDIR)cgvisitor.o
 	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)compiler.o $(COMPDIR)compiler.cc
 
-$(BUILDDIR)astvisitor.o: $(INTERPDIR)astvisitor.cc
-	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)astvisitor.o $(INTERPDIR)astvisitor.cc
+$(BUILDDIR)cgvisitor.o: $(COMPDIR)cgvisitor.cc
+	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)cgvisitor.o $(COMPDIR)cgvisitor.cc
 
 $(BUILDDIR)vm.o: $(VMDIR)vm.cc
 	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)vm.o $(VMDIR)vm.cc

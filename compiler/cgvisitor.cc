@@ -23,8 +23,7 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "ast.h"
-#include "astvisitor.h"
+#include "cgvisitor.h"
 #include "compiler/typetable.h"
 #include "compiler/compiler.h"
 

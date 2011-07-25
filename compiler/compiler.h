@@ -34,7 +34,8 @@
 #include "vm/vm.h"
 #include "vm/opcode.h"
 #include "location.hh"
-#include "interpreter/astvisitor.h"
+#include "interpreter/ast.h"
+#include "cgvisitor.h"
 
 namespace clever {
 
