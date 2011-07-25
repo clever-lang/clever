@@ -68,7 +68,7 @@ static CLEVER_FUNCTION(readln) {
 /**
  * Initializes Standard module
  */
-void IOModule::Init() throw() {
+void IOModule::init() throw() {
 	const Type* string_type = TypeTable::getType(CSTRING("String"));
 
 	addFunction(new Function("print", &CLEVER_FUNC_NAME(print), -1));

@@ -33,7 +33,7 @@ namespace clever { namespace std_pkg {
 /**
  * Initializes Std package
  */
-void Std::Init() throw() {
+void Std::init() throw() {
 	addModule(CSTRING("io"), new IOModule);
 	addModule(CSTRING("math"), new Math);
 }

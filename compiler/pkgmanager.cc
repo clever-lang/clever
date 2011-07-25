@@ -33,14 +33,14 @@ namespace clever {
 /**
  * Loads native packages
  */
-void PackageManager::Init() throw() {
+void PackageManager::init() throw() {
 	addPackage(CSTRING("std"), new std_pkg::Std());
 }
 
 /**
  * Load an entire package
  */
-void PackageManager::loadPackage(Scope& scope, const CString* package) throw() {
+void PackageManager::loadPackage(Scope& scope, const CString* const package) throw() {
 	PackageMap::const_iterator it = m_packages.find(package);
 
 	if (it != m_packages.end()) {
@@ -53,7 +53,7 @@ void PackageManager::loadPackage(Scope& scope, const CString* package) throw() {
 		/**
 		 * Initializes the package
 		 */
-		it->second->Init();
+		it->second->init();
 		{
 			ModuleMap& modules = it->second->get_modules();
 			ModuleMap::const_iterator it = modules.begin(), end = modules.end();
@@ -75,7 +75,7 @@ void PackageManager::loadPackage(Scope& scope, const CString* package) throw() {
 /**
  * Loads an specific module
  */
-void PackageManager::loadModule(Scope& scope, Module* module) throw() {
+void PackageManager::loadModule(Scope& scope, Module* const module) throw() {
 	/**
 	 * Checks if the module already has been loaded
 	 */
@@ -85,7 +85,7 @@ void PackageManager::loadModule(Scope& scope, Module* module) throw() {
 	/**
 	 * Initializes the module
 	 */
-	module->Init();
+	module->init();
 	{
 		FunctionMap& funcs = module->get_functions();
 		FunctionMap::const_iterator it = funcs.begin(), end = funcs.end();
@@ -110,7 +110,7 @@ void PackageManager::loadModule(Scope& scope, Module* module) throw() {
 /**
  * Loads an specific module package by supplying the package and module names
  */
-void PackageManager::loadModule(Scope& scope, const CString* package, const CString* module) throw() {
+void PackageManager::loadModule(Scope& scope, const CString* const package, const CString* const module) throw() {
 	PackageMap::const_iterator it = m_packages.find(package);
 
 	if (it != m_packages.end()) {
@@ -118,7 +118,7 @@ void PackageManager::loadModule(Scope& scope, const CString* package, const CStr
 		 * Checks if the package is unloaded, in this case initialize it
 		 */
 		if (it->second->isUnloaded()) {
-			it->second->Init();
+			it->second->init();
 		}
 		/**
 		 * Check if the package already has been fully loaded

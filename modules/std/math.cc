@@ -129,7 +129,7 @@ static CLEVER_FUNCTION(abs) {
 /**
  * Load module data
  */
-void Math::Init() throw() {
+void Math::init() throw() {
 	const Type* double_type = TypeTable::getType(CSTRING("Double"));
 
 	addFunction(new Function("sqrt", &CLEVER_FUNC_NAME(sqrt), double_type))

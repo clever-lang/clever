@@ -54,9 +54,9 @@ Compiler::~Compiler() {
 /**
  * Initializes the compiler data
  */
-void Compiler::Init() throw() {
+void Compiler::init() throw() {
 	/* Load package list */
-	s_pkgmanager.Init();
+	s_pkgmanager.init();
 
 	/* Load the primitive data types */
 	loadTypes();
