@@ -33,7 +33,8 @@
 #include "refcounted.h"
 #include "cstring.h"
 #include "global.h"
-#include "module.h"
+#include "method.h"
+#include "function.h"
 
 namespace clever {
 

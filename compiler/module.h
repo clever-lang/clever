@@ -32,6 +32,9 @@
 #include <map>
 #include <tr1/unordered_map>
 #include "global.h"
+#include "function.h"
+#include "method.h"
+#include "classtable.h"
 
 namespace clever {
 
@@ -41,149 +44,11 @@ class Value;
 class Type;
 class Function;
 
-typedef std::vector<Value*> ValueVector;
-
-/**
- * Macros to help on module function declaration
- */
-#define CLEVER_FUNCTION_ARGS const ValueVector* args, Value* retval
-#define CLEVER_FUNC_NAME(name) clv_##name
-#define CLEVER_FUNCTION(name) void CLEVER_FASTCALL CLEVER_FUNC_NAME(name)(CLEVER_FUNCTION_ARGS) throw()
-#define CLEVER_METHOD_ARGS const ValueVector* args, Value* retval, Value* value
-#define CLEVER_METHOD(name) void CLEVER_FASTCALL name(CLEVER_METHOD_ARGS) throw()
-
 /**
  * Module function and method prototype
  */
-typedef void (CLEVER_FASTCALL *FunctionPtr)(CLEVER_FUNCTION_ARGS);
-typedef void (CLEVER_FASTCALL *MethodPtr)(CLEVER_METHOD_ARGS);
-
-typedef std::tr1::unordered_map<std::string, Function*> FunctionMap;
-typedef std::pair<std::string, Function*> FunctionPair;
-
 typedef std::tr1::unordered_map<const CString*, Module*> ModuleMap;
 typedef std::pair<const CString*, Module*> ModulePair;
-
-typedef std::tr1::unordered_map<std::string, const Type*> FunctionArgs;
-typedef std::pair<std::string, const Type*> FunctionArgsPair;
-
-/**
- * Function representation
- */
-class Function {
-public:
-	enum FunctionType { INTERNAL, USER };
-
-	explicit Function(std::string name)
-		: m_name(name), m_type(INTERNAL), m_num_args(0), m_return(NULL) { }
-
-	Function(std::string name, FunctionPtr ptr)
-		: m_name(name), m_type(INTERNAL), m_num_args(0), m_return(NULL) { m_info.ptr = ptr; }
-
-	Function(std::string name, FunctionPtr ptr, const Type* rtype)
-		: m_name(name), m_type(INTERNAL), m_num_args(0), m_return(rtype) { m_info.ptr = ptr; }
-
-	Function(std::string name, FunctionPtr ptr, int numargs)
-		: m_name(name), m_type(INTERNAL), m_num_args(numargs), m_return(NULL) { m_info.ptr = ptr; }
-
-	Function(std::string name, FunctionPtr ptr, int numargs, const Type* rtype)
-		: m_name(name), m_type(INTERNAL), m_num_args(numargs), m_return(rtype) { m_info.ptr = ptr; }
-
-	Function(std::string& name, unsigned int offset)
-		: m_name(name), m_type(USER), m_num_args(0), m_return(NULL) { m_info.offset = offset; }
-
-	Function(std::string& name, unsigned int offset, int numargs)
-		: m_name(name), m_type(USER), m_num_args(numargs), m_return(NULL) { m_info.offset = offset; }
-
-	virtual ~Function() { }
-
-	Function* addArg(std::string name, const Type* type) throw() {
-		m_args.insert(FunctionArgsPair(name, type));
-		++m_num_args;
-
-		return this;
-	}
-
-	FunctionArgs& getArgs() throw() { return m_args; }
-
-	void set_vars(Value* vars) { m_vars = vars; }
-	Value* get_vars() throw() { return m_vars; }
-
-	int get_num_args() const { return m_num_args; }
-	void setVariadicArgs() throw() { m_num_args = -1; }
-
-	void setInternal() throw() { m_type = INTERNAL; }
-	void setUserDefined() throw() { m_type = USER; }
-
-	bool isUserDefined() const throw() { return m_type == USER; }
-	bool isInternal() const throw() { return m_type == INTERNAL; }
-
-	void set_offset(unsigned int num) { m_info.offset = num; }
-	long get_offset() const throw() { return m_info.offset; }
-
-	void set_return(const Type* type) { m_return = type; }
-	const Type* get_return() const throw() { return m_return; }
-
-	FunctionPtr get_ptr() const throw() { return m_info.ptr; }
-
-	const std::string& get_name() const throw() { return m_name; }
-
-	void call (const ValueVector* args, Value* result) const {
-		m_info.ptr(args, result);
-	}
-
-	unsigned int call() const throw() { return m_info.offset; }
-
-private:
-	union {
-		FunctionPtr  ptr;
-		long offset;
-	} m_info;
-
-	std::string m_name;
-	FunctionType m_type;
-	int m_num_args;
-	const Type* m_return;
-	FunctionArgs m_args;
-	Value* m_vars;	
-
-};
-
-/**
- * Method representation
- */
-class Method {
-public:
-	enum MethodType { INTERNAL, USER };
-
-	Method(std::string name, MethodPtr ptr)
-		: m_name(name), m_type(INTERNAL) { m_info.ptr = ptr; }
-
-	~Method() { }
-
-	const std::string& get_name() const throw() { return m_name; }
-	MethodPtr get_ptr() const throw() { return m_info.ptr; }
-
-	void setInternal() throw() { m_type = INTERNAL; }
-	void setUserDefined() throw() { m_type = USER; }
-
-	bool isUserDefined() const throw() { return m_type == USER; }
-	bool isInternal() const throw() { return m_type == INTERNAL; }
-
-	void call (const ValueVector* args, Value* result, Value* context) const throw() {
-		m_info.ptr(args, result, context);
-	}
-
-	long call() const throw() { return m_info.offset; }
-private:
-	union {
-		MethodPtr ptr;
-		long offset;
-	} m_info;
-
-	std::string m_name;
-	MethodType m_type;
-};
 
 /**
  * Package representation
@@ -302,6 +167,8 @@ private:
 	const std::string m_name;
 	/* Module function list */
 	FunctionMap m_functions;
+	
+	//ClassTable m_table;
 
 	DISALLOW_COPY_AND_ASSIGN(Module);
 };
