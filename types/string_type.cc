@@ -38,7 +38,7 @@ namespace clever {
  * Replace part of the string and returns the new one.
  */
 CLEVER_TYPE_METHOD(String::replace) {
-	int needleLength, needlePos;
+	size_t needleLength, needlePos;
 	std::string newString = value->toString();
 
 	// Initial replace
