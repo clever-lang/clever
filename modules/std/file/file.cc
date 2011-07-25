@@ -1,4 +1,4 @@
-/**
+/*
  * Clever programming language
  * Copyright (c) 2011 Clever Team
  *
@@ -21,30 +21,41 @@
  * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * $Id$
  */
 
-#ifndef CLEVER_INT_H
-#define CLEVER_INT_H
-
-#include "type.h"
+#include <iostream>
 #include "compiler/value.h"
+#include "compiler/typetable.h"
+#include "std/file/file.h"
+#include "std/file/filestream.h"
 
-namespace clever {
+namespace clever { namespace packages { namespace std {
 
-class Integer : public Type {
-public:
-	Integer() :
-		Type("Int") { }
+namespace file {
+/**
+ * println(object a, [ ...])
+ * Prints the object values without trailing newline
+ */
+/*static CLEVER_FUNCTION(print) {
+	for (int i = 0, size = args->size(); i < size; ++i) {
+		::std::cout << args->at(i)->toString();
+	}
+}*/
 
-	void Init();
-	void* allocateValue() const;
+} // namespace file
 
-	/* Type methods */
-	static CLEVER_TYPE_METHOD(toString);
-private:
-	DISALLOW_COPY_AND_ASSIGN(Integer);
-};
+/**
+ * Initializes Standard module
+ */
+void File::Init() throw() {
+	//const Type* string_type = TypeTable::getType(CSTRING("String"));
+	Class* filestream = new file::FileStream();
+	filestream->Init();
+	
+	using namespace file;
+	addClass(filestream);
+}
 
-} // clever
-
-#endif // CLEVER_INT_H
+}}} // clever::packages::std

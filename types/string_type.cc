@@ -114,4 +114,8 @@ void String::Init() {
 	addMethod(new Method("toInteger", (MethodPtr)&String::toInteger));
 }
 
+void* String::allocateValue() const {
+	return NULL;
+}
+
 } // clever

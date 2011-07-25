@@ -26,8 +26,10 @@
 #ifndef CLEVER_FILESTREAM_H
 #define CLEVER_FILESTREAM_H
 
-#include "type.h"
+#include <fstream>
+#include "types/type.h"
 #include "compiler/value.h"
+#include "modules/std/file/filestreamvalue.h"
 
 namespace clever { namespace packages { namespace std { namespace file {
 
@@ -37,8 +39,11 @@ public:
 		Type("FileStream") { }
 
 	void Init();
+	void* allocateValue() const;
 
 	/* Type methods */
+	static CLEVER_TYPE_METHOD(open);
+	static CLEVER_TYPE_METHOD(read);
 	static CLEVER_TYPE_METHOD(toString);
 private:
 	DISALLOW_COPY_AND_ASSIGN(FileStream);

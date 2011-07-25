@@ -54,4 +54,8 @@ void Double::Init() {
 	addMethod(new Method("sqrt", (MethodPtr)&Double::sqrt));
 }
 
+void* Double::allocateValue() const {
+	return NULL;
+}
+
 } // clever

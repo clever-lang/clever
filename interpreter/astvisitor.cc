@@ -22,7 +22,6 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-
 #include "ast.h"
 #include "astvisitor.h"
 #include "compiler/typetable.h"
@@ -158,6 +157,16 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 		/* TODO: fix this */
 		if (type == TypeTable::getType(CSTRING("Int"))) {
 			variable->set_type(Value::INTEGER);
+		}
+		else if (type == TypeTable::getType(CSTRING("Double"))) {
+			variable->set_type(Value::DOUBLE);
+		}
+		else if (type == TypeTable::getType(CSTRING("String"))) {
+			variable->set_type(Value::STRING);
+		}
+		else {
+			variable->set_type(Value::USER);
+			variable->set_user_data(type->allocateValue());	
 		}
 
 		variable->initialize();

@@ -82,6 +82,11 @@ public:
 	 * Pure virtual methods
 	 */
 	virtual void Init() = 0;
+	
+	/**
+	 * Allocate a buffer for the type's attributes (if the type is not String, Double, Int, etc.) 
+	 */
+	virtual void* allocateValue() const = 0;
 private:
 	MethodMap m_methods;
 	const char* m_name;

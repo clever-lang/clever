@@ -36,6 +36,7 @@ namespace clever { namespace packages {
 void Std::Init() throw() {
 	addModule(CSTRING("io"), new std::IOModule);
 	addModule(CSTRING("math"), new std::Math);
+	addModule(CSTRING("file"), new std::File);
 }
 
 }} // clever::packages

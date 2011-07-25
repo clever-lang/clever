@@ -33,7 +33,7 @@ namespace clever {
 
 class CString;
 
-typedef std::tr1::unordered_map<const CString*, Type*> TypeMap;
+typedef std::tr1::unordered_map<const CString*, const Type*> TypeMap;
 
 /**
  * Internal and user type table
@@ -58,8 +58,8 @@ public:
 	/**
 	 * Inserts a new type
 	 */
-	static void insert(const CString* name, Type* type) {
-		s_type_table.insert(std::pair<const CString*, Type*>(name, type));
+	static void insert(const CString* name, const Type* type) {
+		s_type_table.insert(std::pair<const CString*, const Type*>(name, type));
 	}
 	/**
 	 * Returns the Type pointer

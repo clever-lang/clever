@@ -43,4 +43,8 @@ void Integer::Init() {
 	addMethod(new Method("tostring", (MethodPtr)&Integer::toString));
 }
 
+void* Integer::allocateValue() const {
+	return NULL;
+}
+
 } // clever

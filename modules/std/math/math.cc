@@ -29,8 +29,8 @@
 #include <cstdlib>
 #include <string>
 #include <iostream>
-#include "std/math/math.h"
 #include "compiler/typetable.h"
+#include "std/math/math.h"
 
 namespace clever { namespace packages { namespace std {
 
@@ -49,7 +49,7 @@ static CLEVER_FUNCTION(sqrt) {
 		value = double(args->at(0)->getInteger());
 	}
 	else {
-		::std::cerr << "Double sqrt(Double num) requires 'num' "
+		::std::cout << "Double sqrt(Double num) requires 'num' "
                     "to be convertible to type Double.\n";
 		::std::exit(1);
 	}
