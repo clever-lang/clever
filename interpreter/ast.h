@@ -26,6 +26,7 @@
 #ifndef CLEVER_AST_H
 #define CLEVER_AST_H
 
+#include <list>
 #include <vector>
 #include <set>
 #include "compiler/value.h"
