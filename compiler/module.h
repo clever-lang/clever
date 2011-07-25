@@ -142,6 +142,11 @@ public:
 
 		return func;
 	}
+	
+	void addClass(const Class* klass) throw() {
+		m_class_table.insert(CSTRING(klass->get_name()), klass);
+	}
+	
 	/**
 	 * Check if the module is loaded
 	 */
@@ -167,8 +172,8 @@ private:
 	const std::string m_name;
 	/* Module function list */
 	FunctionMap m_functions;
-	
-	//ClassTable m_table;
+	/* Class table */
+	ClassTable m_class_table;
 
 	DISALLOW_COPY_AND_ASSIGN(Module);
 };

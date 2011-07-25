@@ -34,7 +34,7 @@ namespace clever {
  * Loads native packages
  */
 void PackageManager::Init() throw() {
-	addPackage(CSTRING("std"), new std_pkg::Std());
+	addPackage(CSTRING("std"), new packages::Std());
 }
 
 /**

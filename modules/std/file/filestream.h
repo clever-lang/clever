@@ -1,4 +1,4 @@
-/*
+/**
  * Clever programming language
  * Copyright (c) 2011 Clever Team
  *
@@ -21,31 +21,29 @@
  * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
- *
- * $Id$
  */
 
-#ifndef CLEVER_STD_H
-#define CLEVER_STD_H
+#ifndef CLEVER_FILESTREAM_H
+#define CLEVER_FILESTREAM_H
 
-#include "compiler/module.h"
+#include "type.h"
+#include "compiler/value.h"
 
-namespace clever { namespace std_pkg {
+namespace clever { namespace packages { namespace std { namespace file {
 
-class IOModule : public Module {
+class FileStream : public Type {
 public:
-	IOModule()
-		: Module("IO") { }
+	FileStream() :
+		Type("FileStream") { }
 
-	~IOModule() { }
+	void Init();
 
-	void Init() throw();
+	/* Type methods */
+	static CLEVER_TYPE_METHOD(toString);
 private:
-	DISALLOW_COPY_AND_ASSIGN(IOModule);
+	DISALLOW_COPY_AND_ASSIGN(FileStream);
 };
 
-extern Module* g_io_module;
+}}}} // clever::packages::std::file
 
-}} // clever::std_pkg
-
-#endif // CLEVER_STD_H
+#endif // CLEVER_INT_H

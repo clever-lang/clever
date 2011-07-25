@@ -22,20 +22,30 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * $Id: compiler.cc 315 2011-01-18 23:24:26Z felipensp $
+ * $Id$
  */
 
-#include "compiler/cstring.h"
-#include "std_pkg.h"
+#ifndef CLEVER_STD_H
+#define CLEVER_STD_H
 
-namespace clever { namespace packages {
+#include "compiler/module.h"
 
-/**
- * Initializes Std package
- */
-void Std::Init() throw() {
-	addModule(CSTRING("io"), new std::IOModule);
-	addModule(CSTRING("math"), new std::Math);
-}
+namespace clever { namespace packages { namespace std { 
 
-}} // clever::packages
+class IOModule : public Module {
+public:
+	IOModule()
+		: Module("IO") { }
+
+	~IOModule() { }
+
+	void Init() throw();
+private:
+	DISALLOW_COPY_AND_ASSIGN(IOModule);
+};
+
+extern Module* g_io_module;
+
+}}} // clever::packages::std
+
+#endif // CLEVER_STD_H

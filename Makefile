@@ -106,14 +106,14 @@ $(BUILDDIR)string_type.o: $(TYPEDIR)string_type.cc
 	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)string_type.o $(TYPEDIR)string_type.cc
 
 # Standard package
-$(BUILDDIR)std_pkg.o: $(MODDIR)std/io.cc $(MODDIR)std/math.cc $(MODDIR)std/std_pkg.cc
+$(BUILDDIR)std_pkg.o: $(MODDIR)std/io/io.cc $(MODDIR)std/math/math.cc $(MODDIR)std/std_pkg.cc
 	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)std_pkg.o $(MODDIR)std/std_pkg.cc
 
-$(BUILDDIR)io.o: $(BUILDDIR)pkgmanager.o $(MODDIR)std/io.cc
-	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)io.o $(MODDIR)std/io.cc
+$(BUILDDIR)io.o: $(BUILDDIR)pkgmanager.o $(MODDIR)std/io/io.cc
+	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)io.o $(MODDIR)std/io/io.cc
 
-$(BUILDDIR)math.o: $(BUILDDIR)pkgmanager.o $(MODDIR)std/math.cc
-	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)math.o $(MODDIR)std/math.cc
+$(BUILDDIR)math.o: $(BUILDDIR)pkgmanager.o $(MODDIR)std/math/math.cc
+	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)math.o $(MODDIR)std/math/math.cc
 
 $(BUILDDIR)win32.o: $(WINDIR)win32.cc
 	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)win32.o $(WINDIR)win32.cc

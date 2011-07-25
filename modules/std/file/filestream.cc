@@ -1,4 +1,4 @@
-/*
+/**
  * Clever programming language
  * Copyright (c) 2011 Clever Team
  *
@@ -21,59 +21,26 @@
  * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
- *
- * $Id$
  */
 
 #include <iostream>
-#include "compiler/value.h"
-#include "std/io.h"
-#include "compiler/typetable.h"
+#include "compiler/cstring.h"
+#include "type.h"
+#include "std/io/filestream.h"
 
-namespace clever { namespace std_pkg {
-
-/**
- * println(object a, [ ...])
- * Prints the object values without trailing newline
- */
-static CLEVER_FUNCTION(print) {
-	for (int i = 0, size = args->size(); i < size; ++i) {
-		std::cout << args->at(i)->toString();
-	}
-}
+namespace clever { namespace std { namespace file
 
 /**
- * println(object a, [ ...])
- * Prints the object values with trailing newline
+ * FileStream::toString()
+ * A representation of this class as a string
  */
-static CLEVER_FUNCTION(println) {
-	for (int i = 0, size = args->size(); i < size; ++i) {
-		std::cout << args->at(i)->toString() << std::endl;
-	}
-}
-
-/**
- * readln()
- * Reads a line from the standard input.
- */
-static CLEVER_FUNCTION(readln) {
-	std::string buffer;
-
-	getline(std::cin, buffer);
-	
-	retval->setString(CSTRING(buffer));
+CLEVER_TYPE_METHOD(FileStream::toString) {
+	retval->setString(CSTRING("FileStream class"));
 	retval->set_type(Value::STRING);
 }
 
-/**
- * Initializes Standard module
- */
-void IOModule::Init() throw() {
-	const Type* string_type = TypeTable::getType(CSTRING("String"));
-
-	addFunction(new Function("print", &CLEVER_FUNC_NAME(print), -1));
-	addFunction(new Function("println", &CLEVER_FUNC_NAME(println), -1));
-	addFunction(new Function("readln", &CLEVER_FUNC_NAME(readln), string_type));
+void FileStream::Init() {
+	addMethod(new Method("tostring", (MethodPtr)&Integer::toString));
 }
 
-}} // clever::std_pkg
+}}} // clever::std::file
