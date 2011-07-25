@@ -6,12 +6,12 @@ UNAME := $(shell uname)
 CXX?=g++
 
 ifneq (,$(findstring MINGW,$(UNAME)))
-CXXFLAGS=-c -O2 -ggdb -Wall -ansi -Iinclude/ -Ibuild/ -Imodules/ -Iwin32/ -I. -fno-rtti -pedantic -fno-exceptions
+CXXFLAGS=-c -O2 -ggdb -Wall -ansi -Ibuild/ -Imodules/ -Iwin32/ -I. -fno-rtti -pedantic -fno-exceptions
 else
-CXXFLAGS=-c -O2 -ggdb -Wall -ansi -Iinclude/ -Ibuild/ -Imodules/ -I. -fno-rtti -pedantic -fno-exceptions
+CXXFLAGS=-c -O2 -ggdb -Wall -ansi -Ibuild/ -Imodules/ -I. -fno-rtti -pedantic -fno-exceptions
 endif
 
-CXXFLAGS2=-c -O2 -ggdb -ansi -Iinclude/ -Ibuild/ -I. -fno-rtti -pedantic -fno-exceptions
+CXXFLAGS2=-c -O2 -ggdb -ansi -Ibuild/ -I. -fno-rtti -pedantic -fno-exceptions
 CXXFLAGS3=-ggdb -O2
 # Linker
 LD=g++
@@ -21,8 +21,6 @@ BISON=bison
 RE2C=re2c
 # Build dir
 BUILDDIR=build/
-# Core source dir
-SRCDIR=src/
 # Compiler dir
 COMPDIR=compiler/
 # VM dir
