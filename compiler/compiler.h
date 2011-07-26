@@ -73,6 +73,7 @@ public:
 	/**
 	 * Displays an error message and exits
 	 */
+	static void error(std::string) throw();
 	static void error(std::string, const location&) throw();
 	/**
 	 * Checks if the supplied value pointers are compatibles

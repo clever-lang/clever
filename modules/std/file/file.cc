@@ -1,4 +1,4 @@
-/**
+/*
  * Clever programming language
  * Copyright (c) 2011 Clever Team
  *
@@ -21,41 +21,41 @@
  * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * $Id$
  */
 
 #include <iostream>
-#include <cmath>
-#include "compiler/cstring.h"
-#include "type.h"
-#include "double.h"
+#include "compiler/value.h"
+#include "compiler/typetable.h"
+#include "std/file/file.h"
+#include "std/file/filestream.h"
 
-namespace clever {
+namespace clever { namespace packages { namespace std {
+
+namespace file {
+/**
+ * println(object a, [ ...])
+ * Prints the object values without trailing newline
+ */
+/*static CLEVER_FUNCTION(print) {
+	for (int i = 0, size = args->size(); i < size; ++i) {
+		::std::cout << args->at(i)->toString();
+	}
+}*/
+
+} // namespace file
 
 /**
- * Double::toString()
- * Converts the number to string
+ * Initializes Standard module
  */
-CLEVER_TYPE_METHOD(Double::toString) {
-	retval->setString(CSTRING(value->toString()));
-	retval->set_type(Value::STRING);
+void File::init() throw() {
+	//const Type* string_type = TypeTable::getType(CSTRING("String"));
+	Class* filestream = new file::FileStream();
+	filestream->init();
+	
+	using namespace file;
+	addClass(filestream);
 }
 
-/**
- * Double::sqrt()
- * Returns the square root of the number
- */
-CLEVER_TYPE_METHOD(Double::sqrt) {
-	retval->set_type(Value::DOUBLE);
-	retval->setDouble(std::sqrt(value->getDouble()));
-}
-
-void Double::init() {
-	addMethod(new Method("tostring", (MethodPtr)&Double::toString));
-	addMethod(new Method("sqrt", (MethodPtr)&Double::sqrt));
-}
-
-void* Double::allocateValue() const {
-	return NULL;
-}
-
-} // clever
+}}} // clever::packages::std

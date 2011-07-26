@@ -34,7 +34,6 @@
 #include "global.h"
 #include "function.h"
 #include "method.h"
-#include "classtable.h"
 
 namespace clever {
 
@@ -49,6 +48,9 @@ class Function;
  */
 typedef std::tr1::unordered_map<const CString*, Module*> ModuleMap;
 typedef std::pair<const CString*, Module*> ModulePair;
+
+typedef Type Class;
+typedef std::tr1::unordered_map<const CString*, const Class*> ClassMap;
 
 /**
  * Package representation
@@ -142,6 +144,15 @@ public:
 
 		return func;
 	}
+	
+	void addClass(const Class* klass) throw() {
+		m_class_table.insert(std::make_pair(CSTRING(klass->get_name()), klass));
+	}
+	
+	ClassMap& getClassTable() throw() {
+		return m_class_table;
+	}
+	
 	/**
 	 * Check if the module is loaded
 	 */
@@ -167,8 +178,8 @@ private:
 	const std::string m_name;
 	/* Module function list */
 	FunctionMap m_functions;
-	
-	//ClassTable m_table;
+	/* Class table */
+	ClassMap m_class_table;
 
 	DISALLOW_COPY_AND_ASSIGN(Module);
 };

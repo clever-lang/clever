@@ -25,18 +25,19 @@
 
 #include <iostream>
 #include "compiler/value.h"
-#include "std/io.h"
 #include "compiler/typetable.h"
+#include "std/io/io.h"
 
-namespace clever { namespace std_pkg {
+namespace clever { namespace packages { namespace std {
 
+namespace io {
 /**
  * println(object a, [ ...])
  * Prints the object values without trailing newline
  */
 static CLEVER_FUNCTION(print) {
 	for (int i = 0, size = args->size(); i < size; ++i) {
-		std::cout << args->at(i)->toString();
+		::std::cout << args->at(i)->toString();
 	}
 }
 
@@ -46,7 +47,7 @@ static CLEVER_FUNCTION(print) {
  */
 static CLEVER_FUNCTION(println) {
 	for (int i = 0, size = args->size(); i < size; ++i) {
-		std::cout << args->at(i)->toString() << std::endl;
+		::std::cout << args->at(i)->toString() << ::std::endl;
 	}
 }
 
@@ -55,23 +56,26 @@ static CLEVER_FUNCTION(println) {
  * Reads a line from the standard input.
  */
 static CLEVER_FUNCTION(readln) {
-	std::string buffer;
+	::std::string buffer;
 
-	getline(std::cin, buffer);
+	getline(::std::cin, buffer);
 	
 	retval->setString(CSTRING(buffer));
 	retval->set_type(Value::STRING);
 }
+
+} // namespace io
 
 /**
  * Initializes Standard module
  */
 void IOModule::init() throw() {
 	const Type* string_type = TypeTable::getType(CSTRING("String"));
-
+	
+	using namespace io;
 	addFunction(new Function("print", &CLEVER_FUNC_NAME(print), -1));
 	addFunction(new Function("println", &CLEVER_FUNC_NAME(println), -1));
 	addFunction(new Function("readln", &CLEVER_FUNC_NAME(readln), string_type));
 }
 
-}} // clever::std_pkg
+}}} // clever::packages::std

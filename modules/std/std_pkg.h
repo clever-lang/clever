@@ -26,11 +26,10 @@
 #ifndef CLEVER_STD_PACKAGE_H
 #define CLEVER_STD_PACKAGE_H
 
-#include "std/io.h"
-#include "std/math.h"
+#include "std/std_forwarder.h"
 #include "compiler/module.h"
 
-namespace clever { namespace std_pkg {
+namespace clever { namespace packages {
 
 class Std : public Package {
 public:

@@ -1,4 +1,4 @@
-/**
+/*
  * Clever programming language
  * Copyright (c) 2011 Clever Team
  *
@@ -21,31 +21,10 @@
  * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * $Id$
  */
 
-
-#ifndef CLEVER_STD_MATH_H
-#define CLEVER_STD_MATH_H
-
-#include "compiler/module.h"
-#include "compiler/value.h"
-
-namespace clever { namespace std_pkg {
-
-class Math : public Module {
-public:
-	Math()
-		: Module("Math") { }
-
-	~Math() { }
-
-	void init() throw();
-private:
-	DISALLOW_COPY_AND_ASSIGN(Math);
-};
-
-extern Module* g_math_module;
-
-}} // clever::std_pkg
-
-#endif // CLEVER_STD_MATH_H
+#include "std/file/file.h"
+#include "std/io/io.h"
+#include "std/math/math.h"

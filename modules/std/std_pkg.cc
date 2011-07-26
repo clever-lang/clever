@@ -26,14 +26,15 @@
 #include "compiler/cstring.h"
 #include "std_pkg.h"
 
-namespace clever { namespace std_pkg {
+namespace clever { namespace packages {
 
 /**
  * Initializes Std package
  */
 void Std::init() throw() {
-	addModule(CSTRING("io"), new IOModule);
-	addModule(CSTRING("math"), new Math);
+	addModule(CSTRING("io"), new std::IOModule);
+	addModule(CSTRING("math"), new std::Math);
+	addModule(CSTRING("file"), new std::File);
 }
 
-}} // clever::std_pkg
+}} // clever::packages

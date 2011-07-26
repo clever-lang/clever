@@ -175,7 +175,10 @@ public:
 	bool getBoolean() const { return m_data.b_value; }
 	ValueVector* getVector() const { return m_data.v_value; }
 
-	const ValueData *get_data() const { return &m_data; }
+	const ValueData* get_data() const { return &m_data; }
+	
+	// Sets the buffer for a user type structure
+	void set_user_data(void* data) { m_data.u_value = data; }
 
 	void copy(const Value* const value) throw() {
 		std::memcpy(&m_data, value->get_data(), sizeof(ValueData));

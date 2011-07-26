@@ -23,39 +23,29 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <iostream>
-#include <cmath>
-#include "compiler/cstring.h"
-#include "type.h"
-#include "double.h"
 
-namespace clever {
+#ifndef CLEVER_STD_MATH_H
+#define CLEVER_STD_MATH_H
 
-/**
- * Double::toString()
- * Converts the number to string
- */
-CLEVER_TYPE_METHOD(Double::toString) {
-	retval->setString(CSTRING(value->toString()));
-	retval->set_type(Value::STRING);
-}
+#include "compiler/module.h"
+#include "compiler/value.h"
 
-/**
- * Double::sqrt()
- * Returns the square root of the number
- */
-CLEVER_TYPE_METHOD(Double::sqrt) {
-	retval->set_type(Value::DOUBLE);
-	retval->setDouble(std::sqrt(value->getDouble()));
-}
+namespace clever { namespace packages { namespace std {
 
-void Double::init() {
-	addMethod(new Method("tostring", (MethodPtr)&Double::toString));
-	addMethod(new Method("sqrt", (MethodPtr)&Double::sqrt));
-}
+class Math : public Module {
+public:
+	Math()
+		: Module("Math") { }
 
-void* Double::allocateValue() const {
-	return NULL;
-}
+	~Math() { }
 
-} // clever
+	void init() throw();
+private:
+	DISALLOW_COPY_AND_ASSIGN(Math);
+};
+
+extern Module* g_math_module;
+
+}}} // clever::packages::std
+
+#endif // CLEVER_STD_MATH_H
