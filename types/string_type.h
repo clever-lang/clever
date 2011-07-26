@@ -36,7 +36,8 @@ public:
 	String() :
 		Type("String") { }
 
-	void Init();
+	void init();
+	void* allocateValue() const;
 
 	/* Type methods */
 	static CLEVER_TYPE_METHOD(replace);

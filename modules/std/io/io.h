@@ -23,39 +23,27 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <iostream>
-#include <cmath>
-#include "compiler/cstring.h"
-#include "type.h"
-#include "double.h"
+#ifndef CLEVER_STD_H
+#define CLEVER_STD_H
 
-namespace clever {
+#include "compiler/module.h"
 
-/**
- * Double::toString()
- * Converts the number to string
- */
-CLEVER_TYPE_METHOD(Double::toString) {
-	retval->setString(CSTRING(value->toString()));
-	retval->set_type(Value::STRING);
-}
+namespace clever { namespace packages { namespace std { 
 
-/**
- * Double::sqrt()
- * Returns the square root of the number
- */
-CLEVER_TYPE_METHOD(Double::sqrt) {
-	retval->set_type(Value::DOUBLE);
-	retval->setDouble(std::sqrt(value->getDouble()));
-}
+class IOModule : public Module {
+public:
+	IOModule()
+		: Module("IO") { }
 
-void Double::init() {
-	addMethod(new Method("tostring", (MethodPtr)&Double::toString));
-	addMethod(new Method("sqrt", (MethodPtr)&Double::sqrt));
-}
+	~IOModule() { }
 
-void* Double::allocateValue() const {
-	return NULL;
-}
+	void init() throw();
+private:
+	DISALLOW_COPY_AND_ASSIGN(IOModule);
+};
 
-} // clever
+extern Module* g_io_module;
+
+}}} // clever::packages::std
+
+#endif // CLEVER_STD_H

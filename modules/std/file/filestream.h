@@ -23,27 +23,32 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef CLEVER_STD_H
-#define CLEVER_STD_H
+#ifndef CLEVER_FILESTREAM_H
+#define CLEVER_FILESTREAM_H
 
-#include "compiler/module.h"
+#include <fstream>
+#include "types/type.h"
+#include "compiler/value.h"
+#include "modules/std/file/filestreamvalue.h"
 
-namespace clever { namespace std_pkg {
+namespace clever { namespace packages { namespace std { namespace file {
 
-class IOModule : public Module {
+class FileStream : public Type {
 public:
-	IOModule()
-		: Module("IO") { }
+	FileStream() :
+		Type("FileStream") { }
 
-	~IOModule() { }
+	void init();
+	void* allocateValue() const;
 
-	void init() throw();
+	/* Type methods */
+	static CLEVER_TYPE_METHOD(open);
+	static CLEVER_TYPE_METHOD(read);
+	static CLEVER_TYPE_METHOD(toString);
 private:
-	DISALLOW_COPY_AND_ASSIGN(IOModule);
+	DISALLOW_COPY_AND_ASSIGN(FileStream);
 };
 
-extern Module* g_io_module;
+}}}} // clever::packages::std::file
 
-}} // clever::std_pkg
-
-#endif // CLEVER_STD_H
+#endif // CLEVER_INT_H
