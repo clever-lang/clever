@@ -125,7 +125,7 @@ public:
 
 	void set_type(int type) { m_type = type; }
 	int get_type() const { return m_type; }
-	int hasSameType(const Value* const value) const { return m_type == value->get_type(); }
+	int hasSameType(const Value* const value) const { return m_type_ptr == value->get_type_ptr(); }
 
 	const Type* get_type_ptr() const { return m_type_ptr; }
 	void set_type_ptr(const Type* const ptr) { m_type_ptr = ptr; }
