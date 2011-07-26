@@ -12,22 +12,17 @@
  * $Id$
  */
 
-#ifndef CLEVER_FILESTREAMVALUE_H
-#define CLEVER_FILESTREAMVALUE_H
-#include <fstream>
-#include "compiler/datavalue.h"
+#ifndef CLEVER_DATAVALUE_H
+#define CLEVER_DATAVALUE_H
 
-struct FileStreamValue : public DataValue
+/**
+ * Base class for all typevalues
+ */
+class DataValue
 {
-	FileStreamValue() : m_is_open(false) {}
-	
-	// File stream 
-	::std::fstream m_fstream;
-	
-	// If there is a open stream
-	bool m_is_open;
-	
-	~FileStreamValue() {}
+public:
+	DataValue() {};
+	virtual ~DataValue() {};
 };
 
 #endif

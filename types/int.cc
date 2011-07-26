@@ -43,7 +43,7 @@ void Integer::init() {
 	addMethod(new Method("tostring", (MethodPtr)&Integer::toString));
 }
 
-void* Integer::allocateValue() const {
+DataValue* Integer::allocateValue() const {
 	return NULL;
 }
 

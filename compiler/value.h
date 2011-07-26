@@ -51,7 +51,7 @@ public:
 		double d_value;
 		bool b_value;
 		const CString* s_value;
-		void* u_value;
+		DataValue* dv_value;
 		ValueVector* v_value;
 	} ValueData;
 
@@ -92,7 +92,10 @@ public:
 	}
 
 	virtual ~Value() {
-		if (isVector()) {
+		if (isUserValue()) {
+			if (m_data.dv_value) delete m_data.dv_value;
+		}
+		else if (isVector()) {
 			ValueVector::const_iterator it = m_data.v_value->begin(), end = m_data.v_value->end();
 
 			while (it != end) {
@@ -178,7 +181,10 @@ public:
 	const ValueData* get_data() const { return &m_data; }
 	
 	// Sets the buffer for a user type structure
-	void set_user_data(void* data) { m_data.u_value = data; }
+	void setDataValue(DataValue* data) { 
+		m_data.dv_value = data;
+		m_type = USER;
+	}
 
 	void copy(const Value* const value) throw() {
 		std::memcpy(&m_data, value->get_data(), sizeof(ValueData));

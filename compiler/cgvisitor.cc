@@ -165,7 +165,7 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 		}
 		else {
 			variable->set_type(Value::USER);
-			variable->set_user_data(type->allocateValue());	
+			variable->setDataValue(type->allocateValue());	
 		}
 
 		variable->initialize();

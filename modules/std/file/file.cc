@@ -50,7 +50,6 @@ namespace file {
  * Initializes Standard module
  */
 void File::init() throw() {
-	//const Type* string_type = TypeTable::getType(CSTRING("String"));
 	Class* filestream = new file::FileStream();
 	filestream->init();
 	
