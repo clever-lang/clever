@@ -116,10 +116,12 @@ bool Compiler::checkCompatibleTypes(const Value* const lhs, const Value* const r
 	/**
 	 * Constants with different type cannot performs operation
 	 */
-	if (lhs->isPrimitive() && rhs->isPrimitive() && !lhs->hasSameType(rhs)) {
-		return false;
-	}
-	return true;
+	
+	/**
+	 * @TODO: check if a class is base of another
+	 * if (lhs->isPrimitive() && rhs->isPrimitive() && !lhs->hasSameType(rhs))
+	 */
+	return lhs->hasSameType(rhs);
 }
 
 /**

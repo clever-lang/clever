@@ -136,6 +136,14 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 	/* Check if the declaration contains initialization */
 	if (rhs_expr) {
 		Value* value = getValue(rhs_expr);
+		
+		if (!Compiler::checkCompatibleTypes(variable, value)) {
+			std::string error = std::string("Cannot convert `") 
+				+ value->get_type_ptr()->get_name() + "' to `" 
+				+ variable->get_type_ptr()->get_name() + "' on initialization";
+
+			Compiler::error(error, expr->get_location());
+		}
 
 		variable->addRef();
 		m_ssa.pushVar(variable);
@@ -511,7 +519,15 @@ AST_VISITOR(CodeGenVisitor, MethodCall) {
 AST_VISITOR(CodeGenVisitor, AssignExpr) {
 	Value* lhs = getValue(expr->get_lhs());
 	Value* rhs = getValue(expr->get_rhs());
-
+	
+	if (!Compiler::checkCompatibleTypes(rhs, lhs)) {
+		std::string error = std::string("Cannot convert `") 
+			+ rhs->get_type_ptr()->get_name() + "' to `" 
+			+ lhs->get_type_ptr()->get_name() + "' on assignment";
+		
+		Compiler::error(error, expr->get_location());
+	}
+	
 	lhs->setModified();
 
 	lhs->addRef();
