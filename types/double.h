@@ -36,7 +36,7 @@ public:
 	Double() :
 		Type("Double") { }
 
-	void Init();
+	void init();
 	void* allocateValue() const;
 
 	/* Type methods */

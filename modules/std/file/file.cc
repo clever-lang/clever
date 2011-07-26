@@ -49,10 +49,10 @@ namespace file {
 /**
  * Initializes Standard module
  */
-void File::Init() throw() {
+void File::init() throw() {
 	//const Type* string_type = TypeTable::getType(CSTRING("String"));
 	Class* filestream = new file::FileStream();
-	filestream->Init();
+	filestream->init();
 	
 	using namespace file;
 	addClass(filestream);

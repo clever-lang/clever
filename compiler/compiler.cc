@@ -54,9 +54,9 @@ Compiler::~Compiler() {
 /**
  * Initializes the compiler data
  */
-void Compiler::Init() throw() {
+void Compiler::init() throw() {
 	/* Load package list */
-	s_pkgmanager.Init();
+	s_pkgmanager.init();
 
 	/* Load the primitive data types */
 	loadTypes();
@@ -70,9 +70,9 @@ void Compiler::loadTypes() throw() {
 	Double* double_type = new Double;
 	String* string_type = new String;
 
-	int_type->Init();
-	double_type->Init();
-	string_type->Init();
+	int_type->init();
+	double_type->init();
+	string_type->init();
 
 	TypeTable::insert(CSTRING("Int"), int_type);
 	TypeTable::insert(CSTRING("Double"), double_type);

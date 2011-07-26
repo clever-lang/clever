@@ -39,7 +39,7 @@ CLEVER_TYPE_METHOD(Integer::toString) {
 	retval->set_type(Value::STRING);
 }
 
-void Integer::Init() {
+void Integer::init() {
 	addMethod(new Method("tostring", (MethodPtr)&Integer::toString));
 }
 

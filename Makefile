@@ -6,12 +6,12 @@ UNAME := $(shell uname)
 CXX?=g++
 
 ifneq (,$(findstring MINGW,$(UNAME)))
-CXXFLAGS=-c -O2 -ggdb -Wall -ansi -Iinclude/ -Ibuild/ -Imodules/ -Iwin32/ -I. -fno-rtti -pedantic -fno-exceptions
+CXXFLAGS=-c -O2 -ggdb -Wall -ansi -Ibuild/ -Imodules/ -Iwin32/ -I. -fno-rtti -pedantic -fno-exceptions
 else
-CXXFLAGS=-c -O2 -ggdb -Wall -ansi -Iinclude/ -Ibuild/ -Imodules/ -I. -fno-rtti -pedantic -fno-exceptions
+CXXFLAGS=-c -O2 -ggdb -Wall -ansi -Ibuild/ -Imodules/ -I. -fno-rtti -pedantic -fno-exceptions
 endif
 
-CXXFLAGS2=-c -O2 -ggdb -ansi -Iinclude/ -Ibuild/ -I. -fno-rtti -pedantic -fno-exceptions
+CXXFLAGS2=-c -O2 -ggdb -ansi -Ibuild/ -I. -fno-rtti -pedantic -fno-exceptions
 CXXFLAGS3=-ggdb -O2
 # Linker
 LD=g++
@@ -21,8 +21,6 @@ BISON=bison
 RE2C=re2c
 # Build dir
 BUILDDIR=build/
-# Core source dir
-SRCDIR=src/
 # Compiler dir
 COMPDIR=compiler/
 # VM dir
@@ -43,14 +41,14 @@ OBJECTS=$(BUILDDIR)parser.o $(BUILDDIR)scanner.o $(BUILDDIR)driver.o \
 	$(BUILDDIR)cstring.o $(BUILDDIR)double.o $(BUILDDIR)std_pkg.o \
 	$(BUILDDIR)int.o $(BUILDDIR)io.o $(BUILDDIR)math.o \
 	$(BUILDDIR)file.o $(BUILDDIR)filestream.o $(BUILDDIR)pkgmanager.o $(BUILDDIR)compiler.o \
-	$(BUILDDIR)vm.o $(BUILDDIR)astvisitor.o $(BUILDDIR)opcode.o \
+	$(BUILDDIR)vm.o $(BUILDDIR)cgvisitor.o $(BUILDDIR)opcode.o \
 	$(BUILDDIR)string_type.o $(BUILDDIR)main.o $(BUILDDIR)win32.o
 else
 OBJECTS=$(BUILDDIR)parser.o $(BUILDDIR)scanner.o $(BUILDDIR)driver.o \
 	$(BUILDDIR)cstring.o $(BUILDDIR)double.o $(BUILDDIR)std_pkg.o \
 	$(BUILDDIR)int.o $(BUILDDIR)io.o $(BUILDDIR)math.o \
 	$(BUILDDIR)file.o $(BUILDDIR)filestream.o $(BUILDDIR)pkgmanager.o $(BUILDDIR)compiler.o \
-	$(BUILDDIR)vm.o $(BUILDDIR)astvisitor.o $(BUILDDIR)opcode.o \
+	$(BUILDDIR)vm.o $(BUILDDIR)cgvisitor.o $(BUILDDIR)opcode.o \
 	$(BUILDDIR)string_type.o $(BUILDDIR)main.o
 endif
 
@@ -80,11 +78,11 @@ $(BUILDDIR)scanner.o: $(BUILDDIR)scanner.cc $(BUILDDIR)cstring.o
 $(BUILDDIR)cstring.o: $(COMPDIR)cstring.cc
 	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)cstring.o $(COMPDIR)cstring.cc
 
-$(BUILDDIR)compiler.o: $(COMPDIR)compiler.cc $(BUILDDIR)driver.o $(BUILDDIR)int.o $(BUILDDIR)double.o $(BUILDDIR)pkgmanager.o $(BUILDDIR)astvisitor.o
+$(BUILDDIR)compiler.o: $(COMPDIR)compiler.cc $(BUILDDIR)driver.o $(BUILDDIR)int.o $(BUILDDIR)double.o $(BUILDDIR)pkgmanager.o $(BUILDDIR)cgvisitor.o
 	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)compiler.o $(COMPDIR)compiler.cc
 
-$(BUILDDIR)astvisitor.o: $(INTERPDIR)astvisitor.cc
-	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)astvisitor.o $(INTERPDIR)astvisitor.cc
+$(BUILDDIR)cgvisitor.o: $(COMPDIR)cgvisitor.cc
+	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)cgvisitor.o $(COMPDIR)cgvisitor.cc
 
 $(BUILDDIR)vm.o: $(VMDIR)vm.cc
 	$(CXX) $(CXXFLAGS) -o $(BUILDDIR)vm.o $(VMDIR)vm.cc

@@ -38,7 +38,7 @@ public:
 	FileStream() :
 		Type("FileStream") { }
 
-	void Init();
+	void init();
 	void* allocateValue() const;
 
 	/* Type methods */

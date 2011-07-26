@@ -81,7 +81,7 @@ public:
 	/**
 	 * Pure virtual methods
 	 */
-	virtual void Init() = 0;
+	virtual void init() = 0;
 	
 	/**
 	 * Allocate a buffer for the type's attributes (if the type is not String, Double, Int, etc.) 

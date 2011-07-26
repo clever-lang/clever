@@ -49,7 +49,7 @@ CLEVER_TYPE_METHOD(Double::sqrt) {
 	retval->setDouble(std::sqrt(value->getDouble()));
 }
 
-void Double::Init() {
+void Double::init() {
 	addMethod(new Method("tostring", (MethodPtr)&Double::toString));
 	addMethod(new Method("sqrt", (MethodPtr)&Double::sqrt));
 }

@@ -1,4 +1,4 @@
-/*
+/**
  * Clever programming language
  * Copyright (c) 2011 Clever Team
  *
@@ -22,7 +22,6 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * $Id: std.cc 299 2011-01-16 23:06:11Z felipensp $
  */
 
 #include <cmath>
@@ -132,7 +131,7 @@ static CLEVER_FUNCTION(abs) {
 /**
  * Load module data
  */
-void Math::Init() throw() {
+void Math::init() throw() {
 	const Type* double_type = TypeTable::getType(CSTRING("Double"));
 
 	using namespace math;

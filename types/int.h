@@ -36,7 +36,7 @@ public:
 	Integer() :
 		Type("Int") { }
 
-	void Init();
+	void init();
 	void* allocateValue() const;
 
 	/* Type methods */

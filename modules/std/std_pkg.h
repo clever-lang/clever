@@ -1,4 +1,4 @@
-/*
+/**
  * Clever programming language
  * Copyright (c) 2011 Clever Team
  *
@@ -21,8 +21,6 @@
  * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
- *
- * $Id$
  */
 
 #ifndef CLEVER_STD_PACKAGE_H
@@ -40,7 +38,7 @@ public:
 
 	~Std() { }
 
-	void Init() throw();
+	void init() throw();
 
 	const char* getVersion() const { return NULL; }
 private:

@@ -41,7 +41,7 @@ public:
 
 	~File() { }
 
-	void Init() throw();
+	void init() throw();
 private:
 	DISALLOW_COPY_AND_ASSIGN(File);
 };

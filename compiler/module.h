@@ -99,7 +99,7 @@ public:
 	/**
 	 * Initializes package data
 	 */
-	virtual void Init() throw() = 0;
+	virtual void init() throw() = 0;
 	/**
 	 * Package version
 	 */
@@ -167,7 +167,7 @@ public:
 	void setLoaded() { m_state = LOADED; }
 
 	/* Module initialization */
-	virtual void Init() throw() = 0;
+	virtual void init() throw() = 0;
 
 	/* Module version */
 	virtual const char* getVersion() const { return NULL; }

@@ -49,7 +49,7 @@ public:
 	/**
 	 * Load package map
 	 */
-	void Init() throw();
+	void init() throw();
 	/**
 	 * Free memory
 	 */
@@ -57,18 +57,18 @@ public:
 	/**
 	 * Add a package to list
 	 */
-	void addPackage(const CString* name, Package* package) throw() {
+	void addPackage(const CString* const name, Package* package) throw() {
 		m_packages.insert(PackagePair(name, package));
 	}
 	/**
 	 * Load an specific package
 	 */
-	void loadPackage(Scope&, const CString*) throw();
+	void loadPackage(Scope&, const CString* const) throw();
 	/**
 	 * Load an specific package module
 	 */
-	void loadModule(Scope&, const CString*, const CString*) throw();
-	void loadModule(Scope&, Module*) throw();
+	void loadModule(Scope&, const CString* const, const CString* const) throw();
+	void loadModule(Scope&, Module* const) throw();
 private:
 	PackageMap m_packages;
 

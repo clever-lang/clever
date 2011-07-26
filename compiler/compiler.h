@@ -34,7 +34,8 @@
 #include "vm/vm.h"
 #include "vm/opcode.h"
 #include "location.hh"
-#include "interpreter/astvisitor.h"
+#include "interpreter/ast.h"
+#include "cgvisitor.h"
 
 namespace clever {
 
@@ -48,11 +49,11 @@ public:
 	/**
 	 * Initializes compiler data
 	 */
-	void Init() throw();
+	void init() throw();
 	/**
 	 * Sets the AST tree to be compiled into intermediate representation
 	 */
-	void set_ast(ast::ASTNode* ast) throw() { m_ast = ast; }
+	void setAST(ast::ASTNode* ast) throw() { m_ast = ast; }
 	/**
 	 * Set interactive mode ON
 	 */

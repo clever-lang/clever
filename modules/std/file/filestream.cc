@@ -110,7 +110,7 @@ CLEVER_TYPE_METHOD(FileStream::read) {
 
 
 
-void FileStream::Init() {
+void FileStream::init() {
 	addMethod(new Method("toString", (MethodPtr)&FileStream::toString));
 	addMethod(new Method("open", (MethodPtr)&FileStream::open));
 	addMethod(new Method("read", (MethodPtr)&FileStream::read));
