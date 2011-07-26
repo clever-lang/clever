@@ -46,7 +46,7 @@ CLEVER_TYPE_METHOD(FileStream::toString) {
 CLEVER_TYPE_METHOD(FileStream::open) {
 	size_t size = args->size();
 	
-	FileStreamValue* fsv = static_cast<FileStreamValue*>(value->get_data()->u_value);
+	FileStreamValue* fsv = static_cast<FileStreamValue*>(value->get_data()->dv_value);
 	
 	if (size == 1) {
 		fsv->m_fstream.open(args->at(0)->toString().c_str());
@@ -69,7 +69,7 @@ CLEVER_TYPE_METHOD(FileStream::read) {
 		Compiler::error("calling Filestream::read([String, Int, Double]) : wrong number of arguments given");
 	
 	
-	FileStreamValue* fsv = static_cast<FileStreamValue*>(value->get_data()->u_value);
+	FileStreamValue* fsv = static_cast<FileStreamValue*>(value->get_data()->dv_value);
 	
 	if (!fsv->m_is_open) {
 		Compiler::error("calling Filestream::read([String, Int, Double])"
@@ -116,8 +116,8 @@ void FileStream::init() {
 	addMethod(new Method("read", (MethodPtr)&FileStream::read));
 }
 
-void* FileStream::allocateValue() const {
-	return static_cast<void*>(new FileStreamValue);
+DataValue* FileStream::allocateValue() const {
+	return new FileStreamValue;
 }
 
 }}}} // clever::packages::std::file
