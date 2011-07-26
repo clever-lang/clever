@@ -39,7 +39,7 @@ public:
 		Type("FileStream") { }
 
 	void init();
-	void* allocateValue() const;
+	DataValue* allocateValue() const;
 
 	/* Type methods */
 	static CLEVER_TYPE_METHOD(open);

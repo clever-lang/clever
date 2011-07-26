@@ -30,6 +30,7 @@
 #include <tr1/unordered_map>
 #include "compiler/cstring.h"
 #include "compiler/method.h"
+#include "compiler/datavalue.h"
 
 namespace clever {
 
@@ -86,7 +87,7 @@ public:
 	/**
 	 * Allocate a buffer for the type's attributes (if the type is not String, Double, Int, etc.) 
 	 */
-	virtual void* allocateValue() const = 0;
+	virtual DataValue* allocateValue() const = 0;
 private:
 	MethodMap m_methods;
 	const char* m_name;
