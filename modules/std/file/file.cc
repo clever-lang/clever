@@ -24,27 +24,35 @@
  */
 
 #include <iostream>
-#include "compiler/cstring.h"
-#include "type.h"
-#include "int.h"
+#include "compiler/value.h"
+#include "compiler/typetable.h"
+#include "std/file/file.h"
+#include "std/file/filestream.h"
 
-namespace clever {
+namespace clever { namespace packages { namespace std {
+
+namespace file {
+/**
+ * println(object a, [ ...])
+ * Prints the object values without trailing newline
+ */
+/*static CLEVER_FUNCTION(print) {
+	for (int i = 0, size = args->size(); i < size; ++i) {
+		::std::cout << args->at(i)->toString();
+	}
+}*/
+
+} // namespace file
 
 /**
- * Int::toString()
- * Converts the number to string
+ * Initializes Standard module
  */
-CLEVER_TYPE_METHOD(Integer::toString) {
-	retval->setString(CSTRING(value->toString()));
-	retval->set_type(Value::STRING);
+void File::init() throw() {
+	Class* filestream = new file::FileStream();
+	filestream->init();
+	
+	using namespace file;
+	addClass(filestream);
 }
 
-void Integer::init() {
-	addMethod(new Method("tostring", (MethodPtr)&Integer::toString));
-}
-
-DataValue* Integer::allocateValue() const {
-	return NULL;
-}
-
-} // clever
+}}} // clever::packages::std

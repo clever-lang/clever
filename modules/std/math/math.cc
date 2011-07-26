@@ -28,11 +28,12 @@
 #include <cstdlib>
 #include <string>
 #include <iostream>
-#include "std/math.h"
 #include "compiler/typetable.h"
+#include "std/math/math.h"
 
-namespace clever { namespace std_pkg {
+namespace clever { namespace packages { namespace std {
 
+namespace math {
 /**
  * sqrt(double x)
  * Returns the square root of a number x
@@ -47,12 +48,12 @@ static CLEVER_FUNCTION(sqrt) {
 		value = double(args->at(0)->getInteger());
 	}
 	else {
-		std::cerr << "Double sqrt(Double num) requires 'num' "
+		::std::cout << "Double sqrt(Double num) requires 'num' "
                     "to be convertible to type Double.\n";
-		std::exit(1);
+		::std::exit(1);
 	}
 
-	retval->setDouble(std::sqrt(value));
+	retval->setDouble(::std::sqrt(value));
 	retval->set_type(Value::DOUBLE);
 }
 
@@ -61,7 +62,7 @@ static CLEVER_FUNCTION(sqrt) {
  * Returns the cosine of an angle of x radians
  */
 static CLEVER_FUNCTION(cos) {
-	retval->setDouble(std::cos(args->at(0)->getDouble()));
+	retval->setDouble(::std::cos(args->at(0)->getDouble()));
 	retval->set_type(Value::DOUBLE);
 }
 
@@ -70,7 +71,7 @@ static CLEVER_FUNCTION(cos) {
  * Returns the sine of an angle of x radians
  */
 static CLEVER_FUNCTION(sin) {
-	retval->setDouble(std::sin(args->at(0)->getDouble()));
+	retval->setDouble(::std::sin(args->at(0)->getDouble()));
 	retval->set_type(Value::DOUBLE);
 }
 
@@ -79,7 +80,7 @@ static CLEVER_FUNCTION(sin) {
  * Returns the tangent of an angle of x radians
  */
 static CLEVER_FUNCTION(tan) {
-	retval->setDouble(std::tan(args->at(0)->getDouble()));
+	retval->setDouble(::std::tan(args->at(0)->getDouble()));
 	retval->set_type(Value::DOUBLE);
 }
 
@@ -88,7 +89,7 @@ static CLEVER_FUNCTION(tan) {
  * Returns the arc tangent of an angle of x radians
  */
 static CLEVER_FUNCTION(atan) {
-	retval->setDouble(std::atan(args->at(0)->getDouble()));
+	retval->setDouble(::std::atan(args->at(0)->getDouble()));
 	retval->set_type(Value::DOUBLE);
 }
 
@@ -97,7 +98,7 @@ static CLEVER_FUNCTION(atan) {
  * Returns x raised to the power y
  */
 static CLEVER_FUNCTION(pow) {
-	retval->setDouble(std::pow(args->at(0)->getDouble(), args->at(1)->getDouble()));
+	retval->setDouble(::std::pow(args->at(0)->getDouble(), args->at(1)->getDouble()));
 	retval->set_type(Value::DOUBLE);
 }
 
@@ -106,7 +107,7 @@ static CLEVER_FUNCTION(pow) {
  * Returns the smallest integral value that is not less than x
  */
 static CLEVER_FUNCTION(ceil) {
-	retval->setDouble(std::ceil(args->at(0)->getDouble()));
+	retval->setDouble(::std::ceil(args->at(0)->getDouble()));
 	retval->set_type(Value::DOUBLE);
 }
 
@@ -117,19 +118,23 @@ static CLEVER_FUNCTION(ceil) {
  */
 static CLEVER_FUNCTION(abs) {
 	if (args->at(0)->get_type() == Value::DOUBLE) {
-		retval->setDouble(std::abs(args->at(0)->getDouble()));
+		retval->setDouble(::std::abs(args->at(0)->getDouble()));
 		retval->set_type(Value::DOUBLE);
 	} else {
-		retval->setInteger(std::labs(args->at(0)->getInteger()));
+		retval->setInteger(::std::labs(args->at(0)->getInteger()));
 		retval->set_type(Value::INTEGER);
 	}
 }
+
+} // namespace math
 
 /**
  * Load module data
  */
 void Math::init() throw() {
 	const Type* double_type = TypeTable::getType(CSTRING("Double"));
+
+	using namespace math;
 
 	addFunction(new Function("sqrt", &CLEVER_FUNC_NAME(sqrt), double_type))
 		->addArg("value", double_type);
@@ -157,4 +162,4 @@ void Math::init() throw() {
 		->addArg("value", double_type);
 }
 
-}} // clever::std_pkg
+}}} // clever::packages::std

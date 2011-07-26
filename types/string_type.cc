@@ -107,11 +107,15 @@ CLEVER_TYPE_METHOD(String::toInteger) {
 	retval->set_type(Value::INTEGER);
 }
 
-void String::Init() {
+void String::init() {
 	addMethod(new Method("replace", (MethodPtr)&String::replace));
 	addMethod(new Method("substring", (MethodPtr)&String::substring));
 	addMethod(new Method("toFloat", (MethodPtr)&String::toFloat));
 	addMethod(new Method("toInteger", (MethodPtr)&String::toInteger));
+}
+
+DataValue* String::allocateValue() const {
+	return NULL;
 }
 
 } // clever

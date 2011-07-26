@@ -70,9 +70,9 @@ void Compiler::loadTypes() throw() {
 	Double* double_type = new Double;
 	String* string_type = new String;
 
-	int_type->Init();
-	double_type->Init();
-	string_type->Init();
+	int_type->init();
+	double_type->init();
+	string_type->init();
 
 	TypeTable::insert(CSTRING("Int"), int_type);
 	TypeTable::insert(CSTRING("Double"), double_type);
@@ -97,10 +97,15 @@ void Compiler::buildIR() throw() {
  */
 void Compiler::error(std::string message, const location& loc) throw() {
 	if (loc.begin.filename) {
-		std::cerr << "Compile error: " << message << " on " << *loc.begin.filename << " line " << loc.begin.line << std::endl;
+		std::cout << "Compile error: " << message << " on " << *loc.begin.filename << " line " << loc.begin.line << std::endl;
 	} else {
-		std::cerr << "Compile error: " << message << " on line " << loc.begin.line << std::endl;
+		std::cout << "Compile error: " << message << " on line " << loc.begin.line << std::endl;
 	}
+	exit(1);
+}
+
+void Compiler::error(std::string message) {
+	std::cout << "Compile error: " << message << std::endl;
 	exit(1);
 }
 
@@ -111,10 +116,12 @@ bool Compiler::checkCompatibleTypes(const Value* const lhs, const Value* const r
 	/**
 	 * Constants with different type cannot performs operation
 	 */
-	if (lhs->isPrimitive() && rhs->isPrimitive() && !lhs->hasSameType(rhs)) {
-		return false;
-	}
-	return true;
+	
+	/**
+	 * @TODO: check if a class is base of another
+	 * if (lhs->isPrimitive() && rhs->isPrimitive() && !lhs->hasSameType(rhs))
+	 */
+	return lhs->hasSameType(rhs);
 }
 
 /**

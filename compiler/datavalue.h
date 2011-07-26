@@ -23,29 +23,21 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#ifndef CLEVER_DATAVALUE_H
+#define CLEVER_DATAVALUE_H
 
-#ifndef CLEVER_STD_MATH_H
-#define CLEVER_STD_MATH_H
-
-#include "compiler/module.h"
-#include "compiler/value.h"
-
-namespace clever { namespace std_pkg {
-
-class Math : public Module {
+namespace clever {
+	
+/**
+ * Base class for all typevalues
+ */
+class DataValue
+{
 public:
-	Math()
-		: Module("Math") { }
-
-	~Math() { }
-
-	void init() throw();
-private:
-	DISALLOW_COPY_AND_ASSIGN(Math);
+	DataValue() {};
+	virtual ~DataValue() {};
 };
 
-extern Module* g_math_module;
+} // clever
 
-}} // clever::std_pkg
-
-#endif // CLEVER_STD_MATH_H
+#endif /* CLEVER_DATAVALUE_H */

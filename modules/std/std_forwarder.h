@@ -23,28 +23,6 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <iostream>
-#include "compiler/cstring.h"
-#include "type.h"
-#include "int.h"
-
-namespace clever {
-
-/**
- * Int::toString()
- * Converts the number to string
- */
-CLEVER_TYPE_METHOD(Integer::toString) {
-	retval->setString(CSTRING(value->toString()));
-	retval->set_type(Value::STRING);
-}
-
-void Integer::init() {
-	addMethod(new Method("tostring", (MethodPtr)&Integer::toString));
-}
-
-DataValue* Integer::allocateValue() const {
-	return NULL;
-}
-
-} // clever
+#include "std/file/file.h"
+#include "std/io/io.h"
+#include "std/math/math.h"

@@ -41,9 +41,9 @@ EXTRADIR=extra/
 OBJECTS=$(BUILDDIR)parser.o $(BUILDDIR)scanner.o $(BUILDDIR)driver.o \
 	$(BUILDDIR)cstring.o $(BUILDDIR)double.o $(BUILDDIR)std_pkg.o \
 	$(BUILDDIR)int.o $(BUILDDIR)io.o $(BUILDDIR)math.o \
-	$(BUILDDIR)pkgmanager.o $(BUILDDIR)compiler.o \
+	$(BUILDDIR)file.o $(BUILDDIR)filestream.o $(BUILDDIR)pkgmanager.o $(BUILDDIR)compiler.o \
 	$(BUILDDIR)vm.o $(BUILDDIR)cgvisitor.o $(BUILDDIR)opcode.o \
-	$(BUILDDIR)string_type.o $(BUILDDIR)main.o
+	$(BUILDDIR)string_type.o $(BUILDDIR)main.o $(BUILDDIR)win32.o
 
 # Windows related stuff
 ifdef IS_MINGW
@@ -103,14 +103,20 @@ $(BUILDDIR)string_type.o: $(TYPEDIR)string_type.cc
 	$(CXX) $(CXXFLAGS) -c -o $(BUILDDIR)string_type.o $(TYPEDIR)string_type.cc
 
 # Standard package
-$(BUILDDIR)std_pkg.o: $(MODDIR)std/io.cc $(MODDIR)std/math.cc $(MODDIR)std/std_pkg.cc
+$(BUILDDIR)std_pkg.o: $(MODDIR)std/io/io.cc $(MODDIR)std/math/math.cc $(MODDIR)std/file/file.cc $(MODDIR)std/std_pkg.cc
 	$(CXX) $(CXXFLAGS) -c -o $(BUILDDIR)std_pkg.o $(MODDIR)std/std_pkg.cc
 
-$(BUILDDIR)io.o: $(BUILDDIR)pkgmanager.o $(MODDIR)std/io.cc
-	$(CXX) $(CXXFLAGS) -c -o $(BUILDDIR)io.o $(MODDIR)std/io.cc
+$(BUILDDIR)io.o: $(BUILDDIR)pkgmanager.o $(MODDIR)std/io/io.cc
+	$(CXX) $(CXXFLAGS) -c -o $(BUILDDIR)io.o $(MODDIR)std/io/io.cc
 
-$(BUILDDIR)math.o: $(BUILDDIR)pkgmanager.o $(MODDIR)std/math.cc
-	$(CXX) $(CXXFLAGS) -c -o $(BUILDDIR)math.o $(MODDIR)std/math.cc
+$(BUILDDIR)math.o: $(BUILDDIR)pkgmanager.o $(MODDIR)std/math/math.cc
+	$(CXX) $(CXXFLAGS) -c -o $(BUILDDIR)math.o $(MODDIR)std/math/math.cc
+
+$(BUILDDIR)filestream.o: $(MODDIR)std/file/filestream.cc
+	$(CXX) $(CXXFLAGS) -c -o $(BUILDDIR)filestream.o $(MODDIR)std/file/filestream.cc
+
+$(BUILDDIR)file.o: $(BUILDDIR)pkgmanager.o $(BUILDDIR)filestream.o $(MODDIR)std/file/file.cc
+	$(CXX) $(CXXFLAGS) -c -o $(BUILDDIR)file.o $(MODDIR)std/file/file.cc
 
 $(BUILDDIR)win32.o: $(WINDIR)win32.cc
 	$(CXX) $(CXXFLAGS) -c -o $(BUILDDIR)win32.o $(WINDIR)win32.cc

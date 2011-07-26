@@ -36,7 +36,8 @@ public:
 	Integer() :
 		Type("Int") { }
 
-	void Init();
+	void init();
+	DataValue* allocateValue() const;
 
 	/* Type methods */
 	static CLEVER_TYPE_METHOD(toString);

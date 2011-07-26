@@ -23,28 +23,26 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <iostream>
-#include "compiler/cstring.h"
-#include "type.h"
-#include "int.h"
+#ifndef CLEVER_FILESTREAMVALUE_H
+#define CLEVER_FILESTREAMVALUE_H
+#include <fstream>
+#include "compiler/datavalue.h"
 
-namespace clever {
+namespace clever { namespace packages { namespace std { namespace file {
 
-/**
- * Int::toString()
- * Converts the number to string
- */
-CLEVER_TYPE_METHOD(Integer::toString) {
-	retval->setString(CSTRING(value->toString()));
-	retval->set_type(Value::STRING);
-}
+struct FileStreamValue : public DataValue
+{
+	FileStreamValue() : m_is_open(false) {}
+	
+	// File stream 
+	::std::fstream m_fstream;
+	
+	// If there is a open stream
+	bool m_is_open;
+	
+	~FileStreamValue() {}
+};
 
-void Integer::init() {
-	addMethod(new Method("tostring", (MethodPtr)&Integer::toString));
-}
+}}}} // clever::packages::std::file
 
-DataValue* Integer::allocateValue() const {
-	return NULL;
-}
-
-} // clever
+#endif
