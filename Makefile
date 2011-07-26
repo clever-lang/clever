@@ -4,13 +4,7 @@ UNAME := $(shell uname)
 
 # Compiler
 CXX?=g++
-
-ifneq (,$(findstring MINGW,$(UNAME)))
-CXXFLAGS=-c -O2 -ggdb -Wall -ansi -Ibuild/ -Imodules/ -Iwin32/ -I. -fno-rtti -pedantic -fno-exceptions
-else
 CXXFLAGS=-c -O2 -ggdb -Wall -ansi -Ibuild/ -Imodules/ -I. -fno-rtti -pedantic -fno-exceptions
-endif
-
 CXXFLAGS2=-c -O2 -ggdb -ansi -Ibuild/ -I. -fno-rtti -pedantic -fno-exceptions
 CXXFLAGS3=-ggdb -O2
 # Linker
@@ -36,20 +30,17 @@ WINDIR=win32/
 # Testrunner dir
 EXTRADIR=extra/
 
-ifneq (,$(findstring MINGW,$(UNAME)))
 OBJECTS=$(BUILDDIR)parser.o $(BUILDDIR)scanner.o $(BUILDDIR)driver.o \
 	$(BUILDDIR)cstring.o $(BUILDDIR)double.o $(BUILDDIR)std_pkg.o \
 	$(BUILDDIR)int.o $(BUILDDIR)io.o $(BUILDDIR)math.o \
 	$(BUILDDIR)file.o $(BUILDDIR)filestream.o $(BUILDDIR)pkgmanager.o $(BUILDDIR)compiler.o \
 	$(BUILDDIR)vm.o $(BUILDDIR)cgvisitor.o $(BUILDDIR)opcode.o \
 	$(BUILDDIR)string_type.o $(BUILDDIR)main.o $(BUILDDIR)win32.o
-else
-OBJECTS=$(BUILDDIR)parser.o $(BUILDDIR)scanner.o $(BUILDDIR)driver.o \
-	$(BUILDDIR)cstring.o $(BUILDDIR)double.o $(BUILDDIR)std_pkg.o \
-	$(BUILDDIR)int.o $(BUILDDIR)io.o $(BUILDDIR)math.o \
-	$(BUILDDIR)file.o $(BUILDDIR)filestream.o $(BUILDDIR)pkgmanager.o $(BUILDDIR)compiler.o \
-	$(BUILDDIR)vm.o $(BUILDDIR)cgvisitor.o $(BUILDDIR)opcode.o \
-	$(BUILDDIR)string_type.o $(BUILDDIR)main.o
+
+# Windows related stuff
+ifneq (,$(findstring MINGW,$(UNAME)))
+OBJECTS+=$(BUILDDIR)win32.o
+CXXFLAGS+=-Iwin32/
 endif
 
 clever: $(OBJECTS)
