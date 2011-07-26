@@ -890,14 +890,17 @@ private:
 
 class IntegralValue : public ASTNode {
 public:
-	IntegralValue(int value) : m_value(value) { }
+	IntegralValue(int value) : m_int_value(value) { }
 
 	~IntegralValue() {
 	}
 
-	int get_value() throw() { return m_value; }
+	Value* get_value() throw() { return m_value; }
+	
+	int get_int() throw() { return m_int_value; }
 private:
-	int m_value;
+	Value* m_value;
+	int m_int_value;
 
 	DISALLOW_COPY_AND_ASSIGN(IntegralValue);
 };
