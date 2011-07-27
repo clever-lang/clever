@@ -63,6 +63,7 @@ $(BUILDDIR)main.o: $(INTERPDIR)main.cc
 	$(CXX) $(CXXFLAGS) -c -o $(BUILDDIR)main.o $(INTERPDIR)main.cc
 
 $(BUILDDIR)parser.cc: $(INTERPDIR)parser.y
+	mkdir -p build
 	$(BISON) -d -o$(BUILDDIR)parser.cc $(INTERPDIR)parser.y
 
 $(BUILDDIR)parser.o: $(BUILDDIR)parser.cc
