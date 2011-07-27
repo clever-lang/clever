@@ -895,7 +895,7 @@ public:
 	~IntegralValue() {
 	}
 
-	Value* get_value() throw() { return m_value; }
+	Value* get_value() const throw() { return m_value; }
 	
 	int get_int() throw() { return m_int_value; }
 private:
