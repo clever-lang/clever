@@ -57,10 +57,10 @@ public:
 		: std::string(str), m_id(0) { }
 
 	bool hasSameId(const CString* cstring) const throw() {
-		return get_id() == cstring->get_id();
+		return getId() == cstring->getId();
 	}
 
-	IdType get_id() const throw() {
+	IdType getId() const throw() {
 		return m_id;
 	}
 
@@ -120,7 +120,7 @@ public:
 	}
 
 	bool contains(const CString* cstring) const {
-		IdType id = cstring->get_id();
+		IdType id = cstring->getId();
 		return id != 0 && id < size() && find(id)->second->hasSameId(cstring);
 	}
 
@@ -146,7 +146,7 @@ public:
 	}
 
 	const CString* intern(const CString& needle) throw() {
-		IdType id = needle.get_id();
+		IdType id = needle.getId();
 
 		if (id) {
 			return find(id)->second;

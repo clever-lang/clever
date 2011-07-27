@@ -67,7 +67,7 @@ public:
 	}
 
 	/* Returns the parsed file */
-	CString* get_file() throw() {
+	CString* getFile() throw() {
 		return const_cast<CString*>(m_file);
 	}
 

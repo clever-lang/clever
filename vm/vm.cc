@@ -41,9 +41,9 @@ VM::~VM() {
 	OpcodeList::const_iterator it = m_opcodes->begin(), end(m_opcodes->end());
 
 	while (it != end) {
-		Value* op1 = (*it)->get_op1();
-		Value* op2 = (*it)->get_op2();
-		Value* result = (*it)->get_result();
+		Value* op1 = (*it)->getOp1();
+		Value* op2 = (*it)->getOp2();
+		Value* result = (*it)->getResult();
 
 		if (op1) {
 			op1->delRef();
@@ -88,11 +88,11 @@ void VM::run() throw() {
  * x + y
  */
 CLEVER_VM_HANDLER(VM::plus_handler) {
-	Value* op1 = opcode.get_op1();
-	Value* op2 = opcode.get_op2();
-	Value* result = opcode.get_result();
+	Value* op1 = opcode.getOp1();
+	Value* op2 = opcode.getOp2();
+	Value* result = opcode.getResult();
 
-	switch (op1->get_type()) {
+	switch (op1->getType()) {
 		case Value::STRING:
 			result->setString(CSTRING(op1->getString() + op2->getString()));
 			break;
@@ -109,11 +109,11 @@ CLEVER_VM_HANDLER(VM::plus_handler) {
  * x / y
  */
 CLEVER_VM_HANDLER(VM::div_handler) {
-	Value* op1 = opcode.get_op1();
-	Value* op2 = opcode.get_op2();
-	Value* result = opcode.get_result();
+	Value* op1 = opcode.getOp1();
+	Value* op2 = opcode.getOp2();
+	Value* result = opcode.getResult();
 
-	switch (op1->get_type()) {
+	switch (op1->getType()) {
 		case Value::INTEGER:
 			result->setInteger(op1->getInteger() / op2->getInteger());
 			break;
@@ -127,11 +127,11 @@ CLEVER_VM_HANDLER(VM::div_handler) {
  * x - y
  */
 CLEVER_VM_HANDLER(VM::minus_handler) {
-	Value* op1 = opcode.get_op1();
-	Value* op2 = opcode.get_op2();
-	Value* result = opcode.get_result();
+	Value* op1 = opcode.getOp1();
+	Value* op2 = opcode.getOp2();
+	Value* result = opcode.getResult();
 
-	switch (op1->get_type()) {
+	switch (op1->getType()) {
 		case Value::INTEGER:
 			result->setInteger(op1->getInteger() - op2->getInteger());
 			break;
@@ -145,11 +145,11 @@ CLEVER_VM_HANDLER(VM::minus_handler) {
  * x * y
  */
 CLEVER_VM_HANDLER(VM::mult_handler) {
-	Value* op1 = opcode.get_op1();
-	Value* op2 = opcode.get_op2();
-	Value* result = opcode.get_result();
+	Value* op1 = opcode.getOp1();
+	Value* op2 = opcode.getOp2();
+	Value* result = opcode.getResult();
 
-	switch (op1->get_type()) {
+	switch (op1->getType()) {
 		case Value::INTEGER:
 			result->setInteger(op1->getInteger() * op2->getInteger());
 			break;
@@ -163,11 +163,11 @@ CLEVER_VM_HANDLER(VM::mult_handler) {
  * x & y
  */
 CLEVER_VM_HANDLER(VM::bw_and_handler) {
-	Value* op1 = opcode.get_op1();
-	Value* op2 = opcode.get_op2();
-	Value* result = opcode.get_result();
+	Value* op1 = opcode.getOp1();
+	Value* op2 = opcode.getOp2();
+	Value* result = opcode.getResult();
 
-	switch (op1->get_type()) {
+	switch (op1->getType()) {
 		case Value::INTEGER:
 			result->setInteger(op1->getInteger() & op2->getInteger());
 			break;
@@ -178,11 +178,11 @@ CLEVER_VM_HANDLER(VM::bw_and_handler) {
  * x ^ y
  */
 CLEVER_VM_HANDLER(VM::bw_xor_handler) {
-	Value* op1 = opcode.get_op1();
-	Value* op2 = opcode.get_op2();
-	Value* result = opcode.get_result();
+	Value* op1 = opcode.getOp1();
+	Value* op2 = opcode.getOp2();
+	Value* result = opcode.getResult();
 
-	switch (op1->get_type()) {
+	switch (op1->getType()) {
 		case Value::INTEGER:
 			result->setInteger(op1->getInteger() ^ op2->getInteger());
 			break;
@@ -193,11 +193,11 @@ CLEVER_VM_HANDLER(VM::bw_xor_handler) {
  * x | y
  */
 CLEVER_VM_HANDLER(VM::bw_or_handler) {
-	Value* op1 = opcode.get_op1();
-	Value* op2 = opcode.get_op2();
-	Value* result = opcode.get_result();
+	Value* op1 = opcode.getOp1();
+	Value* op2 = opcode.getOp2();
+	Value* result = opcode.getResult();
 
-	switch (op1->get_type()) {
+	switch (op1->getType()) {
 		case Value::INTEGER:
 			result->setInteger(op1->getInteger() | op2->getInteger());
 			break;
@@ -208,11 +208,11 @@ CLEVER_VM_HANDLER(VM::bw_or_handler) {
  * x % y
  */
 CLEVER_VM_HANDLER(VM::mod_handler) {
-	Value* op1 = opcode.get_op1();
-	Value* op2 = opcode.get_op2();
-	Value* result = opcode.get_result();
+	Value* op1 = opcode.getOp1();
+	Value* op2 = opcode.getOp2();
+	Value* result = opcode.getResult();
 
-	switch (op1->get_type()) {
+	switch (op1->getType()) {
 		case Value::INTEGER:
 			result->setInteger(op1->getInteger() % op2->getInteger());
 			break;
@@ -223,10 +223,10 @@ CLEVER_VM_HANDLER(VM::mod_handler) {
  * Type var [= value ]
  */
 CLEVER_VM_HANDLER(VM::var_decl_handler) {
-	const Value* value = opcode.get_op2();
+	const Value* value = opcode.getOp2();
 
 	if (value) {
-		opcode.get_op1()->copy(value);
+		opcode.getOp1()->copy(value);
 	}
 }
 
@@ -234,10 +234,10 @@ CLEVER_VM_HANDLER(VM::var_decl_handler) {
  * ++x
  */
 CLEVER_VM_HANDLER(VM::pre_inc_handler) {
-	Value* value = opcode.get_op1();
-	Value* result = opcode.get_result();
+	Value* value = opcode.getOp1();
+	Value* result = opcode.getResult();
 
-	switch (value->get_type()) {
+	switch (value->getType()) {
 		case Value::INTEGER:
 			value->setInteger(value->getInteger()+1);
 			break;
@@ -252,11 +252,11 @@ CLEVER_VM_HANDLER(VM::pre_inc_handler) {
  * x++
  */
 CLEVER_VM_HANDLER(VM::pos_inc_handler) {
-	Value* value = opcode.get_op1();
-	Value* result = opcode.get_result();
+	Value* value = opcode.getOp1();
+	Value* result = opcode.getResult();
 
 	result->copy(value);
-	switch (value->get_type()) {
+	switch (value->getType()) {
 		case Value::INTEGER:
 			value->setInteger(value->getInteger()+1);
 			break;
@@ -270,10 +270,10 @@ CLEVER_VM_HANDLER(VM::pos_inc_handler) {
  * --x
  */
 CLEVER_VM_HANDLER(VM::pre_dec_handler) {
-	Value* value = opcode.get_op1();
-	Value* result = opcode.get_result();
+	Value* value = opcode.getOp1();
+	Value* result = opcode.getResult();
 
-	switch (value->get_type()) {
+	switch (value->getType()) {
 		case Value::INTEGER:
 			value->setInteger(value->getInteger()-1);
 			break;
@@ -288,11 +288,11 @@ CLEVER_VM_HANDLER(VM::pre_dec_handler) {
  * x--
  */
 CLEVER_VM_HANDLER(VM::pos_dec_handler) {
-	Value* value = opcode.get_op1();
-	Value* result = opcode.get_result();
+	Value* value = opcode.getOp1();
+	Value* result = opcode.getResult();
 
 	result->copy(value);
-	switch (value->get_type()) {
+	switch (value->getType()) {
 		case Value::INTEGER:
 			value->setInteger(value->getInteger()-1);
 			break;
@@ -306,16 +306,16 @@ CLEVER_VM_HANDLER(VM::pos_dec_handler) {
  * JMPZ - Jump if zero
  */
 CLEVER_VM_HANDLER(VM::jmpz_handler) {
-	Value* value = opcode.get_op1();
-	Value* result = opcode.get_result();
+	Value* value = opcode.getOp1();
+	Value* result = opcode.getResult();
 
-	switch (value->get_type()) {
+	switch (value->getType()) {
 		case Value::INTEGER:
 			if (!value->getInteger()) {
 				if (result) {
 					result->setBoolean(false);
 				}
-				CLEVER_VM_GOTO(opcode.get_jmp_addr1());
+				CLEVER_VM_GOTO(opcode.getJmpAddr1());
 			}
 			break;
 		case Value::DOUBLE:
@@ -323,7 +323,7 @@ CLEVER_VM_HANDLER(VM::jmpz_handler) {
 				if (result) {
 					result->setBoolean(false);
 				}
-				CLEVER_VM_GOTO(opcode.get_jmp_addr1());
+				CLEVER_VM_GOTO(opcode.getJmpAddr1());
 			}
 			break;
 		case Value::BOOLEAN:
@@ -331,7 +331,7 @@ CLEVER_VM_HANDLER(VM::jmpz_handler) {
 				if (result) {
 					result->setBoolean(false);
 				}
-				CLEVER_VM_GOTO(opcode.get_jmp_addr1());
+				CLEVER_VM_GOTO(opcode.getJmpAddr1());
 			}
 			break;
 	}
@@ -344,47 +344,47 @@ CLEVER_VM_HANDLER(VM::jmpz_handler) {
  * JMPNZ - Jump if non zero
  */
 CLEVER_VM_HANDLER(VM::jmpnz_handler) {
-	Value* value = opcode.get_op1();
+	Value* value = opcode.getOp1();
 
-	switch (value->get_type()) {
+	switch (value->getType()) {
 		case Value::INTEGER:
 			if (value->getInteger()) {
-				opcode.get_result()->setBoolean(true);
-				CLEVER_VM_GOTO(opcode.get_jmp_addr1());
+				opcode.getResult()->setBoolean(true);
+				CLEVER_VM_GOTO(opcode.getJmpAddr1());
 			}
 			break;
 		case Value::DOUBLE:
 			if (value->getDouble()) {
-				opcode.get_result()->setBoolean(true);
-				CLEVER_VM_GOTO(opcode.get_jmp_addr1());
+				opcode.getResult()->setBoolean(true);
+				CLEVER_VM_GOTO(opcode.getJmpAddr1());
 			}
 			break;
 		case Value::BOOLEAN:
 			if (value->getBoolean()) {
-				opcode.get_result()->setBoolean(true);
-				CLEVER_VM_GOTO(opcode.get_jmp_addr1());
+				opcode.getResult()->setBoolean(true);
+				CLEVER_VM_GOTO(opcode.getJmpAddr1());
 			}
 			break;
 	}
-	opcode.get_result()->setBoolean(false);
+	opcode.getResult()->setBoolean(false);
 }
 
 /**
  * JMP
  */
 CLEVER_VM_HANDLER(VM::jmp_handler) {
-	CLEVER_VM_GOTO(opcode.get_jmp_addr2());
+	CLEVER_VM_GOTO(opcode.getJmpAddr2());
 }
 
 /**
  * x > y
  */
 CLEVER_VM_HANDLER(VM::greater_handler) {
-	Value* op1 = opcode.get_op1();
-	Value* op2 = opcode.get_op2();
-	Value* result = opcode.get_result();
+	Value* op1 = opcode.getOp1();
+	Value* op2 = opcode.getOp2();
+	Value* result = opcode.getResult();
 
-	switch (op1->get_type()) {
+	switch (op1->getType()) {
 		case Value::INTEGER:
 			result->setBoolean(op1->getInteger() > op2->getInteger());
 			break;
@@ -398,11 +398,11 @@ CLEVER_VM_HANDLER(VM::greater_handler) {
  * x >= y
  */
 CLEVER_VM_HANDLER(VM::greater_equal_handler) {
-	Value* op1 = opcode.get_op1();
-	Value* op2 = opcode.get_op2();
-	Value* result = opcode.get_result();
+	Value* op1 = opcode.getOp1();
+	Value* op2 = opcode.getOp2();
+	Value* result = opcode.getResult();
 
-	switch (op1->get_type()) {
+	switch (op1->getType()) {
 		case Value::INTEGER:
 			result->setBoolean(op1->getInteger() >= op2->getInteger());
 			break;
@@ -416,11 +416,11 @@ CLEVER_VM_HANDLER(VM::greater_equal_handler) {
  * x < y
  */
 CLEVER_VM_HANDLER(VM::less_handler) {
-	Value* op1 = opcode.get_op1();
-	Value* op2 = opcode.get_op2();
-	Value* result = opcode.get_result();
+	Value* op1 = opcode.getOp1();
+	Value* op2 = opcode.getOp2();
+	Value* result = opcode.getResult();
 
-	switch (op1->get_type()) {
+	switch (op1->getType()) {
 		case Value::INTEGER:
 			result->setBoolean(op1->getInteger() < op2->getInteger());
 			break;
@@ -434,11 +434,11 @@ CLEVER_VM_HANDLER(VM::less_handler) {
  * x <= y
  */
 CLEVER_VM_HANDLER(VM::less_equal_handler) {
-	Value* op1 = opcode.get_op1();
-	Value* op2 = opcode.get_op2();
-	Value* result = opcode.get_result();
+	Value* op1 = opcode.getOp1();
+	Value* op2 = opcode.getOp2();
+	Value* result = opcode.getResult();
 
-	switch (op1->get_type()) {
+	switch (op1->getType()) {
 		case Value::INTEGER:
 			result->setBoolean(op1->getInteger() <= op2->getInteger());
 			break;
@@ -452,18 +452,18 @@ CLEVER_VM_HANDLER(VM::less_equal_handler) {
  * break
  */
 CLEVER_VM_HANDLER(VM::break_handler) {
-	CLEVER_VM_GOTO(opcode.get_jmp_addr1());
+	CLEVER_VM_GOTO(opcode.getJmpAddr1());
 }
 
 /**
  * x == y
  */
 CLEVER_VM_HANDLER(VM::equal_handler) {
-	Value* op1 = opcode.get_op1();
-	Value* op2 = opcode.get_op2();
-	Value* result = opcode.get_result();
+	Value* op1 = opcode.getOp1();
+	Value* op2 = opcode.getOp2();
+	Value* result = opcode.getResult();
 
-	switch (op1->get_type()) {
+	switch (op1->getType()) {
 		case Value::INTEGER:
 			result->setBoolean(op1->getInteger() == op2->getInteger());
 			break;
@@ -477,11 +477,11 @@ CLEVER_VM_HANDLER(VM::equal_handler) {
  * x != y
  */
 CLEVER_VM_HANDLER(VM::not_equal_handler) {
-	Value* op1 = opcode.get_op1();
-	Value* op2 = opcode.get_op2();
-	Value* result = opcode.get_result();
+	Value* op1 = opcode.getOp1();
+	Value* op2 = opcode.getOp2();
+	Value* result = opcode.getResult();
 
-	switch (op1->get_type()) {
+	switch (op1->getType()) {
 		case Value::INTEGER:
 			result->setBoolean(op1->getInteger() != op2->getInteger());
 			break;
@@ -495,9 +495,9 @@ CLEVER_VM_HANDLER(VM::not_equal_handler) {
  * func()
  */
 CLEVER_VM_HANDLER(VM::fcall_handler) {
-	CallableValue* func = static_cast<CallableValue*>(opcode.get_op1());
-	Value* args = opcode.get_op2();
-	Value* result = opcode.get_result();
+	CallableValue* func = static_cast<CallableValue*>(opcode.getOp1());
+	Value* args = opcode.getOp2();
+	Value* result = opcode.getResult();
 	const ValueVector* func_args = args ? args->getVector() : NULL;
 
 	result->initialize();
@@ -516,8 +516,8 @@ CLEVER_VM_HANDLER(VM::fcall_handler) {
  * Argument receiver
  */
 CLEVER_VM_HANDLER(VM::arg_recv_handler) {
-	ValueVector* vars = opcode.get_op1()->getVector();
-	ValueVector* func_args = opcode.get_op2()->getVector();
+	ValueVector* vars = opcode.getOp1()->getVector();
+	ValueVector* func_args = opcode.getOp2()->getVector();
 
 	for (int i = 0, j = vars->size(); i < j; ++i) {
 		vars->at(i)->copy(func_args->at(i));
@@ -528,9 +528,9 @@ CLEVER_VM_HANDLER(VM::arg_recv_handler) {
  * var.method()
  */
 CLEVER_VM_HANDLER(VM::mcall_handler) {
-	CallableValue* var = static_cast<CallableValue*>(opcode.get_op1());
-	Value* args = opcode.get_op2();
-	Value* result = opcode.get_result();
+	CallableValue* var = static_cast<CallableValue*>(opcode.getOp1());
+	Value* args = opcode.getOp2();
+	Value* result = opcode.getResult();
 	const ValueVector* func_args = args ? args->getVector() : NULL;
 
 	result->initialize();
@@ -543,7 +543,7 @@ CLEVER_VM_HANDLER(VM::mcall_handler) {
  * x = y
  */
 CLEVER_VM_HANDLER(VM::assign_handler) {
-	opcode.get_op1()->copy(opcode.get_op2());
+	opcode.getOp1()->copy(opcode.getOp2());
 }
 
 /**
@@ -557,7 +557,7 @@ CLEVER_VM_HANDLER(VM::end_func_handler) {
 	/**
 	 * Go to after the caller command
 	 */
-	CLEVER_VM_GOTO(op->get_op_num());
+	CLEVER_VM_GOTO(op->getOpNum());
 }
 
 /**
@@ -565,17 +565,17 @@ CLEVER_VM_HANDLER(VM::end_func_handler) {
  */
 CLEVER_VM_HANDLER(VM::return_handler) {
 	if (!s_call.empty()) {
-		Value* value = opcode.get_op1();
+		Value* value = opcode.getOp1();
 		Opcode* call = s_call.top();
 
 		if (value) {
-			call->get_result()->copy(value);
+			call->getResult()->copy(value);
 		}
 		s_call.pop();
 		/**
 		 * Go back to the caller
 		 */
-		CLEVER_VM_GOTO(call->get_op_num());
+		CLEVER_VM_GOTO(call->getOpNum());
 	} else {
 		/**
 		 * Terminates the execution

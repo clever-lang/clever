@@ -123,12 +123,12 @@ public:
 	/**
 	 * Change the node optimize status
 	 */
-	void set_optimized(bool value) throw() { m_optimized = value; }
+	void setOptimized(bool value) throw() { m_optimized = value; }
 	/**
 	 * Method for getting the line where occurs the definition
 	 */
-	void set_location(location& locate) throw() { m_location = locate; }
-	const location& get_location() const throw() { return m_location; }
+	void setLocation(location& locate) throw() { m_location = locate; }
+	const location& getLocation() const throw() { return m_location; }
 
 	const std::string* getFileName() const throw() { return m_location.end.filename; }
 
@@ -137,13 +137,13 @@ public:
 	/**
 	 * Method for getting the value representation
 	 */
-	virtual Value* get_value() const throw() { return NULL; }
+	virtual Value* getValue() const throw() { return NULL; }
 	/**
 	 * Method for generating the expression IR
 	 */
 	virtual void accept(ASTVisitor& visitor) throw() { }
-	virtual void set_expr(ASTNode* expr) throw() { }
-	virtual void set_block(ASTNode* expr) throw() { }
+	virtual void setExpr(ASTNode* expr) throw() { }
+	virtual void setBlock(ASTNode* expr) throw() { }
 protected:
 	NodeList m_nodes;
 	location m_location;
@@ -160,7 +160,7 @@ public:
 
 	bool isLiteral() const { return true; }
 	virtual bool hasValue() const { return true; }
-	virtual Value* get_value() const throw() = 0;
+	virtual Value* getValue() const throw() = 0;
 private:
 	DISALLOW_COPY_AND_ASSIGN(Literal);
 };
@@ -169,12 +169,12 @@ class NumberLiteral : public Literal {
 public:
 	explicit NumberLiteral(int64_t val) {
 		m_value = new Value(val);
-		m_value->set_type_ptr(TypeTable::getType(CSTRING("Int")));
+		m_value->setTypePtr(TypeTable::getType(CSTRING("Int")));
 	}
 
 	explicit NumberLiteral(double val) {
 		m_value = new Value(val);
-		m_value->set_type_ptr(TypeTable::getType(CSTRING("Double")));
+		m_value->setTypePtr(TypeTable::getType(CSTRING("Double")));
 	}
 
 	explicit NumberLiteral(Value* value)
@@ -184,7 +184,7 @@ public:
 		m_value->delRef();
 	}
 
-	Value* get_value() const throw() { return m_value; };
+	Value* getValue() const throw() { return m_value; };
 private:
 	Value* m_value;
 
@@ -203,11 +203,11 @@ public:
 		m_expr->delRef();
 	}
 
-	Value* get_value() const throw() {
+	Value* getValue() const throw() {
 		return m_result;
 	}
 
-	ASTNode* get_expr() const {
+	ASTNode* getExpr() const {
 		return m_expr;
 	}
 
@@ -256,14 +256,14 @@ public:
 
 	bool isAssigned() const { return m_assign; }
 
-	ASTNode* get_lhs() const { return m_lhs; }
-	ASTNode* get_rhs() const { return m_rhs; }
+	ASTNode* getLhs() const { return m_lhs; }
+	ASTNode* getRhs() const { return m_rhs; }
 
-	int get_op() const { return m_op; }
+	int getOp() const { return m_op; }
 
-	Value* get_value() const throw() { return m_result; }
+	Value* getValue() const throw() { return m_result; }
 
-	void set_result(Value* value) { m_result = value; }
+	void setResult(Value* value) { m_result = value; }
 
 	virtual void accept(ASTVisitor& visitor) throw() {
 		m_lhs->accept(visitor);
@@ -305,15 +305,15 @@ public:
 		}
 	}
 
-	ASTNode* get_variable() const {
+	ASTNode* getVariable() const {
 		return m_variable;
 	}
 
-	ASTNode* get_initial_value() const {
+	ASTNode* getInitialValue() const {
 		return m_initial_value;
 	}
 
-	ASTNode* get_type() const {
+	ASTNode* getType() const {
 		return m_type;
 	}
 
@@ -350,7 +350,7 @@ class Identifier : public ASTNode {
 public:
 	explicit Identifier(const CString* name) {
 		m_value = new Value();
-		m_value->set_name(name);
+		m_value->setName(name);
 		m_name = name;
 	}
 
@@ -359,8 +359,8 @@ public:
 	}
 
 	bool hasValue() const { return true; }
-	Value* get_value() const throw() { return m_value; }
-	const CString* get_name() const { return m_name; }
+	Value* getValue() const throw() { return m_value; }
+	const CString* getName() const { return m_name; }
 private:
 	Value* m_value;
 	const CString* m_name;
@@ -372,14 +372,14 @@ class StringLiteral : public Literal {
 public:
 	explicit StringLiteral(const CString* name) {
 		m_value = new Value(name);
-		m_value->set_type_ptr(TypeTable::getType(CSTRING("String")));
+		m_value->setTypePtr(TypeTable::getType(CSTRING("String")));
 	}
 
 	~StringLiteral() {
 		m_value->delRef();
 	}
 
-	Value* get_value() const throw() { return m_value; };
+	Value* getValue() const throw() { return m_value; };
 private:
 	Value* m_value;
 
@@ -511,11 +511,11 @@ public:
 	bool hasElseBlock() throw() { return m_else != NULL; }
 	bool hasElseIf() throw() { return m_nodes.size() != 0; }
 
-	ASTNode* get_block() throw() { return m_block; }
-	ASTNode* get_condition() throw() { return m_condition; }
+	ASTNode* getBlock() throw() { return m_block; }
+	ASTNode* getCondition() throw() { return m_condition; }
 
-	ASTNode* get_else() throw() { return m_else; }
-	void set_else(ASTNode* expr) {
+	ASTNode* getElse() throw() { return m_else; }
+	void setElse(ASTNode* expr) {
 		if (expr) {
 			m_else = expr;
 			m_else->addRef();
@@ -552,8 +552,8 @@ public:
 
 	bool hasBlock() throw() { return m_block != NULL; }
 
-	ASTNode* get_condition() throw() { return m_condition; }
-	ASTNode* get_block() throw() { return m_block; }
+	ASTNode* getCondition() throw() { return m_condition; }
+	ASTNode* getBlock() throw() { return m_block; }
 private:
 	ASTNode* m_condition;
 	ASTNode* m_block;
@@ -582,8 +582,8 @@ public:
 
 	bool hasBlock() throw() { return m_block != NULL; }
 
-	ASTNode* get_condition() throw() { return m_condition; }
-	ASTNode* get_block() throw() { return m_block; }
+	ASTNode* getCondition() throw() { return m_condition; }
+	ASTNode* getBlock() throw() { return m_block; }
 
 	void accept(ASTVisitor& visitor) throw() {
 		visitor.visit(this);
@@ -690,11 +690,11 @@ public:
 		}
 	}
 
-	const CString* const get_name() const throw() { return m_name->get_value()->get_name(); }
-	ASTNode* get_args() const throw() { return m_args; }
-	ASTNode* get_return() const throw() { return m_return; }
+	const CString* const get_name() const throw() { return m_name->getValue()->getName(); }
+	ASTNode* getArgs() const throw() { return m_args; }
+	ASTNode* getReturn() const throw() { return m_return; }
 
-	ASTNode* get_block() const throw() { return m_block; }
+	ASTNode* getBlock() const throw() { return m_block; }
 	bool hasBlock() const throw() { return m_block != NULL; }
 
 	void accept(ASTVisitor& visitor) throw() {
@@ -719,7 +719,7 @@ public:
 		m_modifier->delRef();
 	}
 
-        ASTNode* get_modifier() { return m_modifier; }
+        ASTNode* getModifier() { return m_modifier; }
 protected:
         ASTNode* m_modifier;
 };
@@ -745,11 +745,11 @@ public:
 		}
 	}
 
-	Value* get_value() const throw() { return m_result; }
+	Value* getValue() const throw() { return m_result; }
 
-	const CString* const get_func_name() const throw() { return m_name->get_value()->get_name(); }
+	const CString* const get_func_name() const throw() { return m_name->getValue()->getName(); }
 
-	ASTNode* get_args() throw() { return m_args; }
+	ASTNode* getArgs() throw() { return m_args; }
 
 	void accept(ASTVisitor& visitor) throw() {
 		visitor.visit(this);
@@ -787,11 +787,11 @@ public:
 		}
 	}
 
-	ASTNode* get_variable() const throw() { return m_var; }
-	const CString* const get_method_name() const throw() { return m_method->get_value()->get_name(); }
-	ASTNode* get_args() const throw() { return m_args; }
+	ASTNode* getVariable() const throw() { return m_var; }
+	const CString* const getMethodName() const throw() { return m_method->getValue()->getName(); }
+	ASTNode* getArgs() const throw() { return m_args; }
 
-	Value* get_value() const throw() { return m_result; }
+	Value* getValue() const throw() { return m_result; }
 
 	void accept(ASTVisitor& visitor) throw() {
 		visitor.visit(this);
@@ -815,7 +815,7 @@ public:
 	}
 
 	void accept(ASTVisitor& visitor) throw() {
-		get_rhs()->accept(visitor);
+		getRhs()->accept(visitor);
 		visitor.visit(this);
 	}
 private:
@@ -840,12 +840,12 @@ public:
 		}
 	}
 
-	const CString* const get_package_name() throw() {
-		return m_package->get_value()->get_name();
+	const CString* const getPackageName() throw() {
+		return m_package->getValue()->getName();
 	}
 
-	const CString* const get_module_name() throw() {
-		return m_module ? m_module->get_value()->get_name() : NULL;
+	const CString* const getModuleName() throw() {
+		return m_module ? m_module->getValue()->getName() : NULL;
 	}
 
 	void accept(ASTVisitor& visitor) throw() {
@@ -874,7 +874,7 @@ public:
 		}
 	}
 
-	ASTNode* get_expr() const throw() { return m_expr; }
+	ASTNode* getExpr() const throw() { return m_expr; }
 
 	void accept(ASTVisitor& visitor) throw() {
 		if (m_expr) {
@@ -895,9 +895,9 @@ public:
 	~IntegralValue() {
 	}
 
-	Value* get_value() const throw() { return m_value; }
+	Value* getValue() const throw() { return m_value; }
 	
-	int get_int() throw() { return m_int_value; }
+	int getInt() throw() { return m_int_value; }
 private:
 	Value* m_value;
 	int m_int_value;
@@ -937,11 +937,11 @@ public:
 		attr->addRef();
 	}
 
-	std::list<MethodDeclaration*>& get_methods_decl() throw() { 
+	std::list<MethodDeclaration*>& getMethodsDecl() throw() { 
 		return m_methods_decl;
 	}
 
-	std::list<AttributeDeclaration*>& get_attrib_decl() throw() { 
+	std::list<AttributeDeclaration*>& getAttribsDecl() throw() { 
 		return m_attrib_decl;
 	}
 private:
@@ -960,13 +960,13 @@ public:
 
 		DeclarationError() {}
 
-		const std::string& get_identifier() { return m_identifier; }
-		const location& get_location() { return m_location; }
-		error_type get_type() { return m_type; }
+		const std::string& getIdentifier() { return m_identifier; }
+		const location& getLocation() { return m_location; }
+		error_type getType() { return m_type; }
 
-		void set_identifier(const std::string& ident) { m_identifier = ident; }
-		void set_location(const location& loc) { m_location = loc; }
-		void set_error_type(error_type type) { m_type = type; }
+		void setIdentifier(const std::string& ident) { m_identifier = ident; }
+		void setLocation(const location& loc) { m_location = loc; }
+		void setErrorType(error_type type) { m_type = type; }
 
 	private:
 		std::string m_identifier;
@@ -987,28 +987,28 @@ public:
 	
 	bool check(DeclarationError& error) {
 		ClassStmtList* list = static_cast<ClassStmtList*>(m_body);
-		std::list<AttributeDeclaration*>& attribs = list->get_attrib_decl();
+		std::list<AttributeDeclaration*>& attribs = list->getAttribsDecl();
 		std::list<AttributeDeclaration*>::const_iterator it;
 
 		std::set<std::string> s;
 
 		for (it = attribs.begin(); it != attribs.end(); ++it) {
-			const std::string& str = (*it)->get_variable()->get_value()->get_name()->str();
+			const std::string& str = (*it)->getVariable()->getValue()->getName()->str();
 			
 			if (s.find(str) == s.end()) {
 				s.insert(str);
 			}
 			else {
-				error.set_error_type(DeclarationError::ATTRIBUTE_DECLARATION);
-				error.set_identifier(str);
-				error.set_location((*it)->get_location());
+				error.setErrorType(DeclarationError::ATTRIBUTE_DECLARATION);
+				error.setIdentifier(str);
+				error.setLocation((*it)->getLocation());
 				return false;
 			}
 		}
 		
 		s.clear();
 		
-		std::list<MethodDeclaration*>& methods = list->get_methods_decl();
+		std::list<MethodDeclaration*>& methods = list->getMethodsDecl();
 		std::list<MethodDeclaration*>::const_iterator it2;
 		
 		for (it2 = methods.begin(); it2 != methods.end(); ++it2) {
@@ -1018,9 +1018,9 @@ public:
 				s.insert(str);
 			}
 			else {
-				error.set_error_type(DeclarationError::METHOD_DECLARATION);
-				error.set_identifier(str);
-				error.set_location((*it2)->get_location());
+				error.setErrorType(DeclarationError::METHOD_DECLARATION);
+				error.setIdentifier(str);
+				error.setLocation((*it2)->getLocation());
 				return false;
 			}
 		}
@@ -1032,8 +1032,8 @@ public:
 		visitor.visit(this);
 	}
 	
-	const CString* get_class_name() const {
-		return m_name->get_value()->get_name();
+	const CString* getClassName() const {
+		return m_name->getValue()->getName();
 	}
 	
 private:

@@ -90,10 +90,10 @@ public:
 
 	FunctionArgs& getArgs() throw() { return m_args; }
 
-	void set_vars(Value* vars) { m_vars = vars; }
-	Value* get_vars() throw() { return m_vars; }
+	void setVars(Value* vars) { m_vars = vars; }
+	Value* getVars() throw() { return m_vars; }
 
-	int get_num_args() const { return m_num_args; }
+	int getNumArgs() const { return m_num_args; }
 	void setVariadicArgs() throw() { m_num_args = -1; }
 
 	void setInternal() throw() { m_type = INTERNAL; }
@@ -102,15 +102,15 @@ public:
 	bool isUserDefined() const throw() { return m_type == USER; }
 	bool isInternal() const throw() { return m_type == INTERNAL; }
 
-	void set_offset(unsigned int num) { m_info.offset = num; }
-	long get_offset() const throw() { return m_info.offset; }
+	void setOffset(unsigned int num) { m_info.offset = num; }
+	long getOffset() const throw() { return m_info.offset; }
 
-	void set_return(const Type* type) { m_return = type; }
-	const Type* get_return() const throw() { return m_return; }
+	void setReturn(const Type* type) { m_return = type; }
+	const Type* getReturn() const throw() { return m_return; }
 
-	FunctionPtr get_ptr() const throw() { return m_info.ptr; }
+	FunctionPtr getPtr() const throw() { return m_info.ptr; }
 
-	const std::string& get_name() const throw() { return m_name; }
+	const std::string& getName() const throw() { return m_name; }
 
 	void call(const ValueVector* args, Value* result) const {
 		m_info.ptr(args, result);

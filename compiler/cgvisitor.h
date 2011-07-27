@@ -115,7 +115,7 @@ private:
 		/**
 		 * Sets the opcode number, which is used by JMP opcodes
 		 */
-		opcode->set_op_num(getOpNum());
+		opcode->setOpNum(getOpNum());
 
 		return opcode;
 	}

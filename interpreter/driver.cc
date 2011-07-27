@@ -44,7 +44,7 @@ void Interpreter::execute(bool interactive) {
 	m_compiler.setInteractive();
 	m_compiler.buildIR();
 
-	vm.set_opcodes(m_compiler.getOpcodes());
+	vm.setOpcodes(m_compiler.getOpcodes());
 	vm.run();
 }
 

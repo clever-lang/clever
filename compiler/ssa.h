@@ -62,7 +62,7 @@ public:
 
 	void push(Value* value) {
 		if (EXPECTED(value->hasName())) {
-			push(value->get_name(), value);
+			push(value->getName(), value);
 		}
 		// TODO: THROW ERROR HERE
 	}
@@ -79,7 +79,7 @@ public:
 	}
 
 	Value* fetch(const Value* value) {
-		return fetch(value->get_name());
+		return fetch(value->getName());
 	}
 private:
 	int m_number;
@@ -104,7 +104,7 @@ public:
 	}
 
 	void pushVar(Value* var) throw() {
-		at(m_scope).push(var->get_name(), var);
+		at(m_scope).push(var->getName(), var);
 	}
 
 	/**
@@ -127,7 +127,7 @@ public:
 	}
 
 	Value* fetchVar(Value* value) throw() {
-		return fetchVar(value->get_name());
+		return fetchVar(value->getName());
 	}
 	
 	Scope& fetchScope(int number) throw() {

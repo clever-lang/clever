@@ -49,7 +49,7 @@ class Driver;
 
 %locations
 %initial-action {
-@$.begin.filename = @$.end.filename = driver.get_file();
+@$.begin.filename = @$.end.filename = driver.getFile();
 };
 
 %debug
@@ -169,8 +169,8 @@ statements:
 ;
 
 return_stmt:
-		RETURN expr { $$ = new ast::ReturnStmt($2); $$->set_location(yylloc); }
-	|	RETURN      { $$ = new ast::ReturnStmt();   $$->set_location(yylloc); }
+		RETURN expr { $$ = new ast::ReturnStmt($2); $$->setLocation(yylloc); }
+	|	RETURN      { $$ = new ast::ReturnStmt();   $$->setLocation(yylloc); }
 ;
 
 args_declaration_non_empty:
@@ -198,7 +198,7 @@ access_modifier:
 ;
 
 class_stmt:
-		/* empty */             { $$ = new ast::ClassStmtList; $$->set_location(yyloc); }
+		/* empty */             { $$ = new ast::ClassStmtList; $$->setLocation(yyloc); }
 	|	class_stmt_no_empty     { $$ = $1; }
 ;
 
@@ -208,11 +208,11 @@ class_stmt_no_empty:
 ;
 
 method_declaration:
-		access_modifier TYPE IDENT '(' args_declaration ')' block_stmt { $$ = new ast::MethodDeclaration($1, $2, $3, $5, $7); $$->set_location(yyloc); }
+		access_modifier TYPE IDENT '(' args_declaration ')' block_stmt { $$ = new ast::MethodDeclaration($1, $2, $3, $5, $7); $$->setLocation(yyloc); }
 ;
 
 attribute_declaration:
-                access_modifier TYPE IDENT ';'	{ $$ = new ast::AttributeDeclaration($1, $2, $3); $$->set_location(yyloc); }
+                access_modifier TYPE IDENT ';'	{ $$ = new ast::AttributeDeclaration($1, $2, $3); $$->setLocation(yyloc); }
 ;
 
 arg_list:
@@ -221,13 +221,13 @@ arg_list:
 ;
 
 func_call:
-		IDENT '(' ')'          { $$ = new ast::FunctionCall($1); $$->set_location(yylloc); }
-	|	IDENT '(' arg_list ')' { $$ = new ast::FunctionCall($1, $3); $$->set_location(yylloc); }
+		IDENT '(' ')'          { $$ = new ast::FunctionCall($1); $$->setLocation(yylloc); }
+	|	IDENT '(' arg_list ')' { $$ = new ast::FunctionCall($1, $3); $$->setLocation(yylloc); }
 ;
 
 method_call:
-		IDENT '.' IDENT '(' ')'          { $$ = new ast::MethodCall($1, $3); $$->set_location(yylloc); }
-	|	IDENT '.' IDENT '(' arg_list ')' { $$ = new ast::MethodCall($1, $3, $5); $$->set_location(yylloc); }
+		IDENT '.' IDENT '(' ')'          { $$ = new ast::MethodCall($1, $3); $$->setLocation(yylloc); }
+	|	IDENT '.' IDENT '(' arg_list ')' { $$ = new ast::MethodCall($1, $3, $5); $$->setLocation(yylloc); }
 ;
 
 variable_declaration_no_init:
@@ -235,21 +235,21 @@ variable_declaration_no_init:
 ;
 
 variable_declaration:
-		TYPE IDENT '=' type_creation { $$ = new ast::VariableDecl($1, $2, $4); $$->set_location(yylloc); }
-	|	TYPE IDENT '=' expr          { $$ = new ast::VariableDecl($1, $2, $4); $$->set_location(yylloc); }
+		TYPE IDENT '=' type_creation { $$ = new ast::VariableDecl($1, $2, $4); $$->setLocation(yylloc); }
+	|	TYPE IDENT '=' expr          { $$ = new ast::VariableDecl($1, $2, $4); $$->setLocation(yylloc); }
 	|	variable_declaration_no_init { $$ = $1; }
 ;
 
 assign_stmt:
-		IDENT '=' expr  { $$ = new ast::AssignExpr($1, $3);                   $$->set_location(yylloc); }
-	|	IDENT "+=" expr { $$ = new ast::BinaryExpr(ast::PLUS, $1, $3, true);  $$->set_location(yylloc); }
-	|	IDENT "-=" expr { $$ = new ast::BinaryExpr(ast::MINUS, $1, $3, true); $$->set_location(yylloc); }
-	|	IDENT "/=" expr { $$ = new ast::BinaryExpr(ast::DIV, $1, $3, true);   $$->set_location(yylloc); }
-	|	IDENT "*=" expr { $$ = new ast::BinaryExpr(ast::MULT, $1, $3, true);  $$->set_location(yylloc); }
-	|	IDENT "%=" expr { $$ = new ast::BinaryExpr(ast::MOD, $1, $3, true);   $$->set_location(yylloc); }
-	|	IDENT "&=" expr { $$ = new ast::BinaryExpr(ast::AND, $1, $3, true);   $$->set_location(yylloc); }
-	|	IDENT "|=" expr { $$ = new ast::BinaryExpr(ast::OR, $1, $3, true);    $$->set_location(yylloc); }
-	|	IDENT "^=" expr { $$ = new ast::BinaryExpr(ast::XOR, $1, $3, true);   $$->set_location(yylloc); }
+		IDENT '=' expr  { $$ = new ast::AssignExpr($1, $3);                   $$->setLocation(yylloc); }
+	|	IDENT "+=" expr { $$ = new ast::BinaryExpr(ast::PLUS, $1, $3, true);  $$->setLocation(yylloc); }
+	|	IDENT "-=" expr { $$ = new ast::BinaryExpr(ast::MINUS, $1, $3, true); $$->setLocation(yylloc); }
+	|	IDENT "/=" expr { $$ = new ast::BinaryExpr(ast::DIV, $1, $3, true);   $$->setLocation(yylloc); }
+	|	IDENT "*=" expr { $$ = new ast::BinaryExpr(ast::MULT, $1, $3, true);  $$->setLocation(yylloc); }
+	|	IDENT "%=" expr { $$ = new ast::BinaryExpr(ast::MOD, $1, $3, true);   $$->setLocation(yylloc); }
+	|	IDENT "&=" expr { $$ = new ast::BinaryExpr(ast::AND, $1, $3, true);   $$->setLocation(yylloc); }
+	|	IDENT "|=" expr { $$ = new ast::BinaryExpr(ast::OR, $1, $3, true);    $$->setLocation(yylloc); }
+	|	IDENT "^=" expr { $$ = new ast::BinaryExpr(ast::XOR, $1, $3, true);   $$->setLocation(yylloc); }
 ;
 
 arguments:
@@ -259,34 +259,34 @@ arguments:
 ;
 
 type_creation:
-		TYPE '(' arguments ')' { $$ = new ast::TypeCreation($1, $3); $$->set_location(yylloc); }
+		TYPE '(' arguments ')' { $$ = new ast::TypeCreation($1, $3); $$->setLocation(yylloc); }
 ;
 
 expr:
-		expr '-' expr         { $$ = new ast::BinaryExpr(ast::MINUS, $1, $3);        $$->set_location(yylloc); }
-	|	expr '+' expr         { $$ = new ast::BinaryExpr(ast::PLUS, $1, $3);         $$->set_location(yylloc); }
-	|	expr '/' expr         { $$ = new ast::BinaryExpr(ast::DIV, $1, $3);          $$->set_location(yylloc); }
-	|	expr '*' expr         { $$ = new ast::BinaryExpr(ast::MULT, $1, $3);         $$->set_location(yylloc); }
-	|	expr '%' expr         { $$ = new ast::BinaryExpr(ast::MOD, $1, $3);          $$->set_location(yylloc); }
-	|	expr '|' expr         { $$ = new ast::BinaryExpr(ast::BW_OR, $1, $3);        $$->set_location(yylloc); }
-	|	expr '&' expr         { $$ = new ast::BinaryExpr(ast::BW_AND, $1, $3);       $$->set_location(yylloc); }
-	|	expr '^' expr         { $$ = new ast::BinaryExpr(ast::XOR, $1, $3);          $$->set_location(yylloc); }
-	|	expr ">" expr         { $$ = new ast::LogicExpr(ast::GREATER, $1, $3);       $$->set_location(yylloc); }
-	|	expr ">=" expr        { $$ = new ast::LogicExpr(ast::GREATER_EQUAL, $1, $3); $$->set_location(yylloc); }
-	|	expr "<" expr         { $$ = new ast::LogicExpr(ast::LESS, $1, $3);          $$->set_location(yylloc); }
-	|	expr "<=" expr        { $$ = new ast::LogicExpr(ast::LESS_EQUAL, $1, $3);    $$->set_location(yylloc); }
-	|	expr "==" expr        { $$ = new ast::LogicExpr(ast::EQUAL, $1, $3);         $$->set_location(yylloc); }
-	|	expr "!=" expr        { $$ = new ast::LogicExpr(ast::NOT_EQUAL, $1, $3);     $$->set_location(yylloc); }
+		expr '-' expr         { $$ = new ast::BinaryExpr(ast::MINUS, $1, $3);        $$->setLocation(yylloc); }
+	|	expr '+' expr         { $$ = new ast::BinaryExpr(ast::PLUS, $1, $3);         $$->setLocation(yylloc); }
+	|	expr '/' expr         { $$ = new ast::BinaryExpr(ast::DIV, $1, $3);          $$->setLocation(yylloc); }
+	|	expr '*' expr         { $$ = new ast::BinaryExpr(ast::MULT, $1, $3);         $$->setLocation(yylloc); }
+	|	expr '%' expr         { $$ = new ast::BinaryExpr(ast::MOD, $1, $3);          $$->setLocation(yylloc); }
+	|	expr '|' expr         { $$ = new ast::BinaryExpr(ast::BW_OR, $1, $3);        $$->setLocation(yylloc); }
+	|	expr '&' expr         { $$ = new ast::BinaryExpr(ast::BW_AND, $1, $3);       $$->setLocation(yylloc); }
+	|	expr '^' expr         { $$ = new ast::BinaryExpr(ast::XOR, $1, $3);          $$->setLocation(yylloc); }
+	|	expr ">" expr         { $$ = new ast::LogicExpr(ast::GREATER, $1, $3);       $$->setLocation(yylloc); }
+	|	expr ">=" expr        { $$ = new ast::LogicExpr(ast::GREATER_EQUAL, $1, $3); $$->setLocation(yylloc); }
+	|	expr "<" expr         { $$ = new ast::LogicExpr(ast::LESS, $1, $3);          $$->setLocation(yylloc); }
+	|	expr "<=" expr        { $$ = new ast::LogicExpr(ast::LESS_EQUAL, $1, $3);    $$->setLocation(yylloc); }
+	|	expr "==" expr        { $$ = new ast::LogicExpr(ast::EQUAL, $1, $3);         $$->setLocation(yylloc); }
+	|	expr "!=" expr        { $$ = new ast::LogicExpr(ast::NOT_EQUAL, $1, $3);     $$->setLocation(yylloc); }
 	|	expr "||" expr
 	|	expr "&&" expr
-	|	expr "or" expr        { $$ = new ast::LogicExpr(ast::OR, $1, $3);            $$->set_location(yylloc); }
-	|	expr "and" expr       { $$ = new ast::LogicExpr(ast::AND, $1, $3);           $$->set_location(yylloc); }
-	|	'-' expr %prec UMINUS { $$ = new ast::BinaryExpr(ast::MINUS, $2);            $$->set_location(yylloc); }
-	|	'+' expr %prec UMINUS { $$ = new ast::BinaryExpr(ast::PLUS, $2);             $$->set_location(yylloc); }
-	|	INCREMENT IDENT       { $$ = new ast::PreIncrement($2);                      $$->set_location(yylloc); }
-	|	IDENT INCREMENT       { $$ = new ast::PosIncrement($1);                      $$->set_location(yylloc); }
-	|	DECREMENT IDENT       { $$ = new ast::PreDecrement($2);                      $$->set_location(yylloc); }
-	|	IDENT DECREMENT       { $$ = new ast::PosDecrement($1);                      $$->set_location(yylloc); }
+	|	expr "or" expr        { $$ = new ast::LogicExpr(ast::OR, $1, $3);            $$->setLocation(yylloc); }
+	|	expr "and" expr       { $$ = new ast::LogicExpr(ast::AND, $1, $3);           $$->setLocation(yylloc); }
+	|	'-' expr %prec UMINUS { $$ = new ast::BinaryExpr(ast::MINUS, $2);            $$->setLocation(yylloc); }
+	|	'+' expr %prec UMINUS { $$ = new ast::BinaryExpr(ast::PLUS, $2);             $$->setLocation(yylloc); }
+	|	INCREMENT IDENT       { $$ = new ast::PreIncrement($2);                      $$->setLocation(yylloc); }
+	|	IDENT INCREMENT       { $$ = new ast::PosIncrement($1);                      $$->setLocation(yylloc); }
+	|	DECREMENT IDENT       { $$ = new ast::PreDecrement($2);                      $$->setLocation(yylloc); }
+	|	IDENT DECREMENT       { $$ = new ast::PosDecrement($1);                      $$->setLocation(yylloc); }
 	|	'!' expr              { $$ = $2; }
 	|	'~' expr              { $$ = $2; }
 	|	'(' expr ')'          { $$ = $2; }
@@ -303,17 +303,17 @@ for_expr:
 ;
 
 while_expr:
-		WHILE '(' expr ')' block_stmt { $$ = new ast::WhileExpr($3, $5); $$->set_location(yylloc); }
+		WHILE '(' expr ')' block_stmt { $$ = new ast::WhileExpr($3, $5); $$->setLocation(yylloc); }
 ;
 
 if_expr:
-		IF '(' expr ')' block_stmt { $2 = new ast::IfExpr($3, $5); $$ = $2;                $$->set_location(yylloc); }
-		elseif_opt else_opt        { static_cast<ast::IfExpr*>($2)->set_else($8); $$ = $2; $$->set_location(yylloc); }
+		IF '(' expr ')' block_stmt { $2 = new ast::IfExpr($3, $5); $$ = $2;                $$->setLocation(yylloc); }
+		elseif_opt else_opt        { static_cast<ast::IfExpr*>($2)->setElse($8); $$ = $2; $$->setLocation(yylloc); }
 ;
 
 elseif_opt:
 		/* empty */
-	|	elseif_opt ELSEIF '(' expr ')' block_stmt { $0->add(new ast::ElseIfExpr($4, $6)); $$->set_location(yylloc); }
+	|	elseif_opt ELSEIF '(' expr ')' block_stmt { $0->add(new ast::ElseIfExpr($4, $6)); $$->setLocation(yylloc); }
 ;
 
 else_opt:
@@ -322,12 +322,12 @@ else_opt:
 ;
 
 break_stmt:
-		BREAK { $$ = new ast::BreakNode(); $$->set_location(yylloc); }
+		BREAK { $$ = new ast::BreakNode(); $$->setLocation(yylloc); }
 ;
 
 import_stmt:
-		IMPORT IDENT           { $$ = new ast::ImportStmt($2);      $$->set_location(yylloc); }
-	|	IMPORT IDENT '.' IDENT { $$ = new ast::ImportStmt($2, $4);  $$->set_location(yylloc); }
+		IMPORT IDENT           { $$ = new ast::ImportStmt($2);      $$->setLocation(yylloc); }
+	|	IMPORT IDENT '.' IDENT { $$ = new ast::ImportStmt($2, $4);  $$->setLocation(yylloc); }
 ;
 
 %%

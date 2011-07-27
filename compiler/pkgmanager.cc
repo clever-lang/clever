@@ -56,7 +56,7 @@ void PackageManager::loadPackage(Scope& scope, const CString* const package) thr
 		 */
 		it->second->init();
 		{
-			ModuleMap& modules = it->second->get_modules();
+			ModuleMap& modules = it->second->getModules();
 			ModuleMap::const_iterator it = modules.begin(), end = modules.end();
 
 			while (it != end) {
@@ -88,7 +88,7 @@ void PackageManager::loadModule(Scope& scope, Module* const module) throw() {
 	 */
 	module->init();
 	{
-		FunctionMap& funcs = module->get_functions();
+		FunctionMap& funcs = module->getFunctions();
 		FunctionMap::const_iterator it = funcs.begin(), end = funcs.end();
 
 		/**
@@ -96,7 +96,7 @@ void PackageManager::loadModule(Scope& scope, Module* const module) throw() {
 		 */
 		while (it != end) {
 			CallableValue* fvalue = new CallableValue(CSTRING(it->first));
-			fvalue->set_handler(it->second);
+			fvalue->setHandler(it->second);
 
 			scope.push(fvalue);
 			++it;
@@ -136,7 +136,7 @@ void PackageManager::loadModule(Scope& scope, const CString* const package, cons
 		 * Check if the package already has been fully loaded
 		 */
 		if (!it->second->isFullyLoaded()) {
-			ModuleMap& modules = it->second->get_modules();
+			ModuleMap& modules = it->second->getModules();
 			ModuleMap::const_iterator it_mod = modules.find(module);
 
 			/**
@@ -160,7 +160,7 @@ void PackageManager::shutdown() throw() {
 	PackageMap::const_iterator it = m_packages.begin(), end = m_packages.end();
 
 	while (it != end) {
-		ModuleMap& modules = it->second->get_modules();
+		ModuleMap& modules = it->second->getModules();
 		ModuleMap::const_iterator it_module = modules.begin(), end_module = modules.end();
 
 		/**

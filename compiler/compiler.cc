@@ -209,15 +209,15 @@ void Compiler::checkFunctionReturn(const Function* func, const Value* value, con
 	 * When value is NULL, the return statement is empty
 	 */
 	if (value && rtype == NULL) {
-		Compiler::errorf(loc, "Function `%S' cannot return value, it was declared as Void!", &func->get_name());
+		Compiler::errorf(loc, "Function `%S' cannot return value, it was declared as Void!", &func->getName());
 	} else if (value == NULL && rtype) {
-		Compiler::errorf(loc, "Function `%S' must return a value of type %s!", &func->get_name(), rtype->get_name());
+		Compiler::errorf(loc, "Function `%S' must return a value of type %s!", &func->getName(), rtype->get_name());
 	} else if (value && rtype) {
-		const Type* vtype = value->get_type_ptr();
+		const Type* vtype = value->getTypePtr();
 
 		if (vtype != rtype) {
 			Compiler::errorf(loc, "Function `%S' expects %s value as return, not %s value",
-				&func->get_name(), rtype->get_name(), vtype->get_name());
+				&func->getName(), rtype->get_name(), vtype->get_name());
 		}
 	}
 }
@@ -226,11 +226,11 @@ void Compiler::checkFunctionReturn(const Function* func, const Value* value, con
  * Checks the number of arguments supplied to the function on call
  */
 void Compiler::checkFunctionArgs(const Function* func, int num_args, const location& loc) throw() {
-	int expected_args = func->get_num_args();
+	int expected_args = func->getNumArgs();
 
 	if (expected_args != -1 && num_args != expected_args) {
 		Compiler::errorf(loc, "Function `%S' expects %l argument%s, %l supplied",
-			&func->get_name(), expected_args, (expected_args > 1 ? "s" : ""), num_args);
+			&func->getName(), expected_args, (expected_args > 1 ? "s" : ""), num_args);
 	}
 }
 

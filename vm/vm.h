@@ -73,7 +73,7 @@ public:
 	/**
 	 * Set the opcode vector
 	 */
-	void set_opcodes(OpcodeList& opcodes) throw() { m_opcodes = &opcodes; }
+	void setOpcodes(OpcodeList& opcodes) throw() { m_opcodes = &opcodes; }
 	/**
 	 * Opcode handlers
 	 */

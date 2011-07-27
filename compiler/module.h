@@ -73,7 +73,7 @@ public:
 	/**
 	 * Returns the package modules map
 	 */
-	ModuleMap& get_modules() {
+	ModuleMap& getModules() {
 		return m_modules;
 	}
 	/**
@@ -131,16 +131,16 @@ public:
 		}
 	}
 
-	const std::string& get_name() const throw() {
+	const std::string& getName() const throw() {
 		return m_name;
 	}
 
-	FunctionMap& get_functions() throw() {
+	FunctionMap& getFunctions() throw() {
 		return m_functions;
 	}
 
 	Function* addFunction(Function* func) throw() {
-		m_functions.insert(FunctionPair(func->get_name(), func));
+		m_functions.insert(FunctionPair(func->getName(), func));
 
 		return func;
 	}

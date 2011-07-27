@@ -89,26 +89,26 @@ public:
 
 	VM::opcode_handler get_handler() const throw() { return m_handler; }
 
-	Value* get_op1() const throw() { return m_op1; }
-	void set_op1(Value* op1) throw() { m_op1 = op1; }
+	Value* getOp1() const throw() { return m_op1; }
+	void setOp1(Value* op1) throw() { m_op1 = op1; }
 
-	Value* get_op2() const throw() { return m_op2; }
-	void set_op2(Value* op2) throw() { m_op2 = op2; }
+	Value* getOp2() const throw() { return m_op2; }
+	void setOp2(Value* op2) throw() { m_op2 = op2; }
 
-	Value* get_result() const throw() { return m_result; }
-	void set_result(Value* result) throw() { m_result = result; }
+	Value* getResult() const throw() { return m_result; }
+	void setResult(Value* result) throw() { m_result = result; }
 
-	long get_op_num() const throw() { return m_op_num; }
-	void set_op_num(long op_num) throw() { m_op_num = op_num; }
+	long getOpNum() const throw() { return m_op_num; }
+	void setOpNum(long op_num) throw() { m_op_num = op_num; }
 
-	void set_jmp_addr1(long jmp_addr) throw() { m_extra.jmp1 = jmp_addr; }
-	long get_jmp_addr1() const throw() { return m_extra.jmp1; }
+	void setJmpAddr1(long jmp_addr) throw() { m_extra.jmp1 = jmp_addr; }
+	long getJmpAddr1() const throw() { return m_extra.jmp1; }
 
-	void set_jmp_addr2(long jmp_addr) throw() { m_extra.jmp2 = jmp_addr; }
-	long get_jmp_addr2() const throw() { return m_extra.jmp2; }
+	void setJmpAddr2(long jmp_addr) throw() { m_extra.jmp2 = jmp_addr; }
+	long getJmpAddr2() const throw() { return m_extra.jmp2; }
 
-	void set_flags(long flags) throw() { m_extra.flags = flags; }
-	long get_flags() const throw() { return m_extra.flags; }
+	void setFlags(long flags) throw() { m_extra.flags = flags; }
+	long getFlags() const throw() { return m_extra.flags; }
 
 	/**
 	 * Methods for debug

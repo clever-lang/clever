@@ -36,7 +36,7 @@ namespace clever {
  */
 CLEVER_TYPE_METHOD(Integer::toString) {
 	retval->setString(CSTRING(value->toString()));
-	retval->set_type(Value::STRING);
+	retval->setType(Value::STRING);
 }
 
 void Integer::init() {

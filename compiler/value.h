@@ -123,19 +123,19 @@ public:
 		}
 	}
 
-	void set_type(int type) { m_type = type; }
-	int get_type() const { return m_type; }
-	int hasSameType(const Value* const value) const { return m_type_ptr == value->get_type_ptr(); }
+	void setType(int type) { m_type = type; }
+	int getType() const { return m_type; }
+	int hasSameType(const Value* const value) const { return m_type_ptr == value->getTypePtr(); }
 
-	const Type* get_type_ptr() const { return m_type_ptr; }
-	void set_type_ptr(const Type* const ptr) { m_type_ptr = ptr; }
+	const Type* getTypePtr() const { return m_type_ptr; }
+	void setTypePtr(const Type* const ptr) { m_type_ptr = ptr; }
 
 	bool hasName() const { return m_name != NULL; }
-	const CString* get_name() const { return m_name; }
-	void set_name(const CString* const name) { m_name = name; }
+	const CString* getName() const { return m_name; }
+	void setName(const CString* const name) { m_name = name; }
 
-	int get_status() { return m_status; }
-	void set_status(int status) { m_status = status; }
+	int getStatus() { return m_status; }
+	void setStatus(int status) { m_status = status; }
 
 	bool isInitialized() const { return m_status == SET; }
 	bool isUninitialized() const { return m_status == UNSET; }
@@ -178,7 +178,7 @@ public:
 	bool getBoolean() const { return m_data.b_value; }
 	ValueVector* getVector() const { return m_data.v_value; }
 
-	const ValueData* get_data() const { return &m_data; }
+	const ValueData* getData() const { return &m_data; }
 	
 	// Sets the buffer for a user type structure
 	void setDataValue(DataValue* data) { 
@@ -187,20 +187,20 @@ public:
 	}
 
 	void copy(const Value* const value) throw() {
-		std::memcpy(&m_data, value->get_data(), sizeof(ValueData));
-		m_type = value->get_type();
+		std::memcpy(&m_data, value->getData(), sizeof(ValueData));
+		m_type = value->getType();
 	}
 	void copy(Value& value) throw() {
-		std::memcpy(&m_data, value.get_data(), sizeof(ValueData));
-		m_type = value.get_type();
+		std::memcpy(&m_data, value.getData(), sizeof(ValueData));
+		m_type = value.getType();
 	}
 
-	virtual Value* get_value() throw() { return this; }
+	virtual Value* getValue() throw() { return this; }
 
 	virtual const CString& toString() throw() {
 		std::ostringstream str;
 
-		switch (get_type()) {
+		switch (getType()) {
 			case INTEGER:
 				str << getInteger();
 
@@ -247,7 +247,7 @@ public:
 	 */
 	explicit CallableValue(const CString* const name)
 		: Value(), m_call_type(NONE), m_context(NULL) {
-		set_name(name);
+		setName(name);
 	}
 
 	/**
@@ -255,8 +255,8 @@ public:
 	 */
 	CallableValue(const CString* const name, const Type* const type)
 		: Value(), m_call_type(NONE), m_context(NULL) {
-		set_name(name);
-		set_type_ptr(type);
+		setName(name);
+		setTypePtr(type);
 	}
 
 	~CallableValue() {
@@ -265,24 +265,24 @@ public:
 		}
 	}
 
-	void set_handler(const Function* const handler) throw() {
+	void setHandler(const Function* const handler) throw() {
 		m_call_type = handler->isInternal() ? FAR : NEAR;
 		m_handler.func = handler;
 	}
 
-	void set_handler(const Method* const handler) throw() {
+	void setHandler(const Method* const handler) throw() {
 		m_call_type = handler->isInternal() ? FAR : NEAR;
 		m_handler.method = handler;
 	}
 
-	void set_context(Value* const value) throw() { m_context = value; }
-	Value* get_context() const throw() { return m_context; }
+	void setContext(Value* const value) throw() { m_context = value; }
+	Value* getContext() const throw() { return m_context; }
 
-	const FunctionPtr get_function_ptr() const throw() { return m_handler.func->get_ptr(); }
-	const MethodPtr get_method_ptr() const throw() { return m_handler.method->get_ptr(); }
+	const FunctionPtr getFunctionPtr() const throw() { return m_handler.func->getPtr(); }
+	const MethodPtr getMethodPtr() const throw() { return m_handler.method->get_ptr(); }
 
-	const Function* get_function() const throw() { return m_handler.func; }
-	const Method* get_method() const throw() { return m_handler.method; }
+	const Function* getFunction() const throw() { return m_handler.func; }
+	const Method* getMethod() const throw() { return m_handler.method; }
 
 	bool isCallable() const { return true; }
 
@@ -295,7 +295,7 @@ public:
 	 * Remember to set a context before calling a non-static method.
 	 */
 	void call(Value* const result, const ValueVector* const args) const throw() {
-		const Type* const type_ptr = get_type_ptr();
+		const Type* const type_ptr = getTypePtr();
 
 		if (UNEXPECTED(m_call_type == NEAR)) {
 			/* TODO: throw error here */

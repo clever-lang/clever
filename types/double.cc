@@ -37,7 +37,7 @@ namespace clever {
  */
 CLEVER_TYPE_METHOD(Double::toString) {
 	retval->setString(CSTRING(value->toString()));
-	retval->set_type(Value::STRING);
+	retval->setType(Value::STRING);
 }
 
 /**
@@ -45,7 +45,7 @@ CLEVER_TYPE_METHOD(Double::toString) {
  * Returns the square root of the number
  */
 CLEVER_TYPE_METHOD(Double::sqrt) {
-	retval->set_type(Value::DOUBLE);
+	retval->setType(Value::DOUBLE);
 	retval->setDouble(std::sqrt(value->getDouble()));
 }
 

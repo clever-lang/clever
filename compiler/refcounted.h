@@ -40,7 +40,7 @@ public:
 
 	virtual ~RefCounted() { }
 
-	void set_reference(int reference) { m_reference = reference; }
+	void setReference(int reference) { m_reference = reference; }
 
 	int refCount() const throw() { return m_reference; }
 

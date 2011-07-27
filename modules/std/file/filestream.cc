@@ -36,7 +36,7 @@ namespace clever { namespace packages { namespace std { namespace file {
  */
 CLEVER_TYPE_METHOD(FileStream::toString) {
 	retval->setString(CSTRING("FileStream class"));
-	retval->set_type(Value::STRING);
+	retval->setType(Value::STRING);
 }
 
 /**
@@ -46,7 +46,7 @@ CLEVER_TYPE_METHOD(FileStream::toString) {
 CLEVER_TYPE_METHOD(FileStream::open) {
 	size_t size = args->size();
 	
-	FileStreamValue* fsv = static_cast<FileStreamValue*>(value->get_data()->dv_value);
+	FileStreamValue* fsv = static_cast<FileStreamValue*>(value->getData()->dv_value);
 	
 	if (size == 1) {
 		fsv->m_fstream.open(args->at(0)->toString().c_str());
@@ -55,7 +55,7 @@ CLEVER_TYPE_METHOD(FileStream::open) {
 	else Compiler::error("calling Filestream::read() : wrong number "
 		"of arguments given to FileStream::open(String)");
 	
-	retval->set_type(Value::NONE);
+	retval->setType(Value::NONE);
 }
 
 /**
@@ -69,7 +69,7 @@ CLEVER_TYPE_METHOD(FileStream::read) {
 		Compiler::error("calling Filestream::read([String, Int, Double]) : wrong number of arguments given");
 	
 	
-	FileStreamValue* fsv = static_cast<FileStreamValue*>(value->get_data()->dv_value);
+	FileStreamValue* fsv = static_cast<FileStreamValue*>(value->getData()->dv_value);
 	
 	if (!fsv->m_is_open) {
 		Compiler::error("calling Filestream::read([String, Int, Double])"
@@ -105,7 +105,7 @@ CLEVER_TYPE_METHOD(FileStream::read) {
 		Compiler::error("calling Filestream::read([String, Int, Double]) : argument type is incompatible");
 	}
 	
-	retval->set_type(Value::NONE);
+	retval->setType(Value::NONE);
 }
 
 
