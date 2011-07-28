@@ -117,11 +117,31 @@ bool Compiler::checkCompatibleTypes(const Value* const lhs, const Value* const r
 	 * Constants with different type cannot performs operation
 	 */
 	
+	if (lhs->isPrimitive() && rhs->isPrimitive() && !lhs->isString() && !rhs->isString()) {
+		return true;
+	}
+	else if (lhs->isString() && rhs->isString()) return true;
+	
 	/**
 	 * @TODO: check if a class is base of another
 	 * if (lhs->isPrimitive() && rhs->isPrimitive() && !lhs->hasSameType(rhs))
 	 */
 	return lhs->hasSameType(rhs);
+}
+
+/**
+ * Returns the type resulting of a binary expression of two compatible types
+ */
+const Type* Compiler::checkExprType(const Value* const lhs, const Value* const rhs) throw() {
+	if (lhs->isPrimitive() && rhs->isPrimitive() && !lhs->isString() && !rhs->isString()) {
+		if (lhs->isDouble() || rhs->isDouble()) return CLEVER_TYPE("Double");
+		if (lhs->isInteger() || rhs->isInteger()) return CLEVER_TYPE("Int");
+		else return CLEVER_TYPE("Bool");
+	}
+	if (lhs->isString()) return CLEVER_TYPE("String");
+	
+	/* TODO: check for non-primitive types */
+	return NULL;
 }
 
 /**

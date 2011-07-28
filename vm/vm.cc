@@ -256,6 +256,7 @@ CLEVER_VM_HANDLER(VM::pos_inc_handler) {
 	Value* result = opcode.getResult();
 
 	result->copy(value);
+	
 	switch (value->getType()) {
 		case Value::INTEGER:
 			value->setInteger(value->getInteger()+1);

@@ -35,6 +35,7 @@
 #include "global.h"
 #include "method.h"
 #include "function.h"
+#include "typetable.h"
 
 namespace clever {
 
@@ -72,22 +73,22 @@ public:
 		: RefCounted(1), m_status(UNSET), m_type(NONE), m_type_ptr(type_ptr), m_name(NULL) { }
 
 	explicit Value(double value)
-		: RefCounted(1), m_status(UNSET), m_type(DOUBLE), m_type_ptr(NULL), m_name(NULL) {
+		: RefCounted(1), m_status(UNSET), m_type(DOUBLE), m_type_ptr(CLEVER_TYPE("Double")), m_name(NULL) {
 		setDouble(value);
 	}
 
 	explicit Value(int64_t value)
-		: RefCounted(1), m_status(UNSET), m_type(INTEGER), m_type_ptr(NULL), m_name(NULL) {
+		: RefCounted(1), m_status(UNSET), m_type(INTEGER), m_type_ptr(CLEVER_TYPE("Int")), m_name(NULL) {
 		setInteger(value);
 	}
 
 	explicit Value(bool value)
-		: RefCounted(1), m_status(UNSET), m_type(BOOLEAN), m_type_ptr(NULL), m_name(NULL) {
+		: RefCounted(1), m_status(UNSET), m_type(BOOLEAN), m_type_ptr(CLEVER_TYPE("Bool")), m_name(NULL) {
 		setBoolean(value);
 	}
 
 	explicit Value(const CString* value)
-		: RefCounted(1), m_status(UNSET), m_type(STRING), m_type_ptr(NULL), m_name(NULL) {
+		: RefCounted(1), m_status(UNSET), m_type(STRING), m_type_ptr(CLEVER_TYPE("String")), m_name(NULL) {
 		setString(value);
 	}
 
@@ -123,7 +124,28 @@ public:
 		}
 	}
 
-	void setType(int type) { m_type = type; }
+	void setType(int type) { 
+		m_type = type; 
+		
+		switch (m_type) {
+			case Value::DOUBLE:
+				m_type_ptr = CLEVER_TYPE("Double");
+				break;
+			case Value::INTEGER:
+				m_type_ptr = CLEVER_TYPE("Int");
+				break;
+			case Value::BOOLEAN:
+				m_type_ptr = CLEVER_TYPE("Bool");
+				break;
+			case Value::STRING:
+				m_type_ptr = CLEVER_TYPE("String");
+				break;
+			default:
+				m_type_ptr = NULL;
+		}
+	}
+	
+	
 	int getType() const { return m_type; }
 	int hasSameType(const Value* const value) const { return m_type_ptr == value->getTypePtr(); }
 
@@ -165,10 +187,31 @@ public:
 	bool isVector() const { return m_type == VECTOR; }
 	bool isUserValue() const { return m_type == USER; }
 
-	void setInteger(int64_t i) { m_type = INTEGER; m_data.l_value = i; }
-	void setString(const CString* const s) { m_type = STRING; m_data.s_value = s; }
-	void setDouble(double d) { m_type = DOUBLE; m_data.d_value = d; }
-	void setBoolean(bool b) { m_type = BOOLEAN; m_data.b_value = b; }
+	void setInteger(int64_t i) { 
+		m_type_ptr = CLEVER_TYPE("Int");
+		m_type = INTEGER; 
+		m_data.l_value = i; 
+	}
+	
+	void setString(const CString* const s) { 
+		m_type_ptr = CLEVER_TYPE("String");
+		m_type = STRING; 
+		m_data.s_value = s; 
+	}
+	
+	void setDouble(double d) { 
+		m_type_ptr = CLEVER_TYPE("Double");
+		m_type = DOUBLE; 
+		m_data.d_value = d; 
+	}
+	
+	void setBoolean(bool b) { 
+		m_type_ptr = CLEVER_TYPE("Bool");
+		m_type = BOOLEAN; 
+		m_data.b_value = b; 
+	}
+	
+	
 	void setVector(ValueVector* v) { m_type = VECTOR; m_data.v_value = v; }
 
 	int64_t getInteger() const { return m_data.l_value; }
@@ -189,10 +232,12 @@ public:
 	void copy(const Value* const value) throw() {
 		std::memcpy(&m_data, value->getData(), sizeof(ValueData));
 		m_type = value->getType();
+		m_type_ptr = value->getTypePtr();
 	}
 	void copy(Value& value) throw() {
 		std::memcpy(&m_data, value.getData(), sizeof(ValueData));
 		m_type = value.getType();
+		m_type_ptr = value.getTypePtr();
 	}
 
 	virtual Value* getValue() throw() { return this; }
