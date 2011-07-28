@@ -78,8 +78,8 @@ Value* CodeGenVisitor::getValue(ASTNode* expr) throw() {
  * Generates opcode for binary expression
  */
 AST_VISITOR(CodeGenVisitor, BinaryExpr) {
-	Value* lhs = m_ssa.fetchVar(getValue(expr->getLhs()));
-	Value* rhs = m_ssa.fetchVar(getValue(expr->getRhs()));
+	Value* lhs = getValue(expr->getLhs());
+	Value* rhs = getValue(expr->getRhs());
 	Value* result = NULL;
 	
 	if (!Compiler::checkCompatibleTypes(lhs, rhs)) {
