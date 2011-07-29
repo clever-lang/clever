@@ -167,7 +167,7 @@ public:
 	void setUninitialized() { m_status = UNSET; }
 	void setModified() { m_status = MODIFIED; }
 
-	bool isPrimitive() const {
+	virtual bool isPrimitive() const {
 		return m_type_ptr == CLEVER_TYPE("Int") ||
 			m_type_ptr == CLEVER_TYPE("Double") ||
 			m_type_ptr == CLEVER_TYPE("Bool") ||
@@ -333,6 +333,11 @@ public:
 
 	bool isNearCall() const throw() { return m_call_type == NEAR; }
 	bool isFarCall() const throw() { return m_call_type == FAR; }
+	
+	/**
+	 * A callable value is not primitive
+	 */
+	virtual bool isPrimitive() const { return false; }
 
 	/**
 	 * Invokes the method/function pointer according with the type.
