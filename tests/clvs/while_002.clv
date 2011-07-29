@@ -1,0 +1,15 @@
+
+import std.io;
+
+Int i = 2;
+
+while (--i) {
+	Int j = -2;
+
+	println(i);
+
+	while (j++) {
+		println(j);
+	}
+}
+

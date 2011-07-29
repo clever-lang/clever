@@ -117,10 +117,12 @@ bool Compiler::checkCompatibleTypes(const Value* const lhs, const Value* const r
 	 * Constants with different type cannot performs operation
 	 */
 	
-	if (lhs->isPrimitive() && rhs->isPrimitive() && !lhs->isString() && !rhs->isString()) {
+	if (lhs->isPrimitive() && rhs->isPrimitive() && lhs->getTypePtr() != CLEVER_TYPE("String") 
+		&& rhs->getTypePtr()  != CLEVER_TYPE("String")) {
 		return true;
 	}
-	else if (lhs->isString() && rhs->isString()) return true;
+	else if (lhs->getTypePtr() == CLEVER_TYPE("String") 
+		&& rhs->getTypePtr() == CLEVER_TYPE("String")) return true;
 	
 	/**
 	 * @TODO: check if a class is base of another
@@ -145,7 +147,8 @@ const Type* Compiler::checkExprType(const Value* const lhs, const Value* const r
 		return CLEVER_TYPE("Bool");
 	}
 	
-	if (lhs->getTypePtr() == CLEVER_TYPE("String")) return CLEVER_TYPE("String");
+	if (lhs->getTypePtr() == CLEVER_TYPE("String") && rhs->getTypePtr() == CLEVER_TYPE("String")) 
+		return CLEVER_TYPE("String");
 	
 	/* TODO: check for non-primitive types */
 	return lhs->getTypePtr();

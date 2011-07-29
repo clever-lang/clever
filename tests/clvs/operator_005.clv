@@ -1,0 +1,12 @@
+
+import std.io;
+
+Int i = 10;
+
+i *= 2;
+
+println(--i + --i, i);
+
+i *= i;
+println(i);
+

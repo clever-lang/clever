@@ -1,0 +1,14 @@
+
+import std.io;
+
+Void foo(Int x) {
+	if (x == 0) {
+		return;
+	}
+
+	println(x);
+	foo(x-1);
+}
+
+foo(10);
+
