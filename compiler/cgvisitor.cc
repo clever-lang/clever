@@ -81,7 +81,13 @@ AST_VISITOR(CodeGenVisitor, BinaryExpr) {
 	Value* lhs = getValue(expr->getLhs());
 	Value* rhs = getValue(expr->getRhs());
 	Value* result = NULL;
-
+	
+	if (!Compiler::checkCompatibleTypes(lhs, rhs)) {
+		Compiler::error("Type mismatch!", expr->getLocation()); 	
+	}
+	
+	const Type* type = Compiler::checkExprType(lhs, rhs);
+	
 	if (lhs->isPrimitive() && rhs->isPrimitive() && !expr->isAssigned()) {
 		result = Compiler::constantFolding(expr->getOp(), lhs, rhs);
 	}
@@ -90,6 +96,7 @@ AST_VISITOR(CodeGenVisitor, BinaryExpr) {
 		 * Don't generate the opcode, the expression was evaluated in
 		 * compile-time
 		 */
+		result->setTypePtr(type);
 		expr->setOptimized(true);
 		expr->setResult(result);
 		return;
@@ -115,6 +122,8 @@ AST_VISITOR(CodeGenVisitor, BinaryExpr) {
 		case AND:   emit(OP_BW_AND, &VM::bw_and_handler, lhs, rhs, expr->getValue()); break;
 		case MOD:   emit(OP_MOD,    &VM::mod_handler,    lhs, rhs, expr->getValue()); break;
 	}
+	
+	expr->getValue()->setTypePtr(type);
 }
 
 
@@ -127,12 +136,25 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 	ASTNode* rhs_expr = expr->getInitialValue();
 	Value* variable = var_expr->getValue();
 	const Type* type = TypeTable::getType(var_type->getValue()->getName());
+	
+	/* Check if the type wasn't declarated */
+	if (type == NULL) {
+		Compiler::errorf(expr->getLocation(), "`%s' does not name a type", 
+			var_type->getValue()->getName()->c_str());
+	}
 
 	variable->setTypePtr(type);
 
 	/* Check if the declaration contains initialization */
 	if (rhs_expr) {
 		Value* value = getValue(rhs_expr);
+		
+		if (!Compiler::checkCompatibleTypes(variable, value)) {
+			std::string error = std::string("Cannot convert `")
+				+ value->getTypePtr()->get_name() + "' to `" 
+				+ variable->getTypePtr()->get_name() + "' on assignment";
+			Compiler::error(error, expr->getLocation());	 	
+		}
 
 		variable->addRef();
 		m_ssa.pushVar(variable);
@@ -184,6 +206,7 @@ AST_VISITOR(CodeGenVisitor, PreIncrement) {
 	value->addRef();
 
 	emit(OP_PRE_INC, &VM::pre_inc_handler, value, NULL, expr->getValue());
+	expr->getValue()->setTypePtr(value->getTypePtr());
 }
 
 /**
@@ -196,6 +219,7 @@ AST_VISITOR(CodeGenVisitor, PosIncrement) {
 	value->addRef();
 
 	emit(OP_POS_INC, &VM::pos_inc_handler, value, NULL, expr->getValue());
+	expr->getValue()->setTypePtr(value->getTypePtr());
 }
 
 /**
@@ -208,6 +232,7 @@ AST_VISITOR(CodeGenVisitor, PreDecrement) {
 	value->addRef();
 
 	emit(OP_PRE_DEC, &VM::pre_dec_handler, value, NULL, expr->getValue());
+	expr->getValue()->setTypePtr(value->getTypePtr());
 }
 
 /**
@@ -220,6 +245,7 @@ AST_VISITOR(CodeGenVisitor, PosDecrement) {
 	value->addRef();
 
 	emit(OP_POS_DEC, &VM::pos_dec_handler, value, NULL, expr->getValue());
+	expr->getValue()->setTypePtr(value->getTypePtr());
 }
 
 /**
@@ -381,6 +407,13 @@ AST_VISITOR(CodeGenVisitor, LogicExpr) {
 
 	lhs = getValue(expr->getLhs());
 	rhs = getValue(expr->getRhs());
+	
+	if (!Compiler::checkCompatibleTypes(rhs, lhs)) {
+		std::string error = std::string("Cannot convert `")
+			+ rhs->getTypePtr()->get_name() + "' to `" 
+			+ lhs->getTypePtr()->get_name() + "' in logic expression";
+		Compiler::error(error, expr->getLocation());	 	
+	}
 
 	if (lhs->isPrimitive()) {
 		result = Compiler::constantFolding(expr->getOp(), lhs, rhs);
@@ -504,6 +537,13 @@ AST_VISITOR(CodeGenVisitor, MethodCall) {
 AST_VISITOR(CodeGenVisitor, AssignExpr) {
 	Value* lhs = getValue(expr->getLhs());
 	Value* rhs = getValue(expr->getRhs());
+	
+	if (!Compiler::checkCompatibleTypes(rhs, lhs)) {
+		std::string error = std::string("Cannot convert `")
+			+ rhs->getTypePtr()->get_name() + "' to `" 
+			+ lhs->getTypePtr()->get_name() + "' on assignment";
+		Compiler::error(error, expr->getLocation());	 	
+	}
 	
 	lhs->setModified();
 

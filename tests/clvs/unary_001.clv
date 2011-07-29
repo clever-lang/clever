@@ -1,0 +1,11 @@
+
+import std.io;
+
+Int i = 2;
+Int j = -2;
+
+println(1 + -i);
+println(-i + -i);
+println(-i - -i);
+println(+j);
+

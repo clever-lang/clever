@@ -729,13 +729,13 @@ public:
 	FunctionCall(ASTNode* name)
 		: m_name(name), m_args(NULL) {
 		m_name->addRef();
-		m_result = new Value;
+		m_result = new CallableValue;
 	}
 	FunctionCall(ASTNode* name, ASTNode* args)
 		: m_name(name), m_args(args) {
 		m_name->addRef();
 		m_args->addRef();
-		m_result = new Value;
+		m_result = new CallableValue;
 	}
 
 	~FunctionCall() {
