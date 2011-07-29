@@ -168,10 +168,10 @@ public:
 	void setModified() { m_status = MODIFIED; }
 
 	bool isPrimitive() const {
-		return m_type == INTEGER ||
-			m_type == DOUBLE ||
-			m_type == BOOLEAN ||
-			m_type == STRING;
+		return m_type_ptr == CLEVER_TYPE("Int") ||
+			m_type_ptr == CLEVER_TYPE("Double") ||
+			m_type_ptr == CLEVER_TYPE("Bool") ||
+			m_type_ptr == CLEVER_TYPE("String");
 	}
 
 	/*

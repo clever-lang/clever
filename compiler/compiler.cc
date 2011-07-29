@@ -134,14 +134,21 @@ bool Compiler::checkCompatibleTypes(const Value* const lhs, const Value* const r
  */
 const Type* Compiler::checkExprType(const Value* const lhs, const Value* const rhs) throw() {
 	if (lhs->isPrimitive() && rhs->isPrimitive() && !lhs->isString() && !rhs->isString()) {
-		if (lhs->isDouble() || rhs->isDouble()) return CLEVER_TYPE("Double");
-		if (lhs->isInteger() || rhs->isInteger()) return CLEVER_TYPE("Int");
-		else return CLEVER_TYPE("Bool");
+		if (lhs->getTypePtr() == CLEVER_TYPE("Double") || rhs->getTypePtr() == CLEVER_TYPE("Double")) {
+			return CLEVER_TYPE("Double");
+		}
+		
+		if (lhs->getTypePtr() == CLEVER_TYPE("Int") || rhs->getTypePtr() == CLEVER_TYPE("Int")) {
+			return CLEVER_TYPE("Int");
+		}
+		
+		return CLEVER_TYPE("Bool");
 	}
-	if (lhs->isString()) return CLEVER_TYPE("String");
+	
+	if (lhs->getTypePtr() == CLEVER_TYPE("String")) return CLEVER_TYPE("String");
 	
 	/* TODO: check for non-primitive types */
-	return NULL;
+	return lhs->getTypePtr();
 }
 
 /**
