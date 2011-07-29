@@ -136,6 +136,12 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 	ASTNode* rhs_expr = expr->getInitialValue();
 	Value* variable = var_expr->getValue();
 	const Type* type = TypeTable::getType(var_type->getValue()->getName());
+	
+	/* Check if the type wasn't declarated */
+	if (type == NULL) {
+		Compiler::errorf(expr->getLocation(), "`%s' does not name a type", 
+			var_type->getValue()->getName()->c_str());
+	}
 
 	variable->setTypePtr(type);
 
