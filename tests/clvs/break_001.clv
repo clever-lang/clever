@@ -1,0 +1,27 @@
+
+import std.io;
+
+while (1) {
+	println(1);
+
+	while (0) {
+		break;
+	}
+
+	if (1) {
+		if (1) {
+			Int i = 2;
+
+			while (i) {
+
+				println(i);
+
+
+				if (--i <= 0) {
+					println("break!");
+				}
+			}
+		}
+	}
+	break;
+}

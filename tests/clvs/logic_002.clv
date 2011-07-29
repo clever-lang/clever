@@ -1,0 +1,15 @@
+
+import std.io;
+
+Int i = 10;
+
+if (--i == 9) {
+	println(i);
+}
+
+if (i != 9) {
+	println('fail!');
+} else {
+	println('ok!');
+}
+

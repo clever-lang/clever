@@ -80,7 +80,7 @@ void VM::run() throw() {
 		// opcode.dump();
 
 		/* Invoke the opcode handler */
-		opcode.get_handler()(opcode, next_op);
+		opcode.getHandler()(opcode, next_op);
 	}
 }
 
@@ -256,6 +256,7 @@ CLEVER_VM_HANDLER(VM::pos_inc_handler) {
 	Value* result = opcode.getResult();
 
 	result->copy(value);
+	
 	switch (value->getType()) {
 		case Value::INTEGER:
 			value->setInteger(value->getInteger()+1);

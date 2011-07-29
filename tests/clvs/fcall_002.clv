@@ -1,0 +1,8 @@
+
+import std.io;
+
+Int bar() { return 3; }
+Int foo() { return bar(); }
+
+println(foo()+2);
+

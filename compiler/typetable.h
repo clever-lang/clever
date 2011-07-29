@@ -29,6 +29,8 @@
 #include <tr1/unordered_map>
 #include "types/type.h"
 
+#define CLEVER_TYPE(name) TypeTable::getType(CSTRING(name))
+
 namespace clever {
 
 class CString;

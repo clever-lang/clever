@@ -68,7 +68,7 @@ public:
 	/**
 	 * Returns the opcode list
 	 */
-	OpcodeList& get_opcodes() throw() { return m_opcodes; }
+	OpcodeList& getOpcodes() throw() { return m_opcodes; }
 
 	/**
 	 * Builds the function arguments vector
