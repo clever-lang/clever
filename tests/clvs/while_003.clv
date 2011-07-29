@@ -1,0 +1,12 @@
+
+import std.io;
+
+Int i = 10;
+
+while (--i) {
+	if (i > 6) {
+		println(i);
+	}
+	println('-');
+}
+

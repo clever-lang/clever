@@ -69,7 +69,7 @@ public:
 	/**
 	 * Returns the collected opcodes
 	 */
-	OpcodeList& getOpcodes() throw() { return m_cgvisitor.get_opcodes(); }
+	OpcodeList& getOpcodes() throw() { return m_cgvisitor.getOpcodes(); }
 	/**
 	 * Displays an error message and exits
 	 */
@@ -79,6 +79,12 @@ public:
 	 * Checks if the supplied value pointers are compatibles
 	 */
 	static bool checkCompatibleTypes(const Value* const, const Value* const) throw();
+	
+	/**
+	 * Returns the type resulting of a binary expression of two compatible types
+	 */
+	static const Type* checkExprType(const Value* const, const Value* const) throw();
+	
 	/**
 	 * Performs a constant folding and constant propagation optimization
 	 */

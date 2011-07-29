@@ -85,9 +85,9 @@ public:
 
 	~Opcode() { }
 
-	int get_op_type() const throw() { return m_op_type; }
+	int getOpType() const throw() { return m_op_type; }
 
-	VM::opcode_handler get_handler() const throw() { return m_handler; }
+	VM::opcode_handler getHandler() const throw() { return m_handler; }
 
 	Value* getOp1() const throw() { return m_op1; }
 	void setOp1(Value* op1) throw() { m_op1 = op1; }

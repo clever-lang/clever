@@ -117,11 +117,41 @@ bool Compiler::checkCompatibleTypes(const Value* const lhs, const Value* const r
 	 * Constants with different type cannot performs operation
 	 */
 	
+	if (lhs->isPrimitive() && rhs->isPrimitive() && lhs->getTypePtr() != CLEVER_TYPE("String") 
+		&& rhs->getTypePtr()  != CLEVER_TYPE("String")) {
+		return true;
+	}
+	else if (lhs->getTypePtr() == CLEVER_TYPE("String") 
+		&& rhs->getTypePtr() == CLEVER_TYPE("String")) return true;
+	
 	/**
 	 * @TODO: check if a class is base of another
 	 * if (lhs->isPrimitive() && rhs->isPrimitive() && !lhs->hasSameType(rhs))
 	 */
 	return lhs->hasSameType(rhs);
+}
+
+/**
+ * Returns the type resulting of a binary expression of two compatible types
+ */
+const Type* Compiler::checkExprType(const Value* const lhs, const Value* const rhs) throw() {
+	if (lhs->isPrimitive() && rhs->isPrimitive() && !lhs->isString() && !rhs->isString()) {
+		if (lhs->getTypePtr() == CLEVER_TYPE("Double") || rhs->getTypePtr() == CLEVER_TYPE("Double")) {
+			return CLEVER_TYPE("Double");
+		}
+		
+		if (lhs->getTypePtr() == CLEVER_TYPE("Int") || rhs->getTypePtr() == CLEVER_TYPE("Int")) {
+			return CLEVER_TYPE("Int");
+		}
+		
+		return CLEVER_TYPE("Bool");
+	}
+	
+	if (lhs->getTypePtr() == CLEVER_TYPE("String") && rhs->getTypePtr() == CLEVER_TYPE("String")) 
+		return CLEVER_TYPE("String");
+	
+	/* TODO: check for non-primitive types */
+	return lhs->getTypePtr();
 }
 
 /**
@@ -211,13 +241,13 @@ void Compiler::checkFunctionReturn(const Function* func, const Value* value, con
 	if (value && rtype == NULL) {
 		Compiler::errorf(loc, "Function `%S' cannot return value, it was declared as Void!", &func->getName());
 	} else if (value == NULL && rtype) {
-		Compiler::errorf(loc, "Function `%S' must return a value of type %s!", &func->getName(), rtype->get_name());
+		Compiler::errorf(loc, "Function `%S' must return a value of type %s!", &func->getName(), rtype->getName());
 	} else if (value && rtype) {
 		const Type* vtype = value->getTypePtr();
 
 		if (vtype != rtype) {
 			Compiler::errorf(loc, "Function `%S' expects %s value as return, not %s value",
-				&func->getName(), rtype->get_name(), vtype->get_name());
+				&func->getName(), rtype->getName(), vtype->getName());
 		}
 	}
 }
