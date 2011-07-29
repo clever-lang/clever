@@ -151,8 +151,8 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 		
 		if (!Compiler::checkCompatibleTypes(variable, value)) {
 			std::string error = std::string("Cannot convert `")
-				+ value->getTypePtr()->get_name() + "' to `" 
-				+ variable->getTypePtr()->get_name() + "' on assignment";
+				+ value->getTypePtr()->getName() + "' to `" 
+				+ variable->getTypePtr()->getName() + "' on assignment";
 			Compiler::error(error, expr->getLocation());	 	
 		}
 
@@ -410,8 +410,8 @@ AST_VISITOR(CodeGenVisitor, LogicExpr) {
 	
 	if (!Compiler::checkCompatibleTypes(rhs, lhs)) {
 		std::string error = std::string("Cannot convert `")
-			+ rhs->getTypePtr()->get_name() + "' to `" 
-			+ lhs->getTypePtr()->get_name() + "' in logic expression";
+			+ rhs->getTypePtr()->getName() + "' to `" 
+			+ lhs->getTypePtr()->getName() + "' in logic expression";
 		Compiler::error(error, expr->getLocation());	 	
 	}
 
@@ -470,7 +470,7 @@ AST_VISITOR(CodeGenVisitor, BreakNode) {
  * Generates opcode for function call
  */
 AST_VISITOR(CodeGenVisitor, FunctionCall) {
-	const CString* const name = expr->get_func_name();
+	const CString* const name = expr->getFuncName();
 	Value* fvalue = m_ssa.fetchVar(name);
 	const Function* func;
 	ASTNode* args = expr->getArgs();
@@ -540,8 +540,8 @@ AST_VISITOR(CodeGenVisitor, AssignExpr) {
 	
 	if (!Compiler::checkCompatibleTypes(rhs, lhs)) {
 		std::string error = std::string("Cannot convert `")
-			+ rhs->getTypePtr()->get_name() + "' to `" 
-			+ lhs->getTypePtr()->get_name() + "' on assignment";
+			+ rhs->getTypePtr()->getName() + "' to `" 
+			+ lhs->getTypePtr()->getName() + "' on assignment";
 		Compiler::error(error, expr->getLocation());	 	
 	}
 	
@@ -587,7 +587,7 @@ AST_VISITOR(CodeGenVisitor, ImportStmt) {
  * Function declaration
  */
 AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
-	const CString* name = expr->get_name();
+	const CString* name = expr->getName();
 	CallableValue* func = new CallableValue(name);
 	Function* user_func = new Function(name->str());
 	ast::ArgumentDeclList* args = static_cast<ast::ArgumentDeclList*>(expr->getArgs());
@@ -613,7 +613,7 @@ AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
 	}
 
 	if (args) {
-		ArgumentDecls& arg_nodes = args->get_args();
+		ArgumentDecls& arg_nodes = args->getArgs();
 		ArgumentDecls::iterator it = arg_nodes.begin(), end = arg_nodes.end();
 		Value* vars = new Value;
 		ValueVector* vec = new ValueVector;

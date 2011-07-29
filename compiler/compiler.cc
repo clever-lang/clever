@@ -241,13 +241,13 @@ void Compiler::checkFunctionReturn(const Function* func, const Value* value, con
 	if (value && rtype == NULL) {
 		Compiler::errorf(loc, "Function `%S' cannot return value, it was declared as Void!", &func->getName());
 	} else if (value == NULL && rtype) {
-		Compiler::errorf(loc, "Function `%S' must return a value of type %s!", &func->getName(), rtype->get_name());
+		Compiler::errorf(loc, "Function `%S' must return a value of type %s!", &func->getName(), rtype->getName());
 	} else if (value && rtype) {
 		const Type* vtype = value->getTypePtr();
 
 		if (vtype != rtype) {
 			Compiler::errorf(loc, "Function `%S' expects %s value as return, not %s value",
-				&func->getName(), rtype->get_name(), vtype->get_name());
+				&func->getName(), rtype->getName(), vtype->getName());
 		}
 	}
 }

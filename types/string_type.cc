@@ -63,8 +63,9 @@ CLEVER_TYPE_METHOD(String::replace) {
  * Retrieves a substring from the original one.
  */
 CLEVER_TYPE_METHOD(String::substring) {
-	if (args->at(0)->getInteger() >= value->toString().length()) {
-		std::cerr << "Out of range: " << args->at(0)->getInteger() << " is after the end of the string." << std::endl;
+	if (size_t(args->at(0)->getInteger()) >= value->toString().length()) {
+		std::cerr << "Out of range: " << args->at(0)->getInteger() 
+			<< " is after the end of the string." << std::endl;
 		std::exit(1);
 	}
 

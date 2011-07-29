@@ -69,7 +69,7 @@ public:
 	/**
 	 * Returns the collected opcodes
 	 */
-	OpcodeList& getOpcodes() throw() { return m_cgvisitor.get_opcodes(); }
+	OpcodeList& getOpcodes() throw() { return m_cgvisitor.getOpcodes(); }
 	/**
 	 * Displays an error message and exits
 	 */

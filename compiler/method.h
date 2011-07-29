@@ -52,8 +52,8 @@ public:
 
 	~Method() { }
 
-	const std::string& get_name() const throw() { return m_name; }
-	MethodPtr get_ptr() const throw() { return m_info.ptr; }
+	const std::string& getName() const throw() { return m_name; }
+	MethodPtr getPtr() const throw() { return m_info.ptr; }
 
 	void setInternal() throw() { m_type = INTERNAL; }
 	void setUserDefined() throw() { m_type = USER; }

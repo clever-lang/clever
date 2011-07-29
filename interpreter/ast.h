@@ -654,7 +654,7 @@ public:
 		name->addRef();
 	}
 
-	ArgumentDecls& get_args() throw() { return m_args; }
+	ArgumentDecls& getArgs() throw() { return m_args; }
 private:
 	ArgumentDecls m_args;
 
@@ -690,7 +690,7 @@ public:
 		}
 	}
 
-	const CString* const get_name() const throw() { return m_name->getValue()->getName(); }
+	const CString* const getName() const throw() { return m_name->getValue()->getName(); }
 	ASTNode* getArgs() const throw() { return m_args; }
 	ASTNode* getReturn() const throw() { return m_return; }
 
@@ -747,7 +747,7 @@ public:
 
 	Value* getValue() const throw() { return m_result; }
 
-	const CString* const get_func_name() const throw() { return m_name->getValue()->getName(); }
+	const CString* const getFuncName() const throw() { return m_name->getValue()->getName(); }
 
 	ASTNode* getArgs() throw() { return m_args; }
 
@@ -1012,7 +1012,7 @@ public:
 		std::list<MethodDeclaration*>::const_iterator it2;
 		
 		for (it2 = methods.begin(); it2 != methods.end(); ++it2) {
-			const std::string& str = (*it2)->get_name()->str();
+			const std::string& str = (*it2)->getName()->str();
 			
 			if (s.find(str) == s.end()) {
 				s.insert(str);

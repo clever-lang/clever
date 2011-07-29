@@ -63,7 +63,7 @@ public:
 	}
 
 	void addMethod(Method* method) throw() {
-		m_methods.insert(MethodPair(method->get_name(), method));
+		m_methods.insert(MethodPair(method->getName(), method));
 	}
 
 	const Method* getMethod(const CString* name) const throw() {
@@ -75,7 +75,7 @@ public:
 		return NULL;
 	}
 
-	const char* get_name() const throw() {
+	const char* getName() const throw() {
 		return m_name;
 	}
 

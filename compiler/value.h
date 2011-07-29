@@ -283,7 +283,7 @@ public:
 		FAR   /* Invoke built-in or loaded functions/methods. (probably faster)*/
 	};
 
-	/* TODO: generate name for anonymous functions, disable set_name(). */
+	/* TODO: generate name for anonymous functions, disable setName(). */
 	CallableValue()
 		: m_call_type(NONE), m_context(NULL) { }
 
@@ -324,7 +324,7 @@ public:
 	Value* getContext() const throw() { return m_context; }
 
 	const FunctionPtr getFunctionPtr() const throw() { return m_handler.func->getPtr(); }
-	const MethodPtr getMethodPtr() const throw() { return m_handler.method->get_ptr(); }
+	const MethodPtr getMethodPtr() const throw() { return m_handler.method->getPtr(); }
 
 	const Function* getFunction() const throw() { return m_handler.func; }
 	const Method* getMethod() const throw() { return m_handler.method; }
