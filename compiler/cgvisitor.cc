@@ -596,7 +596,7 @@ AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
 	CallableValue* func = new CallableValue(name);
 	Function* user_func = new Function(name->str());
 	ast::ArgumentDeclList* args = static_cast<ast::ArgumentDeclList*>(expr->getArgs());
-	Value* return_type = expr->getReturn() ? expr->getReturn()->getValue() : NULL;
+	Value* return_type = expr->getReturnValue();
 	Opcode* jmp;
 
 	jmp = emit(OP_JMP, &VM::jmp_handler);

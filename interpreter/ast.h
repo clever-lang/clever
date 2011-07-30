@@ -693,6 +693,7 @@ public:
 	const CString* const getName() const throw() { return m_name->getValue()->getName(); }
 	ASTNode* getArgs() const throw() { return m_args; }
 	ASTNode* getReturn() const throw() { return m_return; }
+	Value* getReturnValue() const throw() { return m_return ? m_return->getValue() : NULL; }
 
 	ASTNode* getBlock() const throw() { return m_block; }
 	bool hasBlock() const throw() { return m_block != NULL; }
