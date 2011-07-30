@@ -37,6 +37,8 @@ MODDIR=modules/
 WINDIR=win32/
 # Testrunner dir
 EXTRADIR=extra/
+# Test dir
+TESTDIR=test/
 
 OBJECTS=$(BUILDDIR)parser.o $(BUILDDIR)scanner.o $(BUILDDIR)driver.o \
 	$(BUILDDIR)cstring.o $(BUILDDIR)double.o $(BUILDDIR)std_pkg.o \
@@ -128,16 +130,19 @@ $(BUILDDIR)win32.o: $(WINDIR)win32.cc
 run-mem-tests:
 	$(EXTRADIR)testrunner -m tests/
 
-run-tests:
+run-tests: test
 	$(EXTRADIR)testrunner tests/
 
 test: $(EXTRADIR)testrunner.cpp
 	$(CXX) $(CXXFLAGS3) -o $(EXTRADIR)testrunner $(EXTRADIR)testrunner.cpp -lpcrecpp
 
-clean-all: clean clean-test
+clean-all: clean clean-test clean-tests
 
 clean:
 	rm -f clever* $(BUILDDIR)*.o $(BUILDDIR)*.hh $(BUILDDIR)*.cc
+
+clean-tests:
+	rm $(TESTDIR)*.mem $(TESTDIR)*.log
 
 clean-test:
 	rm -rf $(EXTRADIR)testrunner $(EXTRADIR)testrunner.exe
