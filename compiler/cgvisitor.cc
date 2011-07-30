@@ -333,7 +333,6 @@ AST_VISITOR(CodeGenVisitor, IfExpr) {
 AST_VISITOR(CodeGenVisitor, BlockNode) {
 	NodeList& nodes = expr->getNodes();
 	NodeList::const_iterator it = nodes.begin(), end = nodes.end();
-	ASTVisitor& visitor = *this;
 
 	/**
 	 * Create a new scope
@@ -344,7 +343,7 @@ AST_VISITOR(CodeGenVisitor, BlockNode) {
 	 * Iterates statements inside the block
 	 */
 	while (it != end) {
-		(*it)->accept(visitor);
+		(*it)->accept(*this);
 		++it;
 	}
 
