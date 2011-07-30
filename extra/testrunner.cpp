@@ -133,7 +133,9 @@ void TestRunner::run(void) {
 #endif
 
 		fread(result, 1, sizeof(result)-1, fp);
-		fclose(fp);
+		
+		// Tricky uh?
+		pclose(fp);
 
 		// Valgrind log is empty?
 #ifndef _WIN32

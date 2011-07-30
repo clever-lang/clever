@@ -27,6 +27,7 @@
 #define CLEVER_TYPE_H
 
 #include <cstring>
+#include <vector>
 #include <tr1/unordered_map>
 #include "compiler/cstring.h"
 #include "compiler/method.h"
@@ -39,7 +40,7 @@ class CString;
 /**
  * Prototype for class methods which the class represents a type
  */
-#define CLEVER_TYPE_METHOD_ARGS const ValueVector* args, Value* retval, Value* value
+#define CLEVER_TYPE_METHOD_ARGS const ValueVector* args, Value* retval, Value* value, Method* clv_method_
 #define CLEVER_TYPE_METHOD(name) void CLEVER_FASTCALL name(CLEVER_TYPE_METHOD_ARGS) throw()
 
 /**

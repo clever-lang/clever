@@ -28,8 +28,9 @@
 #include <cstdlib>
 #include <stdexcept>
 #include "compiler/cstring.h"
-#include "type.h"
-#include "string_type.h"
+#include "types/type.h"
+#include "types/string_type.h"
+#include "types/typeutils.h"
 
 namespace clever {
 
@@ -38,6 +39,7 @@ namespace clever {
  * Replace part of the string and returns the new one.
  */
 CLEVER_TYPE_METHOD(String::replace) {
+	CLEVER_CHECK_ARGS("String::replace", CLEVER_TYPE("String"), CLEVER_TYPE("String"), NULL);
 	size_t needleLength, needlePos;
 	std::string newString = value->toString();
 
@@ -59,10 +61,12 @@ CLEVER_TYPE_METHOD(String::replace) {
 }
 
 /**
- * String::substring()
+ * String::substring(Int, Int)
  * Retrieves a substring from the original one.
  */
 CLEVER_TYPE_METHOD(String::substring) {
+	CLEVER_CHECK_ARGS("String::substring", CLEVER_TYPE("Int"), CLEVER_TYPE("Int"), NULL);
+	
 	if (size_t(args->at(0)->getInteger()) >= value->toString().length()) {
 		std::cerr << "Out of range: " << args->at(0)->getInteger() 
 			<< " is after the end of the string." << std::endl;
@@ -76,9 +80,11 @@ CLEVER_TYPE_METHOD(String::substring) {
 
 /**
  * String::toDouble()
- * Converts the string to a float, if possible.
+ * Converts the string to a double, if possible.
  */
-CLEVER_TYPE_METHOD(String::toFloat) {
+CLEVER_TYPE_METHOD(String::toDouble) {
+	CLEVER_CHECK_ARGS("String::toDouble", NULL);
+	
 	double floatValue;
 	std::stringstream stream(value->toString());
 
@@ -96,6 +102,8 @@ CLEVER_TYPE_METHOD(String::toFloat) {
  * Converts the string to an integer, if possible.
  */
 CLEVER_TYPE_METHOD(String::toInteger) {
+	CLEVER_CHECK_ARGS("String::toInteger", NULL);
+	
 	int64_t integer;
 	std::stringstream stream(value->toString());
 
@@ -111,7 +119,7 @@ CLEVER_TYPE_METHOD(String::toInteger) {
 void String::init() {
 	addMethod(new Method("replace", (MethodPtr)&String::replace));
 	addMethod(new Method("substring", (MethodPtr)&String::substring));
-	addMethod(new Method("toFloat", (MethodPtr)&String::toFloat));
+	addMethod(new Method("toDouble", (MethodPtr)&String::toDouble));
 	addMethod(new Method("toInteger", (MethodPtr)&String::toInteger));
 }
 
