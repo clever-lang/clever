@@ -875,6 +875,10 @@ public:
 	}
 
 	ASTNode* getExpr() const throw() { return m_expr; }
+	
+	Value* getExprValue() const throw() {
+		return m_expr ? m_expr->getValue() : NULL;
+	}
 
 	void accept(ASTVisitor& visitor) throw() {
 		if (m_expr) {

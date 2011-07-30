@@ -81,12 +81,13 @@ AST_VISITOR(CodeGenVisitor, BinaryExpr) {
 	Value* lhs = getValue(expr->getLhs());
 	Value* rhs = getValue(expr->getRhs());
 	Value* result = NULL;
+	const Type* type;
 	
 	if (!Compiler::checkCompatibleTypes(lhs, rhs)) {
 		Compiler::error("Type mismatch!", expr->getLocation()); 	
 	}
 	
-	const Type* type = Compiler::checkExprType(lhs, rhs);
+	type = Compiler::checkExprType(lhs, rhs);
 	
 	if (lhs->isPrimitive() && rhs->isPrimitive() && !expr->isAssigned()) {
 		result = Compiler::constantFolding(expr->getOp(), lhs, rhs);
@@ -463,6 +464,10 @@ AST_VISITOR(CodeGenVisitor, LogicExpr) {
 AST_VISITOR(CodeGenVisitor, BreakNode) {
 	Opcode* opcode = emit(OP_BREAK, &VM::break_handler);
 
+	/**
+	 * Pushes the break opcode to a stack which in the end
+	 * sets its jump addr to end of repeat block
+	 */
 	m_brks.top().push(opcode);
 }
 
@@ -667,16 +672,14 @@ AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
  * Generates opcode for return statement
  */
 AST_VISITOR(CodeGenVisitor, ReturnStmt) {
-	ASTNode* value = expr->getExpr();
-	Value* expr_value = value ? value->getValue() : NULL;
+	Value* expr_value = expr->getExprValue();
 	const Function* func = m_funcs.empty() ? NULL : m_funcs.top();
-	const Type* rtype = func ? func->getReturn() : NULL;
 
 	/**
 	 * Only for return inside function declaration
 	 */
 	if (func) {
-		Compiler::checkFunctionReturn(func, expr_value, rtype, expr->getLocation());
+		Compiler::checkFunctionReturn(func, expr_value, func->getReturn(), expr->getLocation());
 	}
 
 	if (expr_value) {
@@ -698,11 +701,8 @@ AST_VISITOR(CodeGenVisitor, ClassDeclaration) {
 	if (ok) {
 		//@TODO
 		
-		m_ssa.pushVar(type);
-		
-		
-	}
-	else {
+		m_ssa.pushVar(type);	
+	} else {
 		Compiler::errorf(error.getLocation(),
 			"Redefinition of %s `%s' in class `%s'",
 			(error.getType() == ClassDeclaration::DeclarationError::METHOD_DECLARATION) ?
