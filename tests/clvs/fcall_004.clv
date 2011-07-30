@@ -1,6 +1,0 @@
-import std.io;
-
-Int bar() { return 3; }
-
-println(3+bar());
-println(bar()+3);
