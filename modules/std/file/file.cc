@@ -26,8 +26,8 @@
 #include <iostream>
 #include "compiler/value.h"
 #include "compiler/typetable.h"
-#include "std/file/file.h"
-#include "std/file/filestream.h"
+#include "modules/std/file/file.h"
+#include "modules/std/file/filestream.h"
 
 namespace clever { namespace packages { namespace std {
 

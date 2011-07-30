@@ -26,7 +26,7 @@
 #include <fstream>
 #include "compiler/compiler.h"
 #include "compiler/cstring.h"
-#include "std/file/filestream.h"
+#include "modules/std/file/filestream.h"
 
 namespace clever { namespace packages { namespace std { namespace file {
 

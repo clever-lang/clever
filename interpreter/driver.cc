@@ -25,8 +25,8 @@
 
 #include <fstream>
 #include "driver.h"
-#include "parser.hh"
-#include "position.hh"
+#include "build/parser.hh"
+#include "build/position.hh"
 #include "compiler/cstring.h"
 #include "scanner.h"
 #include "vm/vm.h"

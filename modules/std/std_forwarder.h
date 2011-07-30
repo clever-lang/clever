@@ -23,6 +23,6 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "std/file/file.h"
-#include "std/io/io.h"
-#include "std/math/math.h"
+#include "modules/std/file/file.h"
+#include "modules/std/io/io.h"
+#include "modules/std/math/math.h"

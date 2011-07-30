@@ -26,7 +26,7 @@
 #ifndef CLEVER_STD_PACKAGE_H
 #define CLEVER_STD_PACKAGE_H
 
-#include "std/std_forwarder.h"
+#include "modules/std/std_forwarder.h"
 #include "compiler/module.h"
 
 namespace clever { namespace packages {

@@ -27,7 +27,7 @@
 #include "pkgmanager.h"
 #include "cstring.h"
 #include "typetable.h"
-#include "std/std_pkg.h"
+#include "modules/std/std_pkg.h"
 
 namespace clever {
 

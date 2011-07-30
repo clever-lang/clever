@@ -26,7 +26,7 @@
 #include <iostream>
 #include "compiler/value.h"
 #include "compiler/typetable.h"
-#include "std/io/io.h"
+#include "modules/std/io/io.h"
 
 namespace clever { namespace packages { namespace std {
 

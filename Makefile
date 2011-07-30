@@ -1,6 +1,3 @@
-# $Id$
-#
-
 # Environment detection
 UNAME := $(shell uname)
 
@@ -16,7 +13,7 @@ RE2C?=re2c
 
 # Flags
 
-CXXFLAGS=-O2 -ggdb -Wall -ansi -Wno-variadic-macros -Ibuild/ -Imodules/ -I. -fno-rtti -pedantic -fno-exceptions
+CXXFLAGS=-O2 -ggdb -Wall -ansi -Wno-variadic-macros -I. -fno-rtti -pedantic -fno-exceptions
 CXXFLAGS3=-ggdb -O2
 # Linker
 LFLAGS=-O2 -fno-rtti -fno-exceptions

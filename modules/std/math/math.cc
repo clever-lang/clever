@@ -29,7 +29,7 @@
 #include <string>
 #include <iostream>
 #include "compiler/typetable.h"
-#include "std/math/math.h"
+#include "modules/std/math/math.h"
 
 namespace clever { namespace packages { namespace std {
 
