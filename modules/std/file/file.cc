@@ -42,7 +42,7 @@ namespace file {
 	}
 }*/
 
-} // namespace file
+} // file
 
 /**
  * Initializes Standard module
@@ -50,8 +50,7 @@ namespace file {
 void File::init() throw() {
 	Class* filestream = new file::FileStream();
 	filestream->init();
-	
-	using namespace file;
+
 	addClass(filestream);
 }
 

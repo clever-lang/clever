@@ -40,6 +40,7 @@ typedef std::vector<Value*> ValueVector;
 typedef std::vector<const Type*> TypeVector;
 
 #define CLEVER_METHOD_ARGS const ValueVector* args, Value* retval, Value* value, Method* clv_method_
+#define CLEVER_METHOD_NAME(name) clv_m_##name
 #define CLEVER_METHOD(name) void CLEVER_FASTCALL name(CLEVER_METHOD_ARGS) throw()
 
 typedef void (CLEVER_FASTCALL *MethodPtr)(CLEVER_METHOD_ARGS);

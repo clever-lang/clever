@@ -42,7 +42,8 @@ typedef std::vector<Value*> ValueVector;
  * Macros to help on module function declaration
  */
 #define CLEVER_FUNCTION_ARGS const ValueVector* args, Value* retval
-#define CLEVER_FUNC_NAME(name) clv_##name
+#define CLEVER_FUNC_NAME(name) clv_f_##name
+#define CLEVER_NS_FNAME(ns, name) ns::clv_f_##name
 #define CLEVER_FUNCTION(name) void CLEVER_FASTCALL CLEVER_FUNC_NAME(name)(CLEVER_FUNCTION_ARGS) throw()
 
 typedef void (CLEVER_FASTCALL *FunctionPtr)(CLEVER_FUNCTION_ARGS);

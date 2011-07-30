@@ -126,7 +126,7 @@ static CLEVER_FUNCTION(abs) {
 	}
 }
 
-} // namespace math
+} // math
 
 /**
  * Load module data
@@ -134,31 +134,29 @@ static CLEVER_FUNCTION(abs) {
 void Math::init() throw() {
 	const Type* double_type = TypeTable::getType(CSTRING("Double"));
 
-	using namespace math;
-
-	addFunction(new Function("sqrt", &CLEVER_FUNC_NAME(sqrt), double_type))
+	addFunction(new Function("sqrt", &CLEVER_NS_FNAME(math, sqrt), double_type))
 		->addArg("value", double_type);
 
-	addFunction(new Function("sin",  &CLEVER_FUNC_NAME(sin), double_type))
+	addFunction(new Function("sin",  &CLEVER_NS_FNAME(math, sin), double_type))
 		->addArg("value", double_type);
 
-	addFunction(new Function("cos",  &CLEVER_FUNC_NAME(cos), double_type))
+	addFunction(new Function("cos",  &CLEVER_NS_FNAME(math, cos), double_type))
 		->addArg("value", double_type);
 
-	addFunction(new Function("tan",  &CLEVER_FUNC_NAME(tan), double_type))
+	addFunction(new Function("tan",  &CLEVER_NS_FNAME(math, tan), double_type))
 		->addArg("value", double_type);
 
-	addFunction(new Function("atan", &CLEVER_FUNC_NAME(atan), double_type))
+	addFunction(new Function("atan", &CLEVER_NS_FNAME(math, atan), double_type))
 		->addArg("value", double_type);
 
-	addFunction(new Function("pow",  &CLEVER_FUNC_NAME(pow), double_type))
+	addFunction(new Function("pow",  &CLEVER_NS_FNAME(math, pow), double_type))
 		->addArg("x", double_type)
 		->addArg("y", double_type);
 
-	addFunction(new Function("ceil", &CLEVER_FUNC_NAME(ceil), double_type))
+	addFunction(new Function("ceil", &CLEVER_NS_FNAME(math, ceil), double_type))
 		->addArg("value", double_type);
 
-	addFunction(new Function("abs",	&CLEVER_FUNC_NAME(abs), double_type))
+	addFunction(new Function("abs",	&CLEVER_NS_FNAME(math, abs), double_type))
 		->addArg("value", double_type);
 }
 
