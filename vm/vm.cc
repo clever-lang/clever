@@ -513,7 +513,7 @@ CLEVER_VM_HANDLER(VM::mcall_handler) {
  * x = y
  */
 CLEVER_VM_HANDLER(VM::assign_handler) {
-	opcode.getOp1()->copy(opcode.getOp2());
+	opcode.getOp1()->getTypePtr()->assign(opcode.getOp1(), opcode.getOp2());
 }
 
 /**
