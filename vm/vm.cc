@@ -237,7 +237,7 @@ CLEVER_VM_HANDLER(VM::pre_inc_handler) {
 	Value* value = opcode.getOp1();
 	Value* result = opcode.getResult();
 
-	result->copy(value->getTypePtr()->increment(value));
+	result->copy(opcode.getOp1Type()->increment(value));
 }
 
 /**
@@ -248,7 +248,7 @@ CLEVER_VM_HANDLER(VM::pos_inc_handler) {
 	Value* result = opcode.getResult();
 
 	result->copy(value);
-	value->getTypePtr()->increment(value);
+	opcode.getOp1Type()->increment(value);
 }
 
 /**
@@ -258,7 +258,7 @@ CLEVER_VM_HANDLER(VM::pre_dec_handler) {
 	Value* value = opcode.getOp1();
 	Value* result = opcode.getResult();
 
-	result->copy(value->getTypePtr()->decrement(value));
+	result->copy(opcode.getOp1Type()->decrement(value));
 }
 
 /**
@@ -269,7 +269,7 @@ CLEVER_VM_HANDLER(VM::pos_dec_handler) {
 	Value* result = opcode.getResult();
 
 	result->copy(value);
-	value->getTypePtr()->decrement(value);
+	opcode.getOp1Type()->decrement(value);
 }
 
 /**
@@ -513,7 +513,7 @@ CLEVER_VM_HANDLER(VM::mcall_handler) {
  * x = y
  */
 CLEVER_VM_HANDLER(VM::assign_handler) {
-	opcode.getOp1()->getTypePtr()->assign(opcode.getOp1(), opcode.getOp2());
+	opcode.getOp1Type()->assign(opcode.getOp1(), opcode.getOp2());
 }
 
 /**

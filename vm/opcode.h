@@ -90,9 +90,11 @@ public:
 	VM::opcode_handler getHandler() const throw() { return m_handler; }
 
 	Value* getOp1() const throw() { return m_op1; }
+	const Type* getOp1Type() const throw() { return m_op1->getTypePtr(); }
 	void setOp1(Value* op1) throw() { m_op1 = op1; }
 
 	Value* getOp2() const throw() { return m_op2; }
+	const Type* getOp2Type() const throw() { return m_op2->getTypePtr(); }
 	void setOp2(Value* op2) throw() { m_op2 = op2; }
 
 	Value* getResult() const throw() { return m_result; }
