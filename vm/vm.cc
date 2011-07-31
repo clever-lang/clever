@@ -237,15 +237,7 @@ CLEVER_VM_HANDLER(VM::pre_inc_handler) {
 	Value* value = opcode.getOp1();
 	Value* result = opcode.getResult();
 
-	switch (value->getType()) {
-		case Value::INTEGER:
-			value->setInteger(value->getInteger()+1);
-			break;
-		case Value::DOUBLE:
-			value->setDouble(value->getDouble()+1);
-			break;
-	}
-	result->copy(value);
+	result->copy(value->increment());
 }
 
 /**
@@ -256,15 +248,7 @@ CLEVER_VM_HANDLER(VM::pos_inc_handler) {
 	Value* result = opcode.getResult();
 
 	result->copy(value);
-	
-	switch (value->getType()) {
-		case Value::INTEGER:
-			value->setInteger(value->getInteger()+1);
-			break;
-		case Value::DOUBLE:
-			value->setDouble(value->getDouble()+1);
-			break;
-	}
+	value->increment();
 }
 
 /**
@@ -274,15 +258,7 @@ CLEVER_VM_HANDLER(VM::pre_dec_handler) {
 	Value* value = opcode.getOp1();
 	Value* result = opcode.getResult();
 
-	switch (value->getType()) {
-		case Value::INTEGER:
-			value->setInteger(value->getInteger()-1);
-			break;
-		case Value::DOUBLE:
-			value->setDouble(value->getDouble()-1);
-			break;
-	}
-	result->copy(value);
+	result->copy(value->decrement());
 }
 
 /**
@@ -293,14 +269,7 @@ CLEVER_VM_HANDLER(VM::pos_dec_handler) {
 	Value* result = opcode.getResult();
 
 	result->copy(value);
-	switch (value->getType()) {
-		case Value::INTEGER:
-			value->setInteger(value->getInteger()-1);
-			break;
-		case Value::DOUBLE:
-			value->setDouble(value->getDouble()-1);
-			break;
-	}
+	value->decrement();
 }
 
 /**
