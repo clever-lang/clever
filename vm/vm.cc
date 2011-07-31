@@ -208,25 +208,17 @@ CLEVER_VM_HANDLER(VM::bw_or_handler) {
  * x % y
  */
 CLEVER_VM_HANDLER(VM::mod_handler) {
-	Value* op1 = opcode.getOp1();
-	Value* op2 = opcode.getOp2();
-	Value* result = opcode.getResult();
-
-	switch (op1->getType()) {
-		case Value::INTEGER:
-			result->setInteger(op1->getInteger() % op2->getInteger());
-			break;
-	}
+	opcode.getOp1Type()->modulus(opcode.getResult(), opcode.getOp1(), opcode.getOp2());
 }
 
 /**
  * Type var [= value ]
  */
 CLEVER_VM_HANDLER(VM::var_decl_handler) {
-	const Value* value = opcode.getOp2();
+	Value* value = opcode.getOp2();
 
 	if (value) {
-		opcode.getOp1()->copy(value);
+		opcode.getOp1Type()->assign(opcode.getOp1(), value);
 	}
 }
 

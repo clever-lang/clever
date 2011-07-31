@@ -27,6 +27,8 @@
 #define CLEVER_OPCODES_H
 
 #include "vm.h"
+#include "types/type.h"
+#include "compiler/value.h"
 
 namespace clever {
 
