@@ -43,7 +43,7 @@ class CString;
 #define CLEVER_TYPE_INC_HANDLER_D Value* increment(Value* value) const throw()
 #define CLEVER_TYPE_DEC_HANDLER_D Value* decrement(Value* value) const throw()
 #define CLEVER_TYPE_ASSIGN_HANDLER_D void assign(Value* value, Value* newvalue) const throw()
-#define CLEVER_TYPE_MOD_HANDLER_D void modulus(Value* value, Value* op1, Value* op2) const throw()
+#define CLEVER_TYPE_MOD_HANDLER_D void modulus(Value* value, const Value* op1, const Value* op2) const throw()
 
 /**
  * Prototype for class methods which the class represents a type
