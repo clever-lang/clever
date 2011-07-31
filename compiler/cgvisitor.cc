@@ -520,12 +520,16 @@ AST_VISITOR(CodeGenVisitor, MethodCall) {
 	Value* arg_values = NULL;
 
 	if (!method) {
-		Compiler::error("Method not found!", expr->getLocation());
+		Compiler::errorf(expr->getLocation(),
+			"Method `%s' not found!",
+			call->getName()->str().c_str());
 	}
 
 	call->setTypePtr(variable->getTypePtr());
 	call->setHandler(method);
 	call->setContext(variable);
+	
+	expr->getValue()->setTypePtr(method->getReturn());
 
 	if (args) {
 		arg_values = new Value;

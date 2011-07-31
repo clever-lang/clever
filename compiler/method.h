@@ -51,9 +51,18 @@ typedef void (CLEVER_FASTCALL *MethodPtr)(CLEVER_METHOD_ARGS);
 class Method {
 public:
 	enum MethodType { INTERNAL, USER };
-
+	
 	Method(std::string name, MethodPtr ptr)
-		: m_name(name), m_type(INTERNAL), m_args(NULL), m_is_initialized(false) { m_info.ptr = ptr; }
+		: m_name(name), m_type(INTERNAL), m_args(NULL), m_is_initialized(false), m_rtype(NULL)
+	{
+		m_info.ptr = ptr; 
+	}
+
+	Method(std::string name, MethodPtr ptr, const Type* rtype)
+		: m_name(name), m_type(INTERNAL), m_args(NULL), m_is_initialized(false), m_rtype(rtype)
+	{
+		m_info.ptr = ptr; 
+	}
 
 	~Method() { if (m_args) delete m_args; }
 
@@ -74,6 +83,8 @@ public:
 	
 	const TypeVector* getArgs() const throw() { return m_args; }
 	void setArgs(const TypeVector* const args) { m_args = args; m_is_initialized = true; }
+	
+	const Type* getReturn() const throw() { return m_rtype; } 
 	
 	/**
 	 * Checks if the m_args has been initialized
@@ -99,6 +110,11 @@ private:
 	 * True if the m_args pointer is initialized
 	 */
 	bool m_is_initialized;
+	
+	/**
+	 * Method's return type
+	 */
+	const Type* m_rtype;
 };
 
 } // clever

@@ -40,7 +40,7 @@ CLEVER_TYPE_METHOD(Integer::toString) {
 }
 
 void Integer::init() {
-	addMethod(new Method("tostring", (MethodPtr)&Integer::toString));
+	addMethod(new Method("tostring", (MethodPtr)&Integer::toString, CLEVER_TYPE("String")));
 }
 
 DataValue* Integer::allocateValue() const {
