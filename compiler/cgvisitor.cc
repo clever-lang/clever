@@ -140,8 +140,8 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 	
 	/* Check if the type wasn't declarated */
 	if (type == NULL) {
-		Compiler::errorf(expr->getLocation(), "`%s' does not name a type", 
-			var_type->getValue()->getName()->c_str());
+		Compiler::errorf(expr->getLocation(), "`%S' does not name a type", 
+			var_type->getValue()->getName());
 	}
 
 	variable->setTypePtr(type);
@@ -151,10 +151,10 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 		Value* value = getValue(rhs_expr);
 		
 		if (!Compiler::checkCompatibleTypes(variable, value)) {
-			std::string error = std::string("Cannot convert `")
-				+ value->getTypePtr()->getName() + "' to `" 
-				+ variable->getTypePtr()->getName() + "' on assignment";
-			Compiler::error(error, expr->getLocation());	 	
+			Compiler::errorf(expr->getLocation(),
+				"Cannot convert `%S' to `%S' on assignment",
+				value->getTypePtr()->getName(),
+				variable->getTypePtr()->getName());
 		}
 
 		variable->addRef();
@@ -409,10 +409,10 @@ AST_VISITOR(CodeGenVisitor, LogicExpr) {
 	rhs = getValue(expr->getRhs());
 	
 	if (!Compiler::checkCompatibleTypes(rhs, lhs)) {
-		std::string error = std::string("Cannot convert `")
-			+ rhs->getTypePtr()->getName() + "' to `" 
-			+ lhs->getTypePtr()->getName() + "' in logic expression";
-		Compiler::error(error, expr->getLocation());	 	
+		Compiler::errorf(expr->getLocation(),
+			"Cannot convert `%S' to `%S' in logic expression",			
+			rhs->getTypePtr()->getName(),
+			lhs->getTypePtr()->getName());
 	}
 
 	if (lhs->isPrimitive()) {
@@ -482,7 +482,7 @@ AST_VISITOR(CodeGenVisitor, FunctionCall) {
 	int num_args = args ? args->getNodes().size() : 0;
 
 	if (fvalue == NULL) {
-		Compiler::error("Function '" + *name + "' does not exists!", expr->getLocation());
+		Compiler::errorf(expr->getLocation(), "Function `%S' does not exists!", name);
 	}
 	func = static_cast<CallableValue*>(fvalue)->getFunction();
 
@@ -521,8 +521,8 @@ AST_VISITOR(CodeGenVisitor, MethodCall) {
 
 	if (!method) {
 		Compiler::errorf(expr->getLocation(),
-			"Method `%s' not found!",
-			call->getName()->str().c_str());
+			"Method `%S' not found!",
+			call->getName());
 	}
 
 	call->setTypePtr(variable->getTypePtr());
@@ -547,10 +547,10 @@ AST_VISITOR(CodeGenVisitor, AssignExpr) {
 	Value* rhs = getValue(expr->getRhs());
 	
 	if (!Compiler::checkCompatibleTypes(rhs, lhs)) {
-		std::string error = std::string("Cannot convert `")
-			+ rhs->getTypePtr()->getName() + "' to `" 
-			+ lhs->getTypePtr()->getName() + "' on assignment";
-		Compiler::error(error, expr->getLocation());	 	
+		Compiler::errorf(expr->getLocation(),
+			"Cannot convert `%S' to `%S' on assignment",
+			rhs->getTypePtr()->getName(),
+			lhs->getTypePtr()->getName());	 	
 	}
 	
 	lhs->setModified();
@@ -706,11 +706,11 @@ AST_VISITOR(CodeGenVisitor, ClassDeclaration) {
 		m_ssa.pushVar(type);	
 	} else {
 		Compiler::errorf(error.getLocation(),
-			"Redefinition of %s `%s' in class `%s'",
+			"Redefinition of %s `%S' in class `%S'",
 			(error.getType() == ClassDeclaration::DeclarationError::METHOD_DECLARATION) ?
 				"method" : "attribute",
-			error.getIdentifier().c_str(),
-			class_name->str().c_str()
+			&error.getIdentifier(),
+			class_name
 		);
 	}
 }
