@@ -23,63 +23,11 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef CLEVER_TYPETABLE_H
-#define CLEVER_TYPETABLE_H
+#ifndef CLEVER_NATIVE_TYPES_H
+#define CLEVER_NATIVE_TYPES_H
 
-#include <tr1/unordered_map>
-#include "types/type.h"
+#include "types/int.h"
+#include "types/double.h"
+#include "types/string_type.h"
 
-#define CLEVER_TYPE(name) TypeTable::getType(CSTRING(name))
-
-namespace clever {
-
-class CString;
-
-typedef std::tr1::unordered_map<const CString*, const Type*> TypeMap;
-
-/**
- * Internal and user type table
- */
-class TypeTable {
-public:
-	TypeTable() { }
-
-	~TypeTable() { }
-
-	/**
-	 * Removes all types
-	 */
-	static void clear() throw() {
-		TypeMap::const_iterator it = s_type_table.begin(), end_type(s_type_table.end());
-
-		while (it != end_type) {
-			delete it->second;
-			++it;
-		}
-	}
-	/**
-	 * Inserts a new type
-	 */
-	static void insert(const CString* name, const Type* type) throw() {
-		s_type_table.insert(std::pair<const CString*, const Type*>(name, type));
-	}
-	/**
-	 * Returns the Type pointer
-	 */
-	static const Type* getType(const CString* name) throw() {
-		TypeMap::const_iterator it = s_type_table.find(name);
-
-		if (it != s_type_table.end()) {
-			return it->second;
-		}
-		return NULL;
-	}
-
-	static TypeMap s_type_table;
-private:
-	DISALLOW_COPY_AND_ASSIGN(TypeTable);
-};
-
-} // clever
-
-#endif // CLEVER_TYPETABLE_H
+#endif // CLEVER_NATIVE_TYPES_H

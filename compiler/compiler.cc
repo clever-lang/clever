@@ -29,9 +29,7 @@
 #include <vector>
 #include "compiler.h"
 #include "interpreter/ast.h"
-#include "types/int.h"
-#include "types/double.h"
-#include "types/string_type.h"
+#include "types/native_types.h"
 #include "interpreter/astvisitor.h"
 #include "typetable.h"
 
@@ -70,6 +68,9 @@ void Compiler::loadTypes() throw() {
 	Double* double_type = new Double;
 	String* string_type = new String;
 
+	/**
+	 * Registers all native types
+	 */
 	TypeTable::insert(CSTRING("Int"), int_type);
 	TypeTable::insert(CSTRING("Double"), double_type);
 	TypeTable::insert(CSTRING("String"), string_type);
