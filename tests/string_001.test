@@ -1,0 +1,13 @@
+String substring() and replace() methods
+==CODE==
+import std;
+
+String foo = "0123456789";
+
+println(foo.substring(0,5));
+println(foo.substring(5,6));
+println(foo.replace("01234", "abcde"));
+==RESULT==
+01234
+56789
+abcde56789

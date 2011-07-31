@@ -1,0 +1,17 @@
+String toDouble() and toInteger() methods
+==CODE==
+import std;
+
+Double foo = 123.456;
+Int bar = 789;
+
+String foo_str = "123.456";
+
+println((foo_str.toDouble() == foo));
+
+String bar_str = "789";
+
+println((bar_str.toInteger() == bar));
+==RESULT==
+true
+true
