@@ -262,28 +262,6 @@ public:
 				return *CSTRING("");
 		}
 	}
-	
-	/**
-	 * Value handlers
-	 */
-	virtual Value* increment() throw() {
-		if (isPrimitive()) {
-			switch (m_type) {
-				case Value::INTEGER: ++m_data.l_value; break;
-				case Value::DOUBLE: ++m_data.d_value; break;
-			}
-		}
-		return this;
-	}
-	virtual Value* decrement(void) throw() {
-		if (isPrimitive()) {
-			switch (m_type) {
-				case Value::INTEGER: --m_data.l_value; break;
-				case Value::DOUBLE: --m_data.d_value; break;
-			}
-		}
-		return this;
-	}
 private:
 	int m_status;
 	int m_type;
