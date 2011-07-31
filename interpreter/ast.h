@@ -769,7 +769,7 @@ public:
 		: m_var(var), m_method(method), m_args(NULL) {
 		m_var->addRef();
 		m_method->addRef();
-		m_result = new Value;
+		m_result = new CallableValue;
 	}
 
 	MethodCall(ASTNode* var, ASTNode* method, ASTNode* args)
@@ -777,7 +777,7 @@ public:
 		m_var->addRef();
 		m_method->addRef();
 		m_args->addRef();
-		m_result = new Value;
+		m_result = new CallableValue;
 	}
 
 	~MethodCall() {
@@ -795,6 +795,7 @@ public:
 	Value* getValue() const throw() { return m_result; }
 
 	void accept(ASTVisitor& visitor) throw() {
+		m_var->accept(visitor);
 		visitor.visit(this);
 	}
 private:

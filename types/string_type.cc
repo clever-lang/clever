@@ -117,10 +117,12 @@ CLEVER_TYPE_METHOD(String::toInteger) {
 }
 
 void String::init() {
-	addMethod(new Method("replace", (MethodPtr)&String::replace));
-	addMethod(new Method("substring", (MethodPtr)&String::substring));
-	addMethod(new Method("toDouble", (MethodPtr)&String::toDouble));
-	addMethod(new Method("toInteger", (MethodPtr)&String::toInteger));
+	const Type* const str_type = CLEVER_TYPE("String");
+
+	addMethod(new Method("replace", (MethodPtr)&String::replace, str_type));
+	addMethod(new Method("substring", (MethodPtr)&String::substring, str_type));
+	addMethod(new Method("toDouble", (MethodPtr)&String::toDouble, CLEVER_TYPE("Double")));
+	addMethod(new Method("toInteger", (MethodPtr)&String::toInteger, CLEVER_TYPE("Int")));
 }
 
 DataValue* String::allocateValue() const {

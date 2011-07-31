@@ -70,13 +70,13 @@ void Compiler::loadTypes() throw() {
 	Double* double_type = new Double;
 	String* string_type = new String;
 
-	int_type->init();
-	double_type->init();
-	string_type->init();
-
 	TypeTable::insert(CSTRING("Int"), int_type);
 	TypeTable::insert(CSTRING("Double"), double_type);
 	TypeTable::insert(CSTRING("String"), string_type);
+	
+	int_type->init();
+	double_type->init();
+	string_type->init();
 }
 
 /**

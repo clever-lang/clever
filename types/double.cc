@@ -50,8 +50,8 @@ CLEVER_TYPE_METHOD(Double::sqrt) {
 }
 
 void Double::init() {
-	addMethod(new Method("tostring", (MethodPtr)&Double::toString));
-	addMethod(new Method("sqrt", (MethodPtr)&Double::sqrt));
+	addMethod(new Method("tostring", (MethodPtr)&Double::toString, CLEVER_TYPE("String")));
+	addMethod(new Method("sqrt", (MethodPtr)&Double::sqrt, CLEVER_TYPE("Double")));
 }
 
 DataValue* Double::allocateValue() const {
