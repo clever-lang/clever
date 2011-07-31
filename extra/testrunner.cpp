@@ -213,7 +213,8 @@ void TestRunner::load_folder(const char* dir) {
 			if (strcmp(dirp->d_name, ".") == 0 ||
 				strcmp(dirp->d_name, "..") == 0 ||
 				strstr(dirp->d_name, ".tmp") ||
-				strstr(dirp->d_name, ".svn")) {
+				strstr(dirp->d_name, ".svn") ||
+                strstr(dirp->d_name, ".gitignore")) {
 				continue;
 			}
 			// Ignore .log files
