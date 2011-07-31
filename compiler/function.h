@@ -57,28 +57,28 @@ typedef std::pair<std::string, const Type*> FunctionArgsPair;
  */
 class Function {
 public:
-	enum FunctionType { INTERNAL, USER };
+	enum FunctionKind { INTERNAL, USER };
 
 	explicit Function(std::string name)
-		: m_name(name), m_type(INTERNAL), m_num_args(0), m_return(NULL) { }
+		: m_name(name), m_kind(INTERNAL), m_num_args(0), m_return(NULL) { }
 
 	Function(std::string name, FunctionPtr ptr)
-		: m_name(name), m_type(INTERNAL), m_num_args(0), m_return(NULL) { m_info.ptr = ptr; }
+		: m_name(name), m_kind(INTERNAL), m_num_args(0), m_return(NULL) { m_info.ptr = ptr; }
 
 	Function(std::string name, FunctionPtr ptr, const Type* rtype)
-		: m_name(name), m_type(INTERNAL), m_num_args(0), m_return(rtype) { m_info.ptr = ptr; }
+		: m_name(name), m_kind(INTERNAL), m_num_args(0), m_return(rtype) { m_info.ptr = ptr; }
 
 	Function(std::string name, FunctionPtr ptr, int numargs)
-		: m_name(name), m_type(INTERNAL), m_num_args(numargs), m_return(NULL) { m_info.ptr = ptr; }
+		: m_name(name), m_kind(INTERNAL), m_num_args(numargs), m_return(NULL) { m_info.ptr = ptr; }
 
 	Function(std::string name, FunctionPtr ptr, int numargs, const Type* rtype)
-		: m_name(name), m_type(INTERNAL), m_num_args(numargs), m_return(rtype) { m_info.ptr = ptr; }
+		: m_name(name), m_kind(INTERNAL), m_num_args(numargs), m_return(rtype) { m_info.ptr = ptr; }
 
 	Function(std::string& name, unsigned int offset)
-		: m_name(name), m_type(USER), m_num_args(0), m_return(NULL) { m_info.offset = offset; }
+		: m_name(name), m_kind(USER), m_num_args(0), m_return(NULL) { m_info.offset = offset; }
 
 	Function(std::string& name, unsigned int offset, int numargs)
-		: m_name(name), m_type(USER), m_num_args(numargs), m_return(NULL) { m_info.offset = offset; }
+		: m_name(name), m_kind(USER), m_num_args(numargs), m_return(NULL) { m_info.offset = offset; }
 
 	virtual ~Function() { }
 
@@ -95,15 +95,13 @@ public:
 	Value* getVars() throw() { return m_vars; }
 
 	int getNumArgs() const { return m_num_args; }
-	void setVariadicArgs() throw() { m_num_args = -1; }
+	void turnVariadic() throw() { m_num_args = -1; }
+	bool isVariadic() const throw() { return m_num_args < 0; }
 
-	void setInternal() throw() { m_type = INTERNAL; }
-	void setUserDefined() throw() { m_type = USER; }
+	bool isUserDefined() const throw() { return m_kind == USER; }
+	bool isInternal() const throw() { return m_kind == INTERNAL; }
 
-	bool isUserDefined() const throw() { return m_type == USER; }
-	bool isInternal() const throw() { return m_type == INTERNAL; }
-
-	void setOffset(unsigned int num) { m_info.offset = num; }
+	void setOffset(unsigned int num) { m_info.offset = num; m_kind = USER; }
 	long getOffset() const throw() { return m_info.offset; }
 
 	void setReturn(const Type* type) { m_return = type; }
@@ -126,7 +124,7 @@ private:
 	} m_info;
 
 	std::string m_name;
-	FunctionType m_type;
+	FunctionKind m_kind;
 	int m_num_args;
 	const Type* m_return;
 	FunctionArgs m_args;
