@@ -225,9 +225,17 @@ func_call:
 	|	IDENT '(' arg_list ')' { $$ = new ast::FunctionCall($1, $3); $$->setLocation(yylloc); }
 ;
 
+chaining_method_call: 
+		/* empty */                                     { $$ = $0; }
+	|	chaining_method_call '.' IDENT '(' ')'          { $$ = new ast::MethodCall($1, $3); $$->setLocation(yylloc); }
+	|	chaining_method_call '.' IDENT '(' arg_list ')' { $$ = new ast::MethodCall($1, $3, $5); $$->setLocation(yylloc); }
+;
+
 method_call:
 		IDENT '.' IDENT '(' ')'          { $$ = new ast::MethodCall($1, $3); $$->setLocation(yylloc); }
+			chaining_method_call         { $$ = $7; } 
 	|	IDENT '.' IDENT '(' arg_list ')' { $$ = new ast::MethodCall($1, $3, $5); $$->setLocation(yylloc); }
+			chaining_method_call         { $$ = $8; } 
 ;
 
 variable_declaration_no_init:
