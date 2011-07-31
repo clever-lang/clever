@@ -32,8 +32,6 @@
 
 namespace clever {
 
-class Value;
-
 /**
  * Opcodes
  */
