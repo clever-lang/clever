@@ -237,7 +237,7 @@ CLEVER_VM_HANDLER(VM::pre_inc_handler) {
 	Value* value = opcode.getOp1();
 	Value* result = opcode.getResult();
 
-	result->copy(value->increment());
+	result->copy(value->getTypePtr()->increment(value));
 }
 
 /**
@@ -248,7 +248,7 @@ CLEVER_VM_HANDLER(VM::pos_inc_handler) {
 	Value* result = opcode.getResult();
 
 	result->copy(value);
-	value->increment();
+	value->getTypePtr()->increment(value);
 }
 
 /**
@@ -258,7 +258,7 @@ CLEVER_VM_HANDLER(VM::pre_dec_handler) {
 	Value* value = opcode.getOp1();
 	Value* result = opcode.getResult();
 
-	result->copy(value->decrement());
+	result->copy(value->getTypePtr()->decrement(value));
 }
 
 /**
@@ -269,7 +269,7 @@ CLEVER_VM_HANDLER(VM::pos_dec_handler) {
 	Value* result = opcode.getResult();
 
 	result->copy(value);
-	value->decrement();
+	value->getTypePtr()->decrement(value);
 }
 
 /**

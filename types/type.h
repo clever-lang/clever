@@ -38,6 +38,12 @@ namespace clever {
 class CString;
 
 /**
+ * Type handler definitions
+ */
+#define CLEVER_TYPE_INC_HANDLER_D Value* increment(Value* value) const throw()
+#define CLEVER_TYPE_DEC_HANDLER_D Value* decrement(Value* value) const throw()
+
+/**
  * Prototype for class methods which the class represents a type
  */
 #define CLEVER_TYPE_METHOD_ARGS const ValueVector* args, Value* retval, Value* value, Method* clv_method_
@@ -89,6 +95,12 @@ public:
 	 * Allocate a buffer for the type's attributes (if the type is not String, Double, Int, etc.) 
 	 */
 	virtual DataValue* allocateValue() const = 0;
+	
+	/**
+	 * Type handlers
+	 */
+	virtual CLEVER_TYPE_INC_HANDLER_D = 0;
+	virtual CLEVER_TYPE_DEC_HANDLER_D = 0;
 private:
 	MethodMap m_methods;
 	const char* m_name;

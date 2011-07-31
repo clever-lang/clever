@@ -39,9 +39,17 @@ public:
 	void init();
 	DataValue* allocateValue() const;
 
-	/* Type methods */
+	/**
+	 * Type methods
+	 */
 	static CLEVER_TYPE_METHOD(toString);
 	static CLEVER_TYPE_METHOD(sqrt);
+	
+	/**
+	 * Type handlers
+	 */
+	CLEVER_TYPE_INC_HANDLER_D { return NULL; }
+	CLEVER_TYPE_DEC_HANDLER_D { return NULL; }	
 private:
 	DISALLOW_COPY_AND_ASSIGN(Double);
 };
