@@ -36,14 +36,18 @@ std::string argsError(const TypeVector* expected, const ValueVector* argv) {
 	std::string error = "(";
 	int sz = 0;
 
-	if (argv) sz = argv->size();
+	if (argv) {
+		sz = argv->size();
+	}
 	
 	for (int i = 0; i < sz-1; ++i) {	
 		error += argv->at(i)->getTypePtr()->getName();
 		error += ", ";
 	}
 	
-	if (sz > 0) error += argv->at(sz-1)->getTypePtr()->getName();
+	if (sz > 0) {
+		error += argv->at(sz-1)->getTypePtr()->getName();
+	}
 	
 	error += "). Expecting (";
 	
@@ -53,7 +57,9 @@ std::string argsError(const TypeVector* expected, const ValueVector* argv) {
 		error += ", ";
 	}
 	
-	if (sz > 0) error += expected->at(sz-1)->getName();
+	if (sz > 0) {
+		error += expected->at(sz-1)->getName();
+	}
 	
 	error += ")";
 	
