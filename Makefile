@@ -13,7 +13,7 @@ RE2C?=re2c
 
 # Flags
 
-CXXFLAGS=-O2 -ggdb -Wall -ansi -Wno-variadic-macros -I. -fno-rtti -pedantic -fno-exceptions
+CXXFLAGS=-O2 -ggdb -Wall -ansi -I. -fno-rtti -pedantic -fno-exceptions
 CXXFLAGS3=-ggdb -O2
 # Linker
 LFLAGS=-O2 -fno-rtti -fno-exceptions
@@ -80,7 +80,7 @@ $(BUILDDIR)cstring.o: $(COMPDIR)cstring.cc
 $(BUILDDIR)compiler.o: $(COMPDIR)compiler.cc $(BUILDDIR)driver.o $(BUILDDIR)int.o $(BUILDDIR)double.o $(BUILDDIR)pkgmanager.o $(BUILDDIR)cgvisitor.o
 	$(CXX) $(CXXFLAGS) -c -o $(BUILDDIR)compiler.o $(COMPDIR)compiler.cc
 
-$(BUILDDIR)cgvisitor.o: $(COMPDIR)cgvisitor.cc
+$(BUILDDIR)cgvisitor.o: $(COMPDIR)cgvisitor.cc $(BUILDDIR)typeutils.o
 	$(CXX) $(CXXFLAGS) -c -o $(BUILDDIR)cgvisitor.o $(COMPDIR)cgvisitor.cc
 
 $(BUILDDIR)vm.o: $(VMDIR)vm.cc
@@ -96,26 +96,26 @@ $(BUILDDIR)pkgmanager.o: $(COMPDIR)pkgmanager.cc $(BUILDDIR)std_pkg.o
 $(BUILDDIR)typeutils.o: $(TYPEDIR)typeutils.cc
 	$(CXX) $(CXXFLAGS) -c -o $(BUILDDIR)typeutils.o $(TYPEDIR)typeutils.cc
 
-$(BUILDDIR)double.o: $(TYPEDIR)double.cc $(TYPEDIR)typeutils.cc
+$(BUILDDIR)double.o: $(TYPEDIR)double.cc
 	$(CXX) $(CXXFLAGS) -c -o $(BUILDDIR)double.o $(TYPEDIR)double.cc
 
-$(BUILDDIR)int.o: $(TYPEDIR)int.cc $(TYPEDIR)typeutils.cc
+$(BUILDDIR)int.o: $(TYPEDIR)int.cc
 	$(CXX) $(CXXFLAGS) -c -o $(BUILDDIR)int.o $(TYPEDIR)int.cc
 
-$(BUILDDIR)string_type.o: $(TYPEDIR)string_type.cc $(TYPEDIR)typeutils.cc
+$(BUILDDIR)string_type.o: $(TYPEDIR)string_type.cc
 	$(CXX) $(CXXFLAGS) -c -o $(BUILDDIR)string_type.o $(TYPEDIR)string_type.cc
 
 # Standard package
 $(BUILDDIR)std_pkg.o: $(MODDIR)std/io/io.cc $(MODDIR)std/math/math.cc $(MODDIR)std/file/file.cc $(MODDIR)std/std_pkg.cc
 	$(CXX) $(CXXFLAGS) -c -o $(BUILDDIR)std_pkg.o $(MODDIR)std/std_pkg.cc
 
-$(BUILDDIR)io.o: $(BUILDDIR)pkgmanager.o $(MODDIR)std/io/io.cc $(TYPEDIR)typeutils.cc
+$(BUILDDIR)io.o: $(BUILDDIR)pkgmanager.o $(MODDIR)std/io/io.cc
 	$(CXX) $(CXXFLAGS) -c -o $(BUILDDIR)io.o $(MODDIR)std/io/io.cc
 
-$(BUILDDIR)math.o: $(BUILDDIR)pkgmanager.o $(MODDIR)std/math/math.cc $(TYPEDIR)typeutils.cc
+$(BUILDDIR)math.o: $(BUILDDIR)pkgmanager.o $(MODDIR)std/math/math.cc
 	$(CXX) $(CXXFLAGS) -c -o $(BUILDDIR)math.o $(MODDIR)std/math/math.cc
 
-$(BUILDDIR)filestream.o: $(MODDIR)std/file/filestream.cc $(TYPEDIR)typeutils.cc
+$(BUILDDIR)filestream.o: $(MODDIR)std/file/filestream.cc
 	$(CXX) $(CXXFLAGS) -c -o $(BUILDDIR)filestream.o $(MODDIR)std/file/filestream.cc
 
 $(BUILDDIR)file.o: $(BUILDDIR)pkgmanager.o $(BUILDDIR)filestream.o $(MODDIR)std/file/file.cc

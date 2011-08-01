@@ -39,7 +39,6 @@ namespace clever {
  * Replace part of the string and returns the new one.
  */
 CLEVER_TYPE_METHOD(String::replace) {
-	CLEVER_CHECK_ARGS("String::replace", CLEVER_TYPE("String"), CLEVER_TYPE("String"), NULL);
 	size_t needleLength, needlePos;
 	std::string newString = value->toString();
 
@@ -64,9 +63,7 @@ CLEVER_TYPE_METHOD(String::replace) {
  * String::substring(Int, Int)
  * Retrieves a substring from the original one.
  */
-CLEVER_TYPE_METHOD(String::substring) {
-	CLEVER_CHECK_ARGS("String::substring", CLEVER_TYPE("Int"), CLEVER_TYPE("Int"), NULL);
-	
+CLEVER_TYPE_METHOD(String::substring) {	
 	if (size_t(args->at(0)->getInteger()) >= value->toString().length()) {
 		std::cerr << "Out of range: " << args->at(0)->getInteger() 
 			<< " is after the end of the string." << std::endl;
@@ -83,8 +80,6 @@ CLEVER_TYPE_METHOD(String::substring) {
  * Converts the string to a double, if possible.
  */
 CLEVER_TYPE_METHOD(String::toDouble) {
-	CLEVER_CHECK_ARGS("String::toDouble", NULL);
-	
 	double floatValue;
 	std::stringstream stream(value->toString());
 
@@ -101,9 +96,7 @@ CLEVER_TYPE_METHOD(String::toDouble) {
  * String::toInteger()
  * Converts the string to an integer, if possible.
  */
-CLEVER_TYPE_METHOD(String::toInteger) {
-	CLEVER_CHECK_ARGS("String::toInteger", NULL);
-	
+CLEVER_TYPE_METHOD(String::toInteger) {	
 	int64_t integer;
 	std::stringstream stream(value->toString());
 
@@ -119,10 +112,17 @@ CLEVER_TYPE_METHOD(String::toInteger) {
 void String::init() {
 	const Type* const str_type = CLEVER_TYPE("String");
 
-	addMethod(new Method("replace", (MethodPtr)&String::replace, str_type));
-	addMethod(new Method("substring", (MethodPtr)&String::substring, str_type));
-	addMethod(new Method("toDouble", (MethodPtr)&String::toDouble, CLEVER_TYPE("Double")));
-	addMethod(new Method("toInteger", (MethodPtr)&String::toInteger, CLEVER_TYPE("Int")));
+	addMethod(new Method("replace", (MethodPtr)&String::replace, 
+		makeArgs(str_type, str_type, NULL), str_type));
+	
+	addMethod(new Method("substring", (MethodPtr)&String::substring, 
+		makeArgs(CLEVER_TYPE("Int"), CLEVER_TYPE("Int"), NULL), str_type));
+	
+	addMethod(new Method("toDouble", (MethodPtr)&String::toDouble, 
+		makeArgs(NULL), CLEVER_TYPE("Double")));
+		
+	addMethod(new Method("toInteger", (MethodPtr)&String::toInteger, 
+		makeArgs(NULL), CLEVER_TYPE("Int")));
 }
 
 DataValue* String::allocateValue() const {

@@ -26,6 +26,7 @@
 #include <fstream>
 #include "compiler/compiler.h"
 #include "compiler/cstring.h"
+#include "types/typeutils.h"
 #include "modules/std/file/filestream.h"
 
 namespace clever { namespace packages { namespace std { namespace file {
@@ -111,9 +112,14 @@ CLEVER_TYPE_METHOD(FileStream::read) {
 
 
 void FileStream::init() {
-	addMethod(new Method("toString", (MethodPtr)&FileStream::toString));
-	addMethod(new Method("open", (MethodPtr)&FileStream::open));
-	addMethod(new Method("read", (MethodPtr)&FileStream::read));
+	addMethod(new Method("toString", (MethodPtr)&FileStream::toString, 
+		makeArgs(NULL), CLEVER_TYPE("Void")));
+		
+	addMethod(new Method("open", (MethodPtr)&FileStream::open, 
+		makeArgs(CLEVER_TYPE("String"), NULL), CLEVER_TYPE("Void")));
+		
+	addMethod(new Method("read", (MethodPtr)&FileStream::read, 
+		makeArgs(CLEVER_TYPE("String"), NULL), CLEVER_TYPE("Void")));
 }
 
 DataValue* FileStream::allocateValue() const {

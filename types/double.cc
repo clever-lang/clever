@@ -26,8 +26,9 @@
 #include <iostream>
 #include <cmath>
 #include "compiler/cstring.h"
-#include "type.h"
-#include "double.h"
+#include "types/typeutils.h"
+#include "types/type.h"
+#include "types/double.h"
 
 namespace clever {
 
@@ -50,8 +51,11 @@ CLEVER_TYPE_METHOD(Double::sqrt) {
 }
 
 void Double::init() {
-	addMethod(new Method("tostring", (MethodPtr)&Double::toString, CLEVER_TYPE("String")));
-	addMethod(new Method("sqrt", (MethodPtr)&Double::sqrt, CLEVER_TYPE("Double")));
+	addMethod(new Method("toString", (MethodPtr)&Double::toString, 
+		makeArgs(NULL), CLEVER_TYPE("String")));
+		
+	addMethod(new Method("sqrt", (MethodPtr)&Double::sqrt, 
+		makeArgs(NULL), CLEVER_TYPE("Double")));
 }
 
 DataValue* Double::allocateValue() const {

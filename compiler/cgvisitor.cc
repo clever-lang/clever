@@ -25,6 +25,7 @@
 #include "cgvisitor.h"
 #include "compiler/typetable.h"
 #include "compiler/compiler.h"
+#include "types/typeutils.h"
 
 namespace clever { namespace ast {
 
@@ -517,12 +518,10 @@ AST_VISITOR(CodeGenVisitor, MethodCall) {
 	CallableValue* call = new CallableValue(expr->getMethodName());
 	const Method* method = variable->getTypePtr()->getMethod(call->getName());
 	ASTNode* args = expr->getArgs();
-	Value* arg_values = NULL;
-
+	
 	if (!method) {
-		Compiler::errorf(expr->getLocation(),
-			"Method `%s' not found!",
-			call->getName()->str().c_str());
+		Compiler::errorf(expr->getLocation(), "Method `%s::%S' not found!",
+			variable->getTypePtr()->getName(), call->getName());
 	}
 
 	call->setTypePtr(variable->getTypePtr());
@@ -531,11 +530,19 @@ AST_VISITOR(CodeGenVisitor, MethodCall) {
 	
 	expr->getValue()->setTypePtr(method->getReturn());
 
+	Value* arg_values = NULL;
 	if (args) {
 		arg_values = new Value;
 		arg_values->setType(Value::VECTOR);
 		arg_values->setVector(functionArgs(static_cast<ArgumentList*>(args)));
 	}
+	
+	if (!checkArgs(method->getArgs(), arg_values ? arg_values->getVector() : NULL)) {
+		Compiler::errorf(expr->getLocation(), "No matching call for `%s::%S%s'.", 
+			variable->getTypePtr()->getName(), call->getName(), 
+			argsError(method->getArgs(), arg_values ? arg_values->getVector() : NULL).c_str());
+	}
+	
 	emit(OP_MCALL, &VM::mcall_handler, call, arg_values, expr->getValue());
 }
 
