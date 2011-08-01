@@ -29,8 +29,10 @@
 
 namespace clever {
 
-std::string argsError(const TypeVector* expected, const ValueVector* argv)
-{
+/**
+ * Builds the error message related to type mismatch
+ */
+std::string argsError(const TypeVector* expected, const ValueVector* argv) {
 	std::string error = "(";
 	int sz = 0;
 
@@ -58,16 +60,24 @@ std::string argsError(const TypeVector* expected, const ValueVector* argv)
 	return error;
 }
 
+/**
+ * Checks if the ValueVector matchs the expected types
+ */
 bool checkArgs(const TypeVector* expected, const ValueVector* args) {
+	size_t sz;
 	
 	if (expected == NULL) {
-		if (args == NULL) return true;
+		if (args == NULL) {
+			return true;
+		}
 		return false;
 	}
 	
-	if (args == NULL) return false;
+	if (args == NULL) {
+		return false;
+	}
 	
-	size_t sz = expected->size();
+	sz = expected->size();
 	
 	if (sz != args->size()) {
 		return false;
@@ -82,12 +92,17 @@ bool checkArgs(const TypeVector* expected, const ValueVector* args) {
 	return true;
 }
 
+/**
+ * Builds a vector of Type pointers
+ */
 TypeVector* makeArgs(const Type* type1, ...) {
 	va_list li;
 	TypeVector* tv = NULL;
 	const Type* t1 = type1;
 	
-	if (t1 != NULL) tv = new TypeVector();
+	if (t1 != NULL) {
+		tv = new TypeVector();
+	}
 	
 	va_start(li, type1);
 	
