@@ -538,7 +538,7 @@ AST_VISITOR(CodeGenVisitor, MethodCall) {
 	}
 	
 	if (!checkArgs(method->getArgs(), arg_values ? arg_values->getVector() : NULL)) {
-		Compiler::errorf(expr->getLocation(), "No matching call for `%s::%S%s'.", 
+		Compiler::errorf(expr->getLocation(), "No matching call for %s::%S%s", 
 			variable->getTypePtr()->getName(), call->getName(), 
 			argsError(method->getArgs(), arg_values ? arg_values->getVector() : NULL).c_str());
 	}
@@ -623,7 +623,7 @@ AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
 
 	/* we can't have a function declaration without a block. */
 	if (!expr->hasBlock()) {
-		Compiler::error("Cannot declare a function without a block.", expr->getLocation());
+		Compiler::error("Cannot declare a function without a block", expr->getLocation());
 	}
 
 	if (args) {
