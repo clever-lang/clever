@@ -39,11 +39,20 @@ public:
 	void init();
 	DataValue* allocateValue() const;
 
-	/* Type methods */
+	/**
+	 * Type methods
+	 */
 	static CLEVER_TYPE_METHOD(replace);
 	static CLEVER_TYPE_METHOD(substring);
 	static CLEVER_TYPE_METHOD(toDouble);
 	static CLEVER_TYPE_METHOD(toInteger);
+	
+	/**
+	 * Type handlers
+	 */
+	CLEVER_TYPE_INC_HANDLER_D { return NULL; }
+	CLEVER_TYPE_DEC_HANDLER_D { return NULL; }
+	CLEVER_TYPE_ASSIGN_HANDLER_D { value->copy(newvalue); }
 private:
 	DISALLOW_COPY_AND_ASSIGN(String);
 };

@@ -41,10 +41,19 @@ public:
 	void init();
 	DataValue* allocateValue() const;
 
-	/* Type methods */
+	/**
+	 * Type methods
+	 */
 	static CLEVER_TYPE_METHOD(open);
 	static CLEVER_TYPE_METHOD(read);
 	static CLEVER_TYPE_METHOD(toString);
+	
+	/**
+	 * Type handlers
+	 */
+	CLEVER_TYPE_INC_HANDLER_D { return NULL; }
+	CLEVER_TYPE_DEC_HANDLER_D { return NULL; }
+	CLEVER_TYPE_ASSIGN_HANDLER_D { }
 private:
 	DISALLOW_COPY_AND_ASSIGN(FileStream);
 };
