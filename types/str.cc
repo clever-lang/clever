@@ -29,7 +29,7 @@
 #include <stdexcept>
 #include "compiler/cstring.h"
 #include "types/type.h"
-#include "types/string_type.h"
+#include "types/str.h"
 #include "types/typeutils.h"
 
 namespace clever {

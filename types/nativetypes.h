@@ -28,6 +28,6 @@
 
 #include "types/int.h"
 #include "types/double.h"
-#include "types/string_type.h"
+#include "types/str.h"
 
 #endif // CLEVER_NATIVE_TYPES_H

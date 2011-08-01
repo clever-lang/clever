@@ -42,7 +42,7 @@ OBJECTS=$(BUILDDIR)parser.o $(BUILDDIR)scanner.o $(BUILDDIR)driver.o \
 	$(BUILDDIR)int.o $(BUILDDIR)io.o $(BUILDDIR)math.o \
 	$(BUILDDIR)file.o $(BUILDDIR)filestream.o $(BUILDDIR)pkgmanager.o $(BUILDDIR)compiler.o \
 	$(BUILDDIR)typeutils.o $(BUILDDIR)vm.o $(BUILDDIR)cgvisitor.o $(BUILDDIR)opcode.o \
-	$(BUILDDIR)string_type.o $(BUILDDIR)main.o 
+	$(BUILDDIR)str.o $(BUILDDIR)main.o 
 
 # Windows related stuff
 ifdef IS_MINGW
@@ -102,8 +102,8 @@ $(BUILDDIR)double.o: $(TYPEDIR)double.cc
 $(BUILDDIR)int.o: $(TYPEDIR)int.cc
 	$(CXX) $(CXXFLAGS) -c -o $(BUILDDIR)int.o $(TYPEDIR)int.cc
 
-$(BUILDDIR)string_type.o: $(TYPEDIR)string_type.cc
-	$(CXX) $(CXXFLAGS) -c -o $(BUILDDIR)string_type.o $(TYPEDIR)string_type.cc
+$(BUILDDIR)str.o: $(TYPEDIR)str.cc
+	$(CXX) $(CXXFLAGS) -c -o $(BUILDDIR)str.o $(TYPEDIR)str.cc
 
 # Standard package
 $(BUILDDIR)std_pkg.o: $(MODDIR)std/io/io.cc $(MODDIR)std/math/math.cc $(MODDIR)std/file/file.cc $(MODDIR)std/std_pkg.cc

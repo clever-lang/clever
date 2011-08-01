@@ -29,7 +29,7 @@
 #include <vector>
 #include "compiler.h"
 #include "interpreter/ast.h"
-#include "types/native_types.h"
+#include "types/nativetypes.h"
 #include "interpreter/astvisitor.h"
 #include "typetable.h"
 
