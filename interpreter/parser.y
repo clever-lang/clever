@@ -154,18 +154,18 @@ block_stmt:
 ;
 
 statements:
-		expr ';'	         { tree.top()->add($1); }
+		expr ';'	             { tree.top()->add($1); }
 	|	variable_declaration ';' { tree.top()->add($1); }
 	|	func_declaration         { tree.top()->add($1); }
 	|	if_expr                  { tree.top()->add($1); }
-	|	for_expr
+	|	for_expr                 { tree.top()->add($1); }
 	|	while_expr               { tree.top()->add($1); }
 	|	block_stmt               { tree.top()->add($1); }
 	|	break_stmt ';'           { tree.top()->add($1); }
 	|	assign_stmt ';'          { tree.top()->add($1); }
 	|	import_stmt ';'          { tree.top()->add($1); }
 	|	return_stmt ';'          { tree.top()->add($1); }
-	|	class_declaration	 { tree.top()->add($1); }
+	|	class_declaration	     { tree.top()->add($1); }
 ;
 
 return_stmt:
@@ -306,8 +306,20 @@ expr:
 	|	STR
 ;
 
+variable_decl_or_empty:
+		/* empty */            { $$ = NULL; }
+		| variable_declaration { $$ = $1; }
+;
+
+expr_or_empty:
+		/* empty */ { $$ = NULL; }
+		| expr      { $$ = $1; }
+;
+
 for_expr:
-		FOR '(' variable_declaration_no_init IN  IDENT ')' block_stmt
+			FOR '(' variable_decl_or_empty ';' expr_or_empty ';' expr_or_empty ')' block_stmt { $$ = new ast::ForExpr($3, $5, $7, $9); $$->setLocation(yylloc); }
+		|	FOR '(' variable_decl_or_empty ';' expr_or_empty ';' assign_stmt')' block_stmt    { $$ = new ast::ForExpr($3, $5, $7, $9); $$->setLocation(yylloc); }
+//		|   FOR '(' variable_declaration_no_init IN  IDENT ')' block_stmt                     { $$ = new ast::ForExpr($3, $5, $7); $$->setLocation(yylloc); }
 ;
 
 while_expr:

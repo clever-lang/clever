@@ -393,6 +393,62 @@ AST_VISITOR(CodeGenVisitor, WhileExpr) {
 	jmpz->setJmpAddr1(getOpNum());
 }
 
+/**
+ * Generates the opcode for FOR expression
+ */
+AST_VISITOR(CodeGenVisitor, ForExpr) {
+	Value* value;
+	Opcode* jmpz;
+	Opcode* jmp;
+	unsigned int start_pos = 0;
+
+	if (!expr->isIteratorMode()) {
+		
+		if (expr->getVarDecl() != NULL) {
+			expr->getVarDecl()->accept(*this);
+		}
+		
+		start_pos = getOpNum();
+		
+		if (expr->getCondition()) {
+			expr->getCondition()->accept(*this);
+			
+			value = getValue(expr->getCondition());
+			value->addRef();
+		}
+		else {
+			value = new Value(true);
+		}
+		
+		jmpz = emit(OP_JMPZ, &VM::jmpz_handler, value);
+		
+		if (expr->hasBlock()) {
+			m_brks.push(OpcodeStack());
+
+			expr->getBlock()->accept(*this);
+
+			/**
+			 * Points break statements to out of FOR block
+			 */
+			while (!m_brks.top().empty()) {
+				m_brks.top().top()->setJmpAddr1(getOpNum() + 2);
+				m_brks.top().pop();
+			}
+			
+			m_brks.pop();
+		}
+		
+		if (expr->getIncrement() != NULL) {
+			expr->getIncrement()->accept(*this);
+		}
+		
+		jmp = emit(OP_JMP, &VM::jmp_handler);
+		jmp->setJmpAddr2(start_pos);
+
+		jmpz->setJmpAddr1(getOpNum());
+	}
+}
+
 
 /**
  * Generates opcode for logic expression which weren't optimized
@@ -417,7 +473,7 @@ AST_VISITOR(CodeGenVisitor, LogicExpr) {
 	}
 
 	if (lhs->isPrimitive()) {
-		result = Compiler::constantFolding(expr->getOp(), lhs, rhs);
+		//result = Compiler::constantFolding(expr->getOp(), lhs, rhs);
 	}
 	if (result) {
 		/**
