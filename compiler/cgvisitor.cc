@@ -469,7 +469,7 @@ AST_VISITOR(CodeGenVisitor, LogicExpr) {
 	
 	if (!Compiler::checkCompatibleTypes(rhs, lhs)) {
 		Compiler::errorf(expr->getLocation(),
-			"Cannot convert `%S' to `%S' in logic expression",			
+			"Cannot convert `%s' to `%s' in logic expression",			
 			rhs->getTypePtr()->getName(),
 			lhs->getTypePtr()->getName());
 	}
@@ -613,7 +613,7 @@ AST_VISITOR(CodeGenVisitor, AssignExpr) {
 	
 	if (!Compiler::checkCompatibleTypes(rhs, lhs)) {
 		Compiler::errorf(expr->getLocation(),
-			"Cannot convert `%S' to `%S' on assignment",
+			"Cannot convert `%s' to `%s' on assignment",
 			rhs->getTypePtr()->getName(),
 			lhs->getTypePtr()->getName());	 	
 	}
