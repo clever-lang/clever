@@ -1,0 +1,14 @@
+Testing for loop
+==CODE==
+import std.io;
+
+println("start");
+for (Int i = 4; i > 0; --i) { println(i); }
+println("done");
+==RESULT==
+start
+4
+3
+2
+1
+done
