@@ -626,6 +626,28 @@ public:
 		}
 	}
 	
+	~ForExpr() {
+		if (m_var_decl) {
+			m_var_decl->delRef();
+		}
+		
+		if (m_ident) {
+			m_ident->delRef();
+		}
+		
+		if (m_condition) {
+			m_condition->delRef();
+		}
+		
+		if (m_increment) {
+			m_increment->delRef();
+		}
+		
+		if (m_block) {
+			m_block->delRef();
+		}
+	}
+	
 	bool hasBlock() const { return m_block != NULL; }
 	bool isIteratorMode() const { return m_ident != NULL; }
 	ASTNode* getVarDecl() throw() { return m_var_decl; }
