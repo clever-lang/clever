@@ -77,7 +77,7 @@ void VM::run() throw() {
 	for (next_op = 0; next_op < last_op && next_op >= 0; ++next_op) {
 		Opcode& opcode = *(*m_opcodes)[next_op];
 
-		//opcode.dump();
+		// opcode.dump();
 
 		/* Invoke the opcode handler */
 		opcode.getHandler()(opcode, next_op);

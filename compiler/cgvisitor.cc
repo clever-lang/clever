@@ -422,6 +422,8 @@ AST_VISITOR(CodeGenVisitor, ForExpr) {
 		
 		jmpz = emit(OP_JMPZ, &VM::jmpz_handler, value);
 		
+		// If the expression has increment we must jump 2 opcodes
+		unsigned int offset = (expr->getIncrement() ? 2 : 1);
 		if (expr->hasBlock()) {
 			m_brks.push(OpcodeStack());
 
@@ -431,7 +433,7 @@ AST_VISITOR(CodeGenVisitor, ForExpr) {
 			 * Points break statements to out of FOR block
 			 */
 			while (!m_brks.top().empty()) {
-				m_brks.top().top()->setJmpAddr1(getOpNum() + 2);
+				m_brks.top().top()->setJmpAddr1(getOpNum() + offset);
 				m_brks.top().pop();
 			}
 			
