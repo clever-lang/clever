@@ -125,6 +125,13 @@ public:
 
 		return value;
 	}
+	
+	/**
+	 * Returns the Value* pointer if the name is found in the specified scope
+	 */
+	Value* fetchVarByScope(const CString* name, Scope& scope) throw() {             
+		return at(scope.getNumber()).fetch(name);
+	}
 
 	Value* fetchVar(Value* value) throw() {
 		return fetchVar(value->getName());

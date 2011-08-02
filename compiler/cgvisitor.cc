@@ -144,6 +144,12 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 		Compiler::errorf(expr->getLocation(), "`%S' does not name a type", 
 			var_type->getValue()->getName());
 	}
+	
+	if (m_ssa.fetchVarByScope(variable->getName(), m_ssa.currentScope()) != NULL) {
+		Compiler::errorf(expr->getLocation(), 
+			"Already exists a variable named `%S' in the current scope!",
+			variable->getName());
+	}
 
 	variable->setTypePtr(type);
 
