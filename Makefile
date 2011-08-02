@@ -127,11 +127,11 @@ $(BUILDDIR)win32.o: $(WINDIR)win32.cc
 run-mem-tests:
 	$(EXTRADIR)testrunner -m tests/
 
-run-tests: test
+run-tests:
 	$(EXTRADIR)testrunner tests/
 
-test: $(EXTRADIR)testrunner.cpp
-	$(CXX) $(CXXFLAGS3) -o $(EXTRADIR)testrunner $(EXTRADIR)testrunner.cpp -lpcrecpp
+test: $(EXTRADIR)testrunner.cc
+	$(CXX) $(CXXFLAGS3) -o $(EXTRADIR)testrunner $(EXTRADIR)testrunner.cc -lpcrecpp
 
 clean-all: clean clean-test clean-tests
 
