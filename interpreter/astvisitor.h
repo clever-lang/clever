@@ -42,6 +42,7 @@ class PreIncrement;
 class PreDecrement;
 class IfExpr;
 class WhileExpr;
+class ForExpr;
 class FunctionCall;
 class MethodCall;
 class AssignExpr;
@@ -78,6 +79,7 @@ public:
 	AST_VISITOR_DECL_VIRTUAL(BlockNode);
 	AST_VISITOR_DECL_VIRTUAL(IfExpr);
 	AST_VISITOR_DECL_VIRTUAL(WhileExpr);
+	AST_VISITOR_DECL_VIRTUAL(ForExpr);
 	AST_VISITOR_DECL_VIRTUAL(BreakNode);
 	AST_VISITOR_DECL_VIRTUAL(FunctionCall);
 	AST_VISITOR_DECL_VIRTUAL(MethodCall);

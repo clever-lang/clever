@@ -51,15 +51,9 @@ typedef void (CLEVER_FASTCALL *MethodPtr)(CLEVER_METHOD_ARGS);
 class Method {
 public:
 	enum MethodType { INTERNAL, USER };
-	
-	Method(std::string name, MethodPtr ptr)
-		: m_name(name), m_type(INTERNAL), m_args(NULL), m_is_initialized(false), m_rtype(NULL)
-	{
-		m_info.ptr = ptr; 
-	}
 
-	Method(std::string name, MethodPtr ptr, const Type* rtype)
-		: m_name(name), m_type(INTERNAL), m_args(NULL), m_is_initialized(false), m_rtype(rtype)
+	Method(std::string name, MethodPtr ptr, TypeVector* args, const Type* rtype)
+		: m_name(name), m_type(INTERNAL), m_args(args), m_rtype(rtype)
 	{
 		m_info.ptr = ptr; 
 	}
@@ -82,14 +76,8 @@ public:
 	long call() const throw() { return m_info.offset; }
 	
 	const TypeVector* getArgs() const throw() { return m_args; }
-	void setArgs(const TypeVector* const args) { m_args = args; m_is_initialized = true; }
 	
 	const Type* getReturn() const throw() { return m_rtype; } 
-	
-	/**
-	 * Checks if the m_args has been initialized
-	 */
-	bool isArgsInitialized() const { return m_is_initialized; }
 	
 private:
 	union {
@@ -105,11 +93,6 @@ private:
 	 * Check with isArgsInitialized() before using it.
 	 */
 	const TypeVector* m_args;
-	
-	/**
-	 * True if the m_args pointer is initialized
-	 */
-	bool m_is_initialized;
 	
 	/**
 	 * Method's return type

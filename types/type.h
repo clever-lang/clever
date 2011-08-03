@@ -42,6 +42,8 @@ class CString;
  */
 #define CLEVER_TYPE_INC_HANDLER_D Value* increment(Value* value) const throw()
 #define CLEVER_TYPE_DEC_HANDLER_D Value* decrement(Value* value) const throw()
+#define CLEVER_TYPE_ASSIGN_HANDLER_D void assign(Value* value, Value* newvalue) const throw()
+#define CLEVER_TYPE_MOD_HANDLER_D void modulus(Value* value, const Value* op1, const Value* op2) const throw()
 
 /**
  * Prototype for class methods which the class represents a type
@@ -101,6 +103,8 @@ public:
 	 */
 	virtual CLEVER_TYPE_INC_HANDLER_D = 0;
 	virtual CLEVER_TYPE_DEC_HANDLER_D = 0;
+	virtual CLEVER_TYPE_ASSIGN_HANDLER_D = 0;
+	virtual CLEVER_TYPE_MOD_HANDLER_D { }
 private:
 	MethodMap m_methods;
 	const char* m_name;

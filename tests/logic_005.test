@@ -1,0 +1,10 @@
+Testing comparison with different types
+==CODE==
+Int i = 10;
+String j = "foo";
+
+if (i < j) {
+	println("bug");
+}
+==RESULT==
+Compile error: Cannot convert `String' to `Int' in logic expression on \S+ line 4

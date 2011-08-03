@@ -24,45 +24,41 @@
  */
 
 #include <cstdarg>
+#include <cassert>
 #include "types/typeutils.h"
 
 namespace clever {
 
-void addArgs(Method* method, ...)
-{
-	using namespace std;
-	va_list li;
-	
-	TypeVector* tv = NULL;
-	
-	const Type* t1;
-	va_start(li, method);
-	
-	t1 = va_arg(li, const Type*);
-	
-	if (t1 != NULL) tv = new TypeVector();
-	
-	while (t1 != NULL) {
-		tv->push_back(t1);
-		t1 = va_arg(li, const Type*);
+/**
+ * Builds the error message related to type mismatch
+ */
+std::string argsError(const TypeVector* expected, const ValueVector* argv) {
+	std::string error = "(";
+	int sz = 0;
+
+	if (argv) {
+		sz = argv->size();
 	}
 	
-	method->setArgs(tv);
-	va_end(li);
-}
-
-std::string argsError(const std::string& name, const TypeVector* expected, const ValueVector* args)
-{
-	std::string error = "No matching call for " + name + "(";
-	size_t size = args->size();
-	
-	for (size_t i = 0; i < size-1; ++i) {
-		error += args->at(i)->getTypePtr()->getName();
+	for (int i = 0; i < sz-1; ++i) {	
+		error += argv->at(i)->getTypePtr()->getName();
 		error += ", ";
 	}
 	
-	if (size > 0) {
-		error += args->at(size-1)->getTypePtr()->getName();
+	if (sz > 0) {
+		error += argv->at(sz-1)->getTypePtr()->getName();
+	}
+	
+	error += "). Expecting (";
+	
+	sz = expected ? expected->size() : 0;
+	for (int i = 0; i < sz-1; ++i) {
+		error += expected->at(i)->getName();
+		error += ", ";
+	}
+	
+	if (sz > 0) {
+		error += expected->at(sz-1)->getName();
 	}
 	
 	error += ")";
@@ -70,16 +66,24 @@ std::string argsError(const std::string& name, const TypeVector* expected, const
 	return error;
 }
 
+/**
+ * Checks if the ValueVector matchs the expected types
+ */
 bool checkArgs(const TypeVector* expected, const ValueVector* args) {
+	size_t sz;
 	
 	if (expected == NULL) {
-		if (args == NULL) return true;
+		if (args == NULL) {
+			return true;
+		}
 		return false;
 	}
 	
-	if (args == NULL) return false;
+	if (args == NULL) {
+		return false;
+	}
 	
-	size_t sz = expected->size();
+	sz = expected->size();
 	
 	if (sz != args->size()) {
 		return false;
@@ -92,6 +96,30 @@ bool checkArgs(const TypeVector* expected, const ValueVector* args) {
 	}
 	
 	return true;
+}
+
+/**
+ * Builds a vector of Type pointers
+ */
+TypeVector* makeArgs(const Type* type1, ...) {
+	va_list li;
+	TypeVector* tv = NULL;
+	const Type* t1 = type1;
+	
+	if (t1 != NULL) {
+		tv = new TypeVector();
+	}
+	
+	va_start(li, type1);
+	
+	while (t1 != NULL) {
+		tv->push_back(t1);
+		t1 = va_arg(li, const Type*);
+	}
+	
+	va_end(li);
+	
+	return tv;
 }
 
 } // clever

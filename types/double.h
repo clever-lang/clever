@@ -48,8 +48,9 @@ public:
 	/**
 	 * Type handlers
 	 */
-	CLEVER_TYPE_INC_HANDLER_D { return NULL; }
-	CLEVER_TYPE_DEC_HANDLER_D { return NULL; }	
+	CLEVER_TYPE_INC_HANDLER_D { value->setInteger(value->getInteger()+1); return value; }
+	CLEVER_TYPE_DEC_HANDLER_D { value->setInteger(value->getInteger()-1); return value; }
+	CLEVER_TYPE_ASSIGN_HANDLER_D { value->copy(newvalue); }
 private:
 	DISALLOW_COPY_AND_ASSIGN(Double);
 };

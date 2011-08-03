@@ -1,0 +1,25 @@
+Testing other nested for
+==CODE==
+import std.io;
+
+for (Int i = 1; i < 10; ++i) {
+	
+	for (Int j = 0; j < i; ++j) {
+		println(j);
+	}
+	
+	if (i == 4) {
+		break;
+	}
+}
+==RESULT==
+0
+0
+1
+0
+1
+2
+0
+1
+2
+3

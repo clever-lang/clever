@@ -595,6 +595,81 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(WhileExpr);
 };
 
+class ForExpr : public ASTNode {
+public:
+	ForExpr(ASTNode* var_decl, ASTNode* ident, ASTNode* block)
+		: m_var_decl(var_decl), m_ident(ident), m_condition(NULL), m_increment(NULL), m_block(block) {
+		m_var_decl->addRef();
+		m_ident->addRef();
+		
+		if (m_block) {
+			m_block->addRef();
+		}
+	}
+	
+	ForExpr(ASTNode* var_decl, ASTNode* condition, ASTNode* increment, ASTNode* block) 
+		: m_var_decl(var_decl), m_ident(NULL), m_condition(condition), m_increment(increment), m_block(block) {
+		if (m_var_decl) {
+			m_var_decl->addRef();
+		}
+		
+		if (m_condition) {
+			m_condition->addRef();
+		}
+		
+		if (m_increment) {
+			m_increment->addRef();
+		}
+		
+		if (m_block) {
+			m_block->addRef();
+		}
+	}
+	
+	~ForExpr() {
+		if (m_var_decl) {
+			m_var_decl->delRef();
+		}
+		
+		if (m_ident) {
+			m_ident->delRef();
+		}
+		
+		if (m_condition) {
+			m_condition->delRef();
+		}
+		
+		if (m_increment) {
+			m_increment->delRef();
+		}
+		
+		if (m_block) {
+			m_block->delRef();
+		}
+	}
+	
+	bool hasBlock() const { return m_block != NULL; }
+	bool isIteratorMode() const { return m_ident != NULL; }
+	ASTNode* getVarDecl() throw() { return m_var_decl; }
+	ASTNode* getIdentifier() throw() { return m_ident; }
+	ASTNode* getCondition() throw() { return m_condition; }
+	ASTNode* getIncrement() throw() { return m_increment; }
+	ASTNode* getBlock() throw() { return m_block; }
+	
+	void accept(ASTVisitor& visitor) throw() {
+		visitor.visit(this);
+	}
+	
+private:
+	ASTNode* m_var_decl;
+	ASTNode* m_ident;
+	ASTNode* m_condition;
+	ASTNode* m_increment;
+	ASTNode* m_block;
+
+	DISALLOW_COPY_AND_ASSIGN(ForExpr);
+};
+
 class LogicExpr : public BinaryExpr {
 public:
 	LogicExpr(int op, ASTNode* lhs, ASTNode* rhs)

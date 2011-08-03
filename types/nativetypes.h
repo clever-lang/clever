@@ -23,39 +23,11 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef CLEVER_STRING_H
-#define CLEVER_STRING_H
+#ifndef CLEVER_NATIVE_TYPES_H
+#define CLEVER_NATIVE_TYPES_H
 
-#include "type.h"
-#include "compiler/value.h"
+#include "types/int.h"
+#include "types/double.h"
+#include "types/str.h"
 
-namespace clever {
-
-class String : public Type {
-public:
-	String() :
-		Type("String") { }
-
-	void init();
-	DataValue* allocateValue() const;
-
-	/**
-	 * Type methods
-	 */
-	static CLEVER_TYPE_METHOD(replace);
-	static CLEVER_TYPE_METHOD(substring);
-	static CLEVER_TYPE_METHOD(toDouble);
-	static CLEVER_TYPE_METHOD(toInteger);
-	
-	/**
-	 * Type handlers
-	 */
-	CLEVER_TYPE_INC_HANDLER_D { return NULL; }
-	CLEVER_TYPE_DEC_HANDLER_D { return NULL; }
-private:
-	DISALLOW_COPY_AND_ASSIGN(String);
-};
-
-} // clever
-
-#endif // CLEVER_STRING_H
+#endif // CLEVER_NATIVE_TYPES_H

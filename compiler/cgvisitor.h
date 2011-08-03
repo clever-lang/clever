@@ -90,6 +90,7 @@ public:
 	AST_VISITOR_DECL(BlockNode);
 	AST_VISITOR_DECL(IfExpr);
 	AST_VISITOR_DECL(WhileExpr);
+	AST_VISITOR_DECL(ForExpr);
 	AST_VISITOR_DECL(BreakNode);
 	AST_VISITOR_DECL(FunctionCall);
 	AST_VISITOR_DECL(MethodCall);

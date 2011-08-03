@@ -25,6 +25,7 @@
 #include "cgvisitor.h"
 #include "compiler/typetable.h"
 #include "compiler/compiler.h"
+#include "types/typeutils.h"
 
 namespace clever { namespace ast {
 
@@ -142,6 +143,12 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 	if (type == NULL) {
 		Compiler::errorf(expr->getLocation(), "`%S' does not name a type", 
 			var_type->getValue()->getName());
+	}
+	
+	if (m_ssa.fetchVarByScope(variable->getName(), m_ssa.currentScope()) != NULL) {
+		Compiler::errorf(expr->getLocation(), 
+			"Already exists a variable named `%S' in the current scope!",
+			variable->getName());
 	}
 
 	variable->setTypePtr(type);
@@ -392,6 +399,64 @@ AST_VISITOR(CodeGenVisitor, WhileExpr) {
 	jmpz->setJmpAddr1(getOpNum());
 }
 
+/**
+ * Generates the opcode for FOR expression
+ */
+AST_VISITOR(CodeGenVisitor, ForExpr) {
+	Value* value;
+	Opcode* jmpz;
+	Opcode* jmp;
+	unsigned int start_pos = 0;
+
+	if (!expr->isIteratorMode()) {
+		
+		if (expr->getVarDecl() != NULL) {
+			expr->getVarDecl()->accept(*this);
+		}
+		
+		start_pos = getOpNum();
+		
+		if (expr->getCondition()) {
+			expr->getCondition()->accept(*this);
+			
+			value = getValue(expr->getCondition());
+			value->addRef();
+		}
+		else {
+			value = new Value(true);
+		}
+		
+		jmpz = emit(OP_JMPZ, &VM::jmpz_handler, value);
+		
+		// If the expression has increment we must jump 2 opcodes
+		unsigned int offset = (expr->getIncrement() ? 2 : 1);
+		if (expr->hasBlock()) {
+			m_brks.push(OpcodeStack());
+
+			expr->getBlock()->accept(*this);
+
+			/**
+			 * Points break statements to out of FOR block
+			 */
+			while (!m_brks.top().empty()) {
+				m_brks.top().top()->setJmpAddr1(getOpNum() + offset);
+				m_brks.top().pop();
+			}
+			
+			m_brks.pop();
+		}
+		
+		if (expr->getIncrement() != NULL) {
+			expr->getIncrement()->accept(*this);
+		}
+		
+		jmp = emit(OP_JMP, &VM::jmp_handler);
+		jmp->setJmpAddr2(start_pos);
+
+		jmpz->setJmpAddr1(getOpNum());
+	}
+}
+
 
 /**
  * Generates opcode for logic expression which weren't optimized
@@ -410,13 +475,13 @@ AST_VISITOR(CodeGenVisitor, LogicExpr) {
 	
 	if (!Compiler::checkCompatibleTypes(rhs, lhs)) {
 		Compiler::errorf(expr->getLocation(),
-			"Cannot convert `%S' to `%S' in logic expression",			
+			"Cannot convert `%s' to `%s' in logic expression",			
 			rhs->getTypePtr()->getName(),
 			lhs->getTypePtr()->getName());
 	}
 
 	if (lhs->isPrimitive()) {
-		result = Compiler::constantFolding(expr->getOp(), lhs, rhs);
+		//result = Compiler::constantFolding(expr->getOp(), lhs, rhs);
 	}
 	if (result) {
 		/**
@@ -517,12 +582,10 @@ AST_VISITOR(CodeGenVisitor, MethodCall) {
 	CallableValue* call = new CallableValue(expr->getMethodName());
 	const Method* method = variable->getTypePtr()->getMethod(call->getName());
 	ASTNode* args = expr->getArgs();
-	Value* arg_values = NULL;
-
+	
 	if (!method) {
-		Compiler::errorf(expr->getLocation(),
-			"Method `%S' not found!",
-			call->getName());
+		Compiler::errorf(expr->getLocation(), "Method `%s::%S' not found!",
+			variable->getTypePtr()->getName(), call->getName());
 	}
 
 	call->setTypePtr(variable->getTypePtr());
@@ -531,11 +594,19 @@ AST_VISITOR(CodeGenVisitor, MethodCall) {
 	
 	expr->getValue()->setTypePtr(method->getReturn());
 
+	Value* arg_values = NULL;
 	if (args) {
 		arg_values = new Value;
 		arg_values->setType(Value::VECTOR);
 		arg_values->setVector(functionArgs(static_cast<ArgumentList*>(args)));
 	}
+	
+	if (!checkArgs(method->getArgs(), arg_values ? arg_values->getVector() : NULL)) {
+		Compiler::errorf(expr->getLocation(), "No matching call for %s::%S%s", 
+			variable->getTypePtr()->getName(), call->getName(), 
+			argsError(method->getArgs(), arg_values ? arg_values->getVector() : NULL).c_str());
+	}
+	
 	emit(OP_MCALL, &VM::mcall_handler, call, arg_values, expr->getValue());
 }
 
@@ -548,7 +619,7 @@ AST_VISITOR(CodeGenVisitor, AssignExpr) {
 	
 	if (!Compiler::checkCompatibleTypes(rhs, lhs)) {
 		Compiler::errorf(expr->getLocation(),
-			"Cannot convert `%S' to `%S' on assignment",
+			"Cannot convert `%s' to `%s' on assignment",
 			rhs->getTypePtr()->getName(),
 			lhs->getTypePtr()->getName());	 	
 	}
@@ -616,7 +687,7 @@ AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
 
 	/* we can't have a function declaration without a block. */
 	if (!expr->hasBlock()) {
-		Compiler::error("Cannot declare a function without a block.", expr->getLocation());
+		Compiler::error("Cannot declare a function without a block", expr->getLocation());
 	}
 
 	if (args) {

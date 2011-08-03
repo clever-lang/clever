@@ -25,8 +25,9 @@
 
 #include <iostream>
 #include "compiler/cstring.h"
-#include "type.h"
-#include "int.h"
+#include "types/typeutils.h"
+#include "types/type.h"
+#include "types/int.h"
 
 namespace clever {
 
@@ -40,7 +41,8 @@ CLEVER_TYPE_METHOD(Integer::toString) {
 }
 
 void Integer::init() {
-	addMethod(new Method("tostring", (MethodPtr)&Integer::toString, CLEVER_TYPE("String")));
+	addMethod(new Method("toString", (MethodPtr)&Integer::toString, 
+		makeArgs(NULL), CLEVER_TYPE("String")));
 }
 
 DataValue* Integer::allocateValue() const {

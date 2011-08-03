@@ -1,0 +1,20 @@
+Testing different fors
+==CODE==
+import std.io;
+
+Int a = 0;
+for (; a < 4; ++a) {
+	println(a);
+}
+
+for (Int i = -2; i;) {
+	println(i++);
+}
+
+==RESULT==
+0
+1
+2
+3
+-2
+-1
