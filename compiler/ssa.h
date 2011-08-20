@@ -35,12 +35,16 @@ namespace clever {
 
 class CString;
 
+/**
+ * Hashmap representing values in a scope
+ */
 typedef std::tr1::unordered_map<const CString*, Value*> ScopeBase;
 
 class Scope : public ScopeBase {
 public:
-	Scope(int number)
+	explicit Scope(int number)
 		: m_number(number) { }
+
 	~Scope() {
 		ScopeBase::const_iterator it = begin(), end_ = end();
 
@@ -50,8 +54,14 @@ public:
 		}
 	}
 	
-	int getNumber() throw() { return m_number; }
+	/**
+	 * Returns the number identifying the scope
+	 */
+	int getNumber() const throw() { return m_number; }
 
+	/**
+	 * Pushes a new named Value pointer to the scope
+	 */
 	void push(const CString* name, Value* value) {
 		if (EXPECTED(value->hasName())) {
 			insert(std::pair<const CString*, Value*>(name, value));
@@ -60,6 +70,9 @@ public:
 		// TODO: THROW ERROR HERE
 	}
 
+	/**
+	 * Pushes a new Value pointer to the scope
+	 */
 	void push(Value* value) {
 		if (EXPECTED(value->hasName())) {
 			push(value->getName(), value);
@@ -67,6 +80,9 @@ public:
 		// TODO: THROW ERROR HERE
 	}
 
+	/**
+	 * Fetchs a Value pointer in the scope by name
+	 */
 	Value* fetch(const CString* name) {
 		if (!empty()) {
 			Scope::const_iterator it = find(name);
@@ -78,10 +94,16 @@ public:
 		return NULL;
 	}
 
+	/**
+	 * Fetchs a Value pointer in the scope by a Value pointer
+	 */
 	Value* fetch(const Value* value) {
 		return fetch(value->getName());
 	}
 private:
+	/**
+	 * Number identifying the scope
+	 */
 	int m_number;
 };
 
@@ -89,36 +111,44 @@ private:
  * Minimal SSA form
  */
 typedef std::deque<Scope> SSABase;
+
 class SSA : public SSABase {
 public:
 	SSA()
-		: m_scope(-1) { }
+		: m_level(-1) { }
 
 	~SSA() { }
 
 	/**
-	 * Adds a new variable to current scope
+	 * Pusshes a new Value pointer to the current scope
 	 */
 	void pushVar(const CString* name, Value* var) throw() {
-		at(m_scope).push(name, var);
+		at(m_level).push(name, var);
 	}
 
+	/**
+	 * Pushes a new Value pointer to the current scope
+	 */
 	void pushVar(Value* var) throw() {
-		at(m_scope).push(var->getName(), var);
+		at(m_level).push(var->getName(), var);
 	}
 
 	/**
 	 * Returns the Value* pointer if the name is found
 	 */
 	Value* fetchVar(const CString* name) throw() {
+		Value* value;
+
 		/* There is no scope to search, shit just got real. */
-		if (m_scope == -1) {
-			/* TODO: throw error or warning of unreslved symbol. */
+		if (m_level == -1) {
+			/* TODO: throw error or warning of unresolved symbol. */
 			return NULL;
 		}
+		value = at(m_level).fetch(name);
 
-		Value* value = at(m_scope).fetch(name);
-
+		/**
+		 * If not found in the current scope, try the outermost scopes
+		 */
 		if (value == NULL) {
 			value = deepValueSearch(name);
 		}
@@ -127,25 +157,31 @@ public:
 	}
 	
 	/**
-	 * Returns the Value* pointer if the name is found in the specified scope
+	 * Fetches a Value pointer if its name is found in the specified scope
 	 */
-	Value* fetchVarByScope(const CString* name, Scope& scope) throw() {             
+	Value* fetchVarByScope(const CString* name, const Scope& scope) throw() {             
 		return at(scope.getNumber()).fetch(name);
 	}
 
+	/**
+	 * Fetches a Value pointer by a Value pointer
+	 */
 	Value* fetchVar(Value* value) throw() {
 		return fetchVar(value->getName());
 	}
 	
-	Scope& fetchScope(int number) throw() {
-		return at(number);
+	/**
+	 * Fetches an specified scope by its number
+	 */
+	Scope& fetchScope(int level) throw() {
+		return at(level);
 	}
 
 	/**
 	 * Creates a new scope block
 	 */
 	void beginScope() throw() {
-		push_back(Scope(++m_scope));
+		push_back(Scope(++m_level));
 	}
 
 	/**
@@ -153,21 +189,27 @@ public:
 	 */
 	void endScope() throw() {
 		pop_back();
-		--m_scope;
+		--m_level;
 	}
 
 	/**
 	 * Returns the current scope block
 	 */
 	Scope& currentScope() throw() {
-		return at(m_scope);
+		return at(m_level);
 	}
 
 private:
-	int m_scope;
+	/**
+	 * Number representing the scope level
+	 */
+	int m_level;
 
+	/**
+	 * Makes the deep search in the scopes innermost to outermost
+	 */
 	Value* deepValueSearch(const CString* name) {
-		for (int i = m_scope-1; i >= 0; --i) {
+		for (int i = m_level-1; i >= 0; --i) {
 			Value* value = at(i).fetch(name);
 
 			if (value) {
