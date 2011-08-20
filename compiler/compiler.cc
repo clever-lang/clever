@@ -31,7 +31,9 @@
 #include "interpreter/ast.h"
 #include "types/nativetypes.h"
 #include "interpreter/astvisitor.h"
+#include "interpreter/api.h"
 #include "typetable.h"
+
 
 namespace clever {
 
@@ -265,72 +267,6 @@ void Compiler::checkFunctionArgs(const Function* func, int num_args, const locat
 	}
 }
 
-/**
- * Formatter
- */
-void Compiler::vsprintf(std::ostringstream& outstr, const char* format, va_list ap) throw() {
-	char* chr = const_cast<char*>(format);
-
-	if (!chr) {
-		return;
-	}
-
-	while (*chr) {
-		/* Check for escape %% */
-		if (*chr != '%' || *++chr == '%') {
-			outstr << *chr++;
-			continue;
-		}
-
-		switch (*chr) {
-			/* double */
-			case 'd':
-				outstr << va_arg(ap, double);
-				break;
-			/* long */
-			case 'l':
-				outstr << va_arg(ap, long);
-				break;
-			/* std::string* */
-			case 'S':
-				outstr << *va_arg(ap, std::string*);
-				break;
-			/* const char* */
-			case 's':
-				outstr << va_arg(ap, const char*);
-				break;
-			/* Value* */
-			case 'v':
-				outstr << va_arg(ap, Value*)->toString();
-				break;
-		}
-		++chr;
-	}
-}
-
-void Compiler::sprintf(std::ostringstream& outstr, const char* format, ...) throw() {
-	va_list args;
-
-	va_start(args, format);
-
-	vsprintf(outstr, format, args);
-
-	va_end(args);
-}
-
-void Compiler::printf(const char* format, ...) throw() {
-	std::ostringstream out;
-	va_list args;
-
-	va_start(args, format);
-
-	vsprintf(out, format, args);
-
-	std::cout << out;
-
-	va_end(args);
-}
-
 void Compiler::errorf(const location& loc, const char* format, ...) throw() {
 	std::ostringstream out;
 	va_list args;
@@ -342,19 +278,6 @@ void Compiler::errorf(const location& loc, const char* format, ...) throw() {
 	va_end(args);
 
 	error(out.str(), loc);
-}
-
-void Compiler::printfln(const char* format, ...) throw() {
-	std::ostringstream out;
-	va_list args;
-
-	va_start(args, format);
-
-	vsprintf(out, format, args);
-
-	std::cout << out << std::endl;
-
-	va_end(args);
 }
 
 } // clever

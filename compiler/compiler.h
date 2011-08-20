@@ -112,10 +112,6 @@ public:
 	/**
 	 * Methods for formatted messages
 	 */
-	static void vsprintf(std::ostringstream&, const char*, va_list) throw();
-	static void sprintf(std::ostringstream&, const char*, ...) throw();
-	static void printf(const char*, ...) throw();
-	static void printfln(const char*, ...) throw();
 	static void errorf(const location&, const char*, ...) throw();
 private:
 	ast::ASTNode* m_ast;
