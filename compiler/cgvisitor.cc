@@ -81,7 +81,6 @@ Value* CodeGenVisitor::getValue(ASTNode* expr) throw() {
 AST_VISITOR(CodeGenVisitor, BinaryExpr) {
 	Value* lhs = getValue(expr->getLhs());
 	Value* rhs = getValue(expr->getRhs());
-	Value* result = NULL;
 	const Type* type;
 	
 	if (!Compiler::checkCompatibleTypes(lhs, rhs)) {
@@ -89,24 +88,10 @@ AST_VISITOR(CodeGenVisitor, BinaryExpr) {
 	}
 	
 	type = Compiler::checkExprType(lhs, rhs);
-	
-	if (lhs->isPrimitive() && rhs->isPrimitive() && !expr->isAssigned()) {
-		result = Compiler::constantFolding(expr->getOp(), lhs, rhs);
-	}
-	if (result) {
-		/**
-		 * Don't generate the opcode, the expression was evaluated in
-		 * compile-time
-		 */
-		result->setTypePtr(type);
-		expr->setOptimized(true);
-		expr->setResult(result);
-		return;
-	}
+
 	if (expr->isAssigned()) {
 		expr->setResult(lhs);
 		lhs->addRef();
-		lhs->setModified();
 	} else {
 		expr->setResult(new Value(lhs->getTypePtr()));
 	}
@@ -168,7 +153,6 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 		m_ssa.pushVar(variable);
 
 		if (value->isPrimitive()) {
-			variable->setInitialized();
 			variable->copy(value);
 		}
 
@@ -196,7 +180,6 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 		}
 
 		variable->initialize();
-		variable->setInitialized();
 
 		variable->addRef();
 
@@ -210,7 +193,6 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 AST_VISITOR(CodeGenVisitor, PreIncrement) {
 	Value* value = getValue(expr->getExpr());
 
-	value->setModified();
 	value->addRef();
 
 	emit(OP_PRE_INC, &VM::pre_inc_handler, value, NULL, expr->getValue());
@@ -223,7 +205,6 @@ AST_VISITOR(CodeGenVisitor, PreIncrement) {
 AST_VISITOR(CodeGenVisitor, PosIncrement) {
 	Value* value = getValue(expr->getExpr());
 
-	value->setModified();
 	value->addRef();
 
 	emit(OP_POS_INC, &VM::pos_inc_handler, value, NULL, expr->getValue());
@@ -236,7 +217,6 @@ AST_VISITOR(CodeGenVisitor, PosIncrement) {
 AST_VISITOR(CodeGenVisitor, PreDecrement) {
 	Value* value = getValue(expr->getExpr());
 
-	value->setModified();
 	value->addRef();
 
 	emit(OP_PRE_DEC, &VM::pre_dec_handler, value, NULL, expr->getValue());
@@ -249,7 +229,6 @@ AST_VISITOR(CodeGenVisitor, PreDecrement) {
 AST_VISITOR(CodeGenVisitor, PosDecrement) {
 	Value* value = getValue(expr->getExpr());
 
-	value->setModified();
 	value->addRef();
 
 	emit(OP_POS_DEC, &VM::pos_dec_handler, value, NULL, expr->getValue());
@@ -465,7 +444,6 @@ AST_VISITOR(CodeGenVisitor, LogicExpr) {
 	Opcode* opcode;
 	Value* lhs;
 	Value* rhs;
-	Value* result = NULL;
 
 	expr->getLhs()->accept(*this);
 	expr->getRhs()->accept(*this);
@@ -480,20 +458,7 @@ AST_VISITOR(CodeGenVisitor, LogicExpr) {
 			lhs->getTypePtr()->getName());
 	}
 
-	if (lhs->isPrimitive()) {
-		//result = Compiler::constantFolding(expr->getOp(), lhs, rhs);
-	}
-	if (result) {
-		/**
-		 * Don't generate the opcode, the expression was evaluated in
-		 * compile-time
-		 */
-		expr->setOptimized(true);
-		expr->setResult(result);
-		return;
-	} else {
-		expr->setResult(new Value(lhs->getTypePtr()));
-	}
+	expr->setResult(new Value(lhs->getTypePtr()));
 
 	lhs->addRef();
 	rhs->addRef();
@@ -623,8 +588,6 @@ AST_VISITOR(CodeGenVisitor, AssignExpr) {
 			rhs->getTypePtr()->getName(),
 			lhs->getTypePtr()->getName());	 	
 	}
-	
-	lhs->setModified();
 
 	lhs->addRef();
 	rhs->addRef();
@@ -711,7 +674,6 @@ AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
 			var->setTypePtr(arg_type);
 			var->setType(Value::INTEGER);
 			var->initialize();
-			var->setModified();
 
 			m_ssa.pushVar(var);
 			vec->push_back(var);

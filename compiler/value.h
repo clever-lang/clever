@@ -57,38 +57,33 @@ public:
 	} ValueData;
 
 	/**
-	 * Variable states
-	 */
-	enum { SET, UNSET, MODIFIED };
-
-	/**
 	 * Data type
 	 */
 	enum { NONE, INTEGER, DOUBLE, STRING, BOOLEAN, VECTOR, USER };
 
 	Value()
-		: RefCounted(1), m_status(UNSET), m_type(NONE), m_type_ptr(NULL), m_name(NULL) { }
+		: RefCounted(1), m_type(NONE), m_type_ptr(NULL), m_name(NULL) { }
 
 	explicit Value(const Type* type_ptr)
-		: RefCounted(1), m_status(UNSET), m_type(NONE), m_type_ptr(type_ptr), m_name(NULL) { }
+		: RefCounted(1), m_type(NONE), m_type_ptr(type_ptr), m_name(NULL) { }
 
 	explicit Value(double value)
-		: RefCounted(1), m_status(UNSET), m_type(DOUBLE), m_type_ptr(CLEVER_TYPE("Double")), m_name(NULL) {
+		: RefCounted(1), m_type(DOUBLE), m_type_ptr(CLEVER_TYPE("Double")), m_name(NULL) {
 		setDouble(value);
 	}
 
 	explicit Value(int64_t value)
-		: RefCounted(1), m_status(UNSET), m_type(INTEGER), m_type_ptr(CLEVER_TYPE("Int")), m_name(NULL) {
+		: RefCounted(1), m_type(INTEGER), m_type_ptr(CLEVER_TYPE("Int")), m_name(NULL) {
 		setInteger(value);
 	}
 
 	explicit Value(bool value)
-		: RefCounted(1), m_status(UNSET), m_type(BOOLEAN), m_type_ptr(CLEVER_TYPE("Bool")), m_name(NULL) {
+		: RefCounted(1), m_type(BOOLEAN), m_type_ptr(CLEVER_TYPE("Bool")), m_name(NULL) {
 		setBoolean(value);
 	}
 
 	explicit Value(const CString* value)
-		: RefCounted(1), m_status(UNSET), m_type(STRING), m_type_ptr(CLEVER_TYPE("String")), m_name(NULL) {
+		: RefCounted(1), m_type(STRING), m_type_ptr(CLEVER_TYPE("String")), m_name(NULL) {
 		setString(value);
 	}
 
@@ -155,17 +150,6 @@ public:
 	bool hasName() const { return m_name != NULL; }
 	const CString* getName() const { return m_name; }
 	void setName(const CString* const name) { m_name = name; }
-
-	int getStatus() { return m_status; }
-	void setStatus(int status) { m_status = status; }
-
-	bool isInitialized() const { return m_status == SET; }
-	bool isUninitialized() const { return m_status == UNSET; }
-	bool isModified() const { return m_status == MODIFIED; }
-
-	void setInitialized() { m_status = SET; }
-	void setUninitialized() { m_status = UNSET; }
-	void setModified() { m_status = MODIFIED; }
 
 	virtual bool isPrimitive() const {
 		return m_type_ptr == CLEVER_TYPE("Int") ||
@@ -263,7 +247,6 @@ public:
 		}
 	}
 private:
-	int m_status;
 	int m_type;
 	const Type* m_type_ptr;
 	const CString* m_name;
