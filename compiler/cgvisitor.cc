@@ -62,7 +62,7 @@ Value* CodeGenVisitor::getValue(ASTNode* expr) throw() {
 	Value* value = expr->getValue();
 
 	if (value && value->hasName()) {
-		Value* var = m_symbols.fetchVar(value);
+		Value* var = m_symbols.fetch(value);
 
 		/**
 		 * If the variable is found, we should use its pointer instead of
@@ -131,7 +131,7 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 			var_type->getValue()->getName());
 	}
 	
-	if (m_symbols.fetchVarByScope(variable->getName(), m_symbols.currentScope()) != NULL) {
+	if (m_symbols.fetchByScope(variable->getName(), m_symbols.currentScope()) != NULL) {
 		Compiler::errorf(expr->getLocation(), 
 			"Already exists a variable named `%S' in the current scope!",
 			variable->getName());
@@ -151,7 +151,7 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 		}
 
 		variable->addRef();
-		m_symbols.pushVar(variable);
+		m_symbols.push(variable);
 
 		if (value->isPrimitive()) {
 			variable->copy(value);
@@ -163,7 +163,7 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 		emit(OP_VAR_DECL, &VM::var_decl_handler, variable, value);
 	} else {
 		variable->addRef();
-		m_symbols.pushVar(variable);
+		m_symbols.push(variable);
 
 		/* TODO: fix this */
 		if (type == TypeTable::getType(CSTRING("Int"))) {
@@ -506,7 +506,7 @@ AST_VISITOR(CodeGenVisitor, BreakNode) {
  */
 AST_VISITOR(CodeGenVisitor, FunctionCall) {
 	const CString* const name = expr->getFuncName();
-	Value* fvalue = m_symbols.fetchVar(name);
+	Value* fvalue = m_symbols.fetch(name);
 	const Function* func;
 	ASTNode* args = expr->getArgs();
 	Value* arg_values = NULL;
@@ -647,7 +647,7 @@ AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
 
 	func->setHandler(user_func);
 
-	m_symbols.pushVar(func);
+	m_symbols.push(func);
 
 	/* we can't have a function declaration without a block. */
 	if (!expr->hasBlock()) {
@@ -676,7 +676,7 @@ AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
 			var->setType(Value::INTEGER);
 			var->initialize();
 
-			m_symbols.pushVar(var);
+			m_symbols.push(var);
 			vec->push_back(var);
 			var->addRef();
 
@@ -737,7 +737,7 @@ AST_VISITOR(CodeGenVisitor, ClassDeclaration) {
 	if (ok) {
 		//@TODO
 		
-		m_symbols.pushVar(type);	
+		m_symbols.push(type);
 	} else {
 		Compiler::errorf(error.getLocation(),
 			"Redefinition of %s `%S' in class `%S'",

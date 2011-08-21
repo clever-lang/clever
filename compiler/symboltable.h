@@ -119,21 +119,21 @@ public:
 	/**
 	 * Pusshes a new Value pointer to the current scope
 	 */
-	void pushVar(const CString* name, Value* var) throw() {
+	void push(const CString* name, Value* var) throw() {
 		at(m_level).push(name, var);
 	}
 
 	/**
 	 * Pushes a new Value pointer to the current scope
 	 */
-	void pushVar(Value* var) throw() {
+	void push(Value* var) throw() {
 		at(m_level).push(var->getName(), var);
 	}
 
 	/**
 	 * Returns the Value* pointer if the name is found
 	 */
-	Value* fetchVar(const CString* name) throw() {
+	Value* fetch(const CString* name) throw() {
 		Value* value;
 
 		/* There is no scope to search, shit just got real. */
@@ -156,15 +156,15 @@ public:
 	/**
 	 * Fetches a Value pointer if its name is found in the specified scope
 	 */
-	Value* fetchVarByScope(const CString* name, const Scope& scope) throw() {             
+	Value* fetchByScope(const CString* name, const Scope& scope) throw() {             
 		return at(scope.getNumber()).fetch(name);
 	}
 
 	/**
 	 * Fetches a Value pointer by a Value pointer
 	 */
-	Value* fetchVar(Value* value) throw() {
-		return fetchVar(value->getName());
+	Value* fetch(Value* value) throw() {
+		return fetch(value->getName());
 	}
 	
 	/**
