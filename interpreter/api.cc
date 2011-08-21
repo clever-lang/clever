@@ -24,7 +24,6 @@
  */
  
 #include <iostream>
-#include <sstream>
 #include <cstdarg>
 #include "compiler/value.h"
 
