@@ -26,7 +26,7 @@
 #ifndef CLEVER_CGVISITOR_H
 #define CLEVER_CGVISITOR_H
 
-#include "compiler/ssa.h"
+#include "compiler/symboltable.h"
 #include "vm/opcode.h"
 #include "interpreter/astvisitor.h"
 
@@ -43,10 +43,10 @@ public:
 
 	CodeGenVisitor()
 		: m_interactive(false) {
-		m_ssa.beginScope();		
+		m_symbols.beginScope();		
 	}
 	~CodeGenVisitor() {
-		m_ssa.endScope();	
+		m_symbols.endScope();	
 	}
 
 	void init() throw() {
@@ -103,7 +103,7 @@ public:
 private:
 	bool m_interactive;
 	OpcodeList m_opcodes;
-	SSA m_ssa;
+	SymbolTable m_symbols;
 	JmpStack m_brks;
 	FuncDeclStack m_funcs;
 

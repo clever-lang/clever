@@ -61,7 +61,7 @@ Value* CodeGenVisitor::getValue(ASTNode* expr) throw() {
 	Value* value = expr->getValue();
 
 	if (value && value->hasName()) {
-		Value* var = m_ssa.fetchVar(value);
+		Value* var = m_symbols.fetchVar(value);
 
 		/**
 		 * If the variable is found, we should use its pointer instead of
@@ -130,7 +130,7 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 			var_type->getValue()->getName());
 	}
 	
-	if (m_ssa.fetchVarByScope(variable->getName(), m_ssa.currentScope()) != NULL) {
+	if (m_symbols.fetchVarByScope(variable->getName(), m_symbols.currentScope()) != NULL) {
 		Compiler::errorf(expr->getLocation(), 
 			"Already exists a variable named `%S' in the current scope!",
 			variable->getName());
@@ -150,7 +150,7 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 		}
 
 		variable->addRef();
-		m_ssa.pushVar(variable);
+		m_symbols.pushVar(variable);
 
 		if (value->isPrimitive()) {
 			variable->copy(value);
@@ -162,7 +162,7 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 		emit(OP_VAR_DECL, &VM::var_decl_handler, variable, value);
 	} else {
 		variable->addRef();
-		m_ssa.pushVar(variable);
+		m_symbols.pushVar(variable);
 
 		/* TODO: fix this */
 		if (type == TypeTable::getType(CSTRING("Int"))) {
@@ -323,7 +323,7 @@ AST_VISITOR(CodeGenVisitor, BlockNode) {
 	/**
 	 * Create a new scope
 	 */
-	m_ssa.beginScope();
+	m_symbols.beginScope();
 
 	/**
 	 * Iterates statements inside the block
@@ -336,7 +336,7 @@ AST_VISITOR(CodeGenVisitor, BlockNode) {
 	/**
 	 * Pops the scope
 	 */
-	m_ssa.endScope();
+	m_symbols.endScope();
 }
 
 /**
@@ -505,7 +505,7 @@ AST_VISITOR(CodeGenVisitor, BreakNode) {
  */
 AST_VISITOR(CodeGenVisitor, FunctionCall) {
 	const CString* const name = expr->getFuncName();
-	Value* fvalue = m_ssa.fetchVar(name);
+	Value* fvalue = m_symbols.fetchVar(name);
 	const Function* func;
 	ASTNode* args = expr->getArgs();
 	Value* arg_values = NULL;
@@ -607,20 +607,20 @@ AST_VISITOR(CodeGenVisitor, ImportStmt) {
 		 * Importing an specific module
 		 * e.g. import std.io;
 		 */
-		if (isInteractive() && m_ssa.currentScope().getNumber() == 1) {
-			Compiler::import(m_ssa.fetchScope(0), package, module);
+		if (isInteractive() && m_symbols.currentScope().getNumber() == 1) {
+			Compiler::import(m_symbols.fetchScope(0), package, module);
 		} else {
-			Compiler::import(m_ssa.currentScope(), package, module);
+			Compiler::import(m_symbols.currentScope(), package, module);
 		}
 	} else {
 		/**
 		 * Importing an entire package
 		 * e.g. import std;
 		 */
-		if (isInteractive() && m_ssa.currentScope().getNumber() == 1) {
-			Compiler::import(m_ssa.fetchScope(0), package);
+		if (isInteractive() && m_symbols.currentScope().getNumber() == 1) {
+			Compiler::import(m_symbols.fetchScope(0), package);
 		} else {
-			Compiler::import(m_ssa.currentScope(), package);
+			Compiler::import(m_symbols.currentScope(), package);
 		}
 	}
 }
@@ -646,7 +646,7 @@ AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
 
 	func->setHandler(user_func);
 
-	m_ssa.pushVar(func);
+	m_symbols.pushVar(func);
 
 	/* we can't have a function declaration without a block. */
 	if (!expr->hasBlock()) {
@@ -662,7 +662,7 @@ AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
 		vars->setType(Value::VECTOR);
 		vars->setReference(0);
 
-		m_ssa.beginScope();
+		m_symbols.beginScope();
 
 		while (it != end) {
 			Value* var = new Value;
@@ -675,7 +675,7 @@ AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
 			var->setType(Value::INTEGER);
 			var->initialize();
 
-			m_ssa.pushVar(var);
+			m_symbols.pushVar(var);
 			vec->push_back(var);
 			var->addRef();
 
@@ -695,7 +695,7 @@ AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
 	m_funcs.pop();
 
 	if (args) {
-		m_ssa.endScope();
+		m_symbols.endScope();
 	}
 
 	emit(OP_JMP, &VM::end_func_handler);
@@ -736,7 +736,7 @@ AST_VISITOR(CodeGenVisitor, ClassDeclaration) {
 	if (ok) {
 		//@TODO
 		
-		m_ssa.pushVar(type);	
+		m_symbols.pushVar(type);	
 	} else {
 		Compiler::errorf(error.getLocation(),
 			"Redefinition of %s `%S' in class `%S'",

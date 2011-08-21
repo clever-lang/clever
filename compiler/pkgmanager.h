@@ -27,8 +27,8 @@
 #define CLEVER_PKGMANAGER_H
 
 #include <tr1/unordered_map>
-#include "module.h"
-#include "ssa.h"
+#include "compiler/module.h"
+#include "compiler/symboltable.h"
 
 namespace clever {
 

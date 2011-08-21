@@ -23,8 +23,8 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef CLEVER_SSA_H
-#define CLEVER_SSA_H
+#ifndef CLEVER_SYMBOLTABLE_H
+#define CLEVER_SYMBOLTABLE_H
 
 #include <tr1/unordered_map>
 #include <deque>
@@ -107,17 +107,14 @@ private:
 	int m_number;
 };
 
-/**
- * Minimal SSA form
- */
-typedef std::deque<Scope> SSABase;
+typedef std::deque<Scope> SymbolTableBase;
 
-class SSA : public SSABase {
+class SymbolTable : public SymbolTableBase {
 public:
-	SSA()
+	SymbolTable()
 		: m_level(-1) { }
 
-	~SSA() { }
+	~SymbolTable() { }
 
 	/**
 	 * Pusshes a new Value pointer to the current scope
@@ -220,9 +217,9 @@ private:
 		return NULL;
 	}
 
-	DISALLOW_COPY_AND_ASSIGN(SSA);
+	DISALLOW_COPY_AND_ASSIGN(SymbolTable);
 };
 
 } // clever
 
-#endif // CLEVER_SSA_H
+#endif // CLEVER_SYMBOLTABLE_H
