@@ -35,7 +35,8 @@
 #include "vm/opcode.h"
 #include "build/location.hh"
 #include "interpreter/ast.h"
-#include "cgvisitor.h"
+#include "compiler/cgvisitor.h"
+#include "compiler/typechecker.h"
 
 namespace clever {
 
@@ -96,6 +97,7 @@ public:
 private:
 	ast::ASTNode* m_ast;
 	ast::CodeGenVisitor m_cgvisitor;
+	ast::TypeChecker m_tcvisitor;
 
 	static PackageManager s_pkgmanager;
 

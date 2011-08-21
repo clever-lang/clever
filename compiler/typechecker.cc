@@ -26,7 +26,7 @@
 #include "compiler/compiler.h"
 #include "compiler/typechecker.h"
 
-namespace clever {
+namespace clever { namespace ast {
 
 /**
  * Performs a type compatible checking
@@ -116,4 +116,61 @@ void TypeChecker::checkFunctionArgs(const Function* func, int num_args, const lo
 	}
 }
 
-} // clever
+AST_VISITOR(TypeChecker, BinaryExpr) {
+}
+
+AST_VISITOR(TypeChecker, VariableDecl) {
+}
+
+AST_VISITOR(TypeChecker, PreIncrement) {
+}
+
+AST_VISITOR(TypeChecker, PosIncrement) {
+}
+
+AST_VISITOR(TypeChecker, PreDecrement) {
+}
+
+AST_VISITOR(TypeChecker, PosDecrement) {
+}
+
+AST_VISITOR(TypeChecker, IfExpr) {
+}
+
+AST_VISITOR(TypeChecker, BlockNode) {
+}
+
+AST_VISITOR(TypeChecker, WhileExpr) {
+}
+
+AST_VISITOR(TypeChecker, ForExpr) {
+}
+
+AST_VISITOR(TypeChecker, LogicExpr) {
+}
+
+AST_VISITOR(TypeChecker, BreakNode) {
+}
+
+AST_VISITOR(TypeChecker, FunctionCall) {
+}
+
+AST_VISITOR(TypeChecker, MethodCall) {
+}
+
+AST_VISITOR(TypeChecker, AssignExpr) {
+}
+
+AST_VISITOR(TypeChecker, ImportStmt) {
+}
+
+AST_VISITOR(TypeChecker, FuncDeclaration) {
+}
+
+AST_VISITOR(TypeChecker, ReturnStmt) {
+}
+
+AST_VISITOR(TypeChecker, ClassDeclaration) {
+}
+
+}} // clever::ast

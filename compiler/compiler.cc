@@ -88,6 +88,7 @@ void Compiler::loadTypes() throw() {
 void Compiler::buildIR() throw() {
 	m_cgvisitor.init();
 
+	m_ast->accept(m_tcvisitor);
 	m_ast->accept(m_cgvisitor);
 
 	m_cgvisitor.shutdown();
