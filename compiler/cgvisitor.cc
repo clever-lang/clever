@@ -26,6 +26,7 @@
 #include "compiler/typetable.h"
 #include "compiler/compiler.h"
 #include "types/typeutils.h"
+#include "compiler/typechecker.h"
 
 namespace clever { namespace ast {
 
@@ -83,11 +84,11 @@ AST_VISITOR(CodeGenVisitor, BinaryExpr) {
 	Value* rhs = getValue(expr->getRhs());
 	const Type* type;
 	
-	if (!Compiler::checkCompatibleTypes(lhs, rhs)) {
+	if (!TypeChecker::checkCompatibleTypes(lhs, rhs)) {
 		Compiler::error("Type mismatch!", expr->getLocation()); 	
 	}
 	
-	type = Compiler::checkExprType(lhs, rhs);
+	type = TypeChecker::checkExprType(lhs, rhs);
 
 	if (expr->isAssigned()) {
 		expr->setResult(lhs);
@@ -142,7 +143,7 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 	if (rhs_expr) {
 		Value* value = getValue(rhs_expr);
 		
-		if (!Compiler::checkCompatibleTypes(variable, value)) {
+		if (!TypeChecker::checkCompatibleTypes(variable, value)) {
 			Compiler::errorf(expr->getLocation(),
 				"Cannot convert `%S' to `%S' on assignment",
 				value->getTypePtr()->getName(),
@@ -451,7 +452,7 @@ AST_VISITOR(CodeGenVisitor, LogicExpr) {
 	lhs = getValue(expr->getLhs());
 	rhs = getValue(expr->getRhs());
 	
-	if (!Compiler::checkCompatibleTypes(rhs, lhs)) {
+	if (!TypeChecker::checkCompatibleTypes(rhs, lhs)) {
 		Compiler::errorf(expr->getLocation(),
 			"Cannot convert `%s' to `%s' in logic expression",			
 			rhs->getTypePtr()->getName(),
@@ -519,7 +520,7 @@ AST_VISITOR(CodeGenVisitor, FunctionCall) {
 	/* Set the return type */
 	expr->getValue()->setTypePtr(func->getReturn());
 
-	Compiler::checkFunctionArgs(func, num_args, expr->getLocation());
+	TypeChecker::checkFunctionArgs(func, num_args, expr->getLocation());
 
 	if (args) {
 		arg_values = new Value;
@@ -582,7 +583,7 @@ AST_VISITOR(CodeGenVisitor, AssignExpr) {
 	Value* lhs = getValue(expr->getLhs());
 	Value* rhs = getValue(expr->getRhs());
 	
-	if (!Compiler::checkCompatibleTypes(rhs, lhs)) {
+	if (!TypeChecker::checkCompatibleTypes(rhs, lhs)) {
 		Compiler::errorf(expr->getLocation(),
 			"Cannot convert `%s' to `%s' on assignment",
 			rhs->getTypePtr()->getName(),
@@ -714,7 +715,7 @@ AST_VISITOR(CodeGenVisitor, ReturnStmt) {
 	 * Only for return inside function declaration
 	 */
 	if (func) {
-		Compiler::checkFunctionReturn(func, expr_value, func->getReturn(), expr->getLocation());
+		TypeChecker::checkFunctionReturn(func, expr_value, func->getReturn(), expr->getLocation());
 	}
 
 	if (expr_value) {

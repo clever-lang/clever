@@ -42,7 +42,7 @@ OBJECTS=$(BUILDDIR)parser.o $(BUILDDIR)scanner.o $(BUILDDIR)driver.o \
 	$(BUILDDIR)int.o $(BUILDDIR)io.o $(BUILDDIR)math.o \
 	$(BUILDDIR)file.o $(BUILDDIR)filestream.o $(BUILDDIR)pkgmanager.o $(BUILDDIR)compiler.o \
 	$(BUILDDIR)typeutils.o $(BUILDDIR)vm.o $(BUILDDIR)cgvisitor.o $(BUILDDIR)opcode.o \
-	$(BUILDDIR)str.o $(BUILDDIR)main.o $(BUILDDIR)api.o
+	$(BUILDDIR)str.o $(BUILDDIR)main.o $(BUILDDIR)api.o $(BUILDDIR)typechecker.o
 
 # Windows related stuff
 ifdef IS_MINGW
@@ -79,8 +79,11 @@ $(BUILDDIR)cstring.o: $(COMPDIR)cstring.cc
 	
 $(BUILDDIR)api.o: $(INTERPDIR)api.cc
 	$(CXX) $(CXXFLAGS) -c -o $(BUILDDIR)api.o $(INTERPDIR)api.cc
+	
+$(BUILDDIR)typechecker.o: $(COMPDIR)typechecker.cc
+	$(CXX) $(CXXFLAGS) -c -o $(BUILDDIR)typechecker.o $(COMPDIR)typechecker.cc	
 
-$(BUILDDIR)compiler.o: $(COMPDIR)compiler.cc $(BUILDDIR)driver.o $(BUILDDIR)int.o $(BUILDDIR)double.o $(BUILDDIR)pkgmanager.o $(BUILDDIR)cgvisitor.o $(BUILDDIR)api.o
+$(BUILDDIR)compiler.o: $(COMPDIR)compiler.cc $(BUILDDIR)driver.o $(BUILDDIR)int.o $(BUILDDIR)double.o $(BUILDDIR)pkgmanager.o $(BUILDDIR)cgvisitor.o $(BUILDDIR)api.o $(BUILDDIR)typechecker.o
 	$(CXX) $(CXXFLAGS) -c -o $(BUILDDIR)compiler.o $(COMPDIR)compiler.cc
 
 $(BUILDDIR)cgvisitor.o: $(COMPDIR)cgvisitor.cc $(BUILDDIR)typeutils.o

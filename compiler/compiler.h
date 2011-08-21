@@ -75,20 +75,7 @@ public:
 	 */
 	static void error(std::string) throw();
 	static void error(std::string, const location&) throw();
-	/**
-	 * Checks if the supplied value pointers are compatibles
-	 */
-	static bool checkCompatibleTypes(const Value* const, const Value* const) throw();
-	
-	/**
-	 * Returns the type resulting of a binary expression of two compatible types
-	 */
-	static const Type* checkExprType(const Value* const, const Value* const) throw();
-	
-	/**
-	 * Performs a constant folding and constant propagation optimization
-	 */
-	static Value* constantFolding(int, Value*, Value*) throw();
+
 	/**
 	 * Import a package
 	 */
@@ -101,14 +88,7 @@ public:
 	static void import(Scope& scope, const CString* package, const CString* module) throw() {
 		s_pkgmanager.loadModule(scope, package, module);
 	}
-	/**
-	 * Checks the function arguments
-	 */
-	static void checkFunctionArgs(const Function*, int, const location&) throw();
-	/**
-	 * Checks the function return
-	 */
-	static void checkFunctionReturn(const Function*, const Value*, const Type*, const location&) throw();
+
 	/**
 	 * Methods for formatted messages
 	 */
