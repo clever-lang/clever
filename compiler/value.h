@@ -35,7 +35,7 @@
 #include "global.h"
 #include "method.h"
 #include "function.h"
-#include "typetable.h"
+#include "symboltable.h"
 
 namespace clever {
 

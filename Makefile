@@ -13,10 +13,10 @@ RE2C?=re2c
 
 # Flags
 
-CXXFLAGS=-O2 -ggdb -Wall -ansi -I. -fno-rtti -pedantic -fno-exceptions
-CXXFLAGS3=-ggdb -O2
+CXXFLAGS= -ggdb -Wall -ansi -I. -fno-rtti -pedantic -fno-exceptions
+CXXFLAGS3=-ggdb 
 # Linker
-LFLAGS=-O2 -fno-rtti -fno-exceptions
+LFLAGS= -fno-rtti -fno-exceptions
 # Bison, re2c
 # Build dir
 BUILDDIR=build/
@@ -42,7 +42,7 @@ OBJECTS=$(BUILDDIR)parser.o $(BUILDDIR)scanner.o $(BUILDDIR)driver.o \
 	$(BUILDDIR)int.o $(BUILDDIR)io.o $(BUILDDIR)math.o \
 	$(BUILDDIR)file.o $(BUILDDIR)filestream.o $(BUILDDIR)pkgmanager.o $(BUILDDIR)compiler.o \
 	$(BUILDDIR)typeutils.o $(BUILDDIR)vm.o $(BUILDDIR)cgvisitor.o $(BUILDDIR)opcode.o \
-	$(BUILDDIR)str.o $(BUILDDIR)main.o $(BUILDDIR)api.o $(BUILDDIR)typechecker.o
+	$(BUILDDIR)str.o $(BUILDDIR)main.o $(BUILDDIR)api.o $(BUILDDIR)typechecker.o $(BUILDDIR)symboltable.o
 
 # Windows related stuff
 ifdef IS_MINGW
@@ -88,6 +88,9 @@ $(BUILDDIR)compiler.o: $(COMPDIR)compiler.cc $(BUILDDIR)driver.o $(BUILDDIR)int.
 
 $(BUILDDIR)cgvisitor.o: $(COMPDIR)cgvisitor.cc $(BUILDDIR)typeutils.o
 	$(CXX) $(CXXFLAGS) -c -o $(BUILDDIR)cgvisitor.o $(COMPDIR)cgvisitor.cc
+
+$(BUILDDIR)symboltable.o: $(COMPDIR)symboltable.cc $(BUILDDIR)typeutils.o $(COMPDIR)symboltable.h
+	$(CXX) $(CXXFLAGS) -c -o $(BUILDDIR)symboltable.o $(COMPDIR)symboltable.cc
 
 $(BUILDDIR)vm.o: $(VMDIR)vm.cc
 	$(CXX) $(CXXFLAGS) -c -o $(BUILDDIR)vm.o $(VMDIR)vm.cc

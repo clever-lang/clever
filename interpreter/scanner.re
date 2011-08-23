@@ -28,7 +28,7 @@
 #include "parser.hh"
 #include "interpreter/ast.h"
 #include "compiler/cstring.h"
-#include "compiler/typetable.h"
+#include "compiler/symboltable.h"
 
 namespace clever {
 
@@ -231,7 +231,7 @@ next_token:
 	}
 
 	<INITIAL>INTEGER {
-		Value* newval = new Value(TypeTable::getType(CSTRING("Int")));
+		Value* newval = new Value(CLEVER_TYPE("Int"));
 		int64_t n = strtol(std::string(s.yylex, yylen).c_str(), NULL, 10);
 
 		newval->setType(Value::INTEGER);
@@ -243,7 +243,7 @@ next_token:
 	}
 
 	<INITIAL>HEXINT {
-		Value* newval = new Value(TypeTable::getType(CSTRING("Int")));
+		Value* newval = new Value(CLEVER_TYPE("Int"));
 		int64_t n = 0;
 
 		std::sscanf(std::string(s.yylex+2, yylen).c_str(), "%X", (unsigned*)&n);
@@ -257,7 +257,7 @@ next_token:
 	}
 
 	<INITIAL>OCTINT {
-		Value* newval = new Value(TypeTable::getType(CSTRING("Int")));
+		Value* newval = new Value(CLEVER_TYPE("Int"));
 		int64_t n = 0;
 
 		sscanf(std::string(s.yylex+1, yylen), "%o", &n);
@@ -271,7 +271,7 @@ next_token:
 	}
 
 	<INITIAL>(DOUBLE|EXP_DOUBLE) {
-		Value* newval = new Value(TypeTable::getType(CSTRING("Double")));
+		Value* newval = new Value(CLEVER_TYPE("Double"));
 		double n = 0;
 
 		n = strtod(std::string(s.yylex, yylen).c_str(), NULL);

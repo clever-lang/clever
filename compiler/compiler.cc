@@ -32,20 +32,18 @@
 #include "types/nativetypes.h"
 #include "interpreter/astvisitor.h"
 #include "interpreter/api.h"
-#include "typetable.h"
+#include "symboltable.h"
 
 
 namespace clever {
 
 PackageManager Compiler::s_pkgmanager;
-TypeMap TypeTable::s_type_table;
 
 /**
  * Deallocs memory used by compiler data
  */
 Compiler::~Compiler() {
-	TypeTable::clear();
-
+	g_symtable.endScope();
 	s_pkgmanager.shutdown();
 
 	delete m_ast;
@@ -57,6 +55,8 @@ Compiler::~Compiler() {
 void Compiler::init() throw() {
 	/* Load package list */
 	s_pkgmanager.init();
+	
+	g_symtable.beginScope();
 
 	/* Load the primitive data types */
 	loadTypes();
@@ -73,9 +73,9 @@ void Compiler::loadTypes() throw() {
 	/**
 	 * Registers all native types
 	 */
-	TypeTable::insert(CSTRING("Int"), int_type);
-	TypeTable::insert(CSTRING("Double"), double_type);
-	TypeTable::insert(CSTRING("String"), string_type);
+	g_symtable.push(CSTRING("Int"), int_type);
+	g_symtable.push(CSTRING("Double"), double_type);
+	g_symtable.push(CSTRING("String"), string_type);
 	
 	int_type->init();
 	double_type->init();

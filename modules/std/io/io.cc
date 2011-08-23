@@ -25,7 +25,7 @@
 
 #include <iostream>
 #include "compiler/value.h"
-#include "compiler/typetable.h"
+#include "compiler/symboltable.h"
 #include "modules/std/io/io.h"
 
 namespace clever { namespace packages { namespace std {
@@ -70,7 +70,7 @@ static CLEVER_FUNCTION(readln) {
  * Initializes Standard module
  */
 void IOModule::init() throw() {
-	const Type* string_type = TypeTable::getType(CSTRING("String"));
+	const Type* string_type = CLEVER_TYPE("String");
 	
 	using namespace io;
 	addFunction(new Function("print", &CLEVER_FUNC_NAME(print), -1));

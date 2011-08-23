@@ -29,7 +29,6 @@
 #include <list>
 #include <vector>
 #include <set>
-#include "compiler/typetable.h"
 #include "compiler/value.h"
 #include "compiler/refcounted.h"
 #include "astvisitor.h"
@@ -169,12 +168,12 @@ class NumberLiteral : public Literal {
 public:
 	explicit NumberLiteral(int64_t val) {
 		m_value = new Value(val);
-		m_value->setTypePtr(TypeTable::getType(CSTRING("Int")));
+		m_value->setTypePtr(CLEVER_TYPE("Int"));
 	}
 
 	explicit NumberLiteral(double val) {
 		m_value = new Value(val);
-		m_value->setTypePtr(TypeTable::getType(CSTRING("Double")));
+		m_value->setTypePtr(CLEVER_TYPE("Double"));
 	}
 
 	explicit NumberLiteral(Value* value)
@@ -372,7 +371,7 @@ class StringLiteral : public Literal {
 public:
 	explicit StringLiteral(const CString* name) {
 		m_value = new Value(name);
-		m_value->setTypePtr(TypeTable::getType(CSTRING("String")));
+		m_value->setTypePtr(CLEVER_TYPE("String"));
 	}
 
 	~StringLiteral() {

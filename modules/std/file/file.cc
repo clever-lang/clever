@@ -25,7 +25,7 @@
 
 #include <iostream>
 #include "compiler/value.h"
-#include "compiler/typetable.h"
+#include "compiler/symboltable.h"
 #include "modules/std/file/file.h"
 #include "modules/std/file/filestream.h"
 

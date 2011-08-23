@@ -23,7 +23,6 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 #include "cgvisitor.h"
-#include "compiler/typetable.h"
 #include "compiler/compiler.h"
 #include "types/typeutils.h"
 #include "compiler/typechecker.h"
@@ -62,7 +61,7 @@ Value* CodeGenVisitor::getValue(ASTNode* expr) throw() {
 	Value* value = expr->getValue();
 
 	if (value && value->hasName()) {
-		Value* var = m_symbols.getValue(value->getName());
+		Value* var = g_symtable.getValue(value->getName());
 
 		/**
 		 * If the variable is found, we should use its pointer instead of
@@ -123,7 +122,7 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 	ASTNode* var_expr = expr->getVariable();
 	ASTNode* rhs_expr = expr->getInitialValue();
 	Value* variable = var_expr->getValue();
-	const Type* type = TypeTable::getType(var_type->getValue()->getName());
+	const Type* type = g_symtable.getType(var_type->getValue()->getName());
 	
 	/* Check if the type wasn't declarated */
 	if (type == NULL) {
@@ -131,7 +130,7 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 			var_type->getValue()->getName());
 	}
 	
-	if (m_symbols.getValue(variable->getName(), false) != NULL) {
+	if (g_symtable.getValue(variable->getName(), false) != NULL) {
 		Compiler::errorf(expr->getLocation(), 
 			"Already exists a variable named `%S' in the current scope!",
 			variable->getName());
@@ -151,7 +150,7 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 		}
 
 		variable->addRef();
-		m_symbols.push(variable);
+		g_symtable.push(variable);
 
 		if (value->isPrimitive()) {
 			variable->copy(value);
@@ -163,16 +162,16 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 		emit(OP_VAR_DECL, &VM::var_decl_handler, variable, value);
 	} else {
 		variable->addRef();
-		m_symbols.push(variable);
+		g_symtable.push(variable);
 
 		/* TODO: fix this */
-		if (type == TypeTable::getType(CSTRING("Int"))) {
+		if (type == CLEVER_TYPE("Int")) {
 			variable->setType(Value::INTEGER);
 		}
-		else if (type == TypeTable::getType(CSTRING("Double"))) {
+		else if (type == CLEVER_TYPE("Double")) {
 			variable->setType(Value::DOUBLE);
 		}
-		else if (type == TypeTable::getType(CSTRING("String"))) {
+		else if (type == CLEVER_TYPE("String")) {
 			variable->setType(Value::STRING);
 		}
 		else {
@@ -324,7 +323,7 @@ AST_VISITOR(CodeGenVisitor, BlockNode) {
 	/**
 	 * Create a new scope
 	 */
-	m_symbols.beginScope();
+	g_symtable.beginScope();
 
 	/**
 	 * Iterates statements inside the block
@@ -337,7 +336,7 @@ AST_VISITOR(CodeGenVisitor, BlockNode) {
 	/**
 	 * Pops the scope
 	 */
-	m_symbols.endScope();
+	g_symtable.endScope();
 }
 
 /**
@@ -506,7 +505,7 @@ AST_VISITOR(CodeGenVisitor, BreakNode) {
  */
 AST_VISITOR(CodeGenVisitor, FunctionCall) {
 	const CString* const name = expr->getFuncName();
-	Value* fvalue = m_symbols.getValue(name);
+	Value* fvalue = g_symtable.getValue(name);
 	const Function* func;
 	ASTNode* args = expr->getArgs();
 	Value* arg_values = NULL;
@@ -608,20 +607,20 @@ AST_VISITOR(CodeGenVisitor, ImportStmt) {
 		 * Importing an specific module
 		 * e.g. import std.io;
 		 */
-		if (isInteractive() && m_symbols.getScope().getLevel() == 1) {
-			Compiler::import(m_symbols.getScope(0), package, module);
+		if (isInteractive() && g_symtable.getScope().getLevel() == 1) {
+			Compiler::import(g_symtable.getScope(0), package, module);
 		} else {
-			Compiler::import(m_symbols.getScope(), package, module);
+			Compiler::import(g_symtable.getScope(), package, module);
 		}
 	} else {
 		/**
 		 * Importing an entire package
 		 * e.g. import std;
 		 */
-		if (isInteractive() && m_symbols.getScope().getLevel() == 1) {
-			Compiler::import(m_symbols.getScope(0), package);
+		if (isInteractive() && g_symtable.getScope().getLevel() == 1) {
+			Compiler::import(g_symtable.getScope(0), package);
 		} else {
-			Compiler::import(m_symbols.getScope(), package);
+			Compiler::import(g_symtable.getScope(), package);
 		}
 	}
 }
@@ -642,12 +641,12 @@ AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
 	user_func->setOffset(getOpNum());
 
 	if (return_type) {
-		user_func->setReturn(TypeTable::getType(return_type->getName()));
+		user_func->setReturn(g_symtable.getType(return_type->getName()));
 	}
 
 	func->setHandler(user_func);
 
-	m_symbols.push(func);
+	g_symtable.push(func);
 
 	/* we can't have a function declaration without a block. */
 	if (!expr->hasBlock()) {
@@ -663,12 +662,12 @@ AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
 		vars->setType(Value::VECTOR);
 		vars->setReference(0);
 
-		m_symbols.beginScope();
+		g_symtable.beginScope();
 
 		while (it != end) {
 			Value* var = new Value;
 
-			const Type* arg_type = TypeTable::getType(it->first->getValue()->getName());
+			const Type* arg_type = g_symtable.getType(it->first->getValue()->getName());
 			const CString* arg_name = it->second->getValue()->getName();
 
 			var->setName(arg_name);
@@ -676,7 +675,7 @@ AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
 			var->setType(Value::INTEGER);
 			var->initialize();
 
-			m_symbols.push(var);
+			g_symtable.push(var);
 			vec->push_back(var);
 			var->addRef();
 
@@ -696,7 +695,7 @@ AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
 	m_funcs.pop();
 
 	if (args) {
-		m_symbols.endScope();
+		g_symtable.endScope();
 	}
 
 	emit(OP_JMP, &VM::end_func_handler);
@@ -737,7 +736,7 @@ AST_VISITOR(CodeGenVisitor, ClassDeclaration) {
 	if (ok) {
 		//@TODO
 		
-		m_symbols.push(type);
+		g_symtable.push(type);
 	} else {
 		Compiler::errorf(error.getLocation(),
 			"Redefinition of %s `%S' in class `%S'",

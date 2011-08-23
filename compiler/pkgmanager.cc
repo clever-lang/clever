@@ -26,7 +26,6 @@
 #include <iostream>
 #include "pkgmanager.h"
 #include "cstring.h"
-#include "typetable.h"
 #include "modules/std/std_pkg.h"
 
 namespace clever {
@@ -109,7 +108,7 @@ void PackageManager::loadModule(Scope& scope, Module* const module) throw() {
 		 * Inserts all classes into TypeTable
 		 */
 		while (itc != endc) {
-			TypeTable::insert(itc->first, itc->second);
+			g_symtable.push(itc->first, itc->second);
 			++itc;
 		}
 	}

@@ -27,6 +27,7 @@
 #define CLEVER_CSTRING_H
 
 #include <string>
+#include <iostream>
 #include <tr1/unordered_map>
 #include "global.h"
 
@@ -87,7 +88,7 @@ private:
 namespace std { namespace tr1 {
 
 template <>
-struct hash<clever::CString*> : public unary_function<clever::CString*, size_t> {
+struct hash<const clever::CString*> : public unary_function<const clever::CString*, size_t> {
 public:
 	size_t operator()(const clever::CString* key) const throw() {
 		return hash<std::string>()(*static_cast<const std::string*>(key));

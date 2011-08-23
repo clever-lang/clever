@@ -43,10 +43,10 @@ public:
 
 	CodeGenVisitor()
 		: m_interactive(false) {
-		m_symbols.beginScope();		
+		//g_symtable.beginScope();		
 	}
 	~CodeGenVisitor() {
-		m_symbols.endScope();	
+		//g_symtable.endScope();	
 	}
 
 	void init() throw() {
@@ -103,7 +103,6 @@ public:
 private:
 	bool m_interactive;
 	OpcodeList m_opcodes;
-	SymbolTable m_symbols;
 	JmpStack m_brks;
 	FuncDeclStack m_funcs;
 

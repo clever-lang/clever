@@ -29,30 +29,46 @@
 #include <tr1/unordered_map>
 #include <deque>
 #include "global.h"
-#include "value.h"
+#include "cstring.h"
+#include <iostream>
+#include <sstream>
+#include <cstdio>
+#include <cstdlib>
+//#include "value.h"
+//#include "compiler/symbol.h"
+
+#define CLEVER_TYPE(name)  ::clever::g_symtable.getType(CSTRING(name))
+#define CLEVER_VALUE(name) ::clever::g_symtable.getValue(CSTRING(name))
 
 namespace clever {
 
-class CString;
-class Symbol;
-class Scope;
+class Type;
+class Value;
 
-typedef std::pair<const CString*, Symbol> ScopeEntry;
+class Scope;
+class Symbol;
+class SymbolTable;
+
+extern SymbolTable g_symtable;
+
+typedef std::tr1::unordered_map<const CString*, Symbol*> ScopeBase;
+typedef std::pair<const CString*, Symbol*> ScopeEntry;
 typedef std::deque<Scope> ScopeDeque;
 
 class Symbol {
 public:
-	typedef	enum { INVALID, UNKNOWN, VALUE, TYPE } SymbolType;
+	typedef	enum { INVALID, VALUE, TYPE } SymbolType;
 
 	Symbol()
-		: m_name(NULL), m_type(INVALID) {}
+		: m_name(NULL), m_type(INVALID) {
+	}
 
 	Symbol(const CString* name, Value* value)
 		: m_name(name), m_type(VALUE) {
 		m_data.value = value;
 	}
 
-	Symbol(const CString* name, Type* type)
+	Symbol(const CString* name, const Type* type)
 		: m_name(name), m_type(TYPE) {
 		m_data.type = type;
 	}
@@ -61,13 +77,12 @@ public:
 	SymbolType     getSymbolType() const { return m_type; }
 
 	bool isInvalid() const { return m_type == INVALID; }
-	bool isUnknown() const { return m_type == UNKNOWN; }
 	bool isValue()   const { return m_type == VALUE;   }
 	bool isType()    const { return m_type == TYPE;    }
 
 	// TODO: add type check
-	Value* getValue()             { return m_data.value; }
-	Type*  getType()              { return m_data.type;  }
+	const Type*  getType()  { return m_data.type;  }
+	Value*       getValue() { return m_data.value; }
 
 private:
 	const CString* m_name;
@@ -75,28 +90,15 @@ private:
 
 	union {
 		Value *value;
-		Type  *type;
+		const Type  *type;
 	} m_data;
 };
-
-typedef std::tr1::unordered_map<const CString*, Symbol> ScopeBase;
 
 class Scope : public ScopeBase {
 public:
 
 	Scope(int level) : m_level(level) {}
-	~Scope() {
-		Scope::iterator it = begin(), end_ = end();
-
-		while(it != end_) {
-			Symbol& s = it->second;
-
-			if (s.isValue())
-				s.getValue()->delRef();
-
-			++it;
-		}
-	}
+	~Scope();
 
 	int getLevel() const { return m_level; }
 	
@@ -104,28 +106,27 @@ public:
 	 * Pushes a new value
 	 */
 	void push(const CString* name, Value* value) throw() {
-		insert(ScopeEntry(name, Symbol(name, value)));
+		insert(ScopeEntry(name, new Symbol(name, value)));
 	}
 
-	void push(Value *value) throw() {
-		push(value->getName(), value);
-	}
+	/* deprecated */
+	void push(Value* value);
 
 	/**
 	 * Pushes a new type
 	 */
-	void push(const CString* name, Type* type) throw() {
-		insert(ScopeEntry(name, Symbol(name, type)));
+	void push(const CString* name, const Type* type) throw() {
+		insert(ScopeEntry(name, new Symbol(name, type)));
 	}
 
 	/**
 	 * Attempts to find a symbol with the given name.
 	 */
-	Symbol getSymbol(const CString* name) throw() {
+	Symbol* getSymbol(const CString* name) throw() {
 		Scope::iterator it = find(name);
 
 		if (it == end()) {
-			return Symbol(); // return an invalid symbol
+			return NULL;
 		}
 		
 		return it->second;
@@ -136,25 +137,25 @@ public:
 	 */
 	Value* getValue(const CString* name) throw() {
 
-		Symbol s = getSymbol(name);
+		Symbol* s = getSymbol(name);
 
-		if (s.isInvalid())
+		if (s == NULL || !s->isValue())
 			return NULL;
 
-		return s.getValue();
+		return s->getValue();
 	}
 
 	/**
 	 * Returns the type pointer for the given symbol name.
 	 */
-	Type* getType(const CString* name) throw() {
+	const Type* getType(const CString* name) throw() {
 		
-		Symbol s = getSymbol(name);
+		Symbol* s = getSymbol(name);
 
-		if (s.isInvalid())
+		if (s == NULL || !s->isType())
 			return NULL;
 
-		return s.getType();
+		return s->getType();
 	}
 
 private:
@@ -182,29 +183,28 @@ public:
 	/**
 	 * Pushes a new type to the current scope.
 	 */
-	void push(const CString* name, Type* type) throw() {
+	void push(const CString* name, const Type* type) throw() {
 		getScope().push(name, type);
 	}
 
 	/**
 	 * Attempts to find a symbol with the given name in the current scope.
 	 */
-	Symbol getSymbol(const CString* name, bool recurse) throw() {
-		Symbol s;
-				
-		s = getScope().getSymbol(name);
+	Symbol* getSymbol(const CString* name, bool recurse) throw() {
+		Symbol* s = getScope().getSymbol(name);
 
-		if (s.isInvalid() && recurse) {
-			int i = m_level-1;
+		if (s == NULL && recurse) {
+			int i = m_level;
 
-			while (s.isInvalid() && i >= 0)
+			while (s == NULL && i >= 0)
 				s = getScope(i--).getSymbol(name);
 		}
+
 
 		return s;
 	}
 
-	Symbol getSymbol(const CString* name) throw() {
+	Symbol* getSymbol(const CString* name) throw() {
 		return getSymbol(name, true);
 	}
 
@@ -213,12 +213,12 @@ public:
 	 */
 	Value* getValue(const CString* name, bool recurse) throw() {
 
-		Symbol s = getSymbol(name, recurse);
+		Symbol* s = getSymbol(name, recurse);
 
-		if (s.isInvalid())
+		if (s == NULL || !s->isValue())
 			return NULL;
 
-		return s.getValue();
+		return s->getValue();
 	}
 
 	Value* getValue(const CString* name) throw() {
@@ -228,17 +228,17 @@ public:
 	/**
 	 * Returns the type pointer for the given symbol name.
 	 */
-	Type* getType(const CString* name, bool recurse) throw() {
+	const Type* getType(const CString* name, bool recurse) throw() {
 		
-		Symbol s = getSymbol(name, recurse);
+		Symbol* s = getSymbol(name, recurse);
 
-		if (s.isInvalid())
+		if (s == NULL || !s->isType())
 			return NULL;
 
-		return s.getType();
+		return s->getType();
 	}
 	
-	Type* getType(const CString* name) throw() {
+	const Type* getType(const CString* name) throw() {
 		return getType(name, true);
 	}
 

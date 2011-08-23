@@ -28,7 +28,7 @@
 #include <cstdlib>
 #include <string>
 #include <iostream>
-#include "compiler/typetable.h"
+#include "compiler/symboltable.h"
 #include "modules/std/math/math.h"
 
 namespace clever { namespace packages { namespace std {
@@ -132,7 +132,7 @@ static CLEVER_FUNCTION(abs) {
  * Load module data
  */
 void Math::init() throw() {
-	const Type* double_type = TypeTable::getType(CSTRING("Double"));
+	const Type* double_type = CLEVER_TYPE("Double");
 
 	addFunction(new Function("sqrt", &CLEVER_NS_FNAME(math, sqrt), double_type))
 		->addArg("value", double_type);
