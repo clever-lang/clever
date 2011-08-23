@@ -62,7 +62,7 @@ Value* CodeGenVisitor::getValue(ASTNode* expr) throw() {
 	Value* value = expr->getValue();
 
 	if (value && value->hasName()) {
-		Value* var = m_symbols.fetch(value);
+		Value* var = m_symbols.getValue(value->getName());
 
 		/**
 		 * If the variable is found, we should use its pointer instead of
@@ -131,7 +131,7 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 			var_type->getValue()->getName());
 	}
 	
-	if (m_symbols.fetchByScope(variable->getName(), m_symbols.currentScope()) != NULL) {
+	if (m_symbols.getValue(variable->getName(), false) != NULL) {
 		Compiler::errorf(expr->getLocation(), 
 			"Already exists a variable named `%S' in the current scope!",
 			variable->getName());
@@ -506,7 +506,7 @@ AST_VISITOR(CodeGenVisitor, BreakNode) {
  */
 AST_VISITOR(CodeGenVisitor, FunctionCall) {
 	const CString* const name = expr->getFuncName();
-	Value* fvalue = m_symbols.fetch(name);
+	Value* fvalue = m_symbols.getValue(name);
 	const Function* func;
 	ASTNode* args = expr->getArgs();
 	Value* arg_values = NULL;
@@ -608,20 +608,20 @@ AST_VISITOR(CodeGenVisitor, ImportStmt) {
 		 * Importing an specific module
 		 * e.g. import std.io;
 		 */
-		if (isInteractive() && m_symbols.currentScope().getNumber() == 1) {
-			Compiler::import(m_symbols.fetchScope(0), package, module);
+		if (isInteractive() && m_symbols.getScope().getLevel() == 1) {
+			Compiler::import(m_symbols.getScope(0), package, module);
 		} else {
-			Compiler::import(m_symbols.currentScope(), package, module);
+			Compiler::import(m_symbols.getScope(), package, module);
 		}
 	} else {
 		/**
 		 * Importing an entire package
 		 * e.g. import std;
 		 */
-		if (isInteractive() && m_symbols.currentScope().getNumber() == 1) {
-			Compiler::import(m_symbols.fetchScope(0), package);
+		if (isInteractive() && m_symbols.getScope().getLevel() == 1) {
+			Compiler::import(m_symbols.getScope(0), package);
 		} else {
-			Compiler::import(m_symbols.currentScope(), package);
+			Compiler::import(m_symbols.getScope(), package);
 		}
 	}
 }

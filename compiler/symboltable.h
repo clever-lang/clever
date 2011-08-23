@@ -34,190 +34,252 @@
 namespace clever {
 
 class CString;
+class Symbol;
+class Scope;
 
-/**
- * Hashmap representing values in a scope
- */
-typedef std::tr1::unordered_map<const CString*, Value*> ScopeBase;
+typedef std::pair<const CString*, Symbol> ScopeEntry;
+typedef std::deque<Scope> ScopeDeque;
+
+class Symbol {
+public:
+	typedef	enum { INVALID, UNKNOWN, VALUE, TYPE } SymbolType;
+
+	Symbol()
+		: m_name(NULL), m_type(INVALID) {}
+
+	Symbol(const CString* name, Value* value)
+		: m_name(name), m_type(VALUE) {
+		m_data.value = value;
+	}
+
+	Symbol(const CString* name, Type* type)
+		: m_name(name), m_type(TYPE) {
+		m_data.type = type;
+	}
+
+	const CString* getSymbolName() const { return m_name; }
+	SymbolType     getSymbolType() const { return m_type; }
+
+	bool isInvalid() const { return m_type == INVALID; }
+	bool isUnknown() const { return m_type == UNKNOWN; }
+	bool isValue()   const { return m_type == VALUE;   }
+	bool isType()    const { return m_type == TYPE;    }
+
+	// TODO: add type check
+	Value* getValue()             { return m_data.value; }
+	Type*  getType()              { return m_data.type;  }
+
+private:
+	const CString* m_name;
+	SymbolType     m_type;
+
+	union {
+		Value *value;
+		Type  *type;
+	} m_data;
+};
+
+typedef std::tr1::unordered_map<const CString*, Symbol> ScopeBase;
 
 class Scope : public ScopeBase {
 public:
-	explicit Scope(int number)
-		: m_number(number) { }
 
+	Scope(int level) : m_level(level) {}
 	~Scope() {
-		ScopeBase::const_iterator it = begin(), end_ = end();
+		Scope::iterator it = begin(), end_ = end();
 
-		while (it != end_) {
-			it->second->delRef();
+		while(it != end_) {
+			Symbol& s = it->second;
+
+			if (s.isValue())
+				s.getValue()->delRef();
+
 			++it;
 		}
 	}
+
+	int getLevel() const { return m_level; }
 	
 	/**
-	 * Returns the number identifying the scope
+	 * Pushes a new value
 	 */
-	int getNumber() const throw() { return m_number; }
+	void push(const CString* name, Value* value) throw() {
+		insert(ScopeEntry(name, Symbol(name, value)));
+	}
+
+	void push(Value *value) throw() {
+		push(value->getName(), value);
+	}
 
 	/**
-	 * Pushes a new named Value pointer to the scope
+	 * Pushes a new type
 	 */
-	void push(const CString* name, Value* value) {
-		if (EXPECTED(value->hasName())) {
-			insert(std::pair<const CString*, Value*>(name, value));
+	void push(const CString* name, Type* type) throw() {
+		insert(ScopeEntry(name, Symbol(name, type)));
+	}
+
+	/**
+	 * Attempts to find a symbol with the given name.
+	 */
+	Symbol getSymbol(const CString* name) throw() {
+		Scope::iterator it = find(name);
+
+		if (it == end()) {
+			return Symbol(); // return an invalid symbol
 		}
-
-		// TODO: THROW ERROR HERE
+		
+		return it->second;
 	}
 
 	/**
-	 * Pushes a new Value pointer to the scope
+	 * Returns the value pointer for the given symbol name.
 	 */
-	void push(Value* value) {
-		if (EXPECTED(value->hasName())) {
-			push(value->getName(), value);
-		}
-		// TODO: THROW ERROR HERE
+	Value* getValue(const CString* name) throw() {
+
+		Symbol s = getSymbol(name);
+
+		if (s.isInvalid())
+			return NULL;
+
+		return s.getValue();
 	}
 
 	/**
-	 * Fetchs a Value pointer in the scope by name
+	 * Returns the type pointer for the given symbol name.
 	 */
-	Value* fetch(const CString* name) {
-		if (!empty()) {
-			Scope::const_iterator it = find(name);
+	Type* getType(const CString* name) throw() {
+		
+		Symbol s = getSymbol(name);
 
-			if (it != end()) {
-				return it->second;
-			}
-		}
-		return NULL;
+		if (s.isInvalid())
+			return NULL;
+
+		return s.getType();
 	}
 
-	/**
-	 * Fetchs a Value pointer in the scope by a Value pointer
-	 */
-	Value* fetch(const Value* value) {
-		return fetch(value->getName());
-	}
 private:
-	/**
-	 * Number identifying the scope
-	 */
-	int m_number;
+	int m_level;
 };
 
-typedef std::deque<Scope> SymbolTableBase;
-
-class SymbolTable : public SymbolTableBase {
+class SymbolTable {
 public:
 	SymbolTable()
-		: m_level(-1) { }
+		: m_level(-1) {}
 
-	~SymbolTable() { }
+	~SymbolTable() {}
 
 	/**
-	 * Pusshes a new Value pointer to the current scope
+	 * Pushes a new variable or constant to the current scope.
 	 */
-	void push(const CString* name, Value* var) throw() {
-		at(m_level).push(name, var);
+	void push(const CString* name, Value* value) throw() {
+		getScope().push(name, value);
+	}
+
+	void push(Value *value) throw() {
+		getScope().push(value);
 	}
 
 	/**
-	 * Pushes a new Value pointer to the current scope
+	 * Pushes a new type to the current scope.
 	 */
-	void push(Value* var) throw() {
-		at(m_level).push(var->getName(), var);
+	void push(const CString* name, Type* type) throw() {
+		getScope().push(name, type);
 	}
 
 	/**
-	 * Returns the Value* pointer if the name is found
+	 * Attempts to find a symbol with the given name in the current scope.
 	 */
-	Value* fetch(const CString* name) throw() {
-		Value* value;
+	Symbol getSymbol(const CString* name, bool recurse) throw() {
+		Symbol s;
+				
+		s = getScope().getSymbol(name);
 
-		/* There is no scope to search, shit just got real. */
-		if (m_level == -1) {
-			/* TODO: throw error or warning of unresolved symbol. */
+		if (s.isInvalid() && recurse) {
+			int i = m_level-1;
+
+			while (s.isInvalid() && i >= 0)
+				s = getScope(i--).getSymbol(name);
+		}
+
+		return s;
+	}
+
+	Symbol getSymbol(const CString* name) throw() {
+		return getSymbol(name, true);
+	}
+
+	/**
+	 * Returns the value pointer for the given symbol name.
+	 */
+	Value* getValue(const CString* name, bool recurse) throw() {
+
+		Symbol s = getSymbol(name, recurse);
+
+		if (s.isInvalid())
 			return NULL;
-		}
-		value = at(m_level).fetch(name);
 
-		/**
-		 * If not found in the current scope, try the outermost scopes
-		 */
-		if (value == NULL) {
-			value = deepValueSearch(name);
-		}
+		return s.getValue();
+	}
 
-		return value;
+	Value* getValue(const CString* name) throw() {
+		return getValue(name, true);
+	}
+
+	/**
+	 * Returns the type pointer for the given symbol name.
+	 */
+	Type* getType(const CString* name, bool recurse) throw() {
+		
+		Symbol s = getSymbol(name, recurse);
+
+		if (s.isInvalid())
+			return NULL;
+
+		return s.getType();
 	}
 	
-	/**
-	 * Fetches a Value pointer if its name is found in the specified scope
-	 */
-	Value* fetchByScope(const CString* name, const Scope& scope) throw() {             
-		return at(scope.getNumber()).fetch(name);
+	Type* getType(const CString* name) throw() {
+		return getType(name, true);
 	}
 
 	/**
-	 * Fetches a Value pointer by a Value pointer
+	 * Returns the current scope.
 	 */
-	Value* fetch(Value* value) throw() {
-		return fetch(value->getName());
-	}
-	
-	/**
-	 * Fetches an specified scope by its number
-	 */
-	Scope& fetchScope(int level) throw() {
-		return at(level);
+	Scope& getScope() throw() { 
+		return getScope(m_level);
 	}
 
 	/**
-	 * Creates a new scope block
+	 * Returns the scope at the given level number.
+	 */
+	Scope& getScope(int level) throw() {
+		if (level < 0) {
+			// TODO: throw error.
+		}
+
+		return m_scope.at(level);
+	}
+
+	/**
+	 * Enters a new scope.
 	 */
 	void beginScope() throw() {
-		push_back(Scope(++m_level));
+		m_scope.push_back(Scope(++m_level));
 	}
 
 	/**
-	 * Terminates the current block
+	 * Leaves the current scope.
 	 */
 	void endScope() throw() {
-		pop_back();
-		--m_level;
-	}
-
-	/**
-	 * Returns the current scope block
-	 */
-	Scope& currentScope() throw() {
-		return at(m_level);
+		m_scope.pop_back();
+		m_level--;
 	}
 
 private:
-	/**
-	 * Number representing the scope level
-	 */
-	int m_level;
+		int m_level;
+		ScopeDeque m_scope;
 
-	/**
-	 * Makes the deep search in the scopes innermost to outermost
-	 */
-	Value* deepValueSearch(const CString* name) {
-		for (int i = m_level-1; i >= 0; --i) {
-			Value* value = at(i).fetch(name);
-
-			if (value) {
-				return value;
-			}
-		}
-
-		return NULL;
-	}
-
-	DISALLOW_COPY_AND_ASSIGN(SymbolTable);
+		DISALLOW_COPY_AND_ASSIGN(SymbolTable);
 };
 
 } // clever
