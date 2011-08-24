@@ -125,22 +125,7 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 	ASTNode* var_expr = expr->getVariable();
 	ASTNode* rhs_expr = expr->getInitialValue();
 	Value* variable = var_expr->getValue();
-	const Type* type = g_symtable.getType(var_type->getValue()->getName());
 	
-	/* Check if the type wasn't declarated */
-	if (type == NULL) {
-		Compiler::errorf(expr->getLocation(), "`%S' does not name a type", 
-			var_type->getValue()->getName());
-	}
-	
-	if (g_symtable.getValue(variable->getName(), false) != NULL) {
-		Compiler::errorf(expr->getLocation(), 
-			"Already exists a variable named `%S' in the current scope!",
-			variable->getName());
-	}
-
-	variable->setTypePtr(type);
-
 	/* Check if the declaration contains initialization */
 	if (rhs_expr) {
 		Value* value = getValue(rhs_expr);
@@ -164,10 +149,8 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 
 		emit(OP_VAR_DECL, &VM::var_decl_handler, variable, value);
 	} else {
-		variable->addRef();
-		g_symtable.push(variable);
-
 		/* TODO: fix this */
+		/*
 		if (type == CLEVER_TYPE("Int")) {
 			variable->setType(Value::INTEGER);
 		}
@@ -180,11 +163,10 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 		else {
 			variable->setType(Value::USER);
 			variable->setDataValue(type->allocateValue());	
-		}
-
-		variable->initialize();
+		}*/
 
 		variable->addRef();
+		variable->initialize();
 
 		emit(OP_VAR_DECL, &VM::var_decl_handler, variable);
 	}

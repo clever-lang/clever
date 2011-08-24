@@ -280,75 +280,11 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(BinaryExpr);
 };
 
-class VariableDecl : public ASTNode {
-public:
-	VariableDecl(ASTNode* type, ASTNode* variable)
-		: m_type(type), m_variable(variable), m_initial_value(NULL) {
-		m_type->addRef();
-		m_variable->addRef();
-	}
-
-	VariableDecl(ASTNode* type, ASTNode* variable, ASTNode* rhs)
-		: m_type(type), m_variable(variable), m_initial_value(rhs) {
-		m_type->addRef();
-		m_variable->addRef();
-		m_initial_value->addRef();
-	}
-
-	virtual ~VariableDecl() {
-		m_type->delRef();
-		m_variable->delRef();
-
-		if (m_initial_value) {
-			m_initial_value->delRef();
-		}
-	}
-
-	ASTNode* getVariable() const {
-		return m_variable;
-	}
-
-	ASTNode* getInitialValue() const {
-		return m_initial_value;
-	}
-
-	ASTNode* getType() const {
-		return m_type;
-	}
-
-	void accept(ASTVisitor& visitor) throw() {
-		if (m_initial_value) {
-			m_initial_value->accept(visitor);
-		}
-		visitor.visit(this);
-	}
-private:
-	ASTNode* m_type;
-	ASTNode* m_variable;
-	ASTNode* m_initial_value;
-
-	DISALLOW_COPY_AND_ASSIGN(VariableDecl);
-};
-
-class AttributeDeclaration : public VariableDecl {
-public:
-	AttributeDeclaration(ASTNode* modifier, ASTNode* type, ASTNode* variable) 
-		: VariableDecl(type, variable), m_modifier(modifier) {
-		m_modifier->addRef();
-	}
-	
-	~AttributeDeclaration() {
-		m_modifier->delRef();
-	}
-private:
-	ASTNode* m_modifier;
-	DISALLOW_COPY_AND_ASSIGN(AttributeDeclaration);
-};
 
 class Identifier : public ASTNode {
 public:
 	explicit Identifier(const CString* name)
-		: m_name(name) {}
+		: m_name(name), m_value(NULL) {}
 
 	~Identifier() {
 		if (m_value) {
@@ -372,6 +308,71 @@ private:
 	Value* m_value;	
 
 	DISALLOW_COPY_AND_ASSIGN(Identifier);
+};
+
+class VariableDecl : public ASTNode {
+public:
+	VariableDecl(Identifier* type, Identifier* variable)
+		: m_type(type), m_variable(variable), m_initial_value(NULL) {
+		m_type->addRef();
+		m_variable->addRef();
+	}
+
+	VariableDecl(Identifier* type, Identifier* variable, ASTNode* rhs)
+		: m_type(type), m_variable(variable), m_initial_value(rhs) {
+		m_type->addRef();
+		m_variable->addRef();
+		m_initial_value->addRef();
+	}
+
+	virtual ~VariableDecl() {
+		m_type->delRef();
+		m_variable->delRef();
+
+		if (m_initial_value) {
+			m_initial_value->delRef();
+		}
+	}
+
+	Identifier* getVariable() const {
+		return m_variable;
+	}
+
+	ASTNode* getInitialValue() const {
+		return m_initial_value;
+	}
+
+	Identifier* getType() const {
+		return m_type;
+	}
+
+	void accept(ASTVisitor& visitor) throw() {
+		if (m_initial_value) {
+			m_initial_value->accept(visitor);
+		}
+		visitor.visit(this);
+	}
+private:
+	Identifier* m_type;
+	Identifier* m_variable;
+	ASTNode* m_initial_value;
+
+	DISALLOW_COPY_AND_ASSIGN(VariableDecl);
+};
+
+class AttributeDeclaration : public VariableDecl {
+public:
+	AttributeDeclaration(ASTNode* modifier, Identifier* type, Identifier* variable) 
+		: VariableDecl(type, variable), m_modifier(modifier) {
+		m_modifier->addRef();
+	}
+	
+	~AttributeDeclaration() {
+		m_modifier->delRef();
+	}
+private:
+	ASTNode* m_modifier;
+	DISALLOW_COPY_AND_ASSIGN(AttributeDeclaration);
 };
 
 class StringLiteral : public Literal {
@@ -907,36 +908,28 @@ private:
 
 class ImportStmt : public ASTNode {
 public:
-	ImportStmt(ASTNode* package)
-		: m_package(package), m_module(NULL) {
-		m_package->addRef();
-	}
-	ImportStmt(ASTNode* package, ASTNode* module)
-		: m_package(package), m_module(module) {
-		m_package->addRef();
-		m_module->addRef();
-	}
-	~ImportStmt() {
-		m_package->delRef();
-		if (m_module) {
-			m_module->delRef();
-		}
-	}
+	ImportStmt(Identifier* package)
+		: m_package(package), m_module(NULL) {}
+
+	ImportStmt(Identifier* package, Identifier* module)
+		: m_package(package), m_module(module) {}
+
+	~ImportStmt() {}
 
 	const CString* const getPackageName() throw() {
-		return m_package->getValue()->getName();
+		return m_package->getName();
 	}
 
 	const CString* const getModuleName() throw() {
-		return m_module ? m_module->getValue()->getName() : NULL;
+		return m_module ? m_module->getName() : NULL;
 	}
 
 	void accept(ASTVisitor& visitor) throw() {
 		visitor.visit(this);
 	}
 private:
-	ASTNode* m_package;
-	ASTNode* m_module;
+	Identifier* m_package;
+	Identifier* m_module;
 
 	DISALLOW_COPY_AND_ASSIGN(ImportStmt);
 };

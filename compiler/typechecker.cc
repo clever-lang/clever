@@ -127,6 +127,35 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 }
 
 AST_VISITOR(TypeChecker, VariableDecl) {
+	Identifier* variable = expr->getVariable();
+	Value* var = new Value();
+	const Type* type = g_symtable.getType(expr->getType()->getName());
+	
+	/**
+	 * Check if the type wasn't declarated previously
+	 */
+	if (type == NULL) {
+		Compiler::errorf(expr->getLocation(), "`%S' does not name a type", 
+			expr->getType()->getName());
+	}
+	
+	/**
+	 * Check if there is already a variable with same name in the current scope
+	 */
+	if (g_symtable.getValue(variable->getName(), false) != NULL) {
+		Compiler::errorf(expr->getLocation(), 
+			"Already exists a variable named `%S' in the current scope!",
+			variable->getName());
+	}
+	
+	variable->setValue(var);
+
+	var->setName(variable->getName());
+	var->setTypePtr(type);
+	
+	var->addRef();
+
+	g_symtable.push(var);
 }
 
 AST_VISITOR(TypeChecker, PreIncrement) {
@@ -145,6 +174,26 @@ AST_VISITOR(TypeChecker, IfExpr) {
 }
 
 AST_VISITOR(TypeChecker, BlockNode) {
+	NodeList& nodes = expr->getNodes();
+	NodeList::const_iterator it = nodes.begin(), end = nodes.end();
+
+	/**
+	 * Create a new scope
+	 */
+	g_symtable.beginScope();
+
+	/**
+	 * Iterates statements inside the block
+	 */
+	while (it != end) {
+		(*it)->accept(*this);
+		++it;
+	}
+
+	/**
+	 * Pops the scope
+	 */
+	g_symtable.endScope();
 }
 
 AST_VISITOR(TypeChecker, WhileExpr) {

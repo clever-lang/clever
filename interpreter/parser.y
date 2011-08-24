@@ -212,7 +212,7 @@ method_declaration:
 ;
 
 attribute_declaration:
-                access_modifier TYPE IDENT ';'	{ $$ = new ast::AttributeDeclaration($1, $2, $3); $$->setLocation(yyloc); }
+		access_modifier TYPE IDENT ';'	{ $$ = new ast::AttributeDeclaration($1, static_cast<ast::Identifier*>($2), static_cast<ast::Identifier*>($3)); $$->setLocation(yyloc); }
 ;
 
 arg_list:
@@ -239,12 +239,12 @@ method_call:
 ;
 
 variable_declaration_no_init:
-		TYPE IDENT	{ $$ = new ast::VariableDecl($1, $2); }
+		TYPE IDENT	{ $$ = new ast::VariableDecl(static_cast<ast::Identifier*>($1), static_cast<ast::Identifier*>($2)); }
 ;
 
 variable_declaration:
-		TYPE IDENT '=' type_creation { $$ = new ast::VariableDecl($1, $2, $4); $$->setLocation(yylloc); }
-	|	TYPE IDENT '=' expr          { $$ = new ast::VariableDecl($1, $2, $4); $$->setLocation(yylloc); }
+		TYPE IDENT '=' type_creation { $$ = new ast::VariableDecl(static_cast<ast::Identifier*>($1), static_cast<ast::Identifier*>($2), $4); $$->setLocation(yylloc); }
+	|	TYPE IDENT '=' expr          { $$ = new ast::VariableDecl(static_cast<ast::Identifier*>($1), static_cast<ast::Identifier*>($2), $4); $$->setLocation(yylloc); }
 	|	variable_declaration_no_init { $$ = $1; }
 ;
 
@@ -346,8 +346,8 @@ break_stmt:
 ;
 
 import_stmt:
-		IMPORT IDENT           { $$ = new ast::ImportStmt($2);      $$->setLocation(yylloc); }
-	|	IMPORT IDENT '.' IDENT { $$ = new ast::ImportStmt($2, $4);  $$->setLocation(yylloc); }
+		IMPORT IDENT           { $$ = new ast::ImportStmt(static_cast<ast::Identifier*>($2));      $$->setLocation(yylloc); }
+	|	IMPORT IDENT '.' IDENT { $$ = new ast::ImportStmt(static_cast<ast::Identifier*>($2), static_cast<ast::Identifier*>($4));  $$->setLocation(yylloc); }
 ;
 
 %%
