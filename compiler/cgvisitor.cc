@@ -467,12 +467,11 @@ AST_VISITOR(CodeGenVisitor, BreakNode) {
 AST_VISITOR(CodeGenVisitor, FunctionCall) {
 	CallableValue* fvalue = expr->getFuncValue();
 	const Function* func;
-	ASTNode* args = expr->getArgs();
 	Value* arg_values = expr->getArgsValue();
 
 	func = static_cast<CallableValue*>(fvalue)->getFunction();
 
-	if (args && func->isUserDefined()) {
+	if (arg_values && func->isUserDefined()) {
 		Value* vars = const_cast<Function*>(func)->getVars();
 
 		vars->addRef();

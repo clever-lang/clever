@@ -33,7 +33,8 @@ namespace clever { namespace ast {
 	
 class TypeChecker : public ASTVisitor {
 public:
-	TypeChecker() { }
+	TypeChecker()
+		: m_interactive(false) { }
 	~TypeChecker() { }
 	
 	void init() throw() { }

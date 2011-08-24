@@ -154,6 +154,7 @@ AST_VISITOR(TypeChecker, Identifier) {
 	 */
 	 
 	expr->setValue(ident);
+	ident->addRef();
 }
 
 AST_VISITOR(TypeChecker, BinaryExpr) {
@@ -272,7 +273,7 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 	/**
 	 * Set the return type
 	 */
-	expr->getValue()->setTypePtr(func->getReturn());
+	//expr->getValue()->setTypePtr(func->getReturn());
 
 	if (num_args) {
 		arg_values = new Value;
@@ -283,7 +284,7 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 			Value* vars = const_cast<Function*>(func)->getVars();
 			vars->addRef();
 		}
-		
+		arg_values->addRef();
 		expr->setArgsValue(arg_values);
 	}
 	
