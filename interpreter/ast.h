@@ -347,14 +347,13 @@ private:
 
 class Identifier : public ASTNode {
 public:
-	explicit Identifier(const CString* name) {
-		m_value = new Value();
-		m_value->setName(name);
-		m_name = name;
-	}
+	explicit Identifier(const CString* name)
+		: m_name(name) {}
 
 	~Identifier() {
-		m_value->delRef();
+		if (m_value) {
+			m_value->delRef();
+		}
 	}
 
 	bool hasValue() const { return true; }
@@ -369,8 +368,8 @@ public:
 		visitor.visit(this);
 	}
 private:
-	Value* m_value;
 	const CString* m_name;
+	Value* m_value;	
 
 	DISALLOW_COPY_AND_ASSIGN(Identifier);
 };
