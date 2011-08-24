@@ -152,7 +152,6 @@ AST_VISITOR(TypeChecker, Identifier) {
 	/**
 	 * Associate the Value* of the symbol to the identifier
 	 */
-	 
 	expr->setValue(ident);
 	ident->addRef();
 }
@@ -184,11 +183,13 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 	
 	variable->setValue(var);
 
+	/**
+	 * Registers a new variable
+	 */
 	var->setName(variable->getName());
 	var->setTypePtr(type);
-	
 	var->addRef();
-
+	
 	g_symtable.push(var);
 }
 
@@ -273,7 +274,7 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 	/**
 	 * Set the return type
 	 */
-	//expr->getValue()->setTypePtr(func->getReturn());
+	expr->getValue()->setTypePtr(func->getReturn());
 
 	if (num_args) {
 		arg_values = new Value;
