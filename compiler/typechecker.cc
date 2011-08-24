@@ -116,11 +116,44 @@ void TypeChecker::checkFunctionArgs(const Function* func, int num_args, const lo
 	}
 }
 
+
+/**
+ * Creates a vector with the current value from a Value* pointers
+ */
+ValueVector* TypeChecker::functionArgs(ArgumentList* args) throw() {
+	ValueVector* values = new ValueVector();
+	const NodeList& nodes = args->getNodes();
+	NodeList::const_iterator it = nodes.begin(), end = nodes.end();
+
+	values->reserve(nodes.size());
+
+	while (it != end) {
+		Value* value;
+
+		(*it)->accept(*this);
+
+		value = (*it)->getValue();
+		value->addRef();
+
+		values->push_back(value);
+		++it;
+	}
+
+	return values;
+}
+
 AST_VISITOR(TypeChecker, Identifier) {
+	Value* ident = g_symtable.getValue(expr->getName());
+	
+	if (ident == NULL) {
+		Compiler::errorf(expr->getLocation(), "Variable `%s' not found!", expr->getName());
+	}
+	
 	/**
 	 * Associate the Value* of the symbol to the identifier
 	 */
-	expr->setValue(g_symtable.getValue(expr->getName()));
+	 
+	expr->setValue(ident);
 }
 
 AST_VISITOR(TypeChecker, BinaryExpr) {
@@ -135,7 +168,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 	 * Check if the type wasn't declarated previously
 	 */
 	if (type == NULL) {
-		Compiler::errorf(expr->getLocation(), "`%S' does not name a type", 
+		Compiler::errorf(expr->getLocation(), "`%s' does not name a type", 
 			expr->getType()->getName());
 	}
 	
@@ -159,15 +192,27 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 }
 
 AST_VISITOR(TypeChecker, PreIncrement) {
+	Identifier* ident = expr->getExpr();
+	
+	expr->setValue(g_symtable.getValue(ident->getName()));
 }
 
 AST_VISITOR(TypeChecker, PosIncrement) {
+	Identifier* ident = expr->getExpr();
+	
+	expr->setValue(g_symtable.getValue(ident->getName()));
 }
 
 AST_VISITOR(TypeChecker, PreDecrement) {
+	Identifier* ident = expr->getExpr();
+	
+	expr->setValue(g_symtable.getValue(ident->getName()));
 }
 
 AST_VISITOR(TypeChecker, PosDecrement) {
+	Identifier* ident = expr->getExpr();
+	
+	expr->setValue(g_symtable.getValue(ident->getName()));
 }
 
 AST_VISITOR(TypeChecker, IfExpr) {
@@ -209,6 +254,41 @@ AST_VISITOR(TypeChecker, BreakNode) {
 }
 
 AST_VISITOR(TypeChecker, FunctionCall) {
+	const CString* const name = expr->getFuncName();
+	Value* fvalue = g_symtable.getValue(name);
+	const Function* func;
+	ASTNode* args = expr->getArgs();
+	Value* arg_values = NULL;
+	int num_args = args ? args->getNodes().size() : 0;
+	
+	if (fvalue == NULL) {
+		Compiler::errorf(expr->getLocation(), "Function `%S' does not exists!", name);
+	}
+	
+	func = static_cast<CallableValue*>(fvalue)->getFunction();
+	
+	checkFunctionArgs(func, num_args, expr->getLocation());
+	
+	/**
+	 * Set the return type
+	 */
+	expr->getValue()->setTypePtr(func->getReturn());
+
+	if (num_args) {
+		arg_values = new Value;
+		arg_values->setType(Value::VECTOR);
+		arg_values->setVector(functionArgs(static_cast<ArgumentList*>(args)));
+
+		if (func->isUserDefined()) {
+			Value* vars = const_cast<Function*>(func)->getVars();
+			vars->addRef();
+		}
+		
+		expr->setArgsValue(arg_values);
+	}
+	
+	expr->setFuncValue(static_cast<CallableValue*>(fvalue));
+	fvalue->addRef();
 }
 
 AST_VISITOR(TypeChecker, MethodCall) {
@@ -218,6 +298,30 @@ AST_VISITOR(TypeChecker, AssignExpr) {
 }
 
 AST_VISITOR(TypeChecker, ImportStmt) {
+	const CString* const package = expr->getPackageName();
+	const CString* const module = expr->getModuleName();
+
+	if (module) {
+		/**
+		 * Importing an specific module
+		 * e.g. import std.io;
+		 */
+		if (isInteractive() && g_symtable.getScope().getLevel() == 1) {
+			Compiler::import(g_symtable.getScope(0), package, module);
+		} else {
+			Compiler::import(g_symtable.getScope(), package, module);
+		}
+	} else {
+		/**
+		 * Importing an entire package
+		 * e.g. import std;
+		 */
+		if (isInteractive() && g_symtable.getScope().getLevel() == 1) {
+			Compiler::import(g_symtable.getScope(0), package);
+		} else {
+			Compiler::import(g_symtable.getScope(), package);
+		}
+	}
 }
 
 AST_VISITOR(TypeChecker, FuncDeclaration) {

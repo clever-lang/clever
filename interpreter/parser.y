@@ -221,8 +221,8 @@ arg_list:
 ;
 
 func_call:
-		IDENT '(' ')'          { $$ = new ast::FunctionCall($1); $$->setLocation(yylloc); }
-	|	IDENT '(' arg_list ')' { $$ = new ast::FunctionCall($1, $3); $$->setLocation(yylloc); }
+		IDENT '(' ')'          { $$ = new ast::FunctionCall(static_cast<ast::Identifier*>($1)); $$->setLocation(yylloc); }
+	|	IDENT '(' arg_list ')' { $$ = new ast::FunctionCall(static_cast<ast::Identifier*>($1), $3); $$->setLocation(yylloc); }
 ;
 
 chaining_method_call: 
@@ -291,10 +291,10 @@ expr:
 	|	expr "and" expr       { $$ = new ast::LogicExpr(ast::AND, $1, $3);           $$->setLocation(yylloc); }
 	|	'-' expr %prec UMINUS { $$ = new ast::BinaryExpr(ast::MINUS, $2);            $$->setLocation(yylloc); }
 	|	'+' expr %prec UMINUS { $$ = new ast::BinaryExpr(ast::PLUS, $2);             $$->setLocation(yylloc); }
-	|	INCREMENT IDENT       { $$ = new ast::PreIncrement($2);                      $$->setLocation(yylloc); }
-	|	IDENT INCREMENT       { $$ = new ast::PosIncrement($1);                      $$->setLocation(yylloc); }
-	|	DECREMENT IDENT       { $$ = new ast::PreDecrement($2);                      $$->setLocation(yylloc); }
-	|	IDENT DECREMENT       { $$ = new ast::PosDecrement($1);                      $$->setLocation(yylloc); }
+	|	INCREMENT IDENT       { $$ = new ast::PreIncrement(static_cast<ast::Identifier*>($2)); $$->setLocation(yylloc); }
+	|	IDENT INCREMENT       { $$ = new ast::PosIncrement(static_cast<ast::Identifier*>($1)); $$->setLocation(yylloc); }
+	|	DECREMENT IDENT       { $$ = new ast::PreDecrement(static_cast<ast::Identifier*>($2)); $$->setLocation(yylloc); }
+	|	IDENT DECREMENT       { $$ = new ast::PosDecrement(static_cast<ast::Identifier*>($1)); $$->setLocation(yylloc); }
 	|	'!' expr              { $$ = $2; }
 	|	'~' expr              { $$ = $2; }
 	|	'(' expr ')'          { $$ = $2; }

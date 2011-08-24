@@ -190,34 +190,6 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(NumberLiteral);
 };
 
-class NO_INIT_VTABLE UnaryExpr : public ASTNode {
-public:
-	UnaryExpr(ASTNode* expr)
-		: m_expr(expr) {
-		m_expr->addRef();
-		m_result = new Value();
-	}
-
-	~UnaryExpr() {
-		m_expr->delRef();
-	}
-
-	Value* getValue() const throw() {
-		return m_result;
-	}
-
-	ASTNode* getExpr() const {
-		return m_expr;
-	}
-
-	virtual void accept(ASTVisitor& visitor) throw() { }
-private:
-	ASTNode* m_expr;
-	Value* m_result;
-
-	DISALLOW_COPY_AND_ASSIGN(UnaryExpr);
-};
-
 /* TODO: turn this into an "abstract" class if possible */
 class BinaryExpr : public ASTNode {
 public:
@@ -308,6 +280,38 @@ private:
 	Value* m_value;	
 
 	DISALLOW_COPY_AND_ASSIGN(Identifier);
+};
+
+class NO_INIT_VTABLE UnaryExpr : public ASTNode {
+public:
+	UnaryExpr(Identifier* expr)
+		: m_expr(expr) {
+		m_expr->addRef();
+		m_result = new Value();
+	}
+
+	~UnaryExpr() {
+		m_expr->delRef();
+	}
+	
+	void setValue(Value* value) throw() {
+		m_result = value;
+	}
+
+	Value* getValue() const throw() {
+		return m_result;
+	}
+
+	Identifier* getExpr() const {
+		return m_expr;
+	}
+
+	virtual void accept(ASTVisitor& visitor) throw() { }
+private:
+	Identifier* m_expr;
+	Value* m_result;
+
+	DISALLOW_COPY_AND_ASSIGN(UnaryExpr);
 };
 
 class VariableDecl : public ASTNode {
@@ -429,7 +433,7 @@ private:
 
 class PreIncrement : public UnaryExpr {
 public:
-	PreIncrement(ASTNode* expr)
+	PreIncrement(Identifier* expr)
 		: UnaryExpr(expr) {
 	}
 
@@ -446,7 +450,7 @@ private:
 
 class PosIncrement : public UnaryExpr {
 public:
-	PosIncrement(ASTNode* expr)
+	PosIncrement(Identifier* expr)
 		: UnaryExpr(expr) {
 	}
 
@@ -462,7 +466,7 @@ private:
 
 class PreDecrement : public UnaryExpr {
 public:
-	PreDecrement(ASTNode* expr)
+	PreDecrement(Identifier* expr)
 		: UnaryExpr(expr) {
 	}
 
@@ -478,7 +482,7 @@ private:
 
 class PosDecrement : public UnaryExpr {
 public:
-	PosDecrement(ASTNode* expr)
+	PosDecrement(Identifier* expr)
 		: UnaryExpr(expr) {
 	}
 
@@ -809,13 +813,13 @@ protected:
 
 class FunctionCall : public ASTNode {
 public:
-	FunctionCall(ASTNode* name)
-		: m_name(name), m_args(NULL) {
+	FunctionCall(Identifier* name)
+		: m_name(name), m_args(NULL), m_args_value(NULL) {
 		m_name->addRef();
 		m_result = new CallableValue;
 	}
-	FunctionCall(ASTNode* name, ASTNode* args)
-		: m_name(name), m_args(args) {
+	FunctionCall(Identifier* name, ASTNode* args)
+		: m_name(name), m_args(args), m_args_value(NULL) {
 		m_name->addRef();
 		m_args->addRef();
 		m_result = new CallableValue;
@@ -826,21 +830,42 @@ public:
 		if (m_args) {
 			m_args->delRef();
 		}
+		if (m_args_value) {
+			m_args_value->delRef();
+		}
+	}
+	
+	void setFuncValue(CallableValue* value) throw() {
+		m_value = value;
 	}
 
 	Value* getValue() const throw() { return m_result; }
+	
+	CallableValue* getFuncValue() throw() {
+		return m_value;
+	}
 
-	const CString* const getFuncName() const throw() { return m_name->getValue()->getName(); }
+	const CString* const getFuncName() const throw() { return m_name->getName(); }
 
 	ASTNode* getArgs() throw() { return m_args; }
 
 	void accept(ASTVisitor& visitor) throw() {
 		visitor.visit(this);
 	}
+	
+	void setArgsValue(Value* value) throw() {
+		m_args_value = value;
+	}
+	
+	Value* getArgsValue() throw() {
+		return m_args_value;
+	}
 private:
-	ASTNode* m_name;
+	Identifier* m_name;
 	ASTNode* m_args;
+	Value* m_args_value;
 	Value* m_result;
+	CallableValue* m_value;
 
 	DISALLOW_COPY_AND_ASSIGN(FunctionCall);
 };

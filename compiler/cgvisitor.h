@@ -71,11 +71,6 @@ public:
 	OpcodeList& getOpcodes() throw() { return m_opcodes; }
 
 	/**
-	 * Builds the function arguments vector
-	 */
-	ValueVector* functionArgs(ArgumentList*) throw();
-
-	/**
 	 * Returns the Value pointer according with value type.
 	 */
 	Value* getValue(ASTNode*) throw();
