@@ -75,6 +75,9 @@ Value* CodeGenVisitor::getValue(ASTNode* expr) throw() {
 	return value;
 }
 
+AST_VISITOR(CodeGenVisitor, Identifier) {
+}
+
 /**
  * Generates opcode for binary expression
  */

@@ -32,6 +32,7 @@
 
 namespace clever { namespace ast {
 
+class Identifier;
 class ASTNode;
 class BinaryExpr;
 class LogicExpr;
@@ -58,6 +59,28 @@ class ReturnStmt;
 #define AST_VISITOR_DECL_VIRTUAL(type) virtual void visit(type* const expr) throw() = 0
 #define AST_VISITOR_DECL(type) void visit(type* const expr) throw()
 
+#define AST_VISITOR_DECLARATION(V) \
+	V(BinaryExpr); \
+	V(LogicExpr); \
+	V(VariableDecl); \
+	V(PreIncrement); \
+	V(PosIncrement); \
+	V(PreDecrement); \
+	V(PosDecrement); \
+	V(BlockNode); \
+	V(IfExpr); \
+	V(WhileExpr); \
+	V(ForExpr); \
+	V(BreakNode); \
+	V(FunctionCall); \
+	V(MethodCall); \
+	V(AssignExpr); \
+	V(ImportStmt); \
+	V(FuncDeclaration); \
+	V(ClassDeclaration); \
+	V(ReturnStmt); \
+	V(Identifier)
+
 /**
  * AST Visitor
  */
@@ -65,29 +88,13 @@ class NO_INIT_VTABLE ASTVisitor {
 public:
 	ASTVisitor() { }
 	virtual ~ASTVisitor() { }
+	
+	AST_VISITOR_DECLARATION(AST_VISITOR_DECL_VIRTUAL);
 
 	virtual void init() throw() = 0;
 	virtual void shutdown() throw() = 0;
 
-	AST_VISITOR_DECL_VIRTUAL(BinaryExpr);
-	AST_VISITOR_DECL_VIRTUAL(LogicExpr);
-	AST_VISITOR_DECL_VIRTUAL(VariableDecl);
-	AST_VISITOR_DECL_VIRTUAL(PreIncrement);
-	AST_VISITOR_DECL_VIRTUAL(PosIncrement);
-	AST_VISITOR_DECL_VIRTUAL(PreDecrement);
-	AST_VISITOR_DECL_VIRTUAL(PosDecrement);
-	AST_VISITOR_DECL_VIRTUAL(BlockNode);
-	AST_VISITOR_DECL_VIRTUAL(IfExpr);
-	AST_VISITOR_DECL_VIRTUAL(WhileExpr);
-	AST_VISITOR_DECL_VIRTUAL(ForExpr);
-	AST_VISITOR_DECL_VIRTUAL(BreakNode);
-	AST_VISITOR_DECL_VIRTUAL(FunctionCall);
-	AST_VISITOR_DECL_VIRTUAL(MethodCall);
-	AST_VISITOR_DECL_VIRTUAL(AssignExpr);
-	AST_VISITOR_DECL_VIRTUAL(ImportStmt);
-	AST_VISITOR_DECL_VIRTUAL(FuncDeclaration);
-	AST_VISITOR_DECL_VIRTUAL(ClassDeclaration);
-	AST_VISITOR_DECL_VIRTUAL(ReturnStmt);
+
 private:
 	DISALLOW_COPY_AND_ASSIGN(ASTVisitor);
 };

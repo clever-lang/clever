@@ -116,6 +116,13 @@ void TypeChecker::checkFunctionArgs(const Function* func, int num_args, const lo
 	}
 }
 
+AST_VISITOR(TypeChecker, Identifier) {
+	/**
+	 * Associate the Value* of the symbol to the identifier
+	 */
+	expr->setValue(g_symtable.getValue(expr->getName()));
+}
+
 AST_VISITOR(TypeChecker, BinaryExpr) {
 }
 

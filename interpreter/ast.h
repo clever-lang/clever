@@ -358,8 +358,16 @@ public:
 	}
 
 	bool hasValue() const { return true; }
+	
 	Value* getValue() const throw() { return m_value; }
+	
+	void setValue(Value* value) throw() { m_value = value; }
+	
 	const CString* getName() const { return m_name; }
+	
+	void accept(ASTVisitor& visitor) throw() {
+		visitor.visit(this);
+	}
 private:
 	Value* m_value;
 	const CString* m_name;

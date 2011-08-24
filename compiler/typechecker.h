@@ -39,26 +39,8 @@ public:
 	void init() throw() { }
 
 	void shutdown() throw() { }
-
-	AST_VISITOR_DECL(BinaryExpr);
-	AST_VISITOR_DECL(LogicExpr);
-	AST_VISITOR_DECL(VariableDecl);
-	AST_VISITOR_DECL(PreIncrement);
-	AST_VISITOR_DECL(PosIncrement);
-	AST_VISITOR_DECL(PreDecrement);
-	AST_VISITOR_DECL(PosDecrement);
-	AST_VISITOR_DECL(BlockNode);
-	AST_VISITOR_DECL(IfExpr);
-	AST_VISITOR_DECL(WhileExpr);
-	AST_VISITOR_DECL(ForExpr);
-	AST_VISITOR_DECL(BreakNode);
-	AST_VISITOR_DECL(FunctionCall);
-	AST_VISITOR_DECL(MethodCall);
-	AST_VISITOR_DECL(AssignExpr);
-	AST_VISITOR_DECL(ImportStmt);
-	AST_VISITOR_DECL(FuncDeclaration);
-	AST_VISITOR_DECL(ClassDeclaration);
-	AST_VISITOR_DECL(ReturnStmt);
+	
+	AST_VISITOR_DECLARATION(AST_VISITOR_DECL);
 	
 	/**
 	 * Checks if the supplied value pointers are compatibles
