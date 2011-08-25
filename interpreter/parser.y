@@ -128,32 +128,32 @@ ast::ASTNode* nodes = new ast::BlockNode;
 %left UMINUS;
 
 %union {
-	clever::ast::ASTNode* ast_node;
-	clever::ast::Identifier* identifier;
-	clever::ast::ArgumentDeclList* arg_decl_list;
-	clever::ast::MethodCall* method_call;
-	clever::ast::FunctionCall* func_call;
-	clever::ast::IfExpr* if_expr;
-	clever::ast::NumberLiteral* num_literal;
-	clever::ast::StringLiteral* str_literal;
-	clever::ast::ClassStmtList* class_stmt;
-	clever::ast::ReturnStmt* return_stmt;
-	clever::ast::TypeCreation* type_creation;
-	clever::ast::VariableDecl* variable_decl;
-	clever::ast::ClassDeclaration* class_decl;
-	clever::ast::FuncDeclaration* func_decl;
-	clever::ast::MethodDeclaration* method_decl;
-	clever::ast::AttributeDeclaration* attr_decl;
-	clever::ast::ForExpr* for_expr;
-	clever::ast::WhileExpr* while_expr;
-	clever::ast::ElseIfExpr* elseif_opt;
-	clever::ast::BlockNode* block_stmt;
-	clever::ast::BreakNode* break_stmt;
-	clever::ast::ImportStmt* import_stmt;
-	clever::ast::AssignExpr* assign_stmt;
-	clever::ast::ArgumentList* arg_list;
-	clever::ast::BinaryExpr* binary_expr;
-	clever::ast::IntegralValue* integral_value;
+	ast::ASTNode* ast_node;
+	ast::Identifier* identifier;
+	ast::ArgumentDeclList* arg_decl_list;
+	ast::MethodCall* method_call;
+	ast::FunctionCall* func_call;
+	ast::IfExpr* if_expr;
+	ast::NumberLiteral* num_literal;
+	ast::StringLiteral* str_literal;
+	ast::ClassStmtList* class_stmt;
+	ast::ReturnStmt* return_stmt;
+	ast::TypeCreation* type_creation;
+	ast::VariableDecl* variable_decl;
+	ast::ClassDeclaration* class_decl;
+	ast::FuncDeclaration* func_decl;
+	ast::MethodDeclaration* method_decl;
+	ast::AttributeDeclaration* attr_decl;
+	ast::ForExpr* for_expr;
+	ast::WhileExpr* while_expr;
+	ast::ElseIfExpr* elseif_opt;
+	ast::BlockNode* block_stmt;
+	ast::BreakNode* break_stmt;
+	ast::ImportStmt* import_stmt;
+	ast::AssignExpr* assign_stmt;
+	ast::ArgumentList* arg_list;
+	ast::BinaryExpr* binary_expr;
+	ast::IntegralValue* integral_value;
 }
 
 %type <identifier> IDENT
@@ -161,8 +161,9 @@ ast::ASTNode* nodes = new ast::BlockNode;
 %type <num_literal> NUM_DOUBLE
 %type <str_literal> STR
 
+%type <identifier> TYPE
+
 /* TODO: PLEASE KILL THIS v */
-%type <identifier> TYPE /* should be IDENT, i guess */
 %type <ast_node> '{'
 %type <ast_node> '('
 /* TODO: PLEASE KILL THIS ^ */
@@ -283,7 +284,7 @@ method_declaration:
 ;
 
 attribute_declaration:
-		access_modifier TYPE IDENT ';'	{ $$ = new ast::AttributeDeclaration($1, static_cast<ast::Identifier*>($2), static_cast<ast::Identifier*>($3)); $$->setLocation(yyloc); }
+		access_modifier TYPE IDENT ';'	{ $$ = new ast::AttributeDeclaration($1, $2, $3); $$->setLocation(yyloc); }
 ;
 
 arg_list:
@@ -292,8 +293,8 @@ arg_list:
 ;
 
 func_call:
-		IDENT '(' ')'          { $$ = new ast::FunctionCall(static_cast<ast::Identifier*>($1)); $$->setLocation(yylloc); }
-	|	IDENT '(' arg_list ')' { $$ = new ast::FunctionCall(static_cast<ast::Identifier*>($1), $3); $$->setLocation(yylloc); }
+		IDENT '(' ')'          { $$ = new ast::FunctionCall($1); $$->setLocation(yylloc); }
+	|	IDENT '(' arg_list ')' { $$ = new ast::FunctionCall($1, $3); $$->setLocation(yylloc); }
 ;
 
 chaining_method_call: 
@@ -310,12 +311,12 @@ method_call:
 ;
 
 variable_declaration_no_init:
-		TYPE IDENT	{ $$ = new ast::VariableDecl(static_cast<ast::Identifier*>($1), static_cast<ast::Identifier*>($2)); }
+		TYPE IDENT	{ $$ = new ast::VariableDecl($1, $2); }
 ;
 
 variable_declaration:
-		TYPE IDENT '=' type_creation { $$ = new ast::VariableDecl(static_cast<ast::Identifier*>($1), static_cast<ast::Identifier*>($2), $4); $$->setLocation(yylloc); }
-	|	TYPE IDENT '=' expr          { $$ = new ast::VariableDecl(static_cast<ast::Identifier*>($1), static_cast<ast::Identifier*>($2), $4); $$->setLocation(yylloc); }
+		TYPE IDENT '=' type_creation { $$ = new ast::VariableDecl($1, $2, $4); $$->setLocation(yylloc); }
+	|	TYPE IDENT '=' expr          { $$ = new ast::VariableDecl($1, $2, $4); $$->setLocation(yylloc); }
 	|	variable_declaration_no_init { $$ = $1; }
 ;
 
@@ -362,10 +363,10 @@ expr:
 	|	expr "and" expr       { $$ = new ast::LogicExpr(ast::AND, $1, $3);           $$->setLocation(yylloc); }
 	|	'-' expr %prec UMINUS { $$ = new ast::BinaryExpr(ast::MINUS, $2);            $$->setLocation(yylloc); }
 	|	'+' expr %prec UMINUS { $$ = new ast::BinaryExpr(ast::PLUS, $2);             $$->setLocation(yylloc); }
-	|	INCREMENT IDENT       { $$ = new ast::PreIncrement(static_cast<ast::Identifier*>($2)); $$->setLocation(yylloc); }
-	|	IDENT INCREMENT       { $$ = new ast::PosIncrement(static_cast<ast::Identifier*>($1)); $$->setLocation(yylloc); }
-	|	DECREMENT IDENT       { $$ = new ast::PreDecrement(static_cast<ast::Identifier*>($2)); $$->setLocation(yylloc); }
-	|	IDENT DECREMENT       { $$ = new ast::PosDecrement(static_cast<ast::Identifier*>($1)); $$->setLocation(yylloc); }
+	|	INCREMENT IDENT       { $$ = new ast::PreIncrement($2); $$->setLocation(yylloc); }
+	|	IDENT INCREMENT       { $$ = new ast::PosIncrement($1); $$->setLocation(yylloc); }
+	|	DECREMENT IDENT       { $$ = new ast::PreDecrement($2); $$->setLocation(yylloc); }
+	|	IDENT DECREMENT       { $$ = new ast::PosDecrement($1); $$->setLocation(yylloc); }
 	|	'!' expr              { $$ = $2; }
 	|	'~' expr              { $$ = $2; }
 	|	'(' expr ')'          { $$ = $2; }
@@ -417,8 +418,8 @@ break_stmt:
 ;
 
 import_stmt:
-		IMPORT IDENT           { $$ = new ast::ImportStmt(static_cast<ast::Identifier*>($2));      $$->setLocation(yylloc); }
-	|	IMPORT IDENT '.' IDENT { $$ = new ast::ImportStmt(static_cast<ast::Identifier*>($2), static_cast<ast::Identifier*>($4));  $$->setLocation(yylloc); }
+		IMPORT IDENT           { $$ = new ast::ImportStmt($2);      $$->setLocation(yylloc); }
+	|	IMPORT IDENT '.' IDENT { $$ = new ast::ImportStmt($2, $4);  $$->setLocation(yylloc); }
 ;
 
 %%
