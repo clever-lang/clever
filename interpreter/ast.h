@@ -814,12 +814,12 @@ protected:
 class FunctionCall : public ASTNode {
 public:
 	FunctionCall(Identifier* name)
-		: m_name(name), m_args(NULL), m_args_value(NULL) {
+		: m_name(name), m_args(NULL), m_args_value(NULL), m_value(NULL) {
 		m_name->addRef();
 		m_result = new CallableValue;
 	}
 	FunctionCall(Identifier* name, ASTNode* args)
-		: m_name(name), m_args(args), m_args_value(NULL) {
+		: m_name(name), m_args(args), m_args_value(NULL), m_value(NULL) {
 		m_name->addRef();
 		m_args->addRef();
 		m_result = new CallableValue;
@@ -832,6 +832,9 @@ public:
 		}
 		if (m_args_value) {
 			m_args_value->delRef();
+		}
+		if (m_value) {
+			m_value->delRef();
 		}
 	}
 	
@@ -934,12 +937,24 @@ private:
 class ImportStmt : public ASTNode {
 public:
 	ImportStmt(Identifier* package)
-		: m_package(package), m_module(NULL) {}
+		: m_package(package), m_module(NULL) {
+		m_package->addRef();
+	}
 
 	ImportStmt(Identifier* package, Identifier* module)
-		: m_package(package), m_module(module) {}
+		: m_package(package), m_module(module) {
+		m_package->addRef();
+		m_module->addRef();
+	}
 
-	~ImportStmt() {}
+	~ImportStmt() {
+		if (m_package) {
+			m_package->delRef();
+		}
+		if (m_module) {
+			m_module->delRef();
+		}
+	}
 
 	const CString* const getPackageName() throw() {
 		return m_package->getName();
