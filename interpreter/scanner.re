@@ -182,17 +182,17 @@ next_token:
 
 
 	<INITIAL>IDENTIFIER {
-		*yylval = new ast::Identifier(CSTRING(std::string(s.yylex, yylen)));
+		yylval->identifier = new ast::Identifier(CSTRING(std::string(s.yylex, yylen)));
 		RET(token::IDENT);
 	}
 
 	<INITIAL>"Void" {
-		*yylval = NULL;
+		yylval->ast_node = NULL;
 		RET(token::TYPE);
 	}
 
 	<INITIAL>TYPE {
-		*yylval = new ast::Identifier(CSTRING(std::string(s.yylex, yylen)));
+		yylval->ast_node = new ast::Identifier(CSTRING(std::string(s.yylex, yylen)));
 		RET(token::TYPE);
 	}
 
@@ -226,7 +226,7 @@ next_token:
 			}
 		}
 
-		*yylval = new ast::StringLiteral(CSTRING(strtext));
+		yylval->str_literal = new ast::StringLiteral(CSTRING(strtext));
 		RET(token::STR);
 	}
 
@@ -237,7 +237,7 @@ next_token:
 		newval->setType(Value::INTEGER);
 		newval->setInteger(n);
 
-		*yylval = new ast::NumberLiteral(newval);
+		yylval->num_literal = new ast::NumberLiteral(newval);
 
 		RET(token::NUM_INTEGER);
 	}
@@ -251,7 +251,7 @@ next_token:
 		newval->setType(Value::INTEGER);
 		newval->setInteger(n);
 
-		*yylval = new ast::NumberLiteral(newval);
+		yylval->num_literal = new ast::NumberLiteral(newval);
 
 		RET(token::NUM_INTEGER);
 	}
@@ -265,7 +265,7 @@ next_token:
 		newval->setType(Value::INTEGER);
 		newval->setInteger(n);
 
-		*yylval = new ast::NumberLiteral(newval);
+		yylval->num_literal = new ast::NumberLiteral(newval);
 
 		RET(token::NUM_INTEGER);
 	}
@@ -279,7 +279,7 @@ next_token:
 		newval->setType(Value::DOUBLE);
 		newval->setDouble(n);
 
-		*yylval = new ast::NumberLiteral(newval);
+		yylval->num_literal = new ast::NumberLiteral(newval);
 
 		RET(token::NUM_DOUBLE);
 	}
