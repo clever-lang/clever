@@ -46,7 +46,7 @@ namespace clever { namespace ast {
 class ASTNode;
 
 typedef std::vector<ASTNode*> NodeList;
-typedef std::pair<ASTNode*, ASTNode*> ArgumentDeclPair;
+typedef std::pair<ASTNode*, Identifier*> ArgumentDeclPair;
 typedef std::vector<ArgumentDeclPair> ArgumentDecls;
 
 /**
@@ -730,7 +730,7 @@ public:
 		}
 	}
 
-	void addArg(ASTNode* type, ASTNode* name) throw() {
+	void addArg(ASTNode* type, Identifier* name) throw() {
 		m_args.push_back(ArgumentDeclPair(type, name));
 		type->addRef();
 		name->addRef();
@@ -745,7 +745,7 @@ private:
 
 class FuncDeclaration : public ASTNode {
 public:
-	FuncDeclaration(ASTNode* name, ASTNode* rtype, ASTNode* args, ASTNode* block)
+	FuncDeclaration(Identifier* name, ASTNode* rtype, ArgumentDeclList* args, ASTNode* block)
 		: m_name(name), m_return(rtype), m_args(args), m_block(block) {
 		m_name->addRef();
 		if (m_return) {
@@ -773,7 +773,7 @@ public:
 	}
 
 	const CString* const getName() const throw() { return m_name->getValue()->getName(); }
-	ASTNode* getArgs() const throw() { return m_args; }
+	ArgumentDeclList* getArgs() const throw() { return m_args; }
 	ASTNode* getReturn() const throw() { return m_return; }
 	Value* getReturnValue() const throw() { return m_return ? m_return->getValue() : NULL; }
 
@@ -784,16 +784,16 @@ public:
 		visitor.visit(this);
 	}
 protected:
-	ASTNode* m_name;
+	Identifier* m_name;
 	ASTNode* m_return;
-	ASTNode* m_args;
+	ArgumentDeclList* m_args;
 	ASTNode* m_block;
 };
 
 class MethodDeclaration: public FuncDeclaration {
 public:
-	MethodDeclaration(ASTNode* modifier, ASTNode* rtype, ASTNode* name,
-                ASTNode* args, ASTNode* block)
+	MethodDeclaration(ASTNode* modifier, ASTNode* rtype, Identifier* name,
+                ArgumentDeclList* args, ASTNode* block)
 		: FuncDeclaration(name, rtype, args, block), m_modifier(modifier) {
                     m_modifier->addRef();
 	}
@@ -809,12 +809,12 @@ protected:
 
 class FunctionCall : public ASTNode {
 public:
-	FunctionCall(ASTNode* name)
+	FunctionCall(Identifier* name)
 		: m_name(name), m_args(NULL) {
 		m_name->addRef();
 		m_result = new CallableValue;
 	}
-	FunctionCall(ASTNode* name, ASTNode* args)
+	FunctionCall(Identifier* name, ASTNode* args)
 		: m_name(name), m_args(args) {
 		m_name->addRef();
 		m_args->addRef();
@@ -838,7 +838,7 @@ public:
 		visitor.visit(this);
 	}
 private:
-	ASTNode* m_name;
+	Identifier* m_name;
 	ASTNode* m_args;
 	Value* m_result;
 
@@ -847,14 +847,14 @@ private:
 
 class MethodCall : public ASTNode {
 public:
-	MethodCall(ASTNode* var, ASTNode* method)
+	MethodCall(ASTNode* var, Identifier* method)
 		: m_var(var), m_method(method), m_args(NULL) {
 		m_var->addRef();
 		m_method->addRef();
 		m_result = new CallableValue;
 	}
 
-	MethodCall(ASTNode* var, ASTNode* method, ASTNode* args)
+	MethodCall(ASTNode* var, Identifier* method, ASTNode* args)
 		: m_var(var), m_method(method), m_args(args) {
 		m_var->addRef();
 		m_method->addRef();
@@ -882,7 +882,7 @@ public:
 	}
 private:
 	ASTNode* m_var;
-	ASTNode* m_method;
+	Identifier* m_method;
 	ASTNode* m_args;
 	Value* m_result;
 
@@ -908,11 +908,11 @@ private:
 
 class ImportStmt : public ASTNode {
 public:
-	ImportStmt(ASTNode* package)
+	ImportStmt(Identifier* package)
 		: m_package(package), m_module(NULL) {
 		m_package->addRef();
 	}
-	ImportStmt(ASTNode* package, ASTNode* module)
+	ImportStmt(Identifier* package, Identifier* module)
 		: m_package(package), m_module(module) {
 		m_package->addRef();
 		m_module->addRef();
@@ -936,8 +936,8 @@ public:
 		visitor.visit(this);
 	}
 private:
-	ASTNode* m_package;
-	ASTNode* m_module;
+	Identifier* m_package;
+	Identifier* m_module;
 
 	DISALLOW_COPY_AND_ASSIGN(ImportStmt);
 };
@@ -1062,7 +1062,7 @@ public:
 		error_type m_type;
 	};
 
-	ClassDeclaration(ASTNode* name, ASTNode* body)
+	ClassDeclaration(Identifier* name, ASTNode* body)
 		: m_name(name), m_body(body) {
 		m_name->addRef();
 		m_body->addRef();	
@@ -1125,7 +1125,7 @@ public:
 	}
 	
 private:
-	ASTNode* m_name;
+	Identifier* m_name;
 	ASTNode* m_body;
 	DISALLOW_COPY_AND_ASSIGN(ClassDeclaration);
 };

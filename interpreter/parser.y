@@ -129,15 +129,17 @@ ast::ASTNode* nodes = new ast::BlockNode;
 
 %union{
 	clever::ast::ASTNode *ast_node;
+	clever::ast::Identifier *identifier;
+	clever::ast::ArgumentDeclList *arg_decl_list;
 }
 
-%type <ast_node> IDENT
+%type <identifier> IDENT
 %type <ast_node> NUM_INTEGER
 %type <ast_node> NUM_DOUBLE
 %type <ast_node> STR
 
 /* TODO: PLEASE KILL THIS v */
-%type <ast_node> TYPE /* should be IDENT, i guess */
+%type <identifier> TYPE /* should be IDENT, i guess */
 %type <ast_node> '{'
 %type <ast_node> '('
 /* TODO: PLEASE KILL THIS ^ */
@@ -146,8 +148,8 @@ ast::ASTNode* nodes = new ast::BlockNode;
 %type <ast_node> block_stmt
 %type <ast_node> statements
 %type <ast_node> return_stmt
-%type <ast_node> args_declaration_non_empty
-%type <ast_node> args_declaration
+%type <arg_decl_list> args_declaration_non_empty
+%type <arg_decl_list> args_declaration
 %type <ast_node> func_declaration
 %type <ast_node> class_declaration
 %type <ast_node> access_modifier
@@ -220,8 +222,8 @@ return_stmt:
 ;
 
 args_declaration_non_empty:
-		TYPE IDENT                      { $$ = new ast::ArgumentDeclList(); static_cast<ast::ArgumentDeclList*>($$)->addArg($1, $2); }
-	|	args_declaration ',' TYPE IDENT { static_cast<ast::ArgumentDeclList*>($1)->addArg($3, $4); }
+		TYPE IDENT                      { $$ = new ast::ArgumentDeclList(); $$->addArg($1, $2); }
+	|	args_declaration ',' TYPE IDENT { $1->addArg($3, $4); }
 ;
 
 args_declaration:

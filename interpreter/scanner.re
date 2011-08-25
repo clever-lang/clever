@@ -182,7 +182,7 @@ next_token:
 
 
 	<INITIAL>IDENTIFIER {
-		yylval->ast_node = new ast::Identifier(CSTRING(std::string(s.yylex, yylen)));
+		yylval->identifier = new ast::Identifier(CSTRING(std::string(s.yylex, yylen)));
 		RET(token::IDENT);
 	}
 
