@@ -403,7 +403,7 @@ if_expr:
 ;
 
 elseif_opt:
-		/* empty */
+		/* empty */ { $$ = NULL; }
 	|	elseif_opt ELSEIF '(' expr ')' block_stmt { $<if_expr>0->add(new ast::ElseIfExpr($4, $6)); $$->setLocation(yylloc); }
 ;
 
