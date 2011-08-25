@@ -34,8 +34,6 @@
 #include "interpreter/scanner.h"
 #include "interpreter/ast.h"
 
-#define YYSTYPE ast::ASTNode*
-
 namespace clever {
 class Driver;
 } // clever
@@ -128,6 +126,54 @@ ast::ASTNode* nodes = new ast::BlockNode;
 %left ELSEIF;
 %left ELSE;
 %left UMINUS;
+
+%union{
+	clever::ast::ASTNode *ast_node;
+}
+
+%type <ast_node> IDENT
+%type <ast_node> NUM_INTEGER
+%type <ast_node> NUM_DOUBLE
+%type <ast_node> STR
+
+/* TODO: PLEASE KILL THIS v */
+%type <ast_node> TYPE /* should be IDENT, i guess */
+%type <ast_node> '{'
+%type <ast_node> '('
+/* TODO: PLEASE KILL THIS ^ */
+
+%type <ast_node> statement_list_non_empty
+%type <ast_node> block_stmt
+%type <ast_node> statements
+%type <ast_node> return_stmt
+%type <ast_node> args_declaration_non_empty
+%type <ast_node> args_declaration
+%type <ast_node> func_declaration
+%type <ast_node> class_declaration
+%type <ast_node> access_modifier
+%type <ast_node> class_stmt
+%type <ast_node> class_stmt_no_empty
+%type <ast_node> method_declaration
+%type <ast_node> attribute_declaration
+%type <ast_node> arg_list
+%type <ast_node> func_call
+%type <ast_node> chaining_method_call
+%type <ast_node> method_call
+%type <ast_node> variable_declaration_no_init
+%type <ast_node> variable_decl_or_empty
+%type <ast_node> variable_declaration
+%type <ast_node> assign_stmt
+%type <ast_node> arguments
+%type <ast_node> type_creation
+%type <ast_node> expr
+%type <ast_node> expr_or_empty
+%type <ast_node> for_expr
+%type <ast_node> while_expr
+%type <ast_node> if_expr
+%type <ast_node> elseif_opt
+%type <ast_node> else_opt
+%type <ast_node> break_stmt
+%type <ast_node> import_stmt
 
 %%
 
@@ -226,15 +272,15 @@ func_call:
 ;
 
 chaining_method_call: 
-		/* empty */                                     { $$ = $0; }
+		/* empty */                                     { $$ = $<ast_node>0; }
 	|	chaining_method_call '.' IDENT '(' ')'          { $$ = new ast::MethodCall($1, $3); $$->setLocation(yylloc); }
 	|	chaining_method_call '.' IDENT '(' arg_list ')' { $$ = new ast::MethodCall($1, $3, $5); $$->setLocation(yylloc); }
 ;
 
 method_call:
-		IDENT '.' IDENT '(' ')'          { $$ = new ast::MethodCall($1, $3); $$->setLocation(yylloc); }
-			chaining_method_call         { $$ = $7; } 
-	|	IDENT '.' IDENT '(' arg_list ')' { $$ = new ast::MethodCall($1, $3, $5); $$->setLocation(yylloc); }
+		IDENT '.' IDENT '(' ')'          { $<ast_node>$ = new ast::MethodCall($1, $3); $<ast_node>$->setLocation(yylloc); }
+			chaining_method_call         { $<ast_node>$ = $<ast_node>7; } 
+	|	IDENT '.' IDENT '(' arg_list ')' { $<ast_node>$ = new ast::MethodCall($1, $3, $5); $<ast_node>$->setLocation(yylloc); }
 			chaining_method_call         { $$ = $8; } 
 ;
 
@@ -327,13 +373,13 @@ while_expr:
 ;
 
 if_expr:
-		IF '(' expr ')' block_stmt { $2 = new ast::IfExpr($3, $5); $$ = $2;                $$->setLocation(yylloc); }
+		IF '(' expr ')' block_stmt { $2 = new ast::IfExpr($3, $5); $<ast_node>$ = $2; $<ast_node>$->setLocation(yylloc); }
 		elseif_opt else_opt        { static_cast<ast::IfExpr*>($2)->setElse($8); $$ = $2; $$->setLocation(yylloc); }
 ;
 
 elseif_opt:
 		/* empty */
-	|	elseif_opt ELSEIF '(' expr ')' block_stmt { $0->add(new ast::ElseIfExpr($4, $6)); $$->setLocation(yylloc); }
+	|	elseif_opt ELSEIF '(' expr ')' block_stmt { $<ast_node>0->add(new ast::ElseIfExpr($4, $6)); $$->setLocation(yylloc); }
 ;
 
 else_opt:
