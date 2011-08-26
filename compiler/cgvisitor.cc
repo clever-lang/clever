@@ -98,9 +98,9 @@ AST_VISITOR(CodeGenVisitor, BinaryExpr) {
  * Generates the variable declaration opcode
  */
 AST_VISITOR(CodeGenVisitor, VariableDecl) {
-	ASTNode* var_expr = expr->getVariable();
-	ASTNode* rhs_expr = expr->getInitialValue();
-	Value* variable = var_expr->getValue();
+	Identifier* var_expr = expr->getVariable();
+	ASTNode* rhs_expr    = expr->getInitialValue();
+	Value* variable      = var_expr->getValue();
 	
 	/* Check if the declaration contains initialization */
 	if (rhs_expr) {
