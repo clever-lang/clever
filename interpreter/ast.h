@@ -46,7 +46,7 @@ namespace clever { namespace ast {
 class ASTNode;
 
 typedef std::vector<ASTNode*> NodeList;
-typedef std::pair<ASTNode*, ASTNode*> ArgumentDeclPair;
+typedef std::pair<Identifier*, Identifier*> ArgumentDeclPair;
 typedef std::vector<ArgumentDeclPair> ArgumentDecls;
 
 /**
@@ -280,71 +280,6 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(BinaryExpr);
 };
 
-class VariableDecl : public ASTNode {
-public:
-	VariableDecl(ASTNode* type, ASTNode* variable)
-		: m_type(type), m_variable(variable), m_initial_value(NULL) {
-		m_type->addRef();
-		m_variable->addRef();
-	}
-
-	VariableDecl(ASTNode* type, ASTNode* variable, ASTNode* rhs)
-		: m_type(type), m_variable(variable), m_initial_value(rhs) {
-		m_type->addRef();
-		m_variable->addRef();
-		m_initial_value->addRef();
-	}
-
-	virtual ~VariableDecl() {
-		m_type->delRef();
-		m_variable->delRef();
-
-		if (m_initial_value) {
-			m_initial_value->delRef();
-		}
-	}
-
-	ASTNode* getVariable() const {
-		return m_variable;
-	}
-
-	ASTNode* getInitialValue() const {
-		return m_initial_value;
-	}
-
-	ASTNode* getType() const {
-		return m_type;
-	}
-
-	void accept(ASTVisitor& visitor) throw() {
-		if (m_initial_value) {
-			m_initial_value->accept(visitor);
-		}
-		visitor.visit(this);
-	}
-private:
-	ASTNode* m_type;
-	ASTNode* m_variable;
-	ASTNode* m_initial_value;
-
-	DISALLOW_COPY_AND_ASSIGN(VariableDecl);
-};
-
-class AttributeDeclaration : public VariableDecl {
-public:
-	AttributeDeclaration(ASTNode* modifier, ASTNode* type, ASTNode* variable) 
-		: VariableDecl(type, variable), m_modifier(modifier) {
-		m_modifier->addRef();
-	}
-	
-	~AttributeDeclaration() {
-		m_modifier->delRef();
-	}
-private:
-	ASTNode* m_modifier;
-	DISALLOW_COPY_AND_ASSIGN(AttributeDeclaration);
-};
-
 class Identifier : public ASTNode {
 public:
 	explicit Identifier(const CString* name) {
@@ -375,6 +310,71 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(Identifier);
 };
 
+class VariableDecl : public ASTNode {
+public:
+	VariableDecl(Identifier* type, Identifier* variable)
+		: m_type(type), m_variable(variable), m_initial_value(NULL) {
+		m_type->addRef();
+		m_variable->addRef();
+	}
+
+	VariableDecl(Identifier* type, Identifier* variable, ASTNode* rhs)
+		: m_type(type), m_variable(variable), m_initial_value(rhs) {
+		m_type->addRef();
+		m_variable->addRef();
+		m_initial_value->addRef();
+	}
+
+	virtual ~VariableDecl() {
+		m_type->delRef();
+		m_variable->delRef();
+
+		if (m_initial_value) {
+			m_initial_value->delRef();
+		}
+	}
+
+	Identifier* getVariable() const {
+		return m_variable;
+	}
+
+	ASTNode* getInitialValue() const {
+		return m_initial_value;
+	}
+
+	Identifier* getType() const {
+		return m_type;
+	}
+
+	void accept(ASTVisitor& visitor) throw() {
+		if (m_initial_value) {
+			m_initial_value->accept(visitor);
+		}
+		visitor.visit(this);
+	}
+private:
+	Identifier* m_type;
+	Identifier* m_variable;
+	ASTNode* m_initial_value;
+
+	DISALLOW_COPY_AND_ASSIGN(VariableDecl);
+};
+
+class AttributeDeclaration : public VariableDecl {
+public:
+	AttributeDeclaration(ASTNode* modifier, Identifier* type, Identifier* variable) 
+		: VariableDecl(type, variable), m_modifier(modifier) {
+		m_modifier->addRef();
+	}
+	
+	~AttributeDeclaration() {
+		m_modifier->delRef();
+	}
+private:
+	ASTNode* m_modifier;
+	DISALLOW_COPY_AND_ASSIGN(AttributeDeclaration);
+};
+
 class StringLiteral : public Literal {
 public:
 	explicit StringLiteral(const CString* name) {
@@ -395,7 +395,7 @@ private:
 
 class TypeCreation : public ASTNode {
 public:
-	TypeCreation(ASTNode* type, ASTNode* arguments)
+	TypeCreation(Identifier* type, ASTNode* arguments)
 		: m_type(type), m_arguments(arguments) {
 		m_type->addRef();
 		m_arguments->addRef();
@@ -406,7 +406,7 @@ public:
 		m_arguments->delRef();
 	}
 private:
-	ASTNode* m_type;
+	Identifier* m_type;
 	ASTNode* m_arguments;
 
 	DISALLOW_COPY_AND_ASSIGN(TypeCreation);
@@ -730,7 +730,7 @@ public:
 		}
 	}
 
-	void addArg(ASTNode* type, ASTNode* name) throw() {
+	void addArg(Identifier* type, Identifier* name) throw() {
 		m_args.push_back(ArgumentDeclPair(type, name));
 		type->addRef();
 		name->addRef();
@@ -745,7 +745,7 @@ private:
 
 class FuncDeclaration : public ASTNode {
 public:
-	FuncDeclaration(ASTNode* name, ASTNode* rtype, ASTNode* args, ASTNode* block)
+	FuncDeclaration(Identifier* name, Identifier* rtype, ArgumentDeclList* args, BlockNode* block)
 		: m_name(name), m_return(rtype), m_args(args), m_block(block) {
 		m_name->addRef();
 		if (m_return) {
@@ -773,27 +773,27 @@ public:
 	}
 
 	const CString* const getName() const throw() { return m_name->getValue()->getName(); }
-	ASTNode* getArgs() const throw() { return m_args; }
-	ASTNode* getReturn() const throw() { return m_return; }
+	ArgumentDeclList* getArgs() const throw() { return m_args; }
+	Identifier* getReturn() const throw() { return m_return; }
 	Value* getReturnValue() const throw() { return m_return ? m_return->getValue() : NULL; }
 
-	ASTNode* getBlock() const throw() { return m_block; }
+	BlockNode* getBlock() const throw() { return m_block; }
 	bool hasBlock() const throw() { return m_block != NULL; }
 
 	void accept(ASTVisitor& visitor) throw() {
 		visitor.visit(this);
 	}
 protected:
-	ASTNode* m_name;
-	ASTNode* m_return;
-	ASTNode* m_args;
-	ASTNode* m_block;
+	Identifier* m_name;
+	Identifier* m_return;
+	ArgumentDeclList* m_args;
+	BlockNode* m_block;
 };
 
 class MethodDeclaration: public FuncDeclaration {
 public:
-	MethodDeclaration(ASTNode* modifier, ASTNode* rtype, ASTNode* name,
-                ASTNode* args, ASTNode* block)
+	MethodDeclaration(ASTNode* modifier, Identifier* rtype, Identifier* name,
+                ArgumentDeclList* args, BlockNode* block)
 		: FuncDeclaration(name, rtype, args, block), m_modifier(modifier) {
                     m_modifier->addRef();
 	}
@@ -809,12 +809,12 @@ protected:
 
 class FunctionCall : public ASTNode {
 public:
-	FunctionCall(ASTNode* name)
+	FunctionCall(Identifier* name)
 		: m_name(name), m_args(NULL) {
 		m_name->addRef();
 		m_result = new CallableValue;
 	}
-	FunctionCall(ASTNode* name, ASTNode* args)
+	FunctionCall(Identifier* name, ArgumentList* args)
 		: m_name(name), m_args(args) {
 		m_name->addRef();
 		m_args->addRef();
@@ -830,16 +830,16 @@ public:
 
 	Value* getValue() const throw() { return m_result; }
 
-	const CString* const getFuncName() const throw() { return m_name->getValue()->getName(); }
+	const CString* const getFuncName() const throw() { return m_name->getName(); }
 
-	ASTNode* getArgs() throw() { return m_args; }
+	ArgumentList* getArgs() throw() { return m_args; }
 
 	void accept(ASTVisitor& visitor) throw() {
 		visitor.visit(this);
 	}
 private:
-	ASTNode* m_name;
-	ASTNode* m_args;
+	Identifier* m_name;
+	ArgumentList* m_args;
 	Value* m_result;
 
 	DISALLOW_COPY_AND_ASSIGN(FunctionCall);
@@ -847,14 +847,14 @@ private:
 
 class MethodCall : public ASTNode {
 public:
-	MethodCall(ASTNode* var, ASTNode* method)
+	MethodCall(ASTNode* var, Identifier* method)
 		: m_var(var), m_method(method), m_args(NULL) {
 		m_var->addRef();
 		m_method->addRef();
 		m_result = new CallableValue;
 	}
 
-	MethodCall(ASTNode* var, ASTNode* method, ASTNode* args)
+	MethodCall(ASTNode* var, Identifier* method, ASTNode* args)
 		: m_var(var), m_method(method), m_args(args) {
 		m_var->addRef();
 		m_method->addRef();
@@ -882,7 +882,7 @@ public:
 	}
 private:
 	ASTNode* m_var;
-	ASTNode* m_method;
+	Identifier* m_method;
 	ASTNode* m_args;
 	Value* m_result;
 
@@ -891,8 +891,8 @@ private:
 
 class AssignExpr : public BinaryExpr {
 public:
-	AssignExpr(ASTNode* lhs, ASTNode* rhs)
-		: BinaryExpr(ASSIGN, lhs, rhs) {
+	AssignExpr(Identifier* lhs, ASTNode* rhs)
+		: BinaryExpr(ASSIGN, (ASTNode*)lhs, rhs) {
 	}
 
 	~AssignExpr() {
@@ -908,11 +908,11 @@ private:
 
 class ImportStmt : public ASTNode {
 public:
-	ImportStmt(ASTNode* package)
+	ImportStmt(Identifier* package)
 		: m_package(package), m_module(NULL) {
 		m_package->addRef();
 	}
-	ImportStmt(ASTNode* package, ASTNode* module)
+	ImportStmt(Identifier* package, Identifier* module)
 		: m_package(package), m_module(module) {
 		m_package->addRef();
 		m_module->addRef();
@@ -925,19 +925,19 @@ public:
 	}
 
 	const CString* const getPackageName() throw() {
-		return m_package->getValue()->getName();
+		return m_package->getName();
 	}
 
 	const CString* const getModuleName() throw() {
-		return m_module ? m_module->getValue()->getName() : NULL;
+		return m_module ? m_module->getName() : NULL;
 	}
 
 	void accept(ASTVisitor& visitor) throw() {
 		visitor.visit(this);
 	}
 private:
-	ASTNode* m_package;
-	ASTNode* m_module;
+	Identifier* m_package;
+	Identifier* m_module;
 
 	DISALLOW_COPY_AND_ASSIGN(ImportStmt);
 };
@@ -1013,16 +1013,14 @@ public:
 		}
 	}
 
-	void addMethod(ASTNode* method) throw() {
-		MethodDeclaration* m = static_cast<MethodDeclaration*>(method);
-		m_methods_decl.push_back(m);
-		m->addRef();
+	void addMethod(MethodDeclaration* method) throw() {
+		m_methods_decl.push_back(method);
+		method->addRef();
 	}
 	
-	void addAttribute(ASTNode* attribute) throw() {
-		AttributeDeclaration* attr = static_cast<AttributeDeclaration*>(attribute);
-		m_attrib_decl.push_back(attr);
-		attr->addRef();
+	void addAttribute(AttributeDeclaration* attribute) throw() {
+		m_attrib_decl.push_back(attribute);
+		attribute->addRef();
 	}
 
 	std::list<MethodDeclaration*>& getMethodsDecl() throw() { 
@@ -1062,7 +1060,7 @@ public:
 		error_type m_type;
 	};
 
-	ClassDeclaration(ASTNode* name, ASTNode* body)
+	ClassDeclaration(Identifier* name, ClassStmtList* body)
 		: m_name(name), m_body(body) {
 		m_name->addRef();
 		m_body->addRef();	
@@ -1074,14 +1072,13 @@ public:
 	}
 	
 	bool check(DeclarationError& error) {
-		ClassStmtList* list = static_cast<ClassStmtList*>(m_body);
-		std::list<AttributeDeclaration*>& attribs = list->getAttribsDecl();
+		std::list<AttributeDeclaration*>& attribs = m_body->getAttribsDecl();
 		std::list<AttributeDeclaration*>::const_iterator it;
 
 		std::set<std::string> s;
 
 		for (it = attribs.begin(); it != attribs.end(); ++it) {
-			const std::string& str = (*it)->getVariable()->getValue()->getName()->str();
+			const std::string& str = (*it)->getVariable()->getName()->str();
 			
 			if (s.find(str) == s.end()) {
 				s.insert(str);
@@ -1096,7 +1093,7 @@ public:
 		
 		s.clear();
 		
-		std::list<MethodDeclaration*>& methods = list->getMethodsDecl();
+		std::list<MethodDeclaration*>& methods = m_body->getMethodsDecl();
 		std::list<MethodDeclaration*>::const_iterator it2;
 		
 		for (it2 = methods.begin(); it2 != methods.end(); ++it2) {
@@ -1121,12 +1118,12 @@ public:
 	}
 	
 	const CString* getClassName() const {
-		return m_name->getValue()->getName();
+		return m_name->getName();
 	}
 	
 private:
-	ASTNode* m_name;
-	ASTNode* m_body;
+	Identifier*    m_name;
+	ClassStmtList* m_body;
 	DISALLOW_COPY_AND_ASSIGN(ClassDeclaration);
 };
 

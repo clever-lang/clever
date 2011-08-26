@@ -121,11 +121,11 @@ AST_VISITOR(CodeGenVisitor, BinaryExpr) {
  * Generates the variable declaration opcode
  */
 AST_VISITOR(CodeGenVisitor, VariableDecl) {
-	ASTNode* var_type = expr->getType();
-	ASTNode* var_expr = expr->getVariable();
-	ASTNode* rhs_expr = expr->getInitialValue();
-	Value* variable = var_expr->getValue();
-	const Type* type = g_symtable.getType(var_type->getValue()->getName());
+	Identifier* var_type = expr->getType();
+	Identifier* var_expr = expr->getVariable();
+	ASTNode* rhs_expr    = expr->getInitialValue();
+	const Type* type     = g_symtable.getType(var_type->getName());
+	Value* variable      = var_expr->getValue();
 	
 	/* Check if the type wasn't declarated */
 	if (type == NULL) {
@@ -510,7 +510,7 @@ AST_VISITOR(CodeGenVisitor, FunctionCall) {
 	const CString* const name = expr->getFuncName();
 	Value* fvalue = g_symtable.getValue(name);
 	const Function* func;
-	ASTNode* args = expr->getArgs();
+	ArgumentList* args = expr->getArgs();
 	Value* arg_values = NULL;
 	int num_args = args ? args->getNodes().size() : 0;
 
@@ -527,7 +527,7 @@ AST_VISITOR(CodeGenVisitor, FunctionCall) {
 	if (args) {
 		arg_values = new Value;
 		arg_values->setType(Value::VECTOR);
-		arg_values->setVector(functionArgs(static_cast<ArgumentList*>(args)));
+		arg_values->setVector(functionArgs(args));
 
 		if (func->isUserDefined()) {
 			Value* vars = const_cast<Function*>(func)->getVars();
@@ -635,7 +635,7 @@ AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
 	const CString* name = expr->getName();
 	CallableValue* func = new CallableValue(name);
 	Function* user_func = new Function(name->str());
-	ast::ArgumentDeclList* args = static_cast<ast::ArgumentDeclList*>(expr->getArgs());
+	ast::ArgumentDeclList* args = expr->getArgs();
 	Value* return_type = expr->getReturnValue();
 	Opcode* jmp;
 
