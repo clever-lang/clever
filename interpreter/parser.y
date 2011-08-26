@@ -127,55 +127,79 @@ ast::ASTNode* nodes = new ast::BlockNode;
 %left ELSE;
 %left UMINUS;
 
-%union{
-	clever::ast::ASTNode *ast_node;
-	clever::ast::Identifier *identifier;
-	clever::ast::ArgumentDeclList *arg_decl_list;
+%union {
+	ast::ASTNode* ast_node;
+	ast::Identifier* identifier;
+	ast::ArgumentDeclList* arg_decl_list;
+	ast::MethodCall* method_call;
+	ast::FunctionCall* func_call;
+	ast::IfExpr* if_expr;
+	ast::NumberLiteral* num_literal;
+	ast::StringLiteral* str_literal;
+	ast::ClassStmtList* class_stmt;
+	ast::ReturnStmt* return_stmt;
+	ast::TypeCreation* type_creation;
+	ast::VariableDecl* variable_decl;
+	ast::ClassDeclaration* class_decl;
+	ast::FuncDeclaration* func_decl;
+	ast::MethodDeclaration* method_decl;
+	ast::AttributeDeclaration* attr_decl;
+	ast::ForExpr* for_expr;
+	ast::WhileExpr* while_expr;
+	ast::ElseIfExpr* elseif_opt;
+	ast::BlockNode* block_stmt;
+	ast::BreakNode* break_stmt;
+	ast::ImportStmt* import_stmt;
+	ast::AssignExpr* assign_stmt;
+	ast::ArgumentList* arg_list;
+	ast::BinaryExpr* binary_expr;
+	ast::IntegralValue* integral_value;
 }
 
 %type <identifier> IDENT
-%type <ast_node> NUM_INTEGER
-%type <ast_node> NUM_DOUBLE
-%type <ast_node> STR
+%type <num_literal> NUM_INTEGER
+%type <num_literal> NUM_DOUBLE
+%type <str_literal> STR
+
+%type <identifier> TYPE
 
 /* TODO: PLEASE KILL THIS v */
-%type <identifier> TYPE /* should be IDENT, i guess */
 %type <ast_node> '{'
 %type <ast_node> '('
 /* TODO: PLEASE KILL THIS ^ */
 
 %type <ast_node> statement_list_non_empty
-%type <ast_node> block_stmt
+%type <block_stmt> block_stmt
 %type <ast_node> statements
-%type <ast_node> return_stmt
+%type <return_stmt> return_stmt
 %type <arg_decl_list> args_declaration_non_empty
 %type <arg_decl_list> args_declaration
-%type <ast_node> func_declaration
-%type <ast_node> class_declaration
-%type <ast_node> access_modifier
-%type <ast_node> class_stmt
-%type <ast_node> class_stmt_no_empty
-%type <ast_node> method_declaration
-%type <ast_node> attribute_declaration
-%type <ast_node> arg_list
-%type <ast_node> func_call
-%type <ast_node> chaining_method_call
-%type <ast_node> method_call
-%type <ast_node> variable_declaration_no_init
-%type <ast_node> variable_decl_or_empty
-%type <ast_node> variable_declaration
-%type <ast_node> assign_stmt
+%type <func_decl> func_declaration
+%type <class_decl> class_declaration
+%type <integral_value> access_modifier
+%type <class_stmt> class_stmt
+%type <class_stmt> class_stmt_no_empty
+%type <method_decl> method_declaration
+%type <attr_decl> attribute_declaration
+%type <arg_list> arg_list
+%type <func_call> func_call
+%type <method_call> chaining_method_call
+%type <method_call> method_call
+%type <variable_decl> variable_declaration_no_init
+%type <variable_decl> variable_decl_or_empty
+%type <variable_decl> variable_declaration
+%type <binary_expr> assign_stmt
 %type <ast_node> arguments
-%type <ast_node> type_creation
+%type <type_creation> type_creation
 %type <ast_node> expr
 %type <ast_node> expr_or_empty
-%type <ast_node> for_expr
-%type <ast_node> while_expr
-%type <ast_node> if_expr
-%type <ast_node> elseif_opt
-%type <ast_node> else_opt
-%type <ast_node> break_stmt
-%type <ast_node> import_stmt
+%type <for_expr> for_expr
+%type <while_expr> while_expr
+%type <if_expr> if_expr
+%type <elseif_opt> elseif_opt
+%type <block_stmt> else_opt
+%type <break_stmt> break_stmt
+%type <import_stmt> import_stmt
 
 %%
 
@@ -202,7 +226,7 @@ block_stmt:
 ;
 
 statements:
-		expr ';'	             { tree.top()->add($1); }
+		expr ';'	         { tree.top()->add($1); }
 	|	variable_declaration ';' { tree.top()->add($1); }
 	|	func_declaration         { tree.top()->add($1); }
 	|	if_expr                  { tree.top()->add($1); }
@@ -251,8 +275,8 @@ class_stmt:
 ;
 
 class_stmt_no_empty:
-		class_stmt attribute_declaration        { static_cast<ast::ClassStmtList*>($1)->addAttribute($2); $$ = $1; }
-	|	class_stmt method_declaration           { static_cast<ast::ClassStmtList*>($1)->addMethod($2); $$ = $1; }
+		class_stmt attribute_declaration        { $1->addAttribute($2); $$ = $1; }
+	|	class_stmt method_declaration           { $1->addMethod($2); $$ = $1; }
 ;
 
 method_declaration:
@@ -260,7 +284,7 @@ method_declaration:
 ;
 
 attribute_declaration:
-                access_modifier TYPE IDENT ';'	{ $$ = new ast::AttributeDeclaration($1, $2, $3); $$->setLocation(yyloc); }
+		access_modifier TYPE IDENT ';'	{ $$ = new ast::AttributeDeclaration($1, $2, $3); $$->setLocation(yyloc); }
 ;
 
 arg_list:
@@ -274,15 +298,15 @@ func_call:
 ;
 
 chaining_method_call: 
-		/* empty */                                     { $$ = $<ast_node>0; }
+		/* empty */                                     { $$ = $<method_call>0; }
 	|	chaining_method_call '.' IDENT '(' ')'          { $$ = new ast::MethodCall($1, $3); $$->setLocation(yylloc); }
 	|	chaining_method_call '.' IDENT '(' arg_list ')' { $$ = new ast::MethodCall($1, $3, $5); $$->setLocation(yylloc); }
 ;
 
 method_call:
-		IDENT '.' IDENT '(' ')'          { $<ast_node>$ = new ast::MethodCall($1, $3); $<ast_node>$->setLocation(yylloc); }
-			chaining_method_call         { $<ast_node>$ = $<ast_node>7; } 
-	|	IDENT '.' IDENT '(' arg_list ')' { $<ast_node>$ = new ast::MethodCall($1, $3, $5); $<ast_node>$->setLocation(yylloc); }
+		IDENT '.' IDENT '(' ')'          { $<method_call>$ = new ast::MethodCall($1, $3); $<method_call>$->setLocation(yylloc); }
+			chaining_method_call         { $$ = $7; } 
+	|	IDENT '.' IDENT '(' arg_list ')' { $<method_call>$ = new ast::MethodCall($1, $3, $5); $<method_call>$->setLocation(yylloc); }
 			chaining_method_call         { $$ = $8; } 
 ;
 
@@ -339,19 +363,19 @@ expr:
 	|	expr "and" expr       { $$ = new ast::LogicExpr(ast::AND, $1, $3);           $$->setLocation(yylloc); }
 	|	'-' expr %prec UMINUS { $$ = new ast::BinaryExpr(ast::MINUS, $2);            $$->setLocation(yylloc); }
 	|	'+' expr %prec UMINUS { $$ = new ast::BinaryExpr(ast::PLUS, $2);             $$->setLocation(yylloc); }
-	|	INCREMENT IDENT       { $$ = new ast::PreIncrement($2);                      $$->setLocation(yylloc); }
-	|	IDENT INCREMENT       { $$ = new ast::PosIncrement($1);                      $$->setLocation(yylloc); }
-	|	DECREMENT IDENT       { $$ = new ast::PreDecrement($2);                      $$->setLocation(yylloc); }
-	|	IDENT DECREMENT       { $$ = new ast::PosDecrement($1);                      $$->setLocation(yylloc); }
+	|	INCREMENT IDENT       { $$ = new ast::PreIncrement($2); $$->setLocation(yylloc); }
+	|	IDENT INCREMENT       { $$ = new ast::PosIncrement($1); $$->setLocation(yylloc); }
+	|	DECREMENT IDENT       { $$ = new ast::PreDecrement($2); $$->setLocation(yylloc); }
+	|	IDENT DECREMENT       { $$ = new ast::PosDecrement($1); $$->setLocation(yylloc); }
 	|	'!' expr              { $$ = $2; }
 	|	'~' expr              { $$ = $2; }
 	|	'(' expr ')'          { $$ = $2; }
-	|	func_call
-	|	method_call
-	|	NUM_INTEGER
-	|	NUM_DOUBLE
-	|	IDENT
-	|	STR
+	|	func_call   { $$ = $<ast_node>1; }
+	|	method_call { $$ = $<ast_node>1; }
+	|	NUM_INTEGER { $$ = $<ast_node>1; }
+	|	NUM_DOUBLE  { $$ = $<ast_node>1; }
+	|	IDENT       { $$ = $<ast_node>1; }
+	|	STR         { $$ = $<ast_node>1; }
 ;
 
 variable_decl_or_empty:
@@ -375,13 +399,13 @@ while_expr:
 ;
 
 if_expr:
-		IF '(' expr ')' block_stmt { $2 = new ast::IfExpr($3, $5); $<ast_node>$ = $2; $<ast_node>$->setLocation(yylloc); }
-		elseif_opt else_opt        { static_cast<ast::IfExpr*>($2)->setElse($8); $$ = $2; $$->setLocation(yylloc); }
+		IF '(' expr ')' block_stmt { $2 = new ast::IfExpr($3, $5); $<if_expr>$ = $<if_expr>2; $<if_expr>$->setLocation(yylloc); }
+		elseif_opt else_opt        { $<if_expr>2->setElse($8); $$ = $<if_expr>2; $$->setLocation(yylloc); }
 ;
 
 elseif_opt:
-		/* empty */
-	|	elseif_opt ELSEIF '(' expr ')' block_stmt { $<ast_node>0->add(new ast::ElseIfExpr($4, $6)); $$->setLocation(yylloc); }
+		/* empty */ { $$ = NULL; }
+	|	elseif_opt ELSEIF '(' expr ')' block_stmt { $<if_expr>0->add(new ast::ElseIfExpr($4, $6)); $$->setLocation(yylloc); }
 ;
 
 else_opt:

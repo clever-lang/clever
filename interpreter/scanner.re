@@ -226,7 +226,7 @@ next_token:
 			}
 		}
 
-		yylval->ast_node = new ast::StringLiteral(CSTRING(strtext));
+		yylval->str_literal = new ast::StringLiteral(CSTRING(strtext));
 		RET(token::STR);
 	}
 
@@ -237,7 +237,7 @@ next_token:
 		newval->setType(Value::INTEGER);
 		newval->setInteger(n);
 
-		yylval->ast_node = new ast::NumberLiteral(newval);
+		yylval->num_literal = new ast::NumberLiteral(newval);
 
 		RET(token::NUM_INTEGER);
 	}
@@ -251,7 +251,7 @@ next_token:
 		newval->setType(Value::INTEGER);
 		newval->setInteger(n);
 
-		yylval->ast_node = new ast::NumberLiteral(newval);
+		yylval->num_literal = new ast::NumberLiteral(newval);
 
 		RET(token::NUM_INTEGER);
 	}
@@ -265,7 +265,7 @@ next_token:
 		newval->setType(Value::INTEGER);
 		newval->setInteger(n);
 
-		yylval->ast_node = new ast::NumberLiteral(newval);
+		yylval->num_literal = new ast::NumberLiteral(newval);
 
 		RET(token::NUM_INTEGER);
 	}
@@ -279,7 +279,7 @@ next_token:
 		newval->setType(Value::DOUBLE);
 		newval->setDouble(n);
 
-		yylval->ast_node = new ast::NumberLiteral(newval);
+		yylval->num_literal = new ast::NumberLiteral(newval);
 
 		RET(token::NUM_DOUBLE);
 	}

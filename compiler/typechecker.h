@@ -33,7 +33,8 @@ namespace clever { namespace ast {
 	
 class TypeChecker : public ASTVisitor {
 public:
-	TypeChecker() { }
+	TypeChecker()
+		: m_interactive(false) { }
 	~TypeChecker() { }
 	
 	void init() throw() { }
@@ -41,6 +42,21 @@ public:
 	void shutdown() throw() { }
 	
 	AST_VISITOR_DECLARATION(AST_VISITOR_DECL);
+	
+	/**
+	 * Set the interactive mode
+	 */
+	void setInteractive() throw() { m_interactive = true; }
+
+	/**
+	 * Returns the interactive mode state
+	 */
+	bool isInteractive() throw() { return m_interactive; }
+	
+	/**
+	 * Builds the function arguments vector
+	 */
+	ValueVector* functionArgs(ArgumentList*) throw();
 	
 	/**
 	 * Checks if the supplied value pointers are compatibles
@@ -57,6 +73,8 @@ public:
 	static void checkFunctionArgs(const Function*, int, const location&) throw();
 	
 	static void checkFunctionReturn(const Function*, const Value*, const Type*, const location&) throw();
+private:
+	bool m_interactive;
 };
 
 }} // clever::ast

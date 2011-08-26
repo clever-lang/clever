@@ -29,30 +29,7 @@
 
 namespace clever { namespace ast {
 
-/**
- * Creates a vector with the current value from a Value* pointers
- */
-ValueVector* CodeGenVisitor::functionArgs(ArgumentList* args) throw() {
-	ValueVector* values = new ValueVector();
-	const NodeList& nodes = args->getNodes();
-	NodeList::const_iterator it = nodes.begin(), end = nodes.end();
 
-	values->reserve(nodes.size());
-
-	while (it != end) {
-		Value* value;
-
-		(*it)->accept(*this);
-
-		value = getValue(*it);
-		value->addRef();
-
-		values->push_back(value);
-		++it;
-	}
-
-	return values;
-}
 
 /**
  * Return the Value pointer related to value type
@@ -121,26 +98,10 @@ AST_VISITOR(CodeGenVisitor, BinaryExpr) {
  * Generates the variable declaration opcode
  */
 AST_VISITOR(CodeGenVisitor, VariableDecl) {
-	ASTNode* var_type = expr->getType();
 	ASTNode* var_expr = expr->getVariable();
 	ASTNode* rhs_expr = expr->getInitialValue();
 	Value* variable = var_expr->getValue();
-	const Type* type = g_symtable.getType(var_type->getValue()->getName());
 	
-	/* Check if the type wasn't declarated */
-	if (type == NULL) {
-		Compiler::errorf(expr->getLocation(), "`%S' does not name a type", 
-			var_type->getValue()->getName());
-	}
-	
-	if (g_symtable.getValue(variable->getName(), false) != NULL) {
-		Compiler::errorf(expr->getLocation(), 
-			"Already exists a variable named `%S' in the current scope!",
-			variable->getName());
-	}
-
-	variable->setTypePtr(type);
-
 	/* Check if the declaration contains initialization */
 	if (rhs_expr) {
 		Value* value = getValue(rhs_expr);
@@ -164,10 +125,8 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 
 		emit(OP_VAR_DECL, &VM::var_decl_handler, variable, value);
 	} else {
-		variable->addRef();
-		g_symtable.push(variable);
-
 		/* TODO: fix this */
+		/*
 		if (type == CLEVER_TYPE("Int")) {
 			variable->setType(Value::INTEGER);
 		}
@@ -180,11 +139,10 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 		else {
 			variable->setType(Value::USER);
 			variable->setDataValue(type->allocateValue());	
-		}
-
-		variable->initialize();
+		}*/
 
 		variable->addRef();
+		variable->initialize();
 
 		emit(OP_VAR_DECL, &VM::var_decl_handler, variable);
 	}
@@ -507,35 +465,18 @@ AST_VISITOR(CodeGenVisitor, BreakNode) {
  * Generates opcode for function call
  */
 AST_VISITOR(CodeGenVisitor, FunctionCall) {
-	const CString* const name = expr->getFuncName();
-	Value* fvalue = g_symtable.getValue(name);
+	CallableValue* fvalue = expr->getFuncValue();
 	const Function* func;
-	ASTNode* args = expr->getArgs();
-	Value* arg_values = NULL;
-	int num_args = args ? args->getNodes().size() : 0;
+	Value* arg_values = expr->getArgsValue();
 
-	if (fvalue == NULL) {
-		Compiler::errorf(expr->getLocation(), "Function `%S' does not exists!", name);
-	}
 	func = static_cast<CallableValue*>(fvalue)->getFunction();
 
-	/* Set the return type */
-	expr->getValue()->setTypePtr(func->getReturn());
+	if (arg_values && func->isUserDefined()) {
+		Value* vars = const_cast<Function*>(func)->getVars();
 
-	TypeChecker::checkFunctionArgs(func, num_args, expr->getLocation());
-
-	if (args) {
-		arg_values = new Value;
-		arg_values->setType(Value::VECTOR);
-		arg_values->setVector(functionArgs(static_cast<ArgumentList*>(args)));
-
-		if (func->isUserDefined()) {
-			Value* vars = const_cast<Function*>(func)->getVars();
-
-			vars->addRef();
-			emit(OP_RECV, &VM::arg_recv_handler, vars, arg_values);
-			arg_values = NULL;
-		}
+		vars->addRef();
+		emit(OP_RECV, &VM::arg_recv_handler, vars, arg_values);
+		arg_values = NULL;
 	}
 
 	fvalue->addRef();
@@ -566,7 +507,7 @@ AST_VISITOR(CodeGenVisitor, MethodCall) {
 	if (args) {
 		arg_values = new Value;
 		arg_values->setType(Value::VECTOR);
-		arg_values->setVector(functionArgs(static_cast<ArgumentList*>(args)));
+		//arg_values->setVector(functionArgs(static_cast<ArgumentList*>(args)));
 	}
 	
 	if (!checkArgs(method->getArgs(), arg_values ? arg_values->getVector() : NULL)) {
@@ -602,30 +543,7 @@ AST_VISITOR(CodeGenVisitor, AssignExpr) {
  * Import statement
  */
 AST_VISITOR(CodeGenVisitor, ImportStmt) {
-	const CString* const package = expr->getPackageName();
-	const CString* const module = expr->getModuleName();
 
-	if (module) {
-		/**
-		 * Importing an specific module
-		 * e.g. import std.io;
-		 */
-		if (isInteractive() && g_symtable.getScope().getLevel() == 1) {
-			Compiler::import(g_symtable.getScope(0), package, module);
-		} else {
-			Compiler::import(g_symtable.getScope(), package, module);
-		}
-	} else {
-		/**
-		 * Importing an entire package
-		 * e.g. import std;
-		 */
-		if (isInteractive() && g_symtable.getScope().getLevel() == 1) {
-			Compiler::import(g_symtable.getScope(0), package);
-		} else {
-			Compiler::import(g_symtable.getScope(), package);
-		}
-	}
 }
 
 /**
