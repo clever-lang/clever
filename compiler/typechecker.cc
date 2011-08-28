@@ -345,9 +345,7 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 	CallableValue* func = new CallableValue(name);
 	Function* user_func = new Function(name->str());
 	Identifier* return_type = expr->getReturnValue();
-	ast::ArgumentDeclList* args = expr->getArgs();
-	
-	user_func->setUserDefined();
+	ArgumentDeclList* args = expr->getArgs();
 	
 	/**
 	 * We can't have a function declaration without a block
@@ -355,14 +353,22 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 	if (!expr->hasBlock()) {
 		Compiler::error("Cannot declare a function without a block", expr->getLocation());
 	}
+	/**
+	 * Mark the function as user function
+	 */
+	user_func->setUserDefined();
 	
-	if (return_type) {		
-		func->setReturnType(g_symtable.getType(return_type->getName()));
-	}
 	func->addRef();
 	g_symtable.push(func);
 	
 	func->setHandler(user_func);
+		
+	/**
+	 * Set the return type
+	 */
+	if (return_type) {
+		user_func->setReturn(g_symtable.getType(return_type->getName()));
+	}
 	
 	expr->setValue(func);
 	

@@ -317,10 +317,6 @@ public:
 	bool isNearCall() const throw() { return m_call_type == NEAR; }
 	bool isFarCall() const throw() { return m_call_type == FAR; }
 	
-	void setReturnType(const Type* rtype) throw() { m_rtype = rtype; }
-	
-	const Type* getReturnType() throw() { return m_rtype; }
-	
 	/**
 	 * A callable value is not primitive
 	 */
@@ -356,7 +352,6 @@ private:
 
 	CallType m_call_type;
 	Value* m_context;
-	const Type* m_rtype;
 
 	DISALLOW_COPY_AND_ASSIGN(CallableValue);
 };

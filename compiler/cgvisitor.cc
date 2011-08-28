@@ -557,7 +557,6 @@ AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
 	jmp = emit(OP_JMP, &VM::jmp_handler);
 
 	user_func->setOffset(getOpNum());
-	user_func->setReturn(func->getReturnType());
 
 	m_funcs.push(user_func);
 
