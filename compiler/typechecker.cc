@@ -157,6 +157,23 @@ AST_VISITOR(TypeChecker, Identifier) {
 }
 
 AST_VISITOR(TypeChecker, BinaryExpr) {
+	Value* lhs = expr->getLhs()->getValue();
+	Value* rhs = expr->getRhs()->getValue();
+	const Type* type;
+	
+	if (!checkCompatibleTypes(lhs, rhs)) {
+		Compiler::error("Type mismatch!", expr->getLocation()); 	
+	}
+
+	type = checkExprType(lhs, rhs);
+
+	if (expr->isAssigned()) {
+		expr->setResult(lhs);
+		expr->getValue()->setTypePtr(type);
+		lhs->addRef();
+	} else {
+		expr->setResult(new Value(lhs->getTypePtr()));
+	}	
 }
 
 AST_VISITOR(TypeChecker, VariableDecl) {

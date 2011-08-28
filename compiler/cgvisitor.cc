@@ -52,6 +52,19 @@ Value* CodeGenVisitor::getValue(ASTNode* expr) throw() {
 	return value;
 }
 
+/**
+ * Creates a vector with the current value from a Value* pointers
+ */
+void CodeGenVisitor::functionArgs(ArgumentList* args) throw() {
+	const NodeList& nodes = args->getNodes();
+	NodeList::const_iterator it = nodes.begin(), end = nodes.end();
+
+	while (it != end) {
+		(*it)->accept(*this);
+		++it;
+	}
+}
+
 AST_VISITOR(CodeGenVisitor, Identifier) {
 }
 
@@ -59,26 +72,12 @@ AST_VISITOR(CodeGenVisitor, Identifier) {
  * Generates opcode for binary expression
  */
 AST_VISITOR(CodeGenVisitor, BinaryExpr) {
-	Value* lhs = getValue(expr->getLhs());
-	Value* rhs = getValue(expr->getRhs());
-	const Type* type;
-	
-	if (!TypeChecker::checkCompatibleTypes(lhs, rhs)) {
-		Compiler::error("Type mismatch!", expr->getLocation()); 	
-	}
-	
-	type = TypeChecker::checkExprType(lhs, rhs);
-
-	if (expr->isAssigned()) {
-		expr->setResult(lhs);
-		lhs->addRef();
-	} else {
-		expr->setResult(new Value(lhs->getTypePtr()));
-	}
+	Value* lhs = expr->getLhs()->getValue();
+	Value* rhs = expr->getRhs()->getValue();
 
 	lhs->addRef();
 	rhs->addRef();
-
+	
 	switch (expr->getOp()) {
 		case PLUS:  emit(OP_PLUS,   &VM::plus_handler,   lhs, rhs, expr->getValue()); break;
 		case DIV:   emit(OP_DIV,    &VM::div_handler,    lhs, rhs, expr->getValue()); break;
@@ -89,8 +88,6 @@ AST_VISITOR(CodeGenVisitor, BinaryExpr) {
 		case AND:   emit(OP_BW_AND, &VM::bw_and_handler, lhs, rhs, expr->getValue()); break;
 		case MOD:   emit(OP_MOD,    &VM::mod_handler,    lhs, rhs, expr->getValue()); break;
 	}
-	
-	expr->getValue()->setTypePtr(type);
 }
 
 
@@ -471,12 +468,16 @@ AST_VISITOR(CodeGenVisitor, FunctionCall) {
 
 	func = static_cast<CallableValue*>(fvalue)->getFunction();
 
-	if (arg_values && func->isUserDefined()) {
-		Value* vars = const_cast<Function*>(func)->getVars();
+	if (arg_values) {
+		functionArgs(expr->getArgs());
+		
+		if (func->isUserDefined()) {
+			Value* vars = const_cast<Function*>(func)->getVars();
 
-		vars->addRef();
-		emit(OP_RECV, &VM::arg_recv_handler, vars, arg_values);
-		arg_values = NULL;
+			vars->addRef();
+			emit(OP_RECV, &VM::arg_recv_handler, vars, arg_values);
+			arg_values = NULL;
+		}
 	}
 
 	fvalue->addRef();

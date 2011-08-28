@@ -96,6 +96,8 @@ private:
 
 		return opcode;
 	}
+	
+	void functionArgs(ArgumentList*) throw();
 
 	/**
 	 * Returns the opcode number
