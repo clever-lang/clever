@@ -463,18 +463,17 @@ AST_VISITOR(CodeGenVisitor, BreakNode) {
  */
 AST_VISITOR(CodeGenVisitor, FunctionCall) {
 	CallableValue* fvalue = expr->getFuncValue();
-	const Function* func;
+	Function* func;
 	Value* arg_values = expr->getArgsValue();
 
-	func = static_cast<CallableValue*>(fvalue)->getFunction();
+	func = fvalue->getFunction();
 
 	if (arg_values) {
 		functionArgs(expr->getArgs());
 		
 		if (func->isUserDefined()) {
-			Value* vars = const_cast<Function*>(func)->getVars();
+			Value* vars = func->getVars();
 
-			vars->addRef();
 			emit(OP_RECV, &VM::arg_recv_handler, vars, arg_values);
 			arg_values = NULL;
 		}
@@ -551,74 +550,20 @@ AST_VISITOR(CodeGenVisitor, ImportStmt) {
  * Function declaration
  */
 AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
-	const CString* name = expr->getName();
-	CallableValue* func = new CallableValue(name);
-	Function* user_func = new Function(name->str());
-	ast::ArgumentDeclList* args = expr->getArgs();
-	Value* return_type = expr->getReturnValue();
+	CallableValue* func = expr->getFunc();
+	Function* user_func = func->getFunction();
 	Opcode* jmp;
 
 	jmp = emit(OP_JMP, &VM::jmp_handler);
 
 	user_func->setOffset(getOpNum());
-
-	if (return_type) {
-		user_func->setReturn(g_symtable.getType(return_type->getName()));
-	}
-
-	func->setHandler(user_func);
-
-	g_symtable.push(func);
-
-	/* we can't have a function declaration without a block. */
-	if (!expr->hasBlock()) {
-		Compiler::error("Cannot declare a function without a block", expr->getLocation());
-	}
-
-	if (args) {
-		ArgumentDecls& arg_nodes = args->getArgs();
-		ArgumentDecls::iterator it = arg_nodes.begin(), end = arg_nodes.end();
-		Value* vars = new Value;
-		ValueVector* vec = new ValueVector;
-
-		vars->setType(Value::VECTOR);
-		vars->setReference(0);
-
-		g_symtable.beginScope();
-
-		while (it != end) {
-			Value* var = new Value;
-
-			const Type* arg_type = g_symtable.getType(it->first->getValue()->getName());
-			const CString* arg_name = it->second->getValue()->getName();
-
-			var->setName(arg_name);
-			var->setTypePtr(arg_type);
-			var->setType(Value::INTEGER);
-			var->initialize();
-
-			g_symtable.push(var);
-			vec->push_back(var);
-			var->addRef();
-
-			user_func->addArg(*arg_name, arg_type);
-
-			++it;
-		}
-
-		vars->setVector(vec);
-		user_func->setVars(vars);
-	}
+	user_func->setReturn(func->getReturnType());
 
 	m_funcs.push(user_func);
 
 	expr->getBlock()->accept(*this);
 
 	m_funcs.pop();
-
-	if (args) {
-		g_symtable.endScope();
-	}
 
 	emit(OP_JMP, &VM::end_func_handler);
 

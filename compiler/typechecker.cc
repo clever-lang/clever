@@ -159,17 +159,14 @@ AST_VISITOR(TypeChecker, Identifier) {
 AST_VISITOR(TypeChecker, BinaryExpr) {
 	Value* lhs = expr->getLhs()->getValue();
 	Value* rhs = expr->getRhs()->getValue();
-	const Type* type;
 	
 	if (!checkCompatibleTypes(lhs, rhs)) {
 		Compiler::error("Type mismatch!", expr->getLocation()); 	
 	}
 
-	type = checkExprType(lhs, rhs);
-
 	if (expr->isAssigned()) {
 		expr->setResult(lhs);
-		expr->getValue()->setTypePtr(type);
+		expr->getValue()->setTypePtr(checkExprType(lhs, rhs));
 		lhs->addRef();
 	} else {
 		expr->setResult(new Value(lhs->getTypePtr()));
@@ -344,6 +341,71 @@ AST_VISITOR(TypeChecker, ImportStmt) {
 }
 
 AST_VISITOR(TypeChecker, FuncDeclaration) {
+	const CString* name = expr->getName();
+	CallableValue* func = new CallableValue(name);
+	Function* user_func = new Function(name->str());
+	Identifier* return_type = expr->getReturnValue();
+	ast::ArgumentDeclList* args = expr->getArgs();
+	
+	user_func->setUserDefined();
+	
+	/**
+	 * We can't have a function declaration without a block
+	 */
+	if (!expr->hasBlock()) {
+		Compiler::error("Cannot declare a function without a block", expr->getLocation());
+	}
+	
+	if (return_type) {		
+		func->setReturnType(g_symtable.getType(return_type->getName()));
+	}
+	func->addRef();
+	g_symtable.push(func);
+	
+	func->setHandler(user_func);
+	
+	expr->setValue(func);
+	
+	if (args) {
+		ArgumentDecls& arg_nodes = args->getArgs();
+		ArgumentDecls::iterator it = arg_nodes.begin(), end = arg_nodes.end();
+		Value* vars = new Value;
+		ValueVector* vec = new ValueVector;
+
+		vars->setType(Value::VECTOR);
+		vars->setReference(0);
+
+		g_symtable.beginScope();
+
+		while (it != end) {
+			Value* var = new Value;
+
+			const Type* arg_type = g_symtable.getType(it->first->getName());
+			const CString* arg_name = it->second->getName();
+
+			var->setName(arg_name);
+			var->setTypePtr(arg_type);
+			var->setType(Value::INTEGER);
+			var->initialize();
+
+			g_symtable.push(var);
+			vec->push_back(var);
+			var->addRef();
+
+			user_func->addArg(*arg_name, arg_type);
+
+			++it;
+		}
+
+		vars->setVector(vec);
+		user_func->setVars(vars);
+	}
+	
+	expr->getBlock()->accept(*this);
+	
+	if (args) {
+		g_symtable.endScope();
+	}
 }
 
 AST_VISITOR(TypeChecker, ReturnStmt) {

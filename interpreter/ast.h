@@ -749,7 +749,7 @@ private:
 class FuncDeclaration : public ASTNode {
 public:
 	FuncDeclaration(Identifier* name, Identifier* rtype, ArgumentDeclList* args, BlockNode* block)
-		: m_name(name), m_return(rtype), m_args(args), m_block(block) {
+		: m_name(name), m_return(rtype), m_args(args), m_block(block), m_value(NULL) {
 		m_name->addRef();
 		if (m_return) {
 			m_return->addRef();
@@ -773,17 +773,24 @@ public:
 		if (m_block) {
 			m_block->delRef();
 		}
+		if (m_value) {
+			m_value->delRef();
+		}
 	}
 
-	const CString* const getName() const throw() { return m_name->getValue()->getName(); }
+	const CString* const getName() const throw() { return m_name->getName(); }
 	ArgumentDeclList* getArgs() const throw() { return m_args; }
 
 	Identifier* getReturn() const throw() { return m_return; }
 
-	Value* getReturnValue() const throw() { return m_return ? m_return->getValue() : NULL; }
+	Identifier* getReturnValue() const throw() { return m_return ? m_return : NULL; }
 
 	BlockNode* getBlock() const throw() { return m_block; }
 	bool hasBlock() const throw() { return m_block != NULL; }
+	
+	void setValue(CallableValue* value) throw() { m_value = value; }
+	
+	CallableValue* getFunc(void) throw() { return m_value; }
 
 	void accept(ASTVisitor& visitor) throw() {
 		visitor.visit(this);
@@ -793,6 +800,7 @@ protected:
 	Identifier* m_return;
 	ArgumentDeclList* m_args;
 	BlockNode* m_block;
+	CallableValue* m_value;
 };
 
 class MethodDeclaration: public FuncDeclaration {

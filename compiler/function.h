@@ -100,6 +100,8 @@ public:
 
 	bool isUserDefined() const throw() { return m_kind == USER; }
 	bool isInternal() const throw() { return m_kind == INTERNAL; }
+	
+	void setUserDefined() throw() { m_kind = USER; }
 
 	void setOffset(unsigned int num) { m_info.offset = num; m_kind = USER; }
 	long getOffset() const throw() { return m_info.offset; }

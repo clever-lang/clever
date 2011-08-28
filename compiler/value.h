@@ -293,7 +293,7 @@ public:
 		}
 	}
 
-	void setHandler(const Function* const handler) throw() {
+	void setHandler(Function* handler) throw() {
 		m_call_type = handler->isInternal() ? FAR : NEAR;
 		m_handler.func = handler;
 	}
@@ -309,13 +309,17 @@ public:
 	const FunctionPtr getFunctionPtr() const throw() { return m_handler.func->getPtr(); }
 	const MethodPtr getMethodPtr() const throw() { return m_handler.method->getPtr(); }
 
-	const Function* getFunction() const throw() { return m_handler.func; }
+	Function* getFunction() const throw() { return m_handler.func; }
 	const Method* getMethod() const throw() { return m_handler.method; }
 
 	bool isCallable() const { return true; }
 
 	bool isNearCall() const throw() { return m_call_type == NEAR; }
 	bool isFarCall() const throw() { return m_call_type == FAR; }
+	
+	void setReturnType(const Type* rtype) throw() { m_rtype = rtype; }
+	
+	const Type* getReturnType() throw() { return m_rtype; }
 	
 	/**
 	 * A callable value is not primitive
@@ -346,12 +350,13 @@ public:
 	}
 private:
 	union {
-		const Function* func;
+		Function* func;
 		const Method* method;
 	} m_handler;
 
 	CallType m_call_type;
 	Value* m_context;
+	const Type* m_rtype;
 
 	DISALLOW_COPY_AND_ASSIGN(CallableValue);
 };

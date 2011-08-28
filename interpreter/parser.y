@@ -222,7 +222,7 @@ statement_list_non_empty:
 block_stmt:
 		'{' '}'                      { $$ = NULL; }
 	|	'{'                          { $1 = new ast::BlockNode(); tree.push($1); }
-		statement_list_non_empty '}' { tree.pop(); }
+		statement_list_non_empty '}' { tree.pop(); $<block_stmt>$ = $<block_stmt>1; }
 ;
 
 statements:
