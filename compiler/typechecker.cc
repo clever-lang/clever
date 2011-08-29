@@ -311,6 +311,15 @@ AST_VISITOR(TypeChecker, MethodCall) {
 }
 
 AST_VISITOR(TypeChecker, AssignExpr) {
+	Value* lhs = expr->getLhs()->getValue();
+	Value* rhs = expr->getRhs()->getValue();
+	
+	if (!checkCompatibleTypes(lhs, rhs)) {
+		Compiler::errorf(expr->getLocation(),
+			"Cannot convert `%s' to `%s' on assignment",
+			rhs->getTypePtr()->getName(),
+			lhs->getTypePtr()->getName());	 	
+	}
 }
 
 AST_VISITOR(TypeChecker, ImportStmt) {

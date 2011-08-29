@@ -523,15 +523,8 @@ AST_VISITOR(CodeGenVisitor, MethodCall) {
  * Generates opcode for variable assignment
  */
 AST_VISITOR(CodeGenVisitor, AssignExpr) {
-	Value* lhs = getValue(expr->getLhs());
-	Value* rhs = getValue(expr->getRhs());
-	
-	if (!TypeChecker::checkCompatibleTypes(rhs, lhs)) {
-		Compiler::errorf(expr->getLocation(),
-			"Cannot convert `%s' to `%s' on assignment",
-			rhs->getTypePtr()->getName(),
-			lhs->getTypePtr()->getName());	 	
-	}
+	Value* lhs = expr->getLhs()->getValue();
+	Value* rhs = expr->getRhs()->getValue();
 
 	lhs->addRef();
 	rhs->addRef();

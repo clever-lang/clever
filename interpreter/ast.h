@@ -936,6 +936,7 @@ public:
 	}
 
 	void accept(ASTVisitor& visitor) throw() {
+		getLhs()->accept(visitor);
 		getRhs()->accept(visitor);
 		visitor.visit(this);
 	}
