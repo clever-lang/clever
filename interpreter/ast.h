@@ -284,13 +284,17 @@ private:
 class NO_INIT_VTABLE UnaryExpr : public ASTNode {
 public:
 	UnaryExpr(Identifier* expr)
-		: m_expr(expr) {
+		: m_expr(expr), m_var(NULL) {
 		m_expr->addRef();
 		m_result = new Value();
 	}
 
 	~UnaryExpr() {
 		m_expr->delRef();
+		if (m_var) {
+			m_var->delRef();
+		}
+		m_result->delRef();
 	}
 	
 	void setValue(Value* value) throw() {
@@ -304,11 +308,16 @@ public:
 	Identifier* getExpr() const {
 		return m_expr;
 	}
+	
+	void setVar(Value* value) throw() { m_var = value; }
+	
+	Value* getVar() throw() { return m_var; }
 
 	virtual void accept(ASTVisitor& visitor) throw() { }
 private:
 	Identifier* m_expr;
 	Value* m_result;
+	Value* m_var;
 
 	DISALLOW_COPY_AND_ASSIGN(UnaryExpr);
 };
