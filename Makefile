@@ -1,22 +1,31 @@
-# Environment detection
-UNAME := $(shell uname)
+
+# Environment
+UNAME=$(shell uname)
+PREFIX?=/usr/local
 
 ifneq (,$(findstring MINGW,$(UNAME)))
 IS_MINGW=1
 endif
 
+# Build options
+CXXFLAGS?=-pipe
+
+ifeq ($(DEBUG),y)
+CXXFLAGS+=-ggdb3 -D_DEBUG -DCLEVER_DEBUG
+else
+CXXFLAGS+=-O2 -g -DNDEBUG
+endif
+
 # Programs
 CXX?=g++
-LD=g++
+LD=$(CXX)
 BISON?=bison
 RE2C?=re2c
 
 # Flags
 
-CXXFLAGS=-O2 -ggdb -Wall -ansi -I. -fno-rtti -pedantic -fno-exceptions
-CXXFLAGS3=-ggdb -O2
-# Linker
-LFLAGS=-O2 -fno-rtti -fno-exceptions
+CXXFLAGS+=-Wall -ansi -I. -fno-rtti -pedantic -fno-exceptions
+LFLAGS=$(CXXFLAGS)
 # Bison, re2c
 # Build dir
 BUILDDIR=build/
@@ -141,7 +150,7 @@ run-tests:
 	$(EXTRADIR)testrunner tests/
 
 test: $(EXTRADIR)testrunner.cc
-	$(CXX) $(CXXFLAGS3) -o $(EXTRADIR)testrunner $(EXTRADIR)testrunner.cc -lpcrecpp
+	$(CXX) $(CXXFLAGS) -o $(EXTRADIR)testrunner $(EXTRADIR)testrunner.cc -lpcrecpp
 
 clean-all: clean clean-test clean-tests
 
