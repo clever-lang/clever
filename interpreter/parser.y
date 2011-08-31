@@ -58,9 +58,6 @@ class Driver;
 
 namespace clever {
 
-std::stack<ast::ASTNode*> tree;
-ast::ASTNode* nodes = new ast::BlockNode;
-
 } // clever
 }
 
@@ -207,7 +204,7 @@ ast::ASTNode* nodes = new ast::BlockNode;
 %start top_statements;
 
 top_statements:
-		{ driver.initCompiler(nodes); tree.push(nodes); } statement_list { nodes->add($2); tree.pop(); }
+		{ driver.initCompiler(); } statement_list { driver.emitAST($2); }
 ;
 
 statement_list:
