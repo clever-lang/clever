@@ -213,6 +213,8 @@ AST_VISITOR(TypeChecker, PreIncrement) {
 		
 	expr->setVar(var);
 	var->addRef();
+	
+	expr->getValue()->setTypePtr(var->getTypePtr());
 }
 
 AST_VISITOR(TypeChecker, PosIncrement) {
@@ -221,6 +223,8 @@ AST_VISITOR(TypeChecker, PosIncrement) {
 		
 	expr->setVar(var);
 	var->addRef();
+	
+	expr->getValue()->setTypePtr(var->getTypePtr());
 }
 
 AST_VISITOR(TypeChecker, PreDecrement) {
@@ -229,6 +233,8 @@ AST_VISITOR(TypeChecker, PreDecrement) {
 		
 	expr->setVar(var);
 	var->addRef();
+	
+	expr->getValue()->setTypePtr(var->getTypePtr());
 }
 
 AST_VISITOR(TypeChecker, PosDecrement) {
@@ -237,6 +243,8 @@ AST_VISITOR(TypeChecker, PosDecrement) {
 		
 	expr->setVar(var);
 	var->addRef();
+	
+	expr->getValue()->setTypePtr(var->getTypePtr());
 }
 
 AST_VISITOR(TypeChecker, IfExpr) {

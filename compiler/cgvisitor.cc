@@ -154,7 +154,6 @@ AST_VISITOR(CodeGenVisitor, PreIncrement) {
 	value->addRef();
 
 	emit(OP_PRE_INC, &VM::pre_inc_handler, value, NULL, expr->getValue());
-	expr->getValue()->setTypePtr(value->getTypePtr());
 }
 
 /**
@@ -166,7 +165,6 @@ AST_VISITOR(CodeGenVisitor, PosIncrement) {
 	value->addRef();
 
 	emit(OP_POS_INC, &VM::pos_inc_handler, value, NULL, expr->getValue());
-	expr->getValue()->setTypePtr(value->getTypePtr());
 }
 
 /**
@@ -178,7 +176,6 @@ AST_VISITOR(CodeGenVisitor, PreDecrement) {
 	value->addRef();
 
 	emit(OP_PRE_DEC, &VM::pre_dec_handler, value, NULL, expr->getValue());
-	expr->getValue()->setTypePtr(value->getTypePtr());
 }
 
 /**
@@ -190,7 +187,6 @@ AST_VISITOR(CodeGenVisitor, PosDecrement) {
 	value->addRef();
 
 	emit(OP_POS_DEC, &VM::pos_dec_handler, value, NULL, expr->getValue());
-	expr->getValue()->setTypePtr(value->getTypePtr());
 }
 
 /**
