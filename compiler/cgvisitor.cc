@@ -489,6 +489,8 @@ AST_VISITOR(CodeGenVisitor, MethodCall) {
 	CallableValue* call = expr->getFuncValue();
 	Value* arg_values = expr->getArgsValue();
 	
+	call->addRef();
+	
 	emit(OP_MCALL, &VM::mcall_handler, call, arg_values, expr->getValue());
 }
 

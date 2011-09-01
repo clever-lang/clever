@@ -914,6 +914,9 @@ public:
 		if (m_args) {
 			m_args->delRef();
 		}
+		if (m_value) {
+			m_value->delRef();
+		}
 		if (m_args_value) {
 			m_args_value->delRef();
 		}

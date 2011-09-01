@@ -326,12 +326,11 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 
 AST_VISITOR(TypeChecker, MethodCall) {
 	Value* variable = expr->getVariable()->getValue();
-	//CallableValue* mvalue = new CallableValue(expr->getMethodName());
 	const CString* const name = expr->getMethodName();
 	CallableValue* call = new CallableValue(name);
 	const Method* method = variable->getTypePtr()->getMethod(name);
 	ASTNode* args = expr->getArgs();
-	Value* arg_values;
+	Value* arg_values = NULL;
 	
 	if (!method) {
 		Compiler::errorf(expr->getLocation(), "Method `%s::%S' not found!",
