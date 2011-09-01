@@ -61,9 +61,12 @@ public:
 	virtual ~Driver() { }
 
 	/* Initializes the compiler with AST nodes */
-	void initCompiler(ast::ASTNode* nodes) throw() {
+	void initCompiler() throw() {
 		m_compiler.init();
-		m_compiler.setAST(nodes);
+	}
+
+	void emitAST(ast::ASTNode *tree) throw() {
+		m_compiler.setAST(tree);
 	}
 
 	/* Returns the parsed file */

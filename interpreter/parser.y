@@ -58,9 +58,6 @@ class Driver;
 
 namespace clever {
 
-std::stack<ast::ASTNode*> tree;
-ast::ASTNode* nodes = new ast::BlockNode;
-
 } // clever
 }
 
@@ -169,6 +166,7 @@ ast::ASTNode* nodes = new ast::BlockNode;
 /* TODO: PLEASE KILL THIS ^ */
 
 %type <ast_node> statement_list_non_empty
+%type <ast_node> statement_list
 %type <block_stmt> block_stmt
 %type <ast_node> statements
 %type <return_stmt> return_stmt
@@ -206,38 +204,36 @@ ast::ASTNode* nodes = new ast::BlockNode;
 %start top_statements;
 
 top_statements:
-		{ driver.initCompiler(nodes); tree.push(nodes); } statement_list { tree.pop(); }
-;
+		{ driver.initCompiler(); } statement_list { driver.emitAST($2); }
 
 statement_list:
-		/* empty */
-	|	statement_list  statements
+		/* empty */               { $<ast_node>$ = new ast::BlockNode(); }
+	|	statement_list_non_empty  { $$ = $<ast_node>1; }
 ;
 
 statement_list_non_empty:
-		statements
-	|	statement_list_non_empty statements { $$ = $2; }
+		statements                          { $<ast_node>$ = new ast::BlockNode(); $$->add($1); }
+	|	statement_list_non_empty statements { $1->add($2); $$ = $1; }
 ;
 
 block_stmt:
-		'{' '}'                      { $$ = NULL; }
-	|	'{'                          { $1 = new ast::BlockNode(); tree.push($1); }
-		statement_list_non_empty '}' { tree.pop(); $<block_stmt>$ = $<block_stmt>1; }
+		'{' '}'                          { $$ = new ast::BlockNode(); }
+	|	'{' statement_list_non_empty '}' { $$ = $<block_stmt>2; }
 ;
 
 statements:
-		expr ';'	         { tree.top()->add($1); }
-	|	variable_declaration ';' { tree.top()->add($1); }
-	|	func_declaration         { tree.top()->add($1); }
-	|	if_expr                  { tree.top()->add($1); }
-	|	for_expr                 { tree.top()->add($1); }
-	|	while_expr               { tree.top()->add($1); }
-	|	block_stmt               { tree.top()->add($1); }
-	|	break_stmt ';'           { tree.top()->add($1); }
-	|	assign_stmt ';'          { tree.top()->add($1); }
-	|	import_stmt ';'          { tree.top()->add($1); }
-	|	return_stmt ';'          { tree.top()->add($1); }
-	|	class_declaration	     { tree.top()->add($1); }
+		expr ';'	         { $$ = $<ast_node>1; }
+	|	variable_declaration ';' { $$ = $<ast_node>1; }
+	|	func_declaration         { $$ = $<ast_node>1; }
+	|	if_expr                  { $$ = $<ast_node>1; }
+	|	for_expr                 { $$ = $<ast_node>1; }
+	|	while_expr               { $$ = $<ast_node>1; }
+	|	block_stmt               { $$ = $<ast_node>1; }
+	|	break_stmt ';'           { $$ = $<ast_node>1; }
+	|	assign_stmt ';'          { $$ = $<ast_node>1; }
+	|	import_stmt ';'          { $$ = $<ast_node>1; }
+	|	return_stmt ';'          { $$ = $<ast_node>1; }
+	|	class_declaration	 { $$ = $<ast_node>1; }
 ;
 
 return_stmt:
