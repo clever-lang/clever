@@ -97,7 +97,7 @@ clean-test:
 	rm -rf $(EXTRADIR)testrunner $(EXTRADIR)testrunner.exe
 
 $(BUILDDIR)%.d: %.cc
-	@echo "  DEP   $< "
+	#@echo "  DEP   $< "
 	$(CXX) -MM -MG $(CXXFLAGS) $< > $@.$$$$;\
 		sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@;\
 		rm -f $@.$$$$
