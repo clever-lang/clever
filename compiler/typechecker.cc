@@ -395,6 +395,9 @@ AST_VISITOR(TypeChecker, MethodCall) {
 		arg_values = new Value;
 		arg_values->setType(Value::VECTOR);
 		arg_values->setVector(functionArgs(static_cast<ArgumentList*>(args)));
+		
+		expr->setArgsValue(arg_values);
+		arg_values->addRef();
 	}
 	
 	if (!checkArgs(method->getArgs(), arg_values ? arg_values->getVector() : NULL)) {
