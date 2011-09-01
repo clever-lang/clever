@@ -28,6 +28,7 @@ RE2C?=re2c
 CXXFLAGS+=-Wall -ansi -I. -fno-rtti -pedantic -fno-exceptions
 LFLAGS=$(CXXFLAGS)
 BUILDDIR=build/
+EXT=
 
 VPATH=build compiler vm types interpreter extra test\
       modules/std modules/std/math modules/std/io modules/std/file
@@ -42,9 +43,9 @@ OBJECTS=$(BUILDDIR)parser.o $(BUILDDIR)scanner.o $(BUILDDIR)driver.o \
 
 # Windows related stuff
 ifdef IS_MINGW
+EXT=.exe
 OBJECTS+=$(BUILDDIR)win32.o
 CXXFLAGS+=-Iwin32/
-VPATH+=win32
 endif
 
 ifneq ($(DEBUG),y)
@@ -53,11 +54,11 @@ endif
 
 .PHONY: clean
 
-clever: $(BUILDDIR)scanner.cc $(OBJECTS)
+clever$(EXT): $(BUILDDIR)scanner.cc $(OBJECTS)
 	@echo "  LD    $@"
 	$(LD) $(LFLAGS) -o $@ $(OBJECTS)
 
-all: clever test
+all: clever$(EXT) test
 
 $(BUILDDIR)%.o: %.cc %.d
 	@echo "  CXX   $<"
