@@ -201,7 +201,7 @@ AST_VISITOR(CodeGenVisitor, IfExpr) {
 
 	expr->getCondition()->accept(*this);
 
-	value = getValue(expr->getCondition());
+	value = expr->getCondition()->getValue();
 	value->addRef();
 
 	jmp_if = emit(OP_JMPZ, &VM::jmpz_handler);
@@ -226,7 +226,7 @@ AST_VISITOR(CodeGenVisitor, IfExpr) {
 
 			elseif->getCondition()->accept(*this);
 
-			cond = getValue(elseif->getCondition());
+			cond = elseif->getCondition()->getValue();
 			cond->addRef();
 
 			jmp_elseif = emit(OP_JMPZ, &VM::jmpz_handler, cond);
@@ -396,23 +396,8 @@ AST_VISITOR(CodeGenVisitor, ForExpr) {
  */
 AST_VISITOR(CodeGenVisitor, LogicExpr) {
 	Opcode* opcode;
-	Value* lhs;
-	Value* rhs;
-
-	expr->getLhs()->accept(*this);
-	expr->getRhs()->accept(*this);
-
-	lhs = getValue(expr->getLhs());
-	rhs = getValue(expr->getRhs());
-	
-	if (!TypeChecker::checkCompatibleTypes(rhs, lhs)) {
-		Compiler::errorf(expr->getLocation(),
-			"Cannot convert `%s' to `%s' in logic expression",			
-			rhs->getTypePtr()->getName(),
-			lhs->getTypePtr()->getName());
-	}
-
-	expr->setResult(new Value(lhs->getTypePtr()));
+	Value* lhs = expr->getLhs()->getValue();
+	Value* rhs = expr->getRhs()->getValue();
 
 	lhs->addRef();
 	rhs->addRef();

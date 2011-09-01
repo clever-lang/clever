@@ -174,6 +174,20 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 	}	
 }
 
+AST_VISITOR(TypeChecker, LogicExpr) {
+	Value* lhs = expr->getLhs()->getValue();
+	Value* rhs = expr->getRhs()->getValue();
+	
+	if (!checkCompatibleTypes(lhs, rhs)) {
+		Compiler::errorf(expr->getLocation(),
+			"Cannot convert `%s' to `%s' in logic expression",			
+			rhs->getTypePtr()->getName(),
+			lhs->getTypePtr()->getName());
+	}
+	
+	expr->setResult(new Value(lhs->getTypePtr()));
+}
+
 AST_VISITOR(TypeChecker, VariableDecl) {
 	Identifier* variable = expr->getVariable();
 	Value* var = new Value();
@@ -249,6 +263,7 @@ AST_VISITOR(TypeChecker, PosDecrement) {
 }
 
 AST_VISITOR(TypeChecker, IfExpr) {
+	expr->getCondition()->accept(*this);
 }
 
 AST_VISITOR(TypeChecker, BlockNode) {
@@ -278,9 +293,6 @@ AST_VISITOR(TypeChecker, WhileExpr) {
 }
 
 AST_VISITOR(TypeChecker, ForExpr) {
-}
-
-AST_VISITOR(TypeChecker, LogicExpr) {
 }
 
 AST_VISITOR(TypeChecker, BreakNode) {

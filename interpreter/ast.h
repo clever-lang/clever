@@ -194,18 +194,18 @@ private:
 class BinaryExpr : public ASTNode {
 public:
 	BinaryExpr(int op, ASTNode* lhs, ASTNode* rhs)
-		: m_op(op), m_lhs(lhs), m_rhs(rhs), m_result(NULL), m_assign(false) {
+		: m_lhs(lhs), m_rhs(rhs), m_op(op), m_result(NULL), m_assign(false) {
 		m_lhs->addRef();
 		m_rhs->addRef();
 	}
 	BinaryExpr(int op, ASTNode* lhs, ASTNode* rhs, bool assign)
-		: m_op(op), m_lhs(lhs), m_rhs(rhs), m_result(NULL), m_assign(assign) {
+		: m_lhs(lhs), m_rhs(rhs), m_op(op), m_result(NULL), m_assign(assign) {
 		m_lhs->addRef();
 		m_rhs->addRef();
 	}
 
 	BinaryExpr(int op, ASTNode* rhs)
-		: m_op(op), m_lhs(NULL), m_rhs(rhs), m_result(NULL), m_assign(false) {
+		: m_lhs(NULL), m_rhs(rhs), m_op(op), m_result(NULL), m_assign(false) {
 		m_lhs = new NumberLiteral(int64_t(0));
 		m_lhs->addRef();
 		m_rhs->addRef();
@@ -242,10 +242,11 @@ public:
 
 		visitor.visit(this);
 	}
-private:
-	int m_op;
+protected:
 	ASTNode* m_lhs;
 	ASTNode* m_rhs;
+private:
+	int m_op;
 	Value* m_result;
 	bool m_assign;
 
@@ -698,6 +699,9 @@ public:
 	~LogicExpr() { }
 
 	void accept(ASTVisitor& visitor) throw() {
+		m_lhs->accept(visitor);
+		m_rhs->accept(visitor);
+
 		visitor.visit(this);
 	}
 private:
