@@ -205,7 +205,6 @@ namespace clever {
 
 top_statements:
 		{ driver.initCompiler(); } statement_list { driver.emitAST($2); }
-;
 
 statement_list:
 		/* empty */               { $<ast_node>$ = new ast::BlockNode(); }
