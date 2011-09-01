@@ -271,7 +271,7 @@ AST_VISITOR(CodeGenVisitor, IfExpr) {
  * Call the accept method of each block node
  */
 AST_VISITOR(CodeGenVisitor, BlockNode) {
-	NodeList& nodes = expr->getNodes();
+	const NodeList& nodes = expr->getNodes();
 	NodeList::const_iterator it = nodes.begin(), end = nodes.end();
 
 	/**
@@ -483,34 +483,11 @@ AST_VISITOR(CodeGenVisitor, FunctionCall) {
  * Generates opcode for method call
  */
 AST_VISITOR(CodeGenVisitor, MethodCall) {
-	Value* variable = getValue(expr->getVariable());
-	CallableValue* call = new CallableValue(expr->getMethodName());
-	const Method* method = variable->getTypePtr()->getMethod(call->getName());
-	ASTNode* args = expr->getArgs();
-	
-	if (!method) {
-		Compiler::errorf(expr->getLocation(), "Method `%s::%S' not found!",
-			variable->getTypePtr()->getName(), call->getName());
-	}
-
-	call->setTypePtr(variable->getTypePtr());
-	call->setHandler(method);
-	call->setContext(variable);
-	
-	expr->getValue()->setTypePtr(method->getReturn());
-
-	Value* arg_values = NULL;
-	if (args) {
-		arg_values = new Value;
-		arg_values->setType(Value::VECTOR);
-		//arg_values->setVector(functionArgs(static_cast<ArgumentList*>(args)));
-	}
-	
-	if (!checkArgs(method->getArgs(), arg_values ? arg_values->getVector() : NULL)) {
-		Compiler::errorf(expr->getLocation(), "No matching call for %s::%S%s", 
-			variable->getTypePtr()->getName(), call->getName(), 
-			argsError(method->getArgs(), arg_values ? arg_values->getVector() : NULL).c_str());
-	}
+	//Value* variable = expr->getVariable()->getValue();
+	//CallableValue* call = new CallableValue(expr->getMethodName());
+	//const Method* method = variable->getTypePtr()->getMethod(call->getName());
+	CallableValue* call = expr->getFuncValue();
+	Value* arg_values = expr->getArgsValue();
 	
 	emit(OP_MCALL, &VM::mcall_handler, call, arg_values, expr->getValue());
 }

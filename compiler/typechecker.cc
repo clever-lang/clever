@@ -25,6 +25,7 @@
  
 #include "compiler/compiler.h"
 #include "compiler/typechecker.h"
+#include "types/typeutils.h"
 
 namespace clever { namespace ast {
 
@@ -324,6 +325,38 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 }
 
 AST_VISITOR(TypeChecker, MethodCall) {
+	Value* variable = expr->getVariable()->getValue();
+	//CallableValue* mvalue = new CallableValue(expr->getMethodName());
+	const CString* const name = expr->getMethodName();
+	CallableValue* call = new CallableValue(name);
+	const Method* method = variable->getTypePtr()->getMethod(name);
+	ASTNode* args = expr->getArgs();
+	Value* arg_values;
+	
+	if (!method) {
+		Compiler::errorf(expr->getLocation(), "Method `%s::%S' not found!",
+			variable->getTypePtr()->getName(), name);
+	}
+	
+	if (args) {
+		arg_values = new Value;
+		arg_values->setType(Value::VECTOR);
+		arg_values->setVector(functionArgs(static_cast<ArgumentList*>(args)));
+	}
+	
+	if (!checkArgs(method->getArgs(), arg_values ? arg_values->getVector() : NULL)) {
+		Compiler::errorf(expr->getLocation(), "No matching call for %s::%S%s", 
+			variable->getTypePtr()->getName(), call->getName(), 
+			argsError(method->getArgs(), arg_values ? arg_values->getVector() : NULL).c_str());
+	}
+	
+	call->setTypePtr(variable->getTypePtr());
+	call->setHandler(method);
+	call->setContext(variable);
+	
+	expr->getValue()->setTypePtr(method->getReturn());
+	
+	expr->setFuncValue(static_cast<CallableValue*>(call));
 }
 
 AST_VISITOR(TypeChecker, AssignExpr) {

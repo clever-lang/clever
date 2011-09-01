@@ -894,14 +894,14 @@ private:
 class MethodCall : public ASTNode {
 public:
 	MethodCall(ASTNode* var, Identifier* method)
-		: m_var(var), m_method(method), m_args(NULL) {
+		: m_var(var), m_method(method), m_args(NULL), m_value(NULL), m_args_value(NULL) {
 		m_var->addRef();
 		m_method->addRef();
 		m_result = new CallableValue;
 	}
 
 	MethodCall(ASTNode* var, Identifier* method, ASTNode* args)
-		: m_var(var), m_method(method), m_args(args) {
+		: m_var(var), m_method(method), m_args(args), m_value(NULL), m_args_value(NULL) {
 		m_var->addRef();
 		m_method->addRef();
 		m_args->addRef();
@@ -914,23 +914,44 @@ public:
 		if (m_args) {
 			m_args->delRef();
 		}
+		if (m_args_value) {
+			m_args_value->delRef();
+		}
 	}
 
 	ASTNode* getVariable() const throw() { return m_var; }
-	const CString* const getMethodName() const throw() { return m_method->getValue()->getName(); }
+	const CString* const getMethodName() const throw() { return m_method->getName(); }
 	ASTNode* getArgs() const throw() { return m_args; }
 
 	Value* getValue() const throw() { return m_result; }
+	
+	void setFuncValue(CallableValue* value) throw() {
+		m_value = value;
+	}
+	
+	CallableValue* getFuncValue() throw() {
+		return m_value;
+	}
 
 	void accept(ASTVisitor& visitor) throw() {
 		m_var->accept(visitor);
 		visitor.visit(this);
+	}
+
+	void setArgsValue(Value* value) throw() {
+		m_args_value = value;
+	}
+	
+	Value* getArgsValue() throw() {
+		return m_args_value;
 	}
 private:
 	ASTNode* m_var;
 	Identifier* m_method;
 	ASTNode* m_args;
 	Value* m_result;
+	CallableValue* m_value;
+	Value* m_args_value;
 
 	DISALLOW_COPY_AND_ASSIGN(MethodCall);
 };
