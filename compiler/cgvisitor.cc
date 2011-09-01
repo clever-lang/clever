@@ -29,29 +29,6 @@
 
 namespace clever { namespace ast {
 
-
-
-/**
- * Return the Value pointer related to value type
- */
-Value* CodeGenVisitor::getValue(ASTNode* expr) throw() {
-	Value* value = expr->getValue();
-
-	if (value && value->hasName()) {
-		Value* var = g_symtable.getValue(value->getName());
-
-		/**
-		 * If the variable is found, we should use its pointer instead of
-		 * fetching on runtime
-		 */
-		if (EXPECTED(var != NULL)) {
-			return var;
-		}
-		Compiler::error("Inexistent variable!", expr->getLocation());
-	}
-	return value;
-}
-
 /**
  * Creates a vector with the current value from a Value* pointers
  */
@@ -101,7 +78,7 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 	
 	/* Check if the declaration contains initialization */
 	if (rhs_expr) {
-		Value* value = getValue(rhs_expr);
+		Value* value = rhs_expr->getValue();
 		
 		if (!TypeChecker::checkCompatibleTypes(variable, value)) {
 			Compiler::errorf(expr->getLocation(),
@@ -306,7 +283,7 @@ AST_VISITOR(CodeGenVisitor, WhileExpr) {
 
 	expr->getCondition()->accept(*this);
 
-	value = getValue(expr->getCondition());
+	value = expr->getCondition()->getValue();
 	value->addRef();
 
 	jmpz = emit(OP_JMPZ, &VM::jmpz_handler, value);
@@ -352,7 +329,7 @@ AST_VISITOR(CodeGenVisitor, ForExpr) {
 		if (expr->getCondition()) {
 			expr->getCondition()->accept(*this);
 			
-			value = getValue(expr->getCondition());
+			value = expr->getCondition()->getValue();
 			value->addRef();
 		}
 		else {

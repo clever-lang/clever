@@ -70,11 +70,6 @@ public:
 	 */
 	OpcodeList& getOpcodes() throw() { return m_opcodes; }
 
-	/**
-	 * Returns the Value pointer according with value type.
-	 */
-	Value* getValue(ASTNode*) throw();
-
 	AST_VISITOR_DECLARATION(AST_VISITOR_DECL);
 
 private:
