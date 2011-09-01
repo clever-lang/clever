@@ -260,6 +260,30 @@ AST_VISITOR(TypeChecker, PosDecrement) {
 
 AST_VISITOR(TypeChecker, IfExpr) {
 	expr->getCondition()->accept(*this);
+	
+	if (expr->hasBlock()) {
+		expr->getBlock()->accept(*this);
+	}
+	
+	if (expr->hasElseIf()) {
+		NodeList& elseif_nodes = expr->getNodes();
+		NodeList::const_iterator it = elseif_nodes.begin(), end = elseif_nodes.end();
+
+		while (it != end) {
+			ElseIfExpr* elseif = static_cast<ElseIfExpr*>(*it);
+
+			elseif->getCondition()->accept(*this);
+
+			if (elseif->hasBlock()) {
+				elseif->getBlock()->accept(*this);
+			}
+			++it;
+		}
+	}
+	
+	if (expr->hasElseBlock()) {
+		expr->getElse()->accept(*this);
+	}
 }
 
 AST_VISITOR(TypeChecker, BlockNode) {
