@@ -310,9 +310,31 @@ AST_VISITOR(TypeChecker, BlockNode) {
 }
 
 AST_VISITOR(TypeChecker, WhileExpr) {
+	expr->getCondition()->accept(*this);
+	
+	if (expr->hasBlock()) {
+		expr->getBlock()->accept(*this);
+	}
 }
 
 AST_VISITOR(TypeChecker, ForExpr) {
+	if (!expr->isIteratorMode()) {	
+		if (expr->getVarDecl()) {
+			expr->getVarDecl()->accept(*this);
+		}
+		
+		if (expr->getCondition()) {
+			expr->getCondition()->accept(*this);
+		}
+		
+		if (expr->hasBlock()) {
+			expr->getBlock()->accept(*this);
+		}
+		
+		if (expr->getIncrement()) {
+			expr->getIncrement()->accept(*this);
+		}
+	}
 }
 
 AST_VISITOR(TypeChecker, BreakNode) {
