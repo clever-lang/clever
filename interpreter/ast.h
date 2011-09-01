@@ -450,6 +450,8 @@ public:
 	}
 
 	void accept(ASTVisitor& visitor) throw() {
+		getExpr()->accept(visitor);
+		
 		visitor.visit(this);
 	}
 private:
@@ -467,6 +469,8 @@ public:
 	}
 
 	void accept(ASTVisitor& visitor) throw() {
+		getExpr()->accept(visitor);
+
 		visitor.visit(this);
 	}
 private:
@@ -483,6 +487,8 @@ public:
 	}
 
 	void accept(ASTVisitor& visitor) throw() {
+		getExpr()->accept(visitor);
+
 		visitor.visit(this);
 	}
 private:
@@ -499,6 +505,8 @@ public:
 	}
 
 	void accept(ASTVisitor& visitor) throw() {
+		getExpr()->accept(visitor);
+
 		visitor.visit(this);
 	}
 private:

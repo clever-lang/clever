@@ -223,8 +223,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 }
 
 AST_VISITOR(TypeChecker, PreIncrement) {
-	Identifier* ident = expr->getExpr();
-	Value* var = g_symtable.getValue(ident->getName());
+	Value* var = expr->getExpr()->getValue();
 		
 	expr->setVar(var);
 	var->addRef();
@@ -233,8 +232,7 @@ AST_VISITOR(TypeChecker, PreIncrement) {
 }
 
 AST_VISITOR(TypeChecker, PosIncrement) {
-	Identifier* ident = expr->getExpr();
-	Value* var = g_symtable.getValue(ident->getName());
+	Value* var = expr->getExpr()->getValue();
 		
 	expr->setVar(var);
 	var->addRef();
@@ -243,8 +241,7 @@ AST_VISITOR(TypeChecker, PosIncrement) {
 }
 
 AST_VISITOR(TypeChecker, PreDecrement) {
-	Identifier* ident = expr->getExpr();
-	Value* var = g_symtable.getValue(ident->getName());
+	Value* var = expr->getExpr()->getValue();
 		
 	expr->setVar(var);
 	var->addRef();
@@ -253,8 +250,7 @@ AST_VISITOR(TypeChecker, PreDecrement) {
 }
 
 AST_VISITOR(TypeChecker, PosDecrement) {
-	Identifier* ident = expr->getExpr();
-	Value* var = g_symtable.getValue(ident->getName());
+	Value* var = expr->getExpr()->getValue();
 		
 	expr->setVar(var);
 	var->addRef();
