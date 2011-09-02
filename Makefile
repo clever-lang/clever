@@ -25,7 +25,7 @@ BISON?=bison
 RE2C?=re2c
 
 # Flags
-CXXFLAGS+=-Wall -ansi -I. -fno-rtti -pedantic -fno-exceptions
+CXXFLAGS+=-Wall -ansi -I. -fno-rtti -fno-exceptions
 LFLAGS=$(CXXFLAGS)
 BUILDDIR=build/
 EXT=
@@ -38,7 +38,7 @@ OBJECTS=$(BUILDDIR)parser.o $(BUILDDIR)scanner.o $(BUILDDIR)driver.o \
 	$(BUILDDIR)int.o $(BUILDDIR)io.o $(BUILDDIR)math.o \
 	$(BUILDDIR)file.o $(BUILDDIR)filestream.o $(BUILDDIR)pkgmanager.o $(BUILDDIR)compiler.o \
 	$(BUILDDIR)typeutils.o $(BUILDDIR)vm.o $(BUILDDIR)cgvisitor.o $(BUILDDIR)opcode.o \
-	$(BUILDDIR)str.o $(BUILDDIR)main.o $(BUILDDIR)api.o $(BUILDDIR)typechecker.o \
+	$(BUILDDIR)str.o $(BUILDDIR)main.o $(BUILDDIR)clever.o $(BUILDDIR)typechecker.o \
 	$(BUILDDIR)symboltable.o
 
 # Windows related stuff
@@ -48,7 +48,7 @@ OBJECTS+=$(BUILDDIR)win32.o
 CXXFLAGS+=-Iwin32/
 endif
 
-ifneq ($(DEBUG),y)
+ifneq ($(VERBOSE),y)
 .SILENT:
 endif
 

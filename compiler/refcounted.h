@@ -26,7 +26,7 @@
 #ifndef CLEVER_REFCOUNTED_H
 #define CLEVER_REFCOUNTED_H
 
-#include "global.h"
+#include "compiler/clever.h"
 
 namespace clever {
 

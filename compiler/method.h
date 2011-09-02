@@ -28,7 +28,7 @@
 
 #include <string>
 #include <vector>
-#include "global.h"
+#include "compiler/clever.h"
 
 namespace clever {
 

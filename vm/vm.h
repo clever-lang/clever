@@ -28,7 +28,7 @@
 
 #include <vector>
 #include <stack>
-#include "compiler/global.h"
+#include "compiler/clever.h"
 
 /**
  * Opcode handler arguments

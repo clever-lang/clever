@@ -30,12 +30,12 @@
 #include <cstring>
 #include <sstream>
 #include <vector>
-#include "refcounted.h"
-#include "cstring.h"
-#include "global.h"
-#include "method.h"
-#include "function.h"
-#include "symboltable.h"
+#include "compiler/clever.h"
+#include "compiler/refcounted.h"
+#include "compiler/cstring.h"
+#include "compiler/method.h"
+#include "compiler/function.h"
+#include "compiler/symboltable.h"
 
 namespace clever {
 
