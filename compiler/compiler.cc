@@ -27,12 +27,12 @@
 #include <cstdlib>
 #include <cstdarg>
 #include <vector>
-#include "compiler.h"
+#include "compiler/clever.h"
+#include "compiler/compiler.h"
+#include "compiler/symboltable.h"
 #include "interpreter/ast.h"
 #include "types/nativetypes.h"
 #include "interpreter/astvisitor.h"
-#include "interpreter/api.h"
-#include "symboltable.h"
 
 
 namespace clever {

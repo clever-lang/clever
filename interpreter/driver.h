@@ -84,6 +84,9 @@ public:
 	/* Error handling */
 	void error(const clever::location&, const std::string&) const throw();
 	void error(const std::string&) const throw();
+
+	/* Tracing */
+	void setTraceParsing(bool trace) throw() { m_trace_parsing = trace; }
 protected:
 	/* Indicates if it's a file is being parsed */
 	bool m_is_file;

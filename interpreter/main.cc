@@ -24,6 +24,7 @@
  */
 
 #include <iostream>
+#include "compiler/clever.h"
 #include "interpreter/driver.h"
 #ifdef _WIN32
 #include "win32.h"
@@ -117,7 +118,7 @@ int main(int argc, char *argv[]) {
 			break;
 #ifdef CLEVER_DEBUG
 		} else if (argv[i] == std::string("-p")) {
-			clever.trace_parsing = true;
+			clever.setTraceParsing(true);
 #endif
 		} else {
 			std::cerr << "Unknown option '" << argv[i] << "'" << std::endl;

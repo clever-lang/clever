@@ -29,7 +29,7 @@
 #include <string>
 #include <iostream>
 #include <tr1/unordered_map>
-#include "global.h"
+#include "compiler/clever.h"
 
 /**
  * Returns the CString* pointer to a string

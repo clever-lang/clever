@@ -28,8 +28,8 @@
 
 #include <tr1/unordered_map>
 #include <deque>
-#include "global.h"
-#include "cstring.h"
+#include "compiler/clever.h"
+#include "compiler/cstring.h"
 
 #define CLEVER_TYPE(name)  ::clever::g_symtable.getType(CSTRING(name))
 #define CLEVER_VALUE(name) ::clever::g_symtable.getValue(CSTRING(name))

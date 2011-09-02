@@ -31,9 +31,9 @@
 #include <list>
 #include <map>
 #include <tr1/unordered_map>
-#include "global.h"
-#include "function.h"
-#include "method.h"
+#include "compiler/clever.h"
+#include "compiler/function.h"
+#include "compiler/method.h"
 
 namespace clever {
 
