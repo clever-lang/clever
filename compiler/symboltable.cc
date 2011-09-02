@@ -24,9 +24,5 @@ Scope::~Scope() {
 		}
 }
 
-void Scope::push(Value* value) throw() {
-		push(value->getName(), value);
-}
-
 }
 

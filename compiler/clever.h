@@ -107,7 +107,7 @@ namespace clever {
 void clever_assert_(const char* file, long line, const char* expr,
 		int hypothesis, const char* format, ...) throw();
 #else
-#define clever_assert
+#define clever_assert(Hypothesis, Format, ...) 
 #endif
 
 void clever_fatal(const char* format, ...) throw();

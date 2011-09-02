@@ -59,11 +59,17 @@ public:
 
 	Symbol(const CString* name, Value* value)
 		: m_name(name), m_type(VALUE) {
+		clever_assert(name != NULL,  "No name provided.");
+		clever_assert(value != NULL, "No value provided.");
+
 		m_data.value = value;
 	}
 
 	Symbol(const CString* name, const Type* type)
 		: m_name(name), m_type(TYPE) {
+		clever_assert(name != NULL, "No name provided.");
+		clever_assert(type != NULL, "No type provided.");
+
 		m_data.type = type;
 	}
 
@@ -100,16 +106,19 @@ public:
 	 * Pushes a new value
 	 */
 	void push(const CString* name, Value* value) throw() {
+		clever_assert(name != NULL,  "No name provided.");
+		clever_assert(value != NULL, "No value provided.");
+
 		insert(ScopeEntry(name, new Symbol(name, value)));
 	}
-
-	/* deprecated */
-	void push(Value* value);
 
 	/**
 	 * Pushes a new type
 	 */
 	void push(const CString* name, const Type* type) throw() {
+		clever_assert(name != NULL, "No name provided.");
+		clever_assert(type != NULL, "No type provided.");
+
 		insert(ScopeEntry(name, new Symbol(name, type)));
 	}
 
@@ -168,10 +177,6 @@ public:
 	 */
 	void push(const CString* name, Value* value) throw() {
 		getScope().push(name, value);
-	}
-
-	void push(Value *value) throw() {
-		getScope().push(value);
 	}
 
 	/**
@@ -247,9 +252,7 @@ public:
 	 * Returns the scope at the given level number.
 	 */
 	Scope& getScope(int level) throw() {
-		if (level < 0) {
-			// TODO: throw error.
-		}
+		clever_assert(level >= 0, "No scope available.");
 
 		return m_scope.at(level);
 	}

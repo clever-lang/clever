@@ -88,7 +88,7 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 		}
 
 		variable->addRef();
-		g_symtable.push(variable);
+		g_symtable.push(variable->getName(), variable);
 
 		if (value->isPrimitive()) {
 			variable->copy(value);
@@ -532,7 +532,7 @@ AST_VISITOR(CodeGenVisitor, ClassDeclaration) {
 	if (ok) {
 		//@TODO
 		
-		g_symtable.push(type);
+		g_symtable.push(type->getName(), type);
 	} else {
 		Compiler::errorf(error.getLocation(),
 			"Redefinition of %s `%S' in class `%S'",
