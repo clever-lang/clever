@@ -106,7 +106,7 @@ void TestRunner::run(void) {
 	for (it = files.begin(); it != files.end(); ++it) {
 		char result[300] = {0};
 		std::string title, source, expect, log_line, command;
-		unsigned int filesize;
+		unsigned int filesize = 0;
 
 		file_name = *it;
 

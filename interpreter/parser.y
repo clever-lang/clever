@@ -159,12 +159,6 @@ namespace clever {
 %type <str_literal> STR
 
 %type <identifier> TYPE
-
-/* TODO: PLEASE KILL THIS v */
-%type <ast_node> '{'
-%type <ast_node> '('
-/* TODO: PLEASE KILL THIS ^ */
-
 %type <ast_node> statement_list_non_empty
 %type <ast_node> statement_list
 %type <block_stmt> block_stmt
@@ -375,19 +369,19 @@ expr:
 ;
 
 variable_decl_or_empty:
-		/* empty */            { $$ = NULL; }
-		| variable_declaration { $$ = $1; }
+		/* empty */          { $$ = NULL; }
+	|	variable_declaration { $$ = $1; }
 ;
 
 expr_or_empty:
 		/* empty */ { $$ = NULL; }
-		| expr      { $$ = $1; }
+	|	expr        { $$ = $1; }
 ;
 
 for_expr:
-			FOR '(' variable_decl_or_empty ';' expr_or_empty ';' expr_or_empty ')' block_stmt { $$ = new ast::ForExpr($3, $5, $7, $9); $$->setLocation(yylloc); }
-		|	FOR '(' variable_decl_or_empty ';' expr_or_empty ';' assign_stmt')' block_stmt    { $$ = new ast::ForExpr($3, $5, $7, $9); $$->setLocation(yylloc); }
-//		|   FOR '(' variable_declaration_no_init IN  IDENT ')' block_stmt                     { $$ = new ast::ForExpr($3, $5, $7); $$->setLocation(yylloc); }
+		FOR '(' variable_decl_or_empty ';' expr_or_empty ';' expr_or_empty ')' block_stmt { $$ = new ast::ForExpr($3, $5, $7, $9); $$->setLocation(yylloc); }
+	|	FOR '(' variable_decl_or_empty ';' expr_or_empty ';' assign_stmt')' block_stmt    { $$ = new ast::ForExpr($3, $5, $7, $9); $$->setLocation(yylloc); }
+//	|   FOR '(' variable_declaration_no_init IN  IDENT ')' block_stmt                     { $$ = new ast::ForExpr($3, $5, $7); $$->setLocation(yylloc); }
 ;
 
 while_expr:
@@ -395,8 +389,8 @@ while_expr:
 ;
 
 if_expr:
-		IF '(' expr ')' block_stmt { $2 = new ast::IfExpr($3, $5); $<if_expr>$ = $<if_expr>2; $<if_expr>$->setLocation(yylloc); }
-		elseif_opt else_opt        { $<if_expr>2->setElse($8); $$ = $<if_expr>2; $$->setLocation(yylloc); }
+		IF '(' expr ')' block_stmt { $<if_expr>$ = new ast::IfExpr($3, $5); $<if_expr>$->setLocation(yylloc); }
+		elseif_opt else_opt        { $<if_expr>6->setElse($8); $$ = $<if_expr>6; $$->setLocation(yylloc); }
 ;
 
 elseif_opt:
