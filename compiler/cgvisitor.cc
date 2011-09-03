@@ -484,7 +484,8 @@ AST_VISITOR(CodeGenVisitor, ReturnStmt) {
 	 * Only for return inside function declaration
 	 */
 	if (func) {
-		TypeChecker::checkFunctionReturn(func, expr_value, func->getReturn(), expr->getLocation());
+		TypeChecker::checkFunctionReturn(func, expr_value, func->getReturn(),
+			expr->getLocation());
 	}
 
 	if (expr_value) {

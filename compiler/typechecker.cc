@@ -32,7 +32,8 @@ namespace clever { namespace ast {
 /**
  * Performs a type compatible checking
  */
-bool TypeChecker::checkCompatibleTypes(const Value* const lhs, const Value* const rhs) throw() {
+bool TypeChecker::checkCompatibleTypes(const Value* const lhs,
+		const Value* const rhs) throw() {
 	/**
 	 * Constants with different type cannot performs operation
 	 */
@@ -57,7 +58,8 @@ bool TypeChecker::checkCompatibleTypes(const Value* const lhs, const Value* cons
 /**
  * Returns the type resulting of a binary expression of two compatible types
  */
-const Type* TypeChecker::checkExprType(const Value* const lhs, const Value* const rhs) throw() {
+const Type* TypeChecker::checkExprType(const Value* const lhs,
+		const Value* const rhs) throw() {
 	if (lhs->isPrimitive() && rhs->isPrimitive()
 		&& !lhs->isString() && !rhs->isString()) {
 		
@@ -86,7 +88,8 @@ const Type* TypeChecker::checkExprType(const Value* const lhs, const Value* cons
 /**
  * Checks the function return type
  */
-void TypeChecker::checkFunctionReturn(const Function* func, const Value* value, const Type* rtype, const location& loc) throw() {
+void TypeChecker::checkFunctionReturn(const Function* func, const Value* value,
+		const Type* rtype, const location& loc) throw() {
 	/**
 	 * When the rtype is NULL, the return is expected to be Void
 	 * When value is NULL, the return statement is empty
@@ -108,12 +111,14 @@ void TypeChecker::checkFunctionReturn(const Function* func, const Value* value, 
 /**
  * Checks the number of arguments supplied to the function on call
  */
-void TypeChecker::checkFunctionArgs(const Function* func, int num_args, const location& loc) throw() {
+void TypeChecker::checkFunctionArgs(const Function* func, int num_args,
+		const location& loc) throw() {
 	int expected_args = func->getNumArgs();
 
 	if (expected_args != -1 && num_args != expected_args) {
 		Compiler::errorf(loc, "Function `%S' expects %l argument%s, %l supplied",
-			&func->getName(), expected_args, (expected_args > 1 ? "s" : ""), num_args);
+			&func->getName(), expected_args, (expected_args > 1 ? "s" : ""),
+			num_args);
 	}
 }
 
@@ -147,7 +152,8 @@ AST_VISITOR(TypeChecker, Identifier) {
 	Value* ident = g_symtable.getValue(expr->getName());
 	
 	if (ident == NULL) {
-		Compiler::errorf(expr->getLocation(), "Variable `%s' not found!", expr->getName());
+		Compiler::errorf(expr->getLocation(), "Variable `%s' not found!",
+			expr->getName());
 	}
 	
 	/**
@@ -364,7 +370,8 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 	int num_args = args ? args->getNodes().size() : 0;
 	
 	if (fvalue == NULL) {
-		Compiler::errorf(expr->getLocation(), "Function `%S' does not exists!", name);
+		Compiler::errorf(expr->getLocation(), "Function `%S' does not exists!",
+			name);
 	}
 	
 	func = static_cast<CallableValue*>(fvalue)->getFunction();
@@ -480,7 +487,8 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 	 * We can't have a function declaration without a block
 	 */
 	if (!expr->hasBlock()) {
-		Compiler::error("Cannot declare a function without a block", expr->getLocation());
+		Compiler::error("Cannot declare a function without a block",
+			expr->getLocation());
 	}
 	/**
 	 * Mark the function as user function
