@@ -63,12 +63,12 @@ public:
 	/**
 	 * Load an specific package
 	 */
-	void loadPackage(Scope&, const CString* const) throw();
+	void loadPackage(Scope*, const CString* const) throw();
 	/**
 	 * Load an specific package module
 	 */
-	void loadModule(Scope&, const CString* const, const CString* const) throw();
-	void loadModule(Scope&, Module* const) throw();
+	void loadModule(Scope*, const CString* const, const CString* const) throw();
+	void loadModule(Scope*, Module* const) throw();
 private:
 	PackageMap m_packages;
 

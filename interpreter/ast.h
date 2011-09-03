@@ -31,7 +31,7 @@
 #include <set>
 #include "compiler/value.h"
 #include "compiler/refcounted.h"
-#include "astvisitor.h"
+#include "interpreter/astvisitor.h"
 #include "build/location.hh"
 
 namespace clever {
@@ -427,16 +427,31 @@ private:
 
 class BlockNode : public ASTNode {
 public:
-	BlockNode() { }
+	BlockNode() : m_scope(NULL) { }
 
 	~BlockNode() {
 		clearNodes();
+
+		if (m_scope)
+			m_scope->delRef();
+	}
+
+	void setScope(Scope* scope) {
+		clever_assert(m_scope == NULL, "Block scope reassignment.");
+
+		m_scope = scope;
+		scope->addRef();
+	}
+
+	Scope* getScope() {
+		return m_scope;
 	}
 
 	void accept(ASTVisitor& visitor) throw() {
 		visitor.visit(this);
 	}
 private:
+	Scope* m_scope;
 	DISALLOW_COPY_AND_ASSIGN(BlockNode);
 };
 

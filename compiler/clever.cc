@@ -37,12 +37,17 @@ namespace clever {
 void clever_assert_(const char* file, long line, const char* expr,
 		int hypothesis, const char* format, ...) throw() {
 	va_list vl;
+	std::ostringstream out;
 
 	if (!hypothesis) {
 		va_start(vl, format);
 		printf("clever: assertion '%s' failed at %s line %l.\n\t", expr, file, line);
-		vprintfln(format, vl);
+
+		vsprintf(out, format, vl);
+
 		va_end(vl);
+
+		std::cerr << out.str() << std::endl;
 		std::abort();
 	}
 }

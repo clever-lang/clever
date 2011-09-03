@@ -297,7 +297,7 @@ AST_VISITOR(TypeChecker, BlockNode) {
 	/**
 	 * Create a new scope
 	 */
-	g_symtable.beginScope();
+	expr->setScope(g_symtable.beginScope());
 
 	/**
 	 * Iterates statements inside the block
@@ -440,7 +440,7 @@ AST_VISITOR(TypeChecker, ImportStmt) {
 		 * Importing an specific module
 		 * e.g. import std.io;
 		 */
-		if (isInteractive() && g_symtable.getScope().getLevel() == 1) {
+		if (isInteractive() && g_symtable.getScope()->getLevel() == 1) {
 			Compiler::import(g_symtable.getScope(0), package, module);
 		} else {
 			Compiler::import(g_symtable.getScope(), package, module);
@@ -450,7 +450,7 @@ AST_VISITOR(TypeChecker, ImportStmt) {
 		 * Importing an entire package
 		 * e.g. import std;
 		 */
-		if (isInteractive() && g_symtable.getScope().getLevel() == 1) {
+		if (isInteractive() && g_symtable.getScope()->getLevel() == 1) {
 			Compiler::import(g_symtable.getScope(0), package);
 		} else {
 			Compiler::import(g_symtable.getScope(), package);

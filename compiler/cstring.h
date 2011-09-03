@@ -69,6 +69,10 @@ public:
 		return *static_cast<const std::string*>(this);
 	}
 
+	const char* c_str() const throw() {
+		return static_cast<const std::string*>(this)->c_str();
+	}
+
 	bool operator==(const CString* cstring) throw() {
 		return hasSameId(cstring);
 	}
@@ -131,7 +135,7 @@ public:
 
 	const CString* intern(const std::string& needle) throw() {
 		std::tr1::hash<std::string> hash;
-		const CString* str;
+		const CString* str = NULL;
 
 		IdType id = hash(needle);
 		CStringTable::const_iterator it(find(id));

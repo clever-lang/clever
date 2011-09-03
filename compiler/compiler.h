@@ -80,13 +80,13 @@ public:
 	/**
 	 * Import a package
 	 */
-	static void import(Scope& scope, const CString* package) throw() {
+	static void import(Scope* scope, const CString* package) throw() {
 		s_pkgmanager.loadPackage(scope, package);
 	}
 	/**
 	 * Import a package module
 	 */
-	static void import(Scope& scope, const CString* package, const CString* module) throw() {
+	static void import(Scope* scope, const CString* package, const CString* module) throw() {
 		s_pkgmanager.loadModule(scope, package, module);
 	}
 

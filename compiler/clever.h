@@ -99,11 +99,14 @@ namespace clever {
 # define UNEXPECTED(cond) (cond)
 #endif
 
+
+/**
+ * Utility functions and macros.
+ */
+
 #ifdef CLEVER_DEBUG
-//#define clever_assert(Hypothesis, Format, ...) clever::clever_assert_(__FILE__, __LINE__,
-//	(#Hypothesis), (Hypothesis), Format, __VA_ARGS__)
-#define clever_assert(Hypothesis, Format, ...) clever::clever_assert_(__FILE__, __LINE__, \
-	#Hypothesis, (Hypothesis), Format __VA_ARGS__)
+#define clever_assert(Hypothesis, Format ...) \
+	clever::clever_assert_(__FILE__, __LINE__, #Hypothesis, (Hypothesis), Format)
 void clever_assert_(const char* file, long line, const char* expr,
 		int hypothesis, const char* format, ...) throw();
 #else

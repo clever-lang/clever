@@ -58,9 +58,9 @@ void Interpreter::shutdown() {
 void Driver::readFile() throw() {
 	std::string line;
 	std::fstream filep(m_file->c_str());
-
+	
 	if (!filep) {
-		std::cerr << "Couldn't open file " << m_file << std::endl;
+		std::cerr << "Couldn't open file " << m_file->str() << std::endl;
 		exit(1);
 	}
 

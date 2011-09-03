@@ -40,7 +40,7 @@ void PackageManager::init() throw() {
 /**
  * Load an entire package
  */
-void PackageManager::loadPackage(Scope& scope, const CString* const package) throw() {
+void PackageManager::loadPackage(Scope* scope, const CString* const package) throw() {
 	PackageMap::const_iterator it = m_packages.find(package);
 
 	if (it != m_packages.end()) {
@@ -75,7 +75,7 @@ void PackageManager::loadPackage(Scope& scope, const CString* const package) thr
 /**
  * Loads an specific module
  */
-void PackageManager::loadModule(Scope& scope, Module* const module) throw() {
+void PackageManager::loadModule(Scope* scope, Module* const module) throw() {
 	/**
 	 * Checks if the module already has been loaded
 	 */
@@ -97,7 +97,7 @@ void PackageManager::loadModule(Scope& scope, Module* const module) throw() {
 			CallableValue* fvalue = new CallableValue(CSTRING(it->first));
 			fvalue->setHandler(it->second);
 
-			scope.push(fvalue->getName(), fvalue);
+			scope->push(fvalue->getName(), fvalue);
 			++it;
 		}
 		
@@ -121,7 +121,7 @@ void PackageManager::loadModule(Scope& scope, Module* const module) throw() {
 /**
  * Loads an specific module package by supplying the package and module names
  */
-void PackageManager::loadModule(Scope& scope, const CString* const package, const CString* const module) throw() {
+void PackageManager::loadModule(Scope* scope, const CString* const package, const CString* const module) throw() {
 	PackageMap::const_iterator it = m_packages.find(package);
 
 	if (it != m_packages.end()) {

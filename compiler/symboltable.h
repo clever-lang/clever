@@ -30,6 +30,7 @@
 #include <deque>
 #include "compiler/clever.h"
 #include "compiler/cstring.h"
+#include "compiler/refcounted.h"
 
 #define CLEVER_TYPE(name)  ::clever::g_symtable.getType(CSTRING(name))
 #define CLEVER_VALUE(name) ::clever::g_symtable.getValue(CSTRING(name))
@@ -47,7 +48,7 @@ extern SymbolTable g_symtable;
 
 typedef std::tr1::unordered_map<const CString*, Symbol*> ScopeBase;
 typedef std::pair<const CString*, Symbol*> ScopeEntry;
-typedef std::deque<Scope> ScopeDeque;
+typedef std::deque<Scope*> ScopeDeque;
 
 class Symbol {
 public:
@@ -94,10 +95,10 @@ private:
 	} m_data;
 };
 
-class Scope : public ScopeBase {
+class Scope : public ScopeBase, public RefCounted { /* A cat just died because of this. */
 public:
 
-	Scope(int level) : m_level(level) {}
+	Scope(int level) : ScopeBase(), RefCounted(), m_level(level) {}
 	~Scope();
 
 	int getLevel() const { return m_level; }
@@ -170,33 +171,35 @@ public:
 	SymbolTable()
 		: m_level(-1) {}
 
-	~SymbolTable() {}
+	~SymbolTable() {
+		//clever_assert(m_level < 0, "%i scopes were not properly cleaned.", m_level);
+	}
 
 	/**
 	 * Pushes a new variable or constant to the current scope.
 	 */
 	void push(const CString* name, Value* value) throw() {
-		getScope().push(name, value);
+		getScope()->push(name, value);
 	}
 
 	/**
 	 * Pushes a new type to the current scope.
 	 */
 	void push(const CString* name, const Type* type) throw() {
-		getScope().push(name, type);
+		getScope()->push(name, type);
 	}
 
 	/**
 	 * Attempts to find a symbol with the given name in the current scope.
 	 */
 	Symbol* getSymbol(const CString* name, bool recurse) throw() {
-		Symbol* s = getScope().getSymbol(name);
+		Symbol* s = getScope()->getSymbol(name);
 
 		if (s == NULL && recurse) {
 			int i = m_level;
 
 			while (s == NULL && i >= 0)
-				s = getScope(i--).getSymbol(name);
+				s = getScope(i--)->getSymbol(name);
 		}
 
 
@@ -244,14 +247,14 @@ public:
 	/**
 	 * Returns the current scope.
 	 */
-	Scope& getScope() throw() { 
+	Scope* getScope() throw() { 
 		return getScope(m_level);
 	}
 
 	/**
 	 * Returns the scope at the given level number.
 	 */
-	Scope& getScope(int level) throw() {
+	Scope* getScope(int level) throw() {
 		clever_assert(level >= 0, "No scope available.");
 
 		return m_scope.at(level);
@@ -260,16 +263,24 @@ public:
 	/**
 	 * Enters a new scope.
 	 */
-	void beginScope() throw() {
-		m_scope.push_back(Scope(++m_level));
+	Scope* beginScope() throw() {
+		Scope* s = new Scope(++m_level);
+
+		m_scope.push_back(s);
+
+		return s;
 	}
 
 	/**
 	 * Leaves the current scope.
 	 */
-	void endScope() throw() {
+	Scope* endScope() throw() {
+		Scope* s = m_scope.back();
 		m_scope.pop_back();
 		m_level--;
+		
+		s->delRef();
+		return s;
 	}
 
 private:
