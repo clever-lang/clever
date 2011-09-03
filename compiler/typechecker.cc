@@ -191,6 +191,8 @@ AST_VISITOR(TypeChecker, LogicExpr) {
 AST_VISITOR(TypeChecker, VariableDecl) {
 	Identifier* variable = expr->getVariable();
 	Value* var = new Value();
+	ASTNode* initialization = expr->getInitialValue();
+	Value* initval = initialization ? initialization->getValue() : NULL;
 	const Type* type = g_symtable.getType(expr->getType()->getName());
 	
 	/**
@@ -218,6 +220,15 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 	var->setName(variable->getName());
 	var->setTypePtr(type);
 	var->addRef();
+	
+	if (initval) {		
+		if (!checkCompatibleTypes(var, initval)) {
+			Compiler::errorf(expr->getLocation(),
+				"Cannot convert `%S' to `%S' on assignment",
+				initval->getTypePtr()->getName(),
+				type->getName());
+		}
+	}
 	
 	g_symtable.push(var->getName(), var);
 }
