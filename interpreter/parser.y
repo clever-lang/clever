@@ -159,12 +159,6 @@ namespace clever {
 %type <str_literal> STR
 
 %type <identifier> TYPE
-
-/* TODO: PLEASE KILL THIS v */
-%type <ast_node> '{'
-%type <ast_node> '('
-/* TODO: PLEASE KILL THIS ^ */
-
 %type <ast_node> statement_list_non_empty
 %type <ast_node> statement_list
 %type <block_stmt> block_stmt
@@ -395,8 +389,8 @@ while_expr:
 ;
 
 if_expr:
-		IF '(' expr ')' block_stmt { $2 = new ast::IfExpr($3, $5); $<if_expr>$ = $<if_expr>2; $<if_expr>$->setLocation(yylloc); }
-		elseif_opt else_opt        { $<if_expr>2->setElse($8); $$ = $<if_expr>2; $$->setLocation(yylloc); }
+		IF '(' expr ')' block_stmt { $<if_expr>$ = new ast::IfExpr($3, $5); $<if_expr>$->setLocation(yylloc); }
+		elseif_opt else_opt        { $<if_expr>6->setElse($8); $$ = $<if_expr>6; $$->setLocation(yylloc); }
 ;
 
 elseif_opt:
