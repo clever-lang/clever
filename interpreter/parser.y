@@ -369,19 +369,19 @@ expr:
 ;
 
 variable_decl_or_empty:
-		/* empty */            { $$ = NULL; }
-		| variable_declaration { $$ = $1; }
+		/* empty */          { $$ = NULL; }
+	|	variable_declaration { $$ = $1; }
 ;
 
 expr_or_empty:
 		/* empty */ { $$ = NULL; }
-		| expr      { $$ = $1; }
+	|	expr        { $$ = $1; }
 ;
 
 for_expr:
-			FOR '(' variable_decl_or_empty ';' expr_or_empty ';' expr_or_empty ')' block_stmt { $$ = new ast::ForExpr($3, $5, $7, $9); $$->setLocation(yylloc); }
-		|	FOR '(' variable_decl_or_empty ';' expr_or_empty ';' assign_stmt')' block_stmt    { $$ = new ast::ForExpr($3, $5, $7, $9); $$->setLocation(yylloc); }
-//		|   FOR '(' variable_declaration_no_init IN  IDENT ')' block_stmt                     { $$ = new ast::ForExpr($3, $5, $7); $$->setLocation(yylloc); }
+		FOR '(' variable_decl_or_empty ';' expr_or_empty ';' expr_or_empty ')' block_stmt { $$ = new ast::ForExpr($3, $5, $7, $9); $$->setLocation(yylloc); }
+	|	FOR '(' variable_decl_or_empty ';' expr_or_empty ';' assign_stmt')' block_stmt    { $$ = new ast::ForExpr($3, $5, $7, $9); $$->setLocation(yylloc); }
+//	|   FOR '(' variable_declaration_no_init IN  IDENT ')' block_stmt                     { $$ = new ast::ForExpr($3, $5, $7); $$->setLocation(yylloc); }
 ;
 
 while_expr:
