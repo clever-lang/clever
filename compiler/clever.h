@@ -23,8 +23,14 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef CLEVER_GLOBAL_H
-#define CLEVER_GLOBAL_H
+#ifndef CLEVER_H
+
+#define CLEVER_H
+
+#include <iostream>
+#include <cstdarg>
+
+namespace clever {
 
 /**
  * Disables copy constructor and copy assignment
@@ -93,4 +99,25 @@
 # define UNEXPECTED(cond) (cond)
 #endif
 
-#endif // CLEVER_GLOBAL_H
+#ifdef CLEVER_DEBUG
+//#define clever_assert(Hypothesis, Format, ...) clever::clever_assert_(__FILE__, __LINE__,
+//	(#Hypothesis), (Hypothesis), Format, __VA_ARGS__)
+#define clever_assert(Hypothesis, Format, ...) clever::clever_assert_(__FILE__, __LINE__, \
+	#Hypothesis, (Hypothesis), Format __VA_ARGS__)
+void clever_assert_(const char* file, long line, const char* expr,
+		int hypothesis, const char* format, ...) throw();
+#else
+#define clever_assert(Hypothesis, Format, ...) 
+#endif
+
+void clever_fatal(const char* format, ...) throw();
+
+void vsprintf(std::ostringstream&, const char*, va_list) throw();
+void sprintf(std::ostringstream&, const char*, ...) throw();
+void printf(const char*, ...) throw();
+void vprintfln(const char*, va_list) throw();
+void printfln(const char*, ...) throw();
+} // clever 
+
+#endif /* end of include guard: CLEVER_H */
+

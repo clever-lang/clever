@@ -219,7 +219,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 	var->setTypePtr(type);
 	var->addRef();
 	
-	g_symtable.push(var);
+	g_symtable.push(var->getName(), var);
 }
 
 AST_VISITOR(TypeChecker, PreIncrement) {
@@ -477,7 +477,7 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 	user_func->setUserDefined();
 	
 	func->addRef();
-	g_symtable.push(func);
+	g_symtable.push(func->getName(), func);
 	
 	func->setHandler(user_func);
 		
@@ -512,7 +512,7 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 			var->setType(Value::INTEGER);
 			var->initialize();
 
-			g_symtable.push(var);
+			g_symtable.push(var->getName(), var);
 			vec->push_back(var);
 			var->addRef();
 

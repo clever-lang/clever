@@ -22,12 +22,40 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
- 
-#include <iostream>
-#include <cstdarg>
+
+#include <cstdio>
+#include <cstdlib>
+#include "compiler/clever.h"
 #include "compiler/value.h"
 
 namespace clever {
+
+/**
+ * Errors and stuff.
+ */
+#ifdef CLEVER_DEBUG
+void clever_assert_(const char* file, long line, const char* expr,
+		int hypothesis, const char* format, ...) throw() {
+	va_list vl;
+
+	if (!hypothesis) {
+		va_start(vl, format);
+		printf("clever: assertion '%s' failed at %s line %l.\n\t", expr, file, line);
+		vprintfln(format, vl);
+		va_end(vl);
+		std::abort();
+	}
+}
+#endif
+
+void clever_fatal(const char* format, ...) throw() {
+	va_list vl;
+	va_start(vl, format);
+	printf("clever: a fatal error occurred.\n\t");
+	vprintfln(format, vl);
+	va_end(vl);
+	std::abort();
+}
 
 /**
  * Formatter
@@ -72,15 +100,20 @@ void vsprintf(std::ostringstream& outstr, const char* format, va_list ap) throw(
 	}
 }
 
-void printfln(const char* format, ...) throw() {
+void vprintfln(const char* format, va_list args) throw() {
 	std::ostringstream out;
+	
+	vsprintf(out, format, args);
+
+	std::cout << out.str() << std::endl;
+}
+
+void printfln(const char* format, ...) throw() {
 	va_list args;
 
 	va_start(args, format);
 
-	vsprintf(out, format, args);
-
-	std::cout << out << std::endl;
+	vprintfln(format, args);
 
 	va_end(args);
 }
@@ -103,9 +136,10 @@ void printf(const char* format, ...) throw() {
 
 	vsprintf(out, format, args);
 
-	std::cout << out;
+	std::cout << out.str();
 
 	va_end(args);
 }
 
 } // clever
+

@@ -26,7 +26,7 @@
 #ifndef CLEVER_SCANNER_H
 #define CLEVER_SCANNER_H
 
-#include "compiler/global.h"
+#include "compiler/clever.h"
 
 namespace clever {
 
