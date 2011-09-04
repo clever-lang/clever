@@ -79,13 +79,6 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 	/* Check if the declaration contains initialization */
 	if (rhs_expr) {
 		Value* value = rhs_expr->getValue();
-		
-		if (!TypeChecker::checkCompatibleTypes(variable, value)) {
-			Compiler::errorf(expr->getLocation(),
-				"Cannot convert `%S' to `%S' on assignment",
-				value->getTypePtr()->getName(),
-				variable->getTypePtr()->getName());
-		}
 
 		variable->addRef();
 		g_symtable.push(variable->getName(), variable);
@@ -99,22 +92,6 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 
 		emit(OP_VAR_DECL, &VM::var_decl_handler, variable, value);
 	} else {
-		/* TODO: fix this */
-		/*
-		if (type == CLEVER_TYPE("Int")) {
-			variable->setType(Value::INTEGER);
-		}
-		else if (type == CLEVER_TYPE("Double")) {
-			variable->setType(Value::DOUBLE);
-		}
-		else if (type == CLEVER_TYPE("String")) {
-			variable->setType(Value::STRING);
-		}
-		else {
-			variable->setType(Value::USER);
-			variable->setDataValue(type->allocateValue());	
-		}*/
-
 		variable->addRef();
 		variable->initialize();
 
@@ -445,9 +422,6 @@ AST_VISITOR(CodeGenVisitor, FunctionCall) {
  * Generates opcode for method call
  */
 AST_VISITOR(CodeGenVisitor, MethodCall) {
-	//Value* variable = expr->getVariable()->getValue();
-	//CallableValue* call = new CallableValue(expr->getMethodName());
-	//const Method* method = variable->getTypePtr()->getMethod(call->getName());
 	CallableValue* call = expr->getFuncValue();
 	Value* arg_values = expr->getArgsValue();
 	
@@ -510,7 +484,8 @@ AST_VISITOR(CodeGenVisitor, ReturnStmt) {
 	 * Only for return inside function declaration
 	 */
 	if (func) {
-		TypeChecker::checkFunctionReturn(func, expr_value, func->getReturn(), expr->getLocation());
+		TypeChecker::checkFunctionReturn(func, expr_value, func->getReturn(),
+			expr->getLocation());
 	}
 
 	if (expr_value) {
