@@ -54,11 +54,6 @@ public:
 	bool isInteractive() throw() { return m_interactive; }
 	
 	/**
-	 * Builds the function arguments vector
-	 */
-	ValueVector* functionArgs(ArgumentList*) throw();
-	
-	/**
 	 * Checks if the supplied value pointers are compatibles
 	 */
 	static bool checkCompatibleTypes(const Value* const, const Value* const) throw();

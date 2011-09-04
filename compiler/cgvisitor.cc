@@ -32,8 +32,8 @@ namespace clever { namespace ast {
 /**
  * Creates a vector with the current value from a Value* pointers
  */
-void CodeGenVisitor::functionArgs(ArgumentList* args) throw() {
-	const NodeList& nodes = args->getNodes();
+AST_VISITOR(CodeGenVisitor, ArgumentList) {
+	const NodeList& nodes = expr->getNodes();
 	NodeList::const_iterator it = nodes.begin(), end = nodes.end();
 
 	while (it != end) {
@@ -388,18 +388,18 @@ AST_VISITOR(CodeGenVisitor, BreakNode) {
  */
 AST_VISITOR(CodeGenVisitor, FunctionCall) {
 	CallableValue* fvalue = expr->getFuncValue();
-	Function* func;
+	Function* func = fvalue->getFunction();
 	Value* arg_values = expr->getArgsValue();
 
-	func = fvalue->getFunction();
-
 	if (arg_values) {
-		functionArgs(expr->getArgs());
+		expr->getArgs()->accept(*this);
 		
+		/**
+		 * User-defined function needs an extra opcode passing the parameters
+		 * to be assigned to respective var names used in the func declaration
+		 */
 		if (func->isUserDefined()) {
-			Value* vars = func->getVars();
-
-			emit(OP_RECV, &VM::arg_recv_handler, vars, arg_values);
+			emit(OP_RECV, &VM::arg_recv_handler, func->getVars(), arg_values);
 			arg_values = NULL;
 		}
 	}

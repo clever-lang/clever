@@ -432,8 +432,9 @@ public:
 	~BlockNode() {
 		clearNodes();
 
-		if (m_scope)
+		if (m_scope) {
 			m_scope->delRef();
+		}
 	}
 
 	void setScope(Scope* scope) {
@@ -751,7 +752,16 @@ public:
 	~ArgumentList() {
 		clearNodes();
 	}
+	
+	void accept(ASTVisitor& visitor) throw() {
+		visitor.visit(this);
+	}
+	
+	ValueVector* getArgValue() { return m_value; }
+	
+	void setArgValue(ValueVector* value) { m_value = value; }
 private:
+	ValueVector* m_value;
 	DISALLOW_COPY_AND_ASSIGN(ArgumentList);
 };
 
@@ -927,7 +937,7 @@ public:
 		m_result = new CallableValue;
 	}
 
-	MethodCall(ASTNode* var, Identifier* method, ASTNode* args)
+	MethodCall(ASTNode* var, Identifier* method, ArgumentList* args)
 		: m_var(var), m_method(method), m_args(args), m_value(NULL), m_args_value(NULL) {
 		m_var->addRef();
 		m_method->addRef();
@@ -951,7 +961,7 @@ public:
 
 	ASTNode* getVariable() const throw() { return m_var; }
 	const CString* const getMethodName() const throw() { return m_method->getName(); }
-	ASTNode* getArgs() const throw() { return m_args; }
+	ArgumentList* getArgs() const throw() { return m_args; }
 
 	Value* getValue() const throw() { return m_result; }
 	
@@ -978,7 +988,7 @@ public:
 private:
 	ASTNode* m_var;
 	Identifier* m_method;
-	ASTNode* m_args;
+	ArgumentList* m_args;
 	Value* m_result;
 	CallableValue* m_value;
 	Value* m_args_value;

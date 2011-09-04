@@ -79,6 +79,7 @@ class ReturnStmt;
 	V(FuncDeclaration); \
 	V(ClassDeclaration); \
 	V(ReturnStmt); \
+	V(ArgumentList); \
 	V(Identifier)
 
 /**

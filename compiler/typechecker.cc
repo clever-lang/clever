@@ -126,9 +126,9 @@ void TypeChecker::checkFunctionArgs(const Function* func, int num_args,
 /**
  * Creates a vector with the current value from a Value* pointers
  */
-ValueVector* TypeChecker::functionArgs(ArgumentList* args) throw() {
+AST_VISITOR(TypeChecker, ArgumentList) {
 	ValueVector* values = new ValueVector();
-	const NodeList& nodes = args->getNodes();
+	const NodeList& nodes = expr->getNodes();
 	NodeList::const_iterator it = nodes.begin(), end = nodes.end();
 
 	values->reserve(nodes.size());
@@ -145,7 +145,7 @@ ValueVector* TypeChecker::functionArgs(ArgumentList* args) throw() {
 		++it;
 	}
 
-	return values;
+	expr->setArgValue(values);
 }
 
 AST_VISITOR(TypeChecker, Identifier) {
@@ -386,7 +386,9 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 	if (num_args) {
 		arg_values = new Value;
 		arg_values->setType(Value::VECTOR);
-		arg_values->setVector(functionArgs(static_cast<ArgumentList*>(args)));
+		
+		expr->getArgs()->accept(*this);
+		arg_values->setVector(expr->getArgs()->getArgValue());
 
 		if (func->isUserDefined()) {
 			Value* vars = const_cast<Function*>(func)->getVars();
@@ -416,7 +418,8 @@ AST_VISITOR(TypeChecker, MethodCall) {
 	if (args) {
 		arg_values = new Value;
 		arg_values->setType(Value::VECTOR);
-		arg_values->setVector(functionArgs(static_cast<ArgumentList*>(args)));
+		expr->getArgs()->accept(*this);
+		arg_values->setVector(expr->getArgs()->getArgValue());
 		
 		expr->setArgsValue(arg_values);
 		arg_values->addRef();
