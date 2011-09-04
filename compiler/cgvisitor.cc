@@ -229,22 +229,12 @@ AST_VISITOR(CodeGenVisitor, BlockNode) {
 	NodeList::const_iterator it = nodes.begin(), end = nodes.end();
 
 	/**
-	 * Create a new scope
-	 */
-	g_symtable.beginScope();
-
-	/**
 	 * Iterates statements inside the block
 	 */
 	while (it != end) {
 		(*it)->accept(*this);
 		++it;
 	}
-
-	/**
-	 * Pops the scope
-	 */
-	g_symtable.endScope();
 }
 
 /**
