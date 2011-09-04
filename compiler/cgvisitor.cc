@@ -449,11 +449,7 @@ AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
 
 	user_func->setOffset(getOpNum());
 
-	m_funcs.push(user_func);
-
 	expr->getBlock()->accept(*this);
-
-	m_funcs.pop();
 
 	emit(OP_JMP, &VM::end_func_handler);
 
@@ -465,15 +461,6 @@ AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
  */
 AST_VISITOR(CodeGenVisitor, ReturnStmt) {
 	Value* expr_value = expr->getExprValue();
-	const Function* func = m_funcs.empty() ? NULL : m_funcs.top();
-
-	/**
-	 * Only for return inside function declaration
-	 */
-	if (func) {
-		TypeChecker::checkFunctionReturn(func, expr_value, func->getReturn(),
-			expr->getLocation());
-	}
 
 	if (expr_value) {
 		expr_value->addRef();
@@ -486,7 +473,7 @@ AST_VISITOR(CodeGenVisitor, ReturnStmt) {
  * Generates opcodes for class declaration
  */
 AST_VISITOR(CodeGenVisitor, ClassDeclaration) {
-	UserTypeValue* type = new UserTypeValue(expr->getClassName());
+	//UserTypeValue* type = new UserTypeValue(expr->getClassName());
 	ClassDeclaration::DeclarationError error;	
 	bool ok = expr->check(error);
 	const CString* const class_name = expr->getClassName();

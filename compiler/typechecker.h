@@ -33,6 +33,8 @@ namespace clever { namespace ast {
 	
 class TypeChecker : public ASTVisitor {
 public:
+	typedef std::stack<Function*> FuncDeclStack;
+
 	TypeChecker()
 		: m_interactive(false) { }
 	~TypeChecker() { }
@@ -70,6 +72,7 @@ public:
 	static void checkFunctionReturn(const Function*, const Value*, const Type*, const location&) throw();
 private:
 	bool m_interactive;
+	FuncDeclStack m_funcs;
 };
 
 }} // clever::ast

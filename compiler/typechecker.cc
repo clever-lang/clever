@@ -547,7 +547,11 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 		user_func->setVars(vars);
 	}
 	
+	m_funcs.push(user_func);
+	
 	expr->getBlock()->accept(*this);
+	
+	m_funcs.pop();
 	
 	if (args) {
 		g_symtable.endScope();
@@ -555,6 +559,16 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 }
 
 AST_VISITOR(TypeChecker, ReturnStmt) {
+	Value* expr_value = expr->getExprValue();
+	const Function* func = m_funcs.empty() ? NULL : m_funcs.top();
+
+	/**
+	 * Only for return inside function declaration
+	 */
+	if (func) {
+		checkFunctionReturn(func, expr_value, func->getReturn(),
+			expr->getLocation());
+	}
 }
 
 AST_VISITOR(TypeChecker, ClassDeclaration) {

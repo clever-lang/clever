@@ -39,7 +39,6 @@ class CodeGenVisitor : public ASTVisitor {
 public:
 	typedef std::stack<Opcode*> OpcodeStack;
 	typedef std::stack<OpcodeStack> JmpStack;
-	typedef std::stack<Function*> FuncDeclStack;
 
 	CodeGenVisitor()
 		: m_interactive(false) {
@@ -76,7 +75,6 @@ private:
 	bool m_interactive;
 	OpcodeList m_opcodes;
 	JmpStack m_brks;
-	FuncDeclStack m_funcs;
 
 	/**
 	 * Output an opcode.
