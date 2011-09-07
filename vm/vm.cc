@@ -88,8 +88,8 @@ void VM::run() throw() {
  * x + y
  */
 CLEVER_VM_HANDLER(VM::plus_handler) {
-	Value* op1 = opcode.getOp1();
-	Value* op2 = opcode.getOp2();
+	const Value* const op1 = opcode.getOp1();
+	const Value* const op2 = opcode.getOp2();
 	Value* result = opcode.getResult();
 
 	switch (op1->getType()) {
@@ -109,8 +109,8 @@ CLEVER_VM_HANDLER(VM::plus_handler) {
  * x / y
  */
 CLEVER_VM_HANDLER(VM::div_handler) {
-	Value* op1 = opcode.getOp1();
-	Value* op2 = opcode.getOp2();
+	const Value* const op1 = opcode.getOp1();
+	const Value* const op2 = opcode.getOp2();
 	Value* result = opcode.getResult();
 
 	switch (op1->getType()) {
@@ -127,8 +127,8 @@ CLEVER_VM_HANDLER(VM::div_handler) {
  * x - y
  */
 CLEVER_VM_HANDLER(VM::minus_handler) {
-	Value* op1 = opcode.getOp1();
-	Value* op2 = opcode.getOp2();
+	const Value* const op1 = opcode.getOp1();
+	const Value* const op2 = opcode.getOp2();
 	Value* result = opcode.getResult();
 
 	switch (op1->getType()) {
@@ -145,8 +145,8 @@ CLEVER_VM_HANDLER(VM::minus_handler) {
  * x * y
  */
 CLEVER_VM_HANDLER(VM::mult_handler) {
-	Value* op1 = opcode.getOp1();
-	Value* op2 = opcode.getOp2();
+	const Value* const op1 = opcode.getOp1();
+	const Value* const op2 = opcode.getOp2();
 	Value* result = opcode.getResult();
 
 	switch (op1->getType()) {
@@ -163,8 +163,8 @@ CLEVER_VM_HANDLER(VM::mult_handler) {
  * x & y
  */
 CLEVER_VM_HANDLER(VM::bw_and_handler) {
-	Value* op1 = opcode.getOp1();
-	Value* op2 = opcode.getOp2();
+	const Value* const op1 = opcode.getOp1();
+	const Value* const op2 = opcode.getOp2();
 	Value* result = opcode.getResult();
 
 	switch (op1->getType()) {
@@ -178,8 +178,8 @@ CLEVER_VM_HANDLER(VM::bw_and_handler) {
  * x ^ y
  */
 CLEVER_VM_HANDLER(VM::bw_xor_handler) {
-	Value* op1 = opcode.getOp1();
-	Value* op2 = opcode.getOp2();
+	const Value* const op1 = opcode.getOp1();
+	const Value* const op2 = opcode.getOp2();
 	Value* result = opcode.getResult();
 
 	switch (op1->getType()) {
@@ -193,8 +193,8 @@ CLEVER_VM_HANDLER(VM::bw_xor_handler) {
  * x | y
  */
 CLEVER_VM_HANDLER(VM::bw_or_handler) {
-	Value* op1 = opcode.getOp1();
-	Value* op2 = opcode.getOp2();
+	const Value* const op1 = opcode.getOp1();
+	const Value* const op2 = opcode.getOp2();
 	Value* result = opcode.getResult();
 
 	switch (op1->getType()) {
@@ -268,7 +268,7 @@ CLEVER_VM_HANDLER(VM::pos_dec_handler) {
  * JMPZ - Jump if zero
  */
 CLEVER_VM_HANDLER(VM::jmpz_handler) {
-	Value* value = opcode.getOp1();
+	const Value* const value = opcode.getOp1();
 	Value* result = opcode.getResult();
 
 	switch (value->getType()) {
@@ -306,7 +306,7 @@ CLEVER_VM_HANDLER(VM::jmpz_handler) {
  * JMPNZ - Jump if non zero
  */
 CLEVER_VM_HANDLER(VM::jmpnz_handler) {
-	Value* value = opcode.getOp1();
+	const Value* const value = opcode.getOp1();
 
 	switch (value->getType()) {
 		case Value::INTEGER:
@@ -342,8 +342,8 @@ CLEVER_VM_HANDLER(VM::jmp_handler) {
  * x > y
  */
 CLEVER_VM_HANDLER(VM::greater_handler) {
-	Value* op1 = opcode.getOp1();
-	Value* op2 = opcode.getOp2();
+	const Value* const op1 = opcode.getOp1();
+	const Value* const op2 = opcode.getOp2();
 	Value* result = opcode.getResult();
 
 	switch (op1->getType()) {
@@ -360,8 +360,8 @@ CLEVER_VM_HANDLER(VM::greater_handler) {
  * x >= y
  */
 CLEVER_VM_HANDLER(VM::greater_equal_handler) {
-	Value* op1 = opcode.getOp1();
-	Value* op2 = opcode.getOp2();
+	const Value* const op1 = opcode.getOp1();
+	const Value* const op2 = opcode.getOp2();
 	Value* result = opcode.getResult();
 
 	switch (op1->getType()) {
@@ -378,8 +378,8 @@ CLEVER_VM_HANDLER(VM::greater_equal_handler) {
  * x < y
  */
 CLEVER_VM_HANDLER(VM::less_handler) {
-	Value* op1 = opcode.getOp1();
-	Value* op2 = opcode.getOp2();
+	const Value* const op1 = opcode.getOp1();
+	const Value* const op2 = opcode.getOp2();
 	Value* result = opcode.getResult();
 
 	switch (op1->getType()) {
@@ -396,8 +396,8 @@ CLEVER_VM_HANDLER(VM::less_handler) {
  * x <= y
  */
 CLEVER_VM_HANDLER(VM::less_equal_handler) {
-	Value* op1 = opcode.getOp1();
-	Value* op2 = opcode.getOp2();
+	const Value* const op1 = opcode.getOp1();
+	const Value* const op2 = opcode.getOp2();
 	Value* result = opcode.getResult();
 
 	switch (op1->getType()) {
@@ -421,8 +421,8 @@ CLEVER_VM_HANDLER(VM::break_handler) {
  * x == y
  */
 CLEVER_VM_HANDLER(VM::equal_handler) {
-	Value* op1 = opcode.getOp1();
-	Value* op2 = opcode.getOp2();
+	const Value* const op1 = opcode.getOp1();
+	const Value* const op2 = opcode.getOp2();
 	Value* result = opcode.getResult();
 
 	switch (op1->getType()) {
@@ -439,8 +439,8 @@ CLEVER_VM_HANDLER(VM::equal_handler) {
  * x != y
  */
 CLEVER_VM_HANDLER(VM::not_equal_handler) {
-	Value* op1 = opcode.getOp1();
-	Value* op2 = opcode.getOp2();
+	const Value* const op1 = opcode.getOp1();
+	const Value* const op2 = opcode.getOp2();
 	Value* result = opcode.getResult();
 
 	switch (op1->getType()) {
@@ -457,10 +457,10 @@ CLEVER_VM_HANDLER(VM::not_equal_handler) {
  * func()
  */
 CLEVER_VM_HANDLER(VM::fcall_handler) {
-	CallableValue* func = static_cast<CallableValue*>(opcode.getOp1());
-	Value* args = opcode.getOp2();
+	const CallableValue* const func = static_cast<CallableValue*>(opcode.getOp1());
+	const Value* const args = opcode.getOp2();
 	Value* result = opcode.getResult();
-	const ValueVector* func_args = args ? args->getVector() : NULL;
+	const ValueVector* const func_args = args ? args->getVector() : NULL;
 
 	result->initialize();
 
@@ -479,7 +479,7 @@ CLEVER_VM_HANDLER(VM::fcall_handler) {
  */
 CLEVER_VM_HANDLER(VM::arg_recv_handler) {
 	ValueVector* vars = opcode.getOp1()->getVector();
-	ValueVector* func_args = opcode.getOp2()->getVector();
+	const ValueVector* const func_args = opcode.getOp2()->getVector();
 
 	for (int i = 0, j = vars->size(); i < j; ++i) {
 		vars->at(i)->copy(func_args->at(i));
@@ -490,10 +490,10 @@ CLEVER_VM_HANDLER(VM::arg_recv_handler) {
  * var.method()
  */
 CLEVER_VM_HANDLER(VM::mcall_handler) {
-	CallableValue* var = static_cast<CallableValue*>(opcode.getOp1());
-	Value* args = opcode.getOp2();
+	const CallableValue* const var = static_cast<CallableValue*>(opcode.getOp1());
+	const Value* const args = opcode.getOp2();
 	Value* result = opcode.getResult();
-	const ValueVector* func_args = args ? args->getVector() : NULL;
+	const ValueVector* const func_args = args ? args->getVector() : NULL;
 
 	result->initialize();
 
@@ -512,7 +512,7 @@ CLEVER_VM_HANDLER(VM::assign_handler) {
  * End function marker
  */
 CLEVER_VM_HANDLER(VM::end_func_handler) {
-	Opcode* op = s_call.top();
+	const Opcode* const op = s_call.top();
 
 	s_call.pop();
 
@@ -527,7 +527,7 @@ CLEVER_VM_HANDLER(VM::end_func_handler) {
  */
 CLEVER_VM_HANDLER(VM::return_handler) {
 	if (!s_call.empty()) {
-		Value* value = opcode.getOp1();
+		const Value* const value = opcode.getOp1();
 		Opcode* call = s_call.top();
 
 		if (value) {
