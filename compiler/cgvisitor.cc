@@ -73,8 +73,8 @@ AST_VISITOR(CodeGenVisitor, BinaryExpr) {
  */
 AST_VISITOR(CodeGenVisitor, VariableDecl) {
 	Identifier* var_expr = expr->getVariable();
-	ASTNode* rhs_expr    = expr->getInitialValue();
-	Value* variable      = var_expr->getValue();
+	ASTNode* rhs_expr = expr->getInitialValue();
+	Value* variable = var_expr->getValue();
 	
 	/* Check if the declaration contains initialization */
 	if (rhs_expr) {
@@ -165,7 +165,7 @@ AST_VISITOR(CodeGenVisitor, IfExpr) {
 	}
 
 	if (expr->hasElseIf()) {
-		NodeList& elseif_nodes = expr->getNodes();
+		const NodeList& elseif_nodes = expr->getNodes();
 		NodeList::const_iterator it = elseif_nodes.begin(), end = elseif_nodes.end();
 		Opcode* last_jmp = jmp_if;
 

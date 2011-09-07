@@ -181,8 +181,8 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 }
 
 AST_VISITOR(TypeChecker, LogicExpr) {
-	Value* lhs = expr->getLhs()->getValue();
-	Value* rhs = expr->getRhs()->getValue();
+	const Value* lhs = expr->getLhs()->getValue();
+	const Value* rhs = expr->getRhs()->getValue();
 	
 	if (!checkCompatibleTypes(lhs, rhs)) {
 		Compiler::errorf(expr->getLocation(),
@@ -287,7 +287,7 @@ AST_VISITOR(TypeChecker, IfExpr) {
 	}
 	
 	if (expr->hasElseIf()) {
-		NodeList& elseif_nodes = expr->getNodes();
+		const NodeList& elseif_nodes = expr->getNodes();
 		NodeList::const_iterator it = elseif_nodes.begin(), end = elseif_nodes.end();
 
 		while (it != end) {
@@ -308,7 +308,7 @@ AST_VISITOR(TypeChecker, IfExpr) {
 }
 
 AST_VISITOR(TypeChecker, BlockNode) {
-	NodeList& nodes = expr->getNodes();
+	const NodeList& nodes = expr->getNodes();
 	NodeList::const_iterator it = nodes.begin(), end = nodes.end();
 
 	/**
@@ -441,8 +441,8 @@ AST_VISITOR(TypeChecker, MethodCall) {
 }
 
 AST_VISITOR(TypeChecker, AssignExpr) {
-	Value* lhs = expr->getLhs()->getValue();
-	Value* rhs = expr->getRhs()->getValue();
+	const Value* lhs = expr->getLhs()->getValue();
+	const Value* rhs = expr->getRhs()->getValue();
 	
 	if (!checkCompatibleTypes(lhs, rhs)) {
 		Compiler::errorf(expr->getLocation(),
@@ -456,26 +456,14 @@ AST_VISITOR(TypeChecker, ImportStmt) {
 	const CString* const package = expr->getPackageName();
 	const CString* const module = expr->getModuleName();
 
-	if (module) {
-		/**
-		 * Importing an specific module
-		 * e.g. import std.io;
-		 */
-		if (isInteractive() && g_symtable.getScope()->getDepth() == 1) {
-			Compiler::import(g_symtable.getScope(0), package, module);
-		} else {
-			Compiler::import(g_symtable.getScope(), package, module);
-		}
+	/**
+	 * Importing an specific module or an entire package
+	 * e.g. import std.io;
+	 */
+	if (isInteractive() && g_symtable.getScope()->getDepth() == 1) {
+		Compiler::import(g_symtable.getScope(0), package, module);
 	} else {
-		/**
-		 * Importing an entire package
-		 * e.g. import std;
-		 */
-		if (isInteractive() && g_symtable.getScope()->getDepth() == 1) {
-			Compiler::import(g_symtable.getScope(0), package);
-		} else {
-			Compiler::import(g_symtable.getScope(), package);
-		}
+		Compiler::import(g_symtable.getScope(), package, module);
 	}
 }
 
@@ -559,7 +547,7 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 }
 
 AST_VISITOR(TypeChecker, ReturnStmt) {
-	Value* expr_value = expr->getExprValue();
+	const Value* expr_value = expr->getExprValue();
 	const Function* func = m_funcs.empty() ? NULL : m_funcs.top();
 
 	/**

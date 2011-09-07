@@ -87,7 +87,11 @@ public:
 	 * Import a package module
 	 */
 	static void import(Scope* scope, const CString* package, const CString* module) throw() {
-		s_pkgmanager.loadModule(scope, package, module);
+		if (module) {
+			s_pkgmanager.loadModule(scope, package, module);
+		} else {
+			s_pkgmanager.loadPackage(scope, package);
+		}
 	}
 
 	/**
