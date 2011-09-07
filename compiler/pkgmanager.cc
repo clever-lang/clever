@@ -97,7 +97,7 @@ void PackageManager::loadModule(Scope* scope, Module* const module) throw() {
 			CallableValue* fvalue = new CallableValue(CSTRING(it->first));
 			fvalue->setHandler(it->second);
 
-			scope->push(fvalue->getName(), fvalue);
+			scope->bind(fvalue->getName(), fvalue);
 			++it;
 		}
 		

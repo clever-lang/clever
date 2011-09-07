@@ -95,18 +95,38 @@ private:
 	} m_data;
 };
 
+/*
+ * TODO: XXX: FIXME: Developer note:
+ *
+ * I believe this class can/should, somehow, be merged with or replace 
+ * SymbolTable provided the funcionality (scoping depth manipulation) of the 
+ * latter one is kept intact or improved.
+ * 
+ * One thing we must pay attention to is that merging the two classes will 
+ * require a change of the way we push new entries into the scope. Perhaps 
+ * we should keep an alias to std::deque<const CString*, Scope*> named 
+ * SymbolTable or build a tree/list like structure with pointers to the next 
+ * and the previous scopes using the Scope class.
+ *
+ * -- Higor.
+ * 
+ */
 class Scope : public ScopeBase, public RefCounted { /* A cat just died because of this. */
 public:
 
-	Scope(int level) : ScopeBase(), RefCounted(), m_level(level) {}
+	Scope(int depth, Scope* parent = NULL) : ScopeBase(), RefCounted(), m_parent(parent), m_depth(depth) {
+		if (depth > 0) {
+			clever_assert(parent != NULL, "No parent provided to non-root scope.");
+		}
+	}
 	~Scope();
 
-	int getLevel() const { return m_level; }
+	int getDepth() const { return m_depth; }
 	
 	/**
-	 * Pushes a new value
+	 * Binds a Value* to an interned string.
 	 */
-	void push(const CString* name, Value* value) throw() {
+	void bind(const CString* name, Value* value) throw() {
 		clever_assert(name != NULL,  "No name provided.");
 		clever_assert(value != NULL, "No value provided.");
 
@@ -114,9 +134,9 @@ public:
 	}
 
 	/**
-	 * Pushes a new type
+	 * Binds a Type* to an interned string.
 	 */
-	void push(const CString* name, const Type* type) throw() {
+	void bind(const CString* name, const Type* type) throw() {
 		clever_assert(name != NULL, "No name provided.");
 		clever_assert(type != NULL, "No type provided.");
 
@@ -124,24 +144,33 @@ public:
 	}
 
 	/**
-	 * Attempts to find a symbol with the given name.
+	 * Attempts to resolve a symbol name.
+	 *
+	 * Please use an error message like "unresolved symbol" or something 
+	 * if the symbol is really needed.
 	 */
-	Symbol* getSymbol(const CString* name) throw() {
+	Symbol* resolve(const CString* name, bool recurse = true) throw() {
 		Scope::iterator it = find(name);
 
-		if (it == end()) {
+		if (it != end()) {
+			return it->second;
+		}
+
+		if (!recurse || m_parent == NULL) {
 			return NULL;
 		}
-		
-		return it->second;
+
+		return m_parent->resolve(name, true);
 	}
 
 	/**
-	 * Returns the value pointer for the given symbol name.
+	 * Returns a Value* for the given symbol name.
+	 *
+	 * See resolve() for more information.
 	 */
-	Value* getValue(const CString* name) throw() {
+	Value* resolveValue(const CString* name, bool recurse = true) throw() {
 
-		Symbol* s = getSymbol(name);
+		Symbol* s = resolve(name, recurse);
 
 		if (s == NULL || !s->isValue())
 			return NULL;
@@ -150,11 +179,13 @@ public:
 	}
 
 	/**
-	 * Returns the type pointer for the given symbol name.
+	 * Returns a Type* for the given symbol name.
+	 *
+	 * See resolve() for more information.
 	 */
-	const Type* getType(const CString* name) throw() {
+	const Type* resolveType(const CString* name, bool recurse = true) throw() {
 		
-		Symbol* s = getSymbol(name);
+		Symbol* s = resolve(name, recurse);
 
 		if (s == NULL || !s->isType())
 			return NULL;
@@ -163,7 +194,8 @@ public:
 	}
 
 private:
-	int m_level;
+	Scope* m_parent;
+	int    m_depth;
 };
 
 class SymbolTable {
@@ -179,69 +211,35 @@ public:
 	 * Pushes a new variable or constant to the current scope.
 	 */
 	void push(const CString* name, Value* value) throw() {
-		getScope()->push(name, value);
+		getScope()->bind(name, value);
 	}
 
 	/**
 	 * Pushes a new type to the current scope.
 	 */
 	void push(const CString* name, const Type* type) throw() {
-		getScope()->push(name, type);
+		getScope()->bind(name, type);
 	}
 
 	/**
 	 * Attempts to find a symbol with the given name in the current scope.
 	 */
-	Symbol* getSymbol(const CString* name, bool recurse) throw() {
-		Symbol* s = getScope()->getSymbol(name);
-
-		if (s == NULL && recurse) {
-			int i = m_level;
-
-			while (s == NULL && i >= 0)
-				s = getScope(i--)->getSymbol(name);
-		}
-
-
-		return s;
-	}
-
-	Symbol* getSymbol(const CString* name) throw() {
-		return getSymbol(name, true);
+	Symbol* getSymbol(const CString* name, bool recurse = true) throw() {
+		return getScope()->resolve(name, recurse);
 	}
 
 	/**
 	 * Returns the value pointer for the given symbol name.
 	 */
-	Value* getValue(const CString* name, bool recurse) throw() {
-
-		Symbol* s = getSymbol(name, recurse);
-
-		if (s == NULL || !s->isValue())
-			return NULL;
-
-		return s->getValue();
-	}
-
-	Value* getValue(const CString* name) throw() {
-		return getValue(name, true);
+	Value* getValue(const CString* name, bool recurse = true) throw() {
+		return getScope()->resolveValue(name, recurse);
 	}
 
 	/**
 	 * Returns the type pointer for the given symbol name.
 	 */
-	const Type* getType(const CString* name, bool recurse) throw() {
-		
-		Symbol* s = getSymbol(name, recurse);
-
-		if (s == NULL || !s->isType())
-			return NULL;
-
-		return s->getType();
-	}
-	
-	const Type* getType(const CString* name) throw() {
-		return getType(name, true);
+	const Type* getType(const CString* name, bool recurse = true) throw() {
+		return getScope()->resolveType(name, recurse);
 	}
 
 	/**
@@ -264,7 +262,8 @@ public:
 	 * Enters a new scope.
 	 */
 	Scope* beginScope() throw() {
-		Scope* s = new Scope(++m_level);
+		Scope* parent = m_level < 0 ? NULL : getScope();
+		Scope* s = new Scope(++m_level, parent);
 
 		m_scope.push_back(s);
 
