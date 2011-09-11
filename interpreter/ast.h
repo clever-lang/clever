@@ -344,6 +344,9 @@ public:
 		if (m_rhs) {
 			m_rhs->delRef();			
 		}
+		if (m_initval) {
+			m_initval->delRef();
+		}
 	}
 
 	Identifier* getVariable() const {
@@ -895,9 +898,9 @@ public:
 		m_modifier->delRef();
 	}
 
-        ASTNode* getModifier() { return m_modifier; }
+	ASTNode* getModifier() { return m_modifier; }
 protected:
-        ASTNode* m_modifier;
+	ASTNode* m_modifier;
 };
 
 class FunctionCall : public ASTNode {

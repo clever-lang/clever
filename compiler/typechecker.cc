@@ -237,7 +237,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 		}
 		
 		expr->setInitialValue(initval);
-		//initval->addRef();
+		initval->addRef();
 	}
 	
 	g_symtable.push(var->getName(), var);

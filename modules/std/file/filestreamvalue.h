@@ -40,7 +40,7 @@ public:
 	// If there is a open stream
 	bool m_is_open;
 	
-	~FileStreamValue() {}
+	virtual ~FileStreamValue() {}
 };
 
 }}}} // clever::packages::std::file
