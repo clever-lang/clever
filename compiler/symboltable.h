@@ -90,8 +90,8 @@ private:
 	SymbolType     m_type;
 
 	union {
-		Value *value;
-		const Type  *type;
+		Value* value;
+		const Type* type;
 	} m_data;
 };
 

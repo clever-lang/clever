@@ -7,21 +7,22 @@ namespace clever {
 SymbolTable g_symtable;
 
 Scope::~Scope() {
-		Scope::iterator it = begin(), end_ = end();
+	Scope::iterator it = begin(), end_ = end();
 
-		while(it != end_) {
-			Symbol* s = it->second;
-
-			if (s->isValue())
-				s->getValue()->delRef();
-			
-			if (s->isType())
-				delete s->getType();
-
-			delete s;
-
-			++it;
+	while(it != end_) {
+		Symbol* s = it->second;
+		
+		if (s->isValue()) {
+			s->getValue()->delRef();
 		}
+		
+		if (s->isType()) {
+			delete s->getType();
+		}
+
+		delete s;
+		++it;
+	}
 }
 
 }
