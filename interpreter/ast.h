@@ -326,24 +326,23 @@ private:
 class VariableDecl : public ASTNode {
 public:
 	VariableDecl(Identifier* type, Identifier* variable)
-		: m_type(type), m_variable(variable), m_initial_value(NULL) {
+		: m_type(type), m_variable(variable), m_rhs(NULL), m_initval(NULL) {
 		m_type->addRef();
 		m_variable->addRef();
 	}
 
 	VariableDecl(Identifier* type, Identifier* variable, ASTNode* rhs)
-		: m_type(type), m_variable(variable), m_initial_value(rhs) {
+		: m_type(type), m_variable(variable), m_rhs(rhs), m_initval(NULL) {
 		m_type->addRef();
 		m_variable->addRef();
-		m_initial_value->addRef();
+		m_rhs->addRef();
 	}
 
 	virtual ~VariableDecl() {
 		m_type->delRef();
 		m_variable->delRef();
-
-		if (m_initial_value) {
-			m_initial_value->delRef();
+		if (m_rhs) {
+			m_rhs->delRef();			
 		}
 	}
 
@@ -351,8 +350,16 @@ public:
 		return m_variable;
 	}
 
-	ASTNode* getInitialValue() const {
-		return m_initial_value;
+	Value* getInitialValue() const {
+		return m_initval;
+	}
+	
+	ASTNode* getRhs() throw() {
+		return m_rhs;
+	}
+	
+	void setInitialValue(Value* value) throw() {
+		m_initval = value;
 	}
 
 	Identifier* getType() const {
@@ -360,15 +367,16 @@ public:
 	}
 
 	void accept(ASTVisitor& visitor) throw() {
-		if (m_initial_value) {
-			m_initial_value->accept(visitor);
+		if (m_rhs) {
+			m_rhs->accept(visitor);
 		}
 		visitor.visit(this);
 	}
 private:
 	Identifier* m_type;
 	Identifier* m_variable;
-	ASTNode* m_initial_value;
+	ASTNode* m_rhs;
+	Value* m_initval;
 
 	DISALLOW_COPY_AND_ASSIGN(VariableDecl);
 };
@@ -404,39 +412,6 @@ private:
 	Value* m_value;
 
 	DISALLOW_COPY_AND_ASSIGN(StringLiteral);
-};
-
-class TypeCreation : public ASTNode {
-public:
-	TypeCreation(Identifier* type, ASTNode* arguments)
-		: m_type(type), m_arguments(arguments) {
-		m_type->addRef();
-		m_arguments->addRef();
-		m_value = new Value();
-	}
-
-	~TypeCreation() {
-		m_type->delRef();
-		m_arguments->delRef();
-	}
-	
-	Identifier* getIdentifier() throw() {
-		return m_type;
-	}
-	
-	void accept(ASTVisitor& visitor) throw() {
-		visitor.visit(this);
-	}
-	
-	Value* getValue() const throw() {
-		return m_value;
-	}
-private:
-	Identifier* m_type;
-	ASTNode* m_arguments;
-	Value* m_value;
-
-	DISALLOW_COPY_AND_ASSIGN(TypeCreation);
 };
 
 class BlockNode : public ASTNode {
@@ -804,6 +779,51 @@ private:
 	ArgumentDecls m_args;
 
 	DISALLOW_COPY_AND_ASSIGN(ArgumentDeclList);
+};
+
+class TypeCreation : public ASTNode {
+public:
+	explicit TypeCreation(Identifier* type)
+		: m_type(type), m_arguments(NULL) {
+		m_type->addRef();
+		m_value = new Value();
+	}
+	
+	TypeCreation(Identifier* type, ArgumentList* arguments)
+		: m_type(type), m_arguments(arguments) {
+		m_type->addRef();
+		m_arguments->addRef();
+		m_value = new Value();
+	}
+
+	~TypeCreation() {
+		m_type->delRef();
+		if (m_arguments) {
+			m_arguments->delRef();
+		}
+		m_value->delRef();
+	}
+	
+	Identifier* getIdentifier() throw() {
+		return m_type;
+	}
+	
+	void accept(ASTVisitor& visitor) throw() {
+		if (m_arguments) {
+			m_arguments->accept(visitor);
+		}
+		visitor.visit(this);
+	}
+	
+	Value* getValue() const throw() {
+		return m_value;
+	}
+private:
+	Identifier* m_type;
+	ArgumentList* m_arguments;
+	Value* m_value;
+
+	DISALLOW_COPY_AND_ASSIGN(TypeCreation);
 };
 
 class FuncDeclaration : public ASTNode {

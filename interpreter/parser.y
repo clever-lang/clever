@@ -181,7 +181,6 @@ namespace clever {
 %type <variable_decl> variable_decl_or_empty
 %type <variable_decl> variable_declaration
 %type <binary_expr> assign_stmt
-%type <ast_node> arguments
 %type <type_creation> type_creation
 %type <ast_node> expr
 %type <ast_node> expr_or_empty
@@ -322,14 +321,9 @@ assign_stmt:
 	|	IDENT "^=" expr { $$ = new ast::BinaryExpr(ast::XOR, $1, $3, true);   $$->setLocation(yylloc); }
 ;
 
-arguments:
-		/* empty */          { $$ = NULL; }
-	|	arguments ',' expr   { $$ = $3;   }
-	|	expr                 { $$ = $1;   }
-;
-
 type_creation:
-		TYPE '(' arguments ')' { $$ = new ast::TypeCreation($1, $3); $$->setLocation(yylloc); }
+		TYPE '(' ')'          { $$ = new ast::TypeCreation($1); $$->setLocation(yylloc); }
+	|	TYPE '(' arg_list ')' { $$ = new ast::TypeCreation($1, $3); $$->setLocation(yylloc); }
 ;
 
 expr:

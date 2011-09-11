@@ -73,21 +73,19 @@ AST_VISITOR(CodeGenVisitor, BinaryExpr) {
  */
 AST_VISITOR(CodeGenVisitor, VariableDecl) {
 	Identifier* var_expr = expr->getVariable();
-	ASTNode* rhs_expr = expr->getInitialValue();
+	Value* initval = expr->getInitialValue();
 	Value* variable = var_expr->getValue();
 	
 	/* Check if the declaration contains initialization */
-	if (rhs_expr) {
-		Value* value = rhs_expr->getValue();
-
-		if (value->isPrimitive()) {
-			variable->copy(value);
+	if (initval) {
+		if (initval->isPrimitive()) {
+			variable->copy(initval);
 		}
 
 		variable->addRef();
-		value->addRef();
+		initval->addRef();
 
-		emit(OP_VAR_DECL, &VM::var_decl_handler, variable, value);
+		emit(OP_VAR_DECL, &VM::var_decl_handler, variable, initval);
 	} else {
 		variable->addRef();
 		variable->initialize();

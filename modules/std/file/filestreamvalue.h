@@ -30,8 +30,8 @@
 
 namespace clever { namespace packages { namespace std { namespace file {
 
-struct FileStreamValue : public DataValue
-{
+class FileStreamValue : public DataValue {
+public:
 	FileStreamValue() : m_is_open(false) {}
 	
 	// File stream 

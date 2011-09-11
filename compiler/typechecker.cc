@@ -197,8 +197,7 @@ AST_VISITOR(TypeChecker, LogicExpr) {
 AST_VISITOR(TypeChecker, VariableDecl) {
 	Identifier* variable = expr->getVariable();
 	Value* var = new Value();
-	ASTNode* initialization = expr->getInitialValue();
-	Value* initval = initialization ? initialization->getValue() : NULL;
+	ASTNode* rhs = expr->getRhs();
 	const Type* type = g_symtable.getType(expr->getType()->getName());
 	
 	/**
@@ -227,13 +226,18 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 	var->setTypePtr(type);
 	var->addRef();
 	
-	if (initval) {		
+	if (rhs) {
+		Value* initval = rhs->getValue();
+
 		if (!checkCompatibleTypes(var, initval)) {
 			Compiler::errorf(expr->getLocation(),
 				"Cannot convert `%s' to `%s' on assignment",
 				initval->getTypePtr()->getName(),
 				type->getName());
 		}
+		
+		expr->setInitialValue(initval);
+		//initval->addRef();
 	}
 	
 	g_symtable.push(var->getName(), var);
@@ -570,8 +574,6 @@ AST_VISITOR(TypeChecker, TypeCreation) {
 	
 	value->setDataValue(type->allocateValue());
 	value->setTypePtr(type);
-	
-	value->addRef();
 }
 
 }} // clever::ast

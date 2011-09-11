@@ -89,9 +89,10 @@ public:
 
 	virtual ~Value() {
 		if (isUserValue()) {
-			if (m_data.dv_value) delete m_data.dv_value;
-		}
-		else if (isVector()) {
+			if (m_data.dv_value) {
+				delete m_data.dv_value;
+			}
+		} else if (isVector()) {
 			ValueVector::const_iterator it = m_data.v_value->begin(), end = m_data.v_value->end();
 
 			while (it != end) {
