@@ -54,6 +54,7 @@ class ArgumentList;
 class FuncDeclaration;
 class ClassDeclaration;
 class ReturnStmt;
+class TypeCreation;
 
 #define AST_VISITOR(type, exprtype) void type::visit(exprtype* const expr) throw()
 #define AST_VISITOR_DECL_VIRTUAL(type) virtual void visit(type* const expr) throw() = 0
@@ -80,7 +81,8 @@ class ReturnStmt;
 	V(ClassDeclaration); \
 	V(ReturnStmt); \
 	V(ArgumentList); \
-	V(Identifier)
+	V(Identifier); \
+	V(TypeCreation)
 
 /**
  * AST Visitor
@@ -94,8 +96,6 @@ public:
 
 	virtual void init() throw() = 0;
 	virtual void shutdown() throw() = 0;
-
-
 private:
 	DISALLOW_COPY_AND_ASSIGN(ASTVisitor);
 };

@@ -473,22 +473,10 @@ AST_VISITOR(CodeGenVisitor, ReturnStmt) {
  * Generates opcodes for class declaration
  */
 AST_VISITOR(CodeGenVisitor, ClassDeclaration) {
-	//UserTypeValue* type = new UserTypeValue(expr->getClassName());
-	ClassDeclaration::DeclarationError error;	
-	bool ok = expr->check(error);
-	const CString* const class_name = expr->getClassName();
+}
 
-	if (ok) {
-		//@TODO
-	} else {
-		Compiler::errorf(error.getLocation(),
-			"Redefinition of %s `%S' in class `%S'",
-			(error.getType() == ClassDeclaration::DeclarationError::METHOD_DECLARATION) ?
-				"method" : "attribute",
-			&error.getIdentifier(),
-			class_name
-		);
-	}
+AST_VISITOR(CodeGenVisitor, TypeCreation) {
+	
 }
 
 }} // clever::ast

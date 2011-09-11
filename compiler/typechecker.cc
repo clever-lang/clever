@@ -230,7 +230,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 	if (initval) {		
 		if (!checkCompatibleTypes(var, initval)) {
 			Compiler::errorf(expr->getLocation(),
-				"Cannot convert `%S' to `%S' on assignment",
+				"Cannot convert `%s' to `%s' on assignment",
 				initval->getTypePtr()->getName(),
 				type->getName());
 		}
@@ -560,6 +560,18 @@ AST_VISITOR(TypeChecker, ReturnStmt) {
 }
 
 AST_VISITOR(TypeChecker, ClassDeclaration) {
+	Compiler::error("Not implemented yet!");
+}
+
+AST_VISITOR(TypeChecker, TypeCreation) {
+	Identifier* ident = expr->getIdentifier();
+	const Type* type = g_symtable.getType(ident->getName());
+	Value* value = expr->getValue();
+	
+	value->setDataValue(type->allocateValue());
+	value->setTypePtr(type);
+	
+	value->addRef();
 }
 
 }} // clever::ast
