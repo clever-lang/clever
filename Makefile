@@ -30,6 +30,10 @@ LFLAGS=$(CXXFLAGS)
 BUILDDIR=build/
 EXT=
 
+# shortcuts
+COMPILE=$(CXX) $(CXXFLAGS) -c
+LINK=$(LD) $(LFLAGS)
+
 VPATH=build compiler vm types interpreter extra test\
       modules/std modules/std/math modules/std/io modules/std/file
 
@@ -56,13 +60,13 @@ endif
 
 clever$(EXT): $(BUILDDIR)scanner.cc $(OBJECTS)
 	@echo "  LD    $@"
-	$(LD) $(LFLAGS) -o $@ $(OBJECTS)
+	$(LINK) -o $@ $(OBJECTS)
 
 all: clever$(EXT) test
 
 $(BUILDDIR)%.o: %.cc %.d
 	@echo "  CXX   $<"
-	$(CXX) $(CXXFLAGS) -c -o$@ $<
+	$(COMPILE) -o$@ $<
 
 $(BUILDDIR)%.cc: %.y
 	@mkdir -p build
@@ -107,6 +111,6 @@ $(BUILDDIR)%.d: %.cc
 
 # Do not include dependency files when cleaning
 ifeq (,$(findstring clean,$(MAKECMDGOALS)))
-include $(subst .o,.d,$(OBJECTS))
+-include $(subst .o,.d,$(OBJECTS))
 endif
 
