@@ -70,6 +70,7 @@ $(BUILDDIR)%.cc: %.y
 	$(BISON) -d -o$@ $<
 
 $(BUILDDIR)%.cc: %.re
+	@mkdir -p build
 	@echo "  RE2C  $< "
 	$(RE2C) --case-insensitive -b -c -o $@ $<
 
@@ -90,6 +91,7 @@ clean-all: clean clean-test clean-tests
 clean:
 	@echo "  CLEAN"
 	-rm -f clever* $(BUILDDIR)*.o $(BUILDDIR)*.hh $(BUILDDIR)*.cc $(BUILDDIR)*.d
+	-rm -rf $(BUILDDIR)
 
 clean-tests:
 	rm $(TESTDIR)*.mem $(TESTDIR)*.log
