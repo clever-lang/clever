@@ -32,6 +32,29 @@
 
 namespace clever { namespace packages { namespace std { namespace file {
 
+::std::ios::openmode FileStream::convertOpenMode(::std::string modeString) {
+	// @TODO: support binary modes.
+
+	if (modeString == "r") {
+		return ::std::ios_base::in;
+	} else if (modeString == "w") {
+		return ::std::ios_base::out | ::std::ios_base::trunc;
+	} else if (modeString == "a") {
+		return ::std::ios_base::out | ::std::ios_base::app;
+	} else if (modeString == "r+") {
+		return ::std::ios_base::in | ::std::ios_base::out;
+	} else if (modeString == "w+") {
+		return ::std::ios_base::in | ::std::ios_base::out | ::std::ios_base::trunc;
+	} else if (modeString == "a+") {
+		return ::std::ios_base::in | ::std::ios_base::out | ::std::ios_base::app;
+	} else {
+		// @TODO: remove this error from here.
+		Compiler::error("calling Filestream::open() : "
+			"invalid open mode.");
+		return ::std::ios_base::in;
+	}
+}
+
 /**
  * FileStream::toString()
  * A representation of this class as a string
@@ -42,7 +65,7 @@ CLEVER_TYPE_METHOD(FileStream::toString) {
 }
 
 /**
- * FileStream::open(String file, [Int mode])
+ * FileStream::open(String file, [String mode])
  * Open a file
  */
 CLEVER_TYPE_METHOD(FileStream::open) {
@@ -50,12 +73,12 @@ CLEVER_TYPE_METHOD(FileStream::open) {
 	
 	FileStreamValue* fsv = static_cast<FileStreamValue*>(value->getData()->dv_value);
 	
-	if (size == 1) {
-		fsv->m_fstream.open(args->at(0)->toString().c_str());
+	if (size == 2) {
+		fsv->m_fstream.open(args->at(0)->toString().c_str(), convertOpenMode(args->at(1)->toString()));
 		fsv->m_is_open = true;
 	} else {
 		Compiler::error("calling Filestream::read() : wrong number "
-			"of arguments given to FileStream::open(String)");
+			"of arguments given to FileStream::open(String, [String])");
 	}
 	
 	retval->setType(Value::NONE);
@@ -178,7 +201,7 @@ void FileStream::init() {
 		makeArgs(NULL), CLEVER_TYPE("Void")));
 		
 	addMethod(new Method("open", (MethodPtr)&FileStream::open, 
-		makeArgs(CLEVER_TYPE("String"), NULL), CLEVER_TYPE("Void")));
+		makeArgs(CLEVER_TYPE("String"), CLEVER_TYPE("String"), NULL), CLEVER_TYPE("Void")));
 		
 	addMethod(new Method("read", (MethodPtr)&FileStream::read, 
 		makeArgs(CLEVER_TYPE("String"), NULL), CLEVER_TYPE("Void")));

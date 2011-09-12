@@ -61,6 +61,8 @@ public:
 	}
 private:
 	DISALLOW_COPY_AND_ASSIGN(FileStream);
+
+	static ::std::ios::openmode convertOpenMode(::std::string modeString);
 };
 
 }}}} // clever::packages::std::file
