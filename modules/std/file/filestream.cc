@@ -52,9 +52,10 @@ CLEVER_TYPE_METHOD(FileStream::open) {
 	if (size == 1) {
 		fsv->m_fstream.open(args->at(0)->toString().c_str());
 		fsv->m_is_open = true;
+	} else {
+		Compiler::error("calling Filestream::read() : wrong number "
+			"of arguments given to FileStream::open(String)");
 	}
-	else Compiler::error("calling Filestream::read() : wrong number "
-		"of arguments given to FileStream::open(String)");
 	
 	retval->setType(Value::NONE);
 }
@@ -64,13 +65,15 @@ CLEVER_TYPE_METHOD(FileStream::open) {
  * Get the next token from the file
  */
 CLEVER_TYPE_METHOD(FileStream::read) {
+	FileStreamValue* fsv;
 	size_t size = args->size();
 	
-	if (size != 1)
-		Compiler::error("calling Filestream::read([String, Int, Double]) : wrong number of arguments given");
+	if (size != 1) {
+		Compiler::error("calling Filestream::read([String, Int, Double]) :"
+			" wrong number of arguments given");
+	}	
 	
-	
-	FileStreamValue* fsv = static_cast<FileStreamValue*>(value->getData()->dv_value);
+	fsv = static_cast<FileStreamValue*>(value->getData()->dv_value);
 	
 	if (!fsv->m_is_open) {
 		Compiler::error("calling Filestream::read([String, Int, Double])"
@@ -82,14 +85,12 @@ CLEVER_TYPE_METHOD(FileStream::read) {
 		fsv->m_fstream >> val;
 		
 		args->at(0)->setInteger(val);
-	}
-	else if (args->at(0)->isDouble()) {
+	} else if (args->at(0)->isDouble()) {
 		double val;
 		fsv->m_fstream >> val;
 		
 		args->at(0)->setDouble(val);
-	}
-	else if (args->at(0)->isString()) {
+	} else if (args->at(0)->isString()) {
 		::std::string val;
 		fsv->m_fstream >> val;
 		
@@ -103,13 +104,12 @@ CLEVER_TYPE_METHOD(FileStream::read) {
 	//	args->at(0)->setBoolean(val);
 	//}
 	else {
-		Compiler::error("calling Filestream::read([String, Int, Double]) : argument type is incompatible");
+		Compiler::error("calling Filestream::read([String, Int, Double]) :"
+			" argument type is incompatible");
 	}
 	
 	retval->setType(Value::NONE);
 }
-
-
 
 void FileStream::init() {
 	addMethod(new Method("toString", (MethodPtr)&FileStream::toString, 
