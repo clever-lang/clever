@@ -285,10 +285,10 @@ public:
 	}
 
 private:
-		int m_level;
-		ScopeDeque m_scope;
+	int m_level;
+	ScopeDeque m_scope;
 
-		DISALLOW_COPY_AND_ASSIGN(SymbolTable);
+	DISALLOW_COPY_AND_ASSIGN(SymbolTable);
 };
 
 } // clever

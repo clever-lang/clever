@@ -43,10 +43,14 @@ PackageManager Compiler::s_pkgmanager;
  * Deallocs memory used by compiler data
  */
 Compiler::~Compiler() {
-	g_symtable.endScope();
-	s_pkgmanager.shutdown();
-
-	delete m_ast;
+	if (m_initialized) {
+		g_symtable.endScope();
+		s_pkgmanager.shutdown();
+	}
+	
+	if (m_ast) {
+		delete m_ast;
+	}
 }
 
 /**
@@ -60,6 +64,8 @@ void Compiler::init() throw() {
 
 	/* Load the primitive data types */
 	loadTypes();
+	
+	m_initialized = true;
 }
 
 /**

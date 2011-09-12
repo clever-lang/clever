@@ -43,7 +43,7 @@ namespace clever {
 class Compiler {
 public:
 	Compiler()
-		: m_ast(NULL) { }
+		: m_ast(NULL), m_initialized(false) { }
 
 	~Compiler();
 
@@ -104,6 +104,8 @@ private:
 	ast::TypeChecker m_tcvisitor;
 
 	static PackageManager s_pkgmanager;
+	
+	bool m_initialized;
 
 	DISALLOW_COPY_AND_ASSIGN(Compiler);
 };
