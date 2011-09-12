@@ -64,17 +64,20 @@ clever$(EXT): $(BUILDDIR)scanner.cc $(OBJECTS)
 
 all: clever$(EXT) test
 
+$(BUILDDIR)ensure-build-dir:
+	@echo "Making sure $(BUILDDIR) exists..."
+	mkdir -p $(BUILDDIR)
+	touch $(BUILDDIR)ensure-build-dir
+
 $(BUILDDIR)%.o: %.cc %.d
 	@echo "  CXX   $<"
 	$(COMPILE) -o$@ $<
 
-$(BUILDDIR)%.cc: %.y
-	@mkdir -p build
+$(BUILDDIR)%.cc: %.y $(BUILDDIR)ensure-build-dir
 	@echo "  BISON $<"
 	$(BISON) -d -o$@ $<
 
-$(BUILDDIR)%.cc: %.re
-	@mkdir -p build
+$(BUILDDIR)%.cc: %.re $(BUILDDIR)ensure-build-dir
 	@echo "  RE2C  $< "
 	$(RE2C) --case-insensitive -b -c -o $@ $<
 
@@ -103,14 +106,14 @@ clean-tests:
 clean-test:
 	rm -rf $(EXTRADIR)testrunner $(EXTRADIR)testrunner.exe
 
-$(BUILDDIR)%.d: %.cc
-	#@echo "  DEP   $< "
-	$(CXX) -MM -MG $(CXXFLAGS) $< > $@.$$$$;\
-		sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@;\
-		rm -f $@.$$$$
-
-# Do not include dependency files when cleaning
+# No dependency tracking needed when cleaning
 ifeq (,$(findstring clean,$(MAKECMDGOALS)))
+
+$(BUILDDIR)%.d: %.cc $(BUILDDIR)ensure-build-dir
+	$(CXX) -MM -MG $(CXXFLAGS) $< > $@.tmp
+	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.tmp > $@
+	rm -f $@.tmp
+
 -include $(subst .o,.d,$(OBJECTS))
 endif
 
