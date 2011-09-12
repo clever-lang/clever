@@ -26,13 +26,14 @@
 #ifndef CLEVER_DATAVALUE_H
 #define CLEVER_DATAVALUE_H
 
+#include "compiler/refcounted.h"
+
 namespace clever {
 	
 /**
  * Base class for all typevalues
  */
-class DataValue
-{
+class DataValue : public RefCounted {
 public:
 	DataValue() {};
 	virtual ~DataValue() {};

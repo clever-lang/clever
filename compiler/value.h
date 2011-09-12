@@ -89,9 +89,11 @@ public:
 
 	virtual ~Value() {
 		if (isUserValue()) {
-			if (m_data.dv_value) {
+			if (m_data.dv_value->refCount() == 0) {
 				delete m_data.dv_value;
-			}
+			} else {
+				m_data.dv_value->delRef();
+			}			
 		} else if (isVector()) {
 			ValueVector::const_iterator it = m_data.v_value->begin(), end = m_data.v_value->end();
 
@@ -212,6 +214,10 @@ public:
 	void setDataValue(DataValue* data) { 
 		m_data.dv_value = data;
 		m_type = USER;
+	}
+	
+	DataValue* getDataValue() {
+		return m_data.dv_value;
 	}
 
 	void copy(const Value* const value) throw() {

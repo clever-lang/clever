@@ -73,6 +73,8 @@ public:
 
 		m_data.type = type;
 	}
+	
+	~Symbol() { }
 
 	const CString* getSymbolName() const { return m_name; }
 	SymbolType     getSymbolType() const { return m_type; }
