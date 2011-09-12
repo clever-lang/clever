@@ -24,6 +24,7 @@
  */
 
 #include <fstream>
+#include <iostream>
 #include "compiler/compiler.h"
 #include "compiler/cstring.h"
 #include "types/typeutils.h"
@@ -111,6 +112,67 @@ CLEVER_TYPE_METHOD(FileStream::read) {
 	retval->setType(Value::NONE);
 }
 
+/**
+ * FileStream::write([String])
+ * Writes a String into the filestream.
+ */
+CLEVER_TYPE_METHOD(FileStream::write) {
+	FileStreamValue *fsv;
+	size_t size = args->size();
+
+	if (size != 1) {
+		Compiler::error("calling FileStream::write([String])) :"
+			"wrong number of arguments given");
+	}
+
+	fsv = static_cast<FileStreamValue*>(value->getData()->dv_value);
+
+	if (!fsv->m_is_open) {
+		Compiler::error("calling FileStream::write([Objext]) :"
+			"no file stream is open (use Filestream::open() before)");
+	}
+
+	// Seek to the end of the stream.
+	fsv->m_fstream.seekg(0, ::std::ios::end);
+
+	// Write the String.
+	fsv->m_fstream << args->at(0)->getString();
+
+	retval->setType(Value::NONE);
+}
+
+/**
+ * FileStreasm::writeLine([String])
+ * Writes n String into the filestream, and then a new line.
+ */
+CLEVER_TYPE_METHOD(FileStream::writeLine) {
+	FileStreamValue *fsv;
+	size_t size = args->size();
+
+	if (size != 1) {
+		Compiler::error("calling FileStream::writeLine([String])) :"
+			"wrong number of arguments given");
+	}
+
+	fsv = static_cast<FileStreamValue*>(value->getData()->dv_value);
+
+	if (!fsv->m_is_open) {
+		Compiler::error("calling FileStream::writeLine([Objext]) :"
+			"no file stream is open (use Filestream::open() before)");
+	}
+
+	// Seek to the end of the stream.
+	fsv->m_fstream.seekg(0, ::std::ios::end);
+
+	// Write the String.
+	fsv->m_fstream << args->at(0)->getString();
+
+	// Write a new line.
+	fsv->m_fstream << ::std::endl;
+
+	retval->setType(Value::NONE);
+}
+
 void FileStream::init() {
 	addMethod(new Method("toString", (MethodPtr)&FileStream::toString, 
 		makeArgs(NULL), CLEVER_TYPE("Void")));
@@ -119,6 +181,12 @@ void FileStream::init() {
 		makeArgs(CLEVER_TYPE("String"), NULL), CLEVER_TYPE("Void")));
 		
 	addMethod(new Method("read", (MethodPtr)&FileStream::read, 
+		makeArgs(CLEVER_TYPE("String"), NULL), CLEVER_TYPE("Void")));
+
+	addMethod(new Method("write", (MethodPtr)&FileStream::write,
+		makeArgs(CLEVER_TYPE("String"), NULL), CLEVER_TYPE("Void")));
+
+	addMethod(new Method("writeLine", (MethodPtr)&FileStream::writeLine,
 		makeArgs(CLEVER_TYPE("String"), NULL), CLEVER_TYPE("Void")));
 }
 

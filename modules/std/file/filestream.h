@@ -46,6 +46,8 @@ public:
 	 */
 	static CLEVER_TYPE_METHOD(open);
 	static CLEVER_TYPE_METHOD(read);
+	static CLEVER_TYPE_METHOD(write);
+	static CLEVER_TYPE_METHOD(writeLine);
 	static CLEVER_TYPE_METHOD(toString);
 	
 	/**
