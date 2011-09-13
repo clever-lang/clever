@@ -48,9 +48,7 @@ namespace clever { namespace packages { namespace std { namespace file {
 	} else if (modeString == "a+") {
 		return ::std::ios_base::in | ::std::ios_base::out | ::std::ios_base::app;
 	} else {
-		// @TODO: remove this error from here.
-		Compiler::error("calling Filestream::open() : "
-			"invalid open mode.");
+		// @TODO: return some kind of error here.
 		return ::std::ios_base::in;
 	}
 }
@@ -103,7 +101,9 @@ CLEVER_TYPE_METHOD(FileStream::read) {
 		Compiler::error("calling Filestream::read([String, Int, Double])"
 			" : no file stream is open (use Filestream::open() before)");
 	}
-	
+
+	// @TODO: should test if the stream allows reading.	
+
 	if (args->at(0)->isInteger()) {
 		uint64_t val;
 		fsv->m_fstream >> val;
@@ -155,8 +155,7 @@ CLEVER_TYPE_METHOD(FileStream::write) {
 			"no file stream is open (use Filestream::open() before)");
 	}
 
-	// Seek to the end of the stream.
-	fsv->m_fstream.seekg(0, ::std::ios::end);
+	// @TODO: should check if the stream allows writing.
 
 	// Write the String.
 	fsv->m_fstream << args->at(0)->getString();
@@ -183,9 +182,6 @@ CLEVER_TYPE_METHOD(FileStream::writeLine) {
 		Compiler::error("calling FileStream::writeLine([Objext]) :"
 			"no file stream is open (use Filestream::open() before)");
 	}
-
-	// Seek to the end of the stream.
-	fsv->m_fstream.seekg(0, ::std::ios::end);
 
 	// Write the String.
 	fsv->m_fstream << args->at(0)->getString();
