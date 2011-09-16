@@ -50,6 +50,7 @@ ifdef IS_MINGW
 EXT=.exe
 OBJECTS+=$(BUILDDIR)win32.o
 CXXFLAGS+=-Iwin32/
+VPATH+=win32
 endif
 
 ifneq ($(VERBOSE),y)
