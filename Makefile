@@ -9,6 +9,10 @@ ifneq (,$(findstring MINGW,$(UNAME)))
 IS_MINGW=1
 endif
 
+ifneq (,$(findstring CYGWIN,$(UNAME)))
+IS_MINGW=1
+endif
+
 # Build options
 CXXFLAGS?=-pipe
 
