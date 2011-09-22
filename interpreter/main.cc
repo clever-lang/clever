@@ -27,7 +27,7 @@
 #include "compiler/clever.h"
 #include "interpreter/driver.h"
 #ifdef _WIN32
-#include "win32.h"
+#include "win32/win32.h"
 #endif
 
 #define MORE_ARG() \
@@ -131,3 +131,4 @@ int main(int argc, char *argv[]) {
 
 	return 0;
 }
+
