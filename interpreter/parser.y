@@ -307,8 +307,6 @@ variable_declaration:
 		TYPE IDENT '=' type_creation { $$ = new ast::VariableDecl($1, $2, $4); $$->setLocation(yylloc); }
 	|	TYPE IDENT '=' expr          { $$ = new ast::VariableDecl($1, $2, $4); $$->setLocation(yylloc); }
 	|	variable_declaration_no_init { $$ = $1; }
-	|   TYPE IDENT '(' ')'           { $$ = new ast::VariableDecl($1, $2, new ast::TypeCreation($1)); $$->setLocation(yylloc); }
-	|   TYPE IDENT '(' arg_list ')'  { $$ = new ast::VariableDecl($1, $2, new ast::TypeCreation($1, $4)); $$->setLocation(yylloc); }
 ;
 
 assign_stmt:

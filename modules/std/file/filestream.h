@@ -49,8 +49,6 @@ public:
 	static CLEVER_TYPE_METHOD(write);
 	static CLEVER_TYPE_METHOD(writeLine);
 	static CLEVER_TYPE_METHOD(toString);
-	static CLEVER_TYPE_METHOD(construct1);
-	static CLEVER_TYPE_METHOD(construct2);
 	
 	/**
 	 * Type handlers

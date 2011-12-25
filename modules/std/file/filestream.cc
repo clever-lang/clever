@@ -24,6 +24,7 @@
  */
 
 #include <fstream>
+#include <iostream>
 #include "compiler/compiler.h"
 #include "compiler/cstring.h"
 #include "types/typeutils.h"
@@ -33,6 +34,7 @@ namespace clever { namespace packages { namespace std { namespace file {
 
 ::std::ios::openmode FileStream::convertOpenMode(::std::string modeString) {
 	// @TODO: support binary modes.
+
 	if (modeString == "r") {
 		return ::std::ios_base::in;
 	} else if (modeString == "w") {
@@ -67,7 +69,7 @@ CLEVER_TYPE_METHOD(FileStream::toString) {
 CLEVER_TYPE_METHOD(FileStream::open) {
 	size_t size = args->size();
 	
-	FileStreamValue* fsv = static_cast<FileStreamValue*>(value->getDataValue());
+	FileStreamValue* fsv = static_cast<FileStreamValue*>(value->getData()->dv_value);
 	
 	if (size == 2) {
 		fsv->m_fstream.open(args->at(0)->toString().c_str(), convertOpenMode(args->at(1)->toString()));
@@ -81,8 +83,8 @@ CLEVER_TYPE_METHOD(FileStream::open) {
 }
 
 /**
- * FileStream::read([String, Int, Double] to)
- * Get the next token from the file and writes it into `to'
+ * FileStream::read([String, Int, Double])
+ * Get the next token from the file
  */
 CLEVER_TYPE_METHOD(FileStream::read) {
 	FileStreamValue* fsv;
@@ -134,8 +136,8 @@ CLEVER_TYPE_METHOD(FileStream::read) {
 }
 
 /**
- * FileStream::write(String text)
- * Writes a text into the filestream.
+ * FileStream::write([String])
+ * Writes a String into the filestream.
  */
 CLEVER_TYPE_METHOD(FileStream::write) {
 	FileStreamValue *fsv;
@@ -149,7 +151,7 @@ CLEVER_TYPE_METHOD(FileStream::write) {
 	fsv = static_cast<FileStreamValue*>(value->getData()->dv_value);
 
 	if (!fsv->m_is_open) {
-		Compiler::error("calling FileStream::write([Object]) :"
+		Compiler::error("calling FileStream::write([Objext]) :"
 			"no file stream is open (use Filestream::open() before)");
 	}
 
@@ -162,8 +164,8 @@ CLEVER_TYPE_METHOD(FileStream::write) {
 }
 
 /**
- * FileStream::writeLine(String text)
- * Writes text into the filestream, and then a new line.
+ * FileStreasm::writeLine([String])
+ * Writes n String into the filestream, and then a new line.
  */
 CLEVER_TYPE_METHOD(FileStream::writeLine) {
 	FileStreamValue *fsv;
@@ -177,7 +179,7 @@ CLEVER_TYPE_METHOD(FileStream::writeLine) {
 	fsv = static_cast<FileStreamValue*>(value->getData()->dv_value);
 
 	if (!fsv->m_is_open) {
-		Compiler::error("calling FileStream::writeLine([Object]) :"
+		Compiler::error("calling FileStream::writeLine([Objext]) :"
 			"no file stream is open (use Filestream::open() before)");
 	}
 
@@ -190,22 +192,7 @@ CLEVER_TYPE_METHOD(FileStream::writeLine) {
 	retval->setType(Value::NONE);
 }
 
-/**
- * FileStream::FileStream(String file, [String mode])
- * Initialize a FileStream associating it to a file named `file'
- */
-CLEVER_TYPE_METHOD(FileStream::construct1) {
-	::std::string mode = (args->size() == 1 ? "r+" : args->at(1)->getString().c_str());
-	value->setDataValue(new FileStreamValue(args->at(0)->getString(), convertOpenMode(mode)));
-}
-
 void FileStream::init() {
-	addMethod(new Constructor((MethodPtr)&FileStream::construct1, 
-		makeArgs(CLEVER_TYPE("String"), NULL), this));
-		
-	addMethod(new Constructor((MethodPtr)&FileStream::construct1, 
-		makeArgs(CLEVER_TYPE("String"), CLEVER_TYPE("String"), NULL), this));
-	
 	addMethod(new Method("toString", (MethodPtr)&FileStream::toString, 
 		makeArgs(NULL), CLEVER_TYPE("Void")));
 		

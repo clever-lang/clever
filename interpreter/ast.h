@@ -410,9 +410,7 @@ public:
 		m_value->delRef();
 	}
 
-	Value* getValue() const throw() { 
-		return m_value; 
-	};
+	Value* getValue() const throw() { return m_value; };
 private:
 	Value* m_value;
 
@@ -751,9 +749,7 @@ public:
 		visitor.visit(this);
 	}
 	
-	ValueVector* getArgValue() { 
-		return m_value; 
-	}
+	ValueVector* getArgValue() { return m_value; }
 	
 	void setArgValue(ValueVector* value) { m_value = value; }
 private:
@@ -820,10 +816,6 @@ public:
 			m_arguments->accept(visitor);
 		}
 		visitor.visit(this);
-	}
-	
-	ArgumentList* getArguments() throw() {
-		return m_arguments;
 	}
 	
 	Value* getValue() const throw() {

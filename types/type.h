@@ -56,8 +56,7 @@ class CString;
  */
 class Type {
 public:
-	typedef std::tr1::unordered_map<std::string, Method*> OverloadMethodMap;
-	typedef std::tr1::unordered_map<std::string, OverloadMethodMap> MethodMap;
+	typedef std::tr1::unordered_map<std::string, Method*> MethodMap;
 	typedef std::pair<std::string, Method*> MethodPair;
 
 	explicit Type(const char* name)
@@ -65,52 +64,23 @@ public:
 
 	virtual ~Type() {
 		MethodMap::const_iterator it = m_methods.begin(), end = m_methods.end();
-		
+
 		while (it != end) {
-			OverloadMethodMap::const_iterator be = it->second.begin(),
-				ed = it->second.end();
-			
-			while (be != ed) {
-				delete be->second;
-				++be;
-			}
-			
+			delete it->second;
 			++it;
 		}
 	}
 
 	void addMethod(Method* method) throw() {
-		const TypeVector* args = method->getArgs();
-		
-		std::string args_name;
-		
-		if (args != NULL) {
-			for (size_t i = 0; i < args->size(); ++i) {
-				args_name += args->at(i)->getName();
-				args_name += CLEVER_ARGS_SEPARATOR;
-			}
-		}
-		
-		m_methods[method->getName()].insert(MethodPair(args_name, method));
+		m_methods.insert(MethodPair(method->getName(), method));
 	}
 
-	const Method* getMethod(const CString* name, const TypeVector* args) const throw() {
+	const Method* getMethod(const CString* name) const throw() {
 		MethodMap::const_iterator it = m_methods.find(*name);
 
-		std::string args_name;
-		if (args != NULL) {
-			for (size_t i = 0; i < args->size(); ++i) {
-				args_name += args->at(i)->getName();
-				args_name += CLEVER_ARGS_SEPARATOR;
-			}
+		if (it != m_methods.end()) {
+			return it->second;
 		}
-		
-		OverloadMethodMap::const_iterator method_it = it->second.find(args_name);
-		
-		if (method_it != it->second.end()) {
-			return method_it->second;
-		}
-		
 		return NULL;
 	}
 

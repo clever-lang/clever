@@ -410,41 +410,23 @@ AST_VISITOR(TypeChecker, MethodCall) {
 	Value* variable = expr->getVariable()->getValue();
 	const CString* const name = expr->getMethodName();
 	CallableValue* call = new CallableValue(name);
-	ArgumentList* args = expr->getArgs();
+	const Method* method = variable->getTypePtr()->getMethod(name);
+	ASTNode* args = expr->getArgs();
 	Value* arg_values = NULL;
-	TypeVector type_vector;
 	
-	if (args != NULL) {
-		args->accept(*this);
-		
-		ValueVector* args_vec = args->getArgValue();
-		for (size_t i = 0; i < args_vec->size(); ++i) {
-			type_vector.push_back(args_vec->at(i)->getTypePtr());
-		}
-		
+	if (!method) {
+		Compiler::errorf(expr->getLocation(), "Method `%s::%S' not found!",
+			variable->getTypePtr()->getName(), name);
+	}
+	
+	if (args) {
 		arg_values = new Value;
 		arg_values->setType(Value::VECTOR);
-		arg_values->setVector(args->getArgValue());
+		expr->getArgs()->accept(*this);
+		arg_values->setVector(expr->getArgs()->getArgValue());
 		
 		expr->setArgsValue(arg_values);
 		arg_values->addRef();
-	}
-	
-	const Method* method = variable->getTypePtr()->getMethod(name, &type_vector);
-	
-	if (!method) {
-		std::string arg_types;
-		
-		if (type_vector.size() > 0) {
-			arg_types += type_vector[0]->getName();
-			
-			for (size_t i = 1; i < type_vector.size(); ++i) {
-				arg_types += std::string(", ") + type_vector[i]->getName();
-			}
-		}
-		
-		Compiler::errorf(expr->getLocation(), "Method `%s::%S(%S)' not found!",
-			variable->getTypePtr()->getName(), name, &arg_types);
 	}
 	
 	if (!checkArgs(method->getArgs(), arg_values ? arg_values->getVector() : NULL)) {
@@ -590,43 +572,8 @@ AST_VISITOR(TypeChecker, TypeCreation) {
 	const Type* type = g_symtable.getType(ident->getName());
 	Value* value = expr->getValue();
 	
+	value->setDataValue(type->allocateValue());
 	value->setTypePtr(type);
-	
-	if (!value->isPrimitive()) {
-		ArgumentList* arg_list = expr->getArguments();
-		if (arg_list) arg_list->accept(*this);
-		
-		const ValueVector* args = (arg_list ? expr->getArguments()->getArgValue() : NULL);
-		TypeVector args_types;
-		
-		if (args) {
-			for (size_t i = 0; i < args->size(); ++i) {
-				args_types.push_back(args->at(i)->getTypePtr());
-			}
-			
-			const Method* method = type->getMethod(CSTRING(CLEVER_CONSTRUCTOR_NAME), &args_types);
-
-			if (method == NULL) {
-				std::string arg_types;
-
-				if (args_types.size() > 0) {
-					arg_types += args_types[0]->getName();
-
-					for (size_t i = 1; i < args_types.size(); ++i) {
-						arg_types += std::string(", ") + args_types[i]->getName();
-					}
-				}
-
-				Compiler::errorf(expr->getLocation(), "Unable to construct the object. Constructor `%s::%s(%S)' not found!",
-					type->getName(), type->getName(), &arg_types);
-			}
-
-			method->call(args, value, value);
-		}
-		else {
-			value->setDataValue(type->allocateValue());
-		}
-	}
 }
 
 }} // clever::ast
