@@ -410,7 +410,9 @@ public:
 		m_value->delRef();
 	}
 
-	Value* getValue() const throw() { return m_value; };
+	Value* getValue() const throw() { 
+		return m_value; 
+	};
 private:
 	Value* m_value;
 
@@ -749,7 +751,17 @@ public:
 		visitor.visit(this);
 	}
 	
-	ValueVector* getArgValue() { return m_value; }
+	ValueVector* getArgValue() { 
+		if (m_value == NULL) {
+			m_value = new ValueVector;
+			
+			for (size_t i = 0; i < m_nodes.size(); ++i) {
+				m_value->push_back(m_nodes[i]->getValue());
+			}
+		}
+		
+		return m_value; 
+	}
 	
 	void setArgValue(ValueVector* value) { m_value = value; }
 private:

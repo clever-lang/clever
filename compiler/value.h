@@ -148,7 +148,14 @@ public:
 	int hasSameType(const Value* const value) const { return m_type_ptr == value->getTypePtr(); }
 
 	const Type* getTypePtr() const { return m_type_ptr; }
-	void setTypePtr(const Type* const ptr) { m_type_ptr = ptr; }
+	void setTypePtr(const Type* const ptr) { 
+		m_type_ptr = ptr; 
+		
+		if (m_type_ptr == CLEVER_TYPE("Int")) setInteger(0);
+		else if (m_type_ptr == CLEVER_TYPE("Double")) setDouble(0.0);
+		else if (m_type_ptr == CLEVER_TYPE("Bool")) setBoolean(false);
+		else if (m_type_ptr == CLEVER_TYPE("String")) setString(CSTRING(""));
+	}
 
 	bool hasName() const { return m_name != NULL; }
 	const CString* getName() const { return m_name; }

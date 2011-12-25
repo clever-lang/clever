@@ -30,11 +30,12 @@
 #include "types/typeutils.h"
 #include "modules/std/file/filestream.h"
 
+using namespace std;
+
 namespace clever { namespace packages { namespace std { namespace file {
 
 ::std::ios::openmode FileStream::convertOpenMode(::std::string modeString) {
 	// @TODO: support binary modes.
-
 	if (modeString == "r") {
 		return ::std::ios_base::in;
 	} else if (modeString == "w") {
@@ -69,7 +70,7 @@ CLEVER_TYPE_METHOD(FileStream::toString) {
 CLEVER_TYPE_METHOD(FileStream::open) {
 	size_t size = args->size();
 	
-	FileStreamValue* fsv = static_cast<FileStreamValue*>(value->getData()->dv_value);
+	FileStreamValue* fsv = static_cast<FileStreamValue*>(value->getDataValue());
 	
 	if (size == 2) {
 		fsv->m_fstream.open(args->at(0)->toString().c_str(), convertOpenMode(args->at(1)->toString()));
@@ -151,7 +152,7 @@ CLEVER_TYPE_METHOD(FileStream::write) {
 	fsv = static_cast<FileStreamValue*>(value->getData()->dv_value);
 
 	if (!fsv->m_is_open) {
-		Compiler::error("calling FileStream::write([Objext]) :"
+		Compiler::error("calling FileStream::write([Object]) :"
 			"no file stream is open (use Filestream::open() before)");
 	}
 

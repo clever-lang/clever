@@ -410,13 +410,32 @@ AST_VISITOR(TypeChecker, MethodCall) {
 	Value* variable = expr->getVariable()->getValue();
 	const CString* const name = expr->getMethodName();
 	CallableValue* call = new CallableValue(name);
-	const Method* method = variable->getTypePtr()->getMethod(name);
-	ASTNode* args = expr->getArgs();
+	ArgumentList* args = expr->getArgs();
+	TypeVector type_vector;
+	
+	if (args != NULL) {
+		ValueVector* args_vec = args->getArgValue();
+		for (size_t i = 0; i < args_vec->size(); ++i) {
+			type_vector.push_back(args_vec->at(i)->getTypePtr());
+		}
+	}
+	
+	const Method* method = variable->getTypePtr()->getMethod(name, &type_vector);
 	Value* arg_values = NULL;
 	
 	if (!method) {
-		Compiler::errorf(expr->getLocation(), "Method `%s::%S' not found!",
-			variable->getTypePtr()->getName(), name);
+		std::string arg_types;
+		
+		if (type_vector.size() > 0) {
+			arg_types += type_vector[0]->getName();
+			
+			for (size_t i = 1; i < type_vector.size(); ++i) {
+				arg_types += std::string(", ") + type_vector[i]->getName();
+			}
+		}
+		
+		Compiler::errorf(expr->getLocation(), "Method `%s::%S(%S)' not found!",
+			variable->getTypePtr()->getName(), name, &arg_types);
 	}
 	
 	if (args) {
@@ -572,8 +591,9 @@ AST_VISITOR(TypeChecker, TypeCreation) {
 	const Type* type = g_symtable.getType(ident->getName());
 	Value* value = expr->getValue();
 	
-	value->setDataValue(type->allocateValue());
 	value->setTypePtr(type);
+	
+	if (!value->isPrimitive()) value->setDataValue(type->allocateValue());
 }
 
 }} // clever::ast
