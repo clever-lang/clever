@@ -43,7 +43,8 @@ typedef std::vector<const Type*> TypeVector;
 #define CLEVER_METHOD_NAME(name) clv_m_##name
 #define CLEVER_METHOD(name) void CLEVER_FASTCALL name(CLEVER_METHOD_ARGS) throw()
 
-#define CLEVER_ARGS_SEPARATOR '#'
+const char CLEVER_ARGS_SEPARATOR = '#';
+#define CLEVER_CONSTRUCTOR_NAME "$constructor$"
 
 typedef void (CLEVER_FASTCALL *MethodPtr)(CLEVER_METHOD_ARGS);
 
@@ -60,7 +61,7 @@ public:
 		m_info.ptr = ptr; 
 	}
 
-	~Method() { if (m_args) delete m_args; }
+	virtual ~Method() { if (m_args) delete m_args; }
 
 	const std::string& getName() const throw() { return m_name; }
 	MethodPtr getPtr() const throw() { return m_info.ptr; }
@@ -100,6 +101,18 @@ private:
 	 * Method's return type
 	 */
 	const Type* m_rtype;
+};
+
+/**
+ * Constructor representation
+ */
+class Constructor : public Method
+{
+public:
+	Constructor(MethodPtr ptr, TypeVector* args, Type* type)
+		: Method(CLEVER_CONSTRUCTOR_NAME, ptr, args, type)
+	{
+	}
 };
 
 } // clever

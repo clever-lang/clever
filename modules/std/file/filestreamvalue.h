@@ -33,6 +33,8 @@ namespace clever { namespace packages { namespace std { namespace file {
 class FileStreamValue : public DataValue {
 public:
 	FileStreamValue() : m_is_open(false) {}
+	FileStreamValue(const ::std::string& filename, ::std::ios::openmode mode = ::std::ios::in | ::std::ios::out) :
+		m_fstream(filename.c_str(), mode), m_is_open(true) {}
 	
 	// File stream 
 	::std::fstream m_fstream;

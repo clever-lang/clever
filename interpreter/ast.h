@@ -752,14 +752,6 @@ public:
 	}
 	
 	ValueVector* getArgValue() { 
-		if (m_value == NULL) {
-			m_value = new ValueVector;
-			
-			for (size_t i = 0; i < m_nodes.size(); ++i) {
-				m_value->push_back(m_nodes[i]->getValue());
-			}
-		}
-		
 		return m_value; 
 	}
 	
@@ -828,6 +820,10 @@ public:
 			m_arguments->accept(visitor);
 		}
 		visitor.visit(this);
+	}
+	
+	ArgumentList* getArguments() throw() {
+		return m_arguments;
 	}
 	
 	Value* getValue() const throw() {

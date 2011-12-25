@@ -246,11 +246,9 @@ public:
 		switch (getType()) {
 			case INTEGER:
 				str << getInteger();
-
 				return *CSTRING(str.str());
 			case DOUBLE:
 				str << getDouble();
-
 				return *CSTRING(str.str());
 			case BOOLEAN:
 				return *CSTRING(getBoolean() ? "true" : "false");
