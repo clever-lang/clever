@@ -424,7 +424,7 @@ AST_VISITOR(TypeChecker, MethodCall) {
 		
 		arg_values = new Value;
 		arg_values->setType(Value::VECTOR);
-		arg_values->setVector(expr->getArgs()->getArgValue());
+		arg_values->setVector(args->getArgValue());
 		
 		expr->setArgsValue(arg_values);
 		arg_values->addRef();
