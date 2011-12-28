@@ -79,7 +79,15 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 	/* Check if the declaration contains initialization */
 	if (initval) {
 		if (initval->isPrimitive()) {
-			variable->copy(initval);
+			if (initval->getTypePtr() == variable->getTypePtr()) {
+				variable->copy(initval);
+			}
+			else if (variable->getTypePtr() == CLEVER_TYPE("Int")) {
+				variable->setInteger(initval->getDouble());
+			}
+			else {
+				variable->setDouble(initval->getInteger());
+			}
 		}
 
 		variable->addRef();

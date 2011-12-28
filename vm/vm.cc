@@ -91,21 +91,20 @@ CLEVER_VM_HANDLER(VM::plus_handler) {
 	const Value* const op1 = opcode.getOp1();
 	const Value* const op2 = opcode.getOp2();
 	Value* result = opcode.getResult();
-
-	if (op1->isNumeric() && op2->isNumeric()) {
-		if (op1->isInteger() && op2->isInteger()) {
-			result->setInteger(op1->getInteger() + op2->getInteger());
-		}
-		else {
-			double v1, v2;
-			if (op1->isDouble()) v1 = op1->getDouble();
-			else v1 = op1->getInteger();
-			
-			if (op2->isDouble()) v2 = op2->getDouble();
-			else v2 = op2->getInteger();
-			
-			result->setDouble(v1 + v2);
-		}
+	
+	if (op1->isString()) {
+		result->setString(CSTRING(op1->getString() + op2->getString()));
+	}
+	else if (op1->isNumeric() && op2->isNumeric()) {
+		double v1, v2;
+		if (op1->isDouble()) v1 = op1->getDouble();
+		else v1 = op1->getInteger();
+		
+		if (op2->isDouble()) v2 = op2->getDouble();
+		else v2 = op2->getInteger();
+		
+		if (result->isDouble()) result->setDouble(v1 + v2);
+		else result->setInteger(v1 + v2);
 	}
 }
 
@@ -129,7 +128,8 @@ CLEVER_VM_HANDLER(VM::div_handler) {
 			if (op2->isDouble()) v2 = op2->getDouble();
 			else v2 = op2->getInteger();
 			
-			result->setDouble(v1 / v2);
+			if (result->isDouble()) result->setDouble(v1 / v2);
+			else result->setInteger(v1 / v2);
 		}
 	}
 }
@@ -154,7 +154,8 @@ CLEVER_VM_HANDLER(VM::minus_handler) {
 			if (op2->isDouble()) v2 = op2->getDouble();
 			else v2 = op2->getInteger();
 			
-			result->setDouble(v1 - v2);
+			if (result->isDouble()) result->setDouble(v1 - v2);
+			else result->setInteger(v1 - v2);
 		}
 	}
 }
@@ -179,7 +180,8 @@ CLEVER_VM_HANDLER(VM::mult_handler) {
 			if (op2->isDouble()) v2 = op2->getDouble();
 			else v2 = op2->getInteger();
 			
-			result->setDouble(v1 * v2);
+			if (result->isDouble()) result->setDouble(v1 * v2);
+			else result->setInteger(v1 * v2);
 		}
 	}
 }
@@ -248,7 +250,7 @@ CLEVER_VM_HANDLER(VM::var_decl_handler) {
 CLEVER_VM_HANDLER(VM::pre_inc_handler) {
 	Value* value = opcode.getOp1();
 	Value* result = opcode.getResult();
-
+	
 	result->copy(opcode.getOp1Type()->increment(value));
 }
 
