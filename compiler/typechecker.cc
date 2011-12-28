@@ -590,6 +590,15 @@ AST_VISITOR(TypeChecker, ClassDeclaration) {
 AST_VISITOR(TypeChecker, TypeCreation) {
 	Identifier* ident = expr->getIdentifier();
 	const Type* type = g_symtable.getType(ident->getName());
+	
+	/**
+	 * Check if the type wasn't declarated previously
+	 */
+	if (type == NULL) {
+		Compiler::errorf(expr->getLocation(), "`%s' does not name a type", 
+			ident->getName());
+	}
+	
 	Value* value = expr->getValue();
 	value->setTypePtr(type);
 	
