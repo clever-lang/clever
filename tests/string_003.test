@@ -3,4 +3,4 @@ String::replace() type mismatch
 String str = "foo";
 str.replace(1,2,3);
 ==RESULT==
-Compile error: No matching call for String::replace\(Int, Int, Int\). Expecting \(String, String\) on \S+ line 2
+Compile error: No matching call for String::replace\(Int, Int, Int\) on \S+ line 2

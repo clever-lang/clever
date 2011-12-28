@@ -97,6 +97,8 @@ public:
 	const Method* getMethod(const CString* name, const TypeVector* args) const throw() {
 		MethodMap::const_iterator it = m_methods.find(*name);
 
+		if (it == m_methods.end()) return NULL;
+
 		std::string args_name;
 		if (args != NULL) {
 			for (size_t i = 0; i < args->size(); ++i) {
@@ -135,6 +137,13 @@ public:
 	virtual CLEVER_TYPE_DEC_HANDLER_D = 0;
 	virtual CLEVER_TYPE_ASSIGN_HANDLER_D = 0;
 	virtual CLEVER_TYPE_MOD_HANDLER_D { }
+	
+	/**
+	 * Destructor method. This method will be called when after a variable gets
+	 * out of scope. This method should be overwritten for every type who needs
+	 * some handling before a variable of this type get out of scope.
+	 */
+	virtual void destructor(Value* value) const {}
 private:
 	MethodMap m_methods;
 	const char* m_name;

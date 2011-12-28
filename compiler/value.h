@@ -90,6 +90,8 @@ public:
 	virtual ~Value() {
 		if (isUserValue()) {
 			if (m_data.dv_value->refCount() == 0) {
+				// Runs the type destructor
+				getTypePtr()->destructor(this);
 				delete m_data.dv_value;
 			} else {
 				m_data.dv_value->delRef();
