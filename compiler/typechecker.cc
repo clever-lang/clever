@@ -534,7 +534,6 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 
 			var->setName(arg_name);
 			var->setTypePtr(arg_type);
-			var->setType(Value::INTEGER);
 			var->initialize();
 
 			g_symtable.push(var->getName(), var);

@@ -59,7 +59,6 @@ namespace clever { namespace packages { namespace std { namespace file {
  */
 CLEVER_TYPE_METHOD(FileStream::toString) {
 	retval->setString(CSTRING("FileStream class"));
-	retval->setType(Value::STRING);
 }
 
 /**

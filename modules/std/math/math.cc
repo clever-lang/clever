@@ -54,7 +54,6 @@ static CLEVER_FUNCTION(sqrt) {
 	}
 
 	retval->setDouble(::std::sqrt(value));
-	retval->setType(Value::DOUBLE);
 }
 
 /**
@@ -63,7 +62,6 @@ static CLEVER_FUNCTION(sqrt) {
  */
 static CLEVER_FUNCTION(cos) {
 	retval->setDouble(::std::cos(args->at(0)->getDouble()));
-	retval->setType(Value::DOUBLE);
 }
 
 /**
@@ -72,7 +70,6 @@ static CLEVER_FUNCTION(cos) {
  */
 static CLEVER_FUNCTION(sin) {
 	retval->setDouble(::std::sin(args->at(0)->getDouble()));
-	retval->setType(Value::DOUBLE);
 }
 
 /**
@@ -81,7 +78,6 @@ static CLEVER_FUNCTION(sin) {
  */
 static CLEVER_FUNCTION(tan) {
 	retval->setDouble(::std::tan(args->at(0)->getDouble()));
-	retval->setType(Value::DOUBLE);
 }
 
 /**
@@ -90,7 +86,6 @@ static CLEVER_FUNCTION(tan) {
  */
 static CLEVER_FUNCTION(atan) {
 	retval->setDouble(::std::atan(args->at(0)->getDouble()));
-	retval->setType(Value::DOUBLE);
 }
 
 /**
@@ -99,7 +94,6 @@ static CLEVER_FUNCTION(atan) {
  */
 static CLEVER_FUNCTION(pow) {
 	retval->setDouble(::std::pow(args->at(0)->getDouble(), args->at(1)->getDouble()));
-	retval->setType(Value::DOUBLE);
 }
 
 /**
@@ -108,7 +102,6 @@ static CLEVER_FUNCTION(pow) {
  */
 static CLEVER_FUNCTION(ceil) {
 	retval->setDouble(::std::ceil(args->at(0)->getDouble()));
-	retval->setType(Value::DOUBLE);
 }
 
 /**
@@ -117,12 +110,10 @@ static CLEVER_FUNCTION(ceil) {
  * Returns the absolute value of a number x
  */
 static CLEVER_FUNCTION(abs) {
-	if (args->at(0)->getType() == Value::DOUBLE) {
+	if (args->at(0)->isDouble()) {
 		retval->setDouble(::std::abs(args->at(0)->getDouble()));
-		retval->setType(Value::DOUBLE);
 	} else {
 		retval->setInteger(::std::labs(args->at(0)->getInteger()));
-		retval->setType(Value::INTEGER);
 	}
 }
 

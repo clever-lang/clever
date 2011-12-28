@@ -59,31 +59,31 @@ public:
 	/**
 	 * Data type
 	 */
-	enum { NONE, INTEGER, DOUBLE, STRING, BOOLEAN, VECTOR, USER };
+	enum { NONE, PRIMITIVE, VECTOR, USER };
 
 	Value()
 		: RefCounted(1), m_type(NONE), m_type_ptr(NULL), m_name(NULL) { }
 
 	explicit Value(const Type* type_ptr)
-		: RefCounted(1), m_type(NONE), m_type_ptr(type_ptr), m_name(NULL) { }
+		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(type_ptr), m_name(NULL) { }
 
 	explicit Value(double value)
-		: RefCounted(1), m_type(DOUBLE), m_type_ptr(CLEVER_TYPE("Double")), m_name(NULL) {
+		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_TYPE("Double")), m_name(NULL) {
 		setDouble(value);
 	}
 
 	explicit Value(int64_t value)
-		: RefCounted(1), m_type(INTEGER), m_type_ptr(CLEVER_TYPE("Int")), m_name(NULL) {
+		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_TYPE("Int")), m_name(NULL) {
 		setInteger(value);
 	}
 
 	explicit Value(bool value)
-		: RefCounted(1), m_type(BOOLEAN), m_type_ptr(CLEVER_TYPE("Bool")), m_name(NULL) {
+		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_TYPE("Bool")), m_name(NULL) {
 		setBoolean(value);
 	}
 
 	explicit Value(const CString* value)
-		: RefCounted(1), m_type(STRING), m_type_ptr(CLEVER_TYPE("String")), m_name(NULL) {
+		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_TYPE("String")), m_name(NULL) {
 		setString(value);
 	}
 
@@ -108,46 +108,29 @@ public:
 	}
 
 	void initialize() throw() {
-		switch (m_type) {
-			case Value::DOUBLE:
-				m_data.d_value = 0;
-				break;
-			case Value::INTEGER:
-				m_data.l_value = 0;
-				break;
-			case Value::BOOLEAN:
-				m_data.b_value = false;
-				break;
-			case Value::STRING:
-				m_data.s_value = CSTRING("");
-				break;
+		if (getTypePtr() == CLEVER_TYPE("Int")) {
+			setInteger(0);
+		}
+		else if (getTypePtr() == CLEVER_TYPE("Double")) {
+			setDouble(0.0);
+		}
+		else if (getTypePtr() == CLEVER_TYPE("Bool")) {
+			setBoolean(false);
+		}
+		else if (getTypePtr() == CLEVER_TYPE("String")) {
+			setString(CSTRING(""));
 		}
 	}
 
 	void setType(int type) { 
-		m_type = type; 
-		
-		switch (m_type) {
-			case Value::DOUBLE:
-				m_type_ptr = CLEVER_TYPE("Double");
-				break;
-			case Value::INTEGER:
-				m_type_ptr = CLEVER_TYPE("Int");
-				break;
-			case Value::BOOLEAN:
-				m_type_ptr = CLEVER_TYPE("Bool");
-				break;
-			case Value::STRING:
-				m_type_ptr = CLEVER_TYPE("String");
-				break;
-			default:
-				m_type_ptr = NULL;
+		if (type == NONE || type == USER || type == VECTOR || type == PRIMITIVE) {
+			m_type = type;
 		}
 	}
 	
-	
-	int getType() const { return m_type; }
-	int hasSameType(const Value* const value) const { return m_type_ptr == value->getTypePtr(); }
+	int hasSameType(const Value* const value) const { 
+		return m_type_ptr == value->getTypePtr(); 
+	}
 
 	const Type* getTypePtr() const { return m_type_ptr; }
 	void setTypePtr(const Type* const ptr) { m_type_ptr = ptr; }
@@ -169,34 +152,34 @@ public:
 	 */
 	virtual bool isCallable() const { return false; }
 
-	bool isInteger() const { return m_type == INTEGER; }
-	bool isString() const { return m_type == STRING; }
-	bool isDouble() const { return m_type == DOUBLE; }
-	bool isBoolean() const { return m_type == BOOLEAN; }
-	bool isVector() const { return m_type == VECTOR; }
+	bool isInteger()   const { return m_type_ptr == CLEVER_TYPE("Int"); }
+	bool isString()    const { return m_type_ptr == CLEVER_TYPE("String"); }
+	bool isDouble()    const { return m_type_ptr == CLEVER_TYPE("Double"); }
+	bool isBoolean()   const { return m_type_ptr == CLEVER_TYPE("Bool"); }
+	bool isVector()    const { return m_type == VECTOR; }
 	bool isUserValue() const { return m_type == USER; }
 
 	void setInteger(int64_t i) { 
 		m_type_ptr = CLEVER_TYPE("Int");
-		m_type = INTEGER; 
+		m_type = PRIMITIVE; 
 		m_data.l_value = i; 
 	}
 	
 	void setString(const CString* const s) { 
 		m_type_ptr = CLEVER_TYPE("String");
-		m_type = STRING; 
+		m_type = PRIMITIVE; 
 		m_data.s_value = s; 
 	}
 	
 	void setDouble(double d) { 
 		m_type_ptr = CLEVER_TYPE("Double");
-		m_type = DOUBLE; 
+		m_type = PRIMITIVE; 
 		m_data.d_value = d; 
 	}
 	
 	void setBoolean(bool b) { 
 		m_type_ptr = CLEVER_TYPE("Bool");
-		m_type = BOOLEAN; 
+		m_type = PRIMITIVE; 
 		m_data.b_value = b; 
 	}
 	
@@ -209,6 +192,27 @@ public:
 	double getDouble() const { return m_data.d_value; }
 	bool getBoolean() const { return m_data.b_value; }
 	ValueVector* getVector() const { return m_data.v_value; }
+	
+	bool getValueAsBool() const {
+		if (m_type_ptr == CLEVER_TYPE("Int")) {
+			return getInteger();
+		}
+		else if (m_type_ptr == CLEVER_TYPE("Double")) {
+			return getDouble();
+		}
+		else if (m_type_ptr == CLEVER_TYPE("String")) {
+			return !getString().empty();
+		}
+		else if (m_type_ptr == CLEVER_TYPE("Bool")) {
+			return getBoolean();
+		}
+		
+		return false;
+	}
+	
+	bool isNumeric() const {
+		return (m_type_ptr == CLEVER_TYPE("Double") || m_type_ptr == CLEVER_TYPE("Int"));
+	}
 
 	const ValueData* getData() const { return &m_data; }
 	
@@ -224,12 +228,10 @@ public:
 
 	void copy(const Value* const value) throw() {
 		std::memcpy(&m_data, value->getData(), sizeof(ValueData));
-		m_type = value->getType();
 		m_type_ptr = value->getTypePtr();
 	}
 	void copy(Value& value) throw() {
 		std::memcpy(&m_data, value.getData(), sizeof(ValueData));
-		m_type = value.getType();
 		m_type_ptr = value.getTypePtr();
 	}
 
@@ -238,22 +240,23 @@ public:
 	virtual const CString& toString() throw() {
 		std::ostringstream str;
 
-		switch (getType()) {
-			case INTEGER:
-				str << getInteger();
-
-				return *CSTRING(str.str());
-			case DOUBLE:
-				str << getDouble();
-
-				return *CSTRING(str.str());
-			case BOOLEAN:
-				return *CSTRING(getBoolean() ? "true" : "false");
-			case STRING:
-				return getString();
-			default:
-				return *CSTRING("");
+		if (getTypePtr() == CLEVER_TYPE("Int")) {
+			str << getInteger();
 		}
+		else if (getTypePtr() == CLEVER_TYPE("Double")) {
+			str << getDouble();
+		}
+		else if (getTypePtr() == CLEVER_TYPE("Bool")) {
+				return *CSTRING(getBoolean() ? "true" : "false");
+		}
+		else if (getTypePtr() == CLEVER_TYPE("String")) {
+				return getString();
+		}
+		else {
+			return *CSTRING("");
+		}
+		
+		return *CSTRING(str.str());
 	}
 private:
 	int m_type;
