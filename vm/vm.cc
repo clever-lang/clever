@@ -92,16 +92,20 @@ CLEVER_VM_HANDLER(VM::plus_handler) {
 	const Value* const op2 = opcode.getOp2();
 	Value* result = opcode.getResult();
 
-	switch (op1->getType()) {
-		case Value::STRING:
-			result->setString(CSTRING(op1->getString() + op2->getString()));
-			break;
-		case Value::INTEGER:
+	if (op1->isNumeric() && op2->isNumeric()) {
+		if (op1->isInteger() && op2->isInteger()) {
 			result->setInteger(op1->getInteger() + op2->getInteger());
-			break;
-		case Value::DOUBLE:
-			result->setDouble(op1->getDouble() + op2->getDouble());
-			break;
+		}
+		else {
+			double v1, v2;
+			if (op1->isDouble()) v1 = op1->getDouble();
+			else v1 = op1->getInteger();
+			
+			if (op2->isDouble()) v2 = op2->getDouble();
+			else v2 = op2->getInteger();
+			
+			result->setDouble(v1 + v2);
+		}
 	}
 }
 
@@ -113,13 +117,20 @@ CLEVER_VM_HANDLER(VM::div_handler) {
 	const Value* const op2 = opcode.getOp2();
 	Value* result = opcode.getResult();
 
-	switch (op1->getType()) {
-		case Value::INTEGER:
+	if (op1->isNumeric() && op2->isNumeric()) {
+		if (op1->isInteger() && op2->isInteger()) {
 			result->setInteger(op1->getInteger() / op2->getInteger());
-			break;
-		case Value::DOUBLE:
-			result->setDouble(op1->getDouble() / op2->getDouble());
-			break;
+		}
+		else {
+			double v1, v2;
+			if (op1->isDouble()) v1 = op1->getDouble();
+			else v1 = op1->getInteger();
+			
+			if (op2->isDouble()) v2 = op2->getDouble();
+			else v2 = op2->getInteger();
+			
+			result->setDouble(v1 / v2);
+		}
 	}
 }
 
@@ -131,13 +142,20 @@ CLEVER_VM_HANDLER(VM::minus_handler) {
 	const Value* const op2 = opcode.getOp2();
 	Value* result = opcode.getResult();
 
-	switch (op1->getType()) {
-		case Value::INTEGER:
+	if (op1->isNumeric() && op2->isNumeric()) {
+		if (op1->isInteger() && op2->isInteger()) {
 			result->setInteger(op1->getInteger() - op2->getInteger());
-			break;
-		case Value::DOUBLE:
-			result->setDouble(op1->getDouble() - op2->getDouble());
-			break;
+		}
+		else {
+			double v1, v2;
+			if (op1->isDouble()) v1 = op1->getDouble();
+			else v1 = op1->getInteger();
+			
+			if (op2->isDouble()) v2 = op2->getDouble();
+			else v2 = op2->getInteger();
+			
+			result->setDouble(v1 - v2);
+		}
 	}
 }
 
@@ -149,13 +167,20 @@ CLEVER_VM_HANDLER(VM::mult_handler) {
 	const Value* const op2 = opcode.getOp2();
 	Value* result = opcode.getResult();
 
-	switch (op1->getType()) {
-		case Value::INTEGER:
+	if (op1->isNumeric() && op2->isNumeric()) {
+		if (op1->isInteger() && op2->isInteger()) {
 			result->setInteger(op1->getInteger() * op2->getInteger());
-			break;
-		case Value::DOUBLE:
-			result->setDouble(op1->getDouble() * op2->getDouble());
-			break;
+		}
+		else {
+			double v1, v2;
+			if (op1->isDouble()) v1 = op1->getDouble();
+			else v1 = op1->getInteger();
+			
+			if (op2->isDouble()) v2 = op2->getDouble();
+			else v2 = op2->getInteger();
+			
+			result->setDouble(v1 * v2);
+		}
 	}
 }
 
@@ -167,10 +192,8 @@ CLEVER_VM_HANDLER(VM::bw_and_handler) {
 	const Value* const op2 = opcode.getOp2();
 	Value* result = opcode.getResult();
 
-	switch (op1->getType()) {
-		case Value::INTEGER:
-			result->setInteger(op1->getInteger() & op2->getInteger());
-			break;
+	if (op1->isInteger() && op2->isInteger()) {
+		result->setInteger(op1->getInteger() & op2->getInteger());
 	}
 }
 
@@ -182,10 +205,8 @@ CLEVER_VM_HANDLER(VM::bw_xor_handler) {
 	const Value* const op2 = opcode.getOp2();
 	Value* result = opcode.getResult();
 
-	switch (op1->getType()) {
-		case Value::INTEGER:
-			result->setInteger(op1->getInteger() ^ op2->getInteger());
-			break;
+	if (op1->isInteger() && op2->isInteger()) {
+		result->setInteger(op1->getInteger() ^ op2->getInteger());
 	}
 }
 
@@ -197,10 +218,9 @@ CLEVER_VM_HANDLER(VM::bw_or_handler) {
 	const Value* const op2 = opcode.getOp2();
 	Value* result = opcode.getResult();
 
-	switch (op1->getType()) {
-		case Value::INTEGER:
-			result->setInteger(op1->getInteger() | op2->getInteger());
-			break;
+	
+	if (op1->isInteger() && op2->isInteger()) {
+		result->setInteger(op1->getInteger() | op2->getInteger());
 	}
 }
 
@@ -271,32 +291,11 @@ CLEVER_VM_HANDLER(VM::jmpz_handler) {
 	const Value* const value = opcode.getOp1();
 	Value* result = opcode.getResult();
 
-	switch (value->getType()) {
-		case Value::INTEGER:
-			if (!value->getInteger()) {
-				if (result) {
-					result->setBoolean(false);
-				}
-				CLEVER_VM_GOTO(opcode.getJmpAddr1());
-			}
-			break;
-		case Value::DOUBLE:
-			if (!value->getDouble()) {
-				if (result) {
-					result->setBoolean(false);
-				}
-				CLEVER_VM_GOTO(opcode.getJmpAddr1());
-			}
-			break;
-		case Value::BOOLEAN:
-			if (!value->getBoolean()) {
-				if (result) {
-					result->setBoolean(false);
-				}
-				CLEVER_VM_GOTO(opcode.getJmpAddr1());
-			}
-			break;
+	if (!value->getValueAsBool()) {
+		if (result) result->setBoolean(false);
+		CLEVER_VM_GOTO(opcode.getJmpAddr1());
 	}
+	
 	if (result) {
 		result->setBoolean(true);
 	}
@@ -308,26 +307,11 @@ CLEVER_VM_HANDLER(VM::jmpz_handler) {
 CLEVER_VM_HANDLER(VM::jmpnz_handler) {
 	const Value* const value = opcode.getOp1();
 
-	switch (value->getType()) {
-		case Value::INTEGER:
-			if (value->getInteger()) {
-				opcode.getResult()->setBoolean(true);
-				CLEVER_VM_GOTO(opcode.getJmpAddr1());
-			}
-			break;
-		case Value::DOUBLE:
-			if (value->getDouble()) {
-				opcode.getResult()->setBoolean(true);
-				CLEVER_VM_GOTO(opcode.getJmpAddr1());
-			}
-			break;
-		case Value::BOOLEAN:
-			if (value->getBoolean()) {
-				opcode.getResult()->setBoolean(true);
-				CLEVER_VM_GOTO(opcode.getJmpAddr1());
-			}
-			break;
+	if (value->getValueAsBool()) {
+		opcode.getResult()->setBoolean(true);
+		CLEVER_VM_GOTO(opcode.getJmpAddr1());
 	}
+	
 	opcode.getResult()->setBoolean(false);
 }
 
@@ -346,14 +330,16 @@ CLEVER_VM_HANDLER(VM::greater_handler) {
 	const Value* const op2 = opcode.getOp2();
 	Value* result = opcode.getResult();
 
-	switch (op1->getType()) {
-		case Value::INTEGER:
-			result->setBoolean(op1->getInteger() > op2->getInteger());
-			break;
-		case Value::DOUBLE:
-			result->setBoolean(op1->getDouble() > op2->getDouble());
-			break;
+	if (op1->isInteger()) {
+		result->setBoolean(op1->getInteger() > op2->getInteger());
 	}
+	else if (op1->isDouble()) {
+		result->setBoolean(op1->getDouble() > op2->getDouble());
+	}
+	else if (op1->isString()) {
+		result->setBoolean(op1->getString() > op2->getString());
+	}
+
 }
 
 /**
@@ -364,13 +350,14 @@ CLEVER_VM_HANDLER(VM::greater_equal_handler) {
 	const Value* const op2 = opcode.getOp2();
 	Value* result = opcode.getResult();
 
-	switch (op1->getType()) {
-		case Value::INTEGER:
-			result->setBoolean(op1->getInteger() >= op2->getInteger());
-			break;
-		case Value::DOUBLE:
-			result->setBoolean(op1->getDouble() >= op2->getDouble());
-			break;
+	if (op1->isInteger()) {
+		result->setBoolean(op1->getInteger() >= op2->getInteger());
+	}
+	else if (op1->isDouble()) {
+		result->setBoolean(op1->getDouble() >= op2->getDouble());
+	}
+	else if (op1->isString()) {
+		result->setBoolean(op1->getString() >= op2->getString());
 	}
 }
 
@@ -382,13 +369,14 @@ CLEVER_VM_HANDLER(VM::less_handler) {
 	const Value* const op2 = opcode.getOp2();
 	Value* result = opcode.getResult();
 
-	switch (op1->getType()) {
-		case Value::INTEGER:
-			result->setBoolean(op1->getInteger() < op2->getInteger());
-			break;
-		case Value::DOUBLE:
-			result->setBoolean(op1->getDouble() < op2->getDouble());
-			break;
+	if (op1->isInteger()) {
+		result->setBoolean(op1->getInteger() < op2->getInteger());
+	}
+	else if (op1->isDouble()) {
+		result->setBoolean(op1->getDouble() < op2->getDouble());
+	}
+	else if (op1->isString()) {
+		result->setBoolean(op1->getString() < op2->getString());
 	}
 }
 
@@ -400,13 +388,14 @@ CLEVER_VM_HANDLER(VM::less_equal_handler) {
 	const Value* const op2 = opcode.getOp2();
 	Value* result = opcode.getResult();
 
-	switch (op1->getType()) {
-		case Value::INTEGER:
-			result->setBoolean(op1->getInteger() <= op2->getInteger());
-			break;
-		case Value::DOUBLE:
-			result->setBoolean(op1->getDouble() <= op2->getDouble());
-			break;
+	if (op1->isInteger()) {
+		result->setBoolean(op1->getInteger() <= op2->getInteger());
+	}
+	else if (op1->isDouble()) {
+		result->setBoolean(op1->getDouble() <= op2->getDouble());
+	}
+	else if (op1->isString()) {
+		result->setBoolean(op1->getString() <= op2->getString());
 	}
 }
 
@@ -425,13 +414,14 @@ CLEVER_VM_HANDLER(VM::equal_handler) {
 	const Value* const op2 = opcode.getOp2();
 	Value* result = opcode.getResult();
 
-	switch (op1->getType()) {
-		case Value::INTEGER:
-			result->setBoolean(op1->getInteger() == op2->getInteger());
-			break;
-		case Value::DOUBLE:
-			result->setBoolean(op1->getDouble() == op2->getDouble());
-			break;
+	if (op1->isInteger()) {
+		result->setBoolean(op1->getInteger() == op2->getInteger());
+	}
+	else if (op1->isDouble()) {
+		result->setBoolean(op1->getDouble() == op2->getDouble());
+	}
+	else if (op1->isString()) {
+		result->setBoolean(op1->getString() == op2->getString());
 	}
 }
 
@@ -443,13 +433,14 @@ CLEVER_VM_HANDLER(VM::not_equal_handler) {
 	const Value* const op2 = opcode.getOp2();
 	Value* result = opcode.getResult();
 
-	switch (op1->getType()) {
-		case Value::INTEGER:
-			result->setBoolean(op1->getInteger() != op2->getInteger());
-			break;
-		case Value::DOUBLE:
-			result->setBoolean(op1->getDouble() != op2->getDouble());
-			break;
+	if (op1->isInteger()) {
+		result->setBoolean(op1->getInteger() != op2->getInteger());
+	}
+	else if (op1->isDouble()) {
+		result->setBoolean(op1->getDouble() != op2->getDouble());
+	}
+	else if (op1->isString()) {
+		result->setBoolean(op1->getString() != op2->getString());
 	}
 }
 

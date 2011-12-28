@@ -410,29 +410,40 @@ AST_VISITOR(TypeChecker, MethodCall) {
 	Value* variable = expr->getVariable()->getValue();
 	const CString* const name = expr->getMethodName();
 	CallableValue* call = new CallableValue(name);
-	const Method* method = variable->getTypePtr()->getMethod(name);
-	ASTNode* args = expr->getArgs();
+	ArgumentList* args = expr->getArgs();
 	Value* arg_values = NULL;
-	
-	if (!method) {
-		Compiler::errorf(expr->getLocation(), "Method `%s::%S' not found!",
-			variable->getTypePtr()->getName(), name);
-	}
+	TypeVector args_types;
 	
 	if (args) {
+		expr->getArgs()->accept(*this);
 		arg_values = new Value;
 		arg_values->setType(Value::VECTOR);
-		expr->getArgs()->accept(*this);
-		arg_values->setVector(expr->getArgs()->getArgValue());
-		
-		expr->setArgsValue(arg_values);
+		arg_values->setVector(args->getArgValue());
 		arg_values->addRef();
+		expr->setArgsValue(arg_values);
+		
+		ValueVector* vv = args->getArgValue();
+		
+		for (size_t i = 0; i < vv->size(); ++i) {
+			args_types.push_back(vv->at(i)->getTypePtr());
+		}
 	}
 	
-	if (!checkArgs(method->getArgs(), arg_values ? arg_values->getVector() : NULL)) {
-		Compiler::errorf(expr->getLocation(), "No matching call for %s::%S%s", 
-			variable->getTypePtr()->getName(), call->getName(), 
-			argsError(method->getArgs(), arg_values ? arg_values->getVector() : NULL).c_str());
+	const Method* method = variable->getTypePtr()->getMethod(name, &args_types);
+	
+	if (method == NULL) {
+		std::string args_type_name;
+		
+		if (args_types.size() > 0) {
+			args_type_name = args_types[0]->getName();
+			
+			for (size_t i = 1; i < args_types.size(); ++i) {
+				args_type_name += std::string(", ") + args_types[i]->getName(); 
+			}
+		}
+		
+		Compiler::errorf(expr->getLocation(), "No matching call for %s::%S(%S)", 
+			variable->getTypePtr()->getName(), call->getName(), &args_type_name);
 	}
 	
 	call->setTypePtr(variable->getTypePtr());
@@ -523,7 +534,6 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 
 			var->setName(arg_name);
 			var->setTypePtr(arg_type);
-			var->setType(Value::INTEGER);
 			var->initialize();
 
 			g_symtable.push(var->getName(), var);
@@ -571,9 +581,9 @@ AST_VISITOR(TypeChecker, TypeCreation) {
 	Identifier* ident = expr->getIdentifier();
 	const Type* type = g_symtable.getType(ident->getName());
 	Value* value = expr->getValue();
-	
-	value->setDataValue(type->allocateValue());
 	value->setTypePtr(type);
+	
+	if (!value->isPrimitive()) value->setDataValue(type->allocateValue());
 }
 
 }} // clever::ast

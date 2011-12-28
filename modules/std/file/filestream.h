@@ -40,11 +40,13 @@ public:
 
 	void init();
 	DataValue* allocateValue() const;
+	void destructor(Value* value) const;
 
 	/**
 	 * Type methods
 	 */
 	static CLEVER_TYPE_METHOD(open);
+	static CLEVER_TYPE_METHOD(close);
 	static CLEVER_TYPE_METHOD(read);
 	static CLEVER_TYPE_METHOD(write);
 	static CLEVER_TYPE_METHOD(writeLine);
@@ -59,6 +61,7 @@ public:
 		newvalue->getDataValue()->addRef();
 		value->copy(newvalue);
 	}
+	
 private:
 	DISALLOW_COPY_AND_ASSIGN(FileStream);
 

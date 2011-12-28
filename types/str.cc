@@ -56,7 +56,6 @@ CLEVER_TYPE_METHOD(String::replace) {
 	} while (needlePos != std::string::npos);
 
 	retval->setString(CSTRING(newString));
-	retval->setType(Value::STRING);
 }
 
 /**
@@ -72,7 +71,6 @@ CLEVER_TYPE_METHOD(String::substring) {
 
 	std::string substr = value->toString().substr(args->at(0)->getInteger(), args->at(1)->getInteger());
 	retval->setString(CSTRING(substr));
-	retval->setType(Value::STRING);
 }
 
 /**
@@ -89,7 +87,6 @@ CLEVER_TYPE_METHOD(String::toDouble) {
 	}
 
 	retval->setDouble(floatValue);
-	retval->setType(Value::DOUBLE);
 }
 
 /**
@@ -106,7 +103,6 @@ CLEVER_TYPE_METHOD(String::toInteger) {
 	}
 
 	retval->setInteger(integer);
-	retval->setType(Value::INTEGER);
 }
 
 void String::init() {

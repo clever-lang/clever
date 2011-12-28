@@ -61,7 +61,6 @@ static CLEVER_FUNCTION(readln) {
 	getline(::std::cin, buffer);
 	
 	retval->setString(CSTRING(buffer));
-	retval->setType(Value::STRING);
 }
 
 } // namespace io
