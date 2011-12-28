@@ -59,7 +59,6 @@ namespace clever { namespace packages { namespace std { namespace file {
  */
 CLEVER_TYPE_METHOD(FileStream::toString) {
 	retval->setString(CSTRING("FileStream class"));
-	retval->setType(Value::STRING);
 }
 
 /**
@@ -73,10 +72,23 @@ CLEVER_TYPE_METHOD(FileStream::open) {
 	
 	if (size == 2) {
 		fsv->m_fstream.open(args->at(0)->toString().c_str(), convertOpenMode(args->at(1)->toString()));
-		fsv->m_is_open = true;
 	} else {
 		Compiler::error("calling Filestream::read() : wrong number "
 			"of arguments given to FileStream::open(String, [String])");
+	}
+	
+	retval->setType(Value::NONE);
+}
+
+/**
+ * FileStream::open()
+ * Close the file associated to the current stream
+ */
+CLEVER_TYPE_METHOD(FileStream::close) {
+	FileStreamValue* fsv = static_cast<FileStreamValue*>(value->getData()->dv_value);
+	
+	if (fsv->m_fstream.is_open()) {
+		fsv->m_fstream.close();
 	}
 	
 	retval->setType(Value::NONE);
@@ -97,12 +109,12 @@ CLEVER_TYPE_METHOD(FileStream::read) {
 	
 	fsv = static_cast<FileStreamValue*>(value->getData()->dv_value);
 	
-	if (!fsv->m_is_open) {
+	if (!fsv->m_fstream.is_open()) {
 		Compiler::error("calling Filestream::read([String, Int, Double])"
 			" : no file stream is open (use Filestream::open() before)");
 	}
 
-	// @TODO: should test if the stream allows reading.	
+	// @TODO: should test if the stream allows reading.
 
 	if (args->at(0)->isInteger()) {
 		uint64_t val;
@@ -150,7 +162,7 @@ CLEVER_TYPE_METHOD(FileStream::write) {
 
 	fsv = static_cast<FileStreamValue*>(value->getData()->dv_value);
 
-	if (!fsv->m_is_open) {
+	if (!fsv->m_fstream.is_open()) {
 		Compiler::error("calling FileStream::write([Objext]) :"
 			"no file stream is open (use Filestream::open() before)");
 	}
@@ -178,7 +190,7 @@ CLEVER_TYPE_METHOD(FileStream::writeLine) {
 
 	fsv = static_cast<FileStreamValue*>(value->getData()->dv_value);
 
-	if (!fsv->m_is_open) {
+	if (!fsv->m_fstream.is_open()) {
 		Compiler::error("calling FileStream::writeLine([Objext]) :"
 			"no file stream is open (use Filestream::open() before)");
 	}
@@ -199,6 +211,9 @@ void FileStream::init() {
 	addMethod(new Method("open", (MethodPtr)&FileStream::open, 
 		makeArgs(CLEVER_TYPE("String"), CLEVER_TYPE("String"), NULL), CLEVER_TYPE("Void")));
 		
+	addMethod(new Method("close", (MethodPtr)&FileStream::close, 
+		makeArgs(NULL), CLEVER_TYPE("Void")));
+		
 	addMethod(new Method("read", (MethodPtr)&FileStream::read, 
 		makeArgs(CLEVER_TYPE("String"), NULL), CLEVER_TYPE("Void")));
 
@@ -211,6 +226,15 @@ void FileStream::init() {
 
 DataValue* FileStream::allocateValue() const {
 	return new FileStreamValue;
+}
+
+void FileStream::destructor(Value* value) const {
+	FileStreamValue* fsv = static_cast<FileStreamValue*>(value->getDataValue());
+	
+	// Just close the stream
+	if (fsv && fsv->m_fstream.is_open()) {
+		fsv->m_fstream.close();
+	}
 }
 
 }}}} // clever::packages::std::file

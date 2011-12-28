@@ -234,7 +234,6 @@ next_token:
 		Value* newval = new Value(CLEVER_TYPE("Int"));
 		int64_t n = strtol(std::string(s.yylex, yylen).c_str(), NULL, 10);
 
-		newval->setType(Value::INTEGER);
 		newval->setInteger(n);
 
 		yylval->num_literal = new ast::NumberLiteral(newval);
@@ -248,7 +247,6 @@ next_token:
 
 		std::sscanf(std::string(s.yylex+2, yylen).c_str(), "%X", (unsigned*)&n);
 
-		newval->setType(Value::INTEGER);
 		newval->setInteger(n);
 
 		yylval->num_literal = new ast::NumberLiteral(newval);
@@ -262,7 +260,6 @@ next_token:
 
 		sscanf(std::string(s.yylex+1, yylen), "%o", &n);
 
-		newval->setType(Value::INTEGER);
 		newval->setInteger(n);
 
 		yylval->num_literal = new ast::NumberLiteral(newval);
@@ -276,7 +273,6 @@ next_token:
 
 		n = strtod(std::string(s.yylex, yylen).c_str(), NULL);
 
-		newval->setType(Value::DOUBLE);
 		newval->setDouble(n);
 
 		yylval->num_literal = new ast::NumberLiteral(newval);

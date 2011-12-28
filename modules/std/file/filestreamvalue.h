@@ -32,13 +32,10 @@ namespace clever { namespace packages { namespace std { namespace file {
 
 class FileStreamValue : public DataValue {
 public:
-	FileStreamValue() : m_is_open(false) {}
+	FileStreamValue() {}
 	
 	// File stream 
 	::std::fstream m_fstream;
-	
-	// If there is a open stream
-	bool m_is_open;
 	
 	virtual ~FileStreamValue() {}
 };
