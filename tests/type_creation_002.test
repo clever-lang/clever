@@ -1,0 +1,10 @@
+Testing type creation 2
+==CODE==
+import std.io;
+
+String x = String();
+x = "clever";
+
+println(x);
+==RESULT==
+clever
