@@ -91,8 +91,11 @@ CLEVER_VM_HANDLER(VM::plus_handler) {
 	const Value* const op1 = opcode.getOp1();
 	const Value* const op2 = opcode.getOp2();
 	Value* result = opcode.getResult();
-
-	if (op1->isNumeric() && op2->isNumeric()) {
+	
+	if (op1->isString()) {
+		result->setString(CSTRING(op1->getString() + op2->getString()));
+	}
+	else if (op1->isNumeric() && op2->isNumeric()) {
 		if (op1->isInteger() && op2->isInteger()) {
 			result->setInteger(op1->getInteger() + op2->getInteger());
 		}
