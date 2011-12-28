@@ -173,7 +173,7 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 
 	if (expr->isAssigned()) {
 		expr->setResult(lhs);
-		expr->getValue()->setTypePtr(checkExprType(lhs, rhs));
+		expr->getValue()->setTypePtr(lhs->getTypePtr());
 		lhs->addRef();
 	} else {
 		expr->setResult(new Value(lhs->getTypePtr()));
@@ -237,6 +237,16 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 		}
 		
 		expr->setInitialValue(initval);
+		
+		if (type != initval->getTypePtr()) {
+			if (type == CLEVER_TYPE("Int")) {
+				initval->setInteger(initval->getDouble());
+			}
+			else if (type == CLEVER_TYPE("Double")) {
+				initval->setDouble(initval->getInteger());
+			}
+		}
+		
 		initval->addRef();
 	}
 	

@@ -49,7 +49,10 @@ public:
 	 */
 	CLEVER_TYPE_INC_HANDLER_D { value->setInteger(value->getInteger()+1); return value; }
 	CLEVER_TYPE_DEC_HANDLER_D { value->setInteger(value->getInteger()-1); return value; }
-	CLEVER_TYPE_ASSIGN_HANDLER_D { value->copy(newvalue); }
+	CLEVER_TYPE_ASSIGN_HANDLER_D { 
+		if (newvalue->getTypePtr() == this) value->copy(newvalue);
+		else value->setInteger((int64_t)newvalue->getDouble()); 
+	}
 	CLEVER_TYPE_MOD_HANDLER_D { value->setInteger(op1->getInteger() % op2->getInteger()); }
 private:
 	DISALLOW_COPY_AND_ASSIGN(Integer);
