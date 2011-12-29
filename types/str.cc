@@ -105,8 +105,27 @@ CLEVER_TYPE_METHOD(String::toInteger) {
 	retval->setInteger(integer);
 }
 
+/**
+ * String::String([String value])
+ * Construct the object.
+ */
+CLEVER_TYPE_METHOD(String::constructor) {	
+	if (args) {
+		retval->setString(CSTRING(args->at(0)->getString()));
+	}
+	else {
+		retval->setString(CSTRING(""));
+	}
+}
+
 void String::init() {
 	const Type* const str_type = CLEVER_TYPE("String");
+
+	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&String::constructor, 
+		makeArgs(NULL), str_type));
+
+	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&String::constructor, 
+		makeArgs(str_type, NULL), str_type));
 
 	addMethod(new Method("replace", (MethodPtr)&String::replace, 
 		makeArgs(str_type, str_type, NULL), str_type));

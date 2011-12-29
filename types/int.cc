@@ -31,6 +31,21 @@
 
 namespace clever {
 
+
+/**
+ * Int::Int([Int value])
+ * Construct an Int object with a default value (if no args) or a 
+ * custom value
+ */
+CLEVER_TYPE_METHOD(Integer::constructor) {
+	if (args) {
+		retval->setInteger(args->at(0)->getInteger());
+	}
+	else {
+		retval->setInteger(0);
+	}
+}
+
 /**
  * Int::toString()
  * Converts the number to string
@@ -40,6 +55,12 @@ CLEVER_TYPE_METHOD(Integer::toString) {
 }
 
 void Integer::init() {
+	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Integer::constructor, 
+		makeArgs(NULL), CLEVER_TYPE("Int")));
+	
+	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Integer::constructor, 
+		makeArgs(CLEVER_TYPE("Int"), NULL), CLEVER_TYPE("Int")));
+	
 	addMethod(new Method("toString", (MethodPtr)&Integer::toString, 
 		makeArgs(NULL), CLEVER_TYPE("String")));
 }

@@ -42,6 +42,7 @@ public:
 	/**
 	 * Type methods
 	 */
+	static CLEVER_TYPE_METHOD(constructor);
 	static CLEVER_TYPE_METHOD(toString);
 	static CLEVER_TYPE_METHOD(sqrt);
 	

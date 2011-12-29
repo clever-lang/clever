@@ -43,6 +43,7 @@ typedef std::vector<const Type*> TypeVector;
 #define CLEVER_METHOD_NAME(name) clv_m_##name
 #define CLEVER_METHOD(name) void CLEVER_FASTCALL name(CLEVER_METHOD_ARGS) throw()
 #define CLEVER_ARGS_SEPARATOR '#'
+#define CLEVER_CTOR_NAME "$ctor$"
 
 typedef void (CLEVER_FASTCALL *MethodPtr)(CLEVER_METHOD_ARGS);
 

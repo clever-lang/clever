@@ -45,6 +45,7 @@ public:
 	/**
 	 * Type methods
 	 */
+	static CLEVER_TYPE_METHOD(constructor);
 	static CLEVER_TYPE_METHOD(open);
 	static CLEVER_TYPE_METHOD(close);
 	static CLEVER_TYPE_METHOD(read);
@@ -65,7 +66,7 @@ public:
 private:
 	DISALLOW_COPY_AND_ASSIGN(FileStream);
 
-	static ::std::ios::openmode convertOpenMode(::std::string modeString);
+	static ::std::ios::openmode convertOpenMode(const ::std::string& modeString);
 };
 
 }}}} // clever::packages::std::file
