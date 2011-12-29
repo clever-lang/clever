@@ -23,12 +23,38 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef CLEVER_NATIVE_TYPES_H
-#define CLEVER_NATIVE_TYPES_H
+#ifndef CLEVER_BOOL_H
+#define CLEVER_BOOL_H
 
-#include "types/int.h"
-#include "types/double.h"
-#include "types/str.h"
-#include "types/bool.h"
+#include "type.h"
+#include "compiler/value.h"
 
-#endif // CLEVER_NATIVE_TYPES_H
+namespace clever {
+
+class Bool : public Type {
+public:
+	Bool() :
+		Type("Bool") { }
+
+	void init();
+	DataValue* allocateValue() const;
+
+	/**
+	 * Type methods
+	 */
+	static CLEVER_TYPE_METHOD(constructor);
+	static CLEVER_TYPE_METHOD(toString);
+	
+	/**
+	 * Type handlers
+	 */
+	CLEVER_TYPE_INC_HANDLER_D { return NULL; }
+	CLEVER_TYPE_DEC_HANDLER_D { return NULL; }
+	CLEVER_TYPE_ASSIGN_HANDLER_D { value->copy(newvalue); }
+private:
+	DISALLOW_COPY_AND_ASSIGN(Bool);
+};
+
+} // clever
+
+#endif // CLEVER_STRING_H

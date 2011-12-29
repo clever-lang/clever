@@ -75,6 +75,7 @@ void Compiler::loadTypes() throw() {
 	Integer* int_type = new Integer;
 	Double* double_type = new Double;
 	String* string_type = new String;
+	Bool* bool_type = new Bool;
 
 	/**
 	 * Registers all native types
@@ -82,10 +83,12 @@ void Compiler::loadTypes() throw() {
 	g_symtable.push(CSTRING("Int"), int_type);
 	g_symtable.push(CSTRING("Double"), double_type);
 	g_symtable.push(CSTRING("String"), string_type);
+	g_symtable.push(CSTRING("Bool"), bool_type);
 	
 	int_type->init();
 	double_type->init();
 	string_type->init();
+	bool_type->init();
 }
 
 /**

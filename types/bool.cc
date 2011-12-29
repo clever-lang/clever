@@ -23,12 +23,49 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef CLEVER_NATIVE_TYPES_H
-#define CLEVER_NATIVE_TYPES_H
-
-#include "types/int.h"
-#include "types/double.h"
-#include "types/str.h"
+#include <iostream>
+#include <cmath>
+#include "compiler/cstring.h"
+#include "types/typeutils.h"
+#include "types/type.h"
 #include "types/bool.h"
 
-#endif // CLEVER_NATIVE_TYPES_H
+namespace clever {
+
+/**
+ * Bool::Bool()
+ * Constructs the object.
+ */
+CLEVER_TYPE_METHOD(Bool::constructor) {
+	if (args) {
+		retval->setBoolean(args->at(0)->getBoolean());
+	}
+	else {
+		retval->setBoolean(false);
+	}
+}
+
+/**
+ * Bool::toString()
+ * Converts the boolean into a string
+ */
+CLEVER_TYPE_METHOD(Bool::toString) {
+	retval->setString(CSTRING(value->toString()));
+}
+
+void Bool::init() {
+	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Bool::constructor, 
+		makeArgs(NULL), CLEVER_TYPE("Bool")));
+		
+	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Bool::constructor, 
+		makeArgs(CLEVER_TYPE("Bool"), NULL), CLEVER_TYPE("Bool")));
+		
+	addMethod(new Method("toString", (MethodPtr)&Bool::toString, 
+		makeArgs(NULL), CLEVER_TYPE("String")));
+}
+
+DataValue* Bool::allocateValue() const {
+	return NULL;
+}
+
+} // clever

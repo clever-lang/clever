@@ -1,0 +1,14 @@
+Testing Bool type
+==CODE==
+import std.io;
+
+Bool a = 1 < 2;
+Bool b = 1 > 2;
+Bool c = a;
+
+println(a, b, c);
+
+==RESULT==
+true
+false
+true

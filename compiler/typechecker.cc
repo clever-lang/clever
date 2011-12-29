@@ -247,6 +247,10 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 			}
 		}
 		
+		if (type == CLEVER_TYPE("Bool")) {
+			initval->setBoolean(initval->getValueAsBool());
+		}
+		
 		initval->addRef();
 	}
 	
