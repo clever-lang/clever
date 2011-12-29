@@ -45,6 +45,11 @@ typedef std::vector<const Type*> TypeVector;
 #define CLEVER_ARGS_SEPARATOR '#'
 
 typedef void (CLEVER_FASTCALL *MethodPtr)(CLEVER_METHOD_ARGS);
+typedef std::tr1::unordered_map<std::string, Method*> MethodMap;
+typedef std::pair<std::string, Method*> MethodPair;
+typedef std::tr1::unordered_map<std::string, const Type*> MethodArgs;
+typedef std::pair<std::string, const Type*> MethodArgsPair;
+
 
 /**
  * Method representation
@@ -53,13 +58,13 @@ class Method {
 public:
 	enum MethodType { INTERNAL, USER };
 
-	Method(std::string name, MethodPtr ptr, TypeVector* args, const Type* rtype)
-		: m_name(name), m_type(INTERNAL), m_args(args), m_rtype(rtype)
+	Method(std::string name, MethodPtr ptr, const Type* rtype)
+		: m_name(name), m_type(INTERNAL), m_rtype(rtype)
 	{
 		m_info.ptr = ptr; 
 	}
 
-	~Method() { if (m_args) delete m_args; }
+	~Method() { }
 
 	const std::string& getName() const throw() { return m_name; }
 	MethodPtr getPtr() const throw() { return m_info.ptr; }
@@ -76,9 +81,16 @@ public:
 
 	long call() const throw() { return m_info.offset; }
 	
-	const TypeVector* getArgs() const throw() { return m_args; }
+	const MethodArgs getArgs() const throw() { return m_args; }
 	
 	const Type* getReturn() const throw() { return m_rtype; } 
+	
+	Method* addArg(std::string name, const Type* type) throw() {
+		m_args.insert(MethodArgsPair(name, type));
+		//++m_num_args;
+
+		return this;
+	}
 	
 private:
 	union {
@@ -93,7 +105,7 @@ private:
 	 * Method arguments. (Lazy) 
 	 * Check with isArgsInitialized() before using it.
 	 */
-	const TypeVector* m_args;
+	MethodArgs m_args;
 	
 	/**
 	 * Method's return type

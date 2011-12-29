@@ -80,15 +80,14 @@ public:
 	}
 
 	void addMethod(Method* method) throw() {
-		const TypeVector* args = method->getArgs();
+		const MethodArgs args = method->getArgs();
+		MethodArgs::const_iterator it = args.begin();
 		
 		std::string args_name;
 		
-		if (args != NULL) {
-			for (size_t i = 0; i < args->size(); ++i) {
-				args_name += args->at(i)->getName();
-				args_name += CLEVER_ARGS_SEPARATOR;
-			}
+		for (; it != args.end(); ++it) {
+			args_name += it->second->getName();
+			args_name += CLEVER_ARGS_SEPARATOR;
 		}
 		
 		m_methods[method->getName()].insert(MethodPair(args_name, method));

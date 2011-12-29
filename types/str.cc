@@ -108,17 +108,21 @@ CLEVER_TYPE_METHOD(String::toInteger) {
 void String::init() {
 	const Type* const str_type = CLEVER_TYPE("String");
 
-	addMethod(new Method("replace", (MethodPtr)&String::replace, 
-		makeArgs(str_type, str_type, NULL), str_type));
+	addMethod(
+		(new Method("replace", (MethodPtr)&String::replace, CLEVER_TYPE("String")))
+			->addArg("before", CLEVER_TYPE("String"))
+			->addArg("after", CLEVER_TYPE("String"))
+	);
 	
-	addMethod(new Method("substring", (MethodPtr)&String::substring, 
-		makeArgs(CLEVER_TYPE("Int"), CLEVER_TYPE("Int"), NULL), str_type));
+	addMethod(
+		(new Method("substring", (MethodPtr)&String::substring, CLEVER_TYPE("String")))
+			->addArg("start", CLEVER_TYPE("Int"))
+			->addArg("length", CLEVER_TYPE("Int"))
+	);
 	
-	addMethod(new Method("toDouble", (MethodPtr)&String::toDouble, 
-		makeArgs(NULL), CLEVER_TYPE("Double")));
+	addMethod(new Method("toDouble", (MethodPtr)&String::toDouble, CLEVER_TYPE("Double")));
 		
-	addMethod(new Method("toInteger", (MethodPtr)&String::toInteger, 
-		makeArgs(NULL), CLEVER_TYPE("Int")));
+	addMethod(new Method("toInteger", (MethodPtr)&String::toInteger, CLEVER_TYPE("Int")));
 }
 
 DataValue* String::allocateValue() const {

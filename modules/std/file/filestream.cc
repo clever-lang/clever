@@ -205,23 +205,30 @@ CLEVER_TYPE_METHOD(FileStream::writeLine) {
 }
 
 void FileStream::init() {
-	addMethod(new Method("toString", (MethodPtr)&FileStream::toString, 
-		makeArgs(NULL), CLEVER_TYPE("Void")));
+	addMethod(new Method("toString", (MethodPtr)&FileStream::toString, CLEVER_TYPE("Void")));
 		
-	addMethod(new Method("open", (MethodPtr)&FileStream::open, 
-		makeArgs(CLEVER_TYPE("String"), CLEVER_TYPE("String"), NULL), CLEVER_TYPE("Void")));
+	addMethod(
+		(new Method("open", (MethodPtr)&FileStream::open, CLEVER_TYPE("Void")))
+			->addArg("filename", CLEVER_TYPE("String"))
+			->addArg("mode", CLEVER_TYPE("String"))
+	);
 		
-	addMethod(new Method("close", (MethodPtr)&FileStream::close, 
-		makeArgs(NULL), CLEVER_TYPE("Void")));
+	addMethod(new Method("close", (MethodPtr)&FileStream::close, CLEVER_TYPE("Void")));
 		
-	addMethod(new Method("read", (MethodPtr)&FileStream::read, 
-		makeArgs(CLEVER_TYPE("String"), NULL), CLEVER_TYPE("Void")));
+	addMethod(
+		(new Method("read", (MethodPtr)&FileStream::read, CLEVER_TYPE("Void")))
+			->addArg("output", CLEVER_TYPE("String"))
+	);
 
-	addMethod(new Method("write", (MethodPtr)&FileStream::write,
-		makeArgs(CLEVER_TYPE("String"), NULL), CLEVER_TYPE("Void")));
+	addMethod(
+		(new Method("write", (MethodPtr)&FileStream::write, CLEVER_TYPE("Void")))
+			->addArg("data", CLEVER_TYPE("String"))
+	);
 
-	addMethod(new Method("writeLine", (MethodPtr)&FileStream::writeLine,
-		makeArgs(CLEVER_TYPE("String"), NULL), CLEVER_TYPE("Void")));
+	addMethod(
+		(new Method("writeLine", (MethodPtr)&FileStream::writeLine,CLEVER_TYPE("Void")))
+			->addArg("data", CLEVER_TYPE("String"))
+	);
 }
 
 DataValue* FileStream::allocateValue() const {
