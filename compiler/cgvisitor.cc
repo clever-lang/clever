@@ -482,7 +482,12 @@ AST_VISITOR(CodeGenVisitor, ClassDeclaration) {
 }
 
 AST_VISITOR(CodeGenVisitor, TypeCreation) {
+	CallableValue* call = expr->getFuncValue();
+	Value* arg_values = expr->getArgsValue();
 	
+	call->addRef();
+	
+	emit(OP_MCALL, &VM::mcall_handler, call, arg_values, expr->getValue());
 }
 
 }} // clever::ast

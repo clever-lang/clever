@@ -811,11 +811,31 @@ public:
 		return m_type;
 	}
 	
+	ArgumentList* getArgs() throw() {
+		return m_arguments;
+	}
+	
 	void accept(ASTVisitor& visitor) throw() {
 		if (m_arguments) {
 			m_arguments->accept(visitor);
 		}
 		visitor.visit(this);
+	}
+	
+	void setFuncValue(CallableValue* callable) {
+		m_call_value = callable;
+	}
+	
+	CallableValue* getFuncValue() throw() {
+		return m_call_value;
+	}
+	
+	void setArgsValue(Value* args_value) {
+		m_args_value = args_value;
+	}
+	
+	Value* getArgsValue() {
+		return m_args_value;
 	}
 	
 	Value* getValue() const throw() {
@@ -825,6 +845,8 @@ private:
 	Identifier* m_type;
 	ArgumentList* m_arguments;
 	Value* m_value;
+	CallableValue* m_call_value;
+	Value* m_args_value;
 
 	DISALLOW_COPY_AND_ASSIGN(TypeCreation);
 };
