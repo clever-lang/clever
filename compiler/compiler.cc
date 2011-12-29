@@ -93,6 +93,7 @@ void Compiler::loadTypes() throw() {
 	CLEVER_INT->init();
 	CLEVER_DOUBLE->init();
 	CLEVER_STR->init();
+	CLEVER_BOOL->init();
 }
 
 /**

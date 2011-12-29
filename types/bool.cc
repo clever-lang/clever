@@ -56,6 +56,8 @@ CLEVER_TYPE_METHOD(Bool::toString) {
 }
 
 void Bool::init() {
+	addMethod(new Method("toString", (MethodPtr)&Bool::toString, 
+			makeArgs(NULL), CLEVER_STR));
 }
 
 DataValue* Bool::allocateValue() const {
