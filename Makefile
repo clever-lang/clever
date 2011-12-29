@@ -90,7 +90,7 @@ $(BUILDDIR)location.hh: $(BUILDDIR)parser.cc
 $(BUILDDIR)parser.hh: $(BUILDDIR)parser.cc
 
 test: clever extra/testrunner.cc extra/testrunner.h
-	$(CXX) $(CXXFLAGS) -lpcrecpp -o extra/testrunner extra/testrunner.cc
+	$(CXX) $(CXXFLAGS) $(shell pkg-config --cflags --libs libpcrecpp) -o extra/testrunner extra/testrunner.cc
 
 run-mem-tests: test
 	extra/testrunner -m tests/
