@@ -15,4 +15,7 @@ Headers files uses .h
 Indentation: tab 
 Line ending: LF (Unix)
 
+= TODO =
+See https://github.com/clever-lang/clever/wiki/TODO-List-&-Ideas
+
 [1] - http://google-styleguide.googlecode.com/svn/trunk/cppguide.xml
