@@ -88,24 +88,7 @@ void VM::run() throw() {
  * x + y
  */
 CLEVER_VM_HANDLER(VM::plus_handler) {
-	const Value* const op1 = opcode.getOp1();
-	const Value* const op2 = opcode.getOp2();
-	Value* result = opcode.getResult();
-	
-	if (op1->isString()) {
-		result->setString(CSTRING(op1->getString() + op2->getString()));
-	}
-	else if (op1->isNumeric() && op2->isNumeric()) {
-		double v1, v2;
-		if (op1->isDouble()) v1 = op1->getDouble();
-		else v1 = op1->getInteger();
-		
-		if (op2->isDouble()) v2 = op2->getDouble();
-		else v2 = op2->getInteger();
-		
-		if (result->isDouble()) result->setDouble(v1 + v2);
-		else result->setInteger(v1 + v2);
-	}
+	opcode.getOp1Type()->plus(opcode.getResult(), opcode.getOp1(), opcode.getOp2());
 }
 
 /**

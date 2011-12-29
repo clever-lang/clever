@@ -55,6 +55,11 @@ public:
 		if (newvalue->getTypePtr() == this) value->copy(newvalue); 
 		else value->setDouble(newvalue->getInteger());
 	}
+	CLEVER_TYPE_PLUS_HANDLER_D {
+		double x = op1->isDouble() ? op1->getDouble() : op1->getInteger();
+		double y = op2->isDouble() ? op2->getDouble() : op2->getInteger();
+		value->setDouble(x + y);
+	}
 private:
 	DISALLOW_COPY_AND_ASSIGN(Double);
 };
