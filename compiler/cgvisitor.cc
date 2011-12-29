@@ -82,7 +82,7 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 			if (initval->getTypePtr() == variable->getTypePtr()) {
 				variable->copy(initval);
 			}
-			else if (variable->getTypePtr() == CLEVER_TYPE("Int")) {
+			else if (variable->getTypePtr() == CLEVER_INT) {
 				variable->setInteger(initval->getDouble());
 			}
 			else {

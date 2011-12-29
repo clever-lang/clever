@@ -29,6 +29,7 @@
 #include "compiler/cstring.h"
 #include "types/typeutils.h"
 #include "modules/std/file/filestream.h"
+#include "types/nativetypes.h"
 
 namespace clever { namespace packages { namespace std { namespace file {
 
@@ -228,28 +229,28 @@ void FileStream::init() {
 		makeArgs(NULL), CLEVER_TYPE("FileStream")));
 		
 	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&FileStream::constructor, 
-		makeArgs(CLEVER_TYPE("String"), NULL), CLEVER_TYPE("FileStream")));
+		makeArgs(CLEVER_STR, NULL), CLEVER_TYPE("FileStream")));
 		
 	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&FileStream::constructor, 
-		makeArgs(CLEVER_TYPE("String"), CLEVER_TYPE("String"), NULL), CLEVER_TYPE("FileStream")));
+		makeArgs(CLEVER_STR, CLEVER_STR, NULL), CLEVER_TYPE("FileStream")));
 	
 	addMethod(new Method("toString", (MethodPtr)&FileStream::toString, 
 		makeArgs(NULL), CLEVER_TYPE("Void")));
 		
 	addMethod(new Method("open", (MethodPtr)&FileStream::open, 
-		makeArgs(CLEVER_TYPE("String"), CLEVER_TYPE("String"), NULL), CLEVER_TYPE("Void")));
+		makeArgs(CLEVER_STR, CLEVER_STR, NULL), CLEVER_TYPE("Void")));
 		
 	addMethod(new Method("close", (MethodPtr)&FileStream::close, 
 		makeArgs(NULL), CLEVER_TYPE("Void")));
 		
 	addMethod(new Method("read", (MethodPtr)&FileStream::read, 
-		makeArgs(CLEVER_TYPE("String"), NULL), CLEVER_TYPE("Void")));
+		makeArgs(CLEVER_STR, NULL), CLEVER_TYPE("Void")));
 
 	addMethod(new Method("write", (MethodPtr)&FileStream::write,
-		makeArgs(CLEVER_TYPE("String"), NULL), CLEVER_TYPE("Void")));
+		makeArgs(CLEVER_STR, NULL), CLEVER_TYPE("Void")));
 
 	addMethod(new Method("writeLine", (MethodPtr)&FileStream::writeLine,
-		makeArgs(CLEVER_TYPE("String"), NULL), CLEVER_TYPE("Void")));
+		makeArgs(CLEVER_STR, NULL), CLEVER_TYPE("Void")));
 }
 
 DataValue* FileStream::allocateValue() const {

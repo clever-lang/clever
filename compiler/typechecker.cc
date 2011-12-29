@@ -26,6 +26,7 @@
 #include "compiler/compiler.h"
 #include "compiler/typechecker.h"
 #include "types/typeutils.h"
+#include "types/nativetypes.h"
 
 namespace clever { namespace ast {
 
@@ -39,12 +40,12 @@ bool TypeChecker::checkCompatibleTypes(const Value* const lhs,
 	 */
 	
 	if (lhs->isPrimitive() && rhs->isPrimitive()
-		&& lhs->getTypePtr() != CLEVER_TYPE("String") 
-		&& rhs->getTypePtr()  != CLEVER_TYPE("String")) {
+		&& lhs->getTypePtr() != CLEVER_STR
+		&& rhs->getTypePtr()  != CLEVER_STR) {
 		return true;
 	}
-	else if (lhs->getTypePtr() == CLEVER_TYPE("String")
-		&& rhs->getTypePtr() == CLEVER_TYPE("String")) {
+	else if (lhs->getTypePtr() == CLEVER_STR
+		&& rhs->getTypePtr() == CLEVER_STR) {
 		return true;
 	}
 	
@@ -63,22 +64,22 @@ const Type* TypeChecker::checkExprType(const Value* const lhs,
 	if (lhs->isPrimitive() && rhs->isPrimitive()
 		&& !lhs->isString() && !rhs->isString()) {
 		
-		if (lhs->getTypePtr() == CLEVER_TYPE("Double")
-			|| rhs->getTypePtr() == CLEVER_TYPE("Double")) {
-			return CLEVER_TYPE("Double");
+		if (lhs->getTypePtr() == CLEVER_DOUBLE
+			|| rhs->getTypePtr() == CLEVER_DOUBLE) {
+			return CLEVER_DOUBLE;
 		}
 		
-		if (lhs->getTypePtr() == CLEVER_TYPE("Int")
-			|| rhs->getTypePtr() == CLEVER_TYPE("Int")) {
-			return CLEVER_TYPE("Int");
+		if (lhs->getTypePtr() == CLEVER_INT
+			|| rhs->getTypePtr() == CLEVER_INT) {
+			return CLEVER_INT;
 		}
 		
-		return CLEVER_TYPE("Bool");
+		return CLEVER_BOOL;
 	}
 	
-	if (lhs->getTypePtr() == CLEVER_TYPE("String")
-		&& rhs->getTypePtr() == CLEVER_TYPE("String")) {
-		return CLEVER_TYPE("String");
+	if (lhs->getTypePtr() == CLEVER_STR
+		&& rhs->getTypePtr() == CLEVER_STR) {
+		return CLEVER_STR;
 	}
 	
 	/* TODO: check for non-primitive types */
@@ -239,10 +240,10 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 		expr->setInitialValue(initval);
 		
 		if (type != initval->getTypePtr()) {
-			if (type == CLEVER_TYPE("Int")) {
+			if (type == CLEVER_INT) {
 				initval->setInteger(initval->getDouble());
 			}
-			else if (type == CLEVER_TYPE("Double")) {
+			else if (type == CLEVER_DOUBLE) {
 				initval->setDouble(initval->getInteger());
 			}
 		}

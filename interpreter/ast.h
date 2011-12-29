@@ -33,6 +33,7 @@
 #include "compiler/refcounted.h"
 #include "interpreter/astvisitor.h"
 #include "build/location.hh"
+#include "types/nativetypes.h"
 
 namespace clever {
 
@@ -168,12 +169,12 @@ class NumberLiteral : public Literal {
 public:
 	explicit NumberLiteral(int64_t val) {
 		m_value = new Value(val);
-		m_value->setTypePtr(CLEVER_TYPE("Int"));
+		m_value->setTypePtr(CLEVER_INT);
 	}
 
 	explicit NumberLiteral(double val) {
 		m_value = new Value(val);
-		m_value->setTypePtr(CLEVER_TYPE("Double"));
+		m_value->setTypePtr(CLEVER_DOUBLE);
 	}
 
 	explicit NumberLiteral(Value* value)
@@ -403,7 +404,7 @@ class StringLiteral : public Literal {
 public:
 	explicit StringLiteral(const CString* name) {
 		m_value = new Value(name);
-		m_value->setTypePtr(CLEVER_TYPE("String"));
+		m_value->setTypePtr(CLEVER_STR);
 	}
 
 	~StringLiteral() {

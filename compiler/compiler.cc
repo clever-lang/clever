@@ -39,6 +39,11 @@ namespace clever {
 
 PackageManager Compiler::s_pkgmanager;
 
+THREAD_TLS Type* CLEVER_INT_VAR    = NULL;
+THREAD_TLS Type* CLEVER_DOUBLE_VAR = NULL;
+THREAD_TLS Type* CLEVER_STR_VAR    = NULL;
+THREAD_TLS Type* CLEVER_BOOL_VAR   = NULL;
+
 /**
  * Deallocs memory used by compiler data
  */
@@ -72,20 +77,22 @@ void Compiler::init() throw() {
  * Loads the class representations of native types
  */
 void Compiler::loadTypes() throw() {
-	Integer* int_type = new Integer;
-	Double* double_type = new Double;
-	String* string_type = new String;
+	CLEVER_INT    = new Integer;
+	CLEVER_STR    = new String;
+	CLEVER_DOUBLE = new Double;
+	CLEVER_BOOL   = new Bool;
 
 	/**
 	 * Registers all native types
 	 */
-	g_symtable.push(CSTRING("Int"), int_type);
-	g_symtable.push(CSTRING("Double"), double_type);
-	g_symtable.push(CSTRING("String"), string_type);
+	g_symtable.push(CSTRING("Int"), CLEVER_INT);
+	g_symtable.push(CSTRING("Double"), CLEVER_DOUBLE);
+	g_symtable.push(CSTRING("String"), CLEVER_STR);
+	g_symtable.push(CSTRING("Bool"), CLEVER_BOOL);
 	
-	int_type->init();
-	double_type->init();
-	string_type->init();
+	CLEVER_INT->init();
+	CLEVER_DOUBLE->init();
+	CLEVER_STR->init();
 }
 
 /**

@@ -23,51 +23,42 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <iostream>
-#include "compiler/cstring.h"
-#include "types/typeutils.h"
-#include "types/type.h"
-#include "types/int.h"
-#include "types/nativetypes.h"
+#ifndef CLEVER_BOOL_H
+#define CLEVER_BOOL_H
+
+#include "type.h"
+#include "compiler/value.h"
 
 namespace clever {
 
+class Bool : public Type {
+public:
+	Bool() :
+		Type("Bool") { }
 
-/**
- * Int::Int([Int value])
- * Construct an Int object with a default value (if no args) or a 
- * custom value
- */
-CLEVER_TYPE_METHOD(Integer::constructor) {
-	if (args) {
-		retval->setInteger(args->at(0)->getInteger());
-	}
-	else {
-		retval->setInteger(0);
-	}
-}
+	void init();
+	DataValue* allocateValue() const;
 
-/**
- * Int::toString()
- * Converts the number to string
- */
-CLEVER_TYPE_METHOD(Integer::toString) {
-	retval->setString(CSTRING(value->toString()));
-}
-
-void Integer::init() {
-	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Integer::constructor, 
-		makeArgs(NULL), CLEVER_INT));
+	/**
+	 * Type methods
+	 */
+	static CLEVER_TYPE_METHOD(constructor);
+	static CLEVER_TYPE_METHOD(toString);
 	
-	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Integer::constructor, 
-		makeArgs(CLEVER_INT, NULL), CLEVER_INT));
-	
-	addMethod(new Method("toString", (MethodPtr)&Integer::toString, 
-		makeArgs(NULL), CLEVER_STR));
-}
-
-DataValue* Integer::allocateValue() const {
-	return NULL;
-}
+	/**
+	 * Type handlers
+	 */
+	CLEVER_TYPE_INC_HANDLER_D { return value; }
+	CLEVER_TYPE_DEC_HANDLER_D { return value; }
+	CLEVER_TYPE_ASSIGN_HANDLER_D { 
+		if (newvalue->getTypePtr() == this) value->copy(newvalue);
+		else value->setBoolean((int64_t)newvalue->getDouble()); 
+	}
+	//CLEVER_TYPE_MOD_HANDLER_D { value->setInteger(op1->getBoolean() % op2->getBoolean()); }
+private:
+	DISALLOW_COPY_AND_ASSIGN(Bool);
+};
 
 } // clever
+
+#endif // CLEVER_BOOL_H

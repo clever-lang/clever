@@ -29,6 +29,7 @@
 #include "types/typeutils.h"
 #include "types/type.h"
 #include "types/double.h"
+#include "types/nativetypes.h"
 
 namespace clever {
 
@@ -63,16 +64,16 @@ CLEVER_TYPE_METHOD(Double::sqrt) {
 
 void Double::init() {
 	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Double::constructor, 
-		makeArgs(NULL), CLEVER_TYPE("Double")));
+		makeArgs(NULL), CLEVER_DOUBLE));
 		
 	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Double::constructor, 
-		makeArgs(CLEVER_TYPE("Double"), NULL), CLEVER_TYPE("Double")));
+		makeArgs(CLEVER_DOUBLE, NULL), CLEVER_DOUBLE));
 		
 	addMethod(new Method("toString", (MethodPtr)&Double::toString, 
-		makeArgs(NULL), CLEVER_TYPE("String")));
+		makeArgs(NULL), CLEVER_STR));
 		
 	addMethod(new Method("sqrt", (MethodPtr)&Double::sqrt, 
-		makeArgs(NULL), CLEVER_TYPE("Double")));
+		makeArgs(NULL), CLEVER_DOUBLE));
 }
 
 DataValue* Double::allocateValue() const {

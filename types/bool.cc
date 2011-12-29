@@ -27,46 +27,38 @@
 #include "compiler/cstring.h"
 #include "types/typeutils.h"
 #include "types/type.h"
-#include "types/int.h"
+#include "types/bool.h"
 #include "types/nativetypes.h"
 
 namespace clever {
 
 
 /**
- * Int::Int([Int value])
- * Construct an Int object with a default value (if no args) or a 
+ * Bool::Bool([Bool value])
+ * Construct an Bool object with a default value (if no args) or a 
  * custom value
  */
-CLEVER_TYPE_METHOD(Integer::constructor) {
+CLEVER_TYPE_METHOD(Bool::constructor) {
 	if (args) {
-		retval->setInteger(args->at(0)->getInteger());
+		retval->setBoolean(args->at(0)->getBoolean());
 	}
 	else {
-		retval->setInteger(0);
+		retval->setBoolean(0);
 	}
 }
 
 /**
- * Int::toString()
+ * Bool::toString()
  * Converts the number to string
  */
-CLEVER_TYPE_METHOD(Integer::toString) {
+CLEVER_TYPE_METHOD(Bool::toString) {
 	retval->setString(CSTRING(value->toString()));
 }
 
-void Integer::init() {
-	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Integer::constructor, 
-		makeArgs(NULL), CLEVER_INT));
-	
-	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Integer::constructor, 
-		makeArgs(CLEVER_INT, NULL), CLEVER_INT));
-	
-	addMethod(new Method("toString", (MethodPtr)&Integer::toString, 
-		makeArgs(NULL), CLEVER_STR));
+void Bool::init() {
 }
 
-DataValue* Integer::allocateValue() const {
+DataValue* Bool::allocateValue() const {
 	return NULL;
 }
 

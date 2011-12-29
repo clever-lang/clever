@@ -31,6 +31,7 @@
 #include "types/type.h"
 #include "types/str.h"
 #include "types/typeutils.h"
+#include "types/nativetypes.h"
 
 namespace clever {
 
@@ -119,7 +120,7 @@ CLEVER_TYPE_METHOD(String::constructor) {
 }
 
 void String::init() {
-	const Type* const str_type = CLEVER_TYPE("String");
+	const Type* const str_type = CLEVER_STR;
 
 	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&String::constructor, 
 		makeArgs(NULL), str_type));
@@ -131,13 +132,13 @@ void String::init() {
 		makeArgs(str_type, str_type, NULL), str_type));
 	
 	addMethod(new Method("substring", (MethodPtr)&String::substring, 
-		makeArgs(CLEVER_TYPE("Int"), CLEVER_TYPE("Int"), NULL), str_type));
+		makeArgs(CLEVER_INT, CLEVER_INT, NULL), str_type));
 	
 	addMethod(new Method("toDouble", (MethodPtr)&String::toDouble, 
-		makeArgs(NULL), CLEVER_TYPE("Double")));
+		makeArgs(NULL), CLEVER_DOUBLE));
 		
 	addMethod(new Method("toInteger", (MethodPtr)&String::toInteger, 
-		makeArgs(NULL), CLEVER_TYPE("Int")));
+		makeArgs(NULL), CLEVER_INT));
 }
 
 DataValue* String::allocateValue() const {
