@@ -24,7 +24,6 @@
  */
 
 #ifndef CLEVER_H
-
 #define CLEVER_H
 
 #include <iostream>
@@ -99,6 +98,17 @@ namespace clever {
 # define UNEXPECTED(cond) (cond)
 #endif
 
+/**
+ * Thread-local storage
+ */
+#if __GNUC__
+# define THREAD_TLS __thread
+#elif defined(_MSC_VER)
+# define THREAD_TLS __declspec(thread)
+#else
+# define THREAD_TLS
+#endif
+
 
 /**
  * Utility functions and macros.
@@ -122,5 +132,5 @@ void vprintfln(const char*, va_list) throw();
 void printfln(const char*, ...) throw();
 } // clever 
 
-#endif /* end of include guard: CLEVER_H */
+#endif /* CLEVER_H */
 

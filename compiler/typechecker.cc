@@ -26,6 +26,7 @@
 #include "compiler/compiler.h"
 #include "compiler/typechecker.h"
 #include "types/typeutils.h"
+#include "types/nativetypes.h"
 
 namespace clever { namespace ast {
 
@@ -39,12 +40,12 @@ bool TypeChecker::checkCompatibleTypes(const Value* const lhs,
 	 */
 	
 	if (lhs->isPrimitive() && rhs->isPrimitive()
-		&& lhs->getTypePtr() != CLEVER_TYPE("String") 
-		&& rhs->getTypePtr()  != CLEVER_TYPE("String")) {
+		&& lhs->getTypePtr() != CLEVER_STR
+		&& rhs->getTypePtr()  != CLEVER_STR) {
 		return true;
 	}
-	else if (lhs->getTypePtr() == CLEVER_TYPE("String")
-		&& rhs->getTypePtr() == CLEVER_TYPE("String")) {
+	else if (lhs->getTypePtr() == CLEVER_STR
+		&& rhs->getTypePtr() == CLEVER_STR) {
 		return true;
 	}
 	
@@ -63,22 +64,22 @@ const Type* TypeChecker::checkExprType(const Value* const lhs,
 	if (lhs->isPrimitive() && rhs->isPrimitive()
 		&& !lhs->isString() && !rhs->isString()) {
 		
-		if (lhs->getTypePtr() == CLEVER_TYPE("Double")
-			|| rhs->getTypePtr() == CLEVER_TYPE("Double")) {
-			return CLEVER_TYPE("Double");
+		if (lhs->getTypePtr() == CLEVER_DOUBLE
+			|| rhs->getTypePtr() == CLEVER_DOUBLE) {
+			return CLEVER_DOUBLE;
 		}
 		
-		if (lhs->getTypePtr() == CLEVER_TYPE("Int")
-			|| rhs->getTypePtr() == CLEVER_TYPE("Int")) {
-			return CLEVER_TYPE("Int");
+		if (lhs->getTypePtr() == CLEVER_INT
+			|| rhs->getTypePtr() == CLEVER_INT) {
+			return CLEVER_INT;
 		}
 		
-		return CLEVER_TYPE("Bool");
+		return CLEVER_BOOL;
 	}
 	
-	if (lhs->getTypePtr() == CLEVER_TYPE("String")
-		&& rhs->getTypePtr() == CLEVER_TYPE("String")) {
-		return CLEVER_TYPE("String");
+	if (lhs->getTypePtr() == CLEVER_STR
+		&& rhs->getTypePtr() == CLEVER_STR) {
+		return CLEVER_STR;
 	}
 	
 	/* TODO: check for non-primitive types */
@@ -204,7 +205,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 	 * Check if the type wasn't declarated previously
 	 */
 	if (type == NULL) {
-		Compiler::errorf(expr->getLocation(), "`%s' does not name a type", 
+		Compiler::errorf(expr->getLocation(), "`%S' does not name a type", 
 			expr->getType()->getName());
 	}
 	
@@ -239,10 +240,10 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 		expr->setInitialValue(initval);
 		
 		if (type != initval->getTypePtr()) {
-			if (type == CLEVER_TYPE("Int")) {
+			if (type == CLEVER_INT) {
 				initval->setInteger(initval->getDouble());
 			}
-			else if (type == CLEVER_TYPE("Double")) {
+			else if (type == CLEVER_DOUBLE) {
 				initval->setDouble(initval->getInteger());
 			}
 		}
@@ -599,10 +600,52 @@ AST_VISITOR(TypeChecker, TypeCreation) {
 			ident->getName());
 	}
 	
+	ArgumentList* args = expr->getArgs();
+	TypeVector args_types;
+	Value* arg_values = NULL;
+	
+	if (args) {
+		expr->getArgs()->accept(*this);
+		arg_values = new Value;
+		arg_values->setType(Value::VECTOR);
+		arg_values->setVector(args->getArgValue());
+		arg_values->addRef();
+		expr->setArgsValue(arg_values);
+
+		ValueVector* vv = args->getArgValue();
+
+		for (size_t i = 0; i < vv->size(); ++i) {
+			args_types.push_back(vv->at(i)->getTypePtr());
+		}
+	}
+	
+	const Method* ctor = type->getMethod(CSTRING(CLEVER_CTOR_NAME), &args_types);
+	
+	if (ctor == NULL) {
+		std::string args_type_name;
+
+		if (args_types.size() > 0) {
+			args_type_name = args_types[0]->getName();
+
+			for (size_t i = 1; i < args_types.size(); ++i) {
+				args_type_name += std::string(", ") + args_types[i]->getName(); 
+			}
+		}
+
+		Compiler::errorf(expr->getLocation(), "No matching call for constructor %s::%s(%S)", 
+			type->getName(), type->getName(), &args_type_name);
+	}
+	
 	Value* value = expr->getValue();
 	value->setTypePtr(type);
 	
-	if (!value->isPrimitive()) value->setDataValue(type->allocateValue());
+	CallableValue* call = new CallableValue(CSTRING(CLEVER_CTOR_NAME), type);
+	call->setHandler(ctor);
+	call->setContext(value);
+	value->addRef();
+	
+	expr->getValue()->setTypePtr(type);
+	expr->setFuncValue(call);
 }
 
 }} // clever::ast

@@ -82,7 +82,7 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 			if (initval->getTypePtr() == variable->getTypePtr()) {
 				variable->copy(initval);
 			}
-			else if (variable->getTypePtr() == CLEVER_TYPE("Int")) {
+			else if (variable->getTypePtr() == CLEVER_INT) {
 				variable->setInteger(initval->getDouble());
 			}
 			else {
@@ -482,7 +482,12 @@ AST_VISITOR(CodeGenVisitor, ClassDeclaration) {
 }
 
 AST_VISITOR(CodeGenVisitor, TypeCreation) {
+	CallableValue* call = expr->getFuncValue();
+	Value* arg_values = expr->getArgsValue();
 	
+	call->addRef();
+	
+	emit(OP_MCALL, &VM::mcall_handler, call, arg_values, expr->getValue());
 }
 
 }} // clever::ast

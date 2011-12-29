@@ -28,8 +28,24 @@
 #include "types/typeutils.h"
 #include "types/type.h"
 #include "types/int.h"
+#include "types/nativetypes.h"
 
 namespace clever {
+
+
+/**
+ * Int::Int([Int value])
+ * Construct an Int object with a default value (if no args) or a 
+ * custom value
+ */
+CLEVER_TYPE_METHOD(Integer::constructor) {
+	if (args) {
+		retval->setInteger(args->at(0)->getInteger());
+	}
+	else {
+		retval->setInteger(0);
+	}
+}
 
 /**
  * Int::toString()
@@ -40,7 +56,14 @@ CLEVER_TYPE_METHOD(Integer::toString) {
 }
 
 void Integer::init() {
-	addMethod(new Method("toString", (MethodPtr)&Integer::toString, CLEVER_TYPE("String")));
+	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Integer::constructor, CLEVER_INT));
+	
+	addMethod(
+		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Integer::constructor, CLEVER_INT))
+			->addArg("value", CLEVER_INT)
+	);
+
+	addMethod(new Method("toString", (MethodPtr)&Integer::toString, CLEVER_STR));
 }
 
 DataValue* Integer::allocateValue() const {

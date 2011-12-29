@@ -31,6 +31,7 @@
 #include "types/type.h"
 #include "types/str.h"
 #include "types/typeutils.h"
+#include "types/nativetypes.h"
 
 namespace clever {
 
@@ -105,24 +106,42 @@ CLEVER_TYPE_METHOD(String::toInteger) {
 	retval->setInteger(integer);
 }
 
+/**
+ * String::String([String value])
+ * Construct the object.
+ */
+CLEVER_TYPE_METHOD(String::constructor) {	
+	if (args) {
+		retval->setString(CSTRING(args->at(0)->getString()));
+	}
+	else {
+		retval->setString(CSTRING(""));
+	}
+}
+
 void String::init() {
-	const Type* const str_type = CLEVER_TYPE("String");
+	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&String::constructor, CLEVER_STR));
+
+	addMethod(
+		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&String::constructor, CLEVER_STR))
+			->addArg("value", CLEVER_STR)
+	);
 
 	addMethod(
 		(new Method("replace", (MethodPtr)&String::replace, CLEVER_TYPE("String")))
-			->addArg("before", CLEVER_TYPE("String"))
-			->addArg("after", CLEVER_TYPE("String"))
+			->addArg("before", CLEVER_STR)
+			->addArg("after", CLEVER_STR)
 	);
 	
 	addMethod(
 		(new Method("substring", (MethodPtr)&String::substring, CLEVER_TYPE("String")))
-			->addArg("start", CLEVER_TYPE("Int"))
-			->addArg("length", CLEVER_TYPE("Int"))
+			->addArg("start", CLEVER_INT)
+			->addArg("length", CLEVER_INT)
 	);
 	
-	addMethod(new Method("toDouble", (MethodPtr)&String::toDouble, CLEVER_TYPE("Double")));
+	addMethod(new Method("toDouble", (MethodPtr)&String::toDouble, CLEVER_DOUBLE));
 		
-	addMethod(new Method("toInteger", (MethodPtr)&String::toInteger, CLEVER_TYPE("Int")));
+	addMethod(new Method("toInteger", (MethodPtr)&String::toInteger, CLEVER_INT));
 }
 
 DataValue* String::allocateValue() const {

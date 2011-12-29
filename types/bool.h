@@ -23,60 +23,41 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <iostream>
-#include <cmath>
-#include "compiler/cstring.h"
-#include "types/typeutils.h"
-#include "types/type.h"
-#include "types/double.h"
-#include "types/nativetypes.h"
+#ifndef CLEVER_BOOL_H
+#define CLEVER_BOOL_H
+
+#include "type.h"
+#include "compiler/value.h"
 
 namespace clever {
 
-/**
- * Double::Double()
- * Constructs the object.
- */
-CLEVER_TYPE_METHOD(Double::constructor) {
-	if (args) {
-		retval->setDouble(args->at(0)->getDouble());
+class Bool : public Type {
+public:
+	Bool() :
+		Type("Bool") { }
+
+	void init();
+	DataValue* allocateValue() const;
+
+	/**
+	 * Type methods
+	 */
+	static CLEVER_TYPE_METHOD(constructor);
+	static CLEVER_TYPE_METHOD(toString);
+	
+	/**
+	 * Type handlers
+	 */
+	CLEVER_TYPE_INC_HANDLER_D { return value; }
+	CLEVER_TYPE_DEC_HANDLER_D { return value; }
+	CLEVER_TYPE_ASSIGN_HANDLER_D { 
+		if (newvalue->getTypePtr() == this) value->copy(newvalue);
+		else value->setBoolean((int64_t)newvalue->getDouble()); 
 	}
-	else {
-		retval->setDouble(0.0);
-	}
-}
-
-/**
- * Double::toString()
- * Converts the number to string
- */
-CLEVER_TYPE_METHOD(Double::toString) {
-	retval->setString(CSTRING(value->toString()));
-}
-
-/**
- * Double::sqrt()
- * Returns the square root of the number
- */
-CLEVER_TYPE_METHOD(Double::sqrt) {
-	retval->setDouble(std::sqrt(value->getDouble()));
-}
-
-void Double::init() {
-	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Double::constructor, CLEVER_DOUBLE));
-		
-	addMethod(
-		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Double::constructor, CLEVER_DOUBLE))
-			->addArg("value", CLEVER_DOUBLE)
-	);
-
-	addMethod(new Method("toString", (MethodPtr)&Double::toString, CLEVER_STR));
-		
-	addMethod(new Method("sqrt", (MethodPtr)&Double::sqrt, CLEVER_DOUBLE));
-}
-
-DataValue* Double::allocateValue() const {
-	return NULL;
-}
+private:
+	DISALLOW_COPY_AND_ASSIGN(Bool);
+};
 
 } // clever
+
+#endif // CLEVER_BOOL_H

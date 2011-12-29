@@ -24,58 +24,42 @@
  */
 
 #include <iostream>
-#include <cmath>
 #include "compiler/cstring.h"
 #include "types/typeutils.h"
 #include "types/type.h"
-#include "types/double.h"
+#include "types/bool.h"
 #include "types/nativetypes.h"
 
 namespace clever {
 
+
 /**
- * Double::Double()
- * Constructs the object.
+ * Bool::Bool([Bool value])
+ * Construct an Bool object with a default value (if no args) or a 
+ * custom value
  */
-CLEVER_TYPE_METHOD(Double::constructor) {
+CLEVER_TYPE_METHOD(Bool::constructor) {
 	if (args) {
-		retval->setDouble(args->at(0)->getDouble());
+		retval->setBoolean(args->at(0)->getBoolean());
 	}
 	else {
-		retval->setDouble(0.0);
+		retval->setBoolean(0);
 	}
 }
 
 /**
- * Double::toString()
+ * Bool::toString()
  * Converts the number to string
  */
-CLEVER_TYPE_METHOD(Double::toString) {
+CLEVER_TYPE_METHOD(Bool::toString) {
 	retval->setString(CSTRING(value->toString()));
 }
 
-/**
- * Double::sqrt()
- * Returns the square root of the number
- */
-CLEVER_TYPE_METHOD(Double::sqrt) {
-	retval->setDouble(std::sqrt(value->getDouble()));
+void Bool::init() {
+	addMethod(new Method("toString", (MethodPtr)&Bool::toString, CLEVER_STR));
 }
 
-void Double::init() {
-	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Double::constructor, CLEVER_DOUBLE));
-		
-	addMethod(
-		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Double::constructor, CLEVER_DOUBLE))
-			->addArg("value", CLEVER_DOUBLE)
-	);
-
-	addMethod(new Method("toString", (MethodPtr)&Double::toString, CLEVER_STR));
-		
-	addMethod(new Method("sqrt", (MethodPtr)&Double::sqrt, CLEVER_DOUBLE));
-}
-
-DataValue* Double::allocateValue() const {
+DataValue* Bool::allocateValue() const {
 	return NULL;
 }
 
