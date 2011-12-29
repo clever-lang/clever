@@ -33,6 +33,19 @@
 namespace clever {
 
 /**
+ * Double::Double()
+ * Constructs the object.
+ */
+CLEVER_TYPE_METHOD(Double::constructor) {
+	if (args) {
+		retval->setDouble(args->at(0)->getDouble());
+	}
+	else {
+		retval->setDouble(0.0);
+	}
+}
+
+/**
  * Double::toString()
  * Converts the number to string
  */
@@ -49,6 +62,12 @@ CLEVER_TYPE_METHOD(Double::sqrt) {
 }
 
 void Double::init() {
+	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Double::constructor, 
+		makeArgs(NULL), CLEVER_TYPE("Double")));
+		
+	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Double::constructor, 
+		makeArgs(CLEVER_TYPE("Double"), NULL), CLEVER_TYPE("Double")));
+		
 	addMethod(new Method("toString", (MethodPtr)&Double::toString, 
 		makeArgs(NULL), CLEVER_TYPE("String")));
 		
