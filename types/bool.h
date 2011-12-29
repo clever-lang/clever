@@ -54,7 +54,6 @@ public:
 		if (newvalue->getTypePtr() == this) value->copy(newvalue);
 		else value->setBoolean((int64_t)newvalue->getDouble()); 
 	}
-	//CLEVER_TYPE_MOD_HANDLER_D { value->setInteger(op1->getBoolean() % op2->getBoolean()); }
 private:
 	DISALLOW_COPY_AND_ASSIGN(Bool);
 };
