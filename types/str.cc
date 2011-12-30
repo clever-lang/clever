@@ -120,25 +120,28 @@ CLEVER_TYPE_METHOD(String::constructor) {
 }
 
 void String::init() {
-	const Type* const str_type = CLEVER_STR;
+	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&String::constructor, CLEVER_STR));
 
-	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&String::constructor, 
-		makeArgs(NULL), str_type));
+	addMethod(
+		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&String::constructor, CLEVER_STR))
+			->addArg("value", CLEVER_STR)
+	);
 
-	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&String::constructor, 
-		makeArgs(str_type, NULL), str_type));
-
-	addMethod(new Method("replace", (MethodPtr)&String::replace, 
-		makeArgs(str_type, str_type, NULL), str_type));
+	addMethod(
+		(new Method("replace", (MethodPtr)&String::replace, CLEVER_STR))
+			->addArg("before", CLEVER_STR)
+			->addArg("after", CLEVER_STR)
+	);
 	
-	addMethod(new Method("substring", (MethodPtr)&String::substring, 
-		makeArgs(CLEVER_INT, CLEVER_INT, NULL), str_type));
+	addMethod(
+		(new Method("substring", (MethodPtr)&String::substring, CLEVER_STR))
+			->addArg("start", CLEVER_INT)
+			->addArg("length", CLEVER_INT)
+	);
 	
-	addMethod(new Method("toDouble", (MethodPtr)&String::toDouble, 
-		makeArgs(NULL), CLEVER_DOUBLE));
+	addMethod(new Method("toDouble", (MethodPtr)&String::toDouble, CLEVER_DOUBLE));
 		
-	addMethod(new Method("toInteger", (MethodPtr)&String::toInteger, 
-		makeArgs(NULL), CLEVER_INT));
+	addMethod(new Method("toInteger", (MethodPtr)&String::toInteger, CLEVER_INT));
 }
 
 DataValue* String::allocateValue() const {

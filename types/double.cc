@@ -63,17 +63,16 @@ CLEVER_TYPE_METHOD(Double::sqrt) {
 }
 
 void Double::init() {
-	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Double::constructor, 
-		makeArgs(NULL), CLEVER_DOUBLE));
+	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Double::constructor, CLEVER_DOUBLE));
 		
-	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Double::constructor, 
-		makeArgs(CLEVER_DOUBLE, NULL), CLEVER_DOUBLE));
+	addMethod(
+		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Double::constructor, CLEVER_DOUBLE))
+			->addArg("value", CLEVER_DOUBLE)
+	);
+
+	addMethod(new Method("toString", (MethodPtr)&Double::toString, CLEVER_STR));
 		
-	addMethod(new Method("toString", (MethodPtr)&Double::toString, 
-		makeArgs(NULL), CLEVER_STR));
-		
-	addMethod(new Method("sqrt", (MethodPtr)&Double::sqrt, 
-		makeArgs(NULL), CLEVER_DOUBLE));
+	addMethod(new Method("sqrt", (MethodPtr)&Double::sqrt, CLEVER_DOUBLE));
 }
 
 DataValue* Double::allocateValue() const {
