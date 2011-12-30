@@ -56,14 +56,14 @@ CLEVER_TYPE_METHOD(Integer::toString) {
 }
 
 void Integer::init() {
-	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Integer::constructor, 
-		makeArgs(NULL), CLEVER_INT));
+	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Integer::constructor, CLEVER_INT));
 	
-	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Integer::constructor, 
-		makeArgs(CLEVER_INT, NULL), CLEVER_INT));
-	
-	addMethod(new Method("toString", (MethodPtr)&Integer::toString, 
-		makeArgs(NULL), CLEVER_STR));
+	addMethod(
+		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Integer::constructor, CLEVER_INT))
+			->addArg("value", CLEVER_INT)
+	);
+
+	addMethod(new Method("toString", (MethodPtr)&Integer::toString, CLEVER_STR));
 }
 
 DataValue* Integer::allocateValue() const {
