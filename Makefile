@@ -61,6 +61,13 @@ ifneq ($(VERBOSE),y)
 .SILENT:
 endif
 
+
+tmp_libdirs:=$(shell pkg-config --variable=libdir libpcrecpp)
+tmp_libdirs:=$(foreach dir,$(tmp_libdirs),-L$(dir))
+tmp_incdirs:=$(shell pkg-config --variable=includedir libpcrecpp)
+tmp_incdirs:=$(foreach dir,$(tmp_incdirs),-I$(dir))
+TESTRUNNER_FLAGS=$(tmp_libdirs) $(tmp_incdirs) $(shell pkg-config --cflags --libs libpcrecpp)
+
 .PHONY: clean
 
 clever$(EXT): $(BUILDDIR)scanner.cc $(OBJECTS)
@@ -90,7 +97,7 @@ $(BUILDDIR)location.hh: $(BUILDDIR)parser.cc
 $(BUILDDIR)parser.hh: $(BUILDDIR)parser.cc
 
 test: clever extra/testrunner.cc extra/testrunner.h
-	$(CXX) $(CXXFLAGS) $(shell pkg-config --cflags --libs libpcrecpp) -o extra/testrunner extra/testrunner.cc
+	$(CXX) $(CXXFLAGS) $(TESTRUNNER_FLAGS) -o extra/testrunner extra/testrunner.cc
 
 run-mem-tests: test
 	extra/testrunner -m tests/
