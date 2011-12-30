@@ -82,7 +82,7 @@ public:
 	}
 
 	void addMethod(Method* method) throw() {
-		const MethodArgs args = method->getArgs();
+		const MethodArgs& args = method->getArgs();
 		MethodArgs::const_iterator it = args.begin();
 		
 		std::string args_name;

@@ -128,13 +128,13 @@ void String::init() {
 	);
 
 	addMethod(
-		(new Method("replace", (MethodPtr)&String::replace, CLEVER_TYPE("String")))
+		(new Method("replace", (MethodPtr)&String::replace, CLEVER_STR))
 			->addArg("before", CLEVER_STR)
 			->addArg("after", CLEVER_STR)
 	);
 	
 	addMethod(
-		(new Method("substring", (MethodPtr)&String::substring, CLEVER_TYPE("String")))
+		(new Method("substring", (MethodPtr)&String::substring, CLEVER_STR))
 			->addArg("start", CLEVER_INT)
 			->addArg("length", CLEVER_INT)
 	);
