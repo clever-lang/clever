@@ -82,7 +82,7 @@ public:
 
 	long call() const throw() { return m_info.offset; }
 	
-	const MethodArgs getArgs() const throw() { return m_args; }
+	const MethodArgs& getArgs() const throw() { return m_args; }
 	
 	const Type* getReturn() const throw() { return m_rtype; } 
 	
