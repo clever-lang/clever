@@ -45,7 +45,9 @@ class CString;
 #define CLEVER_TYPE_ASSIGN_HANDLER_D void assign(Value* value, Value* newvalue) const throw()
 #define CLEVER_TYPE_MOD_HANDLER_D    void modulus(Value* value, const Value* op1, const Value* op2) const throw()
 #define CLEVER_TYPE_PLUS_HANDLER_D   void plus(Value* value, const Value* op1, const Value* op2) const throw()
-#define CLEVER_TYPE_MINUS_HANDLER_D   void plus(Value* value, const Value* op1, const Value* op2) const throw()
+#define CLEVER_TYPE_MINUS_HANDLER_D  void minus(Value* value, const Value* op1, const Value* op2) const throw()
+#define CLEVER_TYPE_DIV_HANDLER_D    void div(Value* value, const Value* op1, const Value* op2) const throw()
+#define CLEVER_TYPE_MULT_HANDLER_D   void mult(Value* value, const Value* op1, const Value* op2) const throw()
 
 /**
  * Prototype for class methods which the class represents a type
@@ -67,16 +69,16 @@ public:
 
 	virtual ~Type() {
 		MethodMap::const_iterator it = m_methods.begin(), end = m_methods.end();
-		
+
 		while (it != end) {
 			OverloadMethodMap::const_iterator be = it->second.begin(),
 				ed = it->second.end();
-			
+
 			while (be != ed) {
 				delete be->second;
 				++be;
 			}
-			
+
 			++it;
 		}
 	}
@@ -84,14 +86,14 @@ public:
 	void addMethod(Method* method) throw() {
 		const MethodArgs& args = method->getArgs();
 		MethodArgs::const_iterator it = args.begin();
-		
+
 		std::string args_name;
-		
+
 		for (; it != args.end(); ++it) {
 			args_name += it->second->getName();
 			args_name += CLEVER_ARGS_SEPARATOR;
 		}
-		
+
 		m_methods[method->getName()].insert(MethodPair(args_name, method));
 	}
 
@@ -107,13 +109,13 @@ public:
 				args_name += CLEVER_ARGS_SEPARATOR;
 			}
 		}
-		
+
 		OverloadMethodMap::const_iterator method_it = it->second.find(args_name);
-		
+
 		if (method_it != it->second.end()) {
 			return method_it->second;
 		}
-		
+
 		return NULL;
 	}
 
@@ -125,21 +127,24 @@ public:
 	 * Pure virtual methods
 	 */
 	virtual void init() = 0;
-	
+
 	/**
-	 * Allocate a buffer for the type's attributes (if the type is not String, Double, Int, etc.) 
+	 * Allocate a buffer for the type's attributes (if the type is not String, Double, Int, etc.)
 	 */
 	virtual DataValue* allocateValue() const = 0;
-	
+
 	/**
 	 * Type handlers
 	 */
-	virtual CLEVER_TYPE_INC_HANDLER_D = 0;
-	virtual CLEVER_TYPE_DEC_HANDLER_D = 0;
+	virtual CLEVER_TYPE_INC_HANDLER_D    = 0;
+	virtual CLEVER_TYPE_DEC_HANDLER_D    = 0;
 	virtual CLEVER_TYPE_ASSIGN_HANDLER_D = 0;
-	virtual CLEVER_TYPE_MOD_HANDLER_D { }
-	virtual CLEVER_TYPE_PLUS_HANDLER_D { }
-	
+	virtual CLEVER_TYPE_MOD_HANDLER_D   {}
+	virtual CLEVER_TYPE_PLUS_HANDLER_D  {}
+	virtual CLEVER_TYPE_MINUS_HANDLER_D {}
+	virtual CLEVER_TYPE_DIV_HANDLER_D   {}
+	virtual CLEVER_TYPE_MULT_HANDLER_D  {}
+
 	/**
 	 * Destructor method. This method will be called when after a variable gets
 	 * out of scope. This method should be overwritten for every type who needs

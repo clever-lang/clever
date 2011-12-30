@@ -45,20 +45,43 @@ public:
 	static CLEVER_TYPE_METHOD(constructor);
 	static CLEVER_TYPE_METHOD(toString);
 	static CLEVER_TYPE_METHOD(sqrt);
-	
+
 	/**
 	 * Type handlers
 	 */
 	CLEVER_TYPE_INC_HANDLER_D { value->setDouble(value->getDouble() + 1); return value; }
 	CLEVER_TYPE_DEC_HANDLER_D { value->setDouble(value->getDouble() - 1); return value; }
-	CLEVER_TYPE_ASSIGN_HANDLER_D { 
-		if (newvalue->getTypePtr() == this) value->copy(newvalue); 
-		else value->setDouble(newvalue->getInteger());
+
+	CLEVER_TYPE_ASSIGN_HANDLER_D {
+		if (newvalue->getTypePtr() == this) {
+			value->copy(newvalue);
+		} else {
+			value->setDouble(newvalue->getInteger());
+		}
 	}
+
 	CLEVER_TYPE_PLUS_HANDLER_D {
 		double x = op1->isDouble() ? op1->getDouble() : op1->getInteger();
 		double y = op2->isDouble() ? op2->getDouble() : op2->getInteger();
 		value->setDouble(x + y);
+	}
+
+	CLEVER_TYPE_MINUS_HANDLER_D {
+		double x = op1->isDouble() ? op1->getDouble() : op1->getInteger();
+		double y = op2->isDouble() ? op2->getDouble() : op2->getInteger();
+		value->setDouble(x - y);
+	}
+
+	CLEVER_TYPE_MULT_HANDLER_D {
+		double x = op1->isDouble() ? op1->getDouble() : op1->getInteger();
+		double y = op2->isDouble() ? op2->getDouble() : op2->getInteger();
+		value->setDouble(x * y);
+	}
+
+	CLEVER_TYPE_DIV_HANDLER_D {
+		double x = op1->isDouble() ? op1->getDouble() : op1->getInteger();
+		double y = op2->isDouble() ? op2->getDouble() : op2->getInteger();
+		value->setDouble(x / y);
 	}
 private:
 	DISALLOW_COPY_AND_ASSIGN(Double);

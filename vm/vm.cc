@@ -95,78 +95,21 @@ CLEVER_VM_HANDLER(VM::plus_handler) {
  * x / y
  */
 CLEVER_VM_HANDLER(VM::div_handler) {
-	const Value* const op1 = opcode.getOp1();
-	const Value* const op2 = opcode.getOp2();
-	Value* result = opcode.getResult();
-
-	if (op1->isNumeric() && op2->isNumeric()) {
-		if (op1->isInteger() && op2->isInteger()) {
-			result->setInteger(op1->getInteger() / op2->getInteger());
-		}
-		else {
-			double v1, v2;
-			if (op1->isDouble()) v1 = op1->getDouble();
-			else v1 = op1->getInteger();
-			
-			if (op2->isDouble()) v2 = op2->getDouble();
-			else v2 = op2->getInteger();
-			
-			if (result->isDouble()) result->setDouble(v1 / v2);
-			else result->setInteger(v1 / v2);
-		}
-	}
+	opcode.getOp1Type()->div(opcode.getResult(), opcode.getOp1(), opcode.getOp2());
 }
 
 /**
  * x - y
  */
 CLEVER_VM_HANDLER(VM::minus_handler) {
-	const Value* const op1 = opcode.getOp1();
-	const Value* const op2 = opcode.getOp2();
-	Value* result = opcode.getResult();
-
-	if (op1->isNumeric() && op2->isNumeric()) {
-		if (op1->isInteger() && op2->isInteger()) {
-			result->setInteger(op1->getInteger() - op2->getInteger());
-		}
-		else {
-			double v1, v2;
-			if (op1->isDouble()) v1 = op1->getDouble();
-			else v1 = op1->getInteger();
-			
-			if (op2->isDouble()) v2 = op2->getDouble();
-			else v2 = op2->getInteger();
-			
-			if (result->isDouble()) result->setDouble(v1 - v2);
-			else result->setInteger(v1 - v2);
-		}
-	}
+	opcode.getOp1Type()->minus(opcode.getResult(), opcode.getOp1(), opcode.getOp2());
 }
 
 /**
  * x * y
  */
 CLEVER_VM_HANDLER(VM::mult_handler) {
-	const Value* const op1 = opcode.getOp1();
-	const Value* const op2 = opcode.getOp2();
-	Value* result = opcode.getResult();
-
-	if (op1->isNumeric() && op2->isNumeric()) {
-		if (op1->isInteger() && op2->isInteger()) {
-			result->setInteger(op1->getInteger() * op2->getInteger());
-		}
-		else {
-			double v1, v2;
-			if (op1->isDouble()) v1 = op1->getDouble();
-			else v1 = op1->getInteger();
-			
-			if (op2->isDouble()) v2 = op2->getDouble();
-			else v2 = op2->getInteger();
-			
-			if (result->isDouble()) result->setDouble(v1 * v2);
-			else result->setInteger(v1 * v2);
-		}
-	}
+	opcode.getOp1Type()->mult(opcode.getResult(), opcode.getOp1(), opcode.getOp2());
 }
 
 /**
@@ -203,7 +146,7 @@ CLEVER_VM_HANDLER(VM::bw_or_handler) {
 	const Value* const op2 = opcode.getOp2();
 	Value* result = opcode.getResult();
 
-	
+
 	if (op1->isInteger() && op2->isInteger()) {
 		result->setInteger(op1->getInteger() | op2->getInteger());
 	}
@@ -233,7 +176,7 @@ CLEVER_VM_HANDLER(VM::var_decl_handler) {
 CLEVER_VM_HANDLER(VM::pre_inc_handler) {
 	Value* value = opcode.getOp1();
 	Value* result = opcode.getResult();
-	
+
 	result->copy(opcode.getOp1Type()->increment(value));
 }
 
@@ -280,7 +223,7 @@ CLEVER_VM_HANDLER(VM::jmpz_handler) {
 		if (result) result->setBoolean(false);
 		CLEVER_VM_GOTO(opcode.getJmpAddr1());
 	}
-	
+
 	if (result) {
 		result->setBoolean(true);
 	}
@@ -296,7 +239,7 @@ CLEVER_VM_HANDLER(VM::jmpnz_handler) {
 		opcode.getResult()->setBoolean(true);
 		CLEVER_VM_GOTO(opcode.getJmpAddr1());
 	}
-	
+
 	opcode.getResult()->setBoolean(false);
 }
 
