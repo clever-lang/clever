@@ -57,8 +57,8 @@ public:
 	}
 
 	CLEVER_TYPE_PLUS_HANDLER_D {
-		int64_t x = op1->isDouble() ? op1->getDouble() : op1->getInteger();
-		int64_t y = op2->isDouble() ? op2->getDouble() : op2->getInteger();
+		double x = op1->isDouble() ? op1->getDouble() : op1->getInteger();
+		double y = op2->isDouble() ? op2->getDouble() : op2->getInteger();
 		value->setInteger(x + y);
 	}
 
@@ -69,14 +69,14 @@ public:
 	}
 
 	CLEVER_TYPE_DIV_HANDLER_D {
-		int64_t x = op1->isDouble() ? op1->getDouble() : op1->getInteger();
-		int64_t y = op2->isDouble() ? op2->getDouble() : op2->getInteger();
+		double x = op1->isDouble() ? op1->getDouble() : op1->getInteger();
+		double y = op2->isDouble() ? op2->getDouble() : op2->getInteger();
 		value->setInteger(x / y);
 	}
 
 	CLEVER_TYPE_MULT_HANDLER_D {
-		int64_t x = op1->isDouble() ? op1->getDouble() : op1->getInteger();
-		int64_t y = op2->isDouble() ? op2->getDouble() : op2->getInteger();
+		double x = op1->isDouble() ? op1->getDouble() : op1->getInteger();
+		double y = op2->isDouble() ? op2->getDouble() : op2->getInteger();
 		value->setInteger(x * y);
 	}
 
