@@ -29,7 +29,7 @@ BISON?=bison
 RE2C?=re2c
 
 # Flags
-CXXFLAGS+=-Wall -ansi -I. -fno-rtti -fno-exceptions
+override CXXFLAGS+=-Wall -ansi -I. -fno-rtti -fno-exceptions
 LFLAGS=$(CXXFLAGS)
 BUILDDIR=build/
 EXT=
@@ -53,7 +53,7 @@ OBJECTS=$(BUILDDIR)parser.o $(BUILDDIR)scanner.o $(BUILDDIR)driver.o \
 ifdef IS_MINGW
 EXT=.exe
 OBJECTS+=$(BUILDDIR)win32.o
-CXXFLAGS+=-Iwin32/
+override CXXFLAGS+=-Iwin32/
 VPATH+=win32
 endif
 
