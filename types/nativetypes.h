@@ -40,6 +40,7 @@
 #define CLEVER_DOUBLE ::clever::CLEVER_DOUBLE_VAR
 #define CLEVER_STR    ::clever::CLEVER_STR_VAR
 #define CLEVER_BOOL   ::clever::CLEVER_BOOL_VAR
+#define CLEVER_VOID	  NULL
 
 namespace clever {
 	
