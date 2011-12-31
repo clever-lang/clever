@@ -31,12 +31,12 @@
 #include "types/type.h"
 
 namespace clever {
-	
+
 class Type;
 class Value;
 class Function;
-	
-typedef std::vector<Value*> ValueVector;	
+
+typedef std::vector<Value*> ValueVector;
 
 /**
  * Macros to help on module function declaration
@@ -60,47 +60,47 @@ public:
 	enum FunctionKind { INTERNAL, USER };
 
 	explicit Function(std::string name)
-		: m_name(name), m_kind(INTERNAL), m_num_args(0), m_return(NULL) { }
+		: m_name(name), m_kind(INTERNAL), m_num_args(0), m_min_args(0), m_return(NULL) { }
 
 	Function(std::string name, FunctionPtr ptr)
-		: m_name(name), m_kind(INTERNAL), m_num_args(0), m_return(NULL) { m_info.ptr = ptr; }
+		: m_name(name), m_kind(INTERNAL), m_num_args(0), m_min_args(0), m_return(NULL) { m_info.ptr = ptr; }
 
 	Function(std::string name, FunctionPtr ptr, const Type* rtype)
-		: m_name(name), m_kind(INTERNAL), m_num_args(0), m_return(rtype) { m_info.ptr = ptr; }
-
-	Function(std::string name, FunctionPtr ptr, int numargs)
-		: m_name(name), m_kind(INTERNAL), m_num_args(numargs), m_return(NULL) { m_info.ptr = ptr; }
+		: m_name(name), m_kind(INTERNAL), m_num_args(0), m_min_args(0), m_return(rtype) { m_info.ptr = ptr; }
 
 	Function(std::string name, FunctionPtr ptr, int numargs, const Type* rtype)
-		: m_name(name), m_kind(INTERNAL), m_num_args(numargs), m_return(rtype) { m_info.ptr = ptr; }
+		: m_name(name), m_kind(INTERNAL), m_num_args(numargs), m_min_args(0), m_return(rtype) { m_info.ptr = ptr; }
 
 	Function(std::string& name, unsigned int offset)
-		: m_name(name), m_kind(USER), m_num_args(0), m_return(NULL) { m_info.offset = offset; }
+		: m_name(name), m_kind(USER), m_num_args(0), m_min_args(0), m_return(NULL) { m_info.offset = offset; }
 
 	Function(std::string& name, unsigned int offset, int numargs)
-		: m_name(name), m_kind(USER), m_num_args(numargs), m_return(NULL) { m_info.offset = offset; }
+		: m_name(name), m_kind(USER), m_num_args(numargs), m_min_args(0), m_return(NULL) { m_info.offset = offset; }
 
 	virtual ~Function() { }
 
 	Function* addArg(std::string name, const Type* type) throw() {
 		m_args.insert(FunctionArgsPair(name, type));
-		++m_num_args;
+		m_min_args = ++m_num_args;
 
 		return this;
 	}
 
 	FunctionArgs& getArgs() throw() { return m_args; }
 
-	void setVars(Value* vars) { m_vars = vars; }
+	void setVars(Value* vars) throw() { m_vars = vars; }
 	Value* getVars() throw() { return m_vars; }
 
-	int getNumArgs() const { return m_num_args; }
-	void turnVariadic() throw() { m_num_args = -1; }
+	int getNumArgs() const throw() { return m_num_args; }
+	Function* setVariadic() throw() { m_num_args = -1; return this; }
 	bool isVariadic() const throw() { return m_num_args < 0; }
+
+	Function* setMinNumArgs(int nargs) throw() { m_min_args = nargs; return this; }
+	int getMinNumArgs() const throw() { return m_min_args; }
 
 	bool isUserDefined() const throw() { return m_kind == USER; }
 	bool isInternal() const throw() { return m_kind == INTERNAL; }
-	
+
 	void setUserDefined() throw() { m_kind = USER; }
 
 	void setOffset(unsigned int num) { m_info.offset = num; m_kind = USER; }
@@ -127,10 +127,10 @@ private:
 
 	std::string m_name;
 	FunctionKind m_kind;
-	int m_num_args;
+	int m_num_args, m_min_args;
 	const Type* m_return;
 	FunctionArgs m_args;
-	Value* m_vars;	
+	Value* m_vars;
 
 };
 

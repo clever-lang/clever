@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
- 
+
 #include "compiler/compiler.h"
 #include "compiler/typechecker.h"
 #include "types/typeutils.h"
@@ -38,7 +38,7 @@ bool TypeChecker::checkCompatibleTypes(const Value* const lhs,
 	/**
 	 * Constants with different type cannot performs operation
 	 */
-	
+
 	if (lhs->isPrimitive() && rhs->isPrimitive()
 		&& lhs->getTypePtr() != CLEVER_STR
 		&& rhs->getTypePtr()  != CLEVER_STR) {
@@ -48,7 +48,7 @@ bool TypeChecker::checkCompatibleTypes(const Value* const lhs,
 		&& rhs->getTypePtr() == CLEVER_STR) {
 		return true;
 	}
-	
+
 	/**
 	 * @TODO: check if a class is base of another
 	 * if (lhs->isPrimitive() && rhs->isPrimitive() && !lhs->hasSameType(rhs))
@@ -63,25 +63,25 @@ const Type* TypeChecker::checkExprType(const Value* const lhs,
 		const Value* const rhs) throw() {
 	if (lhs->isPrimitive() && rhs->isPrimitive()
 		&& !lhs->isString() && !rhs->isString()) {
-		
+
 		if (lhs->getTypePtr() == CLEVER_DOUBLE
 			|| rhs->getTypePtr() == CLEVER_DOUBLE) {
 			return CLEVER_DOUBLE;
 		}
-		
+
 		if (lhs->getTypePtr() == CLEVER_INT
 			|| rhs->getTypePtr() == CLEVER_INT) {
 			return CLEVER_INT;
 		}
-		
+
 		return CLEVER_BOOL;
 	}
-	
+
 	if (lhs->getTypePtr() == CLEVER_STR
 		&& rhs->getTypePtr() == CLEVER_STR) {
 		return CLEVER_STR;
 	}
-	
+
 	/* TODO: check for non-primitive types */
 	return lhs->getTypePtr();
 }
@@ -114,12 +114,21 @@ void TypeChecker::checkFunctionReturn(const Function* func, const Value* value,
  */
 void TypeChecker::checkFunctionArgs(const Function* func, int num_args,
 		const location& loc) throw() {
-	int expected_args = func->getNumArgs();
+	int n_required_args = func->getNumArgs();
+	int n_min_args = func->getMinNumArgs();
+	bool is_variadic = func->isVariadic();
 
-	if (expected_args != -1 && num_args != expected_args) {
-		Compiler::errorf(loc, "Function `%S' expects %l argument%s, %l supplied",
-			&func->getName(), expected_args, (expected_args > 1 ? "s" : ""),
-			num_args);
+	if ((is_variadic && n_min_args > num_args)
+		|| (!is_variadic && num_args != n_required_args)) {
+		if (n_min_args != n_required_args && n_min_args > num_args) {
+			Compiler::errorf(loc, "Function `%S' expects at least %l argument%s, %l supplied",
+				&func->getName(), n_min_args, (n_min_args > 1 ? "s" : ""),
+				num_args);
+		} else {
+			Compiler::errorf(loc, "Function `%S' expects %l argument%s, %l supplied",
+				&func->getName(), n_required_args, (n_required_args > 1 ? "s" : ""),
+				num_args);
+		}
 	}
 }
 
@@ -151,12 +160,12 @@ AST_VISITOR(TypeChecker, ArgumentList) {
 
 AST_VISITOR(TypeChecker, Identifier) {
 	Value* ident = g_symtable.getValue(expr->getName());
-	
+
 	if (ident == NULL) {
 		Compiler::errorf(expr->getLocation(), "Variable `%s' not found!",
 			expr->getName());
 	}
-	
+
 	/**
 	 * Associate the Value* of the symbol to the identifier
 	 */
@@ -167,9 +176,9 @@ AST_VISITOR(TypeChecker, Identifier) {
 AST_VISITOR(TypeChecker, BinaryExpr) {
 	Value* lhs = expr->getLhs()->getValue();
 	Value* rhs = expr->getRhs()->getValue();
-	
+
 	if (!checkCompatibleTypes(lhs, rhs)) {
-		Compiler::error("Type mismatch!", expr->getLocation()); 	
+		Compiler::error("Type mismatch!", expr->getLocation());
 	}
 
 	if (expr->isAssigned()) {
@@ -178,20 +187,20 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 		lhs->addRef();
 	} else {
 		expr->setResult(new Value(lhs->getTypePtr()));
-	}	
+	}
 }
 
 AST_VISITOR(TypeChecker, LogicExpr) {
 	const Value* lhs = expr->getLhs()->getValue();
 	const Value* rhs = expr->getRhs()->getValue();
-	
+
 	if (!checkCompatibleTypes(lhs, rhs)) {
 		Compiler::errorf(expr->getLocation(),
-			"Cannot convert `%s' to `%s' in logic expression",			
+			"Cannot convert `%s' to `%s' in logic expression",
 			rhs->getTypePtr()->getName(),
 			lhs->getTypePtr()->getName());
 	}
-	
+
 	expr->setResult(new Value(lhs->getTypePtr()));
 }
 
@@ -200,24 +209,24 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 	Value* var = new Value();
 	ASTNode* rhs = expr->getRhs();
 	const Type* type = g_symtable.getType(expr->getType()->getName());
-	
+
 	/**
 	 * Check if the type wasn't declarated previously
 	 */
 	if (type == NULL) {
-		Compiler::errorf(expr->getLocation(), "`%S' does not name a type", 
+		Compiler::errorf(expr->getLocation(), "`%S' does not name a type",
 			expr->getType()->getName());
 	}
-	
+
 	/**
 	 * Check if there is already a variable with same name in the current scope
 	 */
 	if (g_symtable.getValue(variable->getName(), false) != NULL) {
-		Compiler::errorf(expr->getLocation(), 
+		Compiler::errorf(expr->getLocation(),
 			"Already exists a variable named `%S' in the current scope!",
 			variable->getName());
 	}
-	
+
 	variable->setValue(var);
 
 	/**
@@ -226,7 +235,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 	var->setName(variable->getName());
 	var->setTypePtr(type);
 	var->addRef();
-	
+
 	if (rhs) {
 		Value* initval = rhs->getValue();
 
@@ -236,9 +245,9 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 				initval->getTypePtr()->getName(),
 				type->getName());
 		}
-		
+
 		expr->setInitialValue(initval);
-		
+
 		if (type != initval->getTypePtr()) {
 			if (type == CLEVER_INT) {
 				initval->setInteger(initval->getDouble());
@@ -247,60 +256,60 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 				initval->setDouble(initval->getInteger());
 			}
 		}
-		
+
 		initval->addRef();
 	}
-	
+
 	g_symtable.push(var->getName(), var);
 }
 
 AST_VISITOR(TypeChecker, PreIncrement) {
 	Value* var = expr->getExpr()->getValue();
-		
+
 	expr->setVar(var);
 	var->addRef();
-	
-	expr->getValue()->addRef();	
+
+	expr->getValue()->addRef();
 	expr->getValue()->setTypePtr(var->getTypePtr());
 }
 
 AST_VISITOR(TypeChecker, PosIncrement) {
 	Value* var = expr->getExpr()->getValue();
-		
+
 	expr->setVar(var);
 	var->addRef();
-	
+
 	expr->getValue()->addRef();
 	expr->getValue()->setTypePtr(var->getTypePtr());
 }
 
 AST_VISITOR(TypeChecker, PreDecrement) {
 	Value* var = expr->getExpr()->getValue();
-		
+
 	expr->setVar(var);
 	var->addRef();
-	
+
 	expr->getValue()->addRef();
 	expr->getValue()->setTypePtr(var->getTypePtr());
 }
 
 AST_VISITOR(TypeChecker, PosDecrement) {
 	Value* var = expr->getExpr()->getValue();
-		
+
 	expr->setVar(var);
 	var->addRef();
-	
+
 	expr->getValue()->addRef();
 	expr->getValue()->setTypePtr(var->getTypePtr());
 }
 
 AST_VISITOR(TypeChecker, IfExpr) {
 	expr->getCondition()->accept(*this);
-	
+
 	if (expr->hasBlock()) {
 		expr->getBlock()->accept(*this);
 	}
-	
+
 	if (expr->hasElseIf()) {
 		const NodeList& elseif_nodes = expr->getNodes();
 		NodeList::const_iterator it = elseif_nodes.begin(), end = elseif_nodes.end();
@@ -316,7 +325,7 @@ AST_VISITOR(TypeChecker, IfExpr) {
 			++it;
 		}
 	}
-	
+
 	if (expr->hasElseBlock()) {
 		expr->getElse()->accept(*this);
 	}
@@ -347,26 +356,26 @@ AST_VISITOR(TypeChecker, BlockNode) {
 
 AST_VISITOR(TypeChecker, WhileExpr) {
 	expr->getCondition()->accept(*this);
-	
+
 	if (expr->hasBlock()) {
 		expr->getBlock()->accept(*this);
 	}
 }
 
 AST_VISITOR(TypeChecker, ForExpr) {
-	if (!expr->isIteratorMode()) {	
+	if (!expr->isIteratorMode()) {
 		if (expr->getVarDecl()) {
 			expr->getVarDecl()->accept(*this);
 		}
-		
+
 		if (expr->getCondition()) {
 			expr->getCondition()->accept(*this);
 		}
-		
+
 		if (expr->hasBlock()) {
 			expr->getBlock()->accept(*this);
 		}
-		
+
 		if (expr->getIncrement()) {
 			expr->getIncrement()->accept(*this);
 		}
@@ -383,16 +392,16 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 	ASTNode* args = expr->getArgs();
 	Value* arg_values = NULL;
 	int num_args = args ? args->getNodes().size() : 0;
-	
+
 	if (fvalue == NULL) {
 		Compiler::errorf(expr->getLocation(), "Function `%S' does not exists!",
 			name);
 	}
-	
+
 	func = static_cast<CallableValue*>(fvalue)->getFunction();
-	
+
 	checkFunctionArgs(func, num_args, expr->getLocation());
-	
+
 	/**
 	 * Set the return type
 	 */
@@ -401,7 +410,7 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 	if (num_args) {
 		arg_values = new Value;
 		arg_values->setType(Value::VECTOR);
-		
+
 		expr->getArgs()->accept(*this);
 		arg_values->setVector(expr->getArgs()->getArgValue());
 
@@ -412,7 +421,7 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 		arg_values->addRef();
 		expr->setArgsValue(arg_values);
 	}
-	
+
 	expr->setFuncValue(static_cast<CallableValue*>(fvalue));
 	fvalue->addRef();
 }
@@ -424,7 +433,7 @@ AST_VISITOR(TypeChecker, MethodCall) {
 	ArgumentList* args = expr->getArgs();
 	Value* arg_values = NULL;
 	TypeVector args_types;
-	
+
 	if (args) {
 		expr->getArgs()->accept(*this);
 		arg_values = new Value;
@@ -432,49 +441,49 @@ AST_VISITOR(TypeChecker, MethodCall) {
 		arg_values->setVector(args->getArgValue());
 		arg_values->addRef();
 		expr->setArgsValue(arg_values);
-		
+
 		ValueVector* vv = args->getArgValue();
-		
+
 		for (size_t i = 0; i < vv->size(); ++i) {
 			args_types.push_back(vv->at(i)->getTypePtr());
 		}
 	}
-	
+
 	const Method* method = variable->getTypePtr()->getMethod(name, &args_types);
-	
+
 	if (method == NULL) {
 		std::string args_type_name;
-		
+
 		if (args_types.size() > 0) {
 			args_type_name = args_types[0]->getName();
-			
+
 			for (size_t i = 1; i < args_types.size(); ++i) {
-				args_type_name += std::string(", ") + args_types[i]->getName(); 
+				args_type_name += std::string(", ") + args_types[i]->getName();
 			}
 		}
-		
-		Compiler::errorf(expr->getLocation(), "No matching call for %s::%S(%S)", 
+
+		Compiler::errorf(expr->getLocation(), "No matching call for %s::%S(%S)",
 			variable->getTypePtr()->getName(), call->getName(), &args_type_name);
 	}
-	
+
 	call->setTypePtr(variable->getTypePtr());
 	call->setHandler(method);
 	call->setContext(variable);
-	
+
 	expr->getValue()->setTypePtr(method->getReturn());
-	
+
 	expr->setFuncValue(static_cast<CallableValue*>(call));
 }
 
 AST_VISITOR(TypeChecker, AssignExpr) {
 	const Value* lhs = expr->getLhs()->getValue();
 	const Value* rhs = expr->getRhs()->getValue();
-	
+
 	if (!checkCompatibleTypes(lhs, rhs)) {
 		Compiler::errorf(expr->getLocation(),
 			"Cannot convert `%s' to `%s' on assignment",
 			rhs->getTypePtr()->getName(),
-			lhs->getTypePtr()->getName());	 	
+			lhs->getTypePtr()->getName());
 	}
 }
 
@@ -499,7 +508,7 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 	Function* user_func = new Function(name->str());
 	Identifier* return_type = expr->getReturnValue();
 	ArgumentDeclList* args = expr->getArgs();
-	
+
 	/**
 	 * We can't have a function declaration without a block
 	 */
@@ -511,21 +520,21 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 	 * Mark the function as user function
 	 */
 	user_func->setUserDefined();
-	
+
 	func->addRef();
 	g_symtable.push(func->getName(), func);
-	
+
 	func->setHandler(user_func);
-		
+
 	/**
 	 * Set the return type
 	 */
 	if (return_type) {
 		user_func->setReturn(g_symtable.getType(return_type->getName()));
 	}
-	
+
 	expr->setValue(func);
-	
+
 	if (args) {
 		ArgumentDecls& arg_nodes = args->getArgs();
 		ArgumentDecls::iterator it = arg_nodes.begin(), end = arg_nodes.end();
@@ -559,13 +568,13 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 		vars->setVector(vec);
 		user_func->setVars(vars);
 	}
-	
+
 	m_funcs.push(user_func);
-	
+
 	expr->getBlock()->accept(*this);
-	
+
 	m_funcs.pop();
-	
+
 	if (args) {
 		g_symtable.endScope();
 	}
@@ -591,19 +600,19 @@ AST_VISITOR(TypeChecker, ClassDeclaration) {
 AST_VISITOR(TypeChecker, TypeCreation) {
 	Identifier* ident = expr->getIdentifier();
 	const Type* type = g_symtable.getType(ident->getName());
-	
+
 	/**
 	 * Check if the type wasn't declarated previously
 	 */
 	if (type == NULL) {
-		Compiler::errorf(expr->getLocation(), "`%s' does not name a type", 
+		Compiler::errorf(expr->getLocation(), "`%s' does not name a type",
 			ident->getName());
 	}
-	
+
 	ArgumentList* args = expr->getArgs();
 	TypeVector args_types;
 	Value* arg_values = NULL;
-	
+
 	if (args) {
 		expr->getArgs()->accept(*this);
 		arg_values = new Value;
@@ -618,9 +627,9 @@ AST_VISITOR(TypeChecker, TypeCreation) {
 			args_types.push_back(vv->at(i)->getTypePtr());
 		}
 	}
-	
+
 	const Method* ctor = type->getMethod(CSTRING(CLEVER_CTOR_NAME), &args_types);
-	
+
 	if (ctor == NULL) {
 		std::string args_type_name;
 
@@ -628,22 +637,22 @@ AST_VISITOR(TypeChecker, TypeCreation) {
 			args_type_name = args_types[0]->getName();
 
 			for (size_t i = 1; i < args_types.size(); ++i) {
-				args_type_name += std::string(", ") + args_types[i]->getName(); 
+				args_type_name += std::string(", ") + args_types[i]->getName();
 			}
 		}
 
-		Compiler::errorf(expr->getLocation(), "No matching call for constructor %s::%s(%S)", 
+		Compiler::errorf(expr->getLocation(), "No matching call for constructor %s::%s(%S)",
 			type->getName(), type->getName(), &args_type_name);
 	}
-	
+
 	Value* value = expr->getValue();
 	value->setTypePtr(type);
-	
+
 	CallableValue* call = new CallableValue(CSTRING(CLEVER_CTOR_NAME), type);
 	call->setHandler(ctor);
 	call->setContext(value);
 	value->addRef();
-	
+
 	expr->getValue()->setTypePtr(type);
 	expr->setFuncValue(call);
 }

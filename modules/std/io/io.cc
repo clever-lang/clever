@@ -60,7 +60,7 @@ static CLEVER_FUNCTION(readln) {
 	::std::string buffer;
 
 	getline(::std::cin, buffer);
-	
+
 	retval->setString(CSTRING(buffer));
 }
 
@@ -71,9 +71,14 @@ static CLEVER_FUNCTION(readln) {
  */
 void IOModule::init() throw() {
 	using namespace io;
+	addFunction(new Function("print", &CLEVER_FUNC_NAME(print), CLEVER_VOID))
+		->setVariadic()
+		->setMinNumArgs(1);
 
-	addFunction(new Function("print", &CLEVER_FUNC_NAME(print), -1));
-	addFunction(new Function("println", &CLEVER_FUNC_NAME(println), -1));
+	addFunction(new Function("println", &CLEVER_FUNC_NAME(println), CLEVER_VOID))
+		->setVariadic()
+		->setMinNumArgs(1);
+
 	addFunction(new Function("readln", &CLEVER_FUNC_NAME(readln), CLEVER_STR));
 }
 
