@@ -363,22 +363,23 @@ AST_VISITOR(TypeChecker, WhileExpr) {
 }
 
 AST_VISITOR(TypeChecker, ForExpr) {
-	if (!expr->isIteratorMode()) {
-		if (expr->getVarDecl()) {
-			expr->getVarDecl()->accept(*this);
-		}
+	if (expr->isIteratorMode()) {
+		return;
+	}
+	if (expr->getVarDecl()) {
+		expr->getVarDecl()->accept(*this);
+	}
 
-		if (expr->getCondition()) {
-			expr->getCondition()->accept(*this);
-		}
+	if (expr->getCondition()) {
+		expr->getCondition()->accept(*this);
+	}
 
-		if (expr->hasBlock()) {
-			expr->getBlock()->accept(*this);
-		}
+	if (expr->hasBlock()) {
+		expr->getBlock()->accept(*this);
+	}
 
-		if (expr->getIncrement()) {
-			expr->getIncrement()->accept(*this);
-		}
+	if (expr->getIncrement()) {
+		expr->getIncrement()->accept(*this);
 	}
 }
 
