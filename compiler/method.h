@@ -46,11 +46,8 @@ typedef std::vector<const Type*> TypeVector;
 #define CLEVER_CTOR_NAME "$ctor$"
 
 typedef void (CLEVER_FASTCALL *MethodPtr)(CLEVER_METHOD_ARGS);
-typedef std::tr1::unordered_map<std::string, Method*> MethodMap;
-typedef std::pair<std::string, Method*> MethodPair;
 typedef std::tr1::unordered_map<std::string, const Type*> MethodArgs;
 typedef std::pair<std::string, const Type*> MethodArgsPair;
-
 
 /**
  * Method representation
@@ -62,7 +59,7 @@ public:
 	Method(std::string name, MethodPtr ptr, const Type* rtype)
 		: m_name(name), m_type(INTERNAL), m_rtype(rtype)
 	{
-		m_info.ptr = ptr; 
+		m_info.ptr = ptr;
 	}
 
 	~Method() { }
@@ -81,18 +78,18 @@ public:
 	}
 
 	long call() const throw() { return m_info.offset; }
-	
+
 	const MethodArgs& getArgs() const throw() { return m_args; }
-	
-	const Type* getReturn() const throw() { return m_rtype; } 
-	
+
+	const Type* getReturn() const throw() { return m_rtype; }
+
 	Method* addArg(std::string name, const Type* type) throw() {
 		m_args.insert(MethodArgsPair(name, type));
 		//++m_num_args;
 
 		return this;
 	}
-	
+
 private:
 	union {
 		MethodPtr ptr;
@@ -101,13 +98,13 @@ private:
 
 	std::string m_name;
 	MethodType m_type;
-	
+
 	/**
-	 * Method arguments. (Lazy) 
+	 * Method arguments. (Lazy)
 	 * Check with isArgsInitialized() before using it.
 	 */
 	MethodArgs m_args;
-	
+
 	/**
 	 * Method's return type
 	 */

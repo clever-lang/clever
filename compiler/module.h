@@ -144,15 +144,15 @@ public:
 
 		return func;
 	}
-	
+
 	void addClass(const Class* klass) throw() {
 		m_class_table.insert(std::make_pair(CSTRING(klass->getName()), klass));
 	}
-	
+
 	ClassMap& getClassTable() throw() {
 		return m_class_table;
 	}
-	
+
 	/**
 	 * Check if the module is loaded
 	 */
