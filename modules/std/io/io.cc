@@ -70,12 +70,11 @@ static CLEVER_FUNCTION(readln) {
  * Initializes Standard module
  */
 void IOModule::init() throw() {
-	const Type* string_type = CLEVER_STR;
-	
 	using namespace io;
+
 	addFunction(new Function("print", &CLEVER_FUNC_NAME(print), -1));
 	addFunction(new Function("println", &CLEVER_FUNC_NAME(println), -1));
-	addFunction(new Function("readln", &CLEVER_FUNC_NAME(readln), string_type));
+	addFunction(new Function("readln", &CLEVER_FUNC_NAME(readln), CLEVER_STR));
 }
 
 }}} // clever::packages::std
