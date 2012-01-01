@@ -27,6 +27,7 @@ CXX?=g++
 LD=$(CXX)
 BISON?=bison
 RE2C?=re2c
+SED?=sed
 
 # Flags
 override CXXFLAGS+=-Wall -ansi -I. -fno-rtti -fno-exceptions
@@ -39,7 +40,7 @@ COMPILE=$(CXX) $(CXXFLAGS) -c
 LINK=$(LD) $(LFLAGS)
 
 VPATH=build compiler vm types interpreter extra test\
-      modules/std modules/std/math modules/std/io modules/std/file modules/std/os 
+      modules/std modules/std/math modules/std/io modules/std/file modules/std/os
 
 OBJECTS=$(BUILDDIR)parser.o $(BUILDDIR)scanner.o $(BUILDDIR)driver.o \
 	$(BUILDDIR)cstring.o $(BUILDDIR)double.o $(BUILDDIR)std_pkg.o \
@@ -88,6 +89,7 @@ $(BUILDDIR)%.o: %.cc %.d
 $(BUILDDIR)%.cc: %.y $(BUILDDIR)ensure-build-dir
 	@echo "  BISON $<"
 	$(BISON) -d -o$@ $<
+	$(SED) -ie '135s/|| \([^)]*\)/|| (\1)/' build/position.hh
 
 $(BUILDDIR)%.cc: %.re $(BUILDDIR)ensure-build-dir
 	@echo "  RE2C  $< "
