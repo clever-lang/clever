@@ -23,34 +23,28 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <cstdlib>
-#include "compiler/value.h"
-#include "compiler/symboltable.h"
-#include "modules/std/os/os.h"
-#include "types/nativetypes.h"
+#ifndef CLEVER_SOCKETVALUE_H
+#define CLEVER_SOCKETVALUE_H
 
-namespace clever { namespace packages { namespace std {
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include "compiler/datavalue.h"
 
-namespace os {
+namespace clever { namespace packages { namespace std { namespace net {
 
-/**
- * system(string command)
- * Calls a command and returns the exit code.
- */
-static CLEVER_FUNCTION(system) {
-	retval->setInteger(::system(args->at(0)->getString().c_str()));
-}
+class SocketValue : public DataValue {
+public:
+	SocketValue() {}
+	
+	// Socket
+	int socket;
+	struct sockaddr_in local;
+	struct sockaddr_in remote;
+	
+	virtual ~SocketValue() {}
+};
 
-} // namespace os
+}}}} // clever::packages::std::net
 
-/**
- * Initializes Standard module
- */
-void OSModule::init() throw() {
-	using namespace os;
-
-	addFunction(new Function("system", &CLEVER_FUNC_NAME(system), CLEVER_INT))
-		->addArg("command", CLEVER_STR);
-}
-
-}}} // clever::packages::std
+#endif

@@ -23,34 +23,56 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <cstdlib>
+#ifndef CLEVER_TCPSOCKET_H
+#define CLEVER_TCPSOCKET_H
+
+#include "types/type.h"
 #include "compiler/value.h"
-#include "compiler/symboltable.h"
-#include "modules/std/os/os.h"
-#include "types/nativetypes.h"
+#include "modules/std/net/socketvalue.h"
 
-namespace clever { namespace packages { namespace std {
+namespace clever { namespace packages { namespace std { namespace net {
 
-namespace os {
+class TcpSocket : public Type {
+public:
+	TcpSocket() :
+		Type("TcpSocket") { }
 
-/**
- * system(string command)
- * Calls a command and returns the exit code.
- */
-static CLEVER_FUNCTION(system) {
-	retval->setInteger(::system(args->at(0)->getString().c_str()));
-}
+	void init();
+	DataValue* allocateValue() const;
+	void destructor(Value* value) const;
 
-} // namespace os
+	/**
+	 * Type methods
+	 */
+	static CLEVER_TYPE_METHOD(constructor);
+	static CLEVER_TYPE_METHOD(setHost);
+	static CLEVER_TYPE_METHOD(setPort);
+	static CLEVER_TYPE_METHOD(connect);
+	static CLEVER_TYPE_METHOD(receive);
+	static CLEVER_TYPE_METHOD(send);
+	static CLEVER_TYPE_METHOD(poll);
+	static CLEVER_TYPE_METHOD(toString);
+	
+	/*
+	static CLEVER_TYPE_METHOD(open);
+	static CLEVER_TYPE_METHOD(close);
+	static CLEVER_TYPE_METHOD(writeLine);
+	*/
+	
+	/**
+	 * Type handlers
+	 */
+	CLEVER_TYPE_INC_HANDLER_D { return NULL; }
+	CLEVER_TYPE_DEC_HANDLER_D { return NULL; }
+	CLEVER_TYPE_ASSIGN_HANDLER_D {
+		newvalue->getDataValue()->addRef();
+		value->copy(newvalue);
+	}
+	
+private:
+	DISALLOW_COPY_AND_ASSIGN(TcpSocket);
+};
 
-/**
- * Initializes Standard module
- */
-void OSModule::init() throw() {
-	using namespace os;
+}}}} // clever::packages::std::net
 
-	addFunction(new Function("system", &CLEVER_FUNC_NAME(system), CLEVER_INT))
-		->addArg("command", CLEVER_STR);
-}
-
-}}} // clever::packages::std
+#endif // CLEVER_TCPSOCKET_H

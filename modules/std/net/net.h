@@ -23,34 +23,28 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <cstdlib>
+#ifndef CLEVER_STD_NET_H
+#define CLEVER_STD_NET_H
+
+#include "compiler/module.h"
 #include "compiler/value.h"
-#include "compiler/symboltable.h"
-#include "modules/std/os/os.h"
-#include "types/nativetypes.h"
 
 namespace clever { namespace packages { namespace std {
 
-namespace os {
+class NetModule : public Module {
+public:
+	NetModule()
+		: Module("Net") { }
 
-/**
- * system(string command)
- * Calls a command and returns the exit code.
- */
-static CLEVER_FUNCTION(system) {
-	retval->setInteger(::system(args->at(0)->getString().c_str()));
-}
+	~NetModule() { }
 
-} // namespace os
+	void init() throw();
+private:
+	DISALLOW_COPY_AND_ASSIGN(NetModule);
+};
 
-/**
- * Initializes Standard module
- */
-void OSModule::init() throw() {
-	using namespace os;
-
-	addFunction(new Function("system", &CLEVER_FUNC_NAME(system), CLEVER_INT))
-		->addArg("command", CLEVER_STR);
-}
+extern Module* g_net_module;
 
 }}} // clever::packages::std
+
+#endif // CLEVER_STD_NET_H

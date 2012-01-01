@@ -36,6 +36,7 @@ void Std::init() throw() {
 	addModule(CSTRING("math"), new std::Math);
 	addModule(CSTRING("file"), new std::File);
 	addModule(CSTRING("os"), new std::OSModule);
+	addModule(CSTRING("net"), new std::NetModule);
 }
 
 }} // clever::packages

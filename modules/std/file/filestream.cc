@@ -238,7 +238,7 @@ void FileStream::init() {
 			->addArg("mode", CLEVER_STR)
 	);
 
-	addMethod(new Method("toString", (MethodPtr)&FileStream::toString, CLEVER_VOID));
+	addMethod(new Method("toString", (MethodPtr)&FileStream::toString, CLEVER_STR));
 
 	addMethod(
 		(new Method("open", (MethodPtr)&FileStream::open, CLEVER_VOID))
