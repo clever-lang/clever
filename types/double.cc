@@ -27,7 +27,7 @@
 #include <cmath>
 #include "compiler/cstring.h"
 #include "types/type.h"
-#include "types/nativetypes.h"
+#include "types/double.h"
 
 namespace clever {
 

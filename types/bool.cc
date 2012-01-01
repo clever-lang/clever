@@ -27,7 +27,6 @@
 #include "compiler/cstring.h"
 #include "types/type.h"
 #include "types/bool.h"
-#include "types/nativetypes.h"
 
 namespace clever {
 
