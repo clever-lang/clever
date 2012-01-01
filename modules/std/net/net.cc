@@ -1,6 +1,6 @@
 /**
  * Clever programming language
- * Copyright (c) 2011-2012 Clever Team
+ * Copyright (c) 2012 Clever Team
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -23,34 +23,26 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <cstdlib>
+#include <iostream>
 #include "compiler/value.h"
 #include "compiler/symboltable.h"
-#include "modules/std/os/os.h"
-#include "types/nativetypes.h"
+#include "modules/std/net/net.h"
+#include "modules/std/net/tcpsocket.h"
 
 namespace clever { namespace packages { namespace std {
 
-namespace os {
+namespace net {
 
-/**
- * system(string command)
- * Calls a command and returns the exit code.
- */
-static CLEVER_FUNCTION(system) {
-	retval->setInteger(::system(args->at(0)->getString().c_str()));
-}
-
-} // namespace os
+} // net
 
 /**
  * Initializes Standard module
  */
-void OSModule::init() throw() {
-	using namespace os;
+void NetModule::init() throw() {
+	Class* tcpsocket = new net::TcpSocket();
+	tcpsocket->init();
 
-	addFunction(new Function("system", &CLEVER_FUNC_NAME(system), CLEVER_INT))
-		->addArg("command", CLEVER_STR);
+	addClass(tcpsocket);
 }
 
 }}} // clever::packages::std
