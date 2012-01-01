@@ -30,7 +30,6 @@
 #include <sys/poll.h>
 #include "compiler/compiler.h"
 #include "compiler/cstring.h"
-#include "types/typeutils.h"
 #include "modules/std/net/tcpsocket.h"
 #include "types/nativetypes.h"
 

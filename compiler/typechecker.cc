@@ -25,10 +25,29 @@
 
 #include "compiler/compiler.h"
 #include "compiler/typechecker.h"
-#include "types/typeutils.h"
 #include "types/nativetypes.h"
 
 namespace clever { namespace ast {
+
+/**
+ * Concatenates arg type names with a supplied separator character
+ */
+std::string TypeChecker::serializeArgType(TypeVector& args_types, const char* sep)
+	throw() {
+	std::string args_type_name;
+
+	if (args_types.size() == 0) {
+		return std::string("void");
+	}
+
+	args_type_name = args_types[0]->getName();
+
+	for (size_t i = 1; i < args_types.size(); ++i) {
+		args_type_name += std::string(sep) + args_types[i]->getName();
+	}
+
+	return args_type_name;
+}
 
 /**
  * Performs a type compatible checking
@@ -453,15 +472,7 @@ AST_VISITOR(TypeChecker, MethodCall) {
 	const Method* method = variable->getTypePtr()->getMethod(name, &args_types);
 
 	if (method == NULL) {
-		std::string args_type_name;
-
-		if (args_types.size() > 0) {
-			args_type_name = args_types[0]->getName();
-
-			for (size_t i = 1; i < args_types.size(); ++i) {
-				args_type_name += std::string(", ") + args_types[i]->getName();
-			}
-		}
+		std::string args_type_name = serializeArgType(args_types, ", ");
 
 		Compiler::errorf(expr->getLocation(), "No matching call for %s::%S(%S)",
 			variable->getTypePtr()->getName(), call->getName(), &args_type_name);
@@ -606,7 +617,7 @@ AST_VISITOR(TypeChecker, TypeCreation) {
 	 * Check if the type wasn't declarated previously
 	 */
 	if (type == NULL) {
-		Compiler::errorf(expr->getLocation(), "`%s' does not name a type",
+		Compiler::errorf(expr->getLocation(), "`%S' does not name a type",
 			ident->getName());
 	}
 
@@ -632,15 +643,7 @@ AST_VISITOR(TypeChecker, TypeCreation) {
 	const Method* ctor = type->getMethod(CSTRING(CLEVER_CTOR_NAME), &args_types);
 
 	if (ctor == NULL) {
-		std::string args_type_name;
-
-		if (args_types.size() > 0) {
-			args_type_name = args_types[0]->getName();
-
-			for (size_t i = 1; i < args_types.size(); ++i) {
-				args_type_name += std::string(", ") + args_types[i]->getName();
-			}
-		}
+		std::string args_type_name = serializeArgType(args_types, ", ");
 
 		Compiler::errorf(expr->getLocation(), "No matching call for constructor %s::%s(%S)",
 			type->getName(), type->getName(), &args_type_name);

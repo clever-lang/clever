@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
- 
+
 #ifndef CLEVER_TYPECHECKER_H
 #define CLEVER_TYPECHECKER_H
 
@@ -30,7 +30,7 @@
 #include "compiler/value.h"
 
 namespace clever { namespace ast {
-	
+
 class TypeChecker : public ASTVisitor {
 public:
 	typedef std::stack<Function*> FuncDeclStack;
@@ -38,13 +38,13 @@ public:
 	TypeChecker()
 		: m_interactive(false) { }
 	~TypeChecker() { }
-	
+
 	void init() throw() { }
 
 	void shutdown() throw() { }
-	
+
 	AST_VISITOR_DECLARATION(AST_VISITOR_DECL);
-	
+
 	/**
 	 * Set the interactive mode
 	 */
@@ -54,22 +54,27 @@ public:
 	 * Returns the interactive mode state
 	 */
 	bool isInteractive() throw() { return m_interactive; }
-	
+
 	/**
 	 * Checks if the supplied value pointers are compatibles
 	 */
 	static bool checkCompatibleTypes(const Value* const, const Value* const) throw();
-	
+
 	/**
 	 * Returns the type resulting of a binary expression of two compatible types
 	 */
 	static const Type* checkExprType(const Value* const, const Value* const) throw();
-	
+
 	static int checkFunctionArgs(Function*, int, const location&) throw();
-	
+
 	static void checkFunctionArgs(const Function*, int, const location&) throw();
-	
+
 	static void checkFunctionReturn(const Function*, const Value*, const Type*, const location&) throw();
+
+	/**
+	 * Returns the arg type names concatenated
+	 */
+	static std::string serializeArgType(TypeVector&, const char*) throw();
 private:
 	bool m_interactive;
 	FuncDeclStack m_funcs;

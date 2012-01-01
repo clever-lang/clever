@@ -23,21 +23,27 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "compiler/cstring.h"
-#include "std_pkg.h"
+#ifndef CLEVER_STD_REFLECTION_H
+#define CLEVER_STD_REFLECTION_H
 
-namespace clever { namespace packages {
+#include "compiler/module.h"
 
-/**
- * Initializes Std package
- */
-void Std::init() throw() {
-	addModule(CSTRING("io"), new std::IOModule);
-	addModule(CSTRING("math"), new std::Math);
-	addModule(CSTRING("file"), new std::File);
-	addModule(CSTRING("os"), new std::OSModule);
-	addModule(CSTRING("reflection"), new std::Reflection);
-	addModule(CSTRING("net"), new std::NetModule);
-}
+namespace clever { namespace packages { namespace std {
 
-}} // clever::packages
+class Reflection : public Module {
+public:
+	Reflection()
+		: Module("Reflection") { }
+
+	~Reflection() { }
+
+	void init() throw();
+private:
+	DISALLOW_COPY_AND_ASSIGN(Reflection);
+};
+
+extern Module* g_reflection_module;
+
+}}} // clever::packages::std
+
+#endif // CLEVER_STD_REFLECTION_H

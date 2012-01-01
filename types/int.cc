@@ -25,7 +25,6 @@
 
 #include <iostream>
 #include "compiler/cstring.h"
-#include "types/typeutils.h"
 #include "types/type.h"
 #include "types/int.h"
 #include "types/nativetypes.h"
@@ -35,7 +34,7 @@ namespace clever {
 
 /**
  * Int::Int([Int value])
- * Construct an Int object with a default value (if no args) or a 
+ * Construct an Int object with a default value (if no args) or a
  * custom value
  */
 CLEVER_TYPE_METHOD(Integer::constructor) {
@@ -57,7 +56,7 @@ CLEVER_TYPE_METHOD(Integer::toString) {
 
 void Integer::init() {
 	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Integer::constructor, CLEVER_INT));
-	
+
 	addMethod(
 		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Integer::constructor, CLEVER_INT))
 			->addArg("value", CLEVER_INT)

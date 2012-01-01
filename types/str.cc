@@ -30,7 +30,6 @@
 #include "compiler/cstring.h"
 #include "types/type.h"
 #include "types/str.h"
-#include "types/typeutils.h"
 #include "types/nativetypes.h"
 
 namespace clever {
@@ -63,9 +62,9 @@ CLEVER_TYPE_METHOD(String::replace) {
  * String::substring(Int, Int)
  * Retrieves a substring from the original one.
  */
-CLEVER_TYPE_METHOD(String::substring) {	
+CLEVER_TYPE_METHOD(String::substring) {
 	if (size_t(args->at(0)->getInteger()) >= value->toString().length()) {
-		std::cerr << "Out of range: " << args->at(0)->getInteger() 
+		std::cerr << "Out of range: " << args->at(0)->getInteger()
 			<< " is after the end of the string." << std::endl;
 		std::exit(1);
 	}
@@ -94,7 +93,7 @@ CLEVER_TYPE_METHOD(String::toDouble) {
  * String::toInteger()
  * Converts the string to an integer, if possible.
  */
-CLEVER_TYPE_METHOD(String::toInteger) {	
+CLEVER_TYPE_METHOD(String::toInteger) {
 	int64_t integer;
 	std::stringstream stream(value->toString());
 
@@ -110,7 +109,7 @@ CLEVER_TYPE_METHOD(String::toInteger) {
  * String::String([String value])
  * Construct the object.
  */
-CLEVER_TYPE_METHOD(String::constructor) {	
+CLEVER_TYPE_METHOD(String::constructor) {
 	if (args) {
 		retval->setString(CSTRING(args->at(0)->getString()));
 	}
@@ -132,15 +131,15 @@ void String::init() {
 			->addArg("before", CLEVER_STR)
 			->addArg("after", CLEVER_STR)
 	);
-	
+
 	addMethod(
 		(new Method("substring", (MethodPtr)&String::substring, CLEVER_STR))
 			->addArg("start", CLEVER_INT)
 			->addArg("length", CLEVER_INT)
 	);
-	
+
 	addMethod(new Method("toDouble", (MethodPtr)&String::toDouble, CLEVER_DOUBLE));
-		
+
 	addMethod(new Method("toInteger", (MethodPtr)&String::toInteger, CLEVER_INT));
 }
 

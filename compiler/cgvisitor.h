@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
- 
+
 #ifndef CLEVER_CGVISITOR_H
 #define CLEVER_CGVISITOR_H
 
@@ -42,10 +42,10 @@ public:
 
 	CodeGenVisitor()
 		: m_interactive(false) {
-		//g_symtable.beginScope();		
+		//g_symtable.beginScope();
 	}
 	~CodeGenVisitor() {
-		//g_symtable.endScope();	
+		//g_symtable.endScope();
 	}
 
 	void init() throw() {
@@ -54,7 +54,7 @@ public:
 	}
 
 	void shutdown() throw() { }
-	
+
 	/**
 	 * Set the interactive mode
 	 */
@@ -93,7 +93,7 @@ private:
 	/**
 	 * Returns the opcode number
 	 */
-	unsigned int getOpNum() const throw() {	return m_opcodes.size()-1; }
+	unsigned int getOpNum() const throw() {	return m_opcodes.size() <= 1 ? 0 : m_opcodes.size()-1; }
 
 	DISALLOW_COPY_AND_ASSIGN(CodeGenVisitor);
 };

@@ -41,15 +41,15 @@ LINK=$(LD) $(LFLAGS)
 
 VPATH=build compiler vm types interpreter extra test\
       modules/std modules/std/math modules/std/io modules/std/file\
-      modules/std/os modules/std/net
+      modules/std/os modules/std/reflection modules/std/net
 
 OBJECTS=$(BUILDDIR)parser.o $(BUILDDIR)scanner.o $(BUILDDIR)driver.o \
 	$(BUILDDIR)cstring.o $(BUILDDIR)double.o $(BUILDDIR)std_pkg.o \
 	$(BUILDDIR)int.o $(BUILDDIR)io.o $(BUILDDIR)math.o \
 	$(BUILDDIR)file.o $(BUILDDIR)filestream.o $(BUILDDIR)pkgmanager.o $(BUILDDIR)compiler.o \
-	$(BUILDDIR)typeutils.o $(BUILDDIR)vm.o $(BUILDDIR)cgvisitor.o $(BUILDDIR)opcode.o \
+	$(BUILDDIR)vm.o $(BUILDDIR)cgvisitor.o $(BUILDDIR)opcode.o \
 	$(BUILDDIR)str.o $(BUILDDIR)main.o $(BUILDDIR)clever.o $(BUILDDIR)typechecker.o \
-	$(BUILDDIR)symboltable.o $(BUILDDIR)bool.o $(BUILDDIR)os.o \
+	$(BUILDDIR)symboltable.o $(BUILDDIR)bool.o $(BUILDDIR)os.o $(BUILDDIR)reflection.o \
 	$(BUILDDIR)net.o $(BUILDDIR)tcpsocket.o
 
 # Windows related stuff

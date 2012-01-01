@@ -35,7 +35,10 @@
 
 namespace clever {
 
-class CString;
+/**
+ * Helper to access the an specific DataValue
+ */
+#define CLEVER_GET_VALUE(x, y) static_cast<x>((y)->getDataValue())
 
 /**
  * Type handler definitions

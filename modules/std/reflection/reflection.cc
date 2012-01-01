@@ -23,32 +23,34 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef CLEVER_TYPEUTILS_H
-#define CLEVER_TYPEUTILS_H
-
-#include <string>
-#include "type.h"
+#include <iostream>
 #include "compiler/value.h"
-#include "compiler/method.h"
-#include "compiler/compiler.h"
+#include "compiler/symboltable.h"
+#include "modules/std/reflection/reflection.h"
+#include "types/nativetypes.h"
 
-namespace clever {
+namespace clever { namespace packages { namespace std {
+
+namespace reflection {
 /**
- * Checks if the Value*s contained in the ValueVector have the same 
- * type as the types in the TypeVector
+ * get_type(object variable)
+ * Returns the variable type name
  */
-bool checkArgs(const TypeVector*, const ValueVector*);
+static CLEVER_FUNCTION(get_type) {
+	retval->setString(CSTRING(args->at(0)->getTypePtr()->getName()));
+}
+
+} //  reflection
 
 /**
- * Prints an error related to wrong arguments
+ * Initializes Reflection module
  */
-std::string argsError(const TypeVector*, const ValueVector*);
+void Reflection::init() throw() {
+	using namespace reflection;
 
-/**
- * Makes a TypeVector* with the args of a function/method
- */
-TypeVector* makeArgs(const Type*, ...);
+	addFunction(new Function("get_type", &CLEVER_FUNC_NAME(get_type), CLEVER_STR))
+		->setVariadic()
+		->setMinNumArgs(1);
+}
 
-} // clever
-
-#endif // CLEVER_TYPEUTILS_H
+}}} // clever::packages::std
