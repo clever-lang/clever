@@ -22,7 +22,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
- 
+
 #include "compiler/symboltable.h"
 #include "compiler/value.h"
 
@@ -35,11 +35,11 @@ Scope::~Scope() {
 
 	while (it != end_) {
 		Symbol* s = it->second;
-		
+
 		if (s->isValue()) {
 			s->getValue()->delRef();
 		}
-		
+
 		if (s->isType()) {
 			delete s->getType();
 		}

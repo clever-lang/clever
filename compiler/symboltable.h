@@ -69,7 +69,7 @@ public:
 
 		m_data.type = type;
 	}
-	
+
 	~Symbol() { }
 
 	const CString* getSymbolName() const { return m_name; }
@@ -96,18 +96,18 @@ private:
 /*
  * TODO: XXX: FIXME: Developer note:
  *
- * I believe this class can/should, somehow, be merged with or replace 
- * SymbolTable provided the funcionality (scoping depth manipulation) of the 
+ * I believe this class can/should, somehow, be merged with or replace
+ * SymbolTable provided the funcionality (scoping depth manipulation) of the
  * latter one is kept intact or improved.
- * 
- * One thing we must pay attention to is that merging the two classes will 
- * require a change of the way we push new entries into the scope. Perhaps 
- * we should keep an alias to std::deque<const CString*, Scope*> named 
- * SymbolTable or build a tree/list like structure with pointers to the next 
+ *
+ * One thing we must pay attention to is that merging the two classes will
+ * require a change of the way we push new entries into the scope. Perhaps
+ * we should keep an alias to std::deque<const CString*, Scope*> named
+ * SymbolTable or build a tree/list like structure with pointers to the next
  * and the previous scopes using the Scope class.
  *
  * -- Higor.
- * 
+ *
  */
 class Scope : public RefCounted {
 	typedef std::tr1::unordered_map<const CString*, Symbol*> SymbolMap;
@@ -123,7 +123,7 @@ public:
 	~Scope();
 
 	int getDepth() const { return m_depth; }
-	
+
 	/**
 	 * Binds a Value* to an interned string.
 	 */
@@ -147,7 +147,7 @@ public:
 	/**
 	 * Attempts to resolve a symbol name.
 	 *
-	 * Please use an error message like "unresolved symbol" or something 
+	 * Please use an error message like "unresolved symbol" or something
 	 * if the symbol is really needed.
 	 */
 	Symbol* resolve(const CString* name, bool recurse = true) throw() {
@@ -185,7 +185,7 @@ public:
 	 * See resolve() for more information.
 	 */
 	const Type* resolveType(const CString* name, bool recurse = true) throw() {
-		
+
 		Symbol* s = resolve(name, recurse);
 
 		if (s == NULL || !s->isType())
@@ -248,7 +248,7 @@ public:
 	/**
 	 * Returns the current scope.
 	 */
-	Scope* getScope() throw() { 
+	Scope* getScope() throw() {
 		return getScope(m_level);
 	}
 
@@ -280,7 +280,7 @@ public:
 		Scope* s = m_scope.back();
 		m_scope.pop_back();
 		m_level--;
-		
+
 		s->delRef();
 		return s;
 	}
