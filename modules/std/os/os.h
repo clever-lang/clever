@@ -23,19 +23,27 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "compiler/cstring.h"
-#include "std_pkg.h"
+#ifndef CLEVER_STD_OS_H
+#define CLEVER_STD_OS_H
 
-namespace clever { namespace packages {
+#include "compiler/module.h"
 
-/**
- * Initializes Std package
- */
-void Std::init() throw() {
-	addModule(CSTRING("io"), new std::IOModule);
-	addModule(CSTRING("math"), new std::Math);
-	addModule(CSTRING("file"), new std::File);
-	addModule(CSTRING("os"), new std::OSModule);
-}
+namespace clever { namespace packages { namespace std { 
 
-}} // clever::packages
+class OSModule : public Module {
+public:
+	OSModule()
+		: Module("OS") { }
+
+	~OSModule() { }
+
+	void init() throw();
+private:
+	DISALLOW_COPY_AND_ASSIGN(OSModule);
+};
+
+extern Module* g_os_module;
+
+}}} // clever::packages::std
+
+#endif // CLEVER_STD_OS_H

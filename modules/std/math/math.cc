@@ -140,7 +140,7 @@ static CLEVER_FUNCTION(max_double) {
 }
 
 /**
- * max(int x, int y
+ * max(int x, int y)
  * Returns which value is greater, x or y
  */
 static CLEVER_FUNCTION(max_int) {
