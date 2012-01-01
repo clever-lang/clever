@@ -162,7 +162,7 @@ AST_VISITOR(TypeChecker, Identifier) {
 	Value* ident = g_symtable.getValue(expr->getName());
 
 	if (ident == NULL) {
-		Compiler::errorf(expr->getLocation(), "Variable `%s' not found!",
+		Compiler::errorf(expr->getLocation(), "Variable `%S' not found!",
 			expr->getName());
 	}
 
