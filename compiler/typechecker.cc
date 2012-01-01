@@ -617,7 +617,7 @@ AST_VISITOR(TypeChecker, TypeCreation) {
 	 * Check if the type wasn't declarated previously
 	 */
 	if (type == NULL) {
-		Compiler::errorf(expr->getLocation(), "`%s' does not name a type",
+		Compiler::errorf(expr->getLocation(), "`%S' does not name a type",
 			ident->getName());
 	}
 
