@@ -52,7 +52,7 @@ static void show_usage(void) {
 	std::cout << "\t-f\tExecute the file" << std::endl;
 	std::cout << "\t-i\tRun the interative mode" << std::endl;
 	std::cout << "\t-r\tRun the code" << std::endl;
-	std::cout << "\t-qr\tQuickly run the code (import std automatically)" << std::endl; 
+	std::cout << "\t-qr\tQuickly run the code (import std automatically)" << std::endl;
 	std::cout << std::endl;
 
 #ifdef CLEVER_DEBUG
@@ -77,7 +77,14 @@ int main(int argc, char *argv[]) {
 			show_usage();
 			return 0;
 		} else if (argv[i] == std::string("-v")) {
-			std::cout << "Clever - development version" << std::endl;
+			std::cout << "Clever - development version";
+#ifdef CLEVER_DEBUG
+			std::cout << " (debug)";
+#endif
+			std::cout << std::endl;
+
+			std::cout << "Copyright (c) 2011-2012 Clever team" << std::endl;
+			std::cout << "(built: " __DATE__ " " __TIME__ ")" << std::endl;
 			return 0;
 #ifdef _WIN32
 		} else if (argv[i] == std::string("-b")) {
