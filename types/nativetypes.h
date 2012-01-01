@@ -31,24 +31,4 @@
 #include "types/str.h"
 #include "types/bool.h"
 
-#define CLEVER_INT_VAR    g_int_type_ptr
-#define CLEVER_DOUBLE_VAR g_double_type_ptr
-#define CLEVER_STR_VAR    g_str_type_ptr
-#define CLEVER_BOOL_VAR   g_bool_type_ptr
-
-#define CLEVER_INT    ::clever::CLEVER_INT_VAR
-#define CLEVER_DOUBLE ::clever::CLEVER_DOUBLE_VAR
-#define CLEVER_STR    ::clever::CLEVER_STR_VAR
-#define CLEVER_BOOL   ::clever::CLEVER_BOOL_VAR
-#define CLEVER_VOID	  NULL
-
-namespace clever {
-	
-extern THREAD_TLS Type* CLEVER_INT_VAR;
-extern THREAD_TLS Type* CLEVER_DOUBLE_VAR;
-extern THREAD_TLS Type* CLEVER_STR_VAR;
-extern THREAD_TLS Type* CLEVER_BOOL_VAR;
-	
-}
-
 #endif // CLEVER_NATIVE_TYPES_H

@@ -30,7 +30,6 @@
 #include "compiler/cstring.h"
 #include "types/type.h"
 #include "types/str.h"
-#include "types/nativetypes.h"
 
 namespace clever {
 

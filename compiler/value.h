@@ -36,11 +36,17 @@
 #include "compiler/method.h"
 #include "compiler/function.h"
 #include "compiler/symboltable.h"
+#include "types/type.h"
 
 namespace clever {
 
-class Type;
-class Value;
+/**
+ * Native types
+ */
+extern THREAD_TLS Type* CLEVER_INT_VAR;
+extern THREAD_TLS Type* CLEVER_DOUBLE_VAR;
+extern THREAD_TLS Type* CLEVER_STR_VAR;
+extern THREAD_TLS Type* CLEVER_BOOL_VAR;
 
 /**
  * Base class for value representation
@@ -68,22 +74,22 @@ public:
 		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(type_ptr), m_name(NULL) { }
 
 	explicit Value(double value)
-		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_TYPE("Double")), m_name(NULL) {
+		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_DOUBLE), m_name(NULL) {
 		setDouble(value);
 	}
 
 	explicit Value(int64_t value)
-		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_TYPE("Int")), m_name(NULL) {
+		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_INT), m_name(NULL) {
 		setInteger(value);
 	}
 
 	explicit Value(bool value)
-		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_TYPE("Bool")), m_name(NULL) {
+		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_BOOL), m_name(NULL) {
 		setBoolean(value);
 	}
 
 	explicit Value(const CString* value)
-		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_TYPE("String")), m_name(NULL) {
+		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_STR), m_name(NULL) {
 		setString(value);
 	}
 
@@ -95,7 +101,7 @@ public:
 				delete m_data.dv_value;
 			} else {
 				m_data.dv_value->delRef();
-			}			
+			}
 		} else if (isVector()) {
 			ValueVector::const_iterator it = m_data.v_value->begin(), end = m_data.v_value->end();
 
@@ -108,28 +114,28 @@ public:
 	}
 
 	void initialize() throw() {
-		if (getTypePtr() == CLEVER_TYPE("Int")) {
+		if (getTypePtr() == CLEVER_INT) {
 			setInteger(0);
 		}
-		else if (getTypePtr() == CLEVER_TYPE("Double")) {
+		else if (getTypePtr() == CLEVER_DOUBLE) {
 			setDouble(0.0);
 		}
-		else if (getTypePtr() == CLEVER_TYPE("Bool")) {
+		else if (getTypePtr() == CLEVER_BOOL) {
 			setBoolean(false);
 		}
-		else if (getTypePtr() == CLEVER_TYPE("String")) {
+		else if (getTypePtr() == CLEVER_STR) {
 			setString(CSTRING(""));
 		}
 	}
 
-	void setType(int type) { 
+	void setType(int type) {
 		if (type == NONE || type == USER || type == VECTOR || type == PRIMITIVE) {
 			m_type = type;
 		}
 	}
-	
-	int hasSameType(const Value* const value) const { 
-		return m_type_ptr == value->getTypePtr(); 
+
+	int hasSameType(const Value* const value) const {
+		return m_type_ptr == value->getTypePtr();
 	}
 
 	const Type* getTypePtr() const { return m_type_ptr; }
@@ -140,10 +146,10 @@ public:
 	void setName(const CString* const name) { m_name = name; }
 
 	virtual bool isPrimitive() const {
-		return m_type_ptr == CLEVER_TYPE("Int") ||
-			m_type_ptr == CLEVER_TYPE("Double") ||
-			m_type_ptr == CLEVER_TYPE("Bool") ||
-			m_type_ptr == CLEVER_TYPE("String");
+		return m_type_ptr == CLEVER_INT ||
+			m_type_ptr == CLEVER_DOUBLE ||
+			m_type_ptr == CLEVER_BOOL ||
+			m_type_ptr == CLEVER_STR;
 	}
 
 	/*
@@ -152,38 +158,38 @@ public:
 	 */
 	virtual bool isCallable() const { return false; }
 
-	bool isInteger()   const { return m_type_ptr == CLEVER_TYPE("Int"); }
-	bool isString()    const { return m_type_ptr == CLEVER_TYPE("String"); }
-	bool isDouble()    const { return m_type_ptr == CLEVER_TYPE("Double"); }
-	bool isBoolean()   const { return m_type_ptr == CLEVER_TYPE("Bool"); }
+	bool isInteger()   const { return m_type_ptr == CLEVER_INT; }
+	bool isString()    const { return m_type_ptr == CLEVER_STR; }
+	bool isDouble()    const { return m_type_ptr == CLEVER_DOUBLE; }
+	bool isBoolean()   const { return m_type_ptr == CLEVER_BOOL; }
 	bool isVector()    const { return m_type == VECTOR; }
 	bool isUserValue() const { return m_type == USER; }
 
-	void setInteger(int64_t i) { 
-		m_type_ptr = CLEVER_TYPE("Int");
-		m_type = PRIMITIVE; 
-		m_data.l_value = i; 
+	void setInteger(int64_t i) {
+		m_type_ptr = CLEVER_INT;
+		m_type = PRIMITIVE;
+		m_data.l_value = i;
 	}
-	
-	void setString(const CString* const s) { 
-		m_type_ptr = CLEVER_TYPE("String");
-		m_type = PRIMITIVE; 
-		m_data.s_value = s; 
+
+	void setString(const CString* const s) {
+		m_type_ptr = CLEVER_STR;
+		m_type = PRIMITIVE;
+		m_data.s_value = s;
 	}
-	
-	void setDouble(double d) { 
-		m_type_ptr = CLEVER_TYPE("Double");
-		m_type = PRIMITIVE; 
-		m_data.d_value = d; 
+
+	void setDouble(double d) {
+		m_type_ptr = CLEVER_DOUBLE;
+		m_type = PRIMITIVE;
+		m_data.d_value = d;
 	}
-	
-	void setBoolean(bool b) { 
-		m_type_ptr = CLEVER_TYPE("Bool");
-		m_type = PRIMITIVE; 
-		m_data.b_value = b; 
+
+	void setBoolean(bool b) {
+		m_type_ptr = CLEVER_BOOL;
+		m_type = PRIMITIVE;
+		m_data.b_value = b;
 	}
-	
-	
+
+
 	void setVector(ValueVector* v) { m_type = VECTOR; m_data.v_value = v; }
 
 	int64_t getInteger() const { return m_data.l_value; }
@@ -192,36 +198,36 @@ public:
 	double getDouble() const { return m_data.d_value; }
 	bool getBoolean() const { return m_data.b_value; }
 	ValueVector* getVector() const { return m_data.v_value; }
-	
+
 	bool getValueAsBool() const {
-		if (m_type_ptr == CLEVER_TYPE("Int")) {
+		if (m_type_ptr == CLEVER_INT) {
 			return getInteger();
 		}
-		else if (m_type_ptr == CLEVER_TYPE("Double")) {
+		else if (m_type_ptr == CLEVER_DOUBLE) {
 			return getDouble();
 		}
-		else if (m_type_ptr == CLEVER_TYPE("String")) {
+		else if (m_type_ptr == CLEVER_STR) {
 			return !getString().empty();
 		}
-		else if (m_type_ptr == CLEVER_TYPE("Bool")) {
+		else if (m_type_ptr == CLEVER_BOOL) {
 			return getBoolean();
 		}
-		
+
 		return false;
 	}
-	
+
 	bool isNumeric() const {
-		return (m_type_ptr == CLEVER_TYPE("Double") || m_type_ptr == CLEVER_TYPE("Int"));
+		return (m_type_ptr == CLEVER_DOUBLE || m_type_ptr == CLEVER_INT);
 	}
 
 	const ValueData* getData() const { return &m_data; }
-	
+
 	// Sets the buffer for a user type structure
-	void setDataValue(DataValue* data) { 
+	void setDataValue(DataValue* data) {
 		m_data.dv_value = data;
 		m_type = USER;
 	}
-	
+
 	DataValue* getDataValue() {
 		return m_data.dv_value;
 	}
@@ -240,22 +246,22 @@ public:
 	virtual const CString& toString() throw() {
 		std::ostringstream str;
 
-		if (getTypePtr() == CLEVER_TYPE("Int")) {
+		if (getTypePtr() == CLEVER_INT) {
 			str << getInteger();
 		}
-		else if (getTypePtr() == CLEVER_TYPE("Double")) {
+		else if (getTypePtr() == CLEVER_DOUBLE) {
 			str << getDouble();
 		}
-		else if (getTypePtr() == CLEVER_TYPE("Bool")) {
+		else if (getTypePtr() == CLEVER_BOOL) {
 				return *CSTRING(getBoolean() ? "true" : "false");
 		}
-		else if (getTypePtr() == CLEVER_TYPE("String")) {
+		else if (getTypePtr() == CLEVER_STR) {
 				return getString();
 		}
 		else {
 			return *CSTRING("");
 		}
-		
+
 		return *CSTRING(str.str());
 	}
 private:
@@ -328,7 +334,7 @@ public:
 
 	bool isNearCall() const throw() { return m_call_type == NEAR; }
 	bool isFarCall() const throw() { return m_call_type == FAR; }
-	
+
 	/**
 	 * A callable value is not primitive
 	 */
@@ -372,7 +378,7 @@ class UserTypeValue : public Value {
 public:
 	UserTypeValue(const CString* const name)
 		: m_name(name) { }
-	
+
 	~UserTypeValue() { }
 private:
 	const CString* m_name;
