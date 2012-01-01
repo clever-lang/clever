@@ -23,7 +23,6 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <iostream>
 #include <cstdlib>
 #include "compiler/value.h"
 #include "compiler/symboltable.h"
@@ -41,7 +40,6 @@ namespace os {
 static CLEVER_FUNCTION(system) {
 	retval->setInteger(::system(args->at(0)->getString().c_str()));
 }
-
 
 } // namespace io
 
