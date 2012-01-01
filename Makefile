@@ -92,7 +92,7 @@ override CXXFLAGS = $(cxxflags)
 override LDFLAGS = $(ldflags)
 
 COMPILE=$(CXX) $(CXXFLAGS) -c
-LINK=$(LD) $(LDFLAGS)
+LINK=$(LD) $(CXXFLAGS) $(LDFLAGS)
 
 .PHONY: clean all
 
