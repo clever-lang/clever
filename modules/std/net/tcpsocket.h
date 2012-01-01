@@ -52,13 +52,7 @@ public:
 	static CLEVER_TYPE_METHOD(send);
 	static CLEVER_TYPE_METHOD(poll);
 	static CLEVER_TYPE_METHOD(toString);
-	
-	/*
-	static CLEVER_TYPE_METHOD(open);
-	static CLEVER_TYPE_METHOD(close);
-	static CLEVER_TYPE_METHOD(writeLine);
-	*/
-	
+
 	/**
 	 * Type handlers
 	 */

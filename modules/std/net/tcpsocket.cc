@@ -65,19 +65,19 @@ CLEVER_TYPE_METHOD(TcpSocket::constructor) {
 }
 
 CLEVER_TYPE_METHOD(TcpSocket::setHost) {
-	SocketValue* sv = static_cast<SocketValue*>(value->getDataValue());
+	SocketValue* sv = CLEVER_GET_VALUE(SocketValue*, value);
 
 	sv->remote.sin_addr.s_addr = inet_addr(args->at(0)->getString().c_str());
 }
 
 CLEVER_TYPE_METHOD(TcpSocket::setPort) {
-	SocketValue* sv = static_cast<SocketValue*>(value->getDataValue());
+	SocketValue* sv = CLEVER_GET_VALUE(SocketValue*, value);
 
 	sv->remote.sin_port = htons(args->at(0)->getInteger());
 }
 
 CLEVER_TYPE_METHOD(TcpSocket::connect) {
-	SocketValue* sv = static_cast<SocketValue*>(value->getDataValue());
+	SocketValue* sv = CLEVER_GET_VALUE(SocketValue*, value);
 	int socketflags;
 
 	if (::connect(sv->socket, (struct sockaddr*)&sv->remote, sizeof(sv->remote)) != 0) {
@@ -92,7 +92,7 @@ CLEVER_TYPE_METHOD(TcpSocket::connect) {
 }
 
 CLEVER_TYPE_METHOD(TcpSocket::receive) {
-	SocketValue* sv = static_cast<SocketValue*>(value->getDataValue());
+	SocketValue* sv = CLEVER_GET_VALUE(SocketValue*, value);
 	char buffer[65535] = {0};
 	::std::string data;
 
@@ -105,14 +105,14 @@ CLEVER_TYPE_METHOD(TcpSocket::receive) {
 }
 
 CLEVER_TYPE_METHOD(TcpSocket::send) {
-	SocketValue* sv = static_cast<SocketValue*>(value->getDataValue());
+	SocketValue* sv = CLEVER_GET_VALUE(SocketValue*, value);
 
 	// @TODO: check for errors on this.
 	::send(sv->socket, args->at(0)->getString().c_str(), args->at(0)->getString().size(), 0);
 }
 
 CLEVER_TYPE_METHOD(TcpSocket::poll) {
-	SocketValue* sv = static_cast<SocketValue*>(value->getDataValue());
+	SocketValue* sv = CLEVER_GET_VALUE(SocketValue*, value);
 	struct pollfd fds[1];
 
 	// Prepare and execute the polling.
@@ -175,17 +175,9 @@ DataValue* TcpSocket::allocateValue() const {
 }
 
 void TcpSocket::destructor(Value* value) const {
-	SocketValue* sv = static_cast<SocketValue*>(value->getDataValue());
-	
-	sv = NULL; /* << warning ignore, bitch, please! lol >> */
-	delete sv; /* << warning ignore, bitch, please! lol >> */
+	//SocketValue* sv = CLEVER_GET_VALUE(SocketValue*, value);
 
-	/*
-	// Just close the stream
-	if (fsv && fsv->m_fstream.is_open()) {
-		fsv->m_fstream.close();
-	}
-	*/
+	// @TODO: disconnect.
 }
 
 }}}} // clever::packages::std::net
