@@ -34,10 +34,9 @@
 #include "types/nativetypes.h"
 #include "interpreter/astvisitor.h"
 
-
 namespace clever {
 
-PackageManager Compiler::s_pkgmanager;
+PackageManager g_pkgmanager;
 
 THREAD_TLS Type* CLEVER_INT_VAR    = NULL;
 THREAD_TLS Type* CLEVER_DOUBLE_VAR = NULL;
@@ -50,9 +49,9 @@ THREAD_TLS Type* CLEVER_BOOL_VAR   = NULL;
 Compiler::~Compiler() {
 	if (m_initialized) {
 		g_symtable.endScope();
-		s_pkgmanager.shutdown();
+		g_pkgmanager.shutdown();
 	}
-	
+
 	if (m_ast) {
 		delete m_ast;
 	}
@@ -63,13 +62,13 @@ Compiler::~Compiler() {
  */
 void Compiler::init() throw() {
 	/* Load package list */
-	s_pkgmanager.init();
-	
+	g_pkgmanager.init();
+
 	g_symtable.beginScope();
 
 	/* Load the primitive data types */
 	loadTypes();
-	
+
 	m_initialized = true;
 }
 
@@ -89,7 +88,7 @@ void Compiler::loadTypes() throw() {
 	g_symtable.push(CSTRING("Double"), CLEVER_DOUBLE);
 	g_symtable.push(CSTRING("String"), CLEVER_STR);
 	g_symtable.push(CSTRING("Bool"), CLEVER_BOOL);
-	
+
 	CLEVER_INT->init();
 	CLEVER_DOUBLE->init();
 	CLEVER_STR->init();
@@ -106,7 +105,7 @@ void Compiler::buildIR() throw() {
 	m_ast->accept(m_cgvisitor);
 
 	m_cgvisitor.shutdown();
-	
+
 	m_ast->clear();
 }
 

@@ -81,16 +81,16 @@ public:
 	 * Import a package
 	 */
 	static void import(Scope* scope, const CString* package) throw() {
-		s_pkgmanager.loadPackage(scope, package);
+		g_pkgmanager.loadPackage(scope, package);
 	}
 	/**
 	 * Import a package module
 	 */
 	static void import(Scope* scope, const CString* package, const CString* module) throw() {
 		if (module) {
-			s_pkgmanager.loadModule(scope, package, module);
+			g_pkgmanager.loadModule(scope, package, module);
 		} else {
-			s_pkgmanager.loadPackage(scope, package);
+			g_pkgmanager.loadPackage(scope, package);
 		}
 	}
 
@@ -103,8 +103,6 @@ private:
 	ast::CodeGenVisitor m_cgvisitor;
 	ast::TypeChecker m_tcvisitor;
 
-	static PackageManager s_pkgmanager;
-	
 	bool m_initialized;
 
 	DISALLOW_COPY_AND_ASSIGN(Compiler);
