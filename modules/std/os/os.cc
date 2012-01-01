@@ -23,45 +23,22 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <iostream>
+#include <cstdlib>
 #include "compiler/value.h"
 #include "compiler/symboltable.h"
-#include "modules/std/io/io.h"
+#include "modules/std/os/os.h"
 #include "types/nativetypes.h"
 
 namespace clever { namespace packages { namespace std {
 
-namespace io {
-/**
- * println(object a, [ ...])
- * Prints the object values without trailing newline
- */
-static CLEVER_FUNCTION(print) {
-	for (int i = 0, size = args->size(); i < size; ++i) {
-		::std::cout << args->at(i)->toString();
-	}
-}
+namespace os {
 
 /**
- * println(object a, [ ...])
- * Prints the object values with trailing newline
+ * system(string command)
+ * Calls a command and returns the exit code.
  */
-static CLEVER_FUNCTION(println) {
-	for (int i = 0, size = args->size(); i < size; ++i) {
-		::std::cout << args->at(i)->toString() << ::std::endl;
-	}
-}
-
-/**
- * readln()
- * Reads a line from the standard input.
- */
-static CLEVER_FUNCTION(readln) {
-	::std::string buffer;
-
-	getline(::std::cin, buffer);
-
-	retval->setString(CSTRING(buffer));
+static CLEVER_FUNCTION(system) {
+	retval->setInteger(::system(args->at(0)->getString().c_str()));
 }
 
 } // namespace io
@@ -69,18 +46,11 @@ static CLEVER_FUNCTION(readln) {
 /**
  * Initializes Standard module
  */
-void IOModule::init() throw() {
-	using namespace io;
+void OSModule::init() throw() {
+	using namespace os;
 
-	addFunction(new Function("print", &CLEVER_FUNC_NAME(print), CLEVER_VOID))
-		->setVariadic()
-		->setMinNumArgs(1);
-
-	addFunction(new Function("println", &CLEVER_FUNC_NAME(println), CLEVER_VOID))
-		->setVariadic()
-		->setMinNumArgs(1);
-
-	addFunction(new Function("readln", &CLEVER_FUNC_NAME(readln), CLEVER_STR));
+	addFunction(new Function("system", &CLEVER_FUNC_NAME(system), CLEVER_INT))
+		->addArg("command", CLEVER_STR);
 }
 
 }}} // clever::packages::std

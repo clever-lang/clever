@@ -39,7 +39,7 @@ COMPILE=$(CXX) $(CXXFLAGS) -c
 LINK=$(LD) $(LFLAGS)
 
 VPATH=build compiler vm types interpreter extra test\
-      modules/std modules/std/math modules/std/io modules/std/file
+      modules/std modules/std/math modules/std/io modules/std/file modules/std/os 
 
 OBJECTS=$(BUILDDIR)parser.o $(BUILDDIR)scanner.o $(BUILDDIR)driver.o \
 	$(BUILDDIR)cstring.o $(BUILDDIR)double.o $(BUILDDIR)std_pkg.o \
@@ -47,7 +47,7 @@ OBJECTS=$(BUILDDIR)parser.o $(BUILDDIR)scanner.o $(BUILDDIR)driver.o \
 	$(BUILDDIR)file.o $(BUILDDIR)filestream.o $(BUILDDIR)pkgmanager.o $(BUILDDIR)compiler.o \
 	$(BUILDDIR)typeutils.o $(BUILDDIR)vm.o $(BUILDDIR)cgvisitor.o $(BUILDDIR)opcode.o \
 	$(BUILDDIR)str.o $(BUILDDIR)main.o $(BUILDDIR)clever.o $(BUILDDIR)typechecker.o \
-	$(BUILDDIR)symboltable.o $(BUILDDIR)bool.o
+	$(BUILDDIR)symboltable.o $(BUILDDIR)bool.o $(BUILDDIR)os.o
 
 # Windows related stuff
 ifdef IS_MINGW

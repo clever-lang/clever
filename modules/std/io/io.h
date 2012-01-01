@@ -23,8 +23,8 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef CLEVER_STD_H
-#define CLEVER_STD_H
+#ifndef CLEVER_STD_IO_H
+#define CLEVER_STD_IO_H
 
 #include "compiler/module.h"
 
@@ -46,4 +46,4 @@ extern Module* g_io_module;
 
 }}} // clever::packages::std
 
-#endif // CLEVER_STD_H
+#endif // CLEVER_STD_IO_H
