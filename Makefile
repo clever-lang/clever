@@ -1,69 +1,86 @@
-# Warnings are expected.
+#
+# Clever programming language
+# Copyright (c) 2011-2012 Clever Team
+#
+# Makefile - GNU Make recipes
+#
 
-# Environment
-UNAME:=$(shell uname)
-PREFIX?=/usr/local
-FIND?=find
-
-ifneq (,$(findstring MINGW,$(UNAME)))
-IS_MINGW=1
-endif
-
-ifneq (,$(findstring CYGWIN,$(UNAME)))
-IS_MINGW=1
-endif
-
-# Build options
-CXXFLAGS?=-pipe
-
-ifeq ($(DEBUG),y)
-CXXFLAGS+=-ggdb3 -D_DEBUG -DCLEVER_DEBUG
-else
-CXXFLAGS+=-O2 -g -DNDEBUG
-endif
-
-# Programs
-CXX?=g++
-LD=$(CXX)
-BISON?=bison
-RE2C?=re2c
-SED?=sed
-
-# Flags
-override CXXFLAGS+=-Wall -ansi -I. -fno-rtti -fno-exceptions
-LFLAGS=$(CXXFLAGS)
+#
+# Clever stuff
+#
 BUILDDIR=build/
-EXT=
+MODULEDIR=modules/
 
-# shortcuts
-COMPILE=$(CXX) $(CXXFLAGS) -c
-LINK=$(LD) $(LFLAGS)
+#
+# Programs
+# 
+SHELL=/bin/sh
+SED=sed
 
-VPATH=build compiler vm types interpreter extra test\
-      modules/std modules/std/math modules/std/io modules/std/file\
-      modules/std/os modules/std/reflection modules/std/net
+#
+# Environment 
+#
+UNAME=$(shell uname)
+
+# OS checks
+ifneq ($(findstring MINGW,$(UNAME)),)
+IS_WIN32=yes
+else ifneq ($(findstring CYGWIN,$(UNAME)),)
+IS_WIN32=yes
+endif
+
+#
+# Build stuff
+#
+cxxflags=
+ldflags=
+
+include config.def.mk
+-include config.mk
+
+ifeq ($(BUILD),devel)
+cxxflags+=-Wextra -ggdb3 -pg -D_DEBUG -DCLEVER_DEBUG
+else ifeq ($(BUILD),debug)
+cxxflags+=-ggdb3 -D_DEBUG -DCLEVER_DEBUG
+else
+cxxflags+=-O2 -g -DNDEBUG
+endif
+
+cxxflags:=$(cxxflags) $(CXXFLAGS) \
+	  -DCLEVER_VERSION="\"$(VERSION)\"" \
+	  -Wall -ansi -I. -fno-rtti -fno-exceptions
+
+ldflags:=$(LDFLAGS)
+
+BINEXT=
+
+VPATH=build compiler vm types interpreter extra test
 
 OBJECTS=$(BUILDDIR)parser.o $(BUILDDIR)scanner.o $(BUILDDIR)driver.o \
-	$(BUILDDIR)cstring.o $(BUILDDIR)double.o $(BUILDDIR)std_pkg.o \
-	$(BUILDDIR)int.o $(BUILDDIR)io.o $(BUILDDIR)math.o \
-	$(BUILDDIR)file.o $(BUILDDIR)filestream.o $(BUILDDIR)pkgmanager.o $(BUILDDIR)compiler.o \
+	$(BUILDDIR)cstring.o $(BUILDDIR)double.o \
+	$(BUILDDIR)int.o $(BUILDDIR)pkgmanager.o $(BUILDDIR)compiler.o \
 	$(BUILDDIR)vm.o $(BUILDDIR)cgvisitor.o $(BUILDDIR)opcode.o \
 	$(BUILDDIR)str.o $(BUILDDIR)main.o $(BUILDDIR)clever.o $(BUILDDIR)typechecker.o \
-	$(BUILDDIR)symboltable.o $(BUILDDIR)bool.o $(BUILDDIR)os.o $(BUILDDIR)reflection.o \
-	$(BUILDDIR)net.o $(BUILDDIR)tcpsocket.o
+	$(BUILDDIR)symboltable.o $(BUILDDIR)bool.o 
 
 # Windows related stuff
-ifdef IS_MINGW
-EXT=.exe
+ifdef IS_WIN32
+BINEXT=.exe
 OBJECTS+=$(BUILDDIR)win32.o
-override CXXFLAGS+=-Iwin32/
+cxxflags+=-Iwin32/ -DCLEVER_WIN32
 VPATH+=win32
 endif
 
-ifneq ($(VERBOSE),y)
+# Modules
+moddirs=$(addprefix $(MODULEDIR),$(subst .,/,$(MODULES)))
+modsrc=$(foreach mod,$(moddirs),$(wildcard $(mod)/*.cc))
+modobj=$(addprefix $(BUILDDIR), $(modsrc:.cc=.o))
+OBJECTS+=$(modobj)
+VPATH+=$(moddirs)
+
+ifneq ($(VERBOSE),yes)
 .SILENT:
 endif
-
 
 tmp_libdirs:=$(shell pkg-config --variable=libdir libpcrecpp)
 tmp_libdirs:=$(foreach dir,$(tmp_libdirs),-L$(dir))
@@ -71,17 +88,24 @@ tmp_incdirs:=$(shell pkg-config --variable=includedir libpcrecpp)
 tmp_incdirs:=$(foreach dir,$(tmp_incdirs),-I$(dir))
 TESTRUNNER_FLAGS=$(tmp_libdirs) $(tmp_incdirs) $(shell pkg-config --cflags --libs libpcrecpp)
 
-.PHONY: clean
+override CXXFLAGS = $(cxxflags)
+override LDFLAGS = $(ldflags)
 
-clever$(EXT): $(BUILDDIR)scanner.cc $(OBJECTS)
+COMPILE=$(CXX) $(CXXFLAGS) -c
+LINK=$(LD) $(LFLAGS)
+
+.PHONY: clean all
+
+clever$(BINEXT): $(BUILDDIR)scanner.cc $(OBJECTS)
 	@echo "  LD    $@"
 	$(LINK) -o $@ $(OBJECTS)
 
-all: clever$(EXT) test
+all: clever$(BINEXT) test
+
 
 $(BUILDDIR)ensure-build-dir:
 	@echo "Making sure $(BUILDDIR) exists..."
-	mkdir -p $(BUILDDIR)
+	mkdir -p $(BUILDDIR)  $(addprefix $(BUILDDIR),$(moddirs))
 	touch $(BUILDDIR)ensure-build-dir
 
 $(BUILDDIR)%.o: %.cc %.d
