@@ -32,9 +32,11 @@
 #include "compiler/method.h"
 #include "compiler/compiler.h"
 
+#define CLEVER_GET_VALUE(x, y) static_cast<x>(y->getDataValue())
+
 namespace clever {
 /**
- * Checks if the Value*s contained in the ValueVector have the same 
+ * Checks if the Value*s contained in the ValueVector have the same
  * type as the types in the TypeVector
  */
 bool checkArgs(const TypeVector*, const ValueVector*);
