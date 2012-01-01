@@ -32,7 +32,10 @@
 #include "compiler/method.h"
 #include "compiler/compiler.h"
 
-#define CLEVER_GET_VALUE(x, y) static_cast<x>(y->getDataValue())
+/**
+ * Helper to access the an specific DataValue
+ */
+#define CLEVER_GET_VALUE(x, y) static_cast<x>((y)->getDataValue())
 
 namespace clever {
 /**
