@@ -26,7 +26,6 @@
 #include <iostream>
 #include <cmath>
 #include "compiler/cstring.h"
-#include "types/typeutils.h"
 #include "types/type.h"
 #include "types/nativetypes.h"
 

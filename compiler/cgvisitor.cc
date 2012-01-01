@@ -24,7 +24,6 @@
  */
 #include "cgvisitor.h"
 #include "compiler/compiler.h"
-#include "types/typeutils.h"
 #include "compiler/typechecker.h"
 
 namespace clever { namespace ast {
@@ -54,7 +53,7 @@ AST_VISITOR(CodeGenVisitor, BinaryExpr) {
 
 	lhs->addRef();
 	rhs->addRef();
-	
+
 	switch (expr->getOp()) {
 		case PLUS:  emit(OP_PLUS,   &VM::plus_handler,   lhs, rhs, expr->getValue()); break;
 		case DIV:   emit(OP_DIV,    &VM::div_handler,    lhs, rhs, expr->getValue()); break;
@@ -75,7 +74,7 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 	Identifier* var_expr = expr->getVariable();
 	Value* initval = expr->getInitialValue();
 	Value* variable = var_expr->getValue();
-	
+
 	/* Check if the declaration contains initialization */
 	if (initval) {
 		if (initval->isPrimitive()) {
@@ -289,25 +288,25 @@ AST_VISITOR(CodeGenVisitor, ForExpr) {
 	unsigned int start_pos = 0;
 
 	if (!expr->isIteratorMode()) {
-		
+
 		if (expr->getVarDecl() != NULL) {
 			expr->getVarDecl()->accept(*this);
 		}
-		
+
 		start_pos = getOpNum();
-		
+
 		if (expr->getCondition()) {
 			expr->getCondition()->accept(*this);
-			
+
 			value = expr->getCondition()->getValue();
 			value->addRef();
 		}
 		else {
 			value = new Value(true);
 		}
-		
+
 		jmpz = emit(OP_JMPZ, &VM::jmpz_handler, value);
-		
+
 		// If the expression has increment we must jump 2 opcodes
 		unsigned int offset = (expr->getIncrement() ? 2 : 1);
 		if (expr->hasBlock()) {
@@ -322,14 +321,14 @@ AST_VISITOR(CodeGenVisitor, ForExpr) {
 				m_brks.top().top()->setJmpAddr1(getOpNum() + offset);
 				m_brks.top().pop();
 			}
-			
+
 			m_brks.pop();
 		}
-		
+
 		if (expr->getIncrement() != NULL) {
 			expr->getIncrement()->accept(*this);
 		}
-		
+
 		jmp = emit(OP_JMP, &VM::jmp_handler);
 		jmp->setJmpAddr2(start_pos);
 
@@ -396,7 +395,7 @@ AST_VISITOR(CodeGenVisitor, FunctionCall) {
 
 	if (arg_values) {
 		expr->getArgs()->accept(*this);
-		
+
 		/**
 		 * User-defined function needs an extra opcode passing the parameters
 		 * to be assigned to respective var names used in the func declaration
@@ -417,9 +416,9 @@ AST_VISITOR(CodeGenVisitor, FunctionCall) {
 AST_VISITOR(CodeGenVisitor, MethodCall) {
 	CallableValue* call = expr->getFuncValue();
 	Value* arg_values = expr->getArgsValue();
-	
+
 	call->addRef();
-	
+
 	emit(OP_MCALL, &VM::mcall_handler, call, arg_values, expr->getValue());
 }
 
@@ -484,9 +483,9 @@ AST_VISITOR(CodeGenVisitor, ClassDeclaration) {
 AST_VISITOR(CodeGenVisitor, TypeCreation) {
 	CallableValue* call = expr->getFuncValue();
 	Value* arg_values = expr->getArgsValue();
-	
+
 	call->addRef();
-	
+
 	emit(OP_MCALL, &VM::mcall_handler, call, arg_values, expr->getValue());
 }
 

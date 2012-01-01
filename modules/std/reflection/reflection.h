@@ -23,8 +23,27 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "modules/std/file/file.h"
-#include "modules/std/io/io.h"
-#include "modules/std/math/math.h"
-#include "modules/std/os/os.h"
-#include "modules/std/reflection/reflection.h"
+#ifndef CLEVER_STD_REFLECTION_H
+#define CLEVER_STD_REFLECTION_H
+
+#include "compiler/module.h"
+
+namespace clever { namespace packages { namespace std {
+
+class Reflection : public Module {
+public:
+	Reflection()
+		: Module("Reflection") { }
+
+	~Reflection() { }
+
+	void init() throw();
+private:
+	DISALLOW_COPY_AND_ASSIGN(Reflection);
+};
+
+extern Module* g_reflection_module;
+
+}}} // clever::packages::std
+
+#endif // CLEVER_STD_REFLECTION_H

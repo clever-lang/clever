@@ -23,8 +23,34 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "modules/std/file/file.h"
-#include "modules/std/io/io.h"
-#include "modules/std/math/math.h"
-#include "modules/std/os/os.h"
+#include <iostream>
+#include "compiler/value.h"
+#include "compiler/symboltable.h"
 #include "modules/std/reflection/reflection.h"
+#include "types/nativetypes.h"
+
+namespace clever { namespace packages { namespace std {
+
+namespace reflection {
+/**
+ * get_type(object variable)
+ * Returns the variable type name
+ */
+static CLEVER_FUNCTION(get_type) {
+	retval->setString(CSTRING(args->at(0)->getTypePtr()->getName()));
+}
+
+} //  reflection
+
+/**
+ * Initializes Reflection module
+ */
+void Reflection::init() throw() {
+	using namespace reflection;
+
+	addFunction(new Function("get_type", &CLEVER_FUNC_NAME(get_type), CLEVER_STR))
+		->setVariadic()
+		->setMinNumArgs(1);
+}
+
+}}} // clever::packages::std

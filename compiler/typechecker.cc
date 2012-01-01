@@ -25,7 +25,6 @@
 
 #include "compiler/compiler.h"
 #include "compiler/typechecker.h"
-#include "types/typeutils.h"
 #include "types/nativetypes.h"
 
 namespace clever { namespace ast {
