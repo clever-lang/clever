@@ -25,7 +25,6 @@
 
 #include <iostream>
 #include "compiler/cstring.h"
-#include "types/typeutils.h"
 #include "types/type.h"
 #include "types/bool.h"
 #include "types/nativetypes.h"
@@ -35,7 +34,7 @@ namespace clever {
 
 /**
  * Bool::Bool([Bool value])
- * Construct an Bool object with a default value (if no args) or a 
+ * Construct an Bool object with a default value (if no args) or a
  * custom value
  */
 CLEVER_TYPE_METHOD(Bool::constructor) {
