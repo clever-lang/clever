@@ -46,7 +46,7 @@ CLEVER_TYPE_METHOD(TcpSocket::constructor) {
 	sv->local.sin_family = AF_INET;
 	sv->local.sin_addr.s_addr = htonl(INADDR_ANY);
 	sv->local.sin_port = htons(INADDR_ANY);
-	
+
 	// Remote socket init.
 	sv->remote.sin_family = AF_INET;
 
@@ -82,7 +82,7 @@ CLEVER_TYPE_METHOD(TcpSocket::connect) {
 
 	if (::connect(sv->socket, (struct sockaddr*)&sv->remote, sizeof(sv->remote)) != 0) {
 		// @TODO: change this.
-		::std::cerr << "connect() failed: " << (errno) << " - " << ::std::string(sys_errlist[errno]) << ::std::endl;
+		::std::cerr << "connect() failed: " << (errno) << " - " << ::std::string(strerror(errno)) << ::std::endl;
 	}
 
 	// Change the socket to non-blocking mode.
@@ -139,7 +139,7 @@ void TcpSocket::init() {
 		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&TcpSocket::constructor, CLEVER_TYPE("TcpSocket")))
 			->addArg("host", CLEVER_STR)
 	);
-		
+
 	addMethod(
 		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&TcpSocket::constructor, CLEVER_TYPE("TcpSocket")))
 			->addArg("host", CLEVER_STR)
