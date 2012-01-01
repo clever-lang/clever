@@ -1,6 +1,8 @@
 Join us!
 IRC #clever-lang (irc.freenode.org)
 
+Mailing-list: http://groups.google.com/group/clever-lang
+
 Old wiki at: http://code.google.com/p/clever/
 
 Git help:
@@ -9,10 +11,10 @@ Git help:
 
 
 = Coding standards =
-Currently we have used the Google C++ Style Guide [1] as base for the coding standards on the project. 
-C++ files uses .cc 
-Headers files uses .h 
-Indentation: tab 
+Currently we have used the Google C++ Style Guide [1] as base for the coding standards on the project.
+C++ files uses .cc
+Headers files uses .h
+Indentation: tab
 Line ending: LF (Unix)
 
 = TODO =
