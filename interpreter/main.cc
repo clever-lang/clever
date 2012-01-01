@@ -1,6 +1,6 @@
 /**
  * Clever programming language
- * Copyright (c) 2012 Clever Team
+ * Copyright (c) 2011-2012 Clever Team
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -83,7 +83,7 @@ int main(int argc, char *argv[]) {
 #endif
 			std::cout << std::endl;
 
-			std::cout << "Copyright (c) 2011-2012 Clever Team" << std::endl;
+			std::cout << "Copyright (c) 2011-2011-2012 Clever Team" << std::endl;
 			std::cout << "(built: " __DATE__ " " __TIME__ ")" << std::endl;
 			return 0;
 #ifdef _WIN32
