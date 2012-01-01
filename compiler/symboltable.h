@@ -109,7 +109,7 @@ private:
  * -- Higor.
  * 
  */
-class Scope : public RefCounted { /* A cat just died because of this. */
+class Scope : public RefCounted {
 	typedef std::tr1::unordered_map<const CString*, Symbol*> SymbolMap;
 	typedef std::pair<const CString*, Symbol*> ScopeEntry;
 
