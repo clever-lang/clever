@@ -46,10 +46,6 @@ class SymbolTable;
 
 extern SymbolTable g_symtable;
 
-typedef std::tr1::unordered_map<const CString*, Symbol*> ScopeBase;
-typedef std::pair<const CString*, Symbol*> ScopeEntry;
-typedef std::deque<Scope*> ScopeDeque;
-
 class Symbol {
 public:
 	typedef	enum { INVALID, VALUE, TYPE } SymbolType;
@@ -113,10 +109,13 @@ private:
  * -- Higor.
  * 
  */
-class Scope : public ScopeBase, public RefCounted { /* A cat just died because of this. */
+class Scope : public RefCounted { /* A cat just died because of this. */
+	typedef std::tr1::unordered_map<const CString*, Symbol*> SymbolMap;
+	typedef std::pair<const CString*, Symbol*> ScopeEntry;
+
 public:
 
-	Scope(int depth, Scope* parent = NULL) : ScopeBase(), RefCounted(), m_parent(parent), m_depth(depth) {
+	Scope(int depth, Scope* parent = NULL) : RefCounted(), m_syms(), m_parent(parent), m_depth(depth) {
 		if (depth > 0) {
 			clever_assert(parent != NULL, "No parent provided to non-root scope.");
 		}
@@ -132,7 +131,7 @@ public:
 		clever_assert(name != NULL,  "No name provided.");
 		clever_assert(value != NULL, "No value provided.");
 
-		insert(ScopeEntry(name, new Symbol(name, value)));
+		m_syms.insert(ScopeEntry(name, new Symbol(name, value)));
 	}
 
 	/**
@@ -142,7 +141,7 @@ public:
 		clever_assert(name != NULL, "No name provided.");
 		clever_assert(type != NULL, "No type provided.");
 
-		insert(ScopeEntry(name, new Symbol(name, type)));
+		m_syms.insert(ScopeEntry(name, new Symbol(name, type)));
 	}
 
 	/**
@@ -152,9 +151,9 @@ public:
 	 * if the symbol is really needed.
 	 */
 	Symbol* resolve(const CString* name, bool recurse = true) throw() {
-		Scope::iterator it = find(name);
+		SymbolMap::iterator it = m_syms.find(name);
 
-		if (it != end()) {
+		if (it != m_syms.end()) {
 			return it->second;
 		}
 
@@ -196,11 +195,13 @@ public:
 	}
 
 private:
+	SymbolMap m_syms;
 	Scope* m_parent;
 	int    m_depth;
 };
 
 class SymbolTable {
+	typedef std::deque<Scope*> ScopeDeque;
 public:
 	SymbolTable()
 		: m_level(-1) {}
