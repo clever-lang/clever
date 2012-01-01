@@ -1,0 +1,15 @@
+Testing while expression with boolean value
+==CODE==
+import std.io;
+
+while (true) {
+	println("ok");
+	break;
+}
+
+while (false) {
+	println("fail");
+	break;
+}
+==RESULT==
+ok

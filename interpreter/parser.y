@@ -100,6 +100,8 @@ namespace clever {
 %token PUBLIC	     "public"
 %token PRIVATE       "private"
 %token PROTECTED     "protected"
+%token TRUE          "true"
+%token FALSE         "false"
 
 %left ',';
 %left LOGICAL_OR;
@@ -248,7 +250,7 @@ func_declaration:
 		TYPE IDENT '(' args_declaration ')' block_stmt { $$ = new ast::FuncDeclaration($2, $1, $4, $6); }
 ;
 
-class_declaration:	
+class_declaration:
 		CLASS TYPE '{' class_stmt '}' { $$ = new ast::ClassDeclaration($2, $4); }
 ;
 
@@ -286,7 +288,7 @@ func_call:
 	|	IDENT '(' arg_list ')' { $$ = new ast::FunctionCall($1, $3); $$->setLocation(yylloc); }
 ;
 
-chaining_method_call: 
+chaining_method_call:
 		/* empty */                                     { $$ = $<method_call>0; }
 	|	chaining_method_call '.' IDENT '(' ')'          { $$ = new ast::MethodCall($1, $3); $$->setLocation(yylloc); }
 	|	chaining_method_call '.' IDENT '(' arg_list ')' { $$ = new ast::MethodCall($1, $3, $5); $$->setLocation(yylloc); }
@@ -294,9 +296,9 @@ chaining_method_call:
 
 method_call:
 		IDENT '.' IDENT '(' ')'          { $<method_call>$ = new ast::MethodCall($1, $3); $<method_call>$->setLocation(yylloc); }
-			chaining_method_call         { $$ = $7; } 
+			chaining_method_call         { $$ = $7; }
 	|	IDENT '.' IDENT '(' arg_list ')' { $<method_call>$ = new ast::MethodCall($1, $3, $5); $<method_call>$->setLocation(yylloc); }
-			chaining_method_call         { $$ = $8; } 
+			chaining_method_call         { $$ = $8; }
 ;
 
 variable_declaration_no_init:
@@ -361,6 +363,8 @@ expr:
 	|	NUM_DOUBLE  { $$ = $<ast_node>1; }
 	|	IDENT       { $$ = $<ast_node>1; }
 	|	STR         { $$ = $<ast_node>1; }
+	|	TRUE        { $$ = $<ast_node>1; }
+	|	FALSE       { $$ = $<ast_node>1; }
 ;
 
 variable_decl_or_empty:

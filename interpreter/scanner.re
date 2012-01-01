@@ -164,11 +164,11 @@ next_token:
 	<INITIAL>"import" {
 		RET(token::IMPORT);
 	}
-	
+
 	<INITIAL>"class" {
 		RET(token::CLASS);
 	}
-	
+
 	<INITIAL>"public" {
 		RET(token::PUBLIC);
 	}
@@ -181,6 +181,23 @@ next_token:
 		RET(token::PROTECTED);
 	}
 
+	<INITIAL>"true" {
+		Value* newval = new Value(CLEVER_BOOL);
+		newval->setBoolean(true);
+
+		yylval->num_literal = new ast::NumberLiteral(newval);
+
+		RET(token::TRUE);
+	}
+
+	<INITIAL>"false" {
+		Value* newval = new Value(CLEVER_BOOL);
+		newval->setBoolean(false);
+
+		yylval->num_literal = new ast::NumberLiteral(newval);
+
+		RET(token::FALSE);
+	}
 
 	<INITIAL>IDENTIFIER {
 		yylval->identifier = new ast::Identifier(CSTRING(std::string(s.yylex, yylen)));
