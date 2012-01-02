@@ -61,6 +61,9 @@ CLEVER_TYPE_METHOD(TcpSocket::constructor) {
 		}
 	}
 
+	/* Assignment on type creation will increase the ref */
+	sv->setReference(0);
+
 	retval->setDataValue(sv);
 }
 
