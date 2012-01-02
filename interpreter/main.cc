@@ -58,12 +58,16 @@ static void show_usage(void) {
 #ifdef CLEVER_DEBUG
 	std::cout << "Debug options:" << std::endl;
 	std::cout << "\t-p\tTrace parsing" << std::endl;
+	std::cout << "\t-d\tDump opcode" << std::endl;
 	std::cout << std::endl;
 #endif
 }
 
 int main(int argc, char *argv[]) {
 	clever::Interpreter clever;
+#ifdef CLEVER_DEBUG
+	bool dump_opcode = false;
+#endif
 
 	if (argc == 1) {
 		std::cout << "Clever Programming Language" << std::endl;
@@ -126,6 +130,8 @@ int main(int argc, char *argv[]) {
 #ifdef CLEVER_DEBUG
 		} else if (argv[i] == std::string("-p")) {
 			clever.setTraceParsing(true);
+		} else if (argv[i] == std::string("-d")) {
+			dump_opcode= true;
 #endif
 		} else {
 			std::cerr << "Unknown option '" << argv[i] << "'" << std::endl;
@@ -133,7 +139,11 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
+#ifdef CLEVER_DEBUG
+	clever.execute(false, dump_opcode);
+#else
 	clever.execute(false);
+#endif
 	clever.shutdown();
 
 	return 0;

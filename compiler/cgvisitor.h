@@ -41,7 +41,7 @@ public:
 	typedef std::stack<OpcodeStack> JmpStack;
 
 	CodeGenVisitor()
-		: m_interactive(false) {
+		: m_interactive(false), m_opcode_dump(false) {
 		//g_symtable.beginScope();
 	}
 	~CodeGenVisitor() {
@@ -63,7 +63,14 @@ public:
 	 * Returns the interactive mode state
 	 */
 	bool isInteractive() throw() { return m_interactive; }
-
+	/**
+	 * Set the opcode dumper
+	 */
+	void setOpcodeDump() throw() { m_opcode_dump = true; }
+	/**
+	 * Returns the opcode dump state
+	 */
+	bool isOpcodeDump() throw() { return m_opcode_dump; }
 	/**
 	 * Returns the opcode list
 	 */
@@ -72,7 +79,7 @@ public:
 	AST_VISITOR_DECLARATION(AST_VISITOR_DECL);
 
 private:
-	bool m_interactive;
+	bool m_interactive, m_opcode_dump;
 	OpcodeList m_opcodes;
 	JmpStack m_brks;
 

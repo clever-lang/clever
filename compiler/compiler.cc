@@ -106,7 +106,22 @@ void Compiler::buildIR() throw() {
 
 	m_cgvisitor.shutdown();
 
+	if (m_cgvisitor.isOpcodeDump()) {
+		dumpOpcodes();
+	}
+
 	m_ast->clear();
+}
+
+void Compiler::dumpOpcodes() throw() {
+	const OpcodeList& opcodes = m_cgvisitor.getOpcodes();
+	int i = 0, size = opcodes.size();
+
+	while (i < size) {
+		const Opcode* opcode = opcodes[i];
+		opcode->dump();
+		++i;
+	}
 }
 
 /**

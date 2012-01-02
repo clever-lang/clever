@@ -60,6 +60,10 @@ public:
 	 */
 	void setInteractive() throw() { m_cgvisitor.setInteractive(); }
 	/**
+	 * Set opcode dumper mode ON
+	 */
+	void setOpcodeDump() throw() { m_cgvisitor.setOpcodeDump(); }
+	/**
 	 * Loads primitive data types
 	 */
 	void loadTypes() throw();
@@ -71,6 +75,10 @@ public:
 	 * Returns the collected opcodes
 	 */
 	OpcodeList& getOpcodes() throw() { return m_cgvisitor.getOpcodes(); }
+	/**
+	 * Dumps the opcodes
+	 */
+	void dumpOpcodes() throw();
 	/**
 	 * Displays an error message and exits
 	 */

@@ -50,6 +50,15 @@ void Interpreter::execute(bool interactive) {
 	vm.run();
 }
 
+#ifdef CLEVER_DEBUG
+void Interpreter::execute(bool interactive, bool dump_opcode) {
+	if (dump_opcode) {
+		m_compiler.setOpcodeDump();
+	}
+	execute(interactive);
+}
+#endif
+
 void Interpreter::shutdown() {
 
 }
@@ -60,7 +69,7 @@ void Interpreter::shutdown() {
 void Driver::readFile() throw() {
 	std::string line;
 	std::fstream filep(m_file->c_str());
-	
+
 	if (!filep) {
 		std::cerr << "Couldn't open file " << m_file->str() << std::endl;
 		exit(1);
