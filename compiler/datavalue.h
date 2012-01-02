@@ -29,7 +29,7 @@
 #include "compiler/refcounted.h"
 
 namespace clever {
-	
+
 /**
  * Base class for all typevalues
  */

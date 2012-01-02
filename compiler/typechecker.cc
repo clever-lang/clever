@@ -626,11 +626,9 @@ AST_VISITOR(TypeChecker, TypeCreation) {
 	Value* arg_values = NULL;
 
 	if (args) {
-		expr->getArgs()->accept(*this);
 		arg_values = new Value;
 		arg_values->setType(Value::VECTOR);
 		arg_values->setVector(args->getArgValue());
-		arg_values->addRef();
 		expr->setArgsValue(arg_values);
 
 		ValueVector* vv = args->getArgValue();

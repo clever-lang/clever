@@ -69,6 +69,9 @@ CLEVER_TYPE_METHOD(FileStream::constructor) {
 		}
 	}
 
+	/* Assignment on type creation will increase the ref */
+	fsv->setReference(0);
+
 	retval->setDataValue(fsv);
 }
 

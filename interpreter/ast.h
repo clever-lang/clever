@@ -266,19 +266,19 @@ public:
 	}
 
 	bool hasValue() const { return true; }
-	
+
 	Value* getValue() const throw() { return m_value; }
-	
+
 	void setValue(Value* value) throw() { m_value = value; }
-	
+
 	const CString* getName() const { return m_name; }
-	
+
 	void accept(ASTVisitor& visitor) throw() {
 		visitor.visit(this);
 	}
 private:
 	const CString* m_name;
-	Value* m_value;	
+	Value* m_value;
 
 	DISALLOW_COPY_AND_ASSIGN(Identifier);
 };
@@ -298,7 +298,7 @@ public:
 		}
 		m_result->delRef();
 	}
-	
+
 	void setValue(Value* value) throw() {
 		m_result = value;
 	}
@@ -310,9 +310,9 @@ public:
 	Identifier* getExpr() const {
 		return m_expr;
 	}
-	
+
 	void setVar(Value* value) throw() { m_var = value; }
-	
+
 	Value* getVar() throw() { return m_var; }
 
 	virtual void accept(ASTVisitor& visitor) throw() { }
@@ -343,7 +343,7 @@ public:
 		m_type->delRef();
 		m_variable->delRef();
 		if (m_rhs) {
-			m_rhs->delRef();			
+			m_rhs->delRef();
 		}
 		if (m_initval) {
 			m_initval->delRef();
@@ -357,11 +357,11 @@ public:
 	Value* getInitialValue() const {
 		return m_initval;
 	}
-	
+
 	ASTNode* getRhs() throw() {
 		return m_rhs;
 	}
-	
+
 	void setInitialValue(Value* value) throw() {
 		m_initval = value;
 	}
@@ -387,11 +387,11 @@ private:
 
 class AttributeDeclaration : public VariableDecl {
 public:
-	AttributeDeclaration(ASTNode* modifier, Identifier* type, Identifier* variable) 
+	AttributeDeclaration(ASTNode* modifier, Identifier* type, Identifier* variable)
 		: VariableDecl(type, variable), m_modifier(modifier) {
 		m_modifier->addRef();
 	}
-	
+
 	~AttributeDeclaration() {
 		m_modifier->delRef();
 	}
@@ -460,7 +460,7 @@ public:
 
 	void accept(ASTVisitor& visitor) throw() {
 		getExpr()->accept(visitor);
-		
+
 		visitor.visit(this);
 	}
 private:
@@ -638,53 +638,53 @@ public:
 		: m_var_decl(var_decl), m_ident(ident), m_condition(NULL), m_increment(NULL), m_block(block) {
 		m_var_decl->addRef();
 		m_ident->addRef();
-		
+
 		if (m_block) {
 			m_block->addRef();
 		}
 	}
-	
-	ForExpr(ASTNode* var_decl, ASTNode* condition, ASTNode* increment, ASTNode* block) 
+
+	ForExpr(ASTNode* var_decl, ASTNode* condition, ASTNode* increment, ASTNode* block)
 		: m_var_decl(var_decl), m_ident(NULL), m_condition(condition), m_increment(increment), m_block(block) {
 		if (m_var_decl) {
 			m_var_decl->addRef();
 		}
-		
+
 		if (m_condition) {
 			m_condition->addRef();
 		}
-		
+
 		if (m_increment) {
 			m_increment->addRef();
 		}
-		
+
 		if (m_block) {
 			m_block->addRef();
 		}
 	}
-	
+
 	~ForExpr() {
 		if (m_var_decl) {
 			m_var_decl->delRef();
 		}
-		
+
 		if (m_ident) {
 			m_ident->delRef();
 		}
-		
+
 		if (m_condition) {
 			m_condition->delRef();
 		}
-		
+
 		if (m_increment) {
 			m_increment->delRef();
 		}
-		
+
 		if (m_block) {
 			m_block->delRef();
 		}
 	}
-	
+
 	bool hasBlock() const { return m_block != NULL; }
 	bool isIteratorMode() const { return m_ident != NULL; }
 	ASTNode* getVarDecl() throw() { return m_var_decl; }
@@ -692,11 +692,11 @@ public:
 	ASTNode* getCondition() throw() { return m_condition; }
 	ASTNode* getIncrement() throw() { return m_increment; }
 	ASTNode* getBlock() throw() { return m_block; }
-	
+
 	void accept(ASTVisitor& visitor) throw() {
 		visitor.visit(this);
 	}
-	
+
 private:
 	ASTNode* m_var_decl;
 	ASTNode* m_ident;
@@ -740,18 +740,19 @@ private:
 
 class ArgumentList : public ASTNode {
 public:
-	ArgumentList() { }
+	ArgumentList()
+		: m_value(NULL) { }
 
 	~ArgumentList() {
 		clearNodes();
 	}
-	
+
 	void accept(ASTVisitor& visitor) throw() {
 		visitor.visit(this);
 	}
-	
+
 	ValueVector* getArgValue() { return m_value; }
-	
+
 	void setArgValue(ValueVector* value) { m_value = value; }
 private:
 	ValueVector* m_value;
@@ -788,13 +789,13 @@ private:
 class TypeCreation : public ASTNode {
 public:
 	explicit TypeCreation(Identifier* type)
-		: m_type(type), m_arguments(NULL) {
+		: m_type(type), m_arguments(NULL), m_call_value(NULL), m_args_value(NULL) {
 		m_type->addRef();
 		m_value = new Value();
 	}
-	
+
 	TypeCreation(Identifier* type, ArgumentList* arguments)
-		: m_type(type), m_arguments(arguments) {
+		: m_type(type), m_arguments(arguments), m_call_value(NULL), m_args_value(NULL) {
 		m_type->addRef();
 		m_arguments->addRef();
 		m_value = new Value();
@@ -805,40 +806,43 @@ public:
 		if (m_arguments) {
 			m_arguments->delRef();
 		}
+		if (m_call_value) {
+			m_call_value->delRef();
+		}
 		m_value->delRef();
 	}
-	
+
 	Identifier* getIdentifier() throw() {
 		return m_type;
 	}
-	
+
 	ArgumentList* getArgs() throw() {
 		return m_arguments;
 	}
-	
+
 	void accept(ASTVisitor& visitor) throw() {
 		if (m_arguments) {
 			m_arguments->accept(visitor);
 		}
 		visitor.visit(this);
 	}
-	
+
 	void setFuncValue(CallableValue* callable) {
 		m_call_value = callable;
 	}
-	
+
 	CallableValue* getFuncValue() throw() {
 		return m_call_value;
 	}
-	
+
 	void setArgsValue(Value* args_value) {
 		m_args_value = args_value;
 	}
-	
+
 	Value* getArgsValue() {
 		return m_args_value;
 	}
-	
+
 	Value* getValue() const throw() {
 		return m_value;
 	}
@@ -893,9 +897,9 @@ public:
 
 	BlockNode* getBlock() const throw() { return m_block; }
 	bool hasBlock() const throw() { return m_block != NULL; }
-	
+
 	void setValue(CallableValue* value) throw() { m_value = value; }
-	
+
 	CallableValue* getFunc(void) throw() { return m_value; }
 
 	void accept(ASTVisitor& visitor) throw() {
@@ -952,13 +956,13 @@ public:
 			m_value->delRef();
 		}
 	}
-	
+
 	void setFuncValue(CallableValue* value) throw() {
 		m_value = value;
 	}
 
 	Value* getValue() const throw() { return m_result; }
-	
+
 	CallableValue* getFuncValue() throw() {
 		return m_value;
 	}
@@ -970,11 +974,11 @@ public:
 	void accept(ASTVisitor& visitor) throw() {
 		visitor.visit(this);
 	}
-	
+
 	void setArgsValue(Value* value) throw() {
 		m_args_value = value;
 	}
-	
+
 	Value* getArgsValue() throw() {
 		return m_args_value;
 	}
@@ -1024,11 +1028,11 @@ public:
 	ArgumentList* getArgs() const throw() { return m_args; }
 
 	Value* getValue() const throw() { return m_result; }
-	
+
 	void setFuncValue(CallableValue* value) throw() {
 		m_value = value;
 	}
-	
+
 	CallableValue* getFuncValue() throw() {
 		return m_value;
 	}
@@ -1041,7 +1045,7 @@ public:
 	void setArgsValue(Value* value) throw() {
 		m_args_value = value;
 	}
-	
+
 	Value* getArgsValue() throw() {
 		return m_args_value;
 	}
@@ -1131,7 +1135,7 @@ public:
 	}
 
 	ASTNode* getExpr() const throw() { return m_expr; }
-	
+
 	Value* getExprValue() const throw() {
 		return m_expr ? m_expr->getValue() : NULL;
 	}
@@ -1156,7 +1160,7 @@ public:
 	}
 
 	Value* getValue() const throw() { return m_value; }
-	
+
 	int getInt() throw() { return m_int_value; }
 private:
 	Value* m_value;
@@ -1189,17 +1193,17 @@ public:
 		m_methods_decl.push_back(method);
 		method->addRef();
 	}
-	
+
 	void addAttribute(AttributeDeclaration* attribute) throw() {
 		m_attrib_decl.push_back(attribute);
 		attribute->addRef();
 	}
 
-	std::list<MethodDeclaration*>& getMethodsDecl() throw() { 
+	std::list<MethodDeclaration*>& getMethodsDecl() throw() {
 		return m_methods_decl;
 	}
 
-	std::list<AttributeDeclaration*>& getAttribsDecl() throw() { 
+	std::list<AttributeDeclaration*>& getAttribsDecl() throw() {
 		return m_attrib_decl;
 	}
 private:
@@ -1214,22 +1218,22 @@ public:
 	ClassDeclaration(Identifier* name, ClassStmtList* body)
 		: m_name(name), m_body(body) {
 		m_name->addRef();
-		m_body->addRef();	
+		m_body->addRef();
 	}
-		
+
 	~ClassDeclaration() {
 		m_name->delRef();
 		m_body->delRef();
 	}
-	
+
 	void accept(ASTVisitor& visitor) throw() {
 		visitor.visit(this);
 	}
-	
+
 	const CString* getClassName() const {
 		return m_name->getName();
 	}
-	
+
 private:
 	Identifier*    m_name;
 	ClassStmtList* m_body;

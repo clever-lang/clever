@@ -25,6 +25,7 @@
 
 #ifndef CLEVER_STD_REFLECTION_PACKAGE_VALUE_H
 #define CLEVER_STD_REFLECTION_PACKAGE_VALUE_H
+
 #include "compiler/datavalue.h"
 #include "compiler/pkgmanager.h"
 
@@ -32,9 +33,9 @@ namespace clever { namespace packages { namespace std { namespace reflection {
 
 class ReflectionPackageValue : public DataValue {
 public:
-	ReflectionPackageValue() {}
+	ReflectionPackageValue() { }
 
-	virtual ~ReflectionPackageValue() {}
+	virtual ~ReflectionPackageValue() { }
 
 	PackageMap::const_iterator& getPackage() { return m_package; }
 	void setPackage(const PackageMap::const_iterator& pkg) { m_package = pkg; }

@@ -41,16 +41,23 @@ namespace math {
  * Returns the absolute value of a number x
  */
 static CLEVER_FUNCTION(abs_double) {
-	retval->setDouble(::std::abs(args->at(0)->getDouble()));
+	/* FIXME: Remove this if when we got overload support for functions */
+	if (args->at(0)->getTypePtr() == CLEVER_INT) {
+		retval->setInteger(::std::labs(args->at(0)->getInteger()));
+	} else {
+		retval->setDouble(::std::abs(args->at(0)->getDouble()));
+	}
 }
 
 /**
  * abs(int x)
  * Returns the absolute value of a number x
  */
+ /*
 static CLEVER_FUNCTION(abs_int) {
 	retval->setInteger(::std::labs(args->at(0)->getInteger()));
 }
+*/
 
 /**
  * acos(double x)
@@ -107,7 +114,7 @@ static CLEVER_FUNCTION(floor) {
 static CLEVER_FUNCTION(logb) {
 	double logval = ::std::log10(args->at(0)->getDouble());
 	double logbase = ::std::log10(args->at(1)->getDouble());
-	
+
 	retval->setDouble(logval/logbase);
 }
 
@@ -115,9 +122,10 @@ static CLEVER_FUNCTION(logb) {
  * loge(double x)
  * Returns the natural logarithm of the value
  */
+/*
 static CLEVER_FUNCTION(loge) {
 	retval->setDouble(::std::log(args->at(0)->getDouble()));
-}
+}*/
 
 /**
  * log10(double x)
@@ -143,13 +151,14 @@ static CLEVER_FUNCTION(max_double) {
  * max(int x, int y)
  * Returns which value is greater, x or y
  */
+ /*
 static CLEVER_FUNCTION(max_int) {
 	if (args->at(0)->getInteger() > args->at(1)->getInteger()) {
 		retval->setInteger(args->at(0)->getInteger());
 	} else {
 		retval->setInteger(args->at(1)->getInteger());
 	}
-}
+}*/
 
 /**
  * min(double x, double y)
@@ -167,13 +176,14 @@ static CLEVER_FUNCTION(min_double) {
  * min(int x, int y)
  * Returns which value is smaller, x or y
  */
+ /*
 static CLEVER_FUNCTION(min_int) {
 	if (args->at(0)->getInteger() < args->at(1)->getInteger()) {
 		retval->setInteger(args->at(0)->getInteger());
 	} else {
 		retval->setInteger(args->at(1)->getInteger());
 	}
-}
+}*/
 
 /**
  * pow(double x, double y)
@@ -187,9 +197,10 @@ static CLEVER_FUNCTION(pow_double) {
  * pow(int x, int y)
  * Returns x raised to the power y
  */
+ /*
 static CLEVER_FUNCTION(pow_int) {
 	retval->setInteger(::std::pow(args->at(0)->getInteger(), args->at(1)->getInteger()));
-}
+}*/
 
 /**
  * round(double x)
@@ -197,7 +208,7 @@ static CLEVER_FUNCTION(pow_int) {
  */
 static CLEVER_FUNCTION(round) {
 	double value = args->at(0)->getDouble();
-	
+
 	retval->setDouble(::round(value));
 }
 
@@ -219,6 +230,7 @@ static CLEVER_FUNCTION(sign_double) {
  * sign(int x)
  * Returns a value indicating the sign of x
  */
+ /*
 static CLEVER_FUNCTION(sign_int) {
 	if (args->at(0)->getInteger() == 0) {
 		retval->setInteger(0);
@@ -227,7 +239,7 @@ static CLEVER_FUNCTION(sign_int) {
 	} else {
 		retval->setInteger(1);
 	}
-}
+}*/
 
 /**
  * sin(double x)
@@ -243,7 +255,7 @@ static CLEVER_FUNCTION(sin) {
  */
 static CLEVER_FUNCTION(sqrt) {
 	double value;
-	
+
 	if (args->at(0)->isDouble()) {
 		value = args->at(0)->getDouble();
 	}
@@ -284,9 +296,9 @@ void Math::init() throw() {
 	addFunction(new Function("abs",	&CLEVER_NS_FNAME(math, abs_double), CLEVER_DOUBLE))
 		->addArg("x", CLEVER_DOUBLE);
 
-	addFunction(new Function("abs",	&CLEVER_NS_FNAME(math, abs_int), CLEVER_INT))
+/*	addFunction(new Function("abs",	&CLEVER_NS_FNAME(math, abs_int), CLEVER_INT))
 		->addArg("x", CLEVER_INT);
-
+*/
 	addFunction(new Function("acos", &CLEVER_NS_FNAME(math, acos), CLEVER_DOUBLE))
 		->addArg("x", CLEVER_DOUBLE);
 
@@ -309,35 +321,35 @@ void Math::init() throw() {
 		->addArg("x", CLEVER_DOUBLE)
 		->addArg("base", CLEVER_DOUBLE);
 
-	addFunction(new Function("log",  &CLEVER_NS_FNAME(math, loge), CLEVER_DOUBLE))
+/*	addFunction(new Function("log",  &CLEVER_NS_FNAME(math, loge), CLEVER_DOUBLE))
 		->addArg("value", CLEVER_DOUBLE);
-
+*/
 	addFunction(new Function("log10",  &CLEVER_NS_FNAME(math, log10), CLEVER_DOUBLE))
 		->addArg("x", CLEVER_DOUBLE);
 
 	addFunction(new Function("max", &CLEVER_NS_FNAME(math, max_double), CLEVER_DOUBLE))
 		->addArg("x", CLEVER_DOUBLE)
 		->addArg("y", CLEVER_DOUBLE);
-
+/*
 	addFunction(new Function("max", &CLEVER_NS_FNAME(math, max_int), CLEVER_INT))
 		->addArg("x", CLEVER_INT)
-		->addArg("y", CLEVER_INT);
+		->addArg("y", CLEVER_INT);*/
 
 	addFunction(new Function("min", &CLEVER_NS_FNAME(math, min_double), CLEVER_DOUBLE))
 		->addArg("x", CLEVER_DOUBLE)
 		->addArg("y", CLEVER_DOUBLE);
-
+/*
 	addFunction(new Function("min", &CLEVER_NS_FNAME(math, min_int), CLEVER_INT))
 		->addArg("x", CLEVER_INT)
-		->addArg("y", CLEVER_INT);
+		->addArg("y", CLEVER_INT);*/
 
 	addFunction(new Function("pow",  &CLEVER_NS_FNAME(math, pow_double), CLEVER_DOUBLE))
 		->addArg("x", CLEVER_DOUBLE)
-		->addArg("y", CLEVER_DOUBLE);
+		->addArg("y", CLEVER_DOUBLE);/*
 
 	addFunction(new Function("pow",  &CLEVER_NS_FNAME(math, pow_int), CLEVER_INT))
 		->addArg("x", CLEVER_INT)
-		->addArg("exp", CLEVER_INT);
+		->addArg("exp", CLEVER_INT);*/
 
 	addFunction(new Function("round",  &CLEVER_NS_FNAME(math, round), CLEVER_DOUBLE))
 		->addArg("x", CLEVER_DOUBLE);
@@ -347,9 +359,9 @@ void Math::init() throw() {
 
 	addFunction(new Function("sign", &CLEVER_NS_FNAME(math, sign_double), CLEVER_DOUBLE))
 		->addArg("x", CLEVER_DOUBLE);
-
+/*
 	addFunction(new Function("sign", &CLEVER_NS_FNAME(math, sign_int), CLEVER_INT))
-		->addArg("x", CLEVER_INT);
+		->addArg("x", CLEVER_INT);*/
 
 	addFunction(new Function("sqrt", &CLEVER_NS_FNAME(math, sqrt), CLEVER_DOUBLE))
 		->addArg("x", CLEVER_DOUBLE);

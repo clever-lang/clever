@@ -101,6 +101,7 @@ public:
 				delete m_data.dv_value;
 			} else {
 				m_data.dv_value->delRef();
+
 			}
 		} else if (isVector()) {
 			ValueVector::const_iterator it = m_data.v_value->begin(), end = m_data.v_value->end();
