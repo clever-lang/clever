@@ -41,7 +41,7 @@ CLEVER_TYPE_METHOD(Bool::constructor) {
 		retval->setBoolean(args->at(0)->getBoolean());
 	}
 	else {
-		retval->setBoolean(0);
+		retval->setBoolean(false);
 	}
 }
 
@@ -55,6 +55,11 @@ CLEVER_TYPE_METHOD(Bool::toString) {
 
 void Bool::init() {
 	addMethod(new Method("toString", (MethodPtr)&Bool::toString, CLEVER_STR));
+	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Bool::constructor, CLEVER_BOOL));
+	addMethod(
+		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Bool::constructor, CLEVER_BOOL))
+			->addArg("value", CLEVER_BOOL)
+	);
 }
 
 DataValue* Bool::allocateValue() const {
