@@ -35,6 +35,7 @@ namespace clever { namespace ast {
 std::string TypeChecker::serializeArgType(TypeVector& args_types, const char* sep)
 	throw() {
 	std::string args_type_name;
+	const std::string separator = std::string(sep);
 
 	if (args_types.size() == 0) {
 		return std::string("void");
@@ -43,7 +44,7 @@ std::string TypeChecker::serializeArgType(TypeVector& args_types, const char* se
 	args_type_name = args_types[0]->getName();
 
 	for (size_t i = 1; i < args_types.size(); ++i) {
-		args_type_name += std::string(sep) + args_types[i]->getName();
+		args_type_name += separator + args_types[i]->getName();
 	}
 
 	return args_type_name;

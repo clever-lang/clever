@@ -118,8 +118,7 @@ void Compiler::dumpOpcodes() throw() {
 	int i = 0, size = opcodes.size();
 
 	while (i < size) {
-		const Opcode* opcode = opcodes[i];
-		opcode->dump();
+		opcodes[i]->dump();
 		++i;
 	}
 }
