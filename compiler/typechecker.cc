@@ -221,7 +221,7 @@ AST_VISITOR(TypeChecker, LogicExpr) {
 			lhs->getTypePtr()->getName());
 	}
 
-	expr->setResult(new Value(lhs->getTypePtr()));
+	expr->setResult(new Value(CLEVER_BOOL));
 }
 
 AST_VISITOR(TypeChecker, VariableDecl) {
