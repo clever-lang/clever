@@ -23,39 +23,26 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <iostream>
-#include "compiler/value.h"
-#include "compiler/symboltable.h"
-#include "modules/std/reflection/reflection.h"
-#include "modules/std/reflection/reflectionpackage.h"
-#include "types/nativetypes.h"
+#ifndef CLEVER_STD_REFLECTION_PACKAGE_VALUE_H
+#define CLEVER_STD_REFLECTION_PACKAGE_VALUE_H
+#include "compiler/datavalue.h"
+#include "compiler/pkgmanager.h"
 
-namespace clever { namespace packages { namespace std {
+namespace clever { namespace packages { namespace std { namespace reflection {
 
-namespace reflection {
-/**
- * get_type(object variable)
- * Returns the variable type name
- */
-static CLEVER_FUNCTION(get_type) {
-	retval->setString(CSTRING(args->at(0)->getTypePtr()->getName()));
-}
+class ReflectionPackageValue : public DataValue {
+public:
+	ReflectionPackageValue() {}
 
-} //  reflection
+	virtual ~ReflectionPackageValue() {}
 
-/**
- * Initializes Reflection module
- */
-void Reflection::init() throw() {
-	using namespace reflection;
-	ReflectionPackage *refpackage = new ReflectionPackage;
+	PackageMap::const_iterator& getPackage() { return m_package; }
+	void setPackage(const PackageMap::const_iterator& pkg) { m_package = pkg; }
 
-	refpackage->init();
-	addClass(refpackage);
+private:
+	PackageMap::const_iterator m_package;
+};
 
-	addFunction(new Function("get_type", &CLEVER_FUNC_NAME(get_type), CLEVER_STR))
-		->setVariadic()
-		->setMinNumArgs(1);
-}
+}}}} // clever::packages::std::reflection
 
-}}} // clever::packages::std
+#endif // CLEVER_STD_REFLECTION_PACKAGE_H

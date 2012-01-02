@@ -13,12 +13,12 @@ MODULEDIR=modules/
 
 #
 # Programs
-# 
+#
 SHELL=/bin/sh
 SED=sed
 
 #
-# Environment 
+# Environment
 #
 UNAME=$(shell uname)
 
@@ -61,7 +61,7 @@ OBJECTS=$(BUILDDIR)parser.o $(BUILDDIR)scanner.o $(BUILDDIR)driver.o \
 	$(BUILDDIR)int.o $(BUILDDIR)pkgmanager.o $(BUILDDIR)compiler.o \
 	$(BUILDDIR)vm.o $(BUILDDIR)cgvisitor.o $(BUILDDIR)opcode.o \
 	$(BUILDDIR)str.o $(BUILDDIR)main.o $(BUILDDIR)clever.o $(BUILDDIR)typechecker.o \
-	$(BUILDDIR)symboltable.o $(BUILDDIR)bool.o 
+	$(BUILDDIR)symboltable.o $(BUILDDIR)bool.o
 
 # Windows related stuff
 ifdef IS_WIN32

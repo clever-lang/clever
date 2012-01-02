@@ -23,39 +23,43 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <iostream>
+#ifndef CLEVER_STD_REFLECTION_PACKAGE_H
+#define CLEVER_STD_REFLECTION_PACKAGE_H
+
+#include "types/type.h"
 #include "compiler/value.h"
-#include "compiler/symboltable.h"
-#include "modules/std/reflection/reflection.h"
-#include "modules/std/reflection/reflectionpackage.h"
-#include "types/nativetypes.h"
 
-namespace clever { namespace packages { namespace std {
+namespace clever { namespace packages { namespace std { namespace reflection {
 
-namespace reflection {
-/**
- * get_type(object variable)
- * Returns the variable type name
- */
-static CLEVER_FUNCTION(get_type) {
-	retval->setString(CSTRING(args->at(0)->getTypePtr()->getName()));
-}
+class ReflectionPackage : public Type {
+public:
+	ReflectionPackage() :
+		Type("ReflectionPackage") { }
 
-} //  reflection
+	void init();
+	DataValue* allocateValue() const;
+	void destructor(Value* value) const;
 
-/**
- * Initializes Reflection module
- */
-void Reflection::init() throw() {
-	using namespace reflection;
-	ReflectionPackage *refpackage = new ReflectionPackage;
+	/**
+	 * Type methods
+	 */
+	 static CLEVER_TYPE_METHOD(constructor);
+	 static CLEVER_TYPE_METHOD(getName);
 
-	refpackage->init();
-	addClass(refpackage);
+	/**
+	 * Type handlers
+	 */
+	CLEVER_TYPE_INC_HANDLER_D { return NULL; }
+	CLEVER_TYPE_DEC_HANDLER_D { return NULL; }
+	CLEVER_TYPE_ASSIGN_HANDLER_D {
+		newvalue->getDataValue()->addRef();
+		value->copy(newvalue);
+	}
 
-	addFunction(new Function("get_type", &CLEVER_FUNC_NAME(get_type), CLEVER_STR))
-		->setVariadic()
-		->setMinNumArgs(1);
-}
+private:
+	DISALLOW_COPY_AND_ASSIGN(ReflectionPackage);
+};
 
-}}} // clever::packages::std
+}}}} // clever::packages::std::reflection
+
+#endif // CLEVER_STD_REFLECTION_PACKAGE_H

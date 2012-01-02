@@ -34,14 +34,14 @@ namespace clever {
 
 class CString;
 
+typedef std::tr1::unordered_map<const CString*, Package*> PackageMap;
+typedef std::pair<const CString*, Package*> PackagePair;
+
 /**
  * Package manager representation
  */
 class PackageManager {
 public:
-	typedef std::tr1::unordered_map<const CString*, Package*> PackageMap;
-	typedef std::pair<const CString*, Package*> PackagePair;
-
 	PackageManager() { }
 
 	~PackageManager() { }
@@ -69,6 +69,8 @@ public:
 	 */
 	void loadModule(Scope*, const CString* const, const CString* const) throw();
 	void loadModule(Scope*, Module* const) throw();
+
+	const PackageMap& getPackages() const { return m_packages; }
 private:
 	PackageMap m_packages;
 
