@@ -222,14 +222,14 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 	 * Operator method names
 	 */
 	switch (expr->getOp()) {
-		case PLUS:  method_name = CSTRING(CLEVER_OPERATOR_PLUS);	break;
-		case DIV:   method_name = CSTRING(CLEVER_OPERATOR_DIV);     break;
-		case MULT:  method_name = CSTRING(CLEVER_OPERATOR_MULT);    break;
-		case MINUS: method_name = CSTRING(CLEVER_OPERATOR_MINUS);   break;
-		case MOD:   method_name = CSTRING(CLEVER_OPERATOR_MOD);     break;
-		case XOR:   method_name = CSTRING(CLEVER_OPERATOR_BW_XOR);  break;
-		case OR:    method_name = CSTRING(CLEVER_OPERATOR_BW_OR);   break;
-		case AND:   method_name = CSTRING(CLEVER_OPERATOR_BW_AND);  break;
+		case PLUS:   method_name = CSTRING(CLEVER_OPERATOR_PLUS);	 break;
+		case DIV:    method_name = CSTRING(CLEVER_OPERATOR_DIV);     break;
+		case MULT:   method_name = CSTRING(CLEVER_OPERATOR_MULT);    break;
+		case MINUS:  method_name = CSTRING(CLEVER_OPERATOR_MINUS);   break;
+		case MOD:    method_name = CSTRING(CLEVER_OPERATOR_MOD);     break;
+		case XOR:    method_name = CSTRING(CLEVER_OPERATOR_BW_XOR);  break;
+		case BW_OR:  method_name = CSTRING(CLEVER_OPERATOR_BW_OR);   break;
+		case BW_AND: method_name = CSTRING(CLEVER_OPERATOR_BW_AND);  break;
 	}
 	method = lhs->getTypePtr()->getMethod(method_name, &arg_types);
 
