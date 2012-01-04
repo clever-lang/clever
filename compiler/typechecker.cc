@@ -200,13 +200,50 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 	if (!checkCompatibleTypes(lhs, rhs)) {
 		Compiler::error("Type mismatch!", expr->getLocation());
 	}
+	
+	if (expr->getOp() == PLUS) {
+		TypeVector arg_types;
+		Value* args = new Value;
+		ValueVector* arg_values = new ValueVector;
+		CallableValue* call = new CallableValue;
+		const Method* method;
+		
+		arg_types.push_back(lhs->getTypePtr());
+		arg_types.push_back(rhs->getTypePtr());
+		
+		arg_values->push_back(lhs);
+		arg_values->push_back(rhs);
+		args->setType(Value::VECTOR);
+		args->setVector(arg_values);
+		
+		args->addRef();
+		call->addRef();
+		
+		method = lhs->getTypePtr()->getMethod(CSTRING(CLEVER_OPERATOR_PLUS), &arg_types);
 
-	if (expr->isAssigned()) {
-		expr->setResult(lhs);
-		expr->getValue()->setTypePtr(lhs->getTypePtr());
-		lhs->addRef();
-	} else {
+		if (method == NULL) {
+			std::string arg_type_names = serializeArgType(arg_types, ", ");
+
+			Compiler::errorf(expr->getLocation(), "No matching call for operation using (%S)",
+				&arg_type_names);
+		}
+
+		call->setTypePtr(lhs->getTypePtr());
+		call->setHandler(method);
+		call->setContext(lhs);
+		
+		expr->setMethod(call);		
+		expr->setMethodArgs(args);
+		
 		expr->setResult(new Value(lhs->getTypePtr()));
+	} else {
+		if (expr->isAssigned()) {
+			expr->setResult(lhs);
+			expr->getValue()->setTypePtr(lhs->getTypePtr());
+			lhs->addRef();
+		} else {
+			expr->setResult(new Value(lhs->getTypePtr()));
+		}
 	}
 }
 

@@ -195,18 +195,21 @@ private:
 class BinaryExpr : public ASTNode {
 public:
 	BinaryExpr(int op, ASTNode* lhs, ASTNode* rhs)
-		: m_lhs(lhs), m_rhs(rhs), m_op(op), m_result(NULL), m_assign(false) {
+		: m_lhs(lhs), m_rhs(rhs), m_op(op), m_result(NULL), m_method(NULL),
+			m_args(NULL), m_assign(false) {
 		m_lhs->addRef();
 		m_rhs->addRef();
 	}
 	BinaryExpr(int op, ASTNode* lhs, ASTNode* rhs, bool assign)
-		: m_lhs(lhs), m_rhs(rhs), m_op(op), m_result(NULL), m_assign(assign) {
+		: m_lhs(lhs), m_rhs(rhs), m_op(op), m_result(NULL), m_method(NULL),
+			m_args(NULL), m_assign(assign) {
 		m_lhs->addRef();
 		m_rhs->addRef();
 	}
 
 	BinaryExpr(int op, ASTNode* rhs)
-		: m_lhs(NULL), m_rhs(rhs), m_op(op), m_result(NULL), m_assign(false) {
+		: m_lhs(NULL), m_rhs(rhs), m_op(op), m_result(NULL), m_method(NULL),
+			m_args(NULL), m_assign(false) {
 		m_lhs = new NumberLiteral(int64_t(0));
 		m_lhs->addRef();
 		m_rhs->addRef();
@@ -222,6 +225,12 @@ public:
 		if (m_rhs) {
 			m_rhs->delRef();
 		}
+		if (m_method) {
+			m_method->delRef();
+		}
+		if (m_args) {
+			m_args->delRef();
+		}
 	}
 
 	bool hasValue() const { return true; }
@@ -236,6 +245,12 @@ public:
 	Value* getValue() const throw() { return m_result; }
 
 	void setResult(Value* value) { m_result = value; }
+	
+	void setMethod(Value* method) throw() { m_method = method; }
+	void setMethodArgs(Value* args) throw() { m_args = args; }
+	
+	Value* getMethod() throw() { return m_method; }
+	Value* getMethodArgs() throw() { return m_args; }
 
 	virtual void accept(ASTVisitor& visitor) throw() {
 		m_lhs->accept(visitor);
@@ -249,6 +264,8 @@ protected:
 private:
 	int m_op;
 	Value* m_result;
+	Value* m_method;
+	Value* m_args;
 	bool m_assign;
 
 	DISALLOW_COPY_AND_ASSIGN(BinaryExpr);

@@ -48,7 +48,7 @@ public:
 	/**
 	 * Type operator methods
 	 */
-	static CLEVER_TYPE_METHOD(op_plus);
+	static CLEVER_TYPE_METHOD(plus_int_int);
 
 	/**
 	 * Type handlers
