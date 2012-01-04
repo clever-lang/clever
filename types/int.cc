@@ -89,6 +89,18 @@ CLEVER_TYPE_METHOD(Integer::mod) {
 	retval->setInteger(args->at(0)->getInteger() % args->at(1)->getInteger());
 }
 
+CLEVER_TYPE_METHOD(Integer::bw_and) {
+	retval->setInteger(args->at(0)->getInteger() & args->at(1)->getInteger());
+}
+
+CLEVER_TYPE_METHOD(Integer::bw_or) {
+	retval->setInteger(args->at(0)->getInteger() | args->at(1)->getInteger());
+}
+
+CLEVER_TYPE_METHOD(Integer::bw_xor) {
+	retval->setInteger(args->at(0)->getInteger() ^ args->at(1)->getInteger());
+}
+
 void Integer::init() {
 	addMethod(
 		(new Method(CLEVER_OPERATOR_PLUS, (MethodPtr)&Integer::plus, CLEVER_INT))
@@ -140,6 +152,24 @@ void Integer::init() {
 
 	addMethod(
 		(new Method(CLEVER_OPERATOR_MOD, (MethodPtr)&Integer::mod, CLEVER_INT))
+			->addArg("arg1", CLEVER_INT)
+			->addArg("arg2", CLEVER_INT)
+	);
+
+	addMethod(
+		(new Method(CLEVER_OPERATOR_BW_AND, (MethodPtr)&Integer::bw_and, CLEVER_INT))
+			->addArg("arg1", CLEVER_INT)
+			->addArg("arg2", CLEVER_INT)
+	);
+
+	addMethod(
+		(new Method(CLEVER_OPERATOR_BW_XOR, (MethodPtr)&Integer::bw_xor, CLEVER_INT))
+			->addArg("arg1", CLEVER_INT)
+			->addArg("arg2", CLEVER_INT)
+	);
+
+	addMethod(
+		(new Method(CLEVER_OPERATOR_BW_OR, (MethodPtr)&Integer::bw_or, CLEVER_INT))
 			->addArg("arg1", CLEVER_INT)
 			->addArg("arg2", CLEVER_INT)
 	);

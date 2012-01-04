@@ -53,6 +53,9 @@ public:
 	static CLEVER_TYPE_METHOD(div);
 	static CLEVER_TYPE_METHOD(mult);
 	static CLEVER_TYPE_METHOD(mod);
+	static CLEVER_TYPE_METHOD(bw_and);
+	static CLEVER_TYPE_METHOD(bw_or);
+	static CLEVER_TYPE_METHOD(bw_xor);
 
 	/**
 	 * Type handlers

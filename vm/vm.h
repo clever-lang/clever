@@ -77,15 +77,7 @@ public:
 	/**
 	 * Opcode handlers
 	 */
-	static CLEVER_VM_HANDLER(plus_handler);
-	static CLEVER_VM_HANDLER(div_handler);
-	static CLEVER_VM_HANDLER(mult_handler);
-	static CLEVER_VM_HANDLER(minus_handler);
-	static CLEVER_VM_HANDLER(mod_handler);
 	static CLEVER_VM_HANDLER(var_decl_handler);
-	static CLEVER_VM_HANDLER(bw_and_handler);
-	static CLEVER_VM_HANDLER(bw_or_handler);
-	static CLEVER_VM_HANDLER(bw_xor_handler);
 	static CLEVER_VM_HANDLER(pre_inc_handler);
 	static CLEVER_VM_HANDLER(pre_dec_handler);
 	static CLEVER_VM_HANDLER(pos_inc_handler);

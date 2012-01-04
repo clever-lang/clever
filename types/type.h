@@ -49,14 +49,14 @@ namespace clever {
 /**
  * Operator helpers
  */
-#define CLEVER_OPERATOR_PLUS  "$+$"
-#define CLEVER_OPERATOR_MINUS "$-$"
-#define CLEVER_OPERATOR_DIV   "$/$"
-#define CLEVER_OPERATOR_MULT  "$*$"
-#define CLEVER_OPERATOR_XOR   "$^$"
-#define CLEVER_OPERATOR_AND   "$&$"
-#define CLEVER_OPERATOR_OR    "$|$"
-#define CLEVER_OPERATOR_MOD   "$%$"
+#define CLEVER_OPERATOR_PLUS   "$+$"
+#define CLEVER_OPERATOR_MINUS  "$-$"
+#define CLEVER_OPERATOR_DIV    "$/$"
+#define CLEVER_OPERATOR_MULT   "$*$"
+#define CLEVER_OPERATOR_MOD    "$%$"
+#define CLEVER_OPERATOR_BW_XOR "$^$"
+#define CLEVER_OPERATOR_BW_AND "$&$"
+#define CLEVER_OPERATOR_BW_OR  "$|$"
 
 /**
  * Helper to access the an specific DataValue
@@ -127,7 +127,7 @@ public:
 		std::string args_name;
 
 		if (it == m_methods.end()) return NULL;
-		
+
 		if (args != NULL) {
 			for (size_t i = 0; i < args->size(); ++i) {
 				args_name += args->at(i)->getName();
