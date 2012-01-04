@@ -209,12 +209,12 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 
 	arg_types.push_back(lhs->getTypePtr());
 	arg_types.push_back(rhs->getTypePtr());
-	
+
 	arg_values->push_back(lhs);
 	arg_values->push_back(rhs);
 	args->setType(Value::VECTOR);
 	args->setVector(arg_values);
-	
+
 	args->addRef();
 	call->addRef();
 
@@ -243,8 +243,8 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 	call->setTypePtr(lhs->getTypePtr());
 	call->setHandler(method);
 	call->setContext(lhs);
-	
-	expr->setMethod(call);		
+
+	expr->setMethod(call);
 	expr->setMethodArgs(args);
 
 	if (expr->isAssigned()) {

@@ -54,6 +54,9 @@ CLEVER_TYPE_METHOD(Integer::toString) {
 }
 
 CLEVER_TYPE_METHOD(Integer::plus) {
+	if (retval == value) {
+		std::cout << "assign!" << std::endl;
+	}
 	if (args->at(1)->isInteger()) {
 		retval->setInteger(args->at(0)->getInteger() + args->at(1)->getInteger());
 	} else {
@@ -83,6 +86,10 @@ CLEVER_TYPE_METHOD(Integer::mult) {
 	} else {
 		retval->setInteger(args->at(0)->getInteger() * args->at(1)->getDouble());
 	}
+}
+
+CLEVER_TYPE_METHOD(Integer::mod) {
+	retval->setInteger(args->at(0)->getInteger() % args->at(1)->getInteger());
 }
 
 void Integer::init() {
@@ -132,6 +139,12 @@ void Integer::init() {
 		(new Method(CLEVER_OPERATOR_DIV, (MethodPtr)&Integer::div, CLEVER_INT))
 			->addArg("arg1", CLEVER_INT)
 			->addArg("arg2", CLEVER_DOUBLE)
+	);
+
+	addMethod(
+		(new Method(CLEVER_OPERATOR_MOD, (MethodPtr)&Integer::mod, CLEVER_INT))
+			->addArg("arg1", CLEVER_INT)
+			->addArg("arg2", CLEVER_INT)
 	);
 
 	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Integer::constructor, CLEVER_INT));

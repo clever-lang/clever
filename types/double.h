@@ -45,11 +45,14 @@ public:
 	static CLEVER_TYPE_METHOD(constructor);
 	static CLEVER_TYPE_METHOD(toString);
 	static CLEVER_TYPE_METHOD(sqrt);
-	
+
 	/**
 	 * Type operator methods
 	 */
 	static CLEVER_TYPE_METHOD(plus);
+	static CLEVER_TYPE_METHOD(minus);
+	static CLEVER_TYPE_METHOD(div);
+	static CLEVER_TYPE_METHOD(mult);
 
 	/**
 	 * Type handlers
@@ -63,24 +66,6 @@ public:
 		} else {
 			value->setDouble(newvalue->getInteger());
 		}
-	}
-
-	CLEVER_TYPE_MINUS_HANDLER_D {
-		double x = op1->isDouble() ? op1->getDouble() : op1->getInteger();
-		double y = op2->isDouble() ? op2->getDouble() : op2->getInteger();
-		value->setDouble(x - y);
-	}
-
-	CLEVER_TYPE_MULT_HANDLER_D {
-		double x = op1->isDouble() ? op1->getDouble() : op1->getInteger();
-		double y = op2->isDouble() ? op2->getDouble() : op2->getInteger();
-		value->setDouble(x * y);
-	}
-
-	CLEVER_TYPE_DIV_HANDLER_D {
-		double x = op1->isDouble() ? op1->getDouble() : op1->getInteger();
-		double y = op2->isDouble() ? op2->getDouble() : op2->getInteger();
-		value->setDouble(x / y);
 	}
 private:
 	DISALLOW_COPY_AND_ASSIGN(Double);
