@@ -381,7 +381,7 @@ CLEVER_VM_HANDLER(VM::fcall_handler) {
 	Value* result = opcode.getResult();
 	const ValueVector* const func_args = args ? args->getVector() : NULL;
 
-	result->initialize();
+//	result->initialize();
 
 	if (func->isNearCall()) {
 		s_call.push(&opcode);
@@ -414,7 +414,7 @@ CLEVER_VM_HANDLER(VM::mcall_handler) {
 	Value* result = opcode.getResult();
 	const ValueVector* const func_args = args ? args->getVector() : NULL;
 
-	result->initialize();
+//	result->initialize();
 
 	/* Call the method */
 	var->call(result, func_args);
