@@ -54,9 +54,6 @@ CLEVER_TYPE_METHOD(Integer::toString) {
 }
 
 CLEVER_TYPE_METHOD(Integer::plus) {
-	if (retval == value) {
-		std::cout << "assign!" << std::endl;
-	}
 	if (args->at(1)->isInteger()) {
 		retval->setInteger(args->at(0)->getInteger() + args->at(1)->getInteger());
 	} else {
