@@ -35,8 +35,6 @@
 
 namespace clever {
 
-class Type;
-
 #define CLEVER_INT_VAR    g_int_type_ptr
 #define CLEVER_DOUBLE_VAR g_double_type_ptr
 #define CLEVER_STR_VAR    g_str_type_ptr
@@ -47,6 +45,14 @@ class Type;
 #define CLEVER_STR    ::clever::CLEVER_STR_VAR
 #define CLEVER_BOOL   ::clever::CLEVER_BOOL_VAR
 #define CLEVER_VOID	  NULL
+
+/**
+ * Operator helpers
+ */
+#define CLEVER_OPERATOR_PLUS  "$+$"
+#define CLEVER_OPERATOR_MINUS "$-$"
+#define CLEVER_OPERATOR_DIV   "$/$"
+#define CLEVER_OPERATOR_MULT  "$*$"
 
 /**
  * Helper to access the an specific DataValue
@@ -72,27 +78,6 @@ class Type;
 #define CLEVER_TYPE_METHOD(name) void CLEVER_FASTCALL name(CLEVER_TYPE_METHOD_ARGS) throw()
 
 /**
- * Operator representation
- */
-class Operator {
-public:
-	enum OperatorType { OP_GREATER, OP_LESS };
-
-	Operator(const Type* const op1_type)
-		: m_op1_type(op1_type), m_op2_type(NULL) {}
-
-	Operator(const Type* const op1_type, const Type* const op2_type)
-		: m_op1_type(op1_type), m_op2_type(op2_type) {}
-
-	const Type* const getOp1Type() const { return m_op1_type; }
-
-	const Type* const getOp2Type() const { return m_op2_type; }
-private:
-	const Type* const m_op1_type;
-	const Type* const m_op2_type;
-};
-
-/**
  * Type representation
  */
 class Type {
@@ -100,7 +85,6 @@ public:
 	typedef std::tr1::unordered_map<std::string, Method*> OverloadMethodMap;
 	typedef std::tr1::unordered_map<std::string, OverloadMethodMap> MethodMap;
 	typedef std::pair<std::string, Method*> MethodPair;
-	typedef std::tr1::unordered_map<std::string, Operator*> OperatorMap;
 
 	explicit Type(const char* name)
 		: m_name(name) { }
@@ -119,12 +103,6 @@ public:
 
 			++it;
 		}
-	}
-
-	void addOperator(Operator::OperatorType oper, MethodPtr handler,
-			const Type* const op1_type, const Type* const op2_type) throw() {
-
-
 	}
 
 	void addMethod(Method* method) throw() {

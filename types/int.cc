@@ -53,7 +53,17 @@ CLEVER_TYPE_METHOD(Integer::toString) {
 	retval->setString(CSTRING(value->toString()));
 }
 
+CLEVER_TYPE_METHOD(Integer::op_plus) {
+
+}
+
 void Integer::init() {
+	addMethod(
+		(new Method(CLEVER_OPERATOR_PLUS, (MethodPtr)&Integer::op_plus, CLEVER_INT))
+			->addArg("arg1", CLEVER_INT)
+			->addArg("arg2", CLEVER_INT)
+	);
+
 	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Integer::constructor, CLEVER_INT));
 
 	addMethod(

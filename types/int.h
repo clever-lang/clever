@@ -46,6 +46,11 @@ public:
 	static CLEVER_TYPE_METHOD(toString);
 
 	/**
+	 * Type operator methods
+	 */
+	static CLEVER_TYPE_METHOD(op_plus);
+
+	/**
 	 * Type handlers
 	 */
 	CLEVER_TYPE_INC_HANDLER_D { value->setInteger(value->getInteger()+1); return value; }
