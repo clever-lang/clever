@@ -60,7 +60,27 @@ CLEVER_TYPE_METHOD(Double::sqrt) {
 	retval->setDouble(std::sqrt(value->getDouble()));
 }
 
+CLEVER_TYPE_METHOD(Double::plus) {
+	if (args->at(1)->isDouble()) {
+		retval->setDouble(args->at(0)->getDouble() + args->at(1)->getDouble());	
+	} else {
+		retval->setDouble(args->at(0)->getDouble() + args->at(1)->getInteger());	
+	}
+}
+
 void Double::init() {
+	addMethod(
+		(new Method(CLEVER_OPERATOR_PLUS, (MethodPtr)&Double::plus, CLEVER_DOUBLE))
+			->addArg("arg1", CLEVER_DOUBLE)
+			->addArg("arg2", CLEVER_INT)
+	);
+	
+	addMethod(
+		(new Method(CLEVER_OPERATOR_PLUS, (MethodPtr)&Double::plus, CLEVER_DOUBLE))
+			->addArg("arg1", CLEVER_DOUBLE)
+			->addArg("arg2", CLEVER_DOUBLE)
+	);
+	
 	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Double::constructor, CLEVER_DOUBLE));
 
 	addMethod(

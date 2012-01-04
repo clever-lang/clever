@@ -53,15 +53,85 @@ CLEVER_TYPE_METHOD(Integer::toString) {
 	retval->setString(CSTRING(value->toString()));
 }
 
-CLEVER_TYPE_METHOD(Integer::plus_int_int) {
-	retval->setInteger(args->at(0)->getInteger() + args->at(1)->getInteger());
+CLEVER_TYPE_METHOD(Integer::plus) {
+	if (args->at(1)->isInteger()) {
+		retval->setInteger(args->at(0)->getInteger() + args->at(1)->getInteger());
+	} else {
+		retval->setInteger(args->at(0)->getInteger() + args->at(1)->getDouble());
+	}
+}
+
+CLEVER_TYPE_METHOD(Integer::minus) {
+	if (args->at(1)->isInteger()) {
+		retval->setInteger(args->at(0)->getInteger() - args->at(1)->getInteger());
+	} else {
+		retval->setInteger(args->at(0)->getInteger() - args->at(1)->getDouble());
+	}
+}
+
+CLEVER_TYPE_METHOD(Integer::div) {
+	if (args->at(1)->isInteger()) {
+		retval->setInteger(args->at(0)->getInteger() / args->at(1)->getInteger());
+	} else {
+		retval->setInteger(args->at(0)->getInteger() / args->at(1)->getDouble());
+	}
+}
+
+CLEVER_TYPE_METHOD(Integer::mult) {
+	if (args->at(1)->isInteger()) {
+		retval->setInteger(args->at(0)->getInteger() * args->at(1)->getInteger());
+	} else {
+		retval->setInteger(args->at(0)->getInteger() * args->at(1)->getDouble());
+	}
 }
 
 void Integer::init() {
 	addMethod(
-		(new Method(CLEVER_OPERATOR_PLUS, (MethodPtr)&Integer::plus_int_int, CLEVER_INT))
+		(new Method(CLEVER_OPERATOR_PLUS, (MethodPtr)&Integer::plus, CLEVER_INT))
 			->addArg("arg1", CLEVER_INT)
 			->addArg("arg2", CLEVER_INT)
+	);
+
+	addMethod(
+		(new Method(CLEVER_OPERATOR_PLUS, (MethodPtr)&Integer::plus, CLEVER_INT))
+			->addArg("arg1", CLEVER_INT)
+			->addArg("arg2", CLEVER_DOUBLE)
+	);
+
+	addMethod(
+		(new Method(CLEVER_OPERATOR_MINUS, (MethodPtr)&Integer::minus, CLEVER_INT))
+			->addArg("arg1", CLEVER_INT)
+			->addArg("arg2", CLEVER_INT)
+	);
+
+	addMethod(
+		(new Method(CLEVER_OPERATOR_MINUS, (MethodPtr)&Integer::minus, CLEVER_INT))
+			->addArg("arg1", CLEVER_INT)
+			->addArg("arg2", CLEVER_DOUBLE)
+	);
+
+	addMethod(
+		(new Method(CLEVER_OPERATOR_MULT, (MethodPtr)&Integer::mult, CLEVER_INT))
+			->addArg("arg1", CLEVER_INT)
+			->addArg("arg2", CLEVER_INT)
+	);
+
+	addMethod(
+		(new Method(CLEVER_OPERATOR_MULT, (MethodPtr)&Integer::mult, CLEVER_INT))
+			->addArg("arg1", CLEVER_INT)
+			->addArg("arg2", CLEVER_DOUBLE)
+	);
+
+	addMethod(
+		(new Method(CLEVER_OPERATOR_DIV, (MethodPtr)&Integer::div, CLEVER_INT))
+			->addArg("arg1", CLEVER_INT)
+			->addArg("arg2", CLEVER_INT)
+	);
+
+	addMethod(
+		(new Method(CLEVER_OPERATOR_DIV, (MethodPtr)&Integer::div, CLEVER_INT))
+			->addArg("arg1", CLEVER_INT)
+			->addArg("arg2", CLEVER_DOUBLE)
 	);
 
 	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Integer::constructor, CLEVER_INT));

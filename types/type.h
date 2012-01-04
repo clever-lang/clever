@@ -53,6 +53,10 @@ namespace clever {
 #define CLEVER_OPERATOR_MINUS "$-$"
 #define CLEVER_OPERATOR_DIV   "$/$"
 #define CLEVER_OPERATOR_MULT  "$*$"
+#define CLEVER_OPERATOR_XOR   "$^$"
+#define CLEVER_OPERATOR_AND   "$&$"
+#define CLEVER_OPERATOR_OR    "$|$"
+#define CLEVER_OPERATOR_MOD   "$%$"
 
 /**
  * Helper to access the an specific DataValue
@@ -108,7 +112,6 @@ public:
 	void addMethod(Method* method) throw() {
 		const MethodArgs& args = method->getArgs();
 		MethodArgs::const_iterator it = args.begin();
-
 		std::string args_name;
 
 		for (; it != args.end(); ++it) {
@@ -121,10 +124,10 @@ public:
 
 	const Method* getMethod(const CString* name, const TypeVector* args) const throw() {
 		MethodMap::const_iterator it = m_methods.find(*name);
+		std::string args_name;
 
 		if (it == m_methods.end()) return NULL;
-
-		std::string args_name;
+		
 		if (args != NULL) {
 			for (size_t i = 0; i < args->size(); ++i) {
 				args_name += args->at(i)->getName();

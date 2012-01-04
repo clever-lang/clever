@@ -48,7 +48,10 @@ public:
 	/**
 	 * Type operator methods
 	 */
-	static CLEVER_TYPE_METHOD(plus_int_int);
+	static CLEVER_TYPE_METHOD(plus);
+	static CLEVER_TYPE_METHOD(minus);
+	static CLEVER_TYPE_METHOD(div);
+	static CLEVER_TYPE_METHOD(mult);
 
 	/**
 	 * Type handlers
@@ -59,30 +62,6 @@ public:
 	CLEVER_TYPE_ASSIGN_HANDLER_D {
 		if (newvalue->getTypePtr() == this) value->copy(newvalue);
 		else value->setInteger((int64_t)newvalue->getDouble());
-	}
-
-	CLEVER_TYPE_PLUS_HANDLER_D {
-		double x = op1->isDouble() ? op1->getDouble() : op1->getInteger();
-		double y = op2->isDouble() ? op2->getDouble() : op2->getInteger();
-		value->setInteger(x + y);
-	}
-
-	CLEVER_TYPE_MINUS_HANDLER_D {
-		double x = op1->isDouble() ? op1->getDouble() : op1->getInteger();
-		double y = op2->isDouble() ? op2->getDouble() : op2->getInteger();
-		value->setInteger(x - y);
-	}
-
-	CLEVER_TYPE_DIV_HANDLER_D {
-		double x = op1->isDouble() ? op1->getDouble() : op1->getInteger();
-		double y = op2->isDouble() ? op2->getDouble() : op2->getInteger();
-		value->setInteger(x / y);
-	}
-
-	CLEVER_TYPE_MULT_HANDLER_D {
-		double x = op1->isDouble() ? op1->getDouble() : op1->getInteger();
-		double y = op2->isDouble() ? op2->getDouble() : op2->getInteger();
-		value->setInteger(x * y);
 	}
 
 	CLEVER_TYPE_MOD_HANDLER_D {

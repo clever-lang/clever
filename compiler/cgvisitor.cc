@@ -48,32 +48,13 @@ AST_VISITOR(CodeGenVisitor, Identifier) {
  * Generates opcode for binary expression
  */
 AST_VISITOR(CodeGenVisitor, BinaryExpr) {
-	if (expr->getOp() == PLUS) {
-		Value* lhs = expr->getLhs()->getValue();
-		Value* rhs = expr->getRhs()->getValue();
-		
-		lhs->addRef();
-		rhs->addRef();
-		
-		emit(OP_MCALL, &VM::mcall_handler, expr->getMethod(), expr->getMethodArgs(), expr->getValue());
-	} else {
-		Value* lhs = expr->getLhs()->getValue();
-		Value* rhs = expr->getRhs()->getValue();
-
-		lhs->addRef();
-		rhs->addRef();
-
-		switch (expr->getOp()) {
-			case PLUS:  emit(OP_PLUS,   &VM::plus_handler,   lhs, rhs, expr->getValue()); break;
-			case DIV:   emit(OP_DIV,    &VM::div_handler,    lhs, rhs, expr->getValue()); break;
-			case MULT:  emit(OP_MULT,   &VM::mult_handler,   lhs, rhs, expr->getValue()); break;
-			case MINUS: emit(OP_MINUS,  &VM::minus_handler,  lhs, rhs, expr->getValue()); break;
-			case XOR:   emit(OP_BW_XOR, &VM::bw_xor_handler, lhs, rhs, expr->getValue()); break;
-			case OR:    emit(OP_BW_OR,  &VM::bw_or_handler,  lhs, rhs, expr->getValue()); break;
-			case AND:   emit(OP_BW_AND, &VM::bw_and_handler, lhs, rhs, expr->getValue()); break;
-			case MOD:   emit(OP_MOD,    &VM::mod_handler,    lhs, rhs, expr->getValue()); break;
-		}
-	}
+	Value* lhs = expr->getLhs()->getValue();
+	Value* rhs = expr->getRhs()->getValue();
+	
+	lhs->addRef();
+	rhs->addRef();
+	
+	emit(OP_MCALL, &VM::mcall_handler, expr->getMethod(), expr->getMethodArgs(), expr->getValue());
 }
 
 

@@ -194,56 +194,65 @@ AST_VISITOR(TypeChecker, Identifier) {
 }
 
 AST_VISITOR(TypeChecker, BinaryExpr) {
+	TypeVector arg_types;
+	Value* args = new Value;
+	ValueVector* arg_values = new ValueVector;
+	CallableValue* call = new CallableValue;
+	const Method* method;
+	const CString* method_name;
 	Value* lhs = expr->getLhs()->getValue();
 	Value* rhs = expr->getRhs()->getValue();
 
 	if (!checkCompatibleTypes(lhs, rhs)) {
 		Compiler::error("Type mismatch!", expr->getLocation());
 	}
+
+	arg_types.push_back(lhs->getTypePtr());
+	arg_types.push_back(rhs->getTypePtr());
 	
-	if (expr->getOp() == PLUS) {
-		TypeVector arg_types;
-		Value* args = new Value;
-		ValueVector* arg_values = new ValueVector;
-		CallableValue* call = new CallableValue;
-		const Method* method;
-		
-		arg_types.push_back(lhs->getTypePtr());
-		arg_types.push_back(rhs->getTypePtr());
-		
-		arg_values->push_back(lhs);
-		arg_values->push_back(rhs);
-		args->setType(Value::VECTOR);
-		args->setVector(arg_values);
-		
-		args->addRef();
-		call->addRef();
-		
-		method = lhs->getTypePtr()->getMethod(CSTRING(CLEVER_OPERATOR_PLUS), &arg_types);
+	arg_values->push_back(lhs);
+	arg_values->push_back(rhs);
+	args->setType(Value::VECTOR);
+	args->setVector(arg_values);
+	
+	args->addRef();
+	call->addRef();
 
-		if (method == NULL) {
-			std::string arg_type_names = serializeArgType(arg_types, ", ");
+	/**
+	 * Operator method names
+	 */
+	switch (expr->getOp()) {
+		case PLUS:  method_name = CSTRING(CLEVER_OPERATOR_PLUS);	break;
+		case DIV:   method_name = CSTRING(CLEVER_OPERATOR_DIV);     break;
+		case MULT:  method_name = CSTRING(CLEVER_OPERATOR_MULT);    break;
+		case MINUS: method_name = CSTRING(CLEVER_OPERATOR_MINUS);   break;
+		case XOR:   method_name = CSTRING(CLEVER_OPERATOR_XOR);     break;
+		case OR:    method_name = CSTRING(CLEVER_OPERATOR_OR);      break;
+		case AND:   method_name = CSTRING(CLEVER_OPERATOR_AND);     break;
+		case MOD:   method_name = CSTRING(CLEVER_OPERATOR_MOD);     break;
+	}
+	method = lhs->getTypePtr()->getMethod(method_name, &arg_types);
 
-			Compiler::errorf(expr->getLocation(), "No matching call for operation using (%S)",
-				&arg_type_names);
-		}
+	if (method == NULL) {
+		std::string arg_type_names = serializeArgType(arg_types, ", ");
 
-		call->setTypePtr(lhs->getTypePtr());
-		call->setHandler(method);
-		call->setContext(lhs);
-		
-		expr->setMethod(call);		
-		expr->setMethodArgs(args);
-		
-		expr->setResult(new Value(lhs->getTypePtr()));
+		Compiler::errorf(expr->getLocation(), "No matching call for operation '%S' in %s using (%S)",
+			method_name, lhs->getTypePtr()->getName(), &arg_type_names);
+	}
+
+	call->setTypePtr(lhs->getTypePtr());
+	call->setHandler(method);
+	call->setContext(lhs);
+	
+	expr->setMethod(call);		
+	expr->setMethodArgs(args);
+
+	if (expr->isAssigned()) {
+		expr->setResult(lhs);
+		expr->getValue()->setTypePtr(lhs->getTypePtr());
+		lhs->addRef();
 	} else {
-		if (expr->isAssigned()) {
-			expr->setResult(lhs);
-			expr->getValue()->setTypePtr(lhs->getTypePtr());
-			lhs->addRef();
-		} else {
-			expr->setResult(new Value(lhs->getTypePtr()));
-		}
+		expr->setResult(new Value(lhs->getTypePtr()));
 	}
 }
 

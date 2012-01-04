@@ -46,8 +46,10 @@ typedef std::vector<const Type*> TypeVector;
 #define CLEVER_CTOR_NAME "$ctor$"
 
 typedef void (CLEVER_FASTCALL *MethodPtr)(CLEVER_METHOD_ARGS);
-typedef std::tr1::unordered_map<std::string, const Type*> MethodArgs;
+
 typedef std::pair<std::string, const Type*> MethodArgsPair;
+typedef std::vector<MethodArgsPair> MethodArgs;
+
 
 /**
  * Method representation
@@ -84,7 +86,7 @@ public:
 	const Type* getReturn() const throw() { return m_rtype; }
 
 	Method* addArg(std::string name, const Type* type) throw() {
-		m_args.insert(MethodArgsPair(name, type));
+		m_args.push_back(MethodArgsPair(name, type));
 		//++m_num_args;
 
 		return this;
