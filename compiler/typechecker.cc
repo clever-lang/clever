@@ -270,6 +270,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 	Value* var = new Value();
 	ASTNode* rhs = expr->getRhs();
 	const Type* type = g_symtable.getType(expr->getType()->getName());
+	ContainerPair* cont_type = expr->getType()->getContainer();
 
 	/**
 	 * Check if the type wasn't declarated previously
@@ -286,6 +287,33 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 		Compiler::errorf(expr->getLocation(),
 			"Already exists a variable named `%S' in the current scope!",
 			variable->getName());
+	}
+
+	if (cont_type) {
+		const Type* key_type = g_symtable.getType(cont_type->first->getName());
+		const Type* val_type = NULL;
+
+		if (key_type == NULL) {
+			Compiler::errorf(expr->getLocation(),
+				"Key type of container doesn't exists for variable named `%S'!",
+				variable->getName());
+		}
+		if (cont_type->second) {
+			val_type = g_symtable.getType(cont_type->second->getName());
+
+			if (val_type == NULL) {
+				Compiler::errorf(expr->getLocation(),
+					"Key type of container doesn't exists for variable named `%S'!",
+					variable->getName());
+			}
+		}
+
+		var->setContainerType(key_type, val_type);
+
+		if (type == CLEVER_ARRAY) {
+			var->setType(Value::VECTOR);
+			var->setVector(new ValueVector);
+		}
 	}
 
 	variable->setValue(var);

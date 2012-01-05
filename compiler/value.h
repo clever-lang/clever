@@ -47,6 +47,12 @@ extern THREAD_TLS Type* CLEVER_INT_VAR;
 extern THREAD_TLS Type* CLEVER_DOUBLE_VAR;
 extern THREAD_TLS Type* CLEVER_STR_VAR;
 extern THREAD_TLS Type* CLEVER_BOOL_VAR;
+extern THREAD_TLS Type* CLEVER_ARRAY_VAR;
+
+/**
+ * Container types
+ */
+typedef std::pair<const Type*, const Type*> ContainerTypePair;
 
 /**
  * Base class for value representation
@@ -233,6 +239,14 @@ public:
 		return m_data.dv_value;
 	}
 
+	void setContainerType(const Type* key, const Type* value) throw() {
+		m_container = ContainerTypePair(key, value);
+	}
+
+	const ContainerTypePair& getContainerType() const throw() {
+		return m_container;
+	}
+
 	void copy(const Value* const value) throw() {
 		std::memcpy(&m_data, value->getData(), sizeof(ValueData));
 		m_type_ptr = value->getTypePtr();
@@ -270,6 +284,7 @@ private:
 	const Type* m_type_ptr;
 	const CString* m_name;
 	ValueData m_data;
+	ContainerTypePair m_container;
 
 	DISALLOW_COPY_AND_ASSIGN(Value);
 };

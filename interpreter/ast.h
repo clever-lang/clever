@@ -287,6 +287,7 @@ public:
 			if (m_container->second) {
 				m_container->second->delRef();
 			}
+			delete m_container;
 		}
 	}
 
