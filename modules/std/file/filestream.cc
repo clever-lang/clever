@@ -61,11 +61,11 @@ CLEVER_TYPE_METHOD(FileStream::constructor) {
 	FileStreamValue* fsv = new FileStreamValue;
 
 	if (args != NULL) {
-		if (args->size() == 1) {
+		if (CLEVER_NUM_ARGS() == 1) {
 			fsv->m_fstream.open(CLEVER_ARG(0)->getString().c_str());
 		}
-		else if (args->size() == 2) {
-			fsv->m_fstream.open(CLEVER_ARG(0)->getString().c_str(), convertOpenMode(args->at(1)->getString()));
+		else if (CLEVER_NUM_ARGS() == 2) {
+			fsv->m_fstream.open(CLEVER_ARG(0)->getString().c_str(), convertOpenMode(CLEVER_ARG(1)->getString()));
 		}
 	}
 
@@ -88,11 +88,11 @@ CLEVER_TYPE_METHOD(FileStream::toString) {
  * Open a file
  */
 CLEVER_TYPE_METHOD(FileStream::open) {
-	size_t size = args->size();
+	size_t size = CLEVER_NUM_ARGS();
 	FileStreamValue* fsv = CLEVER_GET_VALUE(FileStreamValue*, value);
 
 	if (size == 2) {
-		fsv->m_fstream.open(CLEVER_ARG(0)->toString().c_str(), convertOpenMode(args->at(1)->toString()));
+		fsv->m_fstream.open(CLEVER_ARG(0)->toString().c_str(), convertOpenMode(CLEVER_ARG(1)->toString()));
 	} else {
 		Compiler::error("calling Filestream::read() : wrong number "
 			"of arguments given to FileStream::open(String, [String])");
@@ -121,7 +121,7 @@ CLEVER_TYPE_METHOD(FileStream::close) {
  */
 CLEVER_TYPE_METHOD(FileStream::read) {
 	FileStreamValue* fsv;
-	size_t size = args->size();
+	size_t size = CLEVER_NUM_ARGS();
 
 	if (size != 1) {
 		Compiler::error("calling Filestream::read([String, Int, Double]) :"
@@ -174,7 +174,7 @@ CLEVER_TYPE_METHOD(FileStream::read) {
  */
 CLEVER_TYPE_METHOD(FileStream::write) {
 	FileStreamValue *fsv;
-	size_t size = args->size();
+	size_t size = CLEVER_NUM_ARGS();
 
 	if (size != 1) {
 		Compiler::error("calling FileStream::write([String])) :"
@@ -202,7 +202,7 @@ CLEVER_TYPE_METHOD(FileStream::write) {
  */
 CLEVER_TYPE_METHOD(FileStream::writeLine) {
 	FileStreamValue *fsv;
-	size_t size = args->size();
+	size_t size = CLEVER_NUM_ARGS();
 
 	if (size != 1) {
 		Compiler::error("calling FileStream::writeLine([String])) :"

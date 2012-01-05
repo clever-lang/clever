@@ -37,8 +37,8 @@ namespace file {
  * Prints the object values without trailing newline
  */
 /*static CLEVER_FUNCTION(print) {
-	for (int i = 0, size = args->size(); i < size; ++i) {
-		::std::cout << args->at(i)->toString();
+	for (int i = 0, size = CLEVER_NUM_ARGS(); i < size; ++i) {
+		::std::cout << CLEVER_ARG(1)->toString();
 	}
 }*/
 

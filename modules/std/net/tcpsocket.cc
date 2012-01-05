@@ -51,13 +51,13 @@ CLEVER_TYPE_METHOD(TcpSocket::constructor) {
 	sv->remote.sin_family = AF_INET;
 
 	if (args != NULL) {
-		if (args->size() == 1) {
+		if (CLEVER_NUM_ARGS() == 1) {
 			// Host only.
 			sv->remote.sin_addr.s_addr = inet_addr(CLEVER_ARG(0)->getString().c_str());
-		} else if (args->size() == 2) {
+		} else if (CLEVER_NUM_ARGS() == 2) {
 			// Host and port.
 			sv->remote.sin_addr.s_addr = inet_addr(CLEVER_ARG(0)->getString().c_str());
-			sv->remote.sin_port = args->at(1)->getInteger();
+			sv->remote.sin_port = CLEVER_ARG(1)->getInteger();
 		}
 	}
 
