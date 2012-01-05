@@ -179,7 +179,6 @@ namespace clever {
 %type <func_call> func_call
 %type <method_call> chaining_method_call
 %type <method_call> method_call
-%type <variable_decl> variable_declaration_no_init
 %type <variable_decl> variable_decl_or_empty
 %type <variable_decl> variable_declaration
 %type <binary_expr> assign_stmt
@@ -301,14 +300,10 @@ method_call:
 			chaining_method_call         { $$ = $8; }
 ;
 
-variable_declaration_no_init:
-		TYPE IDENT	{ $$ = new ast::VariableDecl($1, $2); }
-;
-
 variable_declaration:
 		TYPE IDENT '=' type_creation { $$ = new ast::VariableDecl($1, $2, $4); $$->setLocation(yylloc); }
 	|	TYPE IDENT '=' expr          { $$ = new ast::VariableDecl($1, $2, $4); $$->setLocation(yylloc); }
-	|	variable_declaration_no_init { $$ = $1; }
+	|	TYPE IDENT                   { $$ = new ast::VariableDecl($1, $2); }
 	|   TYPE IDENT '(' arg_list ')'  { $$ = new ast::VariableDecl($1, $2, new ast::TypeCreation($1, $4)); $$->setLocation(yyloc); }
 ;
 
