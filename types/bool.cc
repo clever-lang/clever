@@ -38,10 +38,10 @@ namespace clever {
  */
 CLEVER_TYPE_METHOD(Bool::constructor) {
 	if (args) {
-		retval->setBoolean(args->at(0)->getBoolean());
+		CLEVER_RETURN_BOOL(CLEVER_ARG(0)->getBoolean());
 	}
 	else {
-		retval->setBoolean(false);
+		CLEVER_RETURN_BOOL(false);
 	}
 }
 
@@ -50,40 +50,40 @@ CLEVER_TYPE_METHOD(Bool::constructor) {
  * Converts the number to string
  */
 CLEVER_TYPE_METHOD(Bool::toString) {
-	retval->setString(CSTRING(value->toString()));
+	CLEVER_RETURN_STR(CSTRING(value->toString()));
 }
 
 /**
  * Boolean operators
  */
 CLEVER_TYPE_METHOD(Bool::bw_and) {
-	retval->setBoolean(args->at(0)->getValueAsBool() & args->at(1)->getValueAsBool());
+	CLEVER_RETURN_BOOL(CLEVER_ARG(0)->getValueAsBool() & args->at(1)->getValueAsBool());
 }
 
 CLEVER_TYPE_METHOD(Bool::bw_or) {
-	retval->setBoolean(args->at(0)->getValueAsBool() | args->at(1)->getValueAsBool());
+	CLEVER_RETURN_BOOL(CLEVER_ARG(0)->getValueAsBool() | args->at(1)->getValueAsBool());
 }
 
 CLEVER_TYPE_METHOD(Bool::bw_xor) {
-	retval->setBoolean(args->at(0)->getValueAsBool() ^ args->at(1)->getValueAsBool());
+	CLEVER_RETURN_BOOL(CLEVER_ARG(0)->getValueAsBool() ^ args->at(1)->getValueAsBool());
 }
 
 void Bool::init() {
 	addMethod(new Method("toString", (MethodPtr)&Bool::toString, CLEVER_STR));
-	
+
 	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Bool::constructor, CLEVER_BOOL));
-	
+
 	addMethod(
 		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Bool::constructor, CLEVER_BOOL))
 			->addArg("value", CLEVER_BOOL)
 	);
-	
+
 	addMethod(
 		(new Method(CLEVER_OPERATOR_BW_AND, (MethodPtr)&Bool::bw_and, CLEVER_BOOL))
 			->addArg("arg1", CLEVER_BOOL)
 			->addArg("arg2", CLEVER_BOOL)
 	);
-	
+
 	addMethod(
 		(new Method(CLEVER_OPERATOR_BW_XOR, (MethodPtr)&Bool::bw_xor, CLEVER_BOOL))
 			->addArg("arg1", CLEVER_BOOL)

@@ -33,7 +33,7 @@ CLEVER_TYPE_METHOD(ReflectionPackage::constructor) {
 	ReflectionPackageValue* rpv = new ReflectionPackageValue;
 	const PackageMap& packages = g_pkgmanager.getPackages();
 
-	rpv->setPackage(packages.find(&args->at(0)->getString()));
+	rpv->setPackage(packages.find(&CLEVER_ARG(0)->getString()));
 
 	/* Assignment on type creation will increase the ref */
 	rpv->setReference(0);
@@ -45,9 +45,9 @@ CLEVER_TYPE_METHOD(ReflectionPackage::getName) {
 	ReflectionPackageValue* rpv = CLEVER_GET_VALUE(ReflectionPackageValue*, value);
 
 	if (rpv->getPackage() == g_pkgmanager.getPackages().end()) {
-		retval->setString(CSTRING(""));
+		CLEVER_RETURN_STR(CSTRING(""));
 	} else {
-		retval->setString(rpv->getPackage()->first);
+		CLEVER_RETURN_STR(rpv->getPackage()->first);
 	}
 }
 

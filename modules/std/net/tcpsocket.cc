@@ -53,10 +53,10 @@ CLEVER_TYPE_METHOD(TcpSocket::constructor) {
 	if (args != NULL) {
 		if (args->size() == 1) {
 			// Host only.
-			sv->remote.sin_addr.s_addr = inet_addr(args->at(0)->getString().c_str());
+			sv->remote.sin_addr.s_addr = inet_addr(CLEVER_ARG(0)->getString().c_str());
 		} else if (args->size() == 2) {
 			// Host and port.
-			sv->remote.sin_addr.s_addr = inet_addr(args->at(0)->getString().c_str());
+			sv->remote.sin_addr.s_addr = inet_addr(CLEVER_ARG(0)->getString().c_str());
 			sv->remote.sin_port = args->at(1)->getInteger();
 		}
 	}
@@ -64,19 +64,19 @@ CLEVER_TYPE_METHOD(TcpSocket::constructor) {
 	/* Assignment on type creation will increase the ref */
 	sv->setReference(0);
 
-	retval->setDataValue(sv);
+	CLEVER_RETURN_DATA_VALUE(sv);
 }
 
 CLEVER_TYPE_METHOD(TcpSocket::setHost) {
 	SocketValue* sv = CLEVER_GET_VALUE(SocketValue*, value);
 
-	sv->remote.sin_addr.s_addr = inet_addr(args->at(0)->getString().c_str());
+	sv->remote.sin_addr.s_addr = inet_addr(CLEVER_ARG(0)->getString().c_str());
 }
 
 CLEVER_TYPE_METHOD(TcpSocket::setPort) {
 	SocketValue* sv = CLEVER_GET_VALUE(SocketValue*, value);
 
-	sv->remote.sin_port = htons(args->at(0)->getInteger());
+	sv->remote.sin_port = htons(CLEVER_ARG(0)->getInteger());
 }
 
 CLEVER_TYPE_METHOD(TcpSocket::connect) {
@@ -104,14 +104,14 @@ CLEVER_TYPE_METHOD(TcpSocket::receive) {
 		data += ::std::string(buffer);
 	}
 
-	retval->setString(CSTRING(data));
+	CLEVER_RETURN_STR(CSTRING(data));
 }
 
 CLEVER_TYPE_METHOD(TcpSocket::send) {
 	SocketValue* sv = CLEVER_GET_VALUE(SocketValue*, value);
 
 	// @TODO: check for errors on this.
-	::send(sv->socket, args->at(0)->getString().c_str(), args->at(0)->getString().size(), 0);
+	::send(sv->socket, CLEVER_ARG(0)->getString().c_str(), CLEVER_ARG(0)->getString().size(), 0);
 }
 
 CLEVER_TYPE_METHOD(TcpSocket::poll) {
@@ -125,14 +125,14 @@ CLEVER_TYPE_METHOD(TcpSocket::poll) {
 	::poll(fds, 1, 0);
 
 	if (fds[0].revents == POLLIN) {
-		retval->setBoolean(true);
+		CLEVER_RETURN_BOOL(true);
 	} else {
-		retval->setBoolean(false);
+		CLEVER_RETURN_BOOL(false);
 	}
 }
 
 CLEVER_TYPE_METHOD(TcpSocket::toString) {
-	retval->setString(CSTRING("TcpSocket class"));
+	CLEVER_RETURN_STR(CSTRING("TcpSocket class"));
 }
 
 void TcpSocket::init() {

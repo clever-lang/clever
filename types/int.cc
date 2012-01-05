@@ -38,10 +38,10 @@ namespace clever {
  */
 CLEVER_TYPE_METHOD(Integer::constructor) {
 	if (args) {
-		retval->setInteger(args->at(0)->getInteger());
+		CLEVER_RETURN_INT(CLEVER_ARG(0)->getInteger());
 	}
 	else {
-		retval->setInteger(0);
+		CLEVER_RETURN_INT(0);
 	}
 }
 
@@ -54,71 +54,71 @@ CLEVER_TYPE_METHOD(Integer::toString) {
 }
 
 CLEVER_TYPE_METHOD(Integer::plus) {
-	if (args->at(1)->isInteger()) {
-		retval->setInteger(args->at(0)->getInteger() + args->at(1)->getInteger());
+	if (CLEVER_ARG(1)->isInteger()) {
+		CLEVER_RETURN_INT(CLEVER_ARG(0)->getInteger() + CLEVER_ARG(1)->getInteger());
 	} else {
-		if (args->at(0) != retval) {
-			retval->setDouble(args->at(0)->getInteger() + args->at(1)->getDouble());
+		if (CLEVER_ARG(0) != retval) {
+			retval->setDouble(CLEVER_ARG(0)->getInteger() + CLEVER_ARG(1)->getDouble());
 		}
 		else {
-			retval->setInteger(args->at(0)->getInteger() + args->at(1)->getDouble());
+			CLEVER_RETURN_INT(CLEVER_ARG(0)->getInteger() + CLEVER_ARG(1)->getDouble());
 		}
 	}
 }
 
 CLEVER_TYPE_METHOD(Integer::minus) {
-	if (args->at(1)->isInteger()) {
-		retval->setInteger(args->at(0)->getInteger() - args->at(1)->getInteger());
+	if (CLEVER_ARG(1)->isInteger()) {
+		CLEVER_RETURN_INT(CLEVER_ARG(0)->getInteger() - CLEVER_ARG(1)->getInteger());
 	} else {
-		if (args->at(0) != retval) {
-			retval->setDouble(args->at(0)->getInteger() - args->at(1)->getDouble());
+		if (CLEVER_ARG(0) != retval) {
+			retval->setDouble(CLEVER_ARG(0)->getInteger() - CLEVER_ARG(1)->getDouble());
 		}
 		else {
-			retval->setInteger(args->at(0)->getInteger() - args->at(1)->getDouble());
+			CLEVER_RETURN_INT(CLEVER_ARG(0)->getInteger() - CLEVER_ARG(1)->getDouble());
 		}
 	}
 }
 
 CLEVER_TYPE_METHOD(Integer::div) {
-	if (args->at(1)->isInteger()) {
-		retval->setInteger(args->at(0)->getInteger() / args->at(1)->getInteger());
+	if (CLEVER_ARG(1)->isInteger()) {
+		CLEVER_RETURN_INT(CLEVER_ARG(0)->getInteger() / CLEVER_ARG(1)->getInteger());
 	} else {
-		if (args->at(0) != retval) {
-			retval->setDouble(args->at(0)->getInteger() / args->at(1)->getDouble());
+		if (CLEVER_ARG(0) != retval) {
+			retval->setDouble(CLEVER_ARG(0)->getInteger() / CLEVER_ARG(1)->getDouble());
 		}
 		else {
-			retval->setInteger(args->at(0)->getInteger() / args->at(1)->getDouble());
+			CLEVER_RETURN_INT(CLEVER_ARG(0)->getInteger() / CLEVER_ARG(1)->getDouble());
 		}
 	}
 }
 
 CLEVER_TYPE_METHOD(Integer::mult) {
-	if (args->at(1)->isInteger()) {
-		retval->setInteger(args->at(0)->getInteger() * args->at(1)->getInteger());
+	if (CLEVER_ARG(1)->isInteger()) {
+		CLEVER_RETURN_INT(CLEVER_ARG(0)->getInteger() * CLEVER_ARG(1)->getInteger());
 	} else {
-		if (args->at(0) != retval) {
-			retval->setDouble(args->at(0)->getInteger() * args->at(1)->getDouble());
+		if (CLEVER_ARG(0) != retval) {
+			retval->setDouble(CLEVER_ARG(0)->getInteger() * CLEVER_ARG(1)->getDouble());
 		}
 		else {
-			retval->setInteger(args->at(0)->getInteger() * args->at(1)->getDouble());
+			CLEVER_RETURN_INT(CLEVER_ARG(0)->getInteger() * CLEVER_ARG(1)->getDouble());
 		}
 	}
 }
 
 CLEVER_TYPE_METHOD(Integer::mod) {
-	retval->setInteger(args->at(0)->getInteger() % args->at(1)->getInteger());
+	CLEVER_RETURN_INT(CLEVER_ARG(0)->getInteger() % CLEVER_ARG(1)->getInteger());
 }
 
 CLEVER_TYPE_METHOD(Integer::bw_and) {
-	retval->setInteger(args->at(0)->getInteger() & args->at(1)->getInteger());
+	CLEVER_RETURN_INT(CLEVER_ARG(0)->getInteger() & CLEVER_ARG(1)->getInteger());
 }
 
 CLEVER_TYPE_METHOD(Integer::bw_or) {
-	retval->setInteger(args->at(0)->getInteger() | args->at(1)->getInteger());
+	CLEVER_RETURN_INT(CLEVER_ARG(0)->getInteger() | CLEVER_ARG(1)->getInteger());
 }
 
 CLEVER_TYPE_METHOD(Integer::bw_xor) {
-	retval->setInteger(args->at(0)->getInteger() ^ args->at(1)->getInteger());
+	CLEVER_RETURN_INT(CLEVER_ARG(0)->getInteger() ^ CLEVER_ARG(1)->getInteger());
 }
 
 void Integer::init() {

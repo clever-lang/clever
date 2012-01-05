@@ -52,6 +52,15 @@ namespace clever {
 #define CLEVER_THIS() value
 
 /**
+ * Macros to set return value
+ */
+#define CLEVER_RETURN_STR(x)        retval->setString((x))
+#define CLEVER_RETURN_BOOL(x)       retval->setBoolean((x))
+#define CLEVER_RETURN_INT(x)        retval->setInteger((x))
+#define CLEVER_RETURN_DOUBLE(x)     retval->setDouble((x))
+#define CLEVER_RETURN_DATA_VALUE(x) retval->setDataValue((x))
+
+/**
  * Disables copy constructor and copy assignment
  */
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \

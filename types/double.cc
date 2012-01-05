@@ -37,10 +37,10 @@ namespace clever {
  */
 CLEVER_TYPE_METHOD(Double::constructor) {
 	if (args) {
-		retval->setDouble(args->at(0)->getDouble());
+		CLEVER_RETURN_DOUBLE(CLEVER_ARG(0)->getDouble());
 	}
 	else {
-		retval->setDouble(0.0);
+		CLEVER_RETURN_DOUBLE(0.0);
 	}
 }
 
@@ -49,7 +49,7 @@ CLEVER_TYPE_METHOD(Double::constructor) {
  * Converts the number to string
  */
 CLEVER_TYPE_METHOD(Double::toString) {
-	retval->setString(CSTRING(value->toString()));
+	CLEVER_RETURN_STR(CSTRING(value->toString()));
 }
 
 /**
@@ -57,38 +57,38 @@ CLEVER_TYPE_METHOD(Double::toString) {
  * Returns the square root of the number
  */
 CLEVER_TYPE_METHOD(Double::sqrt) {
-	retval->setDouble(std::sqrt(value->getDouble()));
+	CLEVER_RETURN_DOUBLE(std::sqrt(value->getDouble()));
 }
 
 CLEVER_TYPE_METHOD(Double::plus) {
-	if (args->at(1)->isDouble()) {
-		retval->setDouble(args->at(0)->getDouble() + args->at(1)->getDouble());
+	if (CLEVER_ARG(1)->isDouble()) {
+		CLEVER_RETURN_DOUBLE(CLEVER_ARG(0)->getDouble() + CLEVER_ARG(1)->getDouble());
 	} else {
-		retval->setDouble(args->at(0)->getDouble() + args->at(1)->getInteger());
+		CLEVER_RETURN_DOUBLE(CLEVER_ARG(0)->getDouble() + CLEVER_ARG(1)->getInteger());
 	}
 }
 
 CLEVER_TYPE_METHOD(Double::minus) {
-	if (args->at(1)->isDouble()) {
-		retval->setDouble(args->at(0)->getDouble() - args->at(1)->getDouble());
+	if (CLEVER_ARG(1)->isDouble()) {
+		CLEVER_RETURN_DOUBLE(CLEVER_ARG(0)->getDouble() - CLEVER_ARG(1)->getDouble());
 	} else {
-		retval->setDouble(args->at(0)->getDouble() - args->at(1)->getInteger());
+		CLEVER_RETURN_DOUBLE(CLEVER_ARG(0)->getDouble() - CLEVER_ARG(1)->getInteger());
 	}
 }
 
 CLEVER_TYPE_METHOD(Double::div) {
-	if (args->at(1)->isDouble()) {
-		retval->setDouble(args->at(0)->getDouble() / args->at(1)->getDouble());
+	if (CLEVER_ARG(1)->isDouble()) {
+		CLEVER_RETURN_DOUBLE(CLEVER_ARG(0)->getDouble() / CLEVER_ARG(1)->getDouble());
 	} else {
-		retval->setDouble(args->at(0)->getDouble() / args->at(1)->getInteger());
+		CLEVER_RETURN_DOUBLE(CLEVER_ARG(0)->getDouble() / CLEVER_ARG(1)->getInteger());
 	}
 }
 
 CLEVER_TYPE_METHOD(Double::mult) {
-	if (args->at(1)->isDouble()) {
-		retval->setDouble(args->at(0)->getDouble() * args->at(1)->getDouble());
+	if (CLEVER_ARG(1)->isDouble()) {
+		CLEVER_RETURN_DOUBLE(CLEVER_ARG(0)->getDouble() * CLEVER_ARG(1)->getDouble());
 	} else {
-		retval->setDouble(args->at(0)->getDouble() * args->at(1)->getInteger());
+		CLEVER_RETURN_DOUBLE(CLEVER_ARG(0)->getDouble() * CLEVER_ARG(1)->getInteger());
 	}
 }
 

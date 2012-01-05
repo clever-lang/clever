@@ -54,7 +54,7 @@ CLEVER_TYPE_METHOD(String::replace) {
 		needleLength = CLEVER_ARG(0)->getString().length();
 	} while (needlePos != std::string::npos);
 
-	retval->setString(CSTRING(newString));
+	CLEVER_RETURN_STR(CSTRING(newString));
 }
 
 /**
@@ -69,7 +69,7 @@ CLEVER_TYPE_METHOD(String::substring) {
 	}
 
 	std::string substr = CLEVER_THIS()->toString().substr(CLEVER_ARG(0)->getInteger(), CLEVER_ARG(1)->getInteger());
-	retval->setString(CSTRING(substr));
+	CLEVER_RETURN_STR(CSTRING(substr));
 }
 
 /**
@@ -101,7 +101,7 @@ CLEVER_TYPE_METHOD(String::toInteger) {
 		std::exit(1);
 	}
 
-	retval->setInteger(integer);
+	CLEVER_RETURN_INT(integer);
 }
 
 /**
@@ -110,10 +110,10 @@ CLEVER_TYPE_METHOD(String::toInteger) {
  */
 CLEVER_TYPE_METHOD(String::constructor) {
 	if (args) {
-		retval->setString(CSTRING(CLEVER_ARG(0)->getString()));
+		CLEVER_RETURN_STR(CSTRING(CLEVER_ARG(0)->getString()));
 	}
 	else {
-		retval->setString(CSTRING(""));
+		CLEVER_RETURN_STR(CSTRING(""));
 	}
 }
 
@@ -121,7 +121,7 @@ CLEVER_TYPE_METHOD(String::constructor) {
  * + operator (String, String)
  */
 CLEVER_TYPE_METHOD(String::plus) {
-	retval->setString(CSTRING(CLEVER_ARG(0)->getString() + CLEVER_ARG(1)->getString()));
+	CLEVER_RETURN_STR(CSTRING(CLEVER_ARG(0)->getString() + CLEVER_ARG(1)->getString()));
 }
 
 void String::init() {

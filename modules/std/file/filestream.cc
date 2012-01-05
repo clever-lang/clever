@@ -62,17 +62,17 @@ CLEVER_TYPE_METHOD(FileStream::constructor) {
 
 	if (args != NULL) {
 		if (args->size() == 1) {
-			fsv->m_fstream.open(args->at(0)->getString().c_str());
+			fsv->m_fstream.open(CLEVER_ARG(0)->getString().c_str());
 		}
 		else if (args->size() == 2) {
-			fsv->m_fstream.open(args->at(0)->getString().c_str(), convertOpenMode(args->at(1)->getString()));
+			fsv->m_fstream.open(CLEVER_ARG(0)->getString().c_str(), convertOpenMode(args->at(1)->getString()));
 		}
 	}
 
 	/* Assignment on type creation will increase the ref */
 	fsv->setReference(0);
 
-	retval->setDataValue(fsv);
+	CLEVER_RETURN_DATA_VALUE(fsv);
 }
 
 /**
@@ -80,7 +80,7 @@ CLEVER_TYPE_METHOD(FileStream::constructor) {
  * A representation of this class as a string
  */
 CLEVER_TYPE_METHOD(FileStream::toString) {
-	retval->setString(CSTRING("FileStream class"));
+	CLEVER_RETURN_STR(CSTRING("FileStream class"));
 }
 
 /**
@@ -92,7 +92,7 @@ CLEVER_TYPE_METHOD(FileStream::open) {
 	FileStreamValue* fsv = CLEVER_GET_VALUE(FileStreamValue*, value);
 
 	if (size == 2) {
-		fsv->m_fstream.open(args->at(0)->toString().c_str(), convertOpenMode(args->at(1)->toString()));
+		fsv->m_fstream.open(CLEVER_ARG(0)->toString().c_str(), convertOpenMode(args->at(1)->toString()));
 	} else {
 		Compiler::error("calling Filestream::read() : wrong number "
 			"of arguments given to FileStream::open(String, [String])");
@@ -137,28 +137,28 @@ CLEVER_TYPE_METHOD(FileStream::read) {
 
 	// @TODO: should test if the stream allows reading.
 
-	if (args->at(0)->isInteger()) {
+	if (CLEVER_ARG(0)->isInteger()) {
 		uint64_t val;
 		fsv->m_fstream >> val;
 
-		args->at(0)->setInteger(val);
-	} else if (args->at(0)->isDouble()) {
+		CLEVER_ARG(0)->setInteger(val);
+	} else if (CLEVER_ARG(0)->isDouble()) {
 		double val;
 		fsv->m_fstream >> val;
 
-		args->at(0)->setDouble(val);
-	} else if (args->at(0)->isString()) {
+		CLEVER_ARG(0)->setDouble(val);
+	} else if (CLEVER_ARG(0)->isString()) {
 		::std::string val;
 		fsv->m_fstream >> val;
 
-		args->at(0)->setString(CSTRING(val));
+		CLEVER_ARG(0)->setString(CSTRING(val));
 	}
 	// @TODO : support more "native" types
-	//else if (args->at(0)->isBoolean()) {
+	//else if (CLEVER_ARG(0)->isBoolean()) {
 	//	bool val;
 	//	m_fstream >> val;
 	//
-	//	args->at(0)->setBoolean(val);
+	//	CLEVER_ARG(0)->setBoolean(val);
 	//}
 	else {
 		Compiler::error("calling Filestream::read([String, Int, Double]) :"
@@ -191,7 +191,7 @@ CLEVER_TYPE_METHOD(FileStream::write) {
 	// @TODO: should check if the stream allows writing.
 
 	// Write the String.
-	fsv->m_fstream << args->at(0)->getString();
+	fsv->m_fstream << CLEVER_ARG(0)->getString();
 
 	retval->setType(Value::NONE);
 }
@@ -217,7 +217,7 @@ CLEVER_TYPE_METHOD(FileStream::writeLine) {
 	}
 
 	// Write the String.
-	fsv->m_fstream << args->at(0)->getString();
+	fsv->m_fstream << CLEVER_ARG(0)->getString();
 
 	// Write a new line.
 	fsv->m_fstream << ::std::endl;
