@@ -34,7 +34,7 @@
 #include <pcrecpp.h>
 
 class TestRunner {
-	unsigned int pass, fail, leak;
+	unsigned int pass, fail, leak, flags;
 	timeval start_time;
 	std::vector<std::string> files;
 	std::vector<std::string> tmp_files;
@@ -45,7 +45,9 @@ class TestRunner {
 	void load_folder(const char* dir);
 	void write_log(std::string testname, std::string message);
 public:
-	TestRunner() : pass(0), fail(0), leak(0), valgrind(false) { gettimeofday(&start_time, NULL); }
+	enum { FAIL_ONLY = 1 };
+
+	TestRunner() : pass(0), fail(0), leak(0), flags(0), valgrind(false) { gettimeofday(&start_time, NULL); }
 	~TestRunner();
 
 	std::string read_file(const char*) const;
@@ -53,6 +55,8 @@ public:
 	void run(void);
 	void show_result(void) const;
 	void write_file(std::string&, std::string&);
+	void setFlags(int val) { flags |= val; }
+	int getFlags() const { return flags; }
 
 	bool valgrind;
 };

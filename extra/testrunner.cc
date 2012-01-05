@@ -96,11 +96,16 @@ void TestRunner::run(void) {
 	FILE *fp;
 	std::vector<std::string>::iterator it;
 	std::string file_name, tmp_file;
+	bool show_all_results = true, last_ok = true;
 	pcrecpp::RE regex("((?s:.(?!==CODE==))+)\\s*==CODE==\\s*((?s:.(?!==RESULT==))+)\\s*==RESULT==\\s*((?s:.+))\\s+");
 
 	if (!files.size()) {
 		std::cout << "No files found.";
 		exit(1);
+	}
+
+	if (getFlags() & FAIL_ONLY) {
+		show_all_results = false;
 	}
 
 	for (it = files.begin(); it != files.end(); ++it) {
@@ -135,7 +140,7 @@ void TestRunner::run(void) {
 			std::cout << "Something went wrong reading the result." << std::endl;
 			exit(1);
 		}
-		
+
 		// Tricky uh?
 		pclose(fp);
 
@@ -148,13 +153,17 @@ void TestRunner::run(void) {
 			} else {
 				std::cout << "[LEAK] ";
 				leak++;
+				last_ok = false;
 			}
 		}
 #endif
 
 		if (pcrecpp::RE(expect).FullMatch(result)) {
 			if ((valgrind && filesize == 0) || !valgrind) {
-				std::cout << "[OKAY] ";
+				if (show_all_results) {
+					std::cout << "[OKAY] ";
+				}
+				last_ok = true;
 			}
 			pass++;
 
@@ -165,6 +174,7 @@ void TestRunner::run(void) {
 		} else {
 			if ((valgrind && filesize == 0) || !valgrind) {
 				std::cout << "[FAIL] ";
+				last_ok = false;
 			}
 			log_line = std::string("== Expected ==\n") + expect + std::string("\n");
 			log_line.append(std::string("== Got ==\n") + std::string(result));
@@ -172,7 +182,9 @@ void TestRunner::run(void) {
 			fail++;
 		}
 
-		std::cout << title << " (" << file_name << ")" << std::endl;
+		if (show_all_results == true || last_ok == false) {
+			std::cout << title << " (" << file_name << ")" << std::endl;
+		}
 	}
 }
 
@@ -299,6 +311,7 @@ void usage(void)
 #ifndef _WIN32
 	std::cout << "\t-m: run valgrind on each test" << std::endl;
 #endif
+	std::cout << "\t-q: only list failing tests" << std::endl;
 }
 
 int main(int argc, char *argv[])
@@ -326,6 +339,10 @@ int main(int argc, char *argv[])
 				usage();
 				return 1;
 #endif
+		} else if (std::string(argv[1]) == std::string("-q")) {
+			testrunner.setFlags(TestRunner::FAIL_ONLY);
+
+			start_paths = 2;
 		} else {
 			// ./testrunner <something here>
 			testrunner.valgrind = false;

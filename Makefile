@@ -131,7 +131,7 @@ run-mem-tests: test
 	extra/testrunner -m tests/
 
 run-tests: test
-	extra/testrunner tests/
+	extra/testrunner -q tests/
 
 clean-all: clean clean-test clean-tests
 
@@ -144,7 +144,7 @@ clean-tests:
 	rm $(TESTDIR)*.mem $(TESTDIR)*.log
 
 clean-test:
-	rm -rf $(EXTRADIR)testrunner $(EXTRADIR)testrunner.exe
+	rm -rf extra/testrunner extra/testrunner.exe
 
 # No dependency tracking needed when cleaning
 ifeq (,$(findstring clean,$(MAKECMDGOALS)))
