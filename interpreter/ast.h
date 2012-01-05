@@ -50,6 +50,8 @@ typedef std::vector<ASTNode*> NodeList;
 typedef std::pair<Identifier*, Identifier*> ArgumentDeclPair;
 typedef std::vector<ArgumentDeclPair> ArgumentDecls;
 
+typedef std::pair<Identifier*, Identifier*> ContainerPair;
+
 /**
  * Operators (logical and binary)
  */
@@ -245,10 +247,10 @@ public:
 	Value* getValue() const throw() { return m_result; }
 
 	void setResult(Value* value) { m_result = value; }
-	
+
 	void setMethod(Value* method) throw() { m_method = method; }
 	void setMethodArgs(Value* args) throw() { m_args = args; }
-	
+
 	Value* getMethod() throw() { return m_method; }
 	Value* getMethodArgs() throw() { return m_args; }
 
@@ -274,11 +276,17 @@ private:
 class Identifier : public ASTNode {
 public:
 	explicit Identifier(const CString* name)
-		: m_name(name), m_value(NULL) {}
+		: m_name(name), m_value(NULL), m_container(NULL) {}
 
 	~Identifier() {
 		if (m_value) {
 			m_value->delRef();
+		}
+		if (m_container) {
+			m_container->first->delRef();
+			if (m_container->second) {
+				m_container->second->delRef();
+			}
 		}
 	}
 
@@ -293,9 +301,23 @@ public:
 	void accept(ASTVisitor& visitor) throw() {
 		visitor.visit(this);
 	}
+
+	void setContainer(ContainerPair* container) {
+		m_container = container;
+
+		container->first->addRef();
+		if (container->second) {
+			container->second->addRef();
+		}
+	}
+
+	ContainerPair* getContainer() const throw() {
+		return m_container;
+	}
 private:
 	const CString* m_name;
 	Value* m_value;
+	ContainerPair* m_container;
 
 	DISALLOW_COPY_AND_ASSIGN(Identifier);
 };

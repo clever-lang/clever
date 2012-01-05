@@ -153,6 +153,7 @@ namespace clever {
 	ast::ArgumentList* arg_list;
 	ast::BinaryExpr* binary_expr;
 	ast::IntegralValue* integral_value;
+	ast::ContainerPair* container_pair;
 }
 
 %type <identifier> IDENT
@@ -161,7 +162,8 @@ namespace clever {
 %type <str_literal> STR
 
 %type <identifier> TYPE
-%type <identifier> vector_type
+%type <container_pair> container_type
+%type <identifier> container
 %type <ast_node> statement_list_non_empty
 %type <ast_node> statement_list
 %type <block_stmt> block_stmt
@@ -301,20 +303,24 @@ method_call:
 			chaining_method_call         { $$ = $8; }
 ;
 
-vector_type:
-		TYPE
-	|	TYPE ',' TYPE
+container_type:
+		TYPE           { $<container_pair>$ = new ast::ContainerPair($1, NULL); }
+	|	TYPE ',' TYPE  { $<container_pair>$ = new ast::ContainerPair($1, $3); }
+;
+
+container:
+		TYPE "<" container_type ">"       { $1->setContainer($3); }
 ;
 
 variable_declaration:
 		TYPE IDENT '=' type_creation { $$ = new ast::VariableDecl($1, $2, $4); $$->setLocation(yylloc); }
-	|	TYPE "<" vector_type ">" IDENT '=' type_creation { $$ = new ast::VariableDecl($1, $3, $5); $$->setLocation(yylloc); }
-	|	TYPE IDENT '=' expr                              { $$ = new ast::VariableDecl($1, $2, $4); $$->setLocation(yylloc); }
-	|	TYPE "<" vector_type ">" IDENT '=' expr          { $$ = new ast::VariableDecl($1, $5, $7); $$->setLocation(yylloc); }
-	|	TYPE IDENT                                       { $$ = new ast::VariableDecl($1, $2); }
-	|	TYPE "<" vector_type ">" IDENT                   { $$ = new ast::VariableDecl($1, $5); }
-	|   TYPE IDENT '(' arg_list ')'                      { $$ = new ast::VariableDecl($1, $2, new ast::TypeCreation($1, $4)); $$->setLocation(yyloc); }
-	|   TYPE "<" vector_type ">" IDENT '(' arg_list ')'  { $$ = new ast::VariableDecl($1, $5, new ast::TypeCreation($1, $7)); $$->setLocation(yyloc); }
+	|	container IDENT '=' type_creation { $$ = new ast::VariableDecl($1, $2, $4); $$->setLocation(yylloc); }
+	|	TYPE IDENT '=' expr                                 { $$ = new ast::VariableDecl($1, $2, $4); $$->setLocation(yylloc); }
+	|	container IDENT '=' expr          { $$ = new ast::VariableDecl($1, $2, $4); $$->setLocation(yylloc); }
+	|	TYPE IDENT                                          { $$ = new ast::VariableDecl($1, $2); }
+	|	container IDENT                   { $$ = new ast::VariableDecl($1, $2); }
+	|   TYPE IDENT '(' arg_list ')'                         { $$ = new ast::VariableDecl($1, $2, new ast::TypeCreation($1, $4)); $$->setLocation(yyloc); }
+	|   container IDENT '(' arg_list ')'  { $$ = new ast::VariableDecl($1, $2, new ast::TypeCreation($1, $4)); $$->setLocation(yyloc); }
 ;
 
 assign_stmt:
