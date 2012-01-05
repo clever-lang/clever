@@ -247,7 +247,7 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 		expr->getValue()->setTypePtr(lhs->getTypePtr());
 		lhs->addRef();
 	} else {
-		expr->setResult(new Value(method->getReturn()));
+		expr->setResult(new Value(method->getReturnType()));
 	}
 }
 
@@ -467,7 +467,7 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 	/**
 	 * Set the return type
 	 */
-	expr->getValue()->setTypePtr(func->getReturn());
+	expr->getValue()->setTypePtr(func->getReturnType());
 
 	if (num_args) {
 		arg_values = new Value;
@@ -524,7 +524,7 @@ AST_VISITOR(TypeChecker, MethodCall) {
 	call->setHandler(method);
 	call->setContext(variable);
 
-	expr->getValue()->setTypePtr(method->getReturn());
+	expr->getValue()->setTypePtr(method->getReturnType());
 
 	expr->setFuncValue(static_cast<CallableValue*>(call));
 }
@@ -584,7 +584,7 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 	 * Set the return type
 	 */
 	if (return_type) {
-		user_func->setReturn(g_symtable.getType(return_type->getName()));
+		user_func->setReturnType(g_symtable.getType(return_type->getName()));
 	}
 
 	expr->setValue(func);
@@ -642,7 +642,7 @@ AST_VISITOR(TypeChecker, ReturnStmt) {
 	 * Only for return inside function declaration
 	 */
 	if (func) {
-		checkFunctionReturn(func, expr_value, func->getReturn(),
+		checkFunctionReturn(func, expr_value, func->getReturnType(),
 			expr->getLocation());
 	}
 }

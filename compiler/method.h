@@ -83,7 +83,8 @@ public:
 
 	const MethodArgs& getArgs() const throw() { return m_args; }
 
-	const Type* getReturn() const throw() { return m_rtype; }
+	void setReturnType(const Type* type) { m_rtype = type; }
+	const Type* getReturnType() const throw() { return m_rtype; }
 
 	Method* addArg(std::string name, const Type* type) throw() {
 		m_args.push_back(MethodArgsPair(name, type));

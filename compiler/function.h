@@ -60,22 +60,22 @@ public:
 	enum FunctionKind { INTERNAL, USER };
 
 	explicit Function(std::string name)
-		: m_name(name), m_kind(INTERNAL), m_num_args(0), m_min_args(0), m_return(NULL) { }
+		: m_name(name), m_kind(INTERNAL), m_num_args(0), m_min_args(0), m_rtype(NULL) { }
 
 	Function(std::string name, FunctionPtr ptr)
-		: m_name(name), m_kind(INTERNAL), m_num_args(0), m_min_args(0), m_return(NULL) { m_info.ptr = ptr; }
+		: m_name(name), m_kind(INTERNAL), m_num_args(0), m_min_args(0), m_rtype(NULL) { m_info.ptr = ptr; }
 
 	Function(std::string name, FunctionPtr ptr, const Type* rtype)
-		: m_name(name), m_kind(INTERNAL), m_num_args(0), m_min_args(0), m_return(rtype) { m_info.ptr = ptr; }
+		: m_name(name), m_kind(INTERNAL), m_num_args(0), m_min_args(0), m_rtype(rtype) { m_info.ptr = ptr; }
 
 	Function(std::string name, FunctionPtr ptr, int numargs, const Type* rtype)
-		: m_name(name), m_kind(INTERNAL), m_num_args(numargs), m_min_args(0), m_return(rtype) { m_info.ptr = ptr; }
+		: m_name(name), m_kind(INTERNAL), m_num_args(numargs), m_min_args(0), m_rtype(rtype) { m_info.ptr = ptr; }
 
 	Function(std::string& name, unsigned int offset)
-		: m_name(name), m_kind(USER), m_num_args(0), m_min_args(0), m_return(NULL) { m_info.offset = offset; }
+		: m_name(name), m_kind(USER), m_num_args(0), m_min_args(0), m_rtype(NULL) { m_info.offset = offset; }
 
 	Function(std::string& name, unsigned int offset, int numargs)
-		: m_name(name), m_kind(USER), m_num_args(numargs), m_min_args(0), m_return(NULL) { m_info.offset = offset; }
+		: m_name(name), m_kind(USER), m_num_args(numargs), m_min_args(0), m_rtype(NULL) { m_info.offset = offset; }
 
 	virtual ~Function() { }
 
@@ -106,8 +106,8 @@ public:
 	void setOffset(unsigned int num) { m_info.offset = num; m_kind = USER; }
 	long getOffset() const throw() { return m_info.offset; }
 
-	void setReturn(const Type* type) { m_return = type; }
-	const Type* getReturn() const throw() { return m_return; }
+	void setReturnType(const Type* type) { m_rtype = type; }
+	const Type* getReturnType() const throw() { return m_rtype; }
 
 	FunctionPtr getPtr() const throw() { return m_info.ptr; }
 
@@ -128,7 +128,7 @@ private:
 	std::string m_name;
 	FunctionKind m_kind;
 	int m_num_args, m_min_args;
-	const Type* m_return;
+	const Type* m_rtype;
 	FunctionArgs m_args;
 	Value* m_vars;
 
