@@ -50,10 +50,10 @@ AST_VISITOR(CodeGenVisitor, Identifier) {
 AST_VISITOR(CodeGenVisitor, BinaryExpr) {
 	Value* lhs = expr->getLhs()->getValue();
 	Value* rhs = expr->getRhs()->getValue();
-	
+
 	lhs->addRef();
 	rhs->addRef();
-	
+
 	emit(OP_MCALL, &VM::mcall_handler, expr->getMethod(), expr->getMethodArgs(), expr->getValue());
 }
 

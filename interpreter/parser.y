@@ -355,8 +355,8 @@ expr:
 	|	expr "<=" expr        { $$ = new ast::LogicExpr(ast::LESS_EQUAL, $1, $3);    $$->setLocation(yylloc); }
 	|	expr "==" expr        { $$ = new ast::LogicExpr(ast::EQUAL, $1, $3);         $$->setLocation(yylloc); }
 	|	expr "!=" expr        { $$ = new ast::LogicExpr(ast::NOT_EQUAL, $1, $3);     $$->setLocation(yylloc); }
-	|	expr "||" expr
-	|	expr "&&" expr
+	|	expr "||" expr        { $$ = new ast::LogicExpr(ast::OR, $1, $3);            $$->setLocation(yylloc); }
+	|	expr "&&" expr        { $$ = new ast::LogicExpr(ast::AND, $1, $3);           $$->setLocation(yylloc); }
 	|	expr "or" expr        { $$ = new ast::LogicExpr(ast::OR, $1, $3);            $$->setLocation(yylloc); }
 	|	expr "and" expr       { $$ = new ast::LogicExpr(ast::AND, $1, $3);           $$->setLocation(yylloc); }
 	|	'-' expr %prec UMINUS { $$ = new ast::BinaryExpr(ast::MINUS, $2);            $$->setLocation(yylloc); }
