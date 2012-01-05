@@ -57,7 +57,7 @@ CLEVER_TYPE_METHOD(Integer::plus) {
 	if (args->at(1)->isInteger()) {
 		retval->setInteger(args->at(0)->getInteger() + args->at(1)->getInteger());
 	} else {
-		retval->setInteger(args->at(0)->getInteger() + args->at(1)->getDouble());
+		retval->setDouble(args->at(0)->getInteger() + args->at(1)->getDouble());
 	}
 }
 
@@ -65,7 +65,7 @@ CLEVER_TYPE_METHOD(Integer::minus) {
 	if (args->at(1)->isInteger()) {
 		retval->setInteger(args->at(0)->getInteger() - args->at(1)->getInteger());
 	} else {
-		retval->setInteger(args->at(0)->getInteger() - args->at(1)->getDouble());
+		retval->setDouble(args->at(0)->getInteger() - args->at(1)->getDouble());
 	}
 }
 
@@ -73,7 +73,7 @@ CLEVER_TYPE_METHOD(Integer::div) {
 	if (args->at(1)->isInteger()) {
 		retval->setInteger(args->at(0)->getInteger() / args->at(1)->getInteger());
 	} else {
-		retval->setInteger(args->at(0)->getInteger() / args->at(1)->getDouble());
+		retval->setDouble(args->at(0)->getInteger() / args->at(1)->getDouble());
 	}
 }
 
@@ -81,7 +81,7 @@ CLEVER_TYPE_METHOD(Integer::mult) {
 	if (args->at(1)->isInteger()) {
 		retval->setInteger(args->at(0)->getInteger() * args->at(1)->getInteger());
 	} else {
-		retval->setInteger(args->at(0)->getInteger() * args->at(1)->getDouble());
+		retval->setDouble(args->at(0)->getInteger() * args->at(1)->getDouble());
 	}
 }
 
@@ -109,7 +109,7 @@ void Integer::init() {
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_PLUS, (MethodPtr)&Integer::plus, CLEVER_INT))
+		(new Method(CLEVER_OPERATOR_PLUS, (MethodPtr)&Integer::plus, CLEVER_DOUBLE))
 			->addArg("arg1", CLEVER_INT)
 			->addArg("arg2", CLEVER_DOUBLE)
 	);
@@ -121,7 +121,7 @@ void Integer::init() {
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_MINUS, (MethodPtr)&Integer::minus, CLEVER_INT))
+		(new Method(CLEVER_OPERATOR_MINUS, (MethodPtr)&Integer::minus, CLEVER_DOUBLE))
 			->addArg("arg1", CLEVER_INT)
 			->addArg("arg2", CLEVER_DOUBLE)
 	);
@@ -133,7 +133,7 @@ void Integer::init() {
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_MULT, (MethodPtr)&Integer::mult, CLEVER_INT))
+		(new Method(CLEVER_OPERATOR_MULT, (MethodPtr)&Integer::mult, CLEVER_DOUBLE))
 			->addArg("arg1", CLEVER_INT)
 			->addArg("arg2", CLEVER_DOUBLE)
 	);
@@ -145,7 +145,7 @@ void Integer::init() {
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_DIV, (MethodPtr)&Integer::div, CLEVER_INT))
+		(new Method(CLEVER_OPERATOR_DIV, (MethodPtr)&Integer::div, CLEVER_DOUBLE))
 			->addArg("arg1", CLEVER_INT)
 			->addArg("arg2", CLEVER_DOUBLE)
 	);
