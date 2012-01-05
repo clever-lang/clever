@@ -103,18 +103,18 @@ void IOModule::init() throw() {
 		->setMinNumArgs(1);
 
 	addFunction(new Function("readln", &CLEVER_FUNC_NAME(readln), CLEVER_STR));
-	
+
 	addFunction((new Function("read", &CLEVER_FUNC_NAME(read), CLEVER_VOID))
 		->addArg("buffer", CLEVER_STR)
 	);
-	
+	/*
 	addFunction((new Function("read", &CLEVER_FUNC_NAME(read), CLEVER_VOID))
 		->addArg("buffer", CLEVER_INT)
 	);
-	
+
 	addFunction((new Function("read", &CLEVER_FUNC_NAME(read), CLEVER_VOID))
 		->addArg("buffer", CLEVER_DOUBLE)
-	);
+	);*/
 }
 
 }}} // clever::packages::std
