@@ -46,6 +46,13 @@ public:
 	static CLEVER_TYPE_METHOD(toString);
 	
 	/**
+	 * Type operator methods
+	 */
+	static CLEVER_TYPE_METHOD(bw_and);
+	static CLEVER_TYPE_METHOD(bw_or);
+	static CLEVER_TYPE_METHOD(bw_xor);
+	
+	/**
 	 * Type handlers
 	 */
 	CLEVER_TYPE_INC_HANDLER_D { return value; }

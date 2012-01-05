@@ -53,12 +53,47 @@ CLEVER_TYPE_METHOD(Bool::toString) {
 	retval->setString(CSTRING(value->toString()));
 }
 
+/**
+ * Boolean operators
+ */
+CLEVER_TYPE_METHOD(Bool::bw_and) {
+	retval->setBoolean(args->at(0)->getValueAsBool() & args->at(1)->getValueAsBool());
+}
+
+CLEVER_TYPE_METHOD(Bool::bw_or) {
+	retval->setBoolean(args->at(0)->getValueAsBool() | args->at(1)->getValueAsBool());
+}
+
+CLEVER_TYPE_METHOD(Bool::bw_xor) {
+	retval->setBoolean(args->at(0)->getValueAsBool() ^ args->at(1)->getValueAsBool());
+}
+
 void Bool::init() {
 	addMethod(new Method("toString", (MethodPtr)&Bool::toString, CLEVER_STR));
+	
 	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Bool::constructor, CLEVER_BOOL));
+	
 	addMethod(
 		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Bool::constructor, CLEVER_BOOL))
 			->addArg("value", CLEVER_BOOL)
+	);
+	
+	addMethod(
+		(new Method(CLEVER_OPERATOR_BW_AND, (MethodPtr)&Bool::bw_and, CLEVER_BOOL))
+			->addArg("arg1", CLEVER_BOOL)
+			->addArg("arg2", CLEVER_BOOL)
+	);
+	
+	addMethod(
+		(new Method(CLEVER_OPERATOR_BW_XOR, (MethodPtr)&Bool::bw_xor, CLEVER_BOOL))
+			->addArg("arg1", CLEVER_BOOL)
+			->addArg("arg2", CLEVER_BOOL)
+	);
+
+	addMethod(
+		(new Method(CLEVER_OPERATOR_BW_OR, (MethodPtr)&Bool::bw_or, CLEVER_BOOL))
+			->addArg("arg1", CLEVER_BOOL)
+			->addArg("arg2", CLEVER_BOOL)
 	);
 }
 
