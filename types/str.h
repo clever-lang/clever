@@ -47,16 +47,18 @@ public:
 	static CLEVER_TYPE_METHOD(substring);
 	static CLEVER_TYPE_METHOD(toDouble);
 	static CLEVER_TYPE_METHOD(toInteger);
-	
+
+	/**
+	 * Type operator methods
+	 */
+	static CLEVER_TYPE_METHOD(plus);
+
 	/**
 	 * Type handlers
 	 */
 	CLEVER_TYPE_INC_HANDLER_D { return NULL; }
 	CLEVER_TYPE_DEC_HANDLER_D { return NULL; }
 	CLEVER_TYPE_ASSIGN_HANDLER_D { value->copy(newvalue); }
-	CLEVER_TYPE_PLUS_HANDLER_D {
-		value->setString(CSTRING(op1->getString() + op2->getString()));
-	}
 private:
 	DISALLOW_COPY_AND_ASSIGN(String);
 };

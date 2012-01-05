@@ -35,6 +35,9 @@
 
 namespace clever {
 
+/**
+ * Global native type pointers
+ */
 #define CLEVER_INT_VAR    g_int_type_ptr
 #define CLEVER_DOUBLE_VAR g_double_type_ptr
 #define CLEVER_STR_VAR    g_str_type_ptr
@@ -59,21 +62,11 @@ namespace clever {
 #define CLEVER_OPERATOR_BW_OR  "$|$"
 
 /**
- * Helper to access the an specific DataValue
- */
-#define CLEVER_GET_VALUE(x, y) static_cast<x>((y)->getDataValue())
-
-/**
  * Type handler definitions
  */
 #define CLEVER_TYPE_INC_HANDLER_D    Value* increment(Value* value) const throw()
 #define CLEVER_TYPE_DEC_HANDLER_D    Value* decrement(Value* value) const throw()
 #define CLEVER_TYPE_ASSIGN_HANDLER_D void assign(Value* value, Value* newvalue) const throw()
-#define CLEVER_TYPE_MOD_HANDLER_D    void modulus(Value* value, const Value* op1, const Value* op2) const throw()
-#define CLEVER_TYPE_PLUS_HANDLER_D   void plus(Value* value, const Value* op1, const Value* op2) const throw()
-#define CLEVER_TYPE_MINUS_HANDLER_D  void minus(Value* value, const Value* op1, const Value* op2) const throw()
-#define CLEVER_TYPE_DIV_HANDLER_D    void div(Value* value, const Value* op1, const Value* op2) const throw()
-#define CLEVER_TYPE_MULT_HANDLER_D   void mult(Value* value, const Value* op1, const Value* op2) const throw()
 
 /**
  * Prototype for class methods which the class represents a type
@@ -164,11 +157,6 @@ public:
 	virtual CLEVER_TYPE_INC_HANDLER_D    = 0;
 	virtual CLEVER_TYPE_DEC_HANDLER_D    = 0;
 	virtual CLEVER_TYPE_ASSIGN_HANDLER_D = 0;
-	virtual CLEVER_TYPE_MOD_HANDLER_D   {}
-	virtual CLEVER_TYPE_PLUS_HANDLER_D  {}
-	virtual CLEVER_TYPE_MINUS_HANDLER_D {}
-	virtual CLEVER_TYPE_DIV_HANDLER_D   {}
-	virtual CLEVER_TYPE_MULT_HANDLER_D  {}
 
 	/**
 	 * Destructor method. This method will be called when after a variable gets

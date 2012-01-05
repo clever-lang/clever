@@ -37,8 +37,8 @@ namespace io {
  * Prints the object values without trailing newline
  */
 static CLEVER_FUNCTION(print) {
-	for (int i = 0, size = args->size(); i < size; ++i) {
-		::std::cout << args->at(i)->toString();
+	for (int i = 0, size = CLEVER_NUM_ARGS; i < size; ++i) {
+		::std::cout << CLEVER_ARG(i)->toString();
 	}
 }
 
@@ -47,8 +47,8 @@ static CLEVER_FUNCTION(print) {
  * Prints the object values with trailing newline
  */
 static CLEVER_FUNCTION(println) {
-	for (int i = 0, size = args->size(); i < size; ++i) {
-		::std::cout << args->at(i)->toString() << ::std::endl;
+	for (int i = 0, size = CLEVER_NUM_ARGS; i < size; ++i) {
+		::std::cout << CLEVER_ARG(i)->toString() << ::std::endl;
 	}
 }
 
@@ -69,20 +69,20 @@ static CLEVER_FUNCTION(readln) {
  * Reads a value from the standard input.
  */
 static CLEVER_FUNCTION(read) {
-	if (args->at(0)->isString()) {
+	if (CLEVER_ARG(0)->isString()) {
 		::std::string buffer;
 		::std::cin >> buffer;
-		args->at(0)->setString(CSTRING(buffer));
+		CLEVER_ARG(0)->setString(CSTRING(buffer));
 	}
-	else if (args->at(0)->isInteger()) {
+	else if (CLEVER_ARG(0)->isInteger()) {
 		int64_t buffer;
 		::std::cin >> buffer;
-		args->at(0)->setInteger(buffer);
+		CLEVER_ARG(0)->setInteger(buffer);
 	}
-	else if (args->at(0)->isDouble()) {
+	else if (CLEVER_ARG(0)->isDouble()) {
 		double buffer;
 		::std::cin >> buffer;
-		args->at(0)->setDouble(buffer);
+		CLEVER_ARG(0)->setDouble(buffer);
 	}
 }
 

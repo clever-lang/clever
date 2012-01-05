@@ -41,7 +41,6 @@ class CString;
 class Module;
 class Value;
 class Type;
-class Function;
 
 /**
  * Module function and method prototype

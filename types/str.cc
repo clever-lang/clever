@@ -39,19 +39,19 @@ namespace clever {
  */
 CLEVER_TYPE_METHOD(String::replace) {
 	size_t needleLength, needlePos;
-	std::string newString = value->toString();
+	std::string newString = CLEVER_THIS()->toString();
 
 	// Initial replace
-	needlePos = newString.find(args->at(0)->getString(), 0);
-	needleLength = args->at(0)->getString().length();
+	needlePos = newString.find(CLEVER_ARG(0)->getString(), 0);
+	needleLength = CLEVER_ARG(0)->getString().length();
 
 	do {
 		// Do the replace
-		newString = newString.replace(needlePos, needleLength, args->at(1)->getString());
+		newString = newString.replace(needlePos, needleLength, CLEVER_ARG(1)->getString());
 
 		// Find the next one
-		needlePos = newString.find(args->at(0)->getString(), 0);
-		needleLength = args->at(0)->getString().length();
+		needlePos = newString.find(CLEVER_ARG(0)->getString(), 0);
+		needleLength = CLEVER_ARG(0)->getString().length();
 	} while (needlePos != std::string::npos);
 
 	retval->setString(CSTRING(newString));
@@ -62,13 +62,13 @@ CLEVER_TYPE_METHOD(String::replace) {
  * Retrieves a substring from the original one.
  */
 CLEVER_TYPE_METHOD(String::substring) {
-	if (size_t(args->at(0)->getInteger()) >= value->toString().length()) {
-		std::cerr << "Out of range: " << args->at(0)->getInteger()
+	if (size_t(CLEVER_ARG(0)->getInteger()) >= CLEVER_THIS()->toString().length()) {
+		std::cerr << "Out of range: " << CLEVER_ARG(0)->getInteger()
 			<< " is after the end of the string." << std::endl;
 		std::exit(1);
 	}
 
-	std::string substr = value->toString().substr(args->at(0)->getInteger(), args->at(1)->getInteger());
+	std::string substr = CLEVER_THIS()->toString().substr(CLEVER_ARG(0)->getInteger(), CLEVER_ARG(1)->getInteger());
 	retval->setString(CSTRING(substr));
 }
 
@@ -78,10 +78,10 @@ CLEVER_TYPE_METHOD(String::substring) {
  */
 CLEVER_TYPE_METHOD(String::toDouble) {
 	double floatValue;
-	std::stringstream stream(value->toString());
+	std::stringstream stream(CLEVER_THIS()->toString());
 
 	if ((stream >> floatValue).fail()) {
-		std::cerr << "\"" << value->toString() << "\" is not a valid float." << std::endl;
+		std::cerr << "\"" << CLEVER_THIS()->toString() << "\" is not a valid float." << std::endl;
 		std::exit(1);
 	}
 
@@ -94,10 +94,10 @@ CLEVER_TYPE_METHOD(String::toDouble) {
  */
 CLEVER_TYPE_METHOD(String::toInteger) {
 	int64_t integer;
-	std::stringstream stream(value->toString());
+	std::stringstream stream(CLEVER_THIS()->toString());
 
 	if ((stream >> integer).fail()) {
-		std::cerr << "\"" << value->toString() << "\" is not a valid integer." << std::endl;
+		std::cerr << "\"" << CLEVER_THIS()->toString() << "\" is not a valid integer." << std::endl;
 		std::exit(1);
 	}
 
@@ -110,11 +110,18 @@ CLEVER_TYPE_METHOD(String::toInteger) {
  */
 CLEVER_TYPE_METHOD(String::constructor) {
 	if (args) {
-		retval->setString(CSTRING(args->at(0)->getString()));
+		retval->setString(CSTRING(CLEVER_ARG(0)->getString()));
 	}
 	else {
 		retval->setString(CSTRING(""));
 	}
+}
+
+/**
+ * + operator (String, String)
+ */
+CLEVER_TYPE_METHOD(String::plus) {
+	retval->setString(CSTRING(CLEVER_ARG(0)->getString() + CLEVER_ARG(1)->getString()));
 }
 
 void String::init() {
@@ -123,6 +130,12 @@ void String::init() {
 	addMethod(
 		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&String::constructor, CLEVER_STR))
 			->addArg("value", CLEVER_STR)
+	);
+
+	addMethod(
+		(new Method(CLEVER_OPERATOR_PLUS, (MethodPtr)&String::plus, CLEVER_STR))
+			->addArg("str1", CLEVER_STR)
+			->addArg("str2", CLEVER_STR)
 	);
 
 	addMethod(

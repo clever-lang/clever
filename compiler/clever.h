@@ -32,6 +32,26 @@
 namespace clever {
 
 /**
+ * Macro to access the an specific DataValue
+ */
+#define CLEVER_GET_VALUE(x, y) static_cast<x>((y)->getDataValue())
+
+/**
+ * Macro to access the number of arguments received
+ */
+#define CLEVER_NUM_ARGS() args->size()
+
+/**
+ * Macro to access an specific argument supplied to function
+ */
+#define CLEVER_ARG(x) args->at((x))
+
+/**
+ * Macro to access the Value* associated to object instance
+ */
+#define CLEVER_THIS() value
+
+/**
  * Disables copy constructor and copy assignment
  */
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
@@ -64,7 +84,7 @@ namespace clever {
 #ifdef __GNUC__
 # define CLEVER_PURE_FUNC __attribute__((pure))
 #else
-# define CLEVER_PURE_FUNC 
+# define CLEVER_PURE_FUNC
 #endif
 
 /**
@@ -120,7 +140,7 @@ namespace clever {
 void clever_assert_(const char* file, long line, const char* expr,
 		int hypothesis, const char* format, ...) throw();
 #else
-#define clever_assert(Hypothesis, Format, ...) 
+#define clever_assert(Hypothesis, Format, ...)
 #endif
 
 void clever_fatal(const char* format, ...) throw();
@@ -130,7 +150,7 @@ void sprintf(std::ostringstream&, const char*, ...) throw();
 void printf(const char*, ...) throw();
 void vprintfln(const char*, va_list) throw();
 void printfln(const char*, ...) throw();
-} // clever 
+} // clever
 
 #endif /* CLEVER_H */
 
