@@ -1,0 +1,44 @@
+// Codeforces Round #100 problem A's solution
+// http://codeforces.com/contest/140/problem/A
+
+import std.io;
+import std.math;
+
+Double distance(Double ax, Double ay, Double bx, Double by)
+{
+	return sqrt((ax - bx) * (ax - bx) + (ay - by) * (ay - by));
+}
+
+Int n;
+Int t;
+Int p;
+
+read(n); read(t); read(p);
+
+if (p > t) {
+	println("NO");
+	return;
+}
+
+Double gap = (2 * acos(-1.0)) / n;
+Bool ok = true;
+
+Double px = t - p;
+Double py = 0.0;
+
+for (Int i = 1; i < n; ++i) {
+	Double x = (t - p) * cos(gap * i);
+	Double y = (t - p) * sin(gap * i);
+	
+	if (distance(px, py, x, y) < 2.0 * p) {
+		ok = false;
+		break;
+	}
+}
+
+if (ok) {
+	println("YES");
+}
+else {
+	println("NO");
+}

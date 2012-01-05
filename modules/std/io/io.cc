@@ -64,6 +64,28 @@ static CLEVER_FUNCTION(readln) {
 	retval->setString(CSTRING(buffer));
 }
 
+/**
+ * read()
+ * Reads a value from the standard input.
+ */
+static CLEVER_FUNCTION(read) {
+	if (args->at(0)->isString()) {
+		::std::string buffer;
+		::std::cin >> buffer;
+		args->at(0)->setString(CSTRING(buffer));
+	}
+	else if (args->at(0)->isInteger()) {
+		int64_t buffer;
+		::std::cin >> buffer;
+		args->at(0)->setInteger(buffer);
+	}
+	else if (args->at(0)->isDouble()) {
+		double buffer;
+		::std::cin >> buffer;
+		args->at(0)->setDouble(buffer);
+	}
+}
+
 } // namespace io
 
 /**
@@ -81,6 +103,18 @@ void IOModule::init() throw() {
 		->setMinNumArgs(1);
 
 	addFunction(new Function("readln", &CLEVER_FUNC_NAME(readln), CLEVER_STR));
+	
+	addFunction((new Function("read", &CLEVER_FUNC_NAME(read), CLEVER_VOID))
+		->addArg("buffer", CLEVER_STR)
+	);
+	
+	addFunction((new Function("read", &CLEVER_FUNC_NAME(read), CLEVER_VOID))
+		->addArg("buffer", CLEVER_INT)
+	);
+	
+	addFunction((new Function("read", &CLEVER_FUNC_NAME(read), CLEVER_VOID))
+		->addArg("buffer", CLEVER_DOUBLE)
+	);
 }
 
 }}} // clever::packages::std

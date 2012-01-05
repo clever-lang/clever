@@ -58,7 +58,6 @@ bool TypeChecker::checkCompatibleTypes(const Value* const lhs,
 	/**
 	 * Constants with different type cannot performs operation
 	 */
-
 	if (lhs->isPrimitive() && rhs->isPrimitive()
 		&& lhs->getTypePtr() != CLEVER_STR
 		&& rhs->getTypePtr()  != CLEVER_STR) {
@@ -203,10 +202,6 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 	Value* lhs = expr->getLhs()->getValue();
 	Value* rhs = expr->getRhs()->getValue();
 
-	if (!checkCompatibleTypes(lhs, rhs)) {
-		Compiler::error("Type mismatch!", expr->getLocation());
-	}
-
 	arg_types.push_back(lhs->getTypePtr());
 	arg_types.push_back(rhs->getTypePtr());
 
@@ -252,7 +247,7 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 		expr->getValue()->setTypePtr(lhs->getTypePtr());
 		lhs->addRef();
 	} else {
-		expr->setResult(new Value(lhs->getTypePtr()));
+		expr->setResult(new Value(method->getReturn()));
 	}
 }
 
