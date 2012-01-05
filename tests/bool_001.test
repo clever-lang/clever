@@ -1,0 +1,33 @@
+Testing the Bool type
+==CODE==
+import std.io;
+
+Bool a = false;
+println(a);
+
+a = 2 < 3;
+println(a);
+
+a = true & false;
+println(a);
+
+Bool b(1 >= 1);
+println(b);
+
+Bool c(b);
+println(c);
+
+if (c) {
+	println("OK!");
+}
+
+if (a) {
+	println("fail");
+}
+==RESULT==
+false
+true
+false
+true
+true
+OK!
