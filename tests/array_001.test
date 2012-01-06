@@ -9,4 +9,4 @@ x.push(2);
 
 println(x.toString());
 ==RESULT==
-[1, 2]
+\[1, 2\]
