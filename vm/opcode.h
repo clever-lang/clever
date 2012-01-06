@@ -36,11 +36,6 @@ namespace clever {
  * Opcodes
  */
 enum Opcodes {
-	OP_PLUS,
-	OP_DIV,
-	OP_MULT,
-	OP_MINUS,
-	OP_MOD,
 	OP_VAR_DECL,
 	OP_BW_OR,
 	OP_BW_AND,

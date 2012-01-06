@@ -50,11 +50,6 @@ const char* Opcode::getOpName(Opcodes op) const throw() {
 #define CASE(x) case x: return #x
 
 	switch (op) {
-		CASE(OP_PLUS);
-		CASE(OP_DIV);
-		CASE(OP_MULT);
-		CASE(OP_MINUS);
-		CASE(OP_MOD);
 		CASE(OP_VAR_DECL);
 		CASE(OP_BW_OR);
 		CASE(OP_BW_AND);
@@ -77,6 +72,7 @@ const char* Opcode::getOpName(Opcodes op) const throw() {
 		CASE(OP_FCALL);
 		CASE(OP_ASSIGN);
 		CASE(OP_RETURN);
+		CASE(OP_RECV);
 		default:
 			return "UNKNOWN";
 	}
