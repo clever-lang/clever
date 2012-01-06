@@ -46,7 +46,7 @@ CLEVER_TYPE_METHOD(Array::toString) {
 			ret += sep;
 		}
 	}
-	ret += "]\n";
+	ret += "]";
 
 	CLEVER_RETURN_STR(CSTRING(ret));
 }
