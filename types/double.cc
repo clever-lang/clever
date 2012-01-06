@@ -37,7 +37,7 @@ namespace clever {
  */
 CLEVER_TYPE_METHOD(Double::constructor) {
 	if (args) {
-		CLEVER_RETURN_DOUBLE(CLEVER_ARG(0)->getDouble());
+		CLEVER_RETURN_DOUBLE(CLEVER_ARG_DOUBLE(0));
 	}
 	else {
 		CLEVER_RETURN_DOUBLE(0.0);
@@ -49,7 +49,7 @@ CLEVER_TYPE_METHOD(Double::constructor) {
  * Converts the number to string
  */
 CLEVER_TYPE_METHOD(Double::toString) {
-	CLEVER_RETURN_STR(CSTRING(value->toString()));
+	CLEVER_RETURN_STR(CSTRING(CLEVER_THIS()->toString()));
 }
 
 /**
@@ -61,34 +61,34 @@ CLEVER_TYPE_METHOD(Double::sqrt) {
 }
 
 CLEVER_TYPE_METHOD(Double::plus) {
-	if (CLEVER_ARG(1)->isDouble()) {
-		CLEVER_RETURN_DOUBLE(CLEVER_ARG(0)->getDouble() + CLEVER_ARG(1)->getDouble());
+	if (CLEVER_ARG_IS_DOUBLE(1)) {
+		CLEVER_RETURN_DOUBLE(CLEVER_ARG_DOUBLE(0) + CLEVER_ARG_DOUBLE(1));
 	} else {
-		CLEVER_RETURN_DOUBLE(CLEVER_ARG(0)->getDouble() + CLEVER_ARG(1)->getInteger());
+		CLEVER_RETURN_DOUBLE(CLEVER_ARG_DOUBLE(0) + CLEVER_ARG_INT(1));
 	}
 }
 
 CLEVER_TYPE_METHOD(Double::minus) {
-	if (CLEVER_ARG(1)->isDouble()) {
-		CLEVER_RETURN_DOUBLE(CLEVER_ARG(0)->getDouble() - CLEVER_ARG(1)->getDouble());
+	if (CLEVER_ARG_IS_DOUBLE(1)) {
+		CLEVER_RETURN_DOUBLE(CLEVER_ARG_DOUBLE(0) - CLEVER_ARG_DOUBLE(1));
 	} else {
-		CLEVER_RETURN_DOUBLE(CLEVER_ARG(0)->getDouble() - CLEVER_ARG(1)->getInteger());
+		CLEVER_RETURN_DOUBLE(CLEVER_ARG_DOUBLE(0) - CLEVER_ARG_INT(1));
 	}
 }
 
 CLEVER_TYPE_METHOD(Double::div) {
-	if (CLEVER_ARG(1)->isDouble()) {
-		CLEVER_RETURN_DOUBLE(CLEVER_ARG(0)->getDouble() / CLEVER_ARG(1)->getDouble());
+	if (CLEVER_ARG_IS_DOUBLE(1)) {
+		CLEVER_RETURN_DOUBLE(CLEVER_ARG_DOUBLE(0) / CLEVER_ARG_DOUBLE(1));
 	} else {
-		CLEVER_RETURN_DOUBLE(CLEVER_ARG(0)->getDouble() / CLEVER_ARG(1)->getInteger());
+		CLEVER_RETURN_DOUBLE(CLEVER_ARG_DOUBLE(0) / CLEVER_ARG_INT(1));
 	}
 }
 
 CLEVER_TYPE_METHOD(Double::mult) {
-	if (CLEVER_ARG(1)->isDouble()) {
-		CLEVER_RETURN_DOUBLE(CLEVER_ARG(0)->getDouble() * CLEVER_ARG(1)->getDouble());
+	if (CLEVER_ARG_IS_DOUBLE(1)) {
+		CLEVER_RETURN_DOUBLE(CLEVER_ARG_DOUBLE(0) * CLEVER_ARG_DOUBLE(1));
 	} else {
-		CLEVER_RETURN_DOUBLE(CLEVER_ARG(0)->getDouble() * CLEVER_ARG(1)->getInteger());
+		CLEVER_RETURN_DOUBLE(CLEVER_ARG_DOUBLE(0) * CLEVER_ARG_INT(1));
 	}
 }
 

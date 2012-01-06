@@ -62,10 +62,10 @@ CLEVER_TYPE_METHOD(FileStream::constructor) {
 
 	if (args != NULL) {
 		if (CLEVER_NUM_ARGS() == 1) {
-			fsv->m_fstream.open(CLEVER_ARG(0)->getString().c_str());
+			fsv->m_fstream.open(CLEVER_ARG_STR(0).c_str());
 		}
 		else if (CLEVER_NUM_ARGS() == 2) {
-			fsv->m_fstream.open(CLEVER_ARG(0)->getString().c_str(), convertOpenMode(CLEVER_ARG(1)->getString()));
+			fsv->m_fstream.open(CLEVER_ARG_STR(0).c_str(), convertOpenMode(CLEVER_ARG(1)->getString()));
 		}
 	}
 
@@ -137,17 +137,17 @@ CLEVER_TYPE_METHOD(FileStream::read) {
 
 	// @TODO: should test if the stream allows reading.
 
-	if (CLEVER_ARG(0)->isInteger()) {
+	if (CLEVER_ARG_IS_INT(0)) {
 		uint64_t val;
 		fsv->m_fstream >> val;
 
 		CLEVER_ARG(0)->setInteger(val);
-	} else if (CLEVER_ARG(0)->isDouble()) {
+	} else if (CLEVER_ARG_IS_DOUBLE(0)) {
 		double val;
 		fsv->m_fstream >> val;
 
 		CLEVER_ARG(0)->setDouble(val);
-	} else if (CLEVER_ARG(0)->isString()) {
+	} else if (CLEVER_ARG_IS_STR(0)) {
 		::std::string val;
 		fsv->m_fstream >> val;
 
@@ -191,7 +191,7 @@ CLEVER_TYPE_METHOD(FileStream::write) {
 	// @TODO: should check if the stream allows writing.
 
 	// Write the String.
-	fsv->m_fstream << CLEVER_ARG(0)->getString();
+	fsv->m_fstream << CLEVER_ARG_STR(0);
 
 	retval->setType(Value::NONE);
 }
@@ -217,7 +217,7 @@ CLEVER_TYPE_METHOD(FileStream::writeLine) {
 	}
 
 	// Write the String.
-	fsv->m_fstream << CLEVER_ARG(0)->getString();
+	fsv->m_fstream << CLEVER_ARG_STR(0);
 
 	// Write a new line.
 	fsv->m_fstream << ::std::endl;

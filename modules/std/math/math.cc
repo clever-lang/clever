@@ -42,10 +42,10 @@ namespace math {
  */
 static CLEVER_FUNCTION(abs_double) {
 	/* FIXME: Remove this if when we got overload support for functions */
-	if (CLEVER_ARG(0)->getTypePtr() == CLEVER_INT) {
-		retval->setInteger(::std::labs(CLEVER_ARG(0)->getInteger()));
+	if (CLEVER_ARG_TYPE_P(0) == CLEVER_INT) {
+		retval->setInteger(::std::labs(CLEVER_ARG_INT(0)));
 	} else {
-		CLEVER_RETURN_DOUBLE(::std::abs(CLEVER_ARG(0)->getDouble()));
+		CLEVER_RETURN_DOUBLE(::std::abs(CLEVER_ARG_DOUBLE(0)));
 	}
 }
 
@@ -55,7 +55,7 @@ static CLEVER_FUNCTION(abs_double) {
  */
  /*
 static CLEVER_FUNCTION(abs_int) {
-	retval->setInteger(::std::labs(CLEVER_ARG(0)->getInteger()));
+	retval->setInteger(::std::labs(CLEVER_ARG_INT(0)));
 }
 */
 
@@ -64,7 +64,7 @@ static CLEVER_FUNCTION(abs_int) {
  * Returns the arc cosine of an angle of x radians
  */
 static CLEVER_FUNCTION(acos) {
-	CLEVER_RETURN_DOUBLE(::std::acos(CLEVER_ARG(0)->getDouble()));
+	CLEVER_RETURN_DOUBLE(::std::acos(CLEVER_ARG_DOUBLE(0)));
 }
 
 /**
@@ -72,7 +72,7 @@ static CLEVER_FUNCTION(acos) {
  * Returns the arc sine of an angle of x radians
  */
 static CLEVER_FUNCTION(asin) {
-	CLEVER_RETURN_DOUBLE(::std::asin(CLEVER_ARG(0)->getDouble()));
+	CLEVER_RETURN_DOUBLE(::std::asin(CLEVER_ARG_DOUBLE(0)));
 }
 
 /**
@@ -80,7 +80,7 @@ static CLEVER_FUNCTION(asin) {
  * Returns the arc tangent of an angle of x radians
  */
 static CLEVER_FUNCTION(atan) {
-	CLEVER_RETURN_DOUBLE(::std::atan(CLEVER_ARG(0)->getDouble()));
+	CLEVER_RETURN_DOUBLE(::std::atan(CLEVER_ARG_DOUBLE(0)));
 }
 
 /**
@@ -88,7 +88,7 @@ static CLEVER_FUNCTION(atan) {
  * Returns the smallest integral value that is not less than x
  */
 static CLEVER_FUNCTION(ceil) {
-	CLEVER_RETURN_DOUBLE(::std::ceil(CLEVER_ARG(0)->getDouble()));
+	CLEVER_RETURN_DOUBLE(::std::ceil(CLEVER_ARG_DOUBLE(0)));
 }
 
 /**
@@ -96,7 +96,7 @@ static CLEVER_FUNCTION(ceil) {
  * Returns the cosine of an angle of x radians
  */
 static CLEVER_FUNCTION(cos) {
-	CLEVER_RETURN_DOUBLE(::std::cos(CLEVER_ARG(0)->getDouble()));
+	CLEVER_RETURN_DOUBLE(::std::cos(CLEVER_ARG_DOUBLE(0)));
 }
 
 /**
@@ -104,7 +104,7 @@ static CLEVER_FUNCTION(cos) {
  * Returns the largest integral value that is not greater than x
  */
 static CLEVER_FUNCTION(floor) {
-	CLEVER_RETURN_DOUBLE(::std::floor(CLEVER_ARG(0)->getDouble()));
+	CLEVER_RETURN_DOUBLE(::std::floor(CLEVER_ARG_DOUBLE(0)));
 }
 
 /**
@@ -112,8 +112,8 @@ static CLEVER_FUNCTION(floor) {
  * Returns the logarithm of the value using the specified base
  */
 static CLEVER_FUNCTION(logb) {
-	double logval = ::std::log10(CLEVER_ARG(0)->getDouble());
-	double logbase = ::std::log10(CLEVER_ARG(1)->getDouble());
+	double logval = ::std::log10(CLEVER_ARG_DOUBLE(0));
+	double logbase = ::std::log10(CLEVER_ARG_DOUBLE(1));
 
 	CLEVER_RETURN_DOUBLE(logval/logbase);
 }
@@ -124,7 +124,7 @@ static CLEVER_FUNCTION(logb) {
  */
 /*
 static CLEVER_FUNCTION(loge) {
-	CLEVER_RETURN_DOUBLE(::std::log(CLEVER_ARG(0)->getDouble()));
+	CLEVER_RETURN_DOUBLE(::std::log(CLEVER_ARG_DOUBLE(0)));
 }*/
 
 /**
@@ -132,7 +132,7 @@ static CLEVER_FUNCTION(loge) {
  * Returns the common (base 10) logarithm of the value
  */
 static CLEVER_FUNCTION(log10) {
-	CLEVER_RETURN_DOUBLE(::std::log10(CLEVER_ARG(0)->getDouble()));
+	CLEVER_RETURN_DOUBLE(::std::log10(CLEVER_ARG_DOUBLE(0)));
 }
 
 /**
@@ -140,10 +140,10 @@ static CLEVER_FUNCTION(log10) {
  * Returns which value is greater, x or y
  */
 static CLEVER_FUNCTION(max_double) {
-	if (CLEVER_ARG(0)->getDouble() > CLEVER_ARG(1)->getDouble()) {
-		CLEVER_RETURN_DOUBLE(CLEVER_ARG(0)->getDouble());
+	if (CLEVER_ARG_DOUBLE(0) > CLEVER_ARG_DOUBLE(1)) {
+		CLEVER_RETURN_DOUBLE(CLEVER_ARG_DOUBLE(0));
 	} else {
-		CLEVER_RETURN_DOUBLE(CLEVER_ARG(1)->getDouble());
+		CLEVER_RETURN_DOUBLE(CLEVER_ARG_DOUBLE(1));
 	}
 }
 
@@ -153,8 +153,8 @@ static CLEVER_FUNCTION(max_double) {
  */
  /*
 static CLEVER_FUNCTION(max_int) {
-	if (CLEVER_ARG(0)->getInteger() > CLEVER_ARG(1)->getInteger()) {
-		retval->setInteger(CLEVER_ARG(0)->getInteger());
+	if (CLEVER_ARG_INT(0) > CLEVER_ARG(1)->getInteger()) {
+		retval->setInteger(CLEVER_ARG_INT(0));
 	} else {
 		retval->setInteger(CLEVER_ARG(1)->getInteger());
 	}
@@ -165,10 +165,10 @@ static CLEVER_FUNCTION(max_int) {
  * Returns which value is smaller, x or y
  */
 static CLEVER_FUNCTION(min_double) {
-	if (CLEVER_ARG(0)->getDouble() < CLEVER_ARG(1)->getDouble()) {
-		CLEVER_RETURN_DOUBLE(CLEVER_ARG(0)->getDouble());
+	if (CLEVER_ARG_DOUBLE(0) < CLEVER_ARG_DOUBLE(1)) {
+		CLEVER_RETURN_DOUBLE(CLEVER_ARG_DOUBLE(0));
 	} else {
-		CLEVER_RETURN_DOUBLE(CLEVER_ARG(1)->getDouble());
+		CLEVER_RETURN_DOUBLE(CLEVER_ARG_DOUBLE(1));
 	}
 }
 
@@ -178,8 +178,8 @@ static CLEVER_FUNCTION(min_double) {
  */
  /*
 static CLEVER_FUNCTION(min_int) {
-	if (CLEVER_ARG(0)->getInteger() < CLEVER_ARG(1)->getInteger()) {
-		retval->setInteger(CLEVER_ARG(0)->getInteger());
+	if (CLEVER_ARG_INT(0) < CLEVER_ARG(1)->getInteger()) {
+		retval->setInteger(CLEVER_ARG_INT(0));
 	} else {
 		retval->setInteger(CLEVER_ARG(1)->getInteger());
 	}
@@ -190,7 +190,7 @@ static CLEVER_FUNCTION(min_int) {
  * Returns x raised to the power y
  */
 static CLEVER_FUNCTION(pow_double) {
-	CLEVER_RETURN_DOUBLE(::std::pow(CLEVER_ARG(0)->getDouble(), CLEVER_ARG(1)->getDouble()));
+	CLEVER_RETURN_DOUBLE(::std::pow(CLEVER_ARG_DOUBLE(0), CLEVER_ARG_DOUBLE(1)));
 }
 
 /**
@@ -199,7 +199,7 @@ static CLEVER_FUNCTION(pow_double) {
  */
  /*
 static CLEVER_FUNCTION(pow_int) {
-	retval->setInteger(::std::pow(CLEVER_ARG(0)->getInteger(), CLEVER_ARG(1)->getInteger()));
+	retval->setInteger(::std::pow(CLEVER_ARG_INT(0), CLEVER_ARG(1)->getInteger()));
 }*/
 
 /**
@@ -207,7 +207,7 @@ static CLEVER_FUNCTION(pow_int) {
  * Returns the rounded value of x
  */
 static CLEVER_FUNCTION(round) {
-	double value = CLEVER_ARG(0)->getDouble();
+	double value = CLEVER_ARG_DOUBLE(0);
 
 	CLEVER_RETURN_DOUBLE(::round(value));
 }
@@ -217,9 +217,9 @@ static CLEVER_FUNCTION(round) {
  * Returns a value indicating the sign of x
  */
 static CLEVER_FUNCTION(sign_double) {
-	if (CLEVER_ARG(0)->getDouble() == .0) {
+	if (CLEVER_ARG_DOUBLE(0) == .0) {
 		CLEVER_RETURN_DOUBLE(.0);
-	} else if (CLEVER_ARG(0)->getDouble() < .0) {
+	} else if (CLEVER_ARG_DOUBLE(0) < .0) {
 		CLEVER_RETURN_DOUBLE(-1.0);
 	} else {
 		CLEVER_RETURN_DOUBLE(1.0);
@@ -232,9 +232,9 @@ static CLEVER_FUNCTION(sign_double) {
  */
  /*
 static CLEVER_FUNCTION(sign_int) {
-	if (CLEVER_ARG(0)->getInteger() == 0) {
+	if (CLEVER_ARG_INT(0) == 0) {
 		retval->setInteger(0);
-	} else if (CLEVER_ARG(0)->getInteger() < 0) {
+	} else if (CLEVER_ARG_INT(0) < 0) {
 		retval->setInteger(-1);
 	} else {
 		retval->setInteger(1);
@@ -246,7 +246,7 @@ static CLEVER_FUNCTION(sign_int) {
  * Returns the sine of an angle of x radians
  */
 static CLEVER_FUNCTION(sin) {
-	CLEVER_RETURN_DOUBLE(::std::sin(CLEVER_ARG(0)->getDouble()));
+	CLEVER_RETURN_DOUBLE(::std::sin(CLEVER_ARG_DOUBLE(0)));
 }
 
 /**
@@ -257,9 +257,9 @@ static CLEVER_FUNCTION(sqrt) {
 	double value;
 
 	if (CLEVER_ARG(0)->isDouble()) {
-		value = CLEVER_ARG(0)->getDouble();
+		value = CLEVER_ARG_DOUBLE(0);
 	} else {
-		value = double(CLEVER_ARG(0)->getInteger());
+		value = double(CLEVER_ARG_INT(0));
 	}
 
 	CLEVER_RETURN_DOUBLE(::std::sqrt(value));
@@ -270,7 +270,7 @@ static CLEVER_FUNCTION(sqrt) {
  * Returns the tangent of an angle of x radians
  */
 static CLEVER_FUNCTION(tan) {
-	CLEVER_RETURN_DOUBLE(::std::tan(CLEVER_ARG(0)->getDouble()));
+	CLEVER_RETURN_DOUBLE(::std::tan(CLEVER_ARG_DOUBLE(0)));
 }
 
 /**
@@ -278,7 +278,7 @@ static CLEVER_FUNCTION(tan) {
  * Returns the value of x truncating the decimal part
  */
 static CLEVER_FUNCTION(truncate) {
-	CLEVER_RETURN_DOUBLE((int)CLEVER_ARG(0)->getDouble());
+	CLEVER_RETURN_DOUBLE((int)CLEVER_ARG_DOUBLE(0));
 }
 
 } // math

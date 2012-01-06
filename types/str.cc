@@ -42,16 +42,16 @@ CLEVER_TYPE_METHOD(String::replace) {
 	std::string newString = CLEVER_THIS()->toString();
 
 	// Initial replace
-	needlePos = newString.find(CLEVER_ARG(0)->getString(), 0);
-	needleLength = CLEVER_ARG(0)->getString().length();
+	needlePos = newString.find(CLEVER_ARG_STR(0), 0);
+	needleLength = CLEVER_ARG_STR(0).length();
 
 	do {
 		// Do the replace
-		newString = newString.replace(needlePos, needleLength, CLEVER_ARG(1)->getString());
+		newString = newString.replace(needlePos, needleLength, CLEVER_ARG_STR(1));
 
 		// Find the next one
-		needlePos = newString.find(CLEVER_ARG(0)->getString(), 0);
-		needleLength = CLEVER_ARG(0)->getString().length();
+		needlePos = newString.find(CLEVER_ARG_STR(0), 0);
+		needleLength = CLEVER_ARG_STR(0).length();
 	} while (needlePos != std::string::npos);
 
 	CLEVER_RETURN_STR(CSTRING(newString));
@@ -110,7 +110,7 @@ CLEVER_TYPE_METHOD(String::toInteger) {
  */
 CLEVER_TYPE_METHOD(String::constructor) {
 	if (args) {
-		CLEVER_RETURN_STR(CSTRING(CLEVER_ARG(0)->getString()));
+		CLEVER_RETURN_STR(CSTRING(CLEVER_ARG_STR(0)));
 	}
 	else {
 		CLEVER_RETURN_STR(CSTRING(""));
@@ -121,7 +121,7 @@ CLEVER_TYPE_METHOD(String::constructor) {
  * + operator (String, String)
  */
 CLEVER_TYPE_METHOD(String::plus) {
-	CLEVER_RETURN_STR(CSTRING(CLEVER_ARG(0)->getString() + CLEVER_ARG(1)->getString()));
+	CLEVER_RETURN_STR(CSTRING(CLEVER_ARG_STR(0) + CLEVER_ARG_STR(1)));
 }
 
 void String::init() {

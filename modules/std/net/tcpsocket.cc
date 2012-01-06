@@ -53,11 +53,11 @@ CLEVER_TYPE_METHOD(TcpSocket::constructor) {
 	if (args != NULL) {
 		if (CLEVER_NUM_ARGS() == 1) {
 			// Host only.
-			sv->remote.sin_addr.s_addr = inet_addr(CLEVER_ARG(0)->getString().c_str());
+			sv->remote.sin_addr.s_addr = inet_addr(CLEVER_ARG_STR(0).c_str());
 		} else if (CLEVER_NUM_ARGS() == 2) {
 			// Host and port.
-			sv->remote.sin_addr.s_addr = inet_addr(CLEVER_ARG(0)->getString().c_str());
-			sv->remote.sin_port = CLEVER_ARG(1)->getInteger();
+			sv->remote.sin_addr.s_addr = inet_addr(CLEVER_ARG_STR(0).c_str());
+			sv->remote.sin_port = CLEVER_ARG_INT(1);
 		}
 	}
 
@@ -70,13 +70,13 @@ CLEVER_TYPE_METHOD(TcpSocket::constructor) {
 CLEVER_TYPE_METHOD(TcpSocket::setHost) {
 	SocketValue* sv = CLEVER_GET_VALUE(SocketValue*, value);
 
-	sv->remote.sin_addr.s_addr = inet_addr(CLEVER_ARG(0)->getString().c_str());
+	sv->remote.sin_addr.s_addr = inet_addr(CLEVER_ARG_STR(0).c_str());
 }
 
 CLEVER_TYPE_METHOD(TcpSocket::setPort) {
 	SocketValue* sv = CLEVER_GET_VALUE(SocketValue*, value);
 
-	sv->remote.sin_port = htons(CLEVER_ARG(0)->getInteger());
+	sv->remote.sin_port = htons(CLEVER_ARG_INT(0));
 }
 
 CLEVER_TYPE_METHOD(TcpSocket::connect) {
@@ -111,7 +111,7 @@ CLEVER_TYPE_METHOD(TcpSocket::send) {
 	SocketValue* sv = CLEVER_GET_VALUE(SocketValue*, value);
 
 	// @TODO: check for errors on this.
-	::send(sv->socket, CLEVER_ARG(0)->getString().c_str(), CLEVER_ARG(0)->getString().size(), 0);
+	::send(sv->socket, CLEVER_ARG_STR(0).c_str(), CLEVER_ARG_STR(0).size(), 0);
 }
 
 CLEVER_TYPE_METHOD(TcpSocket::poll) {

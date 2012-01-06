@@ -38,7 +38,7 @@ namespace clever {
  */
 CLEVER_TYPE_METHOD(Bool::constructor) {
 	if (args) {
-		CLEVER_RETURN_BOOL(CLEVER_ARG(0)->getBoolean());
+		CLEVER_RETURN_BOOL(CLEVER_ARG_BOOL(0));
 	}
 	else {
 		CLEVER_RETURN_BOOL(false);
@@ -50,22 +50,22 @@ CLEVER_TYPE_METHOD(Bool::constructor) {
  * Converts the number to string
  */
 CLEVER_TYPE_METHOD(Bool::toString) {
-	CLEVER_RETURN_STR(CSTRING(value->toString()));
+	CLEVER_RETURN_STR(CSTRING(CLEVER_THIS()->toString()));
 }
 
 /**
  * Boolean operators
  */
 CLEVER_TYPE_METHOD(Bool::bw_and) {
-	CLEVER_RETURN_BOOL(CLEVER_ARG(0)->getValueAsBool() & args->at(1)->getValueAsBool());
+	CLEVER_RETURN_BOOL(CLEVER_ARG_AS_BOOL(0) & CLEVER_ARG_AS_BOOL(1));
 }
 
 CLEVER_TYPE_METHOD(Bool::bw_or) {
-	CLEVER_RETURN_BOOL(CLEVER_ARG(0)->getValueAsBool() | args->at(1)->getValueAsBool());
+	CLEVER_RETURN_BOOL(CLEVER_ARG_AS_BOOL(0) | CLEVER_ARG_AS_BOOL(1));
 }
 
 CLEVER_TYPE_METHOD(Bool::bw_xor) {
-	CLEVER_RETURN_BOOL(CLEVER_ARG(0)->getValueAsBool() ^ args->at(1)->getValueAsBool());
+	CLEVER_RETURN_BOOL(CLEVER_ARG_AS_BOOL(0) ^ CLEVER_ARG_AS_BOOL(1));
 }
 
 void Bool::init() {

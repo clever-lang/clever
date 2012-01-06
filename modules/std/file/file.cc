@@ -38,7 +38,7 @@ namespace file {
  */
 /*static CLEVER_FUNCTION(print) {
 	for (int i = 0, size = CLEVER_NUM_ARGS(); i < size; ++i) {
-		::std::cout << CLEVER_ARG(1)->toString();
+		::std::cout << CLEVER_ARG_AS_STR(1);
 	}
 }*/
 

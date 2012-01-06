@@ -47,6 +47,35 @@ namespace clever {
 #define CLEVER_ARG(x) args->at((x))
 
 /**
+ * Macro to convert an specific argument to another type
+ */
+#define CLEVER_ARG_AS_BOOL(x)    CLEVER_ARG(x)->getValueAsBool()
+#define CLEVER_ARG_AS_STR(x)     CLEVER_ARG(x)->toString()
+
+
+/**
+ * Macro to check the argument type
+ */
+#define CLEVER_ARG_IS_INT(x)     CLEVER_ARG(x)->isInteger()
+#define CLEVER_ARG_IS_BOOL(x)    CLEVER_ARG(x)->isBoolean()
+#define CLEVER_ARG_IS_STR(x)     CLEVER_ARG(x)->isString()
+#define CLEVER_ARG_IS_DOUBLE(x)  CLEVER_ARG(x)->isDouble()
+
+/**
+ * Macro to get the Type pointer from an argument
+ */
+#define CLEVER_ARG_TYPE_P(x)     CLEVER_ARG(x)->getTypePtr()
+
+/**
+ * Macro to data access of an specific argument supplied to function
+ */
+#define CLEVER_ARG_INT(x)        args->at((x))->getInteger()
+#define CLEVER_ARG_DOUBLE(x)     args->at((x))->getDouble()
+#define CLEVER_ARG_STR(x)        args->at((x))->getString()
+#define CLEVER_ARG_BOOL(x)       args->at((x))->getBoolean()
+#define CLEVER_ARG_DATA_VALUE(x) args->at((x))->getDataValue()
+
+/**
  * Macro to access the Value* associated to object instance
  */
 #define CLEVER_THIS() value

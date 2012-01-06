@@ -38,7 +38,7 @@ namespace os {
  * Calls a command and returns the exit code.
  */
 static CLEVER_FUNCTION(system) {
-	CLEVER_RETURN_INT(::system(CLEVER_ARG(0)->getString().c_str()));
+	CLEVER_RETURN_INT(::system(CLEVER_ARG_STR(0).c_str()));
 }
 
 } // namespace os

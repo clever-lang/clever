@@ -38,7 +38,7 @@ namespace io {
  */
 static CLEVER_FUNCTION(print) {
 	for (int i = 0, size = CLEVER_NUM_ARGS(); i < size; ++i) {
-		::std::cout << CLEVER_ARG(i)->toString();
+		::std::cout << CLEVER_ARG_AS_STR(i);
 	}
 }
 
@@ -48,7 +48,7 @@ static CLEVER_FUNCTION(print) {
  */
 static CLEVER_FUNCTION(println) {
 	for (int i = 0, size = CLEVER_NUM_ARGS(); i < size; ++i) {
-		::std::cout << CLEVER_ARG(i)->toString() << ::std::endl;
+		::std::cout << CLEVER_ARG_AS_STR(i) << ::std::endl;
 	}
 }
 
@@ -69,17 +69,17 @@ static CLEVER_FUNCTION(readln) {
  * Reads a value from the standard input.
  */
 static CLEVER_FUNCTION(read) {
-	if (CLEVER_ARG(0)->isString()) {
+	if (CLEVER_ARG_IS_STR(0)) {
 		::std::string buffer;
 		::std::cin >> buffer;
 		CLEVER_ARG(0)->setString(CSTRING(buffer));
 	}
-	else if (CLEVER_ARG(0)->isInteger()) {
+	else if (CLEVER_ARG_IS_INT(0)) {
 		int64_t buffer;
 		::std::cin >> buffer;
 		CLEVER_ARG(0)->setInteger(buffer);
 	}
-	else if (CLEVER_ARG(0)->isDouble()) {
+	else if (CLEVER_ARG_IS_DOUBLE(0)) {
 		double buffer;
 		::std::cin >> buffer;
 		CLEVER_ARG(0)->setDouble(buffer);
