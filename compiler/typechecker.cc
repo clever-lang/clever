@@ -198,9 +198,37 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 	ValueVector* arg_values = new ValueVector;
 	CallableValue* call = new CallableValue;
 	const Method* method;
-	const CString* method_name;
+	const CString* method_name = NULL;
 	Value* lhs = expr->getLhs()->getValue();
 	Value* rhs = expr->getRhs()->getValue();
+
+	/**
+	 * Operator method names
+	 */
+	switch (expr->getOp()) {
+		case PLUS:          method_name = CSTRING(CLEVER_OPERATOR_PLUS);    break;
+		case DIV:           method_name = CSTRING(CLEVER_OPERATOR_DIV);     break;
+		case MULT:          method_name = CSTRING(CLEVER_OPERATOR_MULT);    break;
+		case MINUS:         method_name = CSTRING(CLEVER_OPERATOR_MINUS);   break;
+		case MOD:           method_name = CSTRING(CLEVER_OPERATOR_MOD);     break;
+		case XOR:           method_name = CSTRING(CLEVER_OPERATOR_BW_XOR);  break;
+		case BW_OR:         method_name = CSTRING(CLEVER_OPERATOR_BW_OR);   break;
+		case BW_AND:        method_name = CSTRING(CLEVER_OPERATOR_BW_AND);  break;
+		case GREATER:       method_name = CSTRING(CLEVER_OPERATOR_GREATER); break;
+		case LESS:          method_name = CSTRING(CLEVER_OPERATOR_LESS);    break;
+		case GREATER_EQUAL: method_name = CSTRING(CLEVER_OPERATOR_GE);      break;
+		case LESS_EQUAL:    method_name = CSTRING(CLEVER_OPERATOR_LE);      break;
+		case EQUAL:         method_name = CSTRING(CLEVER_OPERATOR_EQUAL);   break;
+		case NOT_EQUAL:     method_name = CSTRING(CLEVER_OPERATOR_NE);      break;
+		case OR:
+		case AND:
+			expr->setResult(new Value(CLEVER_BOOL));
+			delete call;
+			delete arg_values;
+			delete args;
+			return;
+			break;
+	}
 
 	arg_types.push_back(lhs->getTypePtr());
 	arg_types.push_back(rhs->getTypePtr());
@@ -213,19 +241,6 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 	args->addRef();
 	call->addRef();
 
-	/**
-	 * Operator method names
-	 */
-	switch (expr->getOp()) {
-		case PLUS:   method_name = CSTRING(CLEVER_OPERATOR_PLUS);	 break;
-		case DIV:    method_name = CSTRING(CLEVER_OPERATOR_DIV);     break;
-		case MULT:   method_name = CSTRING(CLEVER_OPERATOR_MULT);    break;
-		case MINUS:  method_name = CSTRING(CLEVER_OPERATOR_MINUS);   break;
-		case MOD:    method_name = CSTRING(CLEVER_OPERATOR_MOD);     break;
-		case XOR:    method_name = CSTRING(CLEVER_OPERATOR_BW_XOR);  break;
-		case BW_OR:  method_name = CSTRING(CLEVER_OPERATOR_BW_OR);   break;
-		case BW_AND: method_name = CSTRING(CLEVER_OPERATOR_BW_AND);  break;
-	}
 	method = lhs->getTypePtr()->getMethod(method_name, &arg_types);
 
 	if (method == NULL) {
@@ -249,20 +264,6 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 	} else {
 		expr->setResult(new Value(method->getReturnType()));
 	}
-}
-
-AST_VISITOR(TypeChecker, LogicExpr) {
-	const Value* lhs = expr->getLhs()->getValue();
-	const Value* rhs = expr->getRhs()->getValue();
-
-	if (!checkCompatibleTypes(lhs, rhs)) {
-		Compiler::errorf(expr->getLocation(),
-			"Cannot convert `%s' to `%s' in logic expression",
-			rhs->getTypePtr()->getName(),
-			lhs->getTypePtr()->getName());
-	}
-
-	expr->setResult(new Value(CLEVER_BOOL));
 }
 
 AST_VISITOR(TypeChecker, VariableDecl) {

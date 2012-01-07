@@ -35,7 +35,6 @@ namespace clever { namespace ast {
 class Identifier;
 class ASTNode;
 class BinaryExpr;
-class LogicExpr;
 class VariableDecl;
 class PosIncrement;
 class PosDecrement;
@@ -62,7 +61,6 @@ class TypeCreation;
 
 #define AST_VISITOR_DECLARATION(V) \
 	V(BinaryExpr); \
-	V(LogicExpr); \
 	V(VariableDecl); \
 	V(PreIncrement); \
 	V(PosIncrement); \
@@ -91,7 +89,7 @@ class NO_INIT_VTABLE ASTVisitor {
 public:
 	ASTVisitor() { }
 	virtual ~ASTVisitor() { }
-	
+
 	AST_VISITOR_DECLARATION(AST_VISITOR_DECL_VIRTUAL);
 
 	virtual void init() throw() = 0;

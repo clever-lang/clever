@@ -341,26 +341,26 @@ type_creation:
 ;
 
 expr:
-		expr '-' expr         { $$ = new ast::BinaryExpr(ast::MINUS, $1, $3);        $$->setLocation(yylloc); }
-	|	expr '+' expr         { $$ = new ast::BinaryExpr(ast::PLUS, $1, $3);         $$->setLocation(yylloc); }
-	|	expr '/' expr         { $$ = new ast::BinaryExpr(ast::DIV, $1, $3);          $$->setLocation(yylloc); }
-	|	expr '*' expr         { $$ = new ast::BinaryExpr(ast::MULT, $1, $3);         $$->setLocation(yylloc); }
-	|	expr '%' expr         { $$ = new ast::BinaryExpr(ast::MOD, $1, $3);          $$->setLocation(yylloc); }
-	|	expr '|' expr         { $$ = new ast::BinaryExpr(ast::BW_OR, $1, $3);        $$->setLocation(yylloc); }
-	|	expr '&' expr         { $$ = new ast::BinaryExpr(ast::BW_AND, $1, $3);       $$->setLocation(yylloc); }
-	|	expr '^' expr         { $$ = new ast::BinaryExpr(ast::XOR, $1, $3);          $$->setLocation(yylloc); }
-	|	expr ">" expr         { $$ = new ast::LogicExpr(ast::GREATER, $1, $3);       $$->setLocation(yylloc); }
-	|	expr ">=" expr        { $$ = new ast::LogicExpr(ast::GREATER_EQUAL, $1, $3); $$->setLocation(yylloc); }
-	|	expr "<" expr         { $$ = new ast::LogicExpr(ast::LESS, $1, $3);          $$->setLocation(yylloc); }
-	|	expr "<=" expr        { $$ = new ast::LogicExpr(ast::LESS_EQUAL, $1, $3);    $$->setLocation(yylloc); }
-	|	expr "==" expr        { $$ = new ast::LogicExpr(ast::EQUAL, $1, $3);         $$->setLocation(yylloc); }
-	|	expr "!=" expr        { $$ = new ast::LogicExpr(ast::NOT_EQUAL, $1, $3);     $$->setLocation(yylloc); }
-	|	expr "||" expr        { $$ = new ast::LogicExpr(ast::OR, $1, $3);            $$->setLocation(yylloc); }
-	|	expr "&&" expr        { $$ = new ast::LogicExpr(ast::AND, $1, $3);           $$->setLocation(yylloc); }
-	|	expr "or" expr        { $$ = new ast::LogicExpr(ast::OR, $1, $3);            $$->setLocation(yylloc); }
-	|	expr "and" expr       { $$ = new ast::LogicExpr(ast::AND, $1, $3);           $$->setLocation(yylloc); }
-	|	'-' expr %prec UMINUS { $$ = new ast::BinaryExpr(ast::MINUS, $2);            $$->setLocation(yylloc); }
-	|	'+' expr %prec UMINUS { $$ = new ast::BinaryExpr(ast::PLUS, $2);             $$->setLocation(yylloc); }
+		expr '-' expr         { $$ = new ast::BinaryExpr(ast::MINUS, $1, $3);         $$->setLocation(yylloc); }
+	|	expr '+' expr         { $$ = new ast::BinaryExpr(ast::PLUS, $1, $3);          $$->setLocation(yylloc); }
+	|	expr '/' expr         { $$ = new ast::BinaryExpr(ast::DIV, $1, $3);           $$->setLocation(yylloc); }
+	|	expr '*' expr         { $$ = new ast::BinaryExpr(ast::MULT, $1, $3);          $$->setLocation(yylloc); }
+	|	expr '%' expr         { $$ = new ast::BinaryExpr(ast::MOD, $1, $3);           $$->setLocation(yylloc); }
+	|	expr '|' expr         { $$ = new ast::BinaryExpr(ast::BW_OR, $1, $3);         $$->setLocation(yylloc); }
+	|	expr '&' expr         { $$ = new ast::BinaryExpr(ast::BW_AND, $1, $3);        $$->setLocation(yylloc); }
+	|	expr '^' expr         { $$ = new ast::BinaryExpr(ast::XOR, $1, $3);           $$->setLocation(yylloc); }
+	|	expr ">" expr         { $$ = new ast::BinaryExpr(ast::GREATER, $1, $3);       $$->setLocation(yylloc); }
+	|	expr ">=" expr        { $$ = new ast::BinaryExpr(ast::GREATER_EQUAL, $1, $3); $$->setLocation(yylloc); }
+	|	expr "<" expr         { $$ = new ast::BinaryExpr(ast::LESS, $1, $3);          $$->setLocation(yylloc); }
+	|	expr "<=" expr        { $$ = new ast::BinaryExpr(ast::LESS_EQUAL, $1, $3);    $$->setLocation(yylloc); }
+	|	expr "==" expr        { $$ = new ast::BinaryExpr(ast::EQUAL, $1, $3);         $$->setLocation(yylloc); }
+	|	expr "!=" expr        { $$ = new ast::BinaryExpr(ast::NOT_EQUAL, $1, $3);     $$->setLocation(yylloc); }
+	|	expr "||" expr        { $$ = new ast::BinaryExpr(ast::OR, $1, $3);            $$->setLocation(yylloc); }
+	|	expr "&&" expr        { $$ = new ast::BinaryExpr(ast::AND, $1, $3);           $$->setLocation(yylloc); }
+	|	expr "or" expr        { $$ = new ast::BinaryExpr(ast::OR, $1, $3);            $$->setLocation(yylloc); }
+	|	expr "and" expr       { $$ = new ast::BinaryExpr(ast::AND, $1, $3);           $$->setLocation(yylloc); }
+	|	'-' expr %prec UMINUS { $$ = new ast::BinaryExpr(ast::MINUS, $2);             $$->setLocation(yylloc); }
+	|	'+' expr %prec UMINUS { $$ = new ast::BinaryExpr(ast::PLUS, $2);              $$->setLocation(yylloc); }
 	|	INCREMENT IDENT       { $$ = new ast::PreIncrement($2); $$->setLocation(yylloc); }
 	|	IDENT INCREMENT       { $$ = new ast::PosIncrement($1); $$->setLocation(yylloc); }
 	|	DECREMENT IDENT       { $$ = new ast::PreDecrement($2); $$->setLocation(yylloc); }

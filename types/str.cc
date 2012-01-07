@@ -124,8 +124,74 @@ CLEVER_TYPE_METHOD(String::plus) {
 	CLEVER_RETURN_STR(CSTRING(CLEVER_ARG_STR(0) + CLEVER_ARG_STR(1)));
 }
 
+/**
+ * == operator (String, String)
+ */
+CLEVER_TYPE_METHOD(String::equal) {
+	CLEVER_RETURN_BOOL(CLEVER_ARG_STR(0) == CLEVER_ARG_STR(1));
+}
+
+/**
+ * != operator (String, String)
+ */
+CLEVER_TYPE_METHOD(String::not_equal) {
+	CLEVER_RETURN_BOOL(CLEVER_ARG_STR(0) != CLEVER_ARG_STR(1));
+}
+
+/**
+ * <= operator (String, String)
+ */
+CLEVER_TYPE_METHOD(String::less_equal) {
+	CLEVER_RETURN_BOOL(CLEVER_ARG_STR(0) <= CLEVER_ARG_STR(1));
+}
+
+/**
+ * >= operator (String, String)
+ */
+CLEVER_TYPE_METHOD(String::greater_equal) {
+	CLEVER_RETURN_BOOL(CLEVER_ARG_STR(0) >= CLEVER_ARG_STR(1));
+}
+
+/**
+ * > operator (String, String)
+ */
+CLEVER_TYPE_METHOD(String::greater) {
+	CLEVER_RETURN_BOOL(CLEVER_ARG_STR(0) > CLEVER_ARG_STR(1));
+}
+
+/**
+ * < operator (String, String)
+ */
+CLEVER_TYPE_METHOD(String::less) {
+	CLEVER_RETURN_BOOL(CLEVER_ARG_STR(0) < CLEVER_ARG_STR(1));
+}
+
 void String::init() {
 	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&String::constructor, CLEVER_STR));
+
+	addMethod(
+		(new Method(CLEVER_OPERATOR_EQUAL, (MethodPtr)&String::equal, CLEVER_BOOL))
+			->addArg("arg1", CLEVER_INT)
+			->addArg("arg2", CLEVER_INT)
+	);
+
+	addMethod(
+		(new Method(CLEVER_OPERATOR_NE, (MethodPtr)&String::not_equal, CLEVER_BOOL))
+			->addArg("arg1", CLEVER_INT)
+			->addArg("arg2", CLEVER_INT)
+	);
+
+	addMethod(
+		(new Method(CLEVER_OPERATOR_GREATER, (MethodPtr)&String::greater, CLEVER_BOOL))
+			->addArg("arg1", CLEVER_INT)
+			->addArg("arg2", CLEVER_INT)
+	);
+
+	addMethod(
+		(new Method(CLEVER_OPERATOR_LESS, (MethodPtr)&String::less, CLEVER_BOOL))
+			->addArg("arg1", CLEVER_INT)
+			->addArg("arg2", CLEVER_INT)
+	);
 
 	addMethod(
 		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&String::constructor, CLEVER_STR))

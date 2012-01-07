@@ -53,6 +53,12 @@ public:
 	static CLEVER_TYPE_METHOD(minus);
 	static CLEVER_TYPE_METHOD(div);
 	static CLEVER_TYPE_METHOD(mult);
+	static CLEVER_TYPE_METHOD(not_equal);
+	static CLEVER_TYPE_METHOD(equal);
+	static CLEVER_TYPE_METHOD(less);
+	static CLEVER_TYPE_METHOD(greater);
+	static CLEVER_TYPE_METHOD(less_equal);
+	static CLEVER_TYPE_METHOD(greater_equal);
 
 	/**
 	 * Type handlers

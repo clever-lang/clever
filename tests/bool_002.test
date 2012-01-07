@@ -1,0 +1,13 @@
+Testing expression with bool type
+==CODE==
+import std.io;
+
+println(true == true);
+println(false != true);
+println(false == false);
+println(false == true);
+==RESULT==
+true
+true
+true
+false

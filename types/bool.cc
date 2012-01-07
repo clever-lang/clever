@@ -68,6 +68,20 @@ CLEVER_TYPE_METHOD(Bool::bw_xor) {
 	CLEVER_RETURN_BOOL(CLEVER_ARG_AS_BOOL(0) ^ CLEVER_ARG_AS_BOOL(1));
 }
 
+/**
+ * == operator (Bool, Bool)
+ */
+CLEVER_TYPE_METHOD(Bool::equal) {
+	CLEVER_RETURN_BOOL(CLEVER_ARG_BOOL(0) == CLEVER_ARG_BOOL(1));
+}
+
+/**
+ * != operator (Bool, Bool)
+ */
+CLEVER_TYPE_METHOD(Bool::not_equal) {
+	CLEVER_RETURN_BOOL(CLEVER_ARG_BOOL(0) != CLEVER_ARG_BOOL(1));
+}
+
 void Bool::init() {
 	addMethod(new Method("toString", (MethodPtr)&Bool::toString, CLEVER_STR));
 
@@ -76,6 +90,18 @@ void Bool::init() {
 	addMethod(
 		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Bool::constructor, CLEVER_BOOL))
 			->addArg("value", CLEVER_BOOL)
+	);
+
+	addMethod(
+		(new Method(CLEVER_OPERATOR_EQUAL, (MethodPtr)&Bool::equal, CLEVER_BOOL))
+			->addArg("arg1", CLEVER_BOOL)
+			->addArg("arg2", CLEVER_BOOL)
+	);
+
+	addMethod(
+		(new Method(CLEVER_OPERATOR_NE, (MethodPtr)&Bool::not_equal, CLEVER_BOOL))
+			->addArg("arg1", CLEVER_BOOL)
+			->addArg("arg2", CLEVER_BOOL)
 	);
 
 	addMethod(

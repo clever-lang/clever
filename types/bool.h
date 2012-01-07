@@ -44,22 +44,24 @@ public:
 	 */
 	static CLEVER_TYPE_METHOD(constructor);
 	static CLEVER_TYPE_METHOD(toString);
-	
+
 	/**
 	 * Type operator methods
 	 */
 	static CLEVER_TYPE_METHOD(bw_and);
 	static CLEVER_TYPE_METHOD(bw_or);
 	static CLEVER_TYPE_METHOD(bw_xor);
-	
+	static CLEVER_TYPE_METHOD(not_equal);
+	static CLEVER_TYPE_METHOD(equal);
+
 	/**
 	 * Type handlers
 	 */
 	CLEVER_TYPE_INC_HANDLER_D { return value; }
 	CLEVER_TYPE_DEC_HANDLER_D { return value; }
-	CLEVER_TYPE_ASSIGN_HANDLER_D { 
+	CLEVER_TYPE_ASSIGN_HANDLER_D {
 		if (newvalue->getTypePtr() == this) value->copy(newvalue);
-		else value->setBoolean((int64_t)newvalue->getDouble()); 
+		else value->setBoolean((int64_t)newvalue->getDouble());
 	}
 private:
 	DISALLOW_COPY_AND_ASSIGN(Bool);

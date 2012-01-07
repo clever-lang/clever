@@ -7,4 +7,4 @@ if (i < j) {
 	println("bug");
 }
 ==RESULT==
-Compile error: Cannot convert `String' to `Int' in logic expression on \S+ line 4
+Compile error: No matching call for operation '\$<\$' in Int using \(Int, String\) on \S+ line 4

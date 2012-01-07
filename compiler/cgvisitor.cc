@@ -48,13 +48,34 @@ AST_VISITOR(CodeGenVisitor, Identifier) {
  * Generates opcode for binary expression
  */
 AST_VISITOR(CodeGenVisitor, BinaryExpr) {
+	Opcode *opcode;
 	Value* lhs = expr->getLhs()->getValue();
 	Value* rhs = expr->getRhs()->getValue();
 
 	lhs->addRef();
 	rhs->addRef();
 
-	emit(OP_MCALL, &VM::mcall_handler, expr->getMethod(), expr->getMethodArgs(), expr->getValue());
+	/**
+	 * Treat the jump for logical expression
+	 */
+	switch (expr->getOp()) {
+		case AND:
+			opcode = emit(OP_JMPNZ, &VM::jmpz_handler, lhs, NULL, expr->getValue());
+			opcode->setJmpAddr1(getOpNum()+1);
+			opcode = emit(OP_JMPZ, &VM::jmpz_handler, rhs, NULL, expr->getValue());
+			opcode->setJmpAddr1(getOpNum());
+			expr->getValue()->addRef();
+			break;
+		case OR:
+			opcode = emit(OP_JMPNZ, &VM::jmpnz_handler, lhs, NULL, expr->getValue());
+			opcode->setJmpAddr1(getOpNum()+1);
+			opcode = emit(OP_JMPNZ, &VM::jmpnz_handler, rhs, NULL, expr->getValue());
+			opcode->setJmpAddr1(getOpNum());
+			expr->getValue()->addRef();
+			break;
+		default:
+			emit(OP_MCALL, &VM::mcall_handler, expr->getMethod(), expr->getMethodArgs(), expr->getValue());
+	}
 }
 
 
@@ -324,42 +345,6 @@ AST_VISITOR(CodeGenVisitor, ForExpr) {
 		jmp->setJmpAddr2(start_pos);
 
 		jmpz->setJmpAddr1(getOpNum());
-	}
-}
-
-
-/**
- * Generates opcode for logic expression which weren't optimized
- */
-AST_VISITOR(CodeGenVisitor, LogicExpr) {
-	Opcode* opcode;
-	Value* lhs = expr->getLhs()->getValue();
-	Value* rhs = expr->getRhs()->getValue();
-
-	lhs->addRef();
-	rhs->addRef();
-
-	switch (expr->getOp()) {
-		case GREATER:       emit(OP_GREATER,       &VM::greater_handler,       lhs, rhs, expr->getValue()); break;
-		case LESS:          emit(OP_LESS,          &VM::less_handler,          lhs, rhs, expr->getValue()); break;
-		case GREATER_EQUAL: emit(OP_GREATER_EQUAL, &VM::greater_equal_handler, lhs, rhs, expr->getValue()); break;
-		case LESS_EQUAL:    emit(OP_LESS_EQUAL,    &VM::less_equal_handler,    lhs, rhs, expr->getValue()); break;
-		case EQUAL:         emit(OP_EQUAL,         &VM::equal_handler,         lhs, rhs, expr->getValue()); break;
-		case NOT_EQUAL:     emit(OP_NOT_EQUAL,     &VM::not_equal_handler,     lhs, rhs, expr->getValue()); break;
-		case AND:
-			opcode = emit(OP_JMPNZ, &VM::jmpz_handler, lhs, NULL, expr->getValue());
-			opcode->setJmpAddr1(getOpNum()+1);
-			opcode = emit(OP_JMPZ, &VM::jmpz_handler, rhs, NULL, expr->getValue());
-			opcode->setJmpAddr1(getOpNum());
-			expr->getValue()->addRef();
-			break;
-		case OR:
-			opcode = emit(OP_JMPNZ, &VM::jmpnz_handler, lhs, NULL, expr->getValue());
-			opcode->setJmpAddr1(getOpNum()+1);
-			opcode = emit(OP_JMPNZ, &VM::jmpnz_handler, rhs, NULL, expr->getValue());
-			opcode->setJmpAddr1(getOpNum());
-			expr->getValue()->addRef();
-			break;
 	}
 }
 

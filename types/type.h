@@ -54,14 +54,20 @@ namespace clever {
 /**
  * Operator helpers
  */
-#define CLEVER_OPERATOR_PLUS   "$+$"
-#define CLEVER_OPERATOR_MINUS  "$-$"
-#define CLEVER_OPERATOR_DIV    "$/$"
-#define CLEVER_OPERATOR_MULT   "$*$"
-#define CLEVER_OPERATOR_MOD    "$%$"
-#define CLEVER_OPERATOR_BW_XOR "$^$"
-#define CLEVER_OPERATOR_BW_AND "$&$"
-#define CLEVER_OPERATOR_BW_OR  "$|$"
+#define CLEVER_OPERATOR_PLUS    "$+$"
+#define CLEVER_OPERATOR_MINUS   "$-$"
+#define CLEVER_OPERATOR_DIV     "$/$"
+#define CLEVER_OPERATOR_MULT    "$*$"
+#define CLEVER_OPERATOR_MOD     "$%$"
+#define CLEVER_OPERATOR_BW_XOR  "$^$"
+#define CLEVER_OPERATOR_BW_AND  "$&$"
+#define CLEVER_OPERATOR_BW_OR   "$|$"
+#define CLEVER_OPERATOR_NE      "$!=$"
+#define CLEVER_OPERATOR_LE      "$<=$"
+#define CLEVER_OPERATOR_GE      "$>=$"
+#define CLEVER_OPERATOR_EQUAL   "$==$"
+#define CLEVER_OPERATOR_LESS    "$<$"
+#define CLEVER_OPERATOR_GREATER "$>$"
 
 /**
  * Type handler definitions

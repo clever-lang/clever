@@ -747,24 +747,6 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(ForExpr);
 };
 
-class LogicExpr : public BinaryExpr {
-public:
-	LogicExpr(int op, ASTNode* lhs, ASTNode* rhs)
-		: BinaryExpr(op, lhs, rhs) {
-	}
-
-	~LogicExpr() { }
-
-	void accept(ASTVisitor& visitor) throw() {
-		m_lhs->accept(visitor);
-		m_rhs->accept(visitor);
-
-		visitor.visit(this);
-	}
-private:
-	DISALLOW_COPY_AND_ASSIGN(LogicExpr);
-};
-
 class BreakNode : public ASTNode {
 public:
 	BreakNode() { }

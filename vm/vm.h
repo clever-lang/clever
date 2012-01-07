@@ -85,13 +85,7 @@ public:
 	static CLEVER_VM_HANDLER(jmpnz_handler);
 	static CLEVER_VM_HANDLER(jmpz_handler);
 	static CLEVER_VM_HANDLER(jmp_handler);
-	static CLEVER_VM_HANDLER(greater_handler);
-	static CLEVER_VM_HANDLER(greater_equal_handler);
-	static CLEVER_VM_HANDLER(less_handler);
-	static CLEVER_VM_HANDLER(less_equal_handler);
 	static CLEVER_VM_HANDLER(break_handler);
-	static CLEVER_VM_HANDLER(equal_handler);
-	static CLEVER_VM_HANDLER(not_equal_handler);
 	static CLEVER_VM_HANDLER(fcall_handler);
 	static CLEVER_VM_HANDLER(mcall_handler);
 	static CLEVER_VM_HANDLER(assign_handler);

@@ -121,7 +121,85 @@ CLEVER_TYPE_METHOD(Integer::bw_xor) {
 	CLEVER_RETURN_INT(CLEVER_ARG_INT(0) ^ CLEVER_ARG_INT(1));
 }
 
+/**
+ * == operator (Integer, Integer)
+ */
+CLEVER_TYPE_METHOD(Integer::equal) {
+	CLEVER_RETURN_BOOL(CLEVER_ARG_INT(0) == CLEVER_ARG_INT(1));
+}
+
+/**
+ * != operator (Integer, Integer)
+ */
+CLEVER_TYPE_METHOD(Integer::not_equal) {
+	CLEVER_RETURN_BOOL(CLEVER_ARG_INT(0) != CLEVER_ARG_INT(1));
+}
+
+/**
+ * <= operator (Integer, Integer)
+ */
+CLEVER_TYPE_METHOD(Integer::less_equal) {
+	CLEVER_RETURN_BOOL(CLEVER_ARG_INT(0) <= CLEVER_ARG_INT(1));
+}
+
+/**
+ * >= operator (Integer, Integer)
+ */
+CLEVER_TYPE_METHOD(Integer::greater_equal) {
+	CLEVER_RETURN_BOOL(CLEVER_ARG_INT(0) >= CLEVER_ARG_INT(1));
+}
+
+/**
+ * > operator (Integer, Integer)
+ */
+CLEVER_TYPE_METHOD(Integer::greater) {
+	CLEVER_RETURN_BOOL(CLEVER_ARG_INT(0) > CLEVER_ARG_INT(1));
+}
+
+/**
+ * < operator (Integer, Integer)
+ */
+CLEVER_TYPE_METHOD(Integer::less) {
+	CLEVER_RETURN_BOOL(CLEVER_ARG_INT(0) < CLEVER_ARG_INT(1));
+}
+
 void Integer::init() {
+	addMethod(
+		(new Method(CLEVER_OPERATOR_EQUAL, (MethodPtr)&Integer::equal, CLEVER_BOOL))
+			->addArg("arg1", CLEVER_INT)
+			->addArg("arg2", CLEVER_INT)
+	);
+
+	addMethod(
+		(new Method(CLEVER_OPERATOR_NE, (MethodPtr)&Integer::not_equal, CLEVER_BOOL))
+			->addArg("arg1", CLEVER_INT)
+			->addArg("arg2", CLEVER_INT)
+	);
+
+	addMethod(
+		(new Method(CLEVER_OPERATOR_GREATER, (MethodPtr)&Integer::greater, CLEVER_BOOL))
+			->addArg("arg1", CLEVER_INT)
+			->addArg("arg2", CLEVER_INT)
+	);
+
+	addMethod(
+		(new Method(CLEVER_OPERATOR_LESS, (MethodPtr)&Integer::less, CLEVER_BOOL))
+			->addArg("arg1", CLEVER_INT)
+			->addArg("arg2", CLEVER_INT)
+	);
+
+	addMethod(
+		(new Method(CLEVER_OPERATOR_GE, (MethodPtr)&Integer::greater_equal, CLEVER_BOOL))
+			->addArg("arg1", CLEVER_INT)
+			->addArg("arg2", CLEVER_INT)
+	);
+
+	addMethod(
+		(new Method(CLEVER_OPERATOR_LE, (MethodPtr)&Integer::less_equal, CLEVER_BOOL))
+			->addArg("arg1", CLEVER_INT)
+			->addArg("arg2", CLEVER_INT)
+	);
+
 	addMethod(
 		(new Method(CLEVER_OPERATOR_PLUS, (MethodPtr)&Integer::plus, CLEVER_INT))
 			->addArg("arg1", CLEVER_INT)
