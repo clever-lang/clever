@@ -52,11 +52,16 @@ CLEVER_TYPE_METHOD(Array::toString) {
 }
 
 void Array::init() {
+	/* If we are in our "virtual" Array type */
+	if (CLEVER_TMP_ARG(0) == NULL) {
+		return;
+	}
+	
 	addMethod(new Method("toString", (MethodPtr)&Array::toString, CLEVER_STR));
 
 	addMethod(
 		(new Method("push", (MethodPtr)&Array::push, CLEVER_VOID))
-			->addArg("arg1", CLEVER_INT)
+			->addArg("arg1", CLEVER_TMP_ARG(0))
 	);
 }
 

@@ -293,34 +293,60 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 	}
 
 	if (cont_type) {
-		const Type* key_type = g_symtable.getType(cont_type->first->getName());
-		const Type* val_type = NULL;
+			if (type->isTemplatedType()) {
+				const TemplatedType* temp_type = (const TemplatedType*)type;
+				
+				/**
+				 * @TODO: We need to accept any number of template arguments
+				 */
+				const Type* key_type = g_symtable.getType(cont_type->first->getName());
+				const Type* val_type = NULL;
 
-		if (key_type == NULL) {
-			Compiler::errorf(expr->getLocation(),
-				"Key type of container doesn't exists for variable named `%S'!",
-				variable->getName());
-		}
-		if (cont_type->second) {
-			val_type = g_symtable.getType(cont_type->second->getName());
+				if (key_type == NULL) {
+					Compiler::errorf(expr->getLocation(),
+						"Key type of container doesn't exists for variable named `%S'!",
+						variable->getName());
+				}
+				
+				if (cont_type->second) {
+					val_type = g_symtable.getType(cont_type->second->getName());
 
-			if (val_type == NULL) {
-				Compiler::errorf(expr->getLocation(),
-					"Key type of container doesn't exists for variable named `%S'!",
-					variable->getName());
+					if (val_type == NULL) {
+						Compiler::errorf(expr->getLocation(),
+							"Key type of container doesn't exists for variable named `%S'!",
+							variable->getName());
+					}
+				}
+				
+				if (temp_type == CLEVER_ARRAY) {
+					/**
+					 * @TODO: We can use allocateValue() to avoid this hardcoded thing
+					 */
+					var->setType(Value::VECTOR);
+					var->setVector(new ValueVector);
+				}
+				
+				::std::vector<const Type*> arg_type;
+				/**
+				 * @TODO: check with getNumArgs()
+				 */
+				arg_type.push_back(key_type);
+				type = temp_type->getTemplatedType(arg_type);
+				
 			}
-		}
-
-		var->setContainerType(key_type, val_type);
-
-		if (type == CLEVER_ARRAY) {
-			var->setType(Value::VECTOR);
-			var->setVector(new ValueVector);
-		}
+			else {
+				Compiler::errorf(expr->getLocation(),
+					"Type `%s' do not accept template arguments!",
+					type->getName());
+			}
+	}
+	else if (type->isTemplatedType()) {
+		Compiler::errorf(expr->getLocation(),
+			"Missing template arguments for the type `%s'!",
+			type->getName());
 	}
 
 	variable->setValue(var);
-
 	/**
 	 * Registers a new variable
 	 */
@@ -541,7 +567,7 @@ AST_VISITOR(TypeChecker, MethodCall) {
 			args_types.push_back(vv->at(i)->getTypePtr());
 		}
 	}
-
+	
 	const Method* method = variable->getTypePtr()->getMethod(name, &args_types);
 
 	if (method == NULL) {
