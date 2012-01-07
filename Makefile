@@ -16,7 +16,7 @@ MODULEDIR=modules/
 #
 SHELL=/bin/sh
 SED=sed
-ECHO=echo -e
+ECHO=echo
 
 #
 # Environment
@@ -98,7 +98,7 @@ endef
 define gen_mod_recipes =
 $(1): $$($(1)_obj) $(BUILDDIR)ensure-build-dir
 $$($(1)_objdir)/%.o: $$($(1)_dir)/%.cc
-	@$(ECHO) "\tCXX\t$$<"
+	@$(ECHO) "  CXX  $$<"
 	$$(COMPILE) $$($(1)_cxxflags) -o$$@ $$<
 endef
 
@@ -126,7 +126,7 @@ LINK=$(LD) $(CXXFLAGS) $(LDFLAGS) $(modcxxflags) $(modldflags)
 .PHONY: clean all modules
 
 clever$(BINEXT): $(BUILDDIR)scanner.cc $(OBJECTS) modules
-	@$(ECHO) "\tLD\t$@"
+	@$(ECHO) "  LD  $@"
 	$(LINK) -o $@ $(OBJECTS) $(modobj)
 
 all: clever$(BINEXT) test
@@ -141,16 +141,16 @@ $(BUILDDIR)ensure-build-dir:
 	touch $(BUILDDIR)ensure-build-dir 
 
 $(BUILDDIR)%.o: %.cc %.d
-	@$(ECHO) "\tCXX\t$<"
+	@$(ECHO) "  CXX  $<"
 	$(COMPILE) -o$@ $<
 
 $(BUILDDIR)%.cc: %.y $(BUILDDIR)ensure-build-dir
-	@$(ECHO) "\tBISON\t$<"
+	@$(ECHO) "  BISON  $<"
 	$(BISON) -d -o$@ $<
 	$(SED) -ie '135s/|| \([^)]*\)/|| (\1)/' build/position.hh
 
 $(BUILDDIR)%.cc: %.re $(BUILDDIR)ensure-build-dir
-	@$(ECHO) "\tRE2C\t$< "
+	@$(ECHO) "  RE2C  $< "
 	$(RE2C) --case-insensitive -b -c -o $@ $<
 
 $(BUILDDIR)location.hh: $(BUILDDIR)parser.cc
@@ -168,7 +168,7 @@ run-tests: test
 clean-all: clean clean-test clean-tests
 
 clean:
-	@$(ECHO) "\tCLEAN"
+	@$(ECHO) "  CLEAN"
 	-rm -f clever* $(BUILDDIR)*.o $(BUILDDIR)*.hh $(BUILDDIR)*.cc $(BUILDDIR)*.d
 	-rm -rf $(BUILDDIR)
 
