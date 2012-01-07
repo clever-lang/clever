@@ -48,7 +48,7 @@ AST_VISITOR(CodeGenVisitor, Identifier) {
  * Generates opcode for binary expression
  */
 AST_VISITOR(CodeGenVisitor, BinaryExpr) {
-	Opcode *opcode;
+	Opcode* opcode;
 	Value* lhs = expr->getLhs()->getValue();
 	Value* rhs = expr->getRhs()->getValue();
 
