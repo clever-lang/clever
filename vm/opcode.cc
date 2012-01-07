@@ -36,9 +36,9 @@ namespace clever {
 void Opcode::dump() const throw() {
 	::printf("(%04ld) | ", getOpNum());
 	::printf("%-15s | ", getOpName(m_op_type));
-	::printf("%-15s | ", dumpOp("op1", m_op1).c_str());
-	::printf("%-15s | ", dumpOp("op2", m_op2).c_str());
-	::printf("%-15s | ", dumpOp("result", m_result).c_str());
+	::printf("%-20s | ", dumpOp("op1", m_op1).c_str());
+	::printf("%-20s | ", dumpOp("op2", m_op2).c_str());
+	::printf("%-20s | ", dumpOp("result", m_result).c_str());
 	::printf("Addr1: %04ld | ", getJmpAddr1());
 	::printf("Addr2: %04ld\n", getJmpAddr2());
 }
@@ -78,9 +78,11 @@ const char* Opcode::getOpName(Opcodes op) const throw() {
 std::string Opcode::dumpOp(const char* const label, Value* const op) const throw() {
 	if (op) {
 		std::ostringstream str;
+		std::string name = op->getName() ? op->getName()->str() : op->toString();
 
 		str << op->refCount();
-		return std::string(std::string(label) + ": " + op->toString() + " (ref:" + str.str() + ")");
+
+		return std::string(std::string(label) + ": " + name + " (#" + str.str() + ")");
 	} else {
 		return std::string(std::string(label) + ": UNUSED");
 	}
