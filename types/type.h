@@ -83,6 +83,11 @@ namespace clever {
 #define CLEVER_TYPE_METHOD(name) void CLEVER_FASTCALL name(CLEVER_TYPE_METHOD_ARGS) throw()
 
 /**
+ * Utils for handling TemplatedType
+ */
+#define CLEVER_TMP_ARG(arg) (getTypeArg(arg))
+
+/**
  * Type representation
  */
 class Type {
@@ -165,6 +170,13 @@ public:
 	virtual CLEVER_TYPE_INC_HANDLER_D    = 0;
 	virtual CLEVER_TYPE_DEC_HANDLER_D    = 0;
 	virtual CLEVER_TYPE_ASSIGN_HANDLER_D = 0;
+	
+	/**
+	 * Checks if this type accepts arguments
+	 */
+	virtual bool isTemplatedType() const {
+		return false;
+	}
 
 	/**
 	 * Destructor method. This method will be called when after a variable gets
@@ -177,6 +189,34 @@ private:
 	const char* m_name;
 
 	DISALLOW_COPY_AND_ASSIGN(Type);
+};
+
+class TemplatedType : public Type {
+public:
+	explicit TemplatedType(const char* name, int num_args)
+		: Type(name), m_num_args(num_args) {}
+	
+	virtual bool isTemplatedType() const {
+		return true;
+	}
+	
+	size_t getNumArgs() const {
+		return m_num_args;
+	}
+	
+	const Type* getTypeArg(int index) const {
+		return m_type_args[index];
+	}
+	
+	virtual const Type* getTemplatedType(const ::std::vector<const Type*>&) const = 0;
+private:
+	const int m_num_args;
+	::std::vector<const Type*> m_type_args;
+	
+protected:
+	void addArg(const Type* type) {
+		m_type_args.push_back(type);
+	}
 };
 
 } // clever

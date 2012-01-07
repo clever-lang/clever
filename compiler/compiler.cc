@@ -81,7 +81,7 @@ void Compiler::loadTypes() throw() {
 	CLEVER_STR    = new String;
 	CLEVER_DOUBLE = new Double;
 	CLEVER_BOOL   = new Bool;
-	CLEVER_ARRAY  = new Array;
+	CLEVER_ARRAY  = new Array(); // Virtual Array
 
 	/**
 	 * Registers all native types
