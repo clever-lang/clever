@@ -16,7 +16,6 @@ MODULEDIR=modules/
 #
 SHELL=/bin/sh
 SED=sed
-ECHO=echo
 
 #
 # Environment
@@ -72,40 +71,12 @@ cxxflags+=-Iwin32/ -DCLEVER_WIN32
 VPATH+=win32
 endif
 
-modnames:=
-moddirs:=
-modobj:=
-modsrc:=
-modcxxflags:=
-modldflags:=
-
-define gen_mod_vars =
-override name__=$$(addprefix mod_,$$(subst .,_,$(1)))
-$$(name__)_name:=$$(name__)
-$$(name__)_dir:=$$(addprefix $(MODULEDIR),$$(subst .,/,$(1)))
-$$(name__)_src:=$$(wildcard $$($$(name__)_dir)/*.cc)
-$$(name__)_obj:=$$(addprefix $(BUILDDIR), $$($$(name__)_src:.cc=.o))
-$$(name__)_objdir:=$$(addprefix $(BUILDDIR),$$($$(name__)_dir))
-
-modnames:=$(modnames) $$($$(name__)_name)
-moddirs:=$(moddirs) $$($$(name__)_dir)
-modobj:=$(modobj) $$($$(name__)_obj)
-modsrc:=$(modsrc) $$($$(name__)_src)
-modcxxflags:=$(modcxxflags) $$($$(name__)_cxxflags)
-modldflags:=$(modldflags) $$($$(name__)_ldflags)
-endef
-
-define gen_mod_recipes =
-$(1): $$($(1)_obj) $(BUILDDIR)ensure-build-dir
-$$($(1)_objdir)/%.o: $$($(1)_dir)/%.cc
-	@$(ECHO) "  CXX  $$<"
-	$$(COMPILE) $$($(1)_cxxflags) -o$$@ $$<
-endef
-
-$(foreach mod,$(MODULES),$(eval $(call gen_mod_vars,$(mod))))
-
-#OBJECTS+=$(modobj)
-#VPATH+=$(moddirs)
+# Modules
+moddirs=$(addprefix $(MODULEDIR),$(subst .,/,$(MODULES)))
+modsrc=$(foreach mod,$(moddirs),$(wildcard $(mod)/*.cc))
+modobj=$(addprefix $(BUILDDIR), $(modsrc:.cc=.o))
+OBJECTS+=$(modobj)
+VPATH+=$(moddirs)
 
 ifneq ($(VERBOSE),yes)
 .SILENT:
@@ -121,36 +92,33 @@ override CXXFLAGS = $(cxxflags)
 override LDFLAGS = $(ldflags)
 
 COMPILE=$(CXX) $(CXXFLAGS) -c
-LINK=$(LD) $(CXXFLAGS) $(LDFLAGS) $(modcxxflags) $(modldflags)
+LINK=$(LD) $(CXXFLAGS) $(LDFLAGS)
 
-.PHONY: clean all modules
+.PHONY: clean all
 
-clever$(BINEXT): $(BUILDDIR)scanner.cc $(OBJECTS) modules
-	@$(ECHO) "  LD  $@"
-	$(LINK) -o $@ $(OBJECTS) $(modobj)
+clever$(BINEXT): $(BUILDDIR)scanner.cc $(OBJECTS)
+	@echo "  LD    $@"
+	$(LINK) -o $@ $(OBJECTS)
 
 all: clever$(BINEXT) test
 
-modules: $(modnames)
-
-$(foreach mod,$(modnames),$(eval $(call gen_mod_recipes,$(mod))))
 
 $(BUILDDIR)ensure-build-dir:
 	@echo "Making sure $(BUILDDIR) exists..."
-	mkdir -p $(BUILDDIR) $(dir $(modobj))
-	touch $(BUILDDIR)ensure-build-dir 
+	mkdir -p $(BUILDDIR)  $(addprefix $(BUILDDIR),$(moddirs))
+	touch $(BUILDDIR)ensure-build-dir
 
 $(BUILDDIR)%.o: %.cc %.d
-	@$(ECHO) "  CXX  $<"
+	@echo "  CXX   $<"
 	$(COMPILE) -o$@ $<
 
 $(BUILDDIR)%.cc: %.y $(BUILDDIR)ensure-build-dir
-	@$(ECHO) "  BISON  $<"
+	@echo "  BISON $<"
 	$(BISON) -d -o$@ $<
 	$(SED) -ie '135s/|| \([^)]*\)/|| (\1)/' build/position.hh
 
 $(BUILDDIR)%.cc: %.re $(BUILDDIR)ensure-build-dir
-	@$(ECHO) "  RE2C  $< "
+	@echo "  RE2C  $< "
 	$(RE2C) --case-insensitive -b -c -o $@ $<
 
 $(BUILDDIR)location.hh: $(BUILDDIR)parser.cc
@@ -168,7 +136,7 @@ run-tests: test
 clean-all: clean clean-test clean-tests
 
 clean:
-	@$(ECHO) "  CLEAN"
+	@echo "  CLEAN"
 	-rm -f clever* $(BUILDDIR)*.o $(BUILDDIR)*.hh $(BUILDDIR)*.cc $(BUILDDIR)*.d
 	-rm -rf $(BUILDDIR)
 
