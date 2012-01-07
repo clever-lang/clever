@@ -230,6 +230,8 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 			break;
 	}
 
+	call->setName(method_name);
+
 	arg_types.push_back(lhs->getTypePtr());
 	arg_types.push_back(rhs->getTypePtr());
 
