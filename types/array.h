@@ -31,10 +31,36 @@
 
 namespace clever {
 
-class Array : public Type {
+class Array : public TemplatedType {
 public:
-	Array() :
-		Type("Array") {}
+	Array() : TemplatedType("Array", 1) {
+		addArg(NULL);
+	}
+	
+	Array(const char* name, const Type* arg_type) :
+		TemplatedType(name, 1) {
+			addArg(arg_type);
+	}
+	
+	virtual const Type* getTemplatedType(const ::std::vector<const Type*>& type_args) const {
+		::std::string name = ::std::string(getName()) + "<" 
+						   + type_args[0]->getName() + ">";
+		
+		const Type* type = g_symtable.getType(CSTRING(name));
+		
+		if (type == NULL) {
+			char* cname = new char[name.size() + 1];
+			::strcpy(cname, name.c_str());
+			
+			Type* ntype = new Array(cname, type_args[0]);
+			g_symtable.push(CSTRING(name), ntype);
+			ntype->init();
+			
+			return ntype;
+		}
+		
+		return type;
+	}
 
 	void init();
 	DataValue* allocateValue() const;
