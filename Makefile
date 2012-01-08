@@ -10,6 +10,7 @@
 #
 BUILDDIR=build/
 MODULEDIR=modules/
+TESTDIR=tests/
 
 #
 # Programs
@@ -119,7 +120,7 @@ $(BUILDDIR)location.hh: $(BUILDDIR)parser.cc
 $(BUILDDIR)parser.hh: $(BUILDDIR)parser.cc
 
 test: clever extra/testrunner.cc extra/testrunner.h
-	$(CXX) $(CXXFLAGS) -o extra/testrunner extra/testrunner.cc $(shell pkg-config --cflags --libs libpcrecpp) 
+	$(CXX) $(CXXFLAGS) -o extra/testrunner extra/testrunner.cc $(shell pkg-config --cflags --libs libpcrecpp)
 
 run-mem-tests: test
 	extra/testrunner -m tests/
@@ -135,7 +136,7 @@ clean:
 	-rm -rf $(BUILDDIR)
 
 clean-tests:
-	rm $(TESTDIR)*.mem $(TESTDIR)*.log
+	-rm -f $(TESTDIR)*.mem $(TESTDIR)*.log
 
 clean-test:
 	rm -rf extra/testrunner extra/testrunner.exe
