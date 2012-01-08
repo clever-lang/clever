@@ -199,8 +199,14 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 	CallableValue* call = new CallableValue;
 	const Method* method;
 	const CString* method_name = NULL;
-	Value* lhs = expr->getLhs()->getValue();
-	Value* rhs = expr->getRhs()->getValue();
+	Value* lhs;
+	Value* rhs;
+
+	expr->getLhs()->accept(*this);
+	expr->getRhs()->accept(*this);
+
+	lhs = expr->getLhs()->getValue();
+	rhs = expr->getRhs()->getValue();
 
 	/**
 	 * Operator method names

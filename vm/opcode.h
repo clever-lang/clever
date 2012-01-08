@@ -37,9 +37,6 @@ namespace clever {
  */
 enum Opcodes {
 	OP_VAR_DECL,
-	OP_BW_OR,
-	OP_BW_AND,
-	OP_BW_XOR,
 	OP_PRE_INC,
 	OP_PRE_DEC,
 	OP_POS_INC,
@@ -47,12 +44,6 @@ enum Opcodes {
 	OP_JMPNZ,
 	OP_JMPZ,
 	OP_JMP,
-	OP_GREATER,
-	OP_GREATER_EQUAL,
-	OP_LESS,
-	OP_LESS_EQUAL,
-	OP_EQUAL,
-	OP_NOT_EQUAL,
 	OP_BREAK,
 	OP_FCALL,
 	OP_MCALL,

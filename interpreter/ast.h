@@ -255,9 +255,6 @@ public:
 	Value* getMethodArgs() throw() { return m_args; }
 
 	virtual void accept(ASTVisitor& visitor) throw() {
-		m_lhs->accept(visitor);
-		m_rhs->accept(visitor);
-
 		visitor.visit(this);
 	}
 protected:

@@ -51,9 +51,6 @@ const char* Opcode::getOpName(Opcodes op) const throw() {
 
 	switch (op) {
 		CASE(OP_VAR_DECL);
-		CASE(OP_BW_OR);
-		CASE(OP_BW_AND);
-		CASE(OP_BW_XOR);
 		CASE(OP_PRE_INC);
 		CASE(OP_PRE_DEC);
 		CASE(OP_POS_INC);
