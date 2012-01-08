@@ -83,7 +83,7 @@ public:
 	 * Function/method argument handling
 	 */
 	static void push_args(ValueVector*) throw();
-	static void pop_args() throw();
+	static void pop_args(const Opcode* const) throw();
 	static void restore_args() throw();
 	/**
 	 * Opcode handlers

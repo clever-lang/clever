@@ -82,8 +82,16 @@ void VM::push_args(ValueVector* vec) throw() {
 /**
  * Pop arguments onto the call stack
  */
-void VM::pop_args() throw() {
-	ValueVector* vec_copy = s_arg_values.top();
+void VM::pop_args(const Opcode* const op) throw() {
+	ValueVector* vec_copy;
+
+	/**
+	 * Check if the function has arguments
+	 */
+	if (op->getOp2() == NULL) {
+		return;
+	}
+	vec_copy = s_arg_values.top();
 
 	for (int i = 0, j = vec_copy->size(); i < j; ++i) {
 		delete vec_copy->at(i);
@@ -292,6 +300,11 @@ CLEVER_VM_HANDLER(VM::assign_handler) {
 CLEVER_VM_HANDLER(VM::end_func_handler) {
 	const Opcode* const op = s_call.top();
 
+	/**
+	 * pop + restore arguments from stack
+	 */
+	pop_args(op);
+
 	s_call.pop();
 
 	/**
@@ -311,19 +324,12 @@ CLEVER_VM_HANDLER(VM::return_handler) {
 		if (value) {
 			call->getResult()->copy(value);
 		}
-		s_call.pop();
-
 		/**
-		 * Check if the function which we are returning has argument in the stack
+		 * pop + restore arguments from stack
 		 */
-		if (!s_args.empty()
-			&& static_cast<CallableValue*>(call->getOp1())->isNearCall()
-			&& call->getOp2()) {
-			/**
-			 * pop + restore arguments from stack
-			 */
-			pop_args();
-		}
+		pop_args(call);
+
+		s_call.pop();
 		/**
 		 * Go back to the caller
 		 */
