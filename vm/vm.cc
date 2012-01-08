@@ -83,15 +83,14 @@ void VM::push_args(ValueVector* vec) throw() {
  * Pop arguments onto the call stack
  */
 void VM::pop_args(const Opcode* const op) throw() {
-	ValueVector* vec_copy;
-
 	/**
 	 * Check if the function has arguments
 	 */
 	if (op->getOp2() == NULL) {
 		return;
 	}
-	vec_copy = s_arg_values.top();
+
+	ValueVector* vec_copy = s_arg_values.top();
 
 	for (int i = 0, j = vec_copy->size(); i < j; ++i) {
 		delete vec_copy->at(i);
