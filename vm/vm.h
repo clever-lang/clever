@@ -29,6 +29,7 @@
 #include <vector>
 #include <stack>
 #include "compiler/clever.h"
+#include "compiler/function.h"
 
 /**
  * Opcode handler arguments
@@ -45,8 +46,12 @@ namespace clever {
 
 class Opcode;
 
+
+
 typedef std::vector<Opcode*> OpcodeList;
 typedef std::stack<Opcode*> CallStack;
+typedef std::stack<ValueVector*> ArgStack;
+typedef std::stack<ValueVector*> ArgValueStack;
 
 /**
  * Virtual machine representation
@@ -75,6 +80,12 @@ public:
 	 */
 	void setOpcodes(OpcodeList& opcodes) throw() { m_opcodes = &opcodes; }
 	/**
+	 * Function/method argument handling
+	 */
+	static void push_args(ValueVector*) throw();
+	static void pop_args() throw();
+	static void restore_args() throw();
+	/**
 	 * Opcode handlers
 	 */
 	static CLEVER_VM_HANDLER(var_decl_handler);
@@ -96,6 +107,8 @@ private:
 	OpcodeList* m_opcodes;
 
 	static CallStack s_call;
+	static ArgStack s_args;
+	static ArgValueStack s_arg_values;
 
 	DISALLOW_COPY_AND_ASSIGN(VM);
 };

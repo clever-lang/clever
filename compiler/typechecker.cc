@@ -295,7 +295,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 	if (cont_type) {
 			if (type->isTemplatedType()) {
 				const TemplatedType* temp_type = (const TemplatedType*)type;
-				
+
 				/**
 				 * @TODO: We need to accept any number of template arguments
 				 */
@@ -307,7 +307,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 						"Key type of container doesn't exists for variable named `%S'!",
 						variable->getName());
 				}
-				
+
 				if (cont_type->second) {
 					val_type = g_symtable.getType(cont_type->second->getName());
 
@@ -317,7 +317,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 							variable->getName());
 					}
 				}
-				
+
 				if (temp_type == CLEVER_ARRAY) {
 					/**
 					 * @TODO: We can use allocateValue() to avoid this hardcoded thing
@@ -325,14 +325,14 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 					var->setType(Value::VECTOR);
 					var->setVector(new ValueVector);
 				}
-				
+
 				::std::vector<const Type*> arg_type;
 				/**
 				 * @TODO: check with getNumArgs()
 				 */
 				arg_type.push_back(key_type);
 				type = temp_type->getTemplatedType(arg_type);
-				
+
 			}
 			else {
 				Compiler::errorf(expr->getLocation(),
@@ -567,7 +567,7 @@ AST_VISITOR(TypeChecker, MethodCall) {
 			args_types.push_back(vv->at(i)->getTypePtr());
 		}
 	}
-	
+
 	const Method* method = variable->getTypePtr()->getMethod(name, &args_types);
 
 	if (method == NULL) {

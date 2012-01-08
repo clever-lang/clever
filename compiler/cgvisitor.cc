@@ -378,7 +378,7 @@ AST_VISITOR(CodeGenVisitor, FunctionCall) {
 		 */
 		if (func->isUserDefined()) {
 			emit(OP_RECV, &VM::arg_recv_handler, func->getVars(), arg_values);
-			arg_values = NULL;
+			arg_values->addRef();
 		}
 	}
 

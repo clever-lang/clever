@@ -33,6 +33,8 @@
 namespace clever {
 
 CallStack VM::s_call;
+ArgStack VM::s_args;
+ArgValueStack VM::s_arg_values;
 
 /**
  * Destroy the opcodes data
@@ -56,6 +58,55 @@ VM::~VM() {
 		}
 		delete *it;
 		++it;
+	}
+}
+
+/**
+ * Pushes the arguments into the call stack
+ */
+void VM::push_args(ValueVector* vec) throw() {
+	ValueVector* vec_copy = new ValueVector;
+
+	s_args.push(vec);
+
+	for (int i = 0, j = vec->size(); i < j; ++i) {
+		Value* tmp = new Value;
+
+		tmp->copy(vec->at(i));
+		vec_copy->push_back(tmp);
+	}
+
+	s_arg_values.push(vec_copy);
+}
+
+/**
+ * Pop arguments onto the call stack
+ */
+void VM::pop_args() throw() {
+	ValueVector* vec_copy = s_arg_values.top();
+
+	for (int i = 0, j = vec_copy->size(); i < j; ++i) {
+		delete vec_copy->at(i);
+	}
+	delete vec_copy;
+
+	s_arg_values.pop();
+	s_args.pop();
+
+	if (!s_args.empty()) {
+		restore_args();
+	}
+}
+
+/**
+ * Restore the parameter argument values from the previous stack frame
+ */
+void VM::restore_args() throw() {
+	ValueVector* vec = s_args.top();
+	ValueVector* vec_copy = s_arg_values.top();
+
+	for (int i = 0, j = vec->size(); i < j; ++i) {
+		vec->at(i)->copy(vec_copy->at(i));
 	}
 }
 
@@ -191,8 +242,6 @@ CLEVER_VM_HANDLER(VM::fcall_handler) {
 	Value* result = opcode.getResult();
 	const ValueVector* const func_args = args ? args->getVector() : NULL;
 
-//	result->initialize();
-
 	if (func->isNearCall()) {
 		s_call.push(&opcode);
 
@@ -213,6 +262,8 @@ CLEVER_VM_HANDLER(VM::arg_recv_handler) {
 	for (int i = 0, j = vars->size(); i < j; ++i) {
 		vars->at(i)->copy(func_args->at(i));
 	}
+
+	push_args(vars);
 }
 
 /**
@@ -223,8 +274,6 @@ CLEVER_VM_HANDLER(VM::mcall_handler) {
 	const Value* const args = opcode.getOp2();
 	Value* result = opcode.getResult();
 	const ValueVector* const func_args = args ? args->getVector() : NULL;
-
-//	result->initialize();
 
 	/* Call the method */
 	var->call(result, func_args);
@@ -263,6 +312,18 @@ CLEVER_VM_HANDLER(VM::return_handler) {
 			call->getResult()->copy(value);
 		}
 		s_call.pop();
+
+		/**
+		 * Check if the function which we are returning has argument in the stack
+		 */
+		if (!s_args.empty()
+			&& static_cast<CallableValue*>(call->getOp1())->isNearCall()
+			&& call->getOp2()) {
+			/**
+			 * pop + restore arguments from stack
+			 */
+			pop_args();
+		}
 		/**
 		 * Go back to the caller
 		 */
