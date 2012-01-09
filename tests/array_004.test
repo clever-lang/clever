@@ -1,0 +1,25 @@
+Testing Array's methods #2
+==CODE==
+import std.io;
+
+Array<String> x;
+x.push('cle');
+x.push('ter');
+
+print(x.at(0), x.at(1), "\n");
+
+x.set(1, 'Ver');
+print(x.at(0), x.at(1), "\n");
+
+String str = x.pop();
+println(str);
+println(x.size());
+
+x.push('ver');
+println(x.toString());
+==RESULT==
+cleter
+cleVer
+Ver
+1
+\[cle, ver\]

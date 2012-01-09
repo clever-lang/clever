@@ -30,10 +30,56 @@ namespace clever {
 
 CLEVER_TYPE_METHOD(Array::push) {
 	ValueVector* vec = CLEVER_THIS()->getVector();
+	
+	Value* val = new Value();
+	val->copy(CLEVER_ARG(0));
+	
+	vec->push_back(val);
+}
 
-	vec->push_back(CLEVER_ARG(0));
+CLEVER_TYPE_METHOD(Array::pop) {
+	ValueVector* vec = CLEVER_THIS()->getVector();
+	Value* popped = vec->back();
+	
+	vec->pop_back();
+	
+	retval->copy(popped);
+}
 
-	CLEVER_ARG(0)->addRef();
+CLEVER_TYPE_METHOD(Array::size) {
+	ValueVector* vec = CLEVER_THIS()->getVector();
+	
+	CLEVER_RETURN_INT(vec->size());
+}
+
+CLEVER_TYPE_METHOD(Array::isEmpty) {
+	ValueVector* vec = CLEVER_THIS()->getVector();
+	
+	CLEVER_RETURN_BOOL(vec->empty());
+}
+
+CLEVER_TYPE_METHOD(Array::clear) {
+	ValueVector* vec = CLEVER_THIS()->getVector();
+	
+	vec->clear();
+}
+
+CLEVER_TYPE_METHOD(Array::at) {
+	ValueVector* vec = CLEVER_THIS()->getVector();
+	int64_t idx = CLEVER_ARG(0)->getInteger();
+	
+	retval->copy(vec->at(idx));
+}
+
+CLEVER_TYPE_METHOD(Array::set) {
+	ValueVector* vec = CLEVER_THIS()->getVector();
+	int64_t idx = CLEVER_ARG(0)->getInteger();
+	
+	Value* val = new Value();
+	val->copy(CLEVER_ARG(1));
+	
+	vec->at(idx)->delRef();
+	vec->at(idx) = val;
 }
 
 CLEVER_TYPE_METHOD(Array::toString) {
@@ -62,6 +108,25 @@ void Array::init() {
 	addMethod(
 		(new Method("push", (MethodPtr)&Array::push, CLEVER_VOID))
 			->addArg("arg1", CLEVER_TMP_ARG(0))
+	);
+	
+	addMethod(
+		new Method("pop", (MethodPtr)&Array::pop, CLEVER_TMP_ARG(0))
+	);
+	
+	addMethod(new Method("size", (MethodPtr)&Array::size, CLEVER_INT));
+	
+	addMethod(new Method("isEmpty", (MethodPtr)&Array::isEmpty, CLEVER_BOOL));
+	
+	addMethod(new Method("clear", (MethodPtr)&Array::clear, CLEVER_VOID));
+	
+	addMethod((new Method("at", (MethodPtr)&Array::at, CLEVER_TMP_ARG(0)))
+		->addArg("index", CLEVER_INT)
+	);
+	
+	addMethod((new Method("set", (MethodPtr)&Array::set, CLEVER_VOID))
+		->addArg("index", CLEVER_INT)
+		->addArg("element", CLEVER_TMP_ARG(0))
 	);
 }
 
