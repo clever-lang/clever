@@ -192,6 +192,16 @@ AST_VISITOR(TypeChecker, Identifier) {
 	ident->addRef();
 }
 
+AST_VISITOR(TypeChecker, UnaryExpr) {
+	Value* var = expr->getExpr()->getValue();
+
+	expr->setExprValue(var);
+	var->addRef();
+
+	expr->getValue()->addRef();
+	expr->getValue()->setTypePtr(var->getTypePtr());
+}
+
 AST_VISITOR(TypeChecker, BinaryExpr) {
 	TypeVector arg_types;
 	Value* args = new Value;
@@ -391,46 +401,6 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 	}
 
 	g_symtable.push(var->getName(), var);
-}
-
-AST_VISITOR(TypeChecker, PreIncrement) {
-	Value* var = expr->getExpr()->getValue();
-
-	expr->setExprValue(var);
-	var->addRef();
-
-	expr->getValue()->addRef();
-	expr->getValue()->setTypePtr(var->getTypePtr());
-}
-
-AST_VISITOR(TypeChecker, PosIncrement) {
-	Value* var = expr->getExpr()->getValue();
-
-	expr->setExprValue(var);
-	var->addRef();
-
-	expr->getValue()->addRef();
-	expr->getValue()->setTypePtr(var->getTypePtr());
-}
-
-AST_VISITOR(TypeChecker, PreDecrement) {
-	Value* var = expr->getExpr()->getValue();
-
-	expr->setExprValue(var);
-	var->addRef();
-
-	expr->getValue()->addRef();
-	expr->getValue()->setTypePtr(var->getTypePtr());
-}
-
-AST_VISITOR(TypeChecker, PosDecrement) {
-	Value* var = expr->getExpr()->getValue();
-
-	expr->setExprValue(var);
-	var->addRef();
-
-	expr->getValue()->addRef();
-	expr->getValue()->setTypePtr(var->getTypePtr());
 }
 
 AST_VISITOR(TypeChecker, IfExpr) {

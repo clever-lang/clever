@@ -71,7 +71,13 @@ enum {
 	LESS,
 	LESS_EQUAL,
 	EQUAL,
-	NOT_EQUAL
+	NOT_EQUAL,
+	NOT,
+	BW_NOT,
+	PRE_INC,
+	POS_INC,
+	PRE_DEC,
+	POS_DEC
 };
 
 /**
@@ -318,12 +324,12 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(Identifier);
 };
 
-class NO_INIT_VTABLE UnaryExpr : public ASTNode {
+class UnaryExpr : public ASTNode {
 public:
-	UnaryExpr(ASTNode* expr)
-		: m_expr(expr), m_expr_value(NULL) {
+	UnaryExpr(int op, ASTNode* expr)
+		: m_op(op), m_expr(expr), m_expr_value(NULL) {
 		m_expr->addRef();
-		m_result = new Value();
+		m_result = new Value;
 	}
 
 	~UnaryExpr() {
@@ -332,6 +338,10 @@ public:
 			m_expr_value->delRef();
 		}
 		m_result->delRef();
+	}
+
+	int getOp() const throw() {
+		return m_op;
 	}
 
 	void setValue(Value* value) throw() {
@@ -350,8 +360,13 @@ public:
 
 	Value* getExprValue() throw() { return m_expr_value; }
 
-	virtual void accept(ASTVisitor& visitor) throw() { }
+	virtual void accept(ASTVisitor& visitor) throw() {
+		m_expr->accept(visitor);
+
+		visitor.visit(this);
+	}
 private:
+	int m_op;
 	ASTNode* m_expr;
 	Value* m_result;
 	Value* m_expr_value;
@@ -482,80 +497,6 @@ public:
 private:
 	Scope* m_scope;
 	DISALLOW_COPY_AND_ASSIGN(BlockNode);
-};
-
-class PreIncrement : public UnaryExpr {
-public:
-	PreIncrement(Identifier* expr)
-		: UnaryExpr(expr) {
-	}
-
-	~PreIncrement() {
-	}
-
-	void accept(ASTVisitor& visitor) throw() {
-		getExpr()->accept(visitor);
-
-		visitor.visit(this);
-	}
-private:
-
-	DISALLOW_COPY_AND_ASSIGN(PreIncrement);
-};
-
-class PosIncrement : public UnaryExpr {
-public:
-	PosIncrement(Identifier* expr)
-		: UnaryExpr(expr) {
-	}
-
-	~PosIncrement() {
-	}
-
-	void accept(ASTVisitor& visitor) throw() {
-		getExpr()->accept(visitor);
-
-		visitor.visit(this);
-	}
-private:
-	DISALLOW_COPY_AND_ASSIGN(PosIncrement);
-};
-
-class PreDecrement : public UnaryExpr {
-public:
-	PreDecrement(Identifier* expr)
-		: UnaryExpr(expr) {
-	}
-
-	~PreDecrement() {
-	}
-
-	void accept(ASTVisitor& visitor) throw() {
-		getExpr()->accept(visitor);
-
-		visitor.visit(this);
-	}
-private:
-	DISALLOW_COPY_AND_ASSIGN(PreDecrement);
-};
-
-class PosDecrement : public UnaryExpr {
-public:
-	PosDecrement(Identifier* expr)
-		: UnaryExpr(expr) {
-	}
-
-	~PosDecrement() {
-	}
-
-	void accept(ASTVisitor& visitor) throw() {
-		getExpr()->accept(visitor);
-
-		visitor.visit(this);
-	}
-private:
-
-	DISALLOW_COPY_AND_ASSIGN(PosDecrement);
 };
 
 class IfExpr : public ASTNode {

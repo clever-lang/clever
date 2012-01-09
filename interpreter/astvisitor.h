@@ -36,10 +36,6 @@ class Identifier;
 class ASTNode;
 class BinaryExpr;
 class VariableDecl;
-class PosIncrement;
-class PosDecrement;
-class PreIncrement;
-class PreDecrement;
 class IfExpr;
 class WhileExpr;
 class ForExpr;
@@ -54,6 +50,7 @@ class FuncDeclaration;
 class ClassDeclaration;
 class ReturnStmt;
 class TypeCreation;
+class UnaryExpr;
 
 #define AST_VISITOR(type, exprtype) void type::visit(exprtype* const expr) throw()
 #define AST_VISITOR_DECL_VIRTUAL(type) virtual void visit(type* const expr) throw() = 0
@@ -61,11 +58,8 @@ class TypeCreation;
 
 #define AST_VISITOR_DECLARATION(V) \
 	V(BinaryExpr); \
+	V(UnaryExpr); \
 	V(VariableDecl); \
-	V(PreIncrement); \
-	V(PosIncrement); \
-	V(PreDecrement); \
-	V(PosDecrement); \
 	V(BlockNode); \
 	V(IfExpr); \
 	V(WhileExpr); \
