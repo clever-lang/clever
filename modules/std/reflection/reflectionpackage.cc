@@ -99,7 +99,6 @@ DataValue* ReflectionPackage::allocateValue() const {
 }
 
 void ReflectionPackage::destructor(Value* value) const {
-	::std::cout << "AQUI" << ::std::endl;
 }
 
 }}}} // clever::packages::std::reflection
