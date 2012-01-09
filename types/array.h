@@ -75,6 +75,7 @@ public:
 	static CLEVER_TYPE_METHOD(clear);
 	static CLEVER_TYPE_METHOD(at);
 	static CLEVER_TYPE_METHOD(set);
+	static CLEVER_TYPE_METHOD(resize);
 	static CLEVER_TYPE_METHOD(toString);
 
 	/**
