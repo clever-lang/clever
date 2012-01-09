@@ -69,6 +69,12 @@ public:
 	 * Type methods
 	 */
 	static CLEVER_TYPE_METHOD(push);
+	static CLEVER_TYPE_METHOD(pop);
+	static CLEVER_TYPE_METHOD(size);
+	static CLEVER_TYPE_METHOD(isEmpty);
+	static CLEVER_TYPE_METHOD(clear);
+	static CLEVER_TYPE_METHOD(at);
+	static CLEVER_TYPE_METHOD(set);
 	static CLEVER_TYPE_METHOD(toString);
 
 	/**
@@ -78,8 +84,7 @@ public:
 	CLEVER_TYPE_DEC_HANDLER_D { return value; }
 
 	CLEVER_TYPE_ASSIGN_HANDLER_D {
-		if (newvalue->getTypePtr() == this) value->copy(newvalue);
-		else value->setInteger((int64_t)newvalue->getDouble());
+		value->copy(newvalue);
 	}
 private:
 	DISALLOW_COPY_AND_ASSIGN(Array);
