@@ -49,8 +49,7 @@ class ASTNode;
 typedef std::vector<ASTNode*> NodeList;
 typedef std::pair<Identifier*, Identifier*> ArgumentDeclPair;
 typedef std::vector<ArgumentDeclPair> ArgumentDecls;
-
-typedef std::pair<Identifier*, Identifier*> ContainerPair;
+typedef std::vector<Identifier*> TemplateArgsVector;
 
 /**
  * Operators (logical and binary)
@@ -273,18 +272,19 @@ private:
 class Identifier : public ASTNode {
 public:
 	explicit Identifier(const CString* name)
-		: m_name(name), m_value(NULL), m_container(NULL) {}
+		: m_name(name), m_value(NULL), m_template_args(NULL) {}
 
 	~Identifier() {
 		if (m_value) {
 			m_value->delRef();
 		}
-		if (m_container) {
-			m_container->first->delRef();
-			if (m_container->second) {
-				m_container->second->delRef();
+		if (m_template_args) {
+			
+			for (size_t i = 0; i < m_template_args->size(); ++i) {
+				m_template_args->at(i)->delRef();
 			}
-			delete m_container;
+			
+			delete m_template_args;
 		}
 	}
 
@@ -300,22 +300,21 @@ public:
 		visitor.visit(this);
 	}
 
-	void setContainer(ContainerPair* container) {
-		m_container = container;
+	void setTemplateArgs(TemplateArgsVector* template_args) {
+		m_template_args = template_args;
 
-		container->first->addRef();
-		if (container->second) {
-			container->second->addRef();
+		for (size_t i = 0; i < m_template_args->size(); ++i) {
+			m_template_args->at(i)->addRef();
 		}
 	}
 
-	ContainerPair* getContainer() const throw() {
-		return m_container;
+	TemplateArgsVector* getTemplateArgs() const throw() {
+		return m_template_args;
 	}
 private:
 	const CString* m_name;
 	Value* m_value;
-	ContainerPair* m_container;
+	TemplateArgsVector* m_template_args;
 
 	DISALLOW_COPY_AND_ASSIGN(Identifier);
 };

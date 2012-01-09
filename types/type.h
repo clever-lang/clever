@@ -91,6 +91,8 @@ namespace clever {
  */
 #define CLEVER_TPL_ARG(arg) (getTypeArg(arg))
 
+typedef ::std::vector<const Type*> TemplateArgs;
+
 /**
  * Type representation
  */
@@ -212,7 +214,17 @@ public:
 		return m_type_args[index];
 	}
 
-	virtual const Type* getTemplatedType(const ::std::vector<const Type*>&) const = 0;
+	virtual const Type* getTemplatedType(const Type*) const { 
+		return NULL;
+	};
+	
+	virtual const Type* getTemplatedType(const Type*, const Type*) const {
+		return NULL;
+	};
+	
+	virtual const Type* getTemplatedType(const TemplateArgs&) const {
+		return NULL;
+	}
 private:
 	const int m_num_args;
 	::std::vector<const Type*> m_type_args;

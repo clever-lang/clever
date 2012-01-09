@@ -42,9 +42,9 @@ public:
 			addArg(arg_type);
 	}
 	
-	virtual const Type* getTemplatedType(const ::std::vector<const Type*>& type_args) const {
+	virtual const Type* getTemplatedType(const Type* type_arg) const {
 		::std::string name = ::std::string(getName()) + "<" 
-						   + type_args[0]->getName() + ">";
+						   + type_arg->getName() + ">";
 		
 		const Type* type = g_symtable.getType(CSTRING(name));
 		
@@ -52,7 +52,7 @@ public:
 			char* cname = new char[name.size() + 1];
 			::strcpy(cname, name.c_str());
 			
-			Type* ntype = new Array(cname, type_args[0]);
+			Type* ntype = new Array(cname, type_arg);
 			g_symtable.push(CSTRING(name), ntype);
 			ntype->init();
 			

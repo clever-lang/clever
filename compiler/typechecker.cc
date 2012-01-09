@@ -279,7 +279,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 	Value* var = new Value();
 	ASTNode* rhs = expr->getRhs();
 	const Type* type = g_symtable.getType(expr->getType()->getName());
-	ContainerPair* cont_type = expr->getType()->getContainer();
+	TemplateArgsVector* template_args = expr->getType()->getTemplateArgs();
 
 	/**
 	 * Check if the type wasn't declarated previously
@@ -298,30 +298,17 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 			variable->getName());
 	}
 
-	if (cont_type) {
+	if (template_args) {
 			if (type->isTemplatedType()) {
 				const TemplatedType* temp_type = (const TemplatedType*)type;
-
-				/**
-				 * @TODO: We need to accept any number of template arguments
-				 */
-				const Type* key_type = g_symtable.getType(cont_type->first->getName());
-				const Type* val_type = NULL;
-
-				if (key_type == NULL) {
+				
+				if (template_args->size() != temp_type->getNumArgs()) {
 					Compiler::errorf(expr->getLocation(),
-						"Key type of container doesn't exists for variable named `%S'!",
-						variable->getName());
-				}
-
-				if (cont_type->second) {
-					val_type = g_symtable.getType(cont_type->second->getName());
-
-					if (val_type == NULL) {
-						Compiler::errorf(expr->getLocation(),
-							"Key type of container doesn't exists for variable named `%S'!",
-							variable->getName());
-					}
+						"Wrong number of template arguments given."
+						"`%s' requires %d arguments and %d was given.",
+						type->getName(), temp_type->getNumArgs(),
+						template_args->size()
+					);
 				}
 
 				if (temp_type == CLEVER_ARRAY) {
@@ -331,14 +318,33 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 					var->setType(Value::VECTOR);
 					var->setVector(new ValueVector);
 				}
-
-				::std::vector<const Type*> arg_type;
-				/**
-				 * @TODO: check with getNumArgs()
-				 */
-				arg_type.push_back(key_type);
-				type = temp_type->getTemplatedType(arg_type);
-
+				
+				if (temp_type->getNumArgs() == 1) {
+					const Type* arg1_type = g_symtable.getType(
+						template_args->at(0)->getName()
+					);
+					
+					type = temp_type->getTemplatedType(arg1_type);
+				}
+				else if (temp_type->getNumArgs() == 2) {
+					const Type* arg1_type = g_symtable.getType(
+						template_args->at(0)->getName());
+					
+					const Type* arg2_type = g_symtable.getType(
+						template_args->at(1)->getName());
+					
+					type = temp_type->getTemplatedType(arg1_type, 
+						arg2_type);
+				}
+				else {
+					TemplateArgs vec;
+					for (size_t i = 0; i < template_args->size(); ++i) {
+						vec.push_back(g_symtable.getType(
+							template_args->at(i)->getName()));
+					}
+					
+					type = temp_type->getTemplatedType(vec);
+				}
 			}
 			else {
 				Compiler::errorf(expr->getLocation(),
