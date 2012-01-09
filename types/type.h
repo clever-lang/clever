@@ -53,6 +53,8 @@ namespace clever {
 #define CLEVER_ARRAY  ::clever::CLEVER_ARRAY_VAR
 #define CLEVER_VOID	  NULL
 
+#define CLEVER_GET_ARRAY_TEMPLATE ((const TemplatedType*)CLEVER_ARRAY)
+
 /**
  * Operator helpers
  */
@@ -172,7 +174,7 @@ public:
 	virtual CLEVER_TYPE_INC_HANDLER_D    = 0;
 	virtual CLEVER_TYPE_DEC_HANDLER_D    = 0;
 	virtual CLEVER_TYPE_ASSIGN_HANDLER_D = 0;
-	
+
 	/**
 	 * Checks if this type accepts arguments
 	 */
@@ -197,24 +199,24 @@ class TemplatedType : public Type {
 public:
 	explicit TemplatedType(const char* name, int num_args)
 		: Type(name), m_num_args(num_args) {}
-	
+
 	virtual bool isTemplatedType() const {
 		return true;
 	}
-	
+
 	size_t getNumArgs() const {
 		return m_num_args;
 	}
-	
+
 	const Type* getTypeArg(int index) const {
 		return m_type_args[index];
 	}
-	
+
 	virtual const Type* getTemplatedType(const ::std::vector<const Type*>&) const = 0;
 private:
 	const int m_num_args;
 	::std::vector<const Type*> m_type_args;
-	
+
 protected:
 	void addArg(const Type* type) {
 		m_type_args.push_back(type);
