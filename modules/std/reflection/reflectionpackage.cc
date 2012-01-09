@@ -78,11 +78,7 @@ CLEVER_TYPE_METHOD(ReflectionPackage::getModules) {
 }
 
 void ReflectionPackage::init() {
-	const Type* arr_str;
-	::std::vector<const Type*> arg_type;
-
-	arg_type.push_back(CLEVER_STR);
-	arr_str = CLEVER_GET_ARRAY_TEMPLATE->getTemplatedType(arg_type);
+	const Type* arr_str = CLEVER_GET_ARRAY_TEMPLATE->getTemplatedType(CLEVER_STR);
 
 	addMethod(
 		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&ReflectionPackage::constructor, CLEVER_TYPE("ReflectionPackage")))
