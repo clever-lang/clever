@@ -1,0 +1,36 @@
+Testing Array's methods
+==CODE==
+import std.io;
+
+Array<Int> x;
+
+for (Int i = 0; i < 5; ++i) {
+	x.push(i);
+}
+
+for (Int j = 4; j >= 0; --j) {
+	println(x.at(j));
+}
+
+println(x.size());
+
+if (x.isEmpty()) {
+	println("fail!");
+}
+else {
+	x.clear();
+	
+	if (false == x.isEmpty()) {
+		println("fail!");
+	}
+}
+
+println("done!");
+==RESULT==
+4
+3
+2
+1
+0
+5
+done!
