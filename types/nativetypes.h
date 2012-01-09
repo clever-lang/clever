@@ -30,6 +30,7 @@
 #include "types/double.h"
 #include "types/str.h"
 #include "types/bool.h"
+#include "types/byte.h"
 #include "types/array.h"
 
 #endif // CLEVER_NATIVE_TYPES_H

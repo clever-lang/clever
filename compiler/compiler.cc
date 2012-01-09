@@ -42,6 +42,7 @@ THREAD_TLS Type* CLEVER_INT_VAR    = NULL;
 THREAD_TLS Type* CLEVER_DOUBLE_VAR = NULL;
 THREAD_TLS Type* CLEVER_STR_VAR    = NULL;
 THREAD_TLS Type* CLEVER_BOOL_VAR   = NULL;
+THREAD_TLS Type* CLEVER_BYTE_VAR   = NULL;
 THREAD_TLS Type* CLEVER_ARRAY_VAR  = NULL;
 
 /**
@@ -81,6 +82,7 @@ void Compiler::loadTypes() throw() {
 	CLEVER_STR    = new String;
 	CLEVER_DOUBLE = new Double;
 	CLEVER_BOOL   = new Bool;
+	CLEVER_BYTE   = new Char;
 	CLEVER_ARRAY  = new Array; // Virtual Array
 
 	/**
@@ -90,12 +92,14 @@ void Compiler::loadTypes() throw() {
 	g_symtable.push(CSTRING("Double"), CLEVER_DOUBLE);
 	g_symtable.push(CSTRING("String"), CLEVER_STR);
 	g_symtable.push(CSTRING("Bool"), CLEVER_BOOL);
+	g_symtable.push(CSTRING("Byte"), CLEVER_BYTE);
 	g_symtable.push(CSTRING("Array"), CLEVER_ARRAY);
 
 	CLEVER_INT->init();
 	CLEVER_DOUBLE->init();
 	CLEVER_STR->init();
 	CLEVER_BOOL->init();
+	CLEVER_BYTE->init();
 	CLEVER_ARRAY->init();
 }
 

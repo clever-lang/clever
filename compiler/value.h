@@ -47,6 +47,7 @@ extern THREAD_TLS Type* CLEVER_INT_VAR;
 extern THREAD_TLS Type* CLEVER_DOUBLE_VAR;
 extern THREAD_TLS Type* CLEVER_STR_VAR;
 extern THREAD_TLS Type* CLEVER_BOOL_VAR;
+extern THREAD_TLS Type* CLEVER_BYTE_VAR;
 extern THREAD_TLS Type* CLEVER_ARRAY_VAR;
 
 /**
@@ -66,6 +67,7 @@ public:
 		const CString* s_value;
 		DataValue* dv_value;
 		ValueVector* v_value;
+		uint8_t c_value;
 	} ValueData;
 
 	/**
@@ -97,6 +99,11 @@ public:
 	explicit Value(const CString* value)
 		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_STR), m_name(NULL) {
 		setString(value);
+	}
+	
+	explicit Value(uint8_t value)
+		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_BYTE), m_name(NULL) {
+		setByte(value);
 	}
 
 	virtual ~Value() {
@@ -133,6 +140,9 @@ public:
 		else if (getTypePtr() == CLEVER_STR) {
 			setString(CSTRING(""));
 		}
+		else if (getTypePtr() == CLEVER_BYTE) {
+			setByte(0);
+		}
 	}
 
 	void setType(int type) {
@@ -156,7 +166,8 @@ public:
 		return m_type_ptr == CLEVER_INT ||
 			m_type_ptr == CLEVER_DOUBLE ||
 			m_type_ptr == CLEVER_BOOL ||
-			m_type_ptr == CLEVER_STR;
+			m_type_ptr == CLEVER_STR ||
+			m_type_ptr == CLEVER_BYTE;
 	}
 
 	/*
@@ -169,6 +180,7 @@ public:
 	bool isString()    const { return m_type_ptr == CLEVER_STR; }
 	bool isDouble()    const { return m_type_ptr == CLEVER_DOUBLE; }
 	bool isBoolean()   const { return m_type_ptr == CLEVER_BOOL; }
+	bool isByte()      const { return m_type_ptr == CLEVER_BYTE; }
 	bool isVector()    const { return m_type == VECTOR; }
 	bool isUserValue() const { return m_type == USER; }
 
@@ -195,16 +207,23 @@ public:
 		m_type = PRIMITIVE;
 		m_data.b_value = b;
 	}
-
+	
+	void setByte(uint8_t b) {
+		m_type_ptr = CLEVER_BYTE;
+		m_type = PRIMITIVE;
+		m_data.c_value = b;
+	}
 
 	void setVector(ValueVector* v) { m_type = VECTOR; m_data.v_value = v; }
 
-	int64_t getInteger() const { return m_data.l_value; }
 	const CString* getStringP() const { return m_data.s_value; }
+	
 	const CString& getString() const { return *m_data.s_value; }
-	double getDouble() const { return m_data.d_value; }
-	bool getBoolean() const { return m_data.b_value; }
-	ValueVector* getVector() const { return m_data.v_value; }
+	int64_t getInteger()       const { return m_data.l_value; }
+	double getDouble()         const { return m_data.d_value; }
+	bool getBoolean()          const { return m_data.b_value; }
+	uint8_t getByte()          const { return m_data.c_value; }
+	ValueVector* getVector()   const { return m_data.v_value; }
 
 	bool getValueAsBool() const {
 		if (m_type_ptr == CLEVER_INT) {
@@ -218,6 +237,9 @@ public:
 		}
 		else if (m_type_ptr == CLEVER_BOOL) {
 			return getBoolean();
+		}
+		else if (m_type_ptr == CLEVER_BYTE) {
+			return getByte();
 		}
 
 		return false;
@@ -272,6 +294,9 @@ public:
 		}
 		else if (getTypePtr() == CLEVER_STR) {
 				return getString();
+		}
+		else if (getTypePtr() == CLEVER_BYTE) {
+			str << std::hex << getByte();
 		}
 		else {
 			return *CSTRING("");
