@@ -1,0 +1,23 @@
+Testing scope on for
+==CODE==
+import std.io;
+
+for (Int i = 0; i < 3; ++i) {
+	for (Int i = 0; i < 2; ++i) {
+		println(i);
+	}
+}
+
+for (Int i = 3; i < 6; ++i) {
+	println(i);
+}
+==RESULT==
+0
+1
+0
+1
+0
+1
+3
+4
+5

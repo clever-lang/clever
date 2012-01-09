@@ -59,6 +59,7 @@ namespace clever {
 #define CLEVER_ARG_IS_INT(x)     CLEVER_ARG(x)->isInteger()
 #define CLEVER_ARG_IS_BOOL(x)    CLEVER_ARG(x)->isBoolean()
 #define CLEVER_ARG_IS_STR(x)     CLEVER_ARG(x)->isString()
+#define CLEVER_ARG_IS_BYTE(x)    CLEVER_ARG(x)->isByte()
 #define CLEVER_ARG_IS_DOUBLE(x)  CLEVER_ARG(x)->isDouble()
 
 /**
@@ -73,6 +74,7 @@ namespace clever {
 #define CLEVER_ARG_DOUBLE(x)     args->at((x))->getDouble()
 #define CLEVER_ARG_STR(x)        args->at((x))->getString()
 #define CLEVER_ARG_BOOL(x)       args->at((x))->getBoolean()
+#define CLEVER_ARG_BYTE(x)       args->at((x))->getByte()
 #define CLEVER_ARG_DATA_VALUE(x) args->at((x))->getDataValue()
 
 /**
@@ -87,6 +89,7 @@ namespace clever {
 #define CLEVER_RETURN_BOOL(x)       retval->setBoolean((x))
 #define CLEVER_RETURN_INT(x)        retval->setInteger((x))
 #define CLEVER_RETURN_DOUBLE(x)     retval->setDouble((x))
+#define CLEVER_RETURN_BYTE(x)     retval->setByte((x))
 #define CLEVER_RETURN_DATA_VALUE(x) retval->setDataValue((x))
 
 /**
