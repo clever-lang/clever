@@ -296,7 +296,7 @@ public:
 				return getString();
 		}
 		else if (getTypePtr() == CLEVER_BYTE) {
-			str << std::hex << getByte();
+			str << "0x" << std::hex << uint32_t(getByte());
 		}
 		else {
 			return *CSTRING("");
