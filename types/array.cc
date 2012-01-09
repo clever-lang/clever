@@ -121,7 +121,7 @@ CLEVER_TYPE_METHOD(Array::toString) {
 
 void Array::init() {
 	/* If we are in our "virtual" Array type */
-	if (CLEVER_TMP_ARG(0) == NULL) {
+	if (CLEVER_TPL_ARG(0) == NULL) {
 		return;
 	}
 
@@ -129,11 +129,11 @@ void Array::init() {
 
 	addMethod(
 		(new Method("push", (MethodPtr)&Array::push, CLEVER_VOID))
-			->addArg("arg1", CLEVER_TMP_ARG(0))
+			->addArg("arg1", CLEVER_TPL_ARG(0))
 	);
 
 	addMethod(
-		new Method("pop", (MethodPtr)&Array::pop, CLEVER_TMP_ARG(0))
+		new Method("pop", (MethodPtr)&Array::pop, CLEVER_TPL_ARG(0))
 	);
 
 	addMethod(new Method("size", (MethodPtr)&Array::size, CLEVER_INT));
@@ -142,18 +142,18 @@ void Array::init() {
 
 	addMethod(new Method("clear", (MethodPtr)&Array::clear, CLEVER_VOID));
 
-	addMethod((new Method("at", (MethodPtr)&Array::at, CLEVER_TMP_ARG(0)))
+	addMethod((new Method("at", (MethodPtr)&Array::at, CLEVER_TPL_ARG(0)))
 		->addArg("index", CLEVER_INT)
 	);
 
 	addMethod((new Method("set", (MethodPtr)&Array::set, CLEVER_VOID))
 		->addArg("index", CLEVER_INT)
-		->addArg("element", CLEVER_TMP_ARG(0))
+		->addArg("element", CLEVER_TPL_ARG(0))
 	);
 
 	addMethod((new Method("resize", (MethodPtr)&Array::resize, CLEVER_VOID))
 		->addArg("new_size", CLEVER_INT)
-		->addArg("value", CLEVER_TMP_ARG(0))
+		->addArg("value", CLEVER_TPL_ARG(0))
 	);
 }
 

@@ -89,7 +89,7 @@ namespace clever {
 /**
  * Utils for handling TemplatedType
  */
-#define CLEVER_TMP_ARG(arg) (getTypeArg(arg))
+#define CLEVER_TPL_ARG(arg) (getTypeArg(arg))
 
 /**
  * Type representation
