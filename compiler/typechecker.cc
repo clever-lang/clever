@@ -490,6 +490,9 @@ AST_VISITOR(TypeChecker, ForExpr) {
 	if (expr->isIteratorMode()) {
 		return;
 	}
+	
+	g_symtable.beginScope();
+	
 	if (expr->getVarDecl()) {
 		expr->getVarDecl()->accept(*this);
 	}
@@ -505,6 +508,8 @@ AST_VISITOR(TypeChecker, ForExpr) {
 	if (expr->getIncrement()) {
 		expr->getIncrement()->accept(*this);
 	}
+	
+	g_symtable.endScope();
 }
 
 AST_VISITOR(TypeChecker, BreakNode) {
