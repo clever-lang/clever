@@ -1,0 +1,18 @@
+Testing Array's methods #2
+==CODE==
+import std.io;
+
+Array<Int> arr;
+arr.resize(3);
+arr.set(0, 0);
+arr.set(1, 10);
+arr.set(2, 100);
+
+for (Int i = 0; i < arr.size(); ++i) {
+	println(arr.at(i));
+}
+
+==RESULT==
+0
+10
+100
