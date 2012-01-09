@@ -63,9 +63,7 @@ CLEVER_TYPE_METHOD(Array::clear) {
 
 	size_t sz = vec->size();
 	for (size_t i = 0; i < sz; ++i) {
-		if (vec->at(i)) {
-			vec->at(i)->delRef();
-		}
+		vec->at(i)->delRef();
 	}
 
 	vec->clear();
@@ -85,10 +83,7 @@ CLEVER_TYPE_METHOD(Array::set) {
 	Value* val = new Value();
 	val->copy(CLEVER_ARG(1));
 
-	if (vec->at(idx)) {
-		vec->at(idx)->delRef();
-	}
-
+	vec->at(idx)->delRef();
 	vec->at(idx) = val;
 }
 
@@ -98,12 +93,15 @@ CLEVER_TYPE_METHOD(Array::resize) {
 
 	size_t sz = vec->size();
 	for (size_t i = 0; i < sz; ++i) {
-		if (vec->at(i)) {
-			vec->at(i)->delRef();
-		}
+		vec->at(i)->delRef();
 	}
 
-	vec->resize(nsz, NULL);
+	vec->resize(nsz);
+
+	for (int i = 0; i < nsz; ++i) {
+		vec->at(i) = new Value();
+		vec->at(i)->copy(CLEVER_ARG(1));
+	}
 }
 
 CLEVER_TYPE_METHOD(Array::toString) {
@@ -155,6 +153,7 @@ void Array::init() {
 
 	addMethod((new Method("resize", (MethodPtr)&Array::resize, CLEVER_VOID))
 		->addArg("new_size", CLEVER_INT)
+		->addArg("value", CLEVER_TMP_ARG(0))
 	);
 }
 
