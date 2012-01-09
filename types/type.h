@@ -42,12 +42,14 @@ namespace clever {
 #define CLEVER_DOUBLE_VAR g_double_type_ptr
 #define CLEVER_STR_VAR    g_str_type_ptr
 #define CLEVER_BOOL_VAR   g_bool_type_ptr
+#define CLEVER_BYTE_VAR   g_byte_type_ptr
 #define CLEVER_ARRAY_VAR  g_array_type_ptr
 
 #define CLEVER_INT    ::clever::CLEVER_INT_VAR
 #define CLEVER_DOUBLE ::clever::CLEVER_DOUBLE_VAR
 #define CLEVER_STR    ::clever::CLEVER_STR_VAR
 #define CLEVER_BOOL   ::clever::CLEVER_BOOL_VAR
+#define CLEVER_BYTE   ::clever::CLEVER_BYTE_VAR
 #define CLEVER_ARRAY  ::clever::CLEVER_ARRAY_VAR
 #define CLEVER_VOID	  NULL
 
