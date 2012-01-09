@@ -33,14 +33,19 @@ CLEVER_TYPE_METHOD(ReflectionPackage::constructor) {
 	ReflectionPackageValue* rpv = new ReflectionPackageValue;
 	const PackageMap& packages = g_pkgmanager.getPackages();
 
-	rpv->setPackage(packages.find(&CLEVER_ARG(0)->getString()));
+	rpv->setPackage(packages.find(&CLEVER_ARG_STR(0)));
 
-	/* Assignment on type creation will increase the ref */
+	/**
+	 * Assignment on type creation will increase the ref
+	 */
 	rpv->setReference(0);
 
 	retval->setDataValue(rpv);
 }
 
+/**
+ * String ReflectionPackage::getName()
+ */
 CLEVER_TYPE_METHOD(ReflectionPackage::getName) {
 	ReflectionPackageValue* rpv = CLEVER_GET_VALUE(ReflectionPackageValue*, value);
 
@@ -51,7 +56,34 @@ CLEVER_TYPE_METHOD(ReflectionPackage::getName) {
 	}
 }
 
+/**
+ * Array<String> ReflectionPackage::getModules()
+ */
+CLEVER_TYPE_METHOD(ReflectionPackage::getModules) {
+	ReflectionPackageValue* rpv = CLEVER_GET_VALUE(ReflectionPackageValue*, value);
+	const ModuleMap& modules = rpv->getPackage()->second->getModules();
+	ModuleMap::const_iterator it = modules.begin(), end = modules.end();
+	ValueVector* vec = new ValueVector;
+
+	while (it != end) {
+		Value* tmp = new Value;
+
+		tmp->setString(it->first);
+		vec->push_back(tmp);
+
+		++it;
+	}
+
+	CLEVER_RETURN_ARRAY(vec);
+}
+
 void ReflectionPackage::init() {
+	const Type* arr_str;
+	::std::vector<const Type*> arg_type;
+
+	arg_type.push_back(CLEVER_STR);
+	arr_str = CLEVER_GET_ARRAY_TEMPLATE->getTemplatedType(arg_type);
+
 	addMethod(
 		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&ReflectionPackage::constructor, CLEVER_TYPE("ReflectionPackage")))
 			->addArg("package", CLEVER_STR)
@@ -59,6 +91,10 @@ void ReflectionPackage::init() {
 
 	addMethod(
 		(new Method("getName", (MethodPtr)&ReflectionPackage::getName, CLEVER_STR))
+	);
+
+	addMethod(
+		(new Method("getModules", (MethodPtr)&ReflectionPackage::getModules, arr_str))
 	);
 }
 

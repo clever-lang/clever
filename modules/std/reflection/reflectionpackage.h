@@ -45,6 +45,7 @@ public:
 	 */
 	 static CLEVER_TYPE_METHOD(constructor);
 	 static CLEVER_TYPE_METHOD(getName);
+	 static CLEVER_TYPE_METHOD(getModules);
 
 	/**
 	 * Type handlers
