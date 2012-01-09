@@ -82,7 +82,7 @@ CLEVER_TYPE_METHOD(Array::set) {
 
 	Value* val = new Value();
 	val->copy(CLEVER_ARG(1));
-	
+
 	vec->at(idx)->delRef();
 	vec->at(idx) = val;
 }
@@ -95,13 +95,13 @@ CLEVER_TYPE_METHOD(Array::resize) {
 	for (size_t i = 0; i < sz; ++i) {
 		vec->at(i)->delRef();
 	}
-	
+
 	vec->resize(nsz);
-	
+
 	for (int i = 0; i < nsz; ++i) {
 		vec->at(i) = new Value();
 		vec->at(i)->copy(CLEVER_ARG(1));
-	} 
+	}
 }
 
 CLEVER_TYPE_METHOD(Array::toString) {
