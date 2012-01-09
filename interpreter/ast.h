@@ -192,7 +192,6 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(NumberLiteral);
 };
 
-/* TODO: turn this into an "abstract" class if possible */
 class BinaryExpr : public ASTNode {
 public:
 	BinaryExpr(int op, ASTNode* lhs, ASTNode* rhs)
@@ -279,11 +278,11 @@ public:
 			m_value->delRef();
 		}
 		if (m_template_args) {
-			
+
 			for (size_t i = 0; i < m_template_args->size(); ++i) {
 				m_template_args->at(i)->delRef();
 			}
-			
+
 			delete m_template_args;
 		}
 	}
@@ -321,16 +320,16 @@ private:
 
 class NO_INIT_VTABLE UnaryExpr : public ASTNode {
 public:
-	UnaryExpr(Identifier* expr)
-		: m_expr(expr), m_var(NULL) {
+	UnaryExpr(ASTNode* expr)
+		: m_expr(expr), m_expr_value(NULL) {
 		m_expr->addRef();
 		m_result = new Value();
 	}
 
 	~UnaryExpr() {
 		m_expr->delRef();
-		if (m_var) {
-			m_var->delRef();
+		if (m_expr_value) {
+			m_expr_value->delRef();
 		}
 		m_result->delRef();
 	}
@@ -343,19 +342,19 @@ public:
 		return m_result;
 	}
 
-	Identifier* getExpr() const {
+	ASTNode* getExpr() const {
 		return m_expr;
 	}
 
-	void setVar(Value* value) throw() { m_var = value; }
+	void setExprValue(Value* value) throw() { m_expr_value = value; }
 
-	Value* getVar() throw() { return m_var; }
+	Value* getExprValue() throw() { return m_expr_value; }
 
 	virtual void accept(ASTVisitor& visitor) throw() { }
 private:
-	Identifier* m_expr;
+	ASTNode* m_expr;
 	Value* m_result;
-	Value* m_var;
+	Value* m_expr_value;
 
 	DISALLOW_COPY_AND_ASSIGN(UnaryExpr);
 };

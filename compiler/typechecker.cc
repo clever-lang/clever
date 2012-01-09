@@ -301,7 +301,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 	if (template_args) {
 			if (type->isTemplatedType()) {
 				const TemplatedType* temp_type = (const TemplatedType*)type;
-				
+
 				if (template_args->size() != temp_type->getNumArgs()) {
 					Compiler::errorf(expr->getLocation(),
 						"Wrong number of template arguments given."
@@ -318,22 +318,22 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 					var->setType(Value::VECTOR);
 					var->setVector(new ValueVector);
 				}
-				
+
 				if (temp_type->getNumArgs() == 1) {
 					const Type* arg1_type = g_symtable.getType(
 						template_args->at(0)->getName()
 					);
-					
+
 					type = temp_type->getTemplatedType(arg1_type);
 				}
 				else if (temp_type->getNumArgs() == 2) {
 					const Type* arg1_type = g_symtable.getType(
 						template_args->at(0)->getName());
-					
+
 					const Type* arg2_type = g_symtable.getType(
 						template_args->at(1)->getName());
-					
-					type = temp_type->getTemplatedType(arg1_type, 
+
+					type = temp_type->getTemplatedType(arg1_type,
 						arg2_type);
 				}
 				else {
@@ -342,7 +342,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 						vec.push_back(g_symtable.getType(
 							template_args->at(i)->getName()));
 					}
-					
+
 					type = temp_type->getTemplatedType(vec);
 				}
 			}
@@ -396,7 +396,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 AST_VISITOR(TypeChecker, PreIncrement) {
 	Value* var = expr->getExpr()->getValue();
 
-	expr->setVar(var);
+	expr->setExprValue(var);
 	var->addRef();
 
 	expr->getValue()->addRef();
@@ -406,7 +406,7 @@ AST_VISITOR(TypeChecker, PreIncrement) {
 AST_VISITOR(TypeChecker, PosIncrement) {
 	Value* var = expr->getExpr()->getValue();
 
-	expr->setVar(var);
+	expr->setExprValue(var);
 	var->addRef();
 
 	expr->getValue()->addRef();
@@ -416,7 +416,7 @@ AST_VISITOR(TypeChecker, PosIncrement) {
 AST_VISITOR(TypeChecker, PreDecrement) {
 	Value* var = expr->getExpr()->getValue();
 
-	expr->setVar(var);
+	expr->setExprValue(var);
 	var->addRef();
 
 	expr->getValue()->addRef();
@@ -426,7 +426,7 @@ AST_VISITOR(TypeChecker, PreDecrement) {
 AST_VISITOR(TypeChecker, PosDecrement) {
 	Value* var = expr->getExpr()->getValue();
 
-	expr->setVar(var);
+	expr->setExprValue(var);
 	var->addRef();
 
 	expr->getValue()->addRef();
@@ -496,9 +496,9 @@ AST_VISITOR(TypeChecker, ForExpr) {
 	if (expr->isIteratorMode()) {
 		return;
 	}
-	
+
 	g_symtable.beginScope();
-	
+
 	if (expr->getVarDecl()) {
 		expr->getVarDecl()->accept(*this);
 	}
@@ -514,7 +514,7 @@ AST_VISITOR(TypeChecker, ForExpr) {
 	if (expr->getIncrement()) {
 		expr->getIncrement()->accept(*this);
 	}
-	
+
 	g_symtable.endScope();
 }
 

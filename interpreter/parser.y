@@ -301,7 +301,7 @@ method_call:
 			chaining_method_call         { $$ = $7; }
 	|	IDENT '.' IDENT '(' arg_list ')' { $<method_call>$ = new ast::MethodCall($1, $3, $5); $<method_call>$->setLocation(yylloc); }
 			chaining_method_call         { $$ = $8; }
-;	
+;
 
 template_args:
 		TYPE           			{ $<template_args>$ = new ast::TemplateArgsVector; $<template_args>$->push_back($1); }

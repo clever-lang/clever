@@ -132,7 +132,7 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
  * Generates the pre increment opcode
  */
 AST_VISITOR(CodeGenVisitor, PreIncrement) {
-	Value* value = expr->getVar();
+	Value* value = expr->getExprValue();
 
 	value->addRef();
 
@@ -143,7 +143,7 @@ AST_VISITOR(CodeGenVisitor, PreIncrement) {
  * Generates the pos increment opcode
  */
 AST_VISITOR(CodeGenVisitor, PosIncrement) {
-	Value* value = expr->getVar();
+	Value* value = expr->getExprValue();
 
 	value->addRef();
 
@@ -154,7 +154,7 @@ AST_VISITOR(CodeGenVisitor, PosIncrement) {
  * Generates the pre decrement opcode
  */
 AST_VISITOR(CodeGenVisitor, PreDecrement) {
-	Value* value = expr->getVar();
+	Value* value = expr->getExprValue();
 
 	value->addRef();
 
@@ -165,7 +165,7 @@ AST_VISITOR(CodeGenVisitor, PreDecrement) {
  * Generates the pos decrement opcode
  */
 AST_VISITOR(CodeGenVisitor, PosDecrement) {
-	Value* value = expr->getVar();
+	Value* value = expr->getExprValue();
 
 	value->addRef();
 
