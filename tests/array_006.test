@@ -5,7 +5,7 @@ import std.io;
 Array<Int> arr;
 arr.pop();
 arr.set(3, 10);
-a.at(-4);
+arr.at(-4);
 
 ==RESULT==
 Warning: Popping from a empty Array<Int>! Returning default value of type Int.
