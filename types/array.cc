@@ -46,13 +46,13 @@ CLEVER_TYPE_METHOD(Array::pop) {
 		vec->pop_back();
 	}
 	else {
-		const Type* value_type = ((TemplatedType*)CLEVER_THIS()
+		const Type* value_type = ((const TemplatedType*)CLEVER_THIS()
 			->getTypePtr())->getTypeArg(0);
-			
-		Compiler::warningf("Popping from a empty Array<%s>! Returning"
-			" default value of type %s.",
+
+		Compiler::warningf("Popping from a empty Array<%S>! Returning"
+			" default value of type %S.",
 			value_type->getName(), value_type->getName());
-		
+
 		retval->setTypePtr(value_type);
 		retval->initialize();
 	}
@@ -84,26 +84,28 @@ CLEVER_TYPE_METHOD(Array::clear) {
 CLEVER_TYPE_METHOD(Array::at) {
 	ValueVector* vec = CLEVER_THIS()->getVector();
 	int64_t idx = CLEVER_ARG(0)->getInteger();
-	
+
 	if (size_t(idx) < vec->size() && idx >= 0) {
 		retval->copy(vec->at(idx));
 	}
 	else {
-		const Type* value_type = ((TemplatedType*)CLEVER_THIS()
+		const Type* value_type = ((const TemplatedType*)CLEVER_THIS()
 			->getTypePtr())->getTypeArg(0);
-		
-		if (idx >= 0) {	
-			Compiler::warningf("Indexing position %l an Array<%s>"
-				" with %l elements. Returning default value of type %s.",
-				idx, value_type->getName(), vec->size(), 
+
+		clever_assert(value_type != NULL, "Cannot be NULL");
+
+		if (idx >= 0) {
+			Compiler::warningf("Indexing position %l an Array<%S>"
+				" with %l elements. Returning default value of type %S.",
+				idx, value_type->getName(), vec->size(),
 				value_type->getName());
 		}
 		else {
-			Compiler::warningf("Indexing negative position %l an Array<%s>!"
-				" Returning default value of type %s.",
+			Compiler::warningf("Indexing negative position %l an Array<%S>!"
+				" Returning default value of type %S.",
 				idx, value_type->getName(), value_type->getName());
 		}
-		
+
 		retval->setTypePtr(value_type);
 		retval->initialize();
 	}
@@ -121,17 +123,16 @@ CLEVER_TYPE_METHOD(Array::set) {
 		vec->at(idx) = val;
 	}
 	else {
-		const Type* value_type = ((TemplatedType*)CLEVER_THIS()
+		const Type* value_type = ((const TemplatedType*)CLEVER_THIS()
 			->getTypePtr())->getTypeArg(0);
-		
-		if (idx >= 0) {	
-			Compiler::warningf("Setting position %l an Array<%s> with %l elements.",
-				idx, value_type->getName(), vec->size(), 
-				value_type->getName());
+
+		if (idx >= 0) {
+			Compiler::warningf("Setting position %l an Array<%S> with %l elements.",
+				idx, value_type->getName(), vec->size());
 		}
 		else {
-			Compiler::warningf("Setting negative position %l an Array<%s>!",
-				idx, value_type->getName(), value_type->getName());
+			Compiler::warningf("Setting negative position %l an Array<%S>!",
+				idx, value_type->getName());
 		}
 	}
 }

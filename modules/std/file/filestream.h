@@ -36,7 +36,7 @@ namespace clever { namespace packages { namespace std { namespace file {
 class FileStream : public Type {
 public:
 	FileStream() :
-		Type("FileStream") { }
+		Type(CSTRING("FileStream")) { }
 
 	void init();
 	DataValue* allocateValue() const;

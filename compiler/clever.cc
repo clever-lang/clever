@@ -107,7 +107,7 @@ void vsprintf(std::ostringstream& outstr, const char* format, va_list ap) throw(
 
 void vprintfln(const char* format, va_list args) throw() {
 	std::ostringstream out;
-	
+
 	vsprintf(out, format, args);
 
 	std::cout << out.str() << std::endl;

@@ -34,7 +34,7 @@ namespace clever {
 class Bool : public Type {
 public:
 	Bool() :
-		Type("Bool") { }
+		Type(CSTRING("Bool")) { }
 
 	void init();
 	DataValue* allocateValue() const;

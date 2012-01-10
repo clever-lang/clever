@@ -38,7 +38,7 @@ namespace reflection {
  * Returns the variable type name
  */
 static CLEVER_FUNCTION(get_type) {
-	CLEVER_RETURN_STR(CSTRING(CLEVER_ARG_TYPE_P(0)->getName()));
+	CLEVER_RETURN_STR(CLEVER_ARG_TYPE_P(0)->getName());
 }
 
 } //  reflection

@@ -35,7 +35,7 @@ namespace clever { namespace packages { namespace std { namespace net {
 class TcpSocket : public Type {
 public:
 	TcpSocket() :
-		Type("TcpSocket") { }
+		Type(CSTRING("TcpSocket")) { }
 
 	void init();
 	DataValue* allocateValue() const;

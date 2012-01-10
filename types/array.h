@@ -33,27 +33,25 @@ namespace clever {
 
 class Array : public TemplatedType {
 public:
-	Array() : TemplatedType("Array", 1) {
+	Array()
+		: TemplatedType(CSTRING("Array"), 1) {
 		addArg(NULL);
 	}
 
-	Array(const char* name, const Type* arg_type) :
+	Array(const CString* name, const Type* arg_type) :
 		TemplatedType(name, 1) {
 			addArg(arg_type);
 	}
 
 	virtual const Type* getTemplatedType(const Type* type_arg) const {
-		::std::string name = ::std::string(getName()) + "<"
-						   + type_arg->getName() + ">";
-
-		const Type* type = g_symtable.getType(CSTRING(name));
+		::std::string name = getName()->str() + "<"
+						   + type_arg->getName()->str() + ">";
+		const CString* cname = CSTRING(name);
+		const Type* type = g_symtable.getType(cname);
 
 		if (type == NULL) {
-			char* cname = new char[name.size() + 1];
-			::strcpy(cname, name.c_str());
-
 			Type* ntype = new Array(cname, type_arg);
-			g_symtable.push(CSTRING(name), ntype);
+			g_symtable.push(cname, ntype);
 			ntype->init();
 
 			return ntype;

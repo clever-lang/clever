@@ -106,7 +106,7 @@ public:
 	typedef std::tr1::unordered_map<std::string, OverloadMethodMap> MethodMap;
 	typedef std::pair<std::string, Method*> MethodPair;
 
-	explicit Type(const char* name)
+	explicit Type(const CString* name)
 		: m_name(name) { }
 
 	virtual ~Type() {
@@ -131,7 +131,7 @@ public:
 		std::string args_name;
 
 		for (; it != args.end(); ++it) {
-			args_name += it->second->getName();
+			args_name += it->second->getName()->str();
 			args_name += CLEVER_ARGS_SEPARATOR;
 		}
 
@@ -146,7 +146,7 @@ public:
 
 		if (args != NULL) {
 			for (size_t i = 0; i < args->size(); ++i) {
-				args_name += args->at(i)->getName();
+				args_name += args->at(i)->getName()->str();
 				args_name += CLEVER_ARGS_SEPARATOR;
 			}
 		}
@@ -160,7 +160,7 @@ public:
 		return NULL;
 	}
 
-	const char* getName() const throw() {
+	const CString* getName() const throw() {
 		return m_name;
 	}
 
@@ -194,14 +194,14 @@ public:
 	virtual void destructor(Value* value) const {}
 private:
 	MethodMap m_methods;
-	const char* m_name;
+	const CString* m_name;
 
 	DISALLOW_COPY_AND_ASSIGN(Type);
 };
 
 class TemplatedType : public Type {
 public:
-	explicit TemplatedType(const char* name, int num_args)
+	explicit TemplatedType(const CString* name, int num_args)
 		: Type(name), m_num_args(num_args) {}
 
 	virtual bool isTemplatedType() const {

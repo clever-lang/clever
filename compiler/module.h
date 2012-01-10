@@ -145,7 +145,7 @@ public:
 	}
 
 	void addClass(const Class* klass) throw() {
-		m_class_table.insert(std::make_pair(CSTRING(klass->getName()), klass));
+		m_class_table.insert(std::make_pair(klass->getName(), klass));
 	}
 
 	ClassMap& getClassTable() throw() {

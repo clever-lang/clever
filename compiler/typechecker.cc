@@ -41,10 +41,10 @@ std::string TypeChecker::serializeArgType(TypeVector& args_types, const char* se
 		return std::string("void");
 	}
 
-	args_type_name = args_types[0]->getName();
+	args_type_name = args_types[0]->getName()->str();
 
 	for (size_t i = 1; i < args_types.size(); ++i) {
-		args_type_name += separator + args_types[i]->getName();
+		args_type_name += separator + args_types[i]->getName()->str();
 	}
 
 	return args_type_name;
@@ -117,12 +117,12 @@ void TypeChecker::checkFunctionReturn(const Function* func, const Value* value,
 	if (value && rtype == NULL) {
 		Compiler::errorf(loc, "Function `%S' cannot return value, it was declared as Void!", &func->getName());
 	} else if (value == NULL && rtype) {
-		Compiler::errorf(loc, "Function `%S' must return a value of type %s!", &func->getName(), rtype->getName());
+		Compiler::errorf(loc, "Function `%S' must return a value of type %S!", &func->getName(), rtype->getName());
 	} else if (value && rtype) {
 		const Type* vtype = value->getTypePtr();
 
 		if (vtype != rtype) {
-			Compiler::errorf(loc, "Function `%S' expects %s value as return, not %s value",
+			Compiler::errorf(loc, "Function `%S' expects %S value as return, not %S value",
 				&func->getName(), rtype->getName(), vtype->getName());
 		}
 	}
@@ -289,7 +289,7 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 	if (method == NULL) {
 		std::string arg_type_names = serializeArgType(arg_types, ", ");
 
-		Compiler::errorf(expr->getLocation(), "No matching call for operation '%S' in %s using (%S)",
+		Compiler::errorf(expr->getLocation(), "No matching call for operation '%S' in %S using (%S)",
 			method_name, lhs->getTypePtr()->getName(), &arg_type_names);
 	}
 
@@ -340,7 +340,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 				if (template_args->size() != temp_type->getNumArgs()) {
 					Compiler::errorf(expr->getLocation(),
 						"Wrong number of template arguments given."
-						"`%s' requires %d arguments and %d was given.",
+						"`%S' requires %d arguments and %d was given.",
 						type->getName(), temp_type->getNumArgs(),
 						template_args->size()
 					);
@@ -383,13 +383,13 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 			}
 			else {
 				Compiler::errorf(expr->getLocation(),
-					"Type `%s' do not accept template arguments!",
+					"Type `%S' do not accept template arguments!",
 					type->getName());
 			}
 	}
 	else if (type->isTemplatedType()) {
 		Compiler::errorf(expr->getLocation(),
-			"Missing template arguments for the type `%s'!",
+			"Missing template arguments for the type `%S'!",
 			type->getName());
 	}
 
@@ -406,7 +406,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 
 		if (!checkCompatibleTypes(var, initval)) {
 			Compiler::errorf(expr->getLocation(),
-				"Cannot convert `%s' to `%s' on assignment",
+				"Cannot convert `%S' to `%S' on assignment",
 				initval->getTypePtr()->getName(),
 				type->getName());
 		}
@@ -585,7 +585,7 @@ AST_VISITOR(TypeChecker, MethodCall) {
 	if (method == NULL) {
 		std::string args_type_name = serializeArgType(args_types, ", ");
 
-		Compiler::errorf(expr->getLocation(), "No matching call for %s::%S(%S)",
+		Compiler::errorf(expr->getLocation(), "No matching call for %S::%S(%S)",
 			variable->getTypePtr()->getName(), call->getName(), &args_type_name);
 	}
 
@@ -604,7 +604,7 @@ AST_VISITOR(TypeChecker, AssignExpr) {
 
 	if (!checkCompatibleTypes(lhs, rhs)) {
 		Compiler::errorf(expr->getLocation(),
-			"Cannot convert `%s' to `%s' on assignment",
+			"Cannot convert `%S' to `%S' on assignment",
 			rhs->getTypePtr()->getName(),
 			lhs->getTypePtr()->getName());
 	}
@@ -754,7 +754,7 @@ AST_VISITOR(TypeChecker, TypeCreation) {
 	if (ctor == NULL) {
 		std::string args_type_name = serializeArgType(args_types, ", ");
 
-		Compiler::errorf(expr->getLocation(), "No matching call for constructor %s::%s(%S)",
+		Compiler::errorf(expr->getLocation(), "No matching call for constructor %S::%S(%S)",
 			type->getName(), type->getName(), &args_type_name);
 	}
 

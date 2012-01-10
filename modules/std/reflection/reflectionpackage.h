@@ -34,7 +34,7 @@ namespace clever { namespace packages { namespace std { namespace reflection {
 class ReflectionPackage : public Type {
 public:
 	ReflectionPackage() :
-		Type("ReflectionPackage") { }
+		Type(CSTRING("ReflectionPackage")) { }
 
 	void init();
 	DataValue* allocateValue() const;
