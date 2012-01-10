@@ -96,7 +96,7 @@ CLEVER_TYPE_METHOD(Array::at) {
 
 		if (idx >= 0) {
 			Compiler::warningf("Indexing position %l an Array<%S>"
-				" with %l elements. Returning default value of type %S.",
+				" with %N elements. Returning default value of type %S.",
 				idx, value_type->getName(), vec->size(),
 				value_type->getName());
 		}
@@ -127,7 +127,7 @@ CLEVER_TYPE_METHOD(Array::set) {
 			->getTypePtr())->getTypeArg(0);
 
 		if (idx >= 0) {
-			Compiler::warningf("Setting position %l an Array<%S> with %l elements.",
+			Compiler::warningf("Setting position %l an Array<%S> with %N elements.",
 				idx, value_type->getName(), vec->size());
 		}
 		else {

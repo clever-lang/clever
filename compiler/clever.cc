@@ -84,9 +84,13 @@ void vsprintf(std::ostringstream& outstr, const char* format, va_list ap) throw(
 			case 'd':
 				outstr << va_arg(ap, double);
 				break;
-			/* long */
+			/* size_t */
+			case 'N':
+				outstr << va_arg(ap, size_t);
+				break;
+			/* int64_t */
 			case 'l':
-				outstr << va_arg(ap, long);
+				outstr << va_arg(ap, int64_t);
 				break;
 			/* std::string* */
 			case 'S':
