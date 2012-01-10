@@ -194,41 +194,36 @@ AST_VISITOR(TypeChecker, Identifier) {
 
 AST_VISITOR(TypeChecker, UnaryExpr) {
 	Value* var = expr->getExpr()->getValue();
+	TypeVector arg_types;
+	CallableValue* call = new CallableValue;
+	const Method* method = NULL;
+	const CString* method_name = NULL;
 
-	if (expr->getOp() == ast::NOT || expr->getOp() == ast::BW_NOT) {
-		TypeVector arg_types;
-		CallableValue* call = new CallableValue;
-		const Method* method;
-		const CString* method_name = NULL;
-
-		switch (expr->getOp()) {
-			case ast::NOT:    method_name = CSTRING(CLEVER_OPERATOR_NOT);    break;
-			case ast::BW_NOT: method_name = CSTRING(CLEVER_OPERATOR_BW_NOT); break;
-		}
-
-		method = var->getTypePtr()->getMethod(method_name, &arg_types);
-
-		if (method == NULL) {
-			Compiler::errorf(expr->getLocation(), "Not found!");
-		}
-
-
-		call->setTypePtr(var->getTypePtr());
-		call->setHandler(method);
-		call->setContext(var);
-
-		expr->setExprValue(var);
-
-		expr->setMethod(call);
-		call->addRef();
-
-		return;
+	switch (expr->getOp()) {
+		case ast::NOT:     method_name = CSTRING(CLEVER_OPERATOR_NOT);     break;
+		case ast::BW_NOT:  method_name = CSTRING(CLEVER_OPERATOR_BW_NOT);  break;
+		case ast::PRE_INC: method_name = CSTRING(CLEVER_OPERATOR_PRE_INC); break;
+		case ast::POS_INC: method_name = CSTRING(CLEVER_OPERATOR_POS_INC); break;
+		case ast::PRE_DEC: method_name = CSTRING(CLEVER_OPERATOR_PRE_DEC); break;
+		case ast::POS_DEC: method_name = CSTRING(CLEVER_OPERATOR_POS_DEC); break;
 	}
 
-	expr->setExprValue(var);
-	var->addRef();
+	method = var->getTypePtr()->getMethod(method_name, &arg_types);
 
-	expr->getValue()->addRef();
+	if (method == NULL) {
+		Compiler::errorf(expr->getLocation(), "Not found!");
+	}
+
+
+	call->setTypePtr(var->getTypePtr());
+	call->setHandler(method);
+	call->setContext(var);
+
+	expr->setExprValue(var);
+
+	expr->setMethod(call);
+	call->addRef();
+
 	expr->getValue()->setTypePtr(var->getTypePtr());
 }
 

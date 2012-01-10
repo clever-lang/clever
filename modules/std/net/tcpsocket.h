@@ -56,13 +56,11 @@ public:
 	/**
 	 * Type handlers
 	 */
-	CLEVER_TYPE_INC_HANDLER_D { return NULL; }
-	CLEVER_TYPE_DEC_HANDLER_D { return NULL; }
 	CLEVER_TYPE_ASSIGN_HANDLER_D {
 		newvalue->getDataValue()->addRef();
 		value->copy(newvalue);
 	}
-	
+
 private:
 	DISALLOW_COPY_AND_ASSIGN(TcpSocket);
 };

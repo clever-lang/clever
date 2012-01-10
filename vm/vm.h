@@ -89,10 +89,6 @@ public:
 	 * Opcode handlers
 	 */
 	static CLEVER_VM_HANDLER(var_decl_handler);
-	static CLEVER_VM_HANDLER(pre_inc_handler);
-	static CLEVER_VM_HANDLER(pre_dec_handler);
-	static CLEVER_VM_HANDLER(pos_inc_handler);
-	static CLEVER_VM_HANDLER(pos_dec_handler);
 	static CLEVER_VM_HANDLER(jmpnz_handler);
 	static CLEVER_VM_HANDLER(jmpz_handler);
 	static CLEVER_VM_HANDLER(jmp_handler);

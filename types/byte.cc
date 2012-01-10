@@ -39,14 +39,14 @@ namespace clever {
 CLEVER_TYPE_METHOD(Char::constructor) {
 	if (args) {
 		uint8_t b;
-		
+
 		if (CLEVER_ARG(0)->isInteger()) {
 			b = uint8_t(CLEVER_ARG_INT(0));
 		}
 		else {
 			b = CLEVER_ARG_BYTE(0);
 		}
-		
+
 		CLEVER_RETURN_BYTE(b);
 	}
 	else {
@@ -136,7 +136,77 @@ CLEVER_TYPE_METHOD(Char::less) {
 	CLEVER_RETURN_BOOL(CLEVER_ARG_BYTE(0) < CLEVER_ARG_BYTE(1));
 }
 
+/**
+ * ! operator
+ */
+CLEVER_TYPE_METHOD(Char::logical_not) {
+	CLEVER_RETURN_BOOL(!CLEVER_THIS()->getValueAsBool());
+}
+
+/**
+ * ~ operator
+ */
+CLEVER_TYPE_METHOD(Char::bw_not) {
+	CLEVER_RETURN_BYTE(~CLEVER_THIS()->getByte());
+}
+
+/**
+ * ++ operator
+ */
+CLEVER_TYPE_METHOD(Char::pre_inc) {
+	CLEVER_THIS()->setByte(CLEVER_THIS()->getByte()+1);
+	CLEVER_RETURN_BYTE(CLEVER_THIS()->getByte());
+}
+
+/**
+ * ++ operator
+ */
+CLEVER_TYPE_METHOD(Char::pos_inc) {
+	CLEVER_RETURN_BYTE(CLEVER_THIS()->getByte());
+	CLEVER_THIS()->setByte(CLEVER_THIS()->getByte()+1);
+}
+
+/**
+ * -- operator
+ */
+CLEVER_TYPE_METHOD(Char::pre_dec) {
+	CLEVER_THIS()->setByte(CLEVER_THIS()->getByte()-1);
+	CLEVER_RETURN_BYTE(CLEVER_THIS()->getByte());
+}
+
+/**
+ * -- operator
+ */
+CLEVER_TYPE_METHOD(Char::pos_dec) {
+	CLEVER_RETURN_BYTE(CLEVER_THIS()->getByte());
+	CLEVER_THIS()->setByte(CLEVER_THIS()->getByte()-1);
+}
+
 void Char::init() {
+	addMethod(
+		new Method(CLEVER_OPERATOR_PRE_INC, (MethodPtr)&Char::pre_inc, CLEVER_BYTE)
+	);
+
+	addMethod(
+		new Method(CLEVER_OPERATOR_POS_INC, (MethodPtr)&Char::pos_inc, CLEVER_BYTE)
+	);
+
+	addMethod(
+		new Method(CLEVER_OPERATOR_PRE_DEC, (MethodPtr)&Char::pre_dec, CLEVER_BYTE)
+	);
+
+	addMethod(
+		new Method(CLEVER_OPERATOR_POS_DEC, (MethodPtr)&Char::pos_dec, CLEVER_BYTE)
+	);
+
+	addMethod(
+		new Method(CLEVER_OPERATOR_NOT, (MethodPtr)&Char::logical_not, CLEVER_BYTE)
+	);
+
+	addMethod(
+		new Method(CLEVER_OPERATOR_BW_NOT, (MethodPtr)&Char::bw_not, CLEVER_BYTE)
+	);
+
 	addMethod(
 		(new Method(CLEVER_OPERATOR_EQUAL, (MethodPtr)&Char::equal, CLEVER_BOOL))
 			->addArg("arg1", CLEVER_BYTE)
@@ -227,12 +297,12 @@ void Char::init() {
 		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Char::constructor, CLEVER_BYTE))
 			->addArg("value", CLEVER_BYTE)
 	);
-	
+
 	addMethod(
 		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Char::constructor, CLEVER_BYTE))
 			->addArg("value", CLEVER_INT)
 	);
-	
+
 	addMethod(new Method("toString", (MethodPtr)&Char::toString, CLEVER_STR));
 }
 

@@ -177,8 +177,56 @@ CLEVER_TYPE_METHOD(Integer::bw_not) {
 	CLEVER_RETURN_INT(~CLEVER_THIS()->getInteger());
 }
 
+/**
+ * ++ operator
+ */
+CLEVER_TYPE_METHOD(Integer::pre_inc) {
+	CLEVER_THIS()->setInteger(CLEVER_THIS()->getInteger()+1);
+	CLEVER_RETURN_INT(CLEVER_THIS()->getInteger());
+}
+
+/**
+ * ++ operator
+ */
+CLEVER_TYPE_METHOD(Integer::pos_inc) {
+	CLEVER_RETURN_INT(CLEVER_THIS()->getInteger());
+	CLEVER_THIS()->setInteger(CLEVER_THIS()->getInteger()+1);
+}
+
+/**
+ * -- operator
+ */
+CLEVER_TYPE_METHOD(Integer::pre_dec) {
+	CLEVER_THIS()->setInteger(CLEVER_THIS()->getInteger()-1);
+	CLEVER_RETURN_INT(CLEVER_THIS()->getInteger());
+}
+
+/**
+ * -- operator
+ */
+CLEVER_TYPE_METHOD(Integer::pos_dec) {
+	CLEVER_RETURN_INT(CLEVER_THIS()->getInteger());
+	CLEVER_THIS()->setInteger(CLEVER_THIS()->getInteger()-1);
+}
+
 
 void Integer::init() {
+	addMethod(
+		new Method(CLEVER_OPERATOR_PRE_INC, (MethodPtr)&Integer::pre_inc, CLEVER_INT)
+	);
+
+	addMethod(
+		new Method(CLEVER_OPERATOR_POS_INC, (MethodPtr)&Integer::pos_inc, CLEVER_INT)
+	);
+
+	addMethod(
+		new Method(CLEVER_OPERATOR_PRE_DEC, (MethodPtr)&Integer::pre_dec, CLEVER_INT)
+	);
+
+	addMethod(
+		new Method(CLEVER_OPERATOR_POS_DEC, (MethodPtr)&Integer::pos_dec, CLEVER_INT)
+	);
+
 	addMethod(
 		new Method(CLEVER_OPERATOR_NOT, (MethodPtr)&Integer::logical_not, CLEVER_INT)
 	);

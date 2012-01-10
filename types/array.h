@@ -36,29 +36,29 @@ public:
 	Array() : TemplatedType("Array", 1) {
 		addArg(NULL);
 	}
-	
+
 	Array(const char* name, const Type* arg_type) :
 		TemplatedType(name, 1) {
 			addArg(arg_type);
 	}
-	
+
 	virtual const Type* getTemplatedType(const Type* type_arg) const {
-		::std::string name = ::std::string(getName()) + "<" 
+		::std::string name = ::std::string(getName()) + "<"
 						   + type_arg->getName() + ">";
-		
+
 		const Type* type = g_symtable.getType(CSTRING(name));
-		
+
 		if (type == NULL) {
 			char* cname = new char[name.size() + 1];
 			::strcpy(cname, name.c_str());
-			
+
 			Type* ntype = new Array(cname, type_arg);
 			g_symtable.push(CSTRING(name), ntype);
 			ntype->init();
-			
+
 			return ntype;
 		}
-		
+
 		return type;
 	}
 
@@ -81,9 +81,6 @@ public:
 	/**
 	 * Type handlers
 	 */
-	CLEVER_TYPE_INC_HANDLER_D { return value; }
-	CLEVER_TYPE_DEC_HANDLER_D { return value; }
-
 	CLEVER_TYPE_ASSIGN_HANDLER_D {
 		value->copy(newvalue);
 	}

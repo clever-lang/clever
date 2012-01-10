@@ -54,17 +54,9 @@ AST_VISITOR(CodeGenVisitor, UnaryExpr) {
 
 	switch (expr->getOp()) {
 		case PRE_INC:
-			emit(OP_PRE_INC, &VM::pre_inc_handler, value, NULL, expr->getValue());
-			break;
 		case POS_INC:
-			emit(OP_POS_INC, &VM::pos_inc_handler, value, NULL, expr->getValue());
-			break;
 		case PRE_DEC:
-			emit(OP_PRE_DEC, &VM::pre_dec_handler, value, NULL, expr->getValue());
-			break;
 		case POS_DEC:
-			emit(OP_POS_DEC, &VM::pos_dec_handler, value, NULL, expr->getValue());
-			break;
 		case NOT:
 		case BW_NOT:
 			emit(OP_MCALL, &VM::mcall_handler, expr->getMethod(), NULL, expr->getValue());

@@ -154,48 +154,6 @@ CLEVER_VM_HANDLER(VM::var_decl_handler) {
 }
 
 /**
- * ++x
- */
-CLEVER_VM_HANDLER(VM::pre_inc_handler) {
-	Value* value = opcode.getOp1();
-	Value* result = opcode.getResult();
-
-	result->copy(opcode.getOp1Type()->increment(value));
-}
-
-/**
- * x++
- */
-CLEVER_VM_HANDLER(VM::pos_inc_handler) {
-	Value* value = opcode.getOp1();
-	Value* result = opcode.getResult();
-
-	result->copy(value);
-	opcode.getOp1Type()->increment(value);
-}
-
-/**
- * --x
- */
-CLEVER_VM_HANDLER(VM::pre_dec_handler) {
-	Value* value = opcode.getOp1();
-	Value* result = opcode.getResult();
-
-	result->copy(opcode.getOp1Type()->decrement(value));
-}
-
-/**
- * x--
- */
-CLEVER_VM_HANDLER(VM::pos_dec_handler) {
-	Value* value = opcode.getOp1();
-	Value* result = opcode.getResult();
-
-	result->copy(value);
-	opcode.getOp1Type()->decrement(value);
-}
-
-/**
  * JMPZ - Jump if zero
  */
 CLEVER_VM_HANDLER(VM::jmpz_handler) {

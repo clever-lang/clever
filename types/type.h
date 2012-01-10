@@ -74,12 +74,14 @@ namespace clever {
 #define CLEVER_OPERATOR_GREATER "$>$"
 #define CLEVER_OPERATOR_NOT     "$!$"
 #define CLEVER_OPERATOR_BW_NOT  "$~$"
+#define CLEVER_OPERATOR_PRE_INC "$++$"
+#define CLEVER_OPERATOR_POS_INC "$+++$"
+#define CLEVER_OPERATOR_PRE_DEC "$--$"
+#define CLEVER_OPERATOR_POS_DEC "$---$"
 
 /**
  * Type handler definitions
  */
-#define CLEVER_TYPE_INC_HANDLER_D    Value* increment(Value* value) const throw()
-#define CLEVER_TYPE_DEC_HANDLER_D    Value* decrement(Value* value) const throw()
 #define CLEVER_TYPE_ASSIGN_HANDLER_D void assign(Value* value, Value* newvalue) const throw()
 
 /**
@@ -175,8 +177,6 @@ public:
 	/**
 	 * Type handlers
 	 */
-	virtual CLEVER_TYPE_INC_HANDLER_D    = 0;
-	virtual CLEVER_TYPE_DEC_HANDLER_D    = 0;
 	virtual CLEVER_TYPE_ASSIGN_HANDLER_D = 0;
 
 	/**

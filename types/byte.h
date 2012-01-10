@@ -62,13 +62,16 @@ public:
 	static CLEVER_TYPE_METHOD(greater);
 	static CLEVER_TYPE_METHOD(less_equal);
 	static CLEVER_TYPE_METHOD(greater_equal);
+	static CLEVER_TYPE_METHOD(logical_not);
+	static CLEVER_TYPE_METHOD(bw_not);
+	static CLEVER_TYPE_METHOD(pre_inc);
+	static CLEVER_TYPE_METHOD(pos_inc);
+	static CLEVER_TYPE_METHOD(pre_dec);
+	static CLEVER_TYPE_METHOD(pos_dec);
 
 	/**
 	 * Type handlers
 	 */
-	CLEVER_TYPE_INC_HANDLER_D { value->setByte(value->getByte() + 1); return value; }
-	CLEVER_TYPE_DEC_HANDLER_D { value->setByte(value->getByte() - 1); return value; }
-
 	CLEVER_TYPE_ASSIGN_HANDLER_D {
 		value->setByte(newvalue->getByte());
 	}

@@ -134,7 +134,66 @@ CLEVER_TYPE_METHOD(Double::greater) {
 	CLEVER_RETURN_BOOL(CLEVER_ARG_DOUBLE(0) > CLEVER_ARG_DOUBLE(1));
 }
 
+/**
+ * ! operator
+ */
+CLEVER_TYPE_METHOD(Double::logical_not) {
+	CLEVER_RETURN_BOOL(!CLEVER_THIS()->getValueAsBool());
+}
+
+/**
+ * ++ operator
+ */
+CLEVER_TYPE_METHOD(Double::pre_inc) {
+	CLEVER_THIS()->setDouble(CLEVER_THIS()->getDouble()+1);
+	CLEVER_RETURN_DOUBLE(CLEVER_THIS()->getDouble());
+}
+
+/**
+ * ++ operator
+ */
+CLEVER_TYPE_METHOD(Double::pos_inc) {
+	CLEVER_RETURN_DOUBLE(CLEVER_THIS()->getDouble());
+	CLEVER_THIS()->setDouble(CLEVER_THIS()->getDouble()+1);
+}
+
+/**
+ * -- operator
+ */
+CLEVER_TYPE_METHOD(Double::pre_dec) {
+	CLEVER_THIS()->setDouble(CLEVER_THIS()->getDouble()-1);
+	CLEVER_RETURN_DOUBLE(CLEVER_THIS()->getDouble());
+}
+
+/**
+ * -- operator
+ */
+CLEVER_TYPE_METHOD(Double::pos_dec) {
+	CLEVER_RETURN_DOUBLE(CLEVER_THIS()->getDouble());
+	CLEVER_THIS()->setDouble(CLEVER_THIS()->getDouble()-1);
+}
+
 void Double::init() {
+	addMethod(
+		new Method(CLEVER_OPERATOR_PRE_INC, (MethodPtr)&Double::pre_inc, CLEVER_DOUBLE)
+	);
+
+	addMethod(
+		new Method(CLEVER_OPERATOR_POS_INC, (MethodPtr)&Double::pos_inc, CLEVER_DOUBLE)
+	);
+
+	addMethod(
+		new Method(CLEVER_OPERATOR_PRE_DEC, (MethodPtr)&Double::pre_dec, CLEVER_DOUBLE)
+	);
+
+	addMethod(
+		new Method(CLEVER_OPERATOR_POS_DEC, (MethodPtr)&Double::pos_dec, CLEVER_DOUBLE)
+	);
+
+	addMethod(
+		new Method(CLEVER_OPERATOR_NOT, (MethodPtr)&Double::logical_not, CLEVER_DOUBLE)
+	);
+
 	addMethod(
 		(new Method(CLEVER_OPERATOR_EQUAL, (MethodPtr)&Double::equal, CLEVER_BOOL))
 			->addArg("arg1", CLEVER_DOUBLE)

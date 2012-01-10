@@ -57,8 +57,6 @@ public:
 	/**
 	 * Type handlers
 	 */
-	CLEVER_TYPE_INC_HANDLER_D { return value; }
-	CLEVER_TYPE_DEC_HANDLER_D { return value; }
 	CLEVER_TYPE_ASSIGN_HANDLER_D {
 		if (newvalue->getTypePtr() == this) value->copy(newvalue);
 		else value->setBoolean((int64_t)newvalue->getDouble());
