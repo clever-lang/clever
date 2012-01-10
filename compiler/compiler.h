@@ -37,11 +37,19 @@
 #include "interpreter/ast.h"
 #include "compiler/cgvisitor.h"
 #include "compiler/typechecker.h"
+#include "compiler/compiler.h"
 
 namespace clever {
 
 class Compiler {
-public:
+public:	
+	enum Error {
+		ERROR   = 0x1,
+		WARNING = 0x2,
+		NOTICE  = 0x4,
+		ALL     = ERROR | WARNING | NOTICE
+	};
+	
 	Compiler()
 		: m_ast(NULL), m_initialized(false) { }
 
@@ -79,11 +87,17 @@ public:
 	 * Dumps the opcodes
 	 */
 	void dumpOpcodes() throw();
+	
 	/**
 	 * Displays an error message and exits
 	 */
 	static void error(std::string) throw();
 	static void error(std::string, const location&) throw();
+	
+	/**
+	 * Displays an warning message
+	 */
+	static void warning(std::string) throw();
 
 	/**
 	 * Import a package
@@ -106,12 +120,19 @@ public:
 	 * Methods for formatted messages
 	 */
 	static void errorf(const location&, const char*, ...) throw();
+	static void warningf(const char*, ...) throw();
+	
+	static void setErrorReporting(Error level) {
+		m_error_level = level;
+	}
 private:
 	ast::ASTNode* m_ast;
 	ast::CodeGenVisitor m_cgvisitor;
 	ast::TypeChecker m_tcvisitor;
 
 	bool m_initialized;
+	static Error m_error_level;
+	static std::ostream& m_error_stream;
 
 	DISALLOW_COPY_AND_ASSIGN(Compiler);
 };

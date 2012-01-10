@@ -301,7 +301,7 @@ method_call:
 			chaining_method_call         { $$ = $7; }
 	|	IDENT '.' IDENT '(' arg_list ')' { $<method_call>$ = new ast::MethodCall($1, $3, $5); $<method_call>$->setLocation(yylloc); }
 			chaining_method_call         { $$ = $8; }
-;	
+;
 
 template_args:
 		TYPE           			{ $<template_args>$ = new ast::TemplateArgsVector; $<template_args>$->push_back($1); }
@@ -361,12 +361,12 @@ expr:
 	|	expr "and" expr       { $$ = new ast::BinaryExpr(ast::AND, $1, $3);           $$->setLocation(yylloc); }
 	|	'-' expr %prec UMINUS { $$ = new ast::BinaryExpr(ast::MINUS, $2);             $$->setLocation(yylloc); }
 	|	'+' expr %prec UMINUS { $$ = new ast::BinaryExpr(ast::PLUS, $2);              $$->setLocation(yylloc); }
-	|	INCREMENT IDENT       { $$ = new ast::PreIncrement($2); $$->setLocation(yylloc); }
-	|	IDENT INCREMENT       { $$ = new ast::PosIncrement($1); $$->setLocation(yylloc); }
-	|	DECREMENT IDENT       { $$ = new ast::PreDecrement($2); $$->setLocation(yylloc); }
-	|	IDENT DECREMENT       { $$ = new ast::PosDecrement($1); $$->setLocation(yylloc); }
-	|	'!' expr              { $$ = $2; }
-	|	'~' expr              { $$ = $2; }
+	|	INCREMENT IDENT       { $$ = new ast::UnaryExpr(ast::PRE_INC, $2);            $$->setLocation(yylloc); }
+	|	IDENT INCREMENT       { $$ = new ast::UnaryExpr(ast::POS_INC, $1);            $$->setLocation(yylloc); }
+	|	DECREMENT IDENT       { $$ = new ast::UnaryExpr(ast::PRE_DEC, $2);            $$->setLocation(yylloc); }
+	|	IDENT DECREMENT       { $$ = new ast::UnaryExpr(ast::POS_DEC, $1);            $$->setLocation(yylloc); }
+	|	'!' expr              { $$ = new ast::UnaryExpr(ast::NOT, $2);                $$->setLocation(yylloc); }
+	|	'~' expr              { $$ = new ast::UnaryExpr(ast::BW_NOT, $2);             $$->setLocation(yylloc); }
 	|	'(' expr ')'          { $$ = $2; }
 	|	func_call   { $$ = $<ast_node>1; }
 	|	method_call { $$ = $<ast_node>1; }

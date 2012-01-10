@@ -62,6 +62,8 @@ public:
 	static CLEVER_TYPE_METHOD(greater);
 	static CLEVER_TYPE_METHOD(less_equal);
 	static CLEVER_TYPE_METHOD(greater_equal);
+	static CLEVER_TYPE_METHOD(logical_not);
+	static CLEVER_TYPE_METHOD(bw_not);
 
 	/**
 	 * Type handlers

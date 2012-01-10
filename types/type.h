@@ -72,6 +72,8 @@ namespace clever {
 #define CLEVER_OPERATOR_EQUAL   "$==$"
 #define CLEVER_OPERATOR_LESS    "$<$"
 #define CLEVER_OPERATOR_GREATER "$>$"
+#define CLEVER_OPERATOR_NOT     "$!$"
+#define CLEVER_OPERATOR_BW_NOT  "$~$"
 
 /**
  * Type handler definitions
@@ -214,14 +216,14 @@ public:
 		return m_type_args[index];
 	}
 
-	virtual const Type* getTemplatedType(const Type*) const { 
+	virtual const Type* getTemplatedType(const Type*) const {
 		return NULL;
 	};
-	
+
 	virtual const Type* getTemplatedType(const Type*, const Type*) const {
 		return NULL;
 	};
-	
+
 	virtual const Type* getTemplatedType(const TemplateArgs&) const {
 		return NULL;
 	}

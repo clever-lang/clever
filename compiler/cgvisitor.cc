@@ -45,6 +45,34 @@ AST_VISITOR(CodeGenVisitor, Identifier) {
 }
 
 /**
+ * Generates opcode for unary expression
+ */
+AST_VISITOR(CodeGenVisitor, UnaryExpr) {
+	Value* value = expr->getExprValue();
+
+	value->addRef();
+
+	switch (expr->getOp()) {
+		case PRE_INC:
+			emit(OP_PRE_INC, &VM::pre_inc_handler, value, NULL, expr->getValue());
+			break;
+		case POS_INC:
+			emit(OP_POS_INC, &VM::pos_inc_handler, value, NULL, expr->getValue());
+			break;
+		case PRE_DEC:
+			emit(OP_PRE_DEC, &VM::pre_dec_handler, value, NULL, expr->getValue());
+			break;
+		case POS_DEC:
+			emit(OP_POS_DEC, &VM::pos_dec_handler, value, NULL, expr->getValue());
+			break;
+		case NOT:
+		case BW_NOT:
+			emit(OP_MCALL, &VM::mcall_handler, expr->getMethod(), NULL, expr->getValue());
+			break;
+	}
+}
+
+/**
  * Generates opcode for binary expression
  */
 AST_VISITOR(CodeGenVisitor, BinaryExpr) {
@@ -126,50 +154,6 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 
 		emit(OP_VAR_DECL, &VM::var_decl_handler, variable);
 	}
-}
-
-/**
- * Generates the pre increment opcode
- */
-AST_VISITOR(CodeGenVisitor, PreIncrement) {
-	Value* value = expr->getVar();
-
-	value->addRef();
-
-	emit(OP_PRE_INC, &VM::pre_inc_handler, value, NULL, expr->getValue());
-}
-
-/**
- * Generates the pos increment opcode
- */
-AST_VISITOR(CodeGenVisitor, PosIncrement) {
-	Value* value = expr->getVar();
-
-	value->addRef();
-
-	emit(OP_POS_INC, &VM::pos_inc_handler, value, NULL, expr->getValue());
-}
-
-/**
- * Generates the pre decrement opcode
- */
-AST_VISITOR(CodeGenVisitor, PreDecrement) {
-	Value* value = expr->getVar();
-
-	value->addRef();
-
-	emit(OP_PRE_DEC, &VM::pre_dec_handler, value, NULL, expr->getValue());
-}
-
-/**
- * Generates the pos decrement opcode
- */
-AST_VISITOR(CodeGenVisitor, PosDecrement) {
-	Value* value = expr->getVar();
-
-	value->addRef();
-
-	emit(OP_POS_DEC, &VM::pos_dec_handler, value, NULL, expr->getValue());
 }
 
 /**

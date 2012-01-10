@@ -143,6 +143,18 @@ public:
 		else if (getTypePtr() == CLEVER_BYTE) {
 			setByte(0);
 		}
+		else {
+			/**
+			 * @TODO: need to initialize non-primitive types without
+			 * that method call
+			 */
+			TypeVector tv;
+			const Method* ctor = getTypePtr()->getMethod(CSTRING(CLEVER_CTOR_NAME), &tv);
+			
+			if (ctor) {
+				ctor->call(NULL, this, this);
+			}
+		}
 	}
 
 	void setType(int type) {

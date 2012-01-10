@@ -45,6 +45,9 @@ THREAD_TLS Type* CLEVER_BOOL_VAR   = NULL;
 THREAD_TLS Type* CLEVER_BYTE_VAR   = NULL;
 THREAD_TLS Type* CLEVER_ARRAY_VAR  = NULL;
 
+Compiler::Error Compiler::m_error_level = Compiler::ALL;
+std::ostream& Compiler::m_error_stream  = std::cout;
+
 /**
  * Deallocs memory used by compiler data
  */
@@ -136,15 +139,18 @@ void Compiler::dumpOpcodes() throw() {
  */
 void Compiler::error(std::string message, const location& loc) throw() {
 	if (loc.begin.filename) {
-		std::cout << "Compile error: " << message << " on " << *loc.begin.filename << " line " << loc.begin.line << std::endl;
+		m_error_stream << "Compile error: " << message << " on " 
+			<< *loc.begin.filename << " line " << loc.begin.line << "\n";
 	} else {
-		std::cout << "Compile error: " << message << " on line " << loc.begin.line << std::endl;
+		m_error_stream << "Compile error: " << message << " on line " 
+			<< loc.begin.line << "\n";
 	}
+	
 	exit(1);
 }
 
 void Compiler::error(std::string message) {
-	std::cout << "Compile error: " << message << std::endl;
+	m_error_stream << "Compile error: " << message << "\n";
 	exit(1);
 }
 
@@ -160,6 +166,27 @@ void Compiler::errorf(const location& loc, const char* format, ...) throw() {
 	va_end(args);
 
 	error(out.str(), loc);
+}
+
+void Compiler::warning(std::string message) throw() {
+	if (!(m_error_level & Compiler::WARNING)) {
+		return;
+	}
+	
+	m_error_stream << "Warning: " << message << "\n";
+}
+
+void Compiler::warningf(const char* format, ...) throw() {
+	std::ostringstream out;
+	va_list args;
+
+	va_start(args, format);
+
+	vsprintf(out, format, args);
+
+	va_end(args);
+
+	warning(out.str());
 }
 
 } // clever

@@ -192,6 +192,46 @@ AST_VISITOR(TypeChecker, Identifier) {
 	ident->addRef();
 }
 
+AST_VISITOR(TypeChecker, UnaryExpr) {
+	Value* var = expr->getExpr()->getValue();
+
+	if (expr->getOp() == ast::NOT || expr->getOp() == ast::BW_NOT) {
+		TypeVector arg_types;
+		CallableValue* call = new CallableValue;
+		const Method* method;
+		const CString* method_name = NULL;
+
+		switch (expr->getOp()) {
+			case ast::NOT:    method_name = CSTRING(CLEVER_OPERATOR_NOT);    break;
+			case ast::BW_NOT: method_name = CSTRING(CLEVER_OPERATOR_BW_NOT); break;
+		}
+
+		method = var->getTypePtr()->getMethod(method_name, &arg_types);
+
+		if (method == NULL) {
+			Compiler::errorf(expr->getLocation(), "Not found!");
+		}
+
+
+		call->setTypePtr(var->getTypePtr());
+		call->setHandler(method);
+		call->setContext(var);
+
+		expr->setExprValue(var);
+
+		expr->setMethod(call);
+		call->addRef();
+
+		return;
+	}
+
+	expr->setExprValue(var);
+	var->addRef();
+
+	expr->getValue()->addRef();
+	expr->getValue()->setTypePtr(var->getTypePtr());
+}
+
 AST_VISITOR(TypeChecker, BinaryExpr) {
 	TypeVector arg_types;
 	Value* args = new Value;
@@ -301,7 +341,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 	if (template_args) {
 			if (type->isTemplatedType()) {
 				const TemplatedType* temp_type = (const TemplatedType*)type;
-				
+
 				if (template_args->size() != temp_type->getNumArgs()) {
 					Compiler::errorf(expr->getLocation(),
 						"Wrong number of template arguments given."
@@ -318,22 +358,22 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 					var->setType(Value::VECTOR);
 					var->setVector(new ValueVector);
 				}
-				
+
 				if (temp_type->getNumArgs() == 1) {
 					const Type* arg1_type = g_symtable.getType(
 						template_args->at(0)->getName()
 					);
-					
+
 					type = temp_type->getTemplatedType(arg1_type);
 				}
 				else if (temp_type->getNumArgs() == 2) {
 					const Type* arg1_type = g_symtable.getType(
 						template_args->at(0)->getName());
-					
+
 					const Type* arg2_type = g_symtable.getType(
 						template_args->at(1)->getName());
-					
-					type = temp_type->getTemplatedType(arg1_type, 
+
+					type = temp_type->getTemplatedType(arg1_type,
 						arg2_type);
 				}
 				else {
@@ -342,7 +382,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 						vec.push_back(g_symtable.getType(
 							template_args->at(i)->getName()));
 					}
-					
+
 					type = temp_type->getTemplatedType(vec);
 				}
 			}
@@ -391,46 +431,6 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 	}
 
 	g_symtable.push(var->getName(), var);
-}
-
-AST_VISITOR(TypeChecker, PreIncrement) {
-	Value* var = expr->getExpr()->getValue();
-
-	expr->setVar(var);
-	var->addRef();
-
-	expr->getValue()->addRef();
-	expr->getValue()->setTypePtr(var->getTypePtr());
-}
-
-AST_VISITOR(TypeChecker, PosIncrement) {
-	Value* var = expr->getExpr()->getValue();
-
-	expr->setVar(var);
-	var->addRef();
-
-	expr->getValue()->addRef();
-	expr->getValue()->setTypePtr(var->getTypePtr());
-}
-
-AST_VISITOR(TypeChecker, PreDecrement) {
-	Value* var = expr->getExpr()->getValue();
-
-	expr->setVar(var);
-	var->addRef();
-
-	expr->getValue()->addRef();
-	expr->getValue()->setTypePtr(var->getTypePtr());
-}
-
-AST_VISITOR(TypeChecker, PosDecrement) {
-	Value* var = expr->getExpr()->getValue();
-
-	expr->setVar(var);
-	var->addRef();
-
-	expr->getValue()->addRef();
-	expr->getValue()->setTypePtr(var->getTypePtr());
 }
 
 AST_VISITOR(TypeChecker, IfExpr) {
@@ -496,9 +496,9 @@ AST_VISITOR(TypeChecker, ForExpr) {
 	if (expr->isIteratorMode()) {
 		return;
 	}
-	
+
 	g_symtable.beginScope();
-	
+
 	if (expr->getVarDecl()) {
 		expr->getVarDecl()->accept(*this);
 	}
@@ -514,7 +514,7 @@ AST_VISITOR(TypeChecker, ForExpr) {
 	if (expr->getIncrement()) {
 		expr->getIncrement()->accept(*this);
 	}
-	
+
 	g_symtable.endScope();
 }
 
