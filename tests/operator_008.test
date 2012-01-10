@@ -1,0 +1,29 @@
+Testing NOT logical operator
+==CODE==
+import std.io;
+
+if (!!(true == true)) {
+	println("ok!");
+}
+
+Bool foo() {
+	println("a!");
+
+	return false;
+}
+
+Bool bar() {
+	println("b!");
+
+	return !false;
+}
+
+if (1 == 2 || foo() == true || !bar() == false) {
+	println("cool!");
+}
+
+==RESULT==
+ok!
+a!
+b!
+cool!

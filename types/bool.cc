@@ -82,7 +82,29 @@ CLEVER_TYPE_METHOD(Bool::not_equal) {
 	CLEVER_RETURN_BOOL(CLEVER_ARG_BOOL(0) != CLEVER_ARG_BOOL(1));
 }
 
+/**
+ * ! operator
+ */
+CLEVER_TYPE_METHOD(Bool::logical_not) {
+	CLEVER_RETURN_BOOL(!CLEVER_THIS()->getValueAsBool());
+}
+
+/**
+ * ~ operator
+ */
+CLEVER_TYPE_METHOD(Bool::bw_not) {
+	CLEVER_RETURN_BOOL(~CLEVER_THIS()->getBoolean());
+}
+
 void Bool::init() {
+	addMethod(
+		new Method(CLEVER_OPERATOR_NOT, (MethodPtr)&Bool::logical_not, CLEVER_INT)
+	);
+
+	addMethod(
+		new Method(CLEVER_OPERATOR_BW_NOT, (MethodPtr)&Bool::bw_not, CLEVER_INT)
+	);
+
 	addMethod(new Method("toString", (MethodPtr)&Bool::toString, CLEVER_STR));
 
 	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Bool::constructor, CLEVER_BOOL));

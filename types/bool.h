@@ -53,6 +53,8 @@ public:
 	static CLEVER_TYPE_METHOD(bw_xor);
 	static CLEVER_TYPE_METHOD(not_equal);
 	static CLEVER_TYPE_METHOD(equal);
+	static CLEVER_TYPE_METHOD(logical_not);
+	static CLEVER_TYPE_METHOD(bw_not);
 
 	/**
 	 * Type handlers

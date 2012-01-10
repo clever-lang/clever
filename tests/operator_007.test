@@ -1,0 +1,6 @@
+Testing NOT bitwise operation in Double
+==CODE==
+Double x = 1;
+~x;
+==RESULT==
+Compile error: The type Double doesn't support such operation! on \S+ line \d+

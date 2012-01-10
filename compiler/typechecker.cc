@@ -211,7 +211,9 @@ AST_VISITOR(TypeChecker, UnaryExpr) {
 	method = var->getTypePtr()->getMethod(method_name, &arg_types);
 
 	if (method == NULL) {
-		Compiler::errorf(expr->getLocation(), "Not found!");
+		Compiler::errorf(expr->getLocation(),
+			"The type %S doesn't support such operation!",
+			var->getTypePtr()->getName());
 	}
 
 
