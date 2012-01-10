@@ -66,8 +66,8 @@ AST_VISITOR(CodeGenVisitor, UnaryExpr) {
 			emit(OP_POS_DEC, &VM::pos_dec_handler, value, NULL, expr->getValue());
 			break;
 		case NOT:
-			break;
 		case BW_NOT:
+			emit(OP_MCALL, &VM::mcall_handler, expr->getMethod(), NULL, expr->getValue());
 			break;
 	}
 }

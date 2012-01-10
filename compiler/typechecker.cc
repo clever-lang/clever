@@ -195,6 +195,36 @@ AST_VISITOR(TypeChecker, Identifier) {
 AST_VISITOR(TypeChecker, UnaryExpr) {
 	Value* var = expr->getExpr()->getValue();
 
+	if (expr->getOp() == ast::NOT || expr->getOp() == ast::BW_NOT) {
+		TypeVector arg_types;
+		CallableValue* call = new CallableValue;
+		const Method* method;
+		const CString* method_name = NULL;
+
+		switch (expr->getOp()) {
+			case ast::NOT:    method_name = CSTRING(CLEVER_OPERATOR_NOT);    break;
+			case ast::BW_NOT: method_name = CSTRING(CLEVER_OPERATOR_BW_NOT); break;
+		}
+
+		method = var->getTypePtr()->getMethod(method_name, &arg_types);
+
+		if (method == NULL) {
+			Compiler::errorf(expr->getLocation(), "Not found!");
+		}
+
+
+		call->setTypePtr(var->getTypePtr());
+		call->setHandler(method);
+		call->setContext(var);
+
+		expr->setExprValue(var);
+
+		expr->setMethod(call);
+		call->addRef();
+
+		return;
+	}
+
 	expr->setExprValue(var);
 	var->addRef();
 

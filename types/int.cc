@@ -163,7 +163,30 @@ CLEVER_TYPE_METHOD(Integer::less) {
 	CLEVER_RETURN_BOOL(CLEVER_ARG_INT(0) < CLEVER_ARG_INT(1));
 }
 
+/**
+ * ! operator
+ */
+CLEVER_TYPE_METHOD(Integer::logical_not) {
+	CLEVER_RETURN_BOOL(!CLEVER_THIS()->getValueAsBool());
+}
+
+/**
+ * ~ operator
+ */
+CLEVER_TYPE_METHOD(Integer::bw_not) {
+	CLEVER_RETURN_INT(~CLEVER_THIS()->getInteger());
+}
+
+
 void Integer::init() {
+	addMethod(
+		new Method(CLEVER_OPERATOR_NOT, (MethodPtr)&Integer::logical_not, CLEVER_INT)
+	);
+
+	addMethod(
+		new Method(CLEVER_OPERATOR_BW_NOT, (MethodPtr)&Integer::bw_not, CLEVER_INT)
+	);
+
 	addMethod(
 		(new Method(CLEVER_OPERATOR_EQUAL, (MethodPtr)&Integer::equal, CLEVER_BOOL))
 			->addArg("arg1", CLEVER_INT)

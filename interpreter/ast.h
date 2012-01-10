@@ -327,7 +327,7 @@ private:
 class UnaryExpr : public ASTNode {
 public:
 	UnaryExpr(int op, ASTNode* expr)
-		: m_op(op), m_expr(expr), m_expr_value(NULL) {
+		: m_op(op), m_expr(expr), m_expr_value(NULL), m_method(NULL) {
 		m_expr->addRef();
 		m_result = new Value;
 	}
@@ -337,7 +337,9 @@ public:
 		if (m_expr_value) {
 			m_expr_value->delRef();
 		}
-		m_result->delRef();
+		if (m_method) {
+			m_method->delRef();
+		}
 	}
 
 	int getOp() const throw() {
@@ -360,6 +362,9 @@ public:
 
 	Value* getExprValue() throw() { return m_expr_value; }
 
+	void setMethod(Value* method) { m_method = method; }
+	Value* getMethod() { return m_method; }
+
 	virtual void accept(ASTVisitor& visitor) throw() {
 		m_expr->accept(visitor);
 
@@ -370,6 +375,7 @@ private:
 	ASTNode* m_expr;
 	Value* m_result;
 	Value* m_expr_value;
+	Value* m_method;
 
 	DISALLOW_COPY_AND_ASSIGN(UnaryExpr);
 };

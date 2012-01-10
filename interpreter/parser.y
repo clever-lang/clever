@@ -365,8 +365,8 @@ expr:
 	|	IDENT INCREMENT       { $$ = new ast::UnaryExpr(ast::POS_INC, $1);            $$->setLocation(yylloc); }
 	|	DECREMENT IDENT       { $$ = new ast::UnaryExpr(ast::PRE_DEC, $2);            $$->setLocation(yylloc); }
 	|	IDENT DECREMENT       { $$ = new ast::UnaryExpr(ast::POS_DEC, $1);            $$->setLocation(yylloc); }
-	|	'!' expr              { $$ = new ast::UnaryExpr(ast::NOT, $2); }
-	|	'~' expr              { $$ = new ast::UnaryExpr(ast::BW_NOT, $2); }
+	|	'!' expr              { $$ = new ast::UnaryExpr(ast::NOT, $2);                $$->setLocation(yylloc); }
+	|	'~' expr              { $$ = new ast::UnaryExpr(ast::BW_NOT, $2);             $$->setLocation(yylloc); }
 	|	'(' expr ')'          { $$ = $2; }
 	|	func_call   { $$ = $<ast_node>1; }
 	|	method_call { $$ = $<ast_node>1; }
