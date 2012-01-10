@@ -23,55 +23,41 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <iostream>
+#ifndef CLEVER_STD_REFLECTION_FUNCTION_H
+#define CLEVER_STD_REFLECTION_FUNCTION_H
+
+#include "types/type.h"
 #include "compiler/value.h"
-#include "compiler/symboltable.h"
-#include "modules/std/reflection/reflection.h"
-#include "modules/std/reflection/reflectionpackage.h"
-#include "modules/std/reflection/reflectionfunction.h"
-#include "types/nativetypes.h"
 
-namespace clever { namespace packages { namespace std {
+namespace clever { namespace packages { namespace std { namespace reflection {
 
-namespace reflection {
-/**
- * get_type(object variable)
- * Returns the variable type name
- */
-static CLEVER_FUNCTION(get_type) {
-	CLEVER_RETURN_STR(CLEVER_ARG_TYPE_P(0)->getName());
-}
+class ReflectionFunction : public Type {
+public:
+	ReflectionFunction() :
+		Type(CSTRING("ReflectionFunction")) { }
 
-} //  reflection
-
-/**
- * Initializes Reflection module
- */
-void Reflection::init() throw() {
-	using namespace reflection;
-	ReflectionPackage* refpackage = new ReflectionPackage;
-	// ReflectionFunction* reffunction = new ReflectionFunction;
-
-	refpackage->init();
+	void init();
+	DataValue* allocateValue() const;
+	void destructor(Value* value) const;
 
 	/**
-	 * Symbol table is pending to implement the
-	 * find() by function name
+	 * Type methods
 	 */
-	// reffunction->init();
+	 static CLEVER_TYPE_METHOD(constructor);
+	 static CLEVER_TYPE_METHOD(getName);
 
 	/**
-	 * Module classes
+	 * Type handlers
 	 */
-	addClass(refpackage);
-	// addClass(reffunction);
+	CLEVER_TYPE_ASSIGN_HANDLER_D {
+		newvalue->getDataValue()->addRef();
+		value->copy(newvalue);
+	}
 
-	/**
-	 * Module functions
-	 */
-	addFunction(new Function("get_type", &CLEVER_FUNC_NAME(get_type), CLEVER_STR))
-		->setVariadic()
-		->setMinNumArgs(1);
-}
+private:
+	DISALLOW_COPY_AND_ASSIGN(ReflectionFunction);
+};
 
-}}} // clever::packages::std
+}}}} // clever::packages::std::reflection
+
+#endif // CLEVER_STD_REFLECTION_FUNCTION_H

@@ -23,55 +23,27 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <iostream>
-#include "compiler/value.h"
-#include "compiler/symboltable.h"
-#include "modules/std/reflection/reflection.h"
-#include "modules/std/reflection/reflectionpackage.h"
-#include "modules/std/reflection/reflectionfunction.h"
-#include "types/nativetypes.h"
+#ifndef CLEVER_STD_REFLECTION_FUNCTION_VALUE_H
+#define CLEVER_STD_REFLECTION_FUNCTION_VALUE_H
 
-namespace clever { namespace packages { namespace std {
+#include "compiler/datavalue.h"
+#include "compiler/pkgmanager.h"
 
-namespace reflection {
-/**
- * get_type(object variable)
- * Returns the variable type name
- */
-static CLEVER_FUNCTION(get_type) {
-	CLEVER_RETURN_STR(CLEVER_ARG_TYPE_P(0)->getName());
-}
+namespace clever { namespace packages { namespace std { namespace reflection {
 
-} //  reflection
+class ReflectionFunctionValue : public DataValue {
+public:
+	ReflectionFunctionValue() {}
 
-/**
- * Initializes Reflection module
- */
-void Reflection::init() throw() {
-	using namespace reflection;
-	ReflectionPackage* refpackage = new ReflectionPackage;
-	// ReflectionFunction* reffunction = new ReflectionFunction;
+	virtual ~ReflectionFunctionValue() {}
 
-	refpackage->init();
+	const CallableValue* getFunction() { return m_function; }
+	void setFunction(const CallableValue* function) { m_function = function; }
 
-	/**
-	 * Symbol table is pending to implement the
-	 * find() by function name
-	 */
-	// reffunction->init();
+private:
+	const CallableValue* m_function;
+};
 
-	/**
-	 * Module classes
-	 */
-	addClass(refpackage);
-	// addClass(reffunction);
+}}}} // clever::packages::std::reflection
 
-	/**
-	 * Module functions
-	 */
-	addFunction(new Function("get_type", &CLEVER_FUNC_NAME(get_type), CLEVER_STR))
-		->setVariadic()
-		->setMinNumArgs(1);
-}
-
-}}} // clever::packages::std
+#endif // CLEVER_STD_REFLECTION_FUNCTION_VALUE_H
