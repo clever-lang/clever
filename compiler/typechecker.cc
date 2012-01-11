@@ -220,6 +220,7 @@ AST_VISITOR(TypeChecker, UnaryExpr) {
 	call->setTypePtr(var->getTypePtr());
 	call->setHandler(method);
 	call->setContext(var);
+	var->addRef();
 
 	expr->setExprValue(var);
 
@@ -298,6 +299,7 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 	call->setTypePtr(lhs->getTypePtr());
 	call->setHandler(method);
 	call->setContext(lhs);
+	lhs->addRef();
 
 	expr->setMethod(call);
 	expr->setMethodArgs(args);
@@ -567,6 +569,7 @@ AST_VISITOR(TypeChecker, MethodCall) {
 	Value* arg_values = NULL;
 	TypeVector args_types;
 
+
 	if (args) {
 		expr->getArgs()->accept(*this);
 		arg_values = new Value;
@@ -594,6 +597,7 @@ AST_VISITOR(TypeChecker, MethodCall) {
 	call->setTypePtr(variable->getTypePtr());
 	call->setHandler(method);
 	call->setContext(variable);
+	variable->addRef();
 
 	expr->getValue()->setTypePtr(method->getReturnType());
 
@@ -768,7 +772,6 @@ AST_VISITOR(TypeChecker, TypeCreation) {
 	call->setContext(value);
 	value->addRef();
 
-	expr->getValue()->setTypePtr(type);
 	expr->setFuncValue(call);
 }
 

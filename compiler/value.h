@@ -100,7 +100,7 @@ public:
 		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_STR), m_name(NULL) {
 		setString(value);
 	}
-	
+
 	explicit Value(uint8_t value)
 		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_BYTE), m_name(NULL) {
 		setByte(value);
@@ -150,7 +150,7 @@ public:
 			 */
 			TypeVector tv;
 			const Method* ctor = getTypePtr()->getMethod(CSTRING(CLEVER_CTOR_NAME), &tv);
-			
+
 			if (ctor) {
 				ctor->call(NULL, this, this);
 			}
@@ -219,7 +219,7 @@ public:
 		m_type = PRIMITIVE;
 		m_data.b_value = b;
 	}
-	
+
 	void setByte(uint8_t b) {
 		m_type_ptr = CLEVER_BYTE;
 		m_type = PRIMITIVE;
@@ -229,7 +229,7 @@ public:
 	void setVector(ValueVector* v) { m_type = VECTOR; m_data.v_value = v; }
 
 	const CString* getStringP() const { return m_data.s_value; }
-	
+
 	const CString& getString() const { return *m_data.s_value; }
 	int64_t getInteger()       const { return m_data.l_value; }
 	double getDouble()         const { return m_data.d_value; }
@@ -361,6 +361,9 @@ public:
 	~CallableValue() {
 		if (isNearCall() && m_handler.func) {
 			delete m_handler.func;
+		}
+		if (m_context && this != m_context) {
+			m_context->delRef();
 		}
 	}
 

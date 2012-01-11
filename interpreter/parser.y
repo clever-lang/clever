@@ -163,6 +163,7 @@ namespace clever {
 
 %type <identifier> TYPE
 %type <template_args> template_args
+%type <ast_node> literal
 %type <identifier> template
 %type <ast_node> statement_list_non_empty
 %type <ast_node> statement_list
@@ -299,7 +300,11 @@ chaining_method_call:
 method_call:
 		IDENT '.' IDENT '(' ')'          { $<method_call>$ = new ast::MethodCall($1, $3); $<method_call>$->setLocation(yylloc); }
 			chaining_method_call         { $$ = $7; }
+	|	literal '.' IDENT '(' ')'         { $<method_call>$ = new ast::MethodCall($1, $3); $<method_call>$->setLocation(yylloc); }
+			chaining_method_call         { $$ = $7; }
 	|	IDENT '.' IDENT '(' arg_list ')' { $<method_call>$ = new ast::MethodCall($1, $3, $5); $<method_call>$->setLocation(yylloc); }
+			chaining_method_call         { $$ = $8; }
+	|	literal '.' IDENT '(' arg_list ')' { $<method_call>$ = new ast::MethodCall($1, $3, $5); $<method_call>$->setLocation(yylloc); }
 			chaining_method_call         { $$ = $8; }
 ;
 
@@ -368,11 +373,16 @@ expr:
 	|	'!' expr              { $$ = new ast::UnaryExpr(ast::NOT, $2);                $$->setLocation(yylloc); }
 	|	'~' expr              { $$ = new ast::UnaryExpr(ast::BW_NOT, $2);             $$->setLocation(yylloc); }
 	|	'(' expr ')'          { $$ = $2; }
-	|	func_call   { $$ = $<ast_node>1; }
-	|	method_call { $$ = $<ast_node>1; }
-	|	NUM_INTEGER { $$ = $<ast_node>1; }
+	|	func_call             { $$ = $<ast_node>1; }
+	|	method_call           { $$ = $<ast_node>1; }
+	|	IDENT                 { $$ = $<ast_node>1; }
+	|	literal               { $$ = $<ast_node>1; }
+
+;
+
+literal:
+		NUM_INTEGER { $$ = $<ast_node>1; }
 	|	NUM_DOUBLE  { $$ = $<ast_node>1; }
-	|	IDENT       { $$ = $<ast_node>1; }
 	|	STR         { $$ = $<ast_node>1; }
 	|	TRUE        { $$ = $<ast_node>1; }
 	|	FALSE       { $$ = $<ast_node>1; }

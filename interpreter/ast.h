@@ -460,7 +460,6 @@ class StringLiteral : public Literal {
 public:
 	explicit StringLiteral(const CString* name) {
 		m_value = new Value(name);
-		m_value->setTypePtr(CLEVER_STR);
 	}
 
 	~StringLiteral() {
@@ -773,7 +772,6 @@ public:
 		if (m_call_value) {
 			m_call_value->delRef();
 		}
-		m_value->delRef();
 	}
 
 	Identifier* getIdentifier() throw() {
