@@ -47,7 +47,7 @@ next_token:
 
 	IDENTIFIER = [a-z][a-zA-Z0-9_]*;
 	INTEGER    = [0-9]+;
-	DOUBLE     = [-]?([0-9]*"."[0-9]+)|[-]?([0-9]+"."[0-9]*);
+	DOUBLE     = [-]?([0-9]*"."[0-9]+)|[-]?([0-9]+"."[0-9]+);
 	EXP_DOUBLE = ((INTEGER|DOUBLE)[eE][+-]?INTEGER);
 	HEXINT     = [0][x][0-9a-zA-Z]+;
 	OCTINT     = [0][0-7]+;
