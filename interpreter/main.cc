@@ -87,7 +87,7 @@ int main(int argc, char *argv[]) {
 #endif
 			std::cout << std::endl;
 
-			std::cout << "Copyright (c) 2011-2011-2012 Clever Team" << std::endl;
+			std::cout << "Copyright (c) 2011-2012 Clever Team" << std::endl;
 			std::cout << "(built: " __DATE__ " " __TIME__ ")" << std::endl;
 			return 0;
 #ifdef _WIN32
