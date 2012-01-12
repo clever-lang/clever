@@ -43,6 +43,7 @@ CLEVER_TYPE_METHOD(Array::pop) {
 
 	if (vec->size() > 0) {
 		retval->copy(vec->back());
+		vec->back()->delRef();
 		vec->pop_back();
 	}
 	else {
