@@ -125,6 +125,10 @@ next_token:
 
 	<ST_MULTILINE_COMMENT>"*" { SKIP(); }
 
+	<INITIAL>"as" {
+		RET(token::AS);
+	}
+
 	<INITIAL>"return" {
 		RET(token::RETURN);
 	}

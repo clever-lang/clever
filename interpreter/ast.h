@@ -1043,14 +1043,21 @@ private:
 class ImportStmt : public ASTNode {
 public:
 	ImportStmt(Identifier* package)
-		: m_package(package), m_module(NULL) {
+		: m_package(package), m_module(NULL), m_alias(NULL) {
 		m_package->addRef();
 	}
 
 	ImportStmt(Identifier* package, Identifier* module)
-		: m_package(package), m_module(module) {
+		: m_package(package), m_module(module), m_alias(NULL) {
 		m_package->addRef();
 		m_module->addRef();
+	}
+
+	ImportStmt(Identifier* package, Identifier* module, Identifier* alias)
+		: m_package(package), m_module(module), m_alias(alias) {
+		m_package->addRef();
+		m_module->addRef();
+		m_alias->addRef();
 	}
 
 	~ImportStmt() {
@@ -1059,6 +1066,9 @@ public:
 		}
 		if (m_module) {
 			m_module->delRef();
+		}
+		if (m_alias) {
+			m_alias->delRef();
 		}
 	}
 
@@ -1076,6 +1086,7 @@ public:
 private:
 	Identifier* m_package;
 	Identifier* m_module;
+	Identifier* m_alias;
 
 	DISALLOW_COPY_AND_ASSIGN(ImportStmt);
 };
