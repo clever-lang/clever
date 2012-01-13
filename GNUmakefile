@@ -108,7 +108,7 @@ ld-command     = $(LINK.cc) -o $2 $1
 # depend-command input output
 depend-command = $(DEPEND.cc) $1 | $(SED) -e 's,^\([^:]*\):,$(patsubst %.d,%.o,$2) $2:,' > $2
 # echo-command tool input
-echo-command   = -$(ECHO) -e "\t$1\t$2"
+echo-command   = -$(ECHO) "  $1  $2"
 # bison-command input output
 bison-command  = $(BISON) -d -o$2 $1
 # re2c-command input output
@@ -186,6 +186,11 @@ $(OBJDIR)/interpreter/scanner.o: $(OBJDIR)/interpreter/scanner.cc
 $(OBJDIR)/interpreter/parser.o: $(OBJDIR)/interpreter/parser.cc
 	$(call echo-command,"CXX",$@)
 	$(call cxx-command,$<,$@)
+
+$(OBJDIR)/interpreter/parser.cc: interpreter/parser.y $(OBJDIR)/ensure-dirs
+	$(call echo-command,"BISON",$@)
+	$(call bison-command,$<,$@)
+	$(SED) -ie '135s/|| \([^)]*\)/|| (\1)/' build/interpreter/position.hh
 
 $(OBJDIR)/interpreter/scanner.d: $(OBJDIR)/interpreter/scanner.cc
 $(OBJDIR)/interpreter/parser.d: $(OBJDIR)/interpreter/parser.cc
