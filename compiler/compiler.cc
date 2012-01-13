@@ -149,7 +149,7 @@ void Compiler::error(std::string message, const location& loc) throw() {
 	exit(1);
 }
 
-void Compiler::error(std::string message) {
+void Compiler::error(std::string message) throw() {
 	m_error_stream << "Compile error: " << message << "\n";
 	exit(1);
 }

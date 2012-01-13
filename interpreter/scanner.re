@@ -25,7 +25,7 @@
 
 #include <cstdio>
 #include "interpreter/scanner.h"
-#include "parser.hh"
+#include "build/interpreter/parser.hh"
 #include "interpreter/ast.h"
 #include "compiler/cstring.h"
 #include "compiler/symboltable.h"

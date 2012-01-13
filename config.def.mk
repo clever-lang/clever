@@ -11,6 +11,10 @@
 VERSION=devel
 MODULES=std std.math std.io std.file std.os std.reflection std.net
 
+# module flags (example)
+mod_std_math_CXXFLAGS =
+mod_std_math_LDFLAGS  = -lm
+
 #
 # Environment
 #
