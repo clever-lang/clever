@@ -286,9 +286,14 @@ arg_list:
 	|	expr               { $$ = new ast::ArgumentList; $$->add($1); }
 ;
 
+fully_qualified_name:
+		fully_qualified_name '.' IDENT
+	|	IDENT
+;
+
 func_call:
-		IDENT '(' ')'          { $$ = new ast::FunctionCall($1); $$->setLocation(yylloc); }
-	|	IDENT '(' arg_list ')' { $$ = new ast::FunctionCall($1, $3); $$->setLocation(yylloc); }
+		fully_qualified_name '.' IDENT '(' ')'          { $$ = new ast::FunctionCall($3); $$->setLocation(yylloc); }
+	|	fully_qualified_name '.' IDENT '(' arg_list ')' { $$ = new ast::FunctionCall($3, $5); $$->setLocation(yylloc); }
 ;
 
 chaining_method_call:
@@ -298,12 +303,12 @@ chaining_method_call:
 ;
 
 method_call:
-		IDENT '.' IDENT '(' ')'          { $<method_call>$ = new ast::MethodCall($1, $3); $<method_call>$->setLocation(yylloc); }
-			chaining_method_call         { $$ = $7; }
+		fully_qualified_name '.' IDENT '.' IDENT '(' ')'          { $<method_call>$ = new ast::MethodCall($3, $5); $<method_call>$->setLocation(yylloc); }
+			chaining_method_call         { $$ = $9; }
 	|	literal '.' IDENT '(' ')'         { $<method_call>$ = new ast::MethodCall($1, $3); $<method_call>$->setLocation(yylloc); }
 			chaining_method_call         { $$ = $7; }
-	|	IDENT '.' IDENT '(' arg_list ')' { $<method_call>$ = new ast::MethodCall($1, $3, $5); $<method_call>$->setLocation(yylloc); }
-			chaining_method_call         { $$ = $8; }
+	|	fully_qualified_name '.' IDENT '.' IDENT '(' arg_list ')' { $<method_call>$ = new ast::MethodCall($3, $5, $7); $<method_call>$->setLocation(yylloc); }
+			chaining_method_call         { $$ = $10; }
 	|	literal '.' IDENT '(' arg_list ')' { $<method_call>$ = new ast::MethodCall($1, $3, $5); $<method_call>$->setLocation(yylloc); }
 			chaining_method_call         { $$ = $8; }
 ;
