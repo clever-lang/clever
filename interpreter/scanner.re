@@ -25,7 +25,7 @@
 
 #include <cstdio>
 #include "interpreter/scanner.h"
-#include "parser.hh"
+#include "build/interpreter/parser.hh"
 #include "interpreter/ast.h"
 #include "compiler/cstring.h"
 #include "compiler/symboltable.h"
@@ -124,6 +124,10 @@ next_token:
 	}
 
 	<ST_MULTILINE_COMMENT>"*" { SKIP(); }
+
+	<INITIAL>"as" {
+		RET(token::AS);
+	}
 
 	<INITIAL>"return" {
 		RET(token::RETURN);

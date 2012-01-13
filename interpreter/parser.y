@@ -102,6 +102,7 @@ namespace clever {
 %token PROTECTED     "protected"
 %token TRUE          "true"
 %token FALSE         "false"
+%token AS            "as"
 
 %left ',';
 %left LOGICAL_OR;
@@ -220,7 +221,7 @@ block_stmt:
 ;
 
 statements:
-		expr ';'	         { $$ = $<ast_node>1; }
+		expr ';'	             { $$ = $<ast_node>1; }
 	|	variable_declaration ';' { $$ = $<ast_node>1; }
 	|	func_declaration         { $$ = $<ast_node>1; }
 	|	if_expr                  { $$ = $<ast_node>1; }
@@ -231,7 +232,7 @@ statements:
 	|	assign_stmt ';'          { $$ = $<ast_node>1; }
 	|	import_stmt ';'          { $$ = $<ast_node>1; }
 	|	return_stmt ';'          { $$ = $<ast_node>1; }
-	|	class_declaration	 { $$ = $<ast_node>1; }
+	|	class_declaration	     { $$ = $<ast_node>1; }
 ;
 
 return_stmt:
@@ -433,8 +434,9 @@ break_stmt:
 ;
 
 import_stmt:
-		IMPORT IDENT           { $$ = new ast::ImportStmt($2);      $$->setLocation(yylloc); }
-	|	IMPORT IDENT '.' IDENT { $$ = new ast::ImportStmt($2, $4);  $$->setLocation(yylloc); }
+		IMPORT IDENT                    { $$ = new ast::ImportStmt($2);         $$->setLocation(yylloc); }
+	|	IMPORT IDENT '.' IDENT          { $$ = new ast::ImportStmt($2, $4);     $$->setLocation(yylloc); }
+	|	IMPORT IDENT '.' IDENT AS IDENT { $$ = new ast::ImportStmt($2, $4, $6); $$->setLocation(yylloc); }
 ;
 
 %%

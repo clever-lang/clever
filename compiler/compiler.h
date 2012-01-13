@@ -33,7 +33,7 @@
 #include "pkgmanager.h"
 #include "vm/vm.h"
 #include "vm/opcode.h"
-#include "build/location.hh"
+#include "build/interpreter/location.hh"
 #include "interpreter/ast.h"
 #include "compiler/cgvisitor.h"
 #include "compiler/typechecker.h"
