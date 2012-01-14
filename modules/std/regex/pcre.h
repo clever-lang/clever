@@ -41,7 +41,6 @@ public:
 	void destructor(Value* value) const;
 
 	static CLEVER_TYPE_METHOD(constructor);
-	static CLEVER_TYPE_METHOD(constructor2);
 	static CLEVER_TYPE_METHOD(matches);
 	static CLEVER_TYPE_METHOD(replace);
 	static CLEVER_TYPE_METHOD(replaceAll);

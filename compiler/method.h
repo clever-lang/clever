@@ -29,6 +29,7 @@
 #include <string>
 #include <vector>
 #include "compiler/clever.h"
+#include "compiler/refcounted.h"
 
 namespace clever {
 
@@ -54,12 +55,12 @@ typedef std::vector<MethodArgsPair> MethodArgs;
 /**
  * Method representation
  */
-class Method {
+class Method : public RefCounted {
 public:
 	enum MethodType { INTERNAL, USER };
 
 	Method(std::string name, MethodPtr ptr, const Type* rtype)
-		: m_name(name), m_type(INTERNAL), m_rtype(rtype)
+		: RefCounted(1), m_name(name), m_type(INTERNAL), m_rtype(rtype), m_num_args(0), m_min_args(0)
 	{
 		m_info.ptr = ptr;
 	}
@@ -88,10 +89,15 @@ public:
 
 	Method* addArg(std::string name, const Type* type) throw() {
 		m_args.push_back(MethodArgsPair(name, type));
-		//++m_num_args;
+		m_min_args = ++m_num_args;
 
 		return this;
 	}
+
+	int getNumArgs() const throw() { return m_num_args; }
+
+	Method* setMinNumArgs(int nargs) throw() { m_min_args = nargs; return this; }
+	int getMinNumArgs() const throw() { return m_min_args; }
 
 private:
 	union {
@@ -112,6 +118,8 @@ private:
 	 * Method's return type
 	 */
 	const Type* m_rtype;
+	int m_num_args;
+	int m_min_args;
 };
 
 } // clever

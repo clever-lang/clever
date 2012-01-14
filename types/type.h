@@ -117,7 +117,7 @@ public:
 				ed = it->second.end();
 
 			while (be != ed) {
-				delete be->second;
+				be->second->delRef();
 				++be;
 			}
 
@@ -128,14 +128,25 @@ public:
 	void addMethod(Method* method) throw() {
 		const MethodArgs& args = method->getArgs();
 		MethodArgs::const_iterator it = args.begin();
+		int min_args = method->getMinNumArgs();
+		int num_args = method->getNumArgs();
 		std::string args_name;
 
-		for (; it != args.end(); ++it) {
-			args_name += it->second->getName()->str();
-			args_name += CLEVER_ARGS_SEPARATOR;
+		if (min_args != num_args) {
+			method->setReference(0);
 		}
 
-		m_methods[method->getName()].insert(MethodPair(args_name, method));
+		for (int n = 1; it != args.end(); ++it, ++n) {
+			args_name += it->second->getName()->str();
+			args_name += CLEVER_ARGS_SEPARATOR;
+			if (min_args != num_args && n >= min_args) {
+				m_methods[method->getName()].insert(MethodPair(args_name, method));
+				method->addRef();
+			}
+		}
+		if (min_args == num_args) {
+			m_methods[method->getName()].insert(MethodPair(args_name, method));
+		}
 	}
 
 	const Method* getMethod(const CString* name, const TypeVector* args) const throw() {

@@ -30,15 +30,12 @@
 namespace clever { namespace packages { namespace std { namespace regex {
 
 void Pcre::init() {
-	/* Pcre(String pattern) */
+	/* Pcre(String pattern [, Int options]) */
 	addMethod(
 		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Pcre::constructor, CLEVER_TYPE("Pcre")))
 		->addArg("pattern", CLEVER_STR)
-	);
-	addMethod(
-		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Pcre::constructor2, CLEVER_TYPE("Pcre")))
-		->addArg("pattern", CLEVER_STR)
 		->addArg("options", CLEVER_INT)
+		->setMinNumArgs(1)
 	);
 	/* Pcre.matches(String haystack) */
 	addMethod(
@@ -74,21 +71,12 @@ DataValue* Pcre::allocateValue() const {
 CLEVER_TYPE_METHOD(Pcre::constructor) {
 	PcreValue* self = new PcreValue();
 
-	self->re = new pcrecpp::RE(CLEVER_ARG_STR(0).c_str());
-
-	self->setReference(0);
-
-	CLEVER_RETURN_DATA_VALUE(self);
-}
-
-/**
- * Pcre Pcre::constructor(String pattern, Int options)
- */
-CLEVER_TYPE_METHOD(Pcre::constructor2) {
-	PcreValue* self = new PcreValue();
-
-	self->re = new pcrecpp::RE(CLEVER_ARG_STR(0).c_str(),
-		pcrecpp::RE_Options(CLEVER_ARG_INT(1)));
+	if (CLEVER_NUM_ARGS() == 2) {
+		self->re = new pcrecpp::RE(CLEVER_ARG_STR(0).c_str(),
+			pcrecpp::RE_Options(CLEVER_ARG_INT(1)));
+	} else {
+		self->re = new pcrecpp::RE(CLEVER_ARG_STR(0).c_str());
+	}
 
 	self->setReference(0);
 
