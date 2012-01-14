@@ -33,7 +33,7 @@ namespace clever { namespace packages { namespace std {
 
 class Regex : public Module {
 public:
-	Regex() : Module("Regex") {};
+	Regex() : Module("regex") {};
 	~Regex() {};
 	void init() throw();
 

@@ -1,4 +1,3 @@
-
 /**
  * Clever programming language
  * Copyright (c) 2011-2012 Clever Team
