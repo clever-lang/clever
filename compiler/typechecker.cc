@@ -177,6 +177,18 @@ AST_VISITOR(TypeChecker, ArgumentList) {
 	expr->setArgValue(values);
 }
 
+AST_VISITOR(TypeChecker, AliasStmt) {
+	Value* fvalue = g_symtable.getValue(expr->getCurrentName());
+
+	if (fvalue == NULL) {
+		Compiler::errorf(expr->getLocation(), "Identifier `%S' not found!",
+			expr->getCurrentName());
+	}
+
+	g_symtable.push(expr->getNewName(), fvalue);
+	fvalue->addRef();
+}
+
 AST_VISITOR(TypeChecker, Constant) {
 	Value* constant = g_symtable.getValue(expr->getName());
 

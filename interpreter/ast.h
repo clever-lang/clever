@@ -1112,6 +1112,30 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(ImportStmt);
 };
 
+class AliasStmt : public ASTNode {
+public:
+	AliasStmt(Identifier* new_name, Identifier* curr_name)
+		: m_new_name(new_name), m_curr_name(curr_name) {
+		m_new_name->addRef();
+		m_curr_name->addRef();
+	}
+
+	~AliasStmt() {
+		m_new_name->delRef();
+		m_curr_name->delRef();
+	}
+
+	const CString* getNewName() throw() { return m_new_name->getName(); }
+	const CString* getCurrentName() throw() { return m_curr_name->getName(); }
+
+	void accept(ASTVisitor& visitor) throw() {
+		visitor.visit(this);
+	}
+private:
+	Identifier* m_new_name;
+	Identifier* m_curr_name;
+};
+
 class ReturnStmt : public ASTNode {
 public:
 	ReturnStmt()

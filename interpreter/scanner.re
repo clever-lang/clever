@@ -128,6 +128,10 @@ next_token:
 
 	<ST_MULTILINE_COMMENT>"*" { SKIP(); }
 
+	<INITIAL>"use" {
+		RET(token::USE);
+	}
+
 	<INITIAL>"as" {
 		RET(token::AS);
 	}

@@ -52,6 +52,7 @@ class ClassDeclaration;
 class ReturnStmt;
 class TypeCreation;
 class UnaryExpr;
+class AliasStmt;
 
 #define AST_VISITOR(type, exprtype) void type::visit(exprtype* const expr) throw()
 #define AST_VISITOR_DECL_VIRTUAL(type) virtual void visit(type* const expr) throw() = 0
@@ -60,6 +61,7 @@ class UnaryExpr;
 #define AST_VISITOR_DECLARATION(V) \
 	V(BinaryExpr); \
 	V(Constant); \
+	V(AliasStmt); \
 	V(UnaryExpr); \
 	V(VariableDecl); \
 	V(BlockNode); \

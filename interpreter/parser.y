@@ -105,6 +105,7 @@ namespace clever {
 %token AS            "as"
 %token DOUBLE_COLON  "::"
 %token CONSTANT      "constant"
+%token USE           "use"
 
 %left ',';
 %left LOGICAL_OR;
@@ -158,6 +159,7 @@ namespace clever {
 	ast::BinaryExpr* binary_expr;
 	ast::IntegralValue* integral_value;
 	ast::TemplateArgsVector* template_args;
+	ast::AliasStmt* alias_stmt;
 }
 
 %type <identifier> IDENT
@@ -205,6 +207,7 @@ namespace clever {
 %type <block_stmt> else_opt
 %type <break_stmt> break_stmt
 %type <import_stmt> import_stmt
+%type <alias_stmt> alias_stmt
 
 %%
 
@@ -241,6 +244,7 @@ statements:
 	|	import_stmt ';'          { $$ = $<ast_node>1; }
 	|	return_stmt ';'          { $$ = $<ast_node>1; }
 	|	class_declaration	     { $$ = $<ast_node>1; }
+	|	alias_stmt ';'           { $$ = $<ast_node>1; }
 ;
 
 return_stmt:
@@ -459,6 +463,11 @@ import_stmt:
 		IMPORT IDENT                    { $$ = new ast::ImportStmt($2);         $$->setLocation(yylloc); }
 	|	IMPORT IDENT '.' IDENT          { $$ = new ast::ImportStmt($2, $4);     $$->setLocation(yylloc); }
 	|	IMPORT IDENT '.' IDENT AS IDENT { $$ = new ast::ImportStmt($2, $4, $6); $$->setLocation(yylloc); }
+;
+
+alias_stmt:
+		USE IDENT AS package_module_name "::" IDENT
+		{ $4->concat("::", $6); delete $6; $$ = new ast::AliasStmt($2, $4);  $$->setLocation(yylloc); }
 ;
 
 constant:
