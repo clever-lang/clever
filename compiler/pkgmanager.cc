@@ -95,7 +95,7 @@ void PackageManager::loadModule(Scope* scope, const CString* const package,
 		FunctionMap::const_iterator it = funcs.begin(), end = funcs.end();
 
 		/**
-		 * Inserts the function into the global function table
+		 * Inserts the function into the symbol table
 		 */
 		while (it != end) {
 			CallableValue* fvalue = new CallableValue(CSTRING(it->first));
@@ -112,7 +112,7 @@ void PackageManager::loadModule(Scope* scope, const CString* const package,
 		ClassMap::iterator itc = classes.begin(), endc = classes.end();
 
 		/**
-		 * Inserts all classes into TypeTable
+		 * Inserts all classes into the symbol table
 		 */
 		while (itc != endc) {
 			g_symtable.push(CSTRING(prefix_name + *itc->first), itc->second);
@@ -124,6 +124,9 @@ void PackageManager::loadModule(Scope* scope, const CString* const package,
 		ConstMap& constants = module->getConstants();
 		ConstMap::iterator itcs = constants.begin(), endcs = constants.end();
 
+		/**
+		 * Inserts all constants into the symbol table
+		 */
 		while (itcs != endcs) {
 			g_symtable.push(CSTRING(prefix_name + itcs->first->str()), itcs->second);
 			++itcs;
