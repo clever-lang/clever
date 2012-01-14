@@ -103,6 +103,7 @@ namespace clever {
 %token TRUE          "true"
 %token FALSE         "false"
 %token AS            "as"
+%token DOUBLE_COLON  "::"
 
 %left ',';
 %left LOGICAL_OR;
@@ -162,6 +163,8 @@ namespace clever {
 %type <num_literal> NUM_DOUBLE
 %type <str_literal> STR
 
+%type <identifier> package_module_name
+%type <identifier> func_name
 %type <identifier> TYPE
 %type <template_args> template_args
 %type <ast_node> literal
@@ -181,6 +184,7 @@ namespace clever {
 %type <method_decl> method_declaration
 %type <attr_decl> attribute_declaration
 %type <arg_list> arg_list
+%type <arg_list> arg_list_opt
 %type <func_call> func_call
 %type <method_call> chaining_method_call
 %type <method_call> method_call
@@ -287,31 +291,36 @@ arg_list:
 	|	expr               { $$ = new ast::ArgumentList; $$->add($1); }
 ;
 
-fully_qualified_name:
-		fully_qualified_name '.' IDENT
-	|	IDENT
+arg_list_opt:
+		/* empty */  { $$ = NULL; }
+	| 	arg_list     { $$ = $1; }
 ;
 
+package_module_name:
+		IDENT '.' IDENT  { $<identifier>1->concat(".", $3); delete $3; }
+	|	IDENT            { $$ = $1; }
+;
+
+func_name:
+		package_module_name "::" IDENT { $1->concat("::", $3); delete $3; }
+	|	IDENT                          { $$ = $1; }
+;
+
+
 func_call:
-		fully_qualified_name '.' IDENT '(' ')'          { $$ = new ast::FunctionCall($3); $$->setLocation(yylloc); }
-	|	fully_qualified_name '.' IDENT '(' arg_list ')' { $$ = new ast::FunctionCall($3, $5); $$->setLocation(yylloc); }
+		func_name '(' arg_list_opt ')' { $$ = new ast::FunctionCall($1, $3); $$->setLocation(yylloc); }
 ;
 
 chaining_method_call:
-		/* empty */                                     { $$ = $<method_call>0; }
-	|	chaining_method_call '.' IDENT '(' ')'          { $$ = new ast::MethodCall($1, $3); $$->setLocation(yylloc); }
-	|	chaining_method_call '.' IDENT '(' arg_list ')' { $$ = new ast::MethodCall($1, $3, $5); $$->setLocation(yylloc); }
+		/* empty */                                         { $$ = $<method_call>0; }
+	|	chaining_method_call '.' IDENT '(' arg_list_opt ')' { $$ = new ast::MethodCall($1, $3, $5); $$->setLocation(yylloc); }
 ;
 
 method_call:
-		fully_qualified_name '.' IDENT '.' IDENT '(' ')'          { $<method_call>$ = new ast::MethodCall($3, $5); $<method_call>$->setLocation(yylloc); }
-			chaining_method_call         { $$ = $9; }
-	|	literal '.' IDENT '(' ')'         { $<method_call>$ = new ast::MethodCall($1, $3); $<method_call>$->setLocation(yylloc); }
-			chaining_method_call         { $$ = $7; }
-	|	fully_qualified_name '.' IDENT '.' IDENT '(' arg_list ')' { $<method_call>$ = new ast::MethodCall($3, $5, $7); $<method_call>$->setLocation(yylloc); }
-			chaining_method_call         { $$ = $10; }
-	|	literal '.' IDENT '(' arg_list ')' { $<method_call>$ = new ast::MethodCall($1, $3, $5); $<method_call>$->setLocation(yylloc); }
-			chaining_method_call         { $$ = $8; }
+		IDENT '.' IDENT '(' arg_list_opt ')'   { $<method_call>$ = new ast::MethodCall($1, $3, $5); $<method_call>$->setLocation(yylloc); }
+			chaining_method_call               { $$ = $8; }
+	|	literal '.' IDENT '(' arg_list_opt ')' { $<method_call>$ = new ast::MethodCall($1, $3, $5); $<method_call>$->setLocation(yylloc); }
+			chaining_method_call               { $$ = $8; }
 ;
 
 template_args:
@@ -347,8 +356,7 @@ assign_stmt:
 ;
 
 type_creation:
-		TYPE '(' ')'          { $$ = new ast::TypeCreation($1); $$->setLocation(yylloc); }
-	|	TYPE '(' arg_list ')' { $$ = new ast::TypeCreation($1, $3); $$->setLocation(yylloc); }
+		TYPE '(' arg_list_opt ')' { $$ = new ast::TypeCreation($1, $3); $$->setLocation(yylloc); }
 ;
 
 expr:

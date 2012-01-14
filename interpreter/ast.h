@@ -293,6 +293,10 @@ public:
 		}
 	}
 
+	void concat(std::string sep, Identifier* ident) {
+		m_name = CSTRING(m_name->str() + sep + ident->getName()->str());
+	}
+
 	bool hasValue() const { return true; }
 
 	Value* getValue() const throw() { return m_value; }
@@ -751,16 +755,12 @@ private:
 
 class TypeCreation : public ASTNode {
 public:
-	explicit TypeCreation(Identifier* type)
-		: m_type(type), m_arguments(NULL), m_call_value(NULL), m_args_value(NULL) {
-		m_type->addRef();
-		m_value = new Value();
-	}
-
 	TypeCreation(Identifier* type, ArgumentList* arguments)
 		: m_type(type), m_arguments(arguments), m_call_value(NULL), m_args_value(NULL) {
 		m_type->addRef();
-		m_arguments->addRef();
+		if (m_arguments) {
+			m_arguments->addRef();
+		}
 		m_value = new Value();
 	}
 
@@ -894,15 +894,12 @@ protected:
 
 class FunctionCall : public ASTNode {
 public:
-	FunctionCall(Identifier* name)
-		: m_name(name), m_args(NULL), m_args_value(NULL), m_value(NULL) {
-		m_name->addRef();
-		m_result = new CallableValue;
-	}
 	FunctionCall(Identifier* name, ArgumentList* args)
 		: m_name(name), m_args(args), m_args_value(NULL), m_value(NULL) {
 		m_name->addRef();
-		m_args->addRef();
+		if (m_args) {
+			m_args->addRef();
+		}
 		m_result = new CallableValue;
 	}
 
@@ -956,18 +953,13 @@ private:
 
 class MethodCall : public ASTNode {
 public:
-	MethodCall(ASTNode* var, Identifier* method)
-		: m_var(var), m_method(method), m_args(NULL), m_value(NULL), m_args_value(NULL) {
-		m_var->addRef();
-		m_method->addRef();
-		m_result = new CallableValue;
-	}
-
 	MethodCall(ASTNode* var, Identifier* method, ArgumentList* args)
 		: m_var(var), m_method(method), m_args(args), m_value(NULL), m_args_value(NULL) {
 		m_var->addRef();
 		m_method->addRef();
-		m_args->addRef();
+		if (m_args) {
+			m_args->addRef();
+		}
 		m_result = new CallableValue;
 	}
 
@@ -1078,6 +1070,10 @@ public:
 
 	const CString* const getModuleName() throw() {
 		return m_module ? m_module->getName() : NULL;
+	}
+
+	const CString* const getAliasName() throw() {
+		return m_alias ? m_alias->getName() : NULL;
 	}
 
 	void accept(ASTVisitor& visitor) throw() {

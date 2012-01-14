@@ -619,15 +619,16 @@ AST_VISITOR(TypeChecker, AssignExpr) {
 AST_VISITOR(TypeChecker, ImportStmt) {
 	const CString* const package = expr->getPackageName();
 	const CString* const module = expr->getModuleName();
+	const CString* const alias = expr->getAliasName();
 
 	/**
 	 * Importing an specific module or an entire package
 	 * e.g. import std.io;
 	 */
 	if (isInteractive() && g_symtable.getScope()->getDepth() == 1) {
-		Compiler::import(g_symtable.getScope(0), package, module);
+		Compiler::import(g_symtable.getScope(0), package, module, alias);
 	} else {
-		Compiler::import(g_symtable.getScope(), package, module);
+		Compiler::import(g_symtable.getScope(), package, module, alias);
 	}
 }
 
