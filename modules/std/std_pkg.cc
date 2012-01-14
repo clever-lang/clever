@@ -38,6 +38,7 @@ void Std::init() throw() {
 	addModule(CSTRING("os"), new std::OSModule);
 	addModule(CSTRING("reflection"), new std::Reflection);
 	addModule(CSTRING("net"), new std::NetModule);
+	addModule(CSTRING("regex"), new std::Regex);
 }
 
 }} // clever::packages

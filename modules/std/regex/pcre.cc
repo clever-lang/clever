@@ -1,3 +1,4 @@
+
 /**
  * Clever programming language
  * Copyright (c) 2011-2012 Clever Team
@@ -21,12 +22,50 @@
  * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
+ *
  */
 
-#include "modules/std/file/file.h"
-#include "modules/std/io/io.h"
-#include "modules/std/math/math.h"
-#include "modules/std/os/os.h"
-#include "modules/std/net/net.h"
-#include "modules/std/reflection/reflection.h"
-#include "modules/std/regex/regex.h"
+#include "modules/std/regex/pcre.h"
+#include "modules/std/regex/pcrevalue.h"
+
+namespace clever { namespace packages { namespace std { namespace regex {
+
+void Pcre::init() {
+	/* Pcre(String pattern) */
+	addMethod(
+		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Pcre::constructor, CLEVER_TYPE("Pcre")))
+		->addArg("pattern", CLEVER_STR)
+	);
+	/* Pcre.match(String haystack) */
+	addMethod(
+		(new Method("matches", (MethodPtr)&Pcre::matches, CLEVER_BOOL))
+		->addArg("haystack", CLEVER_STR)
+	);
+}
+
+void Pcre::destructor(Value* value) const {
+	PcreValue* self = CLEVER_GET_VALUE(PcreValue*, value);
+	delete self;
+}
+
+DataValue* Pcre::allocateValue() const {
+	return new PcreValue();
+}
+
+CLEVER_TYPE_METHOD(Pcre::constructor) {
+	PcreValue* self = new PcreValue();
+
+	self->re = new pcrecpp::RE(CLEVER_ARG_STR(0).c_str());
+
+	self->setReference(0);
+
+	retval->setDataValue(self);
+}
+CLEVER_TYPE_METHOD(Pcre::matches) {
+	PcreValue* self = CLEVER_GET_VALUE(PcreValue*, value);
+	const CString* haystack = args->at(0)->getStringP();
+
+	retval->setBoolean(self->re->FullMatch(haystack->c_str()));
+}
+
+}}}} // clever::packages:std::regex

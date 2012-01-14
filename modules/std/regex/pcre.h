@@ -23,10 +23,32 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "modules/std/file/file.h"
-#include "modules/std/io/io.h"
-#include "modules/std/math/math.h"
-#include "modules/std/os/os.h"
-#include "modules/std/net/net.h"
-#include "modules/std/reflection/reflection.h"
-#include "modules/std/regex/regex.h"
+#ifndef CLEVER_STD_REGEX_PCRE_H
+#define CLEVER_STD_REGEX_PCRE_H
+
+#include "compiler/module.h"
+#include "compiler/value.h"
+#include "types/type.h"
+
+namespace clever { namespace packages { namespace std { namespace regex {
+
+class Pcre : public Type {
+public:
+	Pcre() : Type(CSTRING("Pcre")) {}
+
+	void init();
+	DataValue* allocateValue() const;
+	void destructor(Value* value) const;
+
+	static CLEVER_TYPE_METHOD(constructor);
+	static CLEVER_TYPE_METHOD(matches);
+
+	CLEVER_TYPE_ASSIGN_HANDLER_D {
+		newvalue->getDataValue()->addRef();
+		value->copy(newvalue);
+	}
+};
+
+}}}} // clever::packages::std::regex
+
+#endif

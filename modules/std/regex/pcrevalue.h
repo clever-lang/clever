@@ -23,10 +23,23 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "modules/std/file/file.h"
-#include "modules/std/io/io.h"
-#include "modules/std/math/math.h"
-#include "modules/std/os/os.h"
-#include "modules/std/net/net.h"
-#include "modules/std/reflection/reflection.h"
-#include "modules/std/regex/regex.h"
+#ifndef CLEVER_STD_REGEX_PCREVALUE_H
+#define CLEVER_STD_REGEX_PCREVALUE_H
+
+#include "compiler/datavalue.h"
+#include <pcrecpp.h>
+
+namespace clever { namespace packages { namespace std { namespace regex {
+
+class PcreValue : public DataValue {
+public:
+	PcreValue() {}
+
+	pcrecpp::RE* re;
+
+	virtual ~PcreValue() { if (re) delete re; }
+};
+
+}}}} // clever::packages::std::regex
+
+#endif

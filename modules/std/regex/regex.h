@@ -23,10 +23,24 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "modules/std/file/file.h"
-#include "modules/std/io/io.h"
-#include "modules/std/math/math.h"
-#include "modules/std/os/os.h"
-#include "modules/std/net/net.h"
-#include "modules/std/reflection/reflection.h"
-#include "modules/std/regex/regex.h"
+#ifndef CLEVER_STD_REGEX_H
+#define CLEVER_STD_REGEX_H
+
+#include "compiler/module.h"
+#include "compiler/value.h"
+
+namespace clever { namespace packages { namespace std {
+
+class Regex : public Module {
+public:
+	Regex() : Module("Regex") {};
+	~Regex() {};
+	void init() throw();
+
+private:
+	DISALLOW_COPY_AND_ASSIGN(Regex);
+};
+
+}}} // clever::packages::std
+
+#endif

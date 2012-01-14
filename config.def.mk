@@ -9,11 +9,11 @@
 # Clever stuff
 #
 VERSION=devel
-MODULES=std std.math std.io std.file std.os std.reflection std.net
+MODULES=std std.math std.io std.file std.os std.reflection std.net std.regex
 
-# module flags (example)
-mod_std_math_CXXFLAGS =
-mod_std_math_LDFLAGS  = -lm
+
+mod_std_regex_CXXFLAGS = $(shell pkg-config --cflags libpcrecpp)
+mod_std_regex_LDFLAGS  = $(shell pkg-config --libs libpcrecpp)
 
 #
 # Environment
@@ -27,7 +27,7 @@ MANDIR=$(PREFIX)/share/man
 #
 CXX=g++
 LD=$(CXX)
-CXXFLAGS=-pipe 
+CXXFLAGS=-pipe
 LDFLAGS=
 
 #
