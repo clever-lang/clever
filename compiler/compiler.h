@@ -42,14 +42,14 @@
 namespace clever {
 
 class Compiler {
-public:	
+public:
 	enum Error {
 		ERROR   = 0x1,
 		WARNING = 0x2,
 		NOTICE  = 0x4,
 		ALL     = ERROR | WARNING | NOTICE
 	};
-	
+
 	Compiler()
 		: m_ast(NULL), m_initialized(false) { }
 
@@ -87,13 +87,13 @@ public:
 	 * Dumps the opcodes
 	 */
 	void dumpOpcodes() throw();
-	
+
 	/**
 	 * Displays an error message and exits
 	 */
 	static void error(std::string) throw();
 	static void error(std::string, const location&) throw();
-	
+
 	/**
 	 * Displays an warning message
 	 */
@@ -108,9 +108,9 @@ public:
 	/**
 	 * Import a package module
 	 */
-	static void import(Scope* scope, const CString* package, const CString* module) throw() {
+	static void import(Scope* scope, const CString* package, const CString* module, const CString *alias) throw() {
 		if (module) {
-			g_pkgmanager.loadModule(scope, package, module);
+			g_pkgmanager.loadModule(scope, package, module, alias);
 		} else {
 			g_pkgmanager.loadPackage(scope, package);
 		}
@@ -121,7 +121,7 @@ public:
 	 */
 	static void errorf(const location&, const char*, ...) throw();
 	static void warningf(const char*, ...) throw();
-	
+
 	static void setErrorReporting(Error level) {
 		m_error_level = level;
 	}

@@ -67,8 +67,8 @@ public:
 	/**
 	 * Load an specific package module
 	 */
-	void loadModule(Scope*, const CString* const, const CString* const) throw();
-	void loadModule(Scope*, Module* const) throw();
+	void loadModule(Scope*, const CString* const, const CString* const, const CString* const) throw();
+	void loadModule(Scope*, const CString* const, Module* const, const CString* const) throw();
 
 	const PackageMap& getPackages() const { return m_packages; }
 private:
