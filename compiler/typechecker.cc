@@ -185,6 +185,11 @@ AST_VISITOR(TypeChecker, AliasStmt) {
 			expr->getCurrentName());
 	}
 
+	if (g_symtable.getValue(expr->getNewName())) {
+		Compiler::errorf(expr->getLocation(), "Name `%S' already in use!",
+			expr->getNewName());
+	}
+
 	g_symtable.push(expr->getNewName(), fvalue);
 	fvalue->addRef();
 }
