@@ -1,0 +1,10 @@
+Testing replace with options
+==CODE==
+import std.io;
+import std.regex as re;
+
+Pcre p("b", re::PCRE_CASELESS);
+println(p.replace("z", "BBB"), p.replaceAll("z", "BBB"));
+==RESULT==
+zBB
+zzz
