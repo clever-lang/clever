@@ -55,66 +55,6 @@ typedef std::tr1::unordered_map<const CString*, Value*> ConstMap;
 typedef std::pair<const CString*, Value*> ConstPair;
 
 /**
- * Package representation
- */
-class NO_INIT_VTABLE Package {
-public:
-	enum { UNLOADED, LOADED, FULLY_LOADED };
-
-	Package(std::string name)
-		: m_state(UNLOADED), m_name(name) { }
-
-	virtual ~Package() { }
-
-	/**
-	 * Add a new package module
-	 */
-	void addModule(const CString* name, Module* module) throw() {
-		m_modules.insert(ModulePair(name, module));
-	}
-	/**
-	 * Returns the package modules map
-	 */
-	ModuleMap& getModules() {
-		return m_modules;
-	}
-	/**
-	 * Check if the package is loaded
-	 */
-	bool isLoaded() const {	return m_state == LOADED || m_state == FULLY_LOADED; }
-	/**
-	 * Check if the package is unloaded
-	 */
-	bool isUnloaded() const { return m_state == UNLOADED; }
-	/**
-	 * Check if the package was fully loaded
-	 */
-	bool isFullyLoaded() const { return m_state == FULLY_LOADED; }
-	/**
-	 * Set the package state to loaded
-	 */
-	void setLoaded() { m_state = LOADED; }
-	/**
-	 * Set the package state to fully loaded
-	 */
-	void setFullyLoaded() { m_state = FULLY_LOADED; }
-	/**
-	 * Initializes package data
-	 */
-	virtual void init() throw() = 0;
-	/**
-	 * Package version
-	 */
-	virtual const char* getVersion() const { return NULL; }
-private:
-	bool m_state;
-	const std::string& m_name;
-	ModuleMap m_modules;
-
-	DISALLOW_COPY_AND_ASSIGN(Package);
-};
-
-/**
  * Module representation
  */
 class NO_INIT_VTABLE Module {
@@ -193,6 +133,66 @@ private:
 	ConstMap m_const_table;
 
 	DISALLOW_COPY_AND_ASSIGN(Module);
+};
+
+/**
+ * Package representation
+ */
+class NO_INIT_VTABLE Package {
+public:
+	enum { UNLOADED, LOADED, FULLY_LOADED };
+
+	Package(std::string name)
+		: m_state(UNLOADED), m_name(name) { }
+
+	virtual ~Package() { }
+
+	/**
+	 * Add a new package module
+	 */
+	void addModule(Module* module) throw() {
+		m_modules.insert(ModulePair(CSTRING(module->getName()), module));
+	}
+	/**
+	 * Returns the package modules map
+	 */
+	ModuleMap& getModules() {
+		return m_modules;
+	}
+	/**
+	 * Check if the package is loaded
+	 */
+	bool isLoaded() const {	return m_state == LOADED || m_state == FULLY_LOADED; }
+	/**
+	 * Check if the package is unloaded
+	 */
+	bool isUnloaded() const { return m_state == UNLOADED; }
+	/**
+	 * Check if the package was fully loaded
+	 */
+	bool isFullyLoaded() const { return m_state == FULLY_LOADED; }
+	/**
+	 * Set the package state to loaded
+	 */
+	void setLoaded() { m_state = LOADED; }
+	/**
+	 * Set the package state to fully loaded
+	 */
+	void setFullyLoaded() { m_state = FULLY_LOADED; }
+	/**
+	 * Initializes package data
+	 */
+	virtual void init() throw() = 0;
+	/**
+	 * Package version
+	 */
+	virtual const char* getVersion() const { return NULL; }
+private:
+	bool m_state;
+	const std::string& m_name;
+	ModuleMap m_modules;
+
+	DISALLOW_COPY_AND_ASSIGN(Package);
 };
 
 } // clever

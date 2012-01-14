@@ -32,13 +32,13 @@ namespace clever { namespace packages {
  * Initializes Std package
  */
 void Std::init() throw() {
-	addModule(CSTRING("io"), new std::IOModule);
-	addModule(CSTRING("math"), new std::Math);
-	addModule(CSTRING("file"), new std::File);
-	addModule(CSTRING("os"), new std::OSModule);
-	addModule(CSTRING("reflection"), new std::Reflection);
-	addModule(CSTRING("net"), new std::NetModule);
-	addModule(CSTRING("regex"), new std::Regex);
+	addModule(new std::IOModule);
+	addModule(new std::Math);
+	addModule(new std::File);
+	addModule(new std::OSModule);
+	addModule(new std::Reflection);
+	addModule(new std::NetModule);
+	addModule(new std::Regex);
 }
 
 }} // clever::packages
