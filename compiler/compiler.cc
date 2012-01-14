@@ -72,7 +72,7 @@ void Compiler::init() throw() {
 	g_symtable.beginScope();
 
 	/* Load the primitive data types */
-	loadTypes();
+	loadNativeTypes();
 
 	m_initialized = true;
 }
@@ -80,7 +80,7 @@ void Compiler::init() throw() {
 /**
  * Loads the class representations of native types
  */
-void Compiler::loadTypes() throw() {
+void Compiler::loadNativeTypes() throw() {
 	CLEVER_INT    = new Integer;
 	CLEVER_STR    = new String;
 	CLEVER_DOUBLE = new Double;
@@ -139,13 +139,13 @@ void Compiler::dumpOpcodes() throw() {
  */
 void Compiler::error(std::string message, const location& loc) throw() {
 	if (loc.begin.filename) {
-		m_error_stream << "Compile error: " << message << " on " 
+		m_error_stream << "Compile error: " << message << " on "
 			<< *loc.begin.filename << " line " << loc.begin.line << "\n";
 	} else {
-		m_error_stream << "Compile error: " << message << " on line " 
+		m_error_stream << "Compile error: " << message << " on line "
 			<< loc.begin.line << "\n";
 	}
-	
+
 	exit(1);
 }
 
@@ -172,7 +172,7 @@ void Compiler::warning(std::string message) throw() {
 	if (!(m_error_level & Compiler::WARNING)) {
 		return;
 	}
-	
+
 	m_error_stream << "Warning: " << message << "\n";
 }
 

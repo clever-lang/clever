@@ -72,9 +72,9 @@ public:
 	 */
 	void setOpcodeDump() throw() { m_cgvisitor.setOpcodeDump(); }
 	/**
-	 * Loads primitive data types
+	 * Loads native data types
 	 */
-	void loadTypes() throw();
+	void loadNativeTypes() throw();
 	/**
 	 * Generates the intermediate representation
 	 */

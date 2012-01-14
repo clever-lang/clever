@@ -41,7 +41,7 @@ Scope::~Scope() {
 		}
 
 		if (s->isType()) {
-			delete s->getType();
+			const_cast<Type*>(s->getType())->delRef();
 		}
 
 		delete s;

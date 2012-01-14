@@ -100,14 +100,14 @@ typedef ::std::vector<const Type*> TemplateArgs;
 /**
  * Type representation
  */
-class Type {
+class Type : public RefCounted {
 public:
 	typedef std::tr1::unordered_map<std::string, Method*> OverloadMethodMap;
 	typedef std::tr1::unordered_map<std::string, OverloadMethodMap> MethodMap;
 	typedef std::pair<std::string, Method*> MethodPair;
 
 	explicit Type(const CString* name)
-		: m_name(name) { }
+		: RefCounted(1), m_name(name) { }
 
 	virtual ~Type() {
 		MethodMap::const_iterator it = m_methods.begin(), end = m_methods.end();

@@ -337,14 +337,24 @@ template:
 ;
 
 variable_declaration:
-		TYPE IDENT '=' type_creation      { $$ = new ast::VariableDecl($1, $2, $4); $$->setLocation(yylloc); }
-	|	template IDENT '=' type_creation  { $$ = new ast::VariableDecl($1, $2, $4); $$->setLocation(yylloc); }
-	|	TYPE IDENT '=' expr               { $$ = new ast::VariableDecl($1, $2, $4); $$->setLocation(yylloc); }
-	|	template IDENT '=' expr           { $$ = new ast::VariableDecl($1, $2, $4); $$->setLocation(yylloc); }
-	|	TYPE IDENT                        { $$ = new ast::VariableDecl($1, $2); }
-	|	template IDENT                    { $$ = new ast::VariableDecl($1, $2); }
-	|   TYPE IDENT '(' arg_list ')'       { $$ = new ast::VariableDecl($1, $2, new ast::TypeCreation($1, $4)); $$->setLocation(yyloc); }
-	|   template IDENT '(' arg_list ')'   { $$ = new ast::VariableDecl($1, $2, new ast::TypeCreation($1, $4)); $$->setLocation(yyloc); }
+		TYPE IDENT '=' type_creation        { $$ = new ast::VariableDecl($1, $2, $4); $$->setLocation(yylloc); }
+	|	template IDENT '=' type_creation    { $$ = new ast::VariableDecl($1, $2, $4); $$->setLocation(yylloc); }
+	|	package_module_name "::" TYPE IDENT '=' type_creation
+		{ $1->concat("::", $3); delete $3; $$ = new ast::VariableDecl($1, $4, $6); $$->setLocation(yylloc); }
+
+	|	TYPE IDENT '=' expr                 { $$ = new ast::VariableDecl($1, $2, $4); $$->setLocation(yylloc); }
+	|	template IDENT '=' expr             { $$ = new ast::VariableDecl($1, $2, $4); $$->setLocation(yylloc); }
+	|	package_module_name "::" TYPE IDENT '=' expr
+		{ $1->concat("::", $3); delete $3; $$ = new ast::VariableDecl($1, $4, $6); $$->setLocation(yylloc); }
+
+	|	TYPE IDENT                          { $$ = new ast::VariableDecl($1, $2); }
+	|	template IDENT                      { $$ = new ast::VariableDecl($1, $2); }
+	|	package_module_name "::" TYPE IDENT { $1->concat("::", $3); delete $3; $$ = new ast::VariableDecl($1, $4); $$->setLocation(yyloc); }
+
+	|   TYPE IDENT '(' arg_list ')'         { $$ = new ast::VariableDecl($1, $2, new ast::TypeCreation($1, $4)); $$->setLocation(yyloc);   }
+	|   template IDENT '(' arg_list ')'     { $$ = new ast::VariableDecl($1, $2, new ast::TypeCreation($1, $4)); $$->setLocation(yyloc);   }
+	|	package_module_name "::" TYPE IDENT '(' arg_list ')'
+		{ $1->concat("::", $3); delete $3; $$ = new ast::VariableDecl($1, $4, new ast::TypeCreation($1, $6)); $$->setLocation(yyloc);  }
 ;
 
 assign_stmt:

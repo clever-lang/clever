@@ -34,7 +34,7 @@ namespace clever { namespace packages { namespace std {
 class File : public Module {
 public:
 	File()
-		: Module("File") { }
+		: Module("file") { }
 
 	~File() { }
 

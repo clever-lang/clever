@@ -33,7 +33,7 @@ namespace clever { namespace packages { namespace std {
 class Reflection : public Module {
 public:
 	Reflection()
-		: Module("Reflection") { }
+		: Module("reflection") { }
 
 	~Reflection() { }
 

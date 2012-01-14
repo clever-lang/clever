@@ -49,7 +49,7 @@ typedef std::tr1::unordered_map<const CString*, Module*> ModuleMap;
 typedef std::pair<const CString*, Module*> ModulePair;
 
 typedef Type Class;
-typedef std::tr1::unordered_map<const CString*, const Class*> ClassMap;
+typedef std::tr1::unordered_map<const CString*, Class*> ClassMap;
 
 typedef std::tr1::unordered_map<const CString*, Value*> ConstMap;
 typedef std::pair<const CString*, Value*> ConstPair;
@@ -159,7 +159,7 @@ public:
 		m_const_table.insert(ConstPair(name, value));
 	}
 
-	void addClass(const Class* klass) throw() {
+	void addClass(Class* klass) throw() {
 		m_class_table.insert(std::make_pair(klass->getName(), klass));
 	}
 	/**

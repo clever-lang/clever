@@ -34,7 +34,7 @@ namespace clever { namespace packages { namespace std {
 class NetModule : public Module {
 public:
 	NetModule()
-		: Module("Net") { }
+		: Module("net") { }
 
 	~NetModule() { }
 
