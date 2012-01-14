@@ -104,6 +104,7 @@ namespace clever {
 %token FALSE         "false"
 %token AS            "as"
 %token DOUBLE_COLON  "::"
+%token CONSTANT      "constant"
 
 %left ',';
 %left LOGICAL_OR;
@@ -134,6 +135,7 @@ namespace clever {
 	ast::ArgumentDeclList* arg_decl_list;
 	ast::MethodCall* method_call;
 	ast::FunctionCall* func_call;
+	ast::Constant* constant;
 	ast::IfExpr* if_expr;
 	ast::NumberLiteral* num_literal;
 	ast::StringLiteral* str_literal;
@@ -166,6 +168,8 @@ namespace clever {
 %type <identifier> package_module_name
 %type <identifier> func_name
 %type <identifier> TYPE
+%type <identifier> CONSTANT
+%type <constant> constant
 %type <template_args> template_args
 %type <ast_node> literal
 %type <identifier> template
@@ -391,7 +395,7 @@ expr:
 	|	method_call           { $$ = $<ast_node>1; }
 	|	IDENT                 { $$ = $<ast_node>1; }
 	|	literal               { $$ = $<ast_node>1; }
-
+	|	constant              { $$ = $<ast_node>1; }
 ;
 
 literal:
@@ -445,6 +449,11 @@ import_stmt:
 		IMPORT IDENT                    { $$ = new ast::ImportStmt($2);         $$->setLocation(yylloc); }
 	|	IMPORT IDENT '.' IDENT          { $$ = new ast::ImportStmt($2, $4);     $$->setLocation(yylloc); }
 	|	IMPORT IDENT '.' IDENT AS IDENT { $$ = new ast::ImportStmt($2, $4, $6); $$->setLocation(yylloc); }
+;
+
+constant:
+		package_module_name "::" CONSTANT { $1->concat("::", $3); delete $3; $$ = new ast::Constant($1); }
+	|	CONSTANT                          { $$ = new ast::Constant($1); }
 ;
 
 %%

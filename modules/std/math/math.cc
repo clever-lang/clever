@@ -287,6 +287,8 @@ static CLEVER_FUNCTION(truncate) {
  * Load module data
  */
 void Math::init() throw() {
+	addConstant(CSTRING("MATH_PI"), new Value(M_PI));
+
 	addFunction(new Function("abs",	&CLEVER_NS_FNAME(math, abs_double), CLEVER_DOUBLE))
 		->addArg("x", CLEVER_DOUBLE);
 

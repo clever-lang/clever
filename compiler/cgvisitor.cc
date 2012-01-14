@@ -44,6 +44,9 @@ AST_VISITOR(CodeGenVisitor, ArgumentList) {
 AST_VISITOR(CodeGenVisitor, Identifier) {
 }
 
+AST_VISITOR(CodeGenVisitor, Constant) {
+}
+
 /**
  * Generates opcode for unary expression
  */

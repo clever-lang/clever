@@ -88,6 +88,9 @@ void PackageManager::loadModule(Scope* scope, const CString* const package,
 	 */
 	module->init();
 	{
+		const std::string prefix_name = alias ?
+			alias->str() + "::" : package->str() + "." + module->getName() + "::";
+
 		FunctionMap& funcs = module->getFunctions();
 		FunctionMap::const_iterator it = funcs.begin(), end = funcs.end();
 
@@ -96,13 +99,10 @@ void PackageManager::loadModule(Scope* scope, const CString* const package,
 		 */
 		while (it != end) {
 			CallableValue* fvalue = new CallableValue(CSTRING(it->first));
-			const std::string full_name = alias ?
-				alias->str() + "::" + fvalue->getName()->str() :
-				package->str() + "." + module->getName() + "::" + fvalue->getName()->str();
 
 			fvalue->setHandler(it->second);
 
-			scope->bind(CSTRING(full_name), fvalue);
+			scope->bind(CSTRING(prefix_name + *fvalue->getName()), fvalue);
 			scope->bind(fvalue->getName(), fvalue);
 			fvalue->addRef();
 			++it;
@@ -117,6 +117,14 @@ void PackageManager::loadModule(Scope* scope, const CString* const package,
 		while (itc != endc) {
 			g_symtable.push(itc->first, itc->second);
 			++itc;
+		}
+
+		ConstMap& constants = module->getConstants();
+		ConstMap::iterator itcs = constants.begin(), endcs = constants.end();
+
+		while (itcs != endcs) {
+			g_symtable.push(CSTRING(prefix_name + itcs->first->str()), itcs->second);
+			++itcs;
 		}
 	}
 	/**

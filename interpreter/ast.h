@@ -328,6 +328,31 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(Identifier);
 };
 
+class Constant : public ASTNode {
+public:
+	Constant(Identifier* ident)
+		: m_ident(ident) {
+		m_ident->addRef();
+		m_value = new Value;
+	}
+
+	~Constant() {
+		m_ident->delRef();
+		m_value->delRef();
+	}
+
+	const CString* getName() const throw() { return m_ident->getName(); }
+
+	Value* getValue() const throw() { return m_value; }
+
+	void accept(ASTVisitor& visitor) throw() {
+		visitor.visit(this);
+	}
+private:
+	Identifier* m_ident;
+	Value* m_value;
+};
+
 class UnaryExpr : public ASTNode {
 public:
 	UnaryExpr(int op, ASTNode* expr)

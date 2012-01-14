@@ -177,6 +177,17 @@ AST_VISITOR(TypeChecker, ArgumentList) {
 	expr->setArgValue(values);
 }
 
+AST_VISITOR(TypeChecker, Constant) {
+	Value* constant = g_symtable.getValue(expr->getName());
+
+	if (constant == NULL) {
+		Compiler::errorf(expr->getLocation(), "Constant `%S' not found!",
+			expr->getName());
+	}
+
+	expr->getValue()->copy(constant);
+}
+
 AST_VISITOR(TypeChecker, Identifier) {
 	Value* ident = g_symtable.getValue(expr->getName());
 

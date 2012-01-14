@@ -23,6 +23,7 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#include <pcrecpp.h>
 #include "modules/std/regex/regex.h"
 #include "modules/std/regex/pcre.h"
 
@@ -33,6 +34,16 @@ void Regex::init() throw() {
 	pcreClass->init();
 
 	addClass(pcreClass);
+
+	/**
+	 * Module constants
+	 */
+	addConstant(CSTRING("PCRE_DOTALL"),    new Value(int64_t(PCRE_DOTALL)));
+	addConstant(CSTRING("PCRE_MULTILINE"), new Value(int64_t(PCRE_MULTILINE)));
+	addConstant(CSTRING("PCRE_CASELESS"),  new Value(int64_t(PCRE_CASELESS)));
+	addConstant(CSTRING("PCRE_UTF8"),      new Value(int64_t(PCRE_UTF8)));
+	addConstant(CSTRING("PCRE_UNGREEDY"),  new Value(int64_t(PCRE_UNGREEDY)));
+
 }
 
 }}} // clever::packages:std

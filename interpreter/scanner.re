@@ -55,6 +55,7 @@ next_token:
 	STRING     = (["]([^\\"]*|"\\"["]?)*["]|[']([^\\']*|"\\"[']?)*[']);
 	SPECIAL    = [;(),{}&~^|=+*/-];
 	TYPE       = [A-Z][a-zA-Z0-9_]*;
+	CONSTANT   = [A-Z][A-Z0-9_]+;
 
 	<!*> { yylen = cursor - s.yylex; }
 
@@ -213,6 +214,11 @@ next_token:
 	<INITIAL>"Void" {
 		yylval->ast_node = NULL;
 		RET(token::TYPE);
+	}
+
+	<INITIAL>CONSTANT {
+		yylval->ast_node = new ast::Identifier(CSTRING(std::string(s.yylex, yylen)));
+		RET(token::CONSTANT);
 	}
 
 	<INITIAL>TYPE {

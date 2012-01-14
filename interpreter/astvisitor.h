@@ -33,6 +33,7 @@
 namespace clever { namespace ast {
 
 class Identifier;
+class Constant;
 class ASTNode;
 class BinaryExpr;
 class VariableDecl;
@@ -58,6 +59,7 @@ class UnaryExpr;
 
 #define AST_VISITOR_DECLARATION(V) \
 	V(BinaryExpr); \
+	V(Constant); \
 	V(UnaryExpr); \
 	V(VariableDecl); \
 	V(BlockNode); \

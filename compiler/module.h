@@ -51,6 +51,9 @@ typedef std::pair<const CString*, Module*> ModulePair;
 typedef Type Class;
 typedef std::tr1::unordered_map<const CString*, const Class*> ClassMap;
 
+typedef std::tr1::unordered_map<const CString*, Value*> ConstMap;
+typedef std::pair<const CString*, Value*> ConstPair;
+
 /**
  * Package representation
  */
@@ -138,20 +141,27 @@ public:
 		return m_functions;
 	}
 
-	Function* addFunction(Function* func) throw() {
-		m_functions.insert(FunctionPair(func->getName(), func));
-
-		return func;
-	}
-
-	void addClass(const Class* klass) throw() {
-		m_class_table.insert(std::make_pair(klass->getName(), klass));
+	ConstMap& getConstants() throw() {
+		return m_const_table;
 	}
 
 	ClassMap& getClassTable() throw() {
 		return m_class_table;
 	}
 
+	Function* addFunction(Function* func) throw() {
+		m_functions.insert(FunctionPair(func->getName(), func));
+
+		return func;
+	}
+
+	void addConstant(const CString* name, Value* value) throw() {
+		m_const_table.insert(ConstPair(name, value));
+	}
+
+	void addClass(const Class* klass) throw() {
+		m_class_table.insert(std::make_pair(klass->getName(), klass));
+	}
 	/**
 	 * Check if the module is loaded
 	 */
@@ -179,6 +189,8 @@ private:
 	FunctionMap m_functions;
 	/* Class table */
 	ClassMap m_class_table;
+	/* Constant table */
+	ConstMap m_const_table;
 
 	DISALLOW_COPY_AND_ASSIGN(Module);
 };

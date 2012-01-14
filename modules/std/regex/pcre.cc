@@ -35,6 +35,11 @@ void Pcre::init() {
 		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Pcre::constructor, CLEVER_TYPE("Pcre")))
 		->addArg("pattern", CLEVER_STR)
 	);
+	addMethod(
+		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Pcre::constructor2, CLEVER_TYPE("Pcre")))
+		->addArg("pattern", CLEVER_STR)
+		->addArg("options", CLEVER_INT)
+	);
 	/* Pcre.matches(String haystack) */
 	addMethod(
 		(new Method("matches", (MethodPtr)&Pcre::matches, CLEVER_BOOL))
@@ -70,6 +75,20 @@ CLEVER_TYPE_METHOD(Pcre::constructor) {
 	PcreValue* self = new PcreValue();
 
 	self->re = new pcrecpp::RE(CLEVER_ARG_STR(0).c_str());
+
+	self->setReference(0);
+
+	CLEVER_RETURN_DATA_VALUE(self);
+}
+
+/**
+ * Pcre Pcre::constructor(String pattern, Int options)
+ */
+CLEVER_TYPE_METHOD(Pcre::constructor2) {
+	PcreValue* self = new PcreValue();
+
+	self->re = new pcrecpp::RE(CLEVER_ARG_STR(0).c_str(),
+		pcrecpp::RE_Options(CLEVER_ARG_INT(1)));
 
 	self->setReference(0);
 
