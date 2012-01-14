@@ -42,6 +42,8 @@ public:
 
 	static CLEVER_TYPE_METHOD(constructor);
 	static CLEVER_TYPE_METHOD(matches);
+	static CLEVER_TYPE_METHOD(replace);
+	static CLEVER_TYPE_METHOD(replaceAll);
 
 	CLEVER_TYPE_ASSIGN_HANDLER_D {
 		newvalue->getDataValue()->addRef();

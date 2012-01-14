@@ -35,9 +35,21 @@ void Pcre::init() {
 		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Pcre::constructor, CLEVER_TYPE("Pcre")))
 		->addArg("pattern", CLEVER_STR)
 	);
-	/* Pcre.match(String haystack) */
+	/* Pcre.matches(String haystack) */
 	addMethod(
 		(new Method("matches", (MethodPtr)&Pcre::matches, CLEVER_BOOL))
+		->addArg("haystack", CLEVER_STR)
+	);
+	/* Pcre.replace(String replacement, String haystack) */
+	addMethod(
+		(new Method("replace", (MethodPtr)&Pcre::replace, CLEVER_BOOL))
+		->addArg("replacement", CLEVER_STR)
+		->addArg("haystack", CLEVER_STR)
+	);
+	/* Pcre.replaceAll(String replacement, String haystack) */
+	addMethod(
+		(new Method("replaceAll", (MethodPtr)&Pcre::replaceAll, CLEVER_BOOL))
+		->addArg("replacement", CLEVER_STR)
 		->addArg("haystack", CLEVER_STR)
 	);
 }
@@ -51,6 +63,9 @@ DataValue* Pcre::allocateValue() const {
 	return new PcreValue();
 }
 
+/**
+ * Pcre Pcre::constructor(String pattern)
+ */
 CLEVER_TYPE_METHOD(Pcre::constructor) {
 	PcreValue* self = new PcreValue();
 
@@ -58,13 +73,41 @@ CLEVER_TYPE_METHOD(Pcre::constructor) {
 
 	self->setReference(0);
 
-	retval->setDataValue(self);
+	CLEVER_RETURN_DATA_VALUE(self);
 }
+
+/**
+ * Bool Pcre::matches(String haystack)
+ */
 CLEVER_TYPE_METHOD(Pcre::matches) {
 	PcreValue* self = CLEVER_GET_VALUE(PcreValue*, value);
-	const CString* haystack = args->at(0)->getStringP();
+	const CString* haystack = CLEVER_ARG(0)->getStringP();
 
-	retval->setBoolean(self->re->FullMatch(haystack->c_str()));
+	CLEVER_RETURN_BOOL(self->re->FullMatch(haystack->c_str()));
+}
+
+/**
+ * String Pcre::replace(String replacement, String haystack)
+ */
+CLEVER_TYPE_METHOD(Pcre::replace) {
+	PcreValue* self = CLEVER_GET_VALUE(PcreValue*, value);
+	::std::string newstr(CLEVER_ARG(1)->getStringP()->str());
+
+	self->re->Replace(CLEVER_ARG_STR(0), &newstr);
+
+	CLEVER_RETURN_STR(CSTRING(newstr));
+}
+
+/**
+ * String Pcre::replaceAll(String replacement, String haystack)
+ */
+CLEVER_TYPE_METHOD(Pcre::replaceAll) {
+	PcreValue* self = CLEVER_GET_VALUE(PcreValue*, value);
+	::std::string newstr(CLEVER_ARG(1)->getStringP()->str());
+
+	self->re->GlobalReplace(CLEVER_ARG_STR(0), &newstr);
+
+	CLEVER_RETURN_STR(CSTRING(newstr));
 }
 
 }}}} // clever::packages:std::regex
