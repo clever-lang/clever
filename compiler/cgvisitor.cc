@@ -145,7 +145,6 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 		emit(OP_VAR_DECL, &VM::var_decl_handler, variable, initval);
 	} else {
 		variable->addRef();
-		variable->initialize();
 
 		emit(OP_VAR_DECL, &VM::var_decl_handler, variable);
 	}

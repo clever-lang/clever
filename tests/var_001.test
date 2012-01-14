@@ -1,0 +1,10 @@
+Testing uninitialized variable
+==CODE==
+import std.reflection;
+import std.io;
+
+ReflectionPackage a;
+
+println("ok");
+==RESULT==
+ok
