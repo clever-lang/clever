@@ -117,7 +117,7 @@ public:
 		m_info.ptr(args, result);
 	}
 
-	unsigned int call() const throw() { return m_info.offset; }
+	long call() const throw() { return m_info.offset; }
 
 private:
 	union {

@@ -100,7 +100,7 @@ private:
 	/**
 	 * Returns the opcode number
 	 */
-	unsigned int getOpNum() const throw() {	return m_opcodes.size() <= 1 ? 0 : m_opcodes.size()-1; }
+	size_t getOpNum() const throw() { return !m_opcodes.size() ? 0 : m_opcodes.size()-1; }
 
 	DISALLOW_COPY_AND_ASSIGN(CodeGenVisitor);
 };

@@ -126,7 +126,7 @@ void Compiler::buildIR() throw() {
 
 void Compiler::dumpOpcodes() throw() {
 	const OpcodeList& opcodes = m_cgvisitor.getOpcodes();
-	int i = 0, size = opcodes.size();
+	size_t i = 0, size = opcodes.size();
 
 	while (i < size) {
 		opcodes[i]->dump();

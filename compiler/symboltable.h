@@ -115,14 +115,16 @@ class Scope : public RefCounted {
 
 public:
 
-	Scope(int depth, Scope* parent = NULL) : RefCounted(), m_syms(), m_parent(parent), m_depth(depth) {
+	Scope(size_t depth, Scope* parent = NULL) : RefCounted(), m_syms(), m_parent(parent), m_depth(depth) {
 		if (depth > 0) {
 			clever_assert(parent != NULL, "No parent provided to non-root scope.");
+		} else {
+			clever_assert(parent == NULL, "Root scope must have no parent.");
 		}
 	}
 	~Scope();
 
-	int getDepth() const { return m_depth; }
+	size_t getDepth() const { return m_depth; }
 
 	/**
 	 * Binds a Value* to an interned string.
@@ -196,15 +198,15 @@ public:
 
 private:
 	SymbolMap m_syms;
-	Scope* m_parent;
-	int    m_depth;
+	Scope*    m_parent;
+	size_t    m_depth;
 };
 
 class SymbolTable {
 	typedef std::deque<Scope*> ScopeDeque;
 public:
 	SymbolTable()
-		: m_level(-1) {}
+		: m_level() {}
 
 	~SymbolTable() {
 		//clever_assert(m_level < 0, "%i scopes were not properly cleaned.", m_level);
@@ -249,14 +251,14 @@ public:
 	 * Returns the current scope.
 	 */
 	Scope* getScope() throw() {
-		return getScope(m_level);
+		return getScope(m_scope.size()-1);
 	}
 
 	/**
 	 * Returns the scope at the given level number.
 	 */
-	Scope* getScope(int level) throw() {
-		clever_assert(level >= 0, "No scope available.");
+	Scope* getScope(size_t level) throw() {
+		clever_assert(level < m_scope.size(), "No such scope %zu.", level);
 
 		return m_scope.at(level);
 	}
@@ -265,8 +267,8 @@ public:
 	 * Enters a new scope.
 	 */
 	Scope* beginScope() throw() {
-		Scope* parent = m_level < 0 ? NULL : getScope();
-		Scope* s = new Scope(++m_level, parent);
+		Scope* parent = !m_scope.size() ? NULL : getScope();
+		Scope* s = new Scope(m_level++, parent);
 
 		m_scope.push_back(s);
 
@@ -286,7 +288,7 @@ public:
 	}
 
 private:
-	int m_level;
+	size_t m_level;
 	ScopeDeque m_scope;
 
 	DISALLOW_COPY_AND_ASSIGN(SymbolTable);

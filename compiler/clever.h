@@ -165,7 +165,7 @@ namespace clever {
 /**
  * Thread-local storage
  */
-#if __GNUC__ && !__APPLE__
+#if (defined(__GNUC__) && !defined(__APPLE__))
 # define THREAD_TLS __thread
 #elif defined(_MSC_VER)
 # define THREAD_TLS __declspec(thread)

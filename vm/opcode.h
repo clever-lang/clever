@@ -111,7 +111,7 @@ private:
 	Value* m_op2;
 	Value* m_result;
 	long m_op_num;
-	struct { unsigned int jmp1, jmp2, flags; } m_extra;
+	struct { long jmp1, jmp2, flags; } m_extra;
 
 	DISALLOW_COPY_AND_ASSIGN(Opcode);
 };

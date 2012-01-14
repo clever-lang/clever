@@ -299,7 +299,6 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 			delete arg_values;
 			delete args;
 			return;
-			break;
 	}
 
 	call->setName(method_name);
@@ -554,7 +553,7 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 	const Function* func;
 	ASTNode* args = expr->getArgs();
 	Value* arg_values = NULL;
-	int num_args = args ? args->getNodes().size() : 0;
+	size_t num_args = args ? args->getNodes().size() : 0;
 
 	if (fvalue == NULL) {
 		Compiler::errorf(expr->getLocation(), "Function `%S' does not exists!",

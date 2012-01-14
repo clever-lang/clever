@@ -129,7 +129,7 @@ public:
 		return id != 0 && id < size() && find(id)->second->hasSameId(cstring);
 	}
 
-	const CString* getCString(long id) const throw() {
+	const CString* getCString(IdType id) const throw() {
 		return find(id)->second;
 	}
 

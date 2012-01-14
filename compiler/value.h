@@ -380,8 +380,8 @@ public:
 	void setContext(Value* const value) throw() { m_context = value; }
 	Value* getContext() const throw() { return m_context; }
 
-	const FunctionPtr getFunctionPtr() const throw() { return m_handler.func->getPtr(); }
-	const MethodPtr getMethodPtr() const throw() { return m_handler.method->getPtr(); }
+	FunctionPtr getFunctionPtr() const throw() { return m_handler.func->getPtr(); }
+	MethodPtr getMethodPtr() const throw() { return m_handler.method->getPtr(); }
 
 	Function* getFunction() const throw() { return m_handler.func; }
 	const Method* getMethod() const throw() { return m_handler.method; }

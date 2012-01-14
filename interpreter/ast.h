@@ -875,7 +875,7 @@ public:
 		}
 	}
 
-	const CString* const getName() const throw() { return m_name->getName(); }
+	const CString* getName() const throw() { return m_name->getName(); }
 	ArgumentDeclList* getArgs() const throw() { return m_args; }
 
 	Identifier* getReturn() const throw() { return m_return; }
@@ -951,7 +951,7 @@ public:
 		return m_value;
 	}
 
-	const CString* const getFuncName() const throw() { return m_name->getName(); }
+	const CString* getFuncName() const throw() { return m_name->getName(); }
 
 	ArgumentList* getArgs() throw() { return m_args; }
 
@@ -1003,7 +1003,7 @@ public:
 	}
 
 	ASTNode* getVariable() const throw() { return m_var; }
-	const CString* const getMethodName() const throw() { return m_method->getName(); }
+	const CString* getMethodName() const throw() { return m_method->getName(); }
 	ArgumentList* getArgs() const throw() { return m_args; }
 
 	Value* getValue() const throw() { return m_result; }
@@ -1089,15 +1089,15 @@ public:
 		}
 	}
 
-	const CString* const getPackageName() throw() {
+	const CString* getPackageName() throw() {
 		return m_package->getName();
 	}
 
-	const CString* const getModuleName() throw() {
+	const CString* getModuleName() throw() {
 		return m_module ? m_module->getName() : NULL;
 	}
 
-	const CString* const getAliasName() throw() {
+	const CString* getAliasName() throw() {
 		return m_alias ? m_alias->getName() : NULL;
 	}
 

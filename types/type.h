@@ -212,7 +212,7 @@ private:
 
 class TemplatedType : public Type {
 public:
-	explicit TemplatedType(const CString* name, int num_args)
+	explicit TemplatedType(const CString* name, size_t num_args)
 		: Type(name), m_num_args(num_args) {}
 
 	virtual bool isTemplatedType() const {
@@ -223,7 +223,7 @@ public:
 		return m_num_args;
 	}
 
-	const Type* getTypeArg(int index) const {
+	const Type* getTypeArg(size_t index) const {
 		return m_type_args[index];
 	}
 
@@ -239,7 +239,7 @@ public:
 		return NULL;
 	}
 private:
-	const int m_num_args;
+	const size_t m_num_args;
 	::std::vector<const Type*> m_type_args;
 
 protected:
