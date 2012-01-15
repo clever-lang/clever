@@ -212,7 +212,9 @@ AST_VISITOR(TypeChecker, RegexPattern) {
 	ValueVector* vec = new ValueVector;
 	TypeVector args_types;
 
-	clever_assert(type != NULL, "Pcre type not found!");
+	if (type == NULL) {
+		Compiler::error("Pcre module must be loaded to use the regex syntax!");
+	}
 
 	vec->push_back(expr->getRegex());
 
