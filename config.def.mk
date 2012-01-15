@@ -11,12 +11,12 @@
 VERSION=devel
 MODULES=std std.math std.io std.file std.os std.reflection std.net std.regex
 
-ifeq ($(HAS_PKGCONFIG),yes)
-mod_std_regex_CXXFLAGS = $(shell pkg-config --cflags libpcrecpp)
-mod_std_regex_LDFLAGS  = $(shell pkg-config --libs libpcrecpp)
-else
+ifeq ($(IS_WIN32),yes)
 mod_std_regex_CXXFLAGS =
 mod_std_regex_LDFLAGS  = -lpcrecpp
+else
+mod_std_regex_CXXFLAGS = $(shell pkg-config --cflags libpcrecpp)
+mod_std_regex_LDFLAGS  = $(shell pkg-config --libs libpcrecpp)
 endif
 
 #

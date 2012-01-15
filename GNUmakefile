@@ -29,9 +29,6 @@ ENSURE_DIRS :=
 # Environment
 UNAME=$(shell uname)
 IS_WIN32=$(if $(or $(findstring MINGW,$(UNAME)),$(findstring CYGWIN,$(UNAME))),yes,)
-
-HAS_PKGCONFIG=$(if $(shell which pkg-config),yes,)
-
 BINEXT=$(if $(findstring yes,$(IS_WIN32)),.exe,)
 
 
@@ -90,12 +87,12 @@ testrunner_BIN := extra/testrunner$(BINEXT)
 testrunner_SRC := extra/testrunner.cc
 testrunner_OBJ := $(addprefix $(OBJDIR)/,$(testrunner_SRC:.cc=.o))
 
-ifeq ($(HAS_PKGCONFIG),yes)
-testrunner_CXXFLAGS := $(shell pkg-config --cflags libpcrecpp)
-testrunner_LDFLAGS  := $(shell pkg-config --libs libpcrecpp)
-else
+ifeq ($(IS_WIN32),yes)
 testrunner_CXXFLAGS := 
 testrunner_LDFLAGS  := -lpcrecpp
+else
+testrunner_CXXFLAGS := $(shell pkg-config --cflags libpcrecpp)
+testrunner_LDFLAGS  := $(shell pkg-config --libs libpcrecpp)
 endif
 
 OBJFILES    += $(testrunner_OBJ)
