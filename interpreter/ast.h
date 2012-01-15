@@ -355,23 +355,35 @@ private:
 
 class RegexPattern : public ASTNode {
 public:
-	RegexPattern(const CString* regex)
+	RegexPattern(Value* regex)
 		: m_regex(regex) {
 		m_value = new Value;
 	}
 
-	~RegexPattern() {}
+	~RegexPattern() {
+		if (m_method) {
+			m_method->delRef();
+		}
+	}
 
-	const CString* getRegex() const throw() { return m_regex; }
+	Value* getRegex() const throw() { return m_regex; }
 
 	void accept(ASTVisitor& visitor) throw() {
 		visitor.visit(this);
 	}
 
+	void setMethodValue(CallableValue* method) throw() { m_method = method; }
+	CallableValue* getMethodValue() const throw() { return m_method; }
+
 	Value* getValue() const throw() { return m_value; }
+
+	void setArgsValue(Value* args) throw() { m_args_value = args; }
+	Value* getArgsValue() const throw() { return m_args_value; }
 private:
-	const CString* m_regex;
+	Value* m_regex;
 	Value* m_value;
+	Value* m_args_value;
+	CallableValue* m_method;
 };
 
 class UnaryExpr : public ASTNode {

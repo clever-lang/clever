@@ -51,6 +51,13 @@ AST_VISITOR(CodeGenVisitor, AliasStmt) {
 }
 
 AST_VISITOR(CodeGenVisitor, RegexPattern) {
+	CallableValue* call = expr->getMethodValue();
+	Value* arg_values = expr->getArgsValue();
+
+	call->addRef();
+	expr->getValue()->addRef();
+
+	emit(OP_MCALL, &VM::mcall_handler, call, arg_values, expr->getValue());
 }
 
 /**

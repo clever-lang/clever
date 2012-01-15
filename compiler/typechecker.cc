@@ -206,6 +206,36 @@ AST_VISITOR(TypeChecker, Constant) {
 }
 
 AST_VISITOR(TypeChecker, RegexPattern) {
+	const Type* type = CLEVER_TYPE("Pcre");
+	CallableValue* mvalue = new CallableValue;
+	Value* arg_values = new Value;
+	ValueVector* vec = new ValueVector;
+	TypeVector args_types;
+
+	clever_assert(type != NULL, "Pcre type not found!");
+
+	vec->push_back(expr->getRegex());
+
+	arg_values->setType(Value::VECTOR);
+	arg_values->setVector(vec);
+
+	expr->setArgsValue(arg_values);
+
+	args_types.push_back(CLEVER_STR);
+	const Method* ctor = type->getMethod(CSTRING(CLEVER_CTOR_NAME), &args_types);
+
+	clever_assert(ctor != NULL, "Method not found!");
+
+	Value* value = expr->getValue();
+
+	value->setTypePtr(type);
+
+	mvalue->setTypePtr(type);
+	mvalue->setHandler(ctor);
+	mvalue->setContext(value);
+	value->addRef();
+
+	expr->setMethodValue(mvalue);
 }
 
 AST_VISITOR(TypeChecker, Identifier) {
