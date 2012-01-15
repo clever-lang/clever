@@ -51,11 +51,11 @@ public:
 	typedef	enum { INVALID, VALUE, TYPE } SymbolType;
 
 	Symbol()
-		: m_name(NULL), m_type(INVALID) {
+		: m_name(NULL), m_type(INVALID), m_data() {
 	}
 
 	Symbol(const CString* name, Value* value)
-		: m_name(name), m_type(VALUE) {
+		: m_name(name), m_type(VALUE), m_data() {
 		clever_assert(name != NULL,  "No name provided.");
 		clever_assert(value != NULL, "No value provided.");
 
@@ -63,7 +63,7 @@ public:
 	}
 
 	Symbol(const CString* name, const Type* type)
-		: m_name(name), m_type(TYPE) {
+		: m_name(name), m_type(TYPE), m_data() {
 		clever_assert(name != NULL, "No name provided.");
 		clever_assert(type != NULL, "No type provided.");
 
@@ -71,6 +71,17 @@ public:
 	}
 
 	~Symbol() { }
+	
+	Symbol(const Symbol& rhs)
+		: m_name(rhs.m_name), m_type(rhs.m_type), m_data(rhs.m_data) {}
+
+	Symbol& operator=(const Symbol& rhs) {
+		m_name = rhs.m_name;
+		m_type = rhs.m_type;
+		m_data = rhs.m_data;
+
+		return *this;
+	}
 
 	const CString* getSymbolName() const { return m_name; }
 	SymbolType     getSymbolType() const { return m_type; }
@@ -123,6 +134,19 @@ public:
 		}
 	}
 	~Scope();
+
+	Scope(const Scope& rhs)
+		: RefCounted(rhs.refCount()), m_syms(rhs.m_syms), m_parent(rhs.m_parent), m_depth(rhs.m_depth) {}
+
+	Scope& operator=(const Scope& rhs) {
+		setReference(rhs.refCount()); // is this ok?
+
+		m_syms   = rhs.m_syms;
+		m_parent = rhs.m_parent;
+		m_depth  = rhs.m_depth;
+
+		return *this;
+	}
 
 	size_t getDepth() const { return m_depth; }
 
@@ -206,7 +230,7 @@ class SymbolTable {
 	typedef std::deque<Scope*> ScopeDeque;
 public:
 	SymbolTable()
-		: m_level() {}
+		: m_level(), m_scope() {}
 
 	~SymbolTable() {
 		//clever_assert(m_level < 0, "%i scopes were not properly cleaned.", m_level);

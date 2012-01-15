@@ -33,10 +33,10 @@ namespace clever {
 class NO_INIT_VTABLE RefCounted {
 public:
 	RefCounted()
-		: m_reference(1) {	}
+		: m_reference(1) { }
 
 	explicit RefCounted(int reference)
-		: m_reference(reference) {	}
+		: m_reference(reference) { }
 
 	virtual ~RefCounted() { }
 
