@@ -24,7 +24,6 @@
  */
 
 #include <fstream>
-#include <iostream>
 #include <errno.h>
 #include <fcntl.h>
 #include <sys/poll.h>

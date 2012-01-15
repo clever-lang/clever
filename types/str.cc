@@ -23,10 +23,7 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <iostream>
-#include <sstream>
 #include <cstdlib>
-#include <stdexcept>
 #include "compiler/cstring.h"
 #include "types/type.h"
 #include "types/str.h"
@@ -62,11 +59,8 @@ CLEVER_TYPE_METHOD(String::replace) {
  * Retrieves a substring from the original one.
  */
 CLEVER_TYPE_METHOD(String::substring) {
-	if (size_t(CLEVER_ARG(0)->getInteger()) >= CLEVER_THIS()->toString().length()) {
-		std::cerr << "Out of range: " << CLEVER_ARG(0)->getInteger()
-			<< " is after the end of the string." << std::endl;
-		std::exit(1);
-	}
+	clever_assert(static_cast<size_t>(CLEVER_ARG(0)->getInteger()) < CLEVER_THIS()->toString().length(),
+			"Out of range: %l is after the end of the string.", CLEVER_ARG(0)->getInteger());
 
 	std::string substr = CLEVER_THIS()->toString().substr(CLEVER_ARG(0)->getInteger(), CLEVER_ARG(1)->getInteger());
 	CLEVER_RETURN_STR(CSTRING(substr));
@@ -77,13 +71,13 @@ CLEVER_TYPE_METHOD(String::substring) {
  * Converts the string to a double, if possible.
  */
 CLEVER_TYPE_METHOD(String::toDouble) {
-	double floatValue;
+	double floatValue = 0.0;
 	std::stringstream stream(CLEVER_THIS()->toString());
 
-	if ((stream >> floatValue).fail()) {
-		std::cerr << "\"" << CLEVER_THIS()->toString() << "\" is not a valid float." << std::endl;
-		std::exit(1);
-	}
+	stream >> floatValue;
+
+	clever_assert(stream.fail() == false,
+		"'%s' is not a valid floating point number.", CLEVER_THIS()->toString().c_str());
 
 	retval->setDouble(floatValue);
 }
@@ -93,14 +87,15 @@ CLEVER_TYPE_METHOD(String::toDouble) {
  * Converts the string to an integer, if possible.
  */
 CLEVER_TYPE_METHOD(String::toInteger) {
-	int64_t integer;
+	int64_t integer = 0L;
 	std::stringstream stream(CLEVER_THIS()->toString());
 
-	if ((stream >> integer).fail()) {
-		std::cerr << "\"" << CLEVER_THIS()->toString() << "\" is not a valid integer." << std::endl;
-		std::exit(1);
-	}
+	stream >> integer;
 
+	clever_assert(stream.fail() == false,
+			"'%s' is not a valid integer.", CLEVER_THIS()->toString().c_str());
+
+	
 	CLEVER_RETURN_INT(integer);
 }
 

@@ -23,7 +23,6 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <iostream>
 #include "compiler/cstring.h"
 #include "types/type.h"
 #include "types/int.h"

@@ -23,7 +23,6 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <iostream>
 #include "compiler/value.h"
 #include "compiler/symboltable.h"
 #include "modules/std/file/file.h"

@@ -24,7 +24,6 @@
  */
 
 #include <fstream>
-#include <iostream>
 #include "compiler/compiler.h"
 #include "compiler/cstring.h"
 #include "modules/std/file/filestream.h"

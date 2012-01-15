@@ -24,7 +24,6 @@
  */
 
 #include <cstdlib>
-#include <iostream>
 #include "compiler/compiler.h"
 #include "opcode.h"
 #include "vm.h"

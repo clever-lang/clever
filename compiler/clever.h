@@ -26,7 +26,7 @@
 #ifndef CLEVER_H
 #define CLEVER_H
 
-#include <iostream>
+#include <sstream>
 #include <cstdarg>
 
 namespace clever {

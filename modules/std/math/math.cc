@@ -26,8 +26,6 @@
 
 #include <cmath>
 #include <cstdlib>
-#include <string>
-#include <iostream>
 #include "compiler/symboltable.h"
 #include "modules/std/math/math.h"
 #include "types/nativetypes.h"

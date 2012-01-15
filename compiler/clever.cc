@@ -25,6 +25,7 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <iostream>
 #include "compiler/clever.h"
 #include "compiler/value.h"
 
