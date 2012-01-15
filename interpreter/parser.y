@@ -106,6 +106,7 @@ namespace clever {
 %token DOUBLE_COLON  "::"
 %token CONSTANT      "constant"
 %token USE           "use"
+%token REGEX         "regex-pattern"
 
 %left ',';
 %left LOGICAL_OR;
@@ -160,6 +161,7 @@ namespace clever {
 	ast::IntegralValue* integral_value;
 	ast::TemplateArgsVector* template_args;
 	ast::AliasStmt* alias_stmt;
+	ast::RegexPattern* regex_pattern;
 }
 
 %type <identifier> IDENT
@@ -170,6 +172,7 @@ namespace clever {
 %type <identifier> package_module_name
 %type <identifier> func_name
 %type <identifier> TYPE
+%type <regex_pattern> REGEX
 %type <identifier> CONSTANT
 %type <constant> constant
 %type <template_args> template_args
@@ -418,6 +421,7 @@ literal:
 	|	STR         { $$ = $<ast_node>1; }
 	|	TRUE        { $$ = $<ast_node>1; }
 	|	FALSE       { $$ = $<ast_node>1; }
+	|	REGEX 		{ $$ = $<ast_node>1; }
 ;
 
 variable_decl_or_empty:

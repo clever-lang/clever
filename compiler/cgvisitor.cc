@@ -50,6 +50,9 @@ AST_VISITOR(CodeGenVisitor, Constant) {
 AST_VISITOR(CodeGenVisitor, AliasStmt) {
 }
 
+AST_VISITOR(CodeGenVisitor, RegexPattern) {
+}
+
 /**
  * Generates opcode for unary expression
  */

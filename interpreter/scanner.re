@@ -56,6 +56,7 @@ next_token:
 	SPECIAL    = [;(),{}&~^|=+*/-];
 	TYPE       = [A-Z][a-zA-Z0-9_]*;
 	CONSTANT   = [A-Z][A-Z0-9_]+;
+	REGEX      = "/"([a-zA-Z0-9]+|SPACE|[?()*][]|"\\"[^])*"/";
 
 	<!*> { yylen = cursor - s.yylex; }
 
@@ -228,6 +229,11 @@ next_token:
 	<INITIAL>TYPE {
 		yylval->ast_node = new ast::Identifier(CSTRING(std::string(s.yylex, yylen)));
 		RET(token::TYPE);
+	}
+
+	<INITIAL>REGEX {
+		yylval->regex_pattern = new ast::RegexPattern(CSTRING(std::string(s.yylex, yylen)));
+		RET(token::REGEX);
 	}
 
 	<INITIAL>SPECIAL { RET(Parser::token_type(s.yylex[0])); }
