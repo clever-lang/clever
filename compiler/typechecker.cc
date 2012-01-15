@@ -370,8 +370,8 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 
 				if (template_args->size() != temp_type->getNumArgs()) {
 					Compiler::errorf(expr->getLocation(),
-						"Wrong number of template arguments given."
-						"`%S' requires %d arguments and %d was given.",
+						"Wrong number of template arguments given. "
+						"`%S' requires %l arguments and %l was given.",
 						type->getName(), temp_type->getNumArgs(),
 						template_args->size()
 					);
