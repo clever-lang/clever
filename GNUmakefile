@@ -125,7 +125,7 @@ override CXXFLAGS += -Wextra -ggdb3 -pg -D_DEBUG -DCLEVER_DEBUG
 else ifeq ($(BUILD),debug)
 override CXXFLAGS += -ggdb3 -D_DEBUG -DCLEVER_DEBUG
 else
-override CXXFLAGS +=-O2 -g -DNDEBUG
+override CXXFLAGS +=-O2 -DNDEBUG
 endif
 
 .SUFFIXES:
