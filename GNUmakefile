@@ -31,6 +31,7 @@ UNAME=$(shell uname)
 IS_WIN32=$(if $(or $(findstring MINGW,$(UNAME)),$(findstring CYGWIN,$(UNAME))),yes,)
 BINEXT=$(if $(findstring yes,$(IS_WIN32)),.exe,)
 
+
 #############################################################################
 # Helper functions
 # has-goal goal
@@ -85,8 +86,14 @@ ENSURE_DIRS += $(sort $(dir $(clever_OBJ)))
 testrunner_BIN := extra/testrunner$(BINEXT)
 testrunner_SRC := extra/testrunner.cc
 testrunner_OBJ := $(addprefix $(OBJDIR)/,$(testrunner_SRC:.cc=.o))
+
+ifeq ($(IS_WIN32),yes)
+testrunner_CXXFLAGS := 
+testrunner_LDFLAGS  := -lpcrecpp
+else
 testrunner_CXXFLAGS := $(shell pkg-config --cflags libpcrecpp)
 testrunner_LDFLAGS  := $(shell pkg-config --libs libpcrecpp)
+endif
 
 OBJFILES    += $(testrunner_OBJ)
 ENSURE_DIRS += $(sort $(dir $(testrunner_OBJ)))
@@ -125,7 +132,7 @@ override CXXFLAGS += -Wextra -ggdb3 -pg -D_DEBUG -DCLEVER_DEBUG
 else ifeq ($(BUILD),debug)
 override CXXFLAGS += -ggdb3 -D_DEBUG -DCLEVER_DEBUG
 else
-override CXXFLAGS +=-O2 -g -DNDEBUG
+override CXXFLAGS +=-O2 -DNDEBUG
 endif
 
 .SUFFIXES:
