@@ -41,8 +41,8 @@ enum YYCONDTYPE {
 #define YYSETCONDITION(x) s.state = yyc##x
 
 #define YYCTYPE       char
-#define YYMARKER     (s.ctx)
-#define YYCTXMARKER  (s.ctx)
+#define YYMARKER     s.ctx
+#define YYCTXMARKER  s.ctx
 #define YYCURSOR     cursor
 #define YYLIMIT      cursor
 
