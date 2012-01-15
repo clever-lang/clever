@@ -205,6 +205,9 @@ AST_VISITOR(TypeChecker, Constant) {
 	expr->getValue()->copy(constant);
 }
 
+AST_VISITOR(TypeChecker, RegexPattern) {
+}
+
 AST_VISITOR(TypeChecker, Identifier) {
 	Value* ident = g_symtable.getValue(expr->getName());
 

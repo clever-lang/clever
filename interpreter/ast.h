@@ -353,6 +353,27 @@ private:
 	Value* m_value;
 };
 
+class RegexPattern : public ASTNode {
+public:
+	RegexPattern(const CString* regex)
+		: m_regex(regex) {
+		m_value = new Value;
+	}
+
+	~RegexPattern() {}
+
+	const CString* getRegex() const throw() { return m_regex; }
+
+	void accept(ASTVisitor& visitor) throw() {
+		visitor.visit(this);
+	}
+
+	Value* getValue() const throw() { return m_value; }
+private:
+	const CString* m_regex;
+	Value* m_value;
+};
+
 class UnaryExpr : public ASTNode {
 public:
 	UnaryExpr(int op, ASTNode* expr)
