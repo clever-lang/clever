@@ -1,0 +1,10 @@
+Testing replace using the regex syntax
+==CODE==
+import std.io;
+import std.regex;
+
+Pcre a = /fo+/;
+
+println(a.replace("x", "foobar"));
+==RESULT==
+xbar
