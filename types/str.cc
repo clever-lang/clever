@@ -149,13 +149,13 @@ CLEVER_TYPE_METHOD(String::constructor) {
 
 CLEVER_TYPE_METHOD(String::toUpper) {
     std::string str = CLEVER_THIS()->toString();
-    std::transform(str.begin(), str.end(),str.begin(), ::toupper);
+    ::std::transform(str.begin(), str.end(),str.begin(), ::toupper);
     CLEVER_RETURN_STR(CSTRING(str));
 }
 
 CLEVER_TYPE_METHOD(String::toLower) {
     std::string str = CLEVER_THIS()->toString();
-    std::transform(str.begin(), str.end(),str.begin(), ::tolower);
+    ::std::transform(str.begin(), str.end(),str.begin(), ::tolower);
     CLEVER_RETURN_STR(CSTRING(str));
 }
 
