@@ -88,7 +88,7 @@ testrunner_SRC := extra/testrunner.cc
 testrunner_OBJ := $(addprefix $(OBJDIR)/,$(testrunner_SRC:.cc=.o))
 
 ifeq ($(IS_WIN32),yes)
-testrunner_CXXFLAGS := 
+testrunner_CXXFLAGS :=
 testrunner_LDFLAGS  := -lpcrecpp
 else
 testrunner_CXXFLAGS := $(shell pkg-config --cflags libpcrecpp)
