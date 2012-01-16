@@ -31,15 +31,38 @@
 namespace clever {
     
 /**
- * String:trim()
+ * String:ltrim()
+ * Trim non letters from left
  */
 CLEVER_TYPE_METHOD(String::ltrim) {
+    std::string newString = CLEVER_THIS()->toString();
+    newString.erase(0, newString.find_first_not_of(" \n\r\t"));
+    CLEVER_RETURN_STR(CSTRING(newString));
 }
 
+/**
+ * String:rtrim()
+ * Trim non letters from right
+ */
 CLEVER_TYPE_METHOD(String::rtrim) {
+    std::string newString = CLEVER_THIS()->toString();
+    newString.erase(newString.find_last_not_of(" \n\r\t")+1);
+    CLEVER_RETURN_STR(CSTRING(newString));
 }
 
+/**
+ * String:trim()
+ * Trim non letters from both sides
+ */
 CLEVER_TYPE_METHOD(String::trim) {
+    std::string newString = CLEVER_THIS()->toString();
+    // ltrim
+    newString.erase(0, newString.find_first_not_of(" \n\r\t"));
+    
+    // rtrim
+    newString.erase(newString.find_last_not_of(" \n\r\t")+1);
+    
+    CLEVER_RETURN_STR(CSTRING(newString));
 }
 
 /**
