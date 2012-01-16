@@ -1,6 +1,6 @@
 String substring() and replace() methods
 ==CODE==
-import std;
+import std.io;
 
 String foo = "0123456789";
 

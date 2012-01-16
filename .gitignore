@@ -2,3 +2,5 @@ build*
 extra/testrunner
 *.dSYM
 *.DS_Store.tmp
+clever
+test.txt
