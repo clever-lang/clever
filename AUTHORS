@@ -1,0 +1,36 @@
+Clever Team
+========================================================================
+
+  In this file we'll try to log the name of everyone who have contribu-
+ted to the Clever project.
+
+* Language Design and Implementation
+  - Felipe Pena <felipensp at gmail.com>
+  - Higor Eurípedes <heripedes at gmail.com>
+  - Murilo Adriano Vasconcelos <muriloufg at gmail.com>
+
+* Windows port
+  - Ricardo Gomes da Silva <cadopoa at gmail.com>
+
+* Modules
+  * std
+    * file
+      - Murilo
+    * io
+      - Felipe
+    * math
+      - Felipe, Ricardo
+    * net
+      - Ricardo
+    * os
+      - Ricardo, Felipe
+    * reflection
+      - Felipe
+    * regex
+      - Higor, Felipe
+
+* Names
+ - Felipe  = Felipe Nascimento Silva Pena
+ - Higor   = Higor Eurípedes
+ - Murilo  = Murilo Adriano Vasconcelos
+ - Ricardo = Ricardo Gomes da Silva
