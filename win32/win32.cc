@@ -1,4 +1,4 @@
-/*
+/**
  * Clever programming language
  * Copyright (c) 2011-2012 Clever Team
  *
@@ -22,7 +22,6 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * $Id$
  */
 
 // If this is not a Windows host, don't compile this file.

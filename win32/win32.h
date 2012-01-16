@@ -1,4 +1,4 @@
-/*
+/**
  * Clever programming language
  * Copyright (c) 2011-2012 Clever Team
  *
@@ -22,11 +22,10 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  *
- * $Id$
  */
 
-#ifndef TODO_WIN32_H
-#define TODO_WIN32_H
+#ifndef CLEVER_WIN32_H
+#define CLEVER_WIN32_H
 
 // Assuming that you're running a Windows 2000 or newer version...
 #if (_WIN32_WINNT <= 0x0500)
