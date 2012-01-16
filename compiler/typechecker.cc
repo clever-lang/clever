@@ -207,34 +207,46 @@ AST_VISITOR(TypeChecker, Constant) {
 
 AST_VISITOR(TypeChecker, RegexPattern) {
 	const Type* type = CLEVER_TYPE("Pcre");
-	CallableValue* mvalue = new CallableValue;
-	Value* arg_values = new Value;
-	ValueVector* vec = new ValueVector;
-	TypeVector args_types;
 
 	if (type == NULL) {
 		Compiler::error("Regex module must be loaded to use the regex syntax!");
 	}
 
+	expr->getRegex()->addRef();
+
+	/**
+	 * Sets the argument vector for the Pcre constructor
+	 */
+	ValueVector* vec = new ValueVector;
 	vec->push_back(expr->getRegex());
 
-	arg_values->setType(Value::VECTOR);
+	Value* arg_values = new Value;
 	arg_values->setVector(vec);
+	arg_values->addRef();
 
 	expr->setArgsValue(arg_values);
 
+	/**
+	 * Finds the Pcre constructor method
+	 */
+	TypeVector args_types;
 	args_types.push_back(CLEVER_STR);
-	const Method* ctor = type->getMethod(CSTRING(CLEVER_CTOR_NAME), &args_types);
 
-	clever_assert(ctor != NULL, "Method not found!");
+	const Method* ctor = type->getMethod(CSTRING(CLEVER_CTOR_NAME), &args_types);
+	clever_assert(ctor != NULL, "Pcre's constructor method not found!");
 
 	Value* value = expr->getValue();
-
 	value->setTypePtr(type);
 
+	/**
+	 * The Pcre constructor CallableValue
+	 */
+	CallableValue* mvalue = new CallableValue;
 	mvalue->setTypePtr(type);
 	mvalue->setHandler(ctor);
 	mvalue->setContext(value);
+	mvalue->addRef();
+
 	value->addRef();
 
 	expr->setMethodValue(mvalue);

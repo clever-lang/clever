@@ -364,6 +364,12 @@ public:
 		if (m_method) {
 			m_method->delRef();
 		}
+		if (m_regex) {
+			m_regex->delRef();
+		}
+		if (m_args_value) {
+			m_args_value->delRef();
+		}
 	}
 
 	Value* getRegex() const throw() { return m_regex; }

@@ -50,14 +50,12 @@ AST_VISITOR(CodeGenVisitor, Constant) {
 AST_VISITOR(CodeGenVisitor, AliasStmt) {
 }
 
+/**
+ * Generates opcode for regex syntax
+ */
 AST_VISITOR(CodeGenVisitor, RegexPattern) {
-	CallableValue* call = expr->getMethodValue();
-	Value* arg_values = expr->getArgsValue();
-
-	call->addRef();
-	expr->getValue()->addRef();
-
-	emit(OP_MCALL, &VM::mcall_handler, call, arg_values, expr->getValue());
+	emit(OP_MCALL, &VM::mcall_handler,
+		expr->getMethodValue(), expr->getArgsValue(), expr->getValue());
 }
 
 /**
