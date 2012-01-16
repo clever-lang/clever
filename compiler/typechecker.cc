@@ -213,7 +213,7 @@ AST_VISITOR(TypeChecker, RegexPattern) {
 	TypeVector args_types;
 
 	if (type == NULL) {
-		Compiler::error("Pcre module must be loaded to use the regex syntax!");
+		Compiler::error("Regex module must be loaded to use the regex syntax!");
 	}
 
 	vec->push_back(expr->getRegex());
