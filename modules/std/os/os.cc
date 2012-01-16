@@ -41,6 +41,24 @@ static CLEVER_FUNCTION(system) {
 	CLEVER_RETURN_INT(::system(CLEVER_ARG_STR(0).c_str()));
 }
 
+/**
+ * putenv(String env)
+ * Sets an environment variable
+ */
+static CLEVER_FUNCTION(putenv) {
+	::putenv(const_cast<char*>(CLEVER_ARG_STR(0).c_str()));
+}
+
+/**
+ * getenv(String env)
+ * Gets an environment variable
+ */
+static CLEVER_FUNCTION(getenv) {
+	const char* ret = ::getenv(const_cast<char*>(CLEVER_ARG_STR(0).c_str()));
+
+	CLEVER_RETURN_STR(CSTRING(ret ? ret : ""));
+}
+
 } // namespace os
 
 /**
@@ -51,6 +69,12 @@ void OSModule::init() throw() {
 
 	addFunction(new Function("system", &CLEVER_FUNC_NAME(system), CLEVER_INT))
 		->addArg("command", CLEVER_STR);
+
+	addFunction(new Function("putenv", &CLEVER_FUNC_NAME(putenv), CLEVER_VOID))
+		->addArg("env", CLEVER_STR);
+
+	addFunction(new Function("getenv", &CLEVER_FUNC_NAME(getenv), CLEVER_STR))
+		->addArg("var", CLEVER_STR);
 }
 
 }}} // clever::packages::std

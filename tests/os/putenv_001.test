@@ -1,0 +1,9 @@
+Testing putenv and getenv
+==CODE==
+import std.os;
+import std.io;
+
+putenv("FOO=BAR");
+println(getenv("FOO"));
+==RESULT==
+BAR

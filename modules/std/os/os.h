@@ -28,12 +28,12 @@
 
 #include "compiler/module.h"
 
-namespace clever { namespace packages { namespace std { 
+namespace clever { namespace packages { namespace std {
 
 class OSModule : public Module {
 public:
 	OSModule()
-		: Module("OS") { }
+		: Module("os") { }
 
 	~OSModule() { }
 
