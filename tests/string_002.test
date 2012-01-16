@@ -1,6 +1,6 @@
 String toDouble() and toInteger() methods
 ==CODE==
-import std;
+import std.io;
 
 Double foo = 123.456;
 Int bar = 789;

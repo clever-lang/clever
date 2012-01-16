@@ -43,10 +43,15 @@ public:
 	 * Type methods
 	 */
 	static CLEVER_TYPE_METHOD(constructor);
+	static CLEVER_TYPE_METHOD(ltrim);
+    static CLEVER_TYPE_METHOD(rtrim);
+    static CLEVER_TYPE_METHOD(trim);
 	static CLEVER_TYPE_METHOD(replace);
 	static CLEVER_TYPE_METHOD(substring);
 	static CLEVER_TYPE_METHOD(toDouble);
 	static CLEVER_TYPE_METHOD(toInteger);
+	static CLEVER_TYPE_METHOD(toUpper);
+    static CLEVER_TYPE_METHOD(toLower);
 
 	/**
 	 * Type operator methods

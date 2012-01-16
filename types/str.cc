@@ -29,6 +29,18 @@
 #include "types/str.h"
 
 namespace clever {
+    
+/**
+ * String:trim()
+ */
+CLEVER_TYPE_METHOD(String::ltrim) {
+}
+
+CLEVER_TYPE_METHOD(String::rtrim) {
+}
+
+CLEVER_TYPE_METHOD(String::trim) {
+}
 
 /**
  * String:replace()
@@ -112,6 +124,18 @@ CLEVER_TYPE_METHOD(String::constructor) {
 	}
 }
 
+CLEVER_TYPE_METHOD(String::toUpper) {
+    std::string str = CLEVER_THIS()->toString();
+    std::transform(str.begin(), str.end(),str.begin(), ::toupper);
+    CLEVER_RETURN_STR(CSTRING(str));
+}
+
+CLEVER_TYPE_METHOD(String::toLower) {
+    std::string str = CLEVER_THIS()->toString();
+    std::transform(str.begin(), str.end(),str.begin(), ::tolower);
+    CLEVER_RETURN_STR(CSTRING(str));
+}
+
 /**
  * + operator (String, String)
  */
@@ -163,6 +187,12 @@ CLEVER_TYPE_METHOD(String::less) {
 
 void String::init() {
 	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&String::constructor, CLEVER_STR));
+	
+    addMethod(new Method("ltrim", (MethodPtr)&String::ltrim, CLEVER_STR));
+    
+    addMethod(new Method("rtrim", (MethodPtr)&String::rtrim, CLEVER_STR));
+    
+    addMethod(new Method("trim", (MethodPtr)&String::trim, CLEVER_STR));
 
 	addMethod(
 		(new Method(CLEVER_OPERATOR_EQUAL, (MethodPtr)&String::equal, CLEVER_BOOL))
@@ -214,6 +244,10 @@ void String::init() {
 	addMethod(new Method("toDouble", (MethodPtr)&String::toDouble, CLEVER_DOUBLE));
 
 	addMethod(new Method("toInteger", (MethodPtr)&String::toInteger, CLEVER_INT));
+	
+	addMethod(new Method("toUpper", (MethodPtr)&String::toUpper, CLEVER_STR));
+	
+	addMethod(new Method("toLower", (MethodPtr)&String::toLower, CLEVER_STR));
 }
 
 DataValue* String::allocateValue() const {
