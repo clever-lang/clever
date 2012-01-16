@@ -24,6 +24,7 @@
  */
 
 #include <cstdlib>
+#include <dirent.h>
 #include "compiler/value.h"
 #include "compiler/symboltable.h"
 #include "modules/std/os/os.h"
@@ -59,6 +60,17 @@ static CLEVER_FUNCTION(getenv) {
 	CLEVER_RETURN_STR(CSTRING(ret ? ret : ""));
 }
 
+/**
+ * getcwd()
+ * Gets the current working directory
+ */
+static CLEVER_FUNCTION(getcwd) {
+	char temp[PATH_MAX];
+	const char* path = ::getcwd(temp, PATH_MAX);
+
+	CLEVER_RETURN_STR(CSTRING(path ? path : ""));
+}
+
 } // namespace os
 
 /**
@@ -75,6 +87,9 @@ void OSModule::init() throw() {
 
 	addFunction(new Function("getenv", &CLEVER_FUNC_NAME(getenv), CLEVER_STR))
 		->addArg("var", CLEVER_STR);
+
+	addFunction(new Function("getcwd", &CLEVER_FUNC_NAME(getcwd), CLEVER_STR));
+
 }
 
 }}} // clever::packages::std
