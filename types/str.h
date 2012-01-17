@@ -44,14 +44,18 @@ public:
 	 */
 	static CLEVER_TYPE_METHOD(constructor);
 	static CLEVER_TYPE_METHOD(ltrim);
-    static CLEVER_TYPE_METHOD(rtrim);
-    static CLEVER_TYPE_METHOD(trim);
+	static CLEVER_TYPE_METHOD(rtrim);
+	static CLEVER_TYPE_METHOD(trim);
 	static CLEVER_TYPE_METHOD(replace);
 	static CLEVER_TYPE_METHOD(substring);
+	// static CLEVER_TYPE_METHOD(capitalize);
+	// static CLEVER_TYPE_METHOD(split);
+	static CLEVER_TYPE_METHOD(at);
+	static CLEVER_TYPE_METHOD(length);
 	static CLEVER_TYPE_METHOD(toDouble);
 	static CLEVER_TYPE_METHOD(toInteger);
 	static CLEVER_TYPE_METHOD(toUpper);
-    static CLEVER_TYPE_METHOD(toLower);
+	static CLEVER_TYPE_METHOD(toLower);
 
 	/**
 	 * Type operator methods

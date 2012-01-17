@@ -102,6 +102,34 @@ CLEVER_TYPE_METHOD(String::substring) {
 }
 
 /**
+ * String:at(Int)
+ * Return the char at position, if possible
+ */
+CLEVER_TYPE_METHOD(String::at) {
+	std::string str = CLEVER_THIS()->toString();
+	int pos = CLEVER_ARG(0)->getInteger();
+	
+	clever_assert(static_cast<size_t>(pos) < str.length(),
+			"Out of range: %l is after the end of the string.", pos);
+	
+	std::string newString;
+	char s[1];
+	s[0] = str[pos];
+	newString = *s;
+	
+	CLEVER_RETURN_STR(CSTRING(newString));
+}
+
+/**
+ * String:length
+ * Return the length of the string
+ */
+CLEVER_TYPE_METHOD(String::length) {
+	std::string str = CLEVER_THIS()->toString();
+	CLEVER_RETURN_INT(str.length());
+}
+
+/**
  * String::toDouble()
  * Converts the string to a double, if possible.
  */
@@ -263,6 +291,13 @@ void String::init() {
 			->addArg("start", CLEVER_INT)
 			->addArg("length", CLEVER_INT)
 	);
+	
+	addMethod(
+		(new Method("at", (MethodPtr)&String::at, CLEVER_STR))
+			->addArg("pos", CLEVER_INT)
+	);
+	
+	addMethod(new Method("length", (MethodPtr)&String::length, CLEVER_INT));
 
 	addMethod(new Method("toDouble", (MethodPtr)&String::toDouble, CLEVER_DOUBLE));
 

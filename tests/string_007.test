@@ -1,0 +1,9 @@
+String length and test chaining
+==CODE==
+import std.io;
+String x = " FooBar";
+println( x.length() );
+println( x.trim().length());
+==RESULT==
+7
+6

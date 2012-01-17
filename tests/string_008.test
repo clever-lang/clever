@@ -1,0 +1,9 @@
+String::at tests
+==CODE==
+import std.io;
+String str = "foobar";
+prinln(str.at(0));
+prinln(str.at(78));
+==RESULT==
+f
+Out of range: 78 is after the end of the string.
