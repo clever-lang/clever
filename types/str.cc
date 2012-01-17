@@ -26,6 +26,7 @@
 #include <cstdlib>
 #include <algorithm>
 #include "compiler/cstring.h"
+#include "compiler/compiler.h"
 #include "types/type.h"
 #include "types/str.h"
 
@@ -100,6 +101,31 @@ CLEVER_TYPE_METHOD(String::substring) {
 
 	std::string substr = CLEVER_THIS()->toString().substr(CLEVER_ARG(0)->getInteger(), CLEVER_ARG(1)->getInteger());
 	CLEVER_RETURN_STR(CSTRING(substr));
+}
+
+/**
+ * String:at(Int)
+ * Return the char at position, if possible
+ */
+CLEVER_TYPE_METHOD(String::at) {
+	int64_t pos = CLEVER_ARG(0)->getInteger();
+	
+	if (static_cast<size_t>(pos) > CLEVER_THIS()->toString().length()) {
+		Compiler::warningf("Out of range: %l is after the end of the string.", pos);
+	}
+	
+	std::string newString;
+	newString = CLEVER_THIS()->toString()[pos];
+	
+	CLEVER_RETURN_STR(CSTRING(newString));
+}
+
+/**
+ * String:length
+ * Return the length of the string
+ */
+CLEVER_TYPE_METHOD(String::length) {
+	CLEVER_RETURN_INT(CLEVER_THIS()->toString().length());
 }
 
 /**
@@ -272,6 +298,13 @@ void String::init() {
 			->addArg("start", CLEVER_INT)
 			->addArg("length", CLEVER_INT)
 	);
+	
+	addMethod(
+		(new Method("at", (MethodPtr)&String::at, CLEVER_STR))
+			->addArg("pos", CLEVER_INT)
+	);
+	
+	addMethod(new Method("length", (MethodPtr)&String::length, CLEVER_INT));
 
 	addMethod(new Method("toDouble", (MethodPtr)&String::toDouble, CLEVER_DOUBLE));
 
