@@ -40,7 +40,7 @@ enum YYCONDTYPE {
 #define YYGETCONDITION()  s.state
 #define YYSETCONDITION(x) s.state = yyc##x
 
-#define YYCTYPE       char
+#define YYCTYPE      unsigned char
 #define YYMARKER     s.ctx
 #define YYCTXMARKER  s.ctx
 #define YYCURSOR     cursor
@@ -57,13 +57,15 @@ class ScannerState {
 public:
 	ScannerState() : state(0) { }
 
-	void set_cursor(const char* cursor) throw() { cur = cursor; }
+	void set_cursor(unsigned const char* cursor) throw() { cur = cursor; }
 
 	int state;
-	const char *cur, *yylex, *ctx;
+	const unsigned char *cur, *yylex, *ctx;
 private:
 	DISALLOW_COPY_AND_ASSIGN(ScannerState);
 };
+
+typedef std::basic_string <unsigned char> ustring;
 
 } // clever
 

@@ -119,7 +119,7 @@ echo-command   = -$(ECHO) "  $1  $2"
 # bison-command input output
 bison-command  = $(BISON) -d -o$2 $1
 # re2c-command input output
-re2c-command   = $(RE2C) --case-insensitive -b -c -o$2 $1
+re2c-command   = $(RE2C) --case-insensitive -bc -o$2 $1
 
 ifeq ($(VERBOSE),yes)
 echo-command =

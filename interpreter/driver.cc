@@ -99,7 +99,7 @@ int Driver::parseFile(const std::string& filename) {
 	readFile();
 	// Set the file source to scanner read it
 	s_scanners.push(&new_scanner);
-	s_scanners.top()->set_cursor(m_source.c_str());
+	s_scanners.top()->set_cursor(reinterpret_cast<const unsigned char*>(m_source.c_str()));
 	// Bison debug option
 	parser.set_debug_level(m_trace_parsing);
 
@@ -127,7 +127,7 @@ int Driver::parseStr(const std::string& code, bool importStd) {
 
 	/* Set the source code to scanner read it */
 	s_scanners.push(&new_scanner);
-	s_scanners.top()->set_cursor(m_source.c_str());
+	s_scanners.top()->set_cursor(reinterpret_cast<const unsigned char*>(m_source.c_str()));
 
 	/* Bison debug option */
 	parser.set_debug_level(m_trace_parsing);
