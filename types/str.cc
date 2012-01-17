@@ -24,12 +24,13 @@
  */
 
 #include <cstdlib>
+#include <algorithm>
 #include "compiler/cstring.h"
 #include "types/type.h"
 #include "types/str.h"
 
 namespace clever {
-    
+
 /**
  * String:ltrim()
  * Trim non letters from left
@@ -58,10 +59,10 @@ CLEVER_TYPE_METHOD(String::trim) {
     std::string newString = CLEVER_THIS()->toString();
     // ltrim
     newString.erase(0, newString.find_first_not_of(" \n\r\t"));
-    
+
     // rtrim
     newString.erase(newString.find_last_not_of(" \n\r\t")+1);
-    
+
     CLEVER_RETURN_STR(CSTRING(newString));
 }
 
@@ -158,7 +159,7 @@ CLEVER_TYPE_METHOD(String::toInteger) {
 	clever_assert(stream.fail() == false,
 			"'%s' is not a valid integer.", CLEVER_THIS()->toString().c_str());
 
-	
+
 	CLEVER_RETURN_INT(integer);
 }
 
@@ -175,16 +176,24 @@ CLEVER_TYPE_METHOD(String::constructor) {
 	}
 }
 
+/**
+ * String String::toUpper()
+ * Returns the current string in upper case
+ */
 CLEVER_TYPE_METHOD(String::toUpper) {
-    std::string str = CLEVER_THIS()->toString();
-    ::std::transform(str.begin(), str.end(),str.begin(), ::toupper);
-    CLEVER_RETURN_STR(CSTRING(str));
+	::std::string str = CLEVER_THIS()->toString();
+	::std::transform(str.begin(), str.end(),str.begin(), ::toupper);
+	CLEVER_RETURN_STR(CSTRING(str));
 }
 
+/**
+ * String String::toLower()
+ * Returns the current string in lower case
+ */
 CLEVER_TYPE_METHOD(String::toLower) {
-    std::string str = CLEVER_THIS()->toString();
-    ::std::transform(str.begin(), str.end(),str.begin(), ::tolower);
-    CLEVER_RETURN_STR(CSTRING(str));
+	::std::string str = CLEVER_THIS()->toString();
+	::std::transform(str.begin(), str.end(),str.begin(), ::tolower);
+	CLEVER_RETURN_STR(CSTRING(str));
 }
 
 /**
@@ -238,12 +247,12 @@ CLEVER_TYPE_METHOD(String::less) {
 
 void String::init() {
 	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&String::constructor, CLEVER_STR));
-	
-    addMethod(new Method("ltrim", (MethodPtr)&String::ltrim, CLEVER_STR));
-    
-    addMethod(new Method("rtrim", (MethodPtr)&String::rtrim, CLEVER_STR));
-    
-    addMethod(new Method("trim", (MethodPtr)&String::trim, CLEVER_STR));
+
+	addMethod(new Method("ltrim", (MethodPtr)&String::ltrim, CLEVER_STR));
+
+	addMethod(new Method("rtrim", (MethodPtr)&String::rtrim, CLEVER_STR));
+
+	addMethod(new Method("trim", (MethodPtr)&String::trim, CLEVER_STR));
 
 	addMethod(
 		(new Method(CLEVER_OPERATOR_EQUAL, (MethodPtr)&String::equal, CLEVER_BOOL))
@@ -302,9 +311,9 @@ void String::init() {
 	addMethod(new Method("toDouble", (MethodPtr)&String::toDouble, CLEVER_DOUBLE));
 
 	addMethod(new Method("toInteger", (MethodPtr)&String::toInteger, CLEVER_INT));
-	
+
 	addMethod(new Method("toUpper", (MethodPtr)&String::toUpper, CLEVER_STR));
-	
+
 	addMethod(new Method("toLower", (MethodPtr)&String::toLower, CLEVER_STR));
 }
 

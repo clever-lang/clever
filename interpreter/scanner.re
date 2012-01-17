@@ -36,7 +36,7 @@ namespace clever {
 typedef Parser::token token;
 
 Parser::token_type yylex(Parser::semantic_type* yylval, Parser::location_type* yylloc, Driver& driver, ScannerState& s) {
-	const char* cursor = s.cur;
+	const unsigned char* cursor = s.cur;
 	int yylen;
 
 next_token:
@@ -212,7 +212,7 @@ next_token:
 	}
 
 	<INITIAL>IDENTIFIER {
-		yylval->identifier = new ast::Identifier(CSTRING(std::string(s.yylex, yylen)));
+		yylval->identifier = new ast::Identifier(CSTRING(std::string(reinterpret_cast<const char*>(s.yylex), yylen)));
 		RET(token::IDENT);
 	}
 
@@ -222,17 +222,17 @@ next_token:
 	}
 
 	<INITIAL>CONSTANT {
-		yylval->ast_node = new ast::Identifier(CSTRING(std::string(s.yylex, yylen)));
+		yylval->ast_node = new ast::Identifier(CSTRING(std::string(reinterpret_cast<const char*>(s.yylex), yylen)));
 		RET(token::CONSTANT);
 	}
 
 	<INITIAL>TYPE {
-		yylval->ast_node = new ast::Identifier(CSTRING(std::string(s.yylex, yylen)));
+		yylval->ast_node = new ast::Identifier(CSTRING(std::string(reinterpret_cast<const char*>(s.yylex), yylen)));
 		RET(token::TYPE);
 	}
 
 	<INITIAL>REGEX {
-		Value* val = new Value(CSTRING(std::string(s.yylex+1, yylen-2)));
+		Value* val = new Value(CSTRING(std::string(reinterpret_cast<const char*>(s.yylex+1), yylen-2)));
 
 		yylval->regex_pattern = new ast::RegexPattern(val);
 		RET(token::REGEX);
@@ -241,7 +241,7 @@ next_token:
 	<INITIAL>SPECIAL { RET(Parser::token_type(s.yylex[0])); }
 
 	<INITIAL>STRING {
-		std::string strtext(s.yylex+1, yylen-2);
+		std::string strtext(reinterpret_cast<const char*>(s.yylex+1), yylen-2);
 		size_t found = 0;
 
 		// Handle sequence char
@@ -274,7 +274,7 @@ next_token:
 
 	<INITIAL>INTEGER {
 		Value* newval = new Value(CLEVER_INT);
-		int64_t n = strtol(std::string(s.yylex, yylen).c_str(), NULL, 10);
+		int64_t n = strtol(std::string(reinterpret_cast<const char*>(s.yylex), yylen).c_str(), NULL, 10);
 
 		newval->setInteger(n);
 
@@ -287,7 +287,7 @@ next_token:
 		Value* newval = new Value(CLEVER_INT);
 		int64_t n = 0;
 
-		std::sscanf(std::string(s.yylex+2, yylen).c_str(), "%X", (unsigned*)&n);
+		std::sscanf(std::string(reinterpret_cast<const char*>(s.yylex+2), yylen).c_str(), "%X", (unsigned*)&n);
 
 		newval->setInteger(n);
 
@@ -313,7 +313,7 @@ next_token:
 		Value* newval = new Value(CLEVER_DOUBLE);
 		double n = 0;
 
-		n = strtod(std::string(s.yylex, yylen).c_str(), NULL);
+		n = strtod(std::string(reinterpret_cast<const char*>(s.yylex), yylen).c_str(), NULL);
 
 		newval->setDouble(n);
 
