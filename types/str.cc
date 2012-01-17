@@ -26,6 +26,7 @@
 #include <cstdlib>
 #include <algorithm>
 #include "compiler/cstring.h"
+#include "compiler/compiler.h"
 #include "types/type.h"
 #include "types/str.h"
 
@@ -107,16 +108,14 @@ CLEVER_TYPE_METHOD(String::substring) {
  * Return the char at position, if possible
  */
 CLEVER_TYPE_METHOD(String::at) {
-	std::string str = CLEVER_THIS()->toString();
-	int pos = CLEVER_ARG(0)->getInteger();
+	int64_t pos = CLEVER_ARG(0)->getInteger();
 	
-	clever_assert(static_cast<size_t>(pos) < str.length(),
-			"Out of range: %l is after the end of the string.", pos);
+	if (static_cast<size_t>(pos) > CLEVER_THIS()->toString().length()) {
+		Compiler::warningf("Out of range: %l is after the end of the string.", pos);
+	}
 	
 	std::string newString;
-	char s[1];
-	s[0] = str[pos];
-	newString = *s;
+	newString = CLEVER_THIS()->toString()[pos];
 	
 	CLEVER_RETURN_STR(CSTRING(newString));
 }
@@ -126,8 +125,7 @@ CLEVER_TYPE_METHOD(String::at) {
  * Return the length of the string
  */
 CLEVER_TYPE_METHOD(String::length) {
-	std::string str = CLEVER_THIS()->toString();
-	CLEVER_RETURN_INT(str.length());
+	CLEVER_RETURN_INT(CLEVER_THIS()->toString().length());
 }
 
 /**
