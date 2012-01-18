@@ -127,7 +127,7 @@ public:
 		}
 	}
 
-	void initialize() throw() {
+	void initialize() {
 		if (getTypePtr() == CLEVER_INT) {
 			setInteger(0);
 		}
@@ -273,26 +273,26 @@ public:
 		return m_data.dv_value;
 	}
 
-	void setContainerType(const Type* key, const Type* value) throw() {
+	void setContainerType(const Type* key, const Type* value) {
 		m_container = ContainerTypePair(key, value);
 	}
 
-	const ContainerTypePair& getContainerType() const throw() {
+	const ContainerTypePair& getContainerType() const {
 		return m_container;
 	}
 
-	void copy(const Value* const value) throw() {
+	void copy(const Value* const value) {
 		std::memcpy(&m_data, value->getData(), sizeof(ValueData));
 		m_type_ptr = value->getTypePtr();
 	}
-	void copy(Value& value) throw() {
+	void copy(Value& value) {
 		std::memcpy(&m_data, value.getData(), sizeof(ValueData));
 		m_type_ptr = value.getTypePtr();
 	}
 
-	virtual Value* getValue() throw() { return this; }
+	virtual Value* getValue() { return this; }
 
-	virtual const CString& toString() throw() {
+	virtual const CString& toString() {
 		std::ostringstream str;
 
 		if (getTypePtr() == CLEVER_INT) {
@@ -367,29 +367,29 @@ public:
 		}
 	}
 
-	void setHandler(Function* handler) throw() {
+	void setHandler(Function* handler) {
 		m_call_type = handler->isInternal() ? FAR : NEAR;
 		m_handler.func = handler;
 	}
 
-	void setHandler(const Method* const handler) throw() {
+	void setHandler(const Method* const handler) {
 		m_call_type = handler->isInternal() ? FAR : NEAR;
 		m_handler.method = handler;
 	}
 
-	void setContext(Value* const value) throw() { m_context = value; }
-	Value* getContext() const throw() { return m_context; }
+	void setContext(Value* const value) { m_context = value; }
+	Value* getContext() const { return m_context; }
 
-	FunctionPtr getFunctionPtr() const throw() { return m_handler.func->getPtr(); }
-	MethodPtr getMethodPtr() const throw() { return m_handler.method->getPtr(); }
+	FunctionPtr getFunctionPtr() const { return m_handler.func->getPtr(); }
+	MethodPtr getMethodPtr() const { return m_handler.method->getPtr(); }
 
-	Function* getFunction() const throw() { return m_handler.func; }
-	const Method* getMethod() const throw() { return m_handler.method; }
+	Function* getFunction() const { return m_handler.func; }
+	const Method* getMethod() const { return m_handler.method; }
 
 	bool isCallable() const { return true; }
 
-	bool isNearCall() const throw() { return m_call_type == NEAR; }
-	bool isFarCall() const throw() { return m_call_type == FAR; }
+	bool isNearCall() const { return m_call_type == NEAR; }
+	bool isFarCall() const { return m_call_type == FAR; }
 
 	/**
 	 * A callable value is not primitive
@@ -401,7 +401,7 @@ public:
 	 *
 	 * Remember to set a context before calling a non-static method.
 	 */
-	void call(Value* const result, const ValueVector* const args) const throw() {
+	void call(Value* const result, const ValueVector* const args) const {
 		const Type* const type_ptr = getTypePtr();
 
 		if (UNEXPECTED(m_call_type == NEAR)) {
@@ -415,7 +415,7 @@ public:
 		}
 	}
 
-	void call(long& next_op) const throw() {
+	void call(long& next_op) const {
 		next_op = m_handler.func->call();
 	}
 private:

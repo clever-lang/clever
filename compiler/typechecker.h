@@ -39,42 +39,42 @@ public:
 		: m_interactive(false) { }
 	~TypeChecker() { }
 
-	void init() throw() { }
+	void init() { }
 
-	void shutdown() throw() { }
+	void shutdown() { }
 
 	AST_VISITOR_DECLARATION(AST_VISITOR_DECL);
 
 	/**
 	 * Set the interactive mode
 	 */
-	void setInteractive() throw() { m_interactive = true; }
+	void setInteractive() { m_interactive = true; }
 
 	/**
 	 * Returns the interactive mode state
 	 */
-	bool isInteractive() throw() { return m_interactive; }
+	bool isInteractive() { return m_interactive; }
 
 	/**
 	 * Checks if the supplied value pointers are compatibles
 	 */
-	static bool checkCompatibleTypes(const Value* const, const Value* const) throw();
+	static bool checkCompatibleTypes(const Value* const, const Value* const);
 
 	/**
 	 * Returns the type resulting of a binary expression of two compatible types
 	 */
-	static const Type* checkExprType(const Value* const, const Value* const) throw();
+	static const Type* checkExprType(const Value* const, const Value* const);
 
-	static int checkFunctionArgs(Function*, int, const location&) throw();
+	static int checkFunctionArgs(Function*, int, const location&);
 
-	static void checkFunctionArgs(const Function*, int, const location&) throw();
+	static void checkFunctionArgs(const Function*, int, const location&);
 
-	static void checkFunctionReturn(const Function*, const Value*, const Type*, const location&) throw();
+	static void checkFunctionReturn(const Function*, const Value*, const Type*, const location&);
 
 	/**
 	 * Returns the arg type names concatenated
 	 */
-	static std::string serializeArgType(TypeVector&, const char*) throw();
+	static std::string serializeArgType(TypeVector&, const char*);
 private:
 	bool m_interactive;
 	FuncDeclStack m_funcs;

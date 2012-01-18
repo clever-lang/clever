@@ -42,7 +42,7 @@ typedef std::vector<const Type*> TypeVector;
 
 #define CLEVER_METHOD_ARGS const ValueVector* args, Value* retval, Value* value, Method* clv_method_
 #define CLEVER_METHOD_NAME(name) clv_m_##name
-#define CLEVER_METHOD(name) void CLEVER_FASTCALL name(CLEVER_METHOD_ARGS) throw()
+#define CLEVER_METHOD(name) void CLEVER_FASTCALL name(CLEVER_METHOD_ARGS)
 #define CLEVER_ARGS_SEPARATOR '#'
 #define CLEVER_CTOR_NAME "$ctor$"
 
@@ -67,37 +67,37 @@ public:
 
 	~Method() { }
 
-	const std::string& getName() const throw() { return m_name; }
-	MethodPtr getPtr() const throw() { return m_info.ptr; }
+	const std::string& getName() const { return m_name; }
+	MethodPtr getPtr() const { return m_info.ptr; }
 
-	void setInternal() throw() { m_type = INTERNAL; }
-	void setUserDefined() throw() { m_type = USER; }
+	void setInternal() { m_type = INTERNAL; }
+	void setUserDefined() { m_type = USER; }
 
-	bool isUserDefined() const throw() { return m_type == USER; }
-	bool isInternal() const throw() { return m_type == INTERNAL; }
+	bool isUserDefined() const { return m_type == USER; }
+	bool isInternal() const { return m_type == INTERNAL; }
 
-	void call(const ValueVector* args, Value* result, Value* context) const throw() {
+	void call(const ValueVector* args, Value* result, Value* context) const {
 		m_info.ptr(args, result, context, const_cast<Method*>(this));
 	}
 
-	long call() const throw() { return m_info.offset; }
+	long call() const { return m_info.offset; }
 
-	const MethodArgs& getArgs() const throw() { return m_args; }
+	const MethodArgs& getArgs() const { return m_args; }
 
 	void setReturnType(const Type* type) { m_rtype = type; }
-	const Type* getReturnType() const throw() { return m_rtype; }
+	const Type* getReturnType() const { return m_rtype; }
 
-	Method* addArg(std::string name, const Type* type) throw() {
+	Method* addArg(std::string name, const Type* type) {
 		m_args.push_back(MethodArgsPair(name, type));
 		m_min_args = ++m_num_args;
 
 		return this;
 	}
 
-	int getNumArgs() const throw() { return m_num_args; }
+	int getNumArgs() const { return m_num_args; }
 
-	Method* setMinNumArgs(int nargs) throw() { m_min_args = nargs; return this; }
-	int getMinNumArgs() const throw() { return m_min_args; }
+	Method* setMinNumArgs(int nargs) { m_min_args = nargs; return this; }
+	int getMinNumArgs() const { return m_min_args; }
 
 private:
 	union {

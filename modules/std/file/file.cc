@@ -46,7 +46,7 @@ namespace file {
 /**
  * Initializes Standard module
  */
-void File::init() throw() {
+void File::init() {
 	Class* filestream = new file::FileStream();
 	filestream->init();
 

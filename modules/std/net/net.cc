@@ -37,7 +37,7 @@ namespace net {
 /**
  * Initializes Standard module
  */
-void NetModule::init() throw() {
+void NetModule::init() {
 	Class* tcpsocket = new net::TcpSocket();
 	tcpsocket->init();
 

@@ -46,7 +46,7 @@ static CLEVER_FUNCTION(get_type) {
 /**
  * Initializes Reflection module
  */
-void Reflection::init() throw() {
+void Reflection::init() {
 	using namespace reflection;
 	ReflectionPackage* refpackage = new ReflectionPackage;
 	// ReflectionFunction* reffunction = new ReflectionFunction;

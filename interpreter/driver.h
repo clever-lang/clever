@@ -61,32 +61,32 @@ public:
 	virtual ~Driver() { }
 
 	/* Initializes the compiler with AST nodes */
-	void initCompiler() throw() {
+	void initCompiler() {
 		m_compiler.init();
 	}
 
-	void emitAST(ast::ASTNode *tree) throw() {
+	void emitAST(ast::ASTNode *tree) {
 		m_compiler.setAST(tree);
 	}
 
 	/* Returns the parsed file */
-	CString* getFile() throw() {
+	CString* getFile() {
 		return const_cast<CString*>(m_file);
 	}
 
 	/* Read file to the scanner */
-	void readFile() throw();
+	void readFile();
 
 	/* Run the parser */
 	int parseStr(const std::string&, bool importStd);
 	int parseFile(const std::string&);
 
 	/* Error handling */
-	void error(const clever::location&, const std::string&) const throw();
-	void error(const std::string&) const throw();
+	void error(const clever::location&, const std::string&) const;
+	void error(const std::string&) const;
 
 	/* Tracing */
-	void setTraceParsing(bool trace) throw() { m_trace_parsing = trace; }
+	void setTraceParsing(bool trace) { m_trace_parsing = trace; }
 protected:
 	/* Indicates if it's a file is being parsed */
 	bool m_is_file;

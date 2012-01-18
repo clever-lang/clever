@@ -91,7 +91,7 @@ static CLEVER_FUNCTION(read) {
 /**
  * Initializes Standard module
  */
-void IOModule::init() throw() {
+void IOModule::init() {
 	using namespace io;
 
 	addFunction(new Function("print", &CLEVER_FUNC_NAME(print), CLEVER_VOID))

@@ -64,7 +64,7 @@ Compiler::~Compiler() {
 /**
  * Initializes the compiler data
  */
-void Compiler::init() throw() {
+void Compiler::init() {
 	/* Load package list */
 	g_pkgmanager.init();
 
@@ -79,7 +79,7 @@ void Compiler::init() throw() {
 /**
  * Loads the class representations of native types
  */
-void Compiler::loadNativeTypes() throw() {
+void Compiler::loadNativeTypes() {
 	CLEVER_INT    = new Integer;
 	CLEVER_STR    = new String;
 	CLEVER_DOUBLE = new Double;
@@ -108,7 +108,7 @@ void Compiler::loadNativeTypes() throw() {
 /**
  * Collects all opcode
  */
-void Compiler::buildIR() throw() {
+void Compiler::buildIR() {
 	m_cgvisitor.init();
 
 	m_ast->accept(m_tcvisitor);
@@ -123,7 +123,7 @@ void Compiler::buildIR() throw() {
 	m_ast->clear();
 }
 
-void Compiler::dumpOpcodes() throw() {
+void Compiler::dumpOpcodes() {
 	const OpcodeList& opcodes = m_cgvisitor.getOpcodes();
 	size_t i = 0, size = opcodes.size();
 
@@ -136,7 +136,7 @@ void Compiler::dumpOpcodes() throw() {
 /**
  * Displays an error message
  */
-void Compiler::error(std::string message, const location& loc) throw() {
+void Compiler::error(std::string message, const location& loc) {
 	if (loc.begin.filename) {
 		m_error_stream << "Compile error: " << message << " on "
 			<< *loc.begin.filename << " line " << loc.begin.line << "\n";
@@ -148,13 +148,13 @@ void Compiler::error(std::string message, const location& loc) throw() {
 	exit(1);
 }
 
-void Compiler::error(std::string message) throw() {
+void Compiler::error(std::string message) {
 	m_error_stream << "Compile error: " << message << "\n";
 	exit(1);
 }
 
 
-void Compiler::errorf(const location& loc, const char* format, ...) throw() {
+void Compiler::errorf(const location& loc, const char* format, ...) {
 	std::ostringstream out;
 	va_list args;
 
@@ -167,7 +167,7 @@ void Compiler::errorf(const location& loc, const char* format, ...) throw() {
 	error(out.str(), loc);
 }
 
-void Compiler::warning(std::string message) throw() {
+void Compiler::warning(std::string message) {
 	if (!(m_error_level & Compiler::WARNING)) {
 		return;
 	}
@@ -175,7 +175,7 @@ void Compiler::warning(std::string message) throw() {
 	m_error_stream << "Warning: " << message << "\n";
 }
 
-void Compiler::warningf(const char* format, ...) throw() {
+void Compiler::warningf(const char* format, ...) {
 	std::ostringstream out;
 	va_list args;
 

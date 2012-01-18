@@ -182,18 +182,18 @@ namespace clever {
 #define clever_assert(Hypothesis, Format ...) \
 	clever::clever_assert_(__FILE__, __LINE__, #Hypothesis, (Hypothesis), Format)
 void clever_assert_(const char* file, long line, const char* expr,
-		int hypothesis, const char* format, ...) throw();
+		int hypothesis, const char* format, ...);
 #else
 #define clever_assert(Hypothesis, Format, ...)
 #endif
 
-void clever_fatal(const char* format, ...) throw();
+void clever_fatal(const char* format, ...);
 
-void vsprintf(std::ostringstream&, const char*, va_list) throw();
-void sprintf(std::ostringstream&, const char*, ...) throw();
-void printf(const char*, ...) throw();
-void vprintfln(const char*, va_list) throw();
-void printfln(const char*, ...) throw();
+void vsprintf(std::ostringstream&, const char*, va_list);
+void sprintf(std::ostringstream&, const char*, ...);
+void printf(const char*, ...);
+void vprintfln(const char*, va_list);
+void printfln(const char*, ...);
 } // clever
 
 #endif /* CLEVER_H */

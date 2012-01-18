@@ -66,7 +66,7 @@ void Interpreter::shutdown() {
 /**
  * Read the file defined in file property
  */
-void Driver::readFile() throw() {
+void Driver::readFile() {
 	std::string line;
 	std::fstream filep(m_file->c_str());
 
@@ -142,7 +142,7 @@ int Driver::parseStr(const std::string& code, bool importStd) {
 /**
  * Prints an error message and exit
  */
-void Driver::error(const clever::location& location, const std::string& message) const throw() {
+void Driver::error(const clever::location& location, const std::string& message) const {
 	position last = location.end - 1;
 
 	if (last.filename) {
@@ -156,7 +156,7 @@ void Driver::error(const clever::location& location, const std::string& message)
 /**
  * Prints an error message
  */
-void Driver::error(const std::string& message) const throw() {
+void Driver::error(const std::string& message) const {
 	std::cerr << message << std::endl;
 }
 

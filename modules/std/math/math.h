@@ -39,7 +39,7 @@ public:
 
 	~Math() { }
 
-	void init() throw();
+	void init();
 private:
 	DISALLOW_COPY_AND_ASSIGN(Math);
 };

@@ -35,7 +35,7 @@ class Regex : public Module {
 public:
 	Regex() : Module("regex") {};
 	~Regex() {};
-	void init() throw();
+	void init();
 
 private:
 	DISALLOW_COPY_AND_ASSIGN(Regex);

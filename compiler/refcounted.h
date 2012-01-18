@@ -42,11 +42,11 @@ public:
 
 	void setReference(int reference) { m_reference = reference; }
 
-	int refCount() const throw() { return m_reference; }
+	int refCount() const { return m_reference; }
 
-	void addRef() throw() { ++m_reference; }
+	void addRef() { ++m_reference; }
 
-	void delRef() throw() {
+	void delRef() {
 		clever_assert(m_reference > 0, "This object has been free'd before.");
 		if (--m_reference == 0) {
 			delete this;

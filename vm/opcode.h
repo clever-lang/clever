@@ -23,8 +23,8 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef CLEVER_OPCODES_H
-#define CLEVER_OPCODES_H
+#ifndef CLEVER_OPCODE_H
+#define CLEVER_OPCODE_H
 
 #include "vm.h"
 #include "types/type.h"
@@ -71,39 +71,39 @@ public:
 
 	~Opcode() { }
 
-	int getOpType() const throw() { return m_op_type; }
+	int getOpType() const { return m_op_type; }
 
-	VM::opcode_handler getHandler() const throw() { return m_handler; }
+	VM::opcode_handler getHandler() const { return m_handler; }
 
-	Value* getOp1() const throw() { return m_op1; }
-	const Type* getOp1Type() const throw() { return m_op1->getTypePtr(); }
-	void setOp1(Value* op1) throw() { m_op1 = op1; }
+	Value* getOp1() const { return m_op1; }
+	const Type* getOp1Type() const { return m_op1->getTypePtr(); }
+	void setOp1(Value* op1) { m_op1 = op1; }
 
-	Value* getOp2() const throw() { return m_op2; }
-	const Type* getOp2Type() const throw() { return m_op2->getTypePtr(); }
-	void setOp2(Value* op2) throw() { m_op2 = op2; }
+	Value* getOp2() const { return m_op2; }
+	const Type* getOp2Type() const { return m_op2->getTypePtr(); }
+	void setOp2(Value* op2) { m_op2 = op2; }
 
-	Value* getResult() const throw() { return m_result; }
-	void setResult(Value* result) throw() { m_result = result; }
+	Value* getResult() const { return m_result; }
+	void setResult(Value* result) { m_result = result; }
 
-	long getOpNum() const throw() { return m_op_num; }
-	void setOpNum(long op_num) throw() { m_op_num = op_num; }
+	long getOpNum() const { return m_op_num; }
+	void setOpNum(long op_num) { m_op_num = op_num; }
 
-	void setJmpAddr1(long jmp_addr) throw() { m_extra.jmp1 = jmp_addr; }
-	long getJmpAddr1() const throw() { return m_extra.jmp1; }
+	void setJmpAddr1(long jmp_addr) { m_extra.jmp1 = jmp_addr; }
+	long getJmpAddr1() const { return m_extra.jmp1; }
 
-	void setJmpAddr2(long jmp_addr) throw() { m_extra.jmp2 = jmp_addr; }
-	long getJmpAddr2() const throw() { return m_extra.jmp2; }
+	void setJmpAddr2(long jmp_addr) { m_extra.jmp2 = jmp_addr; }
+	long getJmpAddr2() const { return m_extra.jmp2; }
 
-	void setFlags(long flags) throw() { m_extra.flags = flags; }
-	long getFlags() const throw() { return m_extra.flags; }
+	void setFlags(long flags) { m_extra.flags = flags; }
+	long getFlags() const { return m_extra.flags; }
 
 	/**
 	 * Methods for debug
 	 */
-	void dump() const throw();
-	const char* getOpName(Opcodes) const throw();
-	std::string dumpOp(const char* const, Value* const) const throw();
+	void dump() const;
+	const char* getOpName(Opcodes) const;
+	std::string dumpOp(const char* const, Value* const) const;
 private:
 	Opcodes m_op_type;
 	VM::opcode_handler m_handler;
@@ -118,4 +118,4 @@ private:
 
 } // clever
 
-#endif // CLEVER_OPCODES_H
+#endif // CLEVER_OPCODE_H

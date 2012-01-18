@@ -33,14 +33,14 @@ namespace clever {
 /**
  * Loads native packages
  */
-void PackageManager::init() throw() {
+void PackageManager::init() {
 	addPackage(CSTRING("std"), new packages::Std());
 }
 
 /**
  * Load an entire package
  */
-void PackageManager::loadPackage(Scope* scope, const CString* const package) throw() {
+void PackageManager::loadPackage(Scope* scope, const CString* const package) {
 	PackageMap::const_iterator it = m_packages.find(package);
 
 	if (it != m_packages.end()) {
@@ -76,7 +76,7 @@ void PackageManager::loadPackage(Scope* scope, const CString* const package) thr
  * Loads an specific module
  */
 void PackageManager::loadModule(Scope* scope, const CString* const package,
-	Module* const module, const CString* const alias) throw() {
+	Module* const module, const CString* const alias) {
 	/**
 	 * Checks if the module already has been loaded
 	 */
@@ -142,7 +142,7 @@ void PackageManager::loadModule(Scope* scope, const CString* const package,
  * Loads an specific module package by supplying the package and module names
  */
 void PackageManager::loadModule(Scope* scope, const CString* const package,
-	const CString* const module, const CString* const alias) throw() {
+	const CString* const module, const CString* const alias) {
 	PackageMap::const_iterator it = m_packages.find(package);
 
 	if (it != m_packages.end()) {
@@ -176,7 +176,7 @@ void PackageManager::loadModule(Scope* scope, const CString* const package,
 /**
  * Removes the packages and its modules
  */
-void PackageManager::shutdown() throw() {
+void PackageManager::shutdown() {
 	PackageMap::const_iterator it = m_packages.begin(), end = m_packages.end();
 
 	while (it != end) {

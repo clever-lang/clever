@@ -44,7 +44,7 @@ typedef std::vector<Value*> ValueVector;
 #define CLEVER_FUNCTION_ARGS const ValueVector* args, Value* retval
 #define CLEVER_FUNC_NAME(name) clv_f_##name
 #define CLEVER_NS_FNAME(ns, name) ns::clv_f_##name
-#define CLEVER_FUNCTION(name) void CLEVER_FASTCALL CLEVER_FUNC_NAME(name)(CLEVER_FUNCTION_ARGS) throw()
+#define CLEVER_FUNCTION(name) void CLEVER_FASTCALL CLEVER_FUNC_NAME(name)(CLEVER_FUNCTION_ARGS)
 
 typedef void (CLEVER_FASTCALL *FunctionPtr)(CLEVER_FUNCTION_ARGS);
 typedef std::tr1::unordered_map<std::string, Function*> FunctionMap;
@@ -79,45 +79,45 @@ public:
 
 	virtual ~Function() { }
 
-	Function* addArg(std::string name, const Type* type) throw() {
+	Function* addArg(std::string name, const Type* type) {
 		m_args.insert(FunctionArgsPair(name, type));
 		m_min_args = ++m_num_args;
 
 		return this;
 	}
 
-	FunctionArgs& getArgs() throw() { return m_args; }
+	FunctionArgs& getArgs() { return m_args; }
 
-	void setVars(Value* vars) throw() { m_vars = vars; }
-	Value* getVars() throw() { return m_vars; }
+	void setVars(Value* vars) { m_vars = vars; }
+	Value* getVars() { return m_vars; }
 
-	int getNumArgs() const throw() { return m_num_args; }
-	Function* setVariadic() throw() { m_num_args = -1; return this; }
-	bool isVariadic() const throw() { return m_num_args < 0; }
+	int getNumArgs() const { return m_num_args; }
+	Function* setVariadic() { m_num_args = -1; return this; }
+	bool isVariadic() const { return m_num_args < 0; }
 
-	Function* setMinNumArgs(int nargs) throw() { m_min_args = nargs; return this; }
-	int getMinNumArgs() const throw() { return m_min_args; }
+	Function* setMinNumArgs(int nargs) { m_min_args = nargs; return this; }
+	int getMinNumArgs() const { return m_min_args; }
 
-	bool isUserDefined() const throw() { return m_kind == USER; }
-	bool isInternal() const throw() { return m_kind == INTERNAL; }
+	bool isUserDefined() const { return m_kind == USER; }
+	bool isInternal() const { return m_kind == INTERNAL; }
 
-	void setUserDefined() throw() { m_kind = USER; }
+	void setUserDefined() { m_kind = USER; }
 
 	void setOffset(unsigned int num) { m_info.offset = num; m_kind = USER; }
-	long getOffset() const throw() { return m_info.offset; }
+	long getOffset() const { return m_info.offset; }
 
 	void setReturnType(const Type* type) { m_rtype = type; }
-	const Type* getReturnType() const throw() { return m_rtype; }
+	const Type* getReturnType() const { return m_rtype; }
 
-	FunctionPtr getPtr() const throw() { return m_info.ptr; }
+	FunctionPtr getPtr() const { return m_info.ptr; }
 
-	const std::string& getName() const throw() { return m_name; }
+	const std::string& getName() const { return m_name; }
 
 	void call(const ValueVector* args, Value* result) const {
 		m_info.ptr(args, result);
 	}
 
-	long call() const throw() { return m_info.offset; }
+	long call() const { return m_info.offset; }
 
 private:
 	union {

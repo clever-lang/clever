@@ -76,7 +76,7 @@ static CLEVER_FUNCTION(getcwd) {
 /**
  * Initializes Standard module
  */
-void OSModule::init() throw() {
+void OSModule::init() {
 	using namespace os;
 
 	addFunction(new Function("system", &CLEVER_FUNC_NAME(system), CLEVER_INT))

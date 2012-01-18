@@ -58,57 +58,57 @@ public:
 	/**
 	 * Initializes compiler data
 	 */
-	void init() throw();
+	void init();
 	/**
 	 * Sets the AST tree to be compiled into intermediate representation
 	 */
-	void setAST(ast::ASTNode* ast) throw() { m_ast = ast; }
+	void setAST(ast::ASTNode* ast) { m_ast = ast; }
 	/**
 	 * Set interactive mode ON
 	 */
-	void setInteractive() throw() { m_cgvisitor.setInteractive(); }
+	void setInteractive() { m_cgvisitor.setInteractive(); }
 	/**
 	 * Set opcode dumper mode ON
 	 */
-	void setOpcodeDump() throw() { m_cgvisitor.setOpcodeDump(); }
+	void setOpcodeDump() { m_cgvisitor.setOpcodeDump(); }
 	/**
 	 * Loads native data types
 	 */
-	void loadNativeTypes() throw();
+	void loadNativeTypes();
 	/**
 	 * Generates the intermediate representation
 	 */
-	void buildIR() throw();
+	void buildIR();
 	/**
 	 * Returns the collected opcodes
 	 */
-	OpcodeList& getOpcodes() throw() { return m_cgvisitor.getOpcodes(); }
+	OpcodeList& getOpcodes() { return m_cgvisitor.getOpcodes(); }
 	/**
 	 * Dumps the opcodes
 	 */
-	void dumpOpcodes() throw();
+	void dumpOpcodes();
 
 	/**
 	 * Displays an error message and exits
 	 */
-	static void error(std::string) throw();
-	static void error(std::string, const location&) throw();
+	static void error(std::string);
+	static void error(std::string, const location&);
 
 	/**
 	 * Displays an warning message
 	 */
-	static void warning(std::string) throw();
+	static void warning(std::string);
 
 	/**
 	 * Import a package
 	 */
-	static void import(Scope* scope, const CString* package) throw() {
+	static void import(Scope* scope, const CString* package) {
 		g_pkgmanager.loadPackage(scope, package);
 	}
 	/**
 	 * Import a package module
 	 */
-	static void import(Scope* scope, const CString* package, const CString* module, const CString *alias) throw() {
+	static void import(Scope* scope, const CString* package, const CString* module, const CString *alias) {
 		if (module) {
 			g_pkgmanager.loadModule(scope, package, module, alias);
 		} else {
@@ -119,8 +119,8 @@ public:
 	/**
 	 * Methods for formatted messages
 	 */
-	static void errorf(const location&, const char*, ...) throw();
-	static void warningf(const char*, ...) throw();
+	static void errorf(const location&, const char*, ...);
+	static void warningf(const char*, ...);
 
 	static void setErrorReporting(Error level) {
 		m_error_level = level;

@@ -82,13 +82,13 @@ namespace clever {
 /**
  * Type handler definitions
  */
-#define CLEVER_TYPE_ASSIGN_HANDLER_D void assign(Value* value, Value* newvalue) const throw()
+#define CLEVER_TYPE_ASSIGN_HANDLER_D void assign(Value* value, Value* newvalue) const
 
 /**
  * Prototype for class methods which the class represents a type
  */
 #define CLEVER_TYPE_METHOD_ARGS const ValueVector* args, Value* retval, Value* value
-#define CLEVER_TYPE_METHOD(name) void CLEVER_FASTCALL name(CLEVER_TYPE_METHOD_ARGS) throw()
+#define CLEVER_TYPE_METHOD(name) void CLEVER_FASTCALL name(CLEVER_TYPE_METHOD_ARGS)
 
 /**
  * Utils for handling TemplatedType
@@ -125,7 +125,7 @@ public:
 		}
 	}
 
-	void addMethod(Method* method) throw() {
+	void addMethod(Method* method) {
 		const MethodArgs& args = method->getArgs();
 		MethodArgs::const_iterator it = args.begin();
 		int min_args = method->getMinNumArgs();
@@ -149,7 +149,7 @@ public:
 		}
 	}
 
-	const Method* getMethod(const CString* name, const TypeVector* args) const throw() {
+	const Method* getMethod(const CString* name, const TypeVector* args) const {
 		MethodMap::const_iterator it = m_methods.find(*name);
 		std::string args_name;
 
@@ -171,7 +171,7 @@ public:
 		return NULL;
 	}
 
-	const CString* getName() const throw() {
+	const CString* getName() const {
 		return m_name;
 	}
 

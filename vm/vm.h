@@ -35,7 +35,7 @@
  * Opcode handler arguments
  */
 #define CLEVER_VM_HANDLER_ARGS Opcode& opcode, long& next_op
-#define CLEVER_VM_HANDLER(name) void CLEVER_FASTCALL name(CLEVER_VM_HANDLER_ARGS) throw()
+#define CLEVER_VM_HANDLER(name) void CLEVER_FASTCALL name(CLEVER_VM_HANDLER_ARGS)
 
 /**
  * Change the executor flow to run another opcode
@@ -70,21 +70,21 @@ public:
 	/**
 	 * Execute the opcode (call the its related handlers)
 	 */
-	void run() throw();
+	void run();
 	/**
 	 * Displays an error message and exists
 	 */
-	static void error(const char*) throw();
+	static void error(const char*);
 	/**
 	 * Set the opcode vector
 	 */
-	void setOpcodes(OpcodeList& opcodes) throw() { m_opcodes = &opcodes; }
+	void setOpcodes(OpcodeList& opcodes) { m_opcodes = &opcodes; }
 	/**
 	 * Function/method argument handling
 	 */
-	static void push_args(ValueVector*) throw();
-	static void pop_args(const Opcode* const) throw();
-	static void restore_args() throw();
+	static void push_args(ValueVector*);
+	static void pop_args(const Opcode* const);
+	static void restore_args();
 	/**
 	 * Opcode handlers
 	 */

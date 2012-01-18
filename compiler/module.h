@@ -73,33 +73,33 @@ public:
 		}
 	}
 
-	const std::string& getName() const throw() {
+	const std::string& getName() const {
 		return m_name;
 	}
 
-	FunctionMap& getFunctions() throw() {
+	FunctionMap& getFunctions() {
 		return m_functions;
 	}
 
-	ConstMap& getConstants() throw() {
+	ConstMap& getConstants() {
 		return m_const_table;
 	}
 
-	ClassMap& getClassTable() throw() {
+	ClassMap& getClassTable() {
 		return m_class_table;
 	}
 
-	Function* addFunction(Function* func) throw() {
+	Function* addFunction(Function* func) {
 		m_functions.insert(FunctionPair(func->getName(), func));
 
 		return func;
 	}
 
-	void addConstant(const CString* name, Value* value) throw() {
+	void addConstant(const CString* name, Value* value) {
 		m_const_table.insert(ConstPair(name, value));
 	}
 
-	void addClass(Class* klass) throw() {
+	void addClass(Class* klass) {
 		m_class_table.insert(std::make_pair(klass->getName(), klass));
 	}
 	/**
@@ -116,7 +116,7 @@ public:
 	void setLoaded() { m_state = LOADED; }
 
 	/* Module initialization */
-	virtual void init() throw() = 0;
+	virtual void init() = 0;
 
 	/* Module version */
 	virtual const char* getVersion() const { return NULL; }
@@ -150,7 +150,7 @@ public:
 	/**
 	 * Add a new package module
 	 */
-	void addModule(Module* module) throw() {
+	void addModule(Module* module) {
 		m_modules.insert(ModulePair(CSTRING(module->getName()), module));
 	}
 	/**
@@ -182,7 +182,7 @@ public:
 	/**
 	 * Initializes package data
 	 */
-	virtual void init() throw() = 0;
+	virtual void init() = 0;
 	/**
 	 * Package version
 	 */

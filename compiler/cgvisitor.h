@@ -48,33 +48,33 @@ public:
 		//g_symtable.endScope();
 	}
 
-	void init() throw() {
+	void init() {
 		m_opcodes.clear();
 		m_opcodes.reserve(10);
 	}
 
-	void shutdown() throw() { }
+	void shutdown() { }
 
 	/**
 	 * Set the interactive mode
 	 */
-	void setInteractive() throw() { m_interactive = true; }
+	void setInteractive() { m_interactive = true; }
 	/**
 	 * Returns the interactive mode state
 	 */
-	bool isInteractive() throw() { return m_interactive; }
+	bool isInteractive() { return m_interactive; }
 	/**
 	 * Set the opcode dumper
 	 */
-	void setOpcodeDump() throw() { m_opcode_dump = true; }
+	void setOpcodeDump() { m_opcode_dump = true; }
 	/**
 	 * Returns the opcode dump state
 	 */
-	bool isOpcodeDump() throw() { return m_opcode_dump; }
+	bool isOpcodeDump() { return m_opcode_dump; }
 	/**
 	 * Returns the opcode list
 	 */
-	OpcodeList& getOpcodes() throw() { return m_opcodes; }
+	OpcodeList& getOpcodes() { return m_opcodes; }
 
 	AST_VISITOR_DECLARATION(AST_VISITOR_DECL);
 
@@ -86,7 +86,7 @@ private:
 	/**
 	 * Output an opcode.
 	 */
-	Opcode* emit(Opcodes type, VM::opcode_handler handler, Value* op1 = NULL, Value* op2 = NULL, Value* result = NULL) throw() {
+	Opcode* emit(Opcodes type, VM::opcode_handler handler, Value* op1 = NULL, Value* op2 = NULL, Value* result = NULL) {
 		Opcode* opcode = new Opcode(type, handler, op1, op2, result);
 		m_opcodes.push_back(opcode);
 		/**
@@ -100,7 +100,7 @@ private:
 	/**
 	 * Returns the opcode number
 	 */
-	size_t getOpNum() const throw() { return !m_opcodes.size() ? 0 : m_opcodes.size()-1; }
+	size_t getOpNum() const { return !m_opcodes.size() ? 0 : m_opcodes.size()-1; }
 
 	DISALLOW_COPY_AND_ASSIGN(CodeGenVisitor);
 };

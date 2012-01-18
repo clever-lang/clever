@@ -55,9 +55,9 @@ class UnaryExpr;
 class AliasStmt;
 class RegexPattern;
 
-#define AST_VISITOR(type, exprtype) void type::visit(exprtype* const expr) throw()
-#define AST_VISITOR_DECL_VIRTUAL(type) virtual void visit(type* const expr) throw() = 0
-#define AST_VISITOR_DECL(type) void visit(type* const expr) throw()
+#define AST_VISITOR(type, exprtype) void type::visit(exprtype* const expr)
+#define AST_VISITOR_DECL_VIRTUAL(type) virtual void visit(type* const expr) = 0
+#define AST_VISITOR_DECL(type) void visit(type* const expr)
 
 #define AST_VISITOR_DECLARATION(V) \
 	V(BinaryExpr); \
@@ -92,8 +92,8 @@ public:
 
 	AST_VISITOR_DECLARATION(AST_VISITOR_DECL_VIRTUAL);
 
-	virtual void init() throw() = 0;
-	virtual void shutdown() throw() = 0;
+	virtual void init() = 0;
+	virtual void shutdown() = 0;
 private:
 	DISALLOW_COPY_AND_ASSIGN(ASTVisitor);
 };

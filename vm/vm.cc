@@ -63,7 +63,7 @@ VM::~VM() {
 /**
  * Pushes the arguments into the call stack
  */
-void VM::push_args(ValueVector* vec) throw() {
+void VM::push_args(ValueVector* vec) {
 	ValueVector* vec_copy = new ValueVector;
 
 	s_args.push(vec);
@@ -81,7 +81,7 @@ void VM::push_args(ValueVector* vec) throw() {
 /**
  * Pop arguments onto the call stack
  */
-void VM::pop_args(const Opcode* const op) throw() {
+void VM::pop_args(const Opcode* const op) {
 	/**
 	 * Check if the function has arguments
 	 */
@@ -107,7 +107,7 @@ void VM::pop_args(const Opcode* const op) throw() {
 /**
  * Restore the parameter argument values from the previous stack frame
  */
-void VM::restore_args() throw() {
+void VM::restore_args() {
 	ValueVector* vec = s_args.top();
 	ValueVector* vec_copy = s_arg_values.top();
 
@@ -119,7 +119,7 @@ void VM::restore_args() throw() {
 /**
  * Displays an error message and exits
  */
-void VM::error(const char* message) throw() {
+void VM::error(const char* message) {
 	std::cerr << "Runtime error: " << message << std::endl;
 	exit(1);
 }
@@ -127,7 +127,7 @@ void VM::error(const char* message) throw() {
 /**
  * Execute the collected opcodes
  */
-void VM::run() throw() {
+void VM::run() {
 	long next_op;
 	long last_op = m_opcodes->size();
 

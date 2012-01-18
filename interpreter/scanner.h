@@ -57,7 +57,7 @@ class ScannerState {
 public:
 	ScannerState() : state(0) { }
 
-	void set_cursor(unsigned const char* cursor) throw() { cur = cursor; }
+	void set_cursor(unsigned const char* cursor) { cur = cursor; }
 
 	int state;
 	const unsigned char *cur, *yylex, *ctx;

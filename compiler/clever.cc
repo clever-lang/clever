@@ -36,7 +36,7 @@ namespace clever {
  */
 #ifdef CLEVER_DEBUG
 void clever_assert_(const char* file, long line, const char* expr,
-		int hypothesis, const char* format, ...) throw() {
+		int hypothesis, const char* format, ...) {
 	va_list vl;
 	std::ostringstream out;
 
@@ -54,7 +54,7 @@ void clever_assert_(const char* file, long line, const char* expr,
 }
 #endif
 
-void clever_fatal(const char* format, ...) throw() {
+void clever_fatal(const char* format, ...) {
 	va_list vl;
 	va_start(vl, format);
 	printf("clever: a fatal error occurred.\n\t");
@@ -66,7 +66,7 @@ void clever_fatal(const char* format, ...) throw() {
 /**
  * Formatter
  */
-void vsprintf(std::ostringstream& outstr, const char* format, va_list ap) throw() {
+void vsprintf(std::ostringstream& outstr, const char* format, va_list ap) {
 	char* chr = const_cast<char*>(format);
 
 	if (!chr) {
@@ -110,7 +110,7 @@ void vsprintf(std::ostringstream& outstr, const char* format, va_list ap) throw(
 	}
 }
 
-void vprintfln(const char* format, va_list args) throw() {
+void vprintfln(const char* format, va_list args) {
 	std::ostringstream out;
 
 	vsprintf(out, format, args);
@@ -118,7 +118,7 @@ void vprintfln(const char* format, va_list args) throw() {
 	std::cout << out.str() << std::endl;
 }
 
-void printfln(const char* format, ...) throw() {
+void printfln(const char* format, ...) {
 	va_list args;
 
 	va_start(args, format);
@@ -128,7 +128,7 @@ void printfln(const char* format, ...) throw() {
 	va_end(args);
 }
 
-void sprintf(std::ostringstream& outstr, const char* format, ...) throw() {
+void sprintf(std::ostringstream& outstr, const char* format, ...) {
 	va_list args;
 
 	va_start(args, format);
@@ -138,7 +138,7 @@ void sprintf(std::ostringstream& outstr, const char* format, ...) throw() {
 	va_end(args);
 }
 
-void printf(const char* format, ...) throw() {
+void printf(const char* format, ...) {
 	std::ostringstream out;
 	va_list args;
 

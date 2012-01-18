@@ -56,27 +56,27 @@ public:
 	explicit CString(const std::string& str)
 		: std::string(str), m_id(0) { }
 
-	bool hasSameId(const CString* cstring) const throw() {
+	bool hasSameId(const CString* cstring) const {
 		return getId() == cstring->getId();
 	}
 
-	IdType getId() const throw() {
+	IdType getId() const {
 		return m_id;
 	}
 
-	const std::string& str() const throw() {
+	const std::string& str() const {
 		return *static_cast<const std::string*>(this);
 	}
 
-	const char* c_str() const throw() {
+	const char* c_str() const {
 		return static_cast<const std::string*>(this)->c_str();
 	}
 
-	bool operator==(const CString* cstring) throw() {
+	bool operator==(const CString* cstring) {
 		return hasSameId(cstring);
 	}
 
-	bool operator==(const std::string& string) throw() {
+	bool operator==(const std::string& string) {
 		return compare(string) == 0;
 	}
 private:
@@ -93,7 +93,7 @@ namespace std { namespace tr1 {
 template <>
 struct hash<const clever::CString*> : public unary_function<const clever::CString*, size_t> {
 public:
-	size_t operator()(const clever::CString* key) const throw() {
+	size_t operator()(const clever::CString* key) const {
 		return hash<std::string>()(*static_cast<const std::string*>(key));
 	}
 };
@@ -128,11 +128,11 @@ public:
 		return id != 0 && id < size() && find(id)->second->hasSameId(cstring);
 	}
 
-	const CString* getCString(IdType id) const throw() {
+	const CString* getCString(IdType id) const {
 		return find(id)->second;
 	}
 
-	const CString* intern(const std::string& needle) throw() {
+	const CString* intern(const std::string& needle) {
 		std::tr1::hash<std::string> hash;
 		const CString* str = NULL;
 
@@ -149,7 +149,7 @@ public:
 		return str;
 	}
 
-	const CString* intern(const CString& needle) throw() {
+	const CString* intern(const CString& needle) {
 		IdType id = needle.getId();
 
 		if (id) {

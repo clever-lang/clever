@@ -71,7 +71,7 @@ public:
 	}
 
 	~Symbol() { }
-	
+
 	Symbol(const Symbol& rhs)
 		: m_name(rhs.m_name), m_type(rhs.m_type), m_data(rhs.m_data) {}
 
@@ -153,7 +153,7 @@ public:
 	/**
 	 * Binds a Value* to an interned string.
 	 */
-	void bind(const CString* name, Value* value) throw() {
+	void bind(const CString* name, Value* value) {
 		clever_assert(name != NULL,  "No name provided.");
 		clever_assert(value != NULL, "No value provided.");
 
@@ -163,7 +163,7 @@ public:
 	/**
 	 * Binds a Type* to an interned string.
 	 */
-	void bind(const CString* name, const Type* type) throw() {
+	void bind(const CString* name, const Type* type) {
 		clever_assert(name != NULL, "No name provided.");
 		clever_assert(type != NULL, "No type provided.");
 
@@ -176,7 +176,7 @@ public:
 	 * Please use an error message like "unresolved symbol" or something
 	 * if the symbol is really needed.
 	 */
-	Symbol* resolve(const CString* name, bool recurse = true) throw() {
+	Symbol* resolve(const CString* name, bool recurse = true) {
 		SymbolMap::iterator it = m_syms.find(name);
 
 		if (it != m_syms.end()) {
@@ -195,7 +195,7 @@ public:
 	 *
 	 * See resolve() for more information.
 	 */
-	Value* resolveValue(const CString* name, bool recurse = true) throw() {
+	Value* resolveValue(const CString* name, bool recurse = true) {
 
 		Symbol* s = resolve(name, recurse);
 
@@ -210,7 +210,7 @@ public:
 	 *
 	 * See resolve() for more information.
 	 */
-	const Type* resolveType(const CString* name, bool recurse = true) throw() {
+	const Type* resolveType(const CString* name, bool recurse = true) {
 
 		Symbol* s = resolve(name, recurse);
 
@@ -239,49 +239,49 @@ public:
 	/**
 	 * Pushes a new variable or constant to the current scope.
 	 */
-	void push(const CString* name, Value* value) throw() {
+	void push(const CString* name, Value* value) {
 		getScope()->bind(name, value);
 	}
 
 	/**
 	 * Pushes a new type to the current scope.
 	 */
-	void push(const CString* name, const Type* type) throw() {
+	void push(const CString* name, const Type* type) {
 		getScope()->bind(name, type);
 	}
 
 	/**
 	 * Attempts to find a symbol with the given name in the current scope.
 	 */
-	Symbol* getSymbol(const CString* name, bool recurse = true) throw() {
+	Symbol* getSymbol(const CString* name, bool recurse = true) {
 		return getScope()->resolve(name, recurse);
 	}
 
 	/**
 	 * Returns the value pointer for the given symbol name.
 	 */
-	Value* getValue(const CString* name, bool recurse = true) throw() {
+	Value* getValue(const CString* name, bool recurse = true) {
 		return getScope()->resolveValue(name, recurse);
 	}
 
 	/**
 	 * Returns the type pointer for the given symbol name.
 	 */
-	const Type* getType(const CString* name, bool recurse = true) throw() {
+	const Type* getType(const CString* name, bool recurse = true) {
 		return getScope()->resolveType(name, recurse);
 	}
 
 	/**
 	 * Returns the current scope.
 	 */
-	Scope* getScope() throw() {
+	Scope* getScope() {
 		return getScope(m_scope.size()-1);
 	}
 
 	/**
 	 * Returns the scope at the given level number.
 	 */
-	Scope* getScope(size_t level) throw() {
+	Scope* getScope(size_t level) {
 		clever_assert(level < m_scope.size(), "No such scope %zu.", level);
 
 		return m_scope.at(level);
@@ -290,7 +290,7 @@ public:
 	/**
 	 * Enters a new scope.
 	 */
-	Scope* beginScope() throw() {
+	Scope* beginScope() {
 		Scope* parent = !m_scope.size() ? NULL : getScope();
 		Scope* s = new Scope(m_level++, parent);
 
@@ -302,7 +302,7 @@ public:
 	/**
 	 * Leaves the current scope.
 	 */
-	Scope* endScope() throw() {
+	Scope* endScope() {
 		Scope* s = m_scope.back();
 		m_scope.pop_back();
 		m_level--;

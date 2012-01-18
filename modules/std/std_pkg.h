@@ -38,7 +38,7 @@ public:
 
 	~Std() { }
 
-	void init() throw();
+	void init();
 
 	const char* getVersion() const { return NULL; }
 private:

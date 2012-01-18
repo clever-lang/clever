@@ -32,8 +32,7 @@ namespace clever { namespace ast {
 /**
  * Concatenates arg type names with a supplied separator character
  */
-std::string TypeChecker::serializeArgType(TypeVector& args_types, const char* sep)
-	throw() {
+std::string TypeChecker::serializeArgType(TypeVector& args_types, const char* sep) {
 	std::string args_type_name;
 	const std::string separator = std::string(sep);
 
@@ -54,7 +53,7 @@ std::string TypeChecker::serializeArgType(TypeVector& args_types, const char* se
  * Performs a type compatible checking
  */
 bool TypeChecker::checkCompatibleTypes(const Value* const lhs,
-		const Value* const rhs) throw() {
+		const Value* const rhs) {
 	/**
 	 * Constants with different type cannot performs operation
 	 */
@@ -79,7 +78,7 @@ bool TypeChecker::checkCompatibleTypes(const Value* const lhs,
  * Returns the type resulting of a binary expression of two compatible types
  */
 const Type* TypeChecker::checkExprType(const Value* const lhs,
-		const Value* const rhs) throw() {
+		const Value* const rhs) {
 	if (lhs->isPrimitive() && rhs->isPrimitive()
 		&& !lhs->isString() && !rhs->isString()) {
 
@@ -109,7 +108,7 @@ const Type* TypeChecker::checkExprType(const Value* const lhs,
  * Checks the function return type
  */
 void TypeChecker::checkFunctionReturn(const Function* func, const Value* value,
-		const Type* rtype, const location& loc) throw() {
+		const Type* rtype, const location& loc) {
 	/**
 	 * When the rtype is NULL, the return is expected to be Void
 	 * When value is NULL, the return statement is empty
@@ -132,7 +131,7 @@ void TypeChecker::checkFunctionReturn(const Function* func, const Value* value,
  * Checks the number of arguments supplied to the function on call
  */
 void TypeChecker::checkFunctionArgs(const Function* func, int num_args,
-		const location& loc) throw() {
+		const location& loc) {
 	int n_required_args = func->getNumArgs();
 	int n_min_args = func->getMinNumArgs();
 	bool is_variadic = func->isVariadic();

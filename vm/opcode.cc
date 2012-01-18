@@ -33,7 +33,7 @@ namespace clever {
 /**
  * Dumps an opcode
  */
-void Opcode::dump() const throw() {
+void Opcode::dump() const {
 	::printf("(%04ld) | ", getOpNum());
 	::printf("%-15s | ", getOpName(m_op_type));
 	::printf("%-20s | ", dumpOp("op1", m_op1).c_str());
@@ -46,7 +46,7 @@ void Opcode::dump() const throw() {
 /**
  * Returns the opcode name
  */
-const char* Opcode::getOpName(Opcodes op) const throw() {
+const char* Opcode::getOpName(Opcodes op) const {
 #define CASE(x) case x: return #x
 
 	switch (op) {
@@ -72,7 +72,7 @@ const char* Opcode::getOpName(Opcodes op) const throw() {
 /**
  * Dumps an operand
  */
-std::string Opcode::dumpOp(const char* const label, Value* const op) const throw() {
+std::string Opcode::dumpOp(const char* const label, Value* const op) const {
 	if (op) {
 		std::ostringstream str;
 		std::string name = op->getName() ? op->getName()->str() : op->toString();
