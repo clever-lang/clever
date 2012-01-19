@@ -85,6 +85,14 @@ next_token:
 
 	<INITIAL>"<" { RET(token::LESS); }
 
+	<INITIAL>"<<=" { RET(token::LSHIFT_EQUAL); }
+	<INITIAL>"<<" { RET(token::LSHIFT); }
+
+
+	<INITIAL>">>=" { RET(token::RSHIFT_EQUAL); }
+	<INITIAL>">>" { RET(token::RSHIFT); }
+
+
 	<INITIAL>"++" { RET(token::INCREMENT); }
 
 	<INITIAL>"--" { RET(token::DECREMENT); }

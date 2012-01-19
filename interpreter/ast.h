@@ -77,7 +77,9 @@ enum {
 	PRE_INC,
 	POS_INC,
 	PRE_DEC,
-	POS_DEC
+	POS_DEC,
+	LSHIFT,
+	RSHIFT
 };
 
 /**

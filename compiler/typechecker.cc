@@ -338,6 +338,8 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 		case LESS_EQUAL:    method_name = CSTRING(CLEVER_OPERATOR_LE);      break;
 		case EQUAL:         method_name = CSTRING(CLEVER_OPERATOR_EQUAL);   break;
 		case NOT_EQUAL:     method_name = CSTRING(CLEVER_OPERATOR_NE);      break;
+		case LSHIFT:        method_name = CSTRING(CLEVER_OPERATOR_LSHIFT);  break;
+		case RSHIFT:        method_name = CSTRING(CLEVER_OPERATOR_RSHIFT);  break;
 		case OR:
 		case AND:
 			expr->setResult(new Value(CLEVER_BOOL));

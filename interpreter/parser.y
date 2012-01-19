@@ -79,6 +79,10 @@ namespace clever {
 %token GREATER_EQUAL ">="
 %token LESS          "<"
 %token GREATER       ">"
+%token RSHIFT        ">>"
+%token RSHIFT_EQUAL  ">>="
+%token LSHIFT        "<<"
+%token LSHIFT_EQUAL  "<<="
 %token BREAK         "break"
 %token EQUAL         "=="
 %token NOT_EQUAL     "!="
@@ -121,7 +125,7 @@ namespace clever {
 %nonassoc EQUAL NOT_EQUAL;
 %nonassoc LESS LESS_EQUAL GREATER GREATER_EQUAL;
 %left PLUS_EQUAL MINUS_EQUAL DIV_EQUAL MULT_EQUAL MOD_EQUAL BW_OR_EQUAL XOR_EQUAL BW_AND_EQUAL;
-%left SHIFT_LEFT SHIFT_RIGHT;
+%left LSHIFT RSHIFT;
 %left '-' '+' '.';
 %left '*' '/' '%';
 %right '!';
@@ -374,6 +378,8 @@ assign_stmt:
 	|	IDENT "&=" expr { $$ = new ast::BinaryExpr(ast::AND, $1, $3, true);   $$->setLocation(yylloc); }
 	|	IDENT "|=" expr { $$ = new ast::BinaryExpr(ast::OR, $1, $3, true);    $$->setLocation(yylloc); }
 	|	IDENT "^=" expr { $$ = new ast::BinaryExpr(ast::XOR, $1, $3, true);   $$->setLocation(yylloc); }
+	|	IDENT "<<=" expr { $$ = new ast::BinaryExpr(ast::LSHIFT, $1, $3, true);   $$->setLocation(yylloc); }
+	|	IDENT ">>=" expr { $$ = new ast::BinaryExpr(ast::RSHIFT, $1, $3, true);   $$->setLocation(yylloc); }
 ;
 
 type_creation:
@@ -393,6 +399,8 @@ expr:
 	|	expr ">=" expr        { $$ = new ast::BinaryExpr(ast::GREATER_EQUAL, $1, $3); $$->setLocation(yylloc); }
 	|	expr "<" expr         { $$ = new ast::BinaryExpr(ast::LESS, $1, $3);          $$->setLocation(yylloc); }
 	|	expr "<=" expr        { $$ = new ast::BinaryExpr(ast::LESS_EQUAL, $1, $3);    $$->setLocation(yylloc); }
+	|	expr "<<" expr        { $$ = new ast::BinaryExpr(ast::LSHIFT, $1, $3);        $$->setLocation(yylloc); }
+	|	expr ">>" expr        { $$ = new ast::BinaryExpr(ast::RSHIFT, $1, $3);        $$->setLocation(yylloc); }
 	|	expr "==" expr        { $$ = new ast::BinaryExpr(ast::EQUAL, $1, $3);         $$->setLocation(yylloc); }
 	|	expr "!=" expr        { $$ = new ast::BinaryExpr(ast::NOT_EQUAL, $1, $3);     $$->setLocation(yylloc); }
 	|	expr "||" expr        { $$ = new ast::BinaryExpr(ast::OR, $1, $3);            $$->setLocation(yylloc); }

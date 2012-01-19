@@ -121,6 +121,20 @@ CLEVER_TYPE_METHOD(Integer::bw_xor) {
 }
 
 /**
+ * >> operator (Integer, Integer)
+ */
+CLEVER_TYPE_METHOD(Integer::rshift) {
+	CLEVER_RETURN_INT(CLEVER_ARG_INT(0) >> CLEVER_ARG_INT(1));
+}
+
+/**
+ * << operator (Integer, Integer)
+ */
+CLEVER_TYPE_METHOD(Integer::lshift) {
+	CLEVER_RETURN_INT(CLEVER_ARG_INT(0) << CLEVER_ARG_INT(1));
+}
+
+/**
  * == operator (Integer, Integer)
  */
 CLEVER_TYPE_METHOD(Integer::equal) {
@@ -338,6 +352,18 @@ void Integer::init() {
 
 	addMethod(
 		(new Method(CLEVER_OPERATOR_BW_OR, (MethodPtr)&Integer::bw_or, CLEVER_INT))
+			->addArg("arg1", CLEVER_INT)
+			->addArg("arg2", CLEVER_INT)
+	);
+
+	addMethod(
+		(new Method(CLEVER_OPERATOR_LSHIFT, (MethodPtr)&Integer::lshift, CLEVER_INT))
+			->addArg("arg1", CLEVER_INT)
+			->addArg("arg2", CLEVER_INT)
+	);
+
+	addMethod(
+		(new Method(CLEVER_OPERATOR_RSHIFT, (MethodPtr)&Integer::rshift, CLEVER_INT))
 			->addArg("arg1", CLEVER_INT)
 			->addArg("arg2", CLEVER_INT)
 	);

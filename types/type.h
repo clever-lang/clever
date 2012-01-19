@@ -78,6 +78,8 @@ namespace clever {
 #define CLEVER_OPERATOR_POS_INC "$+++$"
 #define CLEVER_OPERATOR_PRE_DEC "$--$"
 #define CLEVER_OPERATOR_POS_DEC "$---$"
+#define CLEVER_OPERATOR_LSHIFT  "$<<$"
+#define CLEVER_OPERATOR_RSHIFT  "$>>$"
 
 /**
  * Type handler definitions

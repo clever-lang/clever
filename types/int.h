@@ -68,6 +68,8 @@ public:
 	static CLEVER_TYPE_METHOD(pos_inc);
 	static CLEVER_TYPE_METHOD(pre_dec);
 	static CLEVER_TYPE_METHOD(pos_dec);
+	static CLEVER_TYPE_METHOD(lshift);
+	static CLEVER_TYPE_METHOD(rshift);
 
 	/**
 	 * Type handlers
