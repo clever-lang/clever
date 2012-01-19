@@ -33,17 +33,16 @@ namespace clever { namespace ast {
  * Concatenates arg type names with a supplied separator character
  */
 std::string TypeChecker::serializeArgType(TypeVector& args_types, const char* sep) {
-	std::string args_type_name;
-	const std::string separator = std::string(sep);
-
 	if (args_types.size() == 0) {
 		return std::string("void");
 	}
 
-	args_type_name = args_types[0]->getName()->str();
+	std::string args_type_name = args_types[0]->getName()->str();
+	const std::string separator = std::string(sep);
 
-	for (size_t i = 1; i < args_types.size(); ++i) {
-		args_type_name += separator + args_types[i]->getName()->str();
+	for (size_t i = 1, j = args_types.size(); i < j; ++i) {
+		args_type_name += separator;
+		args_type_name += args_types[i]->getName()->str();
 	}
 
 	return args_type_name;
@@ -162,11 +161,9 @@ AST_VISITOR(TypeChecker, ArgumentList) {
 	values->reserve(nodes.size());
 
 	while (it != end) {
-		Value* value;
-
 		(*it)->accept(*this);
 
-		value = (*it)->getValue();
+		Value* value = (*it)->getValue();
 		value->addRef();
 
 		values->push_back(value);
@@ -267,9 +264,8 @@ AST_VISITOR(TypeChecker, Identifier) {
 }
 
 AST_VISITOR(TypeChecker, UnaryExpr) {
-	Value* var = expr->getExpr()->getValue();
 	TypeVector arg_types;
-	CallableValue* call = new CallableValue;
+	Value* var = expr->getExpr()->getValue();
 	const Method* method = NULL;
 	const CString* method_name = NULL;
 
@@ -290,7 +286,7 @@ AST_VISITOR(TypeChecker, UnaryExpr) {
 			var->getTypePtr()->getName());
 	}
 
-
+	CallableValue* call = new CallableValue;
 	call->setTypePtr(var->getTypePtr());
 	call->setHandler(method);
 	call->setContext(var);
@@ -305,20 +301,14 @@ AST_VISITOR(TypeChecker, UnaryExpr) {
 }
 
 AST_VISITOR(TypeChecker, BinaryExpr) {
-	TypeVector arg_types;
-	Value* args = new Value;
-	ValueVector* arg_values = new ValueVector;
-	CallableValue* call = new CallableValue;
-	const Method* method;
+	const Method* method = NULL;
 	const CString* method_name = NULL;
-	Value* lhs;
-	Value* rhs;
 
 	expr->getLhs()->accept(*this);
 	expr->getRhs()->accept(*this);
 
-	lhs = expr->getLhs()->getValue();
-	rhs = expr->getRhs()->getValue();
+	Value* lhs = expr->getLhs()->getValue();
+	Value* rhs = expr->getRhs()->getValue();
 
 	/**
 	 * Operator method names
@@ -343,19 +333,22 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 		case OR:
 		case AND:
 			expr->setResult(new Value(CLEVER_BOOL));
-			delete call;
-			delete arg_values;
-			delete args;
 			return;
 	}
 
+	ValueVector* arg_values = new ValueVector;
+	CallableValue* call = new CallableValue;
+
 	call->setName(method_name);
 
+	TypeVector arg_types;
 	arg_types.push_back(lhs->getTypePtr());
 	arg_types.push_back(rhs->getTypePtr());
 
 	arg_values->push_back(lhs);
 	arg_values->push_back(rhs);
+
+	Value* args = new Value;
 	args->setType(Value::VECTOR);
 	args->setVector(arg_values);
 
@@ -389,11 +382,7 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 }
 
 AST_VISITOR(TypeChecker, VariableDecl) {
-	Identifier* variable = expr->getVariable();
-	Value* var = new Value();
-	ASTNode* rhs = expr->getRhs();
 	const Type* type = g_symtable.getType(expr->getType()->getName());
-	TemplateArgsVector* template_args = expr->getType()->getTemplateArgs();
 
 	/**
 	 * Check if the type wasn't declarated previously
@@ -403,6 +392,8 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 			expr->getType()->getName());
 	}
 
+	Identifier* variable = expr->getVariable();
+
 	/**
 	 * Check if there is already a variable with same name in the current scope
 	 */
@@ -411,6 +402,9 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 			"Already exists a variable named `%S' in the current scope!",
 			variable->getName());
 	}
+
+	Value* var = new Value();
+	TemplateArgsVector* template_args = expr->getType()->getTemplateArgs();
 
 	if (template_args) {
 			if (type->isTemplatedType()) {
@@ -479,6 +473,8 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 	var->setName(variable->getName());
 	var->setTypePtr(type);
 	var->addRef();
+
+	ASTNode* rhs = expr->getRhs();
 
 	if (rhs) {
 		Value* initval = rhs->getValue();
@@ -598,17 +594,14 @@ AST_VISITOR(TypeChecker, BreakNode) {
 AST_VISITOR(TypeChecker, FunctionCall) {
 	const CString* const name = expr->getFuncName();
 	Value* fvalue = g_symtable.getValue(name);
-	const Function* func;
-	ASTNode* args = expr->getArgs();
-	Value* arg_values = NULL;
-	size_t num_args = args ? args->getNodes().size() : 0;
 
 	if (fvalue == NULL) {
 		Compiler::errorf(expr->getLocation(), "Function `%S' does not exists!",
 			name);
 	}
 
-	func = static_cast<CallableValue*>(fvalue)->getFunction();
+	const Function* func = static_cast<CallableValue*>(fvalue)->getFunction();
+	size_t num_args = expr->getArgs() ? expr->getArgs()->getNodes().size() : 0;
 
 	checkFunctionArgs(func, num_args, expr->getLocation());
 
@@ -618,7 +611,7 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 	expr->getValue()->setTypePtr(func->getReturnType());
 
 	if (num_args) {
-		arg_values = new Value;
+		Value* arg_values = new Value;
 		arg_values->setType(Value::VECTOR);
 
 		expr->getArgs()->accept(*this);
@@ -641,13 +634,13 @@ AST_VISITOR(TypeChecker, MethodCall) {
 	const CString* const name = expr->getMethodName();
 	CallableValue* call = new CallableValue(name);
 	ArgumentList* args = expr->getArgs();
-	Value* arg_values = NULL;
 	TypeVector args_types;
-
 
 	if (args) {
 		expr->getArgs()->accept(*this);
-		arg_values = new Value;
+
+		Value* arg_values = new Value;
+
 		arg_values->setType(Value::VECTOR);
 		arg_values->setVector(args->getArgValue());
 		arg_values->addRef();
@@ -692,9 +685,9 @@ AST_VISITOR(TypeChecker, AssignExpr) {
 }
 
 AST_VISITOR(TypeChecker, ImportStmt) {
-	const CString* const package = expr->getPackageName();
-	const CString* const module = expr->getModuleName();
-	const CString* const alias = expr->getAliasName();
+	const CString* package = expr->getPackageName();
+	const CString* module = expr->getModuleName();
+	const CString* alias = expr->getAliasName();
 
 	/**
 	 * Importing an specific module or an entire package
@@ -708,12 +701,6 @@ AST_VISITOR(TypeChecker, ImportStmt) {
 }
 
 AST_VISITOR(TypeChecker, FuncDeclaration) {
-	const CString* name = expr->getName();
-	CallableValue* func = new CallableValue(name);
-	Function* user_func = new Function(name->str());
-	Identifier* return_type = expr->getReturnValue();
-	ArgumentDeclList* args = expr->getArgs();
-
 	/**
 	 * We can't have a function declaration without a block
 	 */
@@ -721,6 +708,13 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 		Compiler::error("Cannot declare a function without a block",
 			expr->getLocation());
 	}
+
+	const CString* name = expr->getName();
+	CallableValue* func = new CallableValue(name);
+	Function* user_func = new Function(name->str());
+	Identifier* return_type = expr->getReturnValue();
+	ArgumentDeclList* args = expr->getArgs();
+
 	/**
 	 * Mark the function as user function
 	 */
