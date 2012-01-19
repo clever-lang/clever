@@ -26,7 +26,7 @@
 #ifndef CLEVER_CSTRING_H
 #define CLEVER_CSTRING_H
 
-#include <string>
+#include <iostream>
 #include <tr1/unordered_map>
 #include "compiler/clever.h"
 
@@ -51,13 +51,10 @@ public:
 		: std::string(str), m_id(id) { }
 
 	CString(const CString& str)
-		: std::string(str), m_id(0) { }
-
-	explicit CString(const std::string& str)
-		: std::string(str), m_id(0) { }
+		: std::string(str.str()), m_id(str.m_id) { }
 
 	bool hasSameId(const CString* cstring) const {
-		return getId() == cstring->getId();
+		return m_id == cstring->m_id;
 	}
 
 	IdType getId() const {
@@ -94,7 +91,7 @@ template <>
 struct hash<const clever::CString*> : public unary_function<const clever::CString*, size_t> {
 public:
 	size_t operator()(const clever::CString* key) const {
-		return hash<std::string>()(*static_cast<const std::string*>(key));
+		return hash<std::string>()(key->str());
 	}
 };
 
@@ -106,42 +103,33 @@ class CStringTable;
 
 extern CStringTable g_cstring_tbl;
 
-typedef std::tr1::unordered_map<std::size_t, const CString*> CStringTableBase;
-
-class CStringTable : public CStringTableBase {
+class CStringTable {
 public:
 	typedef CString::IdType IdType;
+	typedef std::tr1::unordered_map<IdType, const CString*> CStringTableBase;
 
-	CStringTable() {}
+	CStringTable()
+		: m_map() {}
 
 	~CStringTable() {
-		CStringTableBase::const_iterator it(begin()), end_table(end());
+		CStringTableBase::const_iterator it(m_map.begin()), end_table(m_map.end());
 
 		while (it != end_table) {
 			delete it->second;
 			++it;
 		}
 	}
-
-	bool contains(const CString* cstring) const {
-		IdType id = cstring->getId();
-		return id != 0 && id < size() && find(id)->second->hasSameId(cstring);
-	}
-
-	const CString* getCString(IdType id) const {
-		return find(id)->second;
-	}
-
+	
 	const CString* intern(const std::string& needle) {
 		std::tr1::hash<std::string> hash;
 		const CString* str = NULL;
 
 		IdType id = hash(needle);
-		CStringTable::const_iterator it(find(id));
+		CStringTableBase::const_iterator it(m_map.find(id));
 
-		if (it == end()) {
+		if (it == m_map.end()) {
 			str = new CString(needle, id);
-			insert(std::pair<IdType, const CString*>(id, str));
+			m_map.insert(std::pair<IdType, const CString*>(id, str));
 		} else {
 			str = it->second;
 		}
@@ -149,17 +137,8 @@ public:
 		return str;
 	}
 
-	const CString* intern(const CString& needle) {
-		IdType id = needle.getId();
-
-		if (id) {
-			return find(id)->second;
-		}
-
-		return intern(static_cast<std::string>(needle));
-	}
-
 private:
+	CStringTableBase m_map;
 	DISALLOW_COPY_AND_ASSIGN(CStringTable);
 };
 
