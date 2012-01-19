@@ -82,19 +82,18 @@ AST_VISITOR(CodeGenVisitor, UnaryExpr) {
  * Generates opcode for binary expression
  */
 AST_VISITOR(CodeGenVisitor, BinaryExpr) {
-	Opcode* opcode;
-	Value* lhs;
 	Value* rhs;
 
 	expr->getLhs()->accept(*this);
-	lhs = expr->getLhs()->getValue();
+
+	Value* lhs = expr->getLhs()->getValue();
 
 	/**
 	 * Treat the jump for logical expression
 	 */
 	switch (expr->getOp()) {
-		case AND:
-			opcode = emit(OP_JMPNZ, &VM::jmpz_handler, lhs, NULL, expr->getValue());
+		case AND: {
+			Opcode* opcode = emit(OP_JMPNZ, &VM::jmpz_handler, lhs, NULL, expr->getValue());
 
 			expr->getRhs()->accept(*this);
 			rhs = expr->getRhs()->getValue();
@@ -104,9 +103,10 @@ AST_VISITOR(CodeGenVisitor, BinaryExpr) {
 			opcode = emit(OP_JMPZ, &VM::jmpz_handler, rhs, NULL, expr->getValue());
 			opcode->setJmpAddr1(getOpNum());
 			expr->getValue()->addRef();
+			}
 			break;
-		case OR:
-			opcode = emit(OP_JMPNZ, &VM::jmpnz_handler, lhs, NULL, expr->getValue());
+		case OR: {
+			Opcode* opcode = emit(OP_JMPNZ, &VM::jmpnz_handler, lhs, NULL, expr->getValue());
 
 			expr->getRhs()->accept(*this);
 			rhs = expr->getRhs()->getValue();
@@ -116,6 +116,7 @@ AST_VISITOR(CodeGenVisitor, BinaryExpr) {
 			opcode = emit(OP_JMPNZ, &VM::jmpnz_handler, rhs, NULL, expr->getValue());
 			opcode->setJmpAddr1(getOpNum());
 			expr->getValue()->addRef();
+			}
 			break;
 		default:
 			expr->getRhs()->accept(*this);
@@ -136,7 +137,9 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 	Value* initval = expr->getInitialValue();
 	Value* variable = var_expr->getValue();
 
-	/* Check if the declaration contains initialization */
+	/**
+	 * Check if the declaration contains initialization
+	 */
 	if (initval) {
 		if (initval->isPrimitive()) {
 			if (initval->getTypePtr() == variable->getTypePtr()) {
@@ -165,18 +168,14 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
  * Generates the opcode for the IF-ELSEIF-ELSE expression
  */
 AST_VISITOR(CodeGenVisitor, IfExpr) {
-	Value* value;
-	Opcode* jmp_if;
-	Opcode* jmp_else;
-	Opcode* jmp_elseif;
 	OpcodeList jmp_ops;
 
 	expr->getCondition()->accept(*this);
 
-	value = expr->getCondition()->getValue();
+	Value* value = expr->getCondition()->getValue();
 	value->addRef();
 
-	jmp_if = emit(OP_JMPZ, &VM::jmpz_handler);
+	Opcode* jmp_if = emit(OP_JMPZ, &VM::jmpz_handler);
 	jmp_if->setOp1(value);
 
 	jmp_ops.push_back(jmp_if);
@@ -201,7 +200,7 @@ AST_VISITOR(CodeGenVisitor, IfExpr) {
 			cond = elseif->getCondition()->getValue();
 			cond->addRef();
 
-			jmp_elseif = emit(OP_JMPZ, &VM::jmpz_handler, cond);
+			Opcode* jmp_elseif = emit(OP_JMPZ, &VM::jmpz_handler, cond);
 
 			jmp_ops.push_back(jmp_elseif);
 
@@ -215,7 +214,7 @@ AST_VISITOR(CodeGenVisitor, IfExpr) {
 	}
 
 	if (expr->hasElseBlock()) {
-		jmp_else = emit(OP_JMP, &VM::jmp_handler);
+		Opcode* jmp_else = emit(OP_JMP, &VM::jmp_handler);
 
 		if (jmp_ops.size() == 1) {
 			jmp_if->setJmpAddr1(getOpNum());
@@ -230,7 +229,7 @@ AST_VISITOR(CodeGenVisitor, IfExpr) {
 		jmp_if->setJmpAddr1(getOpNum());
 		jmp_if->setJmpAddr2(getOpNum());
 	} else {
-		OpcodeList::iterator it = jmp_ops.begin(), end = jmp_ops.end();
+		OpcodeList::const_iterator it = jmp_ops.begin(), end = jmp_ops.end();
 
 		while (it != end) {
 			(*it)->setJmpAddr2(getOpNum());
@@ -259,19 +258,15 @@ AST_VISITOR(CodeGenVisitor, BlockNode) {
  * Generates the JMPZ opcode for WHILE expression
  */
 AST_VISITOR(CodeGenVisitor, WhileExpr) {
-	Value* value;
-	Opcode* jmpz;
-	Opcode* jmp;
 	unsigned int start_pos = 0;
-
 	start_pos = getOpNum();
 
 	expr->getCondition()->accept(*this);
 
-	value = expr->getCondition()->getValue();
+	Value* value = expr->getCondition()->getValue();
 	value->addRef();
 
-	jmpz = emit(OP_JMPZ, &VM::jmpz_handler, value);
+	Opcode* jmpz = emit(OP_JMPZ, &VM::jmpz_handler, value);
 
 	if (expr->hasBlock()) {
 		m_brks.push(OpcodeStack());
@@ -288,7 +283,7 @@ AST_VISITOR(CodeGenVisitor, WhileExpr) {
 		m_brks.pop();
 	}
 
-	jmp = emit(OP_JMP, &VM::jmp_handler);
+	Opcode* jmp = emit(OP_JMP, &VM::jmp_handler);
 	jmp->setJmpAddr2(start_pos);
 
 	jmpz->setJmpAddr1(getOpNum());
@@ -298,18 +293,14 @@ AST_VISITOR(CodeGenVisitor, WhileExpr) {
  * Generates the opcode for FOR expression
  */
 AST_VISITOR(CodeGenVisitor, ForExpr) {
-	Value* value;
-	Opcode* jmpz;
-	Opcode* jmp;
-	unsigned int start_pos = 0;
-
 	if (!expr->isIteratorMode()) {
+		Value* value;
 
 		if (expr->getVarDecl() != NULL) {
 			expr->getVarDecl()->accept(*this);
 		}
 
-		start_pos = getOpNum();
+		unsigned int start_pos = getOpNum();
 
 		if (expr->getCondition()) {
 			expr->getCondition()->accept(*this);
@@ -321,7 +312,7 @@ AST_VISITOR(CodeGenVisitor, ForExpr) {
 			value = new Value(true);
 		}
 
-		jmpz = emit(OP_JMPZ, &VM::jmpz_handler, value);
+		Opcode* jmpz = emit(OP_JMPZ, &VM::jmpz_handler, value);
 
 		// If the expression has increment we must jump 2 opcodes
 		unsigned int offset = (expr->getIncrement() ? 2 : 1);
@@ -345,7 +336,7 @@ AST_VISITOR(CodeGenVisitor, ForExpr) {
 			expr->getIncrement()->accept(*this);
 		}
 
-		jmp = emit(OP_JMP, &VM::jmp_handler);
+		Opcode* jmp = emit(OP_JMP, &VM::jmp_handler);
 		jmp->setJmpAddr2(start_pos);
 
 		jmpz->setJmpAddr1(getOpNum());
@@ -356,13 +347,11 @@ AST_VISITOR(CodeGenVisitor, ForExpr) {
  * Generates opcode for break statement
  */
 AST_VISITOR(CodeGenVisitor, BreakNode) {
-	Opcode* opcode = emit(OP_BREAK, &VM::break_handler);
-
 	/**
 	 * Pushes the break opcode to a stack which in the end
 	 * sets its jump addr to end of repeat block
 	 */
-	m_brks.top().push(opcode);
+	m_brks.top().push(emit(OP_BREAK, &VM::break_handler));
 }
 
 /**
@@ -432,9 +421,7 @@ AST_VISITOR(CodeGenVisitor, ImportStmt) {
 AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
 	CallableValue* func = expr->getFunc();
 	Function* user_func = func->getFunction();
-	Opcode* jmp;
-
-	jmp = emit(OP_JMP, &VM::jmp_handler);
+	Opcode* jmp = emit(OP_JMP, &VM::jmp_handler);
 
 	user_func->setOffset(getOpNum());
 

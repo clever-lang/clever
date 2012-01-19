@@ -165,9 +165,10 @@ public:
 
 	const Method* getMethod(const CString* name, const TypeVector* args) const {
 		MethodMap::const_iterator it = m_methods.find(*name);
-		std::string args_name;
 
 		if (it == m_methods.end()) return NULL;
+
+		std::string args_name;
 
 		if (args != NULL) {
 			for (size_t i = 0; i < args->size(); ++i) {
