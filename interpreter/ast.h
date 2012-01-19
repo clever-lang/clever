@@ -32,6 +32,7 @@
 #include "compiler/value.h"
 #include "compiler/refcounted.h"
 #include "interpreter/astvisitor.h"
+#include "interpreter/asttransformer.h"
 #include "build/interpreter/location.hh"
 #include "types/nativetypes.h"
 
@@ -81,6 +82,8 @@ enum {
 	LSHIFT,
 	RSHIFT
 };
+
+class NumberLiteral;
 
 /**
  * AST node representation
@@ -150,9 +153,14 @@ public:
 	/**
 	 * Method for generating the expression IR
 	 */
-	virtual void accept(ASTVisitor& visitor) { }
+	virtual void acceptVisitor(ASTVisitor& visitor) { }
+	virtual ASTNode* acceptTransformer(ASTTransformer& transformer) { return this; }
 	virtual void setExpr(ASTNode* expr) { }
 	virtual void setBlock(ASTNode* expr) { }
+
+
+	virtual NumberLiteral* asNumberLiteral() { return NULL; }
+
 protected:
 	NodeList m_nodes;
 	location m_location;
@@ -194,6 +202,8 @@ public:
 	}
 
 	Value* getValue() const { return m_value; };
+
+	NumberLiteral* asNumberLiteral() { return this; }
 private:
 	Value* m_value;
 
@@ -260,7 +270,7 @@ public:
 	Value* getMethod() { return m_method; }
 	Value* getMethodArgs() { return m_args; }
 
-	virtual void accept(ASTVisitor& visitor) {
+	virtual void acceptVisitor(ASTVisitor& visitor) {
 		visitor.visit(this);
 	}
 protected:
@@ -307,7 +317,7 @@ public:
 
 	const CString* getName() const { return m_name; }
 
-	void accept(ASTVisitor& visitor) {
+	void acceptVisitor(ASTVisitor& visitor) {
 		visitor.visit(this);
 	}
 
@@ -347,7 +357,7 @@ public:
 
 	Value* getValue() const { return m_value; }
 
-	void accept(ASTVisitor& visitor) {
+	void acceptVisitor(ASTVisitor& visitor) {
 		visitor.visit(this);
 	}
 private:
@@ -376,7 +386,7 @@ public:
 
 	Value* getRegex() const { return m_regex; }
 
-	void accept(ASTVisitor& visitor) {
+	void acceptVisitor(ASTVisitor& visitor) {
 		visitor.visit(this);
 	}
 
@@ -435,8 +445,8 @@ public:
 	void setMethod(Value* method) { m_method = method; }
 	Value* getMethod() { return m_method; }
 
-	virtual void accept(ASTVisitor& visitor) {
-		m_expr->accept(visitor);
+	virtual void acceptVisitor(ASTVisitor& visitor) {
+		m_expr->acceptVisitor(visitor);
 
 		visitor.visit(this);
 	}
@@ -496,9 +506,9 @@ public:
 		return m_type;
 	}
 
-	void accept(ASTVisitor& visitor) {
+	void acceptVisitor(ASTVisitor& visitor) {
 		if (m_rhs) {
-			m_rhs->accept(visitor);
+			m_rhs->acceptVisitor(visitor);
 		}
 		visitor.visit(this);
 	}
@@ -566,7 +576,7 @@ public:
 		return m_scope;
 	}
 
-	void accept(ASTVisitor& visitor) {
+	void acceptVisitor(ASTVisitor& visitor) {
 		visitor.visit(this);
 	}
 private:
@@ -610,7 +620,7 @@ public:
 		}
 	}
 
-	void accept(ASTVisitor& visitor) {
+	void acceptVisitor(ASTVisitor& visitor) {
 		visitor.visit(this);
 	}
 private:
@@ -673,7 +683,7 @@ public:
 	ASTNode* getCondition() { return m_condition; }
 	ASTNode* getBlock() { return m_block; }
 
-	void accept(ASTVisitor& visitor) {
+	void acceptVisitor(ASTVisitor& visitor) {
 		visitor.visit(this);
 	}
 private:
@@ -744,7 +754,7 @@ public:
 	ASTNode* getIncrement() { return m_increment; }
 	ASTNode* getBlock() { return m_block; }
 
-	void accept(ASTVisitor& visitor) {
+	void acceptVisitor(ASTVisitor& visitor) {
 		visitor.visit(this);
 	}
 
@@ -764,7 +774,7 @@ public:
 
 	~BreakNode() { }
 
-	void accept(ASTVisitor& visitor) {
+	void acceptVisitor(ASTVisitor& visitor) {
 		visitor.visit(this);
 	}
 private:
@@ -780,7 +790,7 @@ public:
 		clearNodes();
 	}
 
-	void accept(ASTVisitor& visitor) {
+	void acceptVisitor(ASTVisitor& visitor) {
 		visitor.visit(this);
 	}
 
@@ -848,9 +858,9 @@ public:
 		return m_arguments;
 	}
 
-	void accept(ASTVisitor& visitor) {
+	void acceptVisitor(ASTVisitor& visitor) {
 		if (m_arguments) {
-			m_arguments->accept(visitor);
+			m_arguments->acceptVisitor(visitor);
 		}
 		visitor.visit(this);
 	}
@@ -930,7 +940,7 @@ public:
 
 	CallableValue* getFunc(void) { return m_value; }
 
-	void accept(ASTVisitor& visitor) {
+	void acceptVisitor(ASTVisitor& visitor) {
 		visitor.visit(this);
 	}
 protected:
@@ -996,7 +1006,7 @@ public:
 
 	ArgumentList* getArgs() { return m_args; }
 
-	void accept(ASTVisitor& visitor) {
+	void acceptVisitor(ASTVisitor& visitor) {
 		visitor.visit(this);
 	}
 
@@ -1057,8 +1067,8 @@ public:
 		return m_value;
 	}
 
-	void accept(ASTVisitor& visitor) {
-		m_var->accept(visitor);
+	void acceptVisitor(ASTVisitor& visitor) {
+		m_var->acceptVisitor(visitor);
 		visitor.visit(this);
 	}
 
@@ -1089,9 +1099,9 @@ public:
 	~AssignExpr() {
 	}
 
-	void accept(ASTVisitor& visitor) {
-		getLhs()->accept(visitor);
-		getRhs()->accept(visitor);
+	void acceptVisitor(ASTVisitor& visitor) {
+		getLhs()->acceptVisitor(visitor);
+		getRhs()->acceptVisitor(visitor);
 		visitor.visit(this);
 	}
 private:
@@ -1142,7 +1152,7 @@ public:
 		return m_alias ? m_alias->getName() : NULL;
 	}
 
-	void accept(ASTVisitor& visitor) {
+	void acceptVisitor(ASTVisitor& visitor) {
 		visitor.visit(this);
 	}
 private:
@@ -1169,7 +1179,7 @@ public:
 	const CString* getNewName() { return m_new_name->getName(); }
 	const CString* getCurrentName() { return m_curr_name->getName(); }
 
-	void accept(ASTVisitor& visitor) {
+	void acceptVisitor(ASTVisitor& visitor) {
 		visitor.visit(this);
 	}
 private:
@@ -1199,9 +1209,9 @@ public:
 		return m_expr ? m_expr->getValue() : NULL;
 	}
 
-	void accept(ASTVisitor& visitor) {
+	void acceptVisitor(ASTVisitor& visitor) {
 		if (m_expr) {
-			m_expr->accept(visitor);
+			m_expr->acceptVisitor(visitor);
 		}
 		visitor.visit(this);
 	}
@@ -1285,7 +1295,7 @@ public:
 		m_body->delRef();
 	}
 
-	void accept(ASTVisitor& visitor) {
+	void acceptVisitor(ASTVisitor& visitor) {
 		visitor.visit(this);
 	}
 

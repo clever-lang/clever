@@ -161,7 +161,7 @@ AST_VISITOR(TypeChecker, ArgumentList) {
 	values->reserve(nodes.size());
 
 	while (it != end) {
-		(*it)->accept(*this);
+		(*it)->acceptVisitor(*this);
 
 		Value* value = (*it)->getValue();
 		value->addRef();
@@ -304,8 +304,8 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 	const Method* method = NULL;
 	const CString* method_name = NULL;
 
-	expr->getLhs()->accept(*this);
-	expr->getRhs()->accept(*this);
+	expr->getLhs()->acceptVisitor(*this);
+	expr->getRhs()->acceptVisitor(*this);
 
 	Value* lhs = expr->getLhs()->getValue();
 	Value* rhs = expr->getRhs()->getValue();
@@ -456,7 +456,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 			}
 			else {
 				Compiler::errorf(expr->getLocation(),
-					"Type `%S' do not accept template arguments!",
+					"Type `%S' do not acceptVisitor template arguments!",
 					type->getName());
 			}
 	}
@@ -504,10 +504,10 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 }
 
 AST_VISITOR(TypeChecker, IfExpr) {
-	expr->getCondition()->accept(*this);
+	expr->getCondition()->acceptVisitor(*this);
 
 	if (expr->hasBlock()) {
-		expr->getBlock()->accept(*this);
+		expr->getBlock()->acceptVisitor(*this);
 	}
 
 	if (expr->hasElseIf()) {
@@ -517,17 +517,17 @@ AST_VISITOR(TypeChecker, IfExpr) {
 		while (it != end) {
 			ElseIfExpr* elseif = static_cast<ElseIfExpr*>(*it);
 
-			elseif->getCondition()->accept(*this);
+			elseif->getCondition()->acceptVisitor(*this);
 
 			if (elseif->hasBlock()) {
-				elseif->getBlock()->accept(*this);
+				elseif->getBlock()->acceptVisitor(*this);
 			}
 			++it;
 		}
 	}
 
 	if (expr->hasElseBlock()) {
-		expr->getElse()->accept(*this);
+		expr->getElse()->acceptVisitor(*this);
 	}
 }
 
@@ -544,7 +544,7 @@ AST_VISITOR(TypeChecker, BlockNode) {
 	 * Iterates statements inside the block
 	 */
 	while (it != end) {
-		(*it)->accept(*this);
+		(*it)->acceptVisitor(*this);
 		++it;
 	}
 
@@ -555,10 +555,10 @@ AST_VISITOR(TypeChecker, BlockNode) {
 }
 
 AST_VISITOR(TypeChecker, WhileExpr) {
-	expr->getCondition()->accept(*this);
+	expr->getCondition()->acceptVisitor(*this);
 
 	if (expr->hasBlock()) {
-		expr->getBlock()->accept(*this);
+		expr->getBlock()->acceptVisitor(*this);
 	}
 }
 
@@ -570,19 +570,19 @@ AST_VISITOR(TypeChecker, ForExpr) {
 	g_symtable.beginScope();
 
 	if (expr->getVarDecl()) {
-		expr->getVarDecl()->accept(*this);
+		expr->getVarDecl()->acceptVisitor(*this);
 	}
 
 	if (expr->getCondition()) {
-		expr->getCondition()->accept(*this);
+		expr->getCondition()->acceptVisitor(*this);
 	}
 
 	if (expr->hasBlock()) {
-		expr->getBlock()->accept(*this);
+		expr->getBlock()->acceptVisitor(*this);
 	}
 
 	if (expr->getIncrement()) {
-		expr->getIncrement()->accept(*this);
+		expr->getIncrement()->acceptVisitor(*this);
 	}
 
 	g_symtable.endScope();
@@ -614,7 +614,7 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 		Value* arg_values = new Value;
 		arg_values->setType(Value::VECTOR);
 
-		expr->getArgs()->accept(*this);
+		expr->getArgs()->acceptVisitor(*this);
 		arg_values->setVector(expr->getArgs()->getArgValue());
 
 		if (func->isUserDefined()) {
@@ -637,7 +637,7 @@ AST_VISITOR(TypeChecker, MethodCall) {
 	TypeVector args_types;
 
 	if (args) {
-		expr->getArgs()->accept(*this);
+		expr->getArgs()->acceptVisitor(*this);
 
 		Value* arg_values = new Value;
 
@@ -770,7 +770,7 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 
 	m_funcs.push(user_func);
 
-	expr->getBlock()->accept(*this);
+	expr->getBlock()->acceptVisitor(*this);
 
 	m_funcs.pop();
 

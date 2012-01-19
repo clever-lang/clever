@@ -111,8 +111,8 @@ void Compiler::loadNativeTypes() {
 void Compiler::buildIR() {
 	m_cgvisitor.init();
 
-	m_ast->accept(m_tcvisitor);
-	m_ast->accept(m_cgvisitor);
+	m_ast->acceptVisitor(m_tcvisitor);
+	m_ast->acceptVisitor(m_cgvisitor);
 
 	m_cgvisitor.shutdown();
 

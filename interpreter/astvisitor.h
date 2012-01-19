@@ -26,10 +26,6 @@
 #ifndef CLEVER_ASTVISITOR_H
 #define CLEVER_ASTVISITOR_H
 
-#include "vm/vm.h"
-#include "compiler/symboltable.h"
-#include "vm/opcode.h"
-
 namespace clever { namespace ast {
 
 class Identifier;
