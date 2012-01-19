@@ -58,28 +58,40 @@ namespace clever {
 /**
  * Operator helpers
  */
-#define CLEVER_OPERATOR_PLUS    "$+$"
-#define CLEVER_OPERATOR_MINUS   "$-$"
-#define CLEVER_OPERATOR_DIV     "$/$"
-#define CLEVER_OPERATOR_MULT    "$*$"
-#define CLEVER_OPERATOR_MOD     "$%$"
-#define CLEVER_OPERATOR_BW_XOR  "$^$"
-#define CLEVER_OPERATOR_BW_AND  "$&$"
-#define CLEVER_OPERATOR_BW_OR   "$|$"
-#define CLEVER_OPERATOR_NE      "$!=$"
-#define CLEVER_OPERATOR_LE      "$<=$"
-#define CLEVER_OPERATOR_GE      "$>=$"
-#define CLEVER_OPERATOR_EQUAL   "$==$"
-#define CLEVER_OPERATOR_LESS    "$<$"
-#define CLEVER_OPERATOR_GREATER "$>$"
-#define CLEVER_OPERATOR_NOT     "$!$"
-#define CLEVER_OPERATOR_BW_NOT  "$~$"
-#define CLEVER_OPERATOR_PRE_INC "$++$"
-#define CLEVER_OPERATOR_POS_INC "$+++$"
-#define CLEVER_OPERATOR_PRE_DEC "$--$"
-#define CLEVER_OPERATOR_POS_DEC "$---$"
-#define CLEVER_OPERATOR_LSHIFT  "$<<$"
-#define CLEVER_OPERATOR_RSHIFT  "$>>$"
+#define CLEVER_OPERATOR_PLUS    "__plus__"
+#define CLEVER_OPERATOR_MINUS   "__minus__"
+#define CLEVER_OPERATOR_DIV     "__div__"
+#define CLEVER_OPERATOR_MULT    "__mult__"
+#define CLEVER_OPERATOR_MOD     "__mod__"
+
+/**
+ * Bitwise operator method name
+ */
+#define CLEVER_OPERATOR_BW_XOR  "__bw_xor__"
+#define CLEVER_OPERATOR_BW_AND  "__bw_and__"
+#define CLEVER_OPERATOR_BW_OR   "__bw_or__"
+#define CLEVER_OPERATOR_BW_NOT  "__bw_not__"
+#define CLEVER_OPERATOR_LSHIFT  "__lshift__"
+#define CLEVER_OPERATOR_RSHIFT  "__rshift__"
+
+/**
+ * Logical operator method name
+ */
+#define CLEVER_OPERATOR_NE      "__ne__"
+#define CLEVER_OPERATOR_LE      "__le__"
+#define CLEVER_OPERATOR_GE      "__ge__"
+#define CLEVER_OPERATOR_EQUAL   "__equal__"
+#define CLEVER_OPERATOR_LESS    "__less__"
+#define CLEVER_OPERATOR_GREATER "__greater__"
+#define CLEVER_OPERATOR_NOT     "__not__"
+
+/**
+ * Pre/pos inc dec operator method name
+ */
+#define CLEVER_OPERATOR_PRE_INC "__pre_inc__"
+#define CLEVER_OPERATOR_POS_INC "__pos_inc__"
+#define CLEVER_OPERATOR_PRE_DEC "__pre_dec__"
+#define CLEVER_OPERATOR_POS_DEC "__pos_dec__"
 
 /**
  * Type handler definitions
