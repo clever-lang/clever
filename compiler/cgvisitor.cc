@@ -399,13 +399,12 @@ AST_VISITOR(CodeGenVisitor, MethodCall) {
  * Generates opcode for variable assignment
  */
 AST_VISITOR(CodeGenVisitor, AssignExpr) {
-	Value* lhs = expr->getLhs()->getValue();
-	Value* rhs = expr->getRhs()->getValue();
+	CallableValue* call = expr->getMethodValue();
+	Value* rvalue = expr->getMethodArgs();
 
-	lhs->addRef();
-	rhs->addRef();
+	rvalue->addRef();
 
-	emit(OP_ASSIGN, &VM::assign_handler, lhs, rhs);
+	emit(OP_MCALL, &VM::mcall_handler, call, rvalue);
 }
 
 /**

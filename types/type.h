@@ -56,16 +56,17 @@ namespace clever {
 #define CLEVER_GET_ARRAY_TEMPLATE ((const TemplatedType*)CLEVER_ARRAY)
 
 /**
- * Operator helpers
+ * Arithmetic and assign operator method names
  */
 #define CLEVER_OPERATOR_PLUS    "__plus__"
 #define CLEVER_OPERATOR_MINUS   "__minus__"
 #define CLEVER_OPERATOR_DIV     "__div__"
 #define CLEVER_OPERATOR_MULT    "__mult__"
 #define CLEVER_OPERATOR_MOD     "__mod__"
+#define CLEVER_OPERATOR_ASSIGN  "__assign__"
 
 /**
- * Bitwise operator method name
+ * Bitwise operator method names
  */
 #define CLEVER_OPERATOR_BW_XOR  "__bw_xor__"
 #define CLEVER_OPERATOR_BW_AND  "__bw_and__"
@@ -75,7 +76,7 @@ namespace clever {
 #define CLEVER_OPERATOR_RSHIFT  "__rshift__"
 
 /**
- * Logical operator method name
+ * Logical operator method names
  */
 #define CLEVER_OPERATOR_NE      "__ne__"
 #define CLEVER_OPERATOR_LE      "__le__"
@@ -86,7 +87,7 @@ namespace clever {
 #define CLEVER_OPERATOR_NOT     "__not__"
 
 /**
- * Pre/pos inc dec operator method name
+ * Pre/pos inc dec operator method names
  */
 #define CLEVER_OPERATOR_PRE_INC "__pre_inc__"
 #define CLEVER_OPERATOR_POS_INC "__pos_inc__"

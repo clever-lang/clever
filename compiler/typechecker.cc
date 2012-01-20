@@ -590,6 +590,53 @@ AST_VISITOR(TypeChecker, ForExpr) {
 AST_VISITOR(TypeChecker, BreakNode) {
 }
 
+/**
+ * Assignment expression visitor
+ */
+AST_VISITOR(TypeChecker, AssignExpr) {
+	Value* lhs = expr->getLhs()->getValue();
+	Value* rhs = expr->getRhs()->getValue();
+
+	if (!checkCompatibleTypes(lhs, rhs)) {
+		Compiler::errorf(expr->getLocation(),
+			"Cannot convert `%S' to `%S' on assignment",
+			rhs->getTypePtr()->getName(),
+			lhs->getTypePtr()->getName());
+	}
+
+	TypeVector arg_types;
+	arg_types.push_back(rhs->getTypePtr());
+
+	const Method* method = lhs->getTypePtr()->getMethod(
+		CSTRING(CLEVER_OPERATOR_ASSIGN), &arg_types);
+
+	if (method == NULL) {
+		Compiler::errorf(expr->getLocation(),
+			"Method for assing operation on %S not found to assign %S",
+			rhs->getTypePtr()->getName(),
+			lhs->getTypePtr()->getName());
+	}
+
+	ValueVector* arg_values = new ValueVector;
+	arg_values->push_back(rhs);
+	rhs->addRef();
+
+	Value* args = new Value;
+	args->setType(Value::VECTOR);
+	args->setVector(arg_values);
+
+	expr->setMethodArgs(args);
+
+	CallableValue* call = new CallableValue;
+	call->setTypePtr(lhs->getTypePtr());
+	call->setHandler(method);
+	call->setContext(lhs);
+	lhs->addRef();
+
+	expr->setMethodValue(call);
+	call->addRef();
+}
+
 AST_VISITOR(TypeChecker, FunctionCall) {
 	const CString* const name = expr->getFuncName();
 	Value* fvalue = g_symtable.getValue(name);
@@ -669,18 +716,6 @@ AST_VISITOR(TypeChecker, MethodCall) {
 	expr->getValue()->setTypePtr(method->getReturnType());
 
 	expr->setFuncValue(static_cast<CallableValue*>(call));
-}
-
-AST_VISITOR(TypeChecker, AssignExpr) {
-	const Value* lhs = expr->getLhs()->getValue();
-	const Value* rhs = expr->getRhs()->getValue();
-
-	if (!checkCompatibleTypes(lhs, rhs)) {
-		Compiler::errorf(expr->getLocation(),
-			"Cannot convert `%S' to `%S' on assignment",
-			rhs->getTypePtr()->getName(),
-			lhs->getTypePtr()->getName());
-	}
 }
 
 AST_VISITOR(TypeChecker, ImportStmt) {

@@ -109,14 +109,14 @@ CLEVER_TYPE_METHOD(String::substring) {
  */
 CLEVER_TYPE_METHOD(String::at) {
 	int64_t pos = CLEVER_ARG(0)->getInteger();
-	
+
 	if (static_cast<size_t>(pos) > CLEVER_THIS()->toString().length()) {
 		Compiler::warningf("Out of range: %l is after the end of the string.", pos);
 	}
-	
+
 	std::string newString;
 	newString = CLEVER_THIS()->toString()[pos];
-	
+
 	CLEVER_RETURN_STR(CSTRING(newString));
 }
 
@@ -192,6 +192,13 @@ CLEVER_TYPE_METHOD(String::toLower) {
 	::std::string str = CLEVER_THIS()->toString();
 	::std::transform(str.begin(), str.end(),str.begin(), ::tolower);
 	CLEVER_RETURN_STR(CSTRING(str));
+}
+
+/**
+ * Void String::__assign__(String)
+ */
+CLEVER_TYPE_METHOD(String::do_assign) {
+	CLEVER_THIS()->copy(CLEVER_ARG(0));
 }
 
 /**
@@ -298,12 +305,17 @@ void String::init() {
 			->addArg("start", CLEVER_INT)
 			->addArg("length", CLEVER_INT)
 	);
-	
+
 	addMethod(
 		(new Method("at", (MethodPtr)&String::at, CLEVER_STR))
 			->addArg("pos", CLEVER_INT)
 	);
-	
+
+	addMethod(
+		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&String::do_assign, CLEVER_STR))
+			->addArg("rvalue", CLEVER_STR)
+	);
+
 	addMethod(new Method("length", (MethodPtr)&String::length, CLEVER_INT));
 
 	addMethod(new Method("toDouble", (MethodPtr)&String::toDouble, CLEVER_DOUBLE));

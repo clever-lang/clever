@@ -55,6 +55,7 @@ public:
 	static CLEVER_TYPE_METHOD(equal);
 	static CLEVER_TYPE_METHOD(logical_not);
 	static CLEVER_TYPE_METHOD(bw_not);
+	static CLEVER_TYPE_METHOD(do_assign);
 
 	/**
 	 * Type handlers

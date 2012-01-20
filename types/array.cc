@@ -29,6 +29,16 @@
 
 namespace clever {
 
+/**
+ * Void Array::__assign__(Array)
+ */
+CLEVER_TYPE_METHOD(Array::do_assign) {
+	CLEVER_THIS()->copy(CLEVER_ARG(0));
+}
+
+/**
+ * Void Array<T>::push(T)
+ */
 CLEVER_TYPE_METHOD(Array::push) {
 	ValueVector* vec = CLEVER_THIS()->getVector();
 
@@ -38,6 +48,9 @@ CLEVER_TYPE_METHOD(Array::push) {
 	vec->push_back(val);
 }
 
+/**
+ * T Array<T>::pop()
+ */
 CLEVER_TYPE_METHOD(Array::pop) {
 	ValueVector* vec = CLEVER_THIS()->getVector();
 
@@ -59,18 +72,27 @@ CLEVER_TYPE_METHOD(Array::pop) {
 	}
 }
 
+/**
+ * Int Array<T>::size()
+ */
 CLEVER_TYPE_METHOD(Array::size) {
 	ValueVector* vec = CLEVER_THIS()->getVector();
 
 	CLEVER_RETURN_INT(vec->size());
 }
 
+/**
+ * Bool Array<T>::isEmpty()
+ */
 CLEVER_TYPE_METHOD(Array::isEmpty) {
 	ValueVector* vec = CLEVER_THIS()->getVector();
 
 	CLEVER_RETURN_BOOL(vec->empty());
 }
 
+/**
+ * Void Array<T>::clear()
+ */
 CLEVER_TYPE_METHOD(Array::clear) {
 	ValueVector* vec = CLEVER_THIS()->getVector();
 
@@ -82,6 +104,9 @@ CLEVER_TYPE_METHOD(Array::clear) {
 	vec->clear();
 }
 
+/**
+ * T Array<T>::at(Int)
+ */
 CLEVER_TYPE_METHOD(Array::at) {
 	ValueVector* vec = CLEVER_THIS()->getVector();
 	int64_t idx = CLEVER_ARG(0)->getInteger();
@@ -112,6 +137,9 @@ CLEVER_TYPE_METHOD(Array::at) {
 	}
 }
 
+/**
+ * Void Array<T>::set(Int, T)
+ */
 CLEVER_TYPE_METHOD(Array::set) {
 	ValueVector* vec = CLEVER_THIS()->getVector();
 	int64_t idx = CLEVER_ARG(0)->getInteger();
@@ -138,6 +166,9 @@ CLEVER_TYPE_METHOD(Array::set) {
 	}
 }
 
+/**
+ * Void Array<T>::resize()
+ */
 CLEVER_TYPE_METHOD(Array::resize) {
 	ValueVector* vec = CLEVER_THIS()->getVector();
 	int nsz = CLEVER_ARG(0)->getInteger();
@@ -155,6 +186,9 @@ CLEVER_TYPE_METHOD(Array::resize) {
 	}
 }
 
+/**
+ * String Array<T>::toString()
+ */
 CLEVER_TYPE_METHOD(Array::toString) {
 	ValueVector* vec = CLEVER_THIS()->getVector();
 	std::string ret = "[", sep = ", ";
@@ -170,11 +204,21 @@ CLEVER_TYPE_METHOD(Array::toString) {
 	CLEVER_RETURN_STR(CSTRING(ret));
 }
 
+/**
+ * Array type initializator
+ */
 void Array::init() {
-	/* If we are in our "virtual" Array type */
+	/**
+	 * Check if we are in our "virtual" Array type
+	 */
 	if (CLEVER_TPL_ARG(0) == NULL) {
 		return;
 	}
+
+	addMethod(
+		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&Array::toString, CLEVER_STR))
+			->addArg("rvalue", CLEVER_ARRAY)
+	);
 
 	addMethod(new Method("toString", (MethodPtr)&Array::toString, CLEVER_STR));
 

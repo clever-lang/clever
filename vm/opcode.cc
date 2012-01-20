@@ -61,7 +61,6 @@ const char* Opcode::getOpName(Opcodes op) const {
 		CASE(OP_BREAK);
 		CASE(OP_MCALL);
 		CASE(OP_FCALL);
-		CASE(OP_ASSIGN);
 		CASE(OP_RETURN);
 		CASE(OP_RECV);
 		default:

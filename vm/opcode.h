@@ -47,7 +47,6 @@ enum Opcodes {
 	OP_BREAK,
 	OP_FCALL,
 	OP_MCALL,
-	OP_ASSIGN,
 	OP_RETURN,
 	OP_RECV
 };

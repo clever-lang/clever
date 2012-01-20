@@ -52,6 +52,17 @@ CLEVER_TYPE_METHOD(Integer::toString) {
 	retval->setString(CSTRING(value->toString()));
 }
 
+/**
+ * Void Int::__assign__(Int)
+ */
+CLEVER_TYPE_METHOD(Integer::do_assign) {
+	if (CLEVER_ARG_IS_INT(0)) {
+		CLEVER_THIS()->copy(CLEVER_ARG(0));
+	} else {
+		CLEVER_THIS()->setInteger((int64_t)CLEVER_ARG(0)->getDouble());
+	}
+}
+
 CLEVER_TYPE_METHOD(Integer::plus) {
 	if (CLEVER_ARG_IS_INT(1)) {
 		CLEVER_RETURN_INT(CLEVER_ARG_INT(0) + CLEVER_ARG_INT(1));
@@ -224,6 +235,16 @@ CLEVER_TYPE_METHOD(Integer::pos_dec) {
 
 
 void Integer::init() {
+	addMethod(
+		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&Integer::do_assign, CLEVER_VOID))
+			->addArg("rvalue", CLEVER_INT)
+	);
+
+	addMethod(
+		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&Integer::do_assign, CLEVER_VOID))
+			->addArg("rvalue", CLEVER_DOUBLE)
+	);
+
 	addMethod(
 		new Method(CLEVER_OPERATOR_PRE_INC, (MethodPtr)&Integer::pre_inc, CLEVER_INT)
 	);

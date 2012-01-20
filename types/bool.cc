@@ -45,6 +45,18 @@ CLEVER_TYPE_METHOD(Bool::constructor) {
 }
 
 /**
+ * Void Bool::__assign__()
+ * Performs the assignment of Bool variable type
+ */
+CLEVER_TYPE_METHOD(Bool::do_assign) {
+	if (CLEVER_ARG_IS_BOOL(0)) {
+		CLEVER_THIS()->copy(CLEVER_ARG(0));
+	} else {
+		CLEVER_THIS()->setBoolean((int64_t)CLEVER_ARG(0)->getDouble());
+	}
+}
+
+/**
  * Bool::toString()
  * Converts the number to string
  */
@@ -107,6 +119,11 @@ void Bool::init() {
 	addMethod(new Method("toString", (MethodPtr)&Bool::toString, CLEVER_STR));
 
 	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Bool::constructor, CLEVER_BOOL));
+
+	addMethod(
+		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&Bool::do_assign, CLEVER_VOID))
+			->addArg("rvalue", CLEVER_BOOL)
+	);
 
 	addMethod(
 		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Bool::constructor, CLEVER_BOOL))

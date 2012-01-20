@@ -203,7 +203,7 @@ namespace clever {
 %type <method_call> method_call
 %type <variable_decl> variable_decl_or_empty
 %type <variable_decl> variable_declaration
-%type <binary_expr> assign_stmt
+%type <ast_node> assign_stmt
 %type <type_creation> type_creation
 %type <ast_node> expr
 %type <ast_node> expr_or_empty

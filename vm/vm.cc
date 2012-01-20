@@ -244,13 +244,6 @@ CLEVER_VM_HANDLER(VM::mcall_handler) {
 }
 
 /**
- * x = y
- */
-CLEVER_VM_HANDLER(VM::assign_handler) {
-	opcode.getOp1Type()->assign(opcode.getOp1(), opcode.getOp2());
-}
-
-/**
  * End function marker
  */
 CLEVER_VM_HANDLER(VM::end_func_handler) {
