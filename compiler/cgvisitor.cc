@@ -36,7 +36,7 @@ AST_VISITOR(CodeGenVisitor, ArgumentList) {
 	NodeList::const_iterator it = nodes.begin(), end = nodes.end();
 
 	while (it != end) {
-		(*it)->accept(*this);
+		(*it)->acceptVisitor(*this);
 		++it;
 	}
 }
@@ -84,7 +84,7 @@ AST_VISITOR(CodeGenVisitor, UnaryExpr) {
 AST_VISITOR(CodeGenVisitor, BinaryExpr) {
 	Value* rhs;
 
-	expr->getLhs()->accept(*this);
+	expr->getLhs()->acceptVisitor(*this);
 
 	Value* lhs = expr->getLhs()->getValue();
 
@@ -95,7 +95,7 @@ AST_VISITOR(CodeGenVisitor, BinaryExpr) {
 		case AND: {
 			Opcode* opcode = emit(OP_JMPNZ, &VM::jmpz_handler, lhs, NULL, expr->getValue());
 
-			expr->getRhs()->accept(*this);
+			expr->getRhs()->acceptVisitor(*this);
 			rhs = expr->getRhs()->getValue();
 
 			opcode->setJmpAddr1(getOpNum()+1);
@@ -108,7 +108,7 @@ AST_VISITOR(CodeGenVisitor, BinaryExpr) {
 		case OR: {
 			Opcode* opcode = emit(OP_JMPNZ, &VM::jmpnz_handler, lhs, NULL, expr->getValue());
 
-			expr->getRhs()->accept(*this);
+			expr->getRhs()->acceptVisitor(*this);
 			rhs = expr->getRhs()->getValue();
 
 			opcode->setJmpAddr1(getOpNum()+1);
@@ -119,7 +119,7 @@ AST_VISITOR(CodeGenVisitor, BinaryExpr) {
 			}
 			break;
 		default:
-			expr->getRhs()->accept(*this);
+			expr->getRhs()->acceptVisitor(*this);
 			rhs = expr->getRhs()->getValue();
 			emit(OP_MCALL, &VM::mcall_handler, expr->getMethod(), expr->getMethodArgs(), expr->getValue());
 	}
@@ -170,7 +170,7 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 AST_VISITOR(CodeGenVisitor, IfExpr) {
 	OpcodeList jmp_ops;
 
-	expr->getCondition()->accept(*this);
+	expr->getCondition()->acceptVisitor(*this);
 
 	Value* value = expr->getCondition()->getValue();
 	value->addRef();
@@ -181,7 +181,7 @@ AST_VISITOR(CodeGenVisitor, IfExpr) {
 	jmp_ops.push_back(jmp_if);
 
 	if (expr->hasBlock()) {
-		expr->getBlock()->accept(*this);
+		expr->getBlock()->acceptVisitor(*this);
 	}
 
 	if (expr->hasElseIf()) {
@@ -195,7 +195,7 @@ AST_VISITOR(CodeGenVisitor, IfExpr) {
 
 			last_jmp->setJmpAddr1(getOpNum());
 
-			elseif->getCondition()->accept(*this);
+			elseif->getCondition()->acceptVisitor(*this);
 
 			cond = elseif->getCondition()->getValue();
 			cond->addRef();
@@ -205,7 +205,7 @@ AST_VISITOR(CodeGenVisitor, IfExpr) {
 			jmp_ops.push_back(jmp_elseif);
 
 			if (elseif->hasBlock()) {
-				elseif->getBlock()->accept(*this);
+				elseif->getBlock()->acceptVisitor(*this);
 			}
 
 			last_jmp = jmp_elseif;
@@ -222,7 +222,7 @@ AST_VISITOR(CodeGenVisitor, IfExpr) {
 
 		jmp_ops.push_back(jmp_else);
 
-		expr->getElse()->accept(*this);
+		expr->getElse()->acceptVisitor(*this);
 	}
 
 	if (jmp_ops.size() == 1) {
@@ -239,7 +239,7 @@ AST_VISITOR(CodeGenVisitor, IfExpr) {
 }
 
 /**
- * Call the accept method of each block node
+ * Call the acceptVisitor method of each block node
  */
 AST_VISITOR(CodeGenVisitor, BlockNode) {
 	const NodeList& nodes = expr->getNodes();
@@ -249,7 +249,7 @@ AST_VISITOR(CodeGenVisitor, BlockNode) {
 	 * Iterates statements inside the block
 	 */
 	while (it != end) {
-		(*it)->accept(*this);
+		(*it)->acceptVisitor(*this);
 		++it;
 	}
 }
@@ -261,7 +261,7 @@ AST_VISITOR(CodeGenVisitor, WhileExpr) {
 	unsigned int start_pos = 0;
 	start_pos = getOpNum();
 
-	expr->getCondition()->accept(*this);
+	expr->getCondition()->acceptVisitor(*this);
 
 	Value* value = expr->getCondition()->getValue();
 	value->addRef();
@@ -271,7 +271,7 @@ AST_VISITOR(CodeGenVisitor, WhileExpr) {
 	if (expr->hasBlock()) {
 		m_brks.push(OpcodeStack());
 
-		expr->getBlock()->accept(*this);
+		expr->getBlock()->acceptVisitor(*this);
 
 		/**
 		 * Points break statements to out of WHILE block
@@ -297,13 +297,13 @@ AST_VISITOR(CodeGenVisitor, ForExpr) {
 		Value* value;
 
 		if (expr->getVarDecl() != NULL) {
-			expr->getVarDecl()->accept(*this);
+			expr->getVarDecl()->acceptVisitor(*this);
 		}
 
 		unsigned int start_pos = getOpNum();
 
 		if (expr->getCondition()) {
-			expr->getCondition()->accept(*this);
+			expr->getCondition()->acceptVisitor(*this);
 
 			value = expr->getCondition()->getValue();
 			value->addRef();
@@ -319,7 +319,7 @@ AST_VISITOR(CodeGenVisitor, ForExpr) {
 		if (expr->hasBlock()) {
 			m_brks.push(OpcodeStack());
 
-			expr->getBlock()->accept(*this);
+			expr->getBlock()->acceptVisitor(*this);
 
 			/**
 			 * Points break statements to out of FOR block
@@ -333,7 +333,7 @@ AST_VISITOR(CodeGenVisitor, ForExpr) {
 		}
 
 		if (expr->getIncrement() != NULL) {
-			expr->getIncrement()->accept(*this);
+			expr->getIncrement()->acceptVisitor(*this);
 		}
 
 		Opcode* jmp = emit(OP_JMP, &VM::jmp_handler);
@@ -363,7 +363,7 @@ AST_VISITOR(CodeGenVisitor, FunctionCall) {
 	Value* arg_values = expr->getArgsValue();
 
 	if (arg_values) {
-		expr->getArgs()->accept(*this);
+		expr->getArgs()->acceptVisitor(*this);
 
 		/**
 		 * User-defined function needs an extra opcode passing the parameters
@@ -387,7 +387,7 @@ AST_VISITOR(CodeGenVisitor, MethodCall) {
 	Value* arg_values = expr->getArgsValue();
 
 	if (arg_values) {
-		expr->getArgs()->accept(*this);
+		expr->getArgs()->acceptVisitor(*this);
 	}
 
 	call->addRef();
@@ -425,7 +425,7 @@ AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
 
 	user_func->setOffset(getOpNum());
 
-	expr->getBlock()->accept(*this);
+	expr->getBlock()->acceptVisitor(*this);
 
 	emit(OP_JMP, &VM::end_func_handler);
 

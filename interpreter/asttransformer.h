@@ -23,8 +23,8 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef CLEVER_ASTVISITOR_H
-#define CLEVER_ASTVISITOR_H
+#ifndef CLEVER_ASTTRANSFORMER_H
+#define CLEVER_ASTTRANSFORMER_H
 
 namespace clever { namespace ast {
 
@@ -51,11 +51,11 @@ class UnaryExpr;
 class AliasStmt;
 class RegexPattern;
 
-#define AST_VISITOR(type, exprtype) void type::visit(exprtype* const expr)
-#define AST_VISITOR_DECL_VIRTUAL(type) virtual void visit(type* const expr) = 0
-#define AST_VISITOR_DECL(type) void visit(type* const expr)
+#define AST_TRANSFORMER(type, exprtype) ASTNode* type::transform(exprtype* const expr)
+#define AST_TRANSFORMER_DECL_VIRTUAL(type) virtual ASTNode* transform(type* const expr) = 0
+#define AST_TRANSFORMER_DECL(type) ASTNode* transform(type* const expr)
 
-#define AST_VISITOR_DECLARATION(V) \
+#define AST_TRANSFORMER_DECLARATION(V) \
 	V(BinaryExpr); \
 	V(RegexPattern); \
 	V(Constant); \
@@ -79,21 +79,22 @@ class RegexPattern;
 	V(TypeCreation)
 
 /**
- * AST Visitor
+ * AST Transformer
  */
-class NO_INIT_VTABLE ASTVisitor {
+class NO_INIT_VTABLE ASTTransformer {
 public:
-	ASTVisitor() { }
-	virtual ~ASTVisitor() { }
+	ASTTransformer() { }
+	virtual ~ASTTransformer() { }
 
-	AST_VISITOR_DECLARATION(AST_VISITOR_DECL_VIRTUAL);
+	AST_TRANSFORMER_DECLARATION(AST_TRANSFORMER_DECL_VIRTUAL);
 
 	virtual void init() = 0;
 	virtual void shutdown() = 0;
 private:
-	DISALLOW_COPY_AND_ASSIGN(ASTVisitor);
+	DISALLOW_COPY_AND_ASSIGN(ASTTransformer);
 };
 
 }} // clever::ast
 
-#endif // CLEVER_ASTVISITOR_H
+#endif // CLEVER_ASTTRANSFORMER_H
+
