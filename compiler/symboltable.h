@@ -211,7 +211,6 @@ public:
 	 * See resolve() for more information.
 	 */
 	const Type* resolveType(const CString* name, bool recurse = true) {
-
 		Symbol* s = resolve(name, recurse);
 
 		if (s == NULL || !s->isType())

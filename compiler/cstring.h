@@ -119,22 +119,18 @@ public:
 			++it;
 		}
 	}
-	
-	const CString* intern(const std::string& needle) {
-		std::tr1::hash<std::string> hash;
-		const CString* str = NULL;
 
-		IdType id = hash(needle);
+	const CString* intern(const std::string& needle) {
+		IdType id = std::tr1::hash<std::string>()(needle);
 		CStringTableBase::const_iterator it(m_map.find(id));
 
 		if (it == m_map.end()) {
-			str = new CString(needle, id);
+			const CString* str = new CString(needle, id);
 			m_map.insert(std::pair<IdType, const CString*>(id, str));
-		} else {
-			str = it->second;
-		}
 
-		return str;
+			return str;
+		}
+		return it->second;
 	}
 
 private:

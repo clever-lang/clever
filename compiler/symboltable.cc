@@ -31,7 +31,7 @@ namespace clever {
 SymbolTable g_symtable;
 
 Scope::~Scope() {
-	SymbolMap::iterator it = m_syms.begin(), end_ = m_syms.end();
+	SymbolMap::const_iterator it = m_syms.begin(), end_ = m_syms.end();
 
 	while (it != end_) {
 		Symbol* s = it->second;
