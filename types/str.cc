@@ -312,7 +312,7 @@ void String::init() {
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&String::do_assign, CLEVER_STR))
+		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&String::do_assign, CLEVER_VOID))
 			->addArg("rvalue", CLEVER_STR)
 	);
 
