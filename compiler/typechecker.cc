@@ -264,7 +264,6 @@ AST_VISITOR(TypeChecker, Identifier) {
 }
 
 AST_VISITOR(TypeChecker, UnaryExpr) {
-	TypeVector arg_types;
 	Value* var = expr->getExpr()->getValue();
 	const Method* method = NULL;
 	const CString* method_name = NULL;
@@ -278,7 +277,7 @@ AST_VISITOR(TypeChecker, UnaryExpr) {
 		case ast::POS_DEC: method_name = CSTRING(CLEVER_OPERATOR_POS_DEC); break;
 	}
 
-	method = var->getTypePtr()->getMethod(method_name, &arg_types);
+	method = var->getTypePtr()->getMethod(method_name, NULL);
 
 	if (method == NULL) {
 		Compiler::errorf(expr->getLocation(),

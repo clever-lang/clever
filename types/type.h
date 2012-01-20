@@ -171,7 +171,7 @@ public:
 		std::string args_name;
 
 		if (args != NULL) {
-			for (size_t i = 0; i < args->size(); ++i) {
+			for (size_t i = 0, j = args->size(); i < j; ++i) {
 				args_name += args->at(i)->getName()->str();
 				args_name += CLEVER_ARGS_SEPARATOR;
 			}
