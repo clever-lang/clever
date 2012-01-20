@@ -54,7 +54,7 @@ AST_VISITOR(CodeGenVisitor, AliasStmt) {
  * Generates opcode for regex syntax
  */
 AST_VISITOR(CodeGenVisitor, RegexPattern) {
-	emit(OP_MCALL, &VM::mcall_handler,
+	emit(OP_REGEX, &VM::mcall_handler,
 		expr->getMethodValue(), expr->getArgsValue(), expr->getValue());
 }
 
@@ -63,30 +63,33 @@ AST_VISITOR(CodeGenVisitor, RegexPattern) {
  */
 AST_VISITOR(CodeGenVisitor, UnaryExpr) {
 	Value* value = expr->getExprValue();
+	Opcodes opcode;
 
 	value->addRef();
 
 	switch (expr->getOp()) {
-		case PRE_INC:
-		case POS_INC:
-		case PRE_DEC:
-		case POS_DEC:
-		case NOT:
-		case BW_NOT:
-			emit(OP_MCALL, &VM::mcall_handler, expr->getMethod(), NULL, expr->getValue());
+		case PRE_INC: opcode = OP_PRE_INC; break;
+		case POS_INC: opcode = OP_POS_INC; break;
+		case PRE_DEC: opcode = OP_PRE_DEC; break;
+		case POS_DEC: opcode = OP_POS_DEC; break;
+		case NOT:     opcode = OP_NOT;     break;
+		case BW_NOT:  opcode = OP_BW_NOT;  break;
+		default:
+			Compiler::error("Unknown op type!");
 			break;
 	}
+	emit(opcode, &VM::mcall_handler, expr->getMethod(), NULL, expr->getValue());
 }
 
 /**
  * Generates opcode for binary expression
  */
 AST_VISITOR(CodeGenVisitor, BinaryExpr) {
-	Value* rhs;
-
 	expr->getLhs()->acceptVisitor(*this);
 
+	Value* rhs;
 	Value* lhs = expr->getLhs()->getValue();
+	Opcodes opcode;
 
 	/**
 	 * Treat the jump for logical expression
@@ -118,10 +121,29 @@ AST_VISITOR(CodeGenVisitor, BinaryExpr) {
 			expr->getValue()->addRef();
 			}
 			break;
-		default:
+		case PLUS:          opcode = OP_PLUS;
+		case DIV:           opcode = OP_DIV;
+		case MULT:          opcode = OP_MULT;
+		case MINUS:         opcode = OP_MINUS;
+		case MOD:           opcode = OP_MOD;
+		case XOR:           opcode = OP_XOR;
+		case BW_OR:         opcode = OP_BW_OR;
+		case BW_AND:        opcode = OP_BW_AND;
+		case GREATER:       opcode = OP_GREATER;
+		case LESS:          opcode = OP_LESS;
+		case GREATER_EQUAL: opcode = OP_GE;
+		case LESS_EQUAL:    opcode = OP_LE;
+		case EQUAL:         opcode = OP_EQUAL;
+		case NOT_EQUAL:     opcode = OP_NE;
+		case LSHIFT:        opcode = OP_LSHIFT;
+		case RSHIFT:        opcode = OP_RSHIFT;
 			expr->getRhs()->acceptVisitor(*this);
 			rhs = expr->getRhs()->getValue();
-			emit(OP_MCALL, &VM::mcall_handler, expr->getMethod(), expr->getMethodArgs(), expr->getValue());
+			emit(opcode, &VM::mcall_handler, expr->getMethod(), expr->getMethodArgs(), expr->getValue());
+			break;
+		default:
+			Compiler::error("Unknown op type!");
+			break;
 	}
 
 	lhs->addRef();
@@ -133,20 +155,16 @@ AST_VISITOR(CodeGenVisitor, BinaryExpr) {
  * Generates the variable declaration opcode
  */
 AST_VISITOR(CodeGenVisitor, VariableDecl) {
-	Value* initval = expr->getInitialValue();
-
 	/**
 	 * Check if the declaration contains initialization,
 	 * non initialized declaration doesn't emit opcode
 	 */
-	if (initval == NULL) {
+	if (expr->getInitialValue() == NULL) {
 		return;
 	}
 
-	Value* call = expr->getMethodValue();
-	Value* args = expr->getMethodArgs();	
-
-	emit(OP_MCALL, &VM::mcall_handler, call, args);
+	emit(OP_ASSIGN, &VM::mcall_handler, expr->getMethodValue(),
+		expr->getMethodArgs());
 }
 
 /**
@@ -384,12 +402,11 @@ AST_VISITOR(CodeGenVisitor, MethodCall) {
  * Generates opcode for variable assignment
  */
 AST_VISITOR(CodeGenVisitor, AssignExpr) {
-	CallableValue* call = expr->getMethodValue();
 	Value* rvalue = expr->getMethodArgs();
 
 	rvalue->addRef();
 
-	emit(OP_MCALL, &VM::mcall_handler, call, rvalue);
+	emit(OP_ASSIGN, &VM::mcall_handler, expr->getMethodValue(), rvalue);
 }
 
 /**

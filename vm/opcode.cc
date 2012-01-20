@@ -62,6 +62,26 @@ const char* Opcode::getOpName(Opcodes op) const {
 		CASE(OP_FCALL);
 		CASE(OP_RETURN);
 		CASE(OP_RECV);
+		CASE(OP_REGEX);
+		CASE(OP_NOT);
+		CASE(OP_BW_NOT);
+		CASE(OP_PLUS);
+		CASE(OP_DIV);
+		CASE(OP_MULT);
+		CASE(OP_MINUS);
+		CASE(OP_MOD);
+		CASE(OP_XOR);
+		CASE(OP_BW_OR);
+		CASE(OP_BW_AND);
+		CASE(OP_GREATER);
+		CASE(OP_LESS);
+		CASE(OP_GE);
+		CASE(OP_LE);
+		CASE(OP_EQUAL);
+		CASE(OP_NE);
+		CASE(OP_LSHIFT);
+		CASE(OP_RSHIFT);
+		CASE(OP_ASSIGN);
 		default:
 			return "UNKNOWN";
 	}
