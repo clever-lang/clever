@@ -149,6 +149,8 @@ void TypeChecker::checkFunctionArgs(const Function* func, int num_args,
 	}
 }
 
+AST_VISITOR(TypeChecker, BreakNode) {
+}
 
 /**
  * Creates a vector with the current value from a Value* pointers
@@ -228,7 +230,8 @@ AST_VISITOR(TypeChecker, RegexPattern) {
 	TypeVector args_types;
 	args_types.push_back(CLEVER_STR);
 
-	const Method* ctor = type->getMethod(CSTRING(CLEVER_CTOR_NAME), &args_types);
+	const CString* method_name = CSTRING(CLEVER_CTOR_NAME);
+	const Method* ctor = type->getMethod(method_name, &args_types);
 	clever_assert(ctor != NULL, "Pcre's constructor method not found!");
 
 	Value* value = expr->getValue();
@@ -237,7 +240,7 @@ AST_VISITOR(TypeChecker, RegexPattern) {
 	/**
 	 * The Pcre constructor CallableValue
 	 */
-	CallableValue* mvalue = new CallableValue;
+	CallableValue* mvalue = new CallableValue(method_name);
 	mvalue->setTypePtr(type);
 	mvalue->setHandler(ctor);
 	mvalue->setContext(value);
@@ -285,13 +288,11 @@ AST_VISITOR(TypeChecker, UnaryExpr) {
 			var->getTypePtr()->getName());
 	}
 
-	CallableValue* call = new CallableValue;
+	CallableValue* call = new CallableValue(method_name);
 	call->setTypePtr(var->getTypePtr());
 	call->setHandler(method);
 	call->setContext(var);
 	var->addRef();
-
-	expr->setExprValue(var);
 
 	expr->setMethod(call);
 	call->addRef();
@@ -336,9 +337,7 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 	}
 
 	ValueVector* arg_values = new ValueVector;
-	CallableValue* call = new CallableValue;
-
-	call->setName(method_name);
+	CallableValue* call = new CallableValue(method_name);
 
 	TypeVector arg_types;
 	arg_types.push_back(lhs->getTypePtr());
@@ -487,30 +486,22 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 
 		expr->setInitialValue(initval);
 
-		if (type != initval->getTypePtr()) {
-			if (type == CLEVER_INT) {
-				initval->setInteger(initval->getDouble());
-			}
-			else if (type == CLEVER_DOUBLE) {
-				initval->setDouble(initval->getInteger());
-			}
-		}
-
 		initval->addRef();
-		
+
 		TypeVector arg_types;
 		arg_types.push_back(initval->getTypePtr());
-		
-		const Method* method = var->getTypePtr()->getMethod(
-			CSTRING(CLEVER_OPERATOR_ASSIGN), &arg_types);
-		
+
+		const CString* method_name = CSTRING(CLEVER_OPERATOR_ASSIGN);
+		const Method* method = var->getTypePtr()->getMethod(method_name,
+			&arg_types);
+
 		if (method == NULL) {
 			Compiler::errorf(expr->getLocation(),
 				"Method __assign__ not found in %S for assignment with %S",
 				var->getTypePtr()->getName(),
 				initval->getTypePtr()->getName());
 		}
-			
+
 		ValueVector* arg_values = new ValueVector;
 		arg_values->push_back(initval);
 		initval->addRef();
@@ -520,14 +511,14 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 		args->setVector(arg_values);
 
 		expr->setMethodArgs(args);
-		
-		CallableValue* call = new CallableValue;
+
+		CallableValue* call = new CallableValue(method_name);
 		call->setContext(var);
 		call->setHandler(method);
 		call->setTypePtr(var->getTypePtr());
 		var->addRef();
 		call->addRef();
-		
+
 		expr->setMethodValue(call);
 	}
 
@@ -619,9 +610,6 @@ AST_VISITOR(TypeChecker, ForExpr) {
 	g_symtable.endScope();
 }
 
-AST_VISITOR(TypeChecker, BreakNode) {
-}
-
 /**
  * Assignment expression visitor
  */
@@ -639,8 +627,8 @@ AST_VISITOR(TypeChecker, AssignExpr) {
 	TypeVector arg_types;
 	arg_types.push_back(rhs->getTypePtr());
 
-	const Method* method = lhs->getTypePtr()->getMethod(
-		CSTRING(CLEVER_OPERATOR_ASSIGN), &arg_types);
+	const CString* method_name = CSTRING(CLEVER_OPERATOR_ASSIGN);
+	const Method* method = lhs->getTypePtr()->getMethod(method_name, &arg_types);
 
 	if (method == NULL) {
 		Compiler::errorf(expr->getLocation(),
@@ -659,7 +647,7 @@ AST_VISITOR(TypeChecker, AssignExpr) {
 
 	expr->setMethodArgs(args);
 
-	CallableValue* call = new CallableValue;
+	CallableValue* call = new CallableValue(method_name);
 	call->setTypePtr(lhs->getTypePtr());
 	call->setHandler(method);
 	call->setContext(lhs);
@@ -782,7 +770,7 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 	ArgumentDeclList* args = expr->getArgs();
 
 	/**
-	 * Mark the function as user function
+	 * Mark the function as user defined function
 	 */
 	user_func->setUserDefined();
 
@@ -846,14 +834,13 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 }
 
 AST_VISITOR(TypeChecker, ReturnStmt) {
-	const Value* expr_value = expr->getExprValue();
-	const Function* func = m_funcs.empty() ? NULL : m_funcs.top();
-
 	/**
-	 * Only for return inside function declaration
+	 * Only for return statement inside function declaration
 	 */
-	if (func) {
-		checkFunctionReturn(func, expr_value, func->getReturnType(),
+	if (!m_funcs.empty()) {
+		const Function* func = m_funcs.top();
+
+		checkFunctionReturn(func, expr->getExprValue(), func->getReturnType(),
 			expr->getLocation());
 	}
 }

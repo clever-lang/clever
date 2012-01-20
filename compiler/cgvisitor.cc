@@ -28,6 +28,15 @@
 
 namespace clever { namespace ast {
 
+AST_VISITOR(CodeGenVisitor, Identifier) {
+}
+
+AST_VISITOR(CodeGenVisitor, Constant) {
+}
+
+AST_VISITOR(CodeGenVisitor, AliasStmt) {
+}
+
 /**
  * Creates a vector with the current value from a Value* pointers
  */
@@ -39,15 +48,6 @@ AST_VISITOR(CodeGenVisitor, ArgumentList) {
 		(*it)->acceptVisitor(*this);
 		++it;
 	}
-}
-
-AST_VISITOR(CodeGenVisitor, Identifier) {
-}
-
-AST_VISITOR(CodeGenVisitor, Constant) {
-}
-
-AST_VISITOR(CodeGenVisitor, AliasStmt) {
 }
 
 /**
@@ -62,10 +62,7 @@ AST_VISITOR(CodeGenVisitor, RegexPattern) {
  * Generates opcode for unary expression
  */
 AST_VISITOR(CodeGenVisitor, UnaryExpr) {
-	Value* value = expr->getExprValue();
 	Opcodes opcode;
-
-	value->addRef();
 
 	switch (expr->getOp()) {
 		case PRE_INC: opcode = OP_PRE_INC; break;
@@ -139,7 +136,9 @@ AST_VISITOR(CodeGenVisitor, BinaryExpr) {
 		case RSHIFT:        opcode = OP_RSHIFT;
 			expr->getRhs()->acceptVisitor(*this);
 			rhs = expr->getRhs()->getValue();
-			emit(opcode, &VM::mcall_handler, expr->getMethod(), expr->getMethodArgs(), expr->getValue());
+
+			emit(opcode, &VM::mcall_handler, expr->getMethod(),
+				expr->getMethodArgs(), expr->getValue());
 			break;
 		default:
 			Compiler::error("Unknown op type!");
