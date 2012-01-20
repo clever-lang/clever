@@ -456,7 +456,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 			}
 			else {
 				Compiler::errorf(expr->getLocation(),
-					"Type `%S' do not acceptVisitor template arguments!",
+					"Type `%S' do not accept template arguments!",
 					type->getName());
 			}
 	}
