@@ -56,14 +56,6 @@ public:
 	static CLEVER_TYPE_METHOD(logical_not);
 	static CLEVER_TYPE_METHOD(bw_not);
 	static CLEVER_TYPE_METHOD(do_assign);
-
-	/**
-	 * Type handlers
-	 */
-	CLEVER_TYPE_ASSIGN_HANDLER_D {
-		if (newvalue->getTypePtr() == this) value->copy(newvalue);
-		else value->setBoolean((int64_t)newvalue->getDouble());
-	}
 private:
 	DISALLOW_COPY_AND_ASSIGN(Bool);
 };

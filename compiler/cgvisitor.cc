@@ -133,35 +133,20 @@ AST_VISITOR(CodeGenVisitor, BinaryExpr) {
  * Generates the variable declaration opcode
  */
 AST_VISITOR(CodeGenVisitor, VariableDecl) {
-	Identifier* var_expr = expr->getVariable();
 	Value* initval = expr->getInitialValue();
-	Value* variable = var_expr->getValue();
 
 	/**
-	 * Check if the declaration contains initialization
+	 * Check if the declaration contains initialization,
+	 * non initialized declaration doesn't emit opcode
 	 */
-	if (initval) {
-		if (initval->isPrimitive()) {
-			if (initval->getTypePtr() == variable->getTypePtr()) {
-				variable->copy(initval);
-			}
-			else if (variable->getTypePtr() == CLEVER_INT) {
-				variable->setInteger(initval->getDouble());
-			}
-			else {
-				variable->setDouble(initval->getInteger());
-			}
-		}
-
-		variable->addRef();
-		initval->addRef();
-
-		emit(OP_VAR_DECL, &VM::var_decl_handler, variable, initval);
-	} else {
-		variable->addRef();
-
-		emit(OP_VAR_DECL, &VM::var_decl_handler, variable);
+	if (initval == NULL) {
+		return;
 	}
+
+	Value* call = expr->getMethodValue();
+	Value* args = expr->getMethodArgs();	
+
+	emit(OP_MCALL, &VM::mcall_handler, call, args);
 }
 
 /**

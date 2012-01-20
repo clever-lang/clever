@@ -48,7 +48,6 @@ namespace file {
  */
 void File::init() {
 	Class* filestream = new file::FileStream();
-	filestream->init();
 
 	addClass(filestream);
 }

@@ -61,6 +61,13 @@ CLEVER_TYPE_METHOD(Char::toString) {
 	retval->setString(CSTRING(value->toString()));
 }
 
+/**
+ * Void Byte::__assign__(Byte)
+ */
+CLEVER_TYPE_METHOD(Char::do_assign) {
+	CLEVER_THIS()->setByte(CLEVER_ARG_BYTE(0));
+}
+
 CLEVER_TYPE_METHOD(Char::plus) {
 	CLEVER_RETURN_BYTE(CLEVER_ARG_BYTE(0) + CLEVER_ARG_BYTE(1));
 }
@@ -300,6 +307,11 @@ void Char::init() {
 	addMethod(
 		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Char::constructor, CLEVER_BYTE))
 			->addArg("value", CLEVER_INT)
+	);
+	
+	addMethod(
+		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&Char::do_assign, CLEVER_VOID))
+			->addArg("rvalue", CLEVER_BYTE)
 	);
 
 	addMethod(new Method("toString", (MethodPtr)&Char::toString, CLEVER_STR));

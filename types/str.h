@@ -68,11 +68,6 @@ public:
 	static CLEVER_TYPE_METHOD(less_equal);
 	static CLEVER_TYPE_METHOD(greater_equal);
 	static CLEVER_TYPE_METHOD(do_assign);
-
-	/**
-	 * Type handlers
-	 */
-	CLEVER_TYPE_ASSIGN_HANDLER_D { value->copy(newvalue); }
 private:
 	DISALLOW_COPY_AND_ASSIGN(String);
 };

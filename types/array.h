@@ -76,13 +76,6 @@ public:
 	static CLEVER_TYPE_METHOD(resize);
 	static CLEVER_TYPE_METHOD(toString);
 	static CLEVER_TYPE_METHOD(do_assign);
-
-	/**
-	 * Type handlers
-	 */
-	CLEVER_TYPE_ASSIGN_HANDLER_D {
-		value->copy(newvalue);
-	}
 private:
 	DISALLOW_COPY_AND_ASSIGN(Array);
 };

@@ -44,11 +44,7 @@ public:
 	static CLEVER_TYPE_METHOD(matches);
 	static CLEVER_TYPE_METHOD(replace);
 	static CLEVER_TYPE_METHOD(replaceAll);
-
-	CLEVER_TYPE_ASSIGN_HANDLER_D {
-		newvalue->getDataValue()->addRef();
-		value->copy(newvalue);
-	}
+	static CLEVER_TYPE_METHOD(do_assign);
 };
 
 }}}} // clever::packages::std::regex

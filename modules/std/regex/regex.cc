@@ -31,8 +31,7 @@ namespace clever { namespace packages { namespace std {
 
 void Regex::init() {
 	Class* pcreClass = new regex::Pcre();
-	pcreClass->init();
-
+	
 	addClass(pcreClass);
 
 	/**

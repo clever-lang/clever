@@ -70,8 +70,6 @@ public:
 	static void checkFunctionArgs(const Function*, int, const location&);
 
 	static void checkFunctionReturn(const Function*, const Value*, const Type*, const location&);
-	
-	static void checkTemplatedArgs(ASTNode*, const Type*, TemplateArgsVector*);
 
 	/**
 	 * Returns the arg type names concatenated

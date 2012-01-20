@@ -118,6 +118,8 @@ void PackageManager::loadModule(Scope* scope, const CString* const package,
 			g_symtable.push(CSTRING(prefix_name + *itc->first), itc->second);
 			g_symtable.push(itc->first, itc->second);
 			itc->second->addRef();
+			
+			itc->second->init();
 			++itc;
 		}
 

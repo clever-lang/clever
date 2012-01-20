@@ -64,17 +64,7 @@ public:
 	static CLEVER_TYPE_METHOD(pos_inc);
 	static CLEVER_TYPE_METHOD(pre_dec);
 	static CLEVER_TYPE_METHOD(pos_dec);
-
-	/**
-	 * Type handlers
-	 */
-	CLEVER_TYPE_ASSIGN_HANDLER_D {
-		if (newvalue->getTypePtr() == this) {
-			value->copy(newvalue);
-		} else {
-			value->setDouble(newvalue->getInteger());
-		}
-	}
+	static CLEVER_TYPE_METHOD(do_assign);
 private:
 	DISALLOW_COPY_AND_ASSIGN(Double);
 };

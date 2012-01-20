@@ -59,10 +59,24 @@ CLEVER_TYPE_METHOD(Double::sqrt) {
 	CLEVER_RETURN_DOUBLE(std::sqrt(value->getDouble()));
 }
 
+/**
+ * Double::__assign__(Double)
+ * Double::__assign__(Int)
+ * Returns the square root of the number
+ */
+CLEVER_TYPE_METHOD(Double::do_assign) {
+	if (CLEVER_ARG_IS_DOUBLE(0)) {
+		CLEVER_THIS()->copy(CLEVER_ARG(0));
+	} else {
+		
+		CLEVER_THIS()->setDouble(CLEVER_ARG_INT(0));
+	}
+}
+
 CLEVER_TYPE_METHOD(Double::plus) {
 	if (CLEVER_ARG_IS_DOUBLE(1)) {
 		CLEVER_RETURN_DOUBLE(CLEVER_ARG_DOUBLE(0) + CLEVER_ARG_DOUBLE(1));
-	} else {
+	} else {		
 		CLEVER_RETURN_DOUBLE(CLEVER_ARG_DOUBLE(0) + CLEVER_ARG_INT(1));
 	}
 }
@@ -282,6 +296,16 @@ void Double::init() {
 	addMethod(
 		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Double::constructor, CLEVER_DOUBLE))
 			->addArg("value", CLEVER_DOUBLE)
+	);
+	
+	addMethod(
+		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&Double::do_assign, CLEVER_VOID))
+			->addArg("rvalue", CLEVER_DOUBLE)
+	);
+	
+	addMethod(
+		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&Double::do_assign, CLEVER_VOID))
+			->addArg("rvalue", CLEVER_INT)
 	);
 
 	addMethod(new Method("toString", (MethodPtr)&Double::toString, CLEVER_STR));

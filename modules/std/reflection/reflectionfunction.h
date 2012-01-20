@@ -45,15 +45,7 @@ public:
 	 */
 	 static CLEVER_TYPE_METHOD(constructor);
 	 static CLEVER_TYPE_METHOD(getName);
-
-	/**
-	 * Type handlers
-	 */
-	CLEVER_TYPE_ASSIGN_HANDLER_D {
-		newvalue->getDataValue()->addRef();
-		value->copy(newvalue);
-	}
-
+	 static CLEVER_TYPE_METHOD(do_assign);
 private:
 	DISALLOW_COPY_AND_ASSIGN(ReflectionFunction);
 };

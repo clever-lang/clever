@@ -463,13 +463,15 @@ private:
 class VariableDecl : public ASTNode {
 public:
 	VariableDecl(Identifier* type, Identifier* variable)
-		: m_type(type), m_variable(variable), m_rhs(NULL), m_initval(NULL) {
+		: m_type(type), m_variable(variable), m_rhs(NULL), m_initval(NULL),
+			m_method(NULL), m_args(NULL) {
 		m_type->addRef();
 		m_variable->addRef();
 	}
 
 	VariableDecl(Identifier* type, Identifier* variable, ASTNode* rhs)
-		: m_type(type), m_variable(variable), m_rhs(rhs), m_initval(NULL) {
+		: m_type(type), m_variable(variable), m_rhs(rhs), m_initval(NULL),
+			m_method(NULL), m_args(NULL) {
 		m_type->addRef();
 		m_variable->addRef();
 		m_rhs->addRef();
@@ -483,6 +485,9 @@ public:
 		}
 		if (m_initval) {
 			m_initval->delRef();
+		}
+		if (m_method) {
+			m_method->delRef();
 		}
 	}
 
@@ -505,6 +510,12 @@ public:
 	Identifier* getType() const {
 		return m_type;
 	}
+	
+	void setMethodValue(CallableValue* method) { m_method = method; }
+	CallableValue* getMethodValue() const { return m_method; }
+	
+	void setMethodArgs(Value* args) { m_args = args; }
+	Value* getMethodArgs() const { return m_args; }
 
 	void acceptVisitor(ASTVisitor& visitor) {
 		if (m_rhs) {
@@ -517,6 +528,8 @@ private:
 	Identifier* m_variable;
 	ASTNode* m_rhs;
 	Value* m_initval;
+	CallableValue* m_method;
+	Value* m_args;
 
 	DISALLOW_COPY_AND_ASSIGN(VariableDecl);
 };

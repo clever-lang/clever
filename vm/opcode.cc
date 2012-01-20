@@ -50,7 +50,6 @@ const char* Opcode::getOpName(Opcodes op) const {
 #define CASE(x) case x: return #x
 
 	switch (op) {
-		CASE(OP_VAR_DECL);
 		CASE(OP_PRE_INC);
 		CASE(OP_PRE_DEC);
 		CASE(OP_POS_INC);

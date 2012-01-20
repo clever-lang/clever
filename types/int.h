@@ -71,14 +71,6 @@ public:
 	static CLEVER_TYPE_METHOD(lshift);
 	static CLEVER_TYPE_METHOD(rshift);
 	static CLEVER_TYPE_METHOD(do_assign);
-
-	/**
-	 * Type handlers
-	 */
-	CLEVER_TYPE_ASSIGN_HANDLER_D {
-		if (newvalue->getTypePtr() == this) value->copy(newvalue);
-		else value->setInteger((int64_t)newvalue->getDouble());
-	}
 private:
 	DISALLOW_COPY_AND_ASSIGN(Integer);
 };

@@ -68,13 +68,7 @@ public:
 	static CLEVER_TYPE_METHOD(pos_inc);
 	static CLEVER_TYPE_METHOD(pre_dec);
 	static CLEVER_TYPE_METHOD(pos_dec);
-
-	/**
-	 * Type handlers
-	 */
-	CLEVER_TYPE_ASSIGN_HANDLER_D {
-		value->setByte(newvalue->getByte());
-	}
+	static CLEVER_TYPE_METHOD(do_assign);
 private:
 	DISALLOW_COPY_AND_ASSIGN(Char);
 };

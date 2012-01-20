@@ -51,14 +51,6 @@ void Reflection::init() {
 	ReflectionPackage* refpackage = new ReflectionPackage;
 	// ReflectionFunction* reffunction = new ReflectionFunction;
 
-	refpackage->init();
-
-	/**
-	 * Symbol table is pending to implement the
-	 * find() by function name
-	 */
-	// reffunction->init();
-
 	/**
 	 * Module classes
 	 */

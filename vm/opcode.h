@@ -36,7 +36,6 @@ namespace clever {
  * Opcodes
  */
 enum Opcodes {
-	OP_VAR_DECL,
 	OP_PRE_INC,
 	OP_PRE_DEC,
 	OP_POS_INC,

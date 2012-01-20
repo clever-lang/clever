@@ -52,15 +52,31 @@ CLEVER_TYPE_METHOD(ReflectionFunction::getName) {
 	CLEVER_RETURN_STR(rfv->getFunction()->getName());
 }
 
+/**
+ * Void ReflectionFunction::__assign__(ReflectionFunction)
+ */
+CLEVER_TYPE_METHOD(ReflectionFunction::do_assign) {
+	CLEVER_ARG(0)->getDataValue()->addRef();
+	CLEVER_THIS()->copy(CLEVER_ARG(0));
+}
+
 void ReflectionFunction::init() {
+	const Type* reffunc = CLEVER_TYPE("ReflectionFunction");
+	
 	addMethod(
-		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&ReflectionFunction::constructor, CLEVER_TYPE("ReflectionFunction")))
+		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&ReflectionFunction::constructor, reffunc))
 			->addArg("package", CLEVER_STR)
 	);
 
 	addMethod(
-		(new Method("getName", (MethodPtr)&ReflectionFunction::getName, CLEVER_STR))
+		new Method("getName", (MethodPtr)&ReflectionFunction::getName, CLEVER_STR)
 	);
+	
+	addMethod(
+		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&ReflectionFunction::do_assign, CLEVER_VOID))
+			->addArg("rvalue", reffunc)
+	);
+
 }
 
 DataValue* ReflectionFunction::allocateValue() const {

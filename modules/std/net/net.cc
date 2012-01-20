@@ -39,7 +39,6 @@ namespace net {
  */
 void NetModule::init() {
 	Class* tcpsocket = new net::TcpSocket();
-	tcpsocket->init();
 
 	addClass(tcpsocket);
 }

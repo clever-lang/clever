@@ -497,6 +497,38 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 		}
 
 		initval->addRef();
+		
+		TypeVector arg_types;
+		arg_types.push_back(initval->getTypePtr());
+		
+		const Method* method = var->getTypePtr()->getMethod(
+			CSTRING(CLEVER_OPERATOR_ASSIGN), &arg_types);
+		
+		if (method == NULL) {
+			Compiler::errorf(expr->getLocation(),
+				"Method __assign__ not found in %S for assignment with %S",
+				var->getTypePtr()->getName(),
+				initval->getTypePtr()->getName());
+		}
+			
+		ValueVector* arg_values = new ValueVector;
+		arg_values->push_back(initval);
+		initval->addRef();
+
+		Value* args = new Value;
+		args->setType(Value::VECTOR);
+		args->setVector(arg_values);
+
+		expr->setMethodArgs(args);
+		
+		CallableValue* call = new CallableValue;
+		call->setContext(var);
+		call->setHandler(method);
+		call->setTypePtr(var->getTypePtr());
+		var->addRef();
+		call->addRef();
+		
+		expr->setMethodValue(call);
 	}
 
 	g_symtable.push(var->getName(), var);

@@ -134,16 +134,31 @@ CLEVER_TYPE_METHOD(TcpSocket::toString) {
 	CLEVER_RETURN_STR(CSTRING("TcpSocket class"));
 }
 
+/**
+ * Void TcpSocket::__assign__(TcpSocket)
+ */
+CLEVER_TYPE_METHOD(TcpSocket::do_assign) {
+	CLEVER_ARG(0)->getDataValue()->addRef();
+	CLEVER_THIS()->copy(CLEVER_ARG(0));
+}
+
 void TcpSocket::init() {
-	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&TcpSocket::constructor, CLEVER_TYPE("TcpSocket")));
+	const Type* tcpsock = CLEVER_TYPE("TcpSocket");
+	
+	addMethod(
+		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&TcpSocket::do_assign, tcpsock))
+			->addArg("rvalue", tcpsock)
+	);
+
+	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&TcpSocket::constructor, tcpsock));
 
 	addMethod(
-		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&TcpSocket::constructor, CLEVER_TYPE("TcpSocket")))
+		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&TcpSocket::constructor, tcpsock))
 			->addArg("host", CLEVER_STR)
 	);
 
 	addMethod(
-		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&TcpSocket::constructor, CLEVER_TYPE("TcpSocket")))
+		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&TcpSocket::constructor, tcpsock))
 			->addArg("host", CLEVER_STR)
 			->addArg("port", CLEVER_INT)
 	);
@@ -167,7 +182,7 @@ void TcpSocket::init() {
 
 	addMethod(new Method("poll", (MethodPtr)&TcpSocket::poll, CLEVER_BOOL));
 
-	addMethod(new Method("connect", (MethodPtr)&TcpSocket::connect, CLEVER_TYPE("TcpSocket")));
+	addMethod(new Method("connect", (MethodPtr)&TcpSocket::connect, tcpsock));
 
 	addMethod(new Method("toString", (MethodPtr)&TcpSocket::toString, CLEVER_STR));
 }

@@ -142,17 +142,6 @@ void VM::run() {
 }
 
 /**
- * Type var [= value ]
- */
-CLEVER_VM_HANDLER(VM::var_decl_handler) {
-	Value* value = opcode.getOp2();
-
-	if (value) {
-		opcode.getOp1Type()->assign(opcode.getOp1(), value);
-	}
-}
-
-/**
  * JMPZ - Jump if zero
  */
 CLEVER_VM_HANDLER(VM::jmpz_handler) {

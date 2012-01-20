@@ -95,11 +95,6 @@ namespace clever {
 #define CLEVER_OPERATOR_POS_DEC "__pos_dec__"
 
 /**
- * Type handler definitions
- */
-#define CLEVER_TYPE_ASSIGN_HANDLER_D void assign(Value* value, Value* newvalue) const
-
-/**
  * Prototype for class methods which the class represents a type
  */
 #define CLEVER_TYPE_METHOD_ARGS const ValueVector* args, Value* retval, Value* value
@@ -200,11 +195,6 @@ public:
 	 * Allocate a buffer for the type's attributes (if the type is not String, Double, Int, etc.)
 	 */
 	virtual DataValue* allocateValue() const = 0;
-
-	/**
-	 * Type handlers
-	 */
-	virtual CLEVER_TYPE_ASSIGN_HANDLER_D = 0;
 
 	/**
 	 * Checks if this type accepts arguments

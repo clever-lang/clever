@@ -29,7 +29,7 @@
 
 namespace clever { namespace packages { namespace std { namespace regex {
 
-void Pcre::init() {
+void Pcre::init() {	
 	/* Pcre(String pattern [, Int options]) */
 	addMethod(
 		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Pcre::constructor, CLEVER_TYPE("Pcre")))
@@ -53,6 +53,11 @@ void Pcre::init() {
 		(new Method("replaceAll", (MethodPtr)&Pcre::replaceAll, CLEVER_BOOL))
 		->addArg("replacement", CLEVER_STR)
 		->addArg("haystack", CLEVER_STR)
+	);
+	
+	addMethod(
+		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&Pcre::do_assign, CLEVER_VOID))
+		->addArg("rvalue", CLEVER_TYPE("Pcre"))
 	);
 }
 
@@ -116,6 +121,11 @@ CLEVER_TYPE_METHOD(Pcre::replaceAll) {
 	self->re->GlobalReplace(CLEVER_ARG_STR(0), &newstr);
 
 	CLEVER_RETURN_STR(CSTRING(newstr));
+}
+
+CLEVER_TYPE_METHOD(Pcre::do_assign) {
+	CLEVER_ARG(0)->getDataValue()->addRef();
+	CLEVER_THIS()->copy(CLEVER_ARG(0));
 }
 
 }}}} // clever::packages:std::regex

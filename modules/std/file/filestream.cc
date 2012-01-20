@@ -83,6 +83,14 @@ CLEVER_TYPE_METHOD(FileStream::toString) {
 }
 
 /**
+ * Void FileStream::__assign__(FileStream)
+ */
+CLEVER_TYPE_METHOD(FileStream::do_assign) {
+	CLEVER_ARG(0)->getDataValue()->addRef();
+	CLEVER_THIS()->copy(CLEVER_ARG(0));
+}
+
+/**
  * FileStream::open(String file, [String mode])
  * Open a file
  */
@@ -225,15 +233,22 @@ CLEVER_TYPE_METHOD(FileStream::writeLine) {
 }
 
 void FileStream::init() {
-	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&FileStream::constructor, CLEVER_TYPE("FileStream")));
-
+	const Type* fstream = CLEVER_TYPE("FileStream");
+	
 	addMethod(
-		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&FileStream::constructor, CLEVER_TYPE("FileStream")))
+		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&FileStream::do_assign, CLEVER_VOID))
+			->addArg("rvalue", fstream)
+	);
+
+	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&FileStream::constructor, fstream));
+	
+	addMethod(
+		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&FileStream::constructor, fstream))
 			->addArg("filename", CLEVER_STR)
 	);
 
 	addMethod(
-		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&FileStream::constructor, CLEVER_TYPE("FileStream")))
+		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&FileStream::constructor, fstream))
 			->addArg("filename", CLEVER_STR)
 			->addArg("mode", CLEVER_STR)
 	);
