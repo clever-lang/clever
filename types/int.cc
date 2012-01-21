@@ -236,29 +236,29 @@ CLEVER_TYPE_METHOD(Integer::pos_dec) {
 
 void Integer::init() {
 	addMethod(
-		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&Integer::do_assign, CLEVER_VOID))
+		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&Integer::do_assign, CLEVER_VOID, false))
 			->addArg("rvalue", CLEVER_INT)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&Integer::do_assign, CLEVER_VOID))
+		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&Integer::do_assign, CLEVER_VOID, false))
 			->addArg("rvalue", CLEVER_DOUBLE)
 	);
 
 	addMethod(
-		new Method(CLEVER_OPERATOR_PRE_INC, (MethodPtr)&Integer::pre_inc, CLEVER_INT)
+		new Method(CLEVER_OPERATOR_PRE_INC, (MethodPtr)&Integer::pre_inc, CLEVER_INT, false)
 	);
 
 	addMethod(
-		new Method(CLEVER_OPERATOR_POS_INC, (MethodPtr)&Integer::pos_inc, CLEVER_INT)
+		new Method(CLEVER_OPERATOR_POS_INC, (MethodPtr)&Integer::pos_inc, CLEVER_INT, false)
 	);
 
 	addMethod(
-		new Method(CLEVER_OPERATOR_PRE_DEC, (MethodPtr)&Integer::pre_dec, CLEVER_INT)
+		new Method(CLEVER_OPERATOR_PRE_DEC, (MethodPtr)&Integer::pre_dec, CLEVER_INT, false)
 	);
 
 	addMethod(
-		new Method(CLEVER_OPERATOR_POS_DEC, (MethodPtr)&Integer::pos_dec, CLEVER_INT)
+		new Method(CLEVER_OPERATOR_POS_DEC, (MethodPtr)&Integer::pos_dec, CLEVER_INT, false)
 	);
 
 	addMethod(

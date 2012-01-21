@@ -284,6 +284,12 @@ AST_VISITOR(TypeChecker, UnaryExpr) {
 			"The type %S doesn't support such operation!",
 			var->getTypePtr()->getName());
 	}
+	
+	if (var->isConst() && !method->isConst()) {
+		Compiler::errorf(expr->getLocation(), "Can't use the non-const "
+			"operator `%S' because variable `%S' is const",
+			method_name, var->getName());
+	}
 
 	CallableValue* call = new CallableValue;
 	call->setTypePtr(var->getTypePtr());
@@ -530,7 +536,8 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 		
 		expr->setMethodValue(call);
 	}
-
+	
+	var->setConstness(expr->isConst());
 	g_symtable.push(var->getName(), var);
 }
 
@@ -648,6 +655,12 @@ AST_VISITOR(TypeChecker, AssignExpr) {
 			rhs->getTypePtr()->getName(),
 			lhs->getTypePtr()->getName());
 	}
+	
+	if (lhs->isConst()) {
+		Compiler::errorf(expr->getLocation(), "Can't assign to "
+			"variable `%S' because it is const",
+			lhs->getName());
+	}
 
 	ValueVector* arg_values = new ValueVector;
 	arg_values->push_back(rhs);
@@ -738,6 +751,15 @@ AST_VISITOR(TypeChecker, MethodCall) {
 
 		Compiler::errorf(expr->getLocation(), "No matching call for %S::%S(%S)",
 			variable->getTypePtr()->getName(), call->getName(), &args_type_name);
+	}
+	
+	if (variable->isConst() && !method->isConst()) {
+		std::string args_type_name = serializeArgType(args_types, ", ");
+
+		Compiler::errorf(expr->getLocation(), "Can't call the non-const "
+			"method %S::%S(%S) because variable `%S' is const",
+			variable->getTypePtr()->getName(), call->getName(), &args_type_name,
+			variable->getName());
 	}
 
 	call->setTypePtr(variable->getTypePtr());

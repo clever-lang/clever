@@ -216,19 +216,19 @@ void Array::init() {
 	}
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&Array::toString, CLEVER_STR))
+		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&Array::toString, CLEVER_STR, false))
 			->addArg("rvalue", CLEVER_ARRAY)
 	);
 
 	addMethod(new Method("toString", (MethodPtr)&Array::toString, CLEVER_STR));
 
 	addMethod(
-		(new Method("push", (MethodPtr)&Array::push, CLEVER_VOID))
+		(new Method("push", (MethodPtr)&Array::push, CLEVER_VOID, false))
 			->addArg("arg1", CLEVER_TPL_ARG(0))
 	);
 
 	addMethod(
-		new Method("pop", (MethodPtr)&Array::pop, CLEVER_TPL_ARG(0))
+		new Method("pop", (MethodPtr)&Array::pop, CLEVER_TPL_ARG(0), false)
 	);
 
 	addMethod(new Method("size", (MethodPtr)&Array::size, CLEVER_INT));
@@ -241,12 +241,12 @@ void Array::init() {
 		->addArg("index", CLEVER_INT)
 	);
 
-	addMethod((new Method("set", (MethodPtr)&Array::set, CLEVER_VOID))
+	addMethod((new Method("set", (MethodPtr)&Array::set, CLEVER_VOID, false))
 		->addArg("index", CLEVER_INT)
 		->addArg("element", CLEVER_TPL_ARG(0))
 	);
 
-	addMethod((new Method("resize", (MethodPtr)&Array::resize, CLEVER_VOID))
+	addMethod((new Method("resize", (MethodPtr)&Array::resize, CLEVER_VOID, false))
 		->addArg("new_size", CLEVER_INT)
 		->addArg("value", CLEVER_TPL_ARG(0))
 	);
