@@ -316,12 +316,21 @@ public:
 
 		return *CSTRING(str.str());
 	}
+	
+	bool isConst() const {
+		return m_is_const;
+	}
+	
+	void setConstness(bool constness) {
+		m_is_const = constness;
+	}
 private:
 	int m_type;
 	const Type* m_type_ptr;
 	const CString* m_name;
 	ValueData m_data;
 	ContainerTypePair m_container;
+	bool m_is_const;
 
 	DISALLOW_COPY_AND_ASSIGN(Value);
 };

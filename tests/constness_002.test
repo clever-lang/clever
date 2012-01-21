@@ -1,0 +1,14 @@
+Testing constness #2
+==CODE==
+import std.io;
+
+const Int i = 10;
+Int j = 20;
+j += i;
+
+j++;
+i++;
+
+println(i);
+==RESULT==
+Compile error: Can't use the non-const operator `__pos_inc__' because variable `i' is const on \S+ line 8

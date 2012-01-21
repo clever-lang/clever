@@ -456,14 +456,14 @@ class VariableDecl : public ASTNode {
 public:
 	VariableDecl(Identifier* type, Identifier* variable)
 		: m_type(type), m_variable(variable), m_rhs(NULL), m_initval(NULL),
-			m_method(NULL), m_args(NULL) {
+		m_method(NULL), m_args(NULL), m_const_value(false) {
 		m_type->addRef();
 		m_variable->addRef();
 	}
 
 	VariableDecl(Identifier* type, Identifier* variable, ASTNode* rhs)
 		: m_type(type), m_variable(variable), m_rhs(rhs), m_initval(NULL),
-			m_method(NULL), m_args(NULL) {
+			m_method(NULL), m_args(NULL), m_const_value(false) {
 		m_type->addRef();
 		m_variable->addRef();
 		m_rhs->addRef();
@@ -515,6 +515,14 @@ public:
 		}
 		visitor.visit(this);
 	}
+	
+	void setConstness(bool constness) {
+		m_const_value = constness;
+	}
+	
+	bool isConst() const {
+		return m_const_value;
+	}
 private:
 	Identifier* m_type;
 	Identifier* m_variable;
@@ -522,6 +530,7 @@ private:
 	Value* m_initval;
 	CallableValue* m_method;
 	Value* m_args;
+	bool m_const_value;
 
 	DISALLOW_COPY_AND_ASSIGN(VariableDecl);
 };

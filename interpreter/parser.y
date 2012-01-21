@@ -111,6 +111,7 @@ namespace clever {
 %token CONSTANT      "constant"
 %token USE           "use"
 %token REGEX         "regex-pattern"
+%token CONST		 "const"
 
 %left ',';
 %left LOGICAL_OR;
@@ -366,6 +367,7 @@ variable_declaration:
 	|   template IDENT '(' arg_list ')'     { $$ = new ast::VariableDecl($1, $2, new ast::TypeCreation($1, $4)); $$->setLocation(yyloc);   }
 	|	package_module_name "::" TYPE IDENT '(' arg_list ')'
 		{ $1->concat("::", $3); delete $3; $$ = new ast::VariableDecl($1, $4, new ast::TypeCreation($1, $6)); $$->setLocation(yyloc);  }
+	| 	CONST variable_declaration          { $2->setConstness(true); $$ = $2; }
 ;
 
 assign_stmt:
