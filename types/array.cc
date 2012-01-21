@@ -40,7 +40,7 @@ CLEVER_TYPE_METHOD(Array::do_assign) {
  * Void Array<T>::push(T)
  */
 CLEVER_TYPE_METHOD(Array::push) {
-	ValueVector* vec = CLEVER_THIS()->getVector();
+	ValueVector* vec = CLEVER_THIS()->getArray();
 
 	Value* val = new Value();
 	val->copy(CLEVER_ARG(0));
@@ -52,7 +52,7 @@ CLEVER_TYPE_METHOD(Array::push) {
  * T Array<T>::pop()
  */
 CLEVER_TYPE_METHOD(Array::pop) {
-	ValueVector* vec = CLEVER_THIS()->getVector();
+	ValueVector* vec = CLEVER_THIS()->getArray();
 
 	if (vec->size() > 0) {
 		retval->copy(vec->back());
@@ -76,7 +76,7 @@ CLEVER_TYPE_METHOD(Array::pop) {
  * Int Array<T>::size()
  */
 CLEVER_TYPE_METHOD(Array::size) {
-	ValueVector* vec = CLEVER_THIS()->getVector();
+	ValueVector* vec = CLEVER_THIS()->getArray();
 
 	CLEVER_RETURN_INT(vec->size());
 }
@@ -85,7 +85,7 @@ CLEVER_TYPE_METHOD(Array::size) {
  * Bool Array<T>::isEmpty()
  */
 CLEVER_TYPE_METHOD(Array::isEmpty) {
-	ValueVector* vec = CLEVER_THIS()->getVector();
+	ValueVector* vec = CLEVER_THIS()->getArray();
 
 	CLEVER_RETURN_BOOL(vec->empty());
 }
@@ -94,7 +94,7 @@ CLEVER_TYPE_METHOD(Array::isEmpty) {
  * Void Array<T>::clear()
  */
 CLEVER_TYPE_METHOD(Array::clear) {
-	ValueVector* vec = CLEVER_THIS()->getVector();
+	ValueVector* vec = CLEVER_THIS()->getArray();
 
 	size_t sz = vec->size();
 	for (size_t i = 0; i < sz; ++i) {
@@ -108,7 +108,7 @@ CLEVER_TYPE_METHOD(Array::clear) {
  * T Array<T>::at(Int)
  */
 CLEVER_TYPE_METHOD(Array::at) {
-	ValueVector* vec = CLEVER_THIS()->getVector();
+	ValueVector* vec = CLEVER_THIS()->getArray();
 	int64_t idx = CLEVER_ARG(0)->getInteger();
 
 	if (size_t(idx) < vec->size() && idx >= 0) {
@@ -141,7 +141,7 @@ CLEVER_TYPE_METHOD(Array::at) {
  * Void Array<T>::set(Int, T)
  */
 CLEVER_TYPE_METHOD(Array::set) {
-	ValueVector* vec = CLEVER_THIS()->getVector();
+	ValueVector* vec = CLEVER_THIS()->getArray();
 	int64_t idx = CLEVER_ARG(0)->getInteger();
 
 	if (size_t(idx) < vec->size() && idx >= 0) {
@@ -170,7 +170,7 @@ CLEVER_TYPE_METHOD(Array::set) {
  * Void Array<T>::resize()
  */
 CLEVER_TYPE_METHOD(Array::resize) {
-	ValueVector* vec = CLEVER_THIS()->getVector();
+	ValueVector* vec = CLEVER_THIS()->getArray();
 	int nsz = CLEVER_ARG(0)->getInteger();
 
 	size_t sz = vec->size();
@@ -190,7 +190,7 @@ CLEVER_TYPE_METHOD(Array::resize) {
  * String Array<T>::toString()
  */
 CLEVER_TYPE_METHOD(Array::toString) {
-	ValueVector* vec = CLEVER_THIS()->getVector();
+	ValueVector* vec = CLEVER_THIS()->getArray();
 	std::string ret = "[", sep = ", ";
 
 	for (unsigned int i = 0, j = vec->size(); i < j; ++i) {
@@ -253,7 +253,7 @@ void Array::init() {
 }
 
 DataValue* Array::allocateValue() const {
-	return NULL;
+	return new ArrayValue;
 }
 
 } // clever
