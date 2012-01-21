@@ -407,16 +407,13 @@ private:
 class UnaryExpr : public ASTNode {
 public:
 	UnaryExpr(int op, ASTNode* expr)
-		: m_op(op), m_expr(expr), m_expr_value(NULL), m_method(NULL) {
+		: m_op(op), m_expr(expr), m_method(NULL) {
 		m_expr->addRef();
 		m_result = new Value;
 	}
 
 	~UnaryExpr() {
 		m_expr->delRef();
-		if (m_expr_value) {
-			m_expr_value->delRef();
-		}
 		if (m_method) {
 			m_method->delRef();
 		}
@@ -438,10 +435,6 @@ public:
 		return m_expr;
 	}
 
-	void setExprValue(Value* value) { m_expr_value = value; }
-
-	Value* getExprValue() { return m_expr_value; }
-
 	void setMethod(Value* method) { m_method = method; }
 	Value* getMethod() { return m_method; }
 
@@ -454,7 +447,6 @@ private:
 	int m_op;
 	ASTNode* m_expr;
 	Value* m_result;
-	Value* m_expr_value;
 	Value* m_method;
 
 	DISALLOW_COPY_AND_ASSIGN(UnaryExpr);
@@ -510,10 +502,10 @@ public:
 	Identifier* getType() const {
 		return m_type;
 	}
-	
+
 	void setMethodValue(CallableValue* method) { m_method = method; }
 	CallableValue* getMethodValue() const { return m_method; }
-	
+
 	void setMethodArgs(Value* args) { m_args = args; }
 	Value* getMethodArgs() const { return m_args; }
 
