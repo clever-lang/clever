@@ -1,0 +1,9 @@
+Testing constness #1
+==CODE==
+Array<Int> arr;
+arr.resize(10, 1);
+
+const Array<Int> constArr;
+constArr.resize(5, 2);
+==RESULT==
+Compile error: Can't call the non-const method Array<Int>::resize\(Int, Int\) because variable `constArr' is const on \S+ line 5

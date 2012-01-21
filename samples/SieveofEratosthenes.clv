@@ -1,0 +1,35 @@
+// Sieve of Erastothenes
+// Fills an Array<Int> named `primes` with all primes less than 1000
+
+import std.io as io;
+
+Array<Bool> isPrime;
+isPrime.resize(1000, true);
+isPrime.set(0, false);
+isPrime.set(1, false);
+
+// Setting all even > 2 to false
+for (Int i = 4; i < 1000; i += 2) {
+	isPrime.set(i, false);
+}
+
+// This array will contain all primes < SIZE
+Array<Int> primes;
+primes.push(2);
+
+for (Int i = 3; i < isPrime.size(); i += 2) {
+	if (isPrime.at(i)) {
+		primes.push(i);
+		
+		for (Int j = i + i; j < isPrime.size(); j += i) {
+			isPrime.set(j, false);
+		}
+	}
+}
+
+// prints the primes
+for (Int i = 0; i < primes.size(); ++i) {
+	io::print(primes.at(i), ' ');
+}
+
+io::print("\n");

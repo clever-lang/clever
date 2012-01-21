@@ -112,6 +112,8 @@ next_token:
 	<INITIAL>"%=" { RET(token::MOD_EQUAL); }
 
 	<INITIAL>"::" { RET(token::DOUBLE_COLON); }
+	
+	<INITIAL>"const" { RET(token::CONST); }
 
 	<INITIAL>"//" {
 		YYSETCONDITION(ST_COMMENT);
