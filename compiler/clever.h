@@ -92,7 +92,7 @@ namespace clever {
 #define CLEVER_RETURN_INT(x)        retval->setInteger((x))
 #define CLEVER_RETURN_DOUBLE(x)     retval->setDouble((x))
 #define CLEVER_RETURN_BYTE(x)       retval->setByte((x))
-#define CLEVER_RETURN_ARRAY(x)      retval->setVector((x))
+#define CLEVER_RETURN_ARRAY(x)      retval->setArray((x))
 #define CLEVER_RETURN_DATA_VALUE(x) retval->setDataValue((x))
 
 /**

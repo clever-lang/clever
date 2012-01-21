@@ -1,0 +1,27 @@
+Testing Array< Array<Int> >
+==CODE==
+import std.io;
+
+Array<Int> a;
+for (Int i = 0; i < 5; ++i) {
+	a.push(i);
+}
+
+Array< Array<Int> > b;
+for (Int i = 0; i < 5; ++i) {
+	b.push(a);
+}
+
+for (Int i = 0; i < b.size(); ++i) {
+	for (Int j = 0; j < b.at(i).size(); ++j) {
+		print(b.at(i).at(j), ' ');
+	}
+	print("\n");
+}
+
+==RESULT==
+0 1 2 3 4 
+0 1 2 3 4 
+0 1 2 3 4 
+0 1 2 3 4 
+0 1 2 3 4 

@@ -23,64 +23,28 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef CLEVER_VECTOR_H
-#define CLEVER_VECTOR_H
+#ifndef CLEVER_ARRAYVALUE_H
+#define CLEVER_ARRAYVALUE_H
 
-#include "types/type.h"
+#include <vector>
 #include "compiler/value.h"
-#include "types/arrayvalue.h"
 
 namespace clever {
-
-class Array : public TemplatedType {
-public:
-	Array()
-		: TemplatedType(CSTRING("Array"), 1) {
-		addArg(NULL);
-	}
-
-	Array(const CString* name, const Type* arg_type) :
-		TemplatedType(name, 1) {
-			addArg(arg_type);
-	}
-
-	virtual const Type* getTemplatedType(const Type* type_arg) const {
-		::std::string name = getName()->str() + "<"
-						   + type_arg->getName()->str() + ">";
-		const CString* cname = CSTRING(name);
-		const Type* type = g_symtable.getType(cname);
-
-		if (type == NULL) {
-			Type* ntype = new Array(cname, type_arg);
-			g_symtable.push(cname, ntype);
-			ntype->init();
-
-			return ntype;
+struct ArrayValue : public DataValue
+{
+	ValueVector* m_array;
+	
+	ArrayValue() : m_array(new ValueVector) {}
+	ArrayValue(ValueVector* array) : m_array(array) {}
+	
+	~ArrayValue() {
+		for (size_t i = 0; i < m_array->size(); ++i) {
+			delete m_array->at(i);
 		}
-
-		return type;
+		
+		delete m_array;
 	}
-
-	void init();
-	DataValue* allocateValue() const;
-
-	/**
-	 * Type methods
-	 */
-	static CLEVER_TYPE_METHOD(push);
-	static CLEVER_TYPE_METHOD(pop);
-	static CLEVER_TYPE_METHOD(size);
-	static CLEVER_TYPE_METHOD(isEmpty);
-	static CLEVER_TYPE_METHOD(clear);
-	static CLEVER_TYPE_METHOD(at);
-	static CLEVER_TYPE_METHOD(set);
-	static CLEVER_TYPE_METHOD(resize);
-	static CLEVER_TYPE_METHOD(toString);
-	static CLEVER_TYPE_METHOD(do_assign);
-private:
-	DISALLOW_COPY_AND_ASSIGN(Array);
 };
-
 } // clever
 
-#endif // CLEVER_VECTOR_H
+#endif
