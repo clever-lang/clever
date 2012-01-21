@@ -377,6 +377,12 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 	expr->setMethodArgs(args);
 
 	if (expr->isAssigned()) {
+		if (lhs->isConst()) {
+			Compiler::errorf(expr->getLocation(), "Can't assign to "
+				"variable `%S' because it is const",
+				lhs->getName());
+		}
+		
 		expr->setResult(lhs);
 		expr->getValue()->setTypePtr(lhs->getTypePtr());
 		lhs->addRef();
