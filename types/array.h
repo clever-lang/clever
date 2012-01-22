@@ -28,7 +28,6 @@
 
 #include "types/type.h"
 #include "compiler/value.h"
-#include "types/arrayvalue.h"
 
 namespace clever {
 
@@ -63,17 +62,6 @@ public:
 
 	void init();
 	DataValue* allocateValue() const;
-	
-	void destructor(DataValue* value) const {
-		ValueVector* vec = ((ArrayValue*)value)->m_array;
-		
-		size_t sz = vec->size();
-		for (size_t i = 0; i < sz; ++i) {
-			vec->at(i)->delRef();
-		}
-		
-		vec->clear();
-	}
 
 	/**
 	 * Type methods

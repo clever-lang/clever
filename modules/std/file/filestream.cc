@@ -67,7 +67,8 @@ CLEVER_TYPE_METHOD(FileStream::constructor) {
 			fsv->m_fstream.open(CLEVER_ARG_STR(0).c_str(), convertOpenMode(CLEVER_ARG(1)->getString()));
 		}
 	}
-	
+
+	/* Assignment on type creation will increase the ref */
 	fsv->setReference(0);
 
 	CLEVER_RETURN_DATA_VALUE(fsv);
@@ -282,8 +283,8 @@ DataValue* FileStream::allocateValue() const {
 	return new FileStreamValue;
 }
 
-void FileStream::destructor(DataValue* value) const {
-	FileStreamValue* fsv = (FileStreamValue*)value;
+void FileStream::destructor(Value* value) const {
+	FileStreamValue* fsv = CLEVER_GET_VALUE(FileStreamValue*, value);
 
 	// Just close the stream
 	if (fsv && fsv->m_fstream.is_open()) {

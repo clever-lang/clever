@@ -37,7 +37,6 @@
 #include "compiler/function.h"
 #include "compiler/symboltable.h"
 #include "types/type.h"
-#include "types/arrayvalue.h"
 
 namespace clever {
 
@@ -109,22 +108,21 @@ public:
 
 	virtual ~Value() {
 		if (isUserValue()) {
-			if (m_data.dv_value->refCount() == 1) {
-				getTypePtr()->destructor(m_data.dv_value);
+			if (m_data.dv_value->refCount() == 0) {
+				// Runs the type destructor
+				getTypePtr()->destructor(this);
+				delete m_data.dv_value;
+			} else {
 				m_data.dv_value->delRef();
+
 			}
-			else {
-				m_data.dv_value->delRef();
-			}
-		}
-		else if (isVector()) {
+		} else if (isVector()) {
 			ValueVector::const_iterator it = m_data.v_value->begin(), end = m_data.v_value->end();
-			
+
 			while (it != end) {
 				(*it)->delRef();
 				++it;
 			}
-			
 			delete m_data.v_value;
 		}
 	}
@@ -227,15 +225,8 @@ public:
 		m_type = PRIMITIVE;
 		m_data.c_value = b;
 	}
-	
-	void setVector(ValueVector* v) {
-		m_type = VECTOR;
-		m_data.v_value = v;
-	}
-	
-	void setArray(ValueVector* a) {
-		setDataValue(new ArrayValue(a));
-	}
+
+	void setVector(ValueVector* v) { m_type = VECTOR; m_data.v_value = v; }
 
 	const CString* getStringP() const { return m_data.s_value; }
 
@@ -244,7 +235,6 @@ public:
 	double getDouble()         const { return m_data.d_value; }
 	bool getBoolean()          const { return m_data.b_value; }
 	uint8_t getByte()          const { return m_data.c_value; }
-	ValueVector* getArray()    const { return ((ArrayValue*)(m_data.dv_value))->m_array; }
 	ValueVector* getVector()   const { return m_data.v_value; }
 
 	bool getValueAsBool() const {

@@ -1,6 +1,0 @@
-import std.io;
-
-{
-	Array<String> b;
-	b.push('cle');
-}
