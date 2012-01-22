@@ -95,12 +95,6 @@ namespace clever {
 #define CLEVER_OPERATOR_POS_DEC "__pos_dec__"
 
 /**
- * Prototype for class methods which the class represents a type
- */
-#define CLEVER_TYPE_METHOD_ARGS const ValueVector* args, Value* retval, Value* value
-#define CLEVER_TYPE_METHOD(name) void CLEVER_FASTCALL name(CLEVER_TYPE_METHOD_ARGS)
-
-/**
  * Utils for handling TemplatedType
  */
 #define CLEVER_TPL_ARG(arg) (getTypeArg(arg))

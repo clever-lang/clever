@@ -29,7 +29,7 @@
 
 namespace clever { namespace packages { namespace std { namespace reflection {
 
-CLEVER_TYPE_METHOD(ReflectionPackage::constructor) {
+CLEVER_METHOD(ReflectionPackage::constructor) {
 	ReflectionPackageValue* rpv = new ReflectionPackageValue;
 	const PackageMap& packages = g_pkgmanager.getPackages();
 
@@ -46,7 +46,7 @@ CLEVER_TYPE_METHOD(ReflectionPackage::constructor) {
 /**
  * String ReflectionPackage::getName()
  */
-CLEVER_TYPE_METHOD(ReflectionPackage::getName) {
+CLEVER_METHOD(ReflectionPackage::getName) {
 	ReflectionPackageValue* rpv = CLEVER_GET_VALUE(ReflectionPackageValue*, value);
 
 	if (rpv->getPackage() == g_pkgmanager.getPackages().end()) {
@@ -59,7 +59,7 @@ CLEVER_TYPE_METHOD(ReflectionPackage::getName) {
 /**
  * Array<String> ReflectionPackage::getModules()
  */
-CLEVER_TYPE_METHOD(ReflectionPackage::getModules) {
+CLEVER_METHOD(ReflectionPackage::getModules) {
 	ReflectionPackageValue* rpv = CLEVER_GET_VALUE(ReflectionPackageValue*, value);
 	const ModuleMap& modules = rpv->getPackage()->second->getModules();
 	ModuleMap::const_iterator it = modules.begin(), end = modules.end();
@@ -80,14 +80,14 @@ CLEVER_TYPE_METHOD(ReflectionPackage::getModules) {
 /**
  * Void ReflectionPackage::__assign__(ReflectionPackage)
  */
-CLEVER_TYPE_METHOD(ReflectionPackage::do_assign) {	
+CLEVER_METHOD(ReflectionPackage::do_assign) {
 	CLEVER_ARG(0)->getDataValue()->addRef();
 	CLEVER_THIS()->copy(CLEVER_ARG(0));
 }
 
 void ReflectionPackage::init() {
 	const Type* arr_str = CLEVER_GET_ARRAY_TEMPLATE->getTemplatedType(CLEVER_STR);
-	
+
 	addMethod(
 		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&ReflectionPackage::do_assign, CLEVER_VOID))
 			->addArg("rvalue", CLEVER_TYPE("ReflectionPackage"))

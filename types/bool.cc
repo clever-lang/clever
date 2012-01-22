@@ -35,7 +35,7 @@ namespace clever {
  * Construct an Bool object with a default value (if no args) or a
  * custom value
  */
-CLEVER_TYPE_METHOD(Bool::constructor) {
+CLEVER_METHOD(Bool::constructor) {
 	if (args) {
 		CLEVER_RETURN_BOOL(CLEVER_ARG_BOOL(0));
 	}
@@ -48,7 +48,7 @@ CLEVER_TYPE_METHOD(Bool::constructor) {
  * Void Bool::__assign__()
  * Performs the assignment of Bool variable type
  */
-CLEVER_TYPE_METHOD(Bool::do_assign) {
+CLEVER_METHOD(Bool::do_assign) {
 	if (CLEVER_ARG_IS_BOOL(0)) {
 		CLEVER_THIS()->copy(CLEVER_ARG(0));
 	} else {
@@ -60,50 +60,50 @@ CLEVER_TYPE_METHOD(Bool::do_assign) {
  * Bool::toString()
  * Converts the number to string
  */
-CLEVER_TYPE_METHOD(Bool::toString) {
+CLEVER_METHOD(Bool::toString) {
 	CLEVER_RETURN_STR(CSTRING(CLEVER_THIS()->toString()));
 }
 
 /**
  * Boolean operators
  */
-CLEVER_TYPE_METHOD(Bool::bw_and) {
+CLEVER_METHOD(Bool::bw_and) {
 	CLEVER_RETURN_BOOL(CLEVER_ARG_AS_BOOL(0) & CLEVER_ARG_AS_BOOL(1));
 }
 
-CLEVER_TYPE_METHOD(Bool::bw_or) {
+CLEVER_METHOD(Bool::bw_or) {
 	CLEVER_RETURN_BOOL(CLEVER_ARG_AS_BOOL(0) | CLEVER_ARG_AS_BOOL(1));
 }
 
-CLEVER_TYPE_METHOD(Bool::bw_xor) {
+CLEVER_METHOD(Bool::bw_xor) {
 	CLEVER_RETURN_BOOL(CLEVER_ARG_AS_BOOL(0) ^ CLEVER_ARG_AS_BOOL(1));
 }
 
 /**
  * == operator (Bool, Bool)
  */
-CLEVER_TYPE_METHOD(Bool::equal) {
+CLEVER_METHOD(Bool::equal) {
 	CLEVER_RETURN_BOOL(CLEVER_ARG_BOOL(0) == CLEVER_ARG_BOOL(1));
 }
 
 /**
  * != operator (Bool, Bool)
  */
-CLEVER_TYPE_METHOD(Bool::not_equal) {
+CLEVER_METHOD(Bool::not_equal) {
 	CLEVER_RETURN_BOOL(CLEVER_ARG_BOOL(0) != CLEVER_ARG_BOOL(1));
 }
 
 /**
  * ! operator
  */
-CLEVER_TYPE_METHOD(Bool::logical_not) {
+CLEVER_METHOD(Bool::logical_not) {
 	CLEVER_RETURN_BOOL(!CLEVER_THIS()->getValueAsBool());
 }
 
 /**
  * ~ operator
  */
-CLEVER_TYPE_METHOD(Bool::bw_not) {
+CLEVER_METHOD(Bool::bw_not) {
 	CLEVER_RETURN_BOOL(~CLEVER_THIS()->getBoolean());
 }
 

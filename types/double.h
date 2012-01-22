@@ -42,29 +42,29 @@ public:
 	/**
 	 * Type methods
 	 */
-	static CLEVER_TYPE_METHOD(constructor);
-	static CLEVER_TYPE_METHOD(toString);
-	static CLEVER_TYPE_METHOD(sqrt);
+	static CLEVER_METHOD(constructor);
+	static CLEVER_METHOD(toString);
+	static CLEVER_METHOD(sqrt);
 
 	/**
 	 * Type operator methods
 	 */
-	static CLEVER_TYPE_METHOD(plus);
-	static CLEVER_TYPE_METHOD(minus);
-	static CLEVER_TYPE_METHOD(div);
-	static CLEVER_TYPE_METHOD(mult);
-	static CLEVER_TYPE_METHOD(not_equal);
-	static CLEVER_TYPE_METHOD(equal);
-	static CLEVER_TYPE_METHOD(less);
-	static CLEVER_TYPE_METHOD(greater);
-	static CLEVER_TYPE_METHOD(less_equal);
-	static CLEVER_TYPE_METHOD(greater_equal);
-	static CLEVER_TYPE_METHOD(logical_not);
-	static CLEVER_TYPE_METHOD(pre_inc);
-	static CLEVER_TYPE_METHOD(pos_inc);
-	static CLEVER_TYPE_METHOD(pre_dec);
-	static CLEVER_TYPE_METHOD(pos_dec);
-	static CLEVER_TYPE_METHOD(do_assign);
+	static CLEVER_METHOD(plus);
+	static CLEVER_METHOD(minus);
+	static CLEVER_METHOD(div);
+	static CLEVER_METHOD(mult);
+	static CLEVER_METHOD(not_equal);
+	static CLEVER_METHOD(equal);
+	static CLEVER_METHOD(less);
+	static CLEVER_METHOD(greater);
+	static CLEVER_METHOD(less_equal);
+	static CLEVER_METHOD(greater_equal);
+	static CLEVER_METHOD(logical_not);
+	static CLEVER_METHOD(pre_inc);
+	static CLEVER_METHOD(pos_inc);
+	static CLEVER_METHOD(pre_dec);
+	static CLEVER_METHOD(pos_dec);
+	static CLEVER_METHOD(do_assign);
 private:
 	DISALLOW_COPY_AND_ASSIGN(Double);
 };
