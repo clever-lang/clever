@@ -83,9 +83,6 @@ CLEVER_TYPE_METHOD(Pcre::constructor) {
 		self->re = new pcrecpp::RE(CLEVER_ARG_STR(0).c_str());
 	}
 
-	/* FIXME: memory leak on variable declaration */
-	self->setReference(1);
-
 	CLEVER_RETURN_DATA_VALUE(self);
 }
 
@@ -124,7 +121,6 @@ CLEVER_TYPE_METHOD(Pcre::replaceAll) {
 }
 
 CLEVER_TYPE_METHOD(Pcre::do_assign) {
-	CLEVER_ARG(0)->getDataValue()->addRef();
 	CLEVER_THIS()->copy(CLEVER_ARG(0));
 }
 
