@@ -68,7 +68,7 @@ void VM::push_args(ValueVector* vec) {
 
 	s_args.push(vec);
 
-	for (int i = 0, j = vec->size(); i < j; ++i) {
+	for (size_t i = 0, j = vec->size(); i < j; ++i) {
 		Value* tmp = new Value;
 
 		tmp->copy(vec->at(i));
@@ -91,7 +91,7 @@ void VM::pop_args(const Opcode* const op) {
 
 	ValueVector* vec_copy = s_arg_values.top();
 
-	for (int i = 0, j = vec_copy->size(); i < j; ++i) {
+	for (size_t i = 0, j = vec_copy->size(); i < j; ++i) {
 		delete vec_copy->at(i);
 	}
 	delete vec_copy;
@@ -111,7 +111,7 @@ void VM::restore_args() {
 	ValueVector* vec = s_args.top();
 	ValueVector* vec_copy = s_arg_values.top();
 
-	for (int i = 0, j = vec->size(); i < j; ++i) {
+	for (size_t i = 0, j = vec->size(); i < j; ++i) {
 		vec->at(i)->copy(vec_copy->at(i));
 	}
 }
@@ -212,7 +212,7 @@ CLEVER_VM_HANDLER(VM::arg_recv_handler) {
 	ValueVector* vars = opcode.getOp1()->getVector();
 	const ValueVector* const func_args = opcode.getOp2()->getVector();
 
-	for (int i = 0, j = vars->size(); i < j; ++i) {
+	for (size_t i = 0, j = vars->size(); i < j; ++i) {
 		vars->at(i)->copy(func_args->at(i));
 	}
 

@@ -262,17 +262,17 @@ next_token:
 			}
 			if (s.yylex[0] == '"') {
 				switch (strtext[found+1]) {
-					case 'n': strtext.replace(int(found), 2, 1, '\n'); break;
-					case 'r': strtext.replace(int(found), 2, 1, '\r'); break;
-					case 't': strtext.replace(int(found), 2, 1, '\t'); break;
-					case 'v': strtext.replace(int(found), 2, 1, '\v'); break;
-					case '"': strtext.replace(int(found), 2, 1, '"'); break;
-					case '\\': strtext.replace(int(found), 2, 1, '\\'); ++found; break;
+					case 'n': strtext.replace(found, 2, 1, '\n'); break;
+					case 'r': strtext.replace(found, 2, 1, '\r'); break;
+					case 't': strtext.replace(found, 2, 1, '\t'); break;
+					case 'v': strtext.replace(found, 2, 1, '\v'); break;
+					case '"': strtext.replace(found, 2, 1, '"'); break;
+					case '\\': strtext.replace(found, 2, 1, '\\'); ++found; break;
 					default: ++found; break;
 				}
 			} else {
 				switch (strtext[found+1]) {
-					case '\'': strtext.replace(int(found), 2, 1, '\''); break;
+					case '\'': strtext.replace(found, 2, 1, '\''); break;
 					default: ++found; break;
 				}
 			}

@@ -135,7 +135,7 @@ void TestRunner::run(void) {
 		fp = popen(command.c_str(), "r");
 #endif
 
-		if (fread(result, 1, sizeof(result)-1, fp) < 0) {
+		if (fread(result, 1, sizeof(result)-1, fp) == 0 && ferror(fp) != 0) {
 			// Error?
 			std::cout << "Something went wrong reading the result." << std::endl;
 			exit(1);

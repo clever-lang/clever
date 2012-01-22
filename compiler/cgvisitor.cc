@@ -86,7 +86,7 @@ AST_VISITOR(CodeGenVisitor, BinaryExpr) {
 
 	Value* rhs;
 	Value* lhs = expr->getLhs()->getValue();
-	Opcodes opcode;
+	Opcodes opval;
 
 	/**
 	 * Treat the jump for logical expression
@@ -118,26 +118,26 @@ AST_VISITOR(CodeGenVisitor, BinaryExpr) {
 			expr->getValue()->addRef();
 			}
 			break;
-		case PLUS:          opcode = OP_PLUS;
-		case DIV:           opcode = OP_DIV;
-		case MULT:          opcode = OP_MULT;
-		case MINUS:         opcode = OP_MINUS;
-		case MOD:           opcode = OP_MOD;
-		case XOR:           opcode = OP_XOR;
-		case BW_OR:         opcode = OP_BW_OR;
-		case BW_AND:        opcode = OP_BW_AND;
-		case GREATER:       opcode = OP_GREATER;
-		case LESS:          opcode = OP_LESS;
-		case GREATER_EQUAL: opcode = OP_GE;
-		case LESS_EQUAL:    opcode = OP_LE;
-		case EQUAL:         opcode = OP_EQUAL;
-		case NOT_EQUAL:     opcode = OP_NE;
-		case LSHIFT:        opcode = OP_LSHIFT;
-		case RSHIFT:        opcode = OP_RSHIFT;
+		case PLUS:          opval = OP_PLUS;
+		case DIV:           opval = OP_DIV;
+		case MULT:          opval = OP_MULT;
+		case MINUS:         opval = OP_MINUS;
+		case MOD:           opval = OP_MOD;
+		case XOR:           opval = OP_XOR;
+		case BW_OR:         opval = OP_BW_OR;
+		case BW_AND:        opval = OP_BW_AND;
+		case GREATER:       opval = OP_GREATER;
+		case LESS:          opval = OP_LESS;
+		case GREATER_EQUAL: opval = OP_GE;
+		case LESS_EQUAL:    opval = OP_LE;
+		case EQUAL:         opval = OP_EQUAL;
+		case NOT_EQUAL:     opval = OP_NE;
+		case LSHIFT:        opval = OP_LSHIFT;
+		case RSHIFT:        opval = OP_RSHIFT;
 			expr->getRhs()->acceptVisitor(*this);
 			rhs = expr->getRhs()->getValue();
 
-			emit(opcode, &VM::mcall_handler, expr->getMethod(),
+			emit(opval, &VM::mcall_handler, expr->getMethod(),
 				expr->getMethodArgs(), expr->getValue());
 			break;
 		default:

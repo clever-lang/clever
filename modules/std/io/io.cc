@@ -37,7 +37,7 @@ namespace io {
  * Prints the object values without trailing newline
  */
 static CLEVER_FUNCTION(print) {
-	for (int i = 0, size = CLEVER_NUM_ARGS(); i < size; ++i) {
+	for (size_t i = 0, size = CLEVER_NUM_ARGS(); i < size; ++i) {
 		::std::cout << CLEVER_ARG_AS_STR(i);
 	}
 }
@@ -47,7 +47,7 @@ static CLEVER_FUNCTION(print) {
  * Prints the object values with trailing newline
  */
 static CLEVER_FUNCTION(println) {
-	for (int i = 0, size = CLEVER_NUM_ARGS(); i < size; ++i) {
+	for (size_t i = 0, size = CLEVER_NUM_ARGS(); i < size; ++i) {
 		::std::cout << CLEVER_ARG_AS_STR(i) << ::std::endl;
 	}
 }
