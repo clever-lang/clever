@@ -420,6 +420,7 @@ expr:
 	|	'(' expr ')'          { $$ = $2; }
 	|	func_call             { $$ = $<ast_node>1; }
 	|	method_call           { $$ = $<ast_node>1; }
+	|	IDENT '[' expr ']'    { $$ = new ast::Subscript($1, $3); $$->setLocation(yylloc); }
 	|	IDENT                 { $$ = $<ast_node>1; }
 	|	literal               { $$ = $<ast_node>1; }
 	|	constant              { $$ = $<ast_node>1; }

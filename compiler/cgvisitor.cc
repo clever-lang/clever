@@ -50,6 +50,9 @@ AST_VISITOR(CodeGenVisitor, ArgumentList) {
 	}
 }
 
+AST_VISITOR(CodeGenVisitor, Subscript) {
+}
+
 /**
  * Generates opcode for regex syntax
  */

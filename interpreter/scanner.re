@@ -53,7 +53,7 @@ next_token:
 	OCTINT     = [0][0-7]+;
 	SPACE 	   = [\r\t\v ]+;
 	STRING     = (["]([^\\"]*|"\\"["]?)*["]|[']([^\\']*|"\\"[']?)*[']);
-	SPECIAL    = [;(),{}&~^|=+*/-];
+	SPECIAL    = [;(),{}&~^|=+*/-][];
 	TYPE       = [A-Z][a-zA-Z0-9_]*;
 	CONSTANT   = [A-Z][A-Z0-9_]+;
 	REGEX      = "/"([a-zA-Z0-9]+|SPACE|[-+$^\|{}?()*][]|"\\"[^])*"/";
@@ -112,7 +112,7 @@ next_token:
 	<INITIAL>"%=" { RET(token::MOD_EQUAL); }
 
 	<INITIAL>"::" { RET(token::DOUBLE_COLON); }
-	
+
 	<INITIAL>"const" { RET(token::CONST); }
 
 	<INITIAL>"//" {

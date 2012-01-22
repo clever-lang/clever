@@ -25,7 +25,7 @@
 
 #include <cstdio>
 #include <sstream>
-#include "opcode.h"
+#include "vm/opcode.h"
 #include "compiler/value.h"
 
 namespace clever {

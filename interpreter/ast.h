@@ -340,6 +340,27 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(Identifier);
 };
 
+class Subscript : public ASTNode {
+public:
+	Subscript(Identifier* ident, ASTNode* expr)
+		: m_ident(ident), m_expr(expr) {
+		m_ident->addRef();
+		m_expr->addRef();
+	}
+
+	~Subscript() {
+		m_ident->delRef();
+		m_expr->delRef();
+	}
+
+	void acceptVisitor(ASTVisitor& visitor) {
+		visitor.visit(this);
+	}
+private:
+	Identifier* m_ident;
+	ASTNode* m_expr;
+};
+
 class Constant : public ASTNode {
 public:
 	Constant(Identifier* ident)
@@ -515,11 +536,11 @@ public:
 		}
 		visitor.visit(this);
 	}
-	
+
 	void setConstness(bool constness) {
 		m_const_value = constness;
 	}
-	
+
 	bool isConst() const {
 		return m_const_value;
 	}

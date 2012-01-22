@@ -26,7 +26,7 @@
 #ifndef CLEVER_OPCODE_H
 #define CLEVER_OPCODE_H
 
-#include "vm.h"
+#include "vm/vm.h"
 #include "types/type.h"
 #include "compiler/value.h"
 
