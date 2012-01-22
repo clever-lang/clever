@@ -227,7 +227,7 @@ next_token:
 	}
 
 	<INITIAL>"Void" {
-		yylval->ast_node = NULL;
+		yylval->ast_node = new ast::Identifier(CSTRING(std::string(reinterpret_cast<const char*>(s.yylex), yylen)));
 		RET(token::TYPE);
 	}
 
