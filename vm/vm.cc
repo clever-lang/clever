@@ -132,7 +132,7 @@ void VM::run() {
 	long last_op = m_opcodes->size();
 
 	for (next_op = 0; next_op < last_op && next_op >= 0; ++next_op) {
-		Opcode& opcode = *(*m_opcodes)[next_op];
+		const Opcode& opcode = *(*m_opcodes)[next_op];
 
 		// opcode.dump();
 
@@ -257,7 +257,7 @@ CLEVER_VM_HANDLER(VM::end_func_handler) {
 CLEVER_VM_HANDLER(VM::return_handler) {
 	if (!s_call.empty()) {
 		const Value* const value = opcode.getOp1();
-		Opcode* call = s_call.top();
+		const Opcode* call = s_call.top();
 
 		if (value) {
 			call->getResult()->copy(value);
