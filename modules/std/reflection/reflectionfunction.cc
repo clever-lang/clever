@@ -83,7 +83,7 @@ DataValue* ReflectionFunction::allocateValue() const {
 	return new ReflectionFunctionValue;
 }
 
-void ReflectionFunction::destructor(Value* value) const {
+void ReflectionFunction::destructor(DataValue* value) const {
 }
 
 }}}} // clever::packages::std::reflection

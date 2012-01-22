@@ -38,10 +38,6 @@ struct ArrayValue : public DataValue
 	ArrayValue(ValueVector* array) : m_array(array) {}
 	
 	~ArrayValue() {
-		for (size_t i = 0; i < m_array->size(); ++i) {
-			delete m_array->at(i);
-		}
-		
 		delete m_array;
 	}
 };

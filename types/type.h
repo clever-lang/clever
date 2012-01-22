@@ -208,7 +208,7 @@ public:
 	 * out of scope. This method should be overwritten for every type who needs
 	 * some handling before a variable of this type get out of scope.
 	 */
-	virtual void destructor(Value* value) const {}
+	virtual void destructor(DataValue* value) const {}
 private:
 	MethodMap m_methods;
 	const CString* m_name;

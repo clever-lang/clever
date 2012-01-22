@@ -109,14 +109,23 @@ public:
 
 	virtual ~Value() {
 		if (isUserValue()) {
-			if (m_data.dv_value->refCount() == 0) {
-				// Runs the type destructor
-				getTypePtr()->destructor(this);
-				delete m_data.dv_value;
-			} else {
+			if (m_data.dv_value->refCount() == 1) {
+				getTypePtr()->destructor(m_data.dv_value);
 				m_data.dv_value->delRef();
-
 			}
+			else {
+				m_data.dv_value->delRef();
+			}
+		}
+		else if (isVector()) {
+			ValueVector::const_iterator it = m_data.v_value->begin(), end = m_data.v_value->end();
+			
+			while (it != end) {
+				(*it)->delRef();
+				++it;
+			}
+			
+			delete m_data.v_value;
 		}
 	}
 

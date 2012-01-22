@@ -34,10 +34,6 @@ CLEVER_TYPE_METHOD(ReflectionPackage::constructor) {
 	const PackageMap& packages = g_pkgmanager.getPackages();
 
 	rpv->setPackage(packages.find(&CLEVER_ARG_STR(0)));
-
-	/**
-	 * Assignment on type creation will increase the ref
-	 */
 	rpv->setReference(0);
 
 	retval->setDataValue(rpv);
@@ -111,7 +107,7 @@ DataValue* ReflectionPackage::allocateValue() const {
 	return new ReflectionPackageValue;
 }
 
-void ReflectionPackage::destructor(Value* value) const {
+void ReflectionPackage::destructor(DataValue* value) const {
 }
 
 }}}} // clever::packages::std::reflection

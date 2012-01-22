@@ -38,7 +38,7 @@ public:
 
 	void init();
 	DataValue* allocateValue() const;
-	void destructor(Value* value) const;
+	void destructor(DataValue* value) const;
 
 	/**
 	 * Type methods
