@@ -96,10 +96,22 @@ CLEVER_TYPE_METHOD(String::replace) {
  * Retrieves a substring from the original one.
  */
 CLEVER_TYPE_METHOD(String::substring) {
-	clever_assert(static_cast<size_t>(CLEVER_ARG(0)->getInteger()) < CLEVER_THIS()->toString().length(),
-			"Out of range: %l is after the end of the string.", CLEVER_ARG(0)->getInteger());
+	int64_t arg0 = CLEVER_ARG_INT(0);
+	int64_t arg1 = CLEVER_ARG_INT(1);
+	size_t max_size = CLEVER_THIS()->toString().max_size();
+	size_t length   = CLEVER_THIS()->toString().length();
+	int arg0_in_range = (uint64_t)arg0 < max_size && (uint64_t)arg0 < length;
 
-	std::string substr = CLEVER_THIS()->toString().substr(CLEVER_ARG(0)->getInteger(), CLEVER_ARG(1)->getInteger());
+	if (!arg0_in_range) {
+		if ((uint64_t)arg0 >= max_size) {
+			clever_fatal("Attempted to access %l, but this platform limits "
+					"strings to %l characters.", arg0, max_size);
+		} else {
+			clever_fatal("Index %l is after the end of the string.", arg0);
+		}
+	}
+
+	std::string substr = CLEVER_THIS()->toString().substr(arg0, arg1);
 	CLEVER_RETURN_STR(CSTRING(substr));
 }
 
