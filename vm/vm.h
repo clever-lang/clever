@@ -46,8 +46,6 @@ namespace clever {
 
 class Opcode;
 
-
-
 typedef std::vector<Opcode*> OpcodeList;
 typedef std::stack<const Opcode*> CallStack;
 typedef std::stack<ValueVector*> ArgStack;

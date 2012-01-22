@@ -128,10 +128,9 @@ void VM::error(const char* message) {
  * Execute the collected opcodes
  */
 void VM::run() {
-	long next_op;
 	long last_op = m_opcodes->size();
 
-	for (next_op = 0; next_op < last_op && next_op >= 0; ++next_op) {
+	for (long next_op = 0; next_op < last_op && next_op >= 0; ++next_op) {
 		const Opcode& opcode = *(*m_opcodes)[next_op];
 
 		// opcode.dump();
