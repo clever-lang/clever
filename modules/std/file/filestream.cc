@@ -145,7 +145,7 @@ CLEVER_TYPE_METHOD(FileStream::read) {
 	// @TODO: should test if the stream allows reading.
 
 	if (CLEVER_ARG_IS_INT(0)) {
-		uint64_t val;
+		int64_t val;
 		fsv->m_fstream >> val;
 
 		CLEVER_ARG(0)->setInteger(val);

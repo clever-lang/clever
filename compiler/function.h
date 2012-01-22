@@ -71,10 +71,10 @@ public:
 	Function(std::string name, FunctionPtr ptr, int numargs, const Type* rtype)
 		: m_name(name), m_kind(INTERNAL), m_num_args(numargs), m_min_args(0), m_rtype(rtype) { m_info.ptr = ptr; }
 
-	Function(std::string& name, unsigned int offset)
+	Function(std::string& name, size_t offset)
 		: m_name(name), m_kind(USER), m_num_args(0), m_min_args(0), m_rtype(NULL) { m_info.offset = offset; }
 
-	Function(std::string& name, unsigned int offset, int numargs)
+	Function(std::string& name, size_t offset, int numargs)
 		: m_name(name), m_kind(USER), m_num_args(numargs), m_min_args(0), m_rtype(NULL) { m_info.offset = offset; }
 
 	virtual ~Function() { }
@@ -103,8 +103,8 @@ public:
 
 	void setUserDefined() { m_kind = USER; }
 
-	void setOffset(unsigned int num) { m_info.offset = num; m_kind = USER; }
-	long getOffset() const { return m_info.offset; }
+	void setOffset(size_t num) { m_info.offset = num; m_kind = USER; }
+	size_t getOffset() const { return m_info.offset; }
 
 	void setReturnType(const Type* type) { m_rtype = type; }
 	const Type* getReturnType() const { return m_rtype; }
@@ -117,12 +117,12 @@ public:
 		m_info.ptr(args, result);
 	}
 
-	long call() const { return m_info.offset; }
+	size_t call() const { return m_info.offset; }
 
 private:
 	union {
 		FunctionPtr  ptr;
-		long offset;
+		size_t offset;
 	} m_info;
 
 	std::string m_name;

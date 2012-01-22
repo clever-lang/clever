@@ -204,6 +204,7 @@ namespace clever {
 %type <method_call> method_call
 %type <variable_decl> variable_decl_or_empty
 %type <variable_decl> variable_declaration
+%type <variable_decl> variable_declaration_impl
 %type <ast_node> assign_stmt
 %type <type_creation> type_creation
 %type <ast_node> expr
@@ -340,8 +341,10 @@ method_call:
 ;
 
 template_args:
-		TYPE           			{ $<template_args>$ = new ast::TemplateArgsVector; $<template_args>$->push_back($1); }
-	|	template_args ',' TYPE  { $1->push_back($3); }
+		TYPE           				{ $<template_args>$ = new ast::TemplateArgsVector; $<template_args>$->push_back($1); }
+	|	template_args ',' TYPE  	{ $1->push_back($3); }
+	|   template_args ',' template	{ $1->push_back($3); }
+	|	template					{ $<template_args>$ = new ast::TemplateArgsVector; $<template_args>$->push_back($1); }
 ;
 
 template:
@@ -349,6 +352,10 @@ template:
 ;
 
 variable_declaration:
+		variable_declaration_impl			{ $$ = $1; }
+	|	CONST variable_declaration_impl		{ $2->setConstness(true); $$ = $2; }
+
+variable_declaration_impl:
 		TYPE IDENT '=' type_creation        { $$ = new ast::VariableDecl($1, $2, $4); $$->setLocation(yylloc); }
 	|	template IDENT '=' type_creation    { $$ = new ast::VariableDecl($1, $2, $4); $$->setLocation(yylloc); }
 	|	package_module_name "::" TYPE IDENT '=' type_creation
@@ -367,7 +374,6 @@ variable_declaration:
 	|   template IDENT '(' arg_list ')'     { $$ = new ast::VariableDecl($1, $2, new ast::TypeCreation($1, $4)); $$->setLocation(yyloc);   }
 	|	package_module_name "::" TYPE IDENT '(' arg_list ')'
 		{ $1->concat("::", $3); delete $3; $$ = new ast::VariableDecl($1, $4, new ast::TypeCreation($1, $6)); $$->setLocation(yyloc);  }
-	| 	CONST variable_declaration          { $2->setConstness(true); $$ = $2; }
 ;
 
 assign_stmt:
