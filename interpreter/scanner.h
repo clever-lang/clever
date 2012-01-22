@@ -57,15 +57,13 @@ class ScannerState {
 public:
 	ScannerState() : state(0) { }
 
-	void set_cursor(unsigned const char* cursor) { cur = cursor; }
+	void set_cursor(const unsigned char* cursor) { cur = cursor; }
 
 	int state;
 	const unsigned char *cur, *yylex, *ctx;
 private:
 	DISALLOW_COPY_AND_ASSIGN(ScannerState);
 };
-
-typedef std::basic_string <unsigned char> ustring;
 
 } // clever
 

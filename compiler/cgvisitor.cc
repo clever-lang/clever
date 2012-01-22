@@ -22,7 +22,9 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-#include "cgvisitor.h"
+
+#include "interpreter/ast.h"
+#include "compiler/cgvisitor.h"
 #include "compiler/compiler.h"
 #include "compiler/typechecker.h"
 

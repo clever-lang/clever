@@ -34,7 +34,6 @@
 #include "interpreter/astvisitor.h"
 #include "interpreter/asttransformer.h"
 #include "build/interpreter/location.hh"
-#include "types/nativetypes.h"
 
 namespace clever {
 

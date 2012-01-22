@@ -23,9 +23,9 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#include "interpreter/ast.h"
 #include "compiler/compiler.h"
 #include "compiler/typechecker.h"
-#include "types/nativetypes.h"
 
 namespace clever { namespace ast {
 

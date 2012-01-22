@@ -29,15 +29,14 @@
 #include <cstdarg>
 #include <stack>
 #include <sstream>
-#include "module.h"
 #include "pkgmanager.h"
-#include "vm/vm.h"
-#include "vm/opcode.h"
 #include "build/interpreter/location.hh"
-#include "interpreter/ast.h"
 #include "compiler/cgvisitor.h"
 #include "compiler/typechecker.h"
-#include "compiler/compiler.h"
+
+namespace clever { namespace ast {
+class ASTNode;
+}} // clever::ast
 
 namespace clever {
 
