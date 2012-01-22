@@ -330,6 +330,7 @@ int main(int argc, char *argv[])
 				usage();
 				return 1;
 			}
+			testrunner.setFlags(TestRunner::FAIL_ONLY);
 			// ./testrunner -m <something here>?
 			testrunner.valgrind = true;
 			start_paths = 2;
