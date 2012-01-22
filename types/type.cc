@@ -68,26 +68,26 @@ void Type::addMethod(Method* method) {
 }
 
 const Method* Type::getMethod(const CString* name, const TypeVector* args) const {
-		MethodMap::const_iterator it = m_methods.find(*name);
+	MethodMap::const_iterator it = m_methods.find(*name);
 
-		if (it == m_methods.end()) return NULL;
+	if (it == m_methods.end()) return NULL;
 
-		std::string args_name;
+	std::string args_name;
 
-		if (args != NULL) {
-			for (size_t i = 0, j = args->size(); i < j; ++i) {
-				args_name += args->at(i)->getName()->str();
-				args_name += CLEVER_ARGS_SEPARATOR;
-			}
+	if (args != NULL) {
+		for (size_t i = 0, j = args->size(); i < j; ++i) {
+			args_name += args->at(i)->getName()->str();
+			args_name += CLEVER_ARGS_SEPARATOR;
 		}
-
-		OverloadMethodMap::const_iterator method_it = it->second.find(args_name);
-
-		if (method_it != it->second.end()) {
-			return method_it->second;
-		}
-
-		return NULL;
 	}
+
+	OverloadMethodMap::const_iterator method_it = it->second.find(args_name);
+
+	if (method_it != it->second.end()) {
+		return method_it->second;
+	}
+
+	return NULL;
+}
 
 } // clever
