@@ -90,9 +90,9 @@ class NumberLiteral;
 class NO_INIT_VTABLE ASTNode : public RefCounted {
 public:
 	ASTNode()
-		: RefCounted(0), m_optimized(false) { }
+		: RefCounted(0) {}
 
-	virtual ~ASTNode() { }
+	virtual ~ASTNode() {}
 
 	/**
 	 * Adds a new child node
@@ -128,14 +128,6 @@ public:
 	 */
 	NodeList& getNodes() { return m_nodes; }
 	/**
-	 * Indicates if the node is optimized
-	 */
-	bool isOptimized() const { return m_optimized; }
-	/**
-	 * Change the node optimize status
-	 */
-	void setOptimized(bool value) { m_optimized = value; }
-	/**
 	 * Method for getting the line where occurs the definition
 	 */
 	void setLocation(location& locate) { m_location = locate; }
@@ -163,8 +155,6 @@ public:
 protected:
 	NodeList m_nodes;
 	location m_location;
-private:
-	bool m_optimized;
 
 	DISALLOW_COPY_AND_ASSIGN(ASTNode);
 };
@@ -233,9 +223,6 @@ public:
 	}
 
 	virtual ~BinaryExpr() {
-		if (isOptimized()) {
-			m_result->delRef();
-		}
 		if (m_lhs) {
 			m_lhs->delRef();
 		}
