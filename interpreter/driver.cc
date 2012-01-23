@@ -74,6 +74,7 @@ void Driver::readFile() {
 		std::cerr << "Couldn't open file " << m_file->str() << std::endl;
 		exit(1);
 	}
+	m_source = "";
 
 	while (!filep.eof()) {
 		getline(filep, line);
@@ -89,7 +90,7 @@ void Driver::readFile() {
  */
 int Driver::parseFile(const std::string& filename) {
 	ScannerState new_scanner;
-	Parser parser(*this, new_scanner);
+	Parser parser(*this, new_scanner, m_compiler);
 	int result = 0;
 
 	m_is_file = true;
@@ -99,6 +100,7 @@ int Driver::parseFile(const std::string& filename) {
 	readFile();
 	// Set the file source to scanner read it
 	s_scanners.push(&new_scanner);
+
 	s_scanners.top()->set_cursor(reinterpret_cast<const unsigned char*>(m_source.c_str()));
 	// Bison debug option
 	parser.set_debug_level(m_trace_parsing);
@@ -115,7 +117,7 @@ int Driver::parseFile(const std::string& filename) {
  */
 int Driver::parseStr(const std::string& code, bool importStd) {
 	ScannerState new_scanner;
-	Parser parser(*this, new_scanner);
+	Parser parser(*this, new_scanner, m_compiler);
 	int result = 0;
 
 	/* Save the source code */

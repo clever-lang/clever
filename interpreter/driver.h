@@ -85,6 +85,11 @@ public:
 	void error(const clever::location&, const std::string&) const;
 	void error(const std::string&) const;
 
+#ifdef CLEVER_DEBUG
+	virtual void execute(bool, bool) = 0;
+#endif
+	virtual void execute(bool) = 0;
+
 	/* Tracing */
 	void setTraceParsing(bool trace) { m_trace_parsing = trace; }
 protected:

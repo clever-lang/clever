@@ -35,7 +35,8 @@ namespace clever {
 
 typedef Parser::token token;
 
-Parser::token_type yylex(Parser::semantic_type* yylval, Parser::location_type* yylloc, Driver& driver, ScannerState& s) {
+Parser::token_type yylex(Parser::semantic_type* yylval,
+	Parser::location_type* yylloc, Driver& driver, ScannerState& s) {
 	const unsigned char* cursor = s.cur;
 	int yylen;
 

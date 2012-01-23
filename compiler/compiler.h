@@ -40,6 +40,8 @@ class ASTNode;
 
 namespace clever {
 
+class Driver;
+
 class Compiler {
 public:
 	enum Error {
@@ -117,7 +119,7 @@ public:
 	/**
 	 * Import a file
 	 */
-	static void importFile(const CString*, const CString*);
+	static void importFile(Driver&, const CString*, const CString*);
 
 	/**
 	 * Methods for formatted messages

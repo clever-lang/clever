@@ -36,12 +36,14 @@
 
 namespace clever {
 class Driver;
+class Compiler;
 } // clever
 }
 
 // The parsing context.
 %parse-param { Driver& driver }
 %parse-param { ScannerState& state }
+%parse-param { Compiler& compiler }
 %lex-param   { Driver& driver }
 %lex-param   { ScannerState& state }
 
@@ -484,8 +486,10 @@ import_stmt:
 		IMPORT IDENT                    { $$ = new ast::ImportStmt($2);         $$->setLocation(yylloc); }
 	|	IMPORT IDENT '.' IDENT          { $$ = new ast::ImportStmt($2, $4);     $$->setLocation(yylloc); }
 	|	IMPORT IDENT '.' IDENT AS IDENT { $$ = new ast::ImportStmt($2, $4, $6); $$->setLocation(yylloc); }
-	|	IMPORT STR                      { $$ = new ast::ImportStmt($2);         $$->setLocation(yylloc); }
-	|	IMPORT STR AS IDENT             { $$ = new ast::ImportStmt($2, $4);     $$->setLocation(yylloc); }
+	|	IMPORT STR                      { $$ = new ast::ImportStmt($2);         $$->setLocation(yylloc);
+											compiler.importFile(driver, $2->getString(), NULL); }
+	|	IMPORT STR AS IDENT             { $$ = new ast::ImportStmt($2, $4);     $$->setLocation(yylloc);
+											compiler.importFile(driver, $2->getString(), $4->getName()); }
 ;
 
 alias_stmt:

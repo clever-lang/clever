@@ -366,6 +366,9 @@ AST_VISITOR(CodeGenVisitor, BreakNode) {
  */
 AST_VISITOR(CodeGenVisitor, FunctionCall) {
 	CallableValue* fvalue = expr->getFuncValue();
+
+	clever_assert(fvalue != NULL, "fvalue cannot be NULL");
+
 	Function* func = fvalue->getFunction();
 	Value* arg_values = expr->getArgsValue();
 

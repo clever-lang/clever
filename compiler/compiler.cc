@@ -32,6 +32,7 @@
 #include "interpreter/ast.h"
 #include "types/nativetypes.h"
 #include "interpreter/astvisitor.h"
+#include "interpreter/driver.h"
 
 namespace clever {
 
@@ -65,13 +66,15 @@ Compiler::~Compiler() {
  * Initializes the compiler data
  */
 void Compiler::init() {
-	/* Load package list */
-	g_pkgmanager.init();
+	if (!m_initialized) {
+		/* Load package list */
+		g_pkgmanager.init();
 
-	g_symtable.beginScope();
+		g_symtable.beginScope();
 
-	/* Load the primitive data types */
-	loadNativeTypes();
+		/* Load the primitive data types */
+		loadNativeTypes();
+	}
 
 	m_initialized = true;
 }
@@ -188,8 +191,8 @@ void Compiler::warningf(const char* format, ...) {
 	warning(out.str());
 }
 
-void Compiler::importFile(const CString* file, const CString* alias) {
-
+void Compiler::importFile(Driver& driver, const CString* file, const CString* alias) {
+	driver.parseFile(file->str());
 }
 
 } // clever
