@@ -37,6 +37,7 @@
 #include "compiler/function.h"
 #include "compiler/symboltable.h"
 #include "types/type.h"
+#include "types/arrayvalue.h"
 
 namespace clever {
 
@@ -76,40 +77,33 @@ public:
 	enum { NONE, PRIMITIVE, VECTOR, USER };
 
 	Value()
-		: RefCounted(1), m_type(NONE), m_type_ptr(NULL), m_name(NULL),
-			m_is_const(false) { }
+		: RefCounted(1), m_type(NONE), m_type_ptr(NULL), m_name(NULL) { }
 
 	explicit Value(const Type* type_ptr)
-		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(type_ptr), m_name(NULL),
-			m_is_const(false) { }
+		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(type_ptr), m_name(NULL) { }
 
 	explicit Value(double value)
-		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_DOUBLE),
-			m_name(NULL), m_is_const(false) {
+		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_DOUBLE), m_name(NULL) {
 		setDouble(value);
 	}
 
 	explicit Value(int64_t value)
-		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_INT), m_name(NULL),
-			m_is_const(false) {
+		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_INT), m_name(NULL) {
 		setInteger(value);
 	}
 
 	explicit Value(bool value)
-		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_BOOL), m_name(NULL),
-			m_is_const(false) {
+		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_BOOL), m_name(NULL) {
 		setBoolean(value);
 	}
 
 	explicit Value(const CString* value)
-		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_STR), m_name(NULL),
-			m_is_const(false) {
+		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_STR), m_name(NULL) {
 		setString(value);
 	}
 
 	explicit Value(uint8_t value)
-		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_BYTE), m_name(NULL),
-			m_is_const(false) {
+		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_BYTE), m_name(NULL) {
 		setByte(value);
 	}
 
@@ -122,13 +116,6 @@ public:
 			m_data.dv_value->delRef();
 		}
 		else if (isVector()) {
-			ValueVector::const_iterator it = m_data.v_value->begin(), end = m_data.v_value->end();
-
-			while (it != end) {
-				(*it)->delRef();
-				++it;
-			}
-		} else if (isVector()) {
 			ValueVector::const_iterator it = m_data.v_value->begin(), end = m_data.v_value->end();
 
 			while (it != end) {
@@ -237,8 +224,15 @@ public:
 		m_type = PRIMITIVE;
 		m_data.c_value = b;
 	}
-
-	void setVector(ValueVector* v) { m_type = VECTOR; m_data.v_value = v; }
+	
+	void setVector(ValueVector* v) {
+		m_type = VECTOR;
+		m_data.v_value = v;
+	}
+	
+	void setArray(ValueVector* a) {
+		setDataValue(new ArrayValue(a));
+	}
 
 	const CString* getStringP() const { return m_data.s_value; }
 
@@ -247,6 +241,7 @@ public:
 	double getDouble()         const { return m_data.d_value; }
 	bool getBoolean()          const { return m_data.b_value; }
 	uint8_t getByte()          const { return m_data.c_value; }
+	ValueVector* getArray()    const { return ((ArrayValue*)(m_data.dv_value))->m_array; }
 	ValueVector* getVector()   const { return m_data.v_value; }
 
 	bool getValueAsBool() const {
@@ -328,11 +323,11 @@ public:
 
 		return *CSTRING(str.str());
 	}
-
+	
 	bool isConst() const {
 		return m_is_const;
 	}
-
+	
 	void setConstness(bool constness) {
 		m_is_const = constness;
 	}

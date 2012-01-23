@@ -26,6 +26,7 @@
 #include "compiler/compiler.h"
 #include "compiler/typechecker.h"
 #include "types/nativetypes.h"
+#include "interpreter/ast.h"
 
 namespace clever { namespace ast {
 	
@@ -107,7 +108,7 @@ const Type* clever_evaluate_type(const location& loc, const Identifier* ident)
 		}
 		else {
 			Compiler::errorf(loc,
-				"Type `%S' do not accept template arguments!",
+				"Type `%S' cannot accept template arguments!",
 				type->getName());
 		}
 	}
@@ -128,6 +129,8 @@ std::string TypeChecker::serializeArgType(TypeVector& args_types, const char* se
 		return std::string("void");
 	}
 
+	clever_assert(args_types[0] != NULL, "args_types[0] cannot be NULL!");
+
 	std::string args_type_name = args_types[0]->getName()->str();
 	const std::string separator = std::string(sep);
 
@@ -144,6 +147,10 @@ std::string TypeChecker::serializeArgType(TypeVector& args_types, const char* se
  */
 bool TypeChecker::checkCompatibleTypes(const Value* const lhs,
 		const Value* const rhs) {
+	
+	clever_assert(lhs != NULL, "lhs cannot be NULL");
+	clever_assert(rhs != NULL, "rhs cannot be NULL");		
+	
 	/**
 	 * Constants with different type cannot performs operation
 	 */
@@ -169,6 +176,10 @@ bool TypeChecker::checkCompatibleTypes(const Value* const lhs,
  */
 const Type* TypeChecker::checkExprType(const Value* const lhs,
 		const Value* const rhs) {
+	
+	clever_assert(lhs != NULL, "lhs cannot be NULL");
+	clever_assert(rhs != NULL, "rhs cannot be NULL");		
+	
 	if (lhs->isPrimitive() && rhs->isPrimitive()
 		&& !lhs->isString() && !rhs->isString()) {
 
@@ -953,6 +964,9 @@ AST_VISITOR(TypeChecker, TypeCreation) {
 	value->addRef();
 
 	expr->setFuncValue(call);
+}
+
+AST_VISITOR(TypeChecker, Subscript) {
 }
 
 }} // clever::ast
