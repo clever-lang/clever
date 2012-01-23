@@ -1,0 +1,18 @@
+import std.io;
+import std.file;
+
+FileStream writter = FileStream();
+writter.open('test.txt', 'w');
+writter.write("I'm writting into a file via FileStream class!");
+writter.close();
+
+FileStream reader = FileStream();
+reader.open('test.txt', 'r');
+
+String text = '';
+
+for (Int i = 0; i < 8; ++i) {
+	reader.read(text);
+	print(text, ' ');
+}
+reader.close();

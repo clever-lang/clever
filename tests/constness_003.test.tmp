@@ -1,0 +1,6 @@
+import std.io;
+
+const Int i = 10;
+i = 20;
+
+println(i);

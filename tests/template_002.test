@@ -2,4 +2,4 @@ Testing when a template argument is passed for a non-template type.
 ==CODE==
 String<Int> arr;
 ==RESULT==
-Compile error: Type `String' do not accept template arguments! on line \S+
+Compile error: Type `String' cannot accept template arguments! on line \S+

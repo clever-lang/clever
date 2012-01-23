@@ -32,15 +32,15 @@ namespace clever {
 /**
  * Void Array::__assign__(Array)
  */
-CLEVER_TYPE_METHOD(Array::do_assign) {
+CLEVER_METHOD(Array::do_assign) {
 	CLEVER_THIS()->copy(CLEVER_ARG(0));
 }
 
 /**
  * Void Array<T>::push(T)
  */
-CLEVER_TYPE_METHOD(Array::push) {
-	ValueVector* vec = CLEVER_THIS()->getArray();
+CLEVER_METHOD(Array::push) {
+	ValueVector* vec = CLEVER_THIS()->getVector();
 
 	Value* val = new Value();
 	val->copy(CLEVER_ARG(0));
@@ -51,8 +51,8 @@ CLEVER_TYPE_METHOD(Array::push) {
 /**
  * T Array<T>::pop()
  */
-CLEVER_TYPE_METHOD(Array::pop) {
-	ValueVector* vec = CLEVER_THIS()->getArray();
+CLEVER_METHOD(Array::pop) {
+	ValueVector* vec = CLEVER_THIS()->getVector();
 
 	if (vec->size() > 0) {
 		retval->copy(vec->back());
@@ -75,8 +75,8 @@ CLEVER_TYPE_METHOD(Array::pop) {
 /**
  * Int Array<T>::size()
  */
-CLEVER_TYPE_METHOD(Array::size) {
-	ValueVector* vec = CLEVER_THIS()->getArray();
+CLEVER_METHOD(Array::size) {
+	ValueVector* vec = CLEVER_THIS()->getVector();
 
 	CLEVER_RETURN_INT(vec->size());
 }
@@ -84,8 +84,8 @@ CLEVER_TYPE_METHOD(Array::size) {
 /**
  * Bool Array<T>::isEmpty()
  */
-CLEVER_TYPE_METHOD(Array::isEmpty) {
-	ValueVector* vec = CLEVER_THIS()->getArray();
+CLEVER_METHOD(Array::isEmpty) {
+	ValueVector* vec = CLEVER_THIS()->getVector();
 
 	CLEVER_RETURN_BOOL(vec->empty());
 }
@@ -93,8 +93,8 @@ CLEVER_TYPE_METHOD(Array::isEmpty) {
 /**
  * Void Array<T>::clear()
  */
-CLEVER_TYPE_METHOD(Array::clear) {
-	ValueVector* vec = CLEVER_THIS()->getArray();
+CLEVER_METHOD(Array::clear) {
+	ValueVector* vec = CLEVER_THIS()->getVector();
 
 	size_t sz = vec->size();
 	for (size_t i = 0; i < sz; ++i) {
@@ -107,11 +107,14 @@ CLEVER_TYPE_METHOD(Array::clear) {
 /**
  * T Array<T>::at(Int)
  */
-CLEVER_TYPE_METHOD(Array::at) {
-	ValueVector* vec = CLEVER_THIS()->getArray();
+CLEVER_METHOD(Array::at) {
+	ValueVector* vec = CLEVER_THIS()->getVector();
 	int64_t idx = CLEVER_ARG(0)->getInteger();
+	uint64_t uidx = static_cast<uint64_t>(idx);
+	int is_in_range = uidx < vec->max_size() &&
+		uidx < vec->size() && idx >= 0;
 
-	if (size_t(idx) < vec->size() && idx >= 0) {
+	if (is_in_range) {
 		retval->copy(vec->at(idx));
 	}
 	else {
@@ -120,16 +123,16 @@ CLEVER_TYPE_METHOD(Array::at) {
 
 		clever_assert(value_type != NULL, "Cannot be NULL");
 
-		if (idx >= 0) {
-			Compiler::warningf("Indexing position %l an Array<%S>"
-				" with %N elements. Returning default value of type %S.",
-				idx, value_type->getName(), vec->size(),
-				value_type->getName());
-		}
-		else {
-			Compiler::warningf("Indexing negative position %l an Array<%S>!"
-				" Returning default value of type %S.",
+		if (idx < 0)  {
+			Compiler::warningf("Indexing negative position %l an Array<%S>! "
+					"Returning default value of type %S.",
 				idx, value_type->getName(), value_type->getName());
+		} else if (uidx > vec->max_size()) {
+			clever_fatal("Attempted to access %l in an Array<%S>, but this platform limits "
+					"arrays to %l entries.", idx, value_type->getName(), vec->max_size());
+		} else {
+			Compiler::warningf("Setting position %l an Array<%S> with %N elements.",
+				idx, value_type->getName(), vec->size());
 		}
 
 		retval->setTypePtr(value_type);
@@ -140,11 +143,13 @@ CLEVER_TYPE_METHOD(Array::at) {
 /**
  * Void Array<T>::set(Int, T)
  */
-CLEVER_TYPE_METHOD(Array::set) {
-	ValueVector* vec = CLEVER_THIS()->getArray();
+CLEVER_METHOD(Array::set) {
+	ValueVector* vec = CLEVER_THIS()->getVector();
 	int64_t idx = CLEVER_ARG(0)->getInteger();
+	uint64_t uidx = static_cast<uint64_t>(idx);
+	int is_in_range = uidx < vec->max_size() && uidx < vec->size() && idx >= 0;
 
-	if (size_t(idx) < vec->size() && idx >= 0) {
+	if (is_in_range) {
 		Value* val = new Value();
 		val->copy(CLEVER_ARG(1));
 
@@ -155,13 +160,15 @@ CLEVER_TYPE_METHOD(Array::set) {
 		const Type* value_type = ((const TemplatedType*)CLEVER_THIS()
 			->getTypePtr())->getTypeArg(0);
 
-		if (idx >= 0) {
-			Compiler::warningf("Setting position %l an Array<%S> with %N elements.",
-				idx, value_type->getName(), vec->size());
-		}
-		else {
+		if (idx < 0)  {
 			Compiler::warningf("Setting negative position %l an Array<%S>!",
 				idx, value_type->getName());
+		} else if (uidx > vec->max_size()) {
+			clever_fatal("Attempted to set %l in an Array<%S>, but this platform limits "
+					"arrays to %l entries.", idx, value_type->getName(), vec->max_size());
+		} else {
+			Compiler::warningf("Setting position %l an Array<%S> with %N elements.",
+				idx, value_type->getName(), vec->size());
 		}
 	}
 }
@@ -169,18 +176,26 @@ CLEVER_TYPE_METHOD(Array::set) {
 /**
  * Void Array<T>::resize()
  */
-CLEVER_TYPE_METHOD(Array::resize) {
-	ValueVector* vec = CLEVER_THIS()->getArray();
-	int nsz = CLEVER_ARG(0)->getInteger();
-
+CLEVER_METHOD(Array::resize) {
+	ValueVector* vec = CLEVER_THIS()->getVector();
+	int64_t nsz = CLEVER_ARG(0)->getInteger();
 	size_t sz = vec->size();
+
+	if (static_cast<uint64_t>(nsz) >= vec->max_size()) {
+		const Type* value_type = ((const TemplatedType*)CLEVER_THIS()
+			->getTypePtr())->getTypeArg(0);
+
+		clever_fatal("Attempted to resize an Array<%S> to %l entries, but this platform limits "
+				"arrays to %l entries.", nsz, value_type->getName(), vec->max_size());
+	}
+
 	for (size_t i = 0; i < sz; ++i) {
 		vec->at(i)->delRef();
 	}
 
 	vec->resize(nsz);
 
-	for (int i = 0; i < nsz; ++i) {
+	for (size_t i = 0; i < static_cast<uint64_t>(nsz); ++i) {
 		vec->at(i) = new Value();
 		vec->at(i)->copy(CLEVER_ARG(1));
 	}
@@ -189,8 +204,8 @@ CLEVER_TYPE_METHOD(Array::resize) {
 /**
  * String Array<T>::toString()
  */
-CLEVER_TYPE_METHOD(Array::toString) {
-	ValueVector* vec = CLEVER_THIS()->getArray();
+CLEVER_METHOD(Array::toString) {
+	ValueVector* vec = CLEVER_THIS()->getVector();
 	std::string ret = "[", sep = ", ";
 
 	for (unsigned int i = 0, j = vec->size(); i < j; ++i) {
@@ -253,7 +268,7 @@ void Array::init() {
 }
 
 DataValue* Array::allocateValue() const {
-	return new ArrayValue;
+	return NULL;
 }
 
 } // clever

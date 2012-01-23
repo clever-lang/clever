@@ -1,0 +1,6 @@
+import std.io;
+
+Array<Int> arr;
+arr.pop();
+arr.set(3, 10);
+arr.at(-4);

@@ -1,0 +1,6 @@
+import std.reflection;
+import std.io;
+
+ReflectionPackage package = ReflectionPackage("std");
+
+println(package.getModules().toString());

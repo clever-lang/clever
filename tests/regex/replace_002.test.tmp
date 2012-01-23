@@ -1,0 +1,5 @@
+import std.io;
+import std.regex as re;
+
+Pcre p("b", re::CASELESS);
+println(p.replace("z", "BBB"), p.replaceAll("z", "BBB"));

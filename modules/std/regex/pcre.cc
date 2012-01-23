@@ -29,7 +29,7 @@
 
 namespace clever { namespace packages { namespace std { namespace regex {
 
-void Pcre::init() {	
+void Pcre::init() {
 	/* Pcre(String pattern [, Int options]) */
 	addMethod(
 		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Pcre::constructor, CLEVER_TYPE("Pcre")))
@@ -54,7 +54,7 @@ void Pcre::init() {
 		->addArg("replacement", CLEVER_STR)
 		->addArg("haystack", CLEVER_STR)
 	);
-	
+
 	addMethod(
 		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&Pcre::do_assign, CLEVER_VOID))
 		->addArg("rvalue", CLEVER_TYPE("Pcre"))
@@ -72,7 +72,7 @@ DataValue* Pcre::allocateValue() const {
 /**
  * Pcre Pcre::constructor(String pattern)
  */
-CLEVER_TYPE_METHOD(Pcre::constructor) {
+CLEVER_METHOD(Pcre::constructor) {
 	PcreValue* self = new PcreValue();
 
 	if (CLEVER_NUM_ARGS() == 2) {
@@ -88,17 +88,17 @@ CLEVER_TYPE_METHOD(Pcre::constructor) {
 /**
  * Bool Pcre::matches(String haystack)
  */
-CLEVER_TYPE_METHOD(Pcre::matches) {
+CLEVER_METHOD(Pcre::matches) {
 	PcreValue* self = CLEVER_GET_VALUE(PcreValue*, value);
 	const CString* haystack = CLEVER_ARG(0)->getStringP();
 
-	CLEVER_RETURN_BOOL(self->re->FullMatch(haystack->c_str()));
+	CLEVER_RETURN_BOOL(self->re->PartialMatch(haystack->c_str()));
 }
 
 /**
  * String Pcre::replace(String replacement, String haystack)
  */
-CLEVER_TYPE_METHOD(Pcre::replace) {
+CLEVER_METHOD(Pcre::replace) {
 	PcreValue* self = CLEVER_GET_VALUE(PcreValue*, value);
 	::std::string newstr(CLEVER_ARG(1)->getStringP()->str());
 
@@ -110,7 +110,7 @@ CLEVER_TYPE_METHOD(Pcre::replace) {
 /**
  * String Pcre::replaceAll(String replacement, String haystack)
  */
-CLEVER_TYPE_METHOD(Pcre::replaceAll) {
+CLEVER_METHOD(Pcre::replaceAll) {
 	PcreValue* self = CLEVER_GET_VALUE(PcreValue*, value);
 	::std::string newstr(CLEVER_ARG(1)->getStringP()->str());
 
@@ -119,8 +119,7 @@ CLEVER_TYPE_METHOD(Pcre::replaceAll) {
 	CLEVER_RETURN_STR(CSTRING(newstr));
 }
 
-CLEVER_TYPE_METHOD(Pcre::do_assign) {
-	CLEVER_ARG(0)->getDataValue()->addRef();
+CLEVER_METHOD(Pcre::do_assign) {
 	CLEVER_THIS()->copy(CLEVER_ARG(0));
 }
 

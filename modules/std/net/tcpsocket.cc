@@ -34,7 +34,7 @@
 
 namespace clever { namespace packages { namespace std { namespace net {
 
-CLEVER_TYPE_METHOD(TcpSocket::constructor) {
+CLEVER_METHOD(TcpSocket::constructor) {
 	SocketValue* sv = new SocketValue;
 
 	// Socket init.
@@ -66,19 +66,19 @@ CLEVER_TYPE_METHOD(TcpSocket::constructor) {
 	CLEVER_RETURN_DATA_VALUE(sv);
 }
 
-CLEVER_TYPE_METHOD(TcpSocket::setHost) {
+CLEVER_METHOD(TcpSocket::setHost) {
 	SocketValue* sv = CLEVER_GET_VALUE(SocketValue*, value);
 
 	sv->remote.sin_addr.s_addr = inet_addr(CLEVER_ARG_STR(0).c_str());
 }
 
-CLEVER_TYPE_METHOD(TcpSocket::setPort) {
+CLEVER_METHOD(TcpSocket::setPort) {
 	SocketValue* sv = CLEVER_GET_VALUE(SocketValue*, value);
 
 	sv->remote.sin_port = htons(CLEVER_ARG_INT(0));
 }
 
-CLEVER_TYPE_METHOD(TcpSocket::connect) {
+CLEVER_METHOD(TcpSocket::connect) {
 	SocketValue* sv = CLEVER_GET_VALUE(SocketValue*, value);
 	int socketflags;
 
@@ -93,7 +93,7 @@ CLEVER_TYPE_METHOD(TcpSocket::connect) {
 	fcntl(sv->socket, F_SETFL, socketflags);
 }
 
-CLEVER_TYPE_METHOD(TcpSocket::receive) {
+CLEVER_METHOD(TcpSocket::receive) {
 	SocketValue* sv = CLEVER_GET_VALUE(SocketValue*, value);
 	char buffer[65535] = {0};
 	::std::string data;
@@ -106,14 +106,14 @@ CLEVER_TYPE_METHOD(TcpSocket::receive) {
 	CLEVER_RETURN_STR(CSTRING(data));
 }
 
-CLEVER_TYPE_METHOD(TcpSocket::send) {
+CLEVER_METHOD(TcpSocket::send) {
 	SocketValue* sv = CLEVER_GET_VALUE(SocketValue*, value);
 
 	// @TODO: check for errors on this.
 	::send(sv->socket, CLEVER_ARG_STR(0).c_str(), CLEVER_ARG_STR(0).size(), 0);
 }
 
-CLEVER_TYPE_METHOD(TcpSocket::poll) {
+CLEVER_METHOD(TcpSocket::poll) {
 	SocketValue* sv = CLEVER_GET_VALUE(SocketValue*, value);
 	struct pollfd fds[1];
 
@@ -130,21 +130,21 @@ CLEVER_TYPE_METHOD(TcpSocket::poll) {
 	}
 }
 
-CLEVER_TYPE_METHOD(TcpSocket::toString) {
+CLEVER_METHOD(TcpSocket::toString) {
 	CLEVER_RETURN_STR(CSTRING("TcpSocket class"));
 }
 
 /**
  * Void TcpSocket::__assign__(TcpSocket)
  */
-CLEVER_TYPE_METHOD(TcpSocket::do_assign) {
+CLEVER_METHOD(TcpSocket::do_assign) {
 	CLEVER_ARG(0)->getDataValue()->addRef();
 	CLEVER_THIS()->copy(CLEVER_ARG(0));
 }
 
 void TcpSocket::init() {
 	const Type* tcpsock = CLEVER_TYPE("TcpSocket");
-	
+
 	addMethod(
 		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&TcpSocket::do_assign, tcpsock))
 			->addArg("rvalue", tcpsock)

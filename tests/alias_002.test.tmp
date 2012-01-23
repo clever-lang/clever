@@ -1,0 +1,4 @@
+import std.io;
+use foo as std.io::println;
+
+foo("bar");

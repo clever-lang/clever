@@ -92,7 +92,7 @@ namespace clever {
 #define CLEVER_RETURN_INT(x)        retval->setInteger((x))
 #define CLEVER_RETURN_DOUBLE(x)     retval->setDouble((x))
 #define CLEVER_RETURN_BYTE(x)       retval->setByte((x))
-#define CLEVER_RETURN_ARRAY(x)      retval->setArray((x))
+#define CLEVER_RETURN_ARRAY(x)      retval->setVector((x))
 #define CLEVER_RETURN_DATA_VALUE(x) retval->setDataValue((x))
 
 /**
@@ -129,6 +129,15 @@ namespace clever {
 # define CLEVER_PURE_FUNC __attribute__((pure))
 #else
 # define CLEVER_PURE_FUNC
+#endif
+
+/**
+ * No return attribute
+ */
+#ifdef __GNUC__
+# define CLEVER_NO_RETURN __attribute__((noreturn))
+#else
+# define CLEVER_NO_RETURN 
 #endif
 
 /**
@@ -187,7 +196,7 @@ void clever_assert_(const char* file, long line, const char* expr,
 #define clever_assert(Hypothesis, Format, ...)
 #endif
 
-void clever_fatal(const char* format, ...);
+void clever_fatal(const char* format, ...) CLEVER_NO_RETURN;
 
 void vsprintf(std::ostringstream&, const char*, va_list);
 void sprintf(std::ostringstream&, const char*, ...);

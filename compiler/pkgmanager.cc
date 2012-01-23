@@ -56,11 +56,11 @@ void PackageManager::loadPackage(Scope* scope, const CString* const package) {
 		it->second->init();
 		{
 			ModuleMap& modules = it->second->getModules();
-			ModuleMap::const_iterator it = modules.begin(), end = modules.end();
+			ModuleMap::const_iterator mit = modules.begin(), end = modules.end();
 
-			while (it != end) {
-				loadModule(scope, package, it->second, NULL);
-				++it;
+			while (mit != end) {
+				loadModule(scope, package, mit->second, NULL);
+				++mit;
 			}
 		}
 		/**

@@ -1,0 +1,6 @@
+import std.io;
+import std.regex;
+
+Pcre p("b");
+
+println(p.replace("z", "bbb"), p.replaceAll("z", "bbb"));

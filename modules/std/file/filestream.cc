@@ -56,7 +56,7 @@ namespace clever { namespace packages { namespace std { namespace file {
  * FileStream::FileStream([String file, [String openmode]])
  * A representation of this class as a string
  */
-CLEVER_TYPE_METHOD(FileStream::constructor) {
+CLEVER_METHOD(FileStream::constructor) {
 	FileStreamValue* fsv = new FileStreamValue;
 
 	if (args != NULL) {
@@ -78,14 +78,14 @@ CLEVER_TYPE_METHOD(FileStream::constructor) {
  * FileStream::toString()
  * A representation of this class as a string
  */
-CLEVER_TYPE_METHOD(FileStream::toString) {
+CLEVER_METHOD(FileStream::toString) {
 	CLEVER_RETURN_STR(CSTRING("FileStream class"));
 }
 
 /**
  * Void FileStream::__assign__(FileStream)
  */
-CLEVER_TYPE_METHOD(FileStream::do_assign) {
+CLEVER_METHOD(FileStream::do_assign) {
 	CLEVER_ARG(0)->getDataValue()->addRef();
 	CLEVER_THIS()->copy(CLEVER_ARG(0));
 }
@@ -94,7 +94,7 @@ CLEVER_TYPE_METHOD(FileStream::do_assign) {
  * FileStream::open(String file, [String mode])
  * Open a file
  */
-CLEVER_TYPE_METHOD(FileStream::open) {
+CLEVER_METHOD(FileStream::open) {
 	size_t size = CLEVER_NUM_ARGS();
 	FileStreamValue* fsv = CLEVER_GET_VALUE(FileStreamValue*, value);
 
@@ -112,7 +112,7 @@ CLEVER_TYPE_METHOD(FileStream::open) {
  * FileStream::open()
  * Close the file associated to the current stream
  */
-CLEVER_TYPE_METHOD(FileStream::close) {
+CLEVER_METHOD(FileStream::close) {
 	FileStreamValue* fsv = CLEVER_GET_VALUE(FileStreamValue*, value);
 
 	if (fsv->m_fstream.is_open()) {
@@ -126,7 +126,7 @@ CLEVER_TYPE_METHOD(FileStream::close) {
  * FileStream::read([String, Int, Double])
  * Get the next token from the file
  */
-CLEVER_TYPE_METHOD(FileStream::read) {
+CLEVER_METHOD(FileStream::read) {
 	FileStreamValue* fsv;
 	size_t size = CLEVER_NUM_ARGS();
 
@@ -145,7 +145,7 @@ CLEVER_TYPE_METHOD(FileStream::read) {
 	// @TODO: should test if the stream allows reading.
 
 	if (CLEVER_ARG_IS_INT(0)) {
-		uint64_t val;
+		int64_t val;
 		fsv->m_fstream >> val;
 
 		CLEVER_ARG(0)->setInteger(val);
@@ -179,7 +179,7 @@ CLEVER_TYPE_METHOD(FileStream::read) {
  * FileStream::write([String])
  * Writes a String into the filestream.
  */
-CLEVER_TYPE_METHOD(FileStream::write) {
+CLEVER_METHOD(FileStream::write) {
 	FileStreamValue *fsv;
 	size_t size = CLEVER_NUM_ARGS();
 
@@ -207,7 +207,7 @@ CLEVER_TYPE_METHOD(FileStream::write) {
  * FileStreasm::writeLine([String])
  * Writes n String into the filestream, and then a new line.
  */
-CLEVER_TYPE_METHOD(FileStream::writeLine) {
+CLEVER_METHOD(FileStream::writeLine) {
 	FileStreamValue *fsv;
 	size_t size = CLEVER_NUM_ARGS();
 
@@ -234,14 +234,14 @@ CLEVER_TYPE_METHOD(FileStream::writeLine) {
 
 void FileStream::init() {
 	const Type* fstream = CLEVER_TYPE("FileStream");
-	
+
 	addMethod(
 		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&FileStream::do_assign, CLEVER_VOID))
 			->addArg("rvalue", fstream)
 	);
 
 	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&FileStream::constructor, fstream));
-	
+
 	addMethod(
 		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&FileStream::constructor, fstream))
 			->addArg("filename", CLEVER_STR)

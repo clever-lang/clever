@@ -44,15 +44,15 @@ public:
 	/**
 	 * Type methods
 	 */
-	static CLEVER_TYPE_METHOD(constructor);
-	static CLEVER_TYPE_METHOD(setHost);
-	static CLEVER_TYPE_METHOD(setPort);
-	static CLEVER_TYPE_METHOD(connect);
-	static CLEVER_TYPE_METHOD(receive);
-	static CLEVER_TYPE_METHOD(send);
-	static CLEVER_TYPE_METHOD(poll);
-	static CLEVER_TYPE_METHOD(toString);
-	static CLEVER_TYPE_METHOD(do_assign);
+	static CLEVER_METHOD(constructor);
+	static CLEVER_METHOD(setHost);
+	static CLEVER_METHOD(setPort);
+	static CLEVER_METHOD(connect);
+	static CLEVER_METHOD(receive);
+	static CLEVER_METHOD(send);
+	static CLEVER_METHOD(poll);
+	static CLEVER_METHOD(toString);
+	static CLEVER_METHOD(do_assign);
 private:
 	DISALLOW_COPY_AND_ASSIGN(TcpSocket);
 };

@@ -1,0 +1,19 @@
+import std.io;
+
+Int foo() {
+	println("here!");
+	return 1;
+}
+
+Int bar() {
+	println("here2!");
+	return 0;
+}
+
+if (foo() == 1 || foo() == 0) {
+	println("ok!");
+}
+
+if (bar() == 0 && bar() == 0) {
+	println("ok2!");
+}

@@ -26,7 +26,7 @@
 #ifndef CLEVER_OPCODE_H
 #define CLEVER_OPCODE_H
 
-#include "vm.h"
+#include "vm/vm.h"
 #include "types/type.h"
 #include "compiler/value.h"
 
@@ -104,8 +104,8 @@ public:
 	Value* getResult() const { return m_result; }
 	void setResult(Value* result) { m_result = result; }
 
-	long getOpNum() const { return m_op_num; }
-	void setOpNum(long op_num) { m_op_num = op_num; }
+	size_t getOpNum() const { return m_op_num; }
+	void setOpNum(size_t op_num) { m_op_num = op_num; }
 
 	void setJmpAddr1(long jmp_addr) { m_extra.jmp1 = jmp_addr; }
 	long getJmpAddr1() const { return m_extra.jmp1; }
@@ -128,7 +128,7 @@ private:
 	Value* m_op1;
 	Value* m_op2;
 	Value* m_result;
-	long m_op_num;
+	size_t m_op_num;
 	struct { long jmp1, jmp2, flags; } m_extra;
 
 	DISALLOW_COPY_AND_ASSIGN(Opcode);

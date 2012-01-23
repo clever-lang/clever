@@ -1,0 +1,9 @@
+import std.io;
+
+Array<Int> arr;
+arr.resize(5, 1);
+arr.set(2, 0);
+
+for (Int i = 0; i < arr.size(); ++i) {
+	println(arr.at(i));
+}

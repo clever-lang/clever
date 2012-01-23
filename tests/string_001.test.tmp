@@ -1,0 +1,11 @@
+import std.io;
+
+String foo = "0123456789";
+
+println(foo.substring(0,5));
+println(foo.substring(5,6));
+println(foo.replace("01234", "abcde"));
+
+String bar = foo.substring(4,6).replace("456","foo").replace("789","bar");
+
+println(bar);

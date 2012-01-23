@@ -29,15 +29,14 @@
 #include <cstdarg>
 #include <stack>
 #include <sstream>
-#include "module.h"
 #include "pkgmanager.h"
-#include "vm/vm.h"
-#include "vm/opcode.h"
 #include "build/interpreter/location.hh"
-#include "interpreter/ast.h"
 #include "compiler/cgvisitor.h"
 #include "compiler/typechecker.h"
-#include "compiler/compiler.h"
+
+namespace clever { namespace ast {
+class ASTNode;
+}} // clever::ast
 
 namespace clever {
 
@@ -91,8 +90,8 @@ public:
 	/**
 	 * Displays an error message and exits
 	 */
-	static void error(std::string);
-	static void error(std::string, const location&);
+	static void error(std::string) CLEVER_NO_RETURN;
+	static void error(std::string, const location&) CLEVER_NO_RETURN;
 
 	/**
 	 * Displays an warning message

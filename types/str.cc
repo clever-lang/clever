@@ -36,7 +36,7 @@ namespace clever {
  * String:ltrim()
  * Trim non letters from left
  */
-CLEVER_TYPE_METHOD(String::ltrim) {
+CLEVER_METHOD(String::ltrim) {
     std::string newString = CLEVER_THIS()->toString();
     newString.erase(0, newString.find_first_not_of(" \n\r\t"));
     CLEVER_RETURN_STR(CSTRING(newString));
@@ -46,7 +46,7 @@ CLEVER_TYPE_METHOD(String::ltrim) {
  * String:rtrim()
  * Trim non letters from right
  */
-CLEVER_TYPE_METHOD(String::rtrim) {
+CLEVER_METHOD(String::rtrim) {
     std::string newString = CLEVER_THIS()->toString();
     newString.erase(newString.find_last_not_of(" \n\r\t")+1);
     CLEVER_RETURN_STR(CSTRING(newString));
@@ -56,7 +56,7 @@ CLEVER_TYPE_METHOD(String::rtrim) {
  * String:trim()
  * Trim non letters from both sides
  */
-CLEVER_TYPE_METHOD(String::trim) {
+CLEVER_METHOD(String::trim) {
     std::string newString = CLEVER_THIS()->toString();
     // ltrim
     newString.erase(0, newString.find_first_not_of(" \n\r\t"));
@@ -71,7 +71,7 @@ CLEVER_TYPE_METHOD(String::trim) {
  * String:replace()
  * Replace part of the string and returns the new one.
  */
-CLEVER_TYPE_METHOD(String::replace) {
+CLEVER_METHOD(String::replace) {
 	size_t needleLength, needlePos;
 	std::string newString = CLEVER_THIS()->toString();
 
@@ -95,11 +95,23 @@ CLEVER_TYPE_METHOD(String::replace) {
  * String::substring(Int, Int)
  * Retrieves a substring from the original one.
  */
-CLEVER_TYPE_METHOD(String::substring) {
-	clever_assert(static_cast<size_t>(CLEVER_ARG(0)->getInteger()) < CLEVER_THIS()->toString().length(),
-			"Out of range: %l is after the end of the string.", CLEVER_ARG(0)->getInteger());
+CLEVER_METHOD(String::substring) {
+	int64_t arg0 = CLEVER_ARG_INT(0);
+	int64_t arg1 = CLEVER_ARG_INT(1);
+	size_t max_size = CLEVER_THIS()->toString().max_size();
+	size_t length   = CLEVER_THIS()->toString().length();
+	int arg0_in_range = (uint64_t)arg0 < max_size && (uint64_t)arg0 < length;
 
-	std::string substr = CLEVER_THIS()->toString().substr(CLEVER_ARG(0)->getInteger(), CLEVER_ARG(1)->getInteger());
+	if (!arg0_in_range) {
+		if ((uint64_t)arg0 >= max_size) {
+			clever_fatal("Attempted to access %l, but this platform limits "
+					"strings to %l characters.", arg0, max_size);
+		} else {
+			clever_fatal("Index %l is after the end of the string.", arg0);
+		}
+	}
+
+	std::string substr = CLEVER_THIS()->toString().substr(arg0, arg1);
 	CLEVER_RETURN_STR(CSTRING(substr));
 }
 
@@ -107,7 +119,7 @@ CLEVER_TYPE_METHOD(String::substring) {
  * String:at(Int)
  * Return the char at position, if possible
  */
-CLEVER_TYPE_METHOD(String::at) {
+CLEVER_METHOD(String::at) {
 	int64_t pos = CLEVER_ARG(0)->getInteger();
 
 	if (static_cast<size_t>(pos) > CLEVER_THIS()->toString().length()) {
@@ -124,7 +136,7 @@ CLEVER_TYPE_METHOD(String::at) {
  * String:length
  * Return the length of the string
  */
-CLEVER_TYPE_METHOD(String::length) {
+CLEVER_METHOD(String::length) {
 	CLEVER_RETURN_INT(CLEVER_THIS()->toString().length());
 }
 
@@ -132,7 +144,7 @@ CLEVER_TYPE_METHOD(String::length) {
  * String::toDouble()
  * Converts the string to a double, if possible.
  */
-CLEVER_TYPE_METHOD(String::toDouble) {
+CLEVER_METHOD(String::toDouble) {
 	double floatValue = 0.0;
 	std::stringstream stream(CLEVER_THIS()->toString());
 
@@ -148,7 +160,7 @@ CLEVER_TYPE_METHOD(String::toDouble) {
  * String::toInteger()
  * Converts the string to an integer, if possible.
  */
-CLEVER_TYPE_METHOD(String::toInteger) {
+CLEVER_METHOD(String::toInteger) {
 	int64_t integer = 0L;
 	std::stringstream stream(CLEVER_THIS()->toString());
 
@@ -165,7 +177,7 @@ CLEVER_TYPE_METHOD(String::toInteger) {
  * String::String([String value])
  * Construct the object.
  */
-CLEVER_TYPE_METHOD(String::constructor) {
+CLEVER_METHOD(String::constructor) {
 	if (args) {
 		CLEVER_RETURN_STR(CSTRING(CLEVER_ARG_STR(0)));
 	}
@@ -178,7 +190,7 @@ CLEVER_TYPE_METHOD(String::constructor) {
  * String String::toUpper()
  * Returns the current string in upper case
  */
-CLEVER_TYPE_METHOD(String::toUpper) {
+CLEVER_METHOD(String::toUpper) {
 	::std::string str = CLEVER_THIS()->toString();
 	::std::transform(str.begin(), str.end(),str.begin(), ::toupper);
 	CLEVER_RETURN_STR(CSTRING(str));
@@ -188,7 +200,7 @@ CLEVER_TYPE_METHOD(String::toUpper) {
  * String String::toLower()
  * Returns the current string in lower case
  */
-CLEVER_TYPE_METHOD(String::toLower) {
+CLEVER_METHOD(String::toLower) {
 	::std::string str = CLEVER_THIS()->toString();
 	::std::transform(str.begin(), str.end(),str.begin(), ::tolower);
 	CLEVER_RETURN_STR(CSTRING(str));
@@ -197,56 +209,56 @@ CLEVER_TYPE_METHOD(String::toLower) {
 /**
  * Void String::__assign__(String)
  */
-CLEVER_TYPE_METHOD(String::do_assign) {
+CLEVER_METHOD(String::do_assign) {
 	CLEVER_THIS()->copy(CLEVER_ARG(0));
 }
 
 /**
  * + operator (String, String)
  */
-CLEVER_TYPE_METHOD(String::plus) {
+CLEVER_METHOD(String::plus) {
 	CLEVER_RETURN_STR(CSTRING(CLEVER_ARG_STR(0) + CLEVER_ARG_STR(1)));
 }
 
 /**
  * == operator (String, String)
  */
-CLEVER_TYPE_METHOD(String::equal) {
+CLEVER_METHOD(String::equal) {
 	CLEVER_RETURN_BOOL(CLEVER_ARG_STR(0) == CLEVER_ARG_STR(1));
 }
 
 /**
  * != operator (String, String)
  */
-CLEVER_TYPE_METHOD(String::not_equal) {
+CLEVER_METHOD(String::not_equal) {
 	CLEVER_RETURN_BOOL(CLEVER_ARG_STR(0) != CLEVER_ARG_STR(1));
 }
 
 /**
  * <= operator (String, String)
  */
-CLEVER_TYPE_METHOD(String::less_equal) {
+CLEVER_METHOD(String::less_equal) {
 	CLEVER_RETURN_BOOL(CLEVER_ARG_STR(0) <= CLEVER_ARG_STR(1));
 }
 
 /**
  * >= operator (String, String)
  */
-CLEVER_TYPE_METHOD(String::greater_equal) {
+CLEVER_METHOD(String::greater_equal) {
 	CLEVER_RETURN_BOOL(CLEVER_ARG_STR(0) >= CLEVER_ARG_STR(1));
 }
 
 /**
  * > operator (String, String)
  */
-CLEVER_TYPE_METHOD(String::greater) {
+CLEVER_METHOD(String::greater) {
 	CLEVER_RETURN_BOOL(CLEVER_ARG_STR(0) > CLEVER_ARG_STR(1));
 }
 
 /**
  * < operator (String, String)
  */
-CLEVER_TYPE_METHOD(String::less) {
+CLEVER_METHOD(String::less) {
 	CLEVER_RETURN_BOOL(CLEVER_ARG_STR(0) < CLEVER_ARG_STR(1));
 }
 

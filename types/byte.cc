@@ -35,7 +35,7 @@ namespace clever {
  * Construct an Byte object with a default value (if no args) or a
  * custom value
  */
-CLEVER_TYPE_METHOD(Char::constructor) {
+CLEVER_METHOD(Char::constructor) {
 	if (args) {
 		uint8_t b;
 
@@ -57,109 +57,109 @@ CLEVER_TYPE_METHOD(Char::constructor) {
  * Byte::toString()
  * Converts the number to string
  */
-CLEVER_TYPE_METHOD(Char::toString) {
+CLEVER_METHOD(Char::toString) {
 	retval->setString(CSTRING(value->toString()));
 }
 
 /**
  * Void Byte::__assign__(Byte)
  */
-CLEVER_TYPE_METHOD(Char::do_assign) {
+CLEVER_METHOD(Char::do_assign) {
 	CLEVER_THIS()->setByte(CLEVER_ARG_BYTE(0));
 }
 
-CLEVER_TYPE_METHOD(Char::plus) {
+CLEVER_METHOD(Char::plus) {
 	CLEVER_RETURN_BYTE(CLEVER_ARG_BYTE(0) + CLEVER_ARG_BYTE(1));
 }
 
-CLEVER_TYPE_METHOD(Char::minus) {
+CLEVER_METHOD(Char::minus) {
 	CLEVER_RETURN_BYTE(CLEVER_ARG_BYTE(0) - CLEVER_ARG_BYTE(1));
 }
 
-CLEVER_TYPE_METHOD(Char::div) {
+CLEVER_METHOD(Char::div) {
 	CLEVER_RETURN_BYTE(CLEVER_ARG_BYTE(0) / CLEVER_ARG_BYTE(1));
 }
 
-CLEVER_TYPE_METHOD(Char::mult) {
+CLEVER_METHOD(Char::mult) {
 	CLEVER_RETURN_BYTE(CLEVER_ARG_BYTE(0) * CLEVER_ARG_BYTE(1));
 }
 
-CLEVER_TYPE_METHOD(Char::mod) {
+CLEVER_METHOD(Char::mod) {
 	CLEVER_RETURN_BYTE(CLEVER_ARG_BYTE(0) % CLEVER_ARG_BYTE(1));
 }
 
-CLEVER_TYPE_METHOD(Char::bw_and) {
+CLEVER_METHOD(Char::bw_and) {
 	CLEVER_RETURN_BYTE(CLEVER_ARG_BYTE(0) & CLEVER_ARG_BYTE(1));
 }
 
-CLEVER_TYPE_METHOD(Char::bw_or) {
+CLEVER_METHOD(Char::bw_or) {
 	CLEVER_RETURN_BYTE(CLEVER_ARG_BYTE(0) | CLEVER_ARG_BYTE(1));
 }
 
-CLEVER_TYPE_METHOD(Char::bw_xor) {
+CLEVER_METHOD(Char::bw_xor) {
 	CLEVER_RETURN_BYTE(CLEVER_ARG_BYTE(0) ^ CLEVER_ARG_BYTE(1));
 }
 
 /**
  * == operator (Byte, Byte)
  */
-CLEVER_TYPE_METHOD(Char::equal) {
+CLEVER_METHOD(Char::equal) {
 	CLEVER_RETURN_BOOL(CLEVER_ARG_BYTE(0) == CLEVER_ARG_BYTE(1));
 }
 
 /**
  * != operator (Byte, Byte)
  */
-CLEVER_TYPE_METHOD(Char::not_equal) {
+CLEVER_METHOD(Char::not_equal) {
 	CLEVER_RETURN_BOOL(CLEVER_ARG_BYTE(0) != CLEVER_ARG_BYTE(1));
 }
 
 /**
  * <= operator (Byte, Byte)
  */
-CLEVER_TYPE_METHOD(Char::less_equal) {
+CLEVER_METHOD(Char::less_equal) {
 	CLEVER_RETURN_BOOL(CLEVER_ARG_BYTE(0) <= CLEVER_ARG_BYTE(1));
 }
 
 /**
  * >= operator (Byte, Byte)
  */
-CLEVER_TYPE_METHOD(Char::greater_equal) {
+CLEVER_METHOD(Char::greater_equal) {
 	CLEVER_RETURN_BOOL(CLEVER_ARG_BYTE(0) >= CLEVER_ARG_BYTE(1));
 }
 
 /**
  * > operator (Byte, Byte)
  */
-CLEVER_TYPE_METHOD(Char::greater) {
+CLEVER_METHOD(Char::greater) {
 	CLEVER_RETURN_BOOL(CLEVER_ARG_BYTE(0) > CLEVER_ARG_BYTE(1));
 }
 
 /**
  * < operator (Byte, Byte)
  */
-CLEVER_TYPE_METHOD(Char::less) {
+CLEVER_METHOD(Char::less) {
 	CLEVER_RETURN_BOOL(CLEVER_ARG_BYTE(0) < CLEVER_ARG_BYTE(1));
 }
 
 /**
  * ! operator
  */
-CLEVER_TYPE_METHOD(Char::logical_not) {
+CLEVER_METHOD(Char::logical_not) {
 	CLEVER_RETURN_BOOL(!CLEVER_THIS()->getValueAsBool());
 }
 
 /**
  * ~ operator
  */
-CLEVER_TYPE_METHOD(Char::bw_not) {
+CLEVER_METHOD(Char::bw_not) {
 	CLEVER_RETURN_BYTE(~CLEVER_THIS()->getByte());
 }
 
 /**
  * ++ operator
  */
-CLEVER_TYPE_METHOD(Char::pre_inc) {
+CLEVER_METHOD(Char::pre_inc) {
 	CLEVER_THIS()->setByte(CLEVER_THIS()->getByte()+1);
 	CLEVER_RETURN_BYTE(CLEVER_THIS()->getByte());
 }
@@ -167,7 +167,7 @@ CLEVER_TYPE_METHOD(Char::pre_inc) {
 /**
  * ++ operator
  */
-CLEVER_TYPE_METHOD(Char::pos_inc) {
+CLEVER_METHOD(Char::pos_inc) {
 	CLEVER_RETURN_BYTE(CLEVER_THIS()->getByte());
 	CLEVER_THIS()->setByte(CLEVER_THIS()->getByte()+1);
 }
@@ -175,7 +175,7 @@ CLEVER_TYPE_METHOD(Char::pos_inc) {
 /**
  * -- operator
  */
-CLEVER_TYPE_METHOD(Char::pre_dec) {
+CLEVER_METHOD(Char::pre_dec) {
 	CLEVER_THIS()->setByte(CLEVER_THIS()->getByte()-1);
 	CLEVER_RETURN_BYTE(CLEVER_THIS()->getByte());
 }
@@ -183,7 +183,7 @@ CLEVER_TYPE_METHOD(Char::pre_dec) {
 /**
  * -- operator
  */
-CLEVER_TYPE_METHOD(Char::pos_dec) {
+CLEVER_METHOD(Char::pos_dec) {
 	CLEVER_RETURN_BYTE(CLEVER_THIS()->getByte());
 	CLEVER_THIS()->setByte(CLEVER_THIS()->getByte()-1);
 }
@@ -308,7 +308,7 @@ void Char::init() {
 		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Char::constructor, CLEVER_BYTE))
 			->addArg("value", CLEVER_INT)
 	);
-	
+
 	addMethod(
 		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&Char::do_assign, CLEVER_VOID))
 			->addArg("rvalue", CLEVER_BYTE)

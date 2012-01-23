@@ -1,0 +1,9 @@
+import std.io;
+
+for (Int i = 1; i < 3; ++i) {
+	
+	println(i);
+	for (Int j = 1; j < 4; ++j) {
+		println(j);
+	}
+}
