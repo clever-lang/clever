@@ -484,6 +484,8 @@ import_stmt:
 		IMPORT IDENT                    { $$ = new ast::ImportStmt($2);         $$->setLocation(yylloc); }
 	|	IMPORT IDENT '.' IDENT          { $$ = new ast::ImportStmt($2, $4);     $$->setLocation(yylloc); }
 	|	IMPORT IDENT '.' IDENT AS IDENT { $$ = new ast::ImportStmt($2, $4, $6); $$->setLocation(yylloc); }
+	|	IMPORT STR                      { $$ = new ast::ImportStmt($2);         $$->setLocation(yylloc); }
+	|	IMPORT STR AS IDENT             { $$ = new ast::ImportStmt($2, $4);     $$->setLocation(yylloc); }
 ;
 
 alias_stmt:

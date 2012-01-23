@@ -188,4 +188,8 @@ void Compiler::warningf(const char* format, ...) {
 	warning(out.str());
 }
 
+void Compiler::importFile(const CString* file, const CString* alias) {
+
+}
+
 } // clever

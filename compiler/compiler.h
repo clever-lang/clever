@@ -107,13 +107,17 @@ public:
 	/**
 	 * Import a package module
 	 */
-	static void import(Scope* scope, const CString* package, const CString* module, const CString *alias) {
+	static void import(Scope* scope, const CString* package, const CString* module, const CString* alias) {
 		if (module) {
 			g_pkgmanager.loadModule(scope, package, module, alias);
 		} else {
 			g_pkgmanager.loadPackage(scope, package);
 		}
 	}
+	/**
+	 * Import a file
+	 */
+	static void importFile(const CString*, const CString*);
 
 	/**
 	 * Methods for formatted messages

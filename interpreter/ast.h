@@ -581,6 +581,8 @@ public:
 	}
 
 	Value* getValue() const { return m_value; };
+
+	const CString* getString() const { return m_value->getStringP(); }
 private:
 	Value* m_value;
 
@@ -1169,18 +1171,29 @@ private:
 class ImportStmt : public ASTNode {
 public:
 	ImportStmt(Identifier* package)
-		: m_package(package), m_module(NULL), m_alias(NULL) {
+		: m_file(NULL), m_package(package), m_module(NULL), m_alias(NULL) {
 		m_package->addRef();
 	}
 
+	ImportStmt(StringLiteral* file)
+		: m_file(file), m_package(NULL), m_module(NULL), m_alias(NULL) {
+		m_file->addRef();
+	}
+
 	ImportStmt(Identifier* package, Identifier* module)
-		: m_package(package), m_module(module), m_alias(NULL) {
+		: m_file(NULL), m_package(package), m_module(module), m_alias(NULL) {
 		m_package->addRef();
 		m_module->addRef();
 	}
 
+	ImportStmt(StringLiteral* file, Identifier* alias)
+		: m_file(file), m_package(NULL), m_module(NULL), m_alias(alias) {
+		m_file->addRef();
+		m_alias->addRef();
+	}
+
 	ImportStmt(Identifier* package, Identifier* module, Identifier* alias)
-		: m_package(package), m_module(module), m_alias(alias) {
+		: m_file(NULL), m_package(package), m_module(module), m_alias(alias) {
 		m_package->addRef();
 		m_module->addRef();
 		m_alias->addRef();
@@ -1196,6 +1209,17 @@ public:
 		if (m_alias) {
 			m_alias->delRef();
 		}
+		if (m_file) {
+			m_file->delRef();
+		}
+	}
+
+	bool isFilePath() const {
+		return m_file != NULL;
+	}
+
+	const CString* getFilePath() const {
+		return m_file->getString();
 	}
 
 	const CString* getPackageName() {
@@ -1214,6 +1238,7 @@ public:
 		visitor.visit(this);
 	}
 private:
+	StringLiteral* m_file;
 	Identifier* m_package;
 	Identifier* m_module;
 	Identifier* m_alias;
