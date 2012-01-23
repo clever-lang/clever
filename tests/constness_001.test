@@ -1,4 +1,4 @@
-Testing constness #1
+[FATAL] Testing constness #1
 ==CODE==
 Array<Int> arr;
 arr.resize(10, 1);

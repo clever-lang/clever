@@ -1,4 +1,4 @@
-Testing NOT bitwise operation in Double
+[FATAL] Testing NOT bitwise operation in Double
 ==CODE==
 Double x = 1;
 ~x;

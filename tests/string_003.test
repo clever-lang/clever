@@ -1,4 +1,4 @@
-String::replace() type mismatch
+[FATAL] String::replace() type mismatch
 ==CODE==
 String str = "foo";
 str.replace(1,2,3);
