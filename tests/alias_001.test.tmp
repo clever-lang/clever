@@ -1,3 +1,0 @@
-import std.io as x;
-
-x::println("cool");

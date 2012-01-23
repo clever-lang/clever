@@ -77,33 +77,40 @@ public:
 	enum { NONE, PRIMITIVE, VECTOR, USER };
 
 	Value()
-		: RefCounted(1), m_type(NONE), m_type_ptr(NULL), m_name(NULL) { }
+		: RefCounted(1), m_type(NONE), m_type_ptr(NULL), m_name(NULL),
+		m_is_const(false) { }
 
 	explicit Value(const Type* type_ptr)
-		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(type_ptr), m_name(NULL) { }
+		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(type_ptr), m_name(NULL),
+		m_is_const(false) { }
 
 	explicit Value(double value)
-		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_DOUBLE), m_name(NULL) {
+		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_DOUBLE), m_name(NULL),
+		m_is_const(false) {
 		setDouble(value);
 	}
 
 	explicit Value(int64_t value)
-		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_INT), m_name(NULL) {
+		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_INT), m_name(NULL),
+		m_is_const(false) {
 		setInteger(value);
 	}
 
 	explicit Value(bool value)
-		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_BOOL), m_name(NULL) {
+		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_BOOL), m_name(NULL),
+		m_is_const(false) {
 		setBoolean(value);
 	}
 
 	explicit Value(const CString* value)
-		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_STR), m_name(NULL) {
+		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_STR), m_name(NULL),
+		m_is_const(false) {
 		setString(value);
 	}
 
 	explicit Value(uint8_t value)
-		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_BYTE), m_name(NULL) {
+		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_BYTE), m_name(NULL),
+		m_is_const(false) {
 		setByte(value);
 	}
 

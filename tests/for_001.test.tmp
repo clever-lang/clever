@@ -1,5 +1,0 @@
-import std.io;
-
-println("start");
-for (Int i = 4; i > 0; --i) { println(i); }
-println("done");

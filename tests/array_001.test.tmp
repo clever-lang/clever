@@ -1,8 +1,0 @@
-import std.io;
-
-Array<Int> x;
-
-x.push(1);
-x.push(2);
-
-println(x.toString());

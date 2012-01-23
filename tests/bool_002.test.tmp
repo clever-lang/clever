@@ -1,6 +1,0 @@
-import std.io;
-
-println(true == true);
-println(false != true);
-println(false == false);
-println(false == true);

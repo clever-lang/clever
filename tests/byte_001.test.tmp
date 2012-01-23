@@ -1,6 +1,0 @@
-import std.io;
-
-Byte b(10);
-for (Int i = 0; i <= 10; ++i) {
-	println(b++);
-}
