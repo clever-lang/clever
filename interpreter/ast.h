@@ -146,9 +146,6 @@ public:
 	 */
 	virtual void acceptVisitor(ASTVisitor& visitor) { }
 	virtual ASTNode* acceptTransformer(ASTTransformer& transformer) { return this; }
-	virtual void setExpr(ASTNode* expr) { }
-	virtual void setBlock(ASTNode* expr) { }
-
 
 	virtual NumberLiteral* asNumberLiteral() { return NULL; }
 
