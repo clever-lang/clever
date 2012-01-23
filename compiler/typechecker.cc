@@ -808,6 +808,13 @@ AST_VISITOR(TypeChecker, MethodCall) {
 }
 
 AST_VISITOR(TypeChecker, ImportStmt) {
+	/**
+	 * For import with file path we do not handle in the visitor
+	 */
+	if (expr->hasFilePath()) {
+		return;
+	}
+
 	Scope* scope = g_symtable.getScope();
 	/**
 	 * Importing an specific module or an entire package

@@ -33,6 +33,7 @@
 #include "types/nativetypes.h"
 #include "interpreter/astvisitor.h"
 #include "interpreter/driver.h"
+#include "interpreter/ast.h"
 
 namespace clever {
 
@@ -77,6 +78,15 @@ void Compiler::init() {
 	}
 
 	m_initialized = true;
+}
+
+void Compiler::setAST(ast::ASTNode* ast) {
+	if (m_ast) {
+		ast->add(m_ast);
+		m_ast = ast;
+	} else {
+		m_ast = ast;
+	}
 }
 
 /**
