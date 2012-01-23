@@ -35,7 +35,7 @@ namespace clever {
  * Construct an Int object with a default value (if no args) or a
  * custom value
  */
-CLEVER_TYPE_METHOD(Integer::constructor) {
+CLEVER_METHOD(Integer::constructor) {
 	if (args) {
 		CLEVER_RETURN_INT(CLEVER_ARG_INT(0));
 	}
@@ -48,14 +48,14 @@ CLEVER_TYPE_METHOD(Integer::constructor) {
  * Int::toString()
  * Converts the number to string
  */
-CLEVER_TYPE_METHOD(Integer::toString) {
+CLEVER_METHOD(Integer::toString) {
 	retval->setString(CSTRING(value->toString()));
 }
 
 /**
  * Void Int::__assign__(Int)
  */
-CLEVER_TYPE_METHOD(Integer::do_assign) {
+CLEVER_METHOD(Integer::do_assign) {
 	if (CLEVER_ARG_IS_INT(0)) {
 		CLEVER_THIS()->copy(CLEVER_ARG(0));
 	} else {
@@ -63,7 +63,7 @@ CLEVER_TYPE_METHOD(Integer::do_assign) {
 	}
 }
 
-CLEVER_TYPE_METHOD(Integer::plus) {
+CLEVER_METHOD(Integer::plus) {
 	if (CLEVER_ARG_IS_INT(1)) {
 		CLEVER_RETURN_INT(CLEVER_ARG_INT(0) + CLEVER_ARG_INT(1));
 	} else {
@@ -76,7 +76,7 @@ CLEVER_TYPE_METHOD(Integer::plus) {
 	}
 }
 
-CLEVER_TYPE_METHOD(Integer::minus) {
+CLEVER_METHOD(Integer::minus) {
 	if (CLEVER_ARG_IS_INT(1)) {
 		CLEVER_RETURN_INT(CLEVER_ARG_INT(0) - CLEVER_ARG_INT(1));
 	} else {
@@ -89,7 +89,7 @@ CLEVER_TYPE_METHOD(Integer::minus) {
 	}
 }
 
-CLEVER_TYPE_METHOD(Integer::div) {
+CLEVER_METHOD(Integer::div) {
 	if (CLEVER_ARG_IS_INT(1)) {
 		CLEVER_RETURN_INT(CLEVER_ARG_INT(0) / CLEVER_ARG_INT(1));
 	} else {
@@ -102,7 +102,7 @@ CLEVER_TYPE_METHOD(Integer::div) {
 	}
 }
 
-CLEVER_TYPE_METHOD(Integer::mult) {
+CLEVER_METHOD(Integer::mult) {
 	if (CLEVER_ARG_IS_INT(1)) {
 		CLEVER_RETURN_INT(CLEVER_ARG_INT(0) * CLEVER_ARG_INT(1));
 	} else {
@@ -115,96 +115,96 @@ CLEVER_TYPE_METHOD(Integer::mult) {
 	}
 }
 
-CLEVER_TYPE_METHOD(Integer::mod) {
+CLEVER_METHOD(Integer::mod) {
 	CLEVER_RETURN_INT(CLEVER_ARG_INT(0) % CLEVER_ARG_INT(1));
 }
 
-CLEVER_TYPE_METHOD(Integer::bw_and) {
+CLEVER_METHOD(Integer::bw_and) {
 	CLEVER_RETURN_INT(CLEVER_ARG_INT(0) & CLEVER_ARG_INT(1));
 }
 
-CLEVER_TYPE_METHOD(Integer::bw_or) {
+CLEVER_METHOD(Integer::bw_or) {
 	CLEVER_RETURN_INT(CLEVER_ARG_INT(0) | CLEVER_ARG_INT(1));
 }
 
-CLEVER_TYPE_METHOD(Integer::bw_xor) {
+CLEVER_METHOD(Integer::bw_xor) {
 	CLEVER_RETURN_INT(CLEVER_ARG_INT(0) ^ CLEVER_ARG_INT(1));
 }
 
 /**
  * >> operator (Integer, Integer)
  */
-CLEVER_TYPE_METHOD(Integer::rshift) {
+CLEVER_METHOD(Integer::rshift) {
 	CLEVER_RETURN_INT(CLEVER_ARG_INT(0) >> CLEVER_ARG_INT(1));
 }
 
 /**
  * << operator (Integer, Integer)
  */
-CLEVER_TYPE_METHOD(Integer::lshift) {
+CLEVER_METHOD(Integer::lshift) {
 	CLEVER_RETURN_INT(CLEVER_ARG_INT(0) << CLEVER_ARG_INT(1));
 }
 
 /**
  * == operator (Integer, Integer)
  */
-CLEVER_TYPE_METHOD(Integer::equal) {
+CLEVER_METHOD(Integer::equal) {
 	CLEVER_RETURN_BOOL(CLEVER_ARG_INT(0) == CLEVER_ARG_INT(1));
 }
 
 /**
  * != operator (Integer, Integer)
  */
-CLEVER_TYPE_METHOD(Integer::not_equal) {
+CLEVER_METHOD(Integer::not_equal) {
 	CLEVER_RETURN_BOOL(CLEVER_ARG_INT(0) != CLEVER_ARG_INT(1));
 }
 
 /**
  * <= operator (Integer, Integer)
  */
-CLEVER_TYPE_METHOD(Integer::less_equal) {
+CLEVER_METHOD(Integer::less_equal) {
 	CLEVER_RETURN_BOOL(CLEVER_ARG_INT(0) <= CLEVER_ARG_INT(1));
 }
 
 /**
  * >= operator (Integer, Integer)
  */
-CLEVER_TYPE_METHOD(Integer::greater_equal) {
+CLEVER_METHOD(Integer::greater_equal) {
 	CLEVER_RETURN_BOOL(CLEVER_ARG_INT(0) >= CLEVER_ARG_INT(1));
 }
 
 /**
  * > operator (Integer, Integer)
  */
-CLEVER_TYPE_METHOD(Integer::greater) {
+CLEVER_METHOD(Integer::greater) {
 	CLEVER_RETURN_BOOL(CLEVER_ARG_INT(0) > CLEVER_ARG_INT(1));
 }
 
 /**
  * < operator (Integer, Integer)
  */
-CLEVER_TYPE_METHOD(Integer::less) {
+CLEVER_METHOD(Integer::less) {
 	CLEVER_RETURN_BOOL(CLEVER_ARG_INT(0) < CLEVER_ARG_INT(1));
 }
 
 /**
  * ! operator
  */
-CLEVER_TYPE_METHOD(Integer::logical_not) {
+CLEVER_METHOD(Integer::logical_not) {
 	CLEVER_RETURN_BOOL(!CLEVER_THIS()->getValueAsBool());
 }
 
 /**
  * ~ operator
  */
-CLEVER_TYPE_METHOD(Integer::bw_not) {
+CLEVER_METHOD(Integer::bw_not) {
 	CLEVER_RETURN_INT(~CLEVER_THIS()->getInteger());
 }
 
 /**
  * ++ operator
  */
-CLEVER_TYPE_METHOD(Integer::pre_inc) {
+CLEVER_METHOD(Integer::pre_inc) {
 	CLEVER_THIS()->setInteger(CLEVER_THIS()->getInteger()+1);
 	CLEVER_RETURN_INT(CLEVER_THIS()->getInteger());
 }
@@ -212,7 +212,7 @@ CLEVER_TYPE_METHOD(Integer::pre_inc) {
 /**
  * ++ operator
  */
-CLEVER_TYPE_METHOD(Integer::pos_inc) {
+CLEVER_METHOD(Integer::pos_inc) {
 	CLEVER_RETURN_INT(CLEVER_THIS()->getInteger());
 	CLEVER_THIS()->setInteger(CLEVER_THIS()->getInteger()+1);
 }
@@ -220,7 +220,7 @@ CLEVER_TYPE_METHOD(Integer::pos_inc) {
 /**
  * -- operator
  */
-CLEVER_TYPE_METHOD(Integer::pre_dec) {
+CLEVER_METHOD(Integer::pre_dec) {
 	CLEVER_THIS()->setInteger(CLEVER_THIS()->getInteger()-1);
 	CLEVER_RETURN_INT(CLEVER_THIS()->getInteger());
 }
@@ -228,7 +228,7 @@ CLEVER_TYPE_METHOD(Integer::pre_dec) {
 /**
  * -- operator
  */
-CLEVER_TYPE_METHOD(Integer::pos_dec) {
+CLEVER_METHOD(Integer::pos_dec) {
 	CLEVER_RETURN_INT(CLEVER_THIS()->getInteger());
 	CLEVER_THIS()->setInteger(CLEVER_THIS()->getInteger()-1);
 }

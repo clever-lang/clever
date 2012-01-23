@@ -43,10 +43,10 @@ public:
 	/**
 	 * Type methods
 	 */
-	 static CLEVER_TYPE_METHOD(constructor);
-	 static CLEVER_TYPE_METHOD(getName);
-	 static CLEVER_TYPE_METHOD(getModules);
-	 static CLEVER_TYPE_METHOD(do_assign);
+	 static CLEVER_METHOD(constructor);
+	 static CLEVER_METHOD(getName);
+	 static CLEVER_METHOD(getModules);
+	 static CLEVER_METHOD(do_assign);
 private:
 	DISALLOW_COPY_AND_ASSIGN(ReflectionPackage);
 };

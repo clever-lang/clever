@@ -23,9 +23,9 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#include "interpreter/ast.h"
 #include "compiler/compiler.h"
 #include "compiler/typechecker.h"
-#include "types/nativetypes.h"
 
 namespace clever { namespace ast {
 
@@ -36,6 +36,8 @@ std::string TypeChecker::serializeArgType(TypeVector& args_types, const char* se
 	if (args_types.size() == 0) {
 		return std::string("void");
 	}
+
+	clever_assert(args_types[0] != NULL, "args_types[0] cannot be NULL!");
 
 	std::string args_type_name = args_types[0]->getName()->str();
 	const std::string separator = std::string(sep);
@@ -53,6 +55,9 @@ std::string TypeChecker::serializeArgType(TypeVector& args_types, const char* se
  */
 bool TypeChecker::checkCompatibleTypes(const Value* const lhs,
 		const Value* const rhs) {
+	clever_assert(lhs != NULL, "lhs cannot be NULL");
+	clever_assert(rhs != NULL, "rhs cannot be NULL");
+
 	/**
 	 * Constants with different type cannot performs operation
 	 */
@@ -78,6 +83,9 @@ bool TypeChecker::checkCompatibleTypes(const Value* const lhs,
  */
 const Type* TypeChecker::checkExprType(const Value* const lhs,
 		const Value* const rhs) {
+	clever_assert(lhs != NULL, "lhs cannot be NULL");
+	clever_assert(rhs != NULL, "rhs cannot be NULL");
+
 	if (lhs->isPrimitive() && rhs->isPrimitive()
 		&& !lhs->isString() && !rhs->isString()) {
 
@@ -152,11 +160,14 @@ void TypeChecker::checkFunctionArgs(const Function* func, int num_args,
 AST_VISITOR(TypeChecker, BreakNode) {
 }
 
+AST_VISITOR(TypeChecker, Subscript) {
+}
+
 /**
  * Creates a vector with the current value from a Value* pointers
  */
 AST_VISITOR(TypeChecker, ArgumentList) {
-	ValueVector* values = new ValueVector();
+	ValueVector* values = new ValueVector;
 	const NodeList& nodes = expr->getNodes();
 	NodeList::const_iterator it = nodes.begin(), end = nodes.end();
 
@@ -287,7 +298,7 @@ AST_VISITOR(TypeChecker, UnaryExpr) {
 			"The type %S doesn't support such operation!",
 			var->getTypePtr()->getName());
 	}
-	
+
 	if (var->isConst() && !method->isConst()) {
 		Compiler::errorf(expr->getLocation(), "Can't use the non-const "
 			"operator `%S' because variable `%S' is const",
@@ -378,11 +389,11 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 
 	if (expr->isAssigned()) {
 		if (lhs->isConst()) {
-			Compiler::errorf(expr->getLocation(), "Can't assign to "
-				"variable `%S' because it is const",
+			Compiler::errorf(expr->getLocation(),
+				"Can't assign to variable `%S' because it is const",
 				lhs->getName());
 		}
-		
+
 		expr->setResult(lhs);
 		expr->getValue()->setTypePtr(lhs->getTypePtr());
 		lhs->addRef();
@@ -413,7 +424,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 			variable->getName());
 	}
 
-	Value* var = new Value();
+	Value* var = new Value;
 	TemplateArgsVector* template_args = expr->getType()->getTemplateArgs();
 
 	if (template_args) {
@@ -466,7 +477,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 		}
 		else {
 			Compiler::errorf(expr->getLocation(),
-				"Type `%S' do not accept template arguments!",
+				"Type `%S' cannot accept template arguments!",
 				type->getName());
 		}
 	}
@@ -533,7 +544,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 
 		expr->setMethodValue(call);
 	}
-	
+
 	var->setConstness(expr->isConst());
 	g_symtable.push(var->getName(), var);
 }
@@ -649,10 +660,10 @@ AST_VISITOR(TypeChecker, AssignExpr) {
 			rhs->getTypePtr()->getName(),
 			lhs->getTypePtr()->getName());
 	}
-	
+
 	if (lhs->isConst()) {
-		Compiler::errorf(expr->getLocation(), "Can't assign to "
-			"variable `%S' because it is const",
+		Compiler::errorf(expr->getLocation(),
+			"Can't assign to variable `%S' because it is const",
 			lhs->getName());
 	}
 
@@ -746,7 +757,7 @@ AST_VISITOR(TypeChecker, MethodCall) {
 		Compiler::errorf(expr->getLocation(), "No matching call for %S::%S(%S)",
 			variable->getTypePtr()->getName(), call->getName(), &args_type_name);
 	}
-	
+
 	if (variable->isConst() && !method->isConst()) {
 		std::string args_type_name = serializeArgType(args_types, ", ");
 

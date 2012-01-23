@@ -26,7 +26,6 @@
 #ifndef CLEVER_CSTRING_H
 #define CLEVER_CSTRING_H
 
-#include <iostream>
 #include <tr1/unordered_map>
 #include "compiler/clever.h"
 

@@ -34,7 +34,7 @@
 /**
  * Opcode handler arguments
  */
-#define CLEVER_VM_HANDLER_ARGS Opcode& opcode, long& next_op
+#define CLEVER_VM_HANDLER_ARGS const Opcode& opcode, long& next_op
 #define CLEVER_VM_HANDLER(name) void CLEVER_FASTCALL name(CLEVER_VM_HANDLER_ARGS)
 
 /**
@@ -46,10 +46,8 @@ namespace clever {
 
 class Opcode;
 
-
-
 typedef std::vector<Opcode*> OpcodeList;
-typedef std::stack<Opcode*> CallStack;
+typedef std::stack<const Opcode*> CallStack;
 typedef std::stack<ValueVector*> ArgStack;
 typedef std::stack<ValueVector*> ArgValueStack;
 

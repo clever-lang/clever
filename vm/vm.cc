@@ -68,7 +68,7 @@ void VM::push_args(ValueVector* vec) {
 
 	s_args.push(vec);
 
-	for (int i = 0, j = vec->size(); i < j; ++i) {
+	for (size_t i = 0, j = vec->size(); i < j; ++i) {
 		Value* tmp = new Value;
 
 		tmp->copy(vec->at(i));
@@ -91,7 +91,7 @@ void VM::pop_args(const Opcode* const op) {
 
 	ValueVector* vec_copy = s_arg_values.top();
 
-	for (int i = 0, j = vec_copy->size(); i < j; ++i) {
+	for (size_t i = 0, j = vec_copy->size(); i < j; ++i) {
 		delete vec_copy->at(i);
 	}
 	delete vec_copy;
@@ -111,7 +111,7 @@ void VM::restore_args() {
 	ValueVector* vec = s_args.top();
 	ValueVector* vec_copy = s_arg_values.top();
 
-	for (int i = 0, j = vec->size(); i < j; ++i) {
+	for (size_t i = 0, j = vec->size(); i < j; ++i) {
 		vec->at(i)->copy(vec_copy->at(i));
 	}
 }
@@ -128,11 +128,10 @@ void VM::error(const char* message) {
  * Execute the collected opcodes
  */
 void VM::run() {
-	long next_op;
 	long last_op = m_opcodes->size();
 
-	for (next_op = 0; next_op < last_op && next_op >= 0; ++next_op) {
-		Opcode& opcode = *(*m_opcodes)[next_op];
+	for (long next_op = 0; next_op < last_op && next_op >= 0; ++next_op) {
+		const Opcode& opcode = *(*m_opcodes)[next_op];
 
 		// opcode.dump();
 
@@ -212,7 +211,7 @@ CLEVER_VM_HANDLER(VM::arg_recv_handler) {
 	ValueVector* vars = opcode.getOp1()->getVector();
 	const ValueVector* const func_args = opcode.getOp2()->getVector();
 
-	for (int i = 0, j = vars->size(); i < j; ++i) {
+	for (size_t i = 0, j = vars->size(); i < j; ++i) {
 		vars->at(i)->copy(func_args->at(i));
 	}
 
@@ -257,7 +256,7 @@ CLEVER_VM_HANDLER(VM::end_func_handler) {
 CLEVER_VM_HANDLER(VM::return_handler) {
 	if (!s_call.empty()) {
 		const Value* const value = opcode.getOp1();
-		Opcode* call = s_call.top();
+		const Opcode* call = s_call.top();
 
 		if (value) {
 			call->getResult()->copy(value);

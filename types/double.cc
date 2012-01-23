@@ -34,7 +34,7 @@ namespace clever {
  * Double::Double()
  * Constructs the object.
  */
-CLEVER_TYPE_METHOD(Double::constructor) {
+CLEVER_METHOD(Double::constructor) {
 	if (args) {
 		CLEVER_RETURN_DOUBLE(CLEVER_ARG_DOUBLE(0));
 	}
@@ -47,7 +47,7 @@ CLEVER_TYPE_METHOD(Double::constructor) {
  * Double::toString()
  * Converts the number to string
  */
-CLEVER_TYPE_METHOD(Double::toString) {
+CLEVER_METHOD(Double::toString) {
 	CLEVER_RETURN_STR(CSTRING(CLEVER_THIS()->toString()));
 }
 
@@ -55,7 +55,7 @@ CLEVER_TYPE_METHOD(Double::toString) {
  * Double::sqrt()
  * Returns the square root of the number
  */
-CLEVER_TYPE_METHOD(Double::sqrt) {
+CLEVER_METHOD(Double::sqrt) {
 	CLEVER_RETURN_DOUBLE(std::sqrt(value->getDouble()));
 }
 
@@ -64,24 +64,24 @@ CLEVER_TYPE_METHOD(Double::sqrt) {
  * Double::__assign__(Int)
  * Returns the square root of the number
  */
-CLEVER_TYPE_METHOD(Double::do_assign) {
+CLEVER_METHOD(Double::do_assign) {
 	if (CLEVER_ARG_IS_DOUBLE(0)) {
 		CLEVER_THIS()->copy(CLEVER_ARG(0));
 	} else {
-		
+
 		CLEVER_THIS()->setDouble(CLEVER_ARG_INT(0));
 	}
 }
 
-CLEVER_TYPE_METHOD(Double::plus) {
+CLEVER_METHOD(Double::plus) {
 	if (CLEVER_ARG_IS_DOUBLE(1)) {
 		CLEVER_RETURN_DOUBLE(CLEVER_ARG_DOUBLE(0) + CLEVER_ARG_DOUBLE(1));
-	} else {		
+	} else {
 		CLEVER_RETURN_DOUBLE(CLEVER_ARG_DOUBLE(0) + CLEVER_ARG_INT(1));
 	}
 }
 
-CLEVER_TYPE_METHOD(Double::minus) {
+CLEVER_METHOD(Double::minus) {
 	if (CLEVER_ARG_IS_DOUBLE(1)) {
 		CLEVER_RETURN_DOUBLE(CLEVER_ARG_DOUBLE(0) - CLEVER_ARG_DOUBLE(1));
 	} else {
@@ -89,7 +89,7 @@ CLEVER_TYPE_METHOD(Double::minus) {
 	}
 }
 
-CLEVER_TYPE_METHOD(Double::div) {
+CLEVER_METHOD(Double::div) {
 	if (CLEVER_ARG_IS_DOUBLE(1)) {
 		CLEVER_RETURN_DOUBLE(CLEVER_ARG_DOUBLE(0) / CLEVER_ARG_DOUBLE(1));
 	} else {
@@ -97,7 +97,7 @@ CLEVER_TYPE_METHOD(Double::div) {
 	}
 }
 
-CLEVER_TYPE_METHOD(Double::mult) {
+CLEVER_METHOD(Double::mult) {
 	if (CLEVER_ARG_IS_DOUBLE(1)) {
 		CLEVER_RETURN_DOUBLE(CLEVER_ARG_DOUBLE(0) * CLEVER_ARG_DOUBLE(1));
 	} else {
@@ -108,56 +108,56 @@ CLEVER_TYPE_METHOD(Double::mult) {
 /**
  * == operator (Double, Double)
  */
-CLEVER_TYPE_METHOD(Double::equal) {
+CLEVER_METHOD(Double::equal) {
 	CLEVER_RETURN_BOOL(CLEVER_ARG_DOUBLE(0) == CLEVER_ARG_DOUBLE(1));
 }
 
 /**
  * != operator (Double, Double)
  */
-CLEVER_TYPE_METHOD(Double::not_equal) {
+CLEVER_METHOD(Double::not_equal) {
 	CLEVER_RETURN_BOOL(CLEVER_ARG_DOUBLE(0) != CLEVER_ARG_DOUBLE(1));
 }
 
 /**
  * <= operator (Double, Double)
  */
-CLEVER_TYPE_METHOD(Double::less_equal) {
+CLEVER_METHOD(Double::less_equal) {
 	CLEVER_RETURN_BOOL(CLEVER_ARG_DOUBLE(0) <= CLEVER_ARG_DOUBLE(1));
 }
 
 /**
  * >= operator (Double, Double)
  */
-CLEVER_TYPE_METHOD(Double::greater_equal) {
+CLEVER_METHOD(Double::greater_equal) {
 	CLEVER_RETURN_BOOL(CLEVER_ARG_DOUBLE(0) >= CLEVER_ARG_DOUBLE(1));
 }
 
 /**
  * < operator (Double, Double)
  */
-CLEVER_TYPE_METHOD(Double::less) {
+CLEVER_METHOD(Double::less) {
 	CLEVER_RETURN_BOOL(CLEVER_ARG_DOUBLE(0) < CLEVER_ARG_DOUBLE(1));
 }
 
 /**
  * > operator (Double, Double)
  */
-CLEVER_TYPE_METHOD(Double::greater) {
+CLEVER_METHOD(Double::greater) {
 	CLEVER_RETURN_BOOL(CLEVER_ARG_DOUBLE(0) > CLEVER_ARG_DOUBLE(1));
 }
 
 /**
  * ! operator
  */
-CLEVER_TYPE_METHOD(Double::logical_not) {
+CLEVER_METHOD(Double::logical_not) {
 	CLEVER_RETURN_BOOL(!CLEVER_THIS()->getValueAsBool());
 }
 
 /**
  * ++ operator
  */
-CLEVER_TYPE_METHOD(Double::pre_inc) {
+CLEVER_METHOD(Double::pre_inc) {
 	CLEVER_THIS()->setDouble(CLEVER_THIS()->getDouble()+1);
 	CLEVER_RETURN_DOUBLE(CLEVER_THIS()->getDouble());
 }
@@ -165,7 +165,7 @@ CLEVER_TYPE_METHOD(Double::pre_inc) {
 /**
  * ++ operator
  */
-CLEVER_TYPE_METHOD(Double::pos_inc) {
+CLEVER_METHOD(Double::pos_inc) {
 	CLEVER_RETURN_DOUBLE(CLEVER_THIS()->getDouble());
 	CLEVER_THIS()->setDouble(CLEVER_THIS()->getDouble()+1);
 }
@@ -173,7 +173,7 @@ CLEVER_TYPE_METHOD(Double::pos_inc) {
 /**
  * -- operator
  */
-CLEVER_TYPE_METHOD(Double::pre_dec) {
+CLEVER_METHOD(Double::pre_dec) {
 	CLEVER_THIS()->setDouble(CLEVER_THIS()->getDouble()-1);
 	CLEVER_RETURN_DOUBLE(CLEVER_THIS()->getDouble());
 }
@@ -181,7 +181,7 @@ CLEVER_TYPE_METHOD(Double::pre_dec) {
 /**
  * -- operator
  */
-CLEVER_TYPE_METHOD(Double::pos_dec) {
+CLEVER_METHOD(Double::pos_dec) {
 	CLEVER_RETURN_DOUBLE(CLEVER_THIS()->getDouble());
 	CLEVER_THIS()->setDouble(CLEVER_THIS()->getDouble()-1);
 }
@@ -297,12 +297,12 @@ void Double::init() {
 		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Double::constructor, CLEVER_DOUBLE))
 			->addArg("value", CLEVER_DOUBLE)
 	);
-	
+
 	addMethod(
 		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&Double::do_assign, CLEVER_VOID))
 			->addArg("rvalue", CLEVER_DOUBLE)
 	);
-	
+
 	addMethod(
 		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&Double::do_assign, CLEVER_VOID))
 			->addArg("rvalue", CLEVER_INT)

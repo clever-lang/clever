@@ -132,6 +132,15 @@ namespace clever {
 #endif
 
 /**
+ * No return attribute
+ */
+#ifdef __GNUC__
+# define CLEVER_NO_RETURN __attribute__((noreturn))
+#else
+# define CLEVER_NO_RETURN 
+#endif
+
+/**
  * Try to use register to pass parameters
  */
 #if defined(__GNUC__) && CLEVER_GCC_VERSION >= 3004 && defined(__i386__)
@@ -187,7 +196,7 @@ void clever_assert_(const char* file, long line, const char* expr,
 #define clever_assert(Hypothesis, Format, ...)
 #endif
 
-void clever_fatal(const char* format, ...);
+void clever_fatal(const char* format, ...) CLEVER_NO_RETURN;
 
 void vsprintf(std::ostringstream&, const char*, va_list);
 void sprintf(std::ostringstream&, const char*, ...);

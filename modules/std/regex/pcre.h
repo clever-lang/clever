@@ -40,11 +40,11 @@ public:
 	DataValue* allocateValue() const;
 	void destructor(Value* value) const;
 
-	static CLEVER_TYPE_METHOD(constructor);
-	static CLEVER_TYPE_METHOD(matches);
-	static CLEVER_TYPE_METHOD(replace);
-	static CLEVER_TYPE_METHOD(replaceAll);
-	static CLEVER_TYPE_METHOD(do_assign);
+	static CLEVER_METHOD(constructor);
+	static CLEVER_METHOD(matches);
+	static CLEVER_METHOD(replace);
+	static CLEVER_METHOD(replaceAll);
+	static CLEVER_METHOD(do_assign);
 };
 
 }}}} // clever::packages::std::regex

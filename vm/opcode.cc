@@ -25,7 +25,7 @@
 
 #include <cstdio>
 #include <sstream>
-#include "opcode.h"
+#include "vm/opcode.h"
 #include "compiler/value.h"
 
 namespace clever {
@@ -34,7 +34,7 @@ namespace clever {
  * Dumps an opcode
  */
 void Opcode::dump() const {
-	::printf("(%04ld) | ", getOpNum());
+	::printf("(%04zu) | ", getOpNum());
 	::printf("%-15s | ", getOpName(m_op_type));
 	::printf("%-20s | ", dumpOp("op1", m_op1).c_str());
 	::printf("%-20s | ", dumpOp("op2", m_op2).c_str());

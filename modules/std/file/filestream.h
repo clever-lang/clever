@@ -45,14 +45,14 @@ public:
 	/**
 	 * Type methods
 	 */
-	static CLEVER_TYPE_METHOD(constructor);
-	static CLEVER_TYPE_METHOD(open);
-	static CLEVER_TYPE_METHOD(close);
-	static CLEVER_TYPE_METHOD(read);
-	static CLEVER_TYPE_METHOD(write);
-	static CLEVER_TYPE_METHOD(writeLine);
-	static CLEVER_TYPE_METHOD(toString);
-	static CLEVER_TYPE_METHOD(do_assign);
+	static CLEVER_METHOD(constructor);
+	static CLEVER_METHOD(open);
+	static CLEVER_METHOD(close);
+	static CLEVER_METHOD(read);
+	static CLEVER_METHOD(write);
+	static CLEVER_METHOD(writeLine);
+	static CLEVER_METHOD(toString);
+	static CLEVER_METHOD(do_assign);
 private:
 	DISALLOW_COPY_AND_ASSIGN(FileStream);
 

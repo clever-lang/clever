@@ -66,16 +66,16 @@ public:
 	/**
 	 * Type methods
 	 */
-	static CLEVER_TYPE_METHOD(push);
-	static CLEVER_TYPE_METHOD(pop);
-	static CLEVER_TYPE_METHOD(size);
-	static CLEVER_TYPE_METHOD(isEmpty);
-	static CLEVER_TYPE_METHOD(clear);
-	static CLEVER_TYPE_METHOD(at);
-	static CLEVER_TYPE_METHOD(set);
-	static CLEVER_TYPE_METHOD(resize);
-	static CLEVER_TYPE_METHOD(toString);
-	static CLEVER_TYPE_METHOD(do_assign);
+	static CLEVER_METHOD(push);
+	static CLEVER_METHOD(pop);
+	static CLEVER_METHOD(size);
+	static CLEVER_METHOD(isEmpty);
+	static CLEVER_METHOD(clear);
+	static CLEVER_METHOD(at);
+	static CLEVER_METHOD(set);
+	static CLEVER_METHOD(resize);
+	static CLEVER_METHOD(toString);
+	static CLEVER_METHOD(do_assign);
 private:
 	DISALLOW_COPY_AND_ASSIGN(Array);
 };

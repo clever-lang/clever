@@ -50,6 +50,7 @@ class TypeCreation;
 class UnaryExpr;
 class AliasStmt;
 class RegexPattern;
+class Subscript;
 
 #define AST_TRANSFORMER(type, exprtype) ASTNode* type::transform(exprtype* const expr)
 #define AST_TRANSFORMER_DECL_VIRTUAL(type) virtual ASTNode* transform(type* const expr) = 0
@@ -58,6 +59,7 @@ class RegexPattern;
 #define AST_TRANSFORMER_DECLARATION(V) \
 	V(BinaryExpr); \
 	V(RegexPattern); \
+	V(Subscript); \
 	V(Constant); \
 	V(AliasStmt); \
 	V(UnaryExpr); \

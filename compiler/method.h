@@ -40,17 +40,29 @@ class Method;
 typedef std::vector<Value*> ValueVector;
 typedef std::vector<const Type*> TypeVector;
 
-#define CLEVER_METHOD_ARGS const ValueVector* args, Value* retval, Value* value, Method* clv_method_
-#define CLEVER_METHOD_NAME(name) clv_m_##name
+/**
+ * Prototype for class method implementation
+ */
+#define CLEVER_METHOD_ARGS const ValueVector* args, Value* retval, Value* value
 #define CLEVER_METHOD(name) void CLEVER_FASTCALL name(CLEVER_METHOD_ARGS)
+
+/**
+ * Character used to mangling the method name with its argument types
+ */
 #define CLEVER_ARGS_SEPARATOR '#'
+
+/**
+ * Internal constructir method name
+ */
 #define CLEVER_CTOR_NAME "$ctor$"
 
+/**
+ * Pointer to member representing a class method implementation
+ */
 typedef void (CLEVER_FASTCALL *MethodPtr)(CLEVER_METHOD_ARGS);
 
 typedef std::pair<std::string, const Type*> MethodArgsPair;
 typedef std::vector<MethodArgsPair> MethodArgs;
-
 
 /**
  * Method representation
@@ -60,7 +72,7 @@ public:
 	enum MethodType { INTERNAL, USER };
 
 	Method(std::string name, MethodPtr ptr, const Type* rtype, bool constness = true)
-		: RefCounted(1), m_name(name), m_type(INTERNAL), m_rtype(rtype), m_num_args(0), 
+		: RefCounted(1), m_name(name), m_type(INTERNAL), m_rtype(rtype), m_num_args(0),
 		m_min_args(0), m_is_const(constness)
 	{
 		m_info.ptr = ptr;
@@ -78,7 +90,7 @@ public:
 	bool isInternal() const { return m_type == INTERNAL; }
 
 	void call(const ValueVector* args, Value* result, Value* context) const {
-		m_info.ptr(args, result, context, const_cast<Method*>(this));
+		m_info.ptr(args, result, context);
 	}
 
 	long call() const { return m_info.offset; }
@@ -99,7 +111,7 @@ public:
 
 	Method* setMinNumArgs(int nargs) { m_min_args = nargs; return this; }
 	int getMinNumArgs() const { return m_min_args; }
-	
+
 	bool isConst() const {
 		return m_is_const;
 	}
@@ -123,7 +135,7 @@ private:
 	 * Method's return type
 	 */
 	const Type* m_rtype;
-	
+
 	int m_num_args;
 	int m_min_args;
 	bool m_is_const;

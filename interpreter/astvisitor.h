@@ -50,6 +50,7 @@ class TypeCreation;
 class UnaryExpr;
 class AliasStmt;
 class RegexPattern;
+class Subscript;
 
 #define AST_VISITOR(type, exprtype) void type::visit(exprtype* const expr)
 #define AST_VISITOR_DECL_VIRTUAL(type) virtual void visit(type* const expr) = 0
@@ -58,6 +59,7 @@ class RegexPattern;
 #define AST_VISITOR_DECLARATION(V) \
 	V(BinaryExpr); \
 	V(RegexPattern); \
+	V(Subscript); \
 	V(Constant); \
 	V(AliasStmt); \
 	V(UnaryExpr); \
