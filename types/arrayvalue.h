@@ -23,39 +23,23 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "compiler/symboltable.h"
+#ifndef CLEVER_ARRAYVALUE_H
+#define CLEVER_ARRAYVALUE_H
+
 #include "compiler/value.h"
 
 namespace clever {
-
-SymbolTable g_symtable;
-
-Scope::~Scope() {
-	SymbolMap::const_iterator it = m_syms.begin(), end_ = m_syms.end();
-
-	while (it != end_) {
-		Symbol* s = it->second;
-
-		if (s->isValue()) {
-			s->getValue()->delRef();
-		}
-
-		++it;
-	}
+struct ArrayValue : public DataValue
+{
+	ValueVector* m_array;
 	
-	it = m_syms.begin();
+	ArrayValue() : m_array(new ValueVector) {}
+	ArrayValue(ValueVector* array) : m_array(array) {}
 	
-	while (it != end_) {
-		Symbol* s = it->second;
-
-		if (s->isType()) {
-			const_cast<Type*>(s->getType())->delRef();
-		}
-		
-		delete s;
-		++it;
+	~ArrayValue() {
+		delete m_array;
 	}
-}
-
+};
 } // clever
 
+#endif

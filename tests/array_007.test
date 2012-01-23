@@ -1,0 +1,26 @@
+Testing variable scope
+==CODE==
+import std.io;
+
+Array< Array<Int> > mat;
+Array<Int> array;
+
+for (Int i = 0; i < 3; ++i) {
+	array.push(i);
+}
+
+for (Int i = 0; i < 3; ++i) {
+	mat.push(array);
+}
+
+for (Int i = 0; i < mat.size(); ++i) {
+	for (Int j = 0; j < mat.at(i).size(); ++j) {
+		print(mat.at(i).at(j), ' ');
+	}
+	print("\n");
+}
+
+==RESULT==
+0 1 2 
+0 1 2 
+0 1 2 

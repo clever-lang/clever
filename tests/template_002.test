@@ -1,4 +1,4 @@
-Testing when a template argument is passed for a non-template type.
+[FATAL] Testing when a template argument is passed for a non-template type.
 ==CODE==
 String<Int> arr;
 ==RESULT==

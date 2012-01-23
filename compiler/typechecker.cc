@@ -23,11 +23,103 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "interpreter/ast.h"
 #include "compiler/compiler.h"
 #include "compiler/typechecker.h"
+#include "types/nativetypes.h"
+#include "interpreter/ast.h"
 
 namespace clever { namespace ast {
+	
+const Type* clever_evaluate_type(const location& loc, const Identifier* ident)
+{
+	const Type* type = g_symtable.getType(ident->getName());
+	
+	/**
+	 * Check if the type wasn't declarated previously
+	 */
+	if (type == NULL) {
+		Compiler::errorf(loc, "`%S' does not name a type",
+			ident->getName());
+	}
+	
+	TemplateArgsVector* template_args = ident->getTemplateArgs();
+
+	if (template_args) {
+		if (type->isTemplatedType()) {
+			const TemplatedType* temp_type = (const TemplatedType*)type;
+
+			if (template_args->size() != temp_type->getNumArgs()) {
+				Compiler::errorf(loc,
+					"Wrong number of template arguments given. "
+					"`%S' requires %l arguments and %l was given.",
+					type->getName(), temp_type->getNumArgs(),
+					template_args->size()
+				);
+			}
+
+			if (temp_type->getNumArgs() == 1) {
+				const Type* arg1_type = g_symtable.getType(
+					template_args->at(0)->getName()
+				);
+				
+				if (!arg1_type->isTemplatedType()) {
+					type = temp_type->getTemplatedType(arg1_type);
+				}
+				else {
+					type = temp_type->getTemplatedType(
+						clever_evaluate_type(loc, template_args->at(0))
+					);
+				}
+			}
+			else if (temp_type->getNumArgs() == 2) {
+				const Type* arg1_type = g_symtable.getType(
+					template_args->at(0)->getName());
+
+				const Type* arg2_type = g_symtable.getType(
+					template_args->at(1)->getName());
+
+				if (arg1_type->isTemplatedType()) {
+					arg1_type = clever_evaluate_type(loc, template_args->at(0));
+				}
+				
+				if (arg2_type->isTemplatedType()) {
+					arg2_type = clever_evaluate_type(loc, template_args->at(1));
+				}
+				
+				type = temp_type->getTemplatedType(arg1_type, arg2_type);
+			}
+			else {
+				TemplateArgs vec;
+				const Type* argt;
+				
+				for (size_t i = 0; i < template_args->size(); ++i) {
+					argt = g_symtable.getType(template_args->at(i)->getName());
+					
+					if (!argt->isTemplatedType()) {
+						vec.push_back(argt);
+					}
+					else {
+						vec.push_back(clever_evaluate_type(loc, template_args->at(i)));
+					}
+				}
+
+				type = temp_type->getTemplatedType(vec);
+			}
+		}
+		else {
+			Compiler::errorf(loc,
+				"Type `%S' cannot accept template arguments!",
+				type->getName());
+		}
+	}
+	else if (type->isTemplatedType()) {
+		Compiler::errorf(loc,
+			"Missing template arguments for the type `%S'!",
+			type->getName());
+	}
+	
+	return type;
+}
 
 /**
  * Concatenates arg type names with a supplied separator character
@@ -55,9 +147,10 @@ std::string TypeChecker::serializeArgType(TypeVector& args_types, const char* se
  */
 bool TypeChecker::checkCompatibleTypes(const Value* const lhs,
 		const Value* const rhs) {
+	
 	clever_assert(lhs != NULL, "lhs cannot be NULL");
-	clever_assert(rhs != NULL, "rhs cannot be NULL");
-
+	clever_assert(rhs != NULL, "rhs cannot be NULL");		
+	
 	/**
 	 * Constants with different type cannot performs operation
 	 */
@@ -83,9 +176,10 @@ bool TypeChecker::checkCompatibleTypes(const Value* const lhs,
  */
 const Type* TypeChecker::checkExprType(const Value* const lhs,
 		const Value* const rhs) {
+	
 	clever_assert(lhs != NULL, "lhs cannot be NULL");
-	clever_assert(rhs != NULL, "rhs cannot be NULL");
-
+	clever_assert(rhs != NULL, "rhs cannot be NULL");		
+	
 	if (lhs->isPrimitive() && rhs->isPrimitive()
 		&& !lhs->isString() && !rhs->isString()) {
 
@@ -160,14 +254,11 @@ void TypeChecker::checkFunctionArgs(const Function* func, int num_args,
 AST_VISITOR(TypeChecker, BreakNode) {
 }
 
-AST_VISITOR(TypeChecker, Subscript) {
-}
-
 /**
  * Creates a vector with the current value from a Value* pointers
  */
 AST_VISITOR(TypeChecker, ArgumentList) {
-	ValueVector* values = new ValueVector;
+	ValueVector* values = new ValueVector();
 	const NodeList& nodes = expr->getNodes();
 	NodeList::const_iterator it = nodes.begin(), end = nodes.end();
 
@@ -298,7 +389,7 @@ AST_VISITOR(TypeChecker, UnaryExpr) {
 			"The type %S doesn't support such operation!",
 			var->getTypePtr()->getName());
 	}
-
+	
 	if (var->isConst() && !method->isConst()) {
 		Compiler::errorf(expr->getLocation(), "Can't use the non-const "
 			"operator `%S' because variable `%S' is const",
@@ -389,11 +480,11 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 
 	if (expr->isAssigned()) {
 		if (lhs->isConst()) {
-			Compiler::errorf(expr->getLocation(),
-				"Can't assign to variable `%S' because it is const",
+			Compiler::errorf(expr->getLocation(), "Can't assign to "
+				"variable `%S' because it is const",
 				lhs->getName());
 		}
-
+		
 		expr->setResult(lhs);
 		expr->getValue()->setTypePtr(lhs->getTypePtr());
 		lhs->addRef();
@@ -403,15 +494,8 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 }
 
 AST_VISITOR(TypeChecker, VariableDecl) {
-	const Type* type = g_symtable.getType(expr->getType()->getName());
-
-	/**
-	 * Check if the type wasn't declarated previously
-	 */
-	if (type == NULL) {
-		Compiler::errorf(expr->getLocation(), "`%S' does not name a type",
-			expr->getType()->getName());
-	}
+	const Type* type = clever_evaluate_type(expr->getLocation(), 
+		expr->getType());
 
 	Identifier* variable = expr->getVariable();
 
@@ -424,69 +508,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 			variable->getName());
 	}
 
-	Value* var = new Value;
-	TemplateArgsVector* template_args = expr->getType()->getTemplateArgs();
-
-	if (template_args) {
-		if (type->isTemplatedType()) {
-			const TemplatedType* temp_type = (const TemplatedType*)type;
-
-			if (template_args->size() != temp_type->getNumArgs()) {
-				Compiler::errorf(expr->getLocation(),
-					"Wrong number of template arguments given. "
-					"`%S' requires %l arguments and %l was given.",
-					type->getName(), temp_type->getNumArgs(),
-					template_args->size()
-				);
-			}
-
-			if (temp_type == CLEVER_ARRAY) {
-				/**
-				 * @TODO: We can use allocateValue() to avoid this hardcoded thing
-				 */
-				var->setType(Value::VECTOR);
-				var->setVector(new ValueVector);
-			}
-
-			if (temp_type->getNumArgs() == 1) {
-				const Type* arg1_type = g_symtable.getType(
-					template_args->at(0)->getName()
-				);
-
-				type = temp_type->getTemplatedType(arg1_type);
-			}
-			else if (temp_type->getNumArgs() == 2) {
-				const Type* arg1_type = g_symtable.getType(
-					template_args->at(0)->getName());
-
-				const Type* arg2_type = g_symtable.getType(
-					template_args->at(1)->getName());
-
-				type = temp_type->getTemplatedType(arg1_type,
-					arg2_type);
-			}
-			else {
-				TemplateArgs vec;
-				for (size_t i = 0; i < template_args->size(); ++i) {
-					vec.push_back(g_symtable.getType(
-						template_args->at(i)->getName()));
-				}
-
-				type = temp_type->getTemplatedType(vec);
-			}
-		}
-		else {
-			Compiler::errorf(expr->getLocation(),
-				"Type `%S' cannot accept template arguments!",
-				type->getName());
-		}
-	}
-	else if (type->isTemplatedType()) {
-		Compiler::errorf(expr->getLocation(),
-			"Missing template arguments for the type `%S'!",
-			type->getName());
-	}
-
+	Value* var = new Value();
 	variable->setValue(var);
 	/**
 	 * Registers a new variable
@@ -544,7 +566,14 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 
 		expr->setMethodValue(call);
 	}
-
+	else {
+		DataValue* data_value = type->allocateValue();
+		
+		if (data_value) {
+			var->setDataValue(data_value);
+		}
+	}
+	
 	var->setConstness(expr->isConst());
 	g_symtable.push(var->getName(), var);
 }
@@ -660,10 +689,10 @@ AST_VISITOR(TypeChecker, AssignExpr) {
 			rhs->getTypePtr()->getName(),
 			lhs->getTypePtr()->getName());
 	}
-
+	
 	if (lhs->isConst()) {
-		Compiler::errorf(expr->getLocation(),
-			"Can't assign to variable `%S' because it is const",
+		Compiler::errorf(expr->getLocation(), "Can't assign to "
+			"variable `%S' because it is const",
 			lhs->getName());
 	}
 
@@ -757,7 +786,7 @@ AST_VISITOR(TypeChecker, MethodCall) {
 		Compiler::errorf(expr->getLocation(), "No matching call for %S::%S(%S)",
 			variable->getTypePtr()->getName(), call->getName(), &args_type_name);
 	}
-
+	
 	if (variable->isConst() && !method->isConst()) {
 		std::string args_type_name = serializeArgType(args_types, ", ");
 
@@ -937,6 +966,9 @@ AST_VISITOR(TypeChecker, TypeCreation) {
 	value->addRef();
 
 	expr->setFuncValue(call);
+}
+
+AST_VISITOR(TypeChecker, Subscript) {
 }
 
 }} // clever::ast

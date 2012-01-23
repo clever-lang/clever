@@ -1,4 +1,4 @@
-Testing redefinition of name
+[FATAL] Testing redefinition of name
 ==CODE==
 import std.io;
 use println as std.io::println;
