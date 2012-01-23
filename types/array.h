@@ -63,6 +63,15 @@ public:
 
 	void init();
 	DataValue* allocateValue() const;
+	
+	void destructor(Value* value) const {
+		ValueVector* vec = value->getArray();
+		
+		size_t sz = vec->size();
+		for (size_t i = 0; i < sz; ++i) {
+			vec->at(i)->delRef();
+		}
+	}
 
 	/**
 	 * Type methods

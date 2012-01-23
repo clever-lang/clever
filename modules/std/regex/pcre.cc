@@ -62,8 +62,7 @@ void Pcre::init() {
 }
 
 void Pcre::destructor(Value* value) const {
-	PcreValue* self = CLEVER_GET_VALUE(PcreValue*, value);
-	delete self;
+	
 }
 
 DataValue* Pcre::allocateValue() const {
@@ -82,9 +81,6 @@ CLEVER_TYPE_METHOD(Pcre::constructor) {
 	} else {
 		self->re = new pcrecpp::RE(CLEVER_ARG_STR(0).c_str());
 	}
-
-	/* FIXME: memory leak on variable declaration */
-	self->setReference(1);
 
 	CLEVER_RETURN_DATA_VALUE(self);
 }

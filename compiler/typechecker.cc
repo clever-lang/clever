@@ -498,12 +498,6 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 	}
 
 	Value* var = new Value();
-	
-	DataValue* data_value = type->allocateValue();
-	if (data_value) {
-		var->setDataValue(data_value);
-	}
-	
 	variable->setValue(var);
 	/**
 	 * Registers a new variable
@@ -560,6 +554,13 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 		call->addRef();
 
 		expr->setMethodValue(call);
+	}
+	else {
+		DataValue* data_value = type->allocateValue();
+		
+		if (data_value) {
+			var->setDataValue(data_value);
+		}
 	}
 	
 	var->setConstness(expr->isConst());

@@ -26,7 +26,6 @@
 #ifndef CLEVER_ARRAYVALUE_H
 #define CLEVER_ARRAYVALUE_H
 
-#include <vector>
 #include "compiler/value.h"
 
 namespace clever {
@@ -38,10 +37,6 @@ struct ArrayValue : public DataValue
 	ArrayValue(ValueVector* array) : m_array(array) {}
 	
 	~ArrayValue() {
-		for (size_t i = 0; i < m_array->size(); ++i) {
-			delete m_array->at(i);
-		}
-		
 		delete m_array;
 	}
 };
