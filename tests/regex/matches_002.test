@@ -1,0 +1,15 @@
+Testing Pcre module assigning another pattern
+==CODE==
+import std.io;
+import std.regex;
+
+Pcre a = /f+/;
+
+println(a.matches("fffoo"));
+
+a = /a+/;
+
+println(a.matches("o"));
+==RESULT==
+true
+false
