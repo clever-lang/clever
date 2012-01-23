@@ -128,6 +128,14 @@ public:
 				(*it)->delRef();
 				++it;
 			}
+		} else if (isVector()) {
+			ValueVector::const_iterator it = m_data.v_value->begin(), end = m_data.v_value->end();
+
+			while (it != end) {
+				(*it)->delRef();
+				++it;
+			}
+			delete m_data.v_value;
 		}
 	}
 
