@@ -1,4 +1,4 @@
-Trying to instantiate Void
+[FATAL] Trying to instantiate Void
 ==CODE==
 Void a;
 ==RESULT==

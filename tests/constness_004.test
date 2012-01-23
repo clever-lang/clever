@@ -1,4 +1,4 @@
-Testing constness #4
+[FATAL] Testing constness #4
 ==CODE==
 import std.io;
 

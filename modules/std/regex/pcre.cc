@@ -62,8 +62,7 @@ void Pcre::init() {
 }
 
 void Pcre::destructor(Value* value) const {
-	PcreValue* self = CLEVER_GET_VALUE(PcreValue*, value);
-	delete self;
+	
 }
 
 DataValue* Pcre::allocateValue() const {

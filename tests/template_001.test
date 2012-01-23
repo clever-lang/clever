@@ -1,4 +1,4 @@
-Testing template types.
+[FATAL] Testing template types.
 ==CODE==
 Array arr;
 ==RESULT==

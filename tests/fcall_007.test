@@ -1,4 +1,4 @@
-Testing function declaration with Void return
+[FATAL] Testing function declaration with Void return
 ==CODE==
 import std;
 

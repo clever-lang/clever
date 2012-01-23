@@ -1,4 +1,4 @@
-Testing type creation
+[FATAL] Testing type creation
 ==CODE==
 String x = Int();
 ==RESULT==
