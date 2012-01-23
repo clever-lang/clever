@@ -1,0 +1,5 @@
+Array<Int> arr;
+arr.resize(10, 1);
+
+const Array<Int> constArr;
+constArr.resize(5, 2);

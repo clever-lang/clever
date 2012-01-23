@@ -1,0 +1,13 @@
+import std.io;
+
+Int fact(Int n) {
+    if (n == 0) {
+        return 1;
+    }
+
+    Int f = fact(n-1);
+    Int r = n * f;
+    return r;
+}
+
+println(fact(5));

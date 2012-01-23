@@ -1,0 +1,5 @@
+import std.regex;
+import std.io;
+
+println(/f+o/.matches("fo"));
+println(/f+o/.matches("bo"));

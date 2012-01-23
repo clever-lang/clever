@@ -1,0 +1,12 @@
+import std.io;
+import std.reflection;
+
+String i;
+Bool j;
+Int h;
+Double k;
+
+println(get_type(i));
+println(get_type(j));
+println(get_type(h));
+println(get_type(k));

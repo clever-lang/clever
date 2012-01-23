@@ -1,0 +1,5 @@
+import std;
+
+Void foo(Int i) { println(i); return 1+1; }
+
+foo(1);

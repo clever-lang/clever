@@ -1,0 +1,15 @@
+import std.io;
+
+Array<Int> a;
+a.push(1);
+a.push(2);
+
+Array<String> b;
+b.push('cle');
+b.push('ver');
+
+Array<Double> c;
+c.push(-1.5);
+c.push(2.7);
+
+println(a.toString(), b.toString(), c.toString());

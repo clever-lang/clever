@@ -1,0 +1,10 @@
+import std.io;
+
+Int i = 10;
+println(i++ + i++);
+println(i);
+println(i++);
+
+Int j = 20;
+
+println(i++ + j++);

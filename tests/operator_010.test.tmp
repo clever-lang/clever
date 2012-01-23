@@ -1,0 +1,10 @@
+import std.io;
+
+Int i = 1;
+
+i <<= 2;
+println(i);
+
+Int j = 100;
+j >>= 1;
+println(j);

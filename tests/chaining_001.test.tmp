@@ -1,0 +1,6 @@
+import std.io;
+
+String foo = "foobar";
+String foo2 = foo.replace("foo", "bar").substring(0,2);
+
+println(foo2);
