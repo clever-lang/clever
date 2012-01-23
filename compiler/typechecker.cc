@@ -807,18 +807,20 @@ AST_VISITOR(TypeChecker, MethodCall) {
 }
 
 AST_VISITOR(TypeChecker, ImportStmt) {
-	const CString* package = expr->getPackageName();
-	const CString* module = expr->getModuleName();
-	const CString* alias = expr->getAliasName();
-
-	/**
-	 * Importing an specific module or an entire package
-	 * e.g. import std.io;
-	 */
-	if (isInteractive() && g_symtable.getScope()->getDepth() == 1) {
-		Compiler::import(g_symtable.getScope(0), package, module, alias);
+	if (expr->isFilePath()) {
+		Compiler::importFile(expr->getFilePath(), expr->getAliasName());
 	} else {
-		Compiler::import(g_symtable.getScope(), package, module, alias);
+		Scope* scope = g_symtable.getScope();
+		/**
+		 * Importing an specific module or an entire package
+		 * e.g. import std.io;
+		 */
+		if (UNEXPECTED(isInteractive() && g_symtable.getScope()->getDepth() == 1)) {
+			scope = g_symtable.getScope(0);
+		}
+
+		Compiler::import(scope,
+			expr->getPackageName(), expr->getModuleName(), expr->getAliasName());
 	}
 }
 
