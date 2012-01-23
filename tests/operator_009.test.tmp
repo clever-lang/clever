@@ -1,4 +1,0 @@
-import std.io;
-
-println(1<<2);
-println(100>>1);

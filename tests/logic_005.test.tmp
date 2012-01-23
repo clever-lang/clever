@@ -1,6 +1,0 @@
-Int i = 10;
-String j = "foo";
-
-if (i < j) {
-	println("bug");
-}

@@ -1,7 +1,0 @@
-import std.io;
-import std.regex;
-
-Pcre reg("f.*bar");
-
-println(reg.matches("foobar"));
-println(reg.matches("foobaz"));

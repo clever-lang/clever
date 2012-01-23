@@ -1,3 +1,0 @@
-import std.io;
-
-println("foo" + "bar");

@@ -1,7 +1,0 @@
-import std.io;
-
-println("foo".replace("f", "b"));
-
-println(1.toString());
-
-println("2.3".toDouble() + 1);

@@ -1,7 +1,0 @@
-import std.io;
-
-println(1);
-
-return;
-
-println(2);
