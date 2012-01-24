@@ -1198,12 +1198,8 @@ public:
 		}
 	}
 
-	bool isFilePath() const {
+	bool hasFilePath() const {
 		return m_file != NULL;
-	}
-
-	const CString* getFilePath() const {
-		return m_file->getString();
 	}
 
 	const CString* getPackageName() {

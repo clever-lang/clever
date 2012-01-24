@@ -63,7 +63,7 @@ public:
 	/**
 	 * Sets the AST tree to be compiled into intermediate representation
 	 */
-	void setAST(ast::ASTNode* ast) { m_ast = ast; }
+	void setAST(ast::ASTNode*);
 	/**
 	 * Set interactive mode ON
 	 */
