@@ -1,0 +1,13 @@
+Testing Map<String, Int>
+==CODE==
+import std.io;
+
+Map<String, Int> map;
+map.insert("I", 1);
+map.insert("II", 2);
+map.insert("III", 3);
+map.insert("IV", 4);
+
+println(map.toString());
+==RESULT==
+\[I => 1, II => 2, III => 3, IV => 4\]

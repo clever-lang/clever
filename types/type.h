@@ -44,6 +44,7 @@ namespace clever {
 #define CLEVER_BOOL_VAR   g_bool_type_ptr
 #define CLEVER_BYTE_VAR   g_byte_type_ptr
 #define CLEVER_ARRAY_VAR  g_array_type_ptr
+#define CLEVER_MAP_VAR  g_map_type_ptr
 
 #define CLEVER_INT    ::clever::CLEVER_INT_VAR
 #define CLEVER_DOUBLE ::clever::CLEVER_DOUBLE_VAR
@@ -51,6 +52,7 @@ namespace clever {
 #define CLEVER_BOOL   ::clever::CLEVER_BOOL_VAR
 #define CLEVER_BYTE   ::clever::CLEVER_BYTE_VAR
 #define CLEVER_ARRAY  ::clever::CLEVER_ARRAY_VAR
+#define CLEVER_MAP  ::clever::CLEVER_MAP_VAR
 #define CLEVER_VOID	  NULL
 
 #define CLEVER_GET_ARRAY_TEMPLATE ((const TemplatedType*)CLEVER_ARRAY)
@@ -155,34 +157,26 @@ private:
 
 class TemplatedType : public Type {
 public:
-	explicit TemplatedType(const CString* name, size_t num_args)
-		: Type(name), m_num_args(num_args) {}
+	explicit TemplatedType(const CString* name)
+		: Type(name) {}
 
 	virtual bool isTemplatedType() const {
 		return true;
 	}
 
-	size_t getNumArgs() const {
-		return m_num_args;
-	}
-
 	const Type* getTypeArg(size_t index) const {
 		return m_type_args[index];
 	}
-
-	virtual const Type* getTemplatedType(const Type*) const {
-		return NULL;
-	};
-
-	virtual const Type* getTemplatedType(const Type*, const Type*) const {
-		return NULL;
-	};
-
-	virtual const Type* getTemplatedType(const TemplateArgs&) const {
-		return NULL;
+	
+	size_t getNumArgs() const {
+		return m_type_args.size();
 	}
+
+	virtual const std::string* checkTemplateArgs(const TemplateArgs& args) const = 0;
+	virtual const Type* getTemplatedType(const Type*) const { return NULL; };
+	virtual const Type* getTemplatedType(const Type*, const Type*) const { return NULL; };
+	virtual const Type* getTemplatedType(const TemplateArgs& args) const { return NULL; };
 private:
-	const size_t m_num_args;
 	::std::vector<const Type*> m_type_args;
 
 protected:

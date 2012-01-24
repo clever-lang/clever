@@ -23,15 +23,69 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef CLEVER_NATIVE_TYPES_H
-#define CLEVER_NATIVE_TYPES_H
+#ifndef CLEVER_MAPVALUE_H
+#define CLEVER_MAPVALUE_H
 
-#include "types/int.h"
-#include "types/double.h"
-#include "types/str.h"
-#include "types/bool.h"
-#include "types/byte.h"
-#include "types/array.h"
-#include "types/map.h"
+#include <map>
+#include "compiler/value.h"
 
-#endif // CLEVER_NATIVE_TYPES_H
+namespace clever {
+
+struct Comparator
+{
+	Comparator(const Method* method, Value* value = NULL)
+		: m_comp(method), m_value(value) {
+		
+		if (m_value) {
+			m_value->addRef();
+		}
+	}
+	
+	~Comparator() {
+		if (m_value) {
+			m_value->delRef();
+		}
+	}
+	
+	bool operator()(Value* a, Value* b) const {
+		ValueVector vv(2);
+		vv[0] = a;
+		vv[1] = b;
+
+		Value* result = new Value();
+
+		if (!m_value) {
+			m_comp->call(&vv, result, a);
+		}
+		else {
+			m_comp->call(&vv, result, m_value);
+		}
+		
+		bool ret = result->getBoolean();
+		result->delRef();
+		
+		return ret;
+	}
+	
+	private:
+		const Method* m_comp;
+		Value* m_value;
+};
+
+struct MapValue : public DataValue
+{	
+	typedef std::map<Value*, Value*, Comparator> MapInternal;
+	
+	MapInternal m_map;
+	typedef MapInternal::iterator iterator;
+	
+	MapValue(const Method* method, Value* value = NULL)
+		: m_map(Comparator(method, value)) {
+	}
+	
+	~MapValue() {}
+};
+
+} // clever
+
+#endif

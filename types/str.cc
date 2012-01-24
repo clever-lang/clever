@@ -273,26 +273,26 @@ void String::init() {
 
 	addMethod(
 		(new Method(CLEVER_OPERATOR_EQUAL, (MethodPtr)&String::equal, CLEVER_BOOL))
-			->addArg("arg1", CLEVER_INT)
-			->addArg("arg2", CLEVER_INT)
+			->addArg("arg1", CLEVER_STR)
+			->addArg("arg2", CLEVER_STR)
 	);
 
 	addMethod(
 		(new Method(CLEVER_OPERATOR_NE, (MethodPtr)&String::not_equal, CLEVER_BOOL))
-			->addArg("arg1", CLEVER_INT)
-			->addArg("arg2", CLEVER_INT)
+			->addArg("arg1", CLEVER_STR)
+			->addArg("arg2", CLEVER_STR)
 	);
 
 	addMethod(
 		(new Method(CLEVER_OPERATOR_GREATER, (MethodPtr)&String::greater, CLEVER_BOOL))
-			->addArg("arg1", CLEVER_INT)
-			->addArg("arg2", CLEVER_INT)
+			->addArg("arg1", CLEVER_STR)
+			->addArg("arg2", CLEVER_STR)
 	);
 
 	addMethod(
 		(new Method(CLEVER_OPERATOR_LESS, (MethodPtr)&String::less, CLEVER_BOOL))
-			->addArg("arg1", CLEVER_INT)
-			->addArg("arg2", CLEVER_INT)
+			->addArg("arg1", CLEVER_STR)
+			->addArg("arg2", CLEVER_STR)
 	);
 
 	addMethod(

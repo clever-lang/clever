@@ -44,6 +44,7 @@ THREAD_TLS Type* CLEVER_STR_VAR    = NULL;
 THREAD_TLS Type* CLEVER_BOOL_VAR   = NULL;
 THREAD_TLS Type* CLEVER_BYTE_VAR   = NULL;
 THREAD_TLS Type* CLEVER_ARRAY_VAR  = NULL;
+THREAD_TLS Type* CLEVER_MAP_VAR  = NULL;
 
 Compiler::Error Compiler::m_error_level = Compiler::ALL;
 std::ostream& Compiler::m_error_stream  = std::cout;
@@ -88,7 +89,10 @@ void Compiler::loadNativeTypes() {
 	CLEVER_DOUBLE = new Double;
 	CLEVER_BOOL   = new Bool;
 	CLEVER_BYTE   = new Char;
-	CLEVER_ARRAY  = new Array; // Virtual Array
+	
+	// Virtual Standard Template Types
+	CLEVER_ARRAY  = new Array;
+	CLEVER_MAP = new Map; 
 
 	/**
 	 * Registers all native types
@@ -99,6 +103,7 @@ void Compiler::loadNativeTypes() {
 	g_symtable.push(CSTRING("Bool"), CLEVER_BOOL);
 	g_symtable.push(CSTRING("Byte"), CLEVER_BYTE);
 	g_symtable.push(CSTRING("Array"), CLEVER_ARRAY);
+	g_symtable.push(CSTRING("Map"), CLEVER_MAP);
 
 	CLEVER_INT->init();
 	CLEVER_DOUBLE->init();
@@ -106,6 +111,7 @@ void Compiler::loadNativeTypes() {
 	CLEVER_BOOL->init();
 	CLEVER_BYTE->init();
 	CLEVER_ARRAY->init();
+	CLEVER_MAP->init();
 }
 
 /**

@@ -26,7 +26,9 @@
 #ifndef CLEVER_VECTOR_H
 #define CLEVER_VECTOR_H
 
+#include <sstream>
 #include "types/type.h"
+#include "compiler/clever.h"
 #include "compiler/value.h"
 
 namespace clever {
@@ -34,18 +36,33 @@ namespace clever {
 class Array : public TemplatedType {
 public:
 	Array()
-		: TemplatedType(CSTRING("Array"), 1) {
+		: TemplatedType(CSTRING("Array")) {
 		addArg(NULL);
 	}
 
 	Array(const CString* name, const Type* arg_type) :
-		TemplatedType(name, 1) {
+		TemplatedType(name) {
 			addArg(arg_type);
+	}
+	
+ 	const std::string* checkTemplateArgs(const TemplateArgs& args) const {
+		if (args.size() != 1) {
+			std::ostringstream oss;
+			sprintf(oss, "Wrong number of template arguments given. "
+				"`%S' requires 1 argument and %l was given.",
+				this->getName(), args.size()
+			);
+			
+			return new std::string(oss.str());
+		}
+	
+		return NULL;
 	}
 
 	virtual const Type* getTemplatedType(const Type* type_arg) const {
-		::std::string name = getName()->str() + "<"
+		std::string name = getName()->str() + "<"
 						   + type_arg->getName()->str() + ">";
+						
 		const CString* cname = CSTRING(name);
 		const Type* type = g_symtable.getType(cname);
 
@@ -58,6 +75,10 @@ public:
 		}
 
 		return type;
+	}
+	
+	virtual const Type* getTemplatedType(const TemplateArgs& arg) const {
+		return getTemplatedType(arg.at(0));
 	}
 
 	void init();
