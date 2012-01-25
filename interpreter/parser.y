@@ -218,6 +218,7 @@ namespace clever {
 %type <block_stmt> else_opt
 %type <break_stmt> break_stmt
 %type <import_stmt> import_stmt
+%type <block_stmt> import_file
 %type <alias_stmt> alias_stmt
 
 %%
@@ -253,6 +254,7 @@ statements:
 	|	break_stmt ';'           { $$ = $<ast_node>1; }
 	|	assign_stmt ';'          { $$ = $<ast_node>1; }
 	|	import_stmt ';'          { $$ = $<ast_node>1; }
+	|	import_file ';'          { $$ = $<ast_node>1; }
 	|	return_stmt ';'          { $$ = $<ast_node>1; }
 	|	class_declaration	     { $$ = $<ast_node>1; }
 	|	alias_stmt ';'           { $$ = $<ast_node>1; }
@@ -486,10 +488,11 @@ import_stmt:
 		IMPORT IDENT                    { $$ = new ast::ImportStmt($2);         $$->setLocation(yylloc); }
 	|	IMPORT IDENT '.' IDENT          { $$ = new ast::ImportStmt($2, $4);     $$->setLocation(yylloc); }
 	|	IMPORT IDENT '.' IDENT AS IDENT { $$ = new ast::ImportStmt($2, $4, $6); $$->setLocation(yylloc); }
-	|	IMPORT STR                      { $$ = new ast::ImportStmt($2);         $$->setLocation(yylloc);
-											compiler.importFile(driver, $2->getString(), NULL); }
-	|	IMPORT STR AS IDENT             { $$ = new ast::ImportStmt($2, $4);     $$->setLocation(yylloc);
-											compiler.importFile(driver, $2->getString(), $4->getName()); }
+;
+
+import_file:
+		IMPORT STR                      { $$ = compiler.importFile(driver, $2->getString(), NULL); delete $2; }
+	|	IMPORT STR AS IDENT             { $$ = compiler.importFile(driver, $2->getString(), $4->getName()); }
 ;
 
 alias_stmt:
