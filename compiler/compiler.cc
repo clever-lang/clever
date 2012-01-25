@@ -99,10 +99,10 @@ void Compiler::loadNativeTypes() {
 	CLEVER_DOUBLE = new Double;
 	CLEVER_BOOL   = new Bool;
 	CLEVER_BYTE   = new Char;
-	
+
 	// Virtual Standard Template Types
 	CLEVER_ARRAY  = new Array;
-	CLEVER_MAP = new Map; 
+	CLEVER_MAP = new Map;
 
 	/**
 	 * Registers all native types
