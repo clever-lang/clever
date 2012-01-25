@@ -99,10 +99,6 @@ protected:
 	bool m_trace_parsing;
 	/* The file path -f */
 	const CString* m_file;
-	/* The source */
-	std::string m_source;
-	/* The source as input -r */
-	std::string m_input;
 	/* Compiler */
 	Compiler m_compiler;
 private:

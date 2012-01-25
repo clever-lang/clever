@@ -91,7 +91,6 @@ void Driver::readFile(std::string& source) {
 int Driver::parseFile(const std::string& filename) {
 	ScannerState* new_scanner = new ScannerState;
 	Parser parser(*this, *new_scanner, m_compiler);
-	int result = 0;
 	std::string& source = new_scanner->getSource();
 
 	m_is_file = true;
@@ -106,7 +105,7 @@ int Driver::parseFile(const std::string& filename) {
 	// Bison debug option
 	parser.set_debug_level(m_trace_parsing);
 
-	result = parser.parse();
+	int result = parser.parse();
 
 	delete new_scanner;
 	s_scanners.pop();
@@ -120,27 +119,21 @@ int Driver::parseFile(const std::string& filename) {
 int Driver::parseStr(const std::string& code, bool importStd) {
 	ScannerState *new_scanner = new ScannerState;
 	Parser parser(*this, *new_scanner, m_compiler);
-	int result = 0;
+	std::string& source = new_scanner->getSource();
 
-	/* Save the source code */
 	if (importStd) {
-		m_source = std::string("import std;") + code;
-	} else {
-		m_source = code;
+		source += std::string("import std;");
 	}
-	/**
-	 * Save the -r parameter string
-	 */
-	m_input = m_source;
+	source += code;
 
 	/* Set the source code to scanner read it */
 	s_scanners.push(new_scanner);
-	s_scanners.top()->set_cursor(reinterpret_cast<const unsigned char*>(m_source.c_str()));
+	s_scanners.top()->set_cursor(reinterpret_cast<const unsigned char*>(source.c_str()));
 
 	/* Bison debug option */
 	parser.set_debug_level(m_trace_parsing);
 
-	result = parser.parse();
+	int result = parser.parse();
 
 	delete new_scanner;
 	s_scanners.pop();
