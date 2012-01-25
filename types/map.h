@@ -69,7 +69,7 @@ public:
 				std::ostringstream oss;
 				sprintf(oss, "Unable to instantiate the type Map<Key = %S, Value = %S> because"
 					" the Key type doesn't have the proper operator < defined.",
-					args.at(0)->getName(), args.at(0)->getName() 
+					args.at(0)->getName(), args.at(1)->getName() 
 				);
 				return new std::string(oss.str());
 			}

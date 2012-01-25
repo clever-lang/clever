@@ -1,0 +1,11 @@
+Testing Map<Int, String>
+==CODE==
+import std.io;
+
+Map<Int, String> map;
+map.insert(1000000000, "1 billion");
+map.insert(-1000, "minus one thousand");
+
+println(map.toString());
+==RESULT==
+\[-1000 => minus one thousand, 1000000000 => 1 billion\]

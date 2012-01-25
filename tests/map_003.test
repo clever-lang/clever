@@ -1,0 +1,10 @@
+[FATAL] Testing Map<> with a non-less than comparable key type 
+==CODE==
+import std.io;
+import std.file;
+
+Map<FileStream, String> map;
+
+println(map.toString());
+==RESULT==
+Compile error: Unable to instantiate the type Map<Key = FileStream, Value = String> because the Key type doesn't have the proper operator < defined. on line \d
