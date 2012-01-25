@@ -288,9 +288,21 @@ void String::init() {
 			->addArg("arg1", CLEVER_STR)
 			->addArg("arg2", CLEVER_STR)
 	);
+	
+	addMethod(
+		(new Method(CLEVER_OPERATOR_GE, (MethodPtr)&String::greater_equal, CLEVER_BOOL))
+			->addArg("arg1", CLEVER_STR)
+			->addArg("arg2", CLEVER_STR)
+	);
 
 	addMethod(
 		(new Method(CLEVER_OPERATOR_LESS, (MethodPtr)&String::less, CLEVER_BOOL))
+			->addArg("arg1", CLEVER_STR)
+			->addArg("arg2", CLEVER_STR)
+	);
+	
+	addMethod(
+		(new Method(CLEVER_OPERATOR_LE, (MethodPtr)&String::less_equal, CLEVER_BOOL))
 			->addArg("arg1", CLEVER_STR)
 			->addArg("arg2", CLEVER_STR)
 	);

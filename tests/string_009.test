@@ -1,0 +1,29 @@
+String basic operators
+==CODE==
+import std.io;
+
+String a = 'abc';
+String b = 'bca';
+
+println(a < b);
+println(a <= b);
+println(a != b);
+
+println(a > b);
+println(a >= b);
+println(a == b);
+
+a = 'bca';
+println(a == b);
+
+println(a + b);
+
+==RESULT==
+true
+true
+true
+false
+false
+false
+true
+bcabca
