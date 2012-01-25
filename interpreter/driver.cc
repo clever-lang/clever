@@ -66,7 +66,7 @@ void Interpreter::shutdown() {
 /**
  * Read the file defined in file property
  */
-void Driver::readFile() {
+void Driver::readFile(std::string& source) {
 	std::string line;
 	std::fstream filep(m_file->c_str());
 
@@ -74,12 +74,12 @@ void Driver::readFile() {
 		std::cerr << "Couldn't open file " << m_file->str() << std::endl;
 		exit(1);
 	}
-	m_source = "";
+	source = "";
 
 	while (!filep.eof()) {
 		getline(filep, line);
-		m_source += line;
-		m_source += '\n';
+		source += line;
+		source += '\n';
 	}
 
 	filep.close();
@@ -89,24 +89,26 @@ void Driver::readFile() {
  * Parses a file
  */
 int Driver::parseFile(const std::string& filename) {
-	ScannerState new_scanner;
-	Parser parser(*this, new_scanner, m_compiler);
+	ScannerState* new_scanner = new ScannerState;
+	Parser parser(*this, *new_scanner, m_compiler);
 	int result = 0;
+	std::string& source = new_scanner->getSource();
 
 	m_is_file = true;
-	// Save the filename
 	m_file = CSTRING(filename);
-	// Read the file
-	readFile();
-	// Set the file source to scanner read it
-	s_scanners.push(&new_scanner);
 
-	s_scanners.top()->set_cursor(reinterpret_cast<const unsigned char*>(m_source.c_str()));
+	readFile(source);
+
+	s_scanners.push(new_scanner);
+
+	s_scanners.top()->set_cursor(reinterpret_cast<const unsigned char*>(source.c_str()));
+
 	// Bison debug option
 	parser.set_debug_level(m_trace_parsing);
 
 	result = parser.parse();
 
+	delete new_scanner;
 	s_scanners.pop();
 
 	return result;
@@ -116,8 +118,8 @@ int Driver::parseFile(const std::string& filename) {
  * Parses a string
  */
 int Driver::parseStr(const std::string& code, bool importStd) {
-	ScannerState new_scanner;
-	Parser parser(*this, new_scanner, m_compiler);
+	ScannerState *new_scanner = new ScannerState;
+	Parser parser(*this, *new_scanner, m_compiler);
 	int result = 0;
 
 	/* Save the source code */
@@ -126,9 +128,13 @@ int Driver::parseStr(const std::string& code, bool importStd) {
 	} else {
 		m_source = code;
 	}
+	/**
+	 * Save the -r parameter string
+	 */
+	m_input = m_source;
 
 	/* Set the source code to scanner read it */
-	s_scanners.push(&new_scanner);
+	s_scanners.push(new_scanner);
 	s_scanners.top()->set_cursor(reinterpret_cast<const unsigned char*>(m_source.c_str()));
 
 	/* Bison debug option */
@@ -136,6 +142,7 @@ int Driver::parseStr(const std::string& code, bool importStd) {
 
 	result = parser.parse();
 
+	delete new_scanner;
 	s_scanners.pop();
 
 	return result;

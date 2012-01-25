@@ -61,7 +61,11 @@ public:
 
 	int state;
 	const unsigned char *cur, *yylex, *ctx;
+
+	std::string& getSource() {return m_source; }
 private:
+	std::string m_source;
+
 	DISALLOW_COPY_AND_ASSIGN(ScannerState);
 };
 

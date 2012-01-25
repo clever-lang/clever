@@ -75,7 +75,7 @@ public:
 	}
 
 	/* Read file to the scanner */
-	void readFile();
+	void readFile(std::string&);
 
 	/* Run the parser */
 	int parseStr(const std::string&, bool importStd);
