@@ -64,6 +64,8 @@ public:
 	 * Sets the AST tree to be compiled into intermediate representation
 	 */
 	void setAST(ast::ASTNode*);
+
+	ast::ASTNode* getAST();
 	/**
 	 * Set interactive mode ON
 	 */
@@ -119,7 +121,7 @@ public:
 	/**
 	 * Import a file
 	 */
-	static void importFile(Driver&, const CString*, const CString*);
+	ast::BlockNode* importFile(Driver&, const CString*, const CString*);
 
 	/**
 	 * Methods for formatted messages
@@ -138,6 +140,8 @@ private:
 	bool m_initialized;
 	static Error m_error_level;
 	static std::ostream& m_error_stream;
+
+	std::stack<ast::ASTNode*> m_ast_stack;
 
 	DISALLOW_COPY_AND_ASSIGN(Compiler);
 };

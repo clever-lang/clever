@@ -82,12 +82,9 @@ void Compiler::init() {
 }
 
 void Compiler::setAST(ast::ASTNode* ast) {
-	if (m_ast) {
-		ast->add(m_ast);
-		m_ast = ast;
-	} else {
-		m_ast = ast;
-	}
+	m_ast_stack.push(ast);
+
+	m_ast = ast;
 }
 
 /**
@@ -207,8 +204,18 @@ void Compiler::warningf(const char* format, ...) {
 	warning(out.str());
 }
 
-void Compiler::importFile(Driver& driver, const CString* file, const CString* alias) {
+ast::ASTNode* Compiler::getAST() {
+	ast::ASTNode* root = m_ast_stack.top();
+
+	m_ast_stack.pop();
+
+	return root;
+}
+
+ast::BlockNode* Compiler::importFile(Driver& driver, const CString* file, const CString* alias) {
 	driver.parseFile(file->str());
+
+	return static_cast<ast::BlockNode*>(getAST());
 }
 
 } // clever
