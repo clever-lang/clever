@@ -36,12 +36,13 @@ public:
 	typedef std::stack<Function*> FuncDeclStack;
 
 	TypeChecker()
-		: m_interactive(false) { }
-	~TypeChecker() { }
+		: m_interactive(false) {}
 
-	void init() { }
+	~TypeChecker() {}
 
-	void shutdown() { }
+	void init() {}
+
+	void shutdown() {}
 
 	AST_VISITOR_DECLARATION(AST_VISITOR_DECL);
 

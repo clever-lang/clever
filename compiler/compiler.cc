@@ -24,6 +24,7 @@
  */
 
 #include <cstdlib>
+#include <setjmp.h>
 #include <cstdarg>
 #include <vector>
 #include "compiler/clever.h"
@@ -47,8 +48,17 @@ THREAD_TLS Type* CLEVER_BYTE_VAR   = NULL;
 THREAD_TLS Type* CLEVER_ARRAY_VAR  = NULL;
 THREAD_TLS Type* CLEVER_MAP_VAR  = NULL;
 
+/**
+ * Set the default error level
+ */
 Compiler::Error Compiler::m_error_level = Compiler::ALL;
+
+/**
+ * Set the stream to be used on error message
+ */
 std::ostream& Compiler::m_error_stream  = std::cout;
+
+jmp_buf Compiler::failure;
 
 /**
  * Deallocs memory used by compiler data
@@ -82,6 +92,14 @@ void Compiler::init() {
 }
 
 /**
+ * Shutdown compiler on error
+ */
+void Compiler::shutdown() {
+	m_cgvisitor.shutdown();
+	m_ast->clear();
+}
+
+/**
  * Loads the class representations of native types
  */
 void Compiler::loadNativeTypes() {
@@ -93,19 +111,18 @@ void Compiler::loadNativeTypes() {
 
 	// Virtual Standard Template Types
 	CLEVER_ARRAY  = new Array;
-	CLEVER_MAP = new Map;
+	CLEVER_MAP    = new Map;
 
-	/**
-	 * Registers all native types
-	 */
-	g_symtable.push(CSTRING("Int"), CLEVER_INT);
+	// Registers all native data types
+	g_symtable.push(CSTRING("Int"),    CLEVER_INT);
 	g_symtable.push(CSTRING("Double"), CLEVER_DOUBLE);
 	g_symtable.push(CSTRING("String"), CLEVER_STR);
-	g_symtable.push(CSTRING("Bool"), CLEVER_BOOL);
-	g_symtable.push(CSTRING("Byte"), CLEVER_BYTE);
-	g_symtable.push(CSTRING("Array"), CLEVER_ARRAY);
-	g_symtable.push(CSTRING("Map"), CLEVER_MAP);
+	g_symtable.push(CSTRING("Bool"),   CLEVER_BOOL);
+	g_symtable.push(CSTRING("Byte"),   CLEVER_BYTE);
+	g_symtable.push(CSTRING("Array"),  CLEVER_ARRAY);
+	g_symtable.push(CSTRING("Map"),    CLEVER_MAP);
 
+	// Initialize native data types
 	CLEVER_INT->init();
 	CLEVER_DOUBLE->init();
 	CLEVER_STR->init();
@@ -116,16 +133,20 @@ void Compiler::loadNativeTypes() {
 }
 
 /**
- * Collects all opcode
+ * Make the visitor traverse accross the AST tree, doing the
+ * typechecking, and generating the intermediate representation.
+ * On error, Compiler::shutdown() will be called via longjmp.
  */
 void Compiler::buildIR() {
 	m_cgvisitor.init();
 
+	// Make the visitor traverse accross the AST tree
 	m_ast->acceptVisitor(m_tcvisitor);
 	m_ast->acceptVisitor(m_cgvisitor);
 
 	m_cgvisitor.shutdown();
 
+	// If used -d option in command-line, display the generated opcodes
 	if (m_cgvisitor.isOpcodeDump()) {
 		dumpOpcodes();
 	}
@@ -166,12 +187,13 @@ void Compiler::error(std::string message, const location& loc) {
 			<< loc.begin.line << "\n";
 	}
 
-	exit(1);
+	longjmp(Compiler::failure, 1);
 }
 
 void Compiler::error(std::string message) {
 	m_error_stream << "Compile error: " << message << "\n";
-	exit(1);
+
+	longjmp(Compiler::failure, 1);
 }
 
 

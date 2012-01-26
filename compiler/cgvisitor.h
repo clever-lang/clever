@@ -42,11 +42,8 @@ public:
 
 	CodeGenVisitor()
 		: m_interactive(false), m_opcode_dump(false) {
-		//g_symtable.beginScope();
 	}
-	~CodeGenVisitor() {
-		//g_symtable.endScope();
-	}
+	~CodeGenVisitor() {}
 
 	void init() {
 		m_opcodes.clear();

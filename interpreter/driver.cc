@@ -24,6 +24,7 @@
  */
 
 #include <fstream>
+#include <setjmp.h>
 #include "driver.h"
 #include "build/interpreter/parser.hh"
 #include "build/interpreter/position.hh"
@@ -44,7 +45,14 @@ void Interpreter::execute(bool interactive) {
 	if (interactive) {
 		m_compiler.setInteractive();
 	}
-	m_compiler.buildIR();
+
+	int result = setjmp(Compiler::failure);
+
+	if (result == 0) {
+		m_compiler.buildIR();
+	} else {
+		m_compiler.shutdown();
+	}
 
 	vm.setOpcodes(m_compiler.getOpcodes());
 	vm.run();

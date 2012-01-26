@@ -29,6 +29,7 @@
 #include <cstdarg>
 #include <stack>
 #include <sstream>
+#include <setjmp.h>
 #include "pkgmanager.h"
 #include "build/interpreter/location.hh"
 #include "compiler/cgvisitor.h"
@@ -60,11 +61,16 @@ public:
 	 * Initializes compiler data
 	 */
 	void init();
+
+	void shutdown();
 	/**
 	 * Sets the AST tree to be compiled into intermediate representation
 	 */
 	void setAST(ast::ASTNode* ast) { m_ast = ast; }
 
+	/**
+	 * Get the current AST tree
+	 */
 	ast::ASTNode* getAST() const { return m_ast; }
 	/**
 	 * Set interactive mode ON
@@ -132,6 +138,8 @@ public:
 	static void setErrorReporting(Error level) {
 		m_error_level = level;
 	}
+
+	static jmp_buf failure;
 private:
 	ast::ASTNode* m_ast;
 	ast::CodeGenVisitor m_cgvisitor;
