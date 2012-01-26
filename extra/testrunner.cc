@@ -171,6 +171,10 @@ void TestRunner::run(void) {
 			if (file_exists(file_name + ".log")) {
 				unlink(std::string(file_name + ".log").c_str());
 			}
+			// If the mem log file exists, then remove it.
+			if (file_exists(file_name + ".mem")) {
+				unlink(std::string(file_name + ".mem").c_str());
+			}
 		} else {
 			if ((valgrind && filesize == 0) || !valgrind) {
 				std::cout << "[FAIL] ";
@@ -242,6 +246,10 @@ void TestRunner::load_folder(const char* dir) {
 				closedir(dpr);
 				load_folder(path.c_str());
 			} else {
+				// Ignore non .test file
+				if (file.size()-5 != file.rfind(".test")) {
+					continue;
+				}
 				path = std::string(dir) + std::string(dirp->d_name);
 				files.push_back(path.c_str());
 			}
