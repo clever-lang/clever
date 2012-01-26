@@ -81,12 +81,6 @@ void Compiler::init() {
 	m_initialized = true;
 }
 
-void Compiler::setAST(ast::ASTNode* ast) {
-	m_ast_stack.push(ast);
-
-	m_ast = ast;
-}
-
 /**
  * Loads the class representations of native types
  */

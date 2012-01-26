@@ -63,7 +63,7 @@ public:
 	/**
 	 * Sets the AST tree to be compiled into intermediate representation
 	 */
-	void setAST(ast::ASTNode*);
+	void setAST(ast::ASTNode* ast) { m_ast = ast; }
 
 	ast::ASTNode* getAST() const { return m_ast; }
 	/**
@@ -140,8 +140,6 @@ private:
 	bool m_initialized;
 	static Error m_error_level;
 	static std::ostream& m_error_stream;
-
-	std::stack<ast::ASTNode*> m_ast_stack;
 
 	DISALLOW_COPY_AND_ASSIGN(Compiler);
 };
