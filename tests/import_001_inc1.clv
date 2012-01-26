@@ -1,0 +1,3 @@
+println("foo!");
+
+import 'tests/import_001_inc2.clv';

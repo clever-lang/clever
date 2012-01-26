@@ -65,7 +65,7 @@ public:
 	 */
 	void setAST(ast::ASTNode*);
 
-	ast::ASTNode* getAST();
+	ast::ASTNode* getAST() const { return m_ast; }
 	/**
 	 * Set interactive mode ON
 	 */

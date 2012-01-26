@@ -139,6 +139,17 @@ void Compiler::buildIR() {
 	m_ast->clear();
 }
 
+/**
+ * Direct the driver to parser a new file and return its AST tree
+ * to be appended to the main tree
+ */
+ast::BlockNode* Compiler::importFile(Driver& driver, const CString* file,
+	const CString* alias) {
+	driver.parseFile(file->str());
+
+	return static_cast<ast::BlockNode*>(getAST());
+}
+
 void Compiler::dumpOpcodes() {
 	const OpcodeList& opcodes = m_cgvisitor.getOpcodes();
 	size_t i = 0, size = opcodes.size();
@@ -202,20 +213,6 @@ void Compiler::warningf(const char* format, ...) {
 	va_end(args);
 
 	warning(out.str());
-}
-
-ast::ASTNode* Compiler::getAST() {
-	ast::ASTNode* root = m_ast_stack.top();
-
-	m_ast_stack.pop();
-
-	return root;
-}
-
-ast::BlockNode* Compiler::importFile(Driver& driver, const CString* file, const CString* alias) {
-	driver.parseFile(file->str());
-
-	return static_cast<ast::BlockNode*>(getAST());
 }
 
 } // clever

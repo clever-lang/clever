@@ -1,0 +1,18 @@
+Testing file import
+==CODE==
+import std.io;
+
+println("bar?");
+
+import "tests/import_001_inc1.clv";
+
+println("cool");
+
+import "tests/import_001_inc1.clv";
+==RESULT==
+bar\?
+foo!
+bar!
+cool
+foo!
+bar!
