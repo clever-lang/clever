@@ -24,8 +24,6 @@
  */
 
 #include <cstdlib>
-#include <setjmp.h>
-#include <cstdarg>
 #include <vector>
 #include "compiler/clever.h"
 #include "compiler/compiler.h"

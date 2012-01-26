@@ -70,12 +70,12 @@ public:
 	}
 
 	/* Returns the parsed file */
-	CString* getFile() {
+	CString* getFile() const {
 		return const_cast<CString*>(m_file);
 	}
 
 	/* Read file to the scanner */
-	void readFile(std::string&);
+	void readFile(std::string&) const;
 
 	/* Run the parser */
 	int parseStr(const std::string&, bool importStd);
@@ -119,7 +119,7 @@ public:
 	void execute(bool interactive, bool opcode_dump);
 #endif
 	void execute(bool interactive);
-	void shutdown();
+	void shutdown() {}
 private:
 	DISALLOW_COPY_AND_ASSIGN(Interpreter);
 };

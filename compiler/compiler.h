@@ -26,12 +26,9 @@
 #ifndef CLEVER_COMPILER_H
 #define CLEVER_COMPILER_H
 
-#include <cstdarg>
-#include <stack>
 #include <sstream>
 #include <setjmp.h>
-#include "pkgmanager.h"
-#include "build/interpreter/location.hh"
+#include "compiler/pkgmanager.h"
 #include "compiler/cgvisitor.h"
 #include "compiler/typechecker.h"
 
@@ -41,6 +38,7 @@ class ASTNode;
 
 namespace clever {
 
+class location;
 class Driver;
 
 class Compiler {

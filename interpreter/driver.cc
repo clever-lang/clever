@@ -67,14 +67,10 @@ void Interpreter::execute(bool interactive, bool dump_opcode) {
 }
 #endif
 
-void Interpreter::shutdown() {
-
-}
-
 /**
  * Read the file defined in file property
  */
-void Driver::readFile(std::string& source) {
+void Driver::readFile(std::string& source) const {
 	std::string line;
 	std::fstream filep(m_file->c_str());
 

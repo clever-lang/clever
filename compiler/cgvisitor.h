@@ -26,7 +26,7 @@
 #ifndef CLEVER_CGVISITOR_H
 #define CLEVER_CGVISITOR_H
 
-#include "compiler/symboltable.h"
+#include <stack>
 #include "vm/opcode.h"
 #include "interpreter/astvisitor.h"
 
@@ -41,8 +41,8 @@ public:
 	typedef std::stack<OpcodeStack> JmpStack;
 
 	CodeGenVisitor()
-		: m_interactive(false), m_opcode_dump(false) {
-	}
+		: m_interactive(false), m_opcode_dump(false) {}
+
 	~CodeGenVisitor() {}
 
 	void init() {
@@ -50,7 +50,7 @@ public:
 		m_opcodes.reserve(10);
 	}
 
-	void shutdown() { }
+	void shutdown() {}
 
 	/**
 	 * Set the interactive mode
@@ -59,7 +59,7 @@ public:
 	/**
 	 * Returns the interactive mode state
 	 */
-	bool isInteractive() { return m_interactive; }
+	bool isInteractive() const { return m_interactive; }
 	/**
 	 * Set the opcode dumper
 	 */
@@ -67,7 +67,7 @@ public:
 	/**
 	 * Returns the opcode dump state
 	 */
-	bool isOpcodeDump() { return m_opcode_dump; }
+	bool isOpcodeDump() const { return m_opcode_dump; }
 	/**
 	 * Returns the opcode list
 	 */

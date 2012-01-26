@@ -23,6 +23,7 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#include <iostream>
 #include <fstream>
 #include <errno.h>
 #include <fcntl.h>

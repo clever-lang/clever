@@ -23,6 +23,7 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#include <iostream>
 #include <cstdlib>
 #include "compiler/compiler.h"
 #include "opcode.h"
@@ -121,7 +122,6 @@ void VM::restore_args() {
  */
 void VM::error(const char* message) {
 	std::cerr << "Runtime error: " << message << std::endl;
-	exit(1);
 }
 
 /**

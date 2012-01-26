@@ -26,8 +26,12 @@
 #ifndef CLEVER_TYPECHECKER_H
 #define CLEVER_TYPECHECKER_H
 
+#include <stack>
 #include "interpreter/astvisitor.h"
-#include "compiler/value.h"
+
+namespace clever {
+class location;
+}
 
 namespace clever { namespace ast {
 
