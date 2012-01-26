@@ -31,7 +31,8 @@
 
 namespace clever { namespace ast {
 
-const Type* clever_evaluate_type(const location& loc, const Identifier* ident)
+static const Type* clever_evaluate_type(const location& loc,
+	const Identifier* ident)
 {
 	const Type* type = g_symtable.getType(ident->getName());
 
@@ -48,12 +49,17 @@ const Type* clever_evaluate_type(const location& loc, const Identifier* ident)
 	if (template_args) {
 		if (type->isTemplatedType()) {
 			const TemplatedType* temp_type = (const TemplatedType*)type;
-			
+
 			TemplateArgs vec;
 			const Type* argt;
-			
+
 			for (size_t i = 0; i < template_args->size(); ++i) {
 				argt = g_symtable.getType(template_args->at(i)->getName());
+
+				if (argt == NULL) {
+					Compiler::errorf(loc, "`%S' does not name a type",
+						template_args->at(i)->getName());
+				}
 
 				if (!argt->isTemplatedType()) {
 					vec.push_back(argt);
@@ -62,13 +68,13 @@ const Type* clever_evaluate_type(const location& loc, const Identifier* ident)
 					vec.push_back(clever_evaluate_type(loc, template_args->at(i)));
 				}
 			}
-			
+
 			const std::string* error = temp_type->checkTemplateArgs(vec);
 			if (error) {
 				Compiler::errorf(loc, error->c_str());
 				delete error;
 			}
-			
+
 			type = temp_type->getTemplatedType(vec);
 		}
 		else {
@@ -89,7 +95,7 @@ const Type* clever_evaluate_type(const location& loc, const Identifier* ident)
 /**
  * Concatenates arg type names with a supplied separator character
  */
-std::string TypeChecker::serializeArgType(TypeVector& args_types, const char* sep) {
+static std::string serializeArgType(TypeVector& args_types, const char* sep) {
 	if (args_types.size() == 0) {
 		return std::string("void");
 	}
@@ -110,7 +116,7 @@ std::string TypeChecker::serializeArgType(TypeVector& args_types, const char* se
 /**
  * Performs a type compatible checking
  */
-bool TypeChecker::checkCompatibleTypes(const Value* const lhs,
+static bool checkCompatibleTypes(const Value* const lhs,
 		const Value* const rhs) {
 
 	clever_assert(lhs != NULL, "lhs cannot be NULL");
@@ -137,44 +143,10 @@ bool TypeChecker::checkCompatibleTypes(const Value* const lhs,
 }
 
 /**
- * Returns the type resulting of a binary expression of two compatible types
- */
-const Type* TypeChecker::checkExprType(const Value* const lhs,
-		const Value* const rhs) {
-
-	clever_assert(lhs != NULL, "lhs cannot be NULL");
-	clever_assert(rhs != NULL, "rhs cannot be NULL");
-
-	if (lhs->isPrimitive() && rhs->isPrimitive()
-		&& !lhs->isString() && !rhs->isString()) {
-
-		if (lhs->getTypePtr() == CLEVER_DOUBLE
-			|| rhs->getTypePtr() == CLEVER_DOUBLE) {
-			return CLEVER_DOUBLE;
-		}
-
-		if (lhs->getTypePtr() == CLEVER_INT
-			|| rhs->getTypePtr() == CLEVER_INT) {
-			return CLEVER_INT;
-		}
-
-		return CLEVER_BOOL;
-	}
-
-	if (lhs->getTypePtr() == CLEVER_STR
-		&& rhs->getTypePtr() == CLEVER_STR) {
-		return CLEVER_STR;
-	}
-
-	/* TODO: check for non-primitive types */
-	return lhs->getTypePtr();
-}
-
-/**
  * Checks the function return type
  */
-void TypeChecker::checkFunctionReturn(const Function* func, const Value* value,
-		const Type* rtype, const location& loc) {
+static void checkFunctionReturn(const Function* func,
+	const Value* value, const Type* rtype, const location& loc) {
 	/**
 	 * When the rtype is NULL, the return is expected to be Void
 	 * When value is NULL, the return statement is empty
@@ -196,7 +168,7 @@ void TypeChecker::checkFunctionReturn(const Function* func, const Value* value,
 /**
  * Checks the number of arguments supplied to the function on call
  */
-void TypeChecker::checkFunctionArgs(const Function* func, int num_args,
+static void checkFunctionArgs(const Function* func, int num_args,
 		const location& loc) {
 	int n_required_args = func->getNumArgs();
 	int n_min_args = func->getMinNumArgs();
@@ -714,7 +686,7 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 		arg_values->addRef();
 		expr->setArgsValue(arg_values);
 	}
-
+	expr->getValue()->addRef();
 	expr->setFuncValue(static_cast<CallableValue*>(fvalue));
 	fvalue->addRef();
 }

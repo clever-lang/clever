@@ -59,27 +59,6 @@ public:
 	 * Returns the interactive mode state
 	 */
 	bool isInteractive() { return m_interactive; }
-
-	/**
-	 * Checks if the supplied value pointers are compatibles
-	 */
-	static bool checkCompatibleTypes(const Value* const, const Value* const);
-
-	/**
-	 * Returns the type resulting of a binary expression of two compatible types
-	 */
-	static const Type* checkExprType(const Value* const, const Value* const);
-
-	static int checkFunctionArgs(Function*, int, const location&);
-
-	static void checkFunctionArgs(const Function*, int, const location&);
-
-	static void checkFunctionReturn(const Function*, const Value*, const Type*, const location&);
-
-	/**
-	 * Returns the arg type names concatenated
-	 */
-	static std::string serializeArgType(TypeVector&, const char*);
 private:
 	bool m_interactive;
 	FuncDeclStack m_funcs;

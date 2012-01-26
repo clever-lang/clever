@@ -95,6 +95,8 @@ void Compiler::init() {
 void Compiler::shutdown() {
 	m_cgvisitor.shutdown();
 	m_ast->clear();
+
+	g_symtable.endScope();
 }
 
 /**
@@ -176,7 +178,7 @@ void Compiler::dumpOpcodes() {
 /**
  * Displays an error message
  */
-void Compiler::error(std::string message, const location& loc) {
+void Compiler::error(const std::string& message, const location& loc) {
 	if (loc.begin.filename) {
 		m_error_stream << "Compile error: " << message << " on "
 			<< *loc.begin.filename << " line " << loc.begin.line << "\n";
@@ -184,31 +186,43 @@ void Compiler::error(std::string message, const location& loc) {
 		m_error_stream << "Compile error: " << message << " on line "
 			<< loc.begin.line << "\n";
 	}
-
-	longjmp(Compiler::failure, 1);
 }
 
-void Compiler::error(std::string message) {
+/**
+ * Displays an error message and abort the compilation
+ */
+void Compiler::error(const std::string& message) {
 	m_error_stream << "Compile error: " << message << "\n";
 
+	// Abort the compilation
 	longjmp(Compiler::failure, 1);
 }
 
-
+/**
+ * Displays a formatted error message and abort the compilation
+ */
 void Compiler::errorf(const location& loc, const char* format, ...) {
-	std::ostringstream out;
+	std::ostringstream* out = new std::ostringstream;
 	va_list args;
 
 	va_start(args, format);
 
-	vsprintf(out, format, args);
+	vsprintf(*out, format, args);
 
 	va_end(args);
 
-	error(out.str(), loc);
+	error(out->str(), loc);
+
+	delete out;
+
+	// Abort the compilation
+	longjmp(Compiler::failure, 1);
 }
 
-void Compiler::warning(std::string message) {
+/**
+ * Displays an warning message
+ */
+void Compiler::warning(const std::string& message) {
 	if (!(m_error_level & Compiler::WARNING)) {
 		return;
 	}
@@ -216,6 +230,9 @@ void Compiler::warning(std::string message) {
 	m_error_stream << "Warning: " << message << "\n";
 }
 
+/**
+ * Displays a formatted warning message
+ */
 void Compiler::warningf(const char* format, ...) {
 	std::ostringstream out;
 	va_list args;

@@ -1001,6 +1001,7 @@ public:
 
 	~FunctionCall() {
 		m_name->delRef();
+		m_result->delRef();
 		if (m_args) {
 			m_args->delRef();
 		}

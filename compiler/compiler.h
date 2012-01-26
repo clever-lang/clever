@@ -98,13 +98,13 @@ public:
 	/**
 	 * Displays an error message and exits
 	 */
-	static void error(std::string) CLEVER_NO_RETURN;
-	static void error(std::string, const location&) CLEVER_NO_RETURN;
+	static void error(const std::string&) CLEVER_NO_RETURN;
+	static void error(const std::string&, const location&);
 
 	/**
 	 * Displays an warning message
 	 */
-	static void warning(std::string);
+	static void warning(const std::string&);
 
 	/**
 	 * Import a package
