@@ -848,13 +848,14 @@ AST_VISITOR(TypeChecker, ReturnStmt) {
 	}
 }
 
+/**
+ * Type creation visitor
+ */
 AST_VISITOR(TypeChecker, TypeCreation) {
 	Identifier* ident = expr->getIdentifier();
 	const Type* type = g_symtable.getType(ident->getName());
 
-	/**
-	 * Check if the type wasn't declarated previously
-	 */
+	// Check if the type wasn't declarated previously
 	if (type == NULL) {
 		Compiler::errorf(expr->getLocation(), "`%S' does not name a type",
 			ident->getName());
@@ -864,9 +865,44 @@ AST_VISITOR(TypeChecker, TypeCreation) {
 		CSTRING(CLEVER_CTOR_NAME), expr, NULL);
 }
 
+/**
+ * Subscript operator visitor
+ */
 AST_VISITOR(TypeChecker, Subscript) {
+	Identifier* ident = expr->getIdentifier();
+
+	clever_assert_null(ident);
+
+	Value* var = g_symtable.getValue(ident->getName());
+
+	if (var == NULL) {
+		Compiler::errorf(expr->getLocation(), "Variable `%S' not found!",
+			ident->getName());
+	}
+
+	Value* expr_val = expr->getExpr()->getValue();
+
+	clever_assert_null(expr_val);
+
+	ValueVector* arg_values = new ValueVector;
+	arg_values->push_back(expr_val);
+	expr_val->addRef();
+
+	Value* args = new Value;
+	args->setType(Value::VECTOR);
+	args->setVector(arg_values);
+
+	expr->setArgsValue(args);
+
+	_make_method_call(var->getTypePtr(), var, CSTRING(CLEVER_OPERATOR_AT),
+		expr, args);
+
+	expr->getCallValue()->addRef();
 }
 
+/**
+ * Class declaration visitor
+ */
 AST_VISITOR(TypeChecker, ClassDeclaration) {
 	Compiler::error("Not implemented yet!");
 }

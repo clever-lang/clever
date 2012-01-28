@@ -323,27 +323,6 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(Identifier);
 };
 
-class Subscript : public ASTNode {
-public:
-	Subscript(Identifier* ident, ASTNode* expr)
-		: m_ident(ident), m_expr(expr) {
-		m_ident->addRef();
-		m_expr->addRef();
-	}
-
-	~Subscript() {
-		m_ident->delRef();
-		m_expr->delRef();
-	}
-
-	void acceptVisitor(ASTVisitor& visitor) {
-		visitor.visit(this);
-	}
-private:
-	Identifier* m_ident;
-	ASTNode* m_expr;
-};
-
 class Constant : public ASTNode {
 public:
 	Constant(Identifier* ident)
@@ -710,6 +689,46 @@ protected:
 	Value* m_args_value;
 private:
 	DISALLOW_COPY_AND_ASSIGN(CallExpr);
+};
+
+class Subscript : public CallExpr {
+public:
+	Subscript(Identifier* ident, ASTNode* expr)
+		: CallExpr(NULL), m_ident(ident), m_expr(expr) {
+		m_ident->addRef();
+		m_expr->addRef();
+		m_result = new Value;
+	}
+
+	~Subscript() {
+		m_ident->delRef();
+		m_expr->delRef();
+	}
+
+	Identifier* getIdentifier() const {
+		return m_ident;
+	}
+
+	ASTNode* getExpr() const {
+		return m_expr;
+	}
+
+	Value* getValue() const {
+		return m_result;
+	}
+
+	void acceptVisitor(ASTVisitor& visitor) {
+		m_ident->acceptVisitor(visitor);
+		m_expr->acceptVisitor(visitor);
+
+		visitor.visit(this);
+	}
+private:
+	Identifier* m_ident;
+	ASTNode* m_expr;
+	Value* m_result;
+
+	DISALLOW_COPY_AND_ASSIGN(Subscript);
 };
 
 class VariableDecl : public CallExpr {

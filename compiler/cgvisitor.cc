@@ -52,7 +52,12 @@ AST_VISITOR(CodeGenVisitor, ArgumentList) {
 	}
 }
 
+/**
+ * Genearates opcode for the subscript operator
+ */
 AST_VISITOR(CodeGenVisitor, Subscript) {
+	emit(OP_AT, &VM::mcall_handler,
+		expr->getCallValue(), expr->getArgsValue(), expr->getValue());
 }
 
 /**

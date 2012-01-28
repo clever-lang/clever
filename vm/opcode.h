@@ -67,7 +67,8 @@ enum Opcodes {
 	OP_NE,
 	OP_LSHIFT,
 	OP_RSHIFT,
-	OP_ASSIGN
+	OP_ASSIGN,
+	OP_AT
 };
 
 /**

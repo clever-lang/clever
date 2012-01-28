@@ -66,6 +66,7 @@ namespace clever {
 #define CLEVER_OPERATOR_MULT    "__mult__"
 #define CLEVER_OPERATOR_MOD     "__mod__"
 #define CLEVER_OPERATOR_ASSIGN  "__assign__"
+#define CLEVER_OPERATOR_AT      "__at__"
 
 /**
  * Bitwise operator method names
@@ -167,7 +168,7 @@ public:
 	const Type* getTypeArg(size_t index) const {
 		return m_type_args[index];
 	}
-	
+
 	size_t getNumArgs() const {
 		return m_type_args.size();
 	}

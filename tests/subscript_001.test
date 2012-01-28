@@ -1,0 +1,11 @@
+Testing subscript operator
+==CODE==
+import std.io;
+
+Array<Int> a;
+
+a.push(123);
+
+println(a[0]);
+==RESULT==
+123

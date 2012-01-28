@@ -82,6 +82,7 @@ const char* Opcode::getOpName(Opcodes op) const {
 		CASE(OP_LSHIFT);
 		CASE(OP_RSHIFT);
 		CASE(OP_ASSIGN);
+		CASE(OP_AT);
 		default:
 			return "UNKNOWN";
 	}

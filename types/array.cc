@@ -256,6 +256,10 @@ void Array::init() {
 		->addArg("index", CLEVER_INT)
 	);
 
+	addMethod((new Method(CLEVER_OPERATOR_AT, (MethodPtr)&Array::at, CLEVER_TPL_ARG(0)))
+		->addArg("index", CLEVER_INT)
+	);
+
 	addMethod((new Method("set", (MethodPtr)&Array::set, CLEVER_VOID, false))
 		->addArg("index", CLEVER_INT)
 		->addArg("element", CLEVER_TPL_ARG(0))
