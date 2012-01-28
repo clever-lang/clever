@@ -191,7 +191,10 @@ static void checkFunctionArgs(const Function* func, int num_args,
 	}
 }
 
-static void clever_make_method_call(const Type* type, Value* var,
+/**
+ * Prepares the node to generate an opcode which will make a method call
+ */
+static void _make_method_call(const Type* type, Value* var,
 	const CString* mname, CallExpr* expr, Value* arg_values) {
 
 	clever_assert_null(var);
@@ -338,7 +341,7 @@ AST_VISITOR(TypeChecker, RegexPattern) {
 	expr->setArgsValue(arg_values);
 
 	// The Pcre constructor CallableValue
-	clever_make_method_call(type, expr->getValue(), CSTRING(CLEVER_CTOR_NAME),
+	_make_method_call(type, expr->getValue(), CSTRING(CLEVER_CTOR_NAME),
 		expr, arg_values);
 
 	expr->getCallValue()->addRef();
@@ -380,7 +383,7 @@ AST_VISITOR(TypeChecker, UnaryExpr) {
 
 	clever_assert_null(method_name);
 
-	clever_make_method_call(var->getTypePtr(), var, method_name, expr, NULL);
+	_make_method_call(var->getTypePtr(), var, method_name, expr, NULL);
 
 	expr->getCallValue()->addRef();
 }
@@ -518,7 +521,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 
 		expr->setArgsValue(args);
 
-		clever_make_method_call(type, var, CSTRING(CLEVER_OPERATOR_ASSIGN),
+		_make_method_call(type, var, CSTRING(CLEVER_OPERATOR_ASSIGN),
 			expr, args);
 
 		expr->getCallValue()->addRef();
@@ -730,7 +733,7 @@ AST_VISITOR(TypeChecker, MethodCall) {
 	clever_assert_null(variable);
 	clever_assert_null(name);
 
-	clever_make_method_call(variable->getTypePtr(), variable,
+	_make_method_call(variable->getTypePtr(), variable,
 		name, expr, NULL);
 }
 
@@ -857,7 +860,7 @@ AST_VISITOR(TypeChecker, TypeCreation) {
 			ident->getName());
 	}
 
-	clever_make_method_call(type, expr->getValue(),
+	_make_method_call(type, expr->getValue(),
 		CSTRING(CLEVER_CTOR_NAME), expr, NULL);
 }
 
