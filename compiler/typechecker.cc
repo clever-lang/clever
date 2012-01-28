@@ -658,8 +658,8 @@ AST_VISITOR(TypeChecker, AssignExpr) {
 	}
 
 	if (lhs->isConst()) {
-		Compiler::errorf(expr->getLocation(), "Can't assign to "
-			"variable `%S' because it is const",
+		Compiler::errorf(expr->getLocation(),
+			"Can't assign to variable `%S' because it is const",
 			lhs->getName());
 	}
 
@@ -683,6 +683,9 @@ AST_VISITOR(TypeChecker, AssignExpr) {
 	call->addRef();
 }
 
+/**
+ * Function call visitor
+ */
 AST_VISITOR(TypeChecker, FunctionCall) {
 	const CString* const name = expr->getFuncName();
 
@@ -702,9 +705,7 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 
 	checkFunctionArgs(func, num_args, expr->getLocation());
 
-	/**
-	 * Set the return type
-	 */
+	// Set the return type
 	expr->getValue()->setTypePtr(func->getReturnType());
 
 	if (num_args) {
@@ -737,30 +738,34 @@ AST_VISITOR(TypeChecker, MethodCall) {
 		name, expr, NULL);
 }
 
+/**
+ * Import statement visitor
+ */
 AST_VISITOR(TypeChecker, ImportStmt) {
-	/**
-	 * For import with file path we do not handle in the visitor
-	 */
+	// For import with file path we do not handle in the visitor
 	if (expr->hasFilePath()) {
 		return;
 	}
 
 	Scope* scope = g_symtable.getScope();
+
+	if (UNEXPECTED(isInteractive() && g_symtable.getScope()->getDepth() == 1)) {
+		scope = g_symtable.getScope(0);
+	}
+
 	/**
 	 * Importing an specific module or an entire package
 	 * e.g. import std.io;
 	 */
-	if (UNEXPECTED(isInteractive() && g_symtable.getScope()->getDepth() == 1)) {
-		scope = g_symtable.getScope(0);
-	}
 	Compiler::import(scope,
 		expr->getPackageName(), expr->getModuleName(), expr->getAliasName());
 }
 
+/**
+ * Function declaration visitor
+ */
 AST_VISITOR(TypeChecker, FuncDeclaration) {
-	/**
-	 * We can't have a function declaration without a block
-	 */
+	// We can't have a function declaration without a block
 	if (!expr->hasBlock()) {
 		Compiler::error("Cannot declare a function without a block",
 			expr->getLocation());
@@ -836,10 +841,11 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 	}
 }
 
+/**
+ * Return statement visitor
+ */
 AST_VISITOR(TypeChecker, ReturnStmt) {
-	/**
-	 * Only for return statement inside function declaration
-	 */
+	// Only for return statement inside function declaration
 	if (!m_funcs.empty()) {
 		const Function* func = m_funcs.top();
 
