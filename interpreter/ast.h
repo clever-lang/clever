@@ -369,45 +369,6 @@ private:
 	Value* m_value;
 };
 
-class RegexPattern : public ASTNode {
-public:
-	RegexPattern(Value* regex)
-		: m_regex(regex) {
-		m_value = new Value;
-	}
-
-	~RegexPattern() {
-		if (m_method) {
-			m_method->delRef();
-		}
-		if (m_regex) {
-			m_regex->delRef();
-		}
-		if (m_args_value) {
-			m_args_value->delRef();
-		}
-	}
-
-	Value* getRegex() const { return m_regex; }
-
-	void acceptVisitor(ASTVisitor& visitor) {
-		visitor.visit(this);
-	}
-
-	void setMethodValue(CallableValue* method) { m_method = method; }
-	CallableValue* getMethodValue() const { return m_method; }
-
-	Value* getValue() const { return m_value; }
-
-	void setArgsValue(Value* args) { m_args_value = args; }
-	Value* getArgsValue() const { return m_args_value; }
-private:
-	Value* m_regex;
-	Value* m_value;
-	Value* m_args_value;
-	CallableValue* m_method;
-};
-
 class UnaryExpr : public ASTNode {
 public:
 	UnaryExpr(int op, ASTNode* expr)
@@ -895,6 +856,32 @@ protected:
 	Value* m_args_value;
 private:
 	DISALLOW_COPY_AND_ASSIGN(CallExpr);
+};
+
+class RegexPattern : public CallExpr {
+public:
+	RegexPattern(Value* regex)
+		: CallExpr(NULL), m_regex(regex) {
+		m_regex->addRef();
+		m_value = new Value;
+	}
+
+	~RegexPattern() {
+		if (m_regex) {
+			m_regex->delRef();
+		}
+	}
+
+	Value* getRegex() const { return m_regex; }
+
+	Value* getValue() const { return m_value; }
+
+	void acceptVisitor(ASTVisitor& visitor) {
+		visitor.visit(this);
+	}
+private:
+	Value* m_regex;
+	Value* m_value;
 };
 
 class TypeCreation : public CallExpr {

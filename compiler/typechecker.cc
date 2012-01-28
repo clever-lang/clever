@@ -192,22 +192,24 @@ static void checkFunctionArgs(const Function* func, int num_args,
 }
 
 static void clever_make_method_call(const Type* type, Value* var,
-	const CString* mname, CallExpr* expr) {
+	const CString* mname, CallExpr* expr, Value* arg_values) {
 
 	clever_assert_null(var);
 
 	ArgumentList* args = expr->getArgs();
 	TypeVector args_types;
-	Value* arg_values = NULL;
 
-	// Building the ValueVector of arguments
-	if (args) {
-		arg_values = new Value;
-		arg_values->setType(Value::VECTOR);
-		arg_values->setVector(args->getArgValue());
-		expr->setArgsValue(arg_values);
+	if (arg_values != NULL || args != NULL) {
+		// Building the ValueVector of arguments
 
-		ValueVector* vv = args->getArgValue();
+		if (arg_values == NULL) {
+			arg_values = new Value;
+			arg_values->setType(Value::VECTOR);
+			arg_values->setVector(args->getArgValue());
+			expr->setArgsValue(arg_values);
+		}
+
+		ValueVector* vv = args ? args->getArgValue() : arg_values->getVector();
 
 		for (size_t i = 0; i < vv->size(); ++i) {
 			args_types.push_back(vv->at(i)->getTypePtr());
@@ -313,8 +315,6 @@ AST_VISITOR(TypeChecker, RegexPattern) {
 		Compiler::error("Regex module must be loaded to use the regex syntax!");
 	}
 
-	expr->getRegex()->addRef();
-
 	/**
 	 * Sets the argument vector for the Pcre constructor
 	 */
@@ -323,35 +323,16 @@ AST_VISITOR(TypeChecker, RegexPattern) {
 
 	Value* arg_values = new Value;
 	arg_values->setVector(vec);
-	arg_values->addRef();
 
 	expr->setArgsValue(arg_values);
 
 	/**
-	 * Finds the Pcre constructor method
-	 */
-	TypeVector args_types;
-	args_types.push_back(CLEVER_STR);
-
-	const CString* method_name = CSTRING(CLEVER_CTOR_NAME);
-	const Method* ctor = type->getMethod(method_name, &args_types);
-	clever_assert(ctor != NULL, "Pcre's constructor method not found!");
-
-	Value* value = expr->getValue();
-	value->setTypePtr(type);
-
-	/**
 	 * The Pcre constructor CallableValue
 	 */
-	CallableValue* mvalue = new CallableValue(method_name);
-	mvalue->setTypePtr(type);
-	mvalue->setHandler(ctor);
-	mvalue->setContext(value);
-	mvalue->addRef();
+	clever_make_method_call(type, expr->getValue(), CSTRING(CLEVER_CTOR_NAME),
+		expr, arg_values);
 
-	value->addRef();
-
-	expr->setMethodValue(mvalue);
+	expr->getCallValue()->addRef();
 }
 
 AST_VISITOR(TypeChecker, Identifier) {
@@ -768,7 +749,7 @@ AST_VISITOR(TypeChecker, MethodCall) {
 	clever_assert_null(name);
 
 	clever_make_method_call(variable->getTypePtr(), variable,
-		name, expr);
+		name, expr, NULL);
 }
 
 AST_VISITOR(TypeChecker, ImportStmt) {
@@ -895,7 +876,7 @@ AST_VISITOR(TypeChecker, TypeCreation) {
 	}
 
 	clever_make_method_call(type, expr->getValue(),
-		CSTRING(CLEVER_CTOR_NAME), expr);
+		CSTRING(CLEVER_CTOR_NAME), expr, NULL);
 }
 
 AST_VISITOR(TypeChecker, Subscript) {

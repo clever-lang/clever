@@ -60,7 +60,7 @@ AST_VISITOR(CodeGenVisitor, Subscript) {
  */
 AST_VISITOR(CodeGenVisitor, RegexPattern) {
 	emit(OP_REGEX, &VM::mcall_handler,
-		expr->getMethodValue(), expr->getArgsValue(), expr->getValue());
+		expr->getCallValue(), expr->getArgsValue(), expr->getValue());
 }
 
 /**
