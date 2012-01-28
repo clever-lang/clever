@@ -188,6 +188,67 @@ static void checkFunctionArgs(const Function* func, int num_args,
 	}
 }
 
+static void clever_make_method_call(const Type* type, Value* var,
+	const CString* mname, CallExpr* expr) {
+
+	clever_assert(var != NULL, "var cannot be NULL!");
+
+	ArgumentList* args = expr->getArgs();
+	TypeVector args_types;
+	Value* arg_values = NULL;
+
+	// Building the ValueVector of arguments
+	if (args) {
+		arg_values = new Value;
+		arg_values->setType(Value::VECTOR);
+		arg_values->setVector(args->getArgValue());
+		expr->setArgsValue(arg_values);
+
+		ValueVector* vv = args->getArgValue();
+
+		for (size_t i = 0; i < vv->size(); ++i) {
+			args_types.push_back(vv->at(i)->getTypePtr());
+		}
+	}
+
+	const Method* method = type->getMethod(mname, &args_types);
+
+	if (UNEXPECTED(method == NULL)) {
+		std::string args_type_name = serializeArgType(args_types, ", ");
+
+		if (mname == CSTRING(CLEVER_CTOR_NAME)) {
+			Compiler::errorf(expr->getLocation(),
+				"No matching call for constructor %S::%S(%S)",
+				type->getName(), type->getName(), &args_type_name);
+		} else {
+			std::string args_type_name = serializeArgType(args_types, ", ");
+
+			Compiler::errorf(expr->getLocation(), "No matching call for %S::%S(%S)",
+				var->getTypePtr()->getName(), mname, &args_type_name);
+		}
+	}
+	var->setTypePtr(type);
+
+	if (var->isConst() && !method->isConst()) {
+		std::string args_type_name = serializeArgType(args_types, ", ");
+
+		Compiler::errorf(expr->getLocation(), "Can't call the non-const "
+			"method %S::%S(%S) because variable `%S' is const",
+			var->getTypePtr()->getName(), mname, &args_type_name,
+			var->getName());
+	}
+
+	CallableValue* call = new CallableValue(mname, type);
+	call->setHandler(method);
+	call->setContext(var);
+	var->addRef();
+
+	expr->setCallValue(call);
+
+	// Set the return type as the declared in the method
+	expr->getValue()->setTypePtr(method->getReturnType());
+}
+
 AST_VISITOR(TypeChecker, BreakNode) {
 }
 
@@ -694,53 +755,9 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 AST_VISITOR(TypeChecker, MethodCall) {
 	Value* variable = expr->getVariable()->getValue();
 	const CString* const name = expr->getMethodName();
-	CallableValue* call = new CallableValue(name);
-	ArgumentList* args = expr->getArgs();
-	TypeVector args_types;
 
-	if (args) {
-		expr->getArgs()->acceptVisitor(*this);
-
-		Value* arg_values = new Value;
-
-		arg_values->setType(Value::VECTOR);
-		arg_values->setVector(args->getArgValue());
-		arg_values->addRef();
-		expr->setArgsValue(arg_values);
-
-		ValueVector* vv = args->getArgValue();
-
-		for (size_t i = 0; i < vv->size(); ++i) {
-			args_types.push_back(vv->at(i)->getTypePtr());
-		}
-	}
-
-	const Method* method = variable->getTypePtr()->getMethod(name, &args_types);
-
-	if (method == NULL) {
-		std::string args_type_name = serializeArgType(args_types, ", ");
-
-		Compiler::errorf(expr->getLocation(), "No matching call for %S::%S(%S)",
-			variable->getTypePtr()->getName(), call->getName(), &args_type_name);
-	}
-
-	if (variable->isConst() && !method->isConst()) {
-		std::string args_type_name = serializeArgType(args_types, ", ");
-
-		Compiler::errorf(expr->getLocation(), "Can't call the non-const "
-			"method %S::%S(%S) because variable `%S' is const",
-			variable->getTypePtr()->getName(), call->getName(), &args_type_name,
-			variable->getName());
-	}
-
-	call->setTypePtr(variable->getTypePtr());
-	call->setHandler(method);
-	call->setContext(variable);
-	variable->addRef();
-
-	expr->getValue()->setTypePtr(method->getReturnType());
-
-	expr->setFuncValue(static_cast<CallableValue*>(call));
+	clever_make_method_call(variable->getTypePtr(), variable,
+		name, expr);
 }
 
 AST_VISITOR(TypeChecker, ImportStmt) {
@@ -854,10 +871,6 @@ AST_VISITOR(TypeChecker, ReturnStmt) {
 	}
 }
 
-AST_VISITOR(TypeChecker, ClassDeclaration) {
-	Compiler::error("Not implemented yet!");
-}
-
 AST_VISITOR(TypeChecker, TypeCreation) {
 	Identifier* ident = expr->getIdentifier();
 	const Type* type = g_symtable.getType(ident->getName());
@@ -870,44 +883,15 @@ AST_VISITOR(TypeChecker, TypeCreation) {
 			ident->getName());
 	}
 
-	ArgumentList* args = expr->getArgs();
-	TypeVector args_types;
-	Value* arg_values = NULL;
-
-	if (args) {
-		arg_values = new Value;
-		arg_values->setType(Value::VECTOR);
-		arg_values->setVector(args->getArgValue());
-		expr->setArgsValue(arg_values);
-
-		ValueVector* vv = args->getArgValue();
-
-		for (size_t i = 0; i < vv->size(); ++i) {
-			args_types.push_back(vv->at(i)->getTypePtr());
-		}
-	}
-
-	const Method* ctor = type->getMethod(CSTRING(CLEVER_CTOR_NAME), &args_types);
-
-	if (ctor == NULL) {
-		std::string args_type_name = serializeArgType(args_types, ", ");
-
-		Compiler::errorf(expr->getLocation(), "No matching call for constructor %S::%S(%S)",
-			type->getName(), type->getName(), &args_type_name);
-	}
-
-	Value* value = expr->getValue();
-	value->setTypePtr(type);
-
-	CallableValue* call = new CallableValue(CSTRING(CLEVER_CTOR_NAME), type);
-	call->setHandler(ctor);
-	call->setContext(value);
-	value->addRef();
-
-	expr->setFuncValue(call);
+	clever_make_method_call(type, expr->getValue(),
+		CSTRING(CLEVER_CTOR_NAME), expr);
 }
 
 AST_VISITOR(TypeChecker, Subscript) {
+}
+
+AST_VISITOR(TypeChecker, ClassDeclaration) {
+	Compiler::error("Not implemented yet!");
 }
 
 }} // clever::ast

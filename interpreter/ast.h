@@ -849,47 +849,36 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(ArgumentDeclList);
 };
 
-class TypeCreation : public ASTNode {
+/**
+ * Callable expression representation
+ */
+class NO_INIT_VTABLE CallExpr : public ASTNode {
 public:
-	TypeCreation(Identifier* type, ArgumentList* arguments)
-		: m_type(type), m_arguments(arguments), m_call_value(NULL), m_args_value(NULL) {
-		m_type->addRef();
-		if (m_arguments) {
-			m_arguments->addRef();
+	CallExpr(ArgumentList* args)
+		: m_args(args), m_call_value(NULL), m_args_value(NULL) {
+		if (m_args) {
+			m_args->addRef();
 		}
-		m_value = new Value();
 	}
 
-	~TypeCreation() {
-		m_type->delRef();
-		if (m_arguments) {
-			m_arguments->delRef();
+	virtual ~CallExpr() {
+		if (m_args) {
+			m_args->delRef();
 		}
 		if (m_call_value) {
 			m_call_value->delRef();
 		}
 	}
 
-	Identifier* getIdentifier() {
-		return m_type;
-	}
-
 	ArgumentList* getArgs() {
-		return m_arguments;
+		return m_args;
 	}
 
-	void acceptVisitor(ASTVisitor& visitor) {
-		if (m_arguments) {
-			m_arguments->acceptVisitor(visitor);
-		}
-		visitor.visit(this);
-	}
-
-	void setFuncValue(CallableValue* callable) {
+	void setCallValue(CallableValue* callable) {
 		m_call_value = callable;
 	}
 
-	CallableValue* getFuncValue() {
+	CallableValue* getCallValue() const {
 		return m_call_value;
 	}
 
@@ -897,19 +886,47 @@ public:
 		m_args_value = args_value;
 	}
 
-	Value* getArgsValue() {
+	Value* getArgsValue() const {
 		return m_args_value;
+	}
+protected:
+	ArgumentList* m_args;
+	CallableValue* m_call_value;
+	Value* m_args_value;
+private:
+	DISALLOW_COPY_AND_ASSIGN(CallExpr);
+};
+
+class TypeCreation : public CallExpr {
+public:
+	TypeCreation(Identifier* type, ArgumentList* arguments)
+		: CallExpr(arguments), m_type(type) {
+		m_type->addRef();
+		m_value = new Value();
+	}
+
+	~TypeCreation() {
+		m_type->delRef();
+	}
+
+	Identifier* getIdentifier() {
+		return m_type;
 	}
 
 	Value* getValue() const {
 		return m_value;
 	}
+
+	void acceptVisitor(ASTVisitor& visitor) {
+		ArgumentList* args = getArgs();
+		if (args) {
+			args->acceptVisitor(visitor);
+		}
+		visitor.visit(this);
+	}
 private:
 	Identifier* m_type;
-	ArgumentList* m_arguments;
 	Value* m_value;
-	CallableValue* m_call_value;
-	Value* m_args_value;
 
 	DISALLOW_COPY_AND_ASSIGN(TypeCreation);
 };
@@ -1048,65 +1065,40 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(FunctionCall);
 };
 
-class MethodCall : public ASTNode {
+class MethodCall : public CallExpr {
 public:
 	MethodCall(ASTNode* var, Identifier* method, ArgumentList* args)
-		: m_var(var), m_method(method), m_args(args), m_value(NULL), m_args_value(NULL) {
+		: CallExpr(args), m_var(var), m_method(method) {
 		m_var->addRef();
 		m_method->addRef();
-		if (m_args) {
-			m_args->addRef();
-		}
 		m_result = new CallableValue;
 	}
 
 	~MethodCall() {
 		m_var->delRef();
 		m_method->delRef();
-		if (m_args) {
-			m_args->delRef();
-		}
-		if (m_value) {
-			m_value->delRef();
-		}
-		if (m_args_value) {
-			m_args_value->delRef();
-		}
 	}
 
 	ASTNode* getVariable() const { return m_var; }
 	const CString* getMethodName() const { return m_method->getName(); }
-	ArgumentList* getArgs() const { return m_args; }
 
 	Value* getValue() const { return m_result; }
 
-	void setFuncValue(CallableValue* value) {
-		m_value = value;
-	}
-
-	CallableValue* getFuncValue() {
-		return m_value;
-	}
-
 	void acceptVisitor(ASTVisitor& visitor) {
+		ArgumentList* args = getArgs();
+
 		m_var->acceptVisitor(visitor);
+
+		if (args) {
+			args->acceptVisitor(visitor);
+		}
+
 		visitor.visit(this);
-	}
-
-	void setArgsValue(Value* value) {
-		m_args_value = value;
-	}
-
-	Value* getArgsValue() {
-		return m_args_value;
 	}
 private:
 	ASTNode* m_var;
 	Identifier* m_method;
-	ArgumentList* m_args;
 	Value* m_result;
-	CallableValue* m_value;
-	Value* m_args_value;
 
 	DISALLOW_COPY_AND_ASSIGN(MethodCall);
 };

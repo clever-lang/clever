@@ -393,12 +393,8 @@ AST_VISITOR(CodeGenVisitor, FunctionCall) {
  * Generates opcode for method call
  */
 AST_VISITOR(CodeGenVisitor, MethodCall) {
-	CallableValue* call = expr->getFuncValue();
+	CallableValue* call = expr->getCallValue();
 	Value* arg_values = expr->getArgsValue();
-
-	if (arg_values) {
-		expr->getArgs()->acceptVisitor(*this);
-	}
 
 	call->addRef();
 
@@ -460,7 +456,7 @@ AST_VISITOR(CodeGenVisitor, ClassDeclaration) {
 }
 
 AST_VISITOR(CodeGenVisitor, TypeCreation) {
-	CallableValue* call = expr->getFuncValue();
+	CallableValue* call = expr->getCallValue();
 	Value* arg_values = expr->getArgsValue();
 
 	call->addRef();
