@@ -869,17 +869,7 @@ AST_VISITOR(TypeChecker, TypeCreation) {
  * Subscript operator visitor
  */
 AST_VISITOR(TypeChecker, Subscript) {
-	Identifier* ident = expr->getIdentifier();
-
-	clever_assert_null(ident);
-
-	Value* var = g_symtable.getValue(ident->getName());
-
-	if (var == NULL) {
-		Compiler::errorf(expr->getLocation(), "Variable `%S' not found!",
-			ident->getName());
-	}
-
+	Value* var = expr->getIdentifier()->getValue();
 	Value* expr_val = expr->getExpr()->getValue();
 
 	clever_assert_null(expr_val);
