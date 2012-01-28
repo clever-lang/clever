@@ -251,7 +251,11 @@ static void clever_make_method_call(const Type* type, Value* var,
 	expr->setCallValue(call);
 
 	// Set the return type as the declared in the method
-	expr->getValue()->setTypePtr(method->getReturnType());
+	Value* result = expr->getValue();
+
+	if (result) {
+		result->setTypePtr(method->getReturnType());
+	}
 }
 
 AST_VISITOR(TypeChecker, BreakNode) {
@@ -455,6 +459,9 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 	}
 }
 
+/**
+ * Variable declaration representation
+ */
 AST_VISITOR(TypeChecker, VariableDecl) {
 	const Type* type = clever_evaluate_type(expr->getLocation(),
 		expr->getType());
@@ -472,9 +479,6 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 
 	Value* var = new Value();
 	variable->setValue(var);
-	/**
-	 * Registers a new variable
-	 */
 	var->setName(variable->getName());
 	var->setTypePtr(type);
 	var->addRef();
@@ -490,25 +494,10 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 				initval->getTypePtr()->getName(),
 				type->getName());
 		}
-
+		initval->addRef();
 		expr->setInitialValue(initval);
 
-		initval->addRef();
-
-		TypeVector arg_types;
-		arg_types.push_back(initval->getTypePtr());
-
-		const CString* method_name = CSTRING(CLEVER_OPERATOR_ASSIGN);
-		const Method* method = var->getTypePtr()->getMethod(method_name,
-			&arg_types);
-
-		if (method == NULL) {
-			Compiler::errorf(expr->getLocation(),
-				"Method __assign__ not found in %S for assignment with %S",
-				var->getTypePtr()->getName(),
-				initval->getTypePtr()->getName());
-		}
-
+		// Building ValueVector of arguments for __assign__ method call
 		ValueVector* arg_values = new ValueVector;
 		arg_values->push_back(initval);
 		initval->addRef();
@@ -517,18 +506,13 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 		args->setType(Value::VECTOR);
 		args->setVector(arg_values);
 
-		expr->setMethodArgs(args);
+		expr->setArgsValue(args);
 
-		CallableValue* call = new CallableValue(method_name);
-		call->setContext(var);
-		call->setHandler(method);
-		call->setTypePtr(var->getTypePtr());
-		var->addRef();
-		call->addRef();
+		clever_make_method_call(type, var, CSTRING(CLEVER_OPERATOR_ASSIGN),
+			expr, args);
 
-		expr->setMethodValue(call);
-	}
-	else {
+		expr->getCallValue()->addRef();
+	} else {
 		DataValue* data_value = type->allocateValue();
 
 		if (data_value) {
@@ -537,6 +521,8 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 	}
 
 	var->setConstness(expr->isConst());
+
+	// Registers a new variable
 	g_symtable.push(var->getName(), var);
 }
 

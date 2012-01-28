@@ -369,104 +369,6 @@ private:
 	Value* m_value;
 };
 
-class VariableDecl : public ASTNode {
-public:
-	VariableDecl(Identifier* type, Identifier* variable)
-		: m_type(type), m_variable(variable), m_rhs(NULL), m_initval(NULL),
-		m_method(NULL), m_args(NULL), m_const_value(false) {
-		m_type->addRef();
-		m_variable->addRef();
-	}
-
-	VariableDecl(Identifier* type, Identifier* variable, ASTNode* rhs)
-		: m_type(type), m_variable(variable), m_rhs(rhs), m_initval(NULL),
-			m_method(NULL), m_args(NULL), m_const_value(false) {
-		m_type->addRef();
-		m_variable->addRef();
-		m_rhs->addRef();
-	}
-
-	virtual ~VariableDecl() {
-		m_type->delRef();
-		m_variable->delRef();
-		if (m_rhs) {
-			m_rhs->delRef();
-		}
-		if (m_initval) {
-			m_initval->delRef();
-		}
-		if (m_method) {
-			m_method->delRef();
-		}
-	}
-
-	Identifier* getVariable() const {
-		return m_variable;
-	}
-
-	Value* getInitialValue() const {
-		return m_initval;
-	}
-
-	ASTNode* getRhs() {
-		return m_rhs;
-	}
-
-	void setInitialValue(Value* value) {
-		m_initval = value;
-	}
-
-	Identifier* getType() const {
-		return m_type;
-	}
-
-	void setMethodValue(CallableValue* method) { m_method = method; }
-	CallableValue* getMethodValue() const { return m_method; }
-
-	void setMethodArgs(Value* args) { m_args = args; }
-	Value* getMethodArgs() const { return m_args; }
-
-	void acceptVisitor(ASTVisitor& visitor) {
-		if (m_rhs) {
-			m_rhs->acceptVisitor(visitor);
-		}
-		visitor.visit(this);
-	}
-
-	void setConstness(bool constness) {
-		m_const_value = constness;
-	}
-
-	bool isConst() const {
-		return m_const_value;
-	}
-private:
-	Identifier* m_type;
-	Identifier* m_variable;
-	ASTNode* m_rhs;
-	Value* m_initval;
-	CallableValue* m_method;
-	Value* m_args;
-	bool m_const_value;
-
-	DISALLOW_COPY_AND_ASSIGN(VariableDecl);
-};
-
-class AttributeDeclaration : public VariableDecl {
-public:
-	AttributeDeclaration(ASTNode* modifier, Identifier* type, Identifier* variable)
-		: VariableDecl(type, variable), m_modifier(modifier) {
-		m_modifier->addRef();
-	}
-
-	~AttributeDeclaration() {
-		m_modifier->delRef();
-	}
-private:
-	ASTNode* m_modifier;
-	DISALLOW_COPY_AND_ASSIGN(AttributeDeclaration);
-};
-
 class StringLiteral : public Literal {
 public:
 	explicit StringLiteral(const CString* name) {
@@ -808,6 +710,93 @@ protected:
 	Value* m_args_value;
 private:
 	DISALLOW_COPY_AND_ASSIGN(CallExpr);
+};
+
+class VariableDecl : public CallExpr {
+public:
+	VariableDecl(Identifier* type, Identifier* variable)
+		: CallExpr(NULL), m_type(type), m_variable(variable), m_rhs(NULL),
+			m_initval(NULL), m_const_value(false) {
+		m_type->addRef();
+		m_variable->addRef();
+	}
+
+	VariableDecl(Identifier* type, Identifier* variable, ASTNode* rhs)
+		: CallExpr(NULL), m_type(type), m_variable(variable), m_rhs(rhs),
+			m_initval(NULL), m_const_value(false) {
+		m_type->addRef();
+		m_variable->addRef();
+		m_rhs->addRef();
+	}
+
+	virtual ~VariableDecl() {
+		m_type->delRef();
+		m_variable->delRef();
+		if (m_rhs) {
+			m_rhs->delRef();
+		}
+		if (m_initval) {
+			m_initval->delRef();
+		}
+	}
+
+	Identifier* getVariable() const {
+		return m_variable;
+	}
+
+	Value* getInitialValue() const {
+		return m_initval;
+	}
+
+	ASTNode* getRhs() {
+		return m_rhs;
+	}
+
+	void setInitialValue(Value* value) {
+		m_initval = value;
+	}
+
+	Identifier* getType() const {
+		return m_type;
+	}
+
+	void acceptVisitor(ASTVisitor& visitor) {
+		if (m_rhs) {
+			m_rhs->acceptVisitor(visitor);
+		}
+		visitor.visit(this);
+	}
+
+	void setConstness(bool constness) {
+		m_const_value = constness;
+	}
+
+	bool isConst() const {
+		return m_const_value;
+	}
+private:
+	Identifier* m_type;
+	Identifier* m_variable;
+	ASTNode* m_rhs;
+	Value* m_initval;
+	bool m_const_value;
+
+	DISALLOW_COPY_AND_ASSIGN(VariableDecl);
+};
+
+class AttributeDeclaration : public VariableDecl {
+public:
+	AttributeDeclaration(ASTNode* modifier, Identifier* type, Identifier* variable)
+		: VariableDecl(type, variable), m_modifier(modifier) {
+		m_modifier->addRef();
+	}
+
+	~AttributeDeclaration() {
+		m_modifier->delRef();
+	}
+private:
+	ASTNode* m_modifier;
+	DISALLOW_COPY_AND_ASSIGN(AttributeDeclaration);
 };
 
 class UnaryExpr : public CallExpr {
