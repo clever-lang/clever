@@ -3,4 +3,4 @@
 Double x = 1;
 ~x;
 ==RESULT==
-Compile error: The type Double doesn't support such operation! on \S+ line \d+
+Compile error: No matching call for Double::__bw_not__\(void\) on \S+ line \d+

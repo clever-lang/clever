@@ -369,54 +369,6 @@ private:
 	Value* m_value;
 };
 
-class UnaryExpr : public ASTNode {
-public:
-	UnaryExpr(int op, ASTNode* expr)
-		: m_op(op), m_expr(expr), m_method(NULL) {
-		m_expr->addRef();
-		m_result = new Value;
-	}
-
-	~UnaryExpr() {
-		m_expr->delRef();
-		if (m_method) {
-			m_method->delRef();
-		}
-	}
-
-	int getOp() const {
-		return m_op;
-	}
-
-	void setValue(Value* value) {
-		m_result = value;
-	}
-
-	Value* getValue() const {
-		return m_result;
-	}
-
-	ASTNode* getExpr() const {
-		return m_expr;
-	}
-
-	void setMethod(Value* method) { m_method = method; }
-	Value* getMethod() { return m_method; }
-
-	virtual void acceptVisitor(ASTVisitor& visitor) {
-		m_expr->acceptVisitor(visitor);
-
-		visitor.visit(this);
-	}
-private:
-	int m_op;
-	ASTNode* m_expr;
-	Value* m_result;
-	Value* m_method;
-
-	DISALLOW_COPY_AND_ASSIGN(UnaryExpr);
-};
-
 class VariableDecl : public ASTNode {
 public:
 	VariableDecl(Identifier* type, Identifier* variable)
@@ -856,6 +808,47 @@ protected:
 	Value* m_args_value;
 private:
 	DISALLOW_COPY_AND_ASSIGN(CallExpr);
+};
+
+class UnaryExpr : public CallExpr {
+public:
+	UnaryExpr(int op, ASTNode* expr)
+		: CallExpr(NULL), m_op(op), m_expr(expr) {
+		m_expr->addRef();
+		m_result = new Value;
+	}
+
+	~UnaryExpr() {
+		m_expr->delRef();
+	}
+
+	int getOp() const {
+		return m_op;
+	}
+
+	void setValue(Value* value) {
+		m_result = value;
+	}
+
+	Value* getValue() const {
+		return m_result;
+	}
+
+	ASTNode* getExpr() const {
+		return m_expr;
+	}
+
+	virtual void acceptVisitor(ASTVisitor& visitor) {
+		m_expr->acceptVisitor(visitor);
+
+		visitor.visit(this);
+	}
+private:
+	int m_op;
+	ASTNode* m_expr;
+	Value* m_result;
+
+	DISALLOW_COPY_AND_ASSIGN(UnaryExpr);
 };
 
 class RegexPattern : public CallExpr {

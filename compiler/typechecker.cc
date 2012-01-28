@@ -352,7 +352,6 @@ AST_VISITOR(TypeChecker, Identifier) {
 
 AST_VISITOR(TypeChecker, UnaryExpr) {
 	Value* var = expr->getExpr()->getValue();
-	const Method* method = NULL;
 	const CString* method_name = NULL;
 
 	switch (expr->getOp()) {
@@ -364,30 +363,11 @@ AST_VISITOR(TypeChecker, UnaryExpr) {
 		case ast::POS_DEC: method_name = CSTRING(CLEVER_OPERATOR_POS_DEC); break;
 	}
 
-	method = var->getTypePtr()->getMethod(method_name, NULL);
+	clever_assert_null(method_name);
 
-	if (method == NULL) {
-		Compiler::errorf(expr->getLocation(),
-			"The type %S doesn't support such operation!",
-			var->getTypePtr()->getName());
-	}
+	clever_make_method_call(var->getTypePtr(), var, method_name, expr, NULL);
 
-	if (var->isConst() && !method->isConst()) {
-		Compiler::errorf(expr->getLocation(), "Can't use the non-const "
-			"operator `%S' because variable `%S' is const",
-			method_name, var->getName());
-	}
-
-	CallableValue* call = new CallableValue(method_name);
-	call->setTypePtr(var->getTypePtr());
-	call->setHandler(method);
-	call->setContext(var);
-	var->addRef();
-
-	expr->setMethod(call);
-	call->addRef();
-
-	expr->getValue()->setTypePtr(var->getTypePtr());
+	expr->getCallValue()->addRef();
 }
 
 AST_VISITOR(TypeChecker, BinaryExpr) {

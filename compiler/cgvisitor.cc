@@ -80,7 +80,7 @@ AST_VISITOR(CodeGenVisitor, UnaryExpr) {
 			Compiler::error("Unknown op type!");
 			break;
 	}
-	emit(opcode, &VM::mcall_handler, expr->getMethod(), NULL, expr->getValue());
+	emit(opcode, &VM::mcall_handler, expr->getCallValue(), NULL, expr->getValue());
 }
 
 /**

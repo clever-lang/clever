@@ -11,4 +11,4 @@ i++;
 
 println(i);
 ==RESULT==
-Compile error: Can't use the non-const operator `__pos_inc__' because variable `i' is const on \S+ line 8
+Compile error: Can't call the non-const method Int::__pos_inc__\(void\) because variable `i' is const on \S+ line 8

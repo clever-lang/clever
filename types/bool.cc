@@ -109,11 +109,11 @@ CLEVER_METHOD(Bool::bw_not) {
 
 void Bool::init() {
 	addMethod(
-		new Method(CLEVER_OPERATOR_NOT, (MethodPtr)&Bool::logical_not, CLEVER_INT)
+		new Method(CLEVER_OPERATOR_NOT, (MethodPtr)&Bool::logical_not, CLEVER_BOOL)
 	);
 
 	addMethod(
-		new Method(CLEVER_OPERATOR_BW_NOT, (MethodPtr)&Bool::bw_not, CLEVER_INT)
+		new Method(CLEVER_OPERATOR_BW_NOT, (MethodPtr)&Bool::bw_not, CLEVER_BOOL)
 	);
 
 	addMethod(new Method("toString", (MethodPtr)&Bool::toString, CLEVER_STR));
