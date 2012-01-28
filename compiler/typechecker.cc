@@ -100,7 +100,7 @@ static std::string serializeArgType(TypeVector& args_types, const char* sep) {
 		return std::string("void");
 	}
 
-	clever_assert(args_types[0] != NULL, "args_types[0] cannot be NULL!");
+	clever_assert_null(args_types[0]);
 
 	std::string args_type_name = args_types[0]->getName()->str();
 	const std::string separator = std::string(sep);
@@ -119,8 +119,8 @@ static std::string serializeArgType(TypeVector& args_types, const char* sep) {
 static bool checkCompatibleTypes(const Value* const lhs,
 		const Value* const rhs) {
 
-	clever_assert(lhs != NULL, "lhs cannot be NULL");
-	clever_assert(rhs != NULL, "rhs cannot be NULL");
+	clever_assert_null(lhs);
+	clever_assert_null(rhs);
 
 	/**
 	 * Constants with different type cannot performs operation
@@ -170,6 +170,9 @@ static void checkFunctionReturn(const Function* func,
  */
 static void checkFunctionArgs(const Function* func, int num_args,
 		const location& loc) {
+
+	clever_assert_null(func);
+
 	int n_required_args = func->getNumArgs();
 	int n_min_args = func->getMinNumArgs();
 	bool is_variadic = func->isVariadic();
@@ -191,7 +194,7 @@ static void checkFunctionArgs(const Function* func, int num_args,
 static void clever_make_method_call(const Type* type, Value* var,
 	const CString* mname, CallExpr* expr) {
 
-	clever_assert(var != NULL, "var cannot be NULL!");
+	clever_assert_null(var);
 
 	ArgumentList* args = expr->getArgs();
 	TypeVector args_types;
@@ -716,6 +719,9 @@ AST_VISITOR(TypeChecker, AssignExpr) {
 
 AST_VISITOR(TypeChecker, FunctionCall) {
 	const CString* const name = expr->getFuncName();
+
+	clever_assert_null(name);
+
 	Value* fvalue = g_symtable.getValue(name);
 
 	if (fvalue == NULL) {
@@ -725,6 +731,8 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 
 	const Function* func = static_cast<CallableValue*>(fvalue)->getFunction();
 	size_t num_args = expr->getArgs() ? expr->getArgs()->getNodes().size() : 0;
+
+	clever_assert_null(func);
 
 	checkFunctionArgs(func, num_args, expr->getLocation());
 
@@ -755,6 +763,9 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 AST_VISITOR(TypeChecker, MethodCall) {
 	Value* variable = expr->getVariable()->getValue();
 	const CString* const name = expr->getMethodName();
+
+	clever_assert_null(variable);
+	clever_assert_null(name);
 
 	clever_make_method_call(variable->getTypePtr(), variable,
 		name, expr);

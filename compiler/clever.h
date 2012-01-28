@@ -136,7 +136,7 @@ namespace clever {
 #ifdef __GNUC__
 # define CLEVER_NO_RETURN __attribute__((noreturn))
 #else
-# define CLEVER_NO_RETURN 
+# define CLEVER_NO_RETURN
 #endif
 
 /**
@@ -187,12 +187,17 @@ namespace clever {
  */
 
 #ifdef CLEVER_DEBUG
-#define clever_assert(Hypothesis, Format ...) \
-	clever::clever_assert_(__FILE__, __LINE__, #Hypothesis, (Hypothesis), Format)
+#define clever_assert(hypothesis, format ...) \
+	clever::clever_assert_(__FILE__, __LINE__, #hypothesis, (hypothesis), format)
+
+#define clever_assert_null(hypothesis) \
+	clever::clever_assert_(__FILE__, __LINE__, #hypothesis, (hypothesis) != NULL, #hypothesis " cannot be NULL")
+
 void clever_assert_(const char* file, long line, const char* expr,
 		int hypothesis, const char* format, ...);
 #else
-#define clever_assert(Hypothesis, Format, ...)
+#define clever_assert(hypothesis, format, ...)
+#define clever_assert_null(hypothesis)
 #endif
 
 void clever_fatal(const char* format, ...) CLEVER_NO_RETURN;
