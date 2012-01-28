@@ -284,6 +284,9 @@ AST_VISITOR(TypeChecker, ArgumentList) {
 	expr->setArgValue(values);
 }
 
+/**
+ * Alias visitor
+ */
 AST_VISITOR(TypeChecker, AliasStmt) {
 	Value* fvalue = g_symtable.getValue(expr->getCurrentName());
 
@@ -301,6 +304,9 @@ AST_VISITOR(TypeChecker, AliasStmt) {
 	fvalue->addRef();
 }
 
+/**
+ * Constant visitor
+ */
 AST_VISITOR(TypeChecker, Constant) {
 	Value* constant = g_symtable.getValue(expr->getName());
 
@@ -312,6 +318,9 @@ AST_VISITOR(TypeChecker, Constant) {
 	expr->getValue()->copy(constant);
 }
 
+/**
+ * Regex pattern syntax visitor
+ */
 AST_VISITOR(TypeChecker, RegexPattern) {
 	const Type* type = CLEVER_TYPE("Pcre");
 
@@ -319,9 +328,7 @@ AST_VISITOR(TypeChecker, RegexPattern) {
 		Compiler::error("Regex module must be loaded to use the regex syntax!");
 	}
 
-	/**
-	 * Sets the argument vector for the Pcre constructor
-	 */
+	// Sets the argument vector for the Pcre constructor
 	ValueVector* vec = new ValueVector;
 	vec->push_back(expr->getRegex());
 
@@ -330,15 +337,16 @@ AST_VISITOR(TypeChecker, RegexPattern) {
 
 	expr->setArgsValue(arg_values);
 
-	/**
-	 * The Pcre constructor CallableValue
-	 */
+	// The Pcre constructor CallableValue
 	clever_make_method_call(type, expr->getValue(), CSTRING(CLEVER_CTOR_NAME),
 		expr, arg_values);
 
 	expr->getCallValue()->addRef();
 }
 
+/**
+ * Identifier visitor
+ */
 AST_VISITOR(TypeChecker, Identifier) {
 	Value* ident = g_symtable.getValue(expr->getName());
 
@@ -354,6 +362,9 @@ AST_VISITOR(TypeChecker, Identifier) {
 	ident->addRef();
 }
 
+/**
+ * Unary expression visitor
+ */
 AST_VISITOR(TypeChecker, UnaryExpr) {
 	Value* var = expr->getExpr()->getValue();
 	const CString* method_name = NULL;
@@ -374,6 +385,9 @@ AST_VISITOR(TypeChecker, UnaryExpr) {
 	expr->getCallValue()->addRef();
 }
 
+/**
+ * Binary expression visitor
+ */
 AST_VISITOR(TypeChecker, BinaryExpr) {
 	const Method* method = NULL;
 	const CString* method_name = NULL;
@@ -384,9 +398,7 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 	Value* lhs = expr->getLhs()->getValue();
 	Value* rhs = expr->getRhs()->getValue();
 
-	/**
-	 * Operator method names
-	 */
+	// Operator method names
 	switch (expr->getOp()) {
 		case PLUS:          method_name = CSTRING(CLEVER_OPERATOR_PLUS);    break;
 		case DIV:           method_name = CSTRING(CLEVER_OPERATOR_DIV);     break;
@@ -446,8 +458,8 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 
 	if (expr->isAssigned()) {
 		if (lhs->isConst()) {
-			Compiler::errorf(expr->getLocation(), "Can't assign to "
-				"variable `%S' because it is const",
+			Compiler::errorf(expr->getLocation(),
+				"Can't assign to variable `%S' because it is const",
 				lhs->getName());
 		}
 
@@ -460,7 +472,7 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 }
 
 /**
- * Variable declaration representation
+ * Variable declaration visitor
  */
 AST_VISITOR(TypeChecker, VariableDecl) {
 	const Type* type = clever_evaluate_type(expr->getLocation(),
@@ -468,9 +480,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 
 	Identifier* variable = expr->getVariable();
 
-	/**
-	 * Check if there is already a variable with same name in the current scope
-	 */
+	// Check if there is already a variable with same name in the current scope
 	if (g_symtable.getValue(variable->getName(), false) != NULL) {
 		Compiler::errorf(expr->getLocation(),
 			"Already exists a variable named `%S' in the current scope!",
@@ -526,6 +536,9 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 	g_symtable.push(var->getName(), var);
 }
 
+/**
+ * If statement visitor
+ */
 AST_VISITOR(TypeChecker, IfExpr) {
 	expr->getCondition()->acceptVisitor(*this);
 
@@ -554,29 +567,29 @@ AST_VISITOR(TypeChecker, IfExpr) {
 	}
 }
 
+/**
+ * Block visitor
+ */
 AST_VISITOR(TypeChecker, BlockNode) {
 	const NodeList& nodes = expr->getNodes();
 	NodeList::const_iterator it = nodes.begin(), end = nodes.end();
 
-	/**
-	 * Create a new scope
-	 */
+	// Create a new scope
 	expr->setScope(g_symtable.beginScope());
 
-	/**
-	 * Iterates statements inside the block
-	 */
+	// Iterates over statements inside the block
 	while (it != end) {
 		(*it)->acceptVisitor(*this);
 		++it;
 	}
 
-	/**
-	 * Pops the scope
-	 */
+	// Pops from current scope
 	g_symtable.endScope();
 }
 
+/**
+ * While statement visitor
+ */
 AST_VISITOR(TypeChecker, WhileExpr) {
 	expr->getCondition()->acceptVisitor(*this);
 
@@ -585,6 +598,9 @@ AST_VISITOR(TypeChecker, WhileExpr) {
 	}
 }
 
+/**
+ * For statement visitor
+ */
 AST_VISITOR(TypeChecker, ForExpr) {
 	if (expr->isIteratorMode()) {
 		return;
