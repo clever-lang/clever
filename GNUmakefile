@@ -171,7 +171,9 @@ $(OBJDIR)/%.cc: %.re $(OBJDIR)/ensure-dirs
 	$(call echo-command,"RE2C",$@)
 	$(call re2c-command,$<,$@)
 
+ifeq (,$(findstring clean,$(MAKECMDGOALS)))
 -include $(OBJFILES:.o=.d)
+endif
 
 $(OBJDIR)/%.d: %.cc $(OBJDIR)/ensure-dirs
 	$(call echo-command,"DEP",$@)
