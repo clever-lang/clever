@@ -90,7 +90,7 @@ class NumberLiteral;
 class NO_INIT_VTABLE ASTNode : public RefCounted {
 public:
 	ASTNode()
-		: RefCounted(0) {}
+		: RefCounted(0), m_nodes(NULL) {}
 
 	virtual ~ASTNode() {}
 
@@ -99,13 +99,13 @@ public:
 	 */
 	void add(ASTNode* node) {
 		node->addRef();
-		m_nodes.push_back(node);
+		m_nodes->push_back(node);
 	}
 	/**
 	 * Calls delRef() for each child node
 	 */
 	void clearNodes() const {
-		NodeList::const_iterator it = m_nodes.begin(), end = m_nodes.end();
+		NodeList::const_iterator it = m_nodes->begin(), end = m_nodes->end();
 
 		while (it != end) {
 			(*it)->delRef();
@@ -117,16 +117,16 @@ public:
 	 */
 	void clear() {
 		clearNodes();
-		m_nodes.resize(0);
+		m_nodes->resize(0);
 	}
 	/**
 	 * Checks if the node has child
 	 */
-	bool hasNodes() const { return m_nodes.size() != 0; }
+	bool hasNodes() const { return m_nodes != NULL && m_nodes->size() != 0; }
 	/**
 	 * Returns the node vector
 	 */
-	NodeList& getNodes() { return m_nodes; }
+	NodeList& getNodes() { return *m_nodes; }
 	/**
 	 * Method for getting the line where occurs the definition
 	 */
@@ -150,7 +150,7 @@ public:
 	virtual NumberLiteral* asNumberLiteral() { return NULL; }
 
 protected:
-	NodeList m_nodes;
+	NodeList* m_nodes;
 	location m_location;
 
 	DISALLOW_COPY_AND_ASSIGN(ASTNode);
@@ -296,11 +296,16 @@ private:
 
 class BlockNode : public ASTNode {
 public:
-	BlockNode() : m_scope(NULL) { }
+	BlockNode() :
+		m_scope(NULL) {
+		m_nodes = new NodeList;
+	}
 
 	~BlockNode() {
-		clearNodes();
-
+		if (m_nodes) {
+			clearNodes();
+			delete m_nodes;
+		}
 		if (m_scope) {
 			m_scope->delRef();
 		}
@@ -333,6 +338,7 @@ public:
 		if (m_block) {
 			m_block->addRef();
 		}
+		m_nodes = new NodeList;
 	}
 
 	~IfExpr() {
@@ -344,11 +350,12 @@ public:
 			m_else->delRef();
 		}
 		clearNodes();
+		delete m_nodes;
 	}
 
 	bool hasBlock() { return m_block != NULL; }
 	bool hasElseBlock() { return m_else != NULL; }
-	bool hasElseIf() { return m_nodes.size() != 0; }
+	bool hasElseIf() { return m_nodes != NULL && m_nodes->size() != 0; }
 
 	ASTNode* getBlock() { return m_block; }
 	ASTNode* getCondition() { return m_condition; }
@@ -525,10 +532,13 @@ private:
 class ArgumentList : public ASTNode {
 public:
 	ArgumentList()
-		: m_value(NULL) { }
+		: m_value(NULL) {
+		m_nodes = new NodeList;
+	}
 
 	~ArgumentList() {
 		clearNodes();
+		delete m_nodes;
 	}
 
 	void acceptVisitor(ASTVisitor& visitor) {
