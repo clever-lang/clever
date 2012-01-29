@@ -751,9 +751,7 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 	Identifier* return_type = expr->getReturnValue();
 	ArgumentDeclList* args = expr->getArgs();
 
-	/**
-	 * Mark the function as user defined function
-	 */
+	// Mark the function as user defined function
 	user_func->setUserDefined();
 
 	func->addRef();
@@ -761,9 +759,7 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 
 	func->setHandler(user_func);
 
-	/**
-	 * Set the return type
-	 */
+	// Set the return type
 	if (return_type) {
 		user_func->setReturnType(g_symtable.getType(return_type->getName()));
 	}
