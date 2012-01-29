@@ -570,29 +570,112 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(ArgumentDeclList);
 };
 
-/**
- * Callable expression representation
- */
-class NO_INIT_VTABLE CallExpr : public ASTNode {
+class BinaryExpr : public ASTNode {
 public:
-	CallExpr(ArgumentList* args)
-		: m_args(args), m_call_value(NULL), m_args_value(NULL) {
-		if (m_args) {
-			m_args->addRef();
-		}
+	BinaryExpr(int op, ASTNode* lhs, ASTNode* rhs)
+		: m_lhs(lhs), m_rhs(rhs), m_op(op), m_result(NULL), m_assign(false),
+			m_call_value(NULL), m_args_value(NULL) {
+		m_lhs->addRef();
+		m_rhs->addRef();
+	}
+	BinaryExpr(int op, ASTNode* lhs, ASTNode* rhs, bool assign)
+		: m_lhs(lhs), m_rhs(rhs), m_op(op), m_result(NULL), m_assign(assign),
+			m_call_value(NULL), m_args_value(NULL) {
+		m_lhs->addRef();
+		m_rhs->addRef();
 	}
 
-	virtual ~CallExpr() {
-		if (m_args) {
-			m_args->delRef();
+	BinaryExpr(int op, ASTNode* rhs)
+		: m_lhs(NULL), m_rhs(rhs), m_op(op), m_result(NULL), m_assign(false),
+			m_call_value(NULL), m_args_value(NULL) {
+		m_lhs = new NumberLiteral(int64_t(0));
+		m_lhs->addRef();
+		m_rhs->addRef();
+	}
+
+	virtual ~BinaryExpr() {
+		if (m_lhs) {
+			m_lhs->delRef();
+		}
+		if (m_rhs) {
+			m_rhs->delRef();
 		}
 		if (m_call_value) {
 			m_call_value->delRef();
 		}
 	}
 
-	ArgumentList* getArgs() {
-		return m_args;
+	bool hasValue() const { return true; }
+
+	bool isAssigned() const { return m_assign; }
+
+	ASTNode* getLhs() const { return m_lhs; }
+	ASTNode* getRhs() const { return m_rhs; }
+
+	int getOp() const { return m_op; }
+
+	Value* getValue() const { return m_result; }
+
+	void setResult(Value* value) { m_result = value; }
+
+	void setCallValue(CallableValue* callable) {
+		m_call_value = callable;
+	}
+
+	CallableValue* getCallValue() const {
+		return m_call_value;
+	}
+
+	void setArgsValue(Value* args_value) {
+		m_args_value = args_value;
+	}
+
+	Value* getArgsValue() const {
+		return m_args_value;
+	}
+
+	virtual void acceptVisitor(ASTVisitor& visitor) {
+		visitor.visit(this);
+	}
+private:
+	ASTNode* m_lhs;
+	ASTNode* m_rhs;
+	int m_op;
+	Value* m_result;
+	bool m_assign;
+	CallableValue* m_call_value;
+	Value* m_args_value;
+
+	DISALLOW_COPY_AND_ASSIGN(BinaryExpr);
+};
+
+class Subscript : public ASTNode {
+public:
+	Subscript(Identifier* ident, ASTNode* expr)
+		: m_ident(ident), m_expr(expr), m_call_value(NULL), m_args_value(NULL) {
+		m_ident->addRef();
+		m_expr->addRef();
+		m_result = new Value;
+	}
+
+	~Subscript() {
+		m_ident->delRef();
+		m_expr->delRef();
+		if (m_call_value) {
+			m_call_value->delRef();
+		}
+	}
+
+	Identifier* getIdentifier() const {
+		return m_ident;
+	}
+
+	ASTNode* getExpr() const {
+		return m_expr;
+	}
+
+	Value* getValue() const {
+		return m_result;
 	}
 
 	void setCallValue(CallableValue* callable) {
@@ -610,95 +693,6 @@ public:
 	Value* getArgsValue() const {
 		return m_args_value;
 	}
-protected:
-	ArgumentList* m_args;
-	CallableValue* m_call_value;
-	Value* m_args_value;
-private:
-	DISALLOW_COPY_AND_ASSIGN(CallExpr);
-};
-
-class BinaryExpr : public CallExpr {
-public:
-	BinaryExpr(int op, ASTNode* lhs, ASTNode* rhs)
-		: CallExpr(NULL), m_lhs(lhs), m_rhs(rhs), m_op(op), m_result(NULL), m_assign(false) {
-		m_lhs->addRef();
-		m_rhs->addRef();
-	}
-	BinaryExpr(int op, ASTNode* lhs, ASTNode* rhs, bool assign)
-		: CallExpr(NULL), m_lhs(lhs), m_rhs(rhs), m_op(op), m_result(NULL), m_assign(assign) {
-		m_lhs->addRef();
-		m_rhs->addRef();
-	}
-
-	BinaryExpr(int op, ASTNode* rhs)
-		: CallExpr(NULL), m_lhs(NULL), m_rhs(rhs), m_op(op), m_result(NULL), m_assign(false) {
-		m_lhs = new NumberLiteral(int64_t(0));
-		m_lhs->addRef();
-		m_rhs->addRef();
-	}
-
-	virtual ~BinaryExpr() {
-		if (m_lhs) {
-			m_lhs->delRef();
-		}
-		if (m_rhs) {
-			m_rhs->delRef();
-		}
-	}
-
-	bool hasValue() const { return true; }
-
-	bool isAssigned() const { return m_assign; }
-
-	ASTNode* getLhs() const { return m_lhs; }
-	ASTNode* getRhs() const { return m_rhs; }
-
-	int getOp() const { return m_op; }
-
-	Value* getValue() const { return m_result; }
-
-	void setResult(Value* value) { m_result = value; }
-
-	virtual void acceptVisitor(ASTVisitor& visitor) {
-		visitor.visit(this);
-	}
-protected:
-	ASTNode* m_lhs;
-	ASTNode* m_rhs;
-private:
-	int m_op;
-	Value* m_result;
-	bool m_assign;
-
-	DISALLOW_COPY_AND_ASSIGN(BinaryExpr);
-};
-
-class Subscript : public CallExpr {
-public:
-	Subscript(Identifier* ident, ASTNode* expr)
-		: CallExpr(NULL), m_ident(ident), m_expr(expr) {
-		m_ident->addRef();
-		m_expr->addRef();
-		m_result = new Value;
-	}
-
-	~Subscript() {
-		m_ident->delRef();
-		m_expr->delRef();
-	}
-
-	Identifier* getIdentifier() const {
-		return m_ident;
-	}
-
-	ASTNode* getExpr() const {
-		return m_expr;
-	}
-
-	Value* getValue() const {
-		return m_result;
-	}
 
 	void acceptVisitor(ASTVisitor& visitor) {
 		m_ident->acceptVisitor(visitor);
@@ -710,22 +704,24 @@ private:
 	Identifier* m_ident;
 	ASTNode* m_expr;
 	Value* m_result;
+	CallableValue* m_call_value;
+	Value* m_args_value;
 
 	DISALLOW_COPY_AND_ASSIGN(Subscript);
 };
 
-class VariableDecl : public CallExpr {
+class VariableDecl : public ASTNode {
 public:
 	VariableDecl(Identifier* type, Identifier* variable)
-		: CallExpr(NULL), m_type(type), m_variable(variable), m_rhs(NULL),
-			m_initval(NULL), m_const_value(false) {
+		: m_type(type), m_variable(variable), m_rhs(NULL), m_initval(NULL),
+			m_const_value(false), m_call_value(NULL), m_args_value(NULL) {
 		m_type->addRef();
 		m_variable->addRef();
 	}
 
 	VariableDecl(Identifier* type, Identifier* variable, ASTNode* rhs)
-		: CallExpr(NULL), m_type(type), m_variable(variable), m_rhs(rhs),
-			m_initval(NULL), m_const_value(false) {
+		: m_type(type), m_variable(variable), m_rhs(rhs), m_initval(NULL),
+			m_const_value(false), m_call_value(NULL), m_args_value(NULL) {
 		m_type->addRef();
 		m_variable->addRef();
 		m_rhs->addRef();
@@ -739,6 +735,9 @@ public:
 		}
 		if (m_initval) {
 			m_initval->delRef();
+		}
+		if (m_call_value) {
+			m_call_value->delRef();
 		}
 	}
 
@@ -762,6 +761,22 @@ public:
 		return m_type;
 	}
 
+	void setCallValue(CallableValue* callable) {
+		m_call_value = callable;
+	}
+
+	CallableValue* getCallValue() const {
+		return m_call_value;
+	}
+
+	void setArgsValue(Value* args_value) {
+		m_args_value = args_value;
+	}
+
+	Value* getArgsValue() const {
+		return m_args_value;
+	}
+
 	void acceptVisitor(ASTVisitor& visitor) {
 		if (m_rhs) {
 			m_rhs->acceptVisitor(visitor);
@@ -782,6 +797,8 @@ private:
 	ASTNode* m_rhs;
 	Value* m_initval;
 	bool m_const_value;
+	CallableValue* m_call_value;
+	Value* m_args_value;
 
 	DISALLOW_COPY_AND_ASSIGN(VariableDecl);
 };
@@ -801,16 +818,19 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(AttributeDeclaration);
 };
 
-class UnaryExpr : public CallExpr {
+class UnaryExpr : public ASTNode {
 public:
 	UnaryExpr(int op, ASTNode* expr)
-		: CallExpr(NULL), m_op(op), m_expr(expr) {
+		: m_op(op), m_expr(expr), m_call_value(NULL), m_args_value(NULL) {
 		m_expr->addRef();
 		m_result = new Value;
 	}
 
 	~UnaryExpr() {
 		m_expr->delRef();
+		if (m_call_value) {
+			m_call_value->delRef();
+		}
 	}
 
 	int getOp() const {
@@ -829,6 +849,22 @@ public:
 		return m_expr;
 	}
 
+	void setCallValue(CallableValue* callable) {
+		m_call_value = callable;
+	}
+
+	CallableValue* getCallValue() const {
+		return m_call_value;
+	}
+
+	void setArgsValue(Value* args_value) {
+		m_args_value = args_value;
+	}
+
+	Value* getArgsValue() const {
+		return m_args_value;
+	}
+
 	virtual void acceptVisitor(ASTVisitor& visitor) {
 		m_expr->acceptVisitor(visitor);
 
@@ -838,14 +874,16 @@ private:
 	int m_op;
 	ASTNode* m_expr;
 	Value* m_result;
+	CallableValue* m_call_value;
+	Value* m_args_value;
 
 	DISALLOW_COPY_AND_ASSIGN(UnaryExpr);
 };
 
-class RegexPattern : public CallExpr {
+class RegexPattern : public ASTNode {
 public:
 	RegexPattern(Value* regex)
-		: CallExpr(NULL), m_regex(regex) {
+		: m_regex(regex), m_call_value(NULL), m_args_value(NULL) {
 		m_regex->addRef();
 		m_value = new Value;
 	}
@@ -854,11 +892,30 @@ public:
 		if (m_regex) {
 			m_regex->delRef();
 		}
+		if (m_call_value) {
+			m_call_value->delRef();
+		}
 	}
 
 	Value* getRegex() const { return m_regex; }
 
 	Value* getValue() const { return m_value; }
+
+	void setCallValue(CallableValue* callable) {
+		m_call_value = callable;
+	}
+
+	CallableValue* getCallValue() const {
+		return m_call_value;
+	}
+
+	void setArgsValue(Value* args_value) {
+		m_args_value = args_value;
+	}
+
+	Value* getArgsValue() const {
+		return m_args_value;
+	}
 
 	void acceptVisitor(ASTVisitor& visitor) {
 		visitor.visit(this);
@@ -866,18 +923,31 @@ public:
 private:
 	Value* m_regex;
 	Value* m_value;
+	CallableValue* m_call_value;
+	Value* m_args_value;
+
+	DISALLOW_COPY_AND_ASSIGN(RegexPattern);
 };
 
-class TypeCreation : public CallExpr {
+class TypeCreation : public ASTNode {
 public:
-	TypeCreation(Identifier* type, ArgumentList* arguments)
-		: CallExpr(arguments), m_type(type) {
+	TypeCreation(Identifier* type, ArgumentList* args)
+		: m_type(type), m_args(args), m_call_value(NULL), m_args_value(NULL) {
 		m_type->addRef();
 		m_value = new Value();
+		if (m_args) {
+			m_args->addRef();
+		}
 	}
 
 	~TypeCreation() {
 		m_type->delRef();
+		if (m_args) {
+			m_args->delRef();
+		}
+		if (m_call_value) {
+			m_call_value->delRef();
+		}
 	}
 
 	Identifier* getIdentifier() {
@@ -886,6 +956,26 @@ public:
 
 	Value* getValue() const {
 		return m_value;
+	}
+
+	ArgumentList* getArgs() {
+		return m_args;
+	}
+
+	void setCallValue(CallableValue* callable) {
+		m_call_value = callable;
+	}
+
+	CallableValue* getCallValue() const {
+		return m_call_value;
+	}
+
+	void setArgsValue(Value* args_value) {
+		m_args_value = args_value;
+	}
+
+	Value* getArgsValue() const {
+		return m_args_value;
 	}
 
 	void acceptVisitor(ASTVisitor& visitor) {
@@ -898,6 +988,9 @@ public:
 private:
 	Identifier* m_type;
 	Value* m_value;
+	ArgumentList* m_args;
+	CallableValue* m_call_value;
+	Value* m_args_value;
 
 	DISALLOW_COPY_AND_ASSIGN(TypeCreation);
 };
@@ -1036,24 +1129,55 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(FunctionCall);
 };
 
-class MethodCall : public CallExpr {
+class MethodCall : public ASTNode {
 public:
 	MethodCall(ASTNode* var, Identifier* method, ArgumentList* args)
-		: CallExpr(args), m_var(var), m_method(method) {
+		: m_var(var), m_method(method), m_args(args), m_call_value(NULL),
+			m_args_value(NULL) {
 		m_var->addRef();
 		m_method->addRef();
 		m_result = new CallableValue;
+
+		if (m_args) {
+			m_args->addRef();
+		}
 	}
 
 	~MethodCall() {
 		m_var->delRef();
 		m_method->delRef();
+		if (m_args) {
+			m_args->delRef();
+		}
+		if (m_call_value) {
+			m_call_value->delRef();
+		}
 	}
 
 	ASTNode* getVariable() const { return m_var; }
 	const CString* getMethodName() const { return m_method->getName(); }
 
 	Value* getValue() const { return m_result; }
+
+	ArgumentList* getArgs() {
+		return m_args;
+	}
+
+	void setCallValue(CallableValue* callable) {
+		m_call_value = callable;
+	}
+
+	CallableValue* getCallValue() const {
+		return m_call_value;
+	}
+
+	void setArgsValue(Value* args_value) {
+		m_args_value = args_value;
+	}
+
+	Value* getArgsValue() const {
+		return m_args_value;
+	}
 
 	void acceptVisitor(ASTVisitor& visitor) {
 		ArgumentList* args = getArgs();
@@ -1071,13 +1195,17 @@ private:
 	Identifier* m_method;
 	Value* m_result;
 
+	ArgumentList* m_args;
+	CallableValue* m_call_value;
+	Value* m_args_value;
+
 	DISALLOW_COPY_AND_ASSIGN(MethodCall);
 };
 
-class AssignExpr : public CallExpr {
+class AssignExpr : public ASTNode {
 public:
 	AssignExpr(Identifier* lhs, ASTNode* rhs)
-		: CallExpr(NULL), m_lhs(lhs), m_rhs(rhs) {
+		: m_lhs(lhs), m_rhs(rhs), m_call_value(NULL), m_args_value(NULL) {
 		lhs->addRef();
 		rhs->addRef();
 	}
@@ -1085,10 +1213,29 @@ public:
 	~AssignExpr() {
 		m_lhs->delRef();
 		m_rhs->delRef();
+		if (m_call_value) {
+			m_call_value->delRef();
+		}
 	}
 
 	ASTNode* getLhs() const { return m_lhs; }
 	ASTNode* getRhs() const { return m_rhs; }
+
+	void setCallValue(CallableValue* callable) {
+		m_call_value = callable;
+	}
+
+	CallableValue* getCallValue() const {
+		return m_call_value;
+	}
+
+	void setArgsValue(Value* args_value) {
+		m_args_value = args_value;
+	}
+
+	Value* getArgsValue() const {
+		return m_args_value;
+	}
 
 	void acceptVisitor(ASTVisitor& visitor) {
 		getLhs()->acceptVisitor(visitor);
@@ -1098,6 +1245,8 @@ public:
 private:
 	Identifier* m_lhs;
 	ASTNode* m_rhs;
+	CallableValue* m_call_value;
+	Value* m_args_value;
 	DISALLOW_COPY_AND_ASSIGN(AssignExpr);
 };
 

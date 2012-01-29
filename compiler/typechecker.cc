@@ -198,8 +198,8 @@ static void _check_function_args(const Function* func, int num_args,
 /**
  * Prepares the node to generate an opcode which will make a method call
  */
-static void _make_method_call(const Type* type, Value* var,
-	const CString* mname, CallExpr* expr, const Value* arg_values) {
+static CallableValue* _make_method_call(const Type* type, Value* var,
+	const CString* mname, ASTNode* expr, const Value* arg_values) {
 
 	clever_assert_not_null(type);
 	clever_assert_not_null(var);
@@ -247,14 +247,14 @@ static void _make_method_call(const Type* type, Value* var,
 	call->setContext(var);
 	var->addRef();
 
-	expr->setCallValue(call);
-
 	// Set the return type as the declared in the method
 	Value* result = expr->getValue();
 
 	if (result) {
 		result->setTypePtr(method->getReturnType());
 	}
+
+	return call;
 }
 
 AST_VISITOR(TypeChecker, BreakNode) {
@@ -337,8 +337,8 @@ AST_VISITOR(TypeChecker, RegexPattern) {
 	expr->setArgsValue(arg_values);
 
 	// The Pcre constructor CallableValue
-	_make_method_call(type, expr->getValue(), CSTRING(CLEVER_CTOR_NAME),
-		expr, arg_values);
+	expr->setCallValue(_make_method_call(type, expr->getValue(),
+		CSTRING(CLEVER_CTOR_NAME), expr, arg_values));
 
 	expr->getCallValue()->addRef();
 }
@@ -377,7 +377,8 @@ AST_VISITOR(TypeChecker, UnaryExpr) {
 
 	clever_assert_not_null(method_name);
 
-	_make_method_call(var->getTypePtr(), var, method_name, expr, NULL);
+	expr->setCallValue(_make_method_call(var->getTypePtr(), var, method_name,
+		expr, NULL));
 
 	expr->getCallValue()->addRef();
 }
@@ -446,7 +447,8 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 		expr->setResult(new Value);
 	}
 
-	_make_method_call(lhs->getTypePtr(), lhs, method_name, expr, args);
+	expr->setCallValue(_make_method_call(lhs->getTypePtr(), lhs, method_name,
+		expr, args));
 
 	if (expr->isAssigned()) {
 		/**
@@ -508,8 +510,8 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 
 		expr->setArgsValue(args);
 
-		_make_method_call(type, var, CSTRING(CLEVER_OPERATOR_ASSIGN),
-			expr, args);
+		expr->setCallValue(_make_method_call(type, var,
+			CSTRING(CLEVER_OPERATOR_ASSIGN), expr, args));
 
 		expr->getCallValue()->addRef();
 	} else {
@@ -647,8 +649,8 @@ AST_VISITOR(TypeChecker, AssignExpr) {
 
 	expr->setArgsValue(args);
 
-	_make_method_call(lhs->getTypePtr(), lhs,
-		CSTRING(CLEVER_OPERATOR_ASSIGN), expr, args);
+	expr->setCallValue(_make_method_call(lhs->getTypePtr(), lhs,
+		CSTRING(CLEVER_OPERATOR_ASSIGN), expr, args));
 
 	expr->getCallValue()->addRef();
 }
@@ -714,8 +716,8 @@ AST_VISITOR(TypeChecker, MethodCall) {
 		expr->setArgsValue(arg_values);
 	}
 
-	_make_method_call(variable->getTypePtr(), variable,
-		name, expr, arg_values);
+	expr->setCallValue(_make_method_call(variable->getTypePtr(), variable,
+		name, expr, arg_values));
 }
 
 /**
@@ -853,8 +855,8 @@ AST_VISITOR(TypeChecker, TypeCreation) {
 		expr->setArgsValue(arg_values);
 	}
 
-	_make_method_call(type, expr->getValue(),
-		CSTRING(CLEVER_CTOR_NAME), expr, arg_values);
+	expr->setCallValue(_make_method_call(type, expr->getValue(),
+		CSTRING(CLEVER_CTOR_NAME), expr, arg_values));
 }
 
 /**
@@ -876,8 +878,8 @@ AST_VISITOR(TypeChecker, Subscript) {
 
 	expr->setArgsValue(args);
 
-	_make_method_call(var->getTypePtr(), var, CSTRING(CLEVER_OPERATOR_AT),
-		expr, args);
+	expr->setCallValue(_make_method_call(var->getTypePtr(), var,
+		CSTRING(CLEVER_OPERATOR_AT), expr, args));
 
 	expr->getCallValue()->addRef();
 }
