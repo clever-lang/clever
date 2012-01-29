@@ -492,7 +492,7 @@ import_stmt:
 
 import_file:
 		IMPORT STR                      { $$ = compiler.importFile(driver, $2->getString(), NULL); delete $2; }
-	|	IMPORT STR AS IDENT             { $$ = compiler.importFile(driver, $2->getString(), $4->getName()); }
+	|	IMPORT STR AS IDENT             { $$ = compiler.importFile(driver, $2->getString(), $4->getName()); delete $2; delete $4; }
 ;
 
 alias_stmt:

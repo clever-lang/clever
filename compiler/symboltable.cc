@@ -42,16 +42,16 @@ Scope::~Scope() {
 
 		++it;
 	}
-	
+
 	it = m_syms.begin();
-	
+
 	while (it != end_) {
 		Symbol* s = it->second;
 
 		if (s->isType()) {
 			const_cast<Type*>(s->getType())->delRef();
 		}
-		
+
 		delete s;
 		++it;
 	}
