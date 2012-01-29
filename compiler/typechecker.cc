@@ -199,24 +199,14 @@ static void _check_function_args(const Function* func, int num_args,
  * Prepares the node to generate an opcode which will make a method call
  */
 static void _make_method_call(const Type* type, Value* var,
-	const CString* mname, CallExpr* expr, Value* arg_values) {
+	const CString* mname, CallExpr* expr, const Value* arg_values) {
 
 	clever_assert_not_null(var);
 
-	ArgumentList* args = expr->getArgs();
 	TypeVector args_types;
 
-	if (arg_values != NULL || args != NULL) {
-		// Building the ValueVector of arguments
-
-		if (arg_values == NULL) {
-			arg_values = new Value;
-			arg_values->setType(Value::VECTOR);
-			arg_values->setVector(args->getArgValue());
-			expr->setArgsValue(arg_values);
-		}
-
-		ValueVector* vv = args ? args->getArgValue() : arg_values->getVector();
+	if (arg_values != NULL) {
+		ValueVector* vv = arg_values->getVector();
 
 		for (size_t i = 0; i < vv->size(); ++i) {
 			args_types.push_back(vv->at(i)->getTypePtr());
@@ -708,12 +698,22 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 AST_VISITOR(TypeChecker, MethodCall) {
 	Value* variable = expr->getVariable()->getValue();
 	const CString* const name = expr->getMethodName();
+	Value* arg_values = NULL;
 
 	clever_assert_not_null(variable);
 	clever_assert_not_null(name);
 
+	ArgumentList* args = expr->getArgs();
+
+	if (args != NULL) {
+		arg_values = new Value;
+		arg_values->setType(Value::VECTOR);
+		arg_values->setVector(args->getArgValue());
+		expr->setArgsValue(arg_values);
+	}
+
 	_make_method_call(variable->getTypePtr(), variable,
-		name, expr, NULL);
+		name, expr, arg_values);
 }
 
 /**
@@ -834,6 +834,7 @@ AST_VISITOR(TypeChecker, ReturnStmt) {
 AST_VISITOR(TypeChecker, TypeCreation) {
 	Identifier* ident = expr->getIdentifier();
 	const Type* type = g_symtable.getType(ident->getName());
+	Value* arg_values = NULL;
 
 	// Check if the type wasn't declarated previously
 	if (type == NULL) {
@@ -841,8 +842,17 @@ AST_VISITOR(TypeChecker, TypeCreation) {
 			ident->getName());
 	}
 
+	ArgumentList* args = expr->getArgs();
+
+	if (args != NULL) {
+		arg_values = new Value;
+		arg_values->setType(Value::VECTOR);
+		arg_values->setVector(args->getArgValue());
+		expr->setArgsValue(arg_values);
+	}
+
 	_make_method_call(type, expr->getValue(),
-		CSTRING(CLEVER_CTOR_NAME), expr, NULL);
+		CSTRING(CLEVER_CTOR_NAME), expr, arg_values);
 }
 
 /**
