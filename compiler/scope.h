@@ -55,17 +55,6 @@ public:
 
 	~Symbol();
 
-	Symbol(const Symbol& rhs)
-		: m_name(rhs.m_name), m_type(rhs.m_type), m_data(rhs.m_data) {}
-
-	Symbol& operator=(const Symbol& rhs) {
-		m_name = rhs.m_name;
-		m_type = rhs.m_type;
-		m_data = rhs.m_data;
-
-		return *this;
-	}
-
 	const CString* getSymbolName() const { return m_name; }
 	SymbolType     getSymbolType() const { return m_type; }
 
@@ -78,6 +67,9 @@ public:
 	Value*       getValue() { return m_data.value; }
 
 private:
+	DISALLOW_COPY_AND_ASSIGN(Symbol);
+
+
 	const CString* m_name;
 	SymbolType     m_type;
 
@@ -101,7 +93,7 @@ public:
 	// Global scope constructor
 	Scope() : m_parent(NULL), m_children(), m_symbols() {}
 
-	~Scope();
+	~Scope() { clear(); };
 
 	// Binds a Value* to an interned string.
 	void pushValue(const CString* name, Value* value) {
@@ -180,6 +172,8 @@ public:
 		m_children.push_back(s);	
 		return s;
 	}
+
+	void clear();
 
 	Scope* getParent() const { return m_parent; }
 	std::vector<Scope*>& getChildren() { return m_children; }

@@ -54,6 +54,7 @@ void Interpreter::execute(bool interactive) {
 		m_compiler.shutdown();
 	}
 
+
 	vm.setOpcodes(m_compiler.getOpcodes());
 	vm.run();
 }

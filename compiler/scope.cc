@@ -25,7 +25,6 @@
 
 #include "compiler/scope.h"
 #include "compiler/value.h"
-#include <stdio.h>
 
 namespace clever {
 
@@ -58,15 +57,10 @@ Symbol::~Symbol() {
 	}
 }
 
-Scope::~Scope() {
+void Scope::clear() {
 	SymbolMap::const_iterator sym = m_symbols.begin(), last_sym = m_symbols.end();
 	std::vector<Scope*>::const_iterator child = m_children.begin(), last_child = m_children.end();
 
-	while (sym != last_sym) {
-		delete sym->second;
-		++sym;
-	}
-	
 	while (child != last_child) {
 		delete *child;
 
@@ -74,6 +68,14 @@ Scope::~Scope() {
 	}
 
 	m_children.clear();
+
+	while (sym != last_sym) {
+		delete sym->second;
+		++sym;
+	}
+
+	m_symbols.clear();
+	
 }
 
 } // clever

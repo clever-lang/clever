@@ -62,8 +62,6 @@ jmp_buf Compiler::failure;
  */
 Compiler::~Compiler() {
 	if (m_initialized) {
-#pragma message "look here"
-		//g_scope.endScope();
 		g_pkgmanager.shutdown();
 	}
 
@@ -79,7 +77,6 @@ void Compiler::init() {
 	if (!m_initialized) {
 		/* Load package list */
 		g_pkgmanager.init();
-	//	g_scope = Scope();
 
 		/* Load the primitive data types */
 		loadNativeTypes();
@@ -94,9 +91,6 @@ void Compiler::init() {
 void Compiler::shutdown() {
 	m_cgvisitor.shutdown();
 	m_ast->clear();
-
-#pragma message "look here"
-	//g_scope.endScope();
 }
 
 /**
