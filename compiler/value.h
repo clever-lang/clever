@@ -35,7 +35,6 @@
 #include "compiler/cstring.h"
 #include "compiler/method.h"
 #include "compiler/function.h"
-#include "compiler/symboltable.h"
 #include "types/type.h"
 #include "types/arrayvalue.h"
 

@@ -102,8 +102,8 @@ void PackageManager::loadModule(Scope* scope, const CString* const package,
 
 			fvalue->setHandler(it->second);
 
-			scope->bind(CSTRING(prefix_name + *fvalue->getName()), fvalue);
-			scope->bind(fvalue->getName(), fvalue);
+			scope->pushValue(CSTRING(prefix_name + *fvalue->getName()), fvalue);
+			scope->pushValue(fvalue->getName(), fvalue);
 			fvalue->addRef();
 			++it;
 		}
@@ -115,8 +115,8 @@ void PackageManager::loadModule(Scope* scope, const CString* const package,
 		 * Inserts all classes into the symbol table
 		 */
 		while (itc != endc) {
-			g_symtable.push(CSTRING(prefix_name + *itc->first), itc->second);
-			g_symtable.push(itc->first, itc->second);
+			g_scope.pushType(CSTRING(prefix_name + *itc->first), itc->second);
+			g_scope.pushType(itc->first, itc->second);
 			itc->second->addRef();
 			
 			itc->second->init();
@@ -130,7 +130,7 @@ void PackageManager::loadModule(Scope* scope, const CString* const package,
 		 * Inserts all constants into the symbol table
 		 */
 		while (itcs != endcs) {
-			g_symtable.push(CSTRING(prefix_name + itcs->first->str()), itcs->second);
+			g_scope.pushValue(CSTRING(prefix_name + itcs->first->str()), itcs->second);
 			++itcs;
 		}
 	}

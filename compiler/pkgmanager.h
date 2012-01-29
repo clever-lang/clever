@@ -28,7 +28,7 @@
 
 #include <tr1/unordered_map>
 #include "compiler/module.h"
-#include "compiler/symboltable.h"
+#include "compiler/scope.h"
 
 namespace clever {
 

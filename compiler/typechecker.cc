@@ -36,7 +36,7 @@ namespace clever { namespace ast {
  */
 static const Type* _evaluate_type(const location& loc,
 	const Identifier* ident) {
-	const Type* type = g_symtable.getType(ident->getName());
+	const Type* type = g_scope.getType(ident->getName());
 
 	// Check if the type wasn't declarated previously
 	if (type == NULL) {
@@ -54,7 +54,7 @@ static const Type* _evaluate_type(const location& loc,
 			const Type* argt;
 
 			for (size_t i = 0; i < template_args->size(); ++i) {
-				argt = g_symtable.getType(template_args->at(i)->getName());
+				argt = g_scope.getType(template_args->at(i)->getName());
 
 				if (argt == NULL) {
 					Compiler::errorf(loc, "`%S' does not name a type",
@@ -287,19 +287,19 @@ AST_VISITOR(TypeChecker, ArgumentList) {
  * Alias visitor
  */
 AST_VISITOR(TypeChecker, AliasStmt) {
-	Value* fvalue = g_symtable.getValue(expr->getCurrentName());
+	Value* fvalue = m_scope->getValue(expr->getCurrentName());
 
 	if (fvalue == NULL) {
 		Compiler::errorf(expr->getLocation(), "Identifier `%S' not found!",
 			expr->getCurrentName());
 	}
 
-	if (g_symtable.getValue(expr->getNewName())) {
+	if (m_scope->getValue(expr->getNewName())) {
 		Compiler::errorf(expr->getLocation(), "Name `%S' already in use!",
 			expr->getNewName());
 	}
 
-	g_symtable.push(expr->getNewName(), fvalue);
+	m_scope->pushValue(expr->getNewName(), fvalue);
 	fvalue->addRef();
 }
 
@@ -307,7 +307,7 @@ AST_VISITOR(TypeChecker, AliasStmt) {
  * Constant visitor
  */
 AST_VISITOR(TypeChecker, Constant) {
-	Value* constant = g_symtable.getValue(expr->getName());
+	Value* constant = m_scope->getValue(expr->getName());
 
 	if (constant == NULL) {
 		Compiler::errorf(expr->getLocation(), "Constant `%S' not found!",
@@ -347,7 +347,7 @@ AST_VISITOR(TypeChecker, RegexPattern) {
  * Identifier visitor
  */
 AST_VISITOR(TypeChecker, Identifier) {
-	Value* ident = g_symtable.getValue(expr->getName());
+	Value* ident = m_scope->getValue(expr->getName());
 
 	if (ident == NULL) {
 		Compiler::errorf(expr->getLocation(), "Variable `%S' not found!",
@@ -473,7 +473,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 	Identifier* variable = expr->getVariable();
 
 	// Check if there is already a variable with same name in the current scope
-	if (g_symtable.getValue(variable->getName(), false) != NULL) {
+	if (m_scope->getLocalValue(variable->getName()) != NULL) {
 		Compiler::errorf(expr->getLocation(),
 			"Already exists a variable named `%S' in the current scope!",
 			variable->getName());
@@ -525,7 +525,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 	var->setConstness(expr->isConst());
 
 	// Registers a new variable
-	g_symtable.push(var->getName(), var);
+	m_scope->pushValue(var->getName(), var);
 }
 
 /**
@@ -567,7 +567,8 @@ AST_VISITOR(TypeChecker, BlockNode) {
 	NodeList::const_iterator it = nodes.begin(), end = nodes.end();
 
 	// Create a new scope
-	expr->setScope(g_symtable.beginScope());
+	m_scope = m_scope->newChild();
+	expr->setScope(m_scope);
 
 	// Iterates over statements inside the block
 	while (it != end) {
@@ -575,8 +576,7 @@ AST_VISITOR(TypeChecker, BlockNode) {
 		++it;
 	}
 
-	// Pops from current scope
-	g_symtable.endScope();
+	m_scope = m_scope->getParent();
 }
 
 /**
@@ -598,7 +598,7 @@ AST_VISITOR(TypeChecker, ForExpr) {
 		return;
 	}
 
-	g_symtable.beginScope();
+	m_scope = m_scope->newChild();
 
 	if (expr->getVarDecl()) {
 		expr->getVarDecl()->acceptVisitor(*this);
@@ -616,7 +616,7 @@ AST_VISITOR(TypeChecker, ForExpr) {
 		expr->getIncrement()->acceptVisitor(*this);
 	}
 
-	g_symtable.endScope();
+	m_scope = m_scope->getParent();
 }
 
 /**
@@ -663,7 +663,7 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 
 	clever_assert_not_null(name);
 
-	Value* fvalue = g_symtable.getValue(name);
+	Value* fvalue = m_scope->getValue(name);
 
 	if (fvalue == NULL) {
 		Compiler::errorf(expr->getLocation(), "Function `%S' does not exists!",
@@ -729,10 +729,10 @@ AST_VISITOR(TypeChecker, ImportStmt) {
 		return;
 	}
 
-	Scope* scope = g_symtable.getScope();
+	Scope* scope = m_scope;
 
-	if (UNEXPECTED(isInteractive() && g_symtable.getScope()->getDepth() == 1)) {
-		scope = g_symtable.getScope(0);
+	if (UNEXPECTED(isInteractive() && !scope->isGlobal())) {
+		scope = &g_scope;
 	}
 
 	/**
@@ -763,13 +763,13 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 	user_func->setUserDefined();
 
 	func->addRef();
-	g_symtable.push(func->getName(), func);
+	m_scope->pushValue(func->getName(), func);
 
 	func->setHandler(user_func);
 
 	// Set the return type
 	if (return_type) {
-		user_func->setReturnType(g_symtable.getType(return_type->getName()));
+		user_func->setReturnType(m_scope->getType(return_type->getName()));
 	}
 
 	expr->setValue(func);
@@ -783,19 +783,19 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 		vars->setType(Value::VECTOR);
 		vars->setReference(0);
 
-		g_symtable.beginScope();
+		m_scope = m_scope->newChild();
 
 		while (it != end) {
 			Value* var = new Value;
 
-			const Type* arg_type = g_symtable.getType(it->first->getName());
+			const Type* arg_type = m_scope->getType(it->first->getName());
 			const CString* arg_name = it->second->getName();
 
 			var->setName(arg_name);
 			var->setTypePtr(arg_type);
 			var->initialize();
 
-			g_symtable.push(var->getName(), var);
+			m_scope->pushValue(var->getName(), var);
 			vec->push_back(var);
 			var->addRef();
 
@@ -803,6 +803,7 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 
 			++it;
 		}
+
 
 		vars->setVector(vec);
 		user_func->setVars(vars);
@@ -815,7 +816,7 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 	m_funcs.pop();
 
 	if (args) {
-		g_symtable.endScope();
+		m_scope = m_scope->getParent();
 	}
 }
 
@@ -837,7 +838,7 @@ AST_VISITOR(TypeChecker, ReturnStmt) {
  */
 AST_VISITOR(TypeChecker, TypeCreation) {
 	Identifier* ident = expr->getIdentifier();
-	const Type* type = g_symtable.getType(ident->getName());
+	const Type* type = m_scope->getType(ident->getName());
 	Value* arg_values = NULL;
 
 	// Check if the type wasn't declarated previously

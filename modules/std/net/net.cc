@@ -24,7 +24,6 @@
  */
 
 #include "compiler/value.h"
-#include "compiler/symboltable.h"
 #include "modules/std/net/net.h"
 #include "modules/std/net/tcpsocket.h"
 

@@ -30,6 +30,7 @@
 #include "types/type.h"
 #include "compiler/clever.h"
 #include "compiler/value.h"
+#include "compiler/scope.h"
 
 namespace clever {
 
@@ -64,11 +65,11 @@ public:
 						   + type_arg->getName()->str() + ">";
 						
 		const CString* cname = CSTRING(name);
-		const Type* type = g_symtable.getType(cname);
+		const Type* type = g_scope.getType(cname);
 
 		if (type == NULL) {
 			Type* ntype = new Array(cname, type_arg);
-			g_symtable.push(cname, ntype);
+			g_scope.pushType(cname, ntype);
 			ntype->init();
 
 			return ntype;

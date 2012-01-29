@@ -24,6 +24,7 @@
  *
  */
 
+#include "compiler/scope.h"
 #include "modules/std/regex/pcre.h"
 #include "modules/std/regex/pcrevalue.h"
 

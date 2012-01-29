@@ -27,6 +27,7 @@
 #define CLEVER_TYPECHECKER_H
 
 #include <stack>
+#include "compiler/scope.h"
 #include "interpreter/astvisitor.h"
 
 namespace clever {
@@ -40,7 +41,7 @@ public:
 	typedef std::stack<Function*> FuncDeclStack;
 
 	TypeChecker()
-		: m_interactive(false) {}
+		: m_interactive(false), m_scope(&g_scope) {}
 
 	~TypeChecker() {}
 
@@ -61,6 +62,7 @@ public:
 	bool isInteractive() { return m_interactive; }
 private:
 	bool m_interactive;
+	Scope* m_scope;
 	FuncDeclStack m_funcs;
 };
 

@@ -28,7 +28,6 @@
 #include "build/interpreter/parser.hh"
 #include "interpreter/ast.h"
 #include "compiler/cstring.h"
-#include "compiler/symboltable.h"
 #include "types/nativetypes.h"
 
 namespace clever {

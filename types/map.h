@@ -28,6 +28,7 @@
 
 #include "types/type.h"
 #include "compiler/value.h"
+#include "compiler/scope.h"
 #include "mapvalue.h"
 
 namespace clever {
@@ -108,12 +109,12 @@ public:
 		}
 			
 		const CString* cname = CSTRING(name);
-		const Type* type = g_symtable.getType(cname);
+		const Type* type = g_scope.getType(cname);
 
 		if (type == NULL) {
 			const Type* comp = (args.size() == 3 ? args[2] : NULL);
 			Type* ntype = new Map(cname, args[0], args[1], comp);
-			g_symtable.push(cname, ntype);
+			g_scope.pushType(cname, ntype);
 			ntype->init();
 
 			return ntype;

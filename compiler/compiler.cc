@@ -27,7 +27,6 @@
 #include <vector>
 #include "compiler/clever.h"
 #include "compiler/compiler.h"
-#include "compiler/symboltable.h"
 #include "interpreter/ast.h"
 #include "types/nativetypes.h"
 #include "interpreter/astvisitor.h"
@@ -63,7 +62,8 @@ jmp_buf Compiler::failure;
  */
 Compiler::~Compiler() {
 	if (m_initialized) {
-		g_symtable.endScope();
+#pragma message "look here"
+		//g_scope.endScope();
 		g_pkgmanager.shutdown();
 	}
 
@@ -79,8 +79,7 @@ void Compiler::init() {
 	if (!m_initialized) {
 		/* Load package list */
 		g_pkgmanager.init();
-
-		g_symtable.beginScope();
+	//	g_scope = Scope();
 
 		/* Load the primitive data types */
 		loadNativeTypes();
@@ -96,7 +95,8 @@ void Compiler::shutdown() {
 	m_cgvisitor.shutdown();
 	m_ast->clear();
 
-	g_symtable.endScope();
+#pragma message "look here"
+	//g_scope.endScope();
 }
 
 /**
@@ -114,13 +114,13 @@ void Compiler::loadNativeTypes() {
 	CLEVER_MAP    = new Map;
 
 	// Registers all native data types
-	g_symtable.push(CSTRING("Int"),    CLEVER_INT);
-	g_symtable.push(CSTRING("Double"), CLEVER_DOUBLE);
-	g_symtable.push(CSTRING("String"), CLEVER_STR);
-	g_symtable.push(CSTRING("Bool"),   CLEVER_BOOL);
-	g_symtable.push(CSTRING("Byte"),   CLEVER_BYTE);
-	g_symtable.push(CSTRING("Array"),  CLEVER_ARRAY);
-	g_symtable.push(CSTRING("Map"),    CLEVER_MAP);
+	g_scope.pushType(CSTRING("Int"),    CLEVER_INT);
+	g_scope.pushType(CSTRING("Double"), CLEVER_DOUBLE);
+	g_scope.pushType(CSTRING("String"), CLEVER_STR);
+	g_scope.pushType(CSTRING("Bool"),   CLEVER_BOOL);
+	g_scope.pushType(CSTRING("Byte"),   CLEVER_BYTE);
+	g_scope.pushType(CSTRING("Array"),  CLEVER_ARRAY);
+	g_scope.pushType(CSTRING("Map"),    CLEVER_MAP);
 
 	// Initialize native data types
 	CLEVER_INT->init();

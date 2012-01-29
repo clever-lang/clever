@@ -31,6 +31,7 @@
 #include <set>
 #include "compiler/value.h"
 #include "compiler/refcounted.h"
+#include "compiler/scope.h"
 #include "interpreter/astvisitor.h"
 #include "interpreter/asttransformer.h"
 #include "build/interpreter/location.hh"

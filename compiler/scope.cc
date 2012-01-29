@@ -23,37 +23,46 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "compiler/symboltable.h"
+#include "compiler/scope.h"
 #include "compiler/value.h"
+#include <stdio.h>
 
 namespace clever {
 
-SymbolTable g_symtable;
+Scope g_scope;
 
 Scope::~Scope() {
-	SymbolMap::const_iterator it = m_syms.begin(), end_ = m_syms.end();
+	SymbolMap::const_iterator sym = m_symbols.begin(), last_sym = m_symbols.end();
+	std::vector<Scope*>::const_iterator child = m_children.begin(), last_child = m_children.end();
 
-	while (it != end_) {
-		Symbol* s = it->second;
+	while (sym != last_sym) {
+		Symbol* s = sym->second;
 
 		if (s->isValue()) {
+			printf("value addr: %p\n", (void*)s->getValue());
 			s->getValue()->delRef();
 		}
 
-		++it;
+		++sym;
 	}
 	
-	it = m_syms.begin();
+	sym = m_symbols.begin();
 	
-	while (it != end_) {
-		Symbol* s = it->second;
+	while (sym != last_sym) {
+		Symbol* s = sym->second;
 
 		if (s->isType()) {
+			printf("type addr: %p\n", (void*)s->getType());
 			const_cast<Type*>(s->getType())->delRef();
 		}
 		
 		delete s;
-		++it;
+		++sym;
+	}
+
+	while (child != last_child) {
+		delete *child;
+		++child;
 	}
 }
 

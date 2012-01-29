@@ -25,7 +25,6 @@
 
 #include <iostream>
 #include "compiler/value.h"
-#include "compiler/symboltable.h"
 #include "modules/std/io/io.h"
 #include "types/nativetypes.h"
 

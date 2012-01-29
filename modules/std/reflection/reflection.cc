@@ -24,7 +24,6 @@
  */
 
 #include "compiler/value.h"
-#include "compiler/symboltable.h"
 #include "modules/std/reflection/reflection.h"
 #include "modules/std/reflection/reflectionpackage.h"
 #include "modules/std/reflection/reflectionfunction.h"

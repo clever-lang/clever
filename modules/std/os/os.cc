@@ -26,7 +26,6 @@
 #include <cstdlib>
 #include <dirent.h>
 #include "compiler/value.h"
-#include "compiler/symboltable.h"
 #include "modules/std/os/os.h"
 #include "types/nativetypes.h"
 
