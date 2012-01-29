@@ -149,7 +149,7 @@ void TestRunner::run(void) {
 		if (valgrind) {
 			filesize = file_size(file_name + std::string(".mem"));
 			if (filesize == 0) {
-				remove(std::string(file_name + std::string(".mem")).c_str());
+				unlink(std::string(file_name + std::string(".mem")).c_str());
 			} else {
 				std::cout << "[LEAK] ";
 				leak++;
@@ -157,6 +157,12 @@ void TestRunner::run(void) {
 			}
 		}
 #endif
+		if (!valgrind) {
+			// If the mem log file exists, then remove it.
+			if (file_exists(file_name + ".mem")) {
+				unlink(std::string(file_name + ".mem").c_str());
+			}
+		}
 
 		if (pcrecpp::RE(expect).FullMatch(result)) {
 			if ((valgrind && filesize == 0) || !valgrind) {
@@ -170,10 +176,6 @@ void TestRunner::run(void) {
 			// If the log file exists, then remove it.
 			if (file_exists(file_name + ".log")) {
 				unlink(std::string(file_name + ".log").c_str());
-			}
-			// If the mem log file exists, then remove it.
-			if (file_exists(file_name + ".mem")) {
-				unlink(std::string(file_name + ".mem").c_str());
 			}
 		} else {
 			if ((valgrind && filesize == 0) || !valgrind) {
