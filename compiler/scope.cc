@@ -30,40 +30,50 @@
 namespace clever {
 
 Scope g_scope;
+Symbol::Symbol(const CString* name, Value* value)
+	: m_name(name), m_type(VALUE), m_data() {
+	clever_assert_not_null(name);
+	clever_assert_not_null(value);
+
+	//value->addRef();
+	m_data.value = value;
+}
+
+Symbol::Symbol(const CString* name, const Type* type)
+	: m_name(name), m_type(TYPE), m_data() {
+	clever_assert_not_null(name);
+	clever_assert_not_null(type);
+
+	//const_cast<Type*>(type)->addRef();
+	m_data.type = type;
+}
+	
+Symbol::~Symbol() {
+	if (m_type == TYPE) {
+		const_cast<Type*>(m_data.type)->delRef();
+		m_data.type = NULL;
+	} else if (m_type == VALUE) {
+		m_data.value->delRef();
+		m_data.value = NULL;
+	}
+}
 
 Scope::~Scope() {
 	SymbolMap::const_iterator sym = m_symbols.begin(), last_sym = m_symbols.end();
 	std::vector<Scope*>::const_iterator child = m_children.begin(), last_child = m_children.end();
 
 	while (sym != last_sym) {
-		Symbol* s = sym->second;
-
-		if (s->isValue()) {
-			printf("value addr: %p\n", (void*)s->getValue());
-			s->getValue()->delRef();
-		}
-
+		delete sym->second;
 		++sym;
 	}
 	
-	sym = m_symbols.begin();
-	
-	while (sym != last_sym) {
-		Symbol* s = sym->second;
-
-		if (s->isType()) {
-			printf("type addr: %p\n", (void*)s->getType());
-			const_cast<Type*>(s->getType())->delRef();
-		}
-		
-		delete s;
-		++sym;
-	}
-
 	while (child != last_child) {
 		delete *child;
+
 		++child;
 	}
+
+	m_children.clear();
 }
 
 } // clever

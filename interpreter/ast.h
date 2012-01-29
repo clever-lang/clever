@@ -301,17 +301,12 @@ public:
 
 	~BlockNode() {
 		clearNodes();
-
-		if (m_scope) {
-			m_scope->delRef();
-		}
 	}
 
 	void setScope(Scope* scope) {
 		clever_assert(m_scope == NULL, "Block scope reassignment.");
 
 		m_scope = scope;
-		scope->addRef();
 	}
 
 	Scope* getScope() {

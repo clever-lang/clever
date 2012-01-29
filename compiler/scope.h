@@ -49,27 +49,11 @@ class Symbol {
 public:
 	typedef	enum { INVALID, VALUE, TYPE } SymbolType;
 
-	Symbol()
-		: m_name(NULL), m_type(INVALID), m_data() {
-	}
+	Symbol() : m_name(NULL), m_type(INVALID), m_data() {}
+	Symbol(const CString* name, Value* value);
+	Symbol(const CString* name, const Type* type);
 
-	Symbol(const CString* name, Value* value)
-		: m_name(name), m_type(VALUE), m_data() {
-		clever_assert(name != NULL,  "No name provided.");
-		clever_assert(value != NULL, "No value provided.");
-
-		m_data.value = value;
-	}
-
-	Symbol(const CString* name, const Type* type)
-		: m_name(name), m_type(TYPE), m_data() {
-		clever_assert(name != NULL, "No name provided.");
-		clever_assert(type != NULL, "No type provided.");
-
-		m_data.type = type;
-	}
-
-	~Symbol() { }
+	~Symbol();
 
 	Symbol(const Symbol& rhs)
 		: m_name(rhs.m_name), m_type(rhs.m_type), m_data(rhs.m_data) {}
@@ -103,19 +87,19 @@ private:
 	} m_data;
 };
 
-class Scope : public RefCounted {
+class Scope {
 	typedef std::tr1::unordered_map<const CString*, Symbol*> SymbolMap;
 	typedef SymbolMap::value_type ScopeEntry;
 public:
 
 	// Constructor for non-global scopes
 	explicit Scope(Scope* parent)
-		: RefCounted(), m_parent(parent), m_children(), m_symbols() {
+		: m_parent(parent), m_children(), m_symbols() {
 		clever_assert_not_null(parent);
 	}
 	
 	// Global scope constructor
-	Scope() : RefCounted(), m_parent(NULL), m_children(), m_symbols() {}
+	Scope() : m_parent(NULL), m_children(), m_symbols() {}
 
 	~Scope();
 
