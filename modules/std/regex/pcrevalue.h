@@ -33,7 +33,8 @@ namespace clever { namespace packages { namespace std { namespace regex {
 
 class PcreValue : public DataValue {
 public:
-	PcreValue() {}
+	PcreValue()
+		: re(NULL) {}
 
 	pcrecpp::RE* re;
 
