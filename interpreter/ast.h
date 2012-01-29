@@ -821,7 +821,7 @@ private:
 class UnaryExpr : public ASTNode {
 public:
 	UnaryExpr(int op, ASTNode* expr)
-		: m_op(op), m_expr(expr), m_call_value(NULL), m_args_value(NULL) {
+		: m_op(op), m_expr(expr), m_call_value(NULL) {
 		m_expr->addRef();
 		m_result = new Value;
 	}
@@ -857,14 +857,6 @@ public:
 		return m_call_value;
 	}
 
-	void setArgsValue(Value* args_value) {
-		m_args_value = args_value;
-	}
-
-	Value* getArgsValue() const {
-		return m_args_value;
-	}
-
 	virtual void acceptVisitor(ASTVisitor& visitor) {
 		m_expr->acceptVisitor(visitor);
 
@@ -875,7 +867,6 @@ private:
 	ASTNode* m_expr;
 	Value* m_result;
 	CallableValue* m_call_value;
-	Value* m_args_value;
 
 	DISALLOW_COPY_AND_ASSIGN(UnaryExpr);
 };
