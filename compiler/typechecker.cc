@@ -31,14 +31,14 @@
 
 namespace clever { namespace ast {
 
-static const Type* clever_evaluate_type(const location& loc,
-	const Identifier* ident)
-{
+/**
+ * Evaluate the Type used in the expression, and the templated type as well
+ */
+static const Type* _evaluate_type(const location& loc,
+	const Identifier* ident) {
 	const Type* type = g_symtable.getType(ident->getName());
 
-	/**
-	 * Check if the type wasn't declarated previously
-	 */
+	// Check if the type wasn't declarated previously
 	if (type == NULL) {
 		Compiler::errorf(loc, "`%S' does not name a type",
 			ident->getName());
@@ -65,7 +65,7 @@ static const Type* clever_evaluate_type(const location& loc,
 					vec.push_back(argt);
 				}
 				else {
-					vec.push_back(clever_evaluate_type(loc, template_args->at(i)));
+					vec.push_back(_evaluate_type(loc, template_args->at(i)));
 				}
 			}
 
@@ -95,12 +95,12 @@ static const Type* clever_evaluate_type(const location& loc,
 /**
  * Concatenates arg type names with a supplied separator character
  */
-static std::string serializeArgType(TypeVector& args_types, const char* sep) {
+static std::string _serialize_arg_type(TypeVector& args_types, const char* sep) {
 	if (args_types.size() == 0) {
 		return std::string("void");
 	}
 
-	clever_assert_null(args_types[0]);
+	clever_assert_not_null(args_types[0]);
 
 	std::string args_type_name = args_types[0]->getName()->str();
 	const std::string separator = std::string(sep);
@@ -116,11 +116,11 @@ static std::string serializeArgType(TypeVector& args_types, const char* sep) {
 /**
  * Performs a type compatible checking
  */
-static bool checkCompatibleTypes(const Value* const lhs,
+static bool _check_compatible_types(const Value* const lhs,
 		const Value* const rhs) {
 
-	clever_assert_null(lhs);
-	clever_assert_null(rhs);
+	clever_assert_not_null(lhs);
+	clever_assert_not_null(rhs);
 
 	/**
 	 * Constants with different type cannot performs operation
@@ -145,21 +145,25 @@ static bool checkCompatibleTypes(const Value* const lhs,
 /**
  * Checks the function return type
  */
-static void checkFunctionReturn(const Function* func,
+static void _check_function_return(const Function* func,
 	const Value* value, const Type* rtype, const location& loc) {
 	/**
 	 * When the rtype is NULL, the return is expected to be Void
 	 * When value is NULL, the return statement is empty
 	 */
 	if (value && rtype == NULL) {
-		Compiler::errorf(loc, "Function `%S' cannot return value, it was declared as Void!", &func->getName());
+		Compiler::errorf(loc,
+			"Function `%S' cannot return value, it was declared as Void!",
+			&func->getName());
 	} else if (value == NULL && rtype) {
-		Compiler::errorf(loc, "Function `%S' must return a value of type %S!", &func->getName(), rtype->getName());
+		Compiler::errorf(loc, "Function `%S' must return a value of type %S!",
+			&func->getName(), rtype->getName());
 	} else if (value && rtype) {
 		const Type* vtype = value->getTypePtr();
 
 		if (vtype != rtype) {
-			Compiler::errorf(loc, "Function `%S' expects %S value as return, not %S value",
+			Compiler::errorf(loc,
+				"Function `%S' expects %S value as return, not %S value",
 				&func->getName(), rtype->getName(), vtype->getName());
 		}
 	}
@@ -168,10 +172,10 @@ static void checkFunctionReturn(const Function* func,
 /**
  * Checks the number of arguments supplied to the function on call
  */
-static void checkFunctionArgs(const Function* func, int num_args,
+static void _check_function_args(const Function* func, int num_args,
 		const location& loc) {
 
-	clever_assert_null(func);
+	clever_assert_not_null(func);
 
 	int n_required_args = func->getNumArgs();
 	int n_min_args = func->getMinNumArgs();
@@ -197,7 +201,7 @@ static void checkFunctionArgs(const Function* func, int num_args,
 static void _make_method_call(const Type* type, Value* var,
 	const CString* mname, CallExpr* expr, Value* arg_values) {
 
-	clever_assert_null(var);
+	clever_assert_not_null(var);
 
 	ArgumentList* args = expr->getArgs();
 	TypeVector args_types;
@@ -222,14 +226,14 @@ static void _make_method_call(const Type* type, Value* var,
 	const Method* method = type->getMethod(mname, &args_types);
 
 	if (UNEXPECTED(method == NULL)) {
-		std::string args_type_name = serializeArgType(args_types, ", ");
+		std::string args_type_name = _serialize_arg_type(args_types, ", ");
 
 		if (mname == CSTRING(CLEVER_CTOR_NAME)) {
 			Compiler::errorf(expr->getLocation(),
 				"No matching call for constructor %S::%S(%S)",
 				type->getName(), type->getName(), &args_type_name);
 		} else {
-			std::string args_type_name = serializeArgType(args_types, ", ");
+			std::string args_type_name = _serialize_arg_type(args_types, ", ");
 
 			Compiler::errorf(expr->getLocation(), "No matching call for %S::%S(%S)",
 				var->getTypePtr()->getName(), mname, &args_type_name);
@@ -238,7 +242,7 @@ static void _make_method_call(const Type* type, Value* var,
 	var->setTypePtr(type);
 
 	if (var->isConst() && !method->isConst()) {
-		std::string args_type_name = serializeArgType(args_types, ", ");
+		std::string args_type_name = _serialize_arg_type(args_types, ", ");
 
 		Compiler::errorf(expr->getLocation(), "Can't call the non-const "
 			"method %S::%S(%S) because variable `%S' is const",
@@ -379,7 +383,7 @@ AST_VISITOR(TypeChecker, UnaryExpr) {
 		case ast::POS_DEC: method_name = CSTRING(CLEVER_OPERATOR_POS_DEC); break;
 	}
 
-	clever_assert_null(method_name);
+	clever_assert_not_null(method_name);
 
 	_make_method_call(var->getTypePtr(), var, method_name, expr, NULL);
 
@@ -424,7 +428,7 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 			return;
 	}
 
-	clever_assert_null(method_name);
+	clever_assert_not_null(method_name);
 
 	ValueVector* arg_values = new ValueVector;
 
@@ -469,7 +473,7 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
  * Variable declaration visitor
  */
 AST_VISITOR(TypeChecker, VariableDecl) {
-	const Type* type = clever_evaluate_type(expr->getLocation(),
+	const Type* type = _evaluate_type(expr->getLocation(),
 		expr->getType());
 
 	Identifier* variable = expr->getVariable();
@@ -492,7 +496,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 	if (rhs) {
 		Value* initval = rhs->getValue();
 
-		if (!checkCompatibleTypes(var, initval)) {
+		if (!_check_compatible_types(var, initval)) {
 			Compiler::errorf(expr->getLocation(),
 				"Cannot convert `%S' to `%S' on assignment",
 				initval->getTypePtr()->getName(),
@@ -628,7 +632,7 @@ AST_VISITOR(TypeChecker, AssignExpr) {
 	Value* lhs = expr->getLhs()->getValue();
 	Value* rhs = expr->getRhs()->getValue();
 
-	if (!checkCompatibleTypes(lhs, rhs)) {
+	if (!_check_compatible_types(lhs, rhs)) {
 		Compiler::errorf(expr->getLocation(),
 			"Cannot convert `%S' to `%S' on assignment",
 			rhs->getTypePtr()->getName(),
@@ -663,7 +667,7 @@ AST_VISITOR(TypeChecker, AssignExpr) {
 AST_VISITOR(TypeChecker, FunctionCall) {
 	const CString* const name = expr->getFuncName();
 
-	clever_assert_null(name);
+	clever_assert_not_null(name);
 
 	Value* fvalue = g_symtable.getValue(name);
 
@@ -675,9 +679,9 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 	const Function* func = static_cast<CallableValue*>(fvalue)->getFunction();
 	size_t num_args = expr->getArgs() ? expr->getArgs()->getNodes().size() : 0;
 
-	clever_assert_null(func);
+	clever_assert_not_null(func);
 
-	checkFunctionArgs(func, num_args, expr->getLocation());
+	_check_function_args(func, num_args, expr->getLocation());
 
 	// Set the return type
 	expr->getValue()->setTypePtr(func->getReturnType());
@@ -705,8 +709,8 @@ AST_VISITOR(TypeChecker, MethodCall) {
 	Value* variable = expr->getVariable()->getValue();
 	const CString* const name = expr->getMethodName();
 
-	clever_assert_null(variable);
-	clever_assert_null(name);
+	clever_assert_not_null(variable);
+	clever_assert_not_null(name);
 
 	_make_method_call(variable->getTypePtr(), variable,
 		name, expr, NULL);
@@ -819,7 +823,7 @@ AST_VISITOR(TypeChecker, ReturnStmt) {
 	if (!m_funcs.empty()) {
 		const Function* func = m_funcs.top();
 
-		checkFunctionReturn(func, expr->getExprValue(), func->getReturnType(),
+		_check_function_return(func, expr->getExprValue(), func->getReturnType(),
 			expr->getLocation());
 	}
 }
@@ -848,7 +852,7 @@ AST_VISITOR(TypeChecker, Subscript) {
 	Value* var = expr->getIdentifier()->getValue();
 	Value* expr_val = expr->getExpr()->getValue();
 
-	clever_assert_null(expr_val);
+	clever_assert_not_null(expr_val);
 
 	ValueVector* arg_values = new ValueVector;
 	arg_values->push_back(expr_val);
