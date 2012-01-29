@@ -1091,10 +1091,10 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(MethodCall);
 };
 
-class AssignExpr : public ASTNode {
+class AssignExpr : public CallExpr {
 public:
 	AssignExpr(Identifier* lhs, ASTNode* rhs)
-		: m_lhs(lhs), m_rhs(rhs), m_method(NULL), m_args(NULL) {
+		: CallExpr(NULL), m_lhs(lhs), m_rhs(rhs) {
 		lhs->addRef();
 		rhs->addRef();
 	}
@@ -1102,23 +1102,10 @@ public:
 	~AssignExpr() {
 		m_lhs->delRef();
 		m_rhs->delRef();
-		if (m_args) {
-			m_args->delRef();
-		}
-
-		if (m_method) {
-			m_method->delRef();
-		}
 	}
 
 	ASTNode* getLhs() const { return m_lhs; }
 	ASTNode* getRhs() const { return m_rhs; }
-
-	void setMethodValue(CallableValue* method) { m_method = method; }
-	CallableValue* getMethodValue() const { return m_method; }
-
-	void setMethodArgs(Value* args) { m_args = args; }
-	Value* getMethodArgs() const { return m_args; }
 
 	void acceptVisitor(ASTVisitor& visitor) {
 		getLhs()->acceptVisitor(visitor);
@@ -1128,8 +1115,6 @@ public:
 private:
 	Identifier* m_lhs;
 	ASTNode* m_rhs;
-	CallableValue* m_method;
-	Value* m_args;
 	DISALLOW_COPY_AND_ASSIGN(AssignExpr);
 };
 

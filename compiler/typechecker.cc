@@ -644,19 +644,6 @@ AST_VISITOR(TypeChecker, AssignExpr) {
 			lhs->getTypePtr()->getName());
 	}
 
-	TypeVector arg_types;
-	arg_types.push_back(rhs->getTypePtr());
-
-	const CString* method_name = CSTRING(CLEVER_OPERATOR_ASSIGN);
-	const Method* method = lhs->getTypePtr()->getMethod(method_name, &arg_types);
-
-	if (method == NULL) {
-		Compiler::errorf(expr->getLocation(),
-			"Method for assing operation on %S not found to assign %S",
-			rhs->getTypePtr()->getName(),
-			lhs->getTypePtr()->getName());
-	}
-
 	if (lhs->isConst()) {
 		Compiler::errorf(expr->getLocation(),
 			"Can't assign to variable `%S' because it is const",
@@ -671,16 +658,12 @@ AST_VISITOR(TypeChecker, AssignExpr) {
 	args->setType(Value::VECTOR);
 	args->setVector(arg_values);
 
-	expr->setMethodArgs(args);
+	expr->setArgsValue(args);
 
-	CallableValue* call = new CallableValue(method_name);
-	call->setTypePtr(lhs->getTypePtr());
-	call->setHandler(method);
-	call->setContext(lhs);
-	lhs->addRef();
+	_make_method_call(lhs->getTypePtr(), lhs,
+		CSTRING(CLEVER_OPERATOR_ASSIGN), expr, args);
 
-	expr->setMethodValue(call);
-	call->addRef();
+	expr->getCallValue()->addRef();
 }
 
 /**
