@@ -172,6 +172,9 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 		return;
 	}
 
+	expr->getCallValue()->addRef();
+	expr->getArgsValue()->addRef();
+
 	emit(OP_ASSIGN, &VM::mcall_handler, expr->getCallValue(),
 		expr->getArgsValue());
 }

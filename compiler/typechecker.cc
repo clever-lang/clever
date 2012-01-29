@@ -395,6 +395,14 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 	Value* lhs = expr->getLhs()->getValue();
 	Value* rhs = expr->getRhs()->getValue();
 
+	bool is_assigned = expr->isAssigned();
+
+	if (is_assigned && lhs->isConst()) {
+		Compiler::errorf(expr->getLocation(),
+			"Can't assign to variable `%S' because it is const",
+			lhs->getName());
+	}
+
 	const Type* lhs_type = lhs->getTypePtr();
 
 	// Operator method names
@@ -434,13 +442,7 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 
 	expr->setArgsValue(args);
 
-	if (expr->isAssigned()) {
-		if (lhs->isConst()) {
-			Compiler::errorf(expr->getLocation(),
-				"Can't assign to variable `%S' because it is const",
-				lhs->getName());
-		}
-
+	if (is_assigned) {
 		expr->setResult(lhs);
 		lhs->addRef();
 	} else {
@@ -512,8 +514,6 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 
 		expr->setCallValue(_make_method_call(type, var,
 			CSTRING(CLEVER_OPERATOR_ASSIGN), expr, args));
-
-		expr->getCallValue()->addRef();
 	} else {
 		DataValue* data_value = type->allocateValue();
 

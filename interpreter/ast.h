@@ -746,6 +746,9 @@ public:
 		if (m_call_value) {
 			m_call_value->delRef();
 		}
+		if (m_args_value) {
+			m_args_value->delRef();
+		}
 	}
 
 	Identifier* getVariable() const {
