@@ -201,12 +201,14 @@ static void _check_function_args(const Function* func, int num_args,
 static void _make_method_call(const Type* type, Value* var,
 	const CString* mname, CallExpr* expr, const Value* arg_values) {
 
+	clever_assert_not_null(type);
 	clever_assert_not_null(var);
+	clever_assert_not_null(mname);
 
 	TypeVector args_types;
 
 	if (arg_values != NULL) {
-		ValueVector* vv = arg_values->getVector();
+		const ValueVector* vv = arg_values->getVector();
 
 		for (size_t i = 0; i < vv->size(); ++i) {
 			args_types.push_back(vv->at(i)->getTypePtr());
@@ -216,14 +218,14 @@ static void _make_method_call(const Type* type, Value* var,
 	const Method* method = type->getMethod(mname, &args_types);
 
 	if (UNEXPECTED(method == NULL)) {
-		std::string args_type_name = _serialize_arg_type(args_types, ", ");
+		const std::string args_type_name = _serialize_arg_type(args_types, ", ");
 
 		if (mname == CSTRING(CLEVER_CTOR_NAME)) {
 			Compiler::errorf(expr->getLocation(),
 				"No matching call for constructor %S::%S(%S)",
 				type->getName(), type->getName(), &args_type_name);
 		} else {
-			std::string args_type_name = _serialize_arg_type(args_types, ", ");
+			const std::string args_type_name = _serialize_arg_type(args_types, ", ");
 
 			Compiler::errorf(expr->getLocation(), "No matching call for %S::%S(%S)",
 				var->getTypePtr()->getName(), mname, &args_type_name);
@@ -232,7 +234,7 @@ static void _make_method_call(const Type* type, Value* var,
 	var->setTypePtr(type);
 
 	if (var->isConst() && !method->isConst()) {
-		std::string args_type_name = _serialize_arg_type(args_types, ", ");
+		const std::string args_type_name = _serialize_arg_type(args_types, ", ");
 
 		Compiler::errorf(expr->getLocation(), "Can't call the non-const "
 			"method %S::%S(%S) because variable `%S' is const",
