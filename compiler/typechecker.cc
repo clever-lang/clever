@@ -358,9 +358,7 @@ AST_VISITOR(TypeChecker, Identifier) {
 			expr->getName());
 	}
 
-	/**
-	 * Associate the Value* of the symbol to the identifier
-	 */
+	// Associate the Value* of the symbol to the identifier
 	expr->setValue(ident);
 	ident->addRef();
 }
@@ -392,7 +390,6 @@ AST_VISITOR(TypeChecker, UnaryExpr) {
  * Binary expression visitor
  */
 AST_VISITOR(TypeChecker, BinaryExpr) {
-	const Method* method = NULL;
 	const CString* method_name = NULL;
 
 	expr->getLhs()->acceptVisitor(*this);
@@ -400,6 +397,8 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 
 	Value* lhs = expr->getLhs()->getValue();
 	Value* rhs = expr->getRhs()->getValue();
+
+	const Type* lhs_type = lhs->getTypePtr();
 
 	// Operator method names
 	switch (expr->getOp()) {
@@ -425,12 +424,9 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 			return;
 	}
 
-	ValueVector* arg_values = new ValueVector;
-	CallableValue* call = new CallableValue(method_name);
+	clever_assert_null(method_name);
 
-	TypeVector arg_types;
-	arg_types.push_back(lhs->getTypePtr());
-	arg_types.push_back(rhs->getTypePtr());
+	ValueVector* arg_values = new ValueVector;
 
 	arg_values->push_back(lhs);
 	arg_values->push_back(rhs);
@@ -439,25 +435,7 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 	args->setType(Value::VECTOR);
 	args->setVector(arg_values);
 
-	args->addRef();
-	call->addRef();
-
-	method = lhs->getTypePtr()->getMethod(method_name, &arg_types);
-
-	if (method == NULL) {
-		std::string arg_type_names = serializeArgType(arg_types, ", ");
-
-		Compiler::errorf(expr->getLocation(), "No matching call for operation '%S' in %S using (%S)",
-			method_name, lhs->getTypePtr()->getName(), &arg_type_names);
-	}
-
-	call->setTypePtr(lhs->getTypePtr());
-	call->setHandler(method);
-	call->setContext(lhs);
-	lhs->addRef();
-
-	expr->setMethod(call);
-	expr->setMethodArgs(args);
+	expr->setArgsValue(args);
 
 	if (expr->isAssigned()) {
 		if (lhs->isConst()) {
@@ -467,11 +445,24 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 		}
 
 		expr->setResult(lhs);
-		expr->getValue()->setTypePtr(lhs->getTypePtr());
 		lhs->addRef();
 	} else {
-		expr->setResult(new Value(method->getReturnType()));
+		expr->setResult(new Value);
 	}
+
+	_make_method_call(lhs->getTypePtr(), lhs, method_name, expr, args);
+
+	if (expr->isAssigned()) {
+		/**
+		 * When using the compound assignment expression (e.g. +=),
+		 * we have to restore the original Type ptr, since we aren't in a
+		 * temporary expression, but in an assignment to a variable with its
+		 * defined type
+		 */
+		expr->getValue()->setTypePtr(lhs_type);
+	}
+
+	expr->getCallValue()->addRef();
 }
 
 /**

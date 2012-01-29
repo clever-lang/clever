@@ -196,79 +196,6 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(NumberLiteral);
 };
 
-class BinaryExpr : public ASTNode {
-public:
-	BinaryExpr(int op, ASTNode* lhs, ASTNode* rhs)
-		: m_lhs(lhs), m_rhs(rhs), m_op(op), m_result(NULL), m_method(NULL),
-			m_args(NULL), m_assign(false) {
-		m_lhs->addRef();
-		m_rhs->addRef();
-	}
-	BinaryExpr(int op, ASTNode* lhs, ASTNode* rhs, bool assign)
-		: m_lhs(lhs), m_rhs(rhs), m_op(op), m_result(NULL), m_method(NULL),
-			m_args(NULL), m_assign(assign) {
-		m_lhs->addRef();
-		m_rhs->addRef();
-	}
-
-	BinaryExpr(int op, ASTNode* rhs)
-		: m_lhs(NULL), m_rhs(rhs), m_op(op), m_result(NULL), m_method(NULL),
-			m_args(NULL), m_assign(false) {
-		m_lhs = new NumberLiteral(int64_t(0));
-		m_lhs->addRef();
-		m_rhs->addRef();
-	}
-
-	virtual ~BinaryExpr() {
-		if (m_lhs) {
-			m_lhs->delRef();
-		}
-		if (m_rhs) {
-			m_rhs->delRef();
-		}
-		if (m_method) {
-			m_method->delRef();
-		}
-		if (m_args) {
-			m_args->delRef();
-		}
-	}
-
-	bool hasValue() const { return true; }
-
-	bool isAssigned() const { return m_assign; }
-
-	ASTNode* getLhs() const { return m_lhs; }
-	ASTNode* getRhs() const { return m_rhs; }
-
-	int getOp() const { return m_op; }
-
-	Value* getValue() const { return m_result; }
-
-	void setResult(Value* value) { m_result = value; }
-
-	void setMethod(Value* method) { m_method = method; }
-	void setMethodArgs(Value* args) { m_args = args; }
-
-	Value* getMethod() { return m_method; }
-	Value* getMethodArgs() { return m_args; }
-
-	virtual void acceptVisitor(ASTVisitor& visitor) {
-		visitor.visit(this);
-	}
-protected:
-	ASTNode* m_lhs;
-	ASTNode* m_rhs;
-private:
-	int m_op;
-	Value* m_result;
-	Value* m_method;
-	Value* m_args;
-	bool m_assign;
-
-	DISALLOW_COPY_AND_ASSIGN(BinaryExpr);
-};
-
 class Identifier : public ASTNode {
 public:
 	explicit Identifier(const CString* name)
@@ -689,6 +616,62 @@ protected:
 	Value* m_args_value;
 private:
 	DISALLOW_COPY_AND_ASSIGN(CallExpr);
+};
+
+class BinaryExpr : public CallExpr {
+public:
+	BinaryExpr(int op, ASTNode* lhs, ASTNode* rhs)
+		: CallExpr(NULL), m_lhs(lhs), m_rhs(rhs), m_op(op), m_result(NULL), m_assign(false) {
+		m_lhs->addRef();
+		m_rhs->addRef();
+	}
+	BinaryExpr(int op, ASTNode* lhs, ASTNode* rhs, bool assign)
+		: CallExpr(NULL), m_lhs(lhs), m_rhs(rhs), m_op(op), m_result(NULL), m_assign(assign) {
+		m_lhs->addRef();
+		m_rhs->addRef();
+	}
+
+	BinaryExpr(int op, ASTNode* rhs)
+		: CallExpr(NULL), m_lhs(NULL), m_rhs(rhs), m_op(op), m_result(NULL), m_assign(false) {
+		m_lhs = new NumberLiteral(int64_t(0));
+		m_lhs->addRef();
+		m_rhs->addRef();
+	}
+
+	virtual ~BinaryExpr() {
+		if (m_lhs) {
+			m_lhs->delRef();
+		}
+		if (m_rhs) {
+			m_rhs->delRef();
+		}
+	}
+
+	bool hasValue() const { return true; }
+
+	bool isAssigned() const { return m_assign; }
+
+	ASTNode* getLhs() const { return m_lhs; }
+	ASTNode* getRhs() const { return m_rhs; }
+
+	int getOp() const { return m_op; }
+
+	Value* getValue() const { return m_result; }
+
+	void setResult(Value* value) { m_result = value; }
+
+	virtual void acceptVisitor(ASTVisitor& visitor) {
+		visitor.visit(this);
+	}
+protected:
+	ASTNode* m_lhs;
+	ASTNode* m_rhs;
+private:
+	int m_op;
+	Value* m_result;
+	bool m_assign;
+
+	DISALLOW_COPY_AND_ASSIGN(BinaryExpr);
 };
 
 class Subscript : public CallExpr {

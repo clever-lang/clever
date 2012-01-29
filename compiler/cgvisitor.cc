@@ -147,8 +147,8 @@ AST_VISITOR(CodeGenVisitor, BinaryExpr) {
 			expr->getRhs()->acceptVisitor(*this);
 			rhs = expr->getRhs()->getValue();
 
-			emit(opval, &VM::mcall_handler, expr->getMethod(),
-				expr->getMethodArgs(), expr->getValue());
+			emit(opval, &VM::mcall_handler, expr->getCallValue(),
+				expr->getArgsValue(), expr->getValue());
 			break;
 		default:
 			Compiler::error("Unknown op type!");
@@ -410,10 +410,6 @@ AST_VISITOR(CodeGenVisitor, MethodCall) {
  * Generates opcode for variable assignment
  */
 AST_VISITOR(CodeGenVisitor, AssignExpr) {
-	//Value* rvalue = expr->getMethodArgs();
-
-	//rvalue->addRef();
-
 	emit(OP_ASSIGN, &VM::mcall_handler, expr->getCallValue(),
 		expr->getArgsValue());
 }

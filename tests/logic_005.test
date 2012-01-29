@@ -7,4 +7,4 @@ if (i < j) {
 	println("bug");
 }
 ==RESULT==
-Compile error: No matching call for operation '__less__' in Int using \(Int, String\) on \S+ line 4
+Compile error: No matching call for Int::__less__\(Int, String\) on \S+ line 4
