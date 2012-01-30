@@ -493,6 +493,8 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 		Value* initval = rhs->getValue();
 
 		if (!_check_compatible_types(var, initval)) {
+			var->delRef();
+
 			Compiler::errorf(expr->getLocation(),
 				"Cannot convert `%S' to `%S' on assignment",
 				initval->getTypePtr()->getName(),

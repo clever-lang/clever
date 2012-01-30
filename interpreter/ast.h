@@ -935,7 +935,7 @@ public:
 	TypeCreation(Identifier* type, ArgumentList* args)
 		: m_type(type), m_args(args), m_call_value(NULL), m_args_value(NULL) {
 		m_type->addRef();
-		m_value = new Value();
+		m_value = new Value;
 		if (m_args) {
 			m_args->addRef();
 		}
@@ -949,10 +949,17 @@ public:
 		if (m_call_value) {
 			m_call_value->delRef();
 		}
+		if (m_value) {
+			m_value->delRef();
+		}
 	}
 
 	Identifier* getIdentifier() {
 		return m_type;
+	}
+
+	void setValue(Value* value) {
+		m_value = value;
 	}
 
 	Value* getValue() const {
