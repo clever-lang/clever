@@ -35,14 +35,14 @@ namespace clever {
  * Errors and stuff.
  */
 #ifdef CLEVER_DEBUG
-void clever_assert_(const char* file, long line, const char* expr,
+void clever_assert_(const char* file, const char* function, long line, const char* expr,
 		int hypothesis, const char* format, ...) {
 	va_list vl;
 	std::ostringstream out;
 
 	if (!hypothesis) {
 		va_start(vl, format);
-		printf("clever: assertion '%s' failed at %s line %l.\n\t", expr, file, line);
+		printf("clever: Assertion '%s' failed. File: %s Line: %l Function: %s.\n\t", expr, file, line, function);
 
 		vsprintf(out, format, vl);
 

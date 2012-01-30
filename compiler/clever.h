@@ -181,6 +181,16 @@ namespace clever {
 # define THREAD_TLS
 #endif
 
+/**
+ * Current function's name. (based on BOOST's)
+ */
+#if defined(__GNUC__)
+# define CLEVER_CURRENT_FUNCTION __PRETTY_FUNCTION__
+#elif defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901)
+# define CLEVER_CURRENT_FUNCTION __func__
+#else
+# define CLEVER_CURRENT_FUNCTION "(unknown)"
+#endif
 
 /**
  * Utility functions and macros.
@@ -188,12 +198,12 @@ namespace clever {
 
 #ifdef CLEVER_DEBUG
 #define clever_assert(hypothesis, format ...) \
-	clever::clever_assert_(__FILE__, __LINE__, #hypothesis, (hypothesis), format)
+	clever::clever_assert_(__FILE__, CLEVER_CURRENT_FUNCTION, __LINE__, #hypothesis, (hypothesis), format)
 
 #define clever_assert_not_null(hypothesis) \
-	clever::clever_assert_(__FILE__, __LINE__, #hypothesis, (hypothesis) != NULL, #hypothesis " cannot be NULL")
+	clever::clever_assert_(__FILE__, CLEVER_CURRENT_FUNCTION, __LINE__, #hypothesis, (hypothesis) != NULL, #hypothesis " cannot be NULL")
 
-void clever_assert_(const char* file, long line, const char* expr,
+void clever_assert_(const char* file, const char* function, long line, const char* expr,
 		int hypothesis, const char* format, ...);
 #else
 #define clever_assert(hypothesis, format, ...)
