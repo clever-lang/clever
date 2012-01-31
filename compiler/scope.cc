@@ -29,23 +29,6 @@
 namespace clever {
 
 Scope g_scope;
-Symbol::Symbol(const CString* name, Value* value)
-	: m_name(name), m_type(VALUE), m_data() {
-	clever_assert_not_null(name);
-	clever_assert_not_null(value);
-
-	//value->addRef();
-	m_data.value = value;
-}
-
-Symbol::Symbol(const CString* name, const Type* type)
-	: m_name(name), m_type(TYPE), m_data() {
-	clever_assert_not_null(name);
-	clever_assert_not_null(type);
-
-	//const_cast<Type*>(type)->addRef();
-	m_data.type = type;
-}
 	
 Symbol::~Symbol() {
 	if (m_type == TYPE) {
@@ -58,8 +41,9 @@ Symbol::~Symbol() {
 }
 
 void Scope::clear() {
-	SymbolMap::const_iterator sym = m_symbols.begin(), last_sym = m_symbols.end();
-	std::vector<Scope*>::const_iterator child = m_children.begin(), last_child = m_children.end();
+	SymbolMap::const_iterator sym(m_symbols.begin()), last_sym(m_symbols.end());
+	std::vector<Scope*>::const_iterator child(m_children.begin()),
+		last_child(m_children.end());
 
 	while (child != last_child) {
 		delete *child;

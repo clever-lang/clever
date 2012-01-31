@@ -50,8 +50,22 @@ public:
 	typedef	enum { INVALID, VALUE, TYPE } SymbolType;
 
 	Symbol() : m_name(NULL), m_type(INVALID), m_data() {}
-	Symbol(const CString* name, Value* value);
-	Symbol(const CString* name, const Type* type);
+
+	Symbol(const CString* name, Value* value)
+		: m_name(name), m_type(VALUE), m_data() {
+		clever_assert_not_null(name);
+		clever_assert_not_null(value);
+
+		m_data.value = value;
+	}
+
+	Symbol(const CString* name, const Type* type)
+		: m_name(name), m_type(TYPE), m_data() {
+		clever_assert_not_null(name);
+		clever_assert_not_null(type);
+
+		m_data.type = type;
+	}
 
 	~Symbol();
 
