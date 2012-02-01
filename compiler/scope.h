@@ -93,11 +93,11 @@ private:
 	} m_data;
 };
 
+typedef std::tr1::unordered_map<const CString*, Symbol*> SymbolMap;
+typedef SymbolMap::value_type ScopeEntry;
+	
 class Scope {
-	typedef std::tr1::unordered_map<const CString*, Symbol*> SymbolMap;
-	typedef SymbolMap::value_type ScopeEntry;
 public:
-
 	// Constructor for non-global scopes
 	explicit Scope(Scope* parent)
 		: m_parent(parent), m_children(), m_symbols() {
@@ -193,6 +193,8 @@ public:
 	std::vector<Scope*>& getChildren() { return m_children; }
 
 	bool isGlobal() const { return m_parent == NULL; }
+	
+	SymbolMap& getSymbols() { return m_symbols; }
 
 private:
 	DISALLOW_COPY_AND_ASSIGN(Scope);

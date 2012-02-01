@@ -45,6 +45,7 @@
 namespace clever {
 
 class Opcode;
+class Scope;
 
 typedef std::vector<Opcode*> OpcodeList;
 typedef std::stack<const Opcode*> CallStack;
@@ -83,6 +84,7 @@ public:
 	static void push_args(ValueVector*);
 	static void pop_args(const Opcode* const);
 	static void restore_args();
+	static void update_vars(Scope*, const ValueVector*);
 	/**
 	 * Opcode handlers
 	 */
@@ -96,7 +98,6 @@ public:
 	static CLEVER_VM_HANDLER(assign_handler);
 	static CLEVER_VM_HANDLER(end_func_handler);
 	static CLEVER_VM_HANDLER(return_handler);
-	static CLEVER_VM_HANDLER(arg_recv_handler);
 private:
 	OpcodeList* m_opcodes;
 

@@ -88,9 +88,6 @@ public:
 
 	FunctionArgs& getArgs() { return m_args; }
 
-	void setVars(Value* vars) { m_vars = vars; }
-	Value* getVars() { return m_vars; }
-
 	int getNumArgs() const { return m_num_args; }
 	Function* setVariadic() { m_num_args = -1; return this; }
 	bool isVariadic() const { return m_num_args < 0; }
@@ -130,8 +127,6 @@ private:
 	int m_num_args, m_min_args;
 	const Type* m_rtype;
 	FunctionArgs m_args;
-	Value* m_vars;
-
 };
 
 } // clever

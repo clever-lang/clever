@@ -47,7 +47,6 @@ enum Opcodes {
 	OP_FCALL,
 	OP_MCALL,
 	OP_RETURN,
-	OP_RECV,
 	OP_REGEX,
 	OP_NOT,
 	OP_BW_NOT,

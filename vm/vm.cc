@@ -29,6 +29,7 @@
 #include "opcode.h"
 #include "vm.h"
 #include "types/type.h"
+#include "compiler/scope.h"
 
 namespace clever {
 
@@ -98,6 +99,8 @@ void VM::pop_args(const Opcode* const op) {
 	delete vec_copy;
 
 	s_arg_values.pop();
+
+	delete s_args.top();
 	s_args.pop();
 
 	if (!s_args.empty()) {
@@ -185,6 +188,29 @@ CLEVER_VM_HANDLER(VM::break_handler) {
 	CLEVER_VM_GOTO(opcode.getJmpAddr1());
 }
 
+void VM::update_vars(Scope* scope, const ValueVector* args) {
+	SymbolMap& symbols = scope->getSymbols();
+	SymbolMap::const_iterator sym(symbols.begin()), last_sym(symbols.end());
+	ValueVector* vec = new ValueVector;
+	int i = 0;
+
+	while (sym != last_sym) {
+		Symbol* symbol = sym->second;
+
+		if (symbol->isValue()) {
+			Value* val = symbol->getValue();
+			if (!val->isCallable()) {
+				val->copy(args->at(i));
+				vec->push_back(val);
+				++i;
+			}
+		}
+		++sym;
+	}
+
+	push_args(vec);
+}
+
 /**
  * func()
  */
@@ -197,25 +223,15 @@ CLEVER_VM_HANDLER(VM::fcall_handler) {
 	if (func->isNearCall()) {
 		s_call.push(&opcode);
 
+		if (func_args) {
+			update_vars(func->getScope(), func_args);
+		}
+
 		func->call(next_op);
 	} else {
 		/* Call the function */
 		func->call(result, func_args);
 	}
-}
-
-/**
- * Argument receiver
- */
-CLEVER_VM_HANDLER(VM::arg_recv_handler) {
-	ValueVector* vars = opcode.getOp1()->getVector();
-	const ValueVector* const func_args = opcode.getOp2()->getVector();
-
-	for (size_t i = 0, j = vars->size(); i < j; ++i) {
-		vars->at(i)->copy(func_args->at(i));
-	}
-
-	push_args(vars);
 }
 
 /**

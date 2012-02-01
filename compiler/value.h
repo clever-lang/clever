@@ -39,6 +39,8 @@
 #include "types/arrayvalue.h"
 
 namespace clever {
+	
+class Scope;
 
 /**
  * Native types
@@ -361,13 +363,13 @@ public:
 
 	/* TODO: generate name for anonymous functions, disable setName(). */
 	CallableValue()
-		: m_call_type(NONE), m_context(NULL) { }
+		: m_call_type(NONE), m_context(NULL), m_scope(NULL) { }
 
 	/**
 	 * Create a CallableValue to represent a named function.
 	 */
 	explicit CallableValue(const CString* const name)
-		: Value(), m_call_type(NONE), m_context(NULL) {
+		: Value(), m_call_type(NONE), m_context(NULL), m_scope(NULL) {
 		setName(name);
 	}
 
@@ -375,7 +377,7 @@ public:
 	 * Create a CallableValue able to represent a method.
 	 */
 	CallableValue(const CString* const name, const Type* const type)
-		: Value(), m_call_type(NONE), m_context(NULL) {
+		: Value(), m_call_type(NONE), m_context(NULL), m_scope(NULL) {
 		setName(name);
 		setTypePtr(type);
 	}
@@ -398,8 +400,11 @@ public:
 		m_call_type = handler->isInternal() ? FAR : NEAR;
 		m_handler.method = handler;
 	}
+	
+	void setScope(Scope* scope) { m_scope = scope; }
+	Scope* getScope() const { return m_scope; }
 
-	void setContext(Value* const value) { m_context = value; }
+	void setContext(Value* value) { m_context = value; }
 	Value* getContext() const { return m_context; }
 
 	FunctionPtr getFunctionPtr() const { return m_handler.func->getPtr(); }
@@ -448,6 +453,7 @@ private:
 
 	CallType m_call_type;
 	Value* m_context;
+	Scope* m_scope;
 
 	DISALLOW_COPY_AND_ASSIGN(CallableValue);
 };

@@ -689,10 +689,6 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 		expr->getArgs()->acceptVisitor(*this);
 		arg_values->setVector(expr->getArgs()->getArgValue());
 
-		if (func->isUserDefined()) {
-			Value* vars = const_cast<Function*>(func)->getVars();
-			vars->addRef();
-		}
 		arg_values->addRef();
 		expr->setArgsValue(arg_values);
 	}
@@ -779,13 +775,10 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 	if (args) {
 		ArgumentDecls& arg_nodes = args->getArgs();
 		ArgumentDecls::iterator it = arg_nodes.begin(), end = arg_nodes.end();
-		Value* vars = new Value;
-		ValueVector* vec = new ValueVector;
-
-		vars->setType(Value::VECTOR);
-		vars->setReference(0);
 
 		m_scope = m_scope->newChild();
+
+		func->setScope(m_scope);
 
 		while (it != end) {
 			Value* var = new Value;
@@ -798,17 +791,11 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 			var->initialize();
 
 			m_scope->pushValue(var->getName(), var);
-			vec->push_back(var);
-			var->addRef();
 
 			user_func->addArg(*arg_name, arg_type);
 
 			++it;
 		}
-
-
-		vars->setVector(vec);
-		user_func->setVars(vars);
 	}
 
 	m_funcs.push(user_func);

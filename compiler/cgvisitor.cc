@@ -374,23 +374,12 @@ AST_VISITOR(CodeGenVisitor, BreakNode) {
  */
 AST_VISITOR(CodeGenVisitor, FunctionCall) {
 	CallableValue* fvalue = expr->getFuncValue();
-
-	clever_assert(fvalue != NULL, "fvalue cannot be NULL");
-
-	Function* func = fvalue->getFunction();
 	Value* arg_values = expr->getArgsValue();
+
+	clever_assert_not_null(fvalue);
 
 	if (arg_values) {
 		expr->getArgs()->acceptVisitor(*this);
-
-		/**
-		 * User-defined function needs an extra opcode passing the parameters
-		 * to be assigned to respective var names used in the func declaration
-		 */
-		if (func->isUserDefined()) {
-			emit(OP_RECV, &VM::arg_recv_handler, func->getVars(), arg_values);
-			arg_values->addRef();
-		}
 	}
 
 	fvalue->addRef();
