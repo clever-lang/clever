@@ -31,5 +31,6 @@ println(y.slice(-3, -1).toString());
 \[array, slice\]
 \[method.\]
 \[array, slice, method.\]
-Warning: Value of start param (10) is greater than Array size
+Warning: Value of start param \(10\) is greater than Array size.
+\[\]
 \[2, 3\]

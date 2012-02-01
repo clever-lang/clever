@@ -203,7 +203,7 @@ CLEVER_METHOD(Array::resize) {
 
 
 CLEVER_METHOD(Array::slice) {
-	ValueVector* vec = CLEVER_THIS()->getVector();
+	ValueVector* vec = CLEVER_THIS()->getArray();
 	size_t sz = vec->size();
 	
 	int64_t start = CLEVER_ARG(0)->getInteger();
@@ -219,10 +219,7 @@ CLEVER_METHOD(Array::slice) {
 		r_start = start;
 	}
 	
-	if (length == 0) {
-		r_end = sz;
-	}
-	else if (length < 0) {
+	if (length <= 0) {
 		r_end = sz + length;
 	}
 	else {
@@ -232,10 +229,10 @@ CLEVER_METHOD(Array::slice) {
 	ValueVector* n_vec = new ValueVector;
 	
 	if (r_start >= (int64_t) sz) {
-		Compiler::warningf("Value of start param (%l) is greater than Array size", start);
+		Compiler::warningf("Value of start param (%l) is greater than Array size.", start);
 	}
 	else if (r_end > (int64_t) sz) {
-		Compiler::warningf("Wrong value of length param (%l)", length);
+		Compiler::warningf("Wrong value of length param (%l)", start);
 	}
 	else if (r_start > r_end) {
 		Compiler::warningf("The length param value (%l) must be valid.", length);
