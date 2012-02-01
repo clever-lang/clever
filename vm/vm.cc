@@ -25,10 +25,9 @@
 
 #include <iostream>
 #include <cstdlib>
+#include "vm/vm.h"
+#include "vm/opcode.h"
 #include "compiler/compiler.h"
-#include "opcode.h"
-#include "vm.h"
-#include "types/type.h"
 #include "compiler/scope.h"
 
 namespace clever {
@@ -41,7 +40,8 @@ ArgValueStack VM::s_arg_values;
  * Destroy the opcodes data
  */
 VM::~VM() {
-	OpcodeList::const_iterator it = m_opcodes.begin(), end(m_opcodes.end());
+	OpcodeList::const_iterator it = m_opcodes.begin(),
+		end(m_opcodes.end());
 
 	while (it != end) {
 		Value* op1 = (*it)->getOp1();
@@ -71,7 +71,8 @@ void VM::update_vars(Scope* scope, const ValueVector* args) {
 
 	// Binds the arguments Value* ptr to its respectives func arguments
 	const SymbolMap& symbols = scope->getSymbols();
-	SymbolMap::const_iterator sym(symbols.begin()), last_sym(symbols.end());
+	SymbolMap::const_iterator sym(symbols.begin()),
+		last_sym(symbols.end());
 
 	while (sym != last_sym) {
 		Symbol* symbol = sym->second;
@@ -89,11 +90,13 @@ void VM::update_vars(Scope* scope, const ValueVector* args) {
 
 	if (scope->hasChildren()) {
 		const ScopeVector& scopes = scope->getChildren();
-		ScopeVector::const_iterator scope_it(scopes.begin()), scope_end(scopes.end());
+		ScopeVector::const_iterator scope_it(scopes.begin()),
+			scope_end(scopes.end());
 
 		while (scope_it != scope_end) {
 			const SymbolMap& symbols = (*scope_it)->getSymbols();
-			SymbolMap::const_iterator sym(symbols.begin()), last_sym(symbols.end());
+			SymbolMap::const_iterator sym(symbols.begin()),
+				last_sym(symbols.end());
 
 			while (sym != last_sym) {
 				Symbol* symbol = sym->second;
@@ -137,9 +140,7 @@ void VM::push_args(ValueVector* vec) {
  * Pop arguments onto the call stack
  */
 void VM::pop_args(const Opcode* const op) {
-	/**
-	 * Check if the function has arguments
-	 */
+	// Check if the function has arguments
 	if (op->getOp2() == NULL) {
 		return;
 	}
@@ -235,14 +236,14 @@ CLEVER_VM_HANDLER(VM::jmp_handler) {
 }
 
 /**
- * break
+ * Break statement
  */
 CLEVER_VM_HANDLER(VM::break_handler) {
 	CLEVER_VM_GOTO(opcode.getJmpAddr1());
 }
 
 /**
- * func()
+ * Performs a function call
  */
 CLEVER_VM_HANDLER(VM::fcall_handler) {
 	const CallableValue* const func = static_cast<CallableValue*>(opcode.getOp1());
@@ -250,6 +251,7 @@ CLEVER_VM_HANDLER(VM::fcall_handler) {
 	Value* result = opcode.getResult();
 	const ValueVector* const func_args = args ? args->getVector() : NULL;
 
+	// Check if it's an user function
 	if (func->isNearCall()) {
 		s_call.push(&opcode);
 
@@ -259,13 +261,12 @@ CLEVER_VM_HANDLER(VM::fcall_handler) {
 
 		func->call(next_op);
 	} else {
-		/* Call the function */
 		func->call(result, func_args);
 	}
 }
 
 /**
- * var.method()
+ * Performs a method call (directly or via operators)
  */
 CLEVER_VM_HANDLER(VM::mcall_handler) {
 	const CallableValue* const var = static_cast<CallableValue*>(opcode.getOp1());
@@ -273,12 +274,11 @@ CLEVER_VM_HANDLER(VM::mcall_handler) {
 	Value* result = opcode.getResult();
 	const ValueVector* const func_args = args ? args->getVector() : NULL;
 
-	/* Call the method */
 	var->call(result, func_args);
 }
 
 /**
- * End function marker
+ * Marks the end of a function
  */
 CLEVER_VM_HANDLER(VM::end_func_handler) {
 	const Opcode* const op = s_call.top();
@@ -297,7 +297,7 @@ CLEVER_VM_HANDLER(VM::end_func_handler) {
 }
 
 /**
- * return x
+ * Returns to the caller or terminates the execution
  */
 CLEVER_VM_HANDLER(VM::return_handler) {
 	if (!s_call.empty()) {
@@ -307,20 +307,15 @@ CLEVER_VM_HANDLER(VM::return_handler) {
 		if (value) {
 			call->getResult()->copy(value);
 		}
-		/**
-		 * pop + restore arguments from stack
-		 */
+		// pop + restore arguments from stack
 		pop_args(call);
 
 		s_call.pop();
-		/**
-		 * Go back to the caller
-		 */
+
+		// Go back to the caller
 		CLEVER_VM_GOTO(call->getOpNum());
 	} else {
-		/**
-		 * Terminates the execution
-		 */
+		// Terminates the execution
 		CLEVER_VM_GOTO(-2);
 	}
 }
