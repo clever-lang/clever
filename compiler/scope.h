@@ -95,7 +95,8 @@ private:
 
 typedef std::tr1::unordered_map<const CString*, Symbol*> SymbolMap;
 typedef SymbolMap::value_type ScopeEntry;
-	
+typedef std::vector<Scope*> ScopeVector;
+
 class Scope {
 public:
 	// Constructor for non-global scopes
@@ -103,7 +104,7 @@ public:
 		: m_parent(parent), m_children(), m_symbols() {
 		clever_assert_not_null(parent);
 	}
-	
+
 	// Global scope constructor
 	Scope() : m_parent(NULL), m_children(), m_symbols() {}
 
@@ -134,7 +135,7 @@ public:
 		}
 		return it->second;
 	}
-	
+
 	// Resolve a symbol name recursively
 	Symbol* getSym(const CString* name) {
 		Symbol* sym = getLocalSym(name);
@@ -149,7 +150,7 @@ public:
 
 		return sym;
 	}
-	
+
 	// Resolve a value-symbol name locally
 	Value* getLocalValue(const CString* name) {
 		Symbol* s = getLocalSym(name);
@@ -183,24 +184,26 @@ public:
 
 	Scope* newChild() {
 		Scope* s = new Scope(this);
-		m_children.push_back(s);	
+		m_children.push_back(s);
 		return s;
 	}
+
+	bool hasChildren() const { return m_children.size() != 0; }
 
 	void clear();
 
 	Scope* getParent() const { return m_parent; }
-	std::vector<Scope*>& getChildren() { return m_children; }
+	ScopeVector& getChildren() { return m_children; }
 
 	bool isGlobal() const { return m_parent == NULL; }
-	
+
 	SymbolMap& getSymbols() { return m_symbols; }
 
 private:
 	DISALLOW_COPY_AND_ASSIGN(Scope);
 
 	Scope* m_parent;
-	std::vector<Scope*> m_children;
+	ScopeVector m_children;
 	SymbolMap m_symbols;
 };
 
