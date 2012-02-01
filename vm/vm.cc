@@ -62,33 +62,37 @@ VM::~VM() {
 	}
 }
 
+/**
+ * Update the Value* ptr of variables in the function scope
+ */
 void VM::update_vars(Scope* scope, const ValueVector* args) {
 	ValueVector* vec = new ValueVector;
 	int i = 0;
 
-	// Function arguments
-	SymbolMap& symbols = scope->getSymbols();
+	// Binds the arguments Value* ptr to its respectives func arguments
+	const SymbolMap& symbols = scope->getSymbols();
 	SymbolMap::const_iterator sym(symbols.begin()), last_sym(symbols.end());
+
 	while (sym != last_sym) {
 		Symbol* symbol = sym->second;
 
 		if (symbol->isValue()) {
 			Value* val = symbol->getValue();
+
 			if (!val->isCallable()) {
 				val->copy(args->at(i++));
 				vec->push_back(val);
-
 			}
 		}
 		++sym;
 	}
 
 	if (scope->hasChildren()) {
-		ScopeVector& scopes = scope->getChildren();
+		const ScopeVector& scopes = scope->getChildren();
 		ScopeVector::const_iterator scope_it(scopes.begin()), scope_end(scopes.end());
 
 		while (scope_it != scope_end) {
-			SymbolMap& symbols = (*scope_it)->getSymbols();
+			const SymbolMap& symbols = (*scope_it)->getSymbols();
 			SymbolMap::const_iterator sym(symbols.begin()), last_sym(symbols.end());
 
 			while (sym != last_sym) {
@@ -96,6 +100,7 @@ void VM::update_vars(Scope* scope, const ValueVector* args) {
 
 				if (symbol->isValue()) {
 					Value* val = symbol->getValue();
+
 					if (!val->isCallable()) {
 						vec->push_back(val);
 						val->initialize();
