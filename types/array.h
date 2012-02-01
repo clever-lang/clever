@@ -105,6 +105,7 @@ public:
 	static CLEVER_METHOD(at);
 	static CLEVER_METHOD(set);
 	static CLEVER_METHOD(resize);
+	static CLEVER_METHOD(slice);
 	static CLEVER_METHOD(toString);
 	static CLEVER_METHOD(do_assign);
 private:

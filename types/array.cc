@@ -201,6 +201,53 @@ CLEVER_METHOD(Array::resize) {
 	}
 }
 
+
+CLEVER_METHOD(Array::slice) {
+	ValueVector* vec = CLEVER_THIS()->getArray();
+	size_t sz = vec->size();
+	
+	int64_t start = CLEVER_ARG(0)->getInteger();
+	int64_t length = CLEVER_ARG(1)->getInteger();
+	
+	int64_t r_start = 0;
+	int64_t r_end = 0;
+	
+	if (start < 0) {
+		r_start = sz + start;
+	}
+	else {
+		r_start = start;
+	}
+	
+	if (length <= 0) {
+		r_end = sz + length;
+	}
+	else {
+		r_end = r_start + length;
+	}
+	
+	ValueVector* n_vec = new ValueVector;
+	
+	if (r_start >= (int64_t) sz) {
+		Compiler::warningf("Value of start param (%l) is greater than Array size.", start);
+	}
+	else if (r_end > (int64_t) sz) {
+		Compiler::warningf("Wrong value of length param (%l)", start);
+	}
+	else if (r_start > r_end) {
+		Compiler::warningf("The length param value (%l) must be valid.", length);
+	}
+	else {
+		for (int64_t i = r_start; i < r_end; i++) {
+			Value* val = new Value();
+			val->copy(vec->at(i));
+			n_vec->push_back(val);
+		}
+	}
+	
+	CLEVER_RETURN_ARRAY(n_vec);
+}
+
 /**
  * String Array<T>::toString()
  */
@@ -268,6 +315,12 @@ void Array::init() {
 	addMethod((new Method("resize", (MethodPtr)&Array::resize, CLEVER_VOID, false))
 		->addArg("new_size", CLEVER_INT)
 		->addArg("value", CLEVER_TPL_ARG(0))
+	);
+	
+	const Type* arr_t = CLEVER_GET_ARRAY_TEMPLATE->getTemplatedType(CLEVER_TPL_ARG(0));
+	addMethod((new Method("slice", (MethodPtr)&Array::slice, arr_t))
+		->addArg("start", CLEVER_INT)
+		->addArg("length", CLEVER_INT)
 	);
 }
 
