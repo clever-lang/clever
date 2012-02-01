@@ -62,7 +62,8 @@ public:
 	 */
 	typedef void (CLEVER_FASTCALL *opcode_handler)(CLEVER_VM_HANDLER_ARGS);
 
-	VM() : m_opcodes(NULL) { }
+	VM(OpcodeList& opcodes)
+		: m_opcodes(opcodes) {}
 
 	~VM();
 
@@ -74,10 +75,6 @@ public:
 	 * Displays an error message and exists
 	 */
 	static void error(const char*);
-	/**
-	 * Set the opcode vector
-	 */
-	void setOpcodes(OpcodeList& opcodes) { m_opcodes = &opcodes; }
 	/**
 	 * Function/method argument handling
 	 */
@@ -99,7 +96,7 @@ public:
 	static CLEVER_VM_HANDLER(end_func_handler);
 	static CLEVER_VM_HANDLER(return_handler);
 private:
-	OpcodeList* m_opcodes;
+	const OpcodeList& m_opcodes;
 
 	static CallStack s_call;
 	static ArgStack s_args;

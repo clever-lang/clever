@@ -41,7 +41,7 @@ ArgValueStack VM::s_arg_values;
  * Destroy the opcodes data
  */
 VM::~VM() {
-	OpcodeList::const_iterator it = m_opcodes->begin(), end(m_opcodes->end());
+	OpcodeList::const_iterator it = m_opcodes.begin(), end(m_opcodes.end());
 
 	while (it != end) {
 		Value* op1 = (*it)->getOp1();
@@ -131,10 +131,10 @@ void VM::error(const char* message) {
  * Execute the collected opcodes
  */
 void VM::run() {
-	long last_op = m_opcodes->size();
+	long last_op = m_opcodes.size();
 
 	for (long next_op = 0; next_op < last_op && next_op >= 0; ++next_op) {
-		const Opcode& opcode = *(*m_opcodes)[next_op];
+		const Opcode& opcode = *m_opcodes[next_op];
 
 		// opcode.dump();
 
