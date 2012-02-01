@@ -41,7 +41,7 @@ ArgValueStack VM::s_arg_values;
  * Destroy the opcodes data
  */
 VM::~VM() {
-	OpcodeList::const_iterator it = m_opcodes->begin(), end(m_opcodes->end());
+	OpcodeList::const_iterator it = m_opcodes.begin(), end(m_opcodes.end());
 
 	while (it != end) {
 		Value* op1 = (*it)->getOp1();
@@ -60,6 +60,59 @@ VM::~VM() {
 		delete *it;
 		++it;
 	}
+}
+
+/**
+ * Update the Value* ptr of variables in the function scope
+ */
+void VM::update_vars(Scope* scope, const ValueVector* args) {
+	ValueVector* vec = new ValueVector;
+	int i = 0;
+
+	// Binds the arguments Value* ptr to its respectives func arguments
+	const SymbolMap& symbols = scope->getSymbols();
+	SymbolMap::const_iterator sym(symbols.begin()), last_sym(symbols.end());
+
+	while (sym != last_sym) {
+		Symbol* symbol = sym->second;
+
+		if (symbol->isValue()) {
+			Value* val = symbol->getValue();
+
+			if (!val->isCallable()) {
+				val->copy(args->at(i++));
+				vec->push_back(val);
+			}
+		}
+		++sym;
+	}
+
+	if (scope->hasChildren()) {
+		const ScopeVector& scopes = scope->getChildren();
+		ScopeVector::const_iterator scope_it(scopes.begin()), scope_end(scopes.end());
+
+		while (scope_it != scope_end) {
+			const SymbolMap& symbols = (*scope_it)->getSymbols();
+			SymbolMap::const_iterator sym(symbols.begin()), last_sym(symbols.end());
+
+			while (sym != last_sym) {
+				Symbol* symbol = sym->second;
+
+				if (symbol->isValue()) {
+					Value* val = symbol->getValue();
+
+					if (!val->isCallable()) {
+						vec->push_back(val);
+						val->initialize();
+					}
+				}
+				++sym;
+			}
+			++scope_it;
+		}
+	}
+
+	push_args(vec);
 }
 
 /**
@@ -131,10 +184,10 @@ void VM::error(const char* message) {
  * Execute the collected opcodes
  */
 void VM::run() {
-	long last_op = m_opcodes->size();
+	long last_op = m_opcodes.size();
 
 	for (long next_op = 0; next_op < last_op && next_op >= 0; ++next_op) {
-		const Opcode& opcode = *(*m_opcodes)[next_op];
+		const Opcode& opcode = *m_opcodes[next_op];
 
 		// opcode.dump();
 
@@ -186,53 +239,6 @@ CLEVER_VM_HANDLER(VM::jmp_handler) {
  */
 CLEVER_VM_HANDLER(VM::break_handler) {
 	CLEVER_VM_GOTO(opcode.getJmpAddr1());
-}
-
-void VM::update_vars(Scope* scope, const ValueVector* args) {
-	ValueVector* vec = new ValueVector;
-	int i = 0;
-
-	// Function arguments
-	SymbolMap& symbols = scope->getSymbols();
-	SymbolMap::const_iterator sym(symbols.begin()), last_sym(symbols.end());
-	while (sym != last_sym) {
-		Symbol* symbol = sym->second;
-
-		if (symbol->isValue()) {
-			Value* val = symbol->getValue();
-			if (!val->isCallable()) {
-				val->copy(args->at(i++));
-				vec->push_back(val);
-
-			}
-		}
-		++sym;
-	}
-
-	if (scope->hasChildren()) {
-		ScopeVector& scopes = scope->getChildren();
-		ScopeVector::const_iterator scope_it(scopes.begin()), scope_end(scopes.end());
-
-		while (scope_it != scope_end) {
-			SymbolMap& symbols = (*scope_it)->getSymbols();
-			SymbolMap::const_iterator sym(symbols.begin()), last_sym(symbols.end());
-
-			while (sym != last_sym) {
-				Symbol* symbol = sym->second;
-
-				if (symbol->isValue()) {
-					Value* val = symbol->getValue();
-					if (!val->isCallable()) {
-						vec->push_back(val);
-					}
-				}
-				++sym;
-			}
-			++scope_it;
-		}
-	}
-
-	push_args(vec);
 }
 
 /**

@@ -190,8 +190,7 @@ AST_VISITOR(CodeGenVisitor, IfExpr) {
 	Value* value = expr->getCondition()->getValue();
 	value->addRef();
 
-	Opcode* jmp_if = emit(OP_JMPZ, &VM::jmpz_handler);
-	jmp_if->setOp1(value);
+	Opcode* jmp_if = emit(OP_JMPZ, &VM::jmpz_handler, value);
 
 	jmp_ops.push_back(jmp_if);
 
@@ -205,14 +204,13 @@ AST_VISITOR(CodeGenVisitor, IfExpr) {
 		Opcode* last_jmp = jmp_if;
 
 		while (it != end) {
-			Value* cond;
 			ElseIfExpr* elseif = static_cast<ElseIfExpr*>(*it);
 
 			last_jmp->setJmpAddr1(getOpNum());
 
 			elseif->getCondition()->acceptVisitor(*this);
 
-			cond = elseif->getCondition()->getValue();
+			Value* cond = elseif->getCondition()->getValue();
 			cond->addRef();
 
 			Opcode* jmp_elseif = emit(OP_JMPZ, &VM::jmpz_handler, cond);

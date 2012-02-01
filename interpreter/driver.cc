@@ -40,8 +40,6 @@ Driver::ScannerStack Driver::s_scanners;
  * Executes the script
  */
 void Interpreter::execute(bool interactive) {
-	VM vm;
-
 	if (interactive) {
 		m_compiler.setInteractive();
 	}
@@ -54,8 +52,7 @@ void Interpreter::execute(bool interactive) {
 		m_compiler.shutdown();
 	}
 
-
-	vm.setOpcodes(m_compiler.getOpcodes());
+	VM vm(m_compiler.getOpcodes());
 	vm.run();
 }
 
