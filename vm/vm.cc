@@ -24,7 +24,6 @@
  */
 
 #include <iostream>
-#include <cstdlib>
 #include "vm/vm.h"
 #include "vm/opcode.h"
 #include "compiler/compiler.h"
@@ -69,11 +68,11 @@ void VM::update_vars(Scope* scope, const ValueVector* args) {
 	ValueVector* vec = new ValueVector;
 	int i = 0;
 
-	// Binds the arguments Value* ptr to its respectives func arguments
 	const SymbolMap& symbols = scope->getSymbols();
 	SymbolMap::const_iterator sym(symbols.begin()),
 		last_sym(symbols.end());
 
+	// Binds the arguments Value* ptr to its respectives func arguments
 	while (sym != last_sym) {
 		Symbol* symbol = sym->second;
 
