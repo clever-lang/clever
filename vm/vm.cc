@@ -67,7 +67,13 @@ VM::~VM() {
  */
 void VM::update_vars(Scope* scope, const ValueVector* args) {
 	ValueVector* vec = new ValueVector;
+	ValueVector* vec_copy = new ValueVector;
+	ValueVector* vec_curr = NULL;
 	int i = 0;
+	
+	if (!s_args.empty()) {
+		vec_curr = s_arg_values.top();
+	}
 
 	// Binds the arguments Value* ptr to its respectives func arguments
 	const SymbolMap& symbols = scope->getSymbols();
@@ -81,13 +87,20 @@ void VM::update_vars(Scope* scope, const ValueVector* args) {
 			Value* val = symbol->getValue();
 
 			if (!val->isCallable()) {
+				Value* tmp = new Value;
+
 				val->copy(args->at(i++));
 				vec->push_back(val);
+				
+				tmp->copy(val);
+				vec_copy->push_back(tmp);
 			}
 		}
 		++sym;
 	}
+	i = args->size();
 
+	// Make the copy in the scopes level
 	if (scope->hasChildren()) {
 		const ScopeVector& scopes = scope->getChildren();
 		ScopeVector::const_iterator scope_it(scopes.begin()),
@@ -105,7 +118,18 @@ void VM::update_vars(Scope* scope, const ValueVector* args) {
 					Value* val = symbol->getValue();
 
 					if (!val->isCallable()) {
+						Value* tmp = new Value;
+						
+						tmp->copy(val);
+						
+						if (vec_curr) {
+							vec_curr->at(i++)->copy(tmp);
+							tmp->addRef();
+						}
+						
+						vec_copy->push_back(tmp);
 						vec->push_back(val);
+						
 						val->initialize();
 					}
 				}
@@ -115,24 +139,7 @@ void VM::update_vars(Scope* scope, const ValueVector* args) {
 		}
 	}
 
-	push_args(vec);
-}
-
-/**
- * Pushes the arguments into the call stack
- */
-void VM::push_args(ValueVector* vec) {
-	ValueVector* vec_copy = new ValueVector;
-
 	s_args.push(vec);
-
-	for (size_t i = 0, j = vec->size(); i < j; ++i) {
-		Value* tmp = new Value;
-
-		tmp->copy(vec->at(i));
-		vec_copy->push_back(tmp);
-	}
-
 	s_arg_values.push(vec_copy);
 }
 

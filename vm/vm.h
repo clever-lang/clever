@@ -78,7 +78,6 @@ public:
 	/**
 	 * Function/method argument handling
 	 */
-	static void push_args(ValueVector*);
 	static void pop_args(const Opcode* const);
 	static void restore_args();
 	static void update_vars(Scope*, const ValueVector*);
