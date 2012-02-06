@@ -276,10 +276,12 @@ void Array::init() {
 	if (CLEVER_TPL_ARG(0) == NULL) {
 		return;
 	}
+	
+	const Type* arr_t = CLEVER_GET_ARRAY_TEMPLATE->getTemplatedType(CLEVER_TPL_ARG(0));
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&Array::toString, CLEVER_STR, false))
-			->addArg("rvalue", CLEVER_ARRAY)
+		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&Array::do_assign, CLEVER_STR, false))
+			->addArg("rvalue", arr_t)
 	);
 
 	addMethod(new Method("toString", (MethodPtr)&Array::toString, CLEVER_STR));
@@ -317,7 +319,6 @@ void Array::init() {
 		->addArg("value", CLEVER_TPL_ARG(0))
 	);
 	
-	const Type* arr_t = CLEVER_GET_ARRAY_TEMPLATE->getTemplatedType(CLEVER_TPL_ARG(0));
 	addMethod((new Method("slice", (MethodPtr)&Array::slice, arr_t))
 		->addArg("start", CLEVER_INT)
 		->addArg("length", CLEVER_INT)

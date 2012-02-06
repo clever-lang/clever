@@ -262,6 +262,25 @@ CLEVER_METHOD(String::find) {
 }
 
 /**
+ * Array<Byte> String::asByteArray()
+ * Returns the byte representation of the current String in an Array
+ */
+CLEVER_METHOD(String::asByteArray) {
+	const ::std::string& this_str = CLEVER_THIS()->toString();
+	ValueVector* vv = new ValueVector;
+	
+	Value* v;
+	for (size_t i = 0, sz = this_str.size(); i < sz; ++i) {
+		v = new Value();
+		v->setByte(uint8_t(this_str[i]));
+		vv->push_back(v);
+	}
+	
+	retval->setTypePtr(CLEVER_TYPE("Array<Byte>"));
+	CLEVER_RETURN_ARRAY(vv);
+}
+
+/**
  * Void String::__assign__(String)
  */
 CLEVER_METHOD(String::do_assign) {
@@ -338,6 +357,9 @@ CLEVER_METHOD(String::times) {
 }
 
 void String::init() {
+	const Type* arr_byte = CLEVER_GET_ARRAY_TEMPLATE->getTemplatedType(CLEVER_BYTE);
+	
+	
 	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&String::constructor, CLEVER_STR));
 
 	addMethod(new Method("ltrim", (MethodPtr)&String::ltrim, CLEVER_STR));
@@ -434,13 +456,11 @@ void String::init() {
 	addMethod(
 		(new Method("find", (MethodPtr)&String::find, CLEVER_INT))
 			->addArg("str", CLEVER_STR)
+			->addArg("pos", CLEVER_INT)
+			->setMinNumArgs(1)
 	);
 	
-	addMethod(
-		(new Method("find", (MethodPtr)&String::find, CLEVER_INT))
-			->addArg("str", CLEVER_STR)
-			->addArg("pos", CLEVER_INT)
-	);
+	addMethod(new Method("asByteArray", (MethodPtr)&String::asByteArray, arr_byte));
 
 	addMethod(new Method("length", (MethodPtr)&String::length, CLEVER_INT));
 

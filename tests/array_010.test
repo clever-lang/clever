@@ -1,0 +1,14 @@
+Testing Array's assign
+==CODE==
+import std.io;
+
+Array<Int> a;
+a.push(1);
+a.push(2);
+a.push(3);
+
+Array<Int> b = a;
+
+println(b.toString());
+==RESULT==
+\[1, 2, 3\]

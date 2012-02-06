@@ -1,0 +1,10 @@
+[FATAL] Testing Array's assign of different types
+==CODE==
+import std.io;
+
+Array<Int> a;
+Array<String> b = a;
+
+println(b.toString());
+==RESULT==
+Compile error: Cannot convert `Array<Int>' to `Array<String>' on assignment on \S+ line 4
