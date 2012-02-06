@@ -317,6 +317,26 @@ CLEVER_METHOD(String::less) {
 	CLEVER_RETURN_BOOL(CLEVER_ARG_STR(0) < CLEVER_ARG_STR(1));
 }
 
+/**
+ * * operator (String, Int)
+ */
+CLEVER_METHOD(String::times) {
+	const ::std::string& str = CLEVER_ARG_STR(0);
+	int64_t num = CLEVER_ARG_INT(1);
+	
+	if (num <= 0) {
+		CLEVER_RETURN_STR(CSTRING(""));
+	}
+	else {
+		::std::string ret = str;
+		for (int i = 1; i < num; ++i) {
+			ret += str;
+		}
+		
+		CLEVER_RETURN_STR(CSTRING(ret));
+	}
+}
+
 void String::init() {
 	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&String::constructor, CLEVER_STR));
 
@@ -371,6 +391,12 @@ void String::init() {
 		(new Method(CLEVER_OPERATOR_PLUS, (MethodPtr)&String::plus, CLEVER_STR))
 			->addArg("str1", CLEVER_STR)
 			->addArg("str2", CLEVER_STR)
+	);
+	
+	addMethod(
+		(new Method(CLEVER_OPERATOR_MULT, (MethodPtr)&String::times, CLEVER_STR))
+			->addArg("str", CLEVER_STR)
+			->addArg("num", CLEVER_INT)
 	);
 
 	addMethod(

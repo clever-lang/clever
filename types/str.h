@@ -71,6 +71,7 @@ public:
 	static CLEVER_METHOD(less_equal);
 	static CLEVER_METHOD(greater_equal);
 	static CLEVER_METHOD(do_assign);
+	static CLEVER_METHOD(times);
 private:
 	DISALLOW_COPY_AND_ASSIGN(String);
 };
