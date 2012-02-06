@@ -56,6 +56,8 @@ public:
 	static CLEVER_METHOD(toInteger);
 	static CLEVER_METHOD(toUpper);
 	static CLEVER_METHOD(toLower);
+	static CLEVER_METHOD(startsWith);
+	static CLEVER_METHOD(endsWith);
 
 	/**
 	 * Type operator methods

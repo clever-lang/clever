@@ -4,3 +4,4 @@ extra/testrunner
 clever
 test.txt
 *.tmp
+update.sh

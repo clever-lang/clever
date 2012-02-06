@@ -207,6 +207,43 @@ CLEVER_METHOD(String::toLower) {
 }
 
 /**
+ * Bool String::startsWith(String)
+ * Returns true iff this String starts with the String given as argument
+ */
+CLEVER_METHOD(String::startsWith) {
+	const ::std::string& this_str = CLEVER_THIS()->toString();
+	const ::std::string& arg_str = CLEVER_ARG(0)->toString();
+
+	size_t arg_sz = arg_str.size();
+
+	if (arg_sz > this_str.size()) {
+		CLEVER_RETURN_BOOL(false);
+		return;
+	}
+
+	CLEVER_RETURN_BOOL(this_str.compare(0, arg_sz, arg_str) == 0);
+}
+
+/**
+ * Bool String::endsWith(String)
+ * Returns true iff this String ends with the String given as argument
+ */
+CLEVER_METHOD(String::endsWith) {
+	const ::std::string& this_str = CLEVER_THIS()->toString();
+	const ::std::string& arg_str = CLEVER_ARG(0)->toString();
+
+	size_t arg_sz = arg_str.size();
+	size_t this_sz = this_str.size();
+
+	if (arg_sz > this_sz) {
+		CLEVER_RETURN_BOOL(false);
+		return;
+	}
+
+	CLEVER_RETURN_BOOL(this_str.compare(this_sz - arg_sz, arg_sz, arg_str) == 0);
+}
+
+/**
  * Void String::__assign__(String)
  */
 CLEVER_METHOD(String::do_assign) {
@@ -338,6 +375,16 @@ void String::init() {
 	addMethod(
 		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&String::do_assign, CLEVER_VOID))
 			->addArg("rvalue", CLEVER_STR)
+	);
+	
+	addMethod(
+		(new Method("startsWith", (MethodPtr)&String::startsWith, CLEVER_BOOL))
+			->addArg("str", CLEVER_STR)
+	);
+	
+	addMethod(
+		(new Method("endsWith", (MethodPtr)&String::endsWith, CLEVER_BOOL))
+			->addArg("str", CLEVER_STR)
 	);
 
 	addMethod(new Method("length", (MethodPtr)&String::length, CLEVER_INT));

@@ -1,0 +1,19 @@
+Testing String::endsWith()
+==CODE==
+import std.io;
+
+String a = "clever programming language";
+
+println(a.endsWith("language"));
+println(a.endsWith("g language"));
+println(a.endsWith("glanguage"));
+
+println("language".endsWith("age"));
+println("age".endsWith("language"));
+
+==RESULT==
+true
+true
+false
+true
+false
