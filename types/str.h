@@ -58,6 +58,7 @@ public:
 	static CLEVER_METHOD(toLower);
 	static CLEVER_METHOD(startsWith);
 	static CLEVER_METHOD(endsWith);
+	static CLEVER_METHOD(find);
 
 	/**
 	 * Type operator methods

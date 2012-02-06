@@ -244,6 +244,24 @@ CLEVER_METHOD(String::endsWith) {
 }
 
 /**
+ * Int String::find(String str) and Int String::find(String str, Int pos)
+ * Searches in the current String for the first occurrence of 'str' and returns the
+ * position or -1 if not found. In the second version, the search is done only using
+ * the characters after 'pos'. 
+ */
+CLEVER_METHOD(String::find) {
+	const ::std::string& this_str = CLEVER_THIS()->toString();
+	const ::std::string& arg_str = CLEVER_ARG(0)->toString();
+	size_t pos = (CLEVER_NUM_ARGS() == 1 ? 0 : CLEVER_ARG(1)->getInteger());
+	
+	if (pos >= this_str.size()) {
+		CLEVER_RETURN_INT(-1);
+	}
+	
+	CLEVER_RETURN_INT(this_str.find(arg_str, pos));
+}
+
+/**
  * Void String::__assign__(String)
  */
 CLEVER_METHOD(String::do_assign) {
@@ -385,6 +403,17 @@ void String::init() {
 	addMethod(
 		(new Method("endsWith", (MethodPtr)&String::endsWith, CLEVER_BOOL))
 			->addArg("str", CLEVER_STR)
+	);
+	
+	addMethod(
+		(new Method("find", (MethodPtr)&String::find, CLEVER_INT))
+			->addArg("str", CLEVER_STR)
+	);
+	
+	addMethod(
+		(new Method("find", (MethodPtr)&String::find, CLEVER_INT))
+			->addArg("str", CLEVER_STR)
+			->addArg("pos", CLEVER_INT)
 	);
 
 	addMethod(new Method("length", (MethodPtr)&String::length, CLEVER_INT));
