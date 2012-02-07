@@ -184,6 +184,7 @@ namespace clever {
 %type <identifier> CONSTANT
 %type <constant> constant
 %type <template_args> template_args
+%type <template_args> template_args_fix
 %type <ast_node> literal
 %type <identifier> template
 %type <ast_node> statement_list_non_empty
@@ -352,13 +353,30 @@ template_args:
 	|	template					{ $<template_args>$ = new ast::TemplateArgsVector; $<template_args>$->push_back($1); }
 ;
 
+template_args_fix:
+	TYPE "<" TYPE 						{ $<template_args>$ = new ast::TemplateArgsVector;
+										  ast::TemplateArgsVector* a=new ast::TemplateArgsVector;
+										  a->push_back($3);
+										  $1->setTemplateArgs(a);
+										  $<template_args>$->push_back($1); 
+										}
+	| template_args ',' TYPE "<" TYPE	{
+										  ast::TemplateArgsVector* a=new ast::TemplateArgsVector;
+										  a->push_back($5);
+										  $3->setTemplateArgs(a); 
+										  $1->push_back($3);
+										}
+;
+
 template:
 		TYPE "<" template_args ">"       { $1->setTemplateArgs($3); }
+	|	TYPE "<" template_args_fix ">>"	 { $1->setTemplateArgs($3); }
 ;
 
 variable_declaration:
 		variable_declaration_impl			{ $$ = $1; }
 	|	CONST variable_declaration_impl		{ $2->setConstness(true); $$ = $2; }
+;
 
 variable_declaration_impl:
 		TYPE IDENT '=' type_creation        { $$ = new ast::VariableDecl($1, $2, $4); $$->setLocation(yylloc); }
@@ -413,8 +431,10 @@ expr:
 	|	expr ">=" expr        { $$ = new ast::BinaryExpr(ast::GREATER_EQUAL, $1, $3); $$->setLocation(yylloc); }
 	|	expr "<" expr         { $$ = new ast::BinaryExpr(ast::LESS, $1, $3);          $$->setLocation(yylloc); }
 	|	expr "<=" expr        { $$ = new ast::BinaryExpr(ast::LESS_EQUAL, $1, $3);    $$->setLocation(yylloc); }
-	|	expr "<<" expr        { $$ = new ast::BinaryExpr(ast::LSHIFT, $1, $3);        $$->setLocation(yylloc); }
-	|	expr ">>" expr        { $$ = new ast::BinaryExpr(ast::RSHIFT, $1, $3);        $$->setLocation(yylloc); }
+	|	expr "<<" expr        { $$ = new ast::BinaryExpr(ast::LSHIFT, $1,
+$3);      $$->setLocation(yylloc); }
+	|	expr ">>" expr        { $$ = new ast::BinaryExpr(ast::RSHIFT, $1,
+$3);      $$->setLocation(yylloc); }
 	|	expr "==" expr        { $$ = new ast::BinaryExpr(ast::EQUAL, $1, $3);         $$->setLocation(yylloc); }
 	|	expr "!=" expr        { $$ = new ast::BinaryExpr(ast::NOT_EQUAL, $1, $3);     $$->setLocation(yylloc); }
 	|	expr "||" expr        { $$ = new ast::BinaryExpr(ast::OR, $1, $3);            $$->setLocation(yylloc); }
