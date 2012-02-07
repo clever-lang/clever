@@ -354,7 +354,8 @@ template_args:
 ;
 
 template_args_fix:
-	TYPE "<" TYPE 						{ $<template_args>$ = new ast::TemplateArgsVector;
+	TYPE "<" TYPE 						{ 
+										  $<template_args>$ = new ast::TemplateArgsVector;
 										  ast::TemplateArgsVector* a=new ast::TemplateArgsVector;
 										  a->push_back($3);
 										  $1->setTemplateArgs(a);
@@ -365,6 +366,13 @@ template_args_fix:
 										  a->push_back($5);
 										  $3->setTemplateArgs(a); 
 										  $1->push_back($3);
+										}
+	| TYPE "<" template					{
+										  $<template_args>$ = new ast::TemplateArgsVector;
+										  ast::TemplateArgsVector* a=new ast::TemplateArgsVector;
+										  a->push_back($3);
+										  $1->setTemplateArgs(a);
+										  $<template_args>$->push_back($1);
 										}
 ;
 
