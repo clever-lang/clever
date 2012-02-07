@@ -202,6 +202,10 @@ next_token:
 	<INITIAL>"protected" {
 		RET(token::PROTECTED);
 	}
+	
+	<INITIAL>"Auto" {
+		RET(token::AUTO);
+	}
 
 	<INITIAL>"true" {
 		Value* newval = new Value(CLEVER_BOOL);

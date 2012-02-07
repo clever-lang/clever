@@ -469,8 +469,12 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
  * Variable declaration visitor
  */
 AST_VISITOR(TypeChecker, VariableDecl) {
-	const Type* type = _evaluate_type(expr->getLocation(),
-		expr->getType());
+	const Type* type = NULL;
+	
+	if (expr->getType() != NULL) {
+		type = _evaluate_type(expr->getLocation(),
+			expr->getType());
+	}
 
 	Identifier* variable = expr->getVariable();
 
@@ -491,15 +495,23 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 
 	if (rhs) {
 		Value* initval = rhs->getValue();
+		
+		if (type) {
+			if (!_check_compatible_types(var, initval)) {
+				var->delRef();
 
-		if (!_check_compatible_types(var, initval)) {
-			var->delRef();
-
-			Compiler::errorf(expr->getLocation(),
-				"Cannot convert `%S' to `%S' on assignment",
-				initval->getTypePtr()->getName(),
-				type->getName());
+				Compiler::errorf(expr->getLocation(),
+					"Cannot convert `%S' to `%S' on assignment",
+					initval->getTypePtr()->getName(),
+					type->getName());
+			}
 		}
+		else {
+			// `auto' typed, so the variable's type is the type of rhs
+			type = initval->getTypePtr();
+			var->setTypePtr(type);
+		}
+		
 		initval->addRef();
 		expr->setInitialValue(initval);
 

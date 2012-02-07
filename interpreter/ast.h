@@ -729,14 +729,23 @@ public:
 	VariableDecl(Identifier* type, Identifier* variable, ASTNode* rhs)
 		: m_type(type), m_variable(variable), m_rhs(rhs), m_initval(NULL),
 			m_const_value(false), m_call_value(NULL), m_args_value(NULL) {
-		m_type->addRef();
+		
+		// If is not `Auto' typed variable
+		if (m_type) {
+			m_type->addRef();
+		}
+		
 		m_variable->addRef();
 		m_rhs->addRef();
 	}
 
 	virtual ~VariableDecl() {
-		m_type->delRef();
+		if (m_type) {
+			m_type->delRef();
+		}
+		
 		m_variable->delRef();
+		
 		if (m_rhs) {
 			m_rhs->delRef();
 		}
@@ -802,6 +811,9 @@ public:
 		return m_const_value;
 	}
 private:
+	/**
+	 * The variable's type. NULL means `Auto' typed variable.
+	 */
 	Identifier* m_type;
 	Identifier* m_variable;
 	ASTNode* m_rhs;

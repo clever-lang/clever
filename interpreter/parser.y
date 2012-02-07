@@ -114,6 +114,7 @@ namespace clever {
 %token USE           "use"
 %token REGEX         "regex-pattern"
 %token CONST		 "const"
+%token AUTO			 "auto"
 
 %left ',';
 %left LOGICAL_OR;
@@ -364,7 +365,8 @@ variable_declaration_impl:
 	|	template IDENT '=' type_creation    { $$ = new ast::VariableDecl($1, $2, $4); $$->setLocation(yylloc); }
 	|	package_module_name "::" TYPE IDENT '=' type_creation
 		{ $1->concat("::", $3); delete $3; $$ = new ast::VariableDecl($1, $4, $6); $$->setLocation(yylloc); }
-
+	
+	|	AUTO IDENT '=' expr					{ $$ = new ast::VariableDecl(NULL, $2, $4); $$->setLocation(yylloc); }
 	|	TYPE IDENT '=' expr                 { $$ = new ast::VariableDecl($1, $2, $4); $$->setLocation(yylloc); }
 	|	template IDENT '=' expr             { $$ = new ast::VariableDecl($1, $2, $4); $$->setLocation(yylloc); }
 	|	package_module_name "::" TYPE IDENT '=' expr
