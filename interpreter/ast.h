@@ -757,6 +757,19 @@ public:
 		m_variable->addRef();
 		m_rhs->addRef();
 	}
+	
+	VariableDecl(Identifier* type, Identifier* variable, ASTNode* rhs, bool const_value)
+		: m_type(type), m_variable(variable), m_rhs(rhs), m_initval(NULL),
+			m_const_value(const_value), m_call_value(NULL), m_args_value(NULL) {
+		
+		// If is not `Auto' typed variable
+		if (m_type) {
+			m_type->addRef();
+		}
+		
+		m_variable->addRef();
+		m_rhs->addRef();
+	}
 
 	virtual ~VariableDecl() {
 		if (m_type) {
@@ -851,23 +864,6 @@ private:
 
 /*
 */
-inline void setType(VariableDecls* v, Identifier* type){
-	VariableDecls::iterator it=v->begin(), end=v->end();
-	
-	while(it!=end){
-		(*it)->setType(type);
-		++it;
-	}
-}
-
-inline void setConstness(VariableDecls* v, bool c){
-	VariableDecls::iterator it=v->begin(), end=v->end();
-	
-	while(it!=end){
-		(*it)->setConstness(c);
-		++it;
-	}
-}
 
 class AttributeDeclaration : public VariableDecl {
 public:
@@ -990,7 +986,11 @@ class TypeCreation : public ASTNode {
 public:
 	TypeCreation(Identifier* type, ArgumentList* args)
 		: m_type(type), m_args(args), m_call_value(NULL), m_args_value(NULL) {
-		m_type->addRef();
+		
+		if(type){
+			m_type->addRef();
+		}
+		
 		m_value = new Value;
 		if (m_args) {
 			m_args->addRef();
@@ -1012,6 +1012,11 @@ public:
 
 	Identifier* getIdentifier() {
 		return m_type;
+	}
+	
+	void setType(Identifier* type){
+		m_type=type;
+		m_type->addRef();
 	}
 
 	void setValue(Value* value) {
@@ -1534,6 +1539,31 @@ private:
 
 	DISALLOW_COPY_AND_ASSIGN(ClassDeclaration);
 };
+
+
+inline void setType(VariableDecls* v, Identifier* type){
+	VariableDecls::iterator it=v->begin(), end=v->end();
+	
+	while(it!=end){
+		(*it)->setType(type);
+		if((*it)->isConst()){
+			(*it)->setConstness(false);
+			TypeCreation* tc=static_cast<TypeCreation*>((*it)->getRhs());
+			tc->setType(type);
+		}
+		++it;
+	}
+}
+
+inline void setConstness(VariableDecls* v, bool c){
+	VariableDecls::iterator it=v->begin(), end=v->end();
+	
+	while(it!=end){
+		(*it)->setConstness(c);
+		++it;
+	}
+}
+
 
 }} // clever::ast
 

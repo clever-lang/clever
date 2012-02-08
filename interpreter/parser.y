@@ -400,8 +400,11 @@ variable_declaration_list:
 ;
 
 variable_declaration_list_impl:
-		TYPE variable_declaration_list_creation			{ ast::setType($2,$1); $$ = $2; }
-	|	AUTO auto_variable_declaration_list_creation 	{ $$ = $2; }
+		TYPE variable_declaration_list_creation								{ ast::setType($2, $1); $$ = $2; }
+	|	template variable_declaration_list_creation							{ ast::setType($2, $1); $$ = $2; }
+	|	package_module_name "::" TYPE variable_declaration_list_creation	
+		{ $1->concat("::",$3); delete $3; ast::setType($4,$1); $$ = $4; }
+	|	AUTO auto_variable_declaration_list_creation 						{ $$ = $2; }
 ;
 
 auto_variable_declaration_list_creation:
@@ -421,7 +424,7 @@ variable_declaration_list_creation:
 variable_declaration_list_creation_aux:
 		IDENT '=' type_creation		{ $$ = new ast::VariableDecl(NULL, $1, $3); $$->setLocation(yylloc); }
 	|	IDENT '=' expr 				{ $$ = new ast::VariableDecl(NULL, $1, $3); $$->setLocation(yylloc); }
-	//|	IDENT '(' arg_list ')'		{ $$ = new ast::VariableDecl(NULL, $1, ); $$->setLocation(yylloc); }
+	|	IDENT '(' arg_list ')'		{ $$ = new ast::VariableDecl(NULL, $1, new ast::TypeCreation(NULL, $3), true); $$->setLocation(yylloc); }
 	|	IDENT						{ $$ = new ast::VariableDecl(NULL,$1);  }
 ;
 
