@@ -46,11 +46,13 @@ class CString;
 namespace clever { namespace ast {
 
 class ASTNode;
+class VariableDecl;
 
 typedef std::vector<ASTNode*> NodeList;
 typedef std::pair<Identifier*, Identifier*> ArgumentDeclPair;
 typedef std::vector<ArgumentDeclPair> ArgumentDecls;
 typedef std::vector<Identifier*> TemplateArgsVector;
+typedef std::vector<VariableDecl*> VariableDecls;
 
 /**
  * Operators (logical and binary)
@@ -102,6 +104,20 @@ public:
 		node->addRef();
 		m_nodes->push_back(node);
 	}
+	
+	/**
+	 *Adds a vector with new child nodes
+	 */
+	void add(NodeList* nodes){
+		NodeList::iterator it = nodes->begin(), end = nodes->end();
+		
+		while (it != end) {
+			(*it)->addRef();
+			m_nodes->push_back(*it);
+			++it;
+		}
+	}
+	
 	/**
 	 * Calls delRef() for each child node
 	 */
@@ -722,7 +738,10 @@ public:
 	VariableDecl(Identifier* type, Identifier* variable)
 		: m_type(type), m_variable(variable), m_rhs(NULL), m_initval(NULL),
 			m_const_value(false), m_call_value(NULL), m_args_value(NULL) {
-		m_type->addRef();
+		if (m_type) {
+			m_type->addRef();
+		}
+		
 		m_variable->addRef();
 	}
 
@@ -775,6 +794,11 @@ public:
 	void setInitialValue(Value* value) {
 		m_initval = value;
 	}
+	
+	void setType(Identifier* type){
+		m_type=type;
+		m_type->addRef();
+	}
 
 	Identifier* getType() const {
 		return m_type;
@@ -824,6 +848,26 @@ private:
 
 	DISALLOW_COPY_AND_ASSIGN(VariableDecl);
 };
+
+/*
+*/
+inline void setType(VariableDecls* v, Identifier* type){
+	VariableDecls::iterator it=v->begin(), end=v->end();
+	
+	while(it!=end){
+		(*it)->setType(type);
+		++it;
+	}
+}
+
+inline void setConstness(VariableDecls* v, bool c){
+	VariableDecls::iterator it=v->begin(), end=v->end();
+	
+	while(it!=end){
+		(*it)->setConstness(c);
+		++it;
+	}
+}
 
 class AttributeDeclaration : public VariableDecl {
 public:

@@ -153,6 +153,7 @@ namespace clever {
 	ast::ReturnStmt* return_stmt;
 	ast::TypeCreation* type_creation;
 	ast::VariableDecl* variable_decl;
+	ast::VariableDecls* variable_decls;
 	ast::ClassDeclaration* class_decl;
 	ast::FuncDeclaration* func_decl;
 	ast::MethodDeclaration* method_decl;
@@ -170,6 +171,7 @@ namespace clever {
 	ast::TemplateArgsVector* template_args;
 	ast::AliasStmt* alias_stmt;
 	ast::RegexPattern* regex_pattern;
+	ast::NodeList* node_list;
 }
 
 %type <identifier> IDENT
@@ -209,6 +211,12 @@ namespace clever {
 %type <variable_decl> variable_decl_or_empty
 %type <variable_decl> variable_declaration
 %type <variable_decl> variable_declaration_impl
+%type <variable_decls> variable_declaration_list
+%type <variable_decls> variable_declaration_list_impl
+%type <variable_decls> variable_declaration_list_creation
+%type <variable_decls> auto_variable_declaration_list_creation
+%type <variable_decl> variable_declaration_list_creation_aux
+%type <variable_decl> auto_variable_declaration_list_creation_aux
 %type <ast_node> assign_stmt
 %type <type_creation> type_creation
 %type <ast_node> expr
@@ -229,6 +237,7 @@ namespace clever {
 
 top_statements:
 		{ driver.initCompiler(); } statement_list { driver.emitAST($2); }
+;
 
 statement_list:
 		/* empty */               { $<ast_node>$ = new ast::BlockNode(); }
@@ -236,8 +245,10 @@ statement_list:
 ;
 
 statement_list_non_empty:
-		statements                          { $<ast_node>$ = new ast::BlockNode(); $$->add($1); }
-	|	statement_list_non_empty statements { $1->add($2); $$ = $1; }
+		statements                          					{ $<ast_node>$ = new ast::BlockNode(); $$->add($1); }
+	|	statement_list_non_empty statements 					{ $1->add($2); $$ = $1; }
+	|	variable_declaration_list ';'							{ $<ast_node>$ = new ast::BlockNode(); $$->add($<node_list>1); }
+	|	statement_list_non_empty variable_declaration_list	';'	{ $1->add($<node_list>2); $$ = $1; }
 ;
 
 block_stmt:
@@ -246,20 +257,20 @@ block_stmt:
 ;
 
 statements:
-		expr ';'	             { $$ = $<ast_node>1; }
-	|	variable_declaration ';' { $$ = $<ast_node>1; }
-	|	func_declaration         { $$ = $<ast_node>1; }
-	|	if_expr                  { $$ = $<ast_node>1; }
-	|	for_expr                 { $$ = $<ast_node>1; }
-	|	while_expr               { $$ = $<ast_node>1; }
-	|	block_stmt               { $$ = $<ast_node>1; }
-	|	break_stmt ';'           { $$ = $<ast_node>1; }
-	|	assign_stmt ';'          { $$ = $<ast_node>1; }
-	|	import_stmt ';'          { $$ = $<ast_node>1; }
-	|	import_file ';'          { $$ = $<ast_node>1; }
-	|	return_stmt ';'          { $$ = $<ast_node>1; }
-	|	class_declaration	     { $$ = $<ast_node>1; }
-	|	alias_stmt ';'           { $$ = $<ast_node>1; }
+		expr ';'	             		{ $$ = $<ast_node>1; }
+	|	variable_declaration ';' 		{ $$ = $<ast_node>1; }
+	|	func_declaration       			{ $$ = $<ast_node>1; }
+	|	if_expr                  		{ $$ = $<ast_node>1; }
+	|	for_expr                 		{ $$ = $<ast_node>1; }
+	|	while_expr               		{ $$ = $<ast_node>1; }
+	|	block_stmt               		{ $$ = $<ast_node>1; }
+	|	break_stmt ';'           		{ $$ = $<ast_node>1; }
+	|	assign_stmt ';'          		{ $$ = $<ast_node>1; }
+	|	import_stmt ';'          		{ $$ = $<ast_node>1; }
+	|	import_file ';'          		{ $$ = $<ast_node>1; }
+	|	return_stmt ';'          		{ $$ = $<ast_node>1; }
+	|	class_declaration	     		{ $$ = $<ast_node>1; }
+	|	alias_stmt ';'           		{ $$ = $<ast_node>1; }
 ;
 
 return_stmt:
@@ -354,37 +365,64 @@ template_args:
 ;
 
 template_args_fix:
-	TYPE "<" TYPE 						{ 
-										  $<template_args>$ = new ast::TemplateArgsVector;
-										  ast::TemplateArgsVector* a=new ast::TemplateArgsVector;
-										  a->push_back($3);
-										  $1->setTemplateArgs(a);
-										  $<template_args>$->push_back($1); 
-										}
-	| template_args ',' TYPE "<" TYPE	{
-										  ast::TemplateArgsVector* a=new ast::TemplateArgsVector;
-										  a->push_back($5);
-										  $3->setTemplateArgs(a); 
-										  $1->push_back($3);
-										}
-	| template_args ',' TYPE "<" template	{
-										  ast::TemplateArgsVector* a=new ast::TemplateArgsVector;
-										  a->push_back($5);
-										  $3->setTemplateArgs(a); 
-										  $1->push_back($3);
-										}
-	| TYPE "<" template					{
-										  $<template_args>$ = new ast::TemplateArgsVector;
-										  ast::TemplateArgsVector* a=new ast::TemplateArgsVector;
-										  a->push_back($3);
-										  $1->setTemplateArgs(a);
-										  $<template_args>$->push_back($1);
-										}
+	TYPE "<" TYPE 							{   $<template_args>$ = new ast::TemplateArgsVector;
+												ast::TemplateArgsVector* a=new ast::TemplateArgsVector;
+												a->push_back($3);
+												$1->setTemplateArgs(a);
+												$<template_args>$->push_back($1); 
+											}
+	| template_args ',' TYPE "<" TYPE		{   ast::TemplateArgsVector* a=new ast::TemplateArgsVector;
+												a->push_back($5);
+												$3->setTemplateArgs(a); 
+												$1->push_back($3);
+											}
+	| template_args ',' TYPE "<" template	{   ast::TemplateArgsVector* a=new ast::TemplateArgsVector;
+												a->push_back($5);
+												$3->setTemplateArgs(a); 
+												$1->push_back($3);
+											}
+	| TYPE "<" template						{	$<template_args>$ = new ast::TemplateArgsVector;
+												ast::TemplateArgsVector* a=new ast::TemplateArgsVector;
+												a->push_back($3);
+												$1->setTemplateArgs(a);
+												$<template_args>$->push_back($1);
+											}
 ;
 
 template:
 		TYPE "<" template_args ">"       { $1->setTemplateArgs($3); }
 	|	TYPE "<" template_args_fix ">>"	 { $1->setTemplateArgs($3); }
+;
+
+variable_declaration_list:
+		variable_declaration_list_impl			{ $$ = $1; }
+	|	CONST variable_declaration_list_impl	{ ast::setConstness($2,true); $$ = $2; }
+;
+
+variable_declaration_list_impl:
+		TYPE variable_declaration_list_creation			{ ast::setType($2,$1); $$ = $2; }
+	|	AUTO auto_variable_declaration_list_creation 	{ $$ = $2; }
+;
+
+auto_variable_declaration_list_creation:
+		auto_variable_declaration_list_creation_aux	',' auto_variable_declaration_list_creation_aux	{ $<variable_decls>$ = new ast::VariableDecls(); $$->push_back($1); $$->push_back($3); }
+	|	auto_variable_declaration_list_creation ',' auto_variable_declaration_list_creation_aux		{ $1->push_back($3); $$ = $1; }
+;
+
+auto_variable_declaration_list_creation_aux:
+	IDENT '=' expr 				{ $$ = new ast::VariableDecl(NULL, $1, $3); $$->setLocation(yylloc); }
+;
+
+variable_declaration_list_creation:
+		variable_declaration_list_creation_aux	',' variable_declaration_list_creation_aux	{ $<variable_decls>$ = new ast::VariableDecls(); $$->push_back($1); $$->push_back($3); }
+	|	variable_declaration_list_creation ',' variable_declaration_list_creation_aux		{ $1->push_back($3); $$ = $1; }
+;
+
+variable_declaration_list_creation_aux:
+		IDENT '=' type_creation		{ $$ = new ast::VariableDecl(NULL, $1, $3); $$->setLocation(yylloc); }
+	|	IDENT '=' expr 				{ $$ = new ast::VariableDecl(NULL, $1, $3); $$->setLocation(yylloc); }
+	//|	IDENT '(' arg_list ')'		{ $$ = new ast::VariableDecl(NULL, $1, ); $$->setLocation(yylloc); }
+	|	IDENT						{ $$ = new ast::VariableDecl(NULL,$1);  }
 ;
 
 variable_declaration:
@@ -415,15 +453,15 @@ variable_declaration_impl:
 ;
 
 assign_stmt:
-		IDENT '=' expr  { $$ = new ast::AssignExpr($1, $3);                   $$->setLocation(yylloc); }
-	|	IDENT "+=" expr { $$ = new ast::BinaryExpr(ast::PLUS, $1, $3, true);  $$->setLocation(yylloc); }
-	|	IDENT "-=" expr { $$ = new ast::BinaryExpr(ast::MINUS, $1, $3, true); $$->setLocation(yylloc); }
-	|	IDENT "/=" expr { $$ = new ast::BinaryExpr(ast::DIV, $1, $3, true);   $$->setLocation(yylloc); }
-	|	IDENT "*=" expr { $$ = new ast::BinaryExpr(ast::MULT, $1, $3, true);  $$->setLocation(yylloc); }
-	|	IDENT "%=" expr { $$ = new ast::BinaryExpr(ast::MOD, $1, $3, true);   $$->setLocation(yylloc); }
-	|	IDENT "&=" expr { $$ = new ast::BinaryExpr(ast::AND, $1, $3, true);   $$->setLocation(yylloc); }
-	|	IDENT "|=" expr { $$ = new ast::BinaryExpr(ast::OR, $1, $3, true);    $$->setLocation(yylloc); }
-	|	IDENT "^=" expr { $$ = new ast::BinaryExpr(ast::XOR, $1, $3, true);   $$->setLocation(yylloc); }
+		IDENT '=' expr   { $$ = new ast::AssignExpr($1, $3);                   $$->setLocation(yylloc); }
+	|	IDENT "+=" expr  { $$ = new ast::BinaryExpr(ast::PLUS, $1, $3, true);  $$->setLocation(yylloc); }
+	|	IDENT "-=" expr  { $$ = new ast::BinaryExpr(ast::MINUS, $1, $3, true); $$->setLocation(yylloc); }
+	|	IDENT "/=" expr  { $$ = new ast::BinaryExpr(ast::DIV, $1, $3, true);   $$->setLocation(yylloc); }
+	|	IDENT "*=" expr  { $$ = new ast::BinaryExpr(ast::MULT, $1, $3, true);  $$->setLocation(yylloc); }
+	|	IDENT "%=" expr  { $$ = new ast::BinaryExpr(ast::MOD, $1, $3, true);   $$->setLocation(yylloc); }
+	|	IDENT "&=" expr  { $$ = new ast::BinaryExpr(ast::AND, $1, $3, true);   $$->setLocation(yylloc); }
+	|	IDENT "|=" expr  { $$ = new ast::BinaryExpr(ast::OR, $1, $3, true);    $$->setLocation(yylloc); }
+	|	IDENT "^=" expr  { $$ = new ast::BinaryExpr(ast::XOR, $1, $3, true);   $$->setLocation(yylloc); }
 	|	IDENT "<<=" expr { $$ = new ast::BinaryExpr(ast::LSHIFT, $1, $3, true);   $$->setLocation(yylloc); }
 	|	IDENT ">>=" expr { $$ = new ast::BinaryExpr(ast::RSHIFT, $1, $3, true);   $$->setLocation(yylloc); }
 ;
@@ -445,10 +483,8 @@ expr:
 	|	expr ">=" expr        { $$ = new ast::BinaryExpr(ast::GREATER_EQUAL, $1, $3); $$->setLocation(yylloc); }
 	|	expr "<" expr         { $$ = new ast::BinaryExpr(ast::LESS, $1, $3);          $$->setLocation(yylloc); }
 	|	expr "<=" expr        { $$ = new ast::BinaryExpr(ast::LESS_EQUAL, $1, $3);    $$->setLocation(yylloc); }
-	|	expr "<<" expr        { $$ = new ast::BinaryExpr(ast::LSHIFT, $1,
-$3);      $$->setLocation(yylloc); }
-	|	expr ">>" expr        { $$ = new ast::BinaryExpr(ast::RSHIFT, $1,
-$3);      $$->setLocation(yylloc); }
+	|	expr "<<" expr        { $$ = new ast::BinaryExpr(ast::LSHIFT, $1,$3);         $$->setLocation(yylloc); }
+	|	expr ">>" expr        { $$ = new ast::BinaryExpr(ast::RSHIFT, $1,$3);         $$->setLocation(yylloc); }
 	|	expr "==" expr        { $$ = new ast::BinaryExpr(ast::EQUAL, $1, $3);         $$->setLocation(yylloc); }
 	|	expr "!=" expr        { $$ = new ast::BinaryExpr(ast::NOT_EQUAL, $1, $3);     $$->setLocation(yylloc); }
 	|	expr "||" expr        { $$ = new ast::BinaryExpr(ast::OR, $1, $3);            $$->setLocation(yylloc); }
