@@ -180,7 +180,9 @@ public:
 	}
 	
 	VarDecls(NodeList* nodes){
-		m_nodes=nodes;
+		
+		m_nodes = nodes;
+		//delete nodes;
 	}
 
 	~VarDecls() {
