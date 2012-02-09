@@ -257,7 +257,7 @@ block_stmt:
 statements:
 		expr ';'	             		{ $$ = $<ast_node>1; }
 	|	variable_declaration ';' 		{ $$ = $<ast_node>1; }
-	|	variable_declaration_list ';'	{ $$ = new ast::ASTNodes(); $$->add($<node_list>1); delete $1; }
+	|	variable_declaration_list ';'	{ $$ = new ast::VarDecls(); $$->add($<node_list>1); delete $1; }
 	|	func_declaration       			{ $$ = $<ast_node>1; }
 	|	if_expr                  		{ $$ = $<ast_node>1; }
 	|	for_expr                 		{ $$ = $<ast_node>1; }

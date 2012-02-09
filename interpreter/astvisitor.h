@@ -42,7 +42,7 @@ class AssignExpr;
 class ImportStmt;
 class BreakNode;
 class BlockNode;
-class ASTNodes;
+class VarDecls;
 class ArgumentList;
 class FuncDeclaration;
 class ClassDeclaration;
@@ -66,7 +66,7 @@ class Subscript;
 	V(UnaryExpr); \
 	V(VariableDecl); \
 	V(BlockNode); \
-	V(ASTNodes); \
+	V(VarDecls); \
 	V(IfExpr); \
 	V(WhileExpr); \
 	V(ForExpr); \

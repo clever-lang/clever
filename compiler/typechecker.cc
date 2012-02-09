@@ -593,7 +593,7 @@ AST_VISITOR(TypeChecker, BlockNode) {
 	m_scope = m_scope->getParent();
 }
 
-AST_VISITOR(TypeChecker, ASTNodes) {
+AST_VISITOR(TypeChecker, VarDecls) {
 	const NodeList& nodes = expr->getNodes();
 	NodeList::const_iterator it = nodes.begin(), end = nodes.end();
 

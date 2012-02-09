@@ -173,13 +173,13 @@ protected:
 	DISALLOW_COPY_AND_ASSIGN(ASTNode);
 };
 
-class ASTNodes : public ASTNode {
+class VarDecls : public ASTNode {
 public:
-	ASTNodes() {
+	VarDecls() {
 		m_nodes = new NodeList;
 	}
 
-	~ASTNodes() {
+	~VarDecls() {
 		if (m_nodes) {
 			clearNodes();
 			delete m_nodes;
@@ -191,7 +191,7 @@ public:
 		visitor.visit(this);
 	}
 private:
-	DISALLOW_COPY_AND_ASSIGN(ASTNodes);
+	DISALLOW_COPY_AND_ASSIGN(VarDecls);
 };
 
 class Literal : public ASTNode {

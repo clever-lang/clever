@@ -267,7 +267,7 @@ AST_VISITOR(CodeGenVisitor, BlockNode) {
 	}
 }
 
-AST_VISITOR(CodeGenVisitor, ASTNodes) {
+AST_VISITOR(CodeGenVisitor, VarDecls) {
 	const NodeList& nodes = expr->getNodes();
 	NodeList::const_iterator it = nodes.begin(), end = nodes.end();
 
