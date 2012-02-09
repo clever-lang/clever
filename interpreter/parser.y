@@ -247,8 +247,6 @@ statement_list:
 statement_list_non_empty:
 		statements                          					{ $<ast_node>$ = new ast::BlockNode(); $$->add($1); }
 	|	statement_list_non_empty statements 					{ $1->add($2); $$ = $1; }
-	|	variable_declaration_list ';'							{ $<ast_node>$ = new ast::BlockNode(); $$->add($<node_list>1); delete $1; }
-	|	statement_list_non_empty variable_declaration_list	';'	{ $1->add($<node_list>2); $$ = $1; delete $2; }
 ;
 
 block_stmt:
@@ -259,6 +257,7 @@ block_stmt:
 statements:
 		expr ';'	             		{ $$ = $<ast_node>1; }
 	|	variable_declaration ';' 		{ $$ = $<ast_node>1; }
+	|	variable_declaration_list ';'	{ $$ = new ast::ASTNodes(); $$->add($<node_list>1); delete $1; }
 	|	func_declaration       			{ $$ = $<ast_node>1; }
 	|	if_expr                  		{ $$ = $<ast_node>1; }
 	|	for_expr                 		{ $$ = $<ast_node>1; }

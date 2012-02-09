@@ -173,6 +173,27 @@ protected:
 	DISALLOW_COPY_AND_ASSIGN(ASTNode);
 };
 
+class ASTNodes : public ASTNode {
+public:
+	ASTNodes() {
+		m_nodes = new NodeList;
+	}
+
+	~ASTNodes() {
+		if (m_nodes) {
+			clearNodes();
+			delete m_nodes;
+		}
+	}
+
+
+	void acceptVisitor(ASTVisitor& visitor) {
+		visitor.visit(this);
+	}
+private:
+	DISALLOW_COPY_AND_ASSIGN(ASTNodes);
+};
+
 class Literal : public ASTNode {
 public:
 	Literal() { }

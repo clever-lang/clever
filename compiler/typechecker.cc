@@ -593,6 +593,23 @@ AST_VISITOR(TypeChecker, BlockNode) {
 	m_scope = m_scope->getParent();
 }
 
+AST_VISITOR(TypeChecker, ASTNodes) {
+	const NodeList& nodes = expr->getNodes();
+	NodeList::const_iterator it = nodes.begin(), end = nodes.end();
+
+	// Create a new scope
+	//m_scope = m_scope->newChild();
+	//expr->setScope(m_scope);
+
+	// Iterates over statements inside the block
+	while (it != end) {
+		(*it)->acceptVisitor(*this);
+		++it;
+	}
+
+	//m_scope = m_scope->getParent();
+}
+
 /**
  * While statement visitor
  */

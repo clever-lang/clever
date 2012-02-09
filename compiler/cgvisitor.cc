@@ -267,6 +267,19 @@ AST_VISITOR(CodeGenVisitor, BlockNode) {
 	}
 }
 
+AST_VISITOR(CodeGenVisitor, ASTNodes) {
+	const NodeList& nodes = expr->getNodes();
+	NodeList::const_iterator it = nodes.begin(), end = nodes.end();
+
+	/**
+	 * Iterates statements inside the block
+	 */
+	while (it != end) {
+		(*it)->acceptVisitor(*this);
+		++it;
+	}
+}
+
 /**
  * Generates the JMPZ opcode for WHILE expression
  */
