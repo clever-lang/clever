@@ -3,7 +3,9 @@ Variable declaration list test
 import std;
 
 Array<Int> a, b, c;
-Int i=0, j=2;
+Int i=0, j=2, w;
+
+w=2;
 
 for(Int k=0;k<2;k++){ a.push(k+10); }
 for(Int k=0;k<2;k++){ b.push(k+20); }
