@@ -28,7 +28,6 @@
 
 #include <sstream>
 #include "types/type.h"
-#include "types/arrayvalue.h"
 #include "compiler/clever.h"
 #include "compiler/value.h"
 #include "compiler/scope.h"
@@ -87,7 +86,7 @@ public:
 	DataValue* allocateValue() const;
 	
 	void destructor(Value* value) const {
-		ValueVector* vec = CLEVER_GET_ARRAY(value);
+		ValueVector* vec = value->getArray();
 		
 		size_t sz = vec->size();
 		for (size_t i = 0; i < sz; ++i) {

@@ -78,8 +78,6 @@ namespace clever {
 #define CLEVER_ARG_ARRAY(x)      args->at((x))->getArray()
 #define CLEVER_ARG_DATA_VALUE(x) args->at((x))->getDataValue()
 
-#define CLEVER_GET_ARRAY(x)	((ArrayValue*)((x)->getDataValue()))->m_array
-
 /**
  * Macro to access the Value* associated to object instance
  */
@@ -93,7 +91,7 @@ namespace clever {
 #define CLEVER_RETURN_INT(x)        retval->setInteger((x))
 #define CLEVER_RETURN_DOUBLE(x)     retval->setDouble((x))
 #define CLEVER_RETURN_BYTE(x)       retval->setByte((x))
-#define CLEVER_RETURN_ARRAY(x)      retval->setArray(new ArrayValue(x))
+#define CLEVER_RETURN_ARRAY(x)      retval->setArray((x))
 #define CLEVER_RETURN_DATA_VALUE(x) retval->setDataValue((x))
 
 /**
