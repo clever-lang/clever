@@ -46,11 +46,13 @@ class CString;
 namespace clever { namespace ast {
 
 class ASTNode;
+class VariableDecl;
 
 typedef std::vector<ASTNode*> NodeList;
 typedef std::pair<Identifier*, Identifier*> ArgumentDeclPair;
 typedef std::vector<ArgumentDeclPair> ArgumentDecls;
 typedef std::vector<Identifier*> TemplateArgsVector;
+typedef std::vector<VariableDecl*> VariableDecls;
 
 /**
  * Operators (logical and binary)
@@ -102,6 +104,20 @@ public:
 		node->addRef();
 		m_nodes->push_back(node);
 	}
+	
+	/**
+	 *Adds a vector with new child nodes
+	 */
+	void add(NodeList* nodes){
+		NodeList::iterator it = nodes->begin(), end = nodes->end();
+		
+		while (it != end) {
+			(*it)->addRef();
+			m_nodes->push_back(*it);
+			++it;
+		}
+	}
+	
 	/**
 	 * Calls delRef() for each child node
 	 */
@@ -155,6 +171,33 @@ protected:
 	location m_location;
 
 	DISALLOW_COPY_AND_ASSIGN(ASTNode);
+};
+
+class VarDecls : public ASTNode {
+public:
+	VarDecls() {
+		m_nodes = new NodeList;
+	}
+	
+	VarDecls(NodeList* nodes){
+		
+		m_nodes = nodes;
+		//delete nodes;
+	}
+
+	~VarDecls() {
+		if (m_nodes) {
+			clearNodes();
+			delete m_nodes;
+		}
+	}
+
+
+	void acceptVisitor(ASTVisitor& visitor) {
+		visitor.visit(this);
+	}
+private:
+	DISALLOW_COPY_AND_ASSIGN(VarDecls);
 };
 
 class Literal : public ASTNode {
@@ -722,13 +765,29 @@ public:
 	VariableDecl(Identifier* type, Identifier* variable)
 		: m_type(type), m_variable(variable), m_rhs(NULL), m_initval(NULL),
 			m_const_value(false), m_call_value(NULL), m_args_value(NULL) {
-		m_type->addRef();
+		if (m_type) {
+			m_type->addRef();
+		}
+		
 		m_variable->addRef();
 	}
 
 	VariableDecl(Identifier* type, Identifier* variable, ASTNode* rhs)
 		: m_type(type), m_variable(variable), m_rhs(rhs), m_initval(NULL),
 			m_const_value(false), m_call_value(NULL), m_args_value(NULL) {
+		
+		// If is not `Auto' typed variable
+		if (m_type) {
+			m_type->addRef();
+		}
+		
+		m_variable->addRef();
+		m_rhs->addRef();
+	}
+	
+	VariableDecl(Identifier* type, Identifier* variable, ASTNode* rhs, bool const_value)
+		: m_type(type), m_variable(variable), m_rhs(rhs), m_initval(NULL),
+			m_const_value(const_value), m_call_value(NULL), m_args_value(NULL) {
 		
 		// If is not `Auto' typed variable
 		if (m_type) {
@@ -774,6 +833,11 @@ public:
 
 	void setInitialValue(Value* value) {
 		m_initval = value;
+	}
+	
+	void setType(Identifier* type){
+		m_type=type;
+		m_type->addRef();
 	}
 
 	Identifier* getType() const {
@@ -824,6 +888,9 @@ private:
 
 	DISALLOW_COPY_AND_ASSIGN(VariableDecl);
 };
+
+/*
+*/
 
 class AttributeDeclaration : public VariableDecl {
 public:
@@ -946,7 +1013,11 @@ class TypeCreation : public ASTNode {
 public:
 	TypeCreation(Identifier* type, ArgumentList* args)
 		: m_type(type), m_args(args), m_call_value(NULL), m_args_value(NULL) {
-		m_type->addRef();
+		
+		if(type){
+			m_type->addRef();
+		}
+		
 		m_value = new Value;
 		if (m_args) {
 			m_args->addRef();
@@ -968,6 +1039,11 @@ public:
 
 	Identifier* getIdentifier() {
 		return m_type;
+	}
+	
+	void setType(Identifier* type){
+		m_type=type;
+		m_type->addRef();
 	}
 
 	void setValue(Value* value) {
@@ -1490,6 +1566,31 @@ private:
 
 	DISALLOW_COPY_AND_ASSIGN(ClassDeclaration);
 };
+
+
+inline void setType(VariableDecls* v, Identifier* type){
+	VariableDecls::iterator it=v->begin(), end=v->end();
+	
+	while(it!=end){
+		(*it)->setType(type);
+		if((*it)->isConst()){
+			(*it)->setConstness(false);
+			TypeCreation* tc=static_cast<TypeCreation*>((*it)->getRhs());
+			tc->setType(type);
+		}
+		++it;
+	}
+}
+
+inline void setConstness(VariableDecls* v, bool c){
+	VariableDecls::iterator it=v->begin(), end=v->end();
+	
+	while(it!=end){
+		(*it)->setConstness(c);
+		++it;
+	}
+}
+
 
 }} // clever::ast
 
