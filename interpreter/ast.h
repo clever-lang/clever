@@ -179,10 +179,15 @@ public:
 		m_nodes = new NodeList;
 	}
 	
-	VarDecls(NodeList* nodes){
+	void setVarDecls(NodeList* nodes){
+		m_nodes=nodes;
+		NodeList::iterator it = m_nodes->begin(), end = m_nodes->end();
 		
-		m_nodes = nodes;
-		//delete nodes;
+		while (it != end) {
+			(*it)->addRef();
+			//m_nodes->push_back(*it);
+			++it;
+		}
 	}
 
 	~VarDecls() {
