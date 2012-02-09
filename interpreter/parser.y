@@ -172,6 +172,7 @@ namespace clever {
 	ast::AliasStmt* alias_stmt;
 	ast::RegexPattern* regex_pattern;
 	ast::NodeList* node_list;
+	ast::VarDecls* var_decls;
 }
 
 %type <identifier> IDENT
@@ -257,7 +258,7 @@ block_stmt:
 statements:
 		expr ';'	             		{ $$ = $<ast_node>1; }
 	|	variable_declaration ';' 		{ $$ = $<ast_node>1; }
-	|	variable_declaration_list ';'	{ $$ = new ast::VarDecls(); $$->add($<node_list>1); delete $1; }
+	|	variable_declaration_list ';'	{ $$ = new ast::VarDecls();  $<var_decls>$->setVarDecls($<node_list>1); }
 	|	func_declaration       			{ $$ = $<ast_node>1; }
 	|	if_expr                  		{ $$ = $<ast_node>1; }
 	|	for_expr                 		{ $$ = $<ast_node>1; }
