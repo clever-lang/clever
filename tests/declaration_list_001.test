@@ -1,3 +1,5 @@
+Variable declaration list test  
+==CODE==
 import std;
 
 Array<Int> a, b, c;
@@ -13,3 +15,11 @@ for(Int k=0;k<2;k++){ println(c[k]); }
 
 
 println(i+j);
+==RESULT==
+10
+11
+20
+21
+30
+31
+2
