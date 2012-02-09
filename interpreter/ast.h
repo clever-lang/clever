@@ -178,6 +178,10 @@ public:
 	VarDecls() {
 		m_nodes = new NodeList;
 	}
+	
+	VarDecls(NodeList* nodes){
+		m_nodes=nodes;
+	}
 
 	~VarDecls() {
 		if (m_nodes) {
