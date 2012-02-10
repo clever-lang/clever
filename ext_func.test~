@@ -1,0 +1,14 @@
+import std;
+
+
+//println(call_ext_func('ola','f'));
+Int a, b;
+
+
+//std.io::println(call_ext_func(a,b));
+//[a]b(a);
+//std::println(std.external::call_ext_func(a,b));
+
+Int z, f;
+
+println([z]f());

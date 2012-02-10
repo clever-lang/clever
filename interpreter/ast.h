@@ -75,6 +75,7 @@ enum {
 	LESS_EQUAL,
 	EQUAL,
 	NOT_EQUAL,
+	AUTO_EQUAL,
 	NOT,
 	BW_NOT,
 	PRE_INC,
@@ -1180,6 +1181,26 @@ public:
 		}
 		m_result = new CallableValue;
 	}
+	
+	FunctionCall(Identifier* lib, Identifier* name, ArgumentList* args) {
+		
+		m_args_value = NULL;
+		m_value = NULL;
+		
+		m_name = new Identifier(new CString("call_ext_func",13));
+		m_name->addRef();
+		
+		if(args != NULL){
+			m_args = args;
+		}else{
+			m_args = new ArgumentList;
+		}
+		
+		m_args->addRef();
+		
+		
+		m_result = new CallableValue;
+	}
 
 	~FunctionCall() {
 		m_name->delRef();
@@ -1595,6 +1616,8 @@ inline void setConstness(VariableDecls* v, bool c){
 		++it;
 	}
 }
+
+
 
 
 }} // clever::ast
