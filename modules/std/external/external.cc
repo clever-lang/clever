@@ -69,19 +69,6 @@ extern "C"{
 
 #endif
 
-typedef double (*f1)(int, double);
-
-extern "C"{
-	
-double f11(int a, double c){
-	printf("<>a=%d\n",a);
-	printf("<>c=%e\n",c);
-	double v=a,w=c;
-	return v+w;
-}
-
-};
-
 /**
  * call_ext_func(..., str function_name, str library_name)
  * Returns call an external function
