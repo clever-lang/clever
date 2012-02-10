@@ -193,6 +193,7 @@ static CLEVER_FUNCTION(call_ext_func) {
 			*s = (char*) malloc (sizeof(char)* (strlen(st)+1));
 			
 			strcpy(*s,st);
+			(*s)[strlen(st)]='\0';
 			
 			ffi_args[i] = find_ffi_type("s");
 			
@@ -252,11 +253,16 @@ static CLEVER_FUNCTION(call_ext_func) {
 		
 		CLEVER_RETURN_BOOL(vb);
 	} else if ( rt[0] == 's' ) {
-		char* vs=0;
+		char* vs[1];
 		
-		ffi_call(&cif, pf, vs, ffi_values);
+		ffi_call(&cif, pf, &vs, ffi_values);
 		
-		CLEVER_RETURN_STR(CSTRING(vs));
+		//printf("ret=%s<><>\n",*vs);
+		
+		//string s(*vs);
+		//::std::cout<<string(*vs)<<::std::endl;
+		
+		CLEVER_RETURN_STR(CSTRING(*vs));
 	} else if ( rt[0] == 'c' ) {
 		char vc;
 		
