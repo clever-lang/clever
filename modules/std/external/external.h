@@ -46,6 +46,7 @@ private:
 
 extern Module* g_external_module;
 
+
 }}} // clever::packages::std
 
 #endif // CLEVER_STD_MATH_H

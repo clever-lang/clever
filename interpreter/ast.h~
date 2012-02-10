@@ -1198,12 +1198,6 @@ public:
 		
 		m_args->addRef();
 		
-		//m_args->add(name);
-		//m_args->add(lib);
-		
-		std::cout<<name->getName()->c_str()<<std::endl;
-		std::cout<<lib->getName()->c_str()<<std::endl;
-		std::cout<<"___________"<<std::endl;
 		
 		m_result = new CallableValue;
 	}

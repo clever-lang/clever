@@ -11,4 +11,4 @@ Int a, b;
 
 Int z, f;
 
-println([z]f());
+println([z]f('9','9'));

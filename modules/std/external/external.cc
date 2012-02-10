@@ -47,6 +47,8 @@ static CLEVER_FUNCTION(call_ext_func) {
 	
 	
 	CLEVER_RETURN_STR(CLEVER_ARG(1)->getName());
+	
+	
 }
 
 }

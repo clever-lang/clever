@@ -46,7 +46,8 @@ static CLEVER_FUNCTION(call_ext_func) {
 	::std::cout<<size<<::std::endl;
 	
 	
-	CLEVER_RETURN_STR(CLEVER_ARG(0)->getName());
+	CLEVER_RETURN_STR(CLEVER_ARG(1)->getName());
+	
 }
 
 }

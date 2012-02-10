@@ -344,7 +344,7 @@ func_name:
 
 func_call:
 		func_name '(' arg_list_opt ')' { $$ = new ast::FunctionCall($1, $3); $$->setLocation(yylloc); }
-| '[' IDENT ']' func_name '(' arg_list_opt ')' { $$ = new ast::FunctionCall($2,$4,$6); $$->setLocation(yylloc); }
+| '[' IDENT ']' func_name '(' arg_list_opt ')' { $$ = new ast::FunctionCall($2,$4,$6); $$->setLocation(yylloc);  }
 ;
 
 chaining_method_call:

@@ -1194,6 +1194,7 @@ public:
 			m_args = args;
 		}else{
 			m_args = new ArgumentList;
+			
 		}
 		
 		m_args->addRef();
