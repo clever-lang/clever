@@ -87,6 +87,7 @@ enum {
 };
 
 class NumberLiteral;
+class StringLiteral;
 
 /**
  * AST node representation
@@ -1182,12 +1183,12 @@ public:
 		m_result = new CallableValue;
 	}
 	
-	FunctionCall(Identifier* lib, Identifier* name, ArgumentList* args) {
+	FunctionCall(Identifier* lib, Identifier* rt, Identifier* name, ArgumentList* args) {
 		
 		m_args_value = NULL;
 		m_value = NULL;
 		
-		m_name = new Identifier(new CString("call_ext_func",13));
+		m_name = new Identifier(CSTRING("call_ext_func"));
 		m_name->addRef();
 		
 		if(args != NULL){
@@ -1197,8 +1198,11 @@ public:
 			
 		}
 		
-		m_args->addRef();
+		m_args->add(new StringLiteral(lib->getName()));
+		m_args->add(new StringLiteral(rt->getName()));
+		m_args->add(new StringLiteral(name->getName()));
 		
+		m_args->addRef();
 		
 		m_result = new CallableValue;
 	}

@@ -1,16 +1,8 @@
 import std;
 
-
-//println(call_ext_func('ola','f'));
-Int a, b;
-
-
-//std.io::println(call_ext_func(a,b));
-//[a]b(a);
-//std::println(std.external::call_ext_func(a,b));
-
-Int z, f;
-
-println([z]f('9','9'));
-
+//println([z]f(44,2.0,"r"));
+println([libfext3,d]f1(2,6.7));
+println([libfext3,d]f2("ola",1,5.6));
+println([libfext3,d]f3("ola"));
+println([libfext3,i]f4("ola"));
 

@@ -30,6 +30,9 @@
 #include "compiler/module.h"
 #include "compiler/value.h"
 
+#include <string>
+#include <map>
+
 namespace clever { namespace packages { namespace std {
 
 class External : public Module {
@@ -37,9 +40,10 @@ public:
 	External()
 		: Module("external") { }
 
-	~External() { }
+	~External();
 
 	void init();
+	
 private:
 	DISALLOW_COPY_AND_ASSIGN(External);
 };
