@@ -701,7 +701,7 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 			name);
 	}
 
-	const Function* func = static_cast<CallableValue*>(fvalue)->getFunction();
+	Function* func = static_cast<CallableValue*>(fvalue)->getFunction();
 	size_t num_args = expr->getArgs() ? expr->getArgs()->getNodes().size() : 0;
 
 	clever_assert_not_null(func);
@@ -709,8 +709,14 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 	_check_function_args(func, num_args, expr->getLocation());
 
 	// Set the return type
-	expr->getValue()->setTypePtr(func->getReturnType());
+	if ( expr->getReturnType()==NULL ) {
+		expr->getValue()->setTypePtr(func->getReturnType());
+	} else {
+		expr->getValue()->setTypePtr(expr->getReturnType());
+		func->setReturnType(expr->getReturnType());
 
+	} 
+	
 	if (num_args) {
 		Value* arg_values = new Value;
 		arg_values->setType(Value::VECTOR);
@@ -721,8 +727,10 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 		arg_values->addRef();
 		expr->setArgsValue(arg_values);
 	}
+	
 	expr->getValue()->addRef();
 	expr->setFuncValue(static_cast<CallableValue*>(fvalue));
+	//expr->setFuncReturnType(expr->getReturnType());
 	fvalue->addRef();
 }
 

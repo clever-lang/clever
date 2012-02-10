@@ -103,10 +103,6 @@ static CLEVER_FUNCTION(call_ext_func) {
 	::std::string rt = CLEVER_ARG_STR(size-2);
 	::std::string func = CLEVER_ARG_STR(size-1);
 	::std::string fname=lib+"."+func;
-	
-	::std::cout<<"lib="<<CLEVER_ARG_STR(size-3)<<::std::endl;
-	::std::cout<<"rt="<<CLEVER_ARG_STR(size-2)<<::std::endl;
-	::std::cout<<"function="<<CLEVER_ARG_STR(size-1)<<::std::endl;
 
 #ifdef _WIN32
 #else
@@ -127,14 +123,29 @@ static CLEVER_FUNCTION(call_ext_func) {
 		map<string, void*>::iterator it = ext_mod_map.find(lib), end = ext_mod_map.end();
 		
 		if ( it == end ) {
+			
 			string libname=string("./")+lib+".so";
-			ext_mod_map[lib]=dlopen(libname.c_str(), 1);
+			void* m=ext_mod_map[lib]=dlopen(libname.c_str(), 1);
+			
+			if ( m == NULL ) {
+				
+				CLEVER_RETURN_BOOL(false);
+				return;
+				
+			}
+			
 			it=ext_mod_map.find(lib);
 			
 		}
 		
 		fpf = ext_func_map[fname] = dlsym(it->second, func.c_str());
 		
+		if ( fpf == NULL ) {
+			
+			CLEVER_RETURN_BOOL(false);
+			return;
+			
+		}
 		
 		pf=reinterpret_cast<ffi_call_func>(fpf);
 		
@@ -241,6 +252,7 @@ static CLEVER_FUNCTION(call_ext_func) {
 		CLEVER_RETURN_BOOL(vb);
 	} else if ( rt[0] == 's' ) {
 		char* vs[1];
+		vs[0]=0;
 		
 		ffi_call(&cif, pf, &vs, ffi_values);
 		
@@ -295,7 +307,7 @@ static CLEVER_FUNCTION(call_ext_func) {
  */
 void External::init() {
 	
-	addFunction(new Function("call_ext_func",	&CLEVER_NS_FNAME(external, call_ext_func), CLEVER_INT))
+	addFunction(new Function("call_ext_func",	&CLEVER_NS_FNAME(external, call_ext_func), CLEVER_BOOL))
 		->setVariadic()
 		->setMinNumArgs(2);
 }
@@ -305,7 +317,7 @@ External::~External(){
 	map< string, void*>::iterator it = external::ext_mod_map.begin(), end = external::ext_mod_map.end();
 	
 	while ( it != end) {
-		dlclose(it->second);
+		if (it->second != NULL) dlclose(it->second);
 		++it;
 	}
 	

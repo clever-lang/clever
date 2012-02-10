@@ -33,4 +33,10 @@ int f4(char* f){
 	return 2;
 }
 
+char* f5(char* f){
+	f[0]='9';
+	printf("%s\n",f);
+	return f;
+}
+
 };

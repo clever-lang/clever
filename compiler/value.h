@@ -176,6 +176,12 @@ public:
 
 	const Type* getTypePtr() const { return m_type_ptr; }
 	void setTypePtr(const Type* const ptr) { m_type_ptr = ptr; }
+	
+	void resetType(const Type* const ptr){
+		m_type_ptr = ptr;
+		initialize();
+	}
+	
 
 	bool hasName() const { return m_name != NULL; }
 	const CString* getName() const { return m_name; }
