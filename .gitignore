@@ -5,3 +5,8 @@ clever
 test.txt
 *.tmp
 update.sh
+*~
+*.d
+*.o
+*.so
+*.dll
