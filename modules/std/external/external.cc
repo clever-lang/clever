@@ -65,7 +65,6 @@ extern "C"{
 
 #else
 	map< string, void*> ext_mod_map;
-	map< string, void*> ext_func_map;
 
 #endif
 
@@ -102,54 +101,41 @@ static CLEVER_FUNCTION(call_ext_func) {
 	::std::string lib = CLEVER_ARG_STR(size-3);
 	::std::string rt = CLEVER_ARG_STR(size-2);
 	::std::string func = CLEVER_ARG_STR(size-1);
-	::std::string fname=lib+"."+func;
-
+	
 #ifdef _WIN32
 #else
 	
 	void* fpf;
 	ffi_call_func pf;
 	
-	map<string, void*>::iterator it, end = ext_func_map.end();
-	
-	it = ext_func_map.find(fname);
-	
-	if (it != end ) {
-	
-		fpf = it->second;
-	
-	} else {
+	map<string, void*>::iterator it = ext_mod_map.find(lib), end = ext_mod_map.end();
 		
-		map<string, void*>::iterator it = ext_mod_map.find(lib), end = ext_mod_map.end();
+	if ( it == end ) {
 		
-		if ( it == end ) {
-			
-			string libname=string("./")+lib+".so";
-			void* m=ext_mod_map[lib]=dlopen(libname.c_str(), 1);
-			
-			if ( m == NULL ) {
-				
-				CLEVER_RETURN_BOOL(false);
-				return;
-				
-			}
-			
-			it=ext_mod_map.find(lib);
-			
-		}
+		string libname=string("./")+lib+".so";
+		void* m=ext_mod_map[lib]=dlopen(libname.c_str(), 1);
 		
-		fpf = ext_func_map[fname] = dlsym(it->second, func.c_str());
-		
-		if ( fpf == NULL ) {
+		if ( m == NULL ) {
 			
 			CLEVER_RETURN_BOOL(false);
 			return;
 			
 		}
 		
-		pf=reinterpret_cast<ffi_call_func>(fpf);
+		it=ext_mod_map.find(lib);
 		
 	}
+	
+	fpf = dlsym(it->second, func.c_str());
+		
+	if ( fpf == NULL ) {
+			
+		CLEVER_RETURN_BOOL(false);
+		return;
+			
+	}
+		
+	pf=reinterpret_cast<ffi_call_func>(fpf);
 	
 #endif
 

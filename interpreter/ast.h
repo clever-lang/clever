@@ -1183,14 +1183,13 @@ inline Type* findFunctionCallRetType(char c){
 		case 'a': return CLEVER_ARRAY;
 		case 'v': return CLEVER_VOID;
 	}
-	
 	return NULL;
 }
 
 class FunctionCall : public ASTNode {
 public:
 	FunctionCall(Identifier* name, ArgumentList* args)
-		: m_ret_type(NULL), m_name(name), m_args(args), m_args_value(NULL), m_value(NULL) {
+		: m_ret_type(NULL),m_name(name), m_args(args), m_args_value(NULL), m_value(NULL) {
 		m_name->addRef();
 		if (m_args) {
 			m_args->addRef();
@@ -1213,10 +1212,11 @@ public:
 			
 		}
 		
-		m_ret_type = findFunctionCallRetType ( (*rt->getName())[0]);
-		
 		m_args->add(new StringLiteral(lib->getName()));
 		m_args->add(new StringLiteral(rt->getName()));
+		
+		m_ret_type=findFunctionCallRetType((*rt->getName())[0]);
+		
 		m_args->add(new StringLiteral(name->getName()));
 		
 		m_args->addRef();
@@ -1239,13 +1239,9 @@ public:
 	}
 	
 	Type* getReturnType() const { return m_ret_type; }
-
+	
 	void setFuncValue(CallableValue* value) {
 		m_value = value;
-	}
-	
-	void setFuncReturnType(const Type* type) {
-		m_value->setTypePtr(type);
 	}
 
 	Value* getValue() const { return m_result; }
@@ -1269,6 +1265,7 @@ public:
 	Value* getArgsValue() {
 		return m_args_value;
 	}
+	
 private:
 	
 	Type* m_ret_type;

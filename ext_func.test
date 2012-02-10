@@ -4,7 +4,8 @@ import std;
 println([libfext3,d]f1(2,6.7));
 println([libfext3,d]f2("ola",1,5.6));
 println([libfext3,d]f3("ola"));
-println([libfext3,i]f4("ola"));
+//println([libfext3,i]f4("ola"));
+//println([libfext3,i]f4("ola"));
 println([libfext3,s]f5("ola"));
 
 println("_____________________--\n");
@@ -13,3 +14,14 @@ println("_____________________--\n");
 c := [libfext3,i]f4("ola");//+10000;
 print("<>", c,"\n");
 
+
+
+for(Int i=0;i<1000;i++) {
+
+	c = [libfext3,i]f4("ola") + i;//+10000;
+	print("<>", c,"\n");
+	println([libfext3,s]f5("ola"));
+	s := [libfext3,s]f5("ola") + "olaass<> <>";
+	println(s);
+
+}
