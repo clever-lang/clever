@@ -1,0 +1,12 @@
+import std;
+
+Array<Int> a, b, c;
+Int i=0, j=2;
+
+for(Int k=0;k<2;k++){ a.push(k+10); }
+for(Int k=0;k<2;k++){ b.push(k+20); }
+for(Int k=0;k<2;k++){ c.push(k+30); }
+
+
+
+println(i+j);
