@@ -259,7 +259,7 @@ block_stmt:
 statements:
 		expr ';'	             		{ $$ = $<ast_node>1; }
 	|	variable_declaration ';' 		{ $$ = $<ast_node>1; }
-	|	variable_declaration_list ';'	{ $$ = new ast::VarDecls();  $<var_decls>$->setVarDecls($<node_list>1); }
+	|	variable_declaration_list ';'	{ $$ = new ast::VarDecls($<node_list>1); }
 	|	func_declaration       			{ $$ = $<ast_node>1; }
 	|	if_expr                  		{ $$ = $<ast_node>1; }
 	|	for_expr                 		{ $$ = $<ast_node>1; }
@@ -371,16 +371,16 @@ template_args_fix:
 												ast::TemplateArgsVector* a=new ast::TemplateArgsVector;
 												a->push_back($3);
 												$1->setTemplateArgs(a);
-												$<template_args>$->push_back($1); 
+												$<template_args>$->push_back($1);
 											}
 	| template_args ',' TYPE "<" TYPE		{   ast::TemplateArgsVector* a=new ast::TemplateArgsVector;
 												a->push_back($5);
-												$3->setTemplateArgs(a); 
+												$3->setTemplateArgs(a);
 												$1->push_back($3);
 											}
 	| template_args ',' TYPE "<" template	{   ast::TemplateArgsVector* a=new ast::TemplateArgsVector;
 												a->push_back($5);
-												$3->setTemplateArgs(a); 
+												$3->setTemplateArgs(a);
 												$1->push_back($3);
 											}
 	| TYPE "<" template						{	$<template_args>$ = new ast::TemplateArgsVector;
@@ -404,7 +404,7 @@ variable_declaration_list:
 variable_declaration_list_impl:
 		TYPE variable_declaration_list_creation								{ ast::setType($2, $1); $$ = $2; }
 	|	template variable_declaration_list_creation							{ ast::setType($2, $1); $$ = $2; }
-	|	package_module_name "::" TYPE variable_declaration_list_creation	
+	|	package_module_name "::" TYPE variable_declaration_list_creation
 		{ $1->concat("::",$3); delete $3; ast::setType($4,$1); $$ = $4; }
 	|	AUTO auto_variable_declaration_list_creation 						{ $$ = $2; }
 ;
@@ -440,7 +440,7 @@ variable_declaration_impl:
 	|	template IDENT '=' type_creation    { $$ = new ast::VariableDecl($1, $2, $4); $$->setLocation(yylloc); }
 	|	package_module_name "::" TYPE IDENT '=' type_creation
 		{ $1->concat("::", $3); delete $3; $$ = new ast::VariableDecl($1, $4, $6); $$->setLocation(yylloc); }
-	
+
 	|	AUTO IDENT '=' expr					{ $$ = new ast::VariableDecl(NULL, $2, $4); $$->setLocation(yylloc); }
 	|	IDENT ":=" expr						{ $$ = new ast::VariableDecl(NULL, $1, $3); $$->setLocation(yylloc); }
 	|	TYPE IDENT '=' expr                 { $$ = new ast::VariableDecl($1, $2, $4); $$->setLocation(yylloc); }
