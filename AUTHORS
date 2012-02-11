@@ -9,11 +9,16 @@ ted to the Clever project.
   - Higor Eurípedes <heripedes at gmail.com>
   - Murilo Adriano Vasconcelos <muriloufg at gmail.com>
 
+* FFI (Foreign Function Interface) support
+  - Péricles Lopes Machado <pericles.raskolnikoff at gmail.com>
+
 * Windows port
   - Ricardo Gomes da Silva <cadopoa at gmail.com>
 
 * Modules
   * std
+    * external
+      - Péricles
     * file
       - Murilo
     * io
@@ -30,7 +35,8 @@ ted to the Clever project.
       - Higor, Felipe
 
 * Names
- - Felipe  = Felipe Nascimento Silva Pena
- - Higor   = Higor Eurípedes
- - Murilo  = Murilo Adriano Vasconcelos
- - Ricardo = Ricardo Gomes da Silva
+ - Felipe   = Felipe Nascimento Silva Pena
+ - Higor    = Higor Eurípedes
+ - Murilo   = Murilo Adriano Vasconcelos
+ - Péricles = Péricles Lopes Machado
+ - Ricardo  = Ricardo Gomes da Silva

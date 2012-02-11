@@ -468,7 +468,7 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
  */
 AST_VISITOR(TypeChecker, VariableDecl) {
 	const Type* type = NULL;
-	
+
 	if (expr->getType() != NULL) {
 		type = _evaluate_type(expr->getLocation(),
 			expr->getType());
@@ -493,7 +493,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 
 	if (rhs) {
 		Value* initval = rhs->getValue();
-		
+
 		if (type) {
 			if (!_check_compatible_types(var, initval)) {
 				var->delRef();
@@ -509,7 +509,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 			type = initval->getTypePtr();
 			var->setTypePtr(type);
 		}
-		
+
 		initval->addRef();
 		expr->setInitialValue(initval);
 
@@ -591,21 +591,18 @@ AST_VISITOR(TypeChecker, BlockNode) {
 	m_scope = m_scope->getParent();
 }
 
+/**
+ * Variable declaration list visitor
+ */
 AST_VISITOR(TypeChecker, VarDecls) {
 	const NodeList& nodes = expr->getNodes();
 	NodeList::const_iterator it = nodes.begin(), end = nodes.end();
 
-	// Create a new scope
-	//m_scope = m_scope->newChild();
-	//expr->setScope(m_scope);
-
-	// Iterates over statements inside the block
+	// Declare all the variable in the declaration list
 	while (it != end) {
 		(*it)->acceptVisitor(*this);
 		++it;
 	}
-
-	//m_scope = m_scope->getParent();
 }
 
 /**
@@ -707,13 +704,13 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 	_check_function_args(func, num_args, expr->getLocation());
 
 	// Set the return type
-	
+
 	if (expr->getReturnType()==NULL) {
 		expr->getValue()->setTypePtr(func->getReturnType());
 	} else {
 		expr->getValue()->setTypePtr(expr->getReturnType());
-	} 
-	
+	}
+
 	if (num_args) {
 		Value* arg_values = new Value;
 		arg_values->setType(Value::VECTOR);

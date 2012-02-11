@@ -106,20 +106,20 @@ public:
 		node->addRef();
 		m_nodes->push_back(node);
 	}
-	
+
 	/**
 	 *Adds a vector with new child nodes
 	 */
 	void add(NodeList* nodes){
 		NodeList::iterator it = nodes->begin(), end = nodes->end();
-		
+
 		while (it != end) {
 			(*it)->addRef();
 			m_nodes->push_back(*it);
 			++it;
 		}
 	}
-	
+
 	/**
 	 * Calls delRef() for each child node
 	 */
@@ -177,17 +177,14 @@ protected:
 
 class VarDecls : public ASTNode {
 public:
-	VarDecls() {
-		m_nodes = new NodeList;
-	}
-	
-	void setVarDecls(NodeList* nodes){
-		m_nodes=nodes;
-		NodeList::iterator it = m_nodes->begin(), end = m_nodes->end();
-		
+	VarDecls() {}
+
+	VarDecls(NodeList* nodes) {
+		m_nodes = nodes;
+		NodeList::const_iterator it = m_nodes->begin(), end = m_nodes->end();
+
 		while (it != end) {
 			(*it)->addRef();
-			//m_nodes->push_back(*it);
 			++it;
 		}
 	}
@@ -198,7 +195,6 @@ public:
 			delete m_nodes;
 		}
 	}
-
 
 	void acceptVisitor(ASTVisitor& visitor) {
 		visitor.visit(this);
@@ -775,32 +771,32 @@ public:
 		if (m_type) {
 			m_type->addRef();
 		}
-		
+
 		m_variable->addRef();
 	}
 
 	VariableDecl(Identifier* type, Identifier* variable, ASTNode* rhs)
 		: m_type(type), m_variable(variable), m_rhs(rhs), m_initval(NULL),
 			m_const_value(false), m_call_value(NULL), m_args_value(NULL) {
-		
+
 		// If is not `Auto' typed variable
 		if (m_type) {
 			m_type->addRef();
 		}
-		
+
 		m_variable->addRef();
 		m_rhs->addRef();
 	}
-	
+
 	VariableDecl(Identifier* type, Identifier* variable, ASTNode* rhs, bool const_value)
 		: m_type(type), m_variable(variable), m_rhs(rhs), m_initval(NULL),
 			m_const_value(const_value), m_call_value(NULL), m_args_value(NULL) {
-		
+
 		// If is not `Auto' typed variable
 		if (m_type) {
 			m_type->addRef();
 		}
-		
+
 		m_variable->addRef();
 		m_rhs->addRef();
 	}
@@ -809,9 +805,9 @@ public:
 		if (m_type) {
 			m_type->delRef();
 		}
-		
+
 		m_variable->delRef();
-		
+
 		if (m_rhs) {
 			m_rhs->delRef();
 		}
@@ -841,7 +837,7 @@ public:
 	void setInitialValue(Value* value) {
 		m_initval = value;
 	}
-	
+
 	void setType(Identifier* type){
 		m_type=type;
 		m_type->addRef();
@@ -1020,11 +1016,11 @@ class TypeCreation : public ASTNode {
 public:
 	TypeCreation(Identifier* type, ArgumentList* args)
 		: m_type(type), m_args(args), m_call_value(NULL), m_args_value(NULL) {
-		
+
 		if(type){
 			m_type->addRef();
 		}
-		
+
 		m_value = new Value;
 		if (m_args) {
 			m_args->addRef();
@@ -1047,7 +1043,7 @@ public:
 	Identifier* getIdentifier() {
 		return m_type;
 	}
-	
+
 	void setType(Identifier* type){
 		m_type=type;
 		m_type->addRef();
@@ -1196,31 +1192,31 @@ public:
 		}
 		m_result = new CallableValue;
 	}
-	
+
 	FunctionCall(Identifier* lib, Identifier* rt, Identifier* name, ArgumentList* args) {
-		
+
 		m_args_value = NULL;
 		m_value = NULL;
-		
+
 		m_name = new Identifier(CSTRING("call_ext_func"));
 		m_name->addRef();
-		
+
 		if(args != NULL){
 			m_args = args;
 		}else{
 			m_args = new ArgumentList;
-			
+
 		}
-		
+
 		m_args->add(new StringLiteral(lib->getName()));
 		m_args->add(new StringLiteral(rt->getName()));
-		
+
 		m_ret_type=findFunctionCallRetType((*rt->getName())[0]);
-		
+
 		m_args->add(new StringLiteral(name->getName()));
-		
+
 		m_args->addRef();
-		
+
 		m_result = new CallableValue;
 	}
 
@@ -1237,9 +1233,9 @@ public:
 			m_value->delRef();
 		}
 	}
-	
+
 	Type* getReturnType() const { return m_ret_type; }
-	
+
 	void setFuncValue(CallableValue* value) {
 		m_value = value;
 	}
@@ -1265,11 +1261,11 @@ public:
 	Value* getArgsValue() {
 		return m_args_value;
 	}
-	
+
 private:
-	
+
 	Type* m_ret_type;
-	
+
 	Identifier* m_name;
 	ArgumentList* m_args;
 	Value* m_args_value;
@@ -1624,7 +1620,7 @@ private:
 
 inline void setType(VariableDecls* v, Identifier* type){
 	VariableDecls::iterator it=v->begin(), end=v->end();
-	
+
 	while(it!=end){
 		(*it)->setType(type);
 		if((*it)->isConst()){
@@ -1638,7 +1634,7 @@ inline void setType(VariableDecls* v, Identifier* type){
 
 inline void setConstness(VariableDecls* v, bool c){
 	VariableDecls::iterator it=v->begin(), end=v->end();
-	
+
 	while(it!=end){
 		(*it)->setConstness(c);
 		++it;
