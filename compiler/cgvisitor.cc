@@ -284,8 +284,7 @@ AST_VISITOR(CodeGenVisitor, VarDecls) {
  * Generates the JMPZ opcode for WHILE expression
  */
 AST_VISITOR(CodeGenVisitor, WhileExpr) {
-	unsigned int start_pos = 0;
-	start_pos = getOpNum();
+	size_t start_pos = getOpNum();
 
 	expr->getCondition()->acceptVisitor(*this);
 
@@ -326,7 +325,7 @@ AST_VISITOR(CodeGenVisitor, ForExpr) {
 			expr->getVarDecl()->acceptVisitor(*this);
 		}
 
-		unsigned int start_pos = getOpNum();
+		size_t start_pos = getOpNum();
 
 		if (expr->getCondition()) {
 			expr->getCondition()->acceptVisitor(*this);

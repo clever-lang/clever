@@ -255,7 +255,7 @@ CLEVER_METHOD(Array::toString) {
 	ValueVector* vec = CLEVER_THIS()->getArray();
 	std::string ret = "[", sep = ", ";
 
-	for (unsigned int i = 0, j = vec->size(); i < j; ++i) {
+	for (size_t i = 0, j = vec->size(); i < j; ++i) {
 		ret += vec->at(i)->toString();
 		if (i+1 < j) {
 			ret += sep;

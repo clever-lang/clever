@@ -68,7 +68,7 @@ void VM::update_vars(Scope* scope, const ValueVector* args) {
 	ValueVector* vec = new ValueVector;
 	ValueVector* vec_copy = new ValueVector;
 	ValueVector* vec_curr = NULL;
-	int i = 0;
+	size_t i = 0;
 	
 	if (!s_args.empty()) {
 		vec_curr = s_arg_values.top();

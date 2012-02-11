@@ -172,7 +172,7 @@ static void _check_function_return(const Function* func,
 /**
  * Checks the number of arguments supplied to the function on call
  */
-static void _check_function_args(const Function* func, int num_args,
+static void _check_function_args(const Function* func, size_t num_args,
 		const location& loc) {
 
 	clever_assert_not_null(func);
@@ -225,8 +225,6 @@ static CallableValue* _make_method_call(const Type* type, Value* var,
 				"No matching call for constructor %S::%S(%S)",
 				type->getName(), type->getName(), &args_type_name);
 		} else {
-			const std::string args_type_name = _serialize_arg_type(args_types, ", ");
-
 			Compiler::errorf(expr->getLocation(), "No matching call for %S::%S(%S)",
 				var->getTypePtr()->getName(), mname, &args_type_name);
 		}
