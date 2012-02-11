@@ -24,7 +24,6 @@
  *
  */
 
-#include <iostream>
 #include <cmath>
 #include <vector>
 #include <cstdlib>
@@ -47,17 +46,9 @@ extern "C" {
 	typedef void (* ffi_call_func)();
 };
 
-#ifdef _WIN32
-
-#else
+#ifndef _WIN32
 	::std::map< ::std::string, void*> ext_mod_map;
-
 #endif
-
-/**
- * call_ext_func(..., str function_name, str library_name)
- * Returns call an external function
- */
 
 ffi_type* find_ffi_type(const char* tn) {
 	if (tn[0] == 'i') {
@@ -77,6 +68,10 @@ ffi_type* find_ffi_type(const char* tn) {
 	return NULL;
 }
 
+/**
+ * call_ext_func(..., str function_name, str library_name)
+ * Returns call an external function
+ */
 static CLEVER_FUNCTION(call_ext_func) {
 	size_t size = CLEVER_NUM_ARGS();
 	size_t n_args = size - 3;
@@ -94,7 +89,7 @@ static CLEVER_FUNCTION(call_ext_func) {
 
 	if (it == end) {
 		::std::string libname = ::std::string("./") + lib + ".so";
-		void* m= ext_mod_map[lib] = dlopen(libname.c_str(), 1);
+		void* m = ext_mod_map[lib] = dlopen(libname.c_str(), 1);
 
 		if (m == NULL) {
 			CLEVER_RETURN_BOOL(false);
@@ -130,7 +125,6 @@ static CLEVER_FUNCTION(call_ext_func) {
 
 			ffi_values[i] =  vi;
 		} else if (CLEVER_ARG_IS_BOOL(i)) {
-
 			ffi_args[i] = find_ffi_type("b");
 
 			char* b=(char*) malloc (sizeof(char));
@@ -138,9 +132,7 @@ static CLEVER_FUNCTION(call_ext_func) {
 			*b = CLEVER_ARG_BOOL(i);
 
 			ffi_values[i] = b;
-
 		} else if (CLEVER_ARG_IS_STR(i)) {
-
 			const char* st = CLEVER_ARG_STR(i).c_str();
 
 			char** s= (char**) malloc (sizeof(char*));
@@ -152,25 +144,19 @@ static CLEVER_FUNCTION(call_ext_func) {
 			ffi_args[i] = find_ffi_type("s");
 
 			ffi_values[i] =  s;
-
-
 		} else if (CLEVER_ARG_IS_BYTE(i)) {
-
 			ffi_args[i] = find_ffi_type("c");
 
 			char* b = (char*) malloc (sizeof(char));
 			*b = CLEVER_ARG_BYTE(i);
 
 			ffi_values[i] = b;
-
 		} else if (CLEVER_ARG_IS_DOUBLE(i)) {
-
 			ffi_args[i] = &ffi_type_double;
 
 			double* d = (double*)malloc(sizeof(double));
 			*d = CLEVER_ARG_DOUBLE(i);
 			ffi_values[i] = d;
-
 		} else if ( CLEVER_ARG_IS_USER(i) ) {
 			//::std::cout<<"Arg "<<i<<" is Bool:";
 			//::std::cout<<CLEVER_ARG_BOOL(i)<<::std::endl;
@@ -183,7 +169,6 @@ static CLEVER_FUNCTION(call_ext_func) {
 	if (ffi_prep_cif(&cif, FFI_DEFAULT_ABI, n_args, ffi_rt, ffi_args) != FFI_OK) {
 		 CLEVER_RETURN_BOOL(false);
 	}
-
 
 #ifndef _WIN32
 
@@ -217,7 +202,7 @@ static CLEVER_FUNCTION(call_ext_func) {
 		//::std::cout<<string(*vs)<<::std::endl;
 
 		CLEVER_RETURN_STR(CSTRING(*vs));
-	} else if ( rt[0] == 'c' ) {
+	} else if (rt[0] == 'c') {
 		char vc;
 
 		ffi_call(&cif, pf, &vc, ffi_values);
@@ -229,8 +214,7 @@ static CLEVER_FUNCTION(call_ext_func) {
 
 #endif
 
-	for (size_t i=0;i<n_args;i++) {
-
+	for (size_t i = 0; i < n_args; ++i) {
 		if (CLEVER_ARG_IS_INT(i)) {
 			free((int*)ffi_values[i]);
 		} else if (CLEVER_ARG_IS_BOOL(i)) {
