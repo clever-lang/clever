@@ -707,8 +707,13 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 	_check_function_args(func, num_args, expr->getLocation());
 
 	// Set the return type
-	expr->getValue()->setTypePtr(func->getReturnType());
-
+	
+	if (expr->getReturnType()==NULL) {
+		expr->getValue()->setTypePtr(func->getReturnType());
+	} else {
+		expr->getValue()->setTypePtr(expr->getReturnType());
+	} 
+	
 	if (num_args) {
 		Value* arg_values = new Value;
 		arg_values->setType(Value::VECTOR);
