@@ -172,7 +172,7 @@ static void _check_function_return(const Function* func,
 /**
  * Checks the number of arguments supplied to the function on call
  */
-static void _check_function_args(const Function* func, size_t num_args,
+static void _check_function_args(const Function* func, int num_args,
 		const location& loc) {
 
 	clever_assert_not_null(func);
@@ -700,7 +700,7 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 	}
 
 	const Function* func = static_cast<CallableValue*>(fvalue)->getFunction();
-	size_t num_args = expr->getArgs() ? expr->getArgs()->getNodes().size() : 0;
+	int num_args = expr->getArgs() ? int(expr->getArgs()->getNodes().size()) : 0;
 
 	clever_assert_not_null(func);
 
