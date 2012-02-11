@@ -75,6 +75,7 @@ enum {
 	LESS_EQUAL,
 	EQUAL,
 	NOT_EQUAL,
+	AUTO_EQUAL,
 	NOT,
 	BW_NOT,
 	PRE_INC,
@@ -86,6 +87,7 @@ enum {
 };
 
 class NumberLiteral;
+class StringLiteral;
 
 /**
  * AST node representation
@@ -1170,14 +1172,55 @@ protected:
 	ASTNode* m_modifier;
 };
 
+inline Type* findFunctionCallRetType(char c){
+	switch (c) {
+		case 'i': return CLEVER_INT;
+		case 'd': return CLEVER_DOUBLE;
+		case 's': return CLEVER_STR;
+		case 'b': return CLEVER_BOOL;
+		case 'c': return CLEVER_BYTE;
+		//case 'm': return CLEVER_MAP;
+		case 'a': return CLEVER_ARRAY;
+		case 'v': return CLEVER_VOID;
+	}
+	return NULL;
+}
+
 class FunctionCall : public ASTNode {
 public:
 	FunctionCall(Identifier* name, ArgumentList* args)
-		: m_name(name), m_args(args), m_args_value(NULL), m_value(NULL) {
+		: m_ret_type(NULL),m_name(name), m_args(args), m_args_value(NULL), m_value(NULL) {
 		m_name->addRef();
 		if (m_args) {
 			m_args->addRef();
 		}
+		m_result = new CallableValue;
+	}
+	
+	FunctionCall(Identifier* lib, Identifier* rt, Identifier* name, ArgumentList* args) {
+		
+		m_args_value = NULL;
+		m_value = NULL;
+		
+		m_name = new Identifier(CSTRING("call_ext_func"));
+		m_name->addRef();
+		
+		if(args != NULL){
+			m_args = args;
+		}else{
+			m_args = new ArgumentList;
+			
+		}
+		
+		m_args->add(new StringLiteral(lib->getName()));
+		m_args->add(new StringLiteral(rt->getName()));
+		
+		m_ret_type=findFunctionCallRetType((*rt->getName())[0]);
+		
+		m_args->add(new StringLiteral(name->getName()));
+		
+		m_args->addRef();
+		
 		m_result = new CallableValue;
 	}
 
@@ -1194,7 +1237,9 @@ public:
 			m_value->delRef();
 		}
 	}
-
+	
+	Type* getReturnType() const { return m_ret_type; }
+	
 	void setFuncValue(CallableValue* value) {
 		m_value = value;
 	}
@@ -1220,7 +1265,11 @@ public:
 	Value* getArgsValue() {
 		return m_args_value;
 	}
+	
 private:
+	
+	Type* m_ret_type;
+	
 	Identifier* m_name;
 	ArgumentList* m_args;
 	Value* m_args_value;
@@ -1595,6 +1644,8 @@ inline void setConstness(VariableDecls* v, bool c){
 		++it;
 	}
 }
+
+
 
 
 }} // clever::ast

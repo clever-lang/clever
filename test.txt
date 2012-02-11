@@ -1,0 +1,1 @@
+I'm writting into a file via FileStream class!

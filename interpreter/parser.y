@@ -94,6 +94,7 @@ namespace clever {
 %token DIV_EQUAL     "/="
 %token MINUS_EQUAL   "-="
 %token MOD_EQUAL     "%="
+%token AUTO_EQUAL    ":="
 %token BOOLEAN_OR    "||"
 %token LOGICAL_OR    "or"
 %token BOOLEAN_AND   "&&"
@@ -343,6 +344,7 @@ func_name:
 
 func_call:
 		func_name '(' arg_list_opt ')' { $$ = new ast::FunctionCall($1, $3); $$->setLocation(yylloc); }
+| '[' IDENT ',' IDENT ']' func_name '(' arg_list_opt ')' { $$ = new ast::FunctionCall($2,$4,$6,$8); $$->setLocation(yylloc); delete $2; delete $4; delete $6; }
 ;
 
 chaining_method_call:
@@ -440,6 +442,7 @@ variable_declaration_impl:
 		{ $1->concat("::", $3); delete $3; $$ = new ast::VariableDecl($1, $4, $6); $$->setLocation(yylloc); }
 	
 	|	AUTO IDENT '=' expr					{ $$ = new ast::VariableDecl(NULL, $2, $4); $$->setLocation(yylloc); }
+	|	IDENT ":=" expr						{ $$ = new ast::VariableDecl(NULL, $1, $3); $$->setLocation(yylloc); }
 	|	TYPE IDENT '=' expr                 { $$ = new ast::VariableDecl($1, $2, $4); $$->setLocation(yylloc); }
 	|	template IDENT '=' expr             { $$ = new ast::VariableDecl($1, $2, $4); $$->setLocation(yylloc); }
 	|	package_module_name "::" TYPE IDENT '=' expr

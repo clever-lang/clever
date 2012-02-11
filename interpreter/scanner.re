@@ -110,6 +110,8 @@ next_token:
 	<INITIAL>"/=" { RET(token::DIV_EQUAL); }
 
 	<INITIAL>"%=" { RET(token::MOD_EQUAL); }
+	
+	<INITIAL>":=" { RET(token::AUTO_EQUAL); }
 
 	<INITIAL>"::" { RET(token::DOUBLE_COLON); }
 
