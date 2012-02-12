@@ -39,7 +39,7 @@
 #include "types/arrayvalue.h"
 
 namespace clever {
-	
+
 class Scope;
 
 /**
@@ -120,7 +120,7 @@ public:
 			if (m_data.dv_value->refCount() == 1) {
 				getTypePtr()->destructor(this);
 			}
-			
+
 			m_data.dv_value->delRef();
 		}
 		else if (isVector()) {
@@ -232,12 +232,12 @@ public:
 		m_type = PRIMITIVE;
 		m_data.c_value = b;
 	}
-	
+
 	void setVector(ValueVector* v) {
 		m_type = VECTOR;
 		m_data.v_value = v;
 	}
-	
+
 	void setArray(ValueVector* a) {
 		setDataValue(new ArrayValue(a));
 	}
@@ -331,11 +331,11 @@ public:
 
 		return *CSTRING(str.str());
 	}
-	
+
 	bool isConst() const {
 		return m_is_const;
 	}
-	
+
 	void setConstness(bool constness) {
 		m_is_const = constness;
 	}
@@ -400,7 +400,7 @@ public:
 		m_call_type = handler->isInternal() ? FAR : NEAR;
 		m_handler.method = handler;
 	}
-	
+
 	void setScope(Scope* scope) { m_scope = scope; }
 	Scope* getScope() const { return m_scope; }
 

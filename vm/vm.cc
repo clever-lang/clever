@@ -69,7 +69,7 @@ void VM::update_vars(Scope* scope, const ValueVector* args) {
 	ValueVector* vec_copy = new ValueVector;
 	ValueVector* vec_curr = NULL;
 	size_t i = 0;
-	
+
 	if (!s_args.empty()) {
 		vec_curr = s_arg_values.top();
 	}
@@ -90,7 +90,7 @@ void VM::update_vars(Scope* scope, const ValueVector* args) {
 
 				val->copy(args->at(i++));
 				vec->push_back(val);
-				
+
 				tmp->copy(val);
 				vec_copy->push_back(tmp);
 			}
@@ -118,17 +118,17 @@ void VM::update_vars(Scope* scope, const ValueVector* args) {
 
 					if (!val->isCallable()) {
 						Value* tmp = new Value;
-						
+
 						tmp->copy(val);
-						
+
 						if (vec_curr) {
 							vec_curr->at(i++)->copy(tmp);
 							tmp->addRef();
 						}
-						
+
 						vec_copy->push_back(tmp);
 						vec->push_back(val);
-						
+
 						val->initialize();
 					}
 				}
