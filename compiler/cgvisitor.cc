@@ -101,28 +101,21 @@ AST_VISITOR(CodeGenVisitor, BinaryExpr) {
 
 	// Treat the jump for logical expression
 	switch (op) {
-		case AND: {
-			Opcode* opcode = emit(OP_JMPNZ, &VM::jmpz_handler, lhs, NULL, expr->getValue());
-
-			expr->getRhs()->acceptVisitor(*this);
-			rhs = expr->getRhs()->getValue();
-
-			opcode->setJmpAddr1(getOpNum()+1);
-
-			opcode = emit(OP_JMPZ, &VM::jmpz_handler, rhs, NULL, expr->getValue());
-			opcode->setJmpAddr1(getOpNum());
-			expr->getValue()->addRef();
-			}
-			break;
+		case AND:
 		case OR: {
-			Opcode* opcode = emit(OP_JMPNZ, &VM::jmpnz_handler, lhs, NULL, expr->getValue());
+			opval = op == AND ? OP_JMPZ : OP_JMPNZ;
+
+			VM::opcode_handler op_handler = opval == OP_JMPZ ?
+				&VM::jmpz_handler : &VM::jmpnz_handler;
+
+			Opcode* opcode = emit(opval, op_handler, lhs, NULL, expr->getValue());
 
 			expr->getRhs()->acceptVisitor(*this);
 			rhs = expr->getRhs()->getValue();
 
 			opcode->setJmpAddr1(getOpNum()+1);
 
-			opcode = emit(OP_JMPNZ, &VM::jmpnz_handler, rhs, NULL, expr->getValue());
+			opcode = emit(opval, op_handler, rhs, NULL, expr->getValue());
 			opcode->setJmpAddr1(getOpNum());
 			expr->getValue()->addRef();
 			}
