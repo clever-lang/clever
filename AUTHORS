@@ -17,7 +17,7 @@ ted to the Clever project.
 
 * Modules
   * std
-    * external
+    * FFI (Foreign Function Interface)
       - Péricles
     * file
       - Murilo
