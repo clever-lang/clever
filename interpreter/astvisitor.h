@@ -52,6 +52,7 @@ class UnaryExpr;
 class AliasStmt;
 class RegexPattern;
 class Subscript;
+class UnscopedBlockNode;
 
 #define AST_VISITOR(type, exprtype) void type::visit(exprtype* const expr)
 #define AST_VISITOR_DECL_VIRTUAL(type) virtual void visit(type* const expr) = 0
@@ -62,6 +63,7 @@ class Subscript;
 	V(RegexPattern); \
 	V(Subscript); \
 	V(Constant); \
+	V(UnscopedBlockNode); \
 	V(AliasStmt); \
 	V(UnaryExpr); \
 	V(VariableDecl); \

@@ -356,7 +356,7 @@ public:
 	}
 
 	void setScope(Scope* scope) {
-		clever_assert(m_scope == NULL, "Block scope reassignment.");
+		clever_assert_null(m_scope);
 
 		m_scope = scope;
 	}
@@ -371,6 +371,31 @@ public:
 private:
 	Scope* m_scope;
 	DISALLOW_COPY_AND_ASSIGN(BlockNode);
+};
+
+class UnscopedBlockNode : public ASTNode {
+public:
+	UnscopedBlockNode() {}
+
+	explicit UnscopedBlockNode(BlockNode* block)
+		: m_block(block) {
+		m_block->addRef();
+	}
+
+	~UnscopedBlockNode() {
+		m_block->delRef();
+	}
+
+	BlockNode* getBlock() const {
+		return m_block;
+	}
+
+	void acceptVisitor(ASTVisitor& visitor) {
+		visitor.visit(this);
+	}
+private:
+	BlockNode* m_block;
+	DISALLOW_COPY_AND_ASSIGN(UnscopedBlockNode);
 };
 
 class IfExpr : public ASTNode {

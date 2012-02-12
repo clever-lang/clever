@@ -592,6 +592,20 @@ AST_VISITOR(TypeChecker, BlockNode) {
 }
 
 /**
+ * Unscoped Block visitor
+ */
+AST_VISITOR(TypeChecker, UnscopedBlockNode) {
+	const NodeList& nodes = expr->getBlock()->getNodes();
+	NodeList::const_iterator it = nodes.begin(), end = nodes.end();
+
+	// Iterates over statements inside the block
+	while (it != end) {
+		(*it)->acceptVisitor(*this);
+		++it;
+	}
+}
+
+/**
  * Variable declaration list visitor
  */
 AST_VISITOR(TypeChecker, VarDecls) {

@@ -163,6 +163,7 @@ namespace clever {
 	ast::WhileExpr* while_expr;
 	ast::ElseIfExpr* elseif_opt;
 	ast::BlockNode* block_stmt;
+	ast::UnscopedBlockNode* block_stmt2;
 	ast::BreakNode* break_stmt;
 	ast::ImportStmt* import_stmt;
 	ast::AssignExpr* assign_stmt;
@@ -230,7 +231,7 @@ namespace clever {
 %type <block_stmt> else_opt
 %type <break_stmt> break_stmt
 %type <import_stmt> import_stmt
-%type <block_stmt> import_file
+%type <block_stmt2> import_file
 %type <alias_stmt> alias_stmt
 
 %%
