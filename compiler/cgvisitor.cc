@@ -98,9 +98,7 @@ AST_VISITOR(CodeGenVisitor, BinaryExpr) {
 	Value* lhs = expr->getLhs()->getValue();
 	Opcodes opval;
 
-	/**
-	 * Treat the jump for logical expression
-	 */
+	// Treat the jump for logical expression
 	switch (expr->getOp()) {
 		case AND: {
 			Opcode* opcode = emit(OP_JMPNZ, &VM::jmpz_handler, lhs, NULL, expr->getValue());
@@ -258,9 +256,7 @@ AST_VISITOR(CodeGenVisitor, BlockNode) {
 	const NodeList& nodes = expr->getNodes();
 	NodeList::const_iterator it = nodes.begin(), end = nodes.end();
 
-	/**
-	 * Iterates statements inside the block
-	 */
+	// Iterates statements inside the block
 	while (it != end) {
 		(*it)->acceptVisitor(*this);
 		++it;
@@ -274,9 +270,7 @@ AST_VISITOR(CodeGenVisitor, UnscopedBlockNode) {
 	const NodeList& nodes = expr->getBlock()->getNodes();
 	NodeList::const_iterator it = nodes.begin(), end = nodes.end();
 
-	/**
-	 * Iterates statements inside the block
-	 */
+	// Iterates statements inside the block
 	while (it != end) {
 		(*it)->acceptVisitor(*this);
 		++it;
@@ -287,9 +281,7 @@ AST_VISITOR(CodeGenVisitor, VarDecls) {
 	const NodeList& nodes = expr->getNodes();
 	NodeList::const_iterator it = nodes.begin(), end = nodes.end();
 
-	/**
-	 * Iterates statements inside the block
-	 */
+	// Iterates statements inside the block
 	while (it != end) {
 		(*it)->acceptVisitor(*this);
 		++it;
@@ -314,9 +306,7 @@ AST_VISITOR(CodeGenVisitor, WhileExpr) {
 
 		expr->getBlock()->acceptVisitor(*this);
 
-		/**
-		 * Points break statements to out of WHILE block
-		 */
+		// Points break statements to out of WHILE block
 		while (!m_brks.top().empty()) {
 			m_brks.top().top()->setJmpAddr1(getOpNum()+1);
 			m_brks.top().pop();
@@ -362,9 +352,7 @@ AST_VISITOR(CodeGenVisitor, ForExpr) {
 
 			expr->getBlock()->acceptVisitor(*this);
 
-			/**
-			 * Points break statements to out of FOR block
-			 */
+			// Points break statements to out of FOR block
 			while (!m_brks.top().empty()) {
 				m_brks.top().top()->setJmpAddr1(getOpNum() + offset);
 				m_brks.top().pop();
