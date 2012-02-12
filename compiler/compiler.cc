@@ -152,11 +152,11 @@ void Compiler::buildIR() {
  * Direct the driver to parser a new file and return its AST tree
  * to be appended to the main tree
  */
-ast::BlockNode* Compiler::importFile(Driver& driver, const CString* file,
+ast::UnscopedBlockNode* Compiler::importFile(Driver& driver, const CString* file,
 	const CString* alias) {
 	driver.parseFile(file->str());
 
-	return static_cast<ast::BlockNode*>(getAST());
+	return new ast::UnscopedBlockNode(static_cast<ast::BlockNode*>(getAST()));
 }
 
 void Compiler::dumpOpcodes() {

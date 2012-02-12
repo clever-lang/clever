@@ -46,11 +46,13 @@ class CString;
 namespace clever { namespace ast {
 
 class ASTNode;
+class VariableDecl;
 
 typedef std::vector<ASTNode*> NodeList;
 typedef std::pair<Identifier*, Identifier*> ArgumentDeclPair;
 typedef std::vector<ArgumentDeclPair> ArgumentDecls;
 typedef std::vector<Identifier*> TemplateArgsVector;
+typedef std::vector<VariableDecl*> VariableDecls;
 
 /**
  * Operators (logical and binary)
@@ -73,6 +75,7 @@ enum {
 	LESS_EQUAL,
 	EQUAL,
 	NOT_EQUAL,
+	AUTO_EQUAL,
 	NOT,
 	BW_NOT,
 	PRE_INC,
@@ -84,6 +87,7 @@ enum {
 };
 
 class NumberLiteral;
+class StringLiteral;
 
 /**
  * AST node representation
@@ -102,6 +106,20 @@ public:
 		node->addRef();
 		m_nodes->push_back(node);
 	}
+
+	/**
+	 *Adds a vector with new child nodes
+	 */
+	void add(NodeList* nodes){
+		NodeList::iterator it = nodes->begin(), end = nodes->end();
+
+		while (it != end) {
+			(*it)->addRef();
+			m_nodes->push_back(*it);
+			++it;
+		}
+	}
+
 	/**
 	 * Calls delRef() for each child node
 	 */
@@ -155,6 +173,34 @@ protected:
 	location m_location;
 
 	DISALLOW_COPY_AND_ASSIGN(ASTNode);
+};
+
+class VarDecls : public ASTNode {
+public:
+	VarDecls() {}
+
+	VarDecls(NodeList* nodes) {
+		m_nodes = nodes;
+		NodeList::const_iterator it = m_nodes->begin(), end = m_nodes->end();
+
+		while (it != end) {
+			(*it)->addRef();
+			++it;
+		}
+	}
+
+	~VarDecls() {
+		if (m_nodes) {
+			clearNodes();
+			delete m_nodes;
+		}
+	}
+
+	void acceptVisitor(ASTVisitor& visitor) {
+		visitor.visit(this);
+	}
+private:
+	DISALLOW_COPY_AND_ASSIGN(VarDecls);
 };
 
 class Literal : public ASTNode {
@@ -310,7 +356,7 @@ public:
 	}
 
 	void setScope(Scope* scope) {
-		clever_assert(m_scope == NULL, "Block scope reassignment.");
+		clever_assert_null(m_scope);
 
 		m_scope = scope;
 	}
@@ -325,6 +371,31 @@ public:
 private:
 	Scope* m_scope;
 	DISALLOW_COPY_AND_ASSIGN(BlockNode);
+};
+
+class UnscopedBlockNode : public ASTNode {
+public:
+	UnscopedBlockNode() {}
+
+	explicit UnscopedBlockNode(BlockNode* block)
+		: m_block(block) {
+		m_block->addRef();
+	}
+
+	~UnscopedBlockNode() {
+		m_block->delRef();
+	}
+
+	BlockNode* getBlock() const {
+		return m_block;
+	}
+
+	void acceptVisitor(ASTVisitor& visitor) {
+		visitor.visit(this);
+	}
+private:
+	BlockNode* m_block;
+	DISALLOW_COPY_AND_ASSIGN(UnscopedBlockNode);
 };
 
 class IfExpr : public ASTNode {
@@ -722,19 +793,35 @@ public:
 	VariableDecl(Identifier* type, Identifier* variable)
 		: m_type(type), m_variable(variable), m_rhs(NULL), m_initval(NULL),
 			m_const_value(false), m_call_value(NULL), m_args_value(NULL) {
-		m_type->addRef();
+		if (m_type) {
+			m_type->addRef();
+		}
+
 		m_variable->addRef();
 	}
 
 	VariableDecl(Identifier* type, Identifier* variable, ASTNode* rhs)
 		: m_type(type), m_variable(variable), m_rhs(rhs), m_initval(NULL),
 			m_const_value(false), m_call_value(NULL), m_args_value(NULL) {
-		
+
 		// If is not `Auto' typed variable
 		if (m_type) {
 			m_type->addRef();
 		}
-		
+
+		m_variable->addRef();
+		m_rhs->addRef();
+	}
+
+	VariableDecl(Identifier* type, Identifier* variable, ASTNode* rhs, bool const_value)
+		: m_type(type), m_variable(variable), m_rhs(rhs), m_initval(NULL),
+			m_const_value(const_value), m_call_value(NULL), m_args_value(NULL) {
+
+		// If is not `Auto' typed variable
+		if (m_type) {
+			m_type->addRef();
+		}
+
 		m_variable->addRef();
 		m_rhs->addRef();
 	}
@@ -743,9 +830,9 @@ public:
 		if (m_type) {
 			m_type->delRef();
 		}
-		
+
 		m_variable->delRef();
-		
+
 		if (m_rhs) {
 			m_rhs->delRef();
 		}
@@ -774,6 +861,11 @@ public:
 
 	void setInitialValue(Value* value) {
 		m_initval = value;
+	}
+
+	void setType(Identifier* type){
+		m_type=type;
+		m_type->addRef();
 	}
 
 	Identifier* getType() const {
@@ -824,6 +916,9 @@ private:
 
 	DISALLOW_COPY_AND_ASSIGN(VariableDecl);
 };
+
+/*
+*/
 
 class AttributeDeclaration : public VariableDecl {
 public:
@@ -946,7 +1041,11 @@ class TypeCreation : public ASTNode {
 public:
 	TypeCreation(Identifier* type, ArgumentList* args)
 		: m_type(type), m_args(args), m_call_value(NULL), m_args_value(NULL) {
-		m_type->addRef();
+
+		if(type){
+			m_type->addRef();
+		}
+
 		m_value = new Value;
 		if (m_args) {
 			m_args->addRef();
@@ -968,6 +1067,11 @@ public:
 
 	Identifier* getIdentifier() {
 		return m_type;
+	}
+
+	void setType(Identifier* type){
+		m_type=type;
+		m_type->addRef();
 	}
 
 	void setValue(Value* value) {
@@ -1089,15 +1193,52 @@ protected:
 	ASTNode* m_modifier;
 };
 
+static inline Type* _find_fcall_rtype(char c) {
+	switch (c) {
+		case 'i': return CLEVER_INT;
+		case 'd': return CLEVER_DOUBLE;
+		case 's': return CLEVER_STR;
+		case 'b': return CLEVER_BOOL;
+		case 'c': return CLEVER_BYTE;
+		//case 'm': return CLEVER_MAP;
+		case 'a': return CLEVER_ARRAY;
+		case 'v': return CLEVER_VOID;
+	}
+	return NULL;
+}
+
 class FunctionCall : public ASTNode {
 public:
 	FunctionCall(Identifier* name, ArgumentList* args)
-		: m_name(name), m_args(args), m_args_value(NULL), m_value(NULL) {
+		: m_ret_type(NULL),m_name(name), m_args(args), m_args_value(NULL),
+			m_value(NULL) {
 		m_name->addRef();
 		if (m_args) {
 			m_args->addRef();
 		}
-		m_result = new CallableValue;
+		m_result = new Value;
+	}
+
+	FunctionCall(Identifier* lib, Identifier* rt, Identifier* name,
+		ArgumentList* args) {
+
+		m_args_value = NULL;
+		m_value = NULL;
+
+		m_name = new Identifier(CSTRING("call_ext_func"));
+		m_name->addRef();
+
+		m_args = args ? args : new ArgumentList;
+		m_args->add(new StringLiteral(lib->getName()));
+		m_args->add(new StringLiteral(rt->getName()));
+
+		m_ret_type = _find_fcall_rtype((*rt->getName())[0]);
+
+		m_args->add(new StringLiteral(name->getName()));
+
+		m_args->addRef();
+
+		m_result = new Value;
 	}
 
 	~FunctionCall() {
@@ -1113,6 +1254,8 @@ public:
 			m_value->delRef();
 		}
 	}
+
+	Type* getReturnType() const { return m_ret_type; }
 
 	void setFuncValue(CallableValue* value) {
 		m_value = value;
@@ -1140,6 +1283,8 @@ public:
 		return m_args_value;
 	}
 private:
+	Type* m_ret_type;
+
 	Identifier* m_name;
 	ArgumentList* m_args;
 	Value* m_args_value;
@@ -1156,7 +1301,7 @@ public:
 			m_args_value(NULL) {
 		m_var->addRef();
 		m_method->addRef();
-		m_result = new CallableValue;
+		m_result = new Value;
 
 		if (m_args) {
 			m_args->addRef();
@@ -1490,6 +1635,33 @@ private:
 
 	DISALLOW_COPY_AND_ASSIGN(ClassDeclaration);
 };
+
+
+inline void setType(VariableDecls* v, Identifier* type){
+	VariableDecls::iterator it=v->begin(), end=v->end();
+
+	while(it!=end){
+		(*it)->setType(type);
+		if((*it)->isConst()){
+			(*it)->setConstness(false);
+			TypeCreation* tc=static_cast<TypeCreation*>((*it)->getRhs());
+			tc->setType(type);
+		}
+		++it;
+	}
+}
+
+inline void setConstness(VariableDecls* v, bool c){
+	VariableDecls::iterator it=v->begin(), end=v->end();
+
+	while(it!=end){
+		(*it)->setConstness(c);
+		++it;
+	}
+}
+
+
+
 
 }} // clever::ast
 

@@ -39,6 +39,8 @@ void Std::init() {
 	addModule(new std::Reflection);
 	addModule(new std::NetModule);
 	addModule(new std::Regex);
+	addModule(new std::FFI);
 }
+
 
 }} // clever::packages

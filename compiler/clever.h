@@ -61,6 +61,8 @@ namespace clever {
 #define CLEVER_ARG_IS_STR(x)     CLEVER_ARG(x)->isString()
 #define CLEVER_ARG_IS_BYTE(x)    CLEVER_ARG(x)->isByte()
 #define CLEVER_ARG_IS_DOUBLE(x)  CLEVER_ARG(x)->isDouble()
+#define CLEVER_ARG_IS_USER(x)    CLEVER_ARG(x)->isUserValue()
+#define CLEVER_ARG_IS_VECTOR(x)  CLEVER_ARG(x)->isVector()
 
 /**
  * Macro to get the Type pointer from an argument
@@ -200,6 +202,9 @@ namespace clever {
 #define clever_assert(hypothesis, format ...) \
 	clever::clever_assert_(__FILE__, CLEVER_CURRENT_FUNCTION, __LINE__, #hypothesis, (hypothesis), format)
 
+#define clever_assert_null(hypothesis) \
+	clever::clever_assert_(__FILE__, CLEVER_CURRENT_FUNCTION, __LINE__, #hypothesis, (hypothesis) == NULL, #hypothesis " must be NULL")
+
 #define clever_assert_not_null(hypothesis) \
 	clever::clever_assert_(__FILE__, CLEVER_CURRENT_FUNCTION, __LINE__, #hypothesis, (hypothesis) != NULL, #hypothesis " cannot be NULL")
 
@@ -207,6 +212,7 @@ void clever_assert_(const char* file, const char* function, long line, const cha
 		int hypothesis, const char* format, ...);
 #else
 #define clever_assert(hypothesis, format, ...)
+#define clever_assert_null(hypothesis)
 #define clever_assert_not_null(hypothesis)
 #endif
 

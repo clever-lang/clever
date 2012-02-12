@@ -125,7 +125,7 @@ public:
 	/**
 	 * Import a file
 	 */
-	ast::BlockNode* importFile(Driver&, const CString*, const CString*);
+	ast::UnscopedBlockNode* importFile(Driver&, const CString*, const CString*);
 
 	/**
 	 * Methods for formatted messages

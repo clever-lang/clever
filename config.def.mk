@@ -9,14 +9,14 @@
 # Clever stuff
 #
 VERSION=devel
-MODULES=std std.math std.io std.file std.os std.reflection std.net std.regex
+MODULES=std std.math std.io std.file std.os std.reflection std.net std.regex std.FFI
 
 ifeq ($(IS_WIN32),yes)
 mod_std_regex_CXXFLAGS =
-mod_std_regex_LDFLAGS  = -lpcrecpp
+mod_std_regex_LDFLAGS  = -lpcrecpp -lffi -ldl
 else
-mod_std_regex_CXXFLAGS = $(shell pkg-config --cflags libpcrecpp)
-mod_std_regex_LDFLAGS  = $(shell pkg-config --libs libpcrecpp)
+mod_std_regex_CXXFLAGS = $(shell pkg-config --cflags libpcrecpp) -lffi -ldl
+mod_std_regex_LDFLAGS  = $(shell pkg-config --libs libpcrecpp) -lffi -ldl
 endif
 
 #

@@ -39,7 +39,7 @@
 #include "types/arrayvalue.h"
 
 namespace clever {
-	
+
 class Scope;
 
 /**
@@ -120,7 +120,7 @@ public:
 			if (m_data.dv_value->refCount() == 1) {
 				getTypePtr()->destructor(this);
 			}
-			
+
 			m_data.dv_value->delRef();
 		}
 		else if (isVector()) {
@@ -189,7 +189,7 @@ public:
 			m_type_ptr == CLEVER_BYTE;
 	}
 
-	/*
+	/**
 	 * Avoid using this check. Type your variables as a
 	 * callable value instead of Value to ensure you can call it.
 	 */
@@ -232,12 +232,12 @@ public:
 		m_type = PRIMITIVE;
 		m_data.c_value = b;
 	}
-	
+
 	void setVector(ValueVector* v) {
 		m_type = VECTOR;
 		m_data.v_value = v;
 	}
-	
+
 	void setArray(ValueVector* a) {
 		setDataValue(new ArrayValue(a));
 	}
@@ -317,10 +317,10 @@ public:
 			str << getDouble();
 		}
 		else if (getTypePtr() == CLEVER_BOOL) {
-				return *CSTRING(getBoolean() ? "true" : "false");
+			return *CSTRING(getBoolean() ? "true" : "false");
 		}
 		else if (getTypePtr() == CLEVER_STR) {
-				return getString();
+			return getString();
 		}
 		else if (getTypePtr() == CLEVER_BYTE) {
 			str << "0x" << std::hex << uint32_t(getByte());
@@ -331,11 +331,11 @@ public:
 
 		return *CSTRING(str.str());
 	}
-	
+
 	bool isConst() const {
 		return m_is_const;
 	}
-	
+
 	void setConstness(bool constness) {
 		m_is_const = constness;
 	}
@@ -400,7 +400,7 @@ public:
 		m_call_type = handler->isInternal() ? FAR : NEAR;
 		m_handler.method = handler;
 	}
-	
+
 	void setScope(Scope* scope) { m_scope = scope; }
 	Scope* getScope() const { return m_scope; }
 
@@ -410,7 +410,7 @@ public:
 	FunctionPtr getFunctionPtr() const { return m_handler.func->getPtr(); }
 	MethodPtr getMethodPtr() const { return m_handler.method->getPtr(); }
 
-	Function* getFunction() const { return m_handler.func; }
+	const Function* getFunction() const { return m_handler.func; }
 	const Method* getMethod() const { return m_handler.method; }
 
 	bool isCallable() const { return true; }
@@ -447,7 +447,7 @@ public:
 	}
 private:
 	union {
-		Function* func;
+		const Function* func;
 		const Method* method;
 	} m_handler;
 

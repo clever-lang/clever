@@ -97,61 +97,55 @@ AST_VISITOR(CodeGenVisitor, BinaryExpr) {
 	Value* rhs;
 	Value* lhs = expr->getLhs()->getValue();
 	Opcodes opval;
+	int op = expr->getOp();
 
-	/**
-	 * Treat the jump for logical expression
-	 */
-	switch (expr->getOp()) {
-		case AND: {
-			Opcode* opcode = emit(OP_JMPNZ, &VM::jmpz_handler, lhs, NULL, expr->getValue());
-
-			expr->getRhs()->acceptVisitor(*this);
-			rhs = expr->getRhs()->getValue();
-
-			opcode->setJmpAddr1(getOpNum()+1);
-
-			opcode = emit(OP_JMPZ, &VM::jmpz_handler, rhs, NULL, expr->getValue());
-			opcode->setJmpAddr1(getOpNum());
-			expr->getValue()->addRef();
-			}
-			break;
+	// Treat the jump for logical expression
+	switch (op) {
+		case AND:
 		case OR: {
-			Opcode* opcode = emit(OP_JMPNZ, &VM::jmpnz_handler, lhs, NULL, expr->getValue());
+			opval = op == AND ? OP_JMPZ : OP_JMPNZ;
+
+			VM::opcode_handler op_handler = opval == OP_JMPZ ?
+				&VM::jmpz_handler : &VM::jmpnz_handler;
+
+			Opcode* opcode = emit(opval, op_handler, lhs, NULL, expr->getValue());
 
 			expr->getRhs()->acceptVisitor(*this);
 			rhs = expr->getRhs()->getValue();
 
 			opcode->setJmpAddr1(getOpNum()+1);
 
-			opcode = emit(OP_JMPNZ, &VM::jmpnz_handler, rhs, NULL, expr->getValue());
+			opcode = emit(opval, op_handler, rhs, NULL, expr->getValue());
 			opcode->setJmpAddr1(getOpNum());
 			expr->getValue()->addRef();
 			}
 			break;
-		case PLUS:          opval = OP_PLUS;
-		case DIV:           opval = OP_DIV;
-		case MULT:          opval = OP_MULT;
-		case MINUS:         opval = OP_MINUS;
-		case MOD:           opval = OP_MOD;
-		case XOR:           opval = OP_XOR;
-		case BW_OR:         opval = OP_BW_OR;
-		case BW_AND:        opval = OP_BW_AND;
-		case GREATER:       opval = OP_GREATER;
-		case LESS:          opval = OP_LESS;
-		case GREATER_EQUAL: opval = OP_GE;
-		case LESS_EQUAL:    opval = OP_LE;
-		case EQUAL:         opval = OP_EQUAL;
-		case NOT_EQUAL:     opval = OP_NE;
-		case LSHIFT:        opval = OP_LSHIFT;
-		case RSHIFT:        opval = OP_RSHIFT;
+		default:
+			switch (op) {
+				case PLUS:          opval = OP_PLUS;    break;
+				case DIV:           opval = OP_DIV;     break;
+				case MULT:          opval = OP_MULT;    break;
+				case MINUS:         opval = OP_MINUS;   break;
+				case MOD:           opval = OP_MOD;     break;
+				case XOR:           opval = OP_XOR;     break;
+				case BW_OR:         opval = OP_BW_OR;   break;
+				case BW_AND:        opval = OP_BW_AND;  break;
+				case GREATER:       opval = OP_GREATER; break;
+				case LESS:          opval = OP_LESS;    break;
+				case GREATER_EQUAL: opval = OP_GE;      break;
+				case LESS_EQUAL:    opval = OP_LE;      break;
+				case EQUAL:         opval = OP_EQUAL;   break;
+				case NOT_EQUAL:     opval = OP_NE;      break;
+				case LSHIFT:        opval = OP_LSHIFT;  break;
+				case RSHIFT:        opval = OP_RSHIFT;  break;
+				default:
+					Compiler::error("Unknown op type!");
+			}
 			expr->getRhs()->acceptVisitor(*this);
 			rhs = expr->getRhs()->getValue();
 
 			emit(opval, &VM::mcall_handler, expr->getCallValue(),
 				expr->getArgsValue(), expr->getValue());
-			break;
-		default:
-			Compiler::error("Unknown op type!");
 			break;
 	}
 
@@ -258,9 +252,32 @@ AST_VISITOR(CodeGenVisitor, BlockNode) {
 	const NodeList& nodes = expr->getNodes();
 	NodeList::const_iterator it = nodes.begin(), end = nodes.end();
 
-	/**
-	 * Iterates statements inside the block
-	 */
+	// Iterates statements inside the block
+	while (it != end) {
+		(*it)->acceptVisitor(*this);
+		++it;
+	}
+}
+
+/**
+ * Call the acceptVisitor method of each block node without creating scope
+ */
+AST_VISITOR(CodeGenVisitor, UnscopedBlockNode) {
+	const NodeList& nodes = expr->getBlock()->getNodes();
+	NodeList::const_iterator it = nodes.begin(), end = nodes.end();
+
+	// Iterates statements inside the block
+	while (it != end) {
+		(*it)->acceptVisitor(*this);
+		++it;
+	}
+}
+
+AST_VISITOR(CodeGenVisitor, VarDecls) {
+	const NodeList& nodes = expr->getNodes();
+	NodeList::const_iterator it = nodes.begin(), end = nodes.end();
+
+	// Iterates statements inside the block
 	while (it != end) {
 		(*it)->acceptVisitor(*this);
 		++it;
@@ -271,8 +288,7 @@ AST_VISITOR(CodeGenVisitor, BlockNode) {
  * Generates the JMPZ opcode for WHILE expression
  */
 AST_VISITOR(CodeGenVisitor, WhileExpr) {
-	unsigned int start_pos = 0;
-	start_pos = getOpNum();
+	size_t start_pos = getOpNum();
 
 	expr->getCondition()->acceptVisitor(*this);
 
@@ -286,9 +302,7 @@ AST_VISITOR(CodeGenVisitor, WhileExpr) {
 
 		expr->getBlock()->acceptVisitor(*this);
 
-		/**
-		 * Points break statements to out of WHILE block
-		 */
+		// Points break statements to out of WHILE block
 		while (!m_brks.top().empty()) {
 			m_brks.top().top()->setJmpAddr1(getOpNum()+1);
 			m_brks.top().pop();
@@ -313,7 +327,7 @@ AST_VISITOR(CodeGenVisitor, ForExpr) {
 			expr->getVarDecl()->acceptVisitor(*this);
 		}
 
-		unsigned int start_pos = getOpNum();
+		size_t start_pos = getOpNum();
 
 		if (expr->getCondition()) {
 			expr->getCondition()->acceptVisitor(*this);
@@ -334,9 +348,7 @@ AST_VISITOR(CodeGenVisitor, ForExpr) {
 
 			expr->getBlock()->acceptVisitor(*this);
 
-			/**
-			 * Points break statements to out of FOR block
-			 */
+			// Points break statements to out of FOR block
 			while (!m_brks.top().empty()) {
 				m_brks.top().top()->setJmpAddr1(getOpNum() + offset);
 				m_brks.top().pop();
@@ -416,10 +428,10 @@ AST_VISITOR(CodeGenVisitor, ImportStmt) {
  */
 AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
 	CallableValue* func = expr->getFunc();
-	Function* user_func = func->getFunction();
+	const Function* user_func = func->getFunction();
 	Opcode* jmp = emit(OP_JMP, &VM::jmp_handler);
 
-	user_func->setOffset(getOpNum());
+	const_cast<Function*>(user_func)->setOffset(getOpNum());
 
 	expr->getBlock()->acceptVisitor(*this);
 

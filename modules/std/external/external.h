@@ -23,13 +23,34 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "modules/std/file/file.h"
-#include "modules/std/io/io.h"
-#include "modules/std/math/math.h"
-#include "modules/std/os/os.h"
-#include "modules/std/net/net.h"
-#include "modules/std/reflection/reflection.h"
-#include "modules/std/regex/regex.h"
-#include "modules/std/FFI/FFI.h"
+
+#ifndef CLEVER_STD_EXTERNAL_H
+#define CLEVER_STD_EXTERNAL_H
+
+#include "compiler/module.h"
+#include "compiler/value.h"
+
+#include <string>
+#include <map>
+
+namespace clever { namespace packages { namespace std {
+
+class External : public Module {
+public:
+	External()
+		: Module("external") { }
+
+	~External();
+
+	void init();
+	
+private:
+	DISALLOW_COPY_AND_ASSIGN(External);
+};
+
+extern Module* g_external_module;
 
 
+}}} // clever::packages::std
+
+#endif // CLEVER_STD_MATH_H

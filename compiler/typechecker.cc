@@ -225,8 +225,6 @@ static CallableValue* _make_method_call(const Type* type, Value* var,
 				"No matching call for constructor %S::%S(%S)",
 				type->getName(), type->getName(), &args_type_name);
 		} else {
-			const std::string args_type_name = _serialize_arg_type(args_types, ", ");
-
 			Compiler::errorf(expr->getLocation(), "No matching call for %S::%S(%S)",
 				var->getTypePtr()->getName(), mname, &args_type_name);
 		}
@@ -470,7 +468,7 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
  */
 AST_VISITOR(TypeChecker, VariableDecl) {
 	const Type* type = NULL;
-	
+
 	if (expr->getType() != NULL) {
 		type = _evaluate_type(expr->getLocation(),
 			expr->getType());
@@ -495,7 +493,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 
 	if (rhs) {
 		Value* initval = rhs->getValue();
-		
+
 		if (type) {
 			if (!_check_compatible_types(var, initval)) {
 				var->delRef();
@@ -511,7 +509,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 			type = initval->getTypePtr();
 			var->setTypePtr(type);
 		}
-		
+
 		initval->addRef();
 		expr->setInitialValue(initval);
 
@@ -591,6 +589,34 @@ AST_VISITOR(TypeChecker, BlockNode) {
 	}
 
 	m_scope = m_scope->getParent();
+}
+
+/**
+ * Unscoped Block visitor
+ */
+AST_VISITOR(TypeChecker, UnscopedBlockNode) {
+	const NodeList& nodes = expr->getBlock()->getNodes();
+	NodeList::const_iterator it = nodes.begin(), end = nodes.end();
+
+	// Iterates over statements inside the block
+	while (it != end) {
+		(*it)->acceptVisitor(*this);
+		++it;
+	}
+}
+
+/**
+ * Variable declaration list visitor
+ */
+AST_VISITOR(TypeChecker, VarDecls) {
+	const NodeList& nodes = expr->getNodes();
+	NodeList::const_iterator it = nodes.begin(), end = nodes.end();
+
+	// Declare all the variable in the declaration list
+	while (it != end) {
+		(*it)->acceptVisitor(*this);
+		++it;
+	}
 }
 
 /**
@@ -685,14 +711,19 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 	}
 
 	const Function* func = static_cast<CallableValue*>(fvalue)->getFunction();
-	size_t num_args = expr->getArgs() ? expr->getArgs()->getNodes().size() : 0;
+	int num_args = expr->getArgs() ? int(expr->getArgs()->getNodes().size()) : 0;
 
 	clever_assert_not_null(func);
 
 	_check_function_args(func, num_args, expr->getLocation());
 
 	// Set the return type
-	expr->getValue()->setTypePtr(func->getReturnType());
+
+	if (expr->getReturnType()==NULL) {
+		expr->getValue()->setTypePtr(func->getReturnType());
+	} else {
+		expr->getValue()->setTypePtr(expr->getReturnType());
+	}
 
 	if (num_args) {
 		Value* arg_values = new Value;
