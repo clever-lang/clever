@@ -435,10 +435,10 @@ AST_VISITOR(CodeGenVisitor, ImportStmt) {
  */
 AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
 	CallableValue* func = expr->getFunc();
-	Function* user_func = func->getFunction();
+	const Function* user_func = func->getFunction();
 	Opcode* jmp = emit(OP_JMP, &VM::jmp_handler);
 
-	user_func->setOffset(getOpNum());
+	const_cast<Function*>(user_func)->setOffset(getOpNum());
 
 	expr->getBlock()->acceptVisitor(*this);
 

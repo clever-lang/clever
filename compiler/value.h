@@ -189,7 +189,7 @@ public:
 			m_type_ptr == CLEVER_BYTE;
 	}
 
-	/*
+	/**
 	 * Avoid using this check. Type your variables as a
 	 * callable value instead of Value to ensure you can call it.
 	 */
@@ -317,10 +317,10 @@ public:
 			str << getDouble();
 		}
 		else if (getTypePtr() == CLEVER_BOOL) {
-				return *CSTRING(getBoolean() ? "true" : "false");
+			return *CSTRING(getBoolean() ? "true" : "false");
 		}
 		else if (getTypePtr() == CLEVER_STR) {
-				return getString();
+			return getString();
 		}
 		else if (getTypePtr() == CLEVER_BYTE) {
 			str << "0x" << std::hex << uint32_t(getByte());
@@ -410,7 +410,7 @@ public:
 	FunctionPtr getFunctionPtr() const { return m_handler.func->getPtr(); }
 	MethodPtr getMethodPtr() const { return m_handler.method->getPtr(); }
 
-	Function* getFunction() const { return m_handler.func; }
+	const Function* getFunction() const { return m_handler.func; }
 	const Method* getMethod() const { return m_handler.method; }
 
 	bool isCallable() const { return true; }
@@ -447,7 +447,7 @@ public:
 	}
 private:
 	union {
-		Function* func;
+		const Function* func;
 		const Method* method;
 	} m_handler;
 

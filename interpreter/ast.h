@@ -1193,7 +1193,7 @@ protected:
 	ASTNode* m_modifier;
 };
 
-inline Type* findFunctionCallRetType(char c){
+static inline Type* _find_fcall_rtype(char c) {
 	switch (c) {
 		case 'i': return CLEVER_INT;
 		case 'd': return CLEVER_DOUBLE;
@@ -1210,15 +1210,17 @@ inline Type* findFunctionCallRetType(char c){
 class FunctionCall : public ASTNode {
 public:
 	FunctionCall(Identifier* name, ArgumentList* args)
-		: m_ret_type(NULL),m_name(name), m_args(args), m_args_value(NULL), m_value(NULL) {
+		: m_ret_type(NULL),m_name(name), m_args(args), m_args_value(NULL),
+			m_value(NULL) {
 		m_name->addRef();
 		if (m_args) {
 			m_args->addRef();
 		}
-		m_result = new CallableValue;
+		m_result = new Value;
 	}
 
-	FunctionCall(Identifier* lib, Identifier* rt, Identifier* name, ArgumentList* args) {
+	FunctionCall(Identifier* lib, Identifier* rt, Identifier* name,
+		ArgumentList* args) {
 
 		m_args_value = NULL;
 		m_value = NULL;
@@ -1226,23 +1228,17 @@ public:
 		m_name = new Identifier(CSTRING("call_ext_func"));
 		m_name->addRef();
 
-		if(args != NULL){
-			m_args = args;
-		}else{
-			m_args = new ArgumentList;
-
-		}
-
+		m_args = args ? args : new ArgumentList;
 		m_args->add(new StringLiteral(lib->getName()));
 		m_args->add(new StringLiteral(rt->getName()));
 
-		m_ret_type=findFunctionCallRetType((*rt->getName())[0]);
+		m_ret_type = _find_fcall_rtype((*rt->getName())[0]);
 
 		m_args->add(new StringLiteral(name->getName()));
 
 		m_args->addRef();
 
-		m_result = new CallableValue;
+		m_result = new Value;
 	}
 
 	~FunctionCall() {
@@ -1286,9 +1282,7 @@ public:
 	Value* getArgsValue() {
 		return m_args_value;
 	}
-
 private:
-
 	Type* m_ret_type;
 
 	Identifier* m_name;
@@ -1307,7 +1301,7 @@ public:
 			m_args_value(NULL) {
 		m_var->addRef();
 		m_method->addRef();
-		m_result = new CallableValue;
+		m_result = new Value;
 
 		if (m_args) {
 			m_args->addRef();
