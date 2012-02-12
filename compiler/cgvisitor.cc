@@ -97,9 +97,10 @@ AST_VISITOR(CodeGenVisitor, BinaryExpr) {
 	Value* rhs;
 	Value* lhs = expr->getLhs()->getValue();
 	Opcodes opval;
+	int op = expr->getOp();
 
 	// Treat the jump for logical expression
-	switch (expr->getOp()) {
+	switch (op) {
 		case AND: {
 			Opcode* opcode = emit(OP_JMPNZ, &VM::jmpz_handler, lhs, NULL, expr->getValue());
 
@@ -126,30 +127,32 @@ AST_VISITOR(CodeGenVisitor, BinaryExpr) {
 			expr->getValue()->addRef();
 			}
 			break;
-		case PLUS:          opval = OP_PLUS;
-		case DIV:           opval = OP_DIV;
-		case MULT:          opval = OP_MULT;
-		case MINUS:         opval = OP_MINUS;
-		case MOD:           opval = OP_MOD;
-		case XOR:           opval = OP_XOR;
-		case BW_OR:         opval = OP_BW_OR;
-		case BW_AND:        opval = OP_BW_AND;
-		case GREATER:       opval = OP_GREATER;
-		case LESS:          opval = OP_LESS;
-		case GREATER_EQUAL: opval = OP_GE;
-		case LESS_EQUAL:    opval = OP_LE;
-		case EQUAL:         opval = OP_EQUAL;
-		case NOT_EQUAL:     opval = OP_NE;
-		case LSHIFT:        opval = OP_LSHIFT;
-		case RSHIFT:        opval = OP_RSHIFT;
+		default:
+			switch (op) {
+				case PLUS:          opval = OP_PLUS;    break;
+				case DIV:           opval = OP_DIV;     break;
+				case MULT:          opval = OP_MULT;    break;
+				case MINUS:         opval = OP_MINUS;   break;
+				case MOD:           opval = OP_MOD;     break;
+				case XOR:           opval = OP_XOR;     break;
+				case BW_OR:         opval = OP_BW_OR;   break;
+				case BW_AND:        opval = OP_BW_AND;  break;
+				case GREATER:       opval = OP_GREATER; break;
+				case LESS:          opval = OP_LESS;    break;
+				case GREATER_EQUAL: opval = OP_GE;      break;
+				case LESS_EQUAL:    opval = OP_LE;      break;
+				case EQUAL:         opval = OP_EQUAL;   break;
+				case NOT_EQUAL:     opval = OP_NE;      break;
+				case LSHIFT:        opval = OP_LSHIFT;  break;
+				case RSHIFT:        opval = OP_RSHIFT;  break;
+				default:
+					Compiler::error("Unknown op type!");
+			}
 			expr->getRhs()->acceptVisitor(*this);
 			rhs = expr->getRhs()->getValue();
 
 			emit(opval, &VM::mcall_handler, expr->getCallValue(),
 				expr->getArgsValue(), expr->getValue());
-			break;
-		default:
-			Compiler::error("Unknown op type!");
 			break;
 	}
 

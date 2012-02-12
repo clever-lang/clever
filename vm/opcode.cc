@@ -93,7 +93,12 @@ const char* Opcode::getOpName(Opcodes op) const {
 std::string Opcode::dumpOp(const char* const label, Value* const op) const {
 	if (op) {
 		std::ostringstream str;
-		std::string name = op->getName() ? op->getName()->str() : op->toString();
+		std::string name = op->getName() && op->isCallable() ?
+			op->getName()->str() : op->toString();
+
+		if (op->isVector()) {
+			name = "vector";
+		}
 
 		str << op->refCount();
 
