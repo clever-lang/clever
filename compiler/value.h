@@ -276,7 +276,7 @@ public:
 		m_type = USER;
 	}
 
-	DataValue* getDataValue() {
+	DataValue* getDataValue() const {
 		return m_data.dv_value;
 	}
 
@@ -284,14 +284,10 @@ public:
 		std::memcpy(&m_data, value->getData(), sizeof(ValueData));
 		m_type_ptr = value->getTypePtr();
 	}
-	void copy(Value& value) {
-		std::memcpy(&m_data, value.getData(), sizeof(ValueData));
-		m_type_ptr = value.getTypePtr();
-	}
-
+	
 	virtual Value* getValue() { return this; }
 
-	virtual const CString& toString() {
+	virtual const CString& toString() const {
 		std::ostringstream str;
 
 		if (getTypePtr() == CLEVER_INT) {
