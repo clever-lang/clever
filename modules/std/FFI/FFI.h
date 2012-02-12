@@ -35,6 +35,8 @@
 
 namespace clever { namespace packages { namespace std {
 
+typedef ::std::map< ::std::string, void*> ExtMap;
+
 class FFI : public Module {
 public:
 	FFI()

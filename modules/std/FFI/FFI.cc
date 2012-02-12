@@ -29,7 +29,12 @@
 #include <cstdlib>
 #include <map>
 #include <string>
-#include <ffi.h>
+
+#ifndef __APPLE__
+# include <ffi.h>
+#else
+# include <ffi/ffi.h>
+#endif
 
 #ifdef _WIN32
 # include <windows.h>
@@ -43,11 +48,11 @@
 namespace clever { namespace packages { namespace std { namespace ffi {
 
 extern "C" {
-	typedef void (* ffi_call_func)();
+	typedef void (*ffi_call_func)();
 };
 
 #ifndef _WIN32
-	::std::map< ::std::string, void*> ext_mod_map;
+	ExtMap ext_mod_map;
 #endif
 
 ffi_type* find_ffi_type(const char* tn) {
@@ -84,7 +89,7 @@ static CLEVER_FUNCTION(call_ext_func) {
 	void* fpf;
 	ffi_call_func pf;
 
-	::std::map< ::std::string, void*>::iterator it = ext_mod_map.find(lib),
+	ExtMap::iterator it = ext_mod_map.find(lib),
 		end = ext_mod_map.end();
 
 	if (it == end) {
@@ -257,7 +262,7 @@ void FFI::init() {
 }
 
 FFI::~FFI() {
-	::std::map< ::std::string, void*>::const_iterator it =ffi::ext_mod_map.begin(),
+	ExtMap::const_iterator it = ffi::ext_mod_map.begin(),
 		end = ffi::ext_mod_map.end();
 
 	while (it != end) {
