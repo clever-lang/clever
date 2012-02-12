@@ -9,7 +9,7 @@
 # Clever stuff
 #
 VERSION=devel
-MODULES=std std.math std.io std.file std.os std.reflection std.net std.regex std.external
+MODULES=std std.math std.io std.file std.os std.reflection std.net std.regex std.FFI
 
 ifeq ($(IS_WIN32),yes)
 mod_std_regex_CXXFLAGS =
