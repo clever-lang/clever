@@ -38,7 +38,7 @@ namespace clever { namespace packages { namespace std {
 class FFI : public Module {
 public:
 	FFI()
-		: Module("external") { }
+		: Module("ffi") { }
 
 	~FFI();
 
@@ -53,4 +53,4 @@ extern Module* g_external_module;
 
 }}} // clever::packages::std
 
-#endif // CLEVER_STD_MATH_H
+#endif // CLEVER_STD_FFI_H
