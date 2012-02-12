@@ -33,6 +33,10 @@
 #include <string>
 #include <map>
 
+#ifdef CLEVER_APPLE
+# define MACOSX
+#endif
+
 namespace clever { namespace packages { namespace std {
 
 typedef ::std::map< ::std::string, void*> ExtMap;

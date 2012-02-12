@@ -36,7 +36,7 @@
 # include <ffi/ffi.h>
 #endif
 
-#ifdef _WIN32
+#ifdef CLEVER_WIN32
 # include <windows.h>
 #else
 # include <dlfcn.h>
@@ -51,8 +51,16 @@ extern "C" {
 	typedef void (*ffi_call_func)();
 };
 
-#ifndef _WIN32
+#ifndef CLEVER_WIN32
 	ExtMap ext_mod_map;
+#endif
+
+#if defined(CLEVER_UNIX)
+	const char* CLEVER_DYLIB_EXT = ".so";
+#elif defined(CLEVER_APPLE)
+	const char* CLEVER_DYLIB_EXT = ".dylib";
+#else
+	const char* CLEVER_DYLIB_EXT = ".dll";
 #endif
 
 ffi_type* find_ffi_type(const char* tn) {
@@ -85,7 +93,7 @@ static CLEVER_FUNCTION(call_ext_func) {
 	::std::string rt = CLEVER_ARG_STR(size-2);
 	::std::string func = CLEVER_ARG_STR(size-1);
 
-#ifndef _WIN32
+#ifndef CLEVER_WIN32
 	void* fpf;
 	ffi_call_func pf;
 
@@ -93,7 +101,7 @@ static CLEVER_FUNCTION(call_ext_func) {
 		end = ext_mod_map.end();
 
 	if (it == end) {
-		::std::string libname = ::std::string("./") + lib + ".so";
+		::std::string libname = ::std::string("./") + lib + CLEVER_DYLIB_EXT;
 		void* m = ext_mod_map[lib] = dlopen(libname.c_str(), 1);
 
 		if (m == NULL) {
@@ -175,7 +183,7 @@ static CLEVER_FUNCTION(call_ext_func) {
 		 CLEVER_RETURN_BOOL(false);
 	}
 
-#ifndef _WIN32
+#ifndef CLEVER_WIN32
 
 	if (rt[0] == 'i') {
 		int vi;
