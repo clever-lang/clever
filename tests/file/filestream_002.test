@@ -1,0 +1,35 @@
+Testing other FileStream operations
+==CODE==
+import std.io;
+import std.file;
+
+FileStream fs('test.txt', 'w');
+fs.write('Clever ');
+fs.write(10);
+fs.write(' ');
+fs.write(-123.1);
+fs.write(' ');
+fs.write(true);
+fs.close();
+
+fs.open('test.txt', 'r');
+
+String s;
+fs.read(s);
+
+Int i;
+fs.read(i);
+
+Double d;
+fs.read(d);
+
+Bool b;
+fs.read(b);
+
+println(s, i, d, b);
+fs.close();
+==RESULT==
+Clever
+10
+-123.1
+true
