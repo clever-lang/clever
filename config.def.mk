@@ -21,9 +21,9 @@ endif
 
 # Disable ffi on windows or when NO_FFI=yes is used
 ifneq ($(or $(NO_FFI),$(IS_WIN32)),yes)
-MODULES += std.FFI
-mod_std_FFI_CXXFLAGS = -DHAVE_FFI $(shell pkg-config --cflags libffi)
-mod_std_FFI_LDFLAGS  = $(shell pkg-config --libs libffi)
+MODULES += std.ffi
+mod_std_ffi_CXXFLAGS = -DHAVE_FFI $(shell pkg-config --cflags libffi)
+mod_std_ffi_LDFLAGS  = $(shell pkg-config --libs libffi)
 endif
 
 #
