@@ -9,14 +9,21 @@
 # Clever stuff
 #
 VERSION=devel
-MODULES=std std.math std.io std.file std.os std.reflection std.net std.regex std.ffi
+MODULES=std std.math std.io std.file std.os std.reflection std.net std.regex
 
 ifeq ($(IS_WIN32),yes)
 mod_std_regex_CXXFLAGS =
-mod_std_regex_LDFLAGS  = -lpcrecpp -lffi -ldl
+mod_std_regex_LDFLAGS  = -lpcrecpp
 else
-mod_std_regex_CXXFLAGS = $(shell pkg-config --cflags libpcrecpp) -lffi -ldl
-mod_std_regex_LDFLAGS  = $(shell pkg-config --libs libpcrecpp) -lffi -ldl
+mod_std_regex_CXXFLAGS = $(shell pkg-config --cflags libpcrecpp)
+mod_std_regex_LDFLAGS  = $(shell pkg-config --libs libpcrecpp)
+endif
+
+# Disable ffi on windows or when NO_FFI=yes is used
+ifneq ($(or $(NO_FFI),$(IS_WIN32)),yes)
+MODULES += std.ffi
+mod_std_ffi_CXXFLAGS = -DHAVE_FFI $(shell pkg-config --cflags libffi)
+mod_std_ffi_LDFLAGS  = $(shell pkg-config --libs libffi) -ldl
 endif
 
 #

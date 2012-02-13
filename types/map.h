@@ -40,17 +40,17 @@ public:
 		addArg(NULL);
 	}
 
-	Map(const CString* name, const Type* key_type, const Type* value_type, 
+	Map(const CString* name, const Type* key_type, const Type* value_type,
 		const Type* comparator_type) :
 		TemplatedType(name) {
 			addArg(key_type);
 			addArg(value_type);
-			
+
 			if (comparator_type) {
 				addArg(comparator_type);
 			}
 	}
-	
+
 	virtual const std::string* checkTemplateArgs(const TemplateArgs& args) const {
 		if (args.size() < 2 || args.size() > 3) {
 			std::ostringstream oss;
@@ -58,25 +58,25 @@ public:
 				"`%S' requires 2 or 3 arguments and %l was given.",
 				this->getName(), args.size()
 			);
-			
+
 			return new std::string(oss.str());
 		}
-		
+
 		TypeVector tv(2, args.at(0));
-		
+
 		if (args.size() == 2) {
-			const Method* method = args.at(0)->getMethod(CSTRING(CLEVER_OPERATOR_LESS), &tv);
+			const Method* method = args.at(0)->getMethod(CLEVER_OPERATOR_LESS_PTR, &tv);
 			if (!method || method->getReturnType() != CLEVER_BOOL) {
 				std::ostringstream oss;
 				sprintf(oss, "Unable to instantiate the type Map<Key = %S, Value = %S> because"
 					" the Key type doesn't have the proper operator < defined.",
-					args.at(0)->getName(), args.at(1)->getName() 
+					args.at(0)->getName(), args.at(1)->getName()
 				);
 				return new std::string(oss.str());
 			}
 			return NULL;
 		}
-		
+
 		const Method* method = args.at(2)->getMethod(CSTRING("compare"), &tv);
 		if (!method || method->getReturnType() != CLEVER_BOOL) {
 			std::ostringstream oss;
@@ -87,18 +87,18 @@ public:
 				args.at(2)->getName(), args.at(2)->getName(),
 				args.at(0)->getName(), args.at(0)->getName()
 			);
-			
+
 			return new std::string(oss.str());
 		}
-		
+
 		return NULL;
 	}
-	
+
 	virtual const Type* getTemplatedType(const TemplateArgs& args) const {
 		std::string name = getName()->str() + "<"
-			+ args[0]->getName()->str() + ", " 
+			+ args[0]->getName()->str() + ", "
 			+ args[1]->getName()->str();
-			
+
 		if (args.size() == 2) {
 			name += ">";
 		}
@@ -107,7 +107,7 @@ public:
 			name += args[2]->getName()->str();
 			name += ">";
 		}
-			
+
 		const CString* cname = CSTRING(name);
 		const Type* type = g_scope.getType(cname);
 
@@ -122,18 +122,18 @@ public:
 
 		return type;
 	}
-	
+
 	virtual const Type* getTemplatedType(const Type* key_type, const Type* value_type) const {
 		TemplateArgs tmp;
 		tmp.push_back(key_type);
 		tmp.push_back(value_type);
-		
+
 		return getTemplatedType(tmp);
 	}
-	
+
 	void init();
 	DataValue* allocateValue() const;
-	
+
 	void destructor(Value* value) const {
 		MapValue* map = CLEVER_GET_VALUE(MapValue*, value);
 		MapValue::iterator it = map->m_map.begin(),

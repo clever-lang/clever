@@ -35,6 +35,13 @@
 
 namespace clever {
 
+extern THREAD_TLS const CString* g_cstring_cached_ptrs[24];
+
+void init_type_cached_ptrs();
+
+#define CLEVER_TYPE_CACHE_PTR(x, ptr) g_cstring_cached_ptrs[x] = ptr
+#define CLEVER_TYPE_CACHED_PTR(name)  g_cstring_cached_ptrs[name]
+
 /**
  * Global native type pointers
  */
@@ -44,7 +51,7 @@ namespace clever {
 #define CLEVER_BOOL_VAR   g_bool_type_ptr
 #define CLEVER_BYTE_VAR   g_byte_type_ptr
 #define CLEVER_ARRAY_VAR  g_array_type_ptr
-#define CLEVER_MAP_VAR  g_map_type_ptr
+#define CLEVER_MAP_VAR    g_map_type_ptr
 
 #define CLEVER_INT    ::clever::CLEVER_INT_VAR
 #define CLEVER_DOUBLE ::clever::CLEVER_DOUBLE_VAR
@@ -52,7 +59,7 @@ namespace clever {
 #define CLEVER_BOOL   ::clever::CLEVER_BOOL_VAR
 #define CLEVER_BYTE   ::clever::CLEVER_BYTE_VAR
 #define CLEVER_ARRAY  ::clever::CLEVER_ARRAY_VAR
-#define CLEVER_MAP  ::clever::CLEVER_MAP_VAR
+#define CLEVER_MAP    ::clever::CLEVER_MAP_VAR
 #define CLEVER_VOID	  NULL
 
 #define CLEVER_GET_ARRAY_TEMPLATE ((const TemplatedType*)CLEVER_ARRAY)
@@ -61,41 +68,85 @@ namespace clever {
  * Arithmetic and assign operator method names
  */
 #define CLEVER_OPERATOR_PLUS    "__plus__"
+#define CLEVER_OPERATOR_PLUS_PTR CLEVER_TYPE_CACHED_PTR(0)
+
 #define CLEVER_OPERATOR_MINUS   "__minus__"
+#define CLEVER_OPERATOR_MINUS_PTR CLEVER_TYPE_CACHED_PTR(1)
+
 #define CLEVER_OPERATOR_DIV     "__div__"
+#define CLEVER_OPERATOR_DIV_PTR CLEVER_TYPE_CACHED_PTR(2)
+
 #define CLEVER_OPERATOR_MULT    "__mult__"
+#define CLEVER_OPERATOR_MULT_PTR CLEVER_TYPE_CACHED_PTR(3)
+
 #define CLEVER_OPERATOR_MOD     "__mod__"
+#define CLEVER_OPERATOR_MOD_PTR CLEVER_TYPE_CACHED_PTR(4)
+
 #define CLEVER_OPERATOR_ASSIGN  "__assign__"
+#define CLEVER_OPERATOR_ASSIGN_PTR CLEVER_TYPE_CACHED_PTR(5)
+
 #define CLEVER_OPERATOR_AT      "__at__"
+#define CLEVER_OPERATOR_AT_PTR CLEVER_TYPE_CACHED_PTR(6)
 
 /**
  * Bitwise operator method names
  */
 #define CLEVER_OPERATOR_BW_XOR  "__bw_xor__"
+#define CLEVER_OPERATOR_BW_XOR_PTR CLEVER_TYPE_CACHED_PTR(7)
+
 #define CLEVER_OPERATOR_BW_AND  "__bw_and__"
+#define CLEVER_OPERATOR_BW_AND_PTR CLEVER_TYPE_CACHED_PTR(8)
+
 #define CLEVER_OPERATOR_BW_OR   "__bw_or__"
+#define CLEVER_OPERATOR_BW_OR_PTR CLEVER_TYPE_CACHED_PTR(9)
+
 #define CLEVER_OPERATOR_BW_NOT  "__bw_not__"
+#define CLEVER_OPERATOR_BW_NOT_PTR CLEVER_TYPE_CACHED_PTR(10)
+
 #define CLEVER_OPERATOR_LSHIFT  "__lshift__"
+#define CLEVER_OPERATOR_LSHIFT_PTR CLEVER_TYPE_CACHED_PTR(11)
+
 #define CLEVER_OPERATOR_RSHIFT  "__rshift__"
+#define CLEVER_OPERATOR_RSHIFT_PTR CLEVER_TYPE_CACHED_PTR(12)
 
 /**
  * Logical operator method names
  */
 #define CLEVER_OPERATOR_NE      "__ne__"
+#define CLEVER_OPERATOR_NE_PTR CLEVER_TYPE_CACHED_PTR(13)
+
 #define CLEVER_OPERATOR_LE      "__le__"
+#define CLEVER_OPERATOR_LE_PTR CLEVER_TYPE_CACHED_PTR(14)
+
 #define CLEVER_OPERATOR_GE      "__ge__"
+#define CLEVER_OPERATOR_GE_PTR CLEVER_TYPE_CACHED_PTR(15)
+
 #define CLEVER_OPERATOR_EQUAL   "__equal__"
+#define CLEVER_OPERATOR_EQUAL_PTR CLEVER_TYPE_CACHED_PTR(16)
+
 #define CLEVER_OPERATOR_LESS    "__less__"
+#define CLEVER_OPERATOR_LESS_PTR CLEVER_TYPE_CACHED_PTR(17)
+
 #define CLEVER_OPERATOR_GREATER "__greater__"
+#define CLEVER_OPERATOR_GREATER_PTR CLEVER_TYPE_CACHED_PTR(18)
+
 #define CLEVER_OPERATOR_NOT     "__not__"
+#define CLEVER_OPERATOR_NOT_PTR CLEVER_TYPE_CACHED_PTR(19)
 
 /**
  * Pre/pos inc dec operator method names
  */
 #define CLEVER_OPERATOR_PRE_INC "__pre_inc__"
+#define CLEVER_OPERATOR_PRE_INC_PTR CLEVER_TYPE_CACHED_PTR(20)
+
 #define CLEVER_OPERATOR_POS_INC "__pos_inc__"
+#define CLEVER_OPERATOR_POS_INC_PTR CLEVER_TYPE_CACHED_PTR(21)
+
 #define CLEVER_OPERATOR_PRE_DEC "__pre_dec__"
+#define CLEVER_OPERATOR_PRE_DEC_PTR CLEVER_TYPE_CACHED_PTR(22)
+
 #define CLEVER_OPERATOR_POS_DEC "__pos_dec__"
+#define CLEVER_OPERATOR_POS_DEC_PTR CLEVER_TYPE_CACHED_PTR(23)
 
 /**
  * Utils for handling TemplatedType

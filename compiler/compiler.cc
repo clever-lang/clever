@@ -29,6 +29,7 @@
 #include "compiler/compiler.h"
 #include "interpreter/ast.h"
 #include "types/nativetypes.h"
+#include "types/type.h"
 #include "interpreter/astvisitor.h"
 #include "interpreter/driver.h"
 #include "interpreter/ast.h"
@@ -115,6 +116,8 @@ void Compiler::loadNativeTypes() {
 	g_scope.pushType(CSTRING("Byte"),   CLEVER_BYTE);
 	g_scope.pushType(CSTRING("Array"),  CLEVER_ARRAY);
 	g_scope.pushType(CSTRING("Map"),    CLEVER_MAP);
+
+	init_type_cached_ptrs();
 
 	// Initialize native data types
 	CLEVER_INT->init();
