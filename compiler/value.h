@@ -65,12 +65,13 @@ public:
 		DataValue* dv_value;
 		ValueVector* v_value;
 		uint8_t c_value;
+		Value* ref_value;
 	};
 
 	/**
 	 * Data type
 	 */
-	enum { NONE, PRIMITIVE, VECTOR, USER };
+	enum { NONE, PRIMITIVE, VECTOR, USER, REF };
 
 	Value()
 		: RefCounted(1), m_type(NONE), m_type_ptr(NULL), m_name(NULL),
@@ -109,7 +110,12 @@ public:
 		m_is_const(false) {
 		setByte(value);
 	}
-
+	
+	explicit Value(Value* value)
+		: RefCounted(1), m_type(REF), m_type_ptr(NULL), m_name(NULL), m_is_const(false) {
+		setReference(value);
+	}
+	
 	virtual ~Value() {
 		if (isUserValue()) {
 			if (m_data.dv_value->refCount() == 1) {
@@ -130,6 +136,8 @@ public:
 	}
 
 	void initialize() {
+		clever_assert_not_null(getTypePtr());
+		
 		if (getTypePtr() == CLEVER_INT) {
 			setInteger(0);
 		}
@@ -160,7 +168,8 @@ public:
 	}
 
 	void setType(int type) {
-		if (type == NONE || type == USER || type == VECTOR || type == PRIMITIVE) {
+		if (type == NONE || type == USER || type == VECTOR 
+			|| type == PRIMITIVE || type == REF) {
 			m_type = type;
 		}
 	}
@@ -194,6 +203,11 @@ public:
 	bool isByte()      const { return m_type_ptr == CLEVER_BYTE; }
 	bool isVector()    const { return m_type == VECTOR; }
 	bool isUserValue() const { return m_type == USER; }
+	bool isReference() const { return m_type == REF; }
+	
+	bool isNumeric() const {
+		return (isInteger() || isDouble());
+	}
 
 	void setInteger(int64_t i) {
 		m_type_ptr = CLEVER_INT;
@@ -233,6 +247,12 @@ public:
 	void setArray(ValueVector* a) {
 		setDataValue(new ArrayValue(a));
 	}
+	
+	void setReference(Value* v) {
+		m_type_ptr = NULL;
+		m_data.ref_value = v;
+		m_type = REF;
+	}
 
 	const CString* getStringP() const { return m_data.s_value; }
 
@@ -243,8 +263,12 @@ public:
 	uint8_t getByte()          const { return m_data.c_value; }
 	ValueVector* getArray()    const { return ((ArrayValue*)(m_data.dv_value))->m_array; }
 	ValueVector* getVector()   const { return m_data.v_value; }
+	Value* getReference()	   const { return m_data.ref_value; }
+	const ValueData* getData() const { return &m_data; }
 
 	bool getValueAsBool() const {
+		clever_assert_not_null(m_type_ptr);
+		
 		if (m_type_ptr == CLEVER_INT) {
 			return getInteger();
 		}
@@ -264,12 +288,6 @@ public:
 		return false;
 	}
 
-	bool isNumeric() const {
-		return (m_type_ptr == CLEVER_DOUBLE || m_type_ptr == CLEVER_INT);
-	}
-
-	const ValueData* getData() const { return &m_data; }
-
 	// Sets the buffer for a user type structure
 	void setDataValue(DataValue* data) {
 		m_data.dv_value = data;
@@ -287,6 +305,14 @@ public:
 	
 	virtual Value* getValue() { return this; }
 
+	bool isConst() const {
+		return m_is_const;
+	}
+
+	void setConstness(bool constness) {
+		m_is_const = constness;
+	}
+	
 	virtual const CString& toString() const {
 		std::ostringstream str;
 
@@ -310,14 +336,6 @@ public:
 		}
 
 		return *CSTRING(str.str());
-	}
-
-	bool isConst() const {
-		return m_is_const;
-	}
-
-	void setConstness(bool constness) {
-		m_is_const = constness;
 	}
 private:
 	int m_type;
