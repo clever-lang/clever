@@ -188,6 +188,9 @@ $(clever_BIN): $(clever_OBJ) $(OBJDIR)/ensure-dirs
 	$(call echo-command,"LD",$@)
 	$(call ld-command,$(clever_OBJ),$@)
 
+	$(call echo-command,"")
+	$(call echo-command," -- Make sure to use the same parameters when you run 'make run-tests' or 'make run-mem-tests'")
+
 $(OBJDIR)/interpreter/scanner.o: $(OBJDIR)/interpreter/scanner.cc
 	$(call echo-command,"CXX",$@)
 	$(call cxx-command,$<,$@)

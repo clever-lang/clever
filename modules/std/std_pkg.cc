@@ -39,7 +39,10 @@ void Std::init() {
 	addModule(new std::Reflection);
 	addModule(new std::NetModule);
 	addModule(new std::Regex);
+
+#ifdef HAVE_FFI
 	addModule(new std::FFI);
+#endif
 }
 
 

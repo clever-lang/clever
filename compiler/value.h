@@ -53,16 +53,11 @@ extern THREAD_TLS Type* CLEVER_BYTE_VAR;
 extern THREAD_TLS Type* CLEVER_ARRAY_VAR;
 
 /**
- * Container types
- */
-typedef std::pair<const Type*, const Type*> ContainerTypePair;
-
-/**
  * Base class for value representation
  */
 class NO_INIT_VTABLE Value : public RefCounted {
 public:
-	typedef union {
+	union ValueData {
 		int64_t l_value;
 		double d_value;
 		bool b_value;
@@ -70,7 +65,7 @@ public:
 		DataValue* dv_value;
 		ValueVector* v_value;
 		uint8_t c_value;
-	} ValueData;
+	};
 
 	/**
 	 * Data type
@@ -182,11 +177,8 @@ public:
 	void setName(const CString* const name) { m_name = name; }
 
 	virtual bool isPrimitive() const {
-		return m_type_ptr == CLEVER_INT ||
-			m_type_ptr == CLEVER_DOUBLE ||
-			m_type_ptr == CLEVER_BOOL ||
-			m_type_ptr == CLEVER_STR ||
-			m_type_ptr == CLEVER_BYTE;
+		return isInteger() || isString() || isBoolean()
+				|| isDouble() || isByte();
 	}
 
 	/**
@@ -284,30 +276,18 @@ public:
 		m_type = USER;
 	}
 
-	DataValue* getDataValue() {
+	DataValue* getDataValue() const {
 		return m_data.dv_value;
-	}
-
-	void setContainerType(const Type* key, const Type* value) {
-		m_container = ContainerTypePair(key, value);
-	}
-
-	const ContainerTypePair& getContainerType() const {
-		return m_container;
 	}
 
 	void copy(const Value* const value) {
 		std::memcpy(&m_data, value->getData(), sizeof(ValueData));
 		m_type_ptr = value->getTypePtr();
 	}
-	void copy(Value& value) {
-		std::memcpy(&m_data, value.getData(), sizeof(ValueData));
-		m_type_ptr = value.getTypePtr();
-	}
-
+	
 	virtual Value* getValue() { return this; }
 
-	virtual const CString& toString() {
+	virtual const CString& toString() const {
 		std::ostringstream str;
 
 		if (getTypePtr() == CLEVER_INT) {
@@ -344,7 +324,6 @@ private:
 	const Type* m_type_ptr;
 	const CString* m_name;
 	ValueData m_data;
-	ContainerTypePair m_container;
 	bool m_is_const;
 
 	DISALLOW_COPY_AND_ASSIGN(Value);
