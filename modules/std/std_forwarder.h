@@ -30,6 +30,9 @@
 #include "modules/std/net/net.h"
 #include "modules/std/reflection/reflection.h"
 #include "modules/std/regex/regex.h"
-#include "modules/std/FFI/FFI.h"
+
+#ifdef HAVE_FFI
+# include "modules/std/FFI/FFI.h"
+#endif
 
 
