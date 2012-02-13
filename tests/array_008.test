@@ -1,4 +1,4 @@
-Testing Array container with non-existent type
+[FATAL] Testing Array container with non-existent type
 ==CODE==
 Array<Foo> a;
 ==RESULT==

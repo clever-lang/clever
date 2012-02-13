@@ -529,12 +529,6 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 			CLEVER_OPERATOR_ASSIGN_PTR, expr, args));
 	} 
 	else if (ctor_list) {
-		DataValue* data_value = type->allocateValue();
-		
-		if (data_value) {
-			var->setDataValue(data_value);
-		}
-		
 		Value* arg_values = new Value;
 		arg_values->setType(Value::VECTOR);
 		arg_values->setVector(ctor_list->getArgValue());

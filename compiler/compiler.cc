@@ -46,6 +46,12 @@ THREAD_TLS Type* CLEVER_BYTE_VAR   = NULL;
 THREAD_TLS Type* CLEVER_ARRAY_VAR  = NULL;
 THREAD_TLS Type* CLEVER_MAP_VAR  = NULL;
 
+#ifndef CLEVER_APPLE
+# define CLEVER_ERROR_EXIT_ACTION() longjmp(Compiler::failure, 1)
+#else
+# define CLEVER_ERROR_EXIT_ACTION() exit(1)
+#endif
+
 /**
  * Set the default error level
  */
@@ -192,7 +198,7 @@ void Compiler::error(const std::string& message) {
 	m_error_stream << "Compile error: " << message << "\n";
 
 	// Abort the compilation
-	longjmp(Compiler::failure, 1);
+	CLEVER_ERROR_EXIT_ACTION();
 }
 
 /**
@@ -213,7 +219,7 @@ void Compiler::errorf(const location& loc, const char* format, ...) {
 	delete out;
 
 	// Abort the compilation
-	longjmp(Compiler::failure, 1);
+	CLEVER_ERROR_EXIT_ACTION();
 }
 
 /**
