@@ -256,9 +256,11 @@ CLEVER_METHOD(String::find) {
 	
 	if (pos >= this_str.size()) {
 		CLEVER_RETURN_INT(-1LL);
+		return;
 	}
 	
-	CLEVER_RETURN_INT(this_str.find(arg_str, pos));
+	size_t find_pos = this_str.find(arg_str, pos);
+	CLEVER_RETURN_INT(find_pos != ::std::string::npos ? find_pos : -1LL);
 }
 
 /**
