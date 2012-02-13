@@ -9,7 +9,7 @@ print(get_type(x), ' ', x, "\n");
 Auto str = 'Clever!' * 2;
 print(get_type(str), ' ', str, "\n");
 
-Auto arr = 'CLEVER'.asByteArray();
+Auto arr = 'CLEVER'.toByteArray();
 print(get_type(arr), ' ', arr.toString(), "\n");
 ==RESULT==
 Double 2.5

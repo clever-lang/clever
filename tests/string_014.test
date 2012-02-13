@@ -2,7 +2,7 @@ Testing String::asByteArray()
 ==CODE==
 import std.io;
 
-Array<Byte> arrB = 'clever'.asByteArray();
+Array<Byte> arrB = 'clever'.toByteArray();
 println(arrB.toString());
 
 ==RESULT==

@@ -59,7 +59,7 @@ public:
 	static CLEVER_METHOD(startsWith);
 	static CLEVER_METHOD(endsWith);
 	static CLEVER_METHOD(find);
-	static CLEVER_METHOD(asByteArray);
+	static CLEVER_METHOD(toByteArray);
 
 	/**
 	 * Type operator methods

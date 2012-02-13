@@ -264,10 +264,10 @@ CLEVER_METHOD(String::find) {
 }
 
 /**
- * Array<Byte> String::asByteArray()
+ * Array<Byte> String::toByteArray()
  * Returns the byte representation of the current String in an Array
  */
-CLEVER_METHOD(String::asByteArray) {
+CLEVER_METHOD(String::toByteArray) {
 	const ::std::string& this_str = CLEVER_THIS()->toString();
 	ValueVector* vv = new ValueVector;
 	
@@ -462,7 +462,7 @@ void String::init() {
 			->setMinNumArgs(1)
 	);
 	
-	addMethod(new Method("asByteArray", (MethodPtr)&String::asByteArray, arr_byte));
+	addMethod(new Method("toByteArray", (MethodPtr)&String::toByteArray, arr_byte));
 
 	addMethod(new Method("length", (MethodPtr)&String::length, CLEVER_INT));
 
