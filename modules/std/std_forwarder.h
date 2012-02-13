@@ -32,7 +32,7 @@
 #include "modules/std/regex/regex.h"
 
 #ifdef HAVE_FFI
-# include "modules/std/FFI/FFI.h"
+# include "modules/std/ffi/ffi.h"
 #endif
 
 

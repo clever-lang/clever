@@ -42,7 +42,7 @@
 # include <dlfcn.h>
 #endif
 
-#include "modules/std/FFI/FFI.h"
+#include "modules/std/ffi/ffi.h"
 #include "types/nativetypes.h"
 
 namespace clever { namespace packages { namespace std { namespace ffi {

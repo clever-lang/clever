@@ -23,7 +23,7 @@ endif
 ifneq ($(or $(NO_FFI),$(IS_WIN32)),yes)
 MODULES += std.ffi
 mod_std_ffi_CXXFLAGS = -DHAVE_FFI $(shell pkg-config --cflags libffi)
-mod_std_ffi_LDFLAGS  = $(shell pkg-config --libs libffi)
+mod_std_ffi_LDFLAGS  = $(shell pkg-config --libs libffi) -ldl
 endif
 
 #
