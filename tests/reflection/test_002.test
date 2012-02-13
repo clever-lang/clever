@@ -3,7 +3,7 @@ Testing ReflectionPackge->getModules()
 import std.reflection;
 import std.io;
 
-ReflectionPackage package = ReflectionPackage("std");
+ReflectionPackage package("std");
 
 println(package.getModules().toString());
 ==RESULT==

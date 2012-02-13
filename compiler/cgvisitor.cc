@@ -158,19 +158,25 @@ AST_VISITOR(CodeGenVisitor, BinaryExpr) {
  * Generates the variable declaration opcode
  */
 AST_VISITOR(CodeGenVisitor, VariableDecl) {
-	/**
-	 * Check if the declaration contains initialization,
-	 * non initialized declaration doesn't emit opcode
-	 */
-	if (expr->getInitialValue() == NULL) {
-		return;
+	if (!expr->getConstructorArgs() && expr->getInitialValue()) {
+		expr->getCallValue()->addRef();
+		expr->getArgsValue()->addRef();
+
+		emit(OP_ASSIGN, &VM::mcall_handler, expr->getCallValue(),
+			expr->getArgsValue());
 	}
+	else if (expr->getConstructorArgs()) {
+		clever_assert_not_null(expr->getInitialValue());
+		
+		CallableValue* call = expr->getCallValue();
+		Value* arg_values = expr->getArgsValue();
 
-	expr->getCallValue()->addRef();
-	expr->getArgsValue()->addRef();
+		call->addRef();
+		arg_values->addRef();
+		expr->getInitialValue()->addRef();
 
-	emit(OP_ASSIGN, &VM::mcall_handler, expr->getCallValue(),
-		expr->getArgsValue());
+		emit(OP_MCALL, &VM::mcall_handler, call, arg_values, expr->getInitialValue());
+	}
 }
 
 /**
@@ -466,7 +472,7 @@ AST_VISITOR(CodeGenVisitor, TypeCreation) {
 	call->addRef();
 	expr->getValue()->addRef();
 
-	emit(OP_MCALL, &VM::mcall_handler, call, arg_values, expr->getValue());
+	emit(OP_MCALL, &VM::mcall_handler, call, arg_values, call->getValue());
 }
 
 }} // clever::ast

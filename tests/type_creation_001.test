@@ -1,5 +1,0 @@
-[FATAL] Testing type creation
-==CODE==
-String x = Int();
-==RESULT==
-Compile error: Cannot convert `Int' to `String' on assignment on \S+ line 1

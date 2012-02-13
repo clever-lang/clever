@@ -792,7 +792,8 @@ class VariableDecl : public ASTNode {
 public:
 	VariableDecl(Identifier* type, Identifier* variable)
 		: m_type(type), m_variable(variable), m_rhs(NULL), m_initval(NULL),
-			m_const_value(false), m_call_value(NULL), m_args_value(NULL) {
+			m_const_value(false), m_call_value(NULL),
+			m_args_value(NULL), m_ctor_args(NULL) {
 		if (m_type) {
 			m_type->addRef();
 		}
@@ -802,7 +803,8 @@ public:
 
 	VariableDecl(Identifier* type, Identifier* variable, ASTNode* rhs)
 		: m_type(type), m_variable(variable), m_rhs(rhs), m_initval(NULL),
-			m_const_value(false), m_call_value(NULL), m_args_value(NULL) {
+			m_const_value(false), m_call_value(NULL),
+			m_args_value(NULL), m_ctor_args(NULL) {
 
 		// If is not `Auto' typed variable
 		if (m_type) {
@@ -815,7 +817,8 @@ public:
 
 	VariableDecl(Identifier* type, Identifier* variable, ASTNode* rhs, bool const_value)
 		: m_type(type), m_variable(variable), m_rhs(rhs), m_initval(NULL),
-			m_const_value(const_value), m_call_value(NULL), m_args_value(NULL) {
+			m_const_value(const_value), m_call_value(NULL),
+			m_args_value(NULL), m_ctor_args(NULL) {
 
 		// If is not `Auto' typed variable
 		if (m_type) {
@@ -824,6 +827,16 @@ public:
 
 		m_variable->addRef();
 		m_rhs->addRef();
+	}
+	
+	VariableDecl(Identifier* type, Identifier* variable, ArgumentList* arg_list)
+		: m_type(type), m_variable(variable), m_rhs(NULL), m_initval(NULL),
+			m_const_value(false), m_call_value(NULL), 
+			m_args_value(NULL), m_ctor_args(arg_list) {
+			
+			m_type->addRef();
+			m_variable->addRef();
+			m_ctor_args->addRef();
 	}
 
 	virtual ~VariableDecl() {
@@ -845,6 +858,9 @@ public:
 		if (m_args_value) {
 			m_args_value->delRef();
 		}
+		if (m_ctor_args) {
+			m_ctor_args->delRef();
+		}
 	}
 
 	Identifier* getVariable() const {
@@ -864,7 +880,7 @@ public:
 	}
 
 	void setType(Identifier* type){
-		m_type=type;
+		m_type = type;
 		m_type->addRef();
 	}
 
@@ -892,6 +908,10 @@ public:
 		if (m_rhs) {
 			m_rhs->acceptVisitor(visitor);
 		}
+		else if (m_ctor_args) {
+			m_ctor_args->acceptVisitor(visitor);
+		}
+		
 		visitor.visit(this);
 	}
 
@@ -901,6 +921,10 @@ public:
 
 	bool isConst() const {
 		return m_const_value;
+	}
+	
+	ArgumentList* getConstructorArgs() const {
+		return m_ctor_args;
 	}
 private:
 	/**
@@ -913,6 +937,7 @@ private:
 	bool m_const_value;
 	CallableValue* m_call_value;
 	Value* m_args_value;
+	ArgumentList* m_ctor_args;
 
 	DISALLOW_COPY_AND_ASSIGN(VariableDecl);
 };

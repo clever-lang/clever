@@ -152,7 +152,6 @@ namespace clever {
 	ast::StringLiteral* str_literal;
 	ast::ClassStmtList* class_stmt;
 	ast::ReturnStmt* return_stmt;
-	ast::TypeCreation* type_creation;
 	ast::VariableDecl* variable_decl;
 	ast::VariableDecls* variable_decls;
 	ast::ClassDeclaration* class_decl;
@@ -221,7 +220,6 @@ namespace clever {
 %type <variable_decl> variable_declaration_list_creation_aux
 %type <variable_decl> auto_variable_declaration_list_creation_aux
 %type <ast_node> assign_stmt
-%type <type_creation> type_creation
 %type <ast_node> expr
 %type <ast_node> expr_or_empty
 %type <for_expr> for_expr
@@ -425,10 +423,9 @@ variable_declaration_list_creation:
 ;
 
 variable_declaration_list_creation_aux:
-		IDENT '=' type_creation		{ $$ = new ast::VariableDecl(NULL, $1, $3); $$->setLocation(yylloc); }
-	|	IDENT '=' expr 				{ $$ = new ast::VariableDecl(NULL, $1, $3); $$->setLocation(yylloc); }
-	|	IDENT '(' arg_list ')'		{ $$ = new ast::VariableDecl(NULL, $1, new ast::TypeCreation(NULL, $3), true); $$->setLocation(yylloc); }
-	|	IDENT						{ $$ = new ast::VariableDecl(NULL,$1);  }
+		IDENT '=' expr 				{ $$ = new ast::VariableDecl(NULL, $1, $3); $$->setLocation(yylloc); }
+	|	IDENT '(' arg_list ')'		{ $$ = new ast::VariableDecl(NULL, $1, $<arg_list>3); $$->setLocation(yyloc);   }
+	|	IDENT						{ $$ = new ast::VariableDecl(NULL, $1);  }
 ;
 
 variable_declaration:
@@ -437,12 +434,7 @@ variable_declaration:
 ;
 
 variable_declaration_impl:
-		TYPE IDENT '=' type_creation        { $$ = new ast::VariableDecl($1, $2, $4); $$->setLocation(yylloc); }
-	|	template IDENT '=' type_creation    { $$ = new ast::VariableDecl($1, $2, $4); $$->setLocation(yylloc); }
-	|	package_module_name "::" TYPE IDENT '=' type_creation
-		{ $1->concat("::", $3); delete $3; $$ = new ast::VariableDecl($1, $4, $6); $$->setLocation(yylloc); }
-
-	|	AUTO IDENT '=' expr					{ $$ = new ast::VariableDecl(NULL, $2, $4); $$->setLocation(yylloc); }
+		AUTO IDENT '=' expr					{ $$ = new ast::VariableDecl(NULL, $2, $4); $$->setLocation(yylloc); }
 	|	IDENT ":=" expr						{ $$ = new ast::VariableDecl(NULL, $1, $3); $$->setLocation(yylloc); }
 	|	TYPE IDENT '=' expr                 { $$ = new ast::VariableDecl($1, $2, $4); $$->setLocation(yylloc); }
 	|	template IDENT '=' expr             { $$ = new ast::VariableDecl($1, $2, $4); $$->setLocation(yylloc); }
@@ -453,10 +445,10 @@ variable_declaration_impl:
 	|	template IDENT                      { $$ = new ast::VariableDecl($1, $2); }
 	|	package_module_name "::" TYPE IDENT { $1->concat("::", $3); delete $3; $$ = new ast::VariableDecl($1, $4); $$->setLocation(yyloc); }
 
-	|   TYPE IDENT '(' arg_list ')'         { $$ = new ast::VariableDecl($1, $2, new ast::TypeCreation($1, $4)); $$->setLocation(yyloc);   }
-	|   template IDENT '(' arg_list ')'     { $$ = new ast::VariableDecl($1, $2, new ast::TypeCreation($1, $4)); $$->setLocation(yyloc);   }
+	|   TYPE IDENT '(' arg_list ')'         { $$ = new ast::VariableDecl($1, $2, $<arg_list>4); $$->setLocation(yyloc);   }
+	|   template IDENT '(' arg_list ')'     { $$ = new ast::VariableDecl($1, $2, $<arg_list>4); $$->setLocation(yyloc);   }
 	|	package_module_name "::" TYPE IDENT '(' arg_list ')'
-		{ $1->concat("::", $3); delete $3; $$ = new ast::VariableDecl($1, $4, new ast::TypeCreation($1, $6)); $$->setLocation(yyloc);  }
+		{ $1->concat("::", $3); delete $3; $$ = new ast::VariableDecl($1, $4, $<arg_list>6); $$->setLocation(yyloc);  }
 ;
 
 assign_stmt:
@@ -471,10 +463,6 @@ assign_stmt:
 	|	IDENT "^=" expr  { $$ = new ast::BinaryExpr(ast::XOR, $1, $3, true);   $$->setLocation(yylloc); }
 	|	IDENT "<<=" expr { $$ = new ast::BinaryExpr(ast::LSHIFT, $1, $3, true);   $$->setLocation(yylloc); }
 	|	IDENT ">>=" expr { $$ = new ast::BinaryExpr(ast::RSHIFT, $1, $3, true);   $$->setLocation(yylloc); }
-;
-
-type_creation:
-		TYPE '(' arg_list_opt ')' { $$ = new ast::TypeCreation($1, $3); $$->setLocation(yylloc); }
 ;
 
 expr:

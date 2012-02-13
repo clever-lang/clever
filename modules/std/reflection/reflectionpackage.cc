@@ -35,11 +35,6 @@ CLEVER_METHOD(ReflectionPackage::constructor) {
 
 	rpv->setPackage(packages.find(&CLEVER_ARG_STR(0)));
 
-	/**
-	 * Assignment on type creation will increase the ref
-	 */
-	rpv->setReference(0);
-
 	retval->setDataValue(rpv);
 }
 

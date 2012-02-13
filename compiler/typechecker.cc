@@ -490,6 +490,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 	var->addRef();
 
 	ASTNode* rhs = expr->getRhs();
+	ArgumentList* ctor_list = expr->getConstructorArgs();
 
 	if (rhs) {
 		Value* initval = rhs->getValue();
@@ -526,9 +527,28 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 
 		expr->setCallValue(_make_method_call(type, var,
 			CLEVER_OPERATOR_ASSIGN_PTR, expr, args));
-	} else {
+	} 
+	else if (ctor_list) {
 		DataValue* data_value = type->allocateValue();
+		
+		if (data_value) {
+			var->setDataValue(data_value);
+		}
+		
+		Value* arg_values = new Value;
+		arg_values->setType(Value::VECTOR);
+		arg_values->setVector(ctor_list->getArgValue());
+		expr->setArgsValue(arg_values);
+		
+		expr->setInitialValue(var);
+		var->addRef();
 
+		expr->setCallValue(_make_method_call(type, var,
+			CSTRING(CLEVER_CTOR_NAME), expr, arg_values));
+	}
+	else {
+		DataValue* data_value = type->allocateValue();
+		
 		if (data_value) {
 			var->setDataValue(data_value);
 		}
