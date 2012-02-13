@@ -48,7 +48,7 @@ CLEVER_METHOD(String::ltrim) {
  */
 CLEVER_METHOD(String::rtrim) {
     std::string newString = CLEVER_THIS()->toString();
-    newString.erase(newString.find_last_not_of(" \n\r\t")+1);
+    newString.erase(newString.find_last_not_of(" \n\r\t") + 1);
     CLEVER_RETURN_STR(CSTRING(newString));
 }
 
@@ -62,7 +62,7 @@ CLEVER_METHOD(String::trim) {
     newString.erase(0, newString.find_first_not_of(" \n\r\t"));
 
     // rtrim
-    newString.erase(newString.find_last_not_of(" \n\r\t")+1);
+    newString.erase(newString.find_last_not_of(" \n\r\t") + 1);
 
     CLEVER_RETURN_STR(CSTRING(newString));
 }

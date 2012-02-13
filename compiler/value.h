@@ -290,19 +290,19 @@ public:
 	virtual const CString& toString() const {
 		std::ostringstream str;
 
-		if (getTypePtr() == CLEVER_INT) {
+		if (isInteger()) {
 			str << getInteger();
 		}
-		else if (getTypePtr() == CLEVER_DOUBLE) {
+		else if (isDouble()) {
 			str << getDouble();
 		}
-		else if (getTypePtr() == CLEVER_BOOL) {
+		else if (isBoolean()) {
 			return *CSTRING(getBoolean() ? "true" : "false");
 		}
-		else if (getTypePtr() == CLEVER_STR) {
+		else if (isString()) {
 			return getString();
 		}
-		else if (getTypePtr() == CLEVER_BYTE) {
+		else if (isByte()) {
 			str << "0x" << std::hex << uint32_t(getByte());
 		}
 		else {
