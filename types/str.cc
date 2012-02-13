@@ -255,7 +255,7 @@ CLEVER_METHOD(String::find) {
 	size_t pos = (CLEVER_NUM_ARGS() == 1 ? 0 : CLEVER_ARG(1)->getInteger());
 	
 	if (pos >= this_str.size()) {
-		CLEVER_RETURN_INT(-1);
+		CLEVER_RETURN_INT(-1LL);
 	}
 	
 	CLEVER_RETURN_INT(this_str.find(arg_str, pos));
