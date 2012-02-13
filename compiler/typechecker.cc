@@ -365,12 +365,12 @@ AST_VISITOR(TypeChecker, UnaryExpr) {
 	const CString* method_name = NULL;
 
 	switch (expr->getOp()) {
-		case ast::NOT:     method_name = CSTRING(CLEVER_OPERATOR_NOT);     break;
-		case ast::BW_NOT:  method_name = CSTRING(CLEVER_OPERATOR_BW_NOT);  break;
-		case ast::PRE_INC: method_name = CSTRING(CLEVER_OPERATOR_PRE_INC); break;
-		case ast::POS_INC: method_name = CSTRING(CLEVER_OPERATOR_POS_INC); break;
-		case ast::PRE_DEC: method_name = CSTRING(CLEVER_OPERATOR_PRE_DEC); break;
-		case ast::POS_DEC: method_name = CSTRING(CLEVER_OPERATOR_POS_DEC); break;
+		case ast::NOT:     method_name = CLEVER_OPERATOR_NOT_PTR;     break;
+		case ast::BW_NOT:  method_name = CLEVER_OPERATOR_BW_NOT_PTR;  break;
+		case ast::PRE_INC: method_name = CLEVER_OPERATOR_PRE_INC_PTR; break;
+		case ast::POS_INC: method_name = CLEVER_OPERATOR_POS_INC_PTR; break;
+		case ast::PRE_DEC: method_name = CLEVER_OPERATOR_PRE_DEC_PTR; break;
+		case ast::POS_DEC: method_name = CLEVER_OPERATOR_POS_DEC_PTR; break;
 	}
 
 	clever_assert_not_null(method_name);
@@ -405,22 +405,22 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 
 	// Operator method names
 	switch (expr->getOp()) {
-		case PLUS:          method_name = CSTRING(CLEVER_OPERATOR_PLUS);    break;
-		case DIV:           method_name = CSTRING(CLEVER_OPERATOR_DIV);     break;
-		case MULT:          method_name = CSTRING(CLEVER_OPERATOR_MULT);    break;
-		case MINUS:         method_name = CSTRING(CLEVER_OPERATOR_MINUS);   break;
-		case MOD:           method_name = CSTRING(CLEVER_OPERATOR_MOD);     break;
-		case XOR:           method_name = CSTRING(CLEVER_OPERATOR_BW_XOR);  break;
-		case BW_OR:         method_name = CSTRING(CLEVER_OPERATOR_BW_OR);   break;
-		case BW_AND:        method_name = CSTRING(CLEVER_OPERATOR_BW_AND);  break;
-		case GREATER:       method_name = CSTRING(CLEVER_OPERATOR_GREATER); break;
-		case LESS:          method_name = CSTRING(CLEVER_OPERATOR_LESS);    break;
-		case GREATER_EQUAL: method_name = CSTRING(CLEVER_OPERATOR_GE);      break;
-		case LESS_EQUAL:    method_name = CSTRING(CLEVER_OPERATOR_LE);      break;
-		case EQUAL:         method_name = CSTRING(CLEVER_OPERATOR_EQUAL);   break;
-		case NOT_EQUAL:     method_name = CSTRING(CLEVER_OPERATOR_NE);      break;
-		case LSHIFT:        method_name = CSTRING(CLEVER_OPERATOR_LSHIFT);  break;
-		case RSHIFT:        method_name = CSTRING(CLEVER_OPERATOR_RSHIFT);  break;
+		case PLUS:          method_name = CLEVER_OPERATOR_PLUS_PTR;    break;
+		case DIV:           method_name = CLEVER_OPERATOR_DIV_PTR;     break;
+		case MULT:          method_name = CLEVER_OPERATOR_MULT_PTR;    break;
+		case MINUS:         method_name = CLEVER_OPERATOR_MINUS_PTR;   break;
+		case MOD:           method_name = CLEVER_OPERATOR_MOD_PTR;     break;
+		case XOR:           method_name = CLEVER_OPERATOR_BW_XOR_PTR;  break;
+		case BW_OR:         method_name = CLEVER_OPERATOR_BW_OR_PTR;   break;
+		case BW_AND:        method_name = CLEVER_OPERATOR_BW_AND_PTR;  break;
+		case GREATER:       method_name = CLEVER_OPERATOR_GREATER_PTR; break;
+		case LESS:          method_name = CLEVER_OPERATOR_LESS_PTR;    break;
+		case GREATER_EQUAL: method_name = CLEVER_OPERATOR_GE_PTR;      break;
+		case LESS_EQUAL:    method_name = CLEVER_OPERATOR_LE_PTR;      break;
+		case EQUAL:         method_name = CLEVER_OPERATOR_EQUAL_PTR;   break;
+		case NOT_EQUAL:     method_name = CLEVER_OPERATOR_NE_PTR;      break;
+		case LSHIFT:        method_name = CLEVER_OPERATOR_LSHIFT_PTR;  break;
+		case RSHIFT:        method_name = CLEVER_OPERATOR_RSHIFT_PTR;  break;
 		case OR:
 		case AND:
 			expr->setResult(new Value(CLEVER_BOOL));
@@ -525,7 +525,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 		expr->setArgsValue(args);
 
 		expr->setCallValue(_make_method_call(type, var,
-			CSTRING(CLEVER_OPERATOR_ASSIGN), expr, args));
+			CLEVER_OPERATOR_ASSIGN_PTR, expr, args));
 	} else {
 		DataValue* data_value = type->allocateValue();
 
@@ -690,7 +690,7 @@ AST_VISITOR(TypeChecker, AssignExpr) {
 	expr->setArgsValue(args);
 
 	expr->setCallValue(_make_method_call(lhs->getTypePtr(), lhs,
-		CSTRING(CLEVER_OPERATOR_ASSIGN), expr, args));
+		CLEVER_OPERATOR_ASSIGN_PTR, expr, args));
 
 	expr->getCallValue()->addRef();
 }
@@ -912,7 +912,7 @@ AST_VISITOR(TypeChecker, Subscript) {
 	expr->setArgsValue(args);
 
 	expr->setCallValue(_make_method_call(var->getTypePtr(), var,
-		CSTRING(CLEVER_OPERATOR_AT), expr, args));
+		CLEVER_OPERATOR_AT_PTR, expr, args));
 
 	expr->getCallValue()->addRef();
 }
