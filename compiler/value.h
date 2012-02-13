@@ -36,7 +36,6 @@
 #include "compiler/method.h"
 #include "compiler/function.h"
 #include "types/type.h"
-#include "types/arrayvalue.h"
 
 namespace clever {
 
@@ -243,10 +242,6 @@ public:
 		m_type = VECTOR;
 		m_data.v_value = v;
 	}
-
-	void setArray(ValueVector* a) {
-		setDataValue(new ArrayValue(a));
-	}
 	
 	void setReference(Value* v) {
 		m_type_ptr = NULL;
@@ -261,7 +256,6 @@ public:
 	double getDouble()         const { return m_data.d_value; }
 	bool getBoolean()          const { return m_data.b_value; }
 	uint8_t getByte()          const { return m_data.c_value; }
-	ValueVector* getArray()    const { return ((ArrayValue*)(m_data.dv_value))->m_array; }
 	ValueVector* getVector()   const { return m_data.v_value; }
 	Value* getReference()	   const { return m_data.ref_value; }
 	const ValueData* getData() const { return &m_data; }

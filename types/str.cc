@@ -28,6 +28,7 @@
 #include "compiler/cstring.h"
 #include "compiler/compiler.h"
 #include "types/type.h"
+#include "types/array.h"
 #include "types/str.h"
 
 namespace clever {

@@ -31,6 +31,11 @@
 #include "compiler/clever.h"
 #include "compiler/value.h"
 #include "compiler/scope.h"
+#include "types/arrayvalue.h"
+
+#define CLEVER_RETURN_ARRAY(x) retval->setDataValue(new ArrayValue(x))
+#define CLEVER_GET_ARRAY(x)    static_cast<ArrayValue*>((x)->getDataValue())->m_array
+#define CLEVER_ARG_ARRAY(x)    CLEVER_GET_ARRAY(args->at((x)))
 
 namespace clever {
 
@@ -86,7 +91,7 @@ public:
 	DataValue* allocateValue() const;
 	
 	void destructor(Value* value) const {
-		ValueVector* vec = value->getArray();
+		ValueVector* vec = CLEVER_GET_ARRAY(value);
 		
 		size_t sz = vec->size();
 		for (size_t i = 0; i < sz; ++i) {

@@ -23,9 +23,11 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <compiler/pkgmanager.h>
-#include <modules/std/reflection/reflectionpackage.h>
-#include <modules/std/reflection/reflectionpackagevalue.h>
+#include "compiler/pkgmanager.h"
+#include "types/array.h"
+#include "modules/std/reflection/reflectionpackage.h"
+#include "modules/std/reflection/reflectionpackagevalue.h"
+
 
 namespace clever { namespace packages { namespace std { namespace reflection {
 
