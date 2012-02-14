@@ -730,6 +730,8 @@ AST_VISITOR(TypeChecker, AssignExpr) {
 		CLEVER_OPERATOR_ASSIGN_PTR, expr, args));
 
 	expr->getCallValue()->addRef();
+	
+	expr->setValue(lhs);
 }
 
 /**

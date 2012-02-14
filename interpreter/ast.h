@@ -1397,7 +1397,7 @@ private:
 class AssignExpr : public ASTNode {
 public:
 	AssignExpr(Identifier* lhs, ASTNode* rhs)
-		: m_lhs(lhs), m_rhs(rhs), m_call_value(NULL), m_args_value(NULL) {
+		: m_lhs(lhs), m_rhs(rhs), m_call_value(NULL), m_args_value(NULL), m_value(NULL) {
 		lhs->addRef();
 		rhs->addRef();
 	}
@@ -1424,6 +1424,15 @@ public:
 	void setArgsValue(Value* args_value) {
 		m_args_value = args_value;
 	}
+	
+	void setValue(Value* value) {
+		m_value=value;
+	}
+	
+	Value* getValue() const {
+		return m_value;
+	}
+	
 
 	Value* getArgsValue() const {
 		return m_args_value;
@@ -1439,6 +1448,8 @@ private:
 	ASTNode* m_rhs;
 	CallableValue* m_call_value;
 	Value* m_args_value;
+	Value* m_value;
+	
 	DISALLOW_COPY_AND_ASSIGN(AssignExpr);
 };
 
