@@ -135,11 +135,7 @@ static bool _check_compatible_types(const Value* const lhs,
 		return true;
 	}
 
-	/**
-	 * @TODO: check if a class is base of another
-	 * if (lhs->isPrimitive() && rhs->isPrimitive() && !lhs->hasSameType(rhs))
-	 */
-	return lhs->hasSameType(rhs);
+	return rhs->getTypePtr()->isConvertibleTo(lhs->getTypePtr());
 }
 
 /**

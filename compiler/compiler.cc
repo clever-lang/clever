@@ -44,7 +44,8 @@ THREAD_TLS Type* CLEVER_STR_VAR    = NULL;
 THREAD_TLS Type* CLEVER_BOOL_VAR   = NULL;
 THREAD_TLS Type* CLEVER_BYTE_VAR   = NULL;
 THREAD_TLS Type* CLEVER_ARRAY_VAR  = NULL;
-THREAD_TLS Type* CLEVER_MAP_VAR  = NULL;
+THREAD_TLS Type* CLEVER_MAP_VAR    = NULL;
+THREAD_TLS Type* CLEVER_OBJ_VAR    = NULL;
 
 #ifndef CLEVER_APPLE
 # define CLEVER_ERROR_EXIT_ACTION() longjmp(Compiler::failure, 1)
@@ -104,6 +105,7 @@ void Compiler::shutdown() {
  * Loads the class representations of native types
  */
 void Compiler::loadNativeTypes() {
+	CLEVER_OBJECT = new Object;
 	CLEVER_INT    = new Integer;
 	CLEVER_STR    = new String;
 	CLEVER_DOUBLE = new Double;
@@ -115,6 +117,7 @@ void Compiler::loadNativeTypes() {
 	CLEVER_MAP    = new Map;
 
 	// Registers all native data types
+	g_scope.pushType(CSTRING("Object"), CLEVER_OBJECT);
 	g_scope.pushType(CSTRING("Int"),    CLEVER_INT);
 	g_scope.pushType(CSTRING("Double"), CLEVER_DOUBLE);
 	g_scope.pushType(CSTRING("String"), CLEVER_STR);
@@ -133,6 +136,7 @@ void Compiler::loadNativeTypes() {
 	CLEVER_BYTE->init();
 	CLEVER_ARRAY->init();
 	CLEVER_MAP->init();
+	CLEVER_OBJECT->init();
 }
 
 /**

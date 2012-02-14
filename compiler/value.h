@@ -50,6 +50,7 @@ extern THREAD_TLS Type* CLEVER_STR_VAR;
 extern THREAD_TLS Type* CLEVER_BOOL_VAR;
 extern THREAD_TLS Type* CLEVER_BYTE_VAR;
 extern THREAD_TLS Type* CLEVER_ARRAY_VAR;
+extern THREAD_TLS Type* CLEVER_OBJ_VAR;
 
 /**
  * Base class for value representation

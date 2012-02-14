@@ -42,12 +42,12 @@ namespace clever {
 class Array : public TemplatedType {
 public:
 	Array()
-		: TemplatedType(CSTRING("Array")) {
+		: TemplatedType(CSTRING("Array"), CLEVER_OBJECT) {
 		addArg(NULL);
 	}
 
 	Array(const CString* name, const Type* arg_type) :
-		TemplatedType(name) {
+		TemplatedType(name, CLEVER_OBJECT) {
 			addArg(arg_type);
 	}
 	

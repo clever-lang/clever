@@ -34,7 +34,7 @@ namespace clever {
 class Char : public Type {
 public:
 	Char() :
-		Type(CSTRING("Byte")) { }
+		Type(CSTRING("Byte"), CLEVER_OBJECT) { }
 
 	void init();
 	DataValue* allocateValue() const;

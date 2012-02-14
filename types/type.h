@@ -29,9 +29,11 @@
 #include <cstring>
 #include <vector>
 #include <tr1/unordered_map>
+#include <map>
 #include "compiler/cstring.h"
 #include "compiler/method.h"
 #include "compiler/datavalue.h"
+#include <iostream>
 
 namespace clever {
 
@@ -52,6 +54,7 @@ void init_type_cached_ptrs();
 #define CLEVER_BYTE_VAR   g_byte_type_ptr
 #define CLEVER_ARRAY_VAR  g_array_type_ptr
 #define CLEVER_MAP_VAR    g_map_type_ptr
+#define CLEVER_OBJ_VAR    g_obj_type_ptr
 
 #define CLEVER_INT    ::clever::CLEVER_INT_VAR
 #define CLEVER_DOUBLE ::clever::CLEVER_DOUBLE_VAR
@@ -60,7 +63,10 @@ void init_type_cached_ptrs();
 #define CLEVER_BYTE   ::clever::CLEVER_BYTE_VAR
 #define CLEVER_ARRAY  ::clever::CLEVER_ARRAY_VAR
 #define CLEVER_MAP    ::clever::CLEVER_MAP_VAR
+#define CLEVER_OBJECT ::clever::CLEVER_OBJ_VAR
 #define CLEVER_VOID	  NULL
+
+extern THREAD_TLS Type* CLEVER_OBJ_VAR;
 
 #define CLEVER_GET_ARRAY_TEMPLATE ((const TemplatedType*)CLEVER_ARRAY)
 
@@ -160,12 +166,12 @@ typedef ::std::vector<const Type*> TemplateArgs;
  */
 class Type : public RefCounted {
 public:
-	typedef std::tr1::unordered_map<std::string, Method*> OverloadMethodMap;
+	typedef std::map<std::vector<const Type*>, Method*> OverloadMethodMap;
 	typedef std::tr1::unordered_map<std::string, OverloadMethodMap> MethodMap;
-	typedef std::pair<std::string, Method*> MethodPair;
+	typedef std::pair<std::vector<const Type*>, Method*> MethodPair;
 
-	explicit Type(const CString* name)
-		: RefCounted(1), m_name(name) { }
+	explicit Type(const CString* name, const Type* super = CLEVER_OBJECT)
+		: RefCounted(1), m_name(name), m_super(super) { }
 
 	virtual ~Type();
 
@@ -193,6 +199,28 @@ public:
 	virtual bool isTemplatedType() const {
 		return false;
 	}
+	
+	/**
+	 * Returns the super type of this type or NULL if none
+	 */
+	const Type* getSuperType() const {
+		return m_super;
+	}
+	
+	/**
+	 * Returns true if this type is convertible to the type given
+	 */
+	bool isConvertibleTo(const Type* type) const {
+		if (this == type) {
+			return true;
+		}
+		
+		if (getSuperType()) {
+			return getSuperType()->isConvertibleTo(type);
+		}
+		
+		return false;
+	}
 
 	/**
 	 * Destructor method. This method will be called when after a variable gets
@@ -202,15 +230,18 @@ public:
 	virtual void destructor(Value* value) const {}
 private:
 	MethodMap m_methods;
-	const CString* m_name;
+	const CString* const m_name;
+	
+	// Type which this type is directly inherited
+	const Type* const m_super;
 
 	DISALLOW_COPY_AND_ASSIGN(Type);
 };
 
 class TemplatedType : public Type {
 public:
-	explicit TemplatedType(const CString* name)
-		: Type(name) {}
+	explicit TemplatedType(const CString* name, const Type* super)
+		: Type(name, super) {}
 
 	virtual bool isTemplatedType() const {
 		return true;
