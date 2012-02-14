@@ -120,7 +120,7 @@ namespace clever {
 %left ',';
 %left LOGICAL_OR;
 %left LOGICAL_AND;
-%right '=' PLUS_EQUAL MINUS_EQUAL DIV_EQUAL MULT_EQUAL MOD_EQUAL BW_OR_EQUAL XOR_EQUAL BW_AND_EQUAL  RSHIFT_EQUAL LSHIFT_EQUAL  ; 
+%right '=' PLUS_EQUAL MINUS_EQUAL DIV_EQUAL MULT_EQUAL MOD_EQUAL BW_OR_EQUAL XOR_EQUAL BW_AND_EQUAL  RSHIFT_EQUAL LSHIFT_EQUAL  ;
 %left ':';
 %left BOOLEAN_OR;
 %left BOOLEAN_AND;
@@ -264,7 +264,6 @@ statements:
 	|	while_expr               		{ $$ = $<ast_node>1; }
 	|	block_stmt               		{ $$ = $<ast_node>1; }
 	|	break_stmt ';'           		{ $$ = $<ast_node>1; }
-	//|	assign_stmt ';'          		{ $$ = $<ast_node>1; }
 	|	import_stmt ';'          		{ $$ = $<ast_node>1; }
 	|	import_file ';'          		{ $$ = $<ast_node>1; }
 	|	return_stmt ';'          		{ $$ = $<ast_node>1; }
@@ -342,7 +341,7 @@ func_name:
 
 func_call:
 		func_name '(' arg_list_opt ')' { $$ = new ast::FunctionCall($1, $3); $$->setLocation(yylloc); }
-| '[' IDENT ',' IDENT ']' func_name '(' arg_list_opt ')' { $$ = new ast::FunctionCall($2,$4,$6,$8); $$->setLocation(yylloc); delete $2; delete $4; delete $6; }
+	| '[' IDENT ',' IDENT ']' func_name '(' arg_list_opt ')' { $$ = new ast::FunctionCall($2,$4,$6,$8); $$->setLocation(yylloc); delete $2; delete $4; delete $6; }
 ;
 
 chaining_method_call:
@@ -524,9 +523,6 @@ expr_or_empty:
 
 for_expr:
 		FOR '(' variable_decl_or_empty ';' expr_or_empty ';' expr_or_empty ')' block_stmt { $$ = new ast::ForExpr($3, $5, $7, $9); $$->setLocation(yylloc); }
-//	|	FOR '(' variable_decl_or_empty ';' expr_or_empty ';' assign_stmt')' block_stmt    { $$ = new ast::ForExpr($3, $5, $7, $9); $$->setLocation(yylloc); }
-//		|	FOR '(' variable_decl_or_empty ';' expr_or_empty ';' assign_stmt')' block_stmt    { $$ = new ast::ForExpr($3, $5, $7, $9); $$->setLocation(yylloc); }
-
 //	|   FOR '(' variable_declaration_no_init IN  IDENT ')' block_stmt                     { $$ = new ast::ForExpr($3, $5, $7); $$->setLocation(yylloc); }
 ;
 
