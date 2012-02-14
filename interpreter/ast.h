@@ -833,10 +833,15 @@ public:
 		: m_type(type), m_variable(variable), m_rhs(NULL), m_initval(NULL),
 			m_const_value(false), m_call_value(NULL),
 			m_args_value(NULL), m_ctor_args(arg_list) {
-
+		if (m_type) {
 			m_type->addRef();
+		}
+		if (m_variable) {
 			m_variable->addRef();
+		}
+		if (m_ctor_args) {
 			m_ctor_args->addRef();
+		}
 	}
 
 	virtual ~VariableDecl() {
@@ -1424,15 +1429,15 @@ public:
 	void setArgsValue(Value* args_value) {
 		m_args_value = args_value;
 	}
-	
+
 	void setValue(Value* value) {
 		m_value=value;
 	}
-	
+
 	Value* getValue() const {
 		return m_value;
 	}
-	
+
 
 	Value* getArgsValue() const {
 		return m_args_value;
@@ -1449,7 +1454,7 @@ private:
 	CallableValue* m_call_value;
 	Value* m_args_value;
 	Value* m_value;
-	
+
 	DISALLOW_COPY_AND_ASSIGN(AssignExpr);
 };
 
