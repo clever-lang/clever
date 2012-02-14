@@ -107,6 +107,32 @@ CLEVER_METHOD(Map::toString) {
 }
 
 /**
+ * Bool Map<K, V [, C]>::hasKey(K)
+ */
+CLEVER_METHOD(Map::hasKey) {
+	MapValue* map = CLEVER_GET_VALUE(MapValue*, value);
+	MapValue::iterator it = map->m_map.begin(),
+		end = map->m_map.end();
+
+	bool ret = false;
+	
+	if (it != end) {
+		if (it->first->toString() == CLEVER_ARG(0)->toString()) {
+			ret = true;
+		}
+		
+		while (++it != end && !ret) {
+			if (it->first->toString() == CLEVER_ARG(0)->toString()) {
+				ret = true;
+			}
+		}
+	}
+	
+	CLEVER_RETURN_BOOL(ret);
+}
+
+
+/**
  * Map type initializator
  */
 void Map::init() {
@@ -129,6 +155,10 @@ void Map::init() {
 	addMethod(new Method("isEmpty", (MethodPtr)&Map::isEmpty, CLEVER_BOOL));
 
 	addMethod(new Method("clear", (MethodPtr)&Map::clear, CLEVER_VOID));
+	
+	addMethod((new Method("hasKey", (MethodPtr)&Map::hasKey, CLEVER_BOOL))
+		->addArg("key", CLEVER_TPL_ARG(0))
+	);
 }
 
 DataValue* Map::allocateValue() const {

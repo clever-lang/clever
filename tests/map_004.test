@@ -1,0 +1,26 @@
+Testing Map<K, V>::hasKey
+==CODE==
+import std.io;
+
+Map<String, String> a;
+a.insert('name', 'Clever');
+a.insert('version', '1.0-stable');
+
+println(a.toString());
+println(a.hasKey('name'));
+println(a.hasKey('nameSS'));
+
+Map<Int, String> b;
+b.insert(10, 'Clever');
+b.insert(20, '1.0-stable');
+
+println(b.toString());
+println(b.hasKey(20));
+println(b.hasKey(11));
+==RESULT==
+\[name => Clever, version => 1.0-stable\]
+true
+false
+\[10 => Clever, 20 => 1.0-stable\]
+true
+false

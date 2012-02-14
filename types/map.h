@@ -155,6 +155,7 @@ public:
 	static CLEVER_METHOD(clear);
 	static CLEVER_METHOD(isEmpty);
 	static CLEVER_METHOD(toString);
+	static CLEVER_METHOD(hasKey);
 private:
 	DISALLOW_COPY_AND_ASSIGN(Map);
 };
