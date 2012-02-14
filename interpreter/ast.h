@@ -861,9 +861,6 @@ public:
 		if (m_ctor_args) {
 			m_ctor_args->delRef();
 		}
-		if (m_value) {
-			m_value->delRef();
-		}
 	}
 
 	Identifier* getVariable() const {
@@ -929,14 +926,6 @@ public:
 	ArgumentList* getConstructorArgs() const {
 		return m_ctor_args;
 	}
-	
-	Value* getValue() const {
-		return m_value;
-	}
-	
-	void setValue(Value* v) {
-		m_value = v;
-	}
 private:
 	/**
 	 * The variable's type. NULL means `Auto' typed variable.
@@ -949,7 +938,6 @@ private:
 	CallableValue* m_call_value;
 	Value* m_args_value;
 	ArgumentList* m_ctor_args;
-	Value* m_value;
 
 	DISALLOW_COPY_AND_ASSIGN(VariableDecl);
 };
