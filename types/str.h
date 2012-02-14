@@ -34,7 +34,7 @@ namespace clever {
 class String : public Type {
 public:
 	String() :
-		Type(CSTRING("String")) { }
+		Type(CSTRING("String"), CLEVER_OBJECT) { }
 
 	void init();
 	DataValue* allocateValue() const;

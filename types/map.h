@@ -36,13 +36,13 @@ namespace clever {
 class Map : public TemplatedType {
 public:
 	Map()
-		: TemplatedType(CSTRING("Map")) {
+		: TemplatedType(CSTRING("Map"), CLEVER_OBJECT) {
 		addArg(NULL);
 	}
 
 	Map(const CString* name, const Type* key_type, const Type* value_type,
 		const Type* comparator_type) :
-		TemplatedType(name) {
+		TemplatedType(name, CLEVER_OBJECT) {
 			addArg(key_type);
 			addArg(value_type);
 

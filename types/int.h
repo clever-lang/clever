@@ -28,13 +28,14 @@
 
 #include "type.h"
 #include "compiler/value.h"
+#include "types/object.h"
 
 namespace clever {
 
 class Integer : public Type {
 public:
 	Integer() :
-		Type(CSTRING("Int")) { }
+		Type(CSTRING("Int"), CLEVER_OBJECT) { }
 
 	void init();
 	DataValue* allocateValue() const;

@@ -26,6 +26,7 @@
 #ifndef CLEVER_NATIVE_TYPES_H
 #define CLEVER_NATIVE_TYPES_H
 
+#include "types/object.h"
 #include "types/int.h"
 #include "types/double.h"
 #include "types/str.h"

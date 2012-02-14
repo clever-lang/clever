@@ -78,43 +78,59 @@ void Type::addMethod(Method* method) {
 	MethodArgs::const_iterator it = args.begin();
 	int min_args = method->getMinNumArgs();
 	int num_args = method->getNumArgs();
-	std::string args_name;
 
 	if (min_args != num_args) {
 		method->setReference(0);
 	}
-
+	
+	std::vector<const Type*> v_args;
 	for (int n = 1; it != args.end(); ++it, ++n) {
-		args_name += it->second->getName()->str();
-		args_name += CLEVER_ARGS_SEPARATOR;
+		v_args.push_back(it->second);
 		if (min_args != num_args && n >= min_args) {
-			m_methods[method->getName()].insert(MethodPair(args_name, method));
+			m_methods[method->getName()].insert(MethodPair(v_args, method));
 			method->addRef();
 		}
 	}
+	
 	if (min_args == num_args) {
-		m_methods[method->getName()].insert(MethodPair(args_name, method));
+		m_methods[method->getName()].insert(MethodPair(v_args, method));
 	}
 }
 
 const Method* Type::getMethod(const CString* name, const TypeVector* args) const {
-	MethodMap::const_iterator it = m_methods.find(*name);
+	MethodMap::const_iterator it1 = m_methods.find(*name);
 
-	if (it == m_methods.end()) return NULL;
+	if (it1 == m_methods.end()) return NULL;
 
-	std::string args_name;
-
-	if (args != NULL) {
-		for (size_t i = 0, j = args->size(); i < j; ++i) {
-			args_name += args->at(i)->getName()->str();
-			args_name += CLEVER_ARGS_SEPARATOR;
+	size_t num_args = args->size();
+	
+	OverloadMethodMap::const_iterator it = it1->second.begin(), 
+		itend = it1->second.end();
+	
+	while (it != itend) {
+		const std::vector<const Type*>& vet = it->first;
+		
+		if (vet.size() == num_args) {
+			bool found = true;
+			
+			for (size_t i = 0; i < num_args; ++i) {
+				if (!args->at(i)->isConvertibleTo(vet[i])) {
+					found = false;
+					break;
+				}
+			}
+			
+			if (found) {
+				return it->second;
+			}
 		}
+		
+		it++;
 	}
 
-	OverloadMethodMap::const_iterator method_it = it->second.find(args_name);
-
-	if (method_it != it->second.end()) {
-		return method_it->second;
+	// If we didn't find the method yet, look for it in the super type
+	if (getSuperType()) {
+		return getSuperType()->getMethod(name, args);
 	}
 
 	return NULL;

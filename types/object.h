@@ -23,18 +23,18 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef CLEVER_BOOL_H
-#define CLEVER_BOOL_H
+#ifndef CLEVER_OBJECT_H
+#define CLEVER_OBJECT_H
 
 #include "type.h"
 #include "compiler/value.h"
 
 namespace clever {
 
-class Bool : public Type {
+class Object : public Type {
 public:
-	Bool() :
-		Type(CSTRING("Bool"), CLEVER_OBJECT) { }
+	Object() :
+		Type(CSTRING("Object"), NULL) { }
 
 	void init();
 	DataValue* allocateValue() const;
@@ -48,18 +48,12 @@ public:
 	/**
 	 * Type operator methods
 	 */
-	static CLEVER_METHOD(bw_and);
-	static CLEVER_METHOD(bw_or);
-	static CLEVER_METHOD(bw_xor);
-	static CLEVER_METHOD(not_equal);
 	static CLEVER_METHOD(equal);
-	static CLEVER_METHOD(logical_not);
-	static CLEVER_METHOD(bw_not);
 	static CLEVER_METHOD(do_assign);
 private:
-	DISALLOW_COPY_AND_ASSIGN(Bool);
+	DISALLOW_COPY_AND_ASSIGN(Object);
 };
 
 } // clever
 
-#endif // CLEVER_BOOL_H
+#endif // CLEVER_OBJECT_H

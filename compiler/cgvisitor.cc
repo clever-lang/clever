@@ -28,7 +28,47 @@
 #include "compiler/compiler.h"
 #include "compiler/typechecker.h"
 
-namespace clever { namespace ast {
+namespace clever { 
+
+/**
+ * Prepares the node to generate an opcode which will make a method call
+ */
+static CallableValue* _make_method_call(const Type* type, Value* var,
+	const CString* mname, ast::ASTNode* expr, const Value* arg_values) {
+
+	clever_assert_not_null(type);
+	clever_assert_not_null(var);
+	clever_assert_not_null(mname);
+
+	TypeVector args_types;
+
+	if (arg_values != NULL) {
+		const ValueVector* vv = arg_values->getVector();
+
+		for (size_t i = 0; i < vv->size(); ++i) {
+			args_types.push_back(vv->at(i)->getTypePtr());
+		}
+	}
+
+	const Method* method = type->getMethod(mname, &args_types);
+	var->setTypePtr(type);
+
+	CallableValue* call = new CallableValue(mname, type);
+	call->setHandler(method);
+	call->setContext(var);
+	var->addRef();
+
+	// Set the return type as the declared in the method
+	Value* result = expr->getValue();
+
+	if (result) {
+		result->setTypePtr(method->getReturnType());
+	}
+
+	return call;
+}	
+
+namespace ast {
 
 AST_VISITOR(CodeGenVisitor, Identifier) {
 }
@@ -56,6 +96,13 @@ AST_VISITOR(CodeGenVisitor, ArgumentList) {
  * Genearates opcode for the subscript operator
  */
 AST_VISITOR(CodeGenVisitor, Subscript) {
+	Value* var = expr->getIdentifier()->getValue();
+	
+	expr->setCallValue(_make_method_call(var->getTypePtr(), var,
+		CLEVER_OPERATOR_AT_PTR, expr, expr->getArgsValue()));
+
+	expr->getCallValue()->addRef();
+	
 	emit(OP_AT, &VM::mcall_handler,
 		expr->getCallValue(), expr->getArgsValue(), expr->getValue());
 }
@@ -64,6 +111,12 @@ AST_VISITOR(CodeGenVisitor, Subscript) {
  * Generates opcode for regex syntax
  */
 AST_VISITOR(CodeGenVisitor, RegexPattern) {
+	// The Pcre constructor CallableValue
+	expr->setCallValue(_make_method_call(expr->getValue()->getTypePtr(), expr->getValue(),
+		CSTRING(CLEVER_CTOR_NAME), expr, expr->getArgsValue()));
+
+	expr->getCallValue()->addRef();
+		
 	emit(OP_REGEX, &VM::mcall_handler,
 		expr->getCallValue(), expr->getArgsValue(), expr->getValue());
 }
@@ -73,18 +126,46 @@ AST_VISITOR(CodeGenVisitor, RegexPattern) {
  */
 AST_VISITOR(CodeGenVisitor, UnaryExpr) {
 	Opcodes opcode;
+	Value* var = expr->getExpr()->getValue();
+	const CString* method_name = NULL;
 
 	switch (expr->getOp()) {
-		case PRE_INC: opcode = OP_PRE_INC; break;
-		case POS_INC: opcode = OP_POS_INC; break;
-		case PRE_DEC: opcode = OP_PRE_DEC; break;
-		case POS_DEC: opcode = OP_POS_DEC; break;
-		case NOT:     opcode = OP_NOT;     break;
-		case BW_NOT:  opcode = OP_BW_NOT;  break;
+		case PRE_INC:
+			opcode = OP_PRE_INC; 
+			method_name = CLEVER_OPERATOR_PRE_INC_PTR;
+		break;
+		case POS_INC: 
+			opcode = OP_POS_INC;
+			method_name = CLEVER_OPERATOR_POS_INC_PTR;
+		break;
+		case PRE_DEC: 
+			opcode = OP_PRE_DEC;
+			method_name = CLEVER_OPERATOR_PRE_DEC_PTR;
+		break;
+		case POS_DEC: 
+			opcode = OP_POS_DEC; 
+			method_name = CLEVER_OPERATOR_POS_DEC_PTR;
+		break;
+		case NOT:     
+			opcode = OP_NOT;
+			method_name = CLEVER_OPERATOR_NOT_PTR;
+		break;
+		case BW_NOT:
+			opcode = OP_BW_NOT;
+			method_name = CLEVER_OPERATOR_BW_NOT_PTR;
+		break;
 		default:
 			Compiler::error("Unknown op type!");
 			break;
 	}
+	
+	clever_assert_not_null(method_name);
+	
+	expr->setCallValue(_make_method_call(var->getTypePtr(), var, method_name,
+			expr, NULL));
+
+	expr->getCallValue()->addRef();
+	
 	emit(opcode, &VM::mcall_handler, expr->getCallValue(), NULL, expr->getValue());
 }
 
@@ -93,7 +174,8 @@ AST_VISITOR(CodeGenVisitor, UnaryExpr) {
  */
 AST_VISITOR(CodeGenVisitor, BinaryExpr) {
 	expr->getLhs()->acceptVisitor(*this);
-
+	
+	const CString* method_name = NULL;
 	Value* rhs;
 	Value* lhs = expr->getLhs()->getValue();
 	Opcodes opval;
@@ -122,27 +204,83 @@ AST_VISITOR(CodeGenVisitor, BinaryExpr) {
 			break;
 		default:
 			switch (op) {
-				case PLUS:          opval = OP_PLUS;    break;
-				case DIV:           opval = OP_DIV;     break;
-				case MULT:          opval = OP_MULT;    break;
-				case MINUS:         opval = OP_MINUS;   break;
-				case MOD:           opval = OP_MOD;     break;
-				case XOR:           opval = OP_XOR;     break;
-				case BW_OR:         opval = OP_BW_OR;   break;
-				case BW_AND:        opval = OP_BW_AND;  break;
-				case GREATER:       opval = OP_GREATER; break;
-				case LESS:          opval = OP_LESS;    break;
-				case GREATER_EQUAL: opval = OP_GE;      break;
-				case LESS_EQUAL:    opval = OP_LE;      break;
-				case EQUAL:         opval = OP_EQUAL;   break;
-				case NOT_EQUAL:     opval = OP_NE;      break;
-				case LSHIFT:        opval = OP_LSHIFT;  break;
-				case RSHIFT:        opval = OP_RSHIFT;  break;
+				case PLUS:          
+					opval = OP_PLUS; 
+					method_name = CLEVER_OPERATOR_PLUS_PTR;
+				break;
+				case DIV:
+					opval = OP_DIV;
+					method_name = CLEVER_OPERATOR_DIV_PTR;
+				break;
+				case MULT:
+					opval = OP_MULT;
+					method_name = CLEVER_OPERATOR_MULT_PTR;
+				break;
+				case MINUS:
+					opval = OP_MINUS;
+					method_name = CLEVER_OPERATOR_MINUS_PTR;
+				break;
+				case MOD:
+					opval = OP_MOD;
+					method_name = CLEVER_OPERATOR_MOD_PTR;
+				break;
+				case XOR:
+					opval = OP_XOR;
+					method_name = CLEVER_OPERATOR_BW_XOR_PTR;
+				break;
+				case BW_OR:
+					opval = OP_BW_OR;
+					method_name = CLEVER_OPERATOR_BW_OR_PTR;
+				break;
+				case BW_AND:
+					opval = OP_BW_AND;
+					method_name = CLEVER_OPERATOR_BW_AND_PTR;
+				break;
+				case GREATER:
+					opval = OP_GREATER;
+					method_name = CLEVER_OPERATOR_GREATER_PTR;
+				break;
+				case LESS:
+					opval = OP_LESS;
+					method_name = CLEVER_OPERATOR_LESS_PTR;
+				break;
+				case GREATER_EQUAL:
+					opval = OP_GE;
+					method_name = CLEVER_OPERATOR_GE_PTR;
+				break;
+				case LESS_EQUAL:
+					opval = OP_LE;
+					method_name = CLEVER_OPERATOR_LE_PTR;
+				break;
+				case EQUAL:
+					opval = OP_EQUAL;
+					method_name = CLEVER_OPERATOR_EQUAL_PTR;
+				break;
+				case NOT_EQUAL:
+					opval = OP_NE;
+					method_name = CLEVER_OPERATOR_NE_PTR;
+				break;
+				case LSHIFT:
+					opval = OP_LSHIFT;
+					method_name = CLEVER_OPERATOR_LSHIFT_PTR;
+				break;
+				case RSHIFT:
+					opval = OP_RSHIFT;
+					method_name = CLEVER_OPERATOR_RSHIFT_PTR;
+				break;
 				default:
 					Compiler::error("Unknown op type!");
 			}
+			
+			clever_assert_not_null(method_name);
+			
+			expr->setCallValue(_make_method_call(lhs->getTypePtr(), 
+				lhs, method_name,
+				expr, expr->getArgsValue()));
+			
 			expr->getRhs()->acceptVisitor(*this);
 			rhs = expr->getRhs()->getValue();
+			expr->getCallValue()->addRef();
 
 			emit(opval, &VM::mcall_handler, expr->getCallValue(),
 				expr->getArgsValue(), expr->getValue());
@@ -159,23 +297,35 @@ AST_VISITOR(CodeGenVisitor, BinaryExpr) {
  */
 AST_VISITOR(CodeGenVisitor, VariableDecl) {
 	if (!expr->getConstructorArgs() && expr->getInitialValue()) {
-		expr->getCallValue()->addRef();
 		expr->getArgsValue()->addRef();
-
+		
+		expr->setCallValue(_make_method_call(expr->getInitialValue()->getTypePtr(), 
+			expr->getValue(),
+			CLEVER_OPERATOR_ASSIGN_PTR, expr, expr->getArgsValue())
+		);
+		
+		expr->getCallValue()->addRef();
+		
 		emit(OP_ASSIGN, &VM::mcall_handler, expr->getCallValue(),
 			expr->getArgsValue());
 	}
 	else if (expr->getConstructorArgs()) {
 		clever_assert_not_null(expr->getInitialValue());
 		
-		CallableValue* call = expr->getCallValue();
 		Value* arg_values = expr->getArgsValue();
 
-		call->addRef();
 		arg_values->addRef();
 		expr->getInitialValue()->addRef();
+		
+		expr->setCallValue(_make_method_call(expr->getInitialValue()->getTypePtr(), 
+			expr->getValue(),
+			CSTRING(CLEVER_CTOR_NAME), expr, expr->getArgsValue())
+		);
+		
+		expr->getCallValue()->addRef();
 
-		emit(OP_MCALL, &VM::mcall_handler, call, arg_values, expr->getInitialValue());
+		emit(OP_MCALL, &VM::mcall_handler, expr->getCallValue(),
+			arg_values, expr->getInitialValue());
 	}
 }
 
@@ -406,9 +556,14 @@ AST_VISITOR(CodeGenVisitor, FunctionCall) {
  * Generates opcode for method call
  */
 AST_VISITOR(CodeGenVisitor, MethodCall) {
-	CallableValue* call = expr->getCallValue();
 	Value* arg_values = expr->getArgsValue();
+	Value* variable = expr->getVariable()->getValue();
+	const CString* const name = expr->getMethodName();
 
+	expr->setCallValue(_make_method_call(variable->getTypePtr(), variable,
+			name, expr, arg_values));
+
+	CallableValue* call = expr->getCallValue();
 	call->addRef();
 
 	emit(OP_MCALL, &VM::mcall_handler, call, arg_values, expr->getValue());
@@ -418,6 +573,13 @@ AST_VISITOR(CodeGenVisitor, MethodCall) {
  * Generates opcode for variable assignment
  */
 AST_VISITOR(CodeGenVisitor, AssignExpr) {
+	Value* lhs = expr->getLhs()->getValue();
+	
+	expr->setCallValue(_make_method_call(lhs->getTypePtr(), lhs,
+			CLEVER_OPERATOR_ASSIGN_PTR, expr, expr->getArgsValue()));
+	
+	expr->getCallValue()->addRef();
+	
 	emit(OP_ASSIGN, &VM::mcall_handler, expr->getCallValue(),
 		expr->getArgsValue());
 }
