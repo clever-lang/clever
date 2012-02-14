@@ -828,12 +828,12 @@ public:
 		m_variable->addRef();
 		m_rhs->addRef();
 	}
-	
+
 	VariableDecl(Identifier* type, Identifier* variable, ArgumentList* arg_list)
 		: m_type(type), m_variable(variable), m_rhs(NULL), m_initval(NULL),
-			m_const_value(false), m_call_value(NULL), 
+			m_const_value(false), m_call_value(NULL),
 			m_args_value(NULL), m_ctor_args(arg_list) {
-			
+
 			m_type->addRef();
 			m_variable->addRef();
 			m_ctor_args->addRef();
@@ -911,7 +911,7 @@ public:
 		else if (m_ctor_args) {
 			m_ctor_args->acceptVisitor(visitor);
 		}
-		
+
 		visitor.visit(this);
 	}
 
@@ -922,7 +922,7 @@ public:
 	bool isConst() const {
 		return m_const_value;
 	}
-	
+
 	ArgumentList* getConstructorArgs() const {
 		return m_ctor_args;
 	}
@@ -1199,6 +1199,8 @@ protected:
 	ArgumentDeclList* m_args;
 	BlockNode* m_block;
 	CallableValue* m_value;
+private:
+	DISALLOW_COPY_AND_ASSIGN(FuncDeclaration);
 };
 
 class MethodDeclaration: public FuncDeclaration {
