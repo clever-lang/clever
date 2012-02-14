@@ -1,0 +1,7 @@
+Testing param type checking
+==CODE==
+Int f(Int x, Double z) {}
+
+f(1,"");
+==RESULT==
+Compile error: Wrong param type #2: expected `Double', but `String' supplied on \S+ line 3
