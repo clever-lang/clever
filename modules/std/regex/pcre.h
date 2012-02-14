@@ -32,9 +32,11 @@
 
 namespace clever { namespace packages { namespace std { namespace regex {
 
+#define REGEX_TYPE_NAME "Regex"
+
 class Pcre : public Type {
 public:
-	Pcre() : Type(CSTRING("Pcre")) {}
+	Pcre() : Type(CSTRING(REGEX_TYPE_NAME)) {}
 
 	void init();
 	DataValue* allocateValue() const;

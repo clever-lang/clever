@@ -346,7 +346,7 @@ AST_VISITOR(TypeChecker, Constant) {
  * Regex pattern syntax visitor
  */
 AST_VISITOR(TypeChecker, RegexPattern) {
-	const Type* type = CLEVER_TYPE("Pcre");
+	const Type* type = CLEVER_TYPE("Regex");
 
 	if (type == NULL) {
 		Compiler::error("Regex module must be loaded to use the regex syntax!");

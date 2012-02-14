@@ -82,7 +82,7 @@ void Type::addMethod(Method* method) {
 	if (min_args != num_args) {
 		method->setReference(0);
 	}
-	
+
 	std::vector<const Type*> v_args;
 	for (int n = 1; it != args.end(); ++it, ++n) {
 		v_args.push_back(it->second);
@@ -91,7 +91,7 @@ void Type::addMethod(Method* method) {
 			method->addRef();
 		}
 	}
-	
+
 	if (min_args == num_args) {
 		m_methods[method->getName()].insert(MethodPair(v_args, method));
 	}
@@ -103,28 +103,28 @@ const Method* Type::getMethod(const CString* name, const TypeVector* args) const
 	if (it1 == m_methods.end()) return NULL;
 
 	size_t num_args = args->size();
-	
-	OverloadMethodMap::const_iterator it = it1->second.begin(), 
+
+	OverloadMethodMap::const_iterator it = it1->second.begin(),
 		itend = it1->second.end();
-	
+
 	while (it != itend) {
 		const std::vector<const Type*>& vet = it->first;
-		
+
 		if (vet.size() == num_args) {
 			bool found = true;
-			
+
 			for (size_t i = 0; i < num_args; ++i) {
 				if (!args->at(i)->isConvertibleTo(vet[i])) {
 					found = false;
 					break;
 				}
 			}
-			
+
 			if (found) {
 				return it->second;
 			}
 		}
-		
+
 		it++;
 	}
 

@@ -31,9 +31,11 @@
 namespace clever { namespace packages { namespace std { namespace regex {
 
 void Pcre::init() {
+	const Type* type = CLEVER_TYPE(REGEX_TYPE_NAME);
+
 	/* Pcre(String pattern [, Int options]) */
 	addMethod(
-		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Pcre::constructor, CLEVER_TYPE("Pcre")))
+		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Pcre::constructor, type))
 		->addArg("pattern", CLEVER_STR)
 		->addArg("options", CLEVER_INT)
 		->setMinNumArgs(1)
@@ -58,12 +60,12 @@ void Pcre::init() {
 
 	addMethod(
 		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&Pcre::do_assign, CLEVER_VOID))
-		->addArg("rvalue", CLEVER_TYPE("Pcre"))
+		->addArg("rvalue", type)
 	);
 }
 
 void Pcre::destructor(Value* value) const {
-	
+
 }
 
 DataValue* Pcre::allocateValue() const {
