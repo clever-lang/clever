@@ -121,7 +121,7 @@ static bool _check_compatible_types(const Value* const lhs,
 
 	clever_assert_not_null(lhs);
 	clever_assert_not_null(rhs);
-
+	
 	/**
 	 * Constants with different type cannot performs operation
 	 */
@@ -136,6 +136,13 @@ static bool _check_compatible_types(const Value* const lhs,
 	}
 
 	return rhs->getTypePtr()->isConvertibleTo(lhs->getTypePtr());
+}
+
+static bool _check_compatible_types(const Type* const lhs,
+		const Type* const rhs) {
+	Value v1(lhs), v2(rhs);
+		
+	return _check_compatible_types(&v1, &v2);
 }
 
 /**
@@ -204,9 +211,8 @@ static void _check_function_arg_types(const Function* func,
 		const Type* t1 = it->second;
 		const Type* t2 = arg_values->at(i++)->getTypePtr();
 
-		if (!(t1 == t2)) {
-			if (!((t1 == CLEVER_INT && t2 == CLEVER_DOUBLE)
-				|| (t1 == CLEVER_DOUBLE && t2 == CLEVER_INT))) {
+		if (t1 != t2) {
+			if (!_check_compatible_types(t1, t2)) {
 				Compiler::errorf(loc, "Wrong param type!");
 			}
 		}
