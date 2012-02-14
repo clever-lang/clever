@@ -1,4 +1,4 @@
-Testing Map<Int, String>
+Testing Map<K, V>::hasKey
 ==CODE==
 import std.io;
 
