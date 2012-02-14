@@ -86,7 +86,7 @@ public:
 		return this;
 	}
 
-	FunctionArgs& getArgs() { return m_args; }
+	const FunctionArgs& getArgs() const { return m_args; }
 
 	int getNumArgs() const { return m_num_args; }
 	Function* setVariadic() { m_num_args = -1; return this; }

@@ -1,0 +1,10 @@
+Testing multi assignment
+==CODE==
+import std.io;
+
+Int i,j;
+i = j = 10;
+println(i,j);
+==RESULT==
+10
+10

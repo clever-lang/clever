@@ -222,9 +222,9 @@ static CLEVER_FUNCTION(call_ext_func) {
 
 		CLEVER_RETURN_BYTE(vc);
 	} else if ( rt[0] == 'v' ){
-		
+
 		ffi_call(&cif, pf, NULL, ffi_values);
-		
+
 		CLEVER_RETURN_BOOL(true);
 	} else {
 		CLEVER_RETURN_BOOL(true);
@@ -258,7 +258,7 @@ static CLEVER_FUNCTION(call_ext_func) {
 	free(ffi_values);
 }
 
-} // external
+} // ffi
 
 /**
  * Load module data

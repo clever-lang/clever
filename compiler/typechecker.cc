@@ -168,7 +168,7 @@ static void _check_function_return(const Function* func,
 /**
  * Checks the number of arguments supplied to the function on call
  */
-static void _check_function_args(const Function* func, int num_args,
+static void _check_function_num_args(const Function* func, int num_args,
 		const location& loc) {
 
 	clever_assert_not_null(func);
@@ -188,6 +188,29 @@ static void _check_function_args(const Function* func, int num_args,
 				&func->getName(), n_required_args, (n_required_args > 1 ? "s" : ""),
 				num_args);
 		}
+	}
+}
+
+/**
+ * Check the argument types
+ */
+static void _check_function_arg_types(const Function* func,
+	ValueVector* arg_values, const location& loc) {
+	const FunctionArgs& args = func->getArgs();
+	FunctionArgs::const_iterator it(args.begin()), end(args.end());
+	size_t i = 0;
+
+	while (it != end) {
+		const Type* t1 = it->second;
+		const Type* t2 = arg_values->at(i++)->getTypePtr();
+
+		if (!(t1 == t2)) {
+			if (!((t1 == CLEVER_INT && t2 == CLEVER_DOUBLE)
+				|| (t1 == CLEVER_DOUBLE && t2 == CLEVER_INT))) {
+				Compiler::errorf(loc, "Wrong param type!");
+			}
+		}
+		++it;
 	}
 }
 
@@ -523,13 +546,13 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 
 		expr->setCallValue(_make_method_call(type, var,
 			CLEVER_OPERATOR_ASSIGN_PTR, expr, args));
-	} 
+	}
 	else if (ctor_list) {
 		Value* arg_values = new Value;
 		arg_values->setType(Value::VECTOR);
 		arg_values->setVector(ctor_list->getArgValue());
 		expr->setArgsValue(arg_values);
-		
+
 		expr->setInitialValue(var);
 		var->addRef();
 
@@ -538,7 +561,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 	}
 	else {
 		DataValue* data_value = type->allocateValue();
-		
+
 		if (data_value) {
 			var->setDataValue(data_value);
 		}
@@ -703,6 +726,8 @@ AST_VISITOR(TypeChecker, AssignExpr) {
 		CLEVER_OPERATOR_ASSIGN_PTR, expr, args));
 
 	expr->getCallValue()->addRef();
+	
+	expr->setValue(lhs);
 }
 
 /**
@@ -725,7 +750,7 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 
 	clever_assert_not_null(func);
 
-	_check_function_args(func, num_args, expr->getLocation());
+	_check_function_num_args(func, num_args, expr->getLocation());
 
 	// Set the return type
 
@@ -740,11 +765,16 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 		arg_values->setType(Value::VECTOR);
 
 		expr->getArgs()->acceptVisitor(*this);
+
+		_check_function_arg_types(func, expr->getArgs()->getArgValue(),
+			expr->getLocation());
+
 		arg_values->setVector(expr->getArgs()->getArgValue());
 
 		arg_values->addRef();
 		expr->setArgsValue(arg_values);
 	}
+
 	expr->getValue()->addRef();
 	expr->setFuncValue(static_cast<CallableValue*>(fvalue));
 	fvalue->addRef();
