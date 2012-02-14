@@ -120,7 +120,7 @@ namespace clever {
 %left ',';
 %left LOGICAL_OR;
 %left LOGICAL_AND;
-%left '=';
+%right '=' PLUS_EQUAL MINUS_EQUAL DIV_EQUAL MULT_EQUAL MOD_EQUAL BW_OR_EQUAL XOR_EQUAL BW_AND_EQUAL  RSHIFT_EQUAL LSHIFT_EQUAL  ; 
 %left ':';
 %left BOOLEAN_OR;
 %left BOOLEAN_AND;
@@ -129,7 +129,6 @@ namespace clever {
 %left '&';
 %nonassoc EQUAL NOT_EQUAL;
 %nonassoc LESS LESS_EQUAL GREATER GREATER_EQUAL;
-%left PLUS_EQUAL MINUS_EQUAL DIV_EQUAL MULT_EQUAL MOD_EQUAL BW_OR_EQUAL XOR_EQUAL BW_AND_EQUAL;
 %left LSHIFT RSHIFT;
 %left '-' '+' '.';
 %left '*' '/' '%';
@@ -265,7 +264,7 @@ statements:
 	|	while_expr               		{ $$ = $<ast_node>1; }
 	|	block_stmt               		{ $$ = $<ast_node>1; }
 	|	break_stmt ';'           		{ $$ = $<ast_node>1; }
-	|	assign_stmt ';'          		{ $$ = $<ast_node>1; }
+	//|	assign_stmt ';'          		{ $$ = $<ast_node>1; }
 	|	import_stmt ';'          		{ $$ = $<ast_node>1; }
 	|	import_file ';'          		{ $$ = $<ast_node>1; }
 	|	return_stmt ';'          		{ $$ = $<ast_node>1; }
@@ -452,17 +451,17 @@ variable_declaration_impl:
 ;
 
 assign_stmt:
-		IDENT '=' expr   { $$ = new ast::AssignExpr($1, $3);                   $$->setLocation(yylloc); }
-	|	IDENT "+=" expr  { $$ = new ast::BinaryExpr(ast::PLUS, $1, $3, true);  $$->setLocation(yylloc); }
-	|	IDENT "-=" expr  { $$ = new ast::BinaryExpr(ast::MINUS, $1, $3, true); $$->setLocation(yylloc); }
-	|	IDENT "/=" expr  { $$ = new ast::BinaryExpr(ast::DIV, $1, $3, true);   $$->setLocation(yylloc); }
-	|	IDENT "*=" expr  { $$ = new ast::BinaryExpr(ast::MULT, $1, $3, true);  $$->setLocation(yylloc); }
-	|	IDENT "%=" expr  { $$ = new ast::BinaryExpr(ast::MOD, $1, $3, true);   $$->setLocation(yylloc); }
-	|	IDENT "&=" expr  { $$ = new ast::BinaryExpr(ast::AND, $1, $3, true);   $$->setLocation(yylloc); }
-	|	IDENT "|=" expr  { $$ = new ast::BinaryExpr(ast::OR, $1, $3, true);    $$->setLocation(yylloc); }
-	|	IDENT "^=" expr  { $$ = new ast::BinaryExpr(ast::XOR, $1, $3, true);   $$->setLocation(yylloc); }
-	|	IDENT "<<=" expr { $$ = new ast::BinaryExpr(ast::LSHIFT, $1, $3, true);   $$->setLocation(yylloc); }
-	|	IDENT ">>=" expr { $$ = new ast::BinaryExpr(ast::RSHIFT, $1, $3, true);   $$->setLocation(yylloc); }
+		IDENT '=' expr   %prec '=' { $$ = new ast::AssignExpr($1, $3);                   $$->setLocation(yylloc); }
+	|	IDENT "+=" expr  %prec '=' { $$ = new ast::BinaryExpr(ast::PLUS, $1, $3, true);  $$->setLocation(yylloc); }
+	|	IDENT "-=" expr  %prec '=' { $$ = new ast::BinaryExpr(ast::MINUS, $1, $3, true); $$->setLocation(yylloc); }
+	|	IDENT "/=" expr  %prec '=' { $$ = new ast::BinaryExpr(ast::DIV, $1, $3, true);   $$->setLocation(yylloc); }
+	|	IDENT "*=" expr  %prec '=' { $$ = new ast::BinaryExpr(ast::MULT, $1, $3, true);  $$->setLocation(yylloc); }
+	|	IDENT "%=" expr  %prec '=' { $$ = new ast::BinaryExpr(ast::MOD, $1, $3, true);   $$->setLocation(yylloc); }
+	|	IDENT "&=" expr  %prec '=' { $$ = new ast::BinaryExpr(ast::AND, $1, $3, true);   $$->setLocation(yylloc); }
+	|	IDENT "|=" expr  %prec '=' { $$ = new ast::BinaryExpr(ast::OR, $1, $3, true);    $$->setLocation(yylloc); }
+	|	IDENT "^=" expr  %prec '=' { $$ = new ast::BinaryExpr(ast::XOR, $1, $3, true);   $$->setLocation(yylloc); }
+	|	IDENT "<<=" expr %prec '=' { $$ = new ast::BinaryExpr(ast::LSHIFT, $1, $3, true);   $$->setLocation(yylloc); }
+	|	IDENT ">>=" expr %prec '=' { $$ = new ast::BinaryExpr(ast::RSHIFT, $1, $3, true);   $$->setLocation(yylloc); }
 ;
 
 expr:
@@ -501,6 +500,7 @@ expr:
 	|	IDENT                 { $$ = $<ast_node>1; }
 	|	literal               { $$ = $<ast_node>1; }
 	|	constant              { $$ = $<ast_node>1; }
+	|	assign_stmt             { $$ = $<ast_node>1; }
 ;
 
 literal:
@@ -524,7 +524,9 @@ expr_or_empty:
 
 for_expr:
 		FOR '(' variable_decl_or_empty ';' expr_or_empty ';' expr_or_empty ')' block_stmt { $$ = new ast::ForExpr($3, $5, $7, $9); $$->setLocation(yylloc); }
-	|	FOR '(' variable_decl_or_empty ';' expr_or_empty ';' assign_stmt')' block_stmt    { $$ = new ast::ForExpr($3, $5, $7, $9); $$->setLocation(yylloc); }
+//	|	FOR '(' variable_decl_or_empty ';' expr_or_empty ';' assign_stmt')' block_stmt    { $$ = new ast::ForExpr($3, $5, $7, $9); $$->setLocation(yylloc); }
+//		|	FOR '(' variable_decl_or_empty ';' expr_or_empty ';' assign_stmt')' block_stmt    { $$ = new ast::ForExpr($3, $5, $7, $9); $$->setLocation(yylloc); }
+
 //	|   FOR '(' variable_declaration_no_init IN  IDENT ')' block_stmt                     { $$ = new ast::ForExpr($3, $5, $7); $$->setLocation(yylloc); }
 ;
 
