@@ -42,7 +42,7 @@ CLEVER_METHOD(Map::do_assign) {
  */
 CLEVER_METHOD(Map::size) {
 	MapValue* map = CLEVER_GET_VALUE(MapValue*, value);
-	CLEVER_RETURN_INT(map->m_map.size());
+	CLEVER_RETURN_INT(map->getMap().size());
 }
 
 /**
@@ -50,7 +50,7 @@ CLEVER_METHOD(Map::size) {
  */
 CLEVER_METHOD(Map::isEmpty) {
 	MapValue* map = CLEVER_GET_VALUE(MapValue*, value);
-	CLEVER_RETURN_BOOL(map->m_map.empty());
+	CLEVER_RETURN_BOOL(map->getMap().empty());
 }
 
 /**
@@ -58,7 +58,7 @@ CLEVER_METHOD(Map::isEmpty) {
  */
 CLEVER_METHOD(Map::insert) {
 	MapValue* map = CLEVER_GET_VALUE(MapValue*, value);
-	map->m_map.insert(std::make_pair(CLEVER_ARG(0), CLEVER_ARG(1)));
+	map->getMap().insert(std::make_pair(CLEVER_ARG(0), CLEVER_ARG(1)));
 
 	CLEVER_ARG(0)->addRef();
 	CLEVER_ARG(1)->addRef();
@@ -69,8 +69,8 @@ CLEVER_METHOD(Map::insert) {
  */
 CLEVER_METHOD(Map::clear) {
 	MapValue* map = CLEVER_GET_VALUE(MapValue*, value);
-	MapValue::iterator it = map->m_map.begin(),
-		end = map->m_map.end();
+	MapValue::Iterator it = map->getMap().begin(),
+		end = map->getMap().end();
 		
 	while (it != end) {
 		it->first->delRef();
@@ -78,7 +78,7 @@ CLEVER_METHOD(Map::clear) {
 		++it;
 	}
 
-	map->m_map.clear();
+	map->getMap().clear();
 }
 
 /**
@@ -86,8 +86,8 @@ CLEVER_METHOD(Map::clear) {
  */
 CLEVER_METHOD(Map::toString) {
 	MapValue* map = CLEVER_GET_VALUE(MapValue*, value);
-	MapValue::iterator it = map->m_map.begin(),
-		end = map->m_map.end();
+	MapValue::Iterator it = map->getMap().begin(),
+		end = map->getMap().end();
 
 	std::string ret = "[", sep = ", ";	
 

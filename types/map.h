@@ -136,8 +136,8 @@ public:
 
 	void destructor(Value* value) const {
 		MapValue* map = CLEVER_GET_VALUE(MapValue*, value);
-		MapValue::iterator it = map->m_map.begin(),
-			end = map->m_map.end();
+		MapValue::Iterator it = map->getMap().begin(),
+			end = map->getMap().end();
 
 		while (it != end) {
 			it->first->delRef();

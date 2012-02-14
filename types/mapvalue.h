@@ -75,15 +75,21 @@ struct Comparator
 struct MapValue : public DataValue
 {	
 	typedef std::map<Value*, Value*, Comparator> MapInternal;
-	
-	MapInternal m_map;
-	typedef MapInternal::iterator iterator;
+	typedef MapInternal::iterator Iterator;
+	typedef MapInternal ValueType;
 	
 	MapValue(const Method* method, Value* value = NULL)
 		: m_map(Comparator(method, value)) {
 	}
 	
+	MapInternal& getMap() {
+		return m_map;
+	}
+	
 	~MapValue() {}
+	
+private:
+	MapInternal m_map;
 };
 
 } // clever
