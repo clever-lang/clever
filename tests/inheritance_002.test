@@ -1,0 +1,20 @@
+Inheritance test #2 with Array<Object>
+==CODE==
+import std.io;
+import std.reflection;
+
+Array<Object> arr;
+arr.push(10);
+arr.push('clever');
+arr.push(-23.04);
+arr.push(true);
+
+for (Int i = 0; i < arr.size(); ++i) {
+	print(get_type(arr[i]), ': ', arr[i], "\n");
+}
+
+==RESULT==
+Int: 10
+String: clever
+Double: -23.04
+Bool: true
