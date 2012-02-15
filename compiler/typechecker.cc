@@ -214,7 +214,7 @@ static void _check_function_arg_types(const Function* func,
 		if (t1 != t2) {
 			if (!_check_compatible_types(t1, t2)) {
 				Compiler::errorf(loc,
-					"Wrong param type #%l: expected `%S', but `%S' supplied",
+					"Wrong param type #%N: expected `%S', but `%S' supplied",
 						i, t1->getName(), t2->getName());
 			}
 		}
@@ -862,7 +862,7 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 		if (return_type->getName() != CSTRING("Void")) {
 			rtype = _evaluate_type(expr->getLocation(), return_type);
 		}
-		
+
 		user_func->setReturnType(rtype);
 	}
 
