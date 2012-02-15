@@ -25,6 +25,7 @@
 
 #include <utility>
 #include "types/type.h"
+#include "types/array.h"
 #include "types/map.h"
 #include "compiler/compiler.h"
 
@@ -118,6 +119,50 @@ CLEVER_METHOD(Map::hasKey) {
 	CLEVER_RETURN_BOOL(it != map.end());
 }
 
+/**
+ * Array<K> Map<K, V [, C]>::getKeys()
+ * Returns an Array<K> with all keys present in this Map
+ */
+CLEVER_METHOD(Map::getKeys) {
+	MapValue::ValueType& map = CLEVER_GET_VALUE(MapValue*, value)->getMap();
+	MapValue::Iterator it = map.begin(), end = map.end();
+	
+	ValueVector* vv = new ValueVector();
+	Value* v;
+	
+	while (it != end) {
+		v = new Value();
+		v->copy(it->first);
+		vv->push_back(v);
+		++it;
+	}
+	
+	retval->setTypePtr(CLEVER_TYPE_ARG(value->getTypePtr(), 0));
+	CLEVER_RETURN_ARRAY(vv);
+}
+
+/**
+ * Array<V> Map<K, V [, C]>::getValues()
+ * Returns an Array<V> with all values present in this Map
+ */
+CLEVER_METHOD(Map::getValues) {
+	MapValue::ValueType& map = CLEVER_GET_VALUE(MapValue*, value)->getMap();
+	MapValue::Iterator it = map.begin(), end = map.end();
+	
+	ValueVector* vv = new ValueVector();
+	Value* v;
+	
+	while (it != end) {
+		v = new Value();
+		v->copy(it->second);
+		vv->push_back(v);
+		++it;
+	}
+	
+	retval->setTypePtr(CLEVER_TYPE_ARG(value->getTypePtr(), 1));
+	CLEVER_RETURN_ARRAY(vv);
+}
+
 
 /**
  * Map type initializator
@@ -129,10 +174,15 @@ void Map::init() {
 	if (CLEVER_TPL_ARG(0) == NULL) {
 		return;
 	}
+	
+	const Type* const key_type = CLEVER_TPL_ARG(0);
+	const Type* const value_type = CLEVER_TPL_ARG(1);
+	const Type* const arr_key = CLEVER_TPL_ARRAY(key_type);
+	const Type* const arr_val = CLEVER_TPL_ARRAY(value_type);
 
 	addMethod((new Method("insert", (MethodPtr)&Map::insert, CLEVER_VOID, false))
-		->addArg("key", CLEVER_TPL_ARG(0))
-		->addArg("value", CLEVER_TPL_ARG(1))
+		->addArg("key", key_type)
+		->addArg("value", value_type)
 	);
 
 	addMethod(new Method("toString", (MethodPtr)&Map::toString, CLEVER_STR));
@@ -143,8 +193,12 @@ void Map::init() {
 
 	addMethod(new Method("clear", (MethodPtr)&Map::clear, CLEVER_VOID));
 	
+	addMethod(new Method("getKeys", (MethodPtr)&Map::getKeys, arr_key));
+	
+	addMethod(new Method("getValues", (MethodPtr)&Map::getValues, arr_val));
+	
 	addMethod((new Method("hasKey", (MethodPtr)&Map::hasKey, CLEVER_BOOL))
-		->addArg("key", CLEVER_TPL_ARG(0))
+		->addArg("key", key_type)
 	);
 }
 

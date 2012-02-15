@@ -1,0 +1,18 @@
+Testing Map<K, V>::getKeys() and Map<K, V>::getValues()
+==CODE==
+import std.io;
+
+Map<String, Int> map;
+map.insert('one', 1);
+map.insert('billion', 1000000000);
+map.insert('twelve', 12);
+
+// Remember: Map<> ordering is by key!
+Auto keys = map.getKeys();
+println(keys.toString());
+
+Auto values = map.getValues();
+println(values.toString());
+==RESULT==
+\[billion, one, twelve\]
+\[1000000000, 1, 12\]

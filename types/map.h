@@ -41,8 +41,8 @@ public:
 	}
 
 	Map(const CString* name, const Type* key_type, const Type* value_type,
-		const Type* comparator_type) :
-		TemplatedType(name, CLEVER_OBJECT) {
+		const Type* comparator_type) : TemplatedType(name, CLEVER_OBJECT) {
+			
 			addArg(key_type);
 			addArg(value_type);
 
@@ -156,6 +156,8 @@ public:
 	static CLEVER_METHOD(isEmpty);
 	static CLEVER_METHOD(toString);
 	static CLEVER_METHOD(hasKey);
+	static CLEVER_METHOD(getKeys);
+	static CLEVER_METHOD(getValues);
 private:
 	DISALLOW_COPY_AND_ASSIGN(Map);
 };

@@ -36,6 +36,7 @@
 #define CLEVER_RETURN_ARRAY(x) retval->setDataValue(new ArrayValue(x))
 #define CLEVER_GET_ARRAY(x)    static_cast<ArrayValue*>((x)->getDataValue())->m_array
 #define CLEVER_ARG_ARRAY(x)    CLEVER_GET_ARRAY(args->at((x)))
+#define CLEVER_TPL_ARRAY(x) CLEVER_GET_ARRAY_TEMPLATE->getTemplatedType((x))
 
 namespace clever {
 
