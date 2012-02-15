@@ -137,7 +137,7 @@ CLEVER_METHOD(Map::getKeys) {
 		++it;
 	}
 	
-	retval->setTypePtr(CLEVER_TYPE_ARG(value->getTypePtr(), 0));
+	retval->setTypePtr(CLEVER_TPL_ARRAY(CLEVER_TYPE_ARG(value->getTypePtr(), 0)));
 	CLEVER_RETURN_ARRAY(vv);
 }
 
@@ -159,7 +159,7 @@ CLEVER_METHOD(Map::getValues) {
 		++it;
 	}
 	
-	retval->setTypePtr(CLEVER_TYPE_ARG(value->getTypePtr(), 1));
+	retval->setTypePtr(CLEVER_TPL_ARRAY(CLEVER_TYPE_ARG(value->getTypePtr(), 1)));
 	CLEVER_RETURN_ARRAY(vv);
 }
 
