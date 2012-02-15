@@ -28,6 +28,8 @@
 
 #include <string>
 #include <vector>
+#include <list>
+#include <tr1/unordered_map>
 #include "types/type.h"
 
 namespace clever {
@@ -49,8 +51,9 @@ typedef std::vector<Value*> ValueVector;
 typedef void (CLEVER_FASTCALL *FunctionPtr)(CLEVER_FUNCTION_ARGS);
 typedef std::tr1::unordered_map<std::string, Function*> FunctionMap;
 typedef std::pair<std::string, Function*> FunctionPair;
-typedef std::tr1::unordered_map<std::string, const Type*> FunctionArgs;
 typedef std::pair<std::string, const Type*> FunctionArgsPair;
+typedef std::list<FunctionArgsPair> FunctionArgs;
+
 
 /**
  * Function representation
@@ -80,7 +83,7 @@ public:
 	virtual ~Function() { }
 
 	Function* addArg(std::string name, const Type* type) {
-		m_args.insert(FunctionArgsPair(name, type));
+		m_args.push_back(FunctionArgsPair(name, type));
 		m_min_args = ++m_num_args;
 
 		return this;

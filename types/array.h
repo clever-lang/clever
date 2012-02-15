@@ -36,7 +36,7 @@
 #define CLEVER_RETURN_ARRAY(x) retval->setDataValue(new ArrayValue(x))
 #define CLEVER_GET_ARRAY(x)    static_cast<ArrayValue*>((x)->getDataValue())->m_array
 #define CLEVER_ARG_ARRAY(x)    CLEVER_GET_ARRAY(args->at((x)))
-#define CLEVER_TPL_ARRAY(x) CLEVER_GET_ARRAY_TEMPLATE->getTemplatedType((x))
+#define CLEVER_TPL_ARRAY(x)    CLEVER_GET_ARRAY_TEMPLATE->getTemplatedType((x))
 
 namespace clever {
 
@@ -51,7 +51,7 @@ public:
 		TemplatedType(name, CLEVER_OBJECT) {
 			addArg(arg_type);
 	}
-	
+
  	const std::string* checkTemplateArgs(const TemplateArgs& args) const {
 		if (args.size() != 1) {
 			std::ostringstream oss;
@@ -59,17 +59,17 @@ public:
 				"`%S' requires 1 argument and %l was given.",
 				this->getName(), args.size()
 			);
-			
+
 			return new std::string(oss.str());
 		}
-	
+
 		return NULL;
 	}
 
 	virtual const Type* getTemplatedType(const Type* type_arg) const {
 		std::string name = getName()->str() + "<"
 						   + type_arg->getName()->str() + ">";
-						
+
 		const CString* cname = CSTRING(name);
 		const Type* type = g_scope.getType(cname);
 
@@ -83,17 +83,17 @@ public:
 
 		return type;
 	}
-	
+
 	virtual const Type* getTemplatedType(const TemplateArgs& arg) const {
 		return getTemplatedType(arg.at(0));
 	}
 
 	void init();
 	DataValue* allocateValue() const;
-	
+
 	void destructor(Value* value) const {
 		ValueVector* vec = CLEVER_GET_ARRAY(value);
-		
+
 		size_t sz = vec->size();
 		for (size_t i = 0; i < sz; ++i) {
 			vec->at(i)->delRef();

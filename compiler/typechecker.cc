@@ -761,7 +761,6 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 	_check_function_num_args(func, num_args, expr->getLocation());
 
 	// Set the return type
-
 	if (expr->getReturnType()==NULL) {
 		expr->getValue()->setTypePtr(func->getReturnType());
 	} else {
