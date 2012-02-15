@@ -3,7 +3,7 @@ Testing replace() and replaceAll()
 import std.io;
 import std.regex;
 
-Pcre p("b");
+Regex p("b");
 
 println(p.replace("z", "bbb"), p.replaceAll("z", "bbb"));
 ==RESULT==

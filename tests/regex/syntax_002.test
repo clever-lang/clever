@@ -3,7 +3,7 @@ Testing replace using the regex syntax
 import std.io;
 import std.regex;
 
-Pcre a = /fo+/;
+Regex a = /fo+/;
 
 println(a.replace("x", "foobar"));
 ==RESULT==

@@ -121,7 +121,7 @@ static bool _check_compatible_types(const Value* const lhs,
 
 	clever_assert_not_null(lhs);
 	clever_assert_not_null(rhs);
-	
+
 	/**
 	 * Constants with different type cannot performs operation
 	 */
@@ -141,7 +141,7 @@ static bool _check_compatible_types(const Value* const lhs,
 static bool _check_compatible_types(const Type* const lhs,
 		const Type* const rhs) {
 	Value v1(lhs), v2(rhs);
-		
+
 	return _check_compatible_types(&v1, &v2);
 }
 
@@ -213,7 +213,9 @@ static void _check_function_arg_types(const Function* func,
 
 		if (t1 != t2) {
 			if (!_check_compatible_types(t1, t2)) {
-				Compiler::errorf(loc, "Wrong param type!");
+				Compiler::errorf(loc,
+					"Wrong param type #%l: expected `%S', but `%S' supplied",
+						i, t1->getName(), t2->getName());
 			}
 		}
 		++it;
@@ -344,7 +346,7 @@ AST_VISITOR(TypeChecker, Constant) {
  * Regex pattern syntax visitor
  */
 AST_VISITOR(TypeChecker, RegexPattern) {
-	const Type* type = CLEVER_TYPE("Pcre");
+	const Type* type = CLEVER_TYPE("Regex");
 
 	if (type == NULL) {
 		Compiler::error("Regex module must be loaded to use the regex syntax!");
@@ -732,7 +734,7 @@ AST_VISITOR(TypeChecker, AssignExpr) {
 		CLEVER_OPERATOR_ASSIGN_PTR, expr, args));
 
 	expr->getCallValue()->addRef();
-	
+
 	expr->setValue(lhs);
 }
 
