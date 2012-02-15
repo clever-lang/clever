@@ -187,11 +187,11 @@ static void _check_function_num_args(const Function* func, int num_args,
 	if ((is_variadic && n_min_args > num_args)
 		|| (!is_variadic && num_args != n_required_args)) {
 		if (n_min_args != n_required_args && n_min_args > num_args) {
-			Compiler::errorf(loc, "Function `%S' expects at least %l argument%s, %l supplied",
+			Compiler::errorf(loc, "Function `%S' expects at least %i argument%s, %i supplied",
 				&func->getName(), n_min_args, (n_min_args > 1 ? "s" : ""),
 				num_args);
 		} else {
-			Compiler::errorf(loc, "Function `%S' expects %l argument%s, %l supplied",
+			Compiler::errorf(loc, "Function `%S' expects %i argument%s, %i supplied",
 				&func->getName(), n_required_args, (n_required_args > 1 ? "s" : ""),
 				num_args);
 		}

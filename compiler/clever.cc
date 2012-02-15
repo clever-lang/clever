@@ -81,6 +81,10 @@ void vsprintf(std::ostringstream& outstr, const char* format, va_list ap) {
 		}
 
 		switch (*chr) {
+			/* int */
+			case 'i':
+				outstr << va_arg(ap, int);
+				break;
 			/* double */
 			case 'd':
 				outstr << va_arg(ap, double);
