@@ -64,7 +64,8 @@ VM::~VM() {
 /**
  * Update the Value* ptr of variables in the function scope
  */
-void VM::update_vars(Scope* scope, const ValueVector* args) {
+void VM::update_vars(Scope* scope, const FunctionArgs& fargs,
+	const ValueVector* args) {
 	ValueVector* vec = new ValueVector;
 	ValueVector* vec_copy = new ValueVector;
 	ValueVector* vec_curr = NULL;
@@ -74,28 +75,20 @@ void VM::update_vars(Scope* scope, const ValueVector* args) {
 		vec_curr = s_arg_values.top();
 	}
 
-	const SymbolMap& symbols = scope->getSymbols();
-	SymbolMap::const_iterator sym(symbols.begin()),
-		last_sym(symbols.end());
+	FunctionArgs::const_iterator it(fargs.begin()), end(fargs.end());
 
-	// Binds the arguments Value* ptr to its respectives func arguments
-	while (sym != last_sym) {
-		Symbol* symbol = sym->second;
+	/* TODO: Find a better way to do this */
+	while (it != end) {
+		Value* val = scope->getValue(CSTRING((*it).first));
+		Value* tmp = new Value;
 
-		if (symbol->isValue()) {
-			Value* val = symbol->getValue();
+		val->copy(args->at(i++));
+		vec->push_back(val);
 
-			if (!val->isCallable()) {
-				Value* tmp = new Value;
+		tmp->copy(val);
+		vec_copy->push_back(tmp);
 
-				val->copy(args->at(i++));
-				vec->push_back(val);
-
-				tmp->copy(val);
-				vec_copy->push_back(tmp);
-			}
-		}
-		++sym;
+		++it;
 	}
 	i = args->size();
 
@@ -262,7 +255,7 @@ CLEVER_VM_HANDLER(VM::fcall_handler) {
 		s_call.push(&opcode);
 
 		if (func_args) {
-			update_vars(func->getScope(), func_args);
+			update_vars(func->getScope(), func->getFunction()->getArgs(), func_args);
 		}
 
 		func->call(next_op);

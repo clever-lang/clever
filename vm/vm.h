@@ -80,7 +80,7 @@ public:
 	 */
 	static void pop_args(const Opcode* const);
 	static void restore_args();
-	static void update_vars(Scope*, const ValueVector*);
+	static void update_vars(Scope*, const FunctionArgs&, const ValueVector*);
 	/**
 	 * Opcode handlers
 	 */
