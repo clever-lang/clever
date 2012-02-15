@@ -1,0 +1,16 @@
+Testing Map<K, V>::getAll()
+==CODE==
+import std.io;
+import std.reflection;
+
+Map<String, Int> map;
+map.insert('one', 1);
+map.insert('billion', 1000000000);
+map.insert('twelve', 12);
+
+// Remember: Map<> ordering is by key!
+Auto all = map.getAll();
+println(all.toString());
+
+==RESULT==
+\[\(billion, 1000000000\), \(one, 1\), \(twelve, 12\)\]

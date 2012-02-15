@@ -1,0 +1,20 @@
+Testing Pair<> type
+==CODE==
+import std.io;
+
+Pair<Double, String> p(10.3, "ºC");
+println(p.toString());
+
+println(p.first());
+println(p.second());
+
+p.setFirst(3.1415);
+p.setSecond("PI");
+
+println(p.toString());
+
+==RESULT==
+\(10.3, ºC\)
+10.3
+ºC
+\(3.1415, PI\)

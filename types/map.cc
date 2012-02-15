@@ -26,6 +26,7 @@
 #include <utility>
 #include "types/type.h"
 #include "types/array.h"
+#include "types/pair.h"
 #include "types/map.h"
 #include "compiler/compiler.h"
 
@@ -163,6 +164,36 @@ CLEVER_METHOD(Map::getValues) {
 	CLEVER_RETURN_ARRAY(vv);
 }
 
+/**
+ * Array<Pair<K,V>> Map<K, V [, C]>::getAll()
+ * Returns an Array<> with all pair (key, value) present in this Map
+ */
+CLEVER_METHOD(Map::getAll) {
+	MapValue::ValueType& map = CLEVER_GET_VALUE(MapValue*, value)->getMap();
+	MapValue::Iterator it = map.begin(), end = map.end();
+	
+	const Type* const pair_type = 
+		static_cast<const TemplatedType*>(CLEVER_TYPE("Pair"))
+		->getTemplatedType(CLEVER_THIS_ARG(0), CLEVER_THIS_ARG(1));
+	
+	ValueVector* vv = new ValueVector();
+	Value* v;
+	
+	while (it != end) {
+		PairValue* pv = new PairValue(it->first, it->second);
+		
+		v = new Value();
+		v->setDataValue(pv);
+		v->setTypePtr(pair_type);
+		
+		vv->push_back(v);
+		++it;
+	}
+	
+	retval->setTypePtr(CLEVER_TPL_ARRAY(pair_type));
+	CLEVER_RETURN_ARRAY(vv);
+}
+
 
 /**
  * Map type initializator
@@ -175,10 +206,16 @@ void Map::init() {
 		return;
 	}
 	
-	const Type* const key_type = CLEVER_TPL_ARG(0);
+	const Type* const key_type   = CLEVER_TPL_ARG(0);
 	const Type* const value_type = CLEVER_TPL_ARG(1);
 	const Type* const arr_key = CLEVER_TPL_ARRAY(key_type);
 	const Type* const arr_val = CLEVER_TPL_ARRAY(value_type);
+	
+	const Type* const pair_type = 
+		static_cast<const TemplatedType*>(CLEVER_TYPE("Pair"))
+		->getTemplatedType(key_type, value_type);
+			
+	const Type* const arr_pair  = CLEVER_TPL_ARRAY(pair_type);
 
 	addMethod((new Method("insert", (MethodPtr)&Map::insert, CLEVER_VOID, false))
 		->addArg("key", key_type)
@@ -196,6 +233,8 @@ void Map::init() {
 	addMethod(new Method("getKeys", (MethodPtr)&Map::getKeys, arr_key));
 	
 	addMethod(new Method("getValues", (MethodPtr)&Map::getValues, arr_val));
+	
+	addMethod(new Method("getAll", (MethodPtr)&Map::getAll, arr_pair));
 	
 	addMethod((new Method("hasKey", (MethodPtr)&Map::hasKey, CLEVER_BOOL))
 		->addArg("key", key_type)

@@ -1,4 +1,4 @@
-Testing param type checking
+[FATAL] Testing param type checking
 ==CODE==
 Int f(Int x, Double z) {}
 

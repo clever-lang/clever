@@ -23,17 +23,55 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef CLEVER_NATIVE_TYPES_H
-#define CLEVER_NATIVE_TYPES_H
+#ifndef CLEVER_PAIRVALUE_H
+#define CLEVER_PAIRVALUE_H
 
-#include "types/object.h"
-#include "types/int.h"
-#include "types/double.h"
-#include "types/str.h"
-#include "types/bool.h"
-#include "types/byte.h"
-#include "types/array.h"
-#include "types/map.h"
-#include "types/pair.h"
+#include <utility>
+#include "compiler/value.h"
 
-#endif // CLEVER_NATIVE_TYPES_H
+namespace clever {
+struct PairValue : public DataValue
+{	
+	typedef std::pair<Value*, Value*> InternalType;
+	
+	PairValue(const Type* t1, const Type* t2) 
+		: m_pair(new Value(t1), new Value(t2)) {}
+	
+	PairValue(Value* first, Value* second) 
+		: m_pair(new Value(), new Value()) {
+			m_pair.first->copy(first);
+			m_pair.second->copy(second);
+	}
+	
+	Value* first() const {
+		return m_pair.first;
+	}
+	
+	Value* second() const {
+		return m_pair.second;
+	}
+	
+	void setFirst(Value* v) {
+		m_pair.first = v;
+	}
+	
+	void setSecond(Value* v) {
+		m_pair.second = v;
+	}
+	
+	InternalType& getPair() {
+		return m_pair;
+	}
+	
+	~PairValue() {
+		m_pair.first->delRef();
+		m_pair.second->delRef();
+	}
+
+private:
+	InternalType m_pair;
+};
+} // clever
+
+#endif
+

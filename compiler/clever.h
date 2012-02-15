@@ -94,7 +94,11 @@ namespace clever {
 #define CLEVER_RETURN_BYTE(x)       retval->setByte((x))
 #define CLEVER_RETURN_DATA_VALUE(x) retval->setDataValue((x))
 
+/**
+ * Macros to help getting template argument types
+ */
 #define CLEVER_TYPE_ARG(type, arg) static_cast<const TemplatedType*>((type))->getTypeArg((arg))
+#define CLEVER_THIS_ARG(arg) CLEVER_TYPE_ARG(CLEVER_THIS()->getTypePtr(), (arg))
 
 /**
  * Disables copy constructor and copy assignment

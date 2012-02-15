@@ -308,29 +308,40 @@ public:
 		m_is_const = constness;
 	}
 	
-	virtual const CString& toString() const {
-		std::ostringstream str;
+	virtual const CString& toString() {
+		if (isPrimitive()) {
+			std::ostringstream str;
 
-		if (isInteger()) {
-			str << getInteger();
-		}
-		else if (isDouble()) {
-			str << getDouble();
-		}
-		else if (isBoolean()) {
-			return *CSTRING(getBoolean() ? "true" : "false");
-		}
-		else if (isString()) {
-			return getString();
-		}
-		else if (isByte()) {
-			str << "0x" << std::hex << uint32_t(getByte());
+			if (isInteger()) {
+				str << getInteger();
+			}
+			else if (isDouble()) {
+				str << getDouble();
+			}
+			else if (isBoolean()) {
+				return *CSTRING(getBoolean() ? "true" : "false");
+			}
+			else if (isString()) {
+				return getString();
+			}
+			else if (isByte()) {
+				str << "0x" << std::hex << uint32_t(getByte());
+			}
+		
+			return *CSTRING(str.str());
 		}
 		else {
-			return *CSTRING("");
+			Value* ret = new Value();
+			
+			getTypePtr()->getMethod(CSTRING("toString"), NULL)
+				->call(NULL, ret, this);
+				
+			const CString& str = ret->getString();
+			
+			ret->delRef();
+			
+			return str;
 		}
-
-		return *CSTRING(str.str());
 	}
 private:
 	int m_type;

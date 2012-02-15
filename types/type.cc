@@ -102,7 +102,7 @@ const Method* Type::getMethod(const CString* name, const TypeVector* args) const
 
 	if (it1 == m_methods.end()) return NULL;
 
-	size_t num_args = args->size();
+	size_t num_args = (args ? args->size() : 0);
 
 	OverloadMethodMap::const_iterator it = it1->second.begin(),
 		itend = it1->second.end();

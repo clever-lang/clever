@@ -111,10 +111,11 @@ void Compiler::loadNativeTypes() {
 	CLEVER_DOUBLE = new Double;
 	CLEVER_BOOL   = new Bool;
 	CLEVER_BYTE   = new Char;
-
+	
 	// Virtual Standard Template Types
 	CLEVER_ARRAY  = new Array;
 	CLEVER_MAP    = new Map;
+	Type* pair    = new Pair;
 
 	// Registers all native data types
 	g_scope.pushType(CSTRING("Object"), CLEVER_OBJECT);
@@ -125,6 +126,7 @@ void Compiler::loadNativeTypes() {
 	g_scope.pushType(CSTRING("Byte"),   CLEVER_BYTE);
 	g_scope.pushType(CSTRING("Array"),  CLEVER_ARRAY);
 	g_scope.pushType(CSTRING("Map"),    CLEVER_MAP);
+	g_scope.pushType(CSTRING("Pair"),   pair);
 
 	init_type_cached_ptrs();
 
@@ -137,6 +139,7 @@ void Compiler::loadNativeTypes() {
 	CLEVER_ARRAY->init();
 	CLEVER_MAP->init();
 	CLEVER_OBJECT->init();
+	pair->init();
 }
 
 /**
