@@ -1339,6 +1339,18 @@ public:
 			m_args->addRef();
 		}
 	}
+	
+	MethodCall(Subscript* sub, Identifier* method, ArgumentList* args)
+		: m_var(sub), m_method(method), m_args(args), m_call_value(NULL),
+			m_args_value(NULL) {
+		m_var->addRef();
+		m_method->addRef();
+		m_result = new Value;
+
+		if (m_args) {
+			m_args->addRef();
+		}
+	}
 
 	~MethodCall() {
 		m_var->delRef();

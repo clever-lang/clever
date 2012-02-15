@@ -1,0 +1,25 @@
+Testing function with templated parameter and return
+==CODE==
+import std.io;
+
+Array<String> toArrayString(Array<Int> x)
+{
+	Array<String> ret;
+	
+	for (Int i = 0; i < x.size(); ++i) {
+		ret.push(x[i].toString());
+	}
+	
+	return ret;
+}
+
+Array<Int> y;
+y.push(1);
+y.push(-10);
+y.push(23);
+
+Auto z = toArrayString(y);
+println(z.toString());
+
+==RESULT==
+\[1, -10, 23\]

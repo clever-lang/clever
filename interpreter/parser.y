@@ -290,6 +290,7 @@ args_declaration:
 
 func_declaration:
 		TYPE IDENT '(' args_declaration ')' block_stmt { $$ = new ast::FuncDeclaration($2, $1, $4, $6); }
+	|	template IDENT '(' args_declaration ')' block_stmt { $$ = new ast::FuncDeclaration($2, $1, $4, $6); }
 ;
 
 class_declaration:
@@ -356,6 +357,8 @@ method_call:
 			chaining_method_call               { $$ = $8; }
 	|	literal '.' IDENT '(' arg_list_opt ')' { $<method_call>$ = new ast::MethodCall($1, $3, $5); $<method_call>$->setLocation(yylloc); }
 			chaining_method_call               { $$ = $8; }
+	|	IDENT '[' expr ']' '.' IDENT '(' arg_list_opt ')' { $<method_call>$ = new ast::MethodCall(new ast::Subscript($1, $3), $6, $8); $<method_call>$->setLocation(yylloc); }
+			chaining_method_call               { $$ = $11; }
 ;
 
 template_args:
