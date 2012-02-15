@@ -105,13 +105,13 @@ ENSURE_DIRS += $(sort $(dir $(testrunner_OBJ)))
 OBJFILES := $(sort $(OBJFILES))
 
 COMPILE.cc = $(CXX) $(CXXFLAGS) -c
-LINK.cc    = $(CXX) $(CXXFLAGS) $(LDFLAGS)
+LINK.cc    = $(CXX) $(CXXFLAGS) 
 DEPEND.cc  = $(CXX) $(CXXFLAGS) -MM -MG
 
 # cxx-command input output
 cxx-command    = $(COMPILE.cc) -o $2 $1
 # ld command input output
-ld-command     = $(LINK.cc) -o $2 $1
+ld-command     = $(LINK.cc) -o $2 $1 $(LDFLAGS)
 # depend-command input output
 depend-command = $(DEPEND.cc) $1 | $(SED) -e 's,^\([^:]*\):,$(patsubst %.d,%.o,$2) $2:,' > $2
 # echo-command tool input
