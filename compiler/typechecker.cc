@@ -858,7 +858,12 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 
 	// Set the return type
 	if (return_type) {
-		user_func->setReturnType(m_scope->getType(return_type->getName()));
+		const Type* rtype = NULL;
+		if (return_type->getName() != CSTRING("Void")) {
+			rtype = _evaluate_type(expr->getLocation(), return_type);
+		}
+		
+		user_func->setReturnType(rtype);
 	}
 
 	expr->setValue(func);
@@ -874,7 +879,7 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 		while (it != end) {
 			Value* var = new Value;
 
-			const Type* arg_type = m_scope->getType(it->first->getName());
+			const Type* arg_type = _evaluate_type(expr->getLocation(), it->first);
 			const CString* arg_name = it->second->getName();
 
 			var->setName(arg_name);

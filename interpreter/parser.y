@@ -277,8 +277,10 @@ return_stmt:
 ;
 
 args_declaration_non_empty:
-		TYPE IDENT                      { $$ = new ast::ArgumentDeclList(); $$->addArg($1, $2); }
-	|	args_declaration ',' TYPE IDENT { $1->addArg($3, $4); }
+		TYPE IDENT                      	{ $$ = new ast::ArgumentDeclList(); $$->addArg($1, $2); }
+	|	template IDENT						{ $$ = new ast::ArgumentDeclList(); $$->addArg($1, $2); }
+	|	args_declaration ',' TYPE IDENT 	{ $1->addArg($3, $4); }
+	|	args_declaration ',' template IDENT { $1->addArg($3, $4); }
 ;
 
 args_declaration:

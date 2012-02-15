@@ -1,0 +1,23 @@
+Testing function with templated parameters
+==CODE==
+import std.io;
+
+Void pushTwice(Array<Int> x, Int a)
+{
+	x.push(a);
+	x.push(a);
+}
+
+Array<Int> y;
+pushTwice(y, 3);
+pushTwice(y, -1);
+
+for (Int i = 0; i < y.size(); ++i) {
+	println(y[i]);
+}
+
+==RESULT==
+3
+3
+-1
+-1
