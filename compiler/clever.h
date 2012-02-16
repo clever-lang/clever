@@ -32,6 +32,12 @@
 namespace clever {
 
 /**
+ * Macro to increase/decrease reference couting
+ */
+#define CLEVER_ADDREF(x) (x)->addRef()
+#define CLEVER_DELREF(x) (x)->delRef()
+
+/**
  * Macro to access the an specific DataValue
  */
 #define CLEVER_GET_VALUE(x, y) static_cast<x>((y)->getDataValue())
