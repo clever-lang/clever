@@ -162,6 +162,9 @@ $(OBJDIR)/ensure-dirs:
 $(OBJDIR)/%.o: %.cc $(OBJDIR)/ensure-dirs
 	$(call echo-command,"CXX",$@)
 	$(call cxx-command,$<,$@)
+# see http://stackoverflow.com/a/8027542/604802 :
+	$(call echo-command,"DEP",$@)
+	$(call depend-command,$<,$*.d)
 
 $(OBJDIR)/%.cc: %.y $(OBJDIR)/ensure-dirs
 	$(call echo-command,"BISON",$@)
@@ -171,13 +174,10 @@ $(OBJDIR)/%.cc: %.re $(OBJDIR)/ensure-dirs
 	$(call echo-command,"RE2C",$@)
 	$(call re2c-command,$<,$@)
 
-ifeq (,$(findstring clean,$(MAKECMDGOALS)))
--include $(OBJFILES:.o=.d)
-endif
 
-$(OBJDIR)/%.d: %.cc $(OBJDIR)/ensure-dirs
-	$(call echo-command,"DEP",$@)
-	$(call depend-command,$<,$@)
+#$(OBJDIR)/%.d: %.cc $(OBJDIR)/ensure-dirs
+#	$(call echo-command,"DEP",$@)
+#	$(call depend-command,$<,$@)
 
 #############################################################################
 # Clever recipes
@@ -194,10 +194,12 @@ $(clever_BIN): $(clever_OBJ) $(OBJDIR)/ensure-dirs
 $(OBJDIR)/interpreter/scanner.o: $(OBJDIR)/interpreter/scanner.cc
 	$(call echo-command,"CXX",$@)
 	$(call cxx-command,$<,$@)
+	$(call depend-command,$<,$*.d)
 
 $(OBJDIR)/interpreter/parser.o: $(OBJDIR)/interpreter/parser.cc
 	$(call echo-command,"CXX",$@)
 	$(call cxx-command,$<,$@)
+	$(call depend-command,$<,$*.d)
 
 $(OBJDIR)/interpreter/parser.cc: interpreter/parser.y $(OBJDIR)/ensure-dirs
 	$(call echo-command,"BISON",$@)
@@ -229,3 +231,6 @@ run-mem-tests: test
 run-tests: test
 	$(testrunner_BIN) -q $(TESTDIR)
 
+##############################################################################
+# Include deps
+-include $(OBJFILES:.o=.d)
