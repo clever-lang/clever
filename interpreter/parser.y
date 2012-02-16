@@ -387,28 +387,11 @@ template_args:
 ;
 
 template_args_fix:
-	TYPE "<" TYPE 							{   $<template_args>$ = new ast::TemplateArgsVector;
-												ast::TemplateArgsVector* a=new ast::TemplateArgsVector;
-												a->push_back($3);
-												$1->setTemplateArgs(a);
-												$<template_args>$->push_back($1);
-											}
-	| template_args ',' TYPE "<" TYPE		{   ast::TemplateArgsVector* a=new ast::TemplateArgsVector;
-												a->push_back($5);
-												$3->setTemplateArgs(a);
-												$1->push_back($3);
-											}
-	| template_args ',' TYPE "<" template	{   ast::TemplateArgsVector* a=new ast::TemplateArgsVector;
-												a->push_back($5);
-												$3->setTemplateArgs(a);
-												$1->push_back($3);
-											}
-	| TYPE "<" template						{	$<template_args>$ = new ast::TemplateArgsVector;
-												ast::TemplateArgsVector* a=new ast::TemplateArgsVector;
-												a->push_back($3);
-												$1->setTemplateArgs(a);
-												$<template_args>$->push_back($1);
-											}
+		TYPE "<" template_args				{ $<template_args>$ = new ast::TemplateArgsVector;
+											  $1->setTemplateArgs($3);
+											  $<template_args>$->push_back($1);  
+											}	
+	|	template_args ',' TYPE "<" template_args {  $$=$1; $3->setTemplateArgs($5); $1->push_back($3); }
 ;
 
 template:
