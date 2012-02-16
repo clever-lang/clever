@@ -1,0 +1,12 @@
+Testing Int bounds
+==CODE==
+import std.io;
+
+Int max = 0x7FFFFFFFFFFFFFFF;
+Int min = 0x8000000000000000;
+
+println(max, min); 
+
+==RESULT==
+9223372036854775807
+-9223372036854775808

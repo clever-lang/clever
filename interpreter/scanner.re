@@ -289,9 +289,14 @@ next_token:
 	}
 
 	<INITIAL>INTEGER {
+		const char* nstr = reinterpret_cast<const char*>(s.yylex);
+		
+		int64_t n = 0;
+		for (int i = 0; i < yylen; ++i) {
+			n = n * 10 + (nstr[i] - '0');
+		}
+		
 		Value* newval = new Value(CLEVER_INT);
-		int64_t n = strtol(std::string(reinterpret_cast<const char*>(s.yylex), yylen).c_str(), NULL, 10);
-
 		newval->setInteger(n);
 
 		yylval->num_literal = new ast::NumberLiteral(newval);
@@ -300,11 +305,20 @@ next_token:
 	}
 
 	<INITIAL>HEXINT {
-		Value* newval = new Value(CLEVER_INT);
+		const char* nstr = reinterpret_cast<const char*>(s.yylex + 2);
+
 		int64_t n = 0;
-
-		std::sscanf(std::string(reinterpret_cast<const char*>(s.yylex+2), yylen).c_str(), "%X", (unsigned*)&n);
-
+		for (int i = 0; i < yylen - 2; ++i) {
+			n <<= 4;
+			if (isdigit(nstr[i])) {
+				n += nstr[i] - '0';
+			}
+			else {
+				n += toupper(nstr[i]) - 'A' + 10;
+			}
+		}
+		
+		Value* newval = new Value(CLEVER_INT);
 		newval->setInteger(n);
 
 		yylval->num_literal = new ast::NumberLiteral(newval);
@@ -313,11 +327,15 @@ next_token:
 	}
 
 	<INITIAL>OCTINT {
-		Value* newval = new Value(CLEVER_INT);
+		const char* nstr = reinterpret_cast<const char*>(s.yylex + 1);
+
 		int64_t n = 0;
+		for (int i = 0; i < yylen - 1; ++i) {
+			n = n * 8 + nstr[i] - '0';
+		}
+		
 
-		sscanf(std::string(s.yylex+1, yylen), "%o", &n);
-
+		Value* newval = new Value(CLEVER_INT);
 		newval->setInteger(n);
 
 		yylval->num_literal = new ast::NumberLiteral(newval);
