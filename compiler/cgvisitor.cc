@@ -165,7 +165,7 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 		emit(OP_ASSIGN, &VM::mcall_handler, expr->getCallValue(),
 			expr->getArgsValue());
 	}
-	else if (expr->getConstructorArgs() && !expr->rhsIsArrayList()) {
+	else if (expr->getConstructorArgs()) {
 		clever_assert_not_null(expr->getInitialValue());
 		
 		CallableValue* call = expr->getCallValue();
@@ -473,6 +473,9 @@ AST_VISITOR(CodeGenVisitor, TypeCreation) {
 	expr->getValue()->addRef();
 
 	emit(OP_MCALL, &VM::mcall_handler, call, arg_values, call->getValue());
+}
+
+AST_VISITOR(CodeGenVisitor, ArrayList) {
 }
 
 }} // clever::ast

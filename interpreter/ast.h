@@ -793,7 +793,7 @@ public:
 	VariableDecl(Identifier* type, Identifier* variable)
 		: m_type(type), m_variable(variable), m_rhs(NULL), m_initval(NULL),
 			m_const_value(false), m_call_value(NULL),
-			m_args_value(NULL), m_ctor_args(NULL), m_array_list(false) {
+			m_args_value(NULL), m_ctor_args(NULL) {
 		if (m_type) {
 			m_type->addRef();
 		}
@@ -804,7 +804,7 @@ public:
 	VariableDecl(Identifier* type, Identifier* variable, ASTNode* rhs)
 		: m_type(type), m_variable(variable), m_rhs(rhs), m_initval(NULL),
 			m_const_value(false), m_call_value(NULL),
-			m_args_value(NULL), m_ctor_args(NULL), m_array_list(false) {
+			m_args_value(NULL), m_ctor_args(NULL) {
 
 		// If is not `Auto' typed variable
 		if (m_type) {
@@ -818,7 +818,7 @@ public:
 	VariableDecl(Identifier* type, Identifier* variable, ASTNode* rhs, bool const_value)
 		: m_type(type), m_variable(variable), m_rhs(rhs), m_initval(NULL),
 			m_const_value(const_value), m_call_value(NULL),
-			m_args_value(NULL), m_ctor_args(NULL), m_array_list(false) {
+			m_args_value(NULL), m_ctor_args(NULL) {
 
 		// If is not `Auto' typed variable
 		if (m_type) {
@@ -829,10 +829,10 @@ public:
 		m_rhs->addRef();
 	}
 
-	VariableDecl(Identifier* type, Identifier* variable, ArgumentList* arg_list, bool is_array = false)
+	VariableDecl(Identifier* type, Identifier* variable, ArgumentList* arg_list)
 		: m_type(type), m_variable(variable), m_rhs(NULL), m_initval(NULL),
 			m_const_value(false), m_call_value(NULL),
-			m_args_value(NULL), m_ctor_args(arg_list), m_array_list(is_array) {
+			m_args_value(NULL), m_ctor_args(arg_list) {
 		if (m_type) {
 			m_type->addRef();
 		}
@@ -931,14 +931,6 @@ public:
 	ArgumentList* getConstructorArgs() const {
 		return m_ctor_args;
 	}
-	
-	ArgumentList* getArrayList() const {
-		return m_ctor_args;
-	}
-	
-	bool rhsIsArrayList() const {
-		return m_array_list;
-	}
 private:
 	/**
 	 * The variable's type. NULL means `Auto' typed variable.
@@ -951,7 +943,6 @@ private:
 	CallableValue* m_call_value;
 	Value* m_args_value;
 	ArgumentList* m_ctor_args;
-	bool m_array_list;
 
 	DISALLOW_COPY_AND_ASSIGN(VariableDecl);
 };
@@ -1698,6 +1689,42 @@ private:
 	ClassStmtList* m_body;
 
 	DISALLOW_COPY_AND_ASSIGN(ClassDeclaration);
+};
+
+class ArrayList : public Literal {
+public:
+	ArrayList(ArgumentList* args) : m_arg_list(args), m_value(NULL)
+	{
+		m_arg_list->addRef();
+	}
+	
+	Value* getValue() const {
+		return m_value;
+	}
+	
+	ArgumentList* getArgList() const {
+		return m_arg_list;
+	}
+	
+	void setValue(Value* v) {
+		m_value = v;
+	}
+	
+	void acceptVisitor(ASTVisitor& visitor) {
+		m_arg_list->acceptVisitor(visitor);
+		visitor.visit(this);
+	}
+	
+	~ArrayList() {
+		m_arg_list->delRef();
+		if (m_value) {
+			m_value->delRef();
+		}
+	}
+private:
+	ArgumentList* m_arg_list;
+	Value* m_value;
+	DISALLOW_COPY_AND_ASSIGN(ArrayList);
 };
 
 

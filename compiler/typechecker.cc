@@ -556,34 +556,6 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 			CLEVER_OPERATOR_ASSIGN_PTR, expr, args));
 	
 	}
-	else if (expr->rhsIsArrayList()) {
-		ValueVector* vv = expr->getArrayList()->getArgValue();
-		const Type* value_type = vv->at(0)->getTypePtr();
-		
-		for (size_t i = 1, sz = vv->size(); i < sz; ++i) {
-			if (vv->at(i)->getTypePtr() != value_type) {
-				Compiler::errorf(expr->getLocation(),
-					"Cannot use Array initializer list with "
-					"different value types");
-			}
-		}
-		
-		const Type* const arr_type = CLEVER_TPL_ARRAY(value_type);
-		
-		if (!type) {
-			var->setTypePtr(arr_type);
-		}
-		else if (type != arr_type) {
-			if (!arr_type->isConvertibleTo(type)) {
-				Compiler::errorf(expr->getLocation(),
-					"Cannot convert `%S' to `%S' on assignment",
-					arr_type->getName(),
-					type->getName());
-			}
-		}
-		
-		var->setDataValue(new ArrayValue(vv));
-	}
 	else if (ctor_list) {
 		Value* arg_values = new Value;
 		arg_values->setType(Value::VECTOR);
@@ -1003,6 +975,28 @@ AST_VISITOR(TypeChecker, Subscript) {
  */
 AST_VISITOR(TypeChecker, ClassDeclaration) {
 	Compiler::error("Not implemented yet!");
+}
+
+/**
+ * ArrayList type visitor
+ */
+AST_VISITOR(TypeChecker, ArrayList) {
+	ValueVector* vv = expr->getArgList()->getArgValue();
+	const Type* value_type = vv->at(0)->getTypePtr();
+	
+	for (size_t i = 1, sz = vv->size(); i < sz; ++i) {
+		if (vv->at(i)->getTypePtr() != value_type) {
+			Compiler::errorf(expr->getLocation(),
+				"Cannot use Array initializer list with "
+				"different value types");
+		}
+	}
+	
+	const Type* const arr_type = CLEVER_TPL_ARRAY(value_type);
+	
+	Value* var = new Value(arr_type);
+	var->setDataValue(new ArrayValue(vv));
+	expr->setValue(var);
 }
 
 }} // clever::ast

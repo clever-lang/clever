@@ -173,6 +173,7 @@ namespace clever {
 	ast::RegexPattern* regex_pattern;
 	ast::NodeList* node_list;
 	ast::VarDecls* var_decls;
+	ast::ArrayList* array_list;
 }
 
 %type <identifier> IDENT
@@ -230,6 +231,7 @@ namespace clever {
 %type <import_stmt> import_stmt
 %type <block_stmt2> import_file
 %type <alias_stmt> alias_stmt
+%type <array_list> array_list
 
 %%
 
@@ -329,6 +331,10 @@ arg_list:
 arg_list_opt:
 		/* empty */  { $$ = NULL; }
 	| 	arg_list     { $$ = $1; }
+;
+
+array_list:
+	'{' arg_list '}'	{ $$ = new ast::ArrayList($2); $$->setLocation(yyloc); }
 ;
 
 package_module_name:
@@ -452,9 +458,6 @@ variable_declaration_impl:
 	|   template IDENT '(' arg_list ')'     { $$ = new ast::VariableDecl($1, $2, $<arg_list>4); $$->setLocation(yyloc);   }
 	|	package_module_name "::" TYPE IDENT '(' arg_list ')'
 		{ $1->concat("::", $3); delete $3; $$ = new ast::VariableDecl($1, $4, $<arg_list>6); $$->setLocation(yyloc);  }
-
-	|	template IDENT '=' '{' arg_list '}'	{ $$ = new ast::VariableDecl($1, $2, $5, true); $$->setLocation(yyloc); }
-	|	AUTO IDENT '=' '{' arg_list '}'		{ $$ = new ast::VariableDecl(NULL, $2, $5, true); $$->setLocation(yyloc); }
 ;
 
 assign_stmt:
@@ -507,7 +510,7 @@ expr:
 	|	IDENT                 { $$ = $<ast_node>1; }
 	|	literal               { $$ = $<ast_node>1; }
 	|	constant              { $$ = $<ast_node>1; }
-	|	assign_stmt             { $$ = $<ast_node>1; }
+	|	assign_stmt           { $$ = $<ast_node>1; }
 ;
 
 literal:
@@ -517,6 +520,7 @@ literal:
 	|	TRUE        { $$ = $<ast_node>1; }
 	|	FALSE       { $$ = $<ast_node>1; }
 	|	REGEX 		{ $$ = $<ast_node>1; }
+	|	array_list  { $$ = $<ast_node>1; }
 ;
 
 variable_decl_or_empty:

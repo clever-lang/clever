@@ -1,0 +1,24 @@
+Testing Array<> literal
+==CODE==
+import std.io;
+import std.math;
+
+println({10, 12, 14});
+
+Void output(Array<String> arr)
+{
+	print('Name: ', arr[0], "\n");
+	print('Version: ', arr[1], "\n");
+}
+
+output({'Clever', '0.1-alpha'});
+
+const Double pi = acos(-1.0), sqrt2 = sqrt(2.0);
+
+println({sqrt2, pi, cos(0.0)}.at(1));
+
+==RESULT==
+\[10, 12, 14\]
+Name: Clever
+Version: 0.1-alpha
+3.14159
