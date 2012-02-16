@@ -101,6 +101,11 @@ namespace clever {
 #define CLEVER_THIS_ARG(arg) CLEVER_TYPE_ARG(CLEVER_THIS()->getTypePtr(), (arg))
 
 /**
+ * Performs an internal type method call
+ */
+#define CLEVER_INTERNAL_MCALL(ctx, method, tv, vv, ret) (ctx)->getTypePtr()->getMethod(CSTRING((method)), tv)->call((vv), (ret), (ctx))
+
+/**
  * Disables copy constructor and copy assignment
  */
 #define DISALLOW_COPY_AND_ASSIGN(TypeName) \

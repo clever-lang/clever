@@ -267,6 +267,39 @@ CLEVER_METHOD(Array::toString) {
 }
 
 /**
+ * Int Array<T>::find(T v)
+ * Returns the position of the first value equal to `v' or -1 if 
+ * the value is not present in this Array
+ */
+CLEVER_METHOD(Array::find) {
+	ValueVector* vec = CLEVER_GET_ARRAY(CLEVER_THIS());
+	
+	// Builds the ValueVector and the TypeVector to retrive and call the method
+	ValueVector vv(2, CLEVER_ARG(0));
+	TypeVector tv(2, CLEVER_THIS_ARG(0));
+	
+	// Gets the method
+	const Method* const method = 
+		CLEVER_THIS_ARG(0)->getMethod(CSTRING(CLEVER_OPERATOR_EQUAL), &tv);
+	
+	Value ret;
+	int64_t pos = -1;
+	for (size_t i = 0, sz = vec->size(); i < sz; ++i) {
+		vv[1] = vec->at(i);
+		
+		// Calls this[i] == CLEVER_ARG(0) 
+		method->call(&vv, &ret, vec->at(i));
+		
+		if (ret.getBoolean()) {
+			pos = i;
+			break;
+		}
+	}
+
+	CLEVER_RETURN_INT(pos);
+}
+
+/**
  * Array type initializator
  */
 void Array::init() {
@@ -322,6 +355,10 @@ void Array::init() {
 	addMethod((new Method("slice", (MethodPtr)&Array::slice, arr_t))
 		->addArg("start", CLEVER_INT)
 		->addArg("length", CLEVER_INT)
+	);
+	
+	addMethod((new Method("find", (MethodPtr)&Array::find, CLEVER_INT))
+		->addArg("value", CLEVER_TPL_ARG(0))
 	);
 }
 

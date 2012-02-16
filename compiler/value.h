@@ -331,14 +331,9 @@ public:
 			return *CSTRING(str.str());
 		}
 		else {
-			Value* ret = new Value();
-			
-			getTypePtr()->getMethod(CSTRING("toString"), NULL)
-				->call(NULL, ret, this);
-				
-			const CString& str = ret->getString();
-			
-			ret->delRef();
+			Value ret;
+			CLEVER_INTERNAL_MCALL(this, "toString", NULL, NULL, &ret);
+			const CString& str = ret.getString();
 			
 			return str;
 		}

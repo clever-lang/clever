@@ -100,7 +100,14 @@ void Type::addMethod(Method* method) {
 const Method* Type::getMethod(const CString* name, const TypeVector* args) const {
 	MethodMap::const_iterator it1 = m_methods.find(*name);
 
-	if (it1 == m_methods.end()) return NULL;
+	if (it1 == m_methods.end()) {
+		// Looking up for super type's methods
+		if (getSuperType()) {
+			return getSuperType()->getMethod(name, args);
+		}
+		
+		return NULL;
+	}
 
 	size_t num_args = (args ? args->size() : 0);
 

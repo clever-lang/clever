@@ -35,7 +35,10 @@ struct PairValue : public DataValue
 	typedef std::pair<Value*, Value*> InternalType;
 	
 	PairValue(const Type* t1, const Type* t2) 
-		: m_pair(new Value(t1), new Value(t2)) {}
+		: m_pair(new Value(t1), new Value(t2)) {
+			first()->initialize();
+			second()->initialize();
+	}
 	
 	PairValue(Value* first, Value* second) 
 		: m_pair(new Value(), new Value()) {

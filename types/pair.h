@@ -93,6 +93,7 @@ public:
 	static CLEVER_METHOD(setFirst);
 	static CLEVER_METHOD(setSecond);
 	static CLEVER_METHOD(toString);
+	static CLEVER_METHOD(equal);
 private:
 	DISALLOW_COPY_AND_ASSIGN(Pair);
 };
