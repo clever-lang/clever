@@ -52,6 +52,7 @@ class AliasStmt;
 class RegexPattern;
 class Subscript;
 class ArrayList;
+class MapList;
 
 #define AST_TRANSFORMER(type, exprtype) ASTNode* type::transform(exprtype* const expr)
 #define AST_TRANSFORMER_DECL_VIRTUAL(type) virtual ASTNode* transform(type* const expr) = 0
@@ -80,6 +81,7 @@ class ArrayList;
 	V(ArgumentList); \
 	V(Identifier); \
 	V(ArrayList); \
+	V(MapList); \
 	V(TypeCreation)
 
 /**

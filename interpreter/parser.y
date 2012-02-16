@@ -174,6 +174,7 @@ namespace clever {
 	ast::NodeList* node_list;
 	ast::VarDecls* var_decls;
 	ast::ArrayList* array_list;
+	ast::MapList* map_list;
 }
 
 %type <identifier> IDENT
@@ -232,6 +233,8 @@ namespace clever {
 %type <block_stmt2> import_file
 %type <alias_stmt> alias_stmt
 %type <array_list> array_list
+%type <arg_list> map_arg_list
+%type <map_list> map_list
 
 %%
 
@@ -335,6 +338,15 @@ arg_list_opt:
 
 array_list:
 	'{' arg_list '}'	{ $$ = new ast::ArrayList($2); $$->setLocation(yyloc); }
+;
+
+map_arg_list:
+		map_arg_list ',' expr ':' expr { $1->add($3); $1->add($5); }
+	|	expr ':' expr         			{ $$ = new ast::ArgumentList; $$->add($1); $$->add($3); }
+;
+
+map_list:
+	'{' map_arg_list '}'		{ $$ = new ast::MapList($2); $$->setLocation(yyloc); }
 ;
 
 package_module_name:
@@ -521,6 +533,7 @@ literal:
 	|	FALSE       { $$ = $<ast_node>1; }
 	|	REGEX 		{ $$ = $<ast_node>1; }
 	|	array_list  { $$ = $<ast_node>1; }
+	|	map_list	{ $$ = $<ast_node>1; }
 ;
 
 variable_decl_or_empty:

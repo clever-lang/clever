@@ -1727,6 +1727,42 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(ArrayList);
 };
 
+class MapList : public Literal {
+public:
+	MapList(ArgumentList* args) : m_arg_list(args), m_value(NULL)
+	{
+		m_arg_list->addRef();
+	}
+	
+	Value* getValue() const {
+		return m_value;
+	}
+	
+	ArgumentList* getArgList() const {
+		return m_arg_list;
+	}
+	
+	void setValue(Value* v) {
+		m_value = v;
+	}
+	
+	void acceptVisitor(ASTVisitor& visitor) {
+		m_arg_list->acceptVisitor(visitor);
+		visitor.visit(this);
+	}
+	
+	~MapList() {
+		m_arg_list->delRef();
+		if (m_value) {
+			m_value->delRef();
+		}
+	}
+private:
+	ArgumentList* m_arg_list;
+	Value* m_value;
+	DISALLOW_COPY_AND_ASSIGN(MapList);
+};
+
 
 inline void setType(VariableDecls* v, Identifier* type){
 	VariableDecls::iterator it=v->begin(), end=v->end();

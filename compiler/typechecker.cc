@@ -999,4 +999,59 @@ AST_VISITOR(TypeChecker, ArrayList) {
 	expr->setValue(var);
 }
 
+/**
+ * Map visitor
+ */
+AST_VISITOR(TypeChecker, MapList) {
+	ValueVector* vv = expr->getArgList()->getArgValue();
+	const Type* key_type = vv->at(0)->getTypePtr();
+	const Type* value_type = vv->at(1)->getTypePtr();
+	
+	for (size_t i = 2, sz = vv->size(); i < sz; i += 2) {
+		if (vv->at(i)->getTypePtr() != key_type) {
+			Compiler::errorf(expr->getLocation(),
+				"Cannot use Map list with "
+				"different key types");
+		}
+	}
+	
+	for (size_t i = 3, sz = vv->size(); i < sz; i += 2) {
+		if (vv->at(i)->getTypePtr() != value_type) {
+			Compiler::errorf(expr->getLocation(),
+				"Cannot use Map list with "
+				"different value types");
+		}
+	}
+	
+	const TemplatedType* const virtual_map = 
+		static_cast<const TemplatedType*>(CLEVER_TYPE("Map"));
+	
+	// Checks if the key type meets the requirements
+	TypeVector tv(2);
+	tv[0] = key_type;
+	tv[1] = value_type;
+	
+	const std::string* error = virtual_map->checkTemplateArgs(tv);
+	
+	if (error) {
+		Compiler::errorf(expr->getLocation(),
+			error->c_str());
+	}
+	
+	// Gets the proper Map type
+	const Type* map_type = virtual_map->getTemplatedType(key_type, value_type);
+
+	MapValue* mv = static_cast<MapValue*>(map_type->allocateValue());
+	MapValue::ValueType& map = mv->getMap();
+	
+	// Fills the map
+	for (size_t i = 0, sz = vv->size(); i < sz; i += 2) {
+		map[vv->at(i)] = vv->at(i + 1);
+	}
+	
+	Value* var = new Value(map_type);
+	var->setDataValue(mv);
+	expr->setValue(var);
+}
+
 }} // clever::ast

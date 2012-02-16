@@ -1,0 +1,21 @@
+Testing Map<> literals
+==CODE==
+import std.io;
+
+Auto m1 = {100000: 'med', 10000000000: 'big', -1: 'small'};
+
+Auto all = m1.getAll();
+
+for (Auto i = 0; i < all.size(); ++i) {
+	print(i, ': ', all[i], "\n");
+}
+
+println({'a': 2, 'b': 5}.hasKey('a'));
+println({'a': 2, 'b': 5}.hasKey('5'));
+
+==RESULT==
+0: \(-1, small\)
+1: \(100000, med\)
+2: \(10000000000, big\)
+true
+false
