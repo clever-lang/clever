@@ -341,7 +341,7 @@ array_list:
 ;
 
 map_arg_list:
-		map_arg_list ',' expr ':' expr { $1->add($3); $1->add($5); }
+		map_arg_list ',' expr ':' expr 	{ $1->add($3); $1->add($5); }
 	|	expr ':' expr         			{ $$ = new ast::ArgumentList; $$->add($1); $$->add($3); }
 ;
 

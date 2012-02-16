@@ -1,0 +1,11 @@
+Testing Array<> literal #2
+==CODE==
+import std.io;
+
+Auto arr = {{1, 2}, {10, 20, 30}, {40, 50}};
+println(arr);
+
+println({{'a'}, {'b', 'c'}, {'d'}});
+==RESULT==
+\[\[1, 2\], \[10, 20, 30\], \[40, 50\]\]
+\[\[a\], \[b, c\], \[d\]\]

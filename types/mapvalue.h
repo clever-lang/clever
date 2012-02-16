@@ -52,19 +52,16 @@ struct Comparator
 		vv[0] = a;
 		vv[1] = b;
 
-		Value* result = new Value();
+		Value result;
 
 		if (!m_value) {
-			m_comp->call(&vv, result, a);
+			m_comp->call(&vv, &result, a);
 		}
 		else {
-			m_comp->call(&vv, result, m_value);
+			m_comp->call(&vv, &result, m_value);
 		}
 		
-		bool ret = result->getBoolean();
-		result->delRef();
-		
-		return ret;
+		return result.getBoolean();
 	}
 	
 	private:

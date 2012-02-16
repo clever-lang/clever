@@ -1036,6 +1036,7 @@ AST_VISITOR(TypeChecker, MapList) {
 	if (error) {
 		Compiler::errorf(expr->getLocation(),
 			error->c_str());
+		delete error;
 	}
 	
 	// Gets the proper Map type
