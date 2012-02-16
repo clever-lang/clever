@@ -793,7 +793,7 @@ public:
 	VariableDecl(Identifier* type, Identifier* variable)
 		: m_type(type), m_variable(variable), m_rhs(NULL), m_initval(NULL),
 			m_const_value(false), m_call_value(NULL),
-			m_args_value(NULL), m_ctor_args(NULL) {
+			m_args_value(NULL), m_ctor_args(NULL), m_array_list(false) {
 		if (m_type) {
 			m_type->addRef();
 		}
@@ -804,7 +804,7 @@ public:
 	VariableDecl(Identifier* type, Identifier* variable, ASTNode* rhs)
 		: m_type(type), m_variable(variable), m_rhs(rhs), m_initval(NULL),
 			m_const_value(false), m_call_value(NULL),
-			m_args_value(NULL), m_ctor_args(NULL) {
+			m_args_value(NULL), m_ctor_args(NULL), m_array_list(false) {
 
 		// If is not `Auto' typed variable
 		if (m_type) {
@@ -818,7 +818,7 @@ public:
 	VariableDecl(Identifier* type, Identifier* variable, ASTNode* rhs, bool const_value)
 		: m_type(type), m_variable(variable), m_rhs(rhs), m_initval(NULL),
 			m_const_value(const_value), m_call_value(NULL),
-			m_args_value(NULL), m_ctor_args(NULL) {
+			m_args_value(NULL), m_ctor_args(NULL), m_array_list(false) {
 
 		// If is not `Auto' typed variable
 		if (m_type) {
@@ -829,10 +829,10 @@ public:
 		m_rhs->addRef();
 	}
 
-	VariableDecl(Identifier* type, Identifier* variable, ArgumentList* arg_list)
+	VariableDecl(Identifier* type, Identifier* variable, ArgumentList* arg_list, bool is_array = false)
 		: m_type(type), m_variable(variable), m_rhs(NULL), m_initval(NULL),
 			m_const_value(false), m_call_value(NULL),
-			m_args_value(NULL), m_ctor_args(arg_list) {
+			m_args_value(NULL), m_ctor_args(arg_list), m_array_list(is_array) {
 		if (m_type) {
 			m_type->addRef();
 		}
@@ -931,6 +931,14 @@ public:
 	ArgumentList* getConstructorArgs() const {
 		return m_ctor_args;
 	}
+	
+	ArgumentList* getArrayList() const {
+		return m_ctor_args;
+	}
+	
+	bool rhsIsArrayList() const {
+		return m_array_list;
+	}
 private:
 	/**
 	 * The variable's type. NULL means `Auto' typed variable.
@@ -943,6 +951,7 @@ private:
 	CallableValue* m_call_value;
 	Value* m_args_value;
 	ArgumentList* m_ctor_args;
+	bool m_array_list;
 
 	DISALLOW_COPY_AND_ASSIGN(VariableDecl);
 };

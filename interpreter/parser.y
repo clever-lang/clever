@@ -452,6 +452,9 @@ variable_declaration_impl:
 	|   template IDENT '(' arg_list ')'     { $$ = new ast::VariableDecl($1, $2, $<arg_list>4); $$->setLocation(yyloc);   }
 	|	package_module_name "::" TYPE IDENT '(' arg_list ')'
 		{ $1->concat("::", $3); delete $3; $$ = new ast::VariableDecl($1, $4, $<arg_list>6); $$->setLocation(yyloc);  }
+
+	|	template IDENT '=' '{' arg_list '}'	{ $$ = new ast::VariableDecl($1, $2, $5, true); $$->setLocation(yyloc); }
+	|	AUTO IDENT '=' '{' arg_list '}'		{ $$ = new ast::VariableDecl(NULL, $2, $5, true); $$->setLocation(yyloc); }
 ;
 
 assign_stmt:

@@ -165,7 +165,7 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 		emit(OP_ASSIGN, &VM::mcall_handler, expr->getCallValue(),
 			expr->getArgsValue());
 	}
-	else if (expr->getConstructorArgs()) {
+	else if (expr->getConstructorArgs() && !expr->rhsIsArrayList()) {
 		clever_assert_not_null(expr->getInitialValue());
 		
 		CallableValue* call = expr->getCallValue();
