@@ -28,6 +28,7 @@
 
 #include "compiler/datavalue.h"
 #include "compiler/pkgmanager.h"
+#include "compiler/function.h"
 
 namespace clever { namespace packages { namespace std { namespace reflection {
 
@@ -37,11 +38,11 @@ public:
 
 	virtual ~ReflectionFunctionValue() {}
 
-	const CallableValue* getFunction() { return m_function; }
-	void setFunction(const CallableValue* function) { m_function = function; }
+	const Function* getFunction() { return m_function; }
+	void setFunction(const Function* function) { m_function = function; }
 
 private:
-	const CallableValue* m_function;
+	const Function* m_function;
 };
 
 }}}} // clever::packages::std::reflection

@@ -23,11 +23,36 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <compiler/pkgmanager.h>
-#include <modules/std/reflection/reflectionfunction.h>
-#include <modules/std/reflection/reflectionfunctionvalue.h>
+#include <iostream>
+#include "compiler/scope.h"
+#include "compiler/pkgmanager.h"
+#include "modules/std/reflection/reflectionfunction.h"
+#include "modules/std/reflection/reflectionfunctionvalue.h"
+#include "types/array.h"
 
 namespace clever { namespace packages { namespace std { namespace reflection {
+
+/**
+ * Finds for a CallableValue representing a function
+ */
+static const Function* _reflection_get_function_ptr(const CString* name) {
+	const ScopeVector& scopes = g_scope.getChildren();
+	ScopeVector::const_iterator scope_it(scopes.begin()),
+		scope_end(scopes.end());
+
+	while (scope_it != scope_end) {
+		Value* val = (*scope_it)->getValue(name);
+
+		if (val != NULL) {
+			if (val->isCallable()) {
+				return static_cast<CallableValue*>(val)->getFunction();
+			}
+			break;
+		}
+		++scope_it;
+	}
+	return NULL;
+}
 
 /**
  * ReflectionFunction constructor
@@ -35,10 +60,12 @@ namespace clever { namespace packages { namespace std { namespace reflection {
 CLEVER_METHOD(ReflectionFunction::constructor) {
 	ReflectionFunctionValue* rfv = new ReflectionFunctionValue;
 
-	/**
-	 * Assignment on type creation will increase the ref
-	 */
-	rfv->setReference(0);
+	rfv->setFunction(_reflection_get_function_ptr(&CLEVER_ARG_STR(0)));
+
+	if (rfv->getFunction() == NULL) {
+		delete rfv;
+		clever_fatal("Function `%S' not found!", &CLEVER_ARG_STR(0));
+	}
 
 	retval->setDataValue(rfv);
 }
@@ -49,7 +76,29 @@ CLEVER_METHOD(ReflectionFunction::constructor) {
 CLEVER_METHOD(ReflectionFunction::getName) {
 	ReflectionFunctionValue* rfv = CLEVER_GET_VALUE(ReflectionFunctionValue*, value);
 
-	CLEVER_RETURN_STR(rfv->getFunction()->getName());
+	CLEVER_RETURN_STR(CSTRING(rfv->getFunction()->getName()));
+}
+
+/**
+ * Array<String> ReflectionFunction::getArgs()
+ */
+CLEVER_METHOD(ReflectionFunction::getArgs) {
+	ReflectionFunctionValue* rfv = CLEVER_GET_VALUE(ReflectionFunctionValue*, value);
+	const FunctionArgs& fargs = rfv->getFunction()->getArgs();
+	FunctionArgs::const_iterator it(fargs.begin()), end(fargs.end());
+
+	ValueVector* vec = new ValueVector;
+
+	while (it != end) {
+		Value* tmp = new Value;
+
+		tmp->setString(it->second->getName());
+		vec->push_back(tmp);
+
+		++it;
+	}
+
+	CLEVER_RETURN_ARRAY(vec);
 }
 
 /**
@@ -62,14 +111,19 @@ CLEVER_METHOD(ReflectionFunction::do_assign) {
 
 void ReflectionFunction::init() {
 	const Type* reffunc = CLEVER_TYPE("ReflectionFunction");
+	const Type* arr_str = CLEVER_GET_ARRAY_TEMPLATE->getTemplatedType(CLEVER_STR);
 
 	addMethod(
 		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&ReflectionFunction::constructor, reffunc))
-			->addArg("package", CLEVER_STR)
+			->addArg("name", CLEVER_STR)
 	);
 
 	addMethod(
 		new Method("getName", (MethodPtr)&ReflectionFunction::getName, CLEVER_STR)
+	);
+
+	addMethod(
+		new Method("getArgs", (MethodPtr)&ReflectionFunction::getArgs, arr_str)
 	);
 
 	addMethod(

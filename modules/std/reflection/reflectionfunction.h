@@ -45,6 +45,7 @@ public:
 	 */
 	 static CLEVER_METHOD(constructor);
 	 static CLEVER_METHOD(getName);
+	 static CLEVER_METHOD(getArgs);
 	 static CLEVER_METHOD(do_assign);
 private:
 	DISALLOW_COPY_AND_ASSIGN(ReflectionFunction);

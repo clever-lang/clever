@@ -48,13 +48,13 @@ static CLEVER_FUNCTION(get_type) {
 void Reflection::init() {
 	using namespace reflection;
 	ReflectionPackage* refpackage = new ReflectionPackage;
-	// ReflectionFunction* reffunction = new ReflectionFunction;
+	ReflectionFunction* reffunction = new ReflectionFunction;
 
 	/**
 	 * Module classes
 	 */
 	addClass(refpackage);
-	// addClass(reffunction);
+	addClass(reffunction);
 
 	/**
 	 * Module functions

@@ -1,0 +1,18 @@
+Testing ReflectionFunction methods
+==CODE==
+import std;
+
+ReflectionFunction a("max");
+println(a.getName(), a.getArgs());
+
+ReflectionFunction b("getcwd");
+println(b.getName(), b.getArgs());
+
+ReflectionFunction c("getcwd2");
+println(c.getName(), c.getArgs());
+==RESULT==
+max
+\[Double, Double\]
+getcwd
+\[\]
+Function `getcwd2' not found!
