@@ -1,0 +1,20 @@
+Testing String padding methods
+==CODE==
+import std.io;
+
+String foo = "Eu Sou o Pedro";
+
+println(foo.pad("-=", 21));
+println(foo.padLeft("-=", 21));
+println(foo.padRight("-=", 21));
+println("Clever".padLeft(" ", 3));
+println("Clever".padLeft(" ", 15));
+println(58.toString().padLeft("0", 5));
+
+==RESULT==
+-=-Eu Sou o Pedro-=-=
+-=-=-=-Eu Sou o Pedro
+Eu Sou o Pedro-=-=-=-
+Clever
+         Clever
+00058

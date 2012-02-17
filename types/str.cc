@@ -284,6 +284,77 @@ CLEVER_METHOD(String::toByteArray) {
 }
 
 /**
+ * String String::pad(S, K)
+ */
+CLEVER_METHOD(String::pad) {
+	::std::string this_str = CLEVER_THIS()->toString();
+	const ::std::string& arg_str = CLEVER_ARG(0)->toString();
+	int64_t arg_len = CLEVER_ARG(1)->getInteger();
+
+	if (this_str.size() < arg_len) {
+		::std::string pad;
+		int64_t pad_len = (arg_len - this_str.size()) / 2;
+
+		for (int64_t i = 0; i < pad_len; i++) {
+			pad += arg_str;
+		}
+		this_str = pad.substr(0, pad_len) + this_str;
+
+		pad = "";
+		pad_len = arg_len - this_str.size();
+		for (int64_t i = 0; i < pad_len; i++) {
+			pad += arg_str;
+		}
+		this_str += pad.substr(0, pad_len);
+	}
+
+	CLEVER_RETURN_STR(CSTRING(this_str));
+}
+
+/**
+ * String String::padLeft(S, K)
+ */
+CLEVER_METHOD(String::padLeft) {
+	::std::string this_str = CLEVER_THIS()->toString();
+	const ::std::string& arg_str = CLEVER_ARG(0)->toString();
+	int64_t arg_len = CLEVER_ARG(1)->getInteger();
+
+	if (this_str.size() < arg_len) {
+		::std::string pad;
+		int64_t pad_len = arg_len - this_str.size();
+
+		for (int64_t i = 0; i < pad_len; i++) {
+			pad += arg_str;
+		}
+		this_str = pad.substr(0, pad_len) + this_str;
+	}
+
+	CLEVER_RETURN_STR(CSTRING(this_str));
+}
+
+/**
+ * String String::padRight(S, K)
+ */
+CLEVER_METHOD(String::padRight) {
+	::std::string this_str = CLEVER_THIS()->toString();
+	const ::std::string& arg_str = CLEVER_ARG(0)->toString();
+	int64_t arg_len = CLEVER_ARG(1)->getInteger();
+
+	if (this_str.size() < arg_len) {
+		::std::string pad;
+		int64_t pad_len = arg_len - this_str.size();
+
+		for (int64_t i = 0; i < pad_len; i++) {
+			pad += arg_str;
+		}
+		this_str += pad.substr(0, pad_len);
+	}
+
+	CLEVER_RETURN_STR(CSTRING(this_str));
+}
+
+
+/**
  * Void String::__assign__(String)
  */
 CLEVER_METHOD(String::do_assign) {
@@ -474,6 +545,24 @@ void String::init() {
 	addMethod(new Method("toUpper", (MethodPtr)&String::toUpper, CLEVER_STR));
 
 	addMethod(new Method("toLower", (MethodPtr)&String::toLower, CLEVER_STR));
+
+	addMethod(
+		(new Method("pad", (MethodPtr)&String::pad, CLEVER_STR))
+			->addArg("str", CLEVER_STR)
+			->addArg("length", CLEVER_INT)
+	);
+
+	addMethod(
+		(new Method("padLeft", (MethodPtr)&String::padLeft, CLEVER_STR))
+			->addArg("str", CLEVER_STR)
+			->addArg("length", CLEVER_INT)
+	);
+
+	addMethod(
+		(new Method("padRight", (MethodPtr)&String::padRight, CLEVER_STR))
+			->addArg("str", CLEVER_STR)
+			->addArg("length", CLEVER_INT)
+	);
 }
 
 DataValue* String::allocateValue() const {

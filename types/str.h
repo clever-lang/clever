@@ -60,6 +60,9 @@ public:
 	static CLEVER_METHOD(endsWith);
 	static CLEVER_METHOD(find);
 	static CLEVER_METHOD(toByteArray);
+	static CLEVER_METHOD(pad);
+	static CLEVER_METHOD(padLeft);
+	static CLEVER_METHOD(padRight);
 
 	/**
 	 * Type operator methods
