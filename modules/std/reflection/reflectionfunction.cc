@@ -79,6 +79,53 @@ CLEVER_METHOD(ReflectionFunction::getName) {
 }
 
 /**
+ * Bool ReflectionFunction::isInternal()
+ */
+CLEVER_METHOD(ReflectionFunction::isInternal) {
+	ReflectionFunctionValue* rfv = CLEVER_GET_VALUE(ReflectionFunctionValue*, value);
+
+	CLEVER_RETURN_BOOL(rfv->getFunction()->isInternal());
+}
+
+/**
+ * Bool ReflectionFunction::isUserDefined()
+ */
+CLEVER_METHOD(ReflectionFunction::isUserDefined) {
+	ReflectionFunctionValue* rfv = CLEVER_GET_VALUE(ReflectionFunctionValue*, value);
+
+	CLEVER_RETURN_BOOL(rfv->getFunction()->isUserDefined());
+}
+
+/**
+ * Bool ReflectionFunction::isVariadic()
+ */
+CLEVER_METHOD(ReflectionFunction::isVariadic) {
+	ReflectionFunctionValue* rfv = CLEVER_GET_VALUE(ReflectionFunctionValue*, value);
+
+	CLEVER_RETURN_BOOL(rfv->getFunction()->isVariadic());
+}
+
+/**
+ * String ReflectionFunction::getReturnType()
+ */
+CLEVER_METHOD(ReflectionFunction::getReturnType) {
+	ReflectionFunctionValue* rfv = CLEVER_GET_VALUE(ReflectionFunctionValue*, value);
+
+	const Type* rtype = rfv->getFunction()->getReturnType();
+
+	CLEVER_RETURN_STR(rtype ? rtype->getName() : CSTRING("Void"));
+}
+
+/**
+ * Int ReflectionFunction::getNumRequiredArgs()
+ */
+CLEVER_METHOD(ReflectionFunction::getNumRequiredArgs) {
+	ReflectionFunctionValue* rfv = CLEVER_GET_VALUE(ReflectionFunctionValue*, value);
+
+	CLEVER_RETURN_INT(int64_t(rfv->getFunction()->getNumArgs()));
+}
+
+/**
  * Array<String> ReflectionFunction::getArgs()
  */
 CLEVER_METHOD(ReflectionFunction::getArgs) {
@@ -124,6 +171,31 @@ void ReflectionFunction::init() {
 
 	addMethod(
 		new Method("getArgs", (MethodPtr)&ReflectionFunction::getArgs, arr_str)
+	);
+
+	addMethod(
+		new Method("isVariadic", (MethodPtr)&ReflectionFunction::isVariadic,
+			CLEVER_BOOL)
+	);
+
+	addMethod(
+		new Method("getNumRequiredArgs",
+			(MethodPtr)&ReflectionFunction::getNumRequiredArgs,	CLEVER_INT)
+	);
+
+	addMethod(
+		new Method("getReturnType",
+			(MethodPtr)&ReflectionFunction::getReturnType, CLEVER_STR)
+	);
+
+	addMethod(
+		new Method("isInternal",
+			(MethodPtr)&ReflectionFunction::isInternal, CLEVER_BOOL)
+	);
+
+	addMethod(
+		new Method("isUserDefined",
+			(MethodPtr)&ReflectionFunction::isUserDefined, CLEVER_BOOL)
 	);
 
 	addMethod(

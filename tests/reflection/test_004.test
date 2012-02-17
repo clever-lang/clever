@@ -1,0 +1,21 @@
+Testing ReflectionFunction methods
+==CODE==
+import std;
+ReflectionFunction f("max");
+println(f.getReturnType(),
+	f.isInternal(),
+	f.isUserDefined(),
+	f.getNumRequiredArgs(),
+	f.isVariadic());
+
+
+ReflectionFunction z("println");
+
+println(z.isVariadic());
+==RESULT==
+Double
+true
+false
+2
+false
+true
