@@ -119,6 +119,8 @@ public:
 	void dump() const;
 	const char* getOpName(OpcodeType) const;
 	std::string dumpOp(const char* const, Value* const) const;
+
+	static VM::opcode_handler getHandlerByType(OpcodeType);
 private:
 	OpcodeType m_op_type;
 	VM::opcode_handler m_handler;

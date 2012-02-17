@@ -27,6 +27,7 @@
 #include "compiler/cgvisitor.h"
 #include "compiler/compiler.h"
 #include "compiler/typechecker.h"
+#include "vm/opcode.h"
 
 namespace clever { namespace ast {
 
@@ -85,7 +86,8 @@ AST_VISITOR(CodeGenVisitor, UnaryExpr) {
 			Compiler::error("Unknown op type!");
 			break;
 	}
-	emit(opcode, &VM::mcall_handler, expr->getCallValue(), NULL, expr->getValue());
+	emit(opcode, Opcode::getHandlerByType(opcode), expr->getCallValue(),
+		NULL, expr->getValue());
 }
 
 /**
@@ -123,10 +125,10 @@ AST_VISITOR(CodeGenVisitor, BinaryExpr) {
 		default:
 			switch (op) {
 				case PLUS:          opval = OP_PLUS;    break;
-				case DIV:           opval = OP_DIV;     break;
-				case MULT:          opval = OP_MULT;    break;
 				case MINUS:         opval = OP_MINUS;   break;
-				case MOD:           opval = OP_MOD;     break;
+				case DIV:           opval = OP_DIV;     break;
+				case MULT:		    opval = OP_MULT;    break;
+				case MOD:  	     	opval = OP_MOD;     break;
 				case XOR:           opval = OP_XOR;     break;
 				case BW_OR:         opval = OP_BW_OR;   break;
 				case BW_AND:        opval = OP_BW_AND;  break;
@@ -139,12 +141,12 @@ AST_VISITOR(CodeGenVisitor, BinaryExpr) {
 				case LSHIFT:        opval = OP_LSHIFT;  break;
 				case RSHIFT:        opval = OP_RSHIFT;  break;
 				default:
-					Compiler::error("Unknown op type!");
+					Compiler::error("Unknown operation!");
 			}
 			expr->getRhs()->acceptVisitor(*this);
 			rhs = expr->getRhs()->getValue();
 
-			emit(opval, &VM::mcall_handler, expr->getCallValue(),
+			emit(opval, Opcode::getHandlerByType(opval), expr->getCallValue(),
 				expr->getArgsValue(), expr->getValue());
 			break;
 	}

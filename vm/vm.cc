@@ -312,4 +312,244 @@ CLEVER_VM_HANDLER(VM::return_handler) {
 	}
 }
 
+/**
+ * Add arithmetic operation
+ */
+CLEVER_VM_HANDLER(VM::plus_handler) {
+	const CallableValue* const var = static_cast<CallableValue*>(opcode.getOp1());
+	const Value* const args = opcode.getOp2();
+	Value* result = opcode.getResult();
+	const ValueVector* const func_args = args ? args->getVector() : NULL;
+
+	var->call(result, func_args);
+}
+
+/**
+ * Minus arithmetic operation
+ */
+CLEVER_VM_HANDLER(VM::minus_handler) {
+	const CallableValue* const var = static_cast<CallableValue*>(opcode.getOp1());
+	const Value* const args = opcode.getOp2();
+	Value* result = opcode.getResult();
+	const ValueVector* const func_args = args ? args->getVector() : NULL;
+
+	var->call(result, func_args);
+}
+
+/**
+ * Div arithmetic operation
+ */
+CLEVER_VM_HANDLER(VM::div_handler) {
+	const CallableValue* const var = static_cast<CallableValue*>(opcode.getOp1());
+	const Value* const args = opcode.getOp2();
+	Value* result = opcode.getResult();
+	const ValueVector* const func_args = args ? args->getVector() : NULL;
+
+	var->call(result, func_args);
+}
+
+/**
+ * Mult arithmetic operation
+ */
+CLEVER_VM_HANDLER(VM::mult_handler) {
+	const CallableValue* const var = static_cast<CallableValue*>(opcode.getOp1());
+	const Value* const args = opcode.getOp2();
+	Value* result = opcode.getResult();
+	const ValueVector* const func_args = args ? args->getVector() : NULL;
+
+	var->call(result, func_args);
+}
+
+/**
+ * Mod arithmetic operation
+ */
+CLEVER_VM_HANDLER(VM::mod_handler) {
+	const CallableValue* const var = static_cast<CallableValue*>(opcode.getOp1());
+	const Value* const args = opcode.getOp2();
+	Value* result = opcode.getResult();
+	const ValueVector* const func_args = args ? args->getVector() : NULL;
+
+	var->call(result, func_args);
+}
+
+/**
+ * Inc operation (x++, ++x)
+ */
+CLEVER_VM_HANDLER(VM::inc_handler) {
+	const CallableValue* const var = static_cast<CallableValue*>(opcode.getOp1());
+	const Value* const args = opcode.getOp2();
+	Value* result = opcode.getResult();
+	const ValueVector* const func_args = args ? args->getVector() : NULL;
+
+	var->call(result, func_args);
+}
+
+/**
+ * Dec arithmetic operation (x--, --x)
+ */
+CLEVER_VM_HANDLER(VM::dec_handler) {
+	const CallableValue* const var = static_cast<CallableValue*>(opcode.getOp1());
+	const Value* const args = opcode.getOp2();
+	Value* result = opcode.getResult();
+	const ValueVector* const func_args = args ? args->getVector() : NULL;
+
+	var->call(result, func_args);
+}
+
+/**
+ * Xor bit-wise operation
+ */
+CLEVER_VM_HANDLER(VM::xor_handler) {
+	const CallableValue* const var = static_cast<CallableValue*>(opcode.getOp1());
+	const Value* const args = opcode.getOp2();
+	Value* result = opcode.getResult();
+	const ValueVector* const func_args = args ? args->getVector() : NULL;
+
+	var->call(result, func_args);
+}
+
+/**
+ * OR bit-wise operation
+ */
+CLEVER_VM_HANDLER(VM::bw_or_handler) {
+	const CallableValue* const var = static_cast<CallableValue*>(opcode.getOp1());
+	const Value* const args = opcode.getOp2();
+	Value* result = opcode.getResult();
+	const ValueVector* const func_args = args ? args->getVector() : NULL;
+
+	var->call(result, func_args);
+}
+
+/**
+ * AND bit-wise operation
+ */
+CLEVER_VM_HANDLER(VM::bw_and_handler) {
+	const CallableValue* const var = static_cast<CallableValue*>(opcode.getOp1());
+	const Value* const args = opcode.getOp2();
+	Value* result = opcode.getResult();
+	const ValueVector* const func_args = args ? args->getVector() : NULL;
+
+	var->call(result, func_args);
+}
+
+/**
+ * NOT bit-wise operation
+ */
+CLEVER_VM_HANDLER(VM::bw_not_handler) {
+	const CallableValue* const var = static_cast<CallableValue*>(opcode.getOp1());
+	const Value* const args = opcode.getOp2();
+	Value* result = opcode.getResult();
+	const ValueVector* const func_args = args ? args->getVector() : NULL;
+
+	var->call(result, func_args);
+}
+
+/**
+ * Greater logical operation (x > y)
+ */
+CLEVER_VM_HANDLER(VM::greater_handler) {
+	const CallableValue* const var = static_cast<CallableValue*>(opcode.getOp1());
+	const Value* const args = opcode.getOp2();
+	Value* result = opcode.getResult();
+	const ValueVector* const func_args = args ? args->getVector() : NULL;
+
+	var->call(result, func_args);
+}
+
+/**
+ * Less logical operation (x < y)
+ */
+CLEVER_VM_HANDLER(VM::less_handler) {
+	const CallableValue* const var = static_cast<CallableValue*>(opcode.getOp1());
+	const Value* const args = opcode.getOp2();
+	Value* result = opcode.getResult();
+	const ValueVector* const func_args = args ? args->getVector() : NULL;
+
+	var->call(result, func_args);
+}
+
+/**
+ * Greater or equal logical operation (x >= y)
+ */
+CLEVER_VM_HANDLER(VM::ge_handler) {
+	const CallableValue* const var = static_cast<CallableValue*>(opcode.getOp1());
+	const Value* const args = opcode.getOp2();
+	Value* result = opcode.getResult();
+	const ValueVector* const func_args = args ? args->getVector() : NULL;
+
+	var->call(result, func_args);
+}
+
+/**
+ * Less or equal logical operation (x <= y)
+ */
+CLEVER_VM_HANDLER(VM::le_handler) {
+	const CallableValue* const var = static_cast<CallableValue*>(opcode.getOp1());
+	const Value* const args = opcode.getOp2();
+	Value* result = opcode.getResult();
+	const ValueVector* const func_args = args ? args->getVector() : NULL;
+
+	var->call(result, func_args);
+}
+
+/**
+ * Equal logical operation (x == y)
+ */
+CLEVER_VM_HANDLER(VM::equal_handler) {
+	const CallableValue* const var = static_cast<CallableValue*>(opcode.getOp1());
+	const Value* const args = opcode.getOp2();
+	Value* result = opcode.getResult();
+	const ValueVector* const func_args = args ? args->getVector() : NULL;
+
+	var->call(result, func_args);
+}
+
+/**
+ * Not equal logical operation (x != y)
+ */
+CLEVER_VM_HANDLER(VM::ne_handler) {
+	const CallableValue* const var = static_cast<CallableValue*>(opcode.getOp1());
+	const Value* const args = opcode.getOp2();
+	Value* result = opcode.getResult();
+	const ValueVector* const func_args = args ? args->getVector() : NULL;
+
+	var->call(result, func_args);
+}
+
+/**
+ * Left shift logical operation (x << y)
+ */
+CLEVER_VM_HANDLER(VM::lshift_handler) {
+	const CallableValue* const var = static_cast<CallableValue*>(opcode.getOp1());
+	const Value* const args = opcode.getOp2();
+	Value* result = opcode.getResult();
+	const ValueVector* const func_args = args ? args->getVector() : NULL;
+
+	var->call(result, func_args);
+}
+
+/**
+ * Right shift logical operation (x >> y)
+ */
+CLEVER_VM_HANDLER(VM::rshift_handler) {
+	const CallableValue* const var = static_cast<CallableValue*>(opcode.getOp1());
+	const Value* const args = opcode.getOp2();
+	Value* result = opcode.getResult();
+	const ValueVector* const func_args = args ? args->getVector() : NULL;
+
+	var->call(result, func_args);
+}
+
+/**
+ * NOT logical operation (x >> y)
+ */
+CLEVER_VM_HANDLER(VM::not_handler) {
+	const CallableValue* const var = static_cast<CallableValue*>(opcode.getOp1());
+	const Value* const args = opcode.getOp2();
+	Value* result = opcode.getResult();
+	const ValueVector* const func_args = args ? args->getVector() : NULL;
+
+	var->call(result, func_args);
+}
+
 } // clever

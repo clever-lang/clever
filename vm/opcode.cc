@@ -108,4 +108,35 @@ std::string Opcode::dumpOp(const char* const label, Value* const op) const {
 	}
 }
 
+/**
+ * Returns the opcode handler by supplying its opcode type
+ */
+VM::opcode_handler Opcode::getHandlerByType(OpcodeType op_type) {
+	switch (op_type) {
+		case OP_PLUS:    return &VM::plus_handler;
+		case OP_MINUS:   return &VM::minus_handler;
+		case OP_DIV:     return &VM::div_handler;
+		case OP_MULT:    return &VM::mult_handler;
+		case OP_MOD:     return &VM::mod_handler;
+		case OP_XOR:     return &VM::xor_handler;
+		case OP_BW_OR:   return &VM::bw_or_handler;
+		case OP_BW_AND:  return &VM::bw_and_handler;
+		case OP_GREATER: return &VM::greater_handler;
+		case OP_LESS:    return &VM::less_handler;
+		case OP_GE:      return &VM::ge_handler;
+		case OP_LE:      return &VM::le_handler;
+		case OP_EQUAL:   return &VM::equal_handler;
+		case OP_NE:      return &VM::ne_handler;
+		case OP_LSHIFT:  return &VM::lshift_handler;
+		case OP_RSHIFT:  return &VM::rshift_handler;
+		case OP_PRE_INC: return &VM::inc_handler;
+		case OP_POS_INC: return &VM::inc_handler;
+		case OP_PRE_DEC: return &VM::dec_handler;
+		case OP_POS_DEC: return &VM::dec_handler;
+		case OP_NOT:     return &VM::not_handler;
+		case OP_BW_NOT:  return &VM::bw_not_handler;
+		default:	     return &VM::mcall_handler;
+	}
+}
+
 } // clever

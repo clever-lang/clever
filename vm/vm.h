@@ -89,6 +89,38 @@ public:
 	static CLEVER_VM_HANDLER(assign_handler);
 	static CLEVER_VM_HANDLER(end_func_handler);
 	static CLEVER_VM_HANDLER(return_handler);
+
+	/**
+	 * Arithmetic operation
+	 */
+	static CLEVER_VM_HANDLER(plus_handler);
+	static CLEVER_VM_HANDLER(minus_handler);
+	static CLEVER_VM_HANDLER(div_handler);
+	static CLEVER_VM_HANDLER(mult_handler);
+	static CLEVER_VM_HANDLER(mod_handler);
+	static CLEVER_VM_HANDLER(inc_handler);
+	static CLEVER_VM_HANDLER(dec_handler);
+
+	/**
+	 * Bit-wise operation
+	 */
+	static CLEVER_VM_HANDLER(bw_not_handler);
+	static CLEVER_VM_HANDLER(xor_handler);
+	static CLEVER_VM_HANDLER(bw_or_handler);
+	static CLEVER_VM_HANDLER(bw_and_handler);
+	static CLEVER_VM_HANDLER(lshift_handler);
+	static CLEVER_VM_HANDLER(rshift_handler);
+
+	/**
+	 * Logical operation
+	 */
+	static CLEVER_VM_HANDLER(greater_handler);
+	static CLEVER_VM_HANDLER(less_handler);
+	static CLEVER_VM_HANDLER(ge_handler);
+	static CLEVER_VM_HANDLER(le_handler);
+	static CLEVER_VM_HANDLER(equal_handler);
+	static CLEVER_VM_HANDLER(ne_handler);
+	static CLEVER_VM_HANDLER(not_handler);
 private:
 	const OpcodeList& m_opcodes;
 
