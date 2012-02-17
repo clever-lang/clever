@@ -76,34 +76,34 @@ enum OpcodeType {
 class Opcode {
 public:
 	Opcode(OpcodeType op_type, VM::opcode_handler handler)
-		: m_op_type(op_type), m_handler(handler), m_op1(NULL), m_op2(NULL), m_result(NULL) { }
+		: m_op_type(op_type), m_handler(handler), m_op1(NULL), m_op2(NULL),
+			m_result(NULL) { }
 
 	Opcode(OpcodeType op_type, VM::opcode_handler handler, Value* op1)
-		: m_op_type(op_type), m_handler(handler), m_op1(op1), m_op2(NULL), m_result(NULL) { }
+		: m_op_type(op_type), m_handler(handler), m_op1(op1), m_op2(NULL),
+			m_result(NULL) { }
 
-	Opcode(OpcodeType op_type, VM::opcode_handler handler, Value* op1, Value* op2)
-		: m_op_type(op_type), m_handler(handler), m_op1(op1), m_op2(op2), m_result(NULL) { }
+	Opcode(OpcodeType op_type, VM::opcode_handler handler, Value* op1,
+		Value* op2, Value* result)
+		: m_op_type(op_type), m_handler(handler), m_op1(op1), m_op2(op2),
+			m_result(result) { }
 
-	Opcode(OpcodeType op_type, VM::opcode_handler handler, Value* op1, Value* op2, Value* result)
-		: m_op_type(op_type), m_handler(handler), m_op1(op1), m_op2(op2), m_result(result) { }
-
-	~Opcode() { }
+	~Opcode() {}
 
 	int getOpType() const { return m_op_type; }
 
 	VM::opcode_handler getHandler() const { return m_handler; }
 
 	Value* getOp1() const { return m_op1; }
-	const Type* getOp1Type() const { return m_op1->getTypePtr(); }
 	void setOp1(Value* op1) { m_op1 = op1; }
 
 	Value* getOp2() const { return m_op2; }
-	const Type* getOp2Type() const { return m_op2->getTypePtr(); }
 	void setOp2(Value* op2) { m_op2 = op2; }
 
 	Value* getResult() const { return m_result; }
 	void setResult(Value* result) { m_result = result; }
 
+	// Methods to set and get the opcode number (its position in the vector)
 	size_t getOpNum() const { return m_op_num; }
 	void setOpNum(size_t op_num) { m_op_num = op_num; }
 
@@ -120,6 +120,7 @@ public:
 	const char* getOpName(OpcodeType) const;
 	std::string dumpOp(const char* const, Value* const) const;
 
+	// Returns the opcode handler by supplying its opcode type
 	static VM::opcode_handler getHandlerByType(OpcodeType);
 private:
 	OpcodeType m_op_type;

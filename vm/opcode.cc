@@ -91,37 +91,39 @@ const char* Opcode::getOpName(OpcodeType op) const {
  * Dumps an operand
  */
 std::string Opcode::dumpOp(const char* const label, Value* const op) const {
-	if (op) {
-		std::ostringstream str;
-
-		if (op->getName() && op->isCallable()) {
-			std::string name = op->getName()->str();
-
-			str << op->refCount();
-
-			return std::string(std::string(label) + ": " + name + " (#" + str.str() + ")");
-		} else {
-			std::string name;
-
-			if (op->isVector()) {
-				if (op->getTypePtr() == NULL) {
-					name = "ValueVector";
-				} else {
-					name = op->getTypePtr()->getName()->str();
-				}
-			} else {
-				if (op->getTypePtr() == NULL) {
-					name = "NULL";
-				} else {
-					name = op->toString().str();
-				}
-			}
-			str << op->refCount();
-
-			return std::string(std::string(label) + ": " + name + " (#" + str.str() + ")");
-		}
-	} else {
+	if (!op) {
 		return std::string(std::string(label) + ": UNUSED");
+	}
+
+	std::ostringstream str;
+
+	if (op->getName() && op->isCallable()) {
+		std::string name = op->getName()->str();
+
+		str << op->refCount();
+
+		return std::string(std::string(label) + ": " + name + " (#" +
+			str.str() + ")");
+	} else {
+		std::string name;
+
+		if (op->isVector()) {
+			if (op->getTypePtr() == NULL) {
+				name = "ValueVector";
+			} else {
+				name = op->getTypePtr()->getName()->str();
+			}
+		} else {
+			if (op->getTypePtr() == NULL) {
+				name = "NULL";
+			} else {
+				name = op->toString().str();
+			}
+		}
+		str << op->refCount();
+
+		return std::string(std::string(label) + ": " + name + " (#" +
+			str.str() + ")");
 	}
 }
 
