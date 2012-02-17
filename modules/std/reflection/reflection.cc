@@ -46,20 +46,17 @@ static CLEVER_FUNCTION(get_type) {
  * Initializes Reflection module
  */
 void Reflection::init() {
-	using namespace reflection;
-	ReflectionPackage* refpackage = new ReflectionPackage;
-	ReflectionFunction* reffunction = new ReflectionFunction;
-
 	/**
 	 * Module classes
 	 */
-	addClass(refpackage);
-	addClass(reffunction);
+	addClass(new reflection::ReflectionPackage);
+	addClass(new reflection::ReflectionFunction);
 
 	/**
 	 * Module functions
 	 */
-	addFunction(new Function("get_type", &CLEVER_FUNC_NAME(get_type), CLEVER_STR))
+	addFunction(new Function("get_type",
+		&CLEVER_NS_FNAME(reflection, get_type), CLEVER_STR))
 		->setVariadic()
 		->setMinNumArgs(1);
 }

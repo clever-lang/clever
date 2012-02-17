@@ -113,7 +113,8 @@ void ReflectionFunction::init() {
 	const Type* arr_str = CLEVER_GET_ARRAY_TEMPLATE->getTemplatedType(CLEVER_STR);
 
 	addMethod(
-		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&ReflectionFunction::constructor, reffunc))
+		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&ReflectionFunction::constructor,
+			reffunc))
 			->addArg("name", CLEVER_STR)
 	);
 
@@ -126,10 +127,10 @@ void ReflectionFunction::init() {
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&ReflectionFunction::do_assign, CLEVER_VOID))
+		(new Method(CLEVER_OPERATOR_ASSIGN,
+			(MethodPtr)&ReflectionFunction::do_assign, CLEVER_VOID))
 			->addArg("rvalue", reffunc)
 	);
-
 }
 
 DataValue* ReflectionFunction::allocateValue() const {
