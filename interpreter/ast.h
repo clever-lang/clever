@@ -879,9 +879,6 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(VariableDecl);
 };
 
-/*
-*/
-
 class AttributeDeclaration : public VariableDecl {
 public:
 	AttributeDeclaration(ASTNode* modifier, Identifier* type, Identifier* variable)

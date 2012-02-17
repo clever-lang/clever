@@ -389,8 +389,8 @@ template_args:
 template_args_fix:
 		TYPE "<" template_args				{ $<template_args>$ = new ast::TemplateArgsVector;
 											  $1->setTemplateArgs($3);
-											  $<template_args>$->push_back($1);  
-											}	
+											  $<template_args>$->push_back($1);
+											}
 	|	template_args ',' TYPE "<" template_args {  $$=$1; $3->setTemplateArgs($5); $1->push_back($3); }
 ;
 
