@@ -163,8 +163,7 @@ $(OBJDIR)/%.o: %.cc $(OBJDIR)/ensure-dirs
 	$(call echo-command,"CXX",$@)
 	$(call cxx-command,$<,$@)
 # see http://stackoverflow.com/a/8027542/604802 :
-	$(call echo-command,"DEP",$@)
-	$(call depend-command,$<,$*.d)
+	$(call depend-command,$<,$(@:.o=.d))
 
 $(OBJDIR)/%.cc: %.y $(OBJDIR)/ensure-dirs
 	$(call echo-command,"BISON",$@)
@@ -194,12 +193,12 @@ $(clever_BIN): $(clever_OBJ) $(OBJDIR)/ensure-dirs
 $(OBJDIR)/interpreter/scanner.o: $(OBJDIR)/interpreter/scanner.cc
 	$(call echo-command,"CXX",$@)
 	$(call cxx-command,$<,$@)
-	$(call depend-command,$<,$*.d)
+	$(call depend-command,$<,$(@:.o=.d))
 
 $(OBJDIR)/interpreter/parser.o: $(OBJDIR)/interpreter/parser.cc
 	$(call echo-command,"CXX",$@)
 	$(call cxx-command,$<,$@)
-	$(call depend-command,$<,$*.d)
+	$(call depend-command,$<,$(@:.o=.d))
 
 $(OBJDIR)/interpreter/parser.cc: interpreter/parser.y $(OBJDIR)/ensure-dirs
 	$(call echo-command,"BISON",$@)
