@@ -29,18 +29,19 @@
 #include "compiler/value.h"
 
 namespace clever {
+
 struct ArrayValue : public DataValue
 {
 	ValueVector* m_array;
-	
+
 	ArrayValue() : m_array(new ValueVector) {}
 	ArrayValue(ValueVector* array) : m_array(array) {}
-	
+
 	~ArrayValue() {
 		delete m_array;
 	}
 };
+
 } // clever
 
-#endif
-
+#endif // CLEVER_ARRAYVALUE_H

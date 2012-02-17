@@ -23,7 +23,6 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <iostream>
 #include "compiler/scope.h"
 #include "compiler/pkgmanager.h"
 #include "modules/std/reflection/reflectionfunction.h"
