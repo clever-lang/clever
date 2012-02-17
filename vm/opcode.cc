@@ -93,16 +93,33 @@ const char* Opcode::getOpName(OpcodeType op) const {
 std::string Opcode::dumpOp(const char* const label, Value* const op) const {
 	if (op) {
 		std::ostringstream str;
-		std::string name = op->getName() && op->isCallable() ?
-			op->getName()->str() : op->toString();
 
-		if (op->isVector()) {
-			name = "vector";
+		if (op->getName() && op->isCallable()) {
+			std::string name = op->getName()->str();
+
+			str << op->refCount();
+
+			return std::string(std::string(label) + ": " + name + " (#" + str.str() + ")");
+		} else {
+			std::string name;
+
+			if (op->isVector()) {
+				if (op->getTypePtr() == NULL) {
+					name = "ValueVector";
+				} else {
+					name = op->getTypePtr()->getName()->str();
+				}
+			} else {
+				if (op->getTypePtr() == NULL) {
+					name = "NULL";
+				} else {
+					name = op->toString().str();
+				}
+			}
+			str << op->refCount();
+
+			return std::string(std::string(label) + ": " + name + " (#" + str.str() + ")");
 		}
-
-		str << op->refCount();
-
-		return std::string(std::string(label) + ": " + name + " (#" + str.str() + ")");
 	} else {
 		return std::string(std::string(label) + ": UNUSED");
 	}
