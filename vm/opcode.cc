@@ -36,9 +36,9 @@ namespace clever {
 void Opcode::dump() const {
 	::printf("(%04zu) | ", getOpNum());
 	::printf("%-15s | ", getOpName(m_op_type));
-	::printf("%-20s | ", dumpOp("op1", m_op1).c_str());
-	::printf("%-20s | ", dumpOp("op2", m_op2).c_str());
-	::printf("%-20s | ", dumpOp("result", m_result).c_str());
+	::printf("%-20s | ", dumpOp("op1", getOp1()).c_str());
+	::printf("%-20s | ", dumpOp("op2", getOp2()).c_str());
+	::printf("%-20s | ", dumpOp("result", getResult()).c_str());
 	::printf("Addr1: %04ld | ", getJmpAddr1());
 	::printf("Addr2: %04ld\n", getJmpAddr2());
 }
