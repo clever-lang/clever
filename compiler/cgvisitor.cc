@@ -127,8 +127,8 @@ AST_VISITOR(CodeGenVisitor, BinaryExpr) {
 				case PLUS:          opval = OP_PLUS;    break;
 				case MINUS:         opval = OP_MINUS;   break;
 				case DIV:           opval = OP_DIV;     break;
-				case MULT:		    opval = OP_MULT;    break;
-				case MOD:  	     	opval = OP_MOD;     break;
+				case MULT:          opval = OP_MULT;    break;
+				case MOD:           opval = OP_MOD;     break;
 				case XOR:           opval = OP_XOR;     break;
 				case BW_OR:         opval = OP_BW_OR;   break;
 				case BW_AND:        opval = OP_BW_AND;  break;
