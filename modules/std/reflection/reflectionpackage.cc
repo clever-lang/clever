@@ -83,15 +83,16 @@ CLEVER_METHOD(ReflectionPackage::do_assign) {
 }
 
 void ReflectionPackage::init() {
+	const Type* refpkg = CLEVER_TYPE("ReflectionPackage");
 	const Type* arr_str = CLEVER_GET_ARRAY_TEMPLATE->getTemplatedType(CLEVER_STR);
 
 	addMethod(
 		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&ReflectionPackage::do_assign, CLEVER_VOID))
-			->addArg("rvalue", CLEVER_TYPE("ReflectionPackage"))
+			->addArg("rvalue", refpkg)
 	);
 
 	addMethod(
-		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&ReflectionPackage::constructor, CLEVER_TYPE("ReflectionPackage")))
+		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&ReflectionPackage::constructor, refpkg))
 			->addArg("package", CLEVER_STR)
 	);
 
