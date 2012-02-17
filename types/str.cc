@@ -248,18 +248,18 @@ CLEVER_METHOD(String::endsWith) {
  * Int String::find(String str) and Int String::find(String str, Int pos)
  * Searches in the current String for the first occurrence of 'str' and returns the
  * position or -1 if not found. In the second version, the search is done only using
- * the characters after 'pos'. 
+ * the characters after 'pos'.
  */
 CLEVER_METHOD(String::find) {
 	const ::std::string& this_str = CLEVER_THIS()->toString();
 	const ::std::string& arg_str = CLEVER_ARG(0)->toString();
 	size_t pos = (CLEVER_NUM_ARGS() == 1 ? 0 : CLEVER_ARG(1)->getInteger());
-	
+
 	if (pos >= this_str.size()) {
 		CLEVER_RETURN_INT(-1LL);
 		return;
 	}
-	
+
 	size_t find_pos = this_str.find(arg_str, pos);
 	CLEVER_RETURN_INT(find_pos != ::std::string::npos ? find_pos : -1LL);
 }
@@ -271,14 +271,14 @@ CLEVER_METHOD(String::find) {
 CLEVER_METHOD(String::toByteArray) {
 	const ::std::string& this_str = CLEVER_THIS()->toString();
 	ValueVector* vv = new ValueVector;
-	
+
 	Value* v;
 	for (size_t i = 0, sz = this_str.size(); i < sz; ++i) {
 		v = new Value();
 		v->setByte(uint8_t(this_str[i]));
 		vv->push_back(v);
 	}
-	
+
 	retval->setTypePtr(CLEVER_TYPE("Array<Byte>"));
 	CLEVER_RETURN_ARRAY(vv);
 }
@@ -291,7 +291,7 @@ CLEVER_METHOD(String::pad) {
 	const ::std::string& arg_str = CLEVER_ARG(0)->toString();
 	int64_t arg_len = CLEVER_ARG(1)->getInteger();
 
-	if (this_str.size() < arg_len) {
+	if ((int64_t)this_str.size() < arg_len) {
 		::std::string pad;
 		int64_t pad_len = (arg_len - this_str.size()) / 2;
 
@@ -319,7 +319,7 @@ CLEVER_METHOD(String::padLeft) {
 	const ::std::string& arg_str = CLEVER_ARG(0)->toString();
 	int64_t arg_len = CLEVER_ARG(1)->getInteger();
 
-	if (this_str.size() < arg_len) {
+	if ((int64_t)this_str.size() < arg_len) {
 		::std::string pad;
 		int64_t pad_len = arg_len - this_str.size();
 
@@ -340,7 +340,7 @@ CLEVER_METHOD(String::padRight) {
 	const ::std::string& arg_str = CLEVER_ARG(0)->toString();
 	int64_t arg_len = CLEVER_ARG(1)->getInteger();
 
-	if (this_str.size() < arg_len) {
+	if ((int64_t)this_str.size() < arg_len) {
 		::std::string pad;
 		int64_t pad_len = arg_len - this_str.size();
 
@@ -416,7 +416,7 @@ CLEVER_METHOD(String::less) {
 CLEVER_METHOD(String::times) {
 	const ::std::string& str = CLEVER_ARG_STR(0);
 	int64_t num = CLEVER_ARG_INT(1);
-	
+
 	if (num <= 0) {
 		CLEVER_RETURN_STR(CSTRING(""));
 	}
@@ -425,15 +425,15 @@ CLEVER_METHOD(String::times) {
 		for (int i = 1; i < num; ++i) {
 			ret += str;
 		}
-		
+
 		CLEVER_RETURN_STR(CSTRING(ret));
 	}
 }
 
 void String::init() {
 	const Type* arr_byte = CLEVER_GET_ARRAY_TEMPLATE->getTemplatedType(CLEVER_BYTE);
-	
-	
+
+
 	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&String::constructor, CLEVER_STR));
 
 	addMethod(new Method("ltrim", (MethodPtr)&String::ltrim, CLEVER_STR));
@@ -459,7 +459,7 @@ void String::init() {
 			->addArg("arg1", CLEVER_STR)
 			->addArg("arg2", CLEVER_STR)
 	);
-	
+
 	addMethod(
 		(new Method(CLEVER_OPERATOR_GE, (MethodPtr)&String::greater_equal, CLEVER_BOOL))
 			->addArg("arg1", CLEVER_STR)
@@ -471,7 +471,7 @@ void String::init() {
 			->addArg("arg1", CLEVER_STR)
 			->addArg("arg2", CLEVER_STR)
 	);
-	
+
 	addMethod(
 		(new Method(CLEVER_OPERATOR_LE, (MethodPtr)&String::less_equal, CLEVER_BOOL))
 			->addArg("arg1", CLEVER_STR)
@@ -488,7 +488,7 @@ void String::init() {
 			->addArg("str1", CLEVER_STR)
 			->addArg("str2", CLEVER_STR)
 	);
-	
+
 	addMethod(
 		(new Method(CLEVER_OPERATOR_MULT, (MethodPtr)&String::times, CLEVER_STR))
 			->addArg("str", CLEVER_STR)
@@ -516,24 +516,24 @@ void String::init() {
 		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&String::do_assign, CLEVER_VOID))
 			->addArg("rvalue", CLEVER_STR)
 	);
-	
+
 	addMethod(
 		(new Method("startsWith", (MethodPtr)&String::startsWith, CLEVER_BOOL))
 			->addArg("str", CLEVER_STR)
 	);
-	
+
 	addMethod(
 		(new Method("endsWith", (MethodPtr)&String::endsWith, CLEVER_BOOL))
 			->addArg("str", CLEVER_STR)
 	);
-	
+
 	addMethod(
 		(new Method("find", (MethodPtr)&String::find, CLEVER_INT))
 			->addArg("str", CLEVER_STR)
 			->addArg("pos", CLEVER_INT)
 			->setMinNumArgs(1)
 	);
-	
+
 	addMethod(new Method("toByteArray", (MethodPtr)&String::toByteArray, arr_byte));
 
 	addMethod(new Method("length", (MethodPtr)&String::length, CLEVER_INT));
