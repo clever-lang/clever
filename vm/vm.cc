@@ -35,6 +35,8 @@ CallStack VM::s_call;
 ValueVStack VM::s_arg_vars;
 ValueVStack VM::s_arg_values;
 
+jmp_buf VM::failure;
+
 /**
  * Destroy the opcodes data
  */
@@ -178,6 +180,8 @@ void VM::restore_args() {
  */
 void VM::error(const char* message) {
 	std::cerr << "Runtime error: " << message << std::endl;
+
+	CLEVER_VM_EXIT();
 }
 
 /**

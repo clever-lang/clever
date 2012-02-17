@@ -53,7 +53,12 @@ void Interpreter::execute(bool interactive) {
 	}
 
 	VM vm(m_compiler.getOpcodes());
-	vm.run();
+
+	result = setjmp(VM::failure);
+
+	if (result == 0) {
+		vm.run();
+	}
 }
 
 #ifdef CLEVER_DEBUG

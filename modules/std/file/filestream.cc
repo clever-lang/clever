@@ -58,7 +58,7 @@ namespace clever { namespace packages { namespace std { namespace file {
  */
 CLEVER_METHOD(FileStream::constructor) {
 	FileStreamValue* fsv = new FileStreamValue;
-	
+
 	if (args != NULL) {
 		if (CLEVER_NUM_ARGS() == 1) {
 			fsv->m_fstream.open(CLEVER_ARG_STR(0).c_str(),
@@ -95,7 +95,7 @@ CLEVER_METHOD(FileStream::do_assign) {
  */
 CLEVER_METHOD(FileStream::open) {
 	FileStreamValue* fsv = CLEVER_GET_VALUE(FileStreamValue*, value);
-	
+
 	if (CLEVER_NUM_ARGS() == 2) {
 		fsv->m_fstream.open(CLEVER_ARG(0)->toString().c_str(),
 			convertOpenMode(CLEVER_ARG(1)->toString()));
@@ -128,7 +128,7 @@ CLEVER_METHOD(FileStream::read) {
 	fsv = CLEVER_GET_VALUE(FileStreamValue*, value);
 
 	if (!fsv->m_fstream.is_open()) {
-		Compiler::error("calling Filestream::read([String, Int, Double])"
+		VM::error("calling Filestream::read([String, Int, Double])"
 			" : no file stream is open (use Filestream::open() before)");
 	}
 
@@ -139,13 +139,13 @@ CLEVER_METHOD(FileStream::read) {
 		fsv->m_fstream >> val;
 
 		CLEVER_ARG(0)->setInteger(val);
-	} 
+	}
 	else if (CLEVER_ARG_IS_DOUBLE(0)) {
 		double val;
 		fsv->m_fstream >> val;
 
 		CLEVER_ARG(0)->setDouble(val);
-	} 
+	}
 	else if (CLEVER_ARG_IS_STR(0)) {
 		::std::string val;
 		fsv->m_fstream >> val;
@@ -155,13 +155,13 @@ CLEVER_METHOD(FileStream::read) {
 	else if (CLEVER_ARG(0)->isBoolean()) {
 		bool val;
 		fsv->m_fstream >> val;
-	
+
 		CLEVER_ARG(0)->setBoolean(val);
 	}
 	else if (CLEVER_ARG(0)->isByte()) {
 		uint8_t val;
 		fsv->m_fstream >> val;
-		
+
 		CLEVER_ARG(0)->setByte(val);
 	}
 }
@@ -174,7 +174,7 @@ CLEVER_METHOD(FileStream::write) {
 	FileStreamValue* fsv = CLEVER_GET_VALUE(FileStreamValue*, value);
 
 	if (!fsv->m_fstream.is_open()) {
-		Compiler::error("calling FileStream::write([Object]) :"
+		VM::error("calling FileStream::write([Object]) :"
 			" no file stream is open (use Filestream::open() before)");
 	}
 
@@ -208,7 +208,7 @@ CLEVER_METHOD(FileStream::writeLine) {
 	fsv = CLEVER_GET_VALUE(FileStreamValue*, value);
 
 	if (!fsv->m_fstream.is_open()) {
-		Compiler::error("Calling FileStream::writeLine([Object]) :"
+		VM::error("Calling FileStream::writeLine([Object]) :"
 			" no file stream is open (use Filestream::open() before)");
 	}
 
@@ -248,22 +248,22 @@ void FileStream::init() {
 		(new Method("read", (MethodPtr)&FileStream::read, CLEVER_VOID))
 			->addArg("output", CLEVER_STR)
 	);
-	
+
 	addMethod(
 		(new Method("read", (MethodPtr)&FileStream::read, CLEVER_VOID))
 			->addArg("output", CLEVER_INT)
 	);
-	
+
 	addMethod(
 		(new Method("read", (MethodPtr)&FileStream::read, CLEVER_VOID))
 			->addArg("output", CLEVER_DOUBLE)
 	);
-	
+
 	addMethod(
 		(new Method("read", (MethodPtr)&FileStream::read, CLEVER_VOID))
 			->addArg("output", CLEVER_BOOL)
 	);
-	
+
 	addMethod(
 		(new Method("read", (MethodPtr)&FileStream::read, CLEVER_VOID))
 			->addArg("output", CLEVER_BYTE)
@@ -273,22 +273,22 @@ void FileStream::init() {
 		(new Method("write", (MethodPtr)&FileStream::write, CLEVER_VOID))
 			->addArg("data", CLEVER_STR)
 	);
-	
+
 	addMethod(
 		(new Method("write", (MethodPtr)&FileStream::write, CLEVER_VOID))
 			->addArg("data", CLEVER_INT)
 	);
-	
+
 	addMethod(
 		(new Method("write", (MethodPtr)&FileStream::write, CLEVER_VOID))
 			->addArg("data", CLEVER_DOUBLE)
 	);
-	
+
 	addMethod(
 		(new Method("write", (MethodPtr)&FileStream::write, CLEVER_VOID))
 			->addArg("data", CLEVER_BOOL)
 	);
-	
+
 	addMethod(
 		(new Method("write", (MethodPtr)&FileStream::write, CLEVER_VOID))
 			->addArg("data", CLEVER_BYTE)
