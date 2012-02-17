@@ -63,6 +63,8 @@ next_token:
 	<*>SPACE { yylloc->step(); SKIP(); }
 	<*>[\n]+ { yylloc->lines(yylen); yylloc->step(); SKIP(); }
 
+	<INITIAL>"@@"TYPE { RET(token::ANNONTATION); }
+
 	<INITIAL>"or" { RET(token::LOGICAL_OR); }
 
 	<INITIAL>"||" { RET(token::BOOLEAN_OR); }
@@ -110,7 +112,7 @@ next_token:
 	<INITIAL>"/=" { RET(token::DIV_EQUAL); }
 
 	<INITIAL>"%=" { RET(token::MOD_EQUAL); }
-	
+
 	<INITIAL>":=" { RET(token::AUTO_EQUAL); }
 
 	<INITIAL>"::" { RET(token::DOUBLE_COLON); }
@@ -204,7 +206,7 @@ next_token:
 	<INITIAL>"protected" {
 		RET(token::PROTECTED);
 	}
-	
+
 	<INITIAL>"Auto" {
 		RET(token::AUTO);
 	}
@@ -290,12 +292,12 @@ next_token:
 
 	<INITIAL>INTEGER {
 		const char* nstr = reinterpret_cast<const char*>(s.yylex);
-		
+
 		int64_t n = 0;
 		for (int i = 0; i < yylen; ++i) {
 			n = n * 10 + (nstr[i] - '0');
 		}
-		
+
 		Value* newval = new Value(CLEVER_INT);
 		newval->setInteger(n);
 
@@ -317,7 +319,7 @@ next_token:
 				n += toupper(nstr[i]) - 'A' + 10;
 			}
 		}
-		
+
 		Value* newval = new Value(CLEVER_INT);
 		newval->setInteger(n);
 
@@ -333,7 +335,7 @@ next_token:
 		for (int i = 0; i < yylen - 1; ++i) {
 			n = n * 8 + nstr[i] - '0';
 		}
-		
+
 
 		Value* newval = new Value(CLEVER_INT);
 		newval->setInteger(n);
