@@ -32,8 +32,8 @@
 namespace clever {
 
 CallStack VM::s_call;
-ArgStack VM::s_args;
-ArgValueStack VM::s_arg_values;
+ValueVStack VM::s_arg_vars;
+ValueVStack VM::s_arg_values;
 
 /**
  * Destroy the opcodes data
@@ -71,7 +71,7 @@ void VM::update_vars(Scope* scope, const FunctionArgs& fargs,
 	ValueVector* vec_curr = NULL;
 	size_t i = 0;
 
-	if (!s_args.empty()) {
+	if (!s_arg_vars.empty()) {
 		vec_curr = s_arg_values.top();
 	}
 
@@ -131,7 +131,7 @@ void VM::update_vars(Scope* scope, const FunctionArgs& fargs,
 		}
 	}
 
-	s_args.push(vec);
+	s_arg_vars.push(vec);
 	s_arg_values.push(vec_copy);
 }
 
@@ -153,10 +153,10 @@ void VM::pop_args(const Opcode* const op) {
 
 	s_arg_values.pop();
 
-	delete s_args.top();
-	s_args.pop();
+	delete s_arg_vars.top();
+	s_arg_vars.pop();
 
-	if (!s_args.empty()) {
+	if (!s_arg_vars.empty()) {
 		restore_args();
 	}
 }
@@ -165,7 +165,7 @@ void VM::pop_args(const Opcode* const op) {
  * Restore the parameter argument values from the previous stack frame
  */
 void VM::restore_args() {
-	ValueVector* vec = s_args.top();
+	ValueVector* vec = s_arg_vars.top();
 	ValueVector* vec_copy = s_arg_values.top();
 
 	for (size_t i = 0, j = vec->size(); i < j; ++i) {

@@ -35,7 +35,7 @@ namespace clever {
 /**
  * Opcodes
  */
-enum Opcodes {
+enum OpcodeType {
 	OP_PRE_INC,
 	OP_PRE_DEC,
 	OP_POS_INC,
@@ -75,16 +75,16 @@ enum Opcodes {
  */
 class Opcode {
 public:
-	Opcode(Opcodes op_type, VM::opcode_handler handler)
+	Opcode(OpcodeType op_type, VM::opcode_handler handler)
 		: m_op_type(op_type), m_handler(handler), m_op1(NULL), m_op2(NULL), m_result(NULL) { }
 
-	Opcode(Opcodes op_type, VM::opcode_handler handler, Value* op1)
+	Opcode(OpcodeType op_type, VM::opcode_handler handler, Value* op1)
 		: m_op_type(op_type), m_handler(handler), m_op1(op1), m_op2(NULL), m_result(NULL) { }
 
-	Opcode(Opcodes op_type, VM::opcode_handler handler, Value* op1, Value* op2)
+	Opcode(OpcodeType op_type, VM::opcode_handler handler, Value* op1, Value* op2)
 		: m_op_type(op_type), m_handler(handler), m_op1(op1), m_op2(op2), m_result(NULL) { }
 
-	Opcode(Opcodes op_type, VM::opcode_handler handler, Value* op1, Value* op2, Value* result)
+	Opcode(OpcodeType op_type, VM::opcode_handler handler, Value* op1, Value* op2, Value* result)
 		: m_op_type(op_type), m_handler(handler), m_op1(op1), m_op2(op2), m_result(result) { }
 
 	~Opcode() { }
@@ -113,23 +113,20 @@ public:
 	void setJmpAddr2(long jmp_addr) { m_extra.jmp2 = jmp_addr; }
 	long getJmpAddr2() const { return m_extra.jmp2; }
 
-	void setFlags(long flags) { m_extra.flags = flags; }
-	long getFlags() const { return m_extra.flags; }
-
 	/**
-	 * Methods for debug
+	 * Methods for debugging purpose
 	 */
 	void dump() const;
-	const char* getOpName(Opcodes) const;
+	const char* getOpName(OpcodeType) const;
 	std::string dumpOp(const char* const, Value* const) const;
 private:
-	Opcodes m_op_type;
+	OpcodeType m_op_type;
 	VM::opcode_handler m_handler;
 	Value* m_op1;
 	Value* m_op2;
 	Value* m_result;
 	size_t m_op_num;
-	struct { long jmp1, jmp2, flags; } m_extra;
+	struct { long jmp1, jmp2; } m_extra;
 
 	DISALLOW_COPY_AND_ASSIGN(Opcode);
 };

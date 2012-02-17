@@ -83,7 +83,7 @@ private:
 	/**
 	 * Output an opcode.
 	 */
-	Opcode* emit(Opcodes type, VM::opcode_handler handler, Value* op1 = NULL, Value* op2 = NULL, Value* result = NULL) {
+	Opcode* emit(OpcodeType type, VM::opcode_handler handler, Value* op1 = NULL, Value* op2 = NULL, Value* result = NULL) {
 		Opcode* opcode = new Opcode(type, handler, op1, op2, result);
 		m_opcodes.push_back(opcode);
 		/**

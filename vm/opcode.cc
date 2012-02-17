@@ -46,7 +46,7 @@ void Opcode::dump() const {
 /**
  * Returns the opcode name
  */
-const char* Opcode::getOpName(Opcodes op) const {
+const char* Opcode::getOpName(OpcodeType op) const {
 #define CASE(x) case x: return #x
 
 	switch (op) {

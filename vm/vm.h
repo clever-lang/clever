@@ -49,8 +49,7 @@ class Scope;
 
 typedef std::vector<Opcode*> OpcodeList;
 typedef std::stack<const Opcode*> CallStack;
-typedef std::stack<ValueVector*> ArgStack;
-typedef std::stack<ValueVector*> ArgValueStack;
+typedef std::stack<ValueVector*> ValueVStack;
 
 /**
  * Virtual machine representation
@@ -98,8 +97,8 @@ private:
 	const OpcodeList& m_opcodes;
 
 	static CallStack s_call;
-	static ArgStack s_args;
-	static ArgValueStack s_arg_values;
+	static ValueVStack s_arg_vars;
+	static ValueVStack s_arg_values;
 
 	DISALLOW_COPY_AND_ASSIGN(VM);
 };
