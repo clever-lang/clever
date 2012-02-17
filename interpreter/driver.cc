@@ -25,7 +25,8 @@
 
 #include <fstream>
 #include <setjmp.h>
-#include "driver.h"
+#include "compiler/clever.h"
+#include "interpreter/driver.h"
 #include "build/interpreter/parser.hh"
 #include "build/interpreter/position.hh"
 #include "compiler/cstring.h"
@@ -54,7 +55,7 @@ void Interpreter::execute(bool interactive) {
 
 	VM vm(m_compiler.getOpcodes());
 
-	result = setjmp(VM::failure);
+	result = setjmp(clever::fatal_error);
 
 	if (result == 0) {
 		vm.run();

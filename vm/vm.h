@@ -28,7 +28,6 @@
 
 #include <vector>
 #include <stack>
-#include <setjmp.h>
 #include "compiler/clever.h"
 #include "compiler/function.h"
 
@@ -42,15 +41,6 @@
  * Change the executor flow to run another opcode
  */
 #define CLEVER_VM_GOTO(x) next_op = (x); return
-
-/**
- * Macro to abort the VM execution
- */
-#ifndef CLEVER_APPLE
-# define CLEVER_VM_EXIT() longjmp(VM::failure, 1)
-#else
-# define CLEVER_VM_EXIT() exit(1)
-#endif
 
 namespace clever {
 
@@ -81,10 +71,6 @@ public:
 	 */
 	void run();
 	/**
-	 * Displays an error message and exists
-	 */
-	static void error(const char*);
-	/**
 	 * Function/method argument handling
 	 */
 	static void pop_args(const Opcode* const);
@@ -103,8 +89,6 @@ public:
 	static CLEVER_VM_HANDLER(assign_handler);
 	static CLEVER_VM_HANDLER(end_func_handler);
 	static CLEVER_VM_HANDLER(return_handler);
-
-	static jmp_buf failure;
 private:
 	const OpcodeList& m_opcodes;
 

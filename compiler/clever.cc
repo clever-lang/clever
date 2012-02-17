@@ -31,6 +31,8 @@
 
 namespace clever {
 
+jmp_buf fatal_error;
+
 /**
  * Errors and stuff.
  */
@@ -54,13 +56,26 @@ void clever_assert_(const char* file, const char* function, long line, const cha
 }
 #endif
 
+/**
+ * Throws an error message and abort the VM execution
+ */
+void clever_error(const char* format, ...) {
+	va_list vl;
+	va_start(vl, format);
+	vprintfln(format, vl);
+	va_end(vl);
+}
+
+/**
+ * Throws a fatal error message and abort the VM execution
+ */
 void clever_fatal(const char* format, ...) {
 	va_list vl;
 	va_start(vl, format);
-	printf("clever: a fatal error occurred.\n\t");
 	vprintfln(format, vl);
 	va_end(vl);
-	std::abort();
+
+	CLEVER_EXIT_FATAL();
 }
 
 /**

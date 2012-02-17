@@ -35,8 +35,6 @@ CallStack VM::s_call;
 ValueVStack VM::s_arg_vars;
 ValueVStack VM::s_arg_values;
 
-jmp_buf VM::failure;
-
 /**
  * Destroy the opcodes data
  */
@@ -173,15 +171,6 @@ void VM::restore_args() {
 	for (size_t i = 0, j = vec->size(); i < j; ++i) {
 		vec->at(i)->copy(vec_copy->at(i));
 	}
-}
-
-/**
- * Displays an error message and exits
- */
-void VM::error(const char* message) {
-	std::cerr << "Runtime error: " << message << std::endl;
-
-	CLEVER_VM_EXIT();
 }
 
 /**

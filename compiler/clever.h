@@ -28,8 +28,20 @@
 
 #include <sstream>
 #include <cstdarg>
+#include <setjmp.h>
 
 namespace clever {
+
+extern jmp_buf fatal_error;
+
+/**
+ * Macro to abort the VM execution
+ */
+#ifndef CLEVER_APPLE
+# define CLEVER_EXIT_FATAL() longjmp(fatal_error, 1)
+#else
+# define CLEVER_EXIT_FATAL() exit(1)
+#endif
 
 /**
  * Macro to increase/decrease reference couting
@@ -239,6 +251,7 @@ void clever_assert_(const char* file, const char* function, long line, const cha
 #define clever_assert_not_null(hypothesis)
 #endif
 
+void clever_error(const char* format, ...);
 void clever_fatal(const char* format, ...) CLEVER_NO_RETURN;
 
 void vsprintf(std::ostringstream&, const char*, va_list);
@@ -246,6 +259,7 @@ void sprintf(std::ostringstream&, const char*, ...);
 void printf(const char*, ...);
 void vprintfln(const char*, va_list);
 void printfln(const char*, ...);
+
 } // clever
 
 #endif /* CLEVER_H */

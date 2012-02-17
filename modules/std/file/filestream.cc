@@ -128,7 +128,7 @@ CLEVER_METHOD(FileStream::read) {
 	fsv = CLEVER_GET_VALUE(FileStreamValue*, value);
 
 	if (!fsv->m_fstream.is_open()) {
-		VM::error("calling Filestream::read([String, Int, Double])"
+		clever_error("calling Filestream::read([String, Int, Double])"
 			" : no file stream is open (use Filestream::open() before)");
 	}
 
@@ -174,7 +174,7 @@ CLEVER_METHOD(FileStream::write) {
 	FileStreamValue* fsv = CLEVER_GET_VALUE(FileStreamValue*, value);
 
 	if (!fsv->m_fstream.is_open()) {
-		VM::error("calling FileStream::write([Object]) :"
+		clever_error("calling FileStream::write([Object]) :"
 			" no file stream is open (use Filestream::open() before)");
 	}
 
@@ -208,7 +208,7 @@ CLEVER_METHOD(FileStream::writeLine) {
 	fsv = CLEVER_GET_VALUE(FileStreamValue*, value);
 
 	if (!fsv->m_fstream.is_open()) {
-		VM::error("Calling FileStream::writeLine([Object]) :"
+		clever_error("Calling FileStream::writeLine([Object]) :"
 			" no file stream is open (use Filestream::open() before)");
 	}
 
