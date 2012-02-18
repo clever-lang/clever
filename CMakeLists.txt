@@ -161,4 +161,15 @@ else(PCRECPP_FOUND)
 	message(WARNING "testrunner will not be compiled. reason: libpcrecpp missing")
 endif(PCRECPP_FOUND)
 
+# Test runner
+# ---------------------------------------------------------------------------
+add_custom_target(run-tests
+	COMMAND ./testrunner${CMAKE_EXECUTABLE_SUFFIX} -q;./tests
+	COMMENT "Running tests")
+add_dependencies(run-tests testrunner)
+
+add_custom_target(run-mem-tests
+	COMMAND ./testrunner${CMAKE_EXECUTABLE_SUFFIX} -m;./tests
+	COMMENT "Running memory leak tests")
+add_dependencies(run-mem-tests testrunner)
 
