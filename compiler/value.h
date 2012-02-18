@@ -44,13 +44,13 @@ class Scope;
 /**
  * Native types
  */
-extern THREAD_TLS Type* CLEVER_INT_VAR;
-extern THREAD_TLS Type* CLEVER_DOUBLE_VAR;
-extern THREAD_TLS Type* CLEVER_STR_VAR;
-extern THREAD_TLS Type* CLEVER_BOOL_VAR;
-extern THREAD_TLS Type* CLEVER_BYTE_VAR;
-extern THREAD_TLS Type* CLEVER_ARRAY_VAR;
-extern THREAD_TLS Type* CLEVER_OBJ_VAR;
+extern Type* CLEVER_INT_VAR;
+extern Type* CLEVER_DOUBLE_VAR;
+extern Type* CLEVER_STR_VAR;
+extern Type* CLEVER_BOOL_VAR;
+extern Type* CLEVER_BYTE_VAR;
+extern Type* CLEVER_ARRAY_VAR;
+extern Type* CLEVER_OBJ_VAR;
 
 /**
  * Base class for value representation
