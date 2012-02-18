@@ -78,15 +78,7 @@ endif (CYGWIN)
 if (MSVC)
 	add_definitions(-DCLEVER_MSVC)
 	add_definitions(-DCLEVER_MSVC_VERSION=${MSVC_VERSION})
-endif
-
-if (MSVC80)
-	add_definitions(-DCLEVER_MSVC80)
-endif
-
-if (MSVC_IDE)
-	add_definitions(-DCLEVER_MSVC_IDE)
-endif
+endif (MSVC)
 
 # Build environment
 # ---------------------------------------------------------------------------
