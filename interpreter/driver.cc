@@ -27,8 +27,8 @@
 #include <setjmp.h>
 #include "compiler/clever.h"
 #include "interpreter/driver.h"
-#include "build/interpreter/parser.hh"
-#include "build/interpreter/position.hh"
+#include "interpreter/parser.hh"
+#include "interpreter/position.hh"
 #include "compiler/cstring.h"
 #include "scanner.h"
 #include "vm/vm.h"

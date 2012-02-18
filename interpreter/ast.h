@@ -34,7 +34,7 @@
 #include "compiler/scope.h"
 #include "interpreter/astvisitor.h"
 #include "interpreter/asttransformer.h"
-#include "build/interpreter/location.hh"
+#include "interpreter/location.hh"
 
 /**
  * Macro to help increasing and decreasing reference counting only
