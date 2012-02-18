@@ -155,6 +155,12 @@ extern THREAD_TLS Type* CLEVER_OBJ_VAR;
 #define CLEVER_OPERATOR_POS_DEC_PTR CLEVER_TYPE_CACHED_PTR(23)
 
 /**
+ * Internal constructir method name
+ */
+#define CLEVER_CTOR_NAME "$ctor$"
+#define CLEVER_CTOR_NAME_PTR CLEVER_TYPE_CACHED_PTR(24)
+
+/**
  * Utils for handling TemplatedType
  */
 #define CLEVER_TPL_ARG(arg) (getTypeArg(arg))
@@ -199,14 +205,14 @@ public:
 	virtual bool isTemplatedType() const {
 		return false;
 	}
-	
+
 	/**
 	 * Returns the super type of this type or NULL if none
 	 */
 	const Type* getSuperType() const {
 		return m_super;
 	}
-	
+
 	/**
 	 * Returns true if this type is convertible to the type given
 	 */
@@ -214,11 +220,11 @@ public:
 		if (this == type) {
 			return true;
 		}
-		
+
 		if (getSuperType()) {
 			return getSuperType()->isConvertibleTo(type);
 		}
-		
+
 		return false;
 	}
 
@@ -231,7 +237,7 @@ public:
 private:
 	MethodMap m_methods;
 	const CString* const m_name;
-	
+
 	// Type which this type is directly inherited
 	const Type* const m_super;
 

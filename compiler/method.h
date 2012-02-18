@@ -52,11 +52,6 @@ typedef std::vector<const Type*> TypeVector;
 #define CLEVER_ARGS_SEPARATOR '#'
 
 /**
- * Internal constructir method name
- */
-#define CLEVER_CTOR_NAME "$ctor$"
-
-/**
  * Pointer to member representing a class method implementation
  */
 typedef void (CLEVER_FASTCALL *MethodPtr)(CLEVER_METHOD_ARGS);

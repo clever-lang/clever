@@ -247,7 +247,7 @@ static CallableValue* _make_method_call(const Type* type, Value* var,
 	if (UNEXPECTED(method == NULL)) {
 		const std::string args_type_name = _serialize_arg_type(args_types, ", ");
 
-		if (mname == CSTRING(CLEVER_CTOR_NAME)) {
+		if (mname == CLEVER_CTOR_NAME_PTR) {
 			Compiler::errorf(expr->getLocation(),
 				"No matching call for constructor %S::%S(%S)",
 				type->getName(), type->getName(), &args_type_name);
@@ -363,7 +363,7 @@ AST_VISITOR(TypeChecker, RegexPattern) {
 
 	// The Pcre constructor CallableValue
 	expr->setCallValue(_make_method_call(type, expr->getValue(),
-		CSTRING(CLEVER_CTOR_NAME), expr, arg_values));
+		CLEVER_CTOR_NAME_PTR, expr, arg_values));
 
 	expr->getCallValue()->addRef();
 }
@@ -566,7 +566,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 		var->addRef();
 
 		expr->setCallValue(_make_method_call(type, var,
-			CSTRING(CLEVER_CTOR_NAME), expr, arg_values));
+			CLEVER_CTOR_NAME_PTR, expr, arg_values));
 	}
 	else {
 		DataValue* data_value = type->allocateValue();
@@ -942,7 +942,7 @@ AST_VISITOR(TypeChecker, TypeCreation) {
 	}
 
 	expr->setCallValue(_make_method_call(type, expr->getValue(),
-		CSTRING(CLEVER_CTOR_NAME), expr, arg_values));
+		CLEVER_CTOR_NAME_PTR, expr, arg_values));
 }
 
 /**

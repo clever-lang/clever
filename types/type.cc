@@ -55,6 +55,7 @@ void init_type_cached_ptrs() {
 	CLEVER_TYPE_CACHE_PTR(21, CSTRING(CLEVER_OPERATOR_POS_INC));
 	CLEVER_TYPE_CACHE_PTR(22, CSTRING(CLEVER_OPERATOR_PRE_DEC));
 	CLEVER_TYPE_CACHE_PTR(23, CSTRING(CLEVER_OPERATOR_POS_DEC));
+	CLEVER_TYPE_CACHE_PTR(24, CSTRING(CLEVER_CTOR_NAME));
 }
 
 Type::~Type() {
@@ -105,7 +106,7 @@ const Method* Type::getMethod(const CString* name, const TypeVector* args) const
 		if (getSuperType()) {
 			return getSuperType()->getMethod(name, args);
 		}
-		
+
 		return NULL;
 	}
 

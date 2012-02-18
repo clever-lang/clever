@@ -82,40 +82,41 @@ public:
 		m_is_const(false) { }
 
 	explicit Value(double value)
-		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_DOUBLE), m_name(NULL),
-		m_is_const(false) {
+		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_DOUBLE),
+			m_name(NULL), m_is_const(false) {
 		setDouble(value);
 	}
 
 	explicit Value(int64_t value)
-		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_INT), m_name(NULL),
-		m_is_const(false) {
+		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_INT),
+			m_name(NULL), m_is_const(false) {
 		setInteger(value);
 	}
 
 	explicit Value(bool value)
-		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_BOOL), m_name(NULL),
-		m_is_const(false) {
+		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_BOOL),
+			m_name(NULL), m_is_const(false) {
 		setBoolean(value);
 	}
 
 	explicit Value(const CString* value)
-		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_STR), m_name(NULL),
-		m_is_const(false) {
+		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_STR),
+			m_name(NULL), m_is_const(false) {
 		setString(value);
 	}
 
 	explicit Value(uint8_t value)
-		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_BYTE), m_name(NULL),
-		m_is_const(false) {
+		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_BYTE),
+			m_name(NULL), m_is_const(false) {
 		setByte(value);
 	}
-	
+
 	explicit Value(Value* value)
-		: RefCounted(1), m_type(REF), m_type_ptr(NULL), m_name(NULL), m_is_const(false) {
+		: RefCounted(1), m_type(REF), m_type_ptr(NULL), m_name(NULL),
+			m_is_const(false) {
 		setReference(value);
 	}
-	
+
 	virtual ~Value() {
 		if (isUserValue()) {
 			if (m_data.dv_value->refCount() == 1) {
@@ -125,7 +126,8 @@ public:
 			m_data.dv_value->delRef();
 		}
 		else if (isVector()) {
-			ValueVector::const_iterator it = m_data.v_value->begin(), end = m_data.v_value->end();
+			ValueVector::const_iterator it = m_data.v_value->begin(),
+				end = m_data.v_value->end();
 
 			while (it != end) {
 				(*it)->delRef();
@@ -137,7 +139,7 @@ public:
 
 	void initialize() {
 		clever_assert_not_null(getTypePtr());
-		
+
 		if (getTypePtr() == CLEVER_INT) {
 			setInteger(0);
 		}
@@ -159,7 +161,7 @@ public:
 			 * that method call
 			 */
 			TypeVector tv;
-			const Method* ctor = getTypePtr()->getMethod(CSTRING(CLEVER_CTOR_NAME), &tv);
+			const Method* ctor = getTypePtr()->getMethod(CLEVER_CTOR_NAME_PTR, &tv);
 
 			if (ctor) {
 				ctor->call(NULL, this, this);
@@ -168,7 +170,7 @@ public:
 	}
 
 	void setType(int type) {
-		if (type == NONE || type == USER || type == VECTOR 
+		if (type == NONE || type == USER || type == VECTOR
 			|| type == PRIMITIVE || type == REF) {
 			m_type = type;
 		}
@@ -204,7 +206,7 @@ public:
 	bool isVector()    const { return m_type == VECTOR; }
 	bool isUserValue() const { return m_type == USER; }
 	bool isReference() const { return m_type == REF; }
-	
+
 	bool isNumeric() const {
 		return (isInteger() || isDouble());
 	}
@@ -243,7 +245,7 @@ public:
 		m_type = VECTOR;
 		m_data.v_value = v;
 	}
-	
+
 	void setReference(Value* v) {
 		m_type_ptr = NULL;
 		m_data.ref_value = v;
@@ -263,7 +265,7 @@ public:
 
 	bool getValueAsBool() const {
 		clever_assert_not_null(m_type_ptr);
-		
+
 		if (m_type_ptr == CLEVER_INT) {
 			return getInteger();
 		}
@@ -297,7 +299,7 @@ public:
 		std::memcpy(&m_data, value->getData(), sizeof(ValueData));
 		m_type_ptr = value->getTypePtr();
 	}
-	
+
 	virtual Value* getValue() { return this; }
 
 	bool isConst() const {
@@ -307,7 +309,7 @@ public:
 	void setConstness(bool constness) {
 		m_is_const = constness;
 	}
-	
+
 	virtual const CString& toString() {
 		if (isPrimitive()) {
 			std::ostringstream str;
@@ -327,14 +329,14 @@ public:
 			else if (isByte()) {
 				str << "0x" << std::hex << uint32_t(getByte());
 			}
-		
+
 			return *CSTRING(str.str());
 		}
 		else {
 			Value ret;
 			CLEVER_INTERNAL_MCALL(this, "toString", NULL, NULL, &ret);
 			const CString& str = ret.getString();
-			
+
 			return str;
 		}
 	}
