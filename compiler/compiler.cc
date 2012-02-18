@@ -38,14 +38,14 @@ namespace clever {
 
 PackageManager g_pkgmanager;
 
-THREAD_TLS Type* CLEVER_INT_VAR    = NULL;
-THREAD_TLS Type* CLEVER_DOUBLE_VAR = NULL;
-THREAD_TLS Type* CLEVER_STR_VAR    = NULL;
-THREAD_TLS Type* CLEVER_BOOL_VAR   = NULL;
-THREAD_TLS Type* CLEVER_BYTE_VAR   = NULL;
-THREAD_TLS Type* CLEVER_ARRAY_VAR  = NULL;
-THREAD_TLS Type* CLEVER_MAP_VAR    = NULL;
-THREAD_TLS Type* CLEVER_OBJ_VAR    = NULL;
+Type* CLEVER_INT_VAR    = NULL;
+Type* CLEVER_DOUBLE_VAR = NULL;
+Type* CLEVER_STR_VAR    = NULL;
+Type* CLEVER_BOOL_VAR   = NULL;
+Type* CLEVER_BYTE_VAR   = NULL;
+Type* CLEVER_ARRAY_VAR  = NULL;
+Type* CLEVER_MAP_VAR    = NULL;
+Type* CLEVER_OBJ_VAR    = NULL;
 
 #ifndef CLEVER_APPLE
 # define CLEVER_ERROR_EXIT_ACTION() longjmp(Compiler::failure, 1)
@@ -111,7 +111,7 @@ void Compiler::loadNativeTypes() {
 	CLEVER_DOUBLE = new Double;
 	CLEVER_BOOL   = new Bool;
 	CLEVER_BYTE   = new Char;
-	
+
 	// Virtual Standard Template Types
 	CLEVER_ARRAY  = new Array;
 	CLEVER_MAP    = new Map;

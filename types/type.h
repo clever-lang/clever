@@ -66,7 +66,7 @@ void init_type_cached_ptrs();
 #define CLEVER_OBJECT ::clever::CLEVER_OBJ_VAR
 #define CLEVER_VOID	  NULL
 
-extern THREAD_TLS Type* CLEVER_OBJ_VAR;
+extern Type* CLEVER_OBJ_VAR;
 
 #define CLEVER_GET_ARRAY_TEMPLATE ((const TemplatedType*)CLEVER_ARRAY)
 
