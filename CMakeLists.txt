@@ -157,6 +157,7 @@ if(PCRECPP_FOUND)
 		extra/testrunner.cc
 	)
 	target_link_libraries(testrunner ${PCRECPP_LIBRARIES})
+	add_dependencies(testrunner clever)
 else(PCRECPP_FOUND)
 	message(WARNING "testrunner will not be compiled. reason: libpcrecpp missing")
 endif(PCRECPP_FOUND)
