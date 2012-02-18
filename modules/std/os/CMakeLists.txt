@@ -1,5 +1,5 @@
 
-add_library(modules.std.os STATIC
+add_library(modules_std_os STATIC
 	os.cc
 )
 

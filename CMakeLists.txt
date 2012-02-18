@@ -130,8 +130,8 @@ add_executable(clever
 	vm/opcode.cc
 	${EXTRA_CLEVER_FILES}
 )
-add_dependencies(clever modules.std)
-target_link_libraries(clever modules.std)
+add_dependencies(clever modules_std)
+target_link_libraries(clever modules_std)
 
 #set(clvcflags "")
 #set(clvldflags "")
@@ -160,6 +160,5 @@ if(PCRECPP_FOUND)
 else(PCRECPP_FOUND)
 	message(WARNING "testrunner will not be compiled. reason: libpcrecpp missing")
 endif(PCRECPP_FOUND)
-
 
 

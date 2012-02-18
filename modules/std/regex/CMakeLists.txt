@@ -1,5 +1,5 @@
 
-add_library(modules.std.regex STATIC
+add_library(modules_std_regex STATIC
 	regex.cc
 	pcre.cc
 )

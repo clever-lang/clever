@@ -28,13 +28,13 @@ foreach (module ${CLEVER_MODULES})
 	add_subdirectory(${module})
 endforeach (module)
 
-add_library(modules.std STATIC
+add_library(modules_std STATIC
 	std_pkg.cc
 )
 
 foreach (module ${CLEVER_MODULES})
-	add_dependencies(modules.std "modules.std.${module}")
-	target_link_libraries(modules.std "modules.std.${module}")
+	add_dependencies(modules_std "modules_std_${module}")
+	target_link_libraries(modules_std "modules_std_${module}")
 endforeach (module)
 
 

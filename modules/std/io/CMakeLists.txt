@@ -1,5 +1,5 @@
 
-add_library(modules.std.io STATIC
+add_library(modules_std_io STATIC
 	io.cc
 )
 
