@@ -1,28 +1,37 @@
 
-set(CLEVER_MODULES 
-	file
-	io
-	math
-	net
-	os
-	reflection
-)
+set(CLEVER_MODULES)
 
-if (MODFFI)
-	if (FFI_FOUND)
-		list(APPEND CLEVER_MODULES ffi)
-	else (FFI_FOUND)
-		message(WARNING "ffi module will not be compiled. reason: libffi missing")
-	endif (FFI_FOUND)
-endif (MODFFI)
+if (MOD_STD_FFI)
+	list(APPEND CLEVER_MODULES ffi)
+endif (MOD_STD_FFI)
 
-if (MODREGEX)
-	if (PCRECPP_FOUND)
-		list(APPEND CLEVER_MODULES regex)
-	else (PCRECPP_FOUND)
-		message(WARNING "regex module will not be compiled. reason: libpcrecpp missing")
-	endif (PCRECPP_FOUND)
-endif (MODREGEX)
+if (MOD_STD_REGEX)
+	list(APPEND CLEVER_MODULES regex)
+endif (MOD_STD_REGEX)
+
+if (MOD_STD_FILE)
+	list(APPEND CLEVER_MODULES file)
+endif (MOD_STD_FILE)
+
+if (MOD_STD_IO)
+	list(APPEND CLEVER_MODULES io)
+endif (MOD_STD_IO)
+
+if (MOD_STD_MATH)
+	list(APPEND CLEVER_MODULES math)
+endif (MOD_STD_MATH)
+
+if (MOD_STD_NET)
+	list(APPEND CLEVER_MODULES net)
+endif (MOD_STD_NET)
+
+if (MOD_STD_OS)
+	list(APPEND CLEVER_MODULES os)
+endif (MOD_STD_OS)
+
+if (MOD_STD_REFLECTION)
+	list(APPEND CLEVER_MODULES reflection)
+endif (MOD_STD_REFLECTION)
 
 foreach (module ${CLEVER_MODULES})
 	add_subdirectory(${module})

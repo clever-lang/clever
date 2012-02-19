@@ -25,6 +25,7 @@
 
 #include <iostream>
 #include "pkgmanager.h"
+#include "value.h"
 #include "cstring.h"
 #include "modules/std/std_pkg.h"
 

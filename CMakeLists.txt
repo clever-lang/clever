@@ -22,10 +22,6 @@ find_package(BISON)
 find_package(RE2C)
 find_package(PkgConfig)
 
-# Options
-# ---------------------------------------------------------------------------
-option(MODREGEX "enable the regex module" ON)
-option(MODFFI   "enable the ffi module" ON)
 
 # Some variables
 # ---------------------------------------------------------------------------
@@ -39,27 +35,7 @@ set(CLEVER_INCLUDE_DIRS)
 pkg_check_modules(PCRECPP libpcrecpp)
 if (PCRECPP_FOUND)
 	add_definitions(-DHAVE_PCRECPP)
-	if (MODREGEX)
-		list(APPEND CLEVER_INCLUDE_DIRS ${PCRECPP_INCLUDE_DIRS})
-		list(APPEND CLEVER_LIBRARIES ${PCRECPP_LIBRARIES})
-		#list(APPEND CLEVER_CFLAGS ${PCRECPP_CFLAGS})
-		#list(APPEND CLEVER_LDFLAGS ${PCRECPP_LDFLAGS})
-	endif (MODREGEX)
 endif (PCRECPP_FOUND)
-
-if (MODFFI)
-	if (NOT WIN32)
-		pkg_check_modules(FFI libffi)
-
-		if (FFI_FOUND)
-			add_definitions(-DHAVE_FFI)
-			list(APPEND CLEVER_INCLUDE_DIRS ${FFI_INCLUDE_DIRS})
-			list(APPEND CLEVER_LIBRARIES ${FFI_LIBRARIES} dl)
-			#list(APPEND CLEVER_CFLAGS ${FFI_CFLAGS})
-			#list(APPEND CLEVER_LDFLAGS ${FFI_LDFLAGS})
-		endif (FFI_FOUND)
-	endif (NOT WIN32)
-endif (MODFFI)
 
 # Environment checks
 if (WIN32)
@@ -101,6 +77,7 @@ set_directory_properties(PROPERTIES
 
 # Modules
 # ---------------------------------------------------------------------------
+include(CMakeLists.modopt)
 add_subdirectory(modules/std)
 
 # Parser and Scanner
