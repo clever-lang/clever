@@ -159,3 +159,7 @@ add_custom_target(run-mem-tests
 	COMMENT "Running memory leak tests")
 add_dependencies(run-mem-tests testrunner)
 
+# Files to install
+# ---------------------------------------------------------------------------
+install(TARGETS clever RUNTIME DESTINATION bin)
+
