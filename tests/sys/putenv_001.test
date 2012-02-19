@@ -1,6 +1,6 @@
 Testing putenv and getenv
 ==CODE==
-import std.os;
+import std.sys;
 import std.io;
 
 putenv("FOO=BAR");
