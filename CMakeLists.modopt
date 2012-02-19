@@ -14,7 +14,7 @@ option(MOD_STD_FILE           "enable the file module"                 ON )
 option(MOD_STD_IO             "enable the io module"                   ON )
 option(MOD_STD_MATH           "enable the math module"                 ON )
 option(MOD_STD_NET            "enable the net module"                  ON )
-option(MOD_STD_OS             "enable the os module"                   ON )
+option(MOD_STD_SYS            "enable the sys module"                  ON )
 option(MOD_STD_REFLECTION     "enable the reflection module"           ON )
 
 # std.regex
@@ -90,13 +90,13 @@ else (MOD_STD_NET)
 	message(STATUS "[std.net] disabled.")
 endif (MOD_STD_NET)
 
-# std.os
-if (MOD_STD_OS)
-	add_definitions(-DHAVE_MOD_STD_OS)
-	message(STATUS "[std.os] enabled.")
-else (MOD_STD_OS)
-	message(STATUS "[std.os] disabled.")
-endif (MOD_STD_OS)
+# std.sys
+if (MOD_STD_SYS)
+	add_definitions(-DHAVE_MOD_STD_SYS)
+	message(STATUS "[std.sys] enabled.")
+else (MOD_STD_SYS)
+	message(STATUS "[std.sys] disabled.")
+endif (MOD_STD_SYS)
 
 # std.reflection
 if (MOD_STD_REFLECTION)

@@ -41,8 +41,8 @@ void Std::init() {
 #ifdef HAVE_MOD_STD_FILE
 	addModule(new std::File);
 #endif
-#ifdef HAVE_MOD_STD_OS
-	addModule(new std::OSModule);
+#ifdef HAVE_MOD_STD_SYS
+	addModule(new std::SYSModule);
 #endif
 #ifdef HAVE_MOD_STD_REFLECTION
 	addModule(new std::Reflection);
