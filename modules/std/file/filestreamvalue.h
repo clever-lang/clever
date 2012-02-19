@@ -33,11 +33,11 @@ namespace clever { namespace packages { namespace std { namespace file {
 class FileStreamValue : public DataValue {
 public:
 	FileStreamValue() {}
-	
-	// File stream 
-	::std::fstream m_fstream;
-	
+
 	virtual ~FileStreamValue() {}
+
+	// File stream
+	::std::fstream m_fstream;
 };
 
 }}}} // clever::packages::std::file
