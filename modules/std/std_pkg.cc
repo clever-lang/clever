@@ -24,7 +24,7 @@
  */
 
 #include "compiler/cstring.h"
-#include "std_pkg.h"
+#include "modules/std/std_pkg.h"
 
 namespace clever { namespace packages {
 
@@ -32,28 +32,28 @@ namespace clever { namespace packages {
  * Initializes Std package
  */
 void Std::init() {
-#ifdef HAVE_STD_IO
+#ifdef HAVE_MOD_STD_IO
 	addModule(new std::IOModule);
 #endif
-#ifdef HAVE_STD_MATH
+#ifdef HAVE_MOD_STD_MATH
 	addModule(new std::Math);
 #endif
-#ifdef HAVE_STD_FILE
+#ifdef HAVE_MOD_STD_FILE
 	addModule(new std::File);
 #endif
-#ifdef HAVE_STD_OS
+#ifdef HAVE_MOD_STD_OS
 	addModule(new std::OSModule);
 #endif
-#ifdef HAVE_STD_REFLECTION
+#ifdef HAVE_MOD_STD_REFLECTION
 	addModule(new std::Reflection);
 #endif
-#ifdef HAVE_STD_NET
+#ifdef HAVE_MOD_STD_NET
 	addModule(new std::NetModule);
 #endif
-#ifdef HAVE_STD_REGEX
+#ifdef HAVE_MOD_STD_REGEX
 	addModule(new std::Regex);
 #endif
-#ifdef HAVE_STD_FFI
+#ifdef HAVE_MOD_STD_FFI
 	addModule(new std::FFI);
 #endif
 }
