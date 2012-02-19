@@ -30,7 +30,7 @@
 #include <direct.h>
 #endif
 #include "compiler/value.h"
-#include "modules/std/os/os.h"
+#include "modules/std/sys/sys.h"
 #include "types/nativetypes.h"
 
 #ifdef CLEVER_WIN32
@@ -40,7 +40,7 @@
 
 namespace clever { namespace packages { namespace std {
 
-namespace os {
+namespace sys {
 
 /**
  * system(string command)
@@ -84,8 +84,8 @@ static CLEVER_FUNCTION(getcwd) {
 /**
  * Initializes Standard module
  */
-void OSModule::init() {
-	using namespace os;
+void SYSModule::init() {
+	using namespace sys;
 
 	addFunction(new Function("system", &CLEVER_FUNC_NAME(system), CLEVER_INT))
 		->addArg("command", CLEVER_STR);
