@@ -1599,8 +1599,8 @@ private:
 
 class MapList : public Literal {
 public:
-	MapList(ArgumentList* args) : m_arg_list(args), m_value(NULL)
-	{
+	MapList(ArgumentList* args)
+		: m_arg_list(args), m_value(NULL) {
 		CLEVER_ADDREF(m_arg_list);
 	}
 
@@ -1623,9 +1623,7 @@ public:
 
 	~MapList() {
 		CLEVER_DELREF(m_arg_list);
-		if (m_value) {
-			CLEVER_DELREF(m_value);
-		}
+		AST_DELREF(m_value);
 	}
 private:
 	ArgumentList* m_arg_list;

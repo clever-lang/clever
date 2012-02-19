@@ -1053,6 +1053,8 @@ AST_VISITOR(TypeChecker, MapList) {
 	Value* var = new Value(map_type);
 	var->setDataValue(mv);
 	expr->setValue(var);
+
+	delete vv;
 }
 
 }} // clever::ast
