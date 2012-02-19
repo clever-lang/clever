@@ -78,14 +78,22 @@ endif (CYGWIN)
 if (MSVC)
 	add_definitions(-DCLEVER_MSVC)
 	add_definitions(-DCLEVER_MSVC_VERSION=${MSVC_VERSION})
+	list(APPEND CLEVER_LIBRARIES ws2_32)
 endif (MSVC)
 
 # Build environment
 # ---------------------------------------------------------------------------
 set(CMAKE_BUILD_TYPE        "Debug") # default to debug for now
-set(CMAKE_CXX_FLAGS         "-Wall -ansi -fno-rtti -fno-exceptions")
-set(CMAKE_CXX_FLAGS_DEBUG   "-O1 -ggdb -D_DEBUG -DCLEVER_DEBUG")
-set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG")
+if (MSVC)
+	set(CMAKE_CXX_FLAGS         "/Wall /GR- /EHs-c-")
+	set(CMAKE_CXX_FLAGS_DEBUG   "/O1 /Zi /D_DEBUG /DCLEVER_DEBUG /MTd")
+	set(CMAKE_CXX_FLAGS_RELEASE "/O2 /DNDEBUG /MT")
+else (MSVC)
+	set(CMAKE_CXX_FLAGS         "-Wall -ansi -fno-rtti -fno-exceptions")
+	set(CMAKE_CXX_FLAGS_DEBUG   "-O1 -ggdb -D_DEBUG -DCLEVER_DEBUG")
+	set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG")
+endif (MSVC)
+
 set_directory_properties(PROPERTIES
 	ADDITIONAL_MAKE_CLEAN_FILES 
 	"interpreter/stack.hh;interpreter/parser.cc;interpreter/parser.hh;interpreter/location.hh;interpreter/position.hh;interpreter/scanner.cc")
