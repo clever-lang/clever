@@ -78,6 +78,7 @@ endif (CYGWIN)
 if (MSVC)
 	add_definitions(-DCLEVER_MSVC)
 	add_definitions(-DCLEVER_MSVC_VERSION=${MSVC_VERSION})
+	add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 	list(APPEND CLEVER_LIBRARIES ws2_32)
 endif (MSVC)
 
@@ -85,8 +86,8 @@ endif (MSVC)
 # ---------------------------------------------------------------------------
 set(CMAKE_BUILD_TYPE        "Debug") # default to debug for now
 if (MSVC)
-	set(CMAKE_CXX_FLAGS         "/Wall /GR- /EHs-c-")
-	set(CMAKE_CXX_FLAGS_DEBUG   "/O1 /Zi /D_DEBUG /DCLEVER_DEBUG /MTd")
+	set(CMAKE_CXX_FLAGS         "/W4 /GR- /EHsc-")
+	set(CMAKE_CXX_FLAGS_DEBUG   "/Zi /D_DEBUG /DCLEVER_DEBUG /MTd")
 	set(CMAKE_CXX_FLAGS_RELEASE "/O2 /DNDEBUG /MT")
 else (MSVC)
 	set(CMAKE_CXX_FLAGS         "-Wall -ansi -fno-rtti -fno-exceptions")
