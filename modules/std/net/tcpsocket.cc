@@ -122,7 +122,7 @@ CLEVER_METHOD(TcpSocket::send) {
 CLEVER_METHOD(TcpSocket::poll) {
 	SocketValue* sv = CLEVER_GET_VALUE(SocketValue*, value);
 	struct timeval timeout;
-	struct fd_set readset;
+	fd_set readset;
 	int res;
 
 	// Set the minimum interval.
@@ -137,7 +137,7 @@ CLEVER_METHOD(TcpSocket::poll) {
 	// Prepare the fd_set.
 	FD_ZERO(&readset);
 	FD_SET(sv->socket, &readset);
-	
+
 	// Try the select().
 	res = select(sv->socket + 1, &readset, NULL, NULL, &timeout);
 	if (res == 0) {
