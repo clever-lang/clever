@@ -234,7 +234,7 @@ extern jmp_buf fatal_error;
  */
 
 #ifdef CLEVER_DEBUG
-#define clever_assert(hypothesis, format ...) \
+#define clever_assert(hypothesis, format, ...) \
 	clever::clever_assert_(__FILE__, CLEVER_CURRENT_FUNCTION, __LINE__, #hypothesis, (hypothesis), format)
 
 #define clever_assert_null(hypothesis) \

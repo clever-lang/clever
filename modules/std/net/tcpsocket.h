@@ -47,6 +47,7 @@ public:
 	static CLEVER_METHOD(constructor);
 	static CLEVER_METHOD(setHost);
 	static CLEVER_METHOD(setPort);
+	static CLEVER_METHOD(setTimeout);
 	static CLEVER_METHOD(connect);
 	static CLEVER_METHOD(receive);
 	static CLEVER_METHOD(send);

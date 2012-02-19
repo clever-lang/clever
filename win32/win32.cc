@@ -32,7 +32,7 @@
 #include <string>
 #include "win32.h"
 
-void GetLastErrorStr(LPTSTR pszFunction, std::string &err)
+void GetLastErrorStr(std::string &err)
 {
     LPTSTR pszMessage;
     DWORD dwLastError = GetLastError();
@@ -62,7 +62,7 @@ void CreateBackgroundProcess(std::string cline) {
 	if (CreateProcess(NULL, LPSTR(cline.c_str()), NULL, NULL, false, CREATE_NO_WINDOW, NULL, NULL, &StartupInfo, &ProcInfo)) {
 		std::cout << "Background process created (PID: " << ProcInfo.dwProcessId << ")" << std::endl;
 	} else {
-		GetLastErrorStr("CreateProcess",err);
+		GetLastErrorStr(err);
 		std::cout << "Background process creation failed: " << err << std::endl;
 	}
 }

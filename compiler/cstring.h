@@ -26,7 +26,11 @@
 #ifndef CLEVER_CSTRING_H
 #define CLEVER_CSTRING_H
 
+#ifdef CLEVER_MSVC
+#include <unordered_map>
+#else
 #include <tr1/unordered_map>
+#endif
 #include "compiler/clever.h"
 
 /**
@@ -84,7 +88,11 @@ private:
 /**
  * Specialization of boost::hash<> for working with CStrings
  */
+#ifdef CLEVER_MSVC
+namespace std {
+#else
 namespace std { namespace tr1 {
+#endif
 
 template <>
 struct hash<const clever::CString*> : public unary_function<const clever::CString*, size_t> {
@@ -94,7 +102,11 @@ public:
 	}
 };
 
+#ifdef CLEVER_MSVC
+} // std
+#else
 }} // std::tr1
+#endif
 
 namespace clever {
 

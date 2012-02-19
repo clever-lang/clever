@@ -26,7 +26,11 @@
 #ifndef CLEVER_SYMBOLTABLE_H
 #define CLEVER_SYMBOLTABLE_H
 
+#ifdef CLEVER_MSVC
+#include <unordered_map>
+#else
 #include <tr1/unordered_map>
+#endif
 #include <vector>
 #include "compiler/clever.h"
 #include "compiler/cstring.h"

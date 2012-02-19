@@ -29,6 +29,10 @@
 #include "modules/std/math/math.h"
 #include "types/nativetypes.h"
 
+#ifndef M_PI
+#define M_PI    3.14159265358979323846
+#endif
+
 namespace clever { namespace packages { namespace std {
 
 namespace math {
@@ -206,7 +210,11 @@ static CLEVER_FUNCTION(pow_int) {
 static CLEVER_FUNCTION(round) {
 	double value = CLEVER_ARG_DOUBLE(0);
 
+#ifdef CLEVER_MSVC
+	CLEVER_RETURN_DOUBLE((value > 0.0) ? ::floor(value + 0.5) : ::ceil(value - 0.5));
+#else
 	CLEVER_RETURN_DOUBLE(::round(value));
+#endif
 }
 
 /**

@@ -29,7 +29,11 @@
 #include <string>
 #include <vector>
 #include <list>
+#ifdef CLEVER_MSVC
+#include <unordered_map>
+#else
 #include <tr1/unordered_map>
+#endif
 #include "types/type.h"
 
 namespace clever {

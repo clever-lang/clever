@@ -26,7 +26,11 @@
 #ifndef CLEVER_PKGMANAGER_H
 #define CLEVER_PKGMANAGER_H
 
+#ifdef CLEVER_MSVC
+#include <unordered_map>
+#else
 #include <tr1/unordered_map>
+#endif
 #include "compiler/module.h"
 #include "compiler/scope.h"
 
