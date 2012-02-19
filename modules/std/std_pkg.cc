@@ -32,18 +32,28 @@ namespace clever { namespace packages {
  * Initializes Std package
  */
 void Std::init() {
+#ifdef HAVE_STD_IO
 	addModule(new std::IOModule);
+#endif
+#ifdef HAVE_STD_MATH
 	addModule(new std::Math);
+#endif
+#ifdef HAVE_STD_FILE
 	addModule(new std::File);
+#endif
+#ifdef HAVE_STD_OS
 	addModule(new std::OSModule);
+#endif
+#ifdef HAVE_STD_REFLECTION
 	addModule(new std::Reflection);
+#endif
+#ifdef HAVE_STD_NET
 	addModule(new std::NetModule);
-
-#ifdef HAVE_PCRECPP
+#endif
+#ifdef HAVE_STD_REGEX
 	addModule(new std::Regex);
 #endif
-
-#ifdef HAVE_FFI
+#ifdef HAVE_STD_FFI
 	addModule(new std::FFI);
 #endif
 }

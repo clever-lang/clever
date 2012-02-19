@@ -55,7 +55,7 @@ extern Type* CLEVER_OBJ_VAR;
 /**
  * Base class for value representation
  */
-class NO_INIT_VTABLE Value : public RefCounted {
+class Value : public RefCounted {
 public:
 	union ValueData {
 		int64_t l_value;

@@ -22,10 +22,6 @@ find_package(BISON)
 find_package(RE2C)
 find_package(PkgConfig)
 
-# Options
-# ---------------------------------------------------------------------------
-option(MODREGEX "enable the regex module" ON)
-option(MODFFI   "enable the ffi module" ON)
 
 # Some variables
 # ---------------------------------------------------------------------------
@@ -39,27 +35,7 @@ set(CLEVER_INCLUDE_DIRS)
 pkg_check_modules(PCRECPP libpcrecpp)
 if (PCRECPP_FOUND)
 	add_definitions(-DHAVE_PCRECPP)
-	if (MODREGEX)
-		list(APPEND CLEVER_INCLUDE_DIRS ${PCRECPP_INCLUDE_DIRS})
-		list(APPEND CLEVER_LIBRARIES ${PCRECPP_LIBRARIES})
-		#list(APPEND CLEVER_CFLAGS ${PCRECPP_CFLAGS})
-		#list(APPEND CLEVER_LDFLAGS ${PCRECPP_LDFLAGS})
-	endif (MODREGEX)
 endif (PCRECPP_FOUND)
-
-if (MODFFI)
-	if (NOT WIN32)
-		pkg_check_modules(FFI libffi)
-
-		if (FFI_FOUND)
-			add_definitions(-DHAVE_FFI)
-			list(APPEND CLEVER_INCLUDE_DIRS ${FFI_INCLUDE_DIRS})
-			list(APPEND CLEVER_LIBRARIES ${FFI_LIBRARIES} dl)
-			#list(APPEND CLEVER_CFLAGS ${FFI_CFLAGS})
-			#list(APPEND CLEVER_LDFLAGS ${FFI_LDFLAGS})
-		endif (FFI_FOUND)
-	endif (NOT WIN32)
-endif (MODFFI)
 
 # Environment checks
 if (WIN32)
@@ -79,15 +55,14 @@ if (MSVC)
 	add_definitions(-DCLEVER_MSVC)
 	add_definitions(-DCLEVER_MSVC_VERSION=${MSVC_VERSION})
 	add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-	list(APPEND CLEVER_LIBRARIES ws2_32)
 endif (MSVC)
 
 # Build environment
 # ---------------------------------------------------------------------------
 set(CMAKE_BUILD_TYPE        "Debug") # default to debug for now
 if (MSVC)
-	set(CMAKE_CXX_FLAGS         "/W4 /GR- /EHsc-")
-	set(CMAKE_CXX_FLAGS_DEBUG   "/Zi /D_DEBUG /DCLEVER_DEBUG /MTd")
+	set(CMAKE_CXX_FLAGS         "/W1 /wd4503 /GR- /EHsc-")
+	set(CMAKE_CXX_FLAGS_DEBUG   "/O1 /Zi /D_DEBUG /DCLEVER_DEBUG /MTd")
 	set(CMAKE_CXX_FLAGS_RELEASE "/O2 /DNDEBUG /MT")
 else (MSVC)
 	set(CMAKE_CXX_FLAGS         "-Wall -ansi -fno-rtti -fno-exceptions")
@@ -101,6 +76,7 @@ set_directory_properties(PROPERTIES
 
 # Modules
 # ---------------------------------------------------------------------------
+include(CMakeLists.modopt)
 add_subdirectory(modules/std)
 
 # Parser and Scanner
@@ -182,4 +158,8 @@ add_custom_target(run-mem-tests
 	COMMAND ./testrunner${CMAKE_EXECUTABLE_SUFFIX} -m;./tests
 	COMMENT "Running memory leak tests")
 add_dependencies(run-mem-tests testrunner)
+
+# Files to install
+# ---------------------------------------------------------------------------
+install(TARGETS clever RUNTIME DESTINATION bin)
 
