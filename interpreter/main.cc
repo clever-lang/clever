@@ -64,7 +64,7 @@ static void show_usage(void) {
 }
 
 int main(int argc, char *argv[]) {
-	clever::Interpreter clever;
+	clever::Interpreter clever(argc,argv);
 #ifdef CLEVER_DEBUG
 	bool dump_opcode = false;
 #endif

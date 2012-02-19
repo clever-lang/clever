@@ -113,7 +113,7 @@ private:
  */
 class Interpreter : public Driver {
 public:
-	Interpreter() { }
+	Interpreter(int argc, char** argv);
 
 #ifdef CLEVER_DEBUG
 	void execute(bool interactive, bool opcode_dump);

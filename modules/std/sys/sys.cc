@@ -79,6 +79,24 @@ static CLEVER_FUNCTION(getcwd) {
 	CLEVER_RETURN_STR(CSTRING(path ? path : ""));
 }
 
+/**
+ *String argv(Int i)
+ *Get i-th argv
+ */
+static CLEVER_FUNCTION(argv) {
+	int i = CLEVER_ARG_INT(0);
+	CLEVER_RETURN_STR(CSTRING((g_clever_argv)[i]));
+}
+
+/**
+ *Int argc()
+ *Get argc
+ */
+static CLEVER_FUNCTION(argc) {
+	CLEVER_RETURN_INT(g_clever_argc);
+}
+
+
 } // namespace os
 
 /**
@@ -97,6 +115,11 @@ void SYSModule::init() {
 		->addArg("var", CLEVER_STR);
 
 	addFunction(new Function("getcwd", &CLEVER_FUNC_NAME(getcwd), CLEVER_STR));
+
+	addFunction(new Function("argc", &CLEVER_FUNC_NAME(argc), CLEVER_INT));
+
+	addFunction(new Function("argv", &CLEVER_FUNC_NAME(argv), CLEVER_STR))
+		->addArg("i",CLEVER_INT);
 
 }
 
