@@ -144,7 +144,7 @@ private:
  */
 class NO_INIT_VTABLE Package {
 public:
-	enum { UNLOADED, LOADED, FULLY_LOADED };
+	enum PackageState { UNLOADED, LOADED, FULLY_LOADED };
 
 	Package(std::string name)
 		: m_state(UNLOADED), m_name(name) { }
@@ -192,7 +192,7 @@ public:
 	 */
 	virtual const char* getVersion() const { return NULL; }
 private:
-	bool m_state;
+	PackageState m_state;
 	const std::string& m_name;
 	ModuleMap m_modules;
 
