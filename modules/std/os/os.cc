@@ -24,10 +24,19 @@
  */
 
 #include <cstdlib>
+#ifndef CLEVER_WIN32
 #include <dirent.h>
+#else
+#include <direct.h>
+#endif
 #include "compiler/value.h"
 #include "modules/std/os/os.h"
 #include "types/nativetypes.h"
+
+#ifdef CLEVER_WIN32
+#include <windows.h>
+#define PATH_MAX MAX_PATH
+#endif
 
 namespace clever { namespace packages { namespace std {
 
@@ -46,7 +55,7 @@ static CLEVER_FUNCTION(system) {
  * Sets an environment variable
  */
 static CLEVER_FUNCTION(putenv) {
-	::putenv(const_cast<char*>(CLEVER_ARG_STR(0).c_str()));
+    ::putenv(const_cast<char*>(CLEVER_ARG_STR(0).c_str()));
 }
 
 /**
@@ -65,7 +74,7 @@ static CLEVER_FUNCTION(getenv) {
  */
 static CLEVER_FUNCTION(getcwd) {
 	char temp[PATH_MAX];
-	const char* path = ::getcwd(temp, PATH_MAX);
+    const char* path = ::getcwd(temp, PATH_MAX);
 
 	CLEVER_RETURN_STR(CSTRING(path ? path : ""));
 }

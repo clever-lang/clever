@@ -27,11 +27,15 @@
 #include <fstream>
 #include <errno.h>
 #include <fcntl.h>
-#include <sys/poll.h>
 #include "compiler/compiler.h"
 #include "compiler/cstring.h"
 #include "modules/std/net/tcpsocket.h"
 #include "types/nativetypes.h"
+
+// Win32 workarounds.
+#ifdef CLEVER_WIN32
+#define errno WSAGetLastError()
+#endif
 
 namespace clever { namespace packages { namespace std { namespace net {
 
@@ -79,19 +83,20 @@ CLEVER_METHOD(TcpSocket::setPort) {
 	sv->remote.sin_port = htons(CLEVER_ARG_INT(0));
 }
 
+CLEVER_METHOD(TcpSocket::setTimeout) {
+	SocketValue* sv = CLEVER_GET_VALUE(SocketValue*, value);
+
+	sv->timeout = (CLEVER_ARG_INT(0) * 1000);
+}
+
 CLEVER_METHOD(TcpSocket::connect) {
 	SocketValue* sv = CLEVER_GET_VALUE(SocketValue*, value);
-	int socketflags;
 
 	if (::connect(sv->socket, (struct sockaddr*)&sv->remote, sizeof(sv->remote)) != 0) {
 		// @TODO: change this.
+
 		::std::cerr << "connect() failed: " << (errno) << " - " << ::std::string(strerror(errno)) << ::std::endl;
 	}
-
-	// Change the socket to non-blocking mode.
-	socketflags = fcntl(sv->socket, F_GETFL);
-	socketflags |= O_NONBLOCK;
-	fcntl(sv->socket, F_SETFL, socketflags);
 }
 
 CLEVER_METHOD(TcpSocket::receive) {
@@ -116,18 +121,38 @@ CLEVER_METHOD(TcpSocket::send) {
 
 CLEVER_METHOD(TcpSocket::poll) {
 	SocketValue* sv = CLEVER_GET_VALUE(SocketValue*, value);
-	struct pollfd fds[1];
+	struct timeval timeout;
+	struct fd_set readset;
+	int res;
 
-	// Prepare and execute the polling.
-	memset(fds, 0, sizeof(fds));
-	fds[0].fd = sv->socket;
-	fds[0].events = POLLIN;
-	::poll(fds, 1, 0);
-
-	if (fds[0].revents == POLLIN) {
-		CLEVER_RETURN_BOOL(true);
+	// Set the minimum interval.
+	if (sv->timeout > 1000000) {
+		timeout.tv_sec = (sv->timeout / 1000000);
+		timeout.tv_usec = (sv->timeout % 1000000);
 	} else {
+		timeout.tv_sec = 0;
+		timeout.tv_usec = sv->timeout;
+	}
+
+	// Prepare the fd_set.
+	FD_ZERO(&readset);
+	FD_SET(sv->socket, &readset);
+	
+	// Try the select().
+	res = select(sv->socket + 1, &readset, NULL, NULL, &timeout);
+	if (res == 0) {
+		// Timeout.
 		CLEVER_RETURN_BOOL(false);
+	} else if (res > 0) {
+		// We got our socket back.
+		if (FD_ISSET(sv->socket, &readset)) {
+			CLEVER_RETURN_BOOL(true);
+		} else {
+			CLEVER_RETURN_BOOL(false);
+		}
+	} else {
+		// @TODO: change this.
+		::std::cerr << "select() failed: " << (errno) << " - " << ::std::string(strerror(errno)) << ::std::endl;
 	}
 }
 
@@ -174,6 +199,11 @@ void TcpSocket::init() {
 			->addArg("port", CLEVER_INT)
 	);
 
+	addMethod(
+		(new Method("setTimeout", (MethodPtr)&TcpSocket::setTimeout, CLEVER_VOID))
+			->addArg("timeout", CLEVER_INT)
+	);
+
 	addMethod(new Method("receive", (MethodPtr)&TcpSocket::receive, CLEVER_STR));
 
 	addMethod(
@@ -186,6 +216,15 @@ void TcpSocket::init() {
 	addMethod(new Method("connect", (MethodPtr)&TcpSocket::connect, tcpsock));
 
 	addMethod(new Method("toString", (MethodPtr)&TcpSocket::toString, CLEVER_STR));
+
+	// Windows socket initialization.
+#ifdef CLEVER_WIN32
+	WSADATA wsaData;
+	int res = WSAStartup(MAKEWORD(2, 2), &wsaData);
+	if (res != NO_ERROR) {
+		::std::cerr << "WSAStartup() failed: " << res << ::std::endl;
+	}
+#endif
 }
 
 DataValue* TcpSocket::allocateValue() const {

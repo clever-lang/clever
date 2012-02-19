@@ -30,7 +30,11 @@
 #include <vector>
 #include <list>
 #include <map>
+#ifdef CLEVER_MSVC
+#include <unordered_map>
+#else
 #include <tr1/unordered_map>
+#endif
 #include "compiler/clever.h"
 #include "compiler/function.h"
 #include "compiler/method.h"

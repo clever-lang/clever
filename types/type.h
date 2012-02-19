@@ -28,7 +28,11 @@
 
 #include <cstring>
 #include <vector>
+#ifdef CLEVER_MSVC
+#include <unordered_map>
+#else
 #include <tr1/unordered_map>
+#endif
 #include <map>
 #include "compiler/cstring.h"
 #include "compiler/method.h"

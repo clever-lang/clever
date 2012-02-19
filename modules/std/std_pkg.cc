@@ -38,7 +38,10 @@ void Std::init() {
 	addModule(new std::OSModule);
 	addModule(new std::Reflection);
 	addModule(new std::NetModule);
+
+#ifdef HAVE_PCRECPP
 	addModule(new std::Regex);
+#endif
 
 #ifdef HAVE_FFI
 	addModule(new std::FFI);
