@@ -63,7 +63,7 @@ typedef std::pair<const CString*, Value*> ConstPair;
  */
 class NO_INIT_VTABLE Module {
 public:
-	enum { UNLOADED, LOADED };
+	enum ModuleState { UNLOADED, LOADED };
 
 	Module(std::string name)
 		: m_state(UNLOADED), m_name(name) { }
@@ -126,7 +126,7 @@ public:
 	virtual const char* getVersion() const { return NULL; }
 private:
 	/* Module state */
-	bool m_state;
+	ModuleState m_state;
 	/* Module name */
 	const std::string m_name;
 	/* Module function list */

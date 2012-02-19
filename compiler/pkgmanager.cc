@@ -24,9 +24,9 @@
  */
 
 #include <iostream>
-#include "pkgmanager.h"
-#include "value.h"
-#include "cstring.h"
+#include "compiler/pkgmanager.h"
+#include "compiler/value.h"
+#include "compiler/cstring.h"
 #include "modules/std/std_pkg.h"
 
 namespace clever {
@@ -55,14 +55,13 @@ void PackageManager::loadPackage(Scope* scope, const CString* const package) {
 		 * Initializes the package
 		 */
 		it->second->init();
-		{
-			ModuleMap& modules = it->second->getModules();
-			ModuleMap::const_iterator mit = modules.begin(), end = modules.end();
 
-			while (mit != end) {
-				loadModule(scope, package, mit->second, NULL);
-				++mit;
-			}
+		ModuleMap& modules = it->second->getModules();
+		ModuleMap::const_iterator mit = modules.begin(), end = modules.end();
+
+		while (mit != end) {
+			loadModule(scope, package, mit->second, NULL);
+			++mit;
 		}
 		/**
 		 * Sets the package state to fully loaded
@@ -88,53 +87,53 @@ void PackageManager::loadModule(Scope* scope, const CString* const package,
 	 * Initializes the module
 	 */
 	module->init();
-	{
-		const std::string prefix_name = alias ?
-			alias->str() + "::" : package->str() + "." + module->getName() + "::";
 
-		FunctionMap& funcs = module->getFunctions();
-		FunctionMap::const_iterator it = funcs.begin(), end = funcs.end();
+	const std::string prefix_name = alias ?
+		alias->str() + "::" : package->str() + "." + module->getName() + "::";
 
-		/**
-		 * Inserts the function into the symbol table
-		 */
-		while (it != end) {
-			CallableValue* fvalue = new CallableValue(CSTRING(it->first));
+	FunctionMap& funcs = module->getFunctions();
+	FunctionMap::const_iterator it = funcs.begin(), end = funcs.end();
 
-			fvalue->setHandler(it->second);
+	/**
+	 * Inserts the function into the symbol table
+	 */
+	while (it != end) {
+		CallableValue* fvalue = new CallableValue(CSTRING(it->first));
 
-			scope->pushValue(CSTRING(prefix_name + *fvalue->getName()), fvalue);
-			scope->pushValue(fvalue->getName(), fvalue);
-			fvalue->addRef();
-			++it;
-		}
+		fvalue->setHandler(it->second);
 
-		ClassMap& classes = module->getClassTable();
-		ClassMap::iterator itc = classes.begin(), endc = classes.end();
-
-		/**
-		 * Inserts all classes into the symbol table
-		 */
-		while (itc != endc) {
-			g_scope.pushType(CSTRING(prefix_name + *itc->first), itc->second);
-			g_scope.pushType(itc->first, itc->second);
-			itc->second->addRef();
-			
-			itc->second->init();
-			++itc;
-		}
-
-		ConstMap& constants = module->getConstants();
-		ConstMap::iterator itcs = constants.begin(), endcs = constants.end();
-
-		/**
-		 * Inserts all constants into the symbol table
-		 */
-		while (itcs != endcs) {
-			g_scope.pushValue(CSTRING(prefix_name + itcs->first->str()), itcs->second);
-			++itcs;
-		}
+		scope->pushValue(CSTRING(prefix_name + *fvalue->getName()), fvalue);
+		scope->pushValue(fvalue->getName(), fvalue);
+		fvalue->addRef();
+		++it;
 	}
+
+	ClassMap& classes = module->getClassTable();
+	ClassMap::iterator itc = classes.begin(), endc = classes.end();
+
+	/**
+	 * Inserts all classes into the symbol table
+	 */
+	while (itc != endc) {
+		g_scope.pushType(CSTRING(prefix_name + *itc->first), itc->second);
+		g_scope.pushType(itc->first, itc->second);
+		itc->second->addRef();
+
+		itc->second->init();
+		++itc;
+	}
+
+	ConstMap& constants = module->getConstants();
+	ConstMap::iterator itcs = constants.begin(), endcs = constants.end();
+
+	/**
+	 * Inserts all constants into the symbol table
+	 */
+	while (itcs != endcs) {
+		g_scope.pushValue(CSTRING(prefix_name + itcs->first->str()), itcs->second);
+		++itcs;
+	}
+
 	/**
 	 * Sets the module state to loaded
 	 */
@@ -148,32 +147,34 @@ void PackageManager::loadModule(Scope* scope, const CString* const package,
 	const CString* const module, const CString* const alias) {
 	PackageMap::const_iterator it = m_packages.find(package);
 
-	if (it != m_packages.end()) {
-		/**
-		 * Checks if the package is unloaded, in this case initialize it
-		 */
-		if (it->second->isUnloaded()) {
-			it->second->init();
-		}
-		/**
-		 * Check if the package already has been fully loaded
-		 */
-		if (!it->second->isFullyLoaded()) {
-			ModuleMap& modules = it->second->getModules();
-			ModuleMap::const_iterator it_mod = modules.find(module);
-
-			/**
-			 * Loads the module if it has been found
-			 */
-			if (it_mod != modules.end()) {
-				loadModule(scope, package, it_mod->second, alias);
-			}
-		}
-		/**
-		 * Change the package state to loaded
-		 */
-		it->second->setLoaded();
+	if (it == m_packages.end()) {
+		return;
 	}
+
+	/**
+	 * Checks if the package is unloaded, in this case initialize it
+	 */
+	if (it->second->isUnloaded()) {
+		it->second->init();
+	}
+	/**
+	 * Check if the package already has been fully loaded
+	 */
+	if (!it->second->isFullyLoaded()) {
+		ModuleMap& modules = it->second->getModules();
+		ModuleMap::const_iterator it_mod = modules.find(module);
+
+		/**
+		 * Loads the module if it has been found
+		 */
+		if (it_mod != modules.end()) {
+			loadModule(scope, package, it_mod->second, alias);
+		}
+	}
+	/**
+	 * Change the package state to loaded
+	 */
+	it->second->setLoaded();
 }
 
 /**
