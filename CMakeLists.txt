@@ -55,7 +55,6 @@ if (MSVC)
 	add_definitions(-DCLEVER_MSVC)
 	add_definitions(-DCLEVER_MSVC_VERSION=${MSVC_VERSION})
 	add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-	list(APPEND CLEVER_LIBRARIES ws2_32)
 endif (MSVC)
 
 # Build environment
