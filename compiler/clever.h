@@ -199,14 +199,6 @@ extern jmp_buf fatal_error;
 # define UNEXPECTED(cond) (cond)
 #endif
 
-#ifdef __APPLE__
-# define CLEVER_APPLE
-#elif defined(_WIN32)
-# define CLEVER_WIN32
-#else
-# define CLEVER_UNIX
-#endif
-
 /**
  * Thread-local storage
  */
