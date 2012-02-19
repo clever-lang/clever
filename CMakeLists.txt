@@ -21,6 +21,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} .)
 find_package(BISON)
 find_package(RE2C)
 find_package(PkgConfig)
+find_package(CLEVER)
 
 
 # Some variables

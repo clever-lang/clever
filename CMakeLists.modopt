@@ -5,17 +5,19 @@
 # CMakeLists.modopt - Module options and other stuff
 #
 
-# Options
+# Modules
 # ---------------------------------------------------------------------------
-#      Variable               Doc String                           Enabled
-option(MOD_STD_REGEX          "enable the regex module"                ON )
-option(MOD_STD_FFI            "enable the ffi module"                  ON )
-option(MOD_STD_FILE           "enable the file module"                 ON )
-option(MOD_STD_IO             "enable the io module"                   ON )
-option(MOD_STD_MATH           "enable the math module"                 ON )
-option(MOD_STD_NET            "enable the net module"                  ON )
-option(MOD_STD_OS             "enable the os module"                   ON )
-option(MOD_STD_REFLECTION     "enable the reflection module"           ON )
+clever_add_module(std_regex      ON  "enable the regex module"      "")
+clever_add_module(std_ffi        ON  "enable the ffi module"        "")
+
+# Simple modules
+clever_add_simple_module(std_file       ON  "enable the file module"       "")
+clever_add_simple_module(std_io         ON  "enable the io module"         "")
+clever_add_simple_module(std_math       ON  "enable the math module"       "")
+clever_add_simple_module(std_net        ON  "enable the net module"        "")
+clever_add_simple_module(std_os         ON  "enable the os module"         "")
+clever_add_simple_module(std_reflection ON  "enable the reflection module" "")
+#clever_add_simple_module(std_reflection ON "enable the reflection module" "")
 
 # std.regex
 if (MOD_STD_REGEX)
@@ -23,87 +25,33 @@ if (MOD_STD_REGEX)
 		add_definitions(-DHAVE_MOD_STD_REGEX)
 		list(APPEND CLEVER_INCLUDE_DIRS ${PCRECPP_INCLUDE_DIRS})
 		list(APPEND CLEVER_LIBRARIES ${PCRECPP_LIBRARIES})
-		message(STATUS "[std.regex] enabled.")
 	else (PCRECPP_FOUND)
-		message(STATUS "[std.regex] libpcrecpp not found. disabling.")
+		clever_module_msg(std_regex "libpcrecpp not found. disabling.")
 		set(MOD_STD_REGEX OFF)
 	endif (PCRECPP_FOUND)
-else (MOD_STD_REGEX)
-	message(STATUS "[std.regex] disabled.")
 endif (MOD_STD_REGEX)
+
+clever_module_msg(std_regex ${MOD_STD_REGEX})
 
 # std.ffi
 if (MOD_STD_FFI)
 	if (MSVC)
-		message(STATUS "[std.ffi] not supported under msvc. disabling.")
+		clever_module_msg(std_ffi "not supported under msvc. disabling.")
 		set(MOD_STD_FFI OFF)
 	else (MSVC)
-		pkg_check_modules(FFI libffi)
+		pkg_check_modules(FFI libffi QUIET)
 
 		if (FFI_FOUND)
 			add_definitions(-DHAVE_FFI)
 			add_definitions(-DHAVE_MOD_STD_FFI)
 			list(APPEND CLEVER_INCLUDE_DIRS ${FFI_INCLUDE_DIRS})
 			list(APPEND CLEVER_LIBRARIES ${FFI_LIBRARIES} dl)
-			message(STATUS "[std.ffi] enabled.")
 		else (FFI_FOUND)
-			message(STATUS "[std.ffi] libffi not found. disabling.")
+			clever_module_msg(std_ffi "libffi not found. disabling.")
+			set(MOD_STD_FFI OFF)
 		endif (FFI_FOUND)
 	endif (MSVC)
-else (MOD_STD_FFI)
-	message(STATUS "[std.ffi] disabled.")
 endif (MOD_STD_FFI)
 
-# std.file
-if (MOD_STD_FILE)
-	add_definitions(-DHAVE_MOD_STD_FILE)
-	message(STATUS "[std.file] enabled.")
-else (MOD_STD_FILE)
-	message(STATUS "[std.file] disabled.")
-endif (MOD_STD_FILE)
-
-# std.io
-if (MOD_STD_IO)
-	add_definitions(-DHAVE_MOD_STD_IO)
-	message(STATUS "[std.io] enabled.")
-else (MOD_STD_IO)
-	message(STATUS "[std.io] disabled.")
-endif (MOD_STD_IO)
-
-# std.math
-if (MOD_STD_MATH)
-	add_definitions(-DHAVE_MOD_STD_MATH)
-	message(STATUS "[std.math] enabled.")
-else (MOD_STD_MATH)
-	message(STATUS "[std.math] disabled.")
-endif (MOD_STD_MATH)
-
-# std.net
-if (MOD_STD_NET)
-	if (MSVC)
-		list(APPEND CLEVER_LIBRARIES ws2_32)
-	endif (MSVC)
-
-	add_definitions(-DHAVE_MOD_STD_NET)
-	message(STATUS "[std.net] enabled.")
-else (MOD_STD_NET)
-	message(STATUS "[std.net] disabled.")
-endif (MOD_STD_NET)
-
-# std.os
-if (MOD_STD_OS)
-	add_definitions(-DHAVE_MOD_STD_OS)
-	message(STATUS "[std.os] enabled.")
-else (MOD_STD_OS)
-	message(STATUS "[std.os] disabled.")
-endif (MOD_STD_OS)
-
-# std.reflection
-if (MOD_STD_REFLECTION)
-	add_definitions(-DHAVE_MOD_STD_REFLECTION)
-	message(STATUS "[std.reflection] enabled.")
-else (MOD_STD_REFLECTION)
-	message(STATUS "[std.reflection] disabled.")
-endif (MOD_STD_REFLECTION)
-
+clever_module_msg(std_ffi ${MOD_STD_FFI})
 
