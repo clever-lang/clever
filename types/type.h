@@ -41,7 +41,7 @@
 
 namespace clever {
 
-extern THREAD_TLS const CString* g_cstring_cached_ptrs[24];
+extern const CString* g_cstring_cached_ptrs[24];
 
 void init_type_cached_ptrs();
 

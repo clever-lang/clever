@@ -27,7 +27,7 @@
 
 namespace clever {
 
-THREAD_TLS const CString* g_cstring_cached_ptrs[24];
+const CString* g_cstring_cached_ptrs[24];
 
 // Cached CString* pointers related to Type operators
 void init_type_cached_ptrs() {
