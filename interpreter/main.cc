@@ -75,6 +75,8 @@ int main(int argc, char **argv) {
 		return 0;
 	}
 
+	int inc_arg=0;
+
 	for (int i = 1; i < argc; ++i) {
 		// Look for general options, then code options and finally debug options.
 		if (argv[i] == std::string("-h")) {
@@ -107,11 +109,12 @@ int main(int argc, char **argv) {
 #endif
 		} else if (argv[i] == std::string("-f")) {
 			MORE_ARG();
+			inc_arg++;
 			clever.parseFile(argv[i]);
 			break;
 		} else if (argv[i] == std::string("-i")) {
 			std::string input_line;
-
+			inc_arg++;
 			while (std::cin) {
 				getline(std::cin, input_line);
 				clever.parseStr(input_line + '\n', false);
@@ -121,16 +124,20 @@ int main(int argc, char **argv) {
   			return 0;
 		} else if (argv[i] == std::string("-r")) {
 			MORE_ARG();
+			inc_arg++;
 			clever.parseStr(argv[i], false);
 			break;
 		} else if (argv[i] == std::string("-qr")) {
 			MORE_ARG();
+			inc_arg++;
 			clever.parseStr(argv[i], true);
 			break;
 #ifdef CLEVER_DEBUG
 		} else if (argv[i] == std::string("-p")) {
+			inc_arg++;
 			clever.setTraceParsing(true);
 		} else if (argv[i] == std::string("-d")) {
+			inc_arg++;
 			dump_opcode= true;
 #endif
 		} else {
@@ -138,6 +145,9 @@ int main(int argc, char **argv) {
 			exit(1);
 		}
 	}
+
+	argc-=inc_arg+1;
+	argv+=inc_arg+1;
 
 #ifdef CLEVER_DEBUG
 	clever.execute(false, dump_opcode);
