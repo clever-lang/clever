@@ -1,6 +1,6 @@
 Testing getcwd() function
 ==CODE==
-import std.os;
+import std.sys;
 import std.io;
 println(getcwd());
 ==RESULT==
