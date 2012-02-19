@@ -26,13 +26,14 @@ if (MOD_STD_REGEX)
 		message(STATUS "[std.regex] enabled.")
 	else (PCRECPP_FOUND)
 		message(STATUS "[std.regex] libpcrecpp not found. disabling.")
+		set(MOD_STD_REGEX OFF)
 	endif (PCRECPP_FOUND)
 else (MOD_STD_REGEX)
 	message(STATUS "[std.regex] disabled.")
 endif (MOD_STD_REGEX)
 
 # std.ffi
-if (MOD_STD_FFI AND NOT WIN32)
+if (MOD_STD_FFI AND NOT MSVC)
 	pkg_check_modules(FFI libffi)
 
 	if (FFI_FOUND)
@@ -47,9 +48,10 @@ if (MOD_STD_FFI AND NOT WIN32)
 		message(STATUS "[std.ffi] libffi not found. disabling.")
 		set(MOD_STD_FFI OFF)
 	endif (FFI_FOUND)
-else (MOD_STD_FFI AND NOT WIN32)
+else (MOD_STD_FFI AND NOT MSVC)
 	message(STATUS "[std.ffi] disabled.")
-endif (MOD_STD_FFI AND NOT WIN32)
+	set(MOD_STD_FFI OFF)
+endif (MOD_STD_FFI AND NOT MSVC)
 
 # std.file
 if (MOD_STD_FILE)
