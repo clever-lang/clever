@@ -63,8 +63,8 @@ static void show_usage(void) {
 #endif
 }
 
-int main(int argc, char *argv[]) {
-	clever::Interpreter clever(argc,argv);
+int main(int argc, char **argv) {
+	clever::Interpreter clever(&argc,&argv);
 #ifdef CLEVER_DEBUG
 	bool dump_opcode = false;
 #endif

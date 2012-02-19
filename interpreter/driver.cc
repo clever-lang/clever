@@ -37,10 +37,10 @@ namespace clever {
 
 Driver::ScannerStack Driver::s_scanners;
 
-int g_clever_argc;
-char** g_clever_argv;
+int* g_clever_argc;
+char*** g_clever_argv;
 
-Interpreter::Interpreter(int argc, char** argv) {
+Interpreter::Interpreter(int* argc, char*** argv) {
 	g_clever_argc = argc;
 	g_clever_argv = argv;
 }
