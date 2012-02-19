@@ -25,9 +25,9 @@ if (MOD_STD_NET)
 	list(APPEND CLEVER_MODULES net)
 endif (MOD_STD_NET)
 
-if (MOD_STD_OS)
-	list(APPEND CLEVER_MODULES os)
-endif (MOD_STD_OS)
+if (MOD_STD_SYS)
+	list(APPEND CLEVER_MODULES sys)
+endif (MOD_STD_SYS)
 
 if (MOD_STD_REFLECTION)
 	list(APPEND CLEVER_MODULES reflection)

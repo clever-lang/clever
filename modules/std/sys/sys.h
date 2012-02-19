@@ -23,27 +23,27 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef CLEVER_STD_OS_H
-#define CLEVER_STD_OS_H
+#ifndef CLEVER_STD_SYS_H
+#define CLEVER_STD_SYS_H
 
 #include "compiler/module.h"
 
 namespace clever { namespace packages { namespace std {
 
-class OSModule : public Module {
+class SYSModule : public Module {
 public:
-	OSModule()
-		: Module("os") { }
+	SYSModule()
+		: Module("sys") { }
 
-	~OSModule() { }
+	~SYSModule() { }
 
 	void init();
 private:
-	DISALLOW_COPY_AND_ASSIGN(OSModule);
+	DISALLOW_COPY_AND_ASSIGN(SYSModule);
 };
 
-extern Module* g_os_module;
+extern Module* g_sys_module;
 
 }}} // clever::packages::std
 
-#endif // CLEVER_STD_OS_H
+#endif // CLEVER_STD_SYS_H

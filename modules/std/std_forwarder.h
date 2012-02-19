@@ -32,8 +32,8 @@
 #ifdef HAVE_MOD_STD_MATH
 #include "modules/std/math/math.h"
 #endif
-#ifdef HAVE_MOD_STD_OS
-#include "modules/std/os/os.h"
+#ifdef HAVE_MOD_STD_SYS
+#include "modules/std/sys/sys.h"
 #endif
 #ifdef HAVE_MOD_STD_NET
 #include "modules/std/net/net.h"
