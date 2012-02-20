@@ -5,6 +5,11 @@ if (MOD_WEB_CGI)
 	list(APPEND CLEVER_MODULES cgi)
 endif (MOD_WEB_CGI)
 
+if (MOD_WEB_HTTP)
+	list(APPEND CLEVER_MODULES http)
+endif (MOD_WEB_HTTP)
+
+
 foreach (module ${CLEVER_MODULES})
 	add_subdirectory(${module})
 endforeach (module)

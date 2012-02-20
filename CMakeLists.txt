@@ -47,14 +47,13 @@ else (NOT MSVC)
 			list(APPEND PCRECPP_LIBRARIES ${PCRECPP_LIBS_PCRECPP})
 			set(PCRECPP_FOUND TRUE)
 			add_definitions(-DPCRE_STATIC)
-		endif (PCRECPP_INCLUDE_DIRS AND PCRECPP_LIBS_PCRE AND PCRECPP_LIBS_PCRECPP) 
+		endif (PCRECPP_INCLUDE_DIRS AND PCRECPP_LIBS_PCRE AND PCRECPP_LIBS_PCRECPP)
 	endif (PCRECPP_DIR)
 endif (NOT MSVC)
 
 if (PCRECPP_FOUND)
 	add_definitions(-DHAVE_PCRECPP)
 endif (PCRECPP_FOUND)
-
 
 # Environment checks
 if (WIN32)
@@ -94,10 +93,6 @@ set_directory_properties(PROPERTIES
 	ADDITIONAL_MAKE_CLEAN_FILES
 	"interpreter/stack.hh;interpreter/parser.cc;interpreter/parser.hh;interpreter/location.hh;interpreter/position.hh;interpreter/scanner.cc")
 
-# Module options
-# ---------------------------------------------------------------------------
-include(CMakeLists.modopt)
-
 # Parser and Scanner
 # ---------------------------------------------------------------------------
 BISON_TARGET(CleverParser interpreter/parser.y interpreter/parser.cc)
@@ -105,6 +100,10 @@ RE2C_TARGET(CleverScanner interpreter/scanner.re interpreter/scanner.cc
 	COMPILE_FLAGS "--case-insensitive -bc")
 
 ADD_RE2C_BISON_DEPENDENCY(CleverScanner CleverParser)
+
+# Module options
+# ---------------------------------------------------------------------------
+include(CMakeLists.modopt)
 
 # Main executable
 # ---------------------------------------------------------------------------
@@ -134,30 +133,15 @@ add_executable(clever
 	vm/opcode.cc
 	${EXTRA_CLEVER_FILES}
 )
-add_dependencies(clever modules_std modules_web)
-target_link_libraries(clever modules_std modules_web)
-
-#set(clvcflags "")
-#set(clvldflags "")
-#foreach(flag ${CLEVER_CFLAGS})
-#	set(clvcflags "${clvcflags} ${flag}")
-#endforeach(flag)
-#foreach(flag ${CLEVER_LDFLAGS})
-#	set(clvcflags "${clvldflags} ${flag}")
-#endforeach(flag)
-#
-#set_target_properties(clever
-#	PROPERTIES
-#	COMPILE_FLAGS "${clvcflags}"
-#	LINK_FLAGS    "${clvldflags}"
-#)
-include_directories(${CLEVER_INCLUDE_DIRS})
 target_link_libraries(clever ${CLEVER_LIBRARIES})
+include_directories(${CLEVER_INCLUDE_DIRS})
 
-# Modules
+# Module trees
 # ---------------------------------------------------------------------------
 add_subdirectory(modules/std)
 add_subdirectory(modules/web)
+add_dependencies(clever modules_std modules_web)
+target_link_libraries(clever modules_std modules_web)
 
 # Test runner
 # ---------------------------------------------------------------------------
@@ -186,6 +170,12 @@ add_dependencies(run-mem-tests testrunner)
 # Files to install
 # ---------------------------------------------------------------------------
 install(TARGETS clever RUNTIME DESTINATION bin)
+
+# Files to delete
+# ---------------------------------------------------------------------------
+set_directory_properties(PROPERTIES
+	ADDITIONAL_MAKE_CLEAN_FILES
+	"interpreter/stack.hh;interpreter/parser.cc;interpreter/parser.hh;interpreter/location.hh;interpreter/position.hh;interpreter/scanner.cc")
 
 # Packaging
 # ---------------------------------------------------------------------------

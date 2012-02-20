@@ -92,6 +92,9 @@ public:
 
 	/* Tracing */
 	void setTraceParsing(bool trace) { m_trace_parsing = trace; }
+
+	/* Scanners stack */
+	static ScannerStack s_scanners;
 protected:
 	/* Indicates if it's a file is being parsed */
 	bool m_is_file;
@@ -102,8 +105,6 @@ protected:
 	/* Compiler */
 	Compiler m_compiler;
 private:
-	/* Scanners stack */
-	static ScannerStack s_scanners;
 
 	DISALLOW_COPY_AND_ASSIGN(Driver);
 };
