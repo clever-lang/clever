@@ -32,6 +32,7 @@
 #include <tr1/unordered_map>
 #endif
 #include "compiler/clever.h"
+#include <iostream>
 
 /**
  * Returns the CString* pointer to a string
@@ -94,6 +95,27 @@ namespace std {
 namespace std { namespace tr1 {
 #endif
 
+/**
+ * Mersenne prime hash implementation for std::string on Windows
+ */
+#ifdef CLEVER_MSVC
+
+template <>
+struct hash<const std::string*> : public unary_function<const std::string*, size_t> {
+public:
+	size_t operator()(const std::string* s) const {
+		size_t result = 2166136261U;
+		std::string::const_iterator end = s->end();
+
+		for (std::string::const_iterator it = s->begin(); it != end; ++it) {
+			result = 127 * result + static_cast<unsigned char>(*it);
+		}
+		return result;
+	}
+};
+
+#endif
+
 template <>
 struct hash<const clever::CString*> : public unary_function<const clever::CString*, size_t> {
 public:
@@ -132,7 +154,7 @@ public:
 	}
 
 	const CString* intern(const std::string& needle) {
-		IdType id = std::tr1::hash<std::string>()(needle);
+		IdType id = std::tr1::hash<const std::string*>()(&needle);
 		CStringTableBase::const_iterator it(m_map.find(id));
 
 		if (it == m_map.end()) {
