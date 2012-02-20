@@ -46,6 +46,8 @@ public:
 	 */
 	static CLEVER_METHOD(constructor);
 	static CLEVER_METHOD(getStr);
+	static CLEVER_METHOD(getInt);
+	static CLEVER_METHOD(getDouble);
 	
 private:
 	DISALLOW_COPY_AND_ASSIGN(Cgi);

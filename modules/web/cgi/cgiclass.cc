@@ -51,6 +51,30 @@ CLEVER_METHOD(Cgi::getStr) {
 	CLEVER_RETURN_STR(CSTRING("<>"));
 }
 
+CLEVER_METHOD(Cgi::getInt) {
+	CgiValue* sv = CLEVER_GET_VALUE(CgiValue*, value);
+	
+	cgicc::form_iterator name = sv->cgi.getElement(CLEVER_ARG_STR(0));
+	if(name != sv->cgi.getElements().end()) {
+		CLEVER_RETURN_INT(name->getIntegerValue());
+		return;
+	}
+
+	CLEVER_RETURN_INT(0);
+}
+
+CLEVER_METHOD(Cgi::getDouble) {
+	CgiValue* sv = CLEVER_GET_VALUE(CgiValue*, value);
+	
+	cgicc::form_iterator name = sv->cgi.getElement(CLEVER_ARG_STR(0));
+	if(name != sv->cgi.getElements().end()) {
+		CLEVER_RETURN_DOUBLE(name->getDoubleValue());
+		return;
+	}
+
+	CLEVER_RETURN_DOUBLE(0.0);
+}
+
 
 void Cgi::init() {
 	const Type* cgiclass = CLEVER_TYPE("Cgi");
@@ -59,6 +83,16 @@ void Cgi::init() {
 
 	addMethod(
 		(new Method("getStr", (MethodPtr)&Cgi::getStr, CLEVER_STR))
+			->addArg("name", CLEVER_STR)
+	);
+
+	addMethod(
+		(new Method("getInt", (MethodPtr)&Cgi::getInt, CLEVER_INT))
+			->addArg("name", CLEVER_STR)
+	);
+
+	addMethod(
+		(new Method("getDouble", (MethodPtr)&Cgi::getDouble, CLEVER_DOUBLE))
 			->addArg("name", CLEVER_STR)
 	);
 	
