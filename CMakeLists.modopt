@@ -80,7 +80,7 @@ endif (MOD_WEB_CGI)
 clever_module_msg(web_cgi ${MOD_WEB_CGI})
 
 
-# web.cgi
+# web.http
 if (MOD_WEB_HTTP)
 	find_library(CGICC_LIBRARIES cgicc)
 
@@ -96,7 +96,7 @@ if (MOD_WEB_HTTP)
 		list(APPEND CLEVER_INCLUDE_DIRS ${CGICC_INCLUDE_DIRS})
 		list(APPEND CLEVER_LIBRARIES ${CGICC_LIBRARIES})
 	else (CGICC_FOUND)
-		clever_module_msg(web_cgi "libcgicc not found. disabling.")
+		clever_module_msg(web_http "libcgicc not found. disabling.")
 		set(MOD_WEB_HTTP OFF)
 	endif (CGICC_FOUND)
 endif (MOD_WEB_HTTP)
