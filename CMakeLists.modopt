@@ -14,7 +14,7 @@ clever_add_module(std_ffi        ON  "enable the ffi module"        "")
 clever_add_simple_module(std_file       ON  "enable the file module"       "")
 clever_add_simple_module(std_io         ON  "enable the io module"         "")
 clever_add_simple_module(std_math       ON  "enable the math module"       "")
-clever_add_simple_module(std_net        ON  "enable the net module"        "")
+clever_add_module(std_net        ON  "enable the net module"        "")
 clever_add_simple_module(std_sys        ON  "enable the sys module"        "")
 clever_add_simple_module(std_reflection ON  "enable the reflection module" "")
 
@@ -54,3 +54,14 @@ endif (MOD_STD_FFI)
 
 clever_module_msg(std_ffi ${MOD_STD_FFI})
 
+# std.net
+if (MOD_STD_NET)
+	if (MSVC)
+		list(APPEND CLEVER_LIBRARIES ws2_32)
+	endif (MSVC)
+
+	add_definitions(-DHAVE_MOD_STD_NET)
+	message(STATUS "[std.net] enabled.")
+else (MOD_STD_NET)
+	message(STATUS "[std.net] disabled.")
+endif (MOD_STD_NET)
