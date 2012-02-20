@@ -178,5 +178,3 @@ set_directory_properties(PROPERTIES
 set(CPACK_GENERATOR "STGZ;TBZ2;TGZ;ZIP")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "The Clever programming language")
 include(CPack)
-
-

@@ -170,6 +170,7 @@ void Compiler::buildIR() {
  */
 ast::UnscopedBlockNode* Compiler::importFile(Driver& driver, const CString* file,
 	ast::Identifier* alias) {
+
 	driver.parseFile(file->str());
 
 	return new ast::UnscopedBlockNode(alias, static_cast<ast::BlockNode*>(getAST()));
