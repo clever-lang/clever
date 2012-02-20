@@ -38,10 +38,12 @@ if (PCRECPP_FOUND)
 	add_definitions(-DHAVE_PCRECPP)
 endif (PCRECPP_FOUND)
 
-pkg_check_modules(CGICC libcgicc)
-if (CGICC_FOUND)
+#pkg_check_modules(CGICC libcgicc)
+#find_library(CGICC_FOUND libcgicc)
+set(CGICC_FOUND 1)
+#if (CGICC_FOUND)
 	add_definitions(-DHAVE_CGICC)
-endif (CGICC_FOUND)
+#endif (CGICC_FOUND)
 
 # Environment checks
 if (WIN32)
@@ -84,6 +86,7 @@ set_directory_properties(PROPERTIES
 # ---------------------------------------------------------------------------
 include(CMakeLists.modopt)
 add_subdirectory(modules/std)
+add_subdirectory(modules/web)
 
 # Parser and Scanner
 # ---------------------------------------------------------------------------
@@ -122,7 +125,7 @@ add_executable(clever
 	${EXTRA_CLEVER_FILES}
 )
 add_dependencies(clever modules_std modules_web)
-target_link_libraries(clever modules_std modules_web)
+target_link_libraries(clever modules_std modules_web cgicc)
 
 #set(clvcflags "")
 #set(clvldflags "")

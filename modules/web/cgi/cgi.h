@@ -36,7 +36,7 @@ public:
 	CgiModule()
 		: Module("cgi") { }
 
-	~NetModule() { }
+	~CgiModule() { }
 
 	void init();
 private:

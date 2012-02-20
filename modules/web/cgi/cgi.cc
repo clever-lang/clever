@@ -24,8 +24,7 @@
  */
 
 #include "compiler/value.h"
-#include "modules/std/net/net.h"
-#include "modules/std/net/tcpsocket.h"
+#include "modules/web/cgi/cgi.h"
 
 namespace clever { namespace packages { namespace web {
 
