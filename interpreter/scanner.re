@@ -29,6 +29,7 @@
 #include "interpreter/ast.h"
 #include "compiler/cstring.h"
 #include "types/nativetypes.h"
+#include "interpreter/driver.h"
 
 namespace clever {
 
@@ -36,7 +37,7 @@ typedef Parser::token token;
 
 Parser::token_type yylex(Parser::semantic_type* yylval,
 	Parser::location_type* yylloc, Driver& driver, ScannerState& s) {
-	const unsigned char* cursor = s.cur;
+	const unsigned char* cursor = Driver::s_scanners.top()->cur;
 	int yylen;
 
 next_token:
