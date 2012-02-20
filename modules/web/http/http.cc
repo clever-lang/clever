@@ -30,6 +30,7 @@
 #include "compiler/compiler.h"
 #include "compiler/cstring.h"
 #include "modules/web/cgi/cgiclass.h"
+#include "modules/web/http/sessionclass.h"
 #include "modules/web/http/http.h"
 #include "types/nativetypes.h"
 
@@ -80,7 +81,10 @@ static CLEVER_FUNCTION(title) {
  * Load module data
  */
 void Http::init() {
-	
+	Class* Session = new http::Session();
+
+	addClass(Session);
+
 	addFunction(new Function("header",&CLEVER_NS_FNAME(http, header), CLEVER_VOID))
 		->setVariadic()
 		->setMinNumArgs(0);
