@@ -637,6 +637,7 @@ AST_VISITOR(TypeChecker, BlockNode) {
  * Unscoped Block visitor
  */
 AST_VISITOR(TypeChecker, UnscopedBlockNode) {
+	const CString* alias = expr->getAlias();
 	const NodeList& nodes = expr->getBlock()->getNodes();
 	NodeList::const_iterator it = nodes.begin(), end = nodes.end();
 
@@ -644,6 +645,11 @@ AST_VISITOR(TypeChecker, UnscopedBlockNode) {
 	while (it != end) {
 		(*it)->acceptVisitor(*this);
 		++it;
+	}
+
+	if (alias) {
+		std::string prefix = alias->str() + "::";
+		g_pkgmanager.copyScopeToAlias(m_scope, prefix);
 	}
 }
 

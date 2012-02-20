@@ -384,13 +384,22 @@ class UnscopedBlockNode : public ASTNode {
 public:
 	UnscopedBlockNode() {}
 
-	explicit UnscopedBlockNode(BlockNode* block)
-		: m_block(block) {
+	explicit UnscopedBlockNode(Identifier* alias, BlockNode* block)
+		: m_alias(alias), m_block(block) {
+		AST_ADDREF(m_alias);
 		CLEVER_ADDREF(m_block);
 	}
 
 	~UnscopedBlockNode() {
+		AST_DELREF(m_alias);
 		CLEVER_DELREF(m_block);
+	}
+
+	const CString* getAlias() const {
+		if (m_alias) {
+			return m_alias->getName();
+		}
+		return NULL;
 	}
 
 	BlockNode* getBlock() const {
@@ -401,6 +410,7 @@ public:
 		visitor.visit(this);
 	}
 private:
+	Identifier* m_alias;
 	BlockNode* m_block;
 	DISALLOW_COPY_AND_ASSIGN(UnscopedBlockNode);
 };

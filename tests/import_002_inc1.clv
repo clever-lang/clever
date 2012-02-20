@@ -1,0 +1,7 @@
+String bar() {
+	return "It works!";
+}
+
+Int baz() {
+	return 2012;
+}

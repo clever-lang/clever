@@ -74,6 +74,11 @@ public:
 	void loadModule(Scope*, const CString* const, const CString* const, const CString* const);
 	void loadModule(Scope*, const CString* const, Module* const, const CString* const);
 
+	/**
+	 * Copy function in the scope to another alias
+	 */
+	void copyScopeToAlias(Scope*, const std::string&);
+
 	const PackageMap& getPackages() const { return m_packages; }
 private:
 	PackageMap m_packages;
