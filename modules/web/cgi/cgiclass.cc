@@ -33,29 +33,24 @@
 
 namespace clever { namespace packages { namespace web { namespace cgi {
 
-CLEVER_METHOD(Cgi::constructor) {
-	CgiValue* sv = new CgiValue;
-
-	CLEVER_RETURN_DATA_VALUE(sv);
-}
 
 CLEVER_METHOD(Cgi::getStr) {
-	CgiValue* sv = CLEVER_GET_VALUE(CgiValue*, value);
+	CgiValue* cv = CLEVER_GET_VALUE(CgiValue*, value);
 	
-	cgicc::form_iterator name = sv->cgi.getElement(CLEVER_ARG_STR(0));
-	if(name != sv->cgi.getElements().end()) {
+	cgicc::form_iterator name = cv->cgi->getElement(CLEVER_ARG_STR(0));
+	if(name != cv->cgi->getElements().end()) {
 		CLEVER_RETURN_STR(CSTRING(name->getValue().c_str()));
 		return;
 	}
 
-	CLEVER_RETURN_STR(CSTRING("<>"));
+	CLEVER_RETURN_STR(CSTRING(""));
 }
 
 CLEVER_METHOD(Cgi::getInt) {
-	CgiValue* sv = CLEVER_GET_VALUE(CgiValue*, value);
+	CgiValue* cv = CLEVER_GET_VALUE(CgiValue*, value);
 	
-	cgicc::form_iterator name = sv->cgi.getElement(CLEVER_ARG_STR(0));
-	if(name != sv->cgi.getElements().end()) {
+	cgicc::form_iterator name = cv->cgi->getElement(CLEVER_ARG_STR(0));
+	if(name != cv->cgi->getElements().end()) {
 		CLEVER_RETURN_INT(name->getIntegerValue());
 		return;
 	}
@@ -64,10 +59,10 @@ CLEVER_METHOD(Cgi::getInt) {
 }
 
 CLEVER_METHOD(Cgi::getDouble) {
-	CgiValue* sv = CLEVER_GET_VALUE(CgiValue*, value);
+	CgiValue* cv = CLEVER_GET_VALUE(CgiValue*, value);
 	
-	cgicc::form_iterator name = sv->cgi.getElement(CLEVER_ARG_STR(0));
-	if(name != sv->cgi.getElements().end()) {
+	cgicc::form_iterator name = cv->cgi->getElement(CLEVER_ARG_STR(0));
+	if(name != cv->cgi->getElements().end()) {
 		CLEVER_RETURN_DOUBLE(name->getDoubleValue());
 		return;
 	}
@@ -77,10 +72,7 @@ CLEVER_METHOD(Cgi::getDouble) {
 
 
 void Cgi::init() {
-	const Type* cgiclass = CLEVER_TYPE("Cgi");
 	
-	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Cgi::constructor, cgiclass));
-
 	addMethod(
 		(new Method("getStr", (MethodPtr)&Cgi::getStr, CLEVER_STR))
 			->addArg("name", CLEVER_STR)
@@ -103,7 +95,9 @@ DataValue* Cgi::allocateValue() const {
 }
 
 void Cgi::destructor(Value* value) const {
-	
+	//CgiValue* cv = CLEVER_GET_VALUE(CgiValue*, value);
+	//delete cv->cgi;
+	//delete cv;
 }
 
 }}}} // clever::packages::web::cgi

@@ -36,12 +36,12 @@ namespace clever { namespace packages { namespace web { namespace cgi {
 
 class CgiValue : public DataValue {
 public:
-	CgiValue() : cgi() {}
+	CgiValue(){ cgi = new cgicc::Cgicc;}
 	
 	// Cgi
-	cgicc::Cgicc cgi;
+	cgicc::Cgicc* cgi;
 
-	virtual ~CgiValue() {}
+	virtual ~CgiValue() { delete cgi; }
 };
 
 }}}} // clever::packages::web::cgi
