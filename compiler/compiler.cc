@@ -169,10 +169,10 @@ void Compiler::buildIR() {
  * to be appended to the main tree
  */
 ast::UnscopedBlockNode* Compiler::importFile(Driver& driver, const CString* file,
-	const CString* alias) {
+	ast::Identifier* alias) {
 	driver.parseFile(file->str());
 
-	return new ast::UnscopedBlockNode(static_cast<ast::BlockNode*>(getAST()));
+	return new ast::UnscopedBlockNode(alias, static_cast<ast::BlockNode*>(getAST()));
 }
 
 void Compiler::dumpOpcodes() {

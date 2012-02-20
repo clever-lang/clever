@@ -94,7 +94,7 @@ set_directory_properties(PROPERTIES
 	ADDITIONAL_MAKE_CLEAN_FILES
 	"interpreter/stack.hh;interpreter/parser.cc;interpreter/parser.hh;interpreter/location.hh;interpreter/position.hh;interpreter/scanner.cc")
 
-# Modules
+# Module options
 # ---------------------------------------------------------------------------
 include(CMakeLists.modopt)
 
@@ -134,8 +134,8 @@ add_executable(clever
 	vm/opcode.cc
 	${EXTRA_CLEVER_FILES}
 )
-add_dependencies(clever modules_std)
-target_link_libraries(clever modules_std)
+add_dependencies(clever modules_std modules_web)
+target_link_libraries(clever modules_std modules_web cgicc)
 
 #set(clvcflags "")
 #set(clvldflags "")
@@ -154,9 +154,10 @@ target_link_libraries(clever modules_std)
 include_directories(${CLEVER_INCLUDE_DIRS})
 target_link_libraries(clever ${CLEVER_LIBRARIES})
 
-# Modules/std
+# Modules
 # ---------------------------------------------------------------------------
 add_subdirectory(modules/std)
+add_subdirectory(modules/web)
 
 # Test runner
 # ---------------------------------------------------------------------------
@@ -185,3 +186,9 @@ add_dependencies(run-mem-tests testrunner)
 # Files to install
 # ---------------------------------------------------------------------------
 install(TARGETS clever RUNTIME DESTINATION bin)
+
+# Packaging
+# ---------------------------------------------------------------------------
+set(CPACK_GENERATOR "STGZ;TBZ2;TGZ;ZIP")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "The Clever programming language")
+include(CPack)

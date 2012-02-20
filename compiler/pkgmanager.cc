@@ -28,6 +28,7 @@
 #include "compiler/value.h"
 #include "compiler/cstring.h"
 #include "modules/std/std_pkg.h"
+#include "modules/web/web_pkg.h"
 
 namespace clever {
 
@@ -36,6 +37,7 @@ namespace clever {
  */
 void PackageManager::init() {
 	addPackage(CSTRING("std"), new packages::Std());
+	addPackage(CSTRING("web"), new packages::Web());
 }
 
 /**
@@ -175,6 +177,33 @@ void PackageManager::loadModule(Scope* scope, const CString* const package,
 	 * Change the package state to loaded
 	 */
 	it->second->setLoaded();
+}
+
+/**
+ * Copy user-defined function in a scope to another supplied alias
+ */
+void PackageManager::copyScopeToAlias(Scope* scope, const std::string& alias) {
+	SymbolMap& symbols = scope->getSymbols();
+	SymbolMap::const_iterator it2(symbols.begin()), end2(symbols.end());
+
+	while (it2 != end2) {
+		Symbol* sym = it2->second;
+
+		if (sym->isValue()) {
+			Value* val = sym->getValue();
+
+			if (val->isCallable()) {
+				CallableValue* fvalue = static_cast<CallableValue*>(val);
+
+				if (fvalue->getFunction()->isUserDefined()) {
+					scope->pushValue(CSTRING(alias + val->getName()->str()),
+						fvalue);
+					fvalue->addRef();
+				}
+			}
+		}
+		++it2;
+	}
 }
 
 /**

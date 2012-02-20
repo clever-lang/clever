@@ -9,6 +9,7 @@
 # ---------------------------------------------------------------------------
 clever_add_module(std_regex      ON  "enable the regex module"      "")
 clever_add_module(std_ffi        ON  "enable the ffi module"        "")
+clever_add_module(web_cgi        ON  "enable the cgi module"        "")
 
 # Simple modules
 clever_add_simple_module(std_file       ON  "enable the file module"       "")
@@ -54,6 +55,7 @@ endif (MOD_STD_FFI)
 
 clever_module_msg(std_ffi ${MOD_STD_FFI})
 
+
 # std.net
 if (MOD_STD_NET)
 	if (MSVC)
@@ -65,3 +67,27 @@ if (MOD_STD_NET)
 else (MOD_STD_NET)
 	message(STATUS "[std.net] disabled.")
 endif (MOD_STD_NET)
+
+# web.cgi
+if (MOD_WEB_CGI)
+	find_library(CGICC_LIBRARIES cgicc)
+
+	if (NOT CGICC_LIBRARIES MATCHES "NOTFOUND")
+		set(CGICC_FOUND ON)
+	else (NOT CGICC_LIBRARIES MATCHES "NOTFOUND")
+		set(CGICC_FOUND OFF)
+	endif (NOT CGICC_LIBRARIES MATCHES "NOTFOUND")
+
+	if (CGICC_FOUND)
+		string(REGEX REPLACE "lib([\\/])libcgicc.so" "include\\1cgicc\\1" CGICC_INCLUDE_DIRS ${CGICC_LIBRARIES})
+		add_definitions(-DHAVE_MOD_WEB_CGI)
+		list(APPEND CLEVER_INCLUDE_DIRS ${CGICC_INCLUDE_DIRS})
+		list(APPEND CLEVER_LIBRARIES ${CGICC_LIBRARIES})
+	else (CGICC_FOUND)
+		clever_module_msg(web_cgi "libcgicc not found. disabling.")
+		set(MOD_WEB_CGI OFF)
+	endif (CGICC_FOUND)
+endif (MOD_WEB_CGI)
+
+clever_module_msg(web_cgi ${MOD_WEB_CGI})
+
