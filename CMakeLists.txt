@@ -89,10 +89,6 @@ else (MSVC)
 	set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG")
 endif (MSVC)
 
-set_directory_properties(PROPERTIES
-	ADDITIONAL_MAKE_CLEAN_FILES
-	"interpreter/stack.hh;interpreter/parser.cc;interpreter/parser.hh;interpreter/location.hh;interpreter/position.hh;interpreter/scanner.cc")
-
 # Parser and Scanner
 # ---------------------------------------------------------------------------
 BISON_TARGET(CleverParser interpreter/parser.y interpreter/parser.cc)
