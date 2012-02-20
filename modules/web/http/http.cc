@@ -39,10 +39,38 @@ namespace http {
 
 /**
  * header()
- * Returns the absolute value of a number x
  */
 static CLEVER_FUNCTION(header) {
 	::std::cout<< cgicc::HTTPHTMLHeader() << ::std::endl;
+}
+
+/**
+ * html()
+ */
+static CLEVER_FUNCTION(html) {
+	::std::cout<< cgicc::html() << ::std::endl;
+}
+
+/**
+ * body()
+ */
+static CLEVER_FUNCTION(body) {
+	::std::cout<< cgicc::body() << ::std::endl;
+}
+
+/**
+ * head()
+ */
+static CLEVER_FUNCTION(head) {
+	::std::cout<< cgicc::head() << ::std::endl;
+}
+
+
+/*
+ *String title(String)
+ */
+static CLEVER_FUNCTION(title) {
+	::std::cout << cgicc::title(CLEVER_ARG_STR(0))<< ::std::endl;
 }
 
 
@@ -53,7 +81,25 @@ static CLEVER_FUNCTION(header) {
  */
 void Http::init() {
 	
-	addFunction(new Function("header",&CLEVER_NS_FNAME(http, header), CLEVER_VOID));
+	addFunction(new Function("header",&CLEVER_NS_FNAME(http, header), CLEVER_VOID))
+		->setVariadic()
+		->setMinNumArgs(0);
+
+	addFunction(new Function("html",&CLEVER_NS_FNAME(http, html), CLEVER_VOID))
+		->setVariadic()
+		->setMinNumArgs(0);
+
+	addFunction(new Function("body",&CLEVER_NS_FNAME(http, body), CLEVER_VOID))
+		->setVariadic()
+		->setMinNumArgs(0);
+
+	addFunction(new Function("head",&CLEVER_NS_FNAME(http, head), CLEVER_VOID))
+		->setVariadic()
+		->setMinNumArgs(0);
+
+	addFunction(new Function("title", &CLEVER_NS_FNAME(http, title), CLEVER_VOID))
+		->setVariadic()
+		->setMinNumArgs(1);
 
 }
 
