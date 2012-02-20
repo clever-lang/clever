@@ -23,71 +23,29 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef CLEVER_MAPVALUE_H
-#define CLEVER_MAPVALUE_H
+#ifndef CLEVER_WEB_PACKAGE_H
+#define CLEVER_WEB_PACKAGE_H
 
-#include <map>
-#include "compiler/value.h"
+#include "modules/web/web_forwarder.h"
+#include "compiler/module.h"
 
-namespace clever {
+namespace clever { namespace packages {
 
-struct Comparator
-{
-	Comparator(const Method* method, Value* value = NULL)
-		: m_comp(method), m_value(value) {
-		if (m_value) {
-			m_value->addRef();
-		}
-	}
+class Web : public Package {
+public:
+	Web()
+		: Package("web") { }
 
-	~Comparator() {
-		if (m_value) {
-			m_value->delRef();
-		}
-	}
+	~Web() { }
 
-	bool operator()(Value* a, Value* b) const {
-		ValueVector vv(2);
-		vv[0] = a;
-		vv[1] = b;
+	void init();
 
-		Value result;
-
-		if (!m_value) {
-			m_comp->call(&vv, &result, a);
-		}
-		else {
-			m_comp->call(&vv, &result, m_value);
-		}
-
-		return result.getBoolean();
-	}
-
-	private:
-		const Method* m_comp;
-		Value* m_value;
-};
-
-struct MapValue : public DataValue
-{
-	typedef std::map<Value*, Value*, Comparator> MapInternal;
-	typedef MapInternal::iterator Iterator;
-	typedef MapInternal ValueType;
-
-	MapValue(const Method* method, Value* value = NULL)
-		: m_map(Comparator(method, value)) {
-	}
-
-	MapInternal& getMap() {
-		return m_map;
-	}
-
-	~MapValue() {}
+	const char* getVersion() const { return NULL; }
 private:
-	MapInternal m_map;
+	DISALLOW_COPY_AND_ASSIGN(Web);
 };
 
-} // clever
+}} // clever::web_pkg
 
-#endif
+#endif // CLEVER_WEB_PACKAGE_H
 

@@ -1,6 +1,6 @@
 /**
  * Clever programming language
- * Copyright (c) 2011-2012 Clever Team
+ * Copyright (c) 2012 Clever Team
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -23,71 +23,24 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef CLEVER_MAPVALUE_H
-#define CLEVER_MAPVALUE_H
-
-#include <map>
 #include "compiler/value.h"
+#include "modules/web/cgi/cgi.h"
+#include "modules/web/cgi/cgiclass.h"
 
-namespace clever {
 
-struct Comparator
-{
-	Comparator(const Method* method, Value* value = NULL)
-		: m_comp(method), m_value(value) {
-		if (m_value) {
-			m_value->addRef();
-		}
-	}
+namespace clever { namespace packages { namespace web {
 
-	~Comparator() {
-		if (m_value) {
-			m_value->delRef();
-		}
-	}
+namespace cgi {
 
-	bool operator()(Value* a, Value* b) const {
-		ValueVector vv(2);
-		vv[0] = a;
-		vv[1] = b;
+} // cgi
 
-		Value result;
+/**
+ * Initializes Standard module
+ */
+void CgiModule::init() {
+	Class* Cgi = new cgi::Cgi();
 
-		if (!m_value) {
-			m_comp->call(&vv, &result, a);
-		}
-		else {
-			m_comp->call(&vv, &result, m_value);
-		}
+	addClass(Cgi);
+}
 
-		return result.getBoolean();
-	}
-
-	private:
-		const Method* m_comp;
-		Value* m_value;
-};
-
-struct MapValue : public DataValue
-{
-	typedef std::map<Value*, Value*, Comparator> MapInternal;
-	typedef MapInternal::iterator Iterator;
-	typedef MapInternal ValueType;
-
-	MapValue(const Method* method, Value* value = NULL)
-		: m_map(Comparator(method, value)) {
-	}
-
-	MapInternal& getMap() {
-		return m_map;
-	}
-
-	~MapValue() {}
-private:
-	MapInternal m_map;
-};
-
-} // clever
-
-#endif
-
+}}} // clever::packages::web

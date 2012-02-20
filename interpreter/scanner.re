@@ -124,6 +124,11 @@ next_token:
 		SKIP();
 	}
 
+	<INITIAL>"#" {
+		YYSETCONDITION(ST_COMMENT);
+		SKIP();
+	}
+
 	<ST_COMMENT>[^\n]* {
 		YYSETCONDITION(INITIAL);
 		SKIP();
