@@ -29,6 +29,11 @@
 #include <cstdlib>
 #include "testrunner.h"
 
+#ifdef CLEVER_MSVC
+#define popen _popen
+#define pclose _pclose
+#endif
+
 TestRunner::~TestRunner() {
 	std::vector<std::string>::iterator it;
 
@@ -38,12 +43,12 @@ TestRunner::~TestRunner() {
 }
 
 void TestRunner::show_result(void) const {
-	timeval end_time;
+	clock_t end_time;
 	double duration;
 
-	gettimeofday(&end_time, NULL);
+	end_time = clock();
 
-	duration = (end_time.tv_sec  - start_time.tv_sec) + (end_time.tv_usec - start_time.tv_usec)/1000000.0;
+	duration = (end_time - start_time) / CLOCKS_PER_SEC;
 
 	std::cout << "-----------------------------------" << std::endl;
 	std::cout << "Tests: " << files.size() << std::endl;
@@ -132,7 +137,7 @@ void TestRunner::run(void) {
 		}
 #else
 		command = std::string("clever.exe -f ") + tmp_file + " 2>&1";
-		fp = popen(command.c_str(), "r");
+		fp = _popen(command.c_str(), "r");
 #endif
 
 		if (fread(result, 1, sizeof(result)-1, fp) == 0 && ferror(fp) != 0) {

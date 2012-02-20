@@ -98,6 +98,7 @@ void Driver::readFile(std::string& source) const {
 		source += '\n';
 	}
 
+	filep.clear();
 	filep.close();
 }
 

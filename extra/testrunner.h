@@ -29,13 +29,17 @@
 #define CLEVER_TESTRUNNER_H
 
 #include <vector>
+#include <ctime>
+#ifndef CLEVER_WIN32
 #include <dirent.h>
-#include <sys/time.h>
+#else
+#include <win32/dirent.h>
+#endif
 #include <pcrecpp.h>
 
 class TestRunner {
 	unsigned int pass, fail, leak, flags;
-	timeval start_time;
+	clock_t start_time;
 	std::vector<std::string> files;
 	std::vector<std::string> tmp_files;
 
@@ -47,7 +51,7 @@ class TestRunner {
 public:
 	enum { FAIL_ONLY = 1 };
 
-	TestRunner() : pass(0), fail(0), leak(0), flags(0), valgrind(false) { gettimeofday(&start_time, NULL); }
+	TestRunner() : pass(0), fail(0), leak(0), flags(0), valgrind(false) { start_time = clock(); }
 	~TestRunner();
 
 	std::string read_file(const char*) const;
