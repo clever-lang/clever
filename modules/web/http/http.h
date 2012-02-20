@@ -23,25 +23,29 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "compiler/cstring.h"
-#include "modules/web/web_pkg.h"
 
-namespace clever { namespace packages {
+#ifndef CLEVER_WEB_HTTP_H
+#define CLEVER_WEB_HTTP_H
 
-/**
- * Initializes Web package
- */
-void Web::init() {
-#ifdef HAVE_MOD_WEB_CGI
-	addModule(new web::CgiModule);
-#endif
+#include "compiler/module.h"
+#include "compiler/value.h"
 
-#ifdef HAVE_MOD_WEB_HTTP
-	printf("incluindo http...\n");
-	addModule(new web::Http);
-#endif
+namespace clever { namespace packages { namespace web {
 
-}
+class Http : public Module {
+public:
+	Http()
+		: Module("http") { }
 
+	~Http() { }
 
-}} // clever::packages
+	void init();
+private:
+	DISALLOW_COPY_AND_ASSIGN(Http);
+};
+
+extern Module* g_http_module;
+
+}}} // clever::packages::web
+
+#endif // CLEVER_WEB_HTTP_H
