@@ -154,7 +154,11 @@ public:
 	}
 
 	const CString* intern(const std::string& needle) {
+#ifdef CLEVER_MSVC
 		IdType id = std::tr1::hash<const std::string*>()(&needle);
+#else
+		IdType id = std::tr1::hash<std::string>()(needle);
+#endif
 		CStringTableBase::const_iterator it(m_map.find(id));
 
 		if (it == m_map.end()) {
