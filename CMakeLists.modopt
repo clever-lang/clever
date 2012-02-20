@@ -9,13 +9,13 @@
 # ---------------------------------------------------------------------------
 clever_add_module(std_regex      ON  "enable the regex module"      "")
 clever_add_module(std_ffi        ON  "enable the ffi module"        "")
-clever_add_module(web_cgi        OFF  "enable the cgi module"        "")
+clever_add_module(std_net        ON  "enable the net module"        "")
+clever_add_module(web_cgi        OFF "enable the cgi module"        "")
 
 # Simple modules
 clever_add_simple_module(std_file       ON  "enable the file module"       "")
 clever_add_simple_module(std_io         ON  "enable the io module"         "")
 clever_add_simple_module(std_math       ON  "enable the math module"       "")
-clever_add_simple_module(std_net        ON  "enable the net module"        "")
 clever_add_simple_module(std_sys        ON  "enable the sys module"        "")
 clever_add_simple_module(std_reflection ON  "enable the reflection module" "")
 
@@ -77,4 +77,15 @@ if (MOD_WEB_CGI)
 endif (MOD_WEB_CGI)
 
 clever_module_msg(web_cgi ${MOD_WEB_CGI})
+
+# std.net
+if (MOD_STD_NET)
+	if (MSVC)
+		list(APPEND CLEVER_LIBRARIES ws2_32)
+	endif (MSVC)
+
+	add_definitions(-DHAVE_MOD_STD_NET)
+endif (MOD_STD_NET)
+
+clever_module_msg(std_net ${MOD_STD_NET})
 
