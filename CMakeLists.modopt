@@ -56,19 +56,6 @@ endif (MOD_STD_FFI)
 
 clever_module_msg(std_ffi ${MOD_STD_FFI})
 
-
-# std.net
-if (MOD_STD_NET)
-	if (MSVC)
-		list(APPEND CLEVER_LIBRARIES ws2_32)
-	endif (MSVC)
-
-	add_definitions(-DHAVE_MOD_STD_NET)
-	message(STATUS "[std.net] enabled.")
-else (MOD_STD_NET)
-	message(STATUS "[std.net] disabled.")
-endif (MOD_STD_NET)
-
 # web.cgi
 if (MOD_WEB_CGI)
 	find_library(CGICC_LIBRARIES cgicc)
