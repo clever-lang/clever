@@ -46,32 +46,33 @@ void PackageManager::init() {
 void PackageManager::loadPackage(Scope* scope, const CString* const package) {
 	PackageMap::const_iterator it = m_packages.find(package);
 
-	if (it != m_packages.end()) {
-		/**
-		 * Check if the package already has been loaded
-		 */
-		if (it->second->isLoaded()) {
-			return;
-		}
-		/**
-		 * Initializes the package
-		 */
-		it->second->init();
-
-		ModuleMap& modules = it->second->getModules();
-		ModuleMap::const_iterator mit = modules.begin(), end = modules.end();
-
-		while (mit != end) {
-			loadModule(scope, package, mit->second, NULL);
-			++mit;
-		}
-		/**
-		 * Sets the package state to fully loaded
-		 */
-		it->second->setFullyLoaded();
-	} else {
+	if (it == m_packages.end()) {
 		std::cerr << "package '" << *package << "' not found" << std::endl;
+		return;
 	}
+
+	/**
+	 * Check if the package already has been loaded
+	 */
+	if (it->second->isLoaded()) {
+		return;
+	}
+	/**
+	 * Initializes the package
+	 */
+	it->second->init();
+
+	ModuleMap& modules = it->second->getModules();
+	ModuleMap::const_iterator mit = modules.begin(), end = modules.end();
+
+	while (mit != end) {
+		loadModule(scope, package, mit->second, NULL);
+		++mit;
+	}
+	/**
+	 * Sets the package state to fully loaded
+	 */
+	it->second->setFullyLoaded();
 }
 
 /**
@@ -166,12 +167,15 @@ void PackageManager::loadModule(Scope* scope, const CString* const package,
 		ModuleMap& modules = it->second->getModules();
 		ModuleMap::const_iterator it_mod = modules.find(module);
 
+		if (it_mod == modules.end()) {
+			std::cerr << "module '" << *module << "' not found" << std::endl;
+			return;
+		}
+
 		/**
 		 * Loads the module if it has been found
 		 */
-		if (it_mod != modules.end()) {
-			loadModule(scope, package, it_mod->second, alias);
-		}
+		loadModule(scope, package, it_mod->second, alias);
 	}
 	/**
 	 * Change the package state to loaded

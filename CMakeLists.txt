@@ -135,7 +135,7 @@ add_executable(clever
 	${EXTRA_CLEVER_FILES}
 )
 add_dependencies(clever modules_std modules_web)
-target_link_libraries(clever modules_std modules_web cgicc)
+target_link_libraries(clever modules_std modules_web)
 
 #set(clvcflags "")
 #set(clvldflags "")
