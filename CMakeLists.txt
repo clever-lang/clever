@@ -38,12 +38,6 @@ if (PCRECPP_FOUND)
 	add_definitions(-DHAVE_PCRECPP)
 endif (PCRECPP_FOUND)
 
-#pkg_check_modules(CGICC libcgicc)
-#find_library(CGICC_FOUND libcgicc)
-set(CGICC_FOUND 1)
-#if (CGICC_FOUND)
-	add_definitions(-DHAVE_CGICC)
-#endif (CGICC_FOUND)
 
 # Environment checks
 if (WIN32)
