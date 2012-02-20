@@ -9,7 +9,7 @@
 # ---------------------------------------------------------------------------
 clever_add_module(std_regex      ON  "enable the regex module"      "")
 clever_add_module(std_ffi        ON  "enable the ffi module"        "")
-clever_add_module(web_cgi        ON  "enable the cgi module"        "")
+clever_add_module(web_cgi        OFF  "enable the cgi module"        "")
 
 # Simple modules
 clever_add_simple_module(std_file       ON  "enable the file module"       "")
