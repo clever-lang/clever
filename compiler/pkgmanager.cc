@@ -28,6 +28,7 @@
 #include "compiler/value.h"
 #include "compiler/cstring.h"
 #include "modules/std/std_pkg.h"
+#include "modules/web/web_pkg.h"
 
 namespace clever {
 
@@ -36,6 +37,7 @@ namespace clever {
  */
 void PackageManager::init() {
 	addPackage(CSTRING("std"), new packages::Std());
+	addPackage(CSTRING("web"), new packages::Web());
 }
 
 /**

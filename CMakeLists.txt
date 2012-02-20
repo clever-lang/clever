@@ -38,6 +38,11 @@ if (PCRECPP_FOUND)
 	add_definitions(-DHAVE_PCRECPP)
 endif (PCRECPP_FOUND)
 
+pkg_check_modules(CGICC libcgicc)
+if (CGICC_FOUND)
+	add_definitions(-DHAVE_CGICC)
+endif (CGICC_FOUND)
+
 # Environment checks
 if (WIN32)
 	set(EXTRA_CLEVER_FILES win32/win32.cc)
@@ -116,8 +121,8 @@ add_executable(clever
 	vm/opcode.cc
 	${EXTRA_CLEVER_FILES}
 )
-add_dependencies(clever modules_std)
-target_link_libraries(clever modules_std)
+add_dependencies(clever modules_std modules_web)
+target_link_libraries(clever modules_std modules_web)
 
 #set(clvcflags "")
 #set(clvldflags "")
