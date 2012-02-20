@@ -28,6 +28,6 @@
 #endif
 
 #ifdef HAVE_MOD_WEB_HTTP
-#include "modules/web/cgi/http.h"
+#include "modules/web/http/http.h"
 #endif
 

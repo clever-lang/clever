@@ -30,7 +30,7 @@
 #include "compiler/compiler.h"
 #include "compiler/cstring.h"
 #include "modules/web/cgi/cgiclass.h"
-#include "modules/web/cgi/http.h"
+#include "modules/web/http/http.h"
 #include "types/nativetypes.h"
 
 namespace clever { namespace packages { namespace web {

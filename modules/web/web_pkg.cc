@@ -37,7 +37,6 @@ void Web::init() {
 #endif
 
 #ifdef HAVE_MOD_WEB_HTTP
-	printf("incluindo http...\n");
 	addModule(new web::Http);
 #endif
 
