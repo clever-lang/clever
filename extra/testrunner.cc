@@ -48,7 +48,7 @@ void TestRunner::show_result(void) const {
 
 	end_time = clock();
 
-	duration = (end_time - start_time) / CLOCKS_PER_SEC;
+	duration = (end_time - start_time)*1000/CLOCKS_PER_SEC;
 
 	std::cout << "-----------------------------------" << std::endl;
 	std::cout << "Tests: " << files.size() << std::endl;
@@ -63,7 +63,7 @@ void TestRunner::show_result(void) const {
 #endif
 
 	std::cout << "-----------------------------------" << std::endl;
-	std::cout << "Time taken: " << duration << " seconds" << std::endl;
+	std::cout << "Time taken: " << duration << "ms" << std::endl;
 	std::cout << "-----------------------------------" << std::endl;
 }
 
@@ -117,6 +117,7 @@ void TestRunner::run(void) {
 		char result[300] = {0};
 		std::string title, source, expect, log_line, command;
 		unsigned int filesize = 0;
+		clock_t test_start_time, test_end_time;
 
 		file_name = *it;
 
@@ -125,6 +126,9 @@ void TestRunner::run(void) {
 		regex.FullMatch(read_file(file_name.c_str()), &title, &source, &expect);
 
 		write_file(tmp_file, source);
+
+		// We should save the start time here.
+		test_start_time = clock();
 
 #ifndef _WIN32
 		if (valgrind) {
@@ -148,6 +152,9 @@ void TestRunner::run(void) {
 
 		// Tricky uh?
 		pclose(fp);
+
+		// And we should also save the end time.
+		test_end_time = clock();
 
 		// Valgrind log is empty?
 #ifndef _WIN32
@@ -194,7 +201,7 @@ void TestRunner::run(void) {
 		}
 
 		if (show_all_results == true || last_ok == false) {
-			std::cout << title << " (" << file_name << ")" << std::endl;
+			std::cout << title << " (" << file_name << ")" << " - " << ((test_end_time - test_start_time)*1000/CLOCKS_PER_SEC) << "ms" << std::endl;
 		}
 	}
 }
@@ -327,43 +334,37 @@ void usage(void)
 	std::cout << "\t-m: run valgrind on each test" << std::endl;
 #endif
 	std::cout << "\t-q: only list failing tests" << std::endl;
+	std::cout << "\t-t: show time per test" << std::endl;
 }
 
 int main(int argc, char *argv[])
 {
 	TestRunner testrunner;
-	int start_paths = 1;
+	int start_paths = -1;
 
 	if (argc == 1) {
 		usage();
 		return 1;
 	} else {
-#ifndef _WIN32
-		if (std::string(argv[1]) == std::string("-m")) {
-			if (argc == 2) {
-				// ./testrunner -m?
+		for (int i = 1; i < argc; i++) {
+			if (std::string(argv[i]) == "-m") {
+#ifdef _WIN32
 				usage();
 				return 1;
-			}
-			testrunner.setFlags(TestRunner::FAIL_ONLY);
-			// ./testrunner -m <something here>?
-			testrunner.valgrind = true;
-			start_paths = 2;
 #else
-			if (argc == 1) {
-				// ./testrunner -m?
-				usage();
-				return 1;
+				testrunner.valgrind = true;
 #endif
-		} else if (std::string(argv[1]) == std::string("-q")) {
-			testrunner.setFlags(TestRunner::FAIL_ONLY);
-
-			start_paths = 2;
-		} else {
-			// ./testrunner <something here>
-			testrunner.valgrind = false;
-			start_paths = 1;
+			} else if (std::string(argv[i]) == "-q") {
+				testrunner.setFlags(TestRunner::FAIL_ONLY);
+			} else {
+				start_paths = i;
+			}
 		}
+	}
+
+	if (start_paths < 0) {
+		usage();
+		return 1;
 	}
 
 	for (; start_paths < argc; start_paths++) {
