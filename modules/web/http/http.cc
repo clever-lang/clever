@@ -21,13 +21,40 @@
  * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
+ *
  */
 
-#ifdef HAVE_MOD_WEB_CGI
-#include "modules/web/cgi/cgi.h"
-#endif
 
-#ifdef HAVE_MOD_WEB_HTTP
+#include <iostream>
+#include <fstream>
+#include "compiler/compiler.h"
+#include "compiler/cstring.h"
+#include "modules/web/cgi/cgiclass.h"
 #include "modules/web/http/http.h"
-#endif
+#include "types/nativetypes.h"
 
+namespace clever { namespace packages { namespace web {
+
+namespace http {
+
+/**
+ * header()
+ * Returns the absolute value of a number x
+ */
+static CLEVER_FUNCTION(header) {
+	::std::cout<< cgicc::HTTPHTMLHeader() << ::std::endl;
+}
+
+
+} // web
+
+/**
+ * Load module data
+ */
+void Http::init() {
+	
+	addFunction(new Function("header",&CLEVER_NS_FNAME(http, header), CLEVER_VOID));
+
+}
+
+}}} // clever::packages::web

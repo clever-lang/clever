@@ -36,6 +36,10 @@ void Web::init() {
 	addModule(new web::CgiModule);
 #endif
 
+#ifdef HAVE_MOD_WEB_HTTP
+	addModule(new web::Http);
+#endif
+
 }
 
 
