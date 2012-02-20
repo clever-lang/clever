@@ -25,6 +25,8 @@
 
 #include "compiler/value.h"
 #include "modules/web/cgi/cgi.h"
+#include "modules/web/cgi/cgiclass.h"
+
 
 namespace clever { namespace packages { namespace web {
 
@@ -36,9 +38,9 @@ namespace cgi {
  * Initializes Standard module
  */
 void CgiModule::init() {
-	//Class* tcpsocket = new web::TcpSocket();
+	Class* Cgi = new cgi::Cgi();
 
-	//addClass(tcpsocket);
+	addClass(Cgi);
 }
 
 }}} // clever::packages::web

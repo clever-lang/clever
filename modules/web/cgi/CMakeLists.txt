@@ -1,6 +1,7 @@
 
 add_library(modules_web_cgi STATIC
 	cgi.cc
+	cgiclass.cc
 )
 
 set_target_properties(modules_web_cgi

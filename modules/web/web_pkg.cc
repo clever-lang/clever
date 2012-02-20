@@ -33,7 +33,7 @@ namespace clever { namespace packages {
  */
 void Web::init() {
 #ifdef HAVE_MOD_WEB_CGI
-	//addModule(new std::IOModule);
+	addModule(new web::CgiModule);
 #endif
 
 }
