@@ -34,8 +34,6 @@
 
 namespace clever { namespace packages { namespace std { namespace ffi {
 
-
-
 void FFIObject::init() {}
 
 DataValue* FFIObject::allocateValue() const {
