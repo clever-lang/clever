@@ -106,7 +106,7 @@ std::string Opcode::dumpOp(const char* const label, Value* const op) const {
 			str.str() + ")");
 	} else {
 		std::string name;
-
+/*
 		if (op->isVector()) {
 			if (op->getTypePtr() == NULL) {
 				name = "ValueVector";
@@ -119,7 +119,7 @@ std::string Opcode::dumpOp(const char* const label, Value* const op) const {
 			} else {
 				name = op->toString().str();
 			}
-		}
+		}*/
 		str << op->refCount();
 
 		return std::string(std::string(label) + ": " + name + " (#" +

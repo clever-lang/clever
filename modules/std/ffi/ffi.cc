@@ -116,7 +116,7 @@ static CLEVER_FUNCTION(call_ext_func) {
 		it=ext_mod_map.find(lib);
 	}
 
-	
+
 
 	fpf = dlsym(it->second, func.c_str());
 
@@ -182,10 +182,8 @@ static CLEVER_FUNCTION(call_ext_func) {
 			ffi_args[i] = find_ffi_type("p");
 
 			FFIObjectValue* obj = static_cast<FFIObjectValue*>(CLEVER_ARG_DATA_VALUE(i));
-			
+
 			ffi_values[i] = &(*obj->pointer);
-		} else if ( CLEVER_ARG_IS_VECTOR(i) ) {
-			//TODO 
 		}
 	}
 
@@ -235,7 +233,7 @@ static CLEVER_FUNCTION(call_ext_func) {
 		FFIObjectValue* x = new FFIObjectValue();
 
 		ffi_call(&cif, pf, &(*x->pointer), ffi_values);
-		
+
 		CLEVER_RETURN_DATA_VALUE(x);
 	} else {
 		CLEVER_RETURN_BOOL(true);
@@ -257,7 +255,6 @@ static CLEVER_FUNCTION(call_ext_func) {
 		} else if (CLEVER_ARG_IS_DOUBLE(i)) {
 			free((double*)ffi_values[i]);
 		} else if (CLEVER_ARG_IS_USER(i)) {
-		} else if (CLEVER_ARG_IS_VECTOR(i)) {
 		}
 	}
 

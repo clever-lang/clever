@@ -63,7 +63,6 @@ public:
 		bool b_value;
 		const CString* s_value;
 		DataValue* dv_value;
-		ValueVector* v_value;
 		uint8_t c_value;
 		Value* ref_value;
 	};
@@ -71,7 +70,7 @@ public:
 	/**
 	 * Data type
 	 */
-	enum { NONE, PRIMITIVE, VECTOR, USER, REF };
+	enum { NONE, PRIMITIVE, USER, REF };
 
 	Value()
 		: RefCounted(1), m_type(NONE), m_type_ptr(NULL), m_name(NULL),
@@ -125,16 +124,6 @@ public:
 
 			m_data.dv_value->delRef();
 		}
-		else if (isVector()) {
-			ValueVector::const_iterator it = m_data.v_value->begin(),
-				end = m_data.v_value->end();
-
-			while (it != end) {
-				(*it)->delRef();
-				++it;
-			}
-			delete m_data.v_value;
-		}
 	}
 
 	void initialize() {
@@ -170,8 +159,7 @@ public:
 	}
 
 	void setType(int type) {
-		if (type == NONE || type == USER || type == VECTOR
-			|| type == PRIMITIVE || type == REF) {
+		if (type == NONE || type == USER || type == PRIMITIVE || type == REF) {
 			m_type = type;
 		}
 	}
@@ -203,7 +191,6 @@ public:
 	bool isDouble()    const { return m_type_ptr == CLEVER_DOUBLE; }
 	bool isBoolean()   const { return m_type_ptr == CLEVER_BOOL; }
 	bool isByte()      const { return m_type_ptr == CLEVER_BYTE; }
-	bool isVector()    const { return m_type == VECTOR; }
 	bool isUserValue() const { return m_type == USER; }
 	bool isReference() const { return m_type == REF; }
 
@@ -241,11 +228,6 @@ public:
 		m_data.c_value = b;
 	}
 
-	void setVector(ValueVector* v) {
-		m_type = VECTOR;
-		m_data.v_value = v;
-	}
-
 	void setReference(Value* v) {
 		m_type_ptr = NULL;
 		m_data.ref_value = v;
@@ -259,7 +241,6 @@ public:
 	double getDouble()         const { return m_data.d_value; }
 	bool getBoolean()          const { return m_data.b_value; }
 	uint8_t getByte()          const { return m_data.c_value; }
-	ValueVector* getVector()   const { return m_data.v_value; }
 	Value* getReference()	   const { return m_data.ref_value; }
 	const ValueData* getData() const { return &m_data; }
 

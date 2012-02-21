@@ -89,7 +89,6 @@ extern jmp_buf fatal_error;
 #define CLEVER_ARG_IS_BYTE(x)    CLEVER_ARG(x)->isByte()
 #define CLEVER_ARG_IS_DOUBLE(x)  CLEVER_ARG(x)->isDouble()
 #define CLEVER_ARG_IS_USER(x)    CLEVER_ARG(x)->isUserValue()
-#define CLEVER_ARG_IS_VECTOR(x)  CLEVER_ARG(x)->isVector()
 
 /**
  * Macro to get the Type pointer from an argument
