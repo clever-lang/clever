@@ -34,7 +34,7 @@
 namespace clever { namespace packages { namespace web { namespace cgi {
 
 
-CLEVER_METHOD(Cgi::getStr) {
+CLEVER_METHOD(Cgi::getString) {
 	CgiValue* cv = CLEVER_GET_VALUE(CgiValue*, value);
 	
 	cgicc::form_iterator name = cv->cgi->getElement(CLEVER_ARG_STR(0));
@@ -74,7 +74,7 @@ CLEVER_METHOD(Cgi::getDouble) {
 void Cgi::init() {
 	
 	addMethod(
-		(new Method("getStr", (MethodPtr)&Cgi::getStr, CLEVER_STR))
+		(new Method("getString", (MethodPtr)&Cgi::getString, CLEVER_STR))
 			->addArg("name", CLEVER_STR)
 	);
 

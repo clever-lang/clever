@@ -45,7 +45,7 @@ public:
 	 * Type methods
 	 */
 	static CLEVER_METHOD(constructor);
-	static CLEVER_METHOD(getStr);
+	static CLEVER_METHOD(getString);
 	static CLEVER_METHOD(getInt);
 	static CLEVER_METHOD(getDouble);
 	
