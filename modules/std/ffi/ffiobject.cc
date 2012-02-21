@@ -33,8 +33,16 @@
 
 
 namespace clever { namespace packages { namespace std { namespace ffi {
+CLEVER_METHOD(FFIObject::constructor) {
+	FFIObjectValue* sv = new FFIObjectValue;
+	CLEVER_RETURN_DATA_VALUE(sv);
+}
 
-void FFIObject::init() {}
+void FFIObject::init() {
+	const Type* ffiobj = CLEVER_TYPE("FFIObject");
+
+	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&FFIObject::constructor, ffiobj));
+}
 
 DataValue* FFIObject::allocateValue() const {
 	return new FFIObjectValue;

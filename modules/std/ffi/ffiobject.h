@@ -41,7 +41,7 @@ public:
 	DataValue* allocateValue() const;
 	void destructor(Value* value) const;
 
-	
+	static CLEVER_METHOD(constructor);
 	
 private:
 	DISALLOW_COPY_AND_ASSIGN(FFIObject);
