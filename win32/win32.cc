@@ -32,10 +32,11 @@
 #include <string>
 #include "win32.h"
 
-void GetLastErrorStr(std::string &err)
+std::string GetLastErrorStr(DWORD dwLastError)
 {
     LPTSTR pszMessage;
-    DWORD dwLastError = GetLastError();
+	std::string err;
+
     FormatMessage(
         FORMAT_MESSAGE_ALLOCATE_BUFFER |
         FORMAT_MESSAGE_FROM_SYSTEM |
@@ -45,8 +46,11 @@ void GetLastErrorStr(std::string &err)
         MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
         (LPTSTR)&pszMessage,
         0, NULL );
+	
 	err = std::string(pszMessage);
     LocalFree(pszMessage);
+
+	return err;
 }
 
 void CreateBackgroundProcess(std::string cline) {
@@ -62,7 +66,7 @@ void CreateBackgroundProcess(std::string cline) {
 	if (CreateProcess(NULL, LPSTR(cline.c_str()), NULL, NULL, false, CREATE_NO_WINDOW, NULL, NULL, &StartupInfo, &ProcInfo)) {
 		std::cout << "Background process created (PID: " << ProcInfo.dwProcessId << ")" << std::endl;
 	} else {
-		GetLastErrorStr(err);
+		err = GetLastErrorStr(GetLastError());
 		std::cout << "Background process creation failed: " << err << std::endl;
 	}
 }

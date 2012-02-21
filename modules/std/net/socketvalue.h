@@ -26,30 +26,20 @@
 #ifndef CLEVER_SOCKETVALUE_H
 #define CLEVER_SOCKETVALUE_H
 
-#ifndef _WIN32
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#else
-#include <winsock.h>
-#endif
 #include "compiler/datavalue.h"
+#include "modules/std/net/csocket.h"
 
 namespace clever { namespace packages { namespace std { namespace net {
 
 class SocketValue : public DataValue {
 public:
-	SocketValue() : timeout(100000) {}
+	SocketValue() { socket = new CSocket(); }
 	
-	// Socket
-	int socket;
-	struct sockaddr_in local;
-	struct sockaddr_in remote;
+	virtual ~SocketValue() { delete socket; }
 
-	// Timeout
-	unsigned int timeout;
-	
-	virtual ~SocketValue() {}
+	CSocket* getSocket() { return this->socket; }
+private:
+	CSocket *socket;
 };
 
 }}}} // clever::packages::std::net

@@ -175,14 +175,30 @@ CLEVER_METHOD(String::toInteger) {
 }
 
 /**
- * String::String([String value])
+ * String::String([String value]), String::String([Array<Byte> data])
  * Construct the object.
  */
 CLEVER_METHOD(String::constructor) {
+	const Type* arr_byte = CLEVER_GET_ARRAY_TEMPLATE->getTemplatedType(CLEVER_BYTE);
+
 	if (args) {
-		CLEVER_RETURN_STR(CSTRING(CLEVER_ARG_STR(0)));
+		if (CLEVER_ARG(0)->getTypePtr() == CLEVER_STR) {
+			// String::String([String value])
+			CLEVER_RETURN_STR(CSTRING(CLEVER_ARG_STR(0)));
+		} else if (CLEVER_ARG(0)->getTypePtr() == arr_byte) {
+			// String::String([Array<Byte> data])
+			ValueVector *vv = CLEVER_ARG_ARRAY(0);
+			std::string buffer = "";
+
+			for (int i = 0; i < vv->size(); i++) {
+				buffer += static_cast<char>(vv->at(i)->getByte());
+			}
+
+			CLEVER_RETURN_STR(CSTRING(buffer));
+		}
 	}
 	else {
+		// String::String()
 		CLEVER_RETURN_STR(CSTRING(""));
 	}
 }
@@ -433,8 +449,17 @@ CLEVER_METHOD(String::times) {
 void String::init() {
 	const Type* arr_byte = CLEVER_GET_ARRAY_TEMPLATE->getTemplatedType(CLEVER_BYTE);
 
-
 	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&String::constructor, CLEVER_STR));
+
+	addMethod(
+		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&String::constructor, CLEVER_STR))
+			->addArg("value", CLEVER_STR)
+	);
+
+	addMethod(
+		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&String::constructor, CLEVER_STR))
+			->addArg("value", arr_byte)
+	);
 
 	addMethod(new Method("ltrim", (MethodPtr)&String::ltrim, CLEVER_STR));
 
@@ -476,11 +501,6 @@ void String::init() {
 		(new Method(CLEVER_OPERATOR_LE, (MethodPtr)&String::less_equal, CLEVER_BOOL))
 			->addArg("arg1", CLEVER_STR)
 			->addArg("arg2", CLEVER_STR)
-	);
-
-	addMethod(
-		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&String::constructor, CLEVER_STR))
-			->addArg("value", CLEVER_STR)
 	);
 
 	addMethod(
