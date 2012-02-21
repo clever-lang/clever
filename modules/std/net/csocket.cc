@@ -26,7 +26,9 @@
 #include <iostream>
 #include <errno.h>
 #include "modules/std/net/csocket.h"
+#ifdef CLEVER_WIN32
 #include "win32/win32.h"
+#endif
 
 namespace clever {
 
