@@ -755,7 +755,7 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 
 	Value* fvalue = m_scope->getValue(name);
 
-	if (fvalue == NULL) {
+	if (fvalue == NULL || !fvalue->isCallable()) {
 		Compiler::errorf(expr->getLocation(), "Function `%S' does not exists!",
 			name);
 	}
