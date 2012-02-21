@@ -71,22 +71,52 @@ enum OpcodeType {
 };
 
 /**
+ * Operand representation
+ */
+struct Operand {
+	enum OperandType { VALUE, VECTOR };
+
+	Operand() {}
+
+	~Operand() {}
+
+	explicit Operand(Value* value)
+		: m_type(VALUE) {
+		m_data.value = value;
+	}
+
+	explicit Operand(ValueVector* vector)
+		: m_type(VECTOR) {
+		m_data.vector = vector;
+	}
+
+	OperandType m_type;
+	union {
+		Value* value;
+		ValueVector* vector;
+	} m_data;
+};
+
+/**
  * Opcode representation
  */
 class Opcode {
 public:
 	Opcode(OpcodeType op_type, VM::opcode_handler handler)
-		: m_op_type(op_type), m_handler(handler), m_op1(NULL), m_op2(NULL),
-			m_result(NULL) { }
+		: m_op_type(op_type), m_handler(handler), m_result(NULL) {}
 
 	Opcode(OpcodeType op_type, VM::opcode_handler handler, Value* op1)
-		: m_op_type(op_type), m_handler(handler), m_op1(op1), m_op2(NULL),
-			m_result(NULL) { }
+		: m_op_type(op_type), m_handler(handler), m_op1(op1), m_result(NULL) {}
 
 	Opcode(OpcodeType op_type, VM::opcode_handler handler, Value* op1,
 		Value* op2, Value* result)
 		: m_op_type(op_type), m_handler(handler), m_op1(op1), m_op2(op2),
-			m_result(result) { }
+			m_result(result) {}
+
+	Opcode(OpcodeType op_type, VM::opcode_handler handler, Value* op1,
+		ValueVector* op2, Value* result)
+		: m_op_type(op_type), m_handler(handler), m_op1(op1), m_op2(op2),
+			m_result(result) {}
 
 	~Opcode() {}
 
@@ -94,11 +124,11 @@ public:
 
 	VM::opcode_handler getHandler() const { return m_handler; }
 
-	Value* getOp1() const { return m_op1; }
-	void setOp1(Value* op1) { m_op1 = op1; }
+	Value* getOp1() const { return m_op1.m_data.value; }
+	void setOp1(Value* op1) { m_op1.m_data.value = op1; }
 
-	Value* getOp2() const { return m_op2; }
-	void setOp2(Value* op2) { m_op2 = op2; }
+	Value* getOp2() const { return m_op2.value; }
+	void setOp2(Value* op2) { m_op2.m_data.value = op2; }
 
 	Value* getResult() const { return m_result; }
 	void setResult(Value* result) { m_result = result; }
@@ -125,8 +155,8 @@ public:
 private:
 	OpcodeType m_op_type;
 	VM::opcode_handler m_handler;
-	Value* m_op1;
-	Value* m_op2;
+	Operand m_op1, m_op2;
+
 	Value* m_result;
 	size_t m_op_num;
 	struct { long jmp1, jmp2; } m_extra;
