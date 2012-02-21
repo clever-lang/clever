@@ -96,6 +96,19 @@ static CLEVER_FUNCTION(argc) {
 	CLEVER_RETURN_INT(*g_clever_argc);
 }
 
+/**
+ * sleep(Int time)
+ * Sleep for 'time' milliseconds.
+ */
+static CLEVER_FUNCTION(sleep) {
+	int time = CLEVER_ARG_INT(0);
+
+#ifdef CLEVER_WIN32
+	SleepEx(time, false);
+#else
+	usleep(time * 1000);
+#endif
+}
 
 } // namespace os
 
@@ -119,8 +132,10 @@ void SYSModule::init() {
 	addFunction(new Function("argc", &CLEVER_FUNC_NAME(argc), CLEVER_INT));
 
 	addFunction(new Function("argv", &CLEVER_FUNC_NAME(argv), CLEVER_STR))
-		->addArg("i",CLEVER_INT);
+		->addArg("i", CLEVER_INT);
 
+	addFunction(new Function("sleep", &CLEVER_FUNC_NAME(sleep), CLEVER_VOID))
+		->addArg("time", CLEVER_INT);
 }
 
 }}} // clever::packages::std
