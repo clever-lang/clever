@@ -127,7 +127,7 @@ public:
 	Value* getOp1() const { return m_op1.m_data.value; }
 	void setOp1(Value* op1) { m_op1.m_data.value = op1; }
 
-	Value* getOp2() const { return m_op2.value; }
+	Value* getOp2() const { return m_op2.m_data.value; }
 	void setOp2(Value* op2) { m_op2.m_data.value = op2; }
 
 	Value* getResult() const { return m_result; }
