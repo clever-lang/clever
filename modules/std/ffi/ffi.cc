@@ -173,9 +173,6 @@ static CLEVER_FUNCTION(call_ext_func) {
 		} else if ( CLEVER_ARG_IS_USER(i) ) {
 			//::std::cout<<"Arg "<<i<<" is Bool:";
 			//::std::cout<<CLEVER_ARG_BOOL(i)<<::std::endl;
-		} else if ( CLEVER_ARG_IS_VECTOR(i) ) {
-			//::std::cout<<"Arg "<<i<<" is Bool:";
-			//::std::cout<<CLEVER_ARG_BOOL(i)<<::std::endl;
 		}
 	}
 
@@ -246,9 +243,6 @@ static CLEVER_FUNCTION(call_ext_func) {
 		} else if (CLEVER_ARG_IS_DOUBLE(i)) {
 			free((double*)ffi_values[i]);
 		} else if (CLEVER_ARG_IS_USER(i)) {
-			//::std::cout<<"Arg "<<i<<" is Bool:";
-			//::std::cout<<CLEVER_ARG_BOOL(i)<<::std::endl;
-		} else if (CLEVER_ARG_IS_VECTOR(i)) {
 			//::std::cout<<"Arg "<<i<<" is Bool:";
 			//::std::cout<<CLEVER_ARG_BOOL(i)<<::std::endl;
 		}

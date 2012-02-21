@@ -86,8 +86,8 @@ AST_VISITOR(CodeGenVisitor, UnaryExpr) {
 			Compiler::error("Unknown op type!");
 			break;
 	}
-	emit(opcode, Opcode::getHandlerByType(opcode), expr->getCallValue(),
-		NULL, expr->getValue());
+	emit(opcode, Opcode::getHandlerByType(opcode), expr->getCallValue())
+		->setResult(expr->getValue());
 }
 
 /**
@@ -110,14 +110,17 @@ AST_VISITOR(CodeGenVisitor, BinaryExpr) {
 			VM::opcode_handler op_handler = opval == OP_JMPZ ?
 				&VM::jmpz_handler : &VM::jmpnz_handler;
 
-			Opcode* opcode = emit(opval, op_handler, lhs, NULL, expr->getValue());
+			Opcode* opcode = emit(opval, op_handler, lhs);
+
+			opcode->setResult(expr->getValue());
 
 			expr->getRhs()->acceptVisitor(*this);
 			rhs = expr->getRhs()->getValue();
 
 			opcode->setJmpAddr1(getOpNum()+1);
 
-			opcode = emit(opval, op_handler, rhs, NULL, expr->getValue());
+			opcode = emit(opval, op_handler, rhs);
+			opcode->setResult(expr->getValue());
 			opcode->setJmpAddr1(getOpNum());
 			expr->getValue()->addRef();
 			}
@@ -162,7 +165,7 @@ AST_VISITOR(CodeGenVisitor, BinaryExpr) {
 AST_VISITOR(CodeGenVisitor, VariableDecl) {
 	if (!expr->getConstructorArgs() && expr->getInitialValue()) {
 		expr->getCallValue()->addRef();
-		expr->getArgsValue()->addRef();
+		//expr->getArgsValue()->addRef();
 
 		emit(OP_ASSIGN, &VM::mcall_handler, expr->getCallValue(),
 			expr->getArgsValue());
@@ -171,13 +174,12 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 		clever_assert_not_null(expr->getInitialValue());
 
 		CallableValue* call = expr->getCallValue();
-		Value* arg_values = expr->getArgsValue();
 
 		call->addRef();
-		arg_values->addRef();
 		expr->getInitialValue()->addRef();
 
-		emit(OP_MCALL, &VM::mcall_handler, call, arg_values, expr->getInitialValue());
+		emit(OP_MCALL, &VM::mcall_handler, call, expr->getArgsValue(),
+			expr->getInitialValue());
 	}
 }
 
@@ -392,7 +394,7 @@ AST_VISITOR(CodeGenVisitor, BreakNode) {
  */
 AST_VISITOR(CodeGenVisitor, FunctionCall) {
 	CallableValue* fvalue = expr->getFuncValue();
-	Value* arg_values = expr->getArgsValue();
+	ValueVector* arg_values = expr->getArgsValue();
 
 	clever_assert_not_null(fvalue);
 
@@ -409,11 +411,11 @@ AST_VISITOR(CodeGenVisitor, FunctionCall) {
  */
 AST_VISITOR(CodeGenVisitor, MethodCall) {
 	CallableValue* call = expr->getCallValue();
-	Value* arg_values = expr->getArgsValue();
 
 	call->addRef();
 
-	emit(OP_MCALL, &VM::mcall_handler, call, arg_values, expr->getValue());
+	emit(OP_MCALL, &VM::mcall_handler, call, expr->getArgsValue(),
+		expr->getValue());
 }
 
 /**
@@ -469,12 +471,12 @@ AST_VISITOR(CodeGenVisitor, ClassDeclaration) {
 
 AST_VISITOR(CodeGenVisitor, TypeCreation) {
 	CallableValue* call = expr->getCallValue();
-	Value* arg_values = expr->getArgsValue();
 
 	call->addRef();
 	expr->getValue()->addRef();
 
-	emit(OP_MCALL, &VM::mcall_handler, call, arg_values, call->getValue());
+	emit(OP_MCALL, &VM::mcall_handler, call, expr->getArgsValue(),
+		call->getValue());
 }
 
 AST_VISITOR(CodeGenVisitor, ArrayList) {

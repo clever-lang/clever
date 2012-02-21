@@ -83,6 +83,15 @@ public:
 	~Operand() {
 		if (m_type == VALUE) {
 			CLEVER_SAFE_DELREF(m_data.value);
+		} else if (m_type == VECTOR && m_data.vector) {
+			ValueVector::const_iterator it(m_data.vector->begin()),
+				end(m_data.vector->end());
+
+			while (it != end) {
+				CLEVER_DELREF(*it);
+				++it;
+			}
+			delete m_data.vector;
 		}
 	}
 
@@ -136,6 +145,7 @@ public:
 	OperandType getOp1Type() const { return m_op1.m_type; }
 
 	Value* getOp2() const { return m_op2.m_data.value; }
+	ValueVector* getOp2Vector() const { return m_op2.m_data.vector; }
 	void setOp2(Value* op2) { m_op2.m_data.value = op2; }
 	OperandType getOp2Type() const { return m_op2.m_type; }
 

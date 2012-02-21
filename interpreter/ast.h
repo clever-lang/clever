@@ -677,11 +677,11 @@ public:
 		return m_call_value;
 	}
 
-	void setArgsValue(Value* args_value) {
+	void setArgsValue(ValueVector* args_value) {
 		m_args_value = args_value;
 	}
 
-	Value* getArgsValue() const {
+	ValueVector* getArgsValue() const {
 		return m_args_value;
 	}
 
@@ -695,7 +695,7 @@ private:
 	Value* m_result;
 	bool m_assign;
 	CallableValue* m_call_value;
-	Value* m_args_value;
+	ValueVector* m_args_value;
 
 	DISALLOW_COPY_AND_ASSIGN(BinaryExpr);
 };
@@ -735,11 +735,11 @@ public:
 		return m_call_value;
 	}
 
-	void setArgsValue(Value* args_value) {
+	void setArgsValue(ValueVector* args_value) {
 		m_args_value = args_value;
 	}
 
-	Value* getArgsValue() const {
+	ValueVector* getArgsValue() const {
 		return m_args_value;
 	}
 
@@ -754,7 +754,7 @@ private:
 	ASTNode* m_expr;
 	Value* m_result;
 	CallableValue* m_call_value;
-	Value* m_args_value;
+	ValueVector* m_args_value;
 
 	DISALLOW_COPY_AND_ASSIGN(Subscript);
 };
@@ -806,7 +806,6 @@ public:
 		AST_DELREF(m_rhs);
 		AST_DELREF(m_initval);
 		AST_DELREF(m_call_value);
-		AST_DELREF(m_args_value);
 		AST_DELREF(m_ctor_args);
 	}
 
@@ -843,11 +842,11 @@ public:
 		return m_call_value;
 	}
 
-	void setArgsValue(Value* args_value) {
+	void setArgsValue(ValueVector* args_value) {
 		m_args_value = args_value;
 	}
 
-	Value* getArgsValue() const {
+	ValueVector* getArgsValue() const {
 		return m_args_value;
 	}
 
@@ -883,7 +882,7 @@ private:
 	Value* m_initval;
 	bool m_const_value;
 	CallableValue* m_call_value;
-	Value* m_args_value;
+	ValueVector* m_args_value;
 	ArgumentList* m_ctor_args;
 
 	DISALLOW_COPY_AND_ASSIGN(VariableDecl);
@@ -980,11 +979,11 @@ public:
 		return m_call_value;
 	}
 
-	void setArgsValue(Value* args_value) {
+	void setArgsValue(ValueVector* args_value) {
 		m_args_value = args_value;
 	}
 
-	Value* getArgsValue() const {
+	ValueVector* getArgsValue() const {
 		return m_args_value;
 	}
 
@@ -995,7 +994,7 @@ private:
 	Value* m_regex;
 	Value* m_value;
 	CallableValue* m_call_value;
-	Value* m_args_value;
+	ValueVector* m_args_value;
 
 	DISALLOW_COPY_AND_ASSIGN(RegexPattern);
 };
@@ -1046,11 +1045,11 @@ public:
 		return m_call_value;
 	}
 
-	void setArgsValue(Value* args_value) {
+	void setArgsValue(ValueVector* args_value) {
 		m_args_value = args_value;
 	}
 
-	Value* getArgsValue() const {
+	ValueVector* getArgsValue() const {
 		return m_args_value;
 	}
 
@@ -1066,7 +1065,7 @@ private:
 	Value* m_value;
 	ArgumentList* m_args;
 	CallableValue* m_call_value;
-	Value* m_args_value;
+	ValueVector* m_args_value;
 
 	DISALLOW_COPY_AND_ASSIGN(TypeCreation);
 };
@@ -1183,7 +1182,6 @@ public:
 		CLEVER_DELREF(m_name);
 		CLEVER_DELREF(m_result);
 		AST_DELREF(m_args);
-		AST_DELREF(m_args_value);
 		AST_DELREF(m_value);
 	}
 
@@ -1207,11 +1205,11 @@ public:
 		visitor.visit(this);
 	}
 
-	void setArgsValue(Value* value) {
+	void setArgsValue(ValueVector* value) {
 		m_args_value = value;
 	}
 
-	Value* getArgsValue() {
+	ValueVector* getArgsValue() {
 		return m_args_value;
 	}
 private:
@@ -1219,7 +1217,7 @@ private:
 
 	Identifier* m_name;
 	ArgumentList* m_args;
-	Value* m_args_value;
+	ValueVector* m_args_value;
 	Value* m_result;
 	CallableValue* m_value;
 
@@ -1272,11 +1270,11 @@ public:
 		return m_call_value;
 	}
 
-	void setArgsValue(Value* args_value) {
+	void setArgsValue(ValueVector* args_value) {
 		m_args_value = args_value;
 	}
 
-	Value* getArgsValue() const {
+	ValueVector* getArgsValue() const {
 		return m_args_value;
 	}
 
@@ -1298,7 +1296,7 @@ private:
 
 	ArgumentList* m_args;
 	CallableValue* m_call_value;
-	Value* m_args_value;
+	ValueVector* m_args_value;
 
 	DISALLOW_COPY_AND_ASSIGN(MethodCall);
 };
@@ -1328,8 +1326,12 @@ public:
 		return m_call_value;
 	}
 
-	void setArgsValue(Value* args_value) {
+	void setArgsValue(ValueVector* args_value) {
 		m_args_value = args_value;
+	}
+
+	ValueVector* getArgsValue() const {
+		return m_args_value;
 	}
 
 	void setValue(Value* value) {
@@ -1338,11 +1340,6 @@ public:
 
 	Value* getValue() const {
 		return m_value;
-	}
-
-
-	Value* getArgsValue() const {
-		return m_args_value;
 	}
 
 	void acceptVisitor(ASTVisitor& visitor) {
@@ -1354,7 +1351,7 @@ private:
 	Identifier* m_lhs;
 	ASTNode* m_rhs;
 	CallableValue* m_call_value;
-	Value* m_args_value;
+	ValueVector* m_args_value;
 	Value* m_value;
 
 	DISALLOW_COPY_AND_ASSIGN(AssignExpr);

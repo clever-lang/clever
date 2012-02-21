@@ -47,7 +47,7 @@ struct Comparator
 	}
 
 	bool operator()(Value* a, Value* b) const {
-		std::vector<Value*> vv(2);
+		ValueVector vv(2);
 		vv[0] = a;
 		vv[1] = b;
 
