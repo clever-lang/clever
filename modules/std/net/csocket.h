@@ -20,6 +20,9 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#ifndef CLEVER_CSOCKET_H
+#define CLEVER_CSOCKET_H
+
 #include <string>
 #ifndef _WIN32
 #include <sys/socket.h>
@@ -28,9 +31,7 @@
 #else
 #include <winsock.h>
 #endif
-
-#ifndef CLEVER_CSOCKET_H
-#define CLEVER_CSOCKET_H
+#include "compiler/clever.h"
 
 #ifndef NO_ERROR
 #define NO_ERROR 0
@@ -49,33 +50,35 @@ public:
 
 	bool connect();
 	bool close();
-	
+
 	bool receive(const char *buffer, int length);
 	bool send(const char *buffer, int length);
-	
+
 	bool isOpen();
 	bool poll();
 
-	std::string getErrorString() { return this->errorString; }
-	int getError() { return this->error; }
+	std::string getErrorString() { return m_error_string; }
+	int getError() { return m_error; }
 
 private:
 	void resetError();
 	void setError();
 
 	// Error
-	int error;
-	std::string errorString;
+	int m_error;
+	std::string m_error_string;
 
 	// Socket
-	int socket;
-	struct sockaddr_in local;
-	struct sockaddr_in remote;
+	int m_socket;
+	struct sockaddr_in m_local;
+	struct sockaddr_in m_remote;
 
 	// Timeout
-	unsigned int timeout;
+	unsigned int m_timeout;
+
+	DISALLOW_COPY_AND_ASSIGN(CSocket);
 };
 
 } // clever
 
-#endif
+#endif // CLEVER_CSOCKET_H
