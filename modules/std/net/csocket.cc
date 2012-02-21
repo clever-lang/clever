@@ -28,6 +28,8 @@
 #include "modules/std/net/csocket.h"
 #ifdef CLEVER_WIN32
 #include "win32/win32.h"
+#else
+#include <cstring>
 #endif
 
 namespace clever {
@@ -228,7 +230,6 @@ void CSocket::setError() {
 	this->error = errno;
 	this->errorString = ::std::string(strerror(errno));
 #endif
-	
 }
 
 } // clever
