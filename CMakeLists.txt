@@ -91,8 +91,8 @@ endif (MSVC)
 
 # Parser and Scanner
 # ---------------------------------------------------------------------------
-BISON_TARGET(CleverParser interpreter/parser.y interpreter/parser.cc)
-RE2C_TARGET(CleverScanner interpreter/scanner.re interpreter/scanner.cc
+BISON_TARGET(CleverParser interpreter/parser.y ${CMAKE_CURRENT_BINARY_DIR}/interpreter/parser.cc)
+RE2C_TARGET(CleverScanner interpreter/scanner.re ${CMAKE_CURRENT_BINARY_DIR}/interpreter/scanner.cc
 	COMPILE_FLAGS "--case-insensitive -bc")
 
 ADD_RE2C_BISON_DEPENDENCY(CleverScanner CleverParser)

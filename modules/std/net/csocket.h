@@ -1,7 +1,4 @@
-/**
- * Clever programming language
- * Copyright (c) 2012 Clever Team
- *
+/*
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without
@@ -23,46 +20,62 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef CLEVER_TCPSOCKET_H
-#define CLEVER_TCPSOCKET_H
+#include <string>
+#ifndef _WIN32
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#else
+#include <winsock.h>
+#endif
 
-#include "types/type.h"
-#include "compiler/value.h"
-#include "modules/std/net/socketvalue.h"
+#ifndef CLEVER_CSOCKET_H
+#define CLEVER_CSOCKET_H
 
-namespace clever { namespace packages { namespace std { namespace net {
+#ifndef NO_ERROR
+#define NO_ERROR 0
+#endif
 
-class TcpSocket : public Type {
+namespace clever {
+
+class CSocket {
 public:
-	TcpSocket() :
-		Type(CSTRING("TcpSocket")) { }
+	CSocket();
+	~CSocket();
 
-	void init();
-	DataValue* allocateValue() const;
-	void destructor(Value* value) const;
+	void setHost(const char *addr);
+	void setPort(const int port);
+	void setTimeout(const int time);
 
-	/**
-	 * Type methods
-	 */
-	static CLEVER_METHOD(constructor);
-	static CLEVER_METHOD(setHost);
-	static CLEVER_METHOD(setPort);
-	static CLEVER_METHOD(setTimeout);
-	static CLEVER_METHOD(connect);
-	static CLEVER_METHOD(close);
-	static CLEVER_METHOD(receive);
-	static CLEVER_METHOD(send);
-	static CLEVER_METHOD(isOpen);
-	static CLEVER_METHOD(poll);
-	static CLEVER_METHOD(good);
-	static CLEVER_METHOD(getError);
-	static CLEVER_METHOD(getErrorMessage);
-	static CLEVER_METHOD(toString);
-	static CLEVER_METHOD(do_assign);
+	bool connect();
+	bool close();
+	
+	bool receive(const char *buffer, int length);
+	bool send(const char *buffer, int length);
+	
+	bool isOpen();
+	bool poll();
+
+	std::string getErrorString() { return this->errorString; }
+	int getError() { return this->error; }
+
 private:
-	DISALLOW_COPY_AND_ASSIGN(TcpSocket);
+	void resetError();
+	void setError();
+
+	// Error
+	int error;
+	std::string errorString;
+
+	// Socket
+	int socket;
+	struct sockaddr_in local;
+	struct sockaddr_in remote;
+
+	// Timeout
+	unsigned int timeout;
 };
 
-}}}} // clever::packages::std::net
+} // clever
 
-#endif // CLEVER_TCPSOCKET_H
+#endif
