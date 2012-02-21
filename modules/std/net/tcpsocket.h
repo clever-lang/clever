@@ -49,8 +49,10 @@ public:
 	static CLEVER_METHOD(setPort);
 	static CLEVER_METHOD(setTimeout);
 	static CLEVER_METHOD(connect);
+	static CLEVER_METHOD(close);
 	static CLEVER_METHOD(receive);
 	static CLEVER_METHOD(send);
+	static CLEVER_METHOD(isOpen);
 	static CLEVER_METHOD(poll);
 	static CLEVER_METHOD(toString);
 	static CLEVER_METHOD(do_assign);

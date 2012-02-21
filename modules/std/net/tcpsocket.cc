@@ -99,24 +99,108 @@ CLEVER_METHOD(TcpSocket::connect) {
 	}
 }
 
+CLEVER_METHOD(TcpSocket::close) {
+	SocketValue* sv = CLEVER_GET_VALUE(SocketValue*, value);
+
+#ifdef CLEVER_WIN32
+	if (::closesocket(sv->socket) != 0) {
+#else
+	if (::close(sv->socket) != 0) {
+#endif
+		// @TODO: change this.
+
+		::std::cerr << "close() failed: " << (errno) << " - " << ::std::string(strerror(errno)) << ::std::endl;
+	}
+}
+
 CLEVER_METHOD(TcpSocket::receive) {
 	SocketValue* sv = CLEVER_GET_VALUE(SocketValue*, value);
-	char buffer[65535] = {0};
-	::std::string data;
+	ValueVector* vv = new ValueVector;
+	char *buffer;
+	unsigned int length;
+	
+	length = CLEVER_ARG_INT(0);
 
-	// @TODO: check for errors on this.
-	while (::recv(sv->socket, buffer, sizeof(buffer), 0) > 0) {
-		data += ::std::string(buffer);
+	// Allocate the buffer.
+	buffer = new char[length];
+
+	// Receive data.
+	int res = ::recv(sv->socket, (char *)buffer, length, 0);
+
+	if (res <= 0) {
+		// @TODO: change this.
+
+		::std::cerr << "recv() failed: " << (errno) << " - " << ::std::string(strerror(errno)) << ::std::endl;
+		//::std::cerr << "recv() failed: connection has been gracefully closed." << ::std::endl;
+	} else {
+		for (int i = 0; i < length; i++) {
+			Value *v = new Value();
+			v->setByte(buffer[i]);
+			vv->push_back(v);
+		}
+
+		retval->setTypePtr(CLEVER_TYPE("Array<Byte>"));
+		CLEVER_RETURN_ARRAY(vv);
 	}
 
-	CLEVER_RETURN_STR(CSTRING(data));
+	// Free the buffer.
+	delete buffer;
 }
 
 CLEVER_METHOD(TcpSocket::send) {
 	SocketValue* sv = CLEVER_GET_VALUE(SocketValue*, value);
+	ValueVector *vv = CLEVER_ARG_ARRAY(0);
+	char *buffer;
+	int bufferSize;
+	int bytesSent = 0;
 
-	// @TODO: check for errors on this.
-	::send(sv->socket, CLEVER_ARG_STR(0).c_str(), CLEVER_ARG_STR(0).size(), 0);
+	// Allocate a buffer and fill it with the bytes from the array.
+	buffer = new char[vv->size()];
+	for (int i = 0; i < vv->size(); i++) {
+		buffer[i] = static_cast<char>(vv->at(i)->getByte());
+	}
+	bufferSize = vv->size();
+
+	// Loop the send() because it might happen to not send all data once.
+	do {
+		int res = ::send(sv->socket, (&buffer[bytesSent]), (bufferSize - bytesSent), 0);
+
+		if (res >= 0) {
+			bytesSent += res;
+		} else {
+			// @TODO: change this.
+			::std::cerr << "send() failed: " << (errno) << " - " << ::std::string(strerror(errno)) << ::std::endl;
+		}
+	} while (bytesSent < bufferSize);
+
+	// Free the buffer.
+	delete buffer;
+}
+
+CLEVER_METHOD(TcpSocket::isOpen) {
+	SocketValue* sv = CLEVER_GET_VALUE(SocketValue*, value);
+
+	/*
+	fd_set writeset;
+
+	FD_ZERO(&writeset);
+	FD_SET(sv->socket, &writeset);
+
+	// Try the select().
+	int res = select(sv->socket + 1, NULL, &writeset, NULL, NULL);
+
+	::std::cout << "[DEBUG] select() returned " << res << ::std::endl;
+
+	if (res > 0) {
+		if (FD_ISSET(sv->socket, &writeset)) {
+			::std::cout << "[DEBUG] FD_ISSET returned true" << ::std::endl;
+		} else {
+			::std::cout << "[DEBUG] FD_ISSET returned false" << ::std::endl;
+		}
+	}
+	*/
+	::std::cerr << "isOpen(): not implemented" << ::std::endl;
+	CLEVER_RETURN_BOOL(true);
 }
 
 CLEVER_METHOD(TcpSocket::poll) {
@@ -170,6 +254,7 @@ CLEVER_METHOD(TcpSocket::do_assign) {
 
 void TcpSocket::init() {
 	const Type* tcpsock = CLEVER_TYPE("TcpSocket");
+	const Type* arr_byte = CLEVER_GET_ARRAY_TEMPLATE->getTemplatedType(CLEVER_BYTE);
 
 	addMethod(
 		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&TcpSocket::do_assign, tcpsock))
@@ -204,16 +289,21 @@ void TcpSocket::init() {
 			->addArg("timeout", CLEVER_INT)
 	);
 
-	addMethod(new Method("receive", (MethodPtr)&TcpSocket::receive, CLEVER_STR));
+	addMethod(
+		(new Method("receive", (MethodPtr)&TcpSocket::receive, arr_byte))
+			->addArg("length", CLEVER_INT)
+	);
 
 	addMethod(
 		(new Method("send", (MethodPtr)&TcpSocket::send, CLEVER_VOID))
-			->addArg("data", CLEVER_STR)
+			->addArg("data", arr_byte)
 	);
 
+	addMethod(new Method("isOpen", (MethodPtr)&TcpSocket::isOpen, CLEVER_BOOL));
 	addMethod(new Method("poll", (MethodPtr)&TcpSocket::poll, CLEVER_BOOL));
 
 	addMethod(new Method("connect", (MethodPtr)&TcpSocket::connect, tcpsock));
+	addMethod(new Method("close", (MethodPtr)&TcpSocket::close, tcpsock));
 
 	addMethod(new Method("toString", (MethodPtr)&TcpSocket::toString, CLEVER_STR));
 
