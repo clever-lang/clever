@@ -70,15 +70,21 @@ enum OpcodeType {
 	OP_AT
 };
 
+enum OperandType { UNUSED, VALUE, VECTOR, ADDR };
+
 /**
  * Operand representation
  */
-struct Operand {
-	enum OperandType { VALUE, VECTOR };
+class Operand {
+public:
+	Operand()
+		: m_type(UNUSED) {}
 
-	Operand() {}
-
-	~Operand() {}
+	~Operand() {
+		if (m_type == VALUE) {
+			CLEVER_SAFE_DELREF(m_data.value);
+		}
+	}
 
 	explicit Operand(Value* value)
 		: m_type(VALUE) {
@@ -95,6 +101,7 @@ struct Operand {
 		Value* value;
 		ValueVector* vector;
 	} m_data;
+	long addr;
 };
 
 /**
@@ -126,9 +133,11 @@ public:
 
 	Value* getOp1() const { return m_op1.m_data.value; }
 	void setOp1(Value* op1) { m_op1.m_data.value = op1; }
+	OperandType getOp1Type() const { return m_op1.m_type; }
 
 	Value* getOp2() const { return m_op2.m_data.value; }
 	void setOp2(Value* op2) { m_op2.m_data.value = op2; }
+	OperandType getOp2Type() const { return m_op2.m_type; }
 
 	Value* getResult() const { return m_result; }
 	void setResult(Value* result) { m_result = result; }
@@ -137,11 +146,11 @@ public:
 	size_t getOpNum() const { return m_op_num; }
 	void setOpNum(size_t op_num) { m_op_num = op_num; }
 
-	void setJmpAddr1(long jmp_addr) { m_extra.jmp1 = jmp_addr; }
-	long getJmpAddr1() const { return m_extra.jmp1; }
+	void setJmpAddr1(long jmp_addr) { m_op1.addr = jmp_addr; }
+	long getJmpAddr1() const { return m_op1.addr; }
 
-	void setJmpAddr2(long jmp_addr) { m_extra.jmp2 = jmp_addr; }
-	long getJmpAddr2() const { return m_extra.jmp2; }
+	void setJmpAddr2(long jmp_addr) { m_op2.addr = jmp_addr; }
+	long getJmpAddr2() const { return m_op2.addr; }
 
 	/**
 	 * Methods for debugging purpose
@@ -156,10 +165,8 @@ private:
 	OpcodeType m_op_type;
 	VM::opcode_handler m_handler;
 	Operand m_op1, m_op2;
-
 	Value* m_result;
 	size_t m_op_num;
-	struct { long jmp1, jmp2; } m_extra;
 
 	DISALLOW_COPY_AND_ASSIGN(Opcode);
 };

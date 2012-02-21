@@ -55,6 +55,8 @@ extern jmp_buf fatal_error;
  */
 #define CLEVER_ADDREF(x) (x)->addRef()
 #define CLEVER_DELREF(x) (x)->delRef()
+#define CLEVER_SAFE_ADDREF(x) if (x) { (x)->addRef(); }
+#define CLEVER_SAFE_DELREF(x) if (x) { (x)->delRef(); }
 
 /**
  * Macro to access the an specific DataValue
