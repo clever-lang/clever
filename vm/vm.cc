@@ -43,19 +43,8 @@ VM::~VM() {
 		end(m_opcodes.end());
 
 	while (it != end) {
-		Value* op1 = (*it)->getOp1();
-		Value* op2 = (*it)->getOp2();
-		Value* result = (*it)->getResult();
+		CLEVER_SAFE_DELREF((*it)->getResult());
 
-		if (op1) {
-			op1->delRef();
-		}
-		if (op2) {
-			op2->delRef();
-		}
-		if (result) {
-			result->delRef();
-		}
 		delete *it;
 		++it;
 	}
