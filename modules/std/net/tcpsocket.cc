@@ -83,7 +83,7 @@ CLEVER_METHOD(TcpSocket::receive) {
 	SocketValue* sv = CLEVER_GET_VALUE(SocketValue*, value);
 	ValueVector* vv = new ValueVector;
 	char *buffer;
-	unsigned int length;
+	int length;
 	
 	length = CLEVER_ARG_INT(0);
 
@@ -94,7 +94,7 @@ CLEVER_METHOD(TcpSocket::receive) {
 	// Receive the data.
 	sv->getSocket()->receive(buffer, length);
 
-	for (int i = 0; i < length; i++) {
+	for (int i = 0; i < length; ++i) {
 		Value *v = new Value();
 		v->setByte(buffer[i]);
 		vv->push_back(v);
@@ -115,7 +115,7 @@ CLEVER_METHOD(TcpSocket::send) {
 
 	// Allocate a buffer and fill it with the bytes from the array.
 	buffer = new char[vv->size()];
-	for (int i = 0; i < vv->size(); i++) {
+	for (size_t i = 0; i < vv->size(); ++i) {
 		buffer[i] = static_cast<char>(vv->at(i)->getByte());
 	}
 	bufferSize = vv->size();
