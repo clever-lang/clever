@@ -771,7 +771,11 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 	if (expr->getReturnType() == NULL) {
 		expr->getValue()->setTypePtr(func->getReturnType());
 	} else {
-		expr->getValue()->setTypePtr(expr->getReturnType());
+		if(expr->getReturnType() == CLEVER_OBJECT){
+			expr->getValue()->setTypePtr(CLEVER_TYPE("FFIObject"));
+		} else {
+			expr->getValue()->setTypePtr(expr->getReturnType());
+		}
 	}
 
 	if (num_args) {

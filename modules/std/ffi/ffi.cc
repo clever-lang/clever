@@ -27,6 +27,7 @@
 #include <cmath>
 #include <vector>
 #include <cstdlib>
+#include <cstdio>
 #include <map>
 #include <string>
 
@@ -42,6 +43,7 @@
 # include <dlfcn.h>
 #endif
 
+#include "modules/std/ffi/ffiobject.h"
 #include "modules/std/ffi/ffi.h"
 #include "types/nativetypes.h"
 
@@ -55,12 +57,12 @@ extern "C" {
 	ExtMap ext_mod_map;
 #endif
 
-#if defined(CLEVER_UNIX)
-	const char* CLEVER_DYLIB_EXT = ".so";
+#if defined(CLEVER_WIN32)
+	const char* CLEVER_DYLIB_EXT = ".dll";
 #elif defined(CLEVER_APPLE)
 	const char* CLEVER_DYLIB_EXT = ".dylib";
 #else
-	const char* CLEVER_DYLIB_EXT = ".dll";
+	const char* CLEVER_DYLIB_EXT = ".so";
 #endif
 
 ffi_type* find_ffi_type(const char* tn) {
@@ -76,6 +78,8 @@ ffi_type* find_ffi_type(const char* tn) {
 		return &ffi_type_schar;
 	} else if (tn[0] == 'v') {
 		return &ffi_type_void;
+	} else if (tn[0] == 'p') {
+		return &ffi_type_pointer;
 	}
 
 	return NULL;
@@ -105,15 +109,19 @@ static CLEVER_FUNCTION(call_ext_func) {
 		void* m = ext_mod_map[lib] = dlopen(libname.c_str(), 1);
 
 		if (m == NULL) {
+			::std::fprintf(stderr,"[FFI] Shared library %s don't found!\n",libname.c_str());
 			CLEVER_RETURN_BOOL(false);
 			return;
 		}
 		it=ext_mod_map.find(lib);
 	}
 
+	
+
 	fpf = dlsym(it->second, func.c_str());
 
 	if (fpf == NULL) {
+		::std::fprintf(stderr,"[FFI] function %s don't found at %s!\n",func.c_str(),lib.c_str());
 		CLEVER_RETURN_BOOL(false);
 		return;
 	}
@@ -171,11 +179,13 @@ static CLEVER_FUNCTION(call_ext_func) {
 			*d = CLEVER_ARG_DOUBLE(i);
 			ffi_values[i] = d;
 		} else if ( CLEVER_ARG_IS_USER(i) ) {
-			//::std::cout<<"Arg "<<i<<" is Bool:";
-			//::std::cout<<CLEVER_ARG_BOOL(i)<<::std::endl;
+			ffi_args[i] = find_ffi_type("p");
+
+			FFIObjectValue* obj = static_cast<FFIObjectValue*>(CLEVER_ARG_DATA_VALUE(i));
+			
+			ffi_values[i] = &obj->pointer;
 		} else if ( CLEVER_ARG_IS_VECTOR(i) ) {
-			//::std::cout<<"Arg "<<i<<" is Bool:";
-			//::std::cout<<CLEVER_ARG_BOOL(i)<<::std::endl;
+			//TODO 
 		}
 	}
 
@@ -209,11 +219,6 @@ static CLEVER_FUNCTION(call_ext_func) {
 
 		ffi_call(&cif, pf, &vs, ffi_values);
 
-		//printf("ret=%s<><>\n",*vs);
-
-		//string s(*vs);
-		//::std::cout<<string(*vs)<<::std::endl;
-
 		CLEVER_RETURN_STR(CSTRING(*vs));
 	} else if (rt[0] == 'c') {
 		char vc;
@@ -221,11 +226,17 @@ static CLEVER_FUNCTION(call_ext_func) {
 		ffi_call(&cif, pf, &vc, ffi_values);
 
 		CLEVER_RETURN_BYTE(vc);
-	} else if ( rt[0] == 'v' ){
+	} else if (rt[0] == 'v') {
 
 		ffi_call(&cif, pf, NULL, ffi_values);
 
 		CLEVER_RETURN_BOOL(true);
+	} else if (rt[0] == 'p') {
+		FFIObjectValue* x = new FFIObjectValue();
+
+		ffi_call(&cif, pf, &x->pointer, ffi_values);
+		
+		CLEVER_RETURN_DATA_VALUE(x);
 	} else {
 		CLEVER_RETURN_BOOL(true);
 	}
@@ -246,11 +257,7 @@ static CLEVER_FUNCTION(call_ext_func) {
 		} else if (CLEVER_ARG_IS_DOUBLE(i)) {
 			free((double*)ffi_values[i]);
 		} else if (CLEVER_ARG_IS_USER(i)) {
-			//::std::cout<<"Arg "<<i<<" is Bool:";
-			//::std::cout<<CLEVER_ARG_BOOL(i)<<::std::endl;
 		} else if (CLEVER_ARG_IS_VECTOR(i)) {
-			//::std::cout<<"Arg "<<i<<" is Bool:";
-			//::std::cout<<CLEVER_ARG_BOOL(i)<<::std::endl;
 		}
 	}
 
@@ -264,6 +271,11 @@ static CLEVER_FUNCTION(call_ext_func) {
  * Load module data
  */
 void FFI::init() {
+
+	Class* FFIObject = new ffi::FFIObject();
+
+	addClass(FFIObject);
+
 	addFunction(new Function("call_ext_func", &CLEVER_NS_FNAME(ffi, call_ext_func), CLEVER_BOOL))
 		->setVariadic()
 		->setMinNumArgs(2);

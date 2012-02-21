@@ -1143,6 +1143,7 @@ static inline Type* _find_fcall_rtype(char c) {
 		//case 'm': return CLEVER_MAP;
 		case 'a': return CLEVER_ARRAY;
 		case 'v': return CLEVER_VOID;
+		case 'p': return CLEVER_OBJECT;
 	}
 	return NULL;
 }
