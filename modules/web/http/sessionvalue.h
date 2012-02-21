@@ -29,6 +29,7 @@
 #include <cgicc/HTTPHeader.h>
 #include <cgicc/HTTPHTMLHeader.h>
 #include <cgicc/HTMLClasses.h>
+#include <cgicc/CgiEnvironment.h>
 #include <map>
 #include <string>
 #include <cgicc/Cgicc.h>
@@ -40,17 +41,21 @@ namespace clever { namespace packages { namespace web { namespace http {
 class SessionValue : public DataValue {
 public:
 	SessionValue(){ 
-		h = new cgicc::HTTPHTMLHeader; 
-		cv = new std::vector<cgicc::HTTPCookie>; 
-		mc = new std::map<std::string,std::string>;
+		cgi = new cgicc::Cgicc;
+		header = new cgicc::HTTPHTMLHeader;
+		cgiEnv = new cgicc::CgiEnvironment(cgi->getEnvironment()); 
+		cookVec = new std::vector<cgicc::HTTPCookie>; 
+		mapCook = new std::map<std::string,std::string>;
 	}
 	
 	// Cgi
-	cgicc::HTTPHTMLHeader* h;
-	std::vector<cgicc::HTTPCookie>* cv;
-	std::map<std::string,std::string>* mc;	
+	cgicc::Cgicc* cgi;
+	cgicc::HTTPHTMLHeader* header;
+	cgicc::CgiEnvironment* cgiEnv;
+	std::vector<cgicc::HTTPCookie>* cookVec;
+	std::map<std::string,std::string>* mapCook;	
 
-	virtual ~SessionValue() { delete h; delete cv; delete mc; }
+	virtual ~SessionValue() { delete cgi; delete header; delete cgiEnv; delete cookVec; delete mapCook; }
 };
 
 }}}} // clever::packages::web::http

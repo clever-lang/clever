@@ -38,12 +38,13 @@ typedef std::vector<cgicc::HTTPCookie>::iterator it_cv;
 
 CLEVER_METHOD(Session::refresh) {
 	SessionValue* sv = CLEVER_GET_VALUE(SessionValue*, value);
-	cgicc::HTTPHTMLHeader& h =  *(sv->h);
-	std::vector<cgicc::HTTPCookie>& cv = *(sv->cv);
-	std::map<std::string,std::string>& mc = *(sv->mc);	
 
-	cv = h.getCookies();
-	sv->mc->clear();
+	cgicc::CgiEnvironment& c = *(sv->cgiEnv);
+	std::vector<cgicc::HTTPCookie>& cv = *(sv->cookVec);
+	std::map<std::string,std::string>& mc = *(sv->mapCook);	
+
+	cv = c.getCookieList();
+	sv->mapCook->clear();
 
 	it_cv it = cv.begin(), end = cv.end();
 
@@ -55,16 +56,24 @@ CLEVER_METHOD(Session::refresh) {
 
 CLEVER_METHOD(Session::getCookie) {
 	SessionValue* sv = CLEVER_GET_VALUE(SessionValue*, value);
-	std::map<std::string,std::string>& mc = *(sv->mc);
+	std::map<std::string,std::string>& mc = *(sv->mapCook);
 
 	CLEVER_RETURN_STR(CSTRING(mc[CLEVER_ARG_STR(0)]));
 }
 
+CLEVER_METHOD(Session::getCookies) {
+	SessionValue* sv = CLEVER_GET_VALUE(SessionValue*, value);
+	cgicc::CgiEnvironment& c = *(sv->cgiEnv);
+
+	CLEVER_RETURN_STR(CSTRING(c.getCookies()));
+}
+
 CLEVER_METHOD(Session::setCookie) {
 	SessionValue* sv = CLEVER_GET_VALUE(SessionValue*, value);
-	cgicc::HTTPHTMLHeader& h =  *(sv->h);
-	std::vector<cgicc::HTTPCookie>& cv = *(sv->cv);
-	std::map<std::string,std::string>& mc = *(sv->mc);
+
+	cgicc::HTTPHTMLHeader& h =  *(sv->header);
+	std::vector<cgicc::HTTPCookie>& cv = *(sv->cookVec);
+	std::map<std::string,std::string>& mc = *(sv->mapCook);	
 
 	cgicc::HTTPCookie cookie(CLEVER_ARG_STR(0),CLEVER_ARG_STR(1));	
 	
@@ -76,7 +85,7 @@ CLEVER_METHOD(Session::setCookie) {
 
 CLEVER_METHOD(Session::header) {
 	SessionValue* sv = CLEVER_GET_VALUE(SessionValue*, value);
-	cgicc::HTTPHTMLHeader& h =  *(sv->h);
+	cgicc::HTTPHTMLHeader& h =  *(sv->header);
 
 	::std::cout<< h << ::std::endl;
 }
@@ -89,6 +98,10 @@ void Session::init() {
 	addMethod(
 		(new Method("getCookie", (MethodPtr)&Session::getCookie, CLEVER_STR))
 			->addArg("name", CLEVER_STR)
+	);
+
+	addMethod(
+		(new Method("getCookies", (MethodPtr)&Session::getCookie, CLEVER_STR))
 	);
 
 	addMethod(

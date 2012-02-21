@@ -46,6 +46,7 @@ public:
 	 */
 	static CLEVER_METHOD(refresh);
 	static CLEVER_METHOD(getCookie);
+	static CLEVER_METHOD(getCookies);
 	static CLEVER_METHOD(setCookie);
 	static CLEVER_METHOD(header);
 	
