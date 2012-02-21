@@ -223,10 +223,12 @@ void CSocket::resetError() {
 void CSocket::setError() {
 #ifdef CLEVER_WIN32
 	this->error = WSAGetLastError();
+	this->errorString = GetLastErrorStr(this->error);	
 #else
 	this->error = errno;
+	this->errorString = ::std::string(strerror(errno));
 #endif
-	this->errorString = GetLastErrorStr(this->error);	
+	
 }
 
 } // clever
