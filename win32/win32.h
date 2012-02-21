@@ -32,9 +32,10 @@
 #define _WIN32_WINNT 0x0500
 #endif
 
+#include <string>
 #include <windows.h>
 
-void GetLastErrorStr(LPTSTR pszFunction, std::string &err);
+std::string GetLastErrorStr(DWORD dwLastError);
 void CreateBackgroundProcess(std::string cline);
 
 #endif
