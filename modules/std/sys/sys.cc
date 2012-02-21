@@ -26,6 +26,7 @@
 #include <cstdlib>
 #ifndef CLEVER_WIN32
 #include <dirent.h>
+#include <unistd.h>
 #else
 #include <direct.h>
 #endif
