@@ -235,7 +235,7 @@ static CallableValue* _prepare_method_call(const Type* type, Value* var,
 	TypeVector args_types;
 
 	if (EXPECTED(vv != NULL)) {
-		for (size_t i = 0; i < vv->size(); ++i) {
+		for (size_t i = 0, j = vv->size(); i < j; ++i) {
 			args_types.push_back(vv->at(i)->getTypePtr());
 		}
 	}

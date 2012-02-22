@@ -260,8 +260,7 @@ public:
 			CLEVER_DELREF(m_value);
 		}
 		if (m_template_args) {
-
-			for (size_t i = 0; i < m_template_args->size(); ++i) {
+			for (size_t i = 0, j = m_template_args->size(); i < j; ++i) {
 				CLEVER_DELREF(m_template_args->at(i));
 			}
 
@@ -288,7 +287,7 @@ public:
 	void setTemplateArgs(TemplateArgsVector* template_args) {
 		m_template_args = template_args;
 
-		for (size_t i = 0; i < m_template_args->size(); ++i) {
+		for (size_t i = 0, j = m_template_args->size(); i < j; ++i) {
 			CLEVER_ADDREF(m_template_args->at(i));
 		}
 	}

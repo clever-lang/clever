@@ -238,7 +238,7 @@ CLEVER_METHOD(Array::slice) {
 		Compiler::warningf("The length param value (%l) must be valid.", length);
 	}
 	else {
-		for (int64_t i = r_start; i < r_end; i++) {
+		for (int64_t i = r_start; i < r_end; ++i) {
 			Value* val = new Value();
 			val->copy(vec->at(i));
 			n_vec->push_back(val);

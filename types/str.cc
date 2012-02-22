@@ -310,14 +310,14 @@ CLEVER_METHOD(String::pad) {
 		::std::string pad;
 		int64_t pad_len = (arg_len - this_str.size()) / 2;
 
-		for (int64_t i = 0; i < pad_len; i++) {
+		for (int64_t i = 0; i < pad_len; ++i) {
 			pad += arg_str;
 		}
 		this_str = pad.substr(0, pad_len) + this_str;
 
 		pad = "";
 		pad_len = arg_len - this_str.size();
-		for (int64_t i = 0; i < pad_len; i++) {
+		for (int64_t i = 0; i < pad_len; ++i) {
 			pad += arg_str;
 		}
 		this_str += pad.substr(0, pad_len);
@@ -338,7 +338,7 @@ CLEVER_METHOD(String::padLeft) {
 		::std::string pad;
 		int64_t pad_len = arg_len - this_str.size();
 
-		for (int64_t i = 0; i < pad_len; i++) {
+		for (int64_t i = 0; i < pad_len; ++i) {
 			pad += arg_str;
 		}
 		this_str = pad.substr(0, pad_len) + this_str;
@@ -359,7 +359,7 @@ CLEVER_METHOD(String::padRight) {
 		::std::string pad;
 		int64_t pad_len = arg_len - this_str.size();
 
-		for (int64_t i = 0; i < pad_len; i++) {
+		for (int64_t i = 0; i < pad_len; ++i) {
 			pad += arg_str;
 		}
 		this_str += pad.substr(0, pad_len);
