@@ -51,7 +51,7 @@ namespace clever { namespace packages { namespace std { namespace ffi {
 
 extern "C" {
 	typedef void (*ffi_call_func)();
-};
+}
 
 #ifndef CLEVER_WIN32
 	ExtMap ext_mod_map;
