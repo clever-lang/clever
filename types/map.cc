@@ -73,7 +73,7 @@ CLEVER_METHOD(Map::clear) {
 	MapValue* map = CLEVER_GET_VALUE(MapValue*, value);
 	MapValue::Iterator it = map->getMap().begin(),
 		end = map->getMap().end();
-		
+
 	while (it != end) {
 		it->first->delRef();
 		it->second->delRef();
@@ -91,12 +91,12 @@ CLEVER_METHOD(Map::toString) {
 	MapValue::Iterator it = map->getMap().begin(),
 		end = map->getMap().end();
 
-	std::string ret = "[", sep = ", ";	
+	std::string ret = "[", sep = ", ";
 
 	if (it != end) {
 		ret += it->first->toString() + " => "
 			+ it->second->toString();
-		
+
 		while (++it != end) {
 			ret += sep + it->first->toString() + " => "
 				+ it->second->toString();
@@ -114,9 +114,9 @@ CLEVER_METHOD(Map::toString) {
 CLEVER_METHOD(Map::hasKey) {
 	MapValue::ValueType& map = CLEVER_GET_VALUE(MapValue*, value)->getMap();
 	Value* search = CLEVER_ARG(0);
-	
+
 	MapValue::Iterator it = map.find(search);
-	
+
 	CLEVER_RETURN_BOOL(it != map.end());
 }
 
@@ -127,17 +127,17 @@ CLEVER_METHOD(Map::hasKey) {
 CLEVER_METHOD(Map::getKeys) {
 	MapValue::ValueType& map = CLEVER_GET_VALUE(MapValue*, value)->getMap();
 	MapValue::Iterator it = map.begin(), end = map.end();
-	
+
 	ValueVector* vv = new ValueVector();
 	Value* v;
-	
+
 	while (it != end) {
 		v = new Value();
 		v->copy(it->first);
 		vv->push_back(v);
 		++it;
 	}
-	
+
 	retval->setTypePtr(CLEVER_TPL_ARRAY(CLEVER_TYPE_ARG(value->getTypePtr(), 0)));
 	CLEVER_RETURN_ARRAY(vv);
 }
@@ -149,17 +149,17 @@ CLEVER_METHOD(Map::getKeys) {
 CLEVER_METHOD(Map::getValues) {
 	MapValue::ValueType& map = CLEVER_GET_VALUE(MapValue*, value)->getMap();
 	MapValue::Iterator it = map.begin(), end = map.end();
-	
+
 	ValueVector* vv = new ValueVector();
 	Value* v;
-	
+
 	while (it != end) {
 		v = new Value();
 		v->copy(it->second);
 		vv->push_back(v);
 		++it;
 	}
-	
+
 	retval->setTypePtr(CLEVER_TPL_ARRAY(CLEVER_TYPE_ARG(value->getTypePtr(), 1)));
 	CLEVER_RETURN_ARRAY(vv);
 }
@@ -171,25 +171,25 @@ CLEVER_METHOD(Map::getValues) {
 CLEVER_METHOD(Map::getAll) {
 	MapValue::ValueType& map = CLEVER_GET_VALUE(MapValue*, value)->getMap();
 	MapValue::Iterator it = map.begin(), end = map.end();
-	
-	const Type* const pair_type = 
+
+	const Type* const pair_type =
 		static_cast<const TemplatedType*>(CLEVER_TYPE("Pair"))
 		->getTemplatedType(CLEVER_THIS_ARG(0), CLEVER_THIS_ARG(1));
-	
+
 	ValueVector* vv = new ValueVector();
 	Value* v;
-	
+
 	while (it != end) {
 		PairValue* pv = new PairValue(it->first, it->second);
-		
+
 		v = new Value();
 		v->setDataValue(pv);
 		v->setTypePtr(pair_type);
-		
+
 		vv->push_back(v);
 		++it;
 	}
-	
+
 	retval->setTypePtr(CLEVER_TPL_ARRAY(pair_type));
 	CLEVER_RETURN_ARRAY(vv);
 }
@@ -205,16 +205,16 @@ void Map::init() {
 	if (CLEVER_TPL_ARG(0) == NULL) {
 		return;
 	}
-	
+
 	const Type* const key_type   = CLEVER_TPL_ARG(0);
 	const Type* const value_type = CLEVER_TPL_ARG(1);
 	const Type* const arr_key = CLEVER_TPL_ARRAY(key_type);
 	const Type* const arr_val = CLEVER_TPL_ARRAY(value_type);
-	
-	const Type* const pair_type = 
+
+	const Type* const pair_type =
 		static_cast<const TemplatedType*>(CLEVER_TYPE("Pair"))
 		->getTemplatedType(key_type, value_type);
-			
+
 	const Type* const arr_pair  = CLEVER_TPL_ARRAY(pair_type);
 
 	addMethod((new Method("insert", (MethodPtr)&Map::insert, CLEVER_VOID, false))
@@ -229,13 +229,13 @@ void Map::init() {
 	addMethod(new Method("isEmpty", (MethodPtr)&Map::isEmpty, CLEVER_BOOL));
 
 	addMethod(new Method("clear", (MethodPtr)&Map::clear, CLEVER_VOID));
-	
+
 	addMethod(new Method("getKeys", (MethodPtr)&Map::getKeys, arr_key));
-	
+
 	addMethod(new Method("getValues", (MethodPtr)&Map::getValues, arr_val));
-	
+
 	addMethod(new Method("getAll", (MethodPtr)&Map::getAll, arr_pair));
-	
+
 	addMethod((new Method("hasKey", (MethodPtr)&Map::hasKey, CLEVER_BOOL))
 		->addArg("key", key_type)
 	);
@@ -247,7 +247,7 @@ DataValue* Map::allocateValue() const {
 		return new MapValue(getTypeArg(0)
 			->getMethod(CSTRING(CLEVER_OPERATOR_LESS), &tv));
 	}
-	
+
 	TypeVector tv(2, getTypeArg(0));
 	return new MapValue(getTypeArg(2)
 		->getMethod(CSTRING("compare"), &tv), new Value(getTypeArg(2)));
