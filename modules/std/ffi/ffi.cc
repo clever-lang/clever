@@ -183,7 +183,7 @@ static CLEVER_FUNCTION(call_ext_func) {
 
 			FFIObjectValue* obj = static_cast<FFIObjectValue*>(CLEVER_ARG_DATA_VALUE(i));
 
-			ffi_values[i] = &(*obj->pointer);
+			ffi_values[i] = &obj->pointer;
 		}
 	}
 
@@ -232,7 +232,7 @@ static CLEVER_FUNCTION(call_ext_func) {
 	} else if (rt[0] == 'p') {
 		FFIObjectValue* x = new FFIObjectValue();
 
-		ffi_call(&cif, pf, &(*x->pointer), ffi_values);
+		ffi_call(&cif, pf, &(x->pointer), ffi_values);
 
 		CLEVER_RETURN_DATA_VALUE(x);
 	} else {
