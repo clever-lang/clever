@@ -43,6 +43,7 @@ CLEVER_METHOD(FFIObject::do_assign) {
 
 CLEVER_METHOD(FFIObject::constructor) {
 	FFIObjectValue* sv = new FFIObjectValue;
+	
 	CLEVER_RETURN_DATA_VALUE(sv);
 }
 

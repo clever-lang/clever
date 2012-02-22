@@ -66,22 +66,15 @@ extern "C" {
 #endif
 
 ffi_type* find_ffi_type(const char* tn) {
-	if (tn[0] == 'i') {
-		return &ffi_type_sint32;
-	} else if (tn[0] == 'd') {
-		return &ffi_type_double;
-	} else if (tn[0] == 'b') {
-		return &ffi_type_schar;
-	} else if (tn[0] == 's') {
-		return &ffi_type_pointer;
-	} else if (tn[0] == 'c') {
-		return &ffi_type_schar;
-	} else if (tn[0] == 'v') {
-		return &ffi_type_void;
-	} else if (tn[0] == 'p') {
-		return &ffi_type_pointer;
+	switch (tn[0]) {
+		case 'i': return &ffi_type_sint32;
+		case 'd': return &ffi_type_double;
+		case 'b': return &ffi_type_schar;
+		case 's': return &ffi_type_pointer;
+		case 'c': return &ffi_type_schar;
+		case 'v': return &ffi_type_void;
+		case 'p': return &ffi_type_pointer;
 	}
-
 	return NULL;
 }
 
@@ -182,7 +175,7 @@ static CLEVER_FUNCTION(call_ext_func) {
 			ffi_args[i] = find_ffi_type("p");
 
 			FFIObjectValue* obj = static_cast<FFIObjectValue*>(CLEVER_ARG_DATA_VALUE(i));
-
+			
 			ffi_values[i] = &obj->pointer;
 		}
 	}
