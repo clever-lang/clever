@@ -32,8 +32,9 @@
 
 namespace clever {
 
-/*TODO
- *We need to implement SAPI urgently!
+/**
+ * TODO:
+ * We need to implement SAPI urgently!
  */
 extern int* g_clever_argc;
 extern char*** g_clever_argv;
