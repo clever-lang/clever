@@ -52,8 +52,55 @@ CLEVER_METHOD(Pcre::constructor) {
 CLEVER_METHOD(Pcre::matches) {
 	PcreValue* self = CLEVER_GET_VALUE(PcreValue*, value);
 	const CString* haystack = CLEVER_ARG(0)->getStringP();
+	int n;
 
-	CLEVER_RETURN_BOOL(self->re->PartialMatch(haystack->c_str()));
+	// Check if we are testing another input, if not we just go to the next
+	// matching
+	if (self->match.last_input != haystack) {
+		n = self->re->NumberOfCapturingGroups();
+
+		// Non capturing subpattern uses the partial match method
+		if (n == 0) {
+			CLEVER_RETURN_BOOL(self->re->PartialMatch(haystack->c_str()));
+			return;
+		} else if (n > 0 && self->match.groups == NULL) {
+			self->match.n_groups = n;
+			self->match.matches = new ::std::string[n];
+			self->match.groups = new pcrecpp::Arg*[n];
+			self->match.input = haystack->str();
+			self->match.last_input = haystack;
+
+			for (int i = 0; i < n; ++i) {
+				self->match.groups[i] = new pcrecpp::Arg;
+				*self->match.groups[i] = &self->match.matches[i];
+			}
+		}
+	} else {
+		n = self->match.n_groups;
+	}
+
+	int consumed;
+	bool result = self->re->DoMatch(self->match.input,
+			pcrecpp::RE::UNANCHORED, &consumed, self->match.groups,	n);
+
+	if (result) {
+		self->match.input.remove_prefix(consumed);
+	}
+
+	CLEVER_RETURN_BOOL(result);
+}
+
+/**
+ * String Pcre::group(Int group)
+ */
+CLEVER_METHOD(Pcre::group) {
+	PcreValue* self = CLEVER_GET_VALUE(PcreValue*, value);
+
+	if (CLEVER_ARG_INT(0) >= self->match.n_groups) {
+		CLEVER_RETURN_STR(CSTRING(""));
+	} else {
+		CLEVER_RETURN_STR(CSTRING(self->match.matches[CLEVER_ARG_INT(0)]));
+	}
 }
 
 /**
@@ -110,6 +157,12 @@ void Pcre::init() {
 	addMethod(
 		(new Method("matches", (MethodPtr)&Pcre::matches, CLEVER_BOOL))
 		->addArg("haystack", CLEVER_STR)
+	);
+
+	// String Regex::group(Int group)
+	addMethod(
+		(new Method("group", (MethodPtr)&Pcre::group, CLEVER_STR))
+		->addArg("group", CLEVER_INT)
 	);
 
 	// Bool Regex::replace(String replacement, String haystack)

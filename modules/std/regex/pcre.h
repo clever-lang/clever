@@ -44,9 +44,12 @@ public:
 
 	static CLEVER_METHOD(constructor);
 	static CLEVER_METHOD(matches);
+	static CLEVER_METHOD(group);
 	static CLEVER_METHOD(replace);
 	static CLEVER_METHOD(replaceAll);
 	static CLEVER_METHOD(do_assign);
+private:
+	DISALLOW_COPY_AND_ASSIGN(Pcre);
 };
 
 }}}} // clever::packages::std::regex

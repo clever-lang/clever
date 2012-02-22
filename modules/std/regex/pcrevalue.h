@@ -26,19 +26,55 @@
 #ifndef CLEVER_STD_REGEX_PCREVALUE_H
 #define CLEVER_STD_REGEX_PCREVALUE_H
 
-#include "compiler/datavalue.h"
 #include <pcrecpp.h>
+#include <string>
+#include "compiler/datavalue.h"
+
 
 namespace clever { namespace packages { namespace std { namespace regex {
+
+class PcreMatch {
+public:
+	PcreMatch()
+		: last_input(NULL), groups(NULL), matches(NULL), n_groups(0) {}
+
+	~PcreMatch() {
+		if (groups == NULL) {
+			return;
+		}
+		delete[] matches;
+
+		for (int i = 0; i < n_groups; ++i) {
+			delete groups[i];
+		}
+
+		delete[] groups;
+	}
+
+	const CString* last_input;
+	pcrecpp::Arg** groups;
+	::std::string* matches;
+	int n_groups;
+	pcrecpp::StringPiece input;
+private:
+	DISALLOW_COPY_AND_ASSIGN(PcreMatch);
+};
 
 class PcreValue : public DataValue {
 public:
 	PcreValue()
 		: re(NULL) {}
 
-	pcrecpp::RE* re;
+	virtual ~PcreValue() {
+		if (re) {
+			delete re;
+		}
+	}
 
-	virtual ~PcreValue() { if (re) delete re; }
+	pcrecpp::RE* re;
+	PcreMatch match;
+private:
+	DISALLOW_COPY_AND_ASSIGN(PcreValue);
 };
 
 }}}} // clever::packages::std::regex
