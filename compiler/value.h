@@ -279,9 +279,16 @@ public:
 	}
 
 	void copy(const Value* const value) {
+		if (isUserValue() && getDataValue()) {
+			getDataValue()->delRef();
+		}
 		std::memcpy(&m_data, value->getData(), sizeof(ValueData));
 		m_type_ptr = value->getTypePtr();
 		m_type = value->getType();
+
+		if (isUserValue() && getDataValue()) {
+			getDataValue()->addRef();
+		}
 	}
 
 	virtual Value* getValue() { return this; }
