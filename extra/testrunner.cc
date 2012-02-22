@@ -334,7 +334,6 @@ void usage(void)
 	std::cout << "\t-m: run valgrind on each test" << std::endl;
 #endif
 	std::cout << "\t-q: only list failing tests" << std::endl;
-	std::cout << "\t-t: show time per test" << std::endl;
 }
 
 int main(int argc, char *argv[])
