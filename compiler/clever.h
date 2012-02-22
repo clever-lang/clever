@@ -200,8 +200,8 @@ extern jmp_buf fatal_error;
  * GCC built-in function to provide the compiler with branch prediction information
  */
 #if (defined (__GNUC__) && __GNUC__ > 2 ) && !defined(DARWIN) && !defined(__hpux) && !defined(_AIX)
-# define EXPECTED(cond)   __builtin_expect(cond, 1)
-# define UNEXPECTED(cond) __builtin_expect(cond, 0)
+# define EXPECTED(cond)   __builtin_expect(!!(cond), 1)
+# define UNEXPECTED(cond) __builtin_expect(!!(cond), 0)
 #else
 # define EXPECTED(cond)   (cond)
 # define UNEXPECTED(cond) (cond)

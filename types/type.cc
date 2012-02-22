@@ -27,7 +27,7 @@
 
 namespace clever {
 
-const CString* g_cstring_cached_ptrs[24];
+const CString* g_cstring_cached_ptrs[25];
 
 // Cached CString* pointers related to Type operators
 void init_type_cached_ptrs() {

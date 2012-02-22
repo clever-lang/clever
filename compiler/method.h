@@ -134,6 +134,8 @@ private:
 	int m_num_args;
 	int m_min_args;
 	bool m_is_const;
+
+	DISALLOW_COPY_AND_ASSIGN(Method);
 };
 
 } // clever

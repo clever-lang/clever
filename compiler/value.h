@@ -161,7 +161,8 @@ public:
 	int getType() const { return m_type; }
 
 	void setType(int type) {
-		if (type == NONE || type == USER || type == PRIMITIVE || type == REF) {
+		if (EXPECTED(type == NONE || type == USER || type == PRIMITIVE ||
+			type == REF)) {
 			m_type = type;
 		}
 	}
@@ -422,9 +423,7 @@ public:
 	void call(Value* const result, const ValueVector* const args) const {
 		const Type* const type_ptr = getTypePtr();
 
-		if (UNEXPECTED(m_call_type == NEAR)) {
-			/* TODO: throw error here */
-		}
+		clever_assert(m_call_type != NEAR, "Wrong call for user func/method!");
 
 		if (type_ptr == NULL) {
 			m_handler.func->call(args, result);
