@@ -33,6 +33,14 @@
 
 
 namespace clever { namespace packages { namespace std { namespace ffi {
+
+CLEVER_METHOD(FFIObject::do_assign) {
+	FFIObjectValue* lv = static_cast<FFIObjectValue* >(CLEVER_THIS()->getDataValue());
+	const FFIObjectValue* rv = static_cast<FFIObjectValue* >(CLEVER_ARG_DATA_VALUE(0));
+	*lv->pointer=*rv->pointer;
+	
+}
+
 CLEVER_METHOD(FFIObject::constructor) {
 	FFIObjectValue* sv = new FFIObjectValue;
 	CLEVER_RETURN_DATA_VALUE(sv);
@@ -42,6 +50,11 @@ void FFIObject::init() {
 	const Type* ffiobj = CLEVER_TYPE("FFIObject");
 
 	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&FFIObject::constructor, ffiobj));
+
+	addMethod(
+		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&FFIObject::do_assign, ffiobj, false))
+			->addArg("rvalue", ffiobj)
+	);
 }
 
 DataValue* FFIObject::allocateValue() const {
