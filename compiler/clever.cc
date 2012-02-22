@@ -44,7 +44,7 @@ void clever_assert_(const char* file, const char* function, long line, const cha
 
 	if (!hypothesis) {
 		va_start(vl, format);
-		printf("clever: Assertion '%s' failed. File: %s Line: %l Function: %s.\n\t", expr, file, line, function);
+		::printf("clever: Assertion '%s' failed. File: %s Line: %ld Function: %s.\n\t", expr, file, line, function);
 
 		vsprintf(out, format, vl);
 
