@@ -24,3 +24,5 @@ interpreter/position.hh
 interpreter/scanner.cc
 interpreter/stack.hh
 testrunner
+CPackConfig.cmake
+CPackSourceConfig.cmake
