@@ -31,8 +31,7 @@
 
 namespace clever {
 
-struct Comparator
-{
+struct Comparator {
 	Comparator(const Method* method, Value* value = NULL)
 		: m_comp(method), m_value(value) {
 		if (m_value) {
@@ -63,13 +62,12 @@ struct Comparator
 		return result.getBoolean();
 	}
 
-	private:
-		const Method* m_comp;
-		Value* m_value;
+private:
+	const Method* m_comp;
+	Value* m_value;
 };
 
-struct MapValue : public DataValue
-{
+struct MapValue : public DataValue {
 	typedef std::map<Value*, Value*, Comparator> MapInternal;
 	typedef MapInternal::iterator Iterator;
 	typedef MapInternal ValueType;
@@ -85,6 +83,8 @@ struct MapValue : public DataValue
 	~MapValue() {}
 private:
 	MapInternal m_map;
+
+	DISALLOW_COPY_AND_ASSIGN(MapValue);
 };
 
 } // clever

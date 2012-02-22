@@ -27,8 +27,7 @@
 #define CLEVER_OPCODE_H
 
 #include "vm/vm.h"
-#include "types/type.h"
-#include "compiler/value.h"
+#include "vm/operand.h"
 
 namespace clever {
 
@@ -68,49 +67,6 @@ enum OpcodeType {
 	OP_RSHIFT,
 	OP_ASSIGN,
 	OP_AT
-};
-
-enum OperandType { UNUSED, VALUE, VECTOR, ADDR };
-
-/**
- * Operand representation
- */
-class Operand {
-public:
-	Operand()
-		: m_type(UNUSED) {}
-
-	~Operand() {
-		if (m_type == VALUE) {
-			CLEVER_SAFE_DELREF(m_data.value);
-		} else if (m_type == VECTOR && m_data.vector) {
-			ValueVector::const_iterator it(m_data.vector->begin()),
-				end(m_data.vector->end());
-
-			while (it != end) {
-				CLEVER_DELREF(*it);
-				++it;
-			}
-			delete m_data.vector;
-		}
-	}
-
-	explicit Operand(Value* value)
-		: m_type(VALUE) {
-		m_data.value = value;
-	}
-
-	explicit Operand(ValueVector* vector)
-		: m_type(VECTOR) {
-		m_data.vector = vector;
-	}
-
-	OperandType m_type;
-	union {
-		Value* value;
-		ValueVector* vector;
-	} m_data;
-	long addr;
 };
 
 /**

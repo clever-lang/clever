@@ -27,17 +27,20 @@
 #define CLEVER_FFIOBJECTVALUE_H
 
 
+#include <cstdlib>
+#include <string>
 #include "compiler/datavalue.h"
 
 namespace clever { namespace packages { namespace std { namespace ffi {
 
 class FFIObjectValue : public DataValue {
 public:
-	FFIObjectValue(){pointer = new void*;}
+	FFIObjectValue() { }
 
-	void** pointer;
+	
+	void* pointer[1];
 
-	virtual ~FFIObjectValue() {}
+	virtual ~FFIObjectValue() { }
 };
 
 }}}} // clever::packages::std::ffi

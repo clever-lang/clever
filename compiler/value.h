@@ -158,8 +158,11 @@ public:
 		}
 	}
 
+	int getType() const { return m_type; }
+
 	void setType(int type) {
-		if (type == NONE || type == USER || type == PRIMITIVE || type == REF) {
+		if (EXPECTED(type == NONE || type == USER || type == PRIMITIVE ||
+			type == REF)) {
 			m_type = type;
 		}
 	}
@@ -277,8 +280,16 @@ public:
 	}
 
 	void copy(const Value* const value) {
+		if (isUserValue() && getDataValue()) {
+			getDataValue()->delRef();
+		}
 		std::memcpy(&m_data, value->getData(), sizeof(ValueData));
 		m_type_ptr = value->getTypePtr();
+		m_type = value->getType();
+
+		if (isUserValue() && getDataValue()) {
+			getDataValue()->addRef();
+		}
 	}
 
 	virtual Value* getValue() { return this; }
@@ -412,9 +423,7 @@ public:
 	void call(Value* const result, const ValueVector* const args) const {
 		const Type* const type_ptr = getTypePtr();
 
-		if (UNEXPECTED(m_call_type == NEAR)) {
-			/* TODO: throw error here */
-		}
+		clever_assert(m_call_type != NEAR, "Wrong call for user func/method!");
 
 		if (type_ptr == NULL) {
 			m_handler.func->call(args, result);

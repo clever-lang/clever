@@ -78,7 +78,11 @@ endif (MSVC)
 
 # Build environment
 # ---------------------------------------------------------------------------
-set(CMAKE_BUILD_TYPE        "Debug") # default to debug for now
+if (NOT CMAKE_BUILD_TYPE)
+	set(CMAKE_BUILD_TYPE Debug)
+	message(STATUS "No build specified, defaulting to Debug. Use -DCMAKE_BUILD_TYPE=Release to change")
+endif (NOT CMAKE_BUILD_TYPE)
+
 if (MSVC)
 	set(CMAKE_CXX_FLAGS         "/W1 /wd4503 /GR- /EHsc-")
 	set(CMAKE_CXX_FLAGS_DEBUG   "/O1 /Zi /D_DEBUG /DCLEVER_DEBUG /MDd")

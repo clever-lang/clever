@@ -234,8 +234,8 @@ static CallableValue* _prepare_method_call(const Type* type, Value* var,
 
 	TypeVector args_types;
 
-	if (vv != NULL) {
-		for (size_t i = 0; i < vv->size(); ++i) {
+	if (EXPECTED(vv != NULL)) {
+		for (size_t i = 0, j = vv->size(); i < j; ++i) {
 			args_types.push_back(vv->at(i)->getTypePtr());
 		}
 	}
@@ -256,7 +256,7 @@ static CallableValue* _prepare_method_call(const Type* type, Value* var,
 	}
 	var->setTypePtr(type);
 
-	if (var->isConst() && !method->isConst()) {
+	if (UNEXPECTED(var->isConst() && !method->isConst())) {
 		const std::string args_type_name = _serialize_arg_type(args_types, ", ");
 
 		Compiler::errorf(expr->getLocation(), "Can't call the non-const "
@@ -293,7 +293,7 @@ AST_VISITOR(TypeChecker, ArgumentList) {
 
 	values->reserve(nodes.size());
 
-	while (it != end) {
+	while (EXPECTED(it != end)) {
 		(*it)->acceptVisitor(*this);
 
 		Value* value = (*it)->getValue();
@@ -312,12 +312,12 @@ AST_VISITOR(TypeChecker, ArgumentList) {
 AST_VISITOR(TypeChecker, AliasStmt) {
 	Value* fvalue = m_scope->getValue(expr->getCurrentName());
 
-	if (fvalue == NULL) {
+	if (UNEXPECTED(fvalue == NULL)) {
 		Compiler::errorf(expr->getLocation(), "Identifier `%S' not found!",
 			expr->getCurrentName());
 	}
 
-	if (m_scope->getValue(expr->getNewName())) {
+	if (UNEXPECTED(m_scope->getValue(expr->getNewName()))) {
 		Compiler::errorf(expr->getLocation(), "Name `%S' already in use!",
 			expr->getNewName());
 	}
@@ -332,7 +332,7 @@ AST_VISITOR(TypeChecker, AliasStmt) {
 AST_VISITOR(TypeChecker, Constant) {
 	Value* constant = m_scope->getValue(expr->getName());
 
-	if (constant == NULL) {
+	if (UNEXPECTED(constant == NULL)) {
 		Compiler::errorf(expr->getLocation(), "Constant `%S' not found!",
 			expr->getName());
 	}
@@ -346,7 +346,7 @@ AST_VISITOR(TypeChecker, Constant) {
 AST_VISITOR(TypeChecker, RegexPattern) {
 	const Type* type = CLEVER_TYPE("Regex");
 
-	if (type == NULL) {
+	if (UNEXPECTED(type == NULL)) {
 		Compiler::error("Regex module must be loaded to use the regex syntax!");
 	}
 
@@ -417,7 +417,7 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 
 	bool is_assigned = expr->isAssigned();
 
-	if (is_assigned && lhs->isConst()) {
+	if (UNEXPECTED(is_assigned && lhs->isConst())) {
 		Compiler::errorf(expr->getLocation(),
 			"Can't assign to variable `%S' because it is const",
 			lhs->getName());
@@ -487,7 +487,7 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 AST_VISITOR(TypeChecker, VariableDecl) {
 	const Type* type = NULL;
 
-	if (expr->getType() != NULL) {
+	if (EXPECTED(expr->getType() != NULL)) {
 		type = _evaluate_type(expr->getLocation(),
 			expr->getType());
 	}
@@ -495,7 +495,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 	Identifier* variable = expr->getVariable();
 
 	// Check if there is already a variable with same name in the current scope
-	if (m_scope->getLocalValue(variable->getName()) != NULL) {
+	if (EXPECTED(m_scope->getLocalValue(variable->getName()) != NULL)) {
 		Compiler::errorf(expr->getLocation(),
 			"Already exists a variable named `%S' in the current scope!",
 			variable->getName());
@@ -574,7 +574,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 AST_VISITOR(TypeChecker, IfExpr) {
 	expr->getCondition()->acceptVisitor(*this);
 
-	if (expr->hasBlock()) {
+	if (EXPECTED(expr->hasBlock())) {
 		expr->getBlock()->acceptVisitor(*this);
 	}
 
@@ -611,7 +611,7 @@ AST_VISITOR(TypeChecker, BlockNode) {
 	expr->setScope(m_scope);
 
 	// Iterates over statements inside the block
-	while (it != end) {
+	while (EXPECTED(it != end)) {
 		(*it)->acceptVisitor(*this);
 		++it;
 	}
@@ -628,7 +628,7 @@ AST_VISITOR(TypeChecker, UnscopedBlockNode) {
 	NodeList::const_iterator it = nodes.begin(), end = nodes.end();
 
 	// Iterates over statements inside the block
-	while (it != end) {
+	while (EXPECTED(it != end)) {
 		(*it)->acceptVisitor(*this);
 		++it;
 	}
@@ -647,7 +647,7 @@ AST_VISITOR(TypeChecker, VarDecls) {
 	NodeList::const_iterator it = nodes.begin(), end = nodes.end();
 
 	// Declare all the variable in the declaration list
-	while (it != end) {
+	while (EXPECTED(it != end)) {
 		(*it)->acceptVisitor(*this);
 		++it;
 	}
@@ -659,7 +659,7 @@ AST_VISITOR(TypeChecker, VarDecls) {
 AST_VISITOR(TypeChecker, WhileExpr) {
 	expr->getCondition()->acceptVisitor(*this);
 
-	if (expr->hasBlock()) {
+	if (EXPECTED(expr->hasBlock())) {
 		expr->getBlock()->acceptVisitor(*this);
 	}
 }
@@ -674,19 +674,19 @@ AST_VISITOR(TypeChecker, ForExpr) {
 
 	m_scope = m_scope->newChild();
 
-	if (expr->getVarDecl()) {
+	if (EXPECTED(expr->getVarDecl())) {
 		expr->getVarDecl()->acceptVisitor(*this);
 	}
 
-	if (expr->getCondition()) {
+	if (EXPECTED(expr->getCondition())) {
 		expr->getCondition()->acceptVisitor(*this);
 	}
 
-	if (expr->hasBlock()) {
+	if (EXPECTED(expr->hasBlock())) {
 		expr->getBlock()->acceptVisitor(*this);
 	}
 
-	if (expr->getIncrement()) {
+	if (EXPECTED(expr->getIncrement())) {
 		expr->getIncrement()->acceptVisitor(*this);
 	}
 
@@ -700,14 +700,14 @@ AST_VISITOR(TypeChecker, AssignExpr) {
 	Value* lhs = expr->getLhs()->getValue();
 	Value* rhs = expr->getRhs()->getValue();
 
-	if (!_check_compatible_types(lhs, rhs)) {
+	if (UNEXPECTED(!_check_compatible_types(lhs, rhs))) {
 		Compiler::errorf(expr->getLocation(),
 			"Cannot convert `%S' to `%S' on assignment",
 			rhs->getTypePtr()->getName(),
 			lhs->getTypePtr()->getName());
 	}
 
-	if (lhs->isConst()) {
+	if (UNEXPECTED(lhs->isConst())) {
 		Compiler::errorf(expr->getLocation(),
 			"Can't assign to variable `%S' because it is const",
 			lhs->getName());
@@ -737,7 +737,7 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 
 	Value* fvalue = m_scope->getValue(name);
 
-	if (fvalue == NULL || !fvalue->isCallable()) {
+	if (UNEXPECTED(fvalue == NULL || !fvalue->isCallable())) {
 		Compiler::errorf(expr->getLocation(), "Function `%S' does not exists!",
 			name);
 	}
@@ -753,7 +753,7 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 	if (expr->getReturnType() == NULL) {
 		expr->getValue()->setTypePtr(func->getReturnType());
 	} else {
-		if(expr->getReturnType() == CLEVER_OBJECT){
+		if (expr->getReturnType() == CLEVER_OBJECT) {
 			expr->getValue()->setTypePtr(CLEVER_TYPE("FFIObject"));
 		} else {
 			expr->getValue()->setTypePtr(expr->getReturnType());
@@ -785,7 +785,7 @@ AST_VISITOR(TypeChecker, MethodCall) {
 
 	ArgumentList* args = expr->getArgs();
 
-	if (args != NULL) {
+	if (EXPECTED(args != NULL)) {
 		arg_values = args->getArgValue();
 
 		expr->setArgsValue(arg_values);
@@ -823,7 +823,7 @@ AST_VISITOR(TypeChecker, ImportStmt) {
  */
 AST_VISITOR(TypeChecker, FuncDeclaration) {
 	// We can't have a function declaration without a block
-	if (!expr->hasBlock()) {
+	if (UNEXPECTED(!expr->hasBlock())) {
 		Compiler::error("Cannot declare a function without a block",
 			expr->getLocation());
 	}
@@ -843,12 +843,12 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 	func->setHandler(user_func);
 
 	// Set the return type
-	if (return_type) {
+	if (EXPECTED(return_type != NULL)) {
 		const Type* rtype = NULL;
+
 		if (return_type->getName() != CSTRING("Void")) {
 			rtype = _evaluate_type(expr->getLocation(), return_type);
 		}
-
 		user_func->setReturnType(rtype);
 	}
 
@@ -862,7 +862,7 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 
 		func->setScope(m_scope);
 
-		while (it != end) {
+		while (EXPECTED(it != end)) {
 			Value* var = new Value;
 
 			const Type* arg_type = _evaluate_type(expr->getLocation(), it->first);
@@ -896,12 +896,14 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
  */
 AST_VISITOR(TypeChecker, ReturnStmt) {
 	// Only for return statement inside function declaration
-	if (!m_funcs.empty()) {
-		const Function* func = m_funcs.top();
-
-		_check_function_return(func, expr->getExprValue(), func->getReturnType(),
-			expr->getLocation());
+	if (UNEXPECTED(m_funcs.empty())) {
+		return;
 	}
+
+	const Function* func = m_funcs.top();
+
+	_check_function_return(func, expr->getExprValue(), func->getReturnType(),
+			expr->getLocation());
 }
 
 /**
@@ -913,7 +915,7 @@ AST_VISITOR(TypeChecker, TypeCreation) {
 	ValueVector* arg_values = NULL;
 
 	// Check if the type wasn't declarated previously
-	if (type == NULL) {
+	if (UNEXPECTED(type == NULL)) {
 		Compiler::errorf(expr->getLocation(), "`%S' does not name a type",
 			ident->getName());
 	}

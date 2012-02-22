@@ -42,6 +42,7 @@ public:
 	void destructor(Value* value) const;
 
 	static CLEVER_METHOD(constructor);
+	static CLEVER_METHOD(do_assign);
 	
 private:
 	DISALLOW_COPY_AND_ASSIGN(FFIObject);

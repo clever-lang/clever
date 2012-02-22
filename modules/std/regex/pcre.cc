@@ -30,50 +30,8 @@
 
 namespace clever { namespace packages { namespace std { namespace regex {
 
-void Pcre::init() {
-	const Type* type = CLEVER_TYPE(REGEX_TYPE_NAME);
-
-	/* Pcre(String pattern [, Int options]) */
-	addMethod(
-		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Pcre::constructor, type))
-		->addArg("pattern", CLEVER_STR)
-		->addArg("options", CLEVER_INT)
-		->setMinNumArgs(1)
-	);
-	/* Pcre.matches(String haystack) */
-	addMethod(
-		(new Method("matches", (MethodPtr)&Pcre::matches, CLEVER_BOOL))
-		->addArg("haystack", CLEVER_STR)
-	);
-	/* Pcre.replace(String replacement, String haystack) */
-	addMethod(
-		(new Method("replace", (MethodPtr)&Pcre::replace, CLEVER_BOOL))
-		->addArg("replacement", CLEVER_STR)
-		->addArg("haystack", CLEVER_STR)
-	);
-	/* Pcre.replaceAll(String replacement, String haystack) */
-	addMethod(
-		(new Method("replaceAll", (MethodPtr)&Pcre::replaceAll, CLEVER_BOOL))
-		->addArg("replacement", CLEVER_STR)
-		->addArg("haystack", CLEVER_STR)
-	);
-
-	addMethod(
-		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&Pcre::do_assign, CLEVER_VOID))
-		->addArg("rvalue", type)
-	);
-}
-
-void Pcre::destructor(Value* value) const {
-
-}
-
-DataValue* Pcre::allocateValue() const {
-	return new PcreValue();
-}
-
 /**
- * Pcre Pcre::constructor(String pattern)
+ * Regex(String pattern)
  */
 CLEVER_METHOD(Pcre::constructor) {
 	PcreValue* self = new PcreValue();
@@ -89,17 +47,64 @@ CLEVER_METHOD(Pcre::constructor) {
 }
 
 /**
- * Bool Pcre::matches(String haystack)
+ * Bool Regex::matches(String haystack)
  */
 CLEVER_METHOD(Pcre::matches) {
 	PcreValue* self = CLEVER_GET_VALUE(PcreValue*, value);
 	const CString* haystack = CLEVER_ARG(0)->getStringP();
+	int n;
 
-	CLEVER_RETURN_BOOL(self->re->PartialMatch(haystack->c_str()));
+	// Check if we are testing another input, if not we just go to the next
+	// matching
+	if (self->match.last_input != haystack) {
+		n = self->re->NumberOfCapturingGroups();
+
+		// Non capturing subpattern uses the partial match method
+		if (n == 0) {
+			CLEVER_RETURN_BOOL(self->re->PartialMatch(haystack->c_str()));
+			return;
+		} else if (n > 0 && self->match.groups == NULL) {
+			self->match.n_groups = n;
+			self->match.matches = new ::std::string[n];
+			self->match.groups = new pcrecpp::Arg*[n];
+			self->match.input = haystack->str();
+			self->match.last_input = haystack;
+
+			for (int i = 0; i < n; ++i) {
+				self->match.groups[i] = new pcrecpp::Arg;
+				*self->match.groups[i] = &self->match.matches[i];
+			}
+		}
+	} else {
+		n = self->match.n_groups;
+	}
+
+	int consumed;
+	bool result = self->re->DoMatch(self->match.input,
+			pcrecpp::RE::UNANCHORED, &consumed, self->match.groups,	n);
+
+	if (result) {
+		self->match.input.remove_prefix(consumed);
+	}
+
+	CLEVER_RETURN_BOOL(result);
 }
 
 /**
- * String Pcre::replace(String replacement, String haystack)
+ * String Pcre::group(Int group)
+ */
+CLEVER_METHOD(Pcre::group) {
+	PcreValue* self = CLEVER_GET_VALUE(PcreValue*, value);
+
+	if (CLEVER_ARG_INT(0) >= self->match.n_groups) {
+		CLEVER_RETURN_STR(CSTRING(""));
+	} else {
+		CLEVER_RETURN_STR(CSTRING(self->match.matches[CLEVER_ARG_INT(0)]));
+	}
+}
+
+/**
+ * String Regex::replace(String replacement, String haystack)
  */
 CLEVER_METHOD(Pcre::replace) {
 	PcreValue* self = CLEVER_GET_VALUE(PcreValue*, value);
@@ -111,7 +116,7 @@ CLEVER_METHOD(Pcre::replace) {
 }
 
 /**
- * String Pcre::replaceAll(String replacement, String haystack)
+ * String Regex::replaceAll(String replacement, String haystack)
  */
 CLEVER_METHOD(Pcre::replaceAll) {
 	PcreValue* self = CLEVER_GET_VALUE(PcreValue*, value);
@@ -122,8 +127,63 @@ CLEVER_METHOD(Pcre::replaceAll) {
 	CLEVER_RETURN_STR(CSTRING(newstr));
 }
 
+/**
+ * Void Regex::operator=(Regex regex)
+ */
 CLEVER_METHOD(Pcre::do_assign) {
 	CLEVER_THIS()->copy(CLEVER_ARG(0));
+}
+
+void Pcre::destructor(Value* value) const {
+
+}
+
+DataValue* Pcre::allocateValue() const {
+	return new PcreValue();
+}
+
+void Pcre::init() {
+	const Type* type = CLEVER_TYPE(REGEX_TYPE_NAME);
+
+	// Regex(String pattern [, Int options])
+	addMethod(
+		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Pcre::constructor, type))
+		->addArg("pattern", CLEVER_STR)
+		->addArg("options", CLEVER_INT)
+		->setMinNumArgs(1)
+	);
+
+	// Bool Regex::matches(String haystack)
+	addMethod(
+		(new Method("matches", (MethodPtr)&Pcre::matches, CLEVER_BOOL))
+		->addArg("haystack", CLEVER_STR)
+	);
+
+	// String Regex::group(Int group)
+	addMethod(
+		(new Method("group", (MethodPtr)&Pcre::group, CLEVER_STR))
+		->addArg("group", CLEVER_INT)
+	);
+
+	// Bool Regex::replace(String replacement, String haystack)
+	addMethod(
+		(new Method("replace", (MethodPtr)&Pcre::replace, CLEVER_BOOL))
+		->addArg("replacement", CLEVER_STR)
+		->addArg("haystack", CLEVER_STR)
+	);
+
+	// Bool Regex::replaceAll(String replacement, String haystack)
+	addMethod(
+		(new Method("replaceAll", (MethodPtr)&Pcre::replaceAll, CLEVER_BOOL))
+		->addArg("replacement", CLEVER_STR)
+		->addArg("haystack", CLEVER_STR)
+	);
+
+	// Void Regex::operator= (Regex regex)
+	addMethod(
+		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&Pcre::do_assign, CLEVER_VOID))
+		->addArg("rvalue", type)
+	);
 }
 
 }}}} // clever::packages:std::regex

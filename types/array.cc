@@ -205,29 +205,29 @@ CLEVER_METHOD(Array::resize) {
 CLEVER_METHOD(Array::slice) {
 	ValueVector* vec = CLEVER_GET_ARRAY(CLEVER_THIS());
 	size_t sz = vec->size();
-	
+
 	int64_t start = CLEVER_ARG(0)->getInteger();
 	int64_t length = CLEVER_ARG(1)->getInteger();
-	
+
 	int64_t r_start = 0;
 	int64_t r_end = 0;
-	
+
 	if (start < 0) {
 		r_start = sz + start;
 	}
 	else {
 		r_start = start;
 	}
-	
+
 	if (length <= 0) {
 		r_end = sz + length;
 	}
 	else {
 		r_end = r_start + length;
 	}
-	
+
 	ValueVector* n_vec = new ValueVector;
-	
+
 	if (r_start >= (int64_t) sz) {
 		Compiler::warningf("Value of start param (%l) is greater than Array size.", start);
 	}
@@ -238,13 +238,13 @@ CLEVER_METHOD(Array::slice) {
 		Compiler::warningf("The length param value (%l) must be valid.", length);
 	}
 	else {
-		for (int64_t i = r_start; i < r_end; i++) {
+		for (int64_t i = r_start; i < r_end; ++i) {
 			Value* val = new Value();
 			val->copy(vec->at(i));
 			n_vec->push_back(val);
 		}
 	}
-	
+
 	CLEVER_RETURN_ARRAY(n_vec);
 }
 
@@ -268,28 +268,28 @@ CLEVER_METHOD(Array::toString) {
 
 /**
  * Int Array<T>::find(T v)
- * Returns the position of the first value equal to `v' or -1 if 
+ * Returns the position of the first value equal to `v' or -1 if
  * the value is not present in this Array
  */
 CLEVER_METHOD(Array::find) {
 	ValueVector* vec = CLEVER_GET_ARRAY(CLEVER_THIS());
-	
+
 	// Builds the ValueVector and the TypeVector to retrive and call the method
 	ValueVector vv(2, CLEVER_ARG(0));
 	TypeVector tv(2, CLEVER_THIS_ARG(0));
-	
+
 	// Gets the method
-	const Method* const method = 
+	const Method* const method =
 		CLEVER_THIS_ARG(0)->getMethod(CSTRING(CLEVER_OPERATOR_EQUAL), &tv);
-	
+
 	Value ret;
 	int64_t pos = -1;
 	for (size_t i = 0, sz = vec->size(); i < sz; ++i) {
 		vv[1] = vec->at(i);
-		
-		// Calls this[i] == CLEVER_ARG(0) 
+
+		// Calls this[i] == CLEVER_ARG(0)
 		method->call(&vv, &ret, vec->at(i));
-		
+
 		if (ret.getBoolean()) {
 			pos = i;
 			break;
@@ -309,7 +309,7 @@ void Array::init() {
 	if (CLEVER_TPL_ARG(0) == NULL) {
 		return;
 	}
-	
+
 	const Type* arr_t = CLEVER_GET_ARRAY_TEMPLATE->getTemplatedType(CLEVER_TPL_ARG(0));
 
 	addMethod(
@@ -351,12 +351,12 @@ void Array::init() {
 		->addArg("new_size", CLEVER_INT)
 		->addArg("value", CLEVER_TPL_ARG(0))
 	);
-	
+
 	addMethod((new Method("slice", (MethodPtr)&Array::slice, arr_t))
 		->addArg("start", CLEVER_INT)
 		->addArg("length", CLEVER_INT)
 	);
-	
+
 	addMethod((new Method("find", (MethodPtr)&Array::find, CLEVER_INT))
 		->addArg("value", CLEVER_TPL_ARG(0))
 	);

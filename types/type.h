@@ -41,7 +41,7 @@
 
 namespace clever {
 
-extern const CString* g_cstring_cached_ptrs[24];
+extern const CString* g_cstring_cached_ptrs[25];
 
 void init_type_cached_ptrs();
 

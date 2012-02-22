@@ -35,8 +35,10 @@ namespace clever {
  */
 class DataValue : public RefCounted {
 public:
-	DataValue() {};
-	virtual ~DataValue() {};
+	DataValue() {}
+	virtual ~DataValue() {}
+private:
+	DISALLOW_COPY_AND_ASSIGN(DataValue);
 };
 
 } // clever

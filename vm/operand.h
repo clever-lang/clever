@@ -23,60 +23,58 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef CLEVER_STD_REGEX_PCREVALUE_H
-#define CLEVER_STD_REGEX_PCREVALUE_H
+#ifndef CLEVER_OPERAND_H
+#define CLEVER_OPERAND_H
 
-#include <pcrecpp.h>
-#include <string>
-#include "compiler/datavalue.h"
+#include "compiler/value.h"
 
+namespace clever {
 
-namespace clever { namespace packages { namespace std { namespace regex {
+enum OperandType { UNUSED, VALUE, VECTOR, ADDR };
 
-class PcreMatch {
+/**
+ * Operand representation
+ */
+class Operand {
 public:
-	PcreMatch()
-		: last_input(NULL), groups(NULL), matches(NULL), n_groups(0) {}
+	Operand()
+		: m_type(UNUSED) {}
 
-	~PcreMatch() {
-		if (groups == NULL) {
-			return;
-		}
-		delete[] matches;
-
-		for (int i = 0; i < n_groups; ++i) {
-			delete groups[i];
-		}
-
-		delete[] groups;
+	explicit Operand(Value* value)
+		: m_type(VALUE) {
+		m_data.value = value;
 	}
 
-	const CString* last_input;
-	pcrecpp::Arg** groups;
-	::std::string* matches;
-	int n_groups;
-	pcrecpp::StringPiece input;
-private:
-	DISALLOW_COPY_AND_ASSIGN(PcreMatch);
-};
+	explicit Operand(ValueVector* vector)
+		: m_type(VECTOR) {
+		m_data.vector = vector;
+	}
 
-class PcreValue : public DataValue {
-public:
-	PcreValue()
-		: re(NULL) {}
+	~Operand() {
+		if (m_type == VALUE) {
+			CLEVER_SAFE_DELREF(m_data.value);
+		} else if (m_type == VECTOR && m_data.vector) {
+			ValueVector::const_iterator it(m_data.vector->begin()),
+				end(m_data.vector->end());
 
-	virtual ~PcreValue() {
-		if (re) {
-			delete re;
+			while (it != end) {
+				CLEVER_DELREF(*it);
+				++it;
+			}
+			delete m_data.vector;
 		}
 	}
 
-	pcrecpp::RE* re;
-	PcreMatch match;
-private:
-	DISALLOW_COPY_AND_ASSIGN(PcreValue);
+	OperandType m_type;
+
+	union {
+		Value* value;
+		ValueVector* vector;
+	} m_data;
+
+	long addr;
 };
 
-}}}} // clever::packages::std::regex
+} // clever
 
-#endif
+#endif // CLEVER_OPERAND_H

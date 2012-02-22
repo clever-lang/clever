@@ -190,10 +190,9 @@ CLEVER_METHOD(String::constructor) {
 			ValueVector *vv = CLEVER_ARG_ARRAY(0);
 			std::string buffer = "";
 
-			for (int i = 0; i < vv->size(); i++) {
+			for (size_t i = 0, j = vv->size(); i < j; ++i) {
 				buffer += static_cast<char>(vv->at(i)->getByte());
 			}
-
 			CLEVER_RETURN_STR(CSTRING(buffer));
 		}
 	}
@@ -311,14 +310,14 @@ CLEVER_METHOD(String::pad) {
 		::std::string pad;
 		int64_t pad_len = (arg_len - this_str.size()) / 2;
 
-		for (int64_t i = 0; i < pad_len; i++) {
+		for (int64_t i = 0; i < pad_len; ++i) {
 			pad += arg_str;
 		}
 		this_str = pad.substr(0, pad_len) + this_str;
 
 		pad = "";
 		pad_len = arg_len - this_str.size();
-		for (int64_t i = 0; i < pad_len; i++) {
+		for (int64_t i = 0; i < pad_len; ++i) {
 			pad += arg_str;
 		}
 		this_str += pad.substr(0, pad_len);
@@ -339,7 +338,7 @@ CLEVER_METHOD(String::padLeft) {
 		::std::string pad;
 		int64_t pad_len = arg_len - this_str.size();
 
-		for (int64_t i = 0; i < pad_len; i++) {
+		for (int64_t i = 0; i < pad_len; ++i) {
 			pad += arg_str;
 		}
 		this_str = pad.substr(0, pad_len) + this_str;
@@ -360,7 +359,7 @@ CLEVER_METHOD(String::padRight) {
 		::std::string pad;
 		int64_t pad_len = arg_len - this_str.size();
 
-		for (int64_t i = 0; i < pad_len; i++) {
+		for (int64_t i = 0; i < pad_len; ++i) {
 			pad += arg_str;
 		}
 		this_str += pad.substr(0, pad_len);

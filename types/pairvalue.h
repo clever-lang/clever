@@ -30,42 +30,42 @@
 #include "compiler/value.h"
 
 namespace clever {
-struct PairValue : public DataValue
-{	
+
+struct PairValue : public DataValue {
 	typedef std::pair<Value*, Value*> InternalType;
-	
-	PairValue(const Type* t1, const Type* t2) 
+
+	PairValue(const Type* t1, const Type* t2)
 		: m_pair(new Value(t1), new Value(t2)) {
 			first()->initialize();
 			second()->initialize();
 	}
-	
-	PairValue(Value* first, Value* second) 
+
+	PairValue(Value* first, Value* second)
 		: m_pair(new Value(), new Value()) {
 			m_pair.first->copy(first);
 			m_pair.second->copy(second);
 	}
-	
+
 	Value* first() const {
 		return m_pair.first;
 	}
-	
+
 	Value* second() const {
 		return m_pair.second;
 	}
-	
+
 	void setFirst(Value* v) {
 		m_pair.first = v;
 	}
-	
+
 	void setSecond(Value* v) {
 		m_pair.second = v;
 	}
-	
+
 	InternalType& getPair() {
 		return m_pair;
 	}
-	
+
 	~PairValue() {
 		m_pair.first->delRef();
 		m_pair.second->delRef();
@@ -73,8 +73,10 @@ struct PairValue : public DataValue
 
 private:
 	InternalType m_pair;
+
+	DISALLOW_COPY_AND_ASSIGN(PairValue);
 };
+
 } // clever
 
-#endif
-
+#endif // CLEVER_PAIRVALUE_H
