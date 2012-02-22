@@ -66,6 +66,9 @@ void VM::update_vars(Scope* scope, const FunctionArgs& fargs,
 
 	FunctionArgs::const_iterator it(fargs.begin()), end(fargs.end());
 
+	vec->reserve(args->size());
+	vec_copy->reserve(args->size());
+
 	/* TODO: Find a better way to do this */
 	while (it != end) {
 		Value* val = scope->getValue(CSTRING((*it).first));
@@ -82,37 +85,38 @@ void VM::update_vars(Scope* scope, const FunctionArgs& fargs,
 	i = args->size();
 
 	// Make the copy in the scopes level
-	if (scope->hasChildren()) {
+	if (EXPECTED(scope->hasChildren())) {
 		const ScopeVector& scopes = scope->getChildren();
 		ScopeVector::const_iterator scope_it(scopes.begin()),
 			scope_end(scopes.end());
 
-		while (scope_it != scope_end) {
+		while (EXPECTED(scope_it != scope_end)) {
 			const SymbolMap& symbols = (*scope_it)->getSymbols();
 			SymbolMap::const_iterator sym(symbols.begin()),
 				last_sym(symbols.end());
 
-			while (sym != last_sym) {
+			while (EXPECTED(sym != last_sym)) {
 				Symbol* symbol = sym->second;
 
-				if (symbol->isValue()) {
+				if (EXPECTED(symbol->isValue())) {
 					Value* val = symbol->getValue();
 
-					if (!val->isCallable()) {
-						Value* tmp = new Value;
-
-						tmp->copy(val);
-
-						if (vec_curr) {
-							vec_curr->at(i++)->copy(tmp);
-							tmp->addRef();
-						}
-
-						vec_copy->push_back(tmp);
-						vec->push_back(val);
-
-						val->initialize();
+					if (val->isCallable()) {
+						continue;
 					}
+
+					Value* tmp = new Value;
+
+					tmp->copy(val);
+
+					if (vec_curr) {
+						vec_curr->at(i++)->copy(tmp);
+						tmp->addRef();
+					}
+
+					vec_copy->push_back(tmp);
+					vec->push_back(val);
+					val->initialize();
 				}
 				++sym;
 			}
