@@ -80,6 +80,9 @@ public:
 	Opcode(OpcodeType op_type, VM::opcode_handler handler, Value* op1)
 		: m_op_type(op_type), m_handler(handler), m_op1(op1), m_result(NULL) {}
 
+	Opcode(OpcodeType op_type, VM::opcode_handler handler, long op1)
+		: m_op_type(op_type), m_handler(handler), m_op1(op1), m_result(NULL) {}
+
 	Opcode(OpcodeType op_type, VM::opcode_handler handler, Value* op1,
 		Value* op2, Value* result)
 		: m_op_type(op_type), m_handler(handler), m_op1(op1), m_op2(op2),
@@ -96,14 +99,10 @@ public:
 
 	VM::opcode_handler getHandler() const { return m_handler; }
 
-	Value* getOp1() const { return m_op1.m_data.value; }
-	void setOp1(Value* op1) { m_op1.m_data.value = op1; }
-	OperandType getOp1Type() const { return m_op1.m_type; }
+	Value* getOp1Value() const { return m_op1.getValue(); }
 
-	Value* getOp2() const { return m_op2.m_data.value; }
-	ValueVector* getOp2Vector() const { return m_op2.m_data.vector; }
-	void setOp2(Value* op2) { m_op2.m_data.value = op2; }
-	OperandType getOp2Type() const { return m_op2.m_type; }
+	Value* getOp2Value() const { return m_op2.getValue(); }
+	ValueVector* getOp2Vector() const { return m_op2.getVector(); }
 
 	Value* getResult() const { return m_result; }
 	void setResult(Value* result) { m_result = result; }
@@ -112,11 +111,11 @@ public:
 	size_t getOpNum() const { return m_op_num; }
 	void setOpNum(size_t op_num) { m_op_num = op_num; }
 
-	void setJmpAddr1(long jmp_addr) { m_op1.addr = jmp_addr; }
-	long getJmpAddr1() const { return m_op1.addr; }
+	void setJmpAddr1(long addr) { m_op1.setAddr(addr); }
+	long getJmpAddr1() const { return m_op1.getAddr(); }
 
-	void setJmpAddr2(long jmp_addr) { m_op2.addr = jmp_addr; }
-	long getJmpAddr2() const { return m_op2.addr; }
+	void setJmpAddr2(long addr) { m_op2.setAddr(addr); }
+	long getJmpAddr2() const { return m_op2.getAddr(); }
 
 	/**
 	 * Methods for debugging purpose

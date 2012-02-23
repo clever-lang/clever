@@ -30,13 +30,13 @@
 
 namespace clever {
 
-enum OperandType { UNUSED, VALUE, VECTOR, ADDR };
-
 /**
  * Operand representation
  */
 class Operand {
 public:
+	enum OperandType { UNUSED, VALUE, VECTOR, ADDR };
+
 	Operand()
 		: m_type(UNUSED) {}
 
@@ -48,6 +48,11 @@ public:
 	explicit Operand(ValueVector* vector)
 		: m_type(VECTOR) {
 		m_data.vector = vector;
+	}
+
+	explicit Operand(long addr)
+		: m_type(ADDR) {
+		m_data.addr = addr;
 	}
 
 	~Operand() {
@@ -65,14 +70,27 @@ public:
 		}
 	}
 
+	OperandType getType() const { return m_type; }
+
+	void setAddr(long addr) {
+		m_type = ADDR;
+		m_data.addr = addr;
+	}
+
+	long         getAddr() const { return m_data.addr; }
+	Value*       getValue() const { return m_data.value; }
+	ValueVector* getVector() const { return m_data.vector; }
+private:
+
 	OperandType m_type;
 
 	union {
 		Value* value;
 		ValueVector* vector;
+		long addr;
 	} m_data;
 
-	long addr;
+	DISALLOW_COPY_AND_ASSIGN(Operand);
 };
 
 } // clever
