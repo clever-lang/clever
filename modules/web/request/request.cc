@@ -23,38 +23,51 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef CLEVER_SESSIONCLASS_H
-#define CLEVER_SESSIONCLASS_H
 
-#include "types/type.h"
+#include <cgicc/HTTPHTMLHeader.h>
+#include <cgicc/HTMLClasses.h>
+#include <cgicc/Cgicc.h>
+
+
 #include "compiler/value.h"
-#include "modules/web/http/sessionvalue.h"
+#include "modules/web/request/request.h"
 
-namespace clever { namespace packages { namespace web { namespace http {
 
-class Session : public Type {
-public:
-	Session() :
-		Type(CSTRING("Session")) { }
+namespace clever { namespace packages { namespace web {
 
-	void init();
-	DataValue* allocateValue() const;
-	void destructor(Value* value) const;
+cgicc::Cgicc* r_cgi;
 
-	/**
-	 * Type methods
-	 */
-	static CLEVER_METHOD(refresh);
-	static CLEVER_METHOD(getCookie);
-	static CLEVER_METHOD(getCookies);
-	static CLEVER_METHOD(setCookie);
-	static CLEVER_METHOD(header);
+namespace request {
 	
-private:
-	DISALLOW_COPY_AND_ASSIGN(Session);
-};
+static CLEVER_FUNCTION(params) {
+	
+	cgicc::form_iterator name = r_cgi->getElement(CLEVER_ARG_STR(0));
+	if(name != r_cgi->getElements().end()) {
+		CLEVER_RETURN_STR(CSTRING(name->getValue().c_str()));
+		return;
+	}
 
-}}}} // clever::packages::web::http
+	CLEVER_RETURN_STR(CSTRING("0"));
+}
 
-#endif // CLEVER_CGICLASS_H
+} // request
 
+/**
+ * Initializes Standard module
+ */
+void RequestModule::init() {
+	addFunction(new Function("params",&CLEVER_NS_FNAME(request,params), CLEVER_STR))
+		->addArg("name", CLEVER_STR);
+}
+
+RequestModule::RequestModule()
+	: Module("request") { 
+	r_cgi=new cgicc::Cgicc;
+}
+
+RequestModule::~RequestModule() {
+	delete r_cgi;
+}
+
+
+}}} // clever::packages::web

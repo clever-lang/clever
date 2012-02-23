@@ -23,42 +23,27 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef CLEVER_SESSIONVALUE_H
-#define CLEVER_SESSIONVALUE_H
+#ifndef CLEVER_WEB_REQUEST_H
+#define CLEVER_WEB_REQUEST_H
 
-#include <cgicc/HTTPHeader.h>
-#include <cgicc/HTTPHTMLHeader.h>
-#include <cgicc/HTMLClasses.h>
-#include <cgicc/CgiEnvironment.h>
-#include <map>
-#include <string>
-#include <cgicc/Cgicc.h>
+#include "compiler/module.h"
+#include "compiler/value.h"
 
-#include "compiler/datavalue.h"
+namespace clever { namespace packages { namespace web {
 
-namespace clever { namespace packages { namespace web { namespace http {
-
-class SessionValue : public DataValue {
+class RequestModule : public Module {
 public:
-	SessionValue(){ 
-		cgi = new cgicc::Cgicc;
-		header = new cgicc::HTTPHTMLHeader;
-		cgiEnv = new cgicc::CgiEnvironment(cgi->getEnvironment()); 
-		cookVec = new std::vector<cgicc::HTTPCookie>; 
-		mapCook = new std::map<std::string,std::string>;
-	}
-	
-	// Cgi
-	cgicc::Cgicc* cgi;
-	cgicc::HTTPHTMLHeader* header;
-	cgicc::CgiEnvironment* cgiEnv;
-	std::vector<cgicc::HTTPCookie>* cookVec;
-	std::map<std::string,std::string>* mapCook;	
+	RequestModule();
 
-	virtual ~SessionValue() { delete cgi; delete header; delete cgiEnv; delete cookVec; delete mapCook; }
+	~RequestModule();
+
+	void init();
+private:
+	DISALLOW_COPY_AND_ASSIGN(RequestModule);
 };
 
-}}}} // clever::packages::web::http
+extern Module* g_request_module;
 
-#endif
+}}} // clever::packages::request
 
+#endif // CLEVER_WEB_REQUEST_H
