@@ -446,9 +446,7 @@ AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
 AST_VISITOR(CodeGenVisitor, ReturnStmt) {
 	Value* expr_value = expr->getExprValue();
 
-	if (expr_value) {
-		expr_value->addRef();
-	}
+	CLEVER_SAFE_ADDREF(expr_value);
 
 	emit(OP_RETURN, &VM::return_handler, expr_value);
 }
