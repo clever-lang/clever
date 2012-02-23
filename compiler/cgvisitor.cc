@@ -200,18 +200,17 @@ AST_VISITOR(CodeGenVisitor, IfExpr) {
 		expr->getBlock()->acceptVisitor(*this);
 	}
 
-	Opcode* last_jmp = jmp_if;
+	Opcode* last_jmpz = jmp_if;
 
 	if (expr->hasElseIf()) {
 		const NodeList& elseif_nodes = expr->getNodes();
 		NodeList::const_iterator it(elseif_nodes.begin()), end(elseif_nodes.end());
 
 		while (it != end) {
-			Opcode* jmp_end = emit(OP_JMP, &VM::jmp_handler);
-			jmp_ops.push_back(jmp_end);
+			jmp_ops.push_back(emit(OP_JMP, &VM::jmp_handler));
 
 			// If the last expression is false, jumps to the next condition
-			last_jmp->setJmpAddr1(getOpNum());
+			last_jmpz->setJmpAddr1(getOpNum());
 
 			ElseIfExpr* elseif = static_cast<ElseIfExpr*>(*it);
 
@@ -225,16 +224,15 @@ AST_VISITOR(CodeGenVisitor, IfExpr) {
 			if (elseif->hasBlock()) {
 				elseif->getBlock()->acceptVisitor(*this);
 			}
-
-			last_jmp = jmp_elseif;
+			last_jmpz = jmp_elseif;
 			++it;
 		}
 	}
 
-	Opcode* jmp_else = emit(OP_JMP, &VM::jmp_handler);
-	jmp_ops.push_back(jmp_else);
+	jmp_ops.push_back(emit(OP_JMP, &VM::jmp_handler));
 
-	last_jmp->setJmpAddr1(getOpNum());
+	// If the last expression has failed, it jumps to the last block
+	last_jmpz->setJmpAddr1(getOpNum());
 
 	if (expr->hasElseBlock()) {
 		expr->getElse()->acceptVisitor(*this);

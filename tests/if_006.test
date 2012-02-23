@@ -1,0 +1,15 @@
+Testing if-elseif-else
+==CODE==
+import std;
+
+Int x = 0;
+
+if (x == 1) {
+	print("1=", x, "\n");
+} else if (x == 0) {
+	print("2=", x, "\n");
+} else if (x == 3) {
+	println("oops");
+}
+==RESULT==
+2=0
