@@ -85,7 +85,7 @@ static CLEVER_FUNCTION(getcwd) {
  *Get i-th argv
  */
 static CLEVER_FUNCTION(argv) {
-	int i = CLEVER_ARG_INT(0);
+	size_t i = static_cast<size_t>(CLEVER_ARG_INT(0));
 	CLEVER_RETURN_STR(CSTRING((*g_clever_argv)[i]));
 }
 

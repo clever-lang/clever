@@ -63,6 +63,7 @@ public:
 	static CLEVER_METHOD(pad);
 	static CLEVER_METHOD(padLeft);
 	static CLEVER_METHOD(padRight);
+	static CLEVER_METHOD(split);
 
 	/**
 	 * Type operator methods

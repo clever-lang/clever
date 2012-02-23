@@ -1,0 +1,17 @@
+Testing String split method
+==CODE==
+import std.io;
+
+String foo = "1,2,3,4,5";
+String bar = "1ab2ab3ab4ab5";
+
+println("=" + foo.split(",").toString() + "=");
+println("=" + foo.split("ab").toString() + "=");
+println("=" + bar.split(",").toString() + "=");
+println("=" + bar.split("ab").toString() + "=");
+
+==RESULT==
+=\[1, 2, 3, 4, 5\]=
+=\[1,2,3,4,5\]=
+=\[1ab2ab3ab4ab5\]=
+=\[1, 2, 3, 4, 5\]=

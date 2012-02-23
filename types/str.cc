@@ -368,6 +368,36 @@ CLEVER_METHOD(String::padRight) {
 	CLEVER_RETURN_STR(CSTRING(this_str));
 }
 
+/**
+ * String String::split(separator)
+ */
+CLEVER_METHOD(String::split) {
+	::std::string this_str = CLEVER_THIS()->toString();
+	const ::std::string& separator = CLEVER_ARG(0)->toString();
+	ValueVector* vv = new ValueVector;
+
+	// Skip delimiters at beginning.
+	::std::string::size_type lastPos = this_str.find_first_not_of(separator, 0);
+
+	// Find first "non-delimiter".
+	::std::string::size_type pos = this_str.find_first_of(separator, lastPos);
+
+	while ((::std::string::npos != pos) || (::std::string::npos != lastPos)) {
+		Value *v = new Value();
+
+		// Found it.
+		v->setString(CSTRING(this_str.substr(lastPos, pos - lastPos)));
+		vv->push_back(v);
+
+		// Skip delimiters.
+		lastPos = this_str.find_first_not_of(separator, pos);
+
+		// Find next "non-delimiter"
+		pos = this_str.find_first_of(separator, lastPos);
+	}
+
+	CLEVER_RETURN_ARRAY(vv);
+}
 
 /**
  * Void String::__assign__(String)
@@ -447,6 +477,7 @@ CLEVER_METHOD(String::times) {
 
 void String::init() {
 	const Type* arr_byte = CLEVER_GET_ARRAY_TEMPLATE->getTemplatedType(CLEVER_BYTE);
+	const Type* arr_string = CLEVER_GET_ARRAY_TEMPLATE->getTemplatedType(CLEVER_STR);
 
 	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&String::constructor, CLEVER_STR));
 
@@ -551,6 +582,11 @@ void String::init() {
 			->addArg("str", CLEVER_STR)
 			->addArg("pos", CLEVER_INT)
 			->setMinNumArgs(1)
+	);
+
+	addMethod(
+		(new Method("split", (MethodPtr)&String::split, arr_string))
+			->addArg("separator", CLEVER_STR)
 	);
 
 	addMethod(new Method("toByteArray", (MethodPtr)&String::toByteArray, arr_byte));
