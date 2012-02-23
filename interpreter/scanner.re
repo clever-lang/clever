@@ -56,7 +56,7 @@ next_token:
 	SPECIAL    = [;(),{}&~^|=+*/-][];
 	TYPE       = [A-Z][a-zA-Z0-9_]*;
 	CONSTANT   = [A-Z][A-Z0-9_]+;
-	REGEX      = "/"[^*]([a-zA-Z0-9]+|SPACE|[-+$^\|{}?()*][]|"\\"[^])*"/";
+	REGEX      = "/"[^*]([a-zA-Z0-9]+|SPACE|[-'"+$^\|{}?)(*:<>][]|"\\"[^])*"/";
 
 	<!*> { yylen = cursor - s.yylex; }
 
