@@ -77,6 +77,11 @@ public:
 		m_data.addr = addr;
 	}
 
+	void setValue(Value* value) {
+		m_type = VALUE;
+		m_data.value = value;
+	}
+
 	long         getAddr() const { return m_data.addr; }
 	Value*       getValue() const { return m_data.value; }
 	ValueVector* getVector() const { return m_data.vector; }

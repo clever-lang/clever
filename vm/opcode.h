@@ -75,27 +75,30 @@ enum OpcodeType {
 class Opcode {
 public:
 	Opcode(OpcodeType op_type, VM::opcode_handler handler)
-		: m_op_type(op_type), m_handler(handler), m_result(NULL) {}
+		: m_type(op_type), m_handler(handler), m_op1(), m_op2(),
+			m_result() {}
 
 	Opcode(OpcodeType op_type, VM::opcode_handler handler, Value* op1)
-		: m_op_type(op_type), m_handler(handler), m_op1(op1), m_result(NULL) {}
+		: m_type(op_type), m_handler(handler), m_op1(op1), m_op2(),
+			m_result() {}
 
 	Opcode(OpcodeType op_type, VM::opcode_handler handler, long op1)
-		: m_op_type(op_type), m_handler(handler), m_op1(op1), m_result(NULL) {}
+		: m_type(op_type), m_handler(handler), m_op1(op1), m_op2(),
+			m_result() {}
 
 	Opcode(OpcodeType op_type, VM::opcode_handler handler, Value* op1,
 		Value* op2, Value* result)
-		: m_op_type(op_type), m_handler(handler), m_op1(op1), m_op2(op2),
+		: m_type(op_type), m_handler(handler), m_op1(op1), m_op2(op2),
 			m_result(result) {}
 
 	Opcode(OpcodeType op_type, VM::opcode_handler handler, Value* op1,
 		ValueVector* op2, Value* result)
-		: m_op_type(op_type), m_handler(handler), m_op1(op1), m_op2(op2),
+		: m_type(op_type), m_handler(handler), m_op1(op1), m_op2(op2),
 			m_result(result) {}
 
 	~Opcode() {}
 
-	int getOpType() const { return m_op_type; }
+	OpcodeType getType() const { return m_type; }
 
 	VM::opcode_handler getHandler() const { return m_handler; }
 
@@ -106,8 +109,9 @@ public:
 	Value* getOp2Value() const { return m_op2.getValue(); }
 	ValueVector* getOp2Vector() const { return m_op2.getVector(); }
 
-	Value* getResult() const { return m_result; }
-	void setResult(Value* result) { m_result = result; }
+	const Operand& getResult() const { return m_result; }
+	Value* getResultValue() const { return m_result.getValue(); }
+	void setResult(Value* result) { m_result.setValue(result); }
 
 	// Methods to set and get the opcode number (its position in the vector)
 	size_t getOpNum() const { return m_op_num; }
@@ -130,10 +134,9 @@ public:
 	// Returns the opcode handler by supplying its opcode type
 	static VM::opcode_handler getHandlerByType(OpcodeType);
 private:
-	OpcodeType m_op_type;
+	OpcodeType m_type;
 	VM::opcode_handler m_handler;
-	Operand m_op1, m_op2;
-	Value* m_result;
+	Operand m_op1, m_op2, m_result;
 	size_t m_op_num;
 
 	DISALLOW_COPY_AND_ASSIGN(Opcode);
