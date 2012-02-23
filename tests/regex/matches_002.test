@@ -3,11 +3,11 @@ Testing Regex module assigning another pattern
 import std.io;
 import std.regex;
 
-Regex a = //f+/;
+Regex a = /f+/;
 
 println(a.matches("fffoo"));
 
-a = //a+/;
+a = /a+/;
 
 println(a.matches("o"));
 ==RESULT==
