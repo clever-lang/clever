@@ -27,84 +27,112 @@
 
 #include <iostream>
 #include <fstream>
+#include <cgicc/HTTPHeader.h>
+#include <cgicc/HTTPHTMLHeader.h>
+#include <cgicc/HTMLClasses.h>
+#include <cgicc/CgiEnvironment.h>
+#include <map>
+#include <vector>
+#include <string>
+#include <cgicc/Cgicc.h>
+
 #include "compiler/compiler.h"
 #include "compiler/cstring.h"
-#include "modules/web/cgi/cgiclass.h"
-#include "modules/web/http/sessionclass.h"
-#include "modules/web/http/http.h"
+#include "modules/web/request/request.h"
+#include "modules/web/session/session.h"
 #include "types/nativetypes.h"
 
 namespace clever { namespace packages { namespace web {
 
-namespace http {
 
-/**
- * header()
- */
+cgicc::Cgicc* s_cgi;
+cgicc::HTTPHTMLHeader* header;
+cgicc::CgiEnvironment* cgiEnv;
+std::vector<cgicc::HTTPCookie>* cookVec;
+std::map<std::string,std::string>* mapCook;	
+
+typedef std::vector<cgicc::HTTPCookie>::iterator it_cv;
+
+void __init_session__() {
+	
+	cgicc::CgiEnvironment& c = *(cgiEnv);
+	std::vector<cgicc::HTTPCookie>& cv = *(cookVec);
+	std::map<std::string,std::string>& mc = *(mapCook);	
+
+	cv = c.getCookieList();
+	mapCook->clear();
+
+	it_cv it = cv.begin(), end = cv.end();
+
+	while (it != end) {
+		mc[it->getName()]=it->getValue();
+		++it;
+	}
+}
+
+
+namespace session {
+
+static CLEVER_FUNCTION(getCookie) {
+	std::map<std::string,std::string>& mc = *(mapCook);
+
+	CLEVER_RETURN_STR(CSTRING(mc[CLEVER_ARG_STR(0)]));
+}
+
+static CLEVER_FUNCTION(setCookie) {
+	cgicc::HTTPHTMLHeader& h =  *(header);
+	std::vector<cgicc::HTTPCookie>& cv = *(cookVec);
+	std::map<std::string,std::string>& mc = *(mapCook);	
+
+	cgicc::HTTPCookie cookie(CLEVER_ARG_STR(0),CLEVER_ARG_STR(1));	
+	
+	mc[CLEVER_ARG_STR(0)]=CLEVER_ARG_STR(1);
+	cv.push_back(cookie);
+	h.setCookie(cookie);
+
+}
+
 static CLEVER_FUNCTION(header) {
-	::std::cout<< cgicc::HTTPHTMLHeader() << ::std::endl;
+	cgicc::HTTPHTMLHeader& h =  *(header);
+
+	::std::cout<< h << ::std::endl;
 }
-
-/**
- * html()
- */
-static CLEVER_FUNCTION(html) {
-	::std::cout<< cgicc::html() << ::std::endl;
-}
-
-/**
- * body()
- */
-static CLEVER_FUNCTION(body) {
-	::std::cout<< cgicc::body() << ::std::endl;
-}
-
-/**
- * head()
- */
-static CLEVER_FUNCTION(head) {
-	::std::cout<< cgicc::head() << ::std::endl;
-}
-
-
-/*
- *String title(String)
- */
-static CLEVER_FUNCTION(title) {
-	::std::cout << cgicc::title(CLEVER_ARG_STR(0))<< ::std::endl;
-}
-
 
 } // web
 
 /**
  * Load module data
  */
-void Http::init() {
-	Class* Session = new http::Session();
+void Session::init() {
 
-	addClass(Session);
+	__init_session__();
 
-	addFunction(new Function("header",&CLEVER_NS_FNAME(http, header), CLEVER_VOID))
-		->setVariadic()
-		->setMinNumArgs(0);
+	addFunction(new Function("header",&CLEVER_NS_FNAME(session, header), CLEVER_VOID));
+		
+	addFunction(new Function("getCookie",&CLEVER_NS_FNAME(session,getCookie), CLEVER_STR))
+		->addArg("name", CLEVER_STR);
 
-	addFunction(new Function("html",&CLEVER_NS_FNAME(http, html), CLEVER_VOID))
-		->setVariadic()
-		->setMinNumArgs(0);
+	
+	addFunction(new Function("setCookie", &CLEVER_NS_FNAME(session,setCookie), CLEVER_VOID))
+			->addArg("name", CLEVER_STR)
+			->addArg("value",CLEVER_STR);
+}
 
-	addFunction(new Function("body",&CLEVER_NS_FNAME(http, body), CLEVER_VOID))
-		->setVariadic()
-		->setMinNumArgs(0);
+Session::Session()
+	: Module("Session") { 
+	s_cgi = new cgicc::Cgicc;
+	header = new cgicc::HTTPHTMLHeader;
+	cgiEnv = new cgicc::CgiEnvironment(s_cgi->getEnvironment()); 
+	cookVec = new std::vector<cgicc::HTTPCookie>; 
+	mapCook = new std::map<std::string,std::string>;
+}
 
-	addFunction(new Function("head",&CLEVER_NS_FNAME(http, head), CLEVER_VOID))
-		->setVariadic()
-		->setMinNumArgs(0);
-
-	addFunction(new Function("title", &CLEVER_NS_FNAME(http, title), CLEVER_VOID))
-		->setVariadic()
-		->setMinNumArgs(1);
-
+Session::~Session() {
+	delete s_cgi; 
+	delete header; 
+	delete cgiEnv; 
+	delete cookVec; 
+	delete mapCook;
 }
 
 }}} // clever::packages::web

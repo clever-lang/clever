@@ -23,11 +23,11 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifdef HAVE_MOD_WEB_CGI
-#include "modules/web/cgi/cgi.h"
+#ifdef HAVE_MOD_WEB_REQUEST
+#include "modules/web/request/request.h"
 #endif
 
-#ifdef HAVE_MOD_WEB_HTTP
-#include "modules/web/http/http.h"
+#ifdef HAVE_MOD_WEB_SESSION
+#include "modules/web/session/session.h"
 #endif
 

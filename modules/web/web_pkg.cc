@@ -32,12 +32,12 @@ namespace clever { namespace packages {
  * Initializes Web package
  */
 void Web::init() {
-#ifdef HAVE_MOD_WEB_CGI
-	addModule(new web::CgiModule);
+#ifdef HAVE_MOD_WEB_REQUEST
+	addModule(new web::RequestModule);
 #endif
 
-#ifdef HAVE_MOD_WEB_HTTP
-	addModule(new web::Http);
+#ifdef HAVE_MOD_WEB_SESSION
+	addModule(new web::Session);
 #endif
 
 }
