@@ -102,7 +102,7 @@ static CLEVER_FUNCTION(call_ext_func) {
 		void* m = ext_mod_map[lib] = dlopen(libname.c_str(), 1);
 
 		if (m == NULL) {
-			::std::fprintf(stderr,"[FFI] Shared library %s don't found!\n",libname.c_str());
+			clever_fatal("[FFI] Shared library`%S' not found!", &CLEVER_ARG_STR(size-3));
 			CLEVER_RETURN_BOOL(false);
 			return;
 		}
@@ -114,7 +114,7 @@ static CLEVER_FUNCTION(call_ext_func) {
 	fpf = dlsym(it->second, func.c_str());
 
 	if (fpf == NULL) {
-		::std::fprintf(stderr,"[FFI] function %s don't found at %s!\n",func.c_str(),lib.c_str());
+		clever_fatal("[FFI] function`%S' not found at `%S'!", &CLEVER_ARG_STR(size-1),&CLEVER_ARG_STR(size-3));
 		CLEVER_RETURN_BOOL(false);
 		return;
 	}
