@@ -99,8 +99,10 @@ public:
 
 	VM::opcode_handler getHandler() const { return m_handler; }
 
+	const Operand& getOp1() const { return m_op1; }
 	Value* getOp1Value() const { return m_op1.getValue(); }
 
+	const Operand& getOp2() const { return m_op2; }
 	Value* getOp2Value() const { return m_op2.getValue(); }
 	ValueVector* getOp2Vector() const { return m_op2.getVector(); }
 
@@ -122,7 +124,8 @@ public:
 	 */
 	void dump() const;
 	const char* getOpName(OpcodeType) const;
-	std::string dumpOp(const char* const, Value* const) const;
+	std::string dumpOp(const char* const, const Operand&) const;
+	void dumpValue(std::ostringstream&, Value*) const;
 
 	// Returns the opcode handler by supplying its opcode type
 	static VM::opcode_handler getHandlerByType(OpcodeType);

@@ -36,11 +36,9 @@ namespace clever {
 void Opcode::dump() const {
 	::printf("(%04zu) | ", getOpNum());
 	::printf("%-15s | ", getOpName(m_op_type));
-	//::printf("%-20s | ", dumpOp("op1", getOp1()).c_str());
-	//::printf("%-20s | ", dumpOp("op2", getOp2()).c_str());
-	::printf("%-20s | ", dumpOp("result", getResult()).c_str());
-	::printf("Addr1: %04ld | ", getJmpAddr1());
-	::printf("Addr2: %04ld\n", getJmpAddr2());
+	::printf("%-20s | ", dumpOp("op1", getOp1()).c_str());
+	::printf("%-20s | ", dumpOp("op2", getOp2()).c_str());
+	//::printf("%-20s | ", dumpOp("result", getResult()).c_str());
 }
 
 /**
@@ -90,40 +88,41 @@ const char* Opcode::getOpName(OpcodeType op) const {
 /**
  * Dumps an operand
  */
-std::string Opcode::dumpOp(const char* const label, Value* const op) const {
-	if (!op) {
-		return std::string(std::string(label) + ": UNUSED");
-	}
-
+std::string Opcode::dumpOp(const char* const label, const Operand& op) const {
 	std::ostringstream str;
 
-	if (op->getName() && op->isCallable()) {
-		std::string name = op->getName()->str();
+	str << label;
+	str << ": ";
 
-		str << op->refCount();
+	switch (op.getType()) {
+		case UNUSED:
+			str << ": UNUSED";
+			break;
+		case ADDR:
+			str << ": ";
+			str << op.getAddr();
+			break;
+		case VALUE:
+			dumpValue(str, op.getValue());
+			break;
+		case VECTOR:
+			str << "vector";
+			break;
+	}
+	return str.str();
+}
 
-		return std::string(std::string(label) + ": " + name + " (#" +
-			str.str() + ")");
+/**
+ * Dumps a Value* pointer
+ */
+void Opcode::dumpValue(std::ostringstream& str, Value* value)
+	const {
+	if (value->isCallable()) {
+		str << value->getName()->str();
 	} else {
-		std::string name;
-/*
-		if (op->isVector()) {
-			if (op->getTypePtr() == NULL) {
-				name = "ValueVector";
-			} else {
-				name = op->getTypePtr()->getName()->str();
-			}
-		} else {
-			if (op->getTypePtr() == NULL) {
-				name = "NULL";
-			} else {
-				name = op->toString().str();
-			}
-		}*/
-		str << op->refCount();
-
-		return std::string(std::string(label) + ": " + name + " (#" +
-			str.str() + ")");
+		if (value->getTypePtr()) {
+			str << value->toString();
+		}
 	}
 }
 

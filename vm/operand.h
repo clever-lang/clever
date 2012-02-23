@@ -30,13 +30,13 @@
 
 namespace clever {
 
+enum OperandType { UNUSED, VALUE, VECTOR, ADDR };
+
 /**
  * Operand representation
  */
 class Operand {
 public:
-	enum OperandType { UNUSED, VALUE, VECTOR, ADDR };
-
 	Operand()
 		: m_type(UNUSED) {}
 
