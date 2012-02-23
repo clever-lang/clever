@@ -196,21 +196,24 @@ AST_VISITOR(CodeGenVisitor, IfExpr) {
 
 	Opcode* jmp_if = emit(OP_JMPZ, &VM::jmpz_handler, value);
 
-	jmp_ops.push_back(jmp_if);
-
 	if (expr->hasBlock()) {
 		expr->getBlock()->acceptVisitor(*this);
 	}
 
+	Opcode* last_jmp = jmp_if;
+
 	if (expr->hasElseIf()) {
 		const NodeList& elseif_nodes = expr->getNodes();
-		NodeList::const_iterator it = elseif_nodes.begin(), end = elseif_nodes.end();
-		Opcode* last_jmp = jmp_if;
+		NodeList::const_iterator it(elseif_nodes.begin()), end(elseif_nodes.end());
 
 		while (it != end) {
-			ElseIfExpr* elseif = static_cast<ElseIfExpr*>(*it);
+			Opcode* jmp_end = emit(OP_JMP, &VM::jmp_handler);
+			jmp_ops.push_back(jmp_end);
 
+			// If the last expression is false, jumps to the next condition
 			last_jmp->setJmpAddr1(getOpNum());
+
+			ElseIfExpr* elseif = static_cast<ElseIfExpr*>(*it);
 
 			elseif->getCondition()->acceptVisitor(*this);
 
@@ -218,8 +221,6 @@ AST_VISITOR(CodeGenVisitor, IfExpr) {
 			cond->addRef();
 
 			Opcode* jmp_elseif = emit(OP_JMPZ, &VM::jmpz_handler, cond);
-
-			jmp_ops.push_back(jmp_elseif);
 
 			if (elseif->hasBlock()) {
 				elseif->getBlock()->acceptVisitor(*this);
@@ -230,28 +231,21 @@ AST_VISITOR(CodeGenVisitor, IfExpr) {
 		}
 	}
 
+	Opcode* jmp_else = emit(OP_JMP, &VM::jmp_handler);
+	jmp_ops.push_back(jmp_else);
+
+	last_jmp->setJmpAddr1(getOpNum());
+
 	if (expr->hasElseBlock()) {
-		Opcode* jmp_else = emit(OP_JMP, &VM::jmp_handler);
-
-		if (jmp_ops.size() == 1) {
-			jmp_if->setJmpAddr1(getOpNum());
-		}
-
-		jmp_ops.push_back(jmp_else);
-
 		expr->getElse()->acceptVisitor(*this);
 	}
 
-	if (jmp_ops.size() == 1) {
-		jmp_if->setJmpAddr1(getOpNum());
-		jmp_if->setJmpAddr2(getOpNum());
-	} else {
-		OpcodeList::const_iterator it = jmp_ops.begin(), end = jmp_ops.end();
+	OpcodeList::const_iterator it(jmp_ops.begin()), end(jmp_ops.end());
 
-		while (it != end) {
-			(*it)->setJmpAddr2(getOpNum());
-			++it;
-		}
+	// Set the JMP addr to out of the control structure
+	while (it != end) {
+		(*it)->setJmpAddr2(getOpNum());
+		++it;
 	}
 }
 
