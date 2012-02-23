@@ -119,7 +119,7 @@ void Session::init() {
 }
 
 Session::Session()
-	: Module("Session") { 
+	: Module("session") { 
 	s_cgi = new cgicc::Cgicc;
 	header = new cgicc::HTTPHTMLHeader;
 	cgiEnv = new cgicc::CgiEnvironment(s_cgi->getEnvironment()); 
