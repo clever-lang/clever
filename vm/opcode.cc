@@ -96,10 +96,9 @@ std::string Opcode::dumpOp(const char* const label, const Operand& op) const {
 
 	switch (op.getType()) {
 		case UNUSED:
-			str << ": UNUSED";
+			str << "UNUSED";
 			break;
 		case ADDR:
-			str << ": ";
 			str << op.getAddr();
 			break;
 		case VALUE:
@@ -117,7 +116,9 @@ std::string Opcode::dumpOp(const char* const label, const Operand& op) const {
  */
 void Opcode::dumpValue(std::ostringstream& str, Value* value)
 	const {
-	if (value->isCallable()) {
+	if (value == NULL) {
+		str << "NULL";
+	} else if (value->isCallable()) {
 		str << value->getName()->str();
 	} else {
 		if (value->getTypePtr()) {
