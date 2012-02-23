@@ -97,6 +97,21 @@ private:
 	/**
 	 * Output an opcode.
 	 */
+	Opcode* emit(OpcodeType type, VM::opcode_handler handler, long addr) {
+		Opcode* opcode = new Opcode(type, handler);
+		m_opcodes.push_back(opcode);
+		/**
+		 * Sets the opcode number, which is used by JMP opcodes
+		 */
+		opcode->setOpNum(getOpNum());
+		opcode->setJmpAddr1(addr);
+
+		return opcode;
+	}
+
+	/**
+	 * Output an opcode.
+	 */
 	Opcode* emit(OpcodeType type, VM::opcode_handler handler, Value* op1, ValueVector* op2, Value* result = NULL) {
 		Opcode* opcode = new Opcode(type, handler, op1, op2, result);
 		m_opcodes.push_back(opcode);

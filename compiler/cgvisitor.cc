@@ -117,11 +117,11 @@ AST_VISITOR(CodeGenVisitor, BinaryExpr) {
 			expr->getRhs()->acceptVisitor(*this);
 			rhs = expr->getRhs()->getValue();
 
-			opcode->setJmpAddr1(getOpNum()+1);
+			opcode->setJmpAddr2(getOpNum()+1);
 
 			opcode = emit(opval, op_handler, rhs);
 			opcode->setResult(expr->getValue());
-			opcode->setJmpAddr1(getOpNum());
+			opcode->setJmpAddr2(getOpNum());
 			expr->getValue()->addRef();
 			}
 			break;
@@ -210,7 +210,7 @@ AST_VISITOR(CodeGenVisitor, IfExpr) {
 			jmp_ops.push_back(emit(OP_JMP, &VM::jmp_handler));
 
 			// If the last expression is false, jumps to the next condition
-			last_jmpz->setJmpAddr1(getOpNum());
+			last_jmpz->setJmpAddr2(getOpNum());
 
 			ElseIfExpr* elseif = static_cast<ElseIfExpr*>(*it);
 
@@ -232,7 +232,7 @@ AST_VISITOR(CodeGenVisitor, IfExpr) {
 	jmp_ops.push_back(emit(OP_JMP, &VM::jmp_handler));
 
 	// If the last expression has failed, it jumps to the last block
-	last_jmpz->setJmpAddr1(getOpNum());
+	last_jmpz->setJmpAddr2(getOpNum());
 
 	if (expr->hasElseBlock()) {
 		expr->getElse()->acceptVisitor(*this);
@@ -242,7 +242,7 @@ AST_VISITOR(CodeGenVisitor, IfExpr) {
 
 	// Set the JMP addr to out of the control structure
 	while (it != end) {
-		(*it)->setJmpAddr2(getOpNum());
+		(*it)->setJmpAddr1(getOpNum());
 		++it;
 	}
 }
@@ -312,10 +312,9 @@ AST_VISITOR(CodeGenVisitor, WhileExpr) {
 		m_brks.pop();
 	}
 
-	Opcode* jmp = emit(OP_JMP, &VM::jmp_handler);
-	jmp->setJmpAddr2(start_pos);
+	emit(OP_JMP, &VM::jmp_handler, start_pos);
 
-	jmpz->setJmpAddr1(getOpNum());
+	jmpz->setJmpAddr2(getOpNum());
 }
 
 /**
@@ -363,10 +362,9 @@ AST_VISITOR(CodeGenVisitor, ForExpr) {
 			expr->getIncrement()->acceptVisitor(*this);
 		}
 
-		Opcode* jmp = emit(OP_JMP, &VM::jmp_handler);
-		jmp->setJmpAddr2(start_pos);
+		emit(OP_JMP, &VM::jmp_handler, start_pos);
 
-		jmpz->setJmpAddr1(getOpNum());
+		jmpz->setJmpAddr2(getOpNum());
 	}
 }
 
@@ -378,7 +376,7 @@ AST_VISITOR(CodeGenVisitor, BreakNode) {
 	 * Pushes the break opcode to a stack which in the end
 	 * sets its jump addr to end of repeat block
 	 */
-	m_brks.top().push(emit(OP_BREAK, &VM::break_handler));
+	m_brks.top().push(emit(OP_BREAK, &VM::jmp_handler));
 }
 
 /**
@@ -439,7 +437,7 @@ AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
 
 	emit(OP_JMP, &VM::end_func_handler);
 
-	jmp->setJmpAddr2(getOpNum());
+	jmp->setJmpAddr1(getOpNum());
 }
 
 /**

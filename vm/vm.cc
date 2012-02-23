@@ -190,8 +190,10 @@ CLEVER_VM_HANDLER(VM::jmpz_handler) {
 	Value* result = opcode.getResult();
 
 	if (!value->getValueAsBool()) {
-		if (result) result->setBoolean(false);
-		CLEVER_VM_GOTO(opcode.getJmpAddr1());
+		if (result) {
+			result->setBoolean(false);
+		}
+		CLEVER_VM_GOTO(opcode.getJmpAddr2());
 	}
 
 	if (result) {
@@ -200,30 +202,28 @@ CLEVER_VM_HANDLER(VM::jmpz_handler) {
 }
 
 /**
- * JMPNZ - Jump if non zero
+ * JMPNZ - Jump if non-zero
  */
 CLEVER_VM_HANDLER(VM::jmpnz_handler) {
 	const Value* const value = opcode.getOp1();
+	Value* result = opcode.getResult();
 
 	if (value->getValueAsBool()) {
-		opcode.getResult()->setBoolean(true);
-		CLEVER_VM_GOTO(opcode.getJmpAddr1());
+		if (result) {
+			result->setBoolean(true);
+		}
+		CLEVER_VM_GOTO(opcode.getJmpAddr2());
 	}
 
-	opcode.getResult()->setBoolean(false);
+	if (result) {
+		result->setBoolean(false);
+	}
 }
 
 /**
- * JMP
+ * JMP - Performs a jump to another code
  */
 CLEVER_VM_HANDLER(VM::jmp_handler) {
-	CLEVER_VM_GOTO(opcode.getJmpAddr2());
-}
-
-/**
- * Break statement
- */
-CLEVER_VM_HANDLER(VM::break_handler) {
 	CLEVER_VM_GOTO(opcode.getJmpAddr1());
 }
 
