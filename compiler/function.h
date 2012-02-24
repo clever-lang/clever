@@ -49,7 +49,7 @@ typedef std::vector<Value*> ValueVector;
  */
 #define CLEVER_FUNCTION_ARGS const ValueVector* args, Value* retval
 #define CLEVER_FUNC_NAME(name) clv_f_##name
-#define CLEVER_NS_FNAME(ns, name) ns::clv_f_##name
+#define CLEVER_NS_FNAME(ns, name) ns::CLEVER_FUNC_NAME(name)
 #define CLEVER_FUNCTION(name) void CLEVER_FASTCALL CLEVER_FUNC_NAME(name)(CLEVER_FUNCTION_ARGS)
 
 typedef void (CLEVER_FASTCALL *FunctionPtr)(CLEVER_FUNCTION_ARGS);
