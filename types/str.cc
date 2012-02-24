@@ -199,7 +199,14 @@ CLEVER_METHOD(String::constructor) {
 			std::string buffer = "";
 
 			for (size_t i = 0, j = vv->size(); i < j; ++i) {
-				buffer += static_cast<char>(vv->at(i)->getByte());
+				char c = static_cast<char>(vv->at(i)->getByte());
+
+				// Support for zero-based strings.
+				if (c) {
+					buffer += static_cast<char>(c);
+				} else {
+					break;
+				}
 			}
 			CLEVER_RETURN_STR(CSTRING(buffer));
 		}
