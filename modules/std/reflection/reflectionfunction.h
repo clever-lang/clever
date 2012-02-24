@@ -52,6 +52,7 @@ public:
 	 static CLEVER_METHOD(isInternal);
 	 static CLEVER_METHOD(isUserDefined);
 	 static CLEVER_METHOD(do_assign);
+	 static CLEVER_METHOD(call);
 private:
 	DISALLOW_COPY_AND_ASSIGN(ReflectionFunction);
 };
