@@ -56,7 +56,7 @@ typedef void (CLEVER_FASTCALL *FunctionPtr)(CLEVER_FUNCTION_ARGS);
 typedef std::tr1::unordered_map<std::string, Function*> FunctionMap;
 typedef std::pair<std::string, Function*> FunctionPair;
 typedef std::pair<std::string, const Type*> FunctionArgsPair;
-typedef std::list<FunctionArgsPair> FunctionArgs;
+typedef std::vector<FunctionArgsPair> FunctionArgs;
 
 
 /**
