@@ -70,7 +70,6 @@ namespace clever {
 %token NUM_INTEGER   "number"
 %token NUM_DOUBLE    "float-number"
 %token STR           "string"
-%token ECHO          "echo"
 %token IN            "in"
 %token FOR           "for"
 %token WHILE         "while"

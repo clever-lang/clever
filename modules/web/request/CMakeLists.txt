@@ -9,3 +9,5 @@ set_target_properties(modules_web_request
 	#STATIC_LIBRARY_FLAGS "${FFI_LDFLAGS}"
 )
 
+list(APPEND CLEVER_INCLUDES ${CGICC_INCLUDE_DIRS})
+list(APPEND CLEVER_LIBS ${CGICC_LIBRARIES})
