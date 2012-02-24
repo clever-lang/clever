@@ -30,54 +30,9 @@ set(CLEVER_LDFLAGS)
 set(CLEVER_LIBRARIES)
 set(CLEVER_INCLUDE_DIRS)
 
-# Libraries
+# 3rd-party libraries
 # ---------------------------------------------------------------------------
-# libpcrecpp
-if (PCRECPP_DIR)
-	find_path(PCRECPP_INCLUDE_DIRS pcrecpp.h "${PCRECPP_DIR}/include"})
-	find_library(PCRECPP_LIBS_PCRE NAMES pcre PATHS "${PCRECPP_DIR}/lib")
-	find_library(PCRECPP_LIBS_PCRECPP NAMES pcrecpp PATHS "${PCRECPP_DIR}/lib")
-
-	# If we found everything we need, libpcrecpp is available.
-	if (PCRECPP_INCLUDE_DIRS AND PCRECPP_LIBS_PCRE AND PCRECPP_LIBS_PCRECPP)
-		list(APPEND PCRECPP_LIBRARIES ${PCRECPP_LIBS_PCRE})
-		list(APPEND PCRECPP_LIBRARIES ${PCRECPP_LIBS_PCRECPP})
-		set(PCRECPP_FOUND TRUE)
-		add_definitions(-DPCRE_STATIC)
-	endif (PCRECPP_INCLUDE_DIRS AND PCRECPP_LIBS_PCRE AND PCRECPP_LIBS_PCRECPP)
-else (PCRECPP_DIR)
-	if (NOT MSVC)
-		pkg_check_modules(PCRECPP libpcrecpp)
-	endif (NOT MSVC)
-endif (PCRECPP_DIR)
-
-if (PCRECPP_FOUND)
-	add_definitions(-DHAVE_PCRECPP)
-endif (PCRECPP_FOUND)
-
-# cgicc
-if (CGICC_DIR)
-	find_path(CGICC_INCLUDE_DIRS Cgicc.h "${CGICC_DIR}/include"})
-	find_library(CGICC_LIBRARIES NAMES cgicc PATHS "${CGICC_DIR}/lib")
-
-	# If we found everything we need, libpcrecpp is available.
-	if (CGICC_INCLUDE_DIRS AND CGICC_LIBRARIES)
-		set(CGICC_FOUND TRUE)
-	endif (CGICC_INCLUDE_DIRS AND CGICC_LIBRARIES)
-else (CGICC_DIR)
-	find_library(CGICC_LIBRARIES cgicc)
-	find_path(CGICC_INCLUDE_DIRS cgicc/Cgicc.h)
-
-	if (CGICC_LIBRARIES AND CGICC_INCLUDE_DIRS)
-		set(CGICC_FOUND TRUE)
-	else (CGICC_LIBRARIES AND CGICC_INCLUDE_DIRS)
-		set(CGICC_FOUND FALSE)
-	endif (CGICC_LIBRARIES AND CGICC_INCLUDE_DIRS)
-endif (CGICC_DIR)	
-
-if (CGICC_FOUND)
-	add_definitions(-DHAVE_CGICC)
-endif (CGICC_FOUND)
+include(CMakeLists.depends)
 
 # Environment checks
 # ---------------------------------------------------------------------------
