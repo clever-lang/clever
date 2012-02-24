@@ -131,19 +131,30 @@ bool CSocket::send(const char *buffer, int length) {
 }
 
 bool CSocket::isOpen() {
+	struct timeval timeout;
 	char buf;
 	fd_set readset;
 
 	resetError();
 
 	// @TODO: when the platform supports, use MSG_DONTWAIT.
+	
+	// Set the minimum interval.
+	if (m_timeout > 1000000) {
+		timeout.tv_sec = (m_timeout / 1000000);
+		timeout.tv_usec = (m_timeout % 1000000);
+	} else {
+		timeout.tv_sec = 0;
+		timeout.tv_usec = m_timeout;
+	}
+
 
 	// We should perform a select() to make sure our recv() won't block.
 	FD_ZERO(&readset);
 	FD_SET(m_socket, &readset);
 
 	// Try the select().
-	if (::select(m_socket + 1, &readset, NULL, NULL, NULL) > 0) {
+	if (::select(m_socket + 1, &readset, NULL, NULL, &timeout) >= 0) {
 		if (!FD_ISSET(m_socket, &readset)) {
 			// There's no data, so our recv() will block. This means that our socket is still alive, since
 			// when the connection has been closed FD_ISSET returns true.
