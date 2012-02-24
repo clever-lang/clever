@@ -82,6 +82,10 @@ public:
 		: m_type(op_type), m_handler(handler), m_op1(op1), m_op2(),
 			m_result() {}
 
+	Opcode(OpcodeType op_type, VM::opcode_handler handler, Value* op1, ValueVector* op2)
+		: m_type(op_type), m_handler(handler), m_op1(op1), m_op2(op2),
+			m_result() {}
+
 	Opcode(OpcodeType op_type, VM::opcode_handler handler, long op1)
 		: m_type(op_type), m_handler(handler), m_op1(op1), m_op2(),
 			m_result() {}

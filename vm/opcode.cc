@@ -105,7 +105,11 @@ std::string Opcode::dumpOp(const char* const label, const Operand& op) const {
 			dumpValue(str, op.getValue());
 			break;
 		case VECTOR:
-			str << "vector";
+			if (op.getVector()) {
+				str << "vector (" << op.getVector()->size() << ")";
+			} else {
+				str << "UNUSED";
+			}
 			break;
 	}
 	return str.str();
@@ -120,6 +124,8 @@ void Opcode::dumpValue(std::ostringstream& str, Value* value)
 		str << "NULL";
 	} else if (value->isCallable()) {
 		str << value->getName()->str();
+	} else if (value->getType() == Value::NONE) {
+		str << "UNKNOWN";
 	} else {
 		if (value->getTypePtr()) {
 			str << value->toString();

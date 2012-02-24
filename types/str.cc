@@ -34,6 +34,14 @@
 namespace clever {
 
 /**
+ * String::toString()
+ * Returns the itself string
+ */
+CLEVER_METHOD(String::toString) {
+	CLEVER_RETURN_STR(CLEVER_THIS()->getStringP());
+}
+
+/**
  * String:ltrim()
  * Trim non letters from left
  */
@@ -600,6 +608,8 @@ void String::init() {
 	addMethod(new Method("toUpper", (MethodPtr)&String::toUpper, CLEVER_STR));
 
 	addMethod(new Method("toLower", (MethodPtr)&String::toLower, CLEVER_STR));
+
+	addMethod(new Method("toString", (MethodPtr)&String::toString, CLEVER_STR));
 
 	addMethod(
 		(new Method("pad", (MethodPtr)&String::pad, CLEVER_STR))
