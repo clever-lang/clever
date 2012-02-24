@@ -1,6 +1,6 @@
 /**
  * Clever programming language
- * Copyright (c) 2012 Clever Team
+ * Copyright (c) 2011-2012 Clever Team
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -26,7 +26,6 @@
 #ifndef CLEVER_FFIOBJECTVALUE_H
 #define CLEVER_FFIOBJECTVALUE_H
 
-
 #include <cstdlib>
 #include <string>
 #include "compiler/datavalue.h"
@@ -35,15 +34,14 @@ namespace clever { namespace packages { namespace std { namespace ffi {
 
 class FFIObjectValue : public DataValue {
 public:
-	FFIObjectValue() { }
-
-	
-	void* pointer[1];
+	FFIObjectValue() {}
 
 	virtual ~FFIObjectValue() { }
+
+	void* pointer[1];
 };
 
 }}}} // clever::packages::std::ffi
 
-#endif
+#endif // CLEVER_FFIOBJECTVALUE_H
 
