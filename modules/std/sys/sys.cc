@@ -80,17 +80,22 @@ static CLEVER_FUNCTION(getcwd) {
 }
 
 /**
- *String argv(Int i)
- *Get i-th argv
+ * String argv(Int i)
+ * Get i-th argv value
  */
 static CLEVER_FUNCTION(argv) {
 	size_t i = static_cast<size_t>(CLEVER_ARG_INT(0));
-	CLEVER_RETURN_STR(CSTRING((*g_clever_argv)[i]));
+
+	if (i >= (size_t)*g_clever_argc) {
+		CLEVER_RETURN_STR(CSTRING(""));
+	} else {
+		CLEVER_RETURN_STR(CSTRING((*g_clever_argv)[i]));
+	}
 }
 
 /**
- *Int argc()
- *Get argc
+ * Int argc()
+ * Get argc value
  */
 static CLEVER_FUNCTION(argc) {
 	CLEVER_RETURN_INT(*g_clever_argc);
@@ -101,7 +106,7 @@ static CLEVER_FUNCTION(argc) {
  * Sleep for 'time' milliseconds.
  */
 static CLEVER_FUNCTION(sleep) {
-	int time = CLEVER_ARG_INT(0);
+	int time = static_cast<int>(CLEVER_ARG_INT(0));
 
 #ifdef CLEVER_WIN32
 	SleepEx(time, false);
@@ -116,25 +121,23 @@ static CLEVER_FUNCTION(sleep) {
  * Initializes Standard module
  */
 void SYSModule::init() {
-	using namespace sys;
-
-	addFunction(new Function("system", &CLEVER_FUNC_NAME(system), CLEVER_INT))
+	addFunction(new Function("system", &CLEVER_NS_FNAME(sys, system), CLEVER_INT))
 		->addArg("command", CLEVER_STR);
 
-	addFunction(new Function("putenv", &CLEVER_FUNC_NAME(putenv), CLEVER_VOID))
+	addFunction(new Function("putenv", &CLEVER_NS_FNAME(sys, putenv), CLEVER_VOID))
 		->addArg("env", CLEVER_STR);
 
-	addFunction(new Function("getenv", &CLEVER_FUNC_NAME(getenv), CLEVER_STR))
+	addFunction(new Function("getenv", &CLEVER_NS_FNAME(sys, getenv), CLEVER_STR))
 		->addArg("var", CLEVER_STR);
 
-	addFunction(new Function("getcwd", &CLEVER_FUNC_NAME(getcwd), CLEVER_STR));
+	addFunction(new Function("getcwd", &CLEVER_NS_FNAME(sys, getcwd), CLEVER_STR));
 
-	addFunction(new Function("argc", &CLEVER_FUNC_NAME(argc), CLEVER_INT));
+	addFunction(new Function("argc", &CLEVER_NS_FNAME(sys, argc), CLEVER_INT));
 
-	addFunction(new Function("argv", &CLEVER_FUNC_NAME(argv), CLEVER_STR))
+	addFunction(new Function("argv", &CLEVER_NS_FNAME(sys, argv), CLEVER_STR))
 		->addArg("i", CLEVER_INT);
 
-	addFunction(new Function("sleep", &CLEVER_FUNC_NAME(sleep), CLEVER_VOID))
+	addFunction(new Function("sleep", &CLEVER_NS_FNAME(sys, sleep), CLEVER_VOID))
 		->addArg("time", CLEVER_INT);
 }
 
