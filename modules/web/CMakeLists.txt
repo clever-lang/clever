@@ -1,13 +1,13 @@
 
 set(CLEVER_MODULES)
 
-if (MOD_WEB_CGI)
-	list(APPEND CLEVER_MODULES cgi)
-endif (MOD_WEB_CGI)
+if (MOD_WEB_REQUEST)
+	list(APPEND CLEVER_MODULES request)
+endif (MOD_WEB_REQUEST)
 
-if (MOD_WEB_HTTP)
-	list(APPEND CLEVER_MODULES http)
-endif (MOD_WEB_HTTP)
+if (MOD_WEB_SESSION)
+	list(APPEND CLEVER_MODULES session)
+endif (MOD_WEB_SESSION)
 
 
 foreach (module ${CLEVER_MODULES})

@@ -52,84 +52,105 @@ public:
 
 	void shutdown() {}
 
-	/**
-	 * Set the interactive mode
-	 */
+	// Set the interactive mode
 	void setInteractive() { m_interactive = true; }
-	/**
-	 * Returns the interactive mode state
-	 */
+
+	// Returns the interactive mode state
 	bool isInteractive() const { return m_interactive; }
-	/**
-	 * Set the opcode dumper
-	 */
+
+	// Set if the opcodes must be dumped
 	void setOpcodeDump() { m_opcode_dump = true; }
-	/**
-	 * Returns the opcode dump state
-	 */
+
+	// Returns the opcode dump state
 	bool isOpcodeDump() const { return m_opcode_dump; }
-	/**
-	 * Returns the opcode list
-	 */
+
+	// Returns the opcode list
 	OpcodeList& getOpcodes() { return m_opcodes; }
 
+	// AST node declarations
 	AST_VISITOR_DECLARATION(AST_VISITOR_DECL);
-
 private:
-	bool m_interactive, m_opcode_dump;
-	OpcodeList m_opcodes;
-	JmpStack m_brks;
-
-	/**
-	 * Output an opcode.
-	 */
+	// Output an opcode
 	Opcode* emit(OpcodeType type, VM::opcode_handler handler) {
 		Opcode* opcode = new Opcode(type, handler);
 		m_opcodes.push_back(opcode);
-		/**
-		 * Sets the opcode number, which is used by JMP opcodes
-		 */
+
+		// Sets the opcode number, which is used by JMP opcodes
 		opcode->setOpNum(getOpNum());
 
 		return opcode;
 	}
 
-	/**
-	 * Output an opcode.
-	 */
-	Opcode* emit(OpcodeType type, VM::opcode_handler handler, Value* op1, ValueVector* op2, Value* result = NULL) {
+	// Output an opcode
+	Opcode* emit(OpcodeType type, VM::opcode_handler handler, long addr) {
+		Opcode* opcode = new Opcode(type, handler, addr);
+		m_opcodes.push_back(opcode);
+
+		// Sets the opcode number, which is used by JMP opcodes
+		opcode->setOpNum(getOpNum());
+
+		return opcode;
+	}
+
+	// Output an opcode
+	Opcode* emit(OpcodeType type, VM::opcode_handler handler, Value* op1) {
+		Opcode* opcode = new Opcode(type, handler, op1);
+		m_opcodes.push_back(opcode);
+
+		// Sets the opcode number, which is used by JMP opcodes
+		opcode->setOpNum(getOpNum());
+
+		return opcode;
+	}
+
+	// Output an opcode
+	Opcode* emit(OpcodeType type, VM::opcode_handler handler, Value* op1,
+		ValueVector* op2) {
+		Opcode* opcode = new Opcode(type, handler, op1, op2);
+		m_opcodes.push_back(opcode);
+
+		// Sets the opcode number, which is used by JMP opcodes
+		opcode->setOpNum(getOpNum());
+
+		return opcode;
+	}
+
+	// Output an opcode
+	Opcode* emit(OpcodeType type, VM::opcode_handler handler, Value* op1,
+		ValueVector* op2, Value* result) {
 		Opcode* opcode = new Opcode(type, handler, op1, op2, result);
 		m_opcodes.push_back(opcode);
-		/**
-		 * Sets the opcode number, which is used by JMP opcodes
-		 */
+
+		// Sets the opcode number, which is used by JMP opcodes
 		opcode->setOpNum(getOpNum());
 
 		return opcode;
 	}
 
-	/**
-	 * Output an opcode.
-	 */
-	Opcode* emit(OpcodeType type, VM::opcode_handler handler, Value* op1, Value* op2 = NULL, Value* result = NULL) {
+	// Output an opcode
+	Opcode* emit(OpcodeType type, VM::opcode_handler handler, Value* op1,
+		Value* op2, Value* result) {
 		Opcode* opcode = new Opcode(type, handler, op1, op2, result);
 		m_opcodes.push_back(opcode);
-		/**
-		 * Sets the opcode number, which is used by JMP opcodes
-		 */
+
+		// Sets the opcode number, which is used by JMP opcodes
 		opcode->setOpNum(getOpNum());
 
 		return opcode;
 	}
 
-	/**
-	 * Returns the opcode number
-	 */
-	size_t getOpNum() const { return !m_opcodes.size() ? 0 : m_opcodes.size()-1; }
+	// Returns the opcode number
+	size_t getOpNum() const {
+		return m_opcodes.size() == 0 ? 0 : m_opcodes.size()-1;
+	}
+
+	bool m_interactive, m_opcode_dump;
+	OpcodeList m_opcodes;
+	JmpStack m_brks;
 
 	DISALLOW_COPY_AND_ASSIGN(CodeGenVisitor);
 };
 
 }} // clever::ast
 
-#endif /* CLEVER_CGVSITIOR_H */
+#endif // CLEVER_CGVSITIOR_H

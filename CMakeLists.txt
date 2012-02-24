@@ -97,13 +97,19 @@ endif (MSVC)
 # ---------------------------------------------------------------------------
 BISON_TARGET(CleverParser interpreter/parser.y ${CMAKE_CURRENT_BINARY_DIR}/interpreter/parser.cc)
 RE2C_TARGET(CleverScanner interpreter/scanner.re ${CMAKE_CURRENT_BINARY_DIR}/interpreter/scanner.cc
-	COMPILE_FLAGS "--case-insensitive -bc")
+	COMPILE_FLAGS "--case-inverted -bc")
 
 ADD_RE2C_BISON_DEPENDENCY(CleverScanner CleverParser)
 
 # Module options
 # ---------------------------------------------------------------------------
 include(CMakeLists.modopt)
+
+# Issue #131 fix attempt.
+# ---------------------------------------------------------------------------
+if (UNIX AND MOD_STD_REGEX)
+	set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -lpcrecpp")
+endif (UNIX AND MOD_STD_REGEX)
 
 # Main executable
 # ---------------------------------------------------------------------------
@@ -182,3 +188,4 @@ set_directory_properties(PROPERTIES
 set(CPACK_GENERATOR "STGZ;TBZ2;TGZ;ZIP")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "The Clever programming language")
 include(CPack)
+

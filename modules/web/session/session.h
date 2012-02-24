@@ -24,28 +24,27 @@
  */
 
 
-#ifndef CLEVER_WEB_HTTP_H
-#define CLEVER_WEB_HTTP_H
+#ifndef CLEVER_WEB_SESSION_H
+#define CLEVER_WEB_SESSION_H
 
 #include "compiler/module.h"
 #include "compiler/value.h"
 
 namespace clever { namespace packages { namespace web {
 
-class Http : public Module {
+class Session : public Module {
 public:
-	Http()
-		: Module("http") { }
-
-	~Http() { }
+	Session();
+	
+	~Session();
 
 	void init();
 private:
-	DISALLOW_COPY_AND_ASSIGN(Http);
+	DISALLOW_COPY_AND_ASSIGN(Session);
 };
 
-extern Module* g_http_module;
+extern Module* g_session_module;
 
 }}} // clever::packages::web
 
-#endif // CLEVER_WEB_HTTP_H
+#endif // CLEVER_WEB_SESSION_H

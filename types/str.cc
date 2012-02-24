@@ -34,6 +34,14 @@
 namespace clever {
 
 /**
+ * String::toString()
+ * Returns the itself string
+ */
+CLEVER_METHOD(String::toString) {
+	CLEVER_RETURN_STR(CLEVER_THIS()->getStringP());
+}
+
+/**
  * String:ltrim()
  * Trim non letters from left
  */
@@ -191,7 +199,14 @@ CLEVER_METHOD(String::constructor) {
 			std::string buffer = "";
 
 			for (size_t i = 0, j = vv->size(); i < j; ++i) {
-				buffer += static_cast<char>(vv->at(i)->getByte());
+				char c = static_cast<char>(vv->at(i)->getByte());
+
+				// Support for zero-based strings.
+				if (c) {
+					buffer += static_cast<char>(c);
+				} else {
+					break;
+				}
 			}
 			CLEVER_RETURN_STR(CSTRING(buffer));
 		}
@@ -600,6 +615,8 @@ void String::init() {
 	addMethod(new Method("toUpper", (MethodPtr)&String::toUpper, CLEVER_STR));
 
 	addMethod(new Method("toLower", (MethodPtr)&String::toLower, CLEVER_STR));
+
+	addMethod(new Method("toString", (MethodPtr)&String::toString, CLEVER_STR));
 
 	addMethod(
 		(new Method("pad", (MethodPtr)&String::pad, CLEVER_STR))

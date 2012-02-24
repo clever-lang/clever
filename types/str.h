@@ -54,6 +54,7 @@ public:
 	static CLEVER_METHOD(length);
 	static CLEVER_METHOD(toDouble);
 	static CLEVER_METHOD(toInteger);
+	static CLEVER_METHOD(toString);
 	static CLEVER_METHOD(toUpper);
 	static CLEVER_METHOD(toLower);
 	static CLEVER_METHOD(startsWith);

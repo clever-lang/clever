@@ -75,63 +75,72 @@ enum OpcodeType {
 class Opcode {
 public:
 	Opcode(OpcodeType op_type, VM::opcode_handler handler)
-		: m_op_type(op_type), m_handler(handler), m_result(NULL) {}
+		: m_type(op_type), m_handler(handler), m_op1(), m_op2(),
+			m_result() {}
 
 	Opcode(OpcodeType op_type, VM::opcode_handler handler, Value* op1)
-		: m_op_type(op_type), m_handler(handler), m_op1(op1), m_result(NULL) {}
+		: m_type(op_type), m_handler(handler), m_op1(op1), m_op2(),
+			m_result() {}
+
+	Opcode(OpcodeType op_type, VM::opcode_handler handler, Value* op1, ValueVector* op2)
+		: m_type(op_type), m_handler(handler), m_op1(op1), m_op2(op2),
+			m_result() {}
+
+	Opcode(OpcodeType op_type, VM::opcode_handler handler, long op1)
+		: m_type(op_type), m_handler(handler), m_op1(op1), m_op2(),
+			m_result() {}
 
 	Opcode(OpcodeType op_type, VM::opcode_handler handler, Value* op1,
 		Value* op2, Value* result)
-		: m_op_type(op_type), m_handler(handler), m_op1(op1), m_op2(op2),
+		: m_type(op_type), m_handler(handler), m_op1(op1), m_op2(op2),
 			m_result(result) {}
 
 	Opcode(OpcodeType op_type, VM::opcode_handler handler, Value* op1,
 		ValueVector* op2, Value* result)
-		: m_op_type(op_type), m_handler(handler), m_op1(op1), m_op2(op2),
+		: m_type(op_type), m_handler(handler), m_op1(op1), m_op2(op2),
 			m_result(result) {}
 
 	~Opcode() {}
 
-	int getOpType() const { return m_op_type; }
+	OpcodeType getType() const { return m_type; }
 
 	VM::opcode_handler getHandler() const { return m_handler; }
 
-	Value* getOp1() const { return m_op1.m_data.value; }
-	void setOp1(Value* op1) { m_op1.m_data.value = op1; }
-	OperandType getOp1Type() const { return m_op1.m_type; }
+	const Operand& getOp1() const { return m_op1; }
+	Value* getOp1Value() const { return m_op1.getValue(); }
 
-	Value* getOp2() const { return m_op2.m_data.value; }
-	ValueVector* getOp2Vector() const { return m_op2.m_data.vector; }
-	void setOp2(Value* op2) { m_op2.m_data.value = op2; }
-	OperandType getOp2Type() const { return m_op2.m_type; }
+	const Operand& getOp2() const { return m_op2; }
+	Value* getOp2Value() const { return m_op2.getValue(); }
+	ValueVector* getOp2Vector() const { return m_op2.getVector(); }
 
-	Value* getResult() const { return m_result; }
-	void setResult(Value* result) { m_result = result; }
+	const Operand& getResult() const { return m_result; }
+	Value* getResultValue() const { return m_result.getValue(); }
+	void setResult(Value* result) { m_result.setValue(result); }
 
 	// Methods to set and get the opcode number (its position in the vector)
 	size_t getOpNum() const { return m_op_num; }
 	void setOpNum(size_t op_num) { m_op_num = op_num; }
 
-	void setJmpAddr1(long jmp_addr) { m_op1.addr = jmp_addr; }
-	long getJmpAddr1() const { return m_op1.addr; }
+	void setJmpAddr1(long addr) { m_op1.setAddr(addr); }
+	long getJmpAddr1() const { return m_op1.getAddr(); }
 
-	void setJmpAddr2(long jmp_addr) { m_op2.addr = jmp_addr; }
-	long getJmpAddr2() const { return m_op2.addr; }
+	void setJmpAddr2(long addr) { m_op2.setAddr(addr); }
+	long getJmpAddr2() const { return m_op2.getAddr(); }
 
 	/**
 	 * Methods for debugging purpose
 	 */
 	void dump() const;
 	const char* getOpName(OpcodeType) const;
-	std::string dumpOp(const char* const, Value* const) const;
+	std::string dumpOp(const char* const, const Operand&) const;
+	void dumpValue(std::ostringstream&, Value*) const;
 
 	// Returns the opcode handler by supplying its opcode type
 	static VM::opcode_handler getHandlerByType(OpcodeType);
 private:
-	OpcodeType m_op_type;
+	OpcodeType m_type;
 	VM::opcode_handler m_handler;
-	Operand m_op1, m_op2;
-	Value* m_result;
+	Operand m_op1, m_op2, m_result;
 	size_t m_op_num;
 
 	DISALLOW_COPY_AND_ASSIGN(Opcode);

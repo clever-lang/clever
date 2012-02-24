@@ -50,6 +50,11 @@ public:
 		m_data.vector = vector;
 	}
 
+	explicit Operand(long addr)
+		: m_type(ADDR) {
+		m_data.addr = addr;
+	}
+
 	~Operand() {
 		if (m_type == VALUE) {
 			CLEVER_SAFE_DELREF(m_data.value);
@@ -65,14 +70,32 @@ public:
 		}
 	}
 
+	OperandType getType() const { return m_type; }
+
+	void setAddr(long addr) {
+		m_type = ADDR;
+		m_data.addr = addr;
+	}
+
+	void setValue(Value* value) {
+		m_type = VALUE;
+		m_data.value = value;
+	}
+
+	long         getAddr() const { return m_data.addr; }
+	Value*       getValue() const { return m_data.value; }
+	ValueVector* getVector() const { return m_data.vector; }
+private:
+
 	OperandType m_type;
 
 	union {
 		Value* value;
 		ValueVector* vector;
+		long addr;
 	} m_data;
 
-	long addr;
+	DISALLOW_COPY_AND_ASSIGN(Operand);
 };
 
 } // clever

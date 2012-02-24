@@ -56,7 +56,7 @@ next_token:
 	SPECIAL    = [;(),{}&~^|=+*/-][];
 	TYPE       = [A-Z][a-zA-Z0-9_]*;
 	CONSTANT   = [A-Z][A-Z0-9_]+;
-	REGEX      = "/"([a-zA-Z0-9]+|SPACE|[-+$^\|{}?()*][]|"\\"[^])*"/";
+	REGEX      = "/"[^*]([a-zA-Z0-9]+|SPACE|['"+$^\|{}?)(*:<>.#\]\[-]|"\\"[^])*"/";
 
 	<!*> { yylen = cursor - s.yylex; }
 
@@ -117,7 +117,7 @@ next_token:
 
 	<INITIAL>"::" { RET(token::DOUBLE_COLON); }
 
-	<INITIAL>"const" { RET(token::CONST); }
+	<INITIAL>'const' { RET(token::CONST); }
 
 	<INITIAL>"//" {
 		YYSETCONDITION(ST_COMMENT);
@@ -148,75 +148,71 @@ next_token:
 
 	<ST_MULTILINE_COMMENT>"*" { SKIP(); }
 
-	<INITIAL>"use" {
+	<INITIAL>'use' {
 		RET(token::USE);
 	}
 
-	<INITIAL>"as" {
+	<INITIAL>'as' {
 		RET(token::AS);
 	}
 
-	<INITIAL>"return" {
+	<INITIAL>'return' {
 		RET(token::RETURN);
 	}
 
-	<INITIAL>"break" {
+	<INITIAL>'break' {
 		RET(token::BREAK);
 	}
 
-	<INITIAL>"echo" {
-		RET(token::ECHO);
-	}
-
-	<INITIAL>"for" {
+	<INITIAL>'for' {
 		RET(token::FOR);
 	}
 
-	<INITIAL>"in" {
+	<INITIAL>'in' {
 		RET(token::IN);
 	}
 
-	<INITIAL>"while" {
+	<INITIAL>'while' {
 		RET(token::WHILE);
 	}
 
-	<INITIAL>"if" {
+	<INITIAL>'if' {
 		RET(token::IF);
 	}
 
-	<INITIAL>("elseif"|"else if") {
+	<INITIAL>('elseif'|'else if') {
 		RET(token::ELSEIF);
 	}
 
-	<INITIAL>"else" {
+	<INITIAL>'else' {
 		RET(token::ELSE);
 	}
 
-	<INITIAL>"import" {
+	<INITIAL>'import' {
 		RET(token::IMPORT);
 	}
 
-	<INITIAL>"class" {
+	<INITIAL>'class' {
 		RET(token::CLASS);
 	}
 
-	<INITIAL>"public" {
+	<INITIAL>'public' {
 		RET(token::PUBLIC);
 	}
 
-	<INITIAL>"private" {
+	<INITIAL>'private' {
 		RET(token::PRIVATE);
 	}
 
-	<INITIAL>"protected" {
+	<INITIAL>'protected' {
 		RET(token::PROTECTED);
 	}
 
-	<INITIAL>"Auto" {
+	<INITIAL>'Auto' {
 		RET(token::AUTO);
 	}
 
-	<INITIAL>"true" {
+	<INITIAL>'true' {
 		Value* newval = new Value(CLEVER_BOOL);
 		newval->setBoolean(true);
 
@@ -225,7 +221,7 @@ next_token:
 		RET(token::TRUE);
 	}
 
-	<INITIAL>"false" {
+	<INITIAL>'false' {
 		Value* newval = new Value(CLEVER_BOOL);
 		newval->setBoolean(false);
 
@@ -239,7 +235,7 @@ next_token:
 		RET(token::IDENT);
 	}
 
-	<INITIAL>"Void" {
+	<INITIAL>'Void' {
 		yylval->ast_node = new ast::Identifier(CSTRING(std::string(reinterpret_cast<const char*>(s.yylex), yylen)));
 		RET(token::TYPE);
 	}
@@ -297,8 +293,8 @@ next_token:
 
 	<INITIAL>INTEGER {
 		const char* nstr = reinterpret_cast<const char*>(s.yylex);
-
 		int64_t n = 0;
+
 		for (int i = 0; i < yylen; ++i) {
 			n = n * 10 + (nstr[i] - '0');
 		}
@@ -313,8 +309,8 @@ next_token:
 
 	<INITIAL>HEXINT {
 		const char* nstr = reinterpret_cast<const char*>(s.yylex + 2);
-
 		int64_t n = 0;
+
 		for (int i = 0; i < yylen - 2; ++i) {
 			n <<= 4;
 			if (isdigit(nstr[i])) {
@@ -335,12 +331,11 @@ next_token:
 
 	<INITIAL>OCTINT {
 		const char* nstr = reinterpret_cast<const char*>(s.yylex + 1);
-
 		int64_t n = 0;
+
 		for (int i = 0; i < yylen - 1; ++i) {
 			n = n * 8 + nstr[i] - '0';
 		}
-
 
 		Value* newval = new Value(CLEVER_INT);
 		newval->setInteger(n);

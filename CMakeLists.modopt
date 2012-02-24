@@ -10,8 +10,8 @@
 clever_add_module(std_regex      ON  "enable the regex module"      "")
 clever_add_module(std_ffi        ON  "enable the ffi module"        "")
 clever_add_module(std_net        ON  "enable the net module"        "")
-clever_add_module(web_cgi        OFF "enable the cgi module"        "")
-clever_add_module(web_http       OFF "enable the http module"        "")
+clever_add_module(web_request       ON "enable the request module"        "")
+clever_add_module(web_session       ON "enable the session module"        "")
 
 # Simple modules
 clever_add_simple_module(std_file       ON  "enable the file module"       "")
@@ -56,8 +56,8 @@ endif (MOD_STD_FFI)
 
 clever_module_msg(std_ffi ${MOD_STD_FFI})
 
-# web.cgi
-if (MOD_WEB_CGI)
+# web.request
+if (MOD_WEB_REQUEST)
 	find_library(CGICC_LIBRARIES cgicc)
 
 	if (NOT CGICC_LIBRARIES MATCHES "NOTFOUND")
@@ -68,20 +68,20 @@ if (MOD_WEB_CGI)
 
 	if (CGICC_FOUND)
 		string(REGEX REPLACE "lib([\\/])libcgicc.so" "include\\1cgicc\\1" CGICC_INCLUDE_DIRS ${CGICC_LIBRARIES})
-		add_definitions(-DHAVE_MOD_WEB_CGI)
+		add_definitions(-DHAVE_MOD_WEB_REQUEST)
 		list(APPEND CLEVER_INCLUDE_DIRS ${CGICC_INCLUDE_DIRS})
 		list(APPEND CLEVER_LIBRARIES ${CGICC_LIBRARIES})
 	else (CGICC_FOUND)
-		clever_module_msg(web_cgi "libcgicc not found. disabling.")
-		set(MOD_WEB_CGI OFF)
+		clever_module_msg(web_request "libcgicc not found. disabling.")
+		set(MOD_WEB_REQUEST OFF)
 	endif (CGICC_FOUND)
-endif (MOD_WEB_CGI)
+endif (MOD_WEB_REQUEST)
 
-clever_module_msg(web_cgi ${MOD_WEB_CGI})
+clever_module_msg(web_request ${MOD_WEB_REQUEST})
 
 
-# web.http
-if (MOD_WEB_HTTP)
+# web.session
+if (MOD_WEB_SESSION)
 	find_library(CGICC_LIBRARIES cgicc)
 
 	if (NOT CGICC_LIBRARIES MATCHES "NOTFOUND")
@@ -92,16 +92,16 @@ if (MOD_WEB_HTTP)
 
 	if (CGICC_FOUND)
 		string(REGEX REPLACE "lib([\\/])libcgicc.so" "include\\1cgicc\\1" CGICC_INCLUDE_DIRS ${CGICC_LIBRARIES})
-		add_definitions(-DHAVE_MOD_WEB_HTTP)
+		add_definitions(-DHAVE_MOD_WEB_SESSION)
 		list(APPEND CLEVER_INCLUDE_DIRS ${CGICC_INCLUDE_DIRS})
 		list(APPEND CLEVER_LIBRARIES ${CGICC_LIBRARIES})
 	else (CGICC_FOUND)
-		clever_module_msg(web_http "libcgicc not found. disabling.")
-		set(MOD_WEB_HTTP OFF)
+		clever_module_msg(web_session "libcgicc not found. disabling.")
+		set(MOD_WEB_SESSION OFF)
 	endif (CGICC_FOUND)
-endif (MOD_WEB_HTTP)
+endif (MOD_WEB_SESSION)
 
-clever_module_msg(web_http ${MOD_WEB_HTTP})
+clever_module_msg(web_session ${MOD_WEB_SESSION})
 
 # std.net
 if (MOD_STD_NET)
