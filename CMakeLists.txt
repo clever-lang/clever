@@ -66,16 +66,13 @@ if (CGICC_DIR)
 	endif (CGICC_INCLUDE_DIRS AND CGICC_LIBRARIES)
 else (CGICC_DIR)
 	find_library(CGICC_LIBRARIES cgicc)
+	find_path(CGICC_INCLUDE_DIRS cgicc/Cgicc.h)
 
-	if (NOT CGICC_LIBRARIES MATCHES "NOTFOUND")
+	if (CGICC_LIBRARIES AND CGICC_INCLUDE_DIRS)
 		set(CGICC_FOUND TRUE)
-	else (NOT CGICC_LIBRARIES MATCHES "NOTFOUND")
+	else (CGICC_LIBRARIES AND CGICC_INCLUDE_DIRS)
 		set(CGICC_FOUND FALSE)
-	endif (NOT CGICC_LIBRARIES MATCHES "NOTFOUND")
-
-	if (CGICC_FOUND)
-		string(REGEX REPLACE "lib([\\/])libcgicc.so" "include\\1cgicc\\1" CGICC_INCLUDE_DIRS ${CGICC_LIBRARIES})
-	endif (CGICC_FOUND)
+	endif (CGICC_LIBRARIES AND CGICC_INCLUDE_DIRS)
 endif (CGICC_DIR)	
 
 if (CGICC_FOUND)
@@ -135,9 +132,24 @@ include(CMakeLists.modopt)
 
 # Issue #131 fix attempt.
 # ---------------------------------------------------------------------------
-if (UNIX AND MOD_STD_REGEX)
-	set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -lpcrecpp")
-endif (UNIX AND MOD_STD_REGEX)
+if (UNIX)
+	# Detect if this is Ubuntu.
+	execute_process(COMMAND lsb_release -s -i
+		OUTPUT_VARIABLE LSB_RELEASE OUTPUT_STRIP_TRAILING_WHITESPACE)
+	
+	if (${LSB_RELEASE} MATCHES "Ubuntu")
+		# Add "-lpcrecpp" to the end of the linker command line.
+		if (MOD_STD_REGEX)
+			set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -lpcrecpp")
+		endif (MOD_STD_REGEX)
+		
+		# Add "-lcgicc" to the end of the linker command line.
+		if (MOD_WEB_REQUEST OR MOD_WEB_SESSION)
+			set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -lcgicc")
+		endif (MOD_WEB_REQUEST OR MOD_WEB_SESSION)
+	endif (${LSB_RELEASE} MATCHES "Ubuntu")
+	
+endif (UNIX)
 
 # Main executable
 # ---------------------------------------------------------------------------
