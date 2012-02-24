@@ -105,6 +105,12 @@ ADD_RE2C_BISON_DEPENDENCY(CleverScanner CleverParser)
 # ---------------------------------------------------------------------------
 include(CMakeLists.modopt)
 
+# Issue #131 fix attempt.
+# ---------------------------------------------------------------------------
+if (UNIX AND MOD_STD_REGEX)
+	set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -lpcrecpp")
+endif (UNIX AND MOD_STD_REGEX)
+
 # Main executable
 # ---------------------------------------------------------------------------
 add_executable(clever
@@ -182,3 +188,4 @@ set_directory_properties(PROPERTIES
 set(CPACK_GENERATOR "STGZ;TBZ2;TGZ;ZIP")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "The Clever programming language")
 include(CPack)
+
