@@ -32,30 +32,58 @@ set(CLEVER_INCLUDE_DIRS)
 
 # Libraries
 # ---------------------------------------------------------------------------
-if (NOT MSVC)
-	pkg_check_modules(PCRECPP libpcrecpp)
-else (NOT MSVC)
-	# MSVC basic PCRE support.
-	if (PCRECPP_DIR)
-		find_path(PCRECPP_INCLUDE_DIRS pcrecpp.h "${PCRECPP_DIR}/include"})
-		find_library(PCRECPP_LIBS_PCRE NAMES pcre PATHS "${PCRECPP_DIR}/lib")
-		find_library(PCRECPP_LIBS_PCRECPP NAMES pcrecpp PATHS "${PCRECPP_DIR}/lib")
+# libpcrecpp
+if (PCRECPP_DIR)
+	find_path(PCRECPP_INCLUDE_DIRS pcrecpp.h "${PCRECPP_DIR}/include"})
+	find_library(PCRECPP_LIBS_PCRE NAMES pcre PATHS "${PCRECPP_DIR}/lib")
+	find_library(PCRECPP_LIBS_PCRECPP NAMES pcrecpp PATHS "${PCRECPP_DIR}/lib")
 
-		# If we found everything we need, libpcrecpp is available.
-		if (PCRECPP_INCLUDE_DIRS AND PCRECPP_LIBS_PCRE AND PCRECPP_LIBS_PCRECPP)
-			list(APPEND PCRECPP_LIBRARIES ${PCRECPP_LIBS_PCRE})
-			list(APPEND PCRECPP_LIBRARIES ${PCRECPP_LIBS_PCRECPP})
-			set(PCRECPP_FOUND TRUE)
-			add_definitions(-DPCRE_STATIC)
-		endif (PCRECPP_INCLUDE_DIRS AND PCRECPP_LIBS_PCRE AND PCRECPP_LIBS_PCRECPP)
-	endif (PCRECPP_DIR)
-endif (NOT MSVC)
+	# If we found everything we need, libpcrecpp is available.
+	if (PCRECPP_INCLUDE_DIRS AND PCRECPP_LIBS_PCRE AND PCRECPP_LIBS_PCRECPP)
+		list(APPEND PCRECPP_LIBRARIES ${PCRECPP_LIBS_PCRE})
+		list(APPEND PCRECPP_LIBRARIES ${PCRECPP_LIBS_PCRECPP})
+		set(PCRECPP_FOUND TRUE)
+		add_definitions(-DPCRE_STATIC)
+	endif (PCRECPP_INCLUDE_DIRS AND PCRECPP_LIBS_PCRE AND PCRECPP_LIBS_PCRECPP)
+else (PCRECPP_DIR)
+	if (NOT MSVC)
+		pkg_check_modules(PCRECPP libpcrecpp)
+	endif (NOT MSVC)
+endif (PCRECPP_DIR)
 
 if (PCRECPP_FOUND)
 	add_definitions(-DHAVE_PCRECPP)
 endif (PCRECPP_FOUND)
 
+# cgicc
+if (CGICC_DIR)
+	find_path(CGICC_INCLUDE_DIRS Cgicc.h "${CGICC_DIR}/include"})
+	find_library(CGICC_LIBRARIES NAMES cgicc PATHS "${CGICC_DIR}/lib")
+
+	# If we found everything we need, libpcrecpp is available.
+	if (CGICC_INCLUDE_DIRS AND CGICC_LIBRARIES)
+		set(CGICC_FOUND TRUE)
+	endif (CGICC_INCLUDE_DIRS AND CGICC_LIBRARIES)
+else (CGICC_DIR)
+	find_library(CGICC_LIBRARIES cgicc)
+
+	if (NOT CGICC_LIBRARIES MATCHES "NOTFOUND")
+		set(CGICC_FOUND TRUE)
+	else (NOT CGICC_LIBRARIES MATCHES "NOTFOUND")
+		set(CGICC_FOUND FALSE)
+	endif (NOT CGICC_LIBRARIES MATCHES "NOTFOUND")
+
+	if (CGICC_FOUND)
+		string(REGEX REPLACE "lib([\\/])libcgicc.so" "include\\1cgicc\\1" CGICC_INCLUDE_DIRS ${CGICC_LIBRARIES})
+	endif (CGICC_FOUND)
+endif (CGICC_DIR)	
+
+if (CGICC_FOUND)
+	add_definitions(-DHAVE_CGICC)
+endif (CGICC_FOUND)
+
 # Environment checks
+# ---------------------------------------------------------------------------
 if (WIN32)
 	set(EXTRA_CLEVER_FILES win32/win32.cc)
 	add_definitions(-DCLEVER_WIN32)
@@ -95,8 +123,8 @@ endif (MSVC)
 
 # Parser and Scanner
 # ---------------------------------------------------------------------------
-BISON_TARGET(CleverParser interpreter/parser.y ${CMAKE_CURRENT_BINARY_DIR}/interpreter/parser.cc)
-RE2C_TARGET(CleverScanner interpreter/scanner.re ${CMAKE_CURRENT_BINARY_DIR}/interpreter/scanner.cc
+BISON_TARGET(CleverParser interpreter/parser.y ${CMAKE_SOURCE_DIR}/interpreter/parser.cc)
+RE2C_TARGET(CleverScanner interpreter/scanner.re ${CMAKE_SOURCE_DIR}/interpreter/scanner.cc
 	COMPILE_FLAGS "--case-inverted -bc")
 
 ADD_RE2C_BISON_DEPENDENCY(CleverScanner CleverParser)
