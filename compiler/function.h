@@ -67,24 +67,30 @@ public:
 	enum FunctionKind { INTERNAL, USER };
 
 	explicit Function(std::string name)
-		: m_name(name), m_kind(INTERNAL), m_num_args(0), m_min_args(0), m_rtype(NULL) { }
+		: m_name(name), m_kind(INTERNAL), m_num_args(0), m_min_args(0),
+			m_rtype(NULL) {}
 
 	Function(std::string name, FunctionPtr ptr)
-		: m_name(name), m_kind(INTERNAL), m_num_args(0), m_min_args(0), m_rtype(NULL) { m_info.ptr = ptr; }
+		: m_name(name), m_kind(INTERNAL), m_num_args(0), m_min_args(0),
+			m_rtype(NULL) { m_info.ptr = ptr; }
 
 	Function(std::string name, FunctionPtr ptr, const Type* rtype)
-		: m_name(name), m_kind(INTERNAL), m_num_args(0), m_min_args(0), m_rtype(rtype) { m_info.ptr = ptr; }
+		: m_name(name), m_kind(INTERNAL), m_num_args(0), m_min_args(0),
+			m_rtype(rtype) { m_info.ptr = ptr; }
 
 	Function(std::string name, FunctionPtr ptr, int numargs, const Type* rtype)
-		: m_name(name), m_kind(INTERNAL), m_num_args(numargs), m_min_args(0), m_rtype(rtype) { m_info.ptr = ptr; }
+		: m_name(name), m_kind(INTERNAL), m_num_args(numargs), m_min_args(0),
+			m_rtype(rtype) { m_info.ptr = ptr; }
 
 	Function(std::string& name, size_t offset)
-		: m_name(name), m_kind(USER), m_num_args(0), m_min_args(0), m_rtype(NULL) { m_info.offset = offset; }
+		: m_name(name), m_kind(USER), m_num_args(0), m_min_args(0), m_rtype(NULL)
+			{ m_info.offset = offset; }
 
 	Function(std::string& name, size_t offset, int numargs)
-		: m_name(name), m_kind(USER), m_num_args(numargs), m_min_args(0), m_rtype(NULL) { m_info.offset = offset; }
+		: m_name(name), m_kind(USER), m_num_args(numargs), m_min_args(0),
+			m_rtype(NULL) { m_info.offset = offset; }
 
-	virtual ~Function() { }
+	virtual ~Function() {}
 
 	Function* addArg(std::string name, const Type* type) {
 		m_args.push_back(FunctionArgsPair(name, type));
@@ -125,7 +131,7 @@ public:
 
 private:
 	union {
-		FunctionPtr  ptr;
+		FunctionPtr ptr;
 		size_t offset;
 	} m_info;
 
