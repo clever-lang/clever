@@ -102,6 +102,11 @@ if (UNIX)
 		if (MOD_WEB_REQUEST OR MOD_WEB_SESSION)
 			set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -lcgicc")
 		endif (MOD_WEB_REQUEST OR MOD_WEB_SESSION)
+		
+		# Add "-lffi -ld" to the end of the linker command line.
+		if (MOD_STD_FFI)
+			set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -lffi -ldl")
+		endif (MOD_STD_FFI)
 	endif (${LSB_RELEASE} MATCHES "Ubuntu")
 	
 endif (UNIX)
