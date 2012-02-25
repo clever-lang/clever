@@ -103,6 +103,8 @@ public:
 	}
 
 	int getNumArgs() const { return m_num_args; }
+	Method* setVariadic() { m_num_args = -1; return this; }
+	bool isVariadic() const { return m_num_args < 0; }
 
 	Method* setMinNumArgs(int nargs) { m_min_args = nargs; return this; }
 	int getMinNumArgs() const { return m_min_args; }

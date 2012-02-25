@@ -80,7 +80,7 @@ void Type::addMethod(Method* method) {
 	int min_args = method->getMinNumArgs();
 	int num_args = method->getNumArgs();
 
-	if (min_args != num_args) {
+	if (min_args != num_args && num_args != -1) {
 		method->setReference(0);
 	}
 
@@ -91,9 +91,12 @@ void Type::addMethod(Method* method) {
 			m_methods[method->getName()].insert(MethodPair(v_args, method));
 			method->addRef();
 		}
-	}
-
-	if (min_args == num_args) {
+	}/*
+		if (method->getName() == "call") {
+			std::cout << "aqui " << min_args  << " " << num_args << std::endl;
+		}
+		*/
+	if (min_args == num_args || num_args == -1) {
 		m_methods[method->getName()].insert(MethodPair(v_args, method));
 	}
 }
@@ -131,9 +134,12 @@ const Method* Type::getMethod(const CString* name, const TypeVector* args) const
 			if (found) {
 				return it->second;
 			}
+		} else if (it->second->isVariadic()
+			&& num_args >= size_t(it->second->getMinNumArgs())) {
+			// Variadic method
+			return it->second;
 		}
-
-		it++;
+		++it;
 	}
 
 	// If we didn't find the method yet, look for it in the super type
