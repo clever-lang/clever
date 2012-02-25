@@ -170,11 +170,11 @@ CLEVER_METHOD(ReflectionFunction::call) {
 		if (func->getReturnType()) {
 			CLEVER_RETURN_STR(&result.toString());
 		} else {
-			CLEVER_RETURN_STR(CSTRING(""));
+			CLEVER_RETURN_EMPTY_STR();
 		}
 	} else {
 		// TODO: Change VM to allow specific function execution
-		CLEVER_RETURN_STR(CSTRING(""));
+		CLEVER_RETURN_EMPTY_STR();
 	}
 }
 

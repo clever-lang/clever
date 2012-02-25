@@ -213,7 +213,7 @@ CLEVER_METHOD(String::constructor) {
 	}
 	else {
 		// String::String()
-		CLEVER_RETURN_STR(CSTRING(""));
+		CLEVER_RETURN_EMPTY_STR();
 	}
 }
 
@@ -478,7 +478,7 @@ CLEVER_METHOD(String::times) {
 	int64_t num = CLEVER_ARG_INT(1);
 
 	if (num <= 0) {
-		CLEVER_RETURN_STR(CSTRING(""));
+		CLEVER_RETURN_EMPTY_STR();
 	}
 	else {
 		::std::string ret = str;

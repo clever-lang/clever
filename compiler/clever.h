@@ -29,6 +29,7 @@
 #include <sstream>
 #include <cstdarg>
 #include <setjmp.h>
+#include "compiler/cached_ptrs.h"
 
 namespace clever {
 
@@ -125,6 +126,7 @@ extern jmp_buf fatal_error;
 #define CLEVER_RETURN_DOUBLE(x)     retval->setDouble((x))
 #define CLEVER_RETURN_BYTE(x)       retval->setByte((x))
 #define CLEVER_RETURN_DATA_VALUE(x) retval->setDataValue((x))
+#define CLEVER_RETURN_EMPTY_STR()   retval->setString(CACHE_PTR(CLEVER_EMPTY_STR, ""))
 
 /**
  * Macros to help getting template argument types

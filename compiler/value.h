@@ -140,7 +140,7 @@ public:
 			setBoolean(false);
 		}
 		else if (getTypePtr() == CLEVER_STR) {
-			setString(CSTRING(""));
+			setString(CACHE_PTR(CLEVER_EMPTY_STR, ""));
 		}
 		else if (getTypePtr() == CLEVER_BYTE) {
 			setByte(0);

@@ -47,7 +47,7 @@ CLEVER_METHOD(ReflectionPackage::getName) {
 	ReflectionPackageValue* rpv = CLEVER_GET_VALUE(ReflectionPackageValue*, value);
 
 	if (rpv->getPackage() == g_pkgmanager.getPackages().end()) {
-		CLEVER_RETURN_STR(CSTRING(""));
+		CLEVER_RETURN_EMPTY_STR();
 	} else {
 		CLEVER_RETURN_STR(rpv->getPackage()->first);
 	}

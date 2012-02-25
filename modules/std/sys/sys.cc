@@ -87,7 +87,7 @@ static CLEVER_FUNCTION(argv) {
 	size_t i = static_cast<size_t>(CLEVER_ARG_INT(0));
 
 	if (i >= (size_t)*g_clever_argc) {
-		CLEVER_RETURN_STR(CSTRING(""));
+		CLEVER_RETURN_EMPTY_STR();
 	} else {
 		CLEVER_RETURN_STR(CSTRING((*g_clever_argv)[i]));
 	}

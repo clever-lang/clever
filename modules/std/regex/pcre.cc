@@ -97,7 +97,7 @@ CLEVER_METHOD(Pcre::group) {
 	PcreValue* self = CLEVER_GET_VALUE(PcreValue*, value);
 
 	if (CLEVER_ARG_INT(0) >= self->match.n_groups) {
-		CLEVER_RETURN_STR(CSTRING(""));
+		CLEVER_RETURN_EMPTY_STR();
 	} else {
 		CLEVER_RETURN_STR(CSTRING(self->match.matches[CLEVER_ARG_INT(0)]));
 	}
