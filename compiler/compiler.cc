@@ -128,8 +128,6 @@ void Compiler::loadNativeTypes() {
 	g_scope.pushType(CSTRING("Map"),    CLEVER_MAP);
 	g_scope.pushType(CSTRING("Pair"),   pair);
 
-	init_type_cached_ptrs();
-
 	// Initialize native data types
 	CLEVER_INT->init();
 	CLEVER_DOUBLE->init();
