@@ -803,11 +803,7 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 	if (expr->getReturnType() == NULL) {
 		expr->getValue()->setTypePtr(func->getReturnType());
 	} else {
-		if (expr->getReturnType() == CLEVER_OBJECT) {
-			expr->getValue()->setTypePtr(CLEVER_TYPE("FFIObject"));
-		} else {
-			expr->getValue()->setTypePtr(expr->getReturnType());
-		}
+		expr->getValue()->setTypePtr(expr->getReturnType());
 	}
 
 	if (num_args) {
@@ -825,6 +821,9 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 	fvalue->addRef();
 }
 
+/**
+ * MethodCall visitor
+ */
 AST_VISITOR(TypeChecker, MethodCall) {
 	Value* variable = expr->getVariable()->getValue();
 	const CString* const name = expr->getMethodName();
