@@ -156,7 +156,7 @@ CLEVER_METHOD(ReflectionFunction::do_assign) {
 }
 
 /**
- * String ReflectionFunction::call()
+ * String ReflectionFunction::call([...])
  */
 CLEVER_METHOD(ReflectionFunction::call) {
 	CLEVER_OBJECT_INIT(rfv, ReflectionFunctionValue*);
@@ -173,8 +173,7 @@ CLEVER_METHOD(ReflectionFunction::call) {
 			CLEVER_RETURN_STR(CSTRING(""));
 		}
 	} else {
-		func->call();
-
+		// TODO: Change VM to allow specific function execution
 		CLEVER_RETURN_STR(CSTRING(""));
 	}
 }
