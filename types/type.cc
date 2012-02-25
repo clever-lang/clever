@@ -31,7 +31,6 @@ const CString* g_cstring_cached_ptrs[25];
 
 // Cached CString* pointers related to Type operators
 void init_type_cached_ptrs() {
-	CLEVER_TYPE_CACHE_PTR(0,  CSTRING(CLEVER_OPERATOR_PLUS));
 	CLEVER_TYPE_CACHE_PTR(1,  CSTRING(CLEVER_OPERATOR_MINUS));
 	CLEVER_TYPE_CACHE_PTR(2,  CSTRING(CLEVER_OPERATOR_DIV));
 	CLEVER_TYPE_CACHE_PTR(3,  CSTRING(CLEVER_OPERATOR_MULT));

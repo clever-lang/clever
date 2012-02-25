@@ -25,6 +25,7 @@
 
 #include "compiler/compiler.h"
 #include "compiler/typechecker.h"
+#include "compiler/cached_ptrs.h"
 #include "types/nativetypes.h"
 #include "interpreter/ast.h"
 #include "interpreter/driver.h"
@@ -250,7 +251,7 @@ static CallableValue* _prepare_method_call(const Type* type, Value* var,
 	if (UNEXPECTED(method == NULL)) {
 		const std::string args_type_name = _serialize_arg_type(args_types, ", ");
 
-		if (mname == CLEVER_CTOR_NAME_PTR) {
+		if (mname == (CACHE_PTR(CLEVER_CTOR, CLEVER_CTOR_NAME))) {
 			Compiler::errorf(expr->getLocation(),
 				"No matching call for constructor %S::%S(%S)",
 				type->getName(), type->getName(), &args_type_name);
@@ -363,7 +364,7 @@ AST_VISITOR(TypeChecker, RegexPattern) {
 
 	// The Pcre constructor CallableValue
 	expr->setCallValue(_prepare_method_call(type, expr->getValue(),
-		CLEVER_CTOR_NAME_PTR, expr, arg_values));
+		CACHE_PTR(CLEVER_CTOR, CLEVER_CTOR_NAME), expr, arg_values));
 
 	expr->getCallValue()->addRef();
 }
@@ -392,12 +393,24 @@ AST_VISITOR(TypeChecker, UnaryExpr) {
 	const CString* method_name = NULL;
 
 	switch (expr->getOp()) {
-		case ast::NOT:     method_name = CLEVER_OPERATOR_NOT_PTR;     break;
-		case ast::BW_NOT:  method_name = CLEVER_OPERATOR_BW_NOT_PTR;  break;
-		case ast::PRE_INC: method_name = CLEVER_OPERATOR_PRE_INC_PTR; break;
-		case ast::POS_INC: method_name = CLEVER_OPERATOR_POS_INC_PTR; break;
-		case ast::PRE_DEC: method_name = CLEVER_OPERATOR_PRE_DEC_PTR; break;
-		case ast::POS_DEC: method_name = CLEVER_OPERATOR_POS_DEC_PTR; break;
+		case ast::NOT:
+			method_name = CACHE_PTR(CLEVER_OP_NOT, CLEVER_OPERATOR_NOT);
+			break;
+		case ast::BW_NOT:
+			method_name = CACHE_PTR(CLEVER_OP_BW_NOT, CLEVER_OPERATOR_BW_NOT);
+			break;
+		case ast::PRE_INC:
+			method_name = CACHE_PTR(CLEVER_OP_PRE_INC, CLEVER_OPERATOR_PRE_INC);
+			break;
+		case ast::PRE_DEC:
+			method_name = CACHE_PTR(CLEVER_OP_PRE_DEC, CLEVER_OPERATOR_PRE_DEC);
+			break;
+		case ast::POS_INC:
+			method_name = CACHE_PTR(CLEVER_OP_POS_INC, CLEVER_OPERATOR_POS_INC);
+			break;
+		case ast::POS_DEC:
+			method_name = CACHE_PTR(CLEVER_OP_POS_DEC, CLEVER_OPERATOR_POS_DEC);
+			break;
 	}
 
 	clever_assert_not_null(method_name);
@@ -432,22 +445,54 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 
 	// Operator method names
 	switch (expr->getOp()) {
-		case PLUS:          method_name = CLEVER_OPERATOR_PLUS_PTR;    break;
-		case DIV:           method_name = CLEVER_OPERATOR_DIV_PTR;     break;
-		case MULT:          method_name = CLEVER_OPERATOR_MULT_PTR;    break;
-		case MINUS:         method_name = CLEVER_OPERATOR_MINUS_PTR;   break;
-		case MOD:           method_name = CLEVER_OPERATOR_MOD_PTR;     break;
-		case XOR:           method_name = CLEVER_OPERATOR_BW_XOR_PTR;  break;
-		case BW_OR:         method_name = CLEVER_OPERATOR_BW_OR_PTR;   break;
-		case BW_AND:        method_name = CLEVER_OPERATOR_BW_AND_PTR;  break;
-		case GREATER:       method_name = CLEVER_OPERATOR_GREATER_PTR; break;
-		case LESS:          method_name = CLEVER_OPERATOR_LESS_PTR;    break;
-		case GREATER_EQUAL: method_name = CLEVER_OPERATOR_GE_PTR;      break;
-		case LESS_EQUAL:    method_name = CLEVER_OPERATOR_LE_PTR;      break;
-		case EQUAL:         method_name = CLEVER_OPERATOR_EQUAL_PTR;   break;
-		case NOT_EQUAL:     method_name = CLEVER_OPERATOR_NE_PTR;      break;
-		case LSHIFT:        method_name = CLEVER_OPERATOR_LSHIFT_PTR;  break;
-		case RSHIFT:        method_name = CLEVER_OPERATOR_RSHIFT_PTR;  break;
+		case PLUS:
+			method_name = CACHE_PTR(CLEVER_OP_PLUS, CLEVER_OPERATOR_PLUS);
+			break;
+		case DIV:
+			method_name = CACHE_PTR(CLEVER_OP_DIV, CLEVER_OPERATOR_DIV);
+			break;
+		case MULT:
+			method_name = CACHE_PTR(CLEVER_OP_MULT, CLEVER_OPERATOR_MULT);
+			break;
+		case MINUS:
+			method_name = CACHE_PTR(CLEVER_OP_MINUS, CLEVER_OPERATOR_MINUS);
+			break;
+		case MOD:
+			method_name = CACHE_PTR(CLEVER_OP_MOD, CLEVER_OPERATOR_MOD);
+			break;
+		case XOR:
+			method_name = CACHE_PTR(CLEVER_OP_BW_XOR, CLEVER_OPERATOR_BW_XOR);
+			break;
+		case BW_OR:
+			method_name = CACHE_PTR(CLEVER_OP_BW_OR, CLEVER_OPERATOR_BW_OR);
+			break;
+		case BW_AND:
+			method_name = CACHE_PTR(CLEVER_OP_BW_AND, CLEVER_OPERATOR_BW_AND);
+			break;
+		case GREATER:
+			method_name = CACHE_PTR(CLEVER_OP_GREATER, CLEVER_OPERATOR_GREATER);
+			break;
+		case LESS:
+			method_name = CACHE_PTR(CLEVER_OP_LESS, CLEVER_OPERATOR_LESS);
+			break;
+		case GREATER_EQUAL:
+			method_name = CACHE_PTR(CLEVER_OP_GE, CLEVER_OPERATOR_GE);
+			break;
+		case LESS_EQUAL:
+			method_name = CACHE_PTR(CLEVER_OP_LE, CLEVER_OPERATOR_LE);
+			break;
+		case EQUAL:
+			method_name = CACHE_PTR(CLEVER_OP_EQUAL, CLEVER_OPERATOR_EQUAL);
+			break;
+		case NOT_EQUAL:
+			method_name = CACHE_PTR(CLEVER_OP_NE, CLEVER_OPERATOR_NE);
+			break;
+		case LSHIFT:
+			method_name = CACHE_PTR(CLEVER_OP_LSHIFT, CLEVER_OPERATOR_LSHIFT);
+			break;
+		case RSHIFT:
+			method_name = CACHE_PTR(CLEVER_OP_RSHIFT, CLEVER_OPERATOR_RSHIFT);
+			break;
 		case OR:
 		case AND:
 			expr->setResult(new Value(CLEVER_BOOL));
@@ -545,8 +590,8 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 		expr->setArgsValue(arg_values);
 
 		expr->setCallValue(_prepare_method_call(type, var,
-			CLEVER_OPERATOR_ASSIGN_PTR, expr, arg_values));
-
+			CACHE_PTR(CLEVER_OP_ASSIGN, CLEVER_OPERATOR_ASSIGN),
+			expr, arg_values));
 	}
 	else if (ctor_list) {
 		ValueVector* arg_values = ctor_list->getArgValue();
@@ -557,7 +602,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 		var->addRef();
 
 		expr->setCallValue(_prepare_method_call(type, var,
-			CLEVER_CTOR_NAME_PTR, expr, arg_values));
+			CACHE_PTR(CLEVER_CTOR, CLEVER_CTOR_NAME), expr, arg_values));
 	}
 	else {
 		DataValue* data_value = type->allocateValue();
@@ -725,7 +770,7 @@ AST_VISITOR(TypeChecker, AssignExpr) {
 	expr->setArgsValue(arg_values);
 
 	expr->setCallValue(_prepare_method_call(lhs->getTypePtr(), lhs,
-		CLEVER_OPERATOR_ASSIGN_PTR, expr, arg_values));
+		CACHE_PTR(CLEVER_OP_ASSIGN, CLEVER_OPERATOR_ASSIGN), expr, arg_values));
 
 	expr->getCallValue()->addRef();
 
@@ -934,7 +979,7 @@ AST_VISITOR(TypeChecker, TypeCreation) {
 	}
 
 	expr->setCallValue(_prepare_method_call(type, expr->getValue(),
-		CLEVER_CTOR_NAME_PTR, expr, arg_values));
+		CACHE_PTR(CLEVER_CTOR, CLEVER_CTOR_NAME), expr, arg_values));
 }
 
 /**
@@ -953,7 +998,7 @@ AST_VISITOR(TypeChecker, Subscript) {
 	expr->setArgsValue(arg_values);
 
 	expr->setCallValue(_prepare_method_call(var->getTypePtr(), var,
-		CLEVER_OPERATOR_AT_PTR, expr, arg_values));
+		CACHE_PTR(CLEVER_OP_AT, CLEVER_OPERATOR_AT), expr, arg_values));
 
 	expr->getCallValue()->addRef();
 }

@@ -31,6 +31,7 @@
 #include <sstream>
 #include <vector>
 #include "compiler/clever.h"
+#include "compiler/cached_ptrs.h"
 #include "compiler/refcounted.h"
 #include "compiler/cstring.h"
 #include "compiler/method.h"
@@ -150,7 +151,8 @@ public:
 			 * that method call
 			 */
 			TypeVector tv;
-			const Method* ctor = getTypePtr()->getMethod(CLEVER_CTOR_NAME_PTR, &tv);
+			const Method* ctor = getTypePtr()->getMethod(
+				CACHE_PTR(CLEVER_CTOR, CLEVER_CTOR_NAME), &tv);
 
 			if (ctor) {
 				ctor->call(NULL, this, this);

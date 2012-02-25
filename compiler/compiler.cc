@@ -27,6 +27,7 @@
 #include <vector>
 #include "compiler/clever.h"
 #include "compiler/compiler.h"
+#include "compiler/cached_ptrs.h"
 #include "interpreter/ast.h"
 #include "types/nativetypes.h"
 #include "types/type.h"
@@ -53,17 +54,16 @@ Type* CLEVER_OBJ_VAR    = NULL;
 # define CLEVER_ERROR_EXIT_ACTION() exit(1)
 #endif
 
-/**
- * Set the default error level
- */
+// Set the default error level
 Compiler::Error Compiler::m_error_level = Compiler::ALL;
 
-/**
- * Set the stream to be used on error message
- */
+// Set the stream to be used on error message
 std::ostream& Compiler::m_error_stream  = std::cout;
 
 jmp_buf Compiler::failure;
+
+// Cached pointers
+const CString* g_cache_ptrs[NUM_CACHED_PTRS];
 
 /**
  * Deallocs memory used by compiler data

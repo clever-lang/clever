@@ -65,7 +65,8 @@ public:
 		TypeVector tv(2, args.at(0));
 
 		if (args.size() == 2) {
-			const Method* method = args.at(0)->getMethod(CLEVER_OPERATOR_LESS_PTR, &tv);
+			const Method* method = args.at(0)->getMethod(
+				CACHE_PTR(CLEVER_OP_LESS, CLEVER_OPERATOR_LESS), &tv);
 			if (!method || method->getReturnType() != CLEVER_BOOL) {
 				std::ostringstream oss;
 				sprintf(oss, "Unable to instantiate the type Map<Key = %S, Value = %S> because"
