@@ -32,30 +32,36 @@
 #include <tr1/unordered_map>
 #endif
 #include "compiler/clever.h"
-#include <iostream>
+#include "compiler/refcounted.h"
 
 /**
  * Returns the CString* pointer to a string
  */
-#define CSTRING(xstring) (clever::g_cstring_tbl.intern(xstring))
+#define CSTRING(xstring)  (clever::g_cstring_tbl.intern(xstring))
+#define CSTRINGT(xstring) new clever::CString(xstring, false)
 
 namespace clever {
 
 /**
  * String interning implementation
  */
-class CString : public std::string {
+class CString : public RefCounted, public std::string {
 public:
 	typedef std::size_t IdType;
 
 	CString()
-		: std::string(), m_id(0) { };
+		: RefCounted(0), std::string(), m_id(0), m_interned(true) {}
 
 	CString(const std::string& str, IdType id)
-		: std::string(str), m_id(id) { }
+		: RefCounted(0), std::string(str), m_id(id), m_interned(true) {}
 
 	CString(const CString& str)
-		: std::string(str.str()), m_id(str.m_id) { }
+		: RefCounted(0), std::string(str.str()), m_id(str.m_id),
+			m_interned(true) {}
+
+	CString(const CString& str, bool interned)
+		: RefCounted(0), std::string(str.str()), m_id(str.m_id),
+			m_interned(interned) {}
 
 	bool hasSameId(const CString* cstring) const {
 		return m_id == cstring->m_id;
@@ -63,6 +69,10 @@ public:
 
 	IdType getId() const {
 		return m_id;
+	}
+
+	bool isInterned() const {
+		return m_interned;
 	}
 
 	const std::string& str() const {
@@ -82,6 +92,7 @@ public:
 	}
 private:
 	IdType m_id;
+	bool m_interned;
 };
 
 } // clever
