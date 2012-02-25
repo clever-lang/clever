@@ -1,0 +1,14 @@
+Testing function call with ReflectionFunction::call()
+==CODE==
+import std.io;
+import std.reflection;
+
+ReflectionFunction f("println");
+f.call(1, "foo");
+
+ReflectionFunction z("getcwd");
+z.call();
+==RESULT==
+1
+foo
+.+

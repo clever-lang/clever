@@ -165,9 +165,13 @@ CLEVER_METHOD(ReflectionFunction::call) {
 	if (func->isInternal()) {
 		Value result;
 
-		func->call(NULL, &result);
+		func->call(args, &result);
 
-		CLEVER_RETURN_STR(&result.toString());
+		if (func->getReturnType()) {
+			CLEVER_RETURN_STR(&result.toString());
+		} else {
+			CLEVER_RETURN_STR(CSTRING(""));
+		}
 	} else {
 		func->call();
 
@@ -225,8 +229,10 @@ void ReflectionFunction::init() {
 	);
 
 	addMethod(
-		new Method("call",
-			(MethodPtr)&ReflectionFunction::call, CLEVER_VOID)
+		(new Method("call",
+			(MethodPtr)&ReflectionFunction::call, CLEVER_VOID))
+			->setVariadic()
+			->setMinNumArgs(0)
 	);
 }
 
