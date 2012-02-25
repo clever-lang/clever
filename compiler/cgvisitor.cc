@@ -111,7 +111,6 @@ AST_VISITOR(CodeGenVisitor, BinaryExpr) {
 				&VM::jmpz_handler : &VM::jmpnz_handler;
 
 			Opcode* opcode = emit(opval, op_handler, lhs);
-
 			opcode->setResult(expr->getValue());
 
 			expr->getRhs()->acceptVisitor(*this);
@@ -195,6 +194,7 @@ AST_VISITOR(CodeGenVisitor, IfExpr) {
 	value->addRef();
 
 	Opcode* jmp_if = emit(OP_JMPZ, &VM::jmpz_handler, value);
+	jmp_if->setResult(NULL);
 
 	if (expr->hasBlock()) {
 		expr->getBlock()->acceptVisitor(*this);
@@ -220,6 +220,7 @@ AST_VISITOR(CodeGenVisitor, IfExpr) {
 			cond->addRef();
 
 			Opcode* jmp_elseif = emit(OP_JMPZ, &VM::jmpz_handler, cond);
+			jmp_elseif->setResult(NULL);
 
 			if (elseif->hasBlock()) {
 				elseif->getBlock()->acceptVisitor(*this);
@@ -298,6 +299,7 @@ AST_VISITOR(CodeGenVisitor, WhileExpr) {
 	value->addRef();
 
 	Opcode* jmpz = emit(OP_JMPZ, &VM::jmpz_handler, value);
+	jmpz->setResult(NULL);
 
 	if (expr->hasBlock()) {
 		m_brks.push(OpcodeStack());
@@ -341,6 +343,7 @@ AST_VISITOR(CodeGenVisitor, ForExpr) {
 		}
 
 		Opcode* jmpz = emit(OP_JMPZ, &VM::jmpz_handler, value);
+		jmpz->setResult(NULL);
 
 		// If the expression has increment we must jump 2 opcodes
 		unsigned int offset = (expr->getIncrement() ? 2 : 1);
