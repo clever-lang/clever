@@ -65,6 +65,11 @@ extern jmp_buf fatal_error;
 #define CLEVER_GET_VALUE(x, y) static_cast<x>((y)->getDataValue())
 
 /**
+ * Macro to create a variable of type of a DataValue
+ */
+#define CLEVER_OBJECT_INIT(_var, _obj) _obj _var = CLEVER_GET_VALUE(_obj, CLEVER_THIS())
+
+/**
  * Macro to access the number of arguments received
  */
 #define CLEVER_NUM_ARGS() args->size()

@@ -43,7 +43,7 @@ namespace clever { namespace packages { namespace std {
 namespace sys {
 
 /**
- * system(string command)
+ * Int system(string command)
  * Calls a command and returns the exit code.
  */
 static CLEVER_FUNCTION(system) {
@@ -51,7 +51,7 @@ static CLEVER_FUNCTION(system) {
 }
 
 /**
- * putenv(String env)
+ * Void putenv(String env)
  * Sets an environment variable
  */
 static CLEVER_FUNCTION(putenv) {
@@ -59,7 +59,7 @@ static CLEVER_FUNCTION(putenv) {
 }
 
 /**
- * getenv(String env)
+ * String getenv(String env)
  * Gets an environment variable
  */
 static CLEVER_FUNCTION(getenv) {
@@ -69,7 +69,7 @@ static CLEVER_FUNCTION(getenv) {
 }
 
 /**
- * getcwd()
+ * String getcwd()
  * Gets the current working directory
  */
 static CLEVER_FUNCTION(getcwd) {
@@ -102,7 +102,7 @@ static CLEVER_FUNCTION(argc) {
 }
 
 /**
- * sleep(Int time)
+ * Void sleep(Int time)
  * Sleep for 'time' milliseconds.
  */
 static CLEVER_FUNCTION(sleep) {

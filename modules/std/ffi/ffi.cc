@@ -58,14 +58,14 @@ extern "C" {
 #endif
 
 #if defined(CLEVER_WIN32)
-	const char* CLEVER_DYLIB_EXT = ".dll";
+static const char* CLEVER_DYLIB_EXT = ".dll";
 #elif defined(CLEVER_APPLE)
-	const char* CLEVER_DYLIB_EXT = ".dylib";
+static const char* CLEVER_DYLIB_EXT = ".dylib";
 #else
-	const char* CLEVER_DYLIB_EXT = ".so";
+static const char* CLEVER_DYLIB_EXT = ".so";
 #endif
 
-ffi_type* find_ffi_type(const char* tn) {
+static ffi_type* _find_ffi_type(const char* tn) {
 	switch (tn[0]) {
 		case 'i': return &ffi_type_sint32;
 		case 'd': return &ffi_type_double;
@@ -102,19 +102,19 @@ static CLEVER_FUNCTION(call_ext_func) {
 		void* m = ext_mod_map[lib] = dlopen(libname.c_str(), 1);
 
 		if (m == NULL) {
-			clever_fatal("[FFI] Shared library`%S' not found!", &CLEVER_ARG_STR(size-3));
+			clever_fatal("[FFI] Shared library`%S' not found!",
+				&CLEVER_ARG_STR(size-3));
 			CLEVER_RETURN_BOOL(false);
 			return;
 		}
 		it=ext_mod_map.find(lib);
 	}
 
-
-
 	fpf = dlsym(it->second, func.c_str());
 
 	if (fpf == NULL) {
-		clever_fatal("[FFI] function`%S' not found at `%S'!", &CLEVER_ARG_STR(size-1),&CLEVER_ARG_STR(size-3));
+		clever_fatal("[FFI] function`%S' not found at `%S'!",
+			&CLEVER_ARG_STR(size-1), &CLEVER_ARG_STR(size-3));
 		CLEVER_RETURN_BOOL(false);
 		return;
 	}
@@ -124,7 +124,7 @@ static CLEVER_FUNCTION(call_ext_func) {
 
 	ffi_cif cif;
 
-	ffi_type* ffi_rt = find_ffi_type(rt.c_str());
+	ffi_type* ffi_rt = _find_ffi_type(rt.c_str());
 	ffi_type** ffi_args = (ffi_type**) malloc(n_args*sizeof(ffi_type*));
 
 	void** ffi_values = (void**) malloc(n_args*sizeof(void*));
@@ -139,7 +139,7 @@ static CLEVER_FUNCTION(call_ext_func) {
 
 			ffi_values[i] =  vi;
 		} else if (CLEVER_ARG_IS_BOOL(i)) {
-			ffi_args[i] = find_ffi_type("b");
+			ffi_args[i] = _find_ffi_type("b");
 
 			char* b=(char*) malloc (sizeof(char));
 
@@ -155,11 +155,11 @@ static CLEVER_FUNCTION(call_ext_func) {
 			strcpy(*s,st);
 			(*s)[strlen(st)]='\0';
 
-			ffi_args[i] = find_ffi_type("s");
+			ffi_args[i] = _find_ffi_type("s");
 
 			ffi_values[i] =  s;
 		} else if (CLEVER_ARG_IS_BYTE(i)) {
-			ffi_args[i] = find_ffi_type("c");
+			ffi_args[i] = _find_ffi_type("c");
 
 			char* b = (char*) malloc (sizeof(char));
 			*b = CLEVER_ARG_BYTE(i);
@@ -172,10 +172,10 @@ static CLEVER_FUNCTION(call_ext_func) {
 			*d = CLEVER_ARG_DOUBLE(i);
 			ffi_values[i] = d;
 		} else if ( CLEVER_ARG_IS_USER(i) ) {
-			ffi_args[i] = find_ffi_type("p");
+			ffi_args[i] = _find_ffi_type("p");
 
 			FFIObjectValue* obj = static_cast<FFIObjectValue*>(CLEVER_ARG_DATA_VALUE(i));
-			
+
 			ffi_values[i] = &obj->pointer;
 		}
 	}
@@ -261,12 +261,12 @@ static CLEVER_FUNCTION(call_ext_func) {
  * Load module data
  */
 void FFI::init() {
-
 	Class* FFIObject = new ffi::FFIObject();
 
 	addClass(FFIObject);
 
-	addFunction(new Function("call_ext_func", &CLEVER_NS_FNAME(ffi, call_ext_func), CLEVER_BOOL))
+	addFunction(new Function("call_ext_func",
+		&CLEVER_NS_FNAME(ffi, call_ext_func), CLEVER_BOOL))
 		->setVariadic()
 		->setMinNumArgs(2);
 }
@@ -276,7 +276,9 @@ FFI::~FFI() {
 		end = ffi::ext_mod_map.end();
 
 	while (it != end) {
-		if (it->second != NULL) dlclose(it->second);
+		if (it->second != NULL) {
+			dlclose(it->second);
+		}
 		++it;
 	}
 }

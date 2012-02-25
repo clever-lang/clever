@@ -49,14 +49,14 @@ typedef std::vector<Value*> ValueVector;
  */
 #define CLEVER_FUNCTION_ARGS const ValueVector* args, Value* retval
 #define CLEVER_FUNC_NAME(name) clv_f_##name
-#define CLEVER_NS_FNAME(ns, name) ns::clv_f_##name
+#define CLEVER_NS_FNAME(ns, name) ns::CLEVER_FUNC_NAME(name)
 #define CLEVER_FUNCTION(name) void CLEVER_FASTCALL CLEVER_FUNC_NAME(name)(CLEVER_FUNCTION_ARGS)
 
 typedef void (CLEVER_FASTCALL *FunctionPtr)(CLEVER_FUNCTION_ARGS);
 typedef std::tr1::unordered_map<std::string, Function*> FunctionMap;
 typedef std::pair<std::string, Function*> FunctionPair;
 typedef std::pair<std::string, const Type*> FunctionArgsPair;
-typedef std::list<FunctionArgsPair> FunctionArgs;
+typedef std::vector<FunctionArgsPair> FunctionArgs;
 
 
 /**
@@ -67,24 +67,30 @@ public:
 	enum FunctionKind { INTERNAL, USER };
 
 	explicit Function(std::string name)
-		: m_name(name), m_kind(INTERNAL), m_num_args(0), m_min_args(0), m_rtype(NULL) { }
+		: m_name(name), m_kind(INTERNAL), m_num_args(0), m_min_args(0),
+			m_rtype(NULL) {}
 
 	Function(std::string name, FunctionPtr ptr)
-		: m_name(name), m_kind(INTERNAL), m_num_args(0), m_min_args(0), m_rtype(NULL) { m_info.ptr = ptr; }
+		: m_name(name), m_kind(INTERNAL), m_num_args(0), m_min_args(0),
+			m_rtype(NULL) { m_info.ptr = ptr; }
 
 	Function(std::string name, FunctionPtr ptr, const Type* rtype)
-		: m_name(name), m_kind(INTERNAL), m_num_args(0), m_min_args(0), m_rtype(rtype) { m_info.ptr = ptr; }
+		: m_name(name), m_kind(INTERNAL), m_num_args(0), m_min_args(0),
+			m_rtype(rtype) { m_info.ptr = ptr; }
 
 	Function(std::string name, FunctionPtr ptr, int numargs, const Type* rtype)
-		: m_name(name), m_kind(INTERNAL), m_num_args(numargs), m_min_args(0), m_rtype(rtype) { m_info.ptr = ptr; }
+		: m_name(name), m_kind(INTERNAL), m_num_args(numargs), m_min_args(0),
+			m_rtype(rtype) { m_info.ptr = ptr; }
 
 	Function(std::string& name, size_t offset)
-		: m_name(name), m_kind(USER), m_num_args(0), m_min_args(0), m_rtype(NULL) { m_info.offset = offset; }
+		: m_name(name), m_kind(USER), m_num_args(0), m_min_args(0), m_rtype(NULL)
+			{ m_info.offset = offset; }
 
 	Function(std::string& name, size_t offset, int numargs)
-		: m_name(name), m_kind(USER), m_num_args(numargs), m_min_args(0), m_rtype(NULL) { m_info.offset = offset; }
+		: m_name(name), m_kind(USER), m_num_args(numargs), m_min_args(0),
+			m_rtype(NULL) { m_info.offset = offset; }
 
-	virtual ~Function() { }
+	virtual ~Function() {}
 
 	Function* addArg(std::string name, const Type* type) {
 		m_args.push_back(FunctionArgsPair(name, type));
@@ -125,7 +131,7 @@ public:
 
 private:
 	union {
-		FunctionPtr  ptr;
+		FunctionPtr ptr;
 		size_t offset;
 	} m_info;
 

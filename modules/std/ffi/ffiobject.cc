@@ -1,6 +1,6 @@
 /**
  * Clever programming language
- * Copyright (c) 2012 Clever Team
+ * Copyright (c) 2011-2012 Clever Team
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -31,29 +31,36 @@
 #include "modules/std/ffi/ffiobject.h"
 #include "types/nativetypes.h"
 
-
 namespace clever { namespace packages { namespace std { namespace ffi {
 
-CLEVER_METHOD(FFIObject::do_assign) {
-	FFIObjectValue* lv = static_cast<FFIObjectValue* >(CLEVER_THIS()->getDataValue());
-	const FFIObjectValue* rv = static_cast<FFIObjectValue* >(CLEVER_ARG_DATA_VALUE(0));
-	*lv->pointer=*rv->pointer;
-	
-}
-
+/**
+ * FFIObject::constructor()
+ */
 CLEVER_METHOD(FFIObject::constructor) {
 	FFIObjectValue* sv = new FFIObjectValue;
-	
+
 	CLEVER_RETURN_DATA_VALUE(sv);
+}
+
+/**
+ * Void FFIObject::operator=(FFIObject object)
+ */
+CLEVER_METHOD(FFIObject::do_assign) {
+	FFIObjectValue* lv = CLEVER_GET_VALUE(FFIObjectValue*, CLEVER_THIS());
+	const FFIObjectValue* rv = static_cast<FFIObjectValue* >(CLEVER_ARG_DATA_VALUE(0));
+
+	*lv->pointer = *rv->pointer;
 }
 
 void FFIObject::init() {
 	const Type* ffiobj = CLEVER_TYPE("FFIObject");
 
-	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&FFIObject::constructor, ffiobj));
+	addMethod(new Method(CLEVER_CTOR_NAME,
+		(MethodPtr)&FFIObject::constructor, ffiobj));
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&FFIObject::do_assign, ffiobj, false))
+		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&FFIObject::do_assign,
+			ffiobj, false))
 			->addArg("rvalue", ffiobj)
 	);
 }
@@ -66,4 +73,3 @@ void FFIObject::destructor(Value* value) const {
 }
 
 }}}} // clever::packages::std::ffi
-

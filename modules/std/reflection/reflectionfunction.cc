@@ -73,7 +73,7 @@ CLEVER_METHOD(ReflectionFunction::constructor) {
  * String ReflectionFunction::getName()
  */
 CLEVER_METHOD(ReflectionFunction::getName) {
-	ReflectionFunctionValue* rfv = CLEVER_GET_VALUE(ReflectionFunctionValue*, value);
+	CLEVER_OBJECT_INIT(rfv, ReflectionFunctionValue*);
 
 	CLEVER_RETURN_STR(CSTRING(rfv->getFunction()->getName()));
 }
@@ -82,7 +82,7 @@ CLEVER_METHOD(ReflectionFunction::getName) {
  * Bool ReflectionFunction::isInternal()
  */
 CLEVER_METHOD(ReflectionFunction::isInternal) {
-	ReflectionFunctionValue* rfv = CLEVER_GET_VALUE(ReflectionFunctionValue*, value);
+	CLEVER_OBJECT_INIT(rfv, ReflectionFunctionValue*);
 
 	CLEVER_RETURN_BOOL(rfv->getFunction()->isInternal());
 }
@@ -91,7 +91,7 @@ CLEVER_METHOD(ReflectionFunction::isInternal) {
  * Bool ReflectionFunction::isUserDefined()
  */
 CLEVER_METHOD(ReflectionFunction::isUserDefined) {
-	ReflectionFunctionValue* rfv = CLEVER_GET_VALUE(ReflectionFunctionValue*, value);
+	CLEVER_OBJECT_INIT(rfv, ReflectionFunctionValue*);
 
 	CLEVER_RETURN_BOOL(rfv->getFunction()->isUserDefined());
 }
@@ -100,7 +100,7 @@ CLEVER_METHOD(ReflectionFunction::isUserDefined) {
  * Bool ReflectionFunction::isVariadic()
  */
 CLEVER_METHOD(ReflectionFunction::isVariadic) {
-	ReflectionFunctionValue* rfv = CLEVER_GET_VALUE(ReflectionFunctionValue*, value);
+	CLEVER_OBJECT_INIT(rfv, ReflectionFunctionValue*);
 
 	CLEVER_RETURN_BOOL(rfv->getFunction()->isVariadic());
 }
@@ -109,7 +109,7 @@ CLEVER_METHOD(ReflectionFunction::isVariadic) {
  * String ReflectionFunction::getReturnType()
  */
 CLEVER_METHOD(ReflectionFunction::getReturnType) {
-	ReflectionFunctionValue* rfv = CLEVER_GET_VALUE(ReflectionFunctionValue*, value);
+	CLEVER_OBJECT_INIT(rfv, ReflectionFunctionValue*);
 
 	const Type* rtype = rfv->getFunction()->getReturnType();
 
@@ -120,7 +120,7 @@ CLEVER_METHOD(ReflectionFunction::getReturnType) {
  * Int ReflectionFunction::getNumRequiredArgs()
  */
 CLEVER_METHOD(ReflectionFunction::getNumRequiredArgs) {
-	ReflectionFunctionValue* rfv = CLEVER_GET_VALUE(ReflectionFunctionValue*, value);
+	CLEVER_OBJECT_INIT(rfv, ReflectionFunctionValue*);
 
 	CLEVER_RETURN_INT(int64_t(rfv->getFunction()->getNumArgs()));
 }
@@ -129,7 +129,7 @@ CLEVER_METHOD(ReflectionFunction::getNumRequiredArgs) {
  * Array<String> ReflectionFunction::getArgs()
  */
 CLEVER_METHOD(ReflectionFunction::getArgs) {
-	ReflectionFunctionValue* rfv = CLEVER_GET_VALUE(ReflectionFunctionValue*, value);
+	CLEVER_OBJECT_INIT(rfv, ReflectionFunctionValue*);
 	const FunctionArgs& fargs = rfv->getFunction()->getArgs();
 	FunctionArgs::const_iterator it(fargs.begin()), end(fargs.end());
 
@@ -153,6 +153,26 @@ CLEVER_METHOD(ReflectionFunction::getArgs) {
 CLEVER_METHOD(ReflectionFunction::do_assign) {
 	CLEVER_ARG(0)->getDataValue()->addRef();
 	CLEVER_THIS()->copy(CLEVER_ARG(0));
+}
+
+/**
+ * String ReflectionFunction::call()
+ */
+CLEVER_METHOD(ReflectionFunction::call) {
+	CLEVER_OBJECT_INIT(rfv, ReflectionFunctionValue*);
+	const Function* func = rfv->getFunction();
+
+	if (func->isInternal()) {
+		Value result;
+
+		func->call(NULL, &result);
+
+		CLEVER_RETURN_STR(&result.toString());
+	} else {
+		func->call();
+
+		CLEVER_RETURN_STR(CSTRING(""));
+	}
 }
 
 void ReflectionFunction::init() {
@@ -202,6 +222,11 @@ void ReflectionFunction::init() {
 		(new Method(CLEVER_OPERATOR_ASSIGN,
 			(MethodPtr)&ReflectionFunction::do_assign, CLEVER_VOID))
 			->addArg("rvalue", reffunc)
+	);
+
+	addMethod(
+		new Method("call",
+			(MethodPtr)&ReflectionFunction::call, CLEVER_VOID)
 	);
 }
 
