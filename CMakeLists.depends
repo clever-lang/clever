@@ -34,15 +34,16 @@ endif (PCRECPP_FOUND)
 
 # cgicc
 if (CGICC_DIR)
-	find_path(CGICC_INCLUDE_DIRS Cgicc.h "${CGICC_DIR}/include"})
+	find_path(CGICC_INCLUDE_DIRS cgicc/Cgicc.h "${CGICC_DIR}/include"})
 	find_library(CGICC_LIBRARIES NAMES cgicc PATHS "${CGICC_DIR}/lib")
+	find_library(CGICC_LIBRARIES NAMES libcgicc PATHS "${CGICC_DIR}/lib")
 
 	# If we found everything we need, cgicc is available.
 	if (CGICC_INCLUDE_DIRS AND CGICC_LIBRARIES)
 		set(CGICC_FOUND TRUE)
 	endif (CGICC_INCLUDE_DIRS AND CGICC_LIBRARIES)
 else (CGICC_DIR)
-	find_library(CGICC_LIBRARIES cgicc)
+	find_library(CGICC_LIBRARIES cgicc libcgicc)
 	find_path(CGICC_INCLUDE_DIRS cgicc/Cgicc.h)
 
 	if (CGICC_LIBRARIES AND CGICC_INCLUDE_DIRS)
