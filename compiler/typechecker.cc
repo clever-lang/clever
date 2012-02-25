@@ -208,8 +208,13 @@ static void _check_function_arg_types(const Function* func,
 	size_t i = 0;
 
 	while (it != end) {
+		Value* val = arg_values->at(i++);
 		const Type* t1 = it->second;
-		const Type* t2 = arg_values->at(i++)->getTypePtr();
+		const Type* t2 = val->getTypePtr();
+
+		if (val->isCallable()) {
+			Compiler::errorf(loc, "Callback is not implemented yet!");
+		}
 
 		if (t1 != t2) {
 			if (!_check_compatible_types(t1, t2)) {
