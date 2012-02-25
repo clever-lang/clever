@@ -133,14 +133,14 @@ void TestRunner::run(void) {
 #ifndef _WIN32
 		if (valgrind) {
 			command = std::string("GLIBCXX_FORCE_NEW=yes valgrind -q --tool=memcheck --leak-check=yes --num-callers=30 --log-file=") + file_name + std::string(".mem");
-			command = command + std::string(" ./clever -f ") + tmp_file + " 2>&1";
+			command = command + std::string(" ./clever ") + tmp_file + " 2>&1";
 			fp = popen(command.c_str(), "r");
 		} else {
-			command = std::string("./clever -f ") + tmp_file + " 2>&1";
+			command = std::string("./clever ") + tmp_file + " 2>&1";
 			fp = popen(command.c_str(), "r");
 		}
 #else
-		command = std::string("clever.exe -f ") + tmp_file + " 2>&1";
+		command = std::string("clever.exe ") + tmp_file + " 2>&1";
 		fp = _popen(command.c_str(), "r");
 #endif
 
