@@ -37,7 +37,7 @@
 	}
 
 static void show_usage(void) {
-	std::cout << "Usage: clever <options>" << std::endl;
+	std::cout << "Usage: clever <options> [filename]" << std::endl;
 	std::cout << std::endl;
 
 	std::cout << "General options:" << std::endl;
@@ -49,7 +49,6 @@ static void show_usage(void) {
 	std::cout << std::endl;
 
 	std::cout << "Code options (must be the last one and unique):" << std::endl;
-	std::cout << "\t-f\tExecute the file" << std::endl;
 	std::cout << "\t-i\tRun the interative mode" << std::endl;
 	std::cout << "\t-r\tRun the code" << std::endl;
 	std::cout << "\t-qr\tQuickly run the code (import std automatically)" << std::endl;
@@ -107,11 +106,6 @@ int main(int argc, char **argv) {
 				return 0;
 			}
 #endif
-		} else if (argv[i] == std::string("-f")) {
-			MORE_ARG();
-			inc_arg++;
-			clever.parseFile(argv[i]);
-			break;
 		} else if (argv[i] == std::string("-i")) {
 			std::string input_line;
 			inc_arg++;
@@ -140,9 +134,12 @@ int main(int argc, char **argv) {
 			inc_arg++;
 			dump_opcode= true;
 #endif
-		} else {
+		} else if (argv[i][0] == '-') {
 			std::cerr << "Unknown option '" << argv[i] << "'" << std::endl;
 			exit(1);
+		} else {
+			clever.parseFile(argv[i]);
+			break;
 		}
 	}
 
