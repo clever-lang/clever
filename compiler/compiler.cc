@@ -48,12 +48,6 @@ Type* CLEVER_ARRAY_VAR  = NULL;
 Type* CLEVER_MAP_VAR    = NULL;
 Type* CLEVER_OBJ_VAR    = NULL;
 
-#ifndef CLEVER_APPLE
-# define CLEVER_ERROR_EXIT_ACTION() longjmp(Compiler::failure, 1)
-#else
-# define CLEVER_ERROR_EXIT_ACTION() exit(1)
-#endif
-
 // Set the default error level
 Compiler::Error Compiler::m_error_level = Compiler::ALL;
 

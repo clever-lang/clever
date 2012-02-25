@@ -36,13 +36,6 @@
 #include "interpreter/asttransformer.h"
 #include "interpreter/location.hh"
 
-/**
- * Macro to help increasing and decreasing reference counting only
- * when the value is not null
- */
-#define AST_ADDREF(x) if ((x)) { CLEVER_ADDREF(x); }
-#define AST_DELREF(x) if ((x)) { CLEVER_DELREF(x); }
-
 namespace clever {
 
 class Opcode;
@@ -385,12 +378,12 @@ public:
 
 	explicit UnscopedBlockNode(Identifier* alias, BlockNode* block)
 		: m_alias(alias), m_block(block) {
-		AST_ADDREF(m_alias);
+		CLEVER_SAFE_ADDREF(m_alias);
 		CLEVER_ADDREF(m_block);
 	}
 
 	~UnscopedBlockNode() {
-		AST_DELREF(m_alias);
+		CLEVER_SAFE_DELREF(m_alias);
 		CLEVER_DELREF(m_block);
 	}
 
@@ -419,14 +412,14 @@ public:
 	IfExpr(ASTNode* condition, ASTNode* block)
 		: m_condition(condition), m_block(block), m_else(NULL) {
 		CLEVER_ADDREF(m_condition);
-		AST_ADDREF(m_block);
+		CLEVER_SAFE_ADDREF(m_block);
 		m_nodes = new NodeList;
 	}
 
 	~IfExpr() {
 		CLEVER_DELREF(m_condition);
-		AST_DELREF(m_block);
-		AST_DELREF(m_else);
+		CLEVER_SAFE_DELREF(m_block);
+		CLEVER_SAFE_DELREF(m_else);
 		clearNodes();
 		delete m_nodes;
 	}
@@ -462,12 +455,12 @@ public:
 	ElseIfExpr(ASTNode* condition, ASTNode* block)
 		: m_condition(condition), m_block(block) {
 		CLEVER_ADDREF(m_condition);
-		AST_ADDREF(m_block);
+		CLEVER_SAFE_ADDREF(m_block);
 	}
 
 	~ElseIfExpr() {
 		CLEVER_DELREF(m_condition);
-		AST_DELREF(m_block);
+		CLEVER_SAFE_DELREF(m_block);
 	}
 
 	bool hasBlock() { return m_block != NULL; }
@@ -486,12 +479,12 @@ public:
 	WhileExpr(ASTNode* condition, ASTNode* block)
 		: m_condition(condition), m_block(block) {
 		CLEVER_ADDREF(m_condition);
-		AST_ADDREF(m_block);
+		CLEVER_SAFE_ADDREF(m_block);
 	}
 
 	~WhileExpr() {
 		CLEVER_DELREF(m_condition);
-		AST_DELREF(m_block);
+		CLEVER_SAFE_DELREF(m_block);
 	}
 
 	bool hasBlock() { return m_block != NULL; }
@@ -515,23 +508,23 @@ public:
 		: m_var_decl(var_decl), m_ident(ident), m_condition(NULL), m_increment(NULL), m_block(block) {
 		CLEVER_ADDREF(m_var_decl);
 		CLEVER_ADDREF(m_ident);
-		AST_ADDREF(m_block);
+		CLEVER_SAFE_ADDREF(m_block);
 	}
 
 	ForExpr(ASTNode* var_decl, ASTNode* condition, ASTNode* increment, ASTNode* block)
 		: m_var_decl(var_decl), m_ident(NULL), m_condition(condition), m_increment(increment), m_block(block) {
-		AST_ADDREF(m_var_decl);
-		AST_ADDREF(m_condition);
-		AST_ADDREF(m_increment);
-		AST_ADDREF(m_block);
+		CLEVER_SAFE_ADDREF(m_var_decl);
+		CLEVER_SAFE_ADDREF(m_condition);
+		CLEVER_SAFE_ADDREF(m_increment);
+		CLEVER_SAFE_ADDREF(m_block);
 	}
 
 	~ForExpr() {
-		AST_DELREF(m_var_decl);
-		AST_DELREF(m_ident);
-		AST_DELREF(m_condition);
-		AST_DELREF(m_increment);
-		AST_DELREF(m_block);
+		CLEVER_SAFE_DELREF(m_var_decl);
+		CLEVER_SAFE_DELREF(m_ident);
+		CLEVER_SAFE_DELREF(m_condition);
+		CLEVER_SAFE_DELREF(m_increment);
+		CLEVER_SAFE_DELREF(m_block);
 	}
 
 	bool hasBlock() const { return m_block != NULL; }
@@ -711,7 +704,7 @@ public:
 	~Subscript() {
 		CLEVER_DELREF(m_ident);
 		CLEVER_DELREF(m_expr);
-		AST_DELREF(m_call_value);
+		CLEVER_SAFE_DELREF(m_call_value);
 	}
 
 	Identifier* getIdentifier() const {
@@ -764,7 +757,7 @@ public:
 		: m_type(type), m_variable(variable), m_rhs(NULL), m_initval(NULL),
 			m_const_value(false), m_call_value(NULL),
 			m_args_value(NULL), m_ctor_args(NULL) {
-		AST_ADDREF(m_type);
+		CLEVER_SAFE_ADDREF(m_type);
 		CLEVER_ADDREF(m_variable);
 	}
 
@@ -774,7 +767,7 @@ public:
 			m_args_value(NULL), m_ctor_args(NULL) {
 
 		// If is not `Auto' typed variable
-		AST_ADDREF(m_type);
+		CLEVER_SAFE_ADDREF(m_type);
 		CLEVER_ADDREF(m_variable);
 		CLEVER_ADDREF(m_rhs);
 	}
@@ -785,7 +778,7 @@ public:
 			m_args_value(NULL), m_ctor_args(NULL) {
 
 		// If is not `Auto' typed variable
-		AST_ADDREF(m_type);
+		CLEVER_SAFE_ADDREF(m_type);
 		CLEVER_ADDREF(m_variable);
 		CLEVER_ADDREF(m_rhs);
 	}
@@ -794,18 +787,18 @@ public:
 		: m_type(type), m_variable(variable), m_rhs(NULL), m_initval(NULL),
 			m_const_value(false), m_call_value(NULL),
 			m_args_value(NULL), m_ctor_args(arg_list) {
-		AST_ADDREF(m_type);
-		AST_ADDREF(m_variable);
-		AST_ADDREF(m_ctor_args);
+		CLEVER_SAFE_ADDREF(m_type);
+		CLEVER_SAFE_ADDREF(m_variable);
+		CLEVER_SAFE_ADDREF(m_ctor_args);
 	}
 
 	virtual ~VariableDecl() {
-		AST_DELREF(m_type);
+		CLEVER_SAFE_DELREF(m_type);
 		CLEVER_DELREF(m_variable);
-		AST_DELREF(m_rhs);
-		AST_DELREF(m_initval);
-		AST_DELREF(m_call_value);
-		AST_DELREF(m_ctor_args);
+		CLEVER_SAFE_DELREF(m_rhs);
+		CLEVER_SAFE_DELREF(m_initval);
+		CLEVER_SAFE_DELREF(m_call_value);
+		CLEVER_SAFE_DELREF(m_ctor_args);
 	}
 
 	Identifier* getVariable() const {
@@ -912,7 +905,7 @@ public:
 
 	~UnaryExpr() {
 		CLEVER_DELREF(m_expr);
-		AST_DELREF(m_call_value);
+		CLEVER_SAFE_DELREF(m_call_value);
 	}
 
 	int getOp() const {
@@ -962,8 +955,8 @@ public:
 	}
 
 	~RegexPattern() {
-		AST_DELREF(m_regex);
-		AST_DELREF(m_call_value);
+		CLEVER_SAFE_DELREF(m_regex);
+		CLEVER_SAFE_DELREF(m_call_value);
 	}
 
 	Value* getRegex() const { return m_regex; }
@@ -1002,17 +995,17 @@ class TypeCreation : public ASTNode {
 public:
 	TypeCreation(Identifier* type, ArgumentList* args)
 		: m_type(type), m_args(args), m_call_value(NULL), m_args_value(NULL) {
-		AST_ADDREF(m_type);
-		AST_ADDREF(m_args);
+		CLEVER_SAFE_ADDREF(m_type);
+		CLEVER_SAFE_ADDREF(m_args);
 
 		m_value = new Value;
 	}
 
 	~TypeCreation() {
 		CLEVER_DELREF(m_type);
-		AST_DELREF(m_args);
-		AST_DELREF(m_call_value);
-		AST_DELREF(m_value);
+		CLEVER_SAFE_DELREF(m_args);
+		CLEVER_SAFE_DELREF(m_call_value);
+		CLEVER_SAFE_DELREF(m_value);
 	}
 
 	Identifier* getIdentifier() {
@@ -1074,17 +1067,17 @@ public:
 	FuncDeclaration(Identifier* name, Identifier* rtype, ArgumentDeclList* args, BlockNode* block)
 		: m_name(name), m_return(rtype), m_args(args), m_block(block), m_value(NULL) {
 		CLEVER_ADDREF(m_name);
-		AST_ADDREF(m_return);
-		AST_ADDREF(m_args);
-		AST_ADDREF(m_block);
+		CLEVER_SAFE_ADDREF(m_return);
+		CLEVER_SAFE_ADDREF(m_args);
+		CLEVER_SAFE_ADDREF(m_block);
 	}
 
 	virtual ~FuncDeclaration() {
 		CLEVER_DELREF(m_name);
-		AST_DELREF(m_return);
-		AST_DELREF(m_args);
-		AST_DELREF(m_block);
-		AST_DELREF(m_value);
+		CLEVER_SAFE_DELREF(m_return);
+		CLEVER_SAFE_DELREF(m_args);
+		CLEVER_SAFE_DELREF(m_block);
+		CLEVER_SAFE_DELREF(m_value);
 	}
 
 	const CString* getName() const { return m_name->getName(); }
@@ -1153,7 +1146,7 @@ public:
 		: m_ret_type(NULL),m_name(name), m_args(args), m_args_value(NULL),
 			m_value(NULL) {
 		CLEVER_ADDREF(m_name);
-		AST_ADDREF(m_args);
+		CLEVER_SAFE_ADDREF(m_args);
 		m_result = new Value;
 	}
 
@@ -1182,8 +1175,8 @@ public:
 	~FunctionCall() {
 		CLEVER_DELREF(m_name);
 		CLEVER_DELREF(m_result);
-		AST_DELREF(m_args);
-		AST_DELREF(m_value);
+		CLEVER_SAFE_DELREF(m_args);
+		CLEVER_SAFE_DELREF(m_value);
 	}
 
 	Type* getReturnType() const { return m_ret_type; }
@@ -1232,7 +1225,7 @@ public:
 			m_args_value(NULL) {
 		CLEVER_ADDREF(m_var);
 		CLEVER_ADDREF(m_method);
-		AST_ADDREF(m_args);
+		CLEVER_SAFE_ADDREF(m_args);
 
 		m_result = new Value;
 	}
@@ -1242,7 +1235,7 @@ public:
 			m_args_value(NULL) {
 		CLEVER_ADDREF(m_var);
 		CLEVER_ADDREF(m_method);
-		AST_ADDREF(m_args);
+		CLEVER_SAFE_ADDREF(m_args);
 
 		m_result = new Value;
 	}
@@ -1250,8 +1243,8 @@ public:
 	~MethodCall() {
 		CLEVER_DELREF(m_var);
 		CLEVER_DELREF(m_method);
-		AST_DELREF(m_args);
-		AST_DELREF(m_call_value);
+		CLEVER_SAFE_DELREF(m_args);
+		CLEVER_SAFE_DELREF(m_call_value);
 	}
 
 	ASTNode* getVariable() const { return m_var; }
@@ -1313,7 +1306,7 @@ public:
 	~AssignExpr() {
 		CLEVER_DELREF(m_lhs);
 		CLEVER_DELREF(m_rhs);
-		AST_DELREF(m_call_value);
+		CLEVER_SAFE_DELREF(m_call_value);
 	}
 
 	ASTNode* getLhs() const { return m_lhs; }
@@ -1390,10 +1383,10 @@ public:
 	}
 
 	~ImportStmt() {
-		AST_DELREF(m_package);
-		AST_DELREF(m_module);
-		AST_DELREF(m_alias);
-		AST_DELREF(m_file);
+		CLEVER_SAFE_DELREF(m_package);
+		CLEVER_SAFE_DELREF(m_module);
+		CLEVER_SAFE_DELREF(m_alias);
+		CLEVER_SAFE_DELREF(m_file);
 	}
 
 	bool hasFilePath() const {
@@ -1459,7 +1452,7 @@ public:
 	}
 
 	~ReturnStmt() {
-		AST_DELREF(m_expr);
+		CLEVER_SAFE_DELREF(m_expr);
 	}
 
 	ASTNode* getExpr() const { return m_expr; }
@@ -1631,7 +1624,7 @@ public:
 
 	~MapList() {
 		CLEVER_DELREF(m_arg_list);
-		AST_DELREF(m_value);
+		CLEVER_SAFE_DELREF(m_value);
 	}
 private:
 	ArgumentList* m_arg_list;

@@ -32,6 +32,12 @@
 #include "compiler/cgvisitor.h"
 #include "compiler/typechecker.h"
 
+#ifndef CLEVER_APPLE
+# define CLEVER_ERROR_EXIT_ACTION() longjmp(Compiler::failure, 1)
+#else
+# define CLEVER_ERROR_EXIT_ACTION() exit(1)
+#endif
+
 namespace clever { namespace ast {
 class ASTNode;
 }} // clever::ast
