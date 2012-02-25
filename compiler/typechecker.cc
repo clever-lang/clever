@@ -157,8 +157,8 @@ static void _check_function_return(const Function* func,
 	 */
 	if (value && rtype == NULL) {
 		Compiler::errorf(loc,
-			"Function `%S' cannot return value, it was declared as Void!",
-			&func->getName());
+			"Function `%s' cannot return value, it was declared as Void!",
+			func->getName().c_str());
 	} else if (value == NULL && rtype) {
 		Compiler::errorf(loc, "Function `%S' must return a value of type %S!",
 			&func->getName(), rtype->getName());
@@ -253,11 +253,11 @@ static CallableValue* _prepare_method_call(const Type* type, Value* var,
 
 		if (mname == (CACHE_PTR(CLEVER_CTOR, CLEVER_CTOR_NAME))) {
 			Compiler::errorf(expr->getLocation(),
-				"No matching call for constructor %S::%S(%S)",
-				type->getName(), type->getName(), &args_type_name);
+				"No matching call for constructor %S::%S(%s)",
+				type->getName(), type->getName(), args_type_name.c_str());
 		} else {
-			Compiler::errorf(expr->getLocation(), "No matching call for %S::%S(%S)",
-				var->getTypePtr()->getName(), mname, &args_type_name);
+			Compiler::errorf(expr->getLocation(), "No matching call for %S::%S(%s)",
+				var->getTypePtr()->getName(), mname, args_type_name.c_str());
 		}
 	}
 	var->setTypePtr(type);
@@ -266,8 +266,8 @@ static CallableValue* _prepare_method_call(const Type* type, Value* var,
 		const std::string args_type_name = _serialize_arg_type(args_types, ", ");
 
 		Compiler::errorf(expr->getLocation(), "Can't call the non-const "
-			"method %S::%S(%S) because variable `%S' is const",
-			var->getTypePtr()->getName(), mname, &args_type_name,
+			"method %S::%S(%s) because variable `%S' is const",
+			var->getTypePtr()->getName(), mname, args_type_name.c_str(),
 			var->getName());
 	}
 
