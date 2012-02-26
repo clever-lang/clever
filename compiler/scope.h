@@ -47,8 +47,6 @@ class Value;
 class Scope;
 class Symbol;
 
-extern Scope g_scope;
-
 class Symbol {
 public:
 	typedef	enum { INVALID, VALUE, TYPE } SymbolType;
@@ -211,6 +209,7 @@ private:
 	SymbolMap m_symbols;
 };
 
+extern Scope g_scope;
 
 } // clever
 

@@ -71,15 +71,15 @@ public:
 	/**
 	 * Data type
 	 */
-	enum { NONE, PRIMITIVE, USER, REF };
+	enum { NONE, PRIMITIVE, USER, CALL, REF };
 
 	Value()
 		: RefCounted(1), m_type(NONE), m_type_ptr(NULL), m_name(NULL),
-		m_is_const(false) { }
+		m_is_const(false) { std::memset(&m_data, 0, sizeof(m_data)); }
 
 	explicit Value(const Type* type_ptr)
 		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(type_ptr), m_name(NULL),
-		m_is_const(false) { }
+		m_is_const(false) { setTypePtr(type_ptr); }
 
 	explicit Value(double value)
 		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_DOUBLE),
@@ -102,6 +102,7 @@ public:
 	explicit Value(const CString* value)
 		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_STR),
 			m_name(NULL), m_is_const(false) {
+		std::memset(&m_data, 0, sizeof(m_data));
 		setString(value);
 	}
 
@@ -128,7 +129,6 @@ public:
 		else if (isPrimitive() && isString() && m_data.s_value
 			&& !m_data.s_value->isInterned()) {
 			const_cast<CString*>(m_data.s_value)->delRef();
-			m_data.s_value = NULL;
 		}
 	}
 
@@ -169,7 +169,7 @@ public:
 
 	void setType(int type) {
 		if (EXPECTED(type == NONE || type == USER || type == PRIMITIVE ||
-			type == REF)) {
+			type == REF || type == CALL)) {
 			m_type = type;
 		}
 	}
@@ -180,17 +180,7 @@ public:
 
 	const Type* getTypePtr() const { return m_type_ptr; }
 
-	void setTypePtr(const Type* const ptr) {
-		m_type_ptr = ptr;
-
-		if (m_type == NONE && isPrimitive()) {
-			m_type = PRIMITIVE;
-
-			if (isString()) {
-				m_data.s_value = NULL;
-			}
-		}
-	}
+	void setTypePtr(const Type* ptr) { m_type_ptr = ptr; }
 
 	bool hasName() const { return m_name != NULL; }
 	const CString* getName() const { return m_name; }
@@ -205,7 +195,7 @@ public:
 	 * Avoid using this check. Type your variables as a
 	 * callable value instead of Value to ensure you can call it.
 	 */
-	virtual bool isCallable() const { return false; }
+	virtual bool isCallable() const { return m_type == CALL; }
 
 	bool isInteger()   const { return m_type_ptr == CLEVER_INT; }
 	bool isString()    const { return m_type_ptr == CLEVER_STR; }
@@ -225,10 +215,18 @@ public:
 		m_data.l_value = i;
 	}
 
-	void setString(const CString* const s) {
+	void setString(const CString* s) {
+		if (m_data.s_value && !m_data.s_value->isInterned()) {
+			const_cast<CString*>(m_data.s_value)->delRef();
+		}
+
 		m_type_ptr = CLEVER_STR;
 		m_type = PRIMITIVE;
 		m_data.s_value = s;
+
+		if (!s->isInterned()) {
+			const_cast<CString*>(s)->addRef();
+		}
 	}
 
 	void setDouble(double d) {
@@ -300,20 +298,20 @@ public:
 	void copy(const Value* const value) {
 		if (isUserValue() && getDataValue()) {
 			getDataValue()->delRef();
-		}/* else if (isPrimitive() && isString() && m_data.s_value
+		} else if (isPrimitive() && isString() && m_data.s_value
 			&& !m_data.s_value->isInterned()) {
 			const_cast<CString*>(m_data.s_value)->delRef();
-		}*/
+		}
 		std::memcpy(&m_data, value->getData(), sizeof(ValueData));
 		m_type_ptr = value->getTypePtr();
 		m_type = value->getType();
 
 		if (isUserValue() && getDataValue()) {
 			getDataValue()->addRef();
-		}/* else if (isPrimitive() && isString() && m_data.s_value
+		} else if (isPrimitive() && isString() && m_data.s_value
 			&& !m_data.s_value->isInterned()) {
 			const_cast<CString*>(m_data.s_value)->addRef();
-		}*/
+		}
 	}
 
 	virtual Value* getValue() { return this; }
@@ -373,13 +371,15 @@ class CallableValue : public Value {
 public:
 	enum CallType {
 		NONE,
-		NEAR, /* Invoke compiled functions/methods. */
-		FAR   /* Invoke built-in or loaded functions/methods. (probably faster)*/
+		NEAR, // Invoke compiled functions/methods
+		FAR   // Invoke built-in or loaded functions/methods (probably faster)
 	};
 
 	/* TODO: generate name for anonymous functions, disable setName(). */
 	CallableValue()
-		: m_call_type(NONE), m_context(NULL), m_scope(NULL) { }
+		: Value(), m_call_type(NONE), m_context(NULL), m_scope(NULL) {
+		setType(CALL);
+	}
 
 	/**
 	 * Create a CallableValue to represent a named function.
@@ -387,15 +387,17 @@ public:
 	explicit CallableValue(const CString* const name)
 		: Value(), m_call_type(NONE), m_context(NULL), m_scope(NULL) {
 		setName(name);
+		setType(CALL);
 	}
 
 	/**
 	 * Create a CallableValue able to represent a method.
 	 */
-	CallableValue(const CString* const name, const Type* const type)
+	CallableValue(const CString* name, const Type* type)
 		: Value(), m_call_type(NONE), m_context(NULL), m_scope(NULL) {
 		setName(name);
 		setTypePtr(type);
+		setType(CALL);
 	}
 
 	~CallableValue() {

@@ -759,17 +759,15 @@ private:
 class VariableDecl : public ASTNode {
 public:
 	VariableDecl(Identifier* type, Identifier* variable)
-		: m_type(type), m_variable(variable), m_rhs(NULL), m_initval(NULL),
-			m_const_value(false), m_call_value(NULL),
-			m_args_value(NULL), m_ctor_args(NULL) {
+		: m_type(type), m_variable(variable), m_rhs(NULL), m_const_value(false),
+			m_call_value(NULL), m_args_value(NULL), m_ctor_args(NULL) {
 		CLEVER_SAFE_ADDREF(m_type);
 		CLEVER_ADDREF(m_variable);
 	}
 
 	VariableDecl(Identifier* type, Identifier* variable, ASTNode* rhs)
-		: m_type(type), m_variable(variable), m_rhs(rhs), m_initval(NULL),
-			m_const_value(false), m_call_value(NULL),
-			m_args_value(NULL), m_ctor_args(NULL) {
+		: m_type(type), m_variable(variable), m_rhs(rhs), m_const_value(false),
+			m_call_value(NULL), m_args_value(NULL), m_ctor_args(NULL) {
 
 		// If is not `Auto' typed variable
 		CLEVER_SAFE_ADDREF(m_type);
@@ -777,10 +775,11 @@ public:
 		CLEVER_ADDREF(m_rhs);
 	}
 
-	VariableDecl(Identifier* type, Identifier* variable, ASTNode* rhs, bool const_value)
-		: m_type(type), m_variable(variable), m_rhs(rhs), m_initval(NULL),
-			m_const_value(const_value), m_call_value(NULL),
-			m_args_value(NULL), m_ctor_args(NULL) {
+	VariableDecl(Identifier* type, Identifier* variable, ASTNode* rhs,
+		bool const_value)
+		: m_type(type), m_variable(variable), m_rhs(rhs),
+			m_const_value(const_value), m_call_value(NULL),	m_args_value(NULL),
+			m_ctor_args(NULL) {
 
 		// If is not `Auto' typed variable
 		CLEVER_SAFE_ADDREF(m_type);
@@ -789,9 +788,8 @@ public:
 	}
 
 	VariableDecl(Identifier* type, Identifier* variable, ArgumentList* arg_list)
-		: m_type(type), m_variable(variable), m_rhs(NULL), m_initval(NULL),
-			m_const_value(false), m_call_value(NULL),
-			m_args_value(NULL), m_ctor_args(arg_list) {
+		: m_type(type), m_variable(variable), m_rhs(NULL), m_const_value(false),
+			m_call_value(NULL),	m_args_value(NULL), m_ctor_args(arg_list) {
 		CLEVER_SAFE_ADDREF(m_type);
 		CLEVER_SAFE_ADDREF(m_variable);
 		CLEVER_SAFE_ADDREF(m_ctor_args);
@@ -801,7 +799,6 @@ public:
 		CLEVER_SAFE_DELREF(m_type);
 		CLEVER_DELREF(m_variable);
 		CLEVER_SAFE_DELREF(m_rhs);
-		CLEVER_SAFE_DELREF(m_initval);
 		CLEVER_SAFE_DELREF(m_call_value);
 		CLEVER_SAFE_DELREF(m_ctor_args);
 	}
@@ -810,16 +807,8 @@ public:
 		return m_variable;
 	}
 
-	Value* getInitialValue() const {
-		return m_initval;
-	}
-
 	ASTNode* getRhs() {
 		return m_rhs;
-	}
-
-	void setInitialValue(Value* value) {
-		m_initval = value;
 	}
 
 	void setType(Identifier* type){
@@ -876,7 +865,6 @@ private:
 	Identifier* m_type;
 	Identifier* m_variable;
 	ASTNode* m_rhs;
-	Value* m_initval;
 	bool m_const_value;
 	CallableValue* m_call_value;
 	ValueVector* m_args_value;

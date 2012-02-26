@@ -486,7 +486,7 @@ CLEVER_METHOD(String::times) {
 			ret += str;
 		}
 
-		CLEVER_RETURN_STR(CSTRING(ret));
+		CLEVER_RETURN_STR(CSTRINGT(ret));
 	}
 }
 

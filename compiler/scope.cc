@@ -29,7 +29,7 @@
 namespace clever {
 
 Scope g_scope;
-	
+
 Symbol::~Symbol() {
 	if (m_type == TYPE) {
 		const_cast<Type*>(m_data.type)->delRef();
@@ -59,7 +59,7 @@ void Scope::clear() {
 	}
 
 	m_symbols.clear();
-	
+
 }
 
 } // clever

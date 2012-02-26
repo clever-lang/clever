@@ -162,23 +162,23 @@ AST_VISITOR(CodeGenVisitor, BinaryExpr) {
  * Generates the variable declaration opcode
  */
 AST_VISITOR(CodeGenVisitor, VariableDecl) {
-	if (!expr->getConstructorArgs() && expr->getInitialValue()) {
-		expr->getCallValue()->addRef();
-		//expr->getArgsValue()->addRef();
+	ValueVector* args = expr->getArgsValue();
 
-		emit(OP_ASSIGN, &VM::mcall_handler, expr->getCallValue(),
-			expr->getArgsValue());
+	if (!expr->getConstructorArgs() && args) {
+		expr->getCallValue()->addRef();
+
+		emit(OP_ASSIGN, &VM::mcall_handler, expr->getCallValue(), args);
 	}
 	else if (expr->getConstructorArgs()) {
-		clever_assert_not_null(expr->getInitialValue());
+		clever_assert_not_null(args);
 
 		CallableValue* call = expr->getCallValue();
 
 		call->addRef();
-		expr->getInitialValue()->addRef();
+		expr->getVariable()->getValue()->addRef();
 
 		emit(OP_MCALL, &VM::mcall_handler, call, expr->getArgsValue(),
-			expr->getInitialValue());
+			expr->getVariable()->getValue());
 	}
 }
 

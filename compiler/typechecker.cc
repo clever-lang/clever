@@ -587,9 +587,6 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 			var->setTypePtr(type);
 		}
 
-		initval->addRef();
-		expr->setInitialValue(initval);
-
 		// Building ValueVector of arguments for __assign__ method call
 		ValueVector* arg_values = new ValueVector;
 		arg_values->push_back(initval);
@@ -605,9 +602,6 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 		ValueVector* arg_values = ctor_list->getArgValue();
 
 		expr->setArgsValue(arg_values);
-
-		expr->setInitialValue(var);
-		var->addRef();
 
 		expr->setCallValue(_prepare_method_call(type, var,
 			CACHE_PTR(CLEVER_CTOR, CLEVER_CTOR_NAME), expr, arg_values));

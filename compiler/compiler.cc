@@ -70,6 +70,9 @@ Compiler::~Compiler() {
 	if (m_ast) {
 		delete m_ast;
 	}
+
+	g_scope.clear();
+	delete g_cstring_tbl;
 }
 
 /**

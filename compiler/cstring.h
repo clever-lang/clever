@@ -33,11 +33,12 @@
 #endif
 #include "compiler/clever.h"
 #include "compiler/refcounted.h"
+#include <iostream>
 
 /**
  * Returns the CString* pointer to a string
  */
-#define CSTRING(xstring)  (clever::g_cstring_tbl.intern(xstring))
+#define CSTRING(xstring)  (clever::g_cstring_tbl->intern(xstring))
 #define CSTRINGT(xstring) new clever::CString(xstring, false)
 
 namespace clever {
@@ -50,17 +51,17 @@ public:
 	typedef std::size_t IdType;
 
 	CString()
-		: RefCounted(1), std::string(), m_id(0), m_interned(true) {}
+		: RefCounted(0), std::string(), m_id(0), m_interned(true) {}
 
 	CString(const std::string& str, IdType id)
-		: RefCounted(1), std::string(str), m_id(id), m_interned(true) {}
+		: RefCounted(0), std::string(str), m_id(id), m_interned(true) {}
 
 	CString(const CString& str)
-		: RefCounted(1), std::string(str.str()), m_id(str.m_id),
+		: RefCounted(0), std::string(str.str()), m_id(str.m_id),
 			m_interned(true) {}
 
-	CString(const CString& str, bool interned)
-		: RefCounted(1), std::string(str.str()), m_id(str.m_id),
+	CString(const std::string& str, bool interned)
+		: RefCounted(0), std::string(str), m_id(0),
 			m_interned(interned) {}
 
 	bool hasSameId(const CString* cstring) const {
@@ -145,8 +146,6 @@ namespace clever {
 
 class CStringTable;
 
-extern CStringTable g_cstring_tbl;
-
 class CStringTable {
 public:
 	typedef CString::IdType IdType;
@@ -185,6 +184,8 @@ private:
 	CStringTableBase m_map;
 	DISALLOW_COPY_AND_ASSIGN(CStringTable);
 };
+
+extern CStringTable* g_cstring_tbl;
 
 } // clever
 
