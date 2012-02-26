@@ -343,7 +343,10 @@ AST_VISITOR(TypeChecker, Constant) {
 			expr->getName());
 	}
 
-	expr->getValue()->copy(constant);
+	Value* value = new Value;
+	value->copy(constant);
+
+	expr->setValue(value);
 }
 
 /**
@@ -361,6 +364,8 @@ AST_VISITOR(TypeChecker, RegexPattern) {
 	arg_values->push_back(expr->getRegex());
 
 	expr->setArgsValue(arg_values);
+
+	expr->setValue(new Value);
 
 	// The Pcre constructor CallableValue
 	expr->setCallValue(_prepare_method_call(type, expr->getValue(),
@@ -414,6 +419,8 @@ AST_VISITOR(TypeChecker, UnaryExpr) {
 	}
 
 	clever_assert_not_null(method_name);
+
+	expr->setValue(new Value);
 
 	expr->setCallValue(_prepare_method_call(var->getTypePtr(), var, method_name,
 		expr, NULL));
@@ -799,12 +806,15 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 
 	_check_function_num_args(func, num_args, expr->getLocation());
 
+	Value* result = new Value;
+
 	// Set the return type
 	if (expr->getReturnType() == NULL) {
-		expr->getValue()->setTypePtr(func->getReturnType());
+		result->setTypePtr(func->getReturnType());
 	} else {
-		expr->getValue()->setTypePtr(expr->getReturnType());
+		result->setTypePtr(expr->getReturnType());
 	}
+	expr->setValue(result);
 
 	if (num_args) {
 		expr->getArgs()->acceptVisitor(*this);
@@ -839,6 +849,8 @@ AST_VISITOR(TypeChecker, MethodCall) {
 
 		expr->setArgsValue(arg_values);
 	}
+
+	expr->setValue(new Value);
 
 	expr->setCallValue(_prepare_method_call(variable->getTypePtr(), variable,
 		name, expr, arg_values));
@@ -977,6 +989,8 @@ AST_VISITOR(TypeChecker, TypeCreation) {
 		expr->setArgsValue(arg_values);
 	}
 
+	expr->setValue(new Value);
+
 	expr->setCallValue(_prepare_method_call(type, expr->getValue(),
 		CACHE_PTR(CLEVER_CTOR, CLEVER_CTOR_NAME), expr, arg_values));
 }
@@ -995,6 +1009,8 @@ AST_VISITOR(TypeChecker, Subscript) {
 	expr_val->addRef();
 
 	expr->setArgsValue(arg_values);
+
+	expr->setValue(new Value);
 
 	expr->setCallValue(_prepare_method_call(var->getTypePtr(), var,
 		CACHE_PTR(CLEVER_OP_AT, CLEVER_OPERATOR_AT), expr, arg_values));

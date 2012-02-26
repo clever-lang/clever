@@ -299,9 +299,8 @@ private:
 class Constant : public ASTNode {
 public:
 	Constant(Identifier* ident)
-		: m_ident(ident) {
+		: m_ident(ident), m_value(NULL) {
 		CLEVER_ADDREF(m_ident);
-		m_value = new Value;
 	}
 
 	~Constant() {
@@ -310,6 +309,8 @@ public:
 	}
 
 	const CString* getName() const { return m_ident->getName(); }
+
+	void setValue(Value* value) { m_value = value; }
 
 	Value* getValue() const { return m_value; }
 
@@ -695,10 +696,10 @@ private:
 class Subscript : public ASTNode {
 public:
 	Subscript(Identifier* ident, ASTNode* expr)
-		: m_ident(ident), m_expr(expr), m_call_value(NULL), m_args_value(NULL) {
+		: m_ident(ident), m_expr(expr), m_result(NULL), m_call_value(NULL),
+			m_args_value(NULL) {
 		CLEVER_ADDREF(m_ident);
 		CLEVER_ADDREF(m_expr);
-		m_result = new Value;
 	}
 
 	~Subscript() {
@@ -713,6 +714,10 @@ public:
 
 	ASTNode* getExpr() const {
 		return m_expr;
+	}
+
+	void setValue(Value* value) {
+		m_result = value;
 	}
 
 	Value* getValue() const {
@@ -898,9 +903,8 @@ private:
 class UnaryExpr : public ASTNode {
 public:
 	UnaryExpr(int op, ASTNode* expr)
-		: m_op(op), m_expr(expr), m_call_value(NULL) {
+		: m_op(op), m_expr(expr), m_result(NULL), m_call_value(NULL) {
 		CLEVER_ADDREF(m_expr);
-		m_result = new Value;
 	}
 
 	~UnaryExpr() {
@@ -949,9 +953,8 @@ private:
 class RegexPattern : public ASTNode {
 public:
 	RegexPattern(Value* regex)
-		: m_regex(regex), m_call_value(NULL), m_args_value(NULL) {
+		: m_regex(regex), m_value(NULL), m_call_value(NULL), m_args_value(NULL) {
 		CLEVER_ADDREF(m_regex);
-		m_value = new Value;
 	}
 
 	~RegexPattern() {
@@ -960,6 +963,8 @@ public:
 	}
 
 	Value* getRegex() const { return m_regex; }
+
+	void setValue(Value* value) { m_value = value; }
 
 	Value* getValue() const { return m_value; }
 
@@ -994,11 +999,10 @@ private:
 class TypeCreation : public ASTNode {
 public:
 	TypeCreation(Identifier* type, ArgumentList* args)
-		: m_type(type), m_args(args), m_call_value(NULL), m_args_value(NULL) {
+		: m_type(type), m_value(NULL), m_args(args), m_call_value(NULL),
+			m_args_value(NULL) {
 		CLEVER_SAFE_ADDREF(m_type);
 		CLEVER_SAFE_ADDREF(m_args);
-
-		m_value = new Value;
 	}
 
 	~TypeCreation() {
@@ -1144,17 +1148,15 @@ class FunctionCall : public ASTNode {
 public:
 	FunctionCall(Identifier* name, ArgumentList* args)
 		: m_ret_type(NULL),m_name(name), m_args(args), m_args_value(NULL),
-			m_value(NULL) {
+			m_result(NULL), m_value(NULL) {
 		CLEVER_ADDREF(m_name);
 		CLEVER_SAFE_ADDREF(m_args);
-		m_result = new Value;
 	}
 
 	FunctionCall(Identifier* lib, Identifier* rt, Identifier* name,
-		ArgumentList* args) {
-
-		m_args_value = NULL;
-		m_value = NULL;
+		ArgumentList* args)
+		: m_ret_type(NULL),m_name(name), m_args(args), m_args_value(NULL),
+			m_result(NULL), m_value(NULL) {
 
 		m_name = new Identifier(CSTRING("call_ext_func"));
 		CLEVER_ADDREF(m_name);
@@ -1168,13 +1170,11 @@ public:
 		m_args->add(new StringLiteral(name->getName()));
 
 		CLEVER_ADDREF(m_args);
-
-		m_result = new Value;
 	}
 
 	~FunctionCall() {
 		CLEVER_DELREF(m_name);
-		CLEVER_DELREF(m_result);
+		CLEVER_SAFE_DELREF(m_result);
 		CLEVER_SAFE_DELREF(m_args);
 		CLEVER_SAFE_DELREF(m_value);
 	}
@@ -1184,6 +1184,8 @@ public:
 	void setFuncValue(CallableValue* value) {
 		m_value = value;
 	}
+
+	void setValue(Value* value) { m_result = value; }
 
 	Value* getValue() const { return m_result; }
 
@@ -1221,23 +1223,19 @@ private:
 class MethodCall : public ASTNode {
 public:
 	MethodCall(ASTNode* var, Identifier* method, ArgumentList* args)
-		: m_var(var), m_method(method), m_args(args), m_call_value(NULL),
-			m_args_value(NULL) {
+		: m_var(var), m_method(method), m_result(NULL), m_args(args),
+			m_call_value(NULL), m_args_value(NULL) {
 		CLEVER_ADDREF(m_var);
 		CLEVER_ADDREF(m_method);
 		CLEVER_SAFE_ADDREF(m_args);
-
-		m_result = new Value;
 	}
 
 	MethodCall(Subscript* sub, Identifier* method, ArgumentList* args)
-		: m_var(sub), m_method(method), m_args(args), m_call_value(NULL),
-			m_args_value(NULL) {
+		: m_var(sub), m_method(method), m_result(NULL), m_args(args),
+			m_call_value(NULL), m_args_value(NULL) {
 		CLEVER_ADDREF(m_var);
 		CLEVER_ADDREF(m_method);
 		CLEVER_SAFE_ADDREF(m_args);
-
-		m_result = new Value;
 	}
 
 	~MethodCall() {
@@ -1250,6 +1248,8 @@ public:
 	ASTNode* getVariable() const { return m_var; }
 	const CString* getMethodName() const { return m_method->getName(); }
 
+
+	void setValue(Value* value) { m_result = value; }
 	Value* getValue() const { return m_result; }
 
 	ArgumentList* getArgs() {
