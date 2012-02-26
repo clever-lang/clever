@@ -125,10 +125,11 @@ public:
 
 			m_data.dv_value->delRef();
 		}
-		/*else if (isPrimitive() && isString() && m_data.s_value
+		else if (isPrimitive() && isString() && m_data.s_value
 			&& !m_data.s_value->isInterned()) {
 			const_cast<CString*>(m_data.s_value)->delRef();
-		}*/
+			m_data.s_value = NULL;
+		}
 	}
 
 	void initialize() {
@@ -178,7 +179,18 @@ public:
 	}
 
 	const Type* getTypePtr() const { return m_type_ptr; }
-	void setTypePtr(const Type* const ptr) { m_type_ptr = ptr; }
+
+	void setTypePtr(const Type* const ptr) {
+		m_type_ptr = ptr;
+
+		if (m_type == NONE && isPrimitive()) {
+			m_type = PRIMITIVE;
+
+			if (isString()) {
+				m_data.s_value = NULL;
+			}
+		}
+	}
 
 	bool hasName() const { return m_name != NULL; }
 	const CString* getName() const { return m_name; }

@@ -50,17 +50,17 @@ public:
 	typedef std::size_t IdType;
 
 	CString()
-		: RefCounted(0), std::string(), m_id(0), m_interned(true) {}
+		: RefCounted(1), std::string(), m_id(0), m_interned(true) {}
 
 	CString(const std::string& str, IdType id)
-		: RefCounted(0), std::string(str), m_id(id), m_interned(true) {}
+		: RefCounted(1), std::string(str), m_id(id), m_interned(true) {}
 
 	CString(const CString& str)
-		: RefCounted(0), std::string(str.str()), m_id(str.m_id),
+		: RefCounted(1), std::string(str.str()), m_id(str.m_id),
 			m_interned(true) {}
 
 	CString(const CString& str, bool interned)
-		: RefCounted(0), std::string(str.str()), m_id(str.m_id),
+		: RefCounted(1), std::string(str.str()), m_id(str.m_id),
 			m_interned(interned) {}
 
 	bool hasSameId(const CString* cstring) const {

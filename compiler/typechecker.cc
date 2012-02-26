@@ -559,10 +559,11 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 	}
 
 	Value* var = new Value();
-	variable->setValue(var);
 	var->setName(variable->getName());
 	var->setTypePtr(type);
 	var->addRef();
+
+	variable->setValue(var);
 
 	ASTNode* rhs = expr->getRhs();
 	ArgumentList* ctor_list = expr->getConstructorArgs();
