@@ -24,19 +24,25 @@
  */
 
 #include <cstdlib>
+
 #ifdef CLEVER_WIN32
-#include <direct.h>
-#include <windows.h>
-#define PATH_MAX MAX_PATH
+# include <direct.h>
+# include <windows.h>
+# define PATH_MAX MAX_PATH
 #else
-#include <dirent.h>
-#include <unistd.h>
-#include <sys/resource.h>
-#include <sys/time.h>
+# include <dirent.h>
+# include <unistd.h>
+# include <sys/resource.h>
+# include <sys/time.h>
 #endif
+
 #include "compiler/value.h"
 #include "modules/std/sys/sys.h"
 #include "types/nativetypes.h"
+
+#ifndef PATH_MAX
+# define PATH_MAX 1024
+#endif
 
 namespace clever { namespace packages { namespace std {
 

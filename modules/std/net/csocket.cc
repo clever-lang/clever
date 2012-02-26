@@ -26,10 +26,12 @@
 #include <iostream>
 #include <errno.h>
 #include "modules/std/net/csocket.h"
+
 #ifdef CLEVER_WIN32
-#include "win32/win32.h"
+# include "win32/win32.h"
 #else
-#include <cstring>
+# include <cstring>
+# include <unistd.h>
 #endif
 
 namespace clever {
