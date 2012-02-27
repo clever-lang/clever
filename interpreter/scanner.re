@@ -188,6 +188,10 @@ next_token:
 		RET(token::ELSE);
 	}
 
+	<INTITIAL>'extern' {
+		RET(token::EXTERN);
+	}
+
 	<INITIAL>'import' {
 		RET(token::IMPORT);
 	}

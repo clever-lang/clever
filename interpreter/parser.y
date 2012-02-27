@@ -88,6 +88,7 @@ namespace clever {
 %token EQUAL         "=="
 %token NOT_EQUAL     "!="
 %token IMPORT        "import"
+%token EXTERN        "extern"
 %token PLUS_EQUAL    "+="
 %token MULT_EQUAL    "*="
 %token DIV_EQUAL     "/="
@@ -155,6 +156,7 @@ namespace clever {
 	ast::VariableDecls* variable_decls;
 	ast::ClassDeclaration* class_decl;
 	ast::FuncDeclaration* func_decl;
+	ast::ExtFuncDeclaration* ext_func_decl;
 	ast::MethodDeclaration* method_decl;
 	ast::AttributeDeclaration* attr_decl;
 	ast::ForExpr* for_expr;
@@ -200,6 +202,7 @@ namespace clever {
 %type <arg_decl_list> args_declaration_non_empty
 %type <arg_decl_list> args_declaration
 %type <func_decl> func_declaration
+%type <ext_func_decl> ext_func_declaration
 %type <class_decl> class_declaration
 %type <integral_value> access_modifier
 %type <class_stmt> class_stmt
@@ -263,8 +266,9 @@ block_stmt:
 statements:
 		expr ';'	             		{ $$ = $<ast_node>1; }
 	|	variable_declaration ';' 		{ $$ = $<ast_node>1; }
-	|	variable_declaration_list ';'	{ $$ = new ast::VarDecls($<node_list>1); }
+	|	variable_declaration_list ';'		{ $$ = new ast::VarDecls($<node_list>1); }
 	|	func_declaration       			{ $$ = $<ast_node>1; }
+	|	ext_func_declaration ';'    		{ $$ = $<ast_node>1; }
 	|	if_expr                  		{ $$ = $<ast_node>1; }
 	|	for_expr                 		{ $$ = $<ast_node>1; }
 	|	while_expr               		{ $$ = $<ast_node>1; }
@@ -305,6 +309,11 @@ func_declaration:
 	|	template IDENT '(' args_declaration ')' block_stmt { $$ = new ast::FuncDeclaration($2, $1, $4, $6); }
 	|	annontation template IDENT '(' args_declaration ')' block_stmt { $$ = new ast::FuncDeclaration($3, $2, $5, $7); }
 ;
+
+ext_func_declaration:
+		EXTERN IDENT TYPE IDENT '(' args_declaration ')' { $$ = new ast::ExtFuncDeclaration($2, $4, $3, $6); }
+;
+
 
 class_declaration:
 		CLASS TYPE '{' class_stmt '}' { $$ = new ast::ClassDeclaration($2, $4); }
