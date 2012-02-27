@@ -1175,50 +1175,16 @@ protected:
 	ASTNode* m_modifier;
 };
 
-static inline Type* _find_fcall_rtype(char c) {
-	switch (c) {
-		case 'i': return CLEVER_INT;
-		case 'd': return CLEVER_DOUBLE;
-		case 's': return CLEVER_STR;
-		case 'b': return CLEVER_BOOL;
-		case 'c': return CLEVER_BYTE;
-		//case 'm': return CLEVER_MAP;
-		case 'a': return CLEVER_ARRAY;
-		case 'v': return CLEVER_VOID;
-		case 'p': return CLEVER_OBJECT;
-		case 'q': return CLEVER_OBJECT;
-	}
-	return NULL;
-}
-
 class FunctionCall : public ASTNode {
 public:
 	FunctionCall(Identifier* name, ArgumentList* args)
-		: m_ret_type(NULL),m_name(name), m_args(args), m_args_value(NULL),
+		: m_name(name), m_args(args), m_args_value(NULL),
 			m_result(NULL), m_value(NULL) {
 		CLEVER_ADDREF(m_name);
 		CLEVER_SAFE_ADDREF(m_args);
 	}
 
-	FunctionCall(Identifier* lib, Identifier* rt, Identifier* name,
-		ArgumentList* args)
-		: m_ret_type(NULL),m_name(name), m_args(args), m_args_value(NULL),
-			m_result(NULL), m_value(NULL) {
-
-		m_name = new Identifier(CSTRING("call_ext_func"));
-		CLEVER_ADDREF(m_name);
-
-		m_args = args ? args : new ArgumentList;
-		m_args->add(new StringLiteral(lib->getName()));
-		m_args->add(new StringLiteral(rt->getName()));
-
-		m_ret_type = _find_fcall_rtype((*rt->getName())[0]);
-
-		m_args->add(new StringLiteral(name->getName()));
-
-		CLEVER_ADDREF(m_args);
-	}
-
+	
 	~FunctionCall() {
 		CLEVER_DELREF(m_name);
 		CLEVER_SAFE_DELREF(m_result);
@@ -1226,8 +1192,7 @@ public:
 		CLEVER_SAFE_DELREF(m_value);
 	}
 
-	Type* getReturnType() const { return m_ret_type; }
-
+	
 	void setFuncValue(CallableValue* value) {
 		m_value = value;
 	}
@@ -1258,8 +1223,6 @@ public:
 		return m_args_value;
 	}
 private:
-	Type* m_ret_type;
-
 	Identifier* m_name;
 	ArgumentList* m_args;
 	ValueVector* m_args_value;
