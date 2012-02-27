@@ -821,7 +821,6 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 	if(func->isExternal()){
 		ArgumentList* args = expr->getArgs();
 
-		std::string fun = func->getName();
 		std::string fname = name->c_str();
 		std::string libname = func->getLibName();
 		std::string rt = _find_fcall_rname(func->getReturnType());
