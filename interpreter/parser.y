@@ -157,6 +157,7 @@ namespace clever {
 	ast::ClassDeclaration* class_decl;
 	ast::FuncDeclaration* func_decl;
 	ast::ExtFuncDeclaration* ext_func_decl;
+	ast::ExtFuncDecls* ext_func_decls;
 	ast::MethodDeclaration* method_decl;
 	ast::AttributeDeclaration* attr_decl;
 	ast::ForExpr* for_expr;
@@ -203,6 +204,9 @@ namespace clever {
 %type <arg_decl_list> args_declaration
 %type <func_decl> func_declaration
 %type <ext_func_decl> ext_func_declaration
+%type <ext_func_decls> ext_func_declaration_list
+%type <ext_func_decls> ext_func_declaration_list_impl
+%type <ext_func_decl> ext_func_declaration_list_aux
 %type <class_decl> class_declaration
 %type <integral_value> access_modifier
 %type <class_stmt> class_stmt
@@ -269,6 +273,7 @@ statements:
 	|	variable_declaration_list ';'		{ $$ = new ast::VarDecls($<node_list>1); }
 	|	func_declaration       			{ $$ = $<ast_node>1; }
 	|	ext_func_declaration ';'    		{ $$ = $<ast_node>1; }
+	|	ext_func_declaration_list 		{ $$ = new ast::VarDecls($<node_list>1); }
 	|	if_expr                  		{ $$ = $<ast_node>1; }
 	|	for_expr                 		{ $$ = $<ast_node>1; }
 	|	while_expr               		{ $$ = $<ast_node>1; }
@@ -312,6 +317,18 @@ func_declaration:
 
 ext_func_declaration:
 		EXTERN IDENT TYPE IDENT '(' args_declaration ')' { $$ = new ast::ExtFuncDeclaration($2, $4, $3, $6); }
+;
+
+ext_func_declaration_list_aux:
+	TYPE IDENT '(' args_declaration ')' ';'	{ $$ = new ast::ExtFuncDeclaration(NULL, $2, $1, $4); }
+;
+ext_func_declaration_list_impl:
+		ext_func_declaration_list_aux 					{ $$ = new ast::ExtFuncDecls; $$->push_back($1);}
+	|	ext_func_declaration_list_impl  ext_func_declaration_list_aux 	{ $$ = $1; $$->push_back($2); }
+;
+
+ext_func_declaration_list:
+	EXTERN IDENT '{' ext_func_declaration_list_impl '}' { $$ = $4; ast::_set_libname_ext_func_decl($$,$2); }
 ;
 
 

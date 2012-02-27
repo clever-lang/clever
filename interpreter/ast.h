@@ -47,12 +47,14 @@ namespace clever { namespace ast {
 
 class ASTNode;
 class VariableDecl;
+class ExtFuncDeclaration;
 
 typedef std::vector<ASTNode*> NodeList;
 typedef std::pair<Identifier*, Identifier*> ArgumentDeclPair;
 typedef std::vector<ArgumentDeclPair> ArgumentDecls;
 typedef std::vector<Identifier*> TemplateArgsVector;
 typedef std::vector<VariableDecl*> VariableDecls;
+typedef std::vector<ExtFuncDeclaration*> ExtFuncDecls;
 
 /**
  * Operators (logical and binary)
@@ -1099,18 +1101,19 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(FuncDeclaration);
 };
 
+
 class ExtFuncDeclaration : public ASTNode {
 public:
 	ExtFuncDeclaration(Identifier* libname, Identifier* name, Identifier* rtype, ArgumentDeclList* args)
 		: m_libname(libname), m_name(name), m_return(rtype), m_args(args), m_value(NULL) {
-		CLEVER_ADDREF(m_libname);
+		if(m_libname) CLEVER_ADDREF(m_libname);
 		CLEVER_ADDREF(m_name);
 		CLEVER_SAFE_ADDREF(m_return);
 		CLEVER_SAFE_ADDREF(m_args);
 	}
 
 	virtual ~ExtFuncDeclaration() {
-		CLEVER_DELREF(m_libname);
+		if(m_libname) CLEVER_DELREF(m_libname);
 		CLEVER_DELREF(m_name);
 		CLEVER_SAFE_DELREF(m_return);
 		CLEVER_SAFE_DELREF(m_args);
@@ -1125,6 +1128,10 @@ public:
 
 	Identifier* getReturnValue() const { return m_return ? m_return : NULL; }
 
+	void setLibName(Identifier* libname) { 
+		m_libname = libname; 
+		CLEVER_ADDREF(m_libname); 
+	}
 	void setValue(CallableValue* value) { m_value = value; }
 
 	CallableValue* getFunc(void) { return m_value; }
@@ -1142,6 +1149,15 @@ protected:
 private:
 	DISALLOW_COPY_AND_ASSIGN(ExtFuncDeclaration);
 };
+
+inline void _set_libname_ext_func_decl(ExtFuncDecls* v, Identifier* libname) {
+	ExtFuncDecls::iterator it = v->begin(), end = v->end();	
+
+	while (it != end) {
+		(*it)->setLibName(libname);
+		++it;
+	}
+}
 
 class MethodDeclaration: public FuncDeclaration {
 public:
