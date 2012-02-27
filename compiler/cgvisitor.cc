@@ -444,6 +444,12 @@ AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
 }
 
 /**
+ * Function declaration
+ */
+AST_VISITOR(CodeGenVisitor, ExtFuncDeclaration) {
+}
+
+/**
  * Generates opcode for return statement
  */
 AST_VISITOR(CodeGenVisitor, ReturnStmt) {

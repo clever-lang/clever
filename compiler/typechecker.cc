@@ -782,6 +782,18 @@ AST_VISITOR(TypeChecker, AssignExpr) {
 /**
  * Function call visitor
  */
+
+static inline std::string _find_fcall_rname(const Type* c) {
+	if( c == CLEVER_INT) 		return "i";
+	if( c == CLEVER_DOUBLE) 	return "d";
+	if( c == CLEVER_STR) 		return "s";
+	if( c == CLEVER_BOOL) 		return "b";
+	if( c == CLEVER_BYTE)		return "c";
+	if( c == CLEVER_VOID)		return "v";
+	if( c == NULL)			return "v";
+	return "p";
+}
+
 AST_VISITOR(TypeChecker, FunctionCall) {
 	const CString* const name = expr->getFuncName();
 
@@ -802,6 +814,23 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 	_check_function_num_args(func, num_args, expr->getLocation());
 
 	Value* result = new Value;
+
+	if(func->isExternal()){
+		ArgumentList* args = expr->getArgs();
+
+		std::string fname = func->getName();
+		std::string libname = func->getLibName();
+		std::string rt = _find_fcall_rname(func->getReturnType());
+
+		if(args == NULL ){
+			args = new ArgumentList;
+			expr->setArgs(args);
+		}
+
+		args->add(new StringLiteral(CSTRING(libname)));
+		args->add(new StringLiteral(CSTRING(rt)));
+		args->add(new StringLiteral(CSTRING(fname)));
+	}
 
 	// Set the return type
 	if (expr->getReturnType() == NULL) {
@@ -946,6 +975,52 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 		m_scope = m_scope->getParent();
 	}
 }
+
+/**
+ * External Function declaration visitor
+ */
+AST_VISITOR(TypeChecker, ExtFuncDeclaration) {
+	
+	Identifier* return_type = expr->getReturnValue();
+	
+	const Type* rtype = NULL;
+
+	if (return_type->getName() != CSTRING("Void")) {
+			rtype = _evaluate_type(expr->getLocation(), return_type);
+	}
+
+	const CString* libname = expr->getLibName();
+	const CString* name = expr->getName();
+
+	CallableValue* func = new CallableValue(name);
+	CallableValue* ext_func = static_cast<CallableValue*>(m_scope->getValue(CSTRING("call_ext_func")));
+
+	Function* m_func = new Function(libname->c_str(), name->c_str(), rtype, ext_func->getFunctionPtr());
+	
+	ArgumentDeclList* args = expr->getArgs();
+
+	
+	func->addRef();
+	m_scope->pushValue(func->getName(), func);
+
+	func->setHandler(m_func);	
+
+	if (args) {
+		ArgumentDecls& arg_nodes = args->getArgs();
+		ArgumentDecls::iterator it = arg_nodes.begin(), end = arg_nodes.end();
+
+		while (EXPECTED(it != end)) {
+			const Type* arg_type = _evaluate_type(expr->getLocation(), it->first);
+			const CString* arg_name = it->second->getName();
+
+			
+			m_func->addArg(*arg_name, arg_type);
+
+			++it;
+		}
+	}
+}
+
 
 /**
  * Return statement visitor

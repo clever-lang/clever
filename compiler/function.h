@@ -64,11 +64,15 @@ typedef std::vector<FunctionArgsPair> FunctionArgs;
  */
 class Function {
 public:
-	enum FunctionKind { INTERNAL, USER };
+	enum FunctionKind { INTERNAL, USER, EXTERNAL };
 
 	explicit Function(std::string name)
 		: m_name(name), m_kind(INTERNAL), m_num_args(0), m_min_args(0),
 			m_rtype(NULL) {}
+
+	Function(std::string libname, std::string name, const Type* rtype, FunctionPtr ptr)
+		: m_libname(libname), m_name(name), m_kind(EXTERNAL), m_num_args(0), m_min_args(0),
+			m_rtype(rtype) { m_info.ptr = ptr; }
 
 	Function(std::string name, FunctionPtr ptr)
 		: m_name(name), m_kind(INTERNAL), m_num_args(0), m_min_args(0),
@@ -110,18 +114,22 @@ public:
 
 	bool isUserDefined() const { return m_kind == USER; }
 	bool isInternal() const { return m_kind == INTERNAL; }
+	bool isExternal() const { return m_kind == EXTERNAL; }
 
 	void setUserDefined() { m_kind = USER; }
+	void setExternal() { m_kind = EXTERNAL; } 
 
 	void setOffset(size_t num) { m_info.offset = num; m_kind = USER; }
 	size_t getOffset() const { return m_info.offset; }
 
+	void setLibName(const std::string& libname) { m_libname = libname; }
 	void setReturnType(const Type* type) { m_rtype = type; }
 	const Type* getReturnType() const { return m_rtype; }
 
 	FunctionPtr getPtr() const { return m_info.ptr; }
 
 	const std::string& getName() const { return m_name; }
+	const std::string& getLibName() const { return m_libname; }
 
 	void call(const ValueVector* args, Value* result) const {
 		m_info.ptr(args, result);
@@ -134,6 +142,8 @@ private:
 		FunctionPtr ptr;
 		size_t offset;
 	} m_info;
+
+	std::string m_libname;
 
 	std::string m_name;
 	FunctionKind m_kind;

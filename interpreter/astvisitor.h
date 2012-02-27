@@ -45,6 +45,7 @@ class BlockNode;
 class VarDecls;
 class ArgumentList;
 class FuncDeclaration;
+class ExtFuncDeclaration;
 class ClassDeclaration;
 class ReturnStmt;
 class TypeCreation;
@@ -80,6 +81,7 @@ class MapList;
 	V(AssignExpr); \
 	V(ImportStmt); \
 	V(FuncDeclaration); \
+	V(ExtFuncDeclaration); \
 	V(ClassDeclaration); \
 	V(ReturnStmt); \
 	V(ArgumentList); \
