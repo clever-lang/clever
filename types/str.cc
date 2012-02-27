@@ -48,7 +48,7 @@ CLEVER_METHOD(String::toString) {
 CLEVER_METHOD(String::ltrim) {
     std::string newString = CLEVER_THIS()->toString();
     newString.erase(0, newString.find_first_not_of(" \n\r\t"));
-    CLEVER_RETURN_STR(CSTRING(newString));
+    CLEVER_RETURN_STR(CSTRINGT(newString));
 }
 
 /**
@@ -58,7 +58,7 @@ CLEVER_METHOD(String::ltrim) {
 CLEVER_METHOD(String::rtrim) {
     std::string newString = CLEVER_THIS()->toString();
     newString.erase(newString.find_last_not_of(" \n\r\t") + 1);
-    CLEVER_RETURN_STR(CSTRING(newString));
+    CLEVER_RETURN_STR(CSTRINGT(newString));
 }
 
 /**
@@ -73,7 +73,7 @@ CLEVER_METHOD(String::trim) {
     // rtrim
     newString.erase(newString.find_last_not_of(" \n\r\t") + 1);
 
-    CLEVER_RETURN_STR(CSTRING(newString));
+    CLEVER_RETURN_STR(CSTRINGT(newString));
 }
 
 /**
@@ -97,7 +97,7 @@ CLEVER_METHOD(String::replace) {
 		needleLength = CLEVER_ARG_STR(0).length();
 	} while (needlePos != std::string::npos);
 
-	CLEVER_RETURN_STR(CSTRING(newString));
+	CLEVER_RETURN_STR(CSTRINGT(newString));
 }
 
 /**
@@ -121,7 +121,7 @@ CLEVER_METHOD(String::substring) {
 	}
 
 	std::string substr = CLEVER_THIS()->toString().substr(arg0, arg1);
-	CLEVER_RETURN_STR(CSTRING(substr));
+	CLEVER_RETURN_STR(CSTRINGT(substr));
 }
 
 /**
@@ -138,7 +138,7 @@ CLEVER_METHOD(String::at) {
 	std::string newString;
 	newString = CLEVER_THIS()->toString()[pos];
 
-	CLEVER_RETURN_STR(CSTRING(newString));
+	CLEVER_RETURN_STR(CSTRINGT(newString));
 }
 
 /**
@@ -162,7 +162,7 @@ CLEVER_METHOD(String::toDouble) {
 	clever_assert(stream.fail() == false,
 		"'%s' is not a valid floating point number.", CLEVER_THIS()->toString().c_str());
 
-	retval->setDouble(floatValue);
+	CLEVER_RETURN_DOUBLE(floatValue);
 }
 
 /**
@@ -177,7 +177,6 @@ CLEVER_METHOD(String::toInteger) {
 
 	clever_assert(stream.fail() == false,
 			"'%s' is not a valid integer.", CLEVER_THIS()->toString().c_str());
-
 
 	CLEVER_RETURN_INT(integer);
 }
@@ -208,7 +207,7 @@ CLEVER_METHOD(String::constructor) {
 					break;
 				}
 			}
-			CLEVER_RETURN_STR(CSTRING(buffer));
+			CLEVER_RETURN_STR(CSTRINGT(buffer));
 		}
 	}
 	else {
@@ -224,7 +223,7 @@ CLEVER_METHOD(String::constructor) {
 CLEVER_METHOD(String::toUpper) {
 	::std::string str = CLEVER_THIS()->toString();
 	::std::transform(str.begin(), str.end(),str.begin(), ::toupper);
-	CLEVER_RETURN_STR(CSTRING(str));
+	CLEVER_RETURN_STR(CSTRINGT(str));
 }
 
 /**
@@ -234,7 +233,7 @@ CLEVER_METHOD(String::toUpper) {
 CLEVER_METHOD(String::toLower) {
 	::std::string str = CLEVER_THIS()->toString();
 	::std::transform(str.begin(), str.end(),str.begin(), ::tolower);
-	CLEVER_RETURN_STR(CSTRING(str));
+	CLEVER_RETURN_STR(CSTRINGT(str));
 }
 
 /**
@@ -338,7 +337,7 @@ CLEVER_METHOD(String::pad) {
 		this_str += pad.substr(0, pad_len);
 	}
 
-	CLEVER_RETURN_STR(CSTRING(this_str));
+	CLEVER_RETURN_STR(CSTRINGT(this_str));
 }
 
 /**
@@ -359,7 +358,7 @@ CLEVER_METHOD(String::padLeft) {
 		this_str = pad.substr(0, pad_len) + this_str;
 	}
 
-	CLEVER_RETURN_STR(CSTRING(this_str));
+	CLEVER_RETURN_STR(CSTRINGT(this_str));
 }
 
 /**
@@ -380,7 +379,7 @@ CLEVER_METHOD(String::padRight) {
 		this_str += pad.substr(0, pad_len);
 	}
 
-	CLEVER_RETURN_STR(CSTRING(this_str));
+	CLEVER_RETURN_STR(CSTRINGT(this_str));
 }
 
 /**
@@ -425,7 +424,7 @@ CLEVER_METHOD(String::do_assign) {
  * + operator (String, String)
  */
 CLEVER_METHOD(String::plus) {
-	CLEVER_RETURN_STR(CSTRING(CLEVER_ARG_STR(0) + CLEVER_ARG_STR(1)));
+	CLEVER_RETURN_STR(CSTRINGT(CLEVER_ARG_STR(0) + CLEVER_ARG_STR(1)));
 }
 
 /**

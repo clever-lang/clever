@@ -78,7 +78,7 @@ CLEVER_METHOD(FileStream::constructor) {
  * A representation of this class as a string
  */
 CLEVER_METHOD(FileStream::toString) {
-	CLEVER_RETURN_STR(CSTRING("FileStream class"));
+	CLEVER_RETURN_STR(CSTRINGT("FileStream class"));
 }
 
 /**

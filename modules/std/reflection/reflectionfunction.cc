@@ -75,7 +75,7 @@ CLEVER_METHOD(ReflectionFunction::constructor) {
 CLEVER_METHOD(ReflectionFunction::getName) {
 	CLEVER_OBJECT_INIT(rfv, ReflectionFunctionValue*);
 
-	CLEVER_RETURN_STR(CSTRING(rfv->getFunction()->getName()));
+	CLEVER_RETURN_STR(CSTRINGT(rfv->getFunction()->getName()));
 }
 
 /**

@@ -60,7 +60,7 @@ static CLEVER_FUNCTION(readln) {
 
 	getline(::std::cin, buffer);
 
-	CLEVER_RETURN_STR(CSTRING(buffer));
+	CLEVER_RETURN_STR(CSTRINGT(buffer));
 }
 
 /**
@@ -70,8 +70,8 @@ static CLEVER_FUNCTION(readln) {
 static CLEVER_FUNCTION(readString) {
 	::std::string buffer;
 	::std::cin >> buffer;
-	
-	CLEVER_RETURN_STR(CSTRING(buffer));
+
+	CLEVER_RETURN_STR(CSTRINGT(buffer));
 }
 
 /**
@@ -81,7 +81,7 @@ static CLEVER_FUNCTION(readString) {
 static CLEVER_FUNCTION(readInt) {
 	int64_t buffer;
 	::std::cin >> buffer;
-	
+
 	CLEVER_RETURN_INT(buffer);
 }
 
@@ -92,7 +92,7 @@ static CLEVER_FUNCTION(readInt) {
 static CLEVER_FUNCTION(readDouble) {
 	double buffer;
 	::std::cin >> buffer;
-	
+
 	CLEVER_RETURN_DOUBLE(buffer);
 }
 

@@ -99,7 +99,7 @@ CLEVER_METHOD(Pcre::group) {
 	if (CLEVER_ARG_INT(0) >= self->match.n_groups) {
 		CLEVER_RETURN_EMPTY_STR();
 	} else {
-		CLEVER_RETURN_STR(CSTRING(self->match.matches[CLEVER_ARG_INT(0)]));
+		CLEVER_RETURN_STR(CSTRINGT(self->match.matches[CLEVER_ARG_INT(0)]));
 	}
 }
 
@@ -112,7 +112,7 @@ CLEVER_METHOD(Pcre::replace) {
 
 	self->re->Replace(CLEVER_ARG_STR(0), &newstr);
 
-	CLEVER_RETURN_STR(CSTRING(newstr));
+	CLEVER_RETURN_STR(CSTRINGT(newstr));
 }
 
 /**
@@ -124,7 +124,7 @@ CLEVER_METHOD(Pcre::replaceAll) {
 
 	self->re->GlobalReplace(CLEVER_ARG_STR(0), &newstr);
 
-	CLEVER_RETURN_STR(CSTRING(newstr));
+	CLEVER_RETURN_STR(CSTRINGT(newstr));
 }
 
 /**

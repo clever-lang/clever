@@ -71,7 +71,11 @@ static CLEVER_FUNCTION(putenv) {
 static CLEVER_FUNCTION(getenv) {
 	const char* ret = ::getenv(const_cast<char*>(CLEVER_ARG_STR(0).c_str()));
 
-	CLEVER_RETURN_STR(CSTRING(ret ? ret : ""));
+	if (ret) {
+		CLEVER_RETURN_STR(CSTRINGT(ret));
+	} else {
+		CLEVER_RETURN_EMPTY_STR();
+	}
 }
 
 /**
@@ -82,7 +86,11 @@ static CLEVER_FUNCTION(getcwd) {
 	char temp[PATH_MAX];
     const char* path = ::getcwd(temp, PATH_MAX);
 
-	CLEVER_RETURN_STR(CSTRING(path ? path : ""));
+	if (path) {
+		CLEVER_RETURN_STR(CSTRINGT(path));
+	} else {
+		CLEVER_RETURN_EMPTY_STR();
+	}
 }
 
 /**
@@ -95,7 +103,7 @@ static CLEVER_FUNCTION(argv) {
 	if (i >= (size_t)*g_clever_argc) {
 		CLEVER_RETURN_EMPTY_STR();
 	} else {
-		CLEVER_RETURN_STR(CSTRING((*g_clever_argv)[i]));
+		CLEVER_RETURN_STR(CSTRINGT((*g_clever_argv)[i]));
 	}
 }
 

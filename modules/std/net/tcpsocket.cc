@@ -154,11 +154,11 @@ CLEVER_METHOD(TcpSocket::getError) {
 CLEVER_METHOD(TcpSocket::getErrorMessage) {
 	SocketValue* sv = CLEVER_GET_VALUE(SocketValue*, value);
 
-	CLEVER_RETURN_STR(CSTRING(sv->getSocket()->getErrorString()));
+	CLEVER_RETURN_STR(CSTRINGT(sv->getSocket()->getErrorString()));
 }
 
 CLEVER_METHOD(TcpSocket::toString) {
-	CLEVER_RETURN_STR(CSTRING("TcpSocket class"));
+	CLEVER_RETURN_STR(CSTRINGT("TcpSocket class"));
 }
 
 /**
