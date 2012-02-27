@@ -1103,8 +1103,10 @@ private:
 
 class ExtFuncDeclaration : public ASTNode {
 public:
-	ExtFuncDeclaration(Identifier* libname, Identifier* name, Identifier* rtype, ArgumentDeclList* args)
-		: m_libname(libname), m_name(name), m_return(rtype), m_args(args), m_value(NULL) {
+	ExtFuncDeclaration(Identifier* libname, Identifier* name,
+		Identifier* rtype, ArgumentDeclList* args)
+		: m_libname(libname), m_name(name), m_return(rtype),
+			m_args(args), m_value(NULL) {
 		CLEVER_SAFE_ADDREF(m_libname);
 		CLEVER_ADDREF(m_name);
 		CLEVER_SAFE_ADDREF(m_return);
@@ -1123,9 +1125,7 @@ public:
 	const CString* getName() const { return m_name->getName(); }
 	ArgumentDeclList* getArgs() const { return m_args; }
 
-	Identifier* getReturn() const { return m_return; }
-
-	Identifier* getReturnValue() const { return m_return ? m_return : NULL; }
+	Identifier* getReturnValue() const { return m_return; }
 
 	void setLibName(Identifier* libname) {
 		m_libname = libname;
