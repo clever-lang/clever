@@ -188,7 +188,7 @@ next_token:
 		RET(token::ELSE);
 	}
 
-	<INTITIAL>'extern' {
+	<INITIAL>'extern' {
 		RET(token::EXTERN);
 	}
 
