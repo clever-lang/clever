@@ -801,12 +801,15 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 
 	Value* fvalue = m_scope->getValue(name);
 
+	
 	if (UNEXPECTED(fvalue == NULL || !fvalue->isCallable())) {
 		Compiler::errorf(expr->getLocation(), "Function `%S' does not exists!",
 			name);
 	}
 
 	const Function* func = static_cast<CallableValue*>(fvalue)->getFunction();
+
+	
 	int num_args = expr->getArgs() ? int(expr->getArgs()->getNodes().size()) : 0;
 
 	clever_assert_not_null(func);
@@ -818,18 +821,24 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 	if(func->isExternal()){
 		ArgumentList* args = expr->getArgs();
 
-		std::string fname = func->getName();
+		std::string fun = func->getName();
+		std::string fname = name->c_str();
 		std::string libname = func->getLibName();
 		std::string rt = _find_fcall_rname(func->getReturnType());
 
 		if(args == NULL ){
 			args = new ArgumentList;
 			expr->setArgs(args);
+			args->addRef();
 		}
 
 		args->add(new StringLiteral(CSTRING(libname)));
 		args->add(new StringLiteral(CSTRING(rt)));
 		args->add(new StringLiteral(CSTRING(fname)));
+
+		num_args+=3;
+
+		
 	}
 
 	// Set the return type
@@ -838,6 +847,7 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 	} else {
 		result->setTypePtr(expr->getReturnType());
 	}
+
 	expr->setValue(result);
 
 	if (num_args) {
@@ -983,7 +993,7 @@ AST_VISITOR(TypeChecker, ExtFuncDeclaration) {
 	
 	Identifier* return_type = expr->getReturnValue();
 	
-	const Type* rtype = NULL;
+	const Type* rtype = CLEVER_VOID;
 
 	if (return_type->getName() != CSTRING("Void")) {
 			rtype = _evaluate_type(expr->getLocation(), return_type);
@@ -994,7 +1004,7 @@ AST_VISITOR(TypeChecker, ExtFuncDeclaration) {
 
 	CallableValue* func = new CallableValue(name);
 	CallableValue* ext_func = static_cast<CallableValue*>(m_scope->getValue(CSTRING("call_ext_func")));
-
+	
 	Function* m_func = new Function(libname->c_str(), name->c_str(), rtype, ext_func->getFunctionPtr());
 	
 	ArgumentDeclList* args = expr->getArgs();

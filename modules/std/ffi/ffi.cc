@@ -90,6 +90,7 @@ static CLEVER_FUNCTION(call_ext_func) {
 	::std::string rt = CLEVER_ARG_STR(size-2);
 	::std::string func = CLEVER_ARG_STR(size-1);
 
+	
 #ifndef CLEVER_WIN32
 	void* fpf;
 	ffi_call_func pf;

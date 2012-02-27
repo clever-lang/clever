@@ -410,7 +410,7 @@ public:
 	}
 
 	void setHandler(Function* handler) {
-		m_call_type = handler->isInternal() ? FAR : NEAR;
+		m_call_type = (handler->isInternal() || handler->isExternal() )? FAR : NEAR;
 		m_handler.func = handler;
 	}
 
