@@ -251,9 +251,8 @@ public:
 		: m_name(name), m_value(NULL), m_template_args(NULL) {}
 
 	~Identifier() {
-		if (m_value) {
-			CLEVER_DELREF(m_value);
-		}
+		CLEVER_SAFE_DELREF(m_value);
+
 		if (m_template_args) {
 			for (size_t i = 0, j = m_template_args->size(); i < j; ++i) {
 				CLEVER_DELREF(m_template_args->at(i));
@@ -1106,14 +1105,14 @@ class ExtFuncDeclaration : public ASTNode {
 public:
 	ExtFuncDeclaration(Identifier* libname, Identifier* name, Identifier* rtype, ArgumentDeclList* args)
 		: m_libname(libname), m_name(name), m_return(rtype), m_args(args), m_value(NULL) {
-		if(m_libname) CLEVER_ADDREF(m_libname);
+		CLEVER_SAFE_ADDREF(m_libname);
 		CLEVER_ADDREF(m_name);
 		CLEVER_SAFE_ADDREF(m_return);
 		CLEVER_SAFE_ADDREF(m_args);
 	}
 
 	virtual ~ExtFuncDeclaration() {
-		if(m_libname) CLEVER_DELREF(m_libname);
+		CLEVER_SAFE_DELREF(m_libname);
 		CLEVER_DELREF(m_name);
 		CLEVER_SAFE_DELREF(m_return);
 		CLEVER_SAFE_DELREF(m_args);
@@ -1128,9 +1127,9 @@ public:
 
 	Identifier* getReturnValue() const { return m_return ? m_return : NULL; }
 
-	void setLibName(Identifier* libname) { 
-		m_libname = libname; 
-		CLEVER_ADDREF(m_libname); 
+	void setLibName(Identifier* libname) {
+		m_libname = libname;
+		CLEVER_ADDREF(m_libname);
 	}
 	void setValue(CallableValue* value) { m_value = value; }
 
@@ -1151,7 +1150,7 @@ private:
 };
 
 inline void _set_libname_ext_func_decl(ExtFuncDecls* v, Identifier* libname) {
-	ExtFuncDecls::iterator it = v->begin(), end = v->end();	
+	ExtFuncDecls::iterator it = v->begin(), end = v->end();
 
 	while (it != end) {
 		(*it)->setLibName(libname);
@@ -1638,9 +1637,7 @@ public:
 
 	~ArrayList() {
 		CLEVER_DELREF(m_arg_list);
-		if (m_value) {
-			CLEVER_DELREF(m_value);
-		}
+		CLEVER_SAFE_DELREF(m_value);
 	}
 private:
 	ArgumentList* m_arg_list;
