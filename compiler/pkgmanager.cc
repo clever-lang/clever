@@ -199,7 +199,7 @@ void PackageManager::copyScopeToAlias(Scope* scope, const std::string& alias) {
 			if (val->isCallable()) {
 				CallableValue* fvalue = static_cast<CallableValue*>(val);
 
-				if (fvalue->getFunction()->isUserDefined()) {
+				if (fvalue->isNearCall()) {
 					scope->pushValue(CSTRING(alias + val->getName()->str()),
 						fvalue);
 					fvalue->addRef();
