@@ -116,7 +116,7 @@ namespace clever {
 %token REGEX         "regex-pattern"
 %token CONST         "const"
 %token AUTO          "auto"
-%token ANNONTATION   "@@"
+%token ANNOTATION    "@@"
 
 %left ',';
 %left LOGICAL_OR;
@@ -242,7 +242,7 @@ namespace clever {
 %type <array_list> array_list
 %type <arg_list> map_arg_list
 %type <map_list> map_list
-%type <ast_node> annontation
+%type <ast_node> annotation
 
 %%
 
@@ -303,16 +303,16 @@ args_declaration:
 	|	args_declaration_non_empty
 ;
 
-annontation:
-		ANNONTATION				{ $$ = NULL; }
-	|	annontation ANNONTATION { $$ = NULL; }
+annotation:
+		ANNOTATION            { $$ = NULL; }
+	|	annotation ANNOTATION { $$ = NULL; }
 ;
 
 func_declaration:
 		TYPE IDENT '(' args_declaration ')' block_stmt { $$ = new ast::FuncDeclaration($2, $1, $4, $6); }
-	|	annontation TYPE IDENT '(' args_declaration ')' block_stmt { $$ = new ast::FuncDeclaration($3, $2, $5, $7); }
+	|	annotation TYPE IDENT '(' args_declaration ')' block_stmt { $$ = new ast::FuncDeclaration($3, $2, $5, $7); }
 	|	template IDENT '(' args_declaration ')' block_stmt { $$ = new ast::FuncDeclaration($2, $1, $4, $6); }
-	|	annontation template IDENT '(' args_declaration ')' block_stmt { $$ = new ast::FuncDeclaration($3, $2, $5, $7); }
+	|	annotation template IDENT '(' args_declaration ')' block_stmt { $$ = new ast::FuncDeclaration($3, $2, $5, $7); }
 ;
 
 ext_func_declaration:

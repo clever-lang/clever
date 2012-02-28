@@ -63,7 +63,7 @@ next_token:
 	<*>SPACE { yylloc->step(); SKIP(); }
 	<*>[\n]+ { yylloc->lines(yylen); yylloc->step(); SKIP(); }
 
-	<INITIAL>"@@"TYPE { RET(token::ANNONTATION); }
+	<INITIAL>"@@"TYPE { RET(token::ANNOTATION); }
 
 	<INITIAL>"or" { RET(token::LOGICAL_OR); }
 
