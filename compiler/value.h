@@ -375,8 +375,9 @@ class CallableValue : public Value {
 public:
 	enum CallType {
 		NONE,
-		NEAR, // Invoke compiled functions/methods
-		FAR   // Invoke built-in or loaded functions/methods (probably faster)
+		NEAR,    // Invoke compiled functions/methods
+		FAR,     // Invoke built-in or loaded functions/methods (probably faster)
+		EXTERNAL // External
 	};
 
 	/* TODO: generate name for anonymous functions, disable setName(). */
@@ -405,7 +406,7 @@ public:
 	}
 
 	~CallableValue() {
-		if (isNearCall() && m_handler.func) {
+		if ((isNearCall() || isExternal()) && m_handler.func) {
 			delete m_handler.func;
 		}
 		if (m_context && this != m_context) {
@@ -414,7 +415,13 @@ public:
 	}
 
 	void setHandler(Function* handler) {
-		m_call_type = (handler->isInternal() || handler->isExternal() )? FAR : NEAR;
+		if (handler->isInternal()) {
+			m_call_type = FAR;
+		} else if (handler->isExternal()) {
+			m_call_type = EXTERNAL;
+		} else {
+			m_call_type = NEAR;
+		}
 		m_handler.func = handler;
 	}
 
@@ -437,6 +444,9 @@ public:
 
 	bool isCallable() const { return true; }
 
+	void setCallType(CallType type) { m_call_type = type; }
+
+	bool isExternal() const { return m_call_type == EXTERNAL; }
 	bool isNearCall() const { return m_call_type == NEAR; }
 	bool isFarCall() const { return m_call_type == FAR; }
 

@@ -999,8 +999,6 @@ AST_VISITOR(TypeChecker, ExtFuncDeclaration) {
 
 	ArgumentDeclList* args = expr->getArgs();
 
-
-	func->addRef();
 	m_scope->pushValue(func->getName(), func);
 
 	func->setHandler(m_func);
