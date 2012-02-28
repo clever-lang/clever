@@ -175,9 +175,9 @@ static CLEVER_FUNCTION(call_ext_func) {
 		} else if ( CLEVER_ARG_IS_USER(i) ) {
 			ffi_args[i] = _find_ffi_type("p");
 
-			FFIObjectValue* obj = static_cast<FFIObjectValue*>(CLEVER_ARG_DATA_VALUE(i));
+			//FFIObjectValue* obj = static_cast<FFIObjectValue*>(CLEVER_ARG_DATA_VALUE(i));
 
-			ffi_values[i] = &obj->pointer;
+			ffi_values[i] = &(static_cast<FFIObjectValue*>(CLEVER_ARG_DATA_VALUE(i))->pointer);
 		}
 	}
 
@@ -207,11 +207,13 @@ static CLEVER_FUNCTION(call_ext_func) {
 		CLEVER_RETURN_BOOL(vb);
 	} else if (rt[0] == 's') {
 		char* vs[1];
-		vs[0]=0;
+		vs[0]=NULL;
 
 		ffi_call(&cif, pf, &vs, ffi_values);
 
 		CLEVER_RETURN_STR(CSTRING(*vs));
+
+		if(vs[0]!=NULL)free(vs[0]);
 	} else if (rt[0] == 'c') {
 		char vc;
 
