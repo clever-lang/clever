@@ -66,6 +66,9 @@ public:
 		DataValue* dv_value;
 		uint8_t c_value;
 		Value* ref_value;
+
+		ValueData()
+			: s_value(NULL) {}
 	};
 
 	/**
@@ -75,11 +78,13 @@ public:
 
 	Value()
 		: RefCounted(1), m_type(NONE), m_type_ptr(NULL), m_name(NULL),
-		m_is_const(false) { std::memset(&m_data, 0, sizeof(m_data)); }
+		m_is_const(false) {}
 
 	explicit Value(const Type* type_ptr)
 		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(type_ptr), m_name(NULL),
-		m_is_const(false) { setTypePtr(type_ptr); }
+		m_is_const(false) {
+		setTypePtr(type_ptr);
+	}
 
 	explicit Value(double value)
 		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_DOUBLE),
@@ -102,7 +107,6 @@ public:
 	explicit Value(const CString* value)
 		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_STR),
 			m_name(NULL), m_is_const(false) {
-		std::memset(&m_data, 0, sizeof(m_data));
 		setString(value);
 	}
 
