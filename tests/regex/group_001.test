@@ -8,6 +8,6 @@ Regex re("(.)(.)");
 while (re.matches("abcd")) {
 	print("-> ", re.group(0), " - ", re.group(1), "\n");
 }
-=RESULT==
+==RESULT==
 -> a - b
 -> c - d
