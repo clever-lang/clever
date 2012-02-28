@@ -207,13 +207,12 @@ static CLEVER_FUNCTION(call_ext_func) {
 		CLEVER_RETURN_BOOL(vb);
 	} else if (rt[0] == 's') {
 		char* vs[1];
-		vs[0]=NULL;
-
+		
 		ffi_call(&cif, pf, &vs, ffi_values);
 
 		CLEVER_RETURN_STR(CSTRING(*vs));
 
-		if(vs[0]!=NULL)free(vs[0]);
+		free(vs[0]);
 	} else if (rt[0] == 'c') {
 		char vc;
 
