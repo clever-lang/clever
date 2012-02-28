@@ -1,0 +1,5 @@
+Testing function with wrong parameter
+==CODE==
+Int f(Int z) {} f();
+==RESULT==
+Compile error: Function `f' expects 1 argument, 0 supplied on \S+ line 1

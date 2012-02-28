@@ -188,13 +188,13 @@ static void _check_function_num_args(const Function* func, int num_args,
 	if ((is_variadic && n_min_args > num_args)
 		|| (!is_variadic && num_args != n_required_args)) {
 		if (n_min_args != n_required_args && n_min_args > num_args) {
-			Compiler::errorf(loc, "Function `%S' expects at least %i argument%s, %i supplied",
-				&func->getName(), n_min_args, (n_min_args > 1 ? "s" : ""),
+			Compiler::errorf(loc, "Function `%s' expects at least %i argument%s, %i supplied",
+				func->getName().c_str(), n_min_args, (n_min_args > 1 ? "s" : ""),
 				num_args);
 		} else {
-			Compiler::errorf(loc, "Function `%S' expects %i argument%s, %i supplied",
-				&func->getName(), n_required_args, (n_required_args > 1 ? "s" : ""),
-				num_args);
+			Compiler::errorf(loc, "Function `%s' expects %i argument%s, %i supplied",
+				func->getName().c_str(), n_required_args,
+					(n_required_args > 1 ? "s" : ""), num_args);
 		}
 	}
 }
@@ -801,7 +801,7 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 
 	Value* fvalue = m_scope->getValue(name);
 
-	
+
 	if (UNEXPECTED(fvalue == NULL || !fvalue->isCallable())) {
 		Compiler::errorf(expr->getLocation(), "Function `%S' does not exists!",
 			name);
@@ -809,7 +809,7 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 
 	const Function* func = static_cast<CallableValue*>(fvalue)->getFunction();
 
-	
+
 	int num_args = expr->getArgs() ? int(expr->getArgs()->getNodes().size()) : 0;
 
 	clever_assert_not_null(func);
@@ -837,12 +837,12 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 
 		num_args+=3;
 
-		
+
 	}
 
 	// Set the return type
 	result->setTypePtr(func->getReturnType());
-	
+
 	expr->setValue(result);
 
 	if (num_args) {
@@ -985,9 +985,9 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
  * External Function declaration visitor
  */
 AST_VISITOR(TypeChecker, ExtFuncDeclaration) {
-	
+
 	Identifier* return_type = expr->getReturnValue();
-	
+
 	const Type* rtype = CLEVER_VOID;
 
 	if (return_type->getName() != CSTRING("Void")) {
@@ -999,16 +999,16 @@ AST_VISITOR(TypeChecker, ExtFuncDeclaration) {
 
 	CallableValue* func = new CallableValue(name);
 	CallableValue* ext_func = static_cast<CallableValue*>(m_scope->getValue(CSTRING("call_ext_func")));
-	
+
 	Function* m_func = new Function(libname->c_str(), name->c_str(), rtype, ext_func->getFunctionPtr());
-	
+
 	ArgumentDeclList* args = expr->getArgs();
 
-	
+
 	func->addRef();
 	m_scope->pushValue(func->getName(), func);
 
-	func->setHandler(m_func);	
+	func->setHandler(m_func);
 
 	if (args) {
 		ArgumentDecls& arg_nodes = args->getArgs();
@@ -1018,7 +1018,7 @@ AST_VISITOR(TypeChecker, ExtFuncDeclaration) {
 			const Type* arg_type = _evaluate_type(expr->getLocation(), it->first);
 			const CString* arg_name = it->second->getName();
 
-			
+
 			m_func->addArg(*arg_name, arg_type);
 
 			++it;
