@@ -49,7 +49,8 @@ CLEVER_METHOD(FFIObject::do_assign) {
 	FFIObjectValue* lv = CLEVER_GET_VALUE(FFIObjectValue*, CLEVER_THIS());
 	const FFIObjectValue* rv = static_cast<FFIObjectValue* >(CLEVER_ARG_DATA_VALUE(0));
 
-	*lv->pointer = *rv->pointer;
+	lv->pointer = rv->pointer;
+	//delete rv;
 }
 
 void FFIObject::init() {

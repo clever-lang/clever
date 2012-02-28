@@ -38,7 +38,7 @@ public:
 
 	virtual ~FFIObjectValue() { }
 
-	void* pointer[1];
+	void* pointer;
 };
 
 }}}} // clever::packages::std::ffi

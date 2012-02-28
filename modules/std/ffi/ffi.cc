@@ -224,7 +224,9 @@ static CLEVER_FUNCTION(call_ext_func) {
 
 		CLEVER_RETURN_BOOL(true);
 	} else if (rt[0] == 'p') {
-		FFIObjectValue* x = new FFIObjectValue();
+		FFIObjectValue* x = static_cast<FFIObjectValue*> (retval->getDataValue());
+		
+		if ( x == NULL ) x = new FFIObjectValue();
 
 		ffi_call(&cif, pf, &(x->pointer), ffi_values);
 
