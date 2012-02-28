@@ -219,6 +219,8 @@ static void _check_function_arg_types(const Function* func,
 
 		if (t1 != t2) {
 			if (!_check_compatible_types(t1, t2)) {
+				CLEVER_SAFE_DELETE(arg_values);
+
 				Compiler::errorf(loc,
 					"Wrong param type #%N: expected `%S', but `%S' supplied",
 						i, t1->getName(), t2->getName());
@@ -779,21 +781,20 @@ AST_VISITOR(TypeChecker, AssignExpr) {
 	expr->setValue(lhs);
 }
 
-/**
- * Function call visitor
- */
-
-static inline std::string _find_fcall_rname(const Type* c) {
-	if( c == CLEVER_INT) 		return "i";
-	if( c == CLEVER_DOUBLE) 	return "d";
-	if( c == CLEVER_STR) 		return "s";
-	if( c == CLEVER_BOOL) 		return "b";
-	if( c == CLEVER_BYTE)		return "c";
-	if( c == CLEVER_VOID)		return "v";
-	if( c == NULL)			return "v";
+static inline const char* _find_fcall_rname(const Type* c) {
+	if (c == CLEVER_INT)    return "i";
+	if (c == CLEVER_DOUBLE) return "d";
+	if (c == CLEVER_STR)    return "s";
+	if (c == CLEVER_BOOL)   return "b";
+	if (c == CLEVER_BYTE)   return "c";
+	if (c == CLEVER_VOID)   return "v";
+	if (c == NULL)          return "v";
 	return "p";
 }
 
+/**
+ * Function call visitor
+ */
 AST_VISITOR(TypeChecker, FunctionCall) {
 	const CString* const name = expr->getFuncName();
 
@@ -801,14 +802,12 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 
 	Value* fvalue = m_scope->getValue(name);
 
-
 	if (UNEXPECTED(fvalue == NULL || !fvalue->isCallable())) {
 		Compiler::errorf(expr->getLocation(), "Function `%S' does not exists!",
 			name);
 	}
 
 	const Function* func = static_cast<CallableValue*>(fvalue)->getFunction();
-
 
 	int num_args = expr->getArgs() ? int(expr->getArgs()->getNodes().size()) : 0;
 
@@ -818,26 +817,22 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 
 	Value* result = new Value;
 
-	if(func->isExternal()){
+	if (func->isExternal()) {
 		ArgumentList* args = expr->getArgs();
 
-		std::string fname = name->c_str();
-		std::string libname = func->getLibName();
-		std::string rt = _find_fcall_rname(func->getReturnType());
-
-		if(args == NULL ){
+		if (args == NULL) {
 			args = new ArgumentList;
 			expr->setArgs(args);
 			args->addRef();
 		}
 
-		args->add(new StringLiteral(CSTRING(libname)));
+		std::string rt = _find_fcall_rname(func->getReturnType());
+
+		args->add(new StringLiteral(CSTRING(func->getLibName())));
 		args->add(new StringLiteral(CSTRING(rt)));
-		args->add(new StringLiteral(CSTRING(fname)));
+		args->add(new StringLiteral(name));
 
-		num_args+=3;
-
-
+		num_args += 3;
 	}
 
 	// Set the return type

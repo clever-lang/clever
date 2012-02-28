@@ -57,8 +57,13 @@ extern jmp_buf fatal_error;
  */
 #define CLEVER_ADDREF(x) (x)->addRef()
 #define CLEVER_DELREF(x) (x)->delRef()
-#define CLEVER_SAFE_ADDREF(x) if (x) { (x)->addRef(); }
-#define CLEVER_SAFE_DELREF(x) if (x) { (x)->delRef(); }
+#define CLEVER_SAFE_ADDREF(x) do { if (x) { (x)->addRef(); } } while (0);
+#define CLEVER_SAFE_DELREF(x) do { if (x) { (x)->delRef(); } } while (0);
+
+/**
+ * Macro to delete pointer after checking for not null
+ */
+#define CLEVER_SAFE_DELETE(x) do { if (x) { delete x; } } while (0);
 
 /**
  * Macro to access the an specific DataValue
