@@ -1,0 +1,12 @@
+Testing function chaining call
+==CODE==
+import std.io;
+
+String foo(String z) {
+	return z;
+}
+
+println(foo('cool').toUpper());
+
+==RESULT==
+COOL
