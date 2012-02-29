@@ -165,10 +165,13 @@ static void _check_function_return(const Function* func,
 	} else if (value && rtype) {
 		const Type* vtype = value->getTypePtr();
 
-		if (vtype != rtype) {
+		if (value->isCallable()) {
+			Compiler::errorf(loc,
+				"Cannot return a function - not implemented yet!");
+		} else if (vtype != rtype) {
 			Compiler::errorf(loc,
 				"Function `%S' expects %S value as return, not %S value",
-				&func->getName(), rtype->getName(), vtype->getName());
+				func->getName().c_str(), rtype->getName(), vtype->getName());
 		}
 	}
 }
