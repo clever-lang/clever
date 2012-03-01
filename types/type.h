@@ -208,9 +208,18 @@ public:
 	}
 
 	/**
-	 * Destructor method. This method will be called when after a variable gets
-	 * out of scope. This method should be overwritten for every type who needs
-	 * some handling before a variable of this type get out of scope.
+	 * Clone method
+	 * This method will be called when making a deep copy of a Value
+	 * pointer, i.e. when needed a real copy of a internal value.
+	 */
+	virtual DataValue* clone(const Value* value) const { return NULL; }
+
+	/**
+	 * Destructor method
+	 * This method will be called when after a variable gets
+	 * out of scope. This method should be overwritten for every type
+	 * who needs some handling before a variable of this type get out
+	 * of scope.
 	 */
 	virtual void destructor(Value* value) const {}
 private:

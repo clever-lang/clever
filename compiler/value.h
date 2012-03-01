@@ -299,24 +299,9 @@ public:
 		return m_data.dv_value;
 	}
 
-	void copy(const Value* const value) {
-		if (isUserValue() && getDataValue()) {
-			getDataValue()->delRef();
-		} else if (isPrimitive() && isString() && m_data.s_value
-			&& !m_data.s_value->isInterned()) {
-			const_cast<CString*>(m_data.s_value)->delRef();
-		}
-		std::memcpy(&m_data, value->getData(), sizeof(ValueData));
-		m_type_ptr = value->getTypePtr();
-		m_type = value->getType();
+	void copy(const Value* const);
 
-		if (isUserValue() && getDataValue()) {
-			getDataValue()->addRef();
-		} else if (isPrimitive() && isString() && m_data.s_value
-			&& !m_data.s_value->isInterned()) {
-			const_cast<CString*>(m_data.s_value)->addRef();
-		}
-	}
+	void deepCopy(const Value* const);
 
 	virtual Value* getValue() { return this; }
 
@@ -328,36 +313,7 @@ public:
 		m_is_const = constness;
 	}
 
-	virtual const CString& toString() {
-		if (isPrimitive()) {
-			std::ostringstream str;
-
-			if (isInteger()) {
-				str << getInteger();
-			}
-			else if (isDouble()) {
-				str << getDouble();
-			}
-			else if (isBoolean()) {
-				return *CSTRING(getBoolean() ? "true" : "false");
-			}
-			else if (isString()) {
-				return getString();
-			}
-			else if (isByte()) {
-				str << "0x" << std::hex << uint32_t(getByte());
-			}
-
-			return *CSTRING(str.str());
-		}
-		else {
-			Value ret;
-			CLEVER_INTERNAL_MCALL(this, "toString", NULL, NULL, &ret);
-			const CString& str = ret.getString();
-
-			return str;
-		}
-	}
+	virtual const CString& toString();
 private:
 	int m_type;
 	const Type* m_type_ptr;

@@ -130,6 +130,7 @@ add_executable(clever
 	interpreter/main.cc
 	interpreter/driver.cc
 	interpreter/ast.cc
+	compiler/value.cc
 	compiler/cgvisitor.cc
 	compiler/compiler.cc
 	compiler/typechecker.cc
