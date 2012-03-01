@@ -28,15 +28,12 @@
 
 #include <stdint.h>
 #include <cstring>
-#include <sstream>
-#include <vector>
 #include "compiler/clever.h"
 #include "compiler/cached_ptrs.h"
 #include "compiler/refcounted.h"
 #include "compiler/cstring.h"
 #include "compiler/method.h"
 #include "compiler/function.h"
-#include "types/type.h"
 
 namespace clever {
 
@@ -136,38 +133,7 @@ public:
 		}
 	}
 
-	void initialize() {
-		clever_assert_not_null(getTypePtr());
-
-		if (getTypePtr() == CLEVER_INT) {
-			setInteger(0);
-		}
-		else if (getTypePtr() == CLEVER_DOUBLE) {
-			setDouble(0.0);
-		}
-		else if (getTypePtr() == CLEVER_BOOL) {
-			setBoolean(false);
-		}
-		else if (getTypePtr() == CLEVER_STR) {
-			setString(CACHE_PTR(CLEVER_EMPTY_STR, ""));
-		}
-		else if (getTypePtr() == CLEVER_BYTE) {
-			setByte(0);
-		}
-		else {
-			/**
-			 * @TODO: need to initialize non-primitive types without
-			 * that method call
-			 */
-			TypeVector tv;
-			const Method* ctor = getTypePtr()->getMethod(
-				CACHE_PTR(CLEVER_CTOR, CLEVER_CTOR_NAME), &tv);
-
-			if (ctor) {
-				ctor->call(NULL, this, this);
-			}
-		}
-	}
+	void initialize();
 
 	int getType() const { return m_type; }
 
@@ -267,27 +233,7 @@ public:
 	Value* getReference()	   const { return m_data.ref_value; }
 	const ValueData* getData() const { return &m_data; }
 
-	bool getValueAsBool() const {
-		clever_assert_not_null(m_type_ptr);
-
-		if (m_type_ptr == CLEVER_INT) {
-			return getInteger();
-		}
-		else if (m_type_ptr == CLEVER_DOUBLE) {
-			return getDouble();
-		}
-		else if (m_type_ptr == CLEVER_STR) {
-			return !getString().empty();
-		}
-		else if (m_type_ptr == CLEVER_BOOL) {
-			return getBoolean();
-		}
-		else if (m_type_ptr == CLEVER_BYTE) {
-			return getByte();
-		}
-
-		return false;
-	}
+	bool getValueAsBool() const;
 
 	// Sets the buffer for a user type structure
 	void setDataValue(DataValue* data) {

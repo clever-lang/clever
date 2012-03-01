@@ -23,9 +23,44 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#include <sstream>
 #include "compiler/value.h"
+#include "types/type.h"
 
 namespace clever {
+
+void Value::initialize() {
+	clever_assert_not_null(getTypePtr());
+
+	if (getTypePtr() == CLEVER_INT) {
+		setInteger(0);
+	}
+	else if (getTypePtr() == CLEVER_DOUBLE) {
+		setDouble(0.0);
+	}
+	else if (getTypePtr() == CLEVER_BOOL) {
+		setBoolean(false);
+	}
+	else if (getTypePtr() == CLEVER_STR) {
+		setString(CACHE_PTR(CLEVER_EMPTY_STR, ""));
+	}
+	else if (getTypePtr() == CLEVER_BYTE) {
+		setByte(0);
+	} else {
+		/**
+		 * @TODO: need to initialize non-primitive types without
+		 * that method call
+		 */
+		TypeVector tv;
+
+		const Method* ctor = getTypePtr()->getMethod(
+			CACHE_PTR(CLEVER_CTOR, CLEVER_CTOR_NAME), &tv);
+
+		if (ctor) {
+			ctor->call(NULL, this, this);
+		}
+	}
+}
 
 bool Value::getValueAsBool() const {
 	clever_assert_not_null(m_type_ptr);
@@ -46,6 +81,8 @@ bool Value::getValueAsBool() const {
 }
 
 void Value::copy(const Value* const value) {
+	clever_assert_not_null(value);
+
 	// Decrement the current internal value reference
 	if (isUserValue() && getDataValue()) {
 		getDataValue()->delRef();
@@ -69,6 +106,8 @@ void Value::copy(const Value* const value) {
 }
 
 void Value::deepCopy(const Value* const value) {
+	clever_assert_not_null(value);
+
 	std::memcpy(&m_data, value->getData(), sizeof(ValueData));
 	m_type_ptr = value->getTypePtr();
 	m_type = value->getType();
@@ -104,4 +143,3 @@ const CString& Value::toString() {
 }
 
 } // clever
-
