@@ -833,7 +833,7 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 
 		args->add(new StringLiteral(CSTRING(func->getLibName())));
 		args->add(new StringLiteral(CSTRING(rt)));
-		args->add(new StringLiteral(name));
+		args->add(new StringLiteral(CSTRING(func->getLFName())));
 
 		num_args += 3;
 	}
@@ -992,13 +992,20 @@ AST_VISITOR(TypeChecker, ExtFuncDeclaration) {
 			rtype = _evaluate_type(expr->getLocation(), return_type);
 	}
 
+	const CString* lfname = expr->getLFName();
 	const CString* libname = expr->getLibName();
 	const CString* name = expr->getName();
 
 	CallableValue* func = new CallableValue(name);
 	CallableValue* ext_func = static_cast<CallableValue*>(m_scope->getValue(CSTRING("call_ext_func")));
 
-	Function* m_func = new Function(libname->c_str(), name->c_str(), rtype, ext_func->getFunctionPtr());
+	Function* m_func;
+	
+	if (lfname == NULL) {
+		m_func = new Function(libname->c_str(), name->c_str(), rtype, ext_func->getFunctionPtr());
+	} else {
+		m_func = new Function(libname->c_str(), lfname->c_str(), name->c_str(), rtype, ext_func->getFunctionPtr());
+	}
 
 	ArgumentDeclList* args = expr->getArgs();
 
@@ -1174,6 +1181,31 @@ AST_VISITOR(TypeChecker, MapList) {
 	expr->setValue(var);
 
 	delete vv;
+}
+
+/**
+ * Lambda visitor
+ */
+AST_VISITOR(TypeChecker, LambdaFunction) {
+	const TemplatedType* const virtual_func =
+		static_cast<const TemplatedType*>(CLEVER_TYPE("Function"));
+	
+	const FunctionArgs& args = expr->getArgs();
+	
+	TypeVector tv;
+	tv.push_back(expr->getReturnType());
+	
+	for (size_t i = 0, sz = args.size(); i < sz; ++i) {
+		tv.push_back(args[i].second);
+	}
+	
+	const Type* lambda_type = virtual_func->getTemplatedType(tv);
+	FunctionValue* fv = static_cast<FunctionValue*>(lambda_type->allocateValue());
+	fv->setFunction(expr->getFunction());
+	
+	Value* var = new Value(lambda_type);
+	var->setDataValue(fv);
+	expr->setValue(var);
 }
 
 }} // clever::ast

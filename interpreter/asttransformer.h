@@ -53,6 +53,7 @@ class RegexPattern;
 class Subscript;
 class ArrayList;
 class MapList;
+class LambdaFunction;
 
 #define AST_TRANSFORMER(type, exprtype) ASTNode* type::transform(exprtype* const expr)
 #define AST_TRANSFORMER_DECL_VIRTUAL(type) virtual ASTNode* transform(type* const expr) = 0
@@ -82,6 +83,7 @@ class MapList;
 	V(Identifier); \
 	V(ArrayList); \
 	V(MapList); \
+	V(LambdaFunction); \
 	V(TypeCreation)
 
 /**

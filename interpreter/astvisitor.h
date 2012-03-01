@@ -56,6 +56,7 @@ class Subscript;
 class UnscopedBlockNode;
 class ArrayList;
 class MapList;
+class LambdaFunction;
 
 #define AST_VISITOR(type, exprtype) void type::visit(exprtype* const expr)
 #define AST_VISITOR_DECL_VIRTUAL(type) virtual void visit(type* const expr) = 0
@@ -88,6 +89,7 @@ class MapList;
 	V(Identifier); \
 	V(ArrayList); \
 	V(MapList); \
+	V(LambdaFunction); \
 	V(TypeCreation)
 
 /**

@@ -482,4 +482,7 @@ AST_VISITOR(CodeGenVisitor, ArrayList) {
 AST_VISITOR(CodeGenVisitor, MapList) {
 }
 
+AST_VISITOR(CodeGenVisitor, LambdaFunction) {
+}
+
 }} // clever::ast
