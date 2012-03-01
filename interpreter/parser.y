@@ -320,7 +320,8 @@ ext_func_declaration:
 ;
 
 ext_func_declaration_list_aux:
-	TYPE IDENT '(' args_declaration ')' ';'	{ $$ = new ast::ExtFuncDeclaration(NULL, $2, $1, $4); }
+		TYPE IDENT '(' args_declaration ')' ';'		{ $$ = new ast::ExtFuncDeclaration(NULL, $2, $1, $4); }
+	|	TYPE IDENT '(' args_declaration ')' AS  STR ';'	{ $$ = new ast::ExtFuncDeclaration(NULL, $2, $1, $4, $7); }
 ;
 ext_func_declaration_list_impl:
 		ext_func_declaration_list_aux 					{ $$ = new ast::ExtFuncDecls; $$->push_back($1);}
