@@ -321,41 +321,36 @@ AST_VISITOR(TypeChecker, ArgumentList) {
  * Alias visitor
  */
 AST_VISITOR(TypeChecker, AliasStmt) {
-
-	if(expr->isId()){
-
+	if (expr->isId()) {
 		Value* fvalue = m_scope->getValue(expr->getCurrentName());
 
 		if (UNEXPECTED(fvalue == NULL)) {
-			Compiler::errorf(expr->getLocation(), "Identifier `%S' not found!",
-				expr->getCurrentName());
+			Compiler::errorf(expr->getLocation(),
+				"Identifier `%S' not found!", expr->getCurrentName());
 		}
 
 		if (UNEXPECTED(m_scope->getValue(expr->getNewName()))) {
-			Compiler::errorf(expr->getLocation(), "Name `%S' already in use!",
-				expr->getNewName());
+			Compiler::errorf(expr->getLocation(),
+				"Name `%S' already in use!", expr->getNewName());
 		}
 
 		m_scope->pushValue(expr->getNewName(), fvalue);
 		fvalue->addRef();
-
 	} else {
-
-		Type* ftype = g_scope.getType(expr->getCurrentName());
+		const Type* ftype = g_scope.getType(expr->getCurrentName());
 
 		if (UNEXPECTED(ftype == NULL)) {
-			Compiler::errorf(expr->getLocation(), "Type `%S' not found!",
-				expr->getCurrentName());
+			Compiler::errorf(expr->getLocation(),
+				"Type `%S' not found!", expr->getCurrentName());
 		}
 
 		if (UNEXPECTED(g_scope.getType(expr->getNewName()))) {
-			Compiler::errorf(expr->getLocation(), "Name `%S' already in use!",
-				expr->getNewName());
+			Compiler::errorf(expr->getLocation(),
+				"Name `%S' already in use!", expr->getNewName());
 		}
 
 		g_scope.pushType(expr->getNewName(), ftype);
-		ftype->addRef();
-
+		const_cast<Type*>(ftype)->addRef();
 	}
 }
 
@@ -1022,7 +1017,7 @@ AST_VISITOR(TypeChecker, ExtFuncDeclaration) {
 	CallableValue* ext_func = static_cast<CallableValue*>(m_scope->getValue(CSTRING("call_ext_func")));
 
 	Function* m_func;
-	
+
 	if (lfname == NULL) {
 		m_func = new Function(libname->c_str(), name->c_str(), rtype, ext_func->getFunctionPtr());
 	} else {
@@ -1211,20 +1206,20 @@ AST_VISITOR(TypeChecker, MapList) {
 AST_VISITOR(TypeChecker, LambdaFunction) {
 	const TemplatedType* const virtual_func =
 		static_cast<const TemplatedType*>(CLEVER_TYPE("Function"));
-	
+
 	const FunctionArgs& args = expr->getArgs();
-	
+
 	TypeVector tv;
 	tv.push_back(expr->getReturnType());
-	
+
 	for (size_t i = 0, sz = args.size(); i < sz; ++i) {
 		tv.push_back(args[i].second);
 	}
-	
+
 	const Type* lambda_type = virtual_func->getTemplatedType(tv);
 	FunctionValue* fv = static_cast<FunctionValue*>(lambda_type->allocateValue());
 	fv->setFunction(expr->getFunction());
-	
+
 	Value* var = new Value(lambda_type);
 	var->setDataValue(fv);
 	expr->setValue(var);

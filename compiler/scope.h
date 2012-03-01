@@ -61,7 +61,7 @@ public:
 		m_data.value = value;
 	}
 
-	Symbol(const CString* name, Type* type)
+	Symbol(const CString* name, const Type* type)
 		: m_name(name), m_type(TYPE), m_data() {
 		clever_assert_not_null(name);
 		clever_assert_not_null(type);
@@ -79,7 +79,7 @@ public:
 	bool isType()    const { return m_type == TYPE;    }
 
 	// TODO: add type check
-	Type*  getType()  { return m_data.type;  }
+	const Type*  getType()  { return m_data.type;  }
 	Value*       getValue() { return m_data.value; }
 
 private:
@@ -91,7 +91,7 @@ private:
 
 	union {
 		Value* value;
-		Type* type;
+		const Type* type;
 	} m_data;
 };
 
@@ -121,7 +121,7 @@ public:
 	}
 
 	// Binds a Type* to an interned string.
-	void pushType(const CString* name, Type* type) {
+	void pushType(const CString* name, const Type* type) {
 		clever_assert_not_null(name);
 		clever_assert_not_null(type);
 
@@ -175,7 +175,7 @@ public:
 	}
 
 	// Resolve a type-symbol name recursively
-	Type* getType(const CString* name) {
+	const Type* getType(const CString* name) {
 		Symbol* s = getSym(name);
 
 		if (s == NULL || !s->isType())
