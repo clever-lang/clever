@@ -1,0 +1,20 @@
+Testing comment syntax
+==CODE==
+// /
+//
+///
+
+/**
+ *  foo *
+ // foo
+ #  foo
+ */
+
+# foo
+# // bar
+
+
+import std.io;
+println('ok');
+==RESULT==
+ok
