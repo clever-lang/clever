@@ -1,0 +1,11 @@
+Testing Type aliasing
+==CODE==
+import std;
+
+use Foo as Int;
+
+Foo i = 10;
+
+println(i);
+==RESULT==
+10
