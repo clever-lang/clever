@@ -1173,4 +1173,29 @@ AST_VISITOR(TypeChecker, MapList) {
 	delete vv;
 }
 
+/**
+ * Lambda visitor
+ */
+AST_VISITOR(TypeChecker, LambdaFunction) {
+	const TemplatedType* const virtual_func =
+		static_cast<const TemplatedType*>(CLEVER_TYPE("Function"));
+	
+	const FunctionArgs& args = expr->getArgs();
+	
+	TypeVector tv;
+	tv.push_back(expr->getReturnType());
+	
+	for (size_t i = 0, sz = args.size(); i < sz; ++i) {
+		tv.push_back(args[i].second);
+	}
+	
+	const Type* lambda_type = virtual_func->getTemplatedType(tv);
+	FunctionValue* fv = static_cast<FunctionValue*>(lambda_type->allocateValue());
+	fv->setFunction(expr->getFunction());
+	
+	Value* var = new Value(lambda_type);
+	var->setDataValue(fv);
+	expr->setValue(var);
+}
+
 }} // clever::ast

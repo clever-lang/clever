@@ -1059,14 +1059,14 @@ class FuncDeclaration : public ASTNode {
 public:
 	FuncDeclaration(Identifier* name, Identifier* rtype, ArgumentDeclList* args, BlockNode* block)
 		: m_name(name), m_return(rtype), m_args(args), m_block(block), m_value(NULL) {
-		CLEVER_ADDREF(m_name);
+		CLEVER_SAFE_ADDREF(m_name);
 		CLEVER_SAFE_ADDREF(m_return);
 		CLEVER_SAFE_ADDREF(m_args);
 		CLEVER_SAFE_ADDREF(m_block);
 	}
 
 	virtual ~FuncDeclaration() {
-		CLEVER_DELREF(m_name);
+		CLEVER_SAFE_DELREF(m_name);
 		CLEVER_SAFE_DELREF(m_return);
 		CLEVER_SAFE_DELREF(m_args);
 		CLEVER_SAFE_DELREF(m_block);
@@ -1098,6 +1098,57 @@ protected:
 	CallableValue* m_value;
 private:
 	DISALLOW_COPY_AND_ASSIGN(FuncDeclaration);
+};
+
+class LambdaFunction : public ASTNode {
+public:
+	LambdaFunction(FuncDeclaration* func)
+		: m_function(func), m_value(NULL) {
+		CLEVER_ADDREF(m_function);
+	}
+
+	virtual ~LambdaFunction() {
+		CLEVER_DELREF(m_function);
+		CLEVER_DELREF(m_value);
+	}
+
+	const CString* getName() const { return m_function->getName(); }
+
+	const Function* getFunction() const { return m_function->getFunc()->getFunction(); }
+
+	void acceptVisitor(ASTVisitor& visitor) {
+		m_function->acceptVisitor(visitor);
+		visitor.visit(this);
+	}
+	
+	static Identifier* getLambdaId() { 
+		std::ostringstream oss;
+		oss << "$lambda" << (++m_lambda_id) << "$"; 
+		
+		return new Identifier(CSTRING(oss.str()));
+	}
+	
+	void setValue(Value* value) {
+		m_value = value;
+	}
+	
+	Value* getValue() const {
+		return m_value;
+	}
+	
+	const Type* getReturnType() const {
+		return getFunction()->getReturnType();
+	}
+	
+	const FunctionArgs& getArgs() const { 
+		return getFunction()->getArgs(); 
+	}
+protected:
+	FuncDeclaration* m_function;
+	Value* m_value;
+	static int m_lambda_id;
+private:
+	DISALLOW_COPY_AND_ASSIGN(LambdaFunction);
 };
 
 

@@ -23,18 +23,33 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef CLEVER_NATIVE_TYPES_H
-#define CLEVER_NATIVE_TYPES_H
+#ifndef CLEVER_FUNCTIONVALUE_H
+#define CLEVER_FUNCTIONVALUE_H
 
-#include "types/object.h"
-#include "types/int.h"
-#include "types/double.h"
-#include "types/str.h"
-#include "types/bool.h"
-#include "types/byte.h"
-#include "types/array.h"
-#include "types/map.h"
-#include "types/pair.h"
-#include "types/function.h"
+#include "compiler/value.h"
+#include "compiler/function.h"
 
-#endif // CLEVER_NATIVE_TYPES_H
+namespace clever {
+
+struct FunctionValue : public DataValue {
+	FunctionValue() : m_function(NULL) {}
+
+	const Function* getFunction() {
+		return m_function;
+	}
+
+	void setFunction(const Function* func) {
+		m_function = func;
+	}
+	
+	~FunctionValue() {
+	}
+private:
+	const Function* m_function;
+	DISALLOW_COPY_AND_ASSIGN(FunctionValue);
+};
+
+} // clever
+
+#endif
+

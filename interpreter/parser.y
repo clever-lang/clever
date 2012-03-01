@@ -178,6 +178,7 @@ namespace clever {
 	ast::VarDecls* var_decls;
 	ast::ArrayList* array_list;
 	ast::MapList* map_list;
+	ast::LambdaFunction* lambda_function;
 }
 
 %type <identifier> IDENT
@@ -242,6 +243,7 @@ namespace clever {
 %type <array_list> array_list
 %type <arg_list> map_arg_list
 %type <map_list> map_list
+%type <lambda_function> lambda_function
 %type <ast_node> annotation
 
 %%
@@ -313,6 +315,15 @@ func_declaration:
 	|	annotation TYPE IDENT '(' args_declaration ')' block_stmt { $$ = new ast::FuncDeclaration($3, $2, $5, $7); }
 	|	template IDENT '(' args_declaration ')' block_stmt { $$ = new ast::FuncDeclaration($2, $1, $4, $6); }
 	|	annotation template IDENT '(' args_declaration ')' block_stmt { $$ = new ast::FuncDeclaration($3, $2, $5, $7); }
+;
+
+lambda_function:
+		TYPE '(' args_declaration ')' block_stmt     { 
+			$$ = new ast::LambdaFunction(new ast::FuncDeclaration(ast::LambdaFunction::getLambdaId(), $1, $3, $5)); 	
+		}
+	|	template '(' args_declaration ')' block_stmt { 
+			$$ = new ast::LambdaFunction(new ast::FuncDeclaration(ast::LambdaFunction::getLambdaId(), $1, $3, $5)); 
+		}
 ;
 
 ext_func_declaration:
@@ -539,6 +550,7 @@ expr:
 	|	literal               { $$ = $<ast_node>1; }
 	|	constant              { $$ = $<ast_node>1; }
 	|	assign_stmt           { $$ = $<ast_node>1; }
+	|	lambda_function       { $$ = $<ast_node>1; }
 ;
 
 literal:

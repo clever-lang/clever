@@ -23,18 +23,10 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef CLEVER_NATIVE_TYPES_H
-#define CLEVER_NATIVE_TYPES_H
+#include "interpreter/ast.h"
 
-#include "types/object.h"
-#include "types/int.h"
-#include "types/double.h"
-#include "types/str.h"
-#include "types/bool.h"
-#include "types/byte.h"
-#include "types/array.h"
-#include "types/map.h"
-#include "types/pair.h"
-#include "types/function.h"
+namespace clever { namespace ast {
 
-#endif // CLEVER_NATIVE_TYPES_H
+int LambdaFunction::m_lambda_id = 0;
+
+}} // clever::ast

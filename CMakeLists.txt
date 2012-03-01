@@ -126,8 +126,10 @@ add_executable(clever
 	types/object.cc
 	types/str.cc
 	types/int.cc
+	types/function.cc
 	interpreter/main.cc
 	interpreter/driver.cc
+	interpreter/ast.cc
 	compiler/cgvisitor.cc
 	compiler/compiler.cc
 	compiler/typechecker.cc
