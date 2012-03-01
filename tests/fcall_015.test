@@ -1,0 +1,16 @@
+Creating nested function
+==CODE==
+import std.io;
+
+Int f() {
+	Void z() {
+		println("cool");
+	}
+
+	z();
+}
+
+f();
+
+==RESULT==
+cool

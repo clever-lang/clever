@@ -1,0 +1,22 @@
+Testing function accessing global variable
+==CODE==
+import std.io;
+
+Int i = 0;
+
+Void f() {
+	++i;
+}
+
+f();
+println(i);
+
+Int z(Int z) {
+	++z;
+}
+
+f();
+println(i);
+==RESULT==
+1
+2

@@ -1155,8 +1155,8 @@ private:
 class ExtFuncDeclaration : public ASTNode {
 public:
 	ExtFuncDeclaration(Identifier* libname, Identifier* name,
-		Identifier* rtype, ArgumentDeclList* args)
-		: m_libname(libname), m_name(name), m_return(rtype),
+		Identifier* rtype, ArgumentDeclList* args )
+		: m_libname(libname), m_lfname(NULL), m_name(name), m_return(rtype),
 			m_args(args), m_value(NULL) {
 		CLEVER_SAFE_ADDREF(m_libname);
 		CLEVER_ADDREF(m_name);
@@ -1164,14 +1164,32 @@ public:
 		CLEVER_SAFE_ADDREF(m_args);
 	}
 
+	ExtFuncDeclaration(Identifier* libname, Identifier* name,
+		Identifier* rtype, ArgumentDeclList* args, StringLiteral* m_lfname )
+		: m_libname(libname), m_lfname(m_lfname), m_name(name), m_return(rtype),
+			m_args(args), m_value(NULL) {
+		CLEVER_SAFE_ADDREF(m_libname);
+		CLEVER_SAFE_ADDREF(m_lfname);
+		CLEVER_ADDREF(m_name);
+		CLEVER_SAFE_ADDREF(m_return);
+		CLEVER_SAFE_ADDREF(m_args);
+	}
+
 	virtual ~ExtFuncDeclaration() {
 		CLEVER_SAFE_DELREF(m_libname);
+		CLEVER_SAFE_DELREF(m_lfname);
 		CLEVER_DELREF(m_name);
 		CLEVER_SAFE_DELREF(m_return);
 		CLEVER_SAFE_DELREF(m_args);
 		CLEVER_SAFE_DELREF(m_value);
 	}
 
+	const CString* getLFName() const { 
+		if ( m_lfname == NULL ){
+			return NULL;
+		}
+		return m_lfname->getString(); 
+	}
 	const CString* getLibName() const { return m_libname->getName(); }
 	const CString* getName() const { return m_name->getName(); }
 	ArgumentDeclList* getArgs() const { return m_args; }
@@ -1192,6 +1210,7 @@ public:
 
 protected:
 	Identifier* m_libname;
+	StringLiteral* m_lfname;
 	Identifier* m_name;
 	Identifier* m_return;
 	ArgumentDeclList* m_args;

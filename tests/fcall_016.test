@@ -1,0 +1,12 @@
+Testing return of function
+==CODE==
+import std.io;
+
+Int f() { return f; }
+
+Int i = f();
+
+println(i);
+
+==RESULT==
+Compile error: Cannot return a function - not implemented yet! on \S+ line 3

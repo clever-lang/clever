@@ -165,10 +165,13 @@ static void _check_function_return(const Function* func,
 	} else if (value && rtype) {
 		const Type* vtype = value->getTypePtr();
 
-		if (vtype != rtype) {
+		if (value->isCallable()) {
+			Compiler::errorf(loc,
+				"Cannot return a function - not implemented yet!");
+		} else if (vtype != rtype) {
 			Compiler::errorf(loc,
 				"Function `%S' expects %S value as return, not %S value",
-				&func->getName(), rtype->getName(), vtype->getName());
+				func->getName().c_str(), rtype->getName(), vtype->getName());
 		}
 	}
 }
@@ -830,7 +833,7 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 
 		args->add(new StringLiteral(CSTRING(func->getLibName())));
 		args->add(new StringLiteral(CSTRING(rt)));
-		args->add(new StringLiteral(name));
+		args->add(new StringLiteral(CSTRING(func->getLFName())));
 
 		num_args += 3;
 	}
@@ -989,13 +992,20 @@ AST_VISITOR(TypeChecker, ExtFuncDeclaration) {
 			rtype = _evaluate_type(expr->getLocation(), return_type);
 	}
 
+	const CString* lfname = expr->getLFName();
 	const CString* libname = expr->getLibName();
 	const CString* name = expr->getName();
 
 	CallableValue* func = new CallableValue(name);
 	CallableValue* ext_func = static_cast<CallableValue*>(m_scope->getValue(CSTRING("call_ext_func")));
 
-	Function* m_func = new Function(libname->c_str(), name->c_str(), rtype, ext_func->getFunctionPtr());
+	Function* m_func;
+	
+	if (lfname == NULL) {
+		m_func = new Function(libname->c_str(), name->c_str(), rtype, ext_func->getFunctionPtr());
+	} else {
+		m_func = new Function(libname->c_str(), lfname->c_str(), name->c_str(), rtype, ext_func->getFunctionPtr());
+	}
 
 	ArgumentDeclList* args = expr->getArgs();
 

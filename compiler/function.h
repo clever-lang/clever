@@ -71,7 +71,11 @@ public:
 			m_rtype(NULL) {}
 
 	Function(std::string libname, std::string name, const Type* rtype, FunctionPtr ptr)
-		: m_libname(libname), m_name(name), m_kind(EXTERNAL), m_num_args(0), m_min_args(0),
+		: m_libname(libname), m_lfname(name), m_name(name), m_kind(EXTERNAL), m_num_args(0), m_min_args(0),
+			m_rtype(rtype) { m_info.ptr = ptr; }
+
+	Function(std::string libname, std::string lfname, std::string name, const Type* rtype, FunctionPtr ptr)
+		: m_libname(libname), m_lfname(lfname), m_name(name), m_kind(EXTERNAL), m_num_args(0), m_min_args(0),
 			m_rtype(rtype) { m_info.ptr = ptr; }
 
 	Function(std::string name, FunctionPtr ptr)
@@ -130,6 +134,7 @@ public:
 
 	const std::string& getName() const { return m_name; }
 	const std::string& getLibName() const { return m_libname; }
+	const std::string& getLFName() const { return m_lfname; }
 
 	void call(const ValueVector* args, Value* result) const {
 		m_info.ptr(args, result);
@@ -144,6 +149,7 @@ private:
 	} m_info;
 
 	std::string m_libname;
+	std::string m_lfname;
 
 	std::string m_name;
 	FunctionKind m_kind;

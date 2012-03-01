@@ -331,7 +331,8 @@ ext_func_declaration:
 ;
 
 ext_func_declaration_list_aux:
-	TYPE IDENT '(' args_declaration ')' ';'	{ $$ = new ast::ExtFuncDeclaration(NULL, $2, $1, $4); }
+		TYPE IDENT '(' args_declaration ')' ';'		{ $$ = new ast::ExtFuncDeclaration(NULL, $2, $1, $4); }
+	|	TYPE IDENT '(' args_declaration ')' AS  STR ';'	{ $$ = new ast::ExtFuncDeclaration(NULL, $2, $1, $4, $7); }
 ;
 ext_func_declaration_list_impl:
 		ext_func_declaration_list_aux 					{ $$ = new ast::ExtFuncDecls; $$->push_back($1);}
@@ -418,6 +419,8 @@ method_call:
 		IDENT '.' IDENT '(' arg_list_opt ')'   { $<method_call>$ = new ast::MethodCall($1, $3, $5); $<method_call>$->setLocation(yylloc); }
 			chaining_method_call               { $$ = $8; }
 	|	literal '.' IDENT '(' arg_list_opt ')' { $<method_call>$ = new ast::MethodCall($1, $3, $5); $<method_call>$->setLocation(yylloc); }
+			chaining_method_call               { $$ = $8; }
+	|	func_call '.' IDENT '(' arg_list_opt ')' { $<method_call>$ = new ast::MethodCall($1, $3, $5); $<method_call>$->setLocation(yylloc); }
 			chaining_method_call               { $$ = $8; }
 	|	IDENT '[' expr ']' '.' IDENT '(' arg_list_opt ')' { $<method_call>$ = new ast::MethodCall(new ast::Subscript($1, $3), $6, $8); $<method_call>$->setLocation(yylloc); }
 			chaining_method_call               { $$ = $11; }

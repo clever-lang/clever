@@ -1,0 +1,20 @@
+Testing String * operator
+==CODE==
+import std.io;
+
+Int i = 10;
+
+while (--i) {
+	String f = "a" * i;
+	println(f);
+}
+==RESULT==
+aaaaaaaaa
+aaaaaaaa
+aaaaaaa
+aaaaaa
+aaaaa
+aaaa
+aaa
+aa
+a
