@@ -619,6 +619,12 @@ import_file:
 alias_stmt:
 		USE IDENT AS package_module_name "::" IDENT
 		{ $4->concat("::", $6); delete $6; $$ = new ast::AliasStmt($2, $4);  $$->setLocation(yylloc); }
+	|	USE IDENT AS IDENT
+		{ $$ = new ast::AliasStmt($2, $4);  $$->setLocation(yylloc); }
+	|	USE TYPE AS package_module_name "::" TYPE
+		{ $4->concat("::", $6); delete $6; $$ = new ast::AliasStmt($2, $4,false);  $$->setLocation(yylloc); }
+	|	USE TYPE AS TYPE
+		{ $$ = new ast::AliasStmt($2, $4,false);  $$->setLocation(yylloc); }
 ;
 
 constant:

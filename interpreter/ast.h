@@ -1501,26 +1501,34 @@ private:
 
 class AliasStmt : public ASTNode {
 public:
-	AliasStmt(Identifier* new_name, Identifier* curr_name)
-		: m_new_name(new_name), m_curr_name(curr_name) {
+	AliasStmt(Identifier* new_name, Identifier* curr_name, bool is_id = true)
+		: m_new_name(new_name), m_curr_name(curr_name), m_is_id(is_id) {
 		CLEVER_ADDREF(m_new_name);
 		CLEVER_ADDREF(m_curr_name);
 	}
 
+	
 	~AliasStmt() {
 		CLEVER_DELREF(m_new_name);
 		CLEVER_DELREF(m_curr_name);
 	}
 
+	bool isId() { return m_is_id; }
+
 	const CString* getNewName() { return m_new_name->getName(); }
 	const CString* getCurrentName() { return m_curr_name->getName(); }
+
 
 	void acceptVisitor(ASTVisitor& visitor) {
 		visitor.visit(this);
 	}
 private:
+
 	Identifier* m_new_name;
 	Identifier* m_curr_name;
+
+	bool m_is_id;
+
 };
 
 class ReturnStmt : public ASTNode {

@@ -321,20 +321,42 @@ AST_VISITOR(TypeChecker, ArgumentList) {
  * Alias visitor
  */
 AST_VISITOR(TypeChecker, AliasStmt) {
-	Value* fvalue = m_scope->getValue(expr->getCurrentName());
 
-	if (UNEXPECTED(fvalue == NULL)) {
-		Compiler::errorf(expr->getLocation(), "Identifier `%S' not found!",
-			expr->getCurrentName());
+	if(expr->isId()){
+
+		Value* fvalue = m_scope->getValue(expr->getCurrentName());
+
+		if (UNEXPECTED(fvalue == NULL)) {
+			Compiler::errorf(expr->getLocation(), "Identifier `%S' not found!",
+				expr->getCurrentName());
+		}
+
+		if (UNEXPECTED(m_scope->getValue(expr->getNewName()))) {
+			Compiler::errorf(expr->getLocation(), "Name `%S' already in use!",
+				expr->getNewName());
+		}
+
+		m_scope->pushValue(expr->getNewName(), fvalue);
+		fvalue->addRef();
+
+	} else {
+
+		Type* ftype = g_scope.getType(expr->getCurrentName());
+
+		if (UNEXPECTED(ftype == NULL)) {
+			Compiler::errorf(expr->getLocation(), "Type `%S' not found!",
+				expr->getCurrentName());
+		}
+
+		if (UNEXPECTED(g_scope.getType(expr->getNewName()))) {
+			Compiler::errorf(expr->getLocation(), "Name `%S' already in use!",
+				expr->getNewName());
+		}
+
+		g_scope.pushType(expr->getNewName(), ftype);
+		ftype->addRef();
+
 	}
-
-	if (UNEXPECTED(m_scope->getValue(expr->getNewName()))) {
-		Compiler::errorf(expr->getLocation(), "Name `%S' already in use!",
-			expr->getNewName());
-	}
-
-	m_scope->pushValue(expr->getNewName(), fvalue);
-	fvalue->addRef();
 }
 
 /**
