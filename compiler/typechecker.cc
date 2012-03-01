@@ -160,8 +160,8 @@ static void _check_function_return(const Function* func,
 			"Function `%s' cannot return value, it was declared as Void!",
 			func->getName().c_str());
 	} else if (value == NULL && rtype) {
-		Compiler::errorf(loc, "Function `%S' must return a value of type %S!",
-			&func->getName(), rtype->getName());
+		Compiler::errorf(loc, "Function `%s' must return a value of type %S!",
+			func->getName().c_str(), rtype->getName());
 	} else if (value && rtype) {
 		const Type* vtype = value->getTypePtr();
 
@@ -170,7 +170,7 @@ static void _check_function_return(const Function* func,
 				"Cannot return a function - not implemented yet!");
 		} else if (vtype != rtype) {
 			Compiler::errorf(loc,
-				"Function `%S' expects %S value as return, not %S value",
+				"Function `%s' expects %S value as return, not %S value",
 				func->getName().c_str(), rtype->getName(), vtype->getName());
 		}
 	}
