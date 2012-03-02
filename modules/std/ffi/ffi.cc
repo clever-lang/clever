@@ -99,7 +99,7 @@ static CLEVER_FUNCTION(call_ext_func) {
 		end = ext_mod_map.end();
 
 	if (it == end) {
-		::std::string libname = ::std::string("./") + lib + CLEVER_DYLIB_EXT;
+		::std::string libname = lib + CLEVER_DYLIB_EXT;
 		void* m = ext_mod_map[lib] = dlopen(libname.c_str(), 1);
 
 		if (m == NULL) {

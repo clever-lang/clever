@@ -1,0 +1,17 @@
+import std;
+
+extern "libcurl" {
+  FFIObject curl_easy_init();
+  Int curl_easy_setopt(FFIObject handle, Int option, String param);
+  Int curl_easy_perform(FFIObject handle);
+  Void curl_easy_cleanup(FFIObject handle);
+}
+
+FFIObject c, r;
+
+c = curl_easy_init();
+
+curl_easy_setopt(c, 10002, "http://www.google.com.br");
+
+curl_easy_perform(c);
+curl_easy_cleanup(c);
