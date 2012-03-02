@@ -41,19 +41,27 @@ static CLEVER_FORCE_INLINE const CallableValue*
 	return static_cast<CallableValue*>(opcode.getOp1Value());
 }
 
+inline void VM::start_new_execution() {
+	s_vars.push(VMVars());
+	s_var = &s_vars.top();
+	s_var->running = true;
+}
+
+inline void VM::end_current_execution() {
+	s_vars.pop();
+	s_var = &s_vars.top();
+}
+
 /**
  * Execute the collected opcodes
  */
 void VM::run(size_t start, VMMode mode) {
 	clever_assert_not_null(s_opcodes);
 
+	start_new_execution();
+
 	size_t last_op = s_opcodes->size();
-
-	s_vars.push(VMVars());
-	s_var = &s_vars.top();
-
 	s_var->mode = mode;
-	s_var->running = true;
 
 	for (size_t next_op = start; next_op < last_op && s_var->running; ++next_op) {
 		const Opcode& opcode = *(*s_opcodes)[next_op];
@@ -64,8 +72,29 @@ void VM::run(size_t start, VMMode mode) {
 		opcode.getHandler()(opcode, next_op);
 	}
 
-	s_vars.pop();
-	s_var = &s_vars.top();
+	end_current_execution();
+}
+
+void VM::run(const Function* func, const ValueVector* args) {
+	clever_assert_not_null(func);
+
+	start_new_execution();
+
+	size_t last_op = s_opcodes->size();
+	size_t start = func->getOffset() + 1;
+
+	update_vars(func->getScope(), func->getArgs(), args);
+
+	for (size_t next_op = start; next_op < last_op && s_var->running; ++next_op) {
+		const Opcode& opcode = *(*s_opcodes)[next_op];
+
+		// opcode.dump();
+
+		// Invoke the opcode handler
+		opcode.getHandler()(opcode, next_op);
+	}
+
+	end_current_execution();
 }
 
 /**
@@ -257,7 +286,9 @@ CLEVER_VM_HANDLER(VM::fcall_handler) {
 		s_var->call.push(&opcode);
 
 		if (args) {
-			update_vars(func->getScope(), func->getFunction()->getArgs(), args);
+			const Function* fptr = func->getFunction();
+
+			update_vars(fptr->getScope(), fptr->getArgs(), args);
 		}
 
 		func->call(next_op);

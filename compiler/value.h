@@ -284,7 +284,7 @@ public:
 
 	/* TODO: generate name for anonymous functions, disable setName(). */
 	CallableValue()
-		: Value(), m_call_type(NONE), m_context(NULL), m_scope(NULL) {
+		: Value(), m_call_type(NONE), m_context(NULL) {
 		setType(CALL);
 	}
 
@@ -292,7 +292,7 @@ public:
 	 * Create a CallableValue to represent a named function.
 	 */
 	explicit CallableValue(const CString* const name)
-		: Value(), m_call_type(NONE), m_context(NULL), m_scope(NULL) {
+		: Value(), m_call_type(NONE), m_context(NULL) {
 		setName(name);
 		setType(CALL);
 	}
@@ -301,7 +301,7 @@ public:
 	 * Create a CallableValue able to represent a method.
 	 */
 	CallableValue(const CString* name, const Type* type)
-		: Value(), m_call_type(NONE), m_context(NULL), m_scope(NULL) {
+		: Value(), m_call_type(NONE), m_context(NULL) {
 		setName(name);
 		setTypePtr(type);
 		setType(CALL);
@@ -331,9 +331,6 @@ public:
 		m_call_type = handler->isInternal() ? FAR : NEAR;
 		m_handler.method = handler;
 	}
-
-	void setScope(Scope* scope) { m_scope = scope; }
-	Scope* getScope() const { return m_scope; }
 
 	void setContext(Value* value) { m_context = value; }
 	Value* getContext() const { return m_context; }
@@ -385,7 +382,6 @@ private:
 
 	CallType m_call_type;
 	Value* m_context;
-	Scope* m_scope;
 
 	DISALLOW_COPY_AND_ASSIGN(CallableValue);
 };

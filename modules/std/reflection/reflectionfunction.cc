@@ -174,7 +174,7 @@ CLEVER_METHOD(ReflectionFunction::call) {
 			CLEVER_RETURN_EMPTY_STR();
 		}
 	} else {
-		VM::run(func->getOffset()+1, INTERNAL);
+		VM::run(func, args);
 
 		const Value* val = VM::getLastReturnValue();
 

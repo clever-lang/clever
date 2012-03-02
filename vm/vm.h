@@ -95,6 +95,10 @@ public:
 	 * Execute the opcode (call the its related handlers)
 	 */
 	static void run(size_t offset = 0, VMMode mode = NORMAL);
+	static void run(const Function*, const ValueVector*);
+
+	static void start_new_execution();
+	static void end_current_execution();
 	/**
 	 * Function/method argument handling
 	 */

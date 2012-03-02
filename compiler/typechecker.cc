@@ -965,7 +965,7 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 
 		m_scope = m_scope->newChild();
 
-		func->setScope(m_scope);
+		user_func->setScope(m_scope);
 
 		while (EXPECTED(it != end)) {
 			Value* var = new Value;

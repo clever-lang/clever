@@ -41,6 +41,7 @@ namespace clever {
 class Type;
 class Value;
 class Function;
+class Scope;
 
 typedef std::vector<Value*> ValueVector;
 
@@ -107,6 +108,14 @@ public:
 		return this;
 	}
 
+	void setScope(Scope* scope) {
+		m_scope = scope;
+	}
+
+	Scope* getScope() const {
+		return m_scope;
+	}
+
 	const FunctionArgs& getArgs() const { return m_args; }
 
 	int getNumArgs() const { return m_num_args; }
@@ -121,7 +130,7 @@ public:
 	bool isExternal() const { return m_kind == EXTERNAL; }
 
 	void setUserDefined() { m_kind = USER; }
-	void setExternal() { m_kind = EXTERNAL; } 
+	void setExternal() { m_kind = EXTERNAL; }
 
 	void setOffset(size_t num) { m_info.offset = num; m_kind = USER; }
 	size_t getOffset() const { return m_info.offset; }
@@ -156,6 +165,8 @@ private:
 	int m_num_args, m_min_args;
 	const Type* m_rtype;
 	FunctionArgs m_args;
+
+	Scope* m_scope;
 };
 
 } // clever
