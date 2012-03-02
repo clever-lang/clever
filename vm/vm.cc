@@ -42,6 +42,33 @@ static CLEVER_FORCE_INLINE const CallableValue*
 }
 
 /**
+ * Execute the collected opcodes
+ */
+void VM::run(size_t start, VMMode mode) {
+	clever_assert_not_null(s_opcodes);
+
+	size_t last_op = s_opcodes->size();
+
+	s_vars.push(VMVars());
+	s_var = &s_vars.top();
+
+	s_var->mode = mode;
+	s_var->running = true;
+
+	for (size_t next_op = start; next_op < last_op && s_var->running; ++next_op) {
+		const Opcode& opcode = *(*s_opcodes)[next_op];
+
+		// opcode.dump();
+
+		// Invoke the opcode handler
+		opcode.getHandler()(opcode, next_op);
+	}
+
+	s_vars.pop();
+	s_var = &s_vars.top();
+}
+
+/**
  * Destroy the opcodes data
  */
 VM::~VM() {
@@ -173,32 +200,6 @@ void VM::restore_args() {
 }
 
 /**
- * Execute the collected opcodes
- */
-void VM::run(long start, VMMode mode) {
-	clever_assert_not_null(s_opcodes);
-
-	long last_op = s_opcodes->size();
-
-	s_vars.push(VMVars());
-	s_var = &s_vars.top();
-
-	s_var->mode = mode;
-
-	for (long next_op = start; next_op < last_op && next_op >= 0; ++next_op) {
-		const Opcode& opcode = *(*s_opcodes)[next_op];
-
-		// opcode.dump();
-
-		// Invoke the opcode handler
-		opcode.getHandler()(opcode, next_op);
-	}
-
-	s_vars.pop();
-	s_var = &s_vars.top();
-}
-
-/**
  * JMPZ - Jump if zero
  */
 CLEVER_VM_HANDLER(VM::jmpz_handler) {
@@ -298,7 +299,7 @@ CLEVER_VM_HANDLER(VM::end_func_handler) {
 		CLEVER_VM_GOTO(op->getOpNum());
 	} else {
 		// Terminates the execution, go back to the internal caller
-		CLEVER_VM_GOTO(-2);
+		CLEVER_VM_EXIT();
 	}
 }
 
@@ -326,13 +327,13 @@ CLEVER_VM_HANDLER(VM::return_handler) {
 			CLEVER_VM_GOTO(call->getOpNum());
 		} else {
 			// Terminates the execution, go back to the internal caller
-			CLEVER_VM_GOTO(-2);
+			CLEVER_VM_EXIT();
 		}
 	} else {
 		s_return_value = value;
 
 		// Terminates the execution
-		CLEVER_VM_GOTO(-2);
+		CLEVER_VM_EXIT();
 	}
 }
 

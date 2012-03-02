@@ -34,13 +34,15 @@
 /**
  * Opcode handler arguments
  */
-#define CLEVER_VM_HANDLER_ARGS const Opcode& opcode, long& next_op
+#define CLEVER_VM_HANDLER_ARGS const Opcode& opcode, size_t& next_op
 #define CLEVER_VM_HANDLER(name) void CLEVER_FASTCALL name(CLEVER_VM_HANDLER_ARGS)
 
 /**
  * Change the executor flow to run another opcode
  */
 #define CLEVER_VM_GOTO(x) next_op = (x); return
+
+#define CLEVER_VM_EXIT() s_var->running = false; return
 
 namespace clever {
 
@@ -59,6 +61,8 @@ enum VMMode { NORMAL, INTERNAL };
  */
 struct VMVars {
 	VMMode mode;
+
+	bool running;
 
 	// Call stack - store the caller opcode
 	CallStack call;
@@ -90,7 +94,7 @@ public:
 	/**
 	 * Execute the opcode (call the its related handlers)
 	 */
-	static void run(long offset = 0, VMMode mode = NORMAL);
+	static void run(size_t offset = 0, VMMode mode = NORMAL);
 	/**
 	 * Function/method argument handling
 	 */
@@ -148,7 +152,6 @@ public:
 private:
 	static const OpcodeList* s_opcodes;
 
-	//static Value* s_return_value;
 	static ExecVars s_vars;
 	static VMVars* s_var;
 

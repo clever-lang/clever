@@ -374,7 +374,7 @@ public:
 		}
 	}
 
-	void call(long& next_op) const {
+	void call(size_t& next_op) const {
 		next_op = m_handler.func->call();
 	}
 private:
