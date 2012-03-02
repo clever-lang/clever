@@ -28,6 +28,7 @@
 #include "modules/std/reflection/reflectionfunction.h"
 #include "modules/std/reflection/reflectionfunctionvalue.h"
 #include "types/array.h"
+#include "vm/vm.h"
 
 namespace clever { namespace packages { namespace std { namespace reflection {
 
@@ -173,8 +174,15 @@ CLEVER_METHOD(ReflectionFunction::call) {
 			CLEVER_RETURN_EMPTY_STR();
 		}
 	} else {
-		// TODO: Change VM to allow specific function execution
-		CLEVER_RETURN_EMPTY_STR();
+		VM::run(func->getOffset()+1, INTERNAL);
+
+		const Value* val = VM::getLastReturnValue();
+
+		if (val) {
+			CLEVER_RETURN_STR(&const_cast<Value*>(val)->toString());
+		} else {
+			CLEVER_RETURN_EMPTY_STR();
+		}
 	}
 }
 

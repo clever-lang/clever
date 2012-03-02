@@ -46,6 +46,7 @@ namespace clever {
 
 class Opcode;
 class Scope;
+class Value;
 
 typedef std::vector<Opcode*> OpcodeList;
 typedef std::stack<const Opcode*> CallStack;
@@ -78,15 +79,18 @@ public:
 	 */
 	typedef void (CLEVER_FASTCALL *opcode_handler)(CLEVER_VM_HANDLER_ARGS);
 
-	VM(OpcodeList& opcodes)
-		: m_opcodes(opcodes) {}
+	VM() {}
 
 	~VM();
+
+	static void setOpcodes(OpcodeList* opcodes) {
+		s_opcodes = opcodes;
+	}
 
 	/**
 	 * Execute the opcode (call the its related handlers)
 	 */
-	void run(long = 0);
+	static void run(long offset = 0, VMMode mode = NORMAL);
 	/**
 	 * Function/method argument handling
 	 */
@@ -137,12 +141,18 @@ public:
 	static CLEVER_VM_HANDLER(equal_handler);
 	static CLEVER_VM_HANDLER(ne_handler);
 	static CLEVER_VM_HANDLER(not_handler);
+
+	static const Value* getLastReturnValue() {
+		return s_return_value;
+	}
 private:
-	const OpcodeList& m_opcodes;
+	static const OpcodeList* s_opcodes;
 
 	//static Value* s_return_value;
 	static ExecVars s_vars;
 	static VMVars* s_var;
+
+	static const Value* s_return_value;
 
 	DISALLOW_COPY_AND_ASSIGN(VM);
 };

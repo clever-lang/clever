@@ -1,0 +1,10 @@
+Testing ReflectionFunction::call() with user-function
+==CODE==
+import std;
+
+Int f() { println("foo"); return 3; }
+
+ReflectionFunction z("f"); println(z.call());
+==RESULT==
+foo
+3

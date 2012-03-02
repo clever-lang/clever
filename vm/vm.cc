@@ -33,6 +33,8 @@ namespace clever {
 
 ExecVars VM::s_vars;
 VMVars* VM::s_var;
+const OpcodeList* VM::s_opcodes;
+const Value* VM::s_return_value;
 
 static CLEVER_FORCE_INLINE const CallableValue*
 	_get_op1_callable(const Opcode& opcode) {
@@ -43,8 +45,10 @@ static CLEVER_FORCE_INLINE const CallableValue*
  * Destroy the opcodes data
  */
 VM::~VM() {
-	OpcodeList::const_iterator it = m_opcodes.begin(),
-		end(m_opcodes.end());
+	clever_assert_not_null(s_opcodes);
+
+	OpcodeList::const_iterator it = s_opcodes->begin(),
+		end(s_opcodes->end());
 
 	while (it != end) {
 		delete *it;
@@ -171,16 +175,18 @@ void VM::restore_args() {
 /**
  * Execute the collected opcodes
  */
-void VM::run(long start) {
-	long last_op = m_opcodes.size();
+void VM::run(long start, VMMode mode) {
+	clever_assert_not_null(s_opcodes);
+
+	long last_op = s_opcodes->size();
 
 	s_vars.push(VMVars());
 	s_var = &s_vars.top();
 
-	s_var->mode = start == 0 ? NORMAL : INTERNAL;
+	s_var->mode = mode;
 
 	for (long next_op = start; next_op < last_op && next_op >= 0; ++next_op) {
-		const Opcode& opcode = *m_opcodes[next_op];
+		const Opcode& opcode = *(*s_opcodes)[next_op];
 
 		// opcode.dump();
 
@@ -283,18 +289,26 @@ CLEVER_VM_HANDLER(VM::end_func_handler) {
 
 	s_var->call.pop();
 
+	s_return_value = NULL;
+
 	/**
 	 * Go to after the caller command
 	 */
-	CLEVER_VM_GOTO(op->getOpNum());
+	if (s_var->mode == NORMAL) {
+		CLEVER_VM_GOTO(op->getOpNum());
+	} else {
+		// Terminates the execution, go back to the internal caller
+		CLEVER_VM_GOTO(-2);
+	}
 }
 
 /**
  * Returns to the caller or terminates the execution
  */
 CLEVER_VM_HANDLER(VM::return_handler) {
+	const Value* const value = opcode.getOp1Value();
+
 	if (!s_var->call.empty()) {
-		const Value* const value = opcode.getOp1Value();
 		const Opcode* call = s_var->call.top();
 
 		if (value) {
@@ -305,6 +319,8 @@ CLEVER_VM_HANDLER(VM::return_handler) {
 
 		s_var->call.pop();
 
+		s_return_value = value;
+
 		if (s_var->mode == NORMAL) {
 			// Go back to the caller
 			CLEVER_VM_GOTO(call->getOpNum());
@@ -313,6 +329,8 @@ CLEVER_VM_HANDLER(VM::return_handler) {
 			CLEVER_VM_GOTO(-2);
 		}
 	} else {
+		s_return_value = value;
+
 		// Terminates the execution
 		CLEVER_VM_GOTO(-2);
 	}

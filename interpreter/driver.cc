@@ -61,12 +61,12 @@ void Interpreter::execute(bool interactive) {
 		m_compiler.shutdown();
 	}
 
-	VM vm(m_compiler.getOpcodes());
+	VM::setOpcodes(&m_compiler.getOpcodes());
 
 	result = setjmp(clever::fatal_error);
 
 	if (result == 0) {
-		vm.run();
+		VM::run();
 	}
 }
 
