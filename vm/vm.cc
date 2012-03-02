@@ -31,9 +31,8 @@
 
 namespace clever {
 
-CallStack VM::s_call;
-ValueVStack VM::s_arg_vars;
-ValueVStack VM::s_arg_values;
+ExecVars VM::s_vars;
+VMVars* VM::s_var;
 
 static CLEVER_FORCE_INLINE const CallableValue*
 	_get_op1_callable(const Opcode& opcode) {
@@ -63,8 +62,8 @@ void VM::update_vars(Scope* scope, const FunctionArgs& fargs,
 	ValueVector* vec_curr = NULL;
 	size_t i = 0;
 
-	if (!s_arg_vars.empty()) {
-		vec_curr = s_arg_values.top();
+	if (!s_var->arg_vars.empty()) {
+		vec_curr = s_var->arg_values.top();
 	}
 
 	FunctionArgs::const_iterator it(fargs.begin()), end(fargs.end());
@@ -127,8 +126,8 @@ void VM::update_vars(Scope* scope, const FunctionArgs& fargs,
 		}
 	}
 
-	s_arg_vars.push(vec);
-	s_arg_values.push(vec_copy);
+	s_var->arg_vars.push(vec);
+	s_var->arg_values.push(vec_copy);
 }
 
 /**
@@ -140,19 +139,19 @@ void VM::pop_args(const Opcode* const op) {
 		return;
 	}
 
-	ValueVector* vec_copy = s_arg_values.top();
+	ValueVector* vec_copy = s_var->arg_values.top();
 
 	for (size_t i = 0, j = vec_copy->size(); i < j; ++i) {
 		delete vec_copy->at(i);
 	}
 	delete vec_copy;
 
-	s_arg_values.pop();
+	s_var->arg_values.pop();
 
-	delete s_arg_vars.top();
-	s_arg_vars.pop();
+	delete s_var->arg_vars.top();
+	s_var->arg_vars.pop();
 
-	if (!s_arg_vars.empty()) {
+	if (!s_var->arg_vars.empty()) {
 		restore_args();
 	}
 }
@@ -161,8 +160,8 @@ void VM::pop_args(const Opcode* const op) {
  * Restore the parameter argument values from the previous stack frame
  */
 void VM::restore_args() {
-	ValueVector* vec = s_arg_vars.top();
-	ValueVector* vec_copy = s_arg_values.top();
+	ValueVector* vec = s_var->arg_vars.top();
+	ValueVector* vec_copy = s_var->arg_values.top();
 
 	for (size_t i = 0, j = vec->size(); i < j; ++i) {
 		vec->at(i)->copy(vec_copy->at(i));
@@ -172,17 +171,25 @@ void VM::restore_args() {
 /**
  * Execute the collected opcodes
  */
-void VM::run() {
+void VM::run(long start) {
 	long last_op = m_opcodes.size();
 
-	for (long next_op = 0; next_op < last_op && next_op >= 0; ++next_op) {
+	s_vars.push(VMVars());
+	s_var = &s_vars.top();
+
+	s_var->mode = start == 0 ? NORMAL : INTERNAL;
+
+	for (long next_op = start; next_op < last_op && next_op >= 0; ++next_op) {
 		const Opcode& opcode = *m_opcodes[next_op];
 
 		// opcode.dump();
 
-		/* Invoke the opcode handler */
+		// Invoke the opcode handler
 		opcode.getHandler()(opcode, next_op);
 	}
+
+	s_vars.pop();
+	s_var = &s_vars.top();
 }
 
 /**
@@ -240,7 +247,7 @@ CLEVER_VM_HANDLER(VM::fcall_handler) {
 
 	// Check if it's an user function
 	if (func->isNearCall()) {
-		s_call.push(&opcode);
+		s_var->call.push(&opcode);
 
 		if (args) {
 			update_vars(func->getScope(), func->getFunction()->getArgs(), args);
@@ -267,14 +274,14 @@ CLEVER_VM_HANDLER(VM::mcall_handler) {
  * Marks the end of a function
  */
 CLEVER_VM_HANDLER(VM::end_func_handler) {
-	const Opcode* const op = s_call.top();
+	const Opcode* const op = s_var->call.top();
 
 	/**
 	 * pop + restore arguments from stack
 	 */
 	pop_args(op);
 
-	s_call.pop();
+	s_var->call.pop();
 
 	/**
 	 * Go to after the caller command
@@ -286,9 +293,9 @@ CLEVER_VM_HANDLER(VM::end_func_handler) {
  * Returns to the caller or terminates the execution
  */
 CLEVER_VM_HANDLER(VM::return_handler) {
-	if (!s_call.empty()) {
+	if (!s_var->call.empty()) {
 		const Value* const value = opcode.getOp1Value();
-		const Opcode* call = s_call.top();
+		const Opcode* call = s_var->call.top();
 
 		if (value) {
 			call->getResultValue()->copy(value);
@@ -296,10 +303,15 @@ CLEVER_VM_HANDLER(VM::return_handler) {
 		// pop + restore arguments from stack
 		pop_args(call);
 
-		s_call.pop();
+		s_var->call.pop();
 
-		// Go back to the caller
-		CLEVER_VM_GOTO(call->getOpNum());
+		if (s_var->mode == NORMAL) {
+			// Go back to the caller
+			CLEVER_VM_GOTO(call->getOpNum());
+		} else {
+			// Terminates the execution, go back to the internal caller
+			CLEVER_VM_GOTO(-2);
+		}
 	} else {
 		// Terminates the execution
 		CLEVER_VM_GOTO(-2);

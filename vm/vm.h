@@ -51,6 +51,23 @@ typedef std::vector<Opcode*> OpcodeList;
 typedef std::stack<const Opcode*> CallStack;
 typedef std::stack<ValueVector*> ValueVStack;
 
+enum VMMode { NORMAL, INTERNAL };
+
+/**
+ * VM variables
+ */
+struct VMVars {
+	VMMode mode;
+
+	// Call stack - store the caller opcode
+	CallStack call;
+
+	// Store the scoped variables
+	ValueVStack arg_vars, arg_values;
+};
+
+typedef std::stack<VMVars> ExecVars;
+
 /**
  * Virtual machine representation
  */
@@ -69,7 +86,7 @@ public:
 	/**
 	 * Execute the opcode (call the its related handlers)
 	 */
-	void run();
+	void run(long = 0);
 	/**
 	 * Function/method argument handling
 	 */
@@ -123,9 +140,9 @@ public:
 private:
 	const OpcodeList& m_opcodes;
 
-	static CallStack s_call;
-	static ValueVStack s_arg_vars;
-	static ValueVStack s_arg_values;
+	//static Value* s_return_value;
+	static ExecVars s_vars;
+	static VMVars* s_var;
 
 	DISALLOW_COPY_AND_ASSIGN(VM);
 };
