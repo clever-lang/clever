@@ -327,7 +327,7 @@ lambda_function:
 ;
 
 ext_func_declaration:
-		EXTERN IDENT TYPE IDENT '(' args_declaration ')' { $$ = new ast::ExtFuncDeclaration($2, $4, $3, $6); }
+		EXTERN STR TYPE IDENT '(' args_declaration ')' { $$ = new ast::ExtFuncDeclaration($2, $4, $3, $6); }
 ;
 
 ext_func_declaration_list_aux:
@@ -340,7 +340,7 @@ ext_func_declaration_list_impl:
 ;
 
 ext_func_declaration_list:
-	EXTERN IDENT '{' ext_func_declaration_list_impl '}' { $$ = $4; ast::_set_libname_ext_func_decl($$,$2); }
+	EXTERN STR '{' ext_func_declaration_list_impl '}' { $$ = $4; ast::_set_libname_ext_func_decl($$,$2); }
 ;
 
 

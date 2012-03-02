@@ -1154,7 +1154,7 @@ private:
 
 class ExtFuncDeclaration : public ASTNode {
 public:
-	ExtFuncDeclaration(Identifier* libname, Identifier* name,
+	ExtFuncDeclaration(StringLiteral* libname, Identifier* name,
 		Identifier* rtype, ArgumentDeclList* args )
 		: m_libname(libname), m_lfname(NULL), m_name(name), m_return(rtype),
 			m_args(args), m_value(NULL) {
@@ -1164,7 +1164,7 @@ public:
 		CLEVER_SAFE_ADDREF(m_args);
 	}
 
-	ExtFuncDeclaration(Identifier* libname, Identifier* name,
+	ExtFuncDeclaration(StringLiteral* libname, Identifier* name,
 		Identifier* rtype, ArgumentDeclList* args, StringLiteral* m_lfname )
 		: m_libname(libname), m_lfname(m_lfname), m_name(name), m_return(rtype),
 			m_args(args), m_value(NULL) {
@@ -1190,13 +1190,13 @@ public:
 		}
 		return m_lfname->getString(); 
 	}
-	const CString* getLibName() const { return m_libname->getName(); }
+	const CString* getLibName() const { return m_libname->getString(); }
 	const CString* getName() const { return m_name->getName(); }
 	ArgumentDeclList* getArgs() const { return m_args; }
 
 	Identifier* getReturnValue() const { return m_return; }
 
-	void setLibName(Identifier* libname) {
+	void setLibName(StringLiteral* libname) {
 		m_libname = libname;
 		CLEVER_ADDREF(m_libname);
 	}
@@ -1209,7 +1209,7 @@ public:
 	}
 
 protected:
-	Identifier* m_libname;
+	StringLiteral* m_libname;
 	StringLiteral* m_lfname;
 	Identifier* m_name;
 	Identifier* m_return;
@@ -1219,7 +1219,7 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(ExtFuncDeclaration);
 };
 
-inline void _set_libname_ext_func_decl(ExtFuncDecls* v, Identifier* libname) {
+inline void _set_libname_ext_func_decl(ExtFuncDecls* v, StringLiteral* libname) {
 	ExtFuncDecls::iterator it = v->begin(), end = v->end();
 
 	while (it != end) {
