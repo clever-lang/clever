@@ -863,7 +863,6 @@ static inline const char* _find_fcall_rname(const Type* c) {
 	if (c == CLEVER_BOOL)   return "b";
 	if (c == CLEVER_BYTE)   return "c";
 	if (c == CLEVER_VOID)   return "v";
-	if (c == NULL)          return "v";
 	return "p";
 }
 

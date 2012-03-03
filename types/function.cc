@@ -86,7 +86,30 @@ CLEVER_METHOD(FunctionType::call) {
 		func->call(args, retval);
 	}
 	else {
-		Compiler::error("Function<>::call() not implemented yet for external functions.");
+		ValueVector new_args;
+		
+		if (args) {
+			new_args = *args;
+		}
+
+		std::string rt = "p";
+		
+		if (func->getReturnType() == CLEVER_INT) rt = "i";
+		else if (func->getReturnType() == CLEVER_DOUBLE) rt = "i";
+		else if (func->getReturnType() == CLEVER_STR) rt = "s";
+		else if (func->getReturnType() == CLEVER_BOOL) rt = "b";
+		else if (func->getReturnType() == CLEVER_BYTE) rt = "c";
+		else if (func->getReturnType() == CLEVER_VOID) rt = "v";
+
+		Value lib_name(CSTRING(func->getLibName()));
+		Value ret_type(CSTRING(rt));
+		Value lf_name(CSTRING(func->getLFName()));
+
+		new_args.push_back(&lib_name);
+		new_args.push_back(&ret_type);
+		new_args.push_back(&lf_name);
+		
+		func->call(&new_args, retval);
 	}
 }
 
