@@ -63,12 +63,24 @@ public:
 	}
 
 	virtual const Type* getTemplatedType(const TemplateArgs& args) const {
-		std::string name = getName()->str() + "<"
-			+ args[0]->getName()->str();
+		std::string name = getName()->str() + "<";
+		
+		if (args[0]) {
+			name += args[0]->getName()->str();
+		}
+		else {
+			name += "Void";
+		}
 			
 		for (size_t i = 1, sz = args.size(); i < sz; ++i) {
 			name += ", ";
-			name += args[i]->getName()->str();
+			if (args[i]) {
+				name += args[i]->getName()->str();
+			}
+			else {
+				// The type is Void
+				name += "Void";
+			}
 		}
 		
 		name += ">";
