@@ -68,6 +68,7 @@ void Interpreter::execute(bool interactive) {
 	if (result == 0) {
 		VM::run();
 	}
+	VM::shutdown();
 }
 
 #ifdef CLEVER_DEBUG

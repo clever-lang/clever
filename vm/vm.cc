@@ -105,7 +105,7 @@ void VM::run(const Function* func, const ValueVector* args) {
 /**
  * Destroy the opcodes data
  */
-VM::~VM() {
+void VM::shutdown() {
 	clever_assert_not_null(s_opcodes);
 
 	OpcodeList::const_iterator it = s_opcodes->begin(),
@@ -115,6 +115,9 @@ VM::~VM() {
 		delete *it;
 		++it;
 	}
+
+	s_var = NULL;
+	s_return_value = NULL;
 }
 
 /**

@@ -85,7 +85,7 @@ public:
 
 	VM() {}
 
-	~VM();
+	~VM() {}
 
 	static void setOpcodes(OpcodeList* opcodes) {
 		s_opcodes = opcodes;
@@ -96,6 +96,8 @@ public:
 	 */
 	static void run(size_t offset = 0, VMMode mode = NORMAL);
 	static void run(const Function*, const ValueVector*);
+
+	static void shutdown();
 
 	static void start_new_execution();
 	static void end_current_execution();
