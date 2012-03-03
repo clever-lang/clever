@@ -90,7 +90,7 @@ static CLEVER_FUNCTION(call_ext_func) {
 	::std::string rt = CLEVER_ARG_STR(size-2);
 	::std::string func = CLEVER_ARG_STR(size-1);
 
-	
+
 #ifndef CLEVER_WIN32
 	void* fpf;
 	ffi_call_func pf;
@@ -100,14 +100,15 @@ static CLEVER_FUNCTION(call_ext_func) {
 
 	if (it == end) {
 		::std::string libname = lib + CLEVER_DYLIB_EXT;
-		void* m = ext_mod_map[lib] = dlopen(libname.c_str(), 1);
+		void* m = ext_mod_map[lib] = dlopen(libname.c_str(), RTLD_LAZY);
 
 		if (m == NULL) {
-			clever_fatal("[FFI] Shared library`%S' not found!",
-				&CLEVER_ARG_STR(size-3));
+			clever_fatal("[FFI] Shared library`%S' not loaded!\n Error: \n %s",
+				&CLEVER_ARG_STR(size-3),dlerror());
 			CLEVER_RETURN_BOOL(false);
 			return;
 		}
+
 		it=ext_mod_map.find(lib);
 	}
 
@@ -207,7 +208,7 @@ static CLEVER_FUNCTION(call_ext_func) {
 		CLEVER_RETURN_BOOL(vb);
 	} else if (rt[0] == 's') {
 		char* vs[1];
-		
+
 		ffi_call(&cif, pf, &vs, ffi_values);
 
 		CLEVER_RETURN_STR(CSTRING(*vs));
@@ -226,7 +227,7 @@ static CLEVER_FUNCTION(call_ext_func) {
 		CLEVER_RETURN_BOOL(true);
 	} else if (rt[0] == 'p') {
 		FFIObjectValue* x = static_cast<FFIObjectValue*> (retval->getDataValue());
-		
+
 		if ( x == NULL ) x = new FFIObjectValue();
 
 		ffi_call(&cif, pf, &(x->pointer), ffi_values);
@@ -269,7 +270,7 @@ void FFI::init() {
 
 	addClass(FFIObject);
 
-	addFunction(new Function("call_ext_func",
+	addFunction(new Function("__call_ext_func__",
 		&CLEVER_NS_FNAME(ffi, call_ext_func), CLEVER_BOOL))
 		->setVariadic()
 		->setMinNumArgs(2);
