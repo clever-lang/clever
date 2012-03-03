@@ -68,8 +68,7 @@ public:
 
 	Method(std::string name, MethodPtr ptr, const Type* rtype, bool constness = true)
 		: RefCounted(1), m_name(name), m_type(INTERNAL), m_rtype(rtype), m_num_args(0),
-		m_min_args(0), m_is_const(constness)
-	{
+		m_min_args(0), m_is_const(constness), m_is_static(false) {
 		m_info.ptr = ptr;
 	}
 
@@ -109,10 +108,11 @@ public:
 	Method* setMinNumArgs(int nargs) { m_min_args = nargs; return this; }
 	int getMinNumArgs() const { return m_min_args; }
 
-	bool isConst() const {
-		return m_is_const;
-	}
+	bool isConst() const { return m_is_const; }
 
+
+	Method* setStatic() { m_is_static = true; return this; }
+	bool isStatic() const { return m_is_static; }
 private:
 	union {
 		MethodPtr ptr;
@@ -135,7 +135,7 @@ private:
 
 	int m_num_args;
 	int m_min_args;
-	bool m_is_const;
+	bool m_is_const, m_is_static;
 
 	DISALLOW_COPY_AND_ASSIGN(Method);
 };

@@ -1,0 +1,6 @@
+Testing static call on non-static method
+==CODE==
+import std.regex;
+Regex.matches("foo?");
+==RESULT==
+Compile error: Cannot call non\-static method Regex::matches\(String\) as static on \S+ line 2

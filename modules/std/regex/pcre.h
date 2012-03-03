@@ -42,12 +42,16 @@ public:
 	DataValue* allocateValue() const;
 	void destructor(Value* value) const;
 
+	// Methods
 	static CLEVER_METHOD(constructor);
 	static CLEVER_METHOD(matches);
 	static CLEVER_METHOD(group);
 	static CLEVER_METHOD(replace);
 	static CLEVER_METHOD(replaceAll);
 	static CLEVER_METHOD(do_assign);
+
+	// Static methods
+	static CLEVER_METHOD(quote);
 private:
 	DISALLOW_COPY_AND_ASSIGN(Pcre);
 };

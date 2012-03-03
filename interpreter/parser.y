@@ -318,11 +318,11 @@ func_declaration:
 ;
 
 lambda_function:
-		TYPE '(' args_declaration ')' block_stmt     { 
-			$$ = new ast::LambdaFunction(new ast::FuncDeclaration(ast::LambdaFunction::getLambdaId(), $1, $3, $5)); 	
+		TYPE '(' args_declaration ')' block_stmt     {
+			$$ = new ast::LambdaFunction(new ast::FuncDeclaration(ast::LambdaFunction::getLambdaId(), $1, $3, $5));
 		}
-	|	template '(' args_declaration ')' block_stmt { 
-			$$ = new ast::LambdaFunction(new ast::FuncDeclaration(ast::LambdaFunction::getLambdaId(), $1, $3, $5)); 
+	|	template '(' args_declaration ')' block_stmt {
+			$$ = new ast::LambdaFunction(new ast::FuncDeclaration(ast::LambdaFunction::getLambdaId(), $1, $3, $5));
 		}
 ;
 
@@ -426,6 +426,8 @@ method_call:
 			chaining_method_call               { $$ = $11; }
 	|	'(' expr ')' '.' IDENT '(' arg_list_opt ')'	   { $<method_call>$ = new ast::MethodCall($2, $5, $7); $<method_call>$->setLocation(yylloc); }
 			chaining_method_call               { $$ = $10; }
+	|	TYPE '.' IDENT '(' arg_list_opt ')'    { $<method_call>$ = new ast::MethodCall($1, $3, $5, true); $<method_call>$->setLocation(yylloc); }
+			chaining_method_call               { $$ = $8; }
 ;
 
 template_args:

@@ -371,7 +371,7 @@ public:
 	void acceptVisitor(ASTVisitor& visitor) {
 		visitor.visit(this);
 	}
-	
+
 	bool hasReturn() const { return m_has_return; }
 	void setReturn() { m_has_return = true; }
 private:
@@ -409,11 +409,11 @@ public:
 	void acceptVisitor(ASTVisitor& visitor) {
 		visitor.visit(this);
 	}
-	
+
 	bool hasBlock() const {
 		return true;
 	}
-	
+
 	bool hasReturn() const { return m_has_return; }
 	void setReturn() { m_has_return = true; }
 private:
@@ -465,7 +465,7 @@ private:
 	ASTNode* m_block;
 	ASTNode* m_else;
 	bool m_has_return;
-	
+
 	DISALLOW_COPY_AND_ASSIGN(IfExpr);
 };
 
@@ -517,7 +517,7 @@ public:
 	void acceptVisitor(ASTVisitor& visitor) {
 		visitor.visit(this);
 	}
-	
+
 	bool hasReturn() const { return m_has_return; }
 	void setReturn() { m_has_return = true; }
 private:
@@ -539,7 +539,7 @@ public:
 	}
 
 	ForExpr(ASTNode* var_decl, ASTNode* condition, ASTNode* increment, ASTNode* block)
-		: m_var_decl(var_decl), m_ident(NULL), m_condition(condition), 
+		: m_var_decl(var_decl), m_ident(NULL), m_condition(condition),
 		m_increment(increment), m_block(block), m_has_return(false) {
 		CLEVER_SAFE_ADDREF(m_var_decl);
 		CLEVER_SAFE_ADDREF(m_condition);
@@ -1270,7 +1270,7 @@ public:
 	}
 
 	ASTNode* getModifier() { return m_modifier; }
-	
+
 	bool hasBlock() const {
 		return true;
 	}
@@ -1339,7 +1339,16 @@ class MethodCall : public ASTNode {
 public:
 	MethodCall(ASTNode* var, Identifier* method, ArgumentList* args)
 		: m_var(var), m_method(method), m_result(NULL), m_args(args),
-			m_call_value(NULL), m_args_value(NULL) {
+			m_call_value(NULL), m_args_value(NULL), m_is_static(false) {
+		CLEVER_ADDREF(m_var);
+		CLEVER_ADDREF(m_method);
+		CLEVER_SAFE_ADDREF(m_args);
+	}
+
+	MethodCall(ASTNode* var, Identifier* method, ArgumentList* args,
+		bool is_static)
+		: m_var(var), m_method(method), m_result(NULL), m_args(args),
+			m_call_value(NULL), m_args_value(NULL), m_is_static(is_static) {
 		CLEVER_ADDREF(m_var);
 		CLEVER_ADDREF(m_method);
 		CLEVER_SAFE_ADDREF(m_args);
@@ -1347,7 +1356,7 @@ public:
 
 	MethodCall(Subscript* sub, Identifier* method, ArgumentList* args)
 		: m_var(sub), m_method(method), m_result(NULL), m_args(args),
-			m_call_value(NULL), m_args_value(NULL) {
+			m_call_value(NULL), m_args_value(NULL), m_is_static(false) {
 		CLEVER_ADDREF(m_var);
 		CLEVER_ADDREF(m_method);
 		CLEVER_SAFE_ADDREF(m_args);
@@ -1363,6 +1372,7 @@ public:
 	ASTNode* getVariable() const { return m_var; }
 	const CString* getMethodName() const { return m_method->getName(); }
 
+	bool isStaticCall() const { return m_is_static; }
 
 	void setValue(Value* value) { m_result = value; }
 	Value* getValue() const { return m_result; }
@@ -1390,7 +1400,9 @@ public:
 	void acceptVisitor(ASTVisitor& visitor) {
 		ArgumentList* args = getArgs();
 
-		m_var->acceptVisitor(visitor);
+		if (!isStaticCall()) {
+			m_var->acceptVisitor(visitor);
+		}
 
 		if (args) {
 			args->acceptVisitor(visitor);
@@ -1406,6 +1418,8 @@ private:
 	ArgumentList* m_args;
 	CallableValue* m_call_value;
 	ValueVector* m_args_value;
+
+	bool m_is_static;
 
 	DISALLOW_COPY_AND_ASSIGN(MethodCall);
 };
@@ -1590,7 +1604,7 @@ public:
 		}
 		visitor.visit(this);
 	}
-	
+
 	virtual bool hasReturn() const { return true; }
 private:
 	ASTNode* m_expr;
