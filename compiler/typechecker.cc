@@ -149,8 +149,9 @@ static bool _check_compatible_types(const Type* const lhs,
 /**
  * Checks the function return type
  */
-static void _check_function_return(const Function* func,
-	const Value* value, const Type* rtype, const location& loc) {
+static void _check_function_return(const Function* func, const Value* value,
+	const location& loc) {
+	const Type* rtype = func->getReturnType();
 	/**
 	 * When the rtype is NULL, the return is expected to be Void
 	 * When value is NULL, the return statement is empty
@@ -191,11 +192,13 @@ static void _check_function_num_args(const Function* func, int num_args,
 	if ((is_variadic && n_min_args > num_args)
 		|| (!is_variadic && num_args != n_required_args)) {
 		if (n_min_args != n_required_args && n_min_args > num_args) {
-			Compiler::errorf(loc, "Function `%s' expects at least %i argument%s, %i supplied",
+			Compiler::errorf(loc,
+				"Function `%s' expects at least %i argument%s, %i supplied",
 				func->getName().c_str(), n_min_args, (n_min_args > 1 ? "s" : ""),
 				num_args);
 		} else {
-			Compiler::errorf(loc, "Function `%s' expects %i argument%s, %i supplied",
+			Compiler::errorf(loc,
+				"Function `%s' expects %i argument%s, %i supplied",
 				func->getName().c_str(), n_required_args,
 					(n_required_args > 1 ? "s" : ""), num_args);
 		}
@@ -406,11 +409,11 @@ AST_VISITOR(TypeChecker, Identifier) {
 		Compiler::errorf(expr->getLocation(), "Variable `%S' not found!",
 			expr->getName());
 	}
-	
+
 	if (ident->isCallable()) {
 		const Function* func = static_cast<CallableValue*>(ident)->getFunction();
 		const FunctionArgs& args = func->getArgs();
-		
+
 		TypeVector tv;
 		tv.push_back(func->getReturnType());
 
@@ -422,10 +425,10 @@ AST_VISITOR(TypeChecker, Identifier) {
 			static_cast<const TemplatedType*>(CLEVER_TYPE("Function"));
 
 		const Type* func_type = virtual_func->getTemplatedType(tv);
-		
+
 		FunctionValue* fv = static_cast<FunctionValue*>(func_type->allocateValue());
 		fv->setFunction(func);
-		
+
 		ident->setTypePtr(func_type);
 		ident->setDataValue(fv);
 	}
@@ -1081,8 +1084,7 @@ AST_VISITOR(TypeChecker, ReturnStmt) {
 
 	const Function* func = m_funcs.top();
 
-	_check_function_return(func, expr->getExprValue(), func->getReturnType(),
-			expr->getLocation());
+	_check_function_return(func, expr->getExprValue(), expr->getLocation());
 }
 
 /**
