@@ -134,6 +134,9 @@ CLEVER_METHOD(Pcre::do_assign) {
 	CLEVER_THIS()->copy(CLEVER_ARG(0));
 }
 
+/**
+ * String Regex::quote(String regex)
+ */
 CLEVER_METHOD(Pcre::quote) {
 	CLEVER_RETURN_STR(CSTRING(pcrecpp::RE::QuoteMeta(CLEVER_ARG_STR(0))));
 }
