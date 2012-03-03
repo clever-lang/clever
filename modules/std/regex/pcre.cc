@@ -134,6 +134,10 @@ CLEVER_METHOD(Pcre::do_assign) {
 	CLEVER_THIS()->copy(CLEVER_ARG(0));
 }
 
+CLEVER_METHOD(Pcre::quote) {
+	CLEVER_RETURN_STR(CSTRING(pcrecpp::RE::QuoteMeta(CLEVER_ARG_STR(0))));
+}
+
 void Pcre::destructor(Value* value) const {
 
 }
@@ -183,6 +187,13 @@ void Pcre::init() {
 	addMethod(
 		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&Pcre::do_assign, CLEVER_VOID))
 		->addArg("rvalue", type)
+	);
+
+	// String Regex::quote(String regex)
+	addMethod(
+		(new Method("quote", (MethodPtr)&Pcre::quote, CLEVER_STR))
+		->setStatic()
+		->addArg("regex", CLEVER_STR)
 	);
 }
 

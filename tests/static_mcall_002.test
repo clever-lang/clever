@@ -1,0 +1,6 @@
+Testing static method call
+==CODE=
+import std;
+println(Regex.quote("foo?"));
+==RESUL==
+foo\\?

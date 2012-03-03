@@ -240,11 +240,16 @@ static void _check_function_arg_types(const Function* func,
  * Prepares the node to generate an opcode which will make a method call
  */
 static CallableValue* _prepare_method_call(const Type* type, Value* var,
-	const CString* mname, ASTNode* expr, const ValueVector* vv) {
+	const CString* mname, ASTNode* expr, const ValueVector* vv,
+	bool is_static = false) {
 
 	clever_assert_not_null(type);
-	clever_assert_not_null(var);
 	clever_assert_not_null(mname);
+	if (is_static) {
+		clever_assert_null(var);
+	} else {
+		clever_assert_not_null(var);
+	}
 
 	TypeVector args_types;
 
@@ -255,34 +260,50 @@ static CallableValue* _prepare_method_call(const Type* type, Value* var,
 	}
 
 	const Method* method = type->getMethod(mname, &args_types);
+	const std::string args_type_name = _serialize_arg_type(args_types, ", ");
 
 	if (UNEXPECTED(method == NULL)) {
-		const std::string args_type_name = _serialize_arg_type(args_types, ", ");
-
 		if (mname == (CACHE_PTR(CLEVER_CTOR, CLEVER_CTOR_NAME))) {
 			Compiler::errorf(expr->getLocation(),
 				"No matching call for constructor %S::%S(%s)",
 				type->getName(), type->getName(), args_type_name.c_str());
+		} else if (is_static) {
+			Compiler::errorf(expr->getLocation(), "No matching call for %S::%S(%s)",
+				type->getName(), mname, args_type_name.c_str());
 		} else {
 			Compiler::errorf(expr->getLocation(), "No matching call for %S::%S(%s)",
 				var->getTypePtr()->getName(), mname, args_type_name.c_str());
 		}
 	}
-	var->setTypePtr(type);
 
-	if (UNEXPECTED(var->isConst() && !method->isConst())) {
-		const std::string args_type_name = _serialize_arg_type(args_types, ", ");
+	if (method->isStatic() && !is_static) {
+		Compiler::errorf(expr->getLocation(),
+			"Cannot call static method %S::%S(%s) as non-static",
+			type->getName(), mname, args_type_name.c_str());
+	} else if (!method->isStatic() && is_static) {
+		Compiler::errorf(expr->getLocation(),
+			"Cannot call non-static method %S::%S(%s) as static",
+			type->getName(), mname, args_type_name.c_str());
+	}
 
-		Compiler::errorf(expr->getLocation(), "Can't call the non-const "
-			"method %S::%S(%s) because variable `%S' is const",
-			var->getTypePtr()->getName(), mname, args_type_name.c_str(),
-			var->getName());
+	if (!is_static) {
+		var->setTypePtr(type);
+
+		if (UNEXPECTED(var->isConst() && !method->isConst())) {
+			const std::string args_type_name = _serialize_arg_type(args_types, ", ");
+
+			Compiler::errorf(expr->getLocation(), "Can't call the non-const "
+				"method %S::%S(%s) because variable `%S' is const",
+				var->getTypePtr()->getName(), mname, args_type_name.c_str(),
+				var->getName());
+		}
+
+		var->addRef();
 	}
 
 	CallableValue* call = new CallableValue(mname, type);
 	call->setHandler(method);
 	call->setContext(var);
-	var->addRef();
 
 	// Set the return type as the declared in the method
 	Value* result = expr->getValue();
@@ -934,25 +955,47 @@ AST_VISITOR(TypeChecker, FunctionCall) {
  * MethodCall visitor
  */
 AST_VISITOR(TypeChecker, MethodCall) {
-	Value* variable = expr->getVariable()->getValue();
-	const CString* const name = expr->getMethodName();
-	ValueVector* arg_values = NULL;
+	if (expr->isStaticCall()) {
+		Identifier* type_name = static_cast<Identifier*>(expr->getVariable());
+		const Type* type = m_scope->getType(type_name->getName());
+		const CString* const name = expr->getMethodName();
+		ValueVector* arg_values = NULL;
 
-	clever_assert_not_null(variable);
-	clever_assert_not_null(name);
+		clever_assert_not_null(type);
 
-	ArgumentList* args = expr->getArgs();
+		ArgumentList* args = expr->getArgs();
 
-	if (EXPECTED(args != NULL)) {
-		arg_values = args->getArgValue();
+		if (EXPECTED(args != NULL)) {
+			arg_values = args->getArgValue();
 
-		expr->setArgsValue(arg_values);
+			expr->setArgsValue(arg_values);
+		}
+
+		expr->setValue(new Value);
+
+		expr->setCallValue(_prepare_method_call(type, NULL,
+			name, expr, arg_values, true));
+	} else {
+		Value* variable = expr->getVariable()->getValue();
+		const CString* const name = expr->getMethodName();
+		ValueVector* arg_values = NULL;
+
+		clever_assert_not_null(variable);
+		clever_assert_not_null(name);
+
+		ArgumentList* args = expr->getArgs();
+
+		if (EXPECTED(args != NULL)) {
+			arg_values = args->getArgValue();
+
+			expr->setArgsValue(arg_values);
+		}
+
+		expr->setValue(new Value);
+
+		expr->setCallValue(_prepare_method_call(variable->getTypePtr(), variable,
+			name, expr, arg_values));
 	}
-
-	expr->setValue(new Value);
-
-	expr->setCallValue(_prepare_method_call(variable->getTypePtr(), variable,
-		name, expr, arg_values));
 }
 
 /**
