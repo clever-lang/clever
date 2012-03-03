@@ -1,14 +1,18 @@
 Testing Function type as function argument
 ==CODE==
 import std.io;
+import std.math;
 
-String operation(Int a, Double b, Function<String, Int, Double> callback)
-{
+Auto call1 = String(Int a, Double b) { return "call1: " + abs(a + b).toString(); };
+Auto call2 = String(Int a, Double b) { return "call2: " + abs(a - b).toString(); };
+
+String operation(Int a, Double b, Function<String, Int, Double> callback) {
 	return "ok: " + callback.call(a, b);
 }
 
-Auto call = String(Int a, Double b) { return (a + sqrt(b)).toString(); }
-
-println(operation(10, 3.14, call));
+println(operation(10, -3.14, call1));
+println(operation(10, -3.14, call2));
 
 ==RESULT==
+ok: call1: 6.86
+ok: call2: 13.14

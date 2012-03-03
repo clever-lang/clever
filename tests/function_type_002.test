@@ -5,12 +5,12 @@ import std.reflection;
 
 Function<String, Int> strPi = String(Int z) { return z.toString() + "pi"; };
 
-strPi.call(193);
-strPi.call(2);
+println(strPi.call(193));
+println(strPi.call(2));
 
 println(get_type(strPi));
 
 ==RESULT==
 193pi
 2pi
-Function<String, Int> strPi
+Function<String, Int>
