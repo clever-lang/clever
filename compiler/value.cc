@@ -134,6 +134,8 @@ const CString& Value::toString() {
 		}
 
 		return *CSTRING(str.str());
+	} else if (getTypePtr() == CLEVER_VOID) {
+		return *CSTRING("Void");
 	} else {
 		Value ret;
 		CLEVER_INTERNAL_MCALL(this, "toString", NULL, NULL, &ret);
