@@ -702,7 +702,7 @@ AST_VISITOR(TypeChecker, IfExpr) {
 		expr->getElse()->acceptVisitor(*this);
 		else_has_return = expr->getElse()->hasReturn();
 	}
-	
+
 	// If the IfStmt AND the ElseStmt has return, we
 	// are sure that that it inconditionally returns
 	if (if_has_return && else_has_return) {
@@ -746,11 +746,11 @@ AST_VISITOR(TypeChecker, UnscopedBlockNode) {
 	// Iterates over statements inside the block
 	while (EXPECTED(it != end)) {
 		(*it)->acceptVisitor(*this);
-		
+
 		if ((*it)->hasReturn()) {
 			expr->setReturn();
 		}
-		
+
 		++it;
 	}
 
@@ -782,7 +782,7 @@ AST_VISITOR(TypeChecker, WhileExpr) {
 
 	if (EXPECTED(expr->hasBlock())) {
 		expr->getBlock()->acceptVisitor(*this);
-		
+
 		if (expr->getBlock()->hasReturn()) {
 			expr->setReturn();
 		}
@@ -809,7 +809,7 @@ AST_VISITOR(TypeChecker, ForExpr) {
 
 	if (EXPECTED(expr->hasBlock())) {
 		expr->getBlock()->acceptVisitor(*this);
-		
+
 		if (expr->getBlock()->hasReturn()) {
 			expr->setReturn();
 		}
@@ -993,7 +993,7 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 	Function* user_func = new Function(name->str());
 	Identifier* return_type = expr->getReturnValue();
 	ArgumentDeclList* args = expr->getArgs();
-	
+
 	// Mark the function as user defined function
 	user_func->setUserDefined();
 
@@ -1043,10 +1043,10 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 	m_funcs.push(user_func);
 
 	expr->getBlock()->acceptVisitor(*this);
-	
+
 	if (user_func->getReturnType() && expr->getBlock()->hasReturn() == false) {
 		Compiler::errorf(expr->getLocation(), "Function `%S' must return "
-			"a value of type `%S', and it may not return", 
+			"a value of type `%S', and it may not return",
 			name, user_func->getReturnType()->getName());
 	}
 
@@ -1075,14 +1075,17 @@ AST_VISITOR(TypeChecker, ExtFuncDeclaration) {
 	const CString* name = expr->getName();
 
 	CallableValue* func = new CallableValue(name);
-	CallableValue* ext_func = static_cast<CallableValue*>(m_scope->getValue(CSTRING("call_ext_func")));
+	CallableValue* ext_func = static_cast<CallableValue*>(
+		m_scope->getValue(CSTRING("__call_ext_func__")));
 
 	Function* m_func;
 
 	if (lfname == NULL) {
-		m_func = new Function(libname->c_str(), name->c_str(), rtype, ext_func->getFunctionPtr());
+		m_func = new Function(libname->c_str(), name->c_str(), rtype,
+			ext_func->getFunctionPtr());
 	} else {
-		m_func = new Function(libname->c_str(), lfname->c_str(), name->c_str(), rtype, ext_func->getFunctionPtr());
+		m_func = new Function(libname->c_str(), lfname->c_str(), name->c_str(),
+			rtype, ext_func->getFunctionPtr());
 	}
 
 	ArgumentDeclList* args = expr->getArgs();
@@ -1116,7 +1119,7 @@ AST_VISITOR(TypeChecker, ReturnStmt) {
 	if (UNEXPECTED(m_funcs.empty())) {
 		return;
 	}
-	
+
 	const Function* func = m_funcs.top();
 
 	_check_function_return(func, expr->getExprValue(), expr->getLocation());
