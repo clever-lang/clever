@@ -108,6 +108,7 @@ static CLEVER_FUNCTION(call_ext_func) {
 			CLEVER_RETURN_BOOL(false);
 			return;
 		}
+
 		it=ext_mod_map.find(lib);
 	}
 
