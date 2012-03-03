@@ -1109,7 +1109,7 @@ public:
 
 	virtual ~LambdaFunction() {
 		CLEVER_DELREF(m_function);
-		CLEVER_DELREF(m_value);
+		CLEVER_SAFE_DELREF(m_value);
 	}
 
 	const CString* getName() const { return m_function->getName(); }
@@ -1120,28 +1120,28 @@ public:
 		m_function->acceptVisitor(visitor);
 		visitor.visit(this);
 	}
-	
-	static Identifier* getLambdaId() { 
+
+	static Identifier* getLambdaId() {
 		std::ostringstream oss;
-		oss << "$lambda" << (++m_lambda_id) << "$"; 
-		
+		oss << "$lambda" << (++m_lambda_id) << "$";
+
 		return new Identifier(CSTRING(oss.str()));
 	}
-	
+
 	void setValue(Value* value) {
 		m_value = value;
 	}
-	
+
 	Value* getValue() const {
 		return m_value;
 	}
-	
+
 	const Type* getReturnType() const {
 		return getFunction()->getReturnType();
 	}
-	
-	const FunctionArgs& getArgs() const { 
-		return getFunction()->getArgs(); 
+
+	const FunctionArgs& getArgs() const {
+		return getFunction()->getArgs();
 	}
 protected:
 	FuncDeclaration* m_function;
@@ -1184,11 +1184,11 @@ public:
 		CLEVER_SAFE_DELREF(m_value);
 	}
 
-	const CString* getLFName() const { 
+	const CString* getLFName() const {
 		if ( m_lfname == NULL ){
 			return NULL;
 		}
-		return m_lfname->getString(); 
+		return m_lfname->getString();
 	}
 	const CString* getLibName() const { return m_libname->getString(); }
 	const CString* getName() const { return m_name->getName(); }
@@ -1254,7 +1254,7 @@ public:
 		CLEVER_SAFE_ADDREF(m_args);
 	}
 
-	
+
 	~FunctionCall() {
 		CLEVER_DELREF(m_name);
 		CLEVER_SAFE_DELREF(m_result);
@@ -1262,7 +1262,7 @@ public:
 		CLEVER_SAFE_DELREF(m_value);
 	}
 
-	
+
 	void setFuncValue(CallableValue* value) {
 		m_value = value;
 	}
@@ -1507,7 +1507,7 @@ public:
 		CLEVER_ADDREF(m_curr_name);
 	}
 
-	
+
 	~AliasStmt() {
 		CLEVER_DELREF(m_new_name);
 		CLEVER_DELREF(m_curr_name);
