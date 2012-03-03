@@ -71,14 +71,22 @@ CLEVER_METHOD(FunctionType::call) {
 	FunctionValue* fv = CLEVER_GET_VALUE(FunctionValue*, value);
 	const Function* func = fv->getFunction();
 	
-	VM::run(func, args);
+	if (func->isUserDefined()) {
+		VM::run(func, args);
 	
-	// If ReturnType isn't Void
-	if (CLEVER_THIS_ARG(0)) {
-		retval->copy(VM::getLastReturnValue());
+		// If ReturnType isn't Void
+		if (CLEVER_THIS_ARG(0)) {
+			retval->copy(VM::getLastReturnValue());
+		}
+		else {
+			retval->setType(CLEVER_VOID);
+		}
+	}
+	else if (func->isInternal()) {
+		func->call(args, retval);
 	}
 	else {
-		retval->setType(CLEVER_VOID);
+		Compiler::error("Function<>::call() not implemented yet for external functions.");
 	}
 }
 
