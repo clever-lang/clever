@@ -100,11 +100,11 @@ static CLEVER_FUNCTION(call_ext_func) {
 
 	if (it == end) {
 		::std::string libname = lib + CLEVER_DYLIB_EXT;
-		void* m = ext_mod_map[lib] = dlopen(libname.c_str(), 1);
+		void* m = ext_mod_map[lib] = dlopen(libname.c_str(), RTLD_LAZY);
 
 		if (m == NULL) {
-			clever_fatal("[FFI] Shared library`%S' not found!",
-				&CLEVER_ARG_STR(size-3));
+			clever_fatal("[FFI] Shared library`%S' not loaded!\n Error: \n %s",
+				&CLEVER_ARG_STR(size-3),dlerror());
 			CLEVER_RETURN_BOOL(false);
 			return;
 		}
