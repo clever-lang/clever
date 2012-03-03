@@ -75,6 +75,9 @@ void VM::run(size_t start, VMMode mode) {
 	end_current_execution();
 }
 
+/**
+ * Runs an specific function with the supplied arguments
+ */
 void VM::run(const Function* func, const ValueVector* args) {
 	clever_assert_not_null(func);
 
@@ -83,7 +86,9 @@ void VM::run(const Function* func, const ValueVector* args) {
 	size_t last_op = s_opcodes->size();
 	size_t start = func->getOffset() + 1;
 
-	update_vars(func->getScope(), func->getArgs(), args);
+	if (args) {
+		update_vars(func->getScope(), func->getArgs(), args);
+	}
 
 	for (size_t next_op = start; next_op < last_op && s_var->running; ++next_op) {
 		const Opcode& opcode = *(*s_opcodes)[next_op];
@@ -117,6 +122,8 @@ VM::~VM() {
  */
 void VM::update_vars(Scope* scope, const FunctionArgs& fargs,
 	const ValueVector* args) {
+	clever_assert_not_null(args);
+
 	ValueVector* vec = new ValueVector;
 	ValueVector* vec_copy = new ValueVector;
 	ValueVector* vec_curr = NULL;
