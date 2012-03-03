@@ -73,6 +73,7 @@ CLEVER_METHOD(FunctionType::call) {
 	
 	VM::run(func, args);
 	
+	// If ReturnType isn't Void
 	if (CLEVER_THIS_ARG(0)) {
 		retval->copy(VM::getLastReturnValue());
 	}

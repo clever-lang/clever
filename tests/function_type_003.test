@@ -1,0 +1,14 @@
+Testing Function type as function argument
+==CODE==
+import std.io;
+
+String operation(Int a, Double b, Function<String, Int, Double> callback)
+{
+	return "ok: " + callback.call(a, b);
+}
+
+Auto call = String(Int a, Double b) { return (a + sqrt(b)).toString(); }
+
+println(operation(10, 3.14, call));
+
+==RESULT==
