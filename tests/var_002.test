@@ -12,7 +12,7 @@ f();
 println(i);
 
 Int z(Int z) {
-	++z;
+	return ++z;
 }
 
 f();

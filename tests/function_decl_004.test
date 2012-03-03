@@ -1,0 +1,19 @@
+Testing a function that returns correctly
+==CODE==
+import std.io;
+
+Int f(Int x) {
+	if (x == 2) {
+		return 3;
+	}
+	else if (x == 3) {
+		return 5;
+	}
+	else {
+		return 0;
+	}
+}
+
+println(f(3));
+==RESULT==
+5

@@ -671,8 +671,12 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 AST_VISITOR(TypeChecker, IfExpr) {
 	expr->getCondition()->acceptVisitor(*this);
 
+	bool if_has_return = false;
+	bool else_has_return = false;
+
 	if (EXPECTED(expr->hasBlock())) {
 		expr->getBlock()->acceptVisitor(*this);
+		if_has_return = expr->getBlock()->hasReturn();
 	}
 
 	if (expr->hasElseIf()) {
@@ -693,6 +697,13 @@ AST_VISITOR(TypeChecker, IfExpr) {
 
 	if (expr->hasElseBlock()) {
 		expr->getElse()->acceptVisitor(*this);
+		else_has_return = expr->getElse()->hasReturn();
+	}
+	
+	// If the IfStmt AND the ElseStmt has return, we
+	// are sure that that it inconditionally returns
+	if (if_has_return && else_has_return) {
+		expr->setReturn();
 	}
 }
 
@@ -710,6 +721,11 @@ AST_VISITOR(TypeChecker, BlockNode) {
 	// Iterates over statements inside the block
 	while (EXPECTED(it != end)) {
 		(*it)->acceptVisitor(*this);
+
+		if ((*it)->hasReturn()) {
+			expr->setReturn();
+		}
+
 		++it;
 	}
 
@@ -727,6 +743,11 @@ AST_VISITOR(TypeChecker, UnscopedBlockNode) {
 	// Iterates over statements inside the block
 	while (EXPECTED(it != end)) {
 		(*it)->acceptVisitor(*this);
+		
+		if ((*it)->hasReturn()) {
+			expr->setReturn();
+		}
+		
 		++it;
 	}
 
@@ -758,6 +779,10 @@ AST_VISITOR(TypeChecker, WhileExpr) {
 
 	if (EXPECTED(expr->hasBlock())) {
 		expr->getBlock()->acceptVisitor(*this);
+		
+		if (expr->getBlock()->hasReturn()) {
+			expr->setReturn();
+		}
 	}
 }
 
@@ -781,6 +806,10 @@ AST_VISITOR(TypeChecker, ForExpr) {
 
 	if (EXPECTED(expr->hasBlock())) {
 		expr->getBlock()->acceptVisitor(*this);
+		
+		if (expr->getBlock()->hasReturn()) {
+			expr->setReturn();
+		}
 	}
 
 	if (EXPECTED(expr->getIncrement())) {
@@ -961,7 +990,7 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 	Function* user_func = new Function(name->str());
 	Identifier* return_type = expr->getReturnValue();
 	ArgumentDeclList* args = expr->getArgs();
-
+	
 	// Mark the function as user defined function
 	user_func->setUserDefined();
 
@@ -1011,6 +1040,12 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 	m_funcs.push(user_func);
 
 	expr->getBlock()->acceptVisitor(*this);
+	
+	if (user_func->getReturnType() && expr->getBlock()->hasReturn() == false) {
+		Compiler::errorf(expr->getLocation(), "Function `%S' must return "
+			"a value of type `%S', and it may not return", 
+			name, user_func->getReturnType()->getName());
+	}
 
 	m_funcs.pop();
 
@@ -1078,7 +1113,7 @@ AST_VISITOR(TypeChecker, ReturnStmt) {
 	if (UNEXPECTED(m_funcs.empty())) {
 		return;
 	}
-
+	
 	const Function* func = m_funcs.top();
 
 	_check_function_return(func, expr->getExprValue(), func->getReturnType(),

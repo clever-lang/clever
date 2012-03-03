@@ -169,6 +169,8 @@ public:
 	virtual ASTNode* acceptTransformer(ASTTransformer& transformer) { return this; }
 
 	virtual NumberLiteral* asNumberLiteral() { return NULL; }
+	virtual bool hasBlock() const { return false; }
+	virtual bool hasReturn() const { return false; }
 
 protected:
 	NodeList* m_nodes;
@@ -345,7 +347,7 @@ private:
 class BlockNode : public ASTNode {
 public:
 	BlockNode() :
-		m_scope(NULL) {
+		m_scope(NULL), m_has_return(false) {
 		m_nodes = new NodeList;
 	}
 
@@ -369,8 +371,12 @@ public:
 	void acceptVisitor(ASTVisitor& visitor) {
 		visitor.visit(this);
 	}
+	
+	bool hasReturn() const { return m_has_return; }
+	void setReturn() { m_has_return = true; }
 private:
 	Scope* m_scope;
+	bool m_has_return;
 	DISALLOW_COPY_AND_ASSIGN(BlockNode);
 };
 
@@ -379,7 +385,7 @@ public:
 	UnscopedBlockNode() {}
 
 	explicit UnscopedBlockNode(Identifier* alias, BlockNode* block)
-		: m_alias(alias), m_block(block) {
+		: m_alias(alias), m_block(block), m_has_return(false) {
 		CLEVER_SAFE_ADDREF(m_alias);
 		CLEVER_ADDREF(m_block);
 	}
@@ -403,16 +409,24 @@ public:
 	void acceptVisitor(ASTVisitor& visitor) {
 		visitor.visit(this);
 	}
+	
+	bool hasBlock() const {
+		return true;
+	}
+	
+	bool hasReturn() const { return m_has_return; }
+	void setReturn() { m_has_return = true; }
 private:
 	Identifier* m_alias;
 	BlockNode* m_block;
+	bool m_has_return;
 	DISALLOW_COPY_AND_ASSIGN(UnscopedBlockNode);
 };
 
 class IfExpr : public ASTNode {
 public:
 	IfExpr(ASTNode* condition, ASTNode* block)
-		: m_condition(condition), m_block(block), m_else(NULL) {
+		: m_condition(condition), m_block(block), m_else(NULL), m_has_return(false) {
 		CLEVER_ADDREF(m_condition);
 		CLEVER_SAFE_ADDREF(m_block);
 		m_nodes = new NodeList;
@@ -426,9 +440,11 @@ public:
 		delete m_nodes;
 	}
 
-	bool hasBlock() { return m_block != NULL; }
-	bool hasElseBlock() { return m_else != NULL; }
-	bool hasElseIf() { return m_nodes != NULL && m_nodes->size() != 0; }
+	bool hasBlock() const { return m_block != NULL; }
+	bool hasElseBlock() const { return m_else != NULL; }
+	bool hasElseIf() const { return m_nodes != NULL && m_nodes->size() != 0; }
+	bool hasReturn() const { return m_has_return; }
+	void setReturn() { m_has_return = true; }
 
 	ASTNode* getBlock() { return m_block; }
 	ASTNode* getCondition() { return m_condition; }
@@ -448,14 +464,15 @@ private:
 	ASTNode* m_condition;
 	ASTNode* m_block;
 	ASTNode* m_else;
-
+	bool m_has_return;
+	
 	DISALLOW_COPY_AND_ASSIGN(IfExpr);
 };
 
 class ElseIfExpr : public ASTNode {
 public:
 	ElseIfExpr(ASTNode* condition, ASTNode* block)
-		: m_condition(condition), m_block(block) {
+		: m_condition(condition), m_block(block), m_has_return(false) {
 		CLEVER_ADDREF(m_condition);
 		CLEVER_SAFE_ADDREF(m_block);
 	}
@@ -469,9 +486,12 @@ public:
 
 	ASTNode* getCondition() { return m_condition; }
 	ASTNode* getBlock() { return m_block; }
+	bool hasReturn() const { return m_has_return; }
+	void setReturn() { m_has_return = true; }
 private:
 	ASTNode* m_condition;
 	ASTNode* m_block;
+	bool m_has_return;
 
 	DISALLOW_COPY_AND_ASSIGN(ElseIfExpr);
 };
@@ -479,7 +499,7 @@ private:
 class WhileExpr : public ASTNode {
 public:
 	WhileExpr(ASTNode* condition, ASTNode* block)
-		: m_condition(condition), m_block(block) {
+		: m_condition(condition), m_block(block), m_has_return(false) {
 		CLEVER_ADDREF(m_condition);
 		CLEVER_SAFE_ADDREF(m_block);
 	}
@@ -497,9 +517,13 @@ public:
 	void acceptVisitor(ASTVisitor& visitor) {
 		visitor.visit(this);
 	}
+	
+	bool hasReturn() const { return m_has_return; }
+	void setReturn() { m_has_return = true; }
 private:
 	ASTNode* m_condition;
 	ASTNode* m_block;
+	bool m_has_return;
 
 	DISALLOW_COPY_AND_ASSIGN(WhileExpr);
 };
@@ -507,14 +531,16 @@ private:
 class ForExpr : public ASTNode {
 public:
 	ForExpr(ASTNode* var_decl, ASTNode* ident, ASTNode* block)
-		: m_var_decl(var_decl), m_ident(ident), m_condition(NULL), m_increment(NULL), m_block(block) {
+		: m_var_decl(var_decl), m_ident(ident), m_condition(NULL),
+		m_increment(NULL), m_block(block), m_has_return(false) {
 		CLEVER_ADDREF(m_var_decl);
 		CLEVER_ADDREF(m_ident);
 		CLEVER_SAFE_ADDREF(m_block);
 	}
 
 	ForExpr(ASTNode* var_decl, ASTNode* condition, ASTNode* increment, ASTNode* block)
-		: m_var_decl(var_decl), m_ident(NULL), m_condition(condition), m_increment(increment), m_block(block) {
+		: m_var_decl(var_decl), m_ident(NULL), m_condition(condition), 
+		m_increment(increment), m_block(block), m_has_return(false) {
 		CLEVER_SAFE_ADDREF(m_var_decl);
 		CLEVER_SAFE_ADDREF(m_condition);
 		CLEVER_SAFE_ADDREF(m_increment);
@@ -541,12 +567,15 @@ public:
 		visitor.visit(this);
 	}
 
+	bool hasReturn() const { return m_has_return; }
+	void setReturn() { m_has_return = true; }
 private:
 	ASTNode* m_var_decl;
 	ASTNode* m_ident;
 	ASTNode* m_condition;
 	ASTNode* m_increment;
 	ASTNode* m_block;
+	bool m_has_return;
 
 	DISALLOW_COPY_AND_ASSIGN(ForExpr);
 };
@@ -1241,6 +1270,10 @@ public:
 	}
 
 	ASTNode* getModifier() { return m_modifier; }
+	
+	bool hasBlock() const {
+		return true;
+	}
 protected:
 	ASTNode* m_modifier;
 };
@@ -1557,6 +1590,8 @@ public:
 		}
 		visitor.visit(this);
 	}
+	
+	virtual bool hasReturn() const { return true; }
 private:
 	ASTNode* m_expr;
 

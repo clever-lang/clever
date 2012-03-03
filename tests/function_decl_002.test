@@ -1,0 +1,10 @@
+[FATAL] Testing a function which may not return a value #1
+==CODE==
+Int f(Int x) {
+	if (x == 2) {
+		return 3;
+	}
+}
+
+==RESULT==
+Compile error: Function `f' must return a value of type `Int', and it may not return on line \d+

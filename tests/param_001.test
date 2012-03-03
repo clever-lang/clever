@@ -1,6 +1,6 @@
 [FATAL] Testing param type checking
 ==CODE==
-Int f(Int x, Double z) {}
+Int f(Int x, Double z) { return x; }
 
 f(1,"");
 ==RESULT==
