@@ -1,0 +1,10 @@
+Testing method call in expressions
+==CODE==
+import std.io;
+
+println((3 + 5).toString());
+println(('clever ' + 'programming       ').trim() + ' language');
+
+==RESULT==
+8
+clever programming language
