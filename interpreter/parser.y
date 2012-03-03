@@ -425,7 +425,7 @@ method_call:
 	|	IDENT '[' expr ']' '.' IDENT '(' arg_list_opt ')' { $<method_call>$ = new ast::MethodCall(new ast::Subscript($1, $3), $6, $8); $<method_call>$->setLocation(yylloc); }
 			chaining_method_call               { $$ = $11; }
 	|	expr '.' IDENT '(' arg_list_opt ')'	   { $<method_call>$ = new ast::MethodCall($1, $3, $5); $<method_call>$->setLocation(yylloc); }
-			chaining_method_call               { $$ = $8; }
+			chaining_method_call               { $$ = $8	; }
 ;
 
 template_args:

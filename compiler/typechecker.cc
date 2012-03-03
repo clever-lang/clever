@@ -406,6 +406,29 @@ AST_VISITOR(TypeChecker, Identifier) {
 		Compiler::errorf(expr->getLocation(), "Variable `%S' not found!",
 			expr->getName());
 	}
+	
+	if (ident->isCallable()) {
+		const Function* func = static_cast<CallableValue*>(ident)->getFunction();
+		const FunctionArgs& args = func->getArgs();
+		
+		TypeVector tv;
+		tv.push_back(func->getReturnType());
+
+		for (size_t i = 0, sz = args.size(); i < sz; ++i) {
+			tv.push_back(args[i].second);
+		}
+
+		const TemplatedType* const virtual_func =
+			static_cast<const TemplatedType*>(CLEVER_TYPE("Function"));
+
+		const Type* func_type = virtual_func->getTemplatedType(tv);
+		
+		FunctionValue* fv = static_cast<FunctionValue*>(func_type->allocateValue());
+		fv->setFunction(func);
+		
+		ident->setTypePtr(func_type);
+		ident->setDataValue(fv);
+	}
 
 	// Associate the Value* of the symbol to the identifier
 	expr->setValue(ident);

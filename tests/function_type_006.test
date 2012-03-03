@@ -1,0 +1,23 @@
+Testing using a function as a literal
+==CODE==
+import std.io;
+
+Int cb(String text) {
+	println("Fooooo: " + text);
+	return 2;
+}
+
+println(cb);
+
+Map<String, Function<Int, String>> foo;
+foo.insert("opa", cb);
+println(foo.toString());
+
+Auto f = cb;
+println(f.call("baaar"));
+
+==RESULT==
+Int cb\(String\);
+\[opa => Int cb\(String\);\]
+Fooooo: baaar
+2
