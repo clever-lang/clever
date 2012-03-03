@@ -148,7 +148,7 @@ void Compiler::loadNativeTypes() {
 void Compiler::buildIR() {
 	m_cgvisitor.init();
 
-	// Make the visitor traverse accross the AST tree
+	// Make the visitor traverse across the AST tree
 	m_ast->acceptVisitor(m_tcvisitor);
 	m_ast->acceptVisitor(m_cgvisitor);
 

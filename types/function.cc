@@ -38,7 +38,7 @@ CLEVER_METHOD(FunctionType::do_assign) {
 }
 
 /**
- * String Function<>::toString()
+ * ReturnType Function<>::toString()
  */
 CLEVER_METHOD(FunctionType::toString) {
 	FunctionValue* fv = CLEVER_GET_VALUE(FunctionValue*, value);
@@ -64,6 +64,23 @@ CLEVER_METHOD(FunctionType::toString) {
 	CLEVER_RETURN_STR(CSTRING(str));
 }
 
+/**
+ * String Function<>::call()
+ */
+CLEVER_METHOD(FunctionType::call) {
+	FunctionValue* fv = CLEVER_GET_VALUE(FunctionValue*, value);
+	const Function* func = fv->getFunction();
+	
+	VM::run(func, args);
+	
+	if (CLEVER_THIS_ARG(0)) {
+		retval->copy(VM::getLastReturnValue());
+	}
+	else {
+		retval->setType(CLEVER_VOID);
+	}
+}
+
 
 /**
  * Function type initializator
@@ -72,9 +89,11 @@ void FunctionType::init() {
 	/**
 	 * Check if we are in our "virtual" Function type
 	 */
-	if (CLEVER_TPL_ARG(0) == NULL) {
+	if (getNumArgs() == 0) {
 		return;
 	}
+
+	const Type* return_t = CLEVER_TPL_ARG(0);
 
 	addMethod(
 		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&FunctionType::do_assign, this, false))
@@ -82,6 +101,14 @@ void FunctionType::init() {
 	);
 	
 	addMethod(new Method("toString", (MethodPtr)&FunctionType::toString, CLEVER_STR, true));
+	
+	Method* method = new Method("call", (MethodPtr)&FunctionType::call, return_t, true);
+	
+	for (size_t i = 1, sz = getNumArgs(); i < sz; ++i) {
+		method->addArg("arg", CLEVER_TPL_ARG(i));
+	}
+	
+	addMethod(method);
 }
 
 DataValue* FunctionType::allocateValue() const {

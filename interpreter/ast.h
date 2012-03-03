@@ -1085,7 +1085,7 @@ public:
 
 	void setValue(CallableValue* value) { m_value = value; }
 
-	CallableValue* getFunc(void) { return m_value; }
+	CallableValue* getFunc() { return m_value; }
 
 	void acceptVisitor(ASTVisitor& visitor) {
 		visitor.visit(this);
