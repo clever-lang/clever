@@ -169,7 +169,7 @@ CLEVER_METHOD(ReflectionFunction::call) {
 		func->call(args, &result);
 
 		if (func->getReturnType()) {
-			CLEVER_RETURN_STR(&result.toString());
+			CLEVER_RETURN_STR(CSTRINGT(result.toString()));
 		} else {
 			CLEVER_RETURN_EMPTY_STR();
 		}
@@ -179,7 +179,7 @@ CLEVER_METHOD(ReflectionFunction::call) {
 		const Value* val = VM::getLastReturnValue();
 
 		if (val) {
-			CLEVER_RETURN_STR(&const_cast<Value*>(val)->toString());
+			CLEVER_RETURN_STR(CSTRINGT(const_cast<Value*>(val)->toString()));
 		} else {
 			CLEVER_RETURN_EMPTY_STR();
 		}

@@ -262,7 +262,7 @@ public:
 		m_is_const = constness;
 	}
 
-	virtual const CString& toString();
+	virtual const std::string toString();
 private:
 	int m_type;
 	const Type* m_type_ptr;

@@ -114,21 +114,23 @@ void Value::copy(const Value* const value) {
  * Peforms a deep copy of a Value pointer
  */
 void Value::deepCopy(const Value* const value) {
-	clever_assert_not_null(value);
-
-	std::memcpy(&m_data, value->getData(), sizeof(ValueData));
-	m_type_ptr = value->getTypePtr();
-	m_type = value->getType();
-
 	if (isUserValue()) {
+		clever_assert_not_null(value);
+
+		std::memcpy(&m_data, value->getData(), sizeof(ValueData));
+		m_type_ptr = value->getTypePtr();
+		m_type = value->getType();
+
 		m_data.dv_value = m_type_ptr->clone(value);
+	} else {
+		copy(value);
 	}
 }
 
 /**
  * Returns an string representing the actual value
  */
-const CString& Value::toString() {
+const std::string Value::toString() {
 	if (isPrimitive()) {
 		std::ostringstream str;
 
@@ -144,23 +146,14 @@ const CString& Value::toString() {
 			str << "0x" << std::hex << uint32_t(getByte());
 		}
 
-		return *CSTRING(str.str());
+		return str.str();
 	} else if (getTypePtr() == CLEVER_VOID) {
 		return *CACHE_PTR(CLEVER_VOID_STR, "Void");
 	} else {
 		Value ret;
 		CLEVER_INTERNAL_MCALL(this, "toString", NULL, NULL, &ret);
-		const CString& str = ret.getString();
 
-		/**
-		 * If a refcounted CString was returned, we need to increase the refe-
-		 * rence because the local variable `ret' will decrease its reference
-		 */
-		if (!str.isInterned()) {
-			const_cast<CString*>(&ret.getString())->addRef();
-		}
-
-		return str;
+		return ret.getString().str();
 	}
 }
 
