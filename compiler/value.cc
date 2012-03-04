@@ -29,22 +29,21 @@
 
 namespace clever {
 
+/**
+ * Initializes a Value pointer according to its Type pointer
+ */
 void Value::initialize() {
 	clever_assert_not_null(getTypePtr());
 
-	if (getTypePtr() == CLEVER_INT) {
+	if (isInteger()) {
 		setInteger(0);
-	}
-	else if (getTypePtr() == CLEVER_DOUBLE) {
+	} else if (isDouble()) {
 		setDouble(0.0);
-	}
-	else if (getTypePtr() == CLEVER_BOOL) {
+	} else if (isBoolean()) {
 		setBoolean(false);
-	}
-	else if (getTypePtr() == CLEVER_STR) {
+	} else if (isString()) {
 		setString(CACHE_PTR(CLEVER_EMPTY_STR, ""));
-	}
-	else if (getTypePtr() == CLEVER_BYTE) {
+	} else if (getTypePtr() == CLEVER_BYTE) {
 		setByte(0);
 	} else {
 		/**
@@ -62,6 +61,9 @@ void Value::initialize() {
 	}
 }
 
+/**
+ * Returns a boolean value of a Value pointer
+ */
 bool Value::getValueAsBool() const {
 	clever_assert_not_null(m_type_ptr);
 
@@ -80,6 +82,9 @@ bool Value::getValueAsBool() const {
 	return false;
 }
 
+/**
+ * Performs a copy of a Value pointer
+ */
 void Value::copy(const Value* const value) {
 	clever_assert_not_null(value);
 
@@ -105,6 +110,9 @@ void Value::copy(const Value* const value) {
 	}
 }
 
+/**
+ * Peforms a deep copy of a Value pointer
+ */
 void Value::deepCopy(const Value* const value) {
 	clever_assert_not_null(value);
 
@@ -117,6 +125,9 @@ void Value::deepCopy(const Value* const value) {
 	}
 }
 
+/**
+ * Returns an string representing the actual value
+ */
 const CString& Value::toString() {
 	if (isPrimitive()) {
 		std::ostringstream str;
