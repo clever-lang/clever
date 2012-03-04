@@ -236,167 +236,167 @@ CLEVER_METHOD(Integer::pos_dec) {
 
 void Integer::init() {
 	addMethod(
-		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&Integer::do_assign, CLEVER_VOID, false))
+		(new Method(CLEVER_OPERATOR_ASSIGN, &Integer::do_assign, CLEVER_VOID, false))
 			->addArg("rvalue", CLEVER_INT)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&Integer::do_assign, CLEVER_VOID, false))
+		(new Method(CLEVER_OPERATOR_ASSIGN, &Integer::do_assign, CLEVER_VOID, false))
 			->addArg("rvalue", CLEVER_DOUBLE)
 	);
 
 	addMethod(
-		new Method(CLEVER_OPERATOR_PRE_INC, (MethodPtr)&Integer::pre_inc, CLEVER_INT, false)
+		new Method(CLEVER_OPERATOR_PRE_INC, &Integer::pre_inc, CLEVER_INT, false)
 	);
 
 	addMethod(
-		new Method(CLEVER_OPERATOR_POS_INC, (MethodPtr)&Integer::pos_inc, CLEVER_INT, false)
+		new Method(CLEVER_OPERATOR_POS_INC, &Integer::pos_inc, CLEVER_INT, false)
 	);
 
 	addMethod(
-		new Method(CLEVER_OPERATOR_PRE_DEC, (MethodPtr)&Integer::pre_dec, CLEVER_INT, false)
+		new Method(CLEVER_OPERATOR_PRE_DEC, &Integer::pre_dec, CLEVER_INT, false)
 	);
 
 	addMethod(
-		new Method(CLEVER_OPERATOR_POS_DEC, (MethodPtr)&Integer::pos_dec, CLEVER_INT, false)
+		new Method(CLEVER_OPERATOR_POS_DEC, &Integer::pos_dec, CLEVER_INT, false)
 	);
 
 	addMethod(
-		new Method(CLEVER_OPERATOR_NOT, (MethodPtr)&Integer::logical_not, CLEVER_INT)
+		new Method(CLEVER_OPERATOR_NOT, &Integer::logical_not, CLEVER_INT)
 	);
 
 	addMethod(
-		new Method(CLEVER_OPERATOR_BW_NOT, (MethodPtr)&Integer::bw_not, CLEVER_INT)
+		new Method(CLEVER_OPERATOR_BW_NOT, &Integer::bw_not, CLEVER_INT)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_EQUAL, (MethodPtr)&Integer::equal, CLEVER_BOOL))
+		(new Method(CLEVER_OPERATOR_EQUAL, &Integer::equal, CLEVER_BOOL))
 			->addArg("arg1", CLEVER_INT)
 			->addArg("arg2", CLEVER_INT)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_NE, (MethodPtr)&Integer::not_equal, CLEVER_BOOL))
+		(new Method(CLEVER_OPERATOR_NE, &Integer::not_equal, CLEVER_BOOL))
 			->addArg("arg1", CLEVER_INT)
 			->addArg("arg2", CLEVER_INT)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_GREATER, (MethodPtr)&Integer::greater, CLEVER_BOOL))
+		(new Method(CLEVER_OPERATOR_GREATER, &Integer::greater, CLEVER_BOOL))
 			->addArg("arg1", CLEVER_INT)
 			->addArg("arg2", CLEVER_INT)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_LESS, (MethodPtr)&Integer::less, CLEVER_BOOL))
+		(new Method(CLEVER_OPERATOR_LESS, &Integer::less, CLEVER_BOOL))
 			->addArg("arg1", CLEVER_INT)
 			->addArg("arg2", CLEVER_INT)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_GE, (MethodPtr)&Integer::greater_equal, CLEVER_BOOL))
+		(new Method(CLEVER_OPERATOR_GE, &Integer::greater_equal, CLEVER_BOOL))
 			->addArg("arg1", CLEVER_INT)
 			->addArg("arg2", CLEVER_INT)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_LE, (MethodPtr)&Integer::less_equal, CLEVER_BOOL))
+		(new Method(CLEVER_OPERATOR_LE, &Integer::less_equal, CLEVER_BOOL))
 			->addArg("arg1", CLEVER_INT)
 			->addArg("arg2", CLEVER_INT)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_PLUS, (MethodPtr)&Integer::plus, CLEVER_INT))
+		(new Method(CLEVER_OPERATOR_PLUS, &Integer::plus, CLEVER_INT))
 			->addArg("arg1", CLEVER_INT)
 			->addArg("arg2", CLEVER_INT)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_PLUS, (MethodPtr)&Integer::plus, CLEVER_DOUBLE))
+		(new Method(CLEVER_OPERATOR_PLUS, &Integer::plus, CLEVER_DOUBLE))
 			->addArg("arg1", CLEVER_INT)
 			->addArg("arg2", CLEVER_DOUBLE)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_MINUS, (MethodPtr)&Integer::minus, CLEVER_INT))
+		(new Method(CLEVER_OPERATOR_MINUS, &Integer::minus, CLEVER_INT))
 			->addArg("arg1", CLEVER_INT)
 			->addArg("arg2", CLEVER_INT)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_MINUS, (MethodPtr)&Integer::minus, CLEVER_DOUBLE))
+		(new Method(CLEVER_OPERATOR_MINUS, &Integer::minus, CLEVER_DOUBLE))
 			->addArg("arg1", CLEVER_INT)
 			->addArg("arg2", CLEVER_DOUBLE)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_MULT, (MethodPtr)&Integer::mult, CLEVER_INT))
+		(new Method(CLEVER_OPERATOR_MULT, &Integer::mult, CLEVER_INT))
 			->addArg("arg1", CLEVER_INT)
 			->addArg("arg2", CLEVER_INT)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_MULT, (MethodPtr)&Integer::mult, CLEVER_DOUBLE))
+		(new Method(CLEVER_OPERATOR_MULT, &Integer::mult, CLEVER_DOUBLE))
 			->addArg("arg1", CLEVER_INT)
 			->addArg("arg2", CLEVER_DOUBLE)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_DIV, (MethodPtr)&Integer::div, CLEVER_INT))
+		(new Method(CLEVER_OPERATOR_DIV, &Integer::div, CLEVER_INT))
 			->addArg("arg1", CLEVER_INT)
 			->addArg("arg2", CLEVER_INT)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_DIV, (MethodPtr)&Integer::div, CLEVER_DOUBLE))
+		(new Method(CLEVER_OPERATOR_DIV, &Integer::div, CLEVER_DOUBLE))
 			->addArg("arg1", CLEVER_INT)
 			->addArg("arg2", CLEVER_DOUBLE)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_MOD, (MethodPtr)&Integer::mod, CLEVER_INT))
+		(new Method(CLEVER_OPERATOR_MOD, &Integer::mod, CLEVER_INT))
 			->addArg("arg1", CLEVER_INT)
 			->addArg("arg2", CLEVER_INT)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_BW_AND, (MethodPtr)&Integer::bw_and, CLEVER_INT))
+		(new Method(CLEVER_OPERATOR_BW_AND, &Integer::bw_and, CLEVER_INT))
 			->addArg("arg1", CLEVER_INT)
 			->addArg("arg2", CLEVER_INT)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_BW_XOR, (MethodPtr)&Integer::bw_xor, CLEVER_INT))
+		(new Method(CLEVER_OPERATOR_BW_XOR, &Integer::bw_xor, CLEVER_INT))
 			->addArg("arg1", CLEVER_INT)
 			->addArg("arg2", CLEVER_INT)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_BW_OR, (MethodPtr)&Integer::bw_or, CLEVER_INT))
+		(new Method(CLEVER_OPERATOR_BW_OR, &Integer::bw_or, CLEVER_INT))
 			->addArg("arg1", CLEVER_INT)
 			->addArg("arg2", CLEVER_INT)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_LSHIFT, (MethodPtr)&Integer::lshift, CLEVER_INT))
+		(new Method(CLEVER_OPERATOR_LSHIFT, &Integer::lshift, CLEVER_INT))
 			->addArg("arg1", CLEVER_INT)
 			->addArg("arg2", CLEVER_INT)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_RSHIFT, (MethodPtr)&Integer::rshift, CLEVER_INT))
+		(new Method(CLEVER_OPERATOR_RSHIFT, &Integer::rshift, CLEVER_INT))
 			->addArg("arg1", CLEVER_INT)
 			->addArg("arg2", CLEVER_INT)
 	);
 
-	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Integer::constructor, CLEVER_INT));
+	addMethod(new Method(CLEVER_CTOR_NAME, &Integer::constructor, CLEVER_INT));
 
 	addMethod(
-		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Integer::constructor, CLEVER_INT))
+		(new Method(CLEVER_CTOR_NAME, &Integer::constructor, CLEVER_INT))
 			->addArg("value", CLEVER_INT)
 	);
 
-	addMethod(new Method("toString", (MethodPtr)&Integer::toString, CLEVER_STR));
+	addMethod(new Method("toString", &Integer::toString, CLEVER_STR));
 }
 
 DataValue* Integer::allocateValue() const {

@@ -60,13 +60,14 @@ enum {
 	CLEVER_OP_POS_DEC,
 	CLEVER_CTOR,
 	CLEVER_EMPTY_STR,
+	CLEVER_VOID_STR,
 	NUM_CACHED_PTRS
 };
 
 extern const CString* g_cache_ptrs[NUM_CACHED_PTRS];
 
 #define CACHED_PTR(x)   g_cache_ptrs[x]
-#define CACHE_PTR(x, y) g_cache_ptrs[x] ? CACHED_PTR(x) : g_cache_ptrs[x] = CSTRING(y)
+#define CACHE_PTR(x, y) (g_cache_ptrs[x] ? CACHED_PTR(x) : g_cache_ptrs[x] = CSTRING(y))
 
 } // clever
 

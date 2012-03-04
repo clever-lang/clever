@@ -109,53 +109,53 @@ CLEVER_METHOD(Bool::bw_not) {
 
 void Bool::init() {
 	addMethod(
-		new Method(CLEVER_OPERATOR_NOT, (MethodPtr)&Bool::logical_not, CLEVER_BOOL)
+		new Method(CLEVER_OPERATOR_NOT, &Bool::logical_not, CLEVER_BOOL)
 	);
 
 	addMethod(
-		new Method(CLEVER_OPERATOR_BW_NOT, (MethodPtr)&Bool::bw_not, CLEVER_BOOL)
+		new Method(CLEVER_OPERATOR_BW_NOT, &Bool::bw_not, CLEVER_BOOL)
 	);
 
-	addMethod(new Method("toString", (MethodPtr)&Bool::toString, CLEVER_STR));
+	addMethod(new Method("toString", &Bool::toString, CLEVER_STR));
 
-	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Bool::constructor, CLEVER_BOOL));
+	addMethod(new Method(CLEVER_CTOR_NAME, &Bool::constructor, CLEVER_BOOL));
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&Bool::do_assign, CLEVER_VOID))
+		(new Method(CLEVER_OPERATOR_ASSIGN, &Bool::do_assign, CLEVER_VOID))
 			->addArg("rvalue", CLEVER_BOOL)
 	);
 
 	addMethod(
-		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Bool::constructor, CLEVER_BOOL))
+		(new Method(CLEVER_CTOR_NAME, &Bool::constructor, CLEVER_BOOL))
 			->addArg("value", CLEVER_BOOL)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_EQUAL, (MethodPtr)&Bool::equal, CLEVER_BOOL))
+		(new Method(CLEVER_OPERATOR_EQUAL, &Bool::equal, CLEVER_BOOL))
 			->addArg("arg1", CLEVER_BOOL)
 			->addArg("arg2", CLEVER_BOOL)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_NE, (MethodPtr)&Bool::not_equal, CLEVER_BOOL))
+		(new Method(CLEVER_OPERATOR_NE, &Bool::not_equal, CLEVER_BOOL))
 			->addArg("arg1", CLEVER_BOOL)
 			->addArg("arg2", CLEVER_BOOL)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_BW_AND, (MethodPtr)&Bool::bw_and, CLEVER_BOOL))
+		(new Method(CLEVER_OPERATOR_BW_AND, &Bool::bw_and, CLEVER_BOOL))
 			->addArg("arg1", CLEVER_BOOL)
 			->addArg("arg2", CLEVER_BOOL)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_BW_XOR, (MethodPtr)&Bool::bw_xor, CLEVER_BOOL))
+		(new Method(CLEVER_OPERATOR_BW_XOR, &Bool::bw_xor, CLEVER_BOOL))
 			->addArg("arg1", CLEVER_BOOL)
 			->addArg("arg2", CLEVER_BOOL)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_BW_OR, (MethodPtr)&Bool::bw_or, CLEVER_BOOL))
+		(new Method(CLEVER_OPERATOR_BW_OR, &Bool::bw_or, CLEVER_BOOL))
 			->addArg("arg1", CLEVER_BOOL)
 			->addArg("arg2", CLEVER_BOOL)
 	);

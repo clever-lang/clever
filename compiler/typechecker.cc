@@ -485,6 +485,7 @@ AST_VISITOR(TypeChecker, UnaryExpr) {
 		case ast::POS_DEC:
 			method_name = CACHE_PTR(CLEVER_OP_POS_DEC, CLEVER_OPERATOR_POS_DEC);
 			break;
+		EMPTY_SWITCH_DEFAULT_CASE();
 	}
 
 	clever_assert_not_null(method_name);
@@ -573,6 +574,7 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 		case AND:
 			expr->setResult(new Value(CLEVER_BOOL));
 			return;
+		EMPTY_SWITCH_DEFAULT_CASE();
 	}
 
 	clever_assert_not_null(method_name);
@@ -960,6 +962,11 @@ AST_VISITOR(TypeChecker, MethodCall) {
 		const CString* const name = expr->getMethodName();
 		ValueVector* arg_values = NULL;
 
+		if (UNEXPECTED(type == NULL)) {
+			Compiler::errorf(expr->getLocation(), "Type `%S' not found",
+				type_name->getName());
+		}
+
 		clever_assert_not_null(type);
 
 		ArgumentList* args = expr->getArgs();
@@ -1048,7 +1055,7 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 	if (EXPECTED(return_type != NULL)) {
 		const Type* rtype = NULL;
 
-		if (return_type->getName() != CSTRING("Void")) {
+		if (return_type->getName() != CACHE_PTR(CLEVER_VOID_STR, "Void")) {
 			rtype = _evaluate_type(expr->getLocation(), return_type);
 		}
 		user_func->setReturnType(rtype);
@@ -1108,8 +1115,8 @@ AST_VISITOR(TypeChecker, ExtFuncDeclaration) {
 
 	const Type* rtype = CLEVER_VOID;
 
-	if (return_type->getName() != CSTRING("Void")) {
-			rtype = _evaluate_type(expr->getLocation(), return_type);
+	if (return_type->getName() != CACHE_PTR(CLEVER_VOID_STR, "Void")) {
+		rtype = _evaluate_type(expr->getLocation(), return_type);
 	}
 
 	const CString* lfname = expr->getLFName();
@@ -1119,6 +1126,10 @@ AST_VISITOR(TypeChecker, ExtFuncDeclaration) {
 	CallableValue* func = new CallableValue(name);
 	CallableValue* ext_func = static_cast<CallableValue*>(
 		m_scope->getValue(CSTRING("__call_ext_func__")));
+
+	if (ext_func == NULL) {
+		Compiler::error("Cannot use extern syntax, FFI module is disabled!");
+	}
 
 	Function* m_func;
 

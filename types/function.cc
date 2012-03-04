@@ -42,25 +42,25 @@ CLEVER_METHOD(FunctionType::do_assign) {
  */
 CLEVER_METHOD(FunctionType::toString) {
 	FunctionValue* fv = CLEVER_GET_VALUE(FunctionValue*, value);
-	
+
 	std::string str = CLEVER_THIS_ARG(0)->getName()->str();
 	str += ' ';
 	str += fv->getFunction()->getName();
 	str += "(";
-	
-	const TemplatedType* this_type = 
+
+	const TemplatedType* this_type =
 		static_cast<const TemplatedType*>(CLEVER_THIS()->getTypePtr());
-		
+
 	for (size_t i = 1, sz = this_type->getNumArgs(); i < sz; ++i) {
 		str += CLEVER_THIS_ARG(i)->getName()->str();
-		
+
 		if (i < sz - 1) {
 			str += ", ";
 		}
 	}
-	
+
 	str += ");";
-	
+
 	CLEVER_RETURN_STR(CSTRING(str));
 }
 
@@ -70,10 +70,10 @@ CLEVER_METHOD(FunctionType::toString) {
 CLEVER_METHOD(FunctionType::call) {
 	FunctionValue* fv = CLEVER_GET_VALUE(FunctionValue*, value);
 	const Function* func = fv->getFunction();
-	
+
 	if (func->isUserDefined()) {
 		VM::run(func, args);
-	
+
 		// If ReturnType isn't Void
 		if (CLEVER_THIS_ARG(0)) {
 			retval->copy(VM::getLastReturnValue());
@@ -87,13 +87,13 @@ CLEVER_METHOD(FunctionType::call) {
 	}
 	else {
 		ValueVector new_args;
-		
+
 		if (args) {
 			new_args = *args;
 		}
 
 		std::string rt = "p";
-		
+
 		if (func->getReturnType() == CLEVER_INT) rt = "i";
 		else if (func->getReturnType() == CLEVER_DOUBLE) rt = "i";
 		else if (func->getReturnType() == CLEVER_STR) rt = "s";
@@ -108,7 +108,7 @@ CLEVER_METHOD(FunctionType::call) {
 		new_args.push_back(&lib_name);
 		new_args.push_back(&ret_type);
 		new_args.push_back(&lf_name);
-		
+
 		func->call(&new_args, retval);
 	}
 }
@@ -128,18 +128,18 @@ void FunctionType::init() {
 	const Type* return_t = CLEVER_TPL_ARG(0);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&FunctionType::do_assign, this, false))
+		(new Method(CLEVER_OPERATOR_ASSIGN, &FunctionType::do_assign, this, false))
 			->addArg("rvalue", this)
 	);
-	
-	addMethod(new Method("toString", (MethodPtr)&FunctionType::toString, CLEVER_STR, true));
-	
-	Method* method = new Method("call", (MethodPtr)&FunctionType::call, return_t, true);
-	
+
+	addMethod(new Method("toString", &FunctionType::toString, CLEVER_STR, true));
+
+	Method* method = new Method("call", &FunctionType::call, return_t, true);
+
 	for (size_t i = 1, sz = getNumArgs(); i < sz; ++i) {
 		method->addArg("arg", CLEVER_TPL_ARG(i));
 	}
-	
+
 	addMethod(method);
 }
 

@@ -89,33 +89,33 @@ CLEVER_METHOD(Pair::setSecond) {
  */
 CLEVER_METHOD(Pair::equal) {
 	TypeVector tv(2, CLEVER_THIS_ARG(0));
-	
+
 	const Method* method = CLEVER_THIS_ARG(0)
 		->getMethod(CSTRING(CLEVER_OPERATOR_EQUAL), &tv);
-	
+
 	PairValue* v1 = CLEVER_GET_VALUE(PairValue*, CLEVER_ARG(0));
 	PairValue* v2 = CLEVER_GET_VALUE(PairValue*, CLEVER_ARG(1));
-	
-	
+
+
 	ValueVector vv(2);
 	vv[0] = v1->first();
 	vv[1] = v2->first();
-	
+
 	Value ret;
 	method->call(&vv, &ret, v1->first());
-	
+
 	bool is_equal = true;
 	if (ret.getBoolean()) {
 		tv[0] = tv[1] = CLEVER_THIS_ARG(1);
-		
+
 		method = CLEVER_THIS_ARG(1)->
 			getMethod(CSTRING(CLEVER_OPERATOR_EQUAL), &tv);
-			
+
 		vv[0] = v1->second();
 		vv[1] = v2->second();
-		
+
 		method->call(&vv, &ret, v1->second());
-		
+
 		is_equal = ret.getBoolean();
 	}
 	else {
@@ -149,37 +149,37 @@ void Pair::init() {
 	if (CLEVER_TPL_ARG(0) == NULL) {
 		return;
 	}
-	
+
 	const Type* const t1 = CLEVER_TPL_ARG(0);
 	const Type* const t2 = CLEVER_TPL_ARG(1);
-	
-	addMethod((new Method(CLEVER_CTOR_NAME, (MethodPtr)&Pair::constructor, this))
+
+	addMethod((new Method(CLEVER_CTOR_NAME, &Pair::constructor, this))
 		->addArg("first", t1)
 		->addArg("second", t2)
 	);
-	
-	addMethod((new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&Pair::do_assign, CLEVER_VOID))
+
+	addMethod((new Method(CLEVER_OPERATOR_ASSIGN, &Pair::do_assign, CLEVER_VOID))
 		->addArg("rhs", this)
 	);
-	
-	addMethod((new Method(CLEVER_OPERATOR_EQUAL, (MethodPtr)&Pair::equal, CLEVER_BOOL))
+
+	addMethod((new Method(CLEVER_OPERATOR_EQUAL, &Pair::equal, CLEVER_BOOL))
 		->addArg("lhs", this)
 		->addArg("rhs", this)
 	);
-	
-	addMethod(new Method("first", (MethodPtr)&Pair::first, t1));
-	
-	addMethod((new Method("setFirst", (MethodPtr)&Pair::setFirst, CLEVER_VOID))
+
+	addMethod(new Method("first", &Pair::first, t1));
+
+	addMethod((new Method("setFirst", &Pair::setFirst, CLEVER_VOID))
 		->addArg("newFirst", t1)
 	);
-	
-	addMethod(new Method("second", (MethodPtr)&Pair::second, t2));
-	
-	addMethod((new Method("setSecond", (MethodPtr)&Pair::setSecond, CLEVER_VOID))
+
+	addMethod(new Method("second", &Pair::second, t2));
+
+	addMethod((new Method("setSecond", &Pair::setSecond, CLEVER_VOID))
 		->addArg("newSecond", t2)
 	);
-	
-	addMethod(new Method("toString", (MethodPtr)&Pair::toString, CLEVER_STR));
+
+	addMethod(new Method("toString", &Pair::toString, CLEVER_STR));
 }
 
 DataValue* Pair::allocateValue() const {

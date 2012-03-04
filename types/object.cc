@@ -61,20 +61,23 @@ CLEVER_METHOD(Object::do_assign) {
 CLEVER_METHOD(Object::toString) {
 	::std::ostringstream oss;
 	oss << "[Object id: " << value << "]";
-	
-	retval->setString(CSTRING(oss.str()));
+
+	retval->setString(CSTRINGT(oss.str()));
 }
 
 void Object::init() {
-	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Object::constructor, CLEVER_OBJECT));
-	addMethod((new Method(CLEVER_OPERATOR_EQUAL, (MethodPtr)&Object::equal, CLEVER_BOOL))
+	addMethod(new Method(CLEVER_CTOR_NAME, &Object::constructor, CLEVER_OBJECT));
+
+	addMethod((new Method(CLEVER_OPERATOR_EQUAL, &Object::equal, CLEVER_BOOL))
 		->addArg("lhs", CLEVER_OBJECT)
 		->addArg("rhs", CLEVER_OBJECT)
 	);
-	addMethod((new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&Object::do_assign, CLEVER_VOID, false))
+
+	addMethod((new Method(CLEVER_OPERATOR_ASSIGN, &Object::do_assign, CLEVER_VOID, false))
 		->addArg("rhs", CLEVER_OBJECT)
 	);
-	addMethod(new Method("toString", (MethodPtr)&Object::toString, CLEVER_STR));
+
+	addMethod(new Method("toString", &Object::toString, CLEVER_STR));
 }
 
 DataValue* Object::allocateValue() const {

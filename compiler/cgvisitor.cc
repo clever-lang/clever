@@ -82,9 +82,7 @@ AST_VISITOR(CodeGenVisitor, UnaryExpr) {
 		case POS_DEC: opcode = OP_POS_DEC; break;
 		case NOT:     opcode = OP_NOT;     break;
 		case BW_NOT:  opcode = OP_BW_NOT;  break;
-		default:
-			Compiler::error("Unknown op type!");
-			break;
+		EMPTY_SWITCH_DEFAULT_CASE();
 	}
 	emit(opcode, Opcode::getHandlerByType(opcode), expr->getCallValue())
 		->setResult(expr->getValue());
@@ -142,8 +140,7 @@ AST_VISITOR(CodeGenVisitor, BinaryExpr) {
 				case NOT_EQUAL:     opval = OP_NE;      break;
 				case LSHIFT:        opval = OP_LSHIFT;  break;
 				case RSHIFT:        opval = OP_RSHIFT;  break;
-				default:
-					Compiler::error("Unknown operation!");
+				EMPTY_SWITCH_DEFAULT_CASE();
 			}
 			expr->getRhs()->acceptVisitor(*this);
 			rhs = expr->getRhs()->getValue();

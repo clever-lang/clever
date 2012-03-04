@@ -1,0 +1,5 @@
+Testing static method call with invalid type name
+==CODE==
+Foo.match();
+==RESULT==
+Compile error: Type `Foo' not found on \S+ line 1

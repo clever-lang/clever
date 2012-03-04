@@ -313,51 +313,51 @@ void Array::init() {
 	const Type* arr_t = CLEVER_GET_ARRAY_TEMPLATE->getTemplatedType(CLEVER_TPL_ARG(0));
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&Array::do_assign, CLEVER_STR, false))
+		(new Method(CLEVER_OPERATOR_ASSIGN, &Array::do_assign, CLEVER_STR, false))
 			->addArg("rvalue", arr_t)
 	);
 
-	addMethod(new Method("toString", (MethodPtr)&Array::toString, CLEVER_STR));
+	addMethod(new Method("toString", &Array::toString, CLEVER_STR));
 
 	addMethod(
-		(new Method("push", (MethodPtr)&Array::push, CLEVER_VOID, false))
+		(new Method("push", &Array::push, CLEVER_VOID, false))
 			->addArg("arg1", CLEVER_TPL_ARG(0))
 	);
 
 	addMethod(
-		new Method("pop", (MethodPtr)&Array::pop, CLEVER_TPL_ARG(0), false)
+		new Method("pop", &Array::pop, CLEVER_TPL_ARG(0), false)
 	);
 
-	addMethod(new Method("size", (MethodPtr)&Array::size, CLEVER_INT));
+	addMethod(new Method("size", &Array::size, CLEVER_INT));
 
-	addMethod(new Method("isEmpty", (MethodPtr)&Array::isEmpty, CLEVER_BOOL));
+	addMethod(new Method("isEmpty", &Array::isEmpty, CLEVER_BOOL));
 
-	addMethod(new Method("clear", (MethodPtr)&Array::clear, CLEVER_VOID));
+	addMethod(new Method("clear", &Array::clear, CLEVER_VOID));
 
-	addMethod((new Method("at", (MethodPtr)&Array::at, CLEVER_TPL_ARG(0)))
+	addMethod((new Method("at", &Array::at, CLEVER_TPL_ARG(0)))
 		->addArg("index", CLEVER_INT)
 	);
 
-	addMethod((new Method(CLEVER_OPERATOR_AT, (MethodPtr)&Array::at, CLEVER_TPL_ARG(0)))
+	addMethod((new Method(CLEVER_OPERATOR_AT, &Array::at, CLEVER_TPL_ARG(0)))
 		->addArg("index", CLEVER_INT)
 	);
 
-	addMethod((new Method("set", (MethodPtr)&Array::set, CLEVER_VOID, false))
+	addMethod((new Method("set", &Array::set, CLEVER_VOID, false))
 		->addArg("index", CLEVER_INT)
 		->addArg("element", CLEVER_TPL_ARG(0))
 	);
 
-	addMethod((new Method("resize", (MethodPtr)&Array::resize, CLEVER_VOID, false))
+	addMethod((new Method("resize", &Array::resize, CLEVER_VOID, false))
 		->addArg("new_size", CLEVER_INT)
 		->addArg("value", CLEVER_TPL_ARG(0))
 	);
 
-	addMethod((new Method("slice", (MethodPtr)&Array::slice, arr_t))
+	addMethod((new Method("slice", &Array::slice, arr_t))
 		->addArg("start", CLEVER_INT)
 		->addArg("length", CLEVER_INT)
 	);
 
-	addMethod((new Method("find", (MethodPtr)&Array::find, CLEVER_INT))
+	addMethod((new Method("find", &Array::find, CLEVER_INT))
 		->addArg("value", CLEVER_TPL_ARG(0))
 	);
 }

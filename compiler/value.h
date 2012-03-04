@@ -237,6 +237,9 @@ public:
 
 	// Sets the buffer for a user type structure
 	void setDataValue(DataValue* data) {
+		if (m_data.dv_value) {
+			m_data.dv_value->delRef();
+		}
 		m_data.dv_value = data;
 		m_type = USER;
 	}
