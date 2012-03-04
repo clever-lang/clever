@@ -962,6 +962,11 @@ AST_VISITOR(TypeChecker, MethodCall) {
 		const CString* const name = expr->getMethodName();
 		ValueVector* arg_values = NULL;
 
+		if (UNEXPECTED(type == NULL)) {
+			Compiler::errorf(expr->getLocation(), "Type `%S' not found",
+				type_name->getName());
+		}
+
 		clever_assert_not_null(type);
 
 		ArgumentList* args = expr->getArgs();
