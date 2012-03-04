@@ -485,6 +485,7 @@ AST_VISITOR(TypeChecker, UnaryExpr) {
 		case ast::POS_DEC:
 			method_name = CACHE_PTR(CLEVER_OP_POS_DEC, CLEVER_OPERATOR_POS_DEC);
 			break;
+		EMPTY_SWITCH_DEFAULT_CASE();
 	}
 
 	clever_assert_not_null(method_name);
@@ -573,6 +574,7 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 		case AND:
 			expr->setResult(new Value(CLEVER_BOOL));
 			return;
+		EMPTY_SWITCH_DEFAULT_CASE();
 	}
 
 	clever_assert_not_null(method_name);

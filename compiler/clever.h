@@ -155,9 +155,20 @@ extern jmp_buf fatal_error;
  * Detecting gcc version
  */
 #ifdef __GNUC__
-# define CLEVER_GCC_VERSION (__GNUC__ * 1000 + __GNUC_MINOR__)
+# define CLEVER_GCC_VERSION (__GNUC__ * 1000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
 #else
 # define CLEVER_GCC_VERSION 0
+#endif
+
+/**
+ * Compiler hint for unreachable code
+ */
+#ifdef CLEVER_WIN
+# define EMPTY_SWITCH_DEFAULT_CASE() default: __assume(0); break
+#elsif defined(__GNUC__) && CLEVER_GCC_VERSION >= 40500
+# define EMPTY_SWITCH_DEFAULT_CASE() __builtin_unreachable()
+#else
+# define EMPTY_SWITCH_DEFAULT_CASE()
 #endif
 
 /**
@@ -192,7 +203,7 @@ extern jmp_buf fatal_error;
 /**
  * Try to use register to pass parameters
  */
-#if defined(__GNUC__) && CLEVER_GCC_VERSION >= 3004 && defined(__i386__)
+#if defined(__GNUC__) && CLEVER_GCC_VERSION >= 30040 && defined(__i386__)
 # define CLEVER_FASTCALL __attribute__((fastcall))
 #elif defined(_MSC_VER) && defined(_M_IX86)
 # define CLEVER_FASTCALL __fastcall
