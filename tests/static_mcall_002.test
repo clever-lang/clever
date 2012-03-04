@@ -3,4 +3,4 @@ Testing static method call
 import std;
 println(Regex.quote("foo?"));
 ==RESULT==
-foo\\?
+foo\\\?
