@@ -42,7 +42,7 @@ public:
 
 	FunctionType(const CString* name, const TemplateArgs& args) :
 		TemplatedType(name, CLEVER_OBJECT) {
-			
+
 			for (size_t i = 0, sz = args.size(); i < sz; ++i) {
 				addArg(args[i]);
 			}
@@ -64,14 +64,14 @@ public:
 
 	virtual const Type* getTemplatedType(const TemplateArgs& args) const {
 		std::string name = getName()->str() + "<";
-		
+
 		if (args[0]) {
 			name += args[0]->getName()->str();
 		}
 		else {
 			name += "Void";
 		}
-			
+
 		for (size_t i = 1, sz = args.size(); i < sz; ++i) {
 			name += ", ";
 			if (args[i]) {
@@ -82,7 +82,7 @@ public:
 				name += "Void";
 			}
 		}
-		
+
 		name += ">";
 
 		const CString* cname = CSTRING(name);
@@ -92,7 +92,7 @@ public:
 			Type* ntype = new FunctionType(cname, args);
 			g_scope.pushType(cname, ntype);
 			ntype->init();
-			
+
 			return ntype;
 		}
 
@@ -103,7 +103,7 @@ public:
 	DataValue* allocateValue() const;
 
 	void destructor(Value* value) const {
-		
+
 	}
 
 	/**

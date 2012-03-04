@@ -140,6 +140,15 @@ const CString& Value::toString() {
 		Value ret;
 		CLEVER_INTERNAL_MCALL(this, "toString", NULL, NULL, &ret);
 		const CString& str = ret.getString();
+
+		/**
+		 * If a refcounted CString was returned, we need to increase the refe-
+		 * rence because the local variable `ret' will decrease its reference
+		 */
+		if (!str.isInterned()) {
+			const_cast<CString*>(&ret.getString())->addRef();
+		}
+
 		return str;
 	}
 }
