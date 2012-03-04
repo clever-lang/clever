@@ -60,10 +60,13 @@ CLEVER_METHOD(Map::isEmpty) {
  */
 CLEVER_METHOD(Map::insert) {
 	MapValue* map = CLEVER_GET_VALUE(MapValue*, value);
-	map->getMap().insert(std::make_pair(CLEVER_ARG(0), CLEVER_ARG(1)));
-
-	CLEVER_ARG(0)->addRef();
-	CLEVER_ARG(1)->addRef();
+	Value* key = new Value();
+	Value* val = new Value();
+	
+	key->copy(CLEVER_ARG(0));
+	val->copy(CLEVER_ARG(1));
+	
+	map->getMap().insert(std::make_pair(key, val));
 }
 
 /**
