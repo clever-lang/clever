@@ -142,7 +142,7 @@ extern jmp_buf fatal_error;
 /**
  * Macro to help getting the typename as std::string
  */
-#define CLEVER_TYPE_NAME(x) (x ? x->getName()->str() : "Void")
+#define CLEVER_TYPE_NAME(x) ((x) ? (x)->getName()->str() : "Void")
 
 /**
  * Performs an internal type method call
