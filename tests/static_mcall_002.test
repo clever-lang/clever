@@ -1,6 +1,6 @@
 Testing static method call
-==CODE=
+==CODE==
 import std;
 println(Regex.quote("foo?"));
-==RESUL==
+==RESULT==
 foo\\?

@@ -1,4 +1,4 @@
-Testing static call on non-static method
+[FATAL] Testing static call on non-static method
 ==CODE==
 import std.regex;
 Regex.matches("foo?");

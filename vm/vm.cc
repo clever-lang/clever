@@ -86,6 +86,8 @@ void VM::run(const Function* func, const ValueVector* args) {
 	size_t last_op = s_opcodes->size();
 	size_t start = func->getOffset() + 1;
 
+	s_var->mode = INTERNAL;
+
 	if (args) {
 		update_vars(func->getScope(), func->getArgs(), args);
 	}
@@ -205,7 +207,8 @@ void VM::update_vars(Scope* scope, const FunctionArgs& fargs,
  */
 void VM::pop_args(const Opcode* const op) {
 	// Check if the function has arguments
-	if (op->getOp2Value() == NULL) {
+	if ((s_var->mode == NORMAL && op->getOp2Value() == NULL)
+		|| (s_var->mode == INTERNAL && s_var->arg_vars.size() == 0)) {
 		return;
 	}
 
@@ -372,6 +375,10 @@ CLEVER_VM_HANDLER(VM::return_handler) {
 		}
 	} else {
 		s_return_value = value;
+
+		if (s_var->mode == INTERNAL) {
+			pop_args(NULL);
+		}
 
 		// Terminates the execution
 		CLEVER_VM_EXIT();

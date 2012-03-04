@@ -1,4 +1,4 @@
-Testing static method call as non-static
+[FATAL] Testing static method call as non-static
 ==CODE==
 import std;
 println(/.+/.quote("foo?"));
