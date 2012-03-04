@@ -188,129 +188,129 @@ CLEVER_METHOD(Double::pos_dec) {
 
 void Double::init() {
 	addMethod(
-		new Method(CLEVER_OPERATOR_PRE_INC, (MethodPtr)&Double::pre_inc, CLEVER_DOUBLE)
+		new Method(CLEVER_OPERATOR_PRE_INC, &Double::pre_inc, CLEVER_DOUBLE)
 	);
 
 	addMethod(
-		new Method(CLEVER_OPERATOR_POS_INC, (MethodPtr)&Double::pos_inc, CLEVER_DOUBLE)
+		new Method(CLEVER_OPERATOR_POS_INC, &Double::pos_inc, CLEVER_DOUBLE)
 	);
 
 	addMethod(
-		new Method(CLEVER_OPERATOR_PRE_DEC, (MethodPtr)&Double::pre_dec, CLEVER_DOUBLE)
+		new Method(CLEVER_OPERATOR_PRE_DEC, &Double::pre_dec, CLEVER_DOUBLE)
 	);
 
 	addMethod(
-		new Method(CLEVER_OPERATOR_POS_DEC, (MethodPtr)&Double::pos_dec, CLEVER_DOUBLE)
+		new Method(CLEVER_OPERATOR_POS_DEC, &Double::pos_dec, CLEVER_DOUBLE)
 	);
 
 	addMethod(
-		new Method(CLEVER_OPERATOR_NOT, (MethodPtr)&Double::logical_not, CLEVER_DOUBLE)
+		new Method(CLEVER_OPERATOR_NOT, &Double::logical_not, CLEVER_DOUBLE)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_EQUAL, (MethodPtr)&Double::equal, CLEVER_BOOL))
+		(new Method(CLEVER_OPERATOR_EQUAL, &Double::equal, CLEVER_BOOL))
 			->addArg("arg1", CLEVER_DOUBLE)
 			->addArg("arg2", CLEVER_DOUBLE)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_NE, (MethodPtr)&Double::not_equal, CLEVER_BOOL))
+		(new Method(CLEVER_OPERATOR_NE, &Double::not_equal, CLEVER_BOOL))
 			->addArg("arg1", CLEVER_DOUBLE)
 			->addArg("arg2", CLEVER_DOUBLE)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_GREATER, (MethodPtr)&Double::greater, CLEVER_BOOL))
+		(new Method(CLEVER_OPERATOR_GREATER, &Double::greater, CLEVER_BOOL))
 			->addArg("arg1", CLEVER_DOUBLE)
 			->addArg("arg2", CLEVER_DOUBLE)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_LESS, (MethodPtr)&Double::less, CLEVER_BOOL))
+		(new Method(CLEVER_OPERATOR_LESS, &Double::less, CLEVER_BOOL))
 			->addArg("arg1", CLEVER_DOUBLE)
 			->addArg("arg2", CLEVER_DOUBLE)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_GE, (MethodPtr)&Double::greater_equal, CLEVER_BOOL))
+		(new Method(CLEVER_OPERATOR_GE, &Double::greater_equal, CLEVER_BOOL))
 			->addArg("arg1", CLEVER_DOUBLE)
 			->addArg("arg2", CLEVER_DOUBLE)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_LE, (MethodPtr)&Double::less_equal, CLEVER_BOOL))
+		(new Method(CLEVER_OPERATOR_LE, &Double::less_equal, CLEVER_BOOL))
 			->addArg("arg1", CLEVER_DOUBLE)
 			->addArg("arg2", CLEVER_DOUBLE)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_PLUS, (MethodPtr)&Double::plus, CLEVER_DOUBLE))
+		(new Method(CLEVER_OPERATOR_PLUS, &Double::plus, CLEVER_DOUBLE))
 			->addArg("arg1", CLEVER_DOUBLE)
 			->addArg("arg2", CLEVER_INT)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_PLUS, (MethodPtr)&Double::plus, CLEVER_DOUBLE))
+		(new Method(CLEVER_OPERATOR_PLUS, &Double::plus, CLEVER_DOUBLE))
 			->addArg("arg1", CLEVER_DOUBLE)
 			->addArg("arg2", CLEVER_DOUBLE)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_MINUS, (MethodPtr)&Double::minus, CLEVER_DOUBLE))
+		(new Method(CLEVER_OPERATOR_MINUS, &Double::minus, CLEVER_DOUBLE))
 			->addArg("arg1", CLEVER_DOUBLE)
 			->addArg("arg2", CLEVER_INT)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_MINUS, (MethodPtr)&Double::minus, CLEVER_DOUBLE))
+		(new Method(CLEVER_OPERATOR_MINUS, &Double::minus, CLEVER_DOUBLE))
 			->addArg("arg1", CLEVER_DOUBLE)
 			->addArg("arg2", CLEVER_DOUBLE)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_DIV, (MethodPtr)&Double::div, CLEVER_DOUBLE))
+		(new Method(CLEVER_OPERATOR_DIV, &Double::div, CLEVER_DOUBLE))
 			->addArg("arg1", CLEVER_DOUBLE)
 			->addArg("arg2", CLEVER_INT)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_DIV, (MethodPtr)&Double::div, CLEVER_DOUBLE))
+		(new Method(CLEVER_OPERATOR_DIV, &Double::div, CLEVER_DOUBLE))
 			->addArg("arg1", CLEVER_DOUBLE)
 			->addArg("arg2", CLEVER_DOUBLE)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_MULT, (MethodPtr)&Double::mult, CLEVER_DOUBLE))
+		(new Method(CLEVER_OPERATOR_MULT, &Double::mult, CLEVER_DOUBLE))
 			->addArg("arg1", CLEVER_DOUBLE)
 			->addArg("arg2", CLEVER_INT)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_MULT, (MethodPtr)&Double::mult, CLEVER_DOUBLE))
+		(new Method(CLEVER_OPERATOR_MULT, &Double::mult, CLEVER_DOUBLE))
 			->addArg("arg1", CLEVER_DOUBLE)
 			->addArg("arg2", CLEVER_DOUBLE)
 	);
 
-	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Double::constructor, CLEVER_DOUBLE));
+	addMethod(new Method(CLEVER_CTOR_NAME, &Double::constructor, CLEVER_DOUBLE));
 
 	addMethod(
-		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Double::constructor, CLEVER_DOUBLE))
+		(new Method(CLEVER_CTOR_NAME, &Double::constructor, CLEVER_DOUBLE))
 			->addArg("value", CLEVER_DOUBLE)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&Double::do_assign, CLEVER_VOID))
+		(new Method(CLEVER_OPERATOR_ASSIGN, &Double::do_assign, CLEVER_VOID))
 			->addArg("rvalue", CLEVER_DOUBLE)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&Double::do_assign, CLEVER_VOID))
+		(new Method(CLEVER_OPERATOR_ASSIGN, &Double::do_assign, CLEVER_VOID))
 			->addArg("rvalue", CLEVER_INT)
 	);
 
-	addMethod(new Method("toString", (MethodPtr)&Double::toString, CLEVER_STR));
+	addMethod(new Method("toString", &Double::toString, CLEVER_STR));
 
-	addMethod(new Method("sqrt", (MethodPtr)&Double::sqrt, CLEVER_DOUBLE));
+	addMethod(new Method("sqrt", &Double::sqrt, CLEVER_DOUBLE));
 }
 
 DataValue* Double::allocateValue() const {

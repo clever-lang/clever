@@ -190,131 +190,131 @@ CLEVER_METHOD(Char::pos_dec) {
 
 void Char::init() {
 	addMethod(
-		new Method(CLEVER_OPERATOR_PRE_INC, (MethodPtr)&Char::pre_inc, CLEVER_BYTE)
+		new Method(CLEVER_OPERATOR_PRE_INC, &Char::pre_inc, CLEVER_BYTE)
 	);
 
 	addMethod(
-		new Method(CLEVER_OPERATOR_POS_INC, (MethodPtr)&Char::pos_inc, CLEVER_BYTE)
+		new Method(CLEVER_OPERATOR_POS_INC, &Char::pos_inc, CLEVER_BYTE)
 	);
 
 	addMethod(
-		new Method(CLEVER_OPERATOR_PRE_DEC, (MethodPtr)&Char::pre_dec, CLEVER_BYTE)
+		new Method(CLEVER_OPERATOR_PRE_DEC, &Char::pre_dec, CLEVER_BYTE)
 	);
 
 	addMethod(
-		new Method(CLEVER_OPERATOR_POS_DEC, (MethodPtr)&Char::pos_dec, CLEVER_BYTE)
+		new Method(CLEVER_OPERATOR_POS_DEC, &Char::pos_dec, CLEVER_BYTE)
 	);
 
 	addMethod(
-		new Method(CLEVER_OPERATOR_NOT, (MethodPtr)&Char::logical_not, CLEVER_BYTE)
+		new Method(CLEVER_OPERATOR_NOT, &Char::logical_not, CLEVER_BYTE)
 	);
 
 	addMethod(
-		new Method(CLEVER_OPERATOR_BW_NOT, (MethodPtr)&Char::bw_not, CLEVER_BYTE)
+		new Method(CLEVER_OPERATOR_BW_NOT, &Char::bw_not, CLEVER_BYTE)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_EQUAL, (MethodPtr)&Char::equal, CLEVER_BOOL))
+		(new Method(CLEVER_OPERATOR_EQUAL, &Char::equal, CLEVER_BOOL))
 			->addArg("arg1", CLEVER_BYTE)
 			->addArg("arg2", CLEVER_BYTE)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_NE, (MethodPtr)&Char::not_equal, CLEVER_BOOL))
+		(new Method(CLEVER_OPERATOR_NE, &Char::not_equal, CLEVER_BOOL))
 			->addArg("arg1", CLEVER_BYTE)
 			->addArg("arg2", CLEVER_BYTE)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_GREATER, (MethodPtr)&Char::greater, CLEVER_BOOL))
+		(new Method(CLEVER_OPERATOR_GREATER, &Char::greater, CLEVER_BOOL))
 			->addArg("arg1", CLEVER_BYTE)
 			->addArg("arg2", CLEVER_BYTE)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_LESS, (MethodPtr)&Char::less, CLEVER_BOOL))
+		(new Method(CLEVER_OPERATOR_LESS, &Char::less, CLEVER_BOOL))
 			->addArg("arg1", CLEVER_BYTE)
 			->addArg("arg2", CLEVER_BYTE)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_GE, (MethodPtr)&Char::greater_equal, CLEVER_BOOL))
+		(new Method(CLEVER_OPERATOR_GE, &Char::greater_equal, CLEVER_BOOL))
 			->addArg("arg1", CLEVER_BYTE)
 			->addArg("arg2", CLEVER_BYTE)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_LE, (MethodPtr)&Char::less_equal, CLEVER_BOOL))
+		(new Method(CLEVER_OPERATOR_LE, &Char::less_equal, CLEVER_BOOL))
 			->addArg("arg1", CLEVER_BYTE)
 			->addArg("arg2", CLEVER_BYTE)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_PLUS, (MethodPtr)&Char::plus, CLEVER_BYTE))
+		(new Method(CLEVER_OPERATOR_PLUS, &Char::plus, CLEVER_BYTE))
 			->addArg("arg1", CLEVER_BYTE)
 			->addArg("arg2", CLEVER_BYTE)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_MINUS, (MethodPtr)&Char::minus, CLEVER_BYTE))
+		(new Method(CLEVER_OPERATOR_MINUS, &Char::minus, CLEVER_BYTE))
 			->addArg("arg1", CLEVER_BYTE)
 			->addArg("arg2", CLEVER_BYTE)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_MULT, (MethodPtr)&Char::mult, CLEVER_BYTE))
+		(new Method(CLEVER_OPERATOR_MULT, &Char::mult, CLEVER_BYTE))
 			->addArg("arg1", CLEVER_BYTE)
 			->addArg("arg2", CLEVER_BYTE)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_DIV, (MethodPtr)&Char::div, CLEVER_BYTE))
+		(new Method(CLEVER_OPERATOR_DIV, &Char::div, CLEVER_BYTE))
 			->addArg("arg1", CLEVER_BYTE)
 			->addArg("arg2", CLEVER_BYTE)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_MOD, (MethodPtr)&Char::mod, CLEVER_BYTE))
+		(new Method(CLEVER_OPERATOR_MOD, &Char::mod, CLEVER_BYTE))
 			->addArg("arg1", CLEVER_BYTE)
 			->addArg("arg2", CLEVER_BYTE)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_BW_AND, (MethodPtr)&Char::bw_and, CLEVER_BYTE))
+		(new Method(CLEVER_OPERATOR_BW_AND, &Char::bw_and, CLEVER_BYTE))
 			->addArg("arg1", CLEVER_BYTE)
 			->addArg("arg2", CLEVER_BYTE)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_BW_XOR, (MethodPtr)&Char::bw_xor, CLEVER_BYTE))
+		(new Method(CLEVER_OPERATOR_BW_XOR, &Char::bw_xor, CLEVER_BYTE))
 			->addArg("arg1", CLEVER_BYTE)
 			->addArg("arg2", CLEVER_BYTE)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_BW_OR, (MethodPtr)&Char::bw_or, CLEVER_BYTE))
+		(new Method(CLEVER_OPERATOR_BW_OR, &Char::bw_or, CLEVER_BYTE))
 			->addArg("arg1", CLEVER_BYTE)
 			->addArg("arg2", CLEVER_BYTE)
 	);
 
-	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Char::constructor, CLEVER_BYTE));
+	addMethod(new Method(CLEVER_CTOR_NAME, &Char::constructor, CLEVER_BYTE));
 
 	addMethod(
-		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Char::constructor, CLEVER_BYTE))
+		(new Method(CLEVER_CTOR_NAME, &Char::constructor, CLEVER_BYTE))
 			->addArg("value", CLEVER_BYTE)
 	);
 
 	addMethod(
-		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Char::constructor, CLEVER_BYTE))
+		(new Method(CLEVER_CTOR_NAME, &Char::constructor, CLEVER_BYTE))
 			->addArg("value", CLEVER_INT)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&Char::do_assign, CLEVER_VOID))
+		(new Method(CLEVER_OPERATOR_ASSIGN, &Char::do_assign, CLEVER_VOID))
 			->addArg("rvalue", CLEVER_BYTE)
 	);
 
-	addMethod(new Method("toString", (MethodPtr)&Char::toString, CLEVER_STR));
+	addMethod(new Method("toString", &Char::toString, CLEVER_STR));
 }
 
 DataValue* Char::allocateValue() const {

@@ -493,144 +493,144 @@ void String::init() {
 	const Type* arr_byte = CLEVER_GET_ARRAY_TEMPLATE->getTemplatedType(CLEVER_BYTE);
 	const Type* arr_string = CLEVER_GET_ARRAY_TEMPLATE->getTemplatedType(CLEVER_STR);
 
-	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&String::constructor, CLEVER_STR));
+	addMethod(new Method(CLEVER_CTOR_NAME, &String::constructor, CLEVER_STR));
 
 	addMethod(
-		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&String::constructor, CLEVER_STR))
+		(new Method(CLEVER_CTOR_NAME, &String::constructor, CLEVER_STR))
 			->addArg("value", CLEVER_STR)
 	);
 
 	addMethod(
-		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&String::constructor, CLEVER_STR))
+		(new Method(CLEVER_CTOR_NAME, &String::constructor, CLEVER_STR))
 			->addArg("value", arr_byte)
 	);
 
-	addMethod(new Method("ltrim", (MethodPtr)&String::ltrim, CLEVER_STR));
+	addMethod(new Method("ltrim", &String::ltrim, CLEVER_STR));
 
-	addMethod(new Method("rtrim", (MethodPtr)&String::rtrim, CLEVER_STR));
+	addMethod(new Method("rtrim", &String::rtrim, CLEVER_STR));
 
-	addMethod(new Method("trim", (MethodPtr)&String::trim, CLEVER_STR));
+	addMethod(new Method("trim", &String::trim, CLEVER_STR));
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_EQUAL, (MethodPtr)&String::equal, CLEVER_BOOL))
+		(new Method(CLEVER_OPERATOR_EQUAL, &String::equal, CLEVER_BOOL))
 			->addArg("arg1", CLEVER_STR)
 			->addArg("arg2", CLEVER_STR)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_NE, (MethodPtr)&String::not_equal, CLEVER_BOOL))
+		(new Method(CLEVER_OPERATOR_NE, &String::not_equal, CLEVER_BOOL))
 			->addArg("arg1", CLEVER_STR)
 			->addArg("arg2", CLEVER_STR)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_GREATER, (MethodPtr)&String::greater, CLEVER_BOOL))
+		(new Method(CLEVER_OPERATOR_GREATER, &String::greater, CLEVER_BOOL))
 			->addArg("arg1", CLEVER_STR)
 			->addArg("arg2", CLEVER_STR)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_GE, (MethodPtr)&String::greater_equal, CLEVER_BOOL))
+		(new Method(CLEVER_OPERATOR_GE, &String::greater_equal, CLEVER_BOOL))
 			->addArg("arg1", CLEVER_STR)
 			->addArg("arg2", CLEVER_STR)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_LESS, (MethodPtr)&String::less, CLEVER_BOOL))
+		(new Method(CLEVER_OPERATOR_LESS, &String::less, CLEVER_BOOL))
 			->addArg("arg1", CLEVER_STR)
 			->addArg("arg2", CLEVER_STR)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_LE, (MethodPtr)&String::less_equal, CLEVER_BOOL))
+		(new Method(CLEVER_OPERATOR_LE, &String::less_equal, CLEVER_BOOL))
 			->addArg("arg1", CLEVER_STR)
 			->addArg("arg2", CLEVER_STR)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_PLUS, (MethodPtr)&String::plus, CLEVER_STR))
+		(new Method(CLEVER_OPERATOR_PLUS, &String::plus, CLEVER_STR))
 			->addArg("str1", CLEVER_STR)
 			->addArg("str2", CLEVER_STR)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_MULT, (MethodPtr)&String::times, CLEVER_STR))
+		(new Method(CLEVER_OPERATOR_MULT, &String::times, CLEVER_STR))
 			->addArg("str", CLEVER_STR)
 			->addArg("num", CLEVER_INT)
 	);
 
 	addMethod(
-		(new Method("replace", (MethodPtr)&String::replace, CLEVER_STR))
+		(new Method("replace", &String::replace, CLEVER_STR))
 			->addArg("before", CLEVER_STR)
 			->addArg("after", CLEVER_STR)
 	);
 
 	addMethod(
-		(new Method("substring", (MethodPtr)&String::substring, CLEVER_STR))
+		(new Method("substring", &String::substring, CLEVER_STR))
 			->addArg("start", CLEVER_INT)
 			->addArg("length", CLEVER_INT)
 	);
 
 	addMethod(
-		(new Method("at", (MethodPtr)&String::at, CLEVER_STR))
+		(new Method("at", &String::at, CLEVER_STR))
 			->addArg("pos", CLEVER_INT)
 	);
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&String::do_assign, CLEVER_VOID))
+		(new Method(CLEVER_OPERATOR_ASSIGN, &String::do_assign, CLEVER_VOID))
 			->addArg("rvalue", CLEVER_STR)
 	);
 
 	addMethod(
-		(new Method("startsWith", (MethodPtr)&String::startsWith, CLEVER_BOOL))
+		(new Method("startsWith", &String::startsWith, CLEVER_BOOL))
 			->addArg("str", CLEVER_STR)
 	);
 
 	addMethod(
-		(new Method("endsWith", (MethodPtr)&String::endsWith, CLEVER_BOOL))
+		(new Method("endsWith", &String::endsWith, CLEVER_BOOL))
 			->addArg("str", CLEVER_STR)
 	);
 
 	addMethod(
-		(new Method("find", (MethodPtr)&String::find, CLEVER_INT))
+		(new Method("find", &String::find, CLEVER_INT))
 			->addArg("str", CLEVER_STR)
 			->addArg("pos", CLEVER_INT)
 			->setMinNumArgs(1)
 	);
 
 	addMethod(
-		(new Method("split", (MethodPtr)&String::split, arr_string))
+		(new Method("split", &String::split, arr_string))
 			->addArg("separator", CLEVER_STR)
 	);
 
-	addMethod(new Method("toByteArray", (MethodPtr)&String::toByteArray, arr_byte));
+	addMethod(new Method("toByteArray", &String::toByteArray, arr_byte));
 
-	addMethod(new Method("length", (MethodPtr)&String::length, CLEVER_INT));
+	addMethod(new Method("length", &String::length, CLEVER_INT));
 
-	addMethod(new Method("toDouble", (MethodPtr)&String::toDouble, CLEVER_DOUBLE));
+	addMethod(new Method("toDouble", &String::toDouble, CLEVER_DOUBLE));
 
-	addMethod(new Method("toInteger", (MethodPtr)&String::toInteger, CLEVER_INT));
+	addMethod(new Method("toInteger", &String::toInteger, CLEVER_INT));
 
-	addMethod(new Method("toUpper", (MethodPtr)&String::toUpper, CLEVER_STR));
+	addMethod(new Method("toUpper", &String::toUpper, CLEVER_STR));
 
-	addMethod(new Method("toLower", (MethodPtr)&String::toLower, CLEVER_STR));
+	addMethod(new Method("toLower", &String::toLower, CLEVER_STR));
 
-	addMethod(new Method("toString", (MethodPtr)&String::toString, CLEVER_STR));
+	addMethod(new Method("toString", &String::toString, CLEVER_STR));
 
 	addMethod(
-		(new Method("pad", (MethodPtr)&String::pad, CLEVER_STR))
+		(new Method("pad", &String::pad, CLEVER_STR))
 			->addArg("str", CLEVER_STR)
 			->addArg("length", CLEVER_INT)
 	);
 
 	addMethod(
-		(new Method("padLeft", (MethodPtr)&String::padLeft, CLEVER_STR))
+		(new Method("padLeft", &String::padLeft, CLEVER_STR))
 			->addArg("str", CLEVER_STR)
 			->addArg("length", CLEVER_INT)
 	);
 
 	addMethod(
-		(new Method("padRight", (MethodPtr)&String::padRight, CLEVER_STR))
+		(new Method("padRight", &String::padRight, CLEVER_STR))
 			->addArg("str", CLEVER_STR)
 			->addArg("length", CLEVER_INT)
 	);

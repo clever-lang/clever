@@ -217,26 +217,26 @@ void Map::init() {
 
 	const Type* const arr_pair  = CLEVER_TPL_ARRAY(pair_type);
 
-	addMethod((new Method("insert", (MethodPtr)&Map::insert, CLEVER_VOID, false))
+	addMethod((new Method("insert", &Map::insert, CLEVER_VOID, false))
 		->addArg("key", key_type)
 		->addArg("value", value_type)
 	);
 
-	addMethod(new Method("toString", (MethodPtr)&Map::toString, CLEVER_STR));
+	addMethod(new Method("toString", &Map::toString, CLEVER_STR));
 
-	addMethod(new Method("size", (MethodPtr)&Map::size, CLEVER_INT));
+	addMethod(new Method("size", &Map::size, CLEVER_INT));
 
-	addMethod(new Method("isEmpty", (MethodPtr)&Map::isEmpty, CLEVER_BOOL));
+	addMethod(new Method("isEmpty", &Map::isEmpty, CLEVER_BOOL));
 
-	addMethod(new Method("clear", (MethodPtr)&Map::clear, CLEVER_VOID));
+	addMethod(new Method("clear", &Map::clear, CLEVER_VOID));
 
-	addMethod(new Method("getKeys", (MethodPtr)&Map::getKeys, arr_key));
+	addMethod(new Method("getKeys", &Map::getKeys, arr_key));
 
-	addMethod(new Method("getValues", (MethodPtr)&Map::getValues, arr_val));
+	addMethod(new Method("getValues", &Map::getValues, arr_val));
 
-	addMethod(new Method("getAll", (MethodPtr)&Map::getAll, arr_pair));
+	addMethod(new Method("getAll", &Map::getAll, arr_pair));
 
-	addMethod((new Method("hasKey", (MethodPtr)&Map::hasKey, CLEVER_BOOL))
+	addMethod((new Method("hasKey", &Map::hasKey, CLEVER_BOOL))
 		->addArg("key", key_type)
 	);
 }
