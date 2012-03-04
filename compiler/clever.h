@@ -140,6 +140,11 @@ extern jmp_buf fatal_error;
 #define CLEVER_THIS_ARG(arg) CLEVER_TYPE_ARG(CLEVER_THIS()->getTypePtr(), (arg))
 
 /**
+ * Macro to help getting the typename as std::string
+ */
+#define CLEVER_TYPE_NAME(x) (x ? x->getName()->str() : "Void")
+
+/**
  * Performs an internal type method call
  */
 #define CLEVER_INTERNAL_MCALL(ctx, method, tv, vv, ret) (ctx)->getTypePtr()->getMethod(CSTRING((method)), tv)->call((vv), (ret), (ctx))

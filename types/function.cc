@@ -43,7 +43,7 @@ CLEVER_METHOD(FunctionType::do_assign) {
 CLEVER_METHOD(FunctionType::toString) {
 	FunctionValue* fv = CLEVER_GET_VALUE(FunctionValue*, value);
 
-	std::string str = CLEVER_THIS_ARG(0)->getName()->str();
+	std::string str = CLEVER_TYPE_NAME(CLEVER_THIS_ARG(0));
 	str += ' ';
 	str += fv->getFunction()->getName();
 	str += "(";
@@ -52,7 +52,7 @@ CLEVER_METHOD(FunctionType::toString) {
 		static_cast<const TemplatedType*>(CLEVER_THIS()->getTypePtr());
 
 	for (size_t i = 1, sz = this_type->getNumArgs(); i < sz; ++i) {
-		str += CLEVER_THIS_ARG(i)->getName()->str();
+		str += CLEVER_TYPE_NAME(CLEVER_THIS_ARG(i));
 
 		if (i < sz - 1) {
 			str += ", ";
