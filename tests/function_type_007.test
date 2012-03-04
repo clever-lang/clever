@@ -1,0 +1,10 @@
+Testing lambda with Void return
+==CODE==
+import std.io;
+
+println(Void () {
+  println("foo!");
+});
+
+==RESULT==
+Void \$lambda1\$\(\);
