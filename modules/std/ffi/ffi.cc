@@ -103,7 +103,7 @@ static CLEVER_FUNCTION(call_ext_func) {
 		void* m = ext_mod_map[lib] = dlopen(libname.c_str(), RTLD_LAZY);
 
 		if (m == NULL) {
-			clever_fatal("[FFI] Shared library`%S' not loaded!\n Error: \n %s",
+			clever_fatal("[FFI] Shared library `%S' not loaded!\n Error: \n %s",
 				&CLEVER_ARG_STR(size-3),dlerror());
 			CLEVER_RETURN_BOOL(false);
 			return;
@@ -115,7 +115,7 @@ static CLEVER_FUNCTION(call_ext_func) {
 	fpf = dlsym(it->second, func.c_str());
 
 	if (fpf == NULL) {
-		clever_fatal("[FFI] function`%S' not found at `%S'!",
+		clever_fatal("[FFI] function `%S' not found at `%S'!",
 			&CLEVER_ARG_STR(size-1), &CLEVER_ARG_STR(size-3));
 		CLEVER_RETURN_BOOL(false);
 		return;
