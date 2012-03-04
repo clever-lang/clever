@@ -56,13 +56,15 @@ static const Type* _evaluate_type(const location& loc,
 
 			for (size_t i = 0; i < template_args->size(); ++i) {
 				argt = g_scope.getType(template_args->at(i)->getName());
+				
+				const bool is_void = (template_args->at(i)->getName()->str() == "Void");
 
-				if (argt == NULL) {
+				if (argt == NULL && !is_void) {
 					Compiler::errorf(loc, "`%S' does not name a type",
 						template_args->at(i)->getName());
 				}
 
-				if (!argt->isTemplatedType()) {
+				if (is_void || !argt->isTemplatedType()) {
 					vec.push_back(argt);
 				}
 				else {
