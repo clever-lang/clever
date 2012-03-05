@@ -87,9 +87,16 @@ static const Type* _evaluate_type(const location& loc,
 		}
 	}
 	else if (type->isTemplatedType()) {
-		Compiler::errorf(loc,
-			"Missing template arguments for the type `%S'!",
-			type->getName());
+		// This check below is because alias does not have
+		// the template args in their Identifier*, but 
+		// if the type pointed by an alias has a '>' in its
+		// name is because we already checked and it is ok!
+		if (((const TemplatedType*)type)->getName()->rfind('>') 
+			== std::string::npos) {
+			Compiler::errorf(loc,
+				"Missing template arguments for the type `%S'!",
+				type->getName());
+		}
 	}
 
 	return type;
@@ -363,7 +370,8 @@ AST_VISITOR(TypeChecker, AliasStmt) {
 		m_scope->pushValue(expr->getNewName(), fvalue);
 		fvalue->addRef();
 	} else {
-		const Type* ftype = g_scope.getType(expr->getCurrentName());
+		const Type* ftype = _evaluate_type(expr->getLocation(),
+			expr->getCurrentNameIdentifier());
 
 		if (UNEXPECTED(ftype == NULL)) {
 			Compiler::errorf(expr->getLocation(),

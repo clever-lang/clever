@@ -1564,6 +1564,8 @@ public:
 
 	const CString* getNewName() { return m_new_name->getName(); }
 	const CString* getCurrentName() { return m_curr_name->getName(); }
+	
+	const Identifier* getCurrentNameIdentifier() const { return m_curr_name; }
 
 
 	void acceptVisitor(ASTVisitor& visitor) {
