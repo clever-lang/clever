@@ -16,6 +16,7 @@ Welcome to Clever documentation!
    getting_started
    packages/index
    faq
+   core
    api/index
 
 
