@@ -1,0 +1,11 @@
+Testing templated Type aliasing
+==CODE==
+import std;
+
+use Foo as Array<Int>;
+
+Foo arr = {1, 2, 3};
+
+println(arr);
+==RESULT==
+\[1, 2, 3\]
