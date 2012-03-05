@@ -438,11 +438,11 @@ template_args:
 ;
 
 template_args_fix:
-		TYPE "<" template_args				{ $<template_args>$ = new ast::TemplateArgsVector;
-											  $1->setTemplateArgs($3);
-											  $<template_args>$->push_back($1);
-											}
-	|	template_args ',' TYPE "<" template_args {  $$=$1; $3->setTemplateArgs($5); $1->push_back($3); }
+		TYPE "<" template_args				     { $<template_args>$ = new ast::TemplateArgsVector;
+											       $1->setTemplateArgs($3);
+											       $<template_args>$->push_back($1);
+											     }
+	|	template_args ',' TYPE "<" template_args { $$ = $1; $3->setTemplateArgs($5); $1->push_back($3); }
 ;
 
 template:
@@ -459,7 +459,7 @@ variable_declaration_list_impl:
 		TYPE variable_declaration_list_creation								{ ast::setType($2, $1); $$ = $2; }
 	|	template variable_declaration_list_creation							{ ast::setType($2, $1); $$ = $2; }
 	|	package_module_name "::" TYPE variable_declaration_list_creation
-		{ $1->concat("::",$3); delete $3; ast::setType($4,$1); $$ = $4; }
+		{ $1->concat("::", $3); delete $3; ast::setType($4, $1); $$ = $4; }
 	|	AUTO auto_variable_declaration_list_creation 						{ $$ = $2; }
 ;
 
@@ -626,9 +626,13 @@ alias_stmt:
 	|	USE IDENT AS IDENT
 		{ $$ = new ast::AliasStmt($2, $4);  $$->setLocation(yylloc); }
 	|	USE TYPE AS package_module_name "::" TYPE
-		{ $4->concat("::", $6); delete $6; $$ = new ast::AliasStmt($2, $4,false);  $$->setLocation(yylloc); }
+		{ $4->concat("::", $6); delete $6; $$ = new ast::AliasStmt($2, $4, false);  $$->setLocation(yylloc); }
+	|	USE TYPE AS package_module_name "::" template
+		{ $4->concat("::", $6); delete $6; $$ = new ast::AliasStmt($2, $4, false);  $$->setLocation(yylloc); }
 	|	USE TYPE AS TYPE
-		{ $$ = new ast::AliasStmt($2, $4,false);  $$->setLocation(yylloc); }
+		{ $$ = new ast::AliasStmt($2, $4, false);  $$->setLocation(yylloc); }
+	|	USE TYPE AS template
+		{ $$ = new ast::AliasStmt($2, $4, false);  $$->setLocation(yylloc); }
 ;
 
 constant:
