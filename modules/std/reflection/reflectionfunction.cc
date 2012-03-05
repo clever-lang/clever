@@ -237,7 +237,7 @@ void ReflectionFunction::init() {
 
 	addMethod(
 		(new Method("call",
-			(MethodPtr)&ReflectionFunction::call, CLEVER_VOID))
+			(MethodPtr)&ReflectionFunction::call, CLEVER_STR))
 			->setVariadic()
 			->setMinNumArgs(0)
 	);
