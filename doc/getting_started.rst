@@ -5,7 +5,6 @@ Getting started!
 Installing
 -----------
 
-
 To install Clever is easy, just run the make. In this stage, you can
 help the Clever Team also by running make run-tests and reporting to us
 if you get some failures!

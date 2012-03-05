@@ -6,6 +6,8 @@
 Clever documentation
 ================================================
 
+  .. image:: logo.jpg
+
 Welcome to Clever documentation!
 
 .. toctree::
@@ -13,6 +15,8 @@ Welcome to Clever documentation!
 
    getting_started
    packages/index
+   faq
+   api/index
 
 
 Indices and tables
