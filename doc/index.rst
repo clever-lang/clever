@@ -11,6 +11,7 @@ Welcome to Clever documentation!
 .. toctree::
    :maxdepth: 2
 
+	intro
 
 
 Indices and tables
