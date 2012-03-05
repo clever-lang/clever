@@ -9,9 +9,10 @@ Clever documentation
 Welcome to Clever documentation!
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
-	intro
+   getting_started
+   packages/index
 
 
 Indices and tables
