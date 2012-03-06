@@ -79,7 +79,7 @@ CLEVER_METHOD(FunctionType::call) {
 			retval->copy(VM::getLastReturnValue());
 		}
 		else {
-			retval->setType(CLEVER_VOID);
+			retval->setTypePtr(CLEVER_VOID);
 		}
 	}
 	else if (func->isInternal()) {

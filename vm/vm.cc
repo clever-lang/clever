@@ -325,21 +325,24 @@ CLEVER_VM_HANDLER(VM::mcall_handler) {
  * Marks the end of a function
  */
 CLEVER_VM_HANDLER(VM::end_func_handler) {
-	const Opcode* const op = s_var->call.top();
+	const Opcode* op = NULL;
 
-	/**
-	 * pop + restore arguments from stack
-	 */
+	// On INTERNAL mode the VM might have an empty stack call
+	if (s_var->mode == NORMAL || !s_var->call.empty()) {
+		op = s_var->call.top();
+	}
+
+	// pop + restore arguments from stack
 	pop_args(op);
 
-	s_var->call.pop();
+	if (op) {
+		s_var->call.pop();
+	}
 
 	s_return_value = NULL;
 
-	/**
-	 * Go to after the caller command
-	 */
-	if (s_var->mode == NORMAL) {
+	// Go to after the caller command
+	if (op) {
 		CLEVER_VM_GOTO(op->getOpNum());
 	} else {
 		// Terminates the execution, go back to the internal caller
@@ -366,13 +369,13 @@ CLEVER_VM_HANDLER(VM::return_handler) {
 
 		s_return_value = value;
 
-		if (s_var->mode == NORMAL) {
+		//if (s_var->mode == NORMAL) {
 			// Go back to the caller
 			CLEVER_VM_GOTO(call->getOpNum());
-		} else {
+		//} else {
 			// Terminates the execution, go back to the internal caller
-			CLEVER_VM_EXIT();
-		}
+			//CLEVER_VM_EXIT();
+		//}
 	} else {
 		s_return_value = value;
 
