@@ -382,7 +382,8 @@ private:
 
 class UnscopedBlockNode : public ASTNode {
 public:
-	UnscopedBlockNode() {}
+	UnscopedBlockNode()
+		: m_alias(NULL), m_block(NULL), m_has_return(false) {}
 
 	explicit UnscopedBlockNode(Identifier* alias, BlockNode* block)
 		: m_alias(alias), m_block(block), m_has_return(false) {
@@ -392,7 +393,7 @@ public:
 
 	~UnscopedBlockNode() {
 		CLEVER_SAFE_DELREF(m_alias);
-		CLEVER_DELREF(m_block);
+		CLEVER_SAFE_DELREF(m_block);
 	}
 
 	const CString* getAlias() const {
@@ -411,7 +412,7 @@ public:
 	}
 
 	bool hasBlock() const {
-		return true;
+		return m_block != NULL;
 	}
 
 	bool hasReturn() const { return m_has_return; }
@@ -1564,7 +1565,7 @@ public:
 
 	const CString* getNewName() { return m_new_name->getName(); }
 	const CString* getCurrentName() { return m_curr_name->getName(); }
-	
+
 	const Identifier* getCurrentNameIdentifier() const { return m_curr_name; }
 
 

@@ -263,6 +263,10 @@ AST_VISITOR(CodeGenVisitor, BlockNode) {
  * Call the acceptVisitor method of each block node without creating scope
  */
 AST_VISITOR(CodeGenVisitor, UnscopedBlockNode) {
+	if (!expr->hasBlock()) {
+		return;
+	}
+
 	const NodeList& nodes = expr->getBlock()->getNodes();
 	NodeList::const_iterator it = nodes.begin(), end = nodes.end();
 

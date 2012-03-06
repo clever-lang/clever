@@ -56,7 +56,7 @@ static const Type* _evaluate_type(const location& loc,
 
 			for (size_t i = 0; i < template_args->size(); ++i) {
 				argt = g_scope.getType(template_args->at(i)->getName());
-				
+
 				const bool is_void = (template_args->at(i)->getName()->str() == "Void");
 
 				if (argt == NULL && !is_void) {
@@ -89,10 +89,10 @@ static const Type* _evaluate_type(const location& loc,
 	}
 	else if (type->isTemplatedType()) {
 		// This check below is because alias does not have
-		// the template args in their Identifier*, but 
+		// the template args in their Identifier*, but
 		// if the type pointed by an alias has a '>' in its
 		// name is because we already checked and it is ok!
-		if (((const TemplatedType*)type)->getName()->rfind('>') 
+		if (((const TemplatedType*)type)->getName()->rfind('>')
 			== std::string::npos) {
 			Compiler::errorf(loc,
 				"Missing template arguments for the type `%S'!",
@@ -610,8 +610,8 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 	if (expr->isAssigned()) {
 		/**
 		 * When using the compound assignment expression (e.g. +=),
-		 * we have to restore the original Type ptr, since we aren't in 
-		 * a temporary expression, but in an assignment to a variable 
+		 * we have to restore the original Type ptr, since we aren't in
+		 * a temporary expression, but in an assignment to a variable
 		 * with its defined type
 		 */
 		expr->getValue()->setTypePtr(lhs_type);
@@ -774,6 +774,10 @@ AST_VISITOR(TypeChecker, BlockNode) {
  * Unscoped Block visitor
  */
 AST_VISITOR(TypeChecker, UnscopedBlockNode) {
+	if (!expr->hasBlock()) {
+		return;
+	}
+
 	const CString* alias = expr->getAlias();
 	const NodeList& nodes = expr->getBlock()->getNodes();
 	NodeList::const_iterator it = nodes.begin(), end = nodes.end();
