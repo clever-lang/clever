@@ -119,21 +119,20 @@ public:
 	 */
 	void setLoaded() { m_state = LOADED; }
 
-	/* Module initialization */
+	/**
+	 * Module initialization
+	 */
 	virtual void init() = 0;
 
-	/* Module version */
+	/**
+	 * Module version
+	 */
 	virtual const char* getVersion() const { return NULL; }
 private:
-	/* Module state */
 	ModuleState m_state;
-	/* Module name */
 	const std::string m_name;
-	/* Module function list */
 	FunctionMap m_functions;
-	/* Class table */
 	ClassMap m_class_table;
-	/* Constant table */
 	ConstMap m_const_table;
 
 	DISALLOW_COPY_AND_ASSIGN(Module);
