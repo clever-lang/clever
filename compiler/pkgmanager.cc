@@ -201,6 +201,11 @@ void PackageManager::copyScopeToAlias(Scope* scope, const std::string& alias) {
 					fvalue->addRef();
 				}
 			}
+		} else if (sym->isType()) {
+			scope->pushType(CSTRING(alias + sym->getSymbolName()->str()),
+				sym->getType());
+			
+			const_cast<Type*>(sym->getType())->addRef();
 		}
 		++it2;
 	}

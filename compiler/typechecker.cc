@@ -36,8 +36,8 @@ namespace clever { namespace ast {
  * Evaluate the Type used in the expression, and the templated type as well
  */
 static const Type* _evaluate_type(const location& loc,
-	const Identifier* ident) {
-	const Type* type = g_scope.getType(ident->getName());
+	const Identifier* ident, Scope* scope) {
+	const Type* type = scope->getType(ident->getName());
 
 	// Check if the type wasn't declarated previously
 	if (type == NULL) {
@@ -68,7 +68,8 @@ static const Type* _evaluate_type(const location& loc,
 					vec.push_back(argt);
 				}
 				else {
-					vec.push_back(_evaluate_type(loc, template_args->at(i)));
+					vec.push_back(_evaluate_type(loc,
+						template_args->at(i), scope));
 				}
 			}
 
@@ -371,7 +372,7 @@ AST_VISITOR(TypeChecker, AliasStmt) {
 		fvalue->addRef();
 	} else {
 		const Type* ftype = _evaluate_type(expr->getLocation(),
-			expr->getCurrentNameIdentifier());
+			expr->getCurrentNameIdentifier(), m_scope);
 
 		if (UNEXPECTED(ftype == NULL)) {
 			Compiler::errorf(expr->getLocation(),
@@ -383,7 +384,7 @@ AST_VISITOR(TypeChecker, AliasStmt) {
 				"Name `%S' already in use!", expr->getNewName());
 		}
 
-		g_scope.pushType(expr->getNewName(), ftype);
+		m_scope->pushType(expr->getNewName(), ftype);
 		const_cast<Type*>(ftype)->addRef();
 	}
 }
@@ -603,15 +604,15 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 		expr->setResult(new Value);
 	}
 
-	expr->setCallValue(_prepare_method_call(lhs->getTypePtr(), lhs, method_name,
-		expr, arg_values));
+	expr->setCallValue(_prepare_method_call(lhs->getTypePtr(), lhs,
+		method_name, expr, arg_values));
 
 	if (expr->isAssigned()) {
 		/**
 		 * When using the compound assignment expression (e.g. +=),
-		 * we have to restore the original Type ptr, since we aren't in a
-		 * temporary expression, but in an assignment to a variable with its
-		 * defined type
+		 * we have to restore the original Type ptr, since we aren't in 
+		 * a temporary expression, but in an assignment to a variable 
+		 * with its defined type
 		 */
 		expr->getValue()->setTypePtr(lhs_type);
 	}
@@ -627,7 +628,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 
 	if (EXPECTED(expr->getType() != NULL)) {
 		type = _evaluate_type(expr->getLocation(),
-			expr->getType());
+			expr->getType(), m_scope);
 	}
 
 	Identifier* variable = expr->getVariable();
@@ -717,7 +718,8 @@ AST_VISITOR(TypeChecker, IfExpr) {
 
 	if (expr->hasElseIf()) {
 		const NodeList& elseif_nodes = expr->getNodes();
-		NodeList::const_iterator it = elseif_nodes.begin(), end = elseif_nodes.end();
+		NodeList::const_iterator it = elseif_nodes.begin(),
+			end = elseif_nodes.end();
 
 		while (it != end) {
 			ElseIfExpr* elseif = static_cast<ElseIfExpr*>(*it);
@@ -882,7 +884,8 @@ AST_VISITOR(TypeChecker, AssignExpr) {
 	expr->setArgsValue(arg_values);
 
 	expr->setCallValue(_prepare_method_call(lhs->getTypePtr(), lhs,
-		CACHE_PTR(CLEVER_OP_ASSIGN, CLEVER_OPERATOR_ASSIGN), expr, arg_values));
+		CACHE_PTR(CLEVER_OP_ASSIGN, CLEVER_OPERATOR_ASSIGN), expr,
+			arg_values));
 
 	expr->getCallValue()->addRef();
 
@@ -1009,8 +1012,8 @@ AST_VISITOR(TypeChecker, MethodCall) {
 
 		expr->setValue(new Value);
 
-		expr->setCallValue(_prepare_method_call(variable->getTypePtr(), variable,
-			name, expr, arg_values));
+		expr->setCallValue(_prepare_method_call(variable->getTypePtr(),
+			variable, name, expr, arg_values));
 	}
 }
 
@@ -1034,7 +1037,8 @@ AST_VISITOR(TypeChecker, ImportStmt) {
 	 * e.g. import std.io;
 	 */
 	Compiler::import(scope,
-		expr->getPackageName(), expr->getModuleName(), expr->getAliasName());
+		expr->getPackageName(), expr->getModuleName(),
+		expr->getAliasName());
 }
 
 /**
@@ -1066,7 +1070,8 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 		const Type* rtype = NULL;
 
 		if (return_type->getName() != CACHE_PTR(CLEVER_VOID_STR, "Void")) {
-			rtype = _evaluate_type(expr->getLocation(), return_type);
+			rtype = _evaluate_type(expr->getLocation(), return_type,
+				m_scope);
 		}
 		user_func->setReturnType(rtype);
 	}
@@ -1075,7 +1080,8 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 
 	if (args) {
 		ArgumentDecls& arg_nodes = args->getArgs();
-		ArgumentDecls::iterator it = arg_nodes.begin(), end = arg_nodes.end();
+		ArgumentDecls::iterator it = arg_nodes.begin(),
+			end = arg_nodes.end();
 
 		m_scope = m_scope->newChild();
 
@@ -1084,7 +1090,8 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 		while (EXPECTED(it != end)) {
 			Value* var = new Value;
 
-			const Type* arg_type = _evaluate_type(expr->getLocation(), it->first);
+			const Type* arg_type = _evaluate_type(expr->getLocation(),
+				it->first, m_scope);
 			const CString* arg_name = it->second->getName();
 
 			var->setName(arg_name);
@@ -1126,7 +1133,7 @@ AST_VISITOR(TypeChecker, ExtFuncDeclaration) {
 	const Type* rtype = CLEVER_VOID;
 
 	if (return_type->getName() != CACHE_PTR(CLEVER_VOID_STR, "Void")) {
-		rtype = _evaluate_type(expr->getLocation(), return_type);
+		rtype = _evaluate_type(expr->getLocation(), return_type, m_scope);
 	}
 
 	const CString* lfname = expr->getLFName();
@@ -1162,7 +1169,8 @@ AST_VISITOR(TypeChecker, ExtFuncDeclaration) {
 		ArgumentDecls::iterator it = arg_nodes.begin(), end = arg_nodes.end();
 
 		while (EXPECTED(it != end)) {
-			const Type* arg_type = _evaluate_type(expr->getLocation(), it->first);
+			const Type* arg_type = _evaluate_type(expr->getLocation(),
+				it->first, m_scope);
 			const CString* arg_name = it->second->getName();
 
 
@@ -1309,7 +1317,8 @@ AST_VISITOR(TypeChecker, MapList) {
 	}
 
 	// Gets the proper Map type
-	const Type* map_type = virtual_map->getTemplatedType(key_type, value_type);
+	const Type* map_type = virtual_map->getTemplatedType(key_type,
+		value_type);
 
 	MapValue* mv = static_cast<MapValue*>(map_type->allocateValue());
 	MapValue::ValueType& map = mv->getMap();
