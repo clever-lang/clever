@@ -42,8 +42,6 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(IOModule);
 };
 
-extern Module* g_io_module;
-
 }}} // clever::packages::std
 
 #endif // CLEVER_STD_IO_H

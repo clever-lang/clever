@@ -49,13 +49,10 @@ public:
 	~FFI();
 
 	void init();
-	
+
 private:
 	DISALLOW_COPY_AND_ASSIGN(FFI);
 };
-
-extern Module* g_external_module;
-
 
 }}} // clever::packages::std
 

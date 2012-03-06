@@ -42,8 +42,6 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(Reflection);
 };
 
-extern Module* g_reflection_module;
-
 }}} // clever::packages::std
 
 #endif // CLEVER_STD_REFLECTION_H

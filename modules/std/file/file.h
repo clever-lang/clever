@@ -43,8 +43,6 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(File);
 };
 
-extern Module* g_file_module;
-
 }}} // clever::packages::std
 
 #endif // CLEVER_STD_MATH_H

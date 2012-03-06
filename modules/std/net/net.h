@@ -43,8 +43,6 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(NetModule);
 };
 
-extern Module* g_net_module;
-
 }}} // clever::packages::std
 
 #endif // CLEVER_STD_NET_H
