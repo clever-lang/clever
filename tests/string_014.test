@@ -1,6 +1,7 @@
 Testing String::asByteArray()
 ==CODE==
 import std.io;
+use println as std.io::println;
 
 Array<Byte> arrB = 'clever'.toByteArray();
 println(arrB.toString());

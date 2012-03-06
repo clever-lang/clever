@@ -1,9 +1,11 @@
 Testing uninitialized variable
 ==CODE==
-import std.reflection;
+import std.reflection as r;
 import std.io;
 
-ReflectionPackage a;
+use println as std.io::println;
+
+r::ReflectionPackage a;
 
 println("ok");
 ==RESULT==

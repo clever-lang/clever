@@ -2,6 +2,8 @@ String toDouble() and toInteger() methods
 ==CODE==
 import std.io;
 
+use println as std.io::println;
+
 Double foo = 123.456;
 Int bar = 789;
 

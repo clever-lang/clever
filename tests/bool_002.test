@@ -1,6 +1,7 @@
 Testing expression with bool type
 ==CODE==
 import std.io;
+use println as std.io::println;
 
 println(true == true);
 println(false != true);

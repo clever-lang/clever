@@ -1,6 +1,7 @@
 String::at tests
 ==CODE==
 import std.io;
+use println as std.io::println;
 String str = "foobar";
 println(str.at(0));
 ==RESULT==

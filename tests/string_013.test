@@ -2,6 +2,8 @@ Testing String::operator*(String, Int)
 ==CODE==
 import std.io;
 
+use println as std.io::println;
+
 println("Happy birthday to you! " * 3);
 
 String str = "Ho! ";

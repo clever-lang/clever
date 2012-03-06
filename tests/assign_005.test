@@ -1,6 +1,8 @@
 Testing loop and variable scope
 ==CODE==
 import std.io;
+use println as std.io::println;
+use print as std.io::print;
 
 Int i = 4;
 

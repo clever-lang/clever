@@ -1,9 +1,11 @@
 Testing other FileStream operations
 ==CODE==
 import std.io;
-import std.file;
+import std.file as f;
 
-FileStream fs('test.txt', 'w');
+use println as std.io::println;
+
+f::FileStream fs('test.txt', 'w');
 fs.write('Clever ');
 fs.write(10);
 fs.write(' ');

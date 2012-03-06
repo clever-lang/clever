@@ -1,6 +1,7 @@
 Testing using a function as a literal
 ==CODE==
 import std.io;
+use println as std.io::println;
 
 Int cb(String text) {
 	println("Fooooo: " + text);

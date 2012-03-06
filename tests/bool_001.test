@@ -1,6 +1,7 @@
 Testing the Bool type
 ==CODE==
 import std.io;
+use println as std.io::println;
 
 Bool a = false;
 println(a);

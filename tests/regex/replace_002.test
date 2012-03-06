@@ -3,7 +3,9 @@ Testing replace with options
 import std.io;
 import std.regex as re;
 
-Regex p("b", re::CASELESS);
+use println as std.io::println;
+
+re::Regex p("b", re::CASELESS);
 println(p.replace("z", "BBB"), p.replaceAll("z", "BBB"));
 ==RESULT==
 zBB

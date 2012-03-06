@@ -1,9 +1,10 @@
-[FATAL] Testing Map<> with a non-less than comparable key type 
+[FATAL] Testing Map<> with a non-less than comparable key type
 ==CODE==
 import std.io;
-import std.file;
+import std.file as f;
+use println as std.io::println;
 
-Map<FileStream, String> map;
+Map<f::FileStream, String> map;
 
 println(map.toString());
 ==RESULT==

@@ -1,6 +1,7 @@
 Method chaining
 ==CODE==
 import std.io;
+use println as std.io::println;
 
 String foo = "foobar";
 String foo2 = foo.replace("foo", "bar").substring(0,2);

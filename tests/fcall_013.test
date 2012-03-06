@@ -1,15 +1,15 @@
 Testing function with templated parameter and return
 ==CODE==
-import std.io;
+import std.io as io;
 
 Array<String> toArrayString(Array<Int> x)
 {
 	Array<String> ret;
-	
+
 	for (Int i = 0; i < x.size(); ++i) {
 		ret.push(x[i].toString());
 	}
-	
+
 	return ret;
 }
 
@@ -19,7 +19,7 @@ y.push(-10);
 y.push(23);
 
 Auto z = toArrayString(y);
-println(z.toString());
+io::println(z.toString());
 
 ==RESULT==
 \[1, -10, 23\]

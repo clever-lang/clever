@@ -1,6 +1,7 @@
 Testing function call with recursion
 ==CODE==
 import std.io;
+use println as std.io::println;
 
 Void foo(Int x) {
 	if (x == 0) {

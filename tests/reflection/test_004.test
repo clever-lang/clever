@@ -1,7 +1,11 @@
 Testing ReflectionFunction methods
 ==CODE==
 import std;
-ReflectionFunction f("max");
+
+use println as std.io::println;
+use ReflectionFunction as std.reflection::ReflectionFunction;
+
+ReflectionFunction f("std.math::max");
 println(f.getReturnType(),
 	f.isInternal(),
 	f.isUserDefined(),

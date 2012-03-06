@@ -1,7 +1,7 @@
 Testing Map<K, V>::getAll()
 ==CODE==
 import std.io;
-import std.reflection;
+use println as std.io::println;
 
 Map<String, Int> map;
 map.insert('one', 1);

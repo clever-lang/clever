@@ -1,6 +1,7 @@
 Using return to abort execution
 ==CODE==
 import std.io;
+use println as std.io::println;
 
 println(1);
 

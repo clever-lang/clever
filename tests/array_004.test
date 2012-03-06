@@ -1,22 +1,22 @@
 Testing Array's methods #2
 ==CODE==
-import std.io;
+import std.io as io;
 
 Array<String> x;
 x.push('cle');
 x.push('ter');
 
-print(x.at(0), x.at(1), "\n");
+io::print(x.at(0), x.at(1), "\n");
 
 x.set(1, 'Ver');
-print(x.at(0), x.at(1), "\n");
+io::print(x.at(0), x.at(1), "\n");
 
 String str = x.pop();
-println(str);
-println(x.size());
+io::println(str);
+io::println(x.size());
 
 x.push('ver');
-println(x.toString());
+io::println(x.toString());
 ==RESULT==
 cleter
 cleVer

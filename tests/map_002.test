@@ -1,7 +1,7 @@
 Testing Map<Int, String>
 ==CODE==
 import std.io;
-
+use println as std.io::println;
 Map<Int, String> map;
 map.insert(1000000000, "1 billion");
 map.insert(-1000, "minus one thousand");

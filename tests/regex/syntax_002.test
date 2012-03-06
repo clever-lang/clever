@@ -1,9 +1,11 @@
 Testing replace using the regex syntax
 ==CODE==
 import std.io;
-import std.regex;
+import std.regex as re;
 
-Regex a = /fo+/;
+use println as std.io::println;
+
+re::Regex a = /fo+/;
 
 println(a.replace("x", "foobar"));
 ==RESULT==

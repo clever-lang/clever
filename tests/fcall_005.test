@@ -2,6 +2,8 @@ Testing user function
 ==CODE==
 import std.io;
 
+use println as std.io::println;
+
 Int foo(Int i, Int j) {
 	Int h = j;
 

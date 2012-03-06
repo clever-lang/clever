@@ -1,7 +1,7 @@
 Testing Map<K, V>::getKeys() and Map<K, V>::getValues()
 ==CODE==
 import std.io;
-
+use println as std.io::println;
 Map<String, Int> map;
 map.insert('one', 1);
 map.insert('billion', 1000000000);

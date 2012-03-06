@@ -2,6 +2,8 @@ Testing lambda with Void return
 ==CODE==
 import std.io;
 
+use println as std.io::println;
+
 println(Void () {
   println("foo!");
 });

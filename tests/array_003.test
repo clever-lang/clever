@@ -1,6 +1,6 @@
 Testing Array's methods
 ==CODE==
-import std.io;
+import std.io as io;
 
 Array<Int> x;
 
@@ -9,23 +9,23 @@ for (Int i = 0; i < 5; ++i) {
 }
 
 for (Int j = 4; j >= 0; --j) {
-	println(x.at(j));
+	io::println(x.at(j));
 }
 
-println(x.size());
+io::println(x.size());
 
 if (x.isEmpty()) {
-	println("fail!");
+	io::println("fail!");
 }
 else {
 	x.clear();
-	
+
 	if (false == x.isEmpty()) {
-		println("fail!");
+		io::println("fail!");
 	}
 }
 
-println("done!");
+io::println("done!");
 ==RESULT==
 4
 3

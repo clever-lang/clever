@@ -1,6 +1,7 @@
 Testing Void type with lambda
 ==CODE==
 import std.io;
+use println as std.io::println;
 
 Auto f = Void () { return ; }; println(f.call());
 ==RESULT==

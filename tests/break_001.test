@@ -2,6 +2,8 @@ Testing break statement
 ==CODE==
 import std.io;
 
+use println as std.io::println;
+
 while (1) {
 	println(1);
 

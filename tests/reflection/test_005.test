@@ -3,10 +3,12 @@ Testing function call with ReflectionFunction::call()
 import std.io;
 import std.reflection;
 
-ReflectionFunction f("println");
+use ReflectionFunction as std.reflection::ReflectionFunction;
+
+ReflectionFunction f("std.io::println");
 f.call(1, "foo");
 
-ReflectionFunction z("getcwd");
+ReflectionFunction z("std.sys::getcwd");
 z.call();
 ==RESULT==
 1

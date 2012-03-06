@@ -2,7 +2,8 @@
 ==CODE==
 import std.io;
 use println as std.io::println;
+use println as std.io::println;
 
 println("bar");
 ==RESULT==
-Compile error: Name `println' already in use! on \S+ line 2
+Compile error: Name `println' already in use! on \S+ line 3

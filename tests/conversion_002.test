@@ -1,6 +1,7 @@
 Testing conversion from Int to Double
 ==CODE==
 import std.io;
+use println as std.io::println;
 
 Void print_double(Double d) {
 	println(d);

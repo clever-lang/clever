@@ -2,6 +2,8 @@ Testing nested while loop
 ==CODE==
 import std.io;
 
+use println as std.io::println;
+
 Int i = 2;
 
 while (--i) {

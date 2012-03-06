@@ -1,6 +1,8 @@
-Variable declaration list test  
+Variable declaration list test
 ==CODE==
 import std;
+
+use println as std.io::println;
 
 Array<Int> a, b, c;
 Int i=0, j=2, w;

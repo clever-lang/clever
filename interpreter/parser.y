@@ -189,6 +189,7 @@ namespace clever {
 %type <identifier> package_module_name
 %type <identifier> func_name
 %type <identifier> TYPE
+%type <identifier> type_name
 %type <regex_pattern> REGEX
 %type <identifier> CONSTANT
 %type <constant> constant
@@ -405,6 +406,10 @@ func_name:
 	|	IDENT                          { $$ = $1; }
 ;
 
+type_name:
+		package_module_name "::" TYPE { $1->concat("::", $3); delete $3; }
+	|	TYPE                          { $$ = $1; }
+;
 
 func_call:
 	func_name '(' arg_list_opt ')' { $$ = new ast::FunctionCall($1, $3); $$->setLocation(yylloc); }
@@ -426,12 +431,12 @@ method_call:
 			chaining_method_call               { $$ = $11; }
 	|	'(' expr ')' '.' IDENT '(' arg_list_opt ')'	   { $<method_call>$ = new ast::MethodCall($2, $5, $7); $<method_call>$->setLocation(yylloc); }
 			chaining_method_call               { $$ = $10; }
-	|	TYPE '.' IDENT '(' arg_list_opt ')'    { $<method_call>$ = new ast::MethodCall($1, $3, $5, true); $<method_call>$->setLocation(yylloc); }
+	|	type_name '.' IDENT '(' arg_list_opt ')'    { $<method_call>$ = new ast::MethodCall($1, $3, $5, true); $<method_call>$->setLocation(yylloc); }
 			chaining_method_call               { $$ = $8; }
 ;
 
 template_args:
-		TYPE           				{ $<template_args>$ = new ast::TemplateArgsVector; $<template_args>$->push_back($1); }
+		type_name      				{ $<template_args>$ = new ast::TemplateArgsVector; $<template_args>$->push_back($1); }
 	|	template_args ',' TYPE  	{ $1->push_back($3); }
 	|   template_args ',' template	{ $1->push_back($3); }
 	|	template					{ $<template_args>$ = new ast::TemplateArgsVector; $<template_args>$->push_back($1); }

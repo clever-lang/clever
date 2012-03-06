@@ -1,6 +1,7 @@
 Testing Pair<> type
 ==CODE==
 import std.io;
+use println as std.io::println;
 
 Pair<Double, String> p(10.3, "ºC");
 println(p.toString());

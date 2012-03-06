@@ -1,6 +1,7 @@
 Testing subscript operator
 ==CODE==
 import std.io;
+use println as std.io::println;
 
 Array<Int> a;
 

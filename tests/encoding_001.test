@@ -1,6 +1,7 @@
 Testing UTF-8 script file
 ==CODE==
 import std.io;
+use println as std.io::println;
 println("não!");
 ==RESULT==
 não!

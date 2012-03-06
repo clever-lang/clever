@@ -1,6 +1,7 @@
 Testing if-elseif-else in a for statement
 ==CODE==
 import std;
+use println as std.io::println;
 
 for(Int x=0; x<7;x++){
 	if(x==0){ println(0); }

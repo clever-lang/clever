@@ -2,6 +2,8 @@ Testing conversion from Double to Int
 ==CODE==
 import std.io;
 
+use println as std.io::println;
+
 Double d = 10.2;
 Int i = d + 1;
 println(i);

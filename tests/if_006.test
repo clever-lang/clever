@@ -1,6 +1,8 @@
 Testing if-elseif-else
 ==CODE==
 import std;
+use println as std.io::println;
+use print as std.io::print;
 
 Int x = 0;
 

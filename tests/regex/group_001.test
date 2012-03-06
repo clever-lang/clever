@@ -1,9 +1,9 @@
 Testing Regex::group()
 ==CODE==
 import std.io;
-import std.regex;
+import std.regex as re;
 
-Regex re("(.)(.)");
+re::Regex re("(.)(.)");
 
 while (re.matches("abcd")) {
 	print("-> ", re.group(0), " - ", re.group(1), "\n");

@@ -1,6 +1,7 @@
 Creating nested function
 ==CODE==
 import std.io;
+use println as std.io::println;
 
 Int f() {
 	Void z() {
@@ -8,7 +9,7 @@ Int f() {
 	}
 
 	z();
-	
+
 	return 1;
 }
 

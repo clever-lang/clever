@@ -1,6 +1,6 @@
 Testing Array<>::find()
 ==CODE==
-import std.io;
+import std.io as io;
 
 Array<String> a;
 
@@ -8,9 +8,9 @@ a.push('Clever');
 a.push('Programming');
 a.push('Language');
 
-println(a.find('Clever'));
-println(a.find('Cleverasd'));
-println(a.find('Language'));
+io::println(a.find('Clever'));
+io::println(a.find('Cleverasd'));
+io::println(a.find('Language'));
 
 Pair<Int, Bool> p1(1, true), p2(3, false), p3(-1, true), p4(-1, false);
 
@@ -19,8 +19,8 @@ b.push(p1);
 b.push(p2);
 b.push(p3);
 
-println(b.find(p2));
-println(b.find(p4));
+io::println(b.find(p2));
+io::println(b.find(p4));
 
 ==RESULT==
 0

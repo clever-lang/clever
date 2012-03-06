@@ -1,6 +1,7 @@
 Testing logical operator
 ==CODE==
 import std.io;
+use println as std.io::println;
 
 Int foo() {
 	println("here!");

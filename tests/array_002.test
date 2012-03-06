@@ -1,6 +1,6 @@
 Testing Array type with more types
 ==CODE==
-import std.io;
+import std.io as io;
 
 Array<Int> a;
 a.push(1);
@@ -14,7 +14,7 @@ Array<Double> c;
 c.push(-1.5);
 c.push(2.7);
 
-println(a.toString(), b.toString(), c.toString());
+io::println(a.toString(), b.toString(), c.toString());
 ==RESULT==
 \[1, 2\]
 \[cle, ver\]

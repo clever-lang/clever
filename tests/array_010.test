@@ -1,6 +1,6 @@
 Testing Array's assign
 ==CODE==
-import std.io;
+import std.io as io;
 
 Array<Int> a;
 a.push(1);
@@ -9,6 +9,6 @@ a.push(3);
 
 Array<Int> b = a;
 
-println(b.toString());
+io::println(b.toString());
 ==RESULT==
 \[1, 2, 3\]

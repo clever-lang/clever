@@ -2,6 +2,8 @@ String substring() and replace() methods
 ==CODE==
 import std.io;
 
+use println as std.io::println;
+
 String foo = "0123456789";
 
 println(foo.substring(0,5));

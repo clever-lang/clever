@@ -3,6 +3,9 @@ Inheritance test #2 with Array<Object>
 import std.io;
 import std.reflection;
 
+use print as std.io::print;
+use get_type as std.reflection::get_type;
+
 Array<Object> arr;
 arr.push(10);
 arr.push('clever');

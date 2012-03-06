@@ -3,6 +3,8 @@ Testing regex syntax
 import std.regex;
 import std.io;
 
+use println as std.io::println;
+
 println(/f+o/.matches("fo"));
 println(/f+o/.matches("bo"));
 ==RESULT==

@@ -1,7 +1,8 @@
 Testing Map<> literals
 ==CODE==
 import std.io;
-
+use print as std.io::print;
+use println as std.io::println;
 Auto m1 = {100000: 'med', 10000000000: 'big', -1: 'small'};
 
 Auto all = m1.getAll();

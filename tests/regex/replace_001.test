@@ -1,9 +1,11 @@
 Testing replace() and replaceAll()
 ==CODE==
 import std.io;
-import std.regex;
+import std.regex as re;
 
-Regex p("b");
+use println as std.io::println;
+
+re::Regex p("b");
 
 println(p.replace("z", "bbb"), p.replaceAll("z", "bbb"));
 ==RESULT==

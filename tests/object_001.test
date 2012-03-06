@@ -1,7 +1,7 @@
 Testing method call in literal objects
 ==CODE==
 import std.io;
-
+use println as std.io::println;
 println("foo".replace("f", "b"));
 
 println(1.toString());

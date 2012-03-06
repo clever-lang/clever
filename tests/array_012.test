@@ -1,12 +1,12 @@
 Testing nested template array
 ==CODE==
-import std;
+import std.io as io;
 
 Array<Int> w1;
 Array<Int> w2;
 Array<Int> w3;
 
-Array<Array<Int>> v1;//ok  
+Array<Array<Int>> v1;//ok
 Array<Array<Int>> v2;
 Array<Array<Int>> v4;
 
@@ -15,7 +15,7 @@ Array<Array<Array<Int>>> v5;
 
 Array<Array<Array<Array<Int>>>> v6;//ok
 
-v1.push(w1); 
+v1.push(w1);
 v1.at(0).push(1);
 
 v2.push(w2);
@@ -27,9 +27,9 @@ v5.push(v4);
 v6.push(v5);
 v6.at(0).at(0).at(0).push(3);
 
-println(v1.at(0).at(0));
-println(v3.at(0).at(0).at(0));
-println(v6.at(0).at(0).at(0).at(0));
+io::println(v1.at(0).at(0));
+io::println(v3.at(0).at(0).at(0));
+io::println(v6.at(0).at(0).at(0).at(0));
 ==RESULT==
 1
 2

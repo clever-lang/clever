@@ -1,6 +1,7 @@
 Testing function call
 ==CODE==
 import std.io;
+use println as std.io::println;
 
 Int bar() { return 3; }
 Int foo() { return bar(); }

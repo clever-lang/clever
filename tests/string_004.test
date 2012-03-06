@@ -2,6 +2,8 @@ Testing string concatenation
 ==CODE==
 import std.io;
 
+use println as std.io::println;
+
 String x = "foo";
 
 x += "bar";

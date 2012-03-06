@@ -2,6 +2,8 @@ Factorial from issue #53
 ==CODE==
 import std.io;
 
+use println as std.io::println;
+
 Int fact(Int n) {
     if (n == 0) {
         return 1;

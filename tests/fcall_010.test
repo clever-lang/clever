@@ -1,6 +1,6 @@
 Checking value of uninitialized variable when calling a function twice
 ==CODE==
-import std.io;
+import std.io as io;
 
 Int foo(Int n) {
 	Int x;
@@ -11,8 +11,8 @@ Int foo(Int n) {
 	return x;
 }
 
-println(foo(1));
-println(foo(0));
+io::println(foo(1));
+io::println(foo(0));
 ==RESULT==
 2
 0

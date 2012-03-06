@@ -1,12 +1,12 @@
 Testing function chaining call
 ==CODE==
-import std.io;
+import std.io as io;
 
 String foo(String z) {
 	return z;
 }
 
-println(foo('cool').toUpper());
+io::println(foo('cool').toUpper());
 
 ==RESULT==
 COOL

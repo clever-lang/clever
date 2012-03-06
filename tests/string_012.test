@@ -1,6 +1,7 @@
 Testing String::find(String) and String::find(String, Int)
 ==CODE==
 import std.io;
+use println as std.io::println;
 
 println("abcabc".find("bca"));
 println("abcabc".find("abc", 1));

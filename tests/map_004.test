@@ -1,6 +1,7 @@
 Testing Map<K, V>::hasKey
 ==CODE==
 import std.io;
+use println as std.io::println;
 
 Map<String, String> a;
 a.insert('name', 'Clever');

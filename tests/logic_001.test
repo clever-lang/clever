@@ -1,7 +1,7 @@
 Testing logical expression
 ==CODE==
 import std.io;
-
+use println as std.io::println;
 Int i = 10;
 Int j = 20;
 

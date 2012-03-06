@@ -106,8 +106,6 @@ void PackageManager::loadModule(Scope* scope, const CString* const package,
 		fvalue->setHandler(it->second);
 
 		scope->pushValue(CSTRING(prefix_name + *fvalue->getName()), fvalue);
-		scope->pushValue(fvalue->getName(), fvalue);
-		fvalue->addRef();
 		++it;
 	}
 
@@ -119,8 +117,6 @@ void PackageManager::loadModule(Scope* scope, const CString* const package,
 	 */
 	while (itc != endc) {
 		g_scope.pushType(CSTRING(prefix_name + *itc->first), itc->second);
-		g_scope.pushType(itc->first, itc->second);
-		itc->second->addRef();
 
 		itc->second->init();
 		++itc;

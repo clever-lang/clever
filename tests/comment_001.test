@@ -14,7 +14,7 @@ Testing comment syntax
 # // bar
 
 
-import std.io;
-println('ok');
+import std.io as io;
+io::println('ok');
 ==RESULT==
 ok

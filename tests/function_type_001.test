@@ -2,6 +2,8 @@ Testing Function type #1
 ==CODE==
 import std.io;
 
+use println as std.io::println;
+
 Auto f = Int(Int x) { return x * x; };
 
 for (Int i = 0; i < 5; ++i) {

@@ -1,12 +1,12 @@
 Testing Array<> initializer list
 ==CODE==
-import std.io;
+import std.io as io;
 
 Auto arr = {10, 20, 30};
 Auto txt = {'Clever', 'programming', 'language'};
 
-println(arr);
-println(txt);
+io::println(arr);
+io::println(txt);
 
 ==RESULT==
 \[10, 20, 30\]

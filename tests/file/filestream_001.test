@@ -3,6 +3,9 @@ Testing FileStream basic operations
 import std.io;
 import std.file;
 
+use print as std.io::print;
+use FileStream as std.file::FileStream;
+
 FileStream writter;
 writter.open('test.txt', 'w');
 writter.write("I'm writting into a file via FileStream class!");

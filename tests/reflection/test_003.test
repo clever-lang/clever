@@ -2,10 +2,13 @@ Testing ReflectionFunction methods
 ==CODE==
 import std;
 
-ReflectionFunction a("max");
+use println as std.io::println;
+use ReflectionFunction as std.reflection::ReflectionFunction;
+
+ReflectionFunction a("std.math::max");
 println(a.getName(), a.getArgs());
 
-ReflectionFunction b("getcwd");
+ReflectionFunction b("std.sys::getcwd");
 println(b.getName(), b.getArgs());
 
 ReflectionFunction c("getcwd2");

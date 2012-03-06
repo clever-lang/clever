@@ -2,6 +2,8 @@ Testing function with templated parameters
 ==CODE==
 import std.io;
 
+use println as std.io::println;
+
 Void pushTwice(Array<Int> x, Int a)
 {
 	x.push(a);

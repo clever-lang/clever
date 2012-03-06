@@ -1,6 +1,7 @@
 String basic operators
 ==CODE==
 import std.io;
+use println as std.io::println;
 
 String a = 'abc';
 String b = 'bca';

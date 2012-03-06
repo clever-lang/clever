@@ -3,6 +3,9 @@ Absolute value
 import std.io;
 import std.math;
 
+use println as std.io::println;
+use abs as std.math::abs;
+
 Int i = -10;
 println(i);
 println(abs(i));

@@ -1,21 +1,21 @@
 Testing Array<> literal
 ==CODE==
-import std.io;
-import std.math;
+import std.io as io;
+import std.math as math;
 
-println({10, 12, 14});
+io::println({10, 12, 14});
 
 Void output(Array<String> arr)
 {
-	print('Name: ', arr[0], "\n");
-	print('Version: ', arr[1], "\n");
+	io::print('Name: ', arr[0], "\n");
+	io::print('Version: ', arr[1], "\n");
 }
 
 output({'Clever', '0.1-alpha'});
 
-const Double pi = acos(-1.0), sqrt2 = sqrt(2.0);
+const Double pi = math::acos(-1.0), sqrt2 = math::sqrt(2.0);
 
-println({sqrt2, pi, cos(0.0)}.at(1));
+io::println({sqrt2, pi, math::cos(0.0)}.at(1));
 
 ==RESULT==
 \[10, 12, 14\]

@@ -2,6 +2,8 @@ Testing file import
 ==CODE==
 import std.io;
 
+use println as std.io::println;
+
 println("bar?");
 
 import "tests/import_001_inc1.clv";

@@ -1,7 +1,7 @@
 Testing method call in expressions
 ==CODE==
 import std.io;
-
+use println as std.io::println;
 println((3 + 5).toString());
 println(('clever ' + 'programming       ').trim() + ' language');
 

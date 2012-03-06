@@ -2,6 +2,8 @@ Testing function accessing global variable
 ==CODE==
 import std.io;
 
+use println as std.io::println;
+
 Int i = 0;
 
 Void f() {

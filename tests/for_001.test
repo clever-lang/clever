@@ -1,10 +1,10 @@
 Testing for loop
 ==CODE==
-import std.io;
+import std.io as io;
 
-println("start");
-for (Int i = 4; i > 0; --i) { println(i); }
-println("done");
+io::println("start");
+for (Int i = 4; i > 0; --i) { io::println(i); }
+io::println("done");
 ==RESULT==
 start
 4
