@@ -369,13 +369,8 @@ CLEVER_VM_HANDLER(VM::return_handler) {
 
 		s_return_value = value;
 
-		//if (s_var->mode == NORMAL) {
-			// Go back to the caller
-			CLEVER_VM_GOTO(call->getOpNum());
-		//} else {
-			// Terminates the execution, go back to the internal caller
-			//CLEVER_VM_EXIT();
-		//}
+		// Go back to the caller
+		CLEVER_VM_GOTO(call->getOpNum());
 	} else {
 		s_return_value = value;
 
