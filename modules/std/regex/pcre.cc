@@ -150,8 +150,8 @@ DataValue* Pcre::allocateValue() const {
 }
 
 void Pcre::init() {
-	const Type* type = CLEVER_TYPE("std.regex::" REGEX_TYPE_NAME);
-	
+	const Type* type = g_regex_type;
+
 	clever_assert_not_null(type);
 
 	// Regex(String pattern [, Int options])

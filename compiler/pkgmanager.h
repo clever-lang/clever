@@ -50,33 +50,31 @@ public:
 
 	~PackageManager() { }
 
-	/**
-	 * Load package map
-	 */
+	// Load package map
 	void init();
-	/**
-	 * Free memory
-	 */
+
+	// Free memory
 	void shutdown();
-	/**
-	 * Add a package to list
-	 */
+
+	// Add a package to list
 	void addPackage(const CString* const name, Package* package) {
 		m_packages.insert(PackagePair(name, package));
 	}
-	/**
-	 * Load an specific package
-	 */
+
+	// Load an specific package
 	void loadPackage(Scope*, const CString* const);
-	/**
-	 * Load an specific package module
-	 */
+
+	// Load an specific package module
 	void loadModule(Scope*, const CString* const, const CString* const, const CString* const);
 	void loadModule(Scope*, const CString* const, Module* const, const CString* const);
 
-	/**
-	 * Copy function in the scope to another alias
-	 */
+	// Checks if an specific module is currently loaded
+	bool checkModuleLoaded(const CString* const, const CString* const);
+
+	// Get the Type pointer by its real name
+	const Type* getTypeByModule(const CString* const, const CString* const, const CString* const);
+
+	// Copy function in the scope to another alias
 	void copyScopeToAlias(Scope*, const std::string&);
 
 	const PackageMap& getPackages() const { return m_packages; }

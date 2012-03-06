@@ -140,6 +140,59 @@ void PackageManager::loadModule(Scope* scope, const CString* const package,
 }
 
 /**
+ * Checks if an specific module is currently loaded
+ */
+bool PackageManager::checkModuleLoaded(const CString* const package,
+	const CString* const module) {
+	PackageMap::const_iterator it = m_packages.find(package);
+
+	if (it == m_packages.end()) {
+		return false;
+	}
+
+	if (it->second->isFullyLoaded()) {
+		return true;
+	}
+
+	ModuleMap& modules = it->second->getModules();
+	ModuleMap::const_iterator it_mod = modules.find(module);
+
+	if (it_mod == modules.end()) {
+		return false;
+	}
+
+	return it_mod->second->isLoaded();
+}
+
+/**
+ * Get the Type pointer by its real name
+ */
+const Type* PackageManager::getTypeByModule(const CString* const package,
+	const CString* const module, const CString* const type) {
+	PackageMap::const_iterator it = m_packages.find(package);
+
+	if (it == m_packages.end()) {
+		return NULL;
+	}
+
+	ModuleMap& modules = it->second->getModules();
+	ModuleMap::const_iterator it_mod = modules.find(module);
+
+	if (it_mod == modules.end()) {
+		return NULL;
+	}
+
+	ClassMap& classes = it_mod->second->getClassTable();
+	ClassMap::const_iterator it_class = classes.find(type);
+
+	if (it_class == classes.end()) {
+		return NULL;
+	}
+
+	return it_class->second;
+}
+
+/**
  * Loads an specific module package by supplying the package and module names
  */
 void PackageManager::loadModule(Scope* scope, const CString* const package,
@@ -204,7 +257,7 @@ void PackageManager::copyScopeToAlias(Scope* scope, const std::string& alias) {
 		} else if (sym->isType()) {
 			scope->pushType(CSTRING(alias + sym->getSymbolName()->str()),
 				sym->getType());
-			
+
 			const_cast<Type*>(sym->getType())->addRef();
 		}
 		++it2;

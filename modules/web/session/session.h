@@ -35,15 +35,13 @@ namespace clever { namespace packages { namespace web {
 class Session : public Module {
 public:
 	Session();
-	
+
 	~Session();
 
 	void init();
 private:
 	DISALLOW_COPY_AND_ASSIGN(Session);
 };
-
-extern Module* g_session_module;
 
 }}} // clever::packages::web
 

@@ -1,12 +1,12 @@
 Testing regex module
 ==CODE==
-import std.io;
-import std.regex;
+import std.io as io;
+import std.regex as re;
 
-Regex reg("f.*bar");
+re::Regex reg("f.*bar");
 
-println(reg.matches("foobar"));
-println(reg.matches("foobaz"));
+io::println(reg.matches("foobar"));
+io::println(reg.matches("foobaz"));
 
 ==RESULT==
 true

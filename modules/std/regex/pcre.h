@@ -56,6 +56,8 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(Pcre);
 };
 
+extern Type* g_regex_type;
+
 }}}} // clever::packages::std::regex
 
 #endif

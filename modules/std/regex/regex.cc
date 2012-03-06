@@ -29,10 +29,12 @@
 
 namespace clever { namespace packages { namespace std {
 
+Type* regex::g_regex_type;
+
 void Regex::init() {
-	Class* pcreClass = new regex::Pcre();
-	
-	addClass(pcreClass);
+	regex::g_regex_type = new regex::Pcre();
+
+	addClass(regex::g_regex_type);
 
 	/**
 	 * Module constants

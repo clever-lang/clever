@@ -42,8 +42,6 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(RequestModule);
 };
 
-extern Module* g_request_module;
-
 }}} // clever::packages::request
 
 #endif // CLEVER_WEB_REQUEST_H
