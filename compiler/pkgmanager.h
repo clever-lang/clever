@@ -41,6 +41,9 @@ class CString;
 typedef std::tr1::unordered_map<const CString*, Package*> PackageMap;
 typedef std::pair<const CString*, Package*> PackagePair;
 
+typedef std::pair<const CString*, Value*> ValuePair;
+typedef std::pair<const CString*, const Type*> TypePair;
+
 /**
  * Package manager representation
  */

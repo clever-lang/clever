@@ -238,6 +238,8 @@ void PackageManager::loadModule(Scope* scope, const CString* const package,
 void PackageManager::copyScopeToAlias(Scope* scope, const std::string& alias) {
 	SymbolMap& symbols = scope->getSymbols();
 	SymbolMap::const_iterator it2(symbols.begin()), end2(symbols.end());
+	std::vector<ValuePair> callables;
+	std::vector<TypePair> type_alias;
 
 	while (it2 != end2) {
 		Symbol* sym = it2->second;
@@ -249,19 +251,36 @@ void PackageManager::copyScopeToAlias(Scope* scope, const std::string& alias) {
 				CallableValue* fvalue = static_cast<CallableValue*>(val);
 
 				if (fvalue->isNearCall()) {
-					scope->pushValue(CSTRING(alias + val->getName()->str()),
-						fvalue);
-					fvalue->addRef();
+					callables.push_back(ValuePair(
+						CSTRING(alias + val->getName()->str()),
+						fvalue));
 				}
 			}
 		} else if (sym->isType()) {
-			scope->pushType(CSTRING(alias + sym->getSymbolName()->str()),
-				sym->getType());
-
-			const_cast<Type*>(sym->getType())->addRef();
+			type_alias.push_back(TypePair(
+				CSTRING(alias + sym->getSymbolName()->str()), sym->getType()));
 		}
 		++it2;
 	}
+
+	std::vector<ValuePair>::const_iterator it_call(callables.begin()),
+		it_end(callables.end());
+
+	while (it_call != it_end) {
+		scope->pushValue(it_call->first, it_call->second);
+		it_call->second->addRef();
+		++it_call;
+	}
+
+	std::vector<TypePair>::const_iterator it_alias(type_alias.begin()),
+		it_end2(type_alias.end());
+
+	while (it_alias != it_end2) {
+		scope->pushType(it_alias->first, it_alias->second);
+		const_cast<Type*>(it_alias->second)->addRef();
+		++it_alias;
+	}
+
 }
 
 /**
