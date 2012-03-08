@@ -1,6 +1,6 @@
 Testing Array's slice method
 ==CODE==
-import std.io as io;
+import std.io.* as io;
 
 Array<String> x;
 x.push('Printing');

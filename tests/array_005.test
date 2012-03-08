@@ -1,6 +1,6 @@
 Testing Array's methods #3
 ==CODE==
-import std.io as io;
+import std.io.* as io;
 
 Array<Int> arr;
 arr.resize(5, 1);

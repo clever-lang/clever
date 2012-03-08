@@ -68,14 +68,21 @@ public:
 	void loadPackage(Scope*, const CString* const);
 
 	// Load an specific package module
-	void loadModule(Scope*, const CString* const, const CString* const, const CString* const);
-	void loadModule(Scope*, const CString* const, Module* const, const CString* const);
+	void loadModule(Scope*, const CString* const, const CString* const,
+		const CString* const);
+
+	void loadModule(Scope*, const CString* const, Module* const,
+		const CString* const);
+
+	void loadObject(Scope*, const CString* const, const CString* const,
+		const CString* const, const CString* const);
 
 	// Checks if an specific module is currently loaded
 	bool checkModuleLoaded(const CString* const, const CString* const);
 
 	// Get the Type pointer by its real name
-	const Type* getTypeByModule(const CString* const, const CString* const, const CString* const);
+	const Type* getTypeByModule(const CString* const, const CString* const,
+		const CString* const);
 
 	// Copy function in the scope to another alias
 	void copyScopeToAlias(Scope*, const std::string&);

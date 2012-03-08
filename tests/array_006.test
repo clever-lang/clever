@@ -1,12 +1,9 @@
 Testing Array warnings
 ==CODE==
-import std.io;
-
 Array<Int> arr;
 arr.pop();
 arr.set(3, 10);
 arr.at(-4);
-
 ==RESULT==
 Warning: Popping from a empty Array<Int>! Returning default value of type Int.
 Warning: Setting position 3 an Array<Int> with 0 elements.

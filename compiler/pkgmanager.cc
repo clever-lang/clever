@@ -75,26 +75,38 @@ void PackageManager::loadPackage(Scope* scope, const CString* const package) {
 	it->second->setFullyLoaded();
 }
 
-/**
- * Loads an specific module
- */
-void PackageManager::loadModule(Scope* scope, const CString* const package,
-	Module* const module, const CString* const alias) {
+static void _load_module_functions(const CString* alias, Scope* scope,
+	Module* module, const CString* obj) {
+
 	/**
 	 * Checks if the module already has been loaded
 	 */
-	if (module->isLoaded()) {
-		return;
+	if (!module->isLoaded()) {
+		/**
+		 * Initializes the module
+		 */
+		module->init();
 	}
-	/**
-	 * Initializes the module
-	 */
-	module->init();
-
-	const std::string prefix_name = alias ?
-		alias->str() + "::" : package->str() + "." + module->getName() + "::";
 
 	FunctionMap& funcs = module->getFunctions();
+
+	/**
+	 * Finds an specific module function
+	 */
+	if (obj) {
+		FunctionMap::const_iterator it = funcs.find(obj->str());
+
+		if (it != funcs.end()) {
+			CallableValue* fvalue = new CallableValue(CSTRING(it->first));
+
+			fvalue->setHandler(it->second);
+
+			scope->pushValue(alias ? alias : fvalue->getName(), fvalue);
+		}
+		return;
+	}
+
+	const std::string prefix = alias ? alias->str() + "::" : "";
 	FunctionMap::const_iterator it = funcs.begin(), end = funcs.end();
 
 	/**
@@ -105,33 +117,105 @@ void PackageManager::loadModule(Scope* scope, const CString* const package,
 
 		fvalue->setHandler(it->second);
 
-		scope->pushValue(CSTRING(prefix_name + *fvalue->getName()), fvalue);
+		scope->pushValue(CSTRING(prefix + *fvalue->getName()), fvalue);
 		++it;
 	}
+}
+
+/**
+ * Loads the module classes
+ */
+static void _load_module_classes(const CString* alias, Scope* scope,
+	Module* module, const CString* obj) {
 
 	ClassMap& classes = module->getClassTable();
 	ClassMap::iterator itc = classes.begin(), endc = classes.end();
+
+	const std::string prefix = alias ? alias->str() + "::" : "";
 
 	/**
 	 * Inserts all classes into the symbol table
 	 */
 	while (itc != endc) {
-		g_scope.pushType(CSTRING(prefix_name + *itc->first), itc->second);
+		g_scope.pushType(CSTRING(prefix + *itc->first), itc->second);
 
 		itc->second->init();
 		++itc;
 	}
+}
+
+/**
+ * Loads the module constants
+ */
+static void _load_module_constants(const CString* alias, Scope* scope,
+	Module* module, const CString* obj) {
 
 	ConstMap& constants = module->getConstants();
 	ConstMap::iterator itcs = constants.begin(), endcs = constants.end();
+
+	const std::string prefix = alias ? alias->str() + "::" : "";
 
 	/**
 	 * Inserts all constants into the symbol table
 	 */
 	while (itcs != endcs) {
-		g_scope.pushValue(CSTRING(prefix_name + itcs->first->str()), itcs->second);
+		g_scope.pushValue(CSTRING(prefix + itcs->first->str()), itcs->second);
 		++itcs;
 	}
+}
+
+/**
+ * Imports an specific object to the scope
+ */
+void PackageManager::loadObject(Scope* scope, const CString* const package,
+	const CString* const module, const CString* const obj,
+	const CString* const alias) {
+
+	PackageMap::const_iterator it = m_packages.find(package);
+
+	if (it == m_packages.end()) {
+		std::cerr << "package '" << *package << "' not found" << std::endl;
+		return;
+	}
+
+	/**
+	 * Checks if the package is unloaded, in this case initialize it
+	 */
+	if (it->second->isUnloaded()) {
+		it->second->init();
+	}
+
+	ModuleMap& modules = it->second->getModules();
+	ModuleMap::const_iterator it_mod = modules.find(module);
+
+	if (it_mod == modules.end()) {
+		std::cerr << "module '" << *module << "' not found" << std::endl;
+		return;
+	}
+
+	_load_module_functions(alias, scope, it_mod->second, obj);
+}
+
+/**
+ * Loads an specific module
+ */
+void PackageManager::loadModule(Scope* scope, const CString* const package,
+	Module* const module, const CString* const alias) {
+	/**
+	 * Checks if the module already has been loaded
+	 */
+	if (!module->isLoaded()) {
+		/**
+		 * Initializes the module
+		 */
+		module->init();
+	}
+
+	_load_module_functions(alias, scope, module, NULL);
+
+	_load_module_classes(alias, scope, module, NULL);
+
+	_load_module_constants(alias, scope, module, NULL);
 
 	/**
 	 * Sets the module state to loaded
@@ -197,6 +281,7 @@ const Type* PackageManager::getTypeByModule(const CString* const package,
  */
 void PackageManager::loadModule(Scope* scope, const CString* const package,
 	const CString* const module, const CString* const alias) {
+
 	PackageMap::const_iterator it = m_packages.find(package);
 
 	if (it == m_packages.end()) {

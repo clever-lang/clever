@@ -1026,11 +1026,6 @@ AST_VISITOR(TypeChecker, MethodCall) {
  * Import statement visitor
  */
 AST_VISITOR(TypeChecker, ImportStmt) {
-	// For import with file path we do not handle in the visitor
-	if (expr->hasFilePath()) {
-		return;
-	}
-
 	Scope* scope = m_scope;
 
 	if (UNEXPECTED(isInteractive() && !scope->isGlobal())) {
@@ -1041,9 +1036,8 @@ AST_VISITOR(TypeChecker, ImportStmt) {
 	 * Importing an specific module or an entire package
 	 * e.g. import std.io;
 	 */
-	Compiler::import(scope,
-		expr->getPackageName(), expr->getModuleName(),
-		expr->getAliasName());
+	Compiler::import(scope, expr->getPackageName(), expr->getModuleName(),
+		expr->getObjectName(), expr->getAliasName());
 }
 
 /**

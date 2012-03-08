@@ -121,8 +121,11 @@ public:
 	/**
 	 * Import a package module
 	 */
-	static void import(Scope* scope, const CString* package, const CString* module, const CString* alias) {
-		if (module) {
+	static void import(Scope* scope, const CString* package,
+		const CString* module, const CString* obj, const CString* alias) {
+		if (obj) {
+			g_pkgmanager.loadObject(scope, package, module, obj, alias);
+		} else if (module) {
 			g_pkgmanager.loadModule(scope, package, module, alias);
 		} else {
 			g_pkgmanager.loadPackage(scope, package);

@@ -1,7 +1,7 @@
 Testing aliasing of function
 ==CODE==
-import std.io;
-use foo as std.io::println;
+import std.io.*;
+use foo as println;
 
 foo("bar");
 ==RESULT==

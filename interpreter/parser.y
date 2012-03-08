@@ -189,6 +189,7 @@ namespace clever {
 %type <identifier> package_module_name
 %type <identifier> func_name
 %type <identifier> TYPE
+%type <identifier> import_obj
 %type <identifier> type_name
 %type <regex_pattern> REGEX
 %type <identifier> CONSTANT
@@ -614,10 +615,16 @@ break_stmt:
 		BREAK { $$ = new ast::BreakNode(); $$->setLocation(yylloc); }
 ;
 
+import_obj:
+		IDENT  { $$ = $1;   }
+	|	TYPE   { $$ = $1;   }
+	|	'*'    { $$ = NULL; }
+;
+
 import_stmt:
-		IMPORT IDENT                    { $$ = new ast::ImportStmt($2);         $$->setLocation(yylloc); }
-	|	IMPORT IDENT '.' IDENT          { $$ = new ast::ImportStmt($2, $4);     $$->setLocation(yylloc); }
-	|	IMPORT IDENT '.' IDENT AS IDENT { $$ = new ast::ImportStmt($2, $4, $6); $$->setLocation(yylloc); }
+		IMPORT IDENT '.' '*'                            { $$ = new ast::ImportStmt($2);             $$->setLocation(yylloc); }
+	|	IMPORT IDENT '.' IDENT '.' import_obj           { $$ = new ast::ImportStmt($2, $4, $6);     $$->setLocation(yylloc); }
+	|	IMPORT IDENT '.' IDENT '.' import_obj AS IDENT  { $$ = new ast::ImportStmt($2, $4, $6, $8); $$->setLocation(yylloc); }
 ;
 
 import_file:

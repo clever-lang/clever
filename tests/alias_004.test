@@ -1,6 +1,6 @@
 Testing Type aliasing
 ==CODE==
-import std.io as io;
+import std.io.* as io;
 
 use Foo as Int;
 

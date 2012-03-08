@@ -1,6 +1,6 @@
 Testing Array's methods
 ==CODE==
-import std.io as io;
+import std.io.* as io;
 
 Array<Int> x;
 

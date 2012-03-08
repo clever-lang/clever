@@ -1,6 +1,6 @@
 Testing Array's assign
 ==CODE==
-import std.io as io;
+import std.io.* as io;
 
 Array<Int> a;
 a.push(1);

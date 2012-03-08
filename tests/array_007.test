@@ -1,6 +1,6 @@
 Testing variable scope
 ==CODE==
-import std.io as io;
+import std.io.* as io;
 
 Array< Array<Int> > mat;
 Array<Int> array;
@@ -21,6 +21,6 @@ for (Int i = 0; i < mat.size(); ++i) {
 }
 
 ==RESULT==
-0 1 2 
-0 1 2 
-0 1 2 
+0 1 2
+0 1 2
+0 1 2

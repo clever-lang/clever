@@ -1484,43 +1484,36 @@ private:
 class ImportStmt : public ASTNode {
 public:
 	ImportStmt(Identifier* package)
-		: m_file(NULL), m_package(package), m_module(NULL), m_alias(NULL) {
+		: m_package(package), m_module(NULL), m_obj(NULL), m_alias(NULL) {
 		CLEVER_ADDREF(m_package);
 	}
 
-	ImportStmt(StringLiteral* file)
-		: m_file(file), m_package(NULL), m_module(NULL), m_alias(NULL) {
-		CLEVER_ADDREF(m_file);
-	}
-
-	ImportStmt(Identifier* package, Identifier* module)
-		: m_file(NULL), m_package(package), m_module(module), m_alias(NULL) {
+	ImportStmt(Identifier* package, Identifier* module, Identifier* obj)
+		: m_package(package), m_module(module), m_obj(obj), m_alias(NULL) {
 		CLEVER_ADDREF(m_package);
 		CLEVER_ADDREF(m_module);
+		CLEVER_SAFE_ADDREF(m_obj);
 	}
 
-	ImportStmt(StringLiteral* file, Identifier* alias)
-		: m_file(file), m_package(NULL), m_module(NULL), m_alias(alias) {
-		CLEVER_ADDREF(m_file);
-		CLEVER_ADDREF(m_alias);
-	}
-
-	ImportStmt(Identifier* package, Identifier* module, Identifier* alias)
-		: m_file(NULL), m_package(package), m_module(module), m_alias(alias) {
+	ImportStmt(Identifier* package, Identifier* module, Identifier* obj,
+		Identifier* alias)
+		: m_package(package), m_module(module), m_obj(obj),
+			m_alias(alias) {
 		CLEVER_ADDREF(m_package);
 		CLEVER_ADDREF(m_module);
+		CLEVER_SAFE_ADDREF(m_obj);
 		CLEVER_ADDREF(m_alias);
 	}
 
 	~ImportStmt() {
 		CLEVER_SAFE_DELREF(m_package);
 		CLEVER_SAFE_DELREF(m_module);
+		CLEVER_SAFE_DELREF(m_obj);
 		CLEVER_SAFE_DELREF(m_alias);
-		CLEVER_SAFE_DELREF(m_file);
 	}
 
-	bool hasFilePath() const {
-		return m_file != NULL;
+	const CString* getObjectName() {
+		return m_obj ? m_obj->getName() : NULL;
 	}
 
 	const CString* getPackageName() {
@@ -1539,9 +1532,9 @@ public:
 		visitor.visit(this);
 	}
 private:
-	StringLiteral* m_file;
 	Identifier* m_package;
 	Identifier* m_module;
+	Identifier* m_obj;
 	Identifier* m_alias;
 
 	DISALLOW_COPY_AND_ASSIGN(ImportStmt);
