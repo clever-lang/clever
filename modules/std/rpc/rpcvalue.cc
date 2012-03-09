@@ -46,6 +46,8 @@ int process(int client_socket_id) {
 		if (recv (client_socket_id, &length, sizeof (length), 0) == 0)
 			return 0;
 
+		printf ("<%d>\n", length);
+
 		/* Allocate a buffer to hold the text. */
 		text = (char*) calloc (length,sizeof(char));
 		/* Read the text itself, and print it. */
