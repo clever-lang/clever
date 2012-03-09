@@ -36,6 +36,7 @@ namespace clever { namespace packages { namespace std { namespace rpc {
 
 
 int process(int client_socket_id) {
+	printf("nova conexao...\n");
 	while (true) {
 		int length;
 		char* text;
@@ -106,6 +107,7 @@ void RPCValue::createClient(const char* host, const int port, const int time) {
 	socket->setHost(host);
 	socket->setPort(port);
 	socket->setTimeout(time);
+	socket->connect();
 }
 
 void RPCValue::sendString(const char* s, int len) {
