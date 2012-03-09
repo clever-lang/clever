@@ -9,6 +9,7 @@
 # ---------------------------------------------------------------------------
 clever_add_module(std_regex      ON  "enable the regex module"      "")
 clever_add_module(std_ffi        ON  "enable the ffi module"        "")
+clever_add_module(std_rpc        ON  "enable the rpc module"        "")
 clever_add_module(std_net        ON  "enable the net module"        "")
 clever_add_module(web_request       ON "enable the request module"        "")
 clever_add_module(web_session       ON "enable the session module"        "")
@@ -48,6 +49,22 @@ if (MOD_STD_FFI)
 endif (MOD_STD_FFI)
 
 clever_module_msg(std_ffi ${MOD_STD_FFI})
+
+# std.rpc
+if (MOD_STD_RPC)
+	if (LIBPTHREAD_FOUND)
+		add_definitions(-DHAVE_LIBPTHREAD)
+		add_definitions(-DHAVE_MOD_STD_RPC)
+		list(APPEND CLEVER_INCLUDE_DIRS ${LIBPTHREAD_INCLUDE_DIRS})
+		list(APPEND CLEVER_LIBRARIES ${LIBPTHREAD_LIBRARIES} )
+	else (LIBPTHREAD_FOUND)
+		clever_module_msg(std_rpc "libpthread not found. disabling.")
+		set(MOD_STD_RPC OFF)
+	endif (LIBPTHREAD_FOUND)
+endif (MOD_STD_RPC)
+
+clever_module_msg(std_rpc ${MOD_STD_RPC})
+
 
 # web.request
 if (MOD_WEB_REQUEST)

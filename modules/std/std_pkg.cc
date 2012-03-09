@@ -56,6 +56,9 @@ void Std::init() {
 #ifdef HAVE_MOD_STD_FFI
 	addModule(new std::FFI);
 #endif
+#ifdef HAVE_MOD_STD_RPC
+	addModule(new std::RPCModule);
+#endif
 }
 
 

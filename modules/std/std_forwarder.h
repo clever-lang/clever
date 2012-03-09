@@ -47,5 +47,8 @@
 #ifdef HAVE_MOD_STD_FFI
 # include "modules/std/ffi/ffi.h"
 #endif
+#ifdef HAVE_MOD_STD_RPC
+# include "modules/std/rpc/rpc.h"
+#endif
 
 

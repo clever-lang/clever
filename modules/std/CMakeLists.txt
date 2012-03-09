@@ -1,6 +1,10 @@
 
 set(CLEVER_MODULES)
 
+if (MOD_STD_RPC)
+	list(APPEND CLEVER_MODULES rpc)
+endif (MOD_STD_RPC)
+
 if (MOD_STD_FFI)
 	list(APPEND CLEVER_MODULES ffi)
 endif (MOD_STD_FFI)
