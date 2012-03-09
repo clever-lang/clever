@@ -36,14 +36,14 @@
 namespace clever { namespace packages { namespace std { namespace rpc {
 
 class RPCValue : public DataValue {
+
 public:
+
 	RPCValue() { socket = 0; }
 
 	void createServer(int port, int connections);
 
 	void createClient(const char* host, const int port, const int time);
-
-	int createConnection(int client_socket_id);
 
 	void sendString(const char* s, int len);
 
@@ -54,8 +54,9 @@ public:
 	virtual ~RPCValue() { if(socket) delete socket; }
 
 private:
-	CSocket* socket;
 
+	CSocket* socket;
+	int createConnection(int client_socket_id);
 };
 
 }}}} // clever::packages::std::rpc

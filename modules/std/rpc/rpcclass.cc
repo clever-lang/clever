@@ -34,85 +34,6 @@
 
 namespace clever { namespace packages { namespace std { namespace rpc {
 
-int process(int client_socket_id) {
-	while (true) {
-		int length;
-		char* text;
-
-		/* First, read the length of the text message from the socket. If
-		read returns zero, the client closed the connection. */
-
-		if (recv (client_socket_id, &length, sizeof (length), 0) == 0)
-			return 0;
-
-		/* Allocate a buffer to hold the text. */
-		text = (char*) calloc (length,sizeof(char));
-		/* Read the text itself, and print it. */
-		recv (client_socket_id, text, length, 0);
-		printf ("<%s>\n", text);
-		/* Free the buffer. */
-		free (text);
-		/* If the client sent the message “quit,” we’re all done.  */
-		if (!strcmp (text, "quit"))
-			return 1;
-	}
-
-	close (client_socket_id);
-	return 0;
-}
-
-int RPCValue::createConnection(int client_socket_id){
-	//Create thread to manage connection
-	return process (client_socket_id);
-}
-
-
-void RPCValue::createServer(int port, int connections){
-	sockaddr_in sa;
-
-	memset(&sa, 0, sizeof(sa));
-
-	sa.sin_family = PF_INET;
-	sa.sin_port = ::htons(port);
-	int m_socket = ::socket(AF_INET, SOCK_STREAM, 0);
-
-	bind(m_socket, (sockaddr *)&sa, sizeof(sockaddr_in));
-	
-	listen(m_socket, connections);
-
-	int kill_me;
-
-	do {
-		struct sockaddr client_name;
-		socklen_t client_name_len;
-		int client_socket_id;
-		
-		client_socket_id = accept (m_socket, &client_name, &client_name_len);
-		
-		kill_me=createConnection(client_socket_id);
-		
-	} while (!kill_me);
-
-	close (m_socket);
-
-}
-
-void RPCValue::createClient(const char* host, const int port, const int time) {
-	socket = new CSocket;
-
-	socket->setHost(host);
-	socket->setPort(port);
-	socket->setTimeout(time);
-}
-
-void RPCValue::sendString(const char* s, int len) {
-	socket->send(s,len);
-}
-
-void RPCValue::sendInteger(int v) {
-	socket->send( (char*)(&v),sizeof(int));
-}
-
 /**
  * RPC::constructor()
  */
@@ -126,6 +47,30 @@ CLEVER_METHOD(RPC::do_assign) {
 
 }
 
+CLEVER_METHOD(RPC::client) {
+	RPCValue* rv = CLEVER_GET_VALUE(RPCValue*, value);
+
+	rv->createClient(CLEVER_ARG_STR(0).c_str(), CLEVER_ARG_INT(1), CLEVER_ARG_INT(2));
+}
+
+CLEVER_METHOD(RPC::server) {
+	RPCValue* rv = CLEVER_GET_VALUE(RPCValue*, value);
+
+	rv->createServer(CLEVER_ARG_INT(0), CLEVER_ARG_INT(1));
+}
+
+CLEVER_METHOD(RPC::sendString) {
+	RPCValue* rv = CLEVER_GET_VALUE(RPCValue*, value);
+
+	rv->sendString(CLEVER_ARG_STR(0).c_str(), CLEVER_ARG_STR(0).size());
+}
+
+CLEVER_METHOD(RPC::sendInteger) {
+	RPCValue* rv = CLEVER_GET_VALUE(RPCValue*, value);
+
+	rv->sendInteger(CLEVER_ARG_INT(0));
+}
+
 void RPC::init() {
 	const Type* rpcobj = CLEVER_TYPE("RPCClass");
 
@@ -136,6 +81,29 @@ void RPC::init() {
 		(new Method(CLEVER_OPERATOR_ASSIGN, (MethodPtr)&RPC::do_assign,
 			rpcobj, false))
 			->addArg("rvalue", rpcobj)
+	);
+
+	addMethod(
+		(new Method("client", (MethodPtr)&RPC::client, CLEVER_VOID))
+			->addArg("host", CLEVER_STR)
+			->addArg("port", CLEVER_INT)
+			->addArg("time", CLEVER_INT)
+	);
+
+	addMethod(
+		(new Method("server", (MethodPtr)&RPC::server, CLEVER_VOID))
+			->addArg("port", CLEVER_INT)
+			->addArg("nconnections", CLEVER_INT)
+	);
+
+	addMethod(
+		(new Method("sendString", (MethodPtr)&RPC::sendString, CLEVER_VOID))
+			->addArg("value", CLEVER_STR)
+	);
+
+	addMethod(
+		(new Method("sendInteger", (MethodPtr)&RPC::sendInteger, CLEVER_VOID))
+			->addArg("value", CLEVER_INT)
 	);
 }
 

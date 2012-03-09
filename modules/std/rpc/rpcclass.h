@@ -46,7 +46,11 @@ public:
 
 	static CLEVER_METHOD(constructor);
 	static CLEVER_METHOD(do_assign);
-	
+	static CLEVER_METHOD(client);
+	static CLEVER_METHOD(server);
+	static CLEVER_METHOD(sendString);
+	static CLEVER_METHOD(sendInteger);
+
 	~RPC(){}
 private:
 	DISALLOW_COPY_AND_ASSIGN(RPC);
