@@ -1,7 +1,6 @@
 Testing while expression with boolean value
 ==CODE==
-import std.io;
-use println as std.io::println;
+import std.io.println;
 
 while (true) {
 	println("ok");

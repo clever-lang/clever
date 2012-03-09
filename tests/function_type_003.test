@@ -1,10 +1,7 @@
 Testing Function type as function argument
 ==CODE==
-import std.io;
-import std.math;
-
-use println as std.io::println;
-use abs as std.math::abs;
+import std.io.println;
+import std.math.abs;
 
 Auto call1 = String(Int a, Double b) { return "call1: " + abs(a + b).toString(); };
 Auto call2 = String(Int a, Double b) { return "call2: " + abs(a - b).toString(); };

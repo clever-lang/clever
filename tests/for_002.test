@@ -1,8 +1,6 @@
 Testing nested for loop
 ==CODE==
-import std.io;
-
-use println as std.io::println;
+import std.io.println;
 
 for (Int i = 1; i < 3; ++i) {
 

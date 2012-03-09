@@ -1,6 +1,6 @@
 [FATAL] Testing constness #4
 ==CODE==
-import std.io;
+import std.io.*;
 
 const Int i = 10;
 i -= 20;

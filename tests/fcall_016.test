@@ -1,6 +1,6 @@
 Testing return of function
 ==CODE==
-import std.io;
+import std.io.*;
 
 Int f() { return f; }
 

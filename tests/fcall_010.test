@@ -1,6 +1,6 @@
 Checking value of uninitialized variable when calling a function twice
 ==CODE==
-import std.io as io;
+import std.io.* as io;
 
 Int foo(Int n) {
 	Int x;

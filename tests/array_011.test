@@ -1,6 +1,6 @@
 [FATAL] Testing Array's assign of different types
 ==CODE==
-import std.io;
+import std.io.*;
 
 Array<Int> a;
 Array<String> b = a;

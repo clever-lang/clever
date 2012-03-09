@@ -1,10 +1,7 @@
 Testing `Auto' variables
 ==CODE==
-import std.io;
-import std.reflection;
-
-use print as std.io::print;
-use get_type as std.reflection::get_type;
+import std.io.*;
+import std.reflection.*;
 
 Auto x = 1 + 1.5;
 print(get_type(x), ' ', x, "\n");

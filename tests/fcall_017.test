@@ -1,6 +1,6 @@
 Testing function chaining call
 ==CODE==
-import std.io as io;
+import std.io.* as io;
 
 String foo(String z) {
 	return z;

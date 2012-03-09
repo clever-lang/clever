@@ -1,6 +1,6 @@
 String trimming
 ==CODE==
-import std.io as io;
+import std.io.* as io;
 
 String x = "    FooBar     \n";
 

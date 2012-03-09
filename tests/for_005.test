@@ -1,7 +1,6 @@
 Testing scope on for
 ==CODE==
-import std.io;
-use println as std.io::println;
+import std.io.println;
 
 for (Int i = 0; i < 3; ++i) {
 	for (Int i = 0; i < 2; ++i) {

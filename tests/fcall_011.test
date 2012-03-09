@@ -1,8 +1,6 @@
 Testing variable value when using recursivity
 ==CODE==
-import std.io;
-use println as std.io::println;
-use print as std.io::print;
+import std.io.*;
 
 Int a(Int k)
 {

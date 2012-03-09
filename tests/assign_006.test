@@ -1,7 +1,6 @@
 Testing multi assignment
 ==CODE==
-import std.io;
-use println as std.io::println;
+import std.io.println;
 
 Int i,j;
 i = j = 10;

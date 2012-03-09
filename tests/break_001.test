@@ -1,8 +1,6 @@
 Testing break statement
 ==CODE==
-import std.io;
-
-use println as std.io::println;
+import std.io.*;
 
 while (1) {
 	println(1);

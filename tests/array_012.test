@@ -1,6 +1,6 @@
 Testing nested template array
 ==CODE==
-import std.io as io;
+import std.io.* as io;
 
 Array<Int> w1;
 Array<Int> w2;

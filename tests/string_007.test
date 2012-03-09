@@ -1,7 +1,6 @@
 String length and test chaining
 ==CODE==
-import std.io;
-use println as std.io::println;
+import std.io.println;
 
 String x = " FooBar";
 println( x.length() );

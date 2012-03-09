@@ -1,6 +1,6 @@
 Testing Array type with integers
 ==CODE==
-import std.io as io;
+import std.io.* as io;
 
 Array<Int> x;
 

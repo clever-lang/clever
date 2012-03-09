@@ -1,7 +1,6 @@
 Testing import with aliasing
 ==CODE==
-import std.io;
-use println as std.io::println;
+import std.io.println;
 
 import 'tests/import_002_inc1.clv' as foo;
 

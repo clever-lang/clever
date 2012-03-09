@@ -1,7 +1,6 @@
 Testing <<= and >>= operators
 ==CODE==
-import std.io;
-use println as std.io::println;
+import std.io.println;
 Int i = 1;
 
 i <<= 2;

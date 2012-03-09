@@ -1,10 +1,7 @@
 Absolute value
 ==CODE==
-import std.io;
-import std.math;
-
-use println as std.io::println;
-use abs as std.math::abs;
+import std.io.println;
+import std.math.abs;
 
 Int i = -10;
 println(i);

@@ -1,9 +1,7 @@
 Testing Regex module assigning another pattern
 ==CODE==
-import std.io;
-import std.regex as re;
-
-use println as std.io::println;
+import std.io.*;
+import std.regex.* as re;
 
 re::Regex a = /f+/;
 

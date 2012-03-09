@@ -1,8 +1,7 @@
 [FATAL] Testing Map<> with a non-less than comparable key type
 ==CODE==
-import std.io;
-import std.file as f;
-use println as std.io::println;
+import std.io.println;
+import std.file.* as f;
 
 Map<f::FileStream, String> map;
 

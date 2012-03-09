@@ -1,9 +1,7 @@
 Testing replace() and replaceAll()
 ==CODE==
-import std.io;
-import std.regex as re;
-
-use println as std.io::println;
+import std.io.println;
+import std.regex.* as re;
 
 re::Regex p("b");
 

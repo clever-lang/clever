@@ -1,6 +1,6 @@
 String toUpper and toLower methods
 ==CODE==
-import std.io as io;
+import std.io.* as io;
 
 String x = "FooBar";
 

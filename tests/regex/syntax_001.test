@@ -1,9 +1,7 @@
 Testing regex syntax
 ==CODE==
-import std.regex;
-import std.io;
-
-use println as std.io::println;
+import std.regex.*;
+import std.io.println;
 
 println(/f+o/.matches("fo"));
 println(/f+o/.matches("bo"));

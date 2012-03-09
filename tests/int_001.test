@@ -1,7 +1,6 @@
 Testing Int bounds
 ==CODE==
-import std.io;
-use println as std.io::println;
+import std.io.println;
 
 Int max = 0x7FFFFFFFFFFFFFFF;
 Int min = 0x8000000000000000;

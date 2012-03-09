@@ -1,7 +1,6 @@
 Pos increment operation
 ==CODE==
-import std.io;
-use println as std.io::println;
+import std.io.println;
 
 Int i = 10;
 println(i++ + i++);

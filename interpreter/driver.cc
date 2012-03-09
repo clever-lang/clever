@@ -140,7 +140,7 @@ int Driver::parseStr(const std::string& code, bool importStd) {
 	std::string& source = new_scanner->getSource();
 
 	if (importStd) {
-		source += std::string("import std;");
+		source += std::string("import std.*;");
 	}
 	source += code;
 

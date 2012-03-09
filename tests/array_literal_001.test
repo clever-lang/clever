@@ -1,7 +1,7 @@
 Testing Array<> literal
 ==CODE==
-import std.io as io;
-import std.math as math;
+import std.io.* as io;
+import std.math.* as math;
 
 io::println({10, 12, 14});
 

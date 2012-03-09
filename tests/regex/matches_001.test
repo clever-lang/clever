@@ -1,7 +1,7 @@
 Testing regex module
 ==CODE==
-import std.io as io;
-import std.regex as re;
+import std.io.* as io;
+import std.regex.* as re;
 
 re::Regex reg("f.*bar");
 

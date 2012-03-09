@@ -1,6 +1,6 @@
 Testing Array<>::find()
 ==CODE==
-import std.io as io;
+import std.io.* as io;
 
 Array<String> a;
 

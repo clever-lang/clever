@@ -1,14 +1,12 @@
 Testing function call with ReflectionFunction::call()
 ==CODE==
-import std.io;
-import std.reflection;
+import std.io.*;
+import std.reflection.*;
 
-use ReflectionFunction as std.reflection::ReflectionFunction;
-
-ReflectionFunction f("std.io::println");
+ReflectionFunction f("println");
 f.call(1, "foo");
 
-ReflectionFunction z("std.sys::getcwd");
+ReflectionFunction z("getcwd");
 z.call();
 ==RESULT==
 1

@@ -1,9 +1,7 @@
 Testing ReflectionPackge->getModules()
 ==CODE==
-import std.reflection as r;
-import std.io;
-
-use println as std.io::println;
+import std.reflection.* as r;
+import std.io.println;
 
 r::ReflectionPackage package("std");
 

@@ -1,6 +1,6 @@
 Testing function with templated parameter and return
 ==CODE==
-import std.io as io;
+import std.io.* as io;
 
 Array<String> toArrayString(Array<Int> x)
 {

@@ -1,7 +1,7 @@
 [FATAL] Testing static method call as non-static
 ==CODE==
-import std;
-use println as std.io::println;
+import std.regex.*;
+import std.io.println;
 println(/.+/.quote("foo?"));
 ==RESULT==
 Compile error: Cannot call static method Regex::quote\(String\) as non-static on \S+ line 3

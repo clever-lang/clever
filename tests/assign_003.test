@@ -1,6 +1,6 @@
 Testing variable scope
 ==CODE==
-import std.io as io;
+import std.io.* as io;
 
 Int i = 30;
 Int j = 20;

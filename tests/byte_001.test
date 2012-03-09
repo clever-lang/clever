@@ -1,6 +1,6 @@
 Testing byte type
 ==CODE==
-import std.io as io;
+import std.io.* as io;
 
 Byte b(10);
 for (Int i = 0; i <= 10; ++i) {

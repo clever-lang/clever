@@ -1,7 +1,7 @@
 Testing Map<String, Int>
 ==CODE==
-import std.io;
-use println as std.io::println;
+import std.io.println;
+
 Map<String, Int> map;
 map.insert("I", 1);
 map.insert("II", 2);

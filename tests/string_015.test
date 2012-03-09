@@ -1,7 +1,6 @@
 Testing String padding methods
 ==CODE==
-import std.io;
-use println as std.io::println;
+import std.io.println;
 
 String foo = "Eu Sou o Pedro";
 

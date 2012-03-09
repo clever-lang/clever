@@ -1,7 +1,7 @@
 Testing static method call
 ==CODE==
-import std;
-use println as std.io::println;
-println(std.regex::Regex.quote("foo?"));
+import std.io.println;
+import std.regex.* as re;
+println(re::Regex.quote("foo?"));
 ==RESULT==
 foo\\\?

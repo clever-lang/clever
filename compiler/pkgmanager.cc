@@ -78,16 +78,6 @@ void PackageManager::loadPackage(Scope* scope, const CString* const package) {
 static void _load_module_functions(const CString* alias, Scope* scope,
 	Module* module, const CString* obj) {
 
-	/**
-	 * Checks if the module already has been loaded
-	 */
-	if (!module->isLoaded()) {
-		/**
-		 * Initializes the module
-		 */
-		module->init();
-	}
-
 	FunctionMap& funcs = module->getFunctions();
 
 	/**
@@ -183,6 +173,7 @@ void PackageManager::loadObject(Scope* scope, const CString* const package,
 	 */
 	if (it->second->isUnloaded()) {
 		it->second->init();
+		it->second->setLoaded();
 	}
 
 	ModuleMap& modules = it->second->getModules();
@@ -191,6 +182,16 @@ void PackageManager::loadObject(Scope* scope, const CString* const package,
 	if (it_mod == modules.end()) {
 		std::cerr << "module '" << *module << "' not found" << std::endl;
 		return;
+	}
+	
+	/**
+	 * Checks if the module already has been loaded
+	 */
+	if (!it_mod->second->isLoaded()) {
+		it_mod->second->init();
+		it_mod->second->setLoaded();
+		
+		_load_module_constants(alias, scope, it_mod->second, NULL);
 	}
 
 	_load_module_functions(alias, scope, it_mod->second, obj);
@@ -209,6 +210,7 @@ void PackageManager::loadModule(Scope* scope, const CString* const package,
 		 * Initializes the module
 		 */
 		module->init();
+		module->setLoaded();
 	}
 
 	_load_module_functions(alias, scope, module, NULL);
@@ -216,11 +218,6 @@ void PackageManager::loadModule(Scope* scope, const CString* const package,
 	_load_module_classes(alias, scope, module, NULL);
 
 	_load_module_constants(alias, scope, module, NULL);
-
-	/**
-	 * Sets the module state to loaded
-	 */
-	module->setLoaded();
 }
 
 /**

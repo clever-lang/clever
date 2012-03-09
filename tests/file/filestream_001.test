@@ -1,10 +1,7 @@
 Testing FileStream basic operations
 ==CODE==
-import std.io;
-import std.file;
-
-use print as std.io::print;
-use FileStream as std.file::FileStream;
+import std.io.print;
+import std.file.*;
 
 FileStream writter;
 writter.open('test.txt', 'w');

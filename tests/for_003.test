@@ -1,8 +1,6 @@
 Testing different fors
 ==CODE==
-import std.io;
-
-use println as std.io::println;
+import std.io.println;
 
 Int a = 0;
 for (; a < 4; ++a) {

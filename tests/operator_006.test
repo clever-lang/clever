@@ -1,7 +1,6 @@
 Testing + operator with strings
 ==CODE==
-import std.io;
-use println as std.io::println;
+import std.io.println;
 println("foo" + "bar");
 ==RESULT==
 foobar

@@ -1,14 +1,14 @@
 Testing ReflectionFunction methods
 ==CODE==
-import std;
+import std.io.*;
+import std.math.*;
+import std.sys.*;
+import std.reflection.*;
 
-use println as std.io::println;
-use ReflectionFunction as std.reflection::ReflectionFunction;
-
-ReflectionFunction a("std.math::max");
+ReflectionFunction a("max");
 println(a.getName(), a.getArgs());
 
-ReflectionFunction b("std.sys::getcwd");
+ReflectionFunction b("getcwd");
 println(b.getName(), b.getArgs());
 
 ReflectionFunction c("getcwd2");

@@ -1,7 +1,6 @@
 Testing while and if
 ==CODE==
-import std.io;
-use println as std.io::println;
+import std.io.println;
 
 Int i = 10;
 

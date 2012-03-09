@@ -1,7 +1,6 @@
 Testing NOT logical operator
 ==CODE==
-import std.io;
-use println as std.io::println;
+import std.io.println;
 if (!!(true == true)) {
 	println("ok!");
 }
