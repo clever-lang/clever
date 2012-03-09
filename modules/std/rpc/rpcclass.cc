@@ -48,7 +48,7 @@ CLEVER_METHOD(RPC::do_assign) {
 }
 
 void RPC::init() {
-	const Type* rpcobj = CLEVER_TYPE("RPC");
+	const Type* rpcobj = CLEVER_TYPE("RPCClass");
 
 	addMethod(new Method(CLEVER_CTOR_NAME,
 		(MethodPtr)&RPC::constructor, rpcobj));
