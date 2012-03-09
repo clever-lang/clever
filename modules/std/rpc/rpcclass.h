@@ -31,7 +31,6 @@
 #include "compiler/module.h"
 #include "modules/std/rpc/rpcvalue.h"
 
-
 namespace clever { namespace packages { namespace std { namespace rpc {
 
 //RPC class definition
@@ -39,7 +38,7 @@ namespace clever { namespace packages { namespace std { namespace rpc {
 class RPC : public Type {
 public:
 	RPC()
-		: Type(CSTRING("RPC")) { }
+		: Type(CSTRING("RPCClass")) { }
 
 	void init();
 	DataValue* allocateValue() const;
