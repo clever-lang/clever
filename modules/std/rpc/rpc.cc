@@ -36,10 +36,6 @@ namespace rpc {
 
 } // rpc
 
-}}} // clever::packages::std
-
-
-namespace clever { namespace packages { namespace std {
 /**
  * Initializes Standard module
  */
