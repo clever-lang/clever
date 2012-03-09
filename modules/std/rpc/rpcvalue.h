@@ -37,13 +37,21 @@ namespace clever { namespace packages { namespace std { namespace rpc {
 
 class RPCValue : public DataValue {
 public:
-	RPCValue() {
-		socket = new CSocket;
-	}
+	RPCValue() { socket = 0; }
+
+	void createServer(int port, int connections);
+
+	void createClient(const char* host, const int port, const int time);
+
+	int createConnection(int client_socket_id);
+
+	void sendString(const char* s, int len);
+
+	void sendInteger(int v);
 
 	CSocket* getSocket() { return this->socket; }
 
-	virtual ~RPCValue() { delete socket; }
+	virtual ~RPCValue() { if(socket) delete socket; }
 
 private:
 	CSocket* socket;
