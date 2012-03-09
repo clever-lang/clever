@@ -31,13 +31,22 @@
 #include <pthread.h>
 #include "compiler/datavalue.h"
 
+#include "modules/std/net/csocket.h"
+
 namespace clever { namespace packages { namespace std { namespace rpc {
 
 class RPCValue : public DataValue {
 public:
-	RPCValue() {}
+	RPCValue() {
+		socket = new CSocket;
+	}
 
-	virtual ~RPCValue() { }
+	CSocket* getSocket() { return this->socket; }
+
+	virtual ~RPCValue() { delete socket; }
+
+private:
+	CSocket* socket;
 
 };
 
