@@ -105,6 +105,7 @@ void RPC::init() {
 		(new Method("sendInteger", (MethodPtr)&RPC::sendInteger, CLEVER_VOID))
 			->addArg("value", CLEVER_INT)
 	);
+
 }
 
 DataValue* RPC::allocateValue() const {
