@@ -171,14 +171,16 @@ int process(int client_socket_id) {
 
 				recv (client_socket_id, &n_args, sizeof(n_args), 0);
 
-				ffi_args = (ffi_type**) malloc(n_args*sizeof(ffi_type*));
-				ffi_values = (void**) malloc(n_args*sizeof(void*));
+				if(n_args>0){
+					ffi_args = (ffi_type**) malloc(n_args*sizeof(ffi_type*));
+					ffi_values = (void**) malloc(n_args*sizeof(void*));
 
-				recv (client_socket_id, &size_args, sizeof(size_args), 0);
+					recv (client_socket_id, &size_args, sizeof(size_args), 0);
 
-				buffer = (char*) malloc(size_args*sizeof(char));
+					buffer = (char*) malloc(size_args*sizeof(char));
 
-				recv (client_socket_id, buffer, size_args, 0);
+					recv (client_socket_id, buffer, size_args, 0);
+				}
 
 				ibuffer=0;
 
@@ -241,9 +243,13 @@ int process(int client_socket_id) {
 		 			clever_fatal("[RPC] failed to call function `%s'!",
 						fname);
 					free (fname);
-					free (buffer);
-					free(ffi_values);
-					free(ffi_args);
+
+					if(n_args>0){
+						free (buffer);
+						free(ffi_values);
+						free(ffi_args);
+					}
+
 					return 1;
 				}
 
@@ -321,10 +327,13 @@ int process(int client_socket_id) {
 					}
 				}
 
-				free(ffi_args);
-				free(ffi_values);
+				if(n_args>0){
+					free(ffi_args);
+					free(ffi_values);
+					free(buffer);
+				}
+
 				free(fname);
-				free(buffer);
 
 			break;
 		}
@@ -410,6 +419,20 @@ void RPCValue::sendInteger(int v) {
 	socket->send((char*)(&v),sizeof(int));
 }
 
+void RPCValue::sendFunctionCall(const char* fname, const char* args, int len_fname, int n_args, int len_args){
+	int id=0xFC;
+
+	socket->send((char*)(&id),sizeof(int));
+	socket->send((char*)(&len_fname),sizeof(int));
+	socket->send(fname,len_fname);
+	socket->send((char*)(&n_args),sizeof(int));
+
+	if(n_args>0){
+		socket->send((char*)(&len_args),sizeof(int));
+		socket->send(args,len_args);
+	}
+
+}
 
 }}}} // clever::packages::std::rpc
 

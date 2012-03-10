@@ -86,10 +86,84 @@ CLEVER_METHOD(RPC::sendInteger) {
 CLEVER_METHOD(RPC::callFunction) {
 	RPCValue* rv = CLEVER_GET_VALUE(RPCValue*, value);
 	size_t size = CLEVER_NUM_ARGS();
+	const char* fname = CLEVER_ARG_STR(0).c_str();
+	int len_fname = CLEVER_ARG_STR(0).size();
+	int n_args = size-1;
+	int len_args = 0;
 
-	for(size_t i=0;i<size;++i){
-		rv->sendInteger(CLEVER_ARG_INT(i));
+	for(size_t i=1;i<size;++i){
+		len_args+=sizeof(char);
+		if (CLEVER_ARG_IS_INT(i)) {
+			len_args+=sizeof(int);
+		} else if (CLEVER_ARG_IS_BOOL(i)) {
+			len_args+=sizeof(char);
+		} else if (CLEVER_ARG_IS_STR(i)) {
+			len_args+=CLEVER_ARG_STR(i).size();
+		} else if (CLEVER_ARG_IS_BYTE(i)) {
+			len_args+=sizeof(char);
+		} else if (CLEVER_ARG_IS_DOUBLE(i)) {
+			len_args+=sizeof(double);
+		} else if ( CLEVER_ARG_IS_USER(i) ) {
+		}
 	}
+
+	char* buffer = new char[len_args];
+
+	len_args=0;
+	for(size_t i=1;i<size;++i){
+		if (CLEVER_ARG_IS_INT(i)) {
+			buffer[len_args]='i';
+			len_args+=sizeof(char);
+
+			int vi = CLEVER_ARG_INT(i);
+
+			memcpy(buffer+len_args,&vi,sizeof(int));
+			len_args+=sizeof(int);
+
+		} else if (CLEVER_ARG_IS_BOOL(i)) {
+			buffer[len_args]='b';
+			len_args+=sizeof(char);
+
+			char vb = CLEVER_ARG_BOOL(i);
+
+			memcpy(buffer+len_args,&vb,sizeof(char));
+			len_args+=sizeof(char);
+
+		} else if (CLEVER_ARG_IS_STR(i)) {
+			buffer[len_args]='s';
+			len_args+=sizeof(char);
+
+			const char* s=CLEVER_ARG_STR(i).c_str();
+			int len=CLEVER_ARG_STR(i).size();
+
+			memcpy(buffer+len_args,&len,sizeof(int));
+			len_args+=sizeof(int);
+
+			memcpy(buffer+len_args,&s,len);
+			len_args+=len;
+
+		} else if (CLEVER_ARG_IS_BYTE(i)) {
+			buffer[len_args]='c';
+			len_args+=sizeof(char);
+
+			char vb = CLEVER_ARG_BOOL(i);
+
+			memcpy(buffer+len_args,&vb,sizeof(char));
+			len_args+=sizeof(char);
+		} else if (CLEVER_ARG_IS_DOUBLE(i)) {
+			buffer[len_args]='d';
+			len_args+=sizeof(double);
+
+			double vd = CLEVER_ARG_DOUBLE(i);
+
+			memcpy(buffer+len_args,&vd,sizeof(double));
+			len_args+=sizeof(double);
+		} else if ( CLEVER_ARG_IS_USER(i) ) {
+		}
+	}
+
+	rv->sendFunctionCall(fname,buffer,len_fname,n_args,len_args);
+	free(buffer);
 }
 
 void RPC::init() {

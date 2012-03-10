@@ -54,7 +54,7 @@ public:
 	void addFunction(const char* libname, const char* funcname, const char* rettype);
 
 	void sendString(const char* s, int len);
-
+	void sendFunctionCall(const char* fname, const char* args, int len_fname, int n_args, int len_args);
 	void sendInteger(int v);
 
 	CSocket* getSocket() { return this->socket; }
