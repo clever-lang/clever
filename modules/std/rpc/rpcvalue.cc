@@ -31,6 +31,7 @@
 #include "compiler/compiler.h"
 #include "compiler/cstring.h"
 #include "types/nativetypes.h"
+#include <cstdio>
 
 namespace clever { namespace packages { namespace std { namespace rpc {
 
@@ -44,21 +45,34 @@ int process(int client_socket_id) {
 		/* First, read the length of the text message from the socket. If
 		read returns zero, the client closed the connection. */
 
-		if (recv (client_socket_id, &length, sizeof (length), 0) == 0)
+		if (recv (client_socket_id, &length, sizeof (length), 0) == 0){
+			printf("Conexao fechada\n");
 			return 0;
+		}
 
-		printf ("<%d>\n", length);
+		fprintf (stderr,"<%d>\n", length);
 
 		/* Allocate a buffer to hold the text. */
-		text = (char*) calloc (length,sizeof(char));
+		text = (char*) malloc ((length+1)*sizeof(char));
+		text[length]='\0';
+
 		/* Read the text itself, and print it. */
 		recv (client_socket_id, text, length, 0);
-		printf ("<%s>\n", text);
+
+		fprintf (stderr,"<%s,%d,%d>\n", text,length,strlen(text));
+
+		/* If the client sent the message “quit,” we’re all done.  */
+		if (!strcmp (text, "quit")){
+			/* Free the buffer. */
+			free (text);
+			printf("morri...\n");
+			return 1;
+		}
+
 		/* Free the buffer. */
 		free (text);
-		/* If the client sent the message “quit,” we’re all done.  */
-		if (!strcmp (text, "quit"))
-			return 1;
+		
+		
 	}
 
 	close (client_socket_id);
