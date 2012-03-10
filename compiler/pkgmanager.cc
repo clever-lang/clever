@@ -86,13 +86,15 @@ static void _load_module_functions(const CString* alias, Scope* scope,
 	if (obj) {
 		FunctionMap::const_iterator it = funcs.find(obj->str());
 
-		if (it != funcs.end()) {
-			CallableValue* fvalue = new CallableValue(CSTRING(it->first));
-
-			fvalue->setHandler(it->second);
-
-			scope->pushValue(alias ? alias : fvalue->getName(), fvalue);
+		if (it == funcs.end()) {
+			std::cerr << "function '" << obj->str() << "' not found" << std::endl;
+			return;
 		}
+		CallableValue* fvalue = new CallableValue(CSTRING(it->first));
+
+		fvalue->setHandler(it->second);
+
+		scope->pushValue(alias ? alias : fvalue->getName(), fvalue);
 		return;
 	}
 
@@ -119,6 +121,20 @@ static void _load_module_classes(const CString* alias, Scope* scope,
 	Module* module, const CString* obj) {
 
 	ClassMap& classes = module->getClassTable();
+
+	if (obj) {
+		ClassMap::const_iterator it = classes.find(obj);
+
+		if (it == classes.end()) {
+			std::cerr << "class '" << obj->str() << "' not found" << std::endl;
+			return;
+		}
+
+		g_scope.pushType(alias ? alias : CSTRING(*it->first), it->second);
+		it->second->init();
+		return;
+	}
+
 	ClassMap::iterator itc = classes.begin(), endc = classes.end();
 
 	const std::string prefix = alias ? alias->str() + "::" : "";
@@ -286,6 +302,7 @@ void PackageManager::loadModule(Scope* scope, const CString* const package,
 	PackageMap::const_iterator it = m_packages.find(package);
 
 	if (it == m_packages.end()) {
+		std::cerr << "package '" << *package << "' not found" << std::endl;
 		return;
 	}
 
