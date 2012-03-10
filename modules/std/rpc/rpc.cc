@@ -29,6 +29,12 @@
 #include "modules/std/rpc/rpc.h"
 #include "modules/std/rpc/rpcclass.h"
 
+#ifndef __APPLE__
+# include <ffi.h>
+#else
+# include <ffi/ffi.h>
+#endif
+
 namespace clever { namespace packages { namespace std {
 
 namespace rpc {

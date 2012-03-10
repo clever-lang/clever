@@ -65,10 +65,31 @@ CLEVER_METHOD(RPC::sendString) {
 	rv->sendString(CLEVER_ARG_STR(0).c_str(), CLEVER_ARG_STR(0).size());
 }
 
+CLEVER_METHOD(RPC::loadLibrary) {
+	RPCValue* rv = CLEVER_GET_VALUE(RPCValue*, value);
+
+	rv->loadLibrary(CLEVER_ARG_STR(0).c_str());
+}
+
+CLEVER_METHOD(RPC::addFunction) {
+	RPCValue* rv = CLEVER_GET_VALUE(RPCValue*, value);
+
+	rv->addFunction(CLEVER_ARG_STR(0).c_str(), CLEVER_ARG_STR(1).c_str(), CLEVER_ARG_STR(2).c_str());
+}
+
 CLEVER_METHOD(RPC::sendInteger) {
 	RPCValue* rv = CLEVER_GET_VALUE(RPCValue*, value);
 
 	rv->sendInteger(CLEVER_ARG_INT(0));
+}
+
+CLEVER_METHOD(RPC::callFunction) {
+	RPCValue* rv = CLEVER_GET_VALUE(RPCValue*, value);
+	size_t size = CLEVER_NUM_ARGS();
+
+	for(size_t i=0;i<size;++i){
+		rv->sendInteger(CLEVER_ARG_INT(i));
+	}
 }
 
 void RPC::init() {
@@ -97,6 +118,18 @@ void RPC::init() {
 	);
 
 	addMethod(
+		(new Method("loadLibrary", (MethodPtr)&RPC::loadLibrary, CLEVER_VOID))
+			->addArg("libname", CLEVER_STR)
+	);
+
+	addMethod(
+		(new Method("addFunction", (MethodPtr)&RPC::addFunction, CLEVER_VOID))
+			->addArg("libname", CLEVER_STR)
+			->addArg("funcname", CLEVER_STR)
+			->addArg("rettype", CLEVER_STR)
+	);
+
+	addMethod(
 		(new Method("sendString", (MethodPtr)&RPC::sendString, CLEVER_VOID))
 			->addArg("value", CLEVER_STR)
 	);
@@ -104,6 +137,12 @@ void RPC::init() {
 	addMethod(
 		(new Method("sendInteger", (MethodPtr)&RPC::sendInteger, CLEVER_VOID))
 			->addArg("value", CLEVER_INT)
+	);
+
+	addMethod(
+		(new Method("callFunction", (MethodPtr)&RPC::callFunction, CLEVER_VOID))
+			->setVariadic()
+			->setMinNumArgs(1)
 	);
 
 }

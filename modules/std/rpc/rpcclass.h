@@ -48,8 +48,11 @@ public:
 	static CLEVER_METHOD(do_assign);
 	static CLEVER_METHOD(client);
 	static CLEVER_METHOD(server);
+	static CLEVER_METHOD(loadLibrary);
+	static CLEVER_METHOD(addFunction);
 	static CLEVER_METHOD(sendString);
 	static CLEVER_METHOD(sendInteger);
+	static CLEVER_METHOD(callFunction);
 
 	~RPC(){}
 private:

@@ -29,11 +29,16 @@
 #include <cstdlib>
 #include <string>
 #include <pthread.h>
+#include <map>
 #include "compiler/datavalue.h"
 
 #include "modules/std/net/csocket.h"
 
 namespace clever { namespace packages { namespace std { namespace rpc {
+
+
+typedef ::std::map< ::std::string, void*> ExtMap;
+typedef ::std::map< ::std::string, ::std::string> FuncMap;
 
 class RPCValue : public DataValue {
 
@@ -44,6 +49,9 @@ public:
 	void createServer(int port, int connections);
 
 	void createClient(const char* host, const int port, const int time);
+
+	void loadLibrary(const char* libname);
+	void addFunction(const char* libname, const char* funcname, const char* rettype);
 
 	void sendString(const char* s, int len);
 
