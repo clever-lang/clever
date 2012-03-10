@@ -122,9 +122,10 @@ public:
 	 * Import a package module
 	 */
 	static void import(Scope* scope, const CString* package,
-		const CString* module, const CString* obj, const CString* alias) {
+		const CString* module, const CString* obj, const CString* alias,
+		bool is_type) {
 		if (obj) {
-			g_pkgmanager.loadObject(scope, package, module, obj, alias);
+			g_pkgmanager.loadObject(scope, package, module, obj, alias, is_type);
 		} else if (module) {
 			g_pkgmanager.loadModule(scope, package, module, alias);
 		} else {

@@ -189,7 +189,6 @@ namespace clever {
 %type <identifier> package_module_name
 %type <identifier> func_name
 %type <identifier> TYPE
-%type <identifier> import_obj
 %type <identifier> type_name
 %type <regex_pattern> REGEX
 %type <identifier> CONSTANT
@@ -240,6 +239,7 @@ namespace clever {
 %type <block_stmt> else_opt
 %type <break_stmt> break_stmt
 %type <import_stmt> import_stmt
+%type <import_stmt> import_stmt2
 %type <block_stmt2> import_file
 %type <alias_stmt> alias_stmt
 %type <array_list> array_list
@@ -615,21 +615,21 @@ break_stmt:
 		BREAK { $$ = new ast::BreakNode(); $$->setLocation(yylloc); }
 ;
 
-import_obj:
-		IDENT  { $$ = $1;   }
-	|	TYPE   { $$ = $1;   }
-	|	'*'    { $$ = NULL; }
+import_stmt2:
+		IMPORT IDENT '.' '*'              { $$ = new ast::ImportStmt($2);                  $$->setLocation(yylloc); }
+	|	IMPORT IDENT '.' IDENT '.' IDENT  { $$ = new ast::ImportStmt($2, $4, $6, false);   $$->setLocation(yylloc); }
+	|	IMPORT IDENT '.' IDENT '.' TYPE   { $$ = new ast::ImportStmt($2, $4, $6, true);    $$->setLocation(yylloc); }
+	|	IMPORT IDENT '.' IDENT '.' '*'    { $$ = new ast::ImportStmt($2, $4, NULL, true);  $$->setLocation(yylloc); }
 ;
 
 import_stmt:
-		IMPORT IDENT '.' '*'                            { $$ = new ast::ImportStmt($2);             $$->setLocation(yylloc); }
-	|	IMPORT IDENT '.' IDENT '.' import_obj           { $$ = new ast::ImportStmt($2, $4, $6);     $$->setLocation(yylloc); }
-	|	IMPORT IDENT '.' IDENT '.' import_obj AS IDENT  { $$ = new ast::ImportStmt($2, $4, $6, $8); $$->setLocation(yylloc); }
+		import_stmt2           { $$ = $1; }
+	|	import_stmt2 AS IDENT  { $$->setAlias($3); }
 ;
 
 import_file:
-		IMPORT STR                      { $$ = compiler.importFile(driver, $2->getString(), NULL); delete $2; }
-	|	IMPORT STR AS IDENT             { $$ = compiler.importFile(driver, $2->getString(), $4); delete $2; }
+		IMPORT STR           { $$ = compiler.importFile(driver, $2->getString(), NULL); delete $2; }
+	|	IMPORT STR AS IDENT  { $$ = compiler.importFile(driver, $2->getString(), $4); delete $2; }
 ;
 
 alias_stmt:

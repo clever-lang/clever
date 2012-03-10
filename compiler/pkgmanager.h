@@ -75,7 +75,7 @@ public:
 		const CString* const);
 
 	void loadObject(Scope*, const CString* const, const CString* const,
-		const CString* const, const CString* const);
+		const CString* const, const CString* const, bool is_type);
 
 	// Checks if an specific module is currently loaded
 	bool checkModuleLoaded(const CString* const, const CString* const);

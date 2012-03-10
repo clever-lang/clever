@@ -159,7 +159,7 @@ static void _load_module_constants(const CString* alias, Scope* scope,
  */
 void PackageManager::loadObject(Scope* scope, const CString* const package,
 	const CString* const module, const CString* const obj,
-	const CString* const alias) {
+	const CString* const alias, bool is_type) {
 
 	PackageMap::const_iterator it = m_packages.find(package);
 
@@ -183,18 +183,22 @@ void PackageManager::loadObject(Scope* scope, const CString* const package,
 		std::cerr << "module '" << *module << "' not found" << std::endl;
 		return;
 	}
-	
+
 	/**
 	 * Checks if the module already has been loaded
 	 */
 	if (!it_mod->second->isLoaded()) {
 		it_mod->second->init();
 		it_mod->second->setLoaded();
-		
+
 		_load_module_constants(alias, scope, it_mod->second, NULL);
 	}
 
-	_load_module_functions(alias, scope, it_mod->second, obj);
+	if (is_type) {
+		_load_module_classes(alias, scope, it_mod->second, obj);
+	} else {
+		_load_module_functions(alias, scope, it_mod->second, obj);
+	}
 }
 
 /**

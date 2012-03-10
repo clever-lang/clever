@@ -1484,25 +1484,18 @@ private:
 class ImportStmt : public ASTNode {
 public:
 	ImportStmt(Identifier* package)
-		: m_package(package), m_module(NULL), m_obj(NULL), m_alias(NULL) {
+		: m_package(package), m_module(NULL), m_obj(NULL), m_alias(NULL),
+			m_is_type(false) {
 		CLEVER_ADDREF(m_package);
-	}
-
-	ImportStmt(Identifier* package, Identifier* module, Identifier* obj)
-		: m_package(package), m_module(module), m_obj(obj), m_alias(NULL) {
-		CLEVER_ADDREF(m_package);
-		CLEVER_ADDREF(m_module);
-		CLEVER_SAFE_ADDREF(m_obj);
 	}
 
 	ImportStmt(Identifier* package, Identifier* module, Identifier* obj,
-		Identifier* alias)
-		: m_package(package), m_module(module), m_obj(obj),
-			m_alias(alias) {
+		bool is_type)
+		: m_package(package), m_module(module), m_obj(obj), m_alias(NULL),
+			m_is_type(is_type) {
 		CLEVER_ADDREF(m_package);
 		CLEVER_ADDREF(m_module);
 		CLEVER_SAFE_ADDREF(m_obj);
-		CLEVER_ADDREF(m_alias);
 	}
 
 	~ImportStmt() {
@@ -1510,6 +1503,11 @@ public:
 		CLEVER_SAFE_DELREF(m_module);
 		CLEVER_SAFE_DELREF(m_obj);
 		CLEVER_SAFE_DELREF(m_alias);
+	}
+
+	void setAlias(Identifier* alias) {
+		m_alias = alias;
+		CLEVER_ADDREF(alias);
 	}
 
 	const CString* getObjectName() {
@@ -1528,6 +1526,10 @@ public:
 		return m_alias ? m_alias->getName() : NULL;
 	}
 
+	bool isType() {
+		return m_is_type;
+	}
+
 	void acceptVisitor(ASTVisitor& visitor) {
 		visitor.visit(this);
 	}
@@ -1536,6 +1538,7 @@ private:
 	Identifier* m_module;
 	Identifier* m_obj;
 	Identifier* m_alias;
+	bool m_is_type;
 
 	DISALLOW_COPY_AND_ASSIGN(ImportStmt);
 };

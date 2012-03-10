@@ -1032,12 +1032,8 @@ AST_VISITOR(TypeChecker, ImportStmt) {
 		scope = &g_scope;
 	}
 
-	/**
-	 * Importing an specific module or an entire package
-	 * e.g. import std.io;
-	 */
 	Compiler::import(scope, expr->getPackageName(), expr->getModuleName(),
-		expr->getObjectName(), expr->getAliasName());
+		expr->getObjectName(), expr->getAliasName(), expr->isType());
 }
 
 /**
