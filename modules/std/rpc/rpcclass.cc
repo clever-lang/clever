@@ -163,7 +163,7 @@ CLEVER_METHOD(RPC::callFunction) {
 	}
 
 	rv->sendFunctionCall(fname,buffer,len_fname,n_args,len_args);
-	free(buffer);
+	delete buffer;
 }
 
 void RPC::init() {
