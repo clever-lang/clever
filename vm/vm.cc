@@ -88,7 +88,7 @@ void VM::run(const Function* func, const ValueVector* args) {
 	s_var->mode = INTERNAL;
 
 	if (args) {
-		update_vars(func->getScope(), func->getArgs(), args);
+		push_args(func->getScope(), func->getArgs(), args);
 	}
 
 	for (size_t next_op = start; next_op < last_op && s_var->running; ++next_op) {
@@ -122,9 +122,9 @@ void VM::shutdown() {
 }
 
 /**
- * Update the Value* ptr of variables in the function scope
+ * Pushes the function call arguments
  */
-void VM::update_vars(Scope* scope, const FunctionArgs& fargs,
+void VM::push_args(Scope* scope, const FunctionArgs& fargs,
 	const ValueVector* args) {
 	clever_assert_not_null(args);
 
@@ -254,7 +254,7 @@ CLEVER_VM_HANDLER(VM::fcall_handler) {
 		if (args) {
 			const Function* fptr = func->getFunction();
 
-			update_vars(fptr->getScope(), fptr->getArgs(), args);
+			push_args(fptr->getScope(), fptr->getArgs(), args);
 		}
 
 		func->call(next_op);
