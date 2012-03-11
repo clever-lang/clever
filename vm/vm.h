@@ -36,6 +36,7 @@
  */
 #define CLEVER_VM_HANDLER_ARGS const Opcode& opcode, size_t& next_op
 #define CLEVER_VM_HANDLER(name) void CLEVER_FASTCALL name(CLEVER_VM_HANDLER_ARGS)
+#define VM_H(name) VM::name##_handler
 
 /**
  * Change the executor flow to run another opcode

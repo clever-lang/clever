@@ -57,7 +57,7 @@ AST_VISITOR(CodeGenVisitor, ArgumentList) {
  * Genearates opcode for the subscript operator
  */
 AST_VISITOR(CodeGenVisitor, Subscript) {
-	emit(OP_AT, &VM::mcall_handler,
+	emit(OP_AT, &VM_H(mcall),
 		expr->getCallValue(), expr->getArgsValue(), expr->getValue());
 }
 
@@ -65,7 +65,7 @@ AST_VISITOR(CodeGenVisitor, Subscript) {
  * Generates opcode for regex syntax
  */
 AST_VISITOR(CodeGenVisitor, RegexPattern) {
-	emit(OP_REGEX, &VM::mcall_handler,
+	emit(OP_REGEX, &VM_H(mcall),
 		expr->getCallValue(), expr->getArgsValue(), expr->getValue());
 }
 
@@ -106,7 +106,7 @@ AST_VISITOR(CodeGenVisitor, BinaryExpr) {
 			opval = op == AND ? OP_JMPZ : OP_JMPNZ;
 
 			VM::opcode_handler op_handler = opval == OP_JMPZ ?
-				&VM::jmpz_handler : &VM::jmpnz_handler;
+				&VM_H(jmpz) : &VM_H(jmpnz);
 
 			Opcode* opcode = emit(opval, op_handler, lhs);
 			opcode->setResult(expr->getValue());
@@ -164,7 +164,7 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 	if (!expr->getConstructorArgs() && args) {
 		expr->getCallValue()->addRef();
 
-		emit(OP_ASSIGN, &VM::mcall_handler, expr->getCallValue(), args);
+		emit(OP_ASSIGN, &VM_H(mcall), expr->getCallValue(), args);
 	} else if (expr->getConstructorArgs()) {
 		clever_assert_not_null(args);
 
@@ -173,10 +173,10 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 		call->addRef();
 		expr->getVariable()->getValue()->addRef();
 
-		emit(OP_MCALL, &VM::mcall_handler, call, expr->getArgsValue(),
+		emit(OP_MCALL, &VM_H(mcall), call, expr->getArgsValue(),
 			expr->getVariable()->getValue());
 	} else {
-		emit(OP_INIT_VAR, &VM::init_var_handler,
+		emit(OP_INIT_VAR, &VM_H(init_var),
 			expr->getVariable()->getValue());
 		expr->getVariable()->getValue()->addRef();
 	}
@@ -193,7 +193,7 @@ AST_VISITOR(CodeGenVisitor, IfExpr) {
 	Value* value = expr->getCondition()->getValue();
 	value->addRef();
 
-	Opcode* jmp_if = emit(OP_JMPZ, &VM::jmpz_handler, value);
+	Opcode* jmp_if = emit(OP_JMPZ, &VM_H(jmpz), value);
 	jmp_if->setResult(NULL);
 
 	if (expr->hasBlock()) {
@@ -207,7 +207,7 @@ AST_VISITOR(CodeGenVisitor, IfExpr) {
 		NodeList::const_iterator it(elseif_nodes.begin()), end(elseif_nodes.end());
 
 		while (it != end) {
-			jmp_ops.push_back(emit(OP_JMP, &VM::jmp_handler));
+			jmp_ops.push_back(emit(OP_JMP, &VM_H(jmp)));
 
 			// If the last expression is false, jumps to the next condition
 			last_jmpz->setJmpAddr2(getOpNum());
@@ -219,7 +219,7 @@ AST_VISITOR(CodeGenVisitor, IfExpr) {
 			Value* cond = elseif->getCondition()->getValue();
 			cond->addRef();
 
-			Opcode* jmp_elseif = emit(OP_JMPZ, &VM::jmpz_handler, cond);
+			Opcode* jmp_elseif = emit(OP_JMPZ, &VM_H(jmpz), cond);
 			jmp_elseif->setResult(NULL);
 
 			if (elseif->hasBlock()) {
@@ -230,7 +230,7 @@ AST_VISITOR(CodeGenVisitor, IfExpr) {
 		}
 	}
 
-	jmp_ops.push_back(emit(OP_JMP, &VM::jmp_handler));
+	jmp_ops.push_back(emit(OP_JMP, &VM_H(jmp)));
 
 	// If the last expression has failed, it jumps to the last block
 	last_jmpz->setJmpAddr2(getOpNum());
@@ -302,7 +302,7 @@ AST_VISITOR(CodeGenVisitor, WhileExpr) {
 	Value* value = expr->getCondition()->getValue();
 	value->addRef();
 
-	Opcode* jmpz = emit(OP_JMPZ, &VM::jmpz_handler, value);
+	Opcode* jmpz = emit(OP_JMPZ, &VM_H(jmpz), value);
 	jmpz->setResult(NULL);
 
 	if (expr->hasBlock()) {
@@ -318,7 +318,7 @@ AST_VISITOR(CodeGenVisitor, WhileExpr) {
 		m_brks.pop();
 	}
 
-	emit(OP_JMP, &VM::jmp_handler, start_pos);
+	emit(OP_JMP, &VM_H(jmp), start_pos);
 
 	jmpz->setJmpAddr2(getOpNum());
 }
@@ -346,7 +346,7 @@ AST_VISITOR(CodeGenVisitor, ForExpr) {
 			value = new Value(true);
 		}
 
-		Opcode* jmpz = emit(OP_JMPZ, &VM::jmpz_handler, value);
+		Opcode* jmpz = emit(OP_JMPZ, &VM_H(jmpz), value);
 		jmpz->setResult(NULL);
 
 		// If the expression has increment we must jump 2 opcodes
@@ -369,7 +369,7 @@ AST_VISITOR(CodeGenVisitor, ForExpr) {
 			expr->getIncrement()->acceptVisitor(*this);
 		}
 
-		emit(OP_JMP, &VM::jmp_handler, start_pos);
+		emit(OP_JMP, &VM_H(jmp), start_pos);
 
 		jmpz->setJmpAddr2(getOpNum());
 	}
@@ -383,7 +383,7 @@ AST_VISITOR(CodeGenVisitor, BreakNode) {
 	 * Pushes the break opcode to a stack which in the end
 	 * sets its jump addr to end of repeat block
 	 */
-	m_brks.top().push(emit(OP_BREAK, &VM::jmp_handler));
+	m_brks.top().push(emit(OP_BREAK, &VM_H(jmp)));
 }
 
 /**
@@ -400,7 +400,7 @@ AST_VISITOR(CodeGenVisitor, FunctionCall) {
 	}
 
 	fvalue->addRef();
-	emit(OP_FCALL, &VM::fcall_handler, fvalue, arg_values, expr->getValue());
+	emit(OP_FCALL, &VM_H(fcall), fvalue, arg_values, expr->getValue());
 }
 
 /**
@@ -411,16 +411,14 @@ AST_VISITOR(CodeGenVisitor, MethodCall) {
 
 	call->addRef();
 
-	emit(OP_MCALL, &VM::mcall_handler, call, expr->getArgsValue(),
-		expr->getValue());
+	emit(OP_MCALL, &VM_H(mcall), call, expr->getArgsValue(), expr->getValue());
 }
 
 /**
  * Generates opcode for variable assignment
  */
 AST_VISITOR(CodeGenVisitor, AssignExpr) {
-	emit(OP_ASSIGN, &VM::mcall_handler, expr->getCallValue(),
-		expr->getArgsValue());
+	emit(OP_ASSIGN, &VM_H(mcall), expr->getCallValue(), expr->getArgsValue());
 }
 
 /**
@@ -436,13 +434,13 @@ AST_VISITOR(CodeGenVisitor, ImportStmt) {
 AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
 	CallableValue* func = expr->getFunc();
 	const Function* user_func = func->getFunction();
-	Opcode* jmp = emit(OP_JMP, &VM::jmp_handler);
+	Opcode* jmp = emit(OP_JMP, &VM_H(jmp));
 
 	const_cast<Function*>(user_func)->setOffset(getOpNum());
 
 	expr->getBlock()->acceptVisitor(*this);
 
-	emit(OP_JMP, &VM::end_func_handler);
+	emit(OP_JMP, &VM_H(end_func));
 
 	jmp->setJmpAddr1(getOpNum());
 }
@@ -461,7 +459,7 @@ AST_VISITOR(CodeGenVisitor, ReturnStmt) {
 
 	CLEVER_SAFE_ADDREF(expr_value);
 
-	emit(OP_RETURN, &VM::return_handler, expr_value);
+	emit(OP_RETURN, &VM_H(return), expr_value);
 }
 
 /**
@@ -476,8 +474,7 @@ AST_VISITOR(CodeGenVisitor, TypeCreation) {
 	call->addRef();
 	expr->getValue()->addRef();
 
-	emit(OP_MCALL, &VM::mcall_handler, call, expr->getArgsValue(),
-		call->getValue());
+	emit(OP_MCALL, &VM_H(mcall), call, expr->getArgsValue(), call->getValue());
 }
 
 AST_VISITOR(CodeGenVisitor, ArrayList) {

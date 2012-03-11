@@ -139,30 +139,30 @@ void Opcode::dumpValue(std::ostringstream& str, Value* value)
  */
 VM::opcode_handler Opcode::getHandlerByType(OpcodeType op_type) {
 	switch (op_type) {
-		case OP_PLUS:    return &VM::plus_handler;
-		case OP_MINUS:   return &VM::minus_handler;
-		case OP_DIV:     return &VM::div_handler;
-		case OP_MULT:    return &VM::mult_handler;
-		case OP_MOD:     return &VM::mod_handler;
-		case OP_XOR:     return &VM::xor_handler;
-		case OP_BW_OR:   return &VM::bw_or_handler;
-		case OP_BW_AND:  return &VM::bw_and_handler;
-		case OP_GREATER: return &VM::greater_handler;
-		case OP_LESS:    return &VM::less_handler;
-		case OP_GE:      return &VM::ge_handler;
-		case OP_LE:      return &VM::le_handler;
-		case OP_EQUAL:   return &VM::equal_handler;
-		case OP_NE:      return &VM::ne_handler;
-		case OP_LSHIFT:  return &VM::lshift_handler;
-		case OP_RSHIFT:  return &VM::rshift_handler;
-		case OP_PRE_INC: return &VM::inc_handler;
-		case OP_POS_INC: return &VM::inc_handler;
-		case OP_PRE_DEC: return &VM::dec_handler;
-		case OP_POS_DEC: return &VM::dec_handler;
-		case OP_NOT:     return &VM::not_handler;
-		case OP_BW_NOT:  return &VM::bw_not_handler;
-		case OP_INIT_VAR:return &VM::init_var_handler;
-		default:	     return &VM::mcall_handler;
+		case OP_PLUS:    return &VM_H(plus);
+		case OP_MINUS:   return &VM_H(minus);
+		case OP_DIV:     return &VM_H(div);
+		case OP_MULT:    return &VM_H(mult);
+		case OP_MOD:     return &VM_H(mod);
+		case OP_XOR:     return &VM_H(xor);
+		case OP_BW_OR:   return &VM_H(bw_or);
+		case OP_BW_AND:  return &VM_H(bw_and);
+		case OP_GREATER: return &VM_H(greater);
+		case OP_LESS:    return &VM_H(less);
+		case OP_GE:      return &VM_H(ge);
+		case OP_LE:      return &VM_H(le);
+		case OP_EQUAL:   return &VM_H(equal);
+		case OP_NE:      return &VM_H(ne);
+		case OP_LSHIFT:  return &VM_H(lshift);
+		case OP_RSHIFT:  return &VM_H(rshift);
+		case OP_PRE_INC: return &VM_H(inc);
+		case OP_POS_INC: return &VM_H(inc);
+		case OP_PRE_DEC: return &VM_H(dec);
+		case OP_POS_DEC: return &VM_H(dec);
+		case OP_NOT:     return &VM_H(not);
+		case OP_BW_NOT:  return &VM_H(bw_not);
+		case OP_INIT_VAR:return &VM_H(init_var);
+		default:	     return &VM_H(mcall);
 	}
 }
 
