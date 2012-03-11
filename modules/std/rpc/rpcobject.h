@@ -23,54 +23,48 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef CLEVER_RPCVALUE_H
-#define CLEVER_RPCVALUE_H
+#ifndef CLEVER_RPCOBJECT_H
+#define CLEVER_RPCOBJECT_H
 
 #include <cstdlib>
 #include <string>
 #include <pthread.h>
 #include <map>
+#include "types/type.h"
+#include "compiler/value.h"
 #include "compiler/datavalue.h"
 
-#include "modules/std/net/csocket.h"
 #include "modules/std/rpc/rpcobjectvalue.h"
+#include "modules/std/net/csocket.h"
 
 namespace clever { namespace packages { namespace std { namespace rpc {
 
 
-typedef ::std::map< ::std::string, void*> ExtMap;
-typedef ::std::map< ::std::string, ::std::string> FuncMap;
-
-class RPCValue : public DataValue {
+class RPCObject : public Type {
 
 public:
+	RPCObject()
+		: Type(CSTRING("RPCObject")) { }
 
-	RPCValue() { socket = 0; }
+	void init();
+	DataValue* allocateValue() const;
+	void destructor(Value* value) const;
 
-	void createServer(int port, int connections);
+	static CLEVER_METHOD(constructor);
+	static CLEVER_METHOD(do_assign);
 
-	void createClient(const char* host, const int port, const int time);
+	static CLEVER_METHOD(toInteger);
+	static CLEVER_METHOD(toString);
+	static CLEVER_METHOD(toDouble);
+	static CLEVER_METHOD(clear);
 
-	void loadLibrary(const char* libname);
-	void addFunction(const char* libname, const char* funcname, const char* rettype);
-
-	void sendString(const char* s, int len);
-	void sendFunctionCall(const char* fname, const char* args, int len_fname, int n_args, int len_args);
-	void sendInteger(int v);
-
-	RPCObjectValue* receiveObject();
-
-	CSocket* getSocket() { return this->socket; }
-
-	~RPCValue();
+	~RPCObject(){}
 
 private:
-
-	CSocket* socket;
-	int createConnection(int client_socket_id);
+	DISALLOW_COPY_AND_ASSIGN(RPCObject);
 };
 
 }}}} // clever::packages::std::rpc
 
-#endif // CLEVER_RPCVALUE_H
+#endif // CLEVER_RPCOBJECT_H
 

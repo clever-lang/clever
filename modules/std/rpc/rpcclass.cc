@@ -28,6 +28,7 @@
 #include "modules/std/net/tcpsocket.h"
 #include "modules/std/rpc/rpc.h"
 #include "modules/std/rpc/rpcclass.h"
+#include "modules/std/rpc/rpcobject.h"
 #include "compiler/compiler.h"
 #include "compiler/cstring.h"
 #include "types/nativetypes.h"
@@ -164,10 +165,13 @@ CLEVER_METHOD(RPC::callFunction) {
 
 	rv->sendFunctionCall(fname,buffer,len_fname,n_args,len_args);
 	delete buffer;
+
+	CLEVER_RETURN_DATA_VALUE(rv->receiveObject());
 }
 
 void RPC::init() {
 	const Type* rpcobj = CLEVER_TYPE("RPCClass");
+	const Type* rpcobjvalue = CLEVER_TYPE("RPCObject");
 
 	addMethod(new Method(CLEVER_CTOR_NAME,
 		(MethodPtr)&RPC::constructor, rpcobj));
@@ -214,7 +218,7 @@ void RPC::init() {
 	);
 
 	addMethod(
-		(new Method("callFunction", (MethodPtr)&RPC::callFunction, CLEVER_VOID))
+		(new Method("callFunction", (MethodPtr)&RPC::callFunction, rpcobjvalue))
 			->setVariadic()
 			->setMinNumArgs(1)
 	);
