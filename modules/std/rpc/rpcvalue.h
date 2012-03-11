@@ -59,7 +59,7 @@ public:
 
 	CSocket* getSocket() { return this->socket; }
 
-	virtual ~RPCValue() { if(socket) delete socket; }
+	~RPCValue();
 
 private:
 

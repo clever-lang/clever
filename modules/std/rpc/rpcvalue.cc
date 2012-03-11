@@ -155,7 +155,7 @@ int process(int client_socket_id) {
 				fprintf (stderr,"function name = %s\n", fname);
 
 
-				fpf = dlsym(ext_mod_map[fname], ext_func_map[fname].c_str());
+				fpf = dlsym(ext_mod_map[ext_func_map[fname]], fname);
 
 				if (fpf == NULL) {
 					clever_fatal("[RPC] function `%s' not found at `%s'!",
@@ -341,6 +341,20 @@ int process(int client_socket_id) {
 
 	close (client_socket_id);
 	return 0;
+}
+
+RPCValue::~RPCValue() { 
+	if(socket) delete socket; 
+
+	ExtMap::const_iterator it = ext_mod_map.begin(),
+		end = ext_mod_map.end();
+
+	while (it != end) {
+		if (it->second != NULL) {
+			dlclose(it->second);
+		}
+		++it;
+	}
 }
 
 void RPCValue::addFunction(const char* libname, const char* funcname, const char* rettype){
