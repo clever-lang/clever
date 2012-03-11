@@ -66,7 +66,8 @@ enum OpcodeType {
 	OP_LSHIFT,
 	OP_RSHIFT,
 	OP_ASSIGN,
-	OP_AT
+	OP_AT,
+	OP_INIT_VAR
 };
 
 /**

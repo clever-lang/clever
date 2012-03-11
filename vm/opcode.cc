@@ -80,6 +80,7 @@ const char* Opcode::getOpName(OpcodeType op) const {
 		CASE(OP_RSHIFT);
 		CASE(OP_ASSIGN);
 		CASE(OP_AT);
+		CASE(OP_INIT_VAR);
 		default:
 			return "UNKNOWN";
 	}
@@ -160,6 +161,7 @@ VM::opcode_handler Opcode::getHandlerByType(OpcodeType op_type) {
 		case OP_POS_DEC: return &VM::dec_handler;
 		case OP_NOT:     return &VM::not_handler;
 		case OP_BW_NOT:  return &VM::bw_not_handler;
+		case OP_INIT_VAR:return &VM::init_var_handler;
 		default:	     return &VM::mcall_handler;
 	}
 }

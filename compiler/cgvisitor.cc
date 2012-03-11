@@ -165,8 +165,7 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 		expr->getCallValue()->addRef();
 
 		emit(OP_ASSIGN, &VM::mcall_handler, expr->getCallValue(), args);
-	}
-	else if (expr->getConstructorArgs()) {
+	} else if (expr->getConstructorArgs()) {
 		clever_assert_not_null(args);
 
 		CallableValue* call = expr->getCallValue();
@@ -176,6 +175,10 @@ AST_VISITOR(CodeGenVisitor, VariableDecl) {
 
 		emit(OP_MCALL, &VM::mcall_handler, call, expr->getArgsValue(),
 			expr->getVariable()->getValue());
+	} else {
+		emit(OP_INIT_VAR, &VM::init_var_handler,
+			expr->getVariable()->getValue());
+		expr->getVariable()->getValue()->addRef();
 	}
 }
 

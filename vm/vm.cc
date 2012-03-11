@@ -36,8 +36,7 @@ VMVars* VM::s_var;
 const OpcodeList* VM::s_opcodes;
 const Value* VM::s_return_value;
 
-static CLEVER_FORCE_INLINE const CallableValue*
-	_get_op1_callable(const Opcode& opcode) {
+static inline const CallableValue* _get_op1_callable(const Opcode& opcode) {
 	return static_cast<CallableValue*>(opcode.getOp1Value());
 }
 
@@ -131,12 +130,7 @@ void VM::update_vars(Scope* scope, const FunctionArgs& fargs,
 
 	ValueVector* vec = new ValueVector;
 	ValueVector* vec_copy = new ValueVector;
-	ValueVector* vec_curr = NULL;
 	size_t i = 0;
-
-	if (!s_var->arg_vars.empty()) {
-		vec_curr = s_var->arg_values.top();
-	}
 
 	FunctionArgs::const_iterator it(fargs.begin()), end(fargs.end());
 
@@ -155,47 +149,6 @@ void VM::update_vars(Scope* scope, const FunctionArgs& fargs,
 		vec_copy->push_back(tmp);
 
 		++it;
-	}
-	i = args->size();
-
-	// Make the copy in the scopes level
-	if (EXPECTED(scope->hasChildren())) {
-		const ScopeVector& scopes = scope->getChildren();
-		ScopeVector::const_iterator scope_it(scopes.begin()),
-			scope_end(scopes.end());
-
-		while (EXPECTED(scope_it != scope_end)) {
-			const SymbolMap& symbols = (*scope_it)->getSymbols();
-			SymbolMap::const_iterator sym(symbols.begin()),
-				last_sym(symbols.end());
-
-			while (EXPECTED(sym != last_sym)) {
-				Symbol* symbol = sym->second;
-
-				if (EXPECTED(symbol->isValue())) {
-					Value* val = symbol->getValue();
-
-					if (val->isCallable()) {
-						continue;
-					}
-
-					Value* tmp = new Value;
-
-					tmp->copy(val);
-
-					if (vec_curr) {
-						vec_curr->at(i++)->copy(tmp);
-						tmp->addRef();
-					}
-
-					vec_copy->push_back(tmp);
-					vec->push_back(val);
-					val->initialize();
-				}
-				++sym;
-			}
-			++scope_it;
-		}
 	}
 
 	s_var->arg_vars.push(vec);
@@ -601,6 +554,15 @@ CLEVER_VM_HANDLER(VM::not_handler) {
 	Value* result = opcode.getResultValue();
 
 	var->call(result, args);
+}
+
+/**
+ * Initialize a variable (Type var;)
+ */
+CLEVER_VM_HANDLER(VM::init_var_handler) {
+	Value* op1 = opcode.getOp1Value();
+
+	op1->initialize();
 }
 
 } // clever

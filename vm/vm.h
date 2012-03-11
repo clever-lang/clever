@@ -110,7 +110,7 @@ public:
 	/**
 	 * Opcode handlers
 	 */
-	static CLEVER_VM_HANDLER(var_decl_handler);
+	static CLEVER_VM_HANDLER(init_var_handler);
 	static CLEVER_VM_HANDLER(jmpnz_handler);
 	static CLEVER_VM_HANDLER(jmpz_handler);
 	static CLEVER_VM_HANDLER(jmp_handler);
