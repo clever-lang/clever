@@ -153,7 +153,7 @@ CLEVER_METHOD(RPC::callFunction) {
 			len_args+=sizeof(char);
 		} else if (CLEVER_ARG_IS_DOUBLE(i)) {
 			buffer[len_args]='d';
-			len_args+=sizeof(double);
+			len_args+=sizeof(char);
 
 			double vd = CLEVER_ARG_DOUBLE(i);
 
