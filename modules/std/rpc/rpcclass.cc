@@ -28,6 +28,7 @@
 #include "modules/std/net/tcpsocket.h"
 #include "modules/std/rpc/rpc.h"
 #include "modules/std/rpc/rpcclass.h"
+#include "modules/std/rpc/rpcobject.h"
 #include "compiler/compiler.h"
 #include "compiler/cstring.h"
 #include "types/nativetypes.h"
@@ -107,7 +108,7 @@ CLEVER_METHOD(RPC::callFunction) {
 		}
 	}
 
-	char* buffer = new char[len_args];
+	char* buffer = (char*) malloc (len_args*sizeof(char));
 
 	len_args=0;
 	for(size_t i=1;i<size;++i){
@@ -152,7 +153,7 @@ CLEVER_METHOD(RPC::callFunction) {
 			len_args+=sizeof(char);
 		} else if (CLEVER_ARG_IS_DOUBLE(i)) {
 			buffer[len_args]='d';
-			len_args+=sizeof(double);
+			len_args+=sizeof(char);
 
 			double vd = CLEVER_ARG_DOUBLE(i);
 
@@ -163,11 +164,14 @@ CLEVER_METHOD(RPC::callFunction) {
 	}
 
 	rv->sendFunctionCall(fname,buffer,len_fname,n_args,len_args);
-	delete buffer;
+	free(buffer);
+
+	CLEVER_RETURN_DATA_VALUE(rv->receiveObject());
 }
 
 void RPC::init() {
 	const Type* rpcobj = CLEVER_TYPE("RPCClass");
+	const Type* rpcobjvalue = CLEVER_TYPE("RPCObject");
 
 	addMethod(new Method(CLEVER_CTOR_NAME,
 		(MethodPtr)&RPC::constructor, rpcobj));
@@ -214,7 +218,7 @@ void RPC::init() {
 	);
 
 	addMethod(
-		(new Method("callFunction", (MethodPtr)&RPC::callFunction, CLEVER_VOID))
+		(new Method("callFunction", (MethodPtr)&RPC::callFunction, rpcobjvalue))
 			->setVariadic()
 			->setMinNumArgs(1)
 	);

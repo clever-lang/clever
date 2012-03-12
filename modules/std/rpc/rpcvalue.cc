@@ -28,6 +28,7 @@
 #include "modules/std/net/tcpsocket.h"
 #include "modules/std/rpc/rpc.h"
 #include "modules/std/rpc/rpcclass.h"
+#include "modules/std/rpc/rpcobject.h"
 #include "compiler/compiler.h"
 #include "compiler/cstring.h"
 #include "types/nativetypes.h"
@@ -91,6 +92,7 @@ bool send(int m_socket, const char *buffer, int length) {
 }
 
 int process(int client_socket_id) {
+
 	int type_call;
 	int len_fname;
 	int n_args;
@@ -155,7 +157,7 @@ int process(int client_socket_id) {
 				fprintf (stderr,"function name = %s\n", fname);
 
 
-				fpf = dlsym(ext_mod_map[fname], ext_func_map[fname].c_str());
+				fpf = dlsym(ext_mod_map[ext_func_map[fname]], fname);
 
 				if (fpf == NULL) {
 					clever_fatal("[RPC] function `%s' not found at `%s'!",
@@ -254,12 +256,15 @@ int process(int client_socket_id) {
 				}
 
 				/*call function*/
-
+				int if_rt=f_rt;
+				
 				switch ( f_rt ) {
 						case 'i': 
 							{
 								int vi;
 								ffi_call(&cif, pf, &vi, ffi_values);
+
+								send(client_socket_id,(char*)(&if_rt),sizeof(int));
 								send(client_socket_id,(char*)(&vi),sizeof(int));
 							}
 						break;
@@ -268,6 +273,8 @@ int process(int client_socket_id) {
 							{
 								double vd;
 								ffi_call(&cif, pf, &vd, ffi_values);
+
+								send(client_socket_id,(char*)(&if_rt),sizeof(int));
 								send(client_socket_id,(char*)(&vd),sizeof(double));
 							}
 						break;
@@ -276,6 +283,8 @@ int process(int client_socket_id) {
 							{
 								char vc;
 								ffi_call(&cif, pf, &vc, ffi_values);
+
+								send(client_socket_id,(char*)(&if_rt),sizeof(int));
 								send(client_socket_id,(char*)(&vc),sizeof(double));
 							}
 						break;
@@ -286,9 +295,12 @@ int process(int client_socket_id) {
 								int size_vs;
 
 								ffi_call(&cif, pf, &vs, ffi_values);
-								size_vs = * ((int*) vs[0]);
-								send(client_socket_id,
-								(char*)(vs[0]+sizeof(int)), size_vs);
+
+								 size_vs = * ((int*) vs[0]);
+
+								send(client_socket_id,(char*)(&if_rt),sizeof(int));
+								send(client_socket_id,(char*)(&size_vs),sizeof(int));
+								send(client_socket_id,(char*)(vs[0]+sizeof(int)), size_vs);
 
 								free(vs[0]);
 							}
@@ -297,6 +309,8 @@ int process(int client_socket_id) {
 						case 'v':
 							{
 								ffi_call(&cif, pf, NULL, ffi_values);
+
+								send(client_socket_id,(char*)(&if_rt),sizeof(int));
 							}
 						break;
 				}
@@ -341,6 +355,20 @@ int process(int client_socket_id) {
 
 	close (client_socket_id);
 	return 0;
+}
+
+RPCValue::~RPCValue() { 
+	if(socket) delete socket; 
+
+	ExtMap::const_iterator it = ext_mod_map.begin(),
+		end = ext_mod_map.end();
+
+	while (it != end) {
+		if (it->second != NULL) {
+			dlclose(it->second);
+		}
+		++it;
+	}
 }
 
 void RPCValue::addFunction(const char* libname, const char* funcname, const char* rettype){
@@ -432,6 +460,64 @@ void RPCValue::sendFunctionCall(const char* fname, const char* args, int len_fna
 		socket->send(args,len_args);
 	}
 
+}
+
+RPCObjectValue* RPCValue::receiveObject(){
+	RPCObjectValue* obj =  new RPCObjectValue;
+
+	int* type = (int*)malloc(sizeof(int));
+	int len=sizeof(int), len_s;
+	int* vi;
+	char* vc, *buffer;
+	double* vd;
+
+	socket->receive((char*)type,len);
+
+	obj->type = *type;
+
+	obj->pointer = 0;
+
+	switch(*type){
+		case 'i':
+			{
+				vi = (int*) malloc(sizeof(int));
+				socket->receive((char*)vi,sizeof(int));
+				obj->pointer=vi;
+			}
+		break;
+
+		case 'd':
+			{
+				vd = (double*) malloc(sizeof(double));
+				socket->receive((char*)vd,sizeof(double));
+				obj->pointer=vd;
+			}
+		break;
+
+		case 'c': case 'b':
+			{
+				vc = (char*) malloc(sizeof(char));
+				socket->receive((char*)vc,sizeof(char));
+				obj->pointer=vc;
+			}
+		break;
+
+		case 'p': case 's':
+			{
+				socket->receive((char*)(&len_s),sizeof(int));
+
+				buffer = (char*) malloc(len_s*sizeof(char));
+
+				socket->receive(buffer,len_s);
+
+				obj->pointer=buffer;
+			}
+		break;
+	}
+
+	free(type);
+
+	return obj;
 }
 
 }}}} // clever::packages::std::rpc

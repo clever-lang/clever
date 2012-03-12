@@ -23,8 +23,8 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef CLEVER_RPCVALUE_H
-#define CLEVER_RPCVALUE_H
+#ifndef CLEVER_RPCOBJECTVALUE_H
+#define CLEVER_RPCOBJECTVALUE_H
 
 #include <cstdlib>
 #include <string>
@@ -32,45 +32,27 @@
 #include <map>
 #include "compiler/datavalue.h"
 
+#include "compiler/cstring.h"
+#include "types/nativetypes.h"
+
 #include "modules/std/net/csocket.h"
-#include "modules/std/rpc/rpcobjectvalue.h"
 
 namespace clever { namespace packages { namespace std { namespace rpc {
 
 
-typedef ::std::map< ::std::string, void*> ExtMap;
-typedef ::std::map< ::std::string, ::std::string> FuncMap;
-
-class RPCValue : public DataValue {
+class RPCObjectValue : public DataValue {
 
 public:
 
-	RPCValue() { socket = 0; }
+	RPCObjectValue() { type = 'v'; pointer = 0; }
 
-	void createServer(int port, int connections);
+	~RPCObjectValue() { }
 
-	void createClient(const char* host, const int port, const int time);
-
-	void loadLibrary(const char* libname);
-	void addFunction(const char* libname, const char* funcname, const char* rettype);
-
-	void sendString(const char* s, int len);
-	void sendFunctionCall(const char* fname, const char* args, int len_fname, int n_args, int len_args);
-	void sendInteger(int v);
-
-	RPCObjectValue* receiveObject();
-
-	CSocket* getSocket() { return this->socket; }
-
-	~RPCValue();
-
-private:
-
-	CSocket* socket;
-	int createConnection(int client_socket_id);
+	int type;
+	void* pointer;
 };
 
 }}}} // clever::packages::std::rpc
 
-#endif // CLEVER_RPCVALUE_H
+#endif // CLEVER_RPCOBJECTVALUE_H
 

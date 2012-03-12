@@ -28,6 +28,7 @@
 #include "modules/std/net/tcpsocket.h"
 #include "modules/std/rpc/rpc.h"
 #include "modules/std/rpc/rpcclass.h"
+#include "modules/std/rpc/rpcobject.h"
 
 #ifndef __APPLE__
 # include <ffi.h>
@@ -49,6 +50,10 @@ void RPCModule::init() {
 	Class* rpcclass = new rpc::RPC;
 
 	addClass(rpcclass);
+
+	Class* rpcobject = new rpc::RPCObject;
+
+	addClass(rpcobject);
 }
 
 }}} // clever::packages::std
