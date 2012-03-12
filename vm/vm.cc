@@ -131,14 +131,12 @@ void VM::push_args(Scope* scope, const FunctionArgs& fargs,
 
 	clever_assert_not_null(args);
 
-	ValueVector* vec = new ValueVector;
-	ValueVector* vec_copy = new ValueVector;
+	VarVector* vec = new VarVector;
 	size_t i = 0;
 
 	FunctionArgs::const_iterator it(fargs.begin()), end(fargs.end());
 
 	vec->reserve(args->size());
-	vec_copy->reserve(args->size());
 
 	/* TODO: Find a better way to do this */
 	while (EXPECTED(it != end)) {
@@ -146,33 +144,27 @@ void VM::push_args(Scope* scope, const FunctionArgs& fargs,
 		Value* tmp = new Value;
 
 		val->copy(args->at(i++));
-		vec->push_back(val);
-
 		tmp->copy(val);
-		vec_copy->push_back(tmp);
 
+		vec->push_back(VarPair(val, tmp));
 		++it;
 	}
 
-	s_var->call.top().arg_vars = vec;
-	s_var->call.top().arg_values = vec_copy;
-
-//	push_local_vars(scope);
+	s_var->call.top().params = vec;
 }
 
 /**
  * Pushes local variable into the stack
  */
 void VM::push_local_vars(Scope* scope) {
-	if (!scope->hasChildren()) {
+	if (scope == NULL || !scope->hasChildren() || s_var->call.size() == 0) {
 		return;
 	}
 
 	SymbolMap& symbols = scope->getChildren()[0]->getSymbols();
 	SymbolMap::const_iterator it(symbols.begin()), end(symbols.end());
 
-	ValueVector* vec = s_var->call.top().arg_vars;
-	ValueVector* vec_copy = s_var->call.top().arg_values;
+	VarVector* vec = new VarVector;
 
 	while (it != end) {
 		if (it->second->isValue()) {
@@ -180,15 +172,27 @@ void VM::push_local_vars(Scope* scope) {
 
 			if (!val->isCallable()) {
 				Value* tmp = new Value;
-
-				vec->push_back(val);
-
 				tmp->copy(val);
-				vec_copy->push_back(tmp);
+				vec->push_back(VarPair(val, tmp));
 			}
 		}
 		++it;
 	}
+
+	s_var->call.top().locals = vec;
+}
+
+void VM::pop_local_vars() {
+	VarVector* vec = s_var->call.top().locals;
+
+	if (!vec) {
+		return;
+	}
+
+	for (size_t i = 0, j = vec->size(); i < j; ++i) {
+		delete vec->at(i).second;
+	}
+	delete vec;
 }
 
 /**
@@ -197,36 +201,49 @@ void VM::push_local_vars(Scope* scope) {
 void VM::pop_args(const Opcode* const op) {
 	// Check if the function has arguments
 	if ((s_var->mode == NORMAL && op->getOp2Value() == NULL)
-		|| (s_var->mode == INTERNAL && s_var->call.top().arg_vars != NULL)) {
+		|| (s_var->mode == INTERNAL && s_var->call.top().params != NULL)) {
 		return;
 	}
 
-	ValueVector* vec_copy = s_var->call.top().arg_values;
-
-	if (vec_copy == NULL) {
-		return;
-	}
-
-	for (size_t i = 0, j = vec_copy->size(); i < j; ++i) {
-		delete vec_copy->at(i);
-	}
-	delete vec_copy;
-	delete s_var->call.top().arg_vars;
-}
-
-/**
- * Restore the parameter argument values from the previous stack frame
- */
-void VM::restore_args() {
-	ValueVector* vec = s_var->call.top().arg_vars;
-	ValueVector* vec_copy = s_var->call.top().arg_values;
+	VarVector* vec = s_var->call.top().params;
 
 	if (vec == NULL) {
 		return;
 	}
 
 	for (size_t i = 0, j = vec->size(); i < j; ++i) {
-		vec->at(i)->copy(vec_copy->at(i));
+		delete vec->at(i).second;
+	}
+	delete vec;
+}
+
+/**
+ * Restore the parameter argument values from the previous stack frame
+ */
+void VM::restore_args() {
+	VarVector* vec = s_var->call.top().params;
+
+	if (vec == NULL) {
+		return;
+	}
+
+	for (size_t i = 0, j = vec->size(); i < j; ++i) {
+		vec->at(i).first->copy(vec->at(i).second);
+	}
+}
+
+/**
+ * Restore local variables value
+ */
+void VM::restore_local_vars() {
+	VarVector* vec = s_var->call.top().locals;
+
+	if (vec == NULL) {
+		return;
+	}
+
+	for (size_t i = 0, j = vec->size(); i < j; ++i) {
+		vec->at(i).first->copy(vec->at(i).second);
 	}
 }
 
@@ -285,13 +302,14 @@ CLEVER_VM_HANDLER(VM::fcall_handler) {
 
 	// Check if it's an user function
 	if (func->isNearCall()) {
+		const Function* fptr = func->getFunction();
+
 		s_var->call.push(StackFrame(&opcode));
 
 		if (EXPECTED(args != NULL)) {
-			const Function* fptr = func->getFunction();
-
 			push_args(fptr->getScope(), fptr->getArgs(), args);
 		}
+		push_local_vars(fptr->getScope());
 
 		func->call(next_op);
 	} else {
@@ -321,8 +339,11 @@ CLEVER_VM_HANDLER(VM::end_func_handler) {
 		op = s_var->call.top().ret;
 	}
 
+	restore_local_vars();
+
 	// pop + restore arguments from stack
 	pop_args(op);
+	pop_local_vars();
 
 	if (op) {
 		s_var->call.pop();
@@ -357,6 +378,8 @@ CLEVER_VM_HANDLER(VM::return_handler) {
 		}
 		// pop + restore arguments from stack
 		pop_args(call);
+		restore_local_vars();
+		pop_local_vars();
 
 		s_var->call.pop();
 

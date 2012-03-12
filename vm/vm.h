@@ -51,21 +51,22 @@ class Opcode;
 class Scope;
 class Value;
 
-typedef std::stack<ValueVector*> ValueVStack;
+typedef std::pair<Value*, Value*> VarPair;
+typedef std::vector<VarPair> VarVector;
 
 /**
  * Stack frame representation
  */
 struct StackFrame {
 	StackFrame(const Opcode* opcode)
-		: ret(opcode), arg_vars(NULL), arg_values(NULL) {}
+		: ret(opcode), params(NULL), locals(NULL) {}
 
 	// Return address as an opcode pointer
 	const Opcode* ret;
 
 	// Local and parameter variables
-	ValueVector* arg_vars;
-	ValueVector* arg_values;
+	VarVector* params;
+	VarVector* locals;
 };
 
 typedef std::vector<Opcode*> OpcodeList;
@@ -128,6 +129,8 @@ public:
 	 * Function/method local variable handling
 	 */
 	static void push_local_vars(Scope*);
+	static void pop_local_vars();
+	static void restore_local_vars();
 
 	/**
 	 * Opcode handlers
