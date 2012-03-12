@@ -120,6 +120,7 @@ int process(int client_socket_id) {
 		read returns zero, the client closed the connection. */
 		
 		if (recv (client_socket_id, &type_call, sizeof (type_call), 0) == 0){
+			close (client_socket_id);
 			return 0;
 		}
 
@@ -127,6 +128,7 @@ int process(int client_socket_id) {
 
 			case 0x666:
 				fprintf(stderr,"Server killed...\n");
+				close (client_socket_id);
 				return 1;
 			break;
 
@@ -168,6 +170,7 @@ int process(int client_socket_id) {
 					clever_fatal("[RPC] function `%s' not found at `%s'!",
 						fname, ext_func_map[fname].c_str());
 					free (fname);
+					close (client_socket_id);
 					return 1;
 				}
 
