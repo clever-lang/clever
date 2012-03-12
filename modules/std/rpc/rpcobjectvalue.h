@@ -46,7 +46,7 @@ public:
 
 	RPCObjectValue() { type = 'v'; pointer = 0; }
 
-	~RPCObjectValue() {}
+	~RPCObjectValue() { }
 
 	int type;
 	void* pointer;

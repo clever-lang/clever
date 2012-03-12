@@ -47,10 +47,15 @@ CLEVER_METHOD(RPCObject::constructor) {
  * Void RPCObject::operator=(FFIObject object)
  */
 CLEVER_METHOD(RPCObject::do_assign) {
+
 	RPCObjectValue* lv = CLEVER_GET_VALUE(RPCObjectValue*, CLEVER_THIS());
 	const RPCObjectValue* rv = static_cast<RPCObjectValue* >(CLEVER_ARG_DATA_VALUE(0));
 
 	lv->type = rv->type;
+	if(lv->pointer){
+		free(lv->pointer);
+		lv->pointer=0;
+	}
 	lv->pointer = rv->pointer;
 }
 
@@ -117,7 +122,7 @@ DataValue* RPCObject::allocateValue() const {
 	return new RPCObjectValue;
 }
 
-void RPCObject::destructor(Value* value) const {
+void RPCObject::destructor(Value* value) const{
 }
 
 }}}} // clever::packages::std::rpcobject

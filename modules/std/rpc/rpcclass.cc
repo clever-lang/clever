@@ -108,7 +108,7 @@ CLEVER_METHOD(RPC::callFunction) {
 		}
 	}
 
-	char* buffer = new char[len_args];
+	char* buffer = (char*) malloc (len_args*sizeof(char));
 
 	len_args=0;
 	for(size_t i=1;i<size;++i){
@@ -164,7 +164,7 @@ CLEVER_METHOD(RPC::callFunction) {
 	}
 
 	rv->sendFunctionCall(fname,buffer,len_fname,n_args,len_args);
-	delete buffer;
+	free(buffer);
 
 	CLEVER_RETURN_DATA_VALUE(rv->receiveObject());
 }
