@@ -398,8 +398,8 @@ void RPCValue::addFunction(const char* libname, const char* funcname, const char
 }
 
 void RPCValue::loadLibrary(const char* libname) {
-	void* m = ext_mod_map[libname] = dlopen(libname, RTLD_LAZY);
-
+	void* m = dlopen(libname, RTLD_LAZY);
+	ext_mod_map[libname] = m;
 	if (m == NULL) {
 		clever_fatal("[RPC] Shared library `%s' not loaded!\n Error: \n %s",
 			libname, dlerror());

@@ -105,6 +105,7 @@ CLEVER_METHOD(RPC::callFunction) {
 		} else if (CLEVER_ARG_IS_BOOL(i)) {
 			len_args+=sizeof(char);
 		} else if (CLEVER_ARG_IS_STR(i)) {
+			len_args+=sizeof(int);
 			len_args+=CLEVER_ARG_STR(i).size();
 		} else if (CLEVER_ARG_IS_BYTE(i)) {
 			len_args+=sizeof(char);
@@ -114,7 +115,7 @@ CLEVER_METHOD(RPC::callFunction) {
 		}
 	}
 
-	char* buffer = (char*) malloc (len_args*sizeof(char));
+	char* buffer = static_cast<char*>(malloc(len_args+1));
 
 	len_args=0;
 	for(size_t i=1;i<size;++i){
@@ -140,10 +141,11 @@ CLEVER_METHOD(RPC::callFunction) {
 			buffer[len_args]='s';
 			len_args+=sizeof(char);
 
-			const char* s=CLEVER_ARG_STR(i).c_str();
 			int len=(int)(CLEVER_ARG_STR(i).size());
-
+			const char* s=CLEVER_ARG_STR(i).c_str();
+			
 			memcpy(buffer+len_args,&len,sizeof(int));
+			
 			len_args+=sizeof(int);
 
 			memcpy(buffer+len_args,s,len);
