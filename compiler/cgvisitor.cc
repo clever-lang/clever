@@ -440,7 +440,7 @@ AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
 
 	expr->getBlock()->acceptVisitor(*this);
 
-	emit(OP_JMP, &VM_H(end_func));
+	emit(OP_LEAVE, &VM_H(end_func));
 
 	jmp->setJmpAddr1(getOpNum());
 }

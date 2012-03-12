@@ -87,6 +87,8 @@ void VM::run(const Function* func, const ValueVector* args) {
 
 	s_var->mode = INTERNAL;
 
+	s_var->call.push(StackFrame(NULL));
+
 	if (args) {
 		push_args(func->getScope(), func->getArgs(), args);
 	}
@@ -126,6 +128,7 @@ void VM::shutdown() {
  */
 void VM::push_args(Scope* scope, const FunctionArgs& fargs,
 	const ValueVector* args) {
+
 	clever_assert_not_null(args);
 
 	ValueVector* vec = new ValueVector;
@@ -138,7 +141,7 @@ void VM::push_args(Scope* scope, const FunctionArgs& fargs,
 	vec_copy->reserve(args->size());
 
 	/* TODO: Find a better way to do this */
-	while (it != end) {
+	while (EXPECTED(it != end)) {
 		Value* val = scope->getValue(CSTRING((*it).first));
 		Value* tmp = new Value;
 
@@ -151,8 +154,41 @@ void VM::push_args(Scope* scope, const FunctionArgs& fargs,
 		++it;
 	}
 
-	s_var->arg_vars.push(vec);
-	s_var->arg_values.push(vec_copy);
+	s_var->call.top().arg_vars = vec;
+	s_var->call.top().arg_values = vec_copy;
+
+//	push_local_vars(scope);
+}
+
+/**
+ * Pushes local variable into the stack
+ */
+void VM::push_local_vars(Scope* scope) {
+	if (!scope->hasChildren()) {
+		return;
+	}
+
+	SymbolMap& symbols = scope->getChildren()[0]->getSymbols();
+	SymbolMap::const_iterator it(symbols.begin()), end(symbols.end());
+
+	ValueVector* vec = s_var->call.top().arg_vars;
+	ValueVector* vec_copy = s_var->call.top().arg_values;
+
+	while (it != end) {
+		if (it->second->isValue()) {
+			Value* val = it->second->getValue();
+
+			if (!val->isCallable()) {
+				Value* tmp = new Value;
+
+				vec->push_back(val);
+
+				tmp->copy(val);
+				vec_copy->push_back(tmp);
+			}
+		}
+		++it;
+	}
 }
 
 /**
@@ -161,33 +197,33 @@ void VM::push_args(Scope* scope, const FunctionArgs& fargs,
 void VM::pop_args(const Opcode* const op) {
 	// Check if the function has arguments
 	if ((s_var->mode == NORMAL && op->getOp2Value() == NULL)
-		|| (s_var->mode == INTERNAL && s_var->arg_vars.size() == 0)) {
+		|| (s_var->mode == INTERNAL && s_var->call.top().arg_vars != NULL)) {
 		return;
 	}
 
-	ValueVector* vec_copy = s_var->arg_values.top();
+	ValueVector* vec_copy = s_var->call.top().arg_values;
+
+	if (vec_copy == NULL) {
+		return;
+	}
 
 	for (size_t i = 0, j = vec_copy->size(); i < j; ++i) {
 		delete vec_copy->at(i);
 	}
 	delete vec_copy;
-
-	s_var->arg_values.pop();
-
-	delete s_var->arg_vars.top();
-	s_var->arg_vars.pop();
-
-	if (!s_var->arg_vars.empty()) {
-		restore_args();
-	}
+	delete s_var->call.top().arg_vars;
 }
 
 /**
  * Restore the parameter argument values from the previous stack frame
  */
 void VM::restore_args() {
-	ValueVector* vec = s_var->arg_vars.top();
-	ValueVector* vec_copy = s_var->arg_values.top();
+	ValueVector* vec = s_var->call.top().arg_vars;
+	ValueVector* vec_copy = s_var->call.top().arg_values;
+
+	if (vec == NULL) {
+		return;
+	}
 
 	for (size_t i = 0, j = vec->size(); i < j; ++i) {
 		vec->at(i)->copy(vec_copy->at(i));
@@ -249,9 +285,9 @@ CLEVER_VM_HANDLER(VM::fcall_handler) {
 
 	// Check if it's an user function
 	if (func->isNearCall()) {
-		s_var->call.push(&opcode);
+		s_var->call.push(StackFrame(&opcode));
 
-		if (args) {
+		if (EXPECTED(args != NULL)) {
 			const Function* fptr = func->getFunction();
 
 			push_args(fptr->getScope(), fptr->getArgs(), args);
@@ -282,7 +318,7 @@ CLEVER_VM_HANDLER(VM::end_func_handler) {
 
 	// On INTERNAL mode the VM might have an empty stack call
 	if (s_var->mode == NORMAL || !s_var->call.empty()) {
-		op = s_var->call.top();
+		op = s_var->call.top().ret;
 	}
 
 	// pop + restore arguments from stack
@@ -290,6 +326,10 @@ CLEVER_VM_HANDLER(VM::end_func_handler) {
 
 	if (op) {
 		s_var->call.pop();
+	}
+
+	if (!s_var->call.empty()) {
+		restore_args();
 	}
 
 	s_return_value = NULL;
@@ -310,9 +350,9 @@ CLEVER_VM_HANDLER(VM::return_handler) {
 	const Value* const value = opcode.getOp1Value();
 
 	if (!s_var->call.empty()) {
-		const Opcode* call = s_var->call.top();
+		const Opcode* call = s_var->call.top().ret;
 
-		if (value) {
+		if (call && value) {
 			call->getResultValue()->copy(value);
 		}
 		// pop + restore arguments from stack
@@ -320,10 +360,18 @@ CLEVER_VM_HANDLER(VM::return_handler) {
 
 		s_var->call.pop();
 
+		if (!s_var->call.empty()) {
+			restore_args();
+		}
+
 		s_return_value = value;
 
 		// Go back to the caller
-		CLEVER_VM_GOTO(call->getOpNum());
+		if (s_var->mode == INTERNAL && s_var->call.empty()) {
+			CLEVER_VM_EXIT();
+		} else {
+			CLEVER_VM_GOTO(call->getOpNum());
+		}
 	} else {
 		s_return_value = value;
 

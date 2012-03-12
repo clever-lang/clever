@@ -51,27 +51,42 @@ class Opcode;
 class Scope;
 class Value;
 
-typedef std::vector<Opcode*> OpcodeList;
-typedef std::stack<const Opcode*> CallStack;
 typedef std::stack<ValueVector*> ValueVStack;
 
-enum VMMode { NORMAL, INTERNAL };
+/**
+ * Stack frame representation
+ */
+struct StackFrame {
+	StackFrame(const Opcode* opcode)
+		: ret(opcode), arg_vars(NULL), arg_values(NULL) {}
+
+	// Return address as an opcode pointer
+	const Opcode* ret;
+
+	// Local and parameter variables
+	ValueVector* arg_vars;
+	ValueVector* arg_values;
+};
+
+typedef std::vector<Opcode*> OpcodeList;
+typedef std::stack<StackFrame> CallStack;
 
 /**
- * VM variables
+ * VM execution modes
+ */
+enum VMMode {
+	NORMAL,  // Executing by the interpreter
+	INTERNAL // VM Executor being called internally by a function/method
+};
+
+/**
+ * VM Executor variables
  */
 struct VMVars {
 	VMMode mode;
-
 	bool running;
-
-	// Call stack - store the caller opcode
 	CallStack call;
-
-	// Store the scoped variables
-	ValueVStack arg_vars, arg_values;
 };
-
 typedef std::stack<VMVars> ExecVars;
 
 /**
@@ -108,6 +123,12 @@ public:
 	static void pop_args(const Opcode* const);
 	static void restore_args();
 	static void push_args(Scope*, const FunctionArgs&, const ValueVector*);
+
+	/**
+	 * Function/method local variable handling
+	 */
+	static void push_local_vars(Scope*);
+
 	/**
 	 * Opcode handlers
 	 */
@@ -153,15 +174,23 @@ public:
 	static CLEVER_VM_HANDLER(ne_handler);
 	static CLEVER_VM_HANDLER(not_handler);
 
+	/**
+	 * Returns the last value returned by a return instruction
+	 */
 	static const Value* getLastReturnValue() {
 		return s_return_value;
 	}
 private:
+	// Opcodes to be executed
 	static const OpcodeList* s_opcodes;
 
+	// VM executor variables
 	static ExecVars s_vars;
+
+	// Current variable
 	static VMVars* s_var;
 
+	// Last returned value by a return instruction
 	static const Value* s_return_value;
 
 	DISALLOW_COPY_AND_ASSIGN(VM);
