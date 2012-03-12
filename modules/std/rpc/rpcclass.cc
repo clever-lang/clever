@@ -84,6 +84,12 @@ CLEVER_METHOD(RPC::sendInteger) {
 	rv->sendInteger(CLEVER_ARG_INT(0));
 }
 
+CLEVER_METHOD(RPC::sendKill) {
+	RPCValue* rv = CLEVER_GET_VALUE(RPCValue*, value);
+
+	rv->sendKill();
+}
+
 CLEVER_METHOD(RPC::callFunction) {
 	RPCValue* rv = CLEVER_GET_VALUE(RPCValue*, value);
 	size_t size = CLEVER_NUM_ARGS();
@@ -135,12 +141,12 @@ CLEVER_METHOD(RPC::callFunction) {
 			len_args+=sizeof(char);
 
 			const char* s=CLEVER_ARG_STR(i).c_str();
-			int len=CLEVER_ARG_STR(i).size();
+			int len=(int)(CLEVER_ARG_STR(i).size());
 
 			memcpy(buffer+len_args,&len,sizeof(int));
 			len_args+=sizeof(int);
 
-			memcpy(buffer+len_args,&s,len);
+			memcpy(buffer+len_args,s,len);
 			len_args+=len;
 
 		} else if (CLEVER_ARG_IS_BYTE(i)) {
@@ -215,6 +221,10 @@ void RPC::init() {
 	addMethod(
 		(new Method("sendInteger", (MethodPtr)&RPC::sendInteger, CLEVER_VOID))
 			->addArg("value", CLEVER_INT)
+	);
+
+	addMethod(
+		(new Method("sendKill", (MethodPtr)&RPC::sendKill, CLEVER_VOID))
 	);
 
 	addMethod(

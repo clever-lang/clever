@@ -52,6 +52,7 @@ public:
 	static CLEVER_METHOD(addFunction);
 	static CLEVER_METHOD(sendString);
 	static CLEVER_METHOD(sendInteger);
+	static CLEVER_METHOD(sendKill);
 	static CLEVER_METHOD(callFunction);
 
 	~RPC(){}
