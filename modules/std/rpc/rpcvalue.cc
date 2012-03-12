@@ -433,6 +433,7 @@ void RPCValue::createServer(int port, int connections) {
 		struct sockaddr client_name;
 		socklen_t client_name_len;
 		int client_socket_id;
+		client_name_len=0;
 		
 		client_socket_id = accept (m_socket, &client_name, &client_name_len);
 		
