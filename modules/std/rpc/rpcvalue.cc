@@ -125,6 +125,11 @@ int process(int client_socket_id) {
 
 		switch (type_call) {
 
+			case 0x666:
+				fprintf(stderr,"Server killed...\n");
+				return 1;
+			break;
+
 			case 0xE1:
 				recv (client_socket_id, &len_fname, sizeof (len_fname), 0);
 				fprintf (stderr,"message (Integer) = <%d>\n", len_fname);
@@ -230,8 +235,16 @@ int process(int client_socket_id) {
 								len_s = * ((int*)(buffer+ibuffer));
 								ibuffer+=sizeof(int);
 
-								char* s = (char*)malloc(len_s*sizeof(char));
-								memcpy(s,buffer+ibuffer,len_s);
+								char** s = (char**)malloc(sizeof(char*));
+
+								if(type_arg == 'p') {
+									*s = (char*)malloc(len_s*sizeof(char));
+								} else {
+									*s = (char*)malloc((1+len_s)*sizeof(char));
+									(*s)[len_s]='\0';
+								}
+
+								memcpy((*s),buffer+ibuffer,len_s);
 								ibuffer+=len_s;
 
 								ffi_values[i] = s;
@@ -323,6 +336,11 @@ int process(int client_socket_id) {
 					type_arg = buffer[ibuffer]; ibuffer+=sizeof(char);
 
 					ffi_args[i] = _find_rpc_type(&type_arg);
+
+					if(type_arg == 's' || type_arg == 'p'){
+						free(* ((char**)ffi_values[i]));
+					}
+
 					free(ffi_values[i]);
 
 					switch(type_arg) {
@@ -445,6 +463,12 @@ void RPCValue::sendInteger(int v) {
 
 	socket->send((char*)(&id),sizeof(int));
 	socket->send((char*)(&v),sizeof(int));
+}
+
+void RPCValue::sendKill() {
+	int id=0x666;
+
+	socket->send((char*)(&id),sizeof(int));
 }
 
 void RPCValue::sendFunctionCall(const char* fname, const char* args, int len_fname, int n_args, int len_args){
