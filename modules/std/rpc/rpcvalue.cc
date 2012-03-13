@@ -490,12 +490,14 @@ void RPCValue::createServer(int port, int connections) {
 		int client_socket_id;
 		client_name_len=0;
 
-		sleep(0.5);
-
 		memset(&client_name, 0, sizeof(client_name));
+		
+		printer.printMsg("Waiting client...\n");
 		client_socket_id = accept (m_socket, &client_name, &client_name_len);
 		
+		printer.printMsg("New client...\n");
 		createConnection(client_socket_id);
+		printer.printMsg("Client connected...\n");
 		
 	} while (!kill_me);
 
