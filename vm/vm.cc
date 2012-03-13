@@ -157,7 +157,7 @@ void VM::push_args(Scope* scope, const FunctionArgs& fargs,
  * Pushes local variable into the stack
  */
 void VM::push_local_vars(Scope* scope) {
-	if (scope == NULL || !scope->hasChildren() || s_var->call.size() == 0) {
+	if (scope == NULL || !scope->hasChildren()) {
 		return;
 	}
 
