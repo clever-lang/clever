@@ -1,0 +1,26 @@
+Testing variable value on recursivity
+==CODE==
+import std.io.print;
+
+Void f(Int z) {
+	Int x = z;
+
+	if (z == 0) { return; }
+
+	f(z-1);
+
+	print(z, " ", x, "\n");
+}
+
+f(10);
+==RESULT==
+1 1
+2 2
+3 3
+4 4
+5 5
+6 6
+7 7
+8 8
+9 9
+10 10

@@ -1,0 +1,19 @@
+Testing recursivity
+==CODE==
+import std.io.*;
+
+Int f(Int k)
+{
+    if (k == 0) {
+        return 1;
+    }
+
+    Int x = f(k - 1);
+    x += f(k - 1);
+
+    return x;
+}
+
+println(f(3));
+==RESULT==
+8
