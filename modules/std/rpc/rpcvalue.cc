@@ -92,12 +92,13 @@ bool send(int m_socket, const char *buffer, int length) {
 }
 
 void* process(void* args) {
-	int client_socket_id = * (static_cast<int*>(args));
-	int type_call;
-	int len_fname;
-	int n_args;
+	int client_socket_id; 
+	
+	int type_call=0;
+	int len_fname=0;
+	int n_args=0;
 	char f_rt;
-	int size_args;
+	int size_args=0;
 	char* fname;
 	char* buffer;
 	int ibuffer;
@@ -112,6 +113,11 @@ void* process(void* args) {
 
 	void** ffi_values;
 
+	client_socket_id = * (reinterpret_cast<int*>(args));
+	free(args);
+
+	type_call=len_fname=n_args=size_args=0;
+	f_rt = 'v';
 
 	while (true) {
 		
@@ -421,7 +427,11 @@ void RPCValue::createConnection(int client_socket_id) {
 
 	pthread_attr_init (&attr);
 	pthread_attr_setdetachstate (&attr, PTHREAD_CREATE_DETACHED);
-	pthread_create (&thread, &attr, &process, (void*)(&client_socket_id));
+
+	int * cp = (int*)malloc(sizeof(int)); 
+	*cp = client_socket_id;
+
+	pthread_create (&thread, &attr, &process, (void*)(cp));
 
 	pthread_attr_destroy (&attr);
 
@@ -448,7 +458,10 @@ void RPCValue::createServer(int port, int connections) {
 		socklen_t client_name_len;
 		int client_socket_id;
 		client_name_len=0;
-		
+
+		sleep(0.5);
+
+		memset(&client_name, 0, sizeof(client_name));
 		client_socket_id = accept (m_socket, &client_name, &client_name_len);
 		
 		//kill_me=createConnection(client_socket_id);
