@@ -91,6 +91,45 @@ bool send(int m_socket, const char *buffer, int length) {
 	return true;
 }
 
+class secure_print{
+
+public:
+
+	
+	secure_print(){
+		pthread_mutex_init (&mut,&mattr);
+	}
+
+	void printStr(const char* str){
+		pthread_mutex_lock (&mut);
+		fprintf(stderr,"String: <%s>\n",str);
+		pthread_mutex_unlock (&mut);
+	}
+
+	void printMsg(const char* str){
+		pthread_mutex_lock (&mut);
+		fprintf(stderr,"\t%s\n",str);
+		pthread_mutex_unlock (&mut);
+	}
+
+	void printInt(int v){	
+		pthread_mutex_lock (&mut);
+		fprintf(stderr,"Integer: <%d>\n",v);
+		pthread_mutex_unlock (&mut);
+	} 
+
+
+private:
+
+	int sc;
+
+	pthread_mutex_t mut;
+	pthread_mutexattr_t mattr;
+
+};
+
+secure_print printer;
+
 void* process(void* args) {
 	int client_socket_id; 
 	
@@ -132,7 +171,7 @@ void* process(void* args) {
 		switch (type_call) {
 
 			case 0x666:
-				fprintf(stderr,"Server died...\n");
+				printer.printMsg("Server died...\n");
 				while(recv (client_socket_id, &type_call, sizeof (type_call), 0)!=0);
 				close (client_socket_id);
 				return NULL;
@@ -140,19 +179,18 @@ void* process(void* args) {
 
 			case 0xE1:
 				recv (client_socket_id, &len_fname, sizeof (len_fname), 0);
-				fprintf (stderr,"message (Integer) = <%d>\n", len_fname);
+				printer.printInt(len_fname);
 			break;
 
 			case 0xEC:
 				recv (client_socket_id, &len_fname, sizeof (len_fname), 0);
-				fprintf (stderr,"size message = %d\n", len_fname);
-
+				
 				fname = (char*) malloc ((len_fname+1)*sizeof(char));
 				fname[len_fname]='\0';
 
 				recv (client_socket_id, fname, len_fname, 0);
 
-				fprintf (stderr,"message (String) = <%s>\n", fname);
+				printer.printStr(fname);
 				free(fname);
 			break;
 
@@ -160,15 +198,13 @@ void* process(void* args) {
 			case 0xFC: 
 				recv (client_socket_id, &len_fname, sizeof (len_fname), 0);
 
-				fprintf (stderr,"size function name = %d\n", len_fname);
-
+				
 				fname = (char*) malloc ((len_fname+1)*sizeof(char));
 				fname[len_fname]='\0';
 
 				recv (client_socket_id, fname, len_fname, 0);
 
-				fprintf (stderr,"function name = %s\n", fname);
-
+				
 
 				fpf = dlsym(ext_mod_map[ext_func_map[fname]], fname);
 
@@ -414,14 +450,9 @@ void RPCValue::loadLibrary(const char* libname) {
 
 }
 
-//int RPCValue::createConnection(int client_socket_id) {
-	//Create thread to manage connection
-	//return process (client_socket_id);
-//}
 
 void RPCValue::createConnection(int client_socket_id) {
 	//Create thread to manage connection
-	//process (client_socket_id);
 	pthread_attr_t attr;
 	pthread_t thread;
 
@@ -464,7 +495,6 @@ void RPCValue::createServer(int port, int connections) {
 		memset(&client_name, 0, sizeof(client_name));
 		client_socket_id = accept (m_socket, &client_name, &client_name_len);
 		
-		//kill_me=createConnection(client_socket_id);
 		createConnection(client_socket_id);
 		
 	} while (!kill_me);
