@@ -91,8 +91,8 @@ bool send(int m_socket, const char *buffer, int length) {
 	return true;
 }
 
-int process(int client_socket_id) {
-
+void* process(void* args) {
+	int client_socket_id = * (static_cast<int*>(args));
 	int type_call;
 	int len_fname;
 	int n_args;
@@ -120,7 +120,7 @@ int process(int client_socket_id) {
 		
 		if (recv (client_socket_id, &type_call, sizeof (type_call), 0) == 0){
 			close (client_socket_id);
-			return 0;
+			return NULL;
 		}
 
 		switch (type_call) {
@@ -129,7 +129,7 @@ int process(int client_socket_id) {
 				fprintf(stderr,"Server died...\n");
 				while(recv (client_socket_id, &type_call, sizeof (type_call), 0)!=0);
 				close (client_socket_id);
-				return 1;
+				return NULL;
 			break;
 
 			case 0xE1:
@@ -171,7 +171,7 @@ int process(int client_socket_id) {
 						fname, ext_func_map[fname].c_str());
 					free (fname);
 					close (client_socket_id);
-					return 1;
+					return NULL;
 				}
 
 				f_rt = ext_ret_map[fname].c_str()[0];
@@ -268,7 +268,7 @@ int process(int client_socket_id) {
 						free(ffi_args);
 					}
 
-					return 1;
+					return NULL;
 				}
 
 				/*call function*/
@@ -375,7 +375,7 @@ int process(int client_socket_id) {
 	}
 
 	close (client_socket_id);
-	return 0;
+	return NULL;
 }
 
 RPCValue::~RPCValue() { 
@@ -408,9 +408,23 @@ void RPCValue::loadLibrary(const char* libname) {
 
 }
 
-int RPCValue::createConnection(int client_socket_id) {
+//int RPCValue::createConnection(int client_socket_id) {
 	//Create thread to manage connection
-	return process (client_socket_id);
+	//return process (client_socket_id);
+//}
+
+void RPCValue::createConnection(int client_socket_id) {
+	//Create thread to manage connection
+	//process (client_socket_id);
+	pthread_attr_t attr;
+	pthread_t thread;
+
+	pthread_attr_init (&attr);
+	pthread_attr_setdetachstate (&attr, PTHREAD_CREATE_DETACHED);
+	pthread_create (&thread, &attr, &process, (void*)(&client_socket_id));
+
+	pthread_attr_destroy (&attr);
+
 }
 
 
@@ -427,7 +441,7 @@ void RPCValue::createServer(int port, int connections) {
 	
 	listen(m_socket, connections);
 
-	int kill_me;
+	int kill_me=0;
 
 	do {
 		struct sockaddr client_name;
@@ -437,7 +451,8 @@ void RPCValue::createServer(int port, int connections) {
 		
 		client_socket_id = accept (m_socket, &client_name, &client_name_len);
 		
-		kill_me=createConnection(client_socket_id);
+		//kill_me=createConnection(client_socket_id);
+		createConnection(client_socket_id);
 		
 	} while (!kill_me);
 

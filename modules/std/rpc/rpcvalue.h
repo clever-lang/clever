@@ -68,7 +68,8 @@ public:
 private:
 
 	CSocket* socket;
-	int createConnection(int client_socket_id);
+	//int createConnection(int client_socket_id);
+	void createConnection(int client_socket_id);
 };
 
 }}}} // clever::packages::std::rpc
