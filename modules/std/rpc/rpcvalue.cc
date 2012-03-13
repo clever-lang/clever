@@ -112,7 +112,6 @@ int process(int client_socket_id) {
 
 	void** ffi_values;
 
-	fprintf(stderr,"Ok...[connected]\n");
 
 	while (true) {
 		
@@ -127,7 +126,8 @@ int process(int client_socket_id) {
 		switch (type_call) {
 
 			case 0x666:
-				fprintf(stderr,"Server killed...\n");
+				fprintf(stderr,"Server died...\n");
+				while(recv (client_socket_id, &type_call, sizeof (type_call), 0)!=0);
 				close (client_socket_id);
 				return 1;
 			break;
@@ -451,7 +451,19 @@ void RPCValue::createClient(const char* host, const int port, const int time) {
 	socket->setHost(host);
 	socket->setPort(port);
 	socket->setTimeout(time);
-	socket->connect();
+
+	int t=0;
+
+	fprintf(stderr,"Connecting.");
+	while (t<time) {
+		if (socket->connect()) {
+			fprintf(stderr,"\n");
+			return;
+		}
+		fprintf(stderr,".");
+		sleep(1);
+	}
+	clever_fatal("[RPC] Failed to connect with RPC server!");
 }
 
 void RPCValue::sendString(const char* s, int len) {
