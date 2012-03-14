@@ -33,6 +33,7 @@
 #include "compiler/cstring.h"
 #include "types/nativetypes.h"
 #include <cstdio>
+#include <map>
 
 #ifndef __APPLE__
 # include <ffi.h>
@@ -174,6 +175,85 @@ private:
 
 };
 
+struct rpcData{
+
+	rpcData(int client_socket_id=0, int type=0, int size=0, char* buffer=0):
+		client_socket_id(client_socket_id),type(type),size(size),buffer(buffer) {}
+
+	int client_socket_id;
+	int type;
+	int size;
+	char* buffer;
+};
+
+class retMap{
+
+public:
+
+	
+	retMap(){
+		pthread_mutex_init (&mut,&mattr);
+	}
+
+	void insert(int client_socket_id, int id, int type, int size, char* b){
+		pthread_mutex_lock (&mut);
+		ret_map[id]= rpcData(client_socket_id,type,size,b);
+		pthread_mutex_unlock (&mut);
+	}
+
+	void sendData(int id) {
+		rpcData r;
+		::std::map<int,rpcData>::iterator it;
+		bool ok=false;
+
+		pthread_mutex_lock (&mut);
+		it=ret_map.find(id);
+		if(it!=ret_map.end()){
+			r=it->second;
+		}
+		pthread_mutex_unlock (&mut);
+
+		if(ok) {
+			int client_socket_id = r.client_socket_id;
+			int type = r.type;
+			char f_rt = (char) (type);
+			int size = r.size;	
+			char* b = r.buffer;
+
+			send(client_socket_id,(char*)(&type),sizeof(int));
+			if(f_rt!='v'){
+				send(client_socket_id,(char*)(&size),sizeof(int));
+				if(size>0){
+					send(client_socket_id,b,size);
+					free(b);
+				}
+			}
+			erase(id);
+		}
+	}
+
+	void erase(int id){
+		pthread_mutex_lock (&mut);
+		ret_map.erase(id);
+		pthread_mutex_unlock (&mut);
+	}
+
+
+
+private:
+
+	::std::map<int,rpcData> ret_map;
+
+	pthread_mutex_t mut;
+	pthread_mutexattr_t mattr;
+
+};
+
+
+
+
+
+retMap ret_map;
 securePrint printer;
 waitProcess wait_process;
 
@@ -331,8 +411,11 @@ bool function_call(int client_socket_id, bool send_result=true, int id=0){
 					int vi;
 					ffi_call(&cif, pf, &vi, ffi_values);
 
-					send(client_socket_id,(char*)(&if_rt),sizeof(int));
-					send(client_socket_id,(char*)(&vi),sizeof(int));
+					if (send_result) {
+						send(client_socket_id,(char*)(&if_rt),sizeof(int));
+						send(client_socket_id,(char*)(&vi),sizeof(int));
+					} else {
+					}
 				}
 			break;
 
@@ -340,9 +423,11 @@ bool function_call(int client_socket_id, bool send_result=true, int id=0){
 				{
 					double vd;
 					ffi_call(&cif, pf, &vd, ffi_values);
-
-					send(client_socket_id,(char*)(&if_rt),sizeof(int));
-					send(client_socket_id,(char*)(&vd),sizeof(double));
+					if (send_result) {
+						send(client_socket_id,(char*)(&if_rt),sizeof(int));
+						send(client_socket_id,(char*)(&vd),sizeof(double));
+					} else {
+					}
 				}
 			break;
 
@@ -377,7 +462,9 @@ bool function_call(int client_socket_id, bool send_result=true, int id=0){
 				{
 					ffi_call(&cif, pf, NULL, ffi_values);
 
-					send(client_socket_id,(char*)(&if_rt),sizeof(int));
+					if (send_result) {
+						send(client_socket_id,(char*)(&if_rt),sizeof(int));
+					}
 				}
 			break;
 	}
