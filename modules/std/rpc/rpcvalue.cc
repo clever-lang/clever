@@ -91,12 +91,58 @@ bool send(int m_socket, const char *buffer, int length) {
 	return true;
 }
 
-class secure_print{
+
+class waitProcess {
 
 public:
 
 	
-	secure_print(){
+	waitProcess(){
+		np=0;
+		pthread_mutex_init (&mut,&mattr);
+	}
+
+	void init() {
+		np=0;
+	}
+
+	void inc(){
+		pthread_mutex_lock (&mut);
+		np++;
+		pthread_mutex_unlock (&mut);
+	}
+
+	void dec(){
+		pthread_mutex_lock (&mut);
+		np--;
+		pthread_mutex_unlock (&mut);
+	}
+
+	void wait(){
+		while(true) {
+			sleep(1);	
+			pthread_mutex_lock (&mut);
+			int p=np;
+			pthread_mutex_unlock (&mut);
+			if(p==0) return;
+		}
+	} 
+
+
+private:
+
+	int np;
+
+	pthread_mutex_t mut;
+	pthread_mutexattr_t mattr;
+};
+
+class securePrint{
+
+public:
+
+	
+	securePrint(){
 		pthread_mutex_init (&mut,&mattr);
 	}
 
@@ -128,9 +174,12 @@ private:
 
 };
 
-secure_print printer;
+securePrint printer;
+waitProcess wait_process;
 
 void* process(void* args) {
+
+	wait_process.inc();
 	int client_socket_id; 
 	
 	int type_call=0;
@@ -165,17 +214,11 @@ void* process(void* args) {
 		
 		if (recv (client_socket_id, &type_call, sizeof (type_call), 0) == 0){
 			close (client_socket_id);
+			wait_process.dec();
 			return NULL;
 		}
 
 		switch (type_call) {
-
-			case 0x666:
-				printer.printMsg("Server died...\n");
-				while(recv (client_socket_id, &type_call, sizeof (type_call), 0)!=0);
-				close (client_socket_id);
-				return NULL;
-			break;
 
 			case 0xE1:
 				recv (client_socket_id, &len_fname, sizeof (len_fname), 0);
@@ -213,6 +256,8 @@ void* process(void* args) {
 						fname, ext_func_map[fname].c_str());
 					free (fname);
 					close (client_socket_id);
+					wait_process.dec();
+	
 					return NULL;
 				}
 
@@ -309,7 +354,8 @@ void* process(void* args) {
 						free(ffi_values);
 						free(ffi_args);
 					}
-
+					wait_process.dec();
+	
 					return NULL;
 				}
 
@@ -417,6 +463,8 @@ void* process(void* args) {
 	}
 
 	close (client_socket_id);
+	wait_process.dec();
+	
 	return NULL;
 }
 
@@ -484,6 +532,8 @@ void RPCValue::createServer(int port, int connections) {
 
 	int kill_me=0;
 
+	wait_process.init();
+
 	do {
 		struct sockaddr client_name;
 		socklen_t client_name_len;
@@ -515,6 +565,7 @@ void RPCValue::createServer(int port, int connections) {
 		
 	} while (!kill_me);
 
+	wait_process.wait();
 	close (m_socket);
 
 }
@@ -557,6 +608,12 @@ void RPCValue::sendInteger(int v) {
 
 void RPCValue::sendKill() {
 	int id=0x666;
+
+	socket->send((char*)(&id),sizeof(int));
+}
+
+void RPCValue::sendInit() {
+	int id=0x007;
 
 	socket->send((char*)(&id),sizeof(int));
 }

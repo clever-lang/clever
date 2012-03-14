@@ -58,6 +58,7 @@ public:
 	void sendFunctionCall(const char* fname, const char* args, int len_fname, int n_args, int len_args);
 	void sendInteger(int v);
 	void sendKill();
+	void sendInit();
 
 	RPCObjectValue* receiveObject();
 

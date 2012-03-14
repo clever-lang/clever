@@ -90,6 +90,12 @@ CLEVER_METHOD(RPC::sendKill) {
 	rv->sendKill();
 }
 
+CLEVER_METHOD(RPC::sendInit) {
+	RPCValue* rv = CLEVER_GET_VALUE(RPCValue*, value);
+
+	rv->sendInit();
+}
+
 CLEVER_METHOD(RPC::callFunction) {
 	RPCValue* rv = CLEVER_GET_VALUE(RPCValue*, value);
 	size_t size = CLEVER_NUM_ARGS();
@@ -227,6 +233,10 @@ void RPC::init() {
 
 	addMethod(
 		(new Method("sendKill", (MethodPtr)&RPC::sendKill, CLEVER_VOID))
+	);
+
+	addMethod(
+		(new Method("sendInit", (MethodPtr)&RPC::sendInit, CLEVER_VOID))
 	);
 
 	addMethod(
