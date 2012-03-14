@@ -177,11 +177,8 @@ private:
 securePrint printer;
 waitProcess wait_process;
 
-void* process(void* args) {
+bool function_call(int client_socket_id, bool send_result=true, int id=0){
 
-	wait_process.inc();
-	int client_socket_id; 
-	
 	int type_call=0;
 	int len_fname=0;
 	int n_args=0;
@@ -200,6 +197,245 @@ void* process(void* args) {
 	ffi_type** ffi_args;
 
 	void** ffi_values;
+
+	
+	type_call=len_fname=n_args=size_args=0;
+	f_rt = 'v';
+
+	recv (client_socket_id, &len_fname, sizeof (len_fname), 0);
+
+
+	fname = (char*) malloc ((len_fname+1)*sizeof(char));
+	fname[len_fname]='\0';
+
+	recv (client_socket_id, fname, len_fname, 0);
+
+
+
+	fpf = dlsym(ext_mod_map[ext_func_map[fname]], fname);
+
+	if (fpf == NULL) {
+		clever_fatal("[RPC] function `%s' not found at `%s'!",
+			fname, ext_func_map[fname].c_str());
+		free (fname);
+		close (client_socket_id);
+		wait_process.dec();
+
+		return false;
+	}
+
+	f_rt = ext_ret_map[fname].c_str()[0];
+	ffi_rt = _find_rpc_type(&f_rt);
+
+	pf = reinterpret_cast<ffi_call_func>(fpf);
+
+	recv (client_socket_id, &n_args, sizeof(n_args), 0);
+
+	if(n_args>0){
+		ffi_args = (ffi_type**) malloc(n_args*sizeof(ffi_type*));
+		ffi_values = (void**) malloc(n_args*sizeof(void*));
+
+		recv (client_socket_id, &size_args, sizeof(size_args), 0);
+
+		buffer = (char*) malloc(size_args*sizeof(char));
+
+		recv (client_socket_id, buffer, size_args, 0);
+	}
+
+	ibuffer=0;
+
+	for( int i = 0; i < n_args; ++i){
+		char type_arg;
+		type_arg = buffer[ibuffer]; 
+		ibuffer+=sizeof(char);
+
+		ffi_args[i] = _find_rpc_type(&type_arg);
+
+		switch(type_arg) {
+			case 'i': 
+				{
+					int* pi = (int*)malloc(sizeof(int));
+					*pi = * ((int*)(buffer+ibuffer));
+					ibuffer+=sizeof(int);
+
+					ffi_values[i] = pi;
+				}
+			break;
+
+			case 'd': 
+				{
+					double* pd = (double*)malloc(sizeof(double));
+					*pd = * ((double*)(buffer+ibuffer));
+					ibuffer+=sizeof(double);
+
+					ffi_values[i] = pd;
+				}
+			break;
+
+			case 'c': case 'b':
+				{
+					char* pc = (char*)malloc(sizeof(char));
+					*pc = * ((char*)(buffer+ibuffer));
+					ibuffer+=sizeof(char);
+
+					ffi_values[i] = pc;
+				}
+			break;
+
+			case 'p': case 's':
+				{
+					int len_s;
+					len_s = * ((int*)(buffer+ibuffer));
+					ibuffer+=sizeof(int);
+
+					char** s = (char**)malloc(sizeof(char*));
+
+					if(type_arg == 'p') {
+						*s = (char*)malloc(len_s*sizeof(char));
+					} else {
+						*s = (char*)malloc((1+len_s)*sizeof(char));
+						(*s)[len_s]='\0';
+					}
+
+					memcpy((*s),buffer+ibuffer,len_s);
+					ibuffer+=len_s;
+
+					ffi_values[i] = s;
+				}
+			break;
+
+		}
+	}
+
+	if (ffi_prep_cif(&cif, FFI_DEFAULT_ABI, n_args, ffi_rt, ffi_args) != FFI_OK) {
+		clever_fatal("[RPC] failed to call function `%s'!",
+			fname);
+		free (fname);
+
+		if(n_args>0){
+			free (buffer);
+			free(ffi_values);
+			free(ffi_args);
+		}
+		wait_process.dec();
+
+		return false;
+	}
+
+	/*call function*/
+	int if_rt=f_rt;
+
+	switch ( f_rt ) {
+			case 'i': 
+				{
+					int vi;
+					ffi_call(&cif, pf, &vi, ffi_values);
+
+					send(client_socket_id,(char*)(&if_rt),sizeof(int));
+					send(client_socket_id,(char*)(&vi),sizeof(int));
+				}
+			break;
+
+			case 'd': 
+				{
+					double vd;
+					ffi_call(&cif, pf, &vd, ffi_values);
+
+					send(client_socket_id,(char*)(&if_rt),sizeof(int));
+					send(client_socket_id,(char*)(&vd),sizeof(double));
+				}
+			break;
+
+			case 'c': case 'b':
+				{
+					char vc;
+					ffi_call(&cif, pf, &vc, ffi_values);
+
+					send(client_socket_id,(char*)(&if_rt),sizeof(int));
+					send(client_socket_id,(char*)(&vc),sizeof(double));
+				}
+			break;
+
+			case 'p': case 's':
+				{
+					char* vs[1];
+					int size_vs;
+
+					ffi_call(&cif, pf, &vs, ffi_values);
+
+					 size_vs = * ((int*) vs[0]);
+
+					send(client_socket_id,(char*)(&if_rt),sizeof(int));
+					send(client_socket_id,(char*)(&size_vs),sizeof(int));
+					send(client_socket_id,(char*)(vs[0]+sizeof(int)), size_vs);
+
+					free(vs[0]);
+				}
+			break;
+
+			case 'v':
+				{
+					ffi_call(&cif, pf, NULL, ffi_values);
+
+					send(client_socket_id,(char*)(&if_rt),sizeof(int));
+				}
+			break;
+	}
+
+	/*free memory*/
+
+	ibuffer = 0;
+	for( int i = 0; i < n_args; ++i){
+		char type_arg;
+		type_arg = buffer[ibuffer]; ibuffer+=sizeof(char);
+
+		ffi_args[i] = _find_rpc_type(&type_arg);
+
+		if(type_arg == 's' || type_arg == 'p'){
+			free(* ((char**)ffi_values[i]));
+		}
+
+		free(ffi_values[i]);
+
+		switch(type_arg) {
+			case 'i': ibuffer+=sizeof(int); break;
+			case 'd': ibuffer+=sizeof(double); break;
+			case 'c': case 'b': ibuffer+=sizeof(char); break;
+			case 'p': case 's':
+				{
+					int len_s;
+					len_s = * ((int*)(buffer+ibuffer));
+					ibuffer+=sizeof(int);
+					ibuffer+=len_s;
+				}
+			break;
+
+		}
+	}
+
+	if(n_args>0){
+		free(ffi_args);
+		free(ffi_values);
+		free(buffer);
+	}
+
+	free(fname);
+
+	return true;
+}
+
+void* process(void* args) {
+
+	wait_process.inc();
+	int client_socket_id; 
+	
+	int type_call=0;
+	int len_fname=0;
+	int n_args=0;
+	char f_rt;
+	int size_args=0;
+	char* fname;
+	
 
 	client_socket_id = * (reinterpret_cast<int*>(args));
 	free(args);
@@ -239,225 +475,9 @@ void* process(void* args) {
 
 			/* function call*/
 			case 0xFC: 
-				recv (client_socket_id, &len_fname, sizeof (len_fname), 0);
-
-				
-				fname = (char*) malloc ((len_fname+1)*sizeof(char));
-				fname[len_fname]='\0';
-
-				recv (client_socket_id, fname, len_fname, 0);
-
-				
-
-				fpf = dlsym(ext_mod_map[ext_func_map[fname]], fname);
-
-				if (fpf == NULL) {
-					clever_fatal("[RPC] function `%s' not found at `%s'!",
-						fname, ext_func_map[fname].c_str());
-					free (fname);
-					close (client_socket_id);
-					wait_process.dec();
-	
-					return NULL;
+				if (!function_call(client_socket_id))  {
+					return NULL;				
 				}
-
-				f_rt = ext_ret_map[fname].c_str()[0];
-				ffi_rt = _find_rpc_type(&f_rt);
-
-				pf = reinterpret_cast<ffi_call_func>(fpf);
-
-				recv (client_socket_id, &n_args, sizeof(n_args), 0);
-
-				if(n_args>0){
-					ffi_args = (ffi_type**) malloc(n_args*sizeof(ffi_type*));
-					ffi_values = (void**) malloc(n_args*sizeof(void*));
-
-					recv (client_socket_id, &size_args, sizeof(size_args), 0);
-
-					buffer = (char*) malloc(size_args*sizeof(char));
-
-					recv (client_socket_id, buffer, size_args, 0);
-				}
-
-				ibuffer=0;
-
-				for( int i = 0; i < n_args; ++i){
-					char type_arg;
-					type_arg = buffer[ibuffer]; 
-					ibuffer+=sizeof(char);
-
-					ffi_args[i] = _find_rpc_type(&type_arg);
-
-					switch(type_arg) {
-						case 'i': 
-							{
-								int* pi = (int*)malloc(sizeof(int));
-								*pi = * ((int*)(buffer+ibuffer));
-								ibuffer+=sizeof(int);
-
-								ffi_values[i] = pi;
-							}
-						break;
-
-						case 'd': 
-							{
-								double* pd = (double*)malloc(sizeof(double));
-								*pd = * ((double*)(buffer+ibuffer));
-								ibuffer+=sizeof(double);
-
-								ffi_values[i] = pd;
-							}
-						break;
-
-						case 'c': case 'b':
-							{
-								char* pc = (char*)malloc(sizeof(char));
-								*pc = * ((char*)(buffer+ibuffer));
-								ibuffer+=sizeof(char);
-
-								ffi_values[i] = pc;
-							}
-						break;
-
-						case 'p': case 's':
-							{
-								int len_s;
-								len_s = * ((int*)(buffer+ibuffer));
-								ibuffer+=sizeof(int);
-
-								char** s = (char**)malloc(sizeof(char*));
-
-								if(type_arg == 'p') {
-									*s = (char*)malloc(len_s*sizeof(char));
-								} else {
-									*s = (char*)malloc((1+len_s)*sizeof(char));
-									(*s)[len_s]='\0';
-								}
-
-								memcpy((*s),buffer+ibuffer,len_s);
-								ibuffer+=len_s;
-
-								ffi_values[i] = s;
-							}
-						break;
-
-					}
-				}
-
-				if (ffi_prep_cif(&cif, FFI_DEFAULT_ABI, n_args, ffi_rt, ffi_args) != FFI_OK) {
-		 			clever_fatal("[RPC] failed to call function `%s'!",
-						fname);
-					free (fname);
-
-					if(n_args>0){
-						free (buffer);
-						free(ffi_values);
-						free(ffi_args);
-					}
-					wait_process.dec();
-	
-					return NULL;
-				}
-
-				/*call function*/
-				int if_rt=f_rt;
-				
-				switch ( f_rt ) {
-						case 'i': 
-							{
-								int vi;
-								ffi_call(&cif, pf, &vi, ffi_values);
-
-								send(client_socket_id,(char*)(&if_rt),sizeof(int));
-								send(client_socket_id,(char*)(&vi),sizeof(int));
-							}
-						break;
-
-						case 'd': 
-							{
-								double vd;
-								ffi_call(&cif, pf, &vd, ffi_values);
-
-								send(client_socket_id,(char*)(&if_rt),sizeof(int));
-								send(client_socket_id,(char*)(&vd),sizeof(double));
-							}
-						break;
-
-						case 'c': case 'b':
-							{
-								char vc;
-								ffi_call(&cif, pf, &vc, ffi_values);
-
-								send(client_socket_id,(char*)(&if_rt),sizeof(int));
-								send(client_socket_id,(char*)(&vc),sizeof(double));
-							}
-						break;
-
-						case 'p': case 's':
-							{
-								char* vs[1];
-								int size_vs;
-
-								ffi_call(&cif, pf, &vs, ffi_values);
-
-								 size_vs = * ((int*) vs[0]);
-
-								send(client_socket_id,(char*)(&if_rt),sizeof(int));
-								send(client_socket_id,(char*)(&size_vs),sizeof(int));
-								send(client_socket_id,(char*)(vs[0]+sizeof(int)), size_vs);
-
-								free(vs[0]);
-							}
-						break;
-
-						case 'v':
-							{
-								ffi_call(&cif, pf, NULL, ffi_values);
-
-								send(client_socket_id,(char*)(&if_rt),sizeof(int));
-							}
-						break;
-				}
-
-				/*free memory*/
-
-				ibuffer = 0;
-				for( int i = 0; i < n_args; ++i){
-					char type_arg;
-					type_arg = buffer[ibuffer]; ibuffer+=sizeof(char);
-
-					ffi_args[i] = _find_rpc_type(&type_arg);
-
-					if(type_arg == 's' || type_arg == 'p'){
-						free(* ((char**)ffi_values[i]));
-					}
-
-					free(ffi_values[i]);
-
-					switch(type_arg) {
-						case 'i': ibuffer+=sizeof(int); break;
-						case 'd': ibuffer+=sizeof(double); break;
-						case 'c': case 'b': ibuffer+=sizeof(char); break;
-						case 'p': case 's':
-							{
-								int len_s;
-								len_s = * ((int*)(buffer+ibuffer));
-								ibuffer+=sizeof(int);
-								ibuffer+=len_s;
-							}
-						break;
-
-					}
-				}
-
-				if(n_args>0){
-					free(ffi_args);
-					free(ffi_values);
-					free(buffer);
-				}
-
-				free(fname);
-
 			break;
 		}
 	}
@@ -642,7 +662,9 @@ RPCObjectValue* RPCValue::receiveObject(){
 	char* vc, *buffer;
 	double* vd;
 
-	socket->receive((char*)type,len);
+	if(!socket->receive((char*)type,len)){
+		clever_fatal("[RPC] Failed to receive object!\n");
+	}
 
 	obj->type = *type;
 
