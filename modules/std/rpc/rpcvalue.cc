@@ -488,7 +488,8 @@ void RPCValue::createServer(int port, int connections) {
 		struct sockaddr client_name;
 		socklen_t client_name_len;
 		int client_socket_id;
-		client_name_len=0;
+		int type_call;
+		type_call=client_name_len=0;
 
 		memset(&client_name, 0, sizeof(client_name));
 		
@@ -496,8 +497,21 @@ void RPCValue::createServer(int port, int connections) {
 		client_socket_id = accept (m_socket, &client_name, &client_name_len);
 		
 		printer.printMsg("New client...\n");
-		createConnection(client_socket_id);
-		printer.printMsg("Client connected...\n");
+		
+		if (recv (client_socket_id, &type_call, sizeof (type_call), 0) == 0){
+			close (client_socket_id);
+			continue;
+		}
+
+		if(type_call == 0x666) {
+			printer.printMsg("Server died...\n");
+			while(recv (client_socket_id, &type_call, sizeof (type_call), 0)!=0);
+			close (client_socket_id);
+			kill_me = 1;
+		}else {
+			createConnection(client_socket_id);
+			printer.printMsg("Client connected...\n");
+		}
 		
 	} while (!kill_me);
 
