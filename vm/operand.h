@@ -95,7 +95,7 @@ private:
 		long addr;
 
 		OperandData()
-			: value(NULL) {}
+			: addr(0) {}
 	} m_data;
 
 	DISALLOW_COPY_AND_ASSIGN(Operand);
