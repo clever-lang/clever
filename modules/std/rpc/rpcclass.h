@@ -55,6 +55,8 @@ public:
 	static CLEVER_METHOD(sendKill);
 	static CLEVER_METHOD(sendInit);
 	static CLEVER_METHOD(callFunction);
+	static CLEVER_METHOD(callProcess);
+	static CLEVER_METHOD(waitResult);
 
 	~RPC(){}
 private:

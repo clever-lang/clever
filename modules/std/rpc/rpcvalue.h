@@ -35,6 +35,21 @@
 #include "modules/std/net/csocket.h"
 #include "modules/std/rpc/rpcobjectvalue.h"
 
+//Function call
+#define CLEVER_RPC_FC 0x1
+//Process call
+#define CLEVER_RPC_PC 0x2
+//Send String
+#define CLEVER_RPC_PS 0x3
+//Send Integer
+#define CLEVER_RPC_PI 0x4
+//Get process return
+#define CLEVER_RPC_GR 0x5
+//Kill command
+#define CLEVER_RPC_KILL 0x6
+//Init command
+#define CLEVER_RPC_INIT 0x7
+
 namespace clever { namespace packages { namespace std { namespace rpc {
 
 
@@ -56,10 +71,12 @@ public:
 
 	void sendString(const char* s, int len);
 	void sendFunctionCall(const char* fname, const char* args, int len_fname, int n_args, int len_args);
+	void sendProcessCall(int id_process, const char* fname, const char* args, int len_fname, int n_args, int len_args);
 	void sendInteger(int v);
 	void sendKill();
 	void sendInit();
 
+	RPCObjectValue* getResultProcess(int id_process, double time_sleep);
 	RPCObjectValue* receiveObject();
 
 	CSocket* getSocket() { return this->socket; }

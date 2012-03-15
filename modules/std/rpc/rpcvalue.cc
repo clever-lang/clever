@@ -92,6 +92,30 @@ bool send(int m_socket, const char *buffer, int length) {
 	return true;
 }
 
+class mutex {
+
+public:
+
+	
+	mutex(){}
+
+	void init(){
+		pthread_mutex_init (&mut,&mattr);
+	}
+
+	void lock(){
+		pthread_mutex_lock (&mut);
+	}
+
+	void unlock(){
+		pthread_mutex_unlock (&mut);
+	}
+
+
+private:
+	pthread_mutex_t mut;
+	pthread_mutexattr_t mattr;
+};
 
 class waitProcess {
 
@@ -201,34 +225,37 @@ public:
 		pthread_mutex_unlock (&mut);
 	}
 
-	void sendData(int id) {
+	void sendData(int id, double timeout=0.1) {
 		rpcData r;
 		::std::map<int,rpcData>::iterator it;
 		bool ok=false;
 
-		pthread_mutex_lock (&mut);
-		it=ret_map.find(id);
-		if(it!=ret_map.end()){
-			r=it->second;
-		}
-		pthread_mutex_unlock (&mut);
-
-		if(ok) {
-			int client_socket_id = r.client_socket_id;
-			int type = r.type;
-			char f_rt = (char) (type);
-			int size = r.size;	
-			char* b = r.buffer;
-
-			send(client_socket_id,(char*)(&type),sizeof(int));
-			if(f_rt!='v'){
-				send(client_socket_id,(char*)(&size),sizeof(int));
-				if(size>0){
-					send(client_socket_id,b,size);
-					free(b);
-				}
+		while(true){
+			pthread_mutex_lock (&mut);
+			it=ret_map.find(id);
+			if(it!=ret_map.end()){
+				r=it->second;
 			}
-			erase(id);
+			pthread_mutex_unlock (&mut);
+
+			if(ok) {
+				int client_socket_id = r.client_socket_id;
+				int type = r.type;
+				char f_rt = (char) (type);
+				int size = r.size;	
+				char* b = r.buffer;
+
+				send(client_socket_id,(char*)(&type),sizeof(int));
+				if(f_rt!='v'){
+					send(client_socket_id,(char*)(&size),sizeof(int));
+					if(size>0){
+						send(client_socket_id,b,size);
+						free(b);
+					}
+				}
+				erase(id);
+			}
+			sleep(timeout);
 		}
 	}
 
@@ -257,7 +284,7 @@ retMap ret_map;
 securePrint printer;
 waitProcess wait_process;
 
-bool function_call(int client_socket_id, bool send_result=true, int id=0){
+bool function_call(mutex* m_mutex, int client_socket_id, bool send_result=true, int id_process=0){
 
 	int type_call=0;
 	int len_fname=0;
@@ -404,6 +431,8 @@ bool function_call(int client_socket_id, bool send_result=true, int id=0){
 
 	/*call function*/
 	int if_rt=f_rt;
+	
+	m_mutex->unlock();
 
 	switch ( f_rt ) {
 			case 'i': 
@@ -415,6 +444,10 @@ bool function_call(int client_socket_id, bool send_result=true, int id=0){
 						send(client_socket_id,(char*)(&if_rt),sizeof(int));
 						send(client_socket_id,(char*)(&vi),sizeof(int));
 					} else {
+						char* b = (char*) malloc (sizeof(int));
+						memcpy(b,&vi,sizeof(int));
+
+						ret_map.insert(client_socket_id, id_process, if_rt, sizeof(int),b);
 					}
 				}
 			break;
@@ -427,6 +460,10 @@ bool function_call(int client_socket_id, bool send_result=true, int id=0){
 						send(client_socket_id,(char*)(&if_rt),sizeof(int));
 						send(client_socket_id,(char*)(&vd),sizeof(double));
 					} else {
+						char* b = (char*) malloc (sizeof(double));
+						memcpy(b,&vd,sizeof(double));
+
+						ret_map.insert(client_socket_id, id_process, if_rt, sizeof(double),b);
 					}
 				}
 			break;
@@ -436,8 +473,15 @@ bool function_call(int client_socket_id, bool send_result=true, int id=0){
 					char vc;
 					ffi_call(&cif, pf, &vc, ffi_values);
 
-					send(client_socket_id,(char*)(&if_rt),sizeof(int));
-					send(client_socket_id,(char*)(&vc),sizeof(double));
+					if (send_result) {
+						send(client_socket_id,(char*)(&if_rt),sizeof(int));
+						send(client_socket_id,(char*)(&vc),sizeof(char));
+					} else {
+						char* b = (char*) malloc (sizeof(char));
+						memcpy(b,&vc,sizeof(char));
+
+						ret_map.insert(client_socket_id, id_process, if_rt, sizeof(char),b);
+					}
 				}
 			break;
 
@@ -450,9 +494,16 @@ bool function_call(int client_socket_id, bool send_result=true, int id=0){
 
 					 size_vs = * ((int*) vs[0]);
 
-					send(client_socket_id,(char*)(&if_rt),sizeof(int));
-					send(client_socket_id,(char*)(&size_vs),sizeof(int));
-					send(client_socket_id,(char*)(vs[0]+sizeof(int)), size_vs);
+					if (send_result) {
+						send(client_socket_id,(char*)(&if_rt),sizeof(int));
+						send(client_socket_id,(char*)(&size_vs),sizeof(int));
+						send(client_socket_id,(char*)(vs[0]+sizeof(int)), size_vs);
+					} else {
+						char* b = (char*) malloc (size_vs*sizeof(char));
+						memcpy(b,&vs[0],size_vs);
+
+						ret_map.insert(client_socket_id, id_process, if_rt, size_vs*sizeof(char),b);
+					}
 
 					free(vs[0]);
 				}
@@ -464,6 +515,8 @@ bool function_call(int client_socket_id, bool send_result=true, int id=0){
 
 					if (send_result) {
 						send(client_socket_id,(char*)(&if_rt),sizeof(int));
+					} else {
+						ret_map.insert(client_socket_id, id_process, if_rt, 0,0);
 					}
 				}
 			break;
@@ -511,44 +564,86 @@ bool function_call(int client_socket_id, bool send_result=true, int id=0){
 	return true;
 }
 
+struct processArgs {
+	mutex* m_mutex;
+	int client_socket_id;
+	int id_process;
+
+	processArgs(mutex* m_mutex=0, int c=0, int id=0):
+		m_mutex(m_mutex), client_socket_id(c), id_process(id) {}
+};
+
+void* call_process_thread(void* args) {
+	processArgs* m_args = reinterpret_cast<processArgs*> (args);
+	int id_process = m_args->id_process;
+	int client_socket_id = m_args->client_socket_id;
+	mutex* m_mutex = m_args->m_mutex;
+	delete m_args;
+
+	function_call(m_mutex, client_socket_id, false, id_process);
+
+	return NULL;
+}
+
+void call_process (mutex* m_mutex, int client_socket_id, int id_process){
+	//Create thread to manage connection
+	pthread_attr_t attr;
+	pthread_t thread;
+
+	pthread_attr_init (&attr);
+	pthread_attr_setdetachstate (&attr, PTHREAD_CREATE_DETACHED);
+
+	processArgs* args = new processArgs(m_mutex, client_socket_id, id_process); 
+
+	pthread_create (&thread, &attr, &call_process_thread, (void*)(args));
+
+	pthread_attr_destroy (&attr);
+}
+
+
 void* process(void* args) {
 
 	wait_process.inc();
 	int client_socket_id; 
-	
 	int type_call=0;
 	int len_fname=0;
 	int n_args=0;
 	char f_rt;
+	int id_process=0;
 	int size_args=0;
+	double time_sleep;
 	char* fname;
-	
+	mutex m_mutex;
+
+	m_mutex.init();
 
 	client_socket_id = * (reinterpret_cast<int*>(args));
 	free(args);
 
-	type_call=len_fname=n_args=size_args=0;
+	id_process=type_call=len_fname=n_args=size_args=0;
 	f_rt = 'v';
 
 	while (true) {
 		
 		/* First, read the length of the text message from the socket. If
 		read returns zero, the client closed the connection. */
-		
+		m_mutex.lock();
 		if (recv (client_socket_id, &type_call, sizeof (type_call), 0) == 0){
 			close (client_socket_id);
 			wait_process.dec();
+			m_mutex.unlock();
 			return NULL;
 		}
 
 		switch (type_call) {
 
-			case 0xE1:
+			case CLEVER_RPC_PI:
 				recv (client_socket_id, &len_fname, sizeof (len_fname), 0);
 				printer.printInt(len_fname);
+				m_mutex.unlock();
 			break;
 
-			case 0xEC:
+			case CLEVER_RPC_PS:
 				recv (client_socket_id, &len_fname, sizeof (len_fname), 0);
 				
 				fname = (char*) malloc ((len_fname+1)*sizeof(char));
@@ -558,13 +653,29 @@ void* process(void* args) {
 
 				printer.printStr(fname);
 				free(fname);
+				m_mutex.unlock();
 			break;
 
 			/* function call*/
-			case 0xFC: 
-				if (!function_call(client_socket_id))  {
-					return NULL;				
+			case CLEVER_RPC_FC: 
+				if (!function_call(&m_mutex,client_socket_id))  {
+					m_mutex.unlock();
+					return NULL;
 				}
+			break;
+
+			/* process call */
+			case CLEVER_RPC_PC:
+				recv (client_socket_id, &id_process, sizeof (id_process), 0);
+				call_process (&m_mutex, client_socket_id, id_process);
+			break;
+
+			/*get result process*/
+			case CLEVER_RPC_GR:
+				recv (client_socket_id, &id_process, sizeof(id_process), 0);
+				recv (client_socket_id, &time_sleep, sizeof(time_sleep), 0);
+				ret_map.sendData(id_process, time_sleep);
+				m_mutex.unlock();
 			break;
 		}
 	}
@@ -660,7 +771,7 @@ void RPCValue::createServer(int port, int connections) {
 			continue;
 		}
 
-		if(type_call == 0x666) {
+		if(type_call == CLEVER_RPC_KILL) {
 			printer.printMsg("Server died...\n");
 			while(recv (client_socket_id, &type_call, sizeof (type_call), 0)!=0);
 			close (client_socket_id);
@@ -699,7 +810,7 @@ void RPCValue::createClient(const char* host, const int port, const int time) {
 }
 
 void RPCValue::sendString(const char* s, int len) {
-	int id=0xEC;
+	int id=CLEVER_RPC_PS;
 
 	socket->send((char*)(&id),sizeof(int));
 	socket->send((char*)(&len),sizeof(int));
@@ -707,26 +818,26 @@ void RPCValue::sendString(const char* s, int len) {
 }
 
 void RPCValue::sendInteger(int v) {
-	int id=0xE1;
+	int id=CLEVER_RPC_PI;
 
 	socket->send((char*)(&id),sizeof(int));
 	socket->send((char*)(&v),sizeof(int));
 }
 
 void RPCValue::sendKill() {
-	int id=0x666;
+	int id=CLEVER_RPC_KILL;
 
 	socket->send((char*)(&id),sizeof(int));
 }
 
 void RPCValue::sendInit() {
-	int id=0x007;
+	int id=CLEVER_RPC_INIT;
 
 	socket->send((char*)(&id),sizeof(int));
 }
 
 void RPCValue::sendFunctionCall(const char* fname, const char* args, int len_fname, int n_args, int len_args){
-	int id=0xFC;
+	int id=CLEVER_RPC_FC;
 
 	socket->send((char*)(&id),sizeof(int));
 	socket->send((char*)(&len_fname),sizeof(int));
@@ -738,6 +849,30 @@ void RPCValue::sendFunctionCall(const char* fname, const char* args, int len_fna
 		socket->send(args,len_args);
 	}
 
+}
+
+void RPCValue::sendProcessCall(int id_process, const char* fname, const char* args, int len_fname, int n_args, int len_args){
+	int id = CLEVER_RPC_PC;
+
+	socket->send((char*)(&id),sizeof(int));
+	socket->send((char*)(&id_process),sizeof(int));
+	socket->send((char*)(&len_fname),sizeof(int));
+	socket->send(fname,len_fname);
+	socket->send((char*)(&n_args),sizeof(int));
+
+	if(n_args>0){
+		socket->send((char*)(&len_args),sizeof(int));
+		socket->send(args,len_args);
+	}
+
+}
+
+RPCObjectValue* RPCValue::getResultProcess(int id_process, double time_sleep) {
+	int id = CLEVER_RPC_GR;
+	socket->send((char*)(&id),sizeof(int));
+	socket->send((char*)(&id_process),sizeof(int));
+	socket->send((char*)(&time_sleep),sizeof(double));
+	return receiveObject();
 }
 
 RPCObjectValue* RPCValue::receiveObject(){

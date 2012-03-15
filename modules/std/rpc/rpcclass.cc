@@ -183,6 +183,102 @@ CLEVER_METHOD(RPC::callFunction) {
 	CLEVER_RETURN_DATA_VALUE(rv->receiveObject());
 }
 
+CLEVER_METHOD(RPC::callProcess) {
+	RPCValue* rv = CLEVER_GET_VALUE(RPCValue*, value);
+	size_t size = CLEVER_NUM_ARGS();
+	int id_process = CLEVER_ARG_INT(0);
+	const char* fname = CLEVER_ARG_STR(1).c_str();
+	int len_fname = CLEVER_ARG_STR(1).size();
+	int n_args = size-2;
+	int len_args = 0;
+
+	for(size_t i=2;i<size;++i){
+		len_args+=sizeof(char);
+		if (CLEVER_ARG_IS_INT(i)) {
+			len_args+=sizeof(int);
+		} else if (CLEVER_ARG_IS_BOOL(i)) {
+			len_args+=sizeof(char);
+		} else if (CLEVER_ARG_IS_STR(i)) {
+			len_args+=sizeof(int);
+			len_args+=CLEVER_ARG_STR(i).size();
+		} else if (CLEVER_ARG_IS_BYTE(i)) {
+			len_args+=sizeof(char);
+		} else if (CLEVER_ARG_IS_DOUBLE(i)) {
+			len_args+=sizeof(double);
+		} else if ( CLEVER_ARG_IS_USER(i) ) {
+		}
+	}
+
+	char* buffer = static_cast<char*>(malloc(len_args+1));
+
+	len_args=0;
+	for(size_t i=2;i<size;++i){
+		if (CLEVER_ARG_IS_INT(i)) {
+			buffer[len_args]='i';
+			len_args+=sizeof(char);
+
+			int vi = CLEVER_ARG_INT(i);
+
+			memcpy(buffer+len_args,&vi,sizeof(int));
+			len_args+=sizeof(int);
+
+		} else if (CLEVER_ARG_IS_BOOL(i)) {
+			buffer[len_args]='b';
+			len_args+=sizeof(char);
+
+			char vb = CLEVER_ARG_BOOL(i);
+
+			memcpy(buffer+len_args,&vb,sizeof(char));
+			len_args+=sizeof(char);
+
+		} else if (CLEVER_ARG_IS_STR(i)) {
+			buffer[len_args]='s';
+			len_args+=sizeof(char);
+
+			int len=(int)(CLEVER_ARG_STR(i).size());
+			const char* s=CLEVER_ARG_STR(i).c_str();
+			
+			memcpy(buffer+len_args,&len,sizeof(int));
+			
+			len_args+=sizeof(int);
+
+			memcpy(buffer+len_args,s,len);
+			len_args+=len;
+
+		} else if (CLEVER_ARG_IS_BYTE(i)) {
+			buffer[len_args]='c';
+			len_args+=sizeof(char);
+
+			char vb = CLEVER_ARG_BOOL(i);
+
+			memcpy(buffer+len_args,&vb,sizeof(char));
+			len_args+=sizeof(char);
+		} else if (CLEVER_ARG_IS_DOUBLE(i)) {
+			buffer[len_args]='d';
+			len_args+=sizeof(char);
+
+			double vd = CLEVER_ARG_DOUBLE(i);
+
+			memcpy(buffer+len_args,&vd,sizeof(double));
+			len_args+=sizeof(double);
+		} else if ( CLEVER_ARG_IS_USER(i) ) {
+		}
+	}
+
+	rv->sendProcessCall(id_process,fname,buffer,len_fname,n_args,len_args);
+	free(buffer);
+}
+
+CLEVER_METHOD(RPC::waitResult) {
+	RPCValue* rv = CLEVER_GET_VALUE(RPCValue*, value);
+	int id_process = CLEVER_ARG_INT(0);
+	double time_sleep = CLEVER_ARG_DOUBLE(1);
+
+	rv->getResultProcess(id_process, time_sleep);
+
+	CLEVER_RETURN_DATA_VALUE(rv->receiveObject());
+}
+
 void RPC::init() {
 	const Type* rpcobj = CLEVER_TYPE("RPCClass");
 	const Type* rpcobjvalue = CLEVER_TYPE("RPCObject");
@@ -243,6 +339,18 @@ void RPC::init() {
 		(new Method("callFunction", (MethodPtr)&RPC::callFunction, rpcobjvalue))
 			->setVariadic()
 			->setMinNumArgs(1)
+	);
+
+	addMethod(
+		(new Method("callProcess", (MethodPtr)&RPC::callProcess, CLEVER_VOID))
+			->setVariadic()
+			->setMinNumArgs(2)
+	);
+
+	addMethod(
+		(new Method("waitResult", (MethodPtr)&RPC::waitResult, rpcobjvalue))
+			->addArg("id", CLEVER_INT)
+			->addArg("time_sleep", CLEVER_DOUBLE)
 	);
 
 }
