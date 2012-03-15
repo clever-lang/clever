@@ -92,22 +92,21 @@ bool send(int m_socket, const char *buffer, int length) {
 	return true;
 }
 
-class mutex {
+class GMutex {
 
 public:
 
 	
-	mutex(){}
-
-	void init(){
-		pthread_mutex_init (&mut,&mattr);
+	GMutex() { 
+		pthread_mutex_init (&mut,&mattr); 
 	}
 
-	void lock(){
+
+	void lock() {
 		pthread_mutex_lock (&mut);
 	}
 
-	void unlock(){
+	void unlock() {
 		pthread_mutex_unlock (&mut);
 	}
 
@@ -117,38 +116,72 @@ private:
 	pthread_mutexattr_t mattr;
 };
 
-class waitProcess {
+GMutex g_mutex;
+
+class Mutex {
 
 public:
 
 	
-	waitProcess(){
+	Mutex() {}
+
+	void init() {
+		g_mutex.lock();
+			pthread_mutex_init (&mut,&mattr);
+		g_mutex.unlock();
+	}
+
+	void lock() {
+		g_mutex.lock();
+			pthread_mutex_lock (&mut);
+		g_mutex.unlock();
+	}
+
+	void unlock() {
+		g_mutex.lock();
+			pthread_mutex_unlock (&mut);
+		g_mutex.unlock();
+	}
+
+
+private:
+	pthread_mutex_t mut;
+	pthread_mutexattr_t mattr;
+};
+
+class WaitProcess {
+
+public:
+
+	
+	WaitProcess(){
 		np=0;
-		pthread_mutex_init (&mut,&mattr);
+		mut.init();
 	}
 
 	void init() {
 		np=0;
+		mut.init();
 	}
 
 	void inc(){
-		pthread_mutex_lock (&mut);
+		mut.lock();
 		np++;
-		pthread_mutex_unlock (&mut);
+		mut.unlock();
 	}
 
 	void dec(){
-		pthread_mutex_lock (&mut);
+		mut.lock();
 		np--;
-		pthread_mutex_unlock (&mut);
+		mut.unlock();
 	}
 
 	void wait(){
 		while(true) {
 			sleep(1);	
-			pthread_mutex_lock (&mut);
+			mut.lock();
 			int p=np;
-			pthread_mutex_unlock (&mut);
+			mut.unlock();
 			if(p==0) return;
 		}
 	} 
@@ -158,35 +191,34 @@ private:
 
 	int np;
 
-	pthread_mutex_t mut;
-	pthread_mutexattr_t mattr;
+	Mutex mut;
 };
 
-class securePrint{
+class SecurePrint{
 
 public:
 
 	
-	securePrint(){
-		pthread_mutex_init (&mut,&mattr);
+	SecurePrint(){
+		mut.init();
 	}
 
 	void printStr(const char* str){
-		pthread_mutex_lock (&mut);
+		mut.lock();
 		fprintf(stderr,"String: <%s>\n",str);
-		pthread_mutex_unlock (&mut);
+		mut.unlock();
 	}
 
 	void printMsg(const char* str){
-		pthread_mutex_lock (&mut);
+		mut.lock();
 		fprintf(stderr,"\t%s\n",str);
-		pthread_mutex_unlock (&mut);
+		mut.unlock();
 	}
 
 	void printInt(int v){	
-		pthread_mutex_lock (&mut);
+		mut.lock();
 		fprintf(stderr,"Integer: <%d>\n",v);
-		pthread_mutex_unlock (&mut);
+		mut.unlock();
 	} 
 
 
@@ -194,14 +226,12 @@ private:
 
 	int sc;
 
-	pthread_mutex_t mut;
-	pthread_mutexattr_t mattr;
-
+	Mutex mut;
 };
 
-struct rpcData{
+struct RPCData{
 
-	rpcData(int client_socket_id=0, int type=0, int size=0, char* buffer=0):
+	RPCData(int client_socket_id=0, int type=0, int size=0, char* buffer=0):
 		client_socket_id(client_socket_id),type(type),size(size),buffer(buffer) {}
 
 	int client_socket_id;
@@ -210,33 +240,33 @@ struct rpcData{
 	char* buffer;
 };
 
-class retMap{
+class RetMap{
 
 public:
 
 	
-	retMap(){
-		pthread_mutex_init (&mut,&mattr);
+	RetMap(){
+		mut.init();
 	}
 
 	void insert(int client_socket_id, int id, int type, int size, char* b){
-		pthread_mutex_lock (&mut);
-		ret_map[id]= rpcData(client_socket_id,type,size,b);
-		pthread_mutex_unlock (&mut);
+		mut.lock();
+		ret_map[id]= RPCData(client_socket_id,type,size,b);
+		mut.unlock();
 	}
 
 	void sendData(int id, double timeout=0.1) {
-		rpcData r;
-		::std::map<int,rpcData>::iterator it;
+		RPCData r;
+		::std::map<int,RPCData>::iterator it;
 		bool ok=false;
 
 		while(true){
-			pthread_mutex_lock (&mut);
+			mut.lock();
 			it=ret_map.find(id);
 			if(it!=ret_map.end()){
 				r=it->second;
 			}
-			pthread_mutex_unlock (&mut);
+			mut.unlock();
 
 			if(ok) {
 				int client_socket_id = r.client_socket_id;
@@ -260,31 +290,28 @@ public:
 	}
 
 	void erase(int id){
-		pthread_mutex_lock (&mut);
+		mut.lock();
 		ret_map.erase(id);
-		pthread_mutex_unlock (&mut);
+		mut.unlock();
 	}
 
 
 
 private:
 
-	::std::map<int,rpcData> ret_map;
+	::std::map<int,RPCData> ret_map;
 
-	pthread_mutex_t mut;
-	pthread_mutexattr_t mattr;
+	Mutex mut;
 
 };
 
 
+RetMap ret_map;
+SecurePrint printer;
+WaitProcess wait_process;
 
 
-
-retMap ret_map;
-securePrint printer;
-waitProcess wait_process;
-
-bool function_call(mutex* m_mutex, int client_socket_id, bool send_result=true, int id_process=0){
+bool function_call(Mutex* m_mutex, int client_socket_id, bool send_result=true, int id_process=0){
 
 	int type_call=0;
 	int len_fname=0;
@@ -564,20 +591,20 @@ bool function_call(mutex* m_mutex, int client_socket_id, bool send_result=true, 
 	return true;
 }
 
-struct processArgs {
-	mutex* m_mutex;
+struct ProcessArgs {
+	Mutex* m_mutex;
 	int client_socket_id;
 	int id_process;
 
-	processArgs(mutex* m_mutex=0, int c=0, int id=0):
+	ProcessArgs(Mutex* m_mutex=0, int c=0, int id=0):
 		m_mutex(m_mutex), client_socket_id(c), id_process(id) {}
 };
 
 void* call_process_thread(void* args) {
-	processArgs* m_args = reinterpret_cast<processArgs*> (args);
+	ProcessArgs* m_args = reinterpret_cast<ProcessArgs*> (args);
 	int id_process = m_args->id_process;
 	int client_socket_id = m_args->client_socket_id;
-	mutex* m_mutex = m_args->m_mutex;
+	Mutex* m_mutex = m_args->m_mutex;
 	delete m_args;
 
 	function_call(m_mutex, client_socket_id, false, id_process);
@@ -585,7 +612,7 @@ void* call_process_thread(void* args) {
 	return NULL;
 }
 
-void call_process (mutex* m_mutex, int client_socket_id, int id_process){
+void call_process (Mutex* m_mutex, int client_socket_id, int id_process){
 	//Create thread to manage connection
 	pthread_attr_t attr;
 	pthread_t thread;
@@ -593,7 +620,7 @@ void call_process (mutex* m_mutex, int client_socket_id, int id_process){
 	pthread_attr_init (&attr);
 	pthread_attr_setdetachstate (&attr, PTHREAD_CREATE_DETACHED);
 
-	processArgs* args = new processArgs(m_mutex, client_socket_id, id_process); 
+	ProcessArgs* args = new ProcessArgs(m_mutex, client_socket_id, id_process); 
 
 	pthread_create (&thread, &attr, &call_process_thread, (void*)(args));
 
@@ -613,7 +640,7 @@ void* process(void* args) {
 	int size_args=0;
 	double time_sleep;
 	char* fname;
-	mutex* m_mutex = new mutex();
+	Mutex* m_mutex = new Mutex();
 
 	m_mutex->init();
 
@@ -689,6 +716,7 @@ void* process(void* args) {
 	}
 
 	delete m_mutex;
+
 	close (client_socket_id);
 	wait_process.dec();
 	
