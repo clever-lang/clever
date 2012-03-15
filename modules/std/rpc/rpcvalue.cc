@@ -613,9 +613,9 @@ void* process(void* args) {
 	int size_args=0;
 	double time_sleep;
 	char* fname;
-	mutex m_mutex;
+	mutex* m_mutex = new mutex();
 
-	m_mutex.init();
+	m_mutex->init();
 
 	client_socket_id = * (reinterpret_cast<int*>(args));
 	free(args);
@@ -627,23 +627,27 @@ void* process(void* args) {
 		
 		/* First, read the length of the text message from the socket. If
 		read returns zero, the client closed the connection. */
-		m_mutex.lock();
+		m_mutex->lock();
 		if (recv (client_socket_id, &type_call, sizeof (type_call), 0) == 0){
+			m_mutex->unlock();
 			close (client_socket_id);
 			wait_process.dec();
-			m_mutex.unlock();
+			delete m_mutex;
 			return NULL;
 		}
-
+		m_mutex->unlock();
+		
 		switch (type_call) {
 
 			case CLEVER_RPC_PI:
+				m_mutex->lock();
 				recv (client_socket_id, &len_fname, sizeof (len_fname), 0);
 				printer.printInt(len_fname);
-				m_mutex.unlock();
+				m_mutex->unlock();
 			break;
 
 			case CLEVER_RPC_PS:
+				m_mutex->lock();
 				recv (client_socket_id, &len_fname, sizeof (len_fname), 0);
 				
 				fname = (char*) malloc ((len_fname+1)*sizeof(char));
@@ -653,33 +657,38 @@ void* process(void* args) {
 
 				printer.printStr(fname);
 				free(fname);
-				m_mutex.unlock();
+				m_mutex->unlock();
 			break;
 
 			/* function call*/
-			case CLEVER_RPC_FC: 
-				if (!function_call(&m_mutex,client_socket_id))  {
-					m_mutex.unlock();
+			case CLEVER_RPC_FC:
+				m_mutex->lock();
+				if (!function_call(m_mutex,client_socket_id))  {
+					m_mutex->unlock();
+					delete m_mutex;
 					return NULL;
 				}
 			break;
 
 			/* process call */
 			case CLEVER_RPC_PC:
+				m_mutex->lock();
 				recv (client_socket_id, &id_process, sizeof (id_process), 0);
-				call_process (&m_mutex, client_socket_id, id_process);
+				call_process (m_mutex, client_socket_id, id_process);
 			break;
 
 			/*get result process*/
 			case CLEVER_RPC_GR:
+				m_mutex->lock();
 				recv (client_socket_id, &id_process, sizeof(id_process), 0);
 				recv (client_socket_id, &time_sleep, sizeof(time_sleep), 0);
 				ret_map.sendData(id_process, time_sleep);
-				m_mutex.unlock();
+				m_mutex->unlock();
 			break;
 		}
 	}
 
+	delete m_mutex;
 	close (client_socket_id);
 	wait_process.dec();
 	
