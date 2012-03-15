@@ -89,10 +89,13 @@ private:
 
 	OperandType m_type;
 
-	union {
+	union OperandData {
 		Value* value;
 		ValueVector* vector;
 		long addr;
+
+		OperandData()
+			: value(NULL) {}
 	} m_data;
 
 	DISALLOW_COPY_AND_ASSIGN(Operand);
