@@ -376,6 +376,8 @@ bool function_call(Mutex* m_mutex, int client_socket_id, bool send_result=true, 
 		recv (client_socket_id, buffer, size_args, 0);
 	}
 
+	m_mutex->unlock();
+
 	ibuffer=0;
 
 	for( int i = 0; i < n_args; ++i){
@@ -459,8 +461,7 @@ bool function_call(Mutex* m_mutex, int client_socket_id, bool send_result=true, 
 	/*call function*/
 	int if_rt=f_rt;
 	
-	m_mutex->unlock();
-
+	
 	switch ( f_rt ) {
 			case 'i': 
 				{
