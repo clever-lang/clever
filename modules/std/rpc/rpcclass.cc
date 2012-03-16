@@ -39,13 +39,16 @@ namespace clever { namespace packages { namespace std { namespace rpc {
  * RPC::constructor()
  */
 CLEVER_METHOD(RPC::constructor) {
+	RPCValue* sv = new RPCValue;
+
+	CLEVER_RETURN_DATA_VALUE(sv);
 }
 
 /**
  * Void RPC::operator=(RPC object)
  */
 CLEVER_METHOD(RPC::do_assign) {
-
+	value->setDataValue(CLEVER_ARG_DATA_VALUE(0));
 }
 
 CLEVER_METHOD(RPC::client) {
