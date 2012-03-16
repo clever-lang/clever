@@ -101,7 +101,7 @@ private:
 	pthread_mutexattr_t mattr;
 };
 
-Mutex g_mutex, send_mutex, recv_mutex;
+Mutex g_mutex, send_mutex;
 
 class WaitProcess {
 
@@ -317,14 +317,6 @@ struct FCallArgs {
 RetMap ret_map;
 SecurePrint printer;
 WaitProcess wait_process;
-
-int recv(int client_socket_id, void* b, size_t size, int flag) {
-	int nrecv;
-
-	nrecv = ::recv (client_socket_id, b, size, flag);
-
-	return nrecv;
-}
 
 bool send(int m_socket, const char *buffer, int length) {
 	int sent = 0;
