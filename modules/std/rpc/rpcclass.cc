@@ -51,7 +51,7 @@ CLEVER_METHOD(RPC::do_assign) {
 CLEVER_METHOD(RPC::client) {
 	RPCValue* rv = CLEVER_GET_VALUE(RPCValue*, value);
 
-	rv->createClient(CLEVER_ARG_STR(0).c_str(), CLEVER_ARG_INT(1), CLEVER_ARG_INT(2));
+	CLEVER_RETURN_BOOL(rv->createClient(CLEVER_ARG_STR(0).c_str(), CLEVER_ARG_INT(1), CLEVER_ARG_INT(2)));
 }
 
 CLEVER_METHOD(RPC::server) {
@@ -93,7 +93,7 @@ CLEVER_METHOD(RPC::sendKill) {
 CLEVER_METHOD(RPC::sendInit) {
 	RPCValue* rv = CLEVER_GET_VALUE(RPCValue*, value);
 
-	rv->sendInit();
+	CLEVER_RETURN_BOOL(rv->sendInit());
 }
 
 CLEVER_METHOD(RPC::callFunction) {
@@ -291,7 +291,7 @@ void RPC::init() {
 	);
 
 	addMethod(
-		(new Method("client", (MethodPtr)&RPC::client, CLEVER_VOID))
+		(new Method("client", (MethodPtr)&RPC::client, CLEVER_BOOL))
 			->addArg("host", CLEVER_STR)
 			->addArg("port", CLEVER_INT)
 			->addArg("time", CLEVER_INT)
@@ -330,7 +330,7 @@ void RPC::init() {
 	);
 
 	addMethod(
-		(new Method("sendInit", (MethodPtr)&RPC::sendInit, CLEVER_VOID))
+		(new Method("sendInit", (MethodPtr)&RPC::sendInit, CLEVER_BOOL))
 	);
 
 	addMethod(

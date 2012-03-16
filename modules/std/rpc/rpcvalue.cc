@@ -248,11 +248,12 @@ public:
 				if(f_rt != 'v'){
 					if(f_rt == 's' || f_rt == 'p') send(client_socket_id,(char*)(&size),sizeof(int));
 					if(size>0){
+						mut.lock();
 						send(client_socket_id,b,size);
 						free(b);
+						mut.unlock();
 					}
 				}
-				erase(id);
 				return;
 			}
 			sleep(timeout);
@@ -311,7 +312,7 @@ struct FCallArgs {
 RetMap ret_map;
 SecurePrint printer;
 WaitProcess wait_process;
-
+Mutex g_mutex;
 
 bool function_call(FCallArgs* f_call_args, int client_socket_id, bool send_result=true, int id_process=0){
 
@@ -334,7 +335,9 @@ bool function_call(FCallArgs* f_call_args, int client_socket_id, bool send_resul
 	void** ffi_values;
 
 
+	g_mutex.lock();
 	fpf = dlsym(ext_mod_map[ext_func_map[fname]], fname);
+	g_mutex.unlock();
 
 	if (fpf == NULL) {
 		clever_fatal("[RPC] function `%s' not found at `%s'!",
@@ -346,7 +349,10 @@ bool function_call(FCallArgs* f_call_args, int client_socket_id, bool send_resul
 		return false;
 	}
 
+	g_mutex.lock();
 	f_rt = ext_ret_map[fname].c_str()[0];
+	g_mutex.unlock();
+
 	ffi_rt = _find_rpc_type(&f_rt);
 
 	pf = reinterpret_cast<ffi_call_func>(fpf);
@@ -784,6 +790,8 @@ void RPCValue::createServer(int port, int connections) {
 		}else {
 			createConnection(client_socket_id);
 			printer.printMsg("Client connected...\n");
+			int ok=CLEVER_RPC_OK;
+			send(client_socket_id,(char*)(&ok),sizeof(int));
 		}
 		
 	} while (!kill_me);
@@ -793,7 +801,7 @@ void RPCValue::createServer(int port, int connections) {
 
 }
 
-void RPCValue::createClient(const char* host, const int port, const int time) {
+bool RPCValue::createClient(const char* host, const int port, const int time) {
 	socket = new CSocket;
 
 	socket->setHost(host);
@@ -806,12 +814,13 @@ void RPCValue::createClient(const char* host, const int port, const int time) {
 	while (t<time) {
 		if (socket->connect()) {
 			fprintf(stderr,"\n");
-			return;
+			return true;
 		}
 		fprintf(stderr,".");
 		sleep(1);
 	}
 	clever_fatal("[RPC] Failed to connect with RPC server!");
+	return false;
 }
 
 void RPCValue::sendString(const char* s, int len) {
@@ -835,10 +844,18 @@ void RPCValue::sendKill() {
 	socket->send((char*)(&id),sizeof(int));
 }
 
-void RPCValue::sendInit() {
+bool RPCValue::sendInit() {
 	int id=CLEVER_RPC_INIT;
 
 	socket->send((char*)(&id),sizeof(int));
+
+	int ok;
+
+	if(!socket->receive((char*)(&ok),sizeof(int))) {
+		return false;
+	}
+
+	return true;
 }
 
 void RPCValue::sendFunctionCall(const char* fname, const char* args, int len_fname, int n_args, int len_args){

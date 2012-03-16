@@ -49,6 +49,8 @@
 #define CLEVER_RPC_KILL 0x6
 //Init command
 #define CLEVER_RPC_INIT 0x7
+//Connection accepted 
+#define CLEVER_RPC_OK 0x8
 
 namespace clever { namespace packages { namespace std { namespace rpc {
 
@@ -64,7 +66,7 @@ public:
 
 	void createServer(int port, int connections);
 
-	void createClient(const char* host, const int port, const int time);
+	bool createClient(const char* host, const int port, const int time);
 
 	void loadLibrary(const char* libname);
 	void addFunction(const char* libname, const char* funcname, const char* rettype);
@@ -74,7 +76,7 @@ public:
 	void sendProcessCall(int id_process, const char* fname, const char* args, int len_fname, int n_args, int len_args);
 	void sendInteger(int v);
 	void sendKill();
-	void sendInit();
+	bool sendInit();
 
 	RPCObjectValue* getResultProcess(int id_process, double time_sleep);
 	RPCObjectValue* receiveObject();
