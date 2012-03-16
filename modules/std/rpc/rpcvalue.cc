@@ -92,32 +92,6 @@ bool send(int m_socket, const char *buffer, int length) {
 	return true;
 }
 
-class GMutex {
-
-public:
-
-	
-	GMutex() { 
-		pthread_mutex_init (&mut,&mattr); 
-	}
-
-
-	void lock() {
-		pthread_mutex_lock (&mut);
-	}
-
-	void unlock() {
-		pthread_mutex_unlock (&mut);
-	}
-
-
-private:
-	pthread_mutex_t mut;
-	pthread_mutexattr_t mattr;
-};
-
-GMutex g_mutex;
-
 class Mutex {
 
 public:
@@ -126,21 +100,15 @@ public:
 	Mutex() {}
 
 	void init() {
-		g_mutex.lock();
-			pthread_mutex_init (&mut,&mattr);
-		g_mutex.unlock();
+		pthread_mutex_init (&mut,&mattr);
 	}
 
 	void lock() {
-		g_mutex.lock();
-			pthread_mutex_lock (&mut);
-		g_mutex.unlock();
+		pthread_mutex_lock (&mut);
 	}
 
 	void unlock() {
-		g_mutex.lock();
-			pthread_mutex_unlock (&mut);
-		g_mutex.unlock();
+		pthread_mutex_unlock (&mut);
 	}
 
 
@@ -265,6 +233,7 @@ public:
 			it=ret_map.find(id);
 			if(it!=ret_map.end()){
 				r=it->second;
+				ok=true;
 			}
 			mut.unlock();
 
@@ -276,14 +245,15 @@ public:
 				char* b = r.buffer;
 
 				send(client_socket_id,(char*)(&type),sizeof(int));
-				if(f_rt!='v'){
-					send(client_socket_id,(char*)(&size),sizeof(int));
+				if(f_rt != 'v'){
+					if(f_rt == 's' || f_rt == 'p') send(client_socket_id,(char*)(&size),sizeof(int));
 					if(size>0){
 						send(client_socket_id,b,size);
 						free(b);
 					}
 				}
 				erase(id);
+				return;
 			}
 			sleep(timeout);
 		}
@@ -305,22 +275,53 @@ private:
 
 };
 
+struct FCallArgs {
+
+	int len_fname;
+	char* fname;
+	int n_args;
+	int size_args;
+	char* args;
+
+	FCallArgs(int len_fname=0, char* fname=0, int n_args=0, int size_args=0, char* args=0):
+		len_fname(len_fname), fname(fname), n_args(n_args), size_args(size_args), args(args) {
+	}
+
+	void receive (int client_socket_id) {
+		recv (client_socket_id, &len_fname, sizeof (len_fname), 0);
+		fname = (char*) malloc ((len_fname+1)*sizeof(char));
+		fname[len_fname]='\0';
+
+		recv (client_socket_id, fname, len_fname, 0);
+		recv (client_socket_id, &n_args, sizeof(n_args), 0);
+
+		if(n_args>0){
+			recv (client_socket_id, &size_args, sizeof(size_args), 0);
+
+			args = (char*) malloc(size_args*sizeof(char));
+
+			recv (client_socket_id, args, size_args, 0);
+		}
+	}
+
+	~FCallArgs() {}
+};
+
 
 RetMap ret_map;
 SecurePrint printer;
 WaitProcess wait_process;
 
 
-bool function_call(Mutex* m_mutex, int client_socket_id, bool send_result=true, int id_process=0){
+bool function_call(FCallArgs* f_call_args, int client_socket_id, bool send_result=true, int id_process=0){
 
-	int type_call=0;
-	int len_fname=0;
-	int n_args=0;
+	int n_args = f_call_args->n_args;
 	char f_rt;
-	int size_args=0;
-	char* fname;
-	char* buffer;
+	char* fname = f_call_args->fname;
+	char* buffer = f_call_args->args;
 	int ibuffer;
+
+	delete f_call_args;
 
 	void* fpf;
 	ffi_call_func pf;
@@ -331,19 +332,6 @@ bool function_call(Mutex* m_mutex, int client_socket_id, bool send_result=true, 
 	ffi_type** ffi_args;
 
 	void** ffi_values;
-
-	
-	type_call=len_fname=n_args=size_args=0;
-	f_rt = 'v';
-
-	recv (client_socket_id, &len_fname, sizeof (len_fname), 0);
-
-
-	fname = (char*) malloc ((len_fname+1)*sizeof(char));
-	fname[len_fname]='\0';
-
-	recv (client_socket_id, fname, len_fname, 0);
-
 
 
 	fpf = dlsym(ext_mod_map[ext_func_map[fname]], fname);
@@ -363,20 +351,11 @@ bool function_call(Mutex* m_mutex, int client_socket_id, bool send_result=true, 
 
 	pf = reinterpret_cast<ffi_call_func>(fpf);
 
-	recv (client_socket_id, &n_args, sizeof(n_args), 0);
-
+	
 	if(n_args>0){
 		ffi_args = (ffi_type**) malloc(n_args*sizeof(ffi_type*));
 		ffi_values = (void**) malloc(n_args*sizeof(void*));
-
-		recv (client_socket_id, &size_args, sizeof(size_args), 0);
-
-		buffer = (char*) malloc(size_args*sizeof(char));
-
-		recv (client_socket_id, buffer, size_args, 0);
 	}
-
-	m_mutex->unlock();
 
 	ibuffer=0;
 
@@ -593,27 +572,27 @@ bool function_call(Mutex* m_mutex, int client_socket_id, bool send_result=true, 
 }
 
 struct ProcessArgs {
-	Mutex* m_mutex;
+	FCallArgs* f_call_args;
 	int client_socket_id;
 	int id_process;
 
-	ProcessArgs(Mutex* m_mutex=0, int c=0, int id=0):
-		m_mutex(m_mutex), client_socket_id(c), id_process(id) {}
+	ProcessArgs(FCallArgs* f_call_args=0, int c=0, int id=0):
+		f_call_args(f_call_args), client_socket_id(c), id_process(id) {}
 };
 
 void* call_process_thread(void* args) {
 	ProcessArgs* m_args = reinterpret_cast<ProcessArgs*> (args);
 	int id_process = m_args->id_process;
 	int client_socket_id = m_args->client_socket_id;
-	Mutex* m_mutex = m_args->m_mutex;
+	FCallArgs* f_call_args = m_args->f_call_args;
 	delete m_args;
 
-	function_call(m_mutex, client_socket_id, false, id_process);
+	function_call(f_call_args, client_socket_id, false, id_process);
 
 	return NULL;
 }
 
-void call_process (Mutex* m_mutex, int client_socket_id, int id_process){
+void call_process (FCallArgs* f_call_args, int client_socket_id, int id_process){
 	//Create thread to manage connection
 	pthread_attr_t attr;
 	pthread_t thread;
@@ -621,7 +600,7 @@ void call_process (Mutex* m_mutex, int client_socket_id, int id_process){
 	pthread_attr_init (&attr);
 	pthread_attr_setdetachstate (&attr, PTHREAD_CREATE_DETACHED);
 
-	ProcessArgs* args = new ProcessArgs(m_mutex, client_socket_id, id_process); 
+	ProcessArgs* args = new ProcessArgs(f_call_args, client_socket_id, id_process); 
 
 	pthread_create (&thread, &attr, &call_process_thread, (void*)(args));
 
@@ -641,9 +620,7 @@ void* process(void* args) {
 	int size_args=0;
 	double time_sleep;
 	char* fname;
-	Mutex* m_mutex = new Mutex();
-
-	m_mutex->init();
+	FCallArgs* f_call_args;
 
 	client_socket_id = * (reinterpret_cast<int*>(args));
 	free(args);
@@ -655,27 +632,20 @@ void* process(void* args) {
 		
 		/* First, read the length of the text message from the socket. If
 		read returns zero, the client closed the connection. */
-		m_mutex->lock();
 		if (recv (client_socket_id, &type_call, sizeof (type_call), 0) == 0){
-			m_mutex->unlock();
 			close (client_socket_id);
 			wait_process.dec();
-			delete m_mutex;
 			return NULL;
 		}
-		m_mutex->unlock();
 		
 		switch (type_call) {
 
 			case CLEVER_RPC_PI:
-				m_mutex->lock();
 				recv (client_socket_id, &len_fname, sizeof (len_fname), 0);
 				printer.printInt(len_fname);
-				m_mutex->unlock();
 			break;
 
 			case CLEVER_RPC_PS:
-				m_mutex->lock();
 				recv (client_socket_id, &len_fname, sizeof (len_fname), 0);
 				
 				fname = (char*) malloc ((len_fname+1)*sizeof(char));
@@ -685,38 +655,35 @@ void* process(void* args) {
 
 				printer.printStr(fname);
 				free(fname);
-				m_mutex->unlock();
 			break;
 
 			/* function call*/
 			case CLEVER_RPC_FC:
-				m_mutex->lock();
-				if (!function_call(m_mutex,client_socket_id))  {
-					m_mutex->unlock();
-					delete m_mutex;
+				f_call_args = new FCallArgs;
+				f_call_args->receive(client_socket_id);
+
+				if (!function_call(f_call_args, client_socket_id)) {
 					return NULL;
 				}
 			break;
 
 			/* process call */
 			case CLEVER_RPC_PC:
-				m_mutex->lock();
 				recv (client_socket_id, &id_process, sizeof (id_process), 0);
-				call_process (m_mutex, client_socket_id, id_process);
+				f_call_args = new FCallArgs;
+				f_call_args->receive(client_socket_id);
+
+				call_process (f_call_args, client_socket_id, id_process);
 			break;
 
 			/*get result process*/
 			case CLEVER_RPC_GR:
-				m_mutex->lock();
 				recv (client_socket_id, &id_process, sizeof(id_process), 0);
 				recv (client_socket_id, &time_sleep, sizeof(time_sleep), 0);
 				ret_map.sendData(id_process, time_sleep);
-				m_mutex->unlock();
 			break;
 		}
 	}
-
-	delete m_mutex;
 
 	close (client_socket_id);
 	wait_process.dec();

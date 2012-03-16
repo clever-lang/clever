@@ -274,9 +274,7 @@ CLEVER_METHOD(RPC::waitResult) {
 	int id_process = CLEVER_ARG_INT(0);
 	double time_sleep = CLEVER_ARG_DOUBLE(1);
 
-	rv->getResultProcess(id_process, time_sleep);
-
-	CLEVER_RETURN_DATA_VALUE(rv->receiveObject());
+	CLEVER_RETURN_DATA_VALUE(rv->getResultProcess(id_process, time_sleep));
 }
 
 void RPC::init() {
