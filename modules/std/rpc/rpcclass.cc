@@ -280,6 +280,23 @@ CLEVER_METHOD(RPC::waitResult) {
 	CLEVER_RETURN_DATA_VALUE(rv->getResultProcess(id_process, time_sleep));
 }
 
+CLEVER_METHOD(RPC::sendMsgInt) {
+	RPCValue* rv = CLEVER_GET_VALUE(RPCValue*, value);
+	int id_message = CLEVER_ARG_INT(0);
+	int v = CLEVER_ARG_INT(1);
+
+	rv->sendInteger(id_message, v);
+}
+
+CLEVER_METHOD(RPC::recvMsgInt) {
+	RPCValue* rv = CLEVER_GET_VALUE(RPCValue*, value);
+	int id_message = CLEVER_ARG_INT(0);
+	double time_sleep = CLEVER_ARG_DOUBLE(1);
+
+	CLEVER_RETURN_INT(rv->receiveInt(id_message, time_sleep));
+}
+
+
 void RPC::init() {
 	const Type* rpcobj = CLEVER_TYPE("RPCClass");
 	const Type* rpcobjvalue = CLEVER_TYPE("RPCObject");
@@ -326,6 +343,18 @@ void RPC::init() {
 	addMethod(
 		(new Method("sendInteger", (MethodPtr)&RPC::sendInteger, CLEVER_VOID))
 			->addArg("value", CLEVER_INT)
+	);
+
+	addMethod(
+		(new Method("sendMsgInt", (MethodPtr)&RPC::sendMsgInt, CLEVER_VOID))
+			->addArg("id_message", CLEVER_INT)
+			->addArg("value", CLEVER_INT)
+	);
+
+	addMethod(
+		(new Method("recvMsgInt", (MethodPtr)&RPC::recvMsgInt, CLEVER_INT))
+			->addArg("id_message", CLEVER_INT)
+			->addArg("time_sleep", CLEVER_DOUBLE)
 	);
 
 	addMethod(

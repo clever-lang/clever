@@ -58,6 +58,9 @@ public:
 	static CLEVER_METHOD(callProcess);
 	static CLEVER_METHOD(waitResult);
 
+	static CLEVER_METHOD(sendMsgInt);
+	static CLEVER_METHOD(recvMsgInt);
+
 	~RPC(){}
 private:
 	DISALLOW_COPY_AND_ASSIGN(RPC);

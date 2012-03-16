@@ -101,7 +101,7 @@ private:
 	pthread_mutexattr_t mattr;
 };
 
-Mutex g_mutex, send_mutex;
+Mutex g_mutex, send_mutex, time_mutex;
 
 class WaitProcess {
 
@@ -133,10 +133,8 @@ public:
 	void wait(){
 		while(true) {
 
-			g_mutex.lock();
 			sleep(1);
-			g_mutex.unlock();
-
+			
 			mut.lock();
 			int p=np;
 			mut.unlock();
@@ -248,9 +246,7 @@ public:
 				}
 				return;
 			}
-			g_mutex.lock();
 			sleep(timeout);
-			g_mutex.unlock();
 		}
 	}
 
@@ -262,6 +258,78 @@ private:
 	Mutex mut;
 
 };
+
+class DataMap{
+
+public:
+
+	
+	DataMap(){
+		mut.init();
+	}
+
+	void insert(int client_socket_id, int id, int type, int size, char* b) {
+		mut.lock();
+		::std::map<int,RPCData>::iterator it=data_map.find(id);
+		RPCData r;
+		if(it != data_map.end()) {
+			r = it->second;
+			if(r.buffer) {
+				free(r.buffer);
+				r.buffer=0;
+			}
+		}
+		data_map[id]= RPCData(client_socket_id,type,size,b);
+		mut.unlock();
+	}
+
+	void sendData(int client_socket_id, int id, double timeout=0.1) {
+		RPCData r;
+		::std::map<int,RPCData>::iterator it;
+		bool ok=false;
+
+		while(true){
+			mut.lock();
+			it=data_map.find(id);
+			if(it != data_map.end()) {
+				r=it->second;
+				ok=true;
+			}
+			mut.unlock();
+
+			if(ok) {
+				int type = r.type;
+				char f_rt = (char) (type);
+				int size = r.size;
+				char* b = r.buffer;
+
+				send(client_socket_id,(char*)(&type),sizeof(int));
+				if(f_rt != 'v'){
+					if(f_rt == 's' || f_rt == 'p') {
+						send(client_socket_id,(char*)(&size),sizeof(int));
+					}
+
+					if(size>0) {
+						send(client_socket_id,b,size);
+					}
+				}
+				return;
+			}
+
+			sleep(timeout);
+
+		}
+	}
+
+
+private:
+
+	::std::map<int, RPCData> data_map;
+
+	Mutex mut;
+
+};
+
 
 struct FCallArgs {
 
@@ -316,6 +384,7 @@ struct FCallArgs {
 };
 
 
+DataMap data_map;
 RetMap ret_map;
 SecurePrint printer;
 WaitProcess wait_process;
@@ -702,19 +771,17 @@ void* process(void* args) {
 	int client_socket_id; 
 	int type_call=0;
 	int len_fname=0;
-	int n_args=0;
-	char f_rt;
+	int id_message=0;
+	int vi_message=0;
+	int t_message=0;
 	int id_process=0;
-	int size_args=0;
 	double time_sleep;
-	char* fname;
+	char *fname, *buffer;
 	FCallArgs* f_call_args;
 
 	client_socket_id = * (reinterpret_cast<int*>(args));
 	free(args);
 
-	id_process=type_call=len_fname=n_args=size_args=0;
-	f_rt = 'v';
 
 	while (true) {
 		
@@ -731,11 +798,33 @@ void* process(void* args) {
 
 		switch (type_call) {
 
+			case CLEVER_RPC_RI:
+
+				recv (client_socket_id, &id_message, sizeof (id_message), 0);
+				recv (client_socket_id, &vi_message, sizeof (vi_message), 0);
+
+				t_message = 'i';
+
+				g_mutex.lock();
+				buffer = (char*) malloc (sizeof(int));
+				g_mutex.unlock();
+
+				memcpy(buffer,&vi_message,sizeof(int));
+
+				data_map.insert(client_socket_id, id_message, t_message, sizeof(int),buffer);
+			break;
+
+			case CLEVER_RPC_SI:
+
+				recv (client_socket_id, &id_message, sizeof (id_message), 0);
+				recv (client_socket_id, &time_sleep, sizeof (time_sleep), 0);
+
+				data_map.sendData(client_socket_id, id_message, time_sleep);
+			break;
+
 			case CLEVER_RPC_PI:
 
-				
 				recv (client_socket_id, &len_fname, sizeof (len_fname), 0);
-				
 
 				printer.printInt(len_fname);
 			break;
@@ -948,9 +1037,7 @@ bool RPCValue::createClient(const char* host, const int port, const int time) {
 			return true;
 		}
 		fprintf(stderr,".");
-		g_mutex.lock();
 		sleep(1);
-		g_mutex.unlock();
 	}
 	clever_fatal("[RPC] Failed to connect with RPC server!");
 	return false;
@@ -1020,6 +1107,39 @@ void RPCValue::sendProcessCall(int id_process, const char* fname, const char* ar
 		socket->send(args,len_args);
 	}
 
+}
+
+void RPCValue::sendInteger(int id_message, int v) {
+	int id = CLEVER_RPC_RI;
+
+	socket->send((char*)(&id),sizeof(int));
+	socket->send((char*)(&id_message),sizeof(int));
+	socket->send((char*)(&v),sizeof(int));
+}
+
+int RPCValue::receiveInt(int id_message, double time_sleep) {
+	int id = CLEVER_RPC_SI;
+
+	socket->send((char*)(&id),sizeof(int));
+	socket->send((char*)(&id_message),sizeof(int));
+	socket->send((char*)(&time_sleep),sizeof(double));
+
+	int v;
+	int type;
+
+	if(!socket->receive((char*)(&type),sizeof(int))) {
+		clever_fatal("[RPC] Failed to receive int!\n");
+		return 0;
+	}
+
+	if(type != 'i'){
+		clever_fatal("[RPC] Failed to receive int!\n");
+		return 0;
+	}
+
+	socket->receive((char*)(&v),sizeof(int));
+
+	return v;
 }
 
 RPCObjectValue* RPCValue::getResultProcess(int id_process, double time_sleep) {

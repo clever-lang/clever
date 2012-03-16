@@ -51,6 +51,10 @@
 #define CLEVER_RPC_INIT 0x7
 //Connection accepted 
 #define CLEVER_RPC_OK 0x8
+//Receive Int
+#define CLEVER_RPC_RI 0x9
+//Send Int
+#define CLEVER_RPC_SI 0x10
 
 namespace clever { namespace packages { namespace std { namespace rpc {
 
@@ -71,15 +75,30 @@ public:
 	void loadLibrary(const char* libname);
 	void addFunction(const char* libname, const char* funcname, const char* rettype);
 
+	/* Send objects to server*/
+	void sendInteger(int v);
 	void sendString(const char* s, int len);
 	void sendFunctionCall(const char* fname, const char* args, int len_fname, int n_args, int len_args);
 	void sendProcessCall(int id_process, const char* fname, const char* args, int len_fname, int n_args, int len_args);
-	void sendInteger(int v);
+
+	/* Send objects to another clients */
+	void sendObject(int id_message, const char* s, int len);
+	void sendInteger(int id_message, int v);
+	void sendDouble(int id_message, double v);
+	void sendString(int id_message, const char* s, int len);
+
+
 	void sendKill();
 	bool sendInit();
 
 	RPCObjectValue* getResultProcess(int id_process, double time_sleep);
 	RPCObjectValue* receiveObject();
+
+	/* Receive from another clients */
+	RPCObjectValue* receiveObject(int id_message);
+	int receiveInt(int id_message, double time_sleep);
+	double receiveDouble(int id_message);
+	::std::string receiveString(int id_message);
 
 	CSocket* getSocket() { return this->socket; }
 
