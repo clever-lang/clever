@@ -507,7 +507,7 @@ bool function_call(FCallArgs* f_call_args, int client_socket_id, bool send_resul
 						send(client_socket_id,(char*)(vs[0]+sizeof(int)), size_vs);
 					} else {
 						char* b = (char*) malloc (size_vs*sizeof(char));
-						memcpy(b,&vs[0],size_vs);
+						memcpy(b,(char*)(vs[0]+sizeof(int)),size_vs);
 
 						ret_map.insert(client_socket_id, id_process, if_rt, size_vs*sizeof(char),b);
 					}
