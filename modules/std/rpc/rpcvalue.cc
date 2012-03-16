@@ -222,10 +222,12 @@ public:
 		while(true){
 			mut.lock();
 			it=ret_map.find(client_socket_id);
-			it2 = it->second.find(id);
-			if(it2!=it->second.end()){
-				r=it2->second;
-				ok=true;
+			if(it != ret_map.end()) {
+				it2 = it->second.find(id);
+				if(it2!=it->second.end()) {
+					r=it2->second;
+					ok=true;
+				}
 			}
 			mut.unlock();
 
