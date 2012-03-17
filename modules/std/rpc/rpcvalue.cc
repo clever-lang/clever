@@ -801,6 +801,7 @@ void* process(void* args) {
 	int client_socket_id; 
 	int type_call=0;
 	int len_fname=0;
+	int len_message=0;
 	int id_message=0;
 	int vi_message=0;
 	double vd_message=0;
@@ -845,7 +846,7 @@ void* process(void* args) {
 				data_map.insert(client_socket_id, id_message, t_message, sizeof(int),buffer);
 			break;
 
-			case CLEVER_RPC_SI:case CLEVER_RPC_SD:
+			case CLEVER_RPC_SI: case CLEVER_RPC_SD: case CLEVER_RPC_SS:
 
 				recv (client_socket_id, &id_message, sizeof (id_message), 0);
 				recv (client_socket_id, &time_sleep, sizeof (time_sleep), 0);
@@ -867,6 +868,22 @@ void* process(void* args) {
 				memcpy(buffer,&vd_message,sizeof(double));
 
 				data_map.insert(client_socket_id, id_message, t_message, sizeof(double),buffer);
+			break;
+
+			case CLEVER_RPC_RS:
+
+				recv (client_socket_id, &id_message, sizeof (id_message), 0);
+				recv (client_socket_id, &len_message, sizeof (len_message), 0);
+
+				t_message = 's';
+
+				g_mutex.lock();
+				buffer = (char*) malloc (len_message*sizeof(char));
+				g_mutex.unlock();
+
+				recv (client_socket_id, buffer, len_message, 0);
+
+				data_map.insert(client_socket_id, id_message, t_message, len_message*sizeof(char),buffer);
 			break;
 
 
@@ -1222,6 +1239,51 @@ double RPCValue::receiveDouble(int id_message, double time_sleep) {
 	}
 
 	socket->receive((char*)(&v),sizeof(double));
+
+	return v;
+}
+
+void RPCValue::sendString(int id_message, const char* s, int len) {
+	int id = CLEVER_RPC_RS;
+
+	socket->send((char*)(&id),sizeof(int));
+	socket->send((char*)(&id_message),sizeof(int));
+	socket->send((char*)(&len),sizeof(int));
+	socket->send(s,sizeof(char)*len);
+}
+
+::std::string RPCValue::receiveString(int id_message, double time_sleep) {
+	int id = CLEVER_RPC_SS;
+
+	socket->send((char*)(&id),sizeof(int));
+	socket->send((char*)(&id_message),sizeof(int));
+	socket->send((char*)(&time_sleep),sizeof(double));
+
+	char* buffer;
+	::std::string v;
+	int len;
+	int type;
+
+	if(!socket->receive((char*)(&type),sizeof(int))) {
+		clever_fatal("[RPC] Failed to receive String!\n");
+		return 0;
+	}
+
+	if(type != 's'){
+		clever_fatal("[RPC] Failed to receive String!\n");
+		return 0;
+	}
+
+	socket->receive((char*)(&len),sizeof(int));
+
+	g_mutex.lock();
+	buffer = (char*)malloc((len+1)*sizeof(char));
+	g_mutex.unlock();
+
+	socket->receive(buffer,len*sizeof(char));
+	buffer[len]='\0';
+	v=buffer;
+	free(buffer);
 
 	return v;
 }

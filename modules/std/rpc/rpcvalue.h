@@ -59,6 +59,10 @@
 #define CLEVER_RPC_RD 0x11
 //Send Double
 #define CLEVER_RPC_SD 0x12
+//Receive String
+#define CLEVER_RPC_RS 0x13
+//Send String
+#define CLEVER_RPC_SS 0x14
 
 namespace clever { namespace packages { namespace std { namespace rpc {
 
@@ -98,11 +102,11 @@ public:
 	RPCObjectValue* getResultProcess(int id_process, double time_sleep);
 	RPCObjectValue* receiveObject();
 
-	/* Receive from another clients */
+	/* Receive objects from another clients */
 	RPCObjectValue* receiveObject(int id_message);
 	int receiveInt(int id_message, double time_sleep);
 	double receiveDouble(int id_message, double time_sleep);
-	::std::string receiveString(int id_message);
+	::std::string receiveString(int id_message, double time_sleep);
 
 	CSocket* getSocket() { return this->socket; }
 
