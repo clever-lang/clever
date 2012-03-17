@@ -36,8 +36,8 @@ namespace clever {
 void Opcode::dump() const {
 	::printf("(%04zu) | ", getOpNum());
 	::printf("%-15s | ", getOpName(getType()));
-	::printf("%-20s | ", dumpOp("op1", getOp1()).c_str());
-	::printf("%-20s | ", dumpOp("op2", getOp2()).c_str());
+	::printf("%-30s | ", dumpOp("op1", getOp1()).c_str());
+	::printf("%-40s | ", dumpOp("op2", getOp2()).c_str());
 	::printf("%-20s\n", dumpOp("result", getResult()).c_str());
 }
 
@@ -104,11 +104,14 @@ std::string Opcode::dumpOp(const char* const label, const Operand& op) const {
 			str << op.getAddr();
 			break;
 		case VALUE:
+			str << "(" << op.getValue() << ") ";
 			dumpValue(str, op.getValue());
 			break;
 		case VECTOR:
 			if (op.getVector()) {
-				str << "vector (" << op.getVector()->size() << ")";
+				str << "vector (";
+				dumpVector(str, op.getVector());
+				str << ")";
 			} else {
 				str << "UNUSED";
 			}
@@ -120,8 +123,7 @@ std::string Opcode::dumpOp(const char* const label, const Operand& op) const {
 /**
  * Dumps a Value* pointer
  */
-void Opcode::dumpValue(std::ostringstream& str, Value* value)
-	const {
+void Opcode::dumpValue(std::ostringstream& str, Value* value) const {
 	if (value == NULL) {
 		str << "NULL";
 	} else if (value->isCallable()) {
@@ -131,6 +133,27 @@ void Opcode::dumpValue(std::ostringstream& str, Value* value)
 	} else {
 		if (value->getTypePtr()) {
 			str << value->toString();
+		}
+	}
+}
+
+/**
+ * Dumps a ValueVector pointer
+ */
+void Opcode::dumpVector(std::ostringstream& str, ValueVector* vec) const {
+	if (vec->size() == 0) {
+		return;
+	}
+	for (size_t i = 0, j = vec->size(); i < j; ++i) {
+		str << vec->at(i);
+
+		if (i == 1 && j > i+1) {
+			str << ", ...";
+			break;
+		}
+
+		if (i+1 < j) {
+			str << ", ";
 		}
 	}
 }

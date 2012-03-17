@@ -136,6 +136,7 @@ public:
 	const char* getOpName(OpcodeType) const;
 	std::string dumpOp(const char* const, const Operand&) const;
 	void dumpValue(std::ostringstream&, Value*) const;
+	void dumpVector(std::ostringstream&, ValueVector*) const;
 
 	// Returns the opcode handler by supplying its opcode type
 	static VM::opcode_handler getHandlerByType(OpcodeType);
