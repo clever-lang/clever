@@ -803,6 +803,7 @@ void* process(void* args) {
 	int len_fname=0;
 	int id_message=0;
 	int vi_message=0;
+	double vd_message=0;
 	int t_message=0;
 	int id_process=0;
 	double time_sleep;
@@ -844,13 +845,30 @@ void* process(void* args) {
 				data_map.insert(client_socket_id, id_message, t_message, sizeof(int),buffer);
 			break;
 
-			case CLEVER_RPC_SI:
+			case CLEVER_RPC_SI:case CLEVER_RPC_SD:
 
 				recv (client_socket_id, &id_message, sizeof (id_message), 0);
 				recv (client_socket_id, &time_sleep, sizeof (time_sleep), 0);
 
 				data_map.sendData(client_socket_id, id_message, time_sleep);
 			break;
+
+			case CLEVER_RPC_RD:
+
+				recv (client_socket_id, &id_message, sizeof (id_message), 0);
+				recv (client_socket_id, &vd_message, sizeof (vd_message), 0);
+
+				t_message = 'd';
+
+				g_mutex.lock();
+				buffer = (char*) malloc (sizeof(double));
+				g_mutex.unlock();
+
+				memcpy(buffer,&vd_message,sizeof(double));
+
+				data_map.insert(client_socket_id, id_message, t_message, sizeof(double),buffer);
+			break;
+
 
 			case CLEVER_RPC_PI:
 
@@ -1171,6 +1189,39 @@ int RPCValue::receiveInt(int id_message, double time_sleep) {
 	}
 
 	socket->receive((char*)(&v),sizeof(int));
+
+	return v;
+}
+
+void RPCValue::sendDouble(int id_message, double v) {
+	int id = CLEVER_RPC_RD;
+
+	socket->send((char*)(&id),sizeof(int));
+	socket->send((char*)(&id_message),sizeof(int));
+	socket->send((char*)(&v),sizeof(double));
+}
+
+double RPCValue::receiveDouble(int id_message, double time_sleep) {
+	int id = CLEVER_RPC_SD;
+
+	socket->send((char*)(&id),sizeof(int));
+	socket->send((char*)(&id_message),sizeof(int));
+	socket->send((char*)(&time_sleep),sizeof(double));
+
+	double v;
+	int type;
+
+	if(!socket->receive((char*)(&type),sizeof(int))) {
+		clever_fatal("[RPC] Failed to receive double!\n");
+		return 0;
+	}
+
+	if(type != 'd'){
+		clever_fatal("[RPC] Failed to receive double!\n");
+		return 0;
+	}
+
+	socket->receive((char*)(&v),sizeof(double));
 
 	return v;
 }
