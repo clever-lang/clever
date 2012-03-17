@@ -323,8 +323,7 @@ public:
 				r=it->second;
 				ok=true;
 			}
-			mut.unlock();
-
+			
 			if(ok) {
 				int type = r.type;
 				char f_rt = (char) (type);
@@ -341,8 +340,11 @@ public:
 						send(client_socket_id,b,size);
 					}
 				}
+				mut.unlock();
+
 				return;
 			}
+			mut.unlock();
 
 			sleep(timeout);
 
