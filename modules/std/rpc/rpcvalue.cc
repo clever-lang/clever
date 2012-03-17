@@ -205,8 +205,27 @@ public:
 		mut.init();
 	}
 
+	void clear() {
+		::std::map<int, ::std::map<int,RPCData> >::iterator it=ret_map.begin(), end=ret_map.end();
+		::std::map<int,RPCData>::iterator it2, end2;
+
+		while (it!=end) {
+			it2 = it->second.begin(); end2 = it->second.end();
+
+			while (it2!=end2) {
+				free(it2->second.buffer);
+				++it2;
+			}
+
+			++it;
+		}
+	}
+
 	void insert(int client_socket_id, int id, int type, int size, char* b){
 		mut.lock();
+		if(ret_map[client_socket_id][id].buffer) {
+			free(ret_map[client_socket_id][id].buffer);
+		}
 		ret_map[client_socket_id][id]= RPCData(client_socket_id,type,size,b);
 		mut.unlock();
 	}
@@ -227,8 +246,7 @@ public:
 					ok=true;
 				}
 			}
-			mut.unlock();
-
+			
 			if(ok) {
 				int client_socket_id = r.client_socket_id;
 				int type = r.type;
@@ -241,11 +259,13 @@ public:
 					if(f_rt == 's' || f_rt == 'p') send(client_socket_id,(char*)(&size),sizeof(int));
 					if(size>0){
 						send(client_socket_id,b,size);
-						free(b);
 					}
 				}
+				mut.unlock();
 				return;
 			}
+			mut.unlock();
+
 			sleep(timeout);
 		}
 	}
@@ -268,15 +288,23 @@ public:
 		mut.init();
 	}
 
+	void clear() {
+		::std::map<int,RPCData>::iterator it=data_map.begin(), end=data_map.end();
+
+		while (it!=end) {
+			free(it->second.buffer);
+			++it;
+		}
+
+		data_map.clear();
+	}
+
 	void insert(int client_socket_id, int id, int type, int size, char* b) {
 		mut.lock();
 		::std::map<int,RPCData>::iterator it=data_map.find(id);
-		RPCData r;
 		if(it != data_map.end()) {
-			r = it->second;
-			if(r.buffer) {
-				free(r.buffer);
-				r.buffer=0;
+			if(data_map[id].buffer) {
+				free(data_map[id].buffer);
 			}
 		}
 		data_map[id]= RPCData(client_socket_id,type,size,b);
@@ -638,7 +666,6 @@ bool function_call(FCallArgs* f_call_args, int client_socket_id, bool send_resul
 						send(client_socket_id,(char*)(&if_rt),sizeof(int));
 						send(client_socket_id,(char*)(&size_vs),sizeof(int));
 						send(client_socket_id,(char*)(vs[0]+sizeof(int)), size_vs);
-						free(vs[0]);
 					} else {
 
 						g_mutex.lock();
@@ -650,6 +677,7 @@ bool function_call(FCallArgs* f_call_args, int client_socket_id, bool send_resul
 
 						ret_map.insert(client_socket_id, id_process, if_rt, size_vs*sizeof(char),b);
 					}
+					free(vs[0]);
 
 				}
 			break;
@@ -913,6 +941,9 @@ RPCValue::~RPCValue() {
 		}
 		++it;
 	}
+
+	ret_map.clear();
+	data_map.clear();
 }
 
 void RPCValue::addFunction(const char* libname, const char* funcname, const char* rettype){
