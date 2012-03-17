@@ -44,11 +44,12 @@ class RPCObjectValue : public DataValue {
 
 public:
 
-	RPCObjectValue() { type = 'v'; pointer = 0; }
+	RPCObjectValue() { type = 'v'; size=0; pointer = 0; }
 
 	~RPCObjectValue() { }
 
 	int type;
+	int size;
 	void* pointer;
 };
 

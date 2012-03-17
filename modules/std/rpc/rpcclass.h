@@ -67,6 +67,9 @@ public:
 	static CLEVER_METHOD(sendMsgString);
 	static CLEVER_METHOD(recvMsgString);
 
+	static CLEVER_METHOD(sendMsgObject);
+	static CLEVER_METHOD(recvMsgObject);
+
 	~RPC(){}
 private:
 	DISALLOW_COPY_AND_ASSIGN(RPC);

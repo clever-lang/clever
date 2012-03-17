@@ -63,6 +63,11 @@
 #define CLEVER_RPC_RS 0x13
 //Send String
 #define CLEVER_RPC_SS 0x14
+//Receive Object
+#define CLEVER_RPC_RO 0x15
+//Send Object
+#define CLEVER_RPC_SO 0x16
+
 
 namespace clever { namespace packages { namespace std { namespace rpc {
 
@@ -103,7 +108,7 @@ public:
 	RPCObjectValue* receiveObject();
 
 	/* Receive objects from another clients */
-	RPCObjectValue* receiveObject(int id_message);
+	RPCObjectValue* receiveObject(int id_message, double time_sleep);
 	int receiveInt(int id_message, double time_sleep);
 	double receiveDouble(int id_message, double time_sleep);
 	::std::string receiveString(int id_message, double time_sleep);

@@ -56,6 +56,7 @@ CLEVER_METHOD(RPCObject::do_assign) {
 		free(lv->pointer);
 		lv->pointer=0;
 	}
+	lv->size = rv->size;
 	lv->pointer = rv->pointer;
 }
 
