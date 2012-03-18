@@ -71,6 +71,7 @@ struct StackFrame {
 
 typedef std::vector<Opcode*> OpcodeList;
 typedef std::stack<StackFrame> CallStack;
+typedef std::stack<VarVector> ContextStack;
 
 /**
  * VM execution modes
@@ -87,6 +88,7 @@ struct VMVars {
 	VMMode mode;
 	bool running;
 	CallStack call;
+	ContextStack context;
 };
 typedef std::stack<VMVars> ExecVars;
 
@@ -133,6 +135,12 @@ public:
 	static void restore_local_vars();
 
 	/**
+	 * Context handling
+	 */
+	static void push_context();
+	static void pop_context(const Opcode*);
+
+	/**
 	 * Opcode handlers
 	 */
 	static CLEVER_VM_HANDLER(init_var_handler);
@@ -142,6 +150,7 @@ public:
 	static CLEVER_VM_HANDLER(fcall_handler);
 	static CLEVER_VM_HANDLER(mcall_handler);
 	static CLEVER_VM_HANDLER(assign_handler);
+	static CLEVER_VM_HANDLER(enter_handler);
 	static CLEVER_VM_HANDLER(end_func_handler);
 	static CLEVER_VM_HANDLER(return_handler);
 

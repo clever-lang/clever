@@ -434,6 +434,8 @@ AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
 
 	const_cast<Function*>(user_func)->setOffset(getOpNum());
 
+	emit(OP_ENTER, &VM_H(enter));
+
 	expr->getBlock()->acceptVisitor(*this);
 
 	emit(OP_LEAVE, &VM_H(end_func));

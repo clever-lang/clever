@@ -182,6 +182,36 @@ void VM::push_local_vars(Scope* scope) {
 	s_var->call.top().locals = vec;
 }
 
+/**
+ * Pushes a new context
+ */
+void VM::push_context() {
+	s_var->context.push(VarVector());
+}
+
+/**
+ * Pops the current context
+ */
+void VM::pop_context(const Opcode* opcode) {
+	for (size_t i = 0, j = s_var->context.top().size(); i < j; ++i) {
+		delete s_var->context.top().at(i).second;
+	}
+	s_var->context.pop();
+
+	if (s_var->context.empty()) {
+		return;
+	}
+
+	Value* tmp = new Value;
+	tmp->copy(opcode->getResultValue());
+
+	s_var->context.top().push_back(VarPair(opcode->getResultValue(), tmp));
+
+	for (size_t i = 0, j = s_var->context.top().size(); j > 1 && i < j; ++i) {
+		s_var->context.top().at(i).first->copy(s_var->context.top().at(i).second);
+	}
+}
+
 void VM::pop_local_vars() {
 	VarVector* vec = s_var->call.top().locals;
 
@@ -328,6 +358,10 @@ CLEVER_VM_HANDLER(VM::mcall_handler) {
 	var->call(result, args);
 }
 
+CLEVER_VM_HANDLER(VM::enter_handler) {
+	push_context();
+}
+
 /**
  * Marks the end of a function
  */
@@ -355,6 +389,8 @@ CLEVER_VM_HANDLER(VM::end_func_handler) {
 
 	s_return_value = NULL;
 
+	pop_context(op);
+
 	// Go to after the caller command
 	if (op) {
 		CLEVER_VM_GOTO(op->getOpNum());
@@ -373,7 +409,7 @@ CLEVER_VM_HANDLER(VM::return_handler) {
 	if (!s_var->call.empty()) {
 		const Opcode* call = s_var->call.top().ret;
 
-		if (call && value) {
+		if (EXPECTED(call && value)) {
 			call->getResultValue()->copy(value);
 		}
 		// pop + restore arguments from stack
@@ -388,6 +424,8 @@ CLEVER_VM_HANDLER(VM::return_handler) {
 		}
 
 		s_return_value = value;
+
+		pop_context(call);
 
 		// Go back to the caller
 		if (s_var->mode == INTERNAL && s_var->call.empty()) {
