@@ -612,7 +612,7 @@ bool function_call(FCallArgs* f_call_args, int client_socket_id, bool send_resul
 						memcpy(b,&vi,sizeof(int));
 
 						g_mutex.unlock();
-
+						if_rt = (int) (f_rt);
 						ret_map.insert(client_socket_id, id_process, if_rt, sizeof(int),b);
 					}
 				}
@@ -633,7 +633,7 @@ bool function_call(FCallArgs* f_call_args, int client_socket_id, bool send_resul
 						memcpy(b,&vd,sizeof(double));
 
 						g_mutex.unlock();
-
+						if_rt = (int) (f_rt);
 						ret_map.insert(client_socket_id, id_process, if_rt, sizeof(double),b);
 					}
 				}
@@ -655,7 +655,7 @@ bool function_call(FCallArgs* f_call_args, int client_socket_id, bool send_resul
 						memcpy(b,&vc,sizeof(char));
 
 						g_mutex.unlock();
-
+						if_rt = (int) (f_rt);
 						ret_map.insert(client_socket_id, id_process, if_rt, sizeof(char),b);
 					}
 				}
@@ -683,7 +683,7 @@ bool function_call(FCallArgs* f_call_args, int client_socket_id, bool send_resul
 						memcpy(b,(char*)(vs[0]+sizeof(int)),size_vs);
 
 						g_mutex.unlock();
-
+						if_rt = (int) (f_rt);
 						ret_map.insert(client_socket_id, id_process, if_rt, size_vs*sizeof(char),b);
 					}
 					free(vs[0]);
@@ -699,6 +699,7 @@ bool function_call(FCallArgs* f_call_args, int client_socket_id, bool send_resul
 						if_rt = (int) (f_rt);
 						send(client_socket_id,(char*)(&if_rt),sizeof(int));
 					} else {
+						if_rt = (int) (f_rt);
 						ret_map.insert(client_socket_id, id_process, if_rt, 0,0);
 					}
 				}
