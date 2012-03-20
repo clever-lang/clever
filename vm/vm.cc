@@ -209,8 +209,6 @@ void VM::pop_context(const Opcode* opcode) {
 	Value* tmp = new Value;
 	tmp->copy(opcode->getResultValue());
 
-	//std::cout << "contexto " << s_var->context.size() << " -> " << opcode->getResultValue() << " = " << tmp->toString() << std::endl;
-
 	s_var->context.top().push_back(VarPair(opcode->getResultValue(), tmp));
 
 	for (size_t i = 0, j = s_var->context.top().size(); j > 1 && i < j; ++i) {
@@ -364,10 +362,17 @@ CLEVER_VM_HANDLER(VM::mcall_handler) {
 	const CallableValue* const var = _get_op1_callable(opcode);
 	const ValueVector* const args = opcode.getOp2Vector();
 	Value* result = opcode.getResultValue();
+	bool has_return = var->getMethod()->getReturnType() != NULL;
 
-	push_context();
+	if (has_return) {
+		push_context();
+	}
+
 	var->call(result, args);
-	pop_context(&opcode);
+
+	if (has_return) {
+		pop_context(&opcode);
+	}
 }
 
 /**
