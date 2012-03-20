@@ -723,3 +723,4 @@ CLEVER_VM_HANDLER(VM::init_var_handler) {
 }
 
 } // clever
+
