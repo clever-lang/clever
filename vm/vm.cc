@@ -365,7 +365,9 @@ CLEVER_VM_HANDLER(VM::mcall_handler) {
 	const ValueVector* const args = opcode.getOp2Vector();
 	Value* result = opcode.getResultValue();
 
+	push_context();
 	var->call(result, args);
+	pop_context(&opcode);
 }
 
 /**
