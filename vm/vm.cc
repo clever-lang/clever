@@ -186,14 +186,16 @@ void VM::push_local_vars(Scope* scope) {
  * Pushes a new context
  */
 void VM::push_context() {
-	s_var->context.push(VarVector());
+	if (s_var->context.size()) {
+		s_var->context.push(VarVector());
+	}
 }
 
 /**
  * Pops the current context
  */
 void VM::pop_context(const Opcode* opcode) {
-	if (opcode == NULL) {
+	if (opcode == NULL || s_var->context.size() == 0) {
 		return;
 	}
 
@@ -338,8 +340,10 @@ CLEVER_VM_HANDLER(VM::fcall_handler) {
 	if (func->isNearCall()) {
 		const Function* fptr = func->getFunction();
 
-		push_context();
+		// New context
+		s_var->context.push(VarVector());
 
+		// New stack frame
 		s_var->call.push(StackFrame(&opcode));
 
 		if (EXPECTED(args != NULL)) {
