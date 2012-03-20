@@ -193,6 +193,10 @@ void VM::push_context() {
  * Pops the current context
  */
 void VM::pop_context(const Opcode* opcode) {
+	if (opcode == NULL) {
+		return;
+	}
+
 	for (size_t i = 0, j = s_var->context.top().size(); i < j; ++i) {
 		delete s_var->context.top().at(i).second;
 	}
@@ -204,6 +208,8 @@ void VM::pop_context(const Opcode* opcode) {
 
 	Value* tmp = new Value;
 	tmp->copy(opcode->getResultValue());
+
+	//std::cout << "contexto " << s_var->context.size() << " -> " << opcode->getResultValue() << " = " << tmp->toString() << std::endl;
 
 	s_var->context.top().push_back(VarPair(opcode->getResultValue(), tmp));
 
@@ -334,6 +340,8 @@ CLEVER_VM_HANDLER(VM::fcall_handler) {
 	if (func->isNearCall()) {
 		const Function* fptr = func->getFunction();
 
+		push_context();
+
 		s_var->call.push(StackFrame(&opcode));
 
 		if (EXPECTED(args != NULL)) {
@@ -358,14 +366,10 @@ CLEVER_VM_HANDLER(VM::mcall_handler) {
 	var->call(result, args);
 }
 
-CLEVER_VM_HANDLER(VM::enter_handler) {
-	push_context();
-}
-
 /**
  * Marks the end of a function
  */
-CLEVER_VM_HANDLER(VM::end_func_handler) {
+CLEVER_VM_HANDLER(VM::leave_handler) {
 	const Opcode* op = NULL;
 
 	// On INTERNAL mode the VM might have an empty stack call
