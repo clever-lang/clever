@@ -185,7 +185,7 @@ void VM::push_local_vars(Scope* scope) {
 /**
  * Pushes a new context
  */
-void VM::push_context() {
+inline void VM::push_context() {
 	if (s_var->context.size()) {
 		s_var->context.push(VarVector());
 	}
