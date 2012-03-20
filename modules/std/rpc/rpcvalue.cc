@@ -456,9 +456,9 @@ bool function_call(FCallArgs* f_call_args, int client_socket_id, bool send_resul
 	ffi_cif cif;
 
 	ffi_type* ffi_rt;
-	ffi_type** ffi_args;
+	ffi_type** ffi_args = 0;
 
-	void** ffi_values;
+	void** ffi_values = 0;
 
 
 	g_mutex.lock();
@@ -1050,7 +1050,7 @@ void RPCValue::createServer(int port, int connections) {
 	memset(&sa, 0, sizeof(sa));
 
 	sa.sin_family = PF_INET;
-	sa.sin_port = ::htons(port);
+	sa.sin_port = htons(port);
 	int m_socket = ::socket(AF_INET, SOCK_STREAM, 0);
 
 	bind(m_socket, (sockaddr *)&sa, sizeof(sockaddr_in));
