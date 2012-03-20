@@ -351,7 +351,9 @@ CLEVER_VM_HANDLER(VM::fcall_handler) {
 
 		func->call(next_op);
 	} else {
+		push_context();
 		func->call(result, args);
+		pop_context(&opcode);
 	}
 }
 
@@ -457,7 +459,9 @@ CLEVER_VM_HANDLER(VM::plus_handler) {
 	const ValueVector* const args = opcode.getOp2Vector();
 	Value* result = opcode.getResultValue();
 
+	push_context();
 	var->call(result, args);
+	pop_context(&opcode);
 }
 
 /**
@@ -468,7 +472,9 @@ CLEVER_VM_HANDLER(VM::minus_handler) {
 	const ValueVector* const args = opcode.getOp2Vector();
 	Value* result = opcode.getResultValue();
 
+	push_context();
 	var->call(result, args);
+	pop_context(&opcode);
 }
 
 /**
@@ -479,7 +485,9 @@ CLEVER_VM_HANDLER(VM::div_handler) {
 	const ValueVector* const args = opcode.getOp2Vector();
 	Value* result = opcode.getResultValue();
 
+	push_context();
 	var->call(result, args);
+	pop_context(&opcode);
 }
 
 /**
@@ -490,7 +498,9 @@ CLEVER_VM_HANDLER(VM::mult_handler) {
 	const ValueVector* const args = opcode.getOp2Vector();
 	Value* result = opcode.getResultValue();
 
+	push_context();
 	var->call(result, args);
+	pop_context(&opcode);
 }
 
 /**
@@ -501,7 +511,9 @@ CLEVER_VM_HANDLER(VM::mod_handler) {
 	const ValueVector* const args = opcode.getOp2Vector();
 	Value* result = opcode.getResultValue();
 
+	push_context();
 	var->call(result, args);
+	pop_context(&opcode);
 }
 
 /**
@@ -512,7 +524,9 @@ CLEVER_VM_HANDLER(VM::inc_handler) {
 	const ValueVector* const args = opcode.getOp2Vector();
 	Value* result = opcode.getResultValue();
 
+	push_context();
 	var->call(result, args);
+	pop_context(&opcode);
 }
 
 /**
@@ -523,7 +537,9 @@ CLEVER_VM_HANDLER(VM::dec_handler) {
 	const ValueVector* const args = opcode.getOp2Vector();
 	Value* result = opcode.getResultValue();
 
+	push_context();
 	var->call(result, args);
+	pop_context(&opcode);
 }
 
 /**
@@ -534,7 +550,9 @@ CLEVER_VM_HANDLER(VM::xor_handler) {
 	const ValueVector* const args = opcode.getOp2Vector();
 	Value* result = opcode.getResultValue();
 
+	push_context();
 	var->call(result, args);
+	pop_context(&opcode);
 }
 
 /**
@@ -545,7 +563,9 @@ CLEVER_VM_HANDLER(VM::bw_or_handler) {
 	const ValueVector* const args = opcode.getOp2Vector();
 	Value* result = opcode.getResultValue();
 
+	push_context();
 	var->call(result, args);
+	pop_context(&opcode);
 }
 
 /**
@@ -556,7 +576,9 @@ CLEVER_VM_HANDLER(VM::bw_and_handler) {
 	const ValueVector* const args = opcode.getOp2Vector();
 	Value* result = opcode.getResultValue();
 
+	push_context();
 	var->call(result, args);
+	pop_context(&opcode);
 }
 
 /**
@@ -567,7 +589,9 @@ CLEVER_VM_HANDLER(VM::bw_not_handler) {
 	const ValueVector* const args = opcode.getOp2Vector();
 	Value* result = opcode.getResultValue();
 
+	push_context();
 	var->call(result, args);
+	pop_context(&opcode);
 }
 
 /**
@@ -578,7 +602,9 @@ CLEVER_VM_HANDLER(VM::greater_handler) {
 	const ValueVector* const args = opcode.getOp2Vector();
 	Value* result = opcode.getResultValue();
 
+	push_context();
 	var->call(result, args);
+	pop_context(&opcode);
 }
 
 /**
@@ -589,7 +615,9 @@ CLEVER_VM_HANDLER(VM::less_handler) {
 	const ValueVector* const args = opcode.getOp2Vector();
 	Value* result = opcode.getResultValue();
 
+	push_context();
 	var->call(result, args);
+	pop_context(&opcode);
 }
 
 /**
@@ -600,7 +628,9 @@ CLEVER_VM_HANDLER(VM::ge_handler) {
 	const ValueVector* const args = opcode.getOp2Vector();
 	Value* result = opcode.getResultValue();
 
+	push_context();
 	var->call(result, args);
+	pop_context(&opcode);
 }
 
 /**
@@ -611,7 +641,9 @@ CLEVER_VM_HANDLER(VM::le_handler) {
 	const ValueVector* const args = opcode.getOp2Vector();
 	Value* result = opcode.getResultValue();
 
+	push_context();
 	var->call(result, args);
+	pop_context(&opcode);
 }
 
 /**
@@ -622,7 +654,9 @@ CLEVER_VM_HANDLER(VM::equal_handler) {
 	const ValueVector* const args = opcode.getOp2Vector();
 	Value* result = opcode.getResultValue();
 
+	push_context();
 	var->call(result, args);
+	pop_context(&opcode);
 }
 
 /**
@@ -633,7 +667,9 @@ CLEVER_VM_HANDLER(VM::ne_handler) {
 	const ValueVector* const args = opcode.getOp2Vector();
 	Value* result = opcode.getResultValue();
 
+	push_context();
 	var->call(result, args);
+	pop_context(&opcode);
 }
 
 /**
@@ -644,7 +680,9 @@ CLEVER_VM_HANDLER(VM::lshift_handler) {
 	const ValueVector* const args = opcode.getOp2Vector();
 	Value* result = opcode.getResultValue();
 
+	push_context();
 	var->call(result, args);
+	pop_context(&opcode);
 }
 
 /**
@@ -655,7 +693,9 @@ CLEVER_VM_HANDLER(VM::rshift_handler) {
 	const ValueVector* const args = opcode.getOp2Vector();
 	Value* result = opcode.getResultValue();
 
+	push_context();
 	var->call(result, args);
+	pop_context(&opcode);
 }
 
 /**
@@ -666,7 +706,9 @@ CLEVER_VM_HANDLER(VM::not_handler) {
 	const ValueVector* const args = opcode.getOp2Vector();
 	Value* result = opcode.getResultValue();
 
+	push_context();
 	var->call(result, args);
+	pop_context(&opcode);
 }
 
 /**
