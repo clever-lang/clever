@@ -254,14 +254,16 @@ public:
 				int size = r.size;	
 				char* b = r.buffer;
 
-				send(client_socket_id,(char*)(&type),sizeof(int));
+				send(client_socket_id,(char*)(&type),sizeof(type));
 				if(f_rt != 'v'){
-					if(f_rt == 's' || f_rt == 'p') send(client_socket_id,(char*)(&size),sizeof(int));
+					if(f_rt == 's' || f_rt == 'p') send(client_socket_id,(char*)(&size),sizeof(size));
 					if(size>0){
 						send(client_socket_id,b,size);
 					}
 				}
+
 				mut.unlock();
+
 				return;
 			}
 			mut.unlock();
@@ -589,9 +591,10 @@ bool function_call(FCallArgs* f_call_args, int client_socket_id, bool send_resul
 	}
 
 	/*call function*/
-	int if_rt=f_rt;
+	int if_rt;
 	
-	
+	if_rt = (int) (f_rt);
+
 	switch ( f_rt ) {
 			case 'i': 
 				{
@@ -599,8 +602,9 @@ bool function_call(FCallArgs* f_call_args, int client_socket_id, bool send_resul
 					ffi_call(&cif, pf, &vi, ffi_values);
 
 					if (send_result) {
-						send(client_socket_id,(char*)(&if_rt),sizeof(int));
-						send(client_socket_id,(char*)(&vi),sizeof(int));
+						if_rt = (int) (f_rt);
+						send(client_socket_id,(char*)(&if_rt),sizeof(if_rt));
+						send(client_socket_id,(char*)(&vi),sizeof(vi));
 					} else {
 						g_mutex.lock();
 
@@ -619,6 +623,7 @@ bool function_call(FCallArgs* f_call_args, int client_socket_id, bool send_resul
 					double vd;
 					ffi_call(&cif, pf, &vd, ffi_values);
 					if (send_result) {
+						if_rt = (int) (f_rt);
 						send(client_socket_id,(char*)(&if_rt),sizeof(int));
 						send(client_socket_id,(char*)(&vd),sizeof(double));
 					} else {
@@ -640,6 +645,7 @@ bool function_call(FCallArgs* f_call_args, int client_socket_id, bool send_resul
 					ffi_call(&cif, pf, &vc, ffi_values);
 
 					if (send_result) {
+						if_rt = (int) (f_rt);
 						send(client_socket_id,(char*)(&if_rt),sizeof(int));
 						send(client_socket_id,(char*)(&vc),sizeof(char));
 					} else {
@@ -665,6 +671,7 @@ bool function_call(FCallArgs* f_call_args, int client_socket_id, bool send_resul
 					 size_vs = * ((int*) vs[0]);
 
 					if (send_result) {
+						if_rt = (int) (f_rt);
 						send(client_socket_id,(char*)(&if_rt),sizeof(int));
 						send(client_socket_id,(char*)(&size_vs),sizeof(int));
 						send(client_socket_id,(char*)(vs[0]+sizeof(int)), size_vs);
@@ -689,6 +696,7 @@ bool function_call(FCallArgs* f_call_args, int client_socket_id, bool send_resul
 					ffi_call(&cif, pf, NULL, ffi_values);
 
 					if (send_result) {
+						if_rt = (int) (f_rt);
 						send(client_socket_id,(char*)(&if_rt),sizeof(int));
 					} else {
 						ret_map.insert(client_socket_id, id_process, if_rt, 0,0);
@@ -838,12 +846,12 @@ void* process(void* args) {
 				t_message = 'i';
 
 				g_mutex.lock();
-				buffer = (char*) malloc (sizeof(int));
+				buffer = (char*) malloc (sizeof(vi_message));
 				g_mutex.unlock();
 
-				memcpy(buffer,&vi_message,sizeof(int));
+				memcpy(buffer,&vi_message,sizeof(vi_message));
 
-				data_map.insert(client_socket_id, id_message, t_message, sizeof(int),buffer);
+				data_map.insert(client_socket_id, id_message, t_message, sizeof(vi_message),buffer);
 			break;
 
 			case CLEVER_RPC_SI: case CLEVER_RPC_SD: case CLEVER_RPC_SS: case CLEVER_RPC_SO:
@@ -862,12 +870,12 @@ void* process(void* args) {
 				t_message = 'd';
 
 				g_mutex.lock();
-				buffer = (char*) malloc (sizeof(double));
+				buffer = (char*) malloc (sizeof(vd_message));
 				g_mutex.unlock();
 
-				memcpy(buffer,&vd_message,sizeof(double));
+				memcpy(buffer,&vd_message,sizeof(vd_message));
 
-				data_map.insert(client_socket_id, id_message, t_message, sizeof(double),buffer);
+				data_map.insert(client_socket_id, id_message, t_message, sizeof(vd_message),buffer);
 			break;
 
 			case CLEVER_RPC_RS:
@@ -878,12 +886,12 @@ void* process(void* args) {
 				t_message = 's';
 
 				g_mutex.lock();
-				buffer = (char*) malloc (len_message*sizeof(char));
+				buffer = (char*) malloc (len_message);
 				g_mutex.unlock();
 
 				recv (client_socket_id, buffer, len_message, 0);
 
-				data_map.insert(client_socket_id, id_message, t_message, len_message*sizeof(char),buffer);
+				data_map.insert(client_socket_id, id_message, t_message, len_message,buffer);
 			break;
 
 			case CLEVER_RPC_RO:
@@ -894,12 +902,12 @@ void* process(void* args) {
 				t_message = 'p';
 
 				g_mutex.lock();
-				buffer = (char*) malloc (len_message*sizeof(char));
+				buffer = (char*) malloc (len_message);
 				g_mutex.unlock();
 
 				recv (client_socket_id, buffer, len_message, 0);
 
-				data_map.insert(client_socket_id, id_message, t_message, len_message*sizeof(char),buffer);
+				data_map.insert(client_socket_id, id_message, t_message, len_message,buffer);
 			break;
 
 
@@ -918,7 +926,7 @@ void* process(void* args) {
 
 				g_mutex.lock();
 
-				fname = (char*) malloc ((len_fname+1)*sizeof(char));
+				fname = (char*) malloc ((len_fname+1));
 				fname[len_fname]='\0';
 
 				g_mutex.unlock();
@@ -1034,7 +1042,7 @@ void RPCValue::createConnection(int client_socket_id) {
 	pthread_attr_setdetachstate (&attr, PTHREAD_CREATE_DETACHED);
 
 	g_mutex.lock();
-	int * cp = (int*)malloc(sizeof(int)); 
+	int * cp = (int*)malloc(sizeof(client_socket_id)); 
 	*cp = client_socket_id;
 	g_mutex.unlock();
 
@@ -1095,7 +1103,7 @@ void RPCValue::createServer(int port, int connections) {
 			createConnection(client_socket_id);
 			printer.printMsg("Client connected...\n");
 			int ok=CLEVER_RPC_OK;
-			send(client_socket_id,(char*)(&ok),sizeof(int));
+			send(client_socket_id,(char*)(&ok),sizeof(ok));
 		}
 		
 	} while (!kill_me);
@@ -1130,32 +1138,32 @@ bool RPCValue::createClient(const char* host, const int port, const int time) {
 void RPCValue::sendString(const char* s, int len) {
 	int id=CLEVER_RPC_PS;
 
-	socket->send((char*)(&id),sizeof(int));
-	socket->send((char*)(&len),sizeof(int));
+	socket->send((char*)(&id),sizeof(id));
+	socket->send((char*)(&len),sizeof(len));
 	socket->send(s,len);
 }
 
 void RPCValue::sendInteger(int v) {
 	int id=CLEVER_RPC_PI;
 
-	socket->send((char*)(&id),sizeof(int));
-	socket->send((char*)(&v),sizeof(int));
+	socket->send((char*)(&id),sizeof(id));
+	socket->send((char*)(&v),sizeof(v));
 }
 
 void RPCValue::sendKill() {
 	int id=CLEVER_RPC_KILL;
 
-	socket->send((char*)(&id),sizeof(int));
+	socket->send((char*)(&id),sizeof(id));
 }
 
 bool RPCValue::sendInit() {
 	int id=CLEVER_RPC_INIT;
 
-	socket->send((char*)(&id),sizeof(int));
+	socket->send((char*)(&id),sizeof(id));
 
 	int ok;
 
-	if(!socket->receive((char*)(&ok),sizeof(int))) {
+	if(!socket->receive((char*)(&ok),sizeof(ok))) {
 		return false;
 	}
 
@@ -1165,13 +1173,13 @@ bool RPCValue::sendInit() {
 void RPCValue::sendFunctionCall(const char* fname, const char* args, int len_fname, int n_args, int len_args){
 	int id=CLEVER_RPC_FC;
 
-	socket->send((char*)(&id),sizeof(int));
-	socket->send((char*)(&len_fname),sizeof(int));
+	socket->send((char*)(&id),sizeof(id));
+	socket->send((char*)(&len_fname),sizeof(len_fname));
 	socket->send(fname,len_fname);
-	socket->send((char*)(&n_args),sizeof(int));
+	socket->send((char*)(&n_args),sizeof(n_args));
 
 	if(n_args>0){
-		socket->send((char*)(&len_args),sizeof(int));
+		socket->send((char*)(&len_args),sizeof(len_args));
 		socket->send(args,len_args);
 	}
 
@@ -1180,14 +1188,14 @@ void RPCValue::sendFunctionCall(const char* fname, const char* args, int len_fna
 void RPCValue::sendProcessCall(int id_process, const char* fname, const char* args, int len_fname, int n_args, int len_args){
 	int id = CLEVER_RPC_PC;
 
-	socket->send((char*)(&id),sizeof(int));
-	socket->send((char*)(&id_process),sizeof(int));
-	socket->send((char*)(&len_fname),sizeof(int));
+	socket->send((char*)(&id),sizeof(id));
+	socket->send((char*)(&id_process),sizeof(id_process));
+	socket->send((char*)(&len_fname),sizeof(len_fname));
 	socket->send(fname,len_fname);
-	socket->send((char*)(&n_args),sizeof(int));
+	socket->send((char*)(&n_args),sizeof(n_args));
 
 	if(n_args>0){
-		socket->send((char*)(&len_args),sizeof(int));
+		socket->send((char*)(&len_args),sizeof(len_args));
 		socket->send(args,len_args);
 	}
 
@@ -1204,14 +1212,14 @@ void RPCValue::sendInteger(int id_message, int v) {
 int RPCValue::receiveInt(int id_message, double time_sleep) {
 	int id = CLEVER_RPC_SI;
 
-	socket->send((char*)(&id),sizeof(int));
-	socket->send((char*)(&id_message),sizeof(int));
-	socket->send((char*)(&time_sleep),sizeof(double));
+	socket->send((char*)(&id),sizeof(id));
+	socket->send((char*)(&id_message),sizeof(id_message));
+	socket->send((char*)(&time_sleep),sizeof(time_sleep));
 
 	int v;
 	int type;
 
-	if(!socket->receive((char*)(&type),sizeof(int))) {
+	if(!socket->receive((char*)(&type),sizeof(type))) {
 		clever_fatal("[RPC] Failed to receive int!\n");
 		return 0;
 	}
@@ -1221,7 +1229,7 @@ int RPCValue::receiveInt(int id_message, double time_sleep) {
 		return 0;
 	}
 
-	socket->receive((char*)(&v),sizeof(int));
+	socket->receive((char*)(&v),sizeof(v));
 
 	return v;
 }
@@ -1229,22 +1237,22 @@ int RPCValue::receiveInt(int id_message, double time_sleep) {
 void RPCValue::sendDouble(int id_message, double v) {
 	int id = CLEVER_RPC_RD;
 
-	socket->send((char*)(&id),sizeof(int));
-	socket->send((char*)(&id_message),sizeof(int));
-	socket->send((char*)(&v),sizeof(double));
+	socket->send((char*)(&id),sizeof(id));
+	socket->send((char*)(&id_message),sizeof(id_message));
+	socket->send((char*)(&v),sizeof(v));
 }
 
 double RPCValue::receiveDouble(int id_message, double time_sleep) {
 	int id = CLEVER_RPC_SD;
 
-	socket->send((char*)(&id),sizeof(int));
-	socket->send((char*)(&id_message),sizeof(int));
-	socket->send((char*)(&time_sleep),sizeof(double));
+	socket->send((char*)(&id),sizeof(id));
+	socket->send((char*)(&id_message),sizeof(id_message));
+	socket->send((char*)(&time_sleep),sizeof(time_sleep));
 
 	double v;
 	int type;
 
-	if(!socket->receive((char*)(&type),sizeof(int))) {
+	if(!socket->receive((char*)(&type),sizeof(type))) {
 		clever_fatal("[RPC] Failed to receive double!\n");
 		return 0;
 	}
@@ -1254,7 +1262,7 @@ double RPCValue::receiveDouble(int id_message, double time_sleep) {
 		return 0;
 	}
 
-	socket->receive((char*)(&v),sizeof(double));
+	socket->receive((char*)(&v),sizeof(v));
 
 	return v;
 }
@@ -1262,25 +1270,25 @@ double RPCValue::receiveDouble(int id_message, double time_sleep) {
 void RPCValue::sendString(int id_message, const char* s, int len) {
 	int id = CLEVER_RPC_RS;
 
-	socket->send((char*)(&id),sizeof(int));
-	socket->send((char*)(&id_message),sizeof(int));
-	socket->send((char*)(&len),sizeof(int));
-	socket->send(s,sizeof(char)*len);
+	socket->send((char*)(&id),sizeof(id));
+	socket->send((char*)(&id_message),sizeof(id_message));
+	socket->send((char*)(&len),sizeof(len));
+	socket->send(s,len);
 }
 
 ::std::string RPCValue::receiveString(int id_message, double time_sleep) {
 	int id = CLEVER_RPC_SS;
 
-	socket->send((char*)(&id),sizeof(int));
-	socket->send((char*)(&id_message),sizeof(int));
-	socket->send((char*)(&time_sleep),sizeof(double));
+	socket->send((char*)(&id),sizeof(id));
+	socket->send((char*)(&id_message),sizeof(id_message));
+	socket->send((char*)(&time_sleep),sizeof(time_sleep));
 
 	char* buffer;
 	::std::string v;
 	int len;
 	int type;
 
-	if(!socket->receive((char*)(&type),sizeof(int))) {
+	if(!socket->receive((char*)(&type),sizeof(type))) {
 		clever_fatal("[RPC] Failed to receive String!\n");
 		return 0;
 	}
@@ -1290,13 +1298,13 @@ void RPCValue::sendString(int id_message, const char* s, int len) {
 		return 0;
 	}
 
-	socket->receive((char*)(&len),sizeof(int));
+	socket->receive((char*)(&len),sizeof(len));
 
 	g_mutex.lock();
-	buffer = (char*)malloc((len+1)*sizeof(char));
+	buffer = (char*)malloc((len+1));
 	g_mutex.unlock();
 
-	socket->receive(buffer,len*sizeof(char));
+	socket->receive(buffer,len);
 	buffer[len]='\0';
 	v=buffer;
 	free(buffer);
@@ -1308,25 +1316,25 @@ void RPCValue::sendString(int id_message, const char* s, int len) {
 void RPCValue::sendObject(int id_message, const char* s, int len) {
 	int id = CLEVER_RPC_RO;
 
-	socket->send((char*)(&id),sizeof(int));
-	socket->send((char*)(&id_message),sizeof(int));
-	socket->send((char*)(&len),sizeof(int));
-	socket->send(s,sizeof(char)*len);
+	socket->send((char*)(&id),sizeof(id));
+	socket->send((char*)(&id_message),sizeof(id_message));
+	socket->send((char*)(&len),sizeof(len));
+	socket->send(s,len);
 }
 
 RPCObjectValue* RPCValue::receiveObject(int id_message, double time_sleep) {
 	int id = CLEVER_RPC_SO;
 
-	socket->send((char*)(&id),sizeof(int));
-	socket->send((char*)(&id_message),sizeof(int));
-	socket->send((char*)(&time_sleep),sizeof(double));
+	socket->send((char*)(&id),sizeof(id));
+	socket->send((char*)(&id_message),sizeof(id_message));
+	socket->send((char*)(&time_sleep),sizeof(time_sleep));
 
 	char* buffer;
 	RPCObjectValue* obj =  new RPCObjectValue;
 	int len;
 	int type;
 
-	if(!socket->receive((char*)(&type),sizeof(int))) {
+	if(!socket->receive((char*)(&type),sizeof(type))) {
 		clever_fatal("[RPC] Failed to receive Object!\n");
 		return 0;
 	}
@@ -1336,13 +1344,13 @@ RPCObjectValue* RPCValue::receiveObject(int id_message, double time_sleep) {
 		return 0;
 	}
 
-	socket->receive((char*)(&len),sizeof(int));
+	socket->receive((char*)(&len),sizeof(len));
 
 	g_mutex.lock();
-	buffer = (char*)malloc((len)*sizeof(char));
+	buffer = (char*)malloc(len);
 	g_mutex.unlock();
 
-	socket->receive(buffer,len*sizeof(char));
+	socket->receive(buffer,len);
 
 	obj->type = 'p';
 	obj->size = len;
@@ -1353,17 +1361,18 @@ RPCObjectValue* RPCValue::receiveObject(int id_message, double time_sleep) {
 
 RPCObjectValue* RPCValue::getResultProcess(int id_process, double time_sleep) {
 	int id = CLEVER_RPC_GR;
-	socket->send((char*)(&id),sizeof(int));
-	socket->send((char*)(&id_process),sizeof(int));
-	socket->send((char*)(&time_sleep),sizeof(double));
+	socket->send((char*)(&id),sizeof(id));
+	socket->send((char*)(&id_process),sizeof(id_process));
+	socket->send((char*)(&time_sleep),sizeof(time_sleep));
 	return receiveObject();
 }
 
 RPCObjectValue* RPCValue::receiveObject(){
 	RPCObjectValue* obj =  new RPCObjectValue;
+	int len, len_s;
+	len = sizeof(len);
 
-	int* type = (int*)malloc(sizeof(int));
-	int len=sizeof(int), len_s;
+	int* type = (int*)malloc(sizeof(len));
 	int* vi;
 	char* vc, *buffer;
 	double* vd;
@@ -1379,9 +1388,9 @@ RPCObjectValue* RPCValue::receiveObject(){
 	switch(*type){
 		case 'i':
 			{
-				vi = (int*) malloc(sizeof(int));
-				socket->receive((char*)vi,sizeof(int));
-				obj->size = sizeof(int);
+				vi = (int*) malloc(sizeof(len));
+				socket->receive((char*)vi,sizeof(len));
+				obj->size = sizeof(len);
 				obj->pointer=vi;
 			}
 		break;

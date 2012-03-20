@@ -67,7 +67,8 @@
 #define CLEVER_RPC_RO 0x15
 //Send Object
 #define CLEVER_RPC_SO 0x16
-
+//Object received
+#define CLEVER_RPC_OR 0x17
 
 namespace clever { namespace packages { namespace std { namespace rpc {
 
