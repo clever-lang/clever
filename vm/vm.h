@@ -138,6 +138,7 @@ public:
 	 * Context handling
 	 */
 	static void push_context();
+	static void save_context(const Opcode&);
 	static void pop_context(const Opcode*);
 
 	/**

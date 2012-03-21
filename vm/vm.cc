@@ -218,6 +218,15 @@ void VM::pop_context(const Opcode* opcode) {
 	}
 }
 
+inline void VM::save_context(const Opcode& opcode) {
+	if (s_var->context.size()) {
+		Value* tmp = new Value;
+		tmp->copy(opcode.getResultValue());
+
+		s_var->context.top().push_back(VarPair(opcode.getResultValue(), tmp));
+	}
+}
+
 void VM::pop_local_vars() {
 	VarVector* vec = s_var->call.top().locals;
 
@@ -421,9 +430,8 @@ CLEVER_VM_HANDLER(VM::leave_handler) {
  * Returns to the caller or terminates the execution
  */
 CLEVER_VM_HANDLER(VM::return_handler) {
-	const Value* const value = opcode.getOp1Value();
-
 	if (!s_var->call.empty()) {
+		const Value* const value = opcode.getOp1Value();
 		const Opcode* call = s_var->call.top().ret;
 
 		if (EXPECTED(call && value)) {
@@ -470,256 +478,160 @@ CLEVER_VM_HANDLER(VM::plus_handler) {
 	const ValueVector* const args = opcode.getOp2Vector();
 	Value* result = opcode.getResultValue();
 
-	push_context();
 	var->call(result, args);
-	pop_context(&opcode);
+	save_context(opcode);
 }
 
 /**
  * Minus arithmetic operation
  */
 CLEVER_VM_HANDLER(VM::minus_handler) {
-	const CallableValue* const var = _get_op1_callable(opcode);
-	const ValueVector* const args = opcode.getOp2Vector();
-	Value* result = opcode.getResultValue();
-
-	push_context();
-	var->call(result, args);
-	pop_context(&opcode);
+	_get_op1_callable(opcode)->call(opcode.getResultValue(), opcode.getOp2Vector());
+	save_context(opcode);
 }
 
 /**
  * Div arithmetic operation
  */
 CLEVER_VM_HANDLER(VM::div_handler) {
-	const CallableValue* const var = _get_op1_callable(opcode);
-	const ValueVector* const args = opcode.getOp2Vector();
-	Value* result = opcode.getResultValue();
-
-	push_context();
-	var->call(result, args);
-	pop_context(&opcode);
+	_get_op1_callable(opcode)->call(opcode.getResultValue(), opcode.getOp2Vector());
+	save_context(opcode);
 }
 
 /**
  * Mult arithmetic operation
  */
 CLEVER_VM_HANDLER(VM::mult_handler) {
-	const CallableValue* const var = _get_op1_callable(opcode);
-	const ValueVector* const args = opcode.getOp2Vector();
-	Value* result = opcode.getResultValue();
-
-	push_context();
-	var->call(result, args);
-	pop_context(&opcode);
+	_get_op1_callable(opcode)->call(opcode.getResultValue(), opcode.getOp2Vector());
+	save_context(opcode);
 }
 
 /**
  * Mod arithmetic operation
  */
 CLEVER_VM_HANDLER(VM::mod_handler) {
-	const CallableValue* const var = _get_op1_callable(opcode);
-	const ValueVector* const args = opcode.getOp2Vector();
-	Value* result = opcode.getResultValue();
-
-	push_context();
-	var->call(result, args);
-	pop_context(&opcode);
+	_get_op1_callable(opcode)->call(opcode.getResultValue(), opcode.getOp2Vector());
+	save_context(opcode);
 }
 
 /**
  * Inc operation (x++, ++x)
  */
 CLEVER_VM_HANDLER(VM::inc_handler) {
-	const CallableValue* const var = _get_op1_callable(opcode);
-	const ValueVector* const args = opcode.getOp2Vector();
-	Value* result = opcode.getResultValue();
-
-	push_context();
-	var->call(result, args);
-	pop_context(&opcode);
+	_get_op1_callable(opcode)->call(opcode.getResultValue(), opcode.getOp2Vector());
+	save_context(opcode);
 }
 
 /**
  * Dec arithmetic operation (x--, --x)
  */
 CLEVER_VM_HANDLER(VM::dec_handler) {
-	const CallableValue* const var = _get_op1_callable(opcode);
-	const ValueVector* const args = opcode.getOp2Vector();
-	Value* result = opcode.getResultValue();
-
-	push_context();
-	var->call(result, args);
-	pop_context(&opcode);
+	_get_op1_callable(opcode)->call(opcode.getResultValue(), opcode.getOp2Vector());
+	save_context(opcode);
 }
 
 /**
  * Xor bit-wise operation
  */
 CLEVER_VM_HANDLER(VM::xor_handler) {
-	const CallableValue* const var = _get_op1_callable(opcode);
-	const ValueVector* const args = opcode.getOp2Vector();
-	Value* result = opcode.getResultValue();
-
-	push_context();
-	var->call(result, args);
-	pop_context(&opcode);
+	_get_op1_callable(opcode)->call(opcode.getResultValue(), opcode.getOp2Vector());
+	save_context(opcode);
 }
 
 /**
  * OR bit-wise operation
  */
 CLEVER_VM_HANDLER(VM::bw_or_handler) {
-	const CallableValue* const var = _get_op1_callable(opcode);
-	const ValueVector* const args = opcode.getOp2Vector();
-	Value* result = opcode.getResultValue();
-
-	push_context();
-	var->call(result, args);
-	pop_context(&opcode);
+	_get_op1_callable(opcode)->call(opcode.getResultValue(), opcode.getOp2Vector());
+	save_context(opcode);
 }
 
 /**
  * AND bit-wise operation
  */
 CLEVER_VM_HANDLER(VM::bw_and_handler) {
-	const CallableValue* const var = _get_op1_callable(opcode);
-	const ValueVector* const args = opcode.getOp2Vector();
-	Value* result = opcode.getResultValue();
-
-	push_context();
-	var->call(result, args);
-	pop_context(&opcode);
+	_get_op1_callable(opcode)->call(opcode.getResultValue(), opcode.getOp2Vector());
+	save_context(opcode);
 }
 
 /**
  * NOT bit-wise operation
  */
 CLEVER_VM_HANDLER(VM::bw_not_handler) {
-	const CallableValue* const var = _get_op1_callable(opcode);
-	const ValueVector* const args = opcode.getOp2Vector();
-	Value* result = opcode.getResultValue();
-
-	push_context();
-	var->call(result, args);
-	pop_context(&opcode);
+	_get_op1_callable(opcode)->call(opcode.getResultValue(), opcode.getOp2Vector());
+	save_context(opcode);
 }
 
 /**
  * Greater logical operation (x > y)
  */
 CLEVER_VM_HANDLER(VM::greater_handler) {
-	const CallableValue* const var = _get_op1_callable(opcode);
-	const ValueVector* const args = opcode.getOp2Vector();
-	Value* result = opcode.getResultValue();
-
-	push_context();
-	var->call(result, args);
-	pop_context(&opcode);
+	_get_op1_callable(opcode)->call(opcode.getResultValue(), opcode.getOp2Vector());
+	save_context(opcode);
 }
 
 /**
  * Less logical operation (x < y)
  */
 CLEVER_VM_HANDLER(VM::less_handler) {
-	const CallableValue* const var = _get_op1_callable(opcode);
-	const ValueVector* const args = opcode.getOp2Vector();
-	Value* result = opcode.getResultValue();
-
-	push_context();
-	var->call(result, args);
-	pop_context(&opcode);
+	_get_op1_callable(opcode)->call(opcode.getResultValue(), opcode.getOp2Vector());
+	save_context(opcode);
 }
 
 /**
  * Greater or equal logical operation (x >= y)
  */
 CLEVER_VM_HANDLER(VM::ge_handler) {
-	const CallableValue* const var = _get_op1_callable(opcode);
-	const ValueVector* const args = opcode.getOp2Vector();
-	Value* result = opcode.getResultValue();
-
-	push_context();
-	var->call(result, args);
-	pop_context(&opcode);
+	_get_op1_callable(opcode)->call(opcode.getResultValue(), opcode.getOp2Vector());
+	save_context(opcode);
 }
 
 /**
  * Less or equal logical operation (x <= y)
  */
 CLEVER_VM_HANDLER(VM::le_handler) {
-	const CallableValue* const var = _get_op1_callable(opcode);
-	const ValueVector* const args = opcode.getOp2Vector();
-	Value* result = opcode.getResultValue();
-
-	push_context();
-	var->call(result, args);
-	pop_context(&opcode);
+	_get_op1_callable(opcode)->call(opcode.getResultValue(), opcode.getOp2Vector());
+	save_context(opcode);
 }
 
 /**
  * Equal logical operation (x == y)
  */
 CLEVER_VM_HANDLER(VM::equal_handler) {
-	const CallableValue* const var = _get_op1_callable(opcode);
-	const ValueVector* const args = opcode.getOp2Vector();
-	Value* result = opcode.getResultValue();
-
-	push_context();
-	var->call(result, args);
-	pop_context(&opcode);
+	_get_op1_callable(opcode)->call(opcode.getResultValue(), opcode.getOp2Vector());
+	save_context(opcode);
 }
 
 /**
  * Not equal logical operation (x != y)
  */
 CLEVER_VM_HANDLER(VM::ne_handler) {
-	const CallableValue* const var = _get_op1_callable(opcode);
-	const ValueVector* const args = opcode.getOp2Vector();
-	Value* result = opcode.getResultValue();
-
-	push_context();
-	var->call(result, args);
-	pop_context(&opcode);
+	_get_op1_callable(opcode)->call(opcode.getResultValue(), opcode.getOp2Vector());
+	save_context(opcode);
 }
 
 /**
  * Left shift logical operation (x << y)
  */
 CLEVER_VM_HANDLER(VM::lshift_handler) {
-	const CallableValue* const var = _get_op1_callable(opcode);
-	const ValueVector* const args = opcode.getOp2Vector();
-	Value* result = opcode.getResultValue();
-
-	push_context();
-	var->call(result, args);
-	pop_context(&opcode);
+	_get_op1_callable(opcode)->call(opcode.getResultValue(), opcode.getOp2Vector());
+	save_context(opcode);
 }
 
 /**
  * Right shift logical operation (x >> y)
  */
 CLEVER_VM_HANDLER(VM::rshift_handler) {
-	const CallableValue* const var = _get_op1_callable(opcode);
-	const ValueVector* const args = opcode.getOp2Vector();
-	Value* result = opcode.getResultValue();
-
-	push_context();
-	var->call(result, args);
-	pop_context(&opcode);
+	_get_op1_callable(opcode)->call(opcode.getResultValue(), opcode.getOp2Vector());
+	save_context(opcode);
 }
 
 /**
  * NOT logical operation (x >> y)
  */
 CLEVER_VM_HANDLER(VM::not_handler) {
-	const CallableValue* const var = _get_op1_callable(opcode);
-	const ValueVector* const args = opcode.getOp2Vector();
-	Value* result = opcode.getResultValue();
-
-	push_context();
-	var->call(result, args);
-	pop_context(&opcode);
+	_get_op1_callable(opcode)->call(opcode.getResultValue(), opcode.getOp2Vector());
+	save_context(opcode);
 }
 
 /**
