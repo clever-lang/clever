@@ -430,8 +430,9 @@ CLEVER_VM_HANDLER(VM::leave_handler) {
  * Returns to the caller or terminates the execution
  */
 CLEVER_VM_HANDLER(VM::return_handler) {
+	const Value* const value = opcode.getOp1Value();
+
 	if (!s_var->call.empty()) {
-		const Value* const value = opcode.getOp1Value();
 		const Opcode* call = s_var->call.top().ret;
 
 		if (EXPECTED(call && value)) {
