@@ -156,7 +156,7 @@ public:
 	const CString* getName() const { return m_name; }
 	void setName(const CString* const name) { m_name = name; }
 
-	virtual bool isPrimitive() const {
+	bool isPrimitive() const {
 		return isInteger() || isString() || isBoolean()
 				|| isDouble() || isByte();
 	}
@@ -351,11 +351,6 @@ public:
 	bool isExternal() const { return m_call_type == EXTERNAL; }
 	bool isNearCall() const { return m_call_type == NEAR; }
 	bool isFarCall() const { return m_call_type == FAR; }
-
-	/**
-	 * A callable value is not primitive
-	 */
-	virtual bool isPrimitive() const { return false; }
 
 	/**
 	 * Invokes the method/function pointer according with the type.
