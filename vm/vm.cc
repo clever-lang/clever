@@ -166,6 +166,8 @@ void VM::push_local_vars(Scope* scope) {
 
 	VarVector* vec = new VarVector;
 
+	vec->reserve(symbols.size());
+
 	while (it != end) {
 		if (it->second->isValue()) {
 			Value* val = it->second->getValue();
