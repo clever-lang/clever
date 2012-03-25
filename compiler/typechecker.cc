@@ -1070,22 +1070,11 @@ AST_VISITOR(TypeChecker, FuncPrototype) {
 		ArgumentDecls::iterator it = arg_nodes.begin(),
 			end = arg_nodes.end();
 
-		m_scope = m_scope->newChild();
-
-		user_func->setScope(m_scope);
 
 		while (EXPECTED(it != end)) {
-			Value* var = new Value;
-
 			const Type* arg_type = _evaluate_type(expr->getLocation(),
 				it->first, m_scope);
 			const CString* arg_name = it->second->getName();
-
-			var->setName(arg_name);
-			var->setTypePtr(arg_type);
-			var->initialize();
-
-			m_scope->pushValue(var->getName(), var);
 
 			user_func->addArg(*arg_name, arg_type);
 
@@ -1102,9 +1091,8 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 	}
 
 	const CString* name = expr->getName();
-	CallableValue* func = NULL; //new CallableValue(name);
-	Function* user_func = NULL; //new Function(name->str());
-
+	CallableValue* func = NULL;
+	Function* user_func = NULL;
 	bool first_declaration = true;
 
 	func = static_cast<CallableValue*>(m_scope->getValue(name));
@@ -1141,7 +1129,7 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 
 	expr->setValue(func);
 
-	if (args && first_declaration) {
+	if (args) {
 		ArgumentDecls& arg_nodes = args->getArgs();
 		ArgumentDecls::iterator it = arg_nodes.begin(),
 			end = arg_nodes.end();
@@ -1163,7 +1151,9 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 
 			m_scope->pushValue(var->getName(), var);
 
-			user_func->addArg(*arg_name, arg_type);
+			if(first_declaration) {
+				user_func->addArg(*arg_name, arg_type);
+			}
 
 			++it;
 		}
