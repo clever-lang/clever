@@ -97,7 +97,9 @@ void Value::copy(const Value* const value) {
 	}
 
 	// ValueData shallow-copy (in case of non-primitive)
-	std::memcpy(&m_data, value->getData(), sizeof(ValueData));
+	if (&m_data != value->getData()) {
+		std::memcpy(&m_data, value->getData(), sizeof(ValueData));
+	}
 	m_type_ptr = value->getTypePtr();
 	m_type = value->getType();
 
