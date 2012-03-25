@@ -23,37 +23,19 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "compiler/value.h"
-#include "modules/std/file/file.h"
-#include "modules/std/file/filestream.h"
-#include "modules/std/file/glob.h"
-#include "compiler/pkgmanager.h"
+#ifndef CLEVER_GLOBVALUE_H
+#define CLEVER_GLOBVALUE_H
+#include "compiler/datavalue.h"
 
-namespace clever { namespace packages { namespace std {
+namespace clever { namespace packages { namespace std { namespace file {
 
-namespace file {
-/**
- * println(object a, [ ...])
- * Prints the object values without trailing newline
- */
-/*static CLEVER_FUNCTION(print) {
-	for (int i = 0, size = CLEVER_NUM_ARGS(); i < size; ++i) {
-		::std::cout << CLEVER_ARG_AS_STR(1);
-	}
-}*/
+class GlobValue : public DataValue {
+public:
+	GlobValue() {}
 
-} // file
+	virtual ~GlobValue() {}
+};
 
-/**
- * Initializes Standard module
- */
-CLEVER_MODULE_INIT(File) {
-	BEGIN_DECLARE_CLASS();
+}}}} // clever::packages::std::file
 
-	addClass(new file::FileStream());
-	addClass(new file::Glob());
-
-	END_DECLARE();
-}
-
-}}} // clever::packages::std
+#endif // CLEVER_GLOBVALUE_H

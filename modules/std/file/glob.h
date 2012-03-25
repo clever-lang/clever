@@ -23,37 +23,33 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#ifndef CLEVER_GLOB_H
+#define CLEVER_GLOB_H
+
+#include "types/type.h"
 #include "compiler/value.h"
-#include "modules/std/file/file.h"
-#include "modules/std/file/filestream.h"
-#include "modules/std/file/glob.h"
-#include "compiler/pkgmanager.h"
+#include "modules/std/file/globvalue.h"
 
-namespace clever { namespace packages { namespace std {
+namespace clever { namespace packages { namespace std { namespace file {
 
-namespace file {
-/**
- * println(object a, [ ...])
- * Prints the object values without trailing newline
- */
-/*static CLEVER_FUNCTION(print) {
-	for (int i = 0, size = CLEVER_NUM_ARGS(); i < size; ++i) {
-		::std::cout << CLEVER_ARG_AS_STR(1);
-	}
-}*/
+class Glob : public Type {
+public:
+	Glob() :
+		Type(CSTRING("Glob")) { }
 
-} // file
+	void init();
+	DataValue* allocateValue() const;
+	void destructor(Value* value) const;
 
-/**
- * Initializes Standard module
- */
-CLEVER_MODULE_INIT(File) {
-	BEGIN_DECLARE_CLASS();
+	/**
+	 * Type methods
+	 */
+	static CLEVER_METHOD(constructor);
+	static CLEVER_METHOD(toString);
+private:
+	DISALLOW_COPY_AND_ASSIGN(Glob);
+};
 
-	addClass(new file::FileStream());
-	addClass(new file::Glob());
+}}}} // clever::packages::std::file
 
-	END_DECLARE();
-}
-
-}}} // clever::packages::std
+#endif // CLEVER_GLOB_H

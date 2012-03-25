@@ -42,4 +42,4 @@ public:
 
 }}}} // clever::packages::std::file
 
-#endif
+#endif // CLEVER_FILESTREAMVALUE_H

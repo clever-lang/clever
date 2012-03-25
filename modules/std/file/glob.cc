@@ -23,37 +23,43 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "compiler/value.h"
-#include "modules/std/file/file.h"
-#include "modules/std/file/filestream.h"
+#include "compiler/compiler.h"
+#include "compiler/cstring.h"
 #include "modules/std/file/glob.h"
-#include "compiler/pkgmanager.h"
+#include "types/nativetypes.h"
 
-namespace clever { namespace packages { namespace std {
-
-namespace file {
-/**
- * println(object a, [ ...])
- * Prints the object values without trailing newline
- */
-/*static CLEVER_FUNCTION(print) {
-	for (int i = 0, size = CLEVER_NUM_ARGS(); i < size; ++i) {
-		::std::cout << CLEVER_ARG_AS_STR(1);
-	}
-}*/
-
-} // file
+namespace clever { namespace packages { namespace std { namespace file {
 
 /**
- * Initializes Standard module
+ * Glob::Glob(String pattern)
  */
-CLEVER_MODULE_INIT(File) {
-	BEGIN_DECLARE_CLASS();
-
-	addClass(new file::FileStream());
-	addClass(new file::Glob());
-
-	END_DECLARE();
+CLEVER_METHOD(Glob::constructor) {
 }
 
-}}} // clever::packages::std
+/**
+ * Glob::toString()
+ * A representation of this class as a string
+ */
+CLEVER_METHOD(Glob::toString) {
+	CLEVER_RETURN_STR(CSTRINGT("Glob class"));
+}
+
+void Glob::init() {
+	const Type* glob = CLEVER_TYPE("Glob");
+
+	addMethod(
+		(new Method(CLEVER_CTOR_NAME, &Glob::constructor, glob))
+			->addArg("pattern", CLEVER_STR)
+	);
+
+	addMethod(new Method("toString", &Glob::toString, CLEVER_STR));
+}
+
+DataValue* Glob::allocateValue() const {
+	return new GlobValue;
+}
+
+void Glob::destructor(Value* value) const {
+}
+
+}}}} // clever::packages::std::file
