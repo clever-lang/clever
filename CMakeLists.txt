@@ -73,6 +73,13 @@ else (MSVC)
 	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE} -O2 -DNDEBUG")
 endif (MSVC)
 
+
+if (TCMALLOC)
+	set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -ltcmalloc")
+else (TCMALLOC)
+	message(STATUS "Using default allocator. Use -DTCMALLOC=1 to use tcmalloc")
+endif (TCMALLOC)
+
 # Parser and Scanner
 # ---------------------------------------------------------------------------
 BISON_TARGET(CleverParser interpreter/parser.y ${CMAKE_SOURCE_DIR}/interpreter/parser.cc)
