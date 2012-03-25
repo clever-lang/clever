@@ -116,6 +116,18 @@ private:
 	}
 
 	// Output an opcode
+	Opcode* emit(OpcodeType type, VM::opcode_handler handler, CallableValue* op1,
+		ValueVector* op2, Value* result) {
+		Opcode* opcode = new Opcode(type, handler, op1, op2, result);
+		m_opcodes.push_back(opcode);
+
+		// Sets the opcode number, which is used by JMP opcodes
+		opcode->setOpNum(getOpNum());
+
+		return opcode;
+	}
+
+	// Output an opcode
 	Opcode* emit(OpcodeType type, VM::opcode_handler handler, Value* op1,
 		ValueVector* op2, Value* result) {
 		Opcode* opcode = new Opcode(type, handler, op1, op2, result);

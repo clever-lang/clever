@@ -110,6 +110,7 @@ public:
 
 	const Operand& getOp1() const { return m_op1; }
 	Value* getOp1Value() const { return m_op1.getValue(); }
+	CallableValue* getOp1Callable() const { return m_op1.getCallable(); }
 
 	const Operand& getOp2() const { return m_op2; }
 	Value* getOp2Value() const { return m_op2.getValue(); }

@@ -30,7 +30,7 @@
 
 namespace clever {
 
-enum OperandType { UNUSED, VALUE, VECTOR, ADDR };
+enum OperandType { UNUSED, VALUE, CALLABLE, VECTOR, ADDR };
 
 /**
  * Operand representation
@@ -45,6 +45,11 @@ public:
 		m_data.value = value;
 	}
 
+	explicit Operand(CallableValue* callable)
+		: m_type(CALLABLE) {
+		m_data.callable = callable;
+	}
+
 	explicit Operand(ValueVector* vector)
 		: m_type(VECTOR) {
 		m_data.vector = vector;
@@ -56,7 +61,7 @@ public:
 	}
 
 	~Operand() {
-		if (m_type == VALUE) {
+		if (m_type == VALUE || m_type == CALLABLE) {
 			CLEVER_SAFE_DELREF(m_data.value);
 		} else if (m_type == VECTOR && m_data.vector) {
 			ValueVector::const_iterator it(m_data.vector->begin()),
@@ -82,15 +87,17 @@ public:
 		m_data.value = value;
 	}
 
-	long         getAddr() const { return m_data.addr; }
-	Value*       getValue() const { return m_data.value; }
-	ValueVector* getVector() const { return m_data.vector; }
+	long           getAddr() const { return m_data.addr; }
+	Value*         getValue() const { return m_data.value; }
+	CallableValue* getCallable() const { return m_data.callable; }
+	ValueVector*   getVector() const { return m_data.vector; }
 private:
 
 	OperandType m_type;
 
 	union OperandData {
 		Value* value;
+		CallableValue* callable;
 		ValueVector* vector;
 		long addr;
 

@@ -342,7 +342,7 @@ CLEVER_VM_HANDLER(VM::jmp_handler) {
  * Performs a function call
  */
 CLEVER_VM_HANDLER(VM::fcall_handler) {
-	const CallableValue* const func = _get_op1_callable(opcode);
+	const CallableValue* const func = opcode.getOp1Callable();
 	const ValueVector* const args = opcode.getOp2Vector();
 	Value* result = opcode.getResultValue();
 
@@ -373,7 +373,7 @@ CLEVER_VM_HANDLER(VM::fcall_handler) {
  * Performs a method call (directly or via operators)
  */
 CLEVER_VM_HANDLER(VM::mcall_handler) {
-	const CallableValue* const var = _get_op1_callable(opcode);
+	const CallableValue* const var = opcode.getOp1Callable();
 	const ValueVector* const args = opcode.getOp2Vector();
 	Value* result = opcode.getResultValue();
 	bool has_return = var->getMethod()->getReturnType() != NULL;
@@ -476,7 +476,7 @@ CLEVER_VM_HANDLER(VM::return_handler) {
  * Add arithmetic operation
  */
 CLEVER_VM_HANDLER(VM::plus_handler) {
-	const CallableValue* const var = _get_op1_callable(opcode);
+	const CallableValue* const var = opcode.getOp1Callable();
 	const ValueVector* const args = opcode.getOp2Vector();
 	Value* result = opcode.getResultValue();
 
@@ -488,7 +488,7 @@ CLEVER_VM_HANDLER(VM::plus_handler) {
  * Minus arithmetic operation
  */
 CLEVER_VM_HANDLER(VM::minus_handler) {
-	_get_op1_callable(opcode)->call(opcode.getResultValue(), opcode.getOp2Vector());
+	opcode.getOp1Callable()->call(opcode.getResultValue(), opcode.getOp2Vector());
 	save_context(opcode);
 }
 
@@ -496,7 +496,7 @@ CLEVER_VM_HANDLER(VM::minus_handler) {
  * Div arithmetic operation
  */
 CLEVER_VM_HANDLER(VM::div_handler) {
-	_get_op1_callable(opcode)->call(opcode.getResultValue(), opcode.getOp2Vector());
+	opcode.getOp1Callable()->call(opcode.getResultValue(), opcode.getOp2Vector());
 	save_context(opcode);
 }
 
@@ -504,7 +504,7 @@ CLEVER_VM_HANDLER(VM::div_handler) {
  * Mult arithmetic operation
  */
 CLEVER_VM_HANDLER(VM::mult_handler) {
-	_get_op1_callable(opcode)->call(opcode.getResultValue(), opcode.getOp2Vector());
+	opcode.getOp1Callable()->call(opcode.getResultValue(), opcode.getOp2Vector());
 	save_context(opcode);
 }
 
@@ -512,7 +512,7 @@ CLEVER_VM_HANDLER(VM::mult_handler) {
  * Mod arithmetic operation
  */
 CLEVER_VM_HANDLER(VM::mod_handler) {
-	_get_op1_callable(opcode)->call(opcode.getResultValue(), opcode.getOp2Vector());
+	opcode.getOp1Callable()->call(opcode.getResultValue(), opcode.getOp2Vector());
 	save_context(opcode);
 }
 
@@ -520,7 +520,7 @@ CLEVER_VM_HANDLER(VM::mod_handler) {
  * Inc operation (x++, ++x)
  */
 CLEVER_VM_HANDLER(VM::inc_handler) {
-	_get_op1_callable(opcode)->call(opcode.getResultValue(), opcode.getOp2Vector());
+	opcode.getOp1Callable()->call(opcode.getResultValue(), opcode.getOp2Vector());
 	save_context(opcode);
 }
 
@@ -528,7 +528,7 @@ CLEVER_VM_HANDLER(VM::inc_handler) {
  * Dec arithmetic operation (x--, --x)
  */
 CLEVER_VM_HANDLER(VM::dec_handler) {
-	_get_op1_callable(opcode)->call(opcode.getResultValue(), opcode.getOp2Vector());
+	opcode.getOp1Callable()->call(opcode.getResultValue(), opcode.getOp2Vector());
 	save_context(opcode);
 }
 
@@ -536,7 +536,7 @@ CLEVER_VM_HANDLER(VM::dec_handler) {
  * Xor bit-wise operation
  */
 CLEVER_VM_HANDLER(VM::xor_handler) {
-	_get_op1_callable(opcode)->call(opcode.getResultValue(), opcode.getOp2Vector());
+	opcode.getOp1Callable()->call(opcode.getResultValue(), opcode.getOp2Vector());
 	save_context(opcode);
 }
 
@@ -544,7 +544,7 @@ CLEVER_VM_HANDLER(VM::xor_handler) {
  * OR bit-wise operation
  */
 CLEVER_VM_HANDLER(VM::bw_or_handler) {
-	_get_op1_callable(opcode)->call(opcode.getResultValue(), opcode.getOp2Vector());
+	opcode.getOp1Callable()->call(opcode.getResultValue(), opcode.getOp2Vector());
 	save_context(opcode);
 }
 
@@ -552,7 +552,7 @@ CLEVER_VM_HANDLER(VM::bw_or_handler) {
  * AND bit-wise operation
  */
 CLEVER_VM_HANDLER(VM::bw_and_handler) {
-	_get_op1_callable(opcode)->call(opcode.getResultValue(), opcode.getOp2Vector());
+	opcode.getOp1Callable()->call(opcode.getResultValue(), opcode.getOp2Vector());
 	save_context(opcode);
 }
 
@@ -560,7 +560,7 @@ CLEVER_VM_HANDLER(VM::bw_and_handler) {
  * NOT bit-wise operation
  */
 CLEVER_VM_HANDLER(VM::bw_not_handler) {
-	_get_op1_callable(opcode)->call(opcode.getResultValue(), opcode.getOp2Vector());
+	opcode.getOp1Callable()->call(opcode.getResultValue(), opcode.getOp2Vector());
 	save_context(opcode);
 }
 
@@ -568,7 +568,7 @@ CLEVER_VM_HANDLER(VM::bw_not_handler) {
  * Greater logical operation (x > y)
  */
 CLEVER_VM_HANDLER(VM::greater_handler) {
-	_get_op1_callable(opcode)->call(opcode.getResultValue(), opcode.getOp2Vector());
+	opcode.getOp1Callable()->call(opcode.getResultValue(), opcode.getOp2Vector());
 	save_context(opcode);
 }
 
@@ -576,7 +576,7 @@ CLEVER_VM_HANDLER(VM::greater_handler) {
  * Less logical operation (x < y)
  */
 CLEVER_VM_HANDLER(VM::less_handler) {
-	_get_op1_callable(opcode)->call(opcode.getResultValue(), opcode.getOp2Vector());
+	opcode.getOp1Callable()->call(opcode.getResultValue(), opcode.getOp2Vector());
 	save_context(opcode);
 }
 
@@ -584,7 +584,7 @@ CLEVER_VM_HANDLER(VM::less_handler) {
  * Greater or equal logical operation (x >= y)
  */
 CLEVER_VM_HANDLER(VM::ge_handler) {
-	_get_op1_callable(opcode)->call(opcode.getResultValue(), opcode.getOp2Vector());
+	opcode.getOp1Callable()->call(opcode.getResultValue(), opcode.getOp2Vector());
 	save_context(opcode);
 }
 
@@ -592,7 +592,7 @@ CLEVER_VM_HANDLER(VM::ge_handler) {
  * Less or equal logical operation (x <= y)
  */
 CLEVER_VM_HANDLER(VM::le_handler) {
-	_get_op1_callable(opcode)->call(opcode.getResultValue(), opcode.getOp2Vector());
+	opcode.getOp1Callable()->call(opcode.getResultValue(), opcode.getOp2Vector());
 	save_context(opcode);
 }
 
@@ -600,7 +600,7 @@ CLEVER_VM_HANDLER(VM::le_handler) {
  * Equal logical operation (x == y)
  */
 CLEVER_VM_HANDLER(VM::equal_handler) {
-	_get_op1_callable(opcode)->call(opcode.getResultValue(), opcode.getOp2Vector());
+	opcode.getOp1Callable()->call(opcode.getResultValue(), opcode.getOp2Vector());
 	save_context(opcode);
 }
 
@@ -608,7 +608,7 @@ CLEVER_VM_HANDLER(VM::equal_handler) {
  * Not equal logical operation (x != y)
  */
 CLEVER_VM_HANDLER(VM::ne_handler) {
-	_get_op1_callable(opcode)->call(opcode.getResultValue(), opcode.getOp2Vector());
+	opcode.getOp1Callable()->call(opcode.getResultValue(), opcode.getOp2Vector());
 	save_context(opcode);
 }
 
@@ -616,7 +616,7 @@ CLEVER_VM_HANDLER(VM::ne_handler) {
  * Left shift logical operation (x << y)
  */
 CLEVER_VM_HANDLER(VM::lshift_handler) {
-	_get_op1_callable(opcode)->call(opcode.getResultValue(), opcode.getOp2Vector());
+	opcode.getOp1Callable()->call(opcode.getResultValue(), opcode.getOp2Vector());
 	save_context(opcode);
 }
 
@@ -624,7 +624,7 @@ CLEVER_VM_HANDLER(VM::lshift_handler) {
  * Right shift logical operation (x >> y)
  */
 CLEVER_VM_HANDLER(VM::rshift_handler) {
-	_get_op1_callable(opcode)->call(opcode.getResultValue(), opcode.getOp2Vector());
+	opcode.getOp1Callable()->call(opcode.getResultValue(), opcode.getOp2Vector());
 	save_context(opcode);
 }
 
@@ -632,7 +632,7 @@ CLEVER_VM_HANDLER(VM::rshift_handler) {
  * NOT logical operation (x >> y)
  */
 CLEVER_VM_HANDLER(VM::not_handler) {
-	_get_op1_callable(opcode)->call(opcode.getResultValue(), opcode.getOp2Vector());
+	opcode.getOp1Callable()->call(opcode.getResultValue(), opcode.getOp2Vector());
 	save_context(opcode);
 }
 
@@ -640,9 +640,7 @@ CLEVER_VM_HANDLER(VM::not_handler) {
  * Initialize a variable (Type var;)
  */
 CLEVER_VM_HANDLER(VM::init_var_handler) {
-	Value* op1 = opcode.getOp1Value();
-
-	op1->initialize();
+	opcode.getOp1Value()->initialize();
 }
 
 } // clever

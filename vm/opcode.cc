@@ -103,6 +103,7 @@ std::string Opcode::dumpOp(const char* const label, const Operand& op) const {
 		case ADDR:
 			str << op.getAddr();
 			break;
+		case CALLABLE:
 		case VALUE:
 			str << "(" << op.getValue() << ") ";
 			dumpValue(str, op.getValue());
