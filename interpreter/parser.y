@@ -205,6 +205,7 @@ namespace clever {
 %type <arg_decl_list> args_declaration_non_empty
 %type <arg_decl_list> args_declaration
 %type <func_decl> func_declaration
+%type <func_decl> func_prototype
 %type <ext_func_decl> ext_func_declaration
 %type <ext_func_decls> ext_func_declaration_list
 %type <ext_func_decls> ext_func_declaration_list_impl
@@ -276,6 +277,7 @@ statements:
 	|	variable_declaration ';' 		{ $$ = $<ast_node>1; }
 	|	variable_declaration_list ';'		{ $$ = new ast::VarDecls($<node_list>1); }
 	|	func_declaration       			{ $$ = $<ast_node>1; }
+	|	func_prototype				{ $$ = $<ast_node>1; }
 	|	ext_func_declaration ';'    		{ $$ = $<ast_node>1; }
 	|	ext_func_declaration_list 		{ $$ = new ast::VarDecls($<node_list>1); }
 	|	if_expr                  		{ $$ = $<ast_node>1; }
@@ -297,7 +299,7 @@ return_stmt:
 
 args_declaration_non_empty:
 		TYPE IDENT                      	{ $$ = new ast::ArgumentDeclList(); $$->addArg($1, $2); }
-	|	template IDENT						{ $$ = new ast::ArgumentDeclList(); $$->addArg($1, $2); }
+	|	template IDENT				{ $$ = new ast::ArgumentDeclList(); $$->addArg($1, $2); }
 	|	args_declaration ',' TYPE IDENT 	{ $1->addArg($3, $4); }
 	|	args_declaration ',' template IDENT { $1->addArg($3, $4); }
 ;
@@ -310,6 +312,10 @@ args_declaration:
 annotation:
 		ANNOTATION            { $$ = NULL; }
 	|	annotation ANNOTATION { $$ = NULL; }
+;
+
+func_prototype:
+		TYPE IDENT '(' args_declaration ')' ';' { $$ = new ast::FuncDeclaration($2, $1, $4); }
 ;
 
 func_declaration:
