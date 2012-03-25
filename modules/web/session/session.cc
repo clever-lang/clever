@@ -35,12 +35,12 @@
 #include <vector>
 #include <string>
 #include <cgicc/Cgicc.h>
-
 #include "compiler/compiler.h"
 #include "compiler/cstring.h"
 #include "modules/web/request/request.h"
 #include "modules/web/session/session.h"
 #include "types/nativetypes.h"
+#include "compiler/pkgmanager.h"
 
 namespace clever { namespace packages { namespace web {
 
@@ -49,15 +49,15 @@ cgicc::Cgicc* s_cgi;
 cgicc::HTTPHTMLHeader* header;
 cgicc::CgiEnvironment* cgiEnv;
 std::vector<cgicc::HTTPCookie>* cookVec;
-std::map<std::string,std::string>* mapCook;	
+std::map<std::string,std::string>* mapCook;
 
 typedef std::vector<cgicc::HTTPCookie>::iterator it_cv;
 
 void __init_session__() {
-	
+
 	cgicc::CgiEnvironment& c = *(cgiEnv);
 	std::vector<cgicc::HTTPCookie>& cv = *(cookVec);
-	std::map<std::string,std::string>& mc = *(mapCook);	
+	std::map<std::string,std::string>& mc = *(mapCook);
 
 	cv = c.getCookieList();
 	mapCook->clear();
@@ -82,10 +82,10 @@ static CLEVER_FUNCTION(getCookie) {
 static CLEVER_FUNCTION(setCookie) {
 	cgicc::HTTPHTMLHeader& h =  *(header);
 	std::vector<cgicc::HTTPCookie>& cv = *(cookVec);
-	std::map<std::string,std::string>& mc = *(mapCook);	
+	std::map<std::string,std::string>& mc = *(mapCook);
 
-	cgicc::HTTPCookie cookie(CLEVER_ARG_STR(0),CLEVER_ARG_STR(1));	
-	
+	cgicc::HTTPCookie cookie(CLEVER_ARG_STR(0),CLEVER_ARG_STR(1));
+
 	mc[CLEVER_ARG_STR(0)]=CLEVER_ARG_STR(1);
 	cv.push_back(cookie);
 	h.setCookie(cookie);
@@ -103,35 +103,38 @@ static CLEVER_FUNCTION(header) {
 /**
  * Load module data
  */
-void Session::init() {
+CLEVER_MODULE_INIT(Session) {
+	BEGIN_DECLARE_FUNCTION();
 
 	__init_session__();
 
 	addFunction(new Function("header",&CLEVER_NS_FNAME(session, header), CLEVER_VOID));
-		
+
 	addFunction(new Function("getCookie",&CLEVER_NS_FNAME(session,getCookie), CLEVER_STR))
 		->addArg("name", CLEVER_STR);
 
-	
+
 	addFunction(new Function("setCookie", &CLEVER_NS_FNAME(session,setCookie), CLEVER_VOID))
 			->addArg("name", CLEVER_STR)
 			->addArg("value",CLEVER_STR);
+
+	END_DECLARE();
 }
 
 Session::Session()
-	: Module("session") { 
+	: Module("session") {
 	s_cgi = new cgicc::Cgicc;
 	header = new cgicc::HTTPHTMLHeader;
-	cgiEnv = new cgicc::CgiEnvironment(s_cgi->getEnvironment()); 
-	cookVec = new std::vector<cgicc::HTTPCookie>; 
+	cgiEnv = new cgicc::CgiEnvironment(s_cgi->getEnvironment());
+	cookVec = new std::vector<cgicc::HTTPCookie>;
 	mapCook = new std::map<std::string,std::string>;
 }
 
 Session::~Session() {
-	delete s_cgi; 
-	delete header; 
-	delete cgiEnv; 
-	delete cookVec; 
+	delete s_cgi;
+	delete header;
+	delete cgiEnv;
+	delete cookVec;
 	delete mapCook;
 }
 

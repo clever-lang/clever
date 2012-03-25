@@ -41,6 +41,14 @@
 
 namespace clever {
 
+/**
+ * Module init method declaration
+ */
+#define CLEVER_MODULE_INIT(x) void x::init(short int flags)
+
+#define CLEVER_MODULE_VIRTUAL_METHODS_DECLARATION \
+	void init(short int);
+
 class CString;
 class Module;
 class Value;
@@ -63,10 +71,8 @@ typedef std::pair<const CString*, Value*> ConstPair;
  */
 class NO_INIT_VTABLE Module {
 public:
-	enum ModuleState { UNLOADED, LOADED };
-
 	Module(std::string name)
-		: m_state(UNLOADED), m_name(name) { }
+		: m_flags(0), m_name(name) { }
 
 	virtual ~Module() {
 		FunctionMap::const_iterator it = m_functions.begin(), end = m_functions.end();
@@ -109,27 +115,27 @@ public:
 	/**
 	 * Check if the module is loaded
 	 */
-	bool isLoaded() const {	return m_state == LOADED; }
+	bool isLoaded(short int flags) const { return m_flags & flags; }
 	/**
 	 * Check if the package is unloaded
 	 */
-	bool isUnloaded() const { return m_state == UNLOADED; }
+	bool isUnloaded() const { return m_flags == 0; }
 	/**
-	 * Set the module state to loaded
+	 * Set the module flags
 	 */
-	void setLoaded() { m_state = LOADED; }
+	void setLoaded(short int flags) { m_flags |= flags; }
 
 	/**
 	 * Module initialization
 	 */
-	virtual void init() = 0;
+	virtual void init(short int) = 0;
 
 	/**
 	 * Module version
 	 */
 	virtual const char* getVersion() const { return NULL; }
 private:
-	ModuleState m_state;
+	short int m_flags;
 	const std::string m_name;
 	FunctionMap m_functions;
 	ClassMap m_class_table;

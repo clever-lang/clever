@@ -33,10 +33,12 @@ namespace clever { namespace packages { namespace std {
 
 class Regex : public Module {
 public:
-	Regex() : Module("regex") {};
-	~Regex() {};
-	void init();
+	Regex()
+		: Module("regex") {}
 
+	~Regex() {}
+
+	CLEVER_MODULE_VIRTUAL_METHODS_DECLARATION;
 private:
 	DISALLOW_COPY_AND_ASSIGN(Regex);
 };

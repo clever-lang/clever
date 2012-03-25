@@ -26,6 +26,7 @@
 #include "compiler/value.h"
 #include "modules/std/file/file.h"
 #include "modules/std/file/filestream.h"
+#include "compiler/pkgmanager.h"
 
 namespace clever { namespace packages { namespace std {
 
@@ -45,10 +46,12 @@ namespace file {
 /**
  * Initializes Standard module
  */
-void File::init() {
-	Class* filestream = new file::FileStream();
+CLEVER_MODULE_INIT(File) {
+	BEGIN_DECLARE_CLASS();
 
-	addClass(filestream);
+	addClass(new file::FileStream());
+
+	END_DECLARE();
 }
 
 }}} // clever::packages::std

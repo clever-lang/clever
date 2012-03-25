@@ -37,7 +37,7 @@ public:
 
 	~Reflection() { }
 
-	void init();
+	CLEVER_MODULE_VIRTUAL_METHODS_DECLARATION;
 private:
 	DISALLOW_COPY_AND_ASSIGN(Reflection);
 };

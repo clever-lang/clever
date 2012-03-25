@@ -39,6 +39,7 @@
 #include "compiler/value.h"
 #include "modules/std/sys/sys.h"
 #include "types/nativetypes.h"
+#include "compiler/pkgmanager.h"
 
 #ifndef PATH_MAX
 # define PATH_MAX 1024
@@ -134,7 +135,9 @@ static CLEVER_FUNCTION(sleep) {
 /**
  * Initializes Standard module
  */
-void SYSModule::init() {
+CLEVER_MODULE_INIT(SYSModule) {
+	BEGIN_DECLARE_FUNCTION();
+
 	addFunction(new Function("system", &CLEVER_NS_FNAME(sys, system), CLEVER_INT))
 		->addArg("command", CLEVER_STR);
 
@@ -153,6 +156,8 @@ void SYSModule::init() {
 
 	addFunction(new Function("sleep", &CLEVER_NS_FNAME(sys, sleep), CLEVER_VOID))
 		->addArg("time", CLEVER_INT);
+
+	END_DECLARE();
 }
 
 }}} // clever::packages::std

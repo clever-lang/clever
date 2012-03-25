@@ -24,6 +24,7 @@
  */
 
 #include <iostream>
+#include "compiler/pkgmanager.h"
 #include "compiler/value.h"
 #include "modules/std/io/io.h"
 #include "types/nativetypes.h"
@@ -101,8 +102,10 @@ static CLEVER_FUNCTION(readDouble) {
 /**
  * Initializes Standard module
  */
-void IOModule::init() {
+CLEVER_MODULE_INIT(IOModule) {
 	using namespace io;
+
+	BEGIN_DECLARE_FUNCTION();
 
 	addFunction(new Function("print", &CLEVER_FUNC_NAME(print), CLEVER_VOID))
 		->setVariadic()
@@ -117,6 +120,8 @@ void IOModule::init() {
 	addFunction(new Function("readString", &CLEVER_FUNC_NAME(readString), CLEVER_STR));
 	addFunction(new Function("readInt", &CLEVER_FUNC_NAME(readInt), CLEVER_INT));
 	addFunction(new Function("readDouble", &CLEVER_FUNC_NAME(readDouble), CLEVER_DOUBLE));
+
+	END_DECLARE();
 }
 
 }}} // clever::packages::std

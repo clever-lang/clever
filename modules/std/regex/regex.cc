@@ -26,25 +26,33 @@
 #include <pcrecpp.h>
 #include "modules/std/regex/regex.h"
 #include "modules/std/regex/pcre.h"
+#include "compiler/pkgmanager.h"
 
 namespace clever { namespace packages { namespace std {
 
 Type* regex::g_regex_type;
 
-void Regex::init() {
-	regex::g_regex_type = new regex::Pcre();
+CLEVER_MODULE_INIT(Regex) {
 
+	BEGIN_DECLARE_CLASS();
+
+	regex::g_regex_type = new regex::Pcre();
 	addClass(regex::g_regex_type);
+
+	END_DECLARE();
 
 	/**
 	 * Module constants
 	 */
+	BEGIN_DECLARE_CONSTANT();
+
 	addConstant(CSTRING("DOTALL"),    new Value(int64_t(PCRE_DOTALL)));
 	addConstant(CSTRING("MULTILINE"), new Value(int64_t(PCRE_MULTILINE)));
 	addConstant(CSTRING("CASELESS"),  new Value(int64_t(PCRE_CASELESS)));
 	addConstant(CSTRING("UTF8"),      new Value(int64_t(PCRE_UTF8)));
 	addConstant(CSTRING("UNGREEDY"),  new Value(int64_t(PCRE_UNGREEDY)));
 
+	END_DECLARE();
 }
 
 }}} // clever::packages:std

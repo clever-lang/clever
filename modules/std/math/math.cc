@@ -28,6 +28,7 @@
 #include <cstdlib>
 #include "modules/std/math/math.h"
 #include "types/nativetypes.h"
+#include "compiler/pkgmanager.h"
 
 #ifndef M_PI
 #define M_PI    3.14159265358979323846
@@ -291,8 +292,9 @@ static CLEVER_FUNCTION(truncate) {
 /**
  * Load module data
  */
-void Math::init() {
-	
+CLEVER_MODULE_INIT(Math) {
+	BEGIN_DECLARE_FUNCTION();
+
 	addConstant(CSTRING("MATH_PI"), new Value(M_PI));
 
 	addFunction(new Function("abs",	&CLEVER_NS_FNAME(math, abs_double), CLEVER_DOUBLE))
@@ -373,6 +375,8 @@ void Math::init() {
 
 	addFunction(new Function("truncate",  &CLEVER_NS_FNAME(math, truncate), CLEVER_DOUBLE))
 		->addArg("x", CLEVER_DOUBLE);
+
+	END_DECLARE();
 }
 
 }}} // clever::packages::std

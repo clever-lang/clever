@@ -28,6 +28,7 @@
 #include "modules/std/reflection/reflectionpackage.h"
 #include "modules/std/reflection/reflectionfunction.h"
 #include "types/nativetypes.h"
+#include "compiler/pkgmanager.h"
 
 namespace clever { namespace packages { namespace std {
 
@@ -45,20 +46,28 @@ static CLEVER_FUNCTION(get_type) {
 /**
  * Initializes Reflection module
  */
-void Reflection::init() {
+CLEVER_MODULE_INIT(Reflection) {
 	/**
 	 * Module classes
 	 */
+	BEGIN_DECLARE_CLASS();
+
 	addClass(new reflection::ReflectionPackage);
 	addClass(new reflection::ReflectionFunction);
+
+	END_DECLARE();
 
 	/**
 	 * Module functions
 	 */
+	BEGIN_DECLARE_FUNCTION();
+
 	addFunction(new Function("get_type",
 		&CLEVER_NS_FNAME(reflection, get_type), CLEVER_STR))
 		->setVariadic()
 		->setMinNumArgs(1);
+
+	END_DECLARE();
 }
 
 }}} // clever::packages::std

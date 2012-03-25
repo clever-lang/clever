@@ -26,6 +26,7 @@
 #include "compiler/value.h"
 #include "modules/std/net/net.h"
 #include "modules/std/net/tcpsocket.h"
+#include "compiler/pkgmanager.h"
 
 namespace clever { namespace packages { namespace std {
 
@@ -36,10 +37,12 @@ namespace net {
 /**
  * Initializes Standard module
  */
-void NetModule::init() {
-	Class* tcpsocket = new net::TcpSocket();
+CLEVER_MODULE_INIT(NetModule) {
+	BEGIN_DECLARE_CLASS();
 
-	addClass(tcpsocket);
+	addClass(new net::TcpSocket());
+
+	END_DECLARE();
 }
 
 }}} // clever::packages::std

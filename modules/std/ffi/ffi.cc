@@ -46,6 +46,7 @@
 #include "modules/std/ffi/ffiobject.h"
 #include "modules/std/ffi/ffi.h"
 #include "types/nativetypes.h"
+#include "compiler/pkgmanager.h"
 
 namespace clever { namespace packages { namespace std { namespace ffi {
 
@@ -265,15 +266,22 @@ static CLEVER_FUNCTION(call_ext_func) {
 /**
  * Load module data
  */
-void FFI::init() {
-	Class* FFIObject = new ffi::FFIObject();
+CLEVER_MODULE_INIT(FFI) {
+	BEGIN_DECLARE_CLASS();
 
-	addClass(FFIObject);
+	addClass(new ffi::FFIObject());
+
+	END_DECLARE();
+
+
+	BEGIN_DECLARE_FUNCTION();
 
 	addFunction(new Function("__call_ext_func__",
 		&CLEVER_NS_FNAME(ffi, call_ext_func), CLEVER_BOOL))
 		->setVariadic()
 		->setMinNumArgs(2);
+
+	END_DECLARE();
 }
 
 FFI::~FFI() {

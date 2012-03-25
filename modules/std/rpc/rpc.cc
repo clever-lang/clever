@@ -23,37 +23,31 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#ifndef __APPLE__
+# include <ffi.h>
+#else
+# include <ffi/ffi.h>
+#endif
 #include "compiler/value.h"
 #include "modules/std/net/net.h"
 #include "modules/std/net/tcpsocket.h"
 #include "modules/std/rpc/rpc.h"
 #include "modules/std/rpc/rpcclass.h"
 #include "modules/std/rpc/rpcobject.h"
-
-#ifndef __APPLE__
-# include <ffi.h>
-#else
-# include <ffi/ffi.h>
-#endif
+#include "compiler/pkgmanager.h"
 
 namespace clever { namespace packages { namespace std {
-
-namespace rpc {
-
-
-} // rpc
 
 /**
  * Initializes Standard module
  */
-void RPCModule::init() {
-	Class* rpcclass = new rpc::RPC;
+CLEVER_MODULE_INIT(RPCModule) {
+	BEGIN_DECLARE_CLASS();
 
-	addClass(rpcclass);
+	addClass(new rpc::RPC);
+	addClass(new rpc::RPCObject);
 
-	Class* rpcobject = new rpc::RPCObject;
-
-	addClass(rpcobject);
+	END_DECLARE();
 }
 
 }}} // clever::packages::std

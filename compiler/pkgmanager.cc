@@ -200,20 +200,30 @@ void PackageManager::loadObject(Scope* scope, const CString* const package,
 		return;
 	}
 
+	short int flags = is_type ? PKG_INIT_CLASS : PKG_INIT_FUNC;
+
 	/**
 	 * Checks if the module already has been loaded
 	 */
-	if (!it_mod->second->isLoaded()) {
-		it_mod->second->init();
-		it_mod->second->setLoaded();
-
-		_load_module_constants(alias, scope, it_mod->second, NULL);
+	if (!it_mod->second->isLoaded(flags)) {
+		it_mod->second->init(flags);
+		it_mod->second->setLoaded(flags);
 	}
 
 	if (is_type) {
 		_load_module_classes(alias, scope, it_mod->second, obj);
 	} else {
 		_load_module_functions(alias, scope, it_mod->second, obj);
+	}
+
+	/**
+	 * Always initialize the constants when initializing some class/function
+	 */
+	if (!it_mod->second->isLoaded(PKG_INIT_CONST)) {
+		it_mod->second->init(PKG_INIT_CONST);
+		it_mod->second->setLoaded(PKG_INIT_CONST);
+
+		_load_module_constants(alias, scope, it_mod->second, NULL);
 	}
 }
 
@@ -225,12 +235,12 @@ void PackageManager::loadModule(Scope* scope, const CString* const package,
 	/**
 	 * Checks if the module already has been loaded
 	 */
-	if (!module->isLoaded()) {
+	if (!module->isLoaded(PKG_INIT_ALL)) {
 		/**
 		 * Initializes the module
 		 */
-		module->init();
-		module->setLoaded();
+		module->init(PKG_INIT_ALL);
+		module->setLoaded(PKG_INIT_ALL);
 	}
 
 	_load_module_functions(alias, scope, module, NULL);
@@ -262,7 +272,7 @@ bool PackageManager::checkModuleLoaded(const CString* const package,
 		return false;
 	}
 
-	return it_mod->second->isLoaded();
+	return it_mod->second->isLoaded(PKG_INIT_ALL);
 }
 
 /**
