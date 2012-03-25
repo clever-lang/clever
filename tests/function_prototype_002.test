@@ -1,0 +1,17 @@
+Testing function prototype
+==CODE==
+import std.io.*;
+
+Int f(Int x);
+
+Int f(Int x) {
+	if (x == 0) {
+		return 1;
+	}
+	return f(x - 1) + f(x - 1) + f(x - 1);
+}
+
+
+println(f(3));
+==RESULT==
+27
