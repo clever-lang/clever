@@ -131,6 +131,7 @@ static void _load_module_classes(const CString* alias, Scope* scope,
 		}
 
 		g_scope.pushType(alias ? alias : CSTRING(*it->first), it->second);
+		it->second->addRef();
 		it->second->init();
 		return;
 	}
@@ -144,7 +145,7 @@ static void _load_module_classes(const CString* alias, Scope* scope,
 	 */
 	while (itc != endc) {
 		g_scope.pushType(CSTRING(prefix + *itc->first), itc->second);
-
+		itc->second->addRef();
 		itc->second->init();
 		++itc;
 	}
@@ -404,14 +405,14 @@ void PackageManager::shutdown() {
 
 	while (it != end) {
 		ModuleMap& modules = it->second->getModules();
-		ModuleMap::const_iterator it_module = modules.begin(), end_module = modules.end();
+		ModuleMap::const_iterator it_m(modules.begin()), end_m(modules.end());
 
 		/**
 		 * Deletes the module entries
 		 */
-		while (it_module != end_module) {
-			delete it_module->second;
-			++it_module;
+		while (it_m != end_m) {
+			delete it_m->second;
+			++it_m;
 		}
 		/**
 		 * Deletes the package

@@ -74,14 +74,7 @@ public:
 	Module(std::string name)
 		: m_flags(0), m_name(name) { }
 
-	virtual ~Module() {
-		FunctionMap::const_iterator it = m_functions.begin(), end = m_functions.end();
-
-		while (it != end) {
-			delete it->second;
-			++it;
-		}
-	}
+	virtual ~Module();
 
 	const std::string& getName() const {
 		return m_name;
@@ -92,11 +85,11 @@ public:
 	}
 
 	ConstMap& getConstants() {
-		return m_const_table;
+		return m_consts;
 	}
 
 	ClassMap& getClassTable() {
-		return m_class_table;
+		return m_classes;
 	}
 
 	Function* addFunction(Function* func) {
@@ -106,11 +99,11 @@ public:
 	}
 
 	void addConstant(const CString* name, Value* value) {
-		m_const_table.insert(ConstPair(name, value));
+		m_consts.insert(ConstPair(name, value));
 	}
 
 	void addClass(Class* klass) {
-		m_class_table.insert(std::make_pair(klass->getName(), klass));
+		m_classes.insert(std::make_pair(klass->getName(), klass));
 	}
 	/**
 	 * Check if the module is loaded
@@ -138,8 +131,8 @@ private:
 	short int m_flags;
 	const std::string m_name;
 	FunctionMap m_functions;
-	ClassMap m_class_table;
-	ConstMap m_const_table;
+	ClassMap m_classes;
+	ConstMap m_consts;
 
 	DISALLOW_COPY_AND_ASSIGN(Module);
 };

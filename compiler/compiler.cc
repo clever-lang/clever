@@ -63,15 +63,15 @@ const CString* g_cache_ptrs[NUM_CACHED_PTRS];
  * Deallocs memory used by compiler data
  */
 Compiler::~Compiler() {
-	if (m_initialized) {
-		g_pkgmanager.shutdown();
-	}
-
 	if (m_ast) {
 		delete m_ast;
 	}
 
 	g_scope.clear();
+
+	if (m_initialized) {
+		g_pkgmanager.shutdown();
+	}
 	delete g_cstring_tbl;
 }
 
