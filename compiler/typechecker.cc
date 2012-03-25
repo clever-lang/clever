@@ -1111,10 +1111,12 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 	// Mark the function as user defined function
 	user_func->setUserDefined();
 
-	func->addRef();
-	m_scope->pushValue(func->getName(), func);
+	if (first_declaration) {
+		func->addRef();
+		m_scope->pushValue(func->getName(), func);
 
-	func->setHandler(user_func);
+		func->setHandler(user_func);
+	}
 
 	// Set the return type
 	if (EXPECTED(return_type != NULL)) {
