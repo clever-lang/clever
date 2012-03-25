@@ -154,6 +154,42 @@ void VM::push_args(Scope* scope, const FunctionArgs& fargs,
 }
 
 /**
+ * Pop arguments onto the call stack
+ */
+inline void VM::pop_args(const Opcode* const op) {
+	// Check if the function has arguments
+	if (s_var->mode == NORMAL && op->getOp2Value() == NULL) {
+		return;
+	}
+
+	VarVector* vec = s_var->call.top().params;
+
+	if (vec == NULL) {
+		return;
+	}
+
+	for (size_t i = 0, j = vec->size(); i < j; ++i) {
+		delete vec->at(i).second;
+	}
+	delete vec;
+}
+
+/**
+ * Restore the parameter argument values from the previous stack frame
+ */
+inline void VM::restore_args() {
+	VarVector* vec = s_var->call.top().params;
+
+	if (vec == NULL) {
+		return;
+	}
+
+	for (size_t i = 0, j = vec->size(); i < j; ++i) {
+		vec->at(i).first->copy(vec->at(i).second);
+	}
+}
+
+/**
  * Pushes local variable into the stack
  */
 void VM::push_local_vars(Scope* scope) {
@@ -182,6 +218,34 @@ void VM::push_local_vars(Scope* scope) {
 	}
 
 	s_var->call.top().locals = vec;
+}
+
+inline void VM::pop_local_vars() {
+	VarVector* vec = s_var->call.top().locals;
+
+	if (!vec) {
+		return;
+	}
+
+	for (size_t i = 0, j = vec->size(); i < j; ++i) {
+		delete vec->at(i).second;
+	}
+	delete vec;
+}
+
+/**
+ * Restore local variables value
+ */
+inline void VM::restore_local_vars() {
+	VarVector* vec = s_var->call.top().locals;
+
+	if (vec == NULL) {
+		return;
+	}
+
+	for (size_t i = 0, j = vec->size(); i < j; ++i) {
+		vec->at(i).first->copy(vec->at(i).second);
+	}
 }
 
 /**
@@ -226,70 +290,6 @@ inline void VM::save_context(const Opcode& opcode) {
 		tmp->copy(opcode.getResultValue());
 
 		s_var->context.top().push_back(VarPair(opcode.getResultValue(), tmp));
-	}
-}
-
-inline void VM::pop_local_vars() {
-	VarVector* vec = s_var->call.top().locals;
-
-	if (!vec) {
-		return;
-	}
-
-	for (size_t i = 0, j = vec->size(); i < j; ++i) {
-		delete vec->at(i).second;
-	}
-	delete vec;
-}
-
-/**
- * Pop arguments onto the call stack
- */
-inline void VM::pop_args(const Opcode* const op) {
-	// Check if the function has arguments
-	if (s_var->mode == NORMAL && op->getOp2Value() == NULL) {
-		return;
-	}
-
-	VarVector* vec = s_var->call.top().params;
-
-	if (vec == NULL) {
-		return;
-	}
-
-	for (size_t i = 0, j = vec->size(); i < j; ++i) {
-		delete vec->at(i).second;
-	}
-	delete vec;
-}
-
-/**
- * Restore the parameter argument values from the previous stack frame
- */
-inline void VM::restore_args() {
-	VarVector* vec = s_var->call.top().params;
-
-	if (vec == NULL) {
-		return;
-	}
-
-	for (size_t i = 0, j = vec->size(); i < j; ++i) {
-		vec->at(i).first->copy(vec->at(i).second);
-	}
-}
-
-/**
- * Restore local variables value
- */
-void VM::restore_local_vars() {
-	VarVector* vec = s_var->call.top().locals;
-
-	if (vec == NULL) {
-		return;
-	}
-
-	for (size_t i = 0, j = vec->size(); i < j; ++i) {
-		vec->at(i).first->copy(vec->at(i).second);
 	}
 }
 
@@ -646,4 +646,3 @@ CLEVER_VM_HANDLER(VM::init_var_handler) {
 }
 
 } // clever
-
