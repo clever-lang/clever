@@ -5,15 +5,16 @@ Clever Team
 ted to the Clever project.
 
 * Language Design and Implementation
-  - Felipe Pena <felipensp at gmail.com>
-  - Higor Eurípedes <heripedes at gmail.com>
-  - Murilo Adriano Vasconcelos <muriloufg at gmail.com>
+  - Felipe Pena <felipe at clever-lang.org>
+  - Higor Eurípedes <higor at clever-lang.org>
+  - Murilo Adriano Vasconcelos <murilo at clever-lang.org>
+  - Péricles Lopes Machado <pericles at clever-lang.org>
 
 * FFI (Foreign Function Interface) support
-  - Péricles Lopes Machado <pericles.raskolnikoff at gmail.com>
+  - Péricles Lopes Machado <pericles at clever-lang.org>
 
 * Windows port
-  - Ricardo Gomes da Silva <cadopoa at gmail.com>
+  - Ricardo Gomes da Silva <ricardo at clever-lang.org>
 
 * Modules
   * std
@@ -33,6 +34,8 @@ ted to the Clever project.
       - Felipe
     * regex
       - Higor, Felipe
+    * RPC
+      - Péricles
 
 * Names
  - Felipe   = Felipe Nascimento Silva Pena
