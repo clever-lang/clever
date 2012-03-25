@@ -1085,6 +1085,46 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(TypeCreation);
 };
 
+class FuncPrototype : public ASTNode {
+public:
+	FuncPrototype(Identifier* name, Identifier* rtype, ArgumentDeclList* args)
+		: m_name(name), m_return(rtype), m_args(args), m_value(NULL) {
+		CLEVER_SAFE_ADDREF(m_name);
+		CLEVER_SAFE_ADDREF(m_return);
+		CLEVER_SAFE_ADDREF(m_args);
+	}
+
+	virtual ~FuncPrototype() {
+		CLEVER_SAFE_DELREF(m_name);
+		CLEVER_SAFE_DELREF(m_return);
+		CLEVER_SAFE_DELREF(m_args);
+		CLEVER_SAFE_DELREF(m_value);
+	}
+
+	const CString* getName() const { return m_name->getName(); }
+	ArgumentDeclList* getArgs() const { return m_args; }
+
+	Identifier* getReturn() const { return m_return; }
+
+	Identifier* getReturnValue() const { return m_return ? m_return : NULL; }
+
+
+	void setValue(CallableValue* value) { m_value = value; }
+
+	CallableValue* getFunc() { return m_value; }
+
+	void acceptVisitor(ASTVisitor& visitor) {
+		visitor.visit(this);
+	}
+protected:
+	Identifier* m_name;
+	Identifier* m_return;
+	ArgumentDeclList* m_args;
+	CallableValue* m_value;
+private:
+	DISALLOW_COPY_AND_ASSIGN(FuncPrototype);
+};
+
 class FuncDeclaration : public ASTNode {
 public:
 	FuncDeclaration(Identifier* name, Identifier* rtype, ArgumentDeclList* args, BlockNode* block)

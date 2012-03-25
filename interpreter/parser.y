@@ -156,6 +156,7 @@ namespace clever {
 	ast::VariableDecls* variable_decls;
 	ast::ClassDeclaration* class_decl;
 	ast::FuncDeclaration* func_decl;
+	ast::FuncPrototype* func_proto;
 	ast::ExtFuncDeclaration* ext_func_decl;
 	ast::ExtFuncDecls* ext_func_decls;
 	ast::MethodDeclaration* method_decl;
@@ -205,7 +206,7 @@ namespace clever {
 %type <arg_decl_list> args_declaration_non_empty
 %type <arg_decl_list> args_declaration
 %type <func_decl> func_declaration
-%type <func_decl> func_prototype
+%type <func_proto> func_prototype
 %type <ext_func_decl> ext_func_declaration
 %type <ext_func_decls> ext_func_declaration_list
 %type <ext_func_decls> ext_func_declaration_list_impl
@@ -315,7 +316,7 @@ annotation:
 ;
 
 func_prototype:
-		TYPE IDENT '(' args_declaration ')' ';' { $$ = new ast::FuncDeclaration($2, $1, $4); }
+		TYPE IDENT '(' args_declaration ')' ';' { $$ = new ast::FuncPrototype($2, $1, $4); }
 ;
 
 func_declaration:

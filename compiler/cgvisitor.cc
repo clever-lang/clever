@@ -441,6 +441,11 @@ AST_VISITOR(CodeGenVisitor, FuncDeclaration) {
 	jmp->setJmpAddr1(getOpNum());
 }
 
+AST_VISITOR(CodeGenVisitor, FuncPrototype) {
+
+}
+
+
 /**
  * Function declaration
  */

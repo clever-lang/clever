@@ -1039,13 +1039,7 @@ AST_VISITOR(TypeChecker, ImportStmt) {
 /**
  * Function declaration visitor
  */
-AST_VISITOR(TypeChecker, FuncDeclaration) {
-	// We can't have a function declaration without a block
-	if (UNEXPECTED(!expr->hasBlock())) {
-		Compiler::error("Cannot declare a function without a block",
-			expr->getLocation());
-	}
-
+AST_VISITOR(TypeChecker, FuncPrototype) {
 	const CString* name = expr->getName();
 	CallableValue* func = new CallableValue(name);
 	Function* user_func = new Function(name->str());
@@ -1071,9 +1065,83 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 		user_func->setReturnType(rtype);
 	}
 
+	if (args) {
+		ArgumentDecls& arg_nodes = args->getArgs();
+		ArgumentDecls::iterator it = arg_nodes.begin(),
+			end = arg_nodes.end();
+
+		m_scope = m_scope->newChild();
+
+		user_func->setScope(m_scope);
+
+		while (EXPECTED(it != end)) {
+			Value* var = new Value;
+
+			const Type* arg_type = _evaluate_type(expr->getLocation(),
+				it->first, m_scope);
+			const CString* arg_name = it->second->getName();
+
+			var->setName(arg_name);
+			var->setTypePtr(arg_type);
+			var->initialize();
+
+			m_scope->pushValue(var->getName(), var);
+
+			user_func->addArg(*arg_name, arg_type);
+
+			++it;
+		}
+	}
+}
+
+AST_VISITOR(TypeChecker, FuncDeclaration) {
+	// We can't have a function declaration without a block
+	if (UNEXPECTED(!expr->hasBlock())) {
+		Compiler::error("Cannot declare a function without a block",
+			expr->getLocation());
+	}
+
+	const CString* name = expr->getName();
+	CallableValue* func = NULL; //new CallableValue(name);
+	Function* user_func = NULL; //new Function(name->str());
+
+	bool first_declaration = true;
+
+	func = static_cast<CallableValue*>(m_scope->getValue(name));
+
+	if (func == NULL) {
+		func = new CallableValue(name);
+		user_func = new Function(name->str());
+	} else {
+		user_func = const_cast<Function*>(func->getFunction());
+		first_declaration = false;
+	}
+
+	Identifier* return_type = expr->getReturnValue();
+	ArgumentDeclList* args = expr->getArgs();
+
+	// Mark the function as user defined function
+	user_func->setUserDefined();
+
+	func->addRef();
+	m_scope->pushValue(func->getName(), func);
+
+	func->setHandler(user_func);
+
+	// Set the return type
+	if (EXPECTED(return_type != NULL)) {
+		const Type* rtype = NULL;
+
+		if (return_type->getName() != CACHE_PTR(CLEVER_VOID_STR, "Void")) {
+			rtype = _evaluate_type(expr->getLocation(), return_type,
+				m_scope);
+		}
+		user_func->setReturnType(rtype);
+	}
+
 	expr->setValue(func);
 
-	if (args) {
+	if (args && first_declaration) {
 		ArgumentDecls& arg_nodes = args->getArgs();
 		ArgumentDecls::iterator it = arg_nodes.begin(),
 			end = arg_nodes.end();

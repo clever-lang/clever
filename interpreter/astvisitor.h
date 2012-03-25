@@ -45,6 +45,7 @@ class BlockNode;
 class VarDecls;
 class ArgumentList;
 class FuncDeclaration;
+class FuncPrototype;
 class ExtFuncDeclaration;
 class ClassDeclaration;
 class ReturnStmt;
@@ -82,6 +83,7 @@ class LambdaFunction;
 	V(AssignExpr); \
 	V(ImportStmt); \
 	V(FuncDeclaration); \
+	V(FuncPrototype); \
 	V(ExtFuncDeclaration); \
 	V(ClassDeclaration); \
 	V(ReturnStmt); \
