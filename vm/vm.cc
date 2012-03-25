@@ -245,8 +245,7 @@ void VM::pop_local_vars() {
  */
 void VM::pop_args(const Opcode* const op) {
 	// Check if the function has arguments
-	if ((s_var->mode == NORMAL && op->getOp2Value() == NULL)
-		|| (s_var->mode == INTERNAL && s_var->call.top().params != NULL)) {
+	if (s_var->mode == NORMAL && op->getOp2Value() == NULL) {
 		return;
 	}
 
