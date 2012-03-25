@@ -75,6 +75,11 @@ void Glob::init() {
 
 	addMethod(new Method("toString", &Glob::toString, CLEVER_STR));
 
+	/**
+	 * Iterator interface methods
+	 */
+	setInterface(CLEVER_TYPE("Iterator"));
+
 	addMethod(new Method("current", &Glob::current, CLEVER_STR));
 }
 

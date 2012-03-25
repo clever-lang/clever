@@ -23,19 +23,24 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef CLEVER_NATIVE_TYPES_H
-#define CLEVER_NATIVE_TYPES_H
+#ifndef CLEVER_ITERATOR_H
+#define CLEVER_ITERATOR_H
 
-#include "types/object.h"
-#include "types/int.h"
-#include "types/double.h"
-#include "types/str.h"
-#include "types/bool.h"
-#include "types/byte.h"
-#include "types/array.h"
-#include "types/map.h"
-#include "types/pair.h"
-#include "types/function.h"
-#include "types/iterator.h"
+#include "types/type.h"
 
-#endif // CLEVER_NATIVE_TYPES_H
+namespace clever {
+
+class Iterator : public InterfaceType {
+public:
+	Iterator()
+		: InterfaceType(CSTRING("Iterator")) {}
+
+	void init();
+	DataValue* allocateValue() const;
+private:
+	DISALLOW_COPY_AND_ASSIGN(Iterator);
+};
+
+} // clever
+
+#endif // CLEVER_ITERATOR_H

@@ -114,6 +114,7 @@ void Compiler::loadNativeTypes() {
 	CLEVER_MAP     = new Map;
 	Type* pair     = new Pair;
 	Type* function = new FunctionType;
+	Type* iterator = new Iterator;
 
 	// Registers all native data types
 	g_scope.pushType(CSTRING("Object"), CLEVER_OBJECT);
@@ -126,6 +127,7 @@ void Compiler::loadNativeTypes() {
 	g_scope.pushType(CSTRING("Map"),    CLEVER_MAP);
 	g_scope.pushType(CSTRING("Pair"),   pair);
 	g_scope.pushType(CSTRING("Function"), function);
+	g_scope.pushType(CSTRING("Iterator"), iterator);
 
 	// Initialize native data types
 	CLEVER_INT->init();
@@ -138,6 +140,7 @@ void Compiler::loadNativeTypes() {
 	CLEVER_OBJECT->init();
 	pair->init();
 	function->init();
+	iterator->init();
 }
 
 /**

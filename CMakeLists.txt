@@ -131,6 +131,7 @@ add_executable(clever
 	types/byte.cc
 	types/array.cc
 	types/object.cc
+	types/iterator.cc
 	types/str.cc
 	types/int.cc
 	types/function.cc

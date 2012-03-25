@@ -156,7 +156,7 @@ public:
 	typedef std::pair<std::vector<const Type*>, Method*> MethodPair;
 
 	explicit Type(const CString* name, const Type* super = CLEVER_OBJECT)
-		: RefCounted(1), m_name(name), m_super(super) { }
+		: RefCounted(1), m_name(name), m_super(super), m_interface(NULL) {}
 
 	virtual ~Type();
 
@@ -186,6 +186,13 @@ public:
 	}
 
 	/**
+	 * Checks if this type is an interface
+	 */
+	virtual bool isInterfaceType() const {
+		return false;
+	}
+
+	/**
 	 * Returns the super type of this type or NULL if none
 	 */
 	const Type* getSuperType() const {
@@ -205,6 +212,20 @@ public:
 		}
 
 		return false;
+	}
+
+	/**
+	 * Sets the Type pointer related to the interface type
+	 */
+	void setInterface(const Type* interface) {
+		m_interface = interface;
+	}
+
+	/**
+	 * Returns a boolean indicating if the type implements the interface
+	 */
+	bool implementsInterface(const Type* interface) const {
+		return m_interface == interface;
 	}
 
 	/**
@@ -228,6 +249,7 @@ private:
 
 	// Type which this type is directly inherited
 	const Type* const m_super;
+	const Type* m_interface;
 
 	DISALLOW_COPY_AND_ASSIGN(Type);
 };
@@ -259,6 +281,18 @@ private:
 protected:
 	void addArg(const Type* type) {
 		m_type_args.push_back(type);
+	}
+};
+
+class InterfaceType : public Type {
+public:
+	InterfaceType(const CString* name)
+		: Type(name) {}
+
+	~InterfaceType() {}
+
+	virtual bool isInterfaceType() const {
+		return true;
 	}
 };
 
