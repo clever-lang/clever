@@ -36,10 +36,6 @@ VMVars* VM::s_var;
 const OpcodeList* VM::s_opcodes;
 const Value* VM::s_return_value;
 
-static inline const CallableValue* _get_op1_callable(const Opcode& opcode) {
-	return static_cast<CallableValue*>(opcode.getOp1Value());
-}
-
 inline void VM::start_new_execution() {
 	s_vars.push(VMVars());
 	s_var = &s_vars.top();
