@@ -1,0 +1,13 @@
+[FATAL] Testing different return type
+==CODE==
+import std.io.*;
+
+Int f(Int x);
+
+Double f(Int x) {
+	return x;
+}
+
+f(2);
+==RESULT==
+Compile error: Function declaration `f' uses a different return type than the prototype on line 1
