@@ -46,6 +46,7 @@ public:
 	 */
 	static CLEVER_METHOD(constructor);
 	static CLEVER_METHOD(toString);
+	static CLEVER_METHOD(current);
 private:
 	DISALLOW_COPY_AND_ASSIGN(Glob);
 };

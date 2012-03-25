@@ -34,6 +34,27 @@ namespace clever { namespace packages { namespace std { namespace file {
  * Glob::Glob(String pattern)
  */
 CLEVER_METHOD(Glob::constructor) {
+	GlobValue* gv = new GlobValue;
+
+	gv->globbuf.gl_offs = 0;
+
+	glob(CLEVER_ARG_STR(0).c_str(), GLOB_DOOFFS, NULL, &gv->globbuf);
+
+	CLEVER_RETURN_DATA_VALUE(gv);
+}
+
+/**
+ * Glob::current()
+ * Returns the current path in the internal cursor
+ */
+CLEVER_METHOD(Glob::current) {
+	CLEVER_OBJECT_INIT(gv, GlobValue*);
+
+	if (gv->globbuf.gl_pathc) {
+		CLEVER_RETURN_STR(CSTRINGT(gv->globbuf.gl_pathv[0]));
+	} else {
+		CLEVER_RETURN_EMPTY_STR();
+	}
 }
 
 /**
@@ -53,6 +74,8 @@ void Glob::init() {
 	);
 
 	addMethod(new Method("toString", &Glob::toString, CLEVER_STR));
+
+	addMethod(new Method("current", &Glob::current, CLEVER_STR));
 }
 
 DataValue* Glob::allocateValue() const {
@@ -60,6 +83,11 @@ DataValue* Glob::allocateValue() const {
 }
 
 void Glob::destructor(Value* value) const {
+	GlobValue* gv = CLEVER_GET_VALUE(GlobValue*, value);
+
+	if (gv->globbuf.gl_pathc) {
+		globfree(&gv->globbuf);
+	}
 }
 
 }}}} // clever::packages::std::file
