@@ -161,7 +161,7 @@ void VM::push_local_vars(Scope* scope) {
 		return;
 	}
 
-	SymbolMap& symbols = scope->getChildren()[0]->getSymbols();
+	const SymbolMap& symbols = scope->getChildren()[0]->getSymbols();
 	SymbolMap::const_iterator it(symbols.begin()), end(symbols.end());
 
 	VarVector* vec = new VarVector;
@@ -229,7 +229,7 @@ inline void VM::save_context(const Opcode& opcode) {
 	}
 }
 
-void VM::pop_local_vars() {
+inline void VM::pop_local_vars() {
 	VarVector* vec = s_var->call.top().locals;
 
 	if (!vec) {
@@ -245,7 +245,7 @@ void VM::pop_local_vars() {
 /**
  * Pop arguments onto the call stack
  */
-void VM::pop_args(const Opcode* const op) {
+inline void VM::pop_args(const Opcode* const op) {
 	// Check if the function has arguments
 	if (s_var->mode == NORMAL && op->getOp2Value() == NULL) {
 		return;
@@ -266,7 +266,7 @@ void VM::pop_args(const Opcode* const op) {
 /**
  * Restore the parameter argument values from the previous stack frame
  */
-void VM::restore_args() {
+inline void VM::restore_args() {
 	VarVector* vec = s_var->call.top().params;
 
 	if (vec == NULL) {
