@@ -1070,7 +1070,6 @@ AST_VISITOR(TypeChecker, FuncPrototype) {
 		ArgumentDecls::iterator it = arg_nodes.begin(),
 			end = arg_nodes.end();
 
-
 		while (EXPECTED(it != end)) {
 			const Type* arg_type = _evaluate_type(expr->getLocation(),
 				it->first, m_scope);
@@ -1093,7 +1092,7 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 	const CString* name = expr->getName();
 	CallableValue* func = NULL;
 	Function* user_func = NULL;
-	bool first_declaration = true;
+	bool has_prototype = false;
 
 	func = static_cast<CallableValue*>(m_scope->getValue(name));
 
@@ -1102,31 +1101,42 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 		user_func = new Function(name->str());
 	} else {
 		user_func = const_cast<Function*>(func->getFunction());
-		first_declaration = false;
+		has_prototype = true;
 	}
 
 	Identifier* return_type = expr->getReturnValue();
 	ArgumentDeclList* args = expr->getArgs();
+	const Type* rtype = NULL;
 
-	// Mark the function as user defined function
-	user_func->setUserDefined();
-
-	if (first_declaration) {
-		func->addRef();
-		m_scope->pushValue(func->getName(), func);
-
-		func->setHandler(user_func);
-	}
-
-	// Set the return type
 	if (EXPECTED(return_type != NULL)) {
-		const Type* rtype = NULL;
-
 		if (return_type->getName() != CACHE_PTR(CLEVER_VOID_STR, "Void")) {
 			rtype = _evaluate_type(expr->getLocation(), return_type,
 				m_scope);
 		}
-		user_func->setReturnType(rtype);
+	}
+
+	// Check if the prototype fits the function declaration
+	if (has_prototype) {
+		const Type* rtype2 = user_func->getReturnType();
+
+		if (rtype != rtype2) {
+			Compiler::errorf(expr->getLocation(),
+				"Function declaration `%S' uses a different return type than "
+				"the prototype",
+				name);
+		}
+	} else {
+		// Mark the function as user defined function
+		user_func->setUserDefined();
+
+		func->addRef();
+		func->setHandler(user_func);
+		m_scope->pushValue(func->getName(), func);
+
+		// Set the return type
+		if (EXPECTED(return_type != NULL)) {
+			user_func->setReturnType(rtype);
+		}
 	}
 
 	expr->setValue(func);
@@ -1153,7 +1163,7 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 
 			m_scope->pushValue(var->getName(), var);
 
-			if(first_declaration) {
+			if (!has_prototype) {
 				user_func->addArg(*arg_name, arg_type);
 			}
 
