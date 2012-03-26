@@ -73,7 +73,7 @@ AST_VISITOR(CodeGenVisitor, RegexPattern) {
  * Generates opcode for unary expression
  */
 AST_VISITOR(CodeGenVisitor, UnaryExpr) {
-	OpcodeType opcode;
+	OpcodeType opcode = OP_PRE_INC;
 
 	switch (expr->getOp()) {
 		case PRE_INC: opcode = OP_PRE_INC; break;
@@ -96,7 +96,7 @@ AST_VISITOR(CodeGenVisitor, BinaryExpr) {
 
 	Value* rhs;
 	Value* lhs = expr->getLhs()->getValue();
-	OpcodeType opval;
+	OpcodeType opval = OP_JMPZ;
 	int op = expr->getOp();
 
 	// Treat the jump for logical expression
