@@ -52,7 +52,6 @@ void init_type_cached_ptrs();
  * Global native type pointers
  */
 #define CLEVER_INT_VAR    g_int_type_ptr
-#define CLEVER_LONG_VAR   g_long_type_ptr
 #define CLEVER_DOUBLE_VAR g_double_type_ptr
 #define CLEVER_STR_VAR    g_str_type_ptr
 #define CLEVER_BOOL_VAR   g_bool_type_ptr
@@ -62,7 +61,6 @@ void init_type_cached_ptrs();
 #define CLEVER_OBJ_VAR    g_obj_type_ptr
 
 #define CLEVER_INT    ::clever::CLEVER_INT_VAR
-#define CLEVER_LONG   ::clever::CLEVER_LONG_VAR
 #define CLEVER_DOUBLE ::clever::CLEVER_DOUBLE_VAR
 #define CLEVER_STR    ::clever::CLEVER_STR_VAR
 #define CLEVER_BOOL   ::clever::CLEVER_BOOL_VAR

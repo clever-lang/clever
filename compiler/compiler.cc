@@ -40,7 +40,6 @@ namespace clever {
 PackageManager g_pkgmanager;
 
 Type* CLEVER_INT_VAR    = NULL;
-Type* CLEVER_LONG_VAR   = NULL;
 Type* CLEVER_DOUBLE_VAR = NULL;
 Type* CLEVER_STR_VAR    = NULL;
 Type* CLEVER_BOOL_VAR   = NULL;
@@ -105,7 +104,6 @@ void Compiler::shutdown() {
 void Compiler::loadNativeTypes() {
 	CLEVER_OBJECT = new Object;
 	CLEVER_INT    = new Integer;
-	CLEVER_LONG   = new Long;
 	CLEVER_STR    = new String;
 	CLEVER_DOUBLE = new Double;
 	CLEVER_BOOL   = new Bool;
@@ -121,7 +119,6 @@ void Compiler::loadNativeTypes() {
 	// Registers all native data types
 	g_scope.pushType(CSTRING("Object"), CLEVER_OBJECT);
 	g_scope.pushType(CSTRING("Int"),    CLEVER_INT);
-	g_scope.pushType(CSTRING("Long"),    CLEVER_LONG);
 	g_scope.pushType(CSTRING("Double"), CLEVER_DOUBLE);
 	g_scope.pushType(CSTRING("String"), CLEVER_STR);
 	g_scope.pushType(CSTRING("Bool"),   CLEVER_BOOL);
@@ -134,7 +131,6 @@ void Compiler::loadNativeTypes() {
 
 	// Initialize native data types
 	CLEVER_INT->init();
-	CLEVER_LONG->init();
 	CLEVER_DOUBLE->init();
 	CLEVER_STR->init();
 	CLEVER_BOOL->init();

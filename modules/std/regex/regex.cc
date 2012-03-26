@@ -46,11 +46,11 @@ CLEVER_MODULE_INIT(Regex) {
 	 */
 	BEGIN_DECLARE_CONSTANT();
 
-	addConstant(CSTRING("DOTALL"),    new Value(int32_t(PCRE_DOTALL)));
-	addConstant(CSTRING("MULTILINE"), new Value(int32_t(PCRE_MULTILINE)));
-	addConstant(CSTRING("CASELESS"),  new Value(int32_t(PCRE_CASELESS)));
-	addConstant(CSTRING("UTF8"),      new Value(int32_t(PCRE_UTF8)));
-	addConstant(CSTRING("UNGREEDY"),  new Value(int32_t(PCRE_UNGREEDY)));
+	addConstant(CSTRING("DOTALL"),    new Value(int64_t(PCRE_DOTALL)));
+	addConstant(CSTRING("MULTILINE"), new Value(int64_t(PCRE_MULTILINE)));
+	addConstant(CSTRING("CASELESS"),  new Value(int64_t(PCRE_CASELESS)));
+	addConstant(CSTRING("UTF8"),      new Value(int64_t(PCRE_UTF8)));
+	addConstant(CSTRING("UNGREEDY"),  new Value(int64_t(PCRE_UNGREEDY)));
 
 	END_DECLARE();
 }

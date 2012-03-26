@@ -2,16 +2,16 @@ Testing Map<> literals
 ==CODE==
 import std.io.*;
 
-Auto m1 = {100000L: 'med', 10000000000L: 'big', -1L: 'small'};
+Auto m1 = {100000: 'med', 10000000000: 'big', -1: 'small'};
 
 Auto all = m1.getAll();
 
-for (Auto i = 0L; i < all.size(); ++i) {
+for (Auto i = 0; i < all.size(); ++i) {
 	print(i, ': ', all[i], "\n");
 }
 
-println({'a': 2L, 'b': 5L}.hasKey('a'));
-println({'a': 2L, 'b': 5L}.hasKey('5'));
+println({'a': 2, 'b': 5}.hasKey('a'));
+println({'a': 2, 'b': 5}.hasKey('5'));
 
 ==RESULT==
 0: \(-1, small\)

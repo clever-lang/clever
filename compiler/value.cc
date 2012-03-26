@@ -37,8 +37,6 @@ void Value::initialize() {
 
 	if (isInteger()) {
 		setInteger(0);
-	} else if(isLong()) {
-		setLong(0);
 	} else if (isDouble()) {
 		setDouble(0.0);
 	} else if (isBoolean()) {
@@ -71,8 +69,6 @@ bool Value::getValueAsBool() const {
 
 	if (m_type_ptr == CLEVER_INT) {
 		return getInteger();
-	} else if (m_type_ptr == CLEVER_LONG) {
-		return getLong();
 	} else if (m_type_ptr == CLEVER_DOUBLE) {
 		return getDouble();
 	} else if (m_type_ptr == CLEVER_STR) {
@@ -142,8 +138,6 @@ const std::string Value::toString() {
 
 		if (isInteger()) {
 			str << getInteger();
-		} else if (isLong()) {
-			str << getLong();
 		} else if (isDouble()) {
 			str << getDouble();
 		} else if (isBoolean()) {
