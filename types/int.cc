@@ -57,7 +57,7 @@ CLEVER_METHOD(Integer::toString) {
  */
 CLEVER_METHOD(Integer::do_assign) {
 	if (CLEVER_ARG_IS_INT(0)) {
-		CLEVER_THIS()->copy(CLEVER_ARG(0));
+		CLEVER_THIS()->setInteger(CLEVER_ARG(0)->getInteger());
 	} else {
 		CLEVER_THIS()->setInteger((int32_t)CLEVER_ARG(0)->getDouble());
 	}
