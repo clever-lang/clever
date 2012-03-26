@@ -47,7 +47,7 @@ next_token:
 
 	IDENTIFIER = [a-z][a-zA-Z0-9_]*;
 	INTEGER    = [0-9]+;
-	LONG = [0-9]+[L];
+	LONG       = [0-9]+[L];
 	DOUBLE     = [-]?([0-9]*"."[0-9]+)|[-]?([0-9]+"."[0-9]+);
 	EXP_DOUBLE = ((INTEGER|DOUBLE)[eE][+-]?INTEGER);
 	HEXINT     = [0][x][0-9a-zA-Z]+;
@@ -316,7 +316,7 @@ next_token:
 		const char* nstr = reinterpret_cast<const char*>(s.yylex);
 		int64_t n = 0;
 
-		for (int i = 0; i < yylen; ++i) {
+		for (int i = 0; i < yylen-1; ++i) {
 			n = n * 10 + (nstr[i] - '0');
 		}
 
