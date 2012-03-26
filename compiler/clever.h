@@ -96,6 +96,7 @@ extern jmp_buf fatal_error;
  * Macro to check the argument type
  */
 #define CLEVER_ARG_IS_INT(x)     CLEVER_ARG(x)->isInteger()
+#define CLEVER_ARG_IS_LONG(x)    CLEVER_ARG(x)->isLong()
 #define CLEVER_ARG_IS_BOOL(x)    CLEVER_ARG(x)->isBoolean()
 #define CLEVER_ARG_IS_STR(x)     CLEVER_ARG(x)->isString()
 #define CLEVER_ARG_IS_BYTE(x)    CLEVER_ARG(x)->isByte()
@@ -111,6 +112,7 @@ extern jmp_buf fatal_error;
  * Macro to data access of an specific argument supplied to function
  */
 #define CLEVER_ARG_INT(x)        args->at((x))->getInteger()
+#define CLEVER_ARG_LONG(x)       args->at((x))->getLong()
 #define CLEVER_ARG_DOUBLE(x)     args->at((x))->getDouble()
 #define CLEVER_ARG_STR(x)        args->at((x))->getString()
 #define CLEVER_ARG_BOOL(x)       args->at((x))->getBoolean()
@@ -128,6 +130,7 @@ extern jmp_buf fatal_error;
 #define CLEVER_RETURN_STR(x)        retval->setString((x))
 #define CLEVER_RETURN_BOOL(x)       retval->setBoolean((x))
 #define CLEVER_RETURN_INT(x)        retval->setInteger((x))
+#define CLEVER_RETURN_LONG(x)       retval->setLong((x))
 #define CLEVER_RETURN_DOUBLE(x)     retval->setDouble((x))
 #define CLEVER_RETURN_BYTE(x)       retval->setByte((x))
 #define CLEVER_RETURN_DATA_VALUE(x) retval->setDataValue((x))

@@ -43,6 +43,7 @@ class Scope;
  * Native types
  */
 extern Type* CLEVER_INT_VAR;
+extern Type* CLEVER_LONG_VAR;
 extern Type* CLEVER_DOUBLE_VAR;
 extern Type* CLEVER_STR_VAR;
 extern Type* CLEVER_BOOL_VAR;
@@ -56,6 +57,7 @@ extern Type* CLEVER_OBJ_VAR;
 class Value : public RefCounted {
 public:
 	union ValueData {
+		int32_t i_value;
 		int64_t l_value;
 		double d_value;
 		bool b_value;
@@ -89,10 +91,16 @@ public:
 		setDouble(value);
 	}
 
-	explicit Value(int64_t value)
+	explicit Value(int32_t value)
 		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_INT),
 			m_name(NULL), m_is_const(false) {
 		setInteger(value);
+	}
+
+	explicit Value(int64_t value)
+		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_LONG),
+			m_name(NULL), m_is_const(false) {
+		setLong(value);
 	}
 
 	explicit Value(bool value)
@@ -157,7 +165,7 @@ public:
 	void setName(const CString* const name) { m_name = name; }
 
 	bool isPrimitive() const {
-		return isInteger() || isString() || isBoolean()
+		return isInteger() || isLong() || isString() || isBoolean()
 				|| isDouble() || isByte();
 	}
 
@@ -168,6 +176,7 @@ public:
 	virtual bool isCallable() const { return m_type == CALL; }
 
 	bool isInteger()   const { return m_type_ptr == CLEVER_INT; }
+	bool isLong()      const { return m_type_ptr == CLEVER_LONG; }
 	bool isString()    const { return m_type_ptr == CLEVER_STR; }
 	bool isDouble()    const { return m_type_ptr == CLEVER_DOUBLE; }
 	bool isBoolean()   const { return m_type_ptr == CLEVER_BOOL; }
@@ -176,11 +185,17 @@ public:
 	bool isReference() const { return m_type == REF; }
 
 	bool isNumeric() const {
-		return (isInteger() || isDouble());
+		return (isInteger() || isLong() ||isDouble());
 	}
 
-	void setInteger(int64_t i) {
+	void setInteger(int32_t i) {
 		m_type_ptr = CLEVER_INT;
+		m_type = PRIMITIVE;
+		m_data.i_value = i;
+	}
+
+	void setLong(int64_t i) {
+		m_type_ptr = CLEVER_LONG;
 		m_type = PRIMITIVE;
 		m_data.l_value = i;
 	}
@@ -226,7 +241,8 @@ public:
 	const CString* getStringP() const { return m_data.s_value; }
 
 	const CString& getString() const { return *m_data.s_value; }
-	int64_t getInteger()       const { return m_data.l_value; }
+	int32_t getInteger()       const { return m_data.i_value; }
+	int64_t getLong()          const { return m_data.l_value; }
 	double getDouble()         const { return m_data.d_value; }
 	bool getBoolean()          const { return m_data.b_value; }
 	uint8_t getByte()          const { return m_data.c_value; }

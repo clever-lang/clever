@@ -47,6 +47,7 @@ next_token:
 
 	IDENTIFIER = [a-z][a-zA-Z0-9_]*;
 	INTEGER    = [0-9]+;
+	LONG = [0-9]+L;
 	DOUBLE     = [-]?([0-9]*"."[0-9]+)|[-]?([0-9]+"."[0-9]+);
 	EXP_DOUBLE = ((INTEGER|DOUBLE)[eE][+-]?INTEGER);
 	HEXINT     = [0][x][0-9a-zA-Z]+;
@@ -297,7 +298,7 @@ next_token:
 
 	<INITIAL>INTEGER {
 		const char* nstr = reinterpret_cast<const char*>(s.yylex);
-		int64_t n = 0;
+		int32_t n = 0;
 
 		for (int i = 0; i < yylen; ++i) {
 			n = n * 10 + (nstr[i] - '0');
@@ -309,6 +310,22 @@ next_token:
 		yylval->num_literal = new ast::NumberLiteral(newval);
 
 		RET(token::NUM_INTEGER);
+	}
+
+	<INITIAL>LONG {
+		const char* nstr = reinterpret_cast<const char*>(s.yylex);
+		int64_t n = 0;
+
+		for (int i = 0; i < yylen; ++i) {
+			n = n * 10 + (nstr[i] - '0');
+		}
+
+		Value* newval = new Value(CLEVER_LONG);
+		newval->setLong(n);
+
+		yylval->num_literal = new ast::NumberLiteral(newval);
+
+		RET(token::NUM_LONG);
 	}
 
 	<INITIAL>HEXINT {

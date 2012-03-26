@@ -134,6 +134,7 @@ add_executable(clever
 	types/iterator.cc
 	types/str.cc
 	types/int.cc
+	types/long.cc
 	types/function.cc
 	interpreter/main.cc
 	interpreter/driver.cc
