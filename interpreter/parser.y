@@ -68,6 +68,7 @@ namespace clever {
 %token TYPE          "type specification"
 %token IDENT         "identifier"
 %token NUM_INTEGER   "number"
+%token NUM_LONG      "long number"
 %token NUM_DOUBLE    "float-number"
 %token STR           "string"
 %token IN            "in"
@@ -184,6 +185,7 @@ namespace clever {
 
 %type <identifier> IDENT
 %type <num_literal> NUM_INTEGER
+%type <num_literal> NUM_LONG
 %type <num_literal> NUM_DOUBLE
 %type <str_literal> STR
 
@@ -575,6 +577,7 @@ expr:
 
 literal:
 		NUM_INTEGER { $$ = $<ast_node>1; }
+	|	NUM_LONG    { $$ = $<ast_node>1; }
 	|	NUM_DOUBLE  { $$ = $<ast_node>1; }
 	|	STR         { $$ = $<ast_node>1; }
 	|	TRUE        { $$ = $<ast_node>1; }

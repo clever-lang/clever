@@ -28,6 +28,7 @@
 
 #include "types/object.h"
 #include "types/int.h"
+#include "types/long.h"
 #include "types/double.h"
 #include "types/str.h"
 #include "types/bool.h"
