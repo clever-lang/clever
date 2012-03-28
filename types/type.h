@@ -27,17 +27,20 @@
 #define CLEVER_TYPE_H
 
 #include <cstring>
-#include <vector>
-#ifdef CLEVER_MSVC
-#include <unordered_map>
-#else
-#include <tr1/unordered_map>
-#endif
 #include <map>
+#include <vector>
+
+#ifdef CLEVER_MSVC
+# include <unordered_map>
+# include <unordered_set>
+#else
+# include <tr1/unordered_map>
+# include <tr1/unordered_set>
+#endif
+
 #include "compiler/cstring.h"
 #include "compiler/method.h"
 #include "compiler/datavalue.h"
-#include <iostream>
 
 namespace clever {
 
@@ -154,14 +157,14 @@ public:
 	typedef std::map<std::vector<const Type*>, Method*> OverloadMethodMap;
 	typedef std::tr1::unordered_map<std::string, OverloadMethodMap> MethodMap;
 	typedef std::pair<std::vector<const Type*>, Method*> MethodPair;
+	typedef std::tr1::unordered_set<const Type*> InterfaceSet;
 
 	explicit Type(const CString* name, const Type* super = CLEVER_OBJECT)
-		: RefCounted(1), m_name(name), m_super(super), m_interface(NULL) {}
+		: RefCounted(1), m_name(name), m_super(super) {}
 
 	virtual ~Type();
 
 	void addMethod(Method*);
-
 	const Method* getMethod(const CString*, const TypeVector*) const;
 
 	const CString* getName() const {
@@ -215,17 +218,17 @@ public:
 	}
 
 	/**
-	 * Sets the Type pointer related to the interface type
+	 * Adds a interface to this type
 	 */
-	void setInterface(const Type* interface) {
-		m_interface = interface;
+	void addInterface(const Type* interface) {
+		m_interfaces.insert(interface);
 	}
 
 	/**
-	 * Returns a boolean indicating if the type implements the interface
+	 * Returns a boolean indicating if the type implements this interface
 	 */
 	bool implementsInterface(const Type* interface) const {
-		return m_interface == interface;
+		return (m_interfaces.find(interface) != m_interfaces.end());
 	}
 
 	/**
@@ -243,14 +246,21 @@ public:
 	 * of scope.
 	 */
 	virtual void destructor(Value* value) const {}
-private:
+	
+protected:
+	// Methods belonging this type
 	MethodMap m_methods;
+	
+	// This type's name
 	const CString* const m_name;
 
 	// Type which this type is directly inherited
 	const Type* const m_super;
-	const Type* m_interface;
+	
+	// Interfaces implemented
+	InterfaceSet m_interfaces;
 
+private:
 	DISALLOW_COPY_AND_ASSIGN(Type);
 };
 
@@ -276,7 +286,7 @@ public:
 	virtual const Type* getTemplatedType(const Type*, const Type*) const { return NULL; };
 	virtual const Type* getTemplatedType(const TemplateArgs& args) const { return NULL; };
 private:
-	::std::vector<const Type*> m_type_args;
+	std::vector<const Type*> m_type_args;
 
 protected:
 	void addArg(const Type* type) {
