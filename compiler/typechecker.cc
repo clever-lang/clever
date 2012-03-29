@@ -651,6 +651,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 	ASTNode* rhs = expr->getRhs();
 	ArgumentList* ctor_list = expr->getConstructorArgs();
 	bool is_auto = false;
+	bool is_const = expr->isConst();
 
 	if (rhs) {
 		Value* initval = rhs->getValue();
@@ -670,6 +671,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 			type = initval->getTypePtr();
 			var->setTypePtr(type);
 			is_auto = true;
+			is_const = initval->isConst();
 		}
 
 		// Building ValueVector of arguments for __assign__ method call
@@ -699,7 +701,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 		}
 	}
 
-	var->setConstness(expr->isConst());
+	var->setConstness(is_const);
 
 	if (rhs) {
 		if (!is_auto && !expr->isConst() && rhs->getValue()->isConst()) {
@@ -967,6 +969,7 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 
 	// Set the return type
 	result->setTypePtr(func->getReturnType());
+	result->setConstness(func->hasReturnConst());
 
 	expr->setValue(result);
 
@@ -1152,6 +1155,10 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 		if (EXPECTED(return_type != NULL)) {
 			user_func->setReturnType(rtype);
 		}
+		// Set the return constness
+		user_func->setReturnConst(expr->hasReturnConst());
+
+		func->setConstness(expr->hasReturnConst());
 	}
 
 	expr->setValue(func);

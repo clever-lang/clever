@@ -69,40 +69,43 @@ public:
 
 	explicit Function(std::string name)
 		: m_name(name), m_kind(INTERNAL), m_num_args(0), m_min_args(0),
-			m_rtype(NULL), m_scope(NULL) {}
+			m_rtype(NULL), m_scope(NULL), m_rconst(false) {}
 
 	Function(std::string libname, std::string name, const Type* rtype,
 		FunctionPtr ptr)
 		: m_libname(libname), m_lfname(name), m_name(name),
 			m_kind(EXTERNAL), m_num_args(0), m_min_args(0),
-			m_rtype(rtype), m_scope(NULL) { m_info.ptr = ptr; }
+			m_rtype(rtype), m_scope(NULL), m_rconst(false) { m_info.ptr = ptr; }
 
 	Function(std::string libname, std::string lfname, std::string name,
 		const Type* rtype, FunctionPtr ptr)
 		: m_libname(libname), m_lfname(lfname), m_name(name),
 			m_kind(EXTERNAL), m_num_args(0), m_min_args(0),
-			m_rtype(rtype), m_scope(NULL) { m_info.ptr = ptr; }
+			m_rtype(rtype), m_scope(NULL), m_rconst(false) { m_info.ptr = ptr; }
 
 	Function(std::string name, FunctionPtr ptr)
 		: m_name(name), m_kind(INTERNAL), m_num_args(0), m_min_args(0),
-			m_rtype(NULL), m_scope(NULL) { m_info.ptr = ptr; }
+			m_rtype(NULL), m_scope(NULL), m_rconst(false) { m_info.ptr = ptr; }
 
 	Function(std::string name, FunctionPtr ptr, const Type* rtype)
 		: m_name(name), m_kind(INTERNAL), m_num_args(0), m_min_args(0),
-			m_rtype(rtype), m_scope(NULL) { m_info.ptr = ptr; }
+			m_rtype(rtype), m_scope(NULL), m_rconst(false) { m_info.ptr = ptr; }
 
 	Function(std::string name, FunctionPtr ptr, int numargs,
 		const Type* rtype)
 		: m_name(name), m_kind(INTERNAL), m_num_args(numargs),
-			m_min_args(0), m_rtype(rtype), m_scope(NULL) { m_info.ptr = ptr; }
+			m_min_args(0), m_rtype(rtype), m_scope(NULL), m_rconst(false) {
+			m_info.ptr = ptr; }
 
 	Function(std::string& name, size_t offset)
 		: m_name(name), m_kind(USER), m_num_args(0), m_min_args(0),
-			m_rtype(NULL), m_scope(NULL) { m_info.offset = offset; }
+			m_rtype(NULL), m_scope(NULL), m_rconst(false) {
+			m_info.offset = offset; }
 
 	Function(std::string& name, size_t offset, int numargs)
 		: m_name(name), m_kind(USER), m_num_args(numargs), m_min_args(0),
-			m_rtype(NULL), m_scope(NULL) { m_info.offset = offset; }
+			m_rtype(NULL), m_scope(NULL), m_rconst(false) {
+			m_info.offset = offset; }
 
 	virtual ~Function() {}
 
@@ -144,6 +147,9 @@ public:
 	void setReturnType(const Type* type) { m_rtype = type; }
 	const Type* getReturnType() const { return m_rtype; }
 
+	void setReturnConst(bool is_const) { m_rconst = is_const; }
+	bool hasReturnConst() const { return m_rconst; }
+
 	FunctionPtr getPtr() const { return m_info.ptr; }
 
 	const std::string& getName() const { return m_name; }
@@ -170,8 +176,8 @@ private:
 	int m_num_args, m_min_args;
 	const Type* m_rtype;
 	FunctionArgs m_args;
-
 	Scope* m_scope;
+	bool m_rconst;
 };
 
 } // clever

@@ -1159,6 +1159,8 @@ public:
 
 	CallableValue* getFunc() { return m_value; }
 
+	bool hasReturnConst() const { return m_is_const; }
+
 	void acceptVisitor(ASTVisitor& visitor) {
 		visitor.visit(this);
 	}
