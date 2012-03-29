@@ -651,8 +651,6 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 	ASTNode* rhs = expr->getRhs();
 	ArgumentList* ctor_list = expr->getConstructorArgs();
 
-	bool is_auto = false;
-	
 	if (rhs) {
 		Value* initval = rhs->getValue();
 
@@ -699,9 +697,9 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 			var->setDataValue(data_value);
 		}
 	}
-	
+
 	var->setConstness(expr->isConst());
-	
+
 	if (rhs) {
 		if (!is_auto && !expr->isConst() && rhs->getValue()->isConst()) {
 			Compiler::errorf(expr->getLocation(),
