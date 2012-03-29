@@ -668,6 +668,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 			// `auto' typed, so the variable's type is the type of rhs
 			type = initval->getTypePtr();
 			var->setTypePtr(type);
+			is_auto = true;
 		}
 
 		// Building ValueVector of arguments for __assign__ method call
@@ -698,6 +699,19 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 	}
 
 	var->setConstness(expr->isConst());
+
+	if (rhs) {
+		if (!is_auto && !expr->isConst() && rhs->getValue()->isConst()) {
+			Compiler::errorf(expr->getLocation(),
+				"Cannot convert const-qualified variable `%S' to a "
+				"non-const variable of type `%S' on assignment",
+				variable->getName(),
+				type->getName());
+		}
+		else {
+			var->setConstness(expr->isConst() || rhs->getValue()->isConst());
+		}
+	}
 
 	// Registers a new variable
 	m_scope->pushValue(var->getName(), var);
