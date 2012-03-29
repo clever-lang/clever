@@ -1,0 +1,13 @@
+[FATAL] Testing constness #4
+==CODE==
+import std.io.*;
+
+Auto a = {1, 3, 5};
+println(a);
+
+const Auto b = a;
+b.push(-1);
+
+println(b, a);
+==RESULT==
+Compile error: Can't call the non-const method Array<Int>::push\(Int\) because variable `b' is const on \S+ line 7
