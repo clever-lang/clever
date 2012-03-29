@@ -321,6 +321,7 @@ func_prototype:
 
 func_declaration:
 		TYPE IDENT '(' args_declaration ')' block_stmt { $$ = new ast::FuncDeclaration($2, $1, $4, $6); }
+	|	CONST TYPE IDENT '(' args_declaration ')' block_stmt { $$ = new ast::FuncDeclaration($3, $2, $5, $7, true); }
 	|	annotation TYPE IDENT '(' args_declaration ')' block_stmt { $$ = new ast::FuncDeclaration($3, $2, $5, $7); }
 	|	template IDENT '(' args_declaration ')' block_stmt { $$ = new ast::FuncDeclaration($2, $1, $4, $6); }
 	|	annotation template IDENT '(' args_declaration ')' block_stmt { $$ = new ast::FuncDeclaration($3, $2, $5, $7); }

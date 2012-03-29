@@ -1127,8 +1127,10 @@ private:
 
 class FuncDeclaration : public ASTNode {
 public:
-	FuncDeclaration(Identifier* name, Identifier* rtype, ArgumentDeclList* args, BlockNode* block)
-		: m_name(name), m_return(rtype), m_args(args), m_block(block), m_value(NULL) {
+	FuncDeclaration(Identifier* name, Identifier* rtype,
+		ArgumentDeclList* args, BlockNode* block, bool is_const = false)
+		: m_name(name), m_return(rtype), m_args(args), m_block(block),
+			m_value(NULL), m_is_const(is_const) {
 		CLEVER_SAFE_ADDREF(m_name);
 		CLEVER_SAFE_ADDREF(m_return);
 		CLEVER_SAFE_ADDREF(m_args);
@@ -1166,6 +1168,7 @@ protected:
 	ArgumentDeclList* m_args;
 	BlockNode* m_block;
 	CallableValue* m_value;
+	bool m_is_const;
 private:
 	DISALLOW_COPY_AND_ASSIGN(FuncDeclaration);
 };
