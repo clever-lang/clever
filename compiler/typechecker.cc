@@ -650,6 +650,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 
 	ASTNode* rhs = expr->getRhs();
 	ArgumentList* ctor_list = expr->getConstructorArgs();
+	bool is_auto = false;
 
 	if (rhs) {
 		Value* initval = rhs->getValue();
