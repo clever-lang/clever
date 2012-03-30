@@ -71,7 +71,7 @@ public:
 	/**
 	 * Data type
 	 */
-	enum { NONE, PRIMITIVE, USER, CALL, REF };
+	enum { NONE, PRIMITIVE, INTERNAL, CALL, REF };
 
 	Value()
 		: RefCounted(1), m_type(NONE), m_type_ptr(NULL), m_name(NULL),
@@ -120,7 +120,7 @@ public:
 	}
 
 	virtual ~Value() {
-		if (isUserValue()) {
+		if (isInternal()) {
 			if (m_data.dv_value->refCount() == 1) {
 				getTypePtr()->destructor(this);
 			}
@@ -138,8 +138,8 @@ public:
 	int getType() const { return m_type; }
 
 	void setType(int type) {
-		if (EXPECTED(type == NONE || type == USER || type == PRIMITIVE ||
-			type == REF || type == CALL)) {
+		if (EXPECTED(type == NONE || type == INTERNAL ||
+			type == PRIMITIVE || type == REF || type == CALL)) {
 			m_type = type;
 		}
 	}
@@ -172,7 +172,7 @@ public:
 	bool isDouble()    const { return m_type_ptr == CLEVER_DOUBLE; }
 	bool isBoolean()   const { return m_type_ptr == CLEVER_BOOL; }
 	bool isByte()      const { return m_type_ptr == CLEVER_BYTE; }
-	bool isUserValue() const { return m_type == USER; }
+	bool isInternal()  const { return m_type == INTERNAL; }
 	bool isReference() const { return m_type == REF; }
 
 	bool isNumeric() const {
@@ -241,7 +241,7 @@ public:
 			m_data.dv_value->delRef();
 		}
 		m_data.dv_value = data;
-		m_type = USER;
+		m_type = INTERNAL;
 	}
 
 	DataValue* getDataValue() const {

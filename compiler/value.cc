@@ -89,7 +89,7 @@ void Value::copy(const Value* const value) {
 	clever_assert_not_null(value);
 
 	// Decrement the current internal value reference
-	if (isUserValue() && getDataValue()) {
+	if (isInternal() && getDataValue()) {
 		getDataValue()->delRef();
 	} else if (isPrimitive() && isString() && m_data.s_value
 		&& !m_data.s_value->isInterned()) {
@@ -104,7 +104,7 @@ void Value::copy(const Value* const value) {
 	m_type = value->getType();
 
 	// Increment the new internal value reference
-	if (isUserValue() && getDataValue()) {
+	if (isInternal() && getDataValue()) {
 		getDataValue()->addRef();
 	} else if (isPrimitive() && isString() && m_data.s_value
 		&& !m_data.s_value->isInterned()) {
@@ -116,7 +116,7 @@ void Value::copy(const Value* const value) {
  * Peforms a deep copy of a Value pointer
  */
 void Value::deepCopy(const Value* const value) {
-	if (isUserValue()) {
+	if (isInternal()) {
 		clever_assert_not_null(value);
 
 		std::memcpy(&m_data, value->getData(), sizeof(ValueData));

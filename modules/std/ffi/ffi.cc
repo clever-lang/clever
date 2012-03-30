@@ -174,7 +174,7 @@ static CLEVER_FUNCTION(call_ext_func) {
 			double* d = (double*)malloc(sizeof(double));
 			*d = CLEVER_ARG_DOUBLE(i);
 			ffi_values[i] = d;
-		} else if ( CLEVER_ARG_IS_USER(i) ) {
+		} else if ( CLEVER_ARG_IS_INTERNAL(i) ) {
 			ffi_args[i] = _find_ffi_type("p");
 
 			//FFIObjectValue* obj = static_cast<FFIObjectValue*>(CLEVER_ARG_DATA_VALUE(i));
@@ -253,7 +253,7 @@ static CLEVER_FUNCTION(call_ext_func) {
 			free((char*)ffi_values[i]);
 		} else if (CLEVER_ARG_IS_DOUBLE(i)) {
 			free((double*)ffi_values[i]);
-		} else if (CLEVER_ARG_IS_USER(i)) {
+		} else if (CLEVER_ARG_IS_INTERNAL(i)) {
 		}
 	}
 

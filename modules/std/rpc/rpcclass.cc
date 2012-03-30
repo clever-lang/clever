@@ -120,7 +120,7 @@ CLEVER_METHOD(RPC::callFunction) {
 			len_args+=sizeof(char);
 		} else if (CLEVER_ARG_IS_DOUBLE(i)) {
 			len_args+=sizeof(double);
-		} else if ( CLEVER_ARG_IS_USER(i) ) {
+		} else if ( CLEVER_ARG_IS_INTERNAL(i) ) {
 		}
 	}
 
@@ -152,9 +152,9 @@ CLEVER_METHOD(RPC::callFunction) {
 
 			int len=(int)(CLEVER_ARG_STR(i).size());
 			const char* s=CLEVER_ARG_STR(i).c_str();
-			
+
 			memcpy(buffer+len_args,&len,sizeof(int));
-			
+
 			len_args+=sizeof(int);
 
 			memcpy(buffer+len_args,s,len);
@@ -176,7 +176,7 @@ CLEVER_METHOD(RPC::callFunction) {
 
 			memcpy(buffer+len_args,&vd,sizeof(double));
 			len_args+=sizeof(double);
-		} else if ( CLEVER_ARG_IS_USER(i) ) {
+		} else if ( CLEVER_ARG_IS_INTERNAL(i) ) {
 		}
 	}
 
@@ -208,7 +208,7 @@ CLEVER_METHOD(RPC::callProcess) {
 			len_args+=sizeof(char);
 		} else if (CLEVER_ARG_IS_DOUBLE(i)) {
 			len_args+=sizeof(double);
-		} else if ( CLEVER_ARG_IS_USER(i) ) {
+		} else if ( CLEVER_ARG_IS_INTERNAL(i) ) {
 		}
 	}
 
@@ -240,9 +240,9 @@ CLEVER_METHOD(RPC::callProcess) {
 
 			int len=(int)(CLEVER_ARG_STR(i).size());
 			const char* s=CLEVER_ARG_STR(i).c_str();
-			
+
 			memcpy(buffer+len_args,&len,sizeof(int));
-			
+
 			len_args+=sizeof(int);
 
 			memcpy(buffer+len_args,s,len);
@@ -264,7 +264,7 @@ CLEVER_METHOD(RPC::callProcess) {
 
 			memcpy(buffer+len_args,&vd,sizeof(double));
 			len_args+=sizeof(double);
-		} else if ( CLEVER_ARG_IS_USER(i) ) {
+		} else if ( CLEVER_ARG_IS_INTERNAL(i) ) {
 		}
 	}
 
