@@ -1,0 +1,13 @@
+[FATAL] Checking const specifier from a function definition
+==TEST==
+const Array<Int> constify(Array<Int> y) {
+	const Auto x = y;
+	return x;
+}
+
+Auto a = [1, 2, 3];
+Auto b = constify(a);
+
+b.push(3);
+==RESULT==
+Compile error: Can't call the non-const method Array<Int>::push\(Int\) because variable `b' is const on const.clv line 9
