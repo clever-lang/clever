@@ -66,13 +66,15 @@ class Method : public RefCounted {
 public:
 	enum MethodType { INTERNAL, USER };
 
-	Method(std::string name, MethodPtr ptr, const Type* rtype, bool constness = true)
-		: RefCounted(1), m_name(name), m_type(INTERNAL), m_rtype(rtype), m_num_args(0),
-		m_min_args(0), m_is_const(constness), m_is_static(false) {
+	Method(std::string name, MethodPtr ptr, const Type* rtype,
+		bool constness = true)
+		: RefCounted(1), m_name(name), m_type(INTERNAL), m_rtype(rtype),
+			m_num_args(0), m_min_args(0), m_is_const(constness),
+			m_is_static(false) {
 		m_info.ptr = ptr;
 	}
 
-	~Method() { }
+	virtual ~Method() {}
 
 	const std::string& getName() const { return m_name; }
 	MethodPtr getPtr() const { return m_info.ptr; }
@@ -109,7 +111,6 @@ public:
 	int getMinNumArgs() const { return m_min_args; }
 
 	bool isConst() const { return m_is_const; }
-
 
 	Method* setStatic() { m_is_static = true; return this; }
 	bool isStatic() const { return m_is_static; }
