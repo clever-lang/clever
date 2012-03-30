@@ -3,7 +3,7 @@ Testing Array<> literal
 import std.io.* as io;
 import std.math.* as math;
 
-io::println({10, 12, 14});
+io::println([10, 12, 14]);
 
 Void output(Array<String> arr)
 {
@@ -11,11 +11,11 @@ Void output(Array<String> arr)
 	io::print('Version: ', arr[1], "\n");
 }
 
-output({'Clever', '0.1-alpha'});
+output(['Clever', '0.1-alpha']);
 
 const Double pi = math::acos(-1.0), sqrt2 = math::sqrt(2.0);
 
-io::println({sqrt2, pi, math::cos(0.0)}.at(1));
+io::println([sqrt2, pi, math::cos(0.0)].at(1));
 
 ==RESULT==
 \[10, 12, 14\]

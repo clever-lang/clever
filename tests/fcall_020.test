@@ -6,7 +6,7 @@ Array<Int> f(Array<Int> y) {
     return x;
 }
 
-Auto a = {1, 2, 3};
+Auto a = [1, 2, 3];
 println(f(a));
 ==RESULT==
 \[1, 2, 3\]

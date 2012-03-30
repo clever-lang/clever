@@ -2,7 +2,7 @@
 ==CODE==
 import std.io.*;
 
-Auto a = {1, 3, 5};
+Auto a = [1, 3, 5];
 println(a);
 
 const Auto b = a;

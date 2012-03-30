@@ -393,7 +393,7 @@ arg_list_opt:
 ;
 
 array_list:
-	'{' arg_list '}'	{ $$ = new ast::ArrayList($2); $$->setLocation(yyloc); }
+		'[' arg_list ']'	{ $$ = new ast::ArrayList($2); $$->setLocation(yyloc); }
 ;
 
 map_arg_list:
@@ -402,7 +402,7 @@ map_arg_list:
 ;
 
 map_list:
-	'{' map_arg_list '}'		{ $$ = new ast::MapList($2); $$->setLocation(yyloc); }
+		'{' map_arg_list '}'		{ $$ = new ast::MapList($2); $$->setLocation(yyloc); }
 ;
 
 package_module_name:
@@ -421,7 +421,7 @@ type_name:
 ;
 
 func_call:
-	func_name '(' arg_list_opt ')' { $$ = new ast::FunctionCall($1, $3); $$->setLocation(yylloc); }
+		func_name '(' arg_list_opt ')' { $$ = new ast::FunctionCall($1, $3); $$->setLocation(yylloc); }
 ;
 
 chaining_method_call:
@@ -483,7 +483,7 @@ auto_variable_declaration_list_creation:
 ;
 
 auto_variable_declaration_list_creation_aux:
-	IDENT '=' expr 				{ $$ = new ast::VariableDecl(NULL, $1, $3); $$->setLocation(yylloc); }
+		IDENT '=' expr 				{ $$ = new ast::VariableDecl(NULL, $1, $3); $$->setLocation(yylloc); }
 ;
 
 variable_declaration_list_creation:
