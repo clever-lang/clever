@@ -138,9 +138,14 @@ extern Type* CLEVER_OBJ_VAR;
 #define CLEVER_OPERATOR_POS_DEC "__pos_dec__"
 
 /**
- * Internal constructir method name
+ * Internal constructor method name
  */
 #define CLEVER_CTOR_NAME "$ctor$"
+
+/**
+ * Internal clone method name
+ */
+#define CLEVER_CLONE_NAME "__clone__"
 
 /**
  * Utils for handling TemplatedType

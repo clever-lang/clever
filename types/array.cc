@@ -300,6 +300,14 @@ CLEVER_METHOD(Array::find) {
 }
 
 /**
+ * Array<T> Array<T>::clone(Array<T> obj)
+ * Return a deep copy of the object of same time
+ */
+CLEVER_METHOD(Array::do_clone) {
+	CLEVER_RETURN_DATA_VALUE(CLEVER_ARG(0)->getTypePtr()->clone(CLEVER_ARG(0)));
+}
+
+/**
  * Array type initializator
  */
 void Array::init() {
@@ -318,6 +326,11 @@ void Array::init() {
 	);
 
 	addMethod(new Method("toString", &Array::toString, CLEVER_STR));
+
+	addMethod(
+		(new Method(CLEVER_CLONE_NAME, &Array::do_clone, arr_t, false))
+			->addArg("orig", arr_t)
+	);
 
 	addMethod(
 		(new Method("push", &Array::push, CLEVER_VOID, false))

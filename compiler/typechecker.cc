@@ -1453,12 +1453,22 @@ AST_VISITOR(TypeChecker, LambdaFunction) {
 AST_VISITOR(TypeChecker, CloneExpr) {
 	Value* val = expr->getExpr()->getValue();
 
-	if (val->isInternal()) {
-		expr->setValue(new Value(val->getTypePtr()));
-		expr->getValue()->setType(Value::INTERNAL);
-	} else {
+	if (!val->isInternal()) {
 		expr->setValue(val);
+		return;
 	}
+
+	ValueVector* arg_values = new ValueVector;
+	arg_values->push_back(val);
+	val->addRef();
+
+	expr->setValue(new Value);
+	expr->setArgsValue(arg_values);
+
+	expr->setCallValue(_prepare_method_call(val->getTypePtr(), val,
+		CACHE_PTR(CLEVER_CLONE, CLEVER_CLONE_NAME), expr, arg_values));
+
+	expr->getCallValue()->addRef();
 }
 
 }} // clever::ast

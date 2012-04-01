@@ -497,8 +497,8 @@ AST_VISITOR(CodeGenVisitor, CloneExpr) {
 
 	expr->getExpr()->getValue()->addRef();
 
-	emit(OP_CLONE, &VM_H(clone), expr->getExpr()->getValue())
-		->setResult(expr->getValue());
+	emit(OP_CLONE, &VM_H(clone), expr->getCallValue(), expr->getArgsValue(),
+		expr->getValue());
 }
 
 }} // clever::ast

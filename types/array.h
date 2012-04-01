@@ -119,6 +119,7 @@ public:
 	static CLEVER_METHOD(toString);
 	static CLEVER_METHOD(do_assign);
 	static CLEVER_METHOD(find);
+	static CLEVER_METHOD(do_clone);
 private:
 	DISALLOW_COPY_AND_ASSIGN(Array);
 };

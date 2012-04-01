@@ -647,7 +647,8 @@ CLEVER_VM_HANDLER(VM::init_var_handler) {
  * Clone operation
  */
 CLEVER_VM_HANDLER(VM::clone_handler) {
-	opcode.getResultValue()->deepCopy(opcode.getOp1Value());
+	opcode.getOp1Callable()->call(opcode.getResultValue(), opcode.getOp2Vector());
+	save_context(opcode);
 }
 
 } // clever

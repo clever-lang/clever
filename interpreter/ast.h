@@ -1818,12 +1818,13 @@ private:
 class CloneExpr : public ASTNode {
 public:
 	CloneExpr(ASTNode* expr)
-		: m_expr(expr), m_value(NULL) {
+		: m_expr(expr), m_value(NULL), m_call_value(NULL), m_args_value(NULL) {
 		CLEVER_ADDREF(m_expr);
 	}
 
 	~CloneExpr() {
 		CLEVER_DELREF(m_expr);
+		CLEVER_SAFE_DELREF(m_call_value);
 	}
 
 	ASTNode* getExpr() const { return m_expr; }
@@ -1831,6 +1832,22 @@ public:
 	void setValue(Value* value) { m_value = value; }
 
 	Value* getValue() const { return m_value; }
+
+	void setCallValue(CallableValue* callable) {
+		m_call_value = callable;
+	}
+
+	CallableValue* getCallValue() const {
+		return m_call_value;
+	}
+
+	void setArgsValue(ValueVector* args_value) {
+		m_args_value = args_value;
+	}
+
+	ValueVector* getArgsValue() const {
+		return m_args_value;
+	}
 
 	void acceptVisitor(ASTVisitor& visitor) {
 		m_expr->acceptVisitor(visitor);
@@ -1840,6 +1857,8 @@ public:
 private:
 	ASTNode* m_expr;
 	Value* m_value;
+	CallableValue* m_call_value;
+	ValueVector* m_args_value;
 
 	DISALLOW_COPY_AND_ASSIGN(CloneExpr);
 };
