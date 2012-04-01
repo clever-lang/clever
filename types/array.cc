@@ -405,8 +405,6 @@ DataValue* Array::copy(const Value* orig, bool deep) const {
 		if (deep) {
 			Value* val = new Value;
 
-			std::cout << *vec->at(i)->getTypePtr()->getName() << std::endl;
-
 			val->deepCopy(vec->at(i));
 			array->m_array->push_back(val);
 		} else {
