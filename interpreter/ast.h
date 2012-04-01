@@ -1776,6 +1776,7 @@ public:
 private:
 	ArgumentList* m_arg_list;
 	Value* m_value;
+
 	DISALLOW_COPY_AND_ASSIGN(ArrayList);
 };
 
@@ -1810,7 +1811,33 @@ public:
 private:
 	ArgumentList* m_arg_list;
 	Value* m_value;
+
 	DISALLOW_COPY_AND_ASSIGN(MapList);
+};
+
+class CloneExpr : public ASTNode {
+public:
+	CloneExpr(ASTNode* expr)
+		: m_expr(expr), m_value(NULL) {
+		CLEVER_ADDREF(m_expr);
+	}
+
+	~CloneExpr() {
+		CLEVER_DELREF(m_expr);
+	}
+
+	void setValue(Value* value) { m_value = value; }
+
+	Value* getValue() const { return m_value; }
+
+	void acceptVisitor(ASTVisitor& visitor) {
+		visitor.visit(this);
+	}
+private:
+	ASTNode* m_expr;
+	Value* m_value;
+
+	DISALLOW_COPY_AND_ASSIGN(CloneExpr);
 };
 
 inline void setType(VariableDecls* v, Identifier* type){

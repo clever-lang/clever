@@ -117,6 +117,7 @@ namespace clever {
 %token CONST         "const"
 %token AUTO          "auto"
 %token ANNOTATION    "@@"
+%token CLONE         "(clone)"
 
 %left ',';
 %left LOGICAL_OR;
@@ -134,7 +135,7 @@ namespace clever {
 %left '-' '+' '.';
 %left '*' '/' '%';
 %right '!';
-%right '~' INCREMENT DECREMENT;
+%right '~' INCREMENT DECREMENT CLONE;
 %right '[' '{';
 %left ELSEIF;
 %left ELSE;
@@ -180,6 +181,8 @@ namespace clever {
 	ast::ArrayList* array_list;
 	ast::MapList* map_list;
 	ast::LambdaFunction* lambda_function;
+	ast::Subscript* subscript;
+	ast::CloneExpr* clone;
 }
 
 %type <identifier> IDENT
@@ -191,9 +194,11 @@ namespace clever {
 %type <identifier> func_name
 %type <identifier> TYPE
 %type <identifier> type_name
+%type <subscript> subscript
 %type <regex_pattern> REGEX
 %type <identifier> CONSTANT
 %type <constant> constant
+%type <clone> clone
 %type <template_args> template_args
 %type <template_args> template_args_fix
 %type <ast_node> literal
@@ -567,12 +572,21 @@ expr:
 	|	'(' expr ')'          { $$ = $2; }
 	|	func_call             { $$ = $<ast_node>1; }
 	|	method_call           { $$ = $<ast_node>1; }
-	|	IDENT '[' expr ']'    { $$ = new ast::Subscript($1, $3); $$->setLocation(yylloc); }
+	|	subscript             { $$ = $<ast_node>1; }
 	|	IDENT                 { $$ = $<ast_node>1; }
 	|	literal               { $$ = $<ast_node>1; }
 	|	constant              { $$ = $<ast_node>1; }
 	|	assign_stmt           { $$ = $<ast_node>1; }
 	|	lambda_function       { $$ = $<ast_node>1; }
+	|	clone                 { $$ = $<ast_node>1; }
+;
+
+subscript:
+		IDENT '[' expr ']'    { $$ = new ast::Subscript($1, $3); $$->setLocation(yylloc); }
+;
+
+clone:
+		CLONE expr            { $$ = new ast::CloneExpr($2); }
 ;
 
 literal:

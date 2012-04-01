@@ -1447,4 +1447,11 @@ AST_VISITOR(TypeChecker, LambdaFunction) {
 	expr->setValue(var);
 }
 
+/**
+ * Clone visitor
+ */
+AST_VISITOR(TypeChecker, CloneExpr) {
+
+}
+
 }} // clever::ast
