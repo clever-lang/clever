@@ -1448,9 +1448,9 @@ AST_VISITOR(TypeChecker, LambdaFunction) {
 }
 
 /**
- * Clone visitor
+ * Copy visitor
  */
-AST_VISITOR(TypeChecker, CloneExpr) {
+AST_VISITOR(TypeChecker, CopyExpr) {
 	Value* val = expr->getExpr()->getValue();
 
 	if (!val->isInternal()) {
@@ -1465,8 +1465,13 @@ AST_VISITOR(TypeChecker, CloneExpr) {
 	expr->setValue(new Value);
 	expr->setArgsValue(arg_values);
 
-	expr->setCallValue(_prepare_method_call(val->getTypePtr(), val,
-		CACHE_PTR(CLEVER_CLONE, CLEVER_CLONE_NAME), expr, arg_values));
+	if (expr->isDeepCopy()) {
+		expr->setCallValue(_prepare_method_call(val->getTypePtr(), val,
+			CACHE_PTR(CLEVER_DEEP_COPY, CLEVER_DEEP_COPY_NAME), expr, arg_values));
+	} else {
+		expr->setCallValue(_prepare_method_call(val->getTypePtr(), val,
+			CACHE_PTR(CLEVER_COPY, CLEVER_COPY_NAME), expr, arg_values));
+	}
 
 	expr->getCallValue()->addRef();
 }

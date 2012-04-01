@@ -117,7 +117,8 @@ namespace clever {
 %token CONST         "const"
 %token AUTO          "auto"
 %token ANNOTATION    "@@"
-%token CLONE         "(clone)"
+%token COPY          "(copy)"
+%token DEEPCOPY      "(deepCopy)"
 
 %left ',';
 %left LOGICAL_OR;
@@ -135,7 +136,7 @@ namespace clever {
 %left '-' '+' '.';
 %left '*' '/' '%';
 %right '!';
-%right '~' INCREMENT DECREMENT CLONE;
+%right '~' INCREMENT DECREMENT COPY DEEPCOPY;
 %right '[' '{';
 %left ELSEIF;
 %left ELSE;
@@ -182,7 +183,7 @@ namespace clever {
 	ast::MapList* map_list;
 	ast::LambdaFunction* lambda_function;
 	ast::Subscript* subscript;
-	ast::CloneExpr* clone;
+	ast::CopyExpr* copy;
 }
 
 %type <identifier> IDENT
@@ -198,7 +199,7 @@ namespace clever {
 %type <regex_pattern> REGEX
 %type <identifier> CONSTANT
 %type <constant> constant
-%type <clone> clone
+%type <copy> copy
 %type <template_args> template_args
 %type <template_args> template_args_fix
 %type <ast_node> literal
@@ -578,15 +579,16 @@ expr:
 	|	constant              { $$ = $<ast_node>1; }
 	|	assign_stmt           { $$ = $<ast_node>1; }
 	|	lambda_function       { $$ = $<ast_node>1; }
-	|	clone                 { $$ = $<ast_node>1; }
+	|	copy                  { $$ = $<ast_node>1; }
 ;
 
 subscript:
 		IDENT '[' expr ']'    { $$ = new ast::Subscript($1, $3); $$->setLocation(yylloc); }
 ;
 
-clone:
-		CLONE expr            { $$ = new ast::CloneExpr($2); $$->setLocation(yyloc); }
+copy:
+		COPY expr     { $$ = new ast::CopyExpr($2, false); $$->setLocation(yyloc); }
+	|	DEEPCOPY expr { $$ = new ast::CopyExpr($2, true);  $$->setLocation(yyloc); }
 ;
 
 literal:

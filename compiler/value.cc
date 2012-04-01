@@ -116,14 +116,14 @@ void Value::copy(const Value* const value) {
  * Peforms a deep copy of a Value pointer
  */
 void Value::deepCopy(const Value* const value) {
-	if (isInternal()) {
+	if (value->isInternal()) {
 		clever_assert_not_null(value);
 
 		std::memcpy(&m_data, value->getData(), sizeof(ValueData));
 		m_type_ptr = value->getTypePtr();
 		m_type = value->getType();
 
-		m_data.dv_value = m_type_ptr->clone(value);
+		m_data.dv_value = m_type_ptr->copy(value, true);
 	} else {
 		copy(value);
 	}

@@ -1,11 +1,11 @@
-Testing cloning of an Array
+Testing Array copying
 ==CODE==
 import std.io.println;
 
 Array<Int> i;
 i.push(3);
 
-Array<Int> j = (clone) i;
+Array<Int> j = (copy) i;
 j.push(1);
 
 println(i, j);

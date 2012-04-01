@@ -63,7 +63,9 @@ next_token:
 	<*>SPACE { yylloc->step(); SKIP(); }
 	<*>[\n]+ { yylloc->lines(yylen); yylloc->step(); SKIP(); }
 
-	<INITIAL>'(clone)' { RET(token::CLONE); }
+	<INITIAL>'(copy)' { RET(token::COPY); }
+
+	<INITIAL>'(deepCopy)' { RET(token::DEEPCOPY); }
 
 	<INITIAL>"@@"TYPE { RET(token::ANNOTATION); }
 

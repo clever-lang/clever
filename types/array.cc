@@ -300,11 +300,21 @@ CLEVER_METHOD(Array::find) {
 }
 
 /**
- * Array<T> Array<T>::clone(Array<T> obj)
+ * Array<T> Array<T>::__copy__(Array<T> obj)
  * Return a deep copy of the object of same time
  */
-CLEVER_METHOD(Array::do_clone) {
-	CLEVER_RETURN_DATA_VALUE(CLEVER_ARG(0)->getTypePtr()->clone(CLEVER_ARG(0)));
+CLEVER_METHOD(Array::do_copy) {
+	CLEVER_RETURN_DATA_VALUE(
+		CLEVER_ARG(0)->getTypePtr()->copy(CLEVER_ARG(0), false));
+}
+
+/**
+ * Array<T> Array<T>::__deep_copy__(Array<T> obj)
+ * Return a deep copy of the object of same time
+ */
+CLEVER_METHOD(Array::do_deepcopy) {
+	CLEVER_RETURN_DATA_VALUE(
+		CLEVER_ARG(0)->getTypePtr()->copy(CLEVER_ARG(0), true));
 }
 
 /**
@@ -328,7 +338,12 @@ void Array::init() {
 	addMethod(new Method("toString", &Array::toString, CLEVER_STR));
 
 	addMethod(
-		(new Method(CLEVER_CLONE_NAME, &Array::do_clone, arr_t, false))
+		(new Method(CLEVER_COPY_NAME, &Array::do_copy, arr_t, false))
+			->addArg("orig", arr_t)
+	);
+
+	addMethod(
+		(new Method(CLEVER_DEEP_COPY_NAME, &Array::do_deepcopy, arr_t, false))
 			->addArg("orig", arr_t)
 	);
 
@@ -379,13 +394,26 @@ DataValue* Array::allocateValue() const {
 	return new ArrayValue;
 }
 
-DataValue* Array::clone(const Value* orig) const {
+/**
+ * Performs the shallow and deep copy
+ */
+DataValue* Array::copy(const Value* orig, bool deep) const {
 	ArrayValue* array = new ArrayValue;
 	ValueVector* vec = CLEVER_GET_ARRAY(orig);
 
 	for (size_t i = 0, j = vec->size(); i < j; ++i) {
-		array->m_array->push_back(vec->at(i));
-		vec->at(i)->addRef();
+		if (deep) {
+			Value* val = new Value;
+
+			std::cout << *vec->at(i)->getTypePtr()->getName() << std::endl;
+
+			val->deepCopy(vec->at(i));
+			array->m_array->push_back(val);
+		} else {
+			Value* val = vec->at(i);
+			array->m_array->push_back(val);
+			val->addRef();
+		}
 	}
 
 	return static_cast<DataValue*>(array);

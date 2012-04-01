@@ -58,7 +58,7 @@ class UnscopedBlockNode;
 class ArrayList;
 class MapList;
 class LambdaFunction;
-class CloneExpr;
+class CopyExpr;
 
 #define AST_VISITOR(type, exprtype) void type::visit(exprtype* const expr)
 #define AST_VISITOR_DECL_VIRTUAL(type) virtual void visit(type* const expr) = 0
@@ -94,7 +94,7 @@ class CloneExpr;
 	V(MapList); \
 	V(LambdaFunction); \
 	V(TypeCreation); \
-	V(CloneExpr)
+	V(CopyExpr)
 
 /**
  * AST Visitor

@@ -1815,14 +1815,15 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(MapList);
 };
 
-class CloneExpr : public ASTNode {
+class CopyExpr : public ASTNode {
 public:
-	CloneExpr(ASTNode* expr)
-		: m_expr(expr), m_value(NULL), m_call_value(NULL), m_args_value(NULL) {
+	CopyExpr(ASTNode* expr, bool deep)
+		: m_expr(expr), m_deep(deep), m_value(NULL), m_call_value(NULL),
+			m_args_value(NULL) {
 		CLEVER_ADDREF(m_expr);
 	}
 
-	~CloneExpr() {
+	~CopyExpr() {
 		CLEVER_DELREF(m_expr);
 		CLEVER_SAFE_DELREF(m_call_value);
 	}
@@ -1830,6 +1831,8 @@ public:
 	ASTNode* getExpr() const { return m_expr; }
 
 	void setValue(Value* value) { m_value = value; }
+
+	bool isDeepCopy() const { return m_deep; }
 
 	Value* getValue() const { return m_value; }
 
@@ -1856,11 +1859,12 @@ public:
 	}
 private:
 	ASTNode* m_expr;
+	bool m_deep;
 	Value* m_value;
 	CallableValue* m_call_value;
 	ValueVector* m_args_value;
 
-	DISALLOW_COPY_AND_ASSIGN(CloneExpr);
+	DISALLOW_COPY_AND_ASSIGN(CopyExpr);
 };
 
 inline void setType(VariableDecls* v, Identifier* type){
