@@ -145,7 +145,8 @@ extern Type* CLEVER_OBJ_VAR;
 /**
  * Internal clone method name
  */
-#define CLEVER_CLONE_NAME "__clone__"
+#define CLEVER_COPY_NAME "__copy__"
+#define CLEVER_DEEP_COPY_NAME "__deep_copy__"
 
 /**
  * Utils for handling TemplatedType
@@ -237,11 +238,11 @@ public:
 	}
 
 	/**
-	 * Clone method
-	 * This method will be called when making a deep copy of a Value
-	 * pointer, i.e. when needed a real copy of a internal value.
+	 * Copy method
+	 * This method will be called when making a shallow and deep copy of a Value
+	 * pointer.
 	 */
-	virtual DataValue* clone(const Value* orig) const { return NULL; }
+	virtual DataValue* copy(const Value* orig, bool deep) const { return NULL; }
 
 	/**
 	 * Destructor method

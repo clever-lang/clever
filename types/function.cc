@@ -147,4 +147,12 @@ DataValue* FunctionType::allocateValue() const {
 	return new FunctionValue();
 }
 
+DataValue* FunctionType::copy(const Value* orig, bool deep) const {
+	FunctionValue* fv = new FunctionValue;
+
+	fv->setFunction(static_cast<FunctionValue*>(orig->getDataValue())->getFunction());
+
+	return static_cast<DataValue*>(fv);
+}
+
 } // clever

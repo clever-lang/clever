@@ -93,7 +93,7 @@ public:
 	 */
 	void init();
 	DataValue* allocateValue() const;
-	DataValue* clone(const Value*) const;
+	DataValue* copy(const Value*, bool) const;
 
 	void destructor(Value* value) const {
 		ValueVector* vec = CLEVER_GET_ARRAY(value);
@@ -119,7 +119,8 @@ public:
 	static CLEVER_METHOD(toString);
 	static CLEVER_METHOD(do_assign);
 	static CLEVER_METHOD(find);
-	static CLEVER_METHOD(do_clone);
+	static CLEVER_METHOD(do_copy);
+	static CLEVER_METHOD(do_deepcopy);
 private:
 	DISALLOW_COPY_AND_ASSIGN(Array);
 };

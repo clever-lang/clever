@@ -99,12 +99,14 @@ public:
 		return type;
 	}
 
+	/**
+	 * Virtual methods
+	 */
 	void init();
 	DataValue* allocateValue() const;
+	DataValue* copy(const Value*, bool) const;
 
-	void destructor(Value* value) const {
-
-	}
+	void destructor(Value* value) const { }
 
 	/**
 	 * Type methods

@@ -487,7 +487,7 @@ AST_VISITOR(CodeGenVisitor, MapList) {
 AST_VISITOR(CodeGenVisitor, LambdaFunction) {
 }
 
-AST_VISITOR(CodeGenVisitor, CloneExpr) {
+AST_VISITOR(CodeGenVisitor, CopyExpr) {
 	/**
 	 * Primitive value doesn't need a cloning call
 	 */
