@@ -643,4 +643,11 @@ CLEVER_VM_HANDLER(VM::init_var_handler) {
 	opcode.getOp1Value()->initialize();
 }
 
+/**
+ * Clone operation
+ */
+CLEVER_VM_HANDLER(VM::clone_handler) {
+	opcode.getResultValue()->deepCopy(opcode.getOp1Value());
+}
+
 } // clever

@@ -68,7 +68,8 @@ enum OpcodeType {
 	OP_ASSIGN,
 	OP_AT,
 	OP_INIT_VAR,
-	OP_LEAVE
+	OP_LEAVE,
+	OP_CLONE
 };
 
 /**

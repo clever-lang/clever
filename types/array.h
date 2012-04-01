@@ -88,8 +88,12 @@ public:
 		return getTemplatedType(arg.at(0));
 	}
 
+	/**
+	 * Virtual methods
+	 */
 	void init();
 	DataValue* allocateValue() const;
+	DataValue* clone(const Value*) const;
 
 	void destructor(Value* value) const {
 		ValueVector* vec = CLEVER_GET_ARRAY(value);

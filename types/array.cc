@@ -366,4 +366,16 @@ DataValue* Array::allocateValue() const {
 	return new ArrayValue;
 }
 
+DataValue* Array::clone(const Value* orig) const {
+	ArrayValue* array = new ArrayValue;
+	ValueVector* vec = CLEVER_GET_ARRAY(orig);
+
+	for (size_t i = 0, j = vec->size(); i < j; ++i) {
+		array->m_array->push_back(vec->at(i));
+		vec->at(i)->addRef();
+	}
+
+	return static_cast<DataValue*>(array);
+}
+
 } // clever

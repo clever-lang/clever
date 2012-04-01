@@ -82,6 +82,7 @@ const char* Opcode::getOpName(OpcodeType op) const {
 		CASE(OP_AT);
 		CASE(OP_INIT_VAR);
 		CASE(OP_LEAVE);
+		CASE(OP_CLONE);
 		default:
 			return "UNKNOWN";
 	}
@@ -187,6 +188,7 @@ VM::opcode_handler Opcode::getHandlerByType(OpcodeType op_type) {
 		case OP_NOT:     return &VM_H(not);
 		case OP_BW_NOT:  return &VM_H(bw_not);
 		case OP_INIT_VAR:return &VM_H(init_var);
+		case OP_CLONE:   return &VM_H(clone);
 		default:	     return &VM_H(mcall);
 	}
 }

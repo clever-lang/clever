@@ -1826,11 +1826,15 @@ public:
 		CLEVER_DELREF(m_expr);
 	}
 
+	ASTNode* getExpr() const { return m_expr; }
+
 	void setValue(Value* value) { m_value = value; }
 
 	Value* getValue() const { return m_value; }
 
 	void acceptVisitor(ASTVisitor& visitor) {
+		m_expr->acceptVisitor(visitor);
+
 		visitor.visit(this);
 	}
 private:

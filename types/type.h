@@ -236,7 +236,7 @@ public:
 	 * This method will be called when making a deep copy of a Value
 	 * pointer, i.e. when needed a real copy of a internal value.
 	 */
-	virtual DataValue* clone(const Value* value) const { return NULL; }
+	virtual DataValue* clone(const Value* orig) const { return NULL; }
 
 	/**
 	 * Destructor method
@@ -246,17 +246,17 @@ public:
 	 * of scope.
 	 */
 	virtual void destructor(Value* value) const {}
-	
+
 protected:
 	// Methods belonging this type
 	MethodMap m_methods;
-	
+
 	// This type's name
 	const CString* const m_name;
 
 	// Type which this type is directly inherited
 	const Type* const m_super;
-	
+
 	// Interfaces implemented
 	InterfaceSet m_interfaces;
 

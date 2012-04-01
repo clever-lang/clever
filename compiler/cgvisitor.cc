@@ -488,7 +488,17 @@ AST_VISITOR(CodeGenVisitor, LambdaFunction) {
 }
 
 AST_VISITOR(CodeGenVisitor, CloneExpr) {
+	/**
+	 * Primitive value doesn't need a cloning call
+	 */
+	if (!expr->getExpr()->getValue()->isInternal()) {
+		return;
+	}
 
+	expr->getExpr()->getValue()->addRef();
+
+	emit(OP_CLONE, &VM_H(clone), expr->getExpr()->getValue())
+		->setResult(expr->getValue());
 }
 
 }} // clever::ast

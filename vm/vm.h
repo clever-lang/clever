@@ -153,6 +153,7 @@ public:
 	static CLEVER_VM_HANDLER(assign_handler);
 	static CLEVER_VM_HANDLER(leave_handler);
 	static CLEVER_VM_HANDLER(return_handler);
+	static CLEVER_VM_HANDLER(clone_handler);
 
 	/**
 	 * Arithmetic operation
