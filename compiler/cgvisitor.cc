@@ -495,8 +495,6 @@ AST_VISITOR(CodeGenVisitor, CloneExpr) {
 		return;
 	}
 
-	expr->getExpr()->getValue()->addRef();
-
 	emit(OP_CLONE, &VM_H(clone), expr->getCallValue(), expr->getArgsValue(),
 		expr->getValue());
 }

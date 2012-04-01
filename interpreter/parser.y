@@ -586,7 +586,7 @@ subscript:
 ;
 
 clone:
-		CLONE expr            { $$ = new ast::CloneExpr($2); }
+		CLONE expr            { $$ = new ast::CloneExpr($2); $$->setLocation(yyloc); }
 ;
 
 literal:
