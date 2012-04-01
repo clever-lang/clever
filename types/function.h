@@ -64,7 +64,7 @@ public:
 
 	virtual const Type* getTemplatedType(const TemplateArgs& args) const {
 		std::string name = getName()->str() + "<";
-
+		
 		if (args[0]) {
 			name += args[0]->getName()->str();
 		}

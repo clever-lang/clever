@@ -464,6 +464,7 @@ AST_VISITOR(TypeChecker, Identifier) {
 
 		ident->setTypePtr(func_type);
 		ident->setDataValue(fv);
+		static_cast<CallableValue*>(ident)->setCallableType(CallableValue::FUNCTION);
 	}
 
 	// Associate the Value* of the symbol to the identifier

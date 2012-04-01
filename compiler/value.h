@@ -284,18 +284,24 @@ public:
 		FAR,     // Invoke built-in or loaded functions/methods (probably faster)
 		EXTERNAL // External
 	};
+	
+	enum CallableType {
+		FUNCTION,
+		METHOD
+	};
 
 	/* TODO: generate name for anonymous functions, disable setName(). */
 	CallableValue()
-		: Value(), m_call_type(NONE), m_context(NULL) {
-		setType(CALL);
+		: Value(), m_call_type(NONE), m_context(NULL), m_callable_type(FUNCTION) {
+			setType(CALL);
 	}
 
 	/**
 	 * Create a CallableValue to represent a named function.
 	 */
 	explicit CallableValue(const CString* const name)
-		: Value(), m_call_type(NONE), m_context(NULL) {
+		: Value(), m_call_type(NONE), m_context(NULL),
+		m_callable_type(FUNCTION) {
 		setName(name);
 		setType(CALL);
 	}
@@ -304,7 +310,8 @@ public:
 	 * Create a CallableValue able to represent a method.
 	 */
 	CallableValue(const CString* name, const Type* type)
-		: Value(), m_call_type(NONE), m_context(NULL) {
+		: Value(), m_call_type(NONE), m_context(NULL),
+		m_callable_type(METHOD) {
 		setName(name);
 		setTypePtr(type);
 		setType(CALL);
@@ -358,11 +365,9 @@ public:
 	 * Remember to set a context before calling a non-static method.
 	 */
 	void call(Value* const result, const ValueVector* const args) const {
-		const Type* const type_ptr = getTypePtr();
-
 		clever_assert(m_call_type != NEAR, "Wrong call for user func/method!");
 
-		if (type_ptr == NULL) {
+		if (isFunction()) {
 			m_handler.func->call(args, result);
 		} else {
 			m_handler.method->call(args, result, m_context);
@@ -372,6 +377,18 @@ public:
 	void call(size_t& next_op) const {
 		next_op = m_handler.func->call();
 	}
+	
+	void setCallableType(CallableType type) {
+		m_callable_type = type;
+	}
+	
+	bool isFunction() const {
+		return m_callable_type == FUNCTION;
+	}
+	
+	bool isMethod() const {
+		return m_callable_type == METHOD;
+	}
 private:
 	union {
 		const Function* func;
@@ -380,6 +397,7 @@ private:
 
 	CallType m_call_type;
 	Value* m_context;
+	CallableType m_callable_type;
 
 	DISALLOW_COPY_AND_ASSIGN(CallableValue);
 };
