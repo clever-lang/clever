@@ -11,4 +11,4 @@ pusher(x);
 
 println(x);
 ==RESULT==
-Compile error: Cannot pass a const value on parameter #1 where a non-const is expected! on \S+ line \d+
+Compile error: Cannot pass a const value on parameter `a' where a non-const is expected in function `pusher' on \S+ line \d+

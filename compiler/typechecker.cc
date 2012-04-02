@@ -245,8 +245,9 @@ static void _check_function_arg_types(const Function* func,
 
 		if (val->isConst() && !it->constness) {
 			Compiler::errorf(loc,
-				"Cannot pass a const value on parameter #%N where a "
-				"non-const is expected!", i);
+				"Cannot pass a const value on parameter `%s' where a "
+				"non-const is expected in function `%s'",
+				it->name.c_str(), func->getName().c_str());
 		}
 		++it;
 	}
