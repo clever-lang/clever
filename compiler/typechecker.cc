@@ -1091,8 +1091,8 @@ AST_VISITOR(TypeChecker, FuncPrototype) {
 
 		while (EXPECTED(it != end)) {
 			const Type* arg_type = _evaluate_type(expr->getLocation(),
-				it->first, m_scope);
-			const CString* arg_name = it->second->getName();
+				it->type, m_scope);
+			const CString* arg_name = it->name->getName();
 
 			user_func->addArg(*arg_name, arg_type);
 
@@ -1177,12 +1177,13 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 			Value* var = new Value;
 
 			const Type* arg_type = _evaluate_type(expr->getLocation(),
-				it->first, m_scope);
-			const CString* arg_name = it->second->getName();
+				it->type, m_scope);
+			const CString* arg_name = it->name->getName();
 
 			var->setName(arg_name);
 			var->setTypePtr(arg_type);
 			var->initialize();
+			var->setConstness(it->constness);
 
 			m_scope->pushValue(var->getName(), var);
 
@@ -1258,8 +1259,8 @@ AST_VISITOR(TypeChecker, ExtFuncDeclaration) {
 
 		while (EXPECTED(it != end)) {
 			const Type* arg_type = _evaluate_type(expr->getLocation(),
-				it->first, m_scope);
-			const CString* arg_name = it->second->getName();
+				it->type, m_scope);
+			const CString* arg_name = it->name->getName();
 
 
 			m_func->addArg(*arg_name, arg_type);

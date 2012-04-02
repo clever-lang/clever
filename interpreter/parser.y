@@ -305,10 +305,14 @@ return_stmt:
 ;
 
 args_declaration_non_empty:
-		TYPE IDENT                      	{ $$ = new ast::ArgumentDeclList(); $$->addArg($1, $2); }
-	|	template IDENT				{ $$ = new ast::ArgumentDeclList(); $$->addArg($1, $2); }
-	|	args_declaration ',' TYPE IDENT 	{ $1->addArg($3, $4); }
-	|	args_declaration ',' template IDENT { $1->addArg($3, $4); }
+		TYPE IDENT                      	{ $$ = new ast::ArgumentDeclList(); $$->addArg($1, $2, false); }
+	|	CONST TYPE IDENT                   	{ $$ = new ast::ArgumentDeclList(); $$->addArg($2, $3, true);  }
+	|	template IDENT				        { $$ = new ast::ArgumentDeclList(); $$->addArg($1, $2, false); }
+	|	CONST template IDENT			    { $$ = new ast::ArgumentDeclList(); $$->addArg($2, $3, true); }
+	|	args_declaration ',' TYPE IDENT 	      { $1->addArg($3, $4, false); }
+	|	args_declaration ',' CONST TYPE IDENT 	  { $1->addArg($4, $5, true); }
+	|	args_declaration ',' template IDENT       { $1->addArg($3, $4, false); }
+	|	args_declaration ',' CONST template IDENT { $1->addArg($4, $5, true); }
 ;
 
 args_declaration:

@@ -50,8 +50,20 @@ class VariableDecl;
 class ExtFuncDeclaration;
 
 typedef std::vector<ASTNode*> NodeList;
+
+struct ArgumentInfo {
+	Identifier* type;
+	Identifier* name;
+	bool constness;
+
+	ArgumentInfo(Identifier* _type, Identifier* _name, bool _constness)
+		: type(_type), name(_name), constness(_constness) {}
+};
+
 typedef std::pair<Identifier*, Identifier*> ArgumentDeclPair;
-typedef std::vector<ArgumentDeclPair> ArgumentDecls;
+
+
+typedef std::vector<ArgumentInfo> ArgumentDecls;
 typedef std::vector<Identifier*> TemplateArgsVector;
 typedef std::vector<VariableDecl*> VariableDecls;
 typedef std::vector<ExtFuncDeclaration*> ExtFuncDecls;
@@ -626,14 +638,14 @@ public:
 		ArgumentDecls::const_iterator it = m_args.begin(), end = m_args.end();
 
 		while (it != end) {
-			CLEVER_DELREF(it->first);
-			CLEVER_DELREF(it->second);
+			CLEVER_DELREF(it->type);
+			CLEVER_DELREF(it->name);
 			++it;
 		}
 	}
 
-	void addArg(Identifier* type, Identifier* name) {
-		m_args.push_back(ArgumentDeclPair(type, name));
+	void addArg(Identifier* type, Identifier* name, bool constness) {
+		m_args.push_back(ArgumentInfo(type, name, constness));
 		CLEVER_ADDREF(type);
 		CLEVER_ADDREF(name);
 	}
