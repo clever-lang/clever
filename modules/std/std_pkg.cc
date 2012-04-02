@@ -23,7 +23,6 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "compiler/cstring.h"
 #include "modules/std/std_pkg.h"
 
 namespace clever { namespace packages {
@@ -60,6 +59,5 @@ void Std::init() {
 	addModule(new std::RPCModule);
 #endif
 }
-
 
 }} // clever::packages

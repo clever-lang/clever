@@ -35,7 +35,6 @@
 # include <sys/resource.h>
 # include <sys/time.h>
 #endif
-
 #include "compiler/value.h"
 #include "modules/std/sys/sys.h"
 #include "types/nativetypes.h"
@@ -95,8 +94,8 @@ static CLEVER_FUNCTION(getcwd) {
 }
 
 /**
- * String argv(Int i)
- * Get i-th argv value
+ * String argv(Int n)
+ * Get n-th argv value
  */
 static CLEVER_FUNCTION(argv) {
 	size_t i = static_cast<size_t>(CLEVER_ARG_INT(0));
@@ -158,7 +157,7 @@ CLEVER_MODULE_INIT(SYSModule) {
 
 	addFunction(
 		new Function("argv", &CLEVER_NS_FNAME(sys, argv), CLEVER_STR))
-		->addArg("i", CLEVER_INT);
+		->addArg("n", CLEVER_INT);
 
 	addFunction(
 		new Function("sleep", &CLEVER_NS_FNAME(sys, sleep), CLEVER_VOID))
