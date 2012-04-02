@@ -229,10 +229,6 @@ static void _check_function_arg_types(const Function* func,
 		const Type* t1 = it->type;
 		const Type* t2 = val->getTypePtr();
 
-		if (val->isCallable()) {
-			Compiler::errorf(loc, "Callback is not implemented yet!");
-		}
-
 		if (t1 != t2) {
 			if (!_check_compatible_types(t1, t2)) {
 				CLEVER_SAFE_DELETE(arg_values);

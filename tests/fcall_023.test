@@ -1,0 +1,10 @@
+Passing a callable as parameter
+==CODE==
+import std.io.println;
+import std.sys.getcwd;
+
+Void t(Function<String> f) { println(f.call()); }
+t(getcwd);
+
+==RESULT==
+\S+
