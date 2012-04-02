@@ -190,7 +190,6 @@ namespace clever {
 %type <num_literal> NUM_INTEGER
 %type <num_literal> NUM_DOUBLE
 %type <str_literal> STR
-
 %type <identifier> package_module_name
 %type <identifier> func_name
 %type <identifier> TYPE
@@ -270,8 +269,8 @@ statement_list:
 ;
 
 statement_list_non_empty:
-		statements                          					{ $<ast_node>$ = new ast::BlockNode(); $$->add($1); }
-	|	statement_list_non_empty statements 					{ $1->add($2); $$ = $1; }
+		statements                          { $<ast_node>$ = new ast::BlockNode(); $$->add($1); }
+	|	statement_list_non_empty statements { $1->add($2); $$ = $1; }
 ;
 
 block_stmt:
@@ -282,10 +281,10 @@ block_stmt:
 statements:
 		expr ';'	             		{ $$ = $<ast_node>1; }
 	|	variable_declaration ';' 		{ $$ = $<ast_node>1; }
-	|	variable_declaration_list ';'		{ $$ = new ast::VarDecls($<node_list>1); }
+	|	variable_declaration_list ';'	{ $$ = new ast::VarDecls($<node_list>1); }
 	|	func_declaration       			{ $$ = $<ast_node>1; }
-	|	func_prototype				{ $$ = $<ast_node>1; }
-	|	ext_func_declaration ';'    		{ $$ = $<ast_node>1; }
+	|	func_prototype				    { $$ = $<ast_node>1; }
+	|	ext_func_declaration ';'    	{ $$ = $<ast_node>1; }
 	|	ext_func_declaration_list 		{ $$ = new ast::VarDecls($<node_list>1); }
 	|	if_expr                  		{ $$ = $<ast_node>1; }
 	|	for_expr                 		{ $$ = $<ast_node>1; }
@@ -308,11 +307,11 @@ args_declaration_non_empty:
 		TYPE IDENT                      	{ $$ = new ast::ArgumentDeclList(); $$->addArg($1, $2, false); }
 	|	CONST TYPE IDENT                   	{ $$ = new ast::ArgumentDeclList(); $$->addArg($2, $3, true);  }
 	|	template IDENT				        { $$ = new ast::ArgumentDeclList(); $$->addArg($1, $2, false); }
-	|	CONST template IDENT			    { $$ = new ast::ArgumentDeclList(); $$->addArg($2, $3, true); }
+	|	CONST template IDENT			    { $$ = new ast::ArgumentDeclList(); $$->addArg($2, $3, true);  }
 	|	args_declaration ',' TYPE IDENT 	      { $1->addArg($3, $4, false); }
-	|	args_declaration ',' CONST TYPE IDENT 	  { $1->addArg($4, $5, true); }
+	|	args_declaration ',' CONST TYPE IDENT 	  { $1->addArg($4, $5, true);  }
 	|	args_declaration ',' template IDENT       { $1->addArg($3, $4, false); }
-	|	args_declaration ',' CONST template IDENT { $1->addArg($4, $5, true); }
+	|	args_declaration ',' CONST template IDENT { $1->addArg($4, $5, true);  }
 ;
 
 args_declaration:
@@ -330,12 +329,12 @@ func_prototype:
 ;
 
 func_declaration:
-		TYPE IDENT '(' args_declaration ')' block_stmt { $$ = new ast::FuncDeclaration($2, $1, $4, $6); }
-	|	CONST TYPE IDENT '(' args_declaration ')' block_stmt { $$ = new ast::FuncDeclaration($3, $2, $5, $7, true); }
-	|	annotation TYPE IDENT '(' args_declaration ')' block_stmt { $$ = new ast::FuncDeclaration($3, $2, $5, $7); }
-	|	template IDENT '(' args_declaration ')' block_stmt { $$ = new ast::FuncDeclaration($2, $1, $4, $6); }
-	|	CONST template IDENT '(' args_declaration ')' block_stmt { $$ = new ast::FuncDeclaration($3, $2, $5, $7, true); }
-	|	annotation template IDENT '(' args_declaration ')' block_stmt { $$ = new ast::FuncDeclaration($3, $2, $5, $7); }
+		TYPE IDENT '(' args_declaration ')' block_stmt                { $$ = new ast::FuncDeclaration($2, $1, $4, $6);       }
+	|	CONST TYPE IDENT '(' args_declaration ')' block_stmt          { $$ = new ast::FuncDeclaration($3, $2, $5, $7, true); }
+	|	annotation TYPE IDENT '(' args_declaration ')' block_stmt     { $$ = new ast::FuncDeclaration($3, $2, $5, $7);       }
+	|	template IDENT '(' args_declaration ')' block_stmt            { $$ = new ast::FuncDeclaration($2, $1, $4, $6);       }
+	|	CONST template IDENT '(' args_declaration ')' block_stmt      { $$ = new ast::FuncDeclaration($3, $2, $5, $7, true); }
+	|	annotation template IDENT '(' args_declaration ')' block_stmt { $$ = new ast::FuncDeclaration($3, $2, $5, $7);       }
 ;
 
 lambda_function:
@@ -352,12 +351,12 @@ ext_func_declaration:
 ;
 
 ext_func_declaration_list_aux:
-		TYPE IDENT '(' args_declaration ')' ';'		{ $$ = new ast::ExtFuncDeclaration(NULL, $2, $1, $4); }
+		TYPE IDENT '(' args_declaration ')' ';'	        { $$ = new ast::ExtFuncDeclaration(NULL, $2, $1, $4); }
 	|	TYPE IDENT '(' args_declaration ')' AS  STR ';'	{ $$ = new ast::ExtFuncDeclaration(NULL, $2, $1, $4, $7); }
 ;
 ext_func_declaration_list_impl:
-		ext_func_declaration_list_aux 					{ $$ = new ast::ExtFuncDecls; $$->push_back($1);}
-	|	ext_func_declaration_list_impl  ext_func_declaration_list_aux 	{ $$ = $1; $$->push_back($2); }
+		ext_func_declaration_list_aux 			            	 	  { $$ = new ast::ExtFuncDecls; $$->push_back($1);}
+	|	ext_func_declaration_list_impl ext_func_declaration_list_aux  { $$ = $1; $$->push_back($2); }
 ;
 
 ext_func_declaration_list:
@@ -376,13 +375,13 @@ access_modifier:
 ;
 
 class_stmt:
-		/* empty */             { $$ = new ast::ClassStmtList; $$->setLocation(yyloc); }
-	|	class_stmt_no_empty     { $$ = $1; }
+		/* empty */         { $$ = new ast::ClassStmtList; $$->setLocation(yyloc); }
+	|	class_stmt_no_empty { $$ = $1; }
 ;
 
 class_stmt_no_empty:
-		class_stmt attribute_declaration        { $1->addAttribute($2); $$ = $1; }
-	|	class_stmt method_declaration           { $1->addMethod($2); $$ = $1; }
+		class_stmt attribute_declaration { $1->addAttribute($2); $$ = $1; }
+	|	class_stmt method_declaration    { $1->addMethod($2); $$ = $1; }
 ;
 
 method_declaration:
@@ -390,35 +389,35 @@ method_declaration:
 ;
 
 attribute_declaration:
-		access_modifier TYPE IDENT ';'	{ $$ = new ast::AttributeDeclaration($1, $2, $3); $$->setLocation(yyloc); }
+		access_modifier TYPE IDENT ';' { $$ = new ast::AttributeDeclaration($1, $2, $3); $$->setLocation(yyloc); }
 ;
 
 arg_list:
-		arg_list ',' expr  { $1->add($3); }
-	|	expr               { $$ = new ast::ArgumentList; $$->add($1); }
+		arg_list ',' expr { $1->add($3); }
+	|	expr              { $$ = new ast::ArgumentList; $$->add($1); }
 ;
 
 arg_list_opt:
-		/* empty */  { $$ = NULL; }
-	| 	arg_list     { $$ = $1; }
+		/* empty */ { $$ = NULL; }
+	| 	arg_list    { $$ = $1; }
 ;
 
 array_list:
-		'[' arg_list ']'	{ $$ = new ast::ArrayList($2); $$->setLocation(yyloc); }
+		'[' arg_list ']' { $$ = new ast::ArrayList($2); $$->setLocation(yyloc); }
 ;
 
 map_arg_list:
-		map_arg_list ',' expr ':' expr 	{ $1->add($3); $1->add($5); }
-	|	expr ':' expr         			{ $$ = new ast::ArgumentList; $$->add($1); $$->add($3); }
+		map_arg_list ',' expr ':' expr { $1->add($3); $1->add($5); }
+	|	expr ':' expr         		   { $$ = new ast::ArgumentList; $$->add($1); $$->add($3); }
 ;
 
 map_list:
-		'{' map_arg_list '}'		{ $$ = new ast::MapList($2); $$->setLocation(yyloc); }
+		'{' map_arg_list '}' { $$ = new ast::MapList($2); $$->setLocation(yyloc); }
 ;
 
 package_module_name:
-		IDENT '.' IDENT  { $<identifier>1->concat(".", $3); delete $3; }
-	|	IDENT            { $$ = $1; }
+		IDENT '.' IDENT { $<identifier>1->concat(".", $3); delete $3; }
+	|	IDENT           { $$ = $1; }
 ;
 
 func_name:
@@ -463,29 +462,25 @@ template_args:
 ;
 
 template_args_fix:
-		TYPE "<" template_args				     { $<template_args>$ = new ast::TemplateArgsVector;
-											       $1->setTemplateArgs($3);
-											       $<template_args>$->push_back($1);
-											     }
+		TYPE "<" template_args                   { $<template_args>$ = new ast::TemplateArgsVector; $1->setTemplateArgs($3); $<template_args>$->push_back($1); }
 	|	template_args ',' TYPE "<" template_args { $$ = $1; $3->setTemplateArgs($5); $1->push_back($3); }
 ;
 
 template:
-		TYPE "<" template_args ">"       { $1->setTemplateArgs($3); }
-	|	TYPE "<" template_args_fix ">>"	 { $1->setTemplateArgs($3); }
+		TYPE "<" template_args ">"      { $1->setTemplateArgs($3); }
+	|	TYPE "<" template_args_fix ">>"	{ $1->setTemplateArgs($3); }
 ;
 
 variable_declaration_list:
-		variable_declaration_list_impl			{ $$ = $1; }
-	|	CONST variable_declaration_list_impl	{ ast::setConstness($2,true); $$ = $2; }
+		variable_declaration_list_impl		 { $$ = $1; }
+	|	CONST variable_declaration_list_impl { ast::setConstness($2,true); $$ = $2; }
 ;
 
 variable_declaration_list_impl:
-		TYPE variable_declaration_list_creation								{ ast::setType($2, $1); $$ = $2; }
-	|	template variable_declaration_list_creation							{ ast::setType($2, $1); $$ = $2; }
-	|	package_module_name "::" TYPE variable_declaration_list_creation
-		{ $1->concat("::", $3); delete $3; ast::setType($4, $1); $$ = $4; }
-	|	AUTO auto_variable_declaration_list_creation 						{ $$ = $2; }
+		TYPE variable_declaration_list_creation							 { ast::setType($2, $1); $$ = $2; }
+	|	template variable_declaration_list_creation				 		 { ast::setType($2, $1); $$ = $2; }
+	|	package_module_name "::" TYPE variable_declaration_list_creation { $1->concat("::", $3); delete $3; ast::setType($4, $1); $$ = $4; }
+	|	AUTO auto_variable_declaration_list_creation 					 { $$ = $2; }
 ;
 
 auto_variable_declaration_list_creation:
