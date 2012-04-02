@@ -27,8 +27,12 @@
 #define CLEVER_STD_REFLECTION_FUNCTION_VALUE_H
 
 #include "compiler/datavalue.h"
-#include "compiler/pkgmanager.h"
-#include "compiler/function.h"
+
+namespace clever {
+
+class Function;
+
+} // clever
 
 namespace clever { namespace packages { namespace std { namespace reflection {
 

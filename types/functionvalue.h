@@ -26,10 +26,11 @@
 #ifndef CLEVER_FUNCTIONVALUE_H
 #define CLEVER_FUNCTIONVALUE_H
 
-#include "compiler/value.h"
-#include "compiler/function.h"
+#include "compiler/datavalue.h"
 
 namespace clever {
+
+class Function;
 
 struct FunctionValue : public DataValue {
 	FunctionValue() : m_function(NULL) {}
@@ -41,9 +42,8 @@ struct FunctionValue : public DataValue {
 	void setFunction(const Function* func) {
 		m_function = func;
 	}
-	
-	~FunctionValue() {
-	}
+
+	~FunctionValue() {}
 private:
 	const Function* m_function;
 	DISALLOW_COPY_AND_ASSIGN(FunctionValue);
@@ -51,5 +51,4 @@ private:
 
 } // clever
 
-#endif
-
+#endif // CLEVER_FUNCTIONVALUE_H

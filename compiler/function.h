@@ -43,8 +43,6 @@ class Value;
 class Function;
 class Scope;
 
-typedef std::vector<Value*> ValueVector;
-
 /**
  * Macros to help on module function declaration
  */
@@ -53,7 +51,9 @@ typedef std::vector<Value*> ValueVector;
 #define CLEVER_NS_FNAME(ns, name) ns::CLEVER_FUNC_NAME(name)
 #define CLEVER_FUNCTION(name) void CLEVER_FASTCALL CLEVER_FUNC_NAME(name)(CLEVER_FUNCTION_ARGS)
 
-
+/**
+ * Argument representation
+ */
 struct FunctionArg {
 	std::string name;
 	const Type* type;
@@ -66,7 +66,6 @@ struct FunctionArg {
 typedef void (CLEVER_FASTCALL *FunctionPtr)(CLEVER_FUNCTION_ARGS);
 typedef std::tr1::unordered_map<std::string, Function*> FunctionMap;
 typedef std::pair<std::string, Function*> FunctionPair;
-typedef std::pair<std::string, const Type*> FunctionArgsPair;
 typedef std::vector<FunctionArg> FunctionArgs;
 
 

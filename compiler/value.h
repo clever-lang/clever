@@ -284,7 +284,7 @@ public:
 		FAR,     // Invoke built-in or loaded functions/methods (probably faster)
 		EXTERNAL // External
 	};
-	
+
 	enum CallableType {
 		FUNCTION,
 		METHOD
@@ -377,15 +377,15 @@ public:
 	void call(size_t& next_op) const {
 		next_op = m_handler.func->call();
 	}
-	
+
 	void setCallableType(CallableType type) {
 		m_callable_type = type;
 	}
-	
+
 	bool isFunction() const {
 		return m_callable_type == FUNCTION;
 	}
-	
+
 	bool isMethod() const {
 		return m_callable_type == METHOD;
 	}
@@ -402,6 +402,7 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(CallableValue);
 };
 
+typedef std::vector<Value*> ValueVector;
 
 } // clever
 
