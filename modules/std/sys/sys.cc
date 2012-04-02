@@ -50,7 +50,7 @@ namespace clever { namespace packages { namespace std {
 namespace sys {
 
 /**
- * Int system(string command)
+ * Int system(String command)
  * Calls a command and returns the exit code.
  */
 static CLEVER_FUNCTION(system) {
@@ -138,23 +138,30 @@ static CLEVER_FUNCTION(sleep) {
 CLEVER_MODULE_INIT(SYSModule) {
 	BEGIN_DECLARE_FUNCTION();
 
-	addFunction(new Function("system", &CLEVER_NS_FNAME(sys, system), CLEVER_INT))
+	addFunction(
+		new Function("system", &CLEVER_NS_FNAME(sys, system), CLEVER_INT))
 		->addArg("command", CLEVER_STR);
 
-	addFunction(new Function("putenv", &CLEVER_NS_FNAME(sys, putenv), CLEVER_VOID))
+	addFunction(
+		new Function("putenv", &CLEVER_NS_FNAME(sys, putenv), CLEVER_VOID))
 		->addArg("env", CLEVER_STR);
 
-	addFunction(new Function("getenv", &CLEVER_NS_FNAME(sys, getenv), CLEVER_STR))
+	addFunction(
+		new Function("getenv", &CLEVER_NS_FNAME(sys, getenv), CLEVER_STR))
 		->addArg("var", CLEVER_STR);
 
-	addFunction(new Function("getcwd", &CLEVER_NS_FNAME(sys, getcwd), CLEVER_STR));
+	addFunction(
+		new Function("getcwd", &CLEVER_NS_FNAME(sys, getcwd), CLEVER_STR));
 
-	addFunction(new Function("argc", &CLEVER_NS_FNAME(sys, argc), CLEVER_INT));
+	addFunction(
+		new Function("argc", &CLEVER_NS_FNAME(sys, argc), CLEVER_INT));
 
-	addFunction(new Function("argv", &CLEVER_NS_FNAME(sys, argv), CLEVER_STR))
+	addFunction(
+		new Function("argv", &CLEVER_NS_FNAME(sys, argv), CLEVER_STR))
 		->addArg("i", CLEVER_INT);
 
-	addFunction(new Function("sleep", &CLEVER_NS_FNAME(sys, sleep), CLEVER_VOID))
+	addFunction(
+		new Function("sleep", &CLEVER_NS_FNAME(sys, sleep), CLEVER_VOID))
 		->addArg("time", CLEVER_INT);
 
 	END_DECLARE();
