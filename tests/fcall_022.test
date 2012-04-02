@@ -1,4 +1,4 @@
-Testing to pass a const value to a non-const argument
+[FATAL] Testing to pass a const value to a non-const argument
 ==CODE==
 import std.io.println;
 

@@ -1,5 +1,5 @@
 [FATAL] Checking const specifier from a function definition
-==TEST==
+==CODE==
 import std.io.*;
 
 const Int abc() {
