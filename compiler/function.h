@@ -53,11 +53,21 @@ typedef std::vector<Value*> ValueVector;
 #define CLEVER_NS_FNAME(ns, name) ns::CLEVER_FUNC_NAME(name)
 #define CLEVER_FUNCTION(name) void CLEVER_FASTCALL CLEVER_FUNC_NAME(name)(CLEVER_FUNCTION_ARGS)
 
+
+struct FunctionArg {
+	std::string name;
+	const Type* type;
+	bool constness;
+
+	FunctionArg(std::string _name, const Type* _type, bool _constness)
+		: name(_name), type(_type), constness(_constness) {}
+};
+
 typedef void (CLEVER_FASTCALL *FunctionPtr)(CLEVER_FUNCTION_ARGS);
 typedef std::tr1::unordered_map<std::string, Function*> FunctionMap;
 typedef std::pair<std::string, Function*> FunctionPair;
 typedef std::pair<std::string, const Type*> FunctionArgsPair;
-typedef std::vector<FunctionArgsPair> FunctionArgs;
+typedef std::vector<FunctionArg> FunctionArgs;
 
 
 /**
@@ -109,8 +119,9 @@ public:
 
 	virtual ~Function() {}
 
-	Function* addArg(std::string name, const Type* type) {
-		m_args.push_back(FunctionArgsPair(name, type));
+	Function* addArg(std::string name, const Type* type,
+		bool constness = true) {
+		m_args.push_back(FunctionArg(name, type, constness));
 		m_min_args = ++m_num_args;
 
 		return this;

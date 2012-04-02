@@ -136,7 +136,7 @@ void VM::push_args(Scope* scope, const FunctionArgs& fargs,
 
 	/* TODO: Find a better way to do this */
 	while (EXPECTED(it != end)) {
-		Value* val = scope->getValue(CSTRING((*it).first));
+		Value* val = scope->getValue(CSTRING((*it).name));
 		Value* tmp = new Value;
 
 		val->copy(args->at(i++));

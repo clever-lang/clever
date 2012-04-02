@@ -139,7 +139,7 @@ CLEVER_METHOD(ReflectionFunction::getArgs) {
 	while (it != end) {
 		Value* tmp = new Value;
 
-		tmp->setString(it->second->getName());
+		tmp->setString(it->type->getName());
 		vec->push_back(tmp);
 
 		++it;

@@ -226,7 +226,7 @@ static void _check_function_arg_types(const Function* func,
 
 	while (it != end) {
 		Value* val = arg_values->at(i++);
-		const Type* t1 = it->second;
+		const Type* t1 = it->type;
 		const Type* t2 = val->getTypePtr();
 
 		if (val->isCallable()) {
@@ -241,6 +241,12 @@ static void _check_function_arg_types(const Function* func,
 					"Wrong param type #%N: expected `%S', but `%S' supplied",
 						i, t1->getName(), t2->getName());
 			}
+		}
+
+		if (val->isConst() && !it->constness) {
+			Compiler::errorf(loc,
+				"Cannot pass a const value on parameter #%N where a "
+				"non-const is expected!", i);
 		}
 		++it;
 	}
@@ -451,7 +457,7 @@ AST_VISITOR(TypeChecker, Identifier) {
 		tv.push_back(func->getReturnType());
 
 		for (size_t i = 0, sz = args.size(); i < sz; ++i) {
-			tv.push_back(args[i].second);
+			tv.push_back(args[i].type);
 		}
 
 		const TemplatedType* const virtual_func =
@@ -1094,7 +1100,7 @@ AST_VISITOR(TypeChecker, FuncPrototype) {
 				it->type, m_scope);
 			const CString* arg_name = it->name->getName();
 
-			user_func->addArg(*arg_name, arg_type);
+			user_func->addArg(*arg_name, arg_type, it->constness);
 
 			++it;
 		}
@@ -1188,7 +1194,7 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 			m_scope->pushValue(var->getName(), var);
 
 			if (!has_prototype) {
-				user_func->addArg(*arg_name, arg_type);
+				user_func->addArg(*arg_name, arg_type, it->constness);
 			}
 
 			++it;
@@ -1263,7 +1269,7 @@ AST_VISITOR(TypeChecker, ExtFuncDeclaration) {
 			const CString* arg_name = it->name->getName();
 
 
-			m_func->addArg(*arg_name, arg_type);
+			m_func->addArg(*arg_name, arg_type, it->constness);
 
 			++it;
 		}
@@ -1437,7 +1443,7 @@ AST_VISITOR(TypeChecker, LambdaFunction) {
 	tv.push_back(expr->getReturnType());
 
 	for (size_t i = 0, sz = args.size(); i < sz; ++i) {
-		tv.push_back(args[i].second);
+		tv.push_back(args[i].type);
 	}
 
 	const Type* lambda_type = virtual_func->getTemplatedType(tv);
