@@ -170,7 +170,7 @@ static void _check_function_return(const Function* func, const Value* value,
 		Compiler::errorf(loc,
 			"Function `%s' cannot return value, it was declared as Void!",
 			func->getName().c_str());
-	} else if (value == NULL && rtype) {
+	} else if ((value == NULL || value->getTypePtr() == NULL) && rtype) {
 		Compiler::errorf(loc, "Function `%s' must return a value of type %S!",
 			func->getName().c_str(), rtype->getName());
 	} else if (value && rtype) {

@@ -110,6 +110,9 @@ void Value::copy(const Value* const value) {
 		&& !m_data.s_value->isInterned()) {
 		const_cast<CString*>(m_data.s_value)->addRef();
 	}
+	
+	// Need to keep the constness
+	setConstness(value->isConst());
 }
 
 /**
