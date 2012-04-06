@@ -40,6 +40,10 @@ Parser::token_type yylex(Parser::semantic_type* yylval,
 	int yylen;
 
 next_token:
+	if (YYCURSOR >= YYLIMIT) {
+		RET(token::END);
+	}
+
 	s.yylex = cursor;
 
 /*!re2c

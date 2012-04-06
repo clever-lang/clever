@@ -44,7 +44,7 @@ enum YYCONDTYPE {
 #define YYMARKER     s.ctx
 #define YYCTXMARKER  s.ctx
 #define YYCURSOR     cursor
-#define YYLIMIT      cursor
+#define YYLIMIT      s.yylimit
 
 #define SET_TYPE(t_ptr) \
 	yylval->type = t_ptr; \
@@ -58,9 +58,10 @@ public:
 	ScannerState() : state(0) { }
 
 	void set_cursor(const unsigned char* cursor) { cur = cursor; }
+	void set_limit(const unsigned char* limit) { yylimit = limit; }
 
 	int state;
-	const unsigned char *cur, *yylex, *ctx;
+	const unsigned char *cur, *yylex, *ctx, *yylimit;
 
 	std::string& getSource() {return m_source; }
 private:

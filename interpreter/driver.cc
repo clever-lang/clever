@@ -118,7 +118,10 @@ int Driver::parseFile(const std::string& filename) {
 
 	s_scanners.push(new_scanner);
 
-	s_scanners.top()->set_cursor(reinterpret_cast<const unsigned char*>(source.c_str()));
+	const unsigned char* s = reinterpret_cast<const unsigned char*>(source.c_str());
+
+	s_scanners.top()->set_cursor(s);
+	s_scanners.top()->set_limit(s + source.length());
 
 	// Bison debug option
 	parser.set_debug_level(m_trace_parsing);
