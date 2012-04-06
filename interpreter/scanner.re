@@ -65,7 +65,14 @@ next_token:
 	<!*> { yylen = cursor - s.yylex; }
 
 	<*>SPACE { yylloc->step(); SKIP(); }
-	<*>[\n]+ { yylloc->lines(yylen); yylloc->step(); SKIP(); }
+	<*>[\n]+ {
+		if (YYGETCONDITION() == yycST_COMMENT) {
+			YYSETCONDITION(INITIAL);
+		}
+		yylloc->lines(yylen);
+		yylloc->step();
+		SKIP();
+	}
 
 	<INITIAL>'(copy)' { RET(token::COPY); }
 
