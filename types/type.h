@@ -181,6 +181,11 @@ public:
 	virtual DataValue* allocateValue() const = 0;
 
 	/**
+	 * Method that returns a Value ptr to the Iterator value instance
+	 */
+	virtual Value* getIterator() const { return NULL; }
+
+	/**
 	 * Checks if this type accepts arguments
 	 */
 	virtual bool isTemplatedType() const {

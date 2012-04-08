@@ -588,7 +588,7 @@ private:
 class ForEachExpr : public ASTNode {
 public:
 	ForEachExpr(ASTNode* var, ASTNode* ident, ASTNode* block)
-		: m_var(var), m_ident(ident), m_block(block),
+		: m_var(var), m_ident(ident), m_block(block), m_it_value(NULL),
 		m_has_return(false) {
 		CLEVER_ADDREF(m_var);
 		CLEVER_ADDREF(m_ident);
@@ -606,8 +606,12 @@ public:
 	ASTNode* getIdentifier() { return m_ident; }
 	ASTNode* getBlock() { return m_block; }
 
+	void setIteratorValue(Value* value) { m_it_value = value; }
+	Value* getIteratorValue() const { return m_it_value; }
+
 	void acceptVisitor(ASTVisitor& visitor) {
 		m_var->acceptVisitor(visitor);
+		m_ident->acceptVisitor(visitor);
 
 		visitor.visit(this);
 	}
@@ -618,6 +622,7 @@ private:
 	ASTNode* m_var;
 	ASTNode* m_ident;
 	ASTNode* m_block;
+	Value* m_it_value;
 	bool m_has_return;
 
 	DISALLOW_COPY_AND_ASSIGN(ForEachExpr);

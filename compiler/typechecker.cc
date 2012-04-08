@@ -893,8 +893,16 @@ AST_VISITOR(TypeChecker, ForEachExpr) {
 	clever_assert_not_null(vartype);
 
 	if (!vartype->implementsInterface(CLEVER_TYPE("Iterator"))) {
-		Compiler::error("Type doesn't implements Iterator");
+		Compiler::error("Variable type doesn't implements Iterator interface");
 	}
+
+	expr->setIteratorValue(vartype->getIterator());
+
+	m_scope = m_scope->newChild();
+
+	expr->getBlock()->acceptVisitor(*this);
+
+	m_scope = m_scope->getParent();
 }
 
 /**
