@@ -883,23 +883,72 @@ AST_VISITOR(TypeChecker, ForExpr) {
 	m_scope = m_scope->getParent();
 }
 
+/**
+ * ForEach visitor
+ */
 AST_VISITOR(TypeChecker, ForEachExpr) {
 	if (!expr->hasBlock()) {
 		return;
 	}
 
-	const Type* vartype = expr->getVar()->getValue()->getTypePtr();
+	Value* instance = expr->getVar()->getValue();
+	const Type* instancetype = instance->getTypePtr();
 
-	clever_assert_not_null(vartype);
+	clever_assert_not_null(instancetype);
 
-	if (!vartype->implementsInterface(CLEVER_TYPE("Iterator"))) {
+	/* TODO: Change to Iterable */
+	if (!instancetype->implementsInterface(CLEVER_TYPE("Iterator"))) {
 		Compiler::error("Variable type doesn't implements Iterator interface");
 	}
 
-	expr->setIteratorValue(vartype->getIterator());
+	/**
+	 * for (instance in var):
+	 *   => Get the iterator from instance and create the variable using such
+	 * value and assign to `var'
+	 *   => Emit the opcode to iterator constructor call passing the `instance'
+	 *
+	 *   Internal view:
+	 *      Instance foo;
+	 *      InstanceIterator var(foo); // InstanceIterator = foo->getIterator()
+	 *
+	 *   Loop {
+	 *     => Call Iterator valid() method to check if the loop will happens
+	 *     Do something if success...
+	 *     => Call Iterator next() method
+	 *   }
+	 */
 
+	Identifier* ident = expr->getIdentifier();
+
+	// Create a new scope
 	m_scope = m_scope->newChild();
 
+	// Create the iterator variable
+	Value* iterator = instancetype->getIterator();
+
+	if (iterator == NULL) {
+		Compiler::errorf(expr->getLocation(),
+			"Type '%S' has no iterator!", instancetype->getName());
+	}
+
+	const Type* type = iterator->getTypePtr();
+
+	iterator->setName(ident->getName());
+
+	// Register the variable in the new scope
+	m_scope->pushValue(ident->getName(), iterator);
+
+	// Building ValueVector of arguments for ctor call
+	ValueVector* arg_values = new ValueVector;
+	arg_values->push_back(instance);
+	instance->addRef();
+
+	expr->setCtorArgsValue(arg_values);
+
+	expr->setCtorCallValue(_prepare_method_call(type, iterator,
+		CACHE_PTR(CLEVER_CTOR, CLEVER_CTOR_NAME), expr, arg_values));
+
+	// Iteration code block
 	expr->getBlock()->acceptVisitor(*this);
 
 	m_scope = m_scope->getParent();

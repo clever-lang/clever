@@ -587,7 +587,7 @@ private:
 
 class ForEachExpr : public ASTNode {
 public:
-	ForEachExpr(ASTNode* var, ASTNode* ident, ASTNode* block)
+	ForEachExpr(ASTNode* var, Identifier* ident, ASTNode* block)
 		: m_var(var), m_ident(ident), m_block(block), m_it_value(NULL),
 		m_has_return(false) {
 		CLEVER_ADDREF(m_var);
@@ -602,16 +602,15 @@ public:
 	}
 
 	bool hasBlock() const { return m_block != NULL; }
-	ASTNode* getVar() { return m_var; }
-	ASTNode* getIdentifier() { return m_ident; }
-	ASTNode* getBlock() { return m_block; }
+	ASTNode* getVar() const { return m_var; }
+	Identifier* getIdentifier() const { return m_ident; }
+	ASTNode* getBlock() const { return m_block; }
 
-	void setIteratorValue(Value* value) { m_it_value = value; }
-	Value* getIteratorValue() const { return m_it_value; }
+	void setCtorArgsValue(ValueVector* args) { m_ctor_args = args; }
+	void setCtorCallValue(CallableValue* value) { m_ctor_value = value; }
 
 	void acceptVisitor(ASTVisitor& visitor) {
 		m_var->acceptVisitor(visitor);
-		m_ident->acceptVisitor(visitor);
 
 		visitor.visit(this);
 	}
@@ -620,9 +619,12 @@ public:
 	void setReturn() { m_has_return = true; }
 private:
 	ASTNode* m_var;
-	ASTNode* m_ident;
+	Identifier* m_ident;
 	ASTNode* m_block;
 	Value* m_it_value;
+	Value* m_var_value;
+	ValueVector* m_ctor_args;
+	CallableValue* m_ctor_value;
 	bool m_has_return;
 
 	DISALLOW_COPY_AND_ASSIGN(ForEachExpr);

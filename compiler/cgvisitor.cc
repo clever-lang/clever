@@ -372,6 +372,10 @@ AST_VISITOR(CodeGenVisitor, ForExpr) {
 }
 
 AST_VISITOR(CodeGenVisitor, ForEachExpr) {
+	if (!expr->hasBlock()) {
+		return;
+	}
+
 
 
 }
