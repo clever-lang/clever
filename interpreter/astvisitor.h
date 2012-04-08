@@ -36,6 +36,7 @@ class VariableDecl;
 class IfExpr;
 class WhileExpr;
 class ForExpr;
+class ForEachExpr;
 class FunctionCall;
 class MethodCall;
 class AssignExpr;
@@ -78,6 +79,7 @@ class CopyExpr;
 	V(IfExpr); \
 	V(WhileExpr); \
 	V(ForExpr); \
+	V(ForEachExpr); \
 	V(BreakNode); \
 	V(FunctionCall); \
 	V(MethodCall); \

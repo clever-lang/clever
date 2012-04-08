@@ -164,6 +164,7 @@ namespace clever {
 	ast::MethodDeclaration* method_decl;
 	ast::AttributeDeclaration* attr_decl;
 	ast::ForExpr* for_expr;
+	ast::ForEachExpr* foreach_expr;
 	ast::WhileExpr* while_expr;
 	ast::ElseIfExpr* elseif_opt;
 	ast::BlockNode* block_stmt;
@@ -240,6 +241,7 @@ namespace clever {
 %type <ast_node> expr
 %type <ast_node> expr_or_empty
 %type <for_expr> for_expr
+%type <foreach_expr> foreach_expr
 %type <while_expr> while_expr
 %type <if_expr> if_expr
 %type <elseif_opt> elseif_opt
@@ -288,6 +290,7 @@ statements:
 	|	ext_func_declaration_list 		{ $$ = new ast::VarDecls($<node_list>1); }
 	|	if_expr                  		{ $$ = $<ast_node>1; }
 	|	for_expr                 		{ $$ = $<ast_node>1; }
+	|	foreach_expr               		{ $$ = $<ast_node>1; }
 	|	while_expr               		{ $$ = $<ast_node>1; }
 	|	block_stmt               		{ $$ = $<ast_node>1; }
 	|	break_stmt ';'           		{ $$ = $<ast_node>1; }
@@ -613,7 +616,10 @@ expr_or_empty:
 
 for_expr:
 		FOR '(' variable_decl_or_empty ';' expr_or_empty ';' expr_or_empty ')' block_stmt { $$ = new ast::ForExpr($3, $5, $7, $9); $$->setLocation(yylloc); }
-//	|   FOR '(' variable_declaration_no_init IN  IDENT ')' block_stmt                     { $$ = new ast::ForExpr($3, $5, $7); $$->setLocation(yylloc); }
+;
+
+foreach_expr:
+		FOR '(' expr IN  IDENT ')' block_stmt { $$ = new ast::ForEachExpr($3, $5, $7); $$->setLocation(yylloc); }
 ;
 
 while_expr:

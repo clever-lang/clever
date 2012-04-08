@@ -543,14 +543,6 @@ private:
 
 class ForExpr : public ASTNode {
 public:
-	ForExpr(ASTNode* var_decl, ASTNode* ident, ASTNode* block)
-		: m_var_decl(var_decl), m_ident(ident), m_condition(NULL),
-		m_increment(NULL), m_block(block), m_has_return(false) {
-		CLEVER_ADDREF(m_var_decl);
-		CLEVER_ADDREF(m_ident);
-		CLEVER_SAFE_ADDREF(m_block);
-	}
-
 	ForExpr(ASTNode* var_decl, ASTNode* condition, ASTNode* increment, ASTNode* block)
 		: m_var_decl(var_decl), m_ident(NULL), m_condition(condition),
 		m_increment(increment), m_block(block), m_has_return(false) {
@@ -591,6 +583,42 @@ private:
 	bool m_has_return;
 
 	DISALLOW_COPY_AND_ASSIGN(ForExpr);
+};
+
+class ForEachExpr : public ASTNode {
+public:
+	ForEachExpr(ASTNode* var_decl, ASTNode* ident, ASTNode* block)
+		: m_var_decl(var_decl), m_ident(ident), m_block(block),
+		m_has_return(false) {
+		CLEVER_ADDREF(m_var_decl);
+		CLEVER_ADDREF(m_ident);
+		CLEVER_SAFE_ADDREF(m_block);
+	}
+
+	~ForEachExpr() {
+		CLEVER_SAFE_DELREF(m_var_decl);
+		CLEVER_SAFE_DELREF(m_ident);
+		CLEVER_SAFE_DELREF(m_block);
+	}
+
+	bool hasBlock() const { return m_block != NULL; }
+	ASTNode* getVarDecl() { return m_var_decl; }
+	ASTNode* getIdentifier() { return m_ident; }
+	ASTNode* getBlock() { return m_block; }
+
+	void acceptVisitor(ASTVisitor& visitor) {
+		visitor.visit(this);
+	}
+
+	bool hasReturn() const { return m_has_return; }
+	void setReturn() { m_has_return = true; }
+private:
+	ASTNode* m_var_decl;
+	ASTNode* m_ident;
+	ASTNode* m_block;
+	bool m_has_return;
+
+	DISALLOW_COPY_AND_ASSIGN(ForEachExpr);
 };
 
 class BreakNode : public ASTNode {

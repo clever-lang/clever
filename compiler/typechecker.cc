@@ -883,6 +883,12 @@ AST_VISITOR(TypeChecker, ForExpr) {
 	m_scope = m_scope->getParent();
 }
 
+AST_VISITOR(TypeChecker, ForEachExpr) {
+	if (!expr->hasBlock()) {
+		return;
+	}
+}
+
 /**
  * Assignment expression visitor
  */
