@@ -44,13 +44,6 @@
 
 namespace clever {
 
-extern const CString* g_cstring_cached_ptrs[25];
-
-void init_type_cached_ptrs();
-
-#define CLEVER_TYPE_CACHE_PTR(x, ptr) g_cstring_cached_ptrs[x] = ptr
-#define CLEVER_TYPE_CACHED_PTR(name)  g_cstring_cached_ptrs[name]
-
 /**
  * Global native type pointers
  */
