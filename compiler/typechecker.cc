@@ -887,6 +887,14 @@ AST_VISITOR(TypeChecker, ForEachExpr) {
 	if (!expr->hasBlock()) {
 		return;
 	}
+
+	const Type* vartype = expr->getVar()->getValue()->getTypePtr();
+
+	clever_assert_not_null(vartype);
+
+	if (!vartype->implementsInterface(CLEVER_TYPE("Iterator"))) {
+		Compiler::error("Type doesn't implements Iterator");
+	}
 }
 
 /**

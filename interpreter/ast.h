@@ -587,33 +587,35 @@ private:
 
 class ForEachExpr : public ASTNode {
 public:
-	ForEachExpr(ASTNode* var_decl, ASTNode* ident, ASTNode* block)
-		: m_var_decl(var_decl), m_ident(ident), m_block(block),
+	ForEachExpr(ASTNode* var, ASTNode* ident, ASTNode* block)
+		: m_var(var), m_ident(ident), m_block(block),
 		m_has_return(false) {
-		CLEVER_ADDREF(m_var_decl);
+		CLEVER_ADDREF(m_var);
 		CLEVER_ADDREF(m_ident);
 		CLEVER_SAFE_ADDREF(m_block);
 	}
 
 	~ForEachExpr() {
-		CLEVER_SAFE_DELREF(m_var_decl);
+		CLEVER_SAFE_DELREF(m_var);
 		CLEVER_SAFE_DELREF(m_ident);
 		CLEVER_SAFE_DELREF(m_block);
 	}
 
 	bool hasBlock() const { return m_block != NULL; }
-	ASTNode* getVarDecl() { return m_var_decl; }
+	ASTNode* getVar() { return m_var; }
 	ASTNode* getIdentifier() { return m_ident; }
 	ASTNode* getBlock() { return m_block; }
 
 	void acceptVisitor(ASTVisitor& visitor) {
+		m_var->acceptVisitor(visitor);
+
 		visitor.visit(this);
 	}
 
 	bool hasReturn() const { return m_has_return; }
 	void setReturn() { m_has_return = true; }
 private:
-	ASTNode* m_var_decl;
+	ASTNode* m_var;
 	ASTNode* m_ident;
 	ASTNode* m_block;
 	bool m_has_return;
