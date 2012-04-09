@@ -376,6 +376,11 @@ AST_VISITOR(CodeGenVisitor, ForEachExpr) {
 		return;
 	}
 
+	// Iterator constructor call
+	emit(OP_MCALL, &VM_H(mcall), expr->getCtorCallValue(),
+		expr->getCtorArgsValue(),
+		expr->getCtorResult());
+
 
 
 }

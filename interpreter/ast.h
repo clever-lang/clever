@@ -606,8 +606,17 @@ public:
 	Identifier* getIdentifier() const { return m_ident; }
 	ASTNode* getBlock() const { return m_block; }
 
+	void setValue(Value* value) { m_result = value; }
+	Value* getValue() const { return m_result; }
+
 	void setCtorArgsValue(ValueVector* args) { m_ctor_args = args; }
+	ValueVector* getCtorArgsValue() const { return m_ctor_args; }
+
 	void setCtorCallValue(CallableValue* value) { m_ctor_value = value; }
+	CallableValue* getCtorCallValue() const { return m_ctor_value; }
+
+	void setCtorResult(Value* value) { m_ctor_result = value; }
+	Value* getCtorResult() const { return m_ctor_result; }
 
 	void acceptVisitor(ASTVisitor& visitor) {
 		m_var->acceptVisitor(visitor);
@@ -621,10 +630,12 @@ private:
 	ASTNode* m_var;
 	Identifier* m_ident;
 	ASTNode* m_block;
+	Value* m_result;
 	Value* m_it_value;
 	Value* m_var_value;
 	ValueVector* m_ctor_args;
 	CallableValue* m_ctor_value;
+	Value* m_ctor_result;
 	bool m_has_return;
 
 	DISALLOW_COPY_AND_ASSIGN(ForEachExpr);

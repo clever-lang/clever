@@ -928,7 +928,7 @@ AST_VISITOR(TypeChecker, ForEachExpr) {
 
 	if (iterator == NULL) {
 		Compiler::errorf(expr->getLocation(),
-			"Type '%S' has no iterator!", instancetype->getName());
+			"Type `%S' has no iterator!", instancetype->getName());
 	}
 
 	const Type* type = iterator->getTypePtr();
@@ -943,10 +943,13 @@ AST_VISITOR(TypeChecker, ForEachExpr) {
 	arg_values->push_back(instance);
 	instance->addRef();
 
-	expr->setCtorArgsValue(arg_values);
+	expr->setValue(new Value);
 
+	// Preparing the Iterator ctor call
+	expr->setCtorArgsValue(arg_values);
 	expr->setCtorCallValue(_prepare_method_call(type, iterator,
 		CACHE_PTR(CLEVER_CTOR, CLEVER_CTOR_NAME), expr, arg_values));
+	expr->setCtorResult(expr->getValue());
 
 	// Iteration code block
 	expr->getBlock()->acceptVisitor(*this);
