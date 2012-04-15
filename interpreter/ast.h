@@ -615,8 +615,20 @@ public:
 	void setCtorCallValue(CallableValue* value) { m_ctor_value = value; }
 	CallableValue* getCtorCallValue() const { return m_ctor_value; }
 
+	void setValidCallValue(CallableValue* value) { m_valid_value = value; }
+	CallableValue* getValidCallValue() const { return m_valid_value; }
+
+	void setNextCallValue(CallableValue* value) { m_next_value = value; }
+	CallableValue* getNextCallValue() const { return m_next_value; }
+
 	void setCtorResult(Value* value) { m_ctor_result = value; }
 	Value* getCtorResult() const { return m_ctor_result; }
+
+	void setValidResult(Value* value) { m_valid_result = value; }
+	Value* getValidResult() const { return m_valid_result; }
+
+	void setNextResult(Value* value) { m_next_result = value; }
+	Value* getNextResult() const { return m_next_result; }
 
 	void acceptVisitor(ASTVisitor& visitor) {
 		m_var->acceptVisitor(visitor);
@@ -636,6 +648,10 @@ private:
 	ValueVector* m_ctor_args;
 	CallableValue* m_ctor_value;
 	Value* m_ctor_result;
+	CallableValue* m_valid_value;
+	Value* m_valid_result;
+	CallableValue* m_next_value;
+	Value* m_next_result;
 	bool m_has_return;
 
 	DISALLOW_COPY_AND_ASSIGN(ForEachExpr);

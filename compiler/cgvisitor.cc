@@ -381,8 +381,22 @@ AST_VISITOR(CodeGenVisitor, ForEachExpr) {
 		expr->getCtorArgsValue(),
 		expr->getCtorResult());
 
+	// Iterator::valid() method call
+	emit(OP_MCALL, &VM_H(mcall), expr->getValidCallValue())
+		->setResult(expr->getValidResult());
+
+	Opcode* jmpz = emit(OP_JMPZ, &VM_H(jmpz), expr->getValidResult());
+
+	expr->getBlock()->acceptVisitor(*this);
+
+	// Iterator::next() method call
+	emit(OP_MCALL, &VM_H(mcall), expr->getNextCallValue())
+		->setResult(expr->getNextResult());
+
+	emit(OP_JMP, &VM_H(jmp), jmpz->getOpNum());
 
 
+	jmpz->setJmpAddr1(getOpNum());
 }
 
 /**

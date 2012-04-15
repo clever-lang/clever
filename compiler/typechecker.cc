@@ -951,6 +951,20 @@ AST_VISITOR(TypeChecker, ForEachExpr) {
 		CACHE_PTR(CLEVER_CTOR, CLEVER_CTOR_NAME), expr, arg_values));
 	expr->setCtorResult(expr->getValue());
 
+	expr->setValue(new Value);
+
+	// valid method call
+	expr->setValidCallValue(_prepare_method_call(type, iterator,
+		CSTRING("valid"), expr, NULL));
+	expr->setValidResult(expr->getValue());
+
+	expr->setValue(new Value);
+
+	// next method call
+	expr->setNextCallValue(_prepare_method_call(type, iterator,
+		CSTRING("next"), expr, NULL));
+	expr->setNextResult(expr->getValue());
+
 	// Iteration code block
 	expr->getBlock()->acceptVisitor(*this);
 
