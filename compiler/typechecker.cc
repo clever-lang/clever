@@ -943,7 +943,8 @@ AST_VISITOR(TypeChecker, ForEachExpr) {
 	arg_values->push_back(instance);
 	instance->addRef();
 
-	expr->setValue(new Value);
+	expr->setValue(iterator);
+	iterator->addRef();
 
 	// Preparing the Iterator ctor call
 	expr->setCtorArgsValue(arg_values);

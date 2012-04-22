@@ -38,7 +38,7 @@ public:
 
 	virtual ~GlobValue() {}
 
-	glob_t globbuf;
+	::std::vector<char*> paths;
 };
 
 }}}} // clever::packages::std::file

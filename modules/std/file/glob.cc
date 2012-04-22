@@ -23,9 +23,11 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#include <cstdlib>
 #include "compiler/compiler.h"
 #include "compiler/cstring.h"
 #include "modules/std/file/glob.h"
+#include "modules/std/file/globiteratorvalue.h"
 #include "types/nativetypes.h"
 
 namespace clever { namespace packages { namespace std { namespace file {
@@ -35,10 +37,19 @@ namespace clever { namespace packages { namespace std { namespace file {
  */
 CLEVER_METHOD(Glob::constructor) {
 	GlobValue* gv = new GlobValue;
+	glob_t globbuf;
 
-	gv->globbuf.gl_offs = 0;
+	globbuf.gl_offs = 0;
 
-	glob(CLEVER_ARG_STR(0).c_str(), GLOB_DOOFFS, NULL, &gv->globbuf);
+	glob(CLEVER_ARG_STR(0).c_str(), GLOB_DOOFFS, NULL, &globbuf);
+
+	for (size_t i = 0; i < globbuf.gl_pathc; ++i) {
+		gv->paths.push_back(::strdup(globbuf.gl_pathv[i]));
+	}
+
+	if (globbuf.gl_pathc) {
+		globfree(&globbuf);
+	}
 
 	CLEVER_RETURN_DATA_VALUE(gv);
 }
@@ -50,8 +61,9 @@ CLEVER_METHOD(Glob::constructor) {
 CLEVER_METHOD(Glob::current) {
 	CLEVER_OBJECT_INIT(gv, GlobValue*);
 
-	if (gv->globbuf.gl_pathc) {
-		CLEVER_RETURN_STR(CSTRINGT(gv->globbuf.gl_pathv[0]));
+	if (gv->paths.size()) {
+		CLEVER_RETURN_STR(CSTRINGT(gv->paths.at(0)));
+		//CLEVER_RETURN_STR(CSTRINGT(gv->globbuf.gl_pathv[0]));
 	} else {
 		CLEVER_RETURN_EMPTY_STR();
 	}
@@ -87,11 +99,19 @@ DataValue* Glob::allocateValue() const {
 	return new GlobValue;
 }
 
+Value* Glob::getIterator() const {
+	Value* it = new Value;
+	it->setTypePtr(CLEVER_TYPE("GlobIterator"));
+	it->setDataValue(new GlobIteratorValue);
+
+	return it;
+}
+
 void Glob::destructor(Value* value) const {
 	GlobValue* gv = CLEVER_GET_VALUE(GlobValue*, value);
 
-	if (gv->globbuf.gl_pathc) {
-		globfree(&gv->globbuf);
+	for (size_t i = 0; i < gv->paths.size(); ++i) {
+		::free(gv->paths.at(i));
 	}
 }
 
