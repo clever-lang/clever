@@ -33,6 +33,7 @@
 #include "compiler/cstring.h"
 #include "types/nativetypes.h"
 #include <cstdio>
+#include <unistd.h>
 #include <map>
 
 #ifndef __APPLE__
@@ -48,8 +49,6 @@
 #endif
 
 namespace clever { namespace packages { namespace std { namespace rpc {
-
-
 
 extern "C" {
 	typedef void (*ffi_call_func)();
@@ -79,8 +78,6 @@ ffi_type* _find_rpc_type(const char* tn) {
 class Mutex {
 
 public:
-
-	
 	Mutex() {}
 
 	void init() {
@@ -95,7 +92,6 @@ public:
 		pthread_mutex_unlock (&mut);
 	}
 
-
 private:
 	pthread_mutex_t mut;
 	pthread_mutexattr_t mattr;
@@ -106,8 +102,6 @@ Mutex g_mutex, send_mutex, time_mutex;
 class WaitProcess {
 
 public:
-
-	
 	WaitProcess(){
 		np=0;
 		mut.init();
@@ -153,8 +147,6 @@ private:
 class SecurePrint{
 
 public:
-
-	
 	SecurePrint(){
 		mut.init();
 	}
