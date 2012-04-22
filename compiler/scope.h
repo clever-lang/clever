@@ -101,6 +101,19 @@ public:
 		return s;
 	}
 
+	// This the first scope of top-level functions and classes.
+	Scope* newOrphanedChild() {
+		Scope *s = new Scope(this);
+		s->m_orphaned = true;
+		m_orphanedChildren.push_back(s);
+
+		return s;
+	}
+
+	bool isOrphaned() const {
+		return m_orphaned;
+	}
+
 	bool hasChildren() const { return m_children.size() != 0; }
 
 	void clear();
@@ -117,7 +130,9 @@ private:
 
 	Scope* m_parent;
 	ScopeVector m_children;
+	ScopeVector m_orphanedChildren;
 	SymbolMap m_symbols;
+	bool m_orphaned;
 };
 
 extern Scope g_scope;

@@ -42,7 +42,7 @@ Symbol::~Symbol() {
 
 void Scope::clear() {
 	SymbolMap::const_iterator sym(m_symbols.begin()), last_sym(m_symbols.end());
-	std::vector<Scope*>::const_iterator child(m_children.begin()),
+	ScopeVector::const_iterator child(m_children.begin()),
 		last_child(m_children.end());
 
 	while (child != last_child) {
@@ -51,7 +51,17 @@ void Scope::clear() {
 		++child;
 	}
 
+	child = m_orphanedChildren.begin();
+	last_child = m_orphanedChildren.end();
+
+	while (child != last_child) {
+		delete *child;
+
+		++child;
+	}
+
 	m_children.clear();
+	m_orphanedChildren.clear();
 
 	while (sym != last_sym) {
 		delete sym->second;
