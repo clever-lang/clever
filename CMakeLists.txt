@@ -148,6 +148,8 @@ add_executable(clever
 	compiler/clever.cc
 	compiler/cstring.cc
 	compiler/scope.cc
+	compiler/scope-inl.h
+	compiler/symbol.h
 	compiler/pkgmanager.cc
 	vm/vm.cc
 	vm/opcode.cc
