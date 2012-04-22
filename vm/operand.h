@@ -26,6 +26,7 @@
 #ifndef CLEVER_OPERAND_H
 #define CLEVER_OPERAND_H
 
+#include "compiler/callablevalue.h"
 #include "compiler/value.h"
 
 namespace clever {

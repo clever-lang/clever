@@ -17,7 +17,7 @@ include_directories(.)
 
 # Packages
 # ---------------------------------------------------------------------------
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} .)
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 find_package(BISON)
 find_package(RE2C)
 find_package(PkgConfig)
@@ -139,6 +139,8 @@ add_executable(clever
 	interpreter/driver.cc
 	interpreter/ast.cc
 	compiler/value.cc
+	compiler/callablevalue.cc
+	compiler/callablevalue-inl.h
 	compiler/module.cc
 	compiler/cgvisitor.cc
 	compiler/compiler.cc
@@ -197,7 +199,12 @@ set_directory_properties(PROPERTIES
 
 # Packaging
 # ---------------------------------------------------------------------------
-set(CPACK_GENERATOR "STGZ;TBZ2;TGZ;ZIP")
+set(CPACK_GENERATOR "STGZ;TBZ2;TGZ;ZIP;DEB")
+set(CPACK_PACKAGE_VERSION_MAJOR "0")
+set(CPACK_PACKAGE_VERSION_MINOR "1")
+set(CPACK_PACKAGE_VERSION_PATCH "0")
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Higor Eurípedes heurípedes@gmail.com")
+set(CPACK_PACKAGE_CONTACT "Higor Eurípedes heuripedes@gmail.com")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "The Clever programming language")
 include(CPack)
 
