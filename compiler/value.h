@@ -68,10 +68,16 @@ public:
 			: s_value(NULL) {}
 	};
 
-	/**
-	 * Data type
-	 */
-	enum { NONE, PRIMITIVE, INTERNAL, CALL, REF };
+    /**
+     * Data type
+     */
+    enum ValueType {
+        NONE,
+        PRIMITIVE,
+        INTERNAL,
+        CALL,
+        REF
+    };
 
 	Value()
 		: RefCounted(1), m_type(NONE), m_type_ptr(NULL), m_name(NULL),
@@ -135,16 +141,16 @@ public:
 
 	void initialize();
 
-	int getType() const { return m_type; }
+    ValueType getType() const { return m_type; }
 
-	void setType(int type) {
+    void setType(ValueType type) {
 		if (EXPECTED(type == NONE || type == INTERNAL ||
 			type == PRIMITIVE || type == REF || type == CALL)) {
 			m_type = type;
 		}
 	}
 
-	int hasSameType(const Value* const value) const {
+    bool hasSameType(const Value* const value) const {
 		return m_type_ptr == value->getTypePtr();
 	}
 
@@ -264,7 +270,10 @@ public:
 
 	virtual const std::string toString();
 private:
-	int m_type;
+
+
+    ValueType m_type;
+
 	const Type* m_type_ptr;
 	const CString* m_name;
 	ValueData m_data;
