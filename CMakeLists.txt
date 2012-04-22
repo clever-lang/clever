@@ -139,6 +139,8 @@ add_executable(clever
 	interpreter/driver.cc
 	interpreter/ast.cc
 	compiler/value.cc
+	compiler/callablevalue.cc
+	compiler/callablevalue-inl.h
 	compiler/module.cc
 	compiler/cgvisitor.cc
 	compiler/compiler.cc

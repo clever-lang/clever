@@ -26,6 +26,7 @@
 #include <iostream>
 #include "compiler/pkgmanager.h"
 #include "compiler/value.h"
+#include "compiler/callablevalue.h"
 #include "compiler/cstring.h"
 #include "modules/std/std_pkg.h"
 #include "modules/web/web_pkg.h"

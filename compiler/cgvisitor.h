@@ -27,6 +27,7 @@
 #define CLEVER_CGVISITOR_H
 
 #include <stack>
+
 #include "vm/opcode.h"
 #include "interpreter/astvisitor.h"
 
@@ -71,85 +72,29 @@ public:
 	AST_VISITOR_DECLARATION(AST_VISITOR_DECL);
 private:
 	// Output an opcode
-	Opcode* emit(OpcodeType type, VM::opcode_handler handler) {
-		Opcode* opcode = new Opcode(type, handler);
-		m_opcodes.push_back(opcode);
-
-		// Sets the opcode number, which is used by JMP opcodes
-		opcode->setOpNum(getOpNum());
-
-		return opcode;
-	}
+	Opcode* emit(OpcodeType type, VM::opcode_handler handler);
 
 	// Output an opcode
-	Opcode* emit(OpcodeType type, VM::opcode_handler handler, long addr) {
-		Opcode* opcode = new Opcode(type, handler, addr);
-		m_opcodes.push_back(opcode);
-
-		// Sets the opcode number, which is used by JMP opcodes
-		opcode->setOpNum(getOpNum());
-
-		return opcode;
-	}
+	Opcode* emit(OpcodeType type, VM::opcode_handler handler, long addr);
 
 	// Output an opcode
-	Opcode* emit(OpcodeType type, VM::opcode_handler handler, Value* op1) {
-		Opcode* opcode = new Opcode(type, handler, op1);
-		m_opcodes.push_back(opcode);
-
-		// Sets the opcode number, which is used by JMP opcodes
-		opcode->setOpNum(getOpNum());
-
-		return opcode;
-	}
+	Opcode* emit(OpcodeType type, VM::opcode_handler handler, Value* op1);
 
 	// Output an opcode
 	Opcode* emit(OpcodeType type, VM::opcode_handler handler, Value* op1,
-		ValueVector* op2) {
-		Opcode* opcode = new Opcode(type, handler, op1, op2);
-		m_opcodes.push_back(opcode);
-
-		// Sets the opcode number, which is used by JMP opcodes
-		opcode->setOpNum(getOpNum());
-
-		return opcode;
-	}
+		ValueVector* op2);
 
 	// Output an opcode
 	Opcode* emit(OpcodeType type, VM::opcode_handler handler, CallableValue* op1,
-		ValueVector* op2, Value* result) {
-		Opcode* opcode = new Opcode(type, handler, op1, op2, result);
-		m_opcodes.push_back(opcode);
-
-		// Sets the opcode number, which is used by JMP opcodes
-		opcode->setOpNum(getOpNum());
-
-		return opcode;
-	}
+		ValueVector* op2, Value* result);
 
 	// Output an opcode
 	Opcode* emit(OpcodeType type, VM::opcode_handler handler, Value* op1,
-		ValueVector* op2, Value* result) {
-		Opcode* opcode = new Opcode(type, handler, op1, op2, result);
-		m_opcodes.push_back(opcode);
-
-		// Sets the opcode number, which is used by JMP opcodes
-		opcode->setOpNum(getOpNum());
-
-		return opcode;
-	}
+		ValueVector* op2, Value* result);
 
 	// Output an opcode
 	Opcode* emit(OpcodeType type, VM::opcode_handler handler, Value* op1,
-		Value* op2, Value* result) {
-		Opcode* opcode = new Opcode(type, handler, op1, op2, result);
-		m_opcodes.push_back(opcode);
-
-		// Sets the opcode number, which is used by JMP opcodes
-		opcode->setOpNum(getOpNum());
-
-		return opcode;
-	}
+		Value* op2, Value* result);
 
 	// Returns the opcode number
 	size_t getOpNum() const {

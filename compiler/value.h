@@ -68,60 +68,60 @@ public:
 			: s_value(NULL) {}
 	};
 
-    /**
-     * Data type
-     */
-    enum ValueType {
-        NONE,
-        PRIMITIVE,
-        INTERNAL,
-        CALL,
-        REF
-    };
+	/**
+	 * Data type
+	 */
+	enum ValueType {
+		NONE,
+		PRIMITIVE,
+		INTERNAL,
+		CALL,
+		REF
+	};
 
 	Value()
 		: RefCounted(1), m_type(NONE), m_type_ptr(NULL), m_name(NULL),
-		m_is_const(false) {}
+		  m_is_const(false) {}
 
 	explicit Value(const Type* type_ptr)
 		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(type_ptr), m_name(NULL),
-		m_is_const(false) {
+		  m_is_const(false) {
 		setTypePtr(type_ptr);
 	}
 
 	explicit Value(double value)
 		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_DOUBLE),
-			m_name(NULL), m_is_const(false) {
+		  m_name(NULL), m_is_const(false) {
 		setDouble(value);
 	}
 
 	explicit Value(int64_t value)
 		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_INT),
-			m_name(NULL), m_is_const(false) {
+		  m_name(NULL), m_is_const(false) {
 		setInteger(value);
 	}
 
 	explicit Value(bool value)
 		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_BOOL),
-			m_name(NULL), m_is_const(false) {
+		  m_name(NULL), m_is_const(false) {
 		setBoolean(value);
 	}
 
 	explicit Value(const CString* value)
 		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_STR),
-			m_name(NULL), m_is_const(false) {
+		  m_name(NULL), m_is_const(false) {
 		setString(value);
 	}
 
 	explicit Value(uint8_t value)
 		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_BYTE),
-			m_name(NULL), m_is_const(false) {
+		  m_name(NULL), m_is_const(false) {
 		setByte(value);
 	}
 
 	explicit Value(Value* value)
 		: RefCounted(1), m_type(REF), m_type_ptr(NULL), m_name(NULL),
-			m_is_const(false) {
+		  m_is_const(false) {
 		setReference(value);
 	}
 
@@ -134,23 +134,23 @@ public:
 			m_data.dv_value->delRef();
 		}
 		else if (isPrimitive() && isString() && m_data.s_value
-			&& !m_data.s_value->isInterned()) {
+			 && !m_data.s_value->isInterned()) {
 			const_cast<CString*>(m_data.s_value)->delRef();
 		}
 	}
 
 	void initialize();
 
-    ValueType getType() const { return m_type; }
+	ValueType getType() const { return m_type; }
 
-    void setType(ValueType type) {
+	void setType(ValueType type) {
 		if (EXPECTED(type == NONE || type == INTERNAL ||
-			type == PRIMITIVE || type == REF || type == CALL)) {
+			     type == PRIMITIVE || type == REF || type == CALL)) {
 			m_type = type;
 		}
 	}
 
-    bool hasSameType(const Value* const value) const {
+	bool hasSameType(const Value* const value) const {
 		return m_type_ptr == value->getTypePtr();
 	}
 
@@ -270,9 +270,7 @@ public:
 
 	virtual const std::string toString();
 private:
-
-
-    ValueType m_type;
+	ValueType m_type;
 
 	const Type* m_type_ptr;
 	const CString* m_name;
@@ -280,135 +278,6 @@ private:
 	bool m_is_const;
 
 	DISALLOW_COPY_AND_ASSIGN(Value);
-};
-
-/**
- * Class that represents the values of functions and methods.
- */
-class CallableValue : public Value {
-public:
-	enum CallType {
-		NONE,
-		NEAR,    // Invoke compiled functions/methods
-		FAR,     // Invoke built-in or loaded functions/methods (probably faster)
-		EXTERNAL // External
-	};
-
-	enum CallableType {
-		FUNCTION,
-		METHOD
-	};
-
-	/* TODO: generate name for anonymous functions, disable setName(). */
-	CallableValue()
-		: Value(), m_call_type(NONE), m_context(NULL), m_callable_type(FUNCTION) {
-			setType(CALL);
-	}
-
-	/**
-	 * Create a CallableValue to represent a named function.
-	 */
-	explicit CallableValue(const CString* const name)
-		: Value(), m_call_type(NONE), m_context(NULL),
-		m_callable_type(FUNCTION) {
-		setName(name);
-		setType(CALL);
-	}
-
-	/**
-	 * Create a CallableValue able to represent a method.
-	 */
-	CallableValue(const CString* name, const Type* type)
-		: Value(), m_call_type(NONE), m_context(NULL),
-		m_callable_type(METHOD) {
-		setName(name);
-		setTypePtr(type);
-		setType(CALL);
-	}
-
-	~CallableValue() {
-		if ((isNearCall() || isExternal()) && m_handler.func) {
-			delete m_handler.func;
-		}
-		if (m_context && this != m_context) {
-			m_context->delRef();
-		}
-	}
-
-	void setHandler(Function* handler) {
-		if (handler->isInternal()) {
-			m_call_type = FAR;
-		} else if (handler->isExternal()) {
-			m_call_type = EXTERNAL;
-		} else {
-			m_call_type = NEAR;
-		}
-		m_handler.func = handler;
-	}
-
-	void setHandler(const Method* const handler) {
-		m_call_type = handler->isInternal() ? FAR : NEAR;
-		m_handler.method = handler;
-	}
-
-	void setContext(Value* value) { m_context = value; }
-	Value* getContext() const { return m_context; }
-
-	FunctionPtr getFunctionPtr() const { return m_handler.func->getPtr(); }
-	MethodPtr getMethodPtr() const { return m_handler.method->getPtr(); }
-
-	const Function* getFunction() const { return m_handler.func; }
-	const Method* getMethod() const { return m_handler.method; }
-
-	bool isCallable() const { return true; }
-
-	void setCallType(CallType type) { m_call_type = type; }
-
-	bool isExternal() const { return m_call_type == EXTERNAL; }
-	bool isNearCall() const { return m_call_type == NEAR; }
-	bool isFarCall() const { return m_call_type == FAR; }
-
-	/**
-	 * Invokes the method/function pointer according with the type.
-	 *
-	 * Remember to set a context before calling a non-static method.
-	 */
-	void call(Value* const result, const ValueVector* const args) const {
-		clever_assert(m_call_type != NEAR, "Wrong call for user func/method!");
-
-		if (isFunction()) {
-			m_handler.func->call(args, result);
-		} else {
-			m_handler.method->call(args, result, m_context);
-		}
-	}
-
-	void call(size_t& next_op) const {
-		next_op = m_handler.func->call();
-	}
-
-	void setCallableType(CallableType type) {
-		m_callable_type = type;
-	}
-
-	bool isFunction() const {
-		return m_callable_type == FUNCTION;
-	}
-
-	bool isMethod() const {
-		return m_callable_type == METHOD;
-	}
-private:
-	union {
-		const Function* func;
-		const Method* method;
-	} m_handler;
-
-	CallType m_call_type;
-	Value* m_context;
-	CallableType m_callable_type;
-
-	DISALLOW_COPY_AND_ASSIGN(CallableValue);
 };
 
 typedef std::vector<Value*> ValueVector;

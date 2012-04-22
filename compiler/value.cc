@@ -53,7 +53,7 @@ void Value::initialize() {
 		TypeVector tv;
 
 		const Method* ctor = getTypePtr()->getMethod(
-			CACHE_PTR(CLEVER_CTOR, CLEVER_CTOR_NAME), &tv);
+					CACHE_PTR(CLEVER_CTOR, CLEVER_CTOR_NAME), &tv);
 
 		if (ctor) {
 			ctor->call(NULL, this, this);
@@ -92,7 +92,7 @@ void Value::copy(const Value* const value) {
 	if (isInternal() && getDataValue()) {
 		getDataValue()->delRef();
 	} else if (isPrimitive() && isString() && m_data.s_value
-		&& !m_data.s_value->isInterned()) {
+		   && !m_data.s_value->isInterned()) {
 		const_cast<CString*>(m_data.s_value)->delRef();
 	}
 
@@ -107,10 +107,10 @@ void Value::copy(const Value* const value) {
 	if (isInternal() && getDataValue()) {
 		getDataValue()->addRef();
 	} else if (isPrimitive() && isString() && m_data.s_value
-		&& !m_data.s_value->isInterned()) {
+		   && !m_data.s_value->isInterned()) {
 		const_cast<CString*>(m_data.s_value)->addRef();
 	}
-	
+
 	// Need to keep the constness
 	setConstness(value->isConst());
 }

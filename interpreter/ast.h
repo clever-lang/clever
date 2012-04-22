@@ -30,6 +30,7 @@
 #include <vector>
 #include <set>
 #include "compiler/value.h"
+#include "compiler/callablevalue.h"
 #include "compiler/refcounted.h"
 #include "compiler/scope.h"
 #include "interpreter/astvisitor.h"
@@ -1382,9 +1383,9 @@ inline void _set_libname_ext_func_decl(ExtFuncDecls* v, StringLiteral* libname) 
 class MethodDeclaration: public FuncDeclaration {
 public:
 	MethodDeclaration(ASTNode* modifier, Identifier* rtype, Identifier* name,
-                ArgumentDeclList* args, BlockNode* block)
+		ArgumentDeclList* args, BlockNode* block)
 		: FuncDeclaration(name, rtype, args, block), m_modifier(modifier) {
-                    CLEVER_ADDREF(m_modifier);
+		    CLEVER_ADDREF(m_modifier);
 	}
 
 	~MethodDeclaration() {

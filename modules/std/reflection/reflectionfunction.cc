@@ -30,6 +30,8 @@
 #include "types/array.h"
 #include "vm/vm.h"
 
+#include "compiler/callablevalue.h"
+
 namespace clever { namespace packages { namespace std { namespace reflection {
 
 /**
