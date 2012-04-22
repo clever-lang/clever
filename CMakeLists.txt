@@ -17,7 +17,7 @@ include_directories(.)
 
 # Packages
 # ---------------------------------------------------------------------------
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} .)
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 find_package(BISON)
 find_package(RE2C)
 find_package(PkgConfig)
