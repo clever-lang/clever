@@ -197,6 +197,15 @@ extern jmp_buf fatal_error;
 #endif
 
 /**
+ * Attribute for hot functions
+ */
+#if defined(__GNUC__) && (CLEVER_GCC_VERSION >= 40300)
+# define CLEVER_HOT_FUNC __attribute__((hot))
+#else
+# define CLEVER_HOT_FUNC
+#endif
+
+/**
  * No return attribute
  */
 #ifdef __GNUC__

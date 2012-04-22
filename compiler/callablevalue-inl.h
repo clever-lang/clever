@@ -33,33 +33,33 @@
 namespace clever {
 
 inline CallableValue::~CallableValue() {
-	if ((isNearCall() || isExternal()) && m_handler.func) {
-		delete m_handler.func;
-	}
-	if (m_context && this != m_context) {
-		m_context->delRef();
-	}
+    if ((isNearCall() || isExternal()) && m_handler.func) {
+        delete m_handler.func;
+    }
+    if (m_context && this != m_context) {
+        m_context->delRef();
+    }
 }
 
 inline void CallableValue::setHandler(Function* handler) {
-	if (handler->isInternal()) {
-		m_call_type = FAR;
-	} else if (handler->isExternal()) {
-		m_call_type = EXTERNAL;
-	} else {
-		m_call_type = NEAR;
-	}
-	m_handler.func = handler;
+    if (handler->isInternal()) {
+        m_call_type = FAR;
+    } else if (handler->isExternal()) {
+        m_call_type = EXTERNAL;
+    } else {
+        m_call_type = NEAR;
+    }
+    m_handler.func = handler;
 }
 
 inline void CallableValue::call(Value* const result, const ValueVector* const args) const {
-	clever_assert(m_call_type != NEAR, "Wrong call for user func/method!");
+    clever_assert(m_call_type != NEAR, "Wrong call for user func/method!");
 
-	if (isFunction()) {
-		m_handler.func->call(args, result);
-	} else {
-		m_handler.method->call(args, result, m_context);
-	}
+    if (isFunction()) {
+        m_handler.func->call(args, result);
+    } else {
+        m_handler.method->call(args, result, m_context);
+    }
 }
 
 } // clever
