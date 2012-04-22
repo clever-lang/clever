@@ -37,9 +37,13 @@ public:
 	Glob() :
 		Type(CSTRING("Glob")) { }
 
+	/**
+	 * Virtual methods
+	 */
 	void init();
 	DataValue* allocateValue() const;
 	void destructor(Value* value) const;
+	Value* getIterator() const;
 
 	/**
 	 * Type methods

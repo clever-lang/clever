@@ -459,6 +459,8 @@ AST_VISITOR(CodeGenVisitor, ForEachExpr) {
 	emit(OP_MCALL, &VM_H(mcall), expr->getValidCallValue())
 		->setResult(expr->getValidResult());
 
+	expr->getValidResult()->addRef();
+
 	Opcode* jmpz = emit(OP_JMPZ, &VM_H(jmpz), expr->getValidResult());
 
 	expr->getBlock()->acceptVisitor(*this);
@@ -467,10 +469,11 @@ AST_VISITOR(CodeGenVisitor, ForEachExpr) {
 	emit(OP_MCALL, &VM_H(mcall), expr->getNextCallValue())
 		->setResult(expr->getNextResult());
 
-	emit(OP_JMP, &VM_H(jmp), jmpz->getOpNum());
+	// Jump to before valid method call
+	emit(OP_JMP, &VM_H(jmp))->setJmpAddr1(jmpz->getOpNum()-2);
 
-
-	jmpz->setJmpAddr1(getOpNum());
+	// Jump to out of iteration block
+	jmpz->setJmpAddr2(getOpNum());
 }
 
 /**
