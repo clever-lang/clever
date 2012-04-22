@@ -197,7 +197,12 @@ set_directory_properties(PROPERTIES
 
 # Packaging
 # ---------------------------------------------------------------------------
-set(CPACK_GENERATOR "STGZ;TBZ2;TGZ;ZIP")
+set(CPACK_GENERATOR "STGZ;TBZ2;TGZ;ZIP;DEB")
+set(CPACK_PACKAGE_VERSION_MAJOR "0")
+set(CPACK_PACKAGE_VERSION_MINOR "1")
+set(CPACK_PACKAGE_VERSION_PATCH "0")
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Higor Eurípedes heurípedes@gmail.com")
+set(CPACK_PACKAGE_CONTACT "Higor Eurípedes heuripedes@gmail.com")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "The Clever programming language")
 include(CPack)
 
