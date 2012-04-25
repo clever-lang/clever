@@ -5,4 +5,3 @@ add_library(modules_std_file STATIC
 	glob.cc
 	globiterator.cc
 )
-
