@@ -1261,7 +1261,12 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 		ArgumentDecls::iterator it = arg_nodes.begin(),
 			end = arg_nodes.end();
 
-		m_scope = m_scope->newChild();
+		if (func->isMethod()) {
+			// TODO: assert whether the child's class is an orphaned scope
+			m_scope = m_scope->newChild();
+		} else {
+			m_scope = m_scope->newOrphanedChild();
+		}
 
 		user_func->setScope(m_scope);
 

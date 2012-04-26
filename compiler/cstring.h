@@ -35,12 +35,6 @@
 #include "compiler/refcounted.h"
 #include <iostream>
 
-/**
- * Returns the CString* pointer to a string
- */
-#define CSTRING(xstring)  (clever::g_cstring_tbl->intern(xstring))
-#define CSTRINGT(xstring) new clever::CString(xstring, false)
-
 namespace clever {
 
 /**
@@ -188,6 +182,19 @@ private:
 extern CStringTable* g_cstring_tbl;
 
 } // clever
+
+/**
+ * Returns the CString* pointer to a string
+ */
+//#define CSTRING(xstring)  (clever::g_cstring_tbl->intern(xstring))
+inline const clever::CString* CSTRING(const std::string& str) {
+	return clever::g_cstring_tbl->intern(str);
+}
+
+//#define CSTRINGT(xstring) new clever::CString(xstring, false)
+inline const clever::CString* CSTRINGT(const std::string& str, bool interned = false) {
+	return new clever::CString(str, interned);
+}
 
 #endif /* CLEVER_CSTRING_H */
 

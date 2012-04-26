@@ -23,45 +23,68 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef CLEVER_CALLABLEVALUEINL_H
-#define CLEVER_CALLABLEVALUEINL_H
+#ifndef CLEVER_SCOPEINL_H
+#define CLEVER_SCOPEINL_H
 
-#ifndef CLEVER_CALLABLEVALUE_H
-#include "callablevalue.h"
+#ifndef CLEVER_SCOPE_H
+#include "scope.h"
 #endif
 
 namespace clever {
+inline Symbol* Scope::getLocalSym(const CString* name) {
+	SymbolMap::iterator it = m_symbols.find(name);
 
-inline CallableValue::~CallableValue() {
-	if ((isNearCall() || isExternal()) && m_handler.func) {
-		delete m_handler.func;
+	if (it == m_symbols.end()) {
+		return NULL;
 	}
-	if (m_context && this != m_context) {
-		m_context->delRef();
-	}
+	return it->second;
 }
 
-inline void CallableValue::setHandler(Function* handler) {
-	if (handler->isInternal()) {
-		m_call_type = FAR;
-	} else if (handler->isExternal()) {
-		m_call_type = EXTERNAL;
-	} else {
-		m_call_type = NEAR;
+// Resolve a symbol name recursively
+inline Symbol* Scope::getSym(const CString* name) {
+	Symbol* sym = getLocalSym(name);
+
+	if (sym != NULL) {
+		return sym;
 	}
-	m_handler.func = handler;
+
+	if (m_parent != NULL) {
+		sym = m_parent->getSym(name);
+	}
+
+	return sym;
 }
 
-inline void CallableValue::call(Value* const result, const ValueVector* const args) const {
-	clever_assert(m_call_type != NEAR, "Wrong call for user func/method!");
+// Resolve a value-symbol name locally
+inline Value* Scope::getLocalValue(const CString* name) {
+	Symbol* s = getLocalSym(name);
 
-	if (isFunction()) {
-		m_handler.func->call(args, result);
-	} else {
-		m_handler.method->call(args, result, m_context);
-	}
+	if (s == NULL || !s->isValue())
+		return NULL;
+
+	return s->getValue();
+
 }
 
+// Resolve a value-symbol name recursively
+inline Value* Scope::getValue(const CString* name) {
+	Symbol* s = getSym(name);
+
+	if (s == NULL || !s->isValue())
+		return NULL;
+
+	return s->getValue();
+}
+
+// Resolve a type-symbol name recursively
+inline const Type* Scope::getType(const CString* name) {
+	Symbol* s = getSym(name);
+
+	if (s == NULL || !s->isType())
+		return NULL;
+
+	return s->getType();
+}
 } // clever
 
-#endif // CALLABLEVALUEINL_H
+#endif // CLEVER_SCOPEINL_H

@@ -36,6 +36,8 @@
 #include "compiler/cstring.h"
 #include "compiler/refcounted.h"
 
+#include "symbol.h"
+
 #define CLEVER_TYPE(name)  ::clever::g_scope.getType(CSTRING(name))
 #define CLEVER_VALUE(name) ::clever::g_scope.getValue(CSTRING(name))
 
@@ -43,57 +45,7 @@ namespace clever {
 
 class Type;
 class Value;
-
 class Scope;
-class Symbol;
-
-class Symbol {
-public:
-	typedef	enum { INVALID, VALUE, TYPE } SymbolType;
-
-	Symbol() : m_name(NULL), m_type(INVALID), m_data() {}
-
-	Symbol(const CString* name, Value* value)
-		: m_name(name), m_type(VALUE), m_data() {
-		clever_assert_not_null(name);
-		clever_assert_not_null(value);
-
-		m_data.value = value;
-	}
-
-	Symbol(const CString* name, const Type* type)
-		: m_name(name), m_type(TYPE), m_data() {
-		clever_assert_not_null(name);
-		clever_assert_not_null(type);
-
-		m_data.type = type;
-	}
-
-	~Symbol();
-
-	const CString* getSymbolName() const { return m_name; }
-	SymbolType     getSymbolType() const { return m_type; }
-
-	bool isInvalid() const { return m_type == INVALID; }
-	bool isValue()   const { return m_type == VALUE;   }
-	bool isType()    const { return m_type == TYPE;    }
-
-	// TODO: add type check
-	const Type*  getType()  { return m_data.type;  }
-	Value*       getValue() { return m_data.value; }
-
-private:
-	DISALLOW_COPY_AND_ASSIGN(Symbol);
-
-
-	const CString* m_name;
-	SymbolType     m_type;
-
-	union {
-		Value* value;
-		const Type* type;
-	} m_data;
-};
 
 typedef std::tr1::unordered_map<const CString*, Symbol*> SymbolMap;
 typedef SymbolMap::value_type ScopeEntry;
@@ -110,7 +62,7 @@ public:
 	// Global scope constructor
 	Scope() : m_parent(NULL), m_children(), m_symbols() {}
 
-	~Scope() { clear(); };
+	~Scope() { clear(); }
 
 	// Binds a Value* to an interned string.
 	void pushValue(const CString* name, Value* value) {
@@ -129,65 +81,37 @@ public:
 	}
 
 	// Resolve a symbol name locally
-	Symbol* getLocalSym(const CString* name) {
-		SymbolMap::iterator it = m_symbols.find(name);
-
-		if (it == m_symbols.end()) {
-			return NULL;
-		}
-		return it->second;
-	}
+	Symbol* getLocalSym(const CString* name);
 
 	// Resolve a symbol name recursively
-	Symbol* getSym(const CString* name) {
-		Symbol* sym = getLocalSym(name);
-
-		if (sym != NULL) {
-			return sym;
-		}
-
-		if (m_parent != NULL) {
-			sym = m_parent->getSym(name);
-		}
-
-		return sym;
-	}
+	Symbol* getSym(const CString* name);
 
 	// Resolve a value-symbol name locally
-	Value* getLocalValue(const CString* name) {
-		Symbol* s = getLocalSym(name);
-
-		if (s == NULL || !s->isValue())
-			return NULL;
-
-		return s->getValue();
-
-	}
+	Value* getLocalValue(const CString* name);
 
 	// Resolve a value-symbol name recursively
-	Value* getValue(const CString* name) {
-		Symbol* s = getSym(name);
-
-		if (s == NULL || !s->isValue())
-			return NULL;
-
-		return s->getValue();
-	}
+	Value* getValue(const CString* name);
 
 	// Resolve a type-symbol name recursively
-	const Type* getType(const CString* name) {
-		Symbol* s = getSym(name);
-
-		if (s == NULL || !s->isType())
-			return NULL;
-
-		return s->getType();
-	}
+	const Type* getType(const CString* name);
 
 	Scope* newChild() {
 		Scope* s = new Scope(this);
 		m_children.push_back(s);
 		return s;
+	}
+
+	// This the first scope of top-level functions and classes.
+	Scope* newOrphanedChild() {
+		Scope *s = new Scope(this);
+		s->m_orphaned = true;
+		m_orphanedChildren.push_back(s);
+
+		return s;
+	}
+
+	bool isOrphaned() const {
+		return m_orphaned;
 	}
 
 	bool hasChildren() const { return m_children.size() != 0; }
@@ -206,11 +130,15 @@ private:
 
 	Scope* m_parent;
 	ScopeVector m_children;
+	ScopeVector m_orphanedChildren;
 	SymbolMap m_symbols;
+	bool m_orphaned;
 };
 
 extern Scope g_scope;
 
 } // clever
+
+#include "scope-inl.h"
 
 #endif // CLEVER_SYMBOLTABLE_H

@@ -23,45 +23,61 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef CLEVER_CALLABLEVALUEINL_H
-#define CLEVER_CALLABLEVALUEINL_H
-
-#ifndef CLEVER_CALLABLEVALUE_H
-#include "callablevalue.h"
-#endif
+#ifndef CLEVER_SYMBOL_H
+#define CLEVER_SYMBOL_H
 
 namespace clever {
 
-inline CallableValue::~CallableValue() {
-	if ((isNearCall() || isExternal()) && m_handler.func) {
-		delete m_handler.func;
-	}
-	if (m_context && this != m_context) {
-		m_context->delRef();
-	}
-}
+class CString;
+class Type;
+class Value;
 
-inline void CallableValue::setHandler(Function* handler) {
-	if (handler->isInternal()) {
-		m_call_type = FAR;
-	} else if (handler->isExternal()) {
-		m_call_type = EXTERNAL;
-	} else {
-		m_call_type = NEAR;
+class Symbol {
+public:
+	typedef	enum { INVALID, VALUE, TYPE } SymbolType;
+
+	Symbol() : m_name(NULL), m_type(INVALID), m_data() {}
+
+	Symbol(const CString* name, Value* value)
+		: m_name(name), m_type(VALUE), m_data() {
+		clever_assert_not_null(name);
+		clever_assert_not_null(value);
+
+		m_data.value = value;
 	}
-	m_handler.func = handler;
-}
 
-inline void CallableValue::call(Value* const result, const ValueVector* const args) const {
-	clever_assert(m_call_type != NEAR, "Wrong call for user func/method!");
+	Symbol(const CString* name, const Type* type)
+		: m_name(name), m_type(TYPE), m_data() {
+		clever_assert_not_null(name);
+		clever_assert_not_null(type);
 
-	if (isFunction()) {
-		m_handler.func->call(args, result);
-	} else {
-		m_handler.method->call(args, result, m_context);
+		m_data.type = type;
 	}
-}
 
+	~Symbol();
+
+	const CString* getSymbolName() const { return m_name; }
+	SymbolType     getSymbolType() const { return m_type; }
+
+	bool isInvalid() const { return m_type == INVALID; }
+	bool isValue()   const { return m_type == VALUE;   }
+	bool isType()    const { return m_type == TYPE;    }
+
+	// TODO: add type check
+	const Type*  getType()  { return m_data.type;  }
+	Value*       getValue() { return m_data.value; }
+
+private:
+	DISALLOW_COPY_AND_ASSIGN(Symbol);
+
+	const CString* m_name;
+	SymbolType     m_type;
+
+	union {
+		Value* value;
+		const Type* type;
+	} m_data;
+};
 } // clever
 
-#endif // CALLABLEVALUEINL_H
+#endif // CLEVER_SYMBOL_H

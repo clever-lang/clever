@@ -149,7 +149,7 @@ public:
 	static CLEVER_VM_HANDLER(jmpz_handler);
 	static CLEVER_VM_HANDLER(jmp_handler);
 	static CLEVER_VM_HANDLER(fcall_handler);
-	static CLEVER_VM_HANDLER(mcall_handler);
+	static CLEVER_VM_HANDLER(mcall_handler) CLEVER_HOT_FUNC;
 	static CLEVER_VM_HANDLER(assign_handler);
 	static CLEVER_VM_HANDLER(leave_handler);
 	static CLEVER_VM_HANDLER(return_handler);

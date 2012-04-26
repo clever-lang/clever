@@ -105,7 +105,7 @@ public:
 	 *
 	 * Remember to set a context before calling a non-static method.
 	 */
-	void call(Value* const result, const ValueVector* const args) const;
+	void call(Value* const result, const ValueVector* const args) const CLEVER_HOT_FUNC ;
 
 	void call(size_t& next_op) const {
 		next_op = m_handler.func->call();

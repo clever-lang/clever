@@ -37,7 +37,7 @@ include(CMakeLists.depends)
 # Environment checks
 # ---------------------------------------------------------------------------
 if (WIN32)
-	set(EXTRA_CLEVER_FILES win32/win32.cc)
+	set(EXTRA_CLEVER_FILES win32/dirent.h win32/win32.cc win32/win32.h)
 	add_definitions(-DCLEVER_WIN32)
 endif (WIN32)
 
@@ -123,34 +123,76 @@ endif (UNIX)
 add_executable(clever
 	${RE2C_CleverScanner_OUTPUTS}
 	${BISON_CleverParser_OUTPUTS}
-	types/map.cc
-	types/bool.cc
-	types/pair.cc
-	types/type.cc
-	types/double.cc
-	types/byte.cc
-	types/array.cc
-	types/object.cc
-	types/iterator.cc
-	types/str.cc
-	types/int.cc
-	types/function.cc
-	interpreter/main.cc
-	interpreter/driver.cc
-	interpreter/ast.cc
-	compiler/value.cc
+	compiler/cached_ptrs.h
 	compiler/callablevalue.cc
+	compiler/callablevalue.h
 	compiler/callablevalue-inl.h
-	compiler/module.cc
 	compiler/cgvisitor.cc
-	compiler/compiler.cc
-	compiler/typechecker.cc
+	compiler/cgvisitor.h
 	compiler/clever.cc
+	compiler/clever.h
+	compiler/compiler.cc
+	compiler/compiler.h
 	compiler/cstring.cc
-	compiler/scope.cc
+	compiler/cstring.h
+	compiler/datavalue.h
+	compiler/function.h
+	compiler/method.h
+	compiler/module.cc
+	compiler/module.h
 	compiler/pkgmanager.cc
-	vm/vm.cc
+	compiler/pkgmanager.h
+	compiler/refcounted.h
+	compiler/scope.cc
+	compiler/scope.h
+	compiler/scope-inl.h
+	compiler/symbol.h
+	compiler/typechecker.cc
+	compiler/typechecker.h
+	compiler/value.cc
+	compiler/value.h
+	interpreter/ast.cc
+	interpreter/ast.h
+	interpreter/asttransformer.h
+	interpreter/astvisitor.h
+	interpreter/driver.cc
+	interpreter/driver.h
+	interpreter/main.cc
+	interpreter/scanner.h
+	types/array.cc
+	types/array.h
+	types/arrayvalue.h
+	types/bool.cc
+	types/bool.h
+	types/byte.cc
+	types/byte.h
+	types/double.cc
+	types/double.h
+	types/function.cc
+	types/function.h
+	types/functionvalue.h
+	types/int.cc
+	types/int.h
+	types/iterator.cc
+	types/iterator.h
+	types/map.cc
+	types/map.h
+	types/mapvalue.h
+	types/nativetypes.h
+	types/object.cc
+	types/object.h
+	types/pair.cc
+	types/pair.h
+	types/pairvalue.h
+	types/str.cc
+	types/str.h
+	types/type.cc
+	types/type.h
 	vm/opcode.cc
+	vm/opcode.h
+	vm/operand.h
+	vm/vm.cc
+	vm/vm.h
 	${EXTRA_CLEVER_FILES}
 )
 target_link_libraries(clever ${CLEVER_LIBRARIES})
@@ -177,13 +219,14 @@ endif(PCRECPP_FOUND)
 
 # Test runner
 # ---------------------------------------------------------------------------
+set(TEST_RUNNER_BIN ${CMAKE_BINARY_DIR}/testrunner${CMAKE_EXECUTABLE_SUFFIX})
 add_custom_target(run-tests
-	COMMAND ./testrunner${CMAKE_EXECUTABLE_SUFFIX} -q;./tests
+	COMMAND ${TEST_RUNNER_BIN} -q;${CMAKE_CURRENT_SOURCE_DIR}/tests
 	COMMENT "Running tests")
 add_dependencies(run-tests testrunner)
 
 add_custom_target(run-mem-tests
-	COMMAND ./testrunner${CMAKE_EXECUTABLE_SUFFIX} -m;./tests
+	COMMAND ${TEST_RUNNER_BIN} -m;${CMAKE_CURRENT_SOURCE_DIR}/tests
 	COMMENT "Running memory leak tests")
 add_dependencies(run-mem-tests testrunner)
 
