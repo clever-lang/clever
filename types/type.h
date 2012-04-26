@@ -41,8 +41,11 @@
 #include "compiler/cstring.h"
 #include "compiler/method.h"
 #include "compiler/datavalue.h"
+#include "compiler/refcounted.h"
 
 namespace clever {
+
+class Type;
 
 /**
  * Global native type pointers
