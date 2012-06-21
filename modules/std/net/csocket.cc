@@ -24,6 +24,7 @@
  */
 
 #include <iostream>
+#include <sstream>
 #include <errno.h>
 #include "modules/std/net/csocket.h"
 
@@ -45,9 +46,6 @@ CSocket::CSocket() {
 	m_local.sin_family = AF_INET;
 	m_local.sin_addr.s_addr = htonl(INADDR_ANY);
 	m_local.sin_port = htons(INADDR_ANY);
-
-	// Remote socket init.
-	m_remote.sin_family = AF_INET;
 }
 
 CSocket::~CSocket() {
@@ -55,11 +53,15 @@ CSocket::~CSocket() {
 }
 
 void CSocket::setHost(const char *addr) {
-	m_remote.sin_addr.s_addr = inet_addr(addr);
+	m_host = std::string(addr);
 }
 
 void CSocket::setPort(const int port) {
-	m_remote.sin_port = htons(port);
+	std::stringstream portstr;
+
+	portstr << port;
+
+	m_port = portstr.str();
 }
 
 void CSocket::setTimeout(const int time) {
@@ -68,12 +70,30 @@ void CSocket::setTimeout(const int time) {
 }
 
 bool CSocket::connect() {
+	struct addrinfo *ainfo;
+	struct addrinfo hints;
+
 	resetError();
 
-	if (::connect(m_socket, (struct sockaddr*)&m_remote, sizeof(m_remote)) != 0) {
+	::memset(&hints, 0, sizeof(hints));
+	hints.ai_family = AF_INET;
+	hints.ai_socktype = SOCK_STREAM;
+
+	if (getaddrinfo(m_host.c_str(), m_port.c_str(), &hints, &ainfo) != 0) {
 		setError();
 		return false;
 	}
+
+	if (::connect(m_socket, ainfo->ai_addr, ainfo->ai_addrlen) != 0) {
+		setError();
+
+		// Free this before continuing.
+		freeaddrinfo(ainfo);
+
+		return false;
+	}
+
+	freeaddrinfo(ainfo);
 
 	return true;
 }

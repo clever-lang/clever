@@ -26,6 +26,7 @@
 #include <string>
 #ifndef _WIN32
 #include <sys/socket.h>
+#include <netdb.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #else
@@ -68,10 +69,11 @@ private:
 	int m_error;
 	std::string m_error_string;
 
-	// Socket
+	// Socket and socket-related
 	int m_socket;
 	struct sockaddr_in m_local;
-	struct sockaddr_in m_remote;
+	std::string m_host;
+	std::string m_port;
 
 	// Timeout
 	unsigned int m_timeout;
