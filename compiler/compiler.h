@@ -79,7 +79,7 @@ public:
 	/**
 	 * Set interactive mode ON
 	 */
-	void setInteractive() { m_cgvisitor.setInteractive(); }
+	void setInteractive() { m_tcvisitor.setInteractive(); }
 	/**
 	 * Set opcode dumper mode ON
 	 */
