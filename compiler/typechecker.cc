@@ -275,7 +275,7 @@ static CallableValue* _prepare_method_call(const Type* type, Value* var,
 
 	const Method* method = type->getMethod(mname, &args_types);
 	const std::string args_type_name = _serialize_arg_type(args_types, ", ");
-	
+
 	if (UNEXPECTED(method == NULL)) {
 		if (mname == (CACHE_PTR(CLEVER_CTOR, CLEVER_CTOR_NAME))) {
 			Compiler::errorf(expr->getLocation(),
