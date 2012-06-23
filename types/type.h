@@ -41,8 +41,11 @@
 #include "compiler/cstring.h"
 #include "compiler/method.h"
 #include "compiler/datavalue.h"
+#include "compiler/refcounted.h"
 
 namespace clever {
+
+class Type;
 
 /**
  * Global native type pointers
@@ -224,15 +227,15 @@ public:
 	/**
 	 * Adds a interface to this type
 	 */
-	void addInterface(const Type* interface) {
-		m_interfaces.insert(interface);
+	void addInterface(const Type* iface) {
+		m_interfaces.insert(iface);
 	}
 
 	/**
 	 * Returns a boolean indicating if the type implements this interface
 	 */
-	bool implementsInterface(const Type* interface) const {
-		return (m_interfaces.find(interface) != m_interfaces.end());
+	bool implementsInterface(const Type* iface) const {
+		return (m_interfaces.find(iface) != m_interfaces.end());
 	}
 
 	/**

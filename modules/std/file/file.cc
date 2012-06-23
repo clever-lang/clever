@@ -26,8 +26,10 @@
 #include "compiler/value.h"
 #include "modules/std/file/file.h"
 #include "modules/std/file/filestream.h"
-#include "modules/std/file/glob.h"
-#include "modules/std/file/globiterator.h"
+#ifndef CLEVER_MSVC
+# include "modules/std/file/glob.h"
+# include "modules/std/file/globiterator.h"
+#endif
 #include "compiler/pkgmanager.h"
 
 namespace clever { namespace packages { namespace std {
@@ -52,8 +54,10 @@ CLEVER_MODULE_INIT(File) {
 	BEGIN_DECLARE_CLASS();
 
 	addClass(new file::FileStream());
+#ifndef CLEVER_MSVC
 	addClass(new file::GlobIterator());
 	addClass(new file::Glob());
+#endif
 
 	END_DECLARE();
 }

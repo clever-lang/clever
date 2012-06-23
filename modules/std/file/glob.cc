@@ -23,6 +23,8 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#ifndef CLEVER_MSVC
+
 #include <cstdlib>
 #include "compiler/compiler.h"
 #include "compiler/cstring.h"
@@ -116,3 +118,5 @@ void Glob::destructor(Value* value) const {
 }
 
 }}}} // clever::packages::std::file
+
+#endif /* CLEVER_MSVC */
