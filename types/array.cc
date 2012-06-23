@@ -30,6 +30,14 @@
 namespace clever {
 
 /**
+ * Void Array::Array()
+ */
+CLEVER_METHOD(Array::constructor) {
+	CLEVER_RETURN_DATA_VALUE(new ArrayValue);
+}
+
+
+/**
  * Void Array::__assign__(Array)
  */
 CLEVER_METHOD(Array::do_assign) {
@@ -329,6 +337,8 @@ void Array::init() {
 	}
 
 	const Type* arr_t = CLEVER_GET_ARRAY_TEMPLATE->getTemplatedType(CLEVER_TPL_ARG(0));
+	
+	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&Array::constructor, arr_t));
 
 	addMethod(
 		(new Method(CLEVER_OPERATOR_ASSIGN, &Array::do_assign, CLEVER_STR, false))
@@ -400,7 +410,7 @@ DataValue* Array::allocateValue() const {
 DataValue* Array::copy(const Value* orig, bool deep) const {
 	ArrayValue* array = new ArrayValue;
 	ValueVector* vec = CLEVER_GET_ARRAY(orig);
-
+	
 	for (size_t i = 0, j = vec->size(); i < j; ++i) {
 		if (deep) {
 			Value* val = new Value;

@@ -121,6 +121,7 @@ public:
 	static CLEVER_METHOD(find);
 	static CLEVER_METHOD(do_copy);
 	static CLEVER_METHOD(do_deepcopy);
+	static CLEVER_METHOD(constructor);
 private:
 	DISALLOW_COPY_AND_ASSIGN(Array);
 };

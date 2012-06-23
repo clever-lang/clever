@@ -57,7 +57,8 @@ static const Type* _evaluate_type(const location& loc,
 			for (size_t i = 0; i < template_args->size(); ++i) {
 				argt = g_scope.getType(template_args->at(i)->getName());
 
-				const bool is_void = (template_args->at(i)->getName()->str() == "Void");
+				const bool is_void = 
+					(template_args->at(i)->getName()->str() == "Void");
 
 				if (argt == NULL && !is_void) {
 					Compiler::errorf(loc, "`%S' does not name a type",
@@ -106,19 +107,19 @@ static const Type* _evaluate_type(const location& loc,
 /**
  * Concatenates arg type names with a supplied separator character
  */
-static std::string _serialize_arg_type(TypeVector& args_types, const char* sep) {
-	if (args_types.size() == 0) {
+static std::string _serialize_arg_type(TypeVector& arg_types, const char* sep) {
+	if (arg_types.size() == 0) {
 		return std::string("void");
 	}
 
-	clever_assert_not_null(args_types[0]);
+	clever_assert_not_null(arg_types[0]);
 
-	std::string args_type_name = args_types[0]->getName()->str();
+	std::string args_type_name = arg_types[0]->getName()->str();
 	const std::string separator = std::string(sep);
 
-	for (size_t i = 1, j = args_types.size(); i < j; ++i) {
+	for (size_t i = 1, j = arg_types.size(); i < j; ++i) {
 		args_type_name += separator;
-		args_type_name += args_types[i]->getName()->str();
+		args_type_name += arg_types[i]->getName()->str();
 	}
 
 	return args_type_name;
@@ -204,8 +205,8 @@ static void _check_function_num_args(const Function* func, int num_args,
 		if (n_min_args != n_required_args && n_min_args > num_args) {
 			Compiler::errorf(loc,
 				"Function `%s' expects at least %i argument%s, %i supplied",
-				func->getName().c_str(), n_min_args, (n_min_args > 1 ? "s" : ""),
-				num_args);
+				func->getName().c_str(), n_min_args, 
+				(n_min_args > 1 ? "s" : ""), num_args);
 		} else {
 			Compiler::errorf(loc,
 				"Function `%s' expects %i argument%s, %i supplied",
@@ -274,17 +275,19 @@ static CallableValue* _prepare_method_call(const Type* type, Value* var,
 
 	const Method* method = type->getMethod(mname, &args_types);
 	const std::string args_type_name = _serialize_arg_type(args_types, ", ");
-
+	
 	if (UNEXPECTED(method == NULL)) {
 		if (mname == (CACHE_PTR(CLEVER_CTOR, CLEVER_CTOR_NAME))) {
 			Compiler::errorf(expr->getLocation(),
 				"No matching call for constructor %S::%S(%s)",
 				type->getName(), type->getName(), args_type_name.c_str());
 		} else if (is_static) {
-			Compiler::errorf(expr->getLocation(), "No matching call for %S::%S(%s)",
+			Compiler::errorf(expr->getLocation(), 
+				"No matching call for %S::%S(%s)",
 				type->getName(), mname, args_type_name.c_str());
 		} else {
-			Compiler::errorf(expr->getLocation(), "No matching call for %S::%S(%s)",
+			Compiler::errorf(expr->getLocation(), 
+				"No matching call for %S::%S(%s)",
 				var->getTypePtr()->getName(), mname, args_type_name.c_str());
 		}
 	}
@@ -303,7 +306,8 @@ static CallableValue* _prepare_method_call(const Type* type, Value* var,
 		var->setTypePtr(type);
 
 		if (UNEXPECTED(var->isConst() && !method->isConst())) {
-			const std::string args_type_name = _serialize_arg_type(args_types, ", ");
+			const std::string args_type_name = 
+				_serialize_arg_type(args_types, ", ");
 
 			Compiler::errorf(expr->getLocation(), "Can't call the non-const "
 				"method %S::%S(%s) because variable `%S' is const",
@@ -447,7 +451,8 @@ AST_VISITOR(TypeChecker, Identifier) {
 	}
 
 	if (ident->isCallable()) {
-		const Function* func = static_cast<CallableValue*>(ident)->getFunction();
+		const Function* func = 
+			static_cast<CallableValue*>(ident)->getFunction();
 		const FunctionArgs& args = func->getArgs();
 
 		TypeVector tv;
@@ -462,12 +467,14 @@ AST_VISITOR(TypeChecker, Identifier) {
 
 		const Type* func_type = virtual_func->getTemplatedType(tv);
 
-		FunctionValue* fv = static_cast<FunctionValue*>(func_type->allocateValue());
+		FunctionValue* fv = 
+			static_cast<FunctionValue*>(func_type->allocateValue());
 		fv->setFunction(func);
 
 		ident->setTypePtr(func_type);
 		ident->setDataValue(fv);
-		static_cast<CallableValue*>(ident)->setCallableType(CallableValue::FUNCTION);
+		static_cast<CallableValue*>(ident)
+			->setCallableType(CallableValue::FUNCTION);
 	}
 
 	// Associate the Value* of the symbol to the identifier
@@ -689,21 +696,23 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 			CACHE_PTR(CLEVER_OP_ASSIGN, CLEVER_OPERATOR_ASSIGN),
 			expr, arg_values));
 	}
-	else if (ctor_list) {
-		ValueVector* arg_values = ctor_list->getArgValue();
-
-		expr->setArgsValue(arg_values);
-
+	else /*if (ctor_list)*/ {
+		ValueVector* arg_values = (ctor_list ? ctor_list->getArgValue() : NULL);
+		
+		if (arg_values) {
+			expr->setArgsValue(arg_values);
+		}
+		
 		expr->setCallValue(_prepare_method_call(type, var,
 			CACHE_PTR(CLEVER_CTOR, CLEVER_CTOR_NAME), expr, arg_values));
 	}
-	else {
+	/*else {
 		DataValue* data_value = type->allocateValue();
 
 		if (data_value) {
 			var->setDataValue(data_value);
 		}
-	}
+	}*/
 
 	var->setConstness(is_const);
 
@@ -1034,7 +1043,8 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 
 	const Function* func = static_cast<CallableValue*>(fvalue)->getFunction();
 
-	int num_args = expr->getArgs() ? int(expr->getArgs()->getNodes().size()) : 0;
+	int num_args = 
+		expr->getArgs() ? int(expr->getArgs()->getNodes().size()) : 0;
 
 	clever_assert_not_null(func);
 
@@ -1538,7 +1548,10 @@ AST_VISITOR(TypeChecker, LambdaFunction) {
 	}
 
 	const Type* lambda_type = virtual_func->getTemplatedType(tv);
-	FunctionValue* fv = static_cast<FunctionValue*>(lambda_type->allocateValue());
+	
+	FunctionValue* fv = 
+		static_cast<FunctionValue*>(lambda_type->allocateValue());
+	
 	fv->setFunction(expr->getFunction());
 
 	Value* var = new Value(lambda_type);
@@ -1552,7 +1565,7 @@ AST_VISITOR(TypeChecker, LambdaFunction) {
 AST_VISITOR(TypeChecker, CopyExpr) {
 	Value* val = expr->getExpr()->getValue();
 
-	if (!val->isInternal()) {
+	if (val->isPrimitive()) {
 		expr->setValue(val);
 		return;
 	}
@@ -1566,7 +1579,8 @@ AST_VISITOR(TypeChecker, CopyExpr) {
 
 	if (expr->isDeepCopy()) {
 		expr->setCallValue(_prepare_method_call(val->getTypePtr(), val,
-			CACHE_PTR(CLEVER_DEEP_COPY, CLEVER_DEEP_COPY_NAME), expr, arg_values));
+			CACHE_PTR(CLEVER_DEEP_COPY, CLEVER_DEEP_COPY_NAME), 
+			expr, arg_values));
 	} else {
 		expr->setCallValue(_prepare_method_call(val->getTypePtr(), val,
 			CACHE_PTR(CLEVER_COPY, CLEVER_COPY_NAME), expr, arg_values));

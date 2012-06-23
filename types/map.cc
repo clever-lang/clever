@@ -33,6 +33,13 @@
 namespace clever {
 
 /**
+ * Void Map::Map()
+ */
+CLEVER_METHOD(Map::constructor) {
+	CLEVER_RETURN_DATA_VALUE(CLEVER_THIS()->getTypePtr()->allocateValue());
+}
+
+/**
  * Void Map::__assign__(Map)
  */
 CLEVER_METHOD(Map::do_assign) {
@@ -218,8 +225,13 @@ void Map::init() {
 		static_cast<const TemplatedType*>(CLEVER_TYPE("Pair"))
 		->getTemplatedType(key_type, value_type);
 
-	const Type* const arr_pair  = CLEVER_TPL_ARRAY(pair_type);
+	const Type* const arr_pair = CLEVER_TPL_ARRAY(pair_type);
+	const Type* const map_type = 
+		static_cast<const TemplatedType*>(CLEVER_TYPE("Map"))
+		->getTemplatedType(key_type, value_type);
 
+	addMethod(new Method(CLEVER_CTOR_NAME, &Map::constructor, map_type));
+	
 	addMethod((new Method("insert", &Map::insert, CLEVER_VOID, false))
 		->addArg("key", key_type)
 		->addArg("value", value_type)
