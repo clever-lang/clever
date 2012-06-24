@@ -72,8 +72,8 @@ void Type::addMethod(Method* method) {
 
 const Method* Type::getMethod(const CString* name, const TypeVector* args) const {
 	MethodMap::const_iterator it1 = m_methods.find(*name);
-
-	if (it1 == m_methods.end()) {
+	
+	if (it1 == m_methods.end() && name != CSTRING(CLEVER_CTOR_NAME)) {
 		// Looking up for super type's methods
 		if (getSuperType()) {
 			return getSuperType()->getMethod(name, args);
@@ -112,7 +112,7 @@ const Method* Type::getMethod(const CString* name, const TypeVector* args) const
 	}
 
 	// If we didn't find the method yet, look for it in the super type
-	if (getSuperType()) {
+	if (getSuperType() && name != CSTRING(CLEVER_CTOR_NAME)) {
 		return getSuperType()->getMethod(name, args);
 	}
 

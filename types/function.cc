@@ -31,6 +31,13 @@
 namespace clever {
 
 /**
+ * Void Function<>::Function<>()
+ */
+CLEVER_METHOD(FunctionType::constructor) {
+	CLEVER_RETURN_DATA_VALUE(new FunctionValue());
+}
+
+/**
  * Void Function<>::__assign__(Function<>)
  */
 CLEVER_METHOD(FunctionType::do_assign) {
@@ -125,14 +132,21 @@ void FunctionType::init() {
 		return;
 	}
 
-	const Type* return_t = CLEVER_TPL_ARG(0);
+	const Type* const return_t = CLEVER_TPL_ARG(0);
+	const Type* const function_t =
+		static_cast<const TemplatedType*>(CLEVER_TYPE("Function"))
+		->getTemplatedType(return_t);
+
+	addMethod(new Method(CLEVER_CTOR_NAME, 
+		&FunctionType::constructor, function_t));
 
 	addMethod(
-		(new Method(CLEVER_OPERATOR_ASSIGN, &FunctionType::do_assign, this, false))
-			->addArg("rvalue", this)
+		(new Method(CLEVER_OPERATOR_ASSIGN, 
+			&FunctionType::do_assign, this, false))->addArg("rvalue", this)
 	);
 
-	addMethod(new Method("toString", &FunctionType::toString, CLEVER_STR, true));
+	addMethod(new Method("toString", 
+		&FunctionType::toString, CLEVER_STR, true));
 
 	Method* method = new Method("call", &FunctionType::call, return_t, true);
 
@@ -150,7 +164,8 @@ DataValue* FunctionType::allocateValue() const {
 DataValue* FunctionType::copy(const Value* orig, bool deep) const {
 	FunctionValue* fv = new FunctionValue;
 
-	fv->setFunction(static_cast<FunctionValue*>(orig->getDataValue())->getFunction());
+	fv->setFunction(static_cast<FunctionValue*>
+		(orig->getDataValue())->getFunction());
 
 	return static_cast<DataValue*>(fv);
 }

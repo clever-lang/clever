@@ -33,9 +33,11 @@ namespace clever { namespace packages { namespace std { namespace reflection {
 
 CLEVER_METHOD(ReflectionPackage::constructor) {
 	ReflectionPackageValue* rpv = new ReflectionPackageValue;
-	const PackageMap& packages = g_pkgmanager.getPackages();
 
-	rpv->setPackage(packages.find(&CLEVER_ARG_STR(0)));
+	if (args) {
+		const PackageMap& packages = g_pkgmanager.getPackages();
+		rpv->setPackage(packages.find(&CLEVER_ARG_STR(0)));
+	}
 
 	retval->setDataValue(rpv);
 }
@@ -96,6 +98,11 @@ void ReflectionPackage::init() {
 		(new Method(CLEVER_CTOR_NAME,
 			(MethodPtr)&ReflectionPackage::constructor, refpkg))
 			->addArg("package", CLEVER_STR)
+	);
+	
+	addMethod(
+		(new Method(CLEVER_CTOR_NAME,
+			(MethodPtr)&ReflectionPackage::constructor, refpkg))
 	);
 
 	addMethod(

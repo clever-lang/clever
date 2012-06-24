@@ -160,6 +160,7 @@ public:
 	static CLEVER_METHOD(getKeys);
 	static CLEVER_METHOD(getValues);
 	static CLEVER_METHOD(getAll);
+	static CLEVER_METHOD(constructor);
 private:
 	DISALLOW_COPY_AND_ASSIGN(Map);
 };

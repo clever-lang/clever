@@ -596,7 +596,7 @@ AST_VISITOR(CodeGenVisitor, CopyExpr) {
 	/**
 	 * Primitive value doesn't need a cloning call
 	 */
-	if (!expr->getExpr()->getValue()->isInternal()) {
+	if (expr->getExpr()->getValue()->isPrimitive()) {
 		return;
 	}
 

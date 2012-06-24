@@ -114,6 +114,7 @@ public:
 	static CLEVER_METHOD(do_assign);
 	static CLEVER_METHOD(toString);
 	static CLEVER_METHOD(call);
+	static CLEVER_METHOD(constructor);
 private:
 	DISALLOW_COPY_AND_ASSIGN(FunctionType);
 };

@@ -3,13 +3,11 @@ Testing FileStream basic operations
 import std.io.print;
 import std.file.*;
 
-FileStream writter;
-writter.open('test.txt', 'w');
+FileStream writter('test.txt', 'w');
 writter.write("I'm writting into a file via FileStream class!");
 writter.close();
 
-FileStream reader;
-reader.open('test.txt', 'r');
+FileStream reader('test.txt', 'r');
 
 String text = '';
 
