@@ -38,14 +38,7 @@
 namespace clever {
 
 CSocket::CSocket() {
-	// Socket init.
-	// @TODO: check for errors on this.
-	m_socket = ::socket(AF_INET, SOCK_STREAM, 0);
 
-	// Local socket init.
-	m_local.sin_family = AF_INET;
-	m_local.sin_addr.s_addr = htonl(INADDR_ANY);
-	m_local.sin_port = htons(INADDR_ANY);
 }
 
 CSocket::~CSocket() {
@@ -76,13 +69,25 @@ bool CSocket::connect() {
 	resetError();
 
 	::memset(&hints, 0, sizeof(hints));
-	hints.ai_family = AF_INET;
+	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_STREAM;
 
 	if (getaddrinfo(m_host.c_str(), m_port.c_str(), &hints, &ainfo) != 0) {
 		setError();
 		return false;
 	}
+
+	// If we're talking to an IPv6 address, then use AF_INET6. Otherwise, AF_INET.
+	m_socket = ::socket(ainfo->ai_addr->sa_family, SOCK_STREAM, 0);
+	if (m_socket == -1) {
+		setError();
+		return false;
+	}
+
+	// Local socket initialization.
+	m_local.sin_family = ainfo->ai_addr->sa_family;
+	m_local.sin_addr.s_addr = htonl(INADDR_ANY);
+	m_local.sin_port = htons(INADDR_ANY);
 
 	if (::connect(m_socket, ainfo->ai_addr, ainfo->ai_addrlen) != 0) {
 		setError();
