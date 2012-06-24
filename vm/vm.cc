@@ -280,7 +280,9 @@ void VM::pop_context(const Opcode* opcode) {
 	s_var->context.top().push_back(VarPair(result, tmp));
 
 	for (size_t i = 0, j = s_var->context.top().size(); j > 1 && i < j; ++i) {
-		s_var->context.top().at(i).first->copy(s_var->context.top().at(i).second);
+		if (s_var->context.top().at(i).first) {
+			s_var->context.top().at(i).first->copy(s_var->context.top().at(i).second);
+		}
 	}
 }
 
