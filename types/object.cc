@@ -40,6 +40,14 @@ CLEVER_METHOD(Object::constructor) {
 }
 
 /**
+ * Object::isValid()
+ * Tests whether this is a valid object
+ */
+CLEVER_METHOD(Object::isValid) {
+	CLEVER_RETURN_BOOL(true);
+}
+
+/**
  * Object::operator==
  * Return true iff the two Values* have the same pointer
  */
@@ -77,6 +85,7 @@ void Object::init() {
 		->addArg("rhs", CLEVER_OBJECT)
 	);
 
+	addMethod(new Method("isValid", &Object::isValid, CLEVER_BOOL));
 	addMethod(new Method("toString", &Object::toString, CLEVER_STR));
 }
 

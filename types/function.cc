@@ -72,10 +72,10 @@ CLEVER_METHOD(FunctionType::toString) {
 }
 
 /**
- * Bool Function<>::valid()
+ * Bool Function<>::isValid()
  * Checks whether this function is valid
  */
-CLEVER_METHOD(FunctionType::valid) {
+CLEVER_METHOD(FunctionType::isValid) {
 	FunctionValue* fv = CLEVER_GET_VALUE(FunctionValue*, value);
 
 	CLEVER_RETURN_BOOL(fv->isValid());
@@ -158,8 +158,8 @@ void FunctionType::init() {
 	addMethod(new Method("toString", 
 		&FunctionType::toString, CLEVER_STR, true));
 		
-	addMethod(new Method("valid", 
-		&FunctionType::valid, CLEVER_BOOL, true));
+	addMethod(new Method("isValid", 
+		&FunctionType::isValid, CLEVER_BOOL, true));
 
 	Method* method = new Method("call", &FunctionType::call, return_t, true);
 

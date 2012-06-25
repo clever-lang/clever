@@ -44,6 +44,7 @@ public:
 	 */
 	static CLEVER_METHOD(constructor);
 	static CLEVER_METHOD(toString);
+	static CLEVER_METHOD(isValid);
 
 	/**
 	 * Type operator methods

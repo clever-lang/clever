@@ -1,0 +1,17 @@
+Testing lambda with Void return
+==CODE==
+import std.io.println;
+
+Function<Void> f;
+
+if (f.isValid()) {
+	println('fail');
+}
+else {
+	f = Void() { println('ok'); };
+	
+	f.call();
+}
+
+==RESULT==
+ok
