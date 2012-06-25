@@ -24,6 +24,7 @@
  */
 
 #include <iostream>
+#include <sstream>
 #include <errno.h>
 #include "modules/std/net/csocket.h"
 
@@ -37,17 +38,7 @@
 namespace clever {
 
 CSocket::CSocket() {
-	// Socket init.
-	// @TODO: check for errors on this.
-	m_socket = ::socket(AF_INET, SOCK_STREAM, 0);
 
-	// Local socket init.
-	m_local.sin_family = AF_INET;
-	m_local.sin_addr.s_addr = htonl(INADDR_ANY);
-	m_local.sin_port = htons(INADDR_ANY);
-
-	// Remote socket init.
-	m_remote.sin_family = AF_INET;
 }
 
 CSocket::~CSocket() {
@@ -55,11 +46,15 @@ CSocket::~CSocket() {
 }
 
 void CSocket::setHost(const char *addr) {
-	m_remote.sin_addr.s_addr = inet_addr(addr);
+	m_host = std::string(addr);
 }
 
 void CSocket::setPort(const int port) {
-	m_remote.sin_port = htons(port);
+	std::stringstream portstr;
+
+	portstr << port;
+
+	m_port = portstr.str();
 }
 
 void CSocket::setTimeout(const int time) {
@@ -68,12 +63,42 @@ void CSocket::setTimeout(const int time) {
 }
 
 bool CSocket::connect() {
+	struct addrinfo *ainfo;
+	struct addrinfo hints;
+
 	resetError();
 
-	if (::connect(m_socket, (struct sockaddr*)&m_remote, sizeof(m_remote)) != 0) {
+	::memset(&hints, 0, sizeof(hints));
+	hints.ai_family = AF_UNSPEC;
+	hints.ai_socktype = SOCK_STREAM;
+
+	if (getaddrinfo(m_host.c_str(), m_port.c_str(), &hints, &ainfo) != 0) {
 		setError();
 		return false;
 	}
+
+	// If we're talking to an IPv6 address, then use AF_INET6. Otherwise, AF_INET.
+	m_socket = ::socket(ainfo->ai_addr->sa_family, SOCK_STREAM, 0);
+	if (m_socket == -1) {
+		setError();
+		return false;
+	}
+
+	// Local socket initialization.
+	m_local.sin_family = ainfo->ai_addr->sa_family;
+	m_local.sin_addr.s_addr = htonl(INADDR_ANY);
+	m_local.sin_port = htons(INADDR_ANY);
+
+	if (::connect(m_socket, ainfo->ai_addr, ainfo->ai_addrlen) != 0) {
+		setError();
+
+		// Free this before continuing.
+		freeaddrinfo(ainfo);
+
+		return false;
+	}
+
+	freeaddrinfo(ainfo);
 
 	return true;
 }
