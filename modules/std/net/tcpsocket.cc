@@ -225,7 +225,7 @@ void TcpSocket::init() {
 
 	addMethod(new Method("good", (MethodPtr)&TcpSocket::good, CLEVER_BOOL));
 	addMethod(new Method("getError", (MethodPtr)&TcpSocket::getError, CLEVER_INT));
-	addMethod(new Method("getErrorMessage", (MethodPtr)&TcpSocket::getErrorMessage, CLEVER_INT));
+	addMethod(new Method("getErrorMessage", (MethodPtr)&TcpSocket::getErrorMessage, CLEVER_STR));
 
 	addMethod(new Method("toString", (MethodPtr)&TcpSocket::toString, CLEVER_STR));
 
