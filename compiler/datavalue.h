@@ -37,6 +37,7 @@ class DataValue : public RefCounted {
 public:
 	DataValue() {}
 	virtual ~DataValue() {}
+	virtual bool valid() const = 0;
 private:
 	DISALLOW_COPY_AND_ASSIGN(DataValue);
 };

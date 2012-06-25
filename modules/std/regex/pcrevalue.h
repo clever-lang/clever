@@ -70,6 +70,10 @@ public:
 			delete re;
 		}
 	}
+	
+	bool valid() const {
+		return re != NULL;
+	}
 
 	pcrecpp::RE* re;
 	PcreMatch match;

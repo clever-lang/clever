@@ -34,12 +34,15 @@ namespace clever { namespace packages { namespace std { namespace net {
 class SocketValue : public DataValue {
 public:
 	SocketValue() { socket = new CSocket(); }
-	
 	virtual ~SocketValue() { delete socket; }
-
+	
+	bool valid() const {
+		return socket != NULL;
+	}
+	
 	CSocket* getSocket() { return this->socket; }
 private:
-	CSocket *socket;
+	CSocket* socket;
 };
 
 }}}} // clever::packages::std::net

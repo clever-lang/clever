@@ -79,6 +79,10 @@ struct MapValue : public DataValue {
 	MapInternal& getMap() {
 		return m_map;
 	}
+	
+	bool valid() const {
+		return true;
+	}
 
 	~MapValue() {}
 private:

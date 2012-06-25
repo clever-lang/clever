@@ -34,9 +34,12 @@ namespace clever { namespace packages { namespace std { namespace ffi {
 
 class FFIObjectValue : public DataValue {
 public:
-	FFIObjectValue() {}
-
-	virtual ~FFIObjectValue() { }
+	FFIObjectValue() : pointer(NULL) {}
+	virtual ~FFIObjectValue() {}
+	
+	bool valid() const {
+		return pointer != NULL;
+	}
 
 	void* pointer;
 };

@@ -39,6 +39,10 @@ public:
 
 	virtual ~GlobIteratorValue() {}
 
+	bool valid() const {
+		return data != NULL;
+	}
+
 	::std::vector<char*>* data;
 	size_t index;
 };

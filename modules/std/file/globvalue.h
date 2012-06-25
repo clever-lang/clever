@@ -35,8 +35,11 @@ namespace clever { namespace packages { namespace std { namespace file {
 class GlobValue : public DataValue {
 public:
 	GlobValue() {}
-
 	virtual ~GlobValue() {}
+
+	bool valid() const {
+		return true;
+	}
 
 	::std::vector<char*> paths;
 };

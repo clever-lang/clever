@@ -41,6 +41,10 @@ public:
 	ReflectionFunctionValue() {}
 
 	virtual ~ReflectionFunctionValue() {}
+	
+	bool valid() const {
+		return m_function != NULL;
+	}
 
 	const Function* getFunction() { return m_function; }
 	void setFunction(const Function* function) { m_function = function; }

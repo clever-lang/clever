@@ -78,7 +78,7 @@ CLEVER_METHOD(FunctionType::toString) {
 CLEVER_METHOD(FunctionType::isValid) {
 	FunctionValue* fv = CLEVER_GET_VALUE(FunctionValue*, value);
 
-	CLEVER_RETURN_BOOL(fv->isValid());
+	CLEVER_RETURN_BOOL(fv->valid());
 }
 
 /**

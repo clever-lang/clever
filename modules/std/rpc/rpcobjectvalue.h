@@ -41,12 +41,13 @@ namespace clever { namespace packages { namespace std { namespace rpc {
 
 
 class RPCObjectValue : public DataValue {
-
 public:
+	RPCObjectValue() { type = 'v'; size = 0; pointer = 0; }
+	~RPCObjectValue() {}
 
-	RPCObjectValue() { type = 'v'; size=0; pointer = 0; }
-
-	~RPCObjectValue() { }
+	bool valid() const {
+		return pointer != NULL;
+	}
 
 	int type;
 	int size;

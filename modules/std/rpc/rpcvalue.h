@@ -80,7 +80,7 @@ class RPCValue : public DataValue {
 
 public:
 
-	RPCValue() { socket = 0; }
+	RPCValue() { socket = NULL; }
 
 	void createServer(int port, int connections);
 
@@ -115,6 +115,10 @@ public:
 	::std::string receiveString(int id_message, double time_sleep);
 
 	CSocket* getSocket() { return this->socket; }
+
+	bool valid() const {
+		return socket != NULL;
+	}
 
 	~RPCValue();
 

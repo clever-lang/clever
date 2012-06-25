@@ -37,6 +37,10 @@ struct ArrayValue : public DataValue
 	ArrayValue() : m_array(new ValueVector) {}
 	ArrayValue(ValueVector* array) : m_array(array) {}
 
+	bool valid() const {
+		return true;
+	}
+
 	~ArrayValue() {
 		delete m_array;
 	}

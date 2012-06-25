@@ -43,7 +43,7 @@ struct FunctionValue : public DataValue {
 		m_function = func;
 	}
 	
-	bool isValid() const {
+	bool valid() const {
 		return m_function != NULL;
 	}
 

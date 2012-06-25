@@ -35,6 +35,10 @@ public:
 	FileStreamValue() {}
 
 	virtual ~FileStreamValue() {}
+	
+	bool valid() const {
+		return true;
+	}
 
 	// File stream
 	::std::fstream m_fstream;

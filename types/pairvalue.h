@@ -45,6 +45,10 @@ struct PairValue : public DataValue {
 			m_pair.first->copy(first);
 			m_pair.second->copy(second);
 	}
+	
+	bool valid() const {
+		return (m_pair.first && m_pair.second);
+	}
 
 	Value* first() const {
 		return m_pair.first;

@@ -33,9 +33,13 @@ namespace clever { namespace packages { namespace std { namespace reflection {
 
 class ReflectionPackageValue : public DataValue {
 public:
-	ReflectionPackageValue() { }
+	ReflectionPackageValue() {}
 
-	virtual ~ReflectionPackageValue() { }
+	virtual ~ReflectionPackageValue() {}
+
+	bool valid() const {
+		return true;
+	}
 
 	PackageMap::const_iterator& getPackage() { return m_package; }
 	void setPackage(const PackageMap::const_iterator& pkg) { m_package = pkg; }
