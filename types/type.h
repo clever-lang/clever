@@ -160,9 +160,16 @@ public:
 	typedef std::tr1::unordered_map<std::string, OverloadMethodMap> MethodMap;
 	typedef std::pair<std::vector<const Type*>, Method*> MethodPair;
 	typedef std::tr1::unordered_set<const Type*> InterfaceSet;
+	
+	enum Kind {
+		PRIMITIVE,
+		INTERNAL,
+		USERDEF
+	};
 
-	explicit Type(const CString* name, const Type* super = CLEVER_OBJECT)
-		: RefCounted(1), m_name(name), m_super(super) {}
+	explicit Type(const CString* name, 
+		const Type* super = CLEVER_OBJECT, Kind kind = INTERNAL)
+		: RefCounted(1), m_name(name), m_super(super), m_kind(kind) {}
 
 	virtual ~Type();
 
@@ -253,6 +260,13 @@ public:
 	 * of scope.
 	 */
 	virtual void destructor(Value* value) const {}
+	
+	/**
+	 * Returns the kind of this type
+	 */
+	Kind getKind() const {
+		return m_kind;
+	}
 
 protected:
 	// Methods belonging this type
@@ -266,7 +280,9 @@ protected:
 
 	// Interfaces implemented
 	InterfaceSet m_interfaces;
-
+	
+	// Type kind
+	const Kind m_kind;
 private:
 	DISALLOW_COPY_AND_ASSIGN(Type);
 };

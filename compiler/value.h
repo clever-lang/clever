@@ -73,8 +73,7 @@ public:
 	 */
 	enum ValueType {
 		NONE,
-		PRIMITIVE,
-		INTERNAL,
+		VAR,
 		CALL,
 		REF
 	};
@@ -84,37 +83,37 @@ public:
 		  m_is_const(false) {}
 
 	explicit Value(const Type* type_ptr)
-		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(type_ptr), m_name(NULL),
+		: RefCounted(1), m_type(VAR), m_type_ptr(type_ptr), m_name(NULL),
 		  m_is_const(false) {
 		setTypePtr(type_ptr);
 	}
 
 	explicit Value(double value)
-		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_DOUBLE),
+		: RefCounted(1), m_type(VAR), m_type_ptr(CLEVER_DOUBLE),
 		  m_name(NULL), m_is_const(false) {
 		setDouble(value);
 	}
 
 	explicit Value(int64_t value)
-		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_INT),
+		: RefCounted(1), m_type(VAR), m_type_ptr(CLEVER_INT),
 		  m_name(NULL), m_is_const(false) {
 		setInteger(value);
 	}
 
 	explicit Value(bool value)
-		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_BOOL),
+		: RefCounted(1), m_type(VAR), m_type_ptr(CLEVER_BOOL),
 		  m_name(NULL), m_is_const(false) {
 		setBoolean(value);
 	}
 
 	explicit Value(const CString* value)
-		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_STR),
+		: RefCounted(1), m_type(VAR), m_type_ptr(CLEVER_STR),
 		  m_name(NULL), m_is_const(false) {
 		setString(value);
 	}
 
 	explicit Value(uint8_t value)
-		: RefCounted(1), m_type(PRIMITIVE), m_type_ptr(CLEVER_BYTE),
+		: RefCounted(1), m_type(VAR), m_type_ptr(CLEVER_BYTE),
 		  m_name(NULL), m_is_const(false) {
 		setByte(value);
 	}
@@ -127,11 +126,13 @@ public:
 
 	virtual ~Value() {
 		if (isInternal()) {
-			if (m_data.dv_value->refCount() == 1) {
-				getTypePtr()->destructor(this);
-			}
+			if (m_data.dv_value) {
+				if (m_data.dv_value->refCount() == 1) {
+					getTypePtr()->destructor(this);
+				}
 
-			m_data.dv_value->delRef();
+				m_data.dv_value->delRef();
+			}
 		}
 		else if (isPrimitive() && isString() && m_data.s_value
 			 && !m_data.s_value->isInterned()) {
@@ -144,8 +145,8 @@ public:
 	ValueType getType() const { return m_type; }
 
 	void setType(ValueType type) {
-		if (EXPECTED(type == NONE || type == INTERNAL ||
-			     type == PRIMITIVE || type == REF || type == CALL)) {
+		if (EXPECTED(type == NONE || type == VAR ||
+		 	type == REF || type == CALL)) {
 			m_type = type;
 		}
 	}
@@ -163,8 +164,8 @@ public:
 	void setName(const CString* const name) { m_name = name; }
 
 	bool isPrimitive() const {
-		return isInteger() || isString() || isBoolean()
-				|| isDouble() || isByte();
+		if (m_type_ptr == NULL) return false;
+		return m_type_ptr->getKind() == Type::PRIMITIVE;
 	}
 
 	/**
@@ -178,8 +179,12 @@ public:
 	bool isDouble()    const { return m_type_ptr == CLEVER_DOUBLE; }
 	bool isBoolean()   const { return m_type_ptr == CLEVER_BOOL; }
 	bool isByte()      const { return m_type_ptr == CLEVER_BYTE; }
-	bool isInternal()  const { return m_type == INTERNAL; }
 	bool isReference() const { return m_type == REF; }
+
+	bool isInternal()  const { 
+		if (m_type_ptr == NULL) return false;
+		return m_type_ptr->getKind() == Type::INTERNAL; 
+	}
 
 	bool isNumeric() const {
 		return (isInteger() || isDouble());
@@ -187,7 +192,7 @@ public:
 
 	void setInteger(int64_t i) {
 		m_type_ptr = CLEVER_INT;
-		m_type = PRIMITIVE;
+		m_type = VAR;
 		m_data.l_value = i;
 	}
 
@@ -197,7 +202,7 @@ public:
 		}
 
 		m_type_ptr = CLEVER_STR;
-		m_type = PRIMITIVE;
+		m_type = VAR;
 		m_data.s_value = s;
 
 		if (!s->isInterned()) {
@@ -207,19 +212,19 @@ public:
 
 	void setDouble(double d) {
 		m_type_ptr = CLEVER_DOUBLE;
-		m_type = PRIMITIVE;
+		m_type = VAR;
 		m_data.d_value = d;
 	}
 
 	void setBoolean(bool b) {
 		m_type_ptr = CLEVER_BOOL;
-		m_type = PRIMITIVE;
+		m_type = VAR;
 		m_data.b_value = b;
 	}
 
 	void setByte(uint8_t b) {
 		m_type_ptr = CLEVER_BYTE;
-		m_type = PRIMITIVE;
+		m_type = VAR;
 		m_data.c_value = b;
 	}
 
@@ -241,13 +246,13 @@ public:
 
 	bool getValueAsBool() const;
 
-	// Sets the buffer for a user type structure
+	// Sets the buffer for a internal type structure
 	void setDataValue(DataValue* data) {
 		if (m_data.dv_value && data != m_data.dv_value) {
 			m_data.dv_value->delRef();
 		}
 		m_data.dv_value = data;
-		m_type = INTERNAL;
+		m_type = VAR;
 	}
 
 	DataValue* getDataValue() const {

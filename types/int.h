@@ -35,7 +35,7 @@ namespace clever {
 class Integer : public Type {
 public:
 	Integer() :
-		Type(CSTRING("Int"), CLEVER_OBJECT) { }
+		Type(CSTRING("Int"), CLEVER_OBJECT, Type::PRIMITIVE) { }
 
 	void init();
 	DataValue* allocateValue() const;
