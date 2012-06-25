@@ -42,6 +42,10 @@ struct FunctionValue : public DataValue {
 	void setFunction(const Function* func) {
 		m_function = func;
 	}
+	
+	bool isValid() const {
+		return m_function != NULL;
+	}
 
 	~FunctionValue() {}
 private:
