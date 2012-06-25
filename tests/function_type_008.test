@@ -1,4 +1,4 @@
-Testing lambda with Void return
+Testing Function<>::isValid
 ==CODE==
 import std.io.println;
 
