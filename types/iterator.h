@@ -26,19 +26,32 @@
 #ifndef CLEVER_ITERATOR_H
 #define CLEVER_ITERATOR_H
 
+#include "compiler/scope.h"
 #include "types/type.h"
 
 namespace clever {
 
-class Iterator : public InterfaceType {
+class ForwardIterator : public InterfaceType {
 public:
-	Iterator()
-		: InterfaceType(CSTRING("Iterator")) {}
+	ForwardIterator()
+		: InterfaceType(CSTRING("ForwardIterator")) {}
 
 	void init();
 	DataValue* allocateValue() const;
 private:
-	DISALLOW_COPY_AND_ASSIGN(Iterator);
+	DISALLOW_COPY_AND_ASSIGN(ForwardIterator);
+};
+
+class BidirectionalIterator : public InterfaceType {
+public:
+	BidirectionalIterator()
+		: InterfaceType(CSTRING("BidirectionalIterator"), 
+		CLEVER_TYPE("ForwardIterator")) {}
+
+	void init();
+	DataValue* allocateValue() const;
+private:
+	DISALLOW_COPY_AND_ASSIGN(BidirectionalIterator);
 };
 
 } // clever

@@ -132,6 +132,7 @@ extern jmp_buf fatal_error;
 #define CLEVER_RETURN_BYTE(x)       retval->setByte((x))
 #define CLEVER_RETURN_DATA_VALUE(x) retval->setDataValue((x))
 #define CLEVER_RETURN_EMPTY_STR()   retval->setString(CACHE_PTR(CLEVER_EMPTY_STR, ""))
+#define CLEVER_RETURN(x)			retval->setValue((x))
 
 /**
  * Macros to help getting template argument types
@@ -148,6 +149,12 @@ extern jmp_buf fatal_error;
  * Performs an internal type method call
  */
 #define CLEVER_INTERNAL_MCALL(ctx, method, tv, vv, ret) (ctx)->getTypePtr()->getMethod(CSTRING((method)), tv)->call((vv), (ret), (ctx))
+
+/**
+ * Returns a type/value (if it is in the g_scope)
+ */
+#define CLEVER_TYPE(name)  ::clever::g_scope.getType(CSTRING(name))
+#define CLEVER_VALUE(name) ::clever::g_scope.getValue(CSTRING(name))
 
 /**
  * Disables copy constructor and copy assignment

@@ -319,8 +319,8 @@ protected:
 
 class InterfaceType : public Type {
 public:
-	InterfaceType(const CString* name)
-		: Type(name) {}
+	InterfaceType(const CString* name, const Type* super = NULL)
+		: Type(name, super) {}
 
 	~InterfaceType() {}
 

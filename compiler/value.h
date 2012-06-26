@@ -139,6 +139,27 @@ public:
 			const_cast<CString*>(m_data.s_value)->delRef();
 		}
 	}
+	
+	void setValue(Value* value) {
+		if (value->isInteger()) {
+			setInteger(value->getInteger());
+		}
+		else if (value->isBoolean()) {
+			setBoolean(value->getBoolean());
+		}
+		else if (value->isString()) {
+			setString(value->getStringP());
+		}
+		else if (value->isDouble()) {
+			setDouble(value->getDouble());
+		}
+		else if (value->isByte()) {
+			setByte(value->getByte());
+		}
+		else {
+			setDataValue(value->getDataValue());
+		}
+	}
 
 	void initialize();
 

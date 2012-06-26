@@ -110,11 +110,12 @@ void Compiler::loadNativeTypes() {
 	CLEVER_BYTE   = new Char;
 
 	// Virtual Standard Template Types
-	CLEVER_ARRAY   = new Array;
-	CLEVER_MAP     = new Map;
-	Type* pair     = new Pair;
-	Type* function = new FunctionType;
-	Type* iterator = new Iterator;
+	CLEVER_ARRAY       = new Array;
+	CLEVER_MAP         = new Map;
+	Type* pair         = new Pair;
+	Type* function     = new FunctionType;
+	Type* fwd_iterator = new ForwardIterator;
+	Type* bid_iterator = new BidirectionalIterator;
 
 	// Registers all native data types
 	g_scope.pushType(CSTRING("Object"), CLEVER_OBJECT);
@@ -127,7 +128,8 @@ void Compiler::loadNativeTypes() {
 	g_scope.pushType(CSTRING("Map"),    CLEVER_MAP);
 	g_scope.pushType(CSTRING("Pair"),   pair);
 	g_scope.pushType(CSTRING("Function"), function);
-	g_scope.pushType(CSTRING("Iterator"), iterator);
+	g_scope.pushType(CSTRING("ForwardIterator"), fwd_iterator);
+	g_scope.pushType(CSTRING("BidirectionalIterator"), bid_iterator);
 
 	// Initialize native data types
 	CLEVER_INT->init();
@@ -140,7 +142,8 @@ void Compiler::loadNativeTypes() {
 	CLEVER_OBJECT->init();
 	pair->init();
 	function->init();
-	iterator->init();
+	fwd_iterator->init();
+	bid_iterator->init();
 }
 
 /**

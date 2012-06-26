@@ -38,9 +38,6 @@
 
 #include "symbol.h"
 
-#define CLEVER_TYPE(name)  ::clever::g_scope.getType(CSTRING(name))
-#define CLEVER_VALUE(name) ::clever::g_scope.getValue(CSTRING(name))
-
 namespace clever {
 
 class Type;

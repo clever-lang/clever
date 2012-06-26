@@ -23,40 +23,56 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "types/type.h"
-#include "types/iterator.h"
+#ifndef CLEVER_MAPITERATORVALUE_H
+#define CLEVER_MAPITERATORVALUE_H
+
+#include <map>
+#include "types/mapvalue.h"
+#include "compiler/value.h"
 
 namespace clever {
 
-void ForwardIterator::init() {
-	addMethod(new Method(CLEVER_OPERATOR_PRE_INC, NULL, this));
-	addMethod(new Method(CLEVER_OPERATOR_POS_INC, NULL, this));
+struct MapIteratorValue : public DataValue {
+	MapIteratorValue(MapValue* map) : m_iterator(map->getMap().begin()),
+		m_end(map->getMap().end()) {
+	}
+	
+	bool valid() const {
+		return m_iterator != m_end;
+	}
+	
+	void operator--() {
+		--m_iterator;
+	}
+	
+	void operator++() {
+		++m_iterator;
+	}
 
-	addMethod((new Method(CLEVER_OPERATOR_EQUAL, NULL, this))
-		->addArg("arg1", this)
-		->addArg("arg2", this)
-	);
+	MapValue::MapInternal::iterator& getIterator() {
+		return m_iterator;
+	}
 
-	addMethod(
-		(new Method(CLEVER_OPERATOR_NE, NULL, this))
-			->addArg("arg1", this)
-			->addArg("arg2", this)
-	);
+	std::pair<Value*, Value*> get() {
+		return *m_iterator;
+	}
+	
+	void setIterator(MapValue::MapInternal::iterator& it) {
+		m_iterator = it;
+	}
+	
+	void setEnd(MapValue::MapInternal::iterator& it) {
+		m_end = it;
+	}
 
-	addMethod((new Method("get", NULL, CLEVER_OBJECT)));
-}
-
-DataValue* ForwardIterator::allocateValue() const {
-	return NULL;
-}
-
-void BidirectionalIterator::init() {
-	addMethod(new Method(CLEVER_OPERATOR_PRE_DEC, NULL, this));
-	addMethod(new Method(CLEVER_OPERATOR_POS_DEC, NULL, this));
-}
-
-DataValue* BidirectionalIterator::allocateValue() const {
-	return NULL;
-}
+	~MapIteratorValue() {
+	}
+private:
+	MapValue::MapInternal::iterator m_iterator, m_end;
+	DISALLOW_COPY_AND_ASSIGN(MapIteratorValue);
+};
 
 } // clever
+
+#endif
+

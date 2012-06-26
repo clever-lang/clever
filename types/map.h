@@ -30,6 +30,7 @@
 #include "compiler/value.h"
 #include "compiler/scope.h"
 #include "mapvalue.h"
+#include "mapiterator.h"
 
 namespace clever {
 
@@ -38,6 +39,10 @@ public:
 	Map()
 		: TemplatedType(CSTRING("Map"), CLEVER_OBJECT) {
 		addArg(NULL);
+		
+		Type* map_iter = new MapIterator;
+		g_scope.pushType(CSTRING("MapIterator"), map_iter);
+		map_iter->init();
 	}
 
 	Map(const CString* name, const Type* key_type, const Type* value_type,

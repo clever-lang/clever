@@ -179,6 +179,9 @@ add_executable(clever
 	types/map.cc
 	types/map.h
 	types/mapvalue.h
+	types/mapiterator.cc
+	types/mapiterator.h
+	types/mapiteratorvalue.h
 	types/nativetypes.h
 	types/object.cc
 	types/object.h

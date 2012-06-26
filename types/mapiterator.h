@@ -23,40 +23,42 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#ifndef CLEVER_MAPITERATOR_H
+#define CLEVER_MAPITERATOR_H
+
 #include "types/type.h"
-#include "types/iterator.h"
+#include "compiler/value.h"
+#include "compiler/scope.h"
 
 namespace clever {
 
-void ForwardIterator::init() {
-	addMethod(new Method(CLEVER_OPERATOR_PRE_INC, NULL, this));
-	addMethod(new Method(CLEVER_OPERATOR_POS_INC, NULL, this));
+class MapIterator : public Type {
+public:
+	MapIterator()
+		: Type(CSTRING("MapIterator"), CLEVER_OBJECT) {
+		addInterface(g_scope.getType(CSTRING("BidirectionalIterator")));
+	}
+	
+	void init();
+	DataValue* allocateValue() const;
 
-	addMethod((new Method(CLEVER_OPERATOR_EQUAL, NULL, this))
-		->addArg("arg1", this)
-		->addArg("arg2", this)
-	);
-
-	addMethod(
-		(new Method(CLEVER_OPERATOR_NE, NULL, this))
-			->addArg("arg1", this)
-			->addArg("arg2", this)
-	);
-
-	addMethod((new Method("get", NULL, CLEVER_OBJECT)));
-}
-
-DataValue* ForwardIterator::allocateValue() const {
-	return NULL;
-}
-
-void BidirectionalIterator::init() {
-	addMethod(new Method(CLEVER_OPERATOR_PRE_DEC, NULL, this));
-	addMethod(new Method(CLEVER_OPERATOR_POS_DEC, NULL, this));
-}
-
-DataValue* BidirectionalIterator::allocateValue() const {
-	return NULL;
-}
+	/**
+	 * Type methods
+	 */
+	static CLEVER_METHOD(do_assign);
+	static CLEVER_METHOD(constructor);
+	static CLEVER_METHOD(pre_dec);
+	static CLEVER_METHOD(pos_dec);
+	static CLEVER_METHOD(pre_inc);
+	static CLEVER_METHOD(pos_inc);
+	static CLEVER_METHOD(equal);
+	static CLEVER_METHOD(not_equal);
+	static CLEVER_METHOD(isValid);
+	static CLEVER_METHOD(get);
+private:
+	DISALLOW_COPY_AND_ASSIGN(MapIterator);
+};
 
 } // clever
+
+#endif // CLEVER_MAPITERATOR_H
