@@ -1,0 +1,8 @@
+[FATAL] Issue #172: Identifier redefinition giving segfault
+==CODE==
+Int foo;
+
+Void foo() { 
+}
+==RESULT==
+Compile error: Name `foo' already in use for variable! on line 1

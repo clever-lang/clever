@@ -1214,15 +1214,20 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 	CallableValue* func = NULL;
 	Function* user_func = NULL;
 	bool has_prototype = false;
+	Value* val = m_scope->getValue(name);
+	
+	if (val) {		
+		if (!val->isCallable()) {
+			Compiler::errorf(expr->getLocation(),
+				"Name `%S' already in use for variable!", name);
+		}
 
-	func = static_cast<CallableValue*>(m_scope->getValue(name));
-
-	if (func == NULL) {
-		func = new CallableValue(name);
-		user_func = new Function(name->str());
-	} else {
+		func = static_cast<CallableValue*>(val);
 		user_func = const_cast<Function*>(func->getFunction());
 		has_prototype = true;
+	} else {
+		func = new CallableValue(name);
+		user_func = new Function(name->str());		
 	}
 
 	Identifier* return_type = expr->getReturnValue();

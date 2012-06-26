@@ -207,6 +207,9 @@ void Compiler::error(const std::string& message, const location& loc) {
 		m_error_stream << "Compile error: " << message << " on line "
 			<< loc.begin.line << "\n";
 	}
+	
+	// Abort the compilation
+	CLEVER_ERROR_EXIT_ACTION();
 }
 
 /**
