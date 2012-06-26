@@ -51,20 +51,23 @@ CLEVER_METHOD(MapIterator::do_assign) {
 }
 
 /**
- * Void MapIterator::__pre_dec__(MapIterator)
+ * MapIterator MapIterator::__pre_dec__(MapIterator)
  */
 CLEVER_METHOD(MapIterator::pre_dec) {
 	MapIteratorValue& miv = *CLEVER_GET_VALUE(MapIteratorValue*, value);
 	--miv;
-	//CLEVER_RETURN_DATA_VALUE(CLEVER_GET_VALUE(MapIteratorValue*, value));
+	miv.addRef();
+	CLEVER_RETURN_DATA_VALUE(CLEVER_GET_VALUE(MapIteratorValue*, value));
 }
 
 /**
- * Void MapIterator::__pre_inc_(MapIterator)
+ * MapIterator MapIterator::__pre_inc_(MapIterator)
  */
 CLEVER_METHOD(MapIterator::pre_inc) {
 	MapIteratorValue& miv = *CLEVER_GET_VALUE(MapIteratorValue*, value);
 	++miv;
+	miv.addRef();
+	CLEVER_RETURN_DATA_VALUE(CLEVER_GET_VALUE(MapIteratorValue*, value));
 }
 
 /**
@@ -122,13 +125,13 @@ void MapIterator::init() {
 	);
 	
 	addMethod(new Method(CLEVER_OPERATOR_PRE_INC, 
-		&MapIterator::pre_inc, CLEVER_VOID));
+		&MapIterator::pre_inc, this));
 	addMethod(new Method(CLEVER_OPERATOR_POS_INC, 
-		&MapIterator::pre_inc, CLEVER_VOID));
+		&MapIterator::pre_inc, this));
 	addMethod(new Method(CLEVER_OPERATOR_PRE_DEC, 
-		&MapIterator::pre_dec, CLEVER_VOID));
+		&MapIterator::pre_dec, this));
 	addMethod(new Method(CLEVER_OPERATOR_POS_DEC, 
-		&MapIterator::pre_dec, CLEVER_VOID));
+		&MapIterator::pre_dec, this));
 
 	addMethod(
 	(new Method(CLEVER_OPERATOR_EQUAL, &MapIterator::equal, CLEVER_BOOL))
