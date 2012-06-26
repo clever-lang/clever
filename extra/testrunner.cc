@@ -134,7 +134,7 @@ void TestRunner::run(void) {
 
 #ifndef _WIN32
 		if (valgrind) {
-			command = std::string("GLIBCXX_FORCE_NEW=yes valgrind -q --tool=memcheck --leak-check=yes --suppressions=extra/darwin10.supp --num-callers=30 --show-reachable=yes --track-origins=yes --log-file=") + file_name + std::string(".mem");
+			command = std::string("GLIBCXX_FORCE_NEW=yes valgrind -q --tool=memcheck --leak-check=yes --num-callers=30 --show-reachable=yes --track-origins=yes --log-file=") + file_name + std::string(".mem");
 			command = command + std::string(" ./clever ") + tmp_file + " 2>&1";
 			fp = popen(command.c_str(), "r");
 		} else {
