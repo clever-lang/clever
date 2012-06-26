@@ -51,21 +51,20 @@ CLEVER_METHOD(MapIterator::do_assign) {
 }
 
 /**
- * MapIterator MapIterator::__pre_dec__(MapIterator)
+ * Void MapIterator::__pre_dec__(MapIterator)
  */
 CLEVER_METHOD(MapIterator::pre_dec) {
 	MapIteratorValue& miv = *CLEVER_GET_VALUE(MapIteratorValue*, value);
 	--miv;
-	CLEVER_RETURN_DATA_VALUE(CLEVER_GET_VALUE(MapIteratorValue*, value));
+	//CLEVER_RETURN_DATA_VALUE(CLEVER_GET_VALUE(MapIteratorValue*, value));
 }
 
 /**
- * MapIterator MapIterator::__pre_inc_(MapIterator)
+ * Void MapIterator::__pre_inc_(MapIterator)
  */
 CLEVER_METHOD(MapIterator::pre_inc) {
 	MapIteratorValue& miv = *CLEVER_GET_VALUE(MapIteratorValue*, value);
 	++miv;
-	CLEVER_RETURN_DATA_VALUE(CLEVER_GET_VALUE(MapIteratorValue*, value));
 }
 
 /**
@@ -73,16 +72,15 @@ CLEVER_METHOD(MapIterator::pre_inc) {
  */
 CLEVER_METHOD(MapIterator::get) {
 	MapIteratorValue* miv = CLEVER_GET_VALUE(MapIteratorValue*, value);
-	
 	std::pair<Value*, Value*> pair = miv->get();
-	
+
 	const Type* const pair_type =
 		static_cast<const TemplatedType*>(CLEVER_TYPE("Pair"))
 		->getTemplatedType(pair.first->getTypePtr(), pair.second->getTypePtr());
-		
-	PairValue* pv = new PairValue(pair.first, pair.second);
-	retval->setTypePtr(pair_type);
 	
+	PairValue* pv = new PairValue(pair.first, pair.second);
+
+	retval->setTypePtr(pair_type);
 	CLEVER_RETURN_DATA_VALUE(pv);
 }
 
@@ -123,10 +121,14 @@ void MapIterator::init() {
 		->addArg("map", CLEVER_OBJECT)
 	);
 	
-	addMethod(new Method(CLEVER_OPERATOR_PRE_INC, &MapIterator::pre_inc, this));
-	addMethod(new Method(CLEVER_OPERATOR_POS_INC, &MapIterator::pre_inc, this));
-	addMethod(new Method(CLEVER_OPERATOR_PRE_DEC, &MapIterator::pre_dec, this));
-	addMethod(new Method(CLEVER_OPERATOR_POS_DEC, &MapIterator::pre_dec, this));
+	addMethod(new Method(CLEVER_OPERATOR_PRE_INC, 
+		&MapIterator::pre_inc, CLEVER_VOID));
+	addMethod(new Method(CLEVER_OPERATOR_POS_INC, 
+		&MapIterator::pre_inc, CLEVER_VOID));
+	addMethod(new Method(CLEVER_OPERATOR_PRE_DEC, 
+		&MapIterator::pre_dec, CLEVER_VOID));
+	addMethod(new Method(CLEVER_OPERATOR_POS_DEC, 
+		&MapIterator::pre_dec, CLEVER_VOID));
 
 	addMethod(
 	(new Method(CLEVER_OPERATOR_EQUAL, &MapIterator::equal, CLEVER_BOOL))
