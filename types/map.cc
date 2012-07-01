@@ -27,6 +27,8 @@
 #include "types/type.h"
 #include "types/array.h"
 #include "types/pair.h"
+#include "types/mapiterator.h"
+#include "types/mapiteratorvalue.h"
 #include "types/map.h"
 #include "compiler/compiler.h"
 
@@ -204,6 +206,36 @@ CLEVER_METHOD(Map::getAll) {
 	CLEVER_RETURN_ARRAY(vv);
 }
 
+/**
+ * MapIterator Map<K, V [, C]>::begin()
+ * Returns an iterator to the begin of this Map
+ */
+CLEVER_METHOD(Map::begin) {
+	MapIteratorValue* miv = new MapIteratorValue(
+		CLEVER_GET_VALUE(MapValue*, CLEVER_THIS())
+	);
+	
+	MapValue::ValueType& map = CLEVER_GET_VALUE(MapValue*, value)->getMap();
+	miv->getIterator() = map.begin();
+	
+	CLEVER_RETURN_DATA_VALUE(miv);
+}
+
+/**
+ * MapIterator Map<K, V [, C]>::begin()
+ * Returns an iterator to the end of this Map
+ */
+CLEVER_METHOD(Map::end) {
+	MapIteratorValue* miv = new MapIteratorValue(
+		CLEVER_GET_VALUE(MapValue*, CLEVER_THIS())
+	);
+	
+	MapValue::ValueType& map = CLEVER_GET_VALUE(MapValue*, value)->getMap();
+	miv->getIterator() = map.end();
+	
+	CLEVER_RETURN_DATA_VALUE(miv);
+}
+
 
 /**
  * Map type initializator
@@ -229,6 +261,8 @@ void Map::init() {
 	const Type* const map_type = 
 		static_cast<const TemplatedType*>(CLEVER_TYPE("Map"))
 		->getTemplatedType(key_type, value_type);
+	
+	const Type* const iter_type = CLEVER_TYPE("MapIterator");
 
 	addMethod(new Method(CLEVER_CTOR_NAME, &Map::constructor, map_type));
 	
@@ -254,6 +288,9 @@ void Map::init() {
 	addMethod((new Method("hasKey", &Map::hasKey, CLEVER_BOOL))
 		->addArg("key", key_type)
 	);
+	
+	addMethod(new Method("begin", &Map::begin, iter_type));
+	addMethod(new Method("end", &Map::end, iter_type));
 }
 
 DataValue* Map::allocateValue() const {
