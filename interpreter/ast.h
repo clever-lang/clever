@@ -888,7 +888,7 @@ public:
 		: m_type(type), m_variable(variable), m_rhs(rhs),
 			m_const_value(const_value), m_call_value(NULL),	m_args_value(NULL),
 			m_ctor_args(NULL) {
-
+		
 		// If is not `Auto' typed variable
 		CLEVER_SAFE_ADDREF(m_type);
 		CLEVER_ADDREF(m_variable);

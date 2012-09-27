@@ -29,4 +29,13 @@ CPackConfig.cmake
 CPackSourceConfig.cmake
 _CPack_Packages/
 install_manifest.txt
+a.clh
+a.clv
+a.txt
+array.clv
+const.clv
+extra/.DS_Store
+extra/darwin10.supp
+samples/.DS_Store
+samples/wgraph.clh
 

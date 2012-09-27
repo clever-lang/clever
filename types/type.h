@@ -305,9 +305,25 @@ public:
 	}
 
 	virtual const std::string* checkTemplateArgs(const TemplateArgs& args) const = 0;
-	virtual const Type* getTemplatedType(const Type*) const { return NULL; };
-	virtual const Type* getTemplatedType(const Type*, const Type*) const { return NULL; };
-	virtual const Type* getTemplatedType(const TemplateArgs& args) const { return NULL; };
+	
+	virtual const Type* getTemplatedType(const Type*) const { 
+		/* Reacheable only if there is an error. */
+		clever_assert(false, 
+			"TemplatedType::getTemplatedType() called without definition");
+		return NULL; 
+	};
+	
+	virtual const Type* getTemplatedType(const Type*, const Type*) const {
+		clever_assert(false, 
+			"TemplatedType::getTemplatedType() called without definition");
+		return NULL; 
+	};
+	
+	virtual const Type* getTemplatedType(const TemplateArgs& args) const { 
+		clever_assert(false, 
+			"TemplatedType::getTemplatedType() called without definition");
+		return NULL; 
+	};
 private:
 	std::vector<const Type*> m_type_args;
 

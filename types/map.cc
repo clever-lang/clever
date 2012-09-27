@@ -242,12 +242,13 @@ CLEVER_METHOD(Map::end) {
  */
 void Map::init() {
 	/**
-	 * Check if we are in our "virtual" Map type
+	 * Checks if we are in our "virtual" Map type
 	 */
 	if (CLEVER_TPL_ARG(0) == NULL) {
 		return;
 	}
 
+	/** Type pointers */
 	const Type* const key_type   = CLEVER_TPL_ARG(0);
 	const Type* const value_type = CLEVER_TPL_ARG(1);
 	const Type* const arr_key = CLEVER_TPL_ARRAY(key_type);
@@ -262,8 +263,13 @@ void Map::init() {
 		static_cast<const TemplatedType*>(CLEVER_TYPE("Map"))
 		->getTemplatedType(key_type, value_type);
 	
-	const Type* const iter_type = CLEVER_TYPE("MapIterator");
+	const Type* const iter_type = 
+		static_cast<const TemplatedType*>(CLEVER_TYPE("MapIterator"))
+		->getTemplatedType(key_type, value_type);
 
+	/**
+	 * Beginning of methods definitions
+	 */
 	addMethod(new Method(CLEVER_CTOR_NAME, &Map::constructor, map_type));
 	
 	addMethod((new Method("insert", &Map::insert, CLEVER_VOID, false))

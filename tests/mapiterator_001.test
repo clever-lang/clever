@@ -4,7 +4,7 @@ import std.io.println;
 
 Auto map = {'foo': 10, 'bar': -20, 'baz': 1010};
 
-for (MapIterator it(map); it.isValid(); ++it) {
+for (MapIterator<String, Int> it(map); it.isValid(); ++it) {
 	println(it.get());
 }
 

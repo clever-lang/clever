@@ -120,6 +120,20 @@ CLEVER_METHOD(MapIterator::isValid) {
  * MapIterator type initializator
  */
 void MapIterator::init() {
+	/**
+	 * Checks if we are in our "virtual" Map type
+	 */
+	if (CLEVER_TPL_ARG(0) == NULL) {
+		return;
+	}
+	
+	const Type* key_type = CLEVER_TPL_ARG(0);
+	const Type* value_type = CLEVER_TPL_ARG(1);
+	
+	const Type* pair_type = 
+		static_cast<const TemplatedType*>(CLEVER_TYPE("Pair"))
+		->getTemplatedType(key_type, value_type);
+	
 	addMethod((new Method(CLEVER_CTOR_NAME, &MapIterator::constructor, this))
 		->addArg("map", CLEVER_OBJECT)
 	);
@@ -145,7 +159,7 @@ void MapIterator::init() {
 			->addArg("arg2", this)
 	);
 
-	addMethod(new Method("get", &MapIterator::get, CLEVER_OBJECT));
+	addMethod(new Method("get", &MapIterator::get, pair_type));
 	addMethod(new Method("isValid", &MapIterator::isValid, CLEVER_BOOL));
 }
 

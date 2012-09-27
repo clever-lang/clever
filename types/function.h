@@ -62,6 +62,13 @@ public:
 		return NULL;
 	}
 
+	virtual const Type* getTemplatedType(const Type* r_type) const {
+		TemplateArgs args;
+		args.push_back(r_type);
+		
+		return getTemplatedType(args);
+	}
+
 	virtual const Type* getTemplatedType(const TemplateArgs& args) const {
 		std::string name = getName()->str() + "<";
 		

@@ -49,7 +49,7 @@ static const Type* _evaluate_type(const location& loc,
 
 	if (template_args) {
 		if (type->isTemplatedType()) {
-			const TemplatedType* temp_type = (const TemplatedType*)type;
+			const TemplatedType* temp_type = static_cast<const TemplatedType*>(type);
 
 			TemplateArgs vec;
 			const Type* argt;
@@ -642,7 +642,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 		type = _evaluate_type(expr->getLocation(),
 			expr->getType(), m_scope);
 	}
-
+	
 	Identifier* variable = expr->getVariable();
 
 	// Check if there is already a variable with same name in the current scope
@@ -666,7 +666,7 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 
 	if (rhs) {
 		Value* initval = rhs->getValue();
-
+		
 		if (type) {
 			if (!_check_compatible_types(var, initval)) {
 				var->delRef();

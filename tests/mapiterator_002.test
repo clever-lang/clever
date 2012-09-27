@@ -1,4 +1,4 @@
-Testing Map.begin(), Map.end() and MapIterator class
+Testing Map<>.begin(), Map<>.end() and MapIterator<> class
 ==CODE==
 import std.io.println;
 
