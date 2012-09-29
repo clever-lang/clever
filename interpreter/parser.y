@@ -196,6 +196,7 @@ namespace clever {
 %type <identifier> TYPE
 %type <identifier> type_name
 %type <subscript> subscript
+%type <subscript> chaining_subscript
 %type <regex_pattern> REGEX
 %type <identifier> CONSTANT
 %type <constant> constant
@@ -584,8 +585,14 @@ expr:
 	|	copy                  { $$ = $<ast_node>1; }
 ;
 
+chaining_subscript:
+		/* empty */						{ $$ = $<subscript>0; }
+	|	chaining_subscript '[' expr ']' { $$ = new ast::Subscript($1, $3); }
+;
+
 subscript:
-		IDENT '[' expr ']'    { $$ = new ast::Subscript($1, $3); $$->setLocation(yylloc); }
+		IDENT '[' expr ']'		{ $<subscript>$ = new ast::Subscript($1, $3); $<subscript>$->setLocation(yylloc); }
+			chaining_subscript	{ $$ = $6; }
 ;
 
 copy:

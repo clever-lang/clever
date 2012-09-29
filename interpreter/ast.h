@@ -804,16 +804,24 @@ private:
 class Subscript : public ASTNode {
 public:
 	Subscript(Identifier* ident, ASTNode* expr)
-		: m_ident(ident), m_expr(expr), m_result(NULL), m_call_value(NULL),
+		: m_ident(ident), m_val(NULL), m_expr(expr), m_result(NULL), m_call_value(NULL),
 			m_args_value(NULL) {
 		CLEVER_ADDREF(m_ident);
 		CLEVER_ADDREF(m_expr);
 	}
+	
+	Subscript(Subscript* sub, ASTNode* expr)
+		: m_ident(NULL), m_val(sub), m_expr(expr), m_result(NULL), m_call_value(NULL),
+			m_args_value(NULL) {
+		CLEVER_ADDREF(m_val);
+		CLEVER_ADDREF(m_expr);
+	}
 
 	~Subscript() {
-		CLEVER_DELREF(m_ident);
+		CLEVER_SAFE_DELREF(m_ident);
 		CLEVER_DELREF(m_expr);
 		CLEVER_SAFE_DELREF(m_call_value);
+		CLEVER_SAFE_DELREF(m_val);
 	}
 
 	Identifier* getIdentifier() const {
@@ -822,6 +830,10 @@ public:
 
 	ASTNode* getExpr() const {
 		return m_expr;
+	}
+
+	ASTNode* getChain() const {
+		return m_val;
 	}
 
 	void setValue(Value* value) {
@@ -849,13 +861,20 @@ public:
 	}
 
 	void acceptVisitor(ASTVisitor& visitor) {
-		m_ident->acceptVisitor(visitor);
+		if (m_ident) {
+			m_ident->acceptVisitor(visitor);
+		}
+		else {
+			m_val->acceptVisitor(visitor);
+		}
+		
 		m_expr->acceptVisitor(visitor);
 
 		visitor.visit(this);
 	}
 private:
 	Identifier* m_ident;
+	ASTNode* m_val;
 	ASTNode* m_expr;
 	Value* m_result;
 	CallableValue* m_call_value;

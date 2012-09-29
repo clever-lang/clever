@@ -1429,7 +1429,10 @@ AST_VISITOR(TypeChecker, TypeCreation) {
  * Subscript operator visitor
  */
 AST_VISITOR(TypeChecker, Subscript) {
-	Value* var = expr->getIdentifier()->getValue();
+	Value* var = (expr->getIdentifier() 
+		? expr->getIdentifier()->getValue()
+		: expr->getChain()->getValue());
+	
 	Value* expr_val = expr->getExpr()->getValue();
 
 	clever_assert_not_null(expr_val);
