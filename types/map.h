@@ -168,6 +168,7 @@ public:
 	static CLEVER_METHOD(begin);
 	static CLEVER_METHOD(end);
 	static CLEVER_METHOD(constructor);
+	static CLEVER_METHOD(at);
 private:
 	DISALLOW_COPY_AND_ASSIGN(Map);
 };

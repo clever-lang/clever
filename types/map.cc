@@ -49,6 +49,30 @@ CLEVER_METHOD(Map::do_assign) {
 }
 
 /**
+ * Array<K> Map<K, V [, C]>::_at_(K key)
+ * Access the element whose key is equal `key'
+ */
+CLEVER_METHOD(Map::at) {
+	MapValue::ValueType& map = CLEVER_GET_VALUE(MapValue*, value)->getMap();
+	MapValue::Iterator it = map.find(CLEVER_ARG(0));
+
+	if (it != map.end()) {
+		retval->copy(it->second);
+	}
+	else {
+		const Type* value_type = ((const TemplatedType*)CLEVER_THIS()
+			->getTypePtr())->getTypeArg(1);
+		
+		Compiler::warningf("Map %S does not contains the key %S."
+				"Returning default value of type %S.",
+			value->getName(), CLEVER_ARG(0)->getName(), value_type->getName());
+		
+		retval->setTypePtr(CLEVER_ARG(0)->getTypePtr());
+		retval->initialize();
+	}
+}
+
+/**
  * Int Map<K, V [,C]>::size()
  */
 CLEVER_METHOD(Map::size) {
@@ -271,6 +295,10 @@ void Map::init() {
 	 * Beginning of methods definitions
 	 */
 	addMethod(new Method(CLEVER_CTOR_NAME, &Map::constructor, map_type));
+	 
+ 	addMethod((new Method(CLEVER_OPERATOR_AT, &Map::at, CLEVER_TPL_ARG(1)))
+ 		->addArg("key", CLEVER_TPL_ARG(0))
+ 	);
 	
 	addMethod((new Method("insert", &Map::insert, CLEVER_VOID, false))
 		->addArg("key", key_type)
