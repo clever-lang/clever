@@ -30,6 +30,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #else
+#include <ws2tcpip.h>
 #include <winsock.h>
 #endif
 #include "compiler/clever.h"

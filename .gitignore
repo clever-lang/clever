@@ -17,6 +17,8 @@ make-c++11.sh
 *.dll
 *.a
 *.exe
+*.lib
+*.manifest
 gmon.out
 interpreter/location.hh
 interpreter/parser.cc
