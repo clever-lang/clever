@@ -63,11 +63,11 @@ CLEVER_METHOD(Map::at) {
 		const Type* value_type = ((const TemplatedType*)CLEVER_THIS()
 			->getTypePtr())->getTypeArg(1);
 		
-		Compiler::warningf("Map %S does not contains the key %S."
+		Compiler::warningf("Map %S does not contains the key %S. "
 				"Returning default value of type %S.",
-			value->getName(), CLEVER_ARG(0)->getName(), value_type->getName());
+			value->getName(), CLEVER_ARG(0)->getTypePtr()->getName(), value_type->getName());
 		
-		retval->setTypePtr(CLEVER_ARG(0)->getTypePtr());
+		retval->setTypePtr(value_type);
 		retval->initialize();
 	}
 }
