@@ -575,6 +575,11 @@ void String::init() {
 		(new Method("at", &String::at, CLEVER_STR))
 			->addArg("pos", CLEVER_INT)
 	);
+	
+	addMethod(
+		(new Method(CLEVER_OPERATOR_AT, &String::at, CLEVER_STR))
+			->addArg("pos", CLEVER_INT)
+	);
 
 	addMethod(
 		(new Method(CLEVER_OPERATOR_ASSIGN, &String::do_assign, CLEVER_VOID))
