@@ -131,14 +131,18 @@ CLEVER_METHOD(String::substring) {
 CLEVER_METHOD(String::at) {
 	int64_t pos = CLEVER_ARG(0)->getInteger();
 
-	if (static_cast<size_t>(pos) > CLEVER_THIS()->toString().length()) {
-		Compiler::warningf("Out of range: %l is after the end of the string.", pos);
+	if (static_cast<size_t>(pos) < CLEVER_THIS()->toString().length()) {
+		std::string newString;
+		newString = CLEVER_THIS()->toString()[pos];
+
+		CLEVER_RETURN_STR(CSTRINGT(newString));
 	}
+	else {
+		Compiler::warningf("Out of range: %l is after the end of the string. "
+			"Returning empty String.", pos);
 
-	std::string newString;
-	newString = CLEVER_THIS()->toString()[pos];
-
-	CLEVER_RETURN_STR(CSTRINGT(newString));
+		CLEVER_RETURN_STR(CSTRINGT(""));
+	}
 }
 
 /**
