@@ -23,40 +23,29 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef CLEVER_VECTOR_H
-#define CLEVER_VECTOR_H
+#ifndef CLEVER_ARRAYITERATOR_H
+#define CLEVER_ARRAYITERATOR_H
 
-#include <sstream>
 #include "types/type.h"
-#include "compiler/clever.h"
 #include "compiler/value.h"
 #include "compiler/scope.h"
-#include "types/arrayvalue.h"
-#include "types/arrayiterator.h"
-
-#define CLEVER_RETURN_ARRAY(x) retval->setDataValue(new ArrayValue(x))
-#define CLEVER_GET_ARRAY(x)    static_cast<ArrayValue*>((x)->getDataValue())->m_array
-#define CLEVER_ARG_ARRAY(x)    CLEVER_GET_ARRAY(args->at((x)))
-#define CLEVER_TPL_ARRAY(x)    CLEVER_GET_ARRAY_TEMPLATE->getTemplatedType((x))
 
 namespace clever {
 
-class Array : public TemplatedType {
+class ArrayIterator : public TemplatedType {
 public:
-	Array()
-		: TemplatedType(CSTRING("Array"), CLEVER_OBJECT) {
+	ArrayIterator()
+		: TemplatedType(CSTRING("ArrayIterator"), CLEVER_OBJECT) {
+		addInterface(g_scope.getType(CSTRING("RandomAccessIterator")));
 		addArg(NULL);
-		
-		Type* array_iter = new ArrayIterator;
-		g_scope.pushType(CSTRING("ArrayIterator"), array_iter);
-		array_iter->init();
 	}
-
-	Array(const CString* name, const Type* arg_type) :
-		TemplatedType(name, CLEVER_OBJECT) {
-			addArg(arg_type);
+	
+	ArrayIterator(const CString* name, const Type* val_arg)
+		: TemplatedType(name, CLEVER_OBJECT) {
+		addInterface(g_scope.getType(CSTRING("RandomAccessIterator")));
+		addArg(val_arg);
 	}
-
+	
  	const std::string* checkTemplateArgs(const TemplateArgs& args) const {
 		if (args.size() != 1) {
 			std::ostringstream oss;
@@ -67,19 +56,19 @@ public:
 
 			return new std::string(oss.str());
 		}
-
+		
 		return NULL;
 	}
 
-	virtual const Type* getTemplatedType(const Type* type_arg) const {
+	virtual const Type* getTemplatedType(const Type* val_arg) const {
 		std::string name = getName()->str() + "<"
-						   + type_arg->getName()->str() + ">";
+						   	+ val_arg->getName()->str() + ">";
 
 		const CString* cname = CSTRING(name);
 		const Type* type = g_scope.getType(cname);
 
 		if (type == NULL) {
-			Type* ntype = new Array(cname, type_arg);
+			Type* ntype = new ArrayIterator(cname, val_arg);
 			g_scope.pushType(cname, ntype);
 			ntype->init();
 
@@ -88,51 +77,51 @@ public:
 
 		return type;
 	}
+	
+	virtual const Type* getTemplatedType(const TemplateArgs& args) const {
+		std::string name = getName()->str() + "<"
+			+ args[0]->getName()->str() + ">";
 
-	virtual const Type* getTemplatedType(const TemplateArgs& arg) const {
-		return getTemplatedType(arg.at(0));
+		const CString* cname = CSTRING(name);
+		const Type* type = g_scope.getType(cname);
+
+		if (type == NULL) {
+			Type* ntype = new ArrayIterator(cname, args[0]);
+			g_scope.pushType(cname, ntype);
+			ntype->init();
+
+			return ntype;
+		}
+
+		return type;
 	}
-
-	/**
-	 * Virtual methods
-	 */
+	
 	void init();
 	DataValue* allocateValue() const;
-	DataValue* copy(const Value*, bool) const;
-
-	void destructor(Value* value) const {
-		ValueVector* vec = CLEVER_GET_ARRAY(value);
-
-		size_t sz = vec->size();
-		for (size_t i = 0; i < sz; ++i) {
-			vec->at(i)->delRef();
-		}
-	}
 
 	/**
 	 * Type methods
 	 */
-	static CLEVER_METHOD(push);
-	static CLEVER_METHOD(pop);
-	static CLEVER_METHOD(size);
-	static CLEVER_METHOD(isEmpty);
-	static CLEVER_METHOD(clear);
-	static CLEVER_METHOD(at);
-	static CLEVER_METHOD(set);
-	static CLEVER_METHOD(resize);
-	static CLEVER_METHOD(slice);
-	static CLEVER_METHOD(toString);
 	static CLEVER_METHOD(do_assign);
-	static CLEVER_METHOD(find);
-	static CLEVER_METHOD(do_copy);
-	static CLEVER_METHOD(do_deepcopy);
 	static CLEVER_METHOD(constructor);
-	static CLEVER_METHOD(begin);
-	static CLEVER_METHOD(end);
+	static CLEVER_METHOD(pre_dec);
+	static CLEVER_METHOD(pos_dec);
+	static CLEVER_METHOD(pre_inc);
+	static CLEVER_METHOD(pos_inc);
+	static CLEVER_METHOD(plus);
+	static CLEVER_METHOD(minus);
+	static CLEVER_METHOD(greater);
+	static CLEVER_METHOD(less);
+	static CLEVER_METHOD(ge);
+	static CLEVER_METHOD(le);
+	static CLEVER_METHOD(equal);
+	static CLEVER_METHOD(not_equal);
+	static CLEVER_METHOD(isValid);
+	static CLEVER_METHOD(get);
 private:
-	DISALLOW_COPY_AND_ASSIGN(Array);
+	DISALLOW_COPY_AND_ASSIGN(ArrayIterator);
 };
 
 } // clever
 
-#endif // CLEVER_VECTOR_H
+#endif // CLEVER_ARRAYITERATOR_H

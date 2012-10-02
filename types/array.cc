@@ -25,6 +25,7 @@
 
 #include "types/type.h"
 #include "types/array.h"
+#include "types/arrayiteratorvalue.h"
 #include "compiler/compiler.h"
 
 namespace clever {
@@ -326,6 +327,36 @@ CLEVER_METHOD(Array::do_deepcopy) {
 }
 
 /**
+ * ArrayIterator Array<V>::begin()
+ * Returns an iterator to the begin of this Array
+ */
+CLEVER_METHOD(Array::begin) {
+	ArrayIteratorValue* aiv = new ArrayIteratorValue(
+		CLEVER_GET_VALUE(ArrayValue*, CLEVER_THIS())
+	);
+	
+	aiv->getIterator() = CLEVER_GET_VALUE(ArrayValue*, CLEVER_THIS())
+			->getArray()->begin();
+	
+	CLEVER_RETURN_DATA_VALUE(aiv);
+}
+
+/**
+ * ArrayIterator Array<V>::begin()
+ * Returns an iterator to the end of this Array
+ */
+CLEVER_METHOD(Array::end) {
+	ArrayIteratorValue* aiv = new ArrayIteratorValue(
+		CLEVER_GET_VALUE(ArrayValue*, CLEVER_THIS())
+	);
+	
+	aiv->getIterator() = CLEVER_GET_VALUE(ArrayValue*, CLEVER_THIS())
+			->getArray()->end();
+	
+	CLEVER_RETURN_DATA_VALUE(aiv);
+}
+
+/**
  * Array type initializator
  */
 void Array::init() {
@@ -335,6 +366,10 @@ void Array::init() {
 	if (CLEVER_TPL_ARG(0) == NULL) {
 		return;
 	}
+	
+	const Type* const iter_type = 
+		static_cast<const TemplatedType*>(CLEVER_TYPE("ArrayIterator"))
+		->getTemplatedType(CLEVER_TPL_ARG(0));
 
 	const Type* arr_t = CLEVER_GET_ARRAY_TEMPLATE->getTemplatedType(CLEVER_TPL_ARG(0));
 	
@@ -398,6 +433,9 @@ void Array::init() {
 	addMethod((new Method("find", &Array::find, CLEVER_INT))
 		->addArg("value", CLEVER_TPL_ARG(0))
 	);
+	
+	addMethod(new Method("begin", &Array::begin, iter_type));
+	addMethod(new Method("end", &Array::end, iter_type));
 }
 
 DataValue* Array::allocateValue() const {

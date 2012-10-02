@@ -23,33 +23,69 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef CLEVER_ARRAYVALUE_H
-#define CLEVER_ARRAYVALUE_H
+#ifndef CLEVER_ARRAYITERATORVALUE_H
+#define CLEVER_ARRAYITERATORVALUE_H
 
+#include "types/arrayvalue.h"
 #include "compiler/value.h"
 
 namespace clever {
 
-struct ArrayValue : public DataValue
-{
-	ValueVector* m_array;
-
-	ArrayValue() : m_array(new ValueVector) {}
-	ArrayValue(ValueVector* array) : m_array(array) {}
+struct ArrayIteratorValue : public DataValue {
+	ArrayIteratorValue(ArrayValue* vec) : m_iterator(vec->m_array->begin()),
+		m_end(vec->m_array->end()) {
+	}
 	
-	ValueVector* getArray() const {
-		return m_array;
-	}
-
+	ArrayIteratorValue() {}
+	
 	bool valid() const {
-		return true;
+		return m_iterator != m_end;
+	}
+	
+	void operator--() {
+		--m_iterator;
+	}
+	
+	void operator++() {
+		++m_iterator;
+	}
+	
+	ValueVector::iterator operator+(int offset) {
+		return m_iterator + offset;
+	}
+	
+	ValueVector::iterator operator-(int offset) {
+		return m_iterator - offset;
 	}
 
-	~ArrayValue() {
-		delete m_array;
+	ValueVector::iterator& getIterator() {
+		return m_iterator;
 	}
+	
+	ValueVector::iterator& getEnd() {
+		return m_end;
+	}
+
+	Value* get() {
+		return *m_iterator;
+	}
+	
+	void setIterator(ValueVector::iterator& it) {
+		m_iterator = it;
+	}
+	
+	void setEnd(ValueVector::iterator& it) {
+		m_end = it;
+	}
+
+	~ArrayIteratorValue() {
+	}
+private:
+	ValueVector::iterator m_iterator, m_end;
+	DISALLOW_COPY_AND_ASSIGN(ArrayIteratorValue);
 };
 
 } // clever
 
-#endif // CLEVER_ARRAYVALUE_H
+#endif
+

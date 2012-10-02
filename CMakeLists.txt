@@ -163,6 +163,9 @@ add_executable(clever
 	types/array.cc
 	types/array.h
 	types/arrayvalue.h
+	types/arrayiterator.cc
+	types/arrayiterator.h
+	types/arrayiteratorvalue.h
 	types/bool.cc
 	types/bool.h
 	types/byte.cc
