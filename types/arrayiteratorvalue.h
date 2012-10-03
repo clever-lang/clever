@@ -70,6 +70,10 @@ struct ArrayIteratorValue : public DataValue {
 		return *m_iterator;
 	}
 	
+	void setValue(Value* v) {
+		(*m_iterator)->copy(v);
+	}
+	
 	void setIterator(ValueVector::iterator& it) {
 		m_iterator = it;
 	}

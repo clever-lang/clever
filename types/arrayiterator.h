@@ -110,6 +110,7 @@ public:
 	static CLEVER_METHOD(pos_inc);
 	static CLEVER_METHOD(plus);
 	static CLEVER_METHOD(minus);
+	static CLEVER_METHOD(minus_it);
 	static CLEVER_METHOD(greater);
 	static CLEVER_METHOD(less);
 	static CLEVER_METHOD(ge);
@@ -118,6 +119,8 @@ public:
 	static CLEVER_METHOD(not_equal);
 	static CLEVER_METHOD(isValid);
 	static CLEVER_METHOD(get);
+	static CLEVER_METHOD(set);
+	static CLEVER_METHOD(copy);
 private:
 	DISALLOW_COPY_AND_ASSIGN(ArrayIterator);
 };

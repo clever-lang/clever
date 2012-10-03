@@ -169,8 +169,16 @@ CLEVER_METHOD(ArrayIterator::plus) {
 	
  	CLEVER_RETURN_DATA_VALUE(ret);
  }
-
-
+ 
+/**
+ * Int ArrayIterator::minus_it()
+ */
+ CLEVER_METHOD(ArrayIterator::minus_it) {
+ 	ArrayIteratorValue* a = CLEVER_GET_VALUE(ArrayIteratorValue*,  CLEVER_ARG(0));
+ 	ArrayIteratorValue* b = CLEVER_GET_VALUE(ArrayIteratorValue*,  CLEVER_ARG(1));
+	
+ 	CLEVER_RETURN_INT(a->getIterator() - b->getIterator());
+ }
 
 /**
  * Bool ArrayIterator::isValid()
@@ -180,6 +188,15 @@ CLEVER_METHOD(ArrayIterator::isValid) {
 	
 	CLEVER_RETURN_BOOL(miv->valid());
 }
+
+/**
+ * Void ArrayIterator::set(ValueType)
+ */
+ CLEVER_METHOD(ArrayIterator::set) {
+ 	ArrayIteratorValue* a = CLEVER_GET_VALUE(ArrayIteratorValue*,  value);
+	
+	a->setValue(CLEVER_ARG(0));
+ }
 
 /**
  * ArrayIterator type initializator
@@ -254,7 +271,17 @@ void ArrayIterator::init() {
 			->addArg("arg1", this)
 			->addArg("arg2", CLEVER_INT)
 	);
+	
+	addMethod(
+		(new Method(CLEVER_OPERATOR_MINUS, &ArrayIterator::minus_it, CLEVER_INT))
+			->addArg("arg1", this)
+			->addArg("arg2", this)
+	);
 
+	addMethod((new Method("set", &ArrayIterator::set, CLEVER_VOID))
+		->addArg("value", value_type)
+	);
+	
 	addMethod(new Method("get", &ArrayIterator::get, value_type));
 	addMethod(new Method("isValid", &ArrayIterator::isValid, CLEVER_BOOL));
 }
