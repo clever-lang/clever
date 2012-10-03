@@ -10,10 +10,6 @@ Void swap(ArrayIterator<Int> a, ArrayIterator<Int> b) {
 	b.set(tmp);
 }
 
-Bool default_cmp(Int a, Int b) {
-	return a < b;
-}
-
 Void qsort_impl(ArrayIterator<Int> b, ArrayIterator<Int> e, Function<Bool, Int, Int> cmp) {
 	if (b >= e) {
 		return;
@@ -44,7 +40,7 @@ Void qsort_impl(ArrayIterator<Int> b, ArrayIterator<Int> e, Function<Bool, Int, 
 
 // @TODO: Need to implement function overloading
 Void qsort(ArrayIterator<Int> begin, ArrayIterator<Int> end) {
-	qsort_impl(begin, end - 1, default_cmp);
+	qsort_impl(begin, end - 1, Bool(Int a, Int b) { return a < b; });
 }
 
 Void qsort_custom(ArrayIterator<Int> begin, ArrayIterator<Int> end, Function<Bool, Int, Int> cmp) {
