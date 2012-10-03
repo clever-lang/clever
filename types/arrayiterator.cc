@@ -49,6 +49,27 @@ CLEVER_METHOD(ArrayIterator::do_assign) {
 }
 
 /**
+ * Performs the shallow and deep copy
+ */
+DataValue* ArrayIterator::copy(const Value* orig, bool deep) const {
+	ArrayIteratorValue* miv = new ArrayIteratorValue;
+	ArrayIteratorValue* val = CLEVER_GET_VALUE(ArrayIteratorValue*, orig);
+	
+	miv->setIterator(val->getIterator());
+	
+	return static_cast<DataValue*>(miv);
+}
+
+/**
+ * ArrayIterator<T> ArrayIterator<T>::__copy__(ArrayIterator<T> obj)
+ * Return a deep copy of the object of same time
+ */
+CLEVER_METHOD(ArrayIterator::do_copy) {
+	CLEVER_RETURN_DATA_VALUE(
+		CLEVER_ARG(0)->getTypePtr()->copy(CLEVER_ARG(0), false));
+}
+
+/**
  * ArrayIterator ArrayIterator::__pre_dec__(ArrayIterator)
  */
 CLEVER_METHOD(ArrayIterator::pre_dec) {
@@ -276,6 +297,11 @@ void ArrayIterator::init() {
 		(new Method(CLEVER_OPERATOR_MINUS, &ArrayIterator::minus_it, CLEVER_INT))
 			->addArg("arg1", this)
 			->addArg("arg2", this)
+	);
+
+	addMethod(
+		(new Method(CLEVER_COPY_NAME, &ArrayIterator::do_copy, this, false))
+			->addArg("orig", this)
 	);
 
 	addMethod((new Method("set", &ArrayIterator::set, CLEVER_VOID))

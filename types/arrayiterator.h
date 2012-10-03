@@ -98,6 +98,7 @@ public:
 	
 	void init();
 	DataValue* allocateValue() const;
+	DataValue* copy(const Value*, bool) const;
 
 	/**
 	 * Type methods
@@ -120,7 +121,7 @@ public:
 	static CLEVER_METHOD(isValid);
 	static CLEVER_METHOD(get);
 	static CLEVER_METHOD(set);
-	static CLEVER_METHOD(copy);
+	static CLEVER_METHOD(do_copy);
 private:
 	DISALLOW_COPY_AND_ASSIGN(ArrayIterator);
 };
