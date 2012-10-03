@@ -348,9 +348,11 @@ void PackageManager::loadModule(Scope* scope, const CString* const package,
 }
 
 /**
- * Copy user-defined function in a scope to another supplied alias
+ * Copy user-defined function in a scope to another scope using the 
+ * supplied alias to prefix its symbol names
  */
-void PackageManager::copyScopeToAlias(Scope* scope, const std::string& alias) {
+void PackageManager::copyScopeToAlias(Scope* scope, Scope* dscope, 
+	const std::string& alias) {
 	SymbolMap& symbols = scope->getSymbols();
 	SymbolMap::const_iterator it2(symbols.begin()), end2(symbols.end());
 	std::vector<ValuePair> callables;
@@ -381,8 +383,11 @@ void PackageManager::copyScopeToAlias(Scope* scope, const std::string& alias) {
 	std::vector<ValuePair>::const_iterator it_call(callables.begin()),
 		it_end(callables.end());
 
+	/*
+	 * Pushing the new symbols (functions) to the scope destination
+	 */
 	while (it_call != it_end) {
-		scope->pushValue(it_call->first, it_call->second);
+		dscope->pushValue(it_call->first, it_call->second);
 		it_call->second->addRef();
 		++it_call;
 	}
@@ -390,8 +395,11 @@ void PackageManager::copyScopeToAlias(Scope* scope, const std::string& alias) {
 	std::vector<TypePair>::const_iterator it_alias(type_alias.begin()),
 		it_end2(type_alias.end());
 
+	/*
+	 * Pushing the new symbols (types) to the scope destination
+	 */
 	while (it_alias != it_end2) {
-		scope->pushType(it_alias->first, it_alias->second);
+		dscope->pushType(it_alias->first, it_alias->second);
 		const_cast<Type*>(it_alias->second)->addRef();
 		++it_alias;
 	}

@@ -172,8 +172,8 @@ void Compiler::buildIR() {
  * Direct the driver to parser a new file and return its AST tree
  * to be appended to the main tree
  */
-ast::UnscopedBlockNode* Compiler::importFile(Driver& driver, const CString* file,
-	ast::Identifier* alias) {
+ast::UnscopedBlockNode* Compiler::importFile(Driver& driver,
+	const CString* file, ast::Identifier* alias) {
 
 	if (driver.getFile() == file) {
 		Compiler::warningf("Recursive import of file `%S' detected!",
@@ -183,7 +183,8 @@ ast::UnscopedBlockNode* Compiler::importFile(Driver& driver, const CString* file
 
 	driver.parseFile(file->str());
 
-	return new ast::UnscopedBlockNode(alias, static_cast<ast::BlockNode*>(getAST()));
+	return new ast::UnscopedBlockNode(alias,
+		static_cast<ast::BlockNode*>(getAST()));
 }
 
 void Compiler::dumpOpcodes() {

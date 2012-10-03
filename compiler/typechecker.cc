@@ -812,6 +812,14 @@ AST_VISITOR(TypeChecker, UnscopedBlockNode) {
 	const CString* alias = expr->getAlias();
 	const NodeList& nodes = expr->getBlock()->getNodes();
 	NodeList::const_iterator it = nodes.begin(), end = nodes.end();
+	
+	if (alias) {
+		/* 
+		 * When an alias is supplied, we have to create a new scope and
+		 * so copy everything with aliased name to the parent scope
+		 */
+		m_scope = m_scope->newChild();
+	}
 
 	// Iterates over statements inside the block
 	while (EXPECTED(it != end)) {
@@ -826,7 +834,9 @@ AST_VISITOR(TypeChecker, UnscopedBlockNode) {
 
 	if (alias) {
 		std::string prefix = alias->str() + "::";
-		g_pkgmanager.copyScopeToAlias(m_scope, prefix);
+		g_pkgmanager.copyScopeToAlias(m_scope, m_scope->getParent(), prefix);
+		
+		m_scope = m_scope->getParent();
 	}
 }
 
