@@ -17,7 +17,7 @@ Void qsort_impl(ArrayIterator<Int> b, ArrayIterator<Int> e, Function<Bool, Int, 
 	swap(pivot, e);
 	
 	Auto s = b - 1;
-	Auto i = (b - 1) + 1; // @TODO: Need to implement (copy) for ArrayIterator<>
+	Auto i = (copy)b; // @TODO: Need to implement (copy) for ArrayIterator<>
 	
 	Auto piv = e.get();
 	
