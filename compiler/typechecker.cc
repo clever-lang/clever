@@ -814,7 +814,7 @@ AST_VISITOR(TypeChecker, UnscopedBlockNode) {
 	NodeList::const_iterator it = nodes.begin(), end = nodes.end();
 	
 	if (alias) {
-		/* 
+		/**
 		 * When an alias is supplied, we have to create a new scope and
 		 * so copy everything with aliased name to the parent scope
 		 */

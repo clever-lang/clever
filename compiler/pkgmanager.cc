@@ -383,7 +383,7 @@ void PackageManager::copyScopeToAlias(Scope* scope, Scope* dscope,
 	std::vector<ValuePair>::const_iterator it_call(callables.begin()),
 		it_end(callables.end());
 
-	/*
+	/**
 	 * Pushing the new symbols (functions) to the scope destination
 	 */
 	while (it_call != it_end) {
@@ -395,7 +395,7 @@ void PackageManager::copyScopeToAlias(Scope* scope, Scope* dscope,
 	std::vector<TypePair>::const_iterator it_alias(type_alias.begin()),
 		it_end2(type_alias.end());
 
-	/*
+	/**
 	 * Pushing the new symbols (types) to the scope destination
 	 */
 	while (it_alias != it_end2) {
