@@ -1,0 +1,65 @@
+Testing ArrayIterator<> and Fuction classes with Quicksort algorithm
+==CODE==
+import std.*;
+
+Auto a = [3, 10, 2, 12, 5, 1, 9, 12, 58, 11];
+
+Void swap(ArrayIterator<Int> a, ArrayIterator<Int> b) {
+	Int tmp = (copy)a.get();
+	a.set(b.get());
+	b.set(tmp);
+}
+
+Bool default_cmp(Int a, Int b) {
+	return a < b;
+}
+
+Void qsort_impl(ArrayIterator<Int> b, ArrayIterator<Int> e, Function<Bool, Int, Int> cmp) {
+	if (b >= e) {
+		return;
+	}
+	
+	Auto pivot = b + ((e - b) / 2);
+	swap(pivot, e);
+	
+	Auto s = b - 1;
+	Auto i = (b - 1) + 1; // @TODO: Need to implement (copy) for ArrayIterator<>
+	
+	Auto piv = e.get();
+	
+	while (i < e) {
+		if (cmp.call(i.get(), piv)) {
+			++s;
+			swap(i, s);
+		}
+		++i;
+	}
+	++s;
+	
+	swap(e, s);
+	
+	qsort_impl(b, s - 1, cmp);
+	qsort_impl(s + 1, e, cmp);
+}
+
+// @TODO: Need to implement function overloading
+Void qsort(ArrayIterator<Int> begin, ArrayIterator<Int> end) {
+	qsort_impl(begin, end - 1, default_cmp);
+}
+
+Void qsort_custom(ArrayIterator<Int> begin, ArrayIterator<Int> end, Function<Bool, Int, Int> cmp) {
+	qsort_impl(begin, end - 1, cmp);
+}
+
+println("Array: " + a.toString());
+
+qsort(a.begin(), a.end());
+println("Sorted: " + a.toString());
+
+qsort_custom(a.begin(), a.end(), Bool(Int a, Int b) { return a > b; });
+println("Sorted Decreasing: " + a.toString());
+
+==RESULT==
+Array: \[3, 10, 2, 12, 5, 1, 9, 12, 58, 11\]
+Sorted: \[1, 2, 3, 5, 9, 10, 11, 12, 12, 58\]
+Sorted Decreasing: \[58, 12, 12, 11, 10, 9, 5, 3, 2, 1\]
