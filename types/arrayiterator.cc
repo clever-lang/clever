@@ -23,6 +23,7 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#include "compiler/compiler.h"
 #include "types/type.h"
 #include "types/pair.h"
 #include "types/arrayiterator.h"
@@ -56,6 +57,7 @@ DataValue* ArrayIterator::copy(const Value* orig, bool deep) const {
 	ArrayIteratorValue* val = CLEVER_GET_VALUE(ArrayIteratorValue*, orig);
 	
 	miv->setIterator(val->getIterator());
+	miv->setArray(val->getArray());
 	
 	return static_cast<DataValue*>(miv);
 }
@@ -94,9 +96,15 @@ CLEVER_METHOD(ArrayIterator::pre_inc) {
  */
 CLEVER_METHOD(ArrayIterator::get) {
 	ArrayIteratorValue* miv = CLEVER_GET_VALUE(ArrayIteratorValue*, value);
-	Value* val = miv->get();
-
-	retval->copy(val);
+	
+	if (miv->valid()) {
+		Value* val = miv->get();
+		retval->copy(val);
+		return;
+	}
+	
+	Compiler::warningf("Trying to access an invalid iterator (%S).", 
+		CLEVER_THIS()->getName());
 }
 
 /**
@@ -170,7 +178,7 @@ CLEVER_METHOD(ArrayIterator::plus) {
 	
 	ArrayIteratorValue* ret = new ArrayIteratorValue();
 	ret->setIterator(it);
-	ret->setEnd(a->getEnd());
+	ret->setArray(a->getArray());
 	
 	CLEVER_RETURN_DATA_VALUE(ret);
 }
@@ -186,7 +194,7 @@ CLEVER_METHOD(ArrayIterator::plus) {
 	
  	ArrayIteratorValue* ret = new ArrayIteratorValue();
  	ret->setIterator(it);
- 	ret->setEnd(a->getEnd());
+	ret->setArray(a->getArray());
 	
  	CLEVER_RETURN_DATA_VALUE(ret);
  }
@@ -216,7 +224,13 @@ CLEVER_METHOD(ArrayIterator::isValid) {
  CLEVER_METHOD(ArrayIterator::set) {
  	ArrayIteratorValue* a = CLEVER_GET_VALUE(ArrayIteratorValue*,  value);
 	
-	a->setValue(CLEVER_ARG(0));
+	if (a->valid()) {
+		a->setValue(CLEVER_ARG(0));
+		return;
+	}
+	
+	Compiler::warningf("Trying to access an invalid iterator (%S).", 
+		CLEVER_THIS()->getName());
  }
 
 /**

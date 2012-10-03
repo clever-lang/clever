@@ -50,6 +50,10 @@ CLEVER_METHOD(Array::do_assign) {
  */
 CLEVER_METHOD(Array::push) {
 	ValueVector* vec = CLEVER_GET_ARRAY(CLEVER_THIS());
+	ArrayValue* av = CLEVER_GET_VALUE(ArrayValue*, CLEVER_THIS());
+	
+	// Push changes the Array's version
+	av->changeVersion();
 
 	Value* val = new Value();
 	val->copy(CLEVER_ARG(0));
@@ -62,6 +66,10 @@ CLEVER_METHOD(Array::push) {
  */
 CLEVER_METHOD(Array::pop) {
 	ValueVector* vec = CLEVER_GET_ARRAY(CLEVER_THIS());
+	ArrayValue* av = CLEVER_GET_VALUE(ArrayValue*, CLEVER_THIS());
+	
+	// Pop changes the Array's version
+	av->changeVersion();
 
 	if (vec->size() > 0) {
 		retval->copy(vec->back());
@@ -104,6 +112,10 @@ CLEVER_METHOD(Array::isEmpty) {
  */
 CLEVER_METHOD(Array::clear) {
 	ValueVector* vec = CLEVER_GET_ARRAY(CLEVER_THIS());
+	ArrayValue* av = CLEVER_GET_VALUE(ArrayValue*, CLEVER_THIS());
+	
+	// Clear changes the Array's version
+	av->changeVersion();
 
 	size_t sz = vec->size();
 	for (size_t i = 0; i < sz; ++i) {
@@ -331,12 +343,8 @@ CLEVER_METHOD(Array::do_deepcopy) {
  * Returns an iterator to the begin of this Array
  */
 CLEVER_METHOD(Array::begin) {
-	ArrayIteratorValue* aiv = new ArrayIteratorValue(
-		CLEVER_GET_VALUE(ArrayValue*, CLEVER_THIS())
-	);
-	
-	aiv->getIterator() = CLEVER_GET_VALUE(ArrayValue*, CLEVER_THIS())
-			->getArray()->begin();
+	ArrayValue* av = CLEVER_GET_VALUE(ArrayValue*, CLEVER_THIS());
+	ArrayIteratorValue* aiv = new ArrayIteratorValue(av);
 	
 	CLEVER_RETURN_DATA_VALUE(aiv);
 }
@@ -346,12 +354,11 @@ CLEVER_METHOD(Array::begin) {
  * Returns an iterator to the end of this Array
  */
 CLEVER_METHOD(Array::end) {
-	ArrayIteratorValue* aiv = new ArrayIteratorValue(
-		CLEVER_GET_VALUE(ArrayValue*, CLEVER_THIS())
-	);
+	ArrayIteratorValue* aiv = new ArrayIteratorValue();
+	ArrayValue* av = CLEVER_GET_VALUE(ArrayValue*, CLEVER_THIS());
 	
-	aiv->getIterator() = CLEVER_GET_VALUE(ArrayValue*, CLEVER_THIS())
-			->getArray()->end();
+	aiv->setArray(av);
+	aiv->getIterator() = av->getArray()->end();
 	
 	CLEVER_RETURN_DATA_VALUE(aiv);
 }

@@ -33,13 +33,14 @@ namespace clever {
 
 struct ArrayIteratorValue : public DataValue {
 	ArrayIteratorValue(ArrayValue* vec) : m_iterator(vec->m_array->begin()),
-		m_end(vec->m_array->end()) {
+		m_array(vec), m_array_version(vec->getVersion()) {
 	}
 	
 	ArrayIteratorValue() {}
 	
 	bool valid() const {
-		return m_iterator != m_end;
+		return (m_array_version == m_array->getVersion()
+			&& m_iterator != m_array->m_array->end());
 	}
 	
 	void operator--() {
@@ -61,10 +62,6 @@ struct ArrayIteratorValue : public DataValue {
 	ValueVector::iterator& getIterator() {
 		return m_iterator;
 	}
-	
-	ValueVector::iterator& getEnd() {
-		return m_end;
-	}
 
 	Value* get() {
 		return *m_iterator;
@@ -78,14 +75,25 @@ struct ArrayIteratorValue : public DataValue {
 		m_iterator = it;
 	}
 	
-	void setEnd(ValueVector::iterator& it) {
-		m_end = it;
+	void setVersion(uint32_t version) {
+		m_array_version = version;
+	}
+	
+	void setArray(ArrayValue* array) {
+		m_array = array;
+		m_array_version = array->getVersion();
+	}
+	
+	ArrayValue* getArray() const {
+		return m_array;
 	}
 
 	~ArrayIteratorValue() {
 	}
 private:
-	ValueVector::iterator m_iterator, m_end;
+	ValueVector::iterator m_iterator;
+	ArrayValue* m_array;
+	uint32_t m_array_version;
 	DISALLOW_COPY_AND_ASSIGN(ArrayIteratorValue);
 };
 
