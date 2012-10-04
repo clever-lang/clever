@@ -25,6 +25,7 @@
 
 #include <cstdlib>
 #include <vector>
+#include <unistd.h> 
 #include "compiler/clever.h"
 #include "compiler/compiler.h"
 #include "compiler/cached_ptrs.h"
@@ -180,6 +181,15 @@ ast::UnscopedBlockNode* Compiler::importFile(Driver& driver,
 			file);
 		return new ast::UnscopedBlockNode;
 	}
+	
+	std::string cur_file = driver.getFile()->str();
+	
+	// Get the current dirname
+	cur_file.erase(
+		std::find(cur_file.rbegin(), cur_file.rend(), '/').base(),
+		cur_file.end());
+	
+	chdir(cur_file.c_str());	
 
 	driver.parseFile(file->str());
 

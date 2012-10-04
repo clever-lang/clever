@@ -4,11 +4,11 @@ import std.io.println;
 
 println("bar?");
 
-import "tests/import_001_inc1.clv";
+import "import_001_inc1.clv";
 
 println("cool");
 
-import "tests/import_001_inc1.clv";
+import "import_001_inc1.clv";
 ==RESULT==
 bar\?
 foo!
