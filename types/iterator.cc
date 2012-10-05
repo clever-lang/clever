@@ -24,6 +24,7 @@
  */
 
 #include "types/type.h"
+#include "compiler/compiler.h"
 #include "types/iterator.h"
 
 namespace clever {
@@ -56,6 +57,52 @@ void BidirectionalIterator::init() {
 }
 
 DataValue* BidirectionalIterator::allocateValue() const {
+	return NULL;
+}
+
+void RandomAccessIterator::init() {
+	addMethod((new Method(CLEVER_OPERATOR_PLUS, NULL, this))
+		->addArg("it", this)
+		->addArg("offset", this)
+	);
+	
+	addMethod((new Method(CLEVER_OPERATOR_MINUS, NULL, this))
+		->addArg("it", this)
+		->addArg("offset", this)
+	);
+	
+	addMethod((new Method(CLEVER_OPERATOR_PLUS, NULL, this))
+		->addArg("it", this)
+		->addArg("offset", CLEVER_INT)
+	);
+	
+	addMethod((new Method(CLEVER_OPERATOR_MINUS, NULL, this))
+		->addArg("it", this)
+		->addArg("offset", CLEVER_INT)
+	);
+	
+	addMethod((new Method(CLEVER_OPERATOR_LESS, NULL, this))
+		->addArg("arg1", this)
+		->addArg("arg2", this)
+	);
+	
+	addMethod((new Method(CLEVER_OPERATOR_GREATER, NULL, this))
+		->addArg("arg1", this)
+		->addArg("arg2", this)
+	);
+	
+	addMethod((new Method(CLEVER_OPERATOR_LE, NULL, this))
+		->addArg("arg1", this)
+		->addArg("arg2", this)
+	);
+	
+	addMethod((new Method(CLEVER_OPERATOR_GE, NULL, this))
+		->addArg("arg1", this)
+		->addArg("arg2", this)
+	);
+}
+
+DataValue* RandomAccessIterator::allocateValue() const {
 	return NULL;
 }
 

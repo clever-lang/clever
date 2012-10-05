@@ -1,0 +1,35 @@
+Testing validity of ArrayIterators
+==CODE==
+import std.io.println;
+
+Auto a = [1, 2, 3];
+Auto it = a.begin();
+
+if (it.isValid()) {
+	println("Ok!");
+}
+else {
+	println("Bug!");
+}
+
+a.push(4);
+
+if (it.isValid()) {
+	println("Bug!");
+}
+else {
+	println("Ok!");
+	it = a.begin();
+}
+
+while (it != a.end()) {
+	println(it.get());
+	++it;
+}
+==RESULT==
+Ok!
+Ok!
+1
+2
+3
+4

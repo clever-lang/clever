@@ -2,7 +2,7 @@ Testing import with aliasing
 ==CODE==
 import std.io.println;
 
-import 'tests/import_002_inc1.clv' as foo;
+import 'import_002_inc1.clv' as foo;
 
 println(foo::bar());
 println(foo::baz());

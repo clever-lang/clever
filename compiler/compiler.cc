@@ -25,6 +25,7 @@
 
 #include <cstdlib>
 #include <vector>
+#include <unistd.h> 
 #include "compiler/clever.h"
 #include "compiler/compiler.h"
 #include "compiler/cached_ptrs.h"
@@ -172,18 +173,28 @@ void Compiler::buildIR() {
  * Direct the driver to parser a new file and return its AST tree
  * to be appended to the main tree
  */
-ast::UnscopedBlockNode* Compiler::importFile(Driver& driver, const CString* file,
-	ast::Identifier* alias) {
+ast::UnscopedBlockNode* Compiler::importFile(Driver& driver,
+	const CString* file, ast::Identifier* alias) {
 
 	if (driver.getFile() == file) {
 		Compiler::warningf("Recursive import of file `%S' detected!",
 			file);
 		return new ast::UnscopedBlockNode;
 	}
+	
+	std::string cur_file = driver.getFile()->str();
+	
+	// Get the current dirname
+	cur_file.erase(
+		std::find(cur_file.rbegin(), cur_file.rend(), '/').base(),
+		cur_file.end());
+	
+	chdir(cur_file.c_str());	
 
 	driver.parseFile(file->str());
 
-	return new ast::UnscopedBlockNode(alias, static_cast<ast::BlockNode*>(getAST()));
+	return new ast::UnscopedBlockNode(alias,
+		static_cast<ast::BlockNode*>(getAST()));
 }
 
 void Compiler::dumpOpcodes() {

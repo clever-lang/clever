@@ -33,12 +33,25 @@ namespace clever {
 struct ArrayValue : public DataValue
 {
 	ValueVector* m_array;
+	uint32_t m_version;
 
-	ArrayValue() : m_array(new ValueVector) {}
-	ArrayValue(ValueVector* array) : m_array(array) {}
+	ArrayValue() : m_array(new ValueVector), m_version(0) {}
+	ArrayValue(ValueVector* array) : m_array(array), m_version(0) {}
+	
+	ValueVector* getArray() const {
+		return m_array;
+	}
 
 	bool valid() const {
 		return true;
+	}
+	
+	uint32_t getVersion() const {
+		return m_version;
+	}
+	
+	void changeVersion() {
+		m_version++;
 	}
 
 	~ArrayValue() {

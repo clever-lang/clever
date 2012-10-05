@@ -163,6 +163,9 @@ add_executable(clever
 	types/array.cc
 	types/array.h
 	types/arrayvalue.h
+	types/arrayiterator.cc
+	types/arrayiterator.h
+	types/arrayiteratorvalue.h
 	types/bool.cc
 	types/bool.h
 	types/byte.cc
@@ -250,7 +253,7 @@ set(CPACK_GENERATOR "STGZ;TBZ2;TGZ;ZIP;DEB")
 set(CPACK_PACKAGE_VERSION_MAJOR "0")
 set(CPACK_PACKAGE_VERSION_MINOR "1")
 set(CPACK_PACKAGE_VERSION_PATCH "0")
-set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Higor Eurípedes heurípedes@gmail.com")
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Higor Eurípedes heuripedes@gmail.com")
 set(CPACK_PACKAGE_CONTACT "Higor Eurípedes heuripedes@gmail.com")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "The Clever programming language")
 include(CPack)

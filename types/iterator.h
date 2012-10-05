@@ -54,6 +54,18 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(BidirectionalIterator);
 };
 
+class RandomAccessIterator : public InterfaceType {
+public:
+	RandomAccessIterator()
+		: InterfaceType(CSTRING("RandomAccessIterator"), 
+		CLEVER_TYPE("BidirectionalIterator")) {}
+
+	void init();
+	DataValue* allocateValue() const;
+private:
+	DISALLOW_COPY_AND_ASSIGN(RandomAccessIterator);
+};
+
 } // clever
 
 #endif // CLEVER_ITERATOR_H

@@ -75,46 +75,52 @@ typedef std::vector<FunctionArg> FunctionArgs;
 class Function {
 public:
 	enum FunctionKind { INTERNAL, USER, EXTERNAL };
+	enum FunctionState { PROTOTYPE, IMPLEMENTED };
 
 	explicit Function(std::string name)
 		: m_name(name), m_kind(INTERNAL), m_num_args(0), m_min_args(0),
-			m_rtype(NULL), m_scope(NULL), m_rconst(false) {}
+			m_rtype(NULL), m_scope(NULL), m_rconst(false), m_state(IMPLEMENTED) {}
 
 	Function(std::string libname, std::string name, const Type* rtype,
 		FunctionPtr ptr)
 		: m_libname(libname), m_lfname(name), m_name(name),
 			m_kind(EXTERNAL), m_num_args(0), m_min_args(0),
-			m_rtype(rtype), m_scope(NULL), m_rconst(false) { m_info.ptr = ptr; }
+			m_rtype(rtype), m_scope(NULL), m_rconst(false), m_state(IMPLEMENTED)
+			{ m_info.ptr = ptr; }
 
 	Function(std::string libname, std::string lfname, std::string name,
 		const Type* rtype, FunctionPtr ptr)
 		: m_libname(libname), m_lfname(lfname), m_name(name),
 			m_kind(EXTERNAL), m_num_args(0), m_min_args(0),
-			m_rtype(rtype), m_scope(NULL), m_rconst(false) { m_info.ptr = ptr; }
+			m_rtype(rtype), m_scope(NULL), m_rconst(false), m_state(IMPLEMENTED)
+			{ m_info.ptr = ptr; }
 
 	Function(std::string name, FunctionPtr ptr)
 		: m_name(name), m_kind(INTERNAL), m_num_args(0), m_min_args(0),
-			m_rtype(NULL), m_scope(NULL), m_rconst(false) { m_info.ptr = ptr; }
+			m_rtype(NULL), m_scope(NULL), m_rconst(false), m_state(IMPLEMENTED)
+			{ m_info.ptr = ptr; }
 
 	Function(std::string name, FunctionPtr ptr, const Type* rtype)
 		: m_name(name), m_kind(INTERNAL), m_num_args(0), m_min_args(0),
-			m_rtype(rtype), m_scope(NULL), m_rconst(false) { m_info.ptr = ptr; }
+			m_rtype(rtype), m_scope(NULL), m_rconst(false), m_state(IMPLEMENTED)
+			{ m_info.ptr = ptr; }
 
 	Function(std::string name, FunctionPtr ptr, int numargs,
 		const Type* rtype)
 		: m_name(name), m_kind(INTERNAL), m_num_args(numargs),
-			m_min_args(0), m_rtype(rtype), m_scope(NULL), m_rconst(false) {
-			m_info.ptr = ptr; }
+			m_min_args(0), m_rtype(rtype), m_scope(NULL), m_rconst(false),
+			m_state(IMPLEMENTED) 
+			{ m_info.ptr = ptr; }
 
 	Function(std::string& name, size_t offset)
 		: m_name(name), m_kind(USER), m_num_args(0), m_min_args(0),
-			m_rtype(NULL), m_scope(NULL), m_rconst(false) {
-			m_info.offset = offset; }
+			m_rtype(NULL), m_scope(NULL), m_rconst(false), m_state(IMPLEMENTED)
+			{ m_info.offset = offset; }
 
 	Function(std::string& name, size_t offset, int numargs)
 		: m_name(name), m_kind(USER), m_num_args(numargs), m_min_args(0),
-			m_rtype(NULL), m_scope(NULL), m_rconst(false) {
-			m_info.offset = offset; }
+			m_rtype(NULL), m_scope(NULL), m_rconst(false), m_state(IMPLEMENTED)
+			{ m_info.offset = offset; }
 
 	virtual ~Function() {}
 
@@ -146,6 +152,10 @@ public:
 	bool isUserDefined() const { return m_kind == USER; }
 	bool isInternal() const { return m_kind == INTERNAL; }
 	bool isExternal() const { return m_kind == EXTERNAL; }
+	
+	bool isImplemented() const { return m_state == IMPLEMENTED; }
+	void setImplemented() { m_state = IMPLEMENTED; }
+	void setPrototype() { m_state = PROTOTYPE; }
 
 	void setUserDefined() { m_kind = USER; }
 	void setExternal() { m_kind = EXTERNAL; }
@@ -188,6 +198,7 @@ private:
 	FunctionArgs m_args;
 	Scope* m_scope;
 	bool m_rconst;
+	FunctionState m_state;
 };
 
 } // clever

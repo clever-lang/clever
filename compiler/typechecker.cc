@@ -812,6 +812,14 @@ AST_VISITOR(TypeChecker, UnscopedBlockNode) {
 	const CString* alias = expr->getAlias();
 	const NodeList& nodes = expr->getBlock()->getNodes();
 	NodeList::const_iterator it = nodes.begin(), end = nodes.end();
+	
+	if (alias) {
+		/**
+		 * When an alias is supplied, we have to create a new scope and
+		 * so copy everything with aliased name to the parent scope
+		 */
+		m_scope = m_scope->newChild();
+	}
 
 	// Iterates over statements inside the block
 	while (EXPECTED(it != end)) {
@@ -826,7 +834,9 @@ AST_VISITOR(TypeChecker, UnscopedBlockNode) {
 
 	if (alias) {
 		std::string prefix = alias->str() + "::";
-		g_pkgmanager.copyScopeToAlias(m_scope, prefix);
+		g_pkgmanager.copyScopeToAlias(m_scope, m_scope->getParent(), prefix);
+		
+		m_scope = m_scope->getParent();
 	}
 }
 
@@ -1170,6 +1180,12 @@ AST_VISITOR(TypeChecker, FuncPrototype) {
 	// Mark the function as user defined function
 	user_func->setUserDefined();
 
+	/*
+	 * Mark the function as prototype only, when the implementation is
+	 * reached we change its state
+	 */	
+	user_func->setPrototype();
+
 	func->addRef();
 	m_scope->pushValue(func->getName(), func);
 
@@ -1224,6 +1240,12 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 
 		func = static_cast<CallableValue*>(val);
 		user_func = const_cast<Function*>(func->getFunction());
+		
+		if (user_func->isImplemented()) {
+			Compiler::errorf(expr->getLocation(),
+				"Attempt to redeclare function '%S'!", name);
+		}
+		
 		has_prototype = true;
 	} else {
 		func = new CallableValue(name);
@@ -1270,6 +1292,7 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 	}
 
 	expr->setValue(func);
+	user_func->setImplemented();
 
 	if (args) {
 		ArgumentDecls& arg_nodes = args->getArgs();
