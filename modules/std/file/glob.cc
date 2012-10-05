@@ -23,14 +23,17 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef CLEVER_MSVC
-
 #include <cstdlib>
 #include "compiler/compiler.h"
 #include "compiler/cstring.h"
 #include "modules/std/file/glob.h"
 #include "modules/std/file/globiteratorvalue.h"
 #include "types/nativetypes.h"
+#ifndef _WIN32
+#include <glob.h>
+#else
+#include <windows.h>
+#endif
 
 namespace clever { namespace packages { namespace std { namespace file {
 
@@ -39,6 +42,8 @@ namespace clever { namespace packages { namespace std { namespace file {
  */
 CLEVER_METHOD(Glob::constructor) {
 	GlobValue* gv = new GlobValue;
+
+#ifndef _WIN32
 	glob_t globbuf;
 
 	globbuf.gl_offs = 0;
@@ -52,6 +57,19 @@ CLEVER_METHOD(Glob::constructor) {
 	if (globbuf.gl_pathc) {
 		globfree(&globbuf);
 	}
+#else
+	WIN32_FIND_DATA ffd;
+	HANDLE hf;
+
+	hf = FindFirstFile(CLEVER_ARG_STR(0).c_str(), &ffd);
+	if (hf) {
+		do {
+			gv->paths.push_back(::strdup(ffd.cFileName));
+		} while (FindNextFile(hf, &ffd) != 0);
+
+		FindClose(hf);
+	}
+#endif
 
 	CLEVER_RETURN_DATA_VALUE(gv);
 }
@@ -118,5 +136,3 @@ void Glob::destructor(Value* value) const {
 }
 
 }}}} // clever::packages::std::file
-
-#endif /* CLEVER_MSVC */

@@ -27,7 +27,6 @@
 #define CLEVER_GLOBVALUE_H
 
 #include <vector>
-#include <glob.h>
 #include "compiler/datavalue.h"
 
 namespace clever { namespace packages { namespace std { namespace file {
