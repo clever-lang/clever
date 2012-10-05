@@ -25,7 +25,11 @@
 
 #include <cstdlib>
 #include <vector>
-#include <unistd.h> 
+#ifndef CLEVER_MSVC
+# include <unistd.h>
+#else
+# include <direct.h>
+#endif
 #include "compiler/clever.h"
 #include "compiler/compiler.h"
 #include "compiler/cached_ptrs.h"
