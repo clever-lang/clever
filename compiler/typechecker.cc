@@ -1230,7 +1230,7 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 	CallableValue* func = NULL;
 	Function* user_func = NULL;
 	bool has_prototype = false;
-	Value* val = m_scope->getValue(name);
+	Value* val = m_scope->getLocalValue(name);
 	
 	if (val) {		
 		if (!val->isCallable()) {
