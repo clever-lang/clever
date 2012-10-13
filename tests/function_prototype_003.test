@@ -10,4 +10,4 @@ Double f(Int x) {
 
 f(2);
 ==RESULT==
-Compile error: Function declaration `f' uses a different return type than the prototype on line 1
+Compile error: Function declaration `f' uses a different return type than the prototype on \S+ line 5

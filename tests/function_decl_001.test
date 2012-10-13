@@ -5,4 +5,4 @@ Int f() {
 }
 
 ==RESULT==
-Compile error: Function `f' must return a value of type `Int', and it may not return on line \d+
+Compile error: Function `f' must return a value of type `Int', and it may not return on \S+ line \d+

@@ -333,12 +333,12 @@ func_prototype:
 ;
 
 func_declaration:
-		TYPE IDENT '(' args_declaration ')' block_stmt                { $$ = new ast::FuncDeclaration($2, $1, $4, $6);       }
-	|	CONST TYPE IDENT '(' args_declaration ')' block_stmt          { $$ = new ast::FuncDeclaration($3, $2, $5, $7, true); }
-	|	annotation TYPE IDENT '(' args_declaration ')' block_stmt     { $$ = new ast::FuncDeclaration($3, $2, $5, $7);       }
-	|	template IDENT '(' args_declaration ')' block_stmt            { $$ = new ast::FuncDeclaration($2, $1, $4, $6);       }
-	|	CONST template IDENT '(' args_declaration ')' block_stmt      { $$ = new ast::FuncDeclaration($3, $2, $5, $7, true); }
-	|	annotation template IDENT '(' args_declaration ')' block_stmt { $$ = new ast::FuncDeclaration($3, $2, $5, $7);       }
+		TYPE IDENT '(' args_declaration ')' block_stmt                { $$ = new ast::FuncDeclaration($2, $1, $4, $6);       $$->setLocation(yyloc); }
+	|	CONST TYPE IDENT '(' args_declaration ')' block_stmt          { $$ = new ast::FuncDeclaration($3, $2, $5, $7, true); $$->setLocation(yyloc); }
+	|	annotation TYPE IDENT '(' args_declaration ')' block_stmt     { $$ = new ast::FuncDeclaration($3, $2, $5, $7);       $$->setLocation(yyloc); }
+	|	template IDENT '(' args_declaration ')' block_stmt            { $$ = new ast::FuncDeclaration($2, $1, $4, $6);       $$->setLocation(yyloc); }
+	|	CONST template IDENT '(' args_declaration ')' block_stmt      { $$ = new ast::FuncDeclaration($3, $2, $5, $7, true); $$->setLocation(yyloc); }
+	|	annotation template IDENT '(' args_declaration ')' block_stmt { $$ = new ast::FuncDeclaration($3, $2, $5, $7);       $$->setLocation(yyloc); }
 ;
 
 lambda_function:
