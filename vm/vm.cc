@@ -410,10 +410,10 @@ CLEVER_VM_HANDLER(VM::leave_handler) {
 
 	if (op) {
 		s_var->call.pop();
-	}
 
-	if (!s_var->call.empty()) {
-		restore_args();
+		if (!s_var->call.empty()) {
+			restore_args();
+		}
 	}
 
 	s_return_value = NULL;
