@@ -227,6 +227,7 @@ namespace clever {
 %type <arg_list> arg_list
 %type <arg_list> arg_list_opt
 %type <func_call> func_call
+%type <ast_node> variable
 %type <method_call> chaining_method_call
 %type <method_call> method_call
 %type <variable_decl> variable_decl_or_empty
@@ -544,6 +545,11 @@ assign_stmt:
 	|	IDENT ">>=" expr %prec '=' { $$ = new ast::BinaryExpr(ast::RSHIFT, $1, $3, true);   $$->setLocation(yylloc); }
 ;
 
+variable:
+		IDENT                          { $$ = $<ast_node>1; }
+	|	package_module_name "::" IDENT { $1->concat("::", $3); $$ = $1; delete $3; }
+;
+
 expr:
 		expr '-' expr         { $$ = new ast::BinaryExpr(ast::MINUS, $1, $3);         $$->setLocation(yylloc); }
 	|	expr '+' expr         { $$ = new ast::BinaryExpr(ast::PLUS, $1, $3);          $$->setLocation(yylloc); }
@@ -577,7 +583,7 @@ expr:
 	|	func_call             { $$ = $<ast_node>1; }
 	|	method_call           { $$ = $<ast_node>1; }
 	|	subscript             { $$ = $<ast_node>1; }
-	|	IDENT                 { $$ = $<ast_node>1; }
+	|	variable              { $$ = $<ast_node>1; }
 	|	literal               { $$ = $<ast_node>1; }
 	|	constant              { $$ = $<ast_node>1; }
 	|	assign_stmt           { $$ = $<ast_node>1; }

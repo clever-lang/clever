@@ -372,6 +372,9 @@ void PackageManager::copyScopeToAlias(Scope* scope, Scope* dscope,
 						CSTRING(alias + val->getName()->str()),
 						fvalue));
 				}
+			} else {
+				dscope->pushValue(CSTRING(alias + val->getName()->str()), val);
+				val->addRef();
 			}
 		} else if (sym->isType()) {
 			type_alias.push_back(TypePair(
