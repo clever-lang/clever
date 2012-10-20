@@ -1,4 +1,4 @@
-Testing return of function
+[FATAL] Testing return of function
 ==CODE==
 import std.io.*;
 

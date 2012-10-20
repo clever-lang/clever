@@ -1,4 +1,4 @@
-Testing parser error for function with wrong return
+[FATAL] Testing parser error for function with wrong return
 ==CODE==
 Int f() { return; }
 ==RESULT==
