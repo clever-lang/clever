@@ -293,9 +293,13 @@ static CLEVER_FUNCTION(truncate) {
  * Load module data
  */
 CLEVER_MODULE_INIT(Math) {
-	BEGIN_DECLARE_FUNCTION();
+	BEGIN_DECLARE_CONSTANT();
 
 	addConstant(CSTRING("MATH_PI"), new Value(M_PI));
+	
+	END_DECLARE();
+	
+	BEGIN_DECLARE_FUNCTION();
 
 	addFunction(new Function("abs",	&CLEVER_NS_FNAME(math, abs_double), CLEVER_DOUBLE))
 		->addArg("x", CLEVER_DOUBLE);

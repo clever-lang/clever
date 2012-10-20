@@ -41,6 +41,8 @@ Module::~Module() {
 		delete it_c->second;
 		++it_c;
 	}
+	
+	// Module constants are destroyed on scope destruction
 }
 
 } // clever
