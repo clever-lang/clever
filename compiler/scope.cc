@@ -63,10 +63,28 @@ void Scope::clear() {
 	m_children.clear();
 	m_orphanedChildren.clear();
 
+	/**
+	 * On global scope we have to destruct the Type ptr first, then
+	 * the other symbols
+	 */
+	if (this == &g_scope) {
+		while (sym != last_sym) {
+			if (!sym->second->isType()) {
+				delete sym->second;
+				m_symbols.erase(sym++);
+			} else {
+				++sym;
+			}			
+		}
+		
+		sym = m_symbols.begin();
+		last_sym = m_symbols.end();
+	}
+		
 	while (sym != last_sym) {
 		delete sym->second;
 		++sym;
-	}
+	}		
 
 	m_symbols.clear();
 
