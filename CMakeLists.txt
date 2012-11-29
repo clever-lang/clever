@@ -32,7 +32,7 @@ set(CLEVER_INCLUDE_DIRS)
 
 # 3rd-party libraries
 # ---------------------------------------------------------------------------
-include(CMakeLists.depends)
+include(dependencies.cmake)
 
 # Environment checks
 # ---------------------------------------------------------------------------
@@ -91,7 +91,7 @@ ADD_RE2C_BISON_DEPENDENCY(CleverScanner CleverParser)
 
 # Module options
 # ---------------------------------------------------------------------------
-include(CMakeLists.modopt)
+include(modules.cmake)
 
 # Issue #131 fix attempt.
 # ---------------------------------------------------------------------------
