@@ -1,8 +1,8 @@
 // Codeforces Round #100 problem A's solution
 // http://codeforces.com/contest/140/problem/A
 
-import std.io;
-import std.math;
+import std.io.*;
+import std.math.*;
 
 Double distance(Double ax, Double ay, Double bx, Double by)
 {
@@ -13,7 +13,7 @@ Int n;
 Int t;
 Int p;
 
-read(n); read(t); read(p);
+n = readInt(); t = readInt(); p = readInt();
 
 if (p > t) {
 	println("NO");
