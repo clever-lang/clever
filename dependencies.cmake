@@ -2,7 +2,7 @@
 # Clever programming language
 # Copyright (c) 2011-2012 Clever Team
 #
-# CMakeLists.depends - 3rd-party library dependency
+# dependencies.cmake - 3rd-party library dependency
 #
 
 # 3rd-party libraries
