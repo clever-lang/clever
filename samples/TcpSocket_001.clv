@@ -1,23 +1,25 @@
 // This TcpSocket example simulates a HTTP 1.1 request against a valid IP 
 // address on the Internet, showing the HTML source of the page.
 
-import std.io;
-import std.net;
+import std.io.*;
+import std.net.*;
 
 Int i = 8;
-String page;
+Array<Byte> page;
 
-TcpSocket s = TcpSocket();
+TcpSocket s;
 s.setHost("200.132.43.5");
 s.setPort(80);
 s.connect();
 
-s.send("GET / HTTP/1.1\n");
-s.send("Host: 200.132.43.5\n");
-s.send("\n");
+s.send("GET / HTTP/1.1\n".toByteArray());
+s.send("Host: 200.132.43.5\n".toByteArray());
+s.send("\n".toByteArray());
+
+Int len;
 
 while (i > 0) {
-    page = s.receive();
+    page = s.receive(len);
     print(page);
 
     if (!s.poll()) {
