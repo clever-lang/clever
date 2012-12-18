@@ -49,20 +49,25 @@ static const Type* _evaluate_type(const location& loc,
 
 	if (template_args) {
 		if (type->isTemplatedType()) {
-			const TemplatedType* temp_type = static_cast<const TemplatedType*>(type);
+			const TemplatedType* temp_type = 
+				static_cast<const TemplatedType*>(type);
 
 			TemplateArgs vec;
 			const Type* argt;
 
 			for (size_t i = 0; i < template_args->size(); ++i) {
-				argt = g_scope.getType(template_args->at(i)->getName());
+				argt = g_scope.getType(
+					template_args->at(i)->getName());
 
 				const bool is_void = 
-					(template_args->at(i)->getName()->str() == "Void");
+					(template_args->at(i)->getName()->str()
+						== "Void");
 
 				if (argt == NULL && !is_void) {
-					Compiler::errorf(loc, "`%S' does not name a type",
-						template_args->at(i)->getName());
+					Compiler::errorf(loc, 
+						"`%S' does not name a type",
+						template_args->at(i)->getName()
+					);
 				}
 
 				if (is_void || !argt->isTemplatedType()) {
@@ -74,7 +79,8 @@ static const Type* _evaluate_type(const location& loc,
 				}
 			}
 
-			const std::string* error = temp_type->checkTemplateArgs(vec);
+			const std::string* error =
+				temp_type->checkTemplateArgs(vec);
 			if (error) {
 				Compiler::errorf(loc, error->c_str());
 				delete error;
@@ -169,21 +175,24 @@ static void _check_function_return(const Function* func, const Value* value,
 	 */
 	if (value && rtype == NULL) {
 		Compiler::errorf(loc,
-			"Function `%s' cannot return value, it was declared as Void!",
-			func->getName().c_str());
+			"Function `%s' cannot return value, "
+			"it was declared as Void!", func->getName().c_str());
 	} else if ((value == NULL || value->getTypePtr() == NULL) && rtype) {
-		Compiler::errorf(loc, "Function `%s' must return a value of type %S!",
+		Compiler::errorf(loc, 
+			"Function `%s' must return a value of type %S!",
 			func->getName().c_str(), rtype->getName());
 	} else if (value && rtype) {
 		const Type* vtype = value->getTypePtr();
 
 		if (value->isCallable()) {
 			Compiler::errorf(loc,
-				"Cannot return a function - not implemented yet!");
+				"Cannot return a function - "
+				"not implemented yet!");
 		} else if (vtype != rtype) {
 			Compiler::errorf(loc,
-				"Function `%s' expects %S value as return, not %S value",
-				func->getName().c_str(), rtype->getName(), vtype->getName());
+				"Function `%s' expects %S value as return, "
+				"not %S value", func->getName().c_str(),
+				rtype->getName(), vtype->getName());
 		}
 	}
 }
@@ -204,14 +213,16 @@ static void _check_function_num_args(const Function* func, int num_args,
 		|| (!is_variadic && num_args != n_required_args)) {
 		if (n_min_args != n_required_args && n_min_args > num_args) {
 			Compiler::errorf(loc,
-				"Function `%s' expects at least %i argument%s, %i supplied",
-				func->getName().c_str(), n_min_args, 
-				(n_min_args > 1 ? "s" : ""), num_args);
+				"Function `%s' expects at least %i argument%s, "
+				"%i supplied", func->getName().c_str(),
+				n_min_args, (n_min_args > 1 ? "s" : ""),
+				num_args);
 		} else {
 			Compiler::errorf(loc,
-				"Function `%s' expects %i argument%s, %i supplied",
-				func->getName().c_str(), n_required_args,
-					(n_required_args > 1 ? "s" : ""), num_args);
+				"Function `%s' expects %i argument%s, "
+				"%i supplied",func->getName().c_str(),
+				n_required_args,
+				(n_required_args > 1 ? "s" : ""), num_args);
 		}
 	}
 }
@@ -235,15 +246,18 @@ static void _check_function_arg_types(const Function* func,
 				CLEVER_SAFE_DELETE(arg_values);
 
 				Compiler::errorf(loc,
-					"Wrong param type #%N: expected `%S', but `%S' supplied",
-						i, t1->getName(), t2->getName());
+					"Wrong param type #%N: expected `%S', "
+					"but `%S' supplied",
+					i, t1->getName(), t2->getName()
+				);
 			}
 		}
 
 		if (val->isConst() && !it->constness) {
 			Compiler::errorf(loc,
-				"Cannot pass a const value on parameter `%s' where a "
-				"non-const is expected in function `%s'",
+				"Cannot pass a const value on parameter `%s' "
+				"where a non-const is expected in "
+				"function `%s'",
 				it->name.c_str(), func->getName().c_str());
 		}
 		++it;
@@ -274,13 +288,16 @@ static CallableValue* _prepare_method_call(const Type* type, Value* var,
 	}
 
 	const Method* method = type->getMethod(mname, &args_types);
-	const std::string args_type_name = _serialize_arg_type(args_types, ", ");
+	const std::string args_type_name =
+		_serialize_arg_type(args_types, ", ");
 
 	if (UNEXPECTED(method == NULL)) {
 		if (mname == (CACHE_PTR(CLEVER_CTOR, CLEVER_CTOR_NAME))) {
 			Compiler::errorf(expr->getLocation(),
 				"No matching call for constructor %S::%S(%s)",
-				type->getName(), type->getName(), args_type_name.c_str());
+				type->getName(), type->getName(), 
+				args_type_name.c_str()
+			);
 		} else if (is_static) {
 			Compiler::errorf(expr->getLocation(), 
 				"No matching call for %S::%S(%s)",
@@ -288,7 +305,9 @@ static CallableValue* _prepare_method_call(const Type* type, Value* var,
 		} else {
 			Compiler::errorf(expr->getLocation(), 
 				"No matching call for %S::%S(%s)",
-				var->getTypePtr()->getName(), mname, args_type_name.c_str());
+				var->getTypePtr()->getName(), mname,
+				args_type_name.c_str()
+			);
 		}
 	}
 
@@ -309,10 +328,13 @@ static CallableValue* _prepare_method_call(const Type* type, Value* var,
 			const std::string args_type_name = 
 				_serialize_arg_type(args_types, ", ");
 
-			Compiler::errorf(expr->getLocation(), "Can't call the non-const "
-				"method %S::%S(%s) because variable `%S' is const",
-				var->getTypePtr()->getName(), mname, args_type_name.c_str(),
-				var->getName());
+			Compiler::errorf(expr->getLocation(), 
+				"Can't call the non-const method %S::%S(%s) "
+				"because variable `%S' is const",
+				var->getTypePtr()->getName(), mname, 
+				args_type_name.c_str(),
+				var->getName()
+			);
 		}
 
 		var->addRef();
@@ -367,12 +389,14 @@ AST_VISITOR(TypeChecker, AliasStmt) {
 
 		if (UNEXPECTED(fvalue == NULL)) {
 			Compiler::errorf(expr->getLocation(),
-				"Identifier `%S' not found!", expr->getCurrentName());
+				"Identifier `%S' not found!",
+				expr->getCurrentName());
 		}
 
 		if (UNEXPECTED(m_scope->getValue(expr->getNewName()))) {
 			Compiler::errorf(expr->getLocation(),
-				"Name `%S' already in use!", expr->getNewName());
+				"Name `%S' already in use!",
+				expr->getNewName());
 		}
 
 		m_scope->pushValue(expr->getNewName(), fvalue);
@@ -388,7 +412,8 @@ AST_VISITOR(TypeChecker, AliasStmt) {
 
 		if (UNEXPECTED(g_scope.getType(expr->getNewName()))) {
 			Compiler::errorf(expr->getLocation(),
-				"Name `%S' already in use!", expr->getNewName());
+				"Name `%S' already in use!",
+				expr->getNewName());
 		}
 
 		m_scope->pushType(expr->getNewName(), ftype);
@@ -403,8 +428,8 @@ AST_VISITOR(TypeChecker, Constant) {
 	Value* constant = m_scope->getValue(expr->getName());
 
 	if (UNEXPECTED(constant == NULL)) {
-		Compiler::errorf(expr->getLocation(), "Constant `%S' not found!",
-			expr->getName());
+		Compiler::errorf(expr->getLocation(),
+			"Constant `%S' not found!", expr->getName());
 	}
 
 	Value* value = new Value;
@@ -421,7 +446,8 @@ AST_VISITOR(TypeChecker, RegexPattern) {
 		CSTRING("regex"), CSTRING("Regex"));
 
 	if (UNEXPECTED(type == NULL)) {
-		Compiler::error("Regex module must be loaded to use the regex syntax!");
+		Compiler::error(
+			"Regex module must be loaded to use the regex syntax!");
 	}
 
 	// Sets the argument vector for the Pcre constructor
@@ -446,8 +472,8 @@ AST_VISITOR(TypeChecker, Identifier) {
 	Value* ident = m_scope->getValue(expr->getName());
 
 	if (ident == NULL) {
-		Compiler::errorf(expr->getLocation(), "Variable `%S' not found!",
-			expr->getName());
+		Compiler::errorf(expr->getLocation(), 
+			"Variable `%S' not found!", expr->getName());
 	}
 
 	if (ident->isCallable()) {
@@ -463,7 +489,8 @@ AST_VISITOR(TypeChecker, Identifier) {
 		}
 
 		const TemplatedType* const virtual_func =
-			static_cast<const TemplatedType*>(CLEVER_TYPE("Function"));
+			static_cast<const TemplatedType*>(
+				CLEVER_TYPE("Function"));
 
 		const Type* func_type = virtual_func->getTemplatedType(tv);
 
@@ -491,22 +518,28 @@ AST_VISITOR(TypeChecker, UnaryExpr) {
 
 	switch (expr->getOp()) {
 		case ast::NOT:
-			method_name = CACHE_PTR(CLEVER_OP_NOT, CLEVER_OPERATOR_NOT);
+			method_name = CACHE_PTR(CLEVER_OP_NOT,
+				CLEVER_OPERATOR_NOT);
 			break;
 		case ast::BW_NOT:
-			method_name = CACHE_PTR(CLEVER_OP_BW_NOT, CLEVER_OPERATOR_BW_NOT);
+			method_name = CACHE_PTR(CLEVER_OP_BW_NOT,
+				CLEVER_OPERATOR_BW_NOT);
 			break;
 		case ast::PRE_INC:
-			method_name = CACHE_PTR(CLEVER_OP_PRE_INC, CLEVER_OPERATOR_PRE_INC);
+			method_name = CACHE_PTR(CLEVER_OP_PRE_INC,
+				CLEVER_OPERATOR_PRE_INC);
 			break;
 		case ast::PRE_DEC:
-			method_name = CACHE_PTR(CLEVER_OP_PRE_DEC, CLEVER_OPERATOR_PRE_DEC);
+			method_name = CACHE_PTR(CLEVER_OP_PRE_DEC,
+				CLEVER_OPERATOR_PRE_DEC);
 			break;
 		case ast::POS_INC:
-			method_name = CACHE_PTR(CLEVER_OP_POS_INC, CLEVER_OPERATOR_POS_INC);
+			method_name = CACHE_PTR(CLEVER_OP_POS_INC,
+				CLEVER_OPERATOR_POS_INC);
 			break;
 		case ast::POS_DEC:
-			method_name = CACHE_PTR(CLEVER_OP_POS_DEC, CLEVER_OPERATOR_POS_DEC);
+			method_name = CACHE_PTR(CLEVER_OP_POS_DEC,
+				CLEVER_OPERATOR_POS_DEC);
 			break;
 		EMPTY_SWITCH_DEFAULT_CASE();
 	}
@@ -515,8 +548,8 @@ AST_VISITOR(TypeChecker, UnaryExpr) {
 
 	expr->setValue(new Value);
 
-	expr->setCallValue(_prepare_method_call(var->getTypePtr(), var, method_name,
-		expr, NULL));
+	expr->setCallValue(_prepare_method_call(var->getTypePtr(), var,
+		method_name, expr, NULL));
 
 	expr->getCallValue()->addRef();
 }
@@ -546,52 +579,69 @@ AST_VISITOR(TypeChecker, BinaryExpr) {
 	// Operator method names
 	switch (expr->getOp()) {
 		case PLUS:
-			method_name = CACHE_PTR(CLEVER_OP_PLUS, CLEVER_OPERATOR_PLUS);
+			method_name = CACHE_PTR(CLEVER_OP_PLUS,
+				CLEVER_OPERATOR_PLUS);
 			break;
 		case DIV:
-			method_name = CACHE_PTR(CLEVER_OP_DIV, CLEVER_OPERATOR_DIV);
+			method_name = CACHE_PTR(CLEVER_OP_DIV,
+				CLEVER_OPERATOR_DIV);
 			break;
 		case MULT:
-			method_name = CACHE_PTR(CLEVER_OP_MULT, CLEVER_OPERATOR_MULT);
+			method_name = CACHE_PTR(CLEVER_OP_MULT,
+				CLEVER_OPERATOR_MULT);
 			break;
 		case MINUS:
-			method_name = CACHE_PTR(CLEVER_OP_MINUS, CLEVER_OPERATOR_MINUS);
+			method_name = CACHE_PTR(CLEVER_OP_MINUS,
+				CLEVER_OPERATOR_MINUS);
 			break;
 		case MOD:
-			method_name = CACHE_PTR(CLEVER_OP_MOD, CLEVER_OPERATOR_MOD);
+			method_name = CACHE_PTR(CLEVER_OP_MOD,
+				CLEVER_OPERATOR_MOD);
 			break;
 		case XOR:
-			method_name = CACHE_PTR(CLEVER_OP_BW_XOR, CLEVER_OPERATOR_BW_XOR);
+			method_name = CACHE_PTR(CLEVER_OP_BW_XOR,
+				CLEVER_OPERATOR_BW_XOR);
 			break;
 		case BW_OR:
-			method_name = CACHE_PTR(CLEVER_OP_BW_OR, CLEVER_OPERATOR_BW_OR);
+			method_name = CACHE_PTR(CLEVER_OP_BW_OR,
+				CLEVER_OPERATOR_BW_OR);
 			break;
 		case BW_AND:
-			method_name = CACHE_PTR(CLEVER_OP_BW_AND, CLEVER_OPERATOR_BW_AND);
+			method_name = CACHE_PTR(CLEVER_OP_BW_AND,
+				CLEVER_OPERATOR_BW_AND);
 			break;
 		case GREATER:
-			method_name = CACHE_PTR(CLEVER_OP_GREATER, CLEVER_OPERATOR_GREATER);
+			method_name = CACHE_PTR(CLEVER_OP_GREATER,
+				CLEVER_OPERATOR_GREATER);
 			break;
 		case LESS:
-			method_name = CACHE_PTR(CLEVER_OP_LESS, CLEVER_OPERATOR_LESS);
+			method_name = CACHE_PTR(CLEVER_OP_LESS,
+				CLEVER_OPERATOR_LESS);
 			break;
 		case GREATER_EQUAL:
-			method_name = CACHE_PTR(CLEVER_OP_GE, CLEVER_OPERATOR_GE);
+			method_name = CACHE_PTR(CLEVER_OP_GE,
+				CLEVER_OPERATOR_GE);
 			break;
 		case LESS_EQUAL:
-			method_name = CACHE_PTR(CLEVER_OP_LE, CLEVER_OPERATOR_LE);
+			method_name = CACHE_PTR(CLEVER_OP_LE,
+				CLEVER_OPERATOR_LE);
 			break;
 		case EQUAL:
-			method_name = CACHE_PTR(CLEVER_OP_EQUAL, CLEVER_OPERATOR_EQUAL);
+			method_name = 
+				CACHE_PTR(CLEVER_OP_EQUAL,
+					CLEVER_OPERATOR_EQUAL);
 			break;
 		case NOT_EQUAL:
-			method_name = CACHE_PTR(CLEVER_OP_NE, CLEVER_OPERATOR_NE);
+			method_name = CACHE_PTR(CLEVER_OP_NE,
+				CLEVER_OPERATOR_NE);
 			break;
 		case LSHIFT:
-			method_name = CACHE_PTR(CLEVER_OP_LSHIFT, CLEVER_OPERATOR_LSHIFT);
+			method_name = CACHE_PTR(CLEVER_OP_LSHIFT,
+				CLEVER_OPERATOR_LSHIFT);
 			break;
 		case RSHIFT:
-			method_name = CACHE_PTR(CLEVER_OP_RSHIFT, CLEVER_OPERATOR_RSHIFT);
+			method_name = CACHE_PTR(CLEVER_OP_RSHIFT,
+				CLEVER_OPERATOR_RSHIFT);
 			break;
 		case OR:
 		case AND:
@@ -645,10 +695,12 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 	
 	Identifier* variable = expr->getVariable();
 
-	// Check if there is already a variable with same name in the current scope
+	// Check if there is already a variable with 
+	// same name in the current scope
 	if (EXPECTED(m_scope->getLocalValue(variable->getName()) != NULL)) {
 		Compiler::errorf(expr->getLocation(),
-			"Already exists a variable named `%S' in the current scope!",
+			"Already exists a variable named `%S' "
+			"in the current scope!",
 			variable->getName());
 	}
 
@@ -672,7 +724,8 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 				var->delRef();
 
 				Compiler::errorf(expr->getLocation(),
-					"Cannot convert `%S' to `%S' on assignment",
+					"Cannot convert `%S' to `%S' "
+					"on assignment",
 					initval->getTypePtr()->getName(),
 					type->getName());
 			}
@@ -697,14 +750,16 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 			expr, arg_values));
 	}
 	else /*if (ctor_list)*/ {
-		ValueVector* arg_values = (ctor_list ? ctor_list->getArgValue() : NULL);
+		ValueVector* arg_values = 
+			(ctor_list ? ctor_list->getArgValue() : NULL);
 		
 		if (arg_values) {
 			expr->setArgsValue(arg_values);
 		}
 		
 		expr->setCallValue(_prepare_method_call(type, var,
-			CACHE_PTR(CLEVER_CTOR, CLEVER_CTOR_NAME), expr, arg_values));
+			CACHE_PTR(CLEVER_CTOR, CLEVER_CTOR_NAME),
+				expr, arg_values));
 	}
 	/*else {
 		DataValue* data_value = type->allocateValue();
@@ -717,15 +772,18 @@ AST_VISITOR(TypeChecker, VariableDecl) {
 	var->setConstness(is_const);
 
 	if (rhs) {
-		if (!is_auto && !expr->isConst() && rhs->getValue()->isConst()) {
+		if (!is_auto && !expr->isConst() 
+			&& rhs->getValue()->isConst()) {
 			Compiler::errorf(expr->getLocation(),
-				"Cannot convert const-qualified variable `%S' to a "
-				"non-const variable of type `%S' on assignment",
+				"Cannot convert const-qualified variable `%S' "
+				"to a non-const variable of type `%S' "
+				"on assignment",
 				variable->getName(),
 				type->getName());
 		}
 		else {
-			var->setConstness(expr->isConst() || rhs->getValue()->isConst());
+			var->setConstness(expr->isConst()
+				|| rhs->getValue()->isConst());
 		}
 	}
 
@@ -834,7 +892,8 @@ AST_VISITOR(TypeChecker, UnscopedBlockNode) {
 
 	if (alias) {
 		std::string prefix = alias->str() + "::";
-		g_pkgmanager.copyScopeToAlias(m_scope, m_scope->getParent(), prefix);
+		g_pkgmanager.copyScopeToAlias(m_scope,
+			m_scope->getParent(), prefix);
 		
 		m_scope = m_scope->getParent();
 	}
@@ -917,18 +976,22 @@ AST_VISITOR(TypeChecker, ForEachExpr) {
 
 	/* TODO: Change to Iterable */
 	if (!instancetype->implementsInterface(CLEVER_TYPE("Iterator"))) {
-		Compiler::error("Variable type doesn't implements Iterator interface");
+		Compiler::error(
+			"Variable type doesn't implements Iterator interface");
 	}
 
 	/**
 	 * for (instance in var):
-	 *   => Get the iterator from instance and create the variable using such
-	 * value and assign to `var'
-	 *   => Emit the opcode to iterator constructor call passing the `instance'
+	 *   => Get the iterator from instance and create the variable using
+	 *	such value and assign to `var'
+	 *   => Emit the opcode to iterator constructor call passing the 
+	 *	`instance'
 	 *
 	 *   Internal view:
 	 *      Instance foo;
-	 *      InstanceIterator var(foo); // InstanceIterator = foo->getIterator()
+	 *	// InstanceIterator = foo->getIterator()
+	 *      InstanceIterator var(foo); 
+	 *
 	 *
 	 *   Loop {
 	 *     => Call Iterator valid() method to check if the loop will happens
@@ -1047,11 +1110,49 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 	Value* fvalue = m_scope->getValue(name);
 
 	if (UNEXPECTED(fvalue == NULL || !fvalue->isCallable())) {
-		Compiler::errorf(expr->getLocation(), "Function `%S' does not exists!",
-			name);
+		Identifier* ident = expr->getIdentifier();
+		ident->acceptVisitor(*this);
+		
+		Value* variable = ident->getValue();
+		
+		// Here we check if the identifier is an Function<> object
+		// so we can use it as a functor
+		if (variable &&
+			variable->getTypePtr()->getName()->substr(0, 9) 
+			== "Function<") {
+			
+			int num_args = expr->getArgs() ? 
+				int(expr->getArgs()->getNodes().size()) : 0;
+			
+			Value* result = new Value;
+			result->setTypePtr(variable->getTypePtr());
+			expr->setValue(result);
+			
+			ValueVector* arg_values = NULL;
+			
+			if (num_args) {
+				expr->getArgs()->acceptVisitor(*this);
+				arg_values = expr->getArgs()->getArgValue();
+				expr->setArgsValue(arg_values);
+			}
+
+			expr->setFuncValue(_prepare_method_call(
+				variable->getTypePtr(),
+				variable, CSTRING("call"), expr, arg_values)
+			);
+			
+			expr->getValue()->addRef();
+			
+			return;
+		}
+		else {
+			Compiler::errorf(expr->getLocation(), 
+				"Function `%S' does not exists!", name);
+		}
 	}
 
-	const Function* func = static_cast<CallableValue*>(fvalue)->getFunction();
+	const Function* func = 
+		static_cast<CallableValue*>(fvalue)->getFunction();
 
 	int num_args = 
 		expr->getArgs() ? int(expr->getArgs()->getNodes().size()) : 0;
@@ -1091,7 +1192,8 @@ AST_VISITOR(TypeChecker, FunctionCall) {
 
 		ValueVector* arg_values = expr->getArgs()->getArgValue();
 
-		_check_function_arg_types(func, arg_values,	expr->getLocation());
+		_check_function_arg_types(func, arg_values, 
+			expr->getLocation());
 
 		expr->setArgsValue(arg_values);
 	}
@@ -1106,14 +1208,15 @@ AST_VISITOR(TypeChecker, FunctionCall) {
  */
 AST_VISITOR(TypeChecker, MethodCall) {
 	if (expr->isStaticCall()) {
-		Identifier* type_name = static_cast<Identifier*>(expr->getVariable());
+		Identifier* type_name = 
+			static_cast<Identifier*>(expr->getVariable());
 		const Type* type = m_scope->getType(type_name->getName());
 		const CString* const name = expr->getMethodName();
 		ValueVector* arg_values = NULL;
 
 		if (UNEXPECTED(type == NULL)) {
-			Compiler::errorf(expr->getLocation(), "Type `%S' not found",
-				type_name->getName());
+			Compiler::errorf(expr->getLocation(), 
+				"Type `%S' not found", type_name->getName());
 		}
 
 		clever_assert_not_null(type);
@@ -1142,7 +1245,6 @@ AST_VISITOR(TypeChecker, MethodCall) {
 
 		if (EXPECTED(args != NULL)) {
 			arg_values = args->getArgValue();
-
 			expr->setArgsValue(arg_values);
 		}
 
@@ -1195,7 +1297,8 @@ AST_VISITOR(TypeChecker, FuncPrototype) {
 	if (EXPECTED(return_type != NULL)) {
 		const Type* rtype = NULL;
 
-		if (return_type->getName() != CACHE_PTR(CLEVER_VOID_STR, "Void")) {
+		if (return_type->getName() !=
+			CACHE_PTR(CLEVER_VOID_STR, "Void")) {
 			rtype = _evaluate_type(expr->getLocation(), return_type,
 				m_scope);
 		}
@@ -1208,8 +1311,8 @@ AST_VISITOR(TypeChecker, FuncPrototype) {
 			end = arg_nodes.end();
 
 		while (EXPECTED(it != end)) {
-			const Type* arg_type = _evaluate_type(expr->getLocation(),
-				it->type, m_scope);
+			const Type* arg_type = _evaluate_type(
+				expr->getLocation(), it->type, m_scope);
 			const CString* arg_name = it->name->getName();
 
 			user_func->addArg(*arg_name, arg_type, it->constness);
@@ -1257,7 +1360,8 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 	const Type* rtype = NULL;
 
 	if (EXPECTED(return_type != NULL)) {
-		if (return_type->getName() != CACHE_PTR(CLEVER_VOID_STR, "Void")) {
+		if (return_type->getName() != 
+			CACHE_PTR(CLEVER_VOID_STR, "Void")) {
 			rtype = _evaluate_type(expr->getLocation(), return_type,
 				m_scope);
 		}
@@ -1269,8 +1373,8 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 
 		if (rtype != rtype2) {
 			Compiler::errorf(expr->getLocation(),
-				"Function declaration `%S' uses a different return type than "
-				"the prototype",
+				"Function declaration `%S' uses a "
+				"different return type than the prototype",
 				name);
 		}
 	} else {
@@ -1300,7 +1404,8 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 			end = arg_nodes.end();
 
 		if (func->isMethod()) {
-			// TODO: assert whether the child's class is an orphaned scope
+			// TODO: assert whether the child's 
+			// class is an orphaned scope
 			m_scope = m_scope->newChild();
 		} else {
 			m_scope = m_scope->newOrphanedChild();
@@ -1311,8 +1416,8 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 		while (EXPECTED(it != end)) {
 			Value* var = new Value;
 
-			const Type* arg_type = _evaluate_type(expr->getLocation(),
-				it->type, m_scope);
+			const Type* arg_type = _evaluate_type(
+				expr->getLocation(), it->type, m_scope);
 			const CString* arg_name = it->name->getName();
 
 			var->setName(arg_name);
@@ -1323,7 +1428,8 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 			m_scope->pushValue(var->getName(), var);
 
 			if (!has_prototype) {
-				user_func->addArg(*arg_name, arg_type, it->constness);
+				user_func->addArg(*arg_name, arg_type,
+					it->constness);
 			}
 
 			++it;
@@ -1334,9 +1440,9 @@ AST_VISITOR(TypeChecker, FuncDeclaration) {
 
 	expr->getBlock()->acceptVisitor(*this);
 
-	if (user_func->getReturnType() && expr->getBlock()->hasReturn() == false) {
-		Compiler::errorf(expr->getLocation(), "Function `%S' must return "
-			"a value of type `%S', and it may not return",
+	if (user_func->getReturnType() && !expr->getBlock()->hasReturn()) {
+		Compiler::errorf(expr->getLocation(), "Function `%S' must "
+			"return a value of type `%S', and it may not return",
 			name, user_func->getReturnType()->getName());
 	}
 
@@ -1357,7 +1463,8 @@ AST_VISITOR(TypeChecker, ExtFuncDeclaration) {
 	const Type* rtype = CLEVER_VOID;
 
 	if (return_type->getName() != CACHE_PTR(CLEVER_VOID_STR, "Void")) {
-		rtype = _evaluate_type(expr->getLocation(), return_type, m_scope);
+		rtype = _evaluate_type(expr->getLocation(),
+			return_type, m_scope);
 	}
 
 	const CString* lfname = expr->getLFName();
@@ -1369,7 +1476,8 @@ AST_VISITOR(TypeChecker, ExtFuncDeclaration) {
 		m_scope->getValue(CSTRING("__call_ext_func__")));
 
 	if (ext_func == NULL) {
-		Compiler::error("Cannot use extern syntax, FFI module is disabled!");
+		Compiler::error(
+			"Cannot use extern syntax, FFI module is disabled!");
 	}
 
 	Function* m_func;
@@ -1378,8 +1486,8 @@ AST_VISITOR(TypeChecker, ExtFuncDeclaration) {
 		m_func = new Function(libname->c_str(), name->c_str(), rtype,
 			ext_func->getFunctionPtr());
 	} else {
-		m_func = new Function(libname->c_str(), lfname->c_str(), name->c_str(),
-			rtype, ext_func->getFunctionPtr());
+		m_func = new Function(libname->c_str(), lfname->c_str(),
+			name->c_str(), rtype, ext_func->getFunctionPtr());
 	}
 
 	ArgumentDeclList* args = expr->getArgs();
@@ -1390,16 +1498,15 @@ AST_VISITOR(TypeChecker, ExtFuncDeclaration) {
 
 	if (args) {
 		ArgumentDecls& arg_nodes = args->getArgs();
-		ArgumentDecls::iterator it = arg_nodes.begin(), end = arg_nodes.end();
+		ArgumentDecls::iterator it = arg_nodes.begin(), 
+			end = arg_nodes.end();
 
 		while (EXPECTED(it != end)) {
-			const Type* arg_type = _evaluate_type(expr->getLocation(),
-				it->type, m_scope);
+			const Type* arg_type = _evaluate_type(
+				expr->getLocation(), it->type, m_scope);
 			const CString* arg_name = it->name->getName();
 
-
 			m_func->addArg(*arg_name, arg_type, it->constness);
-
 			++it;
 		}
 	}
@@ -1430,8 +1537,8 @@ AST_VISITOR(TypeChecker, TypeCreation) {
 
 	// Check if the type wasn't declarated previously
 	if (UNEXPECTED(type == NULL)) {
-		Compiler::errorf(expr->getLocation(), "`%S' does not name a type",
-			ident->getName());
+		Compiler::errorf(expr->getLocation(), 
+			"`%S' does not name a type", ident->getName());
 	}
 
 	ArgumentList* args = expr->getArgs();
@@ -1614,7 +1721,8 @@ AST_VISITOR(TypeChecker, CopyExpr) {
 			expr, arg_values));
 	} else {
 		expr->setCallValue(_prepare_method_call(val->getTypePtr(), val,
-			CACHE_PTR(CLEVER_COPY, CLEVER_COPY_NAME), expr, arg_values));
+			CACHE_PTR(CLEVER_COPY, CLEVER_COPY_NAME),
+			expr, arg_values));
 	}
 
 	expr->getCallValue()->addRef();

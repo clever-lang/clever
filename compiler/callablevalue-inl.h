@@ -41,7 +41,7 @@ inline CallableValue::~CallableValue() {
 	}
 }
 
-inline void CallableValue::setHandler(Function* handler) {
+inline void CallableValue::setHandler(const Function* handler) {
 	if (handler->isInternal()) {
 		m_call_type = FAR;
 	} else if (handler->isExternal()) {

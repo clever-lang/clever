@@ -76,7 +76,7 @@ public:
 
 	~CallableValue();
 
-	void setHandler(Function* handler);
+	void setHandler(const Function* handler);
 
 	void setHandler(const Method* const handler) {
 		m_call_type = handler->isInternal() ? FAR : NEAR;

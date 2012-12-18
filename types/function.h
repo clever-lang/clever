@@ -51,8 +51,9 @@ public:
  	const std::string* checkTemplateArgs(const TemplateArgs& args) const {
 		if (args.size() < 1) {
 			std::ostringstream oss;
-			sprintf(oss, "Wrong number of template arguments given. "
-				"`%S' requires at least the return type and no return type was given.",
+			sprintf(oss, "Wrong number of template arguments given."
+				" `%S' requires at least the return type and no"
+				" return type was given.",
 				this->getName(), 0
 			);
 

@@ -1441,6 +1441,10 @@ public:
 	void setFuncValue(CallableValue* value) {
 		m_value = value;
 	}
+	
+	Identifier* getIdentifier() const {
+		return m_name;
+	}
 
 	void setValue(Value* value) { m_result = value; }
 
