@@ -22,7 +22,7 @@ Void qsort_impl(ArrayIterator<Int> b, ArrayIterator<Int> e, Function<Bool, Int, 
 	Auto piv = e.get();
 	
 	while (i < e) {
-		if (cmp.call(i.get(), piv)) {
+		if (cmp(i.get(), piv)) {
 			++s;
 			swap(i, s);
 		}
