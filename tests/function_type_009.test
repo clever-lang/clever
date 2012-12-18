@@ -1,0 +1,15 @@
+Testing functor calls
+==CODE==
+import std.io.println;
+
+Auto f = Void() { println('Clever-lang'); };
+
+f();
+
+Function<Int, Double> round = Int(Double d) { Int x = d; return x; };
+
+println(round(10.123));
+
+==RESULT==
+Clever-lang
+10

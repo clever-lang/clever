@@ -1,0 +1,23 @@
+Testing functor/functions
+==CODE==
+import std.io.println;
+import std.math.sqrt;
+
+
+Void do_operation(Function<Double, Double> op, Double value) {
+	println(op(value));
+}
+
+Double func(Double d) {
+	return sqrt(d);
+}
+
+do_operation(func, 121.0);
+do_operation(sqrt, 121.0);
+do_operation(Double(Double x) { return sqrt(x); }, 121.0);
+
+
+==RESULT==
+11
+11
+11
