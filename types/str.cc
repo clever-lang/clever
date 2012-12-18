@@ -474,6 +474,43 @@ CLEVER_METHOD(String::less) {
 }
 
 /**
+ * % operator (String, Array<String>)
+ */
+CLEVER_METHOD(String::mod) {
+	::std::string this_str = CLEVER_THIS()->toString();
+	ValueVector* data = CLEVER_ARG_ARRAY(1);
+	
+	int size = data->size();
+	
+	::std::string ret;
+	bool open = false;
+	
+	int idx = 0;
+	for (int i = 0, sz = this_str.size(); i < sz; ++i) {
+		if (this_str[i] == '%') {
+			if (!open) {
+				open = true;
+			}
+			else {
+				open = false;
+				if (idx < size) {
+					ret += data->at(idx)->getString().str();
+					++idx;
+				}
+			}
+		}
+		else {
+			if (open) {
+				ret += '%';
+			}
+			ret += this_str[i];
+		}
+	}
+	
+	CLEVER_RETURN_STR(CSTRING(ret));
+}
+
+/**
  * * operator (String, Int)
  */
 CLEVER_METHOD(String::times) {
@@ -494,8 +531,10 @@ CLEVER_METHOD(String::times) {
 }
 
 void String::init() {
-	const Type* arr_byte = CLEVER_GET_ARRAY_TEMPLATE->getTemplatedType(CLEVER_BYTE);
-	const Type* arr_string = CLEVER_GET_ARRAY_TEMPLATE->getTemplatedType(CLEVER_STR);
+	const Type* arr_byte = 
+		CLEVER_GET_ARRAY_TEMPLATE->getTemplatedType(CLEVER_BYTE);
+	const Type* arr_string = 
+		CLEVER_GET_ARRAY_TEMPLATE->getTemplatedType(CLEVER_STR);
 
 	addMethod(new Method(CLEVER_CTOR_NAME, &String::constructor, CLEVER_STR));
 
@@ -610,6 +649,12 @@ void String::init() {
 	addMethod(
 		(new Method("split", &String::split, arr_string))
 			->addArg("separator", CLEVER_STR)
+	);
+	
+	addMethod(
+		(new Method(CLEVER_OPERATOR_MOD, &String::mod, CLEVER_STR))
+			->addArg("format", CLEVER_STR)
+			->addArg("data", arr_string)
 	);
 
 	addMethod(new Method("toByteArray", &String::toByteArray, arr_byte));
