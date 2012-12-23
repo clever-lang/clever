@@ -1,0 +1,57 @@
+import std;
+import 'nffi.clvh';
+
+
+FFIObject o, o2, o3, o4;
+
+
+//Void f(FFIObject o, FFIObject o2, FFIObject o3){}
+String s="ola", u="ola";
+	
+
+Void f(FFIObject o, FFIObject o2, FFIObject o3, FFIObject o4){
+//Void f(){FFIObject o, o2, o3;
+	
+	s=fs(s);
+
+	println(s);
+
+	hello();
+
+	println(f1(2,3));
+
+	o=cobj(33,567);
+	print_obj(o);
+	println("__________----\n");
+	
+	o2=pcobj(44,5123);
+	print_pobj(o2);
+	destroy_pobj(o2);
+
+
+	pcobj2(o2,4477,123);
+	println("<>__________----\n");
+	print_pobj(o2);
+	//println("<>__________----\n");
+	//destroy_pobj(o2);
+	
+	o3=create_obj2(123456, 5.43123, "oalsda\naodioa\ndasdkl()()()");
+	print_obj2(o3);
+	destroy_obj2(o3);
+
+}
+
+
+
+for(Int i=0;i<100000;i++){
+	f(o,o2,o3,o4);
+	//f();
+
+	o=cobj(33,567);
+	print_obj(o);
+	println("__________----\n");
+	
+}
+
+
+

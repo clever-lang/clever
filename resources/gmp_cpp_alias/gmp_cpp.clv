@@ -1,0 +1,34 @@
+import std;
+import "gmp_cpp.clvh";
+
+BigInt res, a, b;
+
+// /
+Int n;
+print("Iteration number n =");
+n=readInt();
+
+res=init_bi(); a=init_bi(); b=init_bi();
+
+set_str_bi(a,"1",10); set_str_bi(b,"1",10); set_str_bi(res,"1",10);
+
+
+for(Int i=0;i<n;i++){
+
+	add_bi(res, a,b);
+	set_bi(a,res);
+	set_bi(b,res);
+
+	if(i%100000==0){
+		print("i=",i,"\n");
+		println("(1+1)^n=",get_str_bi(res,10));
+	}
+
+}
+println("(1+1)^n=",get_str_bi(res,10));
+
+clear_bi(a); clear_bi(b); clear_bi(res);
+
+
+
+

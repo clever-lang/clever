@@ -1,0 +1,11 @@
+import std.rpc.*;
+import std.io.*;
+
+
+RPCClass k;
+
+if(!k.client("127.0.0.1",8383,100)) {
+	println("Failed to connect with server!");
+} else {
+	k.sendKill();
+}

@@ -1,0 +1,36 @@
+import std.rpc.*;
+import std.io.*;
+
+RPCClass c;
+
+if(!c.client("127.0.0.1",8383,100)) {
+	println("Failed to connect with server!");
+} else {
+	c.sendInit();
+
+	Int id_message = 11;
+	Double time_sleep = 1.0;
+	
+	Int id_message_2 = 12;
+	Double time_sleep_2 = 1.0;
+
+	Int id_message_3 = 13;
+	Double time_sleep_3 = 1.0;
+
+	Int id_message_4 = 14;
+	Double time_sleep_4 = 1.0;
+
+	Int vi = 64123;
+	Double vd = 312.123;
+	String vs = "Casasdasda1234124";
+	RPCObject obj;
+	obj = c.callFunction("getStr");
+
+	c.sendMsgInt(id_message, vi);
+	c.sendMsgDouble(id_message_2, vd);
+	c.sendMsgString(id_message_3, vs);
+	c.sendMsgObject(id_message_4, obj);
+	print("Obj=",obj.toString(),"\n");
+
+	obj.clear();
+}

@@ -1,0 +1,16 @@
+import std.rpc.*;
+import std.io.*;
+
+RPCClass c;
+
+if(!c.client("127.0.0.1",8383,100)) {
+	println("Failed to connect with server!");
+} else {
+	c.sendInit();
+
+	Int id_message = 11;
+	Double time_sleep = 1.0;
+	Int v = c.recvMsgInt(id_message, time_sleep);
+
+	print("Msg [",id_message,"] = ", v, "\n");
+}

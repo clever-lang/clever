@@ -1,0 +1,22 @@
+import std;
+import 'gmp.clvh';
+
+FFIObject res, a, b;
+
+
+for(Int i=0;i<1000000;i++){
+	res=init_bi(); a=init_bi(); b=init_bi();
+
+	set_str_bi(a,"123456",10);
+	set_str_bi(b,"111111",10);
+
+
+	println("a=",get_str_bi(a,10));
+	println("b=",get_str_bi(b,10));
+
+	add_bi(res, a,b);
+
+	println("a+b=",get_str_bi(res,10));
+	clear_bi(a); clear_bi(b); clear_bi(res);
+	println("______________");
+}

@@ -1,0 +1,20 @@
+import std;
+
+extern nffi {
+	Void hello();
+	Int f1(Int a, Int b);
+	Void print_obj(FFIObject o);
+	FFIObject cobj(Int a, Int b);
+	FFIObject pcobj(Int a, Int b);
+	Void pcobj2(FFIObject o, Int a, Int b);
+	Void print_pobj(FFIObject o);
+	Void destroy_pobj(FFIObject o);
+
+	FFIObject create_obj2(Int a, Double b, String s);
+	Void print_obj2(FFIObject o);
+	Void destroy_obj2(FFIObject o);
+
+	String fs(String s);
+}
+
+
