@@ -55,7 +55,7 @@ enum YYCONDTYPE {
 
 class ScannerState {
 public:
-	ScannerState() : state(0) { }
+	ScannerState() : state(0) {}
 
 	void set_cursor(const unsigned char* cursor) { cur = cursor; }
 	void set_limit(const unsigned char* limit) { yylimit = limit; }
