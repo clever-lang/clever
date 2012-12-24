@@ -28,17 +28,27 @@
 
 #include "compiler/compiler.h"
 
+#include <pthread.h>
+
 namespace clever {
 
 /**
  * VM representation
  */
+
+typedef std::vector<pthread_t> ThreadPool;
+typedef std::vector<pthread_mutex_t> MutexPool;
+
 class VM {
 public:
 	VM() {}
 	~VM() {}
 
 	static void run(const IRVector&);
+
+private:
+    ThreadPool m_thread_pool;
+    MutexPool m_mutex_pool;
 };
 
 } // clever
