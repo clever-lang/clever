@@ -133,6 +133,9 @@ add_executable(clever
 	interpreter/driver.h
 	interpreter/main.cc
 	interpreter/scanner.h
+	vm/opcode.h
+	vm/vm.h
+	vm/vm.cc
 	${EXTRA_CLEVER_FILES}
 )
 target_link_libraries(clever ${CLEVER_LIBRARIES})

@@ -23,27 +23,21 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "compiler/cstring.h"
+#ifndef CLEVER_VM_H
+#define CLEVER_VM_H
+
 #include "compiler/compiler.h"
 
 namespace clever {
 
-/**
- * Frees all resource used by the compiler
- */
-void Compiler::shutdown()
-{
-	if (g_cstring_tbl) {
-		delete g_cstring_tbl;
-	}
-}
+class VM {
+public:
+	VM() {}
+	~VM() {}
 
-/**
- * Compiles a variable declaration
- */
-void Compiler::varDeclaration(const CString* var)
-{
-	m_ir.push_back(IR(OP_VAR_DECL, 0, 0));
-}
+	static void run(const IRVector&);
+};
 
 } // clever
+
+#endif // CLEVER_VM_H

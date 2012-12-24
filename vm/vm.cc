@@ -23,27 +23,14 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "compiler/cstring.h"
-#include "compiler/compiler.h"
+#include "vm/vm.h"
 
 namespace clever {
 
-/**
- * Frees all resource used by the compiler
- */
-void Compiler::shutdown()
+void VM::run(const IRVector& ir)
 {
-	if (g_cstring_tbl) {
-		delete g_cstring_tbl;
-	}
+
 }
 
-/**
- * Compiles a variable declaration
- */
-void Compiler::varDeclaration(const CString* var)
-{
-	m_ir.push_back(IR(OP_VAR_DECL, 0, 0));
-}
 
 } // clever

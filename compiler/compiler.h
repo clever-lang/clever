@@ -26,10 +26,30 @@
 #ifndef CLEVER_COMPILER_H
 #define CLEVER_COMPILER_H
 
+#include <vector>
+#include "compiler/clever.h"
+#include "vm/opcode.h"
+
 namespace clever {
 
 class CString;
 
+/**
+ * Intermediate representation
+ */
+struct IR {
+	IR(Opcode opcode, int op1, int op2)
+		: m_opcode(opcode), m_op1(op1), m_op2(op2), m_result(NULL) {}
+
+	int m_opcode, m_op1, m_op2;
+	void* m_result;
+};
+
+typedef std::vector<IR> IRVector;
+
+/**
+ * Compiler representation
+ */
 class Compiler {
 public:
 	Compiler() {}
@@ -48,10 +68,14 @@ public:
 	 */
 	void shutdown();
 
+	const IRVector& getIR() const { return m_ir; }
+
 	/**
 	 * Compilation methods
 	 */
 	void varDeclaration(const CString*);
+private:
+	IRVector m_ir;
 };
 
 } // clever

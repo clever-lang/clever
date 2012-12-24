@@ -29,6 +29,7 @@
 #include "interpreter/driver.h"
 #include "interpreter/parser.hh"
 #include "interpreter/position.hh"
+#include "vm/vm.h"
 #include "scanner.h"
 
 namespace clever {
@@ -47,11 +48,10 @@ Interpreter::Interpreter(int* argc, char*** argv)
  */
 void Interpreter::execute(bool interactive)
 {
-/*
-	VM::setIR(&m_compiler.getIR());
-	VM::run();
-	VM::shutdown();
-*/
+	m_compiler.getIR();
+
+	VM::run(m_compiler.getIR());
+
 	m_compiler.shutdown();
 }
 

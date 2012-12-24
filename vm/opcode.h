@@ -23,27 +23,15 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "compiler/cstring.h"
-#include "compiler/compiler.h"
+#ifndef CLEVER_OPCODE_H
+#define CLEVER_OPCODE_H
 
 namespace clever {
 
-/**
- * Frees all resource used by the compiler
- */
-void Compiler::shutdown()
-{
-	if (g_cstring_tbl) {
-		delete g_cstring_tbl;
-	}
-}
-
-/**
- * Compiles a variable declaration
- */
-void Compiler::varDeclaration(const CString* var)
-{
-	m_ir.push_back(IR(OP_VAR_DECL, 0, 0));
-}
+enum Opcode {
+	OP_VAR_DECL
+};
 
 } // clever
+
+#endif // CLEVER_OPCODE_H
