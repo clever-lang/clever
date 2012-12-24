@@ -207,4 +207,4 @@ void printfln(const char*, ...);
 
 } // clever
 
-#endif /* CLEVER_H */
+#endif // CLEVER_H
