@@ -71,12 +71,6 @@ next_token:
 		SKIP();
 	}
 
-	<INITIAL>'(copy)' { RET(token::COPY); }
-
-	<INITIAL>'(deepCopy)' { RET(token::DEEPCOPY); }
-
-	<INITIAL>"@@"TYPE { RET(token::ANNOTATION); }
-
 	<INITIAL>"or" { RET(token::LOGICAL_OR); }
 
 	<INITIAL>"||" { RET(token::BOOLEAN_OR); }
@@ -125,10 +119,6 @@ next_token:
 
 	<INITIAL>"%=" { RET(token::MOD_EQUAL); }
 
-	<INITIAL>":=" { RET(token::AUTO_EQUAL); }
-
-	<INITIAL>"::" { RET(token::DOUBLE_COLON); }
-
 	<INITIAL>'const' { RET(token::CONST); }
 
 	<INITIAL>"//" {
@@ -160,14 +150,6 @@ next_token:
 
 	<ST_MULTILINE_COMMENT>"*" { SKIP(); }
 
-	<INITIAL>'use' {
-		RET(token::USE);
-	}
-
-	<INITIAL>'as' {
-		RET(token::AS);
-	}
-
 	<INITIAL>'return' {
 		RET(token::RETURN);
 	}
@@ -178,10 +160,6 @@ next_token:
 
 	<INITIAL>'for' {
 		RET(token::FOR);
-	}
-
-	<INITIAL>'in' {
-		RET(token::IN);
 	}
 
 	<INITIAL>'while' {
@@ -200,33 +178,10 @@ next_token:
 		RET(token::ELSE);
 	}
 
-	<INITIAL>'extern' {
-		RET(token::EXTERN);
-	}
-
 	<INITIAL>'import' {
 		RET(token::IMPORT);
 	}
 
-	<INITIAL>'class' {
-		RET(token::CLASS);
-	}
-
-	<INITIAL>'public' {
-		RET(token::PUBLIC);
-	}
-
-	<INITIAL>'private' {
-		RET(token::PRIVATE);
-	}
-
-	<INITIAL>'protected' {
-		RET(token::PROTECTED);
-	}
-
-	<INITIAL>'Auto' {
-		RET(token::AUTO);
-	}
 
 	<INITIAL>'true' {
 		RET(token::TRUE);
@@ -244,16 +199,8 @@ next_token:
 		RET(token::TYPE);
 	}
 
-	<INITIAL>CONSTANT {
-		RET(token::CONSTANT);
-	}
-
 	<INITIAL>TYPE {
 		RET(token::TYPE);
-	}
-
-	<INITIAL>REGEX {
-		RET(token::REGEX);
 	}
 
 	<INITIAL>SPECIAL { RET(Parser::token_type(s.yylex[0])); }
