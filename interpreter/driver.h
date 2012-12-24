@@ -107,9 +107,6 @@ class Interpreter : public Driver {
 public:
 	Interpreter(int* argc, char*** argv);
 
-#ifdef CLEVER_DEBUG
-	void execute(bool interactive, bool opcode_dump);
-#endif
 	void execute(bool interactive);
 	void shutdown() {}
 private:
