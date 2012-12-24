@@ -38,7 +38,8 @@ Driver::ScannerStack Driver::s_scanners;
 int* g_clever_argc;
 char*** g_clever_argv;
 
-Interpreter::Interpreter(int* argc, char*** argv) {
+Interpreter::Interpreter(int* argc, char*** argv)
+{
 	g_clever_argc = argc;
 	g_clever_argv = argv;
 }
@@ -46,7 +47,8 @@ Interpreter::Interpreter(int* argc, char*** argv) {
 /**
  * Executes the script
  */
-void Interpreter::execute(bool interactive) {
+void Interpreter::execute(bool interactive)
+{
 	/*
 	if (interactive) {
 		m_compiler.setInteractive();
@@ -71,7 +73,8 @@ void Interpreter::execute(bool interactive) {
 }
 
 #ifdef CLEVER_DEBUG
-void Interpreter::execute(bool interactive, bool dump_opcode) {
+void Interpreter::execute(bool interactive, bool dump_opcode)
+{
 	execute(interactive);
 }
 #endif
@@ -79,7 +82,8 @@ void Interpreter::execute(bool interactive, bool dump_opcode) {
 /**
  * Read the file defined in file property
  */
-void Driver::readFile(std::string& source) const {
+void Driver::readFile(std::string& source) const
+{
 	std::string line;
 	std::fstream filep(m_file->c_str());
 
@@ -102,7 +106,8 @@ void Driver::readFile(std::string& source) const {
 /**
  * Parses a file
  */
-int Driver::parseFile(const std::string& filename) {
+int Driver::parseFile(const std::string& filename)
+{
 	ScannerState* new_scanner = new ScannerState;
 	Parser parser(*this, *new_scanner);
 	std::string& source = new_scanner->getSource();
@@ -133,7 +138,8 @@ int Driver::parseFile(const std::string& filename) {
 /**
  * Parses a string
  */
-int Driver::parseStr(const std::string& code, bool importStd) {
+int Driver::parseStr(const std::string& code, bool importStd)
+{
 	ScannerState *new_scanner = new ScannerState;
 	Parser parser(*this, *new_scanner);
 	std::string& source = new_scanner->getSource();
@@ -164,7 +170,8 @@ int Driver::parseStr(const std::string& code, bool importStd) {
 /**
  * Prints an error message and exit
  */
-void Driver::error(const clever::location& location, const std::string& message) const {
+void Driver::error(const clever::location& location, const std::string& message) const
+{
 	position last = location.end - 1;
 
 	if (last.filename) {
@@ -178,7 +185,8 @@ void Driver::error(const clever::location& location, const std::string& message)
 /**
  * Prints an error message
  */
-void Driver::error(const std::string& message) const {
+void Driver::error(const std::string& message) const
+{
 	std::cerr << message << std::endl;
 }
 
