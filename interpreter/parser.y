@@ -135,7 +135,6 @@ statement_list:
 		/* empty */
 ;
 
-
 %%
 
 namespace clever {

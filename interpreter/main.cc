@@ -36,7 +36,8 @@
 		exit(1); \
 	}
 
-static void show_usage(void) {
+static void show_usage()
+{
 	std::cout << "Usage: clever <options> [filename]" << std::endl;
 	std::cout << std::endl;
 
@@ -62,7 +63,8 @@ static void show_usage(void) {
 #endif
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
 	clever::Interpreter clever(&argc, &argv);
 #ifdef CLEVER_DEBUG
 	bool dump_opcode = false;
