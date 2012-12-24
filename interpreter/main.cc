@@ -63,7 +63,7 @@ static void show_usage(void) {
 }
 
 int main(int argc, char **argv) {
-	clever::Interpreter clever(&argc,&argv);
+	clever::Interpreter clever(&argc, &argv);
 #ifdef CLEVER_DEBUG
 	bool dump_opcode = false;
 #endif
@@ -132,7 +132,7 @@ int main(int argc, char **argv) {
 			clever.setTraceParsing(true);
 		} else if (argv[i] == std::string("-d")) {
 			inc_arg++;
-			dump_opcode= true;
+			dump_opcode = true;
 #endif
 		} else if (argv[i][0] == '-') {
 			std::cerr << "Unknown option '" << argv[i] << "'" << std::endl;
@@ -143,8 +143,8 @@ int main(int argc, char **argv) {
 		}
 	}
 
-	argc-=inc_arg+1;
-	argv+=inc_arg+1;
+	argc -= inc_arg + 1;
+	argv += inc_arg + 1;
 
 #ifdef CLEVER_DEBUG
 	clever.execute(false, dump_opcode);
