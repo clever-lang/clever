@@ -23,29 +23,25 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "compiler/cstring.h"
-#include "compiler/compiler.h"
-#include "compiler/scope.h"
+#ifndef CLEVER_SCOPE_H
+#define CLEVER_SCOPE_H
 
 namespace clever {
 
-/**
- * Frees all resource used by the compiler
- */
-void Compiler::shutdown() const
-{
-	if (g_cstring_tbl) {
-		delete g_cstring_tbl;
-	}
-}
+class CString;
 
-/**
- * Compiles a variable declaration
- */
-void Compiler::varDeclaration(const CString* var)
-{
-	m_scope.push(var);
-	m_ir.push_back(IR(OP_VAR_DECL, 0, 0));
-}
+class Scope {
+public:
+	Scope() {}
+	~Scope() {}
+
+	void push(const CString* name) { m_symbols[0] = name; }
+
+	const CString* get(size_t idx) { return m_symbols[idx]; }
+private:
+	const CString* m_symbols[10];
+};
 
 } // clever
+
+#endif // CLEVER_SCOPE_H

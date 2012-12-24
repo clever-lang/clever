@@ -28,6 +28,7 @@
 
 #include <pthread.h>
 #include "compiler/compiler.h"
+#include "compiler/scope.h"
 
 namespace clever {
 
@@ -40,12 +41,16 @@ public:
 	typedef std::vector<pthread_t> ThreadPool;
 	typedef std::vector<pthread_mutex_t> MutexPool;
 
-	VM() {}
+	VM(Scope* scope)
+		: m_scope(scope) {}
 	~VM() {}
 
-	void run(const IRVector&);
+	void run(IRVector&);
+
+	void var_decl(IR&);
 
 private:
+	Scope* m_scope;
     ThreadPool m_thread_pool;
     MutexPool m_mutex_pool;
 };

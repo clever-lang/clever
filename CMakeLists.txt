@@ -125,6 +125,7 @@ add_executable(clever
 	${RE2C_CleverScanner_OUTPUTS}
 	${BISON_CleverParser_OUTPUTS}
 	compiler/clever.h
+	compiler/clever.cc
 	compiler/compiler.h
 	compiler/compiler.cc
 	compiler/cstring.cc

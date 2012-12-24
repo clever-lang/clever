@@ -23,26 +23,34 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#include <iostream>
+#include "compiler/cstring.h"
 #include "vm/vm.h"
 
 namespace clever {
 
+#define VM_HANDLER(name) CLEVER_FORCE_INLINE void VM::name(IR& op)
+
 /**
  * Variable declaration execution
  */
-CLEVER_FORCE_INLINE static void _var_decl(const IR& op)
+VM_HANDLER(var_decl)
 {
+	/**
+	 * Fetching variable name from scope
+	 */
+	std::cout << *(m_scope->get(op.op1)) << std::endl;
 }
 
 /**
  * Executes the VM opcodes
  */
-void VM::run(const IRVector& ir)
+void VM::run(IRVector& ir)
 {
 	for (size_t i = 0, j = ir.size(); i < j; ++i) {
 		switch (ir[i].opcode) {
 			case OP_VAR_DECL:
-				_var_decl(ir[i]);
+				var_decl(ir[i]);
 				break;
 		}
 	}

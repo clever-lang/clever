@@ -28,6 +28,7 @@
 
 #include <vector>
 #include "compiler/clever.h"
+#include "compiler/scope.h"
 #include "vm/opcode.h"
 
 namespace clever {
@@ -39,7 +40,7 @@ class CString;
  */
 struct IR {
 	IR(Opcode _op, int _op1, int _op2)
-		: opcode(opcode), op1(_op1), op2(_op2), result(NULL) {}
+		: opcode(_op), op1(_op1), op2(_op2), result(NULL) {}
 
 	int opcode, op1, op2;
 	void* result;
@@ -68,7 +69,9 @@ public:
 	 */
 	void shutdown() const;
 
-	const IRVector& getIR() const { return m_ir; }
+	IRVector& getIR() { return m_ir; }
+
+	Scope* getScope() { return &m_scope; }
 
 	/**
 	 * Compilation methods
@@ -76,6 +79,7 @@ public:
 	void varDeclaration(const CString*);
 private:
 	IRVector m_ir;
+	Scope m_scope;
 };
 
 } // clever
