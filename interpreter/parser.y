@@ -62,6 +62,7 @@ namespace clever {
 }
 
 %token END  0        "end of file"
+%token VAR           "var"
 %token EXIT          "exit"
 %token TYPE          "type specification"
 %token IDENT         "identifier"
@@ -134,6 +135,15 @@ top_statements:
 
 statement_list:
 		/* empty */
+	|	non_empty_statement_list
+;
+
+non_empty_statement_list:
+		var_declaration ';'
+;
+
+var_declaration:
+		VAR IDENT
 ;
 
 %%

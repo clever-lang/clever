@@ -71,6 +71,8 @@ next_token:
 		SKIP();
 	}
 
+	<INITIAL>"var" { RET(token::VAR); }
+
 	<INITIAL>"or" { RET(token::LOGICAL_OR); }
 
 	<INITIAL>"||" { RET(token::BOOLEAN_OR); }
