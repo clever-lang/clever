@@ -27,10 +27,25 @@
 
 namespace clever {
 
-void VM::run(const IRVector& ir)
+/**
+ * Variable declaration execution
+ */
+CLEVER_FORCE_INLINE static void _var_decl(const IR& op)
 {
-
 }
 
+/**
+ * Executes the VM opcodes
+ */
+void VM::run(const IRVector& ir)
+{
+	for (size_t i = 0, j = ir.size(); i < j; ++i) {
+		switch (ir[i].opcode) {
+			case OP_VAR_DECL:
+				_var_decl(ir[i]);
+				break;
+		}
+	}
+}
 
 } // clever

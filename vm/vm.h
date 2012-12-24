@@ -30,6 +30,9 @@
 
 namespace clever {
 
+/**
+ * VM representation
+ */
 class VM {
 public:
 	VM() {}

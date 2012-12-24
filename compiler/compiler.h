@@ -38,11 +38,11 @@ class CString;
  * Intermediate representation
  */
 struct IR {
-	IR(Opcode opcode, int op1, int op2)
-		: m_opcode(opcode), m_op1(op1), m_op2(op2), m_result(NULL) {}
+	IR(Opcode _op, int _op1, int _op2)
+		: opcode(opcode), op1(_op1), op2(_op2), result(NULL) {}
 
-	int m_opcode, m_op1, m_op2;
-	void* m_result;
+	int opcode, op1, op2;
+	void* result;
 };
 
 typedef std::vector<IR> IRVector;
