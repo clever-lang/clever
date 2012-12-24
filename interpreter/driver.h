@@ -60,10 +60,6 @@ public:
 
 	virtual ~Driver() {}
 
-	void startCompiler() { m_compiler.init(); }
-
-	void endCompiler() { m_compiler.end(); }
-
 	/* Returns the parsed file */
 	CString* getFile() const {
 		return const_cast<CString*>(m_file);
