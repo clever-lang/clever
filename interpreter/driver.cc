@@ -33,13 +33,11 @@
 
 namespace clever {
 
-int* g_clever_argc;
-char*** g_clever_argv;
-
+/**
+ * Interpreter constructor
+ */
 Interpreter::Interpreter(int* argc, char*** argv)
 {
-	g_clever_argc = argc;
-	g_clever_argv = argv;
 }
 
 /**
