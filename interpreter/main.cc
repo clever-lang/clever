@@ -73,7 +73,7 @@ int main(int argc, char **argv)
 		return 0;
 	}
 
-	int inc_arg=0;
+	int inc_arg = 0;
 
 	for (int i = 1; i < argc; ++i) {
 		// Look for general options, then code options and finally debug options.
