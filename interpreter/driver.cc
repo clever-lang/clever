@@ -25,13 +25,11 @@
 
 #include <fstream>
 #include <setjmp.h>
-#include "compiler/clever.h"
+#include "compiler/cstring.h"
 #include "interpreter/driver.h"
 #include "interpreter/parser.hh"
 #include "interpreter/position.hh"
-#include "compiler/cstring.h"
 #include "scanner.h"
-#include "vm/vm.h"
 
 namespace clever {
 
@@ -49,6 +47,7 @@ Interpreter::Interpreter(int* argc, char*** argv) {
  * Executes the script
  */
 void Interpreter::execute(bool interactive) {
+	/*
 	if (interactive) {
 		m_compiler.setInteractive();
 	}
@@ -68,14 +67,11 @@ void Interpreter::execute(bool interactive) {
 	if (result == 0) {
 		VM::run();
 	}
-	VM::shutdown();
+	VM::shutdown();*/
 }
 
 #ifdef CLEVER_DEBUG
 void Interpreter::execute(bool interactive, bool dump_opcode) {
-	if (dump_opcode) {
-		m_compiler.setOpcodeDump();
-	}
 	execute(interactive);
 }
 #endif
@@ -108,7 +104,7 @@ void Driver::readFile(std::string& source) const {
  */
 int Driver::parseFile(const std::string& filename) {
 	ScannerState* new_scanner = new ScannerState;
-	Parser parser(*this, *new_scanner, m_compiler);
+	Parser parser(*this, *new_scanner);
 	std::string& source = new_scanner->getSource();
 
 	m_is_file = true;
@@ -139,7 +135,7 @@ int Driver::parseFile(const std::string& filename) {
  */
 int Driver::parseStr(const std::string& code, bool importStd) {
 	ScannerState *new_scanner = new ScannerState;
-	Parser parser(*this, *new_scanner, m_compiler);
+	Parser parser(*this, *new_scanner);
 	std::string& source = new_scanner->getSource();
 
 	if (importStd) {

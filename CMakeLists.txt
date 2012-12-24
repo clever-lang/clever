@@ -124,82 +124,12 @@ endif (UNIX)
 add_executable(clever
 	${RE2C_CleverScanner_OUTPUTS}
 	${BISON_CleverParser_OUTPUTS}
-	compiler/cached_ptrs.h
-	compiler/callablevalue.cc
-	compiler/callablevalue.h
-	compiler/callablevalue-inl.h
-	compiler/cgvisitor.cc
-	compiler/cgvisitor.h
-	compiler/clever.cc
-	compiler/clever.h
-	compiler/compiler.cc
-	compiler/compiler.h
 	compiler/cstring.cc
 	compiler/cstring.h
-	compiler/datavalue.h
-	compiler/function.h
-	compiler/method.h
-	compiler/module.cc
-	compiler/module.h
-	compiler/pkgmanager.cc
-	compiler/pkgmanager.h
-	compiler/refcounted.h
-	compiler/scope.cc
-	compiler/scope.h
-	compiler/scope-inl.h
-	compiler/symbol.h
-	compiler/typechecker.cc
-	compiler/typechecker.h
-	compiler/value.cc
-	compiler/value.h
-	interpreter/ast.cc
-	interpreter/ast.h
-	interpreter/asttransformer.h
-	interpreter/astvisitor.h
 	interpreter/driver.cc
 	interpreter/driver.h
 	interpreter/main.cc
 	interpreter/scanner.h
-	types/array.cc
-	types/array.h
-	types/arrayvalue.h
-	types/arrayiterator.cc
-	types/arrayiterator.h
-	types/arrayiteratorvalue.h
-	types/bool.cc
-	types/bool.h
-	types/byte.cc
-	types/byte.h
-	types/double.cc
-	types/double.h
-	types/function.cc
-	types/function.h
-	types/functionvalue.h
-	types/int.cc
-	types/int.h
-	types/iterator.cc
-	types/iterator.h
-	types/map.cc
-	types/map.h
-	types/mapvalue.h
-	types/mapiterator.cc
-	types/mapiterator.h
-	types/mapiteratorvalue.h
-	types/nativetypes.h
-	types/object.cc
-	types/object.h
-	types/pair.cc
-	types/pair.h
-	types/pairvalue.h
-	types/str.cc
-	types/str.h
-	types/type.cc
-	types/type.h
-	vm/opcode.cc
-	vm/opcode.h
-	vm/operand.h
-	vm/vm.cc
-	vm/vm.h
 	${EXTRA_CLEVER_FILES}
 )
 target_link_libraries(clever ${CLEVER_LIBRARIES})
@@ -207,10 +137,10 @@ include_directories(${CLEVER_INCLUDE_DIRS})
 
 # Module trees
 # ---------------------------------------------------------------------------
-add_subdirectory(modules/std)
-add_subdirectory(modules/web)
-add_dependencies(clever modules_std modules_web)
-target_link_libraries(clever modules_std modules_web)
+#add_subdirectory(modules/std)
+#add_subdirectory(modules/web)
+#add_dependencies(clever modules_std modules_web)
+#target_link_libraries(clever modules_std modules_web)
 
 # Test runner
 # ---------------------------------------------------------------------------

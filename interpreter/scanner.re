@@ -26,9 +26,6 @@
 #include <cstdio>
 #include "interpreter/scanner.h"
 #include "interpreter/parser.hh"
-#include "interpreter/ast.h"
-#include "compiler/cstring.h"
-#include "types/nativetypes.h"
 
 namespace clever {
 
@@ -232,47 +229,30 @@ next_token:
 	}
 
 	<INITIAL>'true' {
-		Value* newval = new Value(CLEVER_BOOL);
-		newval->setBoolean(true);
-
-		yylval->num_literal = new ast::NumberLiteral(newval);
-
 		RET(token::TRUE);
 	}
 
 	<INITIAL>'false' {
-		Value* newval = new Value(CLEVER_BOOL);
-		newval->setBoolean(false);
-
-		yylval->num_literal = new ast::NumberLiteral(newval);
-
 		RET(token::FALSE);
 	}
 
 	<INITIAL>IDENTIFIER {
-		yylval->identifier = new ast::Identifier(CSTRING(std::string(reinterpret_cast<const char*>(s.yylex), yylen)));
 		RET(token::IDENT);
 	}
 
 	<INITIAL>'Void' {
-		yylval->ast_node = new ast::Identifier(CSTRING(std::string(reinterpret_cast<const char*>(s.yylex), yylen)));
 		RET(token::TYPE);
 	}
 
 	<INITIAL>CONSTANT {
-		yylval->ast_node = new ast::Identifier(CSTRING(std::string(reinterpret_cast<const char*>(s.yylex), yylen)));
 		RET(token::CONSTANT);
 	}
 
 	<INITIAL>TYPE {
-		yylval->ast_node = new ast::Identifier(CSTRING(std::string(reinterpret_cast<const char*>(s.yylex), yylen)));
 		RET(token::TYPE);
 	}
 
 	<INITIAL>REGEX {
-		Value* val = new Value(CSTRING(std::string(reinterpret_cast<const char*>(s.yylex+1), yylen-2)));
-
-		yylval->regex_pattern = new ast::RegexPattern(val);
 		RET(token::REGEX);
 	}
 
@@ -306,7 +286,6 @@ next_token:
 			}
 		}
 
-		yylval->str_literal = new ast::StringLiteral(CSTRING(strtext));
 		RET(token::STR);
 	}
 
@@ -317,11 +296,6 @@ next_token:
 		for (int i = 0; i < yylen; ++i) {
 			n = n * 10 + (nstr[i] - '0');
 		}
-
-		Value* newval = new Value(CLEVER_INT);
-		newval->setInteger(n);
-
-		yylval->num_literal = new ast::NumberLiteral(newval);
 
 		RET(token::NUM_INTEGER);
 	}
@@ -340,11 +314,6 @@ next_token:
 			}
 		}
 
-		Value* newval = new Value(CLEVER_INT);
-		newval->setInteger(n);
-
-		yylval->num_literal = new ast::NumberLiteral(newval);
-
 		RET(token::NUM_INTEGER);
 	}
 
@@ -356,23 +325,13 @@ next_token:
 			n = n * 8 + nstr[i] - '0';
 		}
 
-		Value* newval = new Value(CLEVER_INT);
-		newval->setInteger(n);
-
-		yylval->num_literal = new ast::NumberLiteral(newval);
-
 		RET(token::NUM_INTEGER);
 	}
 
 	<INITIAL>(DOUBLE|EXP_DOUBLE) {
-		Value* newval = new Value(CLEVER_DOUBLE);
 		double n = 0;
 
 		n = strtod(std::string(reinterpret_cast<const char*>(s.yylex), yylen).c_str(), NULL);
-
-		newval->setDouble(n);
-
-		yylval->num_literal = new ast::NumberLiteral(newval);
 
 		RET(token::NUM_DOUBLE);
 	}

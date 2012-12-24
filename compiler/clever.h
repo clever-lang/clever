@@ -29,7 +29,6 @@
 #include <sstream>
 #include <cstdarg>
 #include <setjmp.h>
-#include "compiler/cached_ptrs.h"
 
 namespace clever {
 
@@ -308,4 +307,3 @@ void printfln(const char*, ...);
 } // clever
 
 #endif /* CLEVER_H */
-

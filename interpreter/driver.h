@@ -28,7 +28,6 @@
 
 #include <stack>
 #include "interpreter/parser.hh"
-#include "compiler/compiler.h"
 
 namespace clever { namespace ast {
 
@@ -62,11 +61,11 @@ public:
 
 	/* Initializes the compiler with AST nodes */
 	void initCompiler() {
-		m_compiler.init();
+		//m_compiler.init();
 	}
 
 	void emitAST(ast::ASTNode *tree) {
-		m_compiler.setAST(tree);
+		//m_compiler.setAST(tree);
 	}
 
 	/* Returns the parsed file */
@@ -100,7 +99,7 @@ protected:
 	/* The file path -f */
 	const CString* m_file;
 	/* Compiler */
-	Compiler m_compiler;
+	//Compiler m_compiler;
 private:
 	/* Scanners stack */
 	static ScannerStack s_scanners;
