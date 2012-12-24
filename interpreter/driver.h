@@ -55,9 +55,9 @@ public:
 	typedef std::stack<ScannerState*> ScannerStack;
 
 	Driver()
-		: m_is_file(false), m_trace_parsing(false), m_file(NULL) { }
+		: m_is_file(false), m_trace_parsing(false), m_file(NULL) {}
 
-	virtual ~Driver() { }
+	virtual ~Driver() {}
 
 	/* Initializes the compiler with AST nodes */
 	void initCompiler() {
@@ -100,10 +100,10 @@ protected:
 	const CString* m_file;
 	/* Compiler */
 	//Compiler m_compiler;
-private:
-	/* Scanners stack */
-	static ScannerStack s_scanners;
 
+	/* Scanners stack */
+	ScannerStack m_scanners;
+private:
 	DISALLOW_COPY_AND_ASSIGN(Driver);
 };
 

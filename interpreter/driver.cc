@@ -33,8 +33,6 @@
 
 namespace clever {
 
-Driver::ScannerStack Driver::s_scanners;
-
 int* g_clever_argc;
 char*** g_clever_argv;
 
@@ -117,12 +115,12 @@ int Driver::parseFile(const std::string& filename)
 
 	readFile(source);
 
-	s_scanners.push(new_scanner);
+	m_scanners.push(new_scanner);
 
 	const unsigned char* s = reinterpret_cast<const unsigned char*>(source.c_str());
 
-	s_scanners.top()->set_cursor(s);
-	s_scanners.top()->set_limit(s + source.length());
+	m_scanners.top()->set_cursor(s);
+	m_scanners.top()->set_limit(s + source.length());
 
 	// Bison debug option
 	parser.set_debug_level(m_trace_parsing);
@@ -130,7 +128,7 @@ int Driver::parseFile(const std::string& filename)
 	int result = parser.parse();
 
 	delete new_scanner;
-	s_scanners.pop();
+	m_scanners.pop();
 
 	return result;
 }
@@ -150,11 +148,11 @@ int Driver::parseStr(const std::string& code, bool importStd)
 	source += code;
 
 	/* Set the source code to scanner read it */
-	s_scanners.push(new_scanner);
+	m_scanners.push(new_scanner);
 
 	const unsigned char* s = reinterpret_cast<const unsigned char*>(source.c_str());
-	s_scanners.top()->set_cursor(s);
-	s_scanners.top()->set_limit(s + source.length());
+	m_scanners.top()->set_cursor(s);
+	m_scanners.top()->set_limit(s + source.length());
 
 	/* Bison debug option */
 	parser.set_debug_level(m_trace_parsing);
@@ -162,7 +160,7 @@ int Driver::parseStr(const std::string& code, bool importStd)
 	int result = parser.parse();
 
 	delete new_scanner;
-	s_scanners.pop();
+	m_scanners.pop();
 
 	return result;
 }

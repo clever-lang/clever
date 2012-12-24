@@ -104,7 +104,7 @@ namespace clever {
 %left ',';
 %left LOGICAL_OR;
 %left LOGICAL_AND;
-%right '=' PLUS_EQUAL MINUS_EQUAL DIV_EQUAL MULT_EQUAL MOD_EQUAL BW_OR_EQUAL XOR_EQUAL BW_AND_EQUAL  RSHIFT_EQUAL LSHIFT_EQUAL  ;
+%right '=' PLUS_EQUAL MINUS_EQUAL DIV_EQUAL MULT_EQUAL MOD_EQUAL BW_OR_EQUAL XOR_EQUAL BW_AND_EQUAL  RSHIFT_EQUAL LSHIFT_EQUAL;
 %left ':';
 %left BOOLEAN_OR;
 %left BOOLEAN_AND;
@@ -139,7 +139,8 @@ statement_list:
 
 namespace clever {
 
-void Parser::error(const Parser::location_type& line, const std::string& message) {
+void Parser::error(const Parser::location_type& line, const std::string& message)
+{
 	driver.error(line, message);
 }
 
