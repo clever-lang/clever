@@ -31,7 +31,7 @@ namespace clever {
 /**
  * Frees all resource used by the compiler
  */
-void Compiler::shutdown()
+void Compiler::shutdown() const
 {
 	if (g_cstring_tbl) {
 		delete g_cstring_tbl;

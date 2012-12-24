@@ -58,15 +58,15 @@ public:
 	/**
 	 * Starts the compilation phase
 	 */
-	void init() {}
+	void init() const {}
 	/**
 	 * Ends the compilation phase
 	 */
-	void end() {}
+	void end() const {}
 	/**
 	 * Shutdown the compiler freeing all resources
 	 */
-	void shutdown();
+	void shutdown() const;
 
 	const IRVector& getIR() const { return m_ir; }
 
