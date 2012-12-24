@@ -130,7 +130,7 @@ namespace clever {
 %start top_statements;
 
 top_statements:
-		statement_list
+		{ driver.startCompiler(); } statement_list { driver.endCompiler(); }
 ;
 
 statement_list:

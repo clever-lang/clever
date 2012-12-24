@@ -33,6 +33,8 @@
 
 namespace clever {
 
+jmp_buf fatal_error;
+
 /**
  * Interpreter constructor
  */
@@ -45,19 +47,18 @@ Interpreter::Interpreter(int* argc, char*** argv)
  */
 void Interpreter::execute(bool interactive)
 {
-	/*
 	if (interactive) {
 		m_compiler.setInteractive();
 	}
 
-	int result = setjmp(Compiler::failure);
+	int result = setjmp(fatal_error);
 
 	if (result == 0) {
-		m_compiler.buildIR();
+		m_compiler.end();
 	} else {
 		m_compiler.shutdown();
 	}
-
+/*
 	VM::setOpcodes(&m_compiler.getOpcodes());
 
 	result = setjmp(clever::fatal_error);

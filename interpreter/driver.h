@@ -27,6 +27,7 @@
 #define CLEVER_DRIVER_H
 
 #include <stack>
+#include "compiler/compiler.h"
 #include "interpreter/parser.hh"
 
 namespace clever { namespace ast {
@@ -59,14 +60,9 @@ public:
 
 	virtual ~Driver() {}
 
-	/* Initializes the compiler with AST nodes */
-	void initCompiler() {
-		//m_compiler.init();
-	}
+	void startCompiler() { m_compiler.init(); }
 
-	void emitAST(ast::ASTNode *tree) {
-		//m_compiler.setAST(tree);
-	}
+	void endCompiler() { m_compiler.end(); }
 
 	/* Returns the parsed file */
 	CString* getFile() const {
@@ -94,12 +90,15 @@ public:
 protected:
 	/* Indicates if it's a file is being parsed */
 	bool m_is_file;
+
 	/* Debug option */
 	bool m_trace_parsing;
+
 	/* The file path -f */
 	const CString* m_file;
+
 	/* Compiler */
-	//Compiler m_compiler;
+	Compiler m_compiler;
 
 	/* Scanners stack */
 	ScannerStack m_scanners;
