@@ -32,6 +32,7 @@
 
 #include <stack>
 #include "interpreter/scanner.h"
+#include "compiler/cstring.h"
 
 namespace clever {
 class Driver;
@@ -46,7 +47,7 @@ class Driver;
 
 %locations
 %initial-action {
-//@$.begin.filename = @$.end.filename = driver.getFile();
+@$.begin.filename = @$.end.filename = driver.getFile();
 };
 
 %debug

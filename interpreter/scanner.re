@@ -276,9 +276,9 @@ next_token:
 	}
 
 	<INITIAL>(DOUBLE|EXP_DOUBLE) {
-		double n = 0;
-
+		/*double n = 0;
 		n = strtod(std::string(reinterpret_cast<const char*>(s.yylex), yylen).c_str(), NULL);
+		*/
 
 		RET(token::NUM_DOUBLE);
 	}
