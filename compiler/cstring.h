@@ -181,17 +181,20 @@ private:
 
 extern CStringTable* g_cstring_tbl;
 
-} // clever
-
 /**
  * Returns the CString* pointer to a string
  */
-inline const clever::CString* CSTRING(const std::string& str) {
-	return clever::g_cstring_tbl->intern(str);
+inline const CString* CSTRING(const std::string& str) {
+	return g_cstring_tbl->intern(str);
 }
 
-inline const clever::CString* CSTRINGT(const std::string& str, bool interned = false) {
-	return new clever::CString(str, interned);
+/**
+ * Returns the CString* pointer to a possible temporary string
+ */
+inline const CString* CSTRINGT(const std::string& str, bool interned = false) {
+	return new CString(str, interned);
 }
+
+} // clever
 
 #endif /* CLEVER_CSTRING_H */

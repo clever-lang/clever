@@ -43,9 +43,9 @@ class ScannerState;
 /**
  * Lexer prototype
  */
-clever::Parser::token_type yylex(clever::Parser::semantic_type*,
-		clever::Parser::location_type*, clever::Driver&,
-		clever::ScannerState&);
+Parser::token_type yylex(Parser::semantic_type*,
+		Parser::location_type*, Driver&,
+		ScannerState&);
 
 /**
  * Driver - Handles the lexer, parser and compiler
@@ -81,7 +81,7 @@ public:
 	int parseFile(const std::string&);
 
 	/* Error handling */
-	void error(const clever::location&, const std::string&) const;
+	void error(const location&, const std::string&) const;
 	void error(const std::string&) const;
 
 #ifdef CLEVER_DEBUG

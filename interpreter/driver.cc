@@ -169,14 +169,15 @@ int Driver::parseStr(const std::string& code, bool importStd)
 /**
  * Prints an error message and exit
  */
-void Driver::error(const clever::location& location, const std::string& message) const
+void Driver::error(const location& location, const std::string& msg) const
 {
 	position last = location.end - 1;
 
 	if (last.filename) {
-		std::cerr << message << " in " << *last.filename << " on line " << last.line << std::endl;
+		std::cerr << msg << " in " << *last.filename <<
+			" on line " << last.line << std::endl;
 	} else {
-		std::cerr << message << " on line " << last.line << std::endl;
+		std::cerr << msg << " on line " << last.line << std::endl;
 	}
 	exit(1);
 }

@@ -150,9 +150,9 @@ var_declaration:
 
 namespace clever {
 
-void Parser::error(const Parser::location_type& line, const std::string& message)
+void Parser::error(const Parser::location_type& line, const std::string& msg)
 {
-	driver.error(line, message);
+	driver.error(line, msg);
 }
 
 } // clever
