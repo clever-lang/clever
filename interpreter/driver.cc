@@ -47,37 +47,13 @@ Interpreter::Interpreter(int* argc, char*** argv)
  */
 void Interpreter::execute(bool interactive)
 {
-	if (interactive) {
-		m_compiler.setInteractive();
-	}
-
-	int result = setjmp(fatal_error);
-
-	if (result == 0) {
-		m_compiler.end();
-	} else {
-		m_compiler.shutdown();
-	}
 /*
-	VM::setOpcodes(&m_compiler.getOpcodes());
-
-	result = setjmp(clever::fatal_error);
-
-	if (result == 0) {
-		VM::run();
-	}
-	VM::shutdown();*/
+	VM::setIR(&m_compiler.getIR());
+	VM::run();
+	VM::shutdown();
+*/
+	m_compiler.shutdown();
 }
-
-#ifdef CLEVER_DEBUG
-void Interpreter::execute(bool interactive, bool dump_opcode)
-{
-	if (dump_opcode) {
-		//m_compiler.setOpcodeDump();
-	}
-	execute(interactive);
-}
-#endif
 
 /**
  * Read the file defined in file property
@@ -104,12 +80,12 @@ void Driver::readFile(std::string& source) const
 }
 
 /**
- * Parses a file
+ * Starts the parsing of the supplied file
  */
 int Driver::parseFile(const std::string& filename)
 {
 	ScannerState* new_scanner = new ScannerState;
-	Parser parser(*this, *new_scanner);
+	Parser parser(*this, *new_scanner, m_compiler);
 	std::string& source = new_scanner->getSource();
 
 	m_is_file = true;
@@ -136,12 +112,12 @@ int Driver::parseFile(const std::string& filename)
 }
 
 /**
- * Parses a string
+ * Starts the parsing of the supplied string
  */
 int Driver::parseStr(const std::string& code, bool importStd)
 {
 	ScannerState *new_scanner = new ScannerState;
-	Parser parser(*this, *new_scanner);
+	Parser parser(*this, *new_scanner, m_compiler);
 	std::string& source = new_scanner->getSource();
 
 	if (importStd) {

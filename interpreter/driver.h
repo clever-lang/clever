@@ -80,9 +80,7 @@ public:
 	void error(const location&, const std::string&) const;
 	void error(const std::string&) const;
 
-#ifdef CLEVER_DEBUG
-	virtual void execute(bool, bool) = 0;
-#endif
+	/* Executes the script */
 	virtual void execute(bool) = 0;
 
 	/* Tracing */

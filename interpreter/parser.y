@@ -36,12 +36,14 @@
 
 namespace clever {
 class Driver;
+class Compiler;
 } // clever
 }
 
 // The parsing context.
 %parse-param { Driver& driver }
 %parse-param { ScannerState& state }
+%parse-param { Compiler& c }
 %lex-param   { Driver& driver }
 %lex-param   { ScannerState& state }
 
@@ -130,7 +132,7 @@ namespace clever {
 %start top_statements;
 
 top_statements:
-		{ driver.startCompiler(); } statement_list { driver.endCompiler(); }
+		{ c.init(); } statement_list { c.end(); }
 ;
 
 statement_list:

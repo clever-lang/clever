@@ -23,30 +23,19 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef CLEVER_COMPILER_H
-#define CLEVER_COMPILER_H
+#include "compiler/cstring.h"
+#include "compiler/compiler.h"
 
 namespace clever {
 
-class Compiler {
-public:
-	Compiler() {}
-
-	~Compiler() {}
-	/**
-	 * Starts the compilation phase
-	 */
-	void init() {}
-	/**
-	 * Ends the compilation phase
-	 */
-	void end() {}
-	/**
-	 * Shutdown the compiler freeing all resources
-	 */
-	void shutdown();
-};
+/**
+ * Frees all resource used by the compiler
+ */
+void Compiler::shutdown()
+{
+	if (g_cstring_tbl) {
+		delete g_cstring_tbl;
+	}
+}
 
 } // clever
-
-#endif // CLEVER_COMPILER_H
