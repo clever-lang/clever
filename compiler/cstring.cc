@@ -29,5 +29,4 @@ namespace clever {
 
 CStringTable* g_cstring_tbl = new CStringTable;
 
-
 } // clever
