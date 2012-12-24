@@ -28,6 +28,8 @@
 
 namespace clever {
 
+class CString;
+
 class Compiler {
 public:
 	Compiler() {}
@@ -45,6 +47,11 @@ public:
 	 * Shutdown the compiler freeing all resources
 	 */
 	void shutdown();
+
+	/**
+	 * Compilation methods
+	 */
+	void varDeclaration(const CString*);
 };
 
 } // clever

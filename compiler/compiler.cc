@@ -38,4 +38,11 @@ void Compiler::shutdown()
 	}
 }
 
+/**
+ * Compiles a variable declaration
+ */
+void Compiler::varDeclaration(const CString* var)
+{
+}
+
 } // clever

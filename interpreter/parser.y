@@ -52,15 +52,17 @@ class Compiler;
 @$.begin.filename = @$.end.filename = driver.getFile();
 };
 
+%union {
+	const CString *str;
+};
+
+%type <str> IDENT
+
 %debug
 %error-verbose
 
 %code {
 #include "interpreter/driver.h"
-
-namespace clever {
-
-} // clever
 }
 
 %token END  0        "end of file"
@@ -145,7 +147,7 @@ non_empty_statement_list:
 ;
 
 var_declaration:
-		VAR IDENT
+		VAR IDENT { c.varDeclaration($2); }
 ;
 
 %%

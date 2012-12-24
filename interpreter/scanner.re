@@ -26,6 +26,7 @@
 #include <cstdio>
 #include "interpreter/scanner.h"
 #include "interpreter/parser.hh"
+#include "compiler/compiler.h"
 
 namespace clever {
 
@@ -194,6 +195,7 @@ next_token:
 	}
 
 	<INITIAL>IDENTIFIER {
+		yylval->str = CSTRING(std::string(reinterpret_cast<const char*>(s.yylex), yylen));
 		RET(token::IDENT);
 	}
 
