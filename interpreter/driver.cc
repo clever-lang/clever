@@ -71,6 +71,9 @@ void Interpreter::execute(bool interactive)
 #ifdef CLEVER_DEBUG
 void Interpreter::execute(bool interactive, bool dump_opcode)
 {
+	if (dump_opcode) {
+		//m_compiler.setOpcodeDump();
+	}
 	execute(interactive);
 }
 #endif
