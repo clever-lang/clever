@@ -26,9 +26,8 @@
 #ifndef CLEVER_VM_H
 #define CLEVER_VM_H
 
-#include "compiler/compiler.h"
-
 #include <pthread.h>
+#include "compiler/compiler.h"
 
 namespace clever {
 
@@ -36,15 +35,15 @@ namespace clever {
  * VM representation
  */
 
-typedef std::vector<pthread_t> ThreadPool;
-typedef std::vector<pthread_mutex_t> MutexPool;
-
 class VM {
 public:
+	typedef std::vector<pthread_t> ThreadPool;
+	typedef std::vector<pthread_mutex_t> MutexPool;
+
 	VM() {}
 	~VM() {}
 
-	static void run(const IRVector&);
+	void run(const IRVector&);
 
 private:
     ThreadPool m_thread_pool;

@@ -50,7 +50,7 @@ void Interpreter::execute(bool interactive)
 {
 	m_compiler.getIR();
 
-	VM::run(m_compiler.getIR());
+	VM().run(m_compiler.getIR());
 
 	m_compiler.shutdown();
 }
