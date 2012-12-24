@@ -68,9 +68,9 @@ public:
 	/* Read file to the scanner */
 	void readFile(std::string&) const;
 
-	/* Run the parser */
-	int parseStr(const std::string&, bool importStd);
-	int parseFile(const std::string&);
+	/* Starts the parser and loads the Symbol table */
+	int loadStr(const std::string&, bool importStd);
+	int loadFile(const std::string&);
 
 	/* Error handling */
 	void error(const location&, const std::string&) const;

@@ -82,7 +82,7 @@ void Driver::readFile(std::string& source) const
 /**
  * Starts the parsing of the supplied file
  */
-int Driver::parseFile(const std::string& filename)
+int Driver::loadFile(const std::string& filename)
 {
 	ScannerState* new_scanner = new ScannerState;
 	Parser parser(*this, *new_scanner, m_compiler);
@@ -114,7 +114,7 @@ int Driver::parseFile(const std::string& filename)
 /**
  * Starts the parsing of the supplied string
  */
-int Driver::parseStr(const std::string& code, bool importStd)
+int Driver::loadStr(const std::string& code, bool importStd)
 {
 	ScannerState *new_scanner = new ScannerState;
 	Parser parser(*this, *new_scanner, m_compiler);

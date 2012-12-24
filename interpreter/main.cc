@@ -110,7 +110,7 @@ int main(int argc, char **argv)
 			inc_arg++;
 			while (std::cin) {
 				getline(std::cin, input_line);
-				clever.parseStr(input_line + '\n', false);
+				clever.loadStr(input_line + '\n', false);
 				clever.execute(true);
   			}
   			clever.shutdown();
@@ -118,12 +118,12 @@ int main(int argc, char **argv)
 		} else if (argv[i] == std::string("-r")) {
 			MORE_ARG();
 			inc_arg++;
-			clever.parseStr(argv[i], false);
+			clever.loadStr(argv[i], false);
 			break;
 		} else if (argv[i] == std::string("-qr")) {
 			MORE_ARG();
 			inc_arg++;
-			clever.parseStr(argv[i], true);
+			clever.loadStr(argv[i], true);
 			break;
 #ifdef CLEVER_DEBUG
 		} else if (argv[i] == std::string("-p")) {
@@ -136,7 +136,7 @@ int main(int argc, char **argv)
 			std::cerr << "Unknown option '" << argv[i] << "'" << std::endl;
 			exit(1);
 		} else {
-			clever.parseFile(argv[i]);
+			clever.loadFile(argv[i]);
 			break;
 		}
 	}
