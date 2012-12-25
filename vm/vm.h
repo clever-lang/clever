@@ -32,6 +32,10 @@
 
 namespace clever {
 
+#define VM_HANDLER_ARG size_t& i, IR& op
+#define VM_HANDLER(name) CLEVER_FORCE_INLINE void VM::name(VM_HANDLER_ARG)
+#define VM_HANDLER_D(name) void name(VM_HANDLER_ARG)
+
 class Scope;
 class Value;
 
@@ -40,23 +44,25 @@ class Value;
  */
 class VM {
 public:
+	typedef void (VM::*OpHandler)(VM_HANDLER_ARG);
+
 	typedef std::vector<pthread_t> ThreadPool;
 	typedef std::vector<pthread_mutex_t> MutexPool;
 
-	VM(Scope** scope_pool, Value** value_pool)
-		: m_scope_pool(scope_pool), m_value_pool(value_pool), m_current_scope(0) {}
+	VM(Scope**, Value**);
 	~VM() {}
 
 	void run(IRVector&);
 
-	void var_decl(IR&);
-	void switch_scope(IR&);
+	VM_HANDLER_D(var_decl);
+	VM_HANDLER_D(switch_scope);
 private:
 	Scope** m_scope_pool;
 	Value** m_value_pool;
 	size_t m_current_scope;
     ThreadPool m_thread_pool;
     MutexPool m_mutex_pool;
+    OpHandler m_handlers[10];
 
     DISALLOW_COPY_AND_ASSIGN(VM);
 };

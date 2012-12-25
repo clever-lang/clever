@@ -30,7 +30,12 @@
 
 namespace clever {
 
-#define VM_HANDLER(name) CLEVER_FORCE_INLINE void VM::name(IR& op)
+VM::VM(Scope** scope_pool, Value** value_pool)
+	: m_scope_pool(scope_pool), m_value_pool(value_pool), m_current_scope(0)
+{
+	m_handlers[OP_VAR_DECL] = &VM::var_decl;
+	m_handlers[OP_SCOPE] = &VM::switch_scope;
+}
 
 /**
  * Variable declaration execution
@@ -59,14 +64,7 @@ VM_HANDLER(switch_scope)
 void VM::run(IRVector& ir)
 {
 	for (size_t i = 0, j = ir.size(); i < j; ++i) {
-		switch (ir[i].opcode) {
-			case OP_VAR_DECL:
-				var_decl(ir[i]);
-				break;
-			case OP_SCOPE:
-				switch_scope(ir[i]);
-				break;
-		}
+		(this->*m_handlers[ir[i].opcode])(i, ir[i]);
 	}
 }
 
