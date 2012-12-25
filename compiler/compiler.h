@@ -29,7 +29,7 @@
 #include <vector>
 #include "compiler/clever.h"
 #include "compiler/scope.h"
-#include "compiler/ir.h"
+#include "vm/ir.h"
 
 namespace clever {
 
