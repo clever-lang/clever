@@ -23,6 +23,7 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#include <cstdlib>
 #include "compiler/cstring.h"
 #include "compiler/compiler.h"
 #include "compiler/scope.h"
@@ -36,7 +37,22 @@ namespace clever {
 void Compiler::init()
 {
 	m_scope = new Scope;
-	m_scope_array[0] = m_scope;
+	m_scope_pool = (Scope**) calloc(10, sizeof(Scope*));
+	m_value_pool = (Value**) calloc(10, sizeof(Value*));
+
+	if (!m_scope_pool || !m_value_pool) {
+		error("Out of memory!");
+	}
+	m_scope_pool[0] = m_scope;
+}
+
+/**
+ * Displays an error message and exits
+ */
+void Compiler::error(const char* msg) const
+{
+	std::cout << "Compile error: " << msg << std::endl;
+	exit(1);
 }
 
 /**
@@ -44,12 +60,14 @@ void Compiler::init()
  */
 void Compiler::shutdown()
 {
-	if (g_cstring_tbl) {
-		delete g_cstring_tbl;
+	CLEVER_SAFE_DELETE(g_cstring_tbl);
+	CLEVER_SAFE_DELETE(m_scope);
+	free(m_scope_pool);
+
+	for (size_t i = 0; i < m_value_id; ++i) {
+		delete m_value_pool[i];
 	}
-	if (m_scope) {
-		delete m_scope;
-	}
+	free(m_value_pool);
 }
 
 /**
@@ -57,11 +75,14 @@ void Compiler::shutdown()
  */
 void Compiler::varDeclaration(const CString* var, Value* node)
 {
-	m_ir.push_back(IR(OP_VAR_DECL, m_scope->push(var)));
-
-	if (node) {
-		delete node;
+	if (!node) {
+		node = new Value(0L);
 	}
+	m_value_pool[m_value_id] = node;
+
+	m_ir.push_back(IR(OP_VAR_DECL, m_scope->push(var, m_value_id)));
+
+	++m_value_id;
 }
 
 /**
@@ -72,7 +93,7 @@ void Compiler::newScope()
 	m_scope = m_scope->newLexicalScope();
 	m_scope->setId(++m_scope_id);
 
-	m_scope_array[m_scope_id] = m_scope;
+	m_scope_pool[m_scope_id] = m_scope;
 
 	m_ir.push_back(IR(OP_SCOPE, m_scope_id));
 }

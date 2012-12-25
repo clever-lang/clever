@@ -27,15 +27,32 @@
 #define CLEVER_SCOPE_H
 
 #include <vector>
+#include "compiler/value.h"
 
 namespace clever {
 
 class CString;
+class Value;
+
+class Symbol {
+public:
+	Symbol(const CString* name, size_t value_id)
+		: m_name(name), m_value_id(value_id) {}
+
+	~Symbol() {}
+
+	const CString* getName() const { return m_name; }
+
+	size_t getValueId() const { return m_value_id; }
+private:
+	const CString* m_name;
+	size_t m_value_id;
+};
 
 class Scope {
 public:
 	typedef std::vector<Scope*> ScopeVector;
-	typedef std::vector<const CString*> SymbolMap;
+	typedef std::vector<Symbol> SymbolMap;
 
 	Scope()
 		: m_parent(NULL), m_children(), m_symbols(), m_size(0), m_id(0) {}
@@ -53,12 +70,12 @@ public:
 		}
 	}
 
-	size_t push(const CString* name) {
-		m_symbols.push_back(name);
+	size_t push(const CString* name, size_t value_id) {
+		m_symbols.push_back(Symbol(name, value_id));
 		return m_size++;
 	}
 
-	const CString* at(size_t idx) { return m_symbols[idx]; }
+	Symbol& at(size_t idx) { return m_symbols[idx]; }
 
 	void setId(size_t id) { m_id = id; }
 	size_t getId() const { return m_id; }

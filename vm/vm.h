@@ -33,6 +33,7 @@
 namespace clever {
 
 class Scope;
+class Value;
 
 /**
  * VM representation
@@ -42,8 +43,8 @@ public:
 	typedef std::vector<pthread_t> ThreadPool;
 	typedef std::vector<pthread_mutex_t> MutexPool;
 
-	VM(Scope** scope)
-		: m_scope_array(scope), m_current_scope(0) {}
+	VM(Scope** scope_pool, Value** value_pool)
+		: m_scope_pool(scope_pool), m_value_pool(value_pool), m_current_scope(0) {}
 	~VM() {}
 
 	void run(IRVector&);
@@ -51,7 +52,8 @@ public:
 	void var_decl(IR&);
 	void switch_scope(IR&);
 private:
-	Scope** m_scope_array;
+	Scope** m_scope_pool;
+	Value** m_value_pool;
 	size_t m_current_scope;
     ThreadPool m_thread_pool;
     MutexPool m_mutex_pool;

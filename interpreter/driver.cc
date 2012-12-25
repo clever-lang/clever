@@ -46,7 +46,7 @@ Interpreter::Interpreter(int* argc, char*** argv)
  */
 void Interpreter::execute(bool interactive)
 {
-	VM(m_compiler.getScopeTable()).run(m_compiler.getIR());
+	VM(m_compiler.getScopePool(), m_compiler.getValuePool()).run(m_compiler.getIR());
 
 	m_compiler.shutdown();
 }

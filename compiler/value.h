@@ -26,21 +26,25 @@
 #ifndef CLEVER_VALUE_H
 #define CLEVER_VALUE_H
 
+#include "compiler/refcounted.h"
+
 namespace clever {
 
-class Value {
+class Value : public RefCounted {
 public:
 	union Data {
 		long lval;
 		double dval;
 
-		Data(long n) : lval(0) {}
-		Data(double n) : dval(0) {}
+		Data(long n) : lval(n) {}
+		Data(double n) : dval(n) {}
 	};
 
-	Value() : m_data(0L) {}
+	Value() : RefCounted(), m_data(0L) {}
+	Value(long n) : RefCounted(), m_data(n) {}
 
-	Value(long n) : m_data(n) {}
+	long getInt() const { return m_data.lval; }
+	double getDouble() const { return m_data.dval; }
 private:
 	Data m_data;
 };

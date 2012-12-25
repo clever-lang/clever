@@ -37,10 +37,10 @@ namespace clever {
  */
 VM_HANDLER(var_decl)
 {
-	/**
-	 * Fetching variable name from scope
-	 */
-	std::cout << *(m_scope_array[m_current_scope]->at(op.op1)) << std::endl;
+	Symbol& sym = m_scope_pool[m_current_scope]->at(op.op1);
+
+	std::cout << "Symbol: " << *sym.getName() << std::endl;
+	std::cout << "Value: " << m_value_pool[sym.getValueId()]->getInt() << std::endl;
 }
 
 /**

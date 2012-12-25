@@ -41,7 +41,7 @@ class Value;
  */
 class Compiler {
 public:
-	Compiler() : m_ir(), m_scope(NULL), m_scope_id(0) {}
+	Compiler() : m_ir(), m_scope(NULL), m_scope_id(0), m_value_id(0) {}
 
 	~Compiler() {}
 	/**
@@ -59,7 +59,10 @@ public:
 
 	IRVector& getIR() { return m_ir; }
 
-	Scope** getScopeTable() { return m_scope_array; }
+	Scope** getScopePool() { return m_scope_pool; }
+	Value** getValuePool() { return m_value_pool; }
+
+	void error(const char*) const;
 
 	/**
 	 * Compilation methods
@@ -70,8 +73,10 @@ public:
 private:
 	IRVector m_ir;
 	Scope* m_scope;
-	Scope* m_scope_array[10];
+	Scope** m_scope_pool;
+	Value** m_value_pool;
 	size_t m_scope_id;
+	size_t m_value_id;
 
 	DISALLOW_COPY_AND_ASSIGN(Compiler);
 };
