@@ -81,6 +81,9 @@ void VM::run()
 {
 	size_t ip = 0;
 
+	/**
+	 * Loads the opcode handlers
+	 */
 	init();
 
 	(this->*m_handlers[m_inst[ip].opcode])(ip, m_inst[ip]);

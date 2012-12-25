@@ -34,13 +34,14 @@ namespace clever {
  * Intermediate representation
  */
 struct IR {
-	IR(Opcode _op, int _op1)
+	IR(Opcode _op, size_t _op1)
 		: opcode(_op), op1(_op1), op2(0), result(NULL) {}
 
-	IR(Opcode _op, int _op1, int _op2)
+	IR(Opcode _op, size_t _op1, size_t _op2)
 		: opcode(_op), op1(_op1), op2(_op2), result(NULL) {}
 
-	int opcode, op1, op2;
+	Opcode opcode;
+	size_t op1, op2;
 	void* result;
 };
 
