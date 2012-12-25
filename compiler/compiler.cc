@@ -32,10 +32,13 @@ namespace clever {
 /**
  * Frees all resource used by the compiler
  */
-void Compiler::shutdown() const
+void Compiler::shutdown()
 {
 	if (g_cstring_tbl) {
 		delete g_cstring_tbl;
+	}
+	if (m_scope) {
+		delete m_scope; /* FIXME: memleak on child scopes */
 	}
 }
 
@@ -44,7 +47,23 @@ void Compiler::shutdown() const
  */
 void Compiler::varDeclaration(const CString* var)
 {
-	m_ir.push_back(IR(OP_VAR_DECL, m_scope.push(var)));
+	m_ir.push_back(IR(OP_VAR_DECL, m_scope->push(var)));
+}
+
+/**
+ * Creates a new lexical scope
+ */
+void Compiler::newScope()
+{
+	m_scope = m_scope->newLexicalScope();
+}
+
+/**
+ * Scope end marker to switch to parent scope
+ */
+void Compiler::endScope()
+{
+	m_scope = m_scope->getParent();
 }
 
 } // clever

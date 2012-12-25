@@ -32,7 +32,15 @@ class CString;
 
 class Scope {
 public:
-	Scope() : m_size(0) {}
+	typedef std::vector<Scope*> ScopeVector;
+	typedef std::vector<const CString*> SymbolMap;
+
+	Scope()
+		: m_parent(NULL), m_children(), m_symbols(), m_size(0) {}
+
+	explicit Scope(Scope* parent)
+		: m_parent(parent), m_children(), m_symbols(), m_size(0) {}
+
 	~Scope() {}
 
 	size_t push(const CString* name) {
@@ -43,8 +51,20 @@ public:
 	const CString* at(size_t idx) { return m_symbols[idx]; }
 
 	size_t size() const { return m_size; }
+
+	Scope* newLexicalScope() {
+		Scope* s = new Scope(this);
+		m_children.push_back(s);
+		return s;
+	}
+
+	Scope* getParent() const { return m_parent; }
+
+	void clear();
 private:
-	std::vector<const CString*> m_symbols;
+	Scope* m_parent;
+	ScopeVector m_children;
+	SymbolMap m_symbols;
 	size_t m_size;
 
 	DISALLOW_COPY_AND_ASSIGN(Scope);

@@ -144,7 +144,7 @@ statement_list:
 
 non_empty_statement_list:
 		var_declaration ';'
-	|	'{' non_empty_statement_list '}'
+	|	'{' { c.newScope(); } non_empty_statement_list { c.endScope(); } '}'
 ;
 
 var_declaration:

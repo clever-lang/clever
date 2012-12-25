@@ -35,7 +35,6 @@ namespace clever {
 /**
  * VM representation
  */
-
 class VM {
 public:
 	typedef std::vector<pthread_t> ThreadPool;
