@@ -40,16 +40,17 @@ public:
 	typedef std::vector<pthread_t> ThreadPool;
 	typedef std::vector<pthread_mutex_t> MutexPool;
 
-	VM(Scope* scope)
-		: m_scope(scope) {}
+	VM(Scope** scope)
+		: m_scope_array(scope), m_current_scope(0) {}
 	~VM() {}
 
 	void run(IRVector&);
 
 	void var_decl(IR&);
-
+	void switch_scope(IR&);
 private:
-	Scope* m_scope;
+	Scope** m_scope_array;
+	size_t m_current_scope;
     ThreadPool m_thread_pool;
     MutexPool m_mutex_pool;
 

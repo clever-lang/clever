@@ -56,13 +56,13 @@ typedef std::vector<IR> IRVector;
  */
 class Compiler {
 public:
-	Compiler() : m_ir(), m_scope(NULL) {}
+	Compiler() : m_ir(), m_scope(NULL), m_scope_id(0) {}
 
 	~Compiler() {}
 	/**
 	 * Starts the compilation phase
 	 */
-	void init() { m_scope = new Scope; }
+	void init();
 	/**
 	 * Ends the compilation phase
 	 */
@@ -74,7 +74,7 @@ public:
 
 	IRVector& getIR() { return m_ir; }
 
-	Scope* getScope() { return m_scope; }
+	Scope** getScopeTable() { return m_scope_array; }
 
 	/**
 	 * Compilation methods
@@ -85,6 +85,8 @@ public:
 private:
 	IRVector m_ir;
 	Scope* m_scope;
+	Scope* m_scope_array[10];
+	size_t m_scope_id;
 
 	DISALLOW_COPY_AND_ASSIGN(Compiler);
 };

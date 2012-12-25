@@ -36,10 +36,10 @@ public:
 	typedef std::vector<const CString*> SymbolMap;
 
 	Scope()
-		: m_parent(NULL), m_children(), m_symbols(), m_size(0) {}
+		: m_parent(NULL), m_children(), m_symbols(), m_size(0), m_id(0) {}
 
 	explicit Scope(Scope* parent)
-		: m_parent(parent), m_children(), m_symbols(), m_size(0) {}
+		: m_parent(parent), m_children(), m_symbols(), m_size(0), m_id(0) {}
 
 	~Scope() {}
 
@@ -49,6 +49,9 @@ public:
 	}
 
 	const CString* at(size_t idx) { return m_symbols[idx]; }
+
+	void setId(size_t id) { m_id = id; }
+	size_t getId() const { return m_id; }
 
 	size_t size() const { return m_size; }
 
@@ -66,6 +69,7 @@ private:
 	ScopeVector m_children;
 	SymbolMap m_symbols;
 	size_t m_size;
+	size_t m_id;
 
 	DISALLOW_COPY_AND_ASSIGN(Scope);
 };

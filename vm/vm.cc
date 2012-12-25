@@ -39,7 +39,15 @@ VM_HANDLER(var_decl)
 	/**
 	 * Fetching variable name from scope
 	 */
-	std::cout << *(m_scope->at(op.op1)) << std::endl;
+	std::cout << *(m_scope_array[m_current_scope]->at(op.op1)) << std::endl;
+}
+
+/**
+ * Scope switching operation
+ */
+VM_HANDLER(switch_scope)
+{
+	m_current_scope = op.op1;
 }
 
 /**
@@ -51,6 +59,9 @@ void VM::run(IRVector& ir)
 		switch (ir[i].opcode) {
 			case OP_VAR_DECL:
 				var_decl(ir[i]);
+				break;
+			case OP_SCOPE:
+				switch_scope(ir[i]);
 				break;
 		}
 	}

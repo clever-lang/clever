@@ -29,6 +29,12 @@
 
 namespace clever {
 
+void Compiler::init()
+{
+	m_scope = new Scope;
+	m_scope_array[0] = m_scope;
+}
+
 /**
  * Frees all resource used by the compiler
  */
@@ -56,6 +62,11 @@ void Compiler::varDeclaration(const CString* var)
 void Compiler::newScope()
 {
 	m_scope = m_scope->newLexicalScope();
+	m_scope->setId(++m_scope_id);
+
+	m_scope_array[m_scope_id] = m_scope;
+
+	m_ir.push_back(IR(OP_SCOPE, m_scope_id));
 }
 
 /**
@@ -64,6 +75,8 @@ void Compiler::newScope()
 void Compiler::endScope()
 {
 	m_scope = m_scope->getParent();
+
+	m_ir.push_back(IR(OP_SCOPE, m_scope->getId()));
 }
 
 } // clever
