@@ -83,6 +83,8 @@ public:
 private:
 	IRVector m_ir;
 	Scope m_scope;
+
+	DISALLOW_COPY_AND_ASSIGN(Compiler);
 };
 
 } // clever

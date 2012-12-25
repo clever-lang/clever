@@ -53,6 +53,8 @@ private:
 	Scope* m_scope;
     ThreadPool m_thread_pool;
     MutexPool m_mutex_pool;
+
+    DISALLOW_COPY_AND_ASSIGN(VM);
 };
 
 } // clever

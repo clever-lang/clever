@@ -46,6 +46,8 @@ public:
 private:
 	std::vector<const CString*> m_symbols;
 	size_t m_size;
+
+	DISALLOW_COPY_AND_ASSIGN(Scope);
 };
 
 } // clever
