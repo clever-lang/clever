@@ -81,14 +81,33 @@ private:
 	 */
 	void init();
 
+	/**
+	 * VM program counter
+	 */
 	size_t m_pc;
+	/**
+	 * Vector of instruction
+	 */
 	IRVector& m_inst;
+	/**
+	 * Scope pool
+	 */
 	Scope** m_scope_pool;
+	/**
+	 * Value pool
+	 */
 	Value** m_value_pool;
+	/**
+	 * Current scope id
+	 */
 	size_t m_current_scope;
+    /**
+     * VM opcode handlers
+     */
+    OpHandler m_handlers[NUM_OPCODES];
+
     ThreadPool m_thread_pool;
     MutexPool m_mutex_pool;
-    OpHandler m_handlers[NUM_OPCODES];
 
     DISALLOW_COPY_AND_ASSIGN(VM);
 };
