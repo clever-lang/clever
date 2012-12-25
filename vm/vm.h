@@ -33,7 +33,7 @@
 
 namespace clever {
 
-#define VM_HANDLER_ARG size_t& i, IR& op
+#define VM_HANDLER_ARG IR& op
 #define VM_HANDLER(name) CLEVER_FASTCALL void VM::name(VM_HANDLER_ARG)
 #define VM_HANDLER_D(name) void name(VM_HANDLER_ARG)
 
@@ -51,7 +51,8 @@ public:
 	typedef std::vector<pthread_mutex_t> MutexPool;
 
 	VM(IRVector& inst)
-		: m_inst(inst), m_scope_pool(NULL), m_value_pool(NULL), m_current_scope(0) {}
+		: m_pc(0), m_inst(inst), m_scope_pool(NULL), m_value_pool(NULL),
+			m_current_scope(0) {}
 	~VM() {}
 	/**
 	 * Sets the symbol table to used by the VM to fetch the symbol names
@@ -79,6 +80,7 @@ private:
 	 */
 	void init();
 
+	size_t m_pc;
 	IRVector& m_inst;
 	Scope** m_scope_pool;
 	Value** m_value_pool;

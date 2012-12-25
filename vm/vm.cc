@@ -30,7 +30,8 @@
 
 namespace clever {
 
-#define VM_NEXT() ++i; (this->*m_handlers[m_inst[i].opcode])(i, m_inst[i])
+#define VM_CONT() (this->*m_handlers[m_inst[m_pc].opcode])(m_inst[m_pc])
+#define VM_NEXT() ++m_pc; VM_CONT()
 
 /**
  * VM initialization phase
@@ -100,14 +101,12 @@ VM_HANDLER(assignment)
  */
 void VM::run()
 {
-	size_t ip = 0;
-
 	/**
 	 * Loads the opcode handlers
 	 */
 	init();
 
-	(this->*m_handlers[m_inst[ip].opcode])(ip, m_inst[ip]);
+	(this->*m_handlers[m_inst[0].opcode])(m_inst[0]);
 }
 
 } // clever
