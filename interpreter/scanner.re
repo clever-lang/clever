@@ -27,6 +27,7 @@
 #include "interpreter/scanner.h"
 #include "interpreter/parser.hh"
 #include "compiler/compiler.h"
+#include "compiler/value.h"
 
 namespace clever {
 
@@ -247,6 +248,8 @@ next_token:
 		for (int i = 0; i < yylen; ++i) {
 			n = n * 10 + (nstr[i] - '0');
 		}
+
+		yylval->val = new Value(n);
 
 		RET(token::NUM_INTEGER);
 	}

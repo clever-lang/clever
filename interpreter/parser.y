@@ -37,6 +37,7 @@
 namespace clever {
 class Driver;
 class Compiler;
+class Value;
 } // clever
 }
 
@@ -54,9 +55,12 @@ class Compiler;
 
 %union {
 	const CString *str;
+	Value* val;
 };
 
 %type <str> IDENT
+%type <val> NUM_INTEGER
+%type <val> r_value
 
 %debug
 %error-verbose
@@ -148,7 +152,12 @@ non_empty_statement_list:
 ;
 
 var_declaration:
-		VAR IDENT { c.varDeclaration($2); }
+		VAR IDENT             { c.varDeclaration($2, NULL); }
+	|	VAR IDENT '=' r_value { c.varDeclaration($2, $4);   }
+;
+
+r_value:
+		NUM_INTEGER
 ;
 
 %%

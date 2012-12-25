@@ -127,6 +127,7 @@ add_executable(clever
 	compiler/clever.h
 	compiler/clever.cc
 	compiler/ir.h
+	compiler/value.h
 	compiler/compiler.h
 	compiler/compiler.cc
 	compiler/cstring.cc

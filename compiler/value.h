@@ -23,68 +23,28 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "compiler/cstring.h"
-#include "compiler/compiler.h"
-#include "compiler/scope.h"
-#include "compiler/value.h"
+#ifndef CLEVER_VALUE_H
+#define CLEVER_VALUE_H
 
 namespace clever {
 
-/**
- * Compiler initialization
- */
-void Compiler::init()
-{
-	m_scope = new Scope;
-	m_scope_array[0] = m_scope;
-}
+class Value {
+public:
+	union Data {
+		long lval;
+		double dval;
 
-/**
- * Frees all resource used by the compiler
- */
-void Compiler::shutdown()
-{
-	if (g_cstring_tbl) {
-		delete g_cstring_tbl;
-	}
-	if (m_scope) {
-		delete m_scope;
-	}
-}
+		Data(long n) : lval(0) {}
+		Data(double n) : dval(0) {}
+	};
 
-/**
- * Compiles a variable declaration
- */
-void Compiler::varDeclaration(const CString* var, Value* node)
-{
-	m_ir.push_back(IR(OP_VAR_DECL, m_scope->push(var)));
+	Value() : m_data(0L) {}
 
-	if (node) {
-		delete node;
-	}
-}
-
-/**
- * Creates a new lexical scope
- */
-void Compiler::newScope()
-{
-	m_scope = m_scope->newLexicalScope();
-	m_scope->setId(++m_scope_id);
-
-	m_scope_array[m_scope_id] = m_scope;
-
-	m_ir.push_back(IR(OP_SCOPE, m_scope_id));
-}
-
-/**
- * Scope end marker to switch to parent scope
- */
-void Compiler::endScope()
-{
-	m_scope = m_scope->getParent();
-
-	m_ir.push_back(IR(OP_SCOPE, m_scope->getId()));
-}
+	Value(long n) : m_data(n) {}
+private:
+	Data m_data;
+};
 
 } // clever
+
+#endif // CLEVER_VALUE_H

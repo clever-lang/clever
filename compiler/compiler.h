@@ -34,6 +34,7 @@
 namespace clever {
 
 class CString;
+class Value;
 
 /**
  * Compiler representation
@@ -63,7 +64,7 @@ public:
 	/**
 	 * Compilation methods
 	 */
-	void varDeclaration(const CString*);
+	void varDeclaration(const CString*, Value*);
 	void newScope();
 	void endScope();
 private:
