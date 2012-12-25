@@ -43,7 +43,8 @@ void Compiler::init()
 	if (!m_scope_pool || !m_value_pool) {
 		error("Out of memory!");
 	}
-	m_scope_pool[0] = m_scope;
+	m_scope_pool[m_scope_id++] = m_scope;
+	m_value_pool[m_value_id++] = NULL;
 }
 
 /**
@@ -83,10 +84,9 @@ void Compiler::shutdown()
  */
 void Compiler::varDeclaration(const CString* var, Value* node)
 {
-	if (!node) {
-		node = new Value(0L);
+	if (node) {
+		m_value_pool[m_value_id] = node;
 	}
-	m_value_pool[m_value_id] = node;
 
 	m_ir.push_back(IR(OP_VAR_DECL, m_scope->push(var, m_value_id)));
 
@@ -117,11 +117,13 @@ void Compiler::assignment(const CString* var, Value* value)
 void Compiler::newScope()
 {
 	m_scope = m_scope->newLexicalScope();
-	m_scope->setId(++m_scope_id);
+	m_scope->setId(m_scope_id);
 
 	m_scope_pool[m_scope_id] = m_scope;
 
 	m_ir.push_back(IR(OP_SCOPE, m_scope_id));
+
+	++m_scope_id;
 }
 
 /**

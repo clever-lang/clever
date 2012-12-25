@@ -52,8 +52,13 @@ VM_HANDLER(var_decl)
 	Value* value = m_value_pool[sym.getValueId()];
 
 	std::cout << "VAR_DECL: Symbol: " << *sym.getName() << " ";
-	std::cout << "Value: " <<
-		((value->isInt()) ? value->getInt() : value->getDouble()) << std::endl;
+
+	if (value) {
+		std::cout << "Value: " <<
+			(value->isInt() ? value->getInt() : value->getDouble()) << std::endl;
+	} else {
+		std::cout << "Value: null" << std::endl;
+	}
 
 	VM_NEXT();
 }
