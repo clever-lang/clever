@@ -38,9 +38,11 @@ namespace clever {
 VM_HANDLER(var_decl)
 {
 	Symbol& sym = m_scope_pool[m_current_scope]->at(op.op1);
+	Value* value = m_value_pool[sym.getValueId()];
 
 	std::cout << "Symbol: " << *sym.getName() << std::endl;
-	std::cout << "Value: " << m_value_pool[sym.getValueId()]->getInt() << std::endl;
+	std::cout << "Value: " <<
+		((value->isInt()) ? value->getInt() : value->getDouble()) << std::endl;
 }
 
 /**

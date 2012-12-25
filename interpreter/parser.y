@@ -59,7 +59,7 @@ class Value;
 };
 
 %type <str> IDENT
-%type <val> NUM_INTEGER
+%type <val> NUM_INTEGER NUM_DOUBLE
 %type <val> r_value
 
 %debug
@@ -158,6 +158,7 @@ var_declaration:
 
 r_value:
 		NUM_INTEGER
+	|	NUM_DOUBLE
 ;
 
 %%

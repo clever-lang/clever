@@ -268,6 +268,8 @@ next_token:
 			}
 		}
 
+		yylval->val = new Value(n);
+
 		RET(token::NUM_INTEGER);
 	}
 
@@ -279,13 +281,16 @@ next_token:
 			n = n * 8 + nstr[i] - '0';
 		}
 
+		yylval->val = new Value(n);
+
 		RET(token::NUM_INTEGER);
 	}
 
 	<INITIAL>(DOUBLE|EXP_DOUBLE) {
-		/*double n = 0;
+		double n = 0;
 		n = strtod(std::string(reinterpret_cast<const char*>(s.yylex), yylen).c_str(), NULL);
-		*/
+
+		yylval->val = new Value(n);
 
 		RET(token::NUM_DOUBLE);
 	}

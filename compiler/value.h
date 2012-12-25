@@ -40,13 +40,22 @@ public:
 		Data(double n) : dval(n) {}
 	};
 
-	Value() : RefCounted(), m_data(0L) {}
-	Value(long n) : RefCounted(), m_data(n) {}
+	enum DataType { INT, DOUBLE };
 
+	Value() : RefCounted(), m_data(0L) {}
+	Value(long n) : RefCounted(), m_data(n), m_type(INT) {}
+	Value(double n) : RefCounted(), m_data(n), m_type(DOUBLE) {}
+
+	bool isInt() const { return m_type == INT; }
 	long getInt() const { return m_data.lval; }
+
+	bool isDouble() const { return m_type == DOUBLE; }
 	double getDouble() const { return m_data.dval; }
+
+	DataType getType() const { return m_type; }
 private:
 	Data m_data;
+	DataType m_type;
 };
 
 } // clever
