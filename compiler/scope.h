@@ -70,8 +70,6 @@ public:
 	}
 
 	Scope* getParent() const { return m_parent; }
-
-	void clear();
 private:
 	Scope* m_parent;
 	ScopeVector m_children;
