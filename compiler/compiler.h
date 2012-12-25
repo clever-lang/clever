@@ -51,7 +51,7 @@ public:
 	/**
 	 * Ends the compilation phase
 	 */
-	void end() const {}
+	void end();
 	/**
 	 * Shutdown the compiler freeing all resources
 	 */

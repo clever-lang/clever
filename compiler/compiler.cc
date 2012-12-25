@@ -32,7 +32,7 @@
 namespace clever {
 
 /**
- * Compiler initialization
+ * Compiler initialization phase
  */
 void Compiler::init()
 {
@@ -44,6 +44,14 @@ void Compiler::init()
 		error("Out of memory!");
 	}
 	m_scope_pool[0] = m_scope;
+}
+
+/**
+ * Compiler termination phase
+ */
+void Compiler::end()
+{
+	m_ir.push_back(IR(OP_RETURN, 0));
 }
 
 /**

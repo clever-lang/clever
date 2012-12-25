@@ -30,11 +30,14 @@
 
 namespace clever {
 
+#define VM_NEXT() ++i; (this->*m_handlers[m_inst[i].opcode])(i, m_inst[i])
+
 VM::VM(IRVector& inst)
 	: m_inst(inst), m_scope_pool(NULL), m_value_pool(NULL), m_current_scope(0)
 {
 	m_handlers[OP_VAR_DECL] = &VM::var_decl;
 	m_handlers[OP_SCOPE] = &VM::switch_scope;
+	m_handlers[OP_RETURN] = &VM::ret;
 }
 
 /**
@@ -48,6 +51,8 @@ VM_HANDLER(var_decl)
 	std::cout << "Symbol: " << *sym.getName() << std::endl;
 	std::cout << "Value: " <<
 		((value->isInt()) ? value->getInt() : value->getDouble()) << std::endl;
+
+	VM_NEXT();
 }
 
 /**
@@ -56,16 +61,25 @@ VM_HANDLER(var_decl)
 VM_HANDLER(switch_scope)
 {
 	m_current_scope = op.op1;
+
+	VM_NEXT();
 }
 
 /**
- * Executes the VM opcodes in a call threading way
+ * Return operation
+ */
+VM_HANDLER(ret)
+{
+}
+
+/**
+ * Executes the VM opcodes in a continuation-passing style
  */
 void VM::run()
 {
-	for (size_t i = 0, j = m_inst.size(); i < j; ++i) {
-		(this->*m_handlers[m_inst[i].opcode])(i, m_inst[i]);
-	}
+	size_t ip = 0;
+
+	(this->*m_handlers[m_inst[ip].opcode])(ip, m_inst[ip]);
 }
 
 } // clever
