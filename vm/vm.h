@@ -28,12 +28,13 @@
 
 #include <vector>
 #include <pthread.h>
+#include "compiler/clever.h"
 #include "vm/ir.h"
 
 namespace clever {
 
 #define VM_HANDLER_ARG size_t& i, IR& op
-#define VM_HANDLER(name) CLEVER_FORCE_INLINE void VM::name(VM_HANDLER_ARG)
+#define VM_HANDLER(name) CLEVER_FASTCALL void VM::name(VM_HANDLER_ARG)
 #define VM_HANDLER_D(name) void name(VM_HANDLER_ARG)
 
 class Scope;

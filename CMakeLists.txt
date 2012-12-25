@@ -126,7 +126,6 @@ add_executable(clever
 	${BISON_CleverParser_OUTPUTS}
 	compiler/clever.h
 	compiler/clever.cc
-	compiler/ir.h
 	compiler/value.h
 	compiler/compiler.h
 	compiler/compiler.cc
@@ -136,6 +135,7 @@ add_executable(clever
 	interpreter/driver.h
 	interpreter/main.cc
 	interpreter/scanner.h
+	vm/ir.h
 	vm/opcode.h
 	vm/vm.h
 	vm/vm.cc

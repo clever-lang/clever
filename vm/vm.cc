@@ -59,7 +59,7 @@ VM_HANDLER(switch_scope)
 }
 
 /**
- * Executes the VM opcodes
+ * Executes the VM opcodes in a call threading way
  */
 void VM::run(IRVector& ir)
 {
