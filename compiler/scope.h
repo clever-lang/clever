@@ -41,7 +41,15 @@ public:
 	explicit Scope(Scope* parent)
 		: m_parent(parent), m_children(), m_symbols(), m_size(0), m_id(0) {}
 
-	~Scope() {}
+	~Scope() {
+		ScopeVector::const_iterator it = m_children.begin(),
+			end = m_children.end();
+
+		while (it != end) {
+			delete *it;
+			++it;
+		}
+	}
 
 	size_t push(const CString* name) {
 		m_symbols.push_back(name);

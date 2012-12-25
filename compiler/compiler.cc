@@ -44,7 +44,7 @@ void Compiler::shutdown()
 		delete g_cstring_tbl;
 	}
 	if (m_scope) {
-		delete m_scope; /* FIXME: memleak on child scopes */
+		delete m_scope;
 	}
 }
 
