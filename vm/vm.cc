@@ -32,6 +32,7 @@ namespace clever {
 
 #define VM_CONT() (this->*m_handlers[m_inst[m_pc].opcode])(m_inst[m_pc])
 #define VM_NEXT() ++m_pc; VM_CONT()
+#define VM_GOTO(n) m_pc = n; VM_CONT()
 
 /**
  * VM initialization phase
