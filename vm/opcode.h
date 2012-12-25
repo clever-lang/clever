@@ -32,7 +32,8 @@ enum Opcode {
 	OP_VAR_DECL,
 	OP_SCOPE,
 	OP_RETURN,
-	OP_ASSIGN
+	OP_ASSIGN,
+	NUM_OPCODES
 };
 
 } // clever

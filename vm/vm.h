@@ -30,6 +30,7 @@
 #include <pthread.h>
 #include "compiler/clever.h"
 #include "vm/ir.h"
+#include "vm/opcode.h"
 
 namespace clever {
 
@@ -87,7 +88,7 @@ private:
 	size_t m_current_scope;
     ThreadPool m_thread_pool;
     MutexPool m_mutex_pool;
-    OpHandler m_handlers[10];
+    OpHandler m_handlers[NUM_OPCODES];
 
     DISALLOW_COPY_AND_ASSIGN(VM);
 };
