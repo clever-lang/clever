@@ -72,6 +72,7 @@ public:
 	VM_HANDLER_D(var_decl);
 	VM_HANDLER_D(switch_scope);
 	VM_HANDLER_D(ret);
+	VM_HANDLER_D(assignment);
 private:
 	/**
 	 * Initialization phase

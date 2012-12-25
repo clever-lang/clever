@@ -26,6 +26,7 @@
 #ifndef CLEVER_COMPILER_H
 #define CLEVER_COMPILER_H
 
+#include <tr1/unordered_map>
 #include <vector>
 #include "compiler/clever.h"
 #include "compiler/scope.h"
@@ -70,6 +71,7 @@ public:
 	void varDeclaration(const CString*, Value*);
 	void newScope();
 	void endScope();
+	void assignment(const CString*, Value*);
 private:
 	IRVector m_ir;
 	Scope* m_scope;

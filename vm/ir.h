@@ -26,6 +26,7 @@
 #ifndef CLEVER_IR_H
 #define CLEVER_IR_H
 
+#include <vector>
 #include "vm/opcode.h"
 
 namespace clever {

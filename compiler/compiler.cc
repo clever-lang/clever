@@ -94,6 +94,24 @@ void Compiler::varDeclaration(const CString* var, Value* node)
 }
 
 /**
+ * Compiles a variable assignment
+ */
+void Compiler::assignment(const CString* var, Value* value)
+{
+	Symbol* sym = m_scope->getSymbol(var);
+
+	if (!sym) {
+		error("Variable cannot be found!");
+	}
+
+	m_value_pool[m_value_id] = value;
+
+	m_ir.push_back(IR(OP_ASSIGN, sym->getValueId(), m_value_id));
+
+	++m_value_id;
+}
+
+/**
  * Creates a new lexical scope
  */
 void Compiler::newScope()

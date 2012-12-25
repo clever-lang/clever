@@ -40,6 +40,7 @@ inline void VM::init()
 	m_handlers[OP_VAR_DECL] = &VM::var_decl;
 	m_handlers[OP_SCOPE]    = &VM::switch_scope;
 	m_handlers[OP_RETURN]   = &VM::ret;
+	m_handlers[OP_ASSIGN]   = &VM::assignment;
 }
 
 /**
@@ -50,7 +51,7 @@ VM_HANDLER(var_decl)
 	Symbol& sym = m_scope_pool[m_current_scope]->at(op.op1);
 	Value* value = m_value_pool[sym.getValueId()];
 
-	std::cout << "Symbol: " << *sym.getName() << std::endl;
+	std::cout << "VAR_DECL: Symbol: " << *sym.getName() << " ";
 	std::cout << "Value: " <<
 		((value->isInt()) ? value->getInt() : value->getDouble()) << std::endl;
 
@@ -72,6 +73,21 @@ VM_HANDLER(switch_scope)
  */
 VM_HANDLER(ret)
 {
+}
+
+/**
+ * Assignment operation
+ */
+VM_HANDLER(assignment)
+{
+	Value* var = m_value_pool[op.op1];
+	Value* value = m_value_pool[op.op2];
+
+	var->setInt(value->getInt());
+
+	std::cout << "ASSIGN: " << value->getInt() << std::endl;
+
+	VM_NEXT();
 }
 
 /**

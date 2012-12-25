@@ -31,7 +31,8 @@ namespace clever {
 enum Opcode {
 	OP_VAR_DECL,
 	OP_SCOPE,
-	OP_RETURN
+	OP_RETURN,
+	OP_ASSIGN
 };
 
 } // clever

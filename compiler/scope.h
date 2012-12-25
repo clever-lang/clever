@@ -26,8 +26,14 @@
 #ifndef CLEVER_SCOPE_H
 #define CLEVER_SCOPE_H
 
+#ifdef CLEVER_MSVC
+#include <unordered_map>
+#else
+#include <tr1/unordered_map>
+#endif
 #include <vector>
 #include "compiler/value.h"
+#include "compiler/cstring.h"
 
 namespace clever {
 
@@ -53,6 +59,8 @@ class Scope {
 public:
 	typedef std::vector<Scope*> ScopeVector;
 	typedef std::vector<Symbol> SymbolMap;
+	typedef std::tr1::unordered_map<const CString*, size_t> SymbolTable;
+	typedef SymbolTable::value_type SymbolEntry;
 
 	Scope()
 		: m_parent(NULL), m_children(), m_symbols(), m_size(0), m_id(0) {}
@@ -72,6 +80,7 @@ public:
 
 	size_t push(const CString* name, size_t value_id) {
 		m_symbols.push_back(Symbol(name, value_id));
+		m_symbol_table.insert(SymbolEntry(name, m_size));
 		return m_size++;
 	}
 
@@ -89,15 +98,43 @@ public:
 	}
 
 	Scope* getParent() const { return m_parent; }
+
+	Symbol* getLocalSymbol(const CString*);
+	Symbol* getSymbol(const CString*);
 private:
 	Scope* m_parent;
 	ScopeVector m_children;
 	SymbolMap m_symbols;
+	SymbolTable m_symbol_table;
 	size_t m_size;
 	size_t m_id;
 
 	DISALLOW_COPY_AND_ASSIGN(Scope);
 };
+
+inline Symbol* Scope::getLocalSymbol(const CString* name) {
+	SymbolTable::iterator it = m_symbol_table.find(name);
+
+	if (it == m_symbol_table.end()) {
+		return NULL;
+	}
+	return &m_symbols[it->second];
+}
+
+// Resolve a symbol name recursively
+inline Symbol* Scope::getSymbol(const CString* name) {
+	Symbol* sym = getLocalSymbol(name);
+
+	if (sym != NULL) {
+		return sym;
+	}
+
+	if (m_parent != NULL) {
+		sym = m_parent->getSymbol(name);
+	}
+
+	return sym;
+}
 
 } // clever
 

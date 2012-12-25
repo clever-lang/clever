@@ -147,13 +147,18 @@ statement_list:
 ;
 
 non_empty_statement_list:
-		var_declaration ';'
-	|	'{' { c.newScope(); } non_empty_statement_list { c.endScope(); } '}'
+		'{' { c.newScope(); } non_empty_statement_list { c.endScope(); } '}'
+	|	var_declaration ';'
+	|	assignment ';'
 ;
 
 var_declaration:
 		VAR IDENT             { c.varDeclaration($2, NULL); }
 	|	VAR IDENT '=' r_value { c.varDeclaration($2, $4);   }
+;
+
+assignment:
+		IDENT '=' r_value { c.assignment($1, $3); }
 ;
 
 r_value:

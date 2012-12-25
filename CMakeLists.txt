@@ -124,13 +124,13 @@ endif (UNIX)
 add_executable(clever
 	${RE2C_CleverScanner_OUTPUTS}
 	${BISON_CleverParser_OUTPUTS}
+	compiler/cstring.h
+	compiler/cstring.cc
 	compiler/clever.h
 	compiler/clever.cc
 	compiler/value.h
 	compiler/compiler.h
 	compiler/compiler.cc
-	compiler/cstring.cc
-	compiler/cstring.h
 	interpreter/driver.cc
 	interpreter/driver.h
 	interpreter/main.cc

@@ -49,6 +49,8 @@ public:
 	bool isInt() const { return m_type == INT; }
 	long getInt() const { return m_data.lval; }
 
+	void setInt(long n) { m_data.lval = n; }
+
 	bool isDouble() const { return m_type == DOUBLE; }
 	double getDouble() const { return m_data.dval; }
 
