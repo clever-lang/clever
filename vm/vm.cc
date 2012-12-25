@@ -32,12 +32,14 @@ namespace clever {
 
 #define VM_NEXT() ++i; (this->*m_handlers[m_inst[i].opcode])(i, m_inst[i])
 
-VM::VM(IRVector& inst)
-	: m_inst(inst), m_scope_pool(NULL), m_value_pool(NULL), m_current_scope(0)
+/**
+ * VM initialization phase
+ */
+inline void VM::init()
 {
 	m_handlers[OP_VAR_DECL] = &VM::var_decl;
-	m_handlers[OP_SCOPE] = &VM::switch_scope;
-	m_handlers[OP_RETURN] = &VM::ret;
+	m_handlers[OP_SCOPE]    = &VM::switch_scope;
+	m_handlers[OP_RETURN]   = &VM::ret;
 }
 
 /**
@@ -78,6 +80,8 @@ VM_HANDLER(ret)
 void VM::run()
 {
 	size_t ip = 0;
+
+	init();
 
 	(this->*m_handlers[m_inst[ip].opcode])(ip, m_inst[ip]);
 }
