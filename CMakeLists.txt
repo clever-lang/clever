@@ -126,6 +126,7 @@ add_executable(clever
 	${BISON_CleverParser_OUTPUTS}
 	compiler/clever.h
 	compiler/clever.cc
+	compiler/ir.h
 	compiler/compiler.h
 	compiler/compiler.cc
 	compiler/cstring.cc

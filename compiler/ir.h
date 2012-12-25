@@ -23,42 +23,29 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef CLEVER_VM_H
-#define CLEVER_VM_H
+#ifndef CLEVER_IR_H
+#define CLEVER_IR_H
 
-#include <vector>
-#include <pthread.h>
-#include "compiler/ir.h"
+#include "vm/opcode.h"
 
 namespace clever {
 
-class Scope;
-
 /**
- * VM representation
+ * Intermediate representation
  */
-class VM {
-public:
-	typedef std::vector<pthread_t> ThreadPool;
-	typedef std::vector<pthread_mutex_t> MutexPool;
+struct IR {
+	IR(Opcode _op, int _op1)
+		: opcode(_op), op1(_op1), op2(0), result(NULL) {}
 
-	VM(Scope** scope)
-		: m_scope_array(scope), m_current_scope(0) {}
-	~VM() {}
+	IR(Opcode _op, int _op1, int _op2)
+		: opcode(_op), op1(_op1), op2(_op2), result(NULL) {}
 
-	void run(IRVector&);
-
-	void var_decl(IR&);
-	void switch_scope(IR&);
-private:
-	Scope** m_scope_array;
-	size_t m_current_scope;
-    ThreadPool m_thread_pool;
-    MutexPool m_mutex_pool;
-
-    DISALLOW_COPY_AND_ASSIGN(VM);
+	int opcode, op1, op2;
+	void* result;
 };
+
+typedef std::vector<IR> IRVector;
 
 } // clever
 
-#endif // CLEVER_VM_H
+#endif // CLEVER_IR_H

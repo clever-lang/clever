@@ -26,6 +26,8 @@
 #ifndef CLEVER_SCOPE_H
 #define CLEVER_SCOPE_H
 
+#include <vector>
+
 namespace clever {
 
 class CString;

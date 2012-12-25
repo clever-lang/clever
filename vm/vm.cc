@@ -25,6 +25,7 @@
 
 #include <iostream>
 #include "compiler/cstring.h"
+#include "compiler/scope.h"
 #include "vm/vm.h"
 
 namespace clever {

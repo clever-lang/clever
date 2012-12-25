@@ -29,27 +29,11 @@
 #include <vector>
 #include "compiler/clever.h"
 #include "compiler/scope.h"
-#include "vm/opcode.h"
+#include "compiler/ir.h"
 
 namespace clever {
 
 class CString;
-
-/**
- * Intermediate representation
- */
-struct IR {
-	IR(Opcode _op, int _op1)
-		: opcode(_op), op1(_op1), op2(0), result(NULL) {}
-
-	IR(Opcode _op, int _op1, int _op2)
-		: opcode(_op), op1(_op1), op2(_op2), result(NULL) {}
-
-	int opcode, op1, op2;
-	void* result;
-};
-
-typedef std::vector<IR> IRVector;
 
 /**
  * Compiler representation
