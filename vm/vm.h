@@ -50,14 +50,29 @@ public:
 	typedef std::vector<pthread_t> ThreadPool;
 	typedef std::vector<pthread_mutex_t> MutexPool;
 
-	VM(Scope**, Value**);
+	VM(IRVector&);
 	~VM() {}
 
-	void run(IRVector&);
+	/**
+	 * Sets the symbol table to used by the VM to fetch the symbol names
+	 */
+	void setSymbolTable(Scope** scope) { m_scope_pool = scope; }
+	/**
+	 * Sets the Value* pool to be used by VM to fetch the instr values
+	 */
+	void setValuePool(Value** value) { m_value_pool = value; }
+	/**
+	 * Start the VM execution
+	 */
+	void run();
 
+	/**
+	 * VM opcode handlers
+	 */
 	VM_HANDLER_D(var_decl);
 	VM_HANDLER_D(switch_scope);
 private:
+	IRVector& m_inst;
 	Scope** m_scope_pool;
 	Value** m_value_pool;
 	size_t m_current_scope;

@@ -46,7 +46,12 @@ Interpreter::Interpreter(int* argc, char*** argv)
  */
 void Interpreter::execute(bool interactive)
 {
-	VM(m_compiler.getScopePool(), m_compiler.getValuePool()).run(m_compiler.getIR());
+	VM vm(m_compiler.getIR());
+
+	vm.setSymbolTable(m_compiler.getScopePool());
+	vm.setValuePool(m_compiler.getValuePool());
+
+	vm.run();
 
 	m_compiler.shutdown();
 }

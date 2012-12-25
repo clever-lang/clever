@@ -30,8 +30,8 @@
 
 namespace clever {
 
-VM::VM(Scope** scope_pool, Value** value_pool)
-	: m_scope_pool(scope_pool), m_value_pool(value_pool), m_current_scope(0)
+VM::VM(IRVector& inst)
+	: m_inst(inst), m_scope_pool(NULL), m_value_pool(NULL), m_current_scope(0)
 {
 	m_handlers[OP_VAR_DECL] = &VM::var_decl;
 	m_handlers[OP_SCOPE] = &VM::switch_scope;
@@ -61,10 +61,10 @@ VM_HANDLER(switch_scope)
 /**
  * Executes the VM opcodes in a call threading way
  */
-void VM::run(IRVector& ir)
+void VM::run()
 {
-	for (size_t i = 0, j = ir.size(); i < j; ++i) {
-		(this->*m_handlers[ir[i].opcode])(i, ir[i]);
+	for (size_t i = 0, j = m_inst.size(); i < j; ++i) {
+		(this->*m_handlers[m_inst[i].opcode])(i, m_inst[i]);
 	}
 }
 
