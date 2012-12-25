@@ -157,7 +157,7 @@ var_declaration:
 ;
 
 r_value:
-		NUM_INTEGER  { $$ = $1; }
+		NUM_INTEGER
 ;
 
 %%
