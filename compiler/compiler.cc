@@ -44,8 +44,7 @@ void Compiler::shutdown() const
  */
 void Compiler::varDeclaration(const CString* var)
 {
-	m_scope.push(var);
-	m_ir.push_back(IR(OP_VAR_DECL, 0, 0));
+	m_ir.push_back(IR(OP_VAR_DECL, m_scope.push(var)));
 }
 
 } // clever

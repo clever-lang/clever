@@ -39,6 +39,9 @@ class CString;
  * Intermediate representation
  */
 struct IR {
+	IR(Opcode _op, int _op1)
+		: opcode(_op), op1(_op1), op2(0), result(NULL) {}
+
 	IR(Opcode _op, int _op1, int _op2)
 		: opcode(_op), op1(_op1), op2(_op2), result(NULL) {}
 

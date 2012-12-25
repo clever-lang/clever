@@ -32,14 +32,20 @@ class CString;
 
 class Scope {
 public:
-	Scope() {}
+	Scope() : m_size(0) {}
 	~Scope() {}
 
-	void push(const CString* name) { m_symbols[0] = name; }
+	size_t push(const CString* name) {
+		m_symbols.push_back(name);
+		return m_size++;
+	}
 
-	const CString* get(size_t idx) { return m_symbols[idx]; }
+	const CString* at(size_t idx) { return m_symbols[idx]; }
+
+	size_t size() const { return m_size; }
 private:
-	const CString* m_symbols[10];
+	std::vector<const CString*> m_symbols;
+	size_t m_size;
 };
 
 } // clever

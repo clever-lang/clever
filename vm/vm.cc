@@ -39,7 +39,7 @@ VM_HANDLER(var_decl)
 	/**
 	 * Fetching variable name from scope
 	 */
-	std::cout << *(m_scope->get(op.op1)) << std::endl;
+	std::cout << *(m_scope->at(op.op1)) << std::endl;
 }
 
 /**

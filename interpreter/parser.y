@@ -139,11 +139,12 @@ top_statements:
 
 statement_list:
 		/* empty */
-	|	non_empty_statement_list
+	|	non_empty_statement_list statement_list
 ;
 
 non_empty_statement_list:
 		var_declaration ';'
+	|	'{' non_empty_statement_list '}'
 ;
 
 var_declaration:
