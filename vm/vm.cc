@@ -59,10 +59,13 @@ inline void VM::init()
 #ifdef CLEVER_DEBUG
 void VM::dumpOpcodes() const
 {
+	const char op_type[] = "~^!$";
+
 	for (size_t i = 0, j = m_inst.size(); i < j; ++i) {
 		IR& ir = m_inst[i];
 		std::cout << get_opcode_name(ir.opcode) << "\t| ";
-		std::cout << ir.op1 << " | " << ir.op2 << std::endl;
+		std::cout << ir.op1 << " [" << op_type[ir.op1_type] << "] | ";
+		std::cout << ir.op2 << " [" << op_type[ir.op2_type] << "]\n";
 	}
 }
 #endif
@@ -72,8 +75,10 @@ void VM::dumpOpcodes() const
  */
 VM_HANDLER(var_decl)
 {
+	/*
 	Symbol& sym = (*m_scope_pool)[m_current_scope]->at(op.op1);
 	Value* value = (*m_value_pool)[sym.getValueId()];
+	*/
 
 	VM_NEXT();
 }
@@ -100,9 +105,10 @@ VM_HANDLER(ret)
  */
 VM_HANDLER(assignment)
 {
+	/*
 	Value* var = (*m_value_pool)[op.op1];
 	Value* value = (*m_value_pool)[op.op2];
-
+	*/
 	VM_NEXT();
 }
 
