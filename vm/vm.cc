@@ -30,6 +30,10 @@
 
 namespace clever {
 
+/**
+ * Helper macros to be used to change the VM program counter
+ * The compiler optimizer is supposed to use tail call optimization here
+ */
 #define VM_CONT() (this->*m_handlers[m_inst[m_pc].opcode])(m_inst[m_pc])
 #define VM_NEXT() ++m_pc; VM_CONT()
 #define VM_GOTO(n) m_pc = n; VM_CONT(); return
@@ -39,6 +43,9 @@ namespace clever {
  */
 inline void VM::init()
 {
+	/**
+	 * Opcode handler mapping
+	 */
 	m_handlers[OP_VAR_DECL] = &VM::var_decl;
 	m_handlers[OP_SCOPE]    = &VM::switch_scope;
 	m_handlers[OP_RETURN]   = &VM::ret;
@@ -107,6 +114,10 @@ void VM::run()
 	 */
 	init();
 
+	/**
+	 * Starts the VM by running the first instruction, which keep calling
+	 * each other in a tail call way
+	 */
 	(this->*m_handlers[m_inst[0].opcode])(m_inst[0]);
 }
 
