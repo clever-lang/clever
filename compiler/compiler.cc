@@ -57,8 +57,8 @@ void Compiler::init()
 	/**
 	 * Native type allocation
 	 */
-	m_type_pool[m_type_id++]   = CLEVER_INT_TYPE    = new IntType;
-	m_type_pool[m_type_id++]   = CLEVER_DOUBLE_TYPE = new DoubleType;
+	m_type_pool[m_type_id++] = CLEVER_INT_TYPE    = new IntType;
+	m_type_pool[m_type_id++] = CLEVER_DOUBLE_TYPE = new DoubleType;
 }
 
 /**
