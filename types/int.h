@@ -26,14 +26,15 @@
 #ifndef CLEVER_INT_H
 #define CLEVER_INT_H
 
+#include "compiler/cstring.h"
 #include "types/type.h"
 
 namespace clever {
 
 class IntType : public Type {
 public:
-	IntType() {}
-	IntType(long n) : m_value(n) {}
+	IntType() : Type(CSTRING("Int")) {}
+	IntType(long n) : Type(CSTRING("Int")), m_value(n) {}
 
 	void dump() const { std::cout << m_value; }
 private:

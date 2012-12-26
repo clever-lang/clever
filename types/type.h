@@ -28,15 +28,23 @@
 
 namespace clever {
 
+class CString;
+
 class Type {
 public:
-	Type() {}
+	Type(const CString* name) : m_name(name) {}
 	virtual ~Type() {}
 
 	/**
-	 * Method for debug purpose
+	 * Method for retrieve the type name
+	 */
+	const CString* getName() const { return m_name; }
+	/**
+	 * Virtual method for debug purpose
 	 */
 	virtual void dump() const = 0;
+private:
+	const CString* m_name;
 };
 
 }

@@ -64,6 +64,7 @@ VM_HANDLER(var_decl)
 	std::cout << "VAR_DECL: Symbol: " << *sym.getName() << " Value: ";
 	if (value) {
 		value->getType()->dump();
+		std::cout << " (" << *value->getType()->getName() << ")" << std::endl;
 	} else {
 		std::cout << "null";
 	}
