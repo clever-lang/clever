@@ -61,7 +61,7 @@ void Compiler::end()
  */
 void Compiler::error(const char* msg) const
 {
-	std::cout << "Compile error: " << msg << std::endl;
+	std::cerr << "Compile error: " << msg << std::endl;
 	CLEVER_EXIT_FATAL();
 }
 
