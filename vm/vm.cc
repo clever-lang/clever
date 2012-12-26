@@ -26,6 +26,7 @@
 #include <iostream>
 #include "compiler/cstring.h"
 #include "compiler/scope.h"
+#include "types/type.h"
 #include "vm/vm.h"
 
 namespace clever {
@@ -60,14 +61,13 @@ VM_HANDLER(var_decl)
 	Symbol& sym = m_scope_pool[m_current_scope]->at(op.op1);
 	Value* value = m_value_pool[sym.getValueId()];
 
-	std::cout << "VAR_DECL: Symbol: " << *sym.getName() << " ";
-
+	std::cout << "VAR_DECL: Symbol: " << *sym.getName() << " Value: ";
 	if (value) {
-		std::cout << "Value: " <<
-			(value->isInt() ? value->getInt() : value->getDouble()) << std::endl;
+		value->getType()->dump();
 	} else {
-		std::cout << "Value: null" << std::endl;
+		std::cout << "null";
 	}
+	std::cout << std::endl;
 
 	VM_NEXT();
 }
@@ -97,9 +97,11 @@ VM_HANDLER(assignment)
 	Value* var = m_value_pool[op.op1];
 	Value* value = m_value_pool[op.op2];
 
-	var->setInt(value->getInt());
-
-	std::cout << "ASSIGN: " << value->getInt() << std::endl;
+	std::cout << "ASSIGN: Changed ";
+	var->getType()->dump();
+	std::cout << " to ";
+	value->getType()->dump();
+	std::cout << std::endl;
 
 	VM_NEXT();
 }

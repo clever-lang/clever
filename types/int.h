@@ -23,26 +23,23 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef CLEVER_VALUE_H
-#define CLEVER_VALUE_H
+#ifndef CLEVER_INT_H
+#define CLEVER_INT_H
 
-#include "compiler/clever.h"
-#include "compiler/refcounted.h"
 #include "types/type.h"
 
 namespace clever {
 
-class Value : public RefCounted {
+class IntType : public Type {
 public:
-	Value() : m_type(NULL) {}
-	Value(Type* type) : m_type(type) {}
-	~Value() { CLEVER_SAFE_DELETE(m_type); }
+	IntType() {}
+	IntType(long n) : m_value(n) {}
 
-	Type* getType() const { return m_type; }
+	void dump() const { std::cout << m_value; }
 private:
-	Type* m_type;
+	long m_value;
 };
 
 } // clever
 
-#endif // CLEVER_VALUE_H
+#endif // CLEVER_INT_H

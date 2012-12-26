@@ -23,26 +23,10 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef CLEVER_VALUE_H
-#define CLEVER_VALUE_H
+#ifndef CLEVER_NATIVE_TYPES_H
+#define CLEVER_NATIVE_TYPES_H
 
-#include "compiler/clever.h"
-#include "compiler/refcounted.h"
-#include "types/type.h"
+#include "types/int.h"
+#include "types/double.h"
 
-namespace clever {
-
-class Value : public RefCounted {
-public:
-	Value() : m_type(NULL) {}
-	Value(Type* type) : m_type(type) {}
-	~Value() { CLEVER_SAFE_DELETE(m_type); }
-
-	Type* getType() const { return m_type; }
-private:
-	Type* m_type;
-};
-
-} // clever
-
-#endif // CLEVER_VALUE_H
+#endif

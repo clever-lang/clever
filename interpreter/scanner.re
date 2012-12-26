@@ -28,6 +28,7 @@
 #include "interpreter/parser.hh"
 #include "compiler/compiler.h"
 #include "compiler/value.h"
+#include "types/native_types.h"
 
 namespace clever {
 
@@ -249,7 +250,7 @@ next_token:
 			n = n * 10 + (nstr[i] - '0');
 		}
 
-		yylval->val = new Value(n);
+		yylval->val = new Value(new IntType(n));
 
 		RET(token::NUM_INTEGER);
 	}
@@ -268,7 +269,7 @@ next_token:
 			}
 		}
 
-		yylval->val = new Value(n);
+		yylval->val = new Value(new IntType(n));
 
 		RET(token::NUM_INTEGER);
 	}
@@ -290,7 +291,7 @@ next_token:
 		double n = 0;
 		n = strtod(std::string(reinterpret_cast<const char*>(s.yylex), yylen).c_str(), NULL);
 
-		yylval->val = new Value(n);
+		yylval->val = new Value(new DoubleType(n));
 
 		RET(token::NUM_DOUBLE);
 	}
