@@ -35,63 +35,6 @@
 #include "compiler/refcounted.h"
 #include <iostream>
 
-namespace clever {
-
-/**
- * String interning implementation
- */
-class CString : public RefCounted, public std::string {
-public:
-	typedef std::size_t IdType;
-
-	CString()
-		: RefCounted(0), std::string(), m_id(0), m_interned(true) {}
-
-	CString(const std::string& str, IdType id)
-		: RefCounted(0), std::string(str), m_id(id), m_interned(true) {}
-
-	CString(const CString& str)
-		: RefCounted(0), std::string(str.str()), m_id(str.m_id),
-			m_interned(true) {}
-
-	CString(const std::string& str, bool interned)
-		: RefCounted(0), std::string(str), m_id(0),
-			m_interned(interned) {}
-
-	bool hasSameId(const CString* cstring) const {
-		return m_id == cstring->m_id;
-	}
-
-	IdType getId() const {
-		return m_id;
-	}
-
-	bool isInterned() const {
-		return m_interned;
-	}
-
-	const std::string& str() const {
-		return *static_cast<const std::string*>(this);
-	}
-
-	const char* c_str() const {
-		return static_cast<const std::string*>(this)->c_str();
-	}
-
-	bool operator==(const CString* cstring) {
-		return hasSameId(cstring);
-	}
-
-	bool operator==(const std::string& string) {
-		return compare(string) == 0;
-	}
-private:
-	IdType m_id;
-	bool m_interned;
-};
-
-} // clever
-
 /**
  * Specialization of boost::hash<> for working with CStrings
  */
@@ -122,14 +65,6 @@ public:
 
 #endif
 
-template <>
-struct hash<const clever::CString*> : public unary_function<const clever::CString*, size_t> {
-public:
-	size_t operator()(const clever::CString* key) const {
-		return hash<std::string>()(key->str());
-	}
-};
-
 #ifdef CLEVER_MSVC
 } // std
 #else
@@ -138,11 +73,12 @@ public:
 
 namespace clever {
 
-class CStringTable;
+typedef std::string CString;
 
 class CStringTable {
 public:
-	typedef CString::IdType IdType;
+	typedef CString::size_type IdType;
+
 	typedef std::tr1::unordered_map<IdType, const CString*> CStringTableBase;
 
 	CStringTable()
@@ -166,7 +102,7 @@ public:
 		CStringTableBase::const_iterator it(m_map.find(id));
 
 		if (it == m_map.end()) {
-			const CString* str = new CString(needle, id);
+			const CString* str = new CString(needle);
 			m_map.insert(std::pair<IdType, const CString*>(id, str));
 
 			return str;
@@ -192,7 +128,7 @@ inline const CString* CSTRING(const std::string& str) {
  * Returns the CString* pointer to a possible temporary string
  */
 inline const CString* CSTRINGT(const std::string& str, bool interned = false) {
-	return new CString(str, interned);
+	return new CString(str);
 }
 
 } // clever

@@ -38,7 +38,6 @@ class ASTNode;
 
 namespace clever {
 
-class CString;
 class ScannerState;
 
 /**

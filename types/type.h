@@ -26,9 +26,9 @@
 #ifndef CLEVER_TYPE_H
 #define CLEVER_TYPE_H
 
-namespace clever {
+#include "compiler/cstring.h"
 
-class CString;
+namespace clever {
 
 class Type {
 public:
