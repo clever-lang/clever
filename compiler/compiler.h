@@ -35,6 +35,7 @@
 
 namespace clever {
 
+class Type;
 class CString;
 class Value;
 class location;
@@ -44,7 +45,9 @@ class location;
  */
 class Compiler {
 public:
-	Compiler() : m_ir(), m_scope(NULL), m_scope_id(0), m_value_id(0) {}
+	Compiler()
+		: m_ir(), m_scope(NULL), m_scope_pool(NULL), m_value_pool(NULL),
+			m_type_pool(NULL), m_scope_id(0), m_value_id(0), m_type_id(0) {}
 
 	~Compiler() {}
 	/**
@@ -81,8 +84,10 @@ private:
 	Scope* m_scope;
 	Scope** m_scope_pool;
 	Value** m_value_pool;
+	Type**  m_type_pool;
 	size_t m_scope_id;
 	size_t m_value_id;
+	size_t m_type_id;
 
 	DISALLOW_COPY_AND_ASSIGN(Compiler);
 };

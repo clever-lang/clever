@@ -42,7 +42,7 @@ public:
 	/**
 	 * Virtual method for debug purpose
 	 */
-	virtual void dump() const = 0;
+	virtual void dump(const void*) const = 0;
 private:
 	const CString* m_name;
 };

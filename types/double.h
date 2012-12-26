@@ -33,12 +33,10 @@ namespace clever {
 
 class DoubleType : public Type {
 public:
-	DoubleType() : Type(CSTRING("Double")), m_value(0) {}
-	DoubleType(double n) : Type(CSTRING("Double")), m_value(n) {}
+	DoubleType() : Type(CSTRING("Double")) {}
+	~DoubleType() {}
 
-	void dump() const {	std::cout << m_value; }
-private:
-	double m_value;
+	void dump(const void* value) const { std::cout << *(double*)value; }
 };
 
 } // clever

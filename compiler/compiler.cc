@@ -29,8 +29,14 @@
 #include "compiler/scope.h"
 #include "compiler/value.h"
 #include "interpreter/location.hh"
+#include "types/native_types.h"
 
 namespace clever {
+
+/**
+ * Declaration of namespace global type ptrs for Clever native types
+ */
+DECLARE_CLEVER_NATIVE_TYPES();
 
 /**
  * Compiler initialization phase
@@ -40,12 +46,39 @@ void Compiler::init()
 	m_scope = new Scope;
 	m_scope_pool = (Scope**) calloc(10, sizeof(Scope*));
 	m_value_pool = (Value**) calloc(10, sizeof(Value*));
+	m_type_pool  = (Type**)  calloc(10, sizeof(Type*));
 
-	if (!m_scope_pool || !m_value_pool) {
+	if (!m_scope_pool || !m_value_pool || !m_type_pool) {
 		error("Out of memory!");
 	}
 	m_scope_pool[m_scope_id++] = m_scope;
 	m_value_pool[m_value_id++] = NULL;
+
+	/**
+	 * Native type allocation
+	 */
+	m_type_pool[m_type_id++]   = CLEVER_INT_TYPE    = new IntType;
+	m_type_pool[m_type_id++]   = CLEVER_DOUBLE_TYPE = new DoubleType;
+}
+
+/**
+ * Frees all resource used by the compiler
+ */
+void Compiler::shutdown()
+{
+	CLEVER_SAFE_DELETE(g_cstring_tbl);
+	CLEVER_SAFE_DELETE(m_scope);
+	free(m_scope_pool);
+
+	for (size_t i = 0; i < m_value_id; ++i) {
+		delete m_value_pool[i];
+	}
+	free(m_value_pool);
+
+	for (size_t i = 0; i < m_type_id; ++i) {
+		delete m_type_pool[i];
+	}
+	free(m_type_pool);
 }
 
 /**
@@ -95,21 +128,6 @@ void Compiler::errorf(const location& loc, const char* format, ...) const
 	va_end(args);
 
 	error(out.str(), loc);
-}
-
-/**
- * Frees all resource used by the compiler
- */
-void Compiler::shutdown()
-{
-	CLEVER_SAFE_DELETE(g_cstring_tbl);
-	CLEVER_SAFE_DELETE(m_scope);
-	free(m_scope_pool);
-
-	for (size_t i = 0; i < m_value_id; ++i) {
-		delete m_value_pool[i];
-	}
-	free(m_value_pool);
 }
 
 /**

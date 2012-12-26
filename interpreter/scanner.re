@@ -250,7 +250,7 @@ next_token:
 			n = n * 10 + (nstr[i] - '0');
 		}
 
-		yylval->val = new Value(new IntType(n));
+		yylval->val = new Value(n);
 
 		RET(token::NUM_INTEGER);
 	}
@@ -269,7 +269,7 @@ next_token:
 			}
 		}
 
-		yylval->val = new Value(new IntType(n));
+		yylval->val = new Value(n);
 
 		RET(token::NUM_INTEGER);
 	}
@@ -291,7 +291,7 @@ next_token:
 		double n = 0;
 		n = strtod(std::string(reinterpret_cast<const char*>(s.yylex), yylen).c_str(), NULL);
 
-		yylval->val = new Value(new DoubleType(n));
+		yylval->val = new Value(n);
 
 		RET(token::NUM_DOUBLE);
 	}

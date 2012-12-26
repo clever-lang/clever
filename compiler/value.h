@@ -29,18 +29,42 @@
 #include "compiler/clever.h"
 #include "compiler/refcounted.h"
 #include "types/type.h"
+#include "types/native_types.h"
 
 namespace clever {
 
 class Value : public RefCounted {
 public:
-	Value() : m_type(NULL) {}
-	Value(Type* type) : m_type(type) {}
-	~Value() { CLEVER_SAFE_DELETE(m_type); }
+	union DataValue {
+		long lval;
+		double dval;
+		const CString* sval;
+		void* obj;
 
-	Type* getType() const { return m_type; }
+		DataValue() : lval(0) {}
+		DataValue(long value) : lval(value) {}
+		DataValue(double value) : dval(value) {}
+		DataValue(void* value) : obj(value) {}
+		DataValue(const CString* value) : sval(value) {}
+	};
+
+	Value() : m_data(), m_type() {}
+	Value(long n) : m_data(n), m_type(CLEVER_INT_TYPE) {}
+	Value(double n) : m_data(n), m_type(CLEVER_DOUBLE_TYPE) {}
+	//Value(const CString* value) : m_data(value), m_type(CLEVER_STR_TYPE) {}
+
+	~Value() {}
+
+	const Type* getType() const { return m_type; }
+
+	void dump() const {
+		if (m_type) {
+			m_type->dump(&m_data.lval);
+		}
+	}
 private:
-	Type* m_type;
+	DataValue m_data;
+	const Type* m_type;
 };
 
 } // clever

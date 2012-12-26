@@ -63,7 +63,7 @@ VM_HANDLER(var_decl)
 
 	std::cout << "VAR_DECL: Symbol: " << *sym.getName() << " Value: ";
 	if (value) {
-		value->getType()->dump();
+		value->dump();
 		std::cout << " (" << *value->getType()->getName() << ")";
 	} else {
 		std::cout << "null";
@@ -99,9 +99,9 @@ VM_HANDLER(assignment)
 	Value* value = m_value_pool[op.op2];
 
 	std::cout << "ASSIGN: Changed ";
-	var->getType()->dump();
+	var->dump();
 	std::cout << " to ";
-	value->getType()->dump();
+	value->dump();
 	std::cout << std::endl;
 
 	VM_NEXT();

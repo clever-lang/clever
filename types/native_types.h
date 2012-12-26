@@ -29,4 +29,18 @@
 #include "types/int.h"
 #include "types/double.h"
 
-#endif
+namespace clever {
+
+extern Type* g_clever_int_type;
+extern Type* g_clever_double_type;
+
+#define CLEVER_INT_TYPE g_clever_int_type
+#define CLEVER_DOUBLE_TYPE g_clever_double_type
+
+#define DECLARE_CLEVER_NATIVE_TYPES() \
+	Type* g_clever_int_type;          \
+	Type* g_clever_double_type;
+
+}
+
+#endif // CLEVER_NATIVE_TYPES_H
