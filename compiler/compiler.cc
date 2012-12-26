@@ -151,11 +151,9 @@ void Compiler::newScope()
 	m_scope = m_scope->newLexicalScope();
 	m_scope->setId(m_scope_id);
 
-	m_scope_pool[m_scope_id] = m_scope;
-
 	m_ir.push_back(IR(OP_SCOPE, m_scope_id));
 
-	++m_scope_id;
+	m_scope_pool[m_scope_id++] = m_scope;
 }
 
 /**
