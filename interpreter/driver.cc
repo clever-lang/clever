@@ -174,13 +174,13 @@ void Driver::error(const location& location, const std::string& msg) const
 {
 	position last = location.end - 1;
 
+	std::cerr << "Error: ";
 	if (last.filename) {
 		std::cerr << msg << " in " << *last.filename <<
 			" on line " << last.line << std::endl;
 	} else {
 		std::cerr << msg << " on line " << last.line << std::endl;
 	}
-	exit(1);
 }
 
 /**
