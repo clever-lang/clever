@@ -56,7 +56,11 @@ public:
 	typedef std::stack<ScannerState*> ScannerStack;
 
 	Driver()
-		: m_is_file(false), m_trace_parsing(false), m_file(NULL) {}
+		: m_is_file(false), m_trace_parsing(false), m_file(NULL)
+#ifdef CLEVER_DEBUG
+			, m_dump_opcode(false)
+#endif
+		 {}
 
 	virtual ~Driver() {}
 
@@ -91,6 +95,11 @@ protected:
 	/* The file path -f */
 	const CString* m_file;
 
+#ifdef CLEVER_DEBUG
+	/* Opcode dumping option */
+	bool m_dump_opcode;
+#endif
+
 	/* Compiler */
 	Compiler m_compiler;
 
@@ -107,6 +116,9 @@ class Interpreter : public Driver {
 public:
 	Interpreter(int* argc, char*** argv);
 
+#ifdef CLEVER_DEBUG
+	void setDebug() { m_dump_opcode = true; }
+#endif
 	void execute(bool interactive);
 	void shutdown();
 private:

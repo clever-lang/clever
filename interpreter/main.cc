@@ -139,6 +139,7 @@ int main(int argc, char **argv)
 			clever.setTraceParsing(true);
 		} else if (argv[i] == std::string("-d")) {
 			inc_arg++;
+			clever.setDebug();
 #endif
 		} else if (argv[i][0] == '-') {
 			std::cerr << "Unknown option '" << argv[i] << "'" << std::endl;

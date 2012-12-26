@@ -23,7 +23,10 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#ifdef CLEVER_DEBUG
 #include <iostream>
+#include "vm/opcode.h"
+#endif
 #include "compiler/cstring.h"
 #include "compiler/scope.h"
 #include "types/type.h"
@@ -53,6 +56,16 @@ inline void VM::init()
 	m_handlers[OP_ASSIGN]   = &VM::assignment;
 }
 
+#ifdef CLEVER_DEBUG
+void VM::dumpOpcodes() const
+{
+	for (size_t i = 0, j = m_inst.size(); i < j; ++i) {
+		IR& ir = m_inst[i];
+		std::cout << get_opcode_name(ir.opcode) << std::endl;
+	}
+}
+#endif
+
 /**
  * Variable declaration execution
  */
@@ -60,15 +73,6 @@ VM_HANDLER(var_decl)
 {
 	Symbol& sym = (*m_scope_pool)[m_current_scope]->at(op.op1);
 	Value* value = (*m_value_pool)[sym.getValueId()];
-
-	std::cout << "VAR_DECL: Symbol: " << *sym.getName() << " Value: ";
-	if (value) {
-		value->dump();
-		std::cout << " (" << *value->getType()->getName() << ")";
-	} else {
-		std::cout << "null";
-	}
-	std::cout << std::endl;
 
 	VM_NEXT();
 }

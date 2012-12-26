@@ -141,6 +141,7 @@ add_executable(clever
 	interpreter/scanner.h
 	vm/ir.h
 	vm/opcode.h
+	vm/opcode.cc
 	vm/vm.h
 	vm/vm.cc
 	${EXTRA_CLEVER_FILES}

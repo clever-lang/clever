@@ -68,6 +68,12 @@ public:
 	 * Start the VM execution
 	 */
 	void run();
+	/**
+	 * Methods for dumping opcodes
+	 */
+#ifdef CLEVER_DEBUG
+	void dumpOpcodes() const;
+#endif
 
 	/**
 	 * VM opcode handlers

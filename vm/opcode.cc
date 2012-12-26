@@ -23,26 +23,25 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef CLEVER_OPCODE_H
-#define CLEVER_OPCODE_H
+#include "vm/opcode.h"
 
 namespace clever {
 
-/**
- * VM opcodes
- */
-enum Opcode {
-	OP_VAR_DECL, /* Used for variable declaration */
-	OP_SCOPE,    /* Used for scope switching */
-	OP_RETURN,   /* Used for returning */
-	OP_ASSIGN,   /* Used for variable assignment */
-	NUM_OPCODES
-};
-
 #ifdef CLEVER_DEBUG
-const char* get_opcode_name(Opcode);
+const char* get_opcode_name(Opcode opnum)
+{
+#define CASE(s) case s: return #s
+	switch (opnum) {
+		CASE(OP_VAR_DECL);
+		CASE(OP_SCOPE);
+		CASE(OP_RETURN);
+		CASE(OP_ASSIGN);
+		default:
+			break;
+	}
+#undef CASE
+	return "UNKNOWN";
+}
 #endif
 
 } // clever
-
-#endif // CLEVER_OPCODE_H

@@ -37,7 +37,7 @@ namespace clever {
 /**
  * Interpreter constructor
  */
-Interpreter::Interpreter(int* argc, char*** argv)
+Interpreter::Interpreter(int* argc, char*** argv) : Driver()
 {
 }
 
@@ -51,6 +51,11 @@ void Interpreter::execute(bool interactive)
 	vm.setSymbolTable(m_compiler.getScopePool());
 	vm.setValuePool(m_compiler.getValuePool());
 
+#ifdef CLEVER_DEBUG
+	if (m_dump_opcode) {
+		vm.dumpOpcodes();
+	}
+#endif
 	vm.run();
 }
 
