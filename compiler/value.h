@@ -59,7 +59,7 @@ public:
 
 	void dump() const {
 		if (m_type) {
-			m_type->dump(&m_data.lval);
+			m_type->dump(&m_data);
 		}
 	}
 private:
