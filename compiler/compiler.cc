@@ -144,9 +144,7 @@ void Compiler::varDeclaration(const CString* var, Value* node)
 	if (!node) {
 		node = new Value();
 	}
-	/**
-	 * A null value is represented by m_value_id = 0 on value pool
-	 */
+
 	m_ir.push_back(
 		IR(OP_VAR_DECL, FETCH_SYM, m_scope->push(var, m_value_id)));
 
