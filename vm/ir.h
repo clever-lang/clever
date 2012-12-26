@@ -31,21 +31,45 @@
 
 namespace clever {
 
+enum OperandType {
+	UNUSED,      /* Operand is not used */
+	FETCH_SYM,   /* For symbol fetchs */
+	FETCH_VAL,   /* For Value* fetchs */
+	FETCH_SCOPE  /* For scope switching */
+};
+
 /**
  * Intermediate representation
  */
 struct IR {
-	IR(Opcode _op, size_t _op1)
-		: opcode(_op), op1(_op1), op2(0), result(NULL) {}
+	IR(Opcode _op)
+		: opcode(_op),
+			op1_type(UNUSED), op2_type(UNUSED),
+			op1(0), op2(0),
+			result(NULL) {}
 
-	IR(Opcode _op, size_t _op1, size_t _op2)
-		: opcode(_op), op1(_op1), op2(_op2), result(NULL) {}
+	IR(Opcode _op, OperandType _op1_type, size_t _op1)
+		: opcode(_op),
+			op1_type(_op1_type), op2_type(UNUSED),
+			op1(_op1), op2(0),
+			result(NULL) {}
+
+	IR(Opcode _op, OperandType _op1_type, size_t _op1,
+		OperandType _op2_type, size_t _op2)
+		: opcode(_op),
+			op1_type(_op1_type), op2_type(_op2_type),
+			op1(_op1), op2(_op2),
+			result(NULL) {}
 
 	Opcode opcode;
+	OperandType op1_type, op2_type;
 	size_t op1, op2;
 	void* result;
 };
 
+/**
+ * Vector of VM instructions
+ */
 typedef std::vector<IR> IRVector;
 
 } // clever

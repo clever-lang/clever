@@ -89,7 +89,7 @@ void Compiler::shutdown()
  */
 void Compiler::end()
 {
-	m_ir.push_back(IR(OP_RETURN, 0));
+	m_ir.push_back(IR(OP_RETURN));
 }
 
 /**
@@ -141,7 +141,8 @@ void Compiler::varDeclaration(const CString* var, Value* node)
 	/**
 	 * A null value is represented by m_value_id = 0 on value pool
 	 */
-	m_ir.push_back(IR(OP_VAR_DECL, m_scope->push(var, node ? m_value_id : 0)));
+	m_ir.push_back(
+		IR(OP_VAR_DECL, FETCH_SYM, m_scope->push(var, node ? m_value_id : 0)));
 
 	if (node) {
 		m_value_pool[m_value_id++] = node;
@@ -159,7 +160,8 @@ void Compiler::assignment(const CString* var, Value* value, const location& loc)
 		errorf(loc, "Variable `%S' cannot be found!", var);
 	}
 
-	m_ir.push_back(IR(OP_ASSIGN, sym->getValueId(), m_value_id));
+	m_ir.push_back(
+		IR(OP_ASSIGN, FETCH_SYM, sym->getValueId(), FETCH_VAL, m_value_id));
 
 	m_value_pool[m_value_id++] = value;
 }
@@ -172,7 +174,7 @@ void Compiler::newScope()
 	m_scope = m_scope->newLexicalScope();
 	m_scope->setId(m_scope_id);
 
-	m_ir.push_back(IR(OP_SCOPE, m_scope_id));
+	m_ir.push_back(IR(OP_SCOPE, FETCH_SCOPE, m_scope_id));
 
 	m_scope_pool[m_scope_id++] = m_scope;
 }
@@ -184,7 +186,7 @@ void Compiler::endScope()
 {
 	m_scope = m_scope->getParent();
 
-	m_ir.push_back(IR(OP_SCOPE, m_scope->getId()));
+	m_ir.push_back(IR(OP_SCOPE, FETCH_SCOPE, m_scope->getId()));
 }
 
 } // clever
