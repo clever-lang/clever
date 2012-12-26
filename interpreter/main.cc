@@ -38,34 +38,34 @@
 
 static void show_usage()
 {
-	std::cout << "Usage: clever <options> [filename]" << std::endl;
-	std::cout << std::endl;
+    std::cout << "Usage: clever <options> [filename]\n\n"
+                 "General options:\n";
 
-	std::cout << "General options:" << std::endl;
 #ifdef _WIN32
-	std::cout << "\t-b\tRun on background" << std::endl;
+    std::cout << "\t-b\tRun on background\n";
 #endif
-	std::cout << "\t-h\tHelp" << std::endl;
-	std::cout << "\t-v\tShow version" << std::endl;
-	std::cout << std::endl;
 
-	std::cout << "Code options (must be the last one and unique):" << std::endl;
-	std::cout << "\t-i\tRun the interative mode" << std::endl;
-	std::cout << "\t-r\tRun the code" << std::endl;
-	std::cout << "\t-qr\tQuickly run the code (import std automatically)" << std::endl;
-	std::cout << std::endl;
+    std::cout << "\t-h\tHelp\n"
+                 "\t-v\tShow version\n"
+                 "\n";
+
+    std::cout << "Code options (must be the last one and unique):\n"
+                 "\t-i\tRun the interative mode\n"
+                 "\t-r\tRun the code\n"
+                 "\t-qr\tQuickly run the code (import std automatically)\n"
+                 "\n";
 
 #ifdef CLEVER_DEBUG
-	std::cout << "Debug options:" << std::endl;
-	std::cout << "\t-p\tTrace parsing" << std::endl;
-	std::cout << "\t-d\tDump opcode" << std::endl;
-	std::cout << std::endl;
+    std::cout << "Debug options:\n"
+                 "\t-p\tTrace parsing\n"
+                 "\t-d\tDump opcode\n"
+                 "\n";
 #endif
 }
 
 int main(int argc, char **argv)
 {
-	clever::Interpreter clever(&argc, &argv);
+    clever::Interpreter clever(&argc, &argv);
 
 	if (argc == 1) {
 		std::cout << "Clever Programming Language" << std::endl;
@@ -73,22 +73,23 @@ int main(int argc, char **argv)
 		return 0;
 	}
 
-	int inc_arg = 0;
+    int inc_arg = 0;
 
-	for (int i = 1; i < argc; ++i) {
+    for (int i = 1; i < argc; ++i) {
 		// Look for general options, then code options and finally debug options.
 		if (argv[i] == std::string("-h")) {
 			show_usage();
 			return 0;
 		} else if (argv[i] == std::string("-v")) {
-			std::cout << "Clever - development version";
-#ifdef CLEVER_DEBUG
-			std::cout << " (debug)";
-#endif
-			std::cout << std::endl;
+            std::cout << "Clever - development version";
 
-			std::cout << "Copyright (c) 2011-2012 Clever Team" << std::endl;
-			std::cout << "(built: " __DATE__ " " __TIME__ ")" << std::endl;
+#ifdef CLEVER_DEBUG
+            std::cout << " (debug)";
+#endif
+            std::cout << "\n"
+                         "Copyright (c) 2011-2012 Clever Team\n"
+                         "(built: " __DATE__ " " __TIME__ ")\n";
+
 			return 0;
 #ifdef _WIN32
 		} else if (argv[i] == std::string("-b")) {
@@ -152,7 +153,7 @@ int main(int argc, char **argv)
 	argv += inc_arg + 1;
 
 	clever.execute(false);
-	clever.shutdown();
+    clever.shutdown();
 
 	return 0;
 }
