@@ -108,7 +108,7 @@ public:
 	Interpreter(int* argc, char*** argv);
 
 	void execute(bool interactive);
-	void shutdown() {}
+	void shutdown();
 private:
 	DISALLOW_COPY_AND_ASSIGN(Interpreter);
 };

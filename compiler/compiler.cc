@@ -62,7 +62,7 @@ void Compiler::end()
 void Compiler::error(const char* msg) const
 {
 	std::cout << "Compile error: " << msg << std::endl;
-	exit(1);
+	CLEVER_EXIT_FATAL();
 }
 
 /**
@@ -77,7 +77,7 @@ void Compiler::error(const std::string& message, const location& loc) const
 		std::cerr << "Compile error: " << message << " on line "
 			<< loc.begin.line << "\n";
 	}
-	exit(1);
+	CLEVER_EXIT_FATAL();
 }
 
 /**

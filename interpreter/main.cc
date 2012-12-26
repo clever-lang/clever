@@ -110,20 +110,27 @@ int main(int argc, char **argv)
 			inc_arg++;
 			while (std::cin) {
 				getline(std::cin, input_line);
-				clever.loadStr(input_line + '\n', false);
-				clever.execute(true);
+				if (clever.loadStr(input_line + '\n', false) == 0) {
+					clever.execute(true);
+				}
   			}
   			clever.shutdown();
   			return 0;
 		} else if (argv[i] == std::string("-r")) {
 			MORE_ARG();
 			inc_arg++;
-			clever.loadStr(argv[i], false);
+			if (clever.loadStr(argv[i], false)) {
+				clever.shutdown();
+				exit(1);
+			}
 			break;
 		} else if (argv[i] == std::string("-qr")) {
 			MORE_ARG();
 			inc_arg++;
-			clever.loadStr(argv[i], true);
+			if (clever.loadStr(argv[i], true)) {
+				clever.shutdown();
+				exit(1);
+			}
 			break;
 #ifdef CLEVER_DEBUG
 		} else if (argv[i] == std::string("-p")) {

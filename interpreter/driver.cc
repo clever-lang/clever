@@ -52,7 +52,13 @@ void Interpreter::execute(bool interactive)
 	vm.setValuePool(m_compiler.getValuePool());
 
 	vm.run();
+}
 
+/**
+ * Frees the resource used to load and execute the script
+ */
+void Interpreter::shutdown()
+{
 	m_compiler.shutdown();
 }
 
@@ -82,6 +88,7 @@ void Driver::readFile(std::string& source) const
 
 /**
  * Starts the parsing of the supplied file
+ * Returns -1 when a parser error happens, otherwise 0 is returned.
  */
 int Driver::loadFile(const std::string& filename)
 {
@@ -104,7 +111,12 @@ int Driver::loadFile(const std::string& filename)
 	// Bison debug option
 	parser.set_debug_level(m_trace_parsing);
 
-	int result = parser.parse();
+	int status = setjmp(fatal_error);
+	int result = 1;
+
+	if (status == 0) {
+		result = parser.parse();
+	}
 
 	delete new_scanner;
 	m_scanners.pop();
@@ -114,6 +126,7 @@ int Driver::loadFile(const std::string& filename)
 
 /**
  * Starts the parsing of the supplied string
+ * Returns -1 when a parser error happens, otherwise 0 is returned.
  */
 int Driver::loadStr(const std::string& code, bool importStd)
 {
@@ -136,7 +149,12 @@ int Driver::loadStr(const std::string& code, bool importStd)
 	/* Bison debug option */
 	parser.set_debug_level(m_trace_parsing);
 
-	int result = parser.parse();
+	int status = setjmp(fatal_error);
+	int result = 1;
+
+	if (status == 0) {
+		result = parser.parse();
+	}
 
 	delete new_scanner;
 	m_scanners.pop();
