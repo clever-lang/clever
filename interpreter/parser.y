@@ -158,7 +158,7 @@ var_declaration:
 ;
 
 assignment:
-		IDENT '=' r_value { c.assignment($1, $3); }
+		IDENT '=' r_value { c.assignment($1, $3, yyloc); }
 ;
 
 r_value:

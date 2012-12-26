@@ -28,6 +28,7 @@
 
 #include <tr1/unordered_map>
 #include <vector>
+#include <sstream>
 #include "compiler/clever.h"
 #include "compiler/scope.h"
 #include "vm/ir.h"
@@ -36,6 +37,7 @@ namespace clever {
 
 class CString;
 class Value;
+class location;
 
 /**
  * Compiler representation
@@ -64,6 +66,8 @@ public:
 	Value** getValuePool() { return m_value_pool; }
 
 	void error(const char*) const;
+	void error(const std::string&, const location&) const;
+	void errorf(const location&, const char*, ...) const;
 
 	/**
 	 * Compilation methods
@@ -71,7 +75,7 @@ public:
 	void varDeclaration(const CString*, Value*);
 	void newScope();
 	void endScope();
-	void assignment(const CString*, Value*);
+	void assignment(const CString*, Value*, const location&);
 private:
 	IRVector m_ir;
 	Scope* m_scope;

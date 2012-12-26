@@ -28,6 +28,7 @@
 #include "compiler/compiler.h"
 #include "compiler/scope.h"
 #include "compiler/value.h"
+#include "interpreter/location.hh"
 
 namespace clever {
 
@@ -65,6 +66,38 @@ void Compiler::error(const char* msg) const
 }
 
 /**
+ * Displays an error message
+ */
+void Compiler::error(const std::string& message, const location& loc) const
+{
+	if (loc.begin.filename) {
+		std::cerr << "Compile error: " << message << " on "
+			<< *loc.begin.filename << " line " << loc.begin.line << "\n";
+	} else {
+		std::cerr << "Compile error: " << message << " on line "
+			<< loc.begin.line << "\n";
+	}
+	exit(1);
+}
+
+/**
+ * Displays a formatted error message and abort the compilation
+ */
+void Compiler::errorf(const location& loc, const char* format, ...) const
+{
+	std::ostringstream out;
+	va_list args;
+
+	va_start(args, format);
+
+	vsprintf(out, format, args);
+
+	va_end(args);
+
+	error(out.str(), loc);
+}
+
+/**
  * Frees all resource used by the compiler
  */
 void Compiler::shutdown()
@@ -96,12 +129,12 @@ void Compiler::varDeclaration(const CString* var, Value* node)
 /**
  * Compiles a variable assignment
  */
-void Compiler::assignment(const CString* var, Value* value)
+void Compiler::assignment(const CString* var, Value* value, const location& loc)
 {
 	Symbol* sym = m_scope->getSymbol(var);
 
 	if (!sym) {
-		error("Variable cannot be found!");
+		errorf(loc, "Variable `%S' cannot be found!", var);
 	}
 
 	m_value_pool[m_value_id] = value;
