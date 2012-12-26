@@ -31,6 +31,8 @@
 
 namespace clever {
 
+class Value;
+
 enum OperandType {
 	UNUSED,      /* Operand is not used */
 	FETCH_SYM,   /* For symbol fetchs */
@@ -55,16 +57,16 @@ struct IR {
 			result(NULL) {}
 
 	IR(Opcode _op, OperandType _op1_type, size_t _op1,
-		OperandType _op2_type, size_t _op2)
+		OperandType _op2_type, size_t _op2, Value* res = NULL)
 		: opcode(_op),
 			op1_type(_op1_type), op2_type(_op2_type),
 			op1(_op1), op2(_op2),
-			result(NULL) {}
+			result(res) {}
 
 	Opcode opcode;
 	OperandType op1_type, op2_type;
 	size_t op1, op2;
-	void* result;
+	Value* result;
 };
 
 /**

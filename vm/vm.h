@@ -82,6 +82,8 @@ public:
 	VM_HANDLER_D(switch_scope);
 	VM_HANDLER_D(ret);
 	VM_HANDLER_D(assignment);
+	VM_HANDLER_D(plus);
+	VM_HANDLER_D(print);
 private:
 	/**
 	 * Initialization phase

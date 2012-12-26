@@ -60,7 +60,7 @@ class Value;
 
 %type <str> IDENT
 %type <val> NUM_INTEGER NUM_DOUBLE
-%type <val> r_value
+%type <val> r_value math_expr
 
 %debug
 %error-verbose
@@ -110,6 +110,7 @@ class Value;
 %token TRUE          "true"
 %token FALSE         "false"
 %token CONST         "const"
+%token PRINT         "print"
 
 %left ',';
 %left LOGICAL_OR;
@@ -150,6 +151,7 @@ non_empty_statement_list:
 		'{' { c.newScope(); } non_empty_statement_list { c.endScope(); } '}'
 	|	var_declaration ';'
 	|	assignment ';'
+	|	print_stmt ';'
 ;
 
 var_declaration:
@@ -164,6 +166,15 @@ assignment:
 r_value:
 		NUM_INTEGER
 	|	NUM_DOUBLE
+	|	math_expr
+;
+
+math_expr:
+		r_value '+' r_value { $$ = c.binOp(OP_PLUS, $1, $3); }
+;
+
+print_stmt:
+		PRINT '(' IDENT ')' { c.print($3, yyloc); }
 ;
 
 %%

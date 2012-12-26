@@ -161,9 +161,38 @@ void Compiler::assignment(const CString* var, Value* value, const location& loc)
 	}
 
 	m_ir.push_back(
-		IR(OP_ASSIGN, FETCH_SYM, sym->getValueId(), FETCH_VAL, m_value_id));
+		IR(OP_ASSIGN, FETCH_VAL, sym->getValueId(), FETCH_VAL, m_value_id));
 
 	m_value_pool[m_value_id++] = value;
+}
+
+/**
+ * Compiles a set of binary operation
+ */
+Value* Compiler::binOp(Opcode op, Value* lhs, Value* rhs)
+{
+	Value* result = new Value();
+
+	m_ir.push_back(
+		IR(OP_PLUS, FETCH_VAL, m_value_id, FETCH_VAL, m_value_id+1, result));
+
+	m_value_pool[m_value_id++] = lhs;
+	m_value_pool[m_value_id++] = rhs;
+
+	return result;
+}
+
+/**
+ * Temporary print statement compilation
+ */
+void Compiler::print(const CString* var, const location& loc)
+{
+	Symbol* sym = m_scope->getSymbol(var);
+
+	if (!sym) {
+		errorf(loc, "Variable `%S' cannot be found!", var);
+	}
+	m_ir.push_back(IR(OP_PRINT, FETCH_SYM, sym->getValueId()));
 }
 
 /**

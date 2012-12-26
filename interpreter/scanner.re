@@ -196,6 +196,10 @@ next_token:
 		RET(token::FALSE);
 	}
 
+	<INITIAL>'print' {
+		RET(token::PRINT);
+	}
+
 	<INITIAL>IDENTIFIER {
 		yylval->str = CSTRING(std::string(reinterpret_cast<const char*>(s.yylex), yylen));
 		RET(token::IDENT);

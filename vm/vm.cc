@@ -29,6 +29,7 @@
 #endif
 #include "compiler/cstring.h"
 #include "compiler/scope.h"
+#include "compiler/value.h"
 #include "types/type.h"
 #include "vm/vm.h"
 
@@ -54,6 +55,8 @@ inline void VM::init()
 	m_handlers[OP_SCOPE]    = &VM::switch_scope;
 	m_handlers[OP_RETURN]   = &VM::ret;
 	m_handlers[OP_ASSIGN]   = &VM::assignment;
+	m_handlers[OP_PLUS]     = &VM::plus;
+	m_handlers[OP_PRINT]    = &VM::print;
 }
 
 #ifdef CLEVER_DEBUG
@@ -63,7 +66,7 @@ void VM::dumpOpcodes() const
 
 	for (size_t i = 0, j = m_inst.size(); i < j; ++i) {
 		IR& ir = m_inst[i];
-		std::cout << get_opcode_name(ir.opcode) << "\t| ";
+		std::cout << get_opcode_name(ir.opcode) << " \t| ";
 		std::cout << ir.op1 << " [" << op_type[ir.op1_type] << "] | ";
 		std::cout << ir.op2 << " [" << op_type[ir.op2_type] << "]\n";
 	}
@@ -105,10 +108,38 @@ VM_HANDLER(ret)
  */
 VM_HANDLER(assignment)
 {
-	/*
 	Value* var = (*m_value_pool)[op.op1];
 	Value* value = (*m_value_pool)[op.op2];
-	*/
+
+	var->copy(value);
+
+	VM_NEXT();
+}
+
+/**
+ * Math sum operation
+ */
+VM_HANDLER(plus)
+{
+	Value* lhs = (*m_value_pool)[op.op1];
+	Value* rhs = (*m_value_pool)[op.op2];
+
+	if (lhs->getType() == CLEVER_INT_TYPE
+		&& rhs->getType() == CLEVER_INT_TYPE) {
+		op.result->setInt(lhs->getInt() + rhs->getInt());
+	}
+
+	VM_NEXT();
+}
+
+/**
+ * Temporary handler for print command
+ */
+VM_HANDLER(print)
+{
+	(*m_value_pool)[op.op1]->dump();
+	std::cout << std::endl;
+
 	VM_NEXT();
 }
 

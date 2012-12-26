@@ -82,6 +82,8 @@ public:
 	void newScope();
 	void endScope();
 	void assignment(const CString*, Value*, const location&);
+	Value* binOp(Opcode, Value*, Value*);
+	void print(const CString*, const location&);
 private:
 	IRVector m_ir;
 	Scope* m_scope;

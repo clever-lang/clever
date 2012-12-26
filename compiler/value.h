@@ -26,6 +26,7 @@
 #ifndef CLEVER_VALUE_H
 #define CLEVER_VALUE_H
 
+#include <cstring>
 #include "compiler/clever.h"
 #include "compiler/refcounted.h"
 #include "types/type.h"
@@ -48,19 +49,30 @@ public:
 		DataValue(const CString* value) : sval(value) {}
 	};
 
-	Value() : m_data(), m_type() {}
+	Value() : m_data(), m_type(NULL) {}
 	Value(long n) : m_data(n), m_type(CLEVER_INT_TYPE) {}
 	Value(double n) : m_data(n), m_type(CLEVER_DOUBLE_TYPE) {}
 	//Value(const CString* value) : m_data(value), m_type(CLEVER_STR_TYPE) {}
 
 	~Value() {}
 
+	void setType(const Type* type) { m_type = type; }
 	const Type* getType() const { return m_type; }
 
 	void dump() const {
 		if (m_type) {
 			m_type->dump(&m_data);
 		}
+	}
+
+	void setInt(long n) { m_data.lval = n; m_type = CLEVER_INT_TYPE; }
+	long getInt() const { return m_data.lval; }
+
+	const DataValue* getData() const { return &m_data; }
+
+	void copy(Value* value) {
+		m_type = value->getType();
+		memcpy(&m_data, value->getData(), sizeof(DataValue));
 	}
 private:
 	DataValue m_data;
