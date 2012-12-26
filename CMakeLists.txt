@@ -29,6 +29,7 @@ set(CLEVER_CFLAGS)
 set(CLEVER_LDFLAGS)
 set(CLEVER_LIBRARIES)
 set(CLEVER_INCLUDE_DIRS)
+set(EXTRA_CLEVER_FILES)
 
 # 3rd-party libraries
 # ---------------------------------------------------------------------------
@@ -124,26 +125,28 @@ endif (UNIX)
 add_executable(clever
 	${RE2C_CleverScanner_OUTPUTS}
 	${BISON_CleverParser_OUTPUTS}
-	types/type.h
-	types/native_types.h
-	types/int.h
-	types/double.h
-	compiler/cstring.h
-	compiler/cstring.cc
-	compiler/clever.h
-	compiler/clever.cc
-	compiler/value.h
-	compiler/compiler.h
-	compiler/compiler.cc
-	interpreter/driver.cc
-	interpreter/driver.h
-	interpreter/main.cc
-	interpreter/scanner.h
-	vm/ir.h
-	vm/opcode.h
-	vm/opcode.cc
-	vm/vm.h
-	vm/vm.cc
+        compiler/clever.cc
+        compiler/clever.h
+        compiler/compiler.cc
+        compiler/compiler.h
+        compiler/cstring.cc
+        compiler/cstring.h
+        compiler/refcounted.h
+        compiler/scope.h
+        compiler/value.h
+        interpreter/driver.cc
+        interpreter/driver.h
+        interpreter/main.cc
+        interpreter/scanner.h
+        types/double.h
+        types/int.h
+        types/native_types.h
+        types/type.h
+        vm/ir.h
+        vm/opcode.cc
+        vm/opcode.h
+        vm/vm.cc
+        vm/vm.h
 	${EXTRA_CLEVER_FILES}
 )
 target_link_libraries(clever ${CLEVER_LIBRARIES})
