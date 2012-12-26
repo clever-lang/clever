@@ -61,7 +61,8 @@ void VM::dumpOpcodes() const
 {
 	for (size_t i = 0, j = m_inst.size(); i < j; ++i) {
 		IR& ir = m_inst[i];
-		std::cout << get_opcode_name(ir.opcode) << std::endl;
+		std::cout << get_opcode_name(ir.opcode) << "\t| ";
+		std::cout << ir.op1 << " | " << ir.op2 << std::endl;
 	}
 }
 #endif
@@ -101,12 +102,6 @@ VM_HANDLER(assignment)
 {
 	Value* var = (*m_value_pool)[op.op1];
 	Value* value = (*m_value_pool)[op.op2];
-
-	std::cout << "ASSIGN: Changed ";
-	var->dump();
-	std::cout << " to ";
-	value->dump();
-	std::cout << std::endl;
 
 	VM_NEXT();
 }
