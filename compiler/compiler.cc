@@ -23,7 +23,6 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <cstdlib>
 #include "compiler/cstring.h"
 #include "compiler/compiler.h"
 #include "compiler/scope.h"
@@ -44,13 +43,11 @@ DECLARE_CLEVER_NATIVE_TYPES();
 void Compiler::init()
 {
 	m_scope = new Scope;
-	m_scope_pool = (Scope**) calloc(10, sizeof(Scope*));
-	m_value_pool = (Value**) calloc(10, sizeof(Value*));
-	m_type_pool  = (Type**)  calloc(10, sizeof(Type*));
 
-	if (!m_scope_pool || !m_value_pool || !m_type_pool) {
-		error("Out of memory!");
-	}
+	m_scope_pool.reserve(10);
+	m_value_pool.reserve(30);
+	m_type_pool.reserve(15);
+
 	m_scope_pool[m_scope_id++] = m_scope;
 	m_value_pool[m_value_id++] = NULL;
 
@@ -68,17 +65,22 @@ void Compiler::shutdown()
 {
 	CLEVER_SAFE_DELETE(g_cstring_tbl);
 	CLEVER_SAFE_DELETE(m_scope);
-	free(m_scope_pool);
 
-	for (size_t i = 0; i < m_value_id; ++i) {
-		delete m_value_pool[i];
-	}
-	free(m_value_pool);
+	ValuePool::const_iterator it = m_value_pool.begin(),
+		end = m_value_pool.end();
 
-	for (size_t i = 0; i < m_type_id; ++i) {
-		delete m_type_pool[i];
+	while (it != end) {
+		delete *it;
+		++it;
 	}
-	free(m_type_pool);
+
+	TypePool::const_iterator it2 = m_type_pool.begin(),
+		end2 = m_type_pool.end();
+
+	while (it2 != end2) {
+		delete *it2;
+		++it2;
+	}
 }
 
 /**

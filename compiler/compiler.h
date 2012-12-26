@@ -40,14 +40,18 @@ class CString;
 class Value;
 class location;
 
+typedef std::vector<Scope*> ScopePool;
+typedef std::vector<Value*> ValuePool;
+typedef std::vector<Type*> TypePool;
+
 /**
  * Compiler representation
  */
 class Compiler {
 public:
 	Compiler()
-		: m_ir(), m_scope(NULL), m_scope_pool(NULL), m_value_pool(NULL),
-			m_type_pool(NULL), m_scope_id(0), m_value_id(0), m_type_id(0) {}
+		: m_ir(), m_scope(NULL), m_scope_pool(10), m_value_pool(30),
+			m_type_pool(15), m_scope_id(0), m_value_id(0), m_type_id(0) {}
 
 	~Compiler() {}
 	/**
@@ -65,8 +69,8 @@ public:
 
 	IRVector& getIR() { return m_ir; }
 
-	Scope** getScopePool() { return m_scope_pool; }
-	Value** getValuePool() { return m_value_pool; }
+	ScopePool* getScopePool() { return &m_scope_pool; }
+	ValuePool* getValuePool() { return &m_value_pool; }
 
 	void error(const char*) const;
 	void error(const std::string&, const location&) const;
@@ -82,9 +86,9 @@ public:
 private:
 	IRVector m_ir;
 	Scope* m_scope;
-	Scope** m_scope_pool;
-	Value** m_value_pool;
-	Type**  m_type_pool;
+	ScopePool m_scope_pool;
+	ValuePool m_value_pool;
+	TypePool m_type_pool;
 	size_t m_scope_id;
 	size_t m_value_id;
 	size_t m_type_id;

@@ -58,8 +58,8 @@ inline void VM::init()
  */
 VM_HANDLER(var_decl)
 {
-	Symbol& sym = m_scope_pool[m_current_scope]->at(op.op1);
-	Value* value = m_value_pool[sym.getValueId()];
+	Symbol& sym = (*m_scope_pool)[m_current_scope]->at(op.op1);
+	Value* value = (*m_value_pool)[sym.getValueId()];
 
 	std::cout << "VAR_DECL: Symbol: " << *sym.getName() << " Value: ";
 	if (value) {
@@ -95,8 +95,8 @@ VM_HANDLER(ret)
  */
 VM_HANDLER(assignment)
 {
-	Value* var = m_value_pool[op.op1];
-	Value* value = m_value_pool[op.op2];
+	Value* var = (*m_value_pool)[op.op1];
+	Value* value = (*m_value_pool)[op.op2];
 
 	std::cout << "ASSIGN: Changed ";
 	var->dump();

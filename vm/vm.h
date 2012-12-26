@@ -29,6 +29,7 @@
 #include <vector>
 #include <pthread.h>
 #include "compiler/clever.h"
+#include "compiler/compiler.h"
 #include "vm/ir.h"
 #include "vm/opcode.h"
 
@@ -58,11 +59,11 @@ public:
 	/**
 	 * Sets the symbol table to used by the VM to fetch the symbol names
 	 */
-	void setSymbolTable(Scope** scope) { m_scope_pool = scope; }
+	void setSymbolTable(ScopePool* scope) { m_scope_pool = scope; }
 	/**
 	 * Sets the Value* pool to be used by VM to fetch the instr values
 	 */
-	void setValuePool(Value** value) { m_value_pool = value; }
+	void setValuePool(ValuePool* value) { m_value_pool = value; }
 	/**
 	 * Start the VM execution
 	 */
@@ -92,11 +93,11 @@ private:
 	/**
 	 * Scope pool
 	 */
-	Scope** m_scope_pool;
+	ScopePool* m_scope_pool;
 	/**
 	 * Value pool
 	 */
-	Value** m_value_pool;
+	ValuePool* m_value_pool;
 	/**
 	 * Current scope id
 	 */
