@@ -37,7 +37,6 @@
 
 namespace clever {
 
-class CString;
 class Value;
 
 class Symbol {

@@ -76,7 +76,7 @@ void Driver::readFile(std::string& source) const
 	std::fstream filep(m_file->c_str());
 
 	if (!filep) {
-		std::cerr << "Couldn't open file " << m_file->str() << std::endl;
+		std::cerr << "Couldn't open file " << *m_file << std::endl;
 		exit(1);
 	}
 	source = "";
