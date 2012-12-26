@@ -139,14 +139,18 @@ void Compiler::errorf(const location& loc, const char* format, ...) const
 void Compiler::varDeclaration(const CString* var, Value* node)
 {
 	/**
+	 * A NULL value is created on uninitialized declaration
+	 */
+	if (!node) {
+		node = new Value();
+	}
+	/**
 	 * A null value is represented by m_value_id = 0 on value pool
 	 */
 	m_ir.push_back(
-		IR(OP_VAR_DECL, FETCH_SYM, m_scope->push(var, node ? m_value_id : 0)));
+		IR(OP_VAR_DECL, FETCH_SYM, m_scope->push(var, m_value_id)));
 
-	if (node) {
-		m_value_pool[m_value_id++] = node;
-	}
+	m_value_pool[m_value_id++] = node;
 }
 
 /**
