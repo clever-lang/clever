@@ -33,7 +33,7 @@ namespace clever {
 
 class IntType : public Type {
 public:
-	IntType() : Type(CSTRING("Int")) {}
+	IntType() : Type(CSTRING("Int")), m_value(0) {}
 	IntType(long n) : Type(CSTRING("Int")), m_value(n) {}
 
 	void dump() const { std::cout << m_value; }
