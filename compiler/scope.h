@@ -129,8 +129,15 @@ inline Symbol* Scope::getSymbol(const CString* name) {
 		return sym;
 	}
 
-	if (m_parent != NULL) {
-		sym = m_parent->getSymbol(name);
+	Scope* v = m_parent;
+	while (v != NULL) {
+		sym = v->getLocalSymbol(name);
+
+		if (sym != NULL) {
+			return sym;
+		}
+
+		v = v->m_parent;
 	}
 
 	return sym;
