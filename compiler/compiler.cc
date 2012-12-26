@@ -44,6 +44,7 @@ void Compiler::init()
 {
 	m_scope = new Scope;
 
+	m_ir.reserve(20);
 	m_scope_pool.reserve(10);
 	m_value_pool.reserve(30);
 	m_type_pool.reserve(15);
