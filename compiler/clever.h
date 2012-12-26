@@ -35,7 +35,7 @@ namespace clever {
 extern jmp_buf fatal_error;
 
 /**
- * Macro to abort the VM execution
+ * Macro to abort execution
  */
 #ifndef CLEVER_APPLE
 # define CLEVER_EXIT_FATAL() longjmp(fatal_error, 1)
@@ -44,17 +44,9 @@ extern jmp_buf fatal_error;
 #endif
 
 /**
- * Macro to increase/decrease reference couting
- */
-#define CLEVER_ADDREF(x) (x)->addRef()
-#define CLEVER_DELREF(x) (x)->delRef()
-#define CLEVER_SAFE_ADDREF(x) do { if (x) { (x)->addRef(); } } while (0);
-#define CLEVER_SAFE_DELREF(x) do { if (x) { (x)->delRef(); } } while (0);
-
-/**
  * Macro to delete pointer after checking for not null
  */
-#define CLEVER_SAFE_DELETE(x) do { if (x) { delete x; } } while (0);
+#define CLEVER_SAFE_DELETE(x) do { if (x) { delete x; } } while (0)
 
 /**
  * Disables copy constructor and copy assignment
@@ -80,7 +72,7 @@ extern jmp_buf fatal_error;
 #elsif defined(__GNUC__) && CLEVER_GCC_VERSION >= 40500
 # define EMPTY_SWITCH_DEFAULT_CASE() __builtin_unreachable()
 #else
-# define EMPTY_SWITCH_DEFAULT_CASE()
+# define EMPTY_SWITCH_DEFAULT_CASE() default: break
 #endif
 
 /**

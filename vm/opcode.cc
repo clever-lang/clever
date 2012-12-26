@@ -23,6 +23,7 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#include "compiler/clever.h"
 #include "vm/opcode.h"
 
 namespace clever {
@@ -36,8 +37,7 @@ const char* get_opcode_name(Opcode opnum)
 		CASE(OP_SCOPE);
 		CASE(OP_RETURN);
 		CASE(OP_ASSIGN);
-		default:
-			break;
+		EMPTY_SWITCH_DEFAULT_CASE();
 	}
 #undef CASE
 	return "UNKNOWN";
