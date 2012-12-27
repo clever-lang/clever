@@ -84,8 +84,10 @@ endif (TCMALLOC)
 
 # Parser and Scanner
 # ---------------------------------------------------------------------------
-BISON_TARGET(CleverParser interpreter/parser.y ${CMAKE_SOURCE_DIR}/interpreter/parser.cc)
-RE2C_TARGET(CleverScanner interpreter/scanner.re ${CMAKE_SOURCE_DIR}/interpreter/scanner.cc
+execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/interpreter)
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+BISON_TARGET(CleverParser interpreter/parser.y ${CMAKE_CURRENT_BINARY_DIR}/interpreter/parser.cc)
+RE2C_TARGET(CleverScanner interpreter/scanner.re ${CMAKE_CURRENT_BINARY_DIR}/interpreter/scanner.cc
 	COMPILE_FLAGS "--case-inverted -bc")
 
 ADD_RE2C_BISON_DEPENDENCY(CleverScanner CleverParser)
