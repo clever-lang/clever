@@ -254,6 +254,10 @@ void Compiler::funcDecl(Node& node)
  */
 void Compiler::funcEndDecl()
 {
+	/**
+	 * Changes the JMP's addr created right before the func declaration
+	 * to point to the end of current function, thus skipping its opcodes
+	 */
 	m_ir[m_curr_func].op1 = m_ir.size();
 }
 
