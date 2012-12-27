@@ -148,7 +148,13 @@ non_empty_statement_list:
 	|	assignment ';'
 	|	print_stmt ';'
 	|	func_declaration
-	|	func_call
+	|	func_call ';'
+	|	prototype ';'
+;
+
+prototype:
+		FUNC IDENT '(' ')'
+	|	FUNC IDENT '(' arg_decl_list ')'
 ;
 
 var_declaration:
@@ -157,11 +163,27 @@ var_declaration:
 ;
 
 func_declaration:
-		FUNC IDENT '(' ')' '{' statement_list '}'
+		FUNC IDENT '('  ')'              '{' statement_list '}'
+	|	FUNC IDENT '(' arg_decl_list ')' '{' statement_list '}'
+;
+
+arg_decl_list:
+		IDENT
+	|	arg_decl_list  ',' IDENT
+;
+
+arg_list:
+		/* empty */
+	|	non_empty_arg_list
+;
+
+non_empty_arg_list:
+		r_value
+	|	non_empty_arg_list ',' r_value
 ;
 
 func_call:
-		IDENT '(' r_value ')'
+		IDENT '(' arg_list ')'
 ;
 
 assignment:
