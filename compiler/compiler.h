@@ -91,7 +91,7 @@ public:
 	/**
 	 * Compilation methods
 	 */
-	void varDeclaration(Node&, Node*);
+	void varDeclaration(Node&, Node*, const location&);
 	void newScope();
 	void endScope();
 	void assignment(Node&, Node&, const location&);

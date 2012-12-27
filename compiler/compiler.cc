@@ -159,10 +159,10 @@ Value* Compiler::getValue(Node& node, const location& loc) const
 /**
  * Compiles a variable declaration
  */
-void Compiler::varDeclaration(Node& var, Node* node)
+void Compiler::varDeclaration(Node& var, Node* node, const location& loc)
 {
 	/// A NULL value is created for uninitialized declaration
-	Value* val = node ? node->data.val : new Value();
+	Value* val = node ? getValue(*node, loc) : new Value();
 
 	m_scope->push(var.data.str, m_value_id);
 

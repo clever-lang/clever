@@ -155,8 +155,8 @@ non_empty_statement_list:
 ;
 
 var_declaration:
-		VAR IDENT             { c.varDeclaration($2, NULL); }
-	|	VAR IDENT '=' r_value { c.varDeclaration($2, &$4);   }
+		VAR IDENT             { c.varDeclaration($2, NULL, yyloc); }
+	|	VAR IDENT '=' r_value { c.varDeclaration($2, &$4, yyloc);   }
 ;
 
 assignment:
