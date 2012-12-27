@@ -36,6 +36,7 @@ enum Opcode {
 	OP_ASSIGN,   /* Used for variable assignment */
 	OP_PLUS,     /* Used for math sum operation */
 	OP_PRINT,    /* TODO: make it regular function call */
+	OP_HALT,     /* Used to abort the VM execution */
 	NUM_OPCODES
 };
 

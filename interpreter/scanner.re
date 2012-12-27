@@ -201,7 +201,8 @@ next_token:
 	}
 
 	<INITIAL>IDENTIFIER {
-		yylval->str = CSTRING(std::string(reinterpret_cast<const char*>(s.yylex), yylen));
+		yylval->node.type = STRCONST;
+		yylval->node.data.str = CSTRING(std::string(reinterpret_cast<const char*>(s.yylex), yylen));
 		RET(token::IDENT);
 	}
 
@@ -273,7 +274,8 @@ next_token:
 			}
 		}
 
-		yylval->val = new Value(n);
+		yylval->node.type = VALUE;
+		yylval->node.data.val = new Value(n);
 
 		RET(token::NUM_INTEGER);
 	}
@@ -286,7 +288,8 @@ next_token:
 			n = n * 8 + nstr[i] - '0';
 		}
 
-		yylval->val = new Value(n);
+		yylval->node.type = VALUE;
+		yylval->node.val = new Value(n);
 
 		RET(token::NUM_INTEGER);
 	}
@@ -295,7 +298,8 @@ next_token:
 		double n = 0;
 		n = strtod(std::string(reinterpret_cast<const char*>(s.yylex), yylen).c_str(), NULL);
 
-		yylval->val = new Value(n);
+		yylval->node.type = VALUE;
+		yylval->node.data.val = new Value(n);
 
 		RET(token::NUM_DOUBLE);
 	}

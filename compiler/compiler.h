@@ -43,6 +43,17 @@ typedef std::vector<Scope*> ScopePool;
 typedef std::vector<Value*> ValuePool;
 typedef std::vector<Type*> TypePool;
 
+enum NodeType { STRCONST, VALUE };
+
+struct Node {
+	union NodeData {
+		Value* val;
+		const CString* str;
+	} data;
+
+	NodeType type;
+};
+
 /**
  * Compiler representation
  */
@@ -78,12 +89,12 @@ public:
 	/**
 	 * Compilation methods
 	 */
-	void varDeclaration(const CString*, Value*);
+	void varDeclaration(Node&, Node*);
 	void newScope();
 	void endScope();
-	void assignment(const CString*, Value*, const location&);
-	Value* binOp(Opcode, Value*, Value*);
-	void print(const CString*, const location&);
+	void assignment(Node&, Node&, const location&);
+	void binOp(Opcode, Node&, Node&, Node&);
+	void print(Node&, const location&);
 private:
 	IRVector m_ir;
 	Scope* m_scope;

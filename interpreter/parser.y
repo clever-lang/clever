@@ -33,6 +33,7 @@
 #include <stack>
 #include "interpreter/scanner.h"
 #include "compiler/cstring.h"
+#include "compiler/compiler.h"
 
 namespace clever {
 class Driver;
@@ -56,11 +57,10 @@ class Value;
 %union {
 	const CString *str;
 	Value* val;
+	Node node;
 };
 
-%type <str> IDENT
-%type <val> NUM_INTEGER NUM_DOUBLE
-%type <val> r_value math_expr
+%type <node> NUM_INTEGER NUM_DOUBLE IDENT r_value math_expr
 
 %debug
 %error-verbose
@@ -156,7 +156,7 @@ non_empty_statement_list:
 
 var_declaration:
 		VAR IDENT             { c.varDeclaration($2, NULL); }
-	|	VAR IDENT '=' r_value { c.varDeclaration($2, $4);   }
+	|	VAR IDENT '=' r_value { c.varDeclaration($2, &$4);   }
 ;
 
 assignment:
@@ -167,14 +167,15 @@ r_value:
 		NUM_INTEGER
 	|	NUM_DOUBLE
 	|	math_expr
+	|	IDENT
 ;
 
 math_expr:
-		r_value '+' r_value { $$ = c.binOp(OP_PLUS, $1, $3); }
+		r_value '+' r_value { c.binOp(OP_PLUS, $1, $3, $$); }
 ;
 
 print_stmt:
-		PRINT '(' IDENT ')' { c.print($3, yyloc); }
+		PRINT '(' r_value ')' { c.print($3, yyloc); }
 ;
 
 %%

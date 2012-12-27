@@ -88,6 +88,7 @@ public:
 	VM_HANDLER_D(assignment);
 	VM_HANDLER_D(plus);
 	VM_HANDLER_D(print);
+	VM_HANDLER_D(halt);
 private:
 	/**
 	 * Initialization phase

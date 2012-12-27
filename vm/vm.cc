@@ -55,6 +55,7 @@ inline void VM::init()
 	m_handlers[OP_ASSIGN]   = &VM::assignment;
 	m_handlers[OP_PLUS]     = &VM::plus;
 	m_handlers[OP_PRINT]    = &VM::print;
+	m_handlers[OP_HALT]     = &VM::halt;
 }
 
 #ifdef CLEVER_DEBUG
@@ -78,6 +79,13 @@ void VM::dumpOpcodes() const
  * Return operation
  */
 VM_HANDLER(ret)
+{
+}
+
+/**
+ * Halt operation
+ */
+VM_HANDLER(halt)
 {
 }
 

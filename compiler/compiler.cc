@@ -89,7 +89,7 @@ void Compiler::shutdown()
  */
 void Compiler::end()
 {
-	m_ir.push_back(IR(OP_RETURN));
+	m_ir.push_back(IR(OP_HALT));
 }
 
 /**
@@ -136,14 +136,16 @@ void Compiler::errorf(const location& loc, const char* format, ...) const
 /**
  * Compiles a variable declaration
  */
-void Compiler::varDeclaration(const CString* var, Value* node)
+void Compiler::varDeclaration(Node& var, Node* node)
 {
+	Value* val;
+
 	/// A NULL value is created for uninitialized declaration
 	if (!node) {
-		node = new Value();
+		val = new Value();
 	}
 
-	m_scope->push(var, m_value_id);
+	m_scope->push(var.data.str, m_value_id);
 
 	m_ir.push_back(
 		IR(OP_ASSIGN, FETCH_VAL, m_value_id, FETCH_VAL, m_value_id+1));
@@ -151,53 +153,61 @@ void Compiler::varDeclaration(const CString* var, Value* node)
 	/// Symbol value
 	m_value_pool[m_value_id++] = new Value();
 	/// Value to be assigned
-	m_value_pool[m_value_id++] = node;
+	m_value_pool[m_value_id++] = node ? node->data.val : val;
 }
 
 /**
  * Compiles a variable assignment
  */
-void Compiler::assignment(const CString* var, Value* value, const location& loc)
+void Compiler::assignment(Node& var, Node& value, const location& loc)
 {
-	Symbol* sym = m_scope->getSymbol(var);
+	if (var.type == STRCONST) {
+		Symbol* sym = m_scope->getSymbol(var.data.str);
 
-	if (!sym) {
-		errorf(loc, "Variable `%S' cannot be found!", var);
+		if (!sym) {
+			errorf(loc, "Variable `%S' cannot be found!", var.data.str);
+		}
+
+		m_ir.push_back(
+			IR(OP_ASSIGN, FETCH_VAL, sym->getValueId(), FETCH_VAL, m_value_id));
+
+		m_value_pool[m_value_id++] = value.data.val;
 	}
-
-	m_ir.push_back(
-		IR(OP_ASSIGN, FETCH_VAL, sym->getValueId(), FETCH_VAL, m_value_id));
-
-	m_value_pool[m_value_id++] = value;
 }
 
 /**
  * Compiles a set of binary operation
  */
-Value* Compiler::binOp(Opcode op, Value* lhs, Value* rhs)
+void Compiler::binOp(Opcode op, Node& lhs, Node& rhs, Node& res)
 {
 	Value* result = new Value();
 
 	m_ir.push_back(
 		IR(OP_PLUS, FETCH_VAL, m_value_id, FETCH_VAL, m_value_id+1, result));
 
-	m_value_pool[m_value_id++] = lhs;
-	m_value_pool[m_value_id++] = rhs;
+	m_value_pool[m_value_id++] = lhs.data.val;
+	m_value_pool[m_value_id++] = rhs.data.val;
 
-	return result;
+	res.type = VALUE;
+	res.data.val = result;
 }
 
 /**
  * Temporary print statement compilation
  */
-void Compiler::print(const CString* var, const location& loc)
+void Compiler::print(Node& node, const location& loc)
 {
-	Symbol* sym = m_scope->getSymbol(var);
+	if (node.type == STRCONST) {
+		Symbol* sym = m_scope->getSymbol(node.data.str);
 
-	if (!sym) {
-		errorf(loc, "Variable `%S' cannot be found!", var);
+		if (!sym) {
+			errorf(loc, "Variable `%S' cannot be found!", node.data.str);
+		}
+		m_ir.push_back(IR(OP_PRINT, FETCH_VAL, sym->getValueId()));
+	} else {
+		m_ir.push_back(IR(OP_PRINT, FETCH_VAL, m_value_id));
+		m_value_pool[m_value_id++] = node.data.val;
 	}
-	m_ir.push_back(IR(OP_PRINT, FETCH_VAL, sym->getValueId()));
 }
 
 /**
