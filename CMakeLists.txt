@@ -144,6 +144,7 @@ add_executable(clever
         types/int.h
         types/native_types.h
         types/type.h
+        types/function.h
         vm/ir.h
         vm/opcode.cc
         vm/opcode.h

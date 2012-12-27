@@ -98,7 +98,7 @@ public:
 	void assignment(Node&, Node&, const location&);
 	void binOp(Opcode, Node&, Node&, Node&, const location&);
 	void print(Node&, const location&);
-	void funcDecl(Node&);
+	void funcDecl(Node&, const location&);
 	void funcEndDecl();
 private:
 	/**

@@ -57,6 +57,7 @@ void Compiler::init()
 	 */
 	m_type_pool[m_type_id++] = CLEVER_INT_TYPE    = new IntType;
 	m_type_pool[m_type_id++] = CLEVER_DOUBLE_TYPE = new DoubleType;
+	m_type_pool[m_type_id++] = CLEVER_FUNC_TYPE   = new FuncType;
 }
 
 /**
@@ -241,10 +242,24 @@ void Compiler::print(Node& node, const location& loc)
 /**
  * Starts the function compilation
  */
-void Compiler::funcDecl(Node& node)
+void Compiler::funcDecl(Node& node, const location& loc)
 {
+	Symbol* sym = m_scope->getSymbol(node.data.str);
+
+	if (sym) {
+		errorf(loc, "Name `%S' already in used!", node.data.str);
+	}
+
+	Value* func = new Value();
+
+	func->setType(CLEVER_FUNC_TYPE);
+
 	m_curr_func = m_ir.size();
 	m_ir.push_back(IR(OP_JMP, JMP_ADDR, 0));
+
+	m_scope->push(node.data.str, m_value_id);
+
+	m_value_pool[m_value_id++] = func;
 }
 
 /**

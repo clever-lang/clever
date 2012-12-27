@@ -23,28 +23,19 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef CLEVER_NATIVE_TYPES_H
-#define CLEVER_NATIVE_TYPES_H
-
-#include "types/int.h"
-#include "types/double.h"
-#include "types/function.h"
+#ifndef CLEVER_TYPES_FUNCTION_H
+#define CLEVER_TYPES_FUNCTION_H
 
 namespace clever {
 
-extern Type* g_clever_int_type;
-extern Type* g_clever_double_type;
-extern Type* g_clever_func_type;
+class FuncType : public Type {
+public:
+	FuncType() : Type(CSTRING("Function")) {}
+	~FuncType() {}
 
-#define CLEVER_INT_TYPE    g_clever_int_type
-#define CLEVER_DOUBLE_TYPE g_clever_double_type
-#define CLEVER_FUNC_TYPE   g_clever_func_type
+	void dump(const void* data) const { std::cout << "function() { }"; }
+};
 
-#define DECLARE_CLEVER_NATIVE_TYPES() \
-	Type* g_clever_int_type;          \
-	Type* g_clever_double_type;       \
-	Type* g_clever_func_type;
+} // clever
 
-}
-
-#endif // CLEVER_NATIVE_TYPES_H
+#endif // CLEVER_TYPES_FUNCTION_H
