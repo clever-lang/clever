@@ -24,7 +24,7 @@
  */
 
 #ifdef CLEVER_DEBUG
-#include <iostream>
+#include <stdio.h>
 #include "vm/opcode.h"
 #endif
 #include "compiler/cstring.h"
@@ -62,13 +62,16 @@ inline void VM::init()
 #ifdef CLEVER_DEBUG
 void VM::dumpOpcodes() const
 {
-	const char op_type[] = "~^!$";
+	const char *op_type[] = {
+		"UNUSED", "FETCH_SYM", "FETCH_VAL", "FETCH_SCOPE"
+	};
 
 	for (size_t i = 0, j = m_inst.size(); i < j; ++i) {
 		IR& ir = m_inst[i];
-		std::cout << get_opcode_name(ir.opcode) << " \t| ";
-		std::cout << ir.op1 << " [" << op_type[ir.op1_type] << "] | ";
-		std::cout << ir.op2 << " [" << op_type[ir.op2_type] << "]\n";
+		::printf("%-20s | %3ld (%-9s) | %3ld (%-9s)\n",
+			get_opcode_name(ir.opcode),
+			ir.op1, op_type[ir.op1_type],
+			ir.op2, op_type[ir.op2_type]);
 	}
 }
 #endif
