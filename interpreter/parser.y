@@ -39,6 +39,8 @@ namespace clever {
 class Driver;
 class Compiler;
 class Value;
+
+#define YYSTYPE Node
 } // clever
 }
 
@@ -53,14 +55,6 @@ class Value;
 %initial-action {
 @$.begin.filename = @$.end.filename = driver.getFile();
 };
-
-%union {
-	const CString *str;
-	Value* val;
-	Node node;
-};
-
-%type <node> NUM_INTEGER NUM_DOUBLE IDENT r_value math_expr
 
 %debug
 %error-verbose
@@ -111,6 +105,7 @@ class Value;
 %token FALSE         "false"
 %token CONST         "const"
 %token PRINT         "print"
+%token FUNC          "function"
 
 %left ',';
 %left LOGICAL_OR;
@@ -152,11 +147,21 @@ non_empty_statement_list:
 	|	var_declaration ';'
 	|	assignment ';'
 	|	print_stmt ';'
+	|	func_declaration
+	|	func_call
 ;
 
 var_declaration:
 		VAR IDENT             { c.varDeclaration($2, NULL, yyloc); }
-	|	VAR IDENT '=' r_value { c.varDeclaration($2, &$4, yyloc);   }
+	|	VAR IDENT '=' r_value { c.varDeclaration($2, &$4, yyloc);  }
+;
+
+func_declaration:
+		FUNC IDENT '(' ')' '{' statement_list '}'
+;
+
+func_call:
+		IDENT '(' r_value ')'
 ;
 
 assignment:
@@ -168,6 +173,7 @@ r_value:
 	|	NUM_DOUBLE
 	|	math_expr
 	|	IDENT
+	|	func_call
 ;
 
 math_expr:

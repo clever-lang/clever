@@ -155,6 +155,10 @@ next_token:
 
 	<ST_MULTILINE_COMMENT>"*" { SKIP(); }
 
+	<INITIAL>'function' {
+		RET(token::FUNC);
+	}
+
 	<INITIAL>'return' {
 		RET(token::RETURN);
 	}
@@ -201,8 +205,8 @@ next_token:
 	}
 
 	<INITIAL>IDENTIFIER {
-		yylval->node.type = STRCONST;
-		yylval->node.data.str = CSTRING(std::string(reinterpret_cast<const char*>(s.yylex), yylen));
+		yylval->type = STRCONST;
+		yylval->data.str = CSTRING(std::string(reinterpret_cast<const char*>(s.yylex), yylen));
 		RET(token::IDENT);
 	}
 
@@ -255,8 +259,8 @@ next_token:
 			n = n * 10 + (nstr[i] - '0');
 		}
 
-		yylval->node.type = VALUE;
-		yylval->node.data.val = new Value(n);
+		yylval->type = VALUE;
+		yylval->data.val = new Value(n);
 
 		RET(token::NUM_INTEGER);
 	}
@@ -275,8 +279,8 @@ next_token:
 			}
 		}
 
-		yylval->node.type = VALUE;
-		yylval->node.data.val = new Value(n);
+		yylval->type = VALUE;
+		yylval->data.val = new Value(n);
 
 		RET(token::NUM_INTEGER);
 	}
@@ -289,8 +293,8 @@ next_token:
 			n = n * 8 + nstr[i] - '0';
 		}
 
-		yylval->node.type = VALUE;
-		yylval->node.val = new Value(n);
+		yylval->type = VALUE;
+		yylval->val = new Value(n);
 
 		RET(token::NUM_INTEGER);
 	}
@@ -299,8 +303,8 @@ next_token:
 		double n = 0;
 		n = strtod(std::string(reinterpret_cast<const char*>(s.yylex), yylen).c_str(), NULL);
 
-		yylval->node.type = VALUE;
-		yylval->node.data.val = new Value(n);
+		yylval->type = VALUE;
+		yylval->data.val = new Value(n);
 
 		RET(token::NUM_DOUBLE);
 	}
