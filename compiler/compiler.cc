@@ -227,16 +227,14 @@ void Compiler::binOp(Opcode op, Node& lhs, Node& rhs, Node& res,
  */
 void Compiler::print(Node& node, const location& loc)
 {
-	if (node.type == STRCONST) {
-		Symbol* sym = m_scope->getSymbol(node.data.str);
+	size_t val_id;
+	Value* val = getValue(node, &val_id, loc);
 
-		if (!sym) {
-			errorf(loc, "Variable `%S' cannot be found!", node.data.str);
-		}
-		m_ir.push_back(IR(OP_PRINT, FETCH_VAL, sym->getValueId()));
+	if (val_id) {
+		m_ir.push_back(IR(OP_PRINT, FETCH_VAL, val_id));
 	} else {
 		m_ir.push_back(IR(OP_PRINT, FETCH_VAL, m_value_id));
-		m_value_pool[m_value_id++] = node.data.val;
+		m_value_pool[m_value_id++] = val;
 	}
 }
 
