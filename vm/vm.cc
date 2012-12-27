@@ -56,18 +56,20 @@ inline void VM::init()
 	m_handlers[OP_PLUS]     = &VM::plus;
 	m_handlers[OP_PRINT]    = &VM::print;
 	m_handlers[OP_HALT]     = &VM::halt;
+	m_handlers[OP_JMP]      = &VM::jmp;
 }
 
 #ifdef CLEVER_DEBUG
 void VM::dumpOpcodes() const
 {
 	const char *op_type[] = {
-		"UNUSED", "FETCH_VAL", "FETCH_SCOPE"
+		"UNUSED", "FETCH_VAL", "FETCH_SCOPE", "JMP_ADDR"
 	};
 
 	for (size_t i = 0, j = m_inst.size(); i < j; ++i) {
 		IR& ir = m_inst[i];
-		::printf("%-20s | %3ld (%-9s) | %3ld (%-9s)\n",
+		::printf("[%03ld] %-10s | %3ld (%-9s) | %3ld (%-9s)\n",
+			i,
 			get_opcode_name(ir.opcode),
 			ir.op1, op_type[ir.op1_type],
 			ir.op2, op_type[ir.op2_type]);
@@ -87,6 +89,14 @@ VM_HANDLER(ret)
  */
 VM_HANDLER(halt)
 {
+}
+
+/**
+ * JMP operation
+ */
+VM_HANDLER(jmp)
+{
+	VM_GOTO(op.op1);
 }
 
 /**

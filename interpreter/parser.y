@@ -163,8 +163,8 @@ var_declaration:
 ;
 
 func_declaration:
-		FUNC IDENT '('  ')'              '{' statement_list '}'
-	|	FUNC IDENT '(' arg_decl_list ')' '{' statement_list '}'
+		FUNC IDENT '('  ')'              '{' { c.funcDecl($2); } statement_list '}' { c.funcEndDecl(); }
+	|	FUNC IDENT '(' arg_decl_list ')' '{' { c.funcDecl($2); } statement_list '}' { c.funcEndDecl(); }
 ;
 
 arg_decl_list:

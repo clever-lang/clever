@@ -241,6 +241,23 @@ void Compiler::print(Node& node, const location& loc)
 }
 
 /**
+ * Starts the function compilation
+ */
+void Compiler::funcDecl(Node& node)
+{
+	m_curr_func = m_ir.size();
+	m_ir.push_back(IR(OP_JMP, JMP_ADDR, 0));
+}
+
+/**
+ * Ends the current function compilation
+ */
+void Compiler::funcEndDecl()
+{
+	m_ir[m_curr_func].op1 = m_ir.size();
+}
+
+/**
  * Creates a new lexical scope
  */
 void Compiler::newScope()
