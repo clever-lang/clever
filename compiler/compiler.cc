@@ -139,15 +139,21 @@ void Compiler::errorf(const location& loc, const char* format, ...) const
 void Compiler::varDeclaration(const CString* var, Value* node)
 {
 	/**
-	 * A NULL value is created on uninitialized declaration
+	 * A NULL value is created for uninitialized declaration
 	 */
 	if (!node) {
 		node = new Value();
 	}
 
-	m_ir.push_back(
-		IR(OP_VAR_DECL, FETCH_SYM, m_scope->push(var, m_value_id)));
+	m_scope->push(var, m_value_id);
 
+	m_ir.push_back(
+		IR(OP_ASSIGN, FETCH_VAL, m_value_id, FETCH_VAL, m_value_id+1));
+
+	/**
+	 * Creating the symbol related value
+	 */
+	m_value_pool[m_value_id++] = new Value();
 	m_value_pool[m_value_id++] = node;
 }
 

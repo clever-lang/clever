@@ -51,7 +51,6 @@ inline void VM::init()
 	/**
 	 * Opcode handler mapping
 	 */
-	m_handlers[OP_VAR_DECL] = &VM::var_decl;
 	m_handlers[OP_SCOPE]    = &VM::switch_scope;
 	m_handlers[OP_RETURN]   = &VM::ret;
 	m_handlers[OP_ASSIGN]   = &VM::assignment;
@@ -75,19 +74,6 @@ void VM::dumpOpcodes() const
 	}
 }
 #endif
-
-/**
- * Variable declaration execution
- */
-VM_HANDLER(var_decl)
-{
-	/*
-	Symbol& sym = (*m_scope_pool)[m_current_scope]->at(op.op1);
-	Value* value = (*m_value_pool)[sym.getValueId()];
-	*/
-
-	VM_NEXT();
-}
 
 /**
  * Scope switching operation
