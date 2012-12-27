@@ -171,7 +171,7 @@ r_value:
 ;
 
 math_expr:
-		r_value '+' r_value { c.binOp(OP_PLUS, $1, $3, $$); }
+		r_value '+' r_value { c.binOp(OP_PLUS, $1, $3, $$, yyloc); }
 ;
 
 print_stmt:

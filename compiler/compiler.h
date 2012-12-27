@@ -86,6 +86,8 @@ public:
 	void error(const std::string&, const location&) const;
 	void errorf(const location&, const char*, ...) const;
 
+	Value* getValue(Node&, const location&) const;
+
 	/**
 	 * Compilation methods
 	 */
@@ -93,7 +95,7 @@ public:
 	void newScope();
 	void endScope();
 	void assignment(Node&, Node&, const location&);
-	void binOp(Opcode, Node&, Node&, Node&);
+	void binOp(Opcode, Node&, Node&, Node&, const location&);
 	void print(Node&, const location&);
 private:
 	IRVector m_ir;

@@ -71,7 +71,9 @@ void Compiler::shutdown()
 		end = m_value_pool.end();
 
 	while (it != end) {
-		delete *it;
+		if (*it) {
+			(*it)->delRef();
+		}
 		++it;
 	}
 
@@ -134,16 +136,33 @@ void Compiler::errorf(const location& loc, const char* format, ...) const
 }
 
 /**
+ * Abstracts the Value* ptr gets from Node
+ * NOTE: When the Node is a STRCONST, it automatically increments the Value's
+ * refcount related to the Symbol
+ */
+Value* Compiler::getValue(Node& node, const location& loc) const
+{
+	if (node.type == VALUE) {
+		return node.data.val;
+	} else if (node.type == STRCONST) {
+		Symbol* sym = m_scope->getSymbol(node.data.str);
+
+		if (!sym) {
+			errorf(loc, "Variable `%S' cannot be found!", node.data.str);
+		}
+		m_value_pool[sym->getValueId()]->addRef();
+		return m_value_pool[sym->getValueId()];
+	}
+	return NULL;
+}
+
+/**
  * Compiles a variable declaration
  */
 void Compiler::varDeclaration(Node& var, Node* node)
 {
-	Value* val;
-
 	/// A NULL value is created for uninitialized declaration
-	if (!node) {
-		val = new Value();
-	}
+	Value* val = node ? node->data.val : new Value();
 
 	m_scope->push(var.data.str, m_value_id);
 
@@ -153,7 +172,7 @@ void Compiler::varDeclaration(Node& var, Node* node)
 	/// Symbol value
 	m_value_pool[m_value_id++] = new Value();
 	/// Value to be assigned
-	m_value_pool[m_value_id++] = node ? node->data.val : val;
+	m_value_pool[m_value_id++] = val;
 }
 
 /**
@@ -178,15 +197,16 @@ void Compiler::assignment(Node& var, Node& value, const location& loc)
 /**
  * Compiles a set of binary operation
  */
-void Compiler::binOp(Opcode op, Node& lhs, Node& rhs, Node& res)
+void Compiler::binOp(Opcode op, Node& lhs, Node& rhs, Node& res,
+	const location& loc)
 {
 	Value* result = new Value();
 
 	m_ir.push_back(
 		IR(OP_PLUS, FETCH_VAL, m_value_id, FETCH_VAL, m_value_id+1, result));
 
-	m_value_pool[m_value_id++] = lhs.data.val;
-	m_value_pool[m_value_id++] = rhs.data.val;
+	m_value_pool[m_value_id++] = getValue(lhs, loc);
+	m_value_pool[m_value_id++] = getValue(rhs, loc);
 
 	res.type = VALUE;
 	res.data.val = result;

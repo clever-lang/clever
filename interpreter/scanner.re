@@ -255,7 +255,8 @@ next_token:
 			n = n * 10 + (nstr[i] - '0');
 		}
 
-		yylval->val = new Value(n);
+		yylval->node.type = VALUE;
+		yylval->node.data.val = new Value(n);
 
 		RET(token::NUM_INTEGER);
 	}
