@@ -197,7 +197,7 @@ void Compiler::print(const CString* var, const location& loc)
 	if (!sym) {
 		errorf(loc, "Variable `%S' cannot be found!", var);
 	}
-	m_ir.push_back(IR(OP_PRINT, FETCH_SYM, sym->getValueId()));
+	m_ir.push_back(IR(OP_PRINT, FETCH_VAL, sym->getValueId()));
 }
 
 /**
