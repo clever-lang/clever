@@ -86,7 +86,7 @@ public:
 	void error(const std::string&, const location&) const;
 	void errorf(const location&, const char*, ...) const;
 
-	Value* getValue(Node&, const location&) const;
+	Value* getValue(Node&, size_t*, const location&) const;
 
 	/**
 	 * Compilation methods
