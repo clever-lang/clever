@@ -1,5 +1,0 @@
-[FATAL] Testing wrong lambda declaration
-==CODE==
-Auto f = Int () { return ; }; println(f.call());
-==RESULT==
-Compile error: Function `\$lambda1\$' must return a value of type Int! on \S+ line 1

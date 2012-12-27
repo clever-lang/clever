@@ -1,8 +1,0 @@
-[FATAL] Testing function declaration without returning its return type
-==CODE==
-Int f() {
-	Int x = 1 + 1;
-}
-
-==RESULT==
-Compile error: Function `f' must return a value of type `Int', and it may not return on \S+ line \d+

@@ -1,5 +1,0 @@
-[FATAL] Trying to instantiate Void
-==CODE==
-Void a;
-==RESULT==
-Compile error: `Void' does not name a type on line 1

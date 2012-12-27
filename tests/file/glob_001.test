@@ -1,9 +1,0 @@
-Testing Glob class
-==CODE==
-import std.file.Glob;
-import std.io.println;
-
-Glob dir("*.rst");
-println(dir.current());
-==RESULT==
-README.rst

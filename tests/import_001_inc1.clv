@@ -1,3 +1,0 @@
-println("foo!");
-
-import 'import_001_inc2.clv';

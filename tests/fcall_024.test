@@ -1,6 +1,0 @@
-[FATAL] Testing returning a Void returned by other function
-==CODE==
-Void x() { return; }
-Double y() { return x(); }
-==RESULT==
-Compile error: Function `y' must return a value of type Double! on \S+ line \d+

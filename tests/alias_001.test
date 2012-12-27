@@ -1,7 +1,0 @@
-Testing module aliasing
-==CODE==
-import std.io.* as x;
-
-x::println("cool");
-==RESULT==
-cool

@@ -1,8 +1,0 @@
-Testing << and >> operators
-==CODE==
-import std.io.println;
-println(1<<2);
-println(100>>1);
-==RESULT==
-4
-50

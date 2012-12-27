@@ -1,5 +1,0 @@
-[FATAL] Testing parser error for function with wrong return
-==CODE==
-Int f() { return; }
-==RESULT==
-Compile error: Function `f' must return a value of type Int! on \S+ line 1

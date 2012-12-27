@@ -1,6 +1,0 @@
-[FATAL] Testing NOT bitwise operation in Double
-==CODE==
-Double x = 1;
-~x;
-==RESULT==
-Compile error: No matching call for Double::__bw_not__\(void\) on \S+ line \d+

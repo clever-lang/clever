@@ -1,8 +1,0 @@
-[FATAL] Testing redefinition of name
-==CODE==
-import std.io.println;
-use println as println;
-
-println("bar");
-==RESULT==
-Compile error: Name `println' already in use! on \S+ line 2

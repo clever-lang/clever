@@ -1,6 +1,0 @@
-[FATAL] Trying to redeclare function
-==CODE==
-Int foo() { return 1; }
-Int foo() { return 1; }
-==RESULT==
-Compile error: Attempt to redeclare function 'foo'! on \S+ line 2

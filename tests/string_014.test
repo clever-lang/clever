@@ -1,9 +1,0 @@
-Testing String::asByteArray()
-==CODE==
-import std.io.println;
-
-Array<Byte> arrB = 'clever'.toByteArray();
-println(arrB.toString());
-
-==RESULT==
-\[0x63, 0x6c, 0x65, 0x76, 0x65, 0x72\]

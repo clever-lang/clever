@@ -1,6 +1,0 @@
-[FATAL] String::replace() type mismatch
-==CODE==
-String str = "foo";
-str.replace(1,2,3);
-==RESULT==
-Compile error: No matching call for String::replace\(Int, Int, Int\) on \S+ line 2

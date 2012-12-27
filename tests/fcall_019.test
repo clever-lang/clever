@@ -1,5 +1,0 @@
-Checking value of function return
-==CODE==
-Int f() { return ""; }
-==RESULT==
-Compile error: Function `f' expects Int value as return, not String value on \S+ line 1
