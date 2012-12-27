@@ -50,7 +50,6 @@ void Compiler::init()
 	m_type_pool.reserve(15);
 
 	m_scope_pool[m_scope_id++] = m_scope;
-	m_value_pool[m_value_id++] = NULL;
 
 	/**
 	 * Native type allocation
@@ -190,7 +189,9 @@ void Compiler::assignment(Node& var, Node& value, const location& loc)
 		m_ir.push_back(
 			IR(OP_ASSIGN, FETCH_VAL, sym->getValueId(), FETCH_VAL, m_value_id));
 
-		m_value_pool[m_value_id++] = value.data.val;
+		m_value_pool[m_value_id++] = getValue(value, loc);
+	} else {
+		error("Not implemented yet");
 	}
 }
 
