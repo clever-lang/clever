@@ -208,8 +208,6 @@ void Compiler::newScope()
 	m_scope = m_scope->newLexicalScope();
 	m_scope->setId(m_scope_id);
 
-	m_ir.push_back(IR(OP_SCOPE, FETCH_SCOPE, m_scope_id));
-
 	m_scope_pool[m_scope_id++] = m_scope;
 }
 
@@ -219,8 +217,6 @@ void Compiler::newScope()
 void Compiler::endScope()
 {
 	m_scope = m_scope->getParent();
-
-	m_ir.push_back(IR(OP_SCOPE, FETCH_SCOPE, m_scope->getId()));
 }
 
 } // clever

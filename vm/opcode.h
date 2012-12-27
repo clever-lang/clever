@@ -32,7 +32,6 @@ namespace clever {
  * VM opcodes
  */
 enum Opcode {
-	OP_SCOPE,    /* Used for scope switching */
 	OP_RETURN,   /* Used for returning */
 	OP_ASSIGN,   /* Used for variable assignment */
 	OP_PLUS,     /* Used for math sum operation */

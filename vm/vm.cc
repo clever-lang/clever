@@ -51,7 +51,6 @@ inline void VM::init()
 	/**
 	 * Opcode handler mapping
 	 */
-	m_handlers[OP_SCOPE]    = &VM::switch_scope;
 	m_handlers[OP_RETURN]   = &VM::ret;
 	m_handlers[OP_ASSIGN]   = &VM::assignment;
 	m_handlers[OP_PLUS]     = &VM::plus;
@@ -74,16 +73,6 @@ void VM::dumpOpcodes() const
 	}
 }
 #endif
-
-/**
- * Scope switching operation
- */
-VM_HANDLER(switch_scope)
-{
-	m_current_scope = op.op1;
-
-	VM_NEXT();
-}
 
 /**
  * Return operation
