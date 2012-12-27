@@ -97,8 +97,8 @@ VM_HANDLER(ret)
  */
 VM_HANDLER(assignment)
 {
-	Value* var = (*m_value_pool)[op.op1];
-	Value* value = (*m_value_pool)[op.op2];
+	Value* var = getValue(op.op1);
+	Value* value = getValue(op.op2);
 
 	var->copy(value);
 
@@ -110,8 +110,8 @@ VM_HANDLER(assignment)
  */
 VM_HANDLER(plus)
 {
-	Value* lhs = (*m_value_pool)[op.op1];
-	Value* rhs = (*m_value_pool)[op.op2];
+	Value* lhs = getValue(op.op1);
+	Value* rhs = getValue(op.op2);
 
 	if (lhs->getType() == CLEVER_INT_TYPE
 		&& rhs->getType() == CLEVER_INT_TYPE) {
@@ -126,7 +126,7 @@ VM_HANDLER(plus)
  */
 VM_HANDLER(print)
 {
-	(*m_value_pool)[op.op1]->dump();
+	getValue(op.op1)->dump();
 	std::cout << std::endl;
 
 	VM_NEXT();
