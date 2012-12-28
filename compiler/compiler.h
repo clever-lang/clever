@@ -96,9 +96,10 @@ public:
 	void print(Node&, const location&);
 	void funcDecl(Node&, ArgDeclList*, const location&);
 	void funcEndDecl(bool);
-	void funcCall(Node&, ArgCallList*, const location&);
+	void funcCall(Node&, ArgCallList*, Node&, const location&);
 	ArgDeclList* newArgDeclList(const CString*) const;
 	ArgCallList* addArgCall(ArgCallList*, Node&, const location&);
+	void retStmt(Node&, const location&);
 private:
 	// Vector of instructions to be passed to VM
 	IRVector m_ir;

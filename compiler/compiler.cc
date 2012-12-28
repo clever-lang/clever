@@ -309,7 +309,8 @@ void Compiler::funcEndDecl(bool has_args)
 }
 
 /// Function call compilation
-void Compiler::funcCall(Node& name, ArgCallList* arg_list, const location& loc)
+void Compiler::funcCall(Node& name, ArgCallList* arg_list, Node& res,
+	const location& loc)
 {
 	Symbol* sym = m_scope->getSymbol(name.data.str);
 
@@ -317,17 +318,37 @@ void Compiler::funcCall(Node& name, ArgCallList* arg_list, const location& loc)
 		errorf(loc, "Function `%S' cannot be found!", name.data.str);
 	}
 
+	Value* result = new Value();
+
 	if (arg_list) {
 		for (size_t i = 0, j = arg_list->size(); i < j; ++i) {
 			m_ir.push_back(IR(OP_SEND_VAL, FETCH_VAL, arg_list->at(i)));
 		}
 	}
 
+	res.type = VALUE;
+	res.data.val = result;
+
 	m_ir.push_back(
-		IR(OP_FCALL, FETCH_VAL, sym->getValueId()));
+		IR(OP_FCALL, FETCH_VAL, sym->getValueId(), result));
 
 	if (arg_list) {
 		delete arg_list;
+	}
+}
+
+/// Compiles a return statement
+void Compiler::retStmt(Node& expr, const location& loc)
+{
+	size_t val_id = 0;
+	Value* value = getValue(expr, &val_id, loc);
+
+	if (val_id) {
+		m_ir.push_back(IR(OP_RET, FETCH_VAL, val_id));
+	} else {
+		m_ir.push_back(IR(OP_RET, FETCH_VAL, m_value_id));
+
+		m_value_pool[m_value_id++] = value;
 	}
 }
 

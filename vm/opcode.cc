@@ -33,7 +33,7 @@ const char* get_opcode_name(Opcode opnum)
 {
 #define CASE(s) case s: return #s
 	switch (opnum) {
-		CASE(OP_RETURN);
+		CASE(OP_RET);
 		CASE(OP_ASSIGN);
 		CASE(OP_ADD);
 		CASE(OP_SUB);

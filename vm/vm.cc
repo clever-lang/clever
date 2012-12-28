@@ -39,7 +39,7 @@ namespace clever {
 inline void VM::init()
 {
 	// Opcode handler mapping
-	m_handlers[OP_RETURN]   = &VM::ret;
+	m_handlers[OP_RET]      = &VM::ret;
 	m_handlers[OP_ASSIGN]   = &VM::assignment;
 	m_handlers[OP_ADD]      = &VM::add;
 	m_handlers[OP_SUB]      = &VM::sub;
@@ -76,6 +76,15 @@ void VM::dumpOpcodes() const
 // Return operation
 VM_HANDLER(ret)
 {
+	const StackFrame& frame = m_call_stack.top();
+
+	if (m_call_stack.size()) {
+		m_call_stack.top().ret_val->copy(getValue(op.op1));
+	}
+
+	m_call_stack.pop();
+
+	VM_GOTO(frame.ret_addr);
 }
 
 // Halt operation
@@ -218,7 +227,7 @@ void VM::saveVars()
 }
 
 // Restore the argument and local variables values
-void VM::restoreVars()
+void VM::restoreVars() const
 {
 	FuncVars::const_iterator it = m_call_stack.top().vars.begin(),
 		end = m_call_stack.top().vars.end();
@@ -248,6 +257,9 @@ VM_HANDLER(fcall)
 		// Sets the return address to the next instruction
 		m_call_stack.top().ret_addr = m_pc + 1;
 
+		// Save the function return value address
+		m_call_stack.top().ret_val = op.result;
+
 		// Function argument value binding
 		if (fdata->arg_vars) {
 			Scope* arg_scope = fdata->arg_vars;
@@ -269,7 +281,7 @@ VM_HANDLER(fcall)
 // Leave operation
 VM_HANDLER(leave)
 {
-	StackFrame& frame = m_call_stack.top();
+	const StackFrame& frame = m_call_stack.top();
 
 	if (m_call_stack.size() > 1) {
 		restoreVars();

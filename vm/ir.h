@@ -48,11 +48,11 @@ struct IR {
 			op1(0), op2(0),
 			result(NULL) {}
 
-	IR(Opcode _op, OperandType _op1_type, size_t _op1)
+	IR(Opcode _op, OperandType _op1_type, size_t _op1, Value* res = NULL)
 		: opcode(_op),
 			op1_type(_op1_type), op2_type(UNUSED),
 			op1(_op1), op2(0),
-			result(NULL) {}
+			result(res) {}
 
 	IR(Opcode _op, OperandType _op1_type, size_t _op1,
 		OperandType _op2_type, size_t _op2, Value* res = NULL)

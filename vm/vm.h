@@ -55,6 +55,7 @@ typedef std::vector<std::pair<size_t, Value*> > FuncVars;
 /// Stackframe representation
 struct StackFrame {
 	size_t ret_addr;     // Return address
+	Value* ret_val;      // Return value
 	Scope* arg_vars;     // Function arguments
 	Scope* local_vars;   // Local variables
 	FuncVars vars;       // Arg and local vars storage
@@ -84,7 +85,7 @@ public:
 
 	// Save function variables on recursion
 	void saveVars();
-	void restoreVars();
+	void restoreVars() const;
 
 	// Start the VM execution
 	void run();

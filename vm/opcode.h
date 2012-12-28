@@ -30,7 +30,7 @@ namespace clever {
 
 /// VM opcodes
 enum Opcode {
-	OP_RETURN,   //   0 - Used for returning
+	OP_RET,      //   0 - Used for returning
 	OP_ASSIGN,   //       Used for variable assignment
 	OP_ADD,      //       Used for math sum operation
 	OP_SUB,      //       Used for math subtraction operation

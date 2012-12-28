@@ -160,6 +160,11 @@ non_empty_statement_list:
 	|	func_declaration
 	|	func_call ';'
 	|	prototype ';'
+	|	return_stmt ';'
+;
+
+return_stmt:
+		RETURN r_value        { c.retStmt($2, yyloc); }
 ;
 
 prototype:
@@ -193,7 +198,7 @@ non_empty_arg_list:
 ;
 
 func_call:
-		IDENT '(' arg_list ')' { c.funcCall($1, $3, yyloc); }
+		IDENT '(' arg_list ')' { c.funcCall($1, $3, $$, yyloc); }
 ;
 
 assignment:
