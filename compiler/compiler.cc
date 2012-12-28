@@ -144,6 +144,12 @@ Value* Compiler::getValue(Node& node, size_t* val_id, const location& loc) const
 /// Compiles a variable declaration
 void Compiler::varDeclaration(Node& var, Node* node, const location& loc)
 {
+	Symbol* sym = m_scope->getLocalSymbol(var.data.str);
+
+	if (sym) {
+		errorf(loc, "Variable `%S' already declared in the scope!", var.data.str);
+	}
+
 	// A NULL value is created for uninitialized declaration
 	size_t val_id = 0;
 	Value* val = node ? getValue(*node, &val_id, loc) : new Value();
