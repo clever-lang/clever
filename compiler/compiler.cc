@@ -187,13 +187,25 @@ void Compiler::assignment(Node& var, Node& value, const location& loc)
 void Compiler::binOp(Opcode op, Node& lhs, Node& rhs, Node& res,
 	const location& loc)
 {
+	size_t rhs_id = 0, lhs_id = 0;
 	Value* result = new Value();
 
-	m_ir.push_back(
-		IR(op, FETCH_VAL, m_value_id, FETCH_VAL, m_value_id+1, result));
+	Value* val = getValue(lhs, &lhs_id, loc);
 
-	m_value_pool[m_value_id++] = getValue(lhs, NULL, loc);
-	m_value_pool[m_value_id++] = getValue(rhs, NULL, loc);
+	if (!lhs_id) {
+		lhs_id = m_value_id++;
+		m_value_pool[lhs_id] = val;
+	}
+
+	val = getValue(rhs, &rhs_id, loc);
+
+	if (!rhs_id) {
+		rhs_id = m_value_id++;
+		m_value_pool[rhs_id] = val;
+	}
+
+	m_ir.push_back(
+		IR(op, FETCH_VAL, lhs_id, FETCH_VAL, rhs_id, result));
 
 	res.type = VALUE;
 	res.data.val = result;
