@@ -62,11 +62,12 @@ void VM::dumpOpcodes() const
 
 	for (size_t i = 0, j = m_inst.size(); i < j; ++i) {
 		IR& ir = m_inst[i];
-		::printf("[%03ld] %-10s | %3ld (%-9s) | %3ld (%-9s)\n",
+		::printf("[%03ld] %-10s | %3ld (%-9s) | %3ld (%-9s) | %p\n",
 			i,
 			get_opcode_name(ir.opcode),
 			ir.op1, op_type[ir.op1_type],
-			ir.op2, op_type[ir.op2_type]);
+			ir.op2, op_type[ir.op2_type],
+			ir.result);
 	}
 }
 #endif
