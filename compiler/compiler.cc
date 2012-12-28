@@ -228,7 +228,7 @@ void Compiler::binOp(Opcode op, Node& lhs, Node& rhs, Node& res,
  */
 void Compiler::print(Node& node, const location& loc)
 {
-	size_t val_id;
+	size_t val_id = 0;
 	Value* val = getValue(node, &val_id, loc);
 
 	if (val_id) {
@@ -249,12 +249,17 @@ void Compiler::funcDecl(Node& node, const location& loc)
 	if (sym) {
 		errorf(loc, "Name `%S' already in used!", node.data.str);
 	}
+	m_curr_func = m_ir.size();
 
 	Value* func = new Value();
+	FuncData* funcdata = static_cast<FuncData*>(CLEVER_FUNC_TYPE->allocData());
 
 	func->setType(CLEVER_FUNC_TYPE);
+	func->setObj(funcdata);
 
-	m_curr_func = m_ir.size();
+	funcdata->type = USER_FUNC;
+	funcdata->u.addr = m_curr_func + 1;
+
 	m_ir.push_back(IR(OP_JMP, JMP_ADDR, 0));
 
 	m_scope->push(node.data.str, m_value_id);
@@ -267,11 +272,24 @@ void Compiler::funcDecl(Node& node, const location& loc)
  */
 void Compiler::funcEndDecl()
 {
+	m_ir.push_back(IR(OP_LEAVE));
 	/**
 	 * Changes the JMP's addr created right before the func declaration
 	 * to point to the end of current function, thus skipping its opcodes
 	 */
 	m_ir[m_curr_func].op1 = m_ir.size();
+}
+
+void Compiler::funcCall(Node& name, Node& args, const location& loc)
+{
+	Symbol* sym = m_scope->getSymbol(name.data.str);
+
+	if (!sym) {
+		errorf(loc, "Function `%S' cannot be found!", name.data.str);
+	}
+
+	m_ir.push_back(
+		IR(OP_FCALL, FETCH_VAL, sym->getValueId()));
 }
 
 /**

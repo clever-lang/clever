@@ -28,12 +28,24 @@
 
 namespace clever {
 
+enum FuncKind { USER_FUNC, INTERNAL_FUNC };
+
+struct FuncData {
+	FuncKind type;
+	union {
+		size_t addr; /* For user function*/
+	} u;
+};
+
 class FuncType : public Type {
 public:
 	FuncType() : Type(CSTRING("Function")) {}
 	~FuncType() {}
 
 	void dump(const void* data) const { std::cout << "function() { }"; }
+
+	void* allocData() { return new FuncData; }
+	void deallocData(void* data) { if (data) { delete static_cast<FuncData*>(data); } }
 };
 
 } // clever

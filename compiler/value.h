@@ -65,6 +65,9 @@ public:
 		}
 	}
 
+	void setObj(void* ptr) { m_data.obj = ptr; }
+	void* getObj() const { return m_data.obj; }
+
 	void setInt(long n) { m_data.lval = n; m_type = CLEVER_INT_TYPE; }
 	long getInt() const { return m_data.lval; }
 

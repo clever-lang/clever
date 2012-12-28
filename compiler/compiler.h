@@ -100,6 +100,7 @@ public:
 	void print(Node&, const location&);
 	void funcDecl(Node&, const location&);
 	void funcEndDecl();
+	void funcCall(Node&, Node&, const location&);
 private:
 	/**
 	 * Vector of instructions to be passed to VM

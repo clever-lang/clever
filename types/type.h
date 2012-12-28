@@ -43,6 +43,9 @@ public:
 	 * Virtual method for debug purpose
 	 */
 	virtual void dump(const void*) const = 0;
+
+	virtual void* allocData() { return NULL; }
+	virtual void deallocData(void* data) {}
 private:
 	const CString* m_name;
 };

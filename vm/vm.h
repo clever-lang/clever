@@ -27,6 +27,7 @@
 #define CLEVER_VM_H
 
 #include <vector>
+#include <stack>
 #include <pthread.h>
 #include "compiler/clever.h"
 #include "compiler/compiler.h"
@@ -52,6 +53,13 @@ namespace clever {
 
 class Scope;
 class Value;
+
+/**
+ * Stackframe representation
+ */
+struct Frame {
+	size_t ret_addr; /* Return address */
+};
 
 /**
  * VM representation
@@ -101,6 +109,8 @@ public:
 	VM_HANDLER_D(print);
 	VM_HANDLER_D(halt);
 	VM_HANDLER_D(jmp);
+	VM_HANDLER_D(fcall);
+	VM_HANDLER_D(leave);
 private:
 	/**
 	 * Initialization phase
@@ -127,10 +137,14 @@ private:
 	 * Current scope id
 	 */
 	size_t m_current_scope;
-    /**
-     * VM opcode handlers
-     */
-    OpHandler m_handlers[NUM_OPCODES];
+	/**
+	 * VM opcode handlers
+	 */
+	OpHandler m_handlers[NUM_OPCODES];
+	/**
+	 * Stack frame
+	 */
+	std::stack<Frame> m_stackframe;
 
     ThreadPool m_thread_pool;
     MutexPool m_mutex_pool;

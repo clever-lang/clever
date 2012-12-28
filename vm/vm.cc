@@ -49,6 +49,8 @@ inline void VM::init()
 	m_handlers[OP_PRINT]    = &VM::print;
 	m_handlers[OP_HALT]     = &VM::halt;
 	m_handlers[OP_JMP]      = &VM::jmp;
+	m_handlers[OP_FCALL]    = &VM::fcall;
+	m_handlers[OP_LEAVE]    = &VM::leave;
 }
 
 #ifdef CLEVER_DEBUG
@@ -129,6 +131,32 @@ VM_HANDLER(print)
 	std::cout << std::endl;
 
 	VM_NEXT();
+}
+
+/**
+ * Function call operation
+ */
+VM_HANDLER(fcall)
+{
+	Value* func = getValue(op.op1);
+	FuncData* data = static_cast<FuncData*>(func->getObj());
+
+	m_stackframe.push(Frame());
+	m_stackframe.top().ret_addr = m_pc+1;
+
+	VM_GOTO(data->u.addr);
+}
+
+/**
+ * Leave operation
+ */
+VM_HANDLER(leave)
+{
+	Frame& frame = m_stackframe.top();
+
+	m_stackframe.pop();
+
+	VM_GOTO(frame.ret_addr);
 }
 
 /**
