@@ -90,7 +90,11 @@ public:
 	VM_HANDLER_D(switch_scope);
 	VM_HANDLER_D(ret);
 	VM_HANDLER_D(assignment);
-	VM_HANDLER_D(plus);
+	VM_HANDLER_D(add);
+	VM_HANDLER_D(sub);
+	VM_HANDLER_D(mul);
+	VM_HANDLER_D(div);
+	VM_HANDLER_D(mod);
 	VM_HANDLER_D(print);
 	VM_HANDLER_D(halt);
 	VM_HANDLER_D(jmp);

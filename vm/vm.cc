@@ -41,7 +41,11 @@ inline void VM::init()
 	// Opcode handler mapping
 	m_handlers[OP_RETURN]   = &VM::ret;
 	m_handlers[OP_ASSIGN]   = &VM::assignment;
-	m_handlers[OP_PLUS]     = &VM::plus;
+	m_handlers[OP_ADD]      = &VM::add;
+	m_handlers[OP_SUB]      = &VM::sub;
+	m_handlers[OP_MUL]      = &VM::mul;
+	m_handlers[OP_DIV]      = &VM::div;
+	m_handlers[OP_MOD]      = &VM::sub;
 	m_handlers[OP_PRINT]    = &VM::print;
 	m_handlers[OP_HALT]     = &VM::halt;
 	m_handlers[OP_JMP]      = &VM::jmp;
@@ -97,7 +101,7 @@ VM_HANDLER(assignment)
 }
 
 // Math sum operation
-VM_HANDLER(plus)
+VM_HANDLER(add)
 {
 	Value* lhs = getValue(op.op1);
 	Value* rhs = getValue(op.op2);
@@ -105,6 +109,62 @@ VM_HANDLER(plus)
 	if (lhs->getType() == CLEVER_INT_TYPE
 		&& rhs->getType() == CLEVER_INT_TYPE) {
 		op.result->setInt(lhs->getInt() + rhs->getInt());
+	}
+
+	VM_NEXT();
+}
+
+// Math subtraction operation
+VM_HANDLER(sub)
+{
+	Value* lhs = getValue(op.op1);
+	Value* rhs = getValue(op.op2);
+
+	if (lhs->getType() == CLEVER_INT_TYPE
+		&& rhs->getType() == CLEVER_INT_TYPE) {
+		op.result->setInt(lhs->getInt() - rhs->getInt());
+	}
+
+	VM_NEXT();
+}
+
+// Math multiplication operation
+VM_HANDLER(mul)
+{
+	Value* lhs = getValue(op.op1);
+	Value* rhs = getValue(op.op2);
+
+	if (lhs->getType() == CLEVER_INT_TYPE
+		&& rhs->getType() == CLEVER_INT_TYPE) {
+		op.result->setInt(lhs->getInt() * rhs->getInt());
+	}
+
+	VM_NEXT();
+}
+
+// Math division operation
+VM_HANDLER(div)
+{
+	Value* lhs = getValue(op.op1);
+	Value* rhs = getValue(op.op2);
+
+	if (lhs->getType() == CLEVER_INT_TYPE
+		&& rhs->getType() == CLEVER_INT_TYPE) {
+		op.result->setInt(lhs->getInt() / rhs->getInt());
+	}
+
+	VM_NEXT();
+}
+
+// Math modulus operation
+VM_HANDLER(mod)
+{
+	Value* lhs = getValue(op.op1);
+	Value* rhs = getValue(op.op2);
+
+	if (lhs->getType() == CLEVER_INT_TYPE
+		&& rhs->getType() == CLEVER_INT_TYPE) {
+		op.result->setInt(lhs->getInt() % rhs->getInt());
 	}
 
 	VM_NEXT();
