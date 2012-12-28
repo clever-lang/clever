@@ -161,6 +161,20 @@ non_empty_statement_list:
 	|	func_call ';'
 	|	prototype ';'
 	|	return_stmt ';'
+	|	if_cond
+;
+
+elseif_cond:
+		/* empty */
+	|	elseif_cond ELSEIF '(' r_value ')' '{' statement_list '}'
+;
+
+else_cond:
+		/* empty */
+	|	ELSE '{' statement_list '}'
+
+if_cond:
+		IF '(' r_value ')' '{' statement_list '}' elseif_cond else_cond
 ;
 
 return_stmt:
