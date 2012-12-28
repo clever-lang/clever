@@ -47,7 +47,7 @@ inline void VM::init()
 	m_handlers[OP_JMP]      = &VM::jmp;
 	m_handlers[OP_FCALL]    = &VM::fcall;
 	m_handlers[OP_LEAVE]    = &VM::leave;
-	m_handlers[OP_PUSH]     = &VM::push_val;
+	m_handlers[OP_SEND_VAL] = &VM::send_val;
 }
 
 #ifdef CLEVER_DEBUG
@@ -59,7 +59,7 @@ void VM::dumpOpcodes() const
 
 	for (size_t i = 0, j = m_inst.size(); i < j; ++i) {
 		IR& ir = m_inst[i];
-		::printf("[%03ld] %-10s | %3ld (%-9s) | %3ld (%-9s) | %p\n",
+		::printf("[%03ld] %-12s | %3ld (%-9s) | %3ld (%-9s) | %p\n",
 			i,
 			get_opcode_name(ir.opcode),
 			ir.op1, op_type[ir.op1_type],
@@ -120,7 +120,7 @@ VM_HANDLER(print)
 }
 
 // Receives values to be used in the next function call
-VM_HANDLER(push_val)
+VM_HANDLER(send_val)
 {
 	m_call_args.push_back(getValue(op.op1));
 

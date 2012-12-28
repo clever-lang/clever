@@ -188,8 +188,8 @@ arg_list:
 ;
 
 non_empty_arg_list:
-		r_value                         { $$ = c.newArgCallList($1, yyloc); }
-	|	non_empty_arg_list ',' r_value  { c.addArgCall($1, $3, yyloc);      }
+		r_value                         { $$ = c.addArgCall(NULL, $1, yyloc); }
+	|	non_empty_arg_list ',' r_value  { c.addArgCall($1, $3, yyloc);        }
 ;
 
 func_call:

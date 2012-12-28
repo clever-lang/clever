@@ -214,7 +214,7 @@ void Compiler::print(Node& node, const location& loc)
 }
 
 /// Creates a list of arguments
-ArgDeclList* Compiler::newArgDeclList(const CString* arg)
+ArgDeclList* Compiler::newArgDeclList(const CString* arg) const
 {
 	ArgDeclList* arg_list = new ArgDeclList;
 	arg_list->push_back(arg);
@@ -273,12 +273,15 @@ void Compiler::funcDecl(Node& node, ArgDeclList* arg_list, const location& loc)
 	funcdata->local_vars = m_scope;
 }
 
-/// Creates a new argument list
-ArgCallList* Compiler::newArgCallList(Node& arg, const location& loc)
+/// Adds new argument to the call argument list
+ArgCallList* Compiler::addArgCall(ArgCallList* arg_list, Node& arg, const location& loc)
 {
 	size_t val_id = 0;
-	ArgCallList* arg_list = new ArgCallList;
 	Value* val = getValue(arg, &val_id, loc);
+
+	if (!arg_list) {
+		arg_list = new ArgCallList;
+	}
 
 	if (val_id) {
 		arg_list->push_back(val_id);
@@ -288,20 +291,6 @@ ArgCallList* Compiler::newArgCallList(Node& arg, const location& loc)
 	}
 
 	return arg_list;
-}
-
-/// Adds new argument to the call argument list
-void Compiler::addArgCall(ArgCallList* arg_list, Node& arg, const location& loc)
-{
-	size_t val_id = 0;
-	Value* val = getValue(arg, &val_id, loc);
-
-	if (val_id) {
-		arg_list->push_back(val_id);
-	} else {
-		arg_list->push_back(m_value_id);
-		m_value_pool[m_value_id++] = val;
-	}
 }
 
 /// Ends the current function compilation
@@ -330,7 +319,7 @@ void Compiler::funcCall(Node& name, ArgCallList* arg_list, const location& loc)
 
 	if (arg_list) {
 		for (size_t i = 0, j = arg_list->size(); i < j; ++i) {
-			m_ir.push_back(IR(OP_PUSH, FETCH_VAL, arg_list->at(i)));
+			m_ir.push_back(IR(OP_SEND_VAL, FETCH_VAL, arg_list->at(i)));
 		}
 	}
 
