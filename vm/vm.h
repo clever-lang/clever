@@ -35,6 +35,17 @@
 
 namespace clever {
 
+/**
+ * Helper macros to be used to change the VM program counter
+ * The compiler optimizer is supposed to use tail call optimization here
+ */
+#define VM_CONT() (this->*m_handlers[m_inst[m_pc].opcode])(m_inst[m_pc])
+#define VM_NEXT() ++m_pc; VM_CONT()
+#define VM_GOTO(n) m_pc = n; VM_CONT(); return
+
+/**
+ * Helper macro for opcode handler declaration
+ */
 #define VM_HANDLER_ARG IR& op
 #define VM_HANDLER(name) CLEVER_FASTCALL void VM::name(VM_HANDLER_ARG)
 #define VM_HANDLER_D(name) void name(VM_HANDLER_ARG)
