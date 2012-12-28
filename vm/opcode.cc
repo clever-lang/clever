@@ -35,7 +35,11 @@ const char* get_opcode_name(Opcode opnum)
 	switch (opnum) {
 		CASE(OP_RETURN);
 		CASE(OP_ASSIGN);
-		CASE(OP_PLUS);
+		CASE(OP_ADD);
+		CASE(OP_SUB);
+		CASE(OP_MUL);
+		CASE(OP_DIV);
+		CASE(OP_MOD);
 		CASE(OP_PRINT);
 		CASE(OP_HALT);
 		CASE(OP_JMP);
