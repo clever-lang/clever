@@ -140,12 +140,21 @@ VM_HANDLER(print)
 VM_HANDLER(fcall)
 {
 	Value* func = getValue(op.op1);
-	FuncData* data = static_cast<FuncData*>(func->getObj());
+	FuncData* fdata = static_cast<FuncData*>(func->getObj());
 
-	m_stackframe.push(Frame());
-	m_stackframe.top().ret_addr = m_pc+1;
+	if (fdata->type == USER_FUNC) {
+		/**
+		 * Pushs a new stack frame for the user function call on the call stack
+		 */
+		m_call_stack.push(StackFrame());
 
-	VM_GOTO(data->u.addr);
+		/**
+		 * Sets the return address to the next instruction
+		 */
+		m_call_stack.top().ret_addr = m_pc + 1;
+
+		VM_GOTO(fdata->u.addr);
+	}
 }
 
 /**
@@ -153,10 +162,13 @@ VM_HANDLER(fcall)
  */
 VM_HANDLER(leave)
 {
-	Frame& frame = m_stackframe.top();
+	StackFrame& frame = m_call_stack.top();
 
-	m_stackframe.pop();
+	m_call_stack.pop();
 
+	/**
+	 * Go back to the next instruction after the caller
+	 */
 	VM_GOTO(frame.ret_addr);
 }
 

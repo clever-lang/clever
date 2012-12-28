@@ -57,7 +57,7 @@ class Value;
 /**
  * Stackframe representation
  */
-struct Frame {
+struct StackFrame {
 	size_t ret_addr; /* Return address */
 };
 
@@ -144,7 +144,7 @@ private:
 	/**
 	 * Stack frame
 	 */
-	std::stack<Frame> m_stackframe;
+	std::stack<StackFrame> m_call_stack;
 
     ThreadPool m_thread_pool;
     MutexPool m_mutex_pool;
