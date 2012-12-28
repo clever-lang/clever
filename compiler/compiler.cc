@@ -123,7 +123,8 @@ void Compiler::errorf(const location& loc, const char* format, ...) const
 /// Abstracts the Value* ptr gets from Node
 // NOTE: When the Node is a STRCONST, it automatically increments the Value's
 // refcount related to the Symbol
-Value* Compiler::getValue(Node& node, size_t* val_id, const location& loc) const
+Value* Compiler::getValue(Node& node, size_t* val_id, const location& loc,
+	bool addref = false) const
 {
 	if (node.type == VALUE) {
 		return node.data.val;
@@ -135,6 +136,9 @@ Value* Compiler::getValue(Node& node, size_t* val_id, const location& loc) const
 		}
 		if (val_id) {
 			*val_id = sym->getValueId();
+		}
+		if (addref) {
+			m_value_pool[sym->getValueId()]->addRef();
 		}
 		return m_value_pool[sym->getValueId()];
 	}
@@ -187,13 +191,14 @@ void Compiler::assignment(Node& var, Node& value, const location& loc)
 void Compiler::binOp(Opcode op, Node& lhs, Node& rhs, Node& res,
 	const location& loc)
 {
+	size_t val_id = 0, val_id2 = 0;
 	Value* result = new Value();
 
 	m_ir.push_back(
 		IR(op, FETCH_VAL, m_value_id, FETCH_VAL, m_value_id+1, result));
 
-	m_value_pool[m_value_id++] = getValue(lhs, NULL, loc);
-	m_value_pool[m_value_id++] = getValue(rhs, NULL, loc);
+	m_value_pool[m_value_id++] = getValue(lhs, &val_id, loc, true);
+	m_value_pool[m_value_id++] = getValue(rhs, &val_id2, loc, true);
 
 	res.type = VALUE;
 	res.data.val = result;
