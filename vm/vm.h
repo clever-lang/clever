@@ -97,28 +97,28 @@ public:
 	VM_HANDLER_D(fcall);
 	VM_HANDLER_D(leave);
 private:
-	// Initialization phase
+	/// Initialization phase
 	void init();
 
-	// VM program counter
+	/// VM program counter
 	size_t m_pc;
 
-	// Vector of instruction
+	/// Vector of instruction
 	IRVector& m_inst;
 
-	// Scope pool
+	/// Scope pool
 	ScopePool* m_scope_pool;
 
-	// Value pool
+	/// Value pool
 	ValuePool* m_value_pool;
 
-	// Current scope id
+	/// Current scope id
 	size_t m_current_scope;
 
-	// VM opcode handlers
+	/// VM opcode handlers
 	OpHandler m_handlers[NUM_OPCODES];
 
-	// Stack frame
+	/// Stack frame
 	std::stack<StackFrame> m_call_stack;
 
     ThreadPool m_thread_pool;

@@ -30,14 +30,14 @@ namespace clever {
 
 /// VM opcodes
 enum Opcode {
-	OP_RETURN,   /* Used for returning */
-	OP_ASSIGN,   /* Used for variable assignment */
-	OP_PLUS,     /* Used for math sum operation */
-	OP_PRINT,    /* TODO: make it regular function call */
-	OP_HALT,     /* Used to abort the VM execution */
-	OP_JMP,      /* Used for jumping to other instructions */
-	OP_FCALL,    /* Used for function call */
-	OP_LEAVE,    /* Used for leaving from a function call */
+	OP_RETURN,   //   0 - Used for returning
+	OP_ASSIGN,   //       Used for variable assignment
+	OP_PLUS,     //       Used for math sum operation
+	OP_PRINT,    //       TODO: make it regular function call
+	OP_HALT,     //   5 - Used to abort the VM execution
+	OP_JMP,      //       Used for jumping to other instructions
+	OP_FCALL,    //       Used for function call
+	OP_LEAVE,    //       Used for leaving from a function call
 	NUM_OPCODES
 };
 

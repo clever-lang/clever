@@ -122,7 +122,7 @@ inline Symbol* Scope::getLocalSymbol(const CString* name) {
 	return &m_symbols[it->second];
 }
 
-// Resolve a symbol name recursively
+/// Resolve a symbol name recursively
 inline Symbol* Scope::getSymbol(const CString* name) {
 	Symbol* sym = getLocalSymbol(name);
 

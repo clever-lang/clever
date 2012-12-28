@@ -34,12 +34,12 @@
 
 namespace clever {
 
-// Interpreter constructor
+/// Interpreter constructor
 Interpreter::Interpreter(int* argc, char*** argv) : Driver()
 {
 }
 
-// Executes the script
+/// Executes the script
 void Interpreter::execute(bool interactive)
 {
 	VM vm(m_compiler.getIR());
@@ -55,13 +55,13 @@ void Interpreter::execute(bool interactive)
 	vm.run();
 }
 
-// Frees the resource used to load and execute the script
+/// Frees the resource used to load and execute the script
 void Interpreter::shutdown()
 {
 	m_compiler.shutdown();
 }
 
-// Read the file defined in file property
+/// Read the file defined in file property
 void Driver::readFile(std::string& source) const
 {
 	std::string line;
@@ -83,8 +83,8 @@ void Driver::readFile(std::string& source) const
 	filep.close();
 }
 
-// Starts the parsing of the supplied file
-// Returns -1 when a parser error happens, otherwise 0 is returned.
+/// Starts the parsing of the supplied file
+/// \returns -1 when a parser error happens, otherwise 0 is returned
 int Driver::loadFile(const std::string& filename)
 {
 	ScannerState* new_scanner = new ScannerState;
@@ -119,8 +119,8 @@ int Driver::loadFile(const std::string& filename)
 	return result;
 }
 
-// Starts the parsing of the supplied string
-// Returns -1 when a parser error happens, otherwise 0 is returned.
+/// Starts the parsing of the supplied string
+/// \returns -1 when a parser error happens, otherwise 0 is returned
 int Driver::loadStr(const std::string& code, bool importStd)
 {
 	ScannerState *new_scanner = new ScannerState;
@@ -155,7 +155,7 @@ int Driver::loadStr(const std::string& code, bool importStd)
 	return result;
 }
 
-// Prints an error message and exit
+/// Prints an error message and exit
 void Driver::error(const location& location, const std::string& msg) const
 {
 	position last = location.end - 1;
@@ -169,7 +169,7 @@ void Driver::error(const location& location, const std::string& msg) const
 	}
 }
 
-// Prints an error message
+/// Prints an error message
 void Driver::error(const std::string& message) const
 {
 	std::cerr << message << std::endl;

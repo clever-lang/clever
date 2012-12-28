@@ -45,7 +45,7 @@ Parser::token_type yylex(Parser::semantic_type*,
 		Parser::location_type*, Driver&,
 		ScannerState&);
 
-// Driver - Handles the lexer, parser and compiler
+/// Driver - Handles the lexer, parser and compiler
 class Driver {
 public:
 	typedef std::stack<ScannerState*> ScannerStack;

@@ -35,7 +35,7 @@ namespace clever {
 // Declaration of namespace global type ptrs for Clever native types
 DECLARE_CLEVER_NATIVE_TYPES();
 
-// Compiler initialization phase
+/// Compiler initialization phase
 void Compiler::init()
 {
 	m_scope = new Scope;
@@ -54,7 +54,7 @@ void Compiler::init()
 	m_type_pool[m_type_id++] = CLEVER_FUNC_TYPE   = new FuncType;
 }
 
-// Frees all resource used by the compiler
+/// Frees all resource used by the compiler
 void Compiler::shutdown()
 {
 	CLEVER_SAFE_DELETE(g_cstring_tbl);
@@ -85,14 +85,14 @@ void Compiler::end()
 	m_ir.push_back(IR(OP_HALT));
 }
 
-// Displays an error message and exits
+/// Displays an error message and exits
 void Compiler::error(const char* msg) const
 {
 	std::cerr << "Compile error: " << msg << std::endl;
 	CLEVER_EXIT_FATAL();
 }
 
-// Displays an error message
+/// Displays an error message
 void Compiler::error(const std::string& message, const location& loc) const
 {
 	if (loc.begin.filename) {
@@ -105,7 +105,7 @@ void Compiler::error(const std::string& message, const location& loc) const
 	CLEVER_EXIT_FATAL();
 }
 
-// Displays a formatted error message and abort the compilation
+/// Displays a formatted error message and abort the compilation
 void Compiler::errorf(const location& loc, const char* format, ...) const
 {
 	std::ostringstream out;
@@ -120,7 +120,7 @@ void Compiler::errorf(const location& loc, const char* format, ...) const
 	error(out.str(), loc);
 }
 
-// Abstracts the Value* ptr gets from Node
+/// Abstracts the Value* ptr gets from Node
 // NOTE: When the Node is a STRCONST, it automatically increments the Value's
 // refcount related to the Symbol
 Value* Compiler::getValue(Node& node, size_t* val_id, const location& loc) const
@@ -141,7 +141,7 @@ Value* Compiler::getValue(Node& node, size_t* val_id, const location& loc) const
 	return NULL;
 }
 
-// Compiles a variable declaration
+/// Compiles a variable declaration
 void Compiler::varDeclaration(Node& var, Node* node, const location& loc)
 {
 	// A NULL value is created for uninitialized declaration
@@ -165,7 +165,7 @@ void Compiler::varDeclaration(Node& var, Node* node, const location& loc)
 	}
 }
 
-// Compiles a variable assignment
+/// Compiles a variable assignment
 void Compiler::assignment(Node& var, Node& value, const location& loc)
 {
 	size_t var_id = 0, val_id = 0;
@@ -183,7 +183,7 @@ void Compiler::assignment(Node& var, Node& value, const location& loc)
 	}
 }
 
-// Compiles a set of binary operation
+/// Compiles a set of binary operation
 void Compiler::binOp(Opcode op, Node& lhs, Node& rhs, Node& res,
 	const location& loc)
 {
@@ -199,7 +199,7 @@ void Compiler::binOp(Opcode op, Node& lhs, Node& rhs, Node& res,
 	res.data.val = result;
 }
 
-// Temporary print statement compilation
+/// Temporary print statement compilation
 void Compiler::print(Node& node, const location& loc)
 {
 	size_t val_id = 0;
@@ -213,7 +213,7 @@ void Compiler::print(Node& node, const location& loc)
 	}
 }
 
-// Starts the function compilation
+/// Starts the function compilation
 void Compiler::funcDecl(Node& node, const location& loc)
 {
 	Symbol* sym = m_scope->getSymbol(node.data.str);
@@ -245,7 +245,7 @@ void Compiler::funcDecl(Node& node, const location& loc)
 	newScope();
 }
 
-// Ends the current function compilation
+/// Ends the current function compilation
 void Compiler::funcEndDecl()
 {
 	m_ir.push_back(IR(OP_LEAVE));
@@ -257,6 +257,7 @@ void Compiler::funcEndDecl()
 	endScope();
 }
 
+/// Function call compilation
 void Compiler::funcCall(Node& name, Node& args, const location& loc)
 {
 	Symbol* sym = m_scope->getSymbol(name.data.str);
@@ -269,7 +270,7 @@ void Compiler::funcCall(Node& name, Node& args, const location& loc)
 		IR(OP_FCALL, FETCH_VAL, sym->getValueId()));
 }
 
-// Creates a new lexical scope
+/// Creates a new lexical scope
 void Compiler::newScope()
 {
 	m_scope = m_scope->newLexicalScope();
@@ -278,7 +279,7 @@ void Compiler::newScope()
 	m_scope_pool[m_scope_id++] = m_scope;
 }
 
-// Scope end marker to switch to parent scope
+/// Scope end marker to switch to parent scope
 void Compiler::endScope()
 {
 	m_scope = m_scope->getParent();
