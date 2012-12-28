@@ -40,9 +40,19 @@ class Driver;
 class Compiler;
 class Value;
 
-#define YYSTYPE Node
 } // clever
 }
+
+%union {
+	Node node;
+	ArgDeclList* arg_decl_list;
+	ArgCallList* arg_call_list;
+}
+
+%type <node> IDENT NUM_INTEGER NUM_DOUBLE
+%type <node> r_value math_expr func_call
+%type <arg_decl_list> arg_decl_list
+%type <arg_call_list> non_empty_arg_list arg_list
 
 // The parsing context.
 %parse-param { Driver& driver }
@@ -163,23 +173,23 @@ var_declaration:
 ;
 
 func_declaration:
-		FUNC IDENT '(' ')'               '{' { c.funcDecl($2, yyloc); } statement_list '}' { c.funcEndDecl(); }
-	|	FUNC IDENT '(' arg_decl_list ')' '{' { c.funcDecl($2, yyloc); } statement_list '}' { c.funcEndDecl(); }
+		FUNC IDENT '(' ')'               '{' { c.funcDecl($2, NULL, yyloc); } statement_list '}' { c.funcEndDecl(false); }
+	|	FUNC IDENT '(' arg_decl_list ')' '{' { c.funcDecl($2, $4, yyloc);   } statement_list '}' { c.funcEndDecl(true);  }
 ;
 
 arg_decl_list:
-		IDENT
-	|	arg_decl_list  ',' IDENT
+		IDENT                     { $$ = c.newArgDeclList($1.data.str); }
+	|	arg_decl_list  ',' IDENT  { $1->push_back($3.data.str);         }
 ;
 
 arg_list:
-		/* empty */
+		/* empty */               { $$ = NULL; }
 	|	non_empty_arg_list
 ;
 
 non_empty_arg_list:
-		r_value
-	|	non_empty_arg_list ',' r_value
+		r_value                         { $$ = c.newArgCallList($1, yyloc); }
+	|	non_empty_arg_list ',' r_value  { c.addArgCall($1, $3, yyloc);      }
 ;
 
 func_call:

@@ -28,15 +28,22 @@
 
 namespace clever {
 
-enum FuncKind { USER_FUNC, INTERNAL_FUNC };
+class Scope;
+
+enum FuncKind { UNDEF, USER_FUNC, INTERNAL_FUNC };
 
 struct FuncData {
 	FuncKind type;
 	union {
-		size_t addr; /* For user function*/
+		size_t addr;   // Instruction address for user function
 	} u;
+	Scope* arg_vars;   // Argument variables
+	Scope* local_vars; // Local variables
+
+	FuncData() : type(UNDEF), arg_vars(NULL), local_vars(NULL) {}
 };
 
+/// Function type
 class FuncType : public Type {
 public:
 	FuncType() : Type(CSTRING("Function")) {}

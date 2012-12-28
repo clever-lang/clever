@@ -96,6 +96,7 @@ public:
 	VM_HANDLER_D(jmp);
 	VM_HANDLER_D(fcall);
 	VM_HANDLER_D(leave);
+	VM_HANDLER_D(push_val);
 private:
 	/// Initialization phase
 	void init();
@@ -120,6 +121,9 @@ private:
 
 	/// Stack frame
 	std::stack<StackFrame> m_call_stack;
+
+	/// Call arguments
+	std::vector<Value*> m_call_args;
 
     ThreadPool m_thread_pool;
     MutexPool m_mutex_pool;

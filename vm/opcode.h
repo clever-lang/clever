@@ -38,6 +38,7 @@ enum Opcode {
 	OP_JMP,      //       Used for jumping to other instructions
 	OP_FCALL,    //       Used for function call
 	OP_LEAVE,    //       Used for leaving from a function call
+	OP_PUSH,     //       Used for receiving argument values
 	NUM_OPCODES
 };
 

@@ -43,6 +43,9 @@ typedef std::vector<Scope*> ScopePool;
 typedef std::vector<Value*> ValuePool;
 typedef std::vector<Type*> TypePool;
 
+typedef std::vector<const CString*> ArgDeclList;
+typedef std::vector<size_t> ArgCallList;
+
 enum NodeType { STRCONST, VALUE };
 
 struct Node {
@@ -91,9 +94,12 @@ public:
 	void assignment(Node&, Node&, const location&);
 	void binOp(Opcode, Node&, Node&, Node&, const location&);
 	void print(Node&, const location&);
-	void funcDecl(Node&, const location&);
-	void funcEndDecl();
-	void funcCall(Node&, Node&, const location&);
+	void funcDecl(Node&, ArgDeclList*, const location&);
+	void funcEndDecl(bool);
+	void funcCall(Node&, ArgCallList*, const location&);
+	ArgDeclList* newArgDeclList(const CString*);
+	ArgCallList* newArgCallList(Node&, const location&);
+	void addArgCall(ArgCallList*, Node&, const location&);
 private:
 	// Vector of instructions to be passed to VM
 	IRVector m_ir;

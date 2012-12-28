@@ -213,8 +213,17 @@ void Compiler::print(Node& node, const location& loc)
 	}
 }
 
+/// Creates a list of arguments
+ArgDeclList* Compiler::newArgDeclList(const CString* arg)
+{
+	ArgDeclList* arg_list = new ArgDeclList;
+	arg_list->push_back(arg);
+
+	return arg_list;
+}
+
 /// Starts the function compilation
-void Compiler::funcDecl(Node& node, const location& loc)
+void Compiler::funcDecl(Node& node, ArgDeclList* arg_list, const location& loc)
 {
 	Symbol* sym = m_scope->getSymbol(node.data.str);
 
@@ -241,12 +250,62 @@ void Compiler::funcDecl(Node& node, const location& loc)
 
 	m_value_pool[m_value_id++] = func;
 
-	// Creates a scope for the argument list and local vars
+	// Create a scope for argument list when used
+	if (arg_list) {
+		ArgDeclList::const_iterator it = arg_list->begin(),
+			end = arg_list->end();
+
+		newScope();
+
+		while (it != end) {
+			m_scope->push(*it, m_value_id);
+			m_value_pool[m_value_id++] = new Value();
+			++it;
+		}
+		delete arg_list;
+
+		funcdata->arg_vars = m_scope;
+	}
+
+	// Creates a scope for the local vars
 	newScope();
+
+	funcdata->local_vars = m_scope;
+}
+
+/// Creates a new argument list
+ArgCallList* Compiler::newArgCallList(Node& arg, const location& loc)
+{
+	size_t val_id = 0;
+	ArgCallList* arg_list = new ArgCallList;
+	Value* val = getValue(arg, &val_id, loc);
+
+	if (val_id) {
+		arg_list->push_back(val_id);
+	} else {
+		arg_list->push_back(m_value_id);
+		m_value_pool[m_value_id++] = val;
+	}
+
+	return arg_list;
+}
+
+/// Adds new argument to the call argument list
+void Compiler::addArgCall(ArgCallList* arg_list, Node& arg, const location& loc)
+{
+	size_t val_id = 0;
+	Value* val = getValue(arg, &val_id, loc);
+
+	if (val_id) {
+		arg_list->push_back(val_id);
+	} else {
+		arg_list->push_back(m_value_id);
+		m_value_pool[m_value_id++] = val;
+	}
 }
 
 /// Ends the current function compilation
-void Compiler::funcEndDecl()
+void Compiler::funcEndDecl(bool has_args)
 {
 	m_ir.push_back(IR(OP_LEAVE));
 	// Changes the JMP's addr created right before the func declaration
@@ -254,11 +313,14 @@ void Compiler::funcEndDecl()
 	m_ir[m_curr_func].op1 = m_ir.size();
 
 	// Switchs to the global scope again
+	if (has_args) {
+		endScope();
+	}
 	endScope();
 }
 
 /// Function call compilation
-void Compiler::funcCall(Node& name, Node& args, const location& loc)
+void Compiler::funcCall(Node& name, ArgCallList* arg_list, const location& loc)
 {
 	Symbol* sym = m_scope->getSymbol(name.data.str);
 
@@ -266,8 +328,18 @@ void Compiler::funcCall(Node& name, Node& args, const location& loc)
 		errorf(loc, "Function `%S' cannot be found!", name.data.str);
 	}
 
+	if (arg_list) {
+		for (size_t i = 0, j = arg_list->size(); i < j; ++i) {
+			m_ir.push_back(IR(OP_PUSH, FETCH_VAL, arg_list->at(i)));
+		}
+	}
+
 	m_ir.push_back(
 		IR(OP_FCALL, FETCH_VAL, sym->getValueId()));
+
+	if (arg_list) {
+		delete arg_list;
+	}
 }
 
 /// Creates a new lexical scope

@@ -47,6 +47,7 @@ inline void VM::init()
 	m_handlers[OP_JMP]      = &VM::jmp;
 	m_handlers[OP_FCALL]    = &VM::fcall;
 	m_handlers[OP_LEAVE]    = &VM::leave;
+	m_handlers[OP_PUSH]     = &VM::push_val;
 }
 
 #ifdef CLEVER_DEBUG
@@ -118,6 +119,14 @@ VM_HANDLER(print)
 	VM_NEXT();
 }
 
+// Receives values to be used in the next function call
+VM_HANDLER(push_val)
+{
+	m_call_args.push_back(getValue(op.op1));
+
+	VM_NEXT();
+}
+
 // Function call operation
 VM_HANDLER(fcall)
 {
@@ -130,6 +139,17 @@ VM_HANDLER(fcall)
 
 		// Sets the return address to the next instruction
 		m_call_stack.top().ret_addr = m_pc + 1;
+
+		if (fdata->arg_vars) {
+			Scope* arg_scope = fdata->arg_vars;
+
+			for (size_t i = 0, j = arg_scope->size(); i < j; ++i) {
+				Value* arg_val = getValue(arg_scope->at(i).getValueId());
+				arg_val->copy(m_call_args[i]);
+			}
+
+			m_call_args.clear();
+		}
 
 		VM_GOTO(fdata->u.addr);
 	}
