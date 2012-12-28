@@ -163,7 +163,7 @@ var_declaration:
 ;
 
 func_declaration:
-		FUNC IDENT '('  ')'              '{' { c.funcDecl($2, yyloc); } statement_list '}' { c.funcEndDecl(); }
+		FUNC IDENT '(' ')'               '{' { c.funcDecl($2, yyloc); } statement_list '}' { c.funcEndDecl(); }
 	|	FUNC IDENT '(' arg_decl_list ')' '{' { c.funcDecl($2, yyloc); } statement_list '}' { c.funcEndDecl(); }
 ;
 

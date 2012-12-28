@@ -249,6 +249,10 @@ void Compiler::funcDecl(Node& node, const location& loc)
 	if (sym) {
 		errorf(loc, "Name `%S' already in used!", node.data.str);
 	}
+	/**
+	 * Saves the current instruction size to be used as a index for
+	 * changing the jmp address to right after the end of function declaration
+	 */
 	m_curr_func = m_ir.size();
 
 	Value* func = new Value();
@@ -262,9 +266,17 @@ void Compiler::funcDecl(Node& node, const location& loc)
 
 	m_ir.push_back(IR(OP_JMP, JMP_ADDR, 0));
 
+	/**
+	 * Adds the function symbol to the current scope
+	 */
 	m_scope->push(node.data.str, m_value_id);
 
 	m_value_pool[m_value_id++] = func;
+
+	/**
+	 * Creates a scope for the argument list and local vars
+	 */
+	newScope();
 }
 
 /**
@@ -278,6 +290,11 @@ void Compiler::funcEndDecl()
 	 * to point to the end of current function, thus skipping its opcodes
 	 */
 	m_ir[m_curr_func].op1 = m_ir.size();
+
+	/**
+	 * Switchs to the global scope again
+	 */
+	endScope();
 }
 
 void Compiler::funcCall(Node& name, Node& args, const location& loc)
