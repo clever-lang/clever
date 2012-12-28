@@ -32,14 +32,10 @@
 
 namespace clever {
 
-/**
- * Declaration of namespace global type ptrs for Clever native types
- */
+// Declaration of namespace global type ptrs for Clever native types
 DECLARE_CLEVER_NATIVE_TYPES();
 
-/**
- * Compiler initialization phase
- */
+// Compiler initialization phase
 void Compiler::init()
 {
 	m_scope = new Scope;
@@ -52,17 +48,13 @@ void Compiler::init()
 	m_value_pool[m_value_id++] = NULL;
 	m_scope_pool[m_scope_id++] = m_scope;
 
-	/**
-	 * Native type allocation
-	 */
+	// Native type allocation
 	m_type_pool[m_type_id++] = CLEVER_INT_TYPE    = new IntType;
 	m_type_pool[m_type_id++] = CLEVER_DOUBLE_TYPE = new DoubleType;
 	m_type_pool[m_type_id++] = CLEVER_FUNC_TYPE   = new FuncType;
 }
 
-/**
- * Frees all resource used by the compiler
- */
+// Frees all resource used by the compiler
 void Compiler::shutdown()
 {
 	CLEVER_SAFE_DELETE(g_cstring_tbl);
@@ -87,26 +79,20 @@ void Compiler::shutdown()
 	}
 }
 
-/**
- * Compiler termination phase
- */
+// Compiler termination phase
 void Compiler::end()
 {
 	m_ir.push_back(IR(OP_HALT));
 }
 
-/**
- * Displays an error message and exits
- */
+// Displays an error message and exits
 void Compiler::error(const char* msg) const
 {
 	std::cerr << "Compile error: " << msg << std::endl;
 	CLEVER_EXIT_FATAL();
 }
 
-/**
- * Displays an error message
- */
+// Displays an error message
 void Compiler::error(const std::string& message, const location& loc) const
 {
 	if (loc.begin.filename) {
@@ -119,9 +105,7 @@ void Compiler::error(const std::string& message, const location& loc) const
 	CLEVER_EXIT_FATAL();
 }
 
-/**
- * Displays a formatted error message and abort the compilation
- */
+// Displays a formatted error message and abort the compilation
 void Compiler::errorf(const location& loc, const char* format, ...) const
 {
 	std::ostringstream out;
@@ -136,11 +120,9 @@ void Compiler::errorf(const location& loc, const char* format, ...) const
 	error(out.str(), loc);
 }
 
-/**
- * Abstracts the Value* ptr gets from Node
- * NOTE: When the Node is a STRCONST, it automatically increments the Value's
- * refcount related to the Symbol
- */
+// Abstracts the Value* ptr gets from Node
+// NOTE: When the Node is a STRCONST, it automatically increments the Value's
+// refcount related to the Symbol
 Value* Compiler::getValue(Node& node, size_t* val_id, const location& loc) const
 {
 	if (node.type == VALUE) {
@@ -159,21 +141,19 @@ Value* Compiler::getValue(Node& node, size_t* val_id, const location& loc) const
 	return NULL;
 }
 
-/**
- * Compiles a variable declaration
- */
+// Compiles a variable declaration
 void Compiler::varDeclaration(Node& var, Node* node, const location& loc)
 {
-	/// A NULL value is created for uninitialized declaration
+	// A NULL value is created for uninitialized declaration
 	size_t val_id = 0;
 	Value* val = node ? getValue(*node, &val_id, loc) : new Value();
 
 	m_scope->push(var.data.str, m_value_id);
 
-	/// Symbol value
+	// Symbol value
 	m_value_pool[m_value_id++] = new Value();
 
-	/// Value to be assigned
+	// Value to be assigned
 	if (val_id) {
 		m_ir.push_back(
 			IR(OP_ASSIGN, FETCH_VAL, m_value_id-1, FETCH_VAL, val_id));
@@ -185,9 +165,7 @@ void Compiler::varDeclaration(Node& var, Node* node, const location& loc)
 	}
 }
 
-/**
- * Compiles a variable assignment
- */
+// Compiles a variable assignment
 void Compiler::assignment(Node& var, Node& value, const location& loc)
 {
 	size_t var_id = 0, val_id = 0;
@@ -205,9 +183,7 @@ void Compiler::assignment(Node& var, Node& value, const location& loc)
 	}
 }
 
-/**
- * Compiles a set of binary operation
- */
+// Compiles a set of binary operation
 void Compiler::binOp(Opcode op, Node& lhs, Node& rhs, Node& res,
 	const location& loc)
 {
@@ -223,9 +199,7 @@ void Compiler::binOp(Opcode op, Node& lhs, Node& rhs, Node& res,
 	res.data.val = result;
 }
 
-/**
- * Temporary print statement compilation
- */
+// Temporary print statement compilation
 void Compiler::print(Node& node, const location& loc)
 {
 	size_t val_id = 0;
@@ -239,9 +213,7 @@ void Compiler::print(Node& node, const location& loc)
 	}
 }
 
-/**
- * Starts the function compilation
- */
+// Starts the function compilation
 void Compiler::funcDecl(Node& node, const location& loc)
 {
 	Symbol* sym = m_scope->getSymbol(node.data.str);
@@ -249,10 +221,8 @@ void Compiler::funcDecl(Node& node, const location& loc)
 	if (sym) {
 		errorf(loc, "Name `%S' already in used!", node.data.str);
 	}
-	/**
-	 * Saves the current instruction size to be used as a index for
-	 * changing the jmp address to right after the end of function declaration
-	 */
+	// Saves the current instruction size to be used as a index for
+	// changing the jmp address to right after the end of function declaration
 	m_curr_func = m_ir.size();
 
 	Value* func = new Value();
@@ -266,34 +236,24 @@ void Compiler::funcDecl(Node& node, const location& loc)
 
 	m_ir.push_back(IR(OP_JMP, JMP_ADDR, 0));
 
-	/**
-	 * Adds the function symbol to the current scope
-	 */
+	// Adds the function symbol to the current scope
 	m_scope->push(node.data.str, m_value_id);
 
 	m_value_pool[m_value_id++] = func;
 
-	/**
-	 * Creates a scope for the argument list and local vars
-	 */
+	// Creates a scope for the argument list and local vars
 	newScope();
 }
 
-/**
- * Ends the current function compilation
- */
+// Ends the current function compilation
 void Compiler::funcEndDecl()
 {
 	m_ir.push_back(IR(OP_LEAVE));
-	/**
-	 * Changes the JMP's addr created right before the func declaration
-	 * to point to the end of current function, thus skipping its opcodes
-	 */
+	// Changes the JMP's addr created right before the func declaration
+	// to point to the end of current function, thus skipping its opcodes
 	m_ir[m_curr_func].op1 = m_ir.size();
 
-	/**
-	 * Switchs to the global scope again
-	 */
+	// Switchs to the global scope again
 	endScope();
 }
 
@@ -309,9 +269,7 @@ void Compiler::funcCall(Node& name, Node& args, const location& loc)
 		IR(OP_FCALL, FETCH_VAL, sym->getValueId()));
 }
 
-/**
- * Creates a new lexical scope
- */
+// Creates a new lexical scope
 void Compiler::newScope()
 {
 	m_scope = m_scope->newLexicalScope();
@@ -320,9 +278,7 @@ void Compiler::newScope()
 	m_scope_pool[m_scope_id++] = m_scope;
 }
 
-/**
- * Scope end marker to switch to parent scope
- */
+// Scope end marker to switch to parent scope
 void Compiler::endScope()
 {
 	m_scope = m_scope->getParent();

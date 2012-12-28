@@ -39,6 +39,7 @@ namespace clever {
 
 class Value;
 
+/// Symbol representation
 class Symbol {
 public:
 	Symbol(const CString* name, size_t value_id)
@@ -54,6 +55,7 @@ private:
 	size_t m_value_id;
 };
 
+/// Scope representation
 class Scope {
 public:
 	typedef std::vector<Scope*> ScopeVector;

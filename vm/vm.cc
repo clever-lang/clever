@@ -35,14 +35,10 @@
 
 namespace clever {
 
-/**
- * VM initialization phase
- */
+// VM initialization phase
 inline void VM::init()
 {
-	/**
-	 * Opcode handler mapping
-	 */
+	// Opcode handler mapping
 	m_handlers[OP_RETURN]   = &VM::ret;
 	m_handlers[OP_ASSIGN]   = &VM::assignment;
 	m_handlers[OP_PLUS]     = &VM::plus;
@@ -72,31 +68,23 @@ void VM::dumpOpcodes() const
 }
 #endif
 
-/**
- * Return operation
- */
+// Return operation
 VM_HANDLER(ret)
 {
 }
 
-/**
- * Halt operation
- */
+// Halt operation
 VM_HANDLER(halt)
 {
 }
 
-/**
- * JMP operation
- */
+// JMP operation
 VM_HANDLER(jmp)
 {
 	VM_GOTO(op.op1);
 }
 
-/**
- * Assignment operation
- */
+// Assignment operation
 VM_HANDLER(assignment)
 {
 	Value* var = getValue(op.op1);
@@ -107,9 +95,7 @@ VM_HANDLER(assignment)
 	VM_NEXT();
 }
 
-/**
- * Math sum operation
- */
+// Math sum operation
 VM_HANDLER(plus)
 {
 	Value* lhs = getValue(op.op1);
@@ -123,9 +109,7 @@ VM_HANDLER(plus)
 	VM_NEXT();
 }
 
-/**
- * Temporary handler for print command
- */
+// Temporary handler for print command
 VM_HANDLER(print)
 {
 	getValue(op.op1)->dump();
@@ -134,58 +118,42 @@ VM_HANDLER(print)
 	VM_NEXT();
 }
 
-/**
- * Function call operation
- */
+// Function call operation
 VM_HANDLER(fcall)
 {
 	Value* func = getValue(op.op1);
 	FuncData* fdata = static_cast<FuncData*>(func->getObj());
 
 	if (fdata->type == USER_FUNC) {
-		/**
-		 * Pushs a new stack frame for the user function call on the call stack
-		 */
+		// Pushs a new stack frame for the user function call on the call stack
 		m_call_stack.push(StackFrame());
 
-		/**
-		 * Sets the return address to the next instruction
-		 */
+		// Sets the return address to the next instruction
 		m_call_stack.top().ret_addr = m_pc + 1;
 
 		VM_GOTO(fdata->u.addr);
 	}
 }
 
-/**
- * Leave operation
- */
+// Leave operation
 VM_HANDLER(leave)
 {
 	StackFrame& frame = m_call_stack.top();
 
 	m_call_stack.pop();
 
-	/**
-	 * Go back to the next instruction after the caller
-	 */
+	// Go back to the next instruction after the caller
 	VM_GOTO(frame.ret_addr);
 }
 
-/**
- * Executes the VM opcodes in a continuation-passing style
- */
+// Executes the VM opcodes in a continuation-passing style
 void VM::run()
 {
-	/**
-	 * Loads the opcode handlers
-	 */
+	// Loads the opcode handlers
 	init();
 
-	/**
-	 * Starts the VM by running the first instruction, which keep calling
-	 * each other in a tail call way
-	 */
+	// Starts the VM by running the first instruction, which keep calling
+	// each other in a tail call way
 	(this->*m_handlers[m_inst[0].opcode])(m_inst[0]);
 }
 

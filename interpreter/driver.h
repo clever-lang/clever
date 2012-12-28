@@ -40,16 +40,12 @@ namespace clever {
 
 class ScannerState;
 
-/**
- * Lexer prototype
- */
+// Lexer prototype
 Parser::token_type yylex(Parser::semantic_type*,
 		Parser::location_type*, Driver&,
 		ScannerState&);
 
-/**
- * Driver - Handles the lexer, parser and compiler
- */
+// Driver - Handles the lexer, parser and compiler
 class Driver {
 public:
 	typedef std::stack<ScannerState*> ScannerStack;
@@ -63,54 +59,52 @@ public:
 
 	virtual ~Driver() {}
 
-	/* Returns the parsed file */
+	// Returns the parsed file
 	CString* getFile() const {
 		return const_cast<CString*>(m_file);
 	}
 
-	/* Read file to the scanner */
+	// Read file to the scanner
 	void readFile(std::string&) const;
 
-	/* Starts the parser and loads the Symbol table */
+	// Starts the parser and loads the Symbol table
 	int loadStr(const std::string&, bool importStd);
 	int loadFile(const std::string&);
 
-	/* Error handling */
+	// Error handling
 	void error(const location&, const std::string&) const;
 	void error(const std::string&) const;
 
-	/* Executes the script */
+	// Executes the script
 	virtual void execute(bool) = 0;
 
-	/* Tracing */
+	// Tracing
 	void setTraceParsing(bool trace) { m_trace_parsing = trace; }
 protected:
-	/* Indicates if it's a file is being parsed */
+	// Indicates if it's a file is being parsed
 	bool m_is_file;
 
-	/* Debug option */
+	// Debug option
 	bool m_trace_parsing;
 
-	/* The file path -f */
+	// The file path -f
 	const CString* m_file;
 
 #ifdef CLEVER_DEBUG
-	/* Opcode dumping option */
+	// Opcode dumping option
 	bool m_dump_opcode;
 #endif
 
-	/* Compiler */
+	// Compiler
 	Compiler m_compiler;
 
-	/* Scanners stack */
+	// Scanners stack
 	ScannerStack m_scanners;
 private:
 	DISALLOW_COPY_AND_ASSIGN(Driver);
 };
 
-/**
- * Interpreter
- */
+/// Interpreter
 class Interpreter : public Driver {
 public:
 	Interpreter(int* argc, char*** argv);

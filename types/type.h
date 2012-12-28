@@ -35,13 +35,10 @@ public:
 	Type(const CString* name) : m_name(name) {}
 	virtual ~Type() {}
 
-	/**
-	 * Method for retrieve the type name
-	 */
+	// Method for retrieve the type name
 	const CString* getName() const { return m_name; }
-	/**
-	 * Virtual method for debug purpose
-	 */
+
+	// Virtual method for debug purpose
 	virtual void dump(const void*) const = 0;
 
 	virtual void* allocData() { return NULL; }

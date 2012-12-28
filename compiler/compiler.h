@@ -54,9 +54,7 @@ struct Node {
 	NodeType type;
 };
 
-/**
- * Compiler representation
- */
+/// Compiler representation
 class Compiler {
 public:
 	Compiler()
@@ -65,17 +63,14 @@ public:
 			m_curr_func(0) {}
 
 	~Compiler() {}
-	/**
-	 * Starts the compilation phase
-	 */
+
+	// Starts the compilation phase
 	void init();
-	/**
-	 * Ends the compilation phase
-	 */
+
+	// Ends the compilation phase
 	void end();
-	/**
-	 * Shutdown the compiler freeing all resources
-	 */
+
+	// Shutdown the compiler freeing all resources
 	void shutdown();
 
 	IRVector& getIR() { return m_ir; }
@@ -89,9 +84,7 @@ public:
 
 	Value* getValue(Node&, size_t*, const location&) const;
 
-	/**
-	 * Compilation methods
-	 */
+	// Compilation methods
 	void varDeclaration(Node&, Node*, const location&);
 	void newScope();
 	void endScope();
@@ -102,30 +95,24 @@ public:
 	void funcEndDecl();
 	void funcCall(Node&, Node&, const location&);
 private:
-	/**
-	 * Vector of instructions to be passed to VM
-	 */
+	// Vector of instructions to be passed to VM
 	IRVector m_ir;
-	/**
-	 * Scope handling
-	 */
+
+	// Scope handling
 	Scope* m_scope;
-	/**
-	 * Compiler pools, which got passed to VM after compiling
-	 */
+
+	// Compiler pools, which got passed to VM after compiling
 	ScopePool m_scope_pool;
 	ValuePool m_value_pool;
 	TypePool m_type_pool;
-	/**
-	 * Indexes for pools
-	 */
+
+	// Indexes for pools
 	size_t m_scope_id;
 	size_t m_value_id;
 	size_t m_type_id;
-	/**
-	 * Used to point the instruction index on m_ir related to JMP created
-	 * just before the current func declaration to skip his internal opcodes
-	 */
+
+	// Used to point the instruction index on m_ir related to JMP created
+	// just before the current func declaration to skip his internal opcodes
 	size_t m_curr_func;
 
 	DISALLOW_COPY_AND_ASSIGN(Compiler);

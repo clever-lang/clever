@@ -34,15 +34,13 @@ namespace clever {
 class Value;
 
 enum OperandType {
-	UNUSED,      /* Operand is not used */
-	FETCH_VAL,   /* For Value* fetchs */
-	FETCH_SCOPE, /* For scope switching */
-	JMP_ADDR     /* For instr addr */
+	UNUSED,      // Operand is not used
+	FETCH_VAL,   // For Value* fetchs
+	FETCH_SCOPE, // For scope switching
+	JMP_ADDR     // For instr addr
 };
 
-/**
- * Intermediate representation
- */
+/// Intermediate representation
 struct IR {
 	IR(Opcode _op)
 		: opcode(_op),
@@ -69,9 +67,7 @@ struct IR {
 	Value* result;
 };
 
-/**
- * Vector of VM instructions
- */
+// Vector of VM instructions
 typedef std::vector<IR> IRVector;
 
 } // clever

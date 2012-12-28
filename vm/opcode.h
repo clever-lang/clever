@@ -28,9 +28,7 @@
 
 namespace clever {
 
-/**
- * VM opcodes
- */
+/// VM opcodes
 enum Opcode {
 	OP_RETURN,   /* Used for returning */
 	OP_ASSIGN,   /* Used for variable assignment */

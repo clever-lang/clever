@@ -36,17 +36,13 @@
 
 namespace clever {
 
-/**
- * Helper macros to be used to change the VM program counter
- * The compiler optimizer is supposed to use tail call optimization here
- */
+// Helper macros to be used to change the VM program counter
+// The compiler optimizer is supposed to use tail call optimization here
 #define VM_CONT() (this->*m_handlers[m_inst[m_pc].opcode])(m_inst[m_pc])
 #define VM_NEXT() ++m_pc; VM_CONT()
 #define VM_GOTO(n) m_pc = n; VM_CONT(); return
 
-/**
- * Helper macro for opcode handler declaration
- */
+// Helper macro for opcode handler declaration
 #define VM_HANDLER_ARG IR& op
 #define VM_HANDLER(name) CLEVER_FASTCALL void VM::name(VM_HANDLER_ARG)
 #define VM_HANDLER_D(name) void name(VM_HANDLER_ARG)
@@ -54,16 +50,12 @@ namespace clever {
 class Scope;
 class Value;
 
-/**
- * Stackframe representation
- */
+/// Stackframe representation
 struct StackFrame {
-	size_t ret_addr; /* Return address */
+	size_t ret_addr; // Return address
 };
 
-/**
- * VM representation
- */
+/// VM representation
 class VM {
 public:
 	typedef void (VM::*OpHandler)(VM_HANDLER_ARG);
@@ -75,32 +67,25 @@ public:
 		: m_pc(0), m_inst(inst), m_scope_pool(NULL), m_value_pool(NULL),
 			m_current_scope(0) {}
 	~VM() {}
-	/**
-	 * Sets the symbol table to used by the VM to fetch the symbol names
-	 */
+
+	// Sets the symbol table to used by the VM to fetch the symbol names
 	void setSymbolTable(ScopePool* scope) { m_scope_pool = scope; }
-	/**
-	 * Sets the Value* pool to be used by VM to fetch the instr values
-	 */
+
+	// Sets the Value* pool to be used by VM to fetch the instr values
 	void setValuePool(ValuePool* value) { m_value_pool = value; }
-	/**
-	 * Helper to retrive a Value* from ValuePool
-	 */
+
+	// Helper to retrive a Value* from ValuePool
 	Value* getValue(size_t n) const { return (*m_value_pool)[n]; }
-	/**
-	 * Start the VM execution
-	 */
+
+	// Start the VM execution
 	void run();
-	/**
-	 * Methods for dumping opcodes
-	 */
+
+	// Methods for dumping opcodes
 #ifdef CLEVER_DEBUG
 	void dumpOpcodes() const;
 #endif
 
-	/**
-	 * VM opcode handlers
-	 */
+	// VM opcode handlers
 	VM_HANDLER_D(var_decl);
 	VM_HANDLER_D(switch_scope);
 	VM_HANDLER_D(ret);
@@ -112,38 +97,28 @@ public:
 	VM_HANDLER_D(fcall);
 	VM_HANDLER_D(leave);
 private:
-	/**
-	 * Initialization phase
-	 */
+	// Initialization phase
 	void init();
 
-	/**
-	 * VM program counter
-	 */
+	// VM program counter
 	size_t m_pc;
-	/**
-	 * Vector of instruction
-	 */
+
+	// Vector of instruction
 	IRVector& m_inst;
-	/**
-	 * Scope pool
-	 */
+
+	// Scope pool
 	ScopePool* m_scope_pool;
-	/**
-	 * Value pool
-	 */
+
+	// Value pool
 	ValuePool* m_value_pool;
-	/**
-	 * Current scope id
-	 */
+
+	// Current scope id
 	size_t m_current_scope;
-	/**
-	 * VM opcode handlers
-	 */
+
+	// VM opcode handlers
 	OpHandler m_handlers[NUM_OPCODES];
-	/**
-	 * Stack frame
-	 */
+
+	// Stack frame
 	std::stack<StackFrame> m_call_stack;
 
     ThreadPool m_thread_pool;
