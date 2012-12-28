@@ -173,8 +173,17 @@ prototype:
 ;
 
 var_declaration:
-		VAR IDENT             { c.varDeclaration($2, NULL, yyloc); }
-	|	VAR IDENT '=' r_value { c.varDeclaration($2, &$4, yyloc);  }
+		VAR var_declaration_list
+;
+
+var_declaration_list:
+		var_declaration_ident
+	|	var_declaration_list ',' var_declaration_ident
+;
+
+var_declaration_ident:
+		IDENT             { c.varDeclaration($1, NULL, yyloc); }
+	|	IDENT '=' r_value { c.varDeclaration($1, &$3, yyloc);  }
 ;
 
 func_declaration:
