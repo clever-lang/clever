@@ -34,6 +34,7 @@ void Std::init() {
 #ifdef HAVE_MOD_STD_IO
 	addModule(new std::IOModule);
 #endif
+/*
 #ifdef HAVE_MOD_STD_MATH
 	addModule(new std::Math);
 #endif
@@ -58,6 +59,7 @@ void Std::init() {
 #ifdef HAVE_MOD_STD_RPC
 	addModule(new std::RPCModule);
 #endif
+*/
 }
 
 }} // clever::packages

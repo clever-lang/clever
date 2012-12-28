@@ -31,6 +31,7 @@
 #include <sstream>
 #include "compiler/clever.h"
 #include "compiler/scope.h"
+#include "compiler/pkgmanager.h"
 #include "vm/ir.h"
 
 namespace clever {
@@ -100,7 +101,11 @@ public:
 	ArgDeclList* newArgDeclList(const CString*) const;
 	ArgCallList* addArgCall(ArgCallList*, Node&, const location&);
 	void retStmt(Node&, const location&);
+	void importStmt(Node&);
 private:
+	// Package manager
+	PkgManager m_pkg;
+
 	// Vector of instructions to be passed to VM
 	IRVector m_ir;
 

@@ -136,6 +136,8 @@ add_executable(clever
         compiler/refcounted.h
         compiler/scope.h
         compiler/value.h
+        compiler/pkgmanager.h
+        compiler/pkgmanager.cc
         interpreter/driver.cc
         interpreter/driver.h
         interpreter/main.cc
@@ -157,9 +159,11 @@ include_directories(${CLEVER_INCLUDE_DIRS})
 
 # Module trees
 # ---------------------------------------------------------------------------
-#add_subdirectory(modules/std)
+add_subdirectory(modules/std)
 #add_subdirectory(modules/web)
+add_dependencies(clever modules_std)
 #add_dependencies(clever modules_std modules_web)
+target_link_libraries(clever modules_std)
 #target_link_libraries(clever modules_std modules_web)
 
 # Test runner

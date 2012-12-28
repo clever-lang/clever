@@ -23,43 +23,41 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef CLEVER_TYPES_FUNCTION_H
-#define CLEVER_TYPES_FUNCTION_H
+#ifndef CLEVER_PKGMANAGER_H
+#define CLEVER_PKGMANAGER_H
 
-#include "types/type.h"
+#ifdef CLEVER_MSVC
+#include <unordered_map>
+#else
+#include <tr1/unordered_map>
+#endif
+#include "compiler/cstring.h"
+#include "compiler/module.h"
 
 namespace clever {
 
 class Scope;
 
-enum FuncKind { UNDEF, USER_FUNC, INTERNAL_FUNC };
+typedef std::tr1::unordered_map<const CString*, Package*> PackageMap;
+typedef std::pair<const CString*, Package*> PackagePair;
 
-struct FuncData {
-	FuncKind type;
-	union {
-		size_t addr;   // Instruction address for user function
-	} u;
-	Scope* arg_vars;   // Argument variables
-	Scope* local_vars; // Local variables
-	const CString* name;
-
-	FuncData() : type(UNDEF), arg_vars(NULL), local_vars(NULL), name(NULL) {}
-
-	const CString* getName() { return name; }
-};
-
-/// Function type
-class FuncType : public Type {
+class PkgManager {
 public:
-	FuncType() : Type(CSTRING("Function")) {}
-	~FuncType() {}
+	PkgManager() {}
+	~PkgManager() {}
 
-	void dump(const void* data) const { std::cout << "function() { }"; }
+	void init();
+	void shutdown();
 
-	void* allocData() { return new FuncData; }
-	void deallocData(void* data) { if (data) { delete static_cast<FuncData*>(data); } }
+	void addPackage(const CString* name, Package* package) {
+		m_pkgs.insert(PackagePair(name, package));
+	}
+
+	void importPackage(Scope*, const CString*);
+private:
+	PackageMap m_pkgs;
 };
 
 } // clever
 
-#endif // CLEVER_TYPES_FUNCTION_H
+#endif // CLEVER_PKGMANAGER_H

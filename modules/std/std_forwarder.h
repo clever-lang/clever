@@ -23,11 +23,12 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifdef HAVE_MOD_STD_FILE
-#include "modules/std/file/file.h"
-#endif
 #ifdef HAVE_MOD_STD_IO
 #include "modules/std/io/io.h"
+#endif
+#if 0
+#ifdef HAVE_MOD_STD_FILE
+#include "modules/std/file/file.h"
 #endif
 #ifdef HAVE_MOD_STD_MATH
 #include "modules/std/math/math.h"
@@ -50,5 +51,4 @@
 #ifdef HAVE_MOD_STD_RPC
 # include "modules/std/rpc/rpc.h"
 #endif
-
-
+#endif

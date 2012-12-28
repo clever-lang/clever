@@ -152,8 +152,20 @@ statement_list:
 	|	non_empty_statement_list statement_list
 ;
 
+import_stmt2:
+		IMPORT IDENT '.' '*'              { c.importStmt($2); }
+//	|	IMPORT IDENT '.' IDENT '.' IDENT  { c.importStmt($2, $4, $6); }
+//	|	IMPORT IDENT '.' IDENT '.' TYPE   { $$ = new ast::ImportStmt($2, $4, $6, true);    $$->setLocation(yylloc); }
+//	|	IMPORT IDENT '.' IDENT '.' '*'    { $$ = new ast::ImportStmt($2, $4, NULL, true);  $$->setLocation(yylloc); }
+;
+
+import_stmt:
+		import_stmt2
+;
+
 non_empty_statement_list:
 		'{' { c.newScope(); } non_empty_statement_list { c.endScope(); } '}'
+	|	import_stmt ';'
 	|	var_declaration ';'
 	|	assignment ';'
 	|	print_stmt ';'

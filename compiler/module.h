@@ -23,43 +23,46 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef CLEVER_TYPES_FUNCTION_H
-#define CLEVER_TYPES_FUNCTION_H
+#ifndef CLEVER_MODULE_H
+#define CLEVER_MODULE_H
 
-#include "types/type.h"
+#include <string>
+
+#define CLEVER_MODULE_INIT(x) void x::init(int flags)
+
+#define CLEVER_MODULE_VIRTUAL_METHODS_DECLARATION \
+	void init(int flags);
+
+#define CLEVER_FUNCTION_ARGS
+#define CLEVER_FUNC_NAME(name) clv_f_##name
+#define CLEVER_NS_FNAME(ns, name) ns::CLEVER_FUNC_NAME(name)
+#define CLEVER_FUNCTION(name) void CLEVER_FASTCALL CLEVER_FUNC_NAME(name)(CLEVER_FUNCTION_ARGS)
 
 namespace clever {
 
-class Scope;
-
-enum FuncKind { UNDEF, USER_FUNC, INTERNAL_FUNC };
-
-struct FuncData {
-	FuncKind type;
-	union {
-		size_t addr;   // Instruction address for user function
-	} u;
-	Scope* arg_vars;   // Argument variables
-	Scope* local_vars; // Local variables
-	const CString* name;
-
-	FuncData() : type(UNDEF), arg_vars(NULL), local_vars(NULL), name(NULL) {}
-
-	const CString* getName() { return name; }
+class Module {
+public:
+	Module(std::string name) : m_name(name) {}
+	~Module() {}
+private:
+	std::string m_name;
 };
 
-/// Function type
-class FuncType : public Type {
+/// Package representation
+class Package {
 public:
-	FuncType() : Type(CSTRING("Function")) {}
-	~FuncType() {}
+	Package(std::string name)
+		: m_name(name) {}
+	virtual ~Package() {}
 
-	void dump(const void* data) const { std::cout << "function() { }"; }
+	void addModule(Module* module) {}
 
-	void* allocData() { return new FuncData; }
-	void deallocData(void* data) { if (data) { delete static_cast<FuncData*>(data); } }
+	virtual void init() = 0;
+	virtual const char* getVersion() const = 0;
+private:
+	std::string m_name;
 };
 
 } // clever
 
-#endif // CLEVER_TYPES_FUNCTION_H
+#endif // CLEVER_MODULE_H

@@ -25,9 +25,7 @@
 
 #include <iostream>
 #include "compiler/pkgmanager.h"
-#include "compiler/value.h"
 #include "modules/std/io/io.h"
-#include "types/nativetypes.h"
 
 namespace clever { namespace packages { namespace std {
 
@@ -37,64 +35,11 @@ namespace io {
  * Prints the object values without trailing newline
  */
 static CLEVER_FUNCTION(print) {
+	/*
 	for (size_t i = 0, size = CLEVER_NUM_ARGS(); i < size; ++i) {
 		::std::cout << CLEVER_ARG_AS_STR(i);
 	}
-}
-
-/**
- * println(object a, [ ...])
- * Prints the object values with trailing newline
- */
-static CLEVER_FUNCTION(println) {
-	for (size_t i = 0, size = CLEVER_NUM_ARGS(); i < size; ++i) {
-		::std::cout << CLEVER_ARG_AS_STR(i) << ::std::endl;
-	}
-}
-
-/**
- * readln()
- * Reads a line from the standard input.
- */
-static CLEVER_FUNCTION(readln) {
-	::std::string buffer;
-
-	getline(::std::cin, buffer);
-
-	CLEVER_RETURN_STR(CSTRINGT(buffer));
-}
-
-/**
- * readString()
- * Reads a String from the standard input.
- */
-static CLEVER_FUNCTION(readString) {
-	::std::string buffer;
-	::std::cin >> buffer;
-
-	CLEVER_RETURN_STR(CSTRINGT(buffer));
-}
-
-/**
- * readInt()
- * Reads an Int from the standard input.
- */
-static CLEVER_FUNCTION(readInt) {
-	int64_t buffer;
-	::std::cin >> buffer;
-
-	CLEVER_RETURN_INT(buffer);
-}
-
-/**
- * readDouble()
- * Reads a Double from the standard input.
- */
-static CLEVER_FUNCTION(readDouble) {
-	double buffer;
-	::std::cin >> buffer;
-
-	CLEVER_RETURN_DOUBLE(buffer);
+	*/
 }
 
 } // namespace io
@@ -103,6 +48,7 @@ static CLEVER_FUNCTION(readDouble) {
  * Initializes Standard module
  */
 CLEVER_MODULE_INIT(IOModule) {
+	/*
 	using namespace io;
 
 	BEGIN_DECLARE_FUNCTION();
@@ -122,6 +68,7 @@ CLEVER_MODULE_INIT(IOModule) {
 	addFunction(new Function("readDouble", &CLEVER_FUNC_NAME(readDouble), CLEVER_DOUBLE));
 
 	END_DECLARE();
+	*/
 }
 
 }}} // clever::packages::std

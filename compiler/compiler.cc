@@ -52,6 +52,8 @@ void Compiler::init()
 	m_type_pool[m_type_id++] = CLEVER_INT_TYPE    = new IntType;
 	m_type_pool[m_type_id++] = CLEVER_DOUBLE_TYPE = new DoubleType;
 	m_type_pool[m_type_id++] = CLEVER_FUNC_TYPE   = new FuncType;
+
+	m_pkg.init();
 }
 
 /// Frees all resource used by the compiler
@@ -77,6 +79,8 @@ void Compiler::shutdown()
 		delete *it2;
 		++it2;
 	}
+
+	m_pkg.shutdown();
 }
 
 // Compiler termination phase
@@ -368,6 +372,11 @@ void Compiler::retStmt(Node& expr, const location& loc)
 
 		m_value_pool[m_value_id++] = value;
 	}
+}
+
+void Compiler::importStmt(Node& package)
+{
+	m_pkg.importPackage(m_scope, package.data.str);
 }
 
 /// Creates a new lexical scope
