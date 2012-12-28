@@ -50,9 +50,14 @@ namespace clever {
 class Scope;
 class Value;
 
+typedef std::vector<std::pair<size_t, Value*> > FuncVars;
+
 /// Stackframe representation
 struct StackFrame {
-	size_t ret_addr; // Return address
+	size_t ret_addr;     // Return address
+	Scope* arg_vars;     // Function arguments
+	Scope* local_vars;   // Local variables
+	FuncVars vars;       // Arg and local vars storage
 };
 
 /// VM representation
@@ -76,6 +81,10 @@ public:
 
 	// Helper to retrive a Value* from ValuePool
 	Value* getValue(size_t n) const { return (*m_value_pool)[n]; }
+
+	// Save function variables on recursion
+	void saveVars();
+	void restoreVars();
 
 	// Start the VM execution
 	void run();

@@ -1,0 +1,9 @@
+Testing function call
+==CODE==
+function test(foo) {
+	print(foo);
+}
+
+test(123);
+==RESULT==
+123

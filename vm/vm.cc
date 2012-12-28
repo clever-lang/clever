@@ -187,6 +187,49 @@ VM_HANDLER(send_val)
 	VM_NEXT();
 }
 
+// Saves function argument and local variables
+void VM::saveVars()
+{
+	Scope* arg_vars   = m_call_stack.top().arg_vars;
+	Scope* local_vars = m_call_stack.top().local_vars;
+
+	if (arg_vars) {
+		// Save the function argument values
+		for (size_t i = 0, j = arg_vars->size(); i < j; ++i) {
+			Value* tmp = new Value();
+
+			tmp->copy(getValue(arg_vars->at(i).getValueId()));
+			m_call_stack.top().vars.push_back(
+				std::pair<size_t, Value*>(
+					arg_vars->at(i).getValueId(), tmp));
+		}
+	}
+	if (local_vars) {
+		// Save the local variables
+		for (size_t i = 0, j = local_vars->size(); i < j; ++i) {
+			Value* tmp = new Value();
+
+			tmp->copy(getValue(local_vars->at(i).getValueId()));
+			m_call_stack.top().vars.push_back(
+				std::pair<size_t, Value*>(
+					local_vars->at(i).getValueId(), tmp));
+		}
+	}
+}
+
+// Restore the argument and local variables values
+void VM::restoreVars()
+{
+	FuncVars::const_iterator it = m_call_stack.top().vars.begin(),
+		end = m_call_stack.top().vars.end();
+
+	while (it != end) {
+		Value* var = getValue((*it).first);
+		var->copy((*it).second);
+		++it;
+	}
+}
+
 // Function call operation
 VM_HANDLER(fcall)
 {
@@ -194,14 +237,22 @@ VM_HANDLER(fcall)
 	FuncData* fdata = static_cast<FuncData*>(func->getObj());
 
 	if (fdata->type == USER_FUNC) {
+		// Save arguments and local vars on possible recursion
+		if (m_call_stack.size()) {
+			saveVars();
+		}
+
 		// Pushs a new stack frame for the user function call on the call stack
 		m_call_stack.push(StackFrame());
 
 		// Sets the return address to the next instruction
 		m_call_stack.top().ret_addr = m_pc + 1;
 
+		// Function argument value binding
 		if (fdata->arg_vars) {
 			Scope* arg_scope = fdata->arg_vars;
+
+			m_call_stack.top().arg_vars = arg_scope;
 
 			for (size_t i = 0, j = arg_scope->size(); i < j; ++i) {
 				Value* arg_val = getValue(arg_scope->at(i).getValueId());
@@ -219,6 +270,10 @@ VM_HANDLER(fcall)
 VM_HANDLER(leave)
 {
 	StackFrame& frame = m_call_stack.top();
+
+	if (m_call_stack.size() > 1) {
+		restoreVars();
+	}
 
 	m_call_stack.pop();
 
