@@ -54,7 +54,12 @@ public:
 	Value(double n) : m_data(n), m_type(CLEVER_DOUBLE_TYPE) {}
 	//Value(const CString* value) : m_data(value), m_type(CLEVER_STR_TYPE) {}
 
-	~Value() {}
+	~Value() {
+		/* FIXME: Find a better way to check if m_data.obj is used */
+		if (m_type && m_type != CLEVER_INT_TYPE && m_type != CLEVER_DOUBLE_TYPE) {
+			const_cast<Type*>(m_type)->deallocData(m_data.obj);
+		}
+	}
 
 	void setType(const Type* type) { m_type = type; }
 	const Type* getType() const { return m_type; }
