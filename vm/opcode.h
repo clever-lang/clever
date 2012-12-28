@@ -32,11 +32,15 @@ namespace clever {
 enum Opcode {
 	OP_RETURN,   //   0 - Used for returning
 	OP_ASSIGN,   //       Used for variable assignment
-	OP_PLUS,     //       Used for math sum operation
+	OP_ADD,      //       Used for math sum operation
+	OP_SUB,      //       Used for math subtraction operation
+	OP_MUL,      //       Used for math multiplication operation
+	OP_DIV,      //   5 - Used for math division operation
+	OP_MOD,      //       Used for math modulus operation
 	OP_PRINT,    //       TODO: make it regular function call
-	OP_HALT,     //   5 - Used to abort the VM execution
+	OP_HALT,     //       Used to abort the VM execution
 	OP_JMP,      //       Used for jumping to other instructions
-	OP_FCALL,    //       Used for function call
+	OP_FCALL,    //  10 - Used for function call
 	OP_LEAVE,    //       Used for leaving from a function call
 	OP_SEND_VAL, //       Used for send Value* to argument values
 	NUM_OPCODES

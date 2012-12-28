@@ -190,7 +190,7 @@ void Compiler::binOp(Opcode op, Node& lhs, Node& rhs, Node& res,
 	Value* result = new Value();
 
 	m_ir.push_back(
-		IR(OP_PLUS, FETCH_VAL, m_value_id, FETCH_VAL, m_value_id+1, result));
+		IR(op, FETCH_VAL, m_value_id, FETCH_VAL, m_value_id+1, result));
 
 	m_value_pool[m_value_id++] = getValue(lhs, NULL, loc);
 	m_value_pool[m_value_id++] = getValue(rhs, NULL, loc);

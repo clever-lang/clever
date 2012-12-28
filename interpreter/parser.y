@@ -209,7 +209,11 @@ r_value:
 ;
 
 math_expr:
-		r_value '+' r_value { c.binOp(OP_PLUS, $1, $3, $$, yyloc); }
+		r_value '+' r_value { c.binOp(OP_ADD, $1, $3, $$, yyloc); }
+	|	r_value '-' r_value { c.binOp(OP_SUB, $1, $3, $$, yyloc); }
+	|	r_value '*' r_value { c.binOp(OP_MUL, $1, $3, $$, yyloc); }
+	|	r_value '/' r_value { c.binOp(OP_DIV, $1, $3, $$, yyloc); }
+	|	r_value '%' r_value { c.binOp(OP_MOD, $1, $3, $$, yyloc); }
 ;
 
 print_stmt:
