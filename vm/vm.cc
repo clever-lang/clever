@@ -58,7 +58,7 @@ inline void VM::init()
 void VM::dumpOpcodes() const
 {
 	const char *op_type[] = {
-		"UNUSED", "FETCH_VAL", "FETCH_SCOPE", "JMP_ADDR"
+		"UNUSED", "FETCH_VAL", "JMP_ADDR"
 	};
 
 	for (size_t i = 0, j = m_inst.size(); i < j; ++i) {

@@ -36,7 +36,6 @@ class Value;
 enum OperandType {
 	UNUSED,      // Operand is not used
 	FETCH_VAL,   // For Value* fetchs
-	FETCH_SCOPE, // For scope switching
 	JMP_ADDR     // For instr addr
 };
 
