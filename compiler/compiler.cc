@@ -137,31 +137,13 @@ Value* Compiler::getValue(Node& node, Symbol** symbol, const location& loc) cons
 /// Compiles a variable declaration
 void Compiler::varDeclaration(Node& var, Node* node, const location& loc)
 {
-	Symbol* sym = m_scope->getLocal(var.data.str);
-
-	if (sym) {
+	if (m_scope->getLocal(var.data.str)) {
 		errorf(loc, "Variable `%S' already declared in the scope!", var.data.str);
 	}
 
-	size_t sym_id = m_scope->pushVar(var.data.str, new Value());
+	m_scope->pushVar(var.data.str, new Value());
 
-	// A NULL value is created for uninitialized declaration
-	sym = NULL;
-	Value* val = node ? getValue(*node, &sym, loc) : new Value();
-
-	// Value to be assigned
-	if (sym) {
-		m_ir.push_back(
-			IR(OP_ASSIGN, FETCH_VAL, sym_id, FETCH_VAL, sym->value_id));
-
-		m_ir.back().op2_scope = sym->scope->getId();
-	} else {
-		m_ir.push_back(
-			IR(OP_ASSIGN, FETCH_VAL, sym_id, FETCH_VAL, m_scope->pushConst(val)));
-
-		m_ir.back().op2_scope = m_scope->getId();
-	}
-	m_ir.back().op1_scope = m_scope->getId();
+	assignment(var, *node, loc);
 }
 
 /// Compiles a variable assignment
