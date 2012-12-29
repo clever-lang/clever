@@ -115,7 +115,7 @@ void Compiler::errorf(const location& loc, const char* format, ...) const
 /// Abstracts the Value* ptr gets from Node
 // NOTE: When the Node is a STRCONST, it automatically increments the Value's
 // refcount related to the Symbol
-Value* Compiler::getValue(Node& node, Symbol* symbol, const location& loc) const
+Value* Compiler::getValue(Node& node, Symbol** symbol, const location& loc) const
 {
 	if (node.type == VALUE) {
 		return node.data.val;
@@ -126,7 +126,7 @@ Value* Compiler::getValue(Node& node, Symbol* symbol, const location& loc) const
 			errorf(loc, "Variable `%S' cannot be found!", node.data.str);
 		}
 		if (symbol) {
-			symbol = sym;
+			*symbol = sym;
 		}
 
 		return m_scope_pool[sym->scope->getId()]->getVar(sym->value_id);
@@ -147,7 +147,7 @@ void Compiler::varDeclaration(Node& var, Node* node, const location& loc)
 
 	// A NULL value is created for uninitialized declaration
 	sym = NULL;
-	Value* val = node ? getValue(*node, sym, loc) : new Value();
+	Value* val = node ? getValue(*node, &sym, loc) : new Value();
 
 	// Value to be assigned
 	if (sym) {
@@ -168,8 +168,8 @@ void Compiler::varDeclaration(Node& var, Node* node, const location& loc)
 void Compiler::assignment(Node& var, Node& value, const location& loc)
 {
 	Symbol* var_sym = NULL, *val_sym = NULL;
-	(void)getValue(var, var_sym, loc);
-	Value* val = getValue(value, val_sym, loc);
+	(void)getValue(var, &var_sym, loc);
+	Value* val = getValue(value, &val_sym, loc);
 
 	if (val_sym) {
 		m_ir.push_back(
@@ -277,7 +277,7 @@ void Compiler::funcDecl(Node& node, ArgDeclList* arg_list, const location& loc)
 ArgCallList* Compiler::addArgCall(ArgCallList* arg_list, Node& arg, const location& loc)
 {
 	Symbol* sym = NULL;
-	Value* val = getValue(arg, sym, loc);
+	Value* val = getValue(arg, &sym, loc);
 
 	if (!arg_list) {
 		arg_list = new ArgCallList;
@@ -285,7 +285,6 @@ ArgCallList* Compiler::addArgCall(ArgCallList* arg_list, Node& arg, const locati
 
 	if (sym) {
 		arg_list->push_back(sym->value_id);
-		val->addRef();
 	} else {
 		arg_list->push_back(m_scope->pushConst(val));
 	}

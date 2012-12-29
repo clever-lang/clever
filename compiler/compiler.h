@@ -85,7 +85,7 @@ public:
 	void error(const std::string&, const location&) const;
 	void errorf(const location&, const char*, ...) const;
 
-	Value* getValue(Node&, Symbol*, const location&) const;
+	Value* getValue(Node&, Symbol**, const location&) const;
 
 	// Compilation methods
 	void varDeclaration(Node&, Node*, const location&);
