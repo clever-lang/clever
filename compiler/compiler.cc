@@ -51,6 +51,7 @@ void Compiler::init()
 	// Native type allocation
 	m_type_pool[m_type_id++] = CLEVER_INT_TYPE    = new IntType;
 	m_type_pool[m_type_id++] = CLEVER_DOUBLE_TYPE = new DoubleType;
+	m_type_pool[m_type_id++] = CLEVER_STR_TYPE    = new StrType;
 	m_type_pool[m_type_id++] = CLEVER_FUNC_TYPE   = new FuncType;
 
 	m_pkg.init(&m_value_pool, &m_value_id);

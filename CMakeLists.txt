@@ -144,6 +144,7 @@ add_executable(clever
         interpreter/scanner.h
         types/double.h
         types/int.h
+        types/str.h
         types/native_types.h
         types/type.h
         types/function.h

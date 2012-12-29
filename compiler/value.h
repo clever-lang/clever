@@ -31,6 +31,7 @@
 #include "compiler/refcounted.h"
 #include "types/type.h"
 #include "types/native_types.h"
+#include "compiler/cstring.h"
 
 namespace clever {
 
@@ -45,14 +46,14 @@ public:
 		DataValue() : lval(0) {}
 		DataValue(long value) : lval(value) {}
 		DataValue(double value) : dval(value) {}
-		DataValue(void* value) : obj(value) {}
 		DataValue(const CString* value) : sval(value) {}
+		DataValue(void* value) : obj(value) {}
 	};
 
 	Value() : m_data(), m_type(NULL) {}
 	Value(long n) : m_data(n), m_type(CLEVER_INT_TYPE) {}
 	Value(double n) : m_data(n), m_type(CLEVER_DOUBLE_TYPE) {}
-	//Value(const CString* value) : m_data(value), m_type(CLEVER_STR_TYPE) {}
+	Value(const CString* value) : m_data(value), m_type(CLEVER_STR_TYPE) {}
 
 	~Value() {
 		/* FIXME: Find a better way to check if m_data.obj is used */
@@ -77,6 +78,8 @@ public:
 	long getInt() const { return m_data.lval; }
 
 	const DataValue* getData() const { return &m_data; }
+
+	const CString* getStr() const { return m_data.sval; }
 
 	void copy(Value* value) {
 		m_type = value->getType();

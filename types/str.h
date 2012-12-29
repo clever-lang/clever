@@ -23,32 +23,25 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef CLEVER_NATIVE_TYPES_H
-#define CLEVER_NATIVE_TYPES_H
+#ifndef CLEVER_STR_H
+#define CLEVER_STR_H
 
-#include "types/int.h"
-#include "types/double.h"
-#include "types/str.h"
-#include "types/function.h"
+#include <iostream>
+#include "compiler/cstring.h"
+#include "types/type.h"
 
 namespace clever {
 
-extern Type* g_clever_int_type;
-extern Type* g_clever_double_type;
-extern Type* g_clever_str_type;
-extern Type* g_clever_func_type;
+class StrType : public Type {
+public:
+	StrType() : Type(CSTRING("String")) {}
+	~StrType() {}
 
-#define CLEVER_INT_TYPE    g_clever_int_type
-#define CLEVER_DOUBLE_TYPE g_clever_double_type
-#define CLEVER_STR_TYPE g_clever_str_type
-#define CLEVER_FUNC_TYPE   g_clever_func_type
+	void dump(const void* value) const {
+		std::cout << (*(const CString**)value)->c_str();
+	}
+};
 
-#define DECLARE_CLEVER_NATIVE_TYPES() \
-	Type* g_clever_int_type;          \
-	Type* g_clever_double_type;       \
-	Type* g_clever_str_type;          \
-	Type* g_clever_func_type;
+} // clever
 
-}
-
-#endif // CLEVER_NATIVE_TYPES_H
+#endif // CLEVER_STR_H

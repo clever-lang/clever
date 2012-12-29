@@ -49,7 +49,7 @@ class Value;
 	ArgCallList* arg_call_list;
 }
 
-%type <node> IDENT NUM_INTEGER NUM_DOUBLE
+%type <node> IDENT NUM_INTEGER NUM_DOUBLE STR
 %type <node> r_value math_expr func_call
 %type <arg_decl_list> arg_decl_list
 %type <arg_call_list> non_empty_arg_list arg_list
@@ -242,6 +242,7 @@ assignment:
 r_value:
 		NUM_INTEGER
 	|	NUM_DOUBLE
+	|	STR
 	|	math_expr
 	|	IDENT
 	|	func_call

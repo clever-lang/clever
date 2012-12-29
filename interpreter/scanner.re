@@ -244,6 +244,9 @@ next_token:
 			}
 		}
 
+		yylval->node.type = VALUE;
+		yylval->node.data.val = new Value(CSTRING(strtext));
+
 		RET(token::STR);
 	}
 
