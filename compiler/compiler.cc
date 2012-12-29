@@ -368,19 +368,20 @@ void Compiler::importStmt(Node& package, Node& module)
 }
 
 void Compiler::whileLoop(Node& cond, const location& loc)
-{/*
-	size_t val_id = 0;
-	Value* val = getValue(cond, &val_id, loc);
-
-	if (!val_id) {
-		val_id = m_value_id;
-		m_value_pool[m_value_id++] = val;
-	}
+{
+	Symbol* sym = NULL;
+	Value* val = getValue(cond, &sym, loc);
 
 	m_jmps.push(std::vector<size_t>());
 	m_jmps.top().push_back(m_ir.size());
 
-	m_ir.push_back(IR(OP_JMPZ, FETCH_VAL, val_id, JMP_ADDR, 0));*/
+	if (sym) {
+		m_ir.push_back(IR(OP_JMPZ, FETCH_VAL, sym->value_id, JMP_ADDR, 0));
+
+		m_ir.back().op1_scope = sym->scope->getId();
+	} else {
+		m_ir.push_back(IR(OP_JMPZ, FETCH_VAL, m_scope->pushConst(val), JMP_ADDR, 0));
+	}
 }
 
 void Compiler::endWhileLoop()
