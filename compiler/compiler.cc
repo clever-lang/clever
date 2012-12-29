@@ -42,10 +42,8 @@ void Compiler::init()
 
 	m_ir.reserve(20);
 	m_scope_pool.reserve(10);
-	m_value_pool.reserve(30);
 	m_type_pool.reserve(15);
 
-	m_value_pool[m_value_id++] = NULL;
 	m_scope_pool[m_scope_id++] = m_scope;
 
 	// Native type allocation
@@ -54,24 +52,16 @@ void Compiler::init()
 	m_type_pool[m_type_id++] = CLEVER_STR_TYPE    = new StrType;
 	m_type_pool[m_type_id++] = CLEVER_FUNC_TYPE   = new FuncType;
 
-	m_pkg.init(&m_value_pool, &m_value_id);
+	m_pkg.init();
 }
 
 /// Frees all resource used by the compiler
 void Compiler::shutdown()
 {
+	m_pkg.shutdown();
+
 	CLEVER_SAFE_DELETE(g_cstring_tbl);
 	CLEVER_SAFE_DELETE(m_scope);
-
-	ValuePool::const_iterator it = m_value_pool.begin(),
-		end = m_value_pool.end();
-
-	while (it != end) {
-		if (*it) {
-			(*it)->delRef();
-		}
-		++it;
-	}
 
 	TypePool::const_iterator it2 = m_type_pool.begin(),
 		end2 = m_type_pool.end();
@@ -80,8 +70,6 @@ void Compiler::shutdown()
 		delete *it2;
 		++it2;
 	}
-
-	m_pkg.shutdown();
 }
 
 // Compiler termination phase
@@ -127,20 +115,21 @@ void Compiler::errorf(const location& loc, const char* format, ...) const
 /// Abstracts the Value* ptr gets from Node
 // NOTE: When the Node is a STRCONST, it automatically increments the Value's
 // refcount related to the Symbol
-Value* Compiler::getValue(Node& node, size_t* val_id, const location& loc) const
+Value* Compiler::getValue(Node& node, Symbol* symbol, const location& loc) const
 {
 	if (node.type == VALUE) {
 		return node.data.val;
 	} else if (node.type == STRCONST) {
-		Symbol* sym = m_scope->getSymbol(node.data.str);
+		Symbol* sym = m_scope->getAny(node.data.str);
 
 		if (!sym) {
 			errorf(loc, "Variable `%S' cannot be found!", node.data.str);
 		}
-		if (val_id) {
-			*val_id = sym->getValueId();
+		if (symbol) {
+			symbol = sym;
 		}
-		return m_scope_pool[sym->getScopeId()]->getVar(sym->getValueId());
+
+		return m_scope_pool[sym->scope->getId()]->getVar(sym->value_id);
 	}
 	return NULL;
 }
@@ -148,7 +137,7 @@ Value* Compiler::getValue(Node& node, size_t* val_id, const location& loc) const
 /// Compiles a variable declaration
 void Compiler::varDeclaration(Node& var, Node* node, const location& loc)
 {
-	Symbol* sym = m_scope->getLocalSymbol(var.data.str);
+	Symbol* sym = m_scope->getLocal(var.data.str);
 
 	if (sym) {
 		errorf(loc, "Variable `%S' already declared in the scope!", var.data.str);
@@ -157,47 +146,51 @@ void Compiler::varDeclaration(Node& var, Node* node, const location& loc)
 	size_t sym_id = m_scope->pushVar(var.data.str, new Value());
 
 	// A NULL value is created for uninitialized declaration
-	size_t val_id = 0;
-	Value* val = node ? getValue(*node, &val_id, loc) : new Value();
+	sym = NULL;
+	Value* val = node ? getValue(*node, sym, loc) : new Value();
 
 	// Value to be assigned
-	if (val_id) {
+	if (sym) {
 		m_ir.push_back(
-			IR(OP_ASSIGN, FETCH_VAL, sym_id, FETCH_VAL, val_id));
+			IR(OP_ASSIGN, FETCH_VAL, sym_id, FETCH_VAL, sym->value_id));
 
+		m_ir.back().op2_scope = sym->scope->getId();
 	} else {
 		m_ir.push_back(
-			IR(OP_ASSIGN, FETCH_VAL, sym_id, FETCH_VAL, m_value_id));
+			IR(OP_ASSIGN, FETCH_VAL, sym_id, FETCH_VAL, m_scope->pushConst(val)));
 
-		m_ir.back().op1_scope = m_scope->getId();
 		m_ir.back().op2_scope = m_scope->getId();
-
-		m_scope->pushConst(val);
 	}
+	m_ir.back().op1_scope = m_scope->getId();
 }
 
 /// Compiles a variable assignment
 void Compiler::assignment(Node& var, Node& value, const location& loc)
 {
-	size_t var_id = 0, val_id = 0;
-	(void)getValue(var, &var_id, loc);
-	Value* val = getValue(value, &val_id, loc);
+	Symbol* var_sym = NULL, *val_sym = NULL;
+	(void)getValue(var, var_sym, loc);
+	Value* val = getValue(value, val_sym, loc);
 
-	if (val_id) {
+	if (val_sym) {
 		m_ir.push_back(
-			IR(OP_ASSIGN, FETCH_VAL, var_id, FETCH_VAL, val_id));
+			IR(OP_ASSIGN, FETCH_VAL, var_sym->value_id, FETCH_VAL, val_sym->value_id));
+
+		m_ir.back().op1_scope = var_sym->scope->getId();
+		m_ir.back().op2_scope = val_sym->scope->getId();
 	} else {
 		m_ir.push_back(
-			IR(OP_ASSIGN, FETCH_VAL, var_id, FETCH_VAL, m_value_id));
+			IR(OP_ASSIGN, FETCH_VAL, var_sym->value_id, FETCH_VAL, m_scope->pushConst(val)));
 
-		m_value_pool[m_value_id++] = val;
+		m_ir.back().op1_scope = var_sym->scope->getId();
+		m_ir.back().op1_scope = m_scope->getId();
+
 	}
 }
 
 /// Compiles a set of binary operation
 void Compiler::binOp(Opcode op, Node& lhs, Node& rhs, Node& res,
 	const location& loc)
-{
+{/*
 	size_t rhs_id = 0, lhs_id = 0;
 	Value* result = new Value();
 
@@ -219,7 +212,7 @@ void Compiler::binOp(Opcode op, Node& lhs, Node& rhs, Node& res,
 		IR(op, FETCH_VAL, lhs_id, FETCH_VAL, rhs_id, result));
 
 	res.type = VALUE;
-	res.data.val = result;
+	res.data.val = result;*/
 }
 
 /// Creates a list of arguments
@@ -234,7 +227,7 @@ ArgDeclList* Compiler::newArgDeclList(const CString* arg) const
 /// Starts the function compilation
 void Compiler::funcDecl(Node& node, ArgDeclList* arg_list, const location& loc)
 {
-	Symbol* sym = m_scope->getSymbol(node.data.str);
+	Symbol* sym = m_scope->getAny(node.data.str);
 
 	if (sym) {
 		errorf(loc, "Name `%S' already in used!", node.data.str);
@@ -283,18 +276,17 @@ void Compiler::funcDecl(Node& node, ArgDeclList* arg_list, const location& loc)
 /// Adds new argument to the call argument list
 ArgCallList* Compiler::addArgCall(ArgCallList* arg_list, Node& arg, const location& loc)
 {
-	size_t val_id = 0;
-	Value* val = getValue(arg, &val_id, loc);
+	Symbol* sym = NULL;
+	Value* val = getValue(arg, sym, loc);
 
 	if (!arg_list) {
 		arg_list = new ArgCallList;
 	}
 
-	if (val_id) {
-		arg_list->push_back(val_id);
+	if (sym) {
+		arg_list->push_back(sym->value_id);
 	} else {
-		arg_list->push_back(m_value_id);
-		m_value_pool[m_value_id++] = val;
+		arg_list->push_back(m_scope->pushConst(val));
 	}
 
 	return arg_list;
@@ -319,7 +311,7 @@ void Compiler::funcEndDecl(bool has_args)
 void Compiler::funcCall(Node& name, ArgCallList* arg_list, Node& res,
 	const location& loc)
 {
-	Symbol* sym = m_scope->getSymbol(name.data.str);
+	Symbol* sym = m_scope->getAny(name.data.str);
 
 	if (!sym) {
 		errorf(loc, "Function `%S' cannot be found!", name.data.str);
@@ -339,9 +331,9 @@ void Compiler::funcCall(Node& name, ArgCallList* arg_list, Node& res,
 	res.data.val = result;
 
 	m_ir.push_back(
-		IR(OP_FCALL, FETCH_VAL, sym->getValueId(), result));
+		IR(OP_FCALL, FETCH_VAL, sym->value_id, result));
 
-	m_ir.back().op1_scope = sym->getScopeId();
+	m_ir.back().op1_scope = sym->scope->getId();
 
 	if (arg_list) {
 		delete arg_list;
@@ -350,7 +342,7 @@ void Compiler::funcCall(Node& name, ArgCallList* arg_list, Node& res,
 
 /// Compiles a return statement
 void Compiler::retStmt(Node* expr, const location& loc)
-{
+{/*
 	if (expr) {
 		size_t val_id = 0;
 		Value* value = getValue(*expr, &val_id, loc);
@@ -364,7 +356,7 @@ void Compiler::retStmt(Node* expr, const location& loc)
 		}
 	} else {
 		m_ir.push_back(IR(OP_RET));
-	}
+	}*/
 }
 
 void Compiler::importStmt(Node& package)
@@ -378,7 +370,7 @@ void Compiler::importStmt(Node& package, Node& module)
 }
 
 void Compiler::whileLoop(Node& cond, const location& loc)
-{
+{/*
 	size_t val_id = 0;
 	Value* val = getValue(cond, &val_id, loc);
 
@@ -390,7 +382,7 @@ void Compiler::whileLoop(Node& cond, const location& loc)
 	m_jmps.push(std::vector<size_t>());
 	m_jmps.top().push_back(m_ir.size());
 
-	m_ir.push_back(IR(OP_JMPZ, FETCH_VAL, val_id, JMP_ADDR, 0));
+	m_ir.push_back(IR(OP_JMPZ, FETCH_VAL, val_id, JMP_ADDR, 0));*/
 }
 
 void Compiler::endWhileLoop()

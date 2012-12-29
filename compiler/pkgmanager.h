@@ -61,7 +61,7 @@ public:
 	~PkgManager() {}
 
 	/// Initialization routine
-	void init(std::vector<Value*>*, size_t*);
+	void init();
 
 	/// Shutdown routine
 	void shutdown();
@@ -79,8 +79,6 @@ public:
 	void loadModule(Scope*, Module*);
 private:
 	PackageMap m_pkgs;
-	ValuePool* m_value_pool;
-	size_t* m_value_id;
 };
 
 } // clever

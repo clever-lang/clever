@@ -81,9 +81,6 @@ public:
 	/// Sets the symbol table to used by the VM to fetch the symbol names
 	void setSymbolTable(ScopePool* scope) { m_scope_pool = scope; }
 
-	/// Sets the Value* pool to be used by VM to fetch the instr values
-	void setValuePool(ValuePool* value) { m_value_pool = value; }
-
 	/// Helper to retrive a Value* from ValuePool
 	Value* getValue(size_t, size_t) const;
 

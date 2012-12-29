@@ -33,10 +33,8 @@
 namespace clever {
 
 /// Adds the available packages to be imported
-void PkgManager::init(ValuePool* value_pool, size_t* value_id)
+void PkgManager::init()
 {
-	m_value_pool = value_pool;
-	m_value_id = value_id;
 
 	addPackage(CSTRING("std"), new packages::Std);
 }

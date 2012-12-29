@@ -62,8 +62,8 @@ struct Node {
 class Compiler {
 public:
 	Compiler()
-		: m_ir(), m_scope(NULL), m_scope_pool(10), m_value_pool(30),
-			m_type_pool(15), m_scope_id(0), m_value_id(0), m_type_id(0),
+		: m_ir(), m_scope(NULL), m_scope_pool(10),
+			m_type_pool(15), m_scope_id(0), m_type_id(0),
 			m_curr_func(0) {}
 
 	~Compiler() {}
@@ -79,14 +79,13 @@ public:
 
 	IRVector& getIR() { return m_ir; }
 
-	ScopePool* getScopePool() { return &m_scope_pool; }
-	ValuePool* getValuePool() { return &m_value_pool; }
+	ScopePool* getSymbolTable() { return &m_scope_pool; }
 
 	void error(const char*) const;
 	void error(const std::string&, const location&) const;
 	void errorf(const location&, const char*, ...) const;
 
-	Value* getValue(Node&, size_t*, const location&) const;
+	Value* getValue(Node&, Symbol*, const location&) const;
 
 	// Compilation methods
 	void varDeclaration(Node&, Node*, const location&);
@@ -116,7 +115,6 @@ private:
 
 	// Compiler pools, which got passed to VM after compiling
 	ScopePool m_scope_pool;
-	ValuePool m_value_pool;
 	TypePool m_type_pool;
 
 	// Indexes for pools

@@ -42,22 +42,15 @@ class Value;
 typedef std::vector<Value*> ValuePool;
 
 /// Symbol representation
-class Symbol {
-public:
-	Symbol(const CString* name, size_t value_id, size_t scope_id)
-		: m_name(name), m_value_id(value_id), m_scope_id(scope_id) {}
+struct Symbol {
+	Symbol(const CString *name_, size_t value_id_, Scope *scope_ = NULL)
+		: name(name_), value_id(value_id_), scope(scope_) {}
 
 	~Symbol() {}
 
-	const CString* getName() const { return m_name; }
-
-	size_t getValueId() const { return m_value_id; }
-
-	size_t getScopeId() const { return m_scope_id; }
-private:
-	const CString* m_name;
-	size_t m_value_id;
-	size_t m_scope_id;
+	const CString* name;
+	size_t value_id;
+	Scope *scope;
 };
 
 /// Scope representation
@@ -69,12 +62,26 @@ public:
 	typedef SymbolTable::value_type SymbolEntry;
 
 	Scope()
-		: m_parent(NULL), m_children(), m_symbols(), m_size(0), m_id(0), m_value_id(0), m_value_pool(30) {}
+		: m_parent(NULL), m_children(), m_symbols(), m_size(0), m_id(0), m_value_id(1), m_value_pool() {
+		m_value_pool.reserve(30);
+	}
 
 	explicit Scope(Scope* parent)
-		: m_parent(parent), m_children(), m_symbols(), m_size(0), m_id(0), m_value_id(0), m_value_pool(30) {}
+		: m_parent(parent), m_children(), m_symbols(), m_size(0), m_id(0), m_value_id(1), m_value_pool() {
+		m_value_pool.reserve(30);
+	}
 
 	~Scope() {
+		ValuePool::const_iterator itv = m_value_pool.begin(),
+			endv = m_value_pool.end();
+
+		while (itv != endv) {
+			if (*itv) {
+				(*itv)->delRef();
+			}
+			++itv;
+		}
+
 		ScopeVector::const_iterator it = m_children.begin(),
 			end = m_children.end();
 
@@ -85,8 +92,8 @@ public:
 	}
 
 	size_t pushVar(const CString* name, Value* value) {
-		m_symbols.push_back(Symbol(name, m_value_id, m_id));
-		m_symbol_table.insert(SymbolEntry(name, m_size));
+		m_symbols.push_back(Symbol(name, m_value_id, this));
+		m_symbol_table.insert(SymbolEntry(name, m_size++));
 		m_value_pool[m_value_id] = value;
 
 		return m_value_id++;
@@ -114,8 +121,8 @@ public:
 
 	Scope* getParent() const { return m_parent; }
 
-	Symbol* getLocalSymbol(const CString*);
-	Symbol* getSymbol(const CString*);
+	Symbol* getLocal(const CString*);
+	Symbol* getAny(const CString*);
 private:
 	Scope* m_parent;
 	ScopeVector m_children;
@@ -129,7 +136,7 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(Scope);
 };
 
-inline Symbol* Scope::getLocalSymbol(const CString* name) {
+inline Symbol* Scope::getLocal(const CString* name) {
 	SymbolTable::iterator it = m_symbol_table.find(name);
 
 	if (it == m_symbol_table.end()) {
@@ -139,8 +146,8 @@ inline Symbol* Scope::getLocalSymbol(const CString* name) {
 }
 
 /// Resolve a symbol name recursively
-inline Symbol* Scope::getSymbol(const CString* name) {
-	Symbol* sym = getLocalSymbol(name);
+inline Symbol* Scope::getAny(const CString* name) {
+	Symbol* sym = getLocal(name);
 
 	if (sym != NULL) {
 		return sym;
@@ -148,7 +155,7 @@ inline Symbol* Scope::getSymbol(const CString* name) {
 
 	Scope* v = m_parent;
 	while (v != NULL) {
-		sym = v->getLocalSymbol(name);
+		sym = v->getLocal(name);
 
 		if (sym != NULL) {
 			return sym;

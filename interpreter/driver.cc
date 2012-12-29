@@ -44,8 +44,7 @@ void Interpreter::execute(bool interactive)
 {
 	VM vm(m_compiler.getIR());
 
-	vm.setSymbolTable(m_compiler.getScopePool());
-	vm.setValuePool(m_compiler.getValuePool());
+	vm.setSymbolTable(m_compiler.getSymbolTable());
 
 #ifdef CLEVER_DEBUG
 	if (m_dump_opcode) {
