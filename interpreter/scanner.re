@@ -201,7 +201,7 @@ next_token:
 	}
 
 	<INITIAL>IDENTIFIER {
-		yylval->node.type = STRCONST;
+		yylval->node.type = SYMBOL;
 		yylval->node.data.str = CSTRING(std::string(reinterpret_cast<const char*>(s.yylex), yylen));
 		RET(token::IDENT);
 	}

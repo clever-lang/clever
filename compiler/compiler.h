@@ -47,7 +47,11 @@ typedef std::vector<Type*> TypePool;
 typedef std::vector<const CString*> ArgDeclList;
 typedef std::vector<std::pair<size_t, size_t> > ArgCallList;
 
-enum NodeType { STRCONST, VALUE };
+enum NodeType {
+	SYMBOL, // For symbol name
+	VALUE,  // For Value ptr
+	TEMP    // For temporary Value ptr
+};
 
 struct Node {
 	union NodeData {
@@ -64,7 +68,7 @@ public:
 	Compiler()
 		: m_ir(), m_scope(NULL), m_scope_pool(10),
 			m_type_pool(15), m_scope_id(0), m_type_id(0),
-			m_curr_func(0) {}
+			m_curr_func(0), m_tmp_vals() {}
 
 	~Compiler() {}
 
@@ -126,6 +130,9 @@ private:
 	// Used to point the instruction index on m_ir related to JMP created
 	// just before the current func declaration to skip his internal opcodes
 	size_t m_curr_func;
+
+	// Used to store temporary computation Value ptr
+	ValuePool m_tmp_vals;
 
 	std::stack<std::vector<size_t> > m_jmps;
 

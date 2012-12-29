@@ -41,6 +41,7 @@ void Compiler::init()
 	m_scope = new Scope;
 
 	m_ir.reserve(20);
+	m_tmp_vals.reserve(15);
 	m_scope_pool.reserve(10);
 	m_type_pool.reserve(15);
 
@@ -63,11 +64,19 @@ void Compiler::shutdown()
 	CLEVER_SAFE_DELETE(g_cstring_tbl);
 	CLEVER_SAFE_DELETE(m_scope);
 
-	TypePool::const_iterator it2 = m_type_pool.begin(),
-		end2 = m_type_pool.end();
+	TypePool::const_iterator it = m_type_pool.begin(),
+		end = m_type_pool.end();
+
+	while (it != end) {
+		delete *it;
+		++it;
+	}
+
+	ValuePool::const_iterator it2 = m_tmp_vals.begin(),
+		end2 = m_tmp_vals.end();
 
 	while (it2 != end2) {
-		delete *it2;
+		(*it2)->delRef();
 		++it2;
 	}
 }
@@ -113,13 +122,16 @@ void Compiler::errorf(const location& loc, const char* format, ...) const
 }
 
 /// Abstracts the Value* ptr gets from Node
-// NOTE: When the Node is a STRCONST, it automatically increments the Value's
+// NOTE: When the Node is a SYMBOL, it automatically increments the Value's
 // refcount related to the Symbol
 Value* Compiler::getValue(Node& node, Symbol** symbol, const location& loc) const
 {
 	if (node.type == VALUE) {
 		return node.data.val;
-	} else if (node.type == STRCONST) {
+	} else if (node.type == TEMP) {
+		node.data.val->addRef();
+		return node.data.val;
+	} else if (node.type == SYMBOL) {
 		Symbol* sym = m_scope->getAny(node.data.str);
 
 		if (!sym) {
@@ -187,8 +199,10 @@ void Compiler::binOp(Opcode op, Node& lhs, Node& rhs, Node& res,
 	m_ir.back().op1_scope = lhs_sym ? lhs_sym->scope->getId() : m_scope->getId();
 	m_ir.back().op2_scope = rhs_sym ? rhs_sym->scope->getId() : m_scope->getId();
 
-	res.type = VALUE;
+	res.type = TEMP;
 	res.data.val = result;
+
+	m_tmp_vals.push_back(result);
 }
 
 /// Creates a list of arguments
@@ -303,11 +317,13 @@ void Compiler::funcCall(Node& name, ArgCallList* arg_list, Node& res,
 		}
 	}
 
-	res.type = VALUE;
+	res.type = TEMP;
 	res.data.val = result;
 
 	m_ir.push_back(
 		IR(OP_FCALL, FETCH_VAL, sym->value_id, result));
+
+	m_tmp_vals.push_back(result);
 
 	m_ir.back().op1_scope = sym->scope->getId();
 
@@ -384,8 +400,10 @@ void Compiler::incDec(Opcode op, Node& var, Node& res, const location& loc)
 	m_ir.back().op1_scope = sym->scope->getId();
 	m_ir.back().result = result;
 
-	res.type = VALUE;
+	res.type = TEMP;
 	res.data.val = result;
+
+	m_tmp_vals.push_back(result);
 }
 
 /// Creates a new lexical scope

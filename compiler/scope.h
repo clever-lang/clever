@@ -63,14 +63,12 @@ public:
 	typedef SymbolTable::value_type SymbolEntry;
 
 	Scope()
-		: m_parent(NULL), m_children(), m_symbols(), m_size(0), m_id(0), m_value_id(0), m_value_pool(30) {
-		m_value_pool.reserve(30);
-	}
+		: m_parent(NULL), m_children(), m_symbols(), m_size(0), m_id(0),
+			m_value_id(0), m_value_pool(30) { m_value_pool.reserve(30); }
 
 	explicit Scope(Scope* parent)
-		: m_parent(parent), m_children(), m_symbols(), m_size(0), m_id(0), m_value_id(0), m_value_pool(30) {
-		m_value_pool.reserve(30);
-	}
+		: m_parent(parent), m_children(), m_symbols(), m_size(0), m_id(0),
+			m_value_id(0), m_value_pool(30) { m_value_pool.reserve(30); }
 
 	~Scope() {
 		ValuePool::const_iterator itv = m_value_pool.begin(),
@@ -110,6 +108,7 @@ public:
 	Symbol& at(size_t idx) { return m_symbols[idx]; }
 
 	void setId(size_t id) { m_id = id; }
+
 	size_t getId() const { return m_id; }
 
 	size_t size() const { return m_size; }
