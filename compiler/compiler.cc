@@ -344,16 +344,19 @@ void Compiler::funcCall(Node& name, ArgCallList* arg_list, Node& res,
 void Compiler::retStmt(Node* expr, const location& loc)
 {
 	if (expr) {
-		Symbol* sym;
+		Symbol* sym = NULL;
 		Value* value = getValue(*expr, &sym, loc);
 
 		if (sym) {
 			m_ir.push_back(IR(OP_RET, FETCH_VAL, sym->value_id));
+			m_ir.back().op1_scope = sym->scope->getId();
 		} else {
 			m_ir.push_back(IR(OP_RET, FETCH_VAL, m_scope->pushConst(value)));
+			m_ir.back().op1_scope = m_scope->getId();
 		}
 	} else {
 		m_ir.push_back(IR(OP_RET));
+		m_ir.back().op1_scope = m_scope->getId();
 	}
 }
 
