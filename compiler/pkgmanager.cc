@@ -42,6 +42,20 @@ void PkgManager::init(ValuePool* value_pool, size_t* value_id)
 
 void PkgManager::shutdown()
 {
+	PackageMap::const_iterator it = m_pkgs.begin(), end = m_pkgs.end();
+
+	while (it != end) {
+		ModuleMap& mods = it->second->getModules();
+		ModuleMap::const_iterator itm = mods.begin(), endm = mods.end();
+
+		while (itm != endm) {
+			delete itm->second;
+			++itm;
+		}
+
+		delete it->second;
+		++it;
+	}
 }
 
 /// Imports a module

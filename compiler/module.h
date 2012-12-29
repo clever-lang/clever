@@ -48,7 +48,7 @@ typedef std::pair<const CString*, Function*> FuncMapEntry;
 class Module {
 public:
 	Module(std::string name) : m_name(name) {}
-	~Module() {}
+	virtual ~Module() {}
 
 	void addFunction(Function* func) {
 		m_funcs.insert(FuncMapEntry(CSTRING(func->getName()), func));

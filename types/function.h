@@ -48,16 +48,17 @@ public:
 	enum FuncKind { UNDEF, USER_FUNC, INTERNAL_FUNC };
 
 	Function()
-		: m_name(), m_arg_vars(NULL), m_local_vars(NULL) {}
-	~Function() {}
+		: m_name(), m_type(UNDEF), m_arg_vars(NULL), m_local_vars(NULL) {}
 
 	Function(std::string name, FunctionPtr ptr)
-		: m_name(name), m_arg_vars(NULL), m_local_vars(NULL)
+		: m_name(name), m_type(UNDEF), m_arg_vars(NULL), m_local_vars(NULL)
 		{ m_info.ptr = ptr; }
 
 	Function(std::string name, size_t addr)
-		: m_name(name), m_arg_vars(NULL), m_local_vars(NULL)
+		: m_name(name), m_type(UNDEF), m_arg_vars(NULL), m_local_vars(NULL)
 		{ m_info.addr = addr; }
+
+	~Function() {}
 
 	void setName(std::string name) { m_name = name; }
 	const std::string& getName() const { return m_name; }

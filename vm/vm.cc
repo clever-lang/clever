@@ -277,6 +277,7 @@ VM_HANDLER(fcall)
 		VM_GOTO(fdata->getAddr());
 	} else {
 		fdata->getPtr()(m_call_args);
+		m_call_args.clear();
 	}
 }
 

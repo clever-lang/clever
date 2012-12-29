@@ -60,7 +60,7 @@ public:
 	PkgManager() {}
 	~PkgManager() {}
 
-	void init(ValuePool*, size_t*);
+	void init(std::vector<Value*>*, size_t*);
 	void shutdown();
 
 	void addPackage(const CString* name, Package* package) {
