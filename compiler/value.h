@@ -30,10 +30,25 @@
 #include "compiler/clever.h"
 #include "compiler/refcounted.h"
 #include "types/type.h"
-#include "types/native_types.h"
 #include "compiler/cstring.h"
 
 namespace clever {
+
+extern Type* g_clever_int_type;
+extern Type* g_clever_double_type;
+extern Type* g_clever_str_type;
+extern Type* g_clever_func_type;
+
+#define DECLARE_CLEVER_NATIVE_TYPES() \
+	Type* g_clever_int_type;          \
+	Type* g_clever_double_type;       \
+	Type* g_clever_str_type;          \
+	Type* g_clever_func_type;
+
+#define CLEVER_INT_TYPE    g_clever_int_type
+#define CLEVER_DOUBLE_TYPE g_clever_double_type
+#define CLEVER_STR_TYPE g_clever_str_type
+#define CLEVER_FUNC_TYPE   g_clever_func_type
 
 class Value : public RefCounted {
 public:
@@ -76,6 +91,9 @@ public:
 
 	void setInt(long n) { m_data.lval = n; m_type = CLEVER_INT_TYPE; }
 	long getInt() const { return m_data.lval; }
+
+	void setDouble(double n) { m_data.dval = n; m_type = CLEVER_DOUBLE_TYPE; }
+	double getDouble() const { return m_data.dval; }
 
 	const DataValue* getData() const { return &m_data; }
 

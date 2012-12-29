@@ -129,7 +129,7 @@ Value* Compiler::getValue(Node& node, Symbol** symbol, const location& loc) cons
 			*symbol = sym;
 		}
 
-		return m_scope_pool[sym->scope->getId()]->getVar(sym->value_id);
+		return m_scope_pool[sym->scope->getId()]->getValue(sym->value_id);
 	}
 	return NULL;
 }
@@ -194,7 +194,7 @@ void Compiler::binOp(Opcode op, Node& lhs, Node& rhs, Node& res,
 	Symbol* rhs_sym = NULL, *lhs_sym = NULL;
 	Value* lhs_val = getValue(lhs, &lhs_sym, loc);
 	Value* rhs_val = getValue(rhs, &rhs_sym, loc);
-	Value* result = new Value();
+	Value* result = new Value;
 
 	m_ir.push_back(
 		IR(op,
@@ -389,6 +389,21 @@ void Compiler::endWhileLoop()
 
 	// Sets the jmp address of JMPZ instructon related to the loop condition
 	m_ir[m_jmps.top().at(0)].op2 = m_ir.size();
+}
+
+/// Compiles increment/decrement operation
+void Compiler::incDec(Opcode op, Node& var, Node& res, const location& loc)
+{
+	Symbol* sym = NULL;
+	Value* result = new Value();
+	(void)getValue(var, &sym, loc);
+
+	m_ir.push_back(IR(op, FETCH_VAL, sym->value_id));
+	m_ir.back().op1_scope = sym->scope->getId();
+	m_ir.back().result = result;
+
+	res.type = VALUE;
+	res.data.val = result;
 }
 
 /// Creates a new lexical scope

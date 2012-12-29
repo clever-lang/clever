@@ -42,6 +42,10 @@ enum Opcode {
 	OP_LEAVE,    //       Used for leaving from a function call
 	OP_SEND_VAL, //  10 - Used for send Value* to argument values,
 	OP_JMPZ,     //       Used for jumping if zero
+	OP_PRE_INC,  //       Used for pre increment variable
+	OP_PRE_DEC,  //       Used for pre decrement variable
+	OP_POS_INC,  //       Used for pos increment variable
+	OP_POS_DEC,  //  15 - Used for pos decrement variable
 	NUM_OPCODES
 };
 

@@ -30,6 +30,8 @@
 
 namespace clever {
 
+class Value;
+
 class Type {
 public:
 	Type(const CString* name) : m_name(name) {}
@@ -43,6 +45,9 @@ public:
 
 	virtual void* allocData() { return NULL; }
 	virtual void deallocData(void* data) {}
+
+	virtual void increment(Value*) const = 0;
+	virtual void decrement(Value*) const = 0;
 private:
 	const CString* m_name;
 };

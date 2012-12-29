@@ -28,6 +28,7 @@
 
 #include <iostream>
 #include "compiler/cstring.h"
+#include "compiler/value.h"
 #include "types/type.h"
 
 namespace clever {
@@ -38,6 +39,14 @@ public:
 	~IntType() {}
 
 	void dump(const void* value) const { std::cout << *(long*)value; }
+
+	void increment(Value* value) const {
+		value->setInt(value->getInt()+1);
+	}
+
+	void decrement(Value* value) const {
+		value->setInt(value->getInt()-1);
+	}
 };
 
 } // clever

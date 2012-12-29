@@ -50,7 +50,7 @@ class Value;
 }
 
 %type <node> IDENT NUM_INTEGER NUM_DOUBLE STR
-%type <node> r_value math_expr func_call
+%type <node> r_value math_expr func_call inc_dec
 %type <arg_decl_list> arg_decl_list
 %type <arg_call_list> non_empty_arg_list arg_list
 
@@ -116,6 +116,8 @@ class Value;
 %token CONST         "const"
 %token PRINT         "print"
 %token FUNC          "function"
+%token INCREMENT     "++"
+%token DECREMENT     "--"
 
 %left ',';
 %left LOGICAL_OR;
@@ -168,6 +170,14 @@ non_empty_statement_list:
 	|	return_stmt ';'
 	|	if_cond
 	|	while_loop
+	|	inc_dec ';'
+;
+
+inc_dec:
+		IDENT INCREMENT { c.incDec(OP_POS_INC, $1, $$, yyloc); }
+	|	INCREMENT IDENT { c.incDec(OP_PRE_INC, $2, $$, yyloc);  }
+	|	IDENT DECREMENT { c.incDec(OP_POS_DEC, $1, $$, yyloc); }
+	|	DECREMENT IDENT { c.incDec(OP_PRE_DEC, $2, $$, yyloc);  }
 ;
 
 while_loop:
@@ -246,6 +256,7 @@ r_value:
 	|	math_expr
 	|	IDENT
 	|	func_call
+	|	inc_dec
 ;
 
 math_expr:

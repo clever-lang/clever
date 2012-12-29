@@ -38,6 +38,7 @@
 namespace clever {
 
 class Value;
+class Scope;
 
 typedef std::vector<Value*> ValuePool;
 
@@ -104,7 +105,7 @@ public:
 		return m_value_id++;
 	}
 
-	Value* getVar(size_t idx) { return m_value_pool[idx]; }
+	Value* getValue(size_t idx) { return m_value_pool[idx]; }
 
 	Symbol& at(size_t idx) { return m_symbols[idx]; }
 

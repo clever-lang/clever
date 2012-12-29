@@ -28,6 +28,7 @@
 
 #include <vector>
 #include "compiler/clever.h"
+#include "compiler/value.h"
 #include "types/type.h"
 
 namespace clever {
@@ -108,6 +109,10 @@ public:
 
 	void* allocData() { return new Function; }
 	void deallocData(void* data) { if (data) { delete static_cast<Function*>(data); } }
+
+	void increment(Value* value) const {}
+
+	void decrement(Value* value) const {}
 };
 
 } // clever

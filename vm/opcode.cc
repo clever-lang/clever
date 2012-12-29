@@ -45,6 +45,10 @@ const char* get_opcode_name(Opcode opnum)
 		CASE(OP_LEAVE);
 		CASE(OP_SEND_VAL);
 		CASE(OP_JMPZ);
+		CASE(OP_PRE_INC);
+		CASE(OP_PRE_DEC);
+		CASE(OP_POS_INC);
+		CASE(OP_POS_DEC);
 		EMPTY_SWITCH_DEFAULT_CASE();
 	}
 #undef CASE

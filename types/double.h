@@ -27,6 +27,8 @@
 #define CLEVER_DOUBLE_H
 
 #include <iostream>
+#include "compiler/cstring.h"
+#include "compiler/value.h"
 #include "types/type.h"
 
 namespace clever {
@@ -37,6 +39,14 @@ public:
 	~DoubleType() {}
 
 	void dump(const void* value) const { std::cout << *(double*)value; }
+
+	void increment(Value* value) const {
+		value->setInt(value->getDouble()+1);
+	}
+
+	void decrement(Value* value) const {
+		value->setInt(value->getDouble()-1);
+	}
 };
 
 } // clever

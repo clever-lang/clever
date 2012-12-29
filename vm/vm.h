@@ -111,6 +111,8 @@ public:
 	VM_HANDLER_D(leave);
 	VM_HANDLER_D(send_val);
 	VM_HANDLER_D(jmpz);
+	VM_HANDLER_D(inc);
+	VM_HANDLER_D(dec);
 private:
 	/// Initialization phase
 	void init();

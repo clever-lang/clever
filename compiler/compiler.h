@@ -103,6 +103,7 @@ public:
 	void importStmt(Node&, Node&);
 	void whileLoop(Node&, const location&);
 	void endWhileLoop();
+	void incDec(Opcode, Node&, Node&, const location&);
 private:
 	// Package manager
 	PkgManager m_pkg;

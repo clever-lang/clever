@@ -51,11 +51,15 @@ inline void VM::init()
 	m_handlers[OP_LEAVE]    = &VM::leave;
 	m_handlers[OP_SEND_VAL] = &VM::send_val;
 	m_handlers[OP_JMPZ]     = &VM::jmpz;
+	m_handlers[OP_PRE_INC]  = &VM::inc;
+	m_handlers[OP_POS_INC]  = &VM::inc;
+	m_handlers[OP_PRE_DEC]  = &VM::dec;
+	m_handlers[OP_POS_DEC]  = &VM::dec;
 }
 
 inline Value* VM::getValue(size_t scope_id, size_t value_id) const
 {
-	return (*m_scope_pool)[scope_id]->getVar(value_id);
+	return (*m_scope_pool)[scope_id]->getValue(value_id);
 }
 
 #ifdef CLEVER_DEBUG
@@ -305,6 +309,38 @@ VM_HANDLER(leave)
 
 	// Go back to the next instruction after the caller
 	VM_GOTO(frame.ret_addr);
+}
+
+// Increment operation
+VM_HANDLER(inc)
+{
+	Value* value = getValue(op.op1_scope, op.op1);
+
+	if (op.opcode == OP_PRE_INC) {
+		value->getType()->increment(value);
+		op.result->copy(value);
+	} else {
+		op.result->copy(value);
+		value->getType()->increment(value);
+	}
+
+	VM_NEXT();
+}
+
+// Decrement operation
+VM_HANDLER(dec)
+{
+	Value* value = getValue(op.op1_scope, op.op1);
+
+	if (op.opcode == OP_PRE_DEC) {
+		value->getType()->decrement(value);
+		op.result->copy(value);
+	} else {
+		op.result->copy(value);
+		value->getType()->decrement(value);
+	}
+
+	VM_NEXT();
 }
 
 // Executes the VM opcodes in a continuation-passing style
