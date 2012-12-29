@@ -285,6 +285,7 @@ ArgCallList* Compiler::addArgCall(ArgCallList* arg_list, Node& arg, const locati
 
 	if (sym) {
 		arg_list->push_back(sym->value_id);
+		val->addRef();
 	} else {
 		arg_list->push_back(m_scope->pushConst(val));
 	}
