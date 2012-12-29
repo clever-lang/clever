@@ -213,7 +213,7 @@ void VM::saveVars()
 					arg_vars->at(i).getValueId(), tmp));
 		}
 	}
-	if (local_vars) {
+	if (EXPECTED(local_vars != NULL)) {
 		// Save the local variables
 		for (size_t i = 0, j = local_vars->size(); i < j; ++i) {
 			Value* tmp = new Value();
@@ -232,7 +232,7 @@ void VM::restoreVars() const
 	FuncVars::const_iterator it = m_call_stack.top().vars.begin(),
 		end = m_call_stack.top().vars.end();
 
-	while (it != end) {
+	while (EXPECTED(it != end)) {
 		Value* var = getValue((*it).first);
 		var->copy((*it).second);
 		++it;
@@ -261,7 +261,7 @@ VM_HANDLER(fcall)
 		m_call_stack.top().ret_val = op.result;
 
 		// Function argument value binding
-		if (fdata->getArgVars()) {
+		if (fdata->hasArgs()) {
 			Scope* arg_scope = fdata->getArgVars();
 
 			m_call_stack.top().arg_vars = arg_scope;

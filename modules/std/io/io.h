@@ -30,6 +30,7 @@
 
 namespace clever { namespace packages { namespace std {
 
+/// Standard IO Module
 class IOModule : public Module {
 public:
 	IOModule()

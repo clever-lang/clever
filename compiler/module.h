@@ -45,6 +45,7 @@ namespace clever {
 typedef std::tr1::unordered_map<const CString*, Function*> FunctionMap;
 typedef std::pair<const CString*, Function*> FuncMapEntry;
 
+/// Module representation
 class Module {
 public:
 	Module(std::string name) : m_name(name) {}

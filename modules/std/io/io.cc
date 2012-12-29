@@ -32,6 +32,7 @@
 namespace clever { namespace packages { namespace std {
 
 namespace io {
+
 // print(object a, [ ...])
 // Prints the object values without trailing newline
 static CLEVER_FUNCTION(print) {
@@ -51,9 +52,7 @@ static CLEVER_FUNCTION(println) {
 
 } // namespace io
 
-/**
- * Initializes Standard module
- */
+/// Initializes Standard module
 CLEVER_MODULE_INIT(IOModule) {
 	using namespace io;
 

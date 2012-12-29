@@ -34,7 +34,7 @@ namespace clever {
 
 class Value;
 
-#define CLEVER_FUNCTION_ARGS ::std::vector<Value*>& args
+#define CLEVER_FUNCTION_ARGS const ::std::vector<Value*>& args
 #define CLEVER_FUNC_NAME(name) clv_f_##name
 #define CLEVER_NS_FNAME(ns, name) ns::CLEVER_FUNC_NAME(name)
 #define CLEVER_FUNCTION(name) void CLEVER_FASTCALL CLEVER_FUNC_NAME(name)(CLEVER_FUNCTION_ARGS)
@@ -77,6 +77,8 @@ public:
 
 	Scope* getLocalVars() { return m_local_vars; }
 	Scope* getArgVars() { return m_arg_vars; }
+
+	bool hasArgs() const { return m_arg_vars != NULL; }
 
 	void setLocalVars(Scope* local_vars) { m_local_vars = local_vars; }
 	void setArgVars(Scope* arg_vars) { m_arg_vars = arg_vars; }
