@@ -190,29 +190,23 @@ void Compiler::assignment(Node& var, Node& value, const location& loc)
 /// Compiles a set of binary operation
 void Compiler::binOp(Opcode op, Node& lhs, Node& rhs, Node& res,
 	const location& loc)
-{/*
-	size_t rhs_id = 0, lhs_id = 0;
+{
+	Symbol* rhs_sym = NULL, *lhs_sym = NULL;
+	Value* lhs_val = getValue(lhs, &lhs_sym, loc);
+	Value* rhs_val = getValue(rhs, &rhs_sym, loc);
 	Value* result = new Value();
 
-	Value* val = getValue(lhs, &lhs_id, loc);
-
-	if (!lhs_id) {
-		lhs_id = m_value_id++;
-		m_value_pool[lhs_id] = val;
-	}
-
-	val = getValue(rhs, &rhs_id, loc);
-
-	if (!rhs_id) {
-		rhs_id = m_value_id++;
-		m_value_pool[rhs_id] = val;
-	}
-
 	m_ir.push_back(
-		IR(op, FETCH_VAL, lhs_id, FETCH_VAL, rhs_id, result));
+		IR(op,
+			FETCH_VAL, (lhs_sym ? lhs_sym->value_id : m_scope->pushConst(lhs_val)),
+			FETCH_VAL, (rhs_sym ? rhs_sym->value_id : m_scope->pushConst(rhs_val)),
+			result));
+
+	m_ir.back().op1_scope = lhs_sym ? lhs_sym->scope->getId() : m_scope->getId();
+	m_ir.back().op2_scope = rhs_sym ? rhs_sym->scope->getId() : m_scope->getId();
 
 	res.type = VALUE;
-	res.data.val = result;*/
+	res.data.val = result;
 }
 
 /// Creates a list of arguments
