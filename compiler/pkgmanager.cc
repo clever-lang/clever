@@ -27,12 +27,16 @@
 #include "compiler/pkgmanager.h"
 #include "compiler/value.h"
 #include "compiler/cstring.h"
+#include "compiler/scope.h"
 #include "modules/std/std_pkg.h"
 
 namespace clever {
 
-void PkgManager::init()
+void PkgManager::init(ValuePool* value_pool, size_t* value_id)
 {
+	m_value_pool = value_pool;
+	m_value_id = value_id;
+
 	addPackage(CSTRING("std"), new packages::Std);
 }
 
@@ -48,6 +52,7 @@ void PkgManager::importModule(Scope* scope, const CString* package,
 
 	if (it == m_pkgs.end()) {
 		std::cerr << "Package not found!" << std::endl;
+		return;
 	}
 
 	it->second->init();
@@ -56,7 +61,24 @@ void PkgManager::importModule(Scope* scope, const CString* package,
 	ModuleMap::const_iterator itm = mods.begin(), endm = mods.end();
 
 	while (itm != endm) {
-		itm->second->init(0);
+		itm->second->init(PKG_INIT_FUNC);
+
+		FunctionMap& funcs = itm->second->getFunctions();
+		FunctionMap::const_iterator itf = funcs.begin(),
+			endf = funcs.end();
+
+		while (itf != endf) {
+			Value* fval = new Value();
+
+			fval->setType(CLEVER_FUNC_TYPE);
+			fval->setObj(itf->second);
+
+			scope->push(itf->first, *m_value_id);
+
+			(*m_value_pool)[(*m_value_id)++] = fval;
+			++itf;
+		}
+
 		++itm;
 	}
 }

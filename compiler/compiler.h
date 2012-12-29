@@ -41,7 +41,6 @@ class Value;
 class location;
 
 typedef std::vector<Scope*> ScopePool;
-typedef std::vector<Value*> ValuePool;
 typedef std::vector<Type*> TypePool;
 
 typedef std::vector<const CString*> ArgDeclList;

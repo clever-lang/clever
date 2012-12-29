@@ -53,7 +53,7 @@ void Compiler::init()
 	m_type_pool[m_type_id++] = CLEVER_DOUBLE_TYPE = new DoubleType;
 	m_type_pool[m_type_id++] = CLEVER_FUNC_TYPE   = new FuncType;
 
-	m_pkg.init();
+	m_pkg.init(&m_value_pool, &m_value_id);
 }
 
 /// Frees all resource used by the compiler
@@ -257,13 +257,14 @@ void Compiler::funcDecl(Node& node, ArgDeclList* arg_list, const location& loc)
 	m_curr_func = m_ir.size();
 
 	Value* func = new Value();
-	FuncData* funcdata = static_cast<FuncData*>(CLEVER_FUNC_TYPE->allocData());
+	Function* funcdata = static_cast<Function*>(CLEVER_FUNC_TYPE->allocData());
 
 	func->setType(CLEVER_FUNC_TYPE);
 	func->setObj(funcdata);
 
-	funcdata->type = USER_FUNC;
-	funcdata->u.addr = m_curr_func + 1;
+	funcdata->setName(*node.data.str);
+	funcdata->setUserDefined();
+	funcdata->setAddr(m_curr_func + 1);
 
 	m_ir.push_back(IR(OP_JMP, JMP_ADDR, 0));
 
@@ -286,13 +287,13 @@ void Compiler::funcDecl(Node& node, ArgDeclList* arg_list, const location& loc)
 		}
 		delete arg_list;
 
-		funcdata->arg_vars = m_scope;
+		funcdata->setArgVars(m_scope);
 	}
 
 	// Creates a scope for the local vars
 	newScope();
 
-	funcdata->local_vars = m_scope;
+	funcdata->setLocalVars(m_scope);
 }
 
 /// Adds new argument to the call argument list

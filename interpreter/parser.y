@@ -166,7 +166,6 @@ non_empty_statement_list:
 	|	import_stmt ';'
 	|	var_declaration ';'
 	|	assignment ';'
-	|	print_stmt ';'
 	|	func_declaration
 	|	func_call ';'
 	|	prototype ';'
@@ -252,10 +251,6 @@ math_expr:
 	|	r_value '*' r_value { c.binOp(OP_MUL, $1, $3, $$, yyloc); }
 	|	r_value '/' r_value { c.binOp(OP_DIV, $1, $3, $$, yyloc); }
 	|	r_value '%' r_value { c.binOp(OP_MOD, $1, $3, $$, yyloc); }
-;
-
-print_stmt:
-		PRINT '(' r_value ')' { c.print($3, yyloc); }
 ;
 
 %%

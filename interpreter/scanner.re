@@ -200,10 +200,6 @@ next_token:
 		RET(token::FALSE);
 	}
 
-	<INITIAL>'print' {
-		RET(token::PRINT);
-	}
-
 	<INITIAL>IDENTIFIER {
 		yylval->node.type = STRCONST;
 		yylval->node.data.str = CSTRING(std::string(reinterpret_cast<const char*>(s.yylex), yylen));

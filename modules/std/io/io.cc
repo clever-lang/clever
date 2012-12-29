@@ -24,22 +24,29 @@
  */
 
 #include <iostream>
+#include "compiler/value.h"
+#include "types/function.h"
 #include "compiler/pkgmanager.h"
 #include "modules/std/io/io.h"
 
 namespace clever { namespace packages { namespace std {
 
 namespace io {
-/**
- * println(object a, [ ...])
- * Prints the object values without trailing newline
- */
+// print(object a, [ ...])
+// Prints the object values without trailing newline
 static CLEVER_FUNCTION(print) {
-	/*
-	for (size_t i = 0, size = CLEVER_NUM_ARGS(); i < size; ++i) {
-		::std::cout << CLEVER_ARG_AS_STR(i);
+	for (size_t i = 0, size = args.size(); i < size; ++i) {
+		args[i]->dump();
 	}
-	*/
+}
+
+// println(object a, [ ...])
+// Prints the object values with trailing newline
+static CLEVER_FUNCTION(println) {
+	for (size_t i = 0, size = args.size(); i < size; ++i) {
+		args[i]->dump();
+		::std::cout << ::std::endl;
+	}
 }
 
 } // namespace io
@@ -48,27 +55,14 @@ static CLEVER_FUNCTION(print) {
  * Initializes Standard module
  */
 CLEVER_MODULE_INIT(IOModule) {
-	/*
 	using namespace io;
 
 	BEGIN_DECLARE_FUNCTION();
 
-	addFunction(new Function("print", &CLEVER_FUNC_NAME(print), CLEVER_VOID))
-		->setVariadic()
-		->setMinNumArgs(1);
-
-	addFunction(new Function("println", &CLEVER_FUNC_NAME(println), CLEVER_VOID))
-		->setVariadic()
-		->setMinNumArgs(1);
-
-	addFunction(new Function("readln", &CLEVER_FUNC_NAME(readln), CLEVER_STR));
-
-	addFunction(new Function("readString", &CLEVER_FUNC_NAME(readString), CLEVER_STR));
-	addFunction(new Function("readInt", &CLEVER_FUNC_NAME(readInt), CLEVER_INT));
-	addFunction(new Function("readDouble", &CLEVER_FUNC_NAME(readDouble), CLEVER_DOUBLE));
+	addFunction(new Function("print",   &CLEVER_FUNC_NAME(print)));
+	addFunction(new Function("println", &CLEVER_FUNC_NAME(println)));
 
 	END_DECLARE();
-	*/
 }
 
 }}} // clever::packages::std

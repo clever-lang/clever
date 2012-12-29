@@ -33,28 +33,34 @@
 #endif
 #include <string>
 #include "compiler/cstring.h"
+#include "types/function.h"
 
 #define CLEVER_MODULE_INIT(x) void x::init(int flags)
 
 #define CLEVER_MODULE_VIRTUAL_METHODS_DECLARATION \
 	void init(int flags);
 
-#define CLEVER_FUNCTION_ARGS
-#define CLEVER_FUNC_NAME(name) clv_f_##name
-#define CLEVER_NS_FNAME(ns, name) ns::CLEVER_FUNC_NAME(name)
-#define CLEVER_FUNCTION(name) void CLEVER_FASTCALL CLEVER_FUNC_NAME(name)(CLEVER_FUNCTION_ARGS)
-
 namespace clever {
+
+typedef std::tr1::unordered_map<const CString*, Function*> FunctionMap;
+typedef std::pair<const CString*, Function*> FuncMapEntry;
 
 class Module {
 public:
 	Module(std::string name) : m_name(name) {}
 	~Module() {}
 
+	void addFunction(Function* func) {
+		m_funcs.insert(FuncMapEntry(CSTRING(func->getName()), func));
+	}
+
+	FunctionMap& getFunctions() { return m_funcs; }
+
 	std::string getName() { return m_name; }
 
 	virtual void init(int) = 0;
 private:
+	FunctionMap m_funcs;
 	std::string m_name;
 };
 

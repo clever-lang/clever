@@ -26,27 +26,74 @@
 #ifndef CLEVER_TYPES_FUNCTION_H
 #define CLEVER_TYPES_FUNCTION_H
 
+#include <vector>
+#include "compiler/clever.h"
 #include "types/type.h"
 
 namespace clever {
 
+class Value;
+
+#define CLEVER_FUNCTION_ARGS ::std::vector<Value*>& args
+#define CLEVER_FUNC_NAME(name) clv_f_##name
+#define CLEVER_NS_FNAME(ns, name) ns::CLEVER_FUNC_NAME(name)
+#define CLEVER_FUNCTION(name) void CLEVER_FASTCALL CLEVER_FUNC_NAME(name)(CLEVER_FUNCTION_ARGS)
+
 class Scope;
 
-enum FuncKind { UNDEF, USER_FUNC, INTERNAL_FUNC };
+typedef void (CLEVER_FASTCALL *FunctionPtr)(CLEVER_FUNCTION_ARGS);
 
-struct FuncData {
-	FuncKind type;
+class Function {
+public:
+	enum FuncKind { UNDEF, USER_FUNC, INTERNAL_FUNC };
+
+	Function()
+		: m_name(), m_arg_vars(NULL), m_local_vars(NULL) {}
+	~Function() {}
+
+	Function(std::string name, FunctionPtr ptr)
+		: m_name(name), m_arg_vars(NULL), m_local_vars(NULL)
+		{ m_info.ptr = ptr; }
+
+	Function(std::string name, size_t addr)
+		: m_name(name), m_arg_vars(NULL), m_local_vars(NULL)
+		{ m_info.addr = addr; }
+
+	void setName(std::string name) { m_name = name; }
+	const std::string& getName() const { return m_name; }
+
+	void setInternal() { m_type = INTERNAL_FUNC; }
+	void setUserDefined() { m_type = USER_FUNC; }
+
+	bool isUserDefined() const { return m_type == USER_FUNC; }
+	bool isInternal() const { return m_type == INTERNAL_FUNC; }
+
+	FunctionPtr getPtr() const { return m_info.ptr; }
+	size_t getAddr() const { return m_info.addr; }
+
+	void setAddr(size_t addr) { m_info.addr = addr; }
+	void setPtr(FunctionPtr ptr) { m_info.ptr = ptr; }
+
+	Scope* getLocalVars() { return m_local_vars; }
+	Scope* getArgVars() { return m_arg_vars; }
+
+	void setLocalVars(Scope* local_vars) { m_local_vars = local_vars; }
+	void setArgVars(Scope* arg_vars) { m_arg_vars = arg_vars; }
+private:
+	std::string m_name;
+	FuncKind m_type;
 	union {
-		size_t addr;   // Instruction address for user function
-	} u;
-	Scope* arg_vars;   // Argument variables
-	Scope* local_vars; // Local variables
-	const CString* name;
+		FunctionPtr ptr;
+		size_t addr;
+	} m_info;
 
-	FuncData() : type(UNDEF), arg_vars(NULL), local_vars(NULL), name(NULL) {}
+	/// Argument variables
+	Scope* m_arg_vars;
 
-	const CString* getName() { return name; }
+	/// Local variables
+	Scope* m_local_vars;
 };
+
 
 /// Function type
 class FuncType : public Type {
@@ -56,8 +103,8 @@ public:
 
 	void dump(const void* data) const { std::cout << "function() { }"; }
 
-	void* allocData() { return new FuncData; }
-	void deallocData(void* data) { if (data) { delete static_cast<FuncData*>(data); } }
+	void* allocData() { return new Function; }
+	void deallocData(void* data) { if (data) { delete static_cast<Function*>(data); } }
 };
 
 } // clever

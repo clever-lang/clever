@@ -243,9 +243,9 @@ void VM::restoreVars() const
 VM_HANDLER(fcall)
 {
 	Value* func = getValue(op.op1);
-	FuncData* fdata = static_cast<FuncData*>(func->getObj());
+	Function* fdata = static_cast<Function*>(func->getObj());
 
-	if (fdata->type == USER_FUNC) {
+	if (fdata->isUserDefined()) {
 		// Save arguments and local vars on possible recursion
 		if (m_call_stack.size()) {
 			saveVars();
@@ -261,8 +261,8 @@ VM_HANDLER(fcall)
 		m_call_stack.top().ret_val = op.result;
 
 		// Function argument value binding
-		if (fdata->arg_vars) {
-			Scope* arg_scope = fdata->arg_vars;
+		if (fdata->getArgVars()) {
+			Scope* arg_scope = fdata->getArgVars();
 
 			m_call_stack.top().arg_vars = arg_scope;
 
@@ -274,7 +274,9 @@ VM_HANDLER(fcall)
 			m_call_args.clear();
 		}
 
-		VM_GOTO(fdata->u.addr);
+		VM_GOTO(fdata->getAddr());
+	} else {
+		fdata->getPtr()(m_call_args);
 	}
 }
 
