@@ -53,7 +53,7 @@ inline void VM::init()
 	m_handlers[OP_JMPZ]     = &VM::jmpz;
 }
 
-Value* VM::getValue(size_t scope_id, size_t value_id) const
+inline Value* VM::getValue(size_t scope_id, size_t value_id) const
 {
 	return (*m_scope_pool)[scope_id]->getVar(value_id);
 }
