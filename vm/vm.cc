@@ -94,6 +94,7 @@ VM_HANDLER(ret)
 // Halt operation
 VM_HANDLER(halt)
 {
+	VM_NEXT();
 }
 
 // JMP operation
@@ -320,9 +321,9 @@ void VM::run()
 	// Loads the opcode handlers
 	init();
 
-	// Starts the VM by running the first instruction, which keep calling
-	// each other in a tail call way
-	(this->*m_handlers[m_inst[0].opcode])(m_inst[0]);
+	for (size_t n = m_inst.size(); m_pc < n;) {
+		(this->*m_handlers[m_inst[m_pc].opcode])(m_inst[m_pc]);
+	}
 }
 
 } // clever
