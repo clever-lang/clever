@@ -79,13 +79,13 @@ void VM::dumpOpcodes() const
 
 // Return operation
 VM_HANDLER(ret)
-{/*
+{
 	if (m_call_stack.size()) {
 		const StackFrame& frame = m_call_stack.top();
-		const Value* val = getValue(op.op1);
+		const Value* val = getValue(op.op1_scope, op.op1);
 
 		if (val) {
-			m_call_stack.top().ret_val->copy(getValue(op.op1));
+			m_call_stack.top().ret_val->copy(getValue(op.op1_scope, op.op1));
 		}
 		m_call_stack.pop();
 
@@ -94,7 +94,7 @@ VM_HANDLER(ret)
 	} else {
 		// Terminates the execution
 		VM_GOTO(m_inst.size());
-	}*/
+	}
 }
 
 // JMP operation
@@ -105,12 +105,12 @@ VM_HANDLER(jmp)
 
 // JMPZ operation
 VM_HANDLER(jmpz)
-{/*
-	Value* value = getValue(op.op1);
+{
+	Value* value = getValue(op.op1_scope, op.op1);
 
 	if (!value->getInt()) {
 		VM_GOTO(op.op2);
-	}*/
+	}
 
 	VM_NEXT();
 }
@@ -271,14 +271,15 @@ VM_HANDLER(fcall)
 		// Function argument value binding
 		if (fdata->hasArgs()) {
 			Scope* arg_scope = fdata->getArgVars();
-/*
+
 			m_call_stack.top().arg_vars = arg_scope;
 
 			for (size_t i = 0, j = arg_scope->size(); i < j; ++i) {
-				Value* arg_val = getValue(arg_scope->at(i).value_id);
+				Value* arg_val = getValue(
+					arg_scope->at(i).scope->getId(), arg_scope->at(i).value_id);
 				arg_val->copy(m_call_args[i]);
 			}
-*/
+
 			m_call_args.clear();
 		}
 

@@ -45,7 +45,7 @@ typedef std::vector<Scope*> ScopePool;
 typedef std::vector<Type*> TypePool;
 
 typedef std::vector<const CString*> ArgDeclList;
-typedef std::vector<size_t> ArgCallList;
+typedef std::vector<std::pair<size_t, size_t> > ArgCallList;
 
 enum NodeType { STRCONST, VALUE };
 

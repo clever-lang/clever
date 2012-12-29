@@ -284,9 +284,9 @@ ArgCallList* Compiler::addArgCall(ArgCallList* arg_list, Node& arg, const locati
 	}
 
 	if (sym) {
-		arg_list->push_back(sym->value_id);
+		arg_list->push_back(std::pair<size_t, size_t>(sym->scope->getId(), sym->value_id));
 	} else {
-		arg_list->push_back(m_scope->pushConst(val));
+		arg_list->push_back(std::pair<size_t, size_t>(m_scope->getId(), m_scope->pushConst(val)));
 	}
 
 	return arg_list;
@@ -321,9 +321,9 @@ void Compiler::funcCall(Node& name, ArgCallList* arg_list, Node& res,
 
 	if (arg_list) {
 		for (size_t i = 0, j = arg_list->size(); i < j; ++i) {
-			m_ir.push_back(IR(OP_SEND_VAL, FETCH_VAL, arg_list->at(i)));
+			m_ir.push_back(IR(OP_SEND_VAL, FETCH_VAL, arg_list->at(i).second));
 
-			m_ir.back().op1_scope = m_scope->getId();
+			m_ir.back().op1_scope = arg_list->at(i).first;
 		}
 	}
 
@@ -342,21 +342,19 @@ void Compiler::funcCall(Node& name, ArgCallList* arg_list, Node& res,
 
 /// Compiles a return statement
 void Compiler::retStmt(Node* expr, const location& loc)
-{/*
+{
 	if (expr) {
-		size_t val_id = 0;
-		Value* value = getValue(*expr, &val_id, loc);
+		Symbol* sym;
+		Value* value = getValue(*expr, &sym, loc);
 
-		if (val_id) {
-			m_ir.push_back(IR(OP_RET, FETCH_VAL, val_id));
+		if (sym) {
+			m_ir.push_back(IR(OP_RET, FETCH_VAL, sym->value_id));
 		} else {
-			m_ir.push_back(IR(OP_RET, FETCH_VAL, m_value_id));
-
-			m_value_pool[m_value_id++] = value;
+			m_ir.push_back(IR(OP_RET, FETCH_VAL, m_scope->pushConst(value)));
 		}
 	} else {
 		m_ir.push_back(IR(OP_RET));
-	}*/
+	}
 }
 
 void Compiler::importStmt(Node& package)
