@@ -171,20 +171,20 @@ void Compiler::assignment(Node& var, Node& value, const location& loc)
 	(void)getValue(var, &var_sym, loc);
 	Value* val = getValue(value, &val_sym, loc);
 
+	size_t val_id, val_scope;
+
 	if (val_sym) {
-		m_ir.push_back(
-			IR(OP_ASSIGN, FETCH_VAL, var_sym->value_id, FETCH_VAL, val_sym->value_id));
-
-		m_ir.back().op1_scope = var_sym->scope->getId();
-		m_ir.back().op2_scope = val_sym->scope->getId();
+		val_id = val_sym->value_id;
+		val_scope = val_sym->scope->getId();
 	} else {
-		m_ir.push_back(
-			IR(OP_ASSIGN, FETCH_VAL, var_sym->value_id, FETCH_VAL, m_scope->pushConst(val)));
-
-		m_ir.back().op1_scope = var_sym->scope->getId();
-		m_ir.back().op2_scope = m_scope->getId();
-
+		val_id = m_scope->pushConst(val);
+		val_scope = m_scope->getId();
 	}
+
+	m_ir.push_back(IR(OP_ASSIGN, FETCH_VAL, var_sym->value_id, FETCH_VAL, val_id));
+
+	m_ir.back().op1_scope = var_sym->scope->getId();
+	m_ir.back().op2_scope = val_scope;
 }
 
 /// Compiles a set of binary operation
