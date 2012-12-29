@@ -102,6 +102,7 @@ public:
 	ArgCallList* addArgCall(ArgCallList*, Node&, const location&);
 	void retStmt(Node&, const location&);
 	void importStmt(Node&);
+	void importStmt(Node&, Node&);
 private:
 	// Package manager
 	PkgManager m_pkg;

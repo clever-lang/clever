@@ -54,6 +54,7 @@ public:
 	}
 
 	void importPackage(Scope*, const CString*);
+	void importModule(Scope*, const CString*, const CString*);
 private:
 	PackageMap m_pkgs;
 };

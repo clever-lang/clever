@@ -154,9 +154,7 @@ statement_list:
 
 import_stmt2:
 		IMPORT IDENT '.' '*'              { c.importStmt($2); }
-//	|	IMPORT IDENT '.' IDENT '.' IDENT  { c.importStmt($2, $4, $6); }
-//	|	IMPORT IDENT '.' IDENT '.' TYPE   { $$ = new ast::ImportStmt($2, $4, $6, true);    $$->setLocation(yylloc); }
-//	|	IMPORT IDENT '.' IDENT '.' '*'    { $$ = new ast::ImportStmt($2, $4, NULL, true);  $$->setLocation(yylloc); }
+	|	IMPORT IDENT '.' IDENT '.' '*'    { c.importStmt($2, $4); }
 ;
 
 import_stmt:

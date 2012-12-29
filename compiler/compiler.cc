@@ -379,6 +379,11 @@ void Compiler::importStmt(Node& package)
 	m_pkg.importPackage(m_scope, package.data.str);
 }
 
+void Compiler::importStmt(Node& package, Node& module)
+{
+	m_pkg.importModule(m_scope, package.data.str, module.data.str);
+}
+
 /// Creates a new lexical scope
 void Compiler::newScope()
 {

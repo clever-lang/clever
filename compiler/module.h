@@ -26,7 +26,13 @@
 #ifndef CLEVER_MODULE_H
 #define CLEVER_MODULE_H
 
+#ifdef CLEVER_MSVC
+#include <unordered_map>
+#else
+#include <tr1/unordered_map>
+#endif
 #include <string>
+#include "compiler/cstring.h"
 
 #define CLEVER_MODULE_INIT(x) void x::init(int flags)
 
@@ -44,9 +50,16 @@ class Module {
 public:
 	Module(std::string name) : m_name(name) {}
 	~Module() {}
+
+	std::string getName() { return m_name; }
+
+	virtual void init(int) = 0;
 private:
 	std::string m_name;
 };
+
+typedef std::tr1::unordered_map<const CString*, Module*> ModuleMap;
+typedef std::pair<const CString*, Module*> ModulePair;
 
 /// Package representation
 class Package {
@@ -55,12 +68,18 @@ public:
 		: m_name(name) {}
 	virtual ~Package() {}
 
-	void addModule(Module* module) {}
+	void addModule(Module* module) {
+		m_modules.insert(ModulePair(CSTRING(module->getName()), module));
+	}
+
+	ModuleMap& getModules() { return m_modules; }
+
 
 	virtual void init() = 0;
 	virtual const char* getVersion() const = 0;
 private:
 	std::string m_name;
+	ModuleMap m_modules;
 };
 
 } // clever

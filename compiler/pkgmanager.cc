@@ -40,6 +40,27 @@ void PkgManager::shutdown()
 {
 }
 
+/// Imports a module
+void PkgManager::importModule(Scope* scope, const CString* package,
+	const CString* module)
+{
+	PackageMap::const_iterator it = m_pkgs.find(package);
+
+	if (it == m_pkgs.end()) {
+		std::cerr << "Package not found!" << std::endl;
+	}
+
+	it->second->init();
+
+	ModuleMap& mods = it->second->getModules();
+	ModuleMap::const_iterator itm = mods.begin(), endm = mods.end();
+
+	while (itm != endm) {
+		itm->second->init(0);
+		++itm;
+	}
+}
+
 /// Imports a package
 void PkgManager::importPackage(Scope* scope, const CString* package)
 {
@@ -48,6 +69,8 @@ void PkgManager::importPackage(Scope* scope, const CString* package)
 	if (it == m_pkgs.end()) {
 		std::cerr << "Package not found!" << std::endl;
 	}
+
+	it->second->init();
 }
 
 } // clever
