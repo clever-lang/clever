@@ -380,17 +380,20 @@ void Compiler::whileLoop(Node& cond, const location& loc)
 
 	if (sym) {
 		m_ir.push_back(IR(OP_JMPZ, FETCH_VAL, sym->value_id, JMP_ADDR, 0));
-
 		m_ir.back().op1_scope = sym->scope->getId();
 	} else {
 		m_ir.push_back(IR(OP_JMPZ, FETCH_VAL, m_scope->pushConst(val), JMP_ADDR, 0));
+		m_ir.back().op1_scope = m_scope->getId();
 	}
 }
 
+/// Handles end of while loop
 void Compiler::endWhileLoop()
 {
+	// Adds a JMP to the loop condition
 	m_ir.push_back(IR(OP_JMP, JMP_ADDR, m_jmps.top().at(0)));
 
+	// Sets the jmp address of JMPZ instructon related to the loop condition
 	m_ir[m_jmps.top().at(0)].op2 = m_ir.size();
 }
 
