@@ -69,6 +69,8 @@ public:
 
 	void importPackage(Scope*, const CString*);
 	void importModule(Scope*, const CString*, const CString*);
+
+	void loadModule(Scope*, Module*);
 private:
 	PackageMap m_pkgs;
 	ValuePool* m_value_pool;

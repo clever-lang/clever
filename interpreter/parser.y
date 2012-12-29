@@ -152,13 +152,9 @@ statement_list:
 	|	non_empty_statement_list statement_list
 ;
 
-import_stmt2:
+import_stmt:
 		IMPORT IDENT '.' '*'              { c.importStmt($2); }
 	|	IMPORT IDENT '.' IDENT '.' '*'    { c.importStmt($2, $4); }
-;
-
-import_stmt:
-		import_stmt2
 ;
 
 non_empty_statement_list:

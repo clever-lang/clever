@@ -48,7 +48,11 @@ typedef std::pair<const CString*, Function*> FuncMapEntry;
 /// Module representation
 class Module {
 public:
-	Module(std::string name) : m_name(name) {}
+	enum ModuleStatus { UNLOADED, LOADED };
+
+	Module(std::string name)
+		: m_name(name), m_flags(UNLOADED), m_funcs() {}
+
 	virtual ~Module() {}
 
 	void addFunction(Function* func) {
@@ -59,10 +63,14 @@ public:
 
 	std::string getName() { return m_name; }
 
+	void setLoaded() { m_flags = LOADED; }
+	bool isLoaded() const { return m_flags == LOADED; }
+
 	virtual void init(int) = 0;
 private:
-	FunctionMap m_funcs;
 	std::string m_name;
+	ModuleStatus m_flags;
+	FunctionMap m_funcs;
 };
 
 typedef std::tr1::unordered_map<const CString*, Module*> ModuleMap;
@@ -71,8 +79,11 @@ typedef std::pair<const CString*, Module*> ModulePair;
 /// Package representation
 class Package {
 public:
+	enum PackageStatus { UNLOADED, LOADED };
+
 	Package(std::string name)
-		: m_name(name) {}
+		: m_name(name), m_flags(UNLOADED) {}
+
 	virtual ~Package() {}
 
 	void addModule(Module* module) {
@@ -81,11 +92,14 @@ public:
 
 	ModuleMap& getModules() { return m_modules; }
 
+	void setLoaded() { m_flags = LOADED; }
+	bool isLoaded() const { return m_flags == LOADED; }
 
 	virtual void init() = 0;
 	virtual const char* getVersion() const = 0;
 private:
 	std::string m_name;
+	PackageStatus m_flags;
 	ModuleMap m_modules;
 };
 

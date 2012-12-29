@@ -58,6 +58,31 @@ void PkgManager::shutdown()
 	}
 }
 
+// Loads a module if it is not already loaded
+void PkgManager::loadModule(Scope* scope, Module* module)
+{
+	if (module->isLoaded()) {
+		return;
+	}
+	module->init(PKG_INIT_FUNC);
+
+	FunctionMap& funcs = module->getFunctions();
+	FunctionMap::const_iterator itf = funcs.begin(),
+		endf = funcs.end();
+
+	while (EXPECTED(itf != endf)) {
+		Value* fval = new Value();
+
+		fval->setType(CLEVER_FUNC_TYPE);
+		fval->setObj(itf->second);
+
+		scope->push(itf->first, *m_value_id);
+
+		(*m_value_pool)[(*m_value_id)++] = fval;
+		++itf;
+	}
+}
+
 /// Imports a module
 void PkgManager::importModule(Scope* scope, const CString* package,
 	const CString* module)
@@ -72,29 +97,14 @@ void PkgManager::importModule(Scope* scope, const CString* package,
 	it->second->init();
 
 	ModuleMap& mods = it->second->getModules();
-	ModuleMap::const_iterator itm = mods.begin(), endm = mods.end();
+	ModuleMap::const_iterator itm = mods.find(module);
 
-	while (itm != endm) {
-		itm->second->init(PKG_INIT_FUNC);
-
-		FunctionMap& funcs = itm->second->getFunctions();
-		FunctionMap::const_iterator itf = funcs.begin(),
-			endf = funcs.end();
-
-		while (itf != endf) {
-			Value* fval = new Value();
-
-			fval->setType(CLEVER_FUNC_TYPE);
-			fval->setObj(itf->second);
-
-			scope->push(itf->first, *m_value_id);
-
-			(*m_value_pool)[(*m_value_id)++] = fval;
-			++itf;
-		}
-
-		++itm;
+	if (itm == mods.end()) {
+		std::cerr << "Module not found!" << std::endl;
+		return;
 	}
+
+	loadModule(scope, itm->second);
 }
 
 /// Imports a package
@@ -105,8 +115,19 @@ void PkgManager::importPackage(Scope* scope, const CString* package)
 	if (it == m_pkgs.end()) {
 		std::cerr << "Package not found!" << std::endl;
 	}
-
+	if (it->second->isLoaded()) {
+		return;
+	}
 	it->second->init();
+	it->second->setLoaded();
+
+	ModuleMap& mods = it->second->getModules();
+	ModuleMap::const_iterator itm = mods.begin(), endm = mods.end();
+
+	while (EXPECTED(itm != endm)) {
+		loadModule(scope, itm->second);
+		++itm;
+	}
 }
 
 } // clever
