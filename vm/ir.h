@@ -45,12 +45,14 @@ struct IR {
 		: opcode(_op),
 			op1_type(UNUSED), op2_type(UNUSED),
 			op1(0), op2(0),
+			op1_scope(0), op2_scope(0),
 			result(NULL) {}
 
 	IR(Opcode _op, OperandType _op1_type, size_t _op1, Value* res = NULL)
 		: opcode(_op),
 			op1_type(_op1_type), op2_type(UNUSED),
 			op1(_op1), op2(0),
+			op1_scope(0), op2_scope(0),
 			result(res) {}
 
 	IR(Opcode _op, OperandType _op1_type, size_t _op1,
@@ -58,11 +60,13 @@ struct IR {
 		: opcode(_op),
 			op1_type(_op1_type), op2_type(_op2_type),
 			op1(_op1), op2(_op2),
+			op1_scope(0), op2_scope(0),
 			result(res) {}
 
 	Opcode opcode;
 	OperandType op1_type, op2_type;
 	size_t op1, op2;
+	size_t op1_scope, op2_scope;
 	Value* result;
 };
 

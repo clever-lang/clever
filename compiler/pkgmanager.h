@@ -34,12 +34,12 @@
 #include <vector>
 #include "compiler/cstring.h"
 #include "compiler/module.h"
+#include "compiler/scope.h"
 
 namespace clever {
 
 class Scope;
 class Value;
-typedef std::vector<Value*> ValuePool;
 
 const int PKG_INIT_FUNC  = 1 << 0;
 const int PKG_INIT_CLASS = 1 << 1;

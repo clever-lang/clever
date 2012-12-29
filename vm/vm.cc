@@ -53,6 +53,11 @@ inline void VM::init()
 	m_handlers[OP_JMPZ]     = &VM::jmpz;
 }
 
+Value* VM::getValue(size_t scope_id, size_t value_id) const
+{
+	return (*m_scope_pool)[scope_id]->getVar(value_id);
+}
+
 #ifdef CLEVER_DEBUG
 void VM::dumpOpcodes() const
 {
@@ -62,11 +67,11 @@ void VM::dumpOpcodes() const
 
 	for (size_t i = 0, j = m_inst.size(); i < j; ++i) {
 		IR& ir = m_inst[i];
-		::printf("[%03ld] %-12s | %3ld (%-9s) | %3ld (%-9s) | %p\n",
+		::printf("[%03ld] %-12s | %3ld:%3ld (%-9s) | %3ld:%3ld (%-9s) | %p\n",
 			i,
 			get_opcode_name(ir.opcode),
-			ir.op1, op_type[ir.op1_type],
-			ir.op2, op_type[ir.op2_type],
+			ir.op1, ir.op1_scope, op_type[ir.op1_type],
+			ir.op2, ir.op2_scope, op_type[ir.op2_type],
 			ir.result);
 	}
 }
@@ -74,7 +79,7 @@ void VM::dumpOpcodes() const
 
 // Return operation
 VM_HANDLER(ret)
-{
+{/*
 	if (m_call_stack.size()) {
 		const StackFrame& frame = m_call_stack.top();
 		const Value* val = getValue(op.op1);
@@ -89,7 +94,7 @@ VM_HANDLER(ret)
 	} else {
 		// Terminates the execution
 		VM_GOTO(m_inst.size());
-	}
+	}*/
 }
 
 // JMP operation
@@ -100,12 +105,12 @@ VM_HANDLER(jmp)
 
 // JMPZ operation
 VM_HANDLER(jmpz)
-{
+{/*
 	Value* value = getValue(op.op1);
 
 	if (!value->getInt()) {
 		VM_GOTO(op.op2);
-	}
+	}*/
 
 	VM_NEXT();
 }
@@ -113,8 +118,8 @@ VM_HANDLER(jmpz)
 // Assignment operation
 VM_HANDLER(assignment)
 {
-	Value* var = getValue(op.op1);
-	Value* value = getValue(op.op2);
+	Value* var = getValue(op.op1_scope, op.op1);
+	Value* value = getValue(op.op2_scope, op.op2);
 
 	var->copy(value);
 
@@ -123,21 +128,21 @@ VM_HANDLER(assignment)
 
 // Math sum operation
 VM_HANDLER(add)
-{
+{/*
 	Value* lhs = getValue(op.op1);
 	Value* rhs = getValue(op.op2);
 
 	if (lhs->getType() == CLEVER_INT_TYPE
 		&& rhs->getType() == CLEVER_INT_TYPE) {
 		op.result->setInt(lhs->getInt() + rhs->getInt());
-	}
+	}*/
 
 	VM_NEXT();
 }
 
 // Math subtraction operation
 VM_HANDLER(sub)
-{
+{/*
 	Value* lhs = getValue(op.op1);
 	Value* rhs = getValue(op.op2);
 
@@ -145,13 +150,13 @@ VM_HANDLER(sub)
 		&& rhs->getType() == CLEVER_INT_TYPE) {
 		op.result->setInt(lhs->getInt() - rhs->getInt());
 	}
-
+*/
 	VM_NEXT();
 }
 
 // Math multiplication operation
 VM_HANDLER(mul)
-{
+{/*
 	Value* lhs = getValue(op.op1);
 	Value* rhs = getValue(op.op2);
 
@@ -159,13 +164,13 @@ VM_HANDLER(mul)
 		&& rhs->getType() == CLEVER_INT_TYPE) {
 		op.result->setInt(lhs->getInt() * rhs->getInt());
 	}
-
+*/
 	VM_NEXT();
 }
 
 // Math division operation
 VM_HANDLER(div)
-{
+{/*
 	Value* lhs = getValue(op.op1);
 	Value* rhs = getValue(op.op2);
 
@@ -173,13 +178,13 @@ VM_HANDLER(div)
 		&& rhs->getType() == CLEVER_INT_TYPE) {
 		op.result->setInt(lhs->getInt() / rhs->getInt());
 	}
-
+*/
 	VM_NEXT();
 }
 
 // Math modulus operation
 VM_HANDLER(mod)
-{
+{/*
 	Value* lhs = getValue(op.op1);
 	Value* rhs = getValue(op.op2);
 
@@ -187,21 +192,21 @@ VM_HANDLER(mod)
 		&& rhs->getType() == CLEVER_INT_TYPE) {
 		op.result->setInt(lhs->getInt() % rhs->getInt());
 	}
-
+*/
 	VM_NEXT();
 }
 
 // Receives values to be used in the next function call
 VM_HANDLER(send_val)
 {
-	m_call_args.push_back(getValue(op.op1));
+	m_call_args.push_back(getValue(op.op1_scope, op.op1));
 
 	VM_NEXT();
 }
 
 // Saves function argument and local variables
 void VM::saveVars()
-{
+{/*
 	Scope* arg_vars   = m_call_stack.top().arg_vars;
 	Scope* local_vars = m_call_stack.top().local_vars;
 
@@ -226,12 +231,12 @@ void VM::saveVars()
 				std::pair<size_t, Value*>(
 					local_vars->at(i).getValueId(), tmp));
 		}
-	}
+	}*/
 }
 
 // Restore the argument and local variables values
 void VM::restoreVars() const
-{
+{/*
 	FuncVars::const_iterator it = m_call_stack.top().vars.begin(),
 		end = m_call_stack.top().vars.end();
 
@@ -239,13 +244,13 @@ void VM::restoreVars() const
 		Value* var = getValue((*it).first);
 		var->copy((*it).second);
 		++it;
-	}
+	}*/
 }
 
 // Function call operation
 VM_HANDLER(fcall)
 {
-	Value* func = getValue(op.op1);
+	Value* func = getValue(op.op1_scope, op.op1);
 	Function* fdata = static_cast<Function*>(func->getObj());
 
 	if (fdata->isUserDefined()) {
@@ -266,14 +271,14 @@ VM_HANDLER(fcall)
 		// Function argument value binding
 		if (fdata->hasArgs()) {
 			Scope* arg_scope = fdata->getArgVars();
-
+/*
 			m_call_stack.top().arg_vars = arg_scope;
 
 			for (size_t i = 0, j = arg_scope->size(); i < j; ++i) {
 				Value* arg_val = getValue(arg_scope->at(i).getValueId());
 				arg_val->copy(m_call_args[i]);
 			}
-
+*/
 			m_call_args.clear();
 		}
 

@@ -39,20 +39,25 @@ namespace clever {
 
 class Value;
 
+typedef std::vector<Value*> ValuePool;
+
 /// Symbol representation
 class Symbol {
 public:
-	Symbol(const CString* name, size_t value_id)
-		: m_name(name), m_value_id(value_id) {}
+	Symbol(const CString* name, size_t value_id, size_t scope_id)
+		: m_name(name), m_value_id(value_id), m_scope_id(scope_id) {}
 
 	~Symbol() {}
 
 	const CString* getName() const { return m_name; }
 
 	size_t getValueId() const { return m_value_id; }
+
+	size_t getScopeId() const { return m_scope_id; }
 private:
 	const CString* m_name;
 	size_t m_value_id;
+	size_t m_scope_id;
 };
 
 /// Scope representation
@@ -64,10 +69,10 @@ public:
 	typedef SymbolTable::value_type SymbolEntry;
 
 	Scope()
-		: m_parent(NULL), m_children(), m_symbols(), m_size(0), m_id(0) {}
+		: m_parent(NULL), m_children(), m_symbols(), m_size(0), m_id(0), m_value_id(0), m_value_pool(30) {}
 
 	explicit Scope(Scope* parent)
-		: m_parent(parent), m_children(), m_symbols(), m_size(0), m_id(0) {}
+		: m_parent(parent), m_children(), m_symbols(), m_size(0), m_id(0), m_value_id(0), m_value_pool(30) {}
 
 	~Scope() {
 		ScopeVector::const_iterator it = m_children.begin(),
@@ -79,11 +84,20 @@ public:
 		}
 	}
 
-	size_t push(const CString* name, size_t value_id) {
-		m_symbols.push_back(Symbol(name, value_id));
+	size_t pushVar(const CString* name, Value* value) {
+		m_symbols.push_back(Symbol(name, m_value_id, m_id));
 		m_symbol_table.insert(SymbolEntry(name, m_size));
-		return m_size++;
+		m_value_pool[m_value_id] = value;
+
+		return m_value_id++;
 	}
+
+	size_t pushConst(Value* value) {
+		m_value_pool[m_value_id] = value;
+		return m_value_id++;
+	}
+
+	Value* getVar(size_t idx) { return m_value_pool[idx]; }
 
 	Symbol& at(size_t idx) { return m_symbols[idx]; }
 
@@ -109,6 +123,8 @@ private:
 	SymbolTable m_symbol_table;
 	size_t m_size;
 	size_t m_id;
+	size_t m_value_id;
+	ValuePool m_value_pool;
 
 	DISALLOW_COPY_AND_ASSIGN(Scope);
 };

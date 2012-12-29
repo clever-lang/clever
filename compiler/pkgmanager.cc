@@ -78,9 +78,7 @@ void PkgManager::loadModule(Scope* scope, Module* module)
 		fval->setType(CLEVER_FUNC_TYPE);
 		fval->setObj(itf->second);
 
-		scope->push(itf->first, *m_value_id);
-
-		(*m_value_pool)[(*m_value_id)++] = fval;
+		scope->pushVar(itf->first, fval);
 		++itf;
 	}
 }

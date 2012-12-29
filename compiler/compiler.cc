@@ -140,7 +140,7 @@ Value* Compiler::getValue(Node& node, size_t* val_id, const location& loc) const
 		if (val_id) {
 			*val_id = sym->getValueId();
 		}
-		return m_value_pool[sym->getValueId()];
+		return m_scope_pool[sym->getScopeId()]->getVar(sym->getValueId());
 	}
 	return NULL;
 }
@@ -154,24 +154,25 @@ void Compiler::varDeclaration(Node& var, Node* node, const location& loc)
 		errorf(loc, "Variable `%S' already declared in the scope!", var.data.str);
 	}
 
+	size_t sym_id = m_scope->pushVar(var.data.str, new Value());
+
 	// A NULL value is created for uninitialized declaration
 	size_t val_id = 0;
 	Value* val = node ? getValue(*node, &val_id, loc) : new Value();
 
-	m_scope->push(var.data.str, m_value_id);
-
-	// Symbol value
-	m_value_pool[m_value_id++] = new Value();
-
 	// Value to be assigned
 	if (val_id) {
 		m_ir.push_back(
-			IR(OP_ASSIGN, FETCH_VAL, m_value_id-1, FETCH_VAL, val_id));
+			IR(OP_ASSIGN, FETCH_VAL, sym_id, FETCH_VAL, val_id));
+
 	} else {
 		m_ir.push_back(
-			IR(OP_ASSIGN, FETCH_VAL, m_value_id-1, FETCH_VAL, m_value_id));
+			IR(OP_ASSIGN, FETCH_VAL, sym_id, FETCH_VAL, m_value_id));
 
-		m_value_pool[m_value_id++] = val;
+		m_ir.back().op1_scope = m_scope->getId();
+		m_ir.back().op2_scope = m_scope->getId();
+
+		m_scope->pushConst(val);
 	}
 }
 
@@ -255,9 +256,7 @@ void Compiler::funcDecl(Node& node, ArgDeclList* arg_list, const location& loc)
 	m_ir.push_back(IR(OP_JMP, JMP_ADDR, 0));
 
 	// Adds the function symbol to the current scope
-	m_scope->push(node.data.str, m_value_id);
-
-	m_value_pool[m_value_id++] = func;
+	m_scope->pushVar(node.data.str, func);
 
 	// Create a scope for argument list when used
 	if (arg_list) {
@@ -267,8 +266,7 @@ void Compiler::funcDecl(Node& node, ArgDeclList* arg_list, const location& loc)
 		newScope();
 
 		while (it != end) {
-			m_scope->push(*it, m_value_id);
-			m_value_pool[m_value_id++] = new Value();
+			m_scope->pushVar(*it, new Value());
 			++it;
 		}
 		delete arg_list;
@@ -332,6 +330,8 @@ void Compiler::funcCall(Node& name, ArgCallList* arg_list, Node& res,
 	if (arg_list) {
 		for (size_t i = 0, j = arg_list->size(); i < j; ++i) {
 			m_ir.push_back(IR(OP_SEND_VAL, FETCH_VAL, arg_list->at(i)));
+
+			m_ir.back().op1_scope = m_scope->getId();
 		}
 	}
 
@@ -340,6 +340,8 @@ void Compiler::funcCall(Node& name, ArgCallList* arg_list, Node& res,
 
 	m_ir.push_back(
 		IR(OP_FCALL, FETCH_VAL, sym->getValueId(), result));
+
+	m_ir.back().op1_scope = sym->getScopeId();
 
 	if (arg_list) {
 		delete arg_list;

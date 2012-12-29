@@ -85,7 +85,7 @@ public:
 	void setValuePool(ValuePool* value) { m_value_pool = value; }
 
 	/// Helper to retrive a Value* from ValuePool
-	Value* getValue(size_t n) const { return (*m_value_pool)[n]; }
+	Value* getValue(size_t, size_t) const;
 
 	/// Save function variables on recursion
 	void saveVars();
