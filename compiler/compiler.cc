@@ -182,7 +182,7 @@ void Compiler::assignment(Node& var, Node& value, const location& loc)
 			IR(OP_ASSIGN, FETCH_VAL, var_sym->value_id, FETCH_VAL, m_scope->pushConst(val)));
 
 		m_ir.back().op1_scope = var_sym->scope->getId();
-		m_ir.back().op1_scope = m_scope->getId();
+		m_ir.back().op2_scope = m_scope->getId();
 
 	}
 }
