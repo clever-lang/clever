@@ -25,12 +25,12 @@
 
 #include <fstream>
 #include <setjmp.h>
-#include "compiler/cstring.h"
-#include "interpreter/driver.h"
-#include "interpreter/parser.hh"
-#include "interpreter/position.hh"
-#include "vm/vm.h"
-#include "scanner.h"
+#include "core/cstring.h"
+#include "core/driver.h"
+#include "core/parser.hh"
+#include "core/position.hh"
+#include "core/vm.h"
+#include "core/scanner.h"
 
 namespace clever {
 

@@ -31,8 +31,8 @@
 #else
 #include <tr1/unordered_map>
 #endif
-#include "compiler/clever.h"
-#include "compiler/refcounted.h"
+#include "core/clever.h"
+#include "core/refcounted.h"
 #include <iostream>
 
 /**

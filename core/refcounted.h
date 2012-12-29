@@ -23,56 +23,41 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef CLEVER_IR_H
-#define CLEVER_IR_H
+#ifndef CLEVER_REFCOUNTED_H
+#define CLEVER_REFCOUNTED_H
 
-#include <vector>
-#include "vm/opcode.h"
+#include "core/clever.h"
 
 namespace clever {
 
-class Value;
+class NO_INIT_VTABLE RefCounted {
+public:
+	RefCounted()
+		: m_reference(1) { }
 
-enum OperandType {
-	UNUSED,      // Operand is not used
-	FETCH_VAL,   // For Value* fetchs
-	JMP_ADDR     // For instr addr
+	explicit RefCounted(int reference)
+		: m_reference(reference) { }
+
+	virtual ~RefCounted() { }
+
+	void setReference(int reference) { m_reference = reference; }
+
+	int refCount() const { return m_reference; }
+
+	void addRef() { ++m_reference; }
+
+	void delRef() {
+		clever_assert(m_reference > 0, "This object has been free'd before.");
+		if (--m_reference == 0) {
+			delete this;
+		}
+	}
+private:
+	int m_reference;
+
+	DISALLOW_COPY_AND_ASSIGN(RefCounted);
 };
-
-/// Intermediate representation
-struct IR {
-	IR(Opcode _op)
-		: opcode(_op),
-			op1_type(UNUSED), op2_type(UNUSED),
-			op1(0), op2(0),
-			op1_scope(0), op2_scope(0),
-			result(NULL) {}
-
-	IR(Opcode _op, OperandType _op1_type, size_t _op1, Value* res = NULL)
-		: opcode(_op),
-			op1_type(_op1_type), op2_type(UNUSED),
-			op1(_op1), op2(0),
-			op1_scope(0), op2_scope(0),
-			result(res) {}
-
-	IR(Opcode _op, OperandType _op1_type, size_t _op1,
-		OperandType _op2_type, size_t _op2, Value* res = NULL)
-		: opcode(_op),
-			op1_type(_op1_type), op2_type(_op2_type),
-			op1(_op1), op2(_op2),
-			op1_scope(0), op2_scope(0),
-			result(res) {}
-
-	Opcode opcode;
-	OperandType op1_type, op2_type;
-	size_t op1, op2;
-	size_t op1_scope, op2_scope;
-	Value* result;
-};
-
-// Vector of VM instructions
-typedef std::vector<IR> IRVector;
 
 } // clever
 
-#endif // CLEVER_IR_H
+#endif /* CLEVER_REFCOUNTED_H */

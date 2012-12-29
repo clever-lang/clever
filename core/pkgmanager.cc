@@ -24,10 +24,10 @@
  */
 
 #include <iostream>
-#include "compiler/pkgmanager.h"
-#include "compiler/value.h"
-#include "compiler/cstring.h"
-#include "compiler/scope.h"
+#include "core/pkgmanager.h"
+#include "core/value.h"
+#include "core/cstring.h"
+#include "core/scope.h"
 #include "modules/std/std_pkg.h"
 
 namespace clever {

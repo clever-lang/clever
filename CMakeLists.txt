@@ -84,10 +84,10 @@ endif (TCMALLOC)
 
 # Parser and Scanner
 # ---------------------------------------------------------------------------
-execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/interpreter)
+execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/core)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
-BISON_TARGET(CleverParser interpreter/parser.y ${CMAKE_CURRENT_BINARY_DIR}/interpreter/parser.cc)
-RE2C_TARGET(CleverScanner interpreter/scanner.re ${CMAKE_CURRENT_BINARY_DIR}/interpreter/scanner.cc
+BISON_TARGET(CleverParser core/parser.y ${CMAKE_CURRENT_BINARY_DIR}/core/parser.cc)
+RE2C_TARGET(CleverScanner core/scanner.re ${CMAKE_CURRENT_BINARY_DIR}/core/scanner.cc
 	COMPILE_FLAGS "--case-inverted -bc")
 
 ADD_RE2C_BISON_DEPENDENCY(CleverScanner CleverParser)
@@ -127,32 +127,33 @@ endif (UNIX)
 add_executable(clever
 	${RE2C_CleverScanner_OUTPUTS}
 	${BISON_CleverParser_OUTPUTS}
-        compiler/clever.cc
-        compiler/clever.h
-        compiler/compiler.cc
-        compiler/compiler.h
-        compiler/cstring.cc
-        compiler/cstring.h
-        compiler/refcounted.h
-        compiler/scope.h
-        compiler/value.h
-        compiler/pkgmanager.h
-        compiler/pkgmanager.cc
-        interpreter/driver.cc
-        interpreter/driver.h
-        interpreter/main.cc
-        interpreter/scanner.h
+	core/clever.cc
+	core/clever.h
+	core/compiler.cc
+	core/compiler.h
+	core/cstring.cc
+	core/cstring.h
+	core/driver.cc
+	core/driver.h
+	core/ir.h
+	core/main.cc
+	core/module.h
+	core/opcode.cc
+	core/opcode.h
+	core/pkgmanager.cc
+	core/pkgmanager.h
+	core/refcounted.h
+	core/scanner.h
+	core/scope.h
+	core/value.h
+	core/vm.cc
+	core/vm.h
         types/double.h
         types/int.h
         types/str.h
         types/native_types.h
         types/type.h
         types/function.h
-        vm/ir.h
-        vm/opcode.cc
-        vm/opcode.h
-        vm/vm.cc
-        vm/vm.h
 	${EXTRA_CLEVER_FILES}
 )
 target_link_libraries(clever ${CLEVER_LIBRARIES})

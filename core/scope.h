@@ -32,8 +32,8 @@
 #include <tr1/unordered_map>
 #endif
 #include <vector>
-#include "compiler/value.h"
-#include "compiler/cstring.h"
+#include "core/value.h"
+#include "core/cstring.h"
 
 namespace clever {
 

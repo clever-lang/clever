@@ -29,10 +29,10 @@
 #include <vector>
 #include <stack>
 #include <pthread.h>
-#include "compiler/clever.h"
-#include "compiler/compiler.h"
-#include "vm/ir.h"
-#include "vm/opcode.h"
+#include "core/clever.h"
+#include "core/compiler.h"
+#include "core/ir.h"
+#include "core/opcode.h"
 
 namespace clever {
 

@@ -25,13 +25,13 @@
 
 #ifdef CLEVER_DEBUG
 #include <stdio.h>
-#include "vm/opcode.h"
+#include "core/opcode.h"
 #endif
-#include "compiler/cstring.h"
-#include "compiler/scope.h"
-#include "compiler/value.h"
+#include "core/cstring.h"
+#include "core/scope.h"
+#include "core/value.h"
 #include "types/type.h"
-#include "vm/vm.h"
+#include "core/vm.h"
 
 namespace clever {
 

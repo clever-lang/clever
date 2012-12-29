@@ -26,7 +26,7 @@
 #ifndef CLEVER_STD_IO_H
 #define CLEVER_STD_IO_H
 
-#include "compiler/module.h"
+#include "core/module.h"
 
 namespace clever { namespace packages { namespace std {
 
