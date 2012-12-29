@@ -258,19 +258,12 @@ VM_HANDLER(fcall)
 	Function* fdata = static_cast<Function*>(func->getObj());
 
 	if (fdata->isUserDefined()) {
-		// Save arguments and local vars on possible recursion
 		if (m_call_stack.size()) {
 			saveVars();
 		}
-
-		// Pushs a new stack frame for the user function call on the call stack
 		m_call_stack.push(StackFrame());
-
-		// Sets the return address to the next instruction
 		m_call_stack.top().ret_addr = m_pc + 1;
-
-		// Save the function return value address
-		m_call_stack.top().ret_val = op.result;
+		m_call_stack.top().ret_val  = op.result;
 
 		// Function argument value binding
 		if (fdata->hasArgs()) {
@@ -280,13 +273,13 @@ VM_HANDLER(fcall)
 
 			for (size_t i = 0, j = arg_scope->size(); i < j; ++i) {
 				Value* arg_val = getValue(
-					arg_scope->at(i).scope->getId(), arg_scope->at(i).value_id);
+					arg_scope->at(i).scope->getId(),
+					arg_scope->at(i).value_id);
+
 				arg_val->copy(m_call_args[i]);
 			}
-
 			m_call_args.clear();
 		}
-
 		VM_GOTO(fdata->getAddr());
 	} else {
 		fdata->getPtr()(m_call_args);
