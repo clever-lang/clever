@@ -75,23 +75,23 @@ public:
 			m_current_scope(0) {}
 	~VM() {}
 
-	// Sets the symbol table to used by the VM to fetch the symbol names
+	/// Sets the symbol table to used by the VM to fetch the symbol names
 	void setSymbolTable(ScopePool* scope) { m_scope_pool = scope; }
 
-	// Sets the Value* pool to be used by VM to fetch the instr values
+	/// Sets the Value* pool to be used by VM to fetch the instr values
 	void setValuePool(ValuePool* value) { m_value_pool = value; }
 
-	// Helper to retrive a Value* from ValuePool
+	/// Helper to retrive a Value* from ValuePool
 	Value* getValue(size_t n) const { return (*m_value_pool)[n]; }
 
-	// Save function variables on recursion
+	/// Save function variables on recursion
 	void saveVars();
 	void restoreVars() const;
 
-	// Start the VM execution
+	/// Start the VM execution
 	void run();
 
-	// Methods for dumping opcodes
+	/// Methods for dumping opcodes
 #ifdef CLEVER_DEBUG
 	void dumpOpcodes() const;
 #endif
