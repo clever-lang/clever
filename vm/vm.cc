@@ -77,18 +77,21 @@ void VM::dumpOpcodes() const
 // Return operation
 VM_HANDLER(ret)
 {
-	const StackFrame& frame = m_call_stack.top();
-
 	if (m_call_stack.size()) {
+		const StackFrame& frame = m_call_stack.top();
 		const Value* val = getValue(op.op1);
 
 		if (val) {
 			m_call_stack.top().ret_val->copy(getValue(op.op1));
 		}
 		m_call_stack.pop();
-	}
 
-	VM_GOTO(frame.ret_addr);
+		// Go back to the caller
+		VM_GOTO(frame.ret_addr);
+	} else {
+		// Terminates the execution
+		VM_GOTO(m_inst.size());
+	}
 }
 
 // Halt operation
