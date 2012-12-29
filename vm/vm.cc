@@ -128,71 +128,71 @@ VM_HANDLER(assignment)
 
 // Math sum operation
 VM_HANDLER(add)
-{/*
-	Value* lhs = getValue(op.op1);
-	Value* rhs = getValue(op.op2);
+{
+	Value* lhs = getValue(op.op1_scope, op.op1);
+	Value* rhs = getValue(op.op2_scope, op.op2);
 
 	if (lhs->getType() == CLEVER_INT_TYPE
 		&& rhs->getType() == CLEVER_INT_TYPE) {
 		op.result->setInt(lhs->getInt() + rhs->getInt());
-	}*/
+	}
 
 	VM_NEXT();
 }
 
 // Math subtraction operation
 VM_HANDLER(sub)
-{/*
-	Value* lhs = getValue(op.op1);
-	Value* rhs = getValue(op.op2);
+{
+	Value* lhs = getValue(op.op1_scope, op.op1);
+	Value* rhs = getValue(op.op2_scope, op.op2);
 
 	if (lhs->getType() == CLEVER_INT_TYPE
 		&& rhs->getType() == CLEVER_INT_TYPE) {
 		op.result->setInt(lhs->getInt() - rhs->getInt());
 	}
-*/
+
 	VM_NEXT();
 }
 
 // Math multiplication operation
 VM_HANDLER(mul)
-{/*
-	Value* lhs = getValue(op.op1);
-	Value* rhs = getValue(op.op2);
+{
+	Value* lhs = getValue(op.op1_scope, op.op1);
+	Value* rhs = getValue(op.op2_scope, op.op2);
 
 	if (lhs->getType() == CLEVER_INT_TYPE
 		&& rhs->getType() == CLEVER_INT_TYPE) {
 		op.result->setInt(lhs->getInt() * rhs->getInt());
 	}
-*/
+
 	VM_NEXT();
 }
 
 // Math division operation
 VM_HANDLER(div)
-{/*
-	Value* lhs = getValue(op.op1);
-	Value* rhs = getValue(op.op2);
+{
+	Value* lhs = getValue(op.op1_scope, op.op1);
+	Value* rhs = getValue(op.op2_scope, op.op2);
 
 	if (lhs->getType() == CLEVER_INT_TYPE
 		&& rhs->getType() == CLEVER_INT_TYPE) {
 		op.result->setInt(lhs->getInt() / rhs->getInt());
 	}
-*/
+
 	VM_NEXT();
 }
 
 // Math modulus operation
 VM_HANDLER(mod)
-{/*
-	Value* lhs = getValue(op.op1);
-	Value* rhs = getValue(op.op2);
+{
+	Value* lhs = getValue(op.op1_scope, op.op1);
+	Value* rhs = getValue(op.op2_scope, op.op2);
 
 	if (lhs->getType() == CLEVER_INT_TYPE
 		&& rhs->getType() == CLEVER_INT_TYPE) {
 		op.result->setInt(lhs->getInt() % rhs->getInt());
 	}
-*/
+
 	VM_NEXT();
 }
 

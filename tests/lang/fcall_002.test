@@ -1,0 +1,15 @@
+Testing global function change inside a function
+==CODE==
+import std.io.*;
+
+var a = 123;
+
+function b() {
+	a =  321;
+}
+
+b();
+
+println(a);
+==RESULT==
+321
