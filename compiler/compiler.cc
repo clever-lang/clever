@@ -385,6 +385,29 @@ void Compiler::importStmt(Node& package, Node& module)
 	m_pkg.importModule(m_scope, package.data.str, module.data.str);
 }
 
+void Compiler::whileLoop(Node& cond, const location& loc)
+{
+	size_t val_id = 0;
+	Value* val = getValue(cond, &val_id, loc);
+
+	if (!val_id) {
+		val_id = m_value_id;
+		m_value_pool[m_value_id++] = val;
+	}
+
+	m_jmps.push(std::vector<size_t>());
+	m_jmps.top().push_back(m_ir.size());
+
+	m_ir.push_back(IR(OP_JMPZ, FETCH_VAL, val_id, JMP_ADDR, 0));
+}
+
+void Compiler::endWhileLoop()
+{
+	m_ir.push_back(IR(OP_JMP, JMP_ADDR, m_jmps.top().at(0)));
+
+	m_ir[m_jmps.top().at(0)].op2 = m_ir.size();
+}
+
 /// Creates a new lexical scope
 void Compiler::newScope()
 {

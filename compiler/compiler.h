@@ -28,6 +28,7 @@
 
 #include <tr1/unordered_map>
 #include <vector>
+#include <stack>
 #include <sstream>
 #include "compiler/clever.h"
 #include "compiler/scope.h"
@@ -102,6 +103,8 @@ public:
 	void retStmt(Node&, const location&);
 	void importStmt(Node&);
 	void importStmt(Node&, Node&);
+	void whileLoop(Node&, const location&);
+	void endWhileLoop();
 private:
 	// Package manager
 	PkgManager m_pkg;
@@ -125,6 +128,8 @@ private:
 	// Used to point the instruction index on m_ir related to JMP created
 	// just before the current func declaration to skip his internal opcodes
 	size_t m_curr_func;
+
+	std::stack<std::vector<size_t> > m_jmps;
 
 	DISALLOW_COPY_AND_ASSIGN(Compiler);
 };

@@ -167,6 +167,11 @@ non_empty_statement_list:
 	|	prototype ';'
 	|	return_stmt ';'
 	|	if_cond
+	|	while_loop
+;
+
+while_loop:
+		WHILE '(' r_value ')' { c.whileLoop($3, yyloc); } '{' statement_list '}' { c.endWhileLoop(); }
 ;
 
 elseif_cond:

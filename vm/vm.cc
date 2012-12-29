@@ -52,6 +52,7 @@ inline void VM::init()
 	m_handlers[OP_FCALL]    = &VM::fcall;
 	m_handlers[OP_LEAVE]    = &VM::leave;
 	m_handlers[OP_SEND_VAL] = &VM::send_val;
+	m_handlers[OP_JMPZ]     = &VM::jmpz;
 }
 
 #ifdef CLEVER_DEBUG
@@ -96,6 +97,18 @@ VM_HANDLER(halt)
 VM_HANDLER(jmp)
 {
 	VM_GOTO(op.op1);
+}
+
+// JMPZ operation
+VM_HANDLER(jmpz)
+{
+	Value* value = getValue(op.op1);
+
+	if (!value->getInt()) {
+		VM_GOTO(op.op2);
+	}
+
+	VM_NEXT();
 }
 
 // Assignment operation
@@ -278,6 +291,8 @@ VM_HANDLER(fcall)
 	} else {
 		fdata->getPtr()(m_call_args);
 		m_call_args.clear();
+
+		VM_NEXT();
 	}
 }
 
