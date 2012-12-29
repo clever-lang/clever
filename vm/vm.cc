@@ -210,10 +210,10 @@ void VM::saveVars()
 		for (size_t i = 0, j = arg_vars->size(); i < j; ++i) {
 			Value* tmp = new Value();
 
-			tmp->copy(getValue(arg_vars->at(i).getValueId()));
+			tmp->copy(getValue(arg_vars->at(i).value_id));
 			m_call_stack.top().vars.push_back(
 				std::pair<size_t, Value*>(
-					arg_vars->at(i).getValueId(), tmp));
+					arg_vars->at(i).value_id, tmp));
 		}
 	}
 	if (EXPECTED(local_vars != NULL)) {
@@ -221,10 +221,10 @@ void VM::saveVars()
 		for (size_t i = 0, j = local_vars->size(); i < j; ++i) {
 			Value* tmp = new Value();
 
-			tmp->copy(getValue(local_vars->at(i).getValueId()));
+			tmp->copy(getValue(local_vars->at(i).value_id));
 			m_call_stack.top().vars.push_back(
 				std::pair<size_t, Value*>(
-					local_vars->at(i).getValueId(), tmp));
+					local_vars->at(i).value_id, tmp));
 		}
 	}
 }
@@ -270,7 +270,7 @@ VM_HANDLER(fcall)
 			m_call_stack.top().arg_vars = arg_scope;
 
 			for (size_t i = 0, j = arg_scope->size(); i < j; ++i) {
-				Value* arg_val = getValue(arg_scope->at(i).getValueId());
+				Value* arg_val = getValue(arg_scope->at(i).value_id);
 				arg_val->copy(m_call_args[i]);
 			}
 

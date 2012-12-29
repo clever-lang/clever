@@ -132,15 +132,15 @@ Value* Compiler::getValue(Node& node, size_t* val_id, const location& loc) const
 	if (node.type == VALUE) {
 		return node.data.val;
 	} else if (node.type == STRCONST) {
-		Symbol* sym = m_scope->getSymbol(node.data.str);
+		Symbol* sym = m_scope->getAny(node.data.str);
 
 		if (!sym) {
 			errorf(loc, "Variable `%S' cannot be found!", node.data.str);
 		}
 		if (val_id) {
-			*val_id = sym->getValueId();
+			*val_id = sym->value_id;
 		}
-		return m_value_pool[sym->getValueId()];
+		return m_value_pool[sym->value_id];
 	}
 	return NULL;
 }
@@ -148,7 +148,7 @@ Value* Compiler::getValue(Node& node, size_t* val_id, const location& loc) const
 /// Compiles a variable declaration
 void Compiler::varDeclaration(Node& var, Node* node, const location& loc)
 {
-	Symbol* sym = m_scope->getLocalSymbol(var.data.str);
+	Symbol* sym = m_scope->getLocal(var.data.str);
 
 	if (sym) {
 		errorf(loc, "Variable `%S' already declared in the scope!", var.data.str);
@@ -233,7 +233,7 @@ ArgDeclList* Compiler::newArgDeclList(const CString* arg) const
 /// Starts the function compilation
 void Compiler::funcDecl(Node& node, ArgDeclList* arg_list, const location& loc)
 {
-	Symbol* sym = m_scope->getSymbol(node.data.str);
+	Symbol* sym = m_scope->getAny(node.data.str);
 
 	if (sym) {
 		errorf(loc, "Name `%S' already in used!", node.data.str);
@@ -321,7 +321,7 @@ void Compiler::funcEndDecl(bool has_args)
 void Compiler::funcCall(Node& name, ArgCallList* arg_list, Node& res,
 	const location& loc)
 {
-	Symbol* sym = m_scope->getSymbol(name.data.str);
+	Symbol* sym = m_scope->getAny(name.data.str);
 
 	if (!sym) {
 		errorf(loc, "Function `%S' cannot be found!", name.data.str);
@@ -339,7 +339,7 @@ void Compiler::funcCall(Node& name, ArgCallList* arg_list, Node& res,
 	res.data.val = result;
 
 	m_ir.push_back(
-		IR(OP_FCALL, FETCH_VAL, sym->getValueId(), result));
+		IR(OP_FCALL, FETCH_VAL, sym->value_id, result));
 
 	if (arg_list) {
 		delete arg_list;
