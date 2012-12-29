@@ -74,8 +74,7 @@ public:
 	typedef std::vector<pthread_mutex_t> MutexPool;
 
 	VM(IRVector& inst)
-		: m_pc(0), m_inst(inst), m_scope_pool(NULL), m_value_pool(NULL),
-			m_current_scope(0) {}
+		: m_pc(0), m_inst(inst), m_scope_pool(NULL) {}
 	~VM() {}
 
 	/// Sets the symbol table to used by the VM to fetch the symbol names
@@ -125,12 +124,6 @@ private:
 
 	/// Scope pool
 	ScopePool* m_scope_pool;
-
-	/// Value pool
-	ValuePool* m_value_pool;
-
-	/// Current scope id
-	size_t m_current_scope;
 
 	/// VM opcode handlers
 	OpHandler m_handlers[NUM_OPCODES];
