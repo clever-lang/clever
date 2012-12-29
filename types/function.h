@@ -27,8 +27,8 @@
 #define CLEVER_TYPES_FUNCTION_H
 
 #include <vector>
-#include "compiler/clever.h"
-#include "compiler/value.h"
+#include "core/clever.h"
+#include "core/value.h"
 #include "types/type.h"
 
 namespace clever {

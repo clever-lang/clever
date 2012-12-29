@@ -23,11 +23,11 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "compiler/cstring.h"
-#include "compiler/compiler.h"
-#include "compiler/scope.h"
-#include "compiler/value.h"
-#include "interpreter/location.hh"
+#include "core/cstring.h"
+#include "core/compiler.h"
+#include "core/scope.h"
+#include "core/value.h"
+#include "core/location.hh"
 #include "types/native_types.h"
 
 namespace clever {

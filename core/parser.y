@@ -31,9 +31,9 @@
  */
 
 #include <stack>
-#include "interpreter/scanner.h"
-#include "compiler/cstring.h"
-#include "compiler/compiler.h"
+#include "core/scanner.h"
+#include "core/cstring.h"
+#include "core/compiler.h"
 
 namespace clever {
 class Driver;
@@ -70,7 +70,7 @@ class Value;
 %error-verbose
 
 %code {
-#include "interpreter/driver.h"
+#include "core/driver.h"
 }
 
 %token END  0        "end of file"

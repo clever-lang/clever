@@ -24,8 +24,8 @@
  */
 
 #include <iostream>
-#include "compiler/clever.h"
-#include "interpreter/driver.h"
+#include "core/clever.h"
+#include "core/driver.h"
 #ifdef _WIN32
 #include "win32/win32.h"
 #endif

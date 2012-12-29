@@ -23,7 +23,7 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "cstring.h"
+#include "core/cstring.h"
 
 namespace clever {
 

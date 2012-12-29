@@ -32,9 +32,9 @@
 #include <tr1/unordered_map>
 #endif
 #include <vector>
-#include "compiler/cstring.h"
-#include "compiler/module.h"
-#include "compiler/scope.h"
+#include "core/cstring.h"
+#include "core/module.h"
+#include "core/scope.h"
 
 namespace clever {
 

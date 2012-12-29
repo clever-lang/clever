@@ -24,10 +24,10 @@
  */
 
 #include <cstdio>
-#include "interpreter/scanner.h"
-#include "interpreter/parser.hh"
-#include "compiler/compiler.h"
-#include "compiler/value.h"
+#include "core/scanner.h"
+#include "core/parser.hh"
+#include "core/compiler.h"
+#include "core/value.h"
 #include "types/native_types.h"
 
 namespace clever {

@@ -26,7 +26,7 @@
 #ifndef CLEVER_TYPE_H
 #define CLEVER_TYPE_H
 
-#include "compiler/cstring.h"
+#include "core/cstring.h"
 
 namespace clever {
 

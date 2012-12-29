@@ -27,10 +27,10 @@
 #define CLEVER_VALUE_H
 
 #include <cstring>
-#include "compiler/clever.h"
-#include "compiler/refcounted.h"
+#include "core/clever.h"
+#include "core/refcounted.h"
 #include "types/type.h"
-#include "compiler/cstring.h"
+#include "core/cstring.h"
 
 namespace clever {
 

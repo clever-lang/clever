@@ -27,8 +27,8 @@
 #define CLEVER_STR_H
 
 #include <iostream>
-#include "compiler/cstring.h"
-#include "compiler/value.h"
+#include "core/cstring.h"
+#include "core/value.h"
 #include "types/type.h"
 
 namespace clever {

@@ -23,8 +23,8 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "compiler/clever.h"
-#include "vm/opcode.h"
+#include "core/clever.h"
+#include "core/opcode.h"
 
 namespace clever {
 

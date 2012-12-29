@@ -27,8 +27,8 @@
 #define CLEVER_DRIVER_H
 
 #include <stack>
-#include "compiler/compiler.h"
-#include "interpreter/parser.hh"
+#include "core/compiler.h"
+#include "core/parser.hh"
 
 namespace clever { namespace ast {
 

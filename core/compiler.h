@@ -30,10 +30,10 @@
 #include <vector>
 #include <stack>
 #include <sstream>
-#include "compiler/clever.h"
-#include "compiler/scope.h"
-#include "compiler/pkgmanager.h"
-#include "vm/ir.h"
+#include "core/clever.h"
+#include "core/scope.h"
+#include "core/pkgmanager.h"
+#include "core/ir.h"
 
 namespace clever {
 

@@ -24,9 +24,9 @@
  */
 
 #include <iostream>
-#include "compiler/value.h"
+#include "core/value.h"
 #include "types/function.h"
-#include "compiler/pkgmanager.h"
+#include "core/pkgmanager.h"
 #include "modules/std/io/io.h"
 
 namespace clever { namespace packages { namespace std {
