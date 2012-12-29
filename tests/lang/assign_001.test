@@ -1,13 +1,15 @@
 Testing variable assignment
 ==CODE==
+import std.io.*;
+
 var a = 1;
 var b = 2;
 
 a = b;
 b = 3;
 
-print(a);
-print(b);
+println(a);
+println(b);
 ==RESULT==
 2
 3

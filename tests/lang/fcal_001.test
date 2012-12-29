@@ -1,7 +1,9 @@
 Testing function call
 ==CODE==
+import std.io.*;
+
 function test(foo) {
-	print(foo);
+	println(foo);
 }
 
 test(123);
