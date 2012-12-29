@@ -37,39 +37,45 @@
 
 namespace clever {
 
+class Scope;
 class Value;
 typedef std::vector<Value*> ValuePool;
 
-const short int PKG_INIT_FUNC  = 1 << 0;
-const short int PKG_INIT_CLASS = 1 << 1;
-const short int PKG_INIT_CONST = 1 << 2;
-const short int PKG_INIT_ALL   = PKG_INIT_FUNC | PKG_INIT_CLASS | PKG_INIT_CONST;
+const int PKG_INIT_FUNC  = 1 << 0;
+const int PKG_INIT_CLASS = 1 << 1;
+const int PKG_INIT_CONST = 1 << 2;
+const int PKG_INIT_ALL   = PKG_INIT_FUNC | PKG_INIT_CLASS | PKG_INIT_CONST;
 
 #define BEGIN_DECLARE_FUNCTION() if (flags & PKG_INIT_FUNC) {
 #define BEGIN_DECLARE_CLASS()    if (flags & PKG_INIT_CLASS) {
 #define BEGIN_DECLARE_CONSTANT() if (flags & PKG_INIT_CONST) {
 #define END_DECLARE() }
 
-class Scope;
-
 typedef std::tr1::unordered_map<const CString*, Package*> PackageMap;
 typedef std::pair<const CString*, Package*> PackagePair;
 
+/// Package manager
 class PkgManager {
 public:
 	PkgManager() {}
 	~PkgManager() {}
 
+	/// Initialization routine
 	void init(std::vector<Value*>*, size_t*);
+
+	/// Shutdown routine
 	void shutdown();
 
+	/// Adds a new package to the map
 	void addPackage(const CString* name, Package* package) {
 		m_pkgs.insert(PackagePair(name, package));
 	}
 
+	/// Imports the package to the current scope
 	void importPackage(Scope*, const CString*);
-	void importModule(Scope*, const CString*, const CString*);
 
+	/// Imports the module to the current scope
+	void importModule(Scope*, const CString*, const CString*);
 	void loadModule(Scope*, Module*);
 private:
 	PackageMap m_pkgs;

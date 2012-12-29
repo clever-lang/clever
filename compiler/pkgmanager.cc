@@ -32,6 +32,7 @@
 
 namespace clever {
 
+/// Adds the available packages to be imported
 void PkgManager::init(ValuePool* value_pool, size_t* value_id)
 {
 	m_value_pool = value_pool;
@@ -40,6 +41,7 @@ void PkgManager::init(ValuePool* value_pool, size_t* value_id)
 	addPackage(CSTRING("std"), new packages::Std);
 }
 
+/// Performs shutdown operation
 void PkgManager::shutdown()
 {
 	PackageMap::const_iterator it = m_pkgs.begin(), end = m_pkgs.end();
@@ -58,7 +60,7 @@ void PkgManager::shutdown()
 	}
 }
 
-// Loads a module if it is not already loaded
+/// Loads a module if it is not already loaded
 void PkgManager::loadModule(Scope* scope, Module* module)
 {
 	if (module->isLoaded()) {
