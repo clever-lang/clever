@@ -188,7 +188,8 @@ if_cond:
 ;
 
 return_stmt:
-		RETURN r_value        { c.retStmt($2, yyloc); }
+		RETURN r_value        { c.retStmt(&$2, yyloc);  }
+	|	RETURN                { c.retStmt(NULL, yyloc); }
 ;
 
 prototype:

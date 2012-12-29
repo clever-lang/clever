@@ -100,7 +100,7 @@ public:
 	void funcCall(Node&, ArgCallList*, Node&, const location&);
 	ArgDeclList* newArgDeclList(const CString*) const;
 	ArgCallList* addArgCall(ArgCallList*, Node&, const location&);
-	void retStmt(Node&, const location&);
+	void retStmt(Node*, const location&);
 	void importStmt(Node&);
 	void importStmt(Node&, Node&);
 	void whileLoop(Node&, const location&);

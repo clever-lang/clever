@@ -80,10 +80,13 @@ VM_HANDLER(ret)
 	const StackFrame& frame = m_call_stack.top();
 
 	if (m_call_stack.size()) {
-		m_call_stack.top().ret_val->copy(getValue(op.op1));
-	}
+		const Value* val = getValue(op.op1);
 
-	m_call_stack.pop();
+		if (val) {
+			m_call_stack.top().ret_val->copy(getValue(op.op1));
+		}
+		m_call_stack.pop();
+	}
 
 	VM_GOTO(frame.ret_addr);
 }

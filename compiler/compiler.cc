@@ -361,17 +361,21 @@ void Compiler::funcCall(Node& name, ArgCallList* arg_list, Node& res,
 }
 
 /// Compiles a return statement
-void Compiler::retStmt(Node& expr, const location& loc)
+void Compiler::retStmt(Node* expr, const location& loc)
 {
-	size_t val_id = 0;
-	Value* value = getValue(expr, &val_id, loc);
+	if (expr) {
+		size_t val_id = 0;
+		Value* value = getValue(*expr, &val_id, loc);
 
-	if (val_id) {
-		m_ir.push_back(IR(OP_RET, FETCH_VAL, val_id));
+		if (val_id) {
+			m_ir.push_back(IR(OP_RET, FETCH_VAL, val_id));
+		} else {
+			m_ir.push_back(IR(OP_RET, FETCH_VAL, m_value_id));
+
+			m_value_pool[m_value_id++] = value;
+		}
 	} else {
-		m_ir.push_back(IR(OP_RET, FETCH_VAL, m_value_id));
-
-		m_value_pool[m_value_id++] = value;
+		m_ir.push_back(IR(OP_RET));
 	}
 }
 
