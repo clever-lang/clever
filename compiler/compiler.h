@@ -94,7 +94,6 @@ public:
 	void endScope();
 	void assignment(Node&, Node&, const location&);
 	void binOp(Opcode, Node&, Node&, Node&, const location&);
-	void print(Node&, const location&);
 	void funcDecl(Node&, ArgDeclList*, const location&);
 	void funcEndDecl(bool);
 	void funcCall(Node&, ArgCallList*, Node&, const location&);

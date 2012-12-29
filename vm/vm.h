@@ -106,8 +106,6 @@ public:
 	VM_HANDLER_D(mul);
 	VM_HANDLER_D(div);
 	VM_HANDLER_D(mod);
-	VM_HANDLER_D(print);
-	VM_HANDLER_D(halt);
 	VM_HANDLER_D(jmp);
 	VM_HANDLER_D(fcall);
 	VM_HANDLER_D(leave);

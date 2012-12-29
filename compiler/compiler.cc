@@ -86,7 +86,6 @@ void Compiler::shutdown()
 // Compiler termination phase
 void Compiler::end()
 {
-	m_ir.push_back(IR(OP_HALT));
 }
 
 /// Displays an error message and exits
@@ -219,20 +218,6 @@ void Compiler::binOp(Opcode op, Node& lhs, Node& rhs, Node& res,
 
 	res.type = VALUE;
 	res.data.val = result;
-}
-
-/// Temporary print statement compilation
-void Compiler::print(Node& node, const location& loc)
-{
-	size_t val_id = 0;
-	Value* val = getValue(node, &val_id, loc);
-
-	if (val_id) {
-		m_ir.push_back(IR(OP_PRINT, FETCH_VAL, val_id));
-	} else {
-		m_ir.push_back(IR(OP_PRINT, FETCH_VAL, m_value_id));
-		m_value_pool[m_value_id++] = val;
-	}
 }
 
 /// Creates a list of arguments

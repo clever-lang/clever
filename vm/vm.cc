@@ -46,8 +46,6 @@ inline void VM::init()
 	m_handlers[OP_MUL]      = &VM::mul;
 	m_handlers[OP_DIV]      = &VM::div;
 	m_handlers[OP_MOD]      = &VM::sub;
-	m_handlers[OP_PRINT]    = &VM::print;
-	m_handlers[OP_HALT]     = &VM::halt;
 	m_handlers[OP_JMP]      = &VM::jmp;
 	m_handlers[OP_FCALL]    = &VM::fcall;
 	m_handlers[OP_LEAVE]    = &VM::leave;
@@ -92,12 +90,6 @@ VM_HANDLER(ret)
 		// Terminates the execution
 		VM_GOTO(m_inst.size());
 	}
-}
-
-// Halt operation
-VM_HANDLER(halt)
-{
-	VM_NEXT();
 }
 
 // JMP operation
@@ -195,15 +187,6 @@ VM_HANDLER(mod)
 		&& rhs->getType() == CLEVER_INT_TYPE) {
 		op.result->setInt(lhs->getInt() % rhs->getInt());
 	}
-
-	VM_NEXT();
-}
-
-// Temporary handler for print command
-VM_HANDLER(print)
-{
-	getValue(op.op1)->dump();
-	std::cout << std::endl;
 
 	VM_NEXT();
 }

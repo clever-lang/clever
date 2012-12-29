@@ -37,12 +37,10 @@ enum Opcode {
 	OP_MUL,      //       Used for math multiplication operation
 	OP_DIV,      //   5 - Used for math division operation
 	OP_MOD,      //       Used for math modulus operation
-	OP_PRINT,    //       TODO: make it regular function call
-	OP_HALT,     //       Used to abort the VM execution
 	OP_JMP,      //       Used for jumping to other instructions
-	OP_FCALL,    //  10 - Used for function call
+	OP_FCALL,    //       Used for function call
 	OP_LEAVE,    //       Used for leaving from a function call
-	OP_SEND_VAL, //       Used for send Value* to argument values,
+	OP_SEND_VAL, //  10 - Used for send Value* to argument values,
 	OP_JMPZ,     //       Used for jumping if zero
 	NUM_OPCODES
 };

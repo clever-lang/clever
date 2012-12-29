@@ -40,8 +40,6 @@ const char* get_opcode_name(Opcode opnum)
 		CASE(OP_MUL);
 		CASE(OP_DIV);
 		CASE(OP_MOD);
-		CASE(OP_PRINT);
-		CASE(OP_HALT);
 		CASE(OP_JMP);
 		CASE(OP_FCALL);
 		CASE(OP_LEAVE);
