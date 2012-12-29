@@ -159,6 +159,10 @@ next_token:
 		RET(token::FUNC);
 	}
 
+    <INITIAL>'thread' {
+		RET(token::THREAD);
+	}
+
 	<INITIAL>'return' {
 		RET(token::RETURN);
 	}

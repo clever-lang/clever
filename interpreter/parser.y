@@ -116,6 +116,7 @@ class Value;
 %token CONST         "const"
 %token PRINT         "print"
 %token FUNC          "function"
+%token THREAD        "thread"
 %token INCREMENT     "++"
 %token DECREMENT     "--"
 
@@ -166,6 +167,7 @@ non_empty_statement_list:
 	|	assignment ';'
 	|	func_declaration
 	|	func_call ';'
+    |   thread_call ';'
 	|	prototype ';'
 	|	return_stmt ';'
 	|	if_cond
@@ -243,6 +245,10 @@ non_empty_arg_list:
 
 func_call:
 		IDENT '(' arg_list ')' { c.funcCall($1, $3, $$, yyloc); }
+;
+
+thread_call:
+        THREAD IDENT '(' arg_list ')' {}
 ;
 
 assignment:
