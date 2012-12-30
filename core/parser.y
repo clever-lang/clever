@@ -164,6 +164,28 @@ lvalue:
 		IDENT
 ;
 
+logic:
+		rvalue '==' rvalue
+	|	rvalue '||' rvalue
+	|	rvalue '&&' rvalue
+;
+
+arithmetic:
+		rvalue '+' rvalue
+	|	rvalue '-' rvalue
+	|	rvalue '*' rvalue
+	|	rvalue '/' rvalue
+	|	rvalue '%' rvalue
+;
+
+bitwise:
+		rvalue '&' rvalue
+	|	rvalue '|' rvalue
+	|	rvalue '^' rvalue
+	|	rvalue '<<' rvalue
+	|	rvalue '>>' rvalue
+;
+
 variable_decl:
 		VAR variable_decl_list { $$ = $2; }
 ;
