@@ -78,8 +78,7 @@ static CLEVER_FUNCTION(safeprintln) {
 	io_mutex.unlock();
 }
 
-
-} // namespace io
+} // clever::packages::std::io
 
 /// Initializes Standard module
 CLEVER_MODULE_INIT(IOModule) {
