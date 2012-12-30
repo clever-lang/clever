@@ -8,7 +8,8 @@
 #ifndef CLEVER_CODEGEN_H
 #define CLEVER_CODEGEN_H
 
-#include <cstdlib>
+#include <vector>
+#include <stack>
 #include "core/astvisitor.h"
 #include "core/ir.h"
 
@@ -24,6 +25,9 @@ namespace clever { namespace ast {
 
 class Codegen: public Visitor {
 public:
+	typedef std::vector<size_t> AddrVector;
+	typedef std::stack<AddrVector> JmpList;
+
 	Codegen(IRVector& ir, ScopePool& scope_pool, const Compiler* compiler)
 		: m_ir(ir), m_scope_pool(scope_pool), m_compiler(compiler), m_scope(NULL),
 			m_scope_id(0) {}
@@ -36,12 +40,14 @@ public:
 	void visit(Assignment*);
 	void visit(Import*);
 	void visit(FunctionCall*);
+	void visit(FunctionDecl*);
 private:
 	IRVector& m_ir;
 	ScopePool& m_scope_pool;
 	const Compiler* m_compiler;
 	Scope* m_scope;
 	size_t m_scope_id;
+	JmpList m_jmps;
 };
 
 }} // clever::ast

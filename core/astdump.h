@@ -29,7 +29,6 @@ public:
 
 	void visit(Node* node)         { std::cout << m_ws << "Node" << std::endl;         }
 	void visit(NodeArray* node)    { std::cout << m_ws << "NodeArray" << std::endl;    }
-	void visit(FunctionDecl* node) { std::cout << m_ws << "FunctionDecl" << std::endl; }
 	void visit(FunctionCall* node) { std::cout << m_ws << "FunctionCall" << std::endl; }
 	void visit(While* node)        { std::cout << m_ws << "While" << std::endl;        }
 	void visit(If* node)           { std::cout << m_ws << "If" << std::endl;           }
@@ -38,6 +37,16 @@ public:
 	void visit(StringLit* node)    { std::cout << m_ws << "StringLit" << std::endl;    }
 	void visit(Return* node)       { std::cout << m_ws << "Return" << std::endl;       }
 	void visit(Import* node)       { std::cout << m_ws << "Import" << std::endl;       }
+
+	void visit(FunctionDecl* node) {
+		std::cout << m_ws << "FunctionDecl" << std::endl;
+
+		m_ws = std::string(++m_level, ' ');
+
+		node->getBlock()->accept(*this);
+
+		m_ws = std::string(--m_level, ' ');
+	}
 
 	void visit(Ident* node) {
 		std::cout << m_ws << "Ident (" << *node->getName() << ")" << std::endl;

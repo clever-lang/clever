@@ -93,4 +93,38 @@ void Codegen::visit(FunctionCall* node)
 	m_ir.back().op1_scope = sym->scope->getId();
 }
 
+void Codegen::visit(FunctionDecl* node)
+{
+	const CString* name = node->getIdent()->getName();
+	Symbol* sym = m_scope->getLocal(name);
+
+	if (sym) {
+		m_compiler->errorf(node->getLocation(),
+			"Function `%S' already defined in the scope!", name);
+	}
+
+	Function* func = static_cast<Function*>(CLEVER_FUNC_TYPE->allocData());
+
+	func->setName(*name);
+	func->setUserDefined();
+	func->setAddr(m_ir.size());
+
+	Value* fval = new Value();
+	fval->setType(CLEVER_FUNC_TYPE);
+	fval->setObj(func);
+
+	m_scope->pushValue(name, fval);
+
+	m_jmps.push(AddrVector());
+	m_jmps.top().push_back(m_ir.size());
+
+	m_ir.push_back(IR(OP_JMP, JMP_ADDR, 0));
+
+	node->getBlock()->accept(*this);
+
+	m_ir.push_back(IR(OP_LEAVE));
+
+	m_ir[m_jmps.top().back()].op1 = m_ir.size();
+}
+
 }} // clever::ast
