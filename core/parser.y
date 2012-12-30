@@ -34,6 +34,7 @@
 #include "core/scanner.h"
 #include "core/cstring.h"
 #include "core/compiler.h"
+#include "core/ast.h"
 
 namespace clever {
 class Driver;
@@ -44,15 +45,12 @@ class Value;
 }
 
 %union {
-	Node node;
-	ArgDeclList* arg_decl_list;
-	ArgCallList* arg_call_list;
+	ast::Ident* ident;
+	ast::StringLit* str;
+	ast::Node* node;
 }
 
-%type <node> IDENT NUM_INTEGER NUM_DOUBLE STR
-%type <node> r_value math_expr func_call inc_dec thread_call
-%type <arg_decl_list> arg_decl_list
-%type <arg_call_list> non_empty_arg_list arg_list
+%type <str> STR IDENT
 
 // The parsing context.
 %parse-param { Driver& driver }
@@ -155,122 +153,8 @@ statement_list:
 	|	non_empty_statement_list statement_list
 ;
 
-import_stmt:
-		IMPORT IDENT '.' '*'              { c.importStmt($2); }
-	|	IMPORT IDENT '.' IDENT '.' '*'    { c.importStmt($2, $4); }
-;
-
 non_empty_statement_list:
-		'{' { c.newScope(); } non_empty_statement_list { c.endScope(); } '}'
-	|	import_stmt ';'
-	|	var_declaration ';'
-	|	assignment ';'
-	|	func_declaration
-	|	func_call ';'
-    |   thread_call ';'
-	|	prototype ';'
-	|	return_stmt ';'
-	|	if_cond
-	|	while_loop
-	|	inc_dec ';'
-;
-
-inc_dec:
-		IDENT INCREMENT { c.incDec(OP_POS_INC, $1, $$, yyloc); }
-	|	INCREMENT IDENT { c.incDec(OP_PRE_INC, $2, $$, yyloc);  }
-	|	IDENT DECREMENT { c.incDec(OP_POS_DEC, $1, $$, yyloc); }
-	|	DECREMENT IDENT { c.incDec(OP_PRE_DEC, $2, $$, yyloc);  }
-;
-
-while_loop:
-		WHILE '(' r_value ')' { c.whileLoop($3, yyloc); } '{' statement_list '}' { c.endWhileLoop(); }
-;
-
-elseif_cond:
-		/* empty */
-	|	elseif_cond ELSEIF '(' r_value ')' '{' statement_list '}'
-;
-
-else_cond:
-		/* empty */
-	|	ELSE '{' statement_list '}'
-
-if_cond:
-		IF '(' r_value ')' '{' statement_list '}' elseif_cond else_cond
-;
-
-return_stmt:
-		RETURN r_value        { c.retStmt(&$2, yyloc);  }
-	|	RETURN                { c.retStmt(NULL, yyloc); }
-;
-
-prototype:
-		FUNC IDENT '(' ')'
-	|	FUNC IDENT '(' arg_decl_list ')'
-;
-
-var_declaration:
-		VAR var_declaration_list
-;
-
-var_declaration_list:
-		var_declaration_ident
-	|	var_declaration_list ',' var_declaration_ident
-;
-
-var_declaration_ident:
-		IDENT             { c.varDeclaration($1, NULL, yyloc); }
-	|	IDENT '=' r_value { c.varDeclaration($1, &$3, yyloc);  }
-;
-
-func_declaration:
-		FUNC IDENT '(' ')'               '{' { c.funcDecl($2, NULL, yyloc); } statement_list '}' { c.funcEndDecl(false); }
-	|	FUNC IDENT '(' arg_decl_list ')' '{' { c.funcDecl($2, $4, yyloc);   } statement_list '}' { c.funcEndDecl(true);  }
-;
-
-arg_decl_list:
-		IDENT                     { $$ = c.newArgDeclList($1.data.str); }
-	|	arg_decl_list  ',' IDENT  { $1->push_back($3.data.str);         }
-;
-
-arg_list:
-		/* empty */               { $$ = NULL; }
-	|	non_empty_arg_list
-;
-
-non_empty_arg_list:
-		r_value                         { $$ = c.addArgCall(NULL, $1, yyloc); }
-	|	non_empty_arg_list ',' r_value  { c.addArgCall($1, $3, yyloc);        }
-;
-
-func_call:
-		IDENT '(' arg_list ')' { c.funcCall($1, $3, $$, yyloc); }
-;
-
-thread_call:
-        THREAD IDENT '(' arg_list ')' { c.threadCall($2, $4, $$, yyloc); }
-;
-
-assignment:
-		IDENT '=' r_value { c.assignment($1, $3, yyloc); }
-;
-
-r_value:
-		NUM_INTEGER
-	|	NUM_DOUBLE
-	|	STR
-	|	math_expr
-	|	IDENT
-	|	func_call
-	|	inc_dec
-;
-
-math_expr:
-		r_value '+' r_value { c.binOp(OP_ADD, $1, $3, $$, yyloc); }
-	|	r_value '-' r_value { c.binOp(OP_SUB, $1, $3, $$, yyloc); }
-	|	r_value '*' r_value { c.binOp(OP_MUL, $1, $3, $$, yyloc); }
-	|	r_value '/' r_value { c.binOp(OP_DIV, $1, $3, $$, yyloc); }
-	|	r_value '%' r_value { c.binOp(OP_MOD, $1, $3, $$, yyloc); }
+		'{' statement_list'}'
 ;
 
 %%
