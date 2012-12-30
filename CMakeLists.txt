@@ -127,6 +127,8 @@ endif (UNIX)
 add_executable(clever
 	${RE2C_CleverScanner_OUTPUTS}
 	${BISON_CleverParser_OUTPUTS}
+	core/ast.h
+	core/astvisitor.h
 	core/clever.cc
 	core/cthread.h
 	core/clever.h
