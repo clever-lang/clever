@@ -23,8 +23,8 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef AST_H
-#define AST_H
+#ifndef CLEVER_AST_H
+#define CLEVER_AST_H
 
 #include <vector>
 #include "core/value.h"
@@ -32,7 +32,6 @@
 #include "core/astvisitor.h"
 
 namespace clever { namespace ast {
-
 
 class Node {
 public:
@@ -45,8 +44,6 @@ public:
 private:
 	const location& m_location;
 };
-
-
 
 class NodeArray: public Node {
 public:
@@ -306,6 +303,6 @@ private:
 	Node* m_value;
 };
 
-}}
+}} // clever::ast
 
-#endif // AST_H
+#endif // CLEVER_AST_H

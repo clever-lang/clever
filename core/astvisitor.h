@@ -23,8 +23,8 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef ASTVISITOR_H
-#define ASTVISITOR_H
+#ifndef CLEVER_ASTVISITOR_H
+#define CLEVER_ASTVISITOR_H
 
 namespace clever { namespace ast {
 
@@ -46,7 +46,6 @@ class Return;
 
 class Visitor {
 public:
-
 	Visitor() {}
 	virtual ~Visitor() {}
 
@@ -65,9 +64,8 @@ public:
 	virtual void visit(StringLit* node) {}
 	virtual void visit(Ident* node) {}
 	virtual void visit(Return* node) {}
-
 };
 
-}}
+}} // clever::ast
 
-#endif // ASTVISITOR_H
+#endif // CLEVER_ASTVISITOR_H
