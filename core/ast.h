@@ -182,7 +182,15 @@ public:
 	};
 
 	Arithmetic(ArithOperator op, Node* lhs, Node* rhs, const location& location)
-		: Node(location), m_op(op), m_lhs(lhs), m_rhs(rhs) {}
+		: Node(location), m_op(op), m_lhs(lhs), m_rhs(rhs) {
+		CLEVER_ADDREF(m_lhs);
+		CLEVER_ADDREF(m_rhs);
+	}
+
+	~Arithmetic() {
+		CLEVER_DELREF(m_lhs);
+		CLEVER_DELREF(m_rhs);
+	}
 
 	ArithOperator getOperator() const { return m_op; }
 	Node* getLhs() { return m_lhs; }
@@ -205,7 +213,15 @@ public:
 	};
 
 	Logic(LogicOperator op, Node* lhs, Node* rhs, const location& location)
-		: Node(location), m_op(op), m_lhs(lhs), m_rhs(rhs) {}
+		: Node(location), m_op(op), m_lhs(lhs), m_rhs(rhs) {
+		CLEVER_ADDREF(m_lhs);
+		CLEVER_ADDREF(m_rhs);
+	}
+
+	~Logic() {
+		CLEVER_DELREF(m_lhs);
+		CLEVER_DELREF(m_rhs);
+	}
 
 	LogicOperator getOperator() const { return m_op; }
 	Node* getLhs() { return m_lhs; }
@@ -230,7 +246,15 @@ public:
 	};
 
 	Bitwise(BitwiseOperator op, Node* lhs, Node* rhs, const location& location)
-		: Node(location), m_op(op), m_lhs(lhs), m_rhs(rhs) {}
+		: Node(location), m_op(op), m_lhs(lhs), m_rhs(rhs) {
+		CLEVER_ADDREF(m_lhs);
+		CLEVER_ADDREF(m_rhs);
+	}
+
+	~Bitwise() {
+		CLEVER_DELREF(m_lhs);
+		CLEVER_DELREF(m_rhs);
+	}
 
 	BitwiseOperator getOperator() const { return m_op; }
 	Node* getLhs() { return m_lhs; }
