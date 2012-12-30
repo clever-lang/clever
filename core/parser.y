@@ -175,7 +175,9 @@ lvalue:
 logic:
 		rvalue EQUAL rvalue       { $$ = new ast::Logic(ast::Logic::LOP_EQUALS, $<node>1, $<node>3, yyloc); }
 	|	rvalue BOOLEAN_OR rvalue  { $$ = new ast::Logic(ast::Logic::LOP_OR, $<node>1, $<node>3, yyloc);     }
+	|	rvalue LOGICAL_OR rvalue  { $$ = new ast::Logic(ast::Logic::LOP_OR, $<node>1, $<node>3, yyloc);     }
 	|	rvalue BOOLEAN_AND rvalue { $$ = new ast::Logic(ast::Logic::LOP_AND, $<node>1, $<node>3, yyloc);    }
+	|	rvalue LOGICAL_AND rvalue { $$ = new ast::Logic(ast::Logic::LOP_AND, $<node>1, $<node>3, yyloc);    }
 ;
 
 arithmetic:
