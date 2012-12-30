@@ -68,9 +68,7 @@ public:
 	Block(const location& location)
 		: NodeArray(location) {}
 
-	virtual void accept(Visitor& visitor) {
-		visitor.visit(this);
-	}
+	virtual void accept(Visitor& visitor) {	visitor.visit(this); }
 };
 
 class Assignment: public Node {
@@ -96,7 +94,7 @@ public:
 	Assignment* getAssignment() { return m_assignment; }
 	bool hasAssignment() const { return m_assignment != NULL; }
 
-	virtual void accept(Visitor& visitor) { visitor.visit(this); }
+	virtual void accept(Visitor& visitor) {	visitor.visit(this); }
 
 private:
 	Ident* m_ident;
