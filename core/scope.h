@@ -73,7 +73,7 @@ public:
 		}
 	}
 
-	size_t pushVar(const CString* name, Value* value) {
+	size_t pushValue(const CString* name, Value* value) {
 		m_symbols.push_back(Symbol(name, m_value_id, this));
 		m_symbol_table.insert(SymbolEntry(name, m_size++));
 		m_value_pool[m_value_id] = value;

@@ -44,10 +44,10 @@ void Codegen::visit(Block* node)
 void Codegen::visit(VariableDecl* node)
 {
 	if (node->hasAssignment()) {
-		m_scope->pushVar(node->getIdent()->getName(), new Value());
+		m_scope->pushValue(node->getIdent()->getName(), new Value());
 		node->getAssignment()->accept(*this);
 	} else {
-		size_t var_id = m_scope->pushVar(node->getIdent()->getName(), new Value());
+		size_t var_id = m_scope->pushValue(node->getIdent()->getName(), new Value());
 
 		m_ir.push_back(
 			IR(OP_ASSIGN, FETCH_VAL, var_id,
