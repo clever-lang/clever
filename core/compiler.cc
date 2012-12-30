@@ -12,6 +12,7 @@
 #include "core/location.hh"
 #include "types/native_types.h"
 #include "core/astdump.h"
+#include "core/codegen.h"
 
 namespace clever {
 
@@ -101,10 +102,12 @@ void Compiler::errorf(const location& loc, const char* format, ...) const
 
 void Compiler::emitAST(ast::Block* tree)
 {
-	ast::DumpVisitor astdump;
+	ast::Dumper astdump;
+	ast::Codegen codegen;
 
 	if (tree) {
-		tree->accept(astdump);
+		//tree->accept(astdump);
+		tree->accept(codegen);
 	}
 }
 

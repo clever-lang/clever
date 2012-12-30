@@ -130,6 +130,8 @@ add_executable(clever
 	core/ast.h
 	core/astdump.h
 	core/astvisitor.h
+	core/codegen.h
+	core/codegen.cc
 	core/clever.cc
 	core/cthread.h
 	core/clever.h
