@@ -23,39 +23,34 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "core/clever.h"
-#include "core/opcode.h"
+#ifndef CLEVER_CTHREAD_H
+#define CLEVER_CTHREAD_H
+
+#include <pthread.h>
 
 namespace clever {
 
-#ifdef CLEVER_DEBUG
-const char* get_opcode_name(Opcode opnum)
-{
-#define CASE(s) case s: return #s
-	switch (opnum) {
-		CASE(OP_RET);
-		CASE(OP_ASSIGN);
-		CASE(OP_ADD);
-		CASE(OP_SUB);
-		CASE(OP_MUL);
-		CASE(OP_DIV);
-		CASE(OP_MOD);
-		CASE(OP_JMP);
-		CASE(OP_FCALL);
-        CASE(OP_TCALL);
-        CASE(OP_END_THREAD);
-		CASE(OP_LEAVE);
-		CASE(OP_SEND_VAL);
-		CASE(OP_JMPZ);
-		CASE(OP_PRE_INC);
-		CASE(OP_PRE_DEC);
-		CASE(OP_POS_INC);
-		CASE(OP_POS_DEC);
-		EMPTY_SWITCH_DEFAULT_CASE();
-	}
-#undef CASE
-	return "UNKNOWN";
+class Mutex {
+
+public:
+    Mutex() {}
+
+    void init() {
+        pthread_mutex_init (&mut,&mattr);
+    }
+
+    void lock() {
+        pthread_mutex_lock (&mut);
+    }
+
+    void unlock() {
+        pthread_mutex_unlock (&mut);
+    }
+
+private:
+    pthread_mutex_t mut;
+    pthread_mutexattr_t mattr;
+};
+
 }
 #endif
-
-} // clever

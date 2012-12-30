@@ -24,6 +24,7 @@
  */
 
 #include <iostream>
+#include "core/cthread.h"
 #include "core/value.h"
 #include "types/function.h"
 #include "core/pkgmanager.h"
@@ -33,35 +34,66 @@ namespace clever { namespace packages { namespace std {
 
 namespace io {
 
+Mutex io_mutex;
+
 // print(object a, [ ...])
 // Prints the object values without trailing newline
 static CLEVER_FUNCTION(print) {
-	for (size_t i = 0, size = args.size(); i < size; ++i) {
-		args[i]->dump();
-	}
+    for (size_t i = 0, size = args.size(); i < size; ++i) {
+        args[i]->dump();
+    }
 }
 
 // println(object a, [ ...])
 // Prints the object values with trailing newline
 static CLEVER_FUNCTION(println) {
-	for (size_t i = 0, size = args.size(); i < size; ++i) {
-		args[i]->dump();
-		::std::cout << ::std::endl;
-	}
+    for (size_t i = 0, size = args.size(); i < size; ++i) {
+        args[i]->dump();
+        ::std::cout << ::std::endl;
+    }
 }
+
+
+// safeprint(object a, [ ...])
+// Prints the object values without trailing newline [thread safed]
+static CLEVER_FUNCTION(safeprint) {
+    io_mutex.lock();
+    for (size_t i = 0, size = args.size(); i < size; ++i) {
+        args[i]->dump();
+    }
+    io_mutex.unlock();
+}
+
+// safeprintln(object a, [ ...])
+// Prints the object values with trailing newline [thread safed]
+static CLEVER_FUNCTION(safeprintln) {
+    io_mutex.lock();
+    for (size_t i = 0, size = args.size(); i < size; ++i) {
+        args[i]->dump();
+        ::std::cout << ::std::endl;
+    }
+    io_mutex.unlock();
+}
+
 
 } // namespace io
 
 /// Initializes Standard module
 CLEVER_MODULE_INIT(IOModule) {
-	using namespace io;
+    using namespace io;
 
-	BEGIN_DECLARE_FUNCTION();
+    io_mutex.init();
 
-	addFunction(new Function("print",   &CLEVER_FUNC_NAME(print)));
-	addFunction(new Function("println", &CLEVER_FUNC_NAME(println)));
+    BEGIN_DECLARE_FUNCTION();
 
-	END_DECLARE();
+    addFunction(new Function("safeprint",   &CLEVER_FUNC_NAME(safeprint)));
+    addFunction(new Function("safeprintln", &CLEVER_FUNC_NAME(safeprintln)));
+
+
+    addFunction(new Function("print",   &CLEVER_FUNC_NAME(print)));
+    addFunction(new Function("println", &CLEVER_FUNC_NAME(println)));
+
+    END_DECLARE();
 }
 
 }}} // clever::packages::std
