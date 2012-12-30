@@ -1,46 +1,15 @@
 Clever Team
-========================================================================
+================================================================================
 
-  In this file we'll try to log the name of everyone who have contribu-
-ted to the Clever project.
+  In this file we'll try to log the name of everyone who have contributed to
+the Clever project.
 
-* Language Design and Implementation
-  - Felipe Pena <felipe at clever-lang.org>
-  - Higor Eurípedes <higor at clever-lang.org>
-  - Murilo Adriano Vasconcelos <murilo at clever-lang.org>
-  - Péricles Lopes Machado <pericles at clever-lang.org>
++ Language Design and Implementation
+  - Felipe Pena                 - felipe at clever-lang.org
+  - Higor Eurípedes             - higor at clever-lang.org
+  - Murilo Adriano Vasconcelos  - murilo at clever-lang.org
+  - Péricles Lopes Machado      - pericles at clever-lang.org
 
-* FFI (Foreign Function Interface) support
-  - Péricles Lopes Machado <pericles at clever-lang.org>
++ Windows port
+  - Ricardo Gomes da Silva      - ricardo at clever-lang.org
 
-* Windows port
-  - Ricardo Gomes da Silva <ricardo at clever-lang.org>
-
-* Modules
-  * std
-    * FFI (Foreign Function Interface)
-      - Péricles
-    * file
-      - Murilo
-    * io
-      - Felipe
-    * math
-      - Felipe, Ricardo
-    * net
-      - Ricardo
-    * os
-      - Ricardo, Felipe
-    * reflection
-      - Felipe
-    * regex
-      - Higor, Felipe
-    * RPC
-      - Péricles
-
-* Names
- - Felipe   = Felipe Nascimento Silva Pena
- - Higor    = Higor Eurípedes
- - Murilo   = Murilo Adriano Vasconcelos
- - Péricles = Péricles Lopes Machado
- - Ricardo  = Ricardo Gomes da Silva
- - Pedro    = Pedro Faria de Miranda Pinto
