@@ -20,12 +20,12 @@ namespace clever { namespace ast {
 		node->getRhs()->accept(*this);               \
 		m_ws = std::string(--m_level, ' ');
 
-class DumpVisitor : public Visitor {
+class Dumper: public Visitor {
 public:
-	DumpVisitor()
+	Dumper()
 		: m_level(0) {}
 
-	~DumpVisitor() {}
+	~Dumper() {}
 
 	void visit(Node* node)         { std::cout << m_ws << "Node" << std::endl;         }
 	void visit(NodeArray* node)    { std::cout << m_ws << "NodeArray" << std::endl;    }
