@@ -38,6 +38,7 @@ class Value;
 	ast::VariableDecl* vardecl;
 	ast::Logic* logic;
 	ast::Import* import;
+	ast::FunctionCall* fcall;
 }
 
 %type <ident> IDENT
@@ -45,13 +46,14 @@ class Value;
 %type <intlit> NUM_INTEGER
 %type <dbllit> NUM_DOUBLE
 %type <assignment> assignment
-%type <narray> variable_decl variable_decl_list
+%type <narray> variable_decl variable_decl_list non_empty_call_args call_args
 %type <vardecl> variable_decl_impl
 %type <block> statement_list
 %type <arithmetic> arithmetic
 %type <bitwise> bitwise
 %type <logic> logic
 %type <import> import
+%type <fcall> fcall
 
 // The parsing context.
 %parse-param { Driver& driver }
@@ -158,6 +160,7 @@ statement:
 		import ';'
 	|	variable_decl ';'
 	|	assignment ';'
+	|	fcall ';'
 ;
 
 rvalue:
@@ -219,6 +222,19 @@ assignment:
 
 import:
 		IMPORT IDENT '.' IDENT '.' '*' { $$ = new ast::Import($2, $4, yyloc); }
+;
+
+call_args:
+		/* empty */          { $$ = NULL; }
+	|	non_empty_call_args
+
+non_empty_call_args:
+		rvalue                       { $$ = new ast::NodeArray(yyloc); $$->append($<node>1); }
+	|	non_empty_call_args rvalue   { $1->append($<node>2); }
+;
+
+fcall:
+		IDENT '(' call_args ')' { $$ = new ast::FunctionCall($1, $3, yyloc); }
 ;
 
 %%

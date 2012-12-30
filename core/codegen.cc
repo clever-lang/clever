@@ -68,4 +68,27 @@ void Codegen::visit(Assignment* node)
 	}
 }
 
+void Codegen::visit(FunctionCall* node)
+{
+	Ident* ident = static_cast<Ident*>(node->getCallee());
+	Symbol* sym = m_scope->getAny(ident->getName());
+
+	if (!sym) {
+		std::cerr << "Function not found!" << std::endl;
+	}
+
+	if (node->hasArgs()) {
+		NodeList& args = node->getArgs()->getNodes();
+		NodeList::const_iterator it = args.begin(), end = args.end();
+
+		while (it != end) {
+			// m_ir.push_back(IR(OP_SEND_VAL, ...));
+			++it;
+		}
+	}
+
+	m_ir.push_back(IR(OP_FCALL, FETCH_VAL, sym->value_id));
+	m_ir.back().op1_scope = sym->scope->getId();
+}
+
 }} // clever::ast

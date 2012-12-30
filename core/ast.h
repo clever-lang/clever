@@ -16,6 +16,10 @@
 
 namespace clever { namespace ast {
 
+class Node;
+
+typedef std::vector<Node*> NodeList;
+
 class Node: public RefCounted {
 public:
 	Node(const location& location)
@@ -36,7 +40,7 @@ public:
 
 	virtual ~NodeArray() { clearNodes(); }
 
-	std::vector<Node*>& getNodes() { return m_nodes; }
+	NodeList& getNodes() { return m_nodes; }
 
 	Node* getFirst() {
 		if (m_nodes.empty()) {
@@ -55,7 +59,7 @@ public:
 	size_t getSize() const { return m_nodes.size(); }
 
 	virtual void accept(Visitor& visitor) {
-		std::vector<Node*>::iterator node(m_nodes.begin()), end(m_nodes.end());
+		NodeList::iterator node(m_nodes.begin()), end(m_nodes.end());
 		while (node != end) {
 			(*node)->accept(visitor);
 			++node;
@@ -63,7 +67,7 @@ public:
 	}
 
 	void clearNodes() {
-		std::vector<Node*>::iterator it = m_nodes.begin(), end = m_nodes.end();
+		NodeList::iterator it = m_nodes.begin(), end = m_nodes.end();
 
 		while (it != end) {
 			CLEVER_DELREF((*it));
@@ -71,7 +75,7 @@ public:
 		}
 	}
 protected:
-	std::vector<Node*> m_nodes;
+	NodeList m_nodes;
 };
 
 class Block: public NodeArray {
@@ -276,7 +280,15 @@ private:
 class FunctionCall: public Node {
 public:
 	FunctionCall(Node* callee, NodeArray* args, const location& location)
-		: Node(location), m_callee(callee), m_args(args) {}
+		: Node(location), m_callee(callee), m_args(args) {
+		CLEVER_ADDREF(m_callee);
+		CLEVER_SAFE_ADDREF(m_args);
+	}
+
+	~FunctionCall() {
+		CLEVER_DELREF(m_callee);
+		CLEVER_SAFE_DELREF(m_args);
+	}
 
 	Node* getCallee() { return m_callee; }
 
