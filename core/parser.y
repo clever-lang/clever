@@ -165,6 +165,7 @@ rvalue:
 	|	arithmetic
 	|	logic
 	|	bitwise
+	|	'(' rvalue ')' { $<node>$ = $<node>2; }
 ;
 
 lvalue:
