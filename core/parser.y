@@ -41,10 +41,9 @@ class Value;
 %type <strlit> STR
 %type <intlit> NUM_INTEGER
 %type <dbllit> NUM_DOUBLE
-%type <node> lvalue rvalue
 %type <assignment> assignment
+%type <narray> variable_decl variable_decl_list
 %type <vardecl> variable_decl_impl
-%type <narray> variable_decl
 
 
 // The parsing context.
@@ -145,7 +144,7 @@ program:
 
 statement_list:
 		// empty
-	|	statement statement_list
+	|	statement_list statement
 ;
 
 statement:
@@ -165,29 +164,30 @@ lvalue:
 ;
 
 variable_decl:
-		VAR variable_decl_list
+		VAR variable_decl_list { $$ = $2; }
 ;
 
 variable_decl_list:
-		/* empty */
-	| variable_decl_impl
-	| variable_decl_list ',' variable_decl_impl
+		variable_decl_impl                        { $$ = new ast::NodeArray(yyloc); $$->append($1); }
+	|	variable_decl_list ',' variable_decl_impl { $1->append($3); }
 ;
 
 variable_decl_impl:
-		IDENT '=' rvalue { $$ = new ast::VariableDecl($1, new ast::Assignment($1, $3, yyloc), yyloc); }
-	|	IDENT { $$ = new ast::VariableDecl($1, NULL, yyloc); }
+		IDENT '=' rvalue { $$ = new ast::VariableDecl($1, new ast::Assignment($1, $<node>3, yyloc), yyloc); }
+	|	IDENT            { $$ = new ast::VariableDecl($1, NULL, yyloc); }
 ;
 
 assignment:
-		lvalue '=' rvalue { $$ = new ast::Assignment($1, $3, yyloc); }
+		lvalue '=' rvalue { $$ = new ast::Assignment($<node>1, $<node>3, yyloc); }
 ;
 
+/*
 assignment_list:
-		/* empty */
-	| assignment
-	| assignment_list ',' assignment
+		// empty
+	|	assignment
+	|	assignment_list ',' assignment
 ;
+*/
 
 
 %%
