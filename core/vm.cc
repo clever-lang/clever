@@ -257,14 +257,17 @@ void VM::restoreVars() const
 
 // Thread call operation
 
-VM::~VM() {
+VM::~VM()
+{
 }
 
-void VM::copy(VM*) {
+void VM::copy(VM*)
+{
 
 }
 
-void VM::wait() {
+void VM::wait()
+{
     for (size_t i = 0; i < m_thread_pool.size(); ++i) {
         void* status;
         int rc;
