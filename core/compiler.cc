@@ -103,7 +103,7 @@ void Compiler::errorf(const location& loc, const char* format, ...) const
 void Compiler::emitAST(ast::Block* tree)
 {
 	ast::Dumper astdump;
-	ast::Codegen codegen;
+	ast::Codegen codegen(m_ir);
 
 	if (tree) {
 		//tree->accept(astdump);
