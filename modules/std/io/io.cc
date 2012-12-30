@@ -36,32 +36,36 @@ namespace io {
 // print(object a, [ ...])
 // Prints the object values without trailing newline
 static CLEVER_FUNCTION(print) {
-	for (size_t i = 0, size = args.size(); i < size; ++i) {
-		args[i]->dump();
-	}
+    for (size_t i = 0, size = args.size(); i < size; ++i) {
+        args[i]->dump();
+    }
 }
 
 // println(object a, [ ...])
 // Prints the object values with trailing newline
 static CLEVER_FUNCTION(println) {
-	for (size_t i = 0, size = args.size(); i < size; ++i) {
-		args[i]->dump();
-		::std::cout << ::std::endl;
-	}
+    for (size_t i = 0, size = args.size(); i < size; ++i) {
+        args[i]->dump();
+        ::std::cout << ::std::endl;
+    }
 }
 
 } // namespace io
 
 /// Initializes Standard module
 CLEVER_MODULE_INIT(IOModule) {
-	using namespace io;
+    using namespace io;
 
-	BEGIN_DECLARE_FUNCTION();
+    BEGIN_DECLARE_FUNCTION();
 
-	addFunction(new Function("print",   &CLEVER_FUNC_NAME(print)));
-	addFunction(new Function("println", &CLEVER_FUNC_NAME(println)));
+    addFunction(new Function("safeprint",   &CLEVER_FUNC_NAME(print)));
+    addFunction(new Function("safeprintln", &CLEVER_FUNC_NAME(println)));
 
-	END_DECLARE();
+
+    addFunction(new Function("print",   &CLEVER_FUNC_NAME(print)));
+    addFunction(new Function("println", &CLEVER_FUNC_NAME(println)));
+
+    END_DECLARE();
 }
 
 }}} // clever::packages::std

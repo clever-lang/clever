@@ -128,6 +128,7 @@ add_executable(clever
 	${RE2C_CleverScanner_OUTPUTS}
 	${BISON_CleverParser_OUTPUTS}
 	core/clever.cc
+	core/cthread.h
 	core/clever.h
 	core/compiler.cc
 	core/compiler.h
@@ -148,12 +149,12 @@ add_executable(clever
 	core/value.h
 	core/vm.cc
 	core/vm.h
-        types/double.h
-        types/int.h
-        types/str.h
-        types/native_types.h
-        types/type.h
-        types/function.h
+		types/double.h
+		types/int.h
+		types/str.h
+		types/native_types.h
+		types/type.h
+		types/function.h
 	${EXTRA_CLEVER_FILES}
 )
 target_link_libraries(clever ${CLEVER_LIBRARIES})

@@ -28,7 +28,7 @@
 
 #include <vector>
 #include <stack>
-#include <pthread.h>
+#include "cthread.h"
 #include "clever.h"
 #include "compiler.h"
 #include "ir.h"
