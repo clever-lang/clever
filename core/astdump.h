@@ -20,6 +20,11 @@ namespace clever { namespace ast {
 		node->getRhs()->accept(*this);               \
 		m_ws = std::string(--m_level, ' ');
 
+#define AST_DUMP_DISPLAY_BLOCK              \
+		m_ws = std::string(++m_level, ' '); \
+		node->getBlock()->accept(*this);    \
+		m_ws = std::string(--m_level, ' ');
+
 class Dumper: public Visitor {
 public:
 	Dumper()
@@ -30,7 +35,6 @@ public:
 	void visit(Node* node)         { std::cout << m_ws << "Node" << std::endl;         }
 	void visit(NodeArray* node)    { std::cout << m_ws << "NodeArray" << std::endl;    }
 	void visit(FunctionCall* node) { std::cout << m_ws << "FunctionCall" << std::endl; }
-	void visit(While* node)        { std::cout << m_ws << "While" << std::endl;        }
 	void visit(If* node)           { std::cout << m_ws << "If" << std::endl;           }
 	void visit(IntLit* node)       { std::cout << m_ws << "IntLit" << std::endl;       }
 	void visit(DoubleLit* node)    { std::cout << m_ws << "DoubleLit" << std::endl;    }
@@ -38,14 +42,16 @@ public:
 	void visit(Return* node)       { std::cout << m_ws << "Return" << std::endl;       }
 	void visit(Import* node)       { std::cout << m_ws << "Import" << std::endl;       }
 
+	void visit(While* node) {
+		std::cout << m_ws << "While" << std::endl;
+
+		AST_DUMP_DISPLAY_BLOCK;
+	}
+
 	void visit(FunctionDecl* node) {
 		std::cout << m_ws << "FunctionDecl" << std::endl;
 
-		m_ws = std::string(++m_level, ' ');
-
-		node->getBlock()->accept(*this);
-
-		m_ws = std::string(--m_level, ' ');
+		AST_DUMP_DISPLAY_BLOCK;
 	}
 
 	void visit(Ident* node) {

@@ -97,6 +97,7 @@ void Codegen::visit(FunctionDecl* node)
 {
 	const CString* name = node->getIdent()->getName();
 	Symbol* sym = m_scope->getLocal(name);
+	size_t start_func;
 
 	if (sym) {
 		m_compiler->errorf(node->getLocation(),
@@ -115,8 +116,7 @@ void Codegen::visit(FunctionDecl* node)
 
 	m_scope->pushValue(name, fval);
 
-	m_jmps.push(AddrVector());
-	m_jmps.top().push_back(m_ir.size());
+	start_func = m_ir.size();
 
 	m_ir.push_back(IR(OP_JMP, JMP_ADDR, 0));
 
@@ -124,7 +124,7 @@ void Codegen::visit(FunctionDecl* node)
 
 	m_ir.push_back(IR(OP_LEAVE));
 
-	m_ir[m_jmps.top().back()].op1 = m_ir.size();
+	m_ir[start_func].op1 = m_ir.size();
 }
 
 void Codegen::visit(Return* node)
@@ -132,5 +132,21 @@ void Codegen::visit(Return* node)
 	// TODO: return value
 	m_ir.push_back(IR(OP_RET));
 }
+
+void Codegen::visit(While* node)
+{
+	size_t start_while = m_ir.size();
+
+	node->getCondition()->accept(*this);
+
+	m_ir.push_back(IR(OP_JMPZ));
+
+	node->getBlock()->accept(*this);
+
+	m_ir.push_back(IR(OP_JMP, JMP_ADDR, start_while));
+
+	m_ir[start_while].op2 = m_ir.size();
+}
+
 
 }} // clever::ast
