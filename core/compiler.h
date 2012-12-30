@@ -51,6 +51,8 @@ public:
 
     ScopePool* getSymbolTable() { return &m_scope_pool; }
 
+	const PkgManager& getPkgManager() const { return m_pkg; }
+
     void error(const char*) const;
     void error(const std::string&, const location&) const;
     void errorf(const location&, const char*, ...) const;

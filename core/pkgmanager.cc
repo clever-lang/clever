@@ -41,7 +41,7 @@ void PkgManager::shutdown()
 }
 
 /// Loads a module if it is not already loaded
-void PkgManager::loadModule(Scope* scope, Module* module)
+void PkgManager::loadModule(Scope* scope, Module* module) const
 {
 	if (module->isLoaded()) {
 		return;
@@ -65,7 +65,7 @@ void PkgManager::loadModule(Scope* scope, Module* module)
 
 /// Imports a module
 void PkgManager::importModule(Scope* scope, const CString* package,
-	const CString* module)
+	const CString* module) const
 {
 	PackageMap::const_iterator it = m_pkgs.find(package);
 
@@ -88,7 +88,7 @@ void PkgManager::importModule(Scope* scope, const CString* package,
 }
 
 /// Imports a package
-void PkgManager::importPackage(Scope* scope, const CString* package)
+void PkgManager::importPackage(Scope* scope, const CString* package) const
 {
 	PackageMap::const_iterator it = m_pkgs.find(package);
 

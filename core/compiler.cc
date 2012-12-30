@@ -102,7 +102,7 @@ void Compiler::emitAST(ast::Block* tree)
 		ast::Dumper astdump;
 		tree->accept(astdump);
 
-		ast::Codegen codegen(m_ir, m_scope_pool, m_pkg);
+		ast::Codegen codegen(m_ir, m_scope_pool, this);
 
 		codegen.init();
 

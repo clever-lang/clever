@@ -9,7 +9,7 @@
 #include "core/ast.h"
 #include "core/codegen.h"
 #include "core/scope.h"
-#include "core/pkgmanager.h"
+#include "core/compiler.h"
 
 namespace clever { namespace ast {
 
@@ -21,7 +21,7 @@ void Codegen::init()
 
 void Codegen::visit(Import* node)
 {
-	m_pkg.importModule(m_scope,
+	m_compiler->getPkgManager().importModule(m_scope,
 		node->getPackage()->getName(), node->getModule()->getName());
 }
 
@@ -64,7 +64,8 @@ void Codegen::visit(Assignment* node)
 	Symbol* sym = m_scope->getLocal(ident->getName());
 
 	if (!sym) {
-		std::cerr << "Variable not found!" << std::endl;
+		m_compiler->errorf(node->getLocation(),
+			"Variable `%S' not found!", ident->getName());
 	}
 }
 
@@ -74,7 +75,8 @@ void Codegen::visit(FunctionCall* node)
 	Symbol* sym = m_scope->getAny(ident->getName());
 
 	if (!sym) {
-		std::cerr << "Function not found!" << std::endl;
+		m_compiler->errorf(node->getLocation(),
+			"Function `%S' not found!", ident->getName());
 	}
 
 	if (node->hasArgs()) {

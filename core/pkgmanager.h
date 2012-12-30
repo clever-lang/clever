@@ -54,11 +54,11 @@ public:
 	}
 
 	/// Imports the package to the current scope
-	void importPackage(Scope*, const CString*);
+	void importPackage(Scope*, const CString*) const;
 
 	/// Imports the module to the current scope
-	void importModule(Scope*, const CString*, const CString*);
-	void loadModule(Scope*, Module*);
+	void importModule(Scope*, const CString*, const CString*) const;
+	void loadModule(Scope*, Module*) const;
 private:
 	PackageMap m_pkgs;
 };

@@ -29,6 +29,7 @@ public:
 
 	virtual void accept(Visitor& visitor) { visitor.visit(this); }
 
+	const location& getLocation() const { return m_location; }
 private:
 	const location& m_location;
 };
