@@ -48,7 +48,7 @@ class Value;
 %type <intlit> NUM_INTEGER
 %type <dbllit> NUM_DOUBLE
 %type <assignment> assignment
-%type <narray> variable_decl variable_decl_list non_empty_call_args call_args decl_args non_empty_decl_args
+%type <narray> variable_decl variable_decl_list non_empty_call_args call_args
 %type <vardecl> variable_decl_impl
 %type <block> statement_list
 %type <arithmetic> arithmetic
@@ -230,24 +230,15 @@ import:
 		IMPORT IDENT '.' IDENT '.' '*' { $$ = new ast::Import($2, $4, yyloc); }
 ;
 
-decl_args:
-		/* empty */          { $$ = NULL; }
-	|	non_empty_decl_args
-;
-
-non_empty_decl_args:
-		IDENT                      { $$ = new ast::NodeArray(yyloc); $$->append($<node>1); }
-	|	non_empty_decl_args IDENT  { $1->append($<node>2); }
-;
-
 fdecl:
-		FUNC IDENT '(' decl_args ')' '{' statement_list '}'
+		FUNC IDENT '(' variable_decl_list ')' '{' statement_list '}'
 		{ $$ = new ast::FunctionDecl($2, $4, $7, yyloc); }
 ;
 
 call_args:
 		/* empty */          { $$ = NULL; }
 	|	non_empty_call_args
+;
 
 non_empty_call_args:
 		rvalue                       { $$ = new ast::NodeArray(yyloc); $$->append($<node>1); }

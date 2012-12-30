@@ -49,6 +49,7 @@ void Codegen::visit(VariableDecl* node)
 	} else {
 		size_t var_id = m_scope->pushValue(node->getIdent()->getName(), new Value());
 
+		// XXX: is this really needed?
 		m_ir.push_back(
 			IR(OP_ASSIGN, FETCH_VAL, var_id,
 				FETCH_VAL, m_scope->pushConst(new Value())));
@@ -60,6 +61,8 @@ void Codegen::visit(VariableDecl* node)
 
 void Codegen::visit(Assignment* node)
 {
+	// TODO: allow assignment of any possible left hand side.
+
 	Ident* ident = static_cast<Ident*>(node->getLhs());
 	Symbol* sym = m_scope->getLocal(ident->getName());
 
@@ -67,6 +70,8 @@ void Codegen::visit(Assignment* node)
 		m_compiler->errorf(node->getLocation(),
 			"Variable `%S' not found!", ident->getName());
 	}
+
+	// TODO: if node->isConditional() is true, emit branching code to avoid assignment when ident has been initialized.
 }
 
 void Codegen::visit(FunctionCall* node)
@@ -118,9 +123,29 @@ void Codegen::visit(FunctionDecl* node)
 	m_jmps.push(AddrVector());
 	m_jmps.top().push_back(m_ir.size());
 
+	// XXX: what's the point of a jump here?
 	m_ir.push_back(IR(OP_JMP, JMP_ADDR, 0));
 
+	// TODO: find a cleaner way to enter and leave scopes
+	m_scope = m_scope->newLexicalScope();
+	m_scope->setId(m_scope_id);
+	m_scope_pool[m_scope_id++] = m_scope;
+
+	if (node->hasArgs()) {
+		for (size_t i = 0; i < node->numArgs(); ++i) {
+			VariableDecl* decl = static_cast<VariableDecl*>(node->getArg(i));
+
+			if (decl->hasAssignment()) {
+				decl->getAssignment()->setConditional(true);
+			}
+		}
+
+		node->getArgs()->accept(*this);
+	}
+
 	node->getBlock()->accept(*this);
+
+	m_scope = m_scope->getParent();
 
 	m_ir.push_back(IR(OP_LEAVE));
 
