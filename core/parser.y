@@ -32,10 +32,11 @@ class Value;
 	ast::StringLit* strlit;
 	ast::IntLit* intlit;
 	ast::DoubleLit* dbllit;
-
+	ast::Arithmetic* arithmetic;
+	ast::Bitwise* bitwise;
 	ast::Assignment* assignment;
 	ast::VariableDecl* vardecl;
-
+	ast::Logic* logic;
 }
 
 %type <ident> IDENT
@@ -46,6 +47,9 @@ class Value;
 %type <narray> variable_decl variable_decl_list
 %type <vardecl> variable_decl_impl
 %type <block> statement_list
+%type <arithmetic> arithmetic
+%type <bitwise> bitwise
+%type <logic> logic
 
 // The parsing context.
 %parse-param { Driver& driver }
@@ -158,6 +162,9 @@ rvalue:
 	|	STR
 	|	NUM_INTEGER
 	|	NUM_DOUBLE
+	|	arithmetic
+	|	logic
+	|	bitwise
 ;
 
 lvalue:
@@ -165,25 +172,25 @@ lvalue:
 ;
 
 logic:
-		rvalue '==' rvalue
-	|	rvalue '||' rvalue
-	|	rvalue '&&' rvalue
+		rvalue EQUAL rvalue       { $$ = new ast::Logic(ast::Logic::LOP_EQUALS, $<node>1, $<node>3, yyloc); }
+	|	rvalue BOOLEAN_OR rvalue  { $$ = new ast::Logic(ast::Logic::LOP_OR, $<node>1, $<node>3, yyloc);     }
+	|	rvalue BOOLEAN_AND rvalue { $$ = new ast::Logic(ast::Logic::LOP_AND, $<node>1, $<node>3, yyloc);    }
 ;
 
 arithmetic:
-		rvalue '+' rvalue
-	|	rvalue '-' rvalue
-	|	rvalue '*' rvalue
-	|	rvalue '/' rvalue
-	|	rvalue '%' rvalue
+		rvalue '+' rvalue { $$ = new ast::Arithmetic(ast::Arithmetic::MOP_ADD, $<node>1, $<node>3, yyloc); }
+	|	rvalue '-' rvalue { $$ = new ast::Arithmetic(ast::Arithmetic::MOP_SUB, $<node>1, $<node>3, yyloc); }
+	|	rvalue '*' rvalue { $$ = new ast::Arithmetic(ast::Arithmetic::MOP_MUL, $<node>1, $<node>3, yyloc); }
+	|	rvalue '/' rvalue { $$ = new ast::Arithmetic(ast::Arithmetic::MOP_DIV, $<node>1, $<node>3, yyloc); }
+	|	rvalue '%' rvalue { $$ = new ast::Arithmetic(ast::Arithmetic::MOP_MOD, $<node>1, $<node>3, yyloc); }
 ;
 
 bitwise:
-		rvalue '&' rvalue
-	|	rvalue '|' rvalue
-	|	rvalue '^' rvalue
-	|	rvalue '<<' rvalue
-	|	rvalue '>>' rvalue
+		rvalue '&' rvalue          { $$ = new ast::Bitwise(ast::Bitwise::BOP_AND, $<node>1, $<node>3, yyloc);    }
+	|	rvalue '|' rvalue          { $$ = new ast::Bitwise(ast::Bitwise::BOP_OR, $<node>1, $<node>3, yyloc);     }
+	|	rvalue '^' rvalue          { $$ = new ast::Bitwise(ast::Bitwise::BOP_XOR, $<node>1, $<node>3, yyloc);    }
+	|	rvalue LSHIFT_EQUAL rvalue { $$ = new ast::Bitwise(ast::Bitwise::BOP_LSHIFT, $<node>1, $<node>3, yyloc); }
+	|	rvalue RSHIFT_EQUAL rvalue { $$ = new ast::Bitwise(ast::Bitwise::BOP_RSHIFT, $<node>1, $<node>3, yyloc); }
 ;
 
 variable_decl:

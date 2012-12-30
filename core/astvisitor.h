@@ -25,6 +25,8 @@ class DoubleLit;
 class StringLit;
 class Ident;
 class Return;
+class Logic;
+class Bitwise;
 
 class Visitor {
 public:
@@ -46,6 +48,8 @@ public:
 	virtual void visit(StringLit* node) {}
 	virtual void visit(Ident* node) {}
 	virtual void visit(Return* node) {}
+	virtual void visit(Logic* node) {}
+	virtual void visit(Bitwise* node) {}
 };
 
 }} // clever::ast
