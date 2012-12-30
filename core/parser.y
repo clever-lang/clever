@@ -40,6 +40,7 @@ class Value;
 	ast::Import* import;
 	ast::FunctionCall* fcall;
 	ast::FunctionDecl* fdecl;
+	ast::Return* ret;
 }
 
 %type <ident> IDENT
@@ -56,6 +57,7 @@ class Value;
 %type <import> import
 %type <fcall> fcall
 %type <fdecl> fdecl
+%type <ret> return_stmt
 
 // The parsing context.
 %parse-param { Driver& driver }
@@ -164,6 +166,7 @@ statement:
 	|	assignment ';'
 	|	fcall ';'
 	|	fdecl
+	|	return_stmt ';'
 ;
 
 rvalue:
@@ -253,6 +256,11 @@ non_empty_call_args:
 
 fcall:
 		IDENT '(' call_args ')' { $$ = new ast::FunctionCall($1, $3, yyloc); }
+;
+
+return_stmt:
+		RETURN rvalue { $$ = new ast::Return($<node>2, yyloc); }
+	|	RETURN        { $$ = new ast::Return(NULL, yyloc); }
 ;
 
 %%

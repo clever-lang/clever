@@ -127,4 +127,10 @@ void Codegen::visit(FunctionDecl* node)
 	m_ir[m_jmps.top().back()].op1 = m_ir.size();
 }
 
+void Codegen::visit(Return* node)
+{
+	// TODO: return value
+	m_ir.push_back(IR(OP_RET));
+}
+
 }} // clever::ast

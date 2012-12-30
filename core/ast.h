@@ -435,7 +435,13 @@ private:
 class Return: public Node {
 public:
 	Return(Node* value, const location& location)
-		: Node(location), m_value(value) {}
+		: Node(location), m_value(value) {
+		CLEVER_SAFE_ADDREF(m_value);
+	}
+
+	~Return() {
+		CLEVER_SAFE_DELREF(m_value);
+	}
 
 	Node* getValue() const { return m_value; }
 

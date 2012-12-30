@@ -41,6 +41,7 @@ public:
 	void visit(Import*);
 	void visit(FunctionCall*);
 	void visit(FunctionDecl*);
+	void visit(Return*);
 private:
 	IRVector& m_ir;
 	ScopePool& m_scope_pool;
