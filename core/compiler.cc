@@ -107,6 +107,8 @@ void Compiler::emitAST(ast::Block* tree)
 		codegen.init();
 
 		tree->accept(codegen);
+
+		delete tree;
 	}
 }
 

@@ -12,13 +12,14 @@
 #include "core/value.h"
 #include "core/location.hh"
 #include "core/astvisitor.h"
+#include "core/clever.h"
 
 namespace clever { namespace ast {
 
-class Node {
+class Node: public RefCounted {
 public:
 	Node(const location& location)
-		: m_location(location) {}
+		: RefCounted(0), m_location(location) {}
 
 	virtual ~Node() {}
 
@@ -33,7 +34,7 @@ public:
 	NodeArray(const location& location)
 		: Node(location) {}
 
-	virtual ~NodeArray(void) {}
+	virtual ~NodeArray() { clearNodes(); }
 
 	std::vector<Node*>& getNodes() { return m_nodes; }
 
@@ -47,6 +48,7 @@ public:
 
 	Node* append(Node* node) {
 		m_nodes.push_back(node);
+		CLEVER_ADDREF(node);
 		return node;
 	}
 
@@ -57,6 +59,15 @@ public:
 		while (node != end) {
 			(*node)->accept(visitor);
 			++node;
+		}
+	}
+
+	void clearNodes() {
+		std::vector<Node*>::iterator it = m_nodes.begin(), end = m_nodes.end();
+
+		while (it != end) {
+			CLEVER_DELREF((*it));
+			++it;
 		}
 	}
 protected:
@@ -74,7 +85,15 @@ public:
 class Assignment: public Node {
 public:
 	Assignment(Node* lhs, Node* rhs, const location& location)
-		: Node(location), m_lhs(lhs), m_rhs(rhs) {}
+		: Node(location), m_lhs(lhs), m_rhs(rhs) {
+		CLEVER_ADDREF(m_lhs);
+		CLEVER_ADDREF(m_rhs);
+	}
+
+	~Assignment() {
+		CLEVER_DELREF(m_lhs);
+		CLEVER_DELREF(m_rhs);
+	}
 
 	Node* getLhs() { return m_lhs; }
 	Node* getRhs() { return m_rhs; }
@@ -85,10 +104,35 @@ private:
 	Node* m_rhs;
 };
 
+class Ident: public Node {
+public:
+	Ident(const CString* name, const location& location)
+		: Node(location), m_name(name) {}
+
+	const CString* getName() const { return m_name; }
+
+	virtual void accept(Visitor& visitor) { visitor.visit(this); }
+
+private:
+	const CString* m_name;
+};
+
 class VariableDecl: public Node {
 public:
 	VariableDecl(Ident* ident, Assignment* assignment, const location& location)
-		: Node(location), m_ident(ident), m_assignment(assignment) { }
+		: Node(location), m_ident(ident), m_assignment(assignment) {
+		CLEVER_ADDREF(m_ident);
+		if (m_assignment) {
+			CLEVER_ADDREF(m_assignment);
+		}
+	}
+
+	~VariableDecl() {
+		CLEVER_DELREF(m_ident);
+		if (m_assignment) {
+			CLEVER_DELREF(m_assignment);
+		}
+	}
 
 	Ident* getIdent() const { return m_ident; }
 	Assignment* getAssignment() { return m_assignment; }
@@ -317,19 +361,6 @@ public:
 
 private:
 	const CString* m_value;
-};
-
-class Ident: public Node {
-public:
-	Ident(const CString* name, const location& location)
-		: Node(location), m_name(name) {}
-
-	const CString* getName() const { return m_name; }
-
-	virtual void accept(Visitor& visitor) { visitor.visit(this); }
-
-private:
-	const CString* m_name;
 };
 
 class Return: public Node {
