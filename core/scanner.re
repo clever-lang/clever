@@ -231,7 +231,7 @@ next_token:
 			}
 		}
 
-		yylval->str = new ast::StringLit(CSTRING(strtext), *yyloc);
+        yylval->strlit = new ast::StringLit(CSTRING(strtext), *yyloc);
 
 		RET(token::STR);
 	}
@@ -244,7 +244,7 @@ next_token:
 			n = n * 10 + (nstr[i] - '0');
 		}
 
-		yylval->num = new ast::IntLit(n, *yyloc);
+        yylval->intlit = new ast::IntLit(n, *yyloc);
 
 		RET(token::NUM_INTEGER);
 	}
@@ -263,7 +263,7 @@ next_token:
 			}
 		}
 
-		yylval->num = new ast::IntLit(n, *yyloc);
+        yylval->intlit = new ast::IntLit(n, *yyloc);
 
 		RET(token::NUM_INTEGER);
 	}
@@ -276,7 +276,7 @@ next_token:
 			n = n * 8 + nstr[i] - '0';
 		}
 
-		yylval->num = new ast::IntLit(n, *yyloc);
+        yylval->intlit = new ast::IntLit(n, *yyloc);
 
 		RET(token::NUM_INTEGER);
 	}
@@ -285,7 +285,7 @@ next_token:
 		double n = strtod(
 			std::string(reinterpret_cast<const char*>(s.yylex), yylen).c_str(), NULL);
 
-		yylval->dval = new ast::DoubleLit(n, *yyloc);
+        yylval->dbllit = new ast::DoubleLit(n, *yyloc);
 
 		RET(token::NUM_DOUBLE);
 	}

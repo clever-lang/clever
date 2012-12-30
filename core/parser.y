@@ -25,15 +25,27 @@ class Value;
 }
 
 %union {
-	ast::Ident* ident;
-	ast::StringLit* str;
-	ast::IntLit* num;
-	ast::DoubleLit* dval;
 	ast::Node* node;
+	ast::NodeArray* narray;
+	ast::Ident* ident;
+	ast::StringLit* strlit;
+	ast::IntLit* intlit;
+	ast::DoubleLit* dbllit;
+
+	ast::Assignment* assignment;
+	ast::VariableDecl* vardecl;
+
 }
 
-%type <str> STR
 %type <ident> IDENT
+%type <strlit> STR
+%type <intlit> NUM_INTEGER
+%type <dbllit> NUM_DOUBLE
+%type <node> lvalue rvalue
+%type <assignment> assignment
+%type <vardecl> variable_decl_impl
+%type <narray> variable_decl
+
 
 // The parsing context.
 %parse-param { Driver& driver }
@@ -125,20 +137,58 @@ class Value;
 
 %%
 
-%start top_statements;
+%start program;
 
-top_statements:
+program:
 		{ c.init(); } statement_list { c.end(); }
 ;
 
 statement_list:
-		/* empty */
-	|	non_empty_statement_list statement_list
+		// empty
+	|	statement statement_list
 ;
 
-non_empty_statement_list:
-		'{' statement_list'}'
+statement:
+		variable_decl
+	|	assignment
 ;
+
+rvalue:
+		IDENT
+	|	STR
+	|	NUM_INTEGER
+	|	NUM_DOUBLE
+;
+
+lvalue:
+		IDENT
+;
+
+variable_decl:
+		VAR variable_decl_list
+;
+
+variable_decl_list:
+		/* empty */
+	| variable_decl_impl
+	| variable_decl_list ',' variable_decl_impl
+;
+
+variable_decl_impl:
+		IDENT '=' rvalue { $$ = new ast::VariableDecl($1, new ast::Assignment($1, $3, yyloc), yyloc); }
+	|	IDENT { $$ = new ast::VariableDecl($1, NULL, yyloc); }
+;
+
+assignment:
+		lvalue '=' rvalue { $$ = new ast::Assignment($1, $3, yyloc); }
+;
+
+assignment_list:
+		/* empty */
+	| assignment
+	| assignment_list ',' assignment
+;
+
 
 %%
 
