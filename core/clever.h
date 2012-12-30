@@ -16,6 +16,10 @@ namespace clever {
 
 extern jmp_buf fatal_error;
 
+// Version macros
+#define CLEVER_VERSION 100    // 0.1.0
+#define CLEVER_VERSION_STRING "0.1.0-dev"
+
 // Macro to abort execution
 #ifndef CLEVER_APPLE
 # define CLEVER_EXIT_FATAL() longjmp(fatal_error, 1)

@@ -63,13 +63,13 @@ int main(int argc, char **argv)
 			show_usage();
 			return 0;
 		} else if (argv[i] == std::string("-v")) {
-            std::cout << "Clever - development version";
+            std::cout << "Clever - " CLEVER_VERSION_STRING;
 
 #ifdef CLEVER_DEBUG
             std::cout << " (debug)";
 #endif
             std::cout << "\n"
-                         "Copyright (c) 2011-2012 Clever Team\n"
+                         "Copyright (c) Clever Team\n"
                          "(built: " __DATE__ " " __TIME__ ")\n";
 
 			return 0;
