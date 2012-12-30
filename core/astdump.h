@@ -37,6 +37,7 @@ public:
 	void visit(DoubleLit* node)    { std::cout << m_ws << "DoubleLit" << std::endl;    }
 	void visit(StringLit* node)    { std::cout << m_ws << "StringLit" << std::endl;    }
 	void visit(Return* node)       { std::cout << m_ws << "Return" << std::endl;       }
+	void visit(Import* node)       { std::cout << m_ws << "Import" << std::endl;       }
 
 	void visit(Ident* node) {
 		std::cout << m_ws << "Ident (" << *node->getName() << ")" << std::endl;

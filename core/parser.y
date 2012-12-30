@@ -37,6 +37,7 @@ class Value;
 	ast::Assignment* assignment;
 	ast::VariableDecl* vardecl;
 	ast::Logic* logic;
+	ast::Import* import;
 }
 
 %type <ident> IDENT
@@ -50,6 +51,7 @@ class Value;
 %type <arithmetic> arithmetic
 %type <bitwise> bitwise
 %type <logic> logic
+%type <import> import
 
 // The parsing context.
 %parse-param { Driver& driver }
@@ -153,7 +155,8 @@ statement_list:
 ;
 
 statement:
-		variable_decl ';'
+		import ';'
+	|	variable_decl ';'
 	|	assignment ';'
 ;
 
@@ -214,14 +217,9 @@ assignment:
 		lvalue '=' rvalue { $$ = new ast::Assignment($<node>1, $<node>3, yyloc); }
 ;
 
-/*
-assignment_list:
-		// empty
-	|	assignment
-	|	assignment_list ',' assignment
+import:
+		IMPORT IDENT '.' IDENT '.' '*' { $$ = new ast::Import($2, $4, yyloc); }
 ;
-*/
-
 
 %%
 

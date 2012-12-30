@@ -117,6 +117,28 @@ private:
 	const CString* m_name;
 };
 
+class Import: public Node {
+public:
+	Import(Ident* package, Ident* module, const location& location)
+		: Node(location), m_package(package), m_module(module) {
+		CLEVER_ADDREF(m_package);
+		CLEVER_ADDREF(m_module);
+	}
+
+	~Import() {
+		CLEVER_DELREF(m_package);
+		CLEVER_DELREF(m_module);
+	}
+
+	Ident* getPackage() const { return m_package; }
+	Ident* getModule() const { return m_module; }
+
+	virtual void accept(Visitor& visitor) { visitor.visit(this); }
+private:
+	Ident* m_package;
+	Ident* m_module;
+};
+
 class VariableDecl: public Node {
 public:
 	VariableDecl(Ident* ident, Assignment* assignment, const location& location)

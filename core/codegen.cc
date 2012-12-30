@@ -9,6 +9,7 @@
 #include "core/ast.h"
 #include "core/codegen.h"
 #include "core/scope.h"
+#include "core/pkgmanager.h"
 
 namespace clever { namespace ast {
 
@@ -16,6 +17,12 @@ void Codegen::init()
 {
 	m_scope = new Scope;
 	m_scope_pool[m_scope_id++] = m_scope;
+}
+
+void Codegen::visit(Import* node)
+{
+	m_pkg.importModule(m_scope,
+		node->getPackage()->getName(), node->getModule()->getName());
 }
 
 void Codegen::visit(Block* node)

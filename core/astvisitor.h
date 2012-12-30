@@ -27,6 +27,7 @@ class Ident;
 class Return;
 class Logic;
 class Bitwise;
+class Import;
 
 class Visitor {
 public:
@@ -50,6 +51,7 @@ public:
 	virtual void visit(Return* node) {}
 	virtual void visit(Logic* node) {}
 	virtual void visit(Bitwise* node) {}
+	virtual void visit(Import* node) {}
 };
 
 }} // clever::ast
