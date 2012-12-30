@@ -29,8 +29,11 @@ public:
 	void visit(IntLit* node)       { std::cout << m_ws << "IntLit" << std::endl;       }
 	void visit(DoubleLit* node)    { std::cout << m_ws << "DoubleLit" << std::endl;    }
 	void visit(StringLit* node)    { std::cout << m_ws << "StringLit" << std::endl;    }
-	void visit(Ident* node)        { std::cout << m_ws << "Ident" << std::endl;        }
 	void visit(Return* node)       { std::cout << m_ws << "Return" << std::endl;       }
+
+	void visit(Ident* node) {
+		std::cout << m_ws << "Ident (" << *node->getName() << ")" << std::endl;
+	}
 
 	void visit(Assignment* node) {
 		std::cout << m_ws << "Assignment";
@@ -45,36 +48,20 @@ public:
 	void visit(Logic* node) {
 		std::cout << m_ws << "Logic";
 		switch (node->getOperator()) {
-			case ast::Logic::LOP_EQUALS:
-				AST_DUMP_DISPLAY_LHS_RHS("==");
-				break;
-			case ast::Logic::LOP_AND:
-				AST_DUMP_DISPLAY_LHS_RHS("&&");
-				break;
-			case ast::Logic::LOP_OR:
-				AST_DUMP_DISPLAY_LHS_RHS("||");
-				break;
+			case ast::Logic::LOP_EQUALS: AST_DUMP_DISPLAY_LHS_RHS("=="); break;
+			case ast::Logic::LOP_AND:    AST_DUMP_DISPLAY_LHS_RHS("&&"); break;
+			case ast::Logic::LOP_OR:     AST_DUMP_DISPLAY_LHS_RHS("||"); break;
 		}
 	}
 
 	void visit(Bitwise* node) {
 		std::cout << m_ws << "Bitwise";
 		switch (node->getOperator()) {
-			case ast::Bitwise::BOP_AND:
-				AST_DUMP_DISPLAY_LHS_RHS('&');
-				break;
-			case ast::Bitwise::BOP_OR:
-				AST_DUMP_DISPLAY_LHS_RHS('|');
-				break;
-			case ast::Bitwise::BOP_XOR:
-				AST_DUMP_DISPLAY_LHS_RHS('^');
-				break;
-			case ast::Bitwise::BOP_LSHIFT:
-				AST_DUMP_DISPLAY_LHS_RHS("<<");
-				break;
-			case ast::Bitwise::BOP_RSHIFT:
-				AST_DUMP_DISPLAY_LHS_RHS(">>");
-				break;
+			case ast::Bitwise::BOP_AND:	   AST_DUMP_DISPLAY_LHS_RHS('&');  break;
+			case ast::Bitwise::BOP_OR:     AST_DUMP_DISPLAY_LHS_RHS('|');  break;
+			case ast::Bitwise::BOP_XOR:    AST_DUMP_DISPLAY_LHS_RHS('^');  break;
+			case ast::Bitwise::BOP_LSHIFT: AST_DUMP_DISPLAY_LHS_RHS("<<"); break;
+			case ast::Bitwise::BOP_RSHIFT: AST_DUMP_DISPLAY_LHS_RHS(">>"); break;
 		}
 	}
 
