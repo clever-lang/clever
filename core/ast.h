@@ -27,7 +27,6 @@
 #define CLEVER_AST_H
 
 #include <vector>
-#include <ostream>
 #include "core/value.h"
 #include "core/location.hh"
 #include "core/astvisitor.h"
@@ -41,7 +40,6 @@ public:
 
 	virtual ~Node(void) {}
 	virtual void accept(Visitor& visitor) {  }
-	virtual void print(std::ostream& os) { os.put(typeid(*this).name()); }
 
 private:
 	const location& m_location;
@@ -78,7 +76,6 @@ public:
 		}
 	}
 
-	virtual void print(std::ostream& os) { os.put(typeid(*this).name()); }
 
 protected:
 	std::vector<Node*> m_nodes;
@@ -90,7 +87,7 @@ public:
 		: NodeArray(location) {}
 
 	using NodeArray::accept;
-	using NodeArray::print;
+
 };
 
 class Assignment: public Node {
@@ -141,6 +138,7 @@ public:
 	Node* getRhs() { return m_rhs; }
 
 	virtual void accept(Visitor& visitor) { visitor.visit(this); }
+
 private:
 	MathOperator m_op;
 	Node* m_lhs;
@@ -173,6 +171,7 @@ public:
 	Block* getBlock() { return m_block; }
 
 	virtual void accept(Visitor& visitor) { visitor.visit(this); }
+
 private:
 	const CString* m_name;
 	NodeArray* m_args;
@@ -203,6 +202,7 @@ public:
 	}
 
 	virtual void accept(Visitor& visitor) { visitor.visit(this); }
+
 private:
 	Node* m_callee;
 	NodeArray* m_args;
@@ -218,6 +218,7 @@ public:
 	Node* getBlock() { return m_block; }
 
 	virtual void accept(Visitor& visitor) { visitor.visit(this); }
+
 private:
 	Node *m_condition;
 	Node *m_block;
@@ -244,6 +245,7 @@ public:
 	Node* getElseNode() { return m_else_node; }
 
 	virtual void accept(Visitor& visitor) { visitor.visit(this); }
+
 private:
 	Node *m_else_node;
 	std::vector<std::pair<Node*, Node*> > m_conditionals;
@@ -257,6 +259,7 @@ public:
 	long getValue() const { return m_value; }
 
 	virtual void accept(Visitor& visitor) { visitor.visit(this); }
+
 private:
 	long m_value;
 };
@@ -269,6 +272,7 @@ public:
 	double getValue() const { return m_value; }
 
 	virtual void accept(Visitor& visitor) { visitor.visit(this); }
+
 private:
 	double m_value;
 };
@@ -281,6 +285,7 @@ public:
 	const CString* getValue() const { return m_value; }
 
 	virtual void accept(Visitor& visitor) { visitor.visit(this); }
+
 private:
 	const CString* m_value;
 };
@@ -293,6 +298,7 @@ public:
 	const CString* getName() const { return m_name; }
 
 	virtual void accept(Visitor& visitor) { visitor.visit(this); }
+
 private:
 	const CString* m_name;
 };
