@@ -17,6 +17,7 @@
 #include "core/pkgmanager.h"
 #include "core/ir.h"
 #include "core/ast.h"
+#include "core/codegen.h"
 
 namespace clever {
 
@@ -24,7 +25,6 @@ class Type;
 class Value;
 class location;
 
-typedef std::vector<Scope*> ScopePool;
 typedef std::vector<Type*> TypePool;
 
 typedef std::vector<const CString*> ArgDeclList;

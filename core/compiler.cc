@@ -22,14 +22,10 @@ DECLARE_CLEVER_NATIVE_TYPES();
 /// Compiler initialization phase
 void Compiler::init()
 {
-	m_scope = new Scope;
-
 	m_ir.reserve(20);
 	m_tmp_vals.reserve(15);
 	m_scope_pool.reserve(10);
 	m_type_pool.reserve(15);
-
-	m_scope_pool[m_scope_id++] = m_scope;
 
 	// Native type allocation
 	m_type_pool[m_type_id++] = CLEVER_INT_TYPE    = new IntType;
@@ -46,7 +42,7 @@ void Compiler::shutdown()
 	m_pkg.shutdown();
 
 	CLEVER_SAFE_DELETE(g_cstring_tbl);
-	CLEVER_SAFE_DELETE(m_scope);
+	CLEVER_SAFE_DELETE(m_scope_pool[0]);
 
 	TypePool::const_iterator it = m_type_pool.begin(),
 		end = m_type_pool.end();
@@ -102,11 +98,14 @@ void Compiler::errorf(const location& loc, const char* format, ...) const
 
 void Compiler::emitAST(ast::Block* tree)
 {
-	ast::Dumper astdump;
-	ast::Codegen codegen(m_ir);
-
 	if (tree) {
-		//tree->accept(astdump);
+		ast::Dumper astdump;
+		tree->accept(astdump);
+
+		ast::Codegen codegen(m_ir, m_scope_pool);
+
+		codegen.init();
+
 		tree->accept(codegen);
 	}
 }
