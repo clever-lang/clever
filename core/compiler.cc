@@ -297,6 +297,44 @@ void Compiler::funcEndDecl(bool has_args)
 	endScope();
 }
 
+/// Thread call compilation
+void Compiler::threadCall(Node& name, ArgCallList* arg_list, Node& res,
+                          const location& loc)
+{
+    Symbol* sym = m_scope->getAny(name.data.str);
+
+    if (!sym) {
+        errorf(loc, "Function `%S' cannot be found!", name.data.str);
+    }
+
+    Value* result = new Value();
+
+    if (arg_list) {
+        for (size_t i = 0, j = arg_list->size(); i < j; ++i) {
+            m_ir.push_back(IR(OP_SEND_VAL, FETCH_VAL, arg_list->at(i).second));
+
+            m_ir.back().op1_scope = arg_list->at(i).first;
+        }
+    }
+
+    res.type = TEMP;
+    res.data.val = result;
+
+    m_ir.push_back(
+        IR(OP_TCALL, FETCH_VAL, sym->value_id, result));
+
+    m_tmp_vals.push_back(result);
+
+    m_ir.back().op1_scope = sym->scope->getId();
+
+    m_ir.push_back(IR(OP_END_THREAD));
+
+    if (arg_list) {
+        delete arg_list;
+    }
+
+}
+
 /// Function call compilation
 void Compiler::funcCall(Node& name, ArgCallList* arg_list, Node& res,
 	const location& loc)

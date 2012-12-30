@@ -50,7 +50,7 @@ class Value;
 }
 
 %type <node> IDENT NUM_INTEGER NUM_DOUBLE STR
-%type <node> r_value math_expr func_call inc_dec
+%type <node> r_value math_expr func_call inc_dec thread_call
 %type <arg_decl_list> arg_decl_list
 %type <arg_call_list> non_empty_arg_list arg_list
 
@@ -248,7 +248,7 @@ func_call:
 ;
 
 thread_call:
-        THREAD IDENT '(' arg_list ')' {}
+        THREAD IDENT '(' arg_list ')' { c.threadCall($2, $4, $$, yyloc); }
 ;
 
 assignment:

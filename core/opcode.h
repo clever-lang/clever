@@ -39,6 +39,8 @@ enum Opcode {
 	OP_MOD,      //       Used for math modulus operation
 	OP_JMP,      //       Used for jumping to other instructions
 	OP_FCALL,    //       Used for function call
+    OP_TCALL,    //       Used for thread call
+    OP_END_THREAD, //     End thread marker
 	OP_LEAVE,    //       Used for leaving from a function call
 	OP_SEND_VAL, //  10 - Used for send Value* to argument values,
 	OP_JMPZ,     //       Used for jumping if zero

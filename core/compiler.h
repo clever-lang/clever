@@ -100,6 +100,7 @@ public:
 	void funcDecl(Node&, ArgDeclList*, const location&);
 	void funcEndDecl(bool);
 	void funcCall(Node&, ArgCallList*, Node&, const location&);
+    void threadCall(Node&, ArgCallList*, Node&, const location&);
 	ArgDeclList* newArgDeclList(const CString*) const;
 	ArgCallList* addArgCall(ArgCallList*, Node&, const location&);
 	void retStmt(Node*, const location&);
