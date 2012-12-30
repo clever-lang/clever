@@ -28,20 +28,17 @@
 
 #include <vector>
 #include <stack>
-#include "cthread.h"
-#include "clever.h"
-#include "compiler.h"
-#include "ir.h"
-#include "opcode.h"
+#include "core/cthread.h"
+#include "core/clever.h"
+#include "core/compiler.h"
+#include "core/ir.h"
+#include "core/opcode.h"
 
 namespace clever {
 
 // Helper macros to be used to change the VM program counter
-// The compiler optimizer is supposed to use tail call optimization here
-#define VM_CONT()
-//(this->*m_handlers[m_inst[m_pc].opcode])(m_inst[m_pc])
-#define VM_NEXT() ++m_pc; VM_CONT()
-#define VM_GOTO(n) m_pc = n; VM_CONT(); return
+#define VM_NEXT() ++m_pc
+#define VM_GOTO(n) m_pc = n; return
 
 // Helper macro for opcode handler declaration
 #define VM_HANDLER_ARG IR& op
