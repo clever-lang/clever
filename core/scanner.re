@@ -26,7 +26,7 @@
 #include <cstdio>
 #include "core/scanner.h"
 #include "core/parser.hh"
-#include "core/compiler.h"
+#include "core/ast.h"
 #include "core/value.h"
 #include "types/native_types.h"
 
@@ -35,7 +35,7 @@ namespace clever {
 typedef Parser::token token;
 
 Parser::token_type yylex(Parser::semantic_type* yylval,
-	Parser::location_type* yylloc, Driver& driver, ScannerState& s) {
+	Parser::location_type* yyloc, Driver& driver, ScannerState& s) {
 	const unsigned char* cursor = s.cur;
 	int yylen;
 
@@ -64,13 +64,13 @@ next_token:
 
 	<!*> { yylen = cursor - s.yylex; }
 
-	<*>SPACE { yylloc->step(); SKIP(); }
+	<*>SPACE { yyloc->step(); SKIP(); }
 	<*>[\n]+ {
 		if (YYGETCONDITION() == yycST_COMMENT) {
 			YYSETCONDITION(INITIAL);
 		}
-		yylloc->lines(yylen);
-		yylloc->step();
+		yyloc->lines(yylen);
+		yyloc->step();
 		SKIP();
 	}
 
@@ -205,8 +205,9 @@ next_token:
 	}
 
 	<INITIAL>IDENTIFIER {
-		yylval->node.type = SYMBOL;
-		yylval->node.data.str = CSTRING(std::string(reinterpret_cast<const char*>(s.yylex), yylen));
+		yylval->ident = new ast::Ident(
+			CSTRING(std::string(reinterpret_cast<const char*>(s.yylex), yylen)), *yyloc);
+
 		RET(token::IDENT);
 	}
 
@@ -247,10 +248,10 @@ next_token:
 				}
 			}
 		}
-
+/*
 		yylval->node.type = VALUE;
 		yylval->node.data.val = new Value(CSTRING(strtext));
-
+*/
 		RET(token::STR);
 	}
 
@@ -261,9 +262,10 @@ next_token:
 		for (int i = 0; i < yylen; ++i) {
 			n = n * 10 + (nstr[i] - '0');
 		}
-
+/*
 		yylval->node.type = VALUE;
 		yylval->node.data.val = new Value(n);
+		*/
 
 		RET(token::NUM_INTEGER);
 	}
@@ -281,9 +283,10 @@ next_token:
 				n += toupper(nstr[i]) - 'A' + 10;
 			}
 		}
-
+/*
 		yylval->node.type = VALUE;
 		yylval->node.data.val = new Value(n);
+		*/
 
 		RET(token::NUM_INTEGER);
 	}
@@ -305,10 +308,10 @@ next_token:
 	<INITIAL>(DOUBLE|EXP_DOUBLE) {
 		double n = 0;
 		n = strtod(std::string(reinterpret_cast<const char*>(s.yylex), yylen).c_str(), NULL);
-
+/*
 		yylval->node.type = VALUE;
 		yylval->node.data.val = new Value(n);
-
+*/
 		RET(token::NUM_DOUBLE);
 	}
 
