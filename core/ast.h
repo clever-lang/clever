@@ -55,7 +55,7 @@ public:
 	virtual void accept(Visitor& visitor) {
 		std::vector<Node*>::iterator node(m_nodes.begin()), end(m_nodes.end());
 		while (node != end) {
-			visitor.visit(*node);
+			(*node)->accept(visitor);
 			++node;
 		}
 	}
@@ -67,6 +67,10 @@ class Block: public NodeArray {
 public:
 	Block(const location& location)
 		: NodeArray(location) {}
+
+	virtual void accept(Visitor& visitor) {
+		visitor.visit(this);
+	}
 };
 
 class Assignment: public Node {

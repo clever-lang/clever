@@ -8,14 +8,29 @@ namespace clever { namespace ast {
 
 class DumpVisitor : public Visitor {
 public:
-	DumpVisitor() {}
+	DumpVisitor()
+		: m_level(0) {}
+
 	~DumpVisitor() {}
 
-	void visit(Node* node)         { std::cout << "Node" << std::endl; }
-	void visit(NodeArray* node)    { std::cout << "NodeArray" << std::endl;}
-	void visit(Block* node)        { std::cout << "Block" << std::endl; }
-	void visit(Assignment* node)   { std::cout << "Assignment" << std::endl; }
-	void visit(VariableDecl* node) {}
+	void visit(Node* node)         { std::cout << m_ws << "Node" << std::endl; }
+	void visit(NodeArray* node)    { std::cout << m_ws << "NodeArray" << std::endl;}
+	void visit(Block* node)        {
+		std::cout << std::string(m_level, ' ') << "Block" << std::endl;
+
+		m_ws = std::string(++m_level, ' ');
+
+		std::vector<Node*> nodes = node->getNodes();
+		std::vector<Node*>::const_iterator it = nodes.begin(), end = nodes.end();
+		while (it != end) {
+			(*it)->accept(*this);
+			++it;
+		}
+
+		m_ws = std::string(--m_level, ' ');
+	}
+	void visit(Assignment* node)   { std::cout << m_ws << "Assignment" << std::endl;   }
+	void visit(VariableDecl* node) { std::cout << m_ws << "VariableDecl" << std::endl; }
 	void visit(Arithmetic* node) {}
 	void visit(FunctionDecl* node) {}
 	void visit(FunctionCall* node) {}
@@ -26,6 +41,9 @@ public:
 	void visit(StringLit* node) {}
 	void visit(Ident* node) {}
 	void visit(Return* node) {}
+private:
+	size_t m_level;
+	std::string m_ws;
 };
 
 }} // clever::ast
