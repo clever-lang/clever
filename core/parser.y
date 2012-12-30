@@ -148,8 +148,8 @@ statement_list:
 ;
 
 statement:
-		variable_decl
-	|	assignment
+		variable_decl ';'
+	|	assignment ';'
 ;
 
 rvalue:
