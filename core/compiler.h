@@ -42,7 +42,7 @@ public:
     // Starts the compilation phase
     void init();
 
-    void emitAST(ast::Node*);
+    void emitAST(ast::Block*);
 
     // Shutdown the compiler freeing all resources
     void shutdown();

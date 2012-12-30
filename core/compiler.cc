@@ -11,6 +11,7 @@
 #include "core/value.h"
 #include "core/location.hh"
 #include "types/native_types.h"
+#include "core/astdump.h"
 
 namespace clever {
 
@@ -98,8 +99,13 @@ void Compiler::errorf(const location& loc, const char* format, ...) const
 	error(out.str(), loc);
 }
 
-void Compiler::emitAST(ast::Node* tree)
+void Compiler::emitAST(ast::Block* tree)
 {
+	ast::DumpVisitor astdump;
+
+	if (tree) {
+		tree->accept(astdump);
+	}
 }
 
 } // clever
