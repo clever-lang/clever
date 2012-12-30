@@ -253,88 +253,78 @@ void VM::restoreVars() const
 	}*/
 }
 
-
-
-// Thread call operation
-
-VM::~VM()
+// Make a copy of VM instance
+void VM::copy(VM* vm)
 {
-}
+     this->m_pc = vm->m_pc;
+     this->m_scope_pool = vm->m_scope_pool;
 
-void VM::copy(VM*)
-{
+     for (size_t i = 0; i < NUM_OPCODES; ++i) {
+         this->m_handlers[i] = vm->m_handlers[i];
+     }
 
+     this->m_call_stack = vm->m_call_stack;
+     this->m_call_args = vm->m_call_args;
 }
 
 void VM::wait()
 {
-    for (size_t i = 0; i < m_thread_pool.size(); ++i) {
-        void* status;
-        int rc;
-        rc = pthread_join(m_thread_pool[i]->t_handler, &status);
-        delete m_thread_pool[i]->vm_handler;
-        delete m_thread_pool[i];
-    }
-    m_thread_pool.clear();
+	for (size_t i = 0; i < m_thread_pool.size(); ++i) {
+		void* status;
+
+		pthread_join(m_thread_pool[i]->t_handler, &status);
+
+		delete m_thread_pool[i]->vm_handler;
+		delete m_thread_pool[i];
+	}
+	m_thread_pool.clear();
 }
 
 void* thread_control(void* arg)
 {
     Thread* thread = static_cast<Thread*>(arg);
     VM* vm_handler = thread->vm_handler;
+
     vm_handler->fcall(vm_handler->getInst()[vm_handler->getPC()]);
     vm_handler->run();
+
     return NULL;
 }
 
 VM_HANDLER(endthread)
 {
-    if (this->isChild()) {
-        this->m_pc = this->m_inst.size();
-    } else {
-        VM_NEXT();
-    }
+	if (this->isChild()) {
+		this->m_pc = this->m_inst.size();
+	} else {
+		VM_NEXT();
+	}
 }
 
 VM_HANDLER(threadcall)
 {
-     Thread* thread = new Thread;
+	Thread* thread = new Thread;
 
-     thread->vm_handler =  new VM(this->m_inst);
+	thread->vm_handler = new VM(this->m_inst);
+	thread->vm_handler->copy(this);
 
+	this->m_call_args.clear();
 
-     thread->vm_handler->copy(this);
+	thread->vm_handler->setChild();
 
-     thread->vm_handler->m_pc = this->m_pc;
-     thread->vm_handler->m_scope_pool = this->m_scope_pool;
-     thread->vm_handler->m_value_pool = this->m_value_pool;
-     thread->vm_handler->m_current_scope = this->m_current_scope;
+	int id = m_thread_pool.size();
 
-     for (size_t i = 0; i < NUM_OPCODES; ++i) {
-         thread->vm_handler->m_handlers[i] =  this->m_handlers[i];
-     }
+	m_thread_pool.push_back(thread);
 
-     thread->vm_handler->m_call_stack = this->m_call_stack;
-     thread->vm_handler->m_call_args = this->m_call_args;
-     this->m_call_args.clear();
+	pthread_attr_t attr;
+	pthread_attr_init(&attr);
+	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
 
-     thread->vm_handler->setChild();
+	pthread_create(&(m_thread_pool[id]->t_handler),
+		&attr, thread_control, static_cast<void*>(thread));
 
+	pthread_attr_destroy(&attr);
 
-     int id = m_thread_pool.size();
-
-     m_thread_pool.push_back(thread);
-
-     pthread_attr_t attr;
-     pthread_attr_init(&attr);
-     pthread_attr_setdetachstate(&attr,PTHREAD_CREATE_JOINABLE);
-
-     pthread_create(&(m_thread_pool[id]->t_handler),
-                    &attr, thread_control,
-                    static_cast<void*>(thread));
-     pthread_attr_destroy(&attr);
-
-     VM_NEXT();
+	VM_NEXT();
 }
 
 // Function call operation
