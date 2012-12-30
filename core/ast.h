@@ -104,7 +104,7 @@ private:
 
 class Arithmetic: public Node {
 public:
-	enum MathOperator {
+	enum ArithOperator {
 		MOP_ADD = '+',
 		MOP_SUB = '-',
 		MOP_MUL = '*',
@@ -112,17 +112,65 @@ public:
 		MOP_MOD = '%'
 	};
 
-	Arithmetic(MathOperator op, Node* lhs, Node* rhs, const location& location)
+	Arithmetic(ArithOperator op, Node* lhs, Node* rhs, const location& location)
 		: Node(location), m_op(op), m_lhs(lhs), m_rhs(rhs) {}
 
-	MathOperator getOperator() const { return m_op; }
+	ArithOperator getOperator() const { return m_op; }
 	Node* getLhs() { return m_lhs; }
 	Node* getRhs() { return m_rhs; }
 
 	virtual void accept(Visitor& visitor) { visitor.visit(this); }
 
 private:
-	MathOperator m_op;
+	ArithOperator m_op;
+	Node* m_lhs;
+	Node* m_rhs;
+};
+
+class Logic: public Node {
+public:
+	enum LogicOperator {
+		LOP_EQUALS,
+		LOP_OR,
+		LOP_AND
+	};
+
+	Logic(LogicOperator op, Node* lhs, Node* rhs, const location& location)
+		: Node(location), m_op(op), m_lhs(lhs), m_rhs(rhs) {}
+
+	LogicOperator getOperator() const { return m_op; }
+	Node* getLhs() { return m_lhs; }
+	Node* getRhs() { return m_rhs; }
+
+	virtual void accept(Visitor& visitor) { visitor.visit(this); }
+
+private:
+	LogicOperator m_op;
+	Node* m_lhs;
+	Node* m_rhs;
+};
+
+class Bitwise: public Node {
+public:
+	enum BitwiseOperator {
+		BOP_AND,
+		BOP_OR,
+		BOP_XOR,
+		BOP_LSHIFT,
+		BOP_RSHIFT
+	};
+
+	Bitwise(BitwiseOperator op, Node* lhs, Node* rhs, const location& location)
+		: Node(location), m_op(op), m_lhs(lhs), m_rhs(rhs) {}
+
+	BitwiseOperator getOperator() const { return m_op; }
+	Node* getLhs() { return m_lhs; }
+	Node* getRhs() { return m_rhs; }
+
+	virtual void accept(Visitor& visitor) { visitor.visit(this); }
+
+private:
+	BitwiseOperator m_op;
 	Node* m_lhs;
 	Node* m_rhs;
 };
