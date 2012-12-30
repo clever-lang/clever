@@ -26,6 +26,7 @@ class Value;
 
 %union {
 	ast::Node* node;
+	ast::Block* block;
 	ast::NodeArray* narray;
 	ast::Ident* ident;
 	ast::StringLit* strlit;
@@ -44,7 +45,7 @@ class Value;
 %type <assignment> assignment
 %type <narray> variable_decl variable_decl_list
 %type <vardecl> variable_decl_impl
-
+%type <block> statement_list
 
 // The parsing context.
 %parse-param { Driver& driver }
@@ -139,12 +140,12 @@ class Value;
 %start program;
 
 program:
-		{ c.init(); } statement_list { c.end(); }
+		{ c.init(); } statement_list { c.emitAST($2); }
 ;
 
 statement_list:
-		// empty
-	|	statement_list statement
+		/* empty */                { $$ = new ast::Block(yyloc); }
+	|	statement_list statement   { $1->append($<node>2);       }
 ;
 
 statement:

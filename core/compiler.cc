@@ -63,11 +63,6 @@ void Compiler::shutdown()
 	}
 }
 
-// Compiler termination phase
-void Compiler::end()
-{
-}
-
 /// Displays an error message and exits
 void Compiler::error(const char* msg) const
 {
@@ -101,6 +96,10 @@ void Compiler::errorf(const location& loc, const char* format, ...) const
 	va_end(args);
 
 	error(out.str(), loc);
+}
+
+void Compiler::emitAST(ast::Node* tree)
+{
 }
 
 } // clever

@@ -16,6 +16,7 @@
 #include "core/scope.h"
 #include "core/pkgmanager.h"
 #include "core/ir.h"
+#include "core/ast.h"
 
 namespace clever {
 
@@ -41,8 +42,7 @@ public:
     // Starts the compilation phase
     void init();
 
-    // Ends the compilation phase
-    void end();
+    void emitAST(ast::Node*);
 
     // Shutdown the compiler freeing all resources
     void shutdown();
