@@ -288,6 +288,7 @@ void* thread_control(void* arg)
     vm_handler->fcall(vm_handler->getInst()[vm_handler->getPC()]);
     vm_handler->run();
 
+
     return NULL;
 }
 
