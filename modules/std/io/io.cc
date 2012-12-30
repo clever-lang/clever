@@ -53,7 +53,6 @@ static CLEVER_FUNCTION(println) {
     }
 }
 
-
 // safeprint(object a, [ ...])
 // Prints the object values without trailing newline [thread safed]
 static CLEVER_FUNCTION(safeprint) {
@@ -88,10 +87,8 @@ CLEVER_MODULE_INIT(IOModule) {
 
     addFunction(new Function("safeprint",   &CLEVER_FUNC_NAME(safeprint)));
     addFunction(new Function("safeprintln", &CLEVER_FUNC_NAME(safeprintln)));
-
-
-    addFunction(new Function("print",   &CLEVER_FUNC_NAME(print)));
-    addFunction(new Function("println", &CLEVER_FUNC_NAME(println)));
+    addFunction(new Function("print",       &CLEVER_FUNC_NAME(print)));
+    addFunction(new Function("println",     &CLEVER_FUNC_NAME(println)));
 
     END_DECLARE();
 }
