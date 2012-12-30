@@ -140,7 +140,6 @@ private:
 	Node* m_rhs;
 };
 
-
 class FunctionDecl: public Node {
 public:
 	FunctionDecl(const CString* name, NodeArray* args, Block* block, const location& location)

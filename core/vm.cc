@@ -276,7 +276,7 @@ void VM::wait()
 	m_thread_pool.clear();
 }
 
-void* thread_control(void* arg)
+static void* _thread_control(void* arg)
 {
 	Thread* thread = static_cast<Thread*>(arg);
 	VM* vm_handler = thread->vm_handler;
@@ -294,6 +294,7 @@ VM_HANDLER(endthread)
 	}
 }
 
+// Creates a thread and copy current VM instance
 VM_HANDLER(threadcall)
 {
 	Thread* thread = new Thread;
@@ -311,8 +312,8 @@ VM_HANDLER(threadcall)
 	pthread_attr_init(&attr);
 	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
 
-	pthread_create(&(thread->t_handler),
-		&attr, thread_control, static_cast<void*>(thread));
+	pthread_create(&(thread->t_handler), &attr,
+		_thread_control, static_cast<void*>(thread));
 
 	pthread_attr_destroy(&attr);
 

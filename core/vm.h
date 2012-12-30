@@ -28,20 +28,17 @@
 
 #include <vector>
 #include <stack>
-#include "cthread.h"
-#include "clever.h"
-#include "compiler.h"
-#include "ir.h"
-#include "opcode.h"
+#include "core/cthread.h"
+#include "core/clever.h"
+#include "core/compiler.h"
+#include "core/ir.h"
+#include "core/opcode.h"
 
 namespace clever {
 
 // Helper macros to be used to change the VM program counter
-// The compiler optimizer is supposed to use tail call optimization here
-#define VM_CONT()
-//(this->*m_handlers[m_inst[m_pc].opcode])(m_inst[m_pc])
-#define VM_NEXT() ++m_pc; VM_CONT()
-#define VM_GOTO(n) m_pc = n; VM_CONT(); return
+#define VM_NEXT() ++m_pc
+#define VM_GOTO(n) m_pc = n; return
 
 // Helper macro for opcode handler declaration
 #define VM_HANDLER_ARG IR& op
@@ -76,89 +73,93 @@ struct Thread {
 /// VM representation
 class VM {
 public:
-    typedef void (VM::*OpHandler)(VM_HANDLER_ARG);
+	typedef void (VM::*OpHandler)(VM_HANDLER_ARG);
 
-    typedef std::vector<Thread*> ThreadPool;
+	typedef std::vector<Thread*> ThreadPool;
 
-    VM(IRVector& inst)
-        : m_pc(0), m_is_main_thread(true), m_inst(inst), m_scope_pool(NULL) {}
-    ~VM() {}
+	VM(IRVector& inst)
+		: m_pc(0), m_is_main_thread(true), m_inst(inst), m_scope_pool(NULL) {}
+	~VM() {}
 
-    /// Sets the symbol table to used by the VM to fetch the symbol names
-    void setSymbolTable(ScopePool* scope) { m_scope_pool = scope; }
+	/// Sets the symbol table to used by the VM to fetch the symbol names
+	void setSymbolTable(ScopePool* scope) { m_scope_pool = scope; }
 
-    void copy(VM*);
+	void copy(VM*);
 
-    void setChild() { m_is_main_thread = false; }
-    bool isChild() const { return !m_is_main_thread; }
-    bool isMain() const { return !m_is_main_thread; }
-    size_t getPC() { return m_pc; }
-    IRVector& getInst() { return m_inst; }
+	void setChild() { m_is_main_thread = false; }
 
-    /// Helper to retrive a Value* from ValuePool
-    Value* getValue(size_t, size_t) const;
+	bool isChild() const { return !m_is_main_thread; }
 
-    /// Save function variables on recursion
-    void saveVars();
-    void restoreVars() const;
+	bool isMain() const { return !m_is_main_thread; }
 
-    /// Start the VM execution
-    void run();
+	size_t getPC() const { return m_pc; }
 
-    /// Wait threads
-    void wait();
+	IRVector& getInst() const { return m_inst; }
 
-    /// Methods for dumping opcodes
+	/// Helper to retrive a Value* from ValuePool
+	Value* getValue(size_t, size_t) const;
+
+	/// Save function variables on recursion
+	void saveVars();
+	void restoreVars() const;
+
+	/// Start the VM execution
+	void run();
+
+	/// Wait threads
+	void wait();
+
+	/// Methods for dumping opcodes
 #ifdef CLEVER_DEBUG
-    void dumpOpcodes() const;
+	void dumpOpcodes() const;
 #endif
 
-    // VM opcode handlers
-    VM_HANDLER_D(var_decl);
-    VM_HANDLER_D(switch_scope);
-    VM_HANDLER_D(ret);
-    VM_HANDLER_D(assignment);
-    VM_HANDLER_D(add);
-    VM_HANDLER_D(sub);
-    VM_HANDLER_D(mul);
-    VM_HANDLER_D(div);
-    VM_HANDLER_D(mod);
-    VM_HANDLER_D(jmp);
-    VM_HANDLER_D(fcall);
-    VM_HANDLER_D(threadcall);
-    VM_HANDLER_D(endthread);
-    VM_HANDLER_D(leave);
-    VM_HANDLER_D(send_val);
-    VM_HANDLER_D(jmpz);
-    VM_HANDLER_D(inc);
-    VM_HANDLER_D(dec);
+	// VM opcode handlers
+	VM_HANDLER_D(var_decl);
+	VM_HANDLER_D(switch_scope);
+	VM_HANDLER_D(ret);
+	VM_HANDLER_D(assignment);
+	VM_HANDLER_D(add);
+	VM_HANDLER_D(sub);
+	VM_HANDLER_D(mul);
+	VM_HANDLER_D(div);
+	VM_HANDLER_D(mod);
+	VM_HANDLER_D(jmp);
+	VM_HANDLER_D(fcall);
+	VM_HANDLER_D(threadcall);
+	VM_HANDLER_D(endthread);
+	VM_HANDLER_D(leave);
+	VM_HANDLER_D(send_val);
+	VM_HANDLER_D(jmpz);
+	VM_HANDLER_D(inc);
+	VM_HANDLER_D(dec);
 private:
-    /// Initialization phase
-    void init();
+	/// Initialization phase
+	void init();
 
-    /// VM program counter
-    size_t m_pc;
+	/// VM program counter
+	size_t m_pc;
 
-    bool m_is_main_thread;
+	bool m_is_main_thread;
 
-    /// Vector of instruction
-    IRVector& m_inst;
+	/// Vector of instruction
+	IRVector& m_inst;
 
-    /// Scope pool
-    ScopePool* m_scope_pool;
+	/// Scope pool
+	ScopePool* m_scope_pool;
 
-    /// VM opcode handlers
-    OpHandler m_handlers[NUM_OPCODES];
+	/// VM opcode handlers
+	OpHandler m_handlers[NUM_OPCODES];
 
-    /// Stack frame
-    std::stack<StackFrame> m_call_stack;
+	/// Stack frame
+	std::stack<StackFrame> m_call_stack;
 
-    /// Call arguments
-    std::vector<Value*> m_call_args;
+	/// Call arguments
+	std::vector<Value*> m_call_args;
 
-    ThreadPool m_thread_pool;
+	ThreadPool m_thread_pool;
 
-    DISALLOW_COPY_AND_ASSIGN(VM);
+	DISALLOW_COPY_AND_ASSIGN(VM);
 };
 
 } // clever
