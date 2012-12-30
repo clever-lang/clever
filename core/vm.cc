@@ -209,44 +209,44 @@ VM_HANDLER(send_val)
 // Saves function argument and local variables
 void VM::saveVars()
 {/*
-    Scope* arg_vars   = m_call_stack.top().arg_vars;
-    Scope* local_vars = m_call_stack.top().local_vars;
+	Scope* arg_vars   = m_call_stack.top().arg_vars;
+	Scope* local_vars = m_call_stack.top().local_vars;
 
-    if (arg_vars) {
-        // Save the function argument values
-        for (size_t i = 0, j = arg_vars->size(); i < j; ++i) {
-            Value* tmp = new Value();
+	if (arg_vars) {
+		// Save the function argument values
+		for (size_t i = 0, j = arg_vars->size(); i < j; ++i) {
+			Value* tmp = new Value();
 
-            tmp->copy(getValue(arg_vars->at(i).value_id));
-            m_call_stack.top().vars.push_back(
-                std::pair<size_t, Value*>(
-                    arg_vars->at(i).value_id, tmp));
-        }
-    }
-    if (EXPECTED(local_vars != NULL)) {
-        // Save the local variables
-        for (size_t i = 0, j = local_vars->size(); i < j; ++i) {
-            Value* tmp = new Value();
+			tmp->copy(getValue(arg_vars->at(i).value_id));
+			m_call_stack.top().vars.push_back(
+				std::pair<size_t, Value*>(
+					arg_vars->at(i).value_id, tmp));
+		}
+	}
+	if (EXPECTED(local_vars != NULL)) {
+		// Save the local variables
+		for (size_t i = 0, j = local_vars->size(); i < j; ++i) {
+			Value* tmp = new Value();
 
-            tmp->copy(getValue(local_vars->at(i).value_id));
-            m_call_stack.top().vars.push_back(
-                std::pair<size_t, Value*>(
-                    local_vars->at(i).value_id, tmp));
-        }
-    }*/
+			tmp->copy(getValue(local_vars->at(i).value_id));
+			m_call_stack.top().vars.push_back(
+				std::pair<size_t, Value*>(
+					local_vars->at(i).value_id, tmp));
+		}
+	}*/
 }
 
 // Restore the argument and local variables values
 void VM::restoreVars() const
 {/*
-    FuncVars::const_iterator it = m_call_stack.top().vars.begin(),
-        end = m_call_stack.top().vars.end();
+	FuncVars::const_iterator it = m_call_stack.top().vars.begin(),
+		end = m_call_stack.top().vars.end();
 
-    while (EXPECTED(it != end)) {
-        Value* var = getValue((*it).first);
-        var->copy((*it).second);
-        ++it;
-    }*/
+	while (EXPECTED(it != end)) {
+		Value* var = getValue((*it).first);
+		var->copy((*it).second);
+		++it;
+	}*/
 }
 
 // Make a copy of VM instance
@@ -291,8 +291,6 @@ VM_HANDLER(endthread)
 {
 	if (this->isChild()) {
 		this->m_pc = this->m_inst.size();
-	} else {
-		VM_NEXT();
 	}
 }
 
@@ -318,6 +316,7 @@ VM_HANDLER(threadcall)
 
 	pthread_attr_destroy(&attr);
 
+	VM_NEXT();
 	VM_NEXT();
 }
 
