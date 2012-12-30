@@ -14,8 +14,6 @@
 
 #include <stack>
 #include "core/scanner.h"
-#include "core/cstring.h"
-#include "core/compiler.h"
 #include "core/ast.h"
 
 namespace clever {

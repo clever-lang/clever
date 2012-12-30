@@ -88,17 +88,17 @@ private:
 
 class VariableDecl: public Node {
 public:
-	VariableDecl(const CString* name, Assignment* assignment, const location& location)
-		: Node(location), m_name(name), m_assignment(assignment) { }
+	VariableDecl(Ident* ident, Assignment* assignment, const location& location)
+		: Node(location), m_ident(ident), m_assignment(assignment) { }
 
-	const CString* getName() const { return m_name; }
+	Ident* getIdent() const { return m_ident; }
 	Assignment* getAssignment() { return m_assignment; }
 	bool hasAssignment() const { return m_assignment != NULL; }
 
 	virtual void accept(Visitor& visitor) { visitor.visit(this); }
 
 private:
-	const CString* m_name;
+	Ident* m_ident;
 	Assignment* m_assignment;
 };
 
@@ -129,10 +129,10 @@ private:
 
 class FunctionDecl: public Node {
 public:
-	FunctionDecl(const CString* name, NodeArray* args, Block* block, const location& location)
-		: Node(location), m_name(name), m_args(args), m_block(block) {}
+	FunctionDecl(Ident* ident, NodeArray* args, Block* block, const location& location)
+		: Node(location), m_ident(ident), m_args(args), m_block(block) {}
 
-	const CString* getName() { return m_name; }
+	Ident* getIdent() { return m_ident; }
 
 	NodeArray* getArgs() { return m_args; }
 	bool hasArgs() const { return m_args != NULL && m_args->getSize() > 0; }
@@ -155,7 +155,7 @@ public:
 	virtual void accept(Visitor& visitor) { visitor.visit(this); }
 
 private:
-	const CString* m_name;
+	Ident* m_ident;
 	NodeArray* m_args;
 	Block* m_block;
 };
