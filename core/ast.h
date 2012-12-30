@@ -27,6 +27,7 @@
 #define CLEVER_AST_H
 
 #include <vector>
+#include <ostream>
 #include "core/value.h"
 #include "core/location.hh"
 #include "core/astvisitor.h"
@@ -40,6 +41,7 @@ public:
 
 	virtual ~Node(void) {}
 	virtual void accept(Visitor& visitor) {  }
+	virtual void print(std::ostream& os) { os.put(typeid(*this).name()); }
 
 private:
 	const location& m_location;
@@ -50,40 +52,45 @@ public:
 	NodeArray(const location& location)
 		: Node(location) {}
 
-	std::vector<Node*>& getArray() { return m_array; }
+	virtual ~NodeArray(void) {}
 
-	Node* append(Node* node) {
-		m_array.push_back(node);
-		return node;
-	}
+	std::vector<Node*>& getNodes() { return m_nodes; }
 
-	size_t getSize() const { return m_array.size(); }
-
-private:
-	std::vector<Node*> m_array;
-};
-
-class Block: public Node {
-public:
-	Block(const location& location)
-		: Node(location) {}
-
-	Node* getFirstChild() {
-		if (m_children.empty()) {
+	Node* getFirst() {
+		if (m_nodes.empty()) {
 			return NULL;
 		}
 
-		return *(m_children.begin());
+		return *(m_nodes.begin());
 	}
 
-	std::vector<Node*>& getChildren() {
-		return m_children;
+	Node* append(Node* node) {
+		m_nodes.push_back(node);
+		return node;
 	}
 
-	virtual void accept(Visitor& visitor) { visitor.visit(this); }
+	size_t getSize() const { return m_nodes.size(); }
 
-private:
-	std::vector<Node*> m_children;
+	virtual void accept(Visitor& visitor) {
+		std::vector<Node*>::iterator node(m_nodes.begin()), end(m_nodes.end());
+		while (node != end) {
+			visitor.visit(*node);
+		}
+	}
+
+	virtual void print(std::ostream& os) { os.put(typeid(*this).name()); }
+
+protected:
+	std::vector<Node*> m_nodes;
+};
+
+class Block: public NodeArray {
+public:
+	Block(const location& location)
+		: NodeArray(location) {}
+
+	using NodeArray::accept;
+	using NodeArray::print;
 };
 
 class Assignment: public Node {
@@ -153,7 +160,7 @@ public:
 	size_t numArgs() const { return m_args->getSize(); }
 
 	Node* getArg(size_t index) {
-		std::vector<Node*> array = m_args->getArray();
+		std::vector<Node*> array = m_args->getNodes();
 
 		clever_assert(index > 0 && index < array.size(), "Index %i out of bounds.", index);
 
@@ -185,7 +192,7 @@ public:
 	size_t numArgs() const { return m_args->getSize(); }
 
 	Node* getArg(size_t index) {
-		std::vector<Node*> array = m_args->getArray();
+		std::vector<Node*> array = m_args->getNodes();
 
 		clever_assert(index > 0 && index < array.size(), "Index %i out of bounds.", index);
 
