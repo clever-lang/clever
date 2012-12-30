@@ -31,26 +31,20 @@
 namespace clever {
 
 class Mutex {
-
 public:
-    Mutex() {}
+	Mutex() {}
+	~Mutex() {}
 
-    void init() {
-        pthread_mutex_init (&mut,&mattr);
-    }
+	void init() { pthread_mutex_init(&mut, &mattr); }
 
-    void lock() {
-        pthread_mutex_lock (&mut);
-    }
+	void lock() { pthread_mutex_lock(&mut); }
 
-    void unlock() {
-        pthread_mutex_unlock (&mut);
-    }
-
+	void unlock() {	pthread_mutex_unlock(&mut); }
 private:
     pthread_mutex_t mut;
     pthread_mutexattr_t mattr;
 };
 
-}
-#endif
+} // clever
+
+#endif // CLEVER_CTHREAD_H

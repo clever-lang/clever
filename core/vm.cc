@@ -38,25 +38,25 @@ namespace clever {
 // VM initialization phase
 inline void VM::init()
 {
-    // Opcode handler mapping
-    m_handlers[OP_RET]      = &VM::ret;
-    m_handlers[OP_ASSIGN]   = &VM::assignment;
-    m_handlers[OP_ADD]      = &VM::add;
-    m_handlers[OP_SUB]      = &VM::sub;
-    m_handlers[OP_MUL]      = &VM::mul;
-    m_handlers[OP_DIV]      = &VM::div;
-    m_handlers[OP_MOD]      = &VM::sub;
-    m_handlers[OP_JMP]      = &VM::jmp;
-    m_handlers[OP_FCALL]    = &VM::fcall;
-    m_handlers[OP_TCALL]    = &VM::threadcall;
-    m_handlers[OP_END_THREAD] = &VM::endthread;
-    m_handlers[OP_LEAVE]    = &VM::leave;
-    m_handlers[OP_SEND_VAL] = &VM::send_val;
-    m_handlers[OP_JMPZ]     = &VM::jmpz;
-    m_handlers[OP_PRE_INC]  = &VM::inc;
-    m_handlers[OP_POS_INC]  = &VM::inc;
-    m_handlers[OP_PRE_DEC]  = &VM::dec;
-    m_handlers[OP_POS_DEC]  = &VM::dec;
+	// Opcode handler mapping
+	m_handlers[OP_RET]      = &VM::ret;
+	m_handlers[OP_ASSIGN]   = &VM::assignment;
+	m_handlers[OP_ADD]      = &VM::add;
+	m_handlers[OP_SUB]      = &VM::sub;
+	m_handlers[OP_MUL]      = &VM::mul;
+	m_handlers[OP_DIV]      = &VM::div;
+	m_handlers[OP_MOD]      = &VM::sub;
+	m_handlers[OP_JMP]      = &VM::jmp;
+	m_handlers[OP_FCALL]    = &VM::fcall;
+	m_handlers[OP_TCALL]    = &VM::threadcall;
+	m_handlers[OP_END_THREAD] = &VM::endthread;
+	m_handlers[OP_LEAVE]    = &VM::leave;
+	m_handlers[OP_SEND_VAL] = &VM::send_val;
+	m_handlers[OP_JMPZ]     = &VM::jmpz;
+	m_handlers[OP_PRE_INC]  = &VM::inc;
+	m_handlers[OP_POS_INC]  = &VM::inc;
+	m_handlers[OP_PRE_DEC]  = &VM::dec;
+	m_handlers[OP_POS_DEC]  = &VM::dec;
 }
 
 inline Value* VM::getValue(size_t scope_id, size_t value_id) const
@@ -282,48 +282,47 @@ void VM::wait()
 
 void* thread_control(void* arg)
 {
-    Thread* thread = static_cast<Thread*>(arg);
-    VM* vm_handler = thread->vm_handler;
+	Thread* thread = static_cast<Thread*>(arg);
+	VM* vm_handler = thread->vm_handler;
 
-    vm_handler->fcall(vm_handler->getInst()[vm_handler->getPC()]);
-    vm_handler->run();
+	vm_handler->fcall(vm_handler->getInst()[vm_handler->getPC()]);
+	vm_handler->run();
 
-
-    return NULL;
+	return NULL;
 }
 
 VM_HANDLER(endthread)
 {
-    if (this->isChild()) {
-        this->m_pc = this->m_inst.size();
-    } else {
-        VM_NEXT();
-    }
+	if (this->isChild()) {
+		this->m_pc = this->m_inst.size();
+	} else {
+		VM_NEXT();
+	}
 }
 
 VM_HANDLER(threadcall)
 {
-    Thread* thread = new Thread;
+	Thread* thread = new Thread;
 
-    thread->vm_handler = new VM(this->m_inst);
-    thread->vm_handler->copy(this);
+	thread->vm_handler = new VM(this->m_inst);
+	thread->vm_handler->copy(this);
 
-    this->m_call_args.clear();
+	this->m_call_args.clear();
 
-    thread->vm_handler->setChild();
+	thread->vm_handler->setChild();
 
-    m_thread_pool.push_back(thread);
+	m_thread_pool.push_back(thread);
 
-    pthread_attr_t attr;
-    pthread_attr_init(&attr);
-    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
+	pthread_attr_t attr;
+	pthread_attr_init(&attr);
+	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
 
-    pthread_create(&(thread->t_handler),
-        &attr, thread_control, static_cast<void*>(thread));
+	pthread_create(&(thread->t_handler),
+		&attr, thread_control, static_cast<void*>(thread));
 
-    pthread_attr_destroy(&attr);
+	pthread_attr_destroy(&attr);
 
-    VM_NEXT();
+	VM_NEXT();
 }
 
 // Function call operation
