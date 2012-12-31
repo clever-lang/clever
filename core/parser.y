@@ -41,6 +41,7 @@ class Value;
 	ast::FunctionCall* fcall;
 	ast::FunctionDecl* fdecl;
 	ast::Return* ret;
+	ast::While* while_loop;
 }
 
 %type <ident> IDENT
@@ -58,6 +59,7 @@ class Value;
 %type <fcall> fcall
 %type <fdecl> fdecl
 %type <ret> return_stmt
+%type <while_loop> while
 
 // The parsing context.
 %parse-param { Driver& driver }
@@ -167,6 +169,7 @@ statement:
 	|	fcall ';'
 	|	fdecl
 	|	return_stmt ';'
+	|	while
 ;
 
 rvalue:
@@ -252,6 +255,11 @@ fcall:
 return_stmt:
 		RETURN rvalue { $$ = new ast::Return($<node>2, yyloc); }
 	|	RETURN        { $$ = new ast::Return(NULL, yyloc); }
+;
+
+while:
+		WHILE '(' rvalue ')' '{' statement_list '}'
+		{ $$ = new ast::While($<node>3, $6, yyloc); }
 ;
 
 %%

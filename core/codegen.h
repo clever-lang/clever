@@ -42,6 +42,7 @@ public:
 	void visit(FunctionCall*);
 	void visit(FunctionDecl*);
 	void visit(Return*);
+	void visit(While*);
 private:
 	IRVector& m_ir;
 	ScopePool& m_scope_pool;
