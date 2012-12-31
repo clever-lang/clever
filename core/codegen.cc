@@ -42,7 +42,6 @@ void Codegen::visit(Ident* node)
 		m_compiler->errorf(node->getLocation(),
 			"Variable `%S' not found!", node->getName());
 	}
-	std::cout << "id: " << sym->value_id << std::endl;
 
 	node->setValueId(sym->value_id);
 	node->setScopeId(sym->scope->getId());
@@ -137,8 +136,6 @@ void Codegen::visit(FunctionCall* node)
 				operand.op_type = FETCH_CONST;
 				operand.value_id = static_cast<Literal*>(*it)->getConstId();
 			} else {
-				std::cout << "foo" << std::endl;
-
 				operand.op_type = FETCH_VAL;
 				operand.value_id = (*it)->getValueId();
 				operand.scope_id = (*it)->getScopeId();
