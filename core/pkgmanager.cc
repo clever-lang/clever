@@ -59,6 +59,7 @@ void PkgManager::loadModule(Scope* scope, Module* module) const
 		fval->setObj(itf->second);
 
 		scope->pushValue(itf->first, fval);
+
 		++itf;
 	}
 }

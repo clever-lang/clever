@@ -15,8 +15,6 @@ namespace clever { namespace ast {
 
 void Codegen::init()
 {
-	m_scope = new Scope;
-	m_scope_pool[m_scope_id++] = m_scope;
 }
 
 void Codegen::visit(IntLit* node)
@@ -44,25 +42,12 @@ void Codegen::visit(Ident* node)
 	}
 
 	node->setValueId(sym->value_id);
-	node->setScopeId(sym->scope->getId());
-}
-
-void Codegen::visit(Import* node)
-{
-	if (node->getModule()) {
-		m_compiler->getPkgManager().importModule(m_scope,
-			node->getPackage()->getName(), node->getModule()->getName());
-	} else {
-		m_compiler->getPkgManager().importPackage(m_scope,
-			node->getPackage()->getName());
-	}
+	node->setScope(sym->scope);
 }
 
 void Codegen::visit(Block* node)
 {
-	m_scope = m_scope->newLexicalScope();
-	m_scope->setId(m_scope_id);
-	m_scope_pool[m_scope_id++] = m_scope;
+	m_scope = node->getScope();
 
 	Visitor::visit(static_cast<NodeArray*>(node));
 
@@ -71,15 +56,13 @@ void Codegen::visit(Block* node)
 
 void Codegen::visit(VariableDecl* node)
 {
-	m_scope->pushValue(node->getIdent()->getName(), new Value());
 	node->getAssignment()->accept(*this);
 }
 
 void Codegen::visit(Assignment* node)
 {
 	// TODO: allow assignment of any possible left hand side.
-	Ident* ident = static_cast<Ident*>(node->getLhs());
-	Symbol* sym = m_scope->getLocal(ident->getName());
+	Symbol* sym = static_cast<Ident*>(node->getLhs())->getSymbol();
 	Node* rhs = node->getRhs();
 
 	clever_assert_not_null(sym);
@@ -103,20 +86,17 @@ void Codegen::visit(Assignment* node)
 				static_cast<Literal*>(rhs)->getConstId());
 		} else {
 			m_ir.back().op2 = Operand(FETCH_VAR,
-				rhs->getValueId(), rhs->getScopeId());
+				rhs->getValueId(), rhs->getScope()->getId());
 		}
 	}
 }
 
 void Codegen::visit(FunctionCall* node)
 {
-	Ident* ident = static_cast<Ident*>(node->getCallee());
-	Symbol* sym = m_scope->getAny(ident->getName());
+	// TODO: allow call for any possible callee
+	Symbol* sym = static_cast<Ident*>(node->getCallee())->getSymbol();
 
-	if (!sym) {
-		Compiler::errorf(node->getLocation(),
-			"Function `%S' not found!", ident->getName());
-	}
+	clever_assert_not_null(sym);
 
 	if (node->hasArgs()) {
 		NodeList& args = node->getArgs()->getNodes();
@@ -133,7 +113,7 @@ void Codegen::visit(FunctionCall* node)
 			} else {
 				operand.op_type = (*it)->isEvaluable() ? FETCH_TMP : FETCH_VAR;
 				operand.value_id = (*it)->getValueId();
-				operand.scope_id = (*it)->getScopeId();
+				operand.scope_id = (*it)->getScope()->getId();
 			}
 			m_ir.push_back(IR(OP_SEND_VAL, operand));
 			++it;
@@ -146,44 +126,14 @@ void Codegen::visit(FunctionCall* node)
 
 void Codegen::visit(FunctionDecl* node)
 {
-	const CString* name = node->getIdent()->getName();
-	Symbol* sym = m_scope->getLocal(name);
-	size_t start_func;
-
-	if (sym) {
-		Compiler::errorf(node->getLocation(),
-			"Function `%S' already defined in the scope!", name);
-	}
-
-	Function* func = static_cast<Function*>(CLEVER_FUNC_TYPE->allocData());
-
-	func->setName(*name);
-	func->setUserDefined();
-	func->setAddr(m_ir.size()+1);
-
-	Value* fval = new Value();
-	fval->setType(CLEVER_FUNC_TYPE);
-	fval->setObj(func);
-
-	m_scope->pushValue(name, fval);
-
-	start_func = m_ir.size();
+	size_t start_func = m_ir.size();
 
 	m_ir.push_back(IR(OP_JMP, Operand(JMP_ADDR, 0)));
 
-	// TODO: find a cleaner way to enter and leave scopes
-	m_scope = m_scope->newLexicalScope();
-	m_scope->setId(m_scope_id);
-	m_scope_pool[m_scope_id++] = m_scope;
+	m_scope = node->getScope();
 
 	if (node->hasArgs()) {
-		for (size_t i = 0; i < node->numArgs(); ++i) {
-			static_cast<VariableDecl*>(node->getArg(i))->getAssignment()->setConditional(true);
-		}
-
 		node->getArgs()->accept(*this);
-
-		func->setArgVars(m_scope);
 	}
 
 	node->getBlock()->accept(*this);
@@ -213,7 +163,7 @@ void Codegen::visit(While* node)
 			Operand(FETCH_CONST, static_cast<Literal*>(cond)->getConstId())));
 	} else {
 		m_ir.push_back(IR(OP_JMPZ,
-			Operand(FETCH_VAR, cond->getValueId(), cond->getScopeId())));
+			Operand(FETCH_VAR, cond->getValueId(), cond->getScope()->getId())));
 	}
 
 	node->getBlock()->accept(*this);
@@ -238,7 +188,7 @@ void Codegen::visit(IncDec* node)
 
 	m_ir.push_back(IR(op,
 		Operand(FETCH_VAR, node->getVar()->getValueId(),
-			node->getVar()->getScopeId())));
+			node->getVar()->getScope()->getId())));
 
 	size_t tmp_id = m_compiler->getTempValue();
 

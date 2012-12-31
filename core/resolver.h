@@ -9,13 +9,17 @@
 #define CLEVER_RESOLVER_H
 
 #include "core/astvisitor.h"
-#include "core/scope.h"
+
+namespace clever {
+class Compiler;
+class Scope;
+}
 
 namespace clever { namespace ast {
 
 class Resolver: public Visitor {
 public:
-	Resolver();
+	Resolver(Compiler* compiler);
 
 	~Resolver() {}
 
@@ -25,9 +29,11 @@ public:
 	virtual void visit(VariableDecl* node);
 	virtual void visit(FunctionDecl* node);
 	virtual void visit(Ident* node);
+	virtual void visit(Import* node);
 private:
+	Compiler* m_compiler;
 	Scope* m_symtable;
-	Scope* m_curscope;
+	Scope* m_scope;
 	size_t m_scope_id;
 
 };

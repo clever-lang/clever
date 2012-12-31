@@ -28,9 +28,9 @@ public:
 	typedef std::vector<size_t> AddrVector;
 	typedef std::stack<AddrVector> JmpList;
 
-	Codegen(IRVector& ir, ScopePool& scope_pool, Compiler* compiler)
-		: m_ir(ir), m_scope_pool(scope_pool), m_compiler(compiler), m_scope(NULL),
-			m_scope_id(0) {}
+	Codegen(IRVector& ir, Scope* symtable, Compiler* compiler)
+		: m_ir(ir), m_symtable(symtable), m_compiler(compiler), m_scope(symtable)
+	{}
 	~Codegen() {}
 
 	void init();
@@ -38,7 +38,6 @@ public:
 	void visit(Block*);
 	void visit(VariableDecl*);
 	void visit(Assignment*);
-	void visit(Import*);
 	void visit(FunctionCall*);
 	void visit(FunctionDecl*);
 	void visit(Return*);
@@ -50,10 +49,9 @@ public:
 	void visit(IncDec*);
 private:
 	IRVector& m_ir;
-	ScopePool& m_scope_pool;
+	Scope* m_symtable;
 	Compiler* m_compiler;
 	Scope* m_scope;
-	size_t m_scope_id;
 	JmpList m_jmps;
 };
 
