@@ -93,17 +93,22 @@ void Codegen::visit(Assignment* node)
 			Operand(JMP_ADDR, m_ir.size() + 2)));
 	}
 
+	m_ir.push_back(IR(OP_ASSIGN,
+		Operand(FETCH_VAL, sym->value_id, sym->scope->getId())));
+
 	if (!rhs) {
-		m_ir.push_back(
-			IR(OP_ASSIGN,
-				Operand(FETCH_VAL, sym->value_id, sym->scope->getId()),
-				Operand(FETCH_VAL, m_scope->pushConst(new Value()), m_scope->getId())));
-	} else if (rhs->isLiteral()) {
+		m_ir.back().op2 = Operand(FETCH_VAL,
+			m_scope->pushConst(new Value()), m_scope->getId());
+	} else {
 		rhs->accept(*this);
 
-		m_ir.push_back(IR(OP_ASSIGN,
-			Operand(FETCH_VAL, sym->value_id, sym->scope->getId()),
-			Operand(FETCH_CONST, static_cast<Literal*>(rhs)->getConstId())));
+		if (rhs->isLiteral()) {
+			m_ir.back().op2 = Operand(FETCH_CONST,
+				static_cast<Literal*>(rhs)->getConstId());
+		} else {
+			m_ir.back().op2 = Operand(FETCH_VAL,
+				rhs->getValueId(), rhs->getScopeId());
+		}
 	}
 }
 
