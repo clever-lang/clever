@@ -64,12 +64,7 @@ void Codegen::visit(Block* node)
 	m_scope->setId(m_scope_id);
 	m_scope_pool[m_scope_id++] = m_scope;
 
-	std::vector<Node*> nodes = node->getNodes();
-	std::vector<Node*>::const_iterator it = nodes.begin(), end = nodes.end();
-	while (it != end) {
-		(*it)->accept(*this);
-		++it;
-	}
+	Visitor::visit(static_cast<NodeArray*>(node));
 
 	m_scope = m_scope->getParent();
 }

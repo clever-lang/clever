@@ -8,6 +8,8 @@
 #ifndef CLEVER_ASTVISITOR_H
 #define CLEVER_ASTVISITOR_H
 
+#include "core/ast.h"
+
 namespace clever { namespace ast {
 
 class Visitor {
@@ -16,8 +18,16 @@ public:
 	virtual ~Visitor() {}
 
 	virtual void visit(Node* node) {}
-	virtual void visit(NodeArray* node) {}
-	virtual void visit(Block* node) {}
+	virtual void visit(NodeArray* node) {
+		std::vector<Node*> nodes = node->getNodes();
+		std::vector<Node*>::const_iterator it = nodes.begin(), end = nodes.end();
+		while (it != end) {
+			(*it)->accept(*this);
+			++it;
+		}
+	}
+
+	virtual void visit(Block* node) { Visitor::visit(static_cast<NodeArray*>(node)); }
 	virtual void visit(Assignment* node) {}
 	virtual void visit(VariableDecl* node) {}
 	virtual void visit(Arithmetic* node) {}
