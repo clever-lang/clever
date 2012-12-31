@@ -54,7 +54,8 @@ public:
 
 	~Value() {
 		/* FIXME: Find a better way to check if m_data.obj is used */
-		if (m_type && m_type != CLEVER_INT_TYPE && m_type != CLEVER_DOUBLE_TYPE) {
+		if (m_type && m_type != CLEVER_INT_TYPE && m_type != CLEVER_DOUBLE_TYPE
+			&& m_type != CLEVER_STR_TYPE) {
 			const_cast<Type*>(m_type)->deallocData(m_data.obj);
 		}
 	}
