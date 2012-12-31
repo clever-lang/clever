@@ -30,6 +30,9 @@ struct Operand {
 
 	Operand() : op_type(UNUSED), value_id(0), scope_id(0) {}
 
+	Operand(OperandType _op_type)
+		: op_type(_op_type), value_id(0), scope_id(0) {}
+
 	Operand(OperandType _op_type, size_t id)
 		: op_type(_op_type), value_id(id), scope_id(0) {}
 

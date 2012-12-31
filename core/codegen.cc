@@ -247,4 +247,45 @@ void Codegen::visit(IncDec* node)
 	node->setValueId(tmp_id);
 }
 
+void Codegen::visit(Arithmetic* node)
+{
+	Node* lhs = node->getLhs();
+	Node* rhs = node->getRhs();
+	Opcode op;
+
+	switch (node->getOperator()) {
+		case Arithmetic::MOP_ADD: op = OP_ADD; break;
+		case Arithmetic::MOP_SUB: op = OP_SUB; break;
+		case Arithmetic::MOP_MUL: op = OP_MUL; break;
+		case Arithmetic::MOP_DIV: op = OP_DIV; break;
+		case Arithmetic::MOP_MOD: op = OP_MOD; break;
+	}
+
+	lhs->accept(*this);
+	rhs->accept(*this);
+
+	m_ir.push_back(IR(op));
+
+	if (lhs->isLiteral()) {
+		m_ir.back().op1 = Operand(FETCH_CONST,
+			static_cast<Literal*>(lhs)->getConstId());
+	} else {
+		m_ir.back().op1 = Operand(
+			lhs->isEvaluable() ? FETCH_TMP : FETCH_VAR,
+			lhs->getValueId(),
+			lhs->getScopeId());
+	}
+	if (rhs->isLiteral()) {
+		m_ir.back().op2 = Operand(FETCH_CONST,
+			static_cast<Literal*>(rhs)->getConstId());
+	} else {
+		m_ir.back().op2 = Operand(
+			rhs->isEvaluable() ? FETCH_TMP : FETCH_VAR,
+			rhs->getValueId(),
+			rhs->getScopeId());
+	}
+
+	m_ir.back().result = Operand(FETCH_TMP, m_compiler->getTempValue());
+}
+
 }} // clever::ast

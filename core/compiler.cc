@@ -133,6 +133,7 @@ size_t Compiler::addConstant(Value* value)
 	return m_const_id++;
 }
 
+/// Adds a new temporary value to the temporary pool
 size_t Compiler::getTempValue() {
 	m_tmp_pool[m_tmp_id] = new Value();
 
