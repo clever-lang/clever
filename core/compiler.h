@@ -38,19 +38,19 @@ public:
           m_type_pool(15), m_const_pool(15), m_scope_id(0), m_type_id(0),
           m_tmp_vals() {}
 
-    ~Compiler() {}
+	~Compiler() {}
 
-    // Starts the compilation phase
-    void init();
+	// Starts the compilation phase
+	void init();
 
-    void emitAST(ast::Block*);
+	void emitAST(ast::Node *tree);
 
-    // Shutdown the compiler freeing all resources
-    void shutdown();
+	// Shutdown the compiler freeing all resources
+	void shutdown();
 
-    IRVector& getIR() { return m_ir; }
+	IRVector& getIR() { return m_ir; }
 
-    ScopePool* getSymbolTable() { return &m_scope_pool; }
+	ScopePool* getSymbolTable() { return &m_scope_pool; }
 
     ValuePool* getConstantPool() { return &m_const_pool; }
 
@@ -62,14 +62,14 @@ public:
     void error(const std::string&, const location&) const;
     void errorf(const location&, const char*, ...) const;
 private:
-    // Package manager
-    PkgManager m_pkg;
+	// Package manager
+	PkgManager m_pkg;
 
-    // Vector of instructions to be passed to VM
-    IRVector m_ir;
+	// Vector of instructions to be passed to VM
+	IRVector m_ir;
 
-    // Scope handling
-    Scope* m_scope;
+	// Scope handling
+	Scope* m_scope;
 
     // Compiler pools, which got passed to VM after compiling
     ScopePool m_scope_pool;
@@ -81,10 +81,10 @@ private:
     size_t m_const_id;
     size_t m_type_id;
 
-    // Used to store temporary computation Value ptr
-    ValuePool m_tmp_vals;
+	// Used to store temporary computation Value ptr
+	ValuePool m_tmp_vals;
 
-    DISALLOW_COPY_AND_ASSIGN(Compiler);
+	DISALLOW_COPY_AND_ASSIGN(Compiler);
 };
 
 } // clever

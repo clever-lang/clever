@@ -13,6 +13,7 @@
 #include "types/native_types.h"
 #include "core/astdump.h"
 #include "core/codegen.h"
+#include "core/evaluator.h"
 
 namespace clever {
 
@@ -97,9 +98,12 @@ void Compiler::errorf(const location& loc, const char* format, ...) const
 	error(out.str(), loc);
 }
 
-void Compiler::emitAST(ast::Block* tree)
+void Compiler::emitAST(ast::Node* tree)
 {
 	if (tree) {
+		//ast::Evaluator evaluator;
+		//tree = tree->accept(evaluator);
+
 		ast::Dumper astdump;
 		tree->accept(astdump);
 

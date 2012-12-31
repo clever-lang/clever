@@ -148,6 +148,8 @@ add_executable(clever
 	core/cstring.h
 	core/driver.cc
 	core/driver.h
+	core/evaluator.cc
+	core/evaluator.h
 	core/ir.h
 	core/main.cc
 	core/module.h
