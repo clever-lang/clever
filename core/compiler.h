@@ -34,9 +34,9 @@ typedef std::vector<std::pair<size_t, size_t> > ArgCallList;
 class Compiler {
 public:
 	Compiler()
-		: m_ir(), m_scope(NULL), m_scope_pool(10),
-		  m_type_pool(15), m_const_pool(15), m_scope_id(0), m_const_id(0),
-		  m_type_id(0), m_tmp_id(0), m_tmp_pool(15) {}
+		: m_ir(), m_scope(NULL),
+			m_scope_pool(10), m_type_pool(15), m_const_pool(15),m_tmp_pool(15),
+			m_scope_id(0), m_const_id(0), m_type_id(0), m_tmp_id(0) {}
 
 	~Compiler() {}
 
@@ -79,15 +79,13 @@ private:
 	ScopePool m_scope_pool;
 	TypePool m_type_pool;
 	ValuePool m_const_pool;
+	ValuePool m_tmp_pool;
 
 	// Indexes for pools
 	size_t m_scope_id;
 	size_t m_const_id;
 	size_t m_type_id;
 	size_t m_tmp_id;
-
-	// Used to store temporary computation Value ptr
-	ValuePool m_tmp_pool;
 
 	DISALLOW_COPY_AND_ASSIGN(Compiler);
 };

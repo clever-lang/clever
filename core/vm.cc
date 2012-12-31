@@ -52,7 +52,7 @@ inline Value* VM::getValue(Operand& operand) const
 	switch (operand.op_type) {
 		case FETCH_CONST:
 			return (*m_const_pool)[operand.value_id];
-		case FETCH_VAL:
+		case FETCH_VAR:
 			return getValue(operand.scope_id, operand.value_id);
 		case FETCH_TMP:
 			return (*m_tmp_pool)[operand.value_id];
@@ -69,7 +69,7 @@ void VM::dumpOperand(Operand& op) const
 	};
 
 	switch (op.op_type) {
-		case FETCH_VAL:
+		case FETCH_VAR:
 			::printf("%3ld:%3ld ", op.value_id, op.scope_id);
 			break;
 		case JMP_ADDR:

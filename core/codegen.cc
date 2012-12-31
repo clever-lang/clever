@@ -86,16 +86,15 @@ void Codegen::visit(Assignment* node)
 
 	if (node->isConditional()) {
 		m_ir.push_back(IR(OP_JMPNZ,
-			Operand(FETCH_VAL, sym->value_id, sym->scope->getId()),
+			Operand(FETCH_VAR, sym->value_id, sym->scope->getId()),
 			Operand(JMP_ADDR, m_ir.size() + 2)));
 	}
 
 	m_ir.push_back(IR(OP_ASSIGN,
-		Operand(FETCH_VAL, sym->value_id, sym->scope->getId())));
+		Operand(FETCH_VAR, sym->value_id, sym->scope->getId())));
 
 	if (!rhs) {
-		m_ir.back().op2 = Operand(FETCH_VAL,
-			m_scope->pushConst(new Value()), m_scope->getId());
+		m_ir.back().op2 = Operand(FETCH_TMP, m_compiler->getTempValue());
 	} else {
 		rhs->accept(*this);
 
@@ -103,7 +102,7 @@ void Codegen::visit(Assignment* node)
 			m_ir.back().op2 = Operand(FETCH_CONST,
 				static_cast<Literal*>(rhs)->getConstId());
 		} else {
-			m_ir.back().op2 = Operand(FETCH_VAL,
+			m_ir.back().op2 = Operand(FETCH_VAR,
 				rhs->getValueId(), rhs->getScopeId());
 		}
 	}
@@ -132,7 +131,7 @@ void Codegen::visit(FunctionCall* node)
 				operand.op_type = FETCH_CONST;
 				operand.value_id = static_cast<Literal*>(*it)->getConstId();
 			} else {
-				operand.op_type = (*it)->isEvaluable() ? FETCH_TMP : FETCH_VAL;
+				operand.op_type = (*it)->isEvaluable() ? FETCH_TMP : FETCH_VAR;
 				operand.value_id = (*it)->getValueId();
 				operand.scope_id = (*it)->getScopeId();
 			}
@@ -142,7 +141,7 @@ void Codegen::visit(FunctionCall* node)
 	}
 
 	m_ir.push_back(IR(OP_FCALL,
-		Operand(FETCH_VAL, sym->value_id, sym->scope->getId())));
+		Operand(FETCH_VAR, sym->value_id, sym->scope->getId())));
 }
 
 void Codegen::visit(FunctionDecl* node)
@@ -214,7 +213,7 @@ void Codegen::visit(While* node)
 			Operand(FETCH_CONST, static_cast<Literal*>(cond)->getConstId())));
 	} else {
 		m_ir.push_back(IR(OP_JMPZ,
-			Operand(FETCH_VAL, cond->getValueId(), cond->getScopeId())));
+			Operand(FETCH_VAR, cond->getValueId(), cond->getScopeId())));
 	}
 
 	node->getBlock()->accept(*this);
@@ -238,7 +237,7 @@ void Codegen::visit(IncDec* node)
 	}
 
 	m_ir.push_back(IR(op,
-		Operand(FETCH_VAL, node->getVar()->getValueId(),
+		Operand(FETCH_VAR, node->getVar()->getValueId(),
 			node->getVar()->getScopeId())));
 
 	size_t tmp_id = m_compiler->getTempValue();

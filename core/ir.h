@@ -17,9 +17,9 @@ class Value;
 
 enum OperandType {
 	UNUSED,      // Operand is not used
-	FETCH_VAL,   // For Value* fetchs
-	FETCH_CONST, // For constant Values
-	FETCH_TMP,   // For temporary Values
+	FETCH_VAR,   // For fetching a variables
+	FETCH_CONST, // For fetching a constant
+	FETCH_TMP,   // For fetching a temporary value
 	JMP_ADDR     // For instr addr
 };
 

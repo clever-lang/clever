@@ -81,11 +81,6 @@ public:
 		return m_value_id++;
 	}
 
-	size_t pushConst(Value* value) {
-		m_value_pool[m_value_id] = value;
-		return m_value_id++;
-	}
-
 	Value* getValue(size_t idx) { return m_value_pool[idx]; }
 
 	Symbol& at(size_t idx) { return m_symbols[idx]; }
