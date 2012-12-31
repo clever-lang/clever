@@ -18,7 +18,14 @@ class Value;
 enum OperandType {
 	UNUSED,      // Operand is not used
 	FETCH_VAL,   // For Value* fetchs
+	FETCH_CONST, // For constant Values
 	JMP_ADDR     // For instr addr
+};
+
+struct Operand {
+	size_t op_type;
+	size_t value_id;
+	size_t scope_id;
 };
 
 /// Intermediate representation

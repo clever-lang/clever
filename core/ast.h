@@ -49,6 +49,8 @@ public:
 	virtual void accept(Visitor& visitor);
 	virtual void accept(Transformer& transformer);
 
+	virtual bool isLiteral() const { return false; }
+
 	const location& getLocation() const { return m_location; }
 
 	virtual IntLit* getIntLit() { return NULL; }
@@ -435,10 +437,26 @@ private:
 	std::vector<std::pair<Node*, Node*> > m_conditionals;
 };
 
-class IntLit: public Node {
+class Literal: public Node {
+public:
+	Literal(const location& location)
+		: Node(location) {}
+
+	virtual ~Literal() {}
+
+	virtual bool isLiteral() const { return true; }
+
+	virtual void setConstId(size_t const_id) { m_const_id = const_id; }
+
+	virtual size_t getConstId() const { return m_const_id; }
+private:
+	size_t m_const_id;
+};
+
+class IntLit: public Literal {
 public:
 	IntLit(long value, const location& location)
-		: Node(location), m_value(value) {}
+		: Literal(location), m_value(value) {}
 
 	long getValue() const { return m_value; }
 
@@ -449,10 +467,10 @@ private:
 	long m_value;
 };
 
-class DoubleLit: public Node {
+class DoubleLit: public Literal {
 public:
 	DoubleLit(double value, const location& location)
-		: Node(location), m_value(value) {}
+		: Literal(location), m_value(value) {}
 
 	double getValue() const { return m_value; }
 
@@ -463,10 +481,10 @@ private:
 	double m_value;
 };
 
-class StringLit: public Node {
+class StringLit: public Literal {
 public:
 	StringLit(const CString* value, const location& location)
-		: Node(location), m_value(value) {}
+		: Literal(location), m_value(value) {}
 
 	const CString* getValue() const { return m_value; }
 

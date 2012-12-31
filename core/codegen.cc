@@ -19,6 +19,21 @@ void Codegen::init()
 	m_scope_pool[m_scope_id++] = m_scope;
 }
 
+void Codegen::visit(IntLit* node)
+{
+	node->setConstId(m_compiler->addConstant(new Value(node->getValue())));
+}
+
+void Codegen::visit(DoubleLit* node)
+{
+	node->setConstId(m_compiler->addConstant(new Value(node->getValue())));
+}
+
+void Codegen::visit(StringLit* node)
+{
+	node->setConstId(m_compiler->addConstant(new Value(node->getValue())));
+}
+
 void Codegen::visit(Import* node)
 {
 	m_compiler->getPkgManager().importModule(m_scope,
@@ -49,7 +64,6 @@ void Codegen::visit(VariableDecl* node)
 	} else {
 		size_t var_id = m_scope->pushValue(node->getIdent()->getName(), new Value());
 
-		// XXX: is this really needed?
 		m_ir.push_back(
 			IR(OP_ASSIGN, FETCH_VAL, var_id,
 				FETCH_VAL, m_scope->pushConst(new Value())));
@@ -65,10 +79,20 @@ void Codegen::visit(Assignment* node)
 
 	Ident* ident = static_cast<Ident*>(node->getLhs());
 	Symbol* sym = m_scope->getLocal(ident->getName());
+	Node* rhs = node->getRhs();
 
 	if (!sym) {
 		m_compiler->errorf(node->getLocation(),
 			"Variable `%S' not found!", ident->getName());
+	}
+
+	if (rhs->isLiteral()) {
+		Literal* literal = static_cast<Literal*>(rhs);
+
+		m_ir.push_back(IR(OP_ASSIGN, FETCH_VAL, sym->value_id,
+			FETCH_CONST, literal->getConstId()));
+
+		m_ir.back().op1_scope = sym->scope->getId();
 	}
 
 	// TODO: if node->isConditional() is true, emit branching code to avoid assignment when ident has been initialized.

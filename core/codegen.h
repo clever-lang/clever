@@ -28,7 +28,7 @@ public:
 	typedef std::vector<size_t> AddrVector;
 	typedef std::stack<AddrVector> JmpList;
 
-	Codegen(IRVector& ir, ScopePool& scope_pool, const Compiler* compiler)
+	Codegen(IRVector& ir, ScopePool& scope_pool, Compiler* compiler)
 		: m_ir(ir), m_scope_pool(scope_pool), m_compiler(compiler), m_scope(NULL),
 			m_scope_id(0) {}
 	~Codegen() {}
@@ -43,10 +43,13 @@ public:
 	void visit(FunctionDecl*);
 	void visit(Return*);
 	void visit(While*);
+	void visit(IntLit*);
+	void visit(DoubleLit*);
+	void visit(StringLit*);
 private:
 	IRVector& m_ir;
 	ScopePool& m_scope_pool;
-	const Compiler* m_compiler;
+	Compiler* m_compiler;
 	Scope* m_scope;
 	size_t m_scope_id;
 	JmpList m_jmps;

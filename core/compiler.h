@@ -35,7 +35,8 @@ class Compiler {
 public:
     Compiler()
         : m_ir(), m_scope(NULL), m_scope_pool(10),
-          m_type_pool(15), m_scope_id(0), m_type_id(0), m_tmp_vals() {}
+          m_type_pool(15), m_const_pool(15), m_scope_id(0), m_type_id(0),
+          m_tmp_vals() {}
 
     ~Compiler() {}
 
@@ -51,7 +52,11 @@ public:
 
     ScopePool* getSymbolTable() { return &m_scope_pool; }
 
+    ValuePool* getConstantPool() { return &m_const_pool; }
+
 	const PkgManager& getPkgManager() const { return m_pkg; }
+
+	size_t addConstant(Value*);
 
     void error(const char*) const;
     void error(const std::string&, const location&) const;
@@ -69,10 +74,11 @@ private:
     // Compiler pools, which got passed to VM after compiling
     ScopePool m_scope_pool;
     TypePool m_type_pool;
+    ValuePool m_const_pool;
 
     // Indexes for pools
     size_t m_scope_id;
-    size_t m_value_id;
+    size_t m_const_id;
     size_t m_type_id;
 
     // Used to store temporary computation Value ptr

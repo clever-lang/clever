@@ -60,11 +60,14 @@ public:
 	typedef std::vector<Thread*> ThreadPool;
 
 	VM(IRVector& inst)
-		: m_pc(0), m_is_main_thread(true), m_inst(inst), m_scope_pool(NULL) {}
+		: m_pc(0), m_is_main_thread(true), m_inst(inst), m_scope_pool(NULL),
+			m_const_pool(NULL) {}
 	~VM() {}
 
 	/// Sets the symbol table to used by the VM to fetch the symbol names
 	void setSymbolTable(ScopePool* scope) { m_scope_pool = scope; }
+
+	void setConstantPool(ValuePool* consts) { m_const_pool = consts; }
 
 	void copy(VM*);
 
@@ -129,6 +132,9 @@ private:
 
 	/// Scope pool
 	ScopePool* m_scope_pool;
+
+	/// Constant pool
+	ValuePool* m_const_pool;
 
 	/// VM opcode handlers
 	OpHandler m_handlers[NUM_OPCODES];

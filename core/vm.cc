@@ -49,7 +49,7 @@ inline Value* VM::getValue(size_t scope_id, size_t value_id) const
 #ifdef CLEVER_DEBUG
 void VM::dumpOpcodes() const
 {
-	const char *op_type[] = {"UNUSED", "FETCH_VAL", "JMP_ADDR"};
+	const char *op_type[] = {"UNUSED", "FETCH_VAL", "FETCH_CONST", "JMP_ADDR"};
 
 	for (size_t i = 0, j = m_inst.size(); i < j; ++i) {
 		IR& ir = m_inst[i];

@@ -26,6 +26,7 @@ void Compiler::init()
 	m_tmp_vals.reserve(15);
 	m_scope_pool.reserve(10);
 	m_type_pool.reserve(15);
+	m_const_pool.reserve(15);
 
 	// Native type allocation
 	m_type_pool[m_type_id++] = CLEVER_INT_TYPE    = new IntType;
@@ -110,6 +111,14 @@ void Compiler::emitAST(ast::Block* tree)
 
 		delete tree;
 	}
+}
+
+/// Adds a new constant value to the constant pool
+size_t Compiler::addConstant(Value* value)
+{
+	m_const_pool[m_const_id] = value;
+
+	return m_const_id++;
 }
 
 } // clever
