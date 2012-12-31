@@ -98,4 +98,8 @@ void Visitor::visit(Import* node) {
 	}
 }
 
+void Visitor::visit(IncDec* node) {
+	node->getVar()->accept(*this);
+}
+
 }}

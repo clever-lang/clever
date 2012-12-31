@@ -88,9 +88,9 @@ next_token:
 	<INITIAL>">>" { RET(token::RSHIFT); }
 
 
-	<INITIAL>"++" { RET(token::INCREMENT); }
+	<INITIAL>"++" { RET(token::INC); }
 
-	<INITIAL>"--" { RET(token::DECREMENT); }
+	<INITIAL>"--" { RET(token::DEC); }
 
 	<INITIAL>"==" { RET(token::EQUAL); }
 

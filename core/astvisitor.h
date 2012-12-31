@@ -26,6 +26,7 @@ public:
 	virtual void visit(Arithmetic* node);
 	virtual void visit(FunctionDecl* node);
 	virtual void visit(FunctionCall* node);
+	virtual void visit(IncDec* node);
 
 	virtual void visit(While* node);
 	virtual void visit(If* node);

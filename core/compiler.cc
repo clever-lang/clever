@@ -63,6 +63,16 @@ void Compiler::shutdown()
 		}
 		++it2;
 	}
+
+	ValuePool::const_iterator it3 = m_tmp_vals.begin(),
+		end3 = m_tmp_vals.end();
+
+	while (it3 != end3) {
+		if (*it3) {
+			(*it3)->delRef();
+		}
+		++it3;
+	}
 }
 
 /// Displays an error message and exits
@@ -125,6 +135,11 @@ size_t Compiler::addConstant(Value* value)
 	m_const_pool[m_const_id] = value;
 
 	return m_const_id++;
+}
+
+Value* Compiler::getTempValue() {
+	m_tmp_vals.push_back(new Value());
+	return m_tmp_vals.back();
 }
 
 } // clever

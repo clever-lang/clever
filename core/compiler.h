@@ -54,6 +54,8 @@ public:
 
     ValuePool* getConstantPool() { return &m_const_pool; }
 
+    Value* getTempValue();
+
 	const PkgManager& getPkgManager() const { return m_pkg; }
 
 	size_t addConstant(Value*);

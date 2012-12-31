@@ -42,6 +42,7 @@ class Value;
 	ast::FunctionDecl* fdecl;
 	ast::Return* ret;
 	ast::While* while_loop;
+	ast::IncDec* inc_dec;
 }
 
 %type <ident> IDENT
@@ -60,6 +61,7 @@ class Value;
 %type <fdecl> fdecl
 %type <ret> return_stmt
 %type <while_loop> while
+%type <inc_dec> inc_dec
 
 // The parsing context.
 %parse-param { Driver& driver }
@@ -124,8 +126,8 @@ class Value;
 %token PRINT         "print"
 %token FUNC          "function"
 %token THREAD        "thread"
-%token INCREMENT     "++"
-%token DECREMENT     "--"
+%token INC           "++"
+%token DEC           "--"
 
 %left ',';
 %left LOGICAL_OR;
@@ -170,6 +172,7 @@ statement:
 	|	fdecl
 	|	return_stmt ';'
 	|	while
+	|	inc_dec ';'
 ;
 
 rvalue:
@@ -180,11 +183,19 @@ rvalue:
 	|	arithmetic
 	|	logic
 	|	bitwise
+	|	inc_dec
 	|	'(' rvalue ')' { $<node>$ = $<node>2; }
 ;
 
 lvalue:
 		IDENT
+;
+
+inc_dec:
+		lvalue INC { $$ = new ast::IncDec(ast::IncDec::POS_INC, $<node>1, yyloc); }
+	|	lvalue DEC { $$ = new ast::IncDec(ast::IncDec::POS_DEC, $<node>1, yyloc); }
+	|	INC lvalue { $$ = new ast::IncDec(ast::IncDec::PRE_INC, $<node>2, yyloc); }
+	|	DEC lvalue { $$ = new ast::IncDec(ast::IncDec::PRE_DEC, $<node>2, yyloc); }
 ;
 
 logic:

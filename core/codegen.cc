@@ -82,10 +82,7 @@ void Codegen::visit(Assignment* node)
 	Symbol* sym = m_scope->getLocal(ident->getName());
 	Node* rhs = node->getRhs();
 
-	if (!sym) {
-		m_compiler->errorf(node->getLocation(),
-			"Variable `%S' not found!", ident->getName());
-	}
+	clever_assert_not_null(sym);
 
 	if (node->isConditional()) {
 		m_ir.push_back(IR(OP_JMPNZ,
@@ -208,10 +205,17 @@ void Codegen::visit(Return* node)
 void Codegen::visit(While* node)
 {
 	size_t start_while = m_ir.size();
+	Node* cond = node->getCondition();
 
-	node->getCondition()->accept(*this);
+	cond->accept(*this);
 
-	m_ir.push_back(IR(OP_JMPZ));
+	if (cond->isLiteral()) {
+		m_ir.push_back(IR(OP_JMPZ,
+			Operand(FETCH_CONST, static_cast<Literal*>(cond)->getConstId())));
+	} else {
+		m_ir.push_back(IR(OP_JMPZ,
+			Operand(FETCH_VAL, cond->getValueId(), cond->getScopeId())));
+	}
 
 	node->getBlock()->accept(*this);
 
@@ -220,5 +224,23 @@ void Codegen::visit(While* node)
 	m_ir[start_while].op2.value_id = m_ir.size();
 }
 
+void Codegen::visit(IncDec* node)
+{
+	node->getVar()->accept(*this);
+
+	switch (node->getOperator()) {
+		case IncDec::PRE_INC:
+		case IncDec::PRE_DEC:
+		case IncDec::POS_INC:
+			break;
+		case IncDec::POS_DEC:
+			m_ir.push_back(IR(OP_POS_DEC,
+				Operand(FETCH_VAL, node->getVar()->getValueId(),
+					node->getVar()->getScopeId())));
+			break;
+	}
+
+	m_ir.back().result = m_compiler->getTempValue();
+}
 
 }} // clever::ast

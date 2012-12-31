@@ -55,6 +55,8 @@ void Bitwise::accept(Visitor& visitor) { visitor.visit(this); }
 
 void Import::accept(Visitor& visitor) { visitor.visit(this); }
 
+void IncDec::accept(Visitor& visitor) { visitor.visit(this); }
+
 // Transformers
 
 Node* Node::accept(Transformer& transformer) { return transformer.transform(this); }
@@ -92,6 +94,8 @@ Node* Logic::accept(Transformer& transformer) { return transformer.transform(thi
 Node* Bitwise::accept(Transformer& transformer) { return transformer.transform(this); }
 
 Node* Import::accept(Transformer& transformer) { return transformer.transform(this); }
+
+Node* IncDec::accept(Transformer& transformer) { return transformer.transform(this); }
 
 
 }}

@@ -415,7 +415,15 @@ private:
 class While: public Node {
 public:
 	While(Node* condition, Node* block, const location& location)
-		: Node(location), m_condition(condition), m_block(block) {}
+		: Node(location), m_condition(condition), m_block(block) {
+		CLEVER_ADDREF(m_condition);
+		CLEVER_SAFE_ADDREF(m_block);
+	}
+
+	~While() {
+		CLEVER_DELREF(m_condition);
+		CLEVER_SAFE_DELREF(m_block);
+	}
 
 	Node* getCondition() { return m_condition; }
 
@@ -537,6 +545,35 @@ public:
 	virtual Node* accept(Transformer& transformer);
 private:
 	Node* m_value;
+};
+
+class IncDec: public Node {
+public:
+	enum IncDecOperator {
+		PRE_INC,
+		PRE_DEC,
+		POS_INC,
+		POS_DEC
+	};
+
+	IncDec(IncDecOperator op, Node* var, const location& location)
+		: Node(location), m_op(op), m_var(var) {
+		CLEVER_ADDREF(m_var);
+	}
+
+	~IncDec() {
+		CLEVER_DELREF(m_var);
+	}
+
+	Node* getVar() const { return m_var; }
+
+	IncDecOperator getOperator() const { return m_op; }
+
+	virtual void accept(Visitor& visitor);
+	virtual Node* accept(Transformer& transformer);
+private:
+	IncDecOperator m_op;
+	Node* m_var;
 };
 
 }} // clever::ast
