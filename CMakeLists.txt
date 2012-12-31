@@ -136,6 +136,7 @@ add_executable(clever
 	core/ast.cc
 	core/astdump.h
 	core/astvisitor.h
+	core/astvisitor.cc
 	core/asttransformer.h
 	core/codegen.h
 	core/codegen.cc
