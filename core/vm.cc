@@ -102,10 +102,13 @@ VM_HANDLER(ret)
 {
 	if (m_call_stack.size()) {
 		const StackFrame& frame = m_call_stack.top();
-		const Value* val = getValue(op.op1);
 
-		if (val) {
-			m_call_stack.top().ret_val->copy(getValue(op.op1));
+		if (op.op1.op_type != UNUSED) {
+			const Value* val = getValue(op.op1);
+
+			if (val) {
+				m_call_stack.top().ret_val->copy(getValue(op.op1));
+			}
 		}
 		m_call_stack.pop();
 

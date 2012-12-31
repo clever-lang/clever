@@ -184,6 +184,7 @@ rvalue:
 	|	logic
 	|	bitwise
 	|	inc_dec
+	|	fcall
 	|	'(' rvalue ')' { $<node>$ = $<node>2; }
 ;
 

@@ -88,8 +88,7 @@ void Codegen::visit(Assignment* node)
 		} else if (rhs->getScope()) {
 			m_ir.back().op2 = Operand(FETCH_VAR, rhs->getValueId());
 		} else {
-			m_ir.back().op2 = Operand(FETCH_TMP,
-				rhs->getValueId(), rhs->getScope()->getId());
+			m_ir.back().op2 = Operand(FETCH_TMP, m_compiler->getTempValue());
 		}
 	}
 }
@@ -127,6 +126,12 @@ void Codegen::visit(FunctionCall* node)
 
 	m_ir.push_back(IR(OP_FCALL,
 		Operand(FETCH_VAR, sym->value_id, sym->scope->getId())));
+
+	size_t tmp_id = m_compiler->getTempValue();
+
+	m_ir.back().result = Operand(FETCH_TMP, tmp_id);
+
+	node->setValueId(tmp_id);
 }
 
 void Codegen::visit(FunctionDecl* node)
@@ -156,8 +161,18 @@ void Codegen::visit(FunctionDecl* node)
 
 void Codegen::visit(Return* node)
 {
-	// TODO: return value
 	m_ir.push_back(IR(OP_RET));
+
+	if (node->hasValue()) {
+		Node* value = node->getValue();
+
+		value->accept(*this);
+
+		if (value->isLiteral()) {
+			m_ir.back().op1 = Operand(FETCH_CONST,
+				static_cast<Literal*>(value)->getConstId());
+		}
+	}
 }
 
 void Codegen::visit(While* node)
