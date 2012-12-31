@@ -159,6 +159,8 @@ add_executable(clever
 	core/pkgmanager.cc
 	core/pkgmanager.h
 	core/refcounted.h
+	core/resolver.cc
+	core/resolver.cc
 	core/scanner.h
 	core/scope.h
 	core/value.h

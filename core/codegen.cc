@@ -39,7 +39,7 @@ void Codegen::visit(Ident* node)
 	Symbol* sym = m_scope->getAny(node->getName());
 
 	if (!sym) {
-		m_compiler->errorf(node->getLocation(),
+		Compiler::errorf(node->getLocation(),
 			"Variable `%S' not found!", node->getName());
 	}
 
@@ -115,7 +115,7 @@ void Codegen::visit(FunctionCall* node)
 	Symbol* sym = m_scope->getAny(ident->getName());
 
 	if (!sym) {
-		m_compiler->errorf(node->getLocation(),
+		Compiler::errorf(node->getLocation(),
 			"Function `%S' not found!", ident->getName());
 	}
 
@@ -132,7 +132,7 @@ void Codegen::visit(FunctionCall* node)
 				operand.op_type = FETCH_CONST;
 				operand.value_id = static_cast<Literal*>(*it)->getConstId();
 			} else {
-				operand.op_type = FETCH_VAL;
+				operand.op_type = (*it)->isEvaluable() ? FETCH_TMP : FETCH_VAL;
 				operand.value_id = (*it)->getValueId();
 				operand.scope_id = (*it)->getScopeId();
 			}
@@ -152,7 +152,7 @@ void Codegen::visit(FunctionDecl* node)
 	size_t start_func;
 
 	if (sym) {
-		m_compiler->errorf(node->getLocation(),
+		Compiler::errorf(node->getLocation(),
 			"Function `%S' already defined in the scope!", name);
 	}
 
@@ -226,21 +226,26 @@ void Codegen::visit(While* node)
 
 void Codegen::visit(IncDec* node)
 {
+	Opcode op;
+
 	node->getVar()->accept(*this);
 
 	switch (node->getOperator()) {
-		case IncDec::PRE_INC:
-		case IncDec::PRE_DEC:
-		case IncDec::POS_INC:
-			break;
-		case IncDec::POS_DEC:
-			m_ir.push_back(IR(OP_POS_DEC,
-				Operand(FETCH_VAL, node->getVar()->getValueId(),
-					node->getVar()->getScopeId())));
-			break;
+		case IncDec::PRE_INC: op = OP_PRE_INC; break;
+		case IncDec::PRE_DEC: op = OP_PRE_DEC; break;
+		case IncDec::POS_INC: op = OP_POS_INC; break;
+		case IncDec::POS_DEC: op = OP_POS_DEC; break;
 	}
 
-	m_ir.back().result = m_compiler->getTempValue();
+	m_ir.push_back(IR(op,
+		Operand(FETCH_VAL, node->getVar()->getValueId(),
+			node->getVar()->getScopeId())));
+
+	size_t tmp_id = m_compiler->getTempValue();
+
+	m_ir.back().result = Operand(FETCH_TMP, tmp_id);
+
+	node->setValueId(tmp_id);
 }
 
 }} // clever::ast

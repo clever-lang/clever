@@ -28,6 +28,7 @@ void Interpreter::execute(bool interactive)
 
 	vm.setSymbolTable(m_compiler.getSymbolTable());
 	vm.setConstantPool(m_compiler.getConstantPool());
+	vm.setTemporaryPool(m_compiler.getTemporaryPool());
 
 #ifdef CLEVER_DEBUG
 	if (m_dump_opcode) {

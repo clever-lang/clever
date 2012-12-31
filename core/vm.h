@@ -61,13 +61,15 @@ public:
 
 	VM(IRVector& inst)
 		: m_pc(0), m_is_main_thread(true), m_inst(inst), m_scope_pool(NULL),
-			m_const_pool(NULL) {}
+			m_const_pool(NULL), m_tmp_pool(NULL) {}
 	~VM() {}
 
 	/// Sets the symbol table to used by the VM to fetch the symbol names
 	void setSymbolTable(ScopePool* scope) { m_scope_pool = scope; }
 
 	void setConstantPool(ValuePool* consts) { m_const_pool = consts; }
+
+	void setTemporaryPool(ValuePool* temps) { m_tmp_pool = temps; }
 
 	void copy(VM*);
 
@@ -138,6 +140,9 @@ private:
 
 	/// Constant pool
 	ValuePool* m_const_pool;
+
+	/// Temporaries pool
+	ValuePool* m_tmp_pool;
 
 	/// VM opcode handlers
 	OpHandler m_handlers[NUM_OPCODES];

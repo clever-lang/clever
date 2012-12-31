@@ -54,6 +54,8 @@ inline Value* VM::getValue(Operand& operand) const
 			return (*m_const_pool)[operand.value_id];
 		case FETCH_VAL:
 			return getValue(operand.scope_id, operand.value_id);
+		case FETCH_TMP:
+			return (*m_tmp_pool)[operand.value_id];
 		default:
 			return NULL;
 	}
@@ -62,7 +64,9 @@ inline Value* VM::getValue(Operand& operand) const
 #ifdef CLEVER_DEBUG
 void VM::dumpOperand(Operand& op) const
 {
-	const char *type[] = {"UNUSED", "FETCH_VAL", "FETCH_CONST", "JMP_ADDR"};
+	const char *type[] = {
+		"UNUSED", "FETCH_VAL", "FETCH_CONST", "FETCH_TMP", "JMP_ADDR"
+	};
 
 	switch (op.op_type) {
 		case FETCH_VAL:
@@ -70,6 +74,7 @@ void VM::dumpOperand(Operand& op) const
 			break;
 		case JMP_ADDR:
 		case FETCH_CONST:
+		case FETCH_TMP:
 			::printf("%7ld ", op.value_id);
 			break;
 		case UNUSED:
@@ -84,9 +89,10 @@ void VM::dumpOpcodes() const
 	for (size_t i = 0, j = m_inst.size(); i < j; ++i) {
 		IR& ir = m_inst[i];
 		::printf("[%03ld] %-12s |", i, get_opcode_name(ir.opcode));
-		dumpOperand(ir.op1),
-		dumpOperand(ir.op2),
-		::printf("%p\n", ir.result);
+		dumpOperand(ir.op1);
+		dumpOperand(ir.op2);
+		dumpOperand(ir.result);
+		::printf("\n");
 	}
 }
 #endif
@@ -160,7 +166,7 @@ VM_HANDLER(add)
 
 	if (lhs->getType() == CLEVER_INT_TYPE
 		&& rhs->getType() == CLEVER_INT_TYPE) {
-		op.result->setInt(lhs->getInt() + rhs->getInt());
+		getValue(op.result)->setInt(lhs->getInt() + rhs->getInt());
 	}
 
 	VM_NEXT();
@@ -174,7 +180,7 @@ VM_HANDLER(sub)
 
 	if (lhs->getType() == CLEVER_INT_TYPE
 		&& rhs->getType() == CLEVER_INT_TYPE) {
-		op.result->setInt(lhs->getInt() - rhs->getInt());
+		getValue(op.result)->setInt(lhs->getInt() - rhs->getInt());
 	}
 
 	VM_NEXT();
@@ -188,7 +194,7 @@ VM_HANDLER(mul)
 
 	if (lhs->getType() == CLEVER_INT_TYPE
 		&& rhs->getType() == CLEVER_INT_TYPE) {
-		op.result->setInt(lhs->getInt() * rhs->getInt());
+		getValue(op.result)->setInt(lhs->getInt() * rhs->getInt());
 	}
 
 	VM_NEXT();
@@ -202,7 +208,7 @@ VM_HANDLER(div)
 
 	if (lhs->getType() == CLEVER_INT_TYPE
 		&& rhs->getType() == CLEVER_INT_TYPE) {
-		op.result->setInt(lhs->getInt() / rhs->getInt());
+		getValue(op.result)->setInt(lhs->getInt() / rhs->getInt());
 	}
 
 	VM_NEXT();
@@ -216,7 +222,7 @@ VM_HANDLER(mod)
 
 	if (lhs->getType() == CLEVER_INT_TYPE
 		&& rhs->getType() == CLEVER_INT_TYPE) {
-		op.result->setInt(lhs->getInt() % rhs->getInt());
+		getValue(op.result)->setInt(lhs->getInt() % rhs->getInt());
 	}
 
 	VM_NEXT();
@@ -357,7 +363,7 @@ VM_HANDLER(fcall)
 		}
 		m_call_stack.push(StackFrame());
 		m_call_stack.top().ret_addr = m_pc + 1;
-		m_call_stack.top().ret_val  = op.result;
+		m_call_stack.top().ret_val  = getValue(op.result);
 
 		// Function argument value binding
 		if (fdata->hasArgs()) {
@@ -408,9 +414,9 @@ VM_HANDLER(inc)
 
 	if (op.opcode == OP_PRE_INC) {
 		value->getType()->increment(value);
-		op.result->copy(value);
+		getValue(op.result)->copy(value);
 	} else {
-		op.result->copy(value);
+		getValue(op.result)->copy(value);
 		value->getType()->increment(value);
 	}
 
@@ -424,9 +430,9 @@ VM_HANDLER(dec)
 
 	if (op.opcode == OP_PRE_DEC) {
 		value->getType()->decrement(value);
-		op.result->copy(value);
+		getValue(op.result)->copy(value);
 	} else {
-		op.result->copy(value);
+		getValue(op.result)->copy(value);
 		value->getType()->decrement(value);
 	}
 

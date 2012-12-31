@@ -19,6 +19,7 @@ enum OperandType {
 	UNUSED,      // Operand is not used
 	FETCH_VAL,   // For Value* fetchs
 	FETCH_CONST, // For constant Values
+	FETCH_TMP,   // For temporary Values
 	JMP_ADDR     // For instr addr
 };
 
@@ -40,17 +41,16 @@ struct Operand {
 /// Intermediate representation
 struct IR {
 	IR(Opcode _op)
-		: opcode(_op), op1(), op2(), result(NULL) {}
+		: opcode(_op), op1(), op2(), result() {}
 
 	IR(Opcode _op, Operand _op1)
-		: opcode(_op), op1(_op1), op2(), result(NULL) {}
+		: opcode(_op), op1(_op1), op2(), result() {}
 
 	IR(Opcode _op, Operand _op1, Operand _op2)
-		: opcode(_op), op1(_op1), op2(_op2), result(NULL) {}
+		: opcode(_op), op1(_op1), op2(_op2), result() {}
 
 	Opcode opcode;
-	Operand op1, op2;
-	Value* result;
+	Operand op1, op2, result;
 };
 
 // Vector of VM instructions

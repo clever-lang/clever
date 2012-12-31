@@ -50,6 +50,7 @@ public:
 	virtual Node* accept(Transformer& transformer);
 
 	virtual bool isLiteral() const { return false; }
+	virtual bool isEvaluable() const { return false; }
 
 	const location& getLocation() const { return m_location; }
 
@@ -260,6 +261,8 @@ public:
 	Node* getLhs() { return m_lhs; }
 	Node* getRhs() { return m_rhs; }
 
+	bool isEvaluable() const { return true; }
+
 	virtual void accept(Visitor& visitor);
 	virtual Node* accept(Transformer& transformer);
 
@@ -287,6 +290,8 @@ public:
 		CLEVER_DELREF(m_lhs);
 		CLEVER_DELREF(m_rhs);
 	}
+
+	bool isEvaluable() const { return true; }
 
 	LogicOperator getOperator() const { return m_op; }
 	Node* getLhs() { return m_lhs; }
@@ -321,6 +326,8 @@ public:
 		CLEVER_DELREF(m_lhs);
 		CLEVER_DELREF(m_rhs);
 	}
+
+	bool isEvaluable() const { return true; }
 
 	BitwiseOperator getOperator() const { return m_op; }
 	Node* getLhs() { return m_lhs; }
@@ -392,6 +399,8 @@ public:
 	bool hasArgs() const { return m_args != NULL && m_args->getSize() > 0; }
 
 	size_t numArgs() const { return m_args->getSize(); }
+
+	bool isEvaluable() const { return true; }
 
 	Node* getArg(size_t index) {
 		std::vector<Node*> array = m_args->getNodes();
@@ -564,6 +573,8 @@ public:
 	~IncDec() {
 		CLEVER_DELREF(m_var);
 	}
+
+	bool isEvaluable() const { return true; }
 
 	Node* getVar() const { return m_var; }
 

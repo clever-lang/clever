@@ -24,7 +24,7 @@ DECLARE_CLEVER_NATIVE_TYPES();
 void Compiler::init()
 {
 	m_ir.reserve(20);
-	m_tmp_vals.reserve(15);
+	m_tmp_pool.reserve(15);
 	m_scope_pool.reserve(10);
 	m_type_pool.reserve(15);
 	m_const_pool.reserve(15);
@@ -64,8 +64,8 @@ void Compiler::shutdown()
 		++it2;
 	}
 
-	ValuePool::const_iterator it3 = m_tmp_vals.begin(),
-		end3 = m_tmp_vals.end();
+	ValuePool::const_iterator it3 = m_tmp_pool.begin(),
+		end3 = m_tmp_pool.end();
 
 	while (it3 != end3) {
 		if (*it3) {
@@ -76,14 +76,14 @@ void Compiler::shutdown()
 }
 
 /// Displays an error message and exits
-void Compiler::error(const char* msg) const
+void Compiler::error(const char* msg)
 {
 	std::cerr << "Compile error: " << msg << std::endl;
 	CLEVER_EXIT_FATAL();
 }
 
 /// Displays an error message
-void Compiler::error(const std::string& message, const location& loc) const
+void Compiler::error(const std::string& message, const location& loc)
 {
 	if (loc.begin.filename) {
 		std::cerr << "Compile error: " << message << " on "
@@ -96,7 +96,7 @@ void Compiler::error(const std::string& message, const location& loc) const
 }
 
 /// Displays a formatted error message and abort the compilation
-void Compiler::errorf(const location& loc, const char* format, ...) const
+void Compiler::errorf(const location& loc, const char* format, ...)
 {
 	std::ostringstream out;
 	va_list args;
@@ -137,9 +137,10 @@ size_t Compiler::addConstant(Value* value)
 	return m_const_id++;
 }
 
-Value* Compiler::getTempValue() {
-	m_tmp_vals.push_back(new Value());
-	return m_tmp_vals.back();
+size_t Compiler::getTempValue() {
+	m_tmp_pool[m_tmp_id] = new Value();
+
+	return m_tmp_id++;
 }
 
 } // clever
