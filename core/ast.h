@@ -12,6 +12,7 @@
 #include "core/value.h"
 #include "core/location.hh"
 #include "core/clever.h"
+#include "core/scope.h"
 
 namespace clever { namespace ast {
 
@@ -61,12 +62,12 @@ public:
 	virtual void setValueId(size_t value_id) { m_value_id = value_id; }
 	virtual size_t getValueId() const { return m_value_id; }
 
-	virtual void setScopeId(size_t scope_id) { m_scope_id = scope_id; }
-	virtual size_t getScopeId() const { return m_scope_id; }
+	virtual void setScope(Scope* scope) { m_scope = scope; }
+	virtual Scope* getScope() { return m_scope; }
 private:
 	const location& m_location;
 	size_t m_value_id;
-	size_t m_scope_id;
+	Scope* m_scope;
 };
 
 class NodeArray: public Node {
@@ -174,8 +175,12 @@ public:
 	virtual void accept(Visitor& visitor);
 	virtual Node* accept(Transformer& transformer);
 
+	void setSymbol(Symbol* sym)	{ m_sym = sym; }
+	Symbol* getSymbol() { return m_sym; }
+
 private:
 	const CString* m_name;
+	Symbol* m_sym;
 };
 
 class Import: public Node {

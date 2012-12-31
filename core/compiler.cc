@@ -14,6 +14,7 @@
 #include "core/astdump.h"
 #include "core/codegen.h"
 #include "core/evaluator.h"
+#include "core/resolver.h"
 
 namespace clever {
 
@@ -118,7 +119,11 @@ void Compiler::emitAST(ast::Node* tree)
 			tree->accept(astdump);
 		}
 
-		ast::Codegen codegen(m_ir, m_scope_pool, this);
+		ast::Resolver resolver(this);
+
+		tree->accept(resolver);
+
+		ast::Codegen codegen(m_ir, resolver.getSymTable(), this);
 
 		codegen.init();
 
