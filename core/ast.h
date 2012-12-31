@@ -212,16 +212,12 @@ public:
 	VariableDecl(Ident* ident, Assignment* assignment, const location& location)
 		: Node(location), m_ident(ident), m_assignment(assignment) {
 		CLEVER_ADDREF(m_ident);
-		if (m_assignment) {
-			CLEVER_ADDREF(m_assignment);
-		}
+		CLEVER_SAFE_ADDREF(m_assignment);
 	}
 
 	~VariableDecl() {
 		CLEVER_DELREF(m_ident);
-		if (m_assignment) {
-			CLEVER_DELREF(m_assignment);
-		}
+		CLEVER_SAFE_DELREF(m_assignment);
 	}
 
 	Ident* getIdent() const { return m_ident; }
