@@ -1,0 +1,10 @@
+Testing function call
+==CODE==
+import std.io.*;
+
+function a(b) { println(b); return 2; }
+var b = a(123);
+println(b * 3);
+==RESULT==
+123
+6

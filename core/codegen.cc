@@ -89,7 +89,7 @@ void Codegen::visit(Assignment* node)
 			m_ir.back().op2 = Operand(FETCH_VAR, rhs->getValueId(),
 				rhs->getScope()->getId());
 		} else {
-			m_ir.back().op2 = Operand(FETCH_TMP, m_compiler->getTempValue());
+			m_ir.back().op2 = Operand(FETCH_TMP, rhs->getValueId());
 		}
 	}
 }
