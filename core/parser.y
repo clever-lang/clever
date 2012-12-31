@@ -230,7 +230,8 @@ assignment:
 ;
 
 import:
-		IMPORT IDENT '.' IDENT '.' '*' { $$ = new ast::Import($2, $4, yyloc); }
+		IMPORT IDENT '.' IDENT '.' '*' { $$ = new ast::Import($2, $4, yyloc);   }
+	|	IMPORT IDENT '.' '*'           { $$ = new ast::Import($2, NULL, yyloc); }
 ;
 
 fdecl:

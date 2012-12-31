@@ -36,8 +36,13 @@ void Codegen::visit(StringLit* node)
 
 void Codegen::visit(Import* node)
 {
-	m_compiler->getPkgManager().importModule(m_scope,
-		node->getPackage()->getName(), node->getModule()->getName());
+	if (node->getModule()) {
+		m_compiler->getPkgManager().importModule(m_scope,
+			node->getPackage()->getName(), node->getModule()->getName());
+	} else {
+		m_compiler->getPkgManager().importPackage(m_scope,
+			node->getPackage()->getName());
+	}
 }
 
 void Codegen::visit(Block* node)
