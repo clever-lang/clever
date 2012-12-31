@@ -27,6 +27,7 @@ typedef std::vector<Value*> ValuePool;
 
 /// Symbol representation
 struct Symbol {
+	Symbol() {}
 	Symbol(const CString *name_, size_t value_id_, Scope *scope_ = NULL)
 		: name(name_), value_id(value_id_), scope(scope_) {}
 
@@ -41,7 +42,7 @@ struct Symbol {
 class Scope {
 public:
 	typedef std::vector<Scope*> ScopeVector;
-	typedef std::vector<Symbol> SymbolMap;
+	typedef std::vector<Symbol*> SymbolMap;
 	typedef std::tr1::unordered_map<const CString*, size_t> SymbolTable;
 	typedef SymbolTable::value_type SymbolEntry;
 
@@ -71,10 +72,18 @@ public:
 			delete *it;
 			++it;
 		}
+
+		SymbolMap::const_iterator its = m_symbols.begin(),
+			ends = m_symbols.end();
+
+		while (its != ends) {
+			delete *its;
+			++its;
+		}
 	}
 
 	size_t pushValue(const CString* name, Value* value) {
-		m_symbols.push_back(Symbol(name, m_value_id, this));
+		m_symbols.push_back(new Symbol(name, m_value_id, this));
 		m_symbol_table.insert(SymbolEntry(name, m_size++));
 		m_value_pool[m_value_id] = value;
 
@@ -83,7 +92,7 @@ public:
 
 	Value* getValue(size_t idx) { return m_value_pool[idx]; }
 
-	Symbol& at(size_t idx) { return m_symbols[idx]; }
+	Symbol& at(size_t idx) { return *m_symbols[idx]; }
 
 	void setId(size_t id) { m_id = id; }
 
@@ -120,7 +129,7 @@ inline Symbol* Scope::getLocal(const CString* name) {
 	if (it == m_symbol_table.end()) {
 		return NULL;
 	}
-	return &m_symbols[it->second];
+	return m_symbols[it->second];
 }
 
 /// Resolve a symbol name recursively
