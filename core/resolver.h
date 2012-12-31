@@ -25,17 +25,15 @@ public:
 
 	Scope* getSymTable() { return m_symtable; }
 
-	virtual void visit(Block* node);
-	virtual void visit(VariableDecl* node);
-	virtual void visit(FunctionDecl* node);
-	virtual void visit(Ident* node);
-	virtual void visit(Import* node);
+	virtual void visit(Block*);
+	virtual void visit(VariableDecl*);
+	virtual void visit(FunctionDecl*);
+	virtual void visit(Ident*);
+	virtual void visit(Import*);
 private:
 	Compiler* m_compiler;
 	Scope* m_symtable;
 	Scope* m_scope;
-	size_t m_scope_id;
-
 };
 
 }}

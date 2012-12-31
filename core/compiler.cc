@@ -133,6 +133,13 @@ void Compiler::emitAST(ast::Node* tree)
 	}
 }
 
+size_t Compiler::addScope(Scope* scope)
+{
+	m_scope_pool[m_scope_id] = scope;
+
+	return m_scope_id++;
+}
+
 /// Adds a new constant value to the constant pool
 size_t Compiler::addConstant(Value* value)
 {

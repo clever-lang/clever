@@ -65,6 +65,7 @@ public:
 
 	const PkgManager& getPkgManager() const { return m_pkg; }
 
+	size_t addScope(Scope*);
 	size_t addConstant(Value*);
 
 	static void error(const char*);
