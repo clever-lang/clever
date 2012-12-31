@@ -147,6 +147,11 @@ void Codegen::visit(FunctionDecl* node)
 
 	m_ir.push_back(IR(OP_LEAVE));
 
+	Symbol* sym = node->getIdent()->getSymbol();
+	Function* func = static_cast<Function*>(sym->scope->getValue(sym->value_id)->getObj());
+
+	func->setAddr(m_ir.size()+1);
+
 	m_ir[start_func].op1.value_id = m_ir.size();
 }
 

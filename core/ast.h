@@ -43,7 +43,7 @@ class Transformer;
 class Node: public RefCounted {
 public:
 	Node(const location& location)
-		: RefCounted(0), m_location(location) {}
+		: RefCounted(0), m_location(location), m_scope(NULL) {}
 
 	virtual ~Node() {}
 
