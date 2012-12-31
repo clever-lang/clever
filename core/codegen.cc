@@ -112,7 +112,14 @@ void Codegen::visit(FunctionCall* node)
 		NodeList::const_iterator it = args.begin(), end = args.end();
 
 		while (it != end) {
-			// m_ir.push_back(IR(OP_SEND_VAL, ...));
+			if ((*it)->isLiteral()) {
+				Literal* lit = static_cast<Literal*>(*it);
+
+				(*it)->accept(*this);
+
+				m_ir.push_back(IR(OP_SEND_VAL,
+					Operand(FETCH_CONST, lit->getConstId())));
+			}
 			++it;
 		}
 	}

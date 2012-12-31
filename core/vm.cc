@@ -64,12 +64,13 @@ void VM::dumpOperand(Operand& op) const
 			break;
 		case JMP_ADDR:
 		case FETCH_CONST:
-			::printf("%7ld", op.value_id);
+			::printf("%7ld ", op.value_id);
 			break;
 		case UNUSED:
+			::printf("        ");
 			break;
 	}
-	::printf(" (%-9s) | ", type[op.op_type]);
+	::printf(" (%-11s) | ", type[op.op_type]);
 }
 
 void VM::dumpOpcodes() const
