@@ -51,6 +51,15 @@ public:
 		return *(m_nodes.begin());
 	}
 
+	Node* getNode(size_t index) {
+		clever_assert(index < m_nodes.size(), "Index %i out of bounds.", index);
+
+		if (m_nodes.empty())
+			return NULL;
+
+		return m_nodes.at(index);
+	}
+
 	Node* append(Node* node) {
 		m_nodes.push_back(node);
 		CLEVER_ADDREF(node);
@@ -90,7 +99,7 @@ public:
 class Assignment: public Node {
 public:
 	Assignment(Node* lhs, Node* rhs, const location& location)
-		: Node(location), m_lhs(lhs), m_rhs(rhs) {
+		: Node(location), m_conditional(false), m_lhs(lhs), m_rhs(rhs) {
 		CLEVER_ADDREF(m_lhs);
 		CLEVER_ADDREF(m_rhs);
 	}
@@ -103,8 +112,17 @@ public:
 	Node* getLhs() { return m_lhs; }
 	Node* getRhs() { return m_rhs; }
 
+	void setConditional(bool conditional) {
+		m_conditional = conditional;
+	}
+
+	bool isConditional() const {
+		return m_conditional;
+	}
+
 	virtual void accept(Visitor& visitor) { visitor.visit(this); }
 private:
+	bool m_conditional;
 	Node* m_lhs;
 	Node* m_rhs;
 };
@@ -292,14 +310,7 @@ public:
 	size_t numArgs() const { return m_args->getSize(); }
 
 	Node* getArg(size_t index) {
-		std::vector<Node*> array = m_args->getNodes();
-
-		clever_assert(index > 0 && index < array.size(), "Index %i out of bounds.", index);
-
-		if (array.empty())
-			return NULL;
-
-		return array.at(index);
+		return m_args->getNode(index);
 	}
 
 	Block* getBlock() { return m_block; }
