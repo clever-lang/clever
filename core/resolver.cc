@@ -98,7 +98,7 @@ void Resolver::visit(Ident* node) {
 	}
 
 	node->setSymbol(sym);
-	node->setScope(m_scope);
+	node->setScope(sym->scope);
 }
 
 void Resolver::visit(Import* node)
