@@ -21,7 +21,6 @@ public:
 
 	virtual Node* transform(Node* node);
 	virtual Node* transform(NodeArray* node);
-	virtual Node* transform(Block* node);
 	virtual Node* transform(VariableDecl* node);
 	virtual Node* transform(Assignment* node);
 	virtual Node* transform(Arithmetic* node);

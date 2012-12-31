@@ -32,10 +32,6 @@ Node* Evaluator::transform(NodeArray* node) {
 	return node;
 }
 
-Node* Evaluator::transform(Block* node) {
-	return transform(static_cast<NodeArray*>(node));
-}
-
 Node* Evaluator::transform(VariableDecl* node) {
 	if (node->hasAssignment()) {
 		node->setAssignment(static_cast<Assignment*>(node->getAssignment()->accept(*this)));
