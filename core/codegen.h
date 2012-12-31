@@ -48,6 +48,7 @@ public:
 	void visit(Ident*);
 	void visit(IncDec*);
 	void visit(Arithmetic*);
+	void visit(Import*) {}
 private:
 	IRVector& m_ir;
 	Scope* m_symtable;

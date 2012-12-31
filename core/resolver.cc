@@ -104,8 +104,6 @@ void Resolver::visit(Ident* node) {
 
 void Resolver::visit(Import* node)
 {
-	std::cout << m_scope << std::endl;
-
 	if (node->getModule()) {
 		m_compiler->getPkgManager().importModule(m_scope,
 			node->getPackage()->getName(), node->getModule()->getName());
