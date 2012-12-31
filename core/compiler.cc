@@ -66,14 +66,14 @@ void Compiler::shutdown()
 }
 
 /// Displays an error message and exits
-void Compiler::error(const char* msg) const
+void Compiler::error(const char* msg)
 {
 	std::cerr << "Compile error: " << msg << std::endl;
 	CLEVER_EXIT_FATAL();
 }
 
 /// Displays an error message
-void Compiler::error(const std::string& message, const location& loc) const
+void Compiler::error(const std::string& message, const location& loc)
 {
 	if (loc.begin.filename) {
 		std::cerr << "Compile error: " << message << " on "
@@ -86,7 +86,7 @@ void Compiler::error(const std::string& message, const location& loc) const
 }
 
 /// Displays a formatted error message and abort the compilation
-void Compiler::errorf(const location& loc, const char* format, ...) const
+void Compiler::errorf(const location& loc, const char* format, ...)
 {
 	std::ostringstream out;
 	va_list args;

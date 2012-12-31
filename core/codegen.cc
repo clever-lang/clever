@@ -39,7 +39,7 @@ void Codegen::visit(Ident* node)
 	Symbol* sym = m_scope->getAny(node->getName());
 
 	if (!sym) {
-		m_compiler->errorf(node->getLocation(),
+		Compiler::errorf(node->getLocation(),
 			"Variable `%S' not found!", node->getName());
 	}
 
@@ -83,7 +83,7 @@ void Codegen::visit(Assignment* node)
 	Node* rhs = node->getRhs();
 
 	if (!sym) {
-		m_compiler->errorf(node->getLocation(),
+		Compiler::errorf(node->getLocation(),
 			"Variable `%S' not found!", ident->getName());
 	}
 
@@ -118,7 +118,7 @@ void Codegen::visit(FunctionCall* node)
 	Symbol* sym = m_scope->getAny(ident->getName());
 
 	if (!sym) {
-		m_compiler->errorf(node->getLocation(),
+		Compiler::errorf(node->getLocation(),
 			"Function `%S' not found!", ident->getName());
 	}
 
@@ -155,7 +155,7 @@ void Codegen::visit(FunctionDecl* node)
 	size_t start_func;
 
 	if (sym) {
-		m_compiler->errorf(node->getLocation(),
+		Compiler::errorf(node->getLocation(),
 			"Function `%S' already defined in the scope!", name);
 	}
 
