@@ -70,6 +70,8 @@ void Driver::readFile(std::string& source) const
 /// \returns -1 when a parser error happens, otherwise 0 is returned
 int Driver::loadFile(const std::string& filename)
 {
+	m_compiler.setFlags(m_cflags);
+
 	ScannerState* new_scanner = new ScannerState;
 	Parser parser(*this, *new_scanner, m_compiler);
 	std::string& source = new_scanner->getSource();
@@ -106,6 +108,8 @@ int Driver::loadFile(const std::string& filename)
 /// \returns -1 when a parser error happens, otherwise 0 is returned
 int Driver::loadStr(const std::string& code, bool importStd)
 {
+	m_compiler.setFlags(m_cflags);
+
 	ScannerState *new_scanner = new ScannerState;
 	Parser parser(*this, *new_scanner, m_compiler);
 	std::string& source = new_scanner->getSource();

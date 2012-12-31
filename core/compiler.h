@@ -33,20 +33,25 @@ typedef std::vector<std::pair<size_t, size_t> > ArgCallList;
 /// Compiler representation
 class Compiler {
 public:
+	enum CompilerFlag {
+		DUMP_AST = 1,
+		USE_OPTIMIZER,
+		INTERACTIVE
+	};
+
 	Compiler()
-		: m_ir(), m_scope(NULL),
+		: m_ir(), m_scope(NULL), m_flags(0),
 			m_scope_pool(10), m_type_pool(15), m_const_pool(15),m_tmp_pool(15),
 			m_scope_id(0), m_const_id(0), m_type_id(0), m_tmp_id(0) {}
 
 	~Compiler() {}
 
-	// Starts the compilation phase
 	void init();
+	void shutdown();
 
 	void emitAST(ast::Node *tree);
 
-	// Shutdown the compiler freeing all resources
-	void shutdown();
+	void setFlags(size_t flags) { m_flags = flags; }
 
 	IRVector& getIR() { return m_ir; }
 
@@ -74,6 +79,9 @@ private:
 
 	// Scope handling
 	Scope* m_scope;
+
+	// Compiler flag
+	size_t m_flags;
 
 	// Compiler pools, which got passed to VM after compiling
 	ScopePool m_scope_pool;

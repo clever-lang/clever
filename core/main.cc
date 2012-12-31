@@ -6,6 +6,7 @@
  */
 
 #include <iostream>
+#include "core/compiler.h"
 #include "core/clever.h"
 #include "core/driver.h"
 #ifdef _WIN32
@@ -115,6 +116,12 @@ int main(int argc, char **argv)
 				exit(1);
 			}
 			break;
+		} else if (argv[i] == std::string("-a")) {
+			inc_arg++;
+			clever.setCompilerFlags(clever::Compiler::DUMP_AST);
+		} else if (argv[i] == std::string("-O")) {
+			inc_arg++;
+			clever.setCompilerFlags(clever::Compiler::USE_OPTIMIZER);
 #ifdef CLEVER_DEBUG
 		} else if (argv[i] == std::string("-p")) {
 			inc_arg++;

@@ -33,7 +33,7 @@ public:
 	typedef std::stack<ScannerState*> ScannerStack;
 
 	Driver()
-		: m_is_file(false), m_trace_parsing(false), m_file(NULL)
+		: m_is_file(false), m_trace_parsing(false), m_file(NULL), m_cflags(0)
 #ifdef CLEVER_DEBUG
 			, m_dump_opcode(false)
 #endif
@@ -62,6 +62,9 @@ public:
 
 	// Tracing
 	void setTraceParsing(bool trace) { m_trace_parsing = trace; }
+
+	// Compiler flags
+	void setCompilerFlags(size_t flags) { m_cflags |= flags; }
 protected:
 	// Indicates if it's a file is being parsed
 	bool m_is_file;
@@ -71,6 +74,9 @@ protected:
 
 	// The file path -f
 	const CString* m_file;
+
+	// Compiler flags
+	size_t m_cflags;
 
 #ifdef CLEVER_DEBUG
 	// Opcode dumping option

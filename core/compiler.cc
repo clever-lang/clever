@@ -109,11 +109,14 @@ void Compiler::errorf(const location& loc, const char* format, ...)
 void Compiler::emitAST(ast::Node* tree)
 {
 	if (tree) {
-		//ast::Evaluator evaluator;
-		//tree = tree->accept(evaluator);
-
-		//ast::Dumper astdump;
-		//tree->accept(astdump);
+		if (m_flags & USE_OPTIMIZER) {
+			ast::Evaluator evaluator;
+			tree = tree->accept(evaluator);
+		}
+		if (m_flags & DUMP_AST) {
+			ast::Dumper astdump;
+			tree->accept(astdump);
+		}
 
 		ast::Codegen codegen(m_ir, m_scope_pool, this);
 
