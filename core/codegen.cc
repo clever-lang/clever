@@ -76,23 +76,13 @@ void Codegen::visit(Block* node)
 
 void Codegen::visit(VariableDecl* node)
 {
-	if (node->hasAssignment()) {
-		m_scope->pushValue(node->getIdent()->getName(), new Value());
-		node->getAssignment()->accept(*this);
-	} else {
-		size_t var_id = m_scope->pushValue(node->getIdent()->getName(), new Value());
-
-		m_ir.push_back(
-			IR(OP_ASSIGN,
-				Operand(FETCH_VAL, var_id, m_scope->getId()),
-				Operand(FETCH_VAL, m_scope->pushConst(new Value()), m_scope->getId())));
-	}
+	m_scope->pushValue(node->getIdent()->getName(), new Value());
+	node->getAssignment()->accept(*this);
 }
 
 void Codegen::visit(Assignment* node)
 {
 	// TODO: allow assignment of any possible left hand side.
-
 	Ident* ident = static_cast<Ident*>(node->getLhs());
 	Symbol* sym = m_scope->getLocal(ident->getName());
 	Node* rhs = node->getRhs();
@@ -102,15 +92,24 @@ void Codegen::visit(Assignment* node)
 			"Variable `%S' not found!", ident->getName());
 	}
 
-	rhs->accept(*this);
+	if (node->isConditional()) {
+		m_ir.push_back(IR(OP_JMPNZ,
+			Operand(FETCH_VAL, sym->value_id, sym->scope->getId()),
+			Operand(JMP_ADDR, m_ir.size() + 2)));
+	}
 
-	if (rhs->isLiteral()) {
+	if (!rhs) {
+		m_ir.push_back(
+			IR(OP_ASSIGN,
+				Operand(FETCH_VAL, sym->value_id, sym->scope->getId()),
+				Operand(FETCH_VAL, m_scope->pushConst(new Value()), m_scope->getId())));
+	} else if (rhs->isLiteral()) {
+		rhs->accept(*this);
+
 		m_ir.push_back(IR(OP_ASSIGN,
 			Operand(FETCH_VAL, sym->value_id, sym->scope->getId()),
 			Operand(FETCH_CONST, static_cast<Literal*>(rhs)->getConstId())));
 	}
-
-	// TODO: if node->isConditional() is true, emit branching code to avoid assignment when ident has been initialized.
 }
 
 void Codegen::visit(FunctionCall* node)
@@ -183,11 +182,7 @@ void Codegen::visit(FunctionDecl* node)
 
 	if (node->hasArgs()) {
 		for (size_t i = 0; i < node->numArgs(); ++i) {
-			VariableDecl* decl = static_cast<VariableDecl*>(node->getArg(i));
-
-			if (decl->hasAssignment()) {
-				decl->getAssignment()->setConditional(true);
-			}
+			static_cast<VariableDecl*>(node->getArg(i))->getAssignment()->setConditional(true);
 		}
 
 		node->getArgs()->accept(*this);

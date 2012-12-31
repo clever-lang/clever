@@ -106,8 +106,8 @@ void Compiler::emitAST(ast::Node* tree)
 		//ast::Evaluator evaluator;
 		//tree = tree->accept(evaluator);
 
-		ast::Dumper astdump;
-		tree->accept(astdump);
+		//ast::Dumper astdump;
+		//tree->accept(astdump);
 
 		ast::Codegen codegen(m_ir, m_scope_pool, this);
 

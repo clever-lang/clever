@@ -30,6 +30,7 @@ enum Opcode {
 	OP_PRE_DEC,    //  15 - Used for pre decrement variable
 	OP_POS_INC,    //       Used for pos increment variable
 	OP_POS_DEC,    //       Used for pos decrement variable
+	OP_JMPNZ,      //       Used for pos decrement variable
 	NUM_OPCODES
 };
 

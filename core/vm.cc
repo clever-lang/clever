@@ -35,6 +35,7 @@ inline void VM::init()
 	m_handlers[OP_LEAVE]      = &VM::leave;
 	m_handlers[OP_SEND_VAL]   = &VM::send_val;
 	m_handlers[OP_JMPZ]       = &VM::jmpz;
+	m_handlers[OP_JMPNZ]      = &VM::jmpnz;
 	m_handlers[OP_PRE_INC]    = &VM::inc;
 	m_handlers[OP_POS_INC]    = &VM::inc;
 	m_handlers[OP_PRE_DEC]    = &VM::dec;
@@ -122,6 +123,18 @@ VM_HANDLER(jmpz)
 	Value* value = getValue(op.op1);
 
 	if (!value->getInt()) {
+		VM_GOTO(op.op2.value_id);
+	}
+
+	VM_NEXT();
+}
+
+// JMPNZ operation
+VM_HANDLER(jmpnz)
+{
+	Value* value = getValue(op.op1);
+
+	if (value->getInt()) {
 		VM_GOTO(op.op2.value_id);
 	}
 
@@ -357,7 +370,11 @@ VM_HANDLER(fcall)
 					arg_scope->at(i).scope->getId(),
 					arg_scope->at(i).value_id);
 
-				arg_val->copy(m_call_args[i]);
+				if (i < m_call_args.size()) {
+					arg_val->copy(m_call_args[i]);
+				} else {
+					arg_val->setNull();
+				}
 			}
 		}
 		m_call_args.clear();

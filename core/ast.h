@@ -131,12 +131,12 @@ public:
 	Assignment(Node* lhs, Node* rhs, const location& location)
 		: Node(location), m_conditional(false), m_lhs(lhs), m_rhs(rhs) {
 		CLEVER_ADDREF(m_lhs);
-		CLEVER_ADDREF(m_rhs);
+		CLEVER_SAFE_ADDREF(m_rhs);
 	}
 
 	~Assignment() {
 		CLEVER_DELREF(m_lhs);
-		CLEVER_DELREF(m_rhs);
+		CLEVER_SAFE_DELREF(m_rhs);
 	}
 
 	void setRhs(Node* rhs) {

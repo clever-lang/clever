@@ -222,7 +222,7 @@ variable_decl_list:
 
 variable_decl_impl:
 		IDENT '=' rvalue { $$ = new ast::VariableDecl($1, new ast::Assignment($1, $<node>3, yyloc), yyloc); }
-	|	IDENT            { $$ = new ast::VariableDecl($1, NULL, yyloc); }
+	|	IDENT            { $$ = new ast::VariableDecl($1, new ast::Assignment($1, NULL, yyloc), yyloc); }
 ;
 
 assignment:

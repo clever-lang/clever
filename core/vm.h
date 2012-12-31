@@ -112,12 +112,13 @@ public:
 	VM_HANDLER_D(div);
 	VM_HANDLER_D(mod);
 	VM_HANDLER_D(jmp);
+	VM_HANDLER_D(jmpz);
+	VM_HANDLER_D(jmpnz);
 	VM_HANDLER_D(fcall);
 	VM_HANDLER_D(threadcall);
 	VM_HANDLER_D(endthread);
 	VM_HANDLER_D(leave);
 	VM_HANDLER_D(send_val);
-	VM_HANDLER_D(jmpz);
 	VM_HANDLER_D(inc);
 	VM_HANDLER_D(dec);
 private:

@@ -63,6 +63,9 @@ public:
 	void setType(const Type* type) { m_type = type; }
 	const Type* getType() const { return m_type; }
 
+	void setNull() { m_type = NULL; }
+	bool isNull() const { return m_type == NULL; }
+
 	void dump() const {
 		if (m_type) {
 			m_type->dump(&m_data);
