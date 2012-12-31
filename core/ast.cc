@@ -57,41 +57,41 @@ void Import::accept(Visitor& visitor) { visitor.visit(this); }
 
 // Transformers
 
-void Node::accept(Transformer& transformer) { transformer.transform(this); }
+Node* Node::accept(Transformer& transformer) { return transformer.transform(this); }
 
-void NodeArray::accept(Transformer& transformer) { transformer.transform(this); }
+Node* NodeArray::accept(Transformer& transformer) { return transformer.transform(this); }
 
-void Block::accept(Transformer& transformer) { transformer.transform(this); }
+Node* Block::accept(Transformer& transformer) { return transformer.transform(this); }
 
-void Assignment::accept(Transformer& transformer) { transformer.transform(this); }
+Node* Assignment::accept(Transformer& transformer) { return transformer.transform(this); }
 
-void VariableDecl::accept(Transformer& transformer) { transformer.transform(this); }
+Node* VariableDecl::accept(Transformer& transformer) { return transformer.transform(this); }
 
-void Arithmetic::accept(Transformer& transformer) { transformer.transform(this); }
+Node* Arithmetic::accept(Transformer& transformer) { return transformer.transform(this); }
 
-void FunctionDecl::accept(Transformer& transformer) { transformer.transform(this); }
+Node* FunctionDecl::accept(Transformer& transformer) { return transformer.transform(this); }
 
-void FunctionCall::accept(Transformer& transformer) { transformer.transform(this); }
+Node* FunctionCall::accept(Transformer& transformer) { return transformer.transform(this); }
 
-void While::accept(Transformer& transformer) { transformer.transform(this); }
+Node* While::accept(Transformer& transformer) { return transformer.transform(this); }
 
-void If::accept(Transformer& transformer) { transformer.transform(this); }
+Node* If::accept(Transformer& transformer) { return transformer.transform(this); }
 
-void IntLit::accept(Transformer& transformer) { transformer.transform(this); }
+Node* IntLit::accept(Transformer& transformer) { return transformer.transform(this); }
 
-void DoubleLit::accept(Transformer& transformer) { transformer.transform(this); }
+Node* DoubleLit::accept(Transformer& transformer) { return transformer.transform(this); }
 
-void StringLit::accept(Transformer& transformer) { transformer.transform(this); }
+Node* StringLit::accept(Transformer& transformer) { return transformer.transform(this); }
 
-void Ident::accept(Transformer& transformer) { transformer.transform(this); }
+Node* Ident::accept(Transformer& transformer) { return transformer.transform(this); }
 
-void Return::accept(Transformer& transformer) { transformer.transform(this); }
+Node* Return::accept(Transformer& transformer) { return transformer.transform(this); }
 
-void Logic::accept(Transformer& transformer) { transformer.transform(this); }
+Node* Logic::accept(Transformer& transformer) { return transformer.transform(this); }
 
-void Bitwise::accept(Transformer& transformer) { transformer.transform(this); }
+Node* Bitwise::accept(Transformer& transformer) { return transformer.transform(this); }
 
-void Import::accept(Transformer& transformer) { transformer.transform(this); }
+Node* Import::accept(Transformer& transformer) { return transformer.transform(this); }
 
 
 }}

@@ -47,7 +47,7 @@ public:
 	virtual ~Node() {}
 
 	virtual void accept(Visitor& visitor);
-	virtual void accept(Transformer& transformer);
+	virtual Node* accept(Transformer& transformer);
 
 	const location& getLocation() const { return m_location; }
 
@@ -93,7 +93,7 @@ public:
 	size_t getSize() const { return m_nodes.size(); }
 
 	virtual void accept(Visitor& visitor);
-	virtual void accept(Transformer& transformer);
+	virtual Node* accept(Transformer& transformer);
 
 	void clearNodes() {
 		NodeList::iterator it = m_nodes.begin(), end = m_nodes.end();
@@ -113,7 +113,7 @@ public:
 		: NodeArray(location) {}
 
 	virtual void accept(Visitor& visitor);
-	virtual void accept(Transformer& transformer);
+	virtual Node* accept(Transformer& transformer);
 };
 
 class Assignment: public Node {
@@ -129,6 +129,11 @@ public:
 		CLEVER_DELREF(m_rhs);
 	}
 
+	void setRhs(Node* rhs) {
+		m_rhs = rhs;
+		CLEVER_SAFE_ADDREF(m_rhs);
+	}
+
 	Node* getLhs() { return m_lhs; }
 	Node* getRhs() { return m_rhs; }
 
@@ -141,7 +146,7 @@ public:
 	}
 
 	virtual void accept(Visitor& visitor);
-	virtual void accept(Transformer& transformer);
+	virtual Node* accept(Transformer& transformer);
 private:
 	bool m_conditional;
 	Node* m_lhs;
@@ -156,7 +161,7 @@ public:
 	const CString* getName() const { return m_name; }
 
 	virtual void accept(Visitor& visitor);
-	virtual void accept(Transformer& transformer);
+	virtual Node* accept(Transformer& transformer);
 
 private:
 	const CString* m_name;
@@ -179,7 +184,7 @@ public:
 	Ident* getModule() const { return m_module; }
 
 	virtual void accept(Visitor& visitor);
-	virtual void accept(Transformer& transformer);
+	virtual Node* accept(Transformer& transformer);
 private:
 	Ident* m_package;
 	Ident* m_module;
@@ -203,11 +208,16 @@ public:
 	}
 
 	Ident* getIdent() const { return m_ident; }
+	void setAssignment(Assignment* assignment) {
+		m_assignment = assignment;
+		CLEVER_SAFE_ADDREF(m_assignment);
+	}
+
 	Assignment* getAssignment() { return m_assignment; }
 	bool hasAssignment() const { return m_assignment != NULL; }
 
 	virtual void accept(Visitor& visitor);
-	virtual void accept(Transformer& transformer);
+	virtual Node* accept(Transformer& transformer);
 
 private:
 	Ident* m_ident;
@@ -240,7 +250,7 @@ public:
 	Node* getRhs() { return m_rhs; }
 
 	virtual void accept(Visitor& visitor);
-	virtual void accept(Transformer& transformer);
+	virtual Node* accept(Transformer& transformer);
 
 private:
 	ArithOperator m_op;
@@ -272,7 +282,7 @@ public:
 	Node* getRhs() { return m_rhs; }
 
 	virtual void accept(Visitor& visitor);
-	virtual void accept(Transformer& transformer);
+	virtual Node* accept(Transformer& transformer);
 
 private:
 	LogicOperator m_op;
@@ -306,7 +316,7 @@ public:
 	Node* getRhs() { return m_rhs; }
 
 	virtual void accept(Visitor& visitor);
-	virtual void accept(Transformer& transformer);
+	virtual Node* accept(Transformer& transformer);
 
 private:
 	BitwiseOperator m_op;
@@ -343,7 +353,7 @@ public:
 	Block* getBlock() { return m_block; }
 
 	virtual void accept(Visitor& visitor);
-	virtual void accept(Transformer& transformer);
+	virtual Node* accept(Transformer& transformer);
 
 private:
 	Ident* m_ident;
@@ -383,7 +393,7 @@ public:
 	}
 
 	virtual void accept(Visitor& visitor);
-	virtual void accept(Transformer& transformer);
+	virtual Node* accept(Transformer& transformer);
 
 private:
 	Node* m_callee;
@@ -400,7 +410,7 @@ public:
 	Node* getBlock() { return m_block; }
 
 	virtual void accept(Visitor& visitor);
-	virtual void accept(Transformer& transformer);
+	virtual Node* accept(Transformer& transformer);
 
 private:
 	Node *m_condition;
@@ -428,7 +438,7 @@ public:
 	Node* getElseNode() { return m_else_node; }
 
 	virtual void accept(Visitor& visitor);
-	virtual void accept(Transformer& transformer);
+	virtual Node* accept(Transformer& transformer);
 
 private:
 	Node *m_else_node;
@@ -443,7 +453,9 @@ public:
 	long getValue() const { return m_value; }
 
 	virtual void accept(Visitor& visitor);
-	virtual void accept(Transformer& transformer);
+	virtual Node* accept(Transformer& transformer);
+
+	virtual IntLit* getIntLit() { return this; }
 
 private:
 	long m_value;
@@ -457,7 +469,9 @@ public:
 	double getValue() const { return m_value; }
 
 	virtual void accept(Visitor& visitor);
-	virtual void accept(Transformer& transformer);
+	virtual Node* accept(Transformer& transformer);
+
+	virtual DoubleLit* getDoubleLit() { return this; }
 
 private:
 	double m_value;
@@ -471,7 +485,7 @@ public:
 	const CString* getValue() const { return m_value; }
 
 	virtual void accept(Visitor& visitor);
-	virtual void accept(Transformer& transformer);
+	virtual Node* accept(Transformer& transformer);
 
 private:
 	const CString* m_value;
@@ -491,7 +505,7 @@ public:
 	Node* getValue() const { return m_value; }
 
 	virtual void accept(Visitor& visitor);
-	virtual void accept(Transformer& transformer);
+	virtual Node* accept(Transformer& transformer);
 private:
 	Node* m_value;
 };
