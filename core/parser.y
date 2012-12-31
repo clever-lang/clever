@@ -248,7 +248,7 @@ call_args:
 
 non_empty_call_args:
 		rvalue                       { $$ = new ast::NodeArray(yyloc); $$->append($<node>1); }
-	|	non_empty_call_args rvalue   { $1->append($<node>2); }
+	|	non_empty_call_args ',' rvalue   { $1->append($<node>3); }
 ;
 
 fcall:
