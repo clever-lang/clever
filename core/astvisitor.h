@@ -18,31 +18,28 @@ public:
 	virtual ~Visitor() {}
 
 	virtual void visit(Node* node) {}
-	virtual void visit(NodeArray* node) {
-		std::vector<Node*> nodes = node->getNodes();
-		std::vector<Node*>::const_iterator it = nodes.begin(), end = nodes.end();
-		while (it != end) {
-			(*it)->accept(*this);
-			++it;
-		}
-	}
 
-	virtual void visit(Block* node) { Visitor::visit(static_cast<NodeArray*>(node)); }
-	virtual void visit(Assignment* node) {}
-	virtual void visit(VariableDecl* node) {}
-	virtual void visit(Arithmetic* node) {}
-	virtual void visit(FunctionDecl* node) {}
-	virtual void visit(FunctionCall* node) {}
-	virtual void visit(While* node) {}
-	virtual void visit(If* node) {}
+	virtual void visit(NodeArray* node);
+	virtual void visit(Block* node);
+	virtual void visit(Assignment* node);
+	virtual void visit(VariableDecl* node);
+	virtual void visit(Arithmetic* node);
+	virtual void visit(FunctionDecl* node);
+	virtual void visit(FunctionCall* node);
+
+	virtual void visit(While* node);
+	virtual void visit(If* node);
+
 	virtual void visit(IntLit* node) {}
 	virtual void visit(DoubleLit* node) {}
 	virtual void visit(StringLit* node) {}
 	virtual void visit(Ident* node) {}
-	virtual void visit(Return* node) {}
-	virtual void visit(Logic* node) {}
-	virtual void visit(Bitwise* node) {}
-	virtual void visit(Import* node) {}
+
+	virtual void visit(Return* node);
+	virtual void visit(Logic* node);
+	virtual void visit(Bitwise* node);
+	virtual void visit(Import* node);
+
 };
 
 }} // clever::ast

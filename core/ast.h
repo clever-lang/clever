@@ -192,6 +192,7 @@ public:
 
 	Ident* getPackage() const { return m_package; }
 	Ident* getModule() const { return m_module; }
+	bool hasModule() const { return m_module != NULL; }
 
 	virtual void accept(Visitor& visitor);
 	virtual Node* accept(Transformer& transformer);
@@ -350,6 +351,7 @@ public:
 	}
 
 	Ident* getIdent() { return m_ident; }
+	bool hasIdent() { return m_ident != NULL; }
 
 	NodeArray* getArgs() { return m_args; }
 	bool hasArgs() const { return m_args != NULL && m_args->getSize() > 0; }
@@ -528,6 +530,7 @@ public:
 		CLEVER_SAFE_DELREF(m_value);
 	}
 
+	bool hasValue() const { return m_value != NULL; }
 	Node* getValue() const { return m_value; }
 
 	virtual void accept(Visitor& visitor);
