@@ -168,7 +168,7 @@ private:
 class Ident: public Node {
 public:
 	Ident(const CString* name, const location& location)
-		: Node(location), m_name(name) {}
+		: Node(location), m_name(name), m_sym(NULL) {}
 
 	const CString* getName() const { return m_name; }
 
