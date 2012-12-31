@@ -11,14 +11,33 @@
 #include <vector>
 #include "core/value.h"
 #include "core/location.hh"
-#include "core/astvisitor.h"
 #include "core/clever.h"
 
 namespace clever { namespace ast {
 
 class Node;
+class NodeArray;
+class Block;
+class Assignment;
+class VariableDecl;
+class Arithmetic;
+class FunctionDecl;
+class FunctionCall;
+class While;
+class If;
+class IntLit;
+class DoubleLit;
+class StringLit;
+class Ident;
+class Return;
+class Logic;
+class Bitwise;
+class Import;
 
 typedef std::vector<Node*> NodeList;
+
+class Visitor;
+class Transformer;
 
 class Node: public RefCounted {
 public:
@@ -27,9 +46,14 @@ public:
 
 	virtual ~Node() {}
 
-	virtual void accept(Visitor& visitor) { visitor.visit(this); }
+	virtual void accept(Visitor& visitor);
+	virtual void accept(Transformer& transformer);
 
 	const location& getLocation() const { return m_location; }
+
+	virtual IntLit* getIntLit() { return NULL; }
+	virtual DoubleLit* getDoubleLit() { return NULL; }
+	virtual StringLit* getStrLit() { return NULL; }
 private:
 	const location& m_location;
 };
@@ -68,13 +92,8 @@ public:
 
 	size_t getSize() const { return m_nodes.size(); }
 
-	virtual void accept(Visitor& visitor) {
-		NodeList::iterator node(m_nodes.begin()), end(m_nodes.end());
-		while (node != end) {
-			(*node)->accept(visitor);
-			++node;
-		}
-	}
+	virtual void accept(Visitor& visitor);
+	virtual void accept(Transformer& transformer);
 
 	void clearNodes() {
 		NodeList::iterator it = m_nodes.begin(), end = m_nodes.end();
@@ -93,7 +112,8 @@ public:
 	Block(const location& location)
 		: NodeArray(location) {}
 
-	virtual void accept(Visitor& visitor) {	visitor.visit(this); }
+	virtual void accept(Visitor& visitor);
+	virtual void accept(Transformer& transformer);
 };
 
 class Assignment: public Node {
@@ -120,7 +140,8 @@ public:
 		return m_conditional;
 	}
 
-	virtual void accept(Visitor& visitor) { visitor.visit(this); }
+	virtual void accept(Visitor& visitor);
+	virtual void accept(Transformer& transformer);
 private:
 	bool m_conditional;
 	Node* m_lhs;
@@ -134,7 +155,8 @@ public:
 
 	const CString* getName() const { return m_name; }
 
-	virtual void accept(Visitor& visitor) { visitor.visit(this); }
+	virtual void accept(Visitor& visitor);
+	virtual void accept(Transformer& transformer);
 
 private:
 	const CString* m_name;
@@ -156,7 +178,8 @@ public:
 	Ident* getPackage() const { return m_package; }
 	Ident* getModule() const { return m_module; }
 
-	virtual void accept(Visitor& visitor) { visitor.visit(this); }
+	virtual void accept(Visitor& visitor);
+	virtual void accept(Transformer& transformer);
 private:
 	Ident* m_package;
 	Ident* m_module;
@@ -183,7 +206,8 @@ public:
 	Assignment* getAssignment() { return m_assignment; }
 	bool hasAssignment() const { return m_assignment != NULL; }
 
-	virtual void accept(Visitor& visitor) {	visitor.visit(this); }
+	virtual void accept(Visitor& visitor);
+	virtual void accept(Transformer& transformer);
 
 private:
 	Ident* m_ident;
@@ -215,7 +239,8 @@ public:
 	Node* getLhs() { return m_lhs; }
 	Node* getRhs() { return m_rhs; }
 
-	virtual void accept(Visitor& visitor) { visitor.visit(this); }
+	virtual void accept(Visitor& visitor);
+	virtual void accept(Transformer& transformer);
 
 private:
 	ArithOperator m_op;
@@ -246,7 +271,8 @@ public:
 	Node* getLhs() { return m_lhs; }
 	Node* getRhs() { return m_rhs; }
 
-	virtual void accept(Visitor& visitor) { visitor.visit(this); }
+	virtual void accept(Visitor& visitor);
+	virtual void accept(Transformer& transformer);
 
 private:
 	LogicOperator m_op;
@@ -279,7 +305,8 @@ public:
 	Node* getLhs() { return m_lhs; }
 	Node* getRhs() { return m_rhs; }
 
-	virtual void accept(Visitor& visitor) { visitor.visit(this); }
+	virtual void accept(Visitor& visitor);
+	virtual void accept(Transformer& transformer);
 
 private:
 	BitwiseOperator m_op;
@@ -315,7 +342,8 @@ public:
 
 	Block* getBlock() { return m_block; }
 
-	virtual void accept(Visitor& visitor) { visitor.visit(this); }
+	virtual void accept(Visitor& visitor);
+	virtual void accept(Transformer& transformer);
 
 private:
 	Ident* m_ident;
@@ -354,7 +382,8 @@ public:
 		return array.at(index);
 	}
 
-	virtual void accept(Visitor& visitor) { visitor.visit(this); }
+	virtual void accept(Visitor& visitor);
+	virtual void accept(Transformer& transformer);
 
 private:
 	Node* m_callee;
@@ -370,7 +399,8 @@ public:
 
 	Node* getBlock() { return m_block; }
 
-	virtual void accept(Visitor& visitor) { visitor.visit(this); }
+	virtual void accept(Visitor& visitor);
+	virtual void accept(Transformer& transformer);
 
 private:
 	Node *m_condition;
@@ -397,7 +427,8 @@ public:
 
 	Node* getElseNode() { return m_else_node; }
 
-	virtual void accept(Visitor& visitor) { visitor.visit(this); }
+	virtual void accept(Visitor& visitor);
+	virtual void accept(Transformer& transformer);
 
 private:
 	Node *m_else_node;
@@ -411,7 +442,8 @@ public:
 
 	long getValue() const { return m_value; }
 
-	virtual void accept(Visitor& visitor) { visitor.visit(this); }
+	virtual void accept(Visitor& visitor);
+	virtual void accept(Transformer& transformer);
 
 private:
 	long m_value;
@@ -424,7 +456,8 @@ public:
 
 	double getValue() const { return m_value; }
 
-	virtual void accept(Visitor& visitor) { visitor.visit(this); }
+	virtual void accept(Visitor& visitor);
+	virtual void accept(Transformer& transformer);
 
 private:
 	double m_value;
@@ -437,7 +470,8 @@ public:
 
 	const CString* getValue() const { return m_value; }
 
-	virtual void accept(Visitor& visitor) { visitor.visit(this); }
+	virtual void accept(Visitor& visitor);
+	virtual void accept(Transformer& transformer);
 
 private:
 	const CString* m_value;
@@ -456,7 +490,8 @@ public:
 
 	Node* getValue() const { return m_value; }
 
-	virtual void accept(Visitor& visitor) { visitor.visit(this); }
+	virtual void accept(Visitor& visitor);
+	virtual void accept(Transformer& transformer);
 private:
 	Node* m_value;
 };

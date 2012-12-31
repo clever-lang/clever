@@ -10,25 +10,6 @@
 
 namespace clever { namespace ast {
 
-class Node;
-class NodeArray;
-class Block;
-class Assignment;
-class VariableDecl;
-class Arithmetic;
-class FunctionDecl;
-class FunctionCall;
-class While;
-class If;
-class IntLit;
-class DoubleLit;
-class StringLit;
-class Ident;
-class Return;
-class Logic;
-class Bitwise;
-class Import;
-
 class Visitor {
 public:
 	Visitor() {}
