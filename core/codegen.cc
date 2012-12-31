@@ -65,11 +65,9 @@ void Codegen::visit(VariableDecl* node)
 		size_t var_id = m_scope->pushValue(node->getIdent()->getName(), new Value());
 
 		m_ir.push_back(
-			IR(OP_ASSIGN, FETCH_VAL, var_id,
-				FETCH_VAL, m_scope->pushConst(new Value())));
-
-		m_ir.back().op1_scope = m_scope->getId();
-		m_ir.back().op2_scope = m_scope->getId();
+			IR(OP_ASSIGN,
+				Operand(FETCH_VAL, var_id, m_scope->getId()),
+				Operand(FETCH_VAL, m_scope->pushConst(new Value()), m_scope->getId())));
 	}
 }
 
@@ -87,12 +85,13 @@ void Codegen::visit(Assignment* node)
 	}
 
 	if (rhs->isLiteral()) {
+		rhs->accept(*this);
+
 		Literal* literal = static_cast<Literal*>(rhs);
 
-		m_ir.push_back(IR(OP_ASSIGN, FETCH_VAL, sym->value_id,
-			FETCH_CONST, literal->getConstId()));
-
-		m_ir.back().op1_scope = sym->scope->getId();
+		m_ir.push_back(IR(OP_ASSIGN,
+			Operand(FETCH_VAL, sym->value_id, sym->scope->getId()),
+			Operand(FETCH_CONST, literal->getConstId())));
 	}
 
 	// TODO: if node->isConditional() is true, emit branching code to avoid assignment when ident has been initialized.
@@ -118,8 +117,8 @@ void Codegen::visit(FunctionCall* node)
 		}
 	}
 
-	m_ir.push_back(IR(OP_FCALL, FETCH_VAL, sym->value_id));
-	m_ir.back().op1_scope = sym->scope->getId();
+	m_ir.push_back(IR(OP_FCALL,
+		Operand(FETCH_VAL, sym->value_id, sym->scope->getId())));
 }
 
 void Codegen::visit(FunctionDecl* node)
@@ -148,7 +147,7 @@ void Codegen::visit(FunctionDecl* node)
 	start_func = m_ir.size();
 
 	// XXX: what's the point of a jump here?
-	m_ir.push_back(IR(OP_JMP, JMP_ADDR, 0));
+	m_ir.push_back(IR(OP_JMP, Operand(JMP_ADDR, 0)));
 
 	// TODO: find a cleaner way to enter and leave scopes
 	m_scope = m_scope->newLexicalScope();
@@ -173,7 +172,7 @@ void Codegen::visit(FunctionDecl* node)
 
 	m_ir.push_back(IR(OP_LEAVE));
 
-	m_ir[start_func].op1 = m_ir.size();
+	m_ir[start_func].op1.value_id = m_ir.size();
 }
 
 void Codegen::visit(Return* node)
@@ -192,9 +191,9 @@ void Codegen::visit(While* node)
 
 	node->getBlock()->accept(*this);
 
-	m_ir.push_back(IR(OP_JMP, JMP_ADDR, start_while));
+	m_ir.push_back(IR(OP_JMP, Operand(JMP_ADDR, start_while)));
 
-	m_ir[start_while].op2 = m_ir.size();
+	m_ir[start_while].op2.value_id = m_ir.size();
 }
 
 

@@ -54,11 +54,13 @@ void Compiler::shutdown()
 		++it;
 	}
 
-	ValuePool::const_iterator it2 = m_tmp_vals.begin(),
-		end2 = m_tmp_vals.end();
+	ValuePool::const_iterator it2 = m_const_pool.begin(),
+		end2 = m_const_pool.end();
 
 	while (it2 != end2) {
-		(*it2)->delRef();
+		if (*it2) {
+			(*it2)->delRef();
+		}
 		++it2;
 	}
 }
