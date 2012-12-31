@@ -65,7 +65,7 @@ inline Value* VM::getValue(Operand& operand) const
 void VM::dumpOperand(Operand& op) const
 {
 	const char *type[] = {
-		"UNUSED", "FETCH_VAL", "FETCH_CONST", "FETCH_TMP", "JMP_ADDR"
+		"UNUSED", "FETCH_VAR", "FETCH_CONST", "FETCH_TMP", "JMP_ADDR"
 	};
 
 	switch (op.op_type) {
