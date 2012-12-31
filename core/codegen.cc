@@ -164,7 +164,7 @@ void Codegen::visit(FunctionDecl* node)
 
 	func->setName(*name);
 	func->setUserDefined();
-	func->setAddr(m_ir.size());
+	func->setAddr(m_ir.size()+1);
 
 	Value* fval = new Value();
 	fval->setType(CLEVER_FUNC_TYPE);
@@ -174,7 +174,6 @@ void Codegen::visit(FunctionDecl* node)
 
 	start_func = m_ir.size();
 
-	// XXX: what's the point of a jump here?
 	m_ir.push_back(IR(OP_JMP, Operand(JMP_ADDR, 0)));
 
 	// TODO: find a cleaner way to enter and leave scopes
@@ -192,6 +191,8 @@ void Codegen::visit(FunctionDecl* node)
 		}
 
 		node->getArgs()->accept(*this);
+
+		func->setArgVars(m_scope);
 	}
 
 	node->getBlock()->accept(*this);

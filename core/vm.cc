@@ -41,13 +41,18 @@ inline void VM::init()
 	m_handlers[OP_POS_DEC]    = &VM::dec;
 }
 
+inline Value* VM::getValue(size_t scope_id, size_t value_id) const
+{
+	return (*m_scope_pool)[scope_id]->getValue(value_id);
+}
+
 inline Value* VM::getValue(Operand& operand) const
 {
 	switch (operand.op_type) {
 		case FETCH_CONST:
 			return (*m_const_pool)[operand.value_id];
 		case FETCH_VAL:
-			return (*m_scope_pool)[operand.scope_id]->getValue(operand.value_id);
+			return getValue(operand.scope_id, operand.value_id);
 		default:
 			return NULL;
 	}
@@ -346,7 +351,7 @@ VM_HANDLER(fcall)
 			Scope* arg_scope = fdata->getArgVars();
 
 			m_call_stack.top().arg_vars = arg_scope;
-/*
+
 			for (size_t i = 0, j = arg_scope->size(); i < j; ++i) {
 				Value* arg_val = getValue(
 					arg_scope->at(i).scope->getId(),
@@ -354,9 +359,8 @@ VM_HANDLER(fcall)
 
 				arg_val->copy(m_call_args[i]);
 			}
-			*/
-			m_call_args.clear();
 		}
+		m_call_args.clear();
 		VM_GOTO(fdata->getAddr());
 	} else {
 		fdata->getPtr()(m_call_args);

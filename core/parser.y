@@ -235,7 +235,9 @@ import:
 ;
 
 fdecl:
-		FUNC IDENT '(' variable_decl_list ')' '{' statement_list '}'
+		FUNC IDENT '(' ')' '{' statement_list '}'
+		{ $$ = new ast::FunctionDecl($2, NULL, $6, yyloc); }
+	|	FUNC IDENT '(' variable_decl_list ')' '{' statement_list '}'
 		{ $$ = new ast::FunctionDecl($2, $4, $7, yyloc); }
 ;
 

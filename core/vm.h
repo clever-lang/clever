@@ -82,6 +82,7 @@ public:
 	IRVector& getInst() const { return m_inst; }
 
 	/// Helper to retrive a Value* from ValuePool
+	Value* getValue(size_t, size_t) const;
 	Value* getValue(Operand&) const;
 
 	/// Save function variables on recursion
