@@ -90,19 +90,20 @@ void Codegen::visit(Assignment* node)
 			Operand(JMP_ADDR, m_ir.size() + 2)));
 	}
 
+	if (rhs) {
+		rhs->accept(*this);
+	}
 	m_ir.push_back(IR(OP_ASSIGN,
-		Operand(FETCH_VAR, sym->value_id, sym->scope->getId())));
+			Operand(FETCH_VAR, sym->value_id, sym->scope->getId())));
 
 	if (!rhs) {
 		m_ir.back().op2 = Operand(FETCH_TMP, m_compiler->getTempValue());
 	} else {
-		rhs->accept(*this);
-
 		if (rhs->isLiteral()) {
 			m_ir.back().op2 = Operand(FETCH_CONST,
 				static_cast<Literal*>(rhs)->getConstId());
 		} else {
-			m_ir.back().op2 = Operand(FETCH_VAR,
+			m_ir.back().op2 = Operand(rhs->isEvaluable() ? FETCH_TMP : FETCH_VAR,
 				rhs->getValueId(), rhs->getScopeId());
 		}
 	}
@@ -285,7 +286,11 @@ void Codegen::visit(Arithmetic* node)
 			rhs->getScopeId());
 	}
 
-	m_ir.back().result = Operand(FETCH_TMP, m_compiler->getTempValue());
+	size_t tmp_id = m_compiler->getTempValue();
+
+	m_ir.back().result = Operand(FETCH_TMP, tmp_id);
+
+	node->setValueId(tmp_id);
 }
 
 }} // clever::ast

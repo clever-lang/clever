@@ -167,6 +167,7 @@ VM_HANDLER(add)
 	if (lhs->getType() == CLEVER_INT_TYPE
 		&& rhs->getType() == CLEVER_INT_TYPE) {
 		getValue(op.result)->setInt(lhs->getInt() + rhs->getInt());
+		getValue(op.result)->setType(lhs->getType());
 	}
 
 	VM_NEXT();
@@ -181,6 +182,7 @@ VM_HANDLER(sub)
 	if (lhs->getType() == CLEVER_INT_TYPE
 		&& rhs->getType() == CLEVER_INT_TYPE) {
 		getValue(op.result)->setInt(lhs->getInt() - rhs->getInt());
+		getValue(op.result)->setType(lhs->getType());
 	}
 
 	VM_NEXT();
@@ -195,6 +197,7 @@ VM_HANDLER(mul)
 	if (lhs->getType() == CLEVER_INT_TYPE
 		&& rhs->getType() == CLEVER_INT_TYPE) {
 		getValue(op.result)->setInt(lhs->getInt() * rhs->getInt());
+		getValue(op.result)->setType(lhs->getType());
 	}
 
 	VM_NEXT();
@@ -209,6 +212,7 @@ VM_HANDLER(div)
 	if (lhs->getType() == CLEVER_INT_TYPE
 		&& rhs->getType() == CLEVER_INT_TYPE) {
 		getValue(op.result)->setInt(lhs->getInt() / rhs->getInt());
+		getValue(op.result)->setType(lhs->getType());
 	}
 
 	VM_NEXT();
