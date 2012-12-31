@@ -58,9 +58,7 @@ void Compiler::shutdown()
 		end2 = m_const_pool.end();
 
 	while (it2 != end2) {
-		if (*it2) {
-			(*it2)->delRef();
-		}
+		CLEVER_SAFE_DELREF(*it2);
 		++it2;
 	}
 
@@ -68,9 +66,7 @@ void Compiler::shutdown()
 		end3 = m_tmp_pool.end();
 
 	while (it3 != end3) {
-		if (*it3) {
-			(*it3)->delRef();
-		}
+		CLEVER_SAFE_DELREF(*it3);
 		++it3;
 	}
 }
