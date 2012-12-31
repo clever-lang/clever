@@ -75,7 +75,6 @@ void VM::dumpOperand(Operand& op) const
 
 void VM::dumpOpcodes() const
 {
-
 	for (size_t i = 0, j = m_inst.size(); i < j; ++i) {
 		IR& ir = m_inst[i];
 		::printf("[%03ld] %-12s |", i, get_opcode_name(ir.opcode));

@@ -46,6 +46,7 @@ public:
 	void visit(IntLit*);
 	void visit(DoubleLit*);
 	void visit(StringLit*);
+	void visit(Ident*);
 private:
 	IRVector& m_ir;
 	ScopePool& m_scope_pool;

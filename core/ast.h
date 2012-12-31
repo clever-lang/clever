@@ -56,8 +56,16 @@ public:
 	virtual IntLit* getIntLit() { return NULL; }
 	virtual DoubleLit* getDoubleLit() { return NULL; }
 	virtual StringLit* getStrLit() { return NULL; }
+
+	virtual void setValueId(size_t value_id) { m_value_id = value_id; }
+	virtual size_t getValueId() const { return m_value_id; }
+
+	virtual void setScopeId(size_t scope_id) { m_scope_id = scope_id; }
+	virtual size_t getScopeId() const { return m_scope_id; }
 private:
 	const location& m_location;
+	size_t m_value_id;
+	size_t m_scope_id;
 };
 
 class NodeArray: public Node {

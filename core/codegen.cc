@@ -34,6 +34,20 @@ void Codegen::visit(StringLit* node)
 	node->setConstId(m_compiler->addConstant(new Value(node->getValue())));
 }
 
+void Codegen::visit(Ident* node)
+{
+	Symbol* sym = m_scope->getAny(node->getName());
+
+	if (!sym) {
+		m_compiler->errorf(node->getLocation(),
+			"Variable `%S' not found!", node->getName());
+	}
+	std::cout << "id: " << sym->value_id << std::endl;
+
+	node->setValueId(sym->value_id);
+	node->setScopeId(sym->scope->getId());
+}
+
 void Codegen::visit(Import* node)
 {
 	if (node->getModule()) {
@@ -89,14 +103,12 @@ void Codegen::visit(Assignment* node)
 			"Variable `%S' not found!", ident->getName());
 	}
 
+	rhs->accept(*this);
+
 	if (rhs->isLiteral()) {
-		rhs->accept(*this);
-
-		Literal* literal = static_cast<Literal*>(rhs);
-
 		m_ir.push_back(IR(OP_ASSIGN,
 			Operand(FETCH_VAL, sym->value_id, sym->scope->getId()),
-			Operand(FETCH_CONST, literal->getConstId())));
+			Operand(FETCH_CONST, static_cast<Literal*>(rhs)->getConstId())));
 	}
 
 	// TODO: if node->isConditional() is true, emit branching code to avoid assignment when ident has been initialized.
@@ -117,14 +129,21 @@ void Codegen::visit(FunctionCall* node)
 		NodeList::const_iterator it = args.begin(), end = args.end();
 
 		while (it != end) {
+			Operand operand;
+
+			(*it)->accept(*this);
+
 			if ((*it)->isLiteral()) {
-				Literal* lit = static_cast<Literal*>(*it);
+				operand.op_type = FETCH_CONST;
+				operand.value_id = static_cast<Literal*>(*it)->getConstId();
+			} else {
+				std::cout << "foo" << std::endl;
 
-				(*it)->accept(*this);
-
-				m_ir.push_back(IR(OP_SEND_VAL,
-					Operand(FETCH_CONST, lit->getConstId())));
+				operand.op_type = FETCH_VAL;
+				operand.value_id = (*it)->getValueId();
+				operand.scope_id = (*it)->getScopeId();
 			}
+			m_ir.push_back(IR(OP_SEND_VAL, operand));
 			++it;
 		}
 	}
