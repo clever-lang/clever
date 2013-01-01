@@ -91,6 +91,8 @@ public:
 	void dump() const {
 		if (m_type) {
 			m_type->dump(&m_data);
+		} else {
+			std::cout << "null";
 		}
 	}
 
