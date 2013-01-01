@@ -419,7 +419,12 @@ VM_HANDLER(lor)
 	VM_NEXT();
 }
 
-VM_HANDLER(lequal)
+VM_HANDLER(equal)
+{
+	VM_NEXT();
+}
+
+VM_HANDLER(nequal)
 {
 	VM_NEXT();
 }
@@ -511,7 +516,8 @@ void VM::run()
 			case OP_JMPNZ:    jmpnz(m_inst[m_pc]);      break;
 			case OP_AND:      land(m_inst[m_pc]);       break;
 			case OP_OR:       lor(m_inst[m_pc]);        break;
-			case OP_EQUAL:    lequal(m_inst[m_pc]);     break;
+			case OP_EQUAL:    equal(m_inst[m_pc]);      break;
+			case OP_NEQUAL:   nequal(m_inst[m_pc]);     break;
 			EMPTY_SWITCH_DEFAULT_CASE();
 		}
 	}

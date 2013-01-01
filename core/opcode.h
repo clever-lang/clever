@@ -34,6 +34,7 @@ enum Opcode {
 	OP_AND,        //       Used for logical and operation
 	OP_OR,         //  20 - Used for logical or operation
 	OP_EQUAL,      //       Used for logical equal operation
+	OP_NEQUAL,     //       Used for logical not equal operation
 	NUM_OPCODES
 };
 

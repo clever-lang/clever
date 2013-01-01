@@ -248,10 +248,10 @@ void Codegen::visit(Logic* node)
 	Opcode op;
 
 	switch (node->getOperator()) {
-		case Logic::LOP_EQUALS:  op = OP_EQUAL; break;
-		case Logic::LOP_NEQUALS: op = OP_EQUAL; break;
-		case Logic::LOP_AND:     op = OP_AND;   break;
-		case Logic::LOP_OR:      op = OP_OR;    break;
+		case Logic::LOP_EQUALS:  op = OP_EQUAL;  break;
+		case Logic::LOP_NEQUALS: op = OP_NEQUAL; break;
+		case Logic::LOP_AND:     op = OP_AND;    break;
+		case Logic::LOP_OR:      op = OP_OR;     break;
 	}
 
 	lhs->accept(*this);

@@ -132,7 +132,8 @@ public:
 	VM_HANDLER_D(dec);
 	VM_HANDLER_D(land);
 	VM_HANDLER_D(lor);
-	VM_HANDLER_D(lequal);
+	VM_HANDLER_D(equal);
+	VM_HANDLER_D(nequal);
 private:
 	/// VM program counter
 	size_t m_pc;
