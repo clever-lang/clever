@@ -40,6 +40,8 @@ static void show_usage()
 
 #ifdef CLEVER_DEBUG
     std::cout << "Debug options:\n"
+                 "\t-a\tDump AST\n"
+                 "\t-O\tPerforms AST optimizations\n"
                  "\t-p\tTrace parsing\n"
                  "\t-d\tDump opcode\n"
                  "\n";
