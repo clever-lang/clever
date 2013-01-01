@@ -75,6 +75,9 @@ void Visitor::visit(If* node) {
 		(*cur).second->accept(*this);
 		++cur;
 	}
+	if (node->getElseNode()) {
+		node->getElseNode()->accept(*this);
+	}
 }
 
 void Visitor::visit(Return* node) {

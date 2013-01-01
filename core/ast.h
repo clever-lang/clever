@@ -457,15 +457,35 @@ public:
 		addConditional(cond_node, then_node);
 	}
 
+	~If() {
+		std::vector<std::pair<Node*, Node*> >::const_iterator it(m_conditionals.begin()),
+			end(m_conditionals.end());
+
+		while (it != end) {
+			CLEVER_DELREF((*it).first);
+			CLEVER_DELREF((*it).second);
+			++it;
+		}
+		if (m_else_node) {
+			CLEVER_DELREF(m_else_node);
+		}
+	}
+
 	void addConditional(Node* cond_node, Node* then_node) {
 		clever_assert_not_null(cond_node);
 
 		m_conditionals.push_back(std::pair<Node*,Node*>(cond_node, then_node));
+
+		CLEVER_ADDREF(cond_node);
+		CLEVER_ADDREF(then_node);
 	}
 
-	std::vector<std::pair<Node*, Node*> > getConditionals() { return m_conditionals; }
+	std::vector<std::pair<Node*, Node*> >& getConditionals() { return m_conditionals; }
 
-	void setElseNode(Node* else_node) { m_else_node = else_node; }
+	void setElseNode(Node* else_node) {
+		m_else_node = else_node;
+		CLEVER_ADDREF(m_else_node);
+	}
 
 	Node* getElseNode() { return m_else_node; }
 

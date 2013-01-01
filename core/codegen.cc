@@ -268,4 +268,50 @@ void Codegen::visit(Arithmetic* node)
 	node->setValueId(tmp_id);
 }
 
+void Codegen::visit(If* node)
+{
+	size_t last_jmpz = 0;
+	std::vector<std::pair<Node*, Node*> >& branches = node->getConditionals();
+	std::vector<std::pair<Node*, Node*> >::const_iterator it(branches.begin()),
+		end(branches.end());
+
+	m_jmps.push(AddrVector());
+
+	while (it != end) {
+		Node* cond  = (*it).first;
+		Node* block = (*it).second;
+
+		cond->accept(*this);
+
+		last_jmpz = m_ir.size();
+		m_ir.push_back(IR(OP_JMPZ));
+
+		if (cond->isLiteral()) {
+			m_ir.back().op1 = Operand(FETCH_CONST, static_cast<Literal*>(cond)->getConstId());
+		} else if (cond->getScope()) {
+			m_ir.back().op1 = Operand(FETCH_VAR, cond->getValueId(), cond->getScope()->getId());
+		} else {
+			m_ir.back().op1 = Operand(FETCH_TMP, cond->getValueId());
+		}
+
+		block->accept(*this);
+
+		m_jmps.top().push_back(m_ir.size());
+		m_ir.push_back(IR(OP_JMP)); // JMP to outside if-elseif-else
+
+		m_ir[last_jmpz].op2 = Operand(JMP_ADDR, m_ir.size());
+
+		++it;
+	}
+
+	if (node->getElseNode()) {
+		node->getElseNode()->accept(*this);
+	}
+
+	AddrVector& vec = m_jmps.top();
+	for (size_t i = 0, j = vec.size(); i < j; ++i) {
+		m_ir[vec[i]].op1 = Operand(JMP_ADDR, m_ir.size());
+	}
+}
+
 }} // clever::ast
