@@ -172,10 +172,12 @@ void Codegen::visit(Return* node)
 
 void Codegen::visit(While* node)
 {
-	size_t start_while = m_ir.size();
 	Node* cond = node->getCondition();
+	size_t start_while = m_ir.size();
 
 	cond->accept(*this);
+
+	size_t jmp_addr = m_ir.size();
 
 	m_ir.push_back(IR(OP_JMPZ));
 
@@ -185,7 +187,7 @@ void Codegen::visit(While* node)
 
 	m_ir.push_back(IR(OP_JMP, Operand(JMP_ADDR, start_while)));
 
-	m_ir[start_while].op2.value_id = m_ir.size();
+	m_ir[jmp_addr].op2 = Operand(JMP_ADDR, m_ir.size());
 }
 
 void Codegen::visit(IncDec* node)
