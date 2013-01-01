@@ -156,10 +156,7 @@ void Codegen::visit(FunctionDecl* node)
 
 	m_ir[start_func].op1.value_id = m_ir.size();
 
-	// Check if it is an anonymous function
 	if (node->isAnonymous()) {
-		// TODO: Fix memory leak on Value internal object
-		funcval->addRef();
 		node->setValueId(sym->value_id);
 		node->setScope(sym->scope);
 	}

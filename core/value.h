@@ -32,33 +32,55 @@ extern Type* g_clever_func_type;
 #define CLEVER_STR_TYPE g_clever_str_type
 #define CLEVER_FUNC_TYPE   g_clever_func_type
 
+class ValueObject : public RefCounted {
+public:
+	ValueObject() : RefCounted(1), m_obj(NULL), m_type(NULL) {}
+	ValueObject(void* obj, const Type* type) : RefCounted(1), m_obj(obj), m_type(type) {}
+	~ValueObject() {
+		if (m_type) {
+			const_cast<Type*>(m_type)->deallocData(m_obj);
+		}
+	}
+
+	void* getObj() { return m_obj; }
+private:
+	void* m_obj;
+	const Type* m_type;
+};
+
 class Value : public RefCounted {
 public:
+	enum ValueKind {
+		PRIMITIVE,
+		OBJECT
+	};
 	union DataValue {
 		long lval;
 		double dval;
 		const CString* sval;
-		void* obj;
+		ValueObject* obj;
 
 		DataValue() : lval(0) {}
 		DataValue(long value) : lval(value) {}
 		DataValue(double value) : dval(value) {}
 		DataValue(const CString* value) : sval(value) {}
-		DataValue(void* value) : obj(value) {}
 	};
 
-	Value() : m_data(), m_type(NULL) {}
-	Value(long n) : m_data(n), m_type(CLEVER_INT_TYPE) {}
-	Value(double n) : m_data(n), m_type(CLEVER_DOUBLE_TYPE) {}
-	Value(const CString* value) : m_data(value), m_type(CLEVER_STR_TYPE) {}
+	Value() : m_data(), m_kind(PRIMITIVE), m_type(NULL) {}
+	Value(long n) : m_data(n), m_kind(PRIMITIVE), m_type(CLEVER_INT_TYPE) {}
+	Value(double n) : m_data(n), m_kind(PRIMITIVE), m_type(CLEVER_DOUBLE_TYPE) {}
+	Value(const CString* value) : m_data(value), m_kind(PRIMITIVE), m_type(CLEVER_STR_TYPE) {}
 
 	~Value() {
-		/* FIXME: Find a better way to check if m_data.obj is used */
-		if (m_type && m_type != CLEVER_INT_TYPE && m_type != CLEVER_DOUBLE_TYPE
-			&& m_type != CLEVER_STR_TYPE) {
-			const_cast<Type*>(m_type)->deallocData(m_data.obj);
+		if (m_type && !isPrimitive()) {
+			m_data.obj->delRef();
 		}
 	}
+
+	bool isPrimitive() const { return m_kind == PRIMITIVE; }
+
+	void setKind(ValueKind kind) { m_kind = kind; }
+	ValueKind getKind() const { return m_kind; }
 
 	void setType(const Type* type) { m_type = type; }
 	const Type* getType() const { return m_type; }
@@ -72,8 +94,12 @@ public:
 		}
 	}
 
-	void setObj(void* ptr) { m_data.obj = ptr; }
-	void* getObj() const { return m_data.obj; }
+	void setObj(void* ptr) {
+		clever_assert_not_null(m_type);
+		m_kind = OBJECT;
+		m_data.obj = new ValueObject(ptr, m_type);
+	}
+	void* getObj() const { return m_data.obj->getObj(); }
 
 	void setInt(long n) { m_data.lval = n; m_type = CLEVER_INT_TYPE; }
 	long getInt() const { return m_data.lval; }
@@ -86,11 +112,19 @@ public:
 	const CString* getStr() const { return m_data.sval; }
 
 	void copy(Value* value) {
+		m_kind = value->getKind();
 		m_type = value->getType();
 		memcpy(&m_data, value->getData(), sizeof(DataValue));
+
+		if (!value->isPrimitive()) {
+			if (m_data.obj) {
+				static_cast<ValueObject*>(m_data.obj)->addRef();
+			}
+		}
 	}
 private:
 	DataValue m_data;
+	ValueKind m_kind;
 	const Type* m_type;
 };
 
