@@ -134,7 +134,7 @@ VM_HANDLER(jmpnz)
 {
 	Value* value = getValue(op.op1);
 
-	if (value->getInt()) {
+	if (!value->isNull()) {
 		VM_GOTO(op.op2.value_id);
 	}
 
