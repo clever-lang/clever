@@ -52,7 +52,7 @@ class Value;
 %type <assignment> assignment
 %type <narray> variable_decl variable_decl_list non_empty_call_args call_args
 %type <vardecl> variable_decl_impl
-%type <block> statement_list
+%type <block> statement_list block
 %type <arithmetic> arithmetic
 %type <bitwise> bitwise
 %type <logic> logic
@@ -171,8 +171,14 @@ statement:
 	|	fcall ';'
 	|	fdecl
 	|	return_stmt ';'
+	|	if
 	|	while
 	|	inc_dec ';'
+	|	block
+;
+
+block:
+		'{' statement_list '}'  { $$ = $2; }
 ;
 
 rvalue:
@@ -247,10 +253,10 @@ import:
 ;
 
 fdecl:
-		FUNC IDENT '(' ')' '{' statement_list '}'
-		{ $$ = new ast::FunctionDecl($2, NULL, $6, yyloc); }
-	|	FUNC IDENT '(' variable_decl_list ')' '{' statement_list '}'
-		{ $$ = new ast::FunctionDecl($2, $4, $7, yyloc); }
+		FUNC IDENT '(' ')' block
+		{ $$ = new ast::FunctionDecl($2, NULL, $5, yyloc); }
+	|	FUNC IDENT '(' variable_decl_list ')' block
+		{ $$ = new ast::FunctionDecl($2, $4, $6, yyloc); }
 ;
 
 call_args:
@@ -259,8 +265,8 @@ call_args:
 ;
 
 non_empty_call_args:
-		rvalue                       { $$ = new ast::NodeArray(yyloc); $$->append($<node>1); }
-	|	non_empty_call_args ',' rvalue   { $1->append($<node>3); }
+		rvalue                         { $$ = new ast::NodeArray(yyloc); $$->append($<node>1); }
+	|	non_empty_call_args ',' rvalue { $1->append($<node>3); }
 ;
 
 fcall:
@@ -273,9 +279,12 @@ return_stmt:
 ;
 
 while:
-		WHILE '(' rvalue ')' '{' statement_list '}'
-		{ $$ = new ast::While($<node>3, $6, yyloc); }
+		WHILE '(' rvalue ')' block
+		{ $$ = new ast::While($<node>3, $5, yyloc); }
 ;
+
+if:
+		IF '(' rvalue ')' block
 
 %%
 
