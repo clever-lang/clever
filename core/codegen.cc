@@ -192,7 +192,7 @@ void Codegen::visit(While* node)
 
 void Codegen::visit(IncDec* node)
 {
-	Opcode op;
+	Opcode op = OP_PRE_INC;
 
 	node->getVar()->accept(*this);
 
@@ -218,7 +218,7 @@ void Codegen::visit(Arithmetic* node)
 {
 	Node* lhs = node->getLhs();
 	Node* rhs = node->getRhs();
-	Opcode op;
+	Opcode op = OP_ADD;
 
 	switch (node->getOperator()) {
 		case Arithmetic::MOP_ADD: op = OP_ADD; break;
@@ -247,7 +247,7 @@ void Codegen::visit(Logic* node)
 {
 	Node* lhs = node->getLhs();
 	Node* rhs = node->getRhs();
-	Opcode op;
+	Opcode op = OP_EQUAL;
 
 	switch (node->getOperator()) {
 		case Logic::LOP_EQUALS:  op = OP_EQUAL;  break;
@@ -295,7 +295,7 @@ void Codegen::visit(Boolean* node)
 {
 	Node* lhs = node->getLhs();
 	Node* rhs = node->getRhs();
-	Opcode op;
+	Opcode op = OP_JMPZ;
 
 	switch (node->getOperator()) {
 		case Boolean::BOP_AND: op = OP_JMPZ;  break;

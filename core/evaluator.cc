@@ -49,7 +49,7 @@ Node* Evaluator::transform(Assignment* node) {
 Node* Evaluator::transform(Arithmetic* node) {
 
 	if (node->getLhs()->getIntLit() && node->getRhs()->getIntLit()) {
-		long lhs, rhs, val;
+		long lhs, rhs, val = 0;
 
 		lhs = node->getLhs()->getIntLit()->getValue();
 		rhs = node->getRhs()->getIntLit()->getValue();
