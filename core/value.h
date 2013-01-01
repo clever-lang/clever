@@ -40,7 +40,7 @@ public:
 	ValueObject(void* obj, const Type* type)
 		: RefCounted(1), m_obj(obj), m_type(type) {}
 
-	~ValueObject() {
+	virtual ~ValueObject() {
 		if (m_type) {
 			const_cast<Type*>(m_type)->deallocData(m_obj);
 		}
@@ -77,7 +77,9 @@ public:
 
 	~Value() {
 		if (m_type && !isPrimitive()) {
-			m_data.obj->delRef();
+			if (m_data.obj) {
+				m_data.obj->delRef();
+			}
 		}
 	}
 
@@ -124,7 +126,7 @@ public:
 
 		if (!value->isPrimitive()) {
 			if (m_data.obj) {
-				static_cast<ValueObject*>(m_data.obj)->addRef();
+				m_data.obj->addRef();
 			}
 		}
 	}

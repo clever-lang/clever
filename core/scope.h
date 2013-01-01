@@ -57,9 +57,7 @@ public:
 			endv = m_value_pool.end();
 
 		while (itv != endv) {
-			if (*itv) {
-				(*itv)->delRef();
-			}
+			CLEVER_SAFE_DELREF(*itv);
 			++itv;
 		}
 

@@ -41,16 +41,6 @@ void Compiler::shutdown()
 	CLEVER_SAFE_DELETE(g_cstring_tbl);
 	CLEVER_SAFE_DELETE(m_scope_pool[0]);
 
-	TypePool::const_iterator it = m_type_pool.begin(),
-		end = m_type_pool.end();
-
-	while (it != end) {
-		if (*it) {
-			delete *it;
-		}
-		++it;
-	}
-
 	ValuePool::const_iterator it2 = m_const_pool.begin(),
 		end2 = m_const_pool.end();
 
@@ -65,6 +55,16 @@ void Compiler::shutdown()
 	while (it3 != end3) {
 		CLEVER_SAFE_DELREF(*it3);
 		++it3;
+	}
+
+	TypePool::const_iterator it = m_type_pool.begin(),
+		end = m_type_pool.end();
+
+	while (it != end) {
+		if (*it) {
+			delete *it;
+		}
+		++it;
 	}
 }
 
