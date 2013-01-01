@@ -13,11 +13,11 @@
 
 namespace clever { namespace ast {
 
-#define AST_DUMP_DISPLAY_LHS_RHS(op)                 \
-		std::cout << " (" << op << ')' << std::endl; \
-		m_ws = std::string(++m_level, ' ');          \
-		node->getLhs()->accept(*this);               \
-		node->getRhs()->accept(*this);               \
+#define AST_DUMP_DISPLAY_LHS_RHS(op)                           \
+		std::cout << " (" << op << ')' << std::endl;           \
+		m_ws = std::string(++m_level, ' ');                    \
+		node->getLhs()->accept(*this);                         \
+		if (node->getRhs()) { node->getRhs()->accept(*this); } \
 		m_ws = std::string(--m_level, ' ');
 
 #define AST_DUMP_DISPLAY_BLOCK              \
