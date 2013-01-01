@@ -12,18 +12,18 @@
 #include <vector>
 #include <stack>
 #include <sstream>
-#include "core/clever.h"
-#include "core/scope.h"
 #include "core/pkgmanager.h"
 #include "core/ir.h"
 #include "core/ast.h"
 #include "core/codegen.h"
+#include "core/scope.h"
 
 namespace clever {
 
 class Type;
 class Value;
 class location;
+class Scope;
 
 typedef std::vector<Type*> TypePool;
 
@@ -61,7 +61,7 @@ public:
 
 	ValuePool* getTemporaryPool() { return &m_tmp_pool; }
 
-    size_t getTempValue();
+	size_t getTempValue();
 
 	const PkgManager& getPkgManager() const { return m_pkg; }
 

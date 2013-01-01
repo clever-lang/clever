@@ -14,13 +14,10 @@
 #include <tr1/unordered_map>
 #endif
 #include <vector>
-#include "core/cstring.h"
 #include "core/module.h"
-#include "core/scope.h"
 
 namespace clever {
 
-class Scope;
 class Value;
 
 const int PKG_INIT_FUNC  = 1 << 0;

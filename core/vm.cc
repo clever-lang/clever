@@ -9,7 +9,6 @@
 #include <stdio.h>
 #include "core/opcode.h"
 #endif
-#include "core/cstring.h"
 #include "core/scope.h"
 #include "core/value.h"
 #include "types/type.h"

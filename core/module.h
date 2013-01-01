@@ -14,7 +14,6 @@
 #include <tr1/unordered_map>
 #endif
 #include <string>
-#include "core/cstring.h"
 #include "types/function.h"
 
 #define CLEVER_MODULE_INIT(x) void x::init(int flags)

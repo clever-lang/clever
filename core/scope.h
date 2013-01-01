@@ -15,8 +15,6 @@
 #endif
 #include <vector>
 #include "core/value.h"
-#include "core/cstring.h"
-#include "core/scope.h"
 
 namespace clever {
 

@@ -6,7 +6,6 @@
  */
 
 #include <iostream>
-#include "core/ast.h"
 #include "core/codegen.h"
 #include "core/scope.h"
 #include "core/compiler.h"

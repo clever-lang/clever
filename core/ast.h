@@ -12,7 +12,11 @@
 #include "core/value.h"
 #include "core/location.hh"
 #include "core/clever.h"
-#include "core/scope.h"
+
+namespace clever {
+class Scope;
+class Symbol;
+}
 
 namespace clever { namespace ast {
 
