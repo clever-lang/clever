@@ -34,8 +34,12 @@ extern Type* g_clever_func_type;
 
 class ValueObject : public RefCounted {
 public:
-	ValueObject() : RefCounted(1), m_obj(NULL), m_type(NULL) {}
-	ValueObject(void* obj, const Type* type) : RefCounted(1), m_obj(obj), m_type(type) {}
+	ValueObject() :
+		RefCounted(1), m_obj(NULL), m_type(NULL) {}
+
+	ValueObject(void* obj, const Type* type)
+		: RefCounted(1), m_obj(obj), m_type(type) {}
+
 	~ValueObject() {
 		if (m_type) {
 			const_cast<Type*>(m_type)->deallocData(m_obj);
@@ -137,7 +141,7 @@ public:
 				return m_data.sval != NULL;
 			}
 		}
-		return false;
+		return true;
 	}
 private:
 	DataValue m_data;

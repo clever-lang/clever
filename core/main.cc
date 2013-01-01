@@ -50,7 +50,7 @@ static void show_usage()
 
 int main(int argc, char **argv)
 {
-	std::ios::sync_with_stdio(false);
+	//std::ios::sync_with_stdio(false);
 
 	clever::Interpreter clever(&argc, &argv);
 
