@@ -11,12 +11,14 @@
 namespace clever { namespace ast {
 
 Resolver::Resolver(Compiler* compiler)
-	: Visitor(), m_compiler(compiler), m_symtable(new Scope()), m_scope(m_symtable) {
+	: Visitor(), m_compiler(compiler), m_symtable(new Scope()), m_scope(m_symtable)
+{
 
 	m_scope->setId(m_compiler->addScope(m_scope));
 }
 
-void Resolver::visit(Block* node) {
+void Resolver::visit(Block* node)
+{
 	m_scope = m_scope->newLexicalScope();
 	m_scope->setId(m_compiler->addScope(m_scope));
 
@@ -27,7 +29,8 @@ void Resolver::visit(Block* node) {
 	m_scope = m_scope->getParent();
 }
 
-void Resolver::visit(VariableDecl* node) {
+void Resolver::visit(VariableDecl* node)
+{
 	const CString* name = node->getIdent()->getName();
 
 	if (m_scope->getLocal(name)) {
@@ -43,7 +46,8 @@ void Resolver::visit(VariableDecl* node) {
 	}
 }
 
-void Resolver::visit(FunctionDecl* node) {
+void Resolver::visit(FunctionDecl* node)
+{
 	const CString* name;
 
 	if (node->hasIdent()) {
@@ -89,7 +93,8 @@ void Resolver::visit(FunctionDecl* node) {
 	m_scope = m_scope->getParent();
 }
 
-void Resolver::visit(Ident* node) {
+void Resolver::visit(Ident* node)
+{
 	Symbol* sym = m_scope->getAny(node->getName());
 
 	if (!sym) {
@@ -112,4 +117,4 @@ void Resolver::visit(Import* node)
 	}
 }
 
-}}
+}} // clever::ast

@@ -13,10 +13,6 @@
 
 namespace clever { namespace ast {
 
-void Codegen::init()
-{
-}
-
 void Codegen::visit(IntLit* node)
 {
 	node->setConstId(m_compiler->addConstant(new Value(node->getValue())));

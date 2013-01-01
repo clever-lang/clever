@@ -29,11 +29,8 @@ public:
 	typedef std::stack<AddrVector> JmpList;
 
 	Codegen(IRVector& ir, Scope* symtable, Compiler* compiler)
-		: m_ir(ir), m_symtable(symtable), m_compiler(compiler), m_scope(symtable)
-	{}
+		: m_ir(ir), m_scope(symtable), m_compiler(compiler) {}
 	~Codegen() {}
-
-	void init();
 
 	void visit(Block*);
 	void visit(VariableDecl*);
@@ -51,9 +48,8 @@ public:
 	void visit(Import*) {}
 private:
 	IRVector& m_ir;
-	Scope* m_symtable;
-	Compiler* m_compiler;
 	Scope* m_scope;
+	Compiler* m_compiler;
 	JmpList m_jmps;
 };
 

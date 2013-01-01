@@ -97,5 +97,4 @@ Node* Import::accept(Transformer& transformer) { return transformer.transform(th
 
 Node* IncDec::accept(Transformer& transformer) { return transformer.transform(this); }
 
-
-}}
+}} // clever::ast

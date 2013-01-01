@@ -36,6 +36,6 @@ private:
 	Scope* m_scope;
 };
 
-}}
+}} // clever::ast
 
 #endif // CLEVER_RESOLVER_H

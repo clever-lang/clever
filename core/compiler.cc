@@ -120,13 +120,9 @@ void Compiler::emitAST(ast::Node* tree)
 		}
 
 		ast::Resolver resolver(this);
-
 		tree->accept(resolver);
 
 		ast::Codegen codegen(m_ir, resolver.getSymTable(), this);
-
-		codegen.init();
-
 		tree->accept(codegen);
 
 		delete tree;
