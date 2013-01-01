@@ -385,6 +385,21 @@ VM_HANDLER(dec)
 	VM_NEXT();
 }
 
+VM_HANDLER(land)
+{
+	VM_NEXT();
+}
+
+VM_HANDLER(lor)
+{
+	VM_NEXT();
+}
+
+VM_HANDLER(lequal)
+{
+	VM_NEXT();
+}
+
 void VM::wait()
 {
 	for (size_t i = 0, j = m_thread_pool.size(); i < j; ++i) {
@@ -470,6 +485,9 @@ void VM::run()
 			case OP_POS_INC:  inc(m_inst[m_pc]);        break;
 			case OP_POS_DEC:  dec(m_inst[m_pc]);        break;
 			case OP_JMPNZ:    jmpnz(m_inst[m_pc]);      break;
+			case OP_AND:      land(m_inst[m_pc]);       break;
+			case OP_OR:       land(m_inst[m_pc]);       break;
+			case OP_EQUAL:    lequal(m_inst[m_pc]);     break;
 			EMPTY_SWITCH_DEFAULT_CASE();
 		}
 	}

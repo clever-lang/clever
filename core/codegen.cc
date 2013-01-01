@@ -13,6 +13,17 @@
 
 namespace clever { namespace ast {
 
+static inline void _prepare_operand(Operand& op, Node* node)
+{
+	if (node->isLiteral()) {
+		op = Operand(FETCH_CONST, static_cast<Literal*>(node)->getConstId());
+	} else if (node->getScope()) {
+		op = Operand(FETCH_VAR, node->getValueId(),	node->getScope()->getId());
+	} else {
+		op = Operand(FETCH_TMP, node->getValueId());
+	}
+}
+
 void Codegen::visit(IntLit* node)
 {
 	node->setConstId(m_compiler->addConstant(new Value(node->getValue())));
@@ -252,20 +263,35 @@ void Codegen::visit(Arithmetic* node)
 
 	m_ir.push_back(IR(op));
 
-	if (lhs->isLiteral()) {
-		m_ir.back().op1 = Operand(FETCH_CONST, static_cast<Literal*>(lhs)->getConstId());
-	} else if (lhs->getScope()) {
-		m_ir.back().op1 = Operand(FETCH_VAR, lhs->getValueId(),	lhs->getScope()->getId());
-	} else {
-		m_ir.back().op1 = Operand(FETCH_TMP, lhs->getValueId());
+	_prepare_operand(m_ir.back().op1, lhs);
+	_prepare_operand(m_ir.back().op2, rhs);
+
+	size_t tmp_id = m_compiler->getTempValue();
+
+	m_ir.back().result = Operand(FETCH_TMP, tmp_id);
+
+	node->setValueId(tmp_id);
+}
+
+void Codegen::visit(Logic* node)
+{
+	Node* lhs = node->getLhs();
+	Node* rhs = node->getRhs();
+	Opcode op;
+
+	switch (node->getOperator()) {
+		case Logic::LOP_EQUALS: op = OP_EQUAL; break;
+		case Logic::LOP_AND:    op = OP_AND;   break;
+		case Logic::LOP_OR:     op = OP_OR;    break;
 	}
-	if (rhs->isLiteral()) {
-		m_ir.back().op2 = Operand(FETCH_CONST, static_cast<Literal*>(rhs)->getConstId());
-	} else if (rhs->getScope()) {
-		m_ir.back().op2 = Operand(FETCH_VAR, rhs->getValueId(), rhs->getScope()->getId());
-	} else {
-		m_ir.back().op2 = Operand(FETCH_TMP, rhs->getValueId());
-	}
+
+	lhs->accept(*this);
+	rhs->accept(*this);
+
+	m_ir.push_back(IR(op));
+
+	_prepare_operand(m_ir.back().op1, lhs);
+	_prepare_operand(m_ir.back().op2, rhs);
 
 	size_t tmp_id = m_compiler->getTempValue();
 

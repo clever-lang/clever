@@ -31,6 +31,9 @@ enum Opcode {
 	OP_POS_INC,    //       Used for pos increment variable
 	OP_POS_DEC,    //       Used for pos decrement variable
 	OP_JMPNZ,      //       Used for pos decrement variable
+	OP_AND,        //       Used for logical and operation
+	OP_OR,         //  20 - Used for logical or operation
+	OP_EQUAL,      //       Used for logical equal operation
 	NUM_OPCODES
 };
 
