@@ -73,6 +73,7 @@ void Visitor::visit(If* node) {
 	while (cur != end) {
 		(*cur).first->accept(*this);
 		(*cur).second->accept(*this);
+		++cur;
 	}
 }
 
