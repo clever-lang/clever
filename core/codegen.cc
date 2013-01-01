@@ -162,17 +162,24 @@ void Codegen::visit(FunctionDecl* node)
 
 void Codegen::visit(Return* node)
 {
-	m_ir.push_back(IR(OP_RET));
-
 	if (node->hasValue()) {
 		Node* value = node->getValue();
 
 		value->accept(*this);
 
+		m_ir.push_back(IR(OP_RET));
+
 		if (value->isLiteral()) {
 			m_ir.back().op1 = Operand(FETCH_CONST,
 				static_cast<Literal*>(value)->getConstId());
+		} else if (value->getScope()) {
+			m_ir.back().op1 = Operand(FETCH_VAR,
+				value->getValueId(), value->getScope()->getId());
+		} else {
+			m_ir.back().op1 = Operand(FETCH_TMP, value->getValueId());
 		}
+	} else {
+		m_ir.push_back(IR(OP_RET));
 	}
 }
 
@@ -244,20 +251,16 @@ void Codegen::visit(Arithmetic* node)
 	m_ir.push_back(IR(op));
 
 	if (lhs->isLiteral()) {
-		m_ir.back().op1 = Operand(FETCH_CONST,
-			static_cast<Literal*>(lhs)->getConstId());
+		m_ir.back().op1 = Operand(FETCH_CONST, static_cast<Literal*>(lhs)->getConstId());
+	} else if (lhs->getScope()) {
+		m_ir.back().op1 = Operand(FETCH_VAR, lhs->getValueId(),	lhs->getScope()->getId());
 	} else {
-		m_ir.back().op1 = Operand(
-			lhs->isEvaluable() ? FETCH_TMP : FETCH_VAR,
-			lhs->getValueId(),
-			lhs->getScope()->getId());
+		m_ir.back().op1 = Operand(FETCH_TMP, lhs->getValueId());
 	}
 	if (rhs->isLiteral()) {
-		m_ir.back().op2 = Operand(FETCH_CONST,
-			static_cast<Literal*>(rhs)->getConstId());
+		m_ir.back().op2 = Operand(FETCH_CONST, static_cast<Literal*>(rhs)->getConstId());
 	} else if (rhs->getScope()) {
-		m_ir.back().op2 = Operand(FETCH_VAR,
-			rhs->getValueId(), rhs->getScope()->getId());
+		m_ir.back().op2 = Operand(FETCH_VAR, rhs->getValueId(), rhs->getScope()->getId());
 	} else {
 		m_ir.back().op2 = Operand(FETCH_TMP, rhs->getValueId());
 	}

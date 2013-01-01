@@ -1,0 +1,15 @@
+Testing return
+==CODE==
+import std.io.*;
+
+function a() {
+	println(1);
+	return;
+	println(2);
+}
+
+a();
+println(3);
+==RESULT==
+1
+3

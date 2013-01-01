@@ -1,0 +1,9 @@
+Testing return
+==CODE==
+import std.io.*;
+
+function a(b) { return b + 1; }
+println(a(2));
+
+==RESULT==
+3
