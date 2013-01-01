@@ -139,7 +139,7 @@ extern jmp_buf fatal_error;
 	clever::clever_assert_(__FILE__, CLEVER_CURRENT_FUNCTION, __LINE__, #hypothesis, (hypothesis) == NULL, #hypothesis " must be NULL")
 
 #define clever_assert_not_null(hypothesis) \
-	clever::clever_assert_(__FILE__, CLEVER_CURRENT_FUNCTION, __LINE__, #hypothesis, (hypothesis) != NULL, #hypothesis " cannot be NULL")
+	clever::clever_assert_(__FILE__, CLEVER_CURRENT_FUNCTION, __LINE__, #hypothesis, (hypothesis) != NULL, #hypothesis " must not be NULL")
 
 void clever_assert_(const char* file, const char* function, long line, const char* expr,
 		int hypothesis, const char* format, ...);

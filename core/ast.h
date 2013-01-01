@@ -168,7 +168,9 @@ private:
 class Ident: public Node {
 public:
 	Ident(const CString* name, const location& location)
-		: Node(location), m_name(name), m_sym(NULL) {}
+		: Node(location), m_name(name), m_sym(NULL) {
+		clever_assert_not_null(m_name);
+	}
 
 	const CString* getName() const { return m_name; }
 
@@ -347,15 +349,21 @@ class FunctionDecl: public Node {
 public:
 	FunctionDecl(Ident* ident, NodeArray* args, Block* block, const location& location)
 		: Node(location), m_ident(ident), m_args(args), m_block(block) {
-		CLEVER_ADDREF(m_ident);
+		CLEVER_SAFE_ADDREF(m_ident);
 		CLEVER_SAFE_ADDREF(m_args);
 		CLEVER_SAFE_ADDREF(m_block);
 	}
 
 	~FunctionDecl() {
-		CLEVER_DELREF(m_ident);
+		CLEVER_SAFE_DELREF(m_ident);
 		CLEVER_SAFE_DELREF(m_args);
 		CLEVER_SAFE_DELREF(m_block);
+	}
+
+	void setIdent(Ident* ident) {
+		CLEVER_SAFE_DELREF(m_ident);
+		m_ident = ident;
+		CLEVER_SAFE_ADDREF(m_ident);
 	}
 
 	Ident* getIdent() { return m_ident; }
