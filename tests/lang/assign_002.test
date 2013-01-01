@@ -1,0 +1,17 @@
+Testing variable assignment
+==CODE==
+import std.io.*;
+
+var a = 10;
+println(a);
+
+var b = a / 2;
+println(b);
+
+var c = ++b;
+println(c);
+
+==RESULT==
+10
+5
+6
