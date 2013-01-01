@@ -334,6 +334,9 @@ public:
 	Node* getRhs() { return m_rhs; }
 
 	bool isEvaluable() const { return true; }
+
+	virtual void accept(Visitor& visitor);
+	virtual Node* accept(Transformer& transformer);
 private:
 	BooleanOperator m_op;
 	Node* m_lhs;

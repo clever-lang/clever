@@ -57,6 +57,8 @@ void Import::accept(Visitor& visitor) { visitor.visit(this); }
 
 void IncDec::accept(Visitor& visitor) { visitor.visit(this); }
 
+void Boolean::accept(Visitor& visitor) { visitor.visit(this); }
+
 // Transformers
 
 Node* Node::accept(Transformer& transformer) { return transformer.transform(this); }
@@ -96,5 +98,7 @@ Node* Bitwise::accept(Transformer& transformer) { return transformer.transform(t
 Node* Import::accept(Transformer& transformer) { return transformer.transform(this); }
 
 Node* IncDec::accept(Transformer& transformer) { return transformer.transform(this); }
+
+Node* Boolean::accept(Transformer& transformer) { return transformer.transform(this); }
 
 }} // clever::ast

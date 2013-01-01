@@ -296,8 +296,8 @@ void Codegen::visit(Boolean* node)
 	Opcode op;
 
 	switch (node->getOperator()) {
-		case Boolean::BOP_AND: op = OP_AND; break;
-		case Boolean::BOP_OR:  op = OP_OR;  break;
+		case Boolean::BOP_AND: op = OP_JMPZ;  break;
+		case Boolean::BOP_OR:  op = OP_JMPNZ; break;
 	}
 
 	lhs->accept(*this);
