@@ -122,7 +122,7 @@ VM_HANDLER(jmpz)
 {
 	Value* value = getValue(op.op1);
 
-	if (!value->asBool()) {
+	if (value->isNull() || !value->asBool()) {
 		if (op.result.op_type != UNUSED) {
 			getValue(op.result)->setNull(); // TODO: boolean
 		}
@@ -139,7 +139,7 @@ VM_HANDLER(jmpnz)
 {
 	Value* value = getValue(op.op1);
 
-	if (value->asBool()) {
+	if (!value->isNull() || value->asBool()) {
 		if (op.result.op_type != UNUSED) {
 			getValue(op.result)->setInt(1); // TODO: boolean
 		}
