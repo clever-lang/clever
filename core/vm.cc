@@ -17,7 +17,7 @@
 
 namespace clever {
 
-// VM initialization phase
+/// VM initialization tasks
 inline void VM::init()
 {
 	// Opcode handler mapping
@@ -42,6 +42,7 @@ inline void VM::init()
 	m_handlers[OP_POS_DEC]    = &VM::dec;
 }
 
+/// Displays an error message
 void VM::error(ErrorLevel level, const char* msg) const
 {
 	switch (level) {
@@ -55,11 +56,13 @@ void VM::error(ErrorLevel level, const char* msg) const
 	}
 }
 
+/// Fetchs a Value ptr from the Symbol table
 inline Value* VM::getValue(size_t scope_id, size_t value_id) const
 {
 	return (*m_scope_pool)[scope_id]->getValue(value_id);
 }
 
+/// Fetchs a Value ptr according to the operand type
 inline Value* VM::getValue(Operand& operand) const
 {
 	switch (operand.op_type) {
@@ -317,64 +320,6 @@ void VM::copy(VM* vm)
 	this->m_call_args = vm->m_call_args;
 }
 
-void VM::wait()
-{
-	for (size_t i = 0; i < m_thread_pool.size(); ++i) {
-		void* status;
-
-		pthread_join(m_thread_pool[i]->t_handler, &status);
-
-		delete m_thread_pool[i]->vm_handler;
-		delete m_thread_pool[i];
-	}
-	m_thread_pool.clear();
-}
-
-static void* _thread_control(void* arg)
-{
-	Thread* thread = static_cast<Thread*>(arg);
-	VM* vm_handler = thread->vm_handler;
-
-	vm_handler->fcall(vm_handler->getInst()[vm_handler->getPC()]);
-	vm_handler->run();
-
-	return NULL;
-}
-
-VM_HANDLER(endthread)
-{
-	if (this->isChild()) {
-		this->m_pc = this->m_inst.size();
-	}
-}
-
-// Creates a thread and copy current VM instance
-VM_HANDLER(threadcall)
-{
-	Thread* thread = new Thread;
-
-	thread->vm_handler = new VM(this->m_inst);
-	thread->vm_handler->copy(this);
-
-	this->m_call_args.clear();
-
-	thread->vm_handler->setChild();
-
-	m_thread_pool.push_back(thread);
-
-	pthread_attr_t attr;
-	pthread_attr_init(&attr);
-	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
-
-	pthread_create(&(thread->t_handler), &attr,
-		_thread_control, static_cast<void*>(thread));
-
-	pthread_attr_destroy(&attr);
-
-	VM_NEXT();
-	VM_NEXT();
-}
-
 // Function call operation
 VM_HANDLER(fcall)
 {
@@ -460,6 +405,64 @@ VM_HANDLER(dec)
 		value->getType()->decrement(value);
 	}
 
+	VM_NEXT();
+}
+
+void VM::wait()
+{
+	for (size_t i = 0; i < m_thread_pool.size(); ++i) {
+		void* status;
+
+		pthread_join(m_thread_pool[i]->t_handler, &status);
+
+		delete m_thread_pool[i]->vm_handler;
+		delete m_thread_pool[i];
+	}
+	m_thread_pool.clear();
+}
+
+static void* _thread_control(void* arg)
+{
+	Thread* thread = static_cast<Thread*>(arg);
+	VM* vm_handler = thread->vm_handler;
+
+	vm_handler->fcall(vm_handler->getInst()[vm_handler->getPC()]);
+	vm_handler->run();
+
+	return NULL;
+}
+
+VM_HANDLER(endthread)
+{
+	if (this->isChild()) {
+		this->m_pc = this->m_inst.size();
+	}
+}
+
+// Creates a thread and copy current VM instance
+VM_HANDLER(threadcall)
+{
+	Thread* thread = new Thread;
+
+	thread->vm_handler = new VM(this->m_inst);
+	thread->vm_handler->copy(this);
+
+	this->m_call_args.clear();
+
+	thread->vm_handler->setChild();
+
+	m_thread_pool.push_back(thread);
+
+	pthread_attr_t attr;
+	pthread_attr_init(&attr);
+	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
+
+	pthread_create(&(thread->t_handler), &attr,
+		_thread_control, static_cast<void*>(thread));
+
+	pthread_attr_destroy(&attr);
+
+	VM_NEXT();
 	VM_NEXT();
 }
 
