@@ -42,6 +42,19 @@ inline void VM::init()
 	m_handlers[OP_POS_DEC]    = &VM::dec;
 }
 
+void VM::error(ErrorLevel level, const char* msg) const
+{
+	switch (level) {
+		case WARNING:
+			std::cerr << "Warning: " << msg << std::endl;
+			break;
+		case ERROR:
+			std::cerr << "Error: " << msg << std::endl;
+			CLEVER_EXIT_FATAL();
+			break;
+	}
+}
+
 inline Value* VM::getValue(size_t scope_id, size_t value_id) const
 {
 	return (*m_scope_pool)[scope_id]->getValue(value_id);
@@ -167,10 +180,14 @@ VM_HANDLER(add)
 	Value* lhs = getValue(op.op1);
 	Value* rhs = getValue(op.op2);
 
-	if (lhs->getType() == CLEVER_INT_TYPE
-		&& rhs->getType() == CLEVER_INT_TYPE) {
-		getValue(op.result)->setInt(lhs->getInt() + rhs->getInt());
-		getValue(op.result)->setType(lhs->getType());
+	if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
+		if (lhs->getType() == CLEVER_INT_TYPE
+			&& rhs->getType() == CLEVER_INT_TYPE) {
+			getValue(op.result)->setInt(lhs->getInt() + rhs->getInt());
+			getValue(op.result)->setType(lhs->getType());
+		}
+	} else {
+		error(ERROR, "Operation cannot be executed on null value");
 	}
 
 	VM_NEXT();

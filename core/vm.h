@@ -55,6 +55,11 @@ struct Thread {
 /// VM representation
 class VM {
 public:
+	enum ErrorLevel {
+		ERROR,
+		WARNING
+	};
+
 	typedef void (VM::*OpHandler)(VM_HANDLER_ARG);
 
 	typedef std::vector<Thread*> ThreadPool;
@@ -63,6 +68,8 @@ public:
 		: m_pc(0), m_is_main_thread(true), m_inst(inst), m_scope_pool(NULL),
 			m_const_pool(NULL), m_tmp_pool(NULL) {}
 	~VM() {}
+
+	void error(ErrorLevel, const char*) const;
 
 	/// Sets the symbol table to used by the VM to fetch the symbol names
 	void setSymbolTable(ScopePool* scope) { m_scope_pool = scope; }

@@ -35,7 +35,11 @@ void Interpreter::execute(bool interactive)
 		vm.dumpOpcodes();
 	}
 #endif
-	vm.run();
+	int status = setjmp(fatal_error);
+
+	if (status == 0) {
+		vm.run();
+	}
 }
 
 /// Frees the resource used to load and execute the script
