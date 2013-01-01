@@ -254,18 +254,38 @@ void Codegen::visit(Logic* node)
 	}
 
 	lhs->accept(*this);
-	rhs->accept(*this);
 
-	m_ir.push_back(IR(op));
+	if (op == OP_AND || op == OP_OR) {
+		size_t jmp_ir = m_ir.size();
+		size_t res_id = m_compiler->getTempValue();
 
-	_prepare_operand(m_ir.back().op1, lhs);
-	_prepare_operand(m_ir.back().op2, rhs);
+		node->setValueId(res_id);
 
-	size_t tmp_id = m_compiler->getTempValue();
+		m_ir.push_back(IR(op));
+		_prepare_operand(m_ir.back().op1, lhs);
+		m_ir.back().result = Operand(FETCH_TMP, res_id);
 
-	m_ir.back().result = Operand(FETCH_TMP, tmp_id);
+		rhs->accept(*this);
 
-	node->setValueId(tmp_id);
+		m_ir.push_back(IR(op));
+		_prepare_operand(m_ir.back().op1, rhs);
+		m_ir.back().result = Operand(FETCH_TMP, res_id);
+
+		m_ir.back().op2 = m_ir[jmp_ir].op2 = Operand(JMP_ADDR, m_ir.size());
+	} else {
+		rhs->accept(*this);
+
+		m_ir.push_back(IR(op));
+
+		_prepare_operand(m_ir.back().op1, lhs);
+		_prepare_operand(m_ir.back().op2, rhs);
+
+		size_t tmp_id = m_compiler->getTempValue();
+
+		m_ir.back().result = Operand(FETCH_TMP, tmp_id);
+
+		node->setValueId(tmp_id);
+	}
 }
 
 void Codegen::visit(If* node)

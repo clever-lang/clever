@@ -387,11 +387,25 @@ VM_HANDLER(dec)
 
 VM_HANDLER(land)
 {
+	Value* lhs = getValue(op.op1);
+
+	if (lhs->isNull()) {
+		getValue(op.result)->setNull();
+		VM_GOTO(op.op2.value_id);
+	}
+	getValue(op.result)->copy(lhs);
+
 	VM_NEXT();
 }
 
 VM_HANDLER(lor)
 {
+	Value* lhs = getValue(op.op1);
+
+	if (!lhs->isNull()) {
+		getValue(op.result)->copy(lhs);
+		VM_GOTO(op.op2.value_id);
+	}
 	VM_NEXT();
 }
 
@@ -486,7 +500,7 @@ void VM::run()
 			case OP_POS_DEC:  dec(m_inst[m_pc]);        break;
 			case OP_JMPNZ:    jmpnz(m_inst[m_pc]);      break;
 			case OP_AND:      land(m_inst[m_pc]);       break;
-			case OP_OR:       land(m_inst[m_pc]);       break;
+			case OP_OR:       lor(m_inst[m_pc]);        break;
 			case OP_EQUAL:    lequal(m_inst[m_pc]);     break;
 			EMPTY_SWITCH_DEFAULT_CASE();
 		}
