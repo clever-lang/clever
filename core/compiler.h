@@ -41,7 +41,7 @@ public:
 
 	Compiler()
 		: m_ir(), m_scope(NULL), m_flags(0),
-			m_scope_pool(10), m_type_pool(15), m_const_pool(15),m_tmp_pool(15),
+			m_scope_pool(), m_type_pool(), m_const_pool(),m_tmp_pool(),
 			m_scope_id(0), m_const_id(0), m_type_id(0), m_tmp_id(0) {}
 
 	~Compiler() {}

@@ -48,11 +48,11 @@ public:
 
 	Scope()
 		: m_parent(NULL), m_children(), m_symbols(), m_size(0), m_id(0),
-			m_value_id(0), m_value_pool(30) { m_value_pool.reserve(30); }
+			m_value_id(0), m_value_pool() {}
 
 	explicit Scope(Scope* parent)
 		: m_parent(parent), m_children(), m_symbols(), m_size(0), m_id(0),
-			m_value_id(0), m_value_pool(30) { m_value_pool.reserve(30); }
+			m_value_id(0), m_value_pool() {}
 
 	~Scope() {
 		ValuePool::const_iterator itv = m_value_pool.begin(),
@@ -85,7 +85,7 @@ public:
 	size_t pushValue(const CString* name, Value* value) {
 		m_symbols.push_back(new Symbol(name, m_value_id, this));
 		m_symbol_table.insert(SymbolEntry(name, m_size++));
-		m_value_pool[m_value_id] = value;
+		m_value_pool.push_back(value);
 
 		return m_value_id++;
 	}

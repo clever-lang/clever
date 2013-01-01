@@ -24,17 +24,11 @@ DECLARE_CLEVER_NATIVE_TYPES();
 /// Compiler initialization phase
 void Compiler::init()
 {
-	m_ir.reserve(20);
-	m_tmp_pool.reserve(15);
-	m_scope_pool.reserve(10);
-	m_type_pool.reserve(15);
-	m_const_pool.reserve(15);
-
 	// Native type allocation
-	m_type_pool[m_type_id++] = CLEVER_INT_TYPE    = new IntType;
-	m_type_pool[m_type_id++] = CLEVER_DOUBLE_TYPE = new DoubleType;
-	m_type_pool[m_type_id++] = CLEVER_STR_TYPE    = new StrType;
-	m_type_pool[m_type_id++] = CLEVER_FUNC_TYPE   = new FuncType;
+	m_type_pool.push_back(CLEVER_INT_TYPE    = new IntType);    m_type_id++;
+	m_type_pool.push_back(CLEVER_DOUBLE_TYPE = new DoubleType); m_type_id++;
+	m_type_pool.push_back(CLEVER_STR_TYPE    = new StrType);    m_type_id++;
+	m_type_pool.push_back(CLEVER_FUNC_TYPE   = new FuncType);   m_type_id++;
 
 	m_pkg.init();
 }
@@ -51,7 +45,9 @@ void Compiler::shutdown()
 		end = m_type_pool.end();
 
 	while (it != end) {
-		delete *it;
+		if (*it) {
+			delete *it;
+		}
 		++it;
 	}
 
@@ -131,7 +127,7 @@ void Compiler::emitAST(ast::Node* tree)
 
 size_t Compiler::addScope(Scope* scope)
 {
-	m_scope_pool[m_scope_id] = scope;
+	m_scope_pool.push_back(scope);
 
 	return m_scope_id++;
 }
@@ -139,14 +135,14 @@ size_t Compiler::addScope(Scope* scope)
 /// Adds a new constant value to the constant pool
 size_t Compiler::addConstant(Value* value)
 {
-	m_const_pool[m_const_id] = value;
+	m_const_pool.push_back(value);
 
 	return m_const_id++;
 }
 
 /// Adds a new temporary value to the temporary pool
 size_t Compiler::getTempValue() {
-	m_tmp_pool[m_tmp_id] = new Value();
+	m_tmp_pool.push_back(new Value());
 
 	return m_tmp_id++;
 }
