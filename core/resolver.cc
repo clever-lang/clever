@@ -48,15 +48,24 @@ void Resolver::visit(VariableDecl* node)
 
 void Resolver::visit(FunctionDecl* node)
 {
+	static size_t anon_fdecls = 0;
+
 	const CString* name;
 
-	if (node->hasIdent()) {
-		name = node->getIdent()->getName();
+	// Create an user-unusable symbol name for anonymous functions
+	if (!node->hasIdent()) {
+		std::stringstream buf;
+		buf << "<anonymous " << anon_fdecls++ << ">";
+		node->setIdent(new Ident(CSTRING(buf.str()),
+								 node->getLocation()));
+	}
 
-		if (m_scope->getLocal(name)) {
-			Compiler::errorf(node->getLocation(),
-				"Cannot redeclare function `%S'.", name);
-		}
+	name = node->getIdent()->getName();
+	clever_assert_not_null(name);
+
+	if (m_scope->getLocal(name)) {
+		Compiler::errorf(node->getLocation(),
+			"Cannot redeclare function `%S'.", name);
 	}
 
 	Function* func = static_cast<Function*>(CLEVER_FUNC_TYPE->allocData());
@@ -67,11 +76,9 @@ void Resolver::visit(FunctionDecl* node)
 	fval->setType(CLEVER_FUNC_TYPE);
 	fval->setObj(func);
 
-	if (node->hasIdent()) {
-		func->setName(*name);
-		m_scope->pushValue(name, fval);
-		node->getIdent()->accept(*this);
-	}
+	func->setName(*name);
+	m_scope->pushValue(name, fval);
+	node->getIdent()->accept(*this);
 
 	m_scope = m_scope->newLexicalScope();
 	m_scope->setId(m_compiler->addScope(m_scope));

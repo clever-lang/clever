@@ -326,6 +326,8 @@ VM_HANDLER(fcall)
 	Value* func = getValue(op.op1);
 	Function* fdata = static_cast<Function*>(func->getObj());
 
+	clever_assert_not_null(fdata);
+
 	if (fdata->isUserDefined()) {
 		if (m_call_stack.size()) {
 			saveVars();

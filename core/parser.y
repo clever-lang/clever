@@ -59,7 +59,7 @@ class Value;
 %type <logic> logic
 %type <import> import
 %type <fcall> fcall
-%type <fdecl> fdecl
+%type <fdecl> fdecl anonymous_fdecl
 %type <ret> return_stmt
 %type <while_loop> while
 %type <inc_dec> inc_dec
@@ -193,6 +193,7 @@ rvalue:
 	|	bitwise
 	|	inc_dec
 	|	fcall
+	|	anonymous_fdecl
 	|	'(' rvalue ')' { $<node>$ = $<node>2; }
 ;
 
@@ -259,6 +260,13 @@ fdecl:
 		{ $$ = new ast::FunctionDecl($2, NULL, $5, yyloc); }
 	|	FUNC IDENT '(' variable_decl_list ')' block
 		{ $$ = new ast::FunctionDecl($2, $4, $6, yyloc); }
+;
+
+anonymous_fdecl:
+	FUNC '(' ')' block
+	{ $$ = new ast::FunctionDecl(NULL, NULL, $4, yyloc); }
+	|	FUNC '(' variable_decl_list ')' block
+	{ $$ = new ast::FunctionDecl(NULL, $3, $5, yyloc); }
 ;
 
 call_args:
