@@ -56,13 +56,13 @@ next_token:
 		SKIP();
 	}
 
-	<INITIAL>"var" { RET(token::VAR); }
+	<INITIAL>'var' { RET(token::VAR); }
 
-	<INITIAL>"or" { RET(token::LOGICAL_OR); }
+	<INITIAL>'or' { RET(token::LOGICAL_OR); }
 
 	<INITIAL>"||" { RET(token::BOOLEAN_OR); }
 
-	<INITIAL>"and" { RET(token::LOGICAL_AND); }
+	<INITIAL>'and' { RET(token::LOGICAL_AND); }
 
 	<INITIAL>"&&" { RET(token::BOOLEAN_AND); }
 
