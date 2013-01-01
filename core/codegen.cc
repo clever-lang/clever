@@ -89,15 +89,7 @@ void Codegen::visit(Assignment* node)
 	if (!rhs) {
 		m_ir.back().op2 = Operand(FETCH_TMP, m_compiler->getTempValue());
 	} else {
-		if (rhs->isLiteral()) {
-			m_ir.back().op2 = Operand(FETCH_CONST,
-				static_cast<Literal*>(rhs)->getConstId());
-		} else if (rhs->getScope()) {
-			m_ir.back().op2 = Operand(FETCH_VAR, rhs->getValueId(),
-				rhs->getScope()->getId());
-		} else {
-			m_ir.back().op2 = Operand(FETCH_TMP, rhs->getValueId());
-		}
+		_prepare_operand(m_ir.back().op2, rhs);
 	}
 }
 
@@ -113,21 +105,11 @@ void Codegen::visit(FunctionCall* node)
 		NodeList::const_iterator it = args.begin(), end = args.end();
 
 		while (it != end) {
-			Operand operand;
-
 			(*it)->accept(*this);
 
-			if ((*it)->isLiteral()) {
-				operand.op_type = FETCH_CONST;
-				operand.value_id = static_cast<Literal*>(*it)->getConstId();
-			} else {
-				operand.op_type = (*it)->isEvaluable() ? FETCH_TMP : FETCH_VAR;
-				operand.value_id = (*it)->getValueId();
-				if ((*it)->getScope()) {
-					operand.scope_id = (*it)->getScope()->getId();
-				}
-			}
-			m_ir.push_back(IR(OP_SEND_VAL, operand));
+			m_ir.push_back(IR(OP_SEND_VAL));
+
+			_prepare_operand(m_ir.back().op1, *it);
 			++it;
 		}
 	}
@@ -182,15 +164,7 @@ void Codegen::visit(Return* node)
 
 		m_ir.push_back(IR(OP_RET));
 
-		if (value->isLiteral()) {
-			m_ir.back().op1 = Operand(FETCH_CONST,
-				static_cast<Literal*>(value)->getConstId());
-		} else if (value->getScope()) {
-			m_ir.back().op1 = Operand(FETCH_VAR,
-				value->getValueId(), value->getScope()->getId());
-		} else {
-			m_ir.back().op1 = Operand(FETCH_TMP, value->getValueId());
-		}
+		_prepare_operand(m_ir.back().op1, value);
 	} else {
 		m_ir.push_back(IR(OP_RET));
 	}
@@ -203,15 +177,9 @@ void Codegen::visit(While* node)
 
 	cond->accept(*this);
 
-	if (cond->isLiteral()) {
-		m_ir.push_back(IR(OP_JMPZ,
-			Operand(FETCH_CONST, static_cast<Literal*>(cond)->getConstId())));
-	} else if (cond->getScope()) {
-		m_ir.push_back(IR(OP_JMPZ,
-			Operand(FETCH_VAR, cond->getValueId(), cond->getScope()->getId())));
-	} else {
-		m_ir.push_back(IR(OP_JMPZ,	Operand(FETCH_TMP, cond->getValueId())));
-	}
+	m_ir.push_back(IR(OP_JMPZ));
+
+	_prepare_operand(m_ir.back().op1, cond);
 
 	node->getBlock()->accept(*this);
 
@@ -318,13 +286,7 @@ void Codegen::visit(If* node)
 		last_jmpz = m_ir.size();
 		m_ir.push_back(IR(OP_JMPZ));
 
-		if (cond->isLiteral()) {
-			m_ir.back().op1 = Operand(FETCH_CONST, static_cast<Literal*>(cond)->getConstId());
-		} else if (cond->getScope()) {
-			m_ir.back().op1 = Operand(FETCH_VAR, cond->getValueId(), cond->getScope()->getId());
-		} else {
-			m_ir.back().op1 = Operand(FETCH_TMP, cond->getValueId());
-		}
+		_prepare_operand(m_ir.back().op1, cond);
 
 		block->accept(*this);
 
