@@ -43,6 +43,7 @@ class Value;
 	ast::Return* ret;
 	ast::While* while_loop;
 	ast::IncDec* inc_dec;
+	ast::If* ifcond;
 }
 
 %type <ident> IDENT
@@ -62,6 +63,7 @@ class Value;
 %type <ret> return_stmt
 %type <while_loop> while
 %type <inc_dec> inc_dec
+%type <ifcond> if else
 
 // The parsing context.
 %parse-param { Driver& driver }
@@ -283,8 +285,20 @@ while:
 		{ $$ = new ast::While($<node>3, $5, yyloc); }
 ;
 
+elseif:
+		/* empty */
+	|	elseif ELSEIF '(' rvalue ')' block
+		{ $<ifcond>0->addConditional($<node>4, $6); }
+;
+
+else:
+		/* empty */ { $$ = $<ifcond>0; }
+	|	ELSE block  { $<ifcond>0->setElseNode($<node>2); $$ = $<ifcond>0; }
+;
+
 if:
-		IF '(' rvalue ')' block
+		IF '(' rvalue ')' block { $<ifcond>$ = new ast::If($<node>3, $<node>5, yyloc); }
+		elseif { $<ifcond>$ = $<ifcond>6; } else { $$ = $9; }
 
 %%
 

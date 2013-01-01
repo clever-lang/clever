@@ -451,8 +451,8 @@ private:
 /// If you want to add a new conditional block, use the addConditional method.
 class If: public Node {
 public:
-	If(Node* cond_node, Node* then_node, Node* else_node, const location& location)
-		: Node(location), m_else_node(else_node) {
+	If(Node* cond_node, Node* then_node, const location& location)
+		: Node(location), m_else_node(NULL) {
 
 		addConditional(cond_node, then_node);
 	}
@@ -464,6 +464,8 @@ public:
 	}
 
 	std::vector<std::pair<Node*, Node*> > getConditionals() { return m_conditionals; }
+
+	void setElseNode(Node* else_node) { m_else_node = else_node; }
 
 	Node* getElseNode() { return m_else_node; }
 
