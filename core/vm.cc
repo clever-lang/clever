@@ -399,7 +399,7 @@ VM_HANDLER(land)
 {
 	Value* lhs = getValue(op.op1);
 
-	if (lhs->isNull()) {
+	if (!lhs->asBool()) {
 		getValue(op.result)->setNull();
 		VM_GOTO(op.op2.value_id);
 	}
@@ -412,7 +412,7 @@ VM_HANDLER(lor)
 {
 	Value* lhs = getValue(op.op1);
 
-	if (!lhs->isNull()) {
+	if (lhs->asBool()) {
 		getValue(op.result)->copy(lhs);
 		VM_GOTO(op.op2.value_id);
 	}
