@@ -141,8 +141,12 @@ next_token:
 		RET(token::FUNC);
 	}
 
-    <INITIAL>'thread' {
+	<INITIAL>'thread' {
 		RET(token::THREAD);
+	}
+
+	<INITIAL>'critical' {
+		RET(token::CRITICAL);
 	}
 
 	<INITIAL>'return' {

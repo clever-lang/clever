@@ -130,6 +130,7 @@ class Value;
 %token PRINT         "print"
 %token FUNC          "function"
 %token THREAD        "thread"
+%token CRITICAL      "critical"
 %token INC           "++"
 %token DEC           "--"
 
@@ -179,10 +180,21 @@ statement:
 	|	while
 	|	inc_dec ';'
 	|	block
+	|	thread_block
+	|   critical_block
 ;
 
 block:
 		'{' statement_list '}'  { $$ = $2; }
+;
+
+
+thread_block:
+		THREAD block {}
+;
+
+critical_bloack:
+		CRITICAL block {}
 ;
 
 rvalue:
