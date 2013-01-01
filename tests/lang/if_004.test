@@ -1,0 +1,14 @@
+Testing selector operator
+==CODE==
+import std.io.*;
+
+println(0 and 2);
+
+var a;
+println(a and 1);
+a = 0;
+println(++a and 2);
+==RESULT==
+null
+null
+2

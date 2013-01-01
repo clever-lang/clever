@@ -1,0 +1,31 @@
+Testing boolean operator
+==CODE==
+import std.io.*;
+
+if (1 && 2) {
+	println(1);
+}
+
+if (0 && 2) {
+	println(2);
+}
+
+if (0) {
+	println(3);
+}
+
+var a;
+if (a) {
+	println(4);
+}
+var b = 0;
+if (b) {
+	println(5);
+}
+
+if (++b) {
+	println(6);
+}
+==RESULT==
+1
+6
