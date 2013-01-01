@@ -13,7 +13,7 @@
 
 namespace clever { namespace ast {
 
-static inline void _prepare_operand(Operand& op, Node* node)
+static CLEVER_FORCE_INLINE void _prepare_operand(Operand& op, Node* node)
 {
 	if (node->isLiteral()) {
 		op = Operand(FETCH_CONST, static_cast<Literal*>(node)->getConstId());

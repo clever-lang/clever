@@ -50,7 +50,9 @@ static void show_usage()
 
 int main(int argc, char **argv)
 {
-    clever::Interpreter clever(&argc, &argv);
+	std::ios::sync_with_stdio(false);
+
+	clever::Interpreter clever(&argc, &argv);
 
 	if (argc == 1) {
 		std::cout << "Clever Programming Language" << std::endl;
@@ -58,20 +60,20 @@ int main(int argc, char **argv)
 		return 0;
 	}
 
-    int inc_arg = 0;
+	int inc_arg = 0;
 
-    for (int i = 1; i < argc; ++i) {
+	for (int i = 1; i < argc; ++i) {
 		// Look for general options, then code options and finally debug options.
 		if (argv[i] == std::string("-h")) {
 			show_usage();
 			return 0;
 		} else if (argv[i] == std::string("-v")) {
-            std::cout << "Clever - " CLEVER_VERSION_STRING;
+			std::cout << "Clever - " CLEVER_VERSION_STRING;
 
 #ifdef CLEVER_DEBUG
-            std::cout << " (debug)";
+			std::cout << " (debug)";
 #endif
-            std::cout << "\n"
+			std::cout << "\n"
                          "Copyright (c) Clever Team\n"
                          "(built: " __DATE__ " " __TIME__ ")\n";
 
@@ -146,7 +148,6 @@ int main(int argc, char **argv)
 
 	clever.execute(false);
     clever.shutdown();
-
 
 	return 0;
 }

@@ -49,7 +49,7 @@ static CLEVER_FUNCTION(print) {
 static CLEVER_FUNCTION(println) {
 	for (size_t i = 0, size = args.size(); i < size; ++i) {
 		args[i]->dump();
-		::std::cout << ::std::endl;
+		::std::cout << '\n';
 	}
 }
 
@@ -72,7 +72,7 @@ static CLEVER_FUNCTION(safeprintln) {
 
 	for (size_t i = 0, size = args.size(); i < size; ++i) {
 		args[i]->dump();
-		::std::cout << ::std::endl;
+		::std::cout << '\n';
 	}
 
 	io_mutex.unlock();

@@ -32,13 +32,13 @@ void VM::error(ErrorLevel level, const char* msg) const
 }
 
 /// Fetchs a Value ptr from the Symbol table
-inline Value* VM::getValue(size_t scope_id, size_t value_id) const
+CLEVER_FORCE_INLINE Value* VM::getValue(size_t scope_id, size_t value_id) const
 {
 	return (*m_scope_pool)[scope_id]->getValue(value_id);
 }
 
 /// Fetchs a Value ptr according to the operand type
-inline Value* VM::getValue(Operand& operand) const
+CLEVER_FORCE_INLINE Value* VM::getValue(Operand& operand) const
 {
 	switch (operand.op_type) {
 		case FETCH_CONST:
