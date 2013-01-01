@@ -122,6 +122,21 @@ public:
 			}
 		}
 	}
+
+	bool asBool() const {
+		if (isNull()) {
+			return false;
+		} else if (m_kind == PRIMITIVE) {
+			if (m_type == CLEVER_INT_TYPE) {
+				return m_data.lval != 0;
+			} else if (m_type == CLEVER_DOUBLE_TYPE) {
+				return m_data.dval != 0;
+			} else if (m_type == CLEVER_STR_TYPE) {
+				return m_data.sval != NULL;
+			}
+		}
+		return false;
+	}
 private:
 	DataValue m_data;
 	ValueKind m_kind;
