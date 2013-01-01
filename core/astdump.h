@@ -71,9 +71,10 @@ public:
 	void visit(Logic* node) {
 		std::cout << m_ws << "Logic";
 		switch (node->getOperator()) {
-			case ast::Logic::LOP_EQUALS: AST_DUMP_DISPLAY_LHS_RHS("=="); break;
-			case ast::Logic::LOP_AND:    AST_DUMP_DISPLAY_LHS_RHS("&&"); break;
-			case ast::Logic::LOP_OR:     AST_DUMP_DISPLAY_LHS_RHS("||"); break;
+			case ast::Logic::LOP_EQUALS:  AST_DUMP_DISPLAY_LHS_RHS("=="); break;
+			case ast::Logic::LOP_NEQUALS: AST_DUMP_DISPLAY_LHS_RHS("!="); break;
+			case ast::Logic::LOP_AND:     AST_DUMP_DISPLAY_LHS_RHS("&&"); break;
+			case ast::Logic::LOP_OR:      AST_DUMP_DISPLAY_LHS_RHS("||"); break;
 		}
 	}
 

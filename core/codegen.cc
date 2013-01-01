@@ -248,9 +248,10 @@ void Codegen::visit(Logic* node)
 	Opcode op;
 
 	switch (node->getOperator()) {
-		case Logic::LOP_EQUALS: op = OP_EQUAL; break;
-		case Logic::LOP_AND:    op = OP_AND;   break;
-		case Logic::LOP_OR:     op = OP_OR;    break;
+		case Logic::LOP_EQUALS:  op = OP_EQUAL; break;
+		case Logic::LOP_NEQUALS: op = OP_EQUAL; break;
+		case Logic::LOP_AND:     op = OP_AND;   break;
+		case Logic::LOP_OR:      op = OP_OR;    break;
 	}
 
 	lhs->accept(*this);
@@ -286,6 +287,37 @@ void Codegen::visit(Logic* node)
 
 		node->setValueId(tmp_id);
 	}
+}
+
+void Codegen::visit(Boolean* node)
+{
+	Node* lhs = node->getLhs();
+	Node* rhs = node->getRhs();
+	Opcode op;
+
+	switch (node->getOperator()) {
+		case Boolean::BOP_AND: op = OP_AND; break;
+		case Boolean::BOP_OR:  op = OP_OR;  break;
+	}
+
+	lhs->accept(*this);
+
+	size_t jmp_ir = m_ir.size();
+	size_t res_id = m_compiler->getTempValue();
+
+	node->setValueId(res_id);
+
+	m_ir.push_back(IR(op));
+	_prepare_operand(m_ir.back().op1, lhs);
+	m_ir.back().result = Operand(FETCH_TMP, res_id);
+
+	rhs->accept(*this);
+
+	m_ir.push_back(IR(op));
+	_prepare_operand(m_ir.back().op1, rhs);
+	m_ir.back().result = Operand(FETCH_TMP, res_id);
+
+	m_ir.back().op2 = m_ir[jmp_ir].op2 = Operand(JMP_ADDR, m_ir.size());
 }
 
 void Codegen::visit(If* node)

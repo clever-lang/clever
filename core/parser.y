@@ -44,6 +44,7 @@ class Value;
 	ast::While* while_loop;
 	ast::IncDec* inc_dec;
 	ast::If* ifcond;
+	ast::Boolean* boolean;
 }
 
 %type <ident> IDENT
@@ -64,6 +65,7 @@ class Value;
 %type <while_loop> while
 %type <inc_dec> inc_dec
 %type <ifcond> if else
+%type <boolean> boolean
 
 // The parsing context.
 %parse-param { Driver& driver }
@@ -191,6 +193,7 @@ rvalue:
 	|	arithmetic
 	|	logic
 	|	bitwise
+	|	boolean
 	|	inc_dec
 	|	fcall
 	|	anonymous_fdecl
@@ -208,12 +211,16 @@ inc_dec:
 	|	DEC lvalue { $$ = new ast::IncDec(ast::IncDec::PRE_DEC, $<node>2, yyloc); }
 ;
 
+boolean:
+		rvalue BOOLEAN_OR rvalue  { $$ = new ast::Boolean(ast::Boolean::BOP_OR, $<node>1, $<node>3, yyloc);  }
+	|	rvalue BOOLEAN_AND rvalue { $$ = new ast::Boolean(ast::Boolean::BOP_AND, $<node>1, $<node>3, yyloc); }
+;
+
 logic:
-		rvalue EQUAL rvalue       { $$ = new ast::Logic(ast::Logic::LOP_EQUALS, $<node>1, $<node>3, yyloc); }
-	|	rvalue BOOLEAN_OR rvalue  { $$ = new ast::Logic(ast::Logic::LOP_OR, $<node>1, $<node>3, yyloc);     }
-	|	rvalue LOGICAL_OR rvalue  { $$ = new ast::Logic(ast::Logic::LOP_OR, $<node>1, $<node>3, yyloc);     }
-	|	rvalue BOOLEAN_AND rvalue { $$ = new ast::Logic(ast::Logic::LOP_AND, $<node>1, $<node>3, yyloc);    }
-	|	rvalue LOGICAL_AND rvalue { $$ = new ast::Logic(ast::Logic::LOP_AND, $<node>1, $<node>3, yyloc);    }
+		rvalue EQUAL rvalue       { $$ = new ast::Logic(ast::Logic::LOP_EQUALS, $<node>1, $<node>3, yyloc);  }
+	|	rvalue NOT_EQUAL rvalue   { $$ = new ast::Logic(ast::Logic::LOP_NEQUALS, $<node>1, $<node>3, yyloc); }
+	|	rvalue LOGICAL_OR rvalue  { $$ = new ast::Logic(ast::Logic::LOP_OR, $<node>1, $<node>3, yyloc);      }
+	|	rvalue LOGICAL_AND rvalue { $$ = new ast::Logic(ast::Logic::LOP_AND, $<node>1, $<node>3, yyloc);     }
 ;
 
 arithmetic:

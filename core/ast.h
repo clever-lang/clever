@@ -34,6 +34,7 @@ class Return;
 class Logic;
 class Bitwise;
 class Import;
+class Boolean;
 
 typedef std::vector<Node*> NodeList;
 
@@ -279,6 +280,7 @@ class Logic: public Node {
 public:
 	enum LogicOperator {
 		LOP_EQUALS,
+		LOP_NEQUALS,
 		LOP_OR,
 		LOP_AND
 	};
@@ -305,6 +307,35 @@ public:
 
 private:
 	LogicOperator m_op;
+	Node* m_lhs;
+	Node* m_rhs;
+};
+
+class Boolean: public Node {
+public:
+	enum BooleanOperator {
+		BOP_AND,
+		BOP_OR
+	};
+
+	Boolean(BooleanOperator op, Node* lhs, Node* rhs, const location& location)
+		: Node(location), m_op(op), m_lhs(lhs), m_rhs(rhs) {
+		CLEVER_ADDREF(m_lhs);
+		CLEVER_ADDREF(m_rhs);
+	}
+
+	~Boolean() {
+		CLEVER_DELREF(m_lhs);
+		CLEVER_DELREF(m_rhs);
+	}
+
+	BooleanOperator getOperator() const { return m_op; }
+	Node* getLhs() { return m_lhs; }
+	Node* getRhs() { return m_rhs; }
+
+	bool isEvaluable() const { return true; }
+private:
+	BooleanOperator m_op;
 	Node* m_lhs;
 	Node* m_rhs;
 };

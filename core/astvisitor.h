@@ -39,6 +39,7 @@ public:
 	virtual void visit(Return* node);
 	virtual void visit(Logic* node);
 	virtual void visit(Bitwise* node);
+	virtual void visit(Boolean* node);
 	virtual void visit(Import* node);
 
 };

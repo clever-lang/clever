@@ -96,6 +96,11 @@ void Visitor::visit(Bitwise* node) {
 	node->getRhs()->accept(*this);
 }
 
+void Visitor::visit(Boolean* node) {
+	node->getLhs()->accept(*this);
+	node->getRhs()->accept(*this);
+}
+
 void Visitor::visit(Import* node) {
 	node->getPackage()->accept(*this);
 

@@ -48,6 +48,7 @@ public:
 	void visit(Import*) {}
 	void visit(If*);
 	void visit(Logic*);
+	void visit(Boolean*);
 private:
 	IRVector& m_ir;
 	Scope* m_scope;
