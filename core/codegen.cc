@@ -312,6 +312,8 @@ void Codegen::visit(If* node)
 	for (size_t i = 0, j = vec.size(); i < j; ++i) {
 		m_ir[vec[i]].op1 = Operand(JMP_ADDR, m_ir.size());
 	}
+
+	m_jmps.pop();
 }
 
 }} // clever::ast
