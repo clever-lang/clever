@@ -17,31 +17,6 @@
 
 namespace clever {
 
-/// VM initialization tasks
-inline void VM::init()
-{
-	// Opcode handler mapping
-	m_handlers[OP_RET]        = &VM::ret;
-	m_handlers[OP_ASSIGN]     = &VM::assignment;
-	m_handlers[OP_ADD]        = &VM::add;
-	m_handlers[OP_SUB]        = &VM::sub;
-	m_handlers[OP_MUL]        = &VM::mul;
-	m_handlers[OP_DIV]        = &VM::div;
-	m_handlers[OP_MOD]        = &VM::sub;
-	m_handlers[OP_JMP]        = &VM::jmp;
-	m_handlers[OP_FCALL]      = &VM::fcall;
-	m_handlers[OP_TCALL]      = &VM::threadcall;
-	m_handlers[OP_END_THREAD] = &VM::endthread;
-	m_handlers[OP_LEAVE]      = &VM::leave;
-	m_handlers[OP_SEND_VAL]   = &VM::send_val;
-	m_handlers[OP_JMPZ]       = &VM::jmpz;
-	m_handlers[OP_JMPNZ]      = &VM::jmpnz;
-	m_handlers[OP_PRE_INC]    = &VM::inc;
-	m_handlers[OP_POS_INC]    = &VM::inc;
-	m_handlers[OP_PRE_DEC]    = &VM::dec;
-	m_handlers[OP_POS_DEC]    = &VM::dec;
-}
-
 /// Displays an error message
 void VM::error(ErrorLevel level, const char* msg) const
 {
@@ -167,7 +142,7 @@ VM_HANDLER(jmpnz)
 }
 
 // Assignment operation
-VM_HANDLER(assignment)
+VM_HANDLER(assign)
 {
 	Value* var = getValue(op.op1);
 	Value* value = getValue(op.op2);
@@ -410,7 +385,7 @@ VM_HANDLER(dec)
 
 void VM::wait()
 {
-	for (size_t i = 0; i < m_thread_pool.size(); ++i) {
+	for (size_t i = 0, j = m_thread_pool.size(); i < j; ++i) {
 		void* status;
 
 		pthread_join(m_thread_pool[i]->t_handler, &status);
@@ -470,10 +445,31 @@ VM_HANDLER(threadcall)
 void VM::run()
 {
 	// Loads the opcode handlers
-	init();
+	// init();
 
 	for (size_t n = m_inst.size(); m_pc < n;) {
-		(this->*m_handlers[m_inst[m_pc].opcode])(m_inst[m_pc]);
+		switch (m_inst[m_pc].opcode) {
+			case OP_RET:      ret(m_inst[m_pc]);        break;
+			case OP_ASSIGN:   assign(m_inst[m_pc]);     break;
+			case OP_ADD:      add(m_inst[m_pc]);        break;
+			case OP_SUB:      sub(m_inst[m_pc]);        break;
+			case OP_MUL:      mul(m_inst[m_pc]);        break;
+			case OP_DIV:      div(m_inst[m_pc]);        break;
+			case OP_MOD:      mod(m_inst[m_pc]);        break;
+			case OP_JMP:      jmp(m_inst[m_pc]);        break;
+			case OP_FCALL:    fcall(m_inst[m_pc]);      break;
+			case OP_TCALL:    threadcall(m_inst[m_pc]); break;
+			case OP_ETHREAD:  endthread(m_inst[m_pc]);  break;
+			case OP_LEAVE:    leave(m_inst[m_pc]);      break;
+			case OP_SEND_VAL: send_val(m_inst[m_pc]);   break;
+			case OP_JMPZ:     jmpz(m_inst[m_pc]);       break;
+			case OP_PRE_INC:  inc(m_inst[m_pc]);        break;
+			case OP_PRE_DEC:  dec(m_inst[m_pc]);        break;
+			case OP_POS_INC:  inc(m_inst[m_pc]);        break;
+			case OP_POS_DEC:  dec(m_inst[m_pc]);        break;
+			case OP_JMPNZ:    jmpnz(m_inst[m_pc]);      break;
+			EMPTY_SWITCH_DEFAULT_CASE();
+		}
 	}
 
 	wait();

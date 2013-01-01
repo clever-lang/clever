@@ -22,7 +22,7 @@ enum Opcode {
 	OP_JMP,        //       Used for jumping to other instructions
 	OP_FCALL,      //       Used for function call
 	OP_TCALL,      //       Used for thread call
-	OP_END_THREAD, //  10 - Used for end thread marker
+	OP_ETHREAD,    //  10 - Used for end thread marker
 	OP_LEAVE,      //       Used for leaving from a function call
 	OP_SEND_VAL,   //       Used for send Value* to argument values,
 	OP_JMPZ,       //       Used for jumping if zero

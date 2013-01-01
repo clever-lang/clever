@@ -25,7 +25,7 @@ const char* get_opcode_name(Opcode opnum)
 		CASE(OP_JMP);
 		CASE(OP_FCALL);
 		CASE(OP_TCALL);
-		CASE(OP_END_THREAD);
+		CASE(OP_ETHREAD);
 		CASE(OP_LEAVE);
 		CASE(OP_SEND_VAL);
 		CASE(OP_JMPZ);

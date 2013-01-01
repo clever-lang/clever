@@ -24,7 +24,7 @@ namespace clever {
 
 // Helper macro for opcode handler declaration
 #define VM_HANDLER_ARG IR& op
-#define VM_HANDLER(name) CLEVER_FASTCALL void VM::name(VM_HANDLER_ARG)
+#define VM_HANDLER(name) CLEVER_FORCE_INLINE void VM::name(VM_HANDLER_ARG)
 #define VM_HANDLER_D(name) void name(VM_HANDLER_ARG)
 
 class Scope;
@@ -114,7 +114,7 @@ public:
 	VM_HANDLER_D(var_decl);
 	VM_HANDLER_D(switch_scope);
 	VM_HANDLER_D(ret);
-	VM_HANDLER_D(assignment);
+	VM_HANDLER_D(assign);
 	VM_HANDLER_D(add);
 	VM_HANDLER_D(sub);
 	VM_HANDLER_D(mul);
@@ -131,9 +131,6 @@ public:
 	VM_HANDLER_D(inc);
 	VM_HANDLER_D(dec);
 private:
-	/// Initialization phase
-	void init();
-
 	/// VM program counter
 	size_t m_pc;
 
