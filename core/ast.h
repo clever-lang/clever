@@ -348,10 +348,14 @@ private:
 class FunctionDecl: public Node {
 public:
 	FunctionDecl(Ident* ident, NodeArray* args, Block* block, const location& location)
-		: Node(location), m_ident(ident), m_args(args), m_block(block) {
+		: Node(location), m_ident(ident), m_args(args), m_block(block), m_is_anon(false) {
 		CLEVER_SAFE_ADDREF(m_ident);
 		CLEVER_SAFE_ADDREF(m_args);
 		CLEVER_SAFE_ADDREF(m_block);
+
+		if (!ident) {
+			m_is_anon = true;
+		}
 	}
 
 	~FunctionDecl() {
@@ -365,6 +369,8 @@ public:
 		m_ident = ident;
 		CLEVER_SAFE_ADDREF(m_ident);
 	}
+
+	bool isAnonymous() const { return m_is_anon; }
 
 	Ident* getIdent() { return m_ident; }
 	bool hasIdent() { return m_ident != NULL; }
@@ -387,6 +393,7 @@ private:
 	Ident* m_ident;
 	NodeArray* m_args;
 	Block* m_block;
+	bool m_is_anon;
 };
 
 class FunctionCall: public Node {

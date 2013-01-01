@@ -138,7 +138,8 @@ void Codegen::visit(FunctionDecl* node)
 	m_ir.push_back(IR(OP_JMP, Operand(JMP_ADDR, 0)));
 
 	Symbol* sym = node->getIdent()->getSymbol();
-	Function* func = static_cast<Function*>(sym->scope->getValue(sym->value_id)->getObj());
+	Value* funcval = sym->scope->getValue(sym->value_id);
+	Function* func = static_cast<Function*>(funcval->getObj());
 	func->setAddr(m_ir.size());
 
 	m_scope = node->getScope();
@@ -154,6 +155,14 @@ void Codegen::visit(FunctionDecl* node)
 	m_ir.push_back(IR(OP_LEAVE));
 
 	m_ir[start_func].op1.value_id = m_ir.size();
+
+	// Check if it is an anonymous function
+	if (node->isAnonymous()) {
+		// TODO: Fix memory leak on Value internal object
+		funcval->addRef();
+		node->setValueId(sym->value_id);
+		node->setScope(sym->scope);
+	}
 }
 
 void Codegen::visit(Return* node)
