@@ -1,0 +1,15 @@
+Testing anonymous functions
+==CODE==
+import std.io.*;
+
+var a = function () {
+	return function () {
+		return "clever";
+	};
+};
+
+var b = a();
+
+println(b());
+==RESULT==
+clever
