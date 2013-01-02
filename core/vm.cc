@@ -133,20 +133,23 @@ void VM::restoreVars() const
 // Make a copy of VM instance
 void VM::copy(VM* vm)
 {
+	this->f_mutex = vm->getMutex();
 	this->m_pc = vm->m_pc;
 
-	this->m_scope_pool = new ScopePool(vm->m_scope_pool->size());
+	this->f_mutex->lock();
+	this->m_scope_pool = new ScopePool;
 
-	this->m_scope_pool->at(0) = vm->m_scope_pool->at(0);
-	this->m_scope_pool->at(1) = vm->m_scope_pool->at(1);
+	this->m_scope_pool->push_back(vm->m_scope_pool->at(0));
+	this->m_scope_pool->push_back(vm->m_scope_pool->at(1));
 
 	for (size_t id = 2; id < vm->m_scope_pool->size(); ++id) {
 		Scope* s = new Scope;
 
 		s->copy(vm->m_scope_pool->at(id));
 
-		this->m_scope_pool->at(id) = s;
+		this->m_scope_pool->push_back(s);
 	}
+	this->f_mutex->unlock();
 
 	for (size_t i = 0; i < NUM_OPCODES; ++i) {
 		this->m_handlers[i] = vm->m_handlers[i];
@@ -154,7 +157,6 @@ void VM::copy(VM* vm)
 
 	this->m_tmp_pool = vm->m_tmp_pool;
 	this->m_const_pool = vm->m_const_pool;
-	this->f_mutex = vm->getMutex();
 }
 
 CLEVER_FORCE_INLINE void VM::increment(IR& op)
