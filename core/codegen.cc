@@ -69,7 +69,7 @@ void Codegen::visit(CriticalBlock* node)
 {
 	m_scope = node->getScope();
 
-	Visitor::visit(static_cast<NodeArray*>(node));
+	node->getBlock()->accept(*this);
 
 	m_scope = m_scope->getParent();
 }
