@@ -134,8 +134,10 @@ void VM::restoreVars() const
 void VM::copy(VM* vm)
 {
 	this->m_pc = vm->m_pc;
-	this->m_scope_pool = vm->m_scope_pool;
-
+	this->m_scope_pool = new ScopePool;
+	for (size_t id = 2; id < vm->m_scope_pool->size(); ++id) {
+		this->m_scope_pool[id] =vm->m_scope_pool[id];
+	}
 	for (size_t i = 0; i < NUM_OPCODES; ++i) {
 		this->m_handlers[i] = vm->m_handlers[i];
 	}
