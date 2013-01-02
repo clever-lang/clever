@@ -300,6 +300,8 @@ void VM::copy(VM* vm)
 		this->m_handlers[i] = vm->m_handlers[i];
 	}
 
+	this->m_tmp_pool = vm->m_tmp_pool;
+	this->m_const_pool = vm->m_const_pool;
 	this->m_call_stack = vm->m_call_stack;
 	this->m_call_args = vm->m_call_args;
 }
@@ -452,7 +454,6 @@ static void* _thread_control(void* arg)
 	Thread* thread = static_cast<Thread*>(arg);
 	VM* vm_handler = thread->vm_handler;
 
-	printf("begin thread %d\n", vm_handler->getPC());
 
 	vm_handler->nextPC();
 	vm_handler->run();
@@ -476,8 +477,6 @@ VM_HANDLER(beginthread)
 	thread->vm_handler = new VM(this->m_inst);
 	thread->vm_handler->copy(this);
 
-	this->m_call_args.clear();
-
 	thread->vm_handler->setChild();
 
 	m_thread_pool.push_back(thread);
@@ -489,6 +488,7 @@ VM_HANDLER(beginthread)
 	pthread_create(&(thread->t_handler), &attr,
 		_thread_control, static_cast<void*>(thread));
 
+	printf("begin thread\n");
 	pthread_attr_destroy(&attr);
 
 	VM_GOTO(op.op1.value_id);

@@ -88,12 +88,9 @@ void Codegen::visit(ThreadBlock* node)
 
 	IR& op = m_ir[bg];
 
-	op.op1.value_id = ed + 1;
+	m_ir[bg].op1 = Operand(JMP_ADDR, ed + 1);
 
 	m_ir.push_back(IR(OP_ETHREAD));
-
-
-	printf("_BEGIN THREAD %d %d\n", bg, ed);
 
 	m_scope = m_scope->getParent();
 }
