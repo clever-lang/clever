@@ -42,7 +42,10 @@ void Compiler::shutdown()
 	m_pkg.shutdown();
 
 	CLEVER_SAFE_DELETE(g_cstring_tbl);
-	CLEVER_SAFE_DELETE(m_scope_pool[0]);
+
+	if (m_scope_id) {
+		CLEVER_SAFE_DELETE(m_scope_pool[0]);
+	}
 
 	ValuePool::const_iterator it2 = m_const_pool.begin(),
 		end2 = m_const_pool.end();

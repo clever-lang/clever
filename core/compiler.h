@@ -40,7 +40,7 @@ public:
 	};
 
 	Compiler()
-		: m_ir(), m_scope(NULL), m_flags(0),
+		: m_ir(), m_flags(0),
 			m_scope_pool(), m_type_pool(), m_const_pool(),m_tmp_pool(),
 			m_scope_id(0), m_const_id(0), m_type_id(0), m_tmp_id(0) {}
 
@@ -77,9 +77,6 @@ private:
 
 	// Vector of instructions to be passed to VM
 	IRVector m_ir;
-
-	// Scope handling
-	Scope* m_scope;
 
 	// Compiler flag
 	size_t m_flags;
