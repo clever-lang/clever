@@ -27,6 +27,8 @@ class Value;
 %union {
 	ast::Node* node;
 	ast::Block* block;
+	ast::ThreadBlock* threadblock;
+	ast::CriticalBlock* criticalblock;
 	ast::NodeArray* narray;
 	ast::Ident* ident;
 	ast::StringLit* strlit;
@@ -55,6 +57,8 @@ class Value;
 %type <narray> variable_decl variable_decl_list non_empty_call_args call_args
 %type <vardecl> variable_decl_impl
 %type <block> statement_list block
+%type <threadblock> thread_block
+%type <criticalblock> critical_block
 %type <arithmetic> arithmetic
 %type <bitwise> bitwise
 %type <logic> logic
@@ -190,11 +194,11 @@ block:
 
 
 thread_block:
-		THREAD block {}
+		THREAD block { $$ = new ast::ThreadBlock(yyloc); }
 ;
 
-critical_bloack:
-		CRITICAL block {}
+critical_block:
+		CRITICAL block { $$ = new ast::CriticalBlock(yyloc); }
 ;
 
 rvalue:
