@@ -59,9 +59,13 @@ static CLEVER_FUNCTION(printf) {
 	const CString *format = args[0]->getStr();
 	if (format) {
 		const char *delim = "{}";
-		char *tokenize = (char*) format->c_str();
+		char *tokenize = (char*) format->c_str();		
+#ifndef _WIN32
 		char *tokenized;
 		char *point = strtok_r(tokenize, delim, &tokenized);
+#else
+		char *pointer = strtok(tokenize, delim);
+#endif
 		if (point) {
 			do {
 				unsigned int arg = atoi(point);
@@ -70,7 +74,11 @@ static CLEVER_FUNCTION(printf) {
 						args[arg]->dump();
 					}
 				} else ::std::cout << point;
+#ifndef _WIN32
 			} while((point = strtok_r(NULL, delim, &tokenized)));
+#else
+			} while((point = strtok(NULL, delim)));
+#endif
 		}
 	}
 }
