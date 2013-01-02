@@ -74,8 +74,7 @@ static CLEVER_FUNCTION(printf) {
 					if (args.size() > arg) {
 						args[arg]->dump();
 					}
-				} 
-				else {
+				} else {
 					::std::cout << point;
 				}
 #ifndef _WIN32
@@ -94,12 +93,11 @@ static CLEVER_FUNCTION(printf) {
 /// Initializes Standard module
 CLEVER_MODULE_INIT(IOModule) {
 	using namespace io;
-	
-	BEGIN_DECLARE_FUNCTION();
 
-	addFunction(new Function("print",       &CLEVER_FUNC_NAME(print)));
-	addFunction(new Function("println",     &CLEVER_FUNC_NAME(println)));
-	addFunction(new Function("printf",		&CLEVER_FUNC_NAME(printf)));
+	BEGIN_DECLARE_FUNCTION();
+	addFunction(new Function("print", &CLEVER_FUNC_NAME(print)));
+	addFunction(new Function("println", &CLEVER_FUNC_NAME(println)));
+	addFunction(new Function("printf", &CLEVER_FUNC_NAME(printf)));
 	END_DECLARE();
 }
 
