@@ -457,7 +457,6 @@ static void* _thread_control(void* arg)
 	vm_handler->nextPC();
 	vm_handler->run();
 
-	pthread_exit(NULL);
 	return NULL;
 }
 

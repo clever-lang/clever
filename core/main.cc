@@ -21,30 +21,30 @@
 
 static void show_usage()
 {
-    std::cout << "Usage: clever <options> [filename]\n\n"
-                 "General options:\n";
+	std::cout << "Usage: clever <options> [filename]\n\n"
+				 "General options:\n";
 
 #ifdef _WIN32
-    std::cout << "\t-b\tRun on background\n";
+	std::cout << "\t-b\tRun on background\n";
 #endif
 
-    std::cout << "\t-h\tHelp\n"
-                 "\t-v\tShow version\n"
-                 "\n";
+	std::cout << "\t-h\tHelp\n"
+				 "\t-v\tShow version\n"
+				 "\n";
 
-    std::cout << "Code options (must be the last one and unique):\n"
-                 "\t-i\tRun the interative mode\n"
-                 "\t-r\tRun the code\n"
-                 "\t-qr\tQuickly run the code (import std automatically)\n"
-                 "\n";
+	std::cout << "Code options (must be the last one and unique):\n"
+				 "\t-i\tRun the interative mode\n"
+				 "\t-r\tRun the code\n"
+				 "\t-qr\tQuickly run the code (import std automatically)\n"
+				 "\n";
 
 #ifdef CLEVER_DEBUG
-    std::cout << "Debug options:\n"
-                 "\t-a\tDump AST\n"
-                 "\t-d\tDump opcode\n"
-                 "\t-O\tPerforms AST optimizations\n"
-                 "\t-p\tTrace parsing\n"
-                 "\n";
+	std::cout << "Debug options:\n"
+				 "\t-a\tDump AST\n"
+				 "\t-d\tDump opcode\n"
+				 "\t-O\tPerforms AST optimizations\n"
+				 "\t-p\tTrace parsing\n"
+				 "\n";
 #endif
 }
 
@@ -74,8 +74,8 @@ int main(int argc, char **argv)
 			std::cout << " (debug)";
 #endif
 			std::cout << "\n"
-                         "Copyright (c) Clever Team\n"
-                         "(built: " __DATE__ " " __TIME__ ")\n";
+						 "Copyright (c) Clever Team\n"
+						 "(built: " __DATE__ " " __TIME__ ")\n";
 
 			return 0;
 #ifdef _WIN32
@@ -101,9 +101,9 @@ int main(int argc, char **argv)
 				if (clever.loadStr(input_line + '\n', false) == 0) {
 					clever.execute(true);
 				}
-  			}
-  			clever.shutdown();
-  			return 0;
+			}
+			clever.shutdown();
+			return 0;
 		} else if (argv[i] == std::string("-r")) {
 			MORE_ARG();
 			inc_arg++;
@@ -147,7 +147,9 @@ int main(int argc, char **argv)
 	argv += inc_arg + 1;
 
 	clever.execute(false);
-    clever.shutdown();
+	clever.shutdown();
 
+
+	pthread_exit(NULL);
 	return 0;
 }
