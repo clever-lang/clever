@@ -60,12 +60,12 @@ void VM::dumpOperand(Operand& op) const
 
 	switch (op.op_type) {
 		case FETCH_VAR:
-			::printf("%3ld:%3ld ", op.value_id, op.scope_id);
+			::printf("%3u:%3u ", op.value_id, op.scope_id);
 			break;
 		case JMP_ADDR:
 		case FETCH_CONST:
 		case FETCH_TMP:
-			::printf("%7ld ", op.value_id);
+			::printf("%7u ", op.value_id);
 			break;
 		case UNUSED:
 			::printf("        ");
@@ -78,7 +78,7 @@ void VM::dumpOpcodes() const
 {
 	for (size_t i = 0, j = m_inst.size(); i < j; ++i) {
 		IR& ir = m_inst[i];
-		::printf("[%03ld] %-12s |", i, get_opcode_name(ir.opcode));
+		::printf("[%03u] %-12s |", i, get_opcode_name(ir.opcode));
 		dumpOperand(ir.op1);
 		dumpOperand(ir.op2);
 		dumpOperand(ir.result);

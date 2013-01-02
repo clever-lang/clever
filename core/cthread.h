@@ -14,18 +14,16 @@ namespace clever {
 
 class Mutex {
 public:
-	Mutex(){ pthread_mutex_init(&mut, &mattr); }
-	~Mutex() { pthread_mutex_destroy(&mut); }
+	Mutex() { pthread_mutex_init(&m_mut, NULL); }
+	
+	~Mutex() { pthread_mutex_destroy(&m_mut); }
 
-	void lock() { pthread_mutex_lock(&mut); }
+	void lock() { pthread_mutex_lock(&m_mut); }
 
-	void unlock() {	pthread_mutex_unlock(&mut); }
+	void unlock() {	pthread_mutex_unlock(&m_mut); }
 private:
-	pthread_mutex_t mut;
-	pthread_mutexattr_t mattr;
+	pthread_mutex_t m_mut;
 };
-
-
 
 } // clever
 
