@@ -34,22 +34,22 @@ typedef std::vector<std::pair<size_t, Value*> > FuncVars;
 
 /// Stackframe representation
 struct StackFrame {
-    size_t ret_addr;     // Return address
-    Value* ret_val;      // Return value
-    Scope* arg_vars;     // Function arguments
-    Scope* local_vars;   // Local variables
-    FuncVars vars;       // Arg and local vars storage
+	size_t ret_addr;     // Return address
+	Value* ret_val;      // Return value
+	Scope* arg_vars;     // Function arguments
+	Scope* local_vars;   // Local variables
+	FuncVars vars;       // Arg and local vars storage
 
-    StackFrame()
-        : ret_addr(0), ret_val(NULL), arg_vars(NULL), local_vars(NULL), vars() {}
+	StackFrame()
+		: ret_addr(0), ret_val(NULL), arg_vars(NULL), local_vars(NULL), vars() {}
 };
 
 class VM;
 
 struct Thread {
-    VM* vm_handler;
-    pthread_t t_handler;
-    pthread_mutex_t m_handler;
+	VM* vm_handler;
+	pthread_t t_handler;
+	pthread_mutex_t m_handler;
 };
 
 /// VM representation
@@ -124,7 +124,7 @@ public:
 	VM_HANDLER_D(jmpz);
 	VM_HANDLER_D(jmpnz);
 	VM_HANDLER_D(fcall);
-	VM_HANDLER_D(threadcall);
+	VM_HANDLER_D(beginthread);
 	VM_HANDLER_D(endthread);
 	VM_HANDLER_D(leave);
 	VM_HANDLER_D(send_val);

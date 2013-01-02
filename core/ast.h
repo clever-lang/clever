@@ -23,6 +23,8 @@ namespace clever { namespace ast {
 class Node;
 class NodeArray;
 class Block;
+class ThreadBlock;
+class CriticalBlock;
 class Assignment;
 class VariableDecl;
 class Arithmetic;
@@ -127,6 +129,24 @@ protected:
 class Block: public NodeArray {
 public:
 	Block(const location& location)
+		: NodeArray(location) {}
+
+	virtual void accept(Visitor& visitor);
+	virtual Node* accept(Transformer& transformer);
+};
+
+class ThreadBlock: public NodeArray {
+public:
+	ThreadBlock(const location& location)
+		: NodeArray(location) {}
+
+	virtual void accept(Visitor& visitor);
+	virtual Node* accept(Transformer& transformer);
+};
+
+class CriticalBlock: public NodeArray {
+public:
+	CriticalBlock(const location& location)
 		: NodeArray(location) {}
 
 	virtual void accept(Visitor& visitor);

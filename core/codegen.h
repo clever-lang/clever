@@ -33,6 +33,8 @@ public:
 	~Codegen() {}
 
 	void visit(Block*);
+	void visit(CriticalBlock*);
+	void visit(ThreadBlock*);
 	void visit(VariableDecl*);
 	void visit(Assignment*);
 	void visit(FunctionCall*);

@@ -22,6 +22,14 @@ void Visitor::visit(Block* node) {
 	Visitor::visit(static_cast<NodeArray*>(node));
 }
 
+void Visitor::visit(CriticalBlock* node) {
+	Visitor::visit(static_cast<NodeArray*>(node));
+}
+
+void Visitor::visit(ThreadBlock* node) {
+	Visitor::visit(static_cast<NodeArray*>(node));
+}
+
 void Visitor::visit(Assignment* node) {
 	node->getLhs()->accept(*this);
 	if (node->getRhs()) {

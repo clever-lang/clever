@@ -60,6 +60,25 @@ void Codegen::visit(Block* node)
 	m_scope = m_scope->getParent();
 }
 
+void Codegen::visit(CriticalBlock* node)
+{
+	m_scope = node->getScope();
+
+	Visitor::visit(static_cast<NodeArray*>(node));
+
+	m_scope = m_scope->getParent();
+}
+
+void Codegen::visit(ThreadBlock* node)
+{
+
+	m_scope = node->getScope();
+
+	Visitor::visit(static_cast<NodeArray*>(node));
+
+	m_scope = m_scope->getParent();
+}
+
 void Codegen::visit(VariableDecl* node)
 {
 	node->getAssignment()->accept(*this);

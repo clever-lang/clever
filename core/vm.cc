@@ -446,7 +446,6 @@ static void* _thread_control(void* arg)
 	Thread* thread = static_cast<Thread*>(arg);
 	VM* vm_handler = thread->vm_handler;
 
-	vm_handler->fcall(vm_handler->getInst()[vm_handler->getPC()]);
 	vm_handler->run();
 
 	return NULL;
@@ -460,7 +459,7 @@ VM_HANDLER(endthread)
 }
 
 // Creates a thread and copy current VM instance
-VM_HANDLER(threadcall)
+VM_HANDLER(beginthread)
 {
 	Thread* thread = new Thread;
 
@@ -503,7 +502,7 @@ void VM::run()
 			case OP_MOD:      mod(m_inst[m_pc]);        break;
 			case OP_JMP:      jmp(m_inst[m_pc]);        break;
 			case OP_FCALL:    fcall(m_inst[m_pc]);      break;
-			case OP_TCALL:    threadcall(m_inst[m_pc]); break;
+			case OP_BTHREAD:  beginthread(m_inst[m_pc]); break;
 			case OP_ETHREAD:  endthread(m_inst[m_pc]);  break;
 			case OP_LEAVE:    leave(m_inst[m_pc]);      break;
 			case OP_SEND_VAL: send_val(m_inst[m_pc]);   break;

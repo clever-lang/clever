@@ -41,6 +41,8 @@ public:
 		return Transformer::transform(static_cast<NodeArray*>(node));
 	}
 
+	virtual Node* transform(CriticalBlock* node) { return node; }
+	virtual Node* transform(ThreadBlock* node) { return node; }
 	virtual Node* transform(Assignment* node) { return node; }
 	virtual Node* transform(VariableDecl* node) { return node; }
 	virtual Node* transform(Arithmetic* node) { return node; }
