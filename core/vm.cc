@@ -405,11 +405,13 @@ void VM::run()
 
 	OP(OP_ETHREAD):
 		if (this->isChild()) {
+			this->getMutex()->lock();
 			for (size_t id = 2; id < m_scope_pool->size(); ++id) {
 				delete m_scope_pool->at(id);
 			}
 
 			delete m_scope_pool;
+			this->getMutex()->unlock();
 
 			VM_EXIT();
 		}
