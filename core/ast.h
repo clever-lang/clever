@@ -139,13 +139,18 @@ public:
 class ThreadBlock: public NodeArray {
 public:
 	ThreadBlock(Block* m_block, const location& location)
-		: NodeArray(location), m_block(m_block) {}
+		: NodeArray(location), m_block(m_block) {
+		CLEVER_ADDREF(m_block);
+	}
+
+	~ThreadBlock() {
+		CLEVER_DELREF(m_block);
+	}
 
 	virtual void accept(Visitor& visitor);
 	virtual Node* accept(Transformer& transformer);
 
 	Block* getBlock() { return m_block; }
-
 protected:
 	Block* m_block;
 };
@@ -153,14 +158,18 @@ protected:
 class CriticalBlock: public NodeArray {
 public:
 	CriticalBlock(Block* m_block, const location& location)
-		: NodeArray(location), m_block(m_block) {}
+		: NodeArray(location), m_block(m_block) {
+		CLEVER_ADDREF(m_block);
+	}
+
+	~CriticalBlock() {
+		CLEVER_DELREF(m_block);
+	}
 
 	virtual void accept(Visitor& visitor);
 	virtual Node* accept(Transformer& transformer);
 
-
 	Block* getBlock() { return m_block; }
-
 protected:
 	Block* m_block;
 };

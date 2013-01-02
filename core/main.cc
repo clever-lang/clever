@@ -152,7 +152,5 @@ int main(int argc, char **argv)
 	clever.execute(false);
 	clever.shutdown();
 
-
-	pthread_exit(NULL);
 	return 0;
 }
