@@ -19,6 +19,7 @@
 namespace clever {
 
 #define OPCODE m_inst[m_pc]
+#define VM_EXIT() goto exit
 
 #if CLEVER_GCC_VERSION > 0
 # define OP(name)    name

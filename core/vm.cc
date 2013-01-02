@@ -391,7 +391,7 @@ void VM::run()
 
 	OP(OP_ETHREAD):
 		if (this->isChild()) {
-			this->m_pc = this->m_inst.size();
+			VM_EXIT();
 		}
 		DISPATCH;
 
@@ -498,7 +498,7 @@ void VM::run()
 		DISPATCH;
 
 	OP(OP_HALT):
-		goto exit;
+		VM_EXIT();
 
 	END_OPCODES;
 exit:
