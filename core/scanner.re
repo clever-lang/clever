@@ -56,6 +56,11 @@ next_token:
 		SKIP();
 	}
 
+	<INITIAL>'null' {
+		yylval->nillit = new ast::NullLit(*yyloc);
+		RET(token::NIL);
+	}
+
 	<INITIAL>'var' { RET(token::VAR); }
 
 	<INITIAL>'or' { RET(token::LOGICAL_OR); }

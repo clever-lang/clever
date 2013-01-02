@@ -59,6 +59,8 @@ void IncDec::accept(Visitor& visitor) { visitor.visit(this); }
 
 void Boolean::accept(Visitor& visitor) { visitor.visit(this); }
 
+void NullLit::accept(Visitor& visitor) { visitor.visit(this); }
+
 // Transformers
 
 Node* Node::accept(Transformer& transformer) { return transformer.transform(this); }
@@ -100,5 +102,7 @@ Node* Import::accept(Transformer& transformer) { return transformer.transform(th
 Node* IncDec::accept(Transformer& transformer) { return transformer.transform(this); }
 
 Node* Boolean::accept(Transformer& transformer) { return transformer.transform(this); }
+
+Node* NullLit::accept(Transformer& transformer) { return transformer.transform(this); }
 
 }} // clever::ast

@@ -23,6 +23,12 @@ static CLEVER_FORCE_INLINE void _prepare_operand(Operand& op, Node* node)
 	}
 }
 
+void Codegen::visit(NullLit* node)
+{
+	// TODO: we should use a fixed constant for NULL
+	node->setConstId(m_compiler->addConstant(new Value()));
+}
+
 void Codegen::visit(IntLit* node)
 {
 	node->setConstId(m_compiler->addConstant(new Value(node->getValue())));

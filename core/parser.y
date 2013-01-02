@@ -45,6 +45,7 @@ class Value;
 	ast::IncDec* inc_dec;
 	ast::If* ifcond;
 	ast::Boolean* boolean;
+	ast::NullLit* nillit;
 }
 
 %type <ident> IDENT
@@ -66,6 +67,7 @@ class Value;
 %type <inc_dec> inc_dec
 %type <ifcond> if else
 %type <boolean> boolean
+%type <nillit> NIL
 
 // The parsing context.
 %parse-param { Driver& driver }
@@ -132,6 +134,7 @@ class Value;
 %token THREAD        "thread"
 %token INC           "++"
 %token DEC           "--"
+%token NIL           "null"
 
 %left ',';
 %left LOGICAL_OR;
@@ -190,6 +193,7 @@ rvalue:
 	|	STR
 	|	NUM_INTEGER
 	|	NUM_DOUBLE
+	|	NIL
 	|	arithmetic
 	|	logic
 	|	bitwise

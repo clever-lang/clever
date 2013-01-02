@@ -49,6 +49,7 @@ public:
 	void visit(If*);
 	void visit(Logic*);
 	void visit(Boolean*);
+	void visit(NullLit*);
 private:
 	IRVector& m_ir;
 	Scope* m_scope;
