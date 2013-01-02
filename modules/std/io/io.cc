@@ -56,15 +56,16 @@ static CLEVER_FUNCTION(println) {
 // printf(string format, [...])
 // Prints and formats a string to standard output without trailing newline
 static CLEVER_FUNCTION(printf) {
-	const CString *format = args[0]->getStr();
+	const CString* format = args[0]->getStr();
 	if (format) {
-		const char *delim = "{}";
-		char *tokenize = (char*) format->c_str();		
+		const char* delim = "{}";
+		char* tokenize = new char[format->size() + 1];
+		::std::strcpy(tokenize, format->c_str());	
 #ifndef _WIN32
-		char *tokenized;
-		char *point = strtok_r(tokenize, delim, &tokenized);
+		char* tokenized;
+		char* point = strtok_r(tokenize, delim, &tokenized);
 #else
-		char *point = strtok(tokenize, delim);
+		char* point = strtok(tokenize, delim);
 #endif
 		if (point) {
 			do {
@@ -73,13 +74,17 @@ static CLEVER_FUNCTION(printf) {
 					if (args.size() > arg) {
 						args[arg]->dump();
 					}
-				} else ::std::cout << point;
+				} else {
+					::std::cout << point;
+				}
 #ifndef _WIN32
 			} while((point = strtok_r(NULL, delim, &tokenized)));
 #else
 			} while((point = strtok(NULL, delim)));
 #endif
 		}
+	
+		delete[] tokenize;
 	}
 }
 
@@ -90,10 +95,9 @@ CLEVER_MODULE_INIT(IOModule) {
 	using namespace io;
 
 	BEGIN_DECLARE_FUNCTION();
-
-	addFunction(new Function("print",       &CLEVER_FUNC_NAME(print)));
-	addFunction(new Function("println",     &CLEVER_FUNC_NAME(println)));
-	addFunction(new Function("printf",		&CLEVER_FUNC_NAME(printf)));
+	addFunction(new Function("print", &CLEVER_FUNC_NAME(print)));
+	addFunction(new Function("println", &CLEVER_FUNC_NAME(println)));
+	addFunction(new Function("printf", &CLEVER_FUNC_NAME(printf)));
 	END_DECLARE();
 }
 
