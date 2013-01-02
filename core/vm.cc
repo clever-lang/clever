@@ -302,8 +302,7 @@ void VM::copy(VM* vm)
 
 	this->m_tmp_pool = vm->m_tmp_pool;
 	this->m_const_pool = vm->m_const_pool;
-	this->m_call_stack = vm->m_call_stack;
-	this->m_call_args = vm->m_call_args;
+	this->f_mutex = vm->getMutex();
 }
 
 // Function call operation
@@ -458,8 +457,10 @@ static void* _thread_control(void* arg)
 	vm_handler->nextPC();
 	vm_handler->run();
 
+	pthread_exit(NULL);
 	return NULL;
 }
+
 
 VM_HANDLER(endthread)
 {
@@ -471,7 +472,6 @@ VM_HANDLER(endthread)
 // Creates a thread and copy current VM instance
 VM_HANDLER(beginthread)
 {
-
 	Thread* thread = new Thread;
 
 	thread->vm_handler = new VM(this->m_inst);
@@ -493,6 +493,19 @@ VM_HANDLER(beginthread)
 	VM_GOTO(op.op1.value_id);
 }
 
+
+VM_HANDLER(lockthread)
+{
+	getMutex()->lock();
+	VM_NEXT();
+}
+
+VM_HANDLER(unlockthread)
+{
+	getMutex()->unlock();
+	VM_NEXT();
+}
+
 // Executes the VM opcodes in a continuation-passing style
 void VM::run()
 {
@@ -501,29 +514,31 @@ void VM::run()
 
 	for (size_t n = m_inst.size(); m_pc < n;) {
 		switch (m_inst[m_pc].opcode) {
-			case OP_RET:      ret(m_inst[m_pc]);        break;
-			case OP_ASSIGN:   assign(m_inst[m_pc]);     break;
-			case OP_ADD:      add(m_inst[m_pc]);        break;
-			case OP_SUB:      sub(m_inst[m_pc]);        break;
-			case OP_MUL:      mul(m_inst[m_pc]);        break;
-			case OP_DIV:      div(m_inst[m_pc]);        break;
-			case OP_MOD:      mod(m_inst[m_pc]);        break;
-			case OP_JMP:      jmp(m_inst[m_pc]);        break;
-			case OP_FCALL:    fcall(m_inst[m_pc]);      break;
-			case OP_BTHREAD:  beginthread(m_inst[m_pc]); break;
-			case OP_ETHREAD:  endthread(m_inst[m_pc]);  break;
-			case OP_LEAVE:    leave(m_inst[m_pc]);      break;
-			case OP_SEND_VAL: send_val(m_inst[m_pc]);   break;
-			case OP_JMPZ:     jmpz(m_inst[m_pc]);       break;
-			case OP_PRE_INC:  inc(m_inst[m_pc]);        break;
-			case OP_PRE_DEC:  dec(m_inst[m_pc]);        break;
-			case OP_POS_INC:  inc(m_inst[m_pc]);        break;
-			case OP_POS_DEC:  dec(m_inst[m_pc]);        break;
-			case OP_JMPNZ:    jmpnz(m_inst[m_pc]);      break;
-			case OP_AND:      land(m_inst[m_pc]);       break;
-			case OP_OR:       lor(m_inst[m_pc]);        break;
-			case OP_EQUAL:    equal(m_inst[m_pc]);      break;
-			case OP_NEQUAL:   nequal(m_inst[m_pc]);     break;
+			case OP_RET:      ret(m_inst[m_pc]);          break;
+			case OP_ASSIGN:   assign(m_inst[m_pc]);       break;
+			case OP_ADD:      add(m_inst[m_pc]);          break;
+			case OP_SUB:      sub(m_inst[m_pc]);          break;
+			case OP_MUL:      mul(m_inst[m_pc]);          break;
+			case OP_DIV:      div(m_inst[m_pc]);          break;
+			case OP_MOD:      mod(m_inst[m_pc]);          break;
+			case OP_JMP:      jmp(m_inst[m_pc]);          break;
+			case OP_FCALL:    fcall(m_inst[m_pc]);        break;
+			case OP_BTHREAD:  beginthread(m_inst[m_pc]);  break;
+			case OP_ETHREAD:  endthread(m_inst[m_pc]);    break;
+			case OP_LEAVE:    leave(m_inst[m_pc]);        break;
+			case OP_SEND_VAL: send_val(m_inst[m_pc]);     break;
+			case OP_JMPZ:     jmpz(m_inst[m_pc]);         break;
+			case OP_PRE_INC:  inc(m_inst[m_pc]);          break;
+			case OP_PRE_DEC:  dec(m_inst[m_pc]);          break;
+			case OP_POS_INC:  inc(m_inst[m_pc]);          break;
+			case OP_POS_DEC:  dec(m_inst[m_pc]);          break;
+			case OP_JMPNZ:    jmpnz(m_inst[m_pc]);        break;
+			case OP_AND:      land(m_inst[m_pc]);         break;
+			case OP_OR:       lor(m_inst[m_pc]);          break;
+			case OP_EQUAL:    equal(m_inst[m_pc]);        break;
+			case OP_NEQUAL:   nequal(m_inst[m_pc]);       break;
+			case OP_LOCK:     lockthread(m_inst[m_pc]);   break;
+			case OP_UNLOCK:   unlockthread(m_inst[m_pc]); break;
 			EMPTY_SWITCH_DEFAULT_CASE();
 		}
 	}

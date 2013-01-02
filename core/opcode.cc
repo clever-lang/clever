@@ -38,6 +38,8 @@ const char* get_opcode_name(Opcode opnum)
 		CASE(OP_OR);
 		CASE(OP_EQUAL);
 		CASE(OP_NEQUAL);
+		CASE(OP_LOCK);
+		CASE(OP_UNLOCK);
 		EMPTY_SWITCH_DEFAULT_CASE();
 	}
 #undef CASE

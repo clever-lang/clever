@@ -66,7 +66,7 @@ public:
 
 	VM(IRVector& inst)
 		: m_pc(0), m_is_main_thread(true), m_inst(inst), m_scope_pool(NULL),
-			m_const_pool(NULL), m_tmp_pool(NULL) {}
+		  m_const_pool(NULL), m_tmp_pool(NULL), m_mutex(), f_mutex(NULL) {}
 	~VM() {}
 
 	void error(ErrorLevel, const char*) const;
@@ -100,6 +100,12 @@ public:
 	void saveVars();
 	void restoreVars() const;
 
+	inline Mutex* getMutex() {
+		if (isChild()) {
+			return f_mutex;
+		}
+		return &m_mutex;
+	}
 	/// Start the VM execution
 	void run();
 
@@ -128,6 +134,8 @@ public:
 	VM_HANDLER_D(fcall);
 	VM_HANDLER_D(beginthread);
 	VM_HANDLER_D(endthread);
+	VM_HANDLER_D(lockthread);
+	VM_HANDLER_D(unlockthread);
 	VM_HANDLER_D(leave);
 	VM_HANDLER_D(send_val);
 	VM_HANDLER_D(inc);
@@ -164,6 +172,9 @@ private:
 	std::vector<Value*> m_call_args;
 
 	ThreadPool m_thread_pool;
+
+	Mutex m_mutex;
+	Mutex* f_mutex;
 
 	DISALLOW_COPY_AND_ASSIGN(VM);
 };

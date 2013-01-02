@@ -84,8 +84,6 @@ static CLEVER_FUNCTION(safeprintln) {
 CLEVER_MODULE_INIT(IOModule) {
 	using namespace io;
 
-	io_mutex.init();
-
 	BEGIN_DECLARE_FUNCTION();
 
 	addFunction(new Function("safeprint",   &CLEVER_FUNC_NAME(safeprint)));

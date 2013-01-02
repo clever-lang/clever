@@ -69,7 +69,9 @@ void Codegen::visit(CriticalBlock* node)
 {
 	m_scope = node->getScope();
 
+	m_ir.push_back(IR(OP_LOCK));
 	node->getBlock()->accept(*this);
+	m_ir.push_back(IR(OP_UNLOCK));
 
 	m_scope = m_scope->getParent();
 }
