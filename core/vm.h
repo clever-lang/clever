@@ -100,11 +100,8 @@ public:
 	void saveVars();
 	void restoreVars() const;
 
-	inline Mutex* getMutex() {
-		if (isChild()) {
-			return f_mutex;
-		}
-		return &m_mutex;
+	Mutex* getMutex() {
+		return isChild() ? f_mutex : &m_mutex;
 	}
 	/// Start the VM execution
 	void run();
