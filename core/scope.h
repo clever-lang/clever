@@ -97,15 +97,11 @@ public:
 	size_t size() const { return m_size; }
 
 	void copy(Scope* s) {
-		size_t n = s->m_value_pool.size();
-
-		m_value_pool.resize(n);
-
-		for (size_t id = 0; id < n; ++id) {
+		for (size_t id = 0; id < s->m_value_pool.size(); ++id) {
 			Value* u = s->m_value_pool[id];
 			Value* v = new Value;
 
-			m_value_pool[id] = v;
+			m_value_pool.push_back(v);
 			v->copy(u);
 		}
 	}
