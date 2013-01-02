@@ -24,6 +24,8 @@
  */
 
 #include <iostream>
+#include <cstdio>
+#include <cstdlib>
 #include "core/cthread.h"
 #include "core/value.h"
 #include "types/function.h"
@@ -51,6 +53,35 @@ static CLEVER_FUNCTION(println) {
 	}
 }
 
+// printf(string format, [...])
+// Prints and formats a string to standard output without trailing newline
+static CLEVER_FUNCTION(printf) {
+	const CString *format = args[0]->getStr();
+	if (format) {
+		const char *delim = "{}";
+		char *tokenize = (char*) format->c_str();		
+#ifndef _WIN32
+		char *tokenized;
+		char *point = strtok_r(tokenize, delim, &tokenized);
+#else
+		char *point = strtok(tokenize, delim);
+#endif
+		if (point) {
+			do {
+				unsigned int arg = atoi(point);
+				if (arg) {
+					if (args.size() > arg) {
+						args[arg]->dump();
+					}
+				} else ::std::cout << point;
+#ifndef _WIN32
+			} while((point = strtok_r(NULL, delim, &tokenized)));
+#else
+			} while((point = strtok(NULL, delim)));
+#endif
+		}
+	}
+}
 
 } // clever::packages::std::io
 
@@ -62,7 +93,7 @@ CLEVER_MODULE_INIT(IOModule) {
 
 	addFunction(new Function("print",       &CLEVER_FUNC_NAME(print)));
 	addFunction(new Function("println",     &CLEVER_FUNC_NAME(println)));
-
+	addFunction(new Function("printf",		&CLEVER_FUNC_NAME(printf)));
 	END_DECLARE();
 }
 
