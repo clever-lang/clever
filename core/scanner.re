@@ -146,7 +146,7 @@ next_token:
 		RET(token::FUNC);
 	}
 
-	<INITIAL>'thread' {
+	<INITIAL>'spawn' {
 		RET(token::THREAD);
 	}
 
