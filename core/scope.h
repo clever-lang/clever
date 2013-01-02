@@ -96,6 +96,20 @@ public:
 
 	size_t size() const { return m_size; }
 
+	void copy(Scope* s) {
+		size_t n = s->m_value_pool.size();
+
+		m_value_pool.resize(n);
+
+		for (size_t id = 0; id < n; ++id) {
+			Value* u = s->m_value_pool[id];
+			Value* v = new Value;
+
+			m_value_pool[id] = v;
+			v->copy(u);
+		}
+	}
+
 	Scope* newLexicalScope() {
 		Scope* s = new Scope(this);
 		m_children.push_back(s);

@@ -134,10 +134,20 @@ void VM::restoreVars() const
 void VM::copy(VM* vm)
 {
 	this->m_pc = vm->m_pc;
-	this->m_scope_pool = new ScopePool;
+
+	this->m_scope_pool = new ScopePool(vm->m_scope_pool->size());
+
+	this->m_scope_pool->at(0) = vm->m_scope_pool->at(0);
+	this->m_scope_pool->at(1) = vm->m_scope_pool->at(1);
+
 	for (size_t id = 2; id < vm->m_scope_pool->size(); ++id) {
-		this->m_scope_pool[id] =vm->m_scope_pool[id];
+		Scope* s = new Scope;
+
+		s->copy(vm->m_scope_pool->at(id));
+
+		this->m_scope_pool->at(id) = s;
 	}
+
 	for (size_t i = 0; i < NUM_OPCODES; ++i) {
 		this->m_handlers[i] = vm->m_handlers[i];
 	}
@@ -393,6 +403,12 @@ void VM::run()
 
 	OP(OP_ETHREAD):
 		if (this->isChild()) {
+			for (size_t id = 2; id < m_scope_pool->size(); ++id) {
+				delete m_scope_pool->at(id);
+			}
+
+			delete m_scope_pool;
+
 			VM_EXIT();
 		}
 		DISPATCH;
