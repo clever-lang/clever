@@ -109,6 +109,11 @@ void Visitor::visit(Boolean* node) {
 	node->getRhs()->accept(*this);
 }
 
+void Visitor::visit(Comparison* node) {
+	node->getLhs()->accept(*this);
+	node->getRhs()->accept(*this);
+}
+
 void Visitor::visit(Import* node) {
 	node->getPackage()->accept(*this);
 

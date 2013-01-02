@@ -236,8 +236,7 @@ void VM::run()
 			// Go back to the caller
 			VM_GOTO(frame.ret_addr);
 		} else {
-			// Terminates the execution
-			VM_GOTO(m_inst.size());
+			VM_EXIT();
 		}
 		DISPATCH;
 
@@ -503,6 +502,18 @@ void VM::run()
 				VM_GOTO(OPCODE.op2.value_id);
 			}
 		}
+		DISPATCH;
+
+	OP(OP_GREATER):
+		DISPATCH;
+
+	OP(OP_GEQUAL):
+		DISPATCH;
+
+	OP(OP_LESS):
+		DISPATCH;
+
+	OP(OP_LEQUAL):
 		DISPATCH;
 
 	OP(OP_EQUAL):

@@ -47,6 +47,7 @@ public:
 	void visit(Ident*);
 	void visit(IncDec*);
 	void visit(Arithmetic*);
+	void visit(Comparison*);
 	void visit(Import*) {}
 	void visit(If*);
 	void visit(Logic*);

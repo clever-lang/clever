@@ -174,6 +174,41 @@ protected:
 	Block* m_block;
 };
 
+class Comparison: public Node {
+public:
+	enum ComparisonOperator {
+		COP_EQUAL,
+		COP_NEQUAL,
+		COP_GREATER,
+		COP_GEQUAL,
+		COP_LESS,
+		COP_LEQUAL
+	};
+
+	Comparison(ComparisonOperator op, Node* lhs, Node* rhs, const location& location)
+		: Node(location), m_op(op), m_lhs(lhs), m_rhs(rhs) {
+		CLEVER_ADDREF(m_lhs);
+		CLEVER_ADDREF(m_rhs);
+	}
+
+	~Comparison() {
+		CLEVER_DELREF(m_lhs);
+		CLEVER_DELREF(m_rhs);
+	}
+
+	ComparisonOperator getOperator() const { return m_op; }
+
+	Node* getLhs() { return m_lhs; }
+	Node* getRhs() { return m_rhs; }
+
+	virtual void accept(Visitor& visitor);
+	virtual Node* accept(Transformer& transformer);
+private:
+	ComparisonOperator m_op;
+	Node* m_lhs;
+	Node* m_rhs;
+};
+
 class Assignment: public Node {
 public:
 	Assignment(Node* lhs, Node* rhs, const location& location)
@@ -324,8 +359,6 @@ private:
 class Logic: public Node {
 public:
 	enum LogicOperator {
-		LOP_EQUALS,
-		LOP_NEQUALS,
 		LOP_OR,
 		LOP_AND
 	};

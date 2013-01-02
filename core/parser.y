@@ -48,6 +48,7 @@ class Value;
 	ast::If* ifcond;
 	ast::Boolean* boolean;
 	ast::NullLit* nillit;
+	ast::Comparison* comp;
 }
 
 %type <ident> IDENT
@@ -72,6 +73,7 @@ class Value;
 %type <ifcond> if else
 %type <boolean> boolean
 %type <nillit> NIL
+%type <comp> comparison
 
 // The parsing context.
 %parse-param { Driver& driver }
@@ -214,6 +216,7 @@ rvalue:
 	|	logic
 	|	bitwise
 	|	boolean
+	|	comparison
 	|	inc_dec
 	|	fcall
 	|	anonymous_fdecl
@@ -231,15 +234,22 @@ inc_dec:
 	|	DEC lvalue { $$ = new ast::IncDec(ast::IncDec::PRE_DEC, $<node>2, yyloc); }
 ;
 
+comparison:
+		rvalue EQUAL rvalue         { $$ = new ast::Comparison(ast::Comparison::COP_EQUAL,   $<node>1, $<node>3, yyloc); }
+	|	rvalue NOT_EQUAL rvalue     { $$ = new ast::Comparison(ast::Comparison::COP_NEQUAL,  $<node>1, $<node>3, yyloc); }
+	|	rvalue GREATER rvalue       { $$ = new ast::Comparison(ast::Comparison::COP_GREATER, $<node>1, $<node>3, yyloc); }
+	|	rvalue GREATER_EQUAL rvalue { $$ = new ast::Comparison(ast::Comparison::COP_GEQUAL,  $<node>1, $<node>3, yyloc); }
+	|	rvalue LESS rvalue          { $$ = new ast::Comparison(ast::Comparison::COP_LESS,    $<node>1, $<node>3, yyloc); }
+	|	rvalue LESS_EQUAL rvalue    { $$ = new ast::Comparison(ast::Comparison::COP_LEQUAL,  $<node>1, $<node>3, yyloc); }
+;
+
 boolean:
 		rvalue BOOLEAN_OR rvalue  { $$ = new ast::Boolean(ast::Boolean::BOP_OR, $<node>1, $<node>3, yyloc);  }
 	|	rvalue BOOLEAN_AND rvalue { $$ = new ast::Boolean(ast::Boolean::BOP_AND, $<node>1, $<node>3, yyloc); }
 ;
 
 logic:
-		rvalue EQUAL rvalue       { $$ = new ast::Logic(ast::Logic::LOP_EQUALS, $<node>1, $<node>3, yyloc);  }
-	|	rvalue NOT_EQUAL rvalue   { $$ = new ast::Logic(ast::Logic::LOP_NEQUALS, $<node>1, $<node>3, yyloc); }
-	|	rvalue LOGICAL_OR rvalue  { $$ = new ast::Logic(ast::Logic::LOP_OR, $<node>1, $<node>3, yyloc);      }
+		rvalue LOGICAL_OR rvalue  { $$ = new ast::Logic(ast::Logic::LOP_OR, $<node>1, $<node>3, yyloc);      }
 	|	rvalue LOGICAL_AND rvalue { $$ = new ast::Logic(ast::Logic::LOP_AND, $<node>1, $<node>3, yyloc);     }
 ;
 

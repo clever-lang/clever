@@ -166,8 +166,6 @@ private:
 	Mutex m_mutex;
 	Mutex* f_mutex;
 
-//	void* m_labels[NUM_OPCODES];
-
 	DISALLOW_COPY_AND_ASSIGN(VM);
 };
 

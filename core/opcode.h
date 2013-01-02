@@ -37,7 +37,11 @@ namespace clever {
 	&&OP_NEQUAL,   \
 	&&OP_LOCK,     \
 	&&OP_UNLOCK,   \
-	&&OP_HALT
+	&&OP_HALT,     \
+	&&OP_GREATER,  \
+	&&OP_GEQUAL,   \
+	&&OP_LESS,     \
+	&&OP_LEQUAL
 #endif
 
 /// VM opcodes
@@ -68,6 +72,10 @@ enum Opcode {
 	OP_LOCK,       //       Used for lock VM
 	OP_UNLOCK,     //       Used for unlock VM
 	OP_HALT,       //  25 - Used for halting VM
+	OP_GREATER,    //       Used for greater than comparison
+	OP_GEQUAL,     //       Used for greater than or equal comparison
+	OP_LESS,       //       Used for less than comparison
+	OP_LEQUAL,     //       Used for less than or equal comparison
 	NUM_OPCODES
 };
 
