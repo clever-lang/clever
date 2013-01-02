@@ -488,7 +488,6 @@ VM_HANDLER(beginthread)
 	pthread_create(&(thread->t_handler), &attr,
 		_thread_control, static_cast<void*>(thread));
 
-	printf("begin thread\n");
 	pthread_attr_destroy(&attr);
 
 	VM_GOTO(op.op1.value_id);
