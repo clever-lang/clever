@@ -67,19 +67,13 @@ void Codegen::visit(Block* node)
 
 void Codegen::visit(CriticalBlock* node)
 {
-	m_scope = node->getScope();
-
 	m_ir.push_back(IR(OP_LOCK));
 	node->getBlock()->accept(*this);
 	m_ir.push_back(IR(OP_UNLOCK));
-
-	m_scope = m_scope->getParent();
 }
 
 void Codegen::visit(ThreadBlock* node)
 {
-	m_scope = node->getScope();
-
 	size_t bg = m_ir.size();
 	m_ir.push_back(IR(OP_BTHREAD, Operand(JMP_ADDR, bg)));
 
@@ -88,8 +82,6 @@ void Codegen::visit(ThreadBlock* node)
 	m_ir.push_back(IR(OP_ETHREAD));
 
 	m_ir[bg].op1 = Operand(JMP_ADDR, m_ir.size());
-
-	m_scope = m_scope->getParent();
 }
 
 void Codegen::visit(VariableDecl* node)
