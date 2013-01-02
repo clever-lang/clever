@@ -76,7 +76,6 @@ void Codegen::visit(CriticalBlock* node)
 
 void Codegen::visit(ThreadBlock* node)
 {
-
 	m_scope = node->getScope();
 
 	size_t bg = m_ir.size();
@@ -84,13 +83,9 @@ void Codegen::visit(ThreadBlock* node)
 
 	node->getBlock()->accept(*this);
 
-	size_t ed = m_ir.size();
-
-	IR& op = m_ir[bg];
-
-	m_ir[bg].op1 = Operand(JMP_ADDR, ed + 1);
-
 	m_ir.push_back(IR(OP_ETHREAD));
+
+	m_ir[bg].op1 = Operand(JMP_ADDR, m_ir.size());
 
 	m_scope = m_scope->getParent();
 }
