@@ -367,6 +367,9 @@ VM_HANDLER(inc)
 {
 	Value* value = getValue(op.op1);
 
+	if (value->isNull()) {
+		error(ERROR, "Cannot increment null value");
+	}
 	if (op.opcode == OP_PRE_INC) {
 		value->getType()->increment(value);
 		getValue(op.result)->copy(value);
@@ -383,6 +386,9 @@ VM_HANDLER(dec)
 {
 	Value* value = getValue(op.op1);
 
+	if (value->isNull()) {
+		error(ERROR, "Cannot decrement null value");
+	}
 	if (op.opcode == OP_PRE_DEC) {
 		value->getType()->decrement(value);
 		getValue(op.result)->copy(value);

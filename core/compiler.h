@@ -68,9 +68,9 @@ public:
 	size_t addScope(Scope*);
 	size_t addConstant(Value*);
 
-	static void error(const char*);
-	static void error(const std::string&, const location&);
-	static void errorf(const location&, const char*, ...);
+	static void error(const char*) CLEVER_NO_RETURN;
+	static void error(const std::string&, const location&) CLEVER_NO_RETURN;
+	static void errorf(const location&, const char*, ...) CLEVER_NO_RETURN;
 private:
 	// Package manager
 	PkgManager m_pkg;
