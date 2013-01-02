@@ -19,19 +19,19 @@
 namespace clever {
 
 #if CLEVER_GCC_VERSION > 0
-# define OPCODE m_inst[m_pc]
-# define OP(name) name
-# define OPCODES static void *m_labels[] = { OP_LABELS }; goto *m_labels[m_inst[m_pc].opcode]
-# define DISPATCH ++m_pc; goto *m_labels[m_inst[m_pc].opcode]
+# define OPCODE      m_inst[m_pc]
+# define OP(name)    name
+# define OPCODES     static void *m_labels[] = { OP_LABELS }; goto *m_labels[m_inst[m_pc].opcode]
+# define DISPATCH    ++m_pc; goto *m_labels[m_inst[m_pc].opcode]
 # define END_OPCODES
-# define VM_GOTO(n) m_pc = n; goto *m_labels[m_inst[m_pc].opcode]
+# define VM_GOTO(n)  m_pc = n; goto *m_labels[m_inst[m_pc].opcode]
 #else
-# define OPCODE m_inst[m_pc]
-# define OP(name) case name
-# define OPCODES for (size_t n = m_inst.size(); m_pc < n;) { switch (m_inst[m_pc].opcode) {
-# define DISPATCH ++m_pc; break
+# define OPCODE      m_inst[m_pc]
+# define OP(name)    case name
+# define OPCODES     for (size_t n = m_inst.size(); m_pc < n;) { switch (m_inst[m_pc].opcode) {
+# define DISPATCH    ++m_pc; break
 # define END_OPCODES EMPTY_SWITCH_DEFAULT_CASE(); } }
-# define VM_GOTO(n) m_pc = n;  break
+# define VM_GOTO(n)  m_pc = n; break
 #endif
 
 // Helper macros to be used to change the VM program counter

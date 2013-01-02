@@ -205,8 +205,6 @@ static void* _thread_control(void* arg)
 // Executes the VM opcodes in a continuation-passing style
 void VM::run()
 {
-	// Loads the opcode handlers
-	// init();
 	OPCODES;
 	OP(OP_RET):
 		if (m_call_stack.size()) {
