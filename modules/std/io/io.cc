@@ -64,7 +64,7 @@ static CLEVER_FUNCTION(printf) {
 		char *tokenized;
 		char *point = strtok_r(tokenize, delim, &tokenized);
 #else
-		char *pointer = strtok(tokenize, delim);
+		char *point = strtok(tokenize, delim);
 #endif
 		if (point) {
 			do {
