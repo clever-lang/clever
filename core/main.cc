@@ -138,7 +138,10 @@ int main(int argc, char **argv)
 			std::cerr << "Unknown option '" << argv[i] << "'" << std::endl;
 			exit(1);
 		} else {
-			clever.loadFile(argv[i]);
+			if (clever.loadFile(argv[i])) {
+				clever.shutdown();
+				exit(1);
+			}
 			break;
 		}
 	}
