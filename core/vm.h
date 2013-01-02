@@ -8,7 +8,7 @@
 #ifndef CLEVER_VM_H
 #define CLEVER_VM_H
 
-#include <vector>
+#include <vector> 
 #include <stack>
 #include "core/cthread.h"
 #include "core/clever.h"
@@ -23,13 +23,16 @@ namespace clever {
 
 #if CLEVER_GCC_VERSION > 0
 # define OP(name)    name
-# define OPCODES     const static void* labels[] = { OP_LABELS }; goto *labels[m_inst[m_pc].opcode]
+# define OPCODES    const static void* labels[] = { OP_LABELS };\
+	if (m_inst.size())\
+		goto *labels[m_inst[m_pc].opcode];\
+	else return;
 # define DISPATCH    ++m_pc; goto *labels[m_inst[m_pc].opcode]
 # define END_OPCODES
 # define VM_GOTO(n)  m_pc = n; goto *labels[m_inst[m_pc].opcode]
 #else
 # define OP(name)    case name
-# define OPCODES     for (;;) { switch (m_inst[m_pc].opcode) {
+# define OPCODES     while (m_inst.size()) { switch (m_inst[m_pc].opcode) {
 # define DISPATCH    ++m_pc; break
 # define END_OPCODES EMPTY_SWITCH_DEFAULT_CASE(); } }
 # define VM_GOTO(n)  m_pc = n; break
