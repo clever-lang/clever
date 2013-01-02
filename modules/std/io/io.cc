@@ -60,7 +60,8 @@ static CLEVER_FUNCTION(printf) {
 	if (format) {
 		const char *delim = "{}";
 		char *tokenize = (char*) format->c_str();
-		char *point = strtok(tokenize, delim);
+		char *tokenized;
+		char *point = strtok_r(tokenize, delim, &tokenized);
 		if (point) {
 			do {
 				unsigned int arg = atoi(point);
@@ -69,7 +70,7 @@ static CLEVER_FUNCTION(printf) {
 						args[arg]->dump();
 					}
 				} else ::std::cout << point;
-			} while(point = strtok(NULL, delim));
+			} while((point = strtok_r(NULL, delim, &tokenized)));
 		}
 	}
 }
