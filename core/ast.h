@@ -41,6 +41,7 @@ class Logic;
 class Bitwise;
 class Import;
 class Boolean;
+class NullLit;
 
 typedef std::vector<Node*> NodeList;
 
@@ -630,6 +631,17 @@ public:
 
 private:
 	const CString* m_value;
+};
+
+class NullLit: public Literal {
+public:
+	NullLit(const location& location)
+		: Literal(location) {}
+
+	~NullLit() {}
+
+	virtual void accept(Visitor& visitor);
+	virtual Node* accept(Transformer& transformer);
 };
 
 class Return: public Node {

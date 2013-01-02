@@ -23,6 +23,11 @@ static CLEVER_FORCE_INLINE void _prepare_operand(Operand& op, Node* node)
 	}
 }
 
+void Codegen::visit(NullLit* node)
+{
+	node->setConstId(0);
+}
+
 void Codegen::visit(IntLit* node)
 {
 	node->setConstId(m_compiler->addConstant(new Value(node->getValue())));
@@ -105,7 +110,7 @@ void Codegen::visit(Assignment* node)
 			Operand(FETCH_VAR, sym->value_id, sym->scope->getId())));
 
 	if (!rhs) {
-		m_ir.back().op2 = Operand(FETCH_TMP, m_compiler->getTempValue());
+		m_ir.back().op2 = Operand(FETCH_CONST, 0); // null
 	} else {
 		_prepare_operand(m_ir.back().op2, rhs);
 	}

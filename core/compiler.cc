@@ -30,6 +30,9 @@ void Compiler::init()
 	m_type_pool.push_back(CLEVER_STR_TYPE    = new StrType);    m_type_id++;
 	m_type_pool.push_back(CLEVER_FUNC_TYPE   = new FuncType);   m_type_id++;
 
+	// Add 'null' to the constant pool
+	addConstant(new Value());
+
 	m_pkg.init();
 }
 

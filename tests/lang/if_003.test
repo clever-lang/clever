@@ -1,5 +1,5 @@
 Testing selector operator
-==CODE=
+==CODE==
 import std.io.*;
 
 println(0 or 2);
@@ -7,6 +7,7 @@ println(0 or 2);
 var a;
 println(a or 1);
 
+a = 0;
 println(++a or 2);
 ==RESULT==
 2
