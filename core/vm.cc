@@ -87,166 +87,6 @@ void VM::dumpOpcodes() const
 }
 #endif
 
-// Return operation
-VM_HANDLER(ret)
-{
-	if (m_call_stack.size()) {
-		const StackFrame& frame = m_call_stack.top();
-
-		if (op.op1.op_type != UNUSED) {
-			const Value* val = getValue(op.op1);
-
-			if (val) {
-				m_call_stack.top().ret_val->copy(getValue(op.op1));
-			}
-		}
-		m_call_stack.pop();
-
-		// Go back to the caller
-		VM_GOTO(frame.ret_addr);
-	} else {
-		// Terminates the execution
-		VM_GOTO(m_inst.size());
-	}
-}
-
-// JMP operation
-VM_HANDLER(jmp)
-{
-	VM_GOTO(op.op1.value_id);
-}
-
-// JMPZ operation
-VM_HANDLER(jmpz)
-{
-	Value* value = getValue(op.op1);
-
-	if (value->isNull() || !value->asBool()) {
-		if (op.result.op_type != UNUSED) {
-			getValue(op.result)->setNull(); // TODO: boolean
-		}
-		VM_GOTO(op.op2.value_id);
-	}
-	if (op.result.op_type != UNUSED) {
-		getValue(op.result)->setInt(1); // TODO: boolean
-	}
-	VM_NEXT();
-}
-
-// JMPNZ operation
-VM_HANDLER(jmpnz)
-{
-	Value* value = getValue(op.op1);
-
-	if (!value->isNull() || value->asBool()) {
-		if (op.result.op_type != UNUSED) {
-			getValue(op.result)->setInt(1); // TODO: boolean
-		}
-		VM_GOTO(op.op2.value_id);
-	}
-	if (op.result.op_type != UNUSED) {
-		getValue(op.result)->setNull(); // TODO: boolean
-	}
-	VM_NEXT();
-}
-
-// Assignment operation
-VM_HANDLER(assign)
-{
-	Value* var = getValue(op.op1);
-	Value* value = getValue(op.op2);
-
-	var->copy(value);
-
-	VM_NEXT();
-}
-
-// Math sum operation
-VM_HANDLER(add)
-{
-	Value* lhs = getValue(op.op1);
-	Value* rhs = getValue(op.op2);
-
-	if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
-		if (lhs->getType() == CLEVER_INT_TYPE
-			&& rhs->getType() == CLEVER_INT_TYPE) {
-			getValue(op.result)->setInt(lhs->getInt() + rhs->getInt());
-			getValue(op.result)->setType(lhs->getType());
-		}
-	} else {
-		error(ERROR, "Operation cannot be executed on null value");
-	}
-
-	VM_NEXT();
-}
-
-// Math subtraction operation
-VM_HANDLER(sub)
-{
-	Value* lhs = getValue(op.op1);
-	Value* rhs = getValue(op.op2);
-
-	if (lhs->getType() == CLEVER_INT_TYPE
-		&& rhs->getType() == CLEVER_INT_TYPE) {
-		getValue(op.result)->setInt(lhs->getInt() - rhs->getInt());
-		getValue(op.result)->setType(lhs->getType());
-	}
-
-	VM_NEXT();
-}
-
-// Math multiplication operation
-VM_HANDLER(mul)
-{
-	Value* lhs = getValue(op.op1);
-	Value* rhs = getValue(op.op2);
-
-	if (lhs->getType() == CLEVER_INT_TYPE
-		&& rhs->getType() == CLEVER_INT_TYPE) {
-		getValue(op.result)->setInt(lhs->getInt() * rhs->getInt());
-		getValue(op.result)->setType(lhs->getType());
-	}
-
-	VM_NEXT();
-}
-
-// Math division operation
-VM_HANDLER(div)
-{
-	Value* lhs = getValue(op.op1);
-	Value* rhs = getValue(op.op2);
-
-	if (lhs->getType() == CLEVER_INT_TYPE
-		&& rhs->getType() == CLEVER_INT_TYPE) {
-		getValue(op.result)->setInt(lhs->getInt() / rhs->getInt());
-		getValue(op.result)->setType(lhs->getType());
-	}
-
-	VM_NEXT();
-}
-
-// Math modulus operation
-VM_HANDLER(mod)
-{
-	Value* lhs = getValue(op.op1);
-	Value* rhs = getValue(op.op2);
-
-	if (lhs->getType() == CLEVER_INT_TYPE
-		&& rhs->getType() == CLEVER_INT_TYPE) {
-		getValue(op.result)->setInt(lhs->getInt() % rhs->getInt());
-	}
-
-	VM_NEXT();
-}
-
-// Receives values to be used in the next function call
-VM_HANDLER(send_val)
-{
-	m_call_args.push_back(getValue(op.op1));
-
-	VM_NEXT();
-}
-
 // Saves function argument and local variables
 void VM::saveVars()
 {/*
@@ -305,71 +145,12 @@ void VM::copy(VM* vm)
 	this->f_mutex = vm->getMutex();
 }
 
-// Function call operation
-VM_HANDLER(fcall)
-{
-	Value* func = getValue(op.op1);
-	Function* fdata = static_cast<Function*>(func->getObj());
-
-	clever_assert_not_null(fdata);
-
-	if (fdata->isUserDefined()) {
-		if (m_call_stack.size()) {
-			saveVars();
-		}
-		m_call_stack.push(StackFrame());
-		m_call_stack.top().ret_addr = m_pc + 1;
-		m_call_stack.top().ret_val  = getValue(op.result);
-
-		// Function argument value binding
-		if (fdata->hasArgs()) {
-			Scope* arg_scope = fdata->getArgVars();
-
-			m_call_stack.top().arg_vars = arg_scope;
-
-			for (size_t i = 0, j = arg_scope->size(); i < j; ++i) {
-				Value* arg_val = getValue(
-					arg_scope->at(i).scope->getId(),
-					arg_scope->at(i).value_id);
-
-				if (i < m_call_args.size()) {
-					arg_val->copy(m_call_args[i]);
-				} else {
-					arg_val->setNull();
-				}
-			}
-		}
-		m_call_args.clear();
-		VM_GOTO(fdata->getAddr());
-	} else {
-		fdata->getPtr()(m_call_args);
-		m_call_args.clear();
-
-		VM_NEXT();
-	}
-}
-
-// Leave operation
-VM_HANDLER(leave)
-{
-	const StackFrame& frame = m_call_stack.top();
-
-	if (m_call_stack.size() > 1) {
-		restoreVars();
-	}
-
-	m_call_stack.pop();
-
-	VM_GOTO(frame.ret_addr);
-}
-
-// Increment operation
-VM_HANDLER(inc)
+CLEVER_FORCE_INLINE void VM::increment(IR& op)
 {
 	Value* value = getValue(op.op1);
 
 	if (value->isNull()) {
-		error(ERROR, "Cannot increment null value");
+		error(VM::ERROR, "Cannot increment null value");
 	}
 	if (op.opcode == OP_PRE_INC) {
 		value->getType()->increment(value);
@@ -378,17 +159,14 @@ VM_HANDLER(inc)
 		getValue(op.result)->copy(value);
 		value->getType()->increment(value);
 	}
-
-	VM_NEXT();
 }
 
-// Decrement operation
-VM_HANDLER(dec)
+CLEVER_FORCE_INLINE void VM::decrement(IR& op)
 {
 	Value* value = getValue(op.op1);
 
 	if (value->isNull()) {
-		error(ERROR, "Cannot decrement null value");
+		error(VM::ERROR, "Cannot decrement null value");
 	}
 	if (op.opcode == OP_PRE_DEC) {
 		value->getType()->decrement(value);
@@ -397,42 +175,6 @@ VM_HANDLER(dec)
 		getValue(op.result)->copy(value);
 		value->getType()->decrement(value);
 	}
-
-	VM_NEXT();
-}
-
-VM_HANDLER(land)
-{
-	Value* lhs = getValue(op.op1);
-
-	if (!lhs->asBool()) {
-		getValue(op.result)->setNull();
-		VM_GOTO(op.op2.value_id);
-	}
-	getValue(op.result)->copy(lhs);
-
-	VM_NEXT();
-}
-
-VM_HANDLER(lor)
-{
-	Value* lhs = getValue(op.op1);
-
-	if (lhs->asBool()) {
-		getValue(op.result)->copy(lhs);
-		VM_GOTO(op.op2.value_id);
-	}
-	VM_NEXT();
-}
-
-VM_HANDLER(equal)
-{
-	VM_NEXT();
-}
-
-VM_HANDLER(nequal)
-{
-	VM_NEXT();
 }
 
 void VM::wait()
@@ -460,88 +202,308 @@ static void* _thread_control(void* arg)
 	return NULL;
 }
 
-
-VM_HANDLER(endthread)
-{
-	if (this->isChild()) {
-		this->m_pc = this->m_inst.size();
-	}
-}
-
-// Creates a thread and copy current VM instance
-VM_HANDLER(beginthread)
-{
-	Thread* thread = new Thread;
-
-	thread->vm_handler = new VM(this->m_inst);
-	thread->vm_handler->copy(this);
-
-	thread->vm_handler->setChild();
-
-	m_thread_pool.push_back(thread);
-
-	pthread_attr_t attr;
-	pthread_attr_init(&attr);
-	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
-
-	pthread_create(&(thread->t_handler), &attr,
-		_thread_control, static_cast<void*>(thread));
-
-	pthread_attr_destroy(&attr);
-
-	VM_GOTO(op.op1.value_id);
-}
-
-
-VM_HANDLER(lockthread)
-{
-	getMutex()->lock();
-	VM_NEXT();
-}
-
-VM_HANDLER(unlockthread)
-{
-	getMutex()->unlock();
-	VM_NEXT();
-}
-
 // Executes the VM opcodes in a continuation-passing style
 void VM::run()
 {
 	// Loads the opcode handlers
 	// init();
+	OPCODES;
+	OP(OP_RET):
+		if (m_call_stack.size()) {
+			const StackFrame& frame = m_call_stack.top();
 
-	for (size_t n = m_inst.size(); m_pc < n;) {
-		switch (m_inst[m_pc].opcode) {
-			case OP_RET:      ret(m_inst[m_pc]);          break;
-			case OP_ASSIGN:   assign(m_inst[m_pc]);       break;
-			case OP_ADD:      add(m_inst[m_pc]);          break;
-			case OP_SUB:      sub(m_inst[m_pc]);          break;
-			case OP_MUL:      mul(m_inst[m_pc]);          break;
-			case OP_DIV:      div(m_inst[m_pc]);          break;
-			case OP_MOD:      mod(m_inst[m_pc]);          break;
-			case OP_JMP:      jmp(m_inst[m_pc]);          break;
-			case OP_FCALL:    fcall(m_inst[m_pc]);        break;
-			case OP_BTHREAD:  beginthread(m_inst[m_pc]);  break;
-			case OP_ETHREAD:  endthread(m_inst[m_pc]);    break;
-			case OP_LEAVE:    leave(m_inst[m_pc]);        break;
-			case OP_SEND_VAL: send_val(m_inst[m_pc]);     break;
-			case OP_JMPZ:     jmpz(m_inst[m_pc]);         break;
-			case OP_PRE_INC:  inc(m_inst[m_pc]);          break;
-			case OP_PRE_DEC:  dec(m_inst[m_pc]);          break;
-			case OP_POS_INC:  inc(m_inst[m_pc]);          break;
-			case OP_POS_DEC:  dec(m_inst[m_pc]);          break;
-			case OP_JMPNZ:    jmpnz(m_inst[m_pc]);        break;
-			case OP_AND:      land(m_inst[m_pc]);         break;
-			case OP_OR:       lor(m_inst[m_pc]);          break;
-			case OP_EQUAL:    equal(m_inst[m_pc]);        break;
-			case OP_NEQUAL:   nequal(m_inst[m_pc]);       break;
-			case OP_LOCK:     lockthread(m_inst[m_pc]);   break;
-			case OP_UNLOCK:   unlockthread(m_inst[m_pc]); break;
-			EMPTY_SWITCH_DEFAULT_CASE();
+			if (OPCODE.op1.op_type != UNUSED) {
+				const Value* val = getValue(OPCODE.op1);
+
+				if (val) {
+					m_call_stack.top().ret_val->copy(getValue(OPCODE.op1));
+				}
+			}
+			m_call_stack.pop();
+
+			// Go back to the caller
+			VM_GOTO(frame.ret_addr);
+		} else {
+			// Terminates the execution
+			VM_GOTO(m_inst.size());
 		}
-	}
+		DISPATCH;
 
+	OP(OP_ASSIGN):
+		{
+			Value* var = getValue(OPCODE.op1);
+			Value* value = getValue(OPCODE.op2);
+
+			var->copy(value);
+		}
+		DISPATCH;
+
+	OP(OP_ADD):
+		{
+			Value* lhs = getValue(OPCODE.op1);
+			Value* rhs = getValue(OPCODE.op2);
+
+			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
+				if (lhs->getType() == CLEVER_INT_TYPE
+					&& rhs->getType() == CLEVER_INT_TYPE) {
+					getValue(OPCODE.result)->setInt(lhs->getInt() + rhs->getInt());
+					getValue(OPCODE.result)->setType(lhs->getType());
+				}
+			} else {
+				error(ERROR, "Operation cannot be executed on null value");
+			}
+		}
+		DISPATCH;
+
+	OP(OP_SUB):
+		{
+			Value* lhs = getValue(OPCODE.op1);
+			Value* rhs = getValue(OPCODE.op2);
+
+			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
+				if (lhs->getType() == CLEVER_INT_TYPE
+					&& rhs->getType() == CLEVER_INT_TYPE) {
+					getValue(OPCODE.result)->setInt(lhs->getInt() - rhs->getInt());
+					getValue(OPCODE.result)->setType(lhs->getType());
+				}
+			} else {
+				error(ERROR, "Operation cannot be executed on null value");
+			}
+		}
+		DISPATCH;
+
+	OP(OP_MUL):
+		{
+			Value* lhs = getValue(OPCODE.op1);
+			Value* rhs = getValue(OPCODE.op2);
+
+			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
+				if (lhs->getType() == CLEVER_INT_TYPE
+					&& rhs->getType() == CLEVER_INT_TYPE) {
+					getValue(OPCODE.result)->setInt(lhs->getInt() * rhs->getInt());
+					getValue(OPCODE.result)->setType(lhs->getType());
+				}
+			} else {
+				error(ERROR, "Operation cannot be executed on null value");
+			}
+		}
+		DISPATCH;
+
+	OP(OP_DIV):
+		{
+			Value* lhs = getValue(OPCODE.op1);
+			Value* rhs = getValue(OPCODE.op2);
+
+			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
+				if (lhs->getType() == CLEVER_INT_TYPE
+					&& rhs->getType() == CLEVER_INT_TYPE) {
+					getValue(OPCODE.result)->setInt(lhs->getInt() / rhs->getInt());
+					getValue(OPCODE.result)->setType(lhs->getType());
+				}
+			} else {
+				error(ERROR, "Operation cannot be executed on null value");
+			}
+		}
+		DISPATCH;
+
+	OP(OP_MOD):
+		{
+			Value* lhs = getValue(OPCODE.op1);
+			Value* rhs = getValue(OPCODE.op2);
+
+			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
+				if (lhs->getType() == CLEVER_INT_TYPE
+					&& rhs->getType() == CLEVER_INT_TYPE) {
+					getValue(OPCODE.result)->setInt(lhs->getInt() % rhs->getInt());
+					getValue(OPCODE.result)->setType(lhs->getType());
+				}
+			} else {
+				error(ERROR, "Operation cannot be executed on null value");
+			}
+		}
+		DISPATCH;
+
+	OP(OP_JMP):
+		VM_GOTO(OPCODE.op1.value_id);
+
+	OP(OP_FCALL):
+		{
+			Value* func = getValue(OPCODE.op1);
+			Function* fdata = static_cast<Function*>(func->getObj());
+
+			clever_assert_not_null(fdata);
+
+			if (fdata->isUserDefined()) {
+				if (m_call_stack.size()) {
+					saveVars();
+				}
+				m_call_stack.push(StackFrame());
+				m_call_stack.top().ret_addr = m_pc + 1;
+				m_call_stack.top().ret_val  = getValue(OPCODE.result);
+
+				// Function argument value binding
+				if (fdata->hasArgs()) {
+					Scope* arg_scope = fdata->getArgVars();
+
+					m_call_stack.top().arg_vars = arg_scope;
+
+					for (size_t i = 0, j = arg_scope->size(); i < j; ++i) {
+						Value* arg_val = getValue(
+							arg_scope->at(i).scope->getId(),
+							arg_scope->at(i).value_id);
+
+						if (i < m_call_args.size()) {
+							arg_val->copy(m_call_args[i]);
+						} else {
+							arg_val->setNull();
+						}
+					}
+				}
+				m_call_args.clear();
+				VM_GOTO(fdata->getAddr());
+			} else {
+				fdata->getPtr()(m_call_args);
+				m_call_args.clear();
+			}
+		}
+		DISPATCH;
+
+	OP(OP_BTHREAD):
+		{
+			Thread* thread = new Thread;
+
+			thread->vm_handler = new VM(this->m_inst);
+			thread->vm_handler->copy(this);
+
+			thread->vm_handler->setChild();
+
+			m_thread_pool.push_back(thread);
+
+			pthread_attr_t attr;
+			pthread_attr_init(&attr);
+			pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
+
+			pthread_create(&(thread->t_handler), &attr,
+				_thread_control, static_cast<void*>(thread));
+
+			pthread_attr_destroy(&attr);
+
+			VM_GOTO(OPCODE.op1.value_id);
+		}
+
+	OP(OP_ETHREAD):
+		if (this->isChild()) {
+			this->m_pc = this->m_inst.size();
+		}
+		DISPATCH;
+
+	OP(OP_LEAVE):
+		{
+			const StackFrame& frame = m_call_stack.top();
+
+			if (m_call_stack.size() > 1) {
+				restoreVars();
+			}
+
+			m_call_stack.pop();
+
+			VM_GOTO(frame.ret_addr);
+		}
+
+	OP(OP_SEND_VAL):
+		m_call_args.push_back(getValue(OPCODE.op1));
+		DISPATCH;
+
+	OP(OP_JMPZ):
+		{
+			Value* value = getValue(OPCODE.op1);
+
+			if (value->isNull() || !value->asBool()) {
+				if (OPCODE.result.op_type != UNUSED) {
+					getValue(OPCODE.result)->setNull(); // TODO: boolean
+				}
+				VM_GOTO(OPCODE.op2.value_id);
+			}
+			if (OPCODE.result.op_type != UNUSED) {
+				getValue(OPCODE.result)->setInt(1); // TODO: boolean
+			}
+		}
+		DISPATCH;
+
+	OP(OP_PRE_INC):
+		increment(OPCODE);
+		DISPATCH;
+
+	OP(OP_PRE_DEC):
+		decrement(OPCODE);
+		DISPATCH;
+
+	OP(OP_POS_INC):
+		increment(OPCODE);
+		DISPATCH;
+
+	OP(OP_POS_DEC):
+		decrement(OPCODE);
+		DISPATCH;
+
+	OP(OP_JMPNZ):
+		{
+			Value* value = getValue(OPCODE.op1);
+
+			if (!value->isNull() || value->asBool()) {
+				if (OPCODE.result.op_type != UNUSED) {
+					getValue(OPCODE.result)->setInt(1); // TODO: boolean
+				}
+				VM_GOTO(OPCODE.op2.value_id);
+			}
+			if (OPCODE.result.op_type != UNUSED) {
+				getValue(OPCODE.result)->setNull(); // TODO: boolean
+			}
+		}
+		DISPATCH;
+
+	OP(OP_AND):
+		{
+			Value* lhs = getValue(OPCODE.op1);
+
+			if (!lhs->asBool()) {
+				getValue(OPCODE.result)->setNull();
+				VM_GOTO(OPCODE.op2.value_id);
+			}
+			getValue(OPCODE.result)->copy(lhs);
+		}
+		DISPATCH;
+
+	OP(OP_OR):
+		{
+			Value* lhs = getValue(OPCODE.op1);
+
+			if (lhs->asBool()) {
+				getValue(OPCODE.result)->copy(lhs);
+				VM_GOTO(OPCODE.op2.value_id);
+			}
+		}
+		DISPATCH;
+
+	OP(OP_EQUAL):
+		DISPATCH;
+
+	OP(OP_NEQUAL):
+		DISPATCH;
+
+	OP(OP_LOCK):
+		getMutex()->lock();
+		DISPATCH;
+
+	OP(OP_UNLOCK):
+		getMutex()->unlock();
+		DISPATCH;
+
+	OP(OP_HALT):
+		goto exit;
+
+	END_OPCODES;
+exit:
 	wait();
 }
 

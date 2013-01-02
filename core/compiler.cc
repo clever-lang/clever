@@ -127,6 +127,8 @@ void Compiler::emitAST(ast::Node* tree)
 		ast::Codegen codegen(m_ir, resolver.getSymTable(), this);
 		tree->accept(codegen);
 
+		m_ir.push_back(IR(OP_HALT));
+
 		delete tree;
 	}
 }

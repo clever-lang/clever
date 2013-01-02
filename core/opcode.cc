@@ -40,6 +40,7 @@ const char* get_opcode_name(Opcode opnum)
 		CASE(OP_NEQUAL);
 		CASE(OP_LOCK);
 		CASE(OP_UNLOCK);
+		CASE(OP_HALT);
 		EMPTY_SWITCH_DEFAULT_CASE();
 	}
 #undef CASE

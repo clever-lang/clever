@@ -18,14 +18,30 @@
 
 namespace clever {
 
+#if CLEVER_GCC_VERSION > 0
+# define OPCODE m_inst[m_pc]
+# define OP(name) name
+# define OPCODES static void *m_labels[] = { OP_LABELS }; goto *m_labels[m_inst[m_pc].opcode]
+# define DISPATCH ++m_pc; goto *m_labels[m_inst[m_pc].opcode]
+# define END_OPCODES
+# define VM_GOTO(n) m_pc = n; goto *m_labels[m_inst[m_pc].opcode]
+#else
+# define OPCODE m_inst[m_pc]
+# define OP(name) case name
+# define OPCODES for (size_t n = m_inst.size(); m_pc < n;) { switch (m_inst[m_pc].opcode) {
+# define DISPATCH ++m_pc; break
+# define END_OPCODES EMPTY_SWITCH_DEFAULT_CASE(); } }
+# define VM_GOTO(n) m_pc = n;  break
+#endif
+
 // Helper macros to be used to change the VM program counter
 #define VM_NEXT() ++m_pc
-#define VM_GOTO(n) m_pc = n; return
+
 
 // Helper macro for opcode handler declaration
 #define VM_HANDLER_ARG IR& op
-#define VM_HANDLER(name) CLEVER_FORCE_INLINE void VM::name(VM_HANDLER_ARG)
-#define VM_HANDLER_D(name) void name(VM_HANDLER_ARG)
+#define VM_HANDLER(name) CLEVER_FORCE_INLINE void VM::vm_##name(VM_HANDLER_ARG)
+#define VM_HANDLER_D(name) void vm_##name(VM_HANDLER_ARG)
 
 class Scope;
 class Value;
@@ -115,32 +131,8 @@ public:
 	void dumpOpcodes() const;
 #endif
 
-	// VM opcode handlers
-	VM_HANDLER_D(var_decl);
-	VM_HANDLER_D(switch_scope);
-	VM_HANDLER_D(ret);
-	VM_HANDLER_D(assign);
-	VM_HANDLER_D(add);
-	VM_HANDLER_D(sub);
-	VM_HANDLER_D(mul);
-	VM_HANDLER_D(div);
-	VM_HANDLER_D(mod);
-	VM_HANDLER_D(jmp);
-	VM_HANDLER_D(jmpz);
-	VM_HANDLER_D(jmpnz);
-	VM_HANDLER_D(fcall);
-	VM_HANDLER_D(beginthread);
-	VM_HANDLER_D(endthread);
-	VM_HANDLER_D(lockthread);
-	VM_HANDLER_D(unlockthread);
-	VM_HANDLER_D(leave);
-	VM_HANDLER_D(send_val);
-	VM_HANDLER_D(inc);
-	VM_HANDLER_D(dec);
-	VM_HANDLER_D(land);
-	VM_HANDLER_D(lor);
-	VM_HANDLER_D(equal);
-	VM_HANDLER_D(nequal);
+	void increment(IR&);
+	void decrement(IR&);
 private:
 	/// VM program counter
 	size_t m_pc;
@@ -172,6 +164,8 @@ private:
 
 	Mutex m_mutex;
 	Mutex* f_mutex;
+
+//	void* m_labels[NUM_OPCODES];
 
 	DISALLOW_COPY_AND_ASSIGN(VM);
 };

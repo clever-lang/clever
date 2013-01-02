@@ -10,6 +10,36 @@
 
 namespace clever {
 
+#ifndef CLEVER_MSVC
+# define OP_LABELS \
+	&&OP_RET, \
+	&&OP_ASSIGN, \
+	&&OP_ADD, \
+	&&OP_SUB, \
+	&&OP_MUL, \
+	&&OP_DIV, \
+	&&OP_MOD, \
+	&&OP_JMP, \
+	&&OP_FCALL, \
+	&&OP_BTHREAD, \
+	&&OP_ETHREAD, \
+	&&OP_LEAVE, \
+	&&OP_SEND_VAL, \
+	&&OP_JMPZ, \
+	&&OP_PRE_INC, \
+	&&OP_PRE_DEC, \
+	&&OP_POS_INC, \
+	&&OP_POS_DEC, \
+	&&OP_JMPNZ, \
+	&&OP_AND, \
+	&&OP_OR, \
+	&&OP_EQUAL, \
+	&&OP_NEQUAL, \
+	&&OP_LOCK, \
+	&&OP_UNLOCK, \
+	&&OP_HALT
+#endif
+
 /// VM opcodes
 enum Opcode {
 	OP_RET,        //   0 - Used for returning
@@ -37,6 +67,7 @@ enum Opcode {
 	OP_NEQUAL,     //       Used for logical not equal operation
 	OP_LOCK,       //       Used for lock vm
 	OP_UNLOCK,     //       Used for unlock vm
+	OP_HALT,
 	NUM_OPCODES
 };
 
