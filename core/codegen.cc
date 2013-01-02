@@ -79,7 +79,21 @@ void Codegen::visit(ThreadBlock* node)
 
 	m_scope = node->getScope();
 
-	Visitor::visit(static_cast<NodeArray*>(node));
+	size_t bg = m_ir.size();
+	m_ir.push_back(IR(OP_BTHREAD, Operand(JMP_ADDR, bg)));
+
+	node->getBlock()->accept(*this);
+
+	size_t ed = m_ir.size();
+
+	IR& op = m_ir[bg];
+
+	op.op1.value_id = ed + 1;
+
+	m_ir.push_back(IR(OP_ETHREAD));
+
+
+	printf("_BEGIN THREAD %d %d\n", bg, ed);
 
 	m_scope = m_scope->getParent();
 }

@@ -197,11 +197,11 @@ block:
 
 
 thread_block:
-		THREAD block { $$ = new ast::ThreadBlock(yyloc); }
+		THREAD block { $$ = new ast::ThreadBlock($2, yyloc); }
 ;
 
 critical_block:
-		CRITICAL block { $$ = new ast::CriticalBlock(yyloc); }
+		CRITICAL block { $$ = new ast::CriticalBlock($2, yyloc); }
 ;
 
 rvalue:

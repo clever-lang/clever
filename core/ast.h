@@ -138,20 +138,31 @@ public:
 
 class ThreadBlock: public NodeArray {
 public:
-	ThreadBlock(const location& location)
-		: NodeArray(location) {}
+	ThreadBlock(Block* m_block, const location& location)
+		: NodeArray(location), m_block(m_block) {}
 
 	virtual void accept(Visitor& visitor);
 	virtual Node* accept(Transformer& transformer);
+
+	Block* getBlock() { return m_block; }
+
+protected:
+	Block* m_block;
 };
 
 class CriticalBlock: public NodeArray {
 public:
-	CriticalBlock(const location& location)
-		: NodeArray(location) {}
+	CriticalBlock(Block* m_block, const location& location)
+		: NodeArray(location), m_block(m_block) {}
 
 	virtual void accept(Visitor& visitor);
 	virtual Node* accept(Transformer& transformer);
+
+
+	Block* getBlock() { return m_block; }
+
+protected:
+	Block* m_block;
 };
 
 class Assignment: public Node {

@@ -27,7 +27,7 @@ void Visitor::visit(CriticalBlock* node) {
 }
 
 void Visitor::visit(ThreadBlock* node) {
-	Visitor::visit(static_cast<NodeArray*>(node));
+	node->getBlock()->accept(*this);
 }
 
 void Visitor::visit(Assignment* node) {

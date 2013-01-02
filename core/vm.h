@@ -88,6 +88,8 @@ public:
 
 	size_t getPC() const { return m_pc; }
 
+	void nextPC() { ++m_pc; }
+
 	IRVector& getInst() const { return m_inst; }
 
 	/// Helper to retrive a Value* from ValuePool

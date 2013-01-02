@@ -446,6 +446,7 @@ static void* _thread_control(void* arg)
 	Thread* thread = static_cast<Thread*>(arg);
 	VM* vm_handler = thread->vm_handler;
 
+	vm_handler->nextPC();
 	vm_handler->run();
 
 	return NULL;
@@ -461,6 +462,8 @@ VM_HANDLER(endthread)
 // Creates a thread and copy current VM instance
 VM_HANDLER(beginthread)
 {
+	printf("_BEGIN THREAD %d %d\n", op.op1.value_id, m_pc);
+
 	Thread* thread = new Thread;
 
 	thread->vm_handler = new VM(this->m_inst);
@@ -481,8 +484,7 @@ VM_HANDLER(beginthread)
 
 	pthread_attr_destroy(&attr);
 
-	VM_NEXT();
-	VM_NEXT();
+	m_pc = op.op1.value_id;
 }
 
 // Executes the VM opcodes in a continuation-passing style
