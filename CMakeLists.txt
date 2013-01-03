@@ -142,6 +142,7 @@ add_executable(clever
 	core/codegen.cc
 	core/clever.cc
 	core/cthread.h
+	core/cthread.cc
 	core/clever.h
 	core/compiler.cc
 	core/compiler.h
