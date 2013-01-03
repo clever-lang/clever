@@ -196,7 +196,7 @@ void VM::wait()
 	for (size_t i = 0, j = m_thread_pool.size(); i < j; ++i) {
 		void* status;
 
-		pthread_join(m_thread_pool[i]->t_handler, &status);
+		status = m_thread_pool[i]->t_handler.wait();
 
 		delete m_thread_pool[i]->vm_handler;
 		delete m_thread_pool[i];
@@ -386,14 +386,8 @@ void VM::run()
 
 			m_thread_pool.push_back(thread);
 
-			pthread_attr_t attr;
-			pthread_attr_init(&attr);
-			pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
-
-			pthread_create(&(thread->t_handler), &attr,
-				_thread_control, static_cast<void*>(thread));
-
-			pthread_attr_destroy(&attr);
+			thread->t_handler.create(_thread_control,
+									 static_cast<void*>(thread));
 
 			VM_GOTO(OPCODE.op1.value_id);
 		}

@@ -65,8 +65,7 @@ class VM;
 
 struct Thread {
 	VM* vm_handler;
-	pthread_t t_handler;
-	pthread_mutex_t m_handler;
+	CThread t_handler;
 };
 
 /// VM representation
