@@ -19,14 +19,14 @@ Resolver::Resolver(Compiler* compiler)
 
 void Resolver::visit(Block* node)
 {
-	m_scope = m_scope->newLexicalScope();
+	m_scope = m_scope->enter();
 	m_scope->setId(m_compiler->addScope(m_scope));
 
 	node->setScope(m_scope);
 
 	Visitor::visit(static_cast<NodeArray*>(node));
 
-	m_scope = m_scope->getParent();
+	m_scope = m_scope->leave();
 }
 
 void Resolver::visit(VariableDecl* node)
@@ -80,7 +80,7 @@ void Resolver::visit(FunctionDecl* node)
 	m_scope->pushValue(name, fval);
 	node->getIdent()->accept(*this);
 
-	m_scope = m_scope->newLexicalScope();
+	m_scope = m_scope->enter();
 	m_scope->setId(m_compiler->addScope(m_scope));
 
 	node->setScope(m_scope);
@@ -97,7 +97,7 @@ void Resolver::visit(FunctionDecl* node)
 
 	node->getBlock()->accept(*this);
 
-	m_scope = m_scope->getParent();
+	m_scope = m_scope->leave();
 }
 
 void Resolver::visit(Ident* node)

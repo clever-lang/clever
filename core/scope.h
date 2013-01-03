@@ -106,10 +106,14 @@ public:
 		}
 	}
 
-	Scope* newLexicalScope() {
+	Scope* enter() {
 		Scope* s = new Scope(this);
 		m_children.push_back(s);
 		return s;
+	}
+
+	Scope* leave() {
+		return m_parent;
 	}
 
 	Scope* getParent() const { return m_parent; }
