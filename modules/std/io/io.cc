@@ -58,7 +58,7 @@ static CLEVER_FUNCTION(print) {
 static CLEVER_FUNCTION(println) {
 	for (size_t i = 0, size = CARG_COUNT(); i < size; ++i) {
 		CARG_DUMP(i);
-		::std::cout << ::std::endl;
+		::std::cout << '\n';
 	}
 }
 
