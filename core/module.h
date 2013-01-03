@@ -34,6 +34,11 @@
 #define CARG_DUMP(index) args[index]->dump()
 /* }}} */
 
+#define CRETURN_STR(r)	
+#define CRETURN_DBL(d)
+#define CRETURN_LONG(l)
+#define CRETURN_OBJ(o)
+
 namespace clever {
 
 typedef std::tr1::unordered_map<const CString*, Function*> FunctionMap;

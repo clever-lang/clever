@@ -36,7 +36,8 @@ namespace clever { namespace packages { namespace std {
 
 namespace io {
 
-#define PRINTF_DELIM "{}"
+#define STDIO_DELIM "{}"
+#define STDIO_MAXBUF 8096
 
 // flush(void)
 // Flushes output buffer (forcefully)
@@ -52,10 +53,6 @@ static CLEVER_FUNCTION(print) {
 	}
 }
 
-static CLEVER_FUNCTION(scan) {
-	
-}
-
 // println(object a, [ ...])
 // Prints the object values with trailing newline
 static CLEVER_FUNCTION(println) {
@@ -69,7 +66,7 @@ static CLEVER_FUNCTION(println) {
 // Prints and formats a string to standard output without trailing newline
 static CLEVER_FUNCTION(printf) {
 	if (CARG_COUNT() > 0) {
-		char* point = strtok(CARG_PSTR(0), PRINTF_DELIM);
+		char* point = strtok(CARG_PSTR(0), STDIO_DELIM);
 		if (point) {
 			do {
 				unsigned int arg = atoi(point);
@@ -80,7 +77,7 @@ static CLEVER_FUNCTION(printf) {
 				} else {
 					::std::cout << point;
 				}
-			} while((point = strtok(NULL, PRINTF_DELIM)));
+			} while((point = strtok(NULL, STDIO_DELIM)));
 		}
 	}
 }
@@ -93,7 +90,6 @@ CLEVER_MODULE_INIT(IOModule) {
 
 	BEGIN_DECLARE_FUNCTION();
 	addFunction(new Function("print", &CLEVER_FUNC_NAME(print)));
-	addFunction(new Function("scan", &CLEVER_FUNC_NAME(scan)));
 	addFunction(new Function("println", &CLEVER_FUNC_NAME(println)));
 	addFunction(new Function("printf", &CLEVER_FUNC_NAME(printf)));
 	addFunction(new Function("flush", &CLEVER_FUNC_NAME(flush)));
