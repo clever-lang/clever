@@ -34,7 +34,7 @@ struct Symbol {
 
 	const CString* name;
 	size_t value_id;
-	Scope *scope;
+	const Scope *scope;
 };
 
 /// Scope representation
@@ -87,9 +87,9 @@ public:
 		return m_value_id++;
 	}
 
-	Value* getValue(size_t idx) { return m_value_pool[idx]; }
+	Value* getValue(size_t idx) const { return m_value_pool[idx]; }
 
-	Symbol& at(size_t idx) { return *m_symbols[idx]; }
+	Symbol& at(size_t idx) const { return *m_symbols[idx]; }
 
 	void setId(size_t id) { m_id = id; }
 

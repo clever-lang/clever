@@ -70,12 +70,12 @@ public:
 	virtual void setValueId(size_t value_id) { m_value_id = value_id; }
 	virtual size_t getValueId() const { return m_value_id; }
 
-	virtual void setScope(Scope* scope) { m_scope = scope; }
-	virtual Scope* getScope() { return m_scope; }
+	virtual void setScope(const Scope* scope) { m_scope = scope; }
+	virtual const Scope* getScope() const { return m_scope; }
 private:
 	const location& m_location;
 	size_t m_value_id;
-	Scope* m_scope;
+	const Scope* m_scope;
 };
 
 class NodeArray: public Node {
