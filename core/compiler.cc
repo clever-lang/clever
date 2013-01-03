@@ -130,7 +130,7 @@ void Compiler::emitAST(ast::Node* tree)
 			m_scope_pool[i]->setId(i);
 		}
 
-		ast::Codegen codegen(m_ir, resolver.getSymTable(), this);
+		ast::Codegen codegen(m_ir, this);
 		tree->accept(codegen);
 
 		m_ir.push_back(IR(OP_HALT));

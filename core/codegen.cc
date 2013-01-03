@@ -45,24 +45,12 @@ void Codegen::visit(StringLit* node)
 
 void Codegen::visit(Ident* node)
 {
-	Symbol* sym = m_scope->getAny(node->getName());
-
-	if (!sym) {
-		Compiler::errorf(node->getLocation(),
-			"Variable `%S' not found!", node->getName());
-	}
-
-	node->setValueId(sym->value_id);
-	node->setScope(sym->scope);
+	node->setValueId(node->getSymbol()->value_id);
 }
 
 void Codegen::visit(Block* node)
 {
-	m_scope = node->getScope();
-
 	Visitor::visit(static_cast<NodeArray*>(node));
-
-	m_scope = m_scope->getParent();
 }
 
 void Codegen::visit(CriticalBlock* node)
@@ -158,15 +146,11 @@ void Codegen::visit(FunctionDecl* node)
 	Function* func = static_cast<Function*>(funcval->getObj());
 	func->setAddr(m_ir.size());
 
-	m_scope = node->getScope();
-
 	if (node->hasArgs()) {
 		node->getArgs()->accept(*this);
 	}
 
 	node->getBlock()->accept(*this);
-
-	m_scope = m_scope->getParent();
 
 	m_ir.push_back(IR(OP_LEAVE));
 
