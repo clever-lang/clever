@@ -36,6 +36,13 @@ CLEVER_FORCE_INLINE Value* VM::getValue(size_t scope_id, size_t value_id) const
 	return (*m_scope_pool)[scope_id]->getValue(value_id);
 }
 
+/// Fetchs a Type ptr from the Symbol table
+CLEVER_FORCE_INLINE const Type* VM::getType(Operand& operand) const
+{
+	return (*m_scope_pool)[operand.scope_id]->getType(operand.value_id);
+}
+
+
 /// Fetchs a Value ptr according to the operand type
 CLEVER_FORCE_INLINE Value* VM::getValue(Operand& operand) const
 {
@@ -55,7 +62,7 @@ CLEVER_FORCE_INLINE Value* VM::getValue(Operand& operand) const
 void VM::dumpOperand(Operand& op) const
 {
 	const char *type[] = {
-		"UNUSED", "FETCH_VAR", "FETCH_CONST", "FETCH_TMP", "JMP_ADDR"
+		"UNUSED", "FETCH_VAR", "FETCH_CONST", "FETCH_TYPE", "FETCH_TMP", "JMP_ADDR"
 	};
 
 	switch (op.op_type) {
@@ -65,6 +72,7 @@ void VM::dumpOperand(Operand& op) const
 		case JMP_ADDR:
 		case FETCH_CONST:
 		case FETCH_TMP:
+		case FETCH_TYPE:
 			::printf("%7zu ", op.value_id);
 			break;
 		case UNUSED:
@@ -503,11 +511,15 @@ void VM::run()
 		DISPATCH;
 
 	OP(OP_NEW):
-		// const Type* type = getType(OPCODE.op1);
+		{
+			const Type* type = getType(OPCODE.op1);
 
-		//if (EXPECTED(!type->isPrimitive())) {
-		//	getValue(OPCODE.result)->setObj(type->allocData(args));
-		//}
+			if (EXPECTED(!type->isPrimitive())) {
+				getValue(OPCODE.result)->setObj(type->allocData());
+			} else {
+				getValue(OPCODE.result)->setType(type);
+			}
+		}
 		DISPATCH;
 
 	OP(OP_MCALL):

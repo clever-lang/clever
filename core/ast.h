@@ -269,10 +269,19 @@ private:
 class Type: public Node {
 public:
 	Type(const CString* name, const location& location)
-		: Node(location), m_name(name) {}
+		: Node(location), m_name(name), m_sym(NULL) {}
 	~Type() {}
+
+	const CString* getName() const { return m_name; }
+
+	void setSymbol(Symbol* sym)	{ m_sym = sym; }
+	Symbol* getSymbol() { return m_sym; }
+
+	virtual void accept(Visitor& visitor);
+	virtual Node* accept(Transformer& transformer);
 private:
 	const CString* m_name;
+	Symbol* m_sym;
 };
 
 class Instantiation: public Node {

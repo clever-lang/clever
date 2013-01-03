@@ -388,7 +388,10 @@ void Codegen::visit(If* node)
 
 void Codegen::visit(Instantiation* node)
 {
-	m_ir.push_back(IR(OP_NEW));
+	Symbol* sym = node->getType()->getSymbol();
+
+	m_ir.push_back(IR(OP_NEW,
+		Operand(FETCH_TYPE, sym->value_id, sym->scope->getId())));
 
 	// TODO(Felipe: Add FETCH_TYPE for doing the instantiation
 	// Make the symbol table works with Type as well

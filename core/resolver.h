@@ -29,6 +29,7 @@ public:
 	virtual void visit(VariableDecl*);
 	virtual void visit(FunctionDecl*);
 	virtual void visit(Ident*);
+	virtual void visit(Type*);
 	virtual void visit(Import*);
 private:
 	Compiler* m_compiler;

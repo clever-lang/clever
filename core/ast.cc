@@ -69,6 +69,8 @@ void Comparison::accept(Visitor& visitor) { visitor.visit(this); }
 
 void Instantiation::accept(Visitor& visitor) { visitor.visit(this); }
 
+void Type::accept(Visitor& visitor) { visitor.visit(this); }
+
 // Transformers
 
 Node* Node::accept(Transformer& transformer) { return transformer.transform(this); }
@@ -120,5 +122,7 @@ Node* NullLit::accept(Transformer& transformer) { return transformer.transform(t
 Node* Comparison::accept(Transformer& transformer) { return transformer.transform(this); }
 
 Node* Instantiation::accept(Transformer& transformer) { return transformer.transform(this); }
+
+Node* Type::accept(Transformer& transformer) { return transformer.transform(this); }
 
 }} // clever::ast

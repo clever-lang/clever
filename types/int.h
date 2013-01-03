@@ -20,6 +20,8 @@ public:
 	IntType() : Type(CSTRING("Int")) {}
 	~IntType() {}
 
+	bool isPrimitive() const { return true; }
+
 	void dump(const void* value) const { std::cout << *(long*)value; }
 
 	CLEVER_TYPE_VIRTUAL_METHOD_DECLARATIONS;

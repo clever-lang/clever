@@ -31,6 +31,8 @@ public:
 	Type(const CString* name) : m_name(name) {}
 	virtual ~Type() {}
 
+	virtual bool isPrimitive() const { return false; }
+
 	/// Method for retrieve the type name
 	const CString* getName() const { return m_name; }
 
@@ -43,7 +45,7 @@ public:
 	virtual void div(CLEVER_TYPE_OPERATOR_ARGS) const = 0;
 	virtual void mod(CLEVER_TYPE_OPERATOR_ARGS) const = 0;
 
-	virtual void* allocData() { return NULL; }
+	virtual void* allocData() const { return NULL; }
 	virtual void deallocData(void* data) {}
 
 	virtual void increment(Value*) const = 0;

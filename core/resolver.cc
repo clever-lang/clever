@@ -117,6 +117,19 @@ void Resolver::visit(Ident* node)
 	node->setScope(sym->scope);
 }
 
+void Resolver::visit(Type* node)
+{
+	Symbol* sym = m_scope->getAny(node->getName());
+
+	if (!sym) {
+		Compiler::errorf(node->getLocation(),
+			"Type `%S' not found.", node->getName());
+	}
+
+	node->setSymbol(sym);
+	node->setScope(sym->scope);
+}
+
 void Resolver::visit(Import* node)
 {
 	if (node->getModule()) {

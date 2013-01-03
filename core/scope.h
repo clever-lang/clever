@@ -111,6 +111,7 @@ public:
 	}
 
 	Value* getValue(size_t idx) const { return m_value_pool[idx]; }
+	const Type* getType(size_t idx) const { return m_type_pool[idx]; }
 
 	Symbol& at(size_t idx) const { return *m_symbols[idx]; }
 
