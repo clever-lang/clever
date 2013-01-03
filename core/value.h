@@ -120,7 +120,7 @@ public:
 	void setStr(const CString* str) { m_data.sval = str; m_type = CLEVER_STR_TYPE; }
 	const CString* getStr() const { return m_data.sval; }
 
-	void copy(Value* value) {
+	void copy(const Value* value) {
 		m_kind = value->getKind();
 		m_type = value->getType();
 		memcpy(&m_data, value->getData(), sizeof(DataValue));

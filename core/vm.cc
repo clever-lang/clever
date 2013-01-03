@@ -319,7 +319,7 @@ void VM::run()
 
 	OP(OP_FCALL):
 		{
-			Value* func = getValue(OPCODE.op1);
+			const Value* func = getValue(OPCODE.op1);
 			Function* fdata = static_cast<Function*>(func->getObj());
 
 			clever_assert_not_null(fdata);
@@ -415,7 +415,7 @@ void VM::run()
 
 	OP(OP_JMPZ):
 		{
-			Value* value = getValue(OPCODE.op1);
+			const Value* value = getValue(OPCODE.op1);
 
 			if (value->isNull() || !value->asBool()) {
 				if (OPCODE.result.op_type != UNUSED) {
@@ -447,7 +447,7 @@ void VM::run()
 
 	OP(OP_JMPNZ):
 		{
-			Value* value = getValue(OPCODE.op1);
+			const Value* value = getValue(OPCODE.op1);
 
 			if (!value->isNull() || value->asBool()) {
 				if (OPCODE.result.op_type != UNUSED) {
@@ -463,7 +463,7 @@ void VM::run()
 
 	OP(OP_AND):
 		{
-			Value* lhs = getValue(OPCODE.op1);
+			const Value* lhs = getValue(OPCODE.op1);
 
 			if (!lhs->asBool()) {
 				getValue(OPCODE.result)->setNull();
@@ -475,7 +475,7 @@ void VM::run()
 
 	OP(OP_OR):
 		{
-			Value* lhs = getValue(OPCODE.op1);
+			const Value* lhs = getValue(OPCODE.op1);
 
 			if (lhs->asBool()) {
 				getValue(OPCODE.result)->copy(lhs);
