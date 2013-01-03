@@ -49,12 +49,16 @@ class Value;
 	ast::Boolean* boolean;
 	ast::NullLit* nillit;
 	ast::Comparison* comp;
+	ast::Type* type;
+	ast::Instantiation* inst;
 }
 
+%type <type> TYPE
 %type <ident> IDENT
 %type <strlit> STR
 %type <intlit> NUM_INTEGER
 %type <dbllit> NUM_DOUBLE
+%type <inst> instantiation
 %type <assignment> assignment
 %type <narray> variable_decl variable_decl_list non_empty_call_args call_args
 %type <vardecl> variable_decl_impl
@@ -142,6 +146,7 @@ class Value;
 %token INC           "++"
 %token DEC           "--"
 %token NIL           "null"
+%token NEW           "new"
 
 %left ',';
 %left LOGICAL_OR;
@@ -197,6 +202,9 @@ block:
 		'{' statement_list '}'  { $$ = $2; }
 ;
 
+instantiation:
+		TYPE '.' NEW { $$ = new ast::Instantiation($1, yyloc); }
+;
 
 thread_block:
 		THREAD block { $$ = new ast::ThreadBlock($2, yyloc); }
@@ -220,6 +228,7 @@ rvalue:
 	|	inc_dec
 	|	fcall
 	|	anonymous_fdecl
+	|	instantiation
 	|	'(' rvalue ')' { $<node>$ = $<node>2; }
 ;
 

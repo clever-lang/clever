@@ -8,7 +8,11 @@
 #ifndef CLEVER_COMPILER_H
 #define CLEVER_COMPILER_H
 
+#ifdef CLEVER_MSVC
+#include <unordered_map>
+#else
 #include <tr1/unordered_map>
+#endif
 #include <vector>
 #include <stack>
 #include <sstream>
@@ -25,7 +29,8 @@ class Value;
 class location;
 class Scope;
 
-typedef std::vector<Type*> TypePool;
+typedef std::tr1::unordered_map<const CString*, Type*> TypePool;
+typedef std::pair<const CString*, Type*> TypePoolEntry;
 
 typedef std::vector<const CString*> ArgDeclList;
 typedef std::vector<std::pair<size_t, size_t> > ArgCallList;
@@ -65,6 +70,7 @@ public:
 
 	const PkgManager& getPkgManager() const { return m_pkg; }
 
+	size_t addType(const CString*, Type*);
 	size_t addScope(Scope*);
 	size_t addConstant(Value*);
 

@@ -41,7 +41,9 @@ namespace clever {
 	&&OP_GREATER,  \
 	&&OP_GEQUAL,   \
 	&&OP_LESS,     \
-	&&OP_LEQUAL
+	&&OP_LEQUAL,   \
+	&&OP_NEW,      \
+	&&OP_MCALL
 #endif
 
 /// VM opcodes
@@ -76,6 +78,8 @@ enum Opcode {
 	OP_GEQUAL,     //       Used for greater than or equal comparison
 	OP_LESS,       //       Used for less than comparison
 	OP_LEQUAL,     //       Used for less than or equal comparison
+	OP_NEW,        //  30 - Used for less than or equal comparison
+	OP_MCALL,      //       Used for method call
 	NUM_OPCODES
 };
 

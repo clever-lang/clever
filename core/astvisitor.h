@@ -44,7 +44,7 @@ public:
 	virtual void visit(Boolean* node);
 	virtual void visit(Comparison* node);
 	virtual void visit(Import* node);
-
+	virtual void visit(Instantiation* node);
 };
 
 }} // clever::ast

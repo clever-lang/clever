@@ -25,10 +25,10 @@ DECLARE_CLEVER_NATIVE_TYPES();
 void Compiler::init()
 {
 	// Native type allocation
-	m_type_pool.push_back(CLEVER_INT_TYPE    = new IntType);    m_type_id++;
-	m_type_pool.push_back(CLEVER_DOUBLE_TYPE = new DoubleType); m_type_id++;
-	m_type_pool.push_back(CLEVER_STR_TYPE    = new StrType);    m_type_id++;
-	m_type_pool.push_back(CLEVER_FUNC_TYPE   = new FuncType);   m_type_id++;
+	addType(CSTRING("Int"),      CLEVER_INT_TYPE    = new IntType);
+	addType(CSTRING("Double"),   CLEVER_DOUBLE_TYPE = new DoubleType);
+	addType(CSTRING("String"),   CLEVER_STR_TYPE    = new StrType);
+	addType(CSTRING("Function"), CLEVER_FUNC_TYPE   = new FuncType);
 
 	// Add 'null' to the constant pool
 	addConstant(new Value());
@@ -67,8 +67,8 @@ void Compiler::shutdown()
 		end = m_type_pool.end();
 
 	while (it != end) {
-		if (*it) {
-			delete *it;
+		if ((*it).second) {
+			delete (*it).second;
 		}
 		++it;
 	}
@@ -133,6 +133,15 @@ void Compiler::emitAST(ast::Node* tree)
 	}
 }
 
+/// Adds a new Type to type pool
+size_t Compiler::addType(const CString* name, Type* type)
+{
+	m_type_pool.insert(TypePoolEntry(name, type));
+
+	return m_type_id++;
+}
+
+/// Adds a new scope to scope pool
 size_t Compiler::addScope(Scope* scope)
 {
 	m_scope_pool.push_back(scope);

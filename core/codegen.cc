@@ -400,4 +400,20 @@ void Codegen::visit(If* node)
 	m_jmps.pop();
 }
 
+void Codegen::visit(Instantiation* node)
+{
+	m_ir.push_back(IR(OP_NEW));
+
+	// TODO(Felipe: Add FETCH_TYPE for doing the instantiation
+	// Make the symbol table works with Type as well
+	// call allocData() from the Type (abstraction of .new)
+	// m_ir.back().op1 = Operand(FETCH_TYPE, type_id, scope_id);
+
+	size_t tmp_id = m_compiler->getTempValue();
+
+	m_ir.back().result = Operand(FETCH_TMP, tmp_id);
+
+	node->setValueId(tmp_id);
+}
+
 }} // clever::ast

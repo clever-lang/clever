@@ -502,6 +502,17 @@ void VM::run()
 		getMutex()->unlock();
 		DISPATCH;
 
+	OP(OP_NEW):
+		// const Type* type = getType(OPCODE.op1);
+
+		//if (EXPECTED(!type->isPrimitive())) {
+		//	getValue(OPCODE.result)->setObj(type->allocData(args));
+		//}
+		DISPATCH;
+
+	OP(OP_MCALL):
+		DISPATCH;
+
 	OP(OP_HALT):
 		VM_EXIT();
 

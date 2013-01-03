@@ -126,4 +126,8 @@ void Visitor::visit(IncDec* node) {
 	node->getVar()->accept(*this);
 }
 
+void Visitor::visit(Instantiation* node) {
+	node->getType()->accept(*this);
+}
+
 }}

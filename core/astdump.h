@@ -41,6 +41,7 @@ public:
 	void visit(StringLit* node)    { std::cout << m_ws << "StringLit" << std::endl;    }
 	void visit(Return* node)       { std::cout << m_ws << "Return" << std::endl;       }
 	void visit(Import* node)       { std::cout << m_ws << "Import" << std::endl;       }
+	void visit(Instantiation* node){ std::cout << m_ws << "Instantiation" << std::endl;}
 
 	void visit(While* node) {
 		std::cout << m_ws << "While" << std::endl;

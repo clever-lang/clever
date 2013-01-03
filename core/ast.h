@@ -266,6 +266,33 @@ private:
 	Symbol* m_sym;
 };
 
+class Type: public Node {
+public:
+	Type(const CString* name, const location& location)
+		: Node(location), m_name(name) {}
+	~Type() {}
+private:
+	const CString* m_name;
+};
+
+class Instantiation: public Node {
+public:
+	Instantiation(Type* type, const location& location)
+		: Node(location), m_type(type) {
+		CLEVER_ADDREF(m_type);
+	}
+	~Instantiation() {
+		CLEVER_DELREF(m_type);
+	}
+
+	Type* getType() { return m_type; }
+
+	virtual void accept(Visitor& visitor);
+	virtual Node* accept(Transformer& transformer);
+private:
+	Type* m_type;
+};
+
 class Import: public Node {
 public:
 	Import(Ident* package, Ident* module, const location& location)

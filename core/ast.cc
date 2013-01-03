@@ -67,6 +67,8 @@ void NullLit::accept(Visitor& visitor) { visitor.visit(this); }
 
 void Comparison::accept(Visitor& visitor) { visitor.visit(this); }
 
+void Instantiation::accept(Visitor& visitor) { visitor.visit(this); }
+
 // Transformers
 
 Node* Node::accept(Transformer& transformer) { return transformer.transform(this); }
@@ -116,5 +118,7 @@ Node* Boolean::accept(Transformer& transformer) { return transformer.transform(t
 Node* NullLit::accept(Transformer& transformer) { return transformer.transform(this); }
 
 Node* Comparison::accept(Transformer& transformer) { return transformer.transform(this); }
+
+Node* Instantiation::accept(Transformer& transformer) { return transformer.transform(this); }
 
 }} // clever::ast
