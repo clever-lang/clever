@@ -1,0 +1,17 @@
+Testing static scope
+==CODE==
+import std.io.*;
+
+var a = 1;
+
+{
+	var a = 2;
+
+	println(a);
+}
+
+println(a);
+
+==RESULT==
+2
+1
