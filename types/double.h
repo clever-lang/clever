@@ -22,6 +22,8 @@ public:
 
 	void dump(const void* value) const { std::cout << *(double*)value; }
 
+	CLEVER_TYPE_VIRTUAL_METHOD_DECLARATIONS;
+
 	void increment(Value* value) const {
 		value->setInt(value->getDouble()+1);
 	}

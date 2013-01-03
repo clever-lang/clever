@@ -24,6 +24,8 @@ public:
 		std::cout << (*(const CString**)value)->c_str();
 	}
 
+	CLEVER_TYPE_VIRTUAL_METHOD_DECLARATIONS;
+
 	void increment(Value* value) const {}
 
 	void decrement(Value* value) const {}

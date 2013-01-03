@@ -167,11 +167,15 @@ add_executable(clever
 	core/vm.cc
 	core/vm.h
 	types/double.h
+	types/double.cc
 	types/int.h
+	types/int.cc
 	types/str.h
+	types/str.cc
 	types/native_types.h
 	types/type.h
 	types/function.h
+	types/function.cc
 	${EXTRA_CLEVER_FILES}
 )
 target_link_libraries(clever ${CLEVER_LIBRARIES})

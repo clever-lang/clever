@@ -255,11 +255,7 @@ void VM::run()
 			Value* rhs = getValue(OPCODE.op2);
 
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
-				if (lhs->getType() == CLEVER_INT_TYPE
-					&& rhs->getType() == CLEVER_INT_TYPE) {
-					getValue(OPCODE.result)->setInt(lhs->getInt() + rhs->getInt());
-					getValue(OPCODE.result)->setType(lhs->getType());
-				}
+				lhs->getType()->add(getValue(OPCODE.result), lhs, rhs);
 			} else {
 				error(ERROR, "Operation cannot be executed on null value");
 			}

@@ -117,6 +117,7 @@ public:
 
 	const DataValue* getData() const { return &m_data; }
 
+	void setStr(const CString* str) { m_data.sval = str; m_type = CLEVER_STR_TYPE; }
 	const CString* getStr() const { return m_data.sval; }
 
 	void copy(Value* value) {

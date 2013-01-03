@@ -12,6 +12,13 @@
 
 namespace clever {
 
+#define CLEVER_TYPE_OPERATOR_ARGS Value* result, const Value* lhs, const Value* rhs
+
+#define CLEVER_TYPE_VIRTUAL_METHOD_DECLARATIONS \
+	void add(CLEVER_TYPE_OPERATOR_ARGS) const
+
+#define CLEVER_TYPE_OPERATOR(name) void name(CLEVER_TYPE_OPERATOR_ARGS) const
+
 class Value;
 
 class Type {
@@ -24,6 +31,8 @@ public:
 
 	/// Virtual method for debug purpose
 	virtual void dump(const void*) const = 0;
+
+	virtual void add(CLEVER_TYPE_OPERATOR_ARGS) const = 0;
 
 	virtual void* allocData() { return NULL; }
 	virtual void deallocData(void* data) {}
