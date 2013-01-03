@@ -14,6 +14,7 @@
 #include <tr1/unordered_map>
 #endif
 #include <vector>
+#include <algorithm>
 #include "core/value.h"
 
 namespace clever {
@@ -114,6 +115,21 @@ public:
 
 	Scope* leave() {
 		return m_parent;
+	}
+
+	std::vector<Scope*> flatten() {
+		std::vector<Scope*> scopes;
+		std::vector<Scope*>::iterator it(m_children.begin()), end(m_children.end());
+
+		scopes.push_back(this);
+
+		for (; it != end; it++) {
+			std::vector<Scope*> flattened = (*it)->flatten();
+
+			std::copy(flattened.begin(), flattened.end(), scopes.end());
+		}
+
+		return scopes;
 	}
 
 	Scope* getParent() const { return m_parent; }
