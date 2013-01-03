@@ -14,7 +14,7 @@ namespace clever {
 CLEVER_TYPE_OPERATOR(StrType::add)
 {
 	if (EXPECTED(rhs->getType() == this)) {
-		// TODO: Do not require CString everywhere (because it stores the
+		// TODO(Felipe): Do not require CString everywhere (because it stores the
 		// data in an string table)
 		result->setStr(CSTRING(*lhs->getStr() + *rhs->getStr()));
 	}
