@@ -1,3 +1,10 @@
+/**
+ * Clever programming language
+ * Copyright (c) Clever Team
+ *
+ * This file is distributed under the MIT license. See LICENSE for details.
+ */
+
 #include "core/cthread.h"
 
 namespace clever {
@@ -22,19 +29,13 @@ void Mutex::unlock()
 	pthread_mutex_unlock(&m_mut);
 }
 
-
-CThread::CThread()
-{
-}
-
 void CThread::create(ThreadFunc thread_func, void* args)
 {
 	pthread_attr_t attr;
 	pthread_attr_init(&attr);
 	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
 
-	pthread_create(&t_handler, &attr,
-		thread_func, args);
+	pthread_create(&t_handler, &attr, thread_func, args);
 
 	pthread_attr_destroy(&attr);
 }
@@ -48,4 +49,4 @@ void* CThread::wait()
 	return status;
 }
 
-}
+} // clever

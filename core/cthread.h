@@ -30,7 +30,9 @@ typedef void* (*ThreadFunc)(void*);
 
 class CThread {
 public:
-	CThread();
+	CThread() {}
+
+	~CThread() {}
 
 	void create(ThreadFunc thread_func, void* args);
 
