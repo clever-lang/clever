@@ -43,7 +43,7 @@ void Compiler::shutdown()
 
 	CLEVER_SAFE_DELETE(g_cstring_tbl);
 
-	if (m_scope_id) {
+	if (m_scope_pool.size()) {
 		CLEVER_SAFE_DELETE(m_scope_pool[0]);
 	}
 
@@ -124,6 +124,12 @@ void Compiler::emitAST(ast::Node* tree)
 		ast::Resolver resolver(this);
 		tree->accept(resolver);
 
+		m_scope_pool = resolver.getSymTable()->flatten();
+
+		for (size_t i = 0; i < m_scope_pool.size(); i++) {
+			m_scope_pool[i]->setId(i);
+		}
+
 		ast::Codegen codegen(m_ir, resolver.getSymTable(), this);
 		tree->accept(codegen);
 
@@ -139,14 +145,6 @@ size_t Compiler::addType(const CString* name, Type* type)
 	m_type_pool.insert(TypePoolEntry(name, type));
 
 	return m_type_id++;
-}
-
-/// Adds a new scope to scope pool
-size_t Compiler::addScope(Scope* scope)
-{
-	m_scope_pool.push_back(scope);
-
-	return m_scope_id++;
 }
 
 /// Adds a new constant value to the constant pool

@@ -11,16 +11,14 @@
 namespace clever { namespace ast {
 
 Resolver::Resolver(Compiler* compiler)
-	: Visitor(), m_compiler(compiler), m_symtable(new Scope()), m_scope(m_symtable)
+	: Visitor(), m_compiler(compiler)
 {
-
-	m_scope->setId(m_compiler->addScope(m_scope));
+	m_symtable = m_scope = new Scope();
 }
 
 void Resolver::visit(Block* node)
 {
 	m_scope = m_scope->enter();
-	m_scope->setId(m_compiler->addScope(m_scope));
 
 	node->setScope(m_scope);
 
@@ -81,7 +79,6 @@ void Resolver::visit(FunctionDecl* node)
 	node->getIdent()->accept(*this);
 
 	m_scope = m_scope->enter();
-	m_scope->setId(m_compiler->addScope(m_scope));
 
 	node->setScope(m_scope);
 

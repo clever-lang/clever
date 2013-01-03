@@ -15,7 +15,7 @@
 
 namespace clever {
 class Scope;
-class Symbol;
+struct Symbol;
 }
 
 namespace clever { namespace ast {

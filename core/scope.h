@@ -125,8 +125,7 @@ public:
 
 		for (; it != end; it++) {
 			std::vector<Scope*> flattened = (*it)->flatten();
-
-			std::copy(flattened.begin(), flattened.end(), scopes.end());
+			scopes.insert(scopes.end(), flattened.begin(), flattened.end());
 		}
 
 		return scopes;
