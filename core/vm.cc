@@ -204,9 +204,7 @@ void VM::wait()
 
 static void* _thread_control(void* arg)
 {
-	Thread* thread = static_cast<Thread*>(arg);
-	VM* vm_handler = thread->vm_handler;
-
+	VM* vm_handler = static_cast<Thread*>(arg)->vm_handler;
 
 	vm_handler->nextPC();
 	vm_handler->run();
@@ -214,7 +212,9 @@ static void* _thread_control(void* arg)
 	return NULL;
 }
 
-// Executes the VM opcodes in a continuation-passing style
+// Executes the VM opcodes
+// When building on GCC the code will use direct threading code, otherwise
+// the switch-based dispatching is used
 void VM::run()
 {
 	OPCODES;
@@ -241,7 +241,7 @@ void VM::run()
 	OP(OP_ASSIGN):
 		{
 			Value* var = getValue(OPCODE.op1);
-			Value* value = getValue(OPCODE.op2);
+			const Value* value = getValue(OPCODE.op2);
 
 			var->copy(value);
 		}
