@@ -22,16 +22,23 @@ namespace clever {
 class Value;
 class Scope;
 
+typedef std::vector<Type*> TypePool;
 typedef std::vector<Value*> ValuePool;
 
 /// Symbol representation
 struct Symbol {
+	enum SymbolType { TYPE, VAR };
+
 	Symbol() {}
-	Symbol(const CString *name_, size_t value_id_, Scope *scope_ = NULL)
-		: name(name_), value_id(value_id_), scope(scope_) {}
+	Symbol(SymbolType type, const CString *name_, size_t value_id_, Scope *scope_ = NULL)
+		: m_type(type), name(name_), value_id(value_id_), scope(scope_) {}
 
 	~Symbol() {}
 
+	bool isType() const { return m_type == TYPE; }
+	bool isVar() const { return m_type == VAR; }
+
+	SymbolType m_type;
 	const CString* name;
 	size_t value_id;
 	const Scope *scope;
@@ -47,11 +54,11 @@ public:
 
 	Scope()
 		: m_parent(NULL), m_children(), m_symbols(), m_size(0), m_id(0),
-			m_value_id(0), m_value_pool() {}
+			m_value_id(0), m_type_id(0), m_value_pool() {}
 
 	explicit Scope(Scope* parent)
 		: m_parent(parent), m_children(), m_symbols(), m_size(0), m_id(0),
-			m_value_id(0), m_value_pool() {}
+			m_value_id(0), m_type_id(0), m_value_pool() {}
 
 	~Scope() {
 		ValuePool::const_iterator itv = m_value_pool.begin(),
@@ -77,10 +84,26 @@ public:
 			delete *its;
 			++its;
 		}
+
+		TypePool::const_iterator itt = m_type_pool.begin(),
+			endt = m_type_pool.end();
+
+		while (itt != endt) {
+			delete *itt;
+			++itt;
+		}
+	}
+
+	size_t pushType(const CString* name, Type* type) {
+		m_symbols.push_back(new Symbol(Symbol::TYPE, name, m_type_id, this));
+		m_symbol_table.insert(SymbolEntry(name, m_size++));
+		m_type_pool.push_back(type);
+
+		return m_type_id++;
 	}
 
 	size_t pushValue(const CString* name, Value* value) {
-		m_symbols.push_back(new Symbol(name, m_value_id, this));
+		m_symbols.push_back(new Symbol(Symbol::VAR, name, m_value_id, this));
 		m_symbol_table.insert(SymbolEntry(name, m_size++));
 		m_value_pool.push_back(value);
 
@@ -143,7 +166,10 @@ private:
 	size_t m_size;
 	size_t m_id;
 	size_t m_value_id;
+	size_t m_type_id;
+
 	ValuePool m_value_pool;
+	TypePool m_type_pool;
 
 	DISALLOW_COPY_AND_ASSIGN(Scope);
 };

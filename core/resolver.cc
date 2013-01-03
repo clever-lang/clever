@@ -5,6 +5,7 @@
  * This file is distributed under the MIT license. See LICENSE for details.
  */
 
+#include "types/native_types.h"
 #include "core/resolver.h"
 #include "core/compiler.h"
 
@@ -14,6 +15,12 @@ Resolver::Resolver(Compiler* compiler)
 	: Visitor(), m_compiler(compiler)
 {
 	m_symtable = m_scope = new Scope();
+
+	// Native type allocation
+	m_symtable->pushType(CSTRING("Int"),      CLEVER_INT_TYPE    = new IntType);
+	m_symtable->pushType(CSTRING("Double"),   CLEVER_DOUBLE_TYPE = new DoubleType);
+	m_symtable->pushType(CSTRING("String"),   CLEVER_STR_TYPE    = new StrType);
+	m_symtable->pushType(CSTRING("Function"), CLEVER_FUNC_TYPE   = new FuncType);
 }
 
 void Resolver::visit(Block* node)

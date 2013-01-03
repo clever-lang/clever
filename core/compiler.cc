@@ -10,7 +10,6 @@
 #include "core/scope.h"
 #include "core/value.h"
 #include "core/location.hh"
-#include "types/native_types.h"
 #include "core/astdump.h"
 #include "core/codegen.h"
 #include "core/evaluator.h"
@@ -24,12 +23,6 @@ DECLARE_CLEVER_NATIVE_TYPES();
 /// Compiler initialization phase
 void Compiler::init()
 {
-	// Native type allocation
-	addType(CSTRING("Int"),      CLEVER_INT_TYPE    = new IntType);
-	addType(CSTRING("Double"),   CLEVER_DOUBLE_TYPE = new DoubleType);
-	addType(CSTRING("String"),   CLEVER_STR_TYPE    = new StrType);
-	addType(CSTRING("Function"), CLEVER_FUNC_TYPE   = new FuncType);
-
 	// Add 'null' to the constant pool
 	addConstant(new Value());
 
@@ -42,10 +35,6 @@ void Compiler::shutdown()
 	m_pkg.shutdown();
 
 	CLEVER_SAFE_DELETE(g_cstring_tbl);
-
-	if (m_scope_pool.size()) {
-		CLEVER_SAFE_DELETE(m_scope_pool[0]);
-	}
 
 	ValuePool::const_iterator it2 = m_const_pool.begin(),
 		end2 = m_const_pool.end();
@@ -63,14 +52,8 @@ void Compiler::shutdown()
 		++it3;
 	}
 
-	TypePool::const_iterator it = m_type_pool.begin(),
-		end = m_type_pool.end();
-
-	while (it != end) {
-		if ((*it).second) {
-			delete (*it).second;
-		}
-		++it;
+	if (m_scope_pool.size()) {
+		CLEVER_SAFE_DELETE(m_scope_pool[0]);
 	}
 }
 
@@ -137,14 +120,6 @@ void Compiler::emitAST(ast::Node* tree)
 
 		delete tree;
 	}
-}
-
-/// Adds a new Type to type pool
-size_t Compiler::addType(const CString* name, Type* type)
-{
-	m_type_pool.insert(TypePoolEntry(name, type));
-
-	return m_type_id++;
 }
 
 /// Adds a new constant value to the constant pool

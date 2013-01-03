@@ -29,9 +29,6 @@ class Value;
 class location;
 class Scope;
 
-typedef std::tr1::unordered_map<const CString*, Type*> TypePool;
-typedef std::pair<const CString*, Type*> TypePoolEntry;
-
 typedef std::vector<const CString*> ArgDeclList;
 typedef std::vector<std::pair<size_t, size_t> > ArgCallList;
 
@@ -46,8 +43,8 @@ public:
 
 	Compiler()
 		: m_ir(), m_flags(0),
-			m_scope_pool(), m_type_pool(), m_const_pool(),m_tmp_pool(),
-			m_scope_id(0), m_const_id(0), m_type_id(0), m_tmp_id(0) {}
+			m_scope_pool(), m_const_pool(),m_tmp_pool(),
+			m_scope_id(0), m_const_id(0), m_tmp_id(0) {}
 
 	~Compiler() {}
 
@@ -70,7 +67,6 @@ public:
 
 	const PkgManager& getPkgManager() const { return m_pkg; }
 
-	size_t addType(const CString*, Type*);
 	size_t addConstant(Value*);
 
 	static void error(const char*) CLEVER_NO_RETURN;
@@ -88,14 +84,12 @@ private:
 
 	// Compiler pools, which got passed to VM after compiling
 	ScopePool m_scope_pool;
-	TypePool m_type_pool;
 	ValuePool m_const_pool;
 	ValuePool m_tmp_pool;
 
 	// Indexes for pools
 	size_t m_scope_id;
 	size_t m_const_id;
-	size_t m_type_id;
 	size_t m_tmp_id;
 
 	DISALLOW_COPY_AND_ASSIGN(Compiler);

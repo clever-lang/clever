@@ -56,7 +56,9 @@ void Codegen::visit(Block* node)
 void Codegen::visit(CriticalBlock* node)
 {
 	m_ir.push_back(IR(OP_LOCK));
+
 	node->getBlock()->accept(*this);
+
 	m_ir.push_back(IR(OP_UNLOCK));
 }
 
