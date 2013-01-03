@@ -1,0 +1,18 @@
+Simple string test
+==CODE==
+import std.io.*;
+
+println("Hello clever");
+
+printf("Testing the {1} function\n", "printf");
+printf("Testing the {2} function with {1} items\n", "two", "printf");
+var a = "10";
+printf("One more test with {1} {2} {3} {4} {5} {6} {7} {8} {9} {10}\n", 1, "two", 3, 4, 5, "six", 7, 8, 9, a);
+
+print("Print without new line");
+==RESULT==
+Hello clever
+Testing the printf function
+Testing the printf function with two items
+One more test with 1 two 3 4 5 six 7 8 9 10
+Print without new line
