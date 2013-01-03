@@ -194,9 +194,7 @@ CLEVER_FORCE_INLINE void VM::decrement(IR& op)
 void VM::wait()
 {
 	for (size_t i = 0, j = m_thread_pool.size(); i < j; ++i) {
-		void* status;
-
-		status = m_thread_pool[i]->t_handler.wait();
+		m_thread_pool[i]->t_handler.wait();
 
 		delete m_thread_pool[i]->vm_handler;
 		delete m_thread_pool[i];
