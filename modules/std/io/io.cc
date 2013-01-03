@@ -52,12 +52,16 @@ static CLEVER_FUNCTION(print) {
 	}
 }
 
+static CLEVER_FUNCTION(scan) {
+	
+}
+
 // println(object a, [ ...])
 // Prints the object values with trailing newline
 static CLEVER_FUNCTION(println) {
 	for (size_t i = 0, size = CARG_COUNT(); i < size; ++i) {
 		CARG_DUMP(i);
-		::std::cout << endl;
+		::std::cout << ::std::endl;
 	}
 }
 
@@ -89,6 +93,7 @@ CLEVER_MODULE_INIT(IOModule) {
 
 	BEGIN_DECLARE_FUNCTION();
 	addFunction(new Function("print", &CLEVER_FUNC_NAME(print)));
+	addFunction(new Function("scan", &CLEVER_FUNC_NAME(scan)));
 	addFunction(new Function("println", &CLEVER_FUNC_NAME(println)));
 	addFunction(new Function("printf", &CLEVER_FUNC_NAME(printf)));
 	addFunction(new Function("flush", &CLEVER_FUNC_NAME(flush)));
