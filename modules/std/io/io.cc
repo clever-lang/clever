@@ -36,41 +36,47 @@ namespace clever { namespace packages { namespace std {
 
 namespace io {
 
+#define PRINTF_DELIM "{}"
+
+// flush(void)
+// Flushes output buffer (forcefully)
+static CLEVER_FUNCTION(flush) {
+	fflush(stdout);
+}
+
 // print(object a, [ ...])
 // Prints the object values without trailing newline
 static CLEVER_FUNCTION(print) {
-	for (size_t i = 0, size = args.size(); i < size; ++i) {
-		args[i]->dump();
+	for (size_t i = 0, size = CARG_COUNT(); i < size; ++i) {
+		CARG_DUMP(i);
 	}
 }
 
 // println(object a, [ ...])
 // Prints the object values with trailing newline
 static CLEVER_FUNCTION(println) {
-	for (size_t i = 0, size = args.size(); i < size; ++i) {
-		args[i]->dump();
-		::std::cout << '\n';
+	for (size_t i = 0, size = CARG_COUNT(); i < size; ++i) {
+		CARG_DUMP(i);
+		::std::cout << endl;
 	}
 }
 
 // printf(string format, [...])
 // Prints and formats a string to standard output without trailing newline
 static CLEVER_FUNCTION(printf) {
-	const CString* format = args[0]->getStr();
-	if (format) {
-		const char* delim = "{}";
-		char* point = strtok((char*)format->c_str(), delim);
+	if (CARG_COUNT() > 0) {
+		char* point = strtok(CARG_PSTR(0), PRINTF_DELIM);
 		if (point) {
 			do {
 				unsigned int arg = atoi(point);
 				if (arg) {
 					if (args.size() > arg) {
-						args[arg]->dump();
+						CARG_DUMP(arg);
 					}
 				} else {
 					::std::cout << point;
 				}
-			} while((point = strtok(NULL, delim)));
+			} while((point = strtok(NULL, PRINTF_DELIM)));
 		}
 	}
 }
@@ -85,6 +91,7 @@ CLEVER_MODULE_INIT(IOModule) {
 	addFunction(new Function("print", &CLEVER_FUNC_NAME(print)));
 	addFunction(new Function("println", &CLEVER_FUNC_NAME(println)));
 	addFunction(new Function("printf", &CLEVER_FUNC_NAME(printf)));
+	addFunction(new Function("flush", &CLEVER_FUNC_NAME(flush)));
 	END_DECLARE();
 }
 

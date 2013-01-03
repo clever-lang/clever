@@ -21,6 +21,19 @@
 #define CLEVER_MODULE_VIRTUAL_METHODS_DECLARATION \
 	void init(int flags);
 
+/* {{{ Accessor Macros for Function Arguments */
+#define CARG_COUNT		 args.size
+/* {{{ CString */
+#define CARG_CSTR(index) args[index]->getStr() /* }}} */
+/* {{{ String Pointer */
+#define CARG_PSTR(index) ((char*) (args[index]->getStr())->c_str()) /* }}} */
+#define CARG_DBL(index)	 args[index]->getDouble()
+#define CARG_LONG(index) args[index]->getLong()
+#define CARG_OBJ(index)	 args[index]->getObj()
+#define CARG_DATA(index) args[index]->getData()
+#define CARG_DUMP(index) args[index]->dump()
+/* }}} */
+
 namespace clever {
 
 typedef std::tr1::unordered_map<const CString*, Function*> FunctionMap;
