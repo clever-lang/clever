@@ -251,8 +251,8 @@ void VM::run()
 
 	OP(OP_ADD):
 		{
-			Value* lhs = getValue(OPCODE.op1);
-			Value* rhs = getValue(OPCODE.op2);
+			const Value* lhs = getValue(OPCODE.op1);
+			const Value* rhs = getValue(OPCODE.op2);
 
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
 				lhs->getType()->add(getValue(OPCODE.result), lhs, rhs);
@@ -264,15 +264,11 @@ void VM::run()
 
 	OP(OP_SUB):
 		{
-			Value* lhs = getValue(OPCODE.op1);
-			Value* rhs = getValue(OPCODE.op2);
+			const Value* lhs = getValue(OPCODE.op1);
+			const Value* rhs = getValue(OPCODE.op2);
 
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
-				if (lhs->getType() == CLEVER_INT_TYPE
-					&& rhs->getType() == CLEVER_INT_TYPE) {
-					getValue(OPCODE.result)->setInt(lhs->getInt() - rhs->getInt());
-					getValue(OPCODE.result)->setType(lhs->getType());
-				}
+				lhs->getType()->sub(getValue(OPCODE.result), lhs, rhs);
 			} else {
 				error(ERROR, "Operation cannot be executed on null value");
 			}
@@ -281,15 +277,11 @@ void VM::run()
 
 	OP(OP_MUL):
 		{
-			Value* lhs = getValue(OPCODE.op1);
-			Value* rhs = getValue(OPCODE.op2);
+			const Value* lhs = getValue(OPCODE.op1);
+			const Value* rhs = getValue(OPCODE.op2);
 
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
-				if (lhs->getType() == CLEVER_INT_TYPE
-					&& rhs->getType() == CLEVER_INT_TYPE) {
-					getValue(OPCODE.result)->setInt(lhs->getInt() * rhs->getInt());
-					getValue(OPCODE.result)->setType(lhs->getType());
-				}
+				lhs->getType()->mul(getValue(OPCODE.result), lhs, rhs);
 			} else {
 				error(ERROR, "Operation cannot be executed on null value");
 			}
@@ -298,15 +290,11 @@ void VM::run()
 
 	OP(OP_DIV):
 		{
-			Value* lhs = getValue(OPCODE.op1);
-			Value* rhs = getValue(OPCODE.op2);
+			const Value* lhs = getValue(OPCODE.op1);
+			const Value* rhs = getValue(OPCODE.op2);
 
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
-				if (lhs->getType() == CLEVER_INT_TYPE
-					&& rhs->getType() == CLEVER_INT_TYPE) {
-					getValue(OPCODE.result)->setInt(lhs->getInt() / rhs->getInt());
-					getValue(OPCODE.result)->setType(lhs->getType());
-				}
+				lhs->getType()->div(getValue(OPCODE.result), lhs, rhs);
 			} else {
 				error(ERROR, "Operation cannot be executed on null value");
 			}
@@ -315,15 +303,11 @@ void VM::run()
 
 	OP(OP_MOD):
 		{
-			Value* lhs = getValue(OPCODE.op1);
-			Value* rhs = getValue(OPCODE.op2);
+			const Value* lhs = getValue(OPCODE.op1);
+			const Value* rhs = getValue(OPCODE.op2);
 
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
-				if (lhs->getType() == CLEVER_INT_TYPE
-					&& rhs->getType() == CLEVER_INT_TYPE) {
-					getValue(OPCODE.result)->setInt(lhs->getInt() % rhs->getInt());
-					getValue(OPCODE.result)->setType(lhs->getType());
-				}
+				lhs->getType()->mod(getValue(OPCODE.result), lhs, rhs);
 			} else {
 				error(ERROR, "Operation cannot be executed on null value");
 			}
