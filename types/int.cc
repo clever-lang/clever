@@ -12,14 +12,14 @@ namespace clever {
 
 CLEVER_TYPE_OPERATOR(IntType::add)
 {
-	if (EXPECTED(lhs->getType() == this && rhs->getType() == this)) {
+	if (EXPECTED(rhs->getType() == this)) {
 		result->setInt(lhs->getInt() + rhs->getInt());
 	}
 }
 
 CLEVER_TYPE_OPERATOR(IntType::sub)
 {
-	if (EXPECTED(lhs->getType() == this && rhs->getType() == this)) {
+	if (EXPECTED(rhs->getType() == this)) {
 		result->setInt(lhs->getInt() - rhs->getInt());
 	}
 }
@@ -27,14 +27,14 @@ CLEVER_TYPE_OPERATOR(IntType::sub)
 
 CLEVER_TYPE_OPERATOR(IntType::mul)
 {
-	if (EXPECTED(lhs->getType() == this && rhs->getType() == this)) {
+	if (EXPECTED(rhs->getType() == this)) {
 		result->setInt(lhs->getInt() * rhs->getInt());
 	}
 }
 
 CLEVER_TYPE_OPERATOR(IntType::div)
 {
-	if (EXPECTED(lhs->getType() == this && rhs->getType() == this)) {
+	if (EXPECTED(rhs->getType() == this)) {
 		result->setInt(lhs->getInt() / rhs->getInt());
 	}
 }
@@ -42,7 +42,7 @@ CLEVER_TYPE_OPERATOR(IntType::div)
 
 CLEVER_TYPE_OPERATOR(IntType::mod)
 {
-	if (EXPECTED(lhs->getType() == this && rhs->getType() == this)) {
+	if (EXPECTED(rhs->getType() == this)) {
 		result->setInt(lhs->getInt() % rhs->getInt());
 	}
 }

@@ -8,6 +8,7 @@
 #ifndef CLEVER_TYPE_H
 #define CLEVER_TYPE_H
 
+#include "core/clever.h"
 #include "core/cstring.h"
 
 namespace clever {
@@ -21,7 +22,7 @@ namespace clever {
 	void div(CLEVER_TYPE_OPERATOR_ARGS) const;  \
 	void mod(CLEVER_TYPE_OPERATOR_ARGS) const
 
-#define CLEVER_TYPE_OPERATOR(name) void name(CLEVER_TYPE_OPERATOR_ARGS) const
+#define CLEVER_TYPE_OPERATOR(name) CLEVER_FASTCALL void name(CLEVER_TYPE_OPERATOR_ARGS) const
 
 class Value;
 
