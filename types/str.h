@@ -36,6 +36,8 @@ public:
 
 	CLEVER_METHOD_D(subString);
 	CLEVER_METHOD_D(find);
+	CLEVER_METHOD_D(findFirst);	
+	CLEVER_METHOD_D(findLast);
 };
 
 } // clever

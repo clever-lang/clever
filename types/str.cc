@@ -145,10 +145,120 @@ CLEVER_METHOD(StrType::find)
 	}
 }
 
+CLEVER_METHOD(StrType::findFirst) 
+{
+	const char *needle;
+	const CString *haystack;
+	int bounds[2];
+
+	bounds[0]=-1;
+	bounds[1]=-1;
+	
+	if (CLEVER_THIS()) {
+		haystack = (const CString*) CLEVER_THIS()->getStr();
+		switch (CLEVER_ARG_COUNT()) {
+			case 1:
+				needle = CLEVER_ARG_PSTR(0);
+			break;
+			case 2:
+				needle = CLEVER_ARG_PSTR(0);
+				bounds[0] = CLEVER_ARG_INT(1);
+			break;
+			case 3:
+				needle = CLEVER_ARG_PSTR(0);
+				bounds[0] = CLEVER_ARG_INT(1);		
+				bounds[1] = CLEVER_ARG_INT(2);
+			break;
+			default: std::cerr << "String.findFirst expected a maximum of 2 arguments";
+		}
+	} else if(CLEVER_ARG_COUNT()) {
+		haystack = (const CString*) CLEVER_ARG_CSTR(0);
+		switch (CLEVER_ARG_COUNT()) {
+			case 4:
+				needle = CLEVER_ARG_PSTR(1);
+				bounds[0] = CLEVER_ARG_INT(2);
+				bounds[1] = CLEVER_ARG_INT(3);
+			break;
+			case 3:
+				needle = CLEVER_ARG_PSTR(1);
+				bounds[0] = CLEVER_ARG_INT(2);
+			break;
+			case 2:
+				needle = CLEVER_ARG_PSTR(1);
+			break;
+			default: std::cerr << "String.findFirst expected at least two arguments";
+		}
+	}	
+
+	if (needle && haystack) {
+		if (bounds[0]>-1) {
+			if (bounds[1]>-1) {
+				result->setInt(haystack->find_first_of((const char*)needle, bounds[0], bounds[1]));
+			} else result->setInt(haystack->find_first_of((const char*)needle, bounds[0]));
+		} else result->setInt(haystack->find_first_of((const char*)needle));
+	}
+}
+
+CLEVER_METHOD(StrType::findLast) 
+{
+	const char *needle;
+	const CString *haystack;
+	int bounds[2];
+
+	bounds[0]=-1;
+	bounds[1]=-1;
+	
+	if (CLEVER_THIS()) {
+		haystack = (const CString*) CLEVER_THIS()->getStr();
+		switch (CLEVER_ARG_COUNT()) {
+			case 1:
+				needle = CLEVER_ARG_PSTR(0);
+			break;
+			case 2:
+				needle = CLEVER_ARG_PSTR(0);
+				bounds[0] = CLEVER_ARG_INT(1);
+			break;
+			case 3:
+				needle = CLEVER_ARG_PSTR(0);
+				bounds[0] = CLEVER_ARG_INT(1);		
+				bounds[1] = CLEVER_ARG_INT(2);
+			break;
+			default: std::cerr << "String.findLast expected a maximum of 2 arguments";
+		}
+	} else if(CLEVER_ARG_COUNT()) {
+		haystack = (const CString*) CLEVER_ARG_CSTR(0);
+		switch (CLEVER_ARG_COUNT()) {
+			case 4:
+				needle = CLEVER_ARG_PSTR(1);
+				bounds[0] = CLEVER_ARG_INT(2);
+				bounds[1] = CLEVER_ARG_INT(3);
+			break;
+			case 3:
+				needle = CLEVER_ARG_PSTR(1);
+				bounds[0] = CLEVER_ARG_INT(2);
+			break;
+			case 2:
+				needle = CLEVER_ARG_PSTR(1);
+			break;
+			default: std::cerr << "String.findLast expected at least two arguments";
+		}
+	}	
+
+	if (needle && haystack) {
+		if (bounds[0]>-1) {
+			if (bounds[1]>-1) {
+				result->setInt(haystack->find_last_of((const char*)needle, bounds[0], bounds[1]));
+			} else result->setInt(haystack->find_last_of((const char*)needle, bounds[0]));
+		} else result->setInt(haystack->find_last_of((const char*)needle));
+	}
+}
+
 CLEVER_TYPE_INIT(StrType::init) 
 {
 	addMethod(CSTRING("subString"),  	(MethodPtr) &StrType::subString);
 	addMethod(CSTRING("find"), 			(MethodPtr) &StrType::find);
+	addMethod(CSTRING("findFirst"), 	(MethodPtr) &StrType::findFirst);
+	addMethod(CSTRING("findLast"), 		(MethodPtr) &StrType::findLast);
 }
 
 } // clever
