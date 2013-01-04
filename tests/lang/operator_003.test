@@ -1,0 +1,14 @@
+Testing operators with string
+==CODE==
+import std.io.*;
+
+println("foo" == "foo");
+println("foo" == "foo ");
+println("foo" != "foo");
+println("" == "");
+
+==RESULT==
+1
+0
+0
+1
