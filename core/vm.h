@@ -33,11 +33,9 @@ struct StackFrame {
 	size_t ret_addr;     // Return address
 	Value* ret_val;      // Return value
 	Scope* arg_vars;     // Function arguments
-	Scope* local_vars;   // Local variables
-	FuncVars vars;       // Arg and local vars storage
 
 	StackFrame()
-		: ret_addr(0), ret_val(NULL), arg_vars(NULL), local_vars(NULL), vars() {}
+		: ret_addr(0), ret_val(NULL), arg_vars(NULL) {}
 };
 
 class VM;
