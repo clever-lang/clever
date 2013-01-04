@@ -123,12 +123,12 @@ void VM::copy(const VM* vm)
 
 	this->m_scope_pool->push_back(const_cast<Scope*>(vm->m_scope_pool->at(0)));
 
-	for (size_t id = 1; id < vm->m_scope_pool->size(); ++id) {
-		Scope* s = new Scope;
+	for (size_t id = 1, n = vm->m_scope_pool->size(); id < n; ++id) {
+		Scope* scope = new Scope;
 
-		s->copy(vm->m_scope_pool->at(id));
+		scope->copy(vm->m_scope_pool->at(id));
 
-		this->m_scope_pool->push_back(s);
+		this->m_scope_pool->push_back(scope);
 	}
 	this->f_mutex->unlock();
 
@@ -341,11 +341,13 @@ void VM::run()
 	OP(OP_ETHREAD):
 		if (this->isChild()) {
 			this->getMutex()->lock();
-			for (size_t id = 1; id < m_scope_pool->size(); ++id) {
+
+			for (size_t id = 1, n = m_scope_pool->size(); id < n; ++id) {
 				delete m_scope_pool->at(id);
 			}
 
 			delete m_scope_pool;
+
 			this->getMutex()->unlock();
 
 			VM_EXIT();
