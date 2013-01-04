@@ -519,21 +519,87 @@ void VM::run()
 		DISPATCH;
 
 	OP(OP_GREATER):
+		{
+			const Value* lhs = getValue(OPCODE.op1);
+			const Value* rhs = getValue(OPCODE.op2);
+
+			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
+				lhs->getType()->greater(getValue(OPCODE.result), lhs, rhs);
+			} else {
+				// TODO(Felipe): boolean false
+				getValue(OPCODE.result)->setInt(0);
+			}
+		}
 		DISPATCH;
 
 	OP(OP_GEQUAL):
+		{
+			const Value* lhs = getValue(OPCODE.op1);
+			const Value* rhs = getValue(OPCODE.op2);
+
+			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
+				lhs->getType()->greater_equal(getValue(OPCODE.result), lhs, rhs);
+			} else {
+				// TODO(Felipe): boolean false
+				getValue(OPCODE.result)->setInt(0);
+			}
+		}
 		DISPATCH;
 
 	OP(OP_LESS):
+		{
+			const Value* lhs = getValue(OPCODE.op1);
+			const Value* rhs = getValue(OPCODE.op2);
+
+			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
+				lhs->getType()->less(getValue(OPCODE.result), lhs, rhs);
+			} else {
+				// TODO(Felipe): boolean false
+				getValue(OPCODE.result)->setInt(0);
+			}
+		}
 		DISPATCH;
 
 	OP(OP_LEQUAL):
+		{
+			const Value* lhs = getValue(OPCODE.op1);
+			const Value* rhs = getValue(OPCODE.op2);
+
+			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
+				lhs->getType()->not_equal(getValue(OPCODE.result), lhs, rhs);
+			} else {
+				// TODO(Felipe): boolean false
+				getValue(OPCODE.result)->setInt(0);
+			}
+		}
 		DISPATCH;
 
 	OP(OP_EQUAL):
+		{
+			const Value* lhs = getValue(OPCODE.op1);
+			const Value* rhs = getValue(OPCODE.op2);
+
+			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
+				lhs->getType()->equal(getValue(OPCODE.result), lhs, rhs);
+			} else {
+				// TODO(Felipe): boolean false
+				getValue(OPCODE.result)->setInt(0);
+			}
+		}
 		DISPATCH;
 
 	OP(OP_NEQUAL):
+		{
+			const Value* lhs = getValue(OPCODE.op1);
+			const Value* rhs = getValue(OPCODE.op2);
+
+			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
+				lhs->getType()->not_equal(getValue(OPCODE.result), lhs, rhs);
+			} else {
+				// TODO(Felipe): boolean false
+				getValue(OPCODE.result)->setInt(0);
+			}
+		}
 		DISPATCH;
 
 	OP(OP_LOCK):

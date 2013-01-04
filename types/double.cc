@@ -44,4 +44,47 @@ CLEVER_TYPE_OPERATOR(DoubleType::mod)
 	}
 }
 
+
+CLEVER_TYPE_OPERATOR(DoubleType::greater)
+{
+	if (EXPECTED(rhs->getType() == this)) {
+		result->setInt(lhs->getDouble() > rhs->getDouble());
+	}
+}
+
+CLEVER_TYPE_OPERATOR(DoubleType::greater_equal)
+{
+	if (EXPECTED(rhs->getType() == this)) {
+		result->setInt(lhs->getDouble() >= rhs->getDouble());
+	}
+}
+
+CLEVER_TYPE_OPERATOR(DoubleType::less)
+{
+	if (EXPECTED(rhs->getType() == this)) {
+		result->setInt(lhs->getDouble() < rhs->getDouble());
+	}
+}
+
+CLEVER_TYPE_OPERATOR(DoubleType::less_equal)
+{
+	if (EXPECTED(rhs->getType() == this)) {
+		result->setInt(lhs->getDouble() <= rhs->getDouble());
+	}
+}
+
+CLEVER_TYPE_OPERATOR(DoubleType::equal)
+{
+	if (EXPECTED(rhs->getType() == this)) {
+		result->setInt(lhs->getDouble() == rhs->getDouble());
+	}
+}
+
+CLEVER_TYPE_OPERATOR(DoubleType::not_equal)
+{
+	if (EXPECTED(rhs->getType() == this)) {
+		result->setInt(lhs->getDouble() != rhs->getDouble());
+	}
+}
+
 } // clever
