@@ -15,7 +15,7 @@
 
 namespace clever {
 class Scope;
-class Symbol;
+struct Symbol;
 }
 
 namespace clever { namespace ast {
@@ -42,6 +42,7 @@ class Bitwise;
 class Import;
 class Boolean;
 class NullLit;
+class MethodCall;
 
 typedef std::vector<Node*> NodeList;
 
@@ -70,12 +71,12 @@ public:
 	virtual void setValueId(size_t value_id) { m_value_id = value_id; }
 	virtual size_t getValueId() const { return m_value_id; }
 
-	virtual void setScope(Scope* scope) { m_scope = scope; }
-	virtual Scope* getScope() { return m_scope; }
+	virtual void setScope(const Scope* scope) { m_scope = scope; }
+	virtual const Scope* getScope() const { return m_scope; }
 private:
 	const location& m_location;
 	size_t m_value_id;
-	Scope* m_scope;
+	const Scope* m_scope;
 };
 
 class NodeArray: public Node {
@@ -136,43 +137,7 @@ public:
 	virtual Node* accept(Transformer& transformer);
 };
 
-class ThreadBlock: public NodeArray {
-public:
-	ThreadBlock(Block* m_block, const location& location)
-		: NodeArray(location), m_block(m_block) {
-		CLEVER_ADDREF(m_block);
-	}
 
-	~ThreadBlock() {
-		CLEVER_DELREF(m_block);
-	}
-
-	virtual void accept(Visitor& visitor);
-	virtual Node* accept(Transformer& transformer);
-
-	Block* getBlock() { return m_block; }
-protected:
-	Block* m_block;
-};
-
-class CriticalBlock: public NodeArray {
-public:
-	CriticalBlock(Block* m_block, const location& location)
-		: NodeArray(location), m_block(m_block) {
-		CLEVER_ADDREF(m_block);
-	}
-
-	~CriticalBlock() {
-		CLEVER_DELREF(m_block);
-	}
-
-	virtual void accept(Visitor& visitor);
-	virtual Node* accept(Transformer& transformer);
-
-	Block* getBlock() { return m_block; }
-protected:
-	Block* m_block;
-};
 
 class Comparison: public Node {
 public:
@@ -264,6 +229,122 @@ public:
 private:
 	const CString* m_name;
 	Symbol* m_sym;
+};
+
+class ThreadBlock: public NodeArray {
+public:
+	ThreadBlock(Block* m_block, const location& location)
+		: NodeArray(location), m_block(m_block), m_name(NULL) {
+		CLEVER_ADDREF(m_block);
+	}
+
+	ThreadBlock(Block* m_block, Ident* m_name, const location& location)
+		: NodeArray(location), m_block(m_block), m_name(m_name) {
+		CLEVER_ADDREF(m_block);
+		CLEVER_ADDREF(m_name);
+	}
+
+	~ThreadBlock() {
+		CLEVER_DELREF(m_block);
+		CLEVER_SAFE_DELREF(m_name);
+	}
+
+	virtual void accept(Visitor& visitor);
+	virtual Node* accept(Transformer& transformer);
+
+	Ident* getName() { return m_name; }
+
+	Block* getBlock() { return m_block; }
+protected:
+	Block* m_block;
+	Ident* m_name;
+};
+
+class Wait: public NodeArray {
+public:
+	Wait(Ident* m_name, const location& location)
+		: NodeArray(location), m_name(m_name) {
+		CLEVER_ADDREF(m_name);
+	}
+
+	~Wait() {
+		CLEVER_DELREF(m_name);
+	}
+
+	virtual void accept(Visitor& visitor);
+	virtual Node* accept(Transformer& transformer);
+
+	Ident* getName() { return m_name; }
+
+protected:
+	Ident* m_name;
+};
+
+class CriticalBlock: public NodeArray {
+public:
+	CriticalBlock(Block* m_block, const location& location)
+		: NodeArray(location), m_block(m_block) {
+		CLEVER_ADDREF(m_block);
+	}
+
+	~CriticalBlock() {
+		CLEVER_DELREF(m_block);
+	}
+
+	virtual void accept(Visitor& visitor);
+	virtual Node* accept(Transformer& transformer);
+
+	Block* getBlock() { return m_block; }
+protected:
+	Block* m_block;
+};
+
+class Type: public Node {
+public:
+	Type(const CString* name, const location& location)
+		: Node(location), m_name(name), m_sym(NULL) {}
+	~Type() {}
+
+	const CString* getName() const { return m_name; }
+
+	void setSymbol(Symbol* sym)	{ m_sym = sym; }
+	Symbol* getSymbol() { return m_sym; }
+
+	virtual void accept(Visitor& visitor);
+	virtual Node* accept(Transformer& transformer);
+private:
+	const CString* m_name;
+	Symbol* m_sym;
+};
+
+class Instantiation: public Node {
+public:
+	Instantiation(Type* type, NodeArray* args, const location& location)
+		: Node(location), m_type(type), m_args(args) {
+		CLEVER_ADDREF(m_type);
+		CLEVER_SAFE_ADDREF(m_args);
+	}
+	~Instantiation() {
+		CLEVER_DELREF(m_type);
+		CLEVER_SAFE_DELREF(m_args);
+	}
+
+	Type* getType() { return m_type; }
+
+	NodeArray* getArgs() { return m_args; }
+	bool hasArgs() const { return m_args != NULL && m_args->getSize() > 0; }
+
+	size_t numArgs() const { return m_args->getSize(); }
+
+	Node* getArg(size_t index) {
+		return m_args->getNode(index);
+	}
+
+	virtual void accept(Visitor& visitor);
+	virtual Node* accept(Transformer& transformer);
+private:
+	Type* m_type;
+	NodeArray* m_args;
 };
 
 class Import: public Node {
@@ -506,6 +587,61 @@ private:
 	NodeArray* m_args;
 	Block* m_block;
 	bool m_is_anon;
+};
+
+class MethodCall: public Node {
+public:
+	MethodCall(Node* callee, Ident* method, NodeArray* args, const location& location)
+		: Node(location), m_callee(callee), m_method(method), m_args(args), m_static(false) {
+		CLEVER_ADDREF(m_callee);
+		CLEVER_ADDREF(m_method);
+		CLEVER_SAFE_ADDREF(m_args);
+	}
+
+	MethodCall(Type* callee, Ident* method, NodeArray* args, const location& location)
+		: Node(location), m_callee(callee), m_method(method), m_args(args), m_static(true) {
+		CLEVER_ADDREF(m_callee);
+		CLEVER_ADDREF(m_method);
+		CLEVER_SAFE_ADDREF(m_args);
+	}
+
+	~MethodCall() {
+		CLEVER_DELREF(m_callee);
+		CLEVER_DELREF(m_method);
+		CLEVER_SAFE_DELREF(m_args);
+	}
+
+	bool isStaticCall() const { return m_static; }
+
+	bool isEvaluable() const { return true; }
+
+	Node* getCallee() const { return m_callee; }
+
+	Ident* getMethod() const { return m_method; }
+
+	NodeArray* getArgs() const { return m_args; }
+	bool hasArgs() const { return m_args != NULL && m_args->getSize() > 0; }
+
+	size_t numArgs() const { return m_args->getSize(); }
+
+	Node* getArg(size_t index) {
+		std::vector<Node*> array = m_args->getNodes();
+
+		clever_assert(index > 0 && index < array.size(), "Index %i out of bounds.", index);
+
+		if (array.empty())
+			return NULL;
+
+		return array.at(index);
+	}
+
+	virtual void accept(Visitor& visitor);
+	virtual Node* accept(Transformer& transformer);
+private:
+	Node* m_callee;
+	Ident* m_method;
+	NodeArray* m_args;
+	bool m_static;
 };
 
 class FunctionCall: public Node {

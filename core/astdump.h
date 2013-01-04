@@ -35,12 +35,14 @@ public:
 	void visit(Node* node)         { std::cout << m_ws << "Node" << std::endl;         }
 	void visit(NodeArray* node)    { std::cout << m_ws << "NodeArray" << std::endl;    }
 	void visit(FunctionCall* node) { std::cout << m_ws << "FunctionCall" << std::endl; }
+	void visit(MethodCall* node)   { std::cout << m_ws << "MethodCall" << std::endl;   }
 	void visit(If* node)           { std::cout << m_ws << "If" << std::endl;           }
 	void visit(IntLit* node)       { std::cout << m_ws << "IntLit" << std::endl;       }
 	void visit(DoubleLit* node)    { std::cout << m_ws << "DoubleLit" << std::endl;    }
 	void visit(StringLit* node)    { std::cout << m_ws << "StringLit" << std::endl;    }
 	void visit(Return* node)       { std::cout << m_ws << "Return" << std::endl;       }
 	void visit(Import* node)       { std::cout << m_ws << "Import" << std::endl;       }
+	void visit(Instantiation* node){ std::cout << m_ws << "Instantiation" << std::endl;}
 
 	void visit(While* node) {
 		std::cout << m_ws << "While" << std::endl;

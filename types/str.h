@@ -20,6 +20,8 @@ public:
 	StrType() : Type(CSTRING("String")) {}
 	~StrType() {}
 
+	bool isPrimitive() const { return true; }
+
 	void dump(const void* value) const {
 		std::cout << (*(const CString**)value)->c_str();
 	}

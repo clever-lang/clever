@@ -20,6 +20,8 @@ public:
 	DoubleType() : Type(CSTRING("Double")) {}
 	~DoubleType() {}
 
+	bool isPrimitive() const { return true; }
+
 	void dump(const void* value) const { std::cout << *(double*)value; }
 
 	CLEVER_TYPE_VIRTUAL_METHOD_DECLARATIONS;

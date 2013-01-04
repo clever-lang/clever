@@ -14,6 +14,23 @@
 #include "types/type.h"
 #include "core/vm.h"
 
+#define OPCODE m_inst[m_pc]
+#define VM_EXIT() goto exit
+
+#if CLEVER_GCC_VERSION > 0
+# define OP(name)    name
+# define OPCODES     const static void* labels[] = { OP_LABELS }; goto *labels[m_inst[m_pc].opcode]
+# define DISPATCH    ++m_pc; goto *labels[m_inst[m_pc].opcode]
+# define END_OPCODES
+# define VM_GOTO(n)  m_pc = n; goto *labels[m_inst[m_pc].opcode]
+#else
+# define OP(name)    case name
+# define OPCODES     for (;;) { switch (m_inst[m_pc].opcode) {
+# define DISPATCH    ++m_pc; break
+# define END_OPCODES EMPTY_SWITCH_DEFAULT_CASE(); } }
+# define VM_GOTO(n)  m_pc = n; break
+#endif
+
 namespace clever {
 
 /// Displays an error message
@@ -36,6 +53,13 @@ CLEVER_FORCE_INLINE Value* VM::getValue(size_t scope_id, size_t value_id) const
 	return (*m_scope_pool)[scope_id]->getValue(value_id);
 }
 
+/// Fetchs a Type ptr from the Symbol table
+CLEVER_FORCE_INLINE const Type* VM::getType(Operand& operand) const
+{
+	return (*m_scope_pool)[operand.scope_id]->getType(operand.value_id);
+}
+
+
 /// Fetchs a Value ptr according to the operand type
 CLEVER_FORCE_INLINE Value* VM::getValue(Operand& operand) const
 {
@@ -55,7 +79,7 @@ CLEVER_FORCE_INLINE Value* VM::getValue(Operand& operand) const
 void VM::dumpOperand(Operand& op) const
 {
 	const char *type[] = {
-		"UNUSED", "FETCH_VAR", "FETCH_CONST", "FETCH_TMP", "JMP_ADDR"
+		"UNUSED", "FETCH_VAR", "FETCH_CONST", "FETCH_TYPE", "FETCH_TMP", "JMP_ADDR"
 	};
 
 	switch (op.op_type) {
@@ -65,6 +89,7 @@ void VM::dumpOperand(Operand& op) const
 		case JMP_ADDR:
 		case FETCH_CONST:
 		case FETCH_TMP:
+		case FETCH_TYPE:
 			::printf("%7zu ", op.value_id);
 			break;
 		case UNUSED:
@@ -140,9 +165,8 @@ void VM::copy(VM* vm)
 	this->m_scope_pool = new ScopePool;
 
 	this->m_scope_pool->push_back(vm->m_scope_pool->at(0));
-	this->m_scope_pool->push_back(vm->m_scope_pool->at(1));
 
-	for (size_t id = 2; id < vm->m_scope_pool->size(); ++id) {
+	for (size_t id = 1; id < vm->m_scope_pool->size(); ++id) {
 		Scope* s = new Scope;
 
 		s->copy(vm->m_scope_pool->at(id));
@@ -193,11 +217,17 @@ CLEVER_FORCE_INLINE void VM::decrement(IR& op)
 
 void VM::wait()
 {
-	for (size_t i = 0, j = m_thread_pool.size(); i < j; ++i) {
-		m_thread_pool[i]->t_handler.wait();
+	ThreadPool::iterator it = m_thread_pool.begin(), ed = m_thread_pool.end();
 
-		delete m_thread_pool[i]->vm_handler;
-		delete m_thread_pool[i];
+	while (it != ed) {
+		for (size_t i = 0, j = it->second.size(); i < j; ++i) {
+			it->second.at(i)->t_handler.wait();
+
+			delete it->second.at(i)->vm_handler;
+			delete it->second.at(i);
+		}
+
+		++it;
 	}
 	m_thread_pool.clear();
 }
@@ -366,18 +396,30 @@ void VM::run()
 
 			thread->vm_handler->setChild();
 
-			m_thread_pool.push_back(thread);
-
+			m_thread_pool[OPCODE.op2.value_id].push_back(thread);
 			thread->t_handler.create(_thread_control,
 									 static_cast<void*>(thread));
 
 			VM_GOTO(OPCODE.op1.value_id);
 		}
 
+	OP(OP_WAIT):
+		{
+			std::vector<Thread*>& thread_list = m_thread_pool[OPCODE.op1.value_id];
+			for (size_t i = 0, j = thread_list.size(); i < j; ++i) {
+				Thread* t = thread_list.at(i);
+				t->t_handler.wait();
+				delete t->vm_handler;
+				delete t;
+			}
+			m_thread_pool.erase(OPCODE.op1.value_id);
+		}
+		DISPATCH;
+
 	OP(OP_ETHREAD):
 		if (this->isChild()) {
 			this->getMutex()->lock();
-			for (size_t id = 2; id < m_scope_pool->size(); ++id) {
+			for (size_t id = 1; id < m_scope_pool->size(); ++id) {
 				delete m_scope_pool->at(id);
 			}
 
@@ -500,6 +542,54 @@ void VM::run()
 
 	OP(OP_UNLOCK):
 		getMutex()->unlock();
+		DISPATCH;
+
+	OP(OP_NEW):
+		{
+			const Type* type = getType(OPCODE.op1);
+
+			getValue(OPCODE.result)->setType(type);
+
+			if (EXPECTED(!type->isPrimitive())) {
+				getValue(OPCODE.result)->setObj(type->allocData(&m_call_args));
+				m_call_args.clear();
+			}
+		}
+		DISPATCH;
+
+	OP(OP_MCALL):
+		{
+			const Value* callee = getValue(OPCODE.op1);
+			const Value* method = getValue(OPCODE.op2);
+			const Type* type = callee->getType();
+			MethodPtr ptr;
+
+			if (UNEXPECTED(callee->isNull())) {
+				error(ERROR, "Cannot call method from a null value");
+			}
+
+			if (EXPECTED((ptr = type->getMethod(method->getStr())))) {
+				(type->*ptr)(getValue(OPCODE.result), callee, m_call_args);
+				m_call_args.clear();
+			} else {
+				error(ERROR, "Method not found!");
+			}
+		}
+		DISPATCH;
+
+	OP(OP_SMCALL):
+		{
+			const Type* type = getType(OPCODE.op1);
+			const Value* method = getValue(OPCODE.op2);
+			MethodPtr ptr;
+
+			if (EXPECTED((ptr = type->getMethod(method->getStr())))) {
+				(type->*ptr)(getValue(OPCODE.result), NULL, m_call_args);
+				m_call_args.clear();
+			} else {
+				error(ERROR, "Method not found!");
+			}
+		}
 		DISPATCH;
 
 	OP(OP_HALT):

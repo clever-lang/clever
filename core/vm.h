@@ -11,33 +11,9 @@
 #include <vector>
 #include <stack>
 #include "core/cthread.h"
-#include "core/clever.h"
 #include "core/compiler.h"
-#include "core/ir.h"
-#include "core/opcode.h"
 
 namespace clever {
-
-#define OPCODE m_inst[m_pc]
-#define VM_EXIT() goto exit
-
-#if CLEVER_GCC_VERSION > 0
-# define OP(name)    name
-# define OPCODES     const static void* labels[] = { OP_LABELS }; goto *labels[m_inst[m_pc].opcode]
-# define DISPATCH    ++m_pc; goto *labels[m_inst[m_pc].opcode]
-# define END_OPCODES
-# define VM_GOTO(n)  m_pc = n; goto *labels[m_inst[m_pc].opcode]
-#else
-# define OP(name)    case name
-# define OPCODES     for (;;) { switch (m_inst[m_pc].opcode) {
-# define DISPATCH    ++m_pc; break
-# define END_OPCODES EMPTY_SWITCH_DEFAULT_CASE(); } }
-# define VM_GOTO(n)  m_pc = n; break
-#endif
-
-// Helper macros to be used to change the VM program counter
-#define VM_NEXT() ++m_pc
-
 
 // Helper macro for opcode handler declaration
 #define VM_HANDLER_ARG IR& op
@@ -54,11 +30,9 @@ struct StackFrame {
 	size_t ret_addr;     // Return address
 	Value* ret_val;      // Return value
 	Scope* arg_vars;     // Function arguments
-	Scope* local_vars;   // Local variables
-	FuncVars vars;       // Arg and local vars storage
 
 	StackFrame()
-		: ret_addr(0), ret_val(NULL), arg_vars(NULL), local_vars(NULL), vars() {}
+		: ret_addr(0), ret_val(NULL), arg_vars(NULL) {}
 };
 
 class VM;
@@ -78,7 +52,7 @@ public:
 
 	typedef void (VM::*OpHandler)(VM_HANDLER_ARG);
 
-	typedef std::vector<Thread*> ThreadPool;
+	typedef std::map<size_t, std::vector<Thread*> > ThreadPool;
 
 	VM(IRVector& inst)
 		: m_pc(0), m_is_main_thread(true), m_inst(inst), m_scope_pool(NULL),
@@ -107,6 +81,9 @@ public:
 	void nextPC() { ++m_pc; }
 
 	IRVector& getInst() const { return m_inst; }
+
+	/// Helper to retrive a Value* from TypePool
+	const Type* getType(Operand&) const;
 
 	/// Helper to retrive a Value* from ValuePool
 	Value* getValue(size_t, size_t) const;

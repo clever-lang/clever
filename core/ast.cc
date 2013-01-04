@@ -27,6 +27,8 @@ void Block::accept(Visitor& visitor) { visitor.visit(this); }
 
 void ThreadBlock::accept(Visitor& visitor) { visitor.visit(this); }
 
+void Wait::accept(Visitor& visitor) { visitor.visit(this); }
+
 void CriticalBlock::accept(Visitor& visitor) { visitor.visit(this); }
 
 void Assignment::accept(Visitor& visitor) { visitor.visit(this); }
@@ -67,6 +69,12 @@ void NullLit::accept(Visitor& visitor) { visitor.visit(this); }
 
 void Comparison::accept(Visitor& visitor) { visitor.visit(this); }
 
+void Instantiation::accept(Visitor& visitor) { visitor.visit(this); }
+
+void Type::accept(Visitor& visitor) { visitor.visit(this); }
+
+void MethodCall::accept(Visitor& visitor) { visitor.visit(this); }
+
 // Transformers
 
 Node* Node::accept(Transformer& transformer) { return transformer.transform(this); }
@@ -76,6 +84,8 @@ Node* NodeArray::accept(Transformer& transformer) { return transformer.transform
 Node* Block::accept(Transformer& transformer) { return transformer.transform(this); }
 
 Node* CriticalBlock::accept(Transformer& transformer) { return transformer.transform(this); }
+
+Node* Wait::accept(Transformer& transformer) { return transformer.transform(this); }
 
 Node* ThreadBlock::accept(Transformer& transformer) { return transformer.transform(this); }
 
@@ -116,5 +126,11 @@ Node* Boolean::accept(Transformer& transformer) { return transformer.transform(t
 Node* NullLit::accept(Transformer& transformer) { return transformer.transform(this); }
 
 Node* Comparison::accept(Transformer& transformer) { return transformer.transform(this); }
+
+Node* Instantiation::accept(Transformer& transformer) { return transformer.transform(this); }
+
+Node* Type::accept(Transformer& transformer) { return transformer.transform(this); }
+
+Node* MethodCall::accept(Transformer& transformer) { return transformer.transform(this); }
 
 }} // clever::ast

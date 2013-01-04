@@ -8,13 +8,15 @@
 #ifndef CLEVER_COMPILER_H
 #define CLEVER_COMPILER_H
 
+#ifdef CLEVER_MSVC
+#include <unordered_map>
+#else
 #include <tr1/unordered_map>
+#endif
 #include <vector>
 #include <stack>
 #include <sstream>
 #include "core/pkgmanager.h"
-#include "core/ir.h"
-#include "core/ast.h"
 #include "core/codegen.h"
 #include "core/scope.h"
 
@@ -24,8 +26,6 @@ class Type;
 class Value;
 class location;
 class Scope;
-
-typedef std::vector<Type*> TypePool;
 
 typedef std::vector<const CString*> ArgDeclList;
 typedef std::vector<std::pair<size_t, size_t> > ArgCallList;
@@ -41,8 +41,8 @@ public:
 
 	Compiler()
 		: m_ir(), m_flags(0),
-			m_scope_pool(), m_type_pool(), m_const_pool(),m_tmp_pool(),
-			m_scope_id(0), m_const_id(0), m_type_id(0), m_tmp_id(0) {}
+			m_scope_pool(), m_const_pool(),m_tmp_pool(),
+			m_scope_id(0), m_const_id(0), m_tmp_id(0) {}
 
 	~Compiler() {}
 
@@ -65,7 +65,6 @@ public:
 
 	const PkgManager& getPkgManager() const { return m_pkg; }
 
-	size_t addScope(Scope*);
 	size_t addConstant(Value*);
 
 	static void error(const char*) CLEVER_NO_RETURN;
@@ -83,14 +82,12 @@ private:
 
 	// Compiler pools, which got passed to VM after compiling
 	ScopePool m_scope_pool;
-	TypePool m_type_pool;
 	ValuePool m_const_pool;
 	ValuePool m_tmp_pool;
 
 	// Indexes for pools
 	size_t m_scope_id;
 	size_t m_const_id;
-	size_t m_type_id;
 	size_t m_tmp_id;
 
 	DISALLOW_COPY_AND_ASSIGN(Compiler);

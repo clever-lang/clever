@@ -28,6 +28,7 @@ class Value;
 	ast::Node* node;
 	ast::Block* block;
 	ast::ThreadBlock* threadblock;
+	ast::Wait* waitblock;
 	ast::CriticalBlock* criticalblock;
 	ast::NodeArray* narray;
 	ast::Ident* ident;
@@ -49,17 +50,23 @@ class Value;
 	ast::Boolean* boolean;
 	ast::NullLit* nillit;
 	ast::Comparison* comp;
+	ast::Type* type;
+	ast::Instantiation* inst;
+	ast::MethodCall* mcall;
 }
 
+%type <type> TYPE
 %type <ident> IDENT
 %type <strlit> STR
 %type <intlit> NUM_INTEGER
 %type <dbllit> NUM_DOUBLE
+%type <inst> instantiation
 %type <assignment> assignment
 %type <narray> variable_decl variable_decl_list non_empty_call_args call_args
 %type <vardecl> variable_decl_impl
 %type <block> statement_list block
 %type <threadblock> thread_block
+%type <waitblock> wait_block
 %type <criticalblock> critical_block
 %type <arithmetic> arithmetic
 %type <bitwise> bitwise
@@ -74,6 +81,7 @@ class Value;
 %type <boolean> boolean
 %type <nillit> NIL
 %type <comp> comparison
+%type <mcall> mcall
 
 // The parsing context.
 %parse-param { Driver& driver }
@@ -137,11 +145,13 @@ class Value;
 %token CONST         "const"
 %token PRINT         "print"
 %token FUNC          "function"
-%token THREAD        "thread"
+%token THREAD        "spawn"
+%token WAIT          "wait"
 %token CRITICAL      "critical"
 %token INC           "++"
 %token DEC           "--"
 %token NIL           "null"
+%token NEW           "new"
 
 %left ',';
 %left LOGICAL_OR;
@@ -183,6 +193,7 @@ statement:
 	|	variable_decl ';'
 	|	assignment ';'
 	|	fcall ';'
+	|	mcall ';'
 	|	fdecl
 	|	return_stmt ';'
 	|	if
@@ -191,15 +202,25 @@ statement:
 	|	block
 	|	thread_block
 	|   critical_block
+	|	wait_block ';'
 ;
 
 block:
 		'{' statement_list '}'  { $$ = $2; }
 ;
 
+instantiation:
+		TYPE '.' NEW                   { $$ = new ast::Instantiation($1, NULL, yyloc); }
+	|	TYPE '.' NEW '(' call_args ')' { $$ = new ast::Instantiation($1, $5,   yyloc); }
+;
+
+wait_block:
+		WAIT IDENT { $$ = new ast::Wait($2, yyloc); }
+;
 
 thread_block:
-		THREAD block { $$ = new ast::ThreadBlock($2, yyloc); }
+		THREAD block       { $$ = new ast::ThreadBlock($2, yyloc); }
+	|	THREAD IDENT block { $$ = new ast::ThreadBlock($3, $2, yyloc); }
 ;
 
 critical_block:
@@ -220,11 +241,18 @@ rvalue:
 	|	inc_dec
 	|	fcall
 	|	anonymous_fdecl
+	|	instantiation
+	|	mcall
 	|	'(' rvalue ')' { $<node>$ = $<node>2; }
 ;
 
 lvalue:
 		IDENT
+;
+
+mcall:
+		rvalue '.' IDENT '(' call_args ')' { $$ = new ast::MethodCall($<node>1, $3, $5, yyloc); }
+	|	TYPE '.' IDENT '(' call_args ')'   { $$ = new ast::MethodCall($1, $3, $5, yyloc); }
 ;
 
 inc_dec:

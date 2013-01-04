@@ -5,28 +5,35 @@
  * This file is distributed under the MIT license. See LICENSE for details.
  */
 
+#include "types/native_types.h"
 #include "core/resolver.h"
 #include "core/compiler.h"
 
 namespace clever { namespace ast {
 
 Resolver::Resolver(Compiler* compiler)
-	: Visitor(), m_compiler(compiler), m_symtable(new Scope()), m_scope(m_symtable)
+	: Visitor(), m_compiler(compiler)
 {
+	m_symtable = m_scope = new Scope();
 
-	m_scope->setId(m_compiler->addScope(m_scope));
+	// Native type allocation
+	m_symtable->pushType(CSTRING("Int"),      CLEVER_INT_TYPE    = new IntType);
+	m_symtable->pushType(CSTRING("Double"),   CLEVER_DOUBLE_TYPE = new DoubleType);
+	m_symtable->pushType(CSTRING("String"),   CLEVER_STR_TYPE    = new StrType);
+	m_symtable->pushType(CSTRING("Function"), CLEVER_FUNC_TYPE   = new FuncType);
+
+	CLEVER_INT_TYPE->init();
 }
 
 void Resolver::visit(Block* node)
 {
-	m_scope = m_scope->newLexicalScope();
-	m_scope->setId(m_compiler->addScope(m_scope));
+	m_scope = m_scope->enter();
 
 	node->setScope(m_scope);
 
 	Visitor::visit(static_cast<NodeArray*>(node));
 
-	m_scope = m_scope->getParent();
+	m_scope = m_scope->leave();
 }
 
 void Resolver::visit(VariableDecl* node)
@@ -80,8 +87,7 @@ void Resolver::visit(FunctionDecl* node)
 	m_scope->pushValue(name, fval);
 	node->getIdent()->accept(*this);
 
-	m_scope = m_scope->newLexicalScope();
-	m_scope->setId(m_compiler->addScope(m_scope));
+	m_scope = m_scope->enter();
 
 	node->setScope(m_scope);
 
@@ -97,7 +103,7 @@ void Resolver::visit(FunctionDecl* node)
 
 	node->getBlock()->accept(*this);
 
-	m_scope = m_scope->getParent();
+	m_scope = m_scope->leave();
 }
 
 void Resolver::visit(Ident* node)
@@ -107,6 +113,19 @@ void Resolver::visit(Ident* node)
 	if (!sym) {
 		Compiler::errorf(node->getLocation(),
 			"Identifier `%S' not found.", node->getName());
+	}
+
+	node->setSymbol(sym);
+	node->setScope(sym->scope);
+}
+
+void Resolver::visit(Type* node)
+{
+	Symbol* sym = m_scope->getAny(node->getName());
+
+	if (!sym) {
+		Compiler::errorf(node->getLocation(),
+			"Type `%S' not found.", node->getName());
 	}
 
 	node->setSymbol(sym);

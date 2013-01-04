@@ -89,7 +89,8 @@ public:
 
 	void dump(const void* data) const { std::cout << "function() { }"; }
 
-	void* allocData() { return new Function; }
+	void* allocData(CLEVER_TYPE_CTOR_ARGS) const { return new Function; }
+
 	void deallocData(void* data) { if (data) { delete static_cast<Function*>(data); } }
 
 	CLEVER_TYPE_VIRTUAL_METHOD_DECLARATIONS;

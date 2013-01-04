@@ -22,6 +22,9 @@ void Visitor::visit(Block* node) {
 	Visitor::visit(static_cast<NodeArray*>(node));
 }
 
+void Visitor::visit(Wait* node) {
+}
+
 void Visitor::visit(CriticalBlock* node) {
 	node->getBlock()->accept(*this);
 }
@@ -62,6 +65,14 @@ void Visitor::visit(FunctionDecl* node) {
 }
 
 void Visitor::visit(FunctionCall* node) {
+	node->getCallee()->accept(*this);
+
+	if (node->hasArgs()) {
+		node->getArgs()->accept(*this);
+	}
+}
+
+void Visitor::visit(MethodCall* node) {
 	node->getCallee()->accept(*this);
 
 	if (node->hasArgs()) {
@@ -124,6 +135,10 @@ void Visitor::visit(Import* node) {
 
 void Visitor::visit(IncDec* node) {
 	node->getVar()->accept(*this);
+}
+
+void Visitor::visit(Instantiation* node) {
+	node->getType()->accept(*this);
 }
 
 }}

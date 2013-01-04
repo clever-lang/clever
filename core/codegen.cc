@@ -45,37 +45,51 @@ void Codegen::visit(StringLit* node)
 
 void Codegen::visit(Ident* node)
 {
-	Symbol* sym = m_scope->getAny(node->getName());
-
-	if (!sym) {
-		Compiler::errorf(node->getLocation(),
-			"Variable `%S' not found!", node->getName());
-	}
-
-	node->setValueId(sym->value_id);
-	node->setScope(sym->scope);
+	node->setValueId(node->getSymbol()->value_id);
 }
 
 void Codegen::visit(Block* node)
 {
-	m_scope = node->getScope();
-
 	Visitor::visit(static_cast<NodeArray*>(node));
-
-	m_scope = m_scope->getParent();
 }
 
 void Codegen::visit(CriticalBlock* node)
 {
 	m_ir.push_back(IR(OP_LOCK));
+
 	node->getBlock()->accept(*this);
+
 	m_ir.push_back(IR(OP_UNLOCK));
+}
+
+void Codegen::visit(Wait* node)
+{
+	const Ident* id_thread = node->getName();
+	const CString* str = id_thread->getName();
+	size_t id = m_thread_ids[*str];
+
+	m_ir.push_back(IR(OP_WAIT, Operand(FETCH_CONST, id)));
 }
 
 void Codegen::visit(ThreadBlock* node)
 {
 	size_t bg = m_ir.size();
-	m_ir.push_back(IR(OP_BTHREAD, Operand(JMP_ADDR, bg)));
+
+	if (node->getName() != NULL) {
+		const Ident* id_thread = node->getName();
+		const CString* str = id_thread->getName();
+
+		m_thread_id++;
+		m_thread_ids[*str] = m_thread_id;
+
+		m_ir.push_back(IR(OP_BTHREAD,
+						  Operand(JMP_ADDR, bg),
+						  Operand(FETCH_CONST, m_thread_id)));
+	} else {
+		m_ir.push_back(IR(OP_BTHREAD,
+						  Operand(JMP_ADDR, bg),
+						  Operand(FETCH_CONST, 0)));
+	}
 
 	node->getBlock()->accept(*this);
 
@@ -116,6 +130,57 @@ void Codegen::visit(Assignment* node)
 	}
 }
 
+void Codegen::visit(MethodCall* node)
+{
+	if (node->isStaticCall()) {
+		Symbol* sym = static_cast<Ident*>(node->getCallee())->getSymbol();
+
+		if (node->hasArgs()) {
+			NodeList& args = node->getArgs()->getNodes();
+			NodeList::const_iterator it = args.begin(), end = args.end();
+
+			while (EXPECTED(it != end)) {
+				(*it)->accept(*this);
+				m_ir.push_back(IR(OP_SEND_VAL));
+				_prepare_operand(m_ir.back().op1, *it);
+				++it;
+			}
+		}
+
+		m_ir.push_back(IR(OP_SMCALL,
+			Operand(FETCH_TYPE, sym->value_id, sym->scope->getId()),
+			Operand(FETCH_CONST,
+				m_compiler->addConstant(new Value(node->getMethod()->getName())))));
+	} else {
+		node->getCallee()->accept(*this);
+
+		if (node->hasArgs()) {
+			NodeList& args = node->getArgs()->getNodes();
+			NodeList::const_iterator it = args.begin(), end = args.end();
+
+			while (EXPECTED(it != end)) {
+				(*it)->accept(*this);
+				m_ir.push_back(IR(OP_SEND_VAL));
+				_prepare_operand(m_ir.back().op1, *it);
+				++it;
+			}
+		}
+
+		m_ir.push_back(IR(OP_MCALL));
+
+		_prepare_operand(m_ir.back().op1, node->getCallee());
+
+		m_ir.back().op2 = Operand(FETCH_CONST,
+			m_compiler->addConstant(new Value(node->getMethod()->getName())));
+	}
+
+	size_t tmp_id = m_compiler->getTempValue();
+
+	m_ir.back().result = Operand(FETCH_TMP, tmp_id);
+
+	node->setValueId(tmp_id);
+}
+
 void Codegen::visit(FunctionCall* node)
 {
 	// TODO: allow call for any possible callee
@@ -127,11 +192,9 @@ void Codegen::visit(FunctionCall* node)
 		NodeList& args = node->getArgs()->getNodes();
 		NodeList::const_iterator it = args.begin(), end = args.end();
 
-		while (it != end) {
+		while (EXPECTED(it != end)) {
 			(*it)->accept(*this);
-
 			m_ir.push_back(IR(OP_SEND_VAL));
-
 			_prepare_operand(m_ir.back().op1, *it);
 			++it;
 		}
@@ -158,15 +221,11 @@ void Codegen::visit(FunctionDecl* node)
 	Function* func = static_cast<Function*>(funcval->getObj());
 	func->setAddr(m_ir.size());
 
-	m_scope = node->getScope();
-
 	if (node->hasArgs()) {
 		node->getArgs()->accept(*this);
 	}
 
 	node->getBlock()->accept(*this);
-
-	m_scope = m_scope->getParent();
 
 	m_ir.push_back(IR(OP_LEAVE));
 
@@ -398,6 +457,32 @@ void Codegen::visit(If* node)
 	}
 
 	m_jmps.pop();
+}
+
+void Codegen::visit(Instantiation* node)
+{
+	Symbol* sym = node->getType()->getSymbol();
+
+	if (node->hasArgs()) {
+		NodeList& args = node->getArgs()->getNodes();
+		NodeList::const_iterator it = args.begin(), end = args.end();
+
+		while (EXPECTED(it != end)) {
+			(*it)->accept(*this);
+			m_ir.push_back(IR(OP_SEND_VAL));
+			_prepare_operand(m_ir.back().op1, *it);
+			++it;
+		}
+	}
+
+	m_ir.push_back(IR(OP_NEW,
+		Operand(FETCH_TYPE, sym->value_id, sym->scope->getId())));
+
+	size_t tmp_id = m_compiler->getTempValue();
+
+	m_ir.back().result = Operand(FETCH_TMP, tmp_id);
+
+	node->setValueId(tmp_id);
 }
 
 }} // clever::ast

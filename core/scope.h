@@ -14,6 +14,7 @@
 #include <tr1/unordered_map>
 #endif
 #include <vector>
+#include <algorithm>
 #include "core/value.h"
 
 namespace clever {
@@ -21,19 +22,26 @@ namespace clever {
 class Value;
 class Scope;
 
+typedef std::vector<Type*> TypePool;
 typedef std::vector<Value*> ValuePool;
 
 /// Symbol representation
 struct Symbol {
+	enum SymbolType { TYPE, VAR };
+
 	Symbol() {}
-	Symbol(const CString *name_, size_t value_id_, Scope *scope_ = NULL)
-		: name(name_), value_id(value_id_), scope(scope_) {}
+	Symbol(SymbolType type, const CString *name_, size_t value_id_, Scope *scope_ = NULL)
+		: m_type(type), name(name_), value_id(value_id_), scope(scope_) {}
 
 	~Symbol() {}
 
+	bool isType() const { return m_type == TYPE; }
+	bool isVar() const { return m_type == VAR; }
+
+	SymbolType m_type;
 	const CString* name;
 	size_t value_id;
-	Scope *scope;
+	const Scope *scope;
 };
 
 /// Scope representation
@@ -46,11 +54,11 @@ public:
 
 	Scope()
 		: m_parent(NULL), m_children(), m_symbols(), m_size(0), m_id(0),
-			m_value_id(0), m_value_pool() {}
+			m_value_id(0), m_type_id(0), m_value_pool() {}
 
 	explicit Scope(Scope* parent)
 		: m_parent(parent), m_children(), m_symbols(), m_size(0), m_id(0),
-			m_value_id(0), m_value_pool() {}
+			m_value_id(0), m_type_id(0), m_value_pool() {}
 
 	~Scope() {
 		ValuePool::const_iterator itv = m_value_pool.begin(),
@@ -76,19 +84,36 @@ public:
 			delete *its;
 			++its;
 		}
+
+		TypePool::const_iterator itt = m_type_pool.begin(),
+			endt = m_type_pool.end();
+
+		while (itt != endt) {
+			delete *itt;
+			++itt;
+		}
+	}
+
+	size_t pushType(const CString* name, Type* type) {
+		m_symbols.push_back(new Symbol(Symbol::TYPE, name, m_type_id, this));
+		m_symbol_table.insert(SymbolEntry(name, m_size++));
+		m_type_pool.push_back(type);
+
+		return m_type_id++;
 	}
 
 	size_t pushValue(const CString* name, Value* value) {
-		m_symbols.push_back(new Symbol(name, m_value_id, this));
+		m_symbols.push_back(new Symbol(Symbol::VAR, name, m_value_id, this));
 		m_symbol_table.insert(SymbolEntry(name, m_size++));
 		m_value_pool.push_back(value);
 
 		return m_value_id++;
 	}
 
-	Value* getValue(size_t idx) { return m_value_pool[idx]; }
+	Value* getValue(size_t idx) const { return m_value_pool[idx]; }
+	const Type* getType(size_t idx) const { return m_type_pool[idx]; }
 
-	Symbol& at(size_t idx) { return *m_symbols[idx]; }
+	Symbol& at(size_t idx) const { return *m_symbols[idx]; }
 
 	void setId(size_t id) { m_id = id; }
 
@@ -106,10 +131,28 @@ public:
 		}
 	}
 
-	Scope* newLexicalScope() {
+	Scope* enter() {
 		Scope* s = new Scope(this);
 		m_children.push_back(s);
 		return s;
+	}
+
+	Scope* leave() {
+		return m_parent;
+	}
+
+	std::vector<Scope*> flatten() {
+		std::vector<Scope*> scopes;
+		std::vector<Scope*>::iterator it(m_children.begin()), end(m_children.end());
+
+		scopes.push_back(this);
+
+		for (; it != end; it++) {
+			std::vector<Scope*> flattened = (*it)->flatten();
+			scopes.insert(scopes.end(), flattened.begin(), flattened.end());
+		}
+
+		return scopes;
 	}
 
 	Scope* getParent() const { return m_parent; }
@@ -124,7 +167,10 @@ private:
 	size_t m_size;
 	size_t m_id;
 	size_t m_value_id;
+	size_t m_type_id;
+
 	ValuePool m_value_pool;
+	TypePool m_type_pool;
 
 	DISALLOW_COPY_AND_ASSIGN(Scope);
 };

@@ -21,6 +21,7 @@ public:
 
 	virtual void visit(NodeArray* node);
 	virtual void visit(Block* node);
+	virtual void visit(Wait* node);
 	virtual void visit(ThreadBlock* node);
 	virtual void visit(CriticalBlock* node);
 	virtual void visit(Assignment* node);
@@ -28,6 +29,7 @@ public:
 	virtual void visit(Arithmetic* node);
 	virtual void visit(FunctionDecl* node);
 	virtual void visit(FunctionCall* node);
+	virtual void visit(MethodCall* node);
 	virtual void visit(IncDec* node);
 
 	virtual void visit(While* node);
@@ -37,6 +39,7 @@ public:
 	virtual void visit(DoubleLit* node) {}
 	virtual void visit(StringLit* node) {}
 	virtual void visit(Ident* node) {}
+	virtual void visit(Type* node) {}
 
 	virtual void visit(Return* node);
 	virtual void visit(Logic* node);
@@ -44,7 +47,7 @@ public:
 	virtual void visit(Boolean* node);
 	virtual void visit(Comparison* node);
 	virtual void visit(Import* node);
-
+	virtual void visit(Instantiation* node);
 };
 
 }} // clever::ast

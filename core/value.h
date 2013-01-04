@@ -9,8 +9,6 @@
 #define CLEVER_VALUE_H
 
 #include <cstring>
-#include "core/clever.h"
-#include "core/refcounted.h"
 #include "types/type.h"
 #include "core/cstring.h"
 
@@ -54,10 +52,6 @@ private:
 
 class Value : public RefCounted {
 public:
-	enum ValueKind {
-		PRIMITIVE,
-		OBJECT
-	};
 	union DataValue {
 		long lval;
 		double dval;
@@ -70,23 +64,18 @@ public:
 		DataValue(const CString* value) : sval(value) {}
 	};
 
-	Value() : m_data(), m_kind(PRIMITIVE), m_type(NULL) {}
-	Value(long n) : m_data(n), m_kind(PRIMITIVE), m_type(CLEVER_INT_TYPE) {}
-	Value(double n) : m_data(n), m_kind(PRIMITIVE), m_type(CLEVER_DOUBLE_TYPE) {}
-	Value(const CString* value) : m_data(value), m_kind(PRIMITIVE), m_type(CLEVER_STR_TYPE) {}
+	Value() : m_data(), m_type(NULL) {}
+	Value(long n) : m_data(n), m_type(CLEVER_INT_TYPE) {}
+	Value(double n) : m_data(n), m_type(CLEVER_DOUBLE_TYPE) {}
+	Value(const CString* value) : m_data(value), m_type(CLEVER_STR_TYPE) {}
 
 	~Value() {
-		if (m_type && !isPrimitive()) {
+		if (m_type && !m_type->isPrimitive()) {
 			if (m_data.obj) {
 				m_data.obj->delRef();
 			}
 		}
 	}
-
-	bool isPrimitive() const { return m_kind == PRIMITIVE; }
-
-	void setKind(ValueKind kind) { m_kind = kind; }
-	ValueKind getKind() const { return m_kind; }
 
 	void setType(const Type* type) { m_type = type; }
 	const Type* getType() const { return m_type; }
@@ -104,7 +93,6 @@ public:
 
 	void setObj(void* ptr) {
 		clever_assert_not_null(m_type);
-		m_kind = OBJECT;
 		m_data.obj = new ValueObject(ptr, m_type);
 	}
 	void* getObj() const { return m_data.obj->getObj(); }
@@ -121,11 +109,10 @@ public:
 	const CString* getStr() const { return m_data.sval; }
 
 	void copy(const Value* value) {
-		m_kind = value->getKind();
 		m_type = value->getType();
 		memcpy(&m_data, value->getData(), sizeof(DataValue));
 
-		if (!value->isPrimitive()) {
+		if (m_type && !m_type->isPrimitive()) {
 			if (m_data.obj) {
 				m_data.obj->addRef();
 			}
@@ -135,7 +122,7 @@ public:
 	bool asBool() const {
 		if (isNull()) {
 			return false;
-		} else if (m_kind == PRIMITIVE) {
+		} else if (m_type->isPrimitive()) {
 			if (m_type == CLEVER_INT_TYPE) {
 				return m_data.lval != 0;
 			} else if (m_type == CLEVER_DOUBLE_TYPE) {
@@ -148,7 +135,6 @@ public:
 	}
 private:
 	DataValue m_data;
-	ValueKind m_kind;
 	const Type* m_type;
 };
 
