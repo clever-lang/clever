@@ -233,13 +233,13 @@ private:
 
 class ThreadBlock: public NodeArray {
 public:
-	ThreadBlock(Block* m_block, const location& location)
-		: NodeArray(location), m_block(m_block), m_name(NULL) {
+	ThreadBlock(Block* block, const location& location)
+		: NodeArray(location), m_block(block), m_name(NULL) {
 		CLEVER_ADDREF(m_block);
 	}
 
-	ThreadBlock(Block* m_block, Ident* m_name, const location& location)
-		: NodeArray(location), m_block(m_block), m_name(m_name) {
+	ThreadBlock(Block* block, Ident* name, const location& location)
+		: NodeArray(location), m_block(block), m_name(name) {
 		CLEVER_ADDREF(m_block);
 		CLEVER_ADDREF(m_name);
 	}
@@ -262,8 +262,8 @@ protected:
 
 class Wait: public NodeArray {
 public:
-	Wait(Ident* m_name, const location& location)
-		: NodeArray(location), m_name(m_name) {
+	Wait(Ident* name, const location& location)
+		: NodeArray(location), m_name(name) {
 		CLEVER_ADDREF(m_name);
 	}
 
@@ -282,8 +282,8 @@ protected:
 
 class CriticalBlock: public NodeArray {
 public:
-	CriticalBlock(Block* m_block, const location& location)
-		: NodeArray(location), m_block(m_block) {
+	CriticalBlock(Block* block, const location& location)
+		: NodeArray(location), m_block(block) {
 		CLEVER_ADDREF(m_block);
 	}
 
