@@ -13,10 +13,7 @@
 #include "core/location.hh"
 #include "core/clever.h"
 
-namespace clever {
-class Scope;
-struct Symbol;
-}
+#include "core/scope.h"
 
 namespace clever { namespace ast {
 
@@ -73,10 +70,16 @@ public:
 
 	virtual void setScope(const Scope* scope) { m_scope = scope; }
 	virtual const Scope* getScope() const { return m_scope; }
+
+	virtual void setVOffset(const ValueOffset& offset) { m_voffset = offset; }
+	ValueOffset& getVOffset() { return m_voffset; }
+
 private:
 	const location& m_location;
 	size_t m_value_id;
 	const Scope* m_scope;
+
+	ValueOffset m_voffset;
 };
 
 class NodeArray: public Node {
