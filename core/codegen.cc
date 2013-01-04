@@ -65,7 +65,22 @@ void Codegen::visit(CriticalBlock* node)
 void Codegen::visit(ThreadBlock* node)
 {
 	size_t bg = m_ir.size();
-	m_ir.push_back(IR(OP_BTHREAD, Operand(JMP_ADDR, bg)));
+
+	if (node->getName() != NULL) {
+		const Ident* id_thread = node->getName();
+		const CString* str = id_thread->getName();
+
+		m_thread_id++;
+		m_thread_ids[*str] = m_thread_id;
+
+		m_ir.push_back(IR(OP_BTHREAD,
+						  Operand(JMP_ADDR, bg),
+						  Operand(FETCH_CONST, m_thread_id)));
+	} else {
+		m_ir.push_back(IR(OP_BTHREAD,
+						  Operand(JMP_ADDR, bg),
+						  Operand(FETCH_CONST, 0)));
+	}
 
 	node->getBlock()->accept(*this);
 

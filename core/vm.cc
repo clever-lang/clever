@@ -201,11 +201,17 @@ CLEVER_FORCE_INLINE void VM::decrement(IR& op)
 
 void VM::wait()
 {
-	for (size_t i = 0, j = m_thread_pool.size(); i < j; ++i) {
-		m_thread_pool[i]->t_handler.wait();
+	ThreadPool::iterator it = m_thread_pool.begin(), ed = m_thread_pool.end();
 
-		delete m_thread_pool[i]->vm_handler;
-		delete m_thread_pool[i];
+	while (it != ed) {
+		for (size_t i = 0, j = it->second.size(); i < j; ++i) {
+			it->second.at(i)->t_handler.wait();
+
+			delete it->second.at(i)->vm_handler;
+			delete it->second.at(i);
+		}
+
+		++it;
 	}
 	m_thread_pool.clear();
 }
@@ -374,7 +380,7 @@ void VM::run()
 
 			thread->vm_handler->setChild();
 
-			m_thread_pool.push_back(thread);
+			m_thread_pool[OPCODE.op2.value_id].push_back(thread);
 
 			thread->t_handler.create(_thread_control,
 									 static_cast<void*>(thread));

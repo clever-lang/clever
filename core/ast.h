@@ -137,43 +137,7 @@ public:
 	virtual Node* accept(Transformer& transformer);
 };
 
-class ThreadBlock: public NodeArray {
-public:
-	ThreadBlock(Block* m_block, const location& location)
-		: NodeArray(location), m_block(m_block) {
-		CLEVER_ADDREF(m_block);
-	}
 
-	~ThreadBlock() {
-		CLEVER_DELREF(m_block);
-	}
-
-	virtual void accept(Visitor& visitor);
-	virtual Node* accept(Transformer& transformer);
-
-	Block* getBlock() { return m_block; }
-protected:
-	Block* m_block;
-};
-
-class CriticalBlock: public NodeArray {
-public:
-	CriticalBlock(Block* m_block, const location& location)
-		: NodeArray(location), m_block(m_block) {
-		CLEVER_ADDREF(m_block);
-	}
-
-	~CriticalBlock() {
-		CLEVER_DELREF(m_block);
-	}
-
-	virtual void accept(Visitor& visitor);
-	virtual Node* accept(Transformer& transformer);
-
-	Block* getBlock() { return m_block; }
-protected:
-	Block* m_block;
-};
 
 class Comparison: public Node {
 public:
@@ -265,6 +229,56 @@ public:
 private:
 	const CString* m_name;
 	Symbol* m_sym;
+};
+
+class ThreadBlock: public NodeArray {
+public:
+	ThreadBlock(Block* m_block, const location& location)
+		: NodeArray(location), m_block(m_block), m_name(NULL) {
+		CLEVER_ADDREF(m_block);
+	}
+
+	ThreadBlock(Block* m_block, Ident* m_name, const location& location)
+		: NodeArray(location), m_block(m_block), m_name(m_name) {
+		CLEVER_ADDREF(m_block);
+		CLEVER_ADDREF(m_name);
+	}
+
+	~ThreadBlock() {
+		CLEVER_DELREF(m_block);
+		if (m_name != NULL) {
+			CLEVER_DELREF(m_name);
+		}
+	}
+
+	virtual void accept(Visitor& visitor);
+	virtual Node* accept(Transformer& transformer);
+
+	Ident* getName() { return m_name; }
+
+	Block* getBlock() { return m_block; }
+protected:
+	Block* m_block;
+	Ident* m_name;
+};
+
+class CriticalBlock: public NodeArray {
+public:
+	CriticalBlock(Block* m_block, const location& location)
+		: NodeArray(location), m_block(m_block) {
+		CLEVER_ADDREF(m_block);
+	}
+
+	~CriticalBlock() {
+		CLEVER_DELREF(m_block);
+	}
+
+	virtual void accept(Visitor& visitor);
+	virtual Node* accept(Transformer& transformer);
+
+	Block* getBlock() { return m_block; }
+protected:
+	Block* m_block;
 };
 
 class Type: public Node {

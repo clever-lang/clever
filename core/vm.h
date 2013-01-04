@@ -78,7 +78,7 @@ public:
 
 	typedef void (VM::*OpHandler)(VM_HANDLER_ARG);
 
-	typedef std::vector<Thread*> ThreadPool;
+	typedef std::map<size_t, std::vector<Thread*> > ThreadPool;
 
 	VM(IRVector& inst)
 		: m_pc(0), m_is_main_thread(true), m_inst(inst), m_scope_pool(NULL),
