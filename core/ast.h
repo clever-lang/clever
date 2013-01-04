@@ -246,9 +246,7 @@ public:
 
 	~ThreadBlock() {
 		CLEVER_DELREF(m_block);
-		if (m_name != NULL) {
-			CLEVER_DELREF(m_name);
-		}
+		CLEVER_SAFE_DELREF(m_name);
 	}
 
 	virtual void accept(Visitor& visitor);
