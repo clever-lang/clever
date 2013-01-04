@@ -21,6 +21,7 @@ public:
 
 	virtual void visit(NodeArray* node);
 	virtual void visit(Block* node);
+	virtual void visit(Wait* node);
 	virtual void visit(ThreadBlock* node);
 	virtual void visit(CriticalBlock* node);
 	virtual void visit(Assignment* node);

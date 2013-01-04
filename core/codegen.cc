@@ -62,6 +62,15 @@ void Codegen::visit(CriticalBlock* node)
 	m_ir.push_back(IR(OP_UNLOCK));
 }
 
+void Codegen::visit(Wait* node)
+{
+	const Ident* id_thread = node->getName();
+	const CString* str = id_thread->getName();
+	size_t id = m_thread_ids[*str];
+
+	m_ir.push_back(IR(OP_WAIT, Operand(FETCH_CONST, id)));
+}
+
 void Codegen::visit(ThreadBlock* node)
 {
 	size_t bg = m_ir.size();

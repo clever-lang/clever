@@ -36,6 +36,7 @@ public:
 
 	void visit(Block*);
 	void visit(CriticalBlock*);
+	void visit(Wait*);
 	void visit(ThreadBlock*);
 	void visit(VariableDecl*);
 	void visit(Assignment*);

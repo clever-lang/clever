@@ -381,12 +381,24 @@ void VM::run()
 			thread->vm_handler->setChild();
 
 			m_thread_pool[OPCODE.op2.value_id].push_back(thread);
-
 			thread->t_handler.create(_thread_control,
 									 static_cast<void*>(thread));
 
 			VM_GOTO(OPCODE.op1.value_id);
 		}
+
+	OP(OP_WAIT):
+		{
+			std::vector<Thread*>& thread_list = m_thread_pool[OPCODE.op1.value_id];
+			for (size_t i = 0, j = thread_list.size(); i < j; ++i) {
+				Thread* t = thread_list.at(i);
+				t->t_handler.wait();
+				delete t->vm_handler;
+				delete t;
+			}
+			m_thread_pool.erase(OPCODE.op1.value_id);
+		}
+		DISPATCH;
 
 	OP(OP_ETHREAD):
 		if (this->isChild()) {

@@ -261,6 +261,26 @@ protected:
 	Ident* m_name;
 };
 
+class Wait: public NodeArray {
+public:
+	Wait(Ident* m_name, const location& location)
+		: NodeArray(location), m_name(m_name) {
+		CLEVER_ADDREF(m_name);
+	}
+
+	~Wait() {
+		CLEVER_DELREF(m_name);
+	}
+
+	virtual void accept(Visitor& visitor);
+	virtual Node* accept(Transformer& transformer);
+
+	Ident* getName() { return m_name; }
+
+protected:
+	Ident* m_name;
+};
+
 class CriticalBlock: public NodeArray {
 public:
 	CriticalBlock(Block* m_block, const location& location)

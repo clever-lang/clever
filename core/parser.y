@@ -28,6 +28,7 @@ class Value;
 	ast::Node* node;
 	ast::Block* block;
 	ast::ThreadBlock* threadblock;
+	ast::Wait* waitblock;
 	ast::CriticalBlock* criticalblock;
 	ast::NodeArray* narray;
 	ast::Ident* ident;
@@ -64,6 +65,7 @@ class Value;
 %type <vardecl> variable_decl_impl
 %type <block> statement_list block
 %type <threadblock> thread_block
+%type <waitblock> wait_block
 %type <criticalblock> critical_block
 %type <arithmetic> arithmetic
 %type <bitwise> bitwise
@@ -141,7 +143,8 @@ class Value;
 %token CONST         "const"
 %token PRINT         "print"
 %token FUNC          "function"
-%token THREAD        "thread"
+%token THREAD        "spawn"
+%token WAIT          "wait"
 %token CRITICAL      "critical"
 %token INC           "++"
 %token DEC           "--"
@@ -196,6 +199,7 @@ statement:
 	|	block
 	|	thread_block
 	|   critical_block
+	|	wait_block ';'
 ;
 
 block:
@@ -204,6 +208,10 @@ block:
 
 instantiation:
 		TYPE '.' NEW { $$ = new ast::Instantiation($1, yyloc); }
+;
+
+wait_block:
+		WAIT IDENT { $$ = new ast::Wait($2, yyloc); }
 ;
 
 thread_block:
