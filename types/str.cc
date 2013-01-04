@@ -57,7 +57,7 @@ CLEVER_METHOD(StrType::subString)
 	bounds[1]=-1;
 
 	if (CLEVER_THIS()) {
-		of = (const CString*) CLEVER_THIS()->getStr();
+		of = CLEVER_THIS()->getStr();
 		switch(CLEVER_ARG_COUNT()) {
 			case 2:
 				bounds[0] = CLEVER_ARG_INT(0);
@@ -69,7 +69,7 @@ CLEVER_METHOD(StrType::subString)
 			default: std::cerr << "String.subString expected at least one argument";
 		}
 	} else if (CLEVER_ARG_COUNT()) {
-		of = (const CString*) CLEVER_ARG_CSTR(0);
+		of = CLEVER_ARG_CSTR(0);
 		switch(CLEVER_ARG_COUNT()) {
 			case 3:
 				bounds[0] = CLEVER_ARG_INT(1);
@@ -103,7 +103,7 @@ CLEVER_METHOD(StrType::find)
 	bounds[1]=-1;
 	
 	if (CLEVER_THIS()) {
-		haystack = (const CString*) CLEVER_THIS()->getStr();
+		haystack = CLEVER_THIS()->getStr();
 		switch (CLEVER_ARG_COUNT()) {
 			case 1:
 				needle = CLEVER_ARG_PSTR(0);
@@ -120,7 +120,7 @@ CLEVER_METHOD(StrType::find)
 			default: std::cerr << "String.find expected a maximum of 2 arguments";
 		}
 	} else if(CLEVER_ARG_COUNT()) {
-		haystack = (const CString*) CLEVER_ARG_CSTR(0);
+		haystack = CLEVER_ARG_CSTR(0);
 		switch (CLEVER_ARG_COUNT()) {
 			case 4:
 				needle = CLEVER_ARG_PSTR(1);
@@ -164,7 +164,7 @@ CLEVER_METHOD(StrType::findFirst)
 	bounds[1]=-1;
 	
 	if (CLEVER_THIS()) {
-		haystack = (const CString*) CLEVER_THIS()->getStr();
+		haystack = CLEVER_THIS()->getStr();
 		switch (CLEVER_ARG_COUNT()) {
 			case 1:
 				needle = CLEVER_ARG_PSTR(0);
@@ -181,7 +181,7 @@ CLEVER_METHOD(StrType::findFirst)
 			default: std::cerr << "String.findFirst expected a maximum of 2 arguments";
 		}
 	} else if(CLEVER_ARG_COUNT()) {
-		haystack = (const CString*) CLEVER_ARG_CSTR(0);
+		haystack = CLEVER_ARG_CSTR(0);
 		switch (CLEVER_ARG_COUNT()) {
 			case 4:
 				needle = CLEVER_ARG_PSTR(1);
@@ -224,7 +224,7 @@ CLEVER_METHOD(StrType::findLast)
 	bounds[1]=-1;
 	
 	if (CLEVER_THIS()) {
-		haystack = (const CString*) CLEVER_THIS()->getStr();
+		haystack = CLEVER_THIS()->getStr();
 		switch (CLEVER_ARG_COUNT()) {
 			case 1:
 				needle = CLEVER_ARG_PSTR(0);
@@ -241,7 +241,7 @@ CLEVER_METHOD(StrType::findLast)
 			default: std::cerr << "String.findLast expected a maximum of 2 arguments";
 		}
 	} else if(CLEVER_ARG_COUNT()) {
-		haystack = (const CString*) CLEVER_ARG_CSTR(0);
+		haystack = CLEVER_ARG_CSTR(0);
 		switch (CLEVER_ARG_COUNT()) {
 			case 4:
 				needle = CLEVER_ARG_PSTR(1);
@@ -278,10 +278,10 @@ CLEVER_METHOD(StrType::findLast)
 CLEVER_METHOD(StrType::getLength)
 {
 	if (CLEVER_THIS()) {
-		result->setInt(((const CString*) CLEVER_THIS()->getStr())->length());
+		result->setInt((CLEVER_THIS()->getStr())->length());
 	} else {
 		if(CLEVER_ARG_COUNT()) {
-			result->setInt(((const CString*) CLEVER_ARG_CSTR(0))->length());
+			result->setInt((CLEVER_ARG_CSTR(0))->length());
 		} else std::cerr << "String.getLength expected a string argument";
 	}
 }
