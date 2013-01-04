@@ -10,8 +10,10 @@
 
 #include <vector>
 #include <stack>
+#include <map>
+#include "core/ir.h"
 #include "core/cthread.h"
-#include "core/compiler.h"
+#include "core/codegen.h"
 
 namespace clever {
 
