@@ -107,9 +107,6 @@ public:
 	void dumpOperand(Operand&) const;
 	void dumpOpcodes() const;
 #endif
-
-	void increment(IR&);
-	void decrement(IR&);
 private:
 	/// VM program counter
 	size_t m_pc;

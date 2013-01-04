@@ -183,38 +183,6 @@ void VM::copy(const VM* vm)
 	this->m_const_pool = vm->m_const_pool;
 }
 
-CLEVER_FORCE_INLINE void VM::increment(IR& op)
-{
-	Value* value = getValue(op.op1);
-
-	if (value->isNull()) {
-		error(VM::ERROR, "Cannot increment null value");
-	}
-	if (op.opcode == OP_PRE_INC) {
-		value->getType()->increment(value);
-		getValue(op.result)->copy(value);
-	} else {
-		getValue(op.result)->copy(value);
-		value->getType()->increment(value);
-	}
-}
-
-CLEVER_FORCE_INLINE void VM::decrement(IR& op)
-{
-	Value* value = getValue(op.op1);
-
-	if (value->isNull()) {
-		error(VM::ERROR, "Cannot decrement null value");
-	}
-	if (op.opcode == OP_PRE_DEC) {
-		value->getType()->decrement(value);
-		getValue(op.result)->copy(value);
-	} else {
-		getValue(op.result)->copy(value);
-		value->getType()->decrement(value);
-	}
-}
-
 void VM::wait()
 {
 	ThreadPool::iterator it = m_thread_pool.begin(), ed = m_thread_pool.end();
@@ -464,19 +432,55 @@ void VM::run()
 		DISPATCH;
 
 	OP(OP_PRE_INC):
-		increment(OPCODE);
-		DISPATCH;
+		{
+			Value* value = getValue(OPCODE.op1);
 
-	OP(OP_PRE_DEC):
-		decrement(OPCODE);
+			if (EXPECTED(!value->isNull())) {
+				value->getType()->increment(value);
+				getValue(OPCODE.result)->copy(value);
+			} else {
+				error(VM::ERROR, "Cannot increment null value");
+			}
+		}
 		DISPATCH;
 
 	OP(OP_POS_INC):
-		increment(OPCODE);
+		{
+			Value* value = getValue(OPCODE.op1);
+
+			if (EXPECTED(!value->isNull())) {
+				getValue(OPCODE.result)->copy(value);
+				value->getType()->increment(value);
+			} else {
+				error(VM::ERROR, "Cannot increment null value");
+			}
+		}
+		DISPATCH;
+
+	OP(OP_PRE_DEC):
+		{
+			Value* value = getValue(OPCODE.op1);
+
+			if (EXPECTED(!value->isNull())) {
+				value->getType()->decrement(value);
+				getValue(OPCODE.result)->copy(value);
+			} else {
+				error(VM::ERROR, "Cannot decrement null value");
+			}
+		}
 		DISPATCH;
 
 	OP(OP_POS_DEC):
-		decrement(OPCODE);
+		{
+			Value* value = getValue(OPCODE.op1);
+
+			if (EXPECTED(!value->isNull())) {
+				getValue(OPCODE.result)->copy(value);
+				value->getType()->decrement(value);
+			} else {
+				error(VM::ERROR, "Cannot decrement null value");
+			}
+		}
 		DISPATCH;
 
 	OP(OP_JMPNZ):

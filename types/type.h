@@ -111,13 +111,12 @@ public:
 	virtual void greater_equal(CLEVER_TYPE_OPERATOR_ARGS) const = 0;
 	virtual void less(CLEVER_TYPE_OPERATOR_ARGS)          const = 0;
 	virtual void less_equal(CLEVER_TYPE_OPERATOR_ARGS)    const = 0;
+	virtual void increment(Value*)                        const = 0;
+	virtual void decrement(Value*)                        const = 0;
 
 
 	virtual void* allocData(CLEVER_TYPE_CTOR_ARGS) const { return NULL; }
 	virtual void deallocData(void* data) {}
-
-	virtual void increment(Value*) const = 0;
-	virtual void decrement(Value*) const = 0;
 private:
 	const CString* m_name;
 	MethodMap m_methods;
