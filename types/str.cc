@@ -47,14 +47,14 @@ CLEVER_TYPE_OPERATOR(StrType::mod)
 
 CLEVER_METHOD(StrType::subString) 
 {
-	char *of;
+	const CString *of;
 	int bounds[2];
 
 	bounds[0]=-1;
 	bounds[1]=-1;
 
 	if (CLEVER_THIS()) {
-		of = (char*) CLEVER_THIS()->getStr()->c_str();
+		of = (const CString*) CLEVER_THIS()->getStr();
 		switch(CLEVER_ARG_COUNT()) {
 			case 2:
 				bounds[0]=CLEVER_ARG_INT(0);
@@ -66,7 +66,7 @@ CLEVER_METHOD(StrType::subString)
 			default: std::cerr << "String.subString expected at least one argument";
 		}
 	} else {
-		of = CLEVER_ARG_PSTR(0);
+		of = (const CString*) CLEVER_ARG_CSTR(0);
 		switch(CLEVER_ARG_COUNT()) {
 			case 3:
 				bounds[0]=CLEVER_ARG_INT(1);
@@ -79,15 +79,9 @@ CLEVER_METHOD(StrType::subString)
 	}
 
 	if (of && bounds[0]>-1) {
-		std::ostringstream buffer;
-		{
-			buffer << of;
-			if (buffer) {
-				if (bounds[1]>-1) {
-					result->setStr(CSTRING(buffer.str().substr(bounds[0], bounds[1])));
-				} else result->setStr(CSTRING(buffer.str().substr(bounds[0])));
-			}
-		}
+		if (bounds[1]>-1) {
+			result->setStr(CSTRING(of->substr(bounds[0], bounds[1])));
+		} else result->setStr(CSTRING(of->substr(bounds[0])));
 	}
 }
 
