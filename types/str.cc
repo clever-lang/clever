@@ -68,16 +68,18 @@ CLEVER_METHOD(StrType::subString)
 			break;
 			default: std::cerr << "String.subString expected at least one argument";
 		}
-	} else if (CLEVER_ARG_COUNT()) {
-		of = CLEVER_ARG_CSTR(0);
-		switch(CLEVER_ARG_COUNT()) {
-			case 3:
-				bounds[0] = CLEVER_ARG_INT(1);
-				bounds[1] = CLEVER_ARG_INT(2);
-			break;
-			case 2: bounds[0] = CLEVER_ARG_INT(1); break;
+	} else {
+		if (CLEVER_ARG_COUNT()) {
+			of = CLEVER_ARG_CSTR(0);
+			switch(CLEVER_ARG_COUNT()) {
+				case 3:
+					bounds[0] = CLEVER_ARG_INT(1);
+					bounds[1] = CLEVER_ARG_INT(2);
+				break;
+				case 2: bounds[0] = CLEVER_ARG_INT(1); break;
 			
-			default: std::cerr << "String.subString expected at least two arguments";
+				default: std::cerr << "String.subString expected at least two arguments";
+			}
 		}
 	}
 
@@ -119,22 +121,24 @@ CLEVER_METHOD(StrType::find)
 			break;
 			default: std::cerr << "String.find expected a maximum of 2 arguments";
 		}
-	} else if(CLEVER_ARG_COUNT()) {
-		haystack = CLEVER_ARG_CSTR(0);
-		switch (CLEVER_ARG_COUNT()) {
-			case 4:
-				needle = CLEVER_ARG_PSTR(1);
-				bounds[0] = CLEVER_ARG_INT(2);
-				bounds[1] = CLEVER_ARG_INT(3);
-			break;
-			case 3:
-				needle = CLEVER_ARG_PSTR(1);
-				bounds[0] = CLEVER_ARG_INT(2);
-			break;
-			case 2:
-				needle = CLEVER_ARG_PSTR(1);
-			break;
-			default: std::cerr << "String.find expected at least two arguments";
+	} else {
+		if(CLEVER_ARG_COUNT()) {
+			haystack = CLEVER_ARG_CSTR(0);
+			switch (CLEVER_ARG_COUNT()) {
+				case 4:
+					needle = CLEVER_ARG_PSTR(1);
+					bounds[0] = CLEVER_ARG_INT(2);
+					bounds[1] = CLEVER_ARG_INT(3);
+				break;
+				case 3:
+					needle = CLEVER_ARG_PSTR(1);
+					bounds[0] = CLEVER_ARG_INT(2);
+				break;
+				case 2:
+					needle = CLEVER_ARG_PSTR(1);
+				break;
+				default: std::cerr << "String.find expected at least two arguments";
+			}
 		}
 	}	
 
@@ -180,22 +184,24 @@ CLEVER_METHOD(StrType::findFirst)
 			break;
 			default: std::cerr << "String.findFirst expected a maximum of 2 arguments";
 		}
-	} else if(CLEVER_ARG_COUNT()) {
-		haystack = CLEVER_ARG_CSTR(0);
-		switch (CLEVER_ARG_COUNT()) {
-			case 4:
-				needle = CLEVER_ARG_PSTR(1);
-				bounds[0] = CLEVER_ARG_INT(2);
-				bounds[1] = CLEVER_ARG_INT(3);
-			break;
-			case 3:
-				needle = CLEVER_ARG_PSTR(1);
-				bounds[0] = CLEVER_ARG_INT(2);
-			break;
-			case 2:
-				needle = CLEVER_ARG_PSTR(1);
-			break;
-			default: std::cerr << "String.findFirst expected at least two arguments";
+	} else {
+		if(CLEVER_ARG_COUNT()) {
+			haystack = CLEVER_ARG_CSTR(0);
+			switch (CLEVER_ARG_COUNT()) {
+				case 4:
+					needle = CLEVER_ARG_PSTR(1);
+					bounds[0] = CLEVER_ARG_INT(2);
+					bounds[1] = CLEVER_ARG_INT(3);
+				break;
+				case 3:
+					needle = CLEVER_ARG_PSTR(1);
+					bounds[0] = CLEVER_ARG_INT(2);
+				break;
+				case 2:
+					needle = CLEVER_ARG_PSTR(1);
+				break;
+				default: std::cerr << "String.findFirst expected at least two arguments";
+			}
 		}
 	}	
 
@@ -241,24 +247,26 @@ CLEVER_METHOD(StrType::findLast)
 			break;
 			default: std::cerr << "String.findLast expected a maximum of 2 arguments";
 		}
-	} else if(CLEVER_ARG_COUNT()) {
-		haystack = CLEVER_ARG_CSTR(0);
-		switch (CLEVER_ARG_COUNT()) {
-			case 4:
-				needle = CLEVER_ARG_PSTR(1);
-				bounds[0] = CLEVER_ARG_INT(2);
-				bounds[1] = CLEVER_ARG_INT(3);
-			break;
-			case 3:
-				needle = CLEVER_ARG_PSTR(1);
-				bounds[0] = CLEVER_ARG_INT(2);
-			break;
-			case 2:
-				needle = CLEVER_ARG_PSTR(1);
-			break;
-			default: std::cerr << "String.findLast expected at least two arguments";
-		}
-	}	
+	} else {
+		if(CLEVER_ARG_COUNT()) {
+			haystack = CLEVER_ARG_CSTR(0);
+			switch (CLEVER_ARG_COUNT()) {
+				case 4:
+					needle = CLEVER_ARG_PSTR(1);
+					bounds[0] = CLEVER_ARG_INT(2);
+					bounds[1] = CLEVER_ARG_INT(3);
+				break;
+				case 3:
+					needle = CLEVER_ARG_PSTR(1);
+					bounds[0] = CLEVER_ARG_INT(2);
+				break;
+				case 2:
+					needle = CLEVER_ARG_PSTR(1);
+				break;
+				default: std::cerr << "String.findLast expected at least two arguments";
+			}
+		}	
+	}
 
 	if (needle && haystack) {
 		if (bounds[0] > -1) {
