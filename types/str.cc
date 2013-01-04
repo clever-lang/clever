@@ -89,6 +89,8 @@ CLEVER_METHOD(StrType::subString)
 		} else {
 			result->setStr(CSTRING(of->substr(bounds[0])));
 		}
+	} else {
+		result->setNull();
 	}
 }
 
