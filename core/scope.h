@@ -21,6 +21,7 @@ namespace clever {
 
 class Value;
 class Scope;
+struct Environment;
 
 typedef std::vector<Type*> TypePool;
 typedef std::vector<Value*> ValuePool;
@@ -54,11 +55,11 @@ public:
 
 	Scope()
 		: m_parent(NULL), m_children(), m_symbols(), m_size(0), m_id(0),
-			m_value_id(0), m_type_id(0), m_value_pool() {}
+		  m_value_id(0), m_type_id(0), m_value_pool(), m_environment(NULL) {}
 
 	explicit Scope(Scope* parent)
 		: m_parent(parent), m_children(), m_symbols(), m_size(0), m_id(0),
-			m_value_id(0), m_type_id(0), m_value_pool() {}
+		  m_value_id(0), m_type_id(0), m_value_pool(), m_environment(NULL) {}
 
 	~Scope() {
 		ValuePool::const_iterator itv = m_value_pool.begin(),
@@ -159,6 +160,12 @@ public:
 
 	Symbol* getLocal(const CString*);
 	Symbol* getAny(const CString*);
+
+	Environment* getEnvironment() { return m_environment; }
+	void setEnvironment(Environment* e) { m_environment = e; }
+
+	std::pair<size_t, size_t> getDepth(Symbol* sym);
+
 private:
 	Scope* m_parent;
 	ScopeVector m_children;
@@ -171,6 +178,8 @@ private:
 
 	ValuePool m_value_pool;
 	TypePool m_type_pool;
+
+	Environment* m_environment;
 
 	DISALLOW_COPY_AND_ASSIGN(Scope);
 };
@@ -204,6 +213,31 @@ inline Symbol* Scope::getAny(const CString* name) {
 	}
 
 	return sym;
+}
+
+inline std::pair<size_t, size_t> Scope::getDepth(Symbol* sym) {
+	size_t depth = 0;
+	size_t value = 0;
+	SymbolMap::iterator it = std::find(m_symbols.begin(), m_symbols.end(), sym);
+
+	if (it != m_symbols.end()) {
+		value = std::distance(m_symbols.begin(), it);
+	} else {
+		for (Scope* parent = parent; parent != NULL; parent = parent->m_parent) {
+			if (parent->getEnvironment()) {
+				depth++;
+
+				it = std::find(parent->m_symbols.begin(), parent-> m_symbols.end(), sym);
+
+				if (it != parent->m_symbols.end()) {
+					value = std::distance(parent->m_symbols.begin(), it);
+				}
+				break;
+			}
+		}
+	}
+
+	return std::pair<size_t, size_t>(depth, value);
 }
 
 } // clever

@@ -9,11 +9,24 @@
 #include "core/resolver.h"
 #include "core/compiler.h"
 
+namespace clever {
+
+struct Environment {
+	Environment* outer;
+	std::vector<Value*> data;
+
+	Environment(Environment* outer_)
+		: outer(outer_), data() {}
+};
+
+}
+
 namespace clever { namespace ast {
 
 Resolver::Resolver(Compiler* compiler)
 	: Visitor(), m_compiler(compiler)
 {
+	// global environment and scope
 	m_symtable = m_scope = new Scope();
 
 	// Native type allocation
