@@ -88,8 +88,8 @@ CLEVER_METHOD(StrType::subString)
 	}
 }
 
-// String.findString(string haystack, string needle, [int position, [int count]])
-// String.findString(string needle, [int position, [int count]])
+// String.find(string haystack, string needle, [int position, [int count]])
+// String.find(string needle, [int position, [int count]])
 // Finds a string in a string returning the position
 CLEVER_METHOD(StrType::find) 
 {
@@ -145,6 +145,9 @@ CLEVER_METHOD(StrType::find)
 	}
 }
 
+// String.findFirst(string haystack, string needle, [int position, [int count]])
+// String.findFirst(string needle, [int position, [int count]])
+// Finds the first occurence of a string in a string returning the position
 CLEVER_METHOD(StrType::findFirst) 
 {
 	const char *needle;
@@ -198,7 +201,9 @@ CLEVER_METHOD(StrType::findFirst)
 		} else result->setInt(haystack->find_first_of((const char*)needle));
 	}
 }
-
+// String.findLast(string haystack, string needle, [int position, [int count]])
+// String.findLast(string needle, [int position, [int count]])
+// Finds the last occurence of a string in a string returning the position
 CLEVER_METHOD(StrType::findLast) 
 {
 	const char *needle;
@@ -253,6 +258,9 @@ CLEVER_METHOD(StrType::findLast)
 	}
 }
 
+// String.getLength(string str)
+// String.getLength()
+// Returns the length of the string
 CLEVER_METHOD(StrType::getLength)
 {
 	if (CLEVER_THIS()) {
