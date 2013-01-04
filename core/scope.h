@@ -61,39 +61,7 @@ public:
 		: m_parent(parent), m_children(), m_symbols(), m_size(0), m_id(0),
 		  m_value_id(0), m_type_id(0), m_value_pool(), m_environment(NULL) {}
 
-	~Scope() {
-		ValuePool::const_iterator itv = m_value_pool.begin(),
-			endv = m_value_pool.end();
-
-		while (itv != endv) {
-			CLEVER_SAFE_DELREF(*itv);
-			++itv;
-		}
-
-		ScopeVector::const_iterator it = m_children.begin(),
-			end = m_children.end();
-
-		while (it != end) {
-			delete *it;
-			++it;
-		}
-
-		SymbolMap::const_iterator its = m_symbols.begin(),
-			ends = m_symbols.end();
-
-		while (its != ends) {
-			delete *its;
-			++its;
-		}
-
-		TypePool::const_iterator itt = m_type_pool.begin(),
-			endt = m_type_pool.end();
-
-		while (itt != endt) {
-			delete *itt;
-			++itt;
-		}
-	}
+	~Scope();
 
 	size_t pushType(const CString* name, Type* type) {
 		m_symbols.push_back(new Symbol(Symbol::TYPE, name, m_type_id, this));
@@ -142,19 +110,7 @@ public:
 		return m_parent;
 	}
 
-	std::vector<Scope*> flatten() {
-		std::vector<Scope*> scopes;
-		std::vector<Scope*>::iterator it(m_children.begin()), end(m_children.end());
-
-		scopes.push_back(this);
-
-		for (; it != end; it++) {
-			std::vector<Scope*> flattened = (*it)->flatten();
-			scopes.insert(scopes.end(), flattened.begin(), flattened.end());
-		}
-
-		return scopes;
-	}
+	std::vector<Scope*> flatten();
 
 	Scope* getParent() const { return m_parent; }
 
@@ -184,61 +140,7 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(Scope);
 };
 
-inline Symbol* Scope::getLocal(const CString* name) {
-	SymbolTable::iterator it = m_symbol_table.find(name);
 
-	if (it == m_symbol_table.end()) {
-		return NULL;
-	}
-	return m_symbols[it->second];
-}
-
-/// Resolve a symbol name recursively
-inline Symbol* Scope::getAny(const CString* name) {
-	Symbol* sym = getLocal(name);
-
-	if (sym != NULL) {
-		return sym;
-	}
-
-	Scope* v = m_parent;
-	while (v != NULL) {
-		sym = v->getLocal(name);
-
-		if (sym != NULL) {
-			return sym;
-		}
-
-		v = v->m_parent;
-	}
-
-	return sym;
-}
-
-inline std::pair<size_t, size_t> Scope::getDepth(Symbol* sym) {
-	size_t depth = 0;
-	size_t value = 0;
-	SymbolMap::iterator it = std::find(m_symbols.begin(), m_symbols.end(), sym);
-
-	if (it != m_symbols.end()) {
-		value = std::distance(m_symbols.begin(), it);
-	} else {
-		for (Scope* parent = parent; parent != NULL; parent = parent->m_parent) {
-			if (parent->getEnvironment()) {
-				depth++;
-
-				it = std::find(parent->m_symbols.begin(), parent-> m_symbols.end(), sym);
-
-				if (it != parent->m_symbols.end()) {
-					value = std::distance(parent->m_symbols.begin(), it);
-				}
-				break;
-			}
-		}
-	}
-
-	return std::pair<size_t, size_t>(depth, value);
-}
 
 } // clever
 

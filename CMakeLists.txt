@@ -163,6 +163,7 @@ add_executable(clever
 	core/resolver.cc
 	core/resolver.cc
 	core/scanner.h
+	core/scope.cc
 	core/scope.h
 	core/value.h
 	core/vm.cc
