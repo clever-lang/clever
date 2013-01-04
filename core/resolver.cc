@@ -26,6 +26,7 @@ Resolver::Resolver(Compiler* compiler)
 	m_symtable->pushType(CSTRING("Function"), CLEVER_FUNC_TYPE   = new FuncType);
 
 	CLEVER_INT_TYPE->init();
+	CLEVER_STR_TYPE->init();
 }
 Resolver::~Resolver() {
 	if (!m_stack.empty()) {
