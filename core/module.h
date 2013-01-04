@@ -34,11 +34,6 @@
 #define CLEVER_ARG_DUMP(index) args[index]->dump()
 /* }}} */
 
-#define CLV_RETURN_STR(r)	
-#define CLV_RETURN_DBL(d)
-#define CLV_RETURN_LONG(l)
-#define CLV_RETURN_OBJ(o)
-
 namespace clever {
 
 typedef std::tr1::unordered_map<const CString*, Function*> FunctionMap;
