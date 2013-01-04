@@ -156,15 +156,15 @@ void VM::restoreVars() const
 }
 
 // Make a copy of VM instance
-void VM::copy(VM* vm)
+void VM::copy(const VM* vm)
 {
-	this->f_mutex = vm->getMutex();
+	this->f_mutex = const_cast<VM*>(vm)->getMutex();
 	this->m_pc = vm->m_pc;
 
 	this->f_mutex->lock();
 	this->m_scope_pool = new ScopePool;
 
-	this->m_scope_pool->push_back(vm->m_scope_pool->at(0));
+	this->m_scope_pool->push_back(const_cast<Scope*>(vm->m_scope_pool->at(0)));
 
 	for (size_t id = 1; id < vm->m_scope_pool->size(); ++id) {
 		Scope* s = new Scope;

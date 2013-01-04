@@ -68,7 +68,7 @@ public:
 
 	void setTemporaryPool(ValuePool* temps) { m_tmp_pool = temps; }
 
-	void copy(VM*);
+	void copy(const VM*);
 
 	void setChild() { m_is_main_thread = false; }
 
