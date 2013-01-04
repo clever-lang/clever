@@ -16,6 +16,9 @@ void Std::init() {
 #ifdef HAVE_MOD_STD_IO
 	addModule(new std::IOModule);
 #endif
+#ifdef HAVE_MOD_STD_REFLECTION
+	addModule(new std::Reflection);
+#endif
 /*
 #ifdef HAVE_MOD_STD_MATH
 	addModule(new std::Math);
@@ -25,9 +28,6 @@ void Std::init() {
 #endif
 #ifdef HAVE_MOD_STD_SYS
 	addModule(new std::SYSModule);
-#endif
-#ifdef HAVE_MOD_STD_REFLECTION
-	addModule(new std::Reflection);
 #endif
 #ifdef HAVE_MOD_STD_NET
 	addModule(new std::NetModule);

@@ -33,9 +33,9 @@ endif (MOD_STD_IO)
 #	list(APPEND CLEVER_MODULES sys)
 #endif (MOD_STD_SYS)
 
-#if (MOD_STD_REFLECTION)
-#	list(APPEND CLEVER_MODULES reflection)
-#endif (MOD_STD_REFLECTION)
+if (MOD_STD_REFLECTION)
+	list(APPEND CLEVER_MODULES reflection)
+endif (MOD_STD_REFLECTION)
 
 foreach (module ${CLEVER_MODULES})
 	add_subdirectory(${module})

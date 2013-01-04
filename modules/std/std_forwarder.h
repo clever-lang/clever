@@ -8,6 +8,9 @@
 #ifdef HAVE_MOD_STD_IO
 #include "modules/std/io/io.h"
 #endif
+#ifdef HAVE_MOD_STD_REFLECTION
+#include "modules/std/reflection/reflection.h"
+#endif
 #if 0
 #ifdef HAVE_MOD_STD_FILE
 #include "modules/std/file/file.h"
@@ -20,9 +23,6 @@
 #endif
 #ifdef HAVE_MOD_STD_NET
 #include "modules/std/net/net.h"
-#endif
-#ifdef HAVE_MOD_STD_REFLECTION
-#include "modules/std/reflection/reflection.h"
 #endif
 #ifdef HAVE_MOD_STD_REGEX
 # include "modules/std/regex/regex.h"
