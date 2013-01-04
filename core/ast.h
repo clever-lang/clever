@@ -43,6 +43,7 @@ class Import;
 class Boolean;
 class NullLit;
 class MethodCall;
+class Property;
 
 typedef std::vector<Node*> NodeList;
 
@@ -851,6 +852,29 @@ public:
 	virtual Node* accept(Transformer& transformer);
 private:
 	Node* m_value;
+};
+
+class Property: public Node {
+public:
+	Property(Node* obj, Ident* prop_name, const location& location)
+		: Node(location), m_obj(obj), m_prop_name(prop_name) {
+		CLEVER_ADDREF(m_obj);
+		CLEVER_ADDREF(m_prop_name);
+	}
+
+	~Property() {
+		CLEVER_DELREF(m_obj);
+		CLEVER_DELREF(m_prop_name);
+	}
+
+	Node* getObject() const { return m_obj; }
+	Ident* getProperty() const { return m_prop_name; }
+
+	virtual void accept(Visitor& visitor);
+	virtual Node* accept(Transformer& transformer);
+private:
+	Node* m_obj;
+	Ident* m_prop_name;
 };
 
 class IncDec: public Node {

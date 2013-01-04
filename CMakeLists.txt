@@ -176,6 +176,7 @@ add_executable(clever
 	types/str.cc
 	types/native_types.h
 	types/type.h
+	types/type.cc
 	types/function.h
 	types/function.cc
 	${EXTRA_CLEVER_FILES}

@@ -141,4 +141,8 @@ void Visitor::visit(Instantiation* node) {
 	node->getType()->accept(*this);
 }
 
-}}
+void Visitor::visit(Property* node) {
+	node->getObject()->accept(*this);
+}
+
+}} // clever::ast

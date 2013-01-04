@@ -53,6 +53,7 @@ class Value;
 	ast::Type* type;
 	ast::Instantiation* inst;
 	ast::MethodCall* mcall;
+	ast::Property* property;
 }
 
 %type <type> TYPE
@@ -82,6 +83,7 @@ class Value;
 %type <nillit> NIL
 %type <comp> comparison
 %type <mcall> mcall
+%type <property> property_access
 
 // The parsing context.
 %parse-param { Driver& driver }
@@ -242,12 +244,17 @@ rvalue:
 	|	fcall
 	|	anonymous_fdecl
 	|	instantiation
+	|	property_access
 	|	mcall
 	|	'(' rvalue ')' { $<node>$ = $<node>2; }
 ;
 
 lvalue:
 		IDENT
+;
+
+property_access:
+		rvalue '.' IDENT { $$ = new ast::Property($<node>1, $3, yyloc); }
 ;
 
 mcall:

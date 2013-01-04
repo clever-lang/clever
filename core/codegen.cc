@@ -485,4 +485,22 @@ void Codegen::visit(Instantiation* node)
 	node->setValueId(tmp_id);
 }
 
+void Codegen::visit(Property* node)
+{
+	node->getObject()->accept(*this);
+
+	m_ir.push_back(IR(OP_PROP_ACC));
+
+	_prepare_operand(m_ir.back().op1, node->getObject());
+
+	m_ir.back().op2 = Operand(FETCH_CONST,
+		m_compiler->addConstant(new Value(node->getProperty()->getName())));
+
+	size_t tmp_id = m_compiler->getTempValue();
+
+	m_ir.back().result = Operand(FETCH_TMP, tmp_id);
+
+	node->setValueId(tmp_id);
+}
+
 }} // clever::ast

@@ -58,6 +58,7 @@ public:
 	void visit(Boolean*);
 	void visit(NullLit*);
 	void visit(Instantiation*);
+	void visit(Property*);
 private:
 	IRVector& m_ir;
 	Compiler* m_compiler;

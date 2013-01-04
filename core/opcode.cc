@@ -49,6 +49,7 @@ const char* get_opcode_name(Opcode opnum)
 		CASE(OP_MCALL);
 		CASE(OP_WAIT);
 		CASE(OP_SMCALL);
+		CASE(OP_PROP_ACC);
 		EMPTY_SWITCH_DEFAULT_CASE();
 	}
 #undef CASE

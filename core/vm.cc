@@ -592,6 +592,21 @@ void VM::run()
 		}
 		DISPATCH;
 
+	OP(OP_PROP_ACC):
+		{
+			const Value* obj = getValue(OPCODE.op1);
+			const Value* prop_name = getValue(OPCODE.op2);
+			const Value* prop_value;
+
+			if (EXPECTED((prop_value = obj->getType()->getProperty(prop_name->getStr())))) {
+				getValue(OPCODE.result)->copy(prop_value);
+				m_call_args.clear();
+			} else {
+				error(ERROR, "Property not found!");
+			}
+		}
+		DISPATCH;
+
 	OP(OP_HALT):
 		VM_EXIT();
 

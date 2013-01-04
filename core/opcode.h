@@ -45,7 +45,8 @@ namespace clever {
 	&&OP_NEW,      \
 	&&OP_MCALL,    \
 	&&OP_WAIT,     \
-	&&OP_SMCALL
+	&&OP_SMCALL,   \
+	&&OP_PROP_ACC
 #endif
 
 /// VM opcodes
@@ -84,6 +85,7 @@ enum Opcode {
 	OP_MCALL,      //       Used for method call
 	OP_WAIT,       //       Wait thread termination
 	OP_SMCALL,     //       Used for static method call
+	OP_PROP_ACC,   //       Used for property access
 	NUM_OPCODES
 };
 

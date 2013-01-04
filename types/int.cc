@@ -63,7 +63,11 @@ CLEVER_METHOD(IntType::toString)
 
 CLEVER_TYPE_INIT(IntType::init)
 {
+	// Methods
 	addMethod(CSTRING("toString"), (MethodPtr) &IntType::toString);
+
+	// Properties
+	addProperty(CSTRING("size"), new Value((long)sizeof(long)));
 }
 
 } // clever
