@@ -158,6 +158,19 @@ void printf(const char*, ...);
 void vprintfln(const char*, va_list);
 void printfln(const char*, ...);
 
+/* {{{ Accessor Macros for Function Arguments */
+#define CLEVER_ARG_COUNT		 args.size
+/* {{{ CString */
+#define CLEVER_ARG_CSTR(index) args[index]->getStr() /* }}} */
+/* {{{ String Pointer */
+#define CLEVER_ARG_PSTR(index) ((char*) (args[index]->getStr())->c_str()) /* }}} */
+#define CLEVER_ARG_DBL(index)	 args[index]->getDouble()
+#define CLEVER_ARG_INT(index)	args[index]->getInt()
+#define CLEVER_ARG_OBJ(index)	 args[index]->getObj()
+#define CLEVER_ARG_DATA(index) args[index]->getData()
+#define CLEVER_ARG_DUMP(index) args[index]->dump()
+/* }}} */
+
 } // clever
 
 #endif // CLEVER_H
