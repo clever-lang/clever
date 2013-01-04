@@ -60,11 +60,11 @@ CLEVER_METHOD(StrType::subString)
 		of = (const CString*) CLEVER_THIS()->getStr();
 		switch(CLEVER_ARG_COUNT()) {
 			case 2:
-				bounds[0]=CLEVER_ARG_INT(0);
-				bounds[1]=CLEVER_ARG_INT(1);
+				bounds[0] = CLEVER_ARG_INT(0);
+				bounds[1] = CLEVER_ARG_INT(1);
 			break;
 			case 1: 
-				bounds[0]=CLEVER_ARG_INT(0);
+				bounds[0] = CLEVER_ARG_INT(0);
 			break;
 			default: std::cerr << "String.subString expected at least one argument";
 		}
@@ -72,19 +72,21 @@ CLEVER_METHOD(StrType::subString)
 		of = (const CString*) CLEVER_ARG_CSTR(0);
 		switch(CLEVER_ARG_COUNT()) {
 			case 3:
-				bounds[0]=CLEVER_ARG_INT(1);
-				bounds[1]=CLEVER_ARG_INT(2);
+				bounds[0] = CLEVER_ARG_INT(1);
+				bounds[1] = CLEVER_ARG_INT(2);
 			break;
-			case 2: bounds[0]=CLEVER_ARG_INT(1); break;
+			case 2: bounds[0] = CLEVER_ARG_INT(1); break;
 			
 			default: std::cerr << "String.subString expected at least two arguments";
 		}
 	}
 
-	if (of && bounds[0]>-1) {
-		if (bounds[1]>-1) {
+	if (of && bounds[0] > -1) {
+		if (bounds[1] > -1) {
 			result->setStr(CSTRING(of->substr(bounds[0], bounds[1])));
-		} else result->setStr(CSTRING(of->substr(bounds[0])));
+		} else {
+			result->setStr(CSTRING(of->substr(bounds[0])));
+		}
 	}
 }
 
@@ -137,11 +139,15 @@ CLEVER_METHOD(StrType::find)
 	}	
 
 	if (needle && haystack) {
-		if (bounds[0]>-1) {
-			if (bounds[1]>-1) {
+		if (bounds[0] > -1) {
+			if (bounds[1] > -1) {
 				result->setInt(haystack->find((const char*)needle, bounds[0], bounds[1]));
-			} else result->setInt(haystack->find((const char*)needle, bounds[0]));
-		} else result->setInt(haystack->find((const char*)needle));
+			} else {
+				result->setInt(haystack->find((const char*)needle, bounds[0]));
+			}
+		} else {
+			result->setInt(haystack->find((const char*)needle));
+		}
 	}
 }
 
@@ -194,11 +200,15 @@ CLEVER_METHOD(StrType::findFirst)
 	}	
 
 	if (needle && haystack) {
-		if (bounds[0]>-1) {
-			if (bounds[1]>-1) {
+		if (bounds[0] > -1) {
+			if (bounds[1] > -1) {
 				result->setInt(haystack->find_first_of((const char*)needle, bounds[0], bounds[1]));
-			} else result->setInt(haystack->find_first_of((const char*)needle, bounds[0]));
-		} else result->setInt(haystack->find_first_of((const char*)needle));
+			} else {
+				result->setInt(haystack->find_first_of((const char*)needle, bounds[0]));
+			}
+		} else {
+			result->setInt(haystack->find_first_of((const char*)needle));
+		}
 	}
 }
 // String.findLast(string haystack, string needle, [int position, [int count]])
@@ -250,11 +260,15 @@ CLEVER_METHOD(StrType::findLast)
 	}	
 
 	if (needle && haystack) {
-		if (bounds[0]>-1) {
-			if (bounds[1]>-1) {
+		if (bounds[0] > -1) {
+			if (bounds[1] > -1) {
 				result->setInt(haystack->find_last_of((const char*)needle, bounds[0], bounds[1]));
-			} else result->setInt(haystack->find_last_of((const char*)needle, bounds[0]));
-		} else result->setInt(haystack->find_last_of((const char*)needle));
+			} else {
+				result->setInt(haystack->find_last_of((const char*)needle, bounds[0]));
+			}
+		} else {
+			result->setInt(haystack->find_last_of((const char*)needle));
+		}
 	}
 }
 
