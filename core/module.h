@@ -22,22 +22,22 @@
 	void init(int flags);
 
 /* {{{ Accessor Macros for Function Arguments */
-#define CARG_COUNT		 args.size
+#define CLV_ARG_COUNT		 args.size
 /* {{{ CString */
-#define CARG_CSTR(index) args[index]->getStr() /* }}} */
+#define CLV_ARG_CSTR(index) args[index]->getStr() /* }}} */
 /* {{{ String Pointer */
-#define CARG_PSTR(index) ((char*) (args[index]->getStr())->c_str()) /* }}} */
-#define CARG_DBL(index)	 args[index]->getDouble()
-#define CARG_LONG(index) args[index]->getLong()
-#define CARG_OBJ(index)	 args[index]->getObj()
-#define CARG_DATA(index) args[index]->getData()
-#define CARG_DUMP(index) args[index]->dump()
+#define CLV_ARG_PSTR(index) ((char*) (args[index]->getStr())->c_str()) /* }}} */
+#define CLV_ARG_DBL(index)	 args[index]->getDouble()
+#define CLV_ARG_LONG(index) args[index]->getLong()
+#define CLV_ARG_OBJ(index)	 args[index]->getObj()
+#define CLV_ARG_DATA(index) args[index]->getData()
+#define CLV_ARG_DUMP(index) args[index]->dump()
 /* }}} */
 
-#define CRETURN_STR(r)	
-#define CRETURN_DBL(d)
-#define CRETURN_LONG(l)
-#define CRETURN_OBJ(o)
+#define CLV_RETURN_STR(r)	
+#define CLV_RETURN_DBL(d)
+#define CLV_RETURN_LONG(l)
+#define CLV_RETURN_OBJ(o)
 
 namespace clever {
 
