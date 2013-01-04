@@ -11,10 +11,7 @@
 #include <vector>
 #include <stack>
 #include "core/cthread.h"
-#include "core/clever.h"
 #include "core/compiler.h"
-#include "core/ir.h"
-#include "core/opcode.h"
 
 namespace clever {
 
