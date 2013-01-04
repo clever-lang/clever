@@ -381,7 +381,7 @@ void VM::run()
 				m_call_args.clear();
 				VM_GOTO(fdata->getAddr());
 			} else {
-				fdata->getPtr()(m_call_args);
+				fdata->getPtr()(m_call_args, this);
 				m_call_args.clear();
 			}
 		}
