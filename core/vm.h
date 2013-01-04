@@ -18,27 +18,6 @@
 
 namespace clever {
 
-#define OPCODE m_inst[m_pc]
-#define VM_EXIT() goto exit
-
-#if CLEVER_GCC_VERSION > 0
-# define OP(name)    name
-# define OPCODES     const static void* labels[] = { OP_LABELS }; goto *labels[m_inst[m_pc].opcode]
-# define DISPATCH    ++m_pc; goto *labels[m_inst[m_pc].opcode]
-# define END_OPCODES
-# define VM_GOTO(n)  m_pc = n; goto *labels[m_inst[m_pc].opcode]
-#else
-# define OP(name)    case name
-# define OPCODES     for (;;) { switch (m_inst[m_pc].opcode) {
-# define DISPATCH    ++m_pc; break
-# define END_OPCODES EMPTY_SWITCH_DEFAULT_CASE(); } }
-# define VM_GOTO(n)  m_pc = n; break
-#endif
-
-// Helper macros to be used to change the VM program counter
-#define VM_NEXT() ++m_pc
-
-
 // Helper macro for opcode handler declaration
 #define VM_HANDLER_ARG IR& op
 #define VM_HANDLER(name) CLEVER_FORCE_INLINE void VM::vm_##name(VM_HANDLER_ARG)
