@@ -17,8 +17,6 @@
 #include <stack>
 #include <sstream>
 #include "core/pkgmanager.h"
-#include "core/ir.h"
-#include "core/ast.h"
 #include "core/codegen.h"
 #include "core/scope.h"
 

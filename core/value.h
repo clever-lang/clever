@@ -9,8 +9,6 @@
 #define CLEVER_VALUE_H
 
 #include <cstring>
-#include "core/clever.h"
-#include "core/refcounted.h"
 #include "types/type.h"
 #include "core/cstring.h"
 
