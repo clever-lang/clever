@@ -72,7 +72,7 @@ public:
 
 	bool isChild() const { return !m_is_main_thread; }
 
-	bool isMain() const { return !m_is_main_thread; }
+	bool isMain() const { return m_is_main_thread; }
 
 	size_t getPC() const { return m_pc; }
 
