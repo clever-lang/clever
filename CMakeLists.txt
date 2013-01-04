@@ -226,7 +226,7 @@ install(TARGETS clever RUNTIME DESTINATION bin)
 # ---------------------------------------------------------------------------
 set_directory_properties(PROPERTIES
 	ADDITIONAL_MAKE_CLEAN_FILES
-	"interpreter/stack.hh;interpreter/parser.cc;interpreter/parser.hh;interpreter/location.hh;interpreter/position.hh;interpreter/scanner.cc")
+	"core/stack.hh;core/parser.cc;core/parser.hh;core/location.hh;core/position.hh;core/scanner.cc")
 
 # Packaging
 # ---------------------------------------------------------------------------
