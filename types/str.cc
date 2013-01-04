@@ -8,6 +8,7 @@
 #include <string>
 #include <sstream>
 #include "types/str.h"
+#include "core/compiler.h"
 
 namespace clever {
 
@@ -21,7 +22,7 @@ CLEVER_TYPE_OPERATOR(StrType::add)
 }
 
 CLEVER_TYPE_OPERATOR(StrType::sub)
-{	
+{
 }
 
 CLEVER_TYPE_OPERATOR(StrType::mul)
@@ -42,15 +43,15 @@ CLEVER_TYPE_OPERATOR(StrType::div)
 }
 
 CLEVER_TYPE_OPERATOR(StrType::mod)
-{	
+{
 }
 
 // String.subString(string str, [int start, [int count]])
 // String.subString(int start, [int count])
 // Returns a substring of the argument or string object referenced using bounds provided
-CLEVER_METHOD(StrType::subString) 
+CLEVER_METHOD(StrType::subString)
 {
-	const CString *of = NULL;
+	const CString* of = NULL;
 	int bounds[2];
 
 	bounds[0] = -1;
@@ -63,23 +64,28 @@ CLEVER_METHOD(StrType::subString)
 				bounds[0] = CLEVER_ARG_INT(0);
 				bounds[1] = CLEVER_ARG_INT(1);
 			break;
-			case 1: 
+
+			case 1:
 				bounds[0] = CLEVER_ARG_INT(0);
 			break;
-			default: std::cerr << "String.subString expected at least one argument";
+
+			default:
+				Compiler::error("String.subString expected at least one argument");
 		}
-	} else {
-		if (CLEVER_ARG_COUNT()) {
-			of = CLEVER_ARG_CSTR(0);
-			switch(CLEVER_ARG_COUNT()) {
-				case 3:
-					bounds[0] = CLEVER_ARG_INT(1);
-					bounds[1] = CLEVER_ARG_INT(2);
-				break;
-				case 2: bounds[0] = CLEVER_ARG_INT(1); break;
-			
-				default: std::cerr << "String.subString expected at least two arguments";
-			}
+	} else if (CLEVER_ARG_COUNT()) {
+		of = CLEVER_ARG_CSTR(0);
+		switch(CLEVER_ARG_COUNT()) {
+			case 3:
+				bounds[0] = CLEVER_ARG_INT(1);
+				bounds[1] = CLEVER_ARG_INT(2);
+			break;
+
+			case 2:
+				bounds[0] = CLEVER_ARG_INT(1);
+			break;
+
+			default:
+				Compiler::error("String.subString expected at least two arguments");
 		}
 	}
 
@@ -95,52 +101,58 @@ CLEVER_METHOD(StrType::subString)
 // String.find(string haystack, string needle, [int position, [int count]])
 // String.find(string needle, [int position, [int count]])
 // Finds a string in a string returning the position
-CLEVER_METHOD(StrType::find) 
+CLEVER_METHOD(StrType::find)
 {
-	const char *needle;
-	const CString *haystack;
+	const char* needle;
+	const CString* haystack;
 	int bounds[2];
 
 	bounds[0] = -1;
 	bounds[1] = -1;
-	
+
 	if (CLEVER_THIS()) {
 		haystack = CLEVER_THIS()->getStr();
 		switch (CLEVER_ARG_COUNT()) {
 			case 1:
 				needle = CLEVER_ARG_PSTR(0);
 			break;
+
 			case 2:
 				needle = CLEVER_ARG_PSTR(0);
 				bounds[0] = CLEVER_ARG_INT(1);
 			break;
+
 			case 3:
 				needle = CLEVER_ARG_PSTR(0);
-				bounds[0] = CLEVER_ARG_INT(1);		
+				bounds[0] = CLEVER_ARG_INT(1);
 				bounds[1] = CLEVER_ARG_INT(2);
 			break;
-			default: std::cerr << "String.find expected a maximum of 2 arguments";
+
+			default:
+				Compiler::error("String.find expected a maximum of 2 arguments");
 		}
-	} else {
-		if(CLEVER_ARG_COUNT()) {
-			haystack = CLEVER_ARG_CSTR(0);
-			switch (CLEVER_ARG_COUNT()) {
-				case 4:
-					needle = CLEVER_ARG_PSTR(1);
-					bounds[0] = CLEVER_ARG_INT(2);
-					bounds[1] = CLEVER_ARG_INT(3);
-				break;
-				case 3:
-					needle = CLEVER_ARG_PSTR(1);
-					bounds[0] = CLEVER_ARG_INT(2);
-				break;
-				case 2:
-					needle = CLEVER_ARG_PSTR(1);
-				break;
-				default: std::cerr << "String.find expected at least two arguments";
-			}
+	} else if(CLEVER_ARG_COUNT()) {
+		haystack = CLEVER_ARG_CSTR(0);
+		switch (CLEVER_ARG_COUNT()) {
+			case 4:
+				needle = CLEVER_ARG_PSTR(1);
+				bounds[0] = CLEVER_ARG_INT(2);
+				bounds[1] = CLEVER_ARG_INT(3);
+			break;
+
+			case 3:
+				needle = CLEVER_ARG_PSTR(1);
+				bounds[0] = CLEVER_ARG_INT(2);
+			break;
+
+			case 2:
+				needle = CLEVER_ARG_PSTR(1);
+			break;
+
+			default:
+				Compiler::error("String.find expected at least two arguments");
 		}
-	}	
+	}
 
 	if (needle && haystack) {
 		if (bounds[0] > -1) {
@@ -158,52 +170,58 @@ CLEVER_METHOD(StrType::find)
 // String.findFirst(string haystack, string needle, [int position, [int count]])
 // String.findFirst(string needle, [int position, [int count]])
 // Finds the first occurence of a string in a string returning the position
-CLEVER_METHOD(StrType::findFirst) 
+CLEVER_METHOD(StrType::findFirst)
 {
-	const char *needle;
-	const CString *haystack;
+	const char* needle;
+	const CString* haystack;
 	int bounds[2];
 
 	bounds[0] = -1;
 	bounds[1] = -1;
-	
+
 	if (CLEVER_THIS()) {
 		haystack = CLEVER_THIS()->getStr();
 		switch (CLEVER_ARG_COUNT()) {
 			case 1:
 				needle = CLEVER_ARG_PSTR(0);
 			break;
+
 			case 2:
 				needle = CLEVER_ARG_PSTR(0);
 				bounds[0] = CLEVER_ARG_INT(1);
 			break;
+
 			case 3:
 				needle = CLEVER_ARG_PSTR(0);
-				bounds[0] = CLEVER_ARG_INT(1);		
+				bounds[0] = CLEVER_ARG_INT(1);
 				bounds[1] = CLEVER_ARG_INT(2);
 			break;
-			default: std::cerr << "String.findFirst expected a maximum of 2 arguments";
+
+			default:
+				Compiler::error("String.findFirst expected a maximum of 2 arguments");
 		}
-	} else {
-		if(CLEVER_ARG_COUNT()) {
-			haystack = CLEVER_ARG_CSTR(0);
-			switch (CLEVER_ARG_COUNT()) {
-				case 4:
-					needle = CLEVER_ARG_PSTR(1);
-					bounds[0] = CLEVER_ARG_INT(2);
-					bounds[1] = CLEVER_ARG_INT(3);
-				break;
-				case 3:
-					needle = CLEVER_ARG_PSTR(1);
-					bounds[0] = CLEVER_ARG_INT(2);
-				break;
-				case 2:
-					needle = CLEVER_ARG_PSTR(1);
-				break;
-				default: std::cerr << "String.findFirst expected at least two arguments";
-			}
+	} else if(CLEVER_ARG_COUNT()) {
+		haystack = CLEVER_ARG_CSTR(0);
+		switch (CLEVER_ARG_COUNT()) {
+			case 4:
+				needle = CLEVER_ARG_PSTR(1);
+				bounds[0] = CLEVER_ARG_INT(2);
+				bounds[1] = CLEVER_ARG_INT(3);
+			break;
+
+			case 3:
+				needle = CLEVER_ARG_PSTR(1);
+				bounds[0] = CLEVER_ARG_INT(2);
+			break;
+
+			case 2:
+				needle = CLEVER_ARG_PSTR(1);
+			break;
+
+			default:
+				Compiler::error("String.findFirst expected at least two arguments");
 		}
-	}	
+	}
 
 	if (needle && haystack) {
 		if (bounds[0] > -1) {
@@ -221,51 +239,57 @@ CLEVER_METHOD(StrType::findFirst)
 // String.findLast(string haystack, string needle, [int position, [int count]])
 // String.findLast(string needle, [int position, [int count]])
 // Finds the last occurence of a string in a string returning the position
-CLEVER_METHOD(StrType::findLast) 
+CLEVER_METHOD(StrType::findLast)
 {
-	const char *needle;
-	const CString *haystack;
+	const char* needle;
+	const CString* haystack;
 	int bounds[2];
 
 	bounds[0] = -1;
 	bounds[1] = -1;
-	
+
 	if (CLEVER_THIS()) {
 		haystack = CLEVER_THIS()->getStr();
 		switch (CLEVER_ARG_COUNT()) {
 			case 1:
 				needle = CLEVER_ARG_PSTR(0);
 			break;
+
 			case 2:
 				needle = CLEVER_ARG_PSTR(0);
 				bounds[0] = CLEVER_ARG_INT(1);
 			break;
+
 			case 3:
 				needle = CLEVER_ARG_PSTR(0);
-				bounds[0] = CLEVER_ARG_INT(1);		
+				bounds[0] = CLEVER_ARG_INT(1);
 				bounds[1] = CLEVER_ARG_INT(2);
 			break;
-			default: std::cerr << "String.findLast expected a maximum of 2 arguments";
+
+			default:
+				Compiler::error("String.findLast expected a maximum of 2 arguments");
 		}
-	} else {
-		if(CLEVER_ARG_COUNT()) {
-			haystack = CLEVER_ARG_CSTR(0);
-			switch (CLEVER_ARG_COUNT()) {
-				case 4:
-					needle = CLEVER_ARG_PSTR(1);
-					bounds[0] = CLEVER_ARG_INT(2);
-					bounds[1] = CLEVER_ARG_INT(3);
-				break;
-				case 3:
-					needle = CLEVER_ARG_PSTR(1);
-					bounds[0] = CLEVER_ARG_INT(2);
-				break;
-				case 2:
-					needle = CLEVER_ARG_PSTR(1);
-				break;
-				default: std::cerr << "String.findLast expected at least two arguments";
-			}
-		}	
+	} else if(CLEVER_ARG_COUNT()) {
+		haystack = CLEVER_ARG_CSTR(0);
+		switch (CLEVER_ARG_COUNT()) {
+			case 4:
+				needle = CLEVER_ARG_PSTR(1);
+				bounds[0] = CLEVER_ARG_INT(2);
+				bounds[1] = CLEVER_ARG_INT(3);
+			break;
+
+			case 3:
+				needle = CLEVER_ARG_PSTR(1);
+				bounds[0] = CLEVER_ARG_INT(2);
+			break;
+
+			case 2:
+				needle = CLEVER_ARG_PSTR(1);
+			break;
+
+			default:
+				Compiler::error("String.findLast expected at least two arguments");
+		}
 	}
 
 	if (needle && haystack) {
@@ -288,19 +312,19 @@ CLEVER_METHOD(StrType::getLength)
 {
 	if (CLEVER_THIS()) {
 		result->setInt((CLEVER_THIS()->getStr())->length());
+	} else if(CLEVER_ARG_COUNT()) {
+		result->setInt((CLEVER_ARG_CSTR(0))->length());
 	} else {
-		if(CLEVER_ARG_COUNT()) {
-			result->setInt((CLEVER_ARG_CSTR(0))->length());
-		} else std::cerr << "String.getLength expected a string argument";
+		std::cerr << "String.getLength expected a string argument";
 	}
 }
 
-CLEVER_TYPE_INIT(StrType::init) 
+CLEVER_TYPE_INIT(StrType::init)
 {
 	addMethod(CSTRING("subString"),  	(MethodPtr) &StrType::subString);
 	addMethod(CSTRING("find"), 			(MethodPtr) &StrType::find);
 	addMethod(CSTRING("findFirst"), 	(MethodPtr) &StrType::findFirst);
-	addMethod(CSTRING("findLast"), 		(MethodPtr) &StrType::findLast);	
+	addMethod(CSTRING("findLast"), 		(MethodPtr) &StrType::findLast);
 	addMethod(CSTRING("getLength"),		(MethodPtr) &StrType::getLength);
 }
 
