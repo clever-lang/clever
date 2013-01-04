@@ -100,7 +100,7 @@ void TestRunner::run(void) {
 	for (it = files.begin(); it != files.end(); ++it) {
 		char result[300] = {0};
 		std::string title, source, expect, log_line, command;
-		unsigned int filesize = 0;
+		size_t filesize = 0;
 		clock_t test_start_time, test_end_time;
 
 		file_name = *it;
@@ -280,9 +280,9 @@ void TestRunner::write_log(std::string testname, std::string message) {
 	}
 }
 
-unsigned int TestRunner::file_size(std::string file) {
+size_t TestRunner::file_size(std::string file) {
 	std::ifstream stream;
-	unsigned int length;
+	size_t length;
 
 	stream.open(file.c_str());
 	if (stream.is_open()) {

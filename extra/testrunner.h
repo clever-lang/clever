@@ -25,7 +25,7 @@ class TestRunner {
 
 	bool file_exists(std::string file);
 	std::string extract_folder(const char* file) const;
-	unsigned int file_size(std::string file);
+	size_t file_size(std::string file);
 	void load_folder(const char* dir);
 	void write_log(std::string testname, std::string message);
 public:
@@ -39,8 +39,8 @@ public:
 	void run(void);
 	void show_result(void) const;
 	void write_file(std::string&, std::string&);
-	void setFlags(int val) { flags |= val; }
-	int getFlags() const { return flags; }
+	void setFlags(unsigned int val) { flags |= val; }
+	unsigned int getFlags() const { return flags; }
 
 	bool valgrind;
 };
