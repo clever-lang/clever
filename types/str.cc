@@ -53,8 +53,8 @@ CLEVER_METHOD(StrType::subString)
 	const CString *of = NULL;
 	int bounds[2];
 
-	bounds[0]=-1;
-	bounds[1]=-1;
+	bounds[0] = -1;
+	bounds[1] = -1;
 
 	if (CLEVER_THIS()) {
 		of = CLEVER_THIS()->getStr();
@@ -101,8 +101,8 @@ CLEVER_METHOD(StrType::find)
 	const CString *haystack;
 	int bounds[2];
 
-	bounds[0]=-1;
-	bounds[1]=-1;
+	bounds[0] = -1;
+	bounds[1] = -1;
 	
 	if (CLEVER_THIS()) {
 		haystack = CLEVER_THIS()->getStr();
@@ -164,8 +164,8 @@ CLEVER_METHOD(StrType::findFirst)
 	const CString *haystack;
 	int bounds[2];
 
-	bounds[0]=-1;
-	bounds[1]=-1;
+	bounds[0] = -1;
+	bounds[1] = -1;
 	
 	if (CLEVER_THIS()) {
 		haystack = CLEVER_THIS()->getStr();
@@ -227,8 +227,8 @@ CLEVER_METHOD(StrType::findLast)
 	const CString *haystack;
 	int bounds[2];
 
-	bounds[0]=-1;
-	bounds[1]=-1;
+	bounds[0] = -1;
+	bounds[1] = -1;
 	
 	if (CLEVER_THIS()) {
 		haystack = CLEVER_THIS()->getStr();
