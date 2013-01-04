@@ -33,15 +33,6 @@
 namespace clever { namespace packages { namespace std {
 
 namespace file {
-/**
- * println(object a, [ ...])
- * Prints the object values without trailing newline
- */
-/*static CLEVER_FUNCTION(print) {
-	for (int i = 0, size = CLEVER_NUM_ARGS(); i < size; ++i) {
-		::std::cout << CLEVER_ARG_AS_STR(1);
-	}
-}*/
 
 } // file
 
