@@ -35,6 +35,7 @@ public:
 	void decrement(Value* value) const {}
 
 	CLEVER_METHOD_D(subString);
+	CLEVER_METHOD_D(find);
 };
 
 } // clever
