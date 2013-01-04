@@ -29,7 +29,6 @@ typedef std::pair<size_t, size_t> ValueOffset;
 struct Environment: public RefCounted {
 	Environment* outer;
 	std::vector<Value*> data;
-	std::vector<ValueOffset> values;
 
 	Environment(Environment* outer_)
 		: RefCounted(0), outer(outer_), data() {

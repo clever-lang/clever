@@ -60,7 +60,6 @@ void Resolver::visit(VariableDecl* node)
 	m_scope->pushValue(name, val);
 
 	m_stack.top()->data.push_back(val);
-	m_stack.top()->values.push_back(ValueOffset(0, m_stack.top()->data.size()-1));
 
 	node->getIdent()->accept(*this);
 
@@ -103,7 +102,6 @@ void Resolver::visit(FunctionDecl* node)
 	m_scope->pushValue(name, fval);
 
 	m_stack.top()->data.push_back(fval);
-	m_stack.top()->values.push_back(ValueOffset(0, m_stack.top()->data.size()-1));
 
 	node->getIdent()->accept(*this);
 
@@ -139,13 +137,7 @@ void Resolver::visit(Ident* node)
 			"Identifier `%S' not found.", node->getName());
 	}
 
-	ValueOffset off = m_scope->getDepth(sym);
-
-	if (off.first != 0) {
-		m_stack.top()->values.push_back(off);
-	}
-
-	// TODO(heuripedes): add offset reference to the node
+	node->setVOffset(m_scope->getDepth(sym));
 
 	node->setSymbol(sym);
 	node->setScope(sym->scope);
@@ -160,13 +152,7 @@ void Resolver::visit(Type* node)
 			"Type `%S' not found.", node->getName());
 	}
 
-	ValueOffset off = m_scope->getDepth(sym);
-
-	if (off.first != 0) {
-		m_stack.top()->values.push_back(off);
-	}
-
-	// TODO(heuripedes): add offset reference to the node
+	node->setVOffset(m_scope->getDepth(sym));
 
 	node->setSymbol(sym);
 	node->setScope(sym->scope);
