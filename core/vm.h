@@ -89,10 +89,6 @@ public:
 	Value* getValue(size_t, size_t) const;
 	Value* getValue(Operand&) const;
 
-	/// Save function variables on recursion
-	void saveVars();
-	void restoreVars() const;
-
 	Mutex* getMutex() {
 		return isChild() ? f_mutex : &m_mutex;
 	}
