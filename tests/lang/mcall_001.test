@@ -1,0 +1,9 @@
+Testing method call
+==CODE==
+import std.io.*;
+
+var a = Int.new;
+
+println(a.toString() + "foo");
+==RESULT==
+0foo

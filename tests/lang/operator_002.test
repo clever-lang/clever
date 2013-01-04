@@ -1,0 +1,14 @@
+Testing operators with double
+==CODE==
+import std.io.*;
+
+println(1.2 > 1.0);
+println(1.2 < 1.0);
+println(1.2 != 1.0);
+println(1.2 == 1.0);
+
+==RESULT==
+1
+0
+1
+0
