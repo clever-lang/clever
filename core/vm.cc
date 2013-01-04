@@ -548,10 +548,11 @@ void VM::run()
 		{
 			const Type* type = getType(OPCODE.op1);
 
+			getValue(OPCODE.result)->setType(type);
+
 			if (EXPECTED(!type->isPrimitive())) {
-				getValue(OPCODE.result)->setObj(type->allocData());
-			} else {
-				getValue(OPCODE.result)->setType(type);
+				getValue(OPCODE.result)->setObj(type->allocData(&m_call_args));
+				m_call_args.clear();
 			}
 		}
 		DISPATCH;

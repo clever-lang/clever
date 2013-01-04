@@ -35,9 +35,11 @@ namespace clever {
 #define CLEVER_TYPE_INIT_ARGS
 #define CLEVER_TYPE_INIT(name) void name(CLEVER_TYPE_INIT_ARGS)
 
-#define CLEVER_METHOD_ARGS Value* result, const Value* obj, ::std::vector<Value*> args
+#define CLEVER_METHOD_ARGS Value* result, const Value* obj, const ::std::vector<Value*>& args
 #define CLEVER_METHOD_D(name) void name(CLEVER_METHOD_ARGS) const
 #define CLEVER_METHOD(name) void name(CLEVER_METHOD_ARGS) const
+
+#define CLEVER_TYPE_CTOR_ARGS const ::std::vector<Value*>* args = NULL
 
 class Value;
 class Type;
@@ -81,7 +83,7 @@ public:
 	virtual void div(CLEVER_TYPE_OPERATOR_ARGS) const = 0;
 	virtual void mod(CLEVER_TYPE_OPERATOR_ARGS) const = 0;
 
-	virtual void* allocData() const { return NULL; }
+	virtual void* allocData(CLEVER_TYPE_CTOR_ARGS) const { return NULL; }
 	virtual void deallocData(void* data) {}
 
 	virtual void increment(Value*) const = 0;

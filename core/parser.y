@@ -210,7 +210,8 @@ block:
 ;
 
 instantiation:
-		TYPE '.' NEW { $$ = new ast::Instantiation($1, yyloc); }
+		TYPE '.' NEW                   { $$ = new ast::Instantiation($1, NULL, yyloc); }
+	|	TYPE '.' NEW '(' call_args ')' { $$ = new ast::Instantiation($1, $5,   yyloc); }
 ;
 
 wait_block:

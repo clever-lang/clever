@@ -319,20 +319,32 @@ private:
 
 class Instantiation: public Node {
 public:
-	Instantiation(Type* type, const location& location)
-		: Node(location), m_type(type) {
+	Instantiation(Type* type, NodeArray* args, const location& location)
+		: Node(location), m_type(type), m_args(args) {
 		CLEVER_ADDREF(m_type);
+		CLEVER_SAFE_ADDREF(m_args);
 	}
 	~Instantiation() {
 		CLEVER_DELREF(m_type);
+		CLEVER_SAFE_DELREF(m_args);
 	}
 
 	Type* getType() { return m_type; }
+
+	NodeArray* getArgs() { return m_args; }
+	bool hasArgs() const { return m_args != NULL && m_args->getSize() > 0; }
+
+	size_t numArgs() const { return m_args->getSize(); }
+
+	Node* getArg(size_t index) {
+		return m_args->getNode(index);
+	}
 
 	virtual void accept(Visitor& visitor);
 	virtual Node* accept(Transformer& transformer);
 private:
 	Type* m_type;
+	NodeArray* m_args;
 };
 
 class Import: public Node {

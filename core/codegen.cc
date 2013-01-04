@@ -463,6 +463,18 @@ void Codegen::visit(Instantiation* node)
 {
 	Symbol* sym = node->getType()->getSymbol();
 
+	if (node->hasArgs()) {
+		NodeList& args = node->getArgs()->getNodes();
+		NodeList::const_iterator it = args.begin(), end = args.end();
+
+		while (EXPECTED(it != end)) {
+			(*it)->accept(*this);
+			m_ir.push_back(IR(OP_SEND_VAL));
+			_prepare_operand(m_ir.back().op1, *it);
+			++it;
+		}
+	}
+
 	m_ir.push_back(IR(OP_NEW,
 		Operand(FETCH_TYPE, sym->value_id, sym->scope->getId())));
 
