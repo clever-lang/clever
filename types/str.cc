@@ -50,7 +50,7 @@ CLEVER_TYPE_OPERATOR(StrType::mod)
 // Returns a substring of the argument or string object referenced using bounds provided
 CLEVER_METHOD(StrType::subString) 
 {
-	const CString *of = NULL;
+	const CString* of = NULL;
 	int bounds[2];
 
 	bounds[0] = -1;
@@ -97,8 +97,8 @@ CLEVER_METHOD(StrType::subString)
 // Finds a string in a string returning the position
 CLEVER_METHOD(StrType::find) 
 {
-	const char *needle;
-	const CString *haystack;
+	const char* needle;
+	const CString* haystack;
 	int bounds[2];
 
 	bounds[0] = -1;
@@ -152,6 +152,8 @@ CLEVER_METHOD(StrType::find)
 		} else {
 			result->setInt(haystack->find(needle));
 		}
+	} else {
+		result->setNull();
 	}
 }
 
@@ -160,8 +162,8 @@ CLEVER_METHOD(StrType::find)
 // Finds the first occurence of a string in a string returning the position
 CLEVER_METHOD(StrType::findFirst) 
 {
-	const char *needle;
-	const CString *haystack;
+	const char* needle;
+	const CString* haystack;
 	int bounds[2];
 
 	bounds[0] = -1;
@@ -215,6 +217,8 @@ CLEVER_METHOD(StrType::findFirst)
 		} else {
 			result->setInt(haystack->find_first_of(needle));
 		}
+	} else {
+		result->setNull();
 	}
 }
 
@@ -223,8 +227,8 @@ CLEVER_METHOD(StrType::findFirst)
 // Finds the last occurence of a string in a string returning the position
 CLEVER_METHOD(StrType::findLast) 
 {
-	const char *needle;
-	const CString *haystack;
+	const char* needle;
+	const CString* haystack;
 	int bounds[2];
 
 	bounds[0] = -1;
@@ -278,6 +282,8 @@ CLEVER_METHOD(StrType::findLast)
 		} else {
 			result->setInt(haystack->find_last_of(needle));
 		}
+	} else {
+		result->setNull();
 	}
 }
 

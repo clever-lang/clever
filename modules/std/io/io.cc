@@ -69,7 +69,7 @@ static CLEVER_FUNCTION(printf) {
 		char* point = strtok((char*)CLEVER_ARG_PSTR(0), STDIO_DELIM);
 		if (point) {
 			do {
-				unsigned int arg = atoi(point);
+				unsigned int arg = atoi(point);				
 				if (arg) {
 					if (args.size() > arg) {
 						CLEVER_ARG_DUMP(arg);
