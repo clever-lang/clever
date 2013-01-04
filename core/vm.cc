@@ -132,10 +132,6 @@ void VM::copy(const VM* vm)
 	}
 	this->f_mutex->unlock();
 
-	for (size_t i = 0; i < NUM_OPCODES; ++i) {
-		this->m_handlers[i] = vm->m_handlers[i];
-	}
-
 	this->m_tmp_pool = vm->m_tmp_pool;
 	this->m_const_pool = vm->m_const_pool;
 }

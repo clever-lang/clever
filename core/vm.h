@@ -50,8 +50,6 @@ public:
 		WARNING
 	};
 
-	typedef void (VM::*OpHandler)(VM_HANDLER_ARG);
-
 	typedef std::map<size_t, std::vector<Thread*> > ThreadPool;
 
 	VM(IRVector& inst)
@@ -120,9 +118,6 @@ private:
 
 	/// Temporaries pool
 	ValuePool* m_tmp_pool;
-
-	/// VM opcode handlers
-	OpHandler m_handlers[NUM_OPCODES];
 
 	/// Stack frame
 	std::stack<StackFrame> m_call_stack;
