@@ -18,7 +18,7 @@ namespace clever {
 class Value;
 class VM;
 
-#define CLEVER_FUNCTION_ARGS const ::std::vector<Value*>& args, VM* m_vm
+#define CLEVER_FUNCTION_ARGS const ::std::vector<Value*>& args, const VM* vm
 #define CLEVER_FUNC_NAME(name) clv_f_##name
 #define CLEVER_NS_FNAME(ns, name) ns::CLEVER_FUNC_NAME(name)
 #define CLEVER_FUNCTION(name) void CLEVER_FASTCALL CLEVER_FUNC_NAME(name)(CLEVER_FUNCTION_ARGS)
