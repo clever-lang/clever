@@ -51,6 +51,7 @@ class Value;
 	ast::Comparison* comp;
 	ast::Type* type;
 	ast::Instantiation* inst;
+	ast::MethodCall* mcall;
 }
 
 %type <type> TYPE
@@ -78,6 +79,7 @@ class Value;
 %type <boolean> boolean
 %type <nillit> NIL
 %type <comp> comparison
+%type <mcall> mcall
 
 // The parsing context.
 %parse-param { Driver& driver }
@@ -188,6 +190,7 @@ statement:
 	|	variable_decl ';'
 	|	assignment ';'
 	|	fcall ';'
+	|	mcall ';'
 	|	fdecl
 	|	return_stmt ';'
 	|	if
@@ -229,11 +232,17 @@ rvalue:
 	|	fcall
 	|	anonymous_fdecl
 	|	instantiation
+	|	mcall
 	|	'(' rvalue ')' { $<node>$ = $<node>2; }
 ;
 
 lvalue:
 		IDENT
+;
+
+mcall:
+		rvalue '.' IDENT '(' call_args ')' { $$ = new ast::MethodCall($<node>1, $3, $5, yyloc); }
+	|	TYPE '.' IDENT '(' call_args ')'   { $$ = new ast::MethodCall($1, $3, $5, yyloc); }
 ;
 
 inc_dec:

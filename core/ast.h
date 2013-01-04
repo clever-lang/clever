@@ -42,6 +42,7 @@ class Bitwise;
 class Import;
 class Boolean;
 class NullLit;
+class MethodCall;
 
 typedef std::vector<Node*> NodeList;
 
@@ -542,6 +543,61 @@ private:
 	NodeArray* m_args;
 	Block* m_block;
 	bool m_is_anon;
+};
+
+class MethodCall: public Node {
+public:
+	MethodCall(Node* callee, Ident* method, NodeArray* args, const location& location)
+		: Node(location), m_callee(callee), m_method(method), m_args(args), m_static(false) {
+		CLEVER_ADDREF(m_callee);
+		CLEVER_ADDREF(m_method);
+		CLEVER_SAFE_ADDREF(m_args);
+	}
+
+	MethodCall(Type* callee, Ident* method, NodeArray* args, const location& location)
+		: Node(location), m_callee(callee), m_method(method), m_args(args), m_static(true) {
+		CLEVER_ADDREF(m_callee);
+		CLEVER_ADDREF(m_method);
+		CLEVER_SAFE_ADDREF(m_args);
+	}
+
+	~MethodCall() {
+		CLEVER_DELREF(m_callee);
+		CLEVER_DELREF(m_method);
+		CLEVER_SAFE_DELREF(m_args);
+	}
+
+	bool isStaticCall() const { return m_static; }
+
+	bool isEvaluable() const { return true; }
+
+	Node* getCallee() const { return m_callee; }
+
+	Ident* getMethod() const { return m_method; }
+
+	NodeArray* getArgs() const { return m_args; }
+	bool hasArgs() const { return m_args != NULL && m_args->getSize() > 0; }
+
+	size_t numArgs() const { return m_args->getSize(); }
+
+	Node* getArg(size_t index) {
+		std::vector<Node*> array = m_args->getNodes();
+
+		clever_assert(index > 0 && index < array.size(), "Index %i out of bounds.", index);
+
+		if (array.empty())
+			return NULL;
+
+		return array.at(index);
+	}
+
+	virtual void accept(Visitor& visitor);
+	virtual Node* accept(Transformer& transformer);
+private:
+	Node* m_callee;
+	Ident* m_method;
+	NodeArray* m_args;
+	bool m_static;
 };
 
 class FunctionCall: public Node {

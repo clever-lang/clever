@@ -523,6 +523,21 @@ void VM::run()
 		DISPATCH;
 
 	OP(OP_MCALL):
+		{
+			const Value* callee = getValue(OPCODE.op1);
+			const Value* method = getValue(OPCODE.op2);
+			const Type* type = callee->getType();
+			MethodPtr ptr;
+
+			if (EXPECTED((ptr = type->getMethod(method->getStr())))) {
+				(type->*ptr)(getValue(OPCODE.result), callee);
+			} else {
+				VM::error(ERROR, "Method not found!");
+			}
+		}
+		DISPATCH;
+
+	OP(OP_SMCALL):
 		DISPATCH;
 
 	OP(OP_HALT):

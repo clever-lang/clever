@@ -21,6 +21,8 @@ Resolver::Resolver(Compiler* compiler)
 	m_symtable->pushType(CSTRING("Double"),   CLEVER_DOUBLE_TYPE = new DoubleType);
 	m_symtable->pushType(CSTRING("String"),   CLEVER_STR_TYPE    = new StrType);
 	m_symtable->pushType(CSTRING("Function"), CLEVER_FUNC_TYPE   = new FuncType);
+
+	CLEVER_INT_TYPE->init();
 }
 
 void Resolver::visit(Block* node)

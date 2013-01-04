@@ -71,6 +71,8 @@ void Instantiation::accept(Visitor& visitor) { visitor.visit(this); }
 
 void Type::accept(Visitor& visitor) { visitor.visit(this); }
 
+void MethodCall::accept(Visitor& visitor) { visitor.visit(this); }
+
 // Transformers
 
 Node* Node::accept(Transformer& transformer) { return transformer.transform(this); }
@@ -124,5 +126,7 @@ Node* Comparison::accept(Transformer& transformer) { return transformer.transfor
 Node* Instantiation::accept(Transformer& transformer) { return transformer.transform(this); }
 
 Node* Type::accept(Transformer& transformer) { return transformer.transform(this); }
+
+Node* MethodCall::accept(Transformer& transformer) { return transformer.transform(this); }
 
 }} // clever::ast

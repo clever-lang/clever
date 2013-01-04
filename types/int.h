@@ -20,6 +20,8 @@ public:
 	IntType() : Type(CSTRING("Int")) {}
 	~IntType() {}
 
+	void init();
+
 	bool isPrimitive() const { return true; }
 
 	void dump(const void* value) const { std::cout << *(long*)value; }
@@ -33,6 +35,8 @@ public:
 	void decrement(Value* value) const {
 		value->setInt(value->getInt()-1);
 	}
+
+	CLEVER_METHOD_D(toString);
 };
 
 } // clever

@@ -69,6 +69,14 @@ void Visitor::visit(FunctionCall* node) {
 	}
 }
 
+void Visitor::visit(MethodCall* node) {
+	node->getCallee()->accept(*this);
+
+	if (node->hasArgs()) {
+		node->getArgs()->accept(*this);
+	}
+}
+
 void Visitor::visit(While* node) {
 	node->getCondition()->accept(*this);
 	node->getBlock()->accept(*this);
