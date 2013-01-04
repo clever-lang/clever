@@ -17,6 +17,7 @@ namespace clever {
 /// Adds the available packages to be imported
 void PkgManager::init()
 {
+
 	addPackage(CSTRING("std"), new packages::Std);
 }
 
