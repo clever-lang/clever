@@ -31,10 +31,6 @@
 # define VM_GOTO(n)  m_pc = n; break
 #endif
 
-// Helper macros to be used to change the VM program counter
-#define VM_NEXT() ++m_pc
-
-
 namespace clever {
 
 /// Displays an error message
@@ -592,7 +588,6 @@ void VM::run()
 			} else {
 				error(ERROR, "Method not found!");
 			}
-
 		}
 		DISPATCH;
 
