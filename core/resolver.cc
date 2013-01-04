@@ -9,18 +9,6 @@
 #include "core/resolver.h"
 #include "core/compiler.h"
 
-namespace clever {
-
-struct Environment {
-	Environment* outer;
-	std::vector<Value*> data;
-
-	Environment(Environment* outer_)
-		: outer(outer_), data() {}
-};
-
-}
-
 namespace clever { namespace ast {
 
 Resolver::Resolver(Compiler* compiler)
@@ -28,6 +16,8 @@ Resolver::Resolver(Compiler* compiler)
 {
 	// global environment and scope
 	m_symtable = m_scope = new Scope();
+	m_scope->setEnvironment(new Environment(NULL));
+	m_stack.push(m_scope->getEnvironment());
 
 	// Native type allocation
 	m_symtable->pushType(CSTRING("Int"),      CLEVER_INT_TYPE    = new IntType);
@@ -37,10 +27,18 @@ Resolver::Resolver(Compiler* compiler)
 
 	CLEVER_INT_TYPE->init();
 }
+Resolver::~Resolver() {
+	if (!m_stack.empty()) {
+		CLEVER_SAFE_DELREF(m_stack.top());
+	}
+}
 
 void Resolver::visit(Block* node)
 {
 	m_scope = m_scope->enter();
+	m_scope->setEnvironment(m_stack.top());
+
+	CLEVER_ADDREF(m_scope->getEnvironment());
 
 	node->setScope(m_scope);
 
@@ -58,7 +56,12 @@ void Resolver::visit(VariableDecl* node)
 			"Cannot redeclare variable `%S'.", name);
 	}
 
-	m_scope->pushValue(name, new Value());
+	Value *val = new Value();
+	m_scope->pushValue(name, val);
+
+	m_stack.top()->data.push_back(val);
+	m_stack.top()->values.push_back(ValueOffset(0, m_stack.top()->data.size()-1));
+
 	node->getIdent()->accept(*this);
 
 	if (node->hasAssignment()) {
@@ -98,9 +101,16 @@ void Resolver::visit(FunctionDecl* node)
 
 	func->setName(*name);
 	m_scope->pushValue(name, fval);
+
+	m_stack.top()->data.push_back(fval);
+	m_stack.top()->values.push_back(ValueOffset(0, m_stack.top()->data.size()-1));
+
 	node->getIdent()->accept(*this);
 
 	m_scope = m_scope->enter();
+
+	m_scope->setEnvironment(new Environment(m_stack.top()));
+	m_stack.push(m_scope->getEnvironment());
 
 	node->setScope(m_scope);
 
@@ -117,6 +127,7 @@ void Resolver::visit(FunctionDecl* node)
 	node->getBlock()->accept(*this);
 
 	m_scope = m_scope->leave();
+	m_stack.pop();
 }
 
 void Resolver::visit(Ident* node)
@@ -127,6 +138,14 @@ void Resolver::visit(Ident* node)
 		Compiler::errorf(node->getLocation(),
 			"Identifier `%S' not found.", node->getName());
 	}
+
+	ValueOffset off = m_scope->getDepth(sym);
+
+	if (off.first != 0) {
+		m_stack.top()->values.push_back(off);
+	}
+
+	// TODO(heuripedes): add offset reference to the node
 
 	node->setSymbol(sym);
 	node->setScope(sym->scope);
@@ -140,6 +159,14 @@ void Resolver::visit(Type* node)
 		Compiler::errorf(node->getLocation(),
 			"Type `%S' not found.", node->getName());
 	}
+
+	ValueOffset off = m_scope->getDepth(sym);
+
+	if (off.first != 0) {
+		m_stack.top()->values.push_back(off);
+	}
+
+	// TODO(heuripedes): add offset reference to the node
 
 	node->setSymbol(sym);
 	node->setScope(sym->scope);

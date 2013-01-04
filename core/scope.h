@@ -21,10 +21,25 @@ namespace clever {
 
 class Value;
 class Scope;
-struct Environment;
 
 typedef std::vector<Type*> TypePool;
 typedef std::vector<Value*> ValuePool;
+typedef std::pair<size_t, size_t> ValueOffset;
+
+struct Environment: public RefCounted {
+	Environment* outer;
+	std::vector<Value*> data;
+	std::vector<ValueOffset> values;
+
+	Environment(Environment* outer_)
+		: RefCounted(0), outer(outer_), data() {
+		CLEVER_SAFE_ADDREF(outer);
+	}
+
+	~Environment() {
+		CLEVER_SAFE_DELREF(outer);
+	}
+};
 
 /// Symbol representation
 struct Symbol {
@@ -118,7 +133,11 @@ public:
 	Symbol* getAny(const CString*);
 
 	Environment* getEnvironment() { return m_environment; }
-	void setEnvironment(Environment* e) { m_environment = e; }
+	void setEnvironment(Environment* e) {
+		CLEVER_SAFE_DELREF(m_environment);
+		m_environment = e;
+		CLEVER_SAFE_ADDREF(m_environment);
+	}
 
 	std::pair<size_t, size_t> getDepth(Symbol* sym);
 
