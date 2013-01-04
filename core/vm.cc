@@ -112,49 +112,6 @@ void VM::dumpOpcodes() const
 }
 #endif
 
-// Saves function argument and local variables
-void VM::saveVars()
-{/*
-	Scope* arg_vars   = m_call_stack.top().arg_vars;
-	Scope* local_vars = m_call_stack.top().local_vars;
-
-	if (arg_vars) {
-		// Save the function argument values
-		for (size_t i = 0, j = arg_vars->size(); i < j; ++i) {
-			Value* tmp = new Value();
-
-			tmp->copy(getValue(arg_vars->at(i).value_id));
-			m_call_stack.top().vars.push_back(
-				std::pair<size_t, Value*>(
-					arg_vars->at(i).value_id, tmp));
-		}
-	}
-	if (EXPECTED(local_vars != NULL)) {
-		// Save the local variables
-		for (size_t i = 0, j = local_vars->size(); i < j; ++i) {
-			Value* tmp = new Value();
-
-			tmp->copy(getValue(local_vars->at(i).value_id));
-			m_call_stack.top().vars.push_back(
-				std::pair<size_t, Value*>(
-					local_vars->at(i).value_id, tmp));
-		}
-	}*/
-}
-
-// Restore the argument and local variables values
-void VM::restoreVars() const
-{/*
-	FuncVars::const_iterator it = m_call_stack.top().vars.begin(),
-		end = m_call_stack.top().vars.end();
-
-	while (EXPECTED(it != end)) {
-		Value* var = getValue((*it).first);
-		var->copy((*it).second);
-		++it;
-	}*/
-}
-
 // Make a copy of VM instance
 void VM::copy(const VM* vm)
 {
@@ -166,18 +123,14 @@ void VM::copy(const VM* vm)
 
 	this->m_scope_pool->push_back(const_cast<Scope*>(vm->m_scope_pool->at(0)));
 
-	for (size_t id = 1; id < vm->m_scope_pool->size(); ++id) {
-		Scope* s = new Scope;
+	for (size_t id = 1, n = vm->m_scope_pool->size(); id < n; ++id) {
+		Scope* scope = new Scope;
 
-		s->copy(vm->m_scope_pool->at(id));
+		scope->copy(vm->m_scope_pool->at(id));
 
-		this->m_scope_pool->push_back(s);
+		this->m_scope_pool->push_back(scope);
 	}
 	this->f_mutex->unlock();
-
-	for (size_t i = 0; i < NUM_OPCODES; ++i) {
-		this->m_handlers[i] = vm->m_handlers[i];
-	}
 
 	this->m_tmp_pool = vm->m_tmp_pool;
 	this->m_const_pool = vm->m_const_pool;
@@ -321,9 +274,6 @@ void VM::run()
 			clever_assert_not_null(fdata);
 
 			if (fdata->isUserDefined()) {
-				if (m_call_stack.size()) {
-					saveVars();
-				}
 				m_call_stack.push(StackFrame());
 				m_call_stack.top().ret_addr = m_pc + 1;
 				m_call_stack.top().ret_val  = getValue(OPCODE.result);
@@ -387,11 +337,13 @@ void VM::run()
 	OP(OP_ETHREAD):
 		if (this->isChild()) {
 			this->getMutex()->lock();
-			for (size_t id = 1; id < m_scope_pool->size(); ++id) {
+
+			for (size_t id = 1, n = m_scope_pool->size(); id < n; ++id) {
 				delete m_scope_pool->at(id);
 			}
 
 			delete m_scope_pool;
+
 			this->getMutex()->unlock();
 
 			VM_EXIT();
@@ -401,10 +353,6 @@ void VM::run()
 	OP(OP_LEAVE):
 		{
 			const StackFrame& frame = m_call_stack.top();
-
-			if (m_call_stack.size() > 1) {
-				restoreVars();
-			}
 
 			m_call_stack.pop();
 

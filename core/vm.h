@@ -50,8 +50,6 @@ public:
 		WARNING
 	};
 
-	typedef void (VM::*OpHandler)(VM_HANDLER_ARG);
-
 	typedef std::map<size_t, std::vector<Thread*> > ThreadPool;
 
 	VM(IRVector& inst)
@@ -74,7 +72,7 @@ public:
 
 	bool isChild() const { return !m_is_main_thread; }
 
-	bool isMain() const { return !m_is_main_thread; }
+	bool isMain() const { return m_is_main_thread; }
 
 	size_t getPC() const { return m_pc; }
 
@@ -88,10 +86,6 @@ public:
 	/// Helper to retrive a Value* from ValuePool
 	Value* getValue(size_t, size_t) const;
 	Value* getValue(Operand&) const;
-
-	/// Save function variables on recursion
-	void saveVars();
-	void restoreVars() const;
 
 	Mutex* getMutex() {
 		return isChild() ? f_mutex : &m_mutex;
@@ -124,9 +118,6 @@ private:
 
 	/// Temporaries pool
 	ValuePool* m_tmp_pool;
-
-	/// VM opcode handlers
-	OpHandler m_handlers[NUM_OPCODES];
 
 	/// Stack frame
 	std::stack<StackFrame> m_call_stack;
