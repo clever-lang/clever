@@ -10,6 +10,7 @@
 
 #include <vector>
 #include <stack>
+#include <map>
 #include "core/astvisitor.h"
 #include "core/ir.h"
 
@@ -29,7 +30,8 @@ public:
 	typedef std::stack<AddrVector> JmpList;
 
 	Codegen(IRVector& ir, Compiler* compiler)
-		: m_ir(ir), m_compiler(compiler) {}
+		: m_ir(ir), m_compiler(compiler),
+		  m_thread_ids(), m_thread_id(0) {}
 	~Codegen() {}
 
 	void visit(Block*);
@@ -58,6 +60,10 @@ private:
 	IRVector& m_ir;
 	Compiler* m_compiler;
 	JmpList m_jmps;
+
+	std::map<CString, size_t> m_thread_ids;
+	size_t m_thread_id;
+
 };
 
 }} // clever::ast

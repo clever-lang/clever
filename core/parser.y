@@ -207,7 +207,8 @@ instantiation:
 ;
 
 thread_block:
-		THREAD block { $$ = new ast::ThreadBlock($2, yyloc); }
+		THREAD block       { $$ = new ast::ThreadBlock($2, yyloc); }
+	|	THREAD IDENT block { $$ = new ast::ThreadBlock($3, $2, yyloc); }
 ;
 
 critical_block:
