@@ -253,12 +253,24 @@ CLEVER_METHOD(StrType::findLast)
 	}
 }
 
+CLEVER_METHOD(StrType::getLength)
+{
+	if (CLEVER_THIS()) {
+		result->setInt(((const CString*) CLEVER_THIS()->getStr())->length());
+	} else {
+		if(CLEVER_ARG_COUNT()) {
+			result->setInt(((const CString*) CLEVER_ARG_CSTR(0))->length());
+		} else std::cerr << "String.getLength expected a string argument";
+	}
+}
+
 CLEVER_TYPE_INIT(StrType::init) 
 {
 	addMethod(CSTRING("subString"),  	(MethodPtr) &StrType::subString);
 	addMethod(CSTRING("find"), 			(MethodPtr) &StrType::find);
 	addMethod(CSTRING("findFirst"), 	(MethodPtr) &StrType::findFirst);
-	addMethod(CSTRING("findLast"), 		(MethodPtr) &StrType::findLast);
+	addMethod(CSTRING("findLast"), 		(MethodPtr) &StrType::findLast);	
+	addMethod(CSTRING("getLength"),		(MethodPtr) &StrType::getLength);
 }
 
 } // clever
