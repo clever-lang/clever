@@ -66,7 +66,7 @@ static CLEVER_FUNCTION(println) {
 // Prints and formats a string to standard output without trailing newline
 static CLEVER_FUNCTION(printf) {
 	if (CLEVER_ARG_COUNT() > 0) {
-		char* point = strtok(CLEVER_ARG_PSTR(0), STDIO_DELIM);
+		char* point = strtok((char*)CLEVER_ARG_PSTR(0), STDIO_DELIM);
 		if (point) {
 			do {
 				unsigned int arg = atoi(point);
