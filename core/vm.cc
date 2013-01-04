@@ -567,12 +567,13 @@ void VM::run()
 			const Type* type = callee->getType();
 			MethodPtr ptr;
 
-			if (callee->isNull()) {
+			if (UNEXPECTED(callee->isNull())) {
 				error(ERROR, "Cannot call method from a null value");
 			}
 
 			if (EXPECTED((ptr = type->getMethod(method->getStr())))) {
-				(type->*ptr)(getValue(OPCODE.result), callee);
+				(type->*ptr)(getValue(OPCODE.result), callee, m_call_args);
+				m_call_args.clear();
 			} else {
 				error(ERROR, "Method not found!");
 			}
@@ -580,6 +581,19 @@ void VM::run()
 		DISPATCH;
 
 	OP(OP_SMCALL):
+		{
+			const Type* type = getType(OPCODE.op1);
+			const Value* method = getValue(OPCODE.op2);
+			MethodPtr ptr;
+
+			if (EXPECTED((ptr = type->getMethod(method->getStr())))) {
+				(type->*ptr)(getValue(OPCODE.result), NULL, m_call_args);
+				m_call_args.clear();
+			} else {
+				error(ERROR, "Method not found!");
+			}
+
+		}
 		DISPATCH;
 
 	OP(OP_HALT):

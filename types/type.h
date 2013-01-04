@@ -13,6 +13,7 @@
 #else
 #include <tr1/unordered_map>
 #endif
+#include <vector>
 #include "core/clever.h"
 #include "core/cstring.h"
 
@@ -29,10 +30,12 @@ namespace clever {
 
 #define CLEVER_TYPE_OPERATOR(name) CLEVER_FASTCALL void name(CLEVER_TYPE_OPERATOR_ARGS) const
 
+#define CLEVER_THIS() obj
+
 #define CLEVER_TYPE_INIT_ARGS
 #define CLEVER_TYPE_INIT(name) void name(CLEVER_TYPE_INIT_ARGS)
 
-#define CLEVER_METHOD_ARGS Value* result, const Value* obj
+#define CLEVER_METHOD_ARGS Value* result, const Value* obj, ::std::vector<Value*> args
 #define CLEVER_METHOD_D(name) void name(CLEVER_METHOD_ARGS) const
 #define CLEVER_METHOD(name) void name(CLEVER_METHOD_ARGS) const
 

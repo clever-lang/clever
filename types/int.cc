@@ -49,11 +49,16 @@ CLEVER_TYPE_OPERATOR(IntType::mod)
 
 CLEVER_METHOD(IntType::toString)
 {
-	std::ostringstream str;
+	if (CLEVER_THIS()) {
+		std::ostringstream str;
 
-	str << obj->getInt();
+		str << CLEVER_THIS()->getInt();
 
-	result->setStr(CSTRING(str.str()));
+		result->setStr(CSTRING(str.str()));
+	} else {
+		// TODO(Felipe): display an error/throw exception
+		std::cout << "Error: Cannot be called as static method!" << '\n';
+	}
 }
 
 CLEVER_TYPE_INIT(IntType::init)

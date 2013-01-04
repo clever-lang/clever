@@ -135,6 +135,18 @@ void Codegen::visit(MethodCall* node)
 	if (node->isStaticCall()) {
 		Symbol* sym = static_cast<Ident*>(node->getCallee())->getSymbol();
 
+		if (node->hasArgs()) {
+			NodeList& args = node->getArgs()->getNodes();
+			NodeList::const_iterator it = args.begin(), end = args.end();
+
+			while (EXPECTED(it != end)) {
+				(*it)->accept(*this);
+				m_ir.push_back(IR(OP_SEND_VAL));
+				_prepare_operand(m_ir.back().op1, *it);
+				++it;
+			}
+		}
+
 		m_ir.push_back(IR(OP_SMCALL,
 			Operand(FETCH_TYPE, sym->value_id, sym->scope->getId()),
 			Operand(FETCH_CONST,
@@ -142,19 +154,31 @@ void Codegen::visit(MethodCall* node)
 	} else {
 		node->getCallee()->accept(*this);
 
+		if (node->hasArgs()) {
+			NodeList& args = node->getArgs()->getNodes();
+			NodeList::const_iterator it = args.begin(), end = args.end();
+
+			while (EXPECTED(it != end)) {
+				(*it)->accept(*this);
+				m_ir.push_back(IR(OP_SEND_VAL));
+				_prepare_operand(m_ir.back().op1, *it);
+				++it;
+			}
+		}
+
 		m_ir.push_back(IR(OP_MCALL));
 
 		_prepare_operand(m_ir.back().op1, node->getCallee());
 
 		m_ir.back().op2 = Operand(FETCH_CONST,
 			m_compiler->addConstant(new Value(node->getMethod()->getName())));
-
-		size_t tmp_id = m_compiler->getTempValue();
-
-		m_ir.back().result = Operand(FETCH_TMP, tmp_id);
-
-		node->setValueId(tmp_id);
 	}
+
+	size_t tmp_id = m_compiler->getTempValue();
+
+	m_ir.back().result = Operand(FETCH_TMP, tmp_id);
+
+	node->setValueId(tmp_id);
 }
 
 void Codegen::visit(FunctionCall* node)
@@ -168,11 +192,9 @@ void Codegen::visit(FunctionCall* node)
 		NodeList& args = node->getArgs()->getNodes();
 		NodeList::const_iterator it = args.begin(), end = args.end();
 
-		while (it != end) {
+		while (EXPECTED(it != end)) {
 			(*it)->accept(*this);
-
 			m_ir.push_back(IR(OP_SEND_VAL));
-
 			_prepare_operand(m_ir.back().op1, *it);
 			++it;
 		}
