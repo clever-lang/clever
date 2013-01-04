@@ -44,7 +44,8 @@ namespace clever {
 	&&OP_LEQUAL,   \
 	&&OP_NEW,      \
 	&&OP_MCALL,    \
-	&&OP_WAIT
+	&&OP_WAIT,     \
+	&&OP_SMCALL
 #endif
 
 /// VM opcodes
@@ -82,6 +83,7 @@ enum Opcode {
 	OP_NEW,        //  30 - Used for less than or equal comparison
 	OP_MCALL,      //       Used for method call
 	OP_WAIT,       //       Wait thread termination
+	OP_SMCALL,     //       Used for static method call
 	NUM_OPCODES
 };
 

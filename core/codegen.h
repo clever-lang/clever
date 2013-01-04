@@ -41,6 +41,7 @@ public:
 	void visit(VariableDecl*);
 	void visit(Assignment*);
 	void visit(FunctionCall*);
+	void visit(MethodCall*);
 	void visit(FunctionDecl*);
 	void visit(Return*);
 	void visit(While*);

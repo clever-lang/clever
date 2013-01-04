@@ -130,6 +130,33 @@ void Codegen::visit(Assignment* node)
 	}
 }
 
+void Codegen::visit(MethodCall* node)
+{
+	if (node->isStaticCall()) {
+		Symbol* sym = static_cast<Ident*>(node->getCallee())->getSymbol();
+
+		m_ir.push_back(IR(OP_SMCALL,
+			Operand(FETCH_TYPE, sym->value_id, sym->scope->getId()),
+			Operand(FETCH_CONST,
+				m_compiler->addConstant(new Value(node->getMethod()->getName())))));
+	} else {
+		m_ir.push_back(IR(OP_MCALL));
+
+		node->getCallee()->accept(*this);
+
+		_prepare_operand(m_ir.back().op1, node->getCallee());
+
+		m_ir.back().op2 = Operand(FETCH_CONST,
+			m_compiler->addConstant(new Value(node->getMethod()->getName())));
+
+		size_t tmp_id = m_compiler->getTempValue();
+
+		m_ir.back().result = Operand(FETCH_TMP, tmp_id);
+
+		node->setValueId(tmp_id);
+	}
+}
+
 void Codegen::visit(FunctionCall* node)
 {
 	// TODO: allow call for any possible callee
@@ -416,11 +443,6 @@ void Codegen::visit(Instantiation* node)
 
 	m_ir.push_back(IR(OP_NEW,
 		Operand(FETCH_TYPE, sym->value_id, sym->scope->getId())));
-
-	// TODO(Felipe: Add FETCH_TYPE for doing the instantiation
-	// Make the symbol table works with Type as well
-	// call allocData() from the Type (abstraction of .new)
-	// m_ir.back().op1 = Operand(FETCH_TYPE, type_id, scope_id);
 
 	size_t tmp_id = m_compiler->getTempValue();
 

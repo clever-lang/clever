@@ -5,7 +5,7 @@
  * This file is distributed under the MIT license. See LICENSE for details.
  */
 
-
+#include <sstream>
 #include "types/int.h"
 
 namespace clever {
@@ -45,6 +45,20 @@ CLEVER_TYPE_OPERATOR(IntType::mod)
 	if (EXPECTED(rhs->getType() == this)) {
 		result->setInt(lhs->getInt() % rhs->getInt());
 	}
+}
+
+CLEVER_METHOD(IntType::toString)
+{
+	std::ostringstream str;
+
+	str << obj->getInt();
+
+	result->setStr(CSTRING(str.str()));
+}
+
+CLEVER_TYPE_INIT(IntType::init)
+{
+	addMethod(CSTRING("toString"), (MethodPtr) &IntType::toString);
 }
 
 } // clever
