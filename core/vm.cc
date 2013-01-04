@@ -9,10 +9,11 @@
 #include <stdio.h>
 #include "core/opcode.h"
 #endif
+#include "core/vm.h"
 #include "core/scope.h"
 #include "core/value.h"
 #include "types/type.h"
-#include "core/vm.h"
+#include "types/function.h"
 
 #define OPCODE m_inst[m_pc]
 #define VM_EXIT() goto exit
