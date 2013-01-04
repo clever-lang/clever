@@ -140,9 +140,9 @@ void Codegen::visit(MethodCall* node)
 			Operand(FETCH_CONST,
 				m_compiler->addConstant(new Value(node->getMethod()->getName())))));
 	} else {
-		m_ir.push_back(IR(OP_MCALL));
-
 		node->getCallee()->accept(*this);
+
+		m_ir.push_back(IR(OP_MCALL));
 
 		_prepare_operand(m_ir.back().op1, node->getCallee());
 
