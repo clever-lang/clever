@@ -145,12 +145,12 @@ CLEVER_METHOD(StrType::find)
 	if (needle && haystack) {
 		if (bounds[0] > -1) {
 			if (bounds[1] > -1) {
-				result->setInt(haystack->find((const char*)needle, bounds[0], bounds[1]));
+				result->setInt(haystack->find(needle, bounds[0], bounds[1]));
 			} else {
-				result->setInt(haystack->find((const char*)needle, bounds[0]));
+				result->setInt(haystack->find(needle, bounds[0]));
 			}
 		} else {
-			result->setInt(haystack->find((const char*)needle));
+			result->setInt(haystack->find(needle));
 		}
 	}
 }
@@ -208,12 +208,12 @@ CLEVER_METHOD(StrType::findFirst)
 	if (needle && haystack) {
 		if (bounds[0] > -1) {
 			if (bounds[1] > -1) {
-				result->setInt(haystack->find_first_of((const char*)needle, bounds[0], bounds[1]));
+				result->setInt(haystack->find_first_of(needle, bounds[0], bounds[1]));
 			} else {
-				result->setInt(haystack->find_first_of((const char*)needle, bounds[0]));
+				result->setInt(haystack->find_first_of(needle, bounds[0]));
 			}
 		} else {
-			result->setInt(haystack->find_first_of((const char*)needle));
+			result->setInt(haystack->find_first_of(needle));
 		}
 	}
 }
@@ -271,12 +271,12 @@ CLEVER_METHOD(StrType::findLast)
 	if (needle && haystack) {
 		if (bounds[0] > -1) {
 			if (bounds[1] > -1) {
-				result->setInt(haystack->find_last_of((const char*)needle, bounds[0], bounds[1]));
+				result->setInt(haystack->find_last_of(needle, bounds[0], bounds[1]));
 			} else {
-				result->setInt(haystack->find_last_of((const char*)needle, bounds[0]));
+				result->setInt(haystack->find_last_of(needle, bounds[0]));
 			}
 		} else {
-			result->setInt(haystack->find_last_of((const char*)needle));
+			result->setInt(haystack->find_last_of(needle));
 		}
 	}
 }
