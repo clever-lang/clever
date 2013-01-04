@@ -40,6 +40,7 @@ public:
 	virtual void visit(StringLit* node) {}
 	virtual void visit(Ident* node) {}
 	virtual void visit(Type* node) {}
+	virtual void visit(NullLit*) {}
 
 	virtual void visit(Return* node);
 	virtual void visit(Logic* node);

@@ -55,6 +55,7 @@ public:
 	virtual Node* transform(DoubleLit* node) { return node; }
 	virtual Node* transform(StringLit* node) { return node; }
 	virtual Node* transform(Ident* node) { return node; }
+	virtual Node* transform(NullLit* node) { return node; }
 	virtual Node* transform(Return* node) { return node; }
 	virtual Node* transform(Logic* node) { return node; }
 	virtual Node* transform(Bitwise* node) { return node; }
