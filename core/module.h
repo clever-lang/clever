@@ -22,16 +22,16 @@
 	void init(int flags);
 
 /* {{{ Accessor Macros for Function Arguments */
-#define CLV_ARG_COUNT		 args.size
+#define CLEVER_ARG_COUNT		 args.size
 /* {{{ CString */
-#define CLV_ARG_CSTR(index) args[index]->getStr() /* }}} */
+#define CLEVER_ARG_CSTR(index) args[index]->getStr() /* }}} */
 /* {{{ String Pointer */
-#define CLV_ARG_PSTR(index) ((char*) (args[index]->getStr())->c_str()) /* }}} */
-#define CLV_ARG_DBL(index)	 args[index]->getDouble()
-#define CLV_ARG_LONG(index) args[index]->getLong()
-#define CLV_ARG_OBJ(index)	 args[index]->getObj()
-#define CLV_ARG_DATA(index) args[index]->getData()
-#define CLV_ARG_DUMP(index) args[index]->dump()
+#define CLEVER_ARG_PSTR(index) ((char*) (args[index]->getStr())->c_str()) /* }}} */
+#define CLEVER_ARG_DBL(index)	 args[index]->getDouble()
+#define CLEVER_ARG_LONG(index) args[index]->getLong()
+#define CLEVER_ARG_OBJ(index)	 args[index]->getObj()
+#define CLEVER_ARG_DATA(index) args[index]->getData()
+#define CLEVER_ARG_DUMP(index) args[index]->dump()
 /* }}} */
 
 #define CLV_RETURN_STR(r)	

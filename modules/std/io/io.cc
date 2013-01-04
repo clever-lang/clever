@@ -48,16 +48,16 @@ static CLEVER_FUNCTION(flush) {
 // print(object a, [ ...])
 // Prints the object values without trailing newline
 static CLEVER_FUNCTION(print) {
-	for (size_t i = 0, size = CLV_ARG_COUNT(); i < size; ++i) {
-		CLV_ARG_DUMP(i);
+	for (size_t i = 0, size = CLEVER_ARG_COUNT(); i < size; ++i) {
+		CLEVER_ARG_DUMP(i);
 	}
 }
 
 // println(object a, [ ...])
 // Prints the object values with trailing newline
 static CLEVER_FUNCTION(println) {
-	for (size_t i = 0, size = CLV_ARG_COUNT(); i < size; ++i) {
-		CLV_ARG_DUMP(i);
+	for (size_t i = 0, size = CLEVER_ARG_COUNT(); i < size; ++i) {
+		CLEVER_ARG_DUMP(i);
 		::std::cout << '\n';
 	}
 }
@@ -65,14 +65,14 @@ static CLEVER_FUNCTION(println) {
 // printf(string format, [...])
 // Prints and formats a string to standard output without trailing newline
 static CLEVER_FUNCTION(printf) {
-	if (CLV_ARG_COUNT() > 0) {
-		char* point = strtok(CLV_ARG_PSTR(0), STDIO_DELIM);
+	if (CLEVER_ARG_COUNT() > 0) {
+		char* point = strtok(CLEVER_ARG_PSTR(0), STDIO_DELIM);
 		if (point) {
 			do {
 				unsigned int arg = atoi(point);
 				if (arg) {
 					if (args.size() > arg) {
-						CLV_ARG_DUMP(arg);
+						CLEVER_ARG_DUMP(arg);
 					}
 				} else {
 					::std::cout << point;
