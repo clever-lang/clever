@@ -21,7 +21,7 @@ CLEVER_TYPE_OPERATOR(StrType::add)
 }
 
 CLEVER_TYPE_OPERATOR(StrType::sub)
-{
+{	
 }
 
 CLEVER_TYPE_OPERATOR(StrType::mul)
@@ -42,7 +42,17 @@ CLEVER_TYPE_OPERATOR(StrType::div)
 }
 
 CLEVER_TYPE_OPERATOR(StrType::mod)
+{	
+}
+
+CLEVER_METHOD(StrType::subString) 
 {
+	
+}
+
+CLEVER_TYPE_INIT(StrType::init) 
+{
+	addMethod(CSTRING("subString"),  (MethodPtr) &StrType::subString);
 }
 
 } // clever

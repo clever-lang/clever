@@ -20,6 +20,8 @@ public:
 	StrType() : Type(CSTRING("String")) {}
 	~StrType() {}
 
+	void init();
+
 	bool isPrimitive() const { return true; }
 
 	void dump(const void* value) const {
@@ -29,8 +31,10 @@ public:
 	CLEVER_TYPE_VIRTUAL_METHOD_DECLARATIONS;
 
 	void increment(Value* value) const {}
-
+	
 	void decrement(Value* value) const {}
+
+	CLEVER_METHOD_D(subString);
 };
 
 } // clever
