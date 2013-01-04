@@ -211,6 +211,7 @@ CLEVER_METHOD(StrType::findFirst)
 		}
 	}
 }
+
 // String.findLast(string haystack, string needle, [int position, [int count]])
 // String.findLast(string needle, [int position, [int count]])
 // Finds the last occurence of a string in a string returning the position
