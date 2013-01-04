@@ -68,7 +68,7 @@ public:
 
 	void setTemporaryPool(ValuePool* temps) { m_tmp_pool = temps; }
 
-	void copy(VM*);
+	void copy(const VM*);
 
 	void setChild() { m_is_main_thread = false; }
 
@@ -107,9 +107,6 @@ public:
 	void dumpOperand(Operand&) const;
 	void dumpOpcodes() const;
 #endif
-
-	void increment(IR&);
-	void decrement(IR&);
 private:
 	/// VM program counter
 	size_t m_pc;

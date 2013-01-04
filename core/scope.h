@@ -104,9 +104,9 @@ public:
 
 	size_t size() const { return m_size; }
 
-	void copy(Scope* s) {
+	void copy(const Scope* s) {
 		for (size_t id = 0; id < s->m_value_pool.size(); ++id) {
-			Value* u = s->m_value_pool[id];
+			const Value* u = s->m_value_pool[id];
 			Value* v = new Value;
 
 			m_value_pool.push_back(v);

@@ -30,4 +30,29 @@ CLEVER_TYPE_OPERATOR(FuncType::mod)
 {
 }
 
+
+CLEVER_TYPE_OPERATOR(FuncType::greater)
+{
+}
+
+CLEVER_TYPE_OPERATOR(FuncType::greater_equal)
+{
+}
+
+CLEVER_TYPE_OPERATOR(FuncType::less)
+{
+}
+
+CLEVER_TYPE_OPERATOR(FuncType::less_equal)
+{
+}
+
+CLEVER_TYPE_OPERATOR(FuncType::equal)
+{
+}
+
+CLEVER_TYPE_OPERATOR(FuncType::not_equal)
+{
+}
+
 } // clever

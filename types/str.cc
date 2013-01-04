@@ -304,4 +304,47 @@ CLEVER_TYPE_INIT(StrType::init)
 	addMethod(CSTRING("getLength"),		(MethodPtr) &StrType::getLength);
 }
 
+
+CLEVER_TYPE_OPERATOR(StrType::greater)
+{
+	if (EXPECTED(rhs->getType() == this)) {
+		result->setInt(lhs->getStr() > rhs->getStr());
+	}
+}
+
+CLEVER_TYPE_OPERATOR(StrType::greater_equal)
+{
+	if (EXPECTED(rhs->getType() == this)) {
+		result->setInt(lhs->getStr() >= rhs->getStr());
+	}
+}
+
+CLEVER_TYPE_OPERATOR(StrType::less)
+{
+	if (EXPECTED(rhs->getType() == this)) {
+		result->setInt(lhs->getStr() < rhs->getStr());
+	}
+}
+
+CLEVER_TYPE_OPERATOR(StrType::less_equal)
+{
+	if (EXPECTED(rhs->getType() == this)) {
+		result->setInt(lhs->getStr() <= rhs->getStr());
+	}
+}
+
+CLEVER_TYPE_OPERATOR(StrType::equal)
+{
+	if (EXPECTED(rhs->getType() == this)) {
+		result->setInt(lhs->getStr() == rhs->getStr());
+	}
+}
+
+CLEVER_TYPE_OPERATOR(StrType::not_equal)
+{
+	if (EXPECTED(rhs->getType() == this)) {
+		result->setInt(lhs->getStr() != rhs->getStr());
+	}
+}
+
 } // clever

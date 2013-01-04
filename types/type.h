@@ -26,7 +26,13 @@ namespace clever {
 	void sub(CLEVER_TYPE_OPERATOR_ARGS) const;  \
 	void mul(CLEVER_TYPE_OPERATOR_ARGS) const;  \
 	void div(CLEVER_TYPE_OPERATOR_ARGS) const;  \
-	void mod(CLEVER_TYPE_OPERATOR_ARGS) const
+	void mod(CLEVER_TYPE_OPERATOR_ARGS) const;  \
+	void equal(CLEVER_TYPE_OPERATOR_ARGS)         const; \
+	void not_equal(CLEVER_TYPE_OPERATOR_ARGS)     const; \
+	void greater(CLEVER_TYPE_OPERATOR_ARGS)       const; \
+	void greater_equal(CLEVER_TYPE_OPERATOR_ARGS) const; \
+	void less(CLEVER_TYPE_OPERATOR_ARGS)          const; \
+	void less_equal(CLEVER_TYPE_OPERATOR_ARGS)    const;
 
 #define CLEVER_TYPE_OPERATOR(name) CLEVER_FASTCALL void name(CLEVER_TYPE_OPERATOR_ARGS) const
 
@@ -93,17 +99,24 @@ public:
 	/// Virtual method for debug purpose
 	virtual void dump(const void*) const = 0;
 
-	virtual void add(CLEVER_TYPE_OPERATOR_ARGS) const = 0;
-	virtual void sub(CLEVER_TYPE_OPERATOR_ARGS) const = 0;
-	virtual void mul(CLEVER_TYPE_OPERATOR_ARGS) const = 0;
-	virtual void div(CLEVER_TYPE_OPERATOR_ARGS) const = 0;
-	virtual void mod(CLEVER_TYPE_OPERATOR_ARGS) const = 0;
+	/// Operator methods
+	virtual void add(CLEVER_TYPE_OPERATOR_ARGS)           const = 0;
+	virtual void sub(CLEVER_TYPE_OPERATOR_ARGS)           const = 0;
+	virtual void mul(CLEVER_TYPE_OPERATOR_ARGS)           const = 0;
+	virtual void div(CLEVER_TYPE_OPERATOR_ARGS)           const = 0;
+	virtual void mod(CLEVER_TYPE_OPERATOR_ARGS)           const = 0;
+	virtual void equal(CLEVER_TYPE_OPERATOR_ARGS)         const = 0;
+	virtual void not_equal(CLEVER_TYPE_OPERATOR_ARGS)     const = 0;
+	virtual void greater(CLEVER_TYPE_OPERATOR_ARGS)       const = 0;
+	virtual void greater_equal(CLEVER_TYPE_OPERATOR_ARGS) const = 0;
+	virtual void less(CLEVER_TYPE_OPERATOR_ARGS)          const = 0;
+	virtual void less_equal(CLEVER_TYPE_OPERATOR_ARGS)    const = 0;
+	virtual void increment(Value*)                        const = 0;
+	virtual void decrement(Value*)                        const = 0;
+
 
 	virtual void* allocData(CLEVER_TYPE_CTOR_ARGS) const { return NULL; }
 	virtual void deallocData(void* data) {}
-
-	virtual void increment(Value*) const = 0;
-	virtual void decrement(Value*) const = 0;
 private:
 	const CString* m_name;
 	MethodMap m_methods;
