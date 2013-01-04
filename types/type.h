@@ -45,7 +45,7 @@ namespace clever {
 #define CLEVER_METHOD_D(name) void name(CLEVER_METHOD_ARGS) const
 #define CLEVER_METHOD(name) void name(CLEVER_METHOD_ARGS) const
 
-#define CLEVER_TYPE_CTOR_ARGS const ::std::vector<Value*>* args = NULL
+#define CLEVER_TYPE_CTOR_ARGS const ::std::vector<Value*>* args
 
 class Value;
 class Type;

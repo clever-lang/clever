@@ -47,6 +47,7 @@ void PkgManager::loadModule(Scope* scope, Module* module) const
 		return;
 	}
 	module->init(PKG_INIT_FUNC);
+	module->setLoaded();
 
 	FunctionMap& funcs = module->getFunctions();
 	FunctionMap::const_iterator itf = funcs.begin(),
@@ -62,6 +63,16 @@ void PkgManager::loadModule(Scope* scope, Module* module) const
 
 		++itf;
 	}
+
+	module->init(PKG_INIT_TYPE);
+
+	TypeMap& types = module->getTypes();
+	TypeMap::const_iterator itt(types.begin()), ite(types.end());
+
+	while (EXPECTED(itt != ite)) {
+		scope->pushType(itt->first, itt->second);
+		++itt;
+	}
 }
 
 /// Imports a module
@@ -75,7 +86,10 @@ void PkgManager::importModule(Scope* scope, const CString* package,
 		return;
 	}
 
-	it->second->init();
+	if (!it->second->isLoaded()) {
+		it->second->init();
+		it->second->setLoaded();
+	}
 
 	ModuleMap& mods = it->second->getModules();
 	ModuleMap::const_iterator itm = mods.find(module);
