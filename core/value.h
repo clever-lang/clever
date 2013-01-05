@@ -133,9 +133,28 @@ public:
 		}
 		return true;
 	}
+	
+	// @TODO(muriloadriano): This is a workout to allow the assign on a const
+	// variable declaration. If the current data is null and it is const, the 
+	// assign must be performed (first assign), if it is not null and const, 
+	// we cannot assign because it is trying to change its value. If it this
+	// value isn't const it is assignable too. Maybe this could be done in a 
+	// clever way.
+	bool isAssignable() const {
+		return isNull() || !isConst();
+	}
+	
+	bool isConst() const {
+		return m_is_const;
+	}
+
+	void setConst(bool constness = true) {
+		m_is_const = constness;
+	}	
 private:
 	DataValue m_data;
 	const Type* m_type;
+	bool m_is_const;
 };
 
 } // clever

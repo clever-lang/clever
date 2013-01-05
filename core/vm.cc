@@ -194,8 +194,16 @@ void VM::run()
 		{
 			Value* var = getValue(OPCODE.op1);
 			const Value* value = getValue(OPCODE.op2);
-
-			var->copy(value);
+			
+			// Checks if this assignment is allowed (non-const variable or 
+			// const variable declaration).
+			if (EXPECTED(var->isAssignable())) {
+				var->copy(value);
+			} else {
+				// TODO(muriloadriano): improve this message to show the symbol
+				// name and the line to the user.
+				error(ERROR, "Cannot assign to a const variable!");
+			}
 		}
 		DISPATCH;
 

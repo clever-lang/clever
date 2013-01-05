@@ -64,7 +64,9 @@ class Value;
 %type <inst> instantiation
 %type <assignment> assignment
 %type <narray> variable_decl variable_decl_list non_empty_call_args call_args
+%type <narray> const_decl_list
 %type <vardecl> variable_decl_impl
+%type <vardecl> const_decl_impl
 %type <block> statement_list block
 %type <threadblock> thread_block
 %type <waitblock> wait_block
@@ -306,6 +308,7 @@ bitwise:
 
 variable_decl:
 		VAR variable_decl_list { $$ = $2; }
+	|	CONST const_decl_list  { $$ = $2; }
 ;
 
 variable_decl_list:
@@ -314,8 +317,17 @@ variable_decl_list:
 ;
 
 variable_decl_impl:
-		IDENT '=' rvalue { $$ = new ast::VariableDecl($1, new ast::Assignment($1, $<node>3, yyloc), yyloc); }
-	|	IDENT            { $$ = new ast::VariableDecl($1, new ast::Assignment($1, NULL, yyloc), yyloc); }
+		IDENT '=' rvalue { $$ = new ast::VariableDecl($1, new ast::Assignment($1, $<node>3, yyloc), false, yyloc); }
+	|	IDENT            { $$ = new ast::VariableDecl($1, new ast::Assignment($1, NULL, yyloc), false, yyloc); }
+;
+
+const_decl_list:
+		const_decl_impl                     { $$ = new ast::NodeArray(yyloc); $$->append($1); }
+	|	const_decl_list ',' const_decl_impl { $1->append($3); }
+;
+
+const_decl_impl:
+		IDENT '=' rvalue { $$ = new ast::VariableDecl($1, new ast::Assignment($1, $<node>3, yyloc), true, yyloc); }
 ;
 
 assignment:
