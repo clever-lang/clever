@@ -60,7 +60,7 @@ void Resolver::visit(VariableDecl* node)
 	Value *val = new Value();
 	m_scope->pushValue(name, val);
 
-	m_stack.top()->data.push_back(val);
+	m_stack.top()->pushValue(val);
 
 	node->getIdent()->accept(*this);
 
@@ -102,7 +102,7 @@ void Resolver::visit(FunctionDecl* node)
 	func->setName(*name);
 	m_scope->pushValue(name, fval);
 
-	m_stack.top()->data.push_back(fval);
+	m_stack.top()->pushValue(fval);
 
 	node->getIdent()->accept(*this);
 

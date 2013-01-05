@@ -16,6 +16,7 @@
 #include <vector>
 #include <algorithm>
 #include "core/value.h"
+#include "core/environment.h"
 
 namespace clever {
 
@@ -24,21 +25,6 @@ class Scope;
 
 typedef std::vector<Type*> TypePool;
 typedef std::vector<Value*> ValuePool;
-typedef std::pair<size_t, size_t> ValueOffset;
-
-struct Environment: public RefCounted {
-	Environment* outer;
-	std::vector<Value*> data;
-
-	Environment(Environment* outer_)
-		: RefCounted(0), outer(outer_), data() {
-		CLEVER_SAFE_ADDREF(outer);
-	}
-
-	~Environment() {
-		CLEVER_SAFE_DELREF(outer);
-	}
-};
 
 /// Symbol representation
 struct Symbol {

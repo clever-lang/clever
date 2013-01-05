@@ -15,7 +15,7 @@
 namespace clever {
 class Compiler;
 class Scope;
-struct Environment;
+class Environment;
 }
 
 namespace clever { namespace ast {
