@@ -122,6 +122,7 @@ void VM::copy(const VM* vm)
 	this->f_mutex->lock();
 	this->m_scope_pool = new ScopePool;
 
+	this->m_try_stack = vm->m_try_stack;
 	this->m_scope_pool->push_back(const_cast<Scope*>(vm->m_scope_pool->at(0)));
 	this->m_scope_pool->push_back(const_cast<Scope*>(vm->m_scope_pool->at(1)));
 
