@@ -177,16 +177,17 @@ void Resolver::visit(Catch* node)
 	m_scope->setEnvironment(new Environment(m_stack.top()));
 	m_stack.push(m_scope->getEnvironment());
 
-	Value *val = new Value();
+	Value* val = new Value();
+
 	m_scope->pushValue(node->getVar()->getName(), val);
 
 	m_stack.top()->pushValue(val);
 
 	node->getVar()->accept(*this);
 
-	Visitor::visit(static_cast<NodeArray*>(node->getBlock()));
-
 	node->setScope(m_scope);
+
+	Visitor::visit(static_cast<NodeArray*>(node->getBlock()));
 
 	m_scope = m_scope->leave();
 	m_stack.pop();

@@ -156,6 +156,7 @@ void Visitor::visit(Try* node) {
 }
 
 void Visitor::visit(Catch* node) {
+	node->getVar()->accept(*this);
 	node->getBlock()->accept(*this);
 }
 
