@@ -134,6 +134,8 @@ private:
 	Mutex m_mutex;
 	Mutex* f_mutex;
 
+	std::stack<size_t> m_try_stack;
+
 	DISALLOW_COPY_AND_ASSIGN(VM);
 };
 

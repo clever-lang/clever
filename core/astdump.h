@@ -43,6 +43,7 @@ public:
 	void visit(Return* node)       { std::cout << m_ws << "Return" << std::endl;       }
 	void visit(Import* node)       { std::cout << m_ws << "Import" << std::endl;       }
 	void visit(Instantiation* node){ std::cout << m_ws << "Instantiation" << std::endl;}
+	void visit(Throw* node)        { std::cout << m_ws << "Throw" << std::endl;        }
 
 	void visit(Try* node) {
 		std::cout << m_ws << "Try" << std::endl;

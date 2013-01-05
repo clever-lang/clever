@@ -645,6 +645,26 @@ void VM::run()
 		}
 		DISPATCH;
 
+	OP(OP_TRY):
+		m_try_stack.push(OPCODE.op1.value_id);
+		DISPATCH;
+
+	OP(OP_CATCH):
+		DISPATCH;
+
+	OP(OP_THROW):
+		if (EXPECTED(m_try_stack.size())) {
+			// TODO(Felipe): Change catch variable
+			// getValue(m_inst[catch_addr].op1)->copy(getValue(OPCODE.op1));
+
+			VM_GOTO(m_try_stack.top());
+		}
+		DISPATCH;
+
+	OP(OP_ETRY):
+		m_try_stack.pop();
+		DISPATCH;
+
 	OP(OP_HALT):
 		VM_EXIT();
 

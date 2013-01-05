@@ -161,4 +161,8 @@ void Visitor::visit(Catch* node) {
 	node->getBlock()->accept(*this);
 }
 
+void Visitor::visit(Throw* node) {
+	node->getExpr()->accept(*this);
+}
+
 }} // clever::ast
