@@ -56,7 +56,7 @@ public:
 
 	VM(IRVector& inst)
 		: m_pc(0), m_is_main_thread(true), m_inst(inst), m_scope_pool(NULL),
-		  m_const_pool(NULL), m_tmp_pool(NULL), m_mutex(), f_mutex(NULL) {}
+		  m_const_pool(NULL), m_tmp_pool(NULL), m_thread_pool(), m_mutex(), f_mutex(NULL) {}
 	~VM() {}
 
 	void error(ErrorLevel, const char*) const;

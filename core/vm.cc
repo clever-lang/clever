@@ -152,7 +152,7 @@ void VM::wait()
 
 		++it;
 	}
-	m_thread_pool.clear();
+	//m_thread_pool.clear();
 }
 
 static void* _thread_control(void* arg)
@@ -332,7 +332,7 @@ void VM::run()
 				delete t->vm_handler;
 				delete t;
 			}
-			m_thread_pool.erase(OPCODE.op1.value_id);
+			thread_list.clear();
 		}
 		DISPATCH;
 
