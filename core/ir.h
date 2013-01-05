@@ -8,6 +8,7 @@
 #ifndef CLEVER_IR_H
 #define CLEVER_IR_H
 
+#include <cstddef>
 #include <vector>
 #include "core/opcode.h"
 
