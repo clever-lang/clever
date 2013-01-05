@@ -335,35 +335,40 @@ CLEVER_METHOD(StrType::format)
 	
 	if (format) {
 		std::ostringstream stream;
-		char* buffer = new char[format->size()+1];
 		
-		::std::strcpy(buffer, format->c_str());
-
 		{
-			char* point = strtok(buffer, "{}");
-			if (point) {
-				do {
-					unsigned long arg = atol(point);
-					if (arg > 0) {
+			char* buffer = new char[format->size()+1];
+			
+			::std::strcpy(buffer, format->c_str());
+			
+			for(char* point = buffer; point < (buffer + format->size());) 
+			{
+				if (*point && (*point == (char)'\\')) {
+					unsigned long arg;
+					char* skip;
+					
+					if ((arg=::std::strtoul(++point, &skip, 10))) {
 						if (CLEVER_ARG_COUNT() > (arg+offset)) {
 							CLEVER_ARG_DUMPTO((arg+offset), stream);
 						}
+						point = skip;
 					} else {
-						stream << point;
+						stream << *(--point);
+						point++;
 					}
-				} while((point = strtok(NULL, "{}")));
-			} else {
-				stream << buffer;
+				} else {
+					stream << *point;
+					point++;
+				}
 			}
-		
-			result->setStr(CSTRING(stream.str()));
-		}
 
-		delete[] buffer;
+			delete[] buffer;
+		}
 		
+		result->setStr(CSTRING(stream.str()));
 	} else {
 		result->setNull();
-	}	
+	}
 }
 
 // String.getLength(string str)

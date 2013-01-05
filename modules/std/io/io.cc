@@ -70,27 +70,30 @@ static CLEVER_FUNCTION(printf) {
 		
 		if (format) {
 			char* buffer = new char[format->size()+1];
-
+			
 			::std::strcpy(buffer, format->c_str());
-		
+			
+			for(char* point = buffer; point < (buffer + format->size());) 
 			{
-				char* point = strtok(buffer, STDIO_DELIM);
-				if (point) {
-					do {
-						unsigned long arg = atol(point);
-						if (arg) {
-							if (CLEVER_ARG_COUNT() > arg) {
-								CLEVER_ARG_DUMP(arg);
-							}
-						} else {
-							::std::cout << point;
+				if (*point && (*point == (char)'\\')) {
+					unsigned long arg;
+					char* skip;
+					
+					if ((arg=::std::strtoul(++point, &skip, 10))) {
+						if (CLEVER_ARG_COUNT() > arg) {
+							CLEVER_ARG_DUMP(arg);
 						}
-					} while((point = strtok(NULL, STDIO_DELIM)));
+						point = skip;
+					} else {
+						::std::cout << *(--point);
+						point++;
+					}
 				} else {
-					::std::cout << buffer;
+					::std::cout << *point;
+					point++;
 				}
 			}
-		
+
 			delete[] buffer;
 		}
 	}
