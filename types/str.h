@@ -24,9 +24,8 @@ public:
 
 	bool isPrimitive() const { return true; }
 
-	void dump(const void* value) const {
-		std::cout << (*(const CString**)value)->c_str();
-	}
+	void dump(const void* value) const { dump(value, std::cout); }
+	void dump(const void* value, std::ostream& out) const { out << (*(const CString**)value)->c_str();}
 
 	CLEVER_TYPE_VIRTUAL_METHOD_DECLARATIONS;
 
@@ -39,6 +38,7 @@ public:
 	CLEVER_METHOD_D(findFirst);	
 	CLEVER_METHOD_D(findLast);
 	CLEVER_METHOD_D(getLength);
+	CLEVER_METHOD_D(format);
 };
 
 } // clever

@@ -175,7 +175,9 @@ void printfln(const char*, ...);
 #define CLEVER_ARG_INT(index)	args[index]->getInt()
 #define CLEVER_ARG_OBJ(index)	args[index]->getObj()
 #define CLEVER_ARG_DATA(index)	args[index]->getData()
+#define CLEVER_ARG_TYPE(index)	args[index]->getType()
 #define CLEVER_ARG_DUMP(index) 	args[index]->dump()
+#define CLEVER_ARG_DUMPTO(index, stream) args[index]->dump(stream)
 /* }}} */
 
 } // clever

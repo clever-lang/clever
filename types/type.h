@@ -98,6 +98,7 @@ public:
 
 	/// Virtual method for debug purpose
 	virtual void dump(const void*) const = 0;
+	virtual void dump(const void*, std::ostream& out) const = 0;
 
 	/// Operator methods
 	virtual void add(CLEVER_TYPE_OPERATOR_ARGS)           const = 0;
