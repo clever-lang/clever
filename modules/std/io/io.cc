@@ -73,7 +73,7 @@ static CLEVER_FUNCTION(printf) {
 			
 			::std::strcpy(buffer, format->c_str());
 			
-			for(char *point = buffer; point < (buffer + format->size());) 
+			for(char* point = buffer; point < (buffer + format->size());) 
 			{
 				if (*point && (*point == (char)'\\')) {
 					unsigned long arg;
