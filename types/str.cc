@@ -107,7 +107,7 @@ CLEVER_METHOD(StrType::subString)
 CLEVER_METHOD(StrType::find)
 {
 	const char* needle = NULL;
-	const CString* haystack;
+	const CString* haystack = NULL;
 	int bounds[2];
 
 	bounds[0] = -1;
@@ -248,7 +248,7 @@ CLEVER_METHOD(StrType::findFirst)
 // Finds the last occurence of a string in a string returning the position
 CLEVER_METHOD(StrType::findLast)
 {
-	const char* needle;
+	const char* needle = NULL;
 	const CString* haystack = NULL;
 	int bounds[2];
 
