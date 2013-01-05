@@ -82,7 +82,7 @@ inline Value* Environment::getValue(const ValueOffset& offset) {
 	if (offset.first == 0) { // local
 
 		clever_assert(offset.second < m_data.size(),
-					  "`offset.second` must be within `m_data` bounds.");
+					  "`offset.second` must be within `m_data` limits.");
 
 		return m_data.at(offset.second);
 	}

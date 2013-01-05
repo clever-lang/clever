@@ -91,26 +91,36 @@ Symbol* Scope::getAny(const CString* name) {
 ValueOffset Scope::getOffset(Symbol* sym) const {
 	size_t depth = 0;
 	size_t value = 0;
-	SymbolMap::const_iterator it = std::find(m_symbols.begin(), m_symbols.end(), sym);
 
-	if (it != m_symbols.end()) {
-		value = std::distance(m_symbols.begin(), it)-1;
-	} else {
-		for (const Scope* parent = m_parent; parent != NULL; parent = parent->m_parent) {
-			if (parent->m_environment != m_environment) {
-				depth++;
-			}
+	const Scope* scope = this;
+	SymbolMap::const_iterator it, end;
 
-			it = std::find(parent->m_symbols.begin(), parent-> m_symbols.end(), sym);
+	while (scope) {
+		value = 0;
 
-			if (it != parent->m_symbols.end()) {
-				value = std::distance(parent->m_symbols.begin(), it)-1;
-				break;
-			}
+		if (scope->m_environment != m_environment) {
+			depth++;
 		}
+
+		it = scope->m_symbols.begin();
+		end = scope->m_symbols.end();
+
+		for (; it != end; it++) {
+			if ((*it)->isType()) {
+				continue;
+			}
+
+			if (*it == sym) {
+				return ValueOffset(depth, value);
+			}
+
+			value++;
+		}
+
+		scope = scope->m_parent;
 	}
 
-	return ValueOffset(depth, value);
+	clever_fatal("Failed to find the symbol offset.");
 }
 
 } // clever
