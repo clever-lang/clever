@@ -34,6 +34,8 @@ public:
 		  m_thread_ids(), m_thread_id(0) {}
 	~Codegen() {}
 
+	void sendArgs(NodeArray*);
+
 	void visit(Block*);
 	void visit(CriticalBlock*);
 	void visit(Wait*);

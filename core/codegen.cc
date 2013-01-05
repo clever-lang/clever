@@ -23,6 +23,22 @@ static CLEVER_FORCE_INLINE void _prepare_operand(Operand& op, Node* node)
 	}
 }
 
+void Codegen::sendArgs(NodeArray* node)
+{
+	NodeList& args = node->getNodes();
+
+	// First generate code for each argument
+	for (size_t i = 0, j = args.size(); i < j; ++i) {
+		args[i]->accept(*this);
+	}
+
+	// Then send them to the proper call
+	for (size_t i = 0, j = args.size(); i < j; ++i) {
+		m_ir.push_back(IR(OP_SEND_VAL));
+		_prepare_operand(m_ir.back().op1, args[i]);
+	}
+}
+
 void Codegen::visit(NullLit* node)
 {
 	node->setConstId(0);
@@ -136,15 +152,7 @@ void Codegen::visit(MethodCall* node)
 		Symbol* sym = static_cast<Ident*>(node->getCallee())->getSymbol();
 
 		if (node->hasArgs()) {
-			NodeList& args = node->getArgs()->getNodes();
-			NodeList::const_iterator it = args.begin(), end = args.end();
-
-			while (EXPECTED(it != end)) {
-				(*it)->accept(*this);
-				m_ir.push_back(IR(OP_SEND_VAL));
-				_prepare_operand(m_ir.back().op1, *it);
-				++it;
-			}
+			sendArgs(node->getArgs());
 		}
 
 		m_ir.push_back(IR(OP_SMCALL,
@@ -155,15 +163,7 @@ void Codegen::visit(MethodCall* node)
 		node->getCallee()->accept(*this);
 
 		if (node->hasArgs()) {
-			NodeList& args = node->getArgs()->getNodes();
-			NodeList::const_iterator it = args.begin(), end = args.end();
-
-			while (EXPECTED(it != end)) {
-				(*it)->accept(*this);
-				m_ir.push_back(IR(OP_SEND_VAL));
-				_prepare_operand(m_ir.back().op1, *it);
-				++it;
-			}
+			sendArgs(node->getArgs());
 		}
 
 		m_ir.push_back(IR(OP_MCALL));
@@ -189,15 +189,7 @@ void Codegen::visit(FunctionCall* node)
 	clever_assert_not_null(sym);
 
 	if (node->hasArgs()) {
-		NodeList& args = node->getArgs()->getNodes();
-		NodeList::const_iterator it = args.begin(), end = args.end();
-
-		while (EXPECTED(it != end)) {
-			(*it)->accept(*this);
-			m_ir.push_back(IR(OP_SEND_VAL));
-			_prepare_operand(m_ir.back().op1, *it);
-			++it;
-		}
+		sendArgs(node->getArgs());
 	}
 
 	m_ir.push_back(IR(OP_FCALL,
@@ -464,15 +456,7 @@ void Codegen::visit(Instantiation* node)
 	Symbol* sym = node->getType()->getSymbol();
 
 	if (node->hasArgs()) {
-		NodeList& args = node->getArgs()->getNodes();
-		NodeList::const_iterator it = args.begin(), end = args.end();
-
-		while (EXPECTED(it != end)) {
-			(*it)->accept(*this);
-			m_ir.push_back(IR(OP_SEND_VAL));
-			_prepare_operand(m_ir.back().op1, *it);
-			++it;
-		}
+		sendArgs(node->getArgs());
 	}
 
 	m_ir.push_back(IR(OP_NEW,
