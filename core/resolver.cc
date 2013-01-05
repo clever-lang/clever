@@ -154,13 +154,8 @@ void Resolver::visit(Catch* node)
 {
 	m_scope = m_scope->enter();
 
-	m_scope->setEnvironment(new Environment(m_stack.top()));
-	m_stack.push(m_scope->getEnvironment());
-
 	Value *val = new Value();
 	m_scope->pushValue(node->getVar()->getName(), val);
-
-	m_stack.top()->data.push_back(val);
 
 	node->getVar()->accept(*this);
 
@@ -169,7 +164,6 @@ void Resolver::visit(Catch* node)
 	node->setScope(m_scope);
 
 	m_scope = m_scope->leave();
-	m_stack.pop();
 }
 
 }} // clever::ast
