@@ -61,6 +61,8 @@ public:
 	void visit(NullLit*);
 	void visit(Instantiation*);
 	void visit(Property*);
+	void visit(Try*);
+	void visit(Throw*);
 private:
 	IRVector& m_ir;
 	Compiler* m_compiler;

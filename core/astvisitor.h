@@ -52,6 +52,7 @@ public:
 	virtual void visit(Property* node);
 	virtual void visit(Try* node);
 	virtual void visit(Catch* node);
+	virtual void visit(Throw* node);
 };
 
 }} // clever::ast

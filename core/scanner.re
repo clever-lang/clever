@@ -69,6 +69,8 @@ next_token:
 
 	<INITIAL>'finally' { RET(token::FINALLY); }
 
+	<INITIAL>'throw' { RET(token::THROW); }
+
 	<INITIAL>'or' { RET(token::LOGICAL_OR); }
 
 	<INITIAL>"||" { RET(token::BOOLEAN_OR); }

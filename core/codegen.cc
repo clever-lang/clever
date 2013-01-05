@@ -496,4 +496,49 @@ void Codegen::visit(Property* node)
 	node->setValueId(tmp_id);
 }
 
+void Codegen::visit(Try* node)
+{
+	size_t try_id = m_ir.size();
+	size_t try_jmp;
+
+	m_ir.push_back(OP_TRY);
+
+	node->getBlock()->accept(*this);
+
+	try_jmp = m_ir.size();
+	m_ir.push_back(OP_JMP); // It's all ok, jump to finally block
+
+	m_ir[try_id].op1 = Operand(JMP_ADDR, m_ir.size());
+
+	if (node->hasCatch()) {
+		node->getCatches()->accept(*this);
+
+		NodeList& catches = node->getCatches()->getNodes();
+		NodeList::const_iterator it(catches.begin()), end(catches.end());
+
+		while (it != end) {
+			m_ir.push_back(OP_CATCH);
+			_prepare_operand(m_ir.back().op1, *it);
+			++it;
+		}
+	}
+
+	m_ir[try_jmp].op1 = Operand(JMP_ADDR, m_ir.size());
+
+	if (node->hasFinally()) {
+		node->getFinally()->accept(*this);
+	}
+
+	m_ir.push_back(IR(OP_ETRY));
+}
+
+void Codegen::visit(Throw* node)
+{
+	node->getExpr()->accept(*this);
+
+	m_ir.push_back(IR(OP_THROW));
+
+	_prepare_operand(m_ir.back().op1, node->getExpr());
+}
+
 }} // clever::ast

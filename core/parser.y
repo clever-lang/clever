@@ -56,6 +56,7 @@ class Value;
 	ast::Property* property;
 	ast::Try* except;
 	ast::Catch* catch_;
+	ast::Throw* throw_;
 }
 
 %type <type> TYPE
@@ -88,6 +89,7 @@ class Value;
 %type <property> property_access
 %type <except> try_catch_finally
 %type <catch_> catch_impl
+%type <throw_> throw
 
 // The parsing context.
 %parse-param { Driver& driver }
@@ -161,6 +163,7 @@ class Value;
 %token FINALLY       "finally"
 %token CATCH         "catch"
 %token TRY           "try"
+%token THROW         "throw"
 
 %left ',';
 %left LOGICAL_OR;
@@ -212,6 +215,7 @@ statement:
 	|	thread_block
 	|   critical_block
 	|	wait_block ';'
+	|	throw ';'
 	|	try_catch_finally
 ;
 
@@ -259,6 +263,10 @@ rvalue:
 
 lvalue:
 		IDENT
+;
+
+throw:
+		THROW rvalue { $$ = new ast::Throw($<node>2, yyloc); }
 ;
 
 catch:

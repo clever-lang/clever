@@ -46,7 +46,11 @@ namespace clever {
 	&&OP_MCALL,    \
 	&&OP_WAIT,     \
 	&&OP_SMCALL,   \
-	&&OP_PROP_ACC
+	&&OP_PROP_ACC, \
+	&&OP_TRY,      \
+	&&OP_CATCH,    \
+	&&OP_THROW,    \
+	&&OP_ETRY
 #endif
 
 /// VM opcodes
@@ -86,6 +90,10 @@ enum Opcode {
 	OP_WAIT,       //       Wait thread termination
 	OP_SMCALL,     //       Used for static method call
 	OP_PROP_ACC,   //       Used for property access
+	OP_TRY,        //  35 - Used for exception block
+	OP_CATCH,      //       Used for catching exception
+	OP_THROW,      //       Used for throwing exception
+	OP_ETRY,       //       Used for end marker exception block
 	NUM_OPCODES
 };
 

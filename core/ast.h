@@ -966,6 +966,25 @@ private:
 	Block* m_block;
 };
 
+class Throw: public Node {
+public:
+	Throw(Node* expr, const location& location)
+		: Node(location), m_expr(expr) {
+		CLEVER_ADDREF(m_expr);
+	}
+
+	~Throw() {
+		CLEVER_DELREF(m_expr);
+	}
+
+	Node* getExpr() const { return m_expr; }
+
+	virtual void accept(Visitor& visitor);
+	virtual Node* accept(Transformer& transformer);
+private:
+	Node* m_expr;
+};
+
 }} // clever::ast
 
 #endif // CLEVER_AST_H
