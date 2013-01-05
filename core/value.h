@@ -9,8 +9,9 @@
 #define CLEVER_VALUE_H
 
 #include <cstring>
-#include "types/type.h"
+
 #include "core/cstring.h"
+#include "types/type.h"
 
 namespace clever {
 
@@ -27,7 +28,7 @@ extern Type* g_clever_func_type;
 
 #define CLEVER_INT_TYPE    g_clever_int_type
 #define CLEVER_DOUBLE_TYPE g_clever_double_type
-#define CLEVER_STR_TYPE g_clever_str_type
+#define CLEVER_STR_TYPE    g_clever_str_type
 #define CLEVER_FUNC_TYPE   g_clever_func_type
 
 class ValueObject : public RefCounted {

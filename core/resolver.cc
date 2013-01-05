@@ -5,9 +5,9 @@
  * This file is distributed under the MIT license. See LICENSE for details.
  */
 
-#include "types/native_types.h"
-#include "core/resolver.h"
 #include "core/compiler.h"
+#include "core/resolver.h"
+#include "types/native_types.h"
 
 namespace clever { namespace ast {
 

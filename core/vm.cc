@@ -12,8 +12,8 @@
 #include "core/vm.h"
 #include "core/scope.h"
 #include "core/value.h"
-#include "types/type.h"
 #include "types/function.h"
+#include "types/type.h"
 
 #define OPCODE m_inst[m_pc]
 #define VM_EXIT() goto exit
