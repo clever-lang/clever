@@ -64,10 +64,14 @@ public:
 		DataValue(const CString* value) : sval(value) {}
 	};
 
-	Value() : m_data(), m_type(NULL) {}
-	Value(long n) : m_data(n), m_type(CLEVER_INT_TYPE) {}
-	Value(double n) : m_data(n), m_type(CLEVER_DOUBLE_TYPE) {}
-	Value(const CString* value) : m_data(value), m_type(CLEVER_STR_TYPE) {}
+	Value() : m_data(), m_type(NULL), m_is_const(false) {}
+
+	Value(long n) : m_data(n), m_type(CLEVER_INT_TYPE), m_is_const(false) {}
+
+	Value(double n) 
+		: m_data(n), m_type(CLEVER_DOUBLE_TYPE), m_is_const(false) {}
+	Value(const CString* value) 
+		: m_data(value), m_type(CLEVER_STR_TYPE), m_is_const(false) {}
 
 	~Value() {
 		if (m_type && !m_type->isPrimitive()) {
