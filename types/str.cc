@@ -335,11 +335,12 @@ CLEVER_METHOD(StrType::format)
 	
 	if (format) {
 		std::ostringstream stream;
+		char* buffer = new char[format->size()+1];
 		char* point = NULL;
-
-		printf("Format [%s]\n", format->c_str());
 	
-		if ((point = strtok((char*)format->c_str(), "{}")) != NULL) {
+		::std::strcpy(buffer, format->c_str());
+
+		if ((point = strtok(buffer, "{}")) != NULL) {
 			do {
 				unsigned long arg = atol(point);
 				if (arg > 0) {
@@ -351,10 +352,13 @@ CLEVER_METHOD(StrType::format)
 				}
 			} while((point = strtok(NULL, "{}")));
 		} else {
-			stream << format;
+			stream << buffer;
 		}
 		
 		result->setStr(CSTRING(stream.str()));
+
+		delete buffer;
+		
 	} else {
 		result->setNull();
 	}	
