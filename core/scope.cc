@@ -94,7 +94,7 @@ ValueOffset Scope::getDepth(Symbol* sym) {
 	SymbolMap::iterator it = std::find(m_symbols.begin(), m_symbols.end(), sym);
 
 	if (it != m_symbols.end()) {
-		value = std::distance(m_symbols.begin(), it);
+		value = std::distance(m_symbols.begin(), it)-1;
 	} else {
 		for (Scope* parent = m_parent; parent != NULL; parent = parent->m_parent) {
 			if (parent->m_environment != m_environment) {
@@ -104,7 +104,7 @@ ValueOffset Scope::getDepth(Symbol* sym) {
 			it = std::find(parent->m_symbols.begin(), parent-> m_symbols.end(), sym);
 
 			if (it != parent->m_symbols.end()) {
-				value = std::distance(parent->m_symbols.begin(), it);
+				value = std::distance(parent->m_symbols.begin(), it)-1;
 			}
 			break;
 		}
