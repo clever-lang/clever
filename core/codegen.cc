@@ -15,12 +15,23 @@ namespace clever { namespace ast {
 static CLEVER_FORCE_INLINE void _prepare_operand(Operand& op, Node* node)
 {
 	if (node->isLiteral()) {
-		op = Operand(FETCH_CONST, static_cast<Literal*>(node)->getConstId());
+		op = Operand(FETCH_CONST, node->getVOffset());
 	} else if (node->getScope()) {
-		op = Operand(FETCH_VAR, node->getValueId(),	node->getScope()->getId());
+		op = Operand(FETCH_VAR, node->getVOffset());
 	} else {
-		op = Operand(FETCH_TMP, node->getValueId());
+		op = Operand(FETCH_TMP, node->getVOffset());
 	}
+}
+
+Codegen::Codegen(IRVector& ir, Compiler* compiler, Environment* init_glbenv)
+	: m_ir(ir), m_compiler(compiler), m_init_glbenv(init_glbenv),
+	  m_thread_ids() {
+
+	m_const_env = new Environment(m_init_glbenv);
+	m_temp_env  = new Environment(m_init_glbenv);
+
+	// Add 'null' to the constant pool
+	m_const_env->pushValue(new Value());
 }
 
 void Codegen::sendArgs(NodeArray* node)
@@ -41,27 +52,28 @@ void Codegen::sendArgs(NodeArray* node)
 
 void Codegen::visit(NullLit* node)
 {
-	node->setConstId(0);
+	//node->setConstId(0);
+	node->setVOffset(ValueOffset(0,0));
 }
 
 void Codegen::visit(IntLit* node)
 {
-	node->setConstId(m_compiler->addConstant(new Value(node->getValue())));
+	node->setVOffset(m_const_env->pushValue(new Value(node->getValue())));
 }
 
 void Codegen::visit(DoubleLit* node)
 {
-	node->setConstId(m_compiler->addConstant(new Value(node->getValue())));
+	node->setVOffset(m_const_env->pushValue(new Value(node->getValue())));
 }
 
 void Codegen::visit(StringLit* node)
 {
-	node->setConstId(m_compiler->addConstant(new Value(node->getValue())));
+	node->setVOffset(m_const_env->pushValue(new Value(node->getValue())));
 }
 
 void Codegen::visit(Ident* node)
 {
-	node->setValueId(node->getSymbol()->value_id);
+	node->setVOffset(node->getSymbol()->voffset);
 }
 
 void Codegen::visit(Block* node)
@@ -71,24 +83,30 @@ void Codegen::visit(Block* node)
 
 void Codegen::visit(CriticalBlock* node)
 {
+	/*
 	m_ir.push_back(IR(OP_LOCK));
 
 	node->getBlock()->accept(*this);
 
 	m_ir.push_back(IR(OP_UNLOCK));
+	*/
 }
+
 
 void Codegen::visit(Wait* node)
 {
+	/*
 	const Ident* id_thread = node->getName();
 	const CString* str = id_thread->getName();
 	size_t id = m_thread_ids[*str];
 
 	m_ir.push_back(IR(OP_WAIT, Operand(FETCH_CONST, id)));
+	*/
 }
 
 void Codegen::visit(ThreadBlock* node)
 {
+	/*
 	size_t bg = m_ir.size();
 
 	if (node->getName() != NULL) {
@@ -112,6 +130,7 @@ void Codegen::visit(ThreadBlock* node)
 	m_ir.push_back(IR(OP_ETHREAD));
 
 	m_ir[bg].op1 = Operand(JMP_ADDR, m_ir.size());
+	*/
 }
 
 void Codegen::visit(VariableDecl* node)
@@ -129,7 +148,7 @@ void Codegen::visit(Assignment* node)
 
 	if (node->isConditional()) {
 		m_ir.push_back(IR(OP_JMPNZ,
-			Operand(FETCH_VAR, sym->value_id, sym->scope->getId()),
+			Operand(FETCH_VAR, sym->voffset),
 			Operand(JMP_ADDR, m_ir.size() + 2)));
 	}
 
@@ -137,7 +156,7 @@ void Codegen::visit(Assignment* node)
 		rhs->accept(*this);
 	}
 	m_ir.push_back(IR(OP_ASSIGN,
-			Operand(FETCH_VAR, sym->value_id, sym->scope->getId())));
+			Operand(FETCH_VAR, sym->voffset)));
 
 	if (!rhs) {
 		m_ir.back().op2 = Operand(FETCH_CONST, 0); // null
@@ -156,9 +175,9 @@ void Codegen::visit(MethodCall* node)
 		}
 
 		m_ir.push_back(IR(OP_SMCALL,
-			Operand(FETCH_TYPE, sym->value_id, sym->scope->getId()),
-			Operand(FETCH_CONST,
-				m_compiler->addConstant(new Value(node->getMethod()->getName())))));
+					Operand(FETCH_TYPE, sym->voffset),
+					Operand(FETCH_CONST,
+						 m_const_env->pushValue(new Value(node->getMethod()->getName())))));
 	} else {
 		node->getCallee()->accept(*this);
 
@@ -171,14 +190,14 @@ void Codegen::visit(MethodCall* node)
 		_prepare_operand(m_ir.back().op1, node->getCallee());
 
 		m_ir.back().op2 = Operand(FETCH_CONST,
-			m_compiler->addConstant(new Value(node->getMethod()->getName())));
+					m_const_env->pushValue(new Value(node->getMethod()->getName())));
 	}
 
-	size_t tmp_id = m_compiler->getTempValue();
+	ValueOffset tmp_id = m_temp_env->pushValue(new Value());
 
 	m_ir.back().result = Operand(FETCH_TMP, tmp_id);
 
-	node->setValueId(tmp_id);
+	node->setVOffset(tmp_id);
 }
 
 void Codegen::visit(FunctionCall* node)
@@ -201,14 +220,14 @@ void Codegen::visit(FunctionCall* node)
 		}
 
 		m_ir.push_back(IR(OP_FCALL,
-			Operand(FETCH_VAR, sym->value_id, sym->scope->getId())));
+			Operand(FETCH_VAR, sym->voffset)));
 	}
 
-	size_t tmp_id = m_compiler->getTempValue();
+	ValueOffset tmp_id = m_temp_env->pushValue(new Value());
 
 	m_ir.back().result = Operand(FETCH_TMP, tmp_id);
 
-	node->setValueId(tmp_id);
+	node->setVOffset(tmp_id);
 }
 
 void Codegen::visit(FunctionDecl* node)
@@ -218,7 +237,7 @@ void Codegen::visit(FunctionDecl* node)
 	m_ir.push_back(IR(OP_JMP, Operand(JMP_ADDR, 0)));
 
 	Symbol* sym = node->getIdent()->getSymbol();
-	Value* funcval = sym->scope->getValue(sym->value_id);
+	Value* funcval = sym->scope->getValue(sym->voffset);
 	Function* func = static_cast<Function*>(funcval->getObj());
 	func->setAddr(m_ir.size());
 
@@ -230,10 +249,10 @@ void Codegen::visit(FunctionDecl* node)
 
 	m_ir.push_back(IR(OP_LEAVE));
 
-	m_ir[start_func].op1.value_id = m_ir.size();
+	m_ir[start_func].op1.jmp_addr = m_ir.size();
 
 	if (node->isAnonymous()) {
-		node->setValueId(sym->value_id);
+		node->setVOffset(sym->voffset);
 		node->setScope(sym->scope);
 	}
 }
@@ -287,14 +306,13 @@ void Codegen::visit(IncDec* node)
 	}
 
 	m_ir.push_back(IR(op,
-		Operand(FETCH_VAR, node->getVar()->getValueId(),
-			node->getVar()->getScope()->getId())));
+		Operand(FETCH_VAR, node->getVar()->getVOffset())));
 
-	size_t tmp_id = m_compiler->getTempValue();
+	ValueOffset tmp_id = m_temp_env->pushValue(new Value());
 
 	m_ir.back().result = Operand(FETCH_TMP, tmp_id);
 
-	node->setValueId(tmp_id);
+	node->setVOffset(tmp_id);
 }
 
 void Codegen::visit(Arithmetic* node)
@@ -319,11 +337,11 @@ void Codegen::visit(Arithmetic* node)
 	_prepare_operand(m_ir.back().op1, lhs);
 	_prepare_operand(m_ir.back().op2, rhs);
 
-	size_t tmp_id = m_compiler->getTempValue();
+	ValueOffset tmp_id = m_temp_env->pushValue(new Value());
 
 	m_ir.back().result = Operand(FETCH_TMP, tmp_id);
 
-	node->setValueId(tmp_id);
+	node->setVOffset(tmp_id);
 }
 
 void Codegen::visit(Comparison* node)
@@ -349,11 +367,11 @@ void Codegen::visit(Comparison* node)
 	_prepare_operand(m_ir.back().op1, lhs);
 	_prepare_operand(m_ir.back().op2, rhs);
 
-	size_t tmp_id = m_compiler->getTempValue();
+	ValueOffset tmp_id = m_temp_env->pushValue(new Value());
 
 	m_ir.back().result = Operand(FETCH_TMP, tmp_id);
 
-	node->setValueId(tmp_id);
+	node->setVOffset(tmp_id);
 }
 
 void Codegen::visit(Logic* node)
@@ -370,9 +388,9 @@ void Codegen::visit(Logic* node)
 	lhs->accept(*this);
 
 	size_t jmp_ir = m_ir.size();
-	size_t res_id = m_compiler->getTempValue();
+	ValueOffset res_id = m_temp_env->pushValue(new Value());
 
-	node->setValueId(res_id);
+	node->setVOffset(res_id);
 
 	m_ir.push_back(IR(op));
 	_prepare_operand(m_ir.back().op1, lhs);
@@ -401,9 +419,9 @@ void Codegen::visit(Boolean* node)
 	lhs->accept(*this);
 
 	size_t jmp_ir = m_ir.size();
-	size_t res_id = m_compiler->getTempValue();
+	ValueOffset res_id = m_temp_env->pushValue(new Value());
 
-	node->setValueId(res_id);
+	node->setVOffset(res_id);
 
 	m_ir.push_back(IR(op));
 	_prepare_operand(m_ir.back().op1, lhs);
@@ -468,14 +486,13 @@ void Codegen::visit(Instantiation* node)
 		sendArgs(node->getArgs());
 	}
 
-	m_ir.push_back(IR(OP_NEW,
-		Operand(FETCH_TYPE, sym->value_id, sym->scope->getId())));
+	m_ir.push_back(IR(OP_NEW, Operand(FETCH_TYPE, sym->voffset)));
 
-	size_t tmp_id = m_compiler->getTempValue();
+	ValueOffset tmp_id = m_temp_env->pushValue(new Value());
 
 	m_ir.back().result = Operand(FETCH_TMP, tmp_id);
 
-	node->setValueId(tmp_id);
+	node->setVOffset(tmp_id);
 }
 
 void Codegen::visit(Property* node)
@@ -487,13 +504,13 @@ void Codegen::visit(Property* node)
 	_prepare_operand(m_ir.back().op1, node->getObject());
 
 	m_ir.back().op2 = Operand(FETCH_CONST,
-		m_compiler->addConstant(new Value(node->getProperty()->getName())));
+			m_const_env->pushValue(new Value(node->getProperty()->getName())));
 
-	size_t tmp_id = m_compiler->getTempValue();
+	ValueOffset tmp_id = m_temp_env->pushValue(new Value());
 
 	m_ir.back().result = Operand(FETCH_TMP, tmp_id);
 
-	node->setValueId(tmp_id);
+	node->setVOffset(tmp_id);
 }
 
 void Codegen::visit(Try* node)

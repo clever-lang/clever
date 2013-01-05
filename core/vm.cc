@@ -48,32 +48,28 @@ void VM::error(ErrorLevel level, const char* msg) const
 	}
 }
 
-/// Fetchs a Value ptr from the Symbol table
-CLEVER_FORCE_INLINE Value* VM::getValue(size_t scope_id, size_t value_id) const
-{
-	return (*m_scope_pool)[scope_id]->getValue(value_id);
-}
-
-/// Fetchs a Type ptr from the Symbol table
+/*/// Fetchs a Type ptr from the Symbol table
 CLEVER_FORCE_INLINE const Type* VM::getType(Operand& operand) const
 {
-	return (*m_scope_pool)[operand.scope_id]->getType(operand.value_id);
-}
-
+	return (*m_scope_pool)[operand.scope_id]->getType(operand.voffset);
+}*/
 
 /// Fetchs a Value ptr according to the operand type
 CLEVER_FORCE_INLINE Value* VM::getValue(Operand& operand) const
 {
+	Environment* source;
+
 	switch (operand.op_type) {
-		case FETCH_CONST:
-			return (*m_const_pool)[operand.value_id];
-		case FETCH_VAR:
-			return getValue(operand.scope_id, operand.value_id);
-		case FETCH_TMP:
-			return (*m_tmp_pool)[operand.value_id];
-		default:
-			return NULL;
+	case FETCH_CONST: source = m_const_env; break;
+	case FETCH_VAR: source = m_call_stack.top(); break;
+	case FETCH_TMP: source = m_temp_env; break;
+	default:
+		return NULL;
 	}
+
+	clever_assert_not_null(source);
+
+	return source->getValue(operand.voffset);
 }
 
 #ifdef CLEVER_DEBUG
@@ -85,13 +81,13 @@ void VM::dumpOperand(Operand& op) const
 
 	switch (op.op_type) {
 		case FETCH_VAR:
-			::printf("%3zu:%3zu ", op.value_id, op.scope_id);
+			::printf("%3zu:%3zu ", op.voffset.first, op.voffset.second);
 			break;
 		case JMP_ADDR:
 		case FETCH_CONST:
 		case FETCH_TMP:
 		case FETCH_TYPE:
-			::printf("%7zu ", op.value_id);
+			::printf("%7zu ", op.voffset.first);
 			break;
 		case UNUSED:
 			::printf("        ");
@@ -116,6 +112,7 @@ void VM::dumpOpcodes() const
 // Make a copy of VM instance
 void VM::copy(const VM* vm)
 {
+	/*
 	this->f_mutex = const_cast<VM*>(vm)->getMutex();
 	this->m_pc = vm->m_pc;
 
@@ -135,8 +132,9 @@ void VM::copy(const VM* vm)
 	}
 	this->f_mutex->unlock();
 
-	this->m_tmp_pool = vm->m_tmp_pool;
-	this->m_const_pool = vm->m_const_pool;
+	this->m_temp_env = vm->m_temp_env;
+	this->m_const_env = vm->m_const_env;
+	*/
 }
 
 void VM::wait()
@@ -156,9 +154,9 @@ void VM::wait()
 	m_thread_pool.clear();
 }
 
-static size_t g_n_threads = 0;
+//static size_t g_n_threads = 0;
 
-static void* _thread_control(void* arg)
+/*static void* _thread_control(void* arg)
 {
 	VM* vm_handler = static_cast<Thread*>(arg)->vm_handler;
 
@@ -166,17 +164,21 @@ static void* _thread_control(void* arg)
 	vm_handler->run();
 
 	return NULL;
-}
+}*/
 
 // Executes the VM opcodes
 // When building on GCC the code will use direct threading code, otherwise
 // the switch-based dispatching is used
 void VM::run()
 {
+	if (m_call_stack.empty()) {
+		m_call_stack.push(m_global_env);
+	}
+
 	OPCODES;
 	OP(OP_RET):
 		if (m_call_stack.size()) {
-			const StackFrame& frame = m_call_stack.top();
+			/*const StackFrame& frame = m_call_stack.top();
 
 			if (OPCODE.op1.op_type != UNUSED) {
 				const Value* val = getValue(OPCODE.op1);
@@ -188,7 +190,8 @@ void VM::run()
 			m_call_stack.pop();
 
 			// Go back to the caller
-			VM_GOTO(frame.ret_addr);
+			VM_GOTO(frame.ret_addr);*/
+			clever_fatal("Not implemented.");
 		} else {
 			VM_EXIT();
 		}
@@ -269,7 +272,7 @@ void VM::run()
 		DISPATCH;
 
 	OP(OP_JMP):
-		VM_GOTO(OPCODE.op1.value_id);
+		VM_GOTO(OPCODE.op1.jmp_addr);
 
 	OP(OP_FCALL):
 		{
@@ -279,6 +282,7 @@ void VM::run()
 			clever_assert_not_null(fdata);
 
 			if (fdata->isUserDefined()) {
+				/*
 				m_call_stack.push(StackFrame());
 				m_call_stack.top().ret_addr = m_pc + 1;
 				m_call_stack.top().ret_val  = getValue(OPCODE.result);
@@ -312,6 +316,8 @@ void VM::run()
 				}
 				m_call_args.clear();
 				VM_GOTO(fdata->getAddr());
+				*/
+				clever_fatal("Not implemented.");
 			} else {
 				fdata->getPtr()(m_call_args, this);
 				m_call_args.clear();
@@ -321,6 +327,7 @@ void VM::run()
 
 	OP(OP_BTHREAD):
 		{
+		/*
 			Thread* thread = new Thread;
 
 			thread->vm_handler = new VM(this->m_inst);
@@ -340,10 +347,13 @@ void VM::run()
 									 static_cast<void*>(thread));
 
 			VM_GOTO(OPCODE.op1.value_id);
+			*/
+			clever_fatal("Not implemented.");
 		}
 
 	OP(OP_WAIT):
 		{
+		/*
 			std::vector<Thread*>& thread_list = m_thread_pool[OPCODE.op1.value_id];
 			for (size_t i = 0, j = thread_list.size(); i < j; ++i) {
 				Thread* t = thread_list.at(i);
@@ -352,11 +362,15 @@ void VM::run()
 				delete t;
 			}
 			thread_list.clear();
+			*/
+			clever_fatal("Not implemented.");
 		}
 		DISPATCH;
 
 	OP(OP_ETHREAD):
+
 		if (this->isChild()) {
+		/*
 			getMutex()->lock();
 
 			for (size_t id = 2, n = m_scope_pool->size(); id < n; ++id) {
@@ -368,16 +382,19 @@ void VM::run()
 			getMutex()->unlock();
 
 			VM_EXIT();
+			*/
+			clever_fatal("Not implemented.");
 		}
 		DISPATCH;
 
 	OP(OP_LEAVE):
 		{
+		/*
 			const StackFrame& frame = m_call_stack.top();
 
 			m_call_stack.pop();
 
-			VM_GOTO(frame.ret_addr);
+			VM_GOTO(frame.ret_addr);*/
 		}
 
 	OP(OP_SEND_VAL):
@@ -392,7 +409,7 @@ void VM::run()
 				if (OPCODE.result.op_type != UNUSED) {
 					getValue(OPCODE.result)->setNull(); // TODO: boolean
 				}
-				VM_GOTO(OPCODE.op2.value_id);
+				VM_GOTO(OPCODE.op2.jmp_addr);
 			}
 			if (OPCODE.result.op_type != UNUSED) {
 				getValue(OPCODE.result)->setInt(1); // TODO: boolean
@@ -460,7 +477,7 @@ void VM::run()
 				if (OPCODE.result.op_type != UNUSED) {
 					getValue(OPCODE.result)->setInt(1); // TODO: boolean
 				}
-				VM_GOTO(OPCODE.op2.value_id);
+				VM_GOTO(OPCODE.op2.jmp_addr);
 			}
 			if (OPCODE.result.op_type != UNUSED) {
 				getValue(OPCODE.result)->setNull(); // TODO: boolean
@@ -474,7 +491,7 @@ void VM::run()
 
 			if (!lhs->asBool()) {
 				getValue(OPCODE.result)->setNull();
-				VM_GOTO(OPCODE.op2.value_id);
+				VM_GOTO(OPCODE.op2.jmp_addr);
 			}
 			getValue(OPCODE.result)->copy(lhs);
 		}
@@ -486,7 +503,7 @@ void VM::run()
 
 			if (lhs->asBool()) {
 				getValue(OPCODE.result)->copy(lhs);
-				VM_GOTO(OPCODE.op2.value_id);
+				VM_GOTO(OPCODE.op2.jmp_addr);
 			}
 		}
 		DISPATCH;
@@ -585,6 +602,7 @@ void VM::run()
 
 	OP(OP_NEW):
 		{
+		/*
 			const Type* type = getType(OPCODE.op1);
 
 			getValue(OPCODE.result)->setType(type);
@@ -593,11 +611,13 @@ void VM::run()
 				getValue(OPCODE.result)->setObj(type->allocData(&m_call_args));
 				m_call_args.clear();
 			}
+			*/
 		}
 		DISPATCH;
 
 	OP(OP_MCALL):
 		{
+		/*
 			const Value* callee = getValue(OPCODE.op1);
 			const Value* method = getValue(OPCODE.op2);
 			const Type* type = callee->getType();
@@ -613,11 +633,13 @@ void VM::run()
 			} else {
 				error(ERROR, "Method not found!");
 			}
+			*/
 		}
 		DISPATCH;
 
 	OP(OP_SMCALL):
 		{
+		/*
 			const Type* type = getType(OPCODE.op1);
 			const Value* method = getValue(OPCODE.op2);
 			MethodPtr ptr;
@@ -628,6 +650,7 @@ void VM::run()
 			} else {
 				error(ERROR, "Method not found!");
 			}
+			*/
 		}
 		DISPATCH;
 
@@ -647,7 +670,7 @@ void VM::run()
 		DISPATCH;
 
 	OP(OP_TRY):
-		m_try_stack.push(OPCODE.op1.value_id);
+		m_try_stack.push(OPCODE.op1.jmp_addr);
 		DISPATCH;
 
 	OP(OP_CATCH):

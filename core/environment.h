@@ -24,7 +24,7 @@ typedef std::stack<Environment*> CallStack;
  */
 class Environment: public RefCounted {
 public:
-    Environment(Environment* outer_)
+	explicit Environment(Environment* outer_)
         : RefCounted(0), m_outer(outer_), m_data(), m_activated(false) {
         CLEVER_SAFE_ADDREF(m_outer);
     }
@@ -33,12 +33,12 @@ public:
         CLEVER_SAFE_DELREF(m_outer);
     }
 
-    /**
-     * @brief pushes a value into the environment.
-     * @param value
-     * @return the index of the newly pushed value.
-     */
-    size_t pushValue(Value* value);
+	/**
+	 * @brief pushes a value into the environment.
+	 * @param value
+	 * @return the index of the newly pushed value.
+	 */
+	ValueOffset pushValue(Value* value);
 
     /**
      * @brief get the value specified by `offset`.
@@ -67,15 +67,15 @@ public:
 private:
     Environment* m_outer;
     std::vector<Value*> m_data;
+	size_t ret_addr;
     bool m_activated;
 
     DISALLOW_COPY_AND_ASSIGN(Environment);
-
 };
 
-inline size_t Environment::pushValue(Value* value) {
+inline ValueOffset Environment::pushValue(Value* value) {
     m_data.push_back(value);
-    return m_data.size()-1;
+	return ValueOffset(0, m_data.size()-1);
 }
 
 inline Value* Environment::getValue(const ValueOffset& offset) {

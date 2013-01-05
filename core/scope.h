@@ -31,8 +31,8 @@ struct Symbol {
 	enum SymbolType { TYPE, VAR };
 
 	Symbol() {}
-	Symbol(SymbolType type, const CString *name_, size_t value_id_, Scope *scope_ = NULL)
-		: m_type(type), name(name_), value_id(value_id_), scope(scope_) {}
+	Symbol(SymbolType type, const CString *name_, Scope *scope_ = NULL)
+		: m_type(type), name(name_), scope(scope_) {}
 
 	~Symbol() {}
 
@@ -41,7 +41,7 @@ struct Symbol {
 
 	SymbolType m_type;
 	const CString* name;
-	size_t value_id;
+	ValueOffset voffset;
 	const Scope *scope;
 };
 
@@ -64,7 +64,7 @@ public:
 	~Scope();
 
 	size_t pushType(const CString* name, Type* type) {
-		m_symbols.push_back(new Symbol(Symbol::TYPE, name, m_type_id, this));
+		m_symbols.push_back(new Symbol(Symbol::TYPE, name, this));
 		m_symbol_table.insert(SymbolEntry(name, m_size++));
 		m_type_pool.push_back(type);
 
@@ -72,14 +72,14 @@ public:
 	}
 
 	size_t pushValue(const CString* name, Value* value) {
-		m_symbols.push_back(new Symbol(Symbol::VAR, name, m_value_id, this));
+		m_symbols.push_back(new Symbol(Symbol::VAR, name, this));
 		m_symbol_table.insert(SymbolEntry(name, m_size++));
 		m_value_pool.push_back(value);
 
 		return m_value_id++;
 	}
 
-	Value* getValue(size_t idx) const { return m_value_pool[idx]; }
+	Value* getValue(const ValueOffset& offset) const { return m_value_pool[offset.second]; }
 	const Type* getType(size_t idx) const { return m_type_pool[idx]; }
 
 	Symbol& at(size_t idx) const { return *m_symbols[idx]; }
