@@ -143,16 +143,16 @@ void VM::wait()
 	ThreadPool::iterator it = m_thread_pool.begin(), ed = m_thread_pool.end();
 
 	while (it != ed) {
-		for (size_t i = 0, j = it->second.size(); i < j; ++i) {
-			it->second.at(i)->t_handler.wait();
+		for (size_t i = 0, j = it->size(); i < j; ++i) {
+			it->at(i)->t_handler.wait();
 
-			delete it->second.at(i)->vm_handler;
-			delete it->second.at(i);
+			delete it->at(i)->vm_handler;
+			delete it->at(i);
 		}
 
 		++it;
 	}
-	//m_thread_pool.clear();
+	m_thread_pool.clear();
 }
 
 static void* _thread_control(void* arg)
@@ -315,6 +315,12 @@ void VM::run()
 			thread->vm_handler->copy(this);
 
 			thread->vm_handler->setChild();
+
+			if (m_thread_pool.size() <= OPCODE.op2.value_id) {
+				getMutex()->lock();
+				m_thread_pool.resize(OPCODE.op2.value_id + 1);
+				getMutex()->unlock();
+			}
 
 			m_thread_pool[OPCODE.op2.value_id].push_back(thread);
 			thread->t_handler.create(_thread_control,
