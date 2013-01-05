@@ -6,6 +6,7 @@
  */
 
 #include <iostream>
+#include "core/pkgmanager.h"
 #include "modules/std/reflection/reflection.h"
 #include "modules/std/reflection/reflectionfunction.h"
 
@@ -13,7 +14,11 @@ namespace clever { namespace packages { namespace std {
 
 CLEVER_MODULE_INIT(Reflection)
 {
-	// addType(CSTRING("ReflectionFunction"), new ReflectionFunction);
+	BEGIN_DECLARE_TYPE()
+
+	addType(CSTRING("ReflectionFunction"), new ReflectionFunction);
+
+	END_DECLARE()
 }
 
 }}} // clever::packages::std

@@ -27,6 +27,13 @@ extern jmp_buf fatal_error;
 # define CLEVER_EXIT_FATAL() exit(1)
 #endif
 
+// Haiku dependencies.
+#ifdef CLEVER_HAIKU
+# include <OS.h>
+# undef TRUE
+# undef FALSE
+#endif
+
 // Macro to increase/decrease reference couting
 #define CLEVER_ADDREF(x) (x)->addRef()
 #define CLEVER_DELREF(x) (x)->delRef()

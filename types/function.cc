@@ -30,7 +30,6 @@ CLEVER_TYPE_OPERATOR(FuncType::mod)
 {
 }
 
-
 CLEVER_TYPE_OPERATOR(FuncType::greater)
 {
 }

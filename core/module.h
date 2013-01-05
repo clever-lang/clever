@@ -35,13 +35,15 @@ public:
 	enum ModuleStatus { UNLOADED, LOADED };
 
 	Module(std::string name)
-		: m_name(name), m_flags(UNLOADED), m_funcs() {}
+		: m_name(name), m_flags(UNLOADED), m_funcs(), m_types() {}
 
 	virtual ~Module() {}
 
 	void addType(const CString* name, Type* type) {
 		m_types.insert(TypeEntry(name, type));
 	}
+
+	TypeMap& getTypes() { return m_types; }
 
 	void addFunction(Function* func) {
 		m_funcs.insert(FuncMapEntry(CSTRING(func->getName()), func));

@@ -57,6 +57,10 @@ if (MSVC)
 	add_definitions(-D_ITERATOR_DEBUG_LEVEL=0)
 endif (MSVC)
 
+if (HAIKU)
+	add_definitions(-DCLEVER_HAIKU)
+endif (HAIKU)
+
 # Build environment
 # ---------------------------------------------------------------------------
 if (NOT CMAKE_BUILD_TYPE)

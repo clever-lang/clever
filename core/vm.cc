@@ -123,8 +123,9 @@ void VM::copy(const VM* vm)
 	this->m_scope_pool = new ScopePool;
 
 	this->m_scope_pool->push_back(const_cast<Scope*>(vm->m_scope_pool->at(0)));
+	this->m_scope_pool->push_back(const_cast<Scope*>(vm->m_scope_pool->at(1)));
 
-	for (size_t id = 1, n = vm->m_scope_pool->size(); id < n; ++id) {
+	for (size_t id = 2, n = vm->m_scope_pool->size(); id < n; ++id) {
 		Scope* scope = new Scope;
 
 		scope->copy(vm->m_scope_pool->at(id));
@@ -142,17 +143,19 @@ void VM::wait()
 	ThreadPool::iterator it = m_thread_pool.begin(), ed = m_thread_pool.end();
 
 	while (it != ed) {
-		for (size_t i = 0, j = it->second.size(); i < j; ++i) {
-			it->second.at(i)->t_handler.wait();
+		for (size_t i = 0, j = it->size(); i < j; ++i) {
+			it->at(i)->t_handler.wait();
 
-			delete it->second.at(i)->vm_handler;
-			delete it->second.at(i);
+			delete it->at(i)->vm_handler;
+			delete it->at(i);
 		}
 
 		++it;
 	}
 	m_thread_pool.clear();
 }
+
+static size_t g_n_threads = 0;
 
 static void* _thread_control(void* arg)
 {
@@ -285,6 +288,10 @@ void VM::run()
 
 					m_call_stack.top().arg_vars = arg_scope;
 
+					if (g_n_threads) {
+						getMutex()->lock();
+					}
+
 					for (size_t i = 0, j = arg_scope->size(); i < j; ++i) {
 						Value* arg_val = getValue(
 							arg_scope->at(i).scope->getId(),
@@ -296,6 +303,11 @@ void VM::run()
 							arg_val->setNull();
 						}
 					}
+
+					if (g_n_threads) {
+						getMutex()->unlock();
+					}
+
 				}
 				m_call_args.clear();
 				VM_GOTO(fdata->getAddr());
@@ -314,6 +326,13 @@ void VM::run()
 			thread->vm_handler->copy(this);
 
 			thread->vm_handler->setChild();
+			getMutex()->lock();
+
+			if (m_thread_pool.size() <= OPCODE.op2.value_id) {
+				m_thread_pool.resize(OPCODE.op2.value_id + 1);
+			}
+			g_n_threads++;
+			getMutex()->unlock();
 
 			m_thread_pool[OPCODE.op2.value_id].push_back(thread);
 			thread->t_handler.create(_thread_control,
@@ -331,21 +350,21 @@ void VM::run()
 				delete t->vm_handler;
 				delete t;
 			}
-			m_thread_pool.erase(OPCODE.op1.value_id);
+			thread_list.clear();
 		}
 		DISPATCH;
 
 	OP(OP_ETHREAD):
 		if (this->isChild()) {
-			this->getMutex()->lock();
+			getMutex()->lock();
 
-			for (size_t id = 1, n = m_scope_pool->size(); id < n; ++id) {
+			for (size_t id = 2, n = m_scope_pool->size(); id < n; ++id) {
 				delete m_scope_pool->at(id);
 			}
 
 			delete m_scope_pool;
-
-			this->getMutex()->unlock();
+			g_n_threads--;
+			getMutex()->unlock();
 
 			VM_EXIT();
 		}

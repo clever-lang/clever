@@ -91,7 +91,7 @@ void Resolver::visit(FunctionDecl* node)
 			"Cannot redeclare function `%S'.", name);
 	}
 
-	Function* func = static_cast<Function*>(CLEVER_FUNC_TYPE->allocData());
+	Function* func = static_cast<Function*>(CLEVER_FUNC_TYPE->allocData(NULL));
 
 	func->setUserDefined();
 

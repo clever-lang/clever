@@ -1,0 +1,15 @@
+Testing argument passing to function
+==CODE==
+import std.io.*;
+
+function f() {
+	return 3.toString();
+} 
+
+printf("{1} {2} {3}\n",f(),f(),f());
+println(3.toString(),3,3.toString());
+==RESULT==
+3 3 3
+3
+3
+3
