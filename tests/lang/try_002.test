@@ -10,6 +10,7 @@ try {
 		printf("Catched: \1\n", e);
 	} finally {
 		println(3);
+		throw "E2";
 	}
 } catch (e) {
 	printf("Catched: \1\n", e);
@@ -20,4 +21,5 @@ try {
 ==RESULT==
 Catched: E1
 3
+Catched: E2
 4
