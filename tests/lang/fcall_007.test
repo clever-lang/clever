@@ -7,5 +7,9 @@ function f() {
 } 
 
 printf("{1} {2} {3}\n",f(),f(),f());
+println(3.toString(),3,3.toString());
 ==RESULT==
 3 3 3
+3
+3
+3
