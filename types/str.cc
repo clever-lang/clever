@@ -7,6 +7,7 @@
 
 #include <string>
 #include <sstream>
+#include <cstdio>
 #include "types/str.h"
 #include "core/compiler.h"
 
@@ -313,6 +314,58 @@ CLEVER_METHOD(StrType::findLast)
 	}
 }
 
+// String.format(string str, ...)
+// String.format(...)
+// Format a string with the variable list of arguments
+CLEVER_METHOD(StrType::format)
+{
+	const CString* format;
+	long offset = 0L;
+	
+	if (CLEVER_THIS()) {
+		format = CLEVER_THIS()->getStr();
+		offset = -1L;
+	} else {
+		if (CLEVER_ARG_COUNT()) {
+			format = CLEVER_ARG_CSTR(0);
+		} else {
+			Compiler::error("String.format expected at least one argument");
+		}
+	}
+	
+	if (format) {
+		std::ostringstream stream;
+		char* buffer = new char[format->size()+1];
+		
+		::std::strcpy(buffer, format->c_str());
+
+		{
+			char *point = strtok(buffer, "{}");
+			if (point) {
+				do {
+					unsigned long arg = atol(point);
+					if (arg > 0) {
+						if (CLEVER_ARG_COUNT() > (arg+offset)) {
+							CLEVER_ARG_DUMPTO((arg+offset), stream);
+						}
+					} else {
+						stream << point;
+					}
+				} while((point = strtok(NULL, "{}")));
+			} else {
+				stream << buffer;
+			}
+		
+			result->setStr(CSTRING(stream.str()));
+		}
+
+		delete buffer;
+		
+	} else {
+		result->setNull();
+	}	
+}
+
 // String.getLength(string str)
 // String.getLength()
 // Returns the length of the string
@@ -323,7 +376,7 @@ CLEVER_METHOD(StrType::getLength)
 	} else if(CLEVER_ARG_COUNT()) {
 		result->setInt((CLEVER_ARG_CSTR(0))->length());
 	} else {
-		std::cerr << "String.getLength expected a string argument";
+		Compiler::error("String.getLength expected at least one argument");
 	}
 }
 
@@ -334,6 +387,7 @@ CLEVER_TYPE_INIT(StrType::init)
 	addMethod(CSTRING("findFirst"), 	(MethodPtr) &StrType::findFirst);
 	addMethod(CSTRING("findLast"), 		(MethodPtr) &StrType::findLast);
 	addMethod(CSTRING("getLength"),		(MethodPtr) &StrType::getLength);
+	addMethod(CSTRING("format"),		(MethodPtr) &StrType::format);
 }
 
 

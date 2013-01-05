@@ -84,13 +84,16 @@ public:
 	bool isNull() const { return m_type == NULL; }
 
 	void dump() const {
+		dump(std::cout);
+	}
+	
+	void dump(std::ostream& out) const {
 		if (m_type) {
-			m_type->dump(&m_data);
+			m_type->dump(&m_data, out);
 		} else {
-			std::cout << "null";
+			out << "null";
 		}
 	}
-
 	void setObj(void* ptr) {
 		clever_assert_not_null(m_type);
 		m_data.obj = new ValueObject(ptr, m_type);
