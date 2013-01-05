@@ -53,6 +53,7 @@ const char* get_opcode_name(Opcode opnum)
 		CASE(OP_TRY);
 		CASE(OP_CATCH);
 		CASE(OP_THROW);
+		CASE(OP_ETRY);
 		EMPTY_SWITCH_DEFAULT_CASE();
 	}
 #undef CASE

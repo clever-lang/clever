@@ -270,8 +270,7 @@ throw:
 ;
 
 catch:
-		/* empty */     { $$ = NULL; }
-	|	not_empty_catch
+		not_empty_catch
 ;
 
 not_empty_catch:

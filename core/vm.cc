@@ -654,10 +654,11 @@ void VM::run()
 
 	OP(OP_THROW):
 		if (EXPECTED(m_try_stack.size())) {
-			// TODO(Felipe): Change catch variable
-			// getValue(m_inst[catch_addr].op1)->copy(getValue(OPCODE.op1));
+			size_t catch_addr = m_try_stack.top();
 
-			VM_GOTO(m_try_stack.top());
+			getValue(m_inst[catch_addr].op1)->copy(getValue(OPCODE.op1));
+
+			VM_GOTO(catch_addr);
 		}
 		DISPATCH;
 

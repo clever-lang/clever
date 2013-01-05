@@ -929,7 +929,6 @@ public:
 	Block* getBlock() const { return m_try; }
 
 	NodeArray* getCatches() const { return m_catch; }
-	bool hasCatch() const { return m_catch != NULL; }
 
 	Block* getFinally() const { return m_finally; }
 	bool hasFinally() const { return m_finally != NULL; }

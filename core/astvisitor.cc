@@ -148,9 +148,7 @@ void Visitor::visit(Property* node) {
 void Visitor::visit(Try* node) {
 	node->getBlock()->accept(*this);
 
-	if (node->hasCatch()) {
-		node->getCatches()->accept(*this);
-	}
+	node->getCatches()->accept(*this);
 
 	if (node->hasFinally()) {
 		node->getFinally()->accept(*this);
