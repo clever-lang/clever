@@ -84,11 +84,7 @@ public:
 	bool isNull() const { return m_type == NULL; }
 
 	void dump() const {
-		if (m_type) {
-			m_type->dump(&m_data);
-		} else {
-			std::cout << "null";
-		}
+		dump(std::cout);
 	}
 	
 	void dump(std::ostream& out) const {

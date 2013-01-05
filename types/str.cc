@@ -368,7 +368,7 @@ CLEVER_METHOD(StrType::getLength)
 	} else if(CLEVER_ARG_COUNT()) {
 		result->setInt((CLEVER_ARG_CSTR(0))->length());
 	} else {
-		std::cerr << "String.getLength expected a string argument";
+		Compiler::error("String.getLength expected at least one argument");
 	}
 }
 
