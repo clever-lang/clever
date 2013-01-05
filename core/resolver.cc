@@ -142,7 +142,7 @@ void Resolver::visit(Ident* node)
 			"Identifier `%S' not found.", node->getName());
 	}
 
-	node->setVOffset(sym->scope->getDepth(sym));
+	node->setVOffset(sym->scope->getOffset(sym));
 	sym->voffset = node->getVOffset();
 
 	ValueOffset vo = node->getVOffset();
@@ -161,7 +161,7 @@ void Resolver::visit(Type* node)
 			"Type `%S' not found.", node->getName());
 	}
 
-	node->setVOffset(m_scope->getDepth(sym));
+	node->setVOffset(m_scope->getOffset(sym));
 
 	node->setSymbol(sym);
 	node->setScope(sym->scope);

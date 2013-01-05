@@ -126,7 +126,7 @@ public:
 		CLEVER_SAFE_ADDREF(m_environment);
 	}
 
-	std::pair<size_t, size_t> getDepth(Symbol* sym) const;
+	std::pair<size_t, size_t> getOffset(Symbol* sym) const;
 
 private:
 	Scope* m_parent;

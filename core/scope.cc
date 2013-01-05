@@ -88,7 +88,7 @@ Symbol* Scope::getAny(const CString* name) {
     return sym;
 }
 
-ValueOffset Scope::getDepth(Symbol* sym) const {
+ValueOffset Scope::getOffset(Symbol* sym) const {
 	size_t depth = 0;
 	size_t value = 0;
 	SymbolMap::const_iterator it = std::find(m_symbols.begin(), m_symbols.end(), sym);
