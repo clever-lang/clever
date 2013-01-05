@@ -24,21 +24,6 @@ class Scope;
 
 typedef std::vector<Type*> TypePool;
 typedef std::vector<Value*> ValuePool;
-typedef std::pair<size_t, size_t> ValueOffset;
-
-struct Environment: public RefCounted {
-	Environment* outer;
-	std::vector<Value*> data;
-
-	Environment(Environment* outer_)
-		: RefCounted(0), outer(outer_), data() {
-		CLEVER_SAFE_ADDREF(outer);
-	}
-
-	~Environment() {
-		CLEVER_SAFE_DELREF(outer);
-	}
-};
 
 /// Symbol representation
 struct Symbol {
@@ -69,11 +54,11 @@ public:
 
 	Scope()
 		: m_parent(NULL), m_children(), m_symbols(), m_size(0), m_id(0),
-		  m_value_id(0), m_type_id(0), m_value_pool(), m_environment(NULL) {}
+		  m_value_id(0), m_type_id(0), m_value_pool() {}
 
 	explicit Scope(Scope* parent)
 		: m_parent(parent), m_children(), m_symbols(), m_size(0), m_id(0),
-		  m_value_id(0), m_type_id(0), m_value_pool(), m_environment(NULL) {}
+		  m_value_id(0), m_type_id(0), m_value_pool() {}
 
 	~Scope();
 
@@ -131,15 +116,6 @@ public:
 	Symbol* getLocal(const CString*);
 	Symbol* getAny(const CString*);
 
-	Environment* getEnvironment() { return m_environment; }
-	void setEnvironment(Environment* e) {
-		CLEVER_SAFE_DELREF(m_environment);
-		m_environment = e;
-		CLEVER_SAFE_ADDREF(m_environment);
-	}
-
-	std::pair<size_t, size_t> getDepth(Symbol* sym);
-
 private:
 	Scope* m_parent;
 	ScopeVector m_children;
@@ -152,8 +128,6 @@ private:
 
 	ValuePool m_value_pool;
 	TypePool m_type_pool;
-
-	Environment* m_environment;
 
 	DISALLOW_COPY_AND_ASSIGN(Scope);
 };

@@ -10,12 +10,9 @@
 
 #include "core/astvisitor.h"
 
-#include <stack>
-
 namespace clever {
 class Compiler;
 class Scope;
-struct Environment;
 }
 
 namespace clever { namespace ast {
@@ -38,7 +35,6 @@ private:
 	Compiler* m_compiler;
 	Scope* m_symtable;
 	Scope* m_scope;
-	std::stack<Environment*> m_stack;
 };
 
 }} // clever::ast
