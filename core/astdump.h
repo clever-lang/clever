@@ -44,6 +44,26 @@ public:
 	void visit(Import* node)       { std::cout << m_ws << "Import" << std::endl;       }
 	void visit(Instantiation* node){ std::cout << m_ws << "Instantiation" << std::endl;}
 
+	void visit(Try* node) {
+		std::cout << m_ws << "Try" << std::endl;
+
+		AST_DUMP_DISPLAY_BLOCK;
+
+		if (node->hasCatch()) {
+			node->getCatches()->accept(*this);
+		}
+
+		if (node->hasFinally()) {
+			node->getFinally()->accept(*this);
+		}
+	}
+
+	void visit(Catch* node) {
+		std::cout << m_ws << "Catch" << std::endl;
+
+		AST_DUMP_DISPLAY_BLOCK;
+	}
+
 	void visit(While* node) {
 		std::cout << m_ws << "While" << std::endl;
 

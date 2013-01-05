@@ -145,4 +145,20 @@ void Visitor::visit(Property* node) {
 	node->getObject()->accept(*this);
 }
 
+void Visitor::visit(Try* node) {
+	node->getBlock()->accept(*this);
+
+	if (node->hasCatch()) {
+		node->getCatches()->accept(*this);
+	}
+
+	if (node->hasFinally()) {
+		node->getFinally()->accept(*this);
+	}
+}
+
+void Visitor::visit(Catch* node) {
+	node->getBlock()->accept(*this);
+}
+
 }} // clever::ast

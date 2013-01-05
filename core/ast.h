@@ -41,6 +41,7 @@ class Boolean;
 class NullLit;
 class MethodCall;
 class Property;
+class Try;
 
 typedef std::vector<Node*> NodeList;
 
@@ -909,6 +910,60 @@ public:
 private:
 	IncDecOperator m_op;
 	Node* m_var;
+};
+
+class Try: public Node {
+public:
+	Try(Block* try_block, NodeArray* catches, Block* finally, const location& location)
+		: Node(location), m_try(try_block), m_catch(catches), m_finally(finally) {
+		CLEVER_ADDREF(m_try);
+		CLEVER_SAFE_ADDREF(m_catch);
+		CLEVER_SAFE_ADDREF(m_finally);
+	}
+	~Try() {
+		CLEVER_DELREF(m_try);
+		CLEVER_SAFE_DELREF(m_catch);
+		CLEVER_SAFE_DELREF(m_finally);
+	}
+
+	Block* getBlock() const { return m_try; }
+
+	NodeArray* getCatches() const { return m_catch; }
+	bool hasCatch() const { return m_catch != NULL; }
+
+	Block* getFinally() const { return m_finally; }
+	bool hasFinally() const { return m_finally != NULL; }
+
+	virtual void accept(Visitor& visitor);
+	virtual Node* accept(Transformer& transformer);
+private:
+	Block* m_try;
+	NodeArray* m_catch;
+	Block* m_finally;
+};
+
+class Catch: public Node {
+public:
+	Catch(Ident* var, Block* block, const location& location)
+		: Node(location), m_var(var), m_block(block) {
+		CLEVER_ADDREF(m_var);
+		CLEVER_ADDREF(m_block);
+	}
+
+	~Catch() {
+		CLEVER_DELREF(m_var);
+		CLEVER_DELREF(m_block);
+	}
+
+	Ident* getVar() const { return m_var; }
+
+	Block* getBlock() const { return m_block; }
+
+	virtual void accept(Visitor& visitor);
+	virtual Node* accept(Transformer& transformer);
+private:
+	Ident* m_var;
+	Block* m_block;
 };
 
 }} // clever::ast

@@ -63,6 +63,12 @@ next_token:
 
 	<INITIAL>'var' { RET(token::VAR); }
 
+	<INITIAL>'catch' { RET(token::CATCH); }
+
+	<INITIAL>'try' { RET(token::TRY); }
+
+	<INITIAL>'finally' { RET(token::FINALLY); }
+
 	<INITIAL>'or' { RET(token::LOGICAL_OR); }
 
 	<INITIAL>"||" { RET(token::BOOLEAN_OR); }

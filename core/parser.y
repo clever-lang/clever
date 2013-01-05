@@ -54,6 +54,8 @@ class Value;
 	ast::Instantiation* inst;
 	ast::MethodCall* mcall;
 	ast::Property* property;
+	ast::Try* except;
+	ast::Catch* catch_;
 }
 
 %type <type> TYPE
@@ -63,9 +65,9 @@ class Value;
 %type <dbllit> NUM_DOUBLE
 %type <inst> instantiation
 %type <assignment> assignment
-%type <narray> variable_decl variable_decl_list non_empty_call_args call_args
+%type <narray> variable_decl variable_decl_list non_empty_call_args call_args not_empty_catch catch
 %type <vardecl> variable_decl_impl
-%type <block> statement_list block
+%type <block> statement_list block finally
 %type <threadblock> thread_block
 %type <waitblock> wait_block
 %type <criticalblock> critical_block
@@ -84,6 +86,8 @@ class Value;
 %type <comp> comparison
 %type <mcall> mcall
 %type <property> property_access
+%type <except> try_catch_finally
+%type <catch_> catch_impl
 
 // The parsing context.
 %parse-param { Driver& driver }
@@ -154,6 +158,9 @@ class Value;
 %token DEC           "--"
 %token NIL           "null"
 %token NEW           "new"
+%token FINALLY       "finally"
+%token CATCH         "catch"
+%token TRY           "try"
 
 %left ',';
 %left LOGICAL_OR;
@@ -205,6 +212,7 @@ statement:
 	|	thread_block
 	|   critical_block
 	|	wait_block ';'
+	|	try_catch_finally
 ;
 
 block:
@@ -251,6 +259,29 @@ rvalue:
 
 lvalue:
 		IDENT
+;
+
+catch:
+		/* empty */     { $$ = NULL; }
+	|	not_empty_catch
+;
+
+not_empty_catch:
+		catch_impl                 { $$ = new ast::NodeArray(yyloc); $$->append($1); }
+	|	not_empty_catch catch_impl { $1->append($2);                                 }
+;
+
+catch_impl:
+		CATCH '(' IDENT ')' block { $$ = new ast::Catch($3, $5, yyloc); }
+;
+
+finally:
+		/* empty */   { $$ = NULL; }
+	|	FINALLY block { $$ = $2;   }
+;
+
+try_catch_finally:
+		TRY block catch finally { $$ = new ast::Try($2, $3, $4, yyloc); }
 ;
 
 property_access:
