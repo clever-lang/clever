@@ -107,7 +107,7 @@ CLEVER_METHOD(StrType::subString)
 CLEVER_METHOD(StrType::find)
 {
 	const char* needle = NULL;
-	const CString* haystack;
+	const CString* haystack = NULL;
 	int bounds[2];
 
 	bounds[0] = -1;
@@ -248,7 +248,7 @@ CLEVER_METHOD(StrType::findFirst)
 // Finds the last occurence of a string in a string returning the position
 CLEVER_METHOD(StrType::findLast)
 {
-	const char* needle;
+	const char* needle = NULL;
 	const CString* haystack = NULL;
 	int bounds[2];
 
@@ -319,7 +319,7 @@ CLEVER_METHOD(StrType::findLast)
 // Format a string with the variable list of arguments
 CLEVER_METHOD(StrType::format)
 {
-	const CString* format;
+	const CString* format = NULL;
 	long offset = 0L;
 	
 	if (CLEVER_THIS()) {
@@ -340,7 +340,7 @@ CLEVER_METHOD(StrType::format)
 		::std::strcpy(buffer, format->c_str());
 
 		{
-			char *point = strtok(buffer, "{}");
+			char* point = strtok(buffer, "{}");
 			if (point) {
 				do {
 					unsigned long arg = atol(point);
@@ -359,7 +359,7 @@ CLEVER_METHOD(StrType::format)
 			result->setStr(CSTRING(stream.str()));
 		}
 
-		delete buffer;
+		delete[] buffer;
 		
 	} else {
 		result->setNull();
@@ -389,7 +389,6 @@ CLEVER_TYPE_INIT(StrType::init)
 	addMethod(CSTRING("getLength"),		(MethodPtr) &StrType::getLength);
 	addMethod(CSTRING("format"),		(MethodPtr) &StrType::format);
 }
-
 
 CLEVER_TYPE_OPERATOR(StrType::greater)
 {

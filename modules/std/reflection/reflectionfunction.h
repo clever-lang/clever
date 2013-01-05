@@ -2,6 +2,7 @@
 #ifndef CLEVER_STD_REFLECTION_FUNCTION_H
 #define CLEVER_STD_REFLECTION_FUNCTION_H
 
+#include <iostream>
 #include "core/cstring.h"
 #include "types/type.h"
 
@@ -15,6 +16,7 @@ public:
 	~ReflectionFunction() {}
 
 	virtual void dump(const void*) const {}
+	virtual void dump(const void*, ::std::ostream& out) const {}
 
 	virtual void* allocData(CLEVER_TYPE_CTOR_ARGS) const;
 	virtual void deallocData(void* data) {}
