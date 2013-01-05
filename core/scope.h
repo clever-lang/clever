@@ -76,6 +76,8 @@ public:
 		m_symbol_table.insert(SymbolEntry(name, m_size++));
 		m_value_pool.push_back(value);
 
+		//std::cout << *name << " " << m_value_id << std::endl;
+
 		return m_value_id++;
 	}
 

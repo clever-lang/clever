@@ -59,7 +59,11 @@ void Resolver::visit(VariableDecl* node)
 	Value *val = new Value();
 	m_scope->pushValue(name, val);
 
-	m_stack.top()->pushValue(val);
+	//m_stack.top()->pushValue(val);
+
+	ValueOffset vo = m_stack.top()->pushValue(val);
+	std::cout << "dec " << *name << " := " << vo.first << ":" << vo.second << std::endl;
+
 
 	node->getIdent()->accept(*this);
 
@@ -138,7 +142,11 @@ void Resolver::visit(Ident* node)
 			"Identifier `%S' not found.", node->getName());
 	}
 
-	node->setVOffset(m_scope->getDepth(sym));
+	node->setVOffset(sym->scope->getDepth(sym));
+	sym->voffset = node->getVOffset();
+
+	ValueOffset vo = node->getVOffset();
+	std::cout << "ref " << *sym->name << " = " << vo.first << ":" << vo.second << std::endl;
 
 	node->setSymbol(sym);
 	node->setScope(sym->scope);

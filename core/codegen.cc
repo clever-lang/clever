@@ -59,6 +59,8 @@ void Codegen::visit(NullLit* node)
 void Codegen::visit(IntLit* node)
 {
 	node->setVOffset(m_const_env->pushValue(new Value(node->getValue())));
+	ValueOffset vo = node->getVOffset();
+	std::cout << "const " << vo.first << ":" << vo.second << " = " << node->getValue() << std::endl;
 }
 
 void Codegen::visit(DoubleLit* node)
@@ -73,7 +75,7 @@ void Codegen::visit(StringLit* node)
 
 void Codegen::visit(Ident* node)
 {
-	node->setVOffset(node->getSymbol()->voffset);
+
 }
 
 void Codegen::visit(Block* node)
