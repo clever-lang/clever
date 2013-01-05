@@ -88,15 +88,15 @@ Symbol* Scope::getAny(const CString* name) {
     return sym;
 }
 
-ValueOffset Scope::getDepth(Symbol* sym) {
+ValueOffset Scope::getDepth(Symbol* sym) const {
 	size_t depth = 0;
 	size_t value = 0;
-	SymbolMap::iterator it = std::find(m_symbols.begin(), m_symbols.end(), sym);
+	SymbolMap::const_iterator it = std::find(m_symbols.begin(), m_symbols.end(), sym);
 
 	if (it != m_symbols.end()) {
 		value = std::distance(m_symbols.begin(), it)-1;
 	} else {
-		for (Scope* parent = m_parent; parent != NULL; parent = parent->m_parent) {
+		for (const Scope* parent = m_parent; parent != NULL; parent = parent->m_parent) {
 			if (parent->m_environment != m_environment) {
 				depth++;
 			}
@@ -105,8 +105,8 @@ ValueOffset Scope::getDepth(Symbol* sym) {
 
 			if (it != parent->m_symbols.end()) {
 				value = std::distance(parent->m_symbols.begin(), it)-1;
+				break;
 			}
-			break;
 		}
 	}
 

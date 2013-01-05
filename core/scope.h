@@ -124,7 +124,7 @@ public:
 		CLEVER_SAFE_ADDREF(m_environment);
 	}
 
-	std::pair<size_t, size_t> getDepth(Symbol* sym);
+	std::pair<size_t, size_t> getDepth(Symbol* sym) const;
 
 private:
 	Scope* m_parent;
