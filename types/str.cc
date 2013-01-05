@@ -359,7 +359,7 @@ CLEVER_METHOD(StrType::format)
 			result->setStr(CSTRING(stream.str()));
 		}
 
-		delete buffer;
+		delete[] buffer;
 		
 	} else {
 		result->setNull();

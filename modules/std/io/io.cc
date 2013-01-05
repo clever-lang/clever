@@ -91,7 +91,7 @@ static CLEVER_FUNCTION(printf) {
 				}
 			}
 		
-			delete buffer;
+			delete[] buffer;
 		}
 	}
 }
