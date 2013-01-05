@@ -234,7 +234,7 @@ private:
 class ThreadBlock: public NodeArray {
 public:
 	ThreadBlock(Block* block, const location& location)
-		: NodeArray(location), m_block(block), m_name(NULL) {
+		: NodeArray(location), m_block(block), m_name(NULL), m_size(NULL) {
 		CLEVER_ADDREF(m_block);
 	}
 
@@ -244,9 +244,18 @@ public:
 		CLEVER_ADDREF(m_name);
 	}
 
+
+	ThreadBlock(Block* block, Ident* name, Node* size, const location& location)
+		: NodeArray(location), m_block(block), m_name(name), m_size(size) {
+		CLEVER_ADDREF(m_block);
+		CLEVER_ADDREF(m_name);
+		CLEVER_ADDREF(m_size);
+	}
+
 	~ThreadBlock() {
 		CLEVER_DELREF(m_block);
 		CLEVER_SAFE_DELREF(m_name);
+		CLEVER_SAFE_DELREF(m_size);
 	}
 
 	virtual void accept(Visitor& visitor);
@@ -255,9 +264,13 @@ public:
 	Ident* getName() { return m_name; }
 
 	Block* getBlock() { return m_block; }
+
+	Node* getSize() { return m_size; }
+
 protected:
 	Block* m_block;
 	Ident* m_name;
+	Node* m_size;
 };
 
 class Wait: public NodeArray {

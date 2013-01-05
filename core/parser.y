@@ -235,6 +235,7 @@ wait_block:
 thread_block:
 		THREAD block       { $$ = new ast::ThreadBlock($2, yyloc); }
 	|	THREAD IDENT block { $$ = new ast::ThreadBlock($3, $2, yyloc); }
+	|	THREAD IDENT '[' rvalue ']'  block { printf("adhas\n"); }
 ;
 
 critical_block:
