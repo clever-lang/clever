@@ -80,6 +80,10 @@ inline size_t Environment::pushValue(Value* value) {
 
 inline Value* Environment::getValue(const ValueOffset& offset) {
     if (offset.first == 0) { // local
+
+		clever_assert(offset.second < m_data.size(),
+					  "`offset.second` must be within `m_data` bounds.");
+
         return m_data.at(offset.second);
     }
 
@@ -90,7 +94,10 @@ inline Value* Environment::getValue(const ValueOffset& offset) {
         e = e->m_outer;
     }
 
-    clever_assert(depth == 0, "Failed to find the requested environment.");
+	clever_assert(depth == 0,
+				  "`depth` must be zero, otherwise we failed to find the environment.");
+	clever_assert(offset.second < m_data.size(),
+				  "`offset.second` must be within `m_data` bounds.");
 	clever_assert_not_null(e);
 
     return e->m_data.at(offset.second);
