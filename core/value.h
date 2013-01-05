@@ -70,6 +70,7 @@ public:
 
 	Value(double n) 
 		: m_data(n), m_type(CLEVER_DOUBLE_TYPE), m_is_const(false) {}
+
 	Value(const CString* value) 
 		: m_data(value), m_type(CLEVER_STR_TYPE), m_is_const(false) {}
 
