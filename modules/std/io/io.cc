@@ -67,25 +67,32 @@ static CLEVER_FUNCTION(println) {
 static CLEVER_FUNCTION(printf) {
 	if (CLEVER_ARG_COUNT() > 0) {
 		const CString* format = CLEVER_ARG_CSTR(0);
-		char* buffer = new char[format->size()+1];
+		
+		if (format) {
+			char* buffer = new char[format->size()+1];
 
-		::std::strcpy(buffer, format->c_str());
+			::std::strcpy(buffer, format->c_str());
 		
-		char* point = strtok(buffer, STDIO_DELIM);
-		if (point) {
-			do {
-				unsigned int arg = atoi(point);
-				if (arg) {
-					if (args.size() > arg) {
-						CLEVER_ARG_DUMP(arg);
-					}
+			{
+				char* point = strtok(buffer, STDIO_DELIM);
+				if (point) {
+					do {
+						unsigned long arg = atol(point);
+						if (arg) {
+							if (CLEVER_ARG_COUNT() > arg) {
+								CLEVER_ARG_DUMP(arg);
+							}
+						} else {
+							::std::cout << point;
+						}
+					} while((point = strtok(NULL, STDIO_DELIM)));
 				} else {
-					::std::cout << point;
+					::std::cout << buffer;
 				}
-			} while((point = strtok(NULL, STDIO_DELIM)));
-		}
+			}
 		
-		delete buffer;
+			delete buffer;
+		}
 	}
 }
 
