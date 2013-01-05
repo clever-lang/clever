@@ -29,8 +29,8 @@ public:
 	typedef std::vector<size_t> AddrVector;
 	typedef std::stack<AddrVector> JmpList;
 
-	Codegen(IRVector& ir, Compiler* compiler)
-		: m_ir(ir), m_compiler(compiler),
+	Codegen(IRVector& ir, Compiler* compiler, Environment* global_env)
+		: m_ir(ir), m_compiler(compiler), m_global_env(global_env),
 		  m_thread_ids(), m_thread_id(0) {}
 	~Codegen() {}
 
@@ -66,6 +66,7 @@ public:
 private:
 	IRVector& m_ir;
 	Compiler* m_compiler;
+	Environment* m_global_env;
 	JmpList m_jmps;
 
 	std::map<CString, size_t> m_thread_ids;
