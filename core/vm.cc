@@ -155,6 +155,8 @@ void VM::wait()
 	m_thread_pool.clear();
 }
 
+static size_t g_n_threads = 0;
+
 static void* _thread_control(void* arg)
 {
 	VM* vm_handler = static_cast<Thread*>(arg)->vm_handler;
@@ -286,6 +288,10 @@ void VM::run()
 
 					m_call_stack.top().arg_vars = arg_scope;
 
+					if (g_n_threads) {
+						getMutex()->lock();
+					}
+
 					for (size_t i = 0, j = arg_scope->size(); i < j; ++i) {
 						Value* arg_val = getValue(
 							arg_scope->at(i).scope->getId(),
@@ -297,6 +303,11 @@ void VM::run()
 							arg_val->setNull();
 						}
 					}
+
+					if (g_n_threads) {
+						getMutex()->unlock();
+					}
+
 				}
 				m_call_args.clear();
 				VM_GOTO(fdata->getAddr());
@@ -315,12 +326,13 @@ void VM::run()
 			thread->vm_handler->copy(this);
 
 			thread->vm_handler->setChild();
+			getMutex()->lock();
 
 			if (m_thread_pool.size() <= OPCODE.op2.value_id) {
-				getMutex()->lock();
 				m_thread_pool.resize(OPCODE.op2.value_id + 1);
-				getMutex()->unlock();
 			}
+			g_n_threads++;
+			getMutex()->unlock();
 
 			m_thread_pool[OPCODE.op2.value_id].push_back(thread);
 			thread->t_handler.create(_thread_control,
@@ -344,15 +356,15 @@ void VM::run()
 
 	OP(OP_ETHREAD):
 		if (this->isChild()) {
-			this->getMutex()->lock();
+			getMutex()->lock();
 
 			for (size_t id = 2, n = m_scope_pool->size(); id < n; ++id) {
 				delete m_scope_pool->at(id);
 			}
 
 			delete m_scope_pool;
-
-			this->getMutex()->unlock();
+			g_n_threads--;
+			getMutex()->unlock();
 
 			VM_EXIT();
 		}
