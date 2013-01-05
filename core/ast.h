@@ -377,8 +377,10 @@ private:
 
 class VariableDecl: public Node {
 public:
-	VariableDecl(Ident* ident, Assignment* assignment, const location& location)
-		: Node(location), m_ident(ident), m_assignment(assignment) {
+	VariableDecl(Ident* ident, Assignment* assignment, bool is_const, 
+		const location& location)
+		: Node(location), m_ident(ident), m_assignment(assignment), 
+		m_is_const(is_const) {
 		CLEVER_ADDREF(m_ident);
 		CLEVER_SAFE_ADDREF(m_assignment);
 	}
@@ -394,8 +396,10 @@ public:
 		CLEVER_SAFE_ADDREF(m_assignment);
 	}
 
-	Assignment* getAssignment() { return m_assignment; }
+	Assignment* getAssignment() const { return m_assignment; }
 	bool hasAssignment() const { return m_assignment != NULL; }
+	
+	bool isConst() const { return m_is_const; }
 
 	virtual void accept(Visitor& visitor);
 	virtual Node* accept(Transformer& transformer);
@@ -403,6 +407,7 @@ public:
 private:
 	Ident* m_ident;
 	Assignment* m_assignment;
+	const bool m_is_const;
 };
 
 class Arithmetic: public Node {

@@ -1,0 +1,13 @@
+Testing const variables
+==CODE==
+import std.io.*;
+
+const a = 1;
+var b = a;
+b = 2;
+
+println(a, b, a + b);
+==RESULT==
+1
+2
+3

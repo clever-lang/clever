@@ -9,8 +9,9 @@
 #define CLEVER_VALUE_H
 
 #include <cstring>
-#include "types/type.h"
+
 #include "core/cstring.h"
+#include "types/type.h"
 
 namespace clever {
 
@@ -27,7 +28,7 @@ extern Type* g_clever_func_type;
 
 #define CLEVER_INT_TYPE    g_clever_int_type
 #define CLEVER_DOUBLE_TYPE g_clever_double_type
-#define CLEVER_STR_TYPE g_clever_str_type
+#define CLEVER_STR_TYPE    g_clever_str_type
 #define CLEVER_FUNC_TYPE   g_clever_func_type
 
 class ValueObject : public RefCounted {
@@ -64,10 +65,15 @@ public:
 		DataValue(const CString* value) : sval(value) {}
 	};
 
-	Value() : m_data(), m_type(NULL) {}
-	Value(long n) : m_data(n), m_type(CLEVER_INT_TYPE) {}
-	Value(double n) : m_data(n), m_type(CLEVER_DOUBLE_TYPE) {}
-	Value(const CString* value) : m_data(value), m_type(CLEVER_STR_TYPE) {}
+	Value() : m_data(), m_type(NULL), m_is_const(false) {}
+
+	Value(long n) : m_data(n), m_type(CLEVER_INT_TYPE), m_is_const(false) {}
+
+	Value(double n) 
+		: m_data(n), m_type(CLEVER_DOUBLE_TYPE), m_is_const(false) {}
+
+	Value(const CString* value) 
+		: m_data(value), m_type(CLEVER_STR_TYPE), m_is_const(false) {}
 
 	~Value() {
 		if (m_type && !m_type->isPrimitive()) {
@@ -133,9 +139,28 @@ public:
 		}
 		return true;
 	}
+	
+	// @TODO(muriloadriano): This is a workout to allow the assign on a const
+	// variable declaration. If the current data is null and it is const, the 
+	// assign must be performed (first assign), if it is not null and const, 
+	// we cannot assign because it is trying to change its value. If it this
+	// value isn't const it is assignable too. Maybe this could be done in a 
+	// clever way.
+	bool isAssignable() const {
+		return isNull() || !isConst();
+	}
+	
+	bool isConst() const {
+		return m_is_const;
+	}
+
+	void setConst(bool constness = true) {
+		m_is_const = constness;
+	}	
 private:
 	DataValue m_data;
 	const Type* m_type;
+	bool m_is_const;
 };
 
 } // clever

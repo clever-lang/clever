@@ -5,9 +5,9 @@
  * This file is distributed under the MIT license. See LICENSE for details.
  */
 
-#include "types/native_types.h"
-#include "core/resolver.h"
 #include "core/compiler.h"
+#include "core/resolver.h"
+#include "types/native_types.h"
 
 namespace clever { namespace ast {
 
@@ -57,7 +57,7 @@ void Resolver::visit(VariableDecl* node)
 			"Cannot redeclare variable `%S'.", name);
 	}
 
-	Value *val = new Value();
+	Value* val = new Value();
 	m_scope->pushValue(name, val);
 
 	m_stack.top()->data.push_back(val);
@@ -67,6 +67,8 @@ void Resolver::visit(VariableDecl* node)
 	if (node->hasAssignment()) {
 		node->getAssignment()->accept(*this);
 	}
+	
+	val->setConst(node->isConst());
 }
 
 void Resolver::visit(FunctionDecl* node)
