@@ -337,6 +337,8 @@ CLEVER_METHOD(StrType::format)
 		std::ostringstream stream;
 		char* point = NULL;
 
+		printf("Format [%s]\n", format->c_str());
+	
 		if ((point = strtok((char*)format->c_str(), "{}")) != NULL) {
 			do {
 				unsigned long arg = atol(point);
