@@ -108,7 +108,10 @@ void Codegen::visit(ThreadBlock* node)
 	}
 
 	if (node->getSize() != NULL) {
-
+		Node* size = node->getSize();
+		size->accept(*this);
+		_prepare_operand(m_ir[bg].result, size);
+	}
 
 	node->getBlock()->accept(*this);
 
