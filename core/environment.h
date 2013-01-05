@@ -15,12 +15,12 @@ namespace clever {
 
 class Environment;
 
-/// @brief A pair specifying how many environments to `escape` and what value to fetch.
+/// @brief a pair specifying how many environments to `escape` and what value to fetch.
 typedef std::pair<size_t, size_t> ValueOffset;
 typedef std::stack<Environment*> CallStack;
 
 /**
- * @brief The Environment class
+ * @brief the environment class.
  */
 class Environment: public RefCounted {
 public:
@@ -52,6 +52,18 @@ public:
      */
     Value* getValue(const ValueOffset& offset);
 
+	/**
+	 * @brief ativates the current environment.
+	 *
+	 * This method should be used to create new stack frames within the virtual
+	 * machine. Usually, this method will be called on a Function's initial
+	 * environment.
+	 *
+	 * @param outer the environment where the current instance is contained in
+	 * @return an "activated" copy of the current environment
+	 */
+	Environment* activate(Environment* outer);
+
 private:
     Environment* m_outer;
     std::vector<Value*> m_data;
@@ -79,11 +91,23 @@ inline Value* Environment::getValue(const ValueOffset& offset) {
     }
 
     clever_assert(depth == 0, "Failed to find the requested environment.");
+	clever_assert_not_null(e);
 
     return e->m_data.at(offset.second);
 }
 
+inline Environment* Environment::activate(Environment* outer) {
+	Environment* e = new Environment(outer);
+	e->m_activated = true;
 
+	for (size_t i = 0, size = m_data.size(); i < size; i++) {
+		Value* v = new Value();
+		v->copy(m_data[i]);
+		e->pushValue(v);
+	}
+
+	return e;
+}
 
 } // clever
 
