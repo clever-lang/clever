@@ -16,7 +16,7 @@ CLEVER_MODULE_INIT(Reflection)
 {
 	BEGIN_DECLARE_TYPE()
 
-	//addType(CSTRING("ReflectionFunction"), new ReflectionFunction);
+	addType(CSTRING("ReflectionFunction"), new ReflectionFunction);
 
 	END_DECLARE()
 }
