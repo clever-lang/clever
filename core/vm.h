@@ -22,6 +22,8 @@ namespace clever {
 #define VM_HANDLER(name) CLEVER_FORCE_INLINE void VM::vm_##name(VM_HANDLER_ARG)
 #define VM_HANDLER_D(name) void vm_##name(VM_HANDLER_ARG)
 
+#define CLEVER_THROW(val) const_cast<VM*>(vm)->setException(val)
+
 class Scope;
 class Value;
 
@@ -58,8 +60,10 @@ public:
 		: m_pc(0), m_is_main_thread(true), m_inst(inst), m_scope_pool(NULL),
 		  m_const_pool(NULL), m_tmp_pool(NULL),
 		  m_call_stack(), m_call_args(),
-		  m_thread_pool(), m_mutex(), f_mutex(NULL) {}
-	~VM() {}
+		  m_thread_pool(), m_mutex(), f_mutex(NULL), m_exception(NULL) {}
+	~VM() {
+		CLEVER_SAFE_DELETE(m_exception);
+	}
 
 	void error(ErrorLevel, const char*) const;
 
@@ -81,6 +85,10 @@ public:
 	size_t getPC() const { return m_pc; }
 
 	void nextPC() { ++m_pc; }
+
+	/// Exception handling methods
+	void setException(Value*);
+	void setException(const char*);
 
 	IRVector& getInst() const { return m_inst; }
 
@@ -135,6 +143,8 @@ private:
 	Mutex* f_mutex;
 
 	std::stack<size_t> m_try_stack;
+
+	Value* m_exception;
 
 	DISALLOW_COPY_AND_ASSIGN(VM);
 };
