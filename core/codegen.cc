@@ -183,17 +183,26 @@ void Codegen::visit(MethodCall* node)
 
 void Codegen::visit(FunctionCall* node)
 {
-	// TODO: allow call for any possible callee
-	Symbol* sym = static_cast<Ident*>(node->getCallee())->getSymbol();
+	if (node->getCallee()->isEvaluable()) {
+		node->getCallee()->accept(*this);
 
-	clever_assert_not_null(sym);
+		if (node->hasArgs()) {
+			sendArgs(node->getArgs());
+		}
 
-	if (node->hasArgs()) {
-		sendArgs(node->getArgs());
+		m_ir.push_back(IR(OP_FCALL));
+		_prepare_operand(m_ir.back().op1, node->getCallee());
+	} else {
+		Symbol* sym = static_cast<Ident*>(node->getCallee())->getSymbol();
+		clever_assert_not_null(sym);
+
+		if (node->hasArgs()) {
+			sendArgs(node->getArgs());
+		}
+
+		m_ir.push_back(IR(OP_FCALL));
+		m_ir.back().op1 = Operand(FETCH_VAR, sym->value_id, sym->scope->getId());
 	}
-
-	m_ir.push_back(IR(OP_FCALL,
-		Operand(FETCH_VAR, sym->value_id, sym->scope->getId())));
 
 	size_t tmp_id = m_compiler->getTempValue();
 

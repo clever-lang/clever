@@ -73,7 +73,7 @@ class Value;
 %type <bitwise> bitwise
 %type <logic> logic
 %type <import> import
-%type <fcall> fcall
+%type <fcall> fcall fcall_chain
 %type <fdecl> fdecl anonymous_fdecl
 %type <ret> return_stmt
 %type <while_loop> while
@@ -351,8 +351,13 @@ non_empty_call_args:
 	|	non_empty_call_args ',' rvalue { $1->append($<node>3); }
 ;
 
+fcall_chain:
+		/* empty */                   { $$ = $<fcall>0; }
+	|	fcall_chain '(' call_args ')' { $$ = new ast::FunctionCall($<node>1, $3, yyloc); }
+;
+
 fcall:
-		IDENT '(' call_args ')' { $$ = new ast::FunctionCall($1, $3, yyloc); }
+		IDENT '(' call_args ')' { $<fcall>$ = new ast::FunctionCall($1, $3, yyloc); } fcall_chain { $$ = $6; }
 ;
 
 return_stmt:

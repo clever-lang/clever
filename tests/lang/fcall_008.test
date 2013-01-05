@@ -1,0 +1,13 @@
+Testing chaining function call
+==CODE==
+import std.io.*;
+function a() { return function (x) { return x; }; }
+
+println(a()(12));
+
+var c = a();
+println(c(32));
+
+==RESULT==
+12
+32
