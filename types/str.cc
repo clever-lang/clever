@@ -95,6 +95,8 @@ CLEVER_METHOD(StrType::subString)
 		} else {
 			result->setStr(CSTRING(of->substr(bounds[0])));
 		}
+	} else {
+		result->setNull();
 	}
 }
 
@@ -164,6 +166,8 @@ CLEVER_METHOD(StrType::find)
 		} else {
 			result->setInt(haystack->find(needle));
 		}
+	} else {
+		result->setNull();
 	}
 }
 
@@ -233,6 +237,8 @@ CLEVER_METHOD(StrType::findFirst)
 		} else {
 			result->setInt(haystack->find_first_of(needle));
 		}
+	} else {
+		result->setNull();
 	}
 }
 
@@ -302,6 +308,8 @@ CLEVER_METHOD(StrType::findLast)
 		} else {
 			result->setInt(haystack->find_last_of(needle));
 		}
+	} else {
+		result->setNull();
 	}
 }
 
