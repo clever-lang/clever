@@ -200,8 +200,8 @@ void Codegen::visit(FunctionCall* node)
 			sendArgs(node->getArgs());
 		}
 
-		m_ir.push_back(IR(OP_FCALL));
-		m_ir.back().op1 = Operand(FETCH_VAR, sym->value_id, sym->scope->getId());
+		m_ir.push_back(IR(OP_FCALL,
+			Operand(FETCH_VAR, sym->value_id, sym->scope->getId())));
 	}
 
 	size_t tmp_id = m_compiler->getTempValue();
