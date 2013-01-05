@@ -10,8 +10,6 @@
 
 #include "core/astvisitor.h"
 
-#include <stack>
-
 namespace clever {
 class Compiler;
 class Scope;
@@ -41,6 +39,7 @@ public:
 	virtual void visit(Ident*);
 	virtual void visit(Type*);
 	virtual void visit(Import*);
+	virtual void visit(Catch*);
 private:
 	Compiler* m_compiler;
 	Scope* m_symtable;

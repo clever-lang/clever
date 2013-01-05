@@ -50,9 +50,7 @@ public:
 
 		AST_DUMP_DISPLAY_BLOCK;
 
-		if (node->hasCatch()) {
-			node->getCatches()->accept(*this);
-		}
+		node->getCatches()->accept(*this);
 
 		if (node->hasFinally()) {
 			node->getFinally()->accept(*this);

@@ -38,7 +38,6 @@ void Resolver::visit(Block* node)
 {
 	m_scope = m_scope->enter();
 	m_scope->setEnvironment(m_stack.top());
-
 	CLEVER_ADDREF(m_scope->getEnvironment());
 
 	node->setScope(m_scope);
@@ -126,6 +125,7 @@ void Resolver::visit(FunctionDecl* node)
 	node->getBlock()->accept(*this);
 
 	m_scope = m_scope->leave();
+
 	m_stack.pop();
 }
 
@@ -168,6 +168,28 @@ void Resolver::visit(Import* node)
 		m_compiler->getPkgManager().importPackage(m_scope,
 			node->getPackage()->getName());
 	}
+}
+
+void Resolver::visit(Catch* node)
+{
+	m_scope = m_scope->enter();
+
+	m_scope->setEnvironment(new Environment(m_stack.top()));
+	m_stack.push(m_scope->getEnvironment());
+
+	Value *val = new Value();
+	m_scope->pushValue(node->getVar()->getName(), val);
+
+	m_stack.top()->pushValue(val);
+
+	node->getVar()->accept(*this);
+
+	Visitor::visit(static_cast<NodeArray*>(node->getBlock()));
+
+	node->setScope(m_scope);
+
+	m_scope = m_scope->leave();
+	m_stack.pop();
 }
 
 }} // clever::ast

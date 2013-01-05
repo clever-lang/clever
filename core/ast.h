@@ -80,7 +80,6 @@ private:
 	const location& m_location;
 	size_t m_value_id;
 	const Scope* m_scope;
-
 	ValueOffset m_voffset;
 };
 
@@ -929,7 +928,6 @@ public:
 	Block* getBlock() const { return m_try; }
 
 	NodeArray* getCatches() const { return m_catch; }
-	bool hasCatch() const { return m_catch != NULL; }
 
 	Block* getFinally() const { return m_finally; }
 	bool hasFinally() const { return m_finally != NULL; }

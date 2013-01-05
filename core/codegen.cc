@@ -508,19 +508,19 @@ void Codegen::visit(Try* node)
 	try_jmp = m_ir.size();
 	m_ir.push_back(OP_JMP); // It's all ok, jump to finally block
 
+	NodeList& catches = node->getCatches()->getNodes();
+	NodeList::const_iterator it(catches.begin()), end(catches.end());
+
 	m_ir[try_id].op1 = Operand(JMP_ADDR, m_ir.size());
 
-	if (node->hasCatch()) {
-		node->getCatches()->accept(*this);
+	while (it != end) {
+		size_t catch_id = m_ir.size();
+		m_ir.push_back(OP_CATCH);
 
-		NodeList& catches = node->getCatches()->getNodes();
-		NodeList::const_iterator it(catches.begin()), end(catches.end());
+		(*it)->accept(*this);
 
-		while (it != end) {
-			m_ir.push_back(OP_CATCH);
-			_prepare_operand(m_ir.back().op1, *it);
-			++it;
-		}
+		_prepare_operand(m_ir[catch_id].op1, static_cast<Catch*>(*it)->getVar());
+		++it;
 	}
 
 	m_ir[try_jmp].op1 = Operand(JMP_ADDR, m_ir.size());
