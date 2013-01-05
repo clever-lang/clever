@@ -6,7 +6,7 @@ try {
 
 	println(1);
 } catch (e) {
-	printf("Catched: {1}\n", e);
+	printf("Catched: \1\n", e);
 } finally {
 	println(3);
 }
