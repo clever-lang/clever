@@ -239,7 +239,7 @@ public:
 	}
 
 	ThreadBlock(Block* block, Ident* name, const location& location)
-		: NodeArray(location), m_block(block), m_name(name) {
+		: NodeArray(location), m_block(block), m_name(name), m_size(NULL) {
 		CLEVER_ADDREF(m_block);
 		CLEVER_ADDREF(m_name);
 	}

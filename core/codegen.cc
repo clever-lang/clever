@@ -107,6 +107,9 @@ void Codegen::visit(ThreadBlock* node)
 						  Operand(FETCH_CONST, 0)));
 	}
 
+	if (node->getSize() != NULL) {
+
+
 	node->getBlock()->accept(*this);
 
 	m_ir.push_back(IR(OP_ETHREAD));
