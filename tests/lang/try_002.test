@@ -1,0 +1,23 @@
+Testing nested try-catch-finally
+==CODE==
+import std.io.*;
+
+try {
+	try {
+		throw "E1";
+		println(1);
+	} catch (e) {
+		printf("Catched: \1\n", e);
+	} finally {
+		println(3);
+	}
+} catch (e) {
+	printf("Catched: \1\n", e);
+} finally {
+	println(4);
+}
+
+==RESULT==
+Catched: E1
+3
+4
