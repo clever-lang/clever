@@ -162,10 +162,10 @@ void Resolver::visit(Type* node)
 void Resolver::visit(Import* node)
 {
 	if (node->getModule()) {
-		m_compiler->getPkgManager().importModule(m_scope,
+		m_compiler->getPkgManager().importModule(m_scope, m_stack.top(),
 			node->getPackage()->getName(), node->getModule()->getName());
 	} else {
-		m_compiler->getPkgManager().importPackage(m_scope,
+		m_compiler->getPkgManager().importPackage(m_scope, m_stack.top(),
 			node->getPackage()->getName());
 	}
 }
