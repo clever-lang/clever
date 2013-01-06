@@ -25,7 +25,7 @@ typedef std::stack<Environment*> CallStack;
 class Environment: public RefCounted {
 public:
 	explicit Environment(Environment* outer_)
-		: RefCounted(0), m_outer(outer_), m_data(), m_activated(false) {
+		: RefCounted(), m_outer(outer_), m_data(), m_activated(false) {
 		CLEVER_SAFE_ADDREF(m_outer);
 	}
 
@@ -64,10 +64,13 @@ public:
 	 */
 	Environment* activate(Environment* outer);
 
+	size_t getRetAddr() const { return m_ret_addr; }
+	void setRetAddr(size_t ret_addr) { m_ret_addr = ret_addr; }
+
 private:
 	Environment* m_outer;
 	std::vector<Value*> m_data;
-	size_t ret_addr;
+	size_t m_ret_addr;
 	bool m_activated;
 
 	DISALLOW_COPY_AND_ASSIGN(Environment);
