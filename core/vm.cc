@@ -178,20 +178,22 @@ void VM::run()
 	OPCODES;
 	OP(OP_RET):
 		if (m_call_stack.size()) {
-			/*const StackFrame& frame = m_call_stack.top();
+
+			Environment* env = m_call_stack.top();
+			size_t ret_addr = env->getRetAddr();
 
 			if (OPCODE.op1.op_type != UNUSED) {
-				const Value* val = getValue(OPCODE.op1);
+				Value* val = getValue(OPCODE.op1);
 
 				if (val) {
-					m_call_stack.top().ret_val->copy(getValue(OPCODE.op1));
+					m_call_stack.top()->getRetVal()->copy(val);
 				}
 			}
+
+			CLEVER_SAFE_DELREF(env);
 			m_call_stack.pop();
 
-			// Go back to the caller
-			VM_GOTO(frame.ret_addr);*/
-			clever_fatal("Not implemented.");
+			VM_GOTO(ret_addr);
 		} else {
 			VM_EXIT();
 		}
@@ -286,49 +288,25 @@ void VM::run()
 				m_call_stack.push(fenv);
 
 				fenv->setRetAddr(m_pc + 1);
+				fenv->setRetVal(getValue(OPCODE.result));
 
 				if (fdata->hasArgs()) {
 					ValueOffset argoff(0,0);
+
+					/*if (g_n_threads) {
+						getMutex()->lock();
+					}*/
 
 					for (size_t i = 0, len = m_call_args.size(); i < len; i++) {
 						fenv->getValue(argoff)->copy(m_call_args[i]);
 						argoff.second++;
 					}
-				}
 
-				/*
-				m_call_stack.push(StackFrame());
-				m_call_stack.top().ret_addr = m_pc + 1;
-				m_call_stack.top().ret_val  = getValue(OPCODE.result);
-
-				// Function argument value binding
-				if (fdata->hasArgs()) {
-					Scope* arg_scope = fdata->getArgVars();
-
-					m_call_stack.top().arg_vars = arg_scope;
-
-					if (g_n_threads) {
-						getMutex()->lock();
-					}
-
-					for (size_t i = 0, j = arg_scope->size(); i < j; ++i) {
-						Value* arg_val = getValue(
-							arg_scope->at(i).scope->getId(),
-							arg_scope->at(i).value_id);
-
-						if (i < m_call_args.size()) {
-							arg_val->copy(m_call_args[i]);
-						} else {
-							arg_val->setNull();
-						}
-					}
-
-					if (g_n_threads) {
+					/*if (g_n_threads) {
 						getMutex()->unlock();
-					}
-
+					}*/
 				}
-				*/
+
 				m_call_args.clear();
 				VM_GOTO(fdata->getAddr());
 			} else {
@@ -646,7 +624,7 @@ void VM::run()
 
 	OP(OP_MCALL):
 		{
-		/*
+
 			const Value* callee = getValue(OPCODE.op1);
 			const Value* method = getValue(OPCODE.op2);
 			const Type* type = callee->getType();
@@ -662,7 +640,7 @@ void VM::run()
 			} else {
 				error(ERROR, "Method not found!");
 			}
-			*/
+
 		}
 		DISPATCH;
 
