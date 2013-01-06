@@ -337,7 +337,7 @@ CLEVER_METHOD(StrType::format)
 		std::ostringstream stream;
 		
 		{
-			const char *start = format->c_str();
+			const char* start = format->c_str();
 			
 			for(const char* point = start; point < (start + format->size());) 
 			{
