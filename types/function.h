@@ -11,19 +11,19 @@
 #include <vector>
 #include "core/clever.h"
 #include "core/value.h"
+#include "core/environment.h"
 #include "types/type.h"
 
 namespace clever {
 
 class Value;
 class VM;
+class Scope;
 
 #define CLEVER_FUNCTION_ARGS const ::std::vector<Value*>& args, const VM* vm
 #define CLEVER_FUNC_NAME(name) clv_f_##name
 #define CLEVER_NS_FNAME(ns, name) ns::CLEVER_FUNC_NAME(name)
 #define CLEVER_FUNCTION(name) void CLEVER_FASTCALL CLEVER_FUNC_NAME(name)(CLEVER_FUNCTION_ARGS)
-
-class Scope;
 
 typedef void (CLEVER_FASTCALL *FunctionPtr)(CLEVER_FUNCTION_ARGS);
 
@@ -66,6 +66,13 @@ public:
 
 	void setLocalVars(Scope* local_vars) { m_local_vars = local_vars; }
 	void setArgVars(Scope* arg_vars) { m_arg_vars = arg_vars; }
+
+	Environment* getEnvironment() { return m_environment; }
+	void setEnvironment(Environment* e) {
+		CLEVER_SAFE_DELREF(m_environment);
+		m_environment = e;
+		CLEVER_SAFE_ADDREF(m_environment);
+	}
 private:
 	std::string m_name;
 	FuncKind m_type;
@@ -79,6 +86,8 @@ private:
 
 	/// Local variables
 	Scope* m_local_vars;
+
+	Environment* m_environment;
 };
 
 

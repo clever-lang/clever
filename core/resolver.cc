@@ -113,6 +113,7 @@ void Resolver::visit(FunctionDecl* node)
 
 	m_scope->setEnvironment(new Environment(m_stack.top()));
 	m_stack.push(m_scope->getEnvironment());
+	func->setEnvironment(m_scope->getEnvironment());
 
 	node->setScope(m_scope);
 
