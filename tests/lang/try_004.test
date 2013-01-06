@@ -1,0 +1,7 @@
+Testing exception
+==CODE==
+import std.io.*;
+print(println+println);
+==RESULT==
+Fatal error: Unhandled exception!
+Message: Cannot use \+ operator with Function type

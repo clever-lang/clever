@@ -142,7 +142,7 @@ private:
 	Mutex m_mutex;
 	Mutex* f_mutex;
 
-	std::stack<size_t> m_try_stack;
+	std::stack<std::pair<size_t, size_t> > m_try_stack;
 
 	Value* m_exception;
 

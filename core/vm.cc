@@ -34,14 +34,34 @@
 # define VM_GOTO(n)  m_pc = n; break
 #endif
 
-#define THROW_EXCEPTION(val, internal)               \
-	if (EXPECTED(m_try_stack.size())) {              \
-		size_t catch_addr = m_try_stack.top();       \
-		getValue(m_inst[catch_addr].op1)->copy(val); \
-		if (internal) { m_exception = NULL; }        \
-		VM_GOTO(catch_addr);                         \
-	} else {                                         \
-		VM_EXIT_UNHANDLED_EXCEPTION();               \
+#define THROW_EXCEPTION(val, internal)                     \
+	if (EXPECTED(m_try_stack.size())) {                    \
+		std::pair<size_t, size_t> curr = m_try_stack.top();\
+		if (curr.second > 1) {                             \
+			m_try_stack.pop();                             \
+			if (m_try_stack.size()) {                      \
+				curr = m_try_stack.top();                  \
+			} else {                                       \
+				if (!internal) {                           \
+					m_exception = new Value();             \
+					m_exception->copy(val);                \
+				}                                          \
+				VM_EXIT_UNHANDLED_EXCEPTION();             \
+			}                                              \
+		}                                                  \
+		size_t catch_addr = curr.first;                    \
+		getValue(m_inst[catch_addr].op1)->copy(val);       \
+		if (internal) {                                    \
+			m_exception->delRef();                         \
+			m_exception = NULL;                            \
+		}                                                  \
+		VM_GOTO(catch_addr);                               \
+	} else {                                               \
+		if (!internal) {                                   \
+			m_exception = new Value();                     \
+			m_exception->copy(val);                        \
+		}                                                  \
+		VM_EXIT_UNHANDLED_EXCEPTION();                     \
 	}
 
 namespace clever {
@@ -699,10 +719,11 @@ void VM::run()
 		DISPATCH;
 
 	OP(OP_TRY):
-		m_try_stack.push(OPCODE.op1.value_id);
+		m_try_stack.push(std::pair<size_t, size_t>(OPCODE.op1.value_id, 1));
 		DISPATCH;
 
 	OP(OP_CATCH):
+		m_try_stack.top().second = 2;
 		DISPATCH;
 
 	OP(OP_THROW):
