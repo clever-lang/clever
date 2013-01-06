@@ -6,10 +6,10 @@ try {
 
 	println(1);
 } catch (e) {
-	printf("Catched: {1}\n", e);
+	printf("Caught: \1\n", e);
 } finally {
 	println(3);
 }
 ==RESULT==
-Catched: yay!
+Caught: yay!
 3
