@@ -286,7 +286,13 @@ void VM::run()
 			clever_assert_not_null(fdata);
 
 			if (fdata->isUserDefined()) {
-				Environment* fenv = fdata->getEnvironment()->activate(m_call_stack.top());
+				Environment* fenv;
+
+				if (m_call_stack.top()->isActive()) {
+					fenv = fdata->getEnvironment()->activate(m_call_stack.top()->getOuter());
+				} else {
+					fenv = fdata->getEnvironment()->activate(m_call_stack.top());
+				}
 				m_call_stack.push(fenv);
 
 				fenv->setRetAddr(m_pc + 1);

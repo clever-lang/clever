@@ -25,7 +25,7 @@ typedef std::stack<Environment*> CallStack;
 class Environment: public RefCounted {
 public:
 	explicit Environment(Environment* outer_)
-		: RefCounted(), m_outer(outer_), m_data(), m_ret_val(NULL), m_ret_addr(0), m_activated(false) {
+		: RefCounted(), m_outer(outer_), m_data(), m_ret_val(NULL), m_ret_addr(0), m_active(false) {
 		CLEVER_SAFE_ADDREF(m_outer);
 	}
 
@@ -69,6 +69,8 @@ public:
 	 */
 	Environment* activate(Environment* outer) const;
 
+	bool isActive() const { return m_active; }
+
 	size_t getRetAddr() const { return m_ret_addr; }
 	void setRetAddr(size_t ret_addr) { m_ret_addr = ret_addr; }
 
@@ -79,12 +81,14 @@ public:
 		CLEVER_SAFE_ADDREF(m_ret_val);
 	}
 
+	Environment* getOuter() const { return m_outer; }
+
 private:
 	Environment* m_outer;
 	std::vector<Value*> m_data;
 	Value* m_ret_val;
 	size_t m_ret_addr;
-	bool m_activated;
+	bool m_active;
 
 	DISALLOW_COPY_AND_ASSIGN(Environment);
 };
@@ -121,7 +125,7 @@ inline Value* Environment::getValue(const ValueOffset& offset) {
 
 inline Environment* Environment::activate(Environment* outer) const {
 	Environment* e = new Environment(outer);
-	e->m_activated = true;
+	e->m_active = true;
 
 	for (size_t i = 0, size = m_data.size(); i < size; i++) {
 		Value* v = new Value();
