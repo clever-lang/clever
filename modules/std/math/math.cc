@@ -7,9 +7,12 @@
 
 #include <cmath>
 #include <cstdlib>
+#include <typeinfo>
+#include "core/value.h"
+#include "types/native_types.h"
+#include "core/compiler.h"
+#include "core/pkgmanager.h"
 #include "modules/std/math/math.h"
-#include "types/nativetypes.h"
-#include "compiler/pkgmanager.h"
 
 #ifndef M_PI
 #define M_PI    3.14159265358979323846
@@ -19,8 +22,21 @@ namespace clever { namespace packages { namespace std {
 
 namespace math {
 
-static CLEVER_FUNCTION(round){
-	
+static CLEVER_FUNCTION(round) {
+	switch (CLEVER_ARG_COUNT()) {
+		case 1: {
+			if (CLEVER_ARG_TYPE(0)==CLEVER_INT_TYPE) {
+				//CLEVER_RETURN_INT(::std::round(CLEVER_ARG_INT(0)));
+			} else if (CLEVER_ARG_TYPE(0)==CLEVER_DOUBLE_TYPE) {
+				//CLEVER_RETURN_DBL(::std::round(CLEVER_ARG_DBL(0)));
+			} else {
+				Compiler::error("Math.round expected a double or integral value");
+			}
+		} break;
+		
+		default:
+			Compiler::error("Math.round expected exactly one argument");
+	}
 }
 
 } // math
