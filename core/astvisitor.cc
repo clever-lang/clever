@@ -30,10 +30,10 @@ void Visitor::visit(CriticalBlock* node) {
 }
 
 void Visitor::visit(ThreadBlock* node) {
-	node->getBlock()->accept(*this);
 	if (node->getSize()) {
 		node->getSize()->accept(*this);
 	}
+	node->getBlock()->accept(*this);
 }
 
 void Visitor::visit(Assignment* node) {
