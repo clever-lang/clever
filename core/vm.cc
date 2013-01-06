@@ -284,6 +284,20 @@ void VM::run()
 			clever_assert_not_null(fdata);
 
 			if (fdata->isUserDefined()) {
+				Environment* fenv = fdata->getEnvironment()->activate(m_call_stack.top());
+				m_call_stack.push(fenv);
+
+				fenv->setRetAddr(m_pc + 1);
+
+				if (fdata->hasArgs()) {
+					ValueOffset argoff(0,0);
+
+					for (size_t i = 0, len = m_call_args.size(); i < len; i++) {
+						fenv->getValue(argoff)->copy(m_call_args[i]);
+						argoff.second++;
+					}
+				}
+
 				/*
 				m_call_stack.push(StackFrame());
 				m_call_stack.top().ret_addr = m_pc + 1;
@@ -316,10 +330,9 @@ void VM::run()
 					}
 
 				}
+				*/
 				m_call_args.clear();
 				VM_GOTO(fdata->getAddr());
-				*/
-				clever_fatal("Not implemented.");
 			} else {
 				fdata->getPtr()(m_call_args, this);
 				m_call_args.clear();
@@ -391,12 +404,13 @@ void VM::run()
 
 	OP(OP_LEAVE):
 		{
-		/*
-			const StackFrame& frame = m_call_stack.top();
+			Environment* env = m_call_stack.top();
+			size_t ret_addr = env->getRetAddr();
 
+			CLEVER_SAFE_DELREF(env);
 			m_call_stack.pop();
 
-			VM_GOTO(frame.ret_addr);*/
+			VM_GOTO(ret_addr);
 		}
 
 	OP(OP_SEND_VAL):
