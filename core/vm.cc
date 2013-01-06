@@ -36,11 +36,11 @@
 
 #define THROW_EXCEPTION(val, internal)                     \
 	if (EXPECTED(m_try_stack.size())) {                    \
-		std::pair<size_t, size_t> curr = m_try_stack.top();\
-		if (curr.second > 1) {                             \
+		size_t catch_addr = m_try_stack.top().first;       \
+		if (m_try_stack.top().second > 1) {                \
 			m_try_stack.pop();                             \
 			if (m_try_stack.size()) {                      \
-				curr = m_try_stack.top();                  \
+				catch_addr = m_try_stack.top().first;      \
 			} else {                                       \
 				if (!internal) {                           \
 					m_exception = new Value();             \
@@ -49,7 +49,6 @@
 				VM_EXIT_UNHANDLED_EXCEPTION();             \
 			}                                              \
 		}                                                  \
-		size_t catch_addr = curr.first;                    \
 		getValue(m_inst[catch_addr].op1)->copy(val);       \
 		if (internal) {                                    \
 			m_exception->delRef();                         \
