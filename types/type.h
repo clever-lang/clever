@@ -34,8 +34,6 @@ namespace clever {
 	void CLEVER_FASTCALL less(CLEVER_TYPE_OPERATOR_ARGS)          const; \
 	void CLEVER_FASTCALL less_equal(CLEVER_TYPE_OPERATOR_ARGS)    const;
 
-// On MSVC we have some problems with CLEVER_FASTCALL.
-//# define CLEVER_TYPE_OPERATOR(name) CLEVER_FASTCALL void name(CLEVER_TYPE_OPERATOR_ARGS) const
 # define CLEVER_TYPE_OPERATOR(name) void CLEVER_FASTCALL name(CLEVER_TYPE_OPERATOR_ARGS) const
 
 #define CLEVER_THIS() obj

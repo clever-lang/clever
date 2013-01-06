@@ -11,7 +11,6 @@
 #ifndef CLEVER_WIN32
 # include <pthread.h>
 #else
-# define NOMINMAX
 # include <win32/win32.h>
 #endif
 
