@@ -80,14 +80,14 @@ void VM::dumpOperand(Operand& op) const
 	};
 
 	switch (op.op_type) {
+		case FETCH_CONST:
+		case FETCH_TMP:
 		case FETCH_VAR:
 			::printf("%3zu:%3zu ", op.voffset.first, op.voffset.second);
 			break;
 		case JMP_ADDR:
 			::printf("%7zu ", op.jmp_addr);
 			break;
-		case FETCH_CONST:
-		case FETCH_TMP:
 		case FETCH_TYPE:
 			::printf("%7zu ", op.voffset.first);
 			break;
