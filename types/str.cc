@@ -427,6 +427,50 @@ CLEVER_METHOD(StrType::endsWith)
 	}
 }
 
+// String.charAt(int position)
+// String.charAt(string string, int position)
+CLEVER_METHOD(StrType::charAt)
+{
+	long position;
+	const CString* data;
+	char found[1];
+
+	if (CLEVER_THIS()) {
+		if (CLEVER_ARG_COUNT() == 1) {
+			data = CLEVER_THIS()->getStr();
+			position = CLEVER_ARG_INT(0);
+		} else {
+			Compiler::error("String.charAt expected exactly one argument");
+		}
+	} else {
+		if (CLEVER_ARG_COUNT() == 2) {
+			data = CLEVER_ARG_CSTR(0);
+			position = CLEVER_ARG_INT(1);
+		} else {
+			Compiler::error("String.charAt expected exactly two parameters");
+		}
+	}
+	
+	if (data) {
+		if (position > -1L) {
+			if (data->size() > (unsigned long) position) {
+				found[0] = data->at(position);
+				if (found[0]) {
+					CLEVER_RETURN_CSTR(CSTRING(found));
+				} else {
+					CLEVER_RETURN_NULL();
+				}
+			} else {
+				CLEVER_RETURN_NULL();
+			}
+		} else {
+			Compiler::error("String.charAt expected a non-negative argument for position");
+		}
+	} else {
+		CLEVER_RETURN_NULL();
+	}
+}
+
 // String.getLength(string str)
 // String.getLength()
 // Returns the length of the string
@@ -451,6 +495,7 @@ CLEVER_TYPE_INIT(StrType::init)
 	addMethod(CSTRING("format"),		(MethodPtr) &StrType::format);
 	addMethod(CSTRING("startsWith"),	(MethodPtr) &StrType::startsWith);
 	addMethod(CSTRING("endsWith"),		(MethodPtr) &StrType::endsWith);
+	addMethod(CSTRING("charAt"),		(MethodPtr) &StrType::charAt);
 }
 
 CLEVER_TYPE_OPERATOR(StrType::greater)

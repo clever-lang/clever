@@ -41,6 +41,7 @@ public:
 	CLEVER_METHOD_D(format);
 	CLEVER_METHOD_D(startsWith);
 	CLEVER_METHOD_D(endsWith);
+	CLEVER_METHOD_D(charAt);
 };
 
 } // clever
