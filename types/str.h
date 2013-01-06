@@ -39,6 +39,8 @@ public:
 	CLEVER_METHOD_D(findLast);
 	CLEVER_METHOD_D(getLength);
 	CLEVER_METHOD_D(format);
+	CLEVER_METHOD_D(startsWith);
+	CLEVER_METHOD_D(endsWith);
 };
 
 } // clever
