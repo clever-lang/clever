@@ -153,15 +153,11 @@ void Codegen::visit(VariableDecl* node)
 
 void Codegen::visit(Assignment* node)
 {
-	// TODO: allow assignment of any possible left hand side.
-	Symbol* sym = static_cast<Ident*>(node->getLhs())->getSymbol();
 	Node* rhs = node->getRhs();
-
-	clever_assert_not_null(sym);
 
 	if (node->isConditional()) {
 		m_ir.push_back(IR(OP_JMPNZ,
-			Operand(FETCH_VAR, sym->voffset),
+			Operand(FETCH_VAR, node->getLhs()->getVOffset()),
 			Operand(JMP_ADDR, m_ir.size() + 2)));
 	}
 
@@ -169,7 +165,7 @@ void Codegen::visit(Assignment* node)
 		rhs->accept(*this);
 	}
 	m_ir.push_back(IR(OP_ASSIGN,
-			Operand(FETCH_VAR, sym->voffset)));
+			Operand(FETCH_VAR, node->getLhs()->getVOffset())));
 
 	if (!rhs) {
 		m_ir.back().op2 = Operand(FETCH_CONST, 0); // null
@@ -233,7 +229,7 @@ void Codegen::visit(FunctionCall* node)
 		}
 
 		m_ir.push_back(IR(OP_FCALL,
-			Operand(FETCH_VAR, sym->voffset)));
+			Operand(FETCH_VAR, node->getCallee()->getVOffset())));
 	}
 
 	ValueOffset tmp_id = m_temp_env->pushValue(new Value());

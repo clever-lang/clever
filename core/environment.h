@@ -32,9 +32,9 @@ public:
 	~Environment() {
 		CLEVER_SAFE_DELREF(m_outer);
 
-		for (size_t i = 0, size = m_data.size(); i < size; i++) {
+		/*for (size_t i = 0, size = m_data.size(); i < size; i++) {
 			CLEVER_SAFE_DELREF(m_data.at(i));
-		}
+		}*/
 		m_data.clear();
 	}
 
