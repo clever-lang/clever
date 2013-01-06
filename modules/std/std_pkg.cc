@@ -19,10 +19,10 @@ void Std::init() {
 #ifdef HAVE_MOD_STD_REFLECTION
 	addModule(new std::Reflection);
 #endif
-/*
 #ifdef HAVE_MOD_STD_MATH
 	addModule(new std::Math);
 #endif
+/*
 #ifdef HAVE_MOD_STD_FILE
 	addModule(new std::File);
 #endif
