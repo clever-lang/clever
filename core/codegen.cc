@@ -127,6 +127,12 @@ void Codegen::visit(ThreadBlock* node)
 						  Operand(FETCH_CONST, 0)));
 	}
 
+	if (node->getSize() != NULL) {
+		Node* size = node->getSize();
+		size->accept(*this);
+		_prepare_operand(m_ir[bg].result, size);
+	}
+
 	node->getBlock()->accept(*this);
 
 	m_ir.push_back(IR(OP_ETHREAD));

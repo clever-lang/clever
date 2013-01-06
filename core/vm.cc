@@ -118,7 +118,6 @@ void VM::copy(const VM* vm)
 	this->f_mutex = const_cast<VM*>(vm)->getMutex();
 	this->m_pc = vm->m_pc;
 
-	this->f_mutex->lock();
 	this->m_scope_pool = new ScopePool;
 
 	this->m_try_stack = vm->m_try_stack;
@@ -132,7 +131,6 @@ void VM::copy(const VM* vm)
 
 		this->m_scope_pool->push_back(scope);
 	}
-	this->f_mutex->unlock();
 
 	this->m_temp_env = vm->m_temp_env;
 	this->m_const_env = vm->m_const_env;
@@ -345,21 +343,36 @@ void VM::run()
 		/*
 			Thread* thread = new Thread;
 
-			thread->vm_handler = new VM(this->m_inst);
-			thread->vm_handler->copy(this);
-
-			thread->vm_handler->setChild();
 			getMutex()->lock();
 
-			if (m_thread_pool.size() <= OPCODE.op2.value_id) {
-				m_thread_pool.resize(OPCODE.op2.value_id + 1);
-			}
-			g_n_threads++;
-			getMutex()->unlock();
+			const Value* size = getValue(OPCODE.result);
+			size_t n_threads = 1;
 
-			m_thread_pool[OPCODE.op2.value_id].push_back(thread);
-			thread->t_handler.create(_thread_control,
-									 static_cast<void*>(thread));
+			if (size != NULL) {
+				n_threads = size->getInt();
+			}
+
+
+
+			for (size_t i = 0; i < n_threads; ++i) {
+				Thread* thread = new Thread;
+
+				thread->vm_handler = new VM(this->m_inst);
+				thread->vm_handler->copy(this);
+
+				thread->vm_handler->setChild();
+
+				if (m_thread_pool.size() <= OPCODE.op2.value_id) {
+					m_thread_pool.resize(OPCODE.op2.value_id + 1);
+				}
+				g_n_threads++;
+				m_thread_pool[OPCODE.op2.value_id].push_back(thread);
+
+
+				thread->t_handler.create(_thread_control,
+										 static_cast<void*>(thread));
+			}
+			getMutex()->unlock();
 
 			VM_GOTO(OPCODE.op1.value_id);
 			*/
