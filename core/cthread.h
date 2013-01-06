@@ -8,7 +8,11 @@
 #ifndef CLEVER_CTHREAD_H
 #define CLEVER_CTHREAD_H
 
-#include <pthread.h>
+#ifndef CLEVER_WIN32
+# include <pthread.h>
+#else
+# include <win32/win32.h>
+#endif
 
 namespace clever {
 
@@ -22,11 +26,20 @@ public:
 	void unlock();
 
 private:
+#ifndef CLEVER_WIN32
 	pthread_mutex_t m_mut;
+#else
+	HANDLE m_mut;
+#endif
 };
 
-
+#ifndef CLEVER_WIN32
+# define CLEVER_THREAD_FUNC(name) static void* name(void *arg)
 typedef void* (*ThreadFunc)(void*);
+#else
+typedef DWORD (*ThreadFunc)(LPVOID);
+# define CLEVER_THREAD_FUNC(name) static DWORD name(void *arg)
+#endif
 
 class CThread {
 public:
@@ -36,10 +49,14 @@ public:
 
 	void create(ThreadFunc thread_func, void* args);
 
-	void* wait();
+	int wait();
 
 private:
+#ifndef CLEVER_WIN32
 	pthread_t t_handler;
+#else
+	HANDLE t_handler;
+#endif
 };
 
 } // clever

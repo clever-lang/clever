@@ -33,6 +33,9 @@
 #endif
 
 #include <string>
+
+// Do not define min/max macros.
+#define NOMINMAX
 #include <windows.h>
 
 std::string GetLastErrorStr(DWORD dwLastError);

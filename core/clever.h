@@ -34,6 +34,11 @@ extern jmp_buf fatal_error;
 # undef FALSE
 #endif
 
+// MSVC dependencies.
+#ifdef CLEVER_MSVC
+# define int64_t __int64
+#endif
+
 // Macro to increase/decrease reference couting
 #define CLEVER_ADDREF(x) (x)->addRef()
 #define CLEVER_DELREF(x) (x)->delRef()

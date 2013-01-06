@@ -38,10 +38,10 @@ namespace clever {
 void VM::error(ErrorLevel level, const char* msg) const
 {
 	switch (level) {
-		case WARNING:
+		case VM_WARNING:
 			std::cerr << "Warning: " << msg << std::endl;
 			break;
-		case ERROR:
+		case VM_ERROR:
 			std::cerr << "Error: " << msg << std::endl;
 			CLEVER_EXIT_FATAL();
 			break;
@@ -156,7 +156,8 @@ void VM::wait()
 
 //static size_t g_n_threads = 0;
 
-/*static void* _thread_control(void* arg)
+/*
+CLEVER_THREAD_FUNC(_thread_control)
 {
 	VM* vm_handler = static_cast<Thread*>(arg)->vm_handler;
 
@@ -164,7 +165,8 @@ void VM::wait()
 	vm_handler->run();
 
 	return NULL;
-}*/
+}
+*/
 
 // Executes the VM opcodes
 // When building on GCC the code will use direct threading code, otherwise
@@ -216,7 +218,7 @@ void VM::run()
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
 				lhs->getType()->add(getValue(OPCODE.result), lhs, rhs);
 			} else {
-				error(ERROR, "Operation cannot be executed on null value");
+				error(VM_ERROR, "Operation cannot be executed on null value");
 			}
 		}
 		DISPATCH;
@@ -229,7 +231,7 @@ void VM::run()
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
 				lhs->getType()->sub(getValue(OPCODE.result), lhs, rhs);
 			} else {
-				error(ERROR, "Operation cannot be executed on null value");
+				error(VM_ERROR, "Operation cannot be executed on null value");
 			}
 		}
 		DISPATCH;
@@ -242,7 +244,7 @@ void VM::run()
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
 				lhs->getType()->mul(getValue(OPCODE.result), lhs, rhs);
 			} else {
-				error(ERROR, "Operation cannot be executed on null value");
+				error(VM_ERROR, "Operation cannot be executed on null value");
 			}
 		}
 		DISPATCH;
@@ -255,7 +257,7 @@ void VM::run()
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
 				lhs->getType()->div(getValue(OPCODE.result), lhs, rhs);
 			} else {
-				error(ERROR, "Operation cannot be executed on null value");
+				error(VM_ERROR, "Operation cannot be executed on null value");
 			}
 		}
 		DISPATCH;
@@ -268,7 +270,7 @@ void VM::run()
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
 				lhs->getType()->mod(getValue(OPCODE.result), lhs, rhs);
 			} else {
-				error(ERROR, "Operation cannot be executed on null value");
+				error(VM_ERROR, "Operation cannot be executed on null value");
 			}
 		}
 		DISPATCH;
@@ -345,7 +347,6 @@ void VM::run()
 				}
 				g_n_threads++;
 				m_thread_pool[OPCODE.op2.value_id].push_back(thread);
-
 
 				thread->t_handler.create(_thread_control,
 										 static_cast<void*>(thread));
@@ -432,7 +433,7 @@ void VM::run()
 				value->getType()->increment(value);
 				getValue(OPCODE.result)->copy(value);
 			} else {
-				error(VM::ERROR, "Cannot increment null value");
+				error(VM_ERROR, "Cannot increment null value");
 			}
 		}
 		DISPATCH;
@@ -445,7 +446,7 @@ void VM::run()
 				getValue(OPCODE.result)->copy(value);
 				value->getType()->increment(value);
 			} else {
-				error(VM::ERROR, "Cannot increment null value");
+				error(VM_ERROR, "Cannot increment null value");
 			}
 		}
 		DISPATCH;
@@ -458,7 +459,7 @@ void VM::run()
 				value->getType()->decrement(value);
 				getValue(OPCODE.result)->copy(value);
 			} else {
-				error(VM::ERROR, "Cannot decrement null value");
+				error(VM_ERROR, "Cannot decrement null value");
 			}
 		}
 		DISPATCH;
@@ -471,7 +472,7 @@ void VM::run()
 				getValue(OPCODE.result)->copy(value);
 				value->getType()->decrement(value);
 			} else {
-				error(VM::ERROR, "Cannot decrement null value");
+				error(VM_ERROR, "Cannot decrement null value");
 			}
 		}
 		DISPATCH;
@@ -631,14 +632,14 @@ void VM::run()
 			MethodPtr ptr;
 
 			if (UNEXPECTED(callee->isNull())) {
-				error(ERROR, "Cannot call method from a null value");
+				error(VM_ERROR, "Cannot call method from a null value");
 			}
 
 			if (EXPECTED((ptr = type->getMethod(method->getStr())))) {
 				(type->*ptr)(getValue(OPCODE.result), callee, m_call_args);
 				m_call_args.clear();
 			} else {
-				error(ERROR, "Method not found!");
+				error(VM_ERROR, "Method not found!");
 			}
 
 		}
@@ -655,7 +656,7 @@ void VM::run()
 				(type->*ptr)(getValue(OPCODE.result), NULL, m_call_args);
 				m_call_args.clear();
 			} else {
-				error(ERROR, "Method not found!");
+				error(VM_ERROR, "Method not found!");
 			}
 			*/
 		}
@@ -671,7 +672,7 @@ void VM::run()
 				getValue(OPCODE.result)->copy(prop_value);
 				m_call_args.clear();
 			} else {
-				error(ERROR, "Property not found!");
+				error(VM_ERROR, "Property not found!");
 			}
 		}
 		DISPATCH;

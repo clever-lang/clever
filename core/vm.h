@@ -48,8 +48,8 @@ struct Thread {
 class VM {
 public:
 	enum ErrorLevel {
-		ERROR,
-		WARNING
+		VM_ERROR,
+		VM_WARNING
 	};
 
 	typedef std::vector<std::vector<Thread*> > ThreadPool;
