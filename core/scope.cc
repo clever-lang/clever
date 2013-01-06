@@ -92,47 +92,58 @@ ValueOffset Scope::getOffset(Symbol* sym) const {
 	ValueOffset offset(0, 0);
 
 	const Scope* scope = this;
-	SymbolMap::const_iterator it, end;
+	const Environment* last_env = m_environment;
+	bool count_values = false;
 
 	while (scope) {
-		if (scope->m_environment != m_environment) {
+		SymbolMap::const_iterator it(scope->m_symbols.begin()), end(scope->m_symbols.end());
+
+		if (scope->m_environment != last_env) {
 			offset.first++;
 			offset.second = 0;
 		}
 
-		it = scope->m_symbols.begin();
-		end = scope->m_symbols.end();
+		if (scope == sym->scope) {
+			count_values = true;
+		}
 
-		for (; it != end; it++) {
+		for (; it != end; ++it) {
 			if ((*it)->isType()) {
 				continue;
 			}
 
-			if (*it == sym) {
+			if ((*it) == sym) {
 				Scope* parent = scope->m_parent;
 
-				if (parent && scope->m_environment == parent->m_environment) {
+				while (parent && parent->m_parent && parent->m_environment == scope->m_environment) {
 					it = parent->m_symbols.begin();
 					end = parent->m_symbols.end();
 
-					for (; it != end; it++) {
-						if (!(*it)->isType()) {
+					for (; it != end; ++it) {
+						if ((*it)->isVar()) {
 							offset.second++;
 						}
 					}
+
+					parent = parent->m_parent;
 				}
-				goto exit;
+				goto finish;
 			}
-			offset.second++;
+
+			if (count_values) {
+				offset.second++;
+			}
 		}
 
+		last_env = scope->m_environment;
 		scope = scope->m_parent;
 	}
 
 	clever_fatal("Failed to find the symbol offset.");
 
-exit:
+finish:
 
+	//std::cout << "ref " << *sym->name << " = " << offset.first << ":" << offset.second << std::endl;
 	return offset;
 }
 
