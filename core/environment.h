@@ -67,7 +67,7 @@ public:
 	 * @param outer the environment where the current instance is contained in
 	 * @return an "activated" copy of the current environment
 	 */
-	Environment* activate(Environment* outer);
+	Environment* activate(Environment* outer) const;
 
 	size_t getRetAddr() const { return m_ret_addr; }
 	void setRetAddr(size_t ret_addr) { m_ret_addr = ret_addr; }
@@ -119,7 +119,7 @@ inline Value* Environment::getValue(const ValueOffset& offset) {
 	return e->m_data.at(offset.second);
 }
 
-inline Environment* Environment::activate(Environment* outer) {
+inline Environment* Environment::activate(Environment* outer) const {
 	Environment* e = new Environment(outer);
 	e->m_activated = true;
 
