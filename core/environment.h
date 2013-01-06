@@ -90,13 +90,13 @@ inline Value* Environment::getValue(const ValueOffset& offset) {
 	size_t depth = offset.first;
 	Environment* e = m_outer;
 
-	while (e && depth--) {
+	while (e && --depth) {
 		e = e->m_outer;
 	}
 
 	clever_assert(depth == 0,
 				  "`depth` must be zero, otherwise we failed to find the environment.");
-	clever_assert(offset.second < m_data.size(),
+	clever_assert(offset.second < e->m_data.size(),
 				  "`offset.second` must be within `m_data` bounds.");
 	clever_assert_not_null(e);
 
