@@ -142,7 +142,7 @@ void Resolver::visit(Ident* node)
 			"Identifier `%S' not found.", node->getName());
 	}
 
-	node->setVOffset(sym->scope->getOffset(sym));
+	node->setVOffset(m_scope->getOffset(sym));
 	sym->voffset = node->getVOffset();
 
 	ValueOffset vo = node->getVOffset();
