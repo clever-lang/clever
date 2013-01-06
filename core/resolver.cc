@@ -59,10 +59,7 @@ void Resolver::visit(VariableDecl* node)
 	Value *val = new Value();
 	m_scope->pushValue(name, val);
 
-	//m_stack.top()->pushValue(val);
-
-	ValueOffset vo = m_stack.top()->pushValue(val);
-	std::cout << "dec " << *name << " := " << vo.first << ":" << vo.second << std::endl;
+	m_stack.top()->pushValue(val);
 
 
 	node->getIdent()->accept(*this);
@@ -145,9 +142,6 @@ void Resolver::visit(Ident* node)
 
 	node->setVOffset(m_scope->getOffset(sym));
 	sym->voffset = node->getVOffset();
-
-	ValueOffset vo = node->getVOffset();
-	std::cout << "ref " << *sym->name << " = " << vo.first << ":" << vo.second << std::endl;
 
 	node->setSymbol(sym);
 	node->setScope(sym->scope);

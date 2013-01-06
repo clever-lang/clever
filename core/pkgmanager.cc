@@ -60,8 +60,7 @@ void PkgManager::loadModule(Scope* scope, Environment* env, Module* module) cons
 		fval->setObj(itf->second);
 
 		scope->pushValue(itf->first, fval);
-		ValueOffset vo = env->pushValue(fval);
-		std::cout << "dec " << *itf->first << " := " << vo.first << ":" << vo.second << std::endl;
+		env->pushValue(fval);
 
 		++itf;
 	}

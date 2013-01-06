@@ -52,15 +52,12 @@ void Codegen::sendArgs(NodeArray* node)
 
 void Codegen::visit(NullLit* node)
 {
-	//node->setConstId(0);
 	node->setVOffset(ValueOffset(0,0));
 }
 
 void Codegen::visit(IntLit* node)
 {
 	node->setVOffset(m_const_env->pushValue(new Value(node->getValue())));
-	ValueOffset vo = node->getVOffset();
-	std::cout << "const " << vo.first << ":" << vo.second << " = " << node->getValue() << std::endl;
 }
 
 void Codegen::visit(DoubleLit* node)

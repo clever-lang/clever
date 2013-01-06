@@ -139,7 +139,7 @@ ValueOffset Scope::getOffset(Symbol* sym) const {
 		scope = scope->m_parent;
 	}
 
-	clever_fatal("Failed to find the symbol offset.");
+	clever_assert(0, "Failed to find the symbol offset.");
 
 finish:
 
