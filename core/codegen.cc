@@ -89,6 +89,12 @@ void Codegen::visit(Wait* node)
 
 void Codegen::visit(ThreadBlock* node)
 {
+
+	if (node->getSize() != NULL) {
+		Node* size = node->getSize();
+		size->accept(*this);
+	}
+
 	size_t bg = m_ir.size();
 
 	if (node->getName() != NULL) {
@@ -109,7 +115,6 @@ void Codegen::visit(ThreadBlock* node)
 
 	if (node->getSize() != NULL) {
 		Node* size = node->getSize();
-		size->accept(*this);
 		_prepare_operand(m_ir[bg].result, size);
 	}
 
