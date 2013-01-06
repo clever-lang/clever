@@ -69,9 +69,7 @@ static CLEVER_FUNCTION(printf) {
 		const CString* format = CLEVER_ARG_CSTR(0);
 		
 		if (format) {
-			char* buffer = new char[format->size()+1];
-			
-			::std::strcpy(buffer, format->c_str());
+			char* buffer = (char*) format->c_str();
 			
 			for(char* point = buffer; point < (buffer + format->size());) 
 			{
@@ -93,8 +91,6 @@ static CLEVER_FUNCTION(printf) {
 					point++;
 				}
 			}
-
-			delete[] buffer;
 		}
 	}
 }

@@ -7,10 +7,8 @@
 
 #include <cmath>
 #include <cstdlib>
-#include <typeinfo>
 #include "core/value.h"
 #include "types/native_types.h"
-#include "core/compiler.h"
 #include "core/pkgmanager.h"
 #include "modules/std/math/math.h"
 
@@ -29,13 +27,8 @@ static CLEVER_FUNCTION(round) {
 				//CLEVER_RETURN_INT(::std::round(CLEVER_ARG_INT(0)));
 			} else if (CLEVER_ARG_TYPE(0)==CLEVER_DOUBLE_TYPE) {
 				//CLEVER_RETURN_DBL(::std::round(CLEVER_ARG_DBL(0)));
-			} else {
-				Compiler::error("Math.round expected a double or integral value");
 			}
 		} break;
-		
-		default:
-			Compiler::error("Math.round expected exactly one argument");
 	}
 }
 
@@ -46,13 +39,8 @@ static CLEVER_FUNCTION(ceil) {
 				//CLEVER_RETURN_INT(::std::ceil(CLEVER_ARG_INT(0)));
 			} else if (CLEVER_ARG_TYPE(0)==CLEVER_DOUBLE_TYPE) {
 				//CLEVER_RETURN_DBL(::std::ceil(CLEVER_ARG_DBL(0)));
-			} else {
-				Compiler::error("Math.ceil expected a double or integral value");
 			}
 		} break;
-		
-		default:
-			Compiler::error("Math.ceil expected exactly one argument");
 	}
 }
 
@@ -63,13 +51,8 @@ static CLEVER_FUNCTION(floor) {
 				//CLEVER_RETURN_INT(::std::floor(CLEVER_ARG_INT(0)));
 			} else if (CLEVER_ARG_TYPE(0)==CLEVER_DOUBLE_TYPE) {
 				//CLEVER_RETURN_DBL(::std::floor(CLEVER_ARG_DBL(0)));
-			} else {
-				Compiler::error("Math.floor expected a double or integral value");
 			}
 		} break;
-		
-		default:
-			Compiler::error("Math.floor expected exactly one argument");
 	}
 }
 
@@ -80,17 +63,10 @@ static CLEVER_FUNCTION(abs) {
 				//CLEVER_RETURN_INT(::std::labs(CLEVER_ARG_INT(0)));
 			} else if (CLEVER_ARG_TYPE(0)==CLEVER_DOUBLE_TYPE) {
 				//CLEVER_RETURN_DBL(::std::abs(CLEVER_ARG_DBL(0)));
-			} else {
-				Compiler::error("Math.floor expected a double or integral value");
 			}
 		} break;
-		
-		default:
-			Compiler::error("Math.floor expected exactly one argument");
 	}
 }
-
-
 
 } // math
 

@@ -337,9 +337,7 @@ CLEVER_METHOD(StrType::format)
 		std::ostringstream stream;
 		
 		{
-			char* buffer = new char[format->size()+1];
-			
-			::std::strcpy(buffer, format->c_str());
+			char* buffer = (char*) format->c_str();
 			
 			for(char* point = buffer; point < (buffer + format->size());) 
 			{
@@ -361,8 +359,6 @@ CLEVER_METHOD(StrType::format)
 					point++;
 				}
 			}
-
-			delete[] buffer;
 		}
 		
 		result->setStr(CSTRING(stream.str()));
