@@ -81,7 +81,7 @@ public:
 		return m_value_id++;
 	}
 
-	Value* getValue(const ValueOffset& offset) const { return m_value_pool[offset.second]; }
+	Value* getValue(const ValueOffset& offset) const { return m_environment->getValue(offset); }
 	const Type* getType(size_t idx) const { return m_type_pool[idx]; }
 
 	Symbol& at(size_t idx) const { return *m_symbols[idx]; }
