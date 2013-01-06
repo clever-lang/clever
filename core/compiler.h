@@ -44,7 +44,10 @@ public:
 			m_scope_pool(), m_const_env(),m_temp_env(),
 			m_scope_id(0), m_const_id(0), m_tmp_id(0) {}
 
-	~Compiler() {}
+	~Compiler() {
+		CLEVER_SAFE_DELREF(m_temp_env);
+		CLEVER_SAFE_DELREF(m_global_env);
+	}
 
 	void init();
 	void shutdown();
