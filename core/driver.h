@@ -65,6 +65,8 @@ public:
 
 	// Compiler flags
 	void setCompilerFlags(size_t flags) { m_cflags |= flags; }
+
+	size_t getCompilerFlags() const { return m_cflags; }
 protected:
 	// Indicates if it's a file is being parsed
 	bool m_is_file;

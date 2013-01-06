@@ -107,16 +107,18 @@ void Compiler::emitAST(ast::Node* tree)
 		ast::Resolver resolver(this);
 		tree->accept(resolver);
 
-		m_scope_pool = resolver.getSymTable()->flatten();
+		if (!(m_flags & PARSER_ONLY)) {
+			m_scope_pool = resolver.getSymTable()->flatten();
 
-		for (size_t i = 0; i < m_scope_pool.size(); i++) {
-			m_scope_pool[i]->setId(i);
+			for (size_t i = 0; i < m_scope_pool.size(); i++) {
+				m_scope_pool[i]->setId(i);
+			}
+
+			ast::Codegen codegen(m_ir, this);
+			tree->accept(codegen);
+
+			m_ir.push_back(IR(OP_HALT));
 		}
-
-		ast::Codegen codegen(m_ir, this);
-		tree->accept(codegen);
-
-		m_ir.push_back(IR(OP_HALT));
 
 		delete tree;
 	}

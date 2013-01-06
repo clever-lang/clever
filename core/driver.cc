@@ -24,6 +24,10 @@ Interpreter::Interpreter(int* argc, char*** argv) : Driver()
 /// Executes the script
 void Interpreter::execute(bool interactive)
 {
+	if (getCompilerFlags() & clever::Compiler::PARSER_ONLY) {
+		return;
+	}
+
 	VM vm(m_compiler.getIR());
 
 	vm.setSymbolTable(m_compiler.getSymbolTable());
