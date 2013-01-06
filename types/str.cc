@@ -337,9 +337,9 @@ CLEVER_METHOD(StrType::format)
 		std::ostringstream stream;
 		
 		{
-			char* buffer = (char*) format->c_str();
+			const char *start = format->c_str();
 			
-			for(char* point = buffer; point < (buffer + format->size());) 
+			for(const char* point = start; point < (start + format->size());) 
 			{
 				if (*point && (*point == (char)'\\')) {
 					unsigned long arg;
