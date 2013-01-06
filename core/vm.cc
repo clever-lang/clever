@@ -192,6 +192,7 @@ void VM::run()
 				}
 			}
 
+			env->clear();
 			CLEVER_SAFE_DELREF(env);
 			m_call_stack.pop();
 
@@ -282,7 +283,7 @@ void VM::run()
 		{
 			const Value* func = getValue(OPCODE.op1);
 			Function* fdata = static_cast<Function*>(func->getObj());
-
+//std::cout << fdata->getName() << std::endl;
 			clever_assert_not_null(fdata);
 
 			if (fdata->isUserDefined()) {
@@ -405,6 +406,7 @@ void VM::run()
 			Environment* env = m_call_stack.top();
 			size_t ret_addr = env->getRetAddr();
 
+			env->clear();
 			CLEVER_SAFE_DELREF(env);
 			m_call_stack.pop();
 
@@ -616,16 +618,15 @@ void VM::run()
 
 	OP(OP_NEW):
 		{
-		/*
-			const Type* type = getType(OPCODE.op1);
+			const Value* valtype = getValue(OPCODE.op1);
+			const Type* type = valtype->getType();
 
-			getValue(OPCODE.result)->setType(type);
+			getValue(OPCODE.result)->setType(valtype->getType());
 
 			if (EXPECTED(!type->isPrimitive())) {
 				getValue(OPCODE.result)->setObj(type->allocData(&m_call_args));
 				m_call_args.clear();
 			}
-			*/
 		}
 		DISPATCH;
 
@@ -653,8 +654,8 @@ void VM::run()
 
 	OP(OP_SMCALL):
 		{
-		/*
-			const Type* type = getType(OPCODE.op1);
+			const Value* valtype = getValue(OPCODE.op1);
+			const Type* type = valtype->getType();
 			const Value* method = getValue(OPCODE.op2);
 			MethodPtr ptr;
 
@@ -664,7 +665,6 @@ void VM::run()
 			} else {
 				error(VM_ERROR, "Method not found!");
 			}
-			*/
 		}
 		DISPATCH;
 

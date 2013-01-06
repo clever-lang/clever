@@ -41,6 +41,8 @@ Scope::~Scope() {
         delete *itt;
         ++itt;
     }
+
+    CLEVER_SAFE_DELREF(m_environment);
 }
 
 std::vector<Scope*> Scope::flatten() {
@@ -115,7 +117,7 @@ ValueOffset Scope::getOffset(Symbol* sym) const {
 			if ((*it) == sym) {
 				Scope* parent = scope->m_parent;
 
-				while (parent && parent->m_parent && parent->m_environment == scope->m_environment) {
+				while (parent && /*parent->m_parent &&*/ parent->m_environment == scope->m_environment) {
 					it = parent->m_symbols.begin();
 					end = parent->m_symbols.end();
 
@@ -143,7 +145,6 @@ ValueOffset Scope::getOffset(Symbol* sym) const {
 
 finish:
 
-	//std::cout << "ref " << *sym->name << " = " << offset.first << ":" << offset.second << std::endl;
 	return offset;
 }
 

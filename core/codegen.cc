@@ -174,14 +174,12 @@ void Codegen::visit(Assignment* node)
 void Codegen::visit(MethodCall* node)
 {
 	if (node->isStaticCall()) {
-		Symbol* sym = static_cast<Ident*>(node->getCallee())->getSymbol();
-
 		if (node->hasArgs()) {
 			sendArgs(node->getArgs());
 		}
 
 		m_ir.push_back(IR(OP_SMCALL,
-					Operand(FETCH_TYPE, sym->voffset),
+					Operand(FETCH_VAR, static_cast<Ident*>(node->getCallee())->getVOffset()),
 					Operand(FETCH_CONST,
 						 m_const_env->pushValue(new Value(node->getMethod()->getName())))));
 	} else {
@@ -243,7 +241,7 @@ void Codegen::visit(FunctionDecl* node)
 	m_ir.push_back(IR(OP_JMP, Operand(JMP_ADDR, 0)));
 
 	Symbol* sym = node->getIdent()->getSymbol();
-	Value* funcval = sym->scope->getValue(sym->voffset);
+	Value* funcval = sym->scope->getValue(node->getIdent()->getVOffset());
 	Function* func = static_cast<Function*>(funcval->getObj());
 	func->setAddr(m_ir.size());
 
@@ -486,13 +484,11 @@ void Codegen::visit(If* node)
 
 void Codegen::visit(Instantiation* node)
 {
-	Symbol* sym = node->getType()->getSymbol();
-
 	if (node->hasArgs()) {
 		sendArgs(node->getArgs());
 	}
 
-	m_ir.push_back(IR(OP_NEW, Operand(FETCH_TYPE, sym->voffset)));
+	m_ir.push_back(IR(OP_NEW, Operand(FETCH_VAR, node->getType()->getVOffset())));
 
 	ValueOffset tmp_id = m_temp_env->pushValue(new Value());
 

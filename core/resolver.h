@@ -22,7 +22,7 @@ class Resolver: public Visitor {
 public:
 	Resolver(Compiler* compiler);
 
-	~Resolver();
+	~Resolver() {}
 
 	Scope* getSymTable() { return m_symtable; }
 

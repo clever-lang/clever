@@ -18,27 +18,32 @@ Resolver::Resolver(Compiler* compiler)
 	m_symtable = m_scope = new Scope();
 	m_scope->setEnvironment(new Environment(NULL));
 	m_stack.push(m_scope->getEnvironment());
+	m_scope->getEnvironment()->delRef();
 
 	// Native type allocation
-	m_symtable->pushType(CSTRING("Int"),      CLEVER_INT_TYPE    = new IntType);
-	m_symtable->pushType(CSTRING("Double"),   CLEVER_DOUBLE_TYPE = new DoubleType);
-	m_symtable->pushType(CSTRING("String"),   CLEVER_STR_TYPE    = new StrType);
-	m_symtable->pushType(CSTRING("Function"), CLEVER_FUNC_TYPE   = new FuncType);
+	Value* intval = new Value(CLEVER_INT_TYPE    = new IntType);
+	Value* strval = new Value(CLEVER_STR_TYPE    = new StrType);
+	Value* dblval = new Value(CLEVER_DOUBLE_TYPE = new DoubleType);
+	Value* fncval = new Value(CLEVER_FUNC_TYPE   = new FuncType);
+
+	m_scope->pushValue(CSTRING("Int"),      intval);
+	m_scope->pushValue(CSTRING("String"),   strval);
+	m_scope->pushValue(CSTRING("Double"),   dblval);
+	m_scope->pushValue(CSTRING("Function"), fncval);
+
+	m_stack.top()->pushValue(intval);
+	m_stack.top()->pushValue(strval);
+	m_stack.top()->pushValue(dblval);
+	m_stack.top()->pushValue(fncval);
 
 	CLEVER_INT_TYPE->init();
 	CLEVER_STR_TYPE->init();
-}
-Resolver::~Resolver() {
-	if (!m_stack.empty()) {
-		CLEVER_SAFE_DELREF(m_stack.top());
-	}
 }
 
 void Resolver::visit(Block* node)
 {
 	m_scope = m_scope->enter();
 	m_scope->setEnvironment(m_stack.top());
-	CLEVER_ADDREF(m_scope->getEnvironment());
 
 	node->setScope(m_scope);
 
@@ -111,6 +116,7 @@ void Resolver::visit(FunctionDecl* node)
 	m_scope->setEnvironment(new Environment(m_stack.top()));
 	m_stack.push(m_scope->getEnvironment());
 	func->setEnvironment(m_scope->getEnvironment());
+	m_scope->getEnvironment()->delRef();
 
 	node->setScope(m_scope);
 
@@ -177,8 +183,7 @@ void Resolver::visit(Catch* node)
 {
 	m_scope = m_scope->enter();
 
-	m_scope->setEnvironment(new Environment(m_stack.top()));
-	m_stack.push(m_scope->getEnvironment());
+	m_scope->setEnvironment(m_stack.top());
 
 	Value* val = new Value();
 
@@ -193,7 +198,6 @@ void Resolver::visit(Catch* node)
 	Visitor::visit(static_cast<NodeArray*>(node->getBlock()));
 
 	m_scope = m_scope->leave();
-	m_stack.pop();
 }
 
 }} // clever::ast

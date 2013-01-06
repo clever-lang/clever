@@ -31,11 +31,12 @@ public:
 
 	~Environment() {
 		CLEVER_SAFE_DELREF(m_outer);
+	}
 
-		/*for (size_t i = 0, size = m_data.size(); i < size; i++) {
+	void clear() {
+		for (size_t i = 0, size = m_data.size(); i < size; i++) {
 			CLEVER_SAFE_DELREF(m_data.at(i));
-		}*/
-		m_data.clear();
+		}
 	}
 
 	/**
@@ -76,9 +77,7 @@ public:
 
 	Value* getRetVal() const { return m_ret_val; }
 	void setRetVal(Value* ret_val) {
-		CLEVER_SAFE_DELREF(m_ret_val);
 		m_ret_val = ret_val;
-		CLEVER_SAFE_ADDREF(m_ret_val);
 	}
 
 	Environment* getOuter() const { return m_outer; }

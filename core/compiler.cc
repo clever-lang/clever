@@ -33,12 +33,21 @@ void Compiler::shutdown()
 
 	CLEVER_SAFE_DELETE(g_cstring_tbl);
 
-	//CLEVER_SAFE_DELREF(m_const_env);
-	//CLEVER_SAFE_DELREF(m_temp_env);
+	m_const_env->clear();
+	CLEVER_SAFE_DELREF(m_const_env);
+
+	m_temp_env->clear();
+	CLEVER_SAFE_DELREF(m_temp_env);
+	//CLEVER_SAFE_DELREF(m_global_env);
 
 	if (m_scope_pool.size()) {
 		CLEVER_SAFE_DELETE(m_scope_pool[0]);
 	}
+
+	delete CLEVER_INT_TYPE;
+	delete CLEVER_STR_TYPE;
+	delete CLEVER_DOUBLE_TYPE;
+	delete CLEVER_FUNC_TYPE;
 }
 
 /// Displays an error message and exits

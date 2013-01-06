@@ -69,9 +69,7 @@ public:
 
 	Environment* getEnvironment() { return m_environment; }
 	void setEnvironment(Environment* e) {
-		CLEVER_SAFE_DELREF(m_environment);
 		m_environment = e;
-		CLEVER_SAFE_ADDREF(m_environment);
 	}
 private:
 	std::string m_name;

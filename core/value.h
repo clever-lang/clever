@@ -68,6 +68,7 @@ public:
 	Value(long n) : m_data(n), m_type(CLEVER_INT_TYPE) {}
 	Value(double n) : m_data(n), m_type(CLEVER_DOUBLE_TYPE) {}
 	Value(const CString* value) : m_data(value), m_type(CLEVER_STR_TYPE) {}
+	Value(const Type* type) : m_data(), m_type(type) {}
 
 	~Value() {
 		if (m_type && !m_type->isPrimitive()) {
@@ -86,7 +87,7 @@ public:
 	void dump() const {
 		dump(std::cout);
 	}
-	
+
 	void dump(std::ostream& out) const {
 		if (m_type) {
 			m_type->dump(&m_data, out);
