@@ -89,17 +89,15 @@ Symbol* Scope::getAny(const CString* name) {
 }
 
 ValueOffset Scope::getOffset(Symbol* sym) const {
-	size_t depth = 0;
-	size_t value = 0;
+	ValueOffset offset(0, 0);
 
 	const Scope* scope = this;
 	SymbolMap::const_iterator it, end;
 
 	while (scope) {
-		value = 0;
-
 		if (scope->m_environment != m_environment) {
-			depth++;
+			offset.first++;
+			offset.second = 0;
 		}
 
 		it = scope->m_symbols.begin();
@@ -111,16 +109,31 @@ ValueOffset Scope::getOffset(Symbol* sym) const {
 			}
 
 			if (*it == sym) {
-				return ValueOffset(depth, value);
-			}
+				Scope* parent = scope->m_parent;
 
-			value++;
+				if (parent && scope->m_environment == parent->m_environment) {
+					it = parent->m_symbols.begin();
+					end = parent->m_symbols.end();
+
+					for (; it != end; it++) {
+						if (!(*it)->isType()) {
+							offset.second++;
+						}
+					}
+				}
+				goto exit;
+			}
+			offset.second++;
 		}
 
 		scope = scope->m_parent;
 	}
 
 	clever_fatal("Failed to find the symbol offset.");
+
+exit:
+
+	return offset;
 }
 
 } // clever

@@ -119,7 +119,7 @@ public:
 	Symbol* getLocal(const CString*);
 	Symbol* getAny(const CString*);
 
-	Environment* getEnvironment() { return m_environment; }
+	Environment* getEnvironment() const { return m_environment; }
 	void setEnvironment(Environment* e) {
 		CLEVER_SAFE_DELREF(m_environment);
 		m_environment = e;
