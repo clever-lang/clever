@@ -9,6 +9,10 @@
 
 namespace clever { namespace packages { namespace std {
 
+void* allocData(CLEVER_TYPE_CTOR_ARGS) {
+	
+}
+
 CLEVER_TYPE_OPERATOR(UnicodeString::add) {}
 CLEVER_TYPE_OPERATOR(UnicodeString::sub) {}
 CLEVER_TYPE_OPERATOR(UnicodeString::mul) {}
@@ -22,7 +26,7 @@ CLEVER_TYPE_OPERATOR(UnicodeString::equal) {}
 CLEVER_TYPE_OPERATOR(UnicodeString::not_equal) {}
 
 CLEVER_TYPE_INIT(UnicodeString::init)
-{
+{	
 }
 
 }}} // clever::packages::std

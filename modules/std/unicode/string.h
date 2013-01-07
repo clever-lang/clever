@@ -28,6 +28,8 @@ public:
 
 	void init();
 
+	void* allocData(CLEVER_TYPE_CTOR_ARGS);
+
 	CLEVER_TYPE_VIRTUAL_METHOD_DECLARATIONS;
 };
 

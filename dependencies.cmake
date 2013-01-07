@@ -32,6 +32,19 @@ if (PCRECPP_FOUND)
 	add_definitions(-DHAVE_PCRECPP)
 endif (PCRECPP_FOUND)
 
+# libicu
+if (ICU_DIR)
+	find_path(ICU_INCLUDE_DIR ustring.h "${ICU_DIR}/include/unicode")
+	find_library(ICU_LIBS NAMES icuio icuuc PATHS "${ICU_DIR}/lib")
+	
+	if (ICU_INCLUDE_DIR AND ICU_LIBS)
+		list (APPEND ICU_INCLUDE_DIR ${ICU_INCLUDE_DIR})
+		list (APPEND ICU_LIBS ${ICU_LIBS})
+		set (ICU_FOUND TRUE)
+		add_definitions(-DICU_STATIC)
+	endif (ICU_INCLUDE_DIR AND ICU_LIBS)
+endif (ICU_DIR)
+
 # cgicc
 if (CGICC_DIR)
 	find_path(CGICC_INCLUDE_DIRS cgicc/Cgicc.h "${CGICC_DIR}/include"})

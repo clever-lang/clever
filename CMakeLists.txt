@@ -108,6 +108,11 @@ if (UNIX)
 		OUTPUT_VARIABLE LSB_RELEASE OUTPUT_STRIP_TRAILING_WHITESPACE)
 
 	if (${LSB_RELEASE} MATCHES "Ubuntu")
+		# Add "-licu" to the end of the linker command line
+		if (MOD_STD_UNICODE)
+			set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -licu")
+		endif (MOD_STD_UNICODE)
+				
 		# Add "-lpcrecpp" to the end of the linker command line.
 		if (MOD_STD_REGEX)
 			set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -lpcrecpp")
