@@ -90,39 +90,41 @@ void Compiler::errorf(const location& loc, const char* format, ...)
 
 void Compiler::emitAST(ast::Node* tree)
 {
-	if (tree) {
-		if (m_flags & USE_OPTIMIZER) {
-			ast::Evaluator evaluator;
-			tree = tree->accept(evaluator);
-		}
-		if (m_flags & DUMP_AST) {
-			ast::Dumper astdump;
-			tree->accept(astdump);
-		}
-
-		ast::Resolver resolver(this);
-		tree->accept(resolver);
-
-		if (!(m_flags & PARSER_ONLY)) {
-			m_scope_pool = resolver.getSymTable()->flatten();
-
-			for (size_t i = 0; i < m_scope_pool.size(); i++) {
-				m_scope_pool[i]->setId(i);
-			}
-
-			m_global_env = resolver.getGlobalEnv();
-
-			ast::Codegen codegen(m_ir, this, m_global_env);
-			tree->accept(codegen);
-
-			m_const_env = codegen.getConstEnv();
-			m_temp_env  = codegen.getTempEnv();
-
-			m_ir.push_back(IR(OP_HALT));
-		}
-
-		delete tree;
+	if (!tree) {
+		return;
 	}
+
+	if (m_flags & USE_OPTIMIZER) {
+		ast::Evaluator evaluator;
+		tree = tree->accept(evaluator);
+	}
+	if (m_flags & DUMP_AST) {
+		ast::Dumper astdump;
+		tree->accept(astdump);
+	}
+
+	ast::Resolver resolver(this);
+	tree->accept(resolver);
+
+	if (!(m_flags & PARSER_ONLY)) {
+		m_scope_pool = resolver.getSymTable()->flatten();
+
+		for (size_t i = 0; i < m_scope_pool.size(); i++) {
+			m_scope_pool[i]->setId(i);
+		}
+
+		m_global_env = resolver.getGlobalEnv();
+
+		ast::Codegen codegen(m_ir, this, m_global_env);
+		tree->accept(codegen);
+
+		m_const_env = codegen.getConstEnv();
+		m_temp_env  = codegen.getTempEnv();
+
+		m_ir.push_back(IR(OP_HALT));
+	}
+
+	delete tree;
 }
 
 } // clever
