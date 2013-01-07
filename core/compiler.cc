@@ -29,8 +29,6 @@ void Compiler::init()
 /// Frees all resource used by the compiler
 void Compiler::shutdown()
 {
-	m_pkg.shutdown();
-
 	CLEVER_SAFE_DELETE(g_cstring_tbl);
 
 	m_const_env->clear();
@@ -48,6 +46,8 @@ void Compiler::shutdown()
 	delete CLEVER_STR_TYPE;
 	delete CLEVER_DOUBLE_TYPE;
 	delete CLEVER_FUNC_TYPE;
+
+	m_pkg.shutdown();
 }
 
 /// Displays an error message and exits
