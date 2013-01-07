@@ -143,7 +143,8 @@ void VM::copy(const VM* vm)
 	this->m_pc = vm->m_pc;
 
 	this->m_try_stack = vm->m_try_stack;
-//o call_stack precisa ser copiado e esse temp_env está certo?
+
+	//[TODO]The call_stack must be copied and this temp_env copy is right?
 	this->m_temp_env = vm->m_temp_env->activate(NULL);
 
 	this->m_global_env = vm->m_global_env;
