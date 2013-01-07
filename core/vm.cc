@@ -180,7 +180,6 @@ void VM::wait()
 	m_thread_pool.clear();
 }
 
-static size_t g_n_threads = 0;
 
 
 CLEVER_THREAD_FUNC(_thread_control)
@@ -339,7 +338,7 @@ void VM::run()
 			clever_assert_not_null(fdata);
 
 			if (fdata->isUserDefined()) {
-				if (g_n_threads) {
+				if (thread_is_enabled()) {
 					getMutex()->lock();
 				}
 
@@ -366,7 +365,7 @@ void VM::run()
 
 				m_call_args.clear();
 
-				if (g_n_threads) {
+				if (thread_is_enabled()) {
 					getMutex()->unlock();
 				}
 
@@ -390,10 +389,10 @@ void VM::run()
 				n_threads = size->getInt();
 			}
 
-
-
 			for (size_t i = 0; i < n_threads; ++i) {
 				Thread* thread = new Thread;
+
+				new_thread();
 
 				thread->vm_handler = new VM(this->m_inst);
 				thread->vm_handler->copy(this);
@@ -403,7 +402,7 @@ void VM::run()
 				if (static_cast<long>(m_thread_pool.size()) <= getValue(OPCODE.op2)->getInt()) {
 					m_thread_pool.resize(getValue(OPCODE.op2)->getInt() + 1);
 				}
-				g_n_threads++;
+
 				m_thread_pool[getValue(OPCODE.op2)->getInt()].push_back(thread);
 
 				thread->t_handler.create(_thread_control,
@@ -419,10 +418,17 @@ void VM::run()
 
 			std::vector<Thread*>& thread_list = m_thread_pool[getValue(OPCODE.op1)->getInt()];
 			for (size_t i = 0, j = thread_list.size(); i < j; ++i) {
+
+				delete_thread();
+
 				Thread* t = thread_list.at(i);
 				t->t_handler.wait();
 				delete t->vm_handler;
 				delete t;
+			}
+
+			if (n_threads() == 0) {
+				disenable_threads();
 			}
 			thread_list.clear();
 		}
@@ -444,7 +450,6 @@ void VM::run()
 
 			delete m_temp_env;
 
-			g_n_threads--;
 
 			getMutex()->unlock();
 

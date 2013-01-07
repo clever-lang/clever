@@ -9,6 +9,7 @@
 #include "core/codegen.h"
 #include "core/scope.h"
 #include "core/compiler.h"
+#include "core/cthread.h"
 
 namespace clever { namespace ast {
 
@@ -103,6 +104,8 @@ void Codegen::visit(Wait* node)
 
 void Codegen::visit(ThreadBlock* node)
 {
+	enable_threads();
+
 	if (node->getSize() != NULL) {
 		Node* size = node->getSize();
 		size->accept(*this);

@@ -75,4 +75,39 @@ int CThread::wait()
 	return status;
 }
 
+
+bool g_thread_is_enabled = false;
+size_t g_n_threads = 0;
+
+void new_thread()
+{
+	++g_n_threads;
+}
+
+void delete_thread()
+{
+	--g_n_threads;
+}
+
+size_t n_threads()
+{
+	return g_n_threads;
+}
+
+void enable_threads()
+{
+	g_thread_is_enabled = true;
+}
+
+void disenable_threads()
+{
+	g_thread_is_enabled = false;
+}
+
+bool thread_is_enabled()
+{
+	return g_thread_is_enabled;
+}
+
+
 } // clever

@@ -16,6 +16,17 @@
 
 namespace clever {
 
+/*
+Functions to count and control thread creations
+*/
+void new_thread();
+void delete_thread();
+size_t n_threads();
+void enable_threads();
+void disenable_threads();
+bool thread_is_enabled();
+
+
 class Mutex {
 public:
 	Mutex();
