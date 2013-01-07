@@ -1,0 +1,20 @@
+Simple UString tests
+==CODE==
+import std.io.*;
+import std.unicode.*;
+
+var ustring = UString.new("Hello World さくら");
+
+printf("UString: \1\n", ustring);
+printf("UString.getLength(ustring)=\1\n", ustring.getLength());
+printf("UString.indexOf(W)=\1\n", ustring.indexOf("W"));
+printf("UString.lastIndexOf(o)=\1\n", ustring.lastIndexOf("o"));
+ustring.toUpper();
+ustring.toLower();
+printf("UString: \1\n", ustring);
+==RESULT==
+UString: Hello World さくら
+UString.getLength(ustring)=21
+UString.indexOf(W)=6
+UString.lastIndexOf(o)=7
+UString: hello world さくら
