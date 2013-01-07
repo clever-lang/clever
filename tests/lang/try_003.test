@@ -1,0 +1,7 @@
+Testing exception
+==CODE==
+import std.io.*;
+throw "ae";
+==RESULT==
+Fatal error: Unhandled exception!
+Message: ae

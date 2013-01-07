@@ -34,9 +34,10 @@ typedef std::vector<std::pair<size_t, size_t> > ArgCallList;
 class Compiler {
 public:
 	enum CompilerFlag {
-		DUMP_AST = 1,
-		USE_OPTIMIZER,
-		INTERACTIVE
+		DUMP_AST       = 1 << 1,
+		USE_OPTIMIZER  = 1 << 2,
+		PARSER_ONLY    = 1 << 3,
+		INTERACTIVE    = 1 << 4
 	};
 
 	Compiler()

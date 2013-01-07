@@ -100,21 +100,23 @@ void Compiler::emitAST(ast::Node* tree)
 		ast::Resolver resolver(this);
 		tree->accept(resolver);
 
-		m_scope_pool = resolver.getSymTable()->flatten();
+		if (!(m_flags & PARSER_ONLY)) {
+			m_scope_pool = resolver.getSymTable()->flatten();
 
-		for (size_t i = 0; i < m_scope_pool.size(); i++) {
-			m_scope_pool[i]->setId(i);
+			for (size_t i = 0; i < m_scope_pool.size(); i++) {
+				m_scope_pool[i]->setId(i);
+			}
+
+			m_global_env = resolver.getGlobalEnv();
+
+			ast::Codegen codegen(m_ir, this, m_global_env);
+			tree->accept(codegen);
+
+			m_const_env = codegen.getConstEnv();
+			m_temp_env  = codegen.getTempEnv();
+
+			m_ir.push_back(IR(OP_HALT));
 		}
-
-		m_global_env = resolver.getGlobalEnv();
-
-		ast::Codegen codegen(m_ir, this, m_global_env);
-		tree->accept(codegen);
-
-		m_const_env = codegen.getConstEnv();
-		m_temp_env  = codegen.getTempEnv();
-
-		m_ir.push_back(IR(OP_HALT));
 
 		delete tree;
 	}
