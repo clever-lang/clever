@@ -23,9 +23,6 @@ DECLARE_CLEVER_NATIVE_TYPES();
 /// Compiler initialization phase
 void Compiler::init()
 {
-	// Add 'null' to the constant pool
-	addConstant(new Value());
-
 	m_pkg.init();
 }
 
@@ -36,25 +33,21 @@ void Compiler::shutdown()
 
 	CLEVER_SAFE_DELETE(g_cstring_tbl);
 
-	ValuePool::const_iterator it2 = m_const_pool.begin(),
-		end2 = m_const_pool.end();
+	m_const_env->clear();
+	CLEVER_SAFE_DELREF(m_const_env);
 
-	while (it2 != end2) {
-		CLEVER_SAFE_DELREF(*it2);
-		++it2;
-	}
-
-	ValuePool::const_iterator it3 = m_tmp_pool.begin(),
-		end3 = m_tmp_pool.end();
-
-	while (it3 != end3) {
-		CLEVER_SAFE_DELREF(*it3);
-		++it3;
-	}
+	m_temp_env->clear();
+	CLEVER_SAFE_DELREF(m_temp_env);
+	//CLEVER_SAFE_DELREF(m_global_env);
 
 	if (m_scope_pool.size()) {
 		CLEVER_SAFE_DELETE(m_scope_pool[0]);
 	}
+
+	delete CLEVER_INT_TYPE;
+	delete CLEVER_STR_TYPE;
+	delete CLEVER_DOUBLE_TYPE;
+	delete CLEVER_FUNC_TYPE;
 }
 
 /// Displays an error message and exits
@@ -107,34 +100,26 @@ void Compiler::emitAST(ast::Node* tree)
 		ast::Resolver resolver(this);
 		tree->accept(resolver);
 
-		m_scope_pool = resolver.getSymTable()->flatten();
+		if (!(m_flags & PARSER_ONLY)) {
+			m_scope_pool = resolver.getSymTable()->flatten();
 
-		for (size_t i = 0; i < m_scope_pool.size(); i++) {
-			m_scope_pool[i]->setId(i);
+			for (size_t i = 0; i < m_scope_pool.size(); i++) {
+				m_scope_pool[i]->setId(i);
+			}
+
+			m_global_env = resolver.getGlobalEnv();
+
+			ast::Codegen codegen(m_ir, this, m_global_env);
+			tree->accept(codegen);
+
+			m_const_env = codegen.getConstEnv();
+			m_temp_env  = codegen.getTempEnv();
+
+			m_ir.push_back(IR(OP_HALT));
 		}
-
-		ast::Codegen codegen(m_ir, this);
-		tree->accept(codegen);
-
-		m_ir.push_back(IR(OP_HALT));
 
 		delete tree;
 	}
-}
-
-/// Adds a new constant value to the constant pool
-size_t Compiler::addConstant(Value* value)
-{
-	m_const_pool.push_back(value);
-
-	return m_const_id++;
-}
-
-/// Adds a new temporary value to the temporary pool
-size_t Compiler::getTempValue() {
-	m_tmp_pool.push_back(new Value());
-
-	return m_tmp_id++;
 }
 
 } // clever

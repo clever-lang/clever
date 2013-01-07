@@ -1,0 +1,20 @@
+Testing nested exception
+==CODE==
+import std.io.*;
+try {
+	try {
+		throw "foo";
+	} catch (e) {
+		println("level 2");
+		println(e);
+		throw e;
+	}
+} catch (e) {
+	println("level 1");
+	println(e);
+}
+==RESULT==
+level 2
+foo
+level 1
+foo

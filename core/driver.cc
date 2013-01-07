@@ -24,11 +24,15 @@ Interpreter::Interpreter(int* argc, char*** argv) : Driver()
 /// Executes the script
 void Interpreter::execute(bool interactive)
 {
+	if (getCompilerFlags() & clever::Compiler::PARSER_ONLY) {
+		return;
+	}
+
 	VM vm(m_compiler.getIR());
 
-	vm.setSymbolTable(m_compiler.getSymbolTable());
-	vm.setConstantPool(m_compiler.getConstantPool());
-	vm.setTemporaryPool(m_compiler.getTemporaryPool());
+	vm.setConstEnv(m_compiler.getConstEnv());
+	vm.setTempEnv(m_compiler.getTempEnv());
+	vm.setGlobalEnv(m_compiler.getGlobalEnv());
 
 #ifdef CLEVER_DEBUG
 	if (m_dump_opcode) {

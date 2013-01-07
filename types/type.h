@@ -19,7 +19,9 @@
 
 namespace clever {
 
-#define CLEVER_TYPE_OPERATOR_ARGS Value* result, const Value* lhs, const Value* rhs
+class VM;
+
+#define CLEVER_TYPE_OPERATOR_ARGS Value* result, const Value* lhs, const Value* rhs, const VM* vm
 
 #define CLEVER_TYPE_VIRTUAL_METHOD_DECLARATIONS \
 	void CLEVER_FASTCALL add(CLEVER_TYPE_OPERATOR_ARGS) const;  \
@@ -41,7 +43,7 @@ namespace clever {
 #define CLEVER_TYPE_INIT_ARGS
 #define CLEVER_TYPE_INIT(name) void name(CLEVER_TYPE_INIT_ARGS)
 
-#define CLEVER_METHOD_ARGS Value* result, const Value* obj, const ::std::vector<Value*>& args
+#define CLEVER_METHOD_ARGS Value* result, const Value* obj, const ::std::vector<Value*>& args, const VM* vm
 #define CLEVER_METHOD_D(name) void name(CLEVER_METHOD_ARGS) const
 #define CLEVER_METHOD(name) void name(CLEVER_METHOD_ARGS) const
 

@@ -13,6 +13,7 @@
 namespace clever {
 class Compiler;
 class Scope;
+class Environment;
 }
 
 namespace clever { namespace ast {
@@ -21,9 +22,16 @@ class Resolver: public Visitor {
 public:
 	Resolver(Compiler* compiler);
 
-	~Resolver();
+	~Resolver() {}
 
 	Scope* getSymTable() { return m_symtable; }
+
+	Environment* getGlobalEnv() {
+		clever_assert(m_stack.size() == 1,
+					  "There must be only one entry on the stack");
+
+		return m_stack.top();
+	}
 
 	virtual void visit(Block*);
 	virtual void visit(VariableDecl*);
@@ -36,6 +44,7 @@ private:
 	Compiler* m_compiler;
 	Scope* m_symtable;
 	Scope* m_scope;
+	std::stack<Environment*> m_stack;
 };
 
 }} // clever::ast

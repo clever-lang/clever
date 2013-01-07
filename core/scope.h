@@ -16,6 +16,7 @@
 #include <vector>
 #include <algorithm>
 #include "core/value.h"
+#include "core/environment.h"
 
 namespace clever {
 
@@ -30,8 +31,8 @@ struct Symbol {
 	enum SymbolType { TYPE, VAR };
 
 	Symbol() {}
-	Symbol(SymbolType type, const CString *name_, size_t value_id_, Scope *scope_ = NULL)
-		: m_type(type), name(name_), value_id(value_id_), scope(scope_) {}
+	Symbol(SymbolType type, const CString *name_, Scope *scope_ = NULL)
+		: m_type(type), name(name_), scope(scope_) {}
 
 	~Symbol() {}
 
@@ -40,7 +41,7 @@ struct Symbol {
 
 	SymbolType m_type;
 	const CString* name;
-	size_t value_id;
+	ValueOffset voffset;
 	const Scope *scope;
 };
 
@@ -54,16 +55,16 @@ public:
 
 	Scope()
 		: m_parent(NULL), m_children(), m_symbols(), m_size(0), m_id(0),
-		  m_value_id(0), m_type_id(0), m_value_pool() {}
+		  m_value_id(0), m_type_id(0), m_value_pool(), m_environment(NULL) {}
 
 	explicit Scope(Scope* parent)
 		: m_parent(parent), m_children(), m_symbols(), m_size(0), m_id(0),
-		  m_value_id(0), m_type_id(0), m_value_pool() {}
+		  m_value_id(0), m_type_id(0), m_value_pool(), m_environment(NULL) {}
 
 	~Scope();
 
 	size_t pushType(const CString* name, Type* type) {
-		m_symbols.push_back(new Symbol(Symbol::TYPE, name, m_type_id, this));
+		m_symbols.push_back(new Symbol(Symbol::TYPE, name, this));
 		m_symbol_table.insert(SymbolEntry(name, m_size++));
 		m_type_pool.push_back(type);
 
@@ -71,14 +72,16 @@ public:
 	}
 
 	size_t pushValue(const CString* name, Value* value) {
-		m_symbols.push_back(new Symbol(Symbol::VAR, name, m_value_id, this));
+		m_symbols.push_back(new Symbol(Symbol::VAR, name, this));
 		m_symbol_table.insert(SymbolEntry(name, m_size++));
 		m_value_pool.push_back(value);
+
+		//std::cout << *name << " " << m_value_id << std::endl;
 
 		return m_value_id++;
 	}
 
-	Value* getValue(size_t idx) const { return m_value_pool[idx]; }
+	Value* getValue(const ValueOffset& offset) const { return m_environment->getValue(offset); }
 	const Type* getType(size_t idx) const { return m_type_pool[idx]; }
 
 	Symbol& at(size_t idx) const { return *m_symbols[idx]; }
@@ -116,6 +119,15 @@ public:
 	Symbol* getLocal(const CString*);
 	Symbol* getAny(const CString*);
 
+	Environment* getEnvironment() const { return m_environment; }
+	void setEnvironment(Environment* e) {
+		CLEVER_SAFE_DELREF(m_environment);
+		m_environment = e;
+		CLEVER_SAFE_ADDREF(m_environment);
+	}
+
+	std::pair<size_t, size_t> getOffset(Symbol* sym) const;
+
 private:
 	Scope* m_parent;
 	ScopeVector m_children;
@@ -128,6 +140,8 @@ private:
 
 	ValuePool m_value_pool;
 	TypePool m_type_pool;
+
+	Environment* m_environment;
 
 	DISALLOW_COPY_AND_ASSIGN(Scope);
 };
