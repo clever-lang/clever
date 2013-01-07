@@ -169,6 +169,7 @@ inline void Environment::copy(const Environment* _env) {
 			_this = _this->m_outer;
 		} else {
 			_this->m_outer = NULL;
+			_env = NULL;
 		}
 	}
 }
