@@ -41,7 +41,6 @@ if (ICU_DIR)
 		list (APPEND ICU_INCLUDE_DIR ${ICU_INCLUDE_DIR})
 		list (APPEND ICU_LIBS ${ICU_LIBS})
 		set (ICU_FOUND TRUE)
-		add_definitions(-DICU_STATIC)
 	endif (ICU_INCLUDE_DIR AND ICU_LIBS)
 endif (ICU_DIR)
 

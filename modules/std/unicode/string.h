@@ -15,12 +15,12 @@
 
 namespace clever { namespace packages { namespace std {
 
-class UnicodeString : public Type {
+class UString : public Type {
 public:
-	UnicodeString()
-		: Type(CSTRING("UnicodeString")) {}
+	UString()
+		: Type(CSTRING("UString")) {}
 
-	~UnicodeString() {}
+	~UString() {}
 
 	void dump(const void* data) const;
 	void dump(const void* data, ::std::ostream& out) const;
