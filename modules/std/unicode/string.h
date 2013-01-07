@@ -34,6 +34,7 @@ public:
 	CLEVER_TYPE_VIRTUAL_METHOD_DECLARATIONS;
 	
 	CLEVER_METHOD_D(startsWith);
+	CLEVER_METHOD_D(endsWith);
 };
 
 }}} // clever::packages::std
