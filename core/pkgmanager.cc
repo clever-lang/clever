@@ -82,6 +82,8 @@ void PkgManager::loadModule(Scope* scope, Environment* env, Module* module) cons
 		Value* tmp = new Value(itt->second);
 		scope->pushValue(itt->first, tmp);
 		env->pushValue(tmp);
+
+		itt->second->init();
 		++itt;
 	}
 }

@@ -21,9 +21,8 @@ CLEVER_TYPE_OPERATOR(UnicodeString::less_equal) {}
 CLEVER_TYPE_OPERATOR(UnicodeString::equal) {}
 CLEVER_TYPE_OPERATOR(UnicodeString::not_equal) {}
 
-CLEVER_TYPE_INIT(UnicodeString::init) 
+CLEVER_TYPE_INIT(UnicodeString::init)
 {
-	printf("Initializing UnicodeString");
 }
 
 }}} // clever::packages::std
