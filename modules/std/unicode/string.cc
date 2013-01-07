@@ -37,9 +37,21 @@ void UnicodeString::deallocData(void *data) {
 	delete CLEVER_USTR_CAST(data);
 }
 
+CLEVER_METHOD(UnicodeString::getLength)
+{
+	if (CLEVER_THIS()) {
+		CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
+		if (intern) {
+			CLEVER_RETURN_INT(intern->length());
+		}
+	} else {
+		/** UnicodeString.getLength cannot be called statically **/
+	}
+}
+
 CLEVER_METHOD(UnicodeString::startsWith) {
 	if (CLEVER_THIS()) {
-		CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();	
+		CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
 		if (intern) {
 			switch (CLEVER_ARG_COUNT()) {
 				case 1: {
@@ -106,12 +118,85 @@ CLEVER_METHOD(UnicodeString::lastIndexOf)
 					if (CLEVER_ARG_TYPE(0) == CLEVER_STR_TYPE) {
 						CLEVER_RETURN_INT(intern->lastIndexOf(icu::UnicodeString(CLEVER_ARG_PSTR(0))));
 					} else {
-						/** UnicodeString.indexOf expects exactly one parameter of type String **/					
+						/** UnicodeString.lastIndexOf expects exactly one parameter of type String **/					
 					}
 				} break;
 			}
 		}
 	}
+}
+
+CLEVER_METHOD(UnicodeString::toLower)
+{
+	if (CLEVER_THIS()) {
+		CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
+		if (intern) {
+			intern->toLower();
+		}
+	} else {
+		/** UnicodeString.toLower cannot be called statically **/
+	}
+	CLEVER_RETURN_NULL();
+}
+
+CLEVER_METHOD(UnicodeString::toUpper)
+{
+	if (CLEVER_THIS()) {
+		CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
+		if (intern) {
+			intern->toUpper();
+		}
+	} else {
+		/** UnicodeString.toUpper cannot be called statically **/
+	}
+	CLEVER_RETURN_NULL();
+}
+
+CLEVER_METHOD(UnicodeString::reverse)
+{
+	if (CLEVER_THIS()) {
+		CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
+		if (intern) {
+			intern->reverse();
+		}
+	} else {
+		/** UnicodeString.reverse cannot be called statically **/
+	}
+	CLEVER_RETURN_NULL();
+}
+
+CLEVER_METHOD(UnicodeString::trim)
+{
+	if (CLEVER_THIS()) {
+		CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
+		if (intern) {
+			intern->trim();
+		}
+	} else {
+		/** UnicodeString.trim cannot be called statically **/
+	}
+	CLEVER_RETURN_NULL();
+}
+
+CLEVER_METHOD(UnicodeString::truncate)
+{
+	if (CLEVER_THIS()) {
+		CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
+		if (intern) {
+			switch (CLEVER_ARG_COUNT()) {
+				case 1: {
+					intern->truncate(CLEVER_ARG_INT(0));
+				} break;
+				
+				default:
+					/** UnicodeString.truncate cannot be called statically */
+				break;
+			}
+		}
+	} else {
+		/** UnicodeString.trim cannot be called statically **/
+	}
+	CLEVER_RETURN_NULL();
 }
 
 CLEVER_TYPE_OPERATOR(UnicodeString::add) {}
@@ -128,10 +213,16 @@ CLEVER_TYPE_OPERATOR(UnicodeString::not_equal) {}
 
 CLEVER_TYPE_INIT(UnicodeString::init)
 {	
+	addMethod(CSTRING("getLength"),			(MethodPtr) &UnicodeString::getLength);
 	addMethod(CSTRING("startsWith"),		(MethodPtr) &UnicodeString::startsWith);
 	addMethod(CSTRING("endsWith"),			(MethodPtr) &UnicodeString::endsWith);
 	addMethod(CSTRING("indexOf"),			(MethodPtr) &UnicodeString::indexOf);
 	addMethod(CSTRING("lastIndexOf"),		(MethodPtr) &UnicodeString::lastIndexOf);
+	addMethod(CSTRING("toUpper"),			(MethodPtr) &UnicodeString::toUpper);
+	addMethod(CSTRING("toLower"),			(MethodPtr) &UnicodeString::toLower);
+	addMethod(CSTRING("reverse"),			(MethodPtr) &UnicodeString::reverse);
+	addMethod(CSTRING("trim"),				(MethodPtr) &UnicodeString::trim);
+	addMethod(CSTRING("truncate"),			(MethodPtr) &UnicodeString::truncate);
 }
 
 }}} // clever::packages::std
