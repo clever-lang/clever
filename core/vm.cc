@@ -384,8 +384,6 @@ void VM::run()
 
 			getMutex()->lock();
 
-			Thread* thread = new Thread;
-
 			const Value* size = getValue(OPCODE.result);
 			size_t n_threads = 1;
 
