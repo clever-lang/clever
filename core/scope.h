@@ -55,34 +55,23 @@ public:
 
 	Scope()
 		: m_parent(NULL), m_children(), m_symbols(), m_size(0), m_id(0),
-		  m_value_id(0), m_type_id(0), m_value_pool(), m_environment(NULL) {}
+		  m_value_id(0), m_value_pool(), m_environment(NULL) {}
 
 	explicit Scope(Scope* parent)
 		: m_parent(parent), m_children(), m_symbols(), m_size(0), m_id(0),
-		  m_value_id(0), m_type_id(0), m_value_pool(), m_environment(NULL) {}
+		  m_value_id(0), m_value_pool(), m_environment(NULL) {}
 
 	~Scope();
-
-	size_t pushType(const CString* name, Type* type) {
-		m_symbols.push_back(new Symbol(Symbol::TYPE, name, this));
-		m_symbol_table.insert(SymbolEntry(name, m_size++));
-		m_type_pool.push_back(type);
-
-		return m_type_id++;
-	}
 
 	size_t pushValue(const CString* name, Value* value) {
 		m_symbols.push_back(new Symbol(Symbol::VAR, name, this));
 		m_symbol_table.insert(SymbolEntry(name, m_size++));
 		m_value_pool.push_back(value);
 
-		//std::cout << *name << " " << m_value_id << std::endl;
-
 		return m_value_id++;
 	}
 
 	Value* getValue(const ValueOffset& offset) const { return m_environment->getValue(offset); }
-	const Type* getType(size_t idx) const { return m_type_pool[idx]; }
 
 	Symbol& at(size_t idx) const { return *m_symbols[idx]; }
 
@@ -136,10 +125,8 @@ private:
 	size_t m_size;
 	size_t m_id;
 	size_t m_value_id;
-	size_t m_type_id;
 
 	ValuePool m_value_pool;
-	TypePool m_type_pool;
 
 	Environment* m_environment;
 

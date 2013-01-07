@@ -71,7 +71,9 @@ void PkgManager::loadModule(Scope* scope, Environment* env, Module* module) cons
 	TypeMap::const_iterator itt(types.begin()), ite(types.end());
 
 	while (EXPECTED(itt != ite)) {
-		scope->pushType(itt->first, itt->second);
+		Value* tmp = new Value(itt->second);
+		scope->pushValue(itt->first, tmp);
+		env->pushValue(tmp);
 		++itt;
 	}
 }

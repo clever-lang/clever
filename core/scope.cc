@@ -34,14 +34,6 @@ Scope::~Scope() {
         ++its;
     }
 
-    TypePool::const_iterator itt = m_type_pool.begin(),
-        endt = m_type_pool.end();
-
-    while (itt != endt) {
-        delete *itt;
-        ++itt;
-    }
-
     CLEVER_SAFE_DELREF(m_environment);
 }
 
