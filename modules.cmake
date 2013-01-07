@@ -36,6 +36,20 @@ endif (MOD_STD_REGEX)
 
 clever_module_msg(std_regex ${MOD_STD_REGEX})
 
+# std.regex
+if (MOD_STD_UNICODE)
+	if (ICU_FOUND)
+		add_definitions(-DHAVE_MOD_STD_UNICODE)
+		list(APPEND CLEVER_INCLUDE_DIRS ${ICU_INCLUDE_DIRS})
+		list(APPEND CLEVER_LIBRARIES ${ICU_LIBS})
+	else (ICU_FOUND)
+		clever_module_msg(std_unicode "libicu not found. disabling.")
+		set(MOD_STD_UNICODE OFF)
+	endif (ICU_FOUND)
+endif (MOD_STD_UNICODE)
+
+clever_module_msg(std_regex ${MOD_STD_REGEX})
+
 # std.ffi
 if (MOD_STD_FFI)
 	if (FFI_FOUND)
