@@ -170,6 +170,12 @@ void printf(const char*, ...);
 void vprintfln(const char*, va_list);
 void printfln(const char*, ...);
 
+#define CLEVER_TYPE_INT		1
+#define CLEVER_TYPE_DBL		2
+#define CLEVER_TYPE_STR		4
+#define CLEVER_TYPE_OBJ		8
+#define CLEVER_TYPE_FUNC	16
+
 /* {{{ Accessor Macros for Function Arguments */
 #define CLEVER_ARG_COUNT		 args.size
 /* {{{ CString */
@@ -183,6 +189,15 @@ void printfln(const char*, ...);
 #define CLEVER_ARG_TYPE(index)	args[index]->getType()
 #define CLEVER_ARG_DUMP(index) 	args[index]->dump()
 #define CLEVER_ARG_DUMPTO(index, stream) args[index]->dump(stream)
+/* }}} */
+
+/* {{{ Return value setters */
+#define CLEVER_RETURN_CSTR(c)	result->setStr(c)
+#define CLEVER_RETURN_DBL(d)	result->setDouble(d)
+#define CLEVER_RETURN_INT(i)	result->setInt(i)
+#define CLEVER_RETURN_OBJ(o)	result->setObj(o)
+#define CLEVER_RETURN_DATA(d)	result->setData(d)
+#define CLEVER_RETURN_NULL()	result->setNull()
 /* }}} */
 
 } // clever
