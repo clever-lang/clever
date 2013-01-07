@@ -82,6 +82,8 @@ public:
 		m_ret_val = ret_val;
 	}
 
+	void copy(const Environment*);
+
 	Environment* getOuter() const { return m_outer; }
 
 private:
@@ -135,6 +137,33 @@ inline Environment* Environment::activate(Environment* outer) const {
 	}
 
 	return e;
+}
+
+inline void Environment::copy(const Environment* env) {
+	this->m_active = env->m_active;
+	this->m_ret_addr = env->m_ret_addr;
+
+	if (env->m_ret_val != NULL) {
+		Value* v = new Value;
+		v->copy(env->m_ret_val);
+
+		this->m_ret_val = v;
+	} else {
+		this->m_ret_val = NULL;
+	}
+
+	for (size_t i = 0, size = env->m_data.size(); i < size; i++) {
+		Value* v = new Value();
+		v->copy(env->m_data[i]);
+		this->pushValue(v);
+	}
+
+	if (env->m_outer != NULL) {
+		this->m_outer = new Environment(NULL);
+		this->m_outer->copy(env->m_outer);
+	} else {
+		this->m_outer = NULL;
+	}
 }
 
 } // clever

@@ -145,7 +145,8 @@ void VM::copy(const VM* vm)
 	this->m_try_stack = vm->m_try_stack;
 
 	//[TODO]The call_stack must be copied and this temp_env copy is right?
-	this->m_temp_env = vm->m_temp_env->activate(NULL);
+	this->m_temp_env = new Environment(NULL);
+	this->m_temp_env->copy(vm->m_temp_env);
 
 	this->m_global_env = vm->m_global_env;
 	this->m_const_env = vm->m_const_env;
