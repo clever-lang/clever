@@ -6,11 +6,16 @@
  */
 #include "types/type.h"
 #include "modules/std/unicode/string.h"
+#include "unicode/unistr.h"
 
 namespace clever { namespace packages { namespace std {
 
 void* allocData(CLEVER_TYPE_CTOR_ARGS) {
-	
+	if (args->size()) {
+		printf("Got %d args\n", args->size());
+		
+	} else printf("Got no args\n");
+	return NULL;
 }
 
 CLEVER_TYPE_OPERATOR(UnicodeString::add) {}
@@ -27,6 +32,7 @@ CLEVER_TYPE_OPERATOR(UnicodeString::not_equal) {}
 
 CLEVER_TYPE_INIT(UnicodeString::init)
 {	
+	
 }
 
 }}} // clever::packages::std

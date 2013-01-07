@@ -35,7 +35,7 @@ endif (PCRECPP_FOUND)
 # libicu
 if (ICU_DIR)
 	find_path(ICU_INCLUDE_DIR ustring.h "${ICU_DIR}/include/unicode")
-	find_library(ICU_LIBS NAMES icuio icuuc PATHS "${ICU_DIR}/lib")
+	find_library(ICU_LIBS NAMES icuuc PATHS "${ICU_DIR}/lib")
 	
 	if (ICU_INCLUDE_DIR AND ICU_LIBS)
 		list (APPEND ICU_INCLUDE_DIR ${ICU_INCLUDE_DIR})
