@@ -328,7 +328,6 @@ void VM::run()
 		{
 			const Value* func = getValue(OPCODE.op1);
 			Function* fdata = static_cast<Function*>(func->getObj());
-//std::cout << fdata->getName() << std::endl;
 			clever_assert_not_null(fdata);
 
 			if (fdata->isUserDefined()) {
