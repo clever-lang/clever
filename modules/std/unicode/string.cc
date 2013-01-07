@@ -11,7 +11,8 @@
 
 namespace clever { namespace packages { namespace std {
 
-#define CLEVER_UNICODE_STRING() (icu::UnicodeString*) CLEVER_THIS()->getObj()
+#define CLEVER_USTR_TYPE icu::UnicodeString*
+#define CLEVER_USTR_THIS() (CLEVER_USTR_TYPE) CLEVER_THIS()->getObj()
 
 void* UnicodeString::allocData(CLEVER_TYPE_CTOR_ARGS) const {
 	if (args->size()) {
@@ -34,7 +35,7 @@ void UnicodeString::deallocData(void *data) {
 
 CLEVER_METHOD(UnicodeString::dbg) {
 	if (CLEVER_THIS()) {
-		icu::UnicodeString* intern = CLEVER_UNICODE_STRING();	
+		CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();	
 		if (intern) {
 			printf("Fetched UnicodeString from Object\n");
 		}
