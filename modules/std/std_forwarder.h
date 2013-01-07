@@ -14,6 +14,9 @@
 #ifdef HAVE_MOD_STD_MATH
 #include "modules/std/math/math.h"
 #endif
+#ifdef HAVE_MOD_STD_MATH
+#include "modules/std/unicode/unicode.h"
+#endif
 #if 0
 #ifdef HAVE_MOD_STD_FILE
 #include "modules/std/file/file.h"
