@@ -333,6 +333,10 @@ void VM::run()
 			clever_assert_not_null(fdata);
 
 			if (fdata->isUserDefined()) {
+				if (g_n_threads) {
+					getMutex()->lock();
+				}
+
 				Environment* fenv;
 
 				if (m_call_stack.top()->isActive()) {
@@ -348,21 +352,18 @@ void VM::run()
 				if (fdata->hasArgs()) {
 					ValueOffset argoff(0,0);
 
-					if (g_n_threads) {
-						getMutex()->lock();
-					}
-
 					for (size_t i = 0, len = m_call_args.size(); i < len; i++) {
 						fenv->getValue(argoff)->copy(m_call_args[i]);
 						argoff.second++;
 					}
-
-					if (g_n_threads) {
-						getMutex()->unlock();
-					}
 				}
 
 				m_call_args.clear();
+
+				if (g_n_threads) {
+					getMutex()->unlock();
+				}
+
 				VM_GOTO(fdata->getAddr());
 			} else {
 				fdata->getPtr()(getValue(OPCODE.result), m_call_args, this);
@@ -388,7 +389,7 @@ void VM::run()
 
 
 			for (size_t i = 0; i < n_threads; ++i) {
-				printf("<>\n");
+				//printf("<>\n");
 				Thread* thread = new Thread;
 
 				thread->vm_handler = new VM(this->m_inst);
