@@ -33,7 +33,7 @@ public:
 
 	CLEVER_TYPE_VIRTUAL_METHOD_DECLARATIONS;
 	
-	CLEVER_METHOD_D(dbg);
+	CLEVER_METHOD_D(startsWith);
 };
 
 }}} // clever::packages::std
