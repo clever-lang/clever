@@ -14,18 +14,21 @@ namespace clever { namespace packages { namespace std {
 #define CLEVER_USTR_TYPE icu::UnicodeString*
 #define CLEVER_USTR_CAST(what) (CLEVER_USTR_TYPE) what
 #define CLEVER_USTR_THIS() CLEVER_USTR_CAST(CLEVER_THIS()->getObj())
+#define CLEVER_USTR_OBJ(from) icu::UnicodeString(from->c_str(), from->size(), US_INV);
 
 void* UnicodeString::allocData(CLEVER_TYPE_CTOR_ARGS) const {
 	if (args->size()) {
 		Value* from = args->at(0);
-		if (from) {
+		if (from && from->getType() == CLEVER_STR_TYPE) {
 			const CString* str = from->getStr();
 			if (str) {
-				return new icu::UnicodeString(
-					str->c_str(), str->size(), US_INV
-				);
+				return new CLEVER_USTR_OBJ(str);
 			}
+		} else {
+			/** UnicodeString.new expected exactly one argument of type String **/
 		}
+	} else {
+		/** UnicodeString.new expected exactly one argument of type String **/
 	}
 	return NULL;
 }
@@ -40,6 +43,8 @@ CLEVER_METHOD(UnicodeString::dbg) {
 		if (intern) {
 			printf("Fetched UnicodeString from Object\n");
 		}
+	} else {
+		/** UnicodeString.dbg cannot be called statically **/
 	}
 }
 
