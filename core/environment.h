@@ -10,6 +10,7 @@
 
 #include "core/value.h"
 #include <stack>
+#include <queue>
 
 namespace clever {
 
@@ -18,6 +19,7 @@ class Environment;
 /// @brief a pair specifying how many environments to `escape` and what value to fetch.
 typedef std::pair<size_t, size_t> ValueOffset;
 typedef std::stack<Environment*> CallStack;
+typedef std::queue<Environment*> CallQueue;
 
 /**
  * @brief the environment class.
@@ -78,9 +80,6 @@ public:
 	Value* getRetVal() const { return m_ret_val; }
 	void setRetVal(Value* ret_val) {
 		m_ret_val = ret_val;
-	}
-
-	void copy(const Environment* env) {
 	}
 
 	Environment* getOuter() const { return m_outer; }

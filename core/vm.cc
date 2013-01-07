@@ -142,10 +142,25 @@ void VM::copy(const VM* vm)
 	this->f_mutex = const_cast<VM*>(vm)->getMutex();
 	this->m_pc = vm->m_pc;
 
+	CallStack tmp_stack = vm->m_call_stack;
+	CallQueue tmp_queue;
+
+	while (!tmp_stack.empty()) {
+		tmp_queue.push(tmp_stack.top()->activate(NULL));
+		tmp_stack.pop();
+	}
+
+	while (!tmp_queue.empty()) {
+		this->m_call_stack.push(tmp_queue.front());
+		tmp_queue.pop();
+	}
+
+
 	this->m_try_stack = vm->m_try_stack;
 
+	this->m_temp_env = vm->m_temp_env->activate(NULL);
+
 	this->m_global_env = vm->m_global_env;
-	this->m_temp_env = vm->m_temp_env;
 	this->m_const_env = vm->m_const_env;
 }
 
@@ -166,9 +181,9 @@ void VM::wait()
 	m_thread_pool.clear();
 }
 
-//static size_t g_n_threads = 0;
+static size_t g_n_threads = 0;
 
-/*
+
 CLEVER_THREAD_FUNC(_thread_control)
 {
 	VM* vm_handler = static_cast<Thread*>(arg)->vm_handler;
@@ -178,7 +193,7 @@ CLEVER_THREAD_FUNC(_thread_control)
 
 	return NULL;
 }
-*/
+
 
 void VM::setException(const char* msg)
 {
@@ -334,18 +349,18 @@ void VM::run()
 				if (fdata->hasArgs()) {
 					ValueOffset argoff(0,0);
 
-					/*if (g_n_threads) {
+					if (g_n_threads) {
 						getMutex()->lock();
-					}*/
+					}
 
 					for (size_t i = 0, len = m_call_args.size(); i < len; i++) {
 						fenv->getValue(argoff)->copy(m_call_args[i]);
 						argoff.second++;
 					}
 
-					/*if (g_n_threads) {
+					if (g_n_threads) {
 						getMutex()->unlock();
-					}*/
+					}
 				}
 
 				m_call_args.clear();
@@ -359,10 +374,10 @@ void VM::run()
 
 	OP(OP_BTHREAD):
 		{
-		/*
-			Thread* thread = new Thread;
 
 			getMutex()->lock();
+
+			Thread* thread = new Thread;
 
 			const Value* size = getValue(OPCODE.result);
 			size_t n_threads = 1;
@@ -374,6 +389,7 @@ void VM::run()
 
 
 			for (size_t i = 0; i < n_threads; ++i) {
+				printf("<>\n");
 				Thread* thread = new Thread;
 
 				thread->vm_handler = new VM(this->m_inst);
@@ -381,26 +397,26 @@ void VM::run()
 
 				thread->vm_handler->setChild();
 
-				if (m_thread_pool.size() <= OPCODE.op2.value_id) {
-					m_thread_pool.resize(OPCODE.op2.value_id + 1);
+				if (m_thread_pool.size() <= getValue(OPCODE.op2)->getInt()) {
+					m_thread_pool.resize(getValue(OPCODE.op2)->getInt() + 1);
 				}
 				g_n_threads++;
-				m_thread_pool[OPCODE.op2.value_id].push_back(thread);
+				m_thread_pool[getValue(OPCODE.op2)->getInt()].push_back(thread);
 
 				thread->t_handler.create(_thread_control,
 										 static_cast<void*>(thread));
 			}
 			getMutex()->unlock();
 
-			VM_GOTO(OPCODE.op1.value_id);
-			*/
-			clever_fatal("Not implemented.");
+			VM_GOTO(OPCODE.op1.jmp_addr);
+
+			//clever_fatal("Not implemented.");
 		}
 
 	OP(OP_WAIT):
 		{
-		/*
-			std::vector<Thread*>& thread_list = m_thread_pool[OPCODE.op1.value_id];
+
+			std::vector<Thread*>& thread_list = m_thread_pool[getValue(OPCODE.op1)->getInt()];
 			for (size_t i = 0, j = thread_list.size(); i < j; ++i) {
 				Thread* t = thread_list.at(i);
 				t->t_handler.wait();
@@ -408,7 +424,7 @@ void VM::run()
 				delete t;
 			}
 			thread_list.clear();
-			*/
+
 			clever_fatal("Not implemented.");
 		}
 		DISPATCH;
@@ -416,20 +432,20 @@ void VM::run()
 	OP(OP_ETHREAD):
 
 		if (this->isChild()) {
-		/*
 			getMutex()->lock();
 
-			for (size_t id = 2, n = m_scope_pool->size(); id < n; ++id) {
-				delete m_scope_pool->at(id);
-			}
+			//for (size_t id = 2, n = m_scope_pool->size(); id < n; ++id) {
+				//delete m_scope_pool->at(id);
+			//}
 
-			delete m_scope_pool;
+			//delete m_scope_pool;
+
 			g_n_threads--;
 			getMutex()->unlock();
 
 			VM_EXIT();
-			*/
-			clever_fatal("Not implemented.");
+
+			//clever_fatal("Not implemented.");
 		}
 		DISPATCH;
 
