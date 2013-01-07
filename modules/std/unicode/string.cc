@@ -22,7 +22,10 @@ void UnicodeString::dump(const void *data) const {
 }
 
 void UnicodeString::dump(const void* data, ::std::ostream& out) const {
-	out << ((CLEVER_USTR_TYPE)data);
+	CLEVER_USTR_TYPE ustr = (*(CLEVER_USTR_TYPE*)data);
+	if (ustr) {
+		out << ustr;
+	}
 }
 
 void* UnicodeString::allocData(CLEVER_TYPE_CTOR_ARGS) const {
