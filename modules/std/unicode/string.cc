@@ -10,12 +10,16 @@
 
 namespace clever { namespace packages { namespace std {
 
-void* allocData(CLEVER_TYPE_CTOR_ARGS) {
-	if (args->size()) {
-		printf("Got %d args\n", args->size());
-		
-	} else printf("Got no args\n");
+void* UnicodeString::allocData(CLEVER_TYPE_CTOR_ARGS) const {
 	return NULL;
+}
+
+void UnicodeString::deallocData(void *data) {
+	
+}
+
+CLEVER_METHOD(UnicodeString::dbg) {
+	
 }
 
 CLEVER_TYPE_OPERATOR(UnicodeString::add) {}
@@ -32,7 +36,7 @@ CLEVER_TYPE_OPERATOR(UnicodeString::not_equal) {}
 
 CLEVER_TYPE_INIT(UnicodeString::init)
 {	
-	
+	addMethod(CSTRING("dbg"),		(MethodPtr) &UnicodeString::dbg);
 }
 
 }}} // clever::packages::std
