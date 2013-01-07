@@ -10,6 +10,8 @@
 #include <iostream>
 #include "core/cstring.h"
 #include "types/type.h"
+#include "unicode/unistr.h"
+#include "unicode/ustream.h"
 
 namespace clever { namespace packages { namespace std {
 
@@ -20,8 +22,8 @@ public:
 
 	~UnicodeString() {}
 
-	virtual void dump(const void*) const {}
-	virtual void dump(const void*, ::std::ostream& out) const {}
+	void dump(const void* data) const;
+	void dump(const void* data, ::std::ostream& out) const;
 
 	virtual void increment(Value*) const {}
 	virtual void decrement(Value*) const {}
@@ -33,11 +35,16 @@ public:
 
 	CLEVER_TYPE_VIRTUAL_METHOD_DECLARATIONS;
 	
+	CLEVER_METHOD_D(getLength);
 	CLEVER_METHOD_D(startsWith);
 	CLEVER_METHOD_D(endsWith);
 	CLEVER_METHOD_D(indexOf);
 	CLEVER_METHOD_D(lastIndexOf);
-	
+	CLEVER_METHOD_D(toLower);
+	CLEVER_METHOD_D(toUpper);
+	CLEVER_METHOD_D(reverse);
+	CLEVER_METHOD_D(trim);
+	CLEVER_METHOD_D(truncate);
 };
 
 }}} // clever::packages::std
