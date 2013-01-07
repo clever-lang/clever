@@ -21,20 +21,22 @@ namespace clever {
 
 class VM;
 
+#define CLEVER_TYPE_DEFAULT_OPERATOR_IMPL CLEVER_THROW("Operation not allowed in this type");
+
 #define CLEVER_TYPE_OPERATOR_ARGS Value* result, const Value* lhs, const Value* rhs, const VM* vm
 
-#define CLEVER_TYPE_VIRTUAL_METHOD_DECLARATIONS \
-	void CLEVER_FASTCALL add(CLEVER_TYPE_OPERATOR_ARGS) const;  \
-	void CLEVER_FASTCALL sub(CLEVER_TYPE_OPERATOR_ARGS) const;  \
-	void CLEVER_FASTCALL mul(CLEVER_TYPE_OPERATOR_ARGS) const;  \
-	void CLEVER_FASTCALL div(CLEVER_TYPE_OPERATOR_ARGS) const;  \
-	void CLEVER_FASTCALL mod(CLEVER_TYPE_OPERATOR_ARGS) const;  \
+#define CLEVER_TYPE_VIRTUAL_METHOD_DECLARATIONS                          \
+	void CLEVER_FASTCALL add(CLEVER_TYPE_OPERATOR_ARGS)           const; \
+	void CLEVER_FASTCALL sub(CLEVER_TYPE_OPERATOR_ARGS)           const; \
+	void CLEVER_FASTCALL mul(CLEVER_TYPE_OPERATOR_ARGS)           const; \
+	void CLEVER_FASTCALL div(CLEVER_TYPE_OPERATOR_ARGS)           const; \
+	void CLEVER_FASTCALL mod(CLEVER_TYPE_OPERATOR_ARGS)           const; \
 	void CLEVER_FASTCALL equal(CLEVER_TYPE_OPERATOR_ARGS)         const; \
 	void CLEVER_FASTCALL not_equal(CLEVER_TYPE_OPERATOR_ARGS)     const; \
 	void CLEVER_FASTCALL greater(CLEVER_TYPE_OPERATOR_ARGS)       const; \
 	void CLEVER_FASTCALL greater_equal(CLEVER_TYPE_OPERATOR_ARGS) const; \
 	void CLEVER_FASTCALL less(CLEVER_TYPE_OPERATOR_ARGS)          const; \
-	void CLEVER_FASTCALL less_equal(CLEVER_TYPE_OPERATOR_ARGS)    const;
+	void CLEVER_FASTCALL less_equal(CLEVER_TYPE_OPERATOR_ARGS)    const
 
 # define CLEVER_TYPE_OPERATOR(name) void CLEVER_FASTCALL name(CLEVER_TYPE_OPERATOR_ARGS) const
 
@@ -103,19 +105,19 @@ public:
 	virtual void dump(const void*, std::ostream& out) const = 0;
 
 	/// Operator methods
-	virtual void CLEVER_FASTCALL add(CLEVER_TYPE_OPERATOR_ARGS)           const = 0;
-	virtual void CLEVER_FASTCALL sub(CLEVER_TYPE_OPERATOR_ARGS)           const = 0;
-	virtual void CLEVER_FASTCALL mul(CLEVER_TYPE_OPERATOR_ARGS)           const = 0;
-	virtual void CLEVER_FASTCALL div(CLEVER_TYPE_OPERATOR_ARGS)           const = 0;
-	virtual void CLEVER_FASTCALL mod(CLEVER_TYPE_OPERATOR_ARGS)           const = 0;
-	virtual void CLEVER_FASTCALL equal(CLEVER_TYPE_OPERATOR_ARGS)         const = 0;
-	virtual void CLEVER_FASTCALL not_equal(CLEVER_TYPE_OPERATOR_ARGS)     const = 0;
-	virtual void CLEVER_FASTCALL greater(CLEVER_TYPE_OPERATOR_ARGS)       const = 0;
-	virtual void CLEVER_FASTCALL greater_equal(CLEVER_TYPE_OPERATOR_ARGS) const = 0;
-	virtual void CLEVER_FASTCALL less(CLEVER_TYPE_OPERATOR_ARGS)          const = 0;
-	virtual void CLEVER_FASTCALL less_equal(CLEVER_TYPE_OPERATOR_ARGS)    const = 0;
-	virtual void increment(Value*)                                        const = 0;
-	virtual void decrement(Value*)                                        const = 0;
+	virtual void CLEVER_FASTCALL add(CLEVER_TYPE_OPERATOR_ARGS)           const;
+	virtual void CLEVER_FASTCALL sub(CLEVER_TYPE_OPERATOR_ARGS)           const;
+	virtual void CLEVER_FASTCALL mul(CLEVER_TYPE_OPERATOR_ARGS)           const;
+	virtual void CLEVER_FASTCALL div(CLEVER_TYPE_OPERATOR_ARGS)           const;
+	virtual void CLEVER_FASTCALL mod(CLEVER_TYPE_OPERATOR_ARGS)           const;
+	virtual void CLEVER_FASTCALL equal(CLEVER_TYPE_OPERATOR_ARGS)         const;
+	virtual void CLEVER_FASTCALL not_equal(CLEVER_TYPE_OPERATOR_ARGS)     const;
+	virtual void CLEVER_FASTCALL greater(CLEVER_TYPE_OPERATOR_ARGS)       const;
+	virtual void CLEVER_FASTCALL greater_equal(CLEVER_TYPE_OPERATOR_ARGS) const;
+	virtual void CLEVER_FASTCALL less(CLEVER_TYPE_OPERATOR_ARGS)          const;
+	virtual void CLEVER_FASTCALL less_equal(CLEVER_TYPE_OPERATOR_ARGS)    const;
+	virtual void increment(Value*)                                        const {};
+	virtual void decrement(Value*)                                        const {};
 
 
 	virtual void* allocData(CLEVER_TYPE_CTOR_ARGS) const { return NULL; }

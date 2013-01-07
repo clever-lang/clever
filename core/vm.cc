@@ -139,27 +139,28 @@ void VM::dumpOpcodes() const
 // Make a copy of VM instance
 void VM::copy(const VM* vm)
 {
-	/*
 	this->f_mutex = const_cast<VM*>(vm)->getMutex();
 	this->m_pc = vm->m_pc;
 
-	this->m_scope_pool = new ScopePool;
 
 	this->m_try_stack = vm->m_try_stack;
-	this->m_scope_pool->push_back(const_cast<Scope*>(vm->m_scope_pool->at(0)));
-	this->m_scope_pool->push_back(const_cast<Scope*>(vm->m_scope_pool->at(1)));
 
-	for (size_t id = 2, n = vm->m_scope_pool->size(); id < n; ++id) {
-		Scope* scope = new Scope;
-
-		scope->copy(vm->m_scope_pool->at(id));
-
-		this->m_scope_pool->push_back(scope);
+	if (vm->m_temp_env != NULL) {
+		this->m_temp_env = new Environment(NULL);
+		this->m_temp_env->copy(vm->m_temp_env);
+	} else {
+		this->m_temp_env = NULL;
 	}
 
-	this->m_temp_env = vm->m_temp_env;
+	this->m_global_env = vm->m_global_env;
+
 	this->m_const_env = vm->m_const_env;
-	*/
+
+	if (vm->m_exception != NULL) {
+		this->m_exception->copy(vm->m_exception);
+	} else {
+		this->m_exception = NULL;
+	}
 }
 
 void VM::wait()
@@ -179,9 +180,8 @@ void VM::wait()
 	m_thread_pool.clear();
 }
 
-//static size_t g_n_threads = 0;
 
-/*
+
 CLEVER_THREAD_FUNC(_thread_control)
 {
 	VM* vm_handler = static_cast<Thread*>(arg)->vm_handler;
@@ -191,14 +191,21 @@ CLEVER_THREAD_FUNC(_thread_control)
 
 	return NULL;
 }
-*/
 
-void VM::setException(const char* msg)
+
+void VM::setException(const char* format, ...)
 {
+	std::ostringstream out;
+	va_list args;
+
+	va_start(args, format);
+
+	vsprintf(out, format, args);
+
 	if (UNEXPECTED(m_exception == NULL)) {
 		m_exception = new Value;
 	}
-	m_exception->setStr(CSTRING(msg));
+	m_exception->setStr(CSTRING(out.str()));
 }
 
 void VM::setException(Value* exception)
@@ -331,6 +338,10 @@ void VM::run()
 			clever_assert_not_null(fdata);
 
 			if (fdata->isUserDefined()) {
+				if (thread_is_enabled()) {
+					getMutex()->lock();
+				}
+
 				Environment* fenv;
 
 				if (m_call_stack.top()->isActive()) {
@@ -346,21 +357,18 @@ void VM::run()
 				if (fdata->hasArgs()) {
 					ValueOffset argoff(0,0);
 
-					/*if (g_n_threads) {
-						getMutex()->lock();
-					}*/
-
 					for (size_t i = 0, len = m_call_args.size(); i < len; i++) {
 						fenv->getValue(argoff)->copy(m_call_args[i]);
 						argoff.second++;
 					}
-
-					/*if (g_n_threads) {
-						getMutex()->unlock();
-					}*/
 				}
 
 				m_call_args.clear();
+
+				if (thread_is_enabled()) {
+					getMutex()->unlock();
+				}
+
 				VM_GOTO(fdata->getAddr());
 			} else {
 				fdata->getPtr()(getValue(OPCODE.result), m_call_args, this);
@@ -371,8 +379,6 @@ void VM::run()
 
 	OP(OP_BTHREAD):
 		{
-		/*
-			Thread* thread = new Thread;
 
 			getMutex()->lock();
 
@@ -383,65 +389,71 @@ void VM::run()
 				n_threads = size->getInt();
 			}
 
-
-
 			for (size_t i = 0; i < n_threads; ++i) {
 				Thread* thread = new Thread;
+
+				new_thread();
 
 				thread->vm_handler = new VM(this->m_inst);
 				thread->vm_handler->copy(this);
 
 				thread->vm_handler->setChild();
 
-				if (m_thread_pool.size() <= OPCODE.op2.value_id) {
-					m_thread_pool.resize(OPCODE.op2.value_id + 1);
+				if (static_cast<long>(m_thread_pool.size()) <= getValue(OPCODE.op2)->getInt()) {
+					m_thread_pool.resize(getValue(OPCODE.op2)->getInt() + 1);
 				}
-				g_n_threads++;
-				m_thread_pool[OPCODE.op2.value_id].push_back(thread);
+
+				m_thread_pool[getValue(OPCODE.op2)->getInt()].push_back(thread);
 
 				thread->t_handler.create(_thread_control,
 										 static_cast<void*>(thread));
 			}
 			getMutex()->unlock();
 
-			VM_GOTO(OPCODE.op1.value_id);
-			*/
-			clever_fatal("Not implemented.");
+			VM_GOTO(OPCODE.op1.jmp_addr);
 		}
 
 	OP(OP_WAIT):
 		{
-		/*
-			std::vector<Thread*>& thread_list = m_thread_pool[OPCODE.op1.value_id];
+
+			std::vector<Thread*>& thread_list = m_thread_pool[getValue(OPCODE.op1)->getInt()];
 			for (size_t i = 0, j = thread_list.size(); i < j; ++i) {
+
+				delete_thread();
+
 				Thread* t = thread_list.at(i);
 				t->t_handler.wait();
 				delete t->vm_handler;
 				delete t;
 			}
+
+			if (n_threads() == 0) {
+				disenable_threads();
+			}
 			thread_list.clear();
-			*/
-			clever_fatal("Not implemented.");
 		}
 		DISPATCH;
 
 	OP(OP_ETHREAD):
 
 		if (this->isChild()) {
-		/*
-			getMutex()->lock();
 
-			for (size_t id = 2, n = m_scope_pool->size(); id < n; ++id) {
-				delete m_scope_pool->at(id);
+			getMutex()->lock();
+			Environment* env = m_temp_env;
+			Environment* other = NULL;
+
+			while (env != NULL) {
+				other = env->getOuter();
+				env->clear();
+				env = other;
 			}
 
-			delete m_scope_pool;
-			g_n_threads--;
+			delete m_temp_env;
+
+
 			getMutex()->unlock();
 
 			VM_EXIT();
-			*/
-			clever_fatal("Not implemented.");
 		}
 		DISPATCH;
 

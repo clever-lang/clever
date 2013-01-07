@@ -14,6 +14,8 @@
 
 namespace clever {
 
+#define CLEVER_THROW(val, args...) const_cast<VM*>(vm)->setException(val, ##args)
+
 extern jmp_buf fatal_error;
 
 // Version macros

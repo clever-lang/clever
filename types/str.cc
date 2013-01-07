@@ -321,7 +321,7 @@ CLEVER_METHOD(StrType::format)
 {
 	const CString* format = NULL;
 	long offset = 0L;
-	
+
 	if (CLEVER_THIS()) {
 		format = CLEVER_THIS()->getStr();
 		offset = -1L;
@@ -332,19 +332,19 @@ CLEVER_METHOD(StrType::format)
 			Compiler::error("String.format expected at least one argument");
 		}
 	}
-	
+
 	if (format) {
 		std::ostringstream stream;
-		
+
 		{
 			const char* start = format->c_str();
-			
-			for(const char* point = start; point < (start + format->size());) 
+
+			for(const char* point = start; point < (start + format->size());)
 			{
 				if (*point && (*point == (char)'\\')) {
 					unsigned long arg;
 					char* skip;
-					
+
 					if ((arg=::std::strtoul(++point, &skip, 10))) {
 						if (CLEVER_ARG_COUNT() > (arg+offset)) {
 							CLEVER_ARG_DUMPTO((arg+offset), stream);
@@ -360,7 +360,7 @@ CLEVER_METHOD(StrType::format)
 				}
 			}
 		}
-		
+
 		CLEVER_RETURN_CSTR(CSTRING(stream.str()));
 	} else {
 		CLEVER_RETURN_NULL();
@@ -369,7 +369,7 @@ CLEVER_METHOD(StrType::format)
 
 // String.startsWith(string match)
 // String.startsWith(string string, string match)
-CLEVER_METHOD(StrType::startsWith) 
+CLEVER_METHOD(StrType::startsWith)
 {
 	const char* with;
 	const CString* match;
@@ -450,7 +450,7 @@ CLEVER_METHOD(StrType::charAt)
 			Compiler::error("String.charAt expected exactly two parameters");
 		}
 	}
-	
+
 	if (data) {
 		if (position > -1L) {
 			if (data->size() > (unsigned long) position) {
