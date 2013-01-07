@@ -373,6 +373,10 @@ void VM::run()
 			} else {
 				fdata->getPtr()(getValue(OPCODE.result), m_call_args, this);
 				m_call_args.clear();
+
+				if (UNEXPECTED(m_exception != NULL)) {
+					THROW_EXCEPTION(m_exception, 1);
+				}
 			}
 		}
 		DISPATCH;
