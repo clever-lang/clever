@@ -12,24 +12,30 @@
 
 namespace clever { namespace packages { namespace std {
 
-#define CLEVER_USTR_TYPE icu::UnicodeString*
+using namespace icu;
+
+#define CLEVER_USTR_TYPE UnicodeString*
 #define CLEVER_USTR_CAST(what) (CLEVER_USTR_TYPE) what
 #define CLEVER_USTR_THIS() CLEVER_USTR_CAST(CLEVER_THIS()->getObj())
-#define CLEVER_USTR_OBJ(from) icu::UnicodeString(from->c_str(), from->size(), US_INV);
+#define CLEVER_USTR_OBJ(from) UnicodeString(from->c_str(), from->size(), US_INV);
 
-void UnicodeString::dump(const void *data) const {
-	 dump(data, ::std::cout);
+void UString::dump(const void *data) const {
+	dump(data, ::std::cout);
 }
 
-void UnicodeString::dump(const void* data, ::std::ostream& out) const {
-	CLEVER_USTR_TYPE ustr = (*(CLEVER_USTR_TYPE*)data);
-	if (ustr) {
-		/** wtf, I am sure this is right ?? **/
-		out << ustr;
+void UString::dump(const void* data, ::std::ostream& out) const {
+	Value::DataValue* dvalue = (Value::DataValue*)data;
+	if (dvalue) {
+		UnicodeString* uvalue = (UnicodeString*) dvalue->obj->getObj();
+		if (uvalue) {
+			for(int32_t start=0; start < uvalue->length(); start++) {
+				out << static_cast<char>(uvalue->char32At(start));
+			}
+		}
 	}
 }
 
-void* UnicodeString::allocData(CLEVER_TYPE_CTOR_ARGS) const {
+void* UString::allocData(CLEVER_TYPE_CTOR_ARGS) const {
 	if (args->size()) {
 		Value* from = args->at(0);
 		if (from && from->getType() == CLEVER_STR_TYPE) {
@@ -38,19 +44,19 @@ void* UnicodeString::allocData(CLEVER_TYPE_CTOR_ARGS) const {
 				return new CLEVER_USTR_OBJ(str);
 			}
 		} else {
-			/** UnicodeString.new expected exactly one argument of type String **/
+			/** UString.new expected exactly one argument of type String **/
 		}
 	} else {
-		/** UnicodeString.new expected exactly one argument of type String **/
+		/** UString.new expected exactly one argument of type String **/
 	}
 	return NULL;
 }
 
-void UnicodeString::deallocData(void *data) {
+void UString::deallocData(void *data) {
 	delete CLEVER_USTR_CAST(data);
 }
 
-CLEVER_METHOD(UnicodeString::getLength)
+CLEVER_METHOD(UString::getLength)
 {
 	if (CLEVER_THIS()) {
 		CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
@@ -58,34 +64,34 @@ CLEVER_METHOD(UnicodeString::getLength)
 			CLEVER_RETURN_INT(intern->length());
 		}
 	} else {
-		/** UnicodeString.getLength cannot be called statically **/
+		/** UString.getLength cannot be called statically **/
 	}
 }
 
-CLEVER_METHOD(UnicodeString::startsWith) {
+CLEVER_METHOD(UString::startsWith) {
 	if (CLEVER_THIS()) {
 		CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
 		if (intern) {
 			switch (CLEVER_ARG_COUNT()) {
 				case 1: {
 					if (CLEVER_ARG_TYPE(0)==CLEVER_STR_TYPE) {
-						CLEVER_RETURN_INT(intern->startsWith(icu::UnicodeString(CLEVER_ARG_PSTR(0))));
+						CLEVER_RETURN_INT(intern->startsWith(UnicodeString(CLEVER_ARG_PSTR(0))));
 					} else {
-						/** UnicodeString.startsWith expects exactly one parameter of type String **/
+						/** UString.startsWith expects exactly one parameter of type String **/
 					}
 				} break;
 
 				default:
-					/** UnicodeString.startsWith expects exactly one parameter, got none **/
+					/** UString.startsWith expects exactly one parameter, got none **/
 				break;
 			}
 		}
 	} else {
-		/** UnicodeString.startsWith cannot be called statically **/
+		/** UString.startsWith cannot be called statically **/
 	}
 }
 
-CLEVER_METHOD(UnicodeString::endsWith)
+CLEVER_METHOD(UString::endsWith)
 {
 	if (CLEVER_THIS()) {
 		CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
@@ -93,9 +99,9 @@ CLEVER_METHOD(UnicodeString::endsWith)
 			switch(CLEVER_ARG_COUNT()) {
 				case 1: {
 					if (CLEVER_ARG_TYPE(0) == CLEVER_STR_TYPE) {
-						CLEVER_RETURN_INT(intern->endsWith(icu::UnicodeString(CLEVER_ARG_PSTR(0))));
+						CLEVER_RETURN_INT(intern->endsWith(UnicodeString(CLEVER_ARG_PSTR(0))));
 					} else {
-						/** UnicodeString.endsWith expects exactly one parameter of type String **/					
+						/** UString.endsWith expects exactly one parameter of type String **/					
 					}
 				} break;
 			}
@@ -103,7 +109,7 @@ CLEVER_METHOD(UnicodeString::endsWith)
 	}
 }
 
-CLEVER_METHOD(UnicodeString::indexOf) 
+CLEVER_METHOD(UString::indexOf) 
 {
 	if (CLEVER_THIS()) {
 		CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
@@ -111,9 +117,9 @@ CLEVER_METHOD(UnicodeString::indexOf)
 			switch(CLEVER_ARG_COUNT()) {
 				case 1: {
 					if (CLEVER_ARG_TYPE(0) == CLEVER_STR_TYPE) {
-						CLEVER_RETURN_INT(intern->indexOf(icu::UnicodeString(CLEVER_ARG_PSTR(0))));
+						CLEVER_RETURN_INT(intern->indexOf(UnicodeString(CLEVER_ARG_PSTR(0))));
 					} else {
-						/** UnicodeString.indexOf expects exactly one parameter of type String **/					
+						/** UString.indexOf expects exactly one parameter of type String **/					
 					}
 				} break;
 			}
@@ -121,7 +127,7 @@ CLEVER_METHOD(UnicodeString::indexOf)
 	}
 }
 
-CLEVER_METHOD(UnicodeString::lastIndexOf)
+CLEVER_METHOD(UString::lastIndexOf)
 {
 	if (CLEVER_THIS()) {
 		CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
@@ -129,9 +135,9 @@ CLEVER_METHOD(UnicodeString::lastIndexOf)
 			switch(CLEVER_ARG_COUNT()) {
 				case 1: {
 					if (CLEVER_ARG_TYPE(0) == CLEVER_STR_TYPE) {
-						CLEVER_RETURN_INT(intern->lastIndexOf(icu::UnicodeString(CLEVER_ARG_PSTR(0))));
+						CLEVER_RETURN_INT(intern->lastIndexOf(UnicodeString(CLEVER_ARG_PSTR(0))));
 					} else {
-						/** UnicodeString.lastIndexOf expects exactly one parameter of type String **/					
+						/** UString.lastIndexOf expects exactly one parameter of type String **/					
 					}
 				} break;
 			}
@@ -139,7 +145,7 @@ CLEVER_METHOD(UnicodeString::lastIndexOf)
 	}
 }
 
-CLEVER_METHOD(UnicodeString::toLower)
+CLEVER_METHOD(UString::toLower)
 {
 	if (CLEVER_THIS()) {
 		CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
@@ -147,12 +153,12 @@ CLEVER_METHOD(UnicodeString::toLower)
 			intern->toLower();
 		}
 	} else {
-		/** UnicodeString.toLower cannot be called statically **/
+		/** UString.toLower cannot be called statically **/
 	}
 	CLEVER_RETURN_NULL();
 }
 
-CLEVER_METHOD(UnicodeString::toUpper)
+CLEVER_METHOD(UString::toUpper)
 {
 	if (CLEVER_THIS()) {
 		CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
@@ -160,12 +166,12 @@ CLEVER_METHOD(UnicodeString::toUpper)
 			intern->toUpper();
 		}
 	} else {
-		/** UnicodeString.toUpper cannot be called statically **/
+		/** UString.toUpper cannot be called statically **/
 	}
 	CLEVER_RETURN_NULL();
 }
 
-CLEVER_METHOD(UnicodeString::reverse)
+CLEVER_METHOD(UString::reverse)
 {
 	if (CLEVER_THIS()) {
 		CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
@@ -173,12 +179,12 @@ CLEVER_METHOD(UnicodeString::reverse)
 			intern->reverse();
 		}
 	} else {
-		/** UnicodeString.reverse cannot be called statically **/
+		/** UString.reverse cannot be called statically **/
 	}
 	CLEVER_RETURN_NULL();
 }
 
-CLEVER_METHOD(UnicodeString::trim)
+CLEVER_METHOD(UString::trim)
 {
 	if (CLEVER_THIS()) {
 		CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
@@ -186,12 +192,12 @@ CLEVER_METHOD(UnicodeString::trim)
 			intern->trim();
 		}
 	} else {
-		/** UnicodeString.trim cannot be called statically **/
+		/** UString.trim cannot be called statically **/
 	}
 	CLEVER_RETURN_NULL();
 }
 
-CLEVER_METHOD(UnicodeString::truncate)
+CLEVER_METHOD(UString::truncate)
 {
 	if (CLEVER_THIS()) {
 		CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
@@ -202,40 +208,40 @@ CLEVER_METHOD(UnicodeString::truncate)
 				} break;
 				
 				default:
-					/** UnicodeString.truncate cannot be called statically */
+					/** UString.truncate cannot be called statically */
 				break;
 			}
 		}
 	} else {
-		/** UnicodeString.trim cannot be called statically **/
+		/** UString.trim cannot be called statically **/
 	}
 	CLEVER_RETURN_NULL();
 }
 
-CLEVER_TYPE_OPERATOR(UnicodeString::add) {}
-CLEVER_TYPE_OPERATOR(UnicodeString::sub) {}
-CLEVER_TYPE_OPERATOR(UnicodeString::mul) {}
-CLEVER_TYPE_OPERATOR(UnicodeString::div) {}
-CLEVER_TYPE_OPERATOR(UnicodeString::mod) {}
-CLEVER_TYPE_OPERATOR(UnicodeString::greater) {}
-CLEVER_TYPE_OPERATOR(UnicodeString::greater_equal) {}
-CLEVER_TYPE_OPERATOR(UnicodeString::less) {}
-CLEVER_TYPE_OPERATOR(UnicodeString::less_equal) {}
-CLEVER_TYPE_OPERATOR(UnicodeString::equal) {}
-CLEVER_TYPE_OPERATOR(UnicodeString::not_equal) {}
+CLEVER_TYPE_OPERATOR(UString::add) {}
+CLEVER_TYPE_OPERATOR(UString::sub) {}
+CLEVER_TYPE_OPERATOR(UString::mul) {}
+CLEVER_TYPE_OPERATOR(UString::div) {}
+CLEVER_TYPE_OPERATOR(UString::mod) {}
+CLEVER_TYPE_OPERATOR(UString::greater) {}
+CLEVER_TYPE_OPERATOR(UString::greater_equal) {}
+CLEVER_TYPE_OPERATOR(UString::less) {}
+CLEVER_TYPE_OPERATOR(UString::less_equal) {}
+CLEVER_TYPE_OPERATOR(UString::equal) {}
+CLEVER_TYPE_OPERATOR(UString::not_equal) {}
 
-CLEVER_TYPE_INIT(UnicodeString::init)
+CLEVER_TYPE_INIT(UString::init)
 {	
-	addMethod(CSTRING("getLength"),			(MethodPtr) &UnicodeString::getLength);
-	addMethod(CSTRING("startsWith"),		(MethodPtr) &UnicodeString::startsWith);
-	addMethod(CSTRING("endsWith"),			(MethodPtr) &UnicodeString::endsWith);
-	addMethod(CSTRING("indexOf"),			(MethodPtr) &UnicodeString::indexOf);
-	addMethod(CSTRING("lastIndexOf"),		(MethodPtr) &UnicodeString::lastIndexOf);
-	addMethod(CSTRING("toUpper"),			(MethodPtr) &UnicodeString::toUpper);
-	addMethod(CSTRING("toLower"),			(MethodPtr) &UnicodeString::toLower);
-	addMethod(CSTRING("reverse"),			(MethodPtr) &UnicodeString::reverse);
-	addMethod(CSTRING("trim"),				(MethodPtr) &UnicodeString::trim);
-	addMethod(CSTRING("truncate"),			(MethodPtr) &UnicodeString::truncate);
+	addMethod(CSTRING("getLength"),			(MethodPtr) &UString::getLength);
+	addMethod(CSTRING("startsWith"),		(MethodPtr) &UString::startsWith);
+	addMethod(CSTRING("endsWith"),			(MethodPtr) &UString::endsWith);
+	addMethod(CSTRING("indexOf"),			(MethodPtr) &UString::indexOf);
+	addMethod(CSTRING("lastIndexOf"),		(MethodPtr) &UString::lastIndexOf);
+	addMethod(CSTRING("toUpper"),			(MethodPtr) &UString::toUpper);
+	addMethod(CSTRING("toLower"),			(MethodPtr) &UString::toLower);
+	addMethod(CSTRING("reverse"),			(MethodPtr) &UString::reverse);
+	addMethod(CSTRING("trim"),				(MethodPtr) &UString::trim);
+	addMethod(CSTRING("truncate"),			(MethodPtr) &UString::truncate);
 }
 
 }}} // clever::packages::std

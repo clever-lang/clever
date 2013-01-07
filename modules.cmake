@@ -36,7 +36,7 @@ endif (MOD_STD_REGEX)
 
 clever_module_msg(std_regex ${MOD_STD_REGEX})
 
-# std.regex
+# std.unicode
 if (MOD_STD_UNICODE)
 	if (ICU_FOUND)
 		add_definitions(-DHAVE_MOD_STD_UNICODE)
@@ -48,7 +48,7 @@ if (MOD_STD_UNICODE)
 	endif (ICU_FOUND)
 endif (MOD_STD_UNICODE)
 
-clever_module_msg(std_regex ${MOD_STD_REGEX})
+clever_module_msg(std_unicode ${MOD_STD_UNICODE})
 
 # std.ffi
 if (MOD_STD_FFI)

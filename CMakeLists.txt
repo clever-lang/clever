@@ -110,7 +110,7 @@ if (UNIX)
 	if (${LSB_RELEASE} MATCHES "Ubuntu")
 		# Add "-licu" to the end of the linker command line
 		if (MOD_STD_UNICODE)
-			set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -licu")
+			set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -licuio -licuuc")
 		endif (MOD_STD_UNICODE)
 				
 		# Add "-lpcrecpp" to the end of the linker command line.
