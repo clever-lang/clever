@@ -31,6 +31,14 @@ void PkgManager::shutdown()
 		ModuleMap::const_iterator itm = mods.begin(), endm = mods.end();
 
 		while (itm != endm) {
+			TypeMap& types = itm->second->getTypes();
+			TypeMap::const_iterator itt(types.begin()), ite(types.end());
+
+			while (itt != ite) {
+				delete itt->second;
+				++itt;
+			}
+
 			delete itm->second;
 			++itm;
 		}
