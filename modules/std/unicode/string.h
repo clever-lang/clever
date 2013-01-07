@@ -28,7 +28,12 @@ public:
 
 	void init();
 
+	virtual void* allocData(CLEVER_TYPE_CTOR_ARGS) const;
+	virtual void deallocData(void* data);
+
 	CLEVER_TYPE_VIRTUAL_METHOD_DECLARATIONS;
+	
+	CLEVER_METHOD_D(dbg);
 };
 
 }}} // clever::packages::std
