@@ -31,12 +31,15 @@ void Compiler::shutdown()
 {
 	CLEVER_SAFE_DELETE(g_cstring_tbl);
 
-	m_const_env->clear();
-	CLEVER_SAFE_DELREF(m_const_env);
+	if (m_const_env) {
+		m_const_env->clear();
+		CLEVER_SAFE_DELREF(m_const_env);
+	}
 
-	m_temp_env->clear();
-	CLEVER_SAFE_DELREF(m_temp_env);
-	//CLEVER_SAFE_DELREF(m_global_env);
+	if (m_temp_env) {
+		m_temp_env->clear();
+		CLEVER_SAFE_DELREF(m_temp_env);
+	}
 
 	if (m_scope_pool.size()) {
 		CLEVER_SAFE_DELETE(m_scope_pool[0]);
@@ -87,39 +90,41 @@ void Compiler::errorf(const location& loc, const char* format, ...)
 
 void Compiler::emitAST(ast::Node* tree)
 {
-	if (tree) {
-		if (m_flags & USE_OPTIMIZER) {
-			ast::Evaluator evaluator;
-			tree = tree->accept(evaluator);
-		}
-		if (m_flags & DUMP_AST) {
-			ast::Dumper astdump;
-			tree->accept(astdump);
-		}
-
-		ast::Resolver resolver(this);
-		tree->accept(resolver);
-
-		if (!(m_flags & PARSER_ONLY)) {
-			m_scope_pool = resolver.getSymTable()->flatten();
-
-			for (size_t i = 0; i < m_scope_pool.size(); i++) {
-				m_scope_pool[i]->setId(i);
-			}
-
-			m_global_env = resolver.getGlobalEnv();
-
-			ast::Codegen codegen(m_ir, this, m_global_env);
-			tree->accept(codegen);
-
-			m_const_env = codegen.getConstEnv();
-			m_temp_env  = codegen.getTempEnv();
-
-			m_ir.push_back(IR(OP_HALT));
-		}
-
-		delete tree;
+	if (!tree) {
+		return;
 	}
+
+	if (m_flags & USE_OPTIMIZER) {
+		ast::Evaluator evaluator;
+		tree = tree->accept(evaluator);
+	}
+	if (m_flags & DUMP_AST) {
+		ast::Dumper astdump;
+		tree->accept(astdump);
+	}
+
+	ast::Resolver resolver(this);
+	tree->accept(resolver);
+
+	if (!(m_flags & PARSER_ONLY)) {
+		m_scope_pool = resolver.getSymTable()->flatten();
+
+		for (size_t i = 0; i < m_scope_pool.size(); i++) {
+			m_scope_pool[i]->setId(i);
+		}
+
+		m_global_env = resolver.getGlobalEnv();
+
+		ast::Codegen codegen(m_ir, this, m_global_env);
+		tree->accept(codegen);
+
+		m_const_env = codegen.getConstEnv();
+		m_temp_env  = codegen.getTempEnv();
+
+		m_ir.push_back(IR(OP_HALT));
+	}
+
+	delete tree;
 }
 
 } // clever
