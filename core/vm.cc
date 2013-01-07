@@ -383,7 +383,6 @@ void VM::run()
 
 	OP(OP_BTHREAD):
 		{
-
 			getMutex()->lock();
 
 			const Value* size = getValue(OPCODE.result);
@@ -419,10 +418,9 @@ void VM::run()
 
 	OP(OP_WAIT):
 		{
-
 			std::vector<Thread*>& thread_list = m_thread_pool[getValue(OPCODE.op1)->getInt()];
-			for (size_t i = 0, j = thread_list.size(); i < j; ++i) {
 
+			for (size_t i = 0, j = thread_list.size(); i < j; ++i) {
 				delete_thread();
 
 				Thread* t = thread_list.at(i);
@@ -439,7 +437,6 @@ void VM::run()
 		DISPATCH;
 
 	OP(OP_ETHREAD):
-
 		if (this->isChild()) {
 
 			getMutex()->lock();
@@ -451,12 +448,9 @@ void VM::run()
 				env->clear();
 				env = other;
 			}
-
 			delete m_temp_env;
 
-
 			getMutex()->unlock();
-
 			VM_EXIT();
 		}
 		DISPATCH;
