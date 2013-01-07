@@ -80,6 +80,9 @@ public:
 		m_ret_val = ret_val;
 	}
 
+	void copy(const Environment* env) {
+	}
+
 	Environment* getOuter() const { return m_outer; }
 
 private:

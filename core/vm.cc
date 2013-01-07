@@ -114,27 +114,14 @@ void VM::dumpOpcodes() const
 // Make a copy of VM instance
 void VM::copy(const VM* vm)
 {
-	/*
 	this->f_mutex = const_cast<VM*>(vm)->getMutex();
 	this->m_pc = vm->m_pc;
 
-	this->m_scope_pool = new ScopePool;
-
 	this->m_try_stack = vm->m_try_stack;
-	this->m_scope_pool->push_back(const_cast<Scope*>(vm->m_scope_pool->at(0)));
-	this->m_scope_pool->push_back(const_cast<Scope*>(vm->m_scope_pool->at(1)));
 
-	for (size_t id = 2, n = vm->m_scope_pool->size(); id < n; ++id) {
-		Scope* scope = new Scope;
-
-		scope->copy(vm->m_scope_pool->at(id));
-
-		this->m_scope_pool->push_back(scope);
-	}
-
+	this->m_global_env = vm->m_global_env;
 	this->m_temp_env = vm->m_temp_env;
 	this->m_const_env = vm->m_const_env;
-	*/
 }
 
 void VM::wait()

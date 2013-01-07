@@ -82,31 +82,27 @@ void Codegen::visit(Block* node)
 
 void Codegen::visit(CriticalBlock* node)
 {
-	/*
+
 	m_ir.push_back(IR(OP_LOCK));
 
 	node->getBlock()->accept(*this);
 
 	m_ir.push_back(IR(OP_UNLOCK));
-	*/
 }
 
 
 void Codegen::visit(Wait* node)
 {
-	/*
+
 	const Ident* id_thread = node->getName();
 	const CString* str = id_thread->getName();
 	size_t id = m_thread_ids[*str];
 
 	m_ir.push_back(IR(OP_WAIT, Operand(FETCH_CONST, id)));
-	*/
 }
 
 void Codegen::visit(ThreadBlock* node)
 {
-	/*
-
 	if (node->getSize() != NULL) {
 		Node* size = node->getSize();
 		size->accept(*this);
@@ -118,7 +114,7 @@ void Codegen::visit(ThreadBlock* node)
 		const Ident* id_thread = node->getName();
 		const CString* str = id_thread->getName();
 
-		m_thread_id++;
+		size_t m_thread_id = m_thread_ids.size() + 1;
 		m_thread_ids[*str] = m_thread_id;
 
 		m_ir.push_back(IR(OP_BTHREAD,
@@ -140,7 +136,6 @@ void Codegen::visit(ThreadBlock* node)
 	m_ir.push_back(IR(OP_ETHREAD));
 
 	m_ir[bg].op1 = Operand(JMP_ADDR, m_ir.size());
-	*/
 }
 
 void Codegen::visit(VariableDecl* node)

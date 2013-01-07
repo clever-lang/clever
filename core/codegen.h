@@ -72,7 +72,7 @@ private:
 	Environment* m_temp_env;
 	JmpList m_jmps;
 
-	std::map<CString, ValueOffset> m_thread_ids;
+	std::map<CString, size_t> m_thread_ids;
 };
 
 }} // clever::ast
