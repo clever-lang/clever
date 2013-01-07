@@ -139,30 +139,37 @@ inline Environment* Environment::activate(Environment* outer) const {
 	return e;
 }
 
-inline void Environment::copy(const Environment* env) {
-	this->m_active = env->m_active;
-	this->m_ret_addr = env->m_ret_addr;
+inline void Environment::copy(const Environment* _env) {
+	Environment* _this = this;
+	while (_env != NULL) {
+		const Environment* env = _env;
 
-	if (env->m_ret_val != NULL) {
-		Value* v = new Value;
-		v->copy(env->m_ret_val);
+		_this->m_active = env->m_active;
+		_this->m_ret_addr = env->m_ret_addr;
 
-		this->m_ret_val = v;
-	} else {
-		this->m_ret_val = NULL;
-	}
+		if (env->m_ret_val != NULL) {
+			Value* v = new Value;
+			v->copy(env->m_ret_val);
 
-	for (size_t i = 0, size = env->m_data.size(); i < size; i++) {
-		Value* v = new Value();
-		v->copy(env->m_data[i]);
-		this->pushValue(v);
-	}
+			_this->m_ret_val = v;
+		} else {
+			_this->m_ret_val = NULL;
+		}
 
-	if (env->m_outer != NULL) {
-		this->m_outer = new Environment(NULL);
-		this->m_outer->copy(env->m_outer);
-	} else {
-		this->m_outer = NULL;
+		for (size_t i = 0, size = env->m_data.size(); i < size; i++) {
+			Value* v = new Value();
+			v->copy(env->m_data[i]);
+			_this->pushValue(v);
+		}
+
+		if (env->m_outer != NULL) {
+			//this->m_outer->copy(env->m_outer)
+			_this->m_outer = new Environment(NULL);
+			_env = env->m_outer;
+			_this = _this->m_outer;
+		} else {
+			_this->m_outer = NULL;
+		}
 	}
 }
 
