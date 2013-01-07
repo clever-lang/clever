@@ -330,7 +330,6 @@ void VM::run()
 		{
 			const Value* func = getValue(OPCODE.op1);
 			Function* fdata = static_cast<Function*>(func->getObj());
-//std::cout << fdata->getName() << std::endl;
 			clever_assert_not_null(fdata);
 
 			if (fdata->isUserDefined()) {
@@ -366,7 +365,7 @@ void VM::run()
 				m_call_args.clear();
 				VM_GOTO(fdata->getAddr());
 			} else {
-				fdata->getPtr()(m_call_args, this);
+				fdata->getPtr()(getValue(OPCODE.result), m_call_args, this);
 				m_call_args.clear();
 			}
 		}

@@ -31,6 +31,14 @@ void PkgManager::shutdown()
 		ModuleMap::const_iterator itm = mods.begin(), endm = mods.end();
 
 		while (itm != endm) {
+			TypeMap& types = itm->second->getTypes();
+			TypeMap::const_iterator itt(types.begin()), ite(types.end());
+
+			while (itt != ite) {
+				delete itt->second;
+				++itt;
+			}
+
 			delete itm->second;
 			++itm;
 		}
@@ -71,7 +79,11 @@ void PkgManager::loadModule(Scope* scope, Environment* env, Module* module) cons
 	TypeMap::const_iterator itt(types.begin()), ite(types.end());
 
 	while (EXPECTED(itt != ite)) {
-		scope->pushType(itt->first, itt->second);
+		Value* tmp = new Value(itt->second);
+		scope->pushValue(itt->first, tmp);
+		env->pushValue(tmp);
+
+		itt->second->init();
 		++itt;
 	}
 }
