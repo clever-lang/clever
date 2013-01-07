@@ -24,6 +24,7 @@ void UnicodeString::dump(const void *data) const {
 void UnicodeString::dump(const void* data, ::std::ostream& out) const {
 	CLEVER_USTR_TYPE ustr = (*(CLEVER_USTR_TYPE*)data);
 	if (ustr) {
+		/** wtf, I am sure this is right ?? **/
 		out << ustr;
 	}
 }
