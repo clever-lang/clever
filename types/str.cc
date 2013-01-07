@@ -391,14 +391,15 @@ CLEVER_METHOD(StrType::charAt)
 	}
 }
 
-// String.getLength(string str)
 // String.getLength()
 // Returns the length of the string
 CLEVER_METHOD(StrType::getLength)
 {
 	if (CLEVER_THIS()) {
 		CLEVER_RETURN_INT((CLEVER_THIS()->getStr())->length());
-	} else Compiler::error("String.getLength cannot be called statically");
+	} else {
+		Compiler::error("String.getLength cannot be called statically");
+	}
 }
 
 CLEVER_TYPE_INIT(StrType::init)
