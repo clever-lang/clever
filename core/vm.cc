@@ -146,7 +146,14 @@ void VM::copy(const VM* vm)
 	CallQueue tmp_queue;
 
 	while (!tmp_stack.empty()) {
-		tmp_queue.push(tmp_stack.top()->activate(NULL));
+		Environment* env = tmp_stack.top();
+
+		tmp_queue.push(env->activate(NULL));
+		while (env->isActive()) {
+			tmp_queue.push(env->activate(env->getOuter()));
+			env = env->getOuter();
+		}
+
 		tmp_stack.pop();
 	}
 
