@@ -24,7 +24,7 @@ CLEVER_MODULE_INIT(UnicodeModule) {
 
 	BEGIN_DECLARE_TYPE()
 
-	addType(CSTRING("UnicodeString"), new UnicodeString);
+	addType(CSTRING("UString"), new UString);
 
 	END_DECLARE()
 }
