@@ -21,9 +21,13 @@ if (MOD_STD_IO)
 	list(APPEND CLEVER_MODULES io)
 endif (MOD_STD_IO)
 
-#if (MOD_STD_MATH)
-#	list(APPEND CLEVER_MODULES math)
-#endif (MOD_STD_MATH)
+if (MOD_STD_UNICODE)
+	list(APPEND CLEVER_MODULES unicode)
+endif (MOD_STD_UNICODE)
+
+if (MOD_STD_MATH)
+	list(APPEND CLEVER_MODULES math)
+endif (MOD_STD_MATH)
 
 #if (MOD_STD_NET)
 #	list(APPEND CLEVER_MODULES net)

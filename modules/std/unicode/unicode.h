@@ -1,31 +1,30 @@
 /**
  * Clever programming language
- * Copyright (c) 2011-2012 Clever Team
+ * Copyright (c) Clever Team
  *
  * This file is distributed under the MIT license. See LICENSE for details.
  */
 
-#ifndef CLEVER_STD_MATH_H
-#define CLEVER_STD_MATH_H
+#ifndef CLEVER_STD_UNICODE_H
+#define CLEVER_STD_UNICODE_H
 
 #include "core/module.h"
-#include "types/type.h"
 
 namespace clever { namespace packages { namespace std {
 
-// Standard Math Module
-class Math : public Module {
+/// Standard Unicode Module
+class UnicodeModule : public Module {
 public:
-	Math()
-		: Module("Math") { } 
+	UnicodeModule()
+		: Module("unicode") { }
 
-	~Math() { }
-
+	~UnicodeModule() { }
+		
 	CLEVER_MODULE_VIRTUAL_METHODS_DECLARATION;
 private:
-	DISALLOW_COPY_AND_ASSIGN(Math);
+	DISALLOW_COPY_AND_ASSIGN(UnicodeModule);
 };
 
 }}} // clever::packages::std
 
-#endif // CLEVER_STD_MATH_H
+#endif // CLEVER_STD_UNICODE_H

@@ -69,11 +69,9 @@ static CLEVER_FUNCTION(printf) {
 		const CString* format = CLEVER_ARG_CSTR(0);
 		
 		if (format) {
-			char* buffer = new char[format->size()+1];
+			const char* start = format->c_str();
 			
-			::std::strcpy(buffer, format->c_str());
-			
-			for(char* point = buffer; point < (buffer + format->size());) 
+			for(const char* point = start; point < (start + format->size());) 
 			{
 				if (*point && (*point == (char)'\\')) {
 					unsigned long arg;
@@ -93,8 +91,6 @@ static CLEVER_FUNCTION(printf) {
 					point++;
 				}
 			}
-
-			delete[] buffer;
 		}
 	}
 }
