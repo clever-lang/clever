@@ -363,7 +363,7 @@ void VM::run()
 				m_call_args.clear();
 				VM_GOTO(fdata->getAddr());
 			} else {
-				fdata->getPtr()(m_call_args, this);
+				fdata->getPtr()(getValue(OPCODE.result), m_call_args, this);
 				m_call_args.clear();
 			}
 		}
