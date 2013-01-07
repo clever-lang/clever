@@ -41,6 +41,8 @@ Scope::~Scope() {
         delete *itt;
         ++itt;
     }
+
+    CLEVER_SAFE_DELREF(m_environment);
 }
 
 std::vector<Scope*> Scope::flatten() {
@@ -86,6 +88,64 @@ Symbol* Scope::getAny(const CString* name) {
     }
 
     return sym;
+}
+
+ValueOffset Scope::getOffset(Symbol* sym) const {
+	ValueOffset offset(0, 0);
+
+	const Scope* scope = this;
+	const Environment* last_env = m_environment;
+	bool count_values = false;
+
+	while (scope) {
+		SymbolMap::const_iterator it(scope->m_symbols.begin()), end(scope->m_symbols.end());
+
+		if (scope->m_environment != last_env) {
+			offset.first++;
+			offset.second = 0;
+		}
+
+		if (scope == sym->scope) {
+			count_values = true;
+		}
+
+		for (; it != end; ++it) {
+			if ((*it)->isType()) {
+				continue;
+			}
+
+			if ((*it) == sym) {
+				Scope* parent = scope->m_parent;
+
+				while (parent && /*parent->m_parent &&*/ parent->m_environment == scope->m_environment) {
+					it = parent->m_symbols.begin();
+					end = parent->m_symbols.end();
+
+					for (; it != end; ++it) {
+						if ((*it)->isVar()) {
+							offset.second++;
+						}
+					}
+
+					parent = parent->m_parent;
+				}
+				goto finish;
+			}
+
+			if (count_values) {
+				offset.second++;
+			}
+		}
+
+		last_env = scope->m_environment;
+		scope = scope->m_parent;
+	}
+
+	clever_assert(0, "Failed to find the symbol offset.");
+
+finish:
+
+	return offset;
 }
 
 } // clever

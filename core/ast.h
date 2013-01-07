@@ -67,16 +67,17 @@ public:
 	virtual DoubleLit* getDoubleLit() { return NULL; }
 	virtual StringLit* getStrLit() { return NULL; }
 
-	virtual void setValueId(size_t value_id) { m_value_id = value_id; }
-	virtual size_t getValueId() const { return m_value_id; }
-
 	virtual void setScope(const Scope* scope) { m_scope = scope; }
 	virtual const Scope* getScope() const { return m_scope; }
+
+	virtual void setVOffset(const ValueOffset& offset) { m_voffset = offset; }
+	ValueOffset& getVOffset() { return m_voffset; }
 
 private:
 	const location& m_location;
 	size_t m_value_id;
 	const Scope* m_scope;
+	ValueOffset m_voffset;
 };
 
 class NodeArray: public Node {
@@ -781,10 +782,6 @@ public:
 	virtual ~Literal() {}
 
 	virtual bool isLiteral() const { return true; }
-
-	virtual void setConstId(size_t const_id) { m_const_id = const_id; }
-
-	virtual size_t getConstId() const { return m_const_id; }
 private:
 	size_t m_const_id;
 };

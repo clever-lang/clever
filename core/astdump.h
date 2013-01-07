@@ -34,7 +34,18 @@ public:
 
 	void visit(Node* node)         { std::cout << m_ws << "Node" << std::endl;         }
 	void visit(NodeArray* node)    { std::cout << m_ws << "NodeArray" << std::endl;    }
-	void visit(FunctionCall* node) { std::cout << m_ws << "FunctionCall" << std::endl; }
+	void visit(FunctionCall* node) {
+		std::cout << m_ws << "FunctionCall" << std::endl;
+		m_ws = std::string(++m_level, ' ');
+		node->getCallee()->accept(*this);
+
+		if (node->hasArgs()) {
+			node->getArgs()->accept(*this);
+		}
+
+		m_ws = std::string(--m_level, ' ');
+
+	}
 	void visit(MethodCall* node)   { std::cout << m_ws << "MethodCall" << std::endl;   }
 	void visit(If* node)           { std::cout << m_ws << "If" << std::endl;           }
 	void visit(IntLit* node)       { std::cout << m_ws << "IntLit" << std::endl;       }
