@@ -17,7 +17,7 @@ namespace clever { namespace packages { namespace std {
 class UnicodeModule : public Module {
 public:
 	UnicodeModule()
-		: Module("unicode") { }
+		: Module("unicode") { u_init(&errorCode); }
 
 	~UnicodeModule() {
 		u_cleanup();
@@ -26,6 +26,8 @@ public:
 	CLEVER_MODULE_VIRTUAL_METHODS_DECLARATION;
 private:
 	DISALLOW_COPY_AND_ASSIGN(UnicodeModule);
+	
+	UErrorCode errorCode;
 };
 
 }}} // clever::packages::std
