@@ -142,6 +142,7 @@ void VM::copy(const VM* vm)
 	this->f_mutex = const_cast<VM*>(vm)->getMutex();
 	this->m_pc = vm->m_pc;
 
+
 	this->m_try_stack = vm->m_try_stack;
 
 	//[TODO]The call_stack must be copied and this temp_env copy is right?
@@ -183,12 +184,19 @@ CLEVER_THREAD_FUNC(_thread_control)
 }
 
 
-void VM::setException(const char* msg)
+void VM::setException(const char* format, ...)
 {
+	std::ostringstream out;
+	va_list args;
+
+	va_start(args, format);
+
+	vsprintf(out, format, args);
+
 	if (UNEXPECTED(m_exception == NULL)) {
 		m_exception = new Value;
 	}
-	m_exception->setStr(CSTRING(msg));
+	m_exception->setStr(CSTRING(out.str()));
 }
 
 void VM::setException(Value* exception)
@@ -383,7 +391,7 @@ void VM::run()
 
 				thread->vm_handler->setChild();
 
-				if (m_thread_pool.size() <= getValue(OPCODE.op2)->getInt()) {
+				if (static_cast<long>(m_thread_pool.size()) <= getValue(OPCODE.op2)->getInt()) {
 					m_thread_pool.resize(getValue(OPCODE.op2)->getInt() + 1);
 				}
 				g_n_threads++;

@@ -22,8 +22,6 @@ namespace clever {
 #define VM_HANDLER(name) CLEVER_FORCE_INLINE void VM::vm_##name(VM_HANDLER_ARG)
 #define VM_HANDLER_D(name) void vm_##name(VM_HANDLER_ARG)
 
-#define CLEVER_THROW(val) const_cast<VM*>(vm)->setException(val)
-
 class Scope;
 class Value;
 
@@ -88,7 +86,7 @@ public:
 
 	/// Exception handling methods
 	void setException(Value*);
-	void setException(const char*);
+	void setException(const char*, ...);
 
 	IRVector& getInst() const { return m_inst; }
 
