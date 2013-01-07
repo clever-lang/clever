@@ -10,6 +10,8 @@
 #include <iostream>
 #include "core/cstring.h"
 #include "types/type.h"
+#include "unicode/unistr.h"
+#include "unicode/ustream.h"
 
 namespace clever { namespace packages { namespace std {
 
@@ -20,8 +22,8 @@ public:
 
 	~UnicodeString() {}
 
-	virtual void dump(const void*) const {}
-	virtual void dump(const void*, ::std::ostream& out) const {}
+	void dump(const void* data) const;
+	void dump(const void* data, ::std::ostream& out) const;
 
 	virtual void increment(Value*) const {}
 	virtual void decrement(Value*) const {}

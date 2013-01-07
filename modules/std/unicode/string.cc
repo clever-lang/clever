@@ -6,6 +6,7 @@
  */
 #include "types/type.h"
 #include "modules/std/unicode/string.h"
+#include "unicode/ustream.h"
 #include "unicode/unistr.h"
 #include "core/value.h"
 
@@ -15,6 +16,14 @@ namespace clever { namespace packages { namespace std {
 #define CLEVER_USTR_CAST(what) (CLEVER_USTR_TYPE) what
 #define CLEVER_USTR_THIS() CLEVER_USTR_CAST(CLEVER_THIS()->getObj())
 #define CLEVER_USTR_OBJ(from) icu::UnicodeString(from->c_str(), from->size(), US_INV);
+
+void UnicodeString::dump(const void *data) const {
+	 dump(data, ::std::cout);
+}
+
+void UnicodeString::dump(const void* data, ::std::ostream& out) const {
+	out << ((CLEVER_USTR_TYPE)data);
+}
 
 void* UnicodeString::allocData(CLEVER_TYPE_CTOR_ARGS) const {
 	if (args->size()) {
