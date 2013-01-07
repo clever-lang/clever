@@ -17,14 +17,22 @@ using namespace icu;
 #define CLEVER_USTR_TYPE UnicodeString*
 #define CLEVER_USTR_CAST(what) (CLEVER_USTR_TYPE) what
 #define CLEVER_USTR_THIS() CLEVER_USTR_CAST(CLEVER_THIS()->getObj())
-#define CLEVER_USTR_OBJ(from) UnicodeString(from->c_str(), from->size(), NULL);
+#define CLEVER_USTR_OBJ(from) UnicodeString(from->c_str(), from->size(), US_INV);
 
 void UString::dump(const void *data) const {
-	 dump(data, ::std::cout);
+	dump(data, ::std::cout);
 }
 
 void UString::dump(const void* data, ::std::ostream& out) const {
-	
+	Value::DataValue* dvalue = (Value::DataValue*)data;
+	if (dvalue) {
+		UnicodeString* uvalue = (UnicodeString*) dvalue->obj->getObj();
+		if (uvalue) {
+			for(int32_t start=0; start < uvalue->length(); start++) {
+				out << static_cast<char>(uvalue->char32At(start));
+			}
+		}
+	}
 }
 
 void* UString::allocData(CLEVER_TYPE_CTOR_ARGS) const {
