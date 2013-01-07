@@ -8,12 +8,13 @@
 #ifndef CLEVER_VM_H
 #define CLEVER_VM_H
 
-#include <vector>
-#include <stack>
 #include <map>
+#include <stack>
+#include <vector>
+
 #include "core/ir.h"
-#include "core/cthread.h"
 #include "core/codegen.h"
+#include "core/cthread.h"
 
 namespace clever {
 

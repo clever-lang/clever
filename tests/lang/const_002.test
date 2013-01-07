@@ -1,0 +1,10 @@
+[FATAL] Testing const variables
+==CODE==
+import std.io.*;
+
+const a = 1;
+a = 2;
+
+println(a);
+==RESULT==
+Error: Cannot assign to a const variable!

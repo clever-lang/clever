@@ -34,7 +34,9 @@ Node* Evaluator::transform(NodeArray* node) {
 
 Node* Evaluator::transform(VariableDecl* node) {
 	if (node->hasAssignment()) {
-		node->setAssignment(static_cast<Assignment*>(node->getAssignment()->accept(*this)));
+		node->setAssignment(static_cast<Assignment*>(
+			node->getAssignment()->accept(*this))
+		);
 	}
 
 	return node;
@@ -55,11 +57,11 @@ Node* Evaluator::transform(Arithmetic* node) {
 		rhs = node->getRhs()->getIntLit()->getValue();
 
 		switch (node->getOperator()) {
-		case Arithmetic::MOP_ADD: val = lhs + rhs; break;
-		case Arithmetic::MOP_SUB: val = lhs - rhs; break;
-		case Arithmetic::MOP_MUL: val = lhs * rhs; break;
-		case Arithmetic::MOP_DIV: val = lhs / rhs; break;
-		case Arithmetic::MOP_MOD: val = lhs % rhs; break;
+			case Arithmetic::MOP_ADD: val = lhs + rhs; break;
+			case Arithmetic::MOP_SUB: val = lhs - rhs; break;
+			case Arithmetic::MOP_MUL: val = lhs * rhs; break;
+			case Arithmetic::MOP_DIV: val = lhs / rhs; break;
+			case Arithmetic::MOP_MOD: val = lhs % rhs; break;
 		}
 
 		Node* tnode = new IntLit(val, node->getLocation());

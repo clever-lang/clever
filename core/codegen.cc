@@ -6,8 +6,8 @@
  */
 
 #include <iostream>
+
 #include "core/codegen.h"
-#include "core/scope.h"
 #include "core/compiler.h"
 #include "core/cthread.h"
 
