@@ -146,11 +146,21 @@ void VM::copy(const VM* vm)
 	this->m_try_stack = vm->m_try_stack;
 
 	//[TODO]The call_stack must be copied and this temp_env copy is right?
-	this->m_temp_env = new Environment(NULL);
-	this->m_temp_env->copy(vm->m_temp_env);
+	if (vm->m_temp_env != NULL) {
+		this->m_temp_env = new Environment(NULL);
+		this->m_temp_env->copy(vm->m_temp_env);
+	} else {
+		this->m_temp_env = NULL;
+	}
 
 	this->m_global_env = vm->m_global_env;
 	this->m_const_env = vm->m_const_env;
+
+	if (vm->m_exception != NULL) {
+		this->m_exception->copy(vm->m_exception);
+	} else {
+		this->m_exception = NULL;
+	}
 }
 
 void VM::wait()
@@ -426,12 +436,9 @@ void VM::run()
 	OP(OP_ETHREAD):
 
 		if (this->isChild()) {
-			getMutex()->lock();
-
 			delete m_temp_env;
 
 			g_n_threads--;
-			getMutex()->unlock();
 
 			VM_EXIT();
 
