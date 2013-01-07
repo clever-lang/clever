@@ -431,9 +431,22 @@ void VM::run()
 	OP(OP_ETHREAD):
 
 		if (this->isChild()) {
+
+			getMutex()->lock();
+			Environment* env = m_temp_env;
+			Environment* other = NULL;
+
+			while (env != NULL) {
+				other = env->getOuter();
+				env->clear();
+				env = other;
+			}
+
 			delete m_temp_env;
 
 			g_n_threads--;
+
+			getMutex()->unlock();
 
 			VM_EXIT();
 		}
