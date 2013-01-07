@@ -393,7 +393,6 @@ void VM::run()
 
 
 			for (size_t i = 0; i < n_threads; ++i) {
-				//printf("<>\n");
 				Thread* thread = new Thread;
 
 				thread->vm_handler = new VM(this->m_inst);
@@ -413,8 +412,6 @@ void VM::run()
 			getMutex()->unlock();
 
 			VM_GOTO(OPCODE.op1.jmp_addr);
-
-			//clever_fatal("Not implemented.");
 		}
 
 	OP(OP_WAIT):
@@ -428,8 +425,6 @@ void VM::run()
 				delete t;
 			}
 			thread_list.clear();
-
-			//clever_fatal("Not implemented.");
 		}
 		DISPATCH;
 
@@ -441,8 +436,6 @@ void VM::run()
 			g_n_threads--;
 
 			VM_EXIT();
-
-			//clever_fatal("Not implemented.");
 		}
 		DISPATCH;
 
