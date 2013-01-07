@@ -9,6 +9,7 @@
 #define CLEVER_STD_UNICODE_H
 
 #include "core/module.h"
+#include "unicode/uclean.h"
 
 namespace clever { namespace packages { namespace std {
 
@@ -16,13 +17,17 @@ namespace clever { namespace packages { namespace std {
 class UnicodeModule : public Module {
 public:
 	UnicodeModule()
-		: Module("unicode") { }
+		: Module("unicode") { u_init(&errorCode); }
 
-	~UnicodeModule() { }
+	~UnicodeModule() {
+		u_cleanup();
+	}
 		
 	CLEVER_MODULE_VIRTUAL_METHODS_DECLARATION;
 private:
 	DISALLOW_COPY_AND_ASSIGN(UnicodeModule);
+	
+	UErrorCode errorCode;
 };
 
 }}} // clever::packages::std
