@@ -12,7 +12,8 @@
 namespace clever { namespace packages { namespace std {
 
 #define CLEVER_USTR_TYPE icu::UnicodeString*
-#define CLEVER_USTR_THIS() (CLEVER_USTR_TYPE) CLEVER_THIS()->getObj()
+#define CLEVER_USTR_CAST (CLEVER_USTR_TYPE)
+#define CLEVER_USTR_THIS() CLEVER_USTR_CAST CLEVER_THIS()->getObj()
 
 void* UnicodeString::allocData(CLEVER_TYPE_CTOR_ARGS) const {
 	if (args->size()) {
@@ -30,7 +31,7 @@ void* UnicodeString::allocData(CLEVER_TYPE_CTOR_ARGS) const {
 }
 
 void UnicodeString::deallocData(void *data) {
-	delete (icu::UnicodeString*) data;
+	delete CLEVER_USTR_CAST data;
 }
 
 CLEVER_METHOD(UnicodeString::dbg) {
