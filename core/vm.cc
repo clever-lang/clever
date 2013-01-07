@@ -441,11 +441,7 @@ void VM::run()
 		if (this->isChild()) {
 			getMutex()->lock();
 
-			//for (size_t id = 2, n = m_scope_pool->size(); id < n; ++id) {
-				//delete m_scope_pool->at(id);
-			//}
-
-			//delete m_scope_pool;
+			delete m_temp_env;
 
 			g_n_threads--;
 			getMutex()->unlock();
