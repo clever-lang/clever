@@ -142,29 +142,8 @@ void VM::copy(const VM* vm)
 	this->f_mutex = const_cast<VM*>(vm)->getMutex();
 	this->m_pc = vm->m_pc;
 
-	CallStack tmp_stack = vm->m_call_stack;
-	CallQueue tmp_queue;
-
-	while (!tmp_stack.empty()) {
-		Environment* env = tmp_stack.top();
-
-		tmp_queue.push(env->activate(NULL));
-		while (env->isActive()) {
-			tmp_queue.push(env->activate(env->getOuter()));
-			env = env->getOuter();
-		}
-
-		tmp_stack.pop();
-	}
-
-	while (!tmp_queue.empty()) {
-		this->m_call_stack.push(tmp_queue.front());
-		tmp_queue.pop();
-	}
-
-
 	this->m_try_stack = vm->m_try_stack;
-
+//o call_stack precisa ser copiado e esse temp_env está certo?
 	this->m_temp_env = vm->m_temp_env->activate(NULL);
 
 	this->m_global_env = vm->m_global_env;
@@ -430,7 +409,7 @@ void VM::run()
 			}
 			thread_list.clear();
 
-			clever_fatal("Not implemented.");
+			//clever_fatal("Not implemented.");
 		}
 		DISPATCH;
 
