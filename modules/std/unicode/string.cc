@@ -78,6 +78,42 @@ CLEVER_METHOD(UnicodeString::endsWith)
 	}
 }
 
+CLEVER_METHOD(UnicodeString::indexOf) 
+{
+	if (CLEVER_THIS()) {
+		CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
+		if (intern) {
+			switch(CLEVER_ARG_COUNT()) {
+				case 1: {
+					if (CLEVER_ARG_TYPE(0) == CLEVER_STR_TYPE) {
+						CLEVER_RETURN_INT(intern->indexOf(icu::UnicodeString(CLEVER_ARG_PSTR(0))));
+					} else {
+						/** UnicodeString.indexOf expects exactly one parameter of type String **/					
+					}
+				} break;
+			}
+		}
+	}
+}
+
+CLEVER_METHOD(UnicodeString::lastIndexOf)
+{
+	if (CLEVER_THIS()) {
+		CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
+		if (intern) {
+			switch(CLEVER_ARG_COUNT()) {
+				case 1: {
+					if (CLEVER_ARG_TYPE(0) == CLEVER_STR_TYPE) {
+						CLEVER_RETURN_INT(intern->lastIndexOf(icu::UnicodeString(CLEVER_ARG_PSTR(0))));
+					} else {
+						/** UnicodeString.indexOf expects exactly one parameter of type String **/					
+					}
+				} break;
+			}
+		}
+	}
+}
+
 CLEVER_TYPE_OPERATOR(UnicodeString::add) {}
 CLEVER_TYPE_OPERATOR(UnicodeString::sub) {}
 CLEVER_TYPE_OPERATOR(UnicodeString::mul) {}
@@ -94,6 +130,8 @@ CLEVER_TYPE_INIT(UnicodeString::init)
 {	
 	addMethod(CSTRING("startsWith"),		(MethodPtr) &UnicodeString::startsWith);
 	addMethod(CSTRING("endsWith"),			(MethodPtr) &UnicodeString::endsWith);
+	addMethod(CSTRING("indexOf"),			(MethodPtr) &UnicodeString::indexOf);
+	addMethod(CSTRING("lastIndexOf"),		(MethodPtr) &UnicodeString::lastIndexOf);
 }
 
 }}} // clever::packages::std
