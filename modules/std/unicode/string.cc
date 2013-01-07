@@ -41,7 +41,9 @@ CLEVER_METHOD(UnicodeString::dbg) {
 	if (CLEVER_THIS()) {
 		CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();	
 		if (intern) {
-			printf("Fetched UnicodeString from Object\n");
+			printf("Fetched UnicodeString from Object: %d\n", intern->startsWith(
+				icu::UnicodeString("H")
+			));
 		}
 	} else {
 		/** UnicodeString.dbg cannot be called statically **/
@@ -65,4 +67,4 @@ CLEVER_TYPE_INIT(UnicodeString::init)
 	addMethod(CSTRING("dbg"),		(MethodPtr) &UnicodeString::dbg);
 }
 
-}}} // clever::packages::std
+}}} // clever::packages::stdsame 
