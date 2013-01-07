@@ -31,6 +31,14 @@ void PkgManager::shutdown()
 		ModuleMap::const_iterator itm = mods.begin(), endm = mods.end();
 
 		while (itm != endm) {
+			TypeMap& types = itm->second->getTypes();
+			TypeMap::const_iterator itt(types.begin()), ite(types.end());
+
+			while (itt != ite) {
+				delete itt->second;
+				++itt;
+			}
+
 			delete itm->second;
 			++itm;
 		}
@@ -41,7 +49,7 @@ void PkgManager::shutdown()
 }
 
 /// Loads a module if it is not already loaded
-void PkgManager::loadModule(Scope* scope, Module* module) const
+void PkgManager::loadModule(Scope* scope, Environment* env, Module* module) const
 {
 	if (module->isLoaded()) {
 		return;
@@ -60,6 +68,7 @@ void PkgManager::loadModule(Scope* scope, Module* module) const
 		fval->setObj(itf->second);
 
 		scope->pushValue(itf->first, fval);
+		env->pushValue(fval);
 
 		++itf;
 	}
@@ -70,13 +79,17 @@ void PkgManager::loadModule(Scope* scope, Module* module) const
 	TypeMap::const_iterator itt(types.begin()), ite(types.end());
 
 	while (EXPECTED(itt != ite)) {
-		scope->pushType(itt->first, itt->second);
+		Value* tmp = new Value(itt->second);
+		scope->pushValue(itt->first, tmp);
+		env->pushValue(tmp);
+
+		itt->second->init();
 		++itt;
 	}
 }
 
 /// Imports a module
-void PkgManager::importModule(Scope* scope, const CString* package,
+void PkgManager::importModule(Scope* scope, Environment* env, const CString* package,
 	const CString* module) const
 {
 	PackageMap::const_iterator it = m_pkgs.find(package);
@@ -99,11 +112,11 @@ void PkgManager::importModule(Scope* scope, const CString* package,
 		return;
 	}
 
-	loadModule(scope, itm->second);
+	loadModule(scope, env, itm->second);
 }
 
 /// Imports a package
-void PkgManager::importPackage(Scope* scope, const CString* package) const
+void PkgManager::importPackage(Scope* scope, Environment* env, const CString* package) const
 {
 	PackageMap::const_iterator it = m_pkgs.find(package);
 
@@ -120,7 +133,7 @@ void PkgManager::importPackage(Scope* scope, const CString* package) const
 	ModuleMap::const_iterator itm = mods.begin(), endm = mods.end();
 
 	while (EXPECTED(itm != endm)) {
-		loadModule(scope, itm->second);
+		loadModule(scope, env, itm->second);
 		++itm;
 	}
 }

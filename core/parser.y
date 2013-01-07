@@ -54,6 +54,9 @@ class Value;
 	ast::Instantiation* inst;
 	ast::MethodCall* mcall;
 	ast::Property* property;
+	ast::Try* except;
+	ast::Catch* catch_;
+	ast::Throw* throw_;
 }
 
 %type <type> TYPE
@@ -64,10 +67,10 @@ class Value;
 %type <inst> instantiation
 %type <assignment> assignment
 %type <narray> variable_decl variable_decl_list non_empty_call_args call_args
-%type <narray> const_decl_list
+%type <narray> const_decl_list not_empty_catch catch
 %type <vardecl> variable_decl_impl
 %type <vardecl> const_decl_impl
-%type <block> statement_list block
+%type <block> statement_list block finally
 %type <threadblock> thread_block
 %type <waitblock> wait_block
 %type <criticalblock> critical_block
@@ -75,7 +78,7 @@ class Value;
 %type <bitwise> bitwise
 %type <logic> logic
 %type <import> import
-%type <fcall> fcall
+%type <fcall> fcall fcall_chain
 %type <fdecl> fdecl anonymous_fdecl
 %type <ret> return_stmt
 %type <while_loop> while
@@ -86,6 +89,9 @@ class Value;
 %type <comp> comparison
 %type <mcall> mcall
 %type <property> property_access
+%type <except> try_catch_finally
+%type <catch_> catch_impl
+%type <throw_> throw
 
 // The parsing context.
 %parse-param { Driver& driver }
@@ -156,6 +162,10 @@ class Value;
 %token DEC           "--"
 %token NIL           "null"
 %token NEW           "new"
+%token FINALLY       "finally"
+%token CATCH         "catch"
+%token TRY           "try"
+%token THROW         "throw"
 
 %left ',';
 %left LOGICAL_OR;
@@ -207,6 +217,8 @@ statement:
 	|	thread_block
 	|   critical_block
 	|	wait_block ';'
+	|	throw ';'
+	|	try_catch_finally
 ;
 
 block:
@@ -225,6 +237,7 @@ wait_block:
 thread_block:
 		THREAD block       { $$ = new ast::ThreadBlock($2, yyloc); }
 	|	THREAD IDENT block { $$ = new ast::ThreadBlock($3, $2, yyloc); }
+	|	THREAD IDENT '[' rvalue ']'  block { $$ = new ast::ThreadBlock($6, $2, $<node>4, yyloc); }
 ;
 
 critical_block:
@@ -253,6 +266,32 @@ rvalue:
 
 lvalue:
 		IDENT
+;
+
+throw:
+		THROW rvalue { $$ = new ast::Throw($<node>2, yyloc); }
+;
+
+catch:
+		not_empty_catch
+;
+
+not_empty_catch:
+		catch_impl                 { $$ = new ast::NodeArray(yyloc); $$->append($1); }
+	|	not_empty_catch catch_impl { $1->append($2);                                 }
+;
+
+catch_impl:
+		CATCH '(' IDENT ')' block { $$ = new ast::Catch($3, $5, yyloc); }
+;
+
+finally:
+		/* empty */   { $$ = NULL; }
+	|	FINALLY block { $$ = $2;   }
+;
+
+try_catch_finally:
+		TRY block catch finally { $$ = new ast::Try($2, $3, $4, yyloc); }
 ;
 
 property_access:
@@ -363,8 +402,13 @@ non_empty_call_args:
 	|	non_empty_call_args ',' rvalue { $1->append($<node>3); }
 ;
 
+fcall_chain:
+		/* empty */                   { $$ = $<fcall>0; }
+	|	fcall_chain '(' call_args ')' { $$ = new ast::FunctionCall($<node>1, $3, yyloc); }
+;
+
 fcall:
-		IDENT '(' call_args ')' { $$ = new ast::FunctionCall($1, $3, yyloc); }
+		IDENT '(' call_args ')' { $<fcall>$ = new ast::FunctionCall($1, $3, yyloc); } fcall_chain { $$ = $6; }
 ;
 
 return_stmt:

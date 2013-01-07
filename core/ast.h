@@ -41,6 +41,7 @@ class Boolean;
 class NullLit;
 class MethodCall;
 class Property;
+class Try;
 
 typedef std::vector<Node*> NodeList;
 
@@ -66,9 +67,6 @@ public:
 	virtual DoubleLit* getDoubleLit() { return NULL; }
 	virtual StringLit* getStrLit() { return NULL; }
 
-	virtual void setValueId(size_t value_id) { m_value_id = value_id; }
-	virtual size_t getValueId() const { return m_value_id; }
-
 	virtual void setScope(const Scope* scope) { m_scope = scope; }
 	virtual const Scope* getScope() const { return m_scope; }
 
@@ -79,7 +77,6 @@ private:
 	const location& m_location;
 	size_t m_value_id;
 	const Scope* m_scope;
-
 	ValueOffset m_voffset;
 };
 
@@ -238,19 +235,28 @@ private:
 class ThreadBlock: public NodeArray {
 public:
 	ThreadBlock(Block* block, const location& location)
-		: NodeArray(location), m_block(block), m_name(NULL) {
+		: NodeArray(location), m_block(block), m_name(NULL), m_size(NULL) {
 		CLEVER_ADDREF(m_block);
 	}
 
 	ThreadBlock(Block* block, Ident* name, const location& location)
-		: NodeArray(location), m_block(block), m_name(name) {
+		: NodeArray(location), m_block(block), m_name(name), m_size(NULL) {
 		CLEVER_ADDREF(m_block);
 		CLEVER_ADDREF(m_name);
+	}
+
+
+	ThreadBlock(Block* block, Ident* name, Node* size, const location& location)
+		: NodeArray(location), m_block(block), m_name(name), m_size(size) {
+		CLEVER_ADDREF(m_block);
+		CLEVER_ADDREF(m_name);
+		CLEVER_ADDREF(m_size);
 	}
 
 	~ThreadBlock() {
 		CLEVER_DELREF(m_block);
 		CLEVER_SAFE_DELREF(m_name);
+		CLEVER_SAFE_DELREF(m_size);
 	}
 
 	virtual void accept(Visitor& visitor);
@@ -259,9 +265,13 @@ public:
 	Ident* getName() { return m_name; }
 
 	Block* getBlock() { return m_block; }
+
+	Node* getSize() { return m_size; }
+
 protected:
 	Block* m_block;
 	Ident* m_name;
+	Node* m_size;
 };
 
 class Wait: public NodeArray {
@@ -777,10 +787,6 @@ public:
 	virtual ~Literal() {}
 
 	virtual bool isLiteral() const { return true; }
-
-	virtual void setConstId(size_t const_id) { m_const_id = const_id; }
-
-	virtual size_t getConstId() const { return m_const_id; }
 private:
 	size_t m_const_id;
 };
@@ -914,6 +920,78 @@ public:
 private:
 	IncDecOperator m_op;
 	Node* m_var;
+};
+
+class Try: public Node {
+public:
+	Try(Block* try_block, NodeArray* catches, Block* finally, const location& location)
+		: Node(location), m_try(try_block), m_catch(catches), m_finally(finally) {
+		CLEVER_ADDREF(m_try);
+		CLEVER_SAFE_ADDREF(m_catch);
+		CLEVER_SAFE_ADDREF(m_finally);
+	}
+	~Try() {
+		CLEVER_DELREF(m_try);
+		CLEVER_SAFE_DELREF(m_catch);
+		CLEVER_SAFE_DELREF(m_finally);
+	}
+
+	Block* getBlock() const { return m_try; }
+
+	NodeArray* getCatches() const { return m_catch; }
+
+	Block* getFinally() const { return m_finally; }
+	bool hasFinally() const { return m_finally != NULL; }
+
+	virtual void accept(Visitor& visitor);
+	virtual Node* accept(Transformer& transformer);
+private:
+	Block* m_try;
+	NodeArray* m_catch;
+	Block* m_finally;
+};
+
+class Catch: public Node {
+public:
+	Catch(Ident* var, Block* block, const location& location)
+		: Node(location), m_var(var), m_block(block) {
+		CLEVER_ADDREF(m_var);
+		CLEVER_ADDREF(m_block);
+	}
+
+	~Catch() {
+		CLEVER_DELREF(m_var);
+		CLEVER_DELREF(m_block);
+	}
+
+	Ident* getVar() const { return m_var; }
+
+	Block* getBlock() const { return m_block; }
+
+	virtual void accept(Visitor& visitor);
+	virtual Node* accept(Transformer& transformer);
+private:
+	Ident* m_var;
+	Block* m_block;
+};
+
+class Throw: public Node {
+public:
+	Throw(Node* expr, const location& location)
+		: Node(location), m_expr(expr) {
+		CLEVER_ADDREF(m_expr);
+	}
+
+	~Throw() {
+		CLEVER_DELREF(m_expr);
+	}
+
+	Node* getExpr() const { return m_expr; }
+
+	virtual void accept(Visitor& visitor);
+	virtual Node* accept(Transformer& transformer);
+private:
+	Node* m_expr;
 };
 
 }} // clever::ast

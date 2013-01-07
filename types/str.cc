@@ -7,6 +7,7 @@
 
 #include <string>
 #include <sstream>
+#include <cstdio>
 #include "types/str.h"
 #include "core/compiler.h"
 
@@ -91,10 +92,12 @@ CLEVER_METHOD(StrType::subString)
 
 	if (of && bounds[0] > -1) {
 		if (bounds[1] > -1) {
-			result->setStr(CSTRING(of->substr(bounds[0], bounds[1])));
+			CLEVER_RETURN_CSTR(CSTRING(of->substr(bounds[0], bounds[1])));
 		} else {
-			result->setStr(CSTRING(of->substr(bounds[0])));
+			CLEVER_RETURN_CSTR(CSTRING(of->substr(bounds[0])));
 		}
+	} else {
+		CLEVER_RETURN_NULL();
 	}
 }
 
@@ -104,7 +107,7 @@ CLEVER_METHOD(StrType::subString)
 CLEVER_METHOD(StrType::find)
 {
 	const char* needle = NULL;
-	const CString* haystack;
+	const CString* haystack = NULL;
 	int bounds[2];
 
 	bounds[0] = -1;
@@ -157,13 +160,15 @@ CLEVER_METHOD(StrType::find)
 	if (needle && haystack) {
 		if (bounds[0] > -1) {
 			if (bounds[1] > -1) {
-				result->setInt(haystack->find(needle, bounds[0], bounds[1]));
+				CLEVER_RETURN_INT(haystack->find(needle, bounds[0], bounds[1]));
 			} else {
-				result->setInt(haystack->find(needle, bounds[0]));
+				CLEVER_RETURN_INT(haystack->find(needle, bounds[0]));
 			}
 		} else {
-			result->setInt(haystack->find(needle));
+			CLEVER_RETURN_INT(haystack->find(needle));
 		}
+	} else {
+		CLEVER_RETURN_NULL();
 	}
 }
 
@@ -226,13 +231,15 @@ CLEVER_METHOD(StrType::findFirst)
 	if (needle && haystack) {
 		if (bounds[0] > -1) {
 			if (bounds[1] > -1) {
-				result->setInt(haystack->find_first_of(needle, bounds[0], bounds[1]));
+				CLEVER_RETURN_INT(haystack->find_first_of(needle, bounds[0], bounds[1]));
 			} else {
-				result->setInt(haystack->find_first_of(needle, bounds[0]));
+				CLEVER_RETURN_INT(haystack->find_first_of(needle, bounds[0]));
 			}
 		} else {
-			result->setInt(haystack->find_first_of(needle));
+			CLEVER_RETURN_INT(haystack->find_first_of(needle));
 		}
+	} else {
+		CLEVER_RETURN_NULL();
 	}
 }
 
@@ -241,7 +248,7 @@ CLEVER_METHOD(StrType::findFirst)
 // Finds the last occurence of a string in a string returning the position
 CLEVER_METHOD(StrType::findLast)
 {
-	const char* needle;
+	const char* needle = NULL;
 	const CString* haystack = NULL;
 	int bounds[2];
 
@@ -295,13 +302,172 @@ CLEVER_METHOD(StrType::findLast)
 	if (needle && haystack) {
 		if (bounds[0] > -1) {
 			if (bounds[1] > -1) {
-				result->setInt(haystack->find_last_of(needle, bounds[0], bounds[1]));
+				CLEVER_RETURN_INT(haystack->find_last_of(needle, bounds[0], bounds[1]));
 			} else {
-				result->setInt(haystack->find_last_of(needle, bounds[0]));
+				CLEVER_RETURN_INT(haystack->find_last_of(needle, bounds[0]));
 			}
 		} else {
-			result->setInt(haystack->find_last_of(needle));
+			CLEVER_RETURN_INT(haystack->find_last_of(needle));
 		}
+	} else {
+		CLEVER_RETURN_NULL();
+	}
+}
+
+// String.format(string str, ...)
+// String.format(...)
+// Format a string with the variable list of arguments
+CLEVER_METHOD(StrType::format)
+{
+	const CString* format = NULL;
+	long offset = 0L;
+
+	if (CLEVER_THIS()) {
+		format = CLEVER_THIS()->getStr();
+		offset = -1L;
+	} else {
+		if (CLEVER_ARG_COUNT()) {
+			format = CLEVER_ARG_CSTR(0);
+		} else {
+			Compiler::error("String.format expected at least one argument");
+		}
+	}
+
+	if (format) {
+		std::ostringstream stream;
+
+		{
+			const char* start = format->c_str();
+
+			for(const char* point = start; point < (start + format->size());)
+			{
+				if (*point && (*point == (char)'\\')) {
+					unsigned long arg;
+					char* skip;
+
+					if ((arg=::std::strtoul(++point, &skip, 10))) {
+						if (CLEVER_ARG_COUNT() > (arg+offset)) {
+							CLEVER_ARG_DUMPTO((arg+offset), stream);
+						}
+						point = skip;
+					} else {
+						stream << *(--point);
+						point++;
+					}
+				} else {
+					stream << *point;
+					point++;
+				}
+			}
+		}
+
+		CLEVER_RETURN_CSTR(CSTRING(stream.str()));
+	} else {
+		CLEVER_RETURN_NULL();
+	}
+}
+
+// String.startsWith(string match)
+// String.startsWith(string string, string match)
+CLEVER_METHOD(StrType::startsWith)
+{
+	const char* with;
+	const CString* match;
+
+	if (CLEVER_THIS()) {
+		if (CLEVER_ARG_COUNT() == 1) {
+			match = CLEVER_THIS()->getStr();
+			with = CLEVER_ARG_PSTR(0);
+		} else {
+			Compiler::error("String.startsWith expected exactly one argument");
+		}
+	} else {
+		if (CLEVER_ARG_COUNT() == 2) {
+			match = CLEVER_ARG_CSTR(0);
+			with = CLEVER_ARG_PSTR(1);
+		} else {
+			Compiler::error("String.startsWith expected exactly two arguments");
+		}
+	}
+
+	if (match && with) {
+		CLEVER_RETURN_INT(match->find(with) == 0);
+	} else {
+		CLEVER_RETURN_NULL();
+	}
+}
+
+// String.endsWith(string match)
+// String.endsWith(string string, string match)
+CLEVER_METHOD(StrType::endsWith)
+{
+	const CString* with;
+	const CString* match;
+
+	if (CLEVER_THIS()) {
+		if (CLEVER_ARG_COUNT() == 1) {
+			match = CLEVER_THIS()->getStr();
+			with = CLEVER_ARG_CSTR(0);
+		} else {
+			Compiler::error("String.startsWith expected exactly one argument");
+		}
+	} else {
+		if (CLEVER_ARG_COUNT() == 2) {
+			match = CLEVER_ARG_CSTR(0);
+			with = CLEVER_ARG_CSTR(1);
+		} else {
+			Compiler::error("String.startsWith expected exactly two arguments");
+		}
+	}
+
+	if (match && with) {
+		CLEVER_RETURN_INT(match->rfind(with->c_str()) == (match->size() - with->size()));
+	} else {
+		CLEVER_RETURN_NULL();
+	}
+}
+
+// String.charAt(int position)
+// String.charAt(string string, int position)
+CLEVER_METHOD(StrType::charAt)
+{
+	long position;
+	const CString* data;
+	char found[1];
+
+	if (CLEVER_THIS()) {
+		if (CLEVER_ARG_COUNT() == 1) {
+			data = CLEVER_THIS()->getStr();
+			position = CLEVER_ARG_INT(0);
+		} else {
+			Compiler::error("String.charAt expected exactly one argument");
+		}
+	} else {
+		if (CLEVER_ARG_COUNT() == 2) {
+			data = CLEVER_ARG_CSTR(0);
+			position = CLEVER_ARG_INT(1);
+		} else {
+			Compiler::error("String.charAt expected exactly two parameters");
+		}
+	}
+
+	if (data) {
+		if (position > -1L) {
+			if (data->size() > (unsigned long) position) {
+				found[0] = data->at(position);
+				if (found[0]) {
+					CLEVER_RETURN_CSTR(CSTRING(found));
+				} else {
+					CLEVER_RETURN_NULL();
+				}
+			} else {
+				CLEVER_RETURN_NULL();
+			}
+		} else {
+			Compiler::error("String.charAt expected a non-negative argument for position");
+		}
+	} else {
+		CLEVER_RETURN_NULL();
 	}
 }
 
@@ -311,11 +477,11 @@ CLEVER_METHOD(StrType::findLast)
 CLEVER_METHOD(StrType::getLength)
 {
 	if (CLEVER_THIS()) {
-		result->setInt((CLEVER_THIS()->getStr())->length());
+		CLEVER_RETURN_INT((CLEVER_THIS()->getStr())->length());
 	} else if(CLEVER_ARG_COUNT()) {
-		result->setInt((CLEVER_ARG_CSTR(0))->length());
+		CLEVER_RETURN_INT((CLEVER_ARG_CSTR(0))->length());
 	} else {
-		std::cerr << "String.getLength expected a string argument";
+		Compiler::error("String.getLength expected at least one argument");
 	}
 }
 
@@ -326,48 +492,51 @@ CLEVER_TYPE_INIT(StrType::init)
 	addMethod(CSTRING("findFirst"), 	(MethodPtr) &StrType::findFirst);
 	addMethod(CSTRING("findLast"), 		(MethodPtr) &StrType::findLast);
 	addMethod(CSTRING("getLength"),		(MethodPtr) &StrType::getLength);
+	addMethod(CSTRING("format"),		(MethodPtr) &StrType::format);
+	addMethod(CSTRING("startsWith"),	(MethodPtr) &StrType::startsWith);
+	addMethod(CSTRING("endsWith"),		(MethodPtr) &StrType::endsWith);
+	addMethod(CSTRING("charAt"),		(MethodPtr) &StrType::charAt);
 }
-
 
 CLEVER_TYPE_OPERATOR(StrType::greater)
 {
 	if (EXPECTED(rhs->getType() == this)) {
-		result->setInt(lhs->getStr() > rhs->getStr());
+		CLEVER_RETURN_INT(lhs->getStr() > rhs->getStr());
 	}
 }
 
 CLEVER_TYPE_OPERATOR(StrType::greater_equal)
 {
 	if (EXPECTED(rhs->getType() == this)) {
-		result->setInt(lhs->getStr() >= rhs->getStr());
+		CLEVER_RETURN_INT(lhs->getStr() >= rhs->getStr());
 	}
 }
 
 CLEVER_TYPE_OPERATOR(StrType::less)
 {
 	if (EXPECTED(rhs->getType() == this)) {
-		result->setInt(lhs->getStr() < rhs->getStr());
+		CLEVER_RETURN_INT(lhs->getStr() < rhs->getStr());
 	}
 }
 
 CLEVER_TYPE_OPERATOR(StrType::less_equal)
 {
 	if (EXPECTED(rhs->getType() == this)) {
-		result->setInt(lhs->getStr() <= rhs->getStr());
+		CLEVER_RETURN_INT(lhs->getStr() <= rhs->getStr());
 	}
 }
 
 CLEVER_TYPE_OPERATOR(StrType::equal)
 {
 	if (EXPECTED(rhs->getType() == this)) {
-		result->setInt(lhs->getStr() == rhs->getStr());
+		CLEVER_RETURN_INT(lhs->getStr() == rhs->getStr());
 	}
 }
 
 CLEVER_TYPE_OPERATOR(StrType::not_equal)
 {
 	if (EXPECTED(rhs->getType() == this)) {
-		result->setInt(lhs->getStr() != rhs->getStr());
+		CLEVER_RETURN_INT(lhs->getStr() != rhs->getStr());
 	}
 }
 

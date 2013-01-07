@@ -19,6 +19,7 @@
 namespace clever {
 
 class Value;
+class Environment;
 
 const int PKG_INIT_FUNC  = 1 << 0;
 const int PKG_INIT_TYPE = 1 << 1;
@@ -51,11 +52,11 @@ public:
 	}
 
 	/// Imports the package to the current scope
-	void importPackage(Scope*, const CString*) const;
+	void importPackage(Scope*, Environment*, const CString*) const;
 
 	/// Imports the module to the current scope
-	void importModule(Scope*, const CString*, const CString*) const;
-	void loadModule(Scope*, Module*) const;
+	void importModule(Scope*, Environment*, const CString*, const CString*) const;
+	void loadModule(Scope*, Environment*, Module*) const;
 private:
 	PackageMap m_pkgs;
 };

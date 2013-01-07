@@ -34,14 +34,15 @@ typedef std::vector<std::pair<size_t, size_t> > ArgCallList;
 class Compiler {
 public:
 	enum CompilerFlag {
-		DUMP_AST = 1,
-		USE_OPTIMIZER,
-		INTERACTIVE
+		DUMP_AST       = 1 << 1,
+		USE_OPTIMIZER  = 1 << 2,
+		PARSER_ONLY    = 1 << 3,
+		INTERACTIVE    = 1 << 4
 	};
 
 	Compiler()
 		: m_ir(), m_flags(0),
-			m_scope_pool(), m_const_pool(),m_tmp_pool(),
+			m_scope_pool(), m_const_env(),m_temp_env(),
 			m_scope_id(0), m_const_id(0), m_tmp_id(0) {}
 
 	~Compiler() {}
@@ -57,15 +58,13 @@ public:
 
 	ScopePool* getSymbolTable() { return &m_scope_pool; }
 
-	ValuePool* getConstantPool() { return &m_const_pool; }
+	Environment* getGlobalEnv() const { return m_global_env; }
 
-	ValuePool* getTemporaryPool() { return &m_tmp_pool; }
+	Environment* getConstEnv() const { return m_const_env; }
 
-	size_t getTempValue();
+	Environment* getTempEnv() const { return m_temp_env; }
 
 	const PkgManager& getPkgManager() const { return m_pkg; }
-
-	size_t addConstant(Value*);
 
 	static void error(const char*) CLEVER_NO_RETURN;
 	static void error(const std::string&, const location&) CLEVER_NO_RETURN;
@@ -82,8 +81,9 @@ private:
 
 	// Compiler pools, which got passed to VM after compiling
 	ScopePool m_scope_pool;
-	ValuePool m_const_pool;
-	ValuePool m_tmp_pool;
+	Environment* m_const_env;
+	Environment* m_temp_env;
+	Environment* m_global_env;
 
 	// Indexes for pools
 	size_t m_scope_id;

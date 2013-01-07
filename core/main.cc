@@ -42,6 +42,7 @@ static void show_usage()
 	std::cout << "Debug options:\n"
 				 "\t-a\tDump AST\n"
 				 "\t-d\tDump opcode\n"
+				 "\t-l\tSyntax checking only\n"
 				 "\t-O\tPerforms AST optimizations\n"
 				 "\t-p\tTrace parsing\n"
 				 "\n";
@@ -123,6 +124,9 @@ int main(int argc, char **argv)
 		} else if (argv[i] == std::string("-a")) {
 			inc_arg++;
 			clever.setCompilerFlags(clever::Compiler::DUMP_AST);
+		} else if (argv[i] == std::string("-l")) {
+			inc_arg++;
+			clever.setCompilerFlags(clever::Compiler::PARSER_ONLY);
 		} else if (argv[i] == std::string("-O")) {
 			inc_arg++;
 			clever.setCompilerFlags(clever::Compiler::USE_OPTIMIZER);

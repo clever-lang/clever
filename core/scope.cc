@@ -13,8 +13,6 @@ Scope::~Scope() {
     ValuePool::const_iterator itv = m_value_pool.begin(),
         endv = m_value_pool.end();
 
-    CLEVER_SAFE_DELREF(m_environment);
-
     while (itv != endv) {
         CLEVER_SAFE_DELREF(*itv);
         ++itv;
@@ -36,13 +34,7 @@ Scope::~Scope() {
         ++its;
     }
 
-    TypePool::const_iterator itt = m_type_pool.begin(),
-        endt = m_type_pool.end();
-
-    while (itt != endt) {
-        delete *itt;
-        ++itt;
-    }
+    CLEVER_SAFE_DELREF(m_environment);
 }
 
 std::vector<Scope*> Scope::flatten() {
@@ -90,29 +82,62 @@ Symbol* Scope::getAny(const CString* name) {
     return sym;
 }
 
-ValueOffset Scope::getDepth(Symbol* sym) {
-    size_t depth = 0;
-    size_t value = 0;
-    SymbolMap::iterator it = std::find(m_symbols.begin(), m_symbols.end(), sym);
+ValueOffset Scope::getOffset(Symbol* sym) const {
+	ValueOffset offset(0, 0);
 
-    if (it != m_symbols.end()) {
-        value = std::distance(m_symbols.begin(), it);
-    } else {
-        for (Scope* parent = m_parent; parent != NULL; parent = parent->m_parent) {
-            if (parent->m_environment != m_environment) {
-                depth++;
-            }
+	const Scope* scope = this;
+	const Environment* last_env = m_environment;
+	bool count_values = false;
 
-            it = std::find(parent->m_symbols.begin(), parent-> m_symbols.end(), sym);
+	while (scope) {
+		SymbolMap::const_iterator it(scope->m_symbols.begin()), end(scope->m_symbols.end());
 
-            if (it != parent->m_symbols.end()) {
-                value = std::distance(parent->m_symbols.begin(), it);
-            }
-            break;
-        }
-    }
+		if (scope->m_environment != last_env) {
+			offset.first++;
+			offset.second = 0;
+		}
 
-    return ValueOffset(depth, value);
+		if (scope == sym->scope) {
+			count_values = true;
+		}
+
+		for (; it != end; ++it) {
+			if ((*it)->isType()) {
+				continue;
+			}
+
+			if ((*it) == sym) {
+				Scope* parent = scope->m_parent;
+
+				while (parent && /*parent->m_parent &&*/ parent->m_environment == scope->m_environment) {
+					it = parent->m_symbols.begin();
+					end = parent->m_symbols.end();
+
+					for (; it != end; ++it) {
+						if ((*it)->isVar()) {
+							offset.second++;
+						}
+					}
+
+					parent = parent->m_parent;
+				}
+				goto finish;
+			}
+
+			if (count_values) {
+				offset.second++;
+			}
+		}
+
+		last_env = scope->m_environment;
+		scope = scope->m_parent;
+	}
+
+	clever_assert(0, "Failed to find the symbol offset.");
+
+finish:
+
+	return offset;
 }
 
 } // clever

@@ -29,12 +29,13 @@ public:
 	typedef std::vector<size_t> AddrVector;
 	typedef std::stack<AddrVector> JmpList;
 
-	Codegen(IRVector& ir, Compiler* compiler)
-		: m_ir(ir), m_compiler(compiler),
-		  m_thread_ids(), m_thread_id(0) {}
+	Codegen(IRVector& ir, Compiler* compiler, Environment* init_glbenv);
 	~Codegen() {}
 
 	void sendArgs(NodeArray*);
+
+	Environment* getConstEnv() const { return m_const_env; }
+	Environment* getTempEnv() const { return m_temp_env; }
 
 	void visit(Block*);
 	void visit(CriticalBlock*);
@@ -61,14 +62,17 @@ public:
 	void visit(NullLit*);
 	void visit(Instantiation*);
 	void visit(Property*);
+	void visit(Try*);
+	void visit(Throw*);
 private:
 	IRVector& m_ir;
 	Compiler* m_compiler;
+	Environment* m_init_glbenv;
+	Environment* m_const_env;
+	Environment* m_temp_env;
 	JmpList m_jmps;
 
 	std::map<CString, size_t> m_thread_ids;
-	size_t m_thread_id;
-
 };
 
 }} // clever::ast

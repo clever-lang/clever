@@ -30,6 +30,9 @@ void Visitor::visit(CriticalBlock* node) {
 }
 
 void Visitor::visit(ThreadBlock* node) {
+	if (node->getSize()) {
+		node->getSize()->accept(*this);
+	}
 	node->getBlock()->accept(*this);
 }
 
@@ -143,6 +146,25 @@ void Visitor::visit(Instantiation* node) {
 
 void Visitor::visit(Property* node) {
 	node->getObject()->accept(*this);
+}
+
+void Visitor::visit(Try* node) {
+	node->getBlock()->accept(*this);
+
+	node->getCatches()->accept(*this);
+
+	if (node->hasFinally()) {
+		node->getFinally()->accept(*this);
+	}
+}
+
+void Visitor::visit(Catch* node) {
+	node->getVar()->accept(*this);
+	node->getBlock()->accept(*this);
+}
+
+void Visitor::visit(Throw* node) {
+	node->getExpr()->accept(*this);
 }
 
 }} // clever::ast

@@ -75,6 +75,9 @@ public:
 	Value(const CString* value) 
 		: m_data(value), m_type(CLEVER_STR_TYPE), m_is_const(false) {}
 
+	Value(const Type* type) : m_data(), m_type(type), m_is_const(false) {}
+
+
 	~Value() {
 		if (m_type && !m_type->isPrimitive()) {
 			if (m_data.obj) {
@@ -90,13 +93,16 @@ public:
 	bool isNull() const { return m_type == NULL; }
 
 	void dump() const {
-		if (m_type) {
-			m_type->dump(&m_data);
-		} else {
-			std::cout << "null";
-		}
+		dump(std::cout);
 	}
 
+	void dump(std::ostream& out) const {
+		if (m_type) {
+			m_type->dump(&m_data, out);
+		} else {
+			out << "null";
+		}
+	}
 	void setObj(void* ptr) {
 		clever_assert_not_null(m_type);
 		m_data.obj = new ValueObject(ptr, m_type);

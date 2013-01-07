@@ -66,18 +66,31 @@ static CLEVER_FUNCTION(println) {
 // Prints and formats a string to standard output without trailing newline
 static CLEVER_FUNCTION(printf) {
 	if (CLEVER_ARG_COUNT() > 0) {
-		char* point = strtok((char*)CLEVER_ARG_PSTR(0), STDIO_DELIM);
-		if (point) {
-			do {
-				unsigned int arg = atoi(point);
-				if (arg) {
-					if (args.size() > arg) {
-						CLEVER_ARG_DUMP(arg);
+		const CString* format = CLEVER_ARG_CSTR(0);
+		
+		if (format) {
+			const char* start = format->c_str();
+			
+			for(const char* point = start; point < (start + format->size());) 
+			{
+				if (*point && (*point == (char)'\\')) {
+					unsigned long arg;
+					char* skip;
+					
+					if ((arg=::std::strtoul(++point, &skip, 10))) {
+						if (CLEVER_ARG_COUNT() > arg) {
+							CLEVER_ARG_DUMP(arg);
+						}
+						point = skip;
+					} else {
+						::std::cout << *(--point);
+						point++;
 					}
 				} else {
-					::std::cout << point;
+					::std::cout << *point;
+					point++;
 				}
-			} while((point = strtok(NULL, STDIO_DELIM)));
+			}
 		}
 	}
 }

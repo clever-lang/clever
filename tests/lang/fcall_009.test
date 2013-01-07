@@ -1,0 +1,9 @@
+Testing chaining function call
+==CODE==
+import std.io.*;
+
+function a() { return function () { return function (x) { return x; }; }; }
+
+println(a()()(12));
+==RESULT==
+12

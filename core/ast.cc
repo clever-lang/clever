@@ -77,6 +77,12 @@ void MethodCall::accept(Visitor& visitor) { visitor.visit(this); }
 
 void Property::accept(Visitor& visitor) { visitor.visit(this); }
 
+void Try::accept(Visitor& visitor) { visitor.visit(this); }
+
+void Catch::accept(Visitor& visitor) { visitor.visit(this); }
+
+void Throw::accept(Visitor& visitor) { visitor.visit(this); }
+
 // Transformers
 
 Node* Node::accept(Transformer& transformer) { return transformer.transform(this); }
@@ -136,5 +142,11 @@ Node* Type::accept(Transformer& transformer) { return transformer.transform(this
 Node* MethodCall::accept(Transformer& transformer) { return transformer.transform(this); }
 
 Node* Property::accept(Transformer& transformer) { return transformer.transform(this); }
+
+Node* Try::accept(Transformer& transformer) { return transformer.transform(this); }
+
+Node* Catch::accept(Transformer& transformer) { return transformer.transform(this); }
+
+Node* Throw::accept(Transformer& transformer) { return transformer.transform(this); }
 
 }} // clever::ast

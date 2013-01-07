@@ -1,0 +1,74 @@
+Testing threads
+==CODE==
+import std.io.*;
+
+var memude = 555;
+
+function f(a,b=println)
+{
+	var i = 3;
+	while (i) {
+		critical {
+			b(a);
+			memude = 666;
+		}
+
+		--i;
+	}
+} 
+
+
+var i = 5;
+while (i) {
+	var a = i;
+	spawn threads { 
+		f(a, println); 
+	} 
+
+	i--;
+	wait threads;
+
+}
+
+wait threads;
+
+spawn thread {
+	var i = 10;
+
+	while (i) {
+		critical {
+			println(memude);
+		}
+
+		--i;
+	}
+}
+
+wait thread;
+
+==RESULT==
+5
+5
+5
+4
+4
+4
+3
+3
+3
+2
+2
+2
+1
+1
+1
+666
+666
+666
+666
+666
+666
+666
+666
+666
+666

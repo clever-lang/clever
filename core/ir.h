@@ -11,6 +11,7 @@
 #include <cstddef>
 #include <vector>
 #include "core/opcode.h"
+#include "core/environment.h"
 
 namespace clever {
 
@@ -27,20 +28,18 @@ enum OperandType {
 
 struct Operand {
 	OperandType op_type;
-	size_t value_id;
-	size_t scope_id;
+	ValueOffset voffset;
+	size_t jmp_addr;
 
-	Operand() : op_type(UNUSED), value_id(0), scope_id(0) {}
+	Operand() : op_type(UNUSED), voffset() {}
 
 	Operand(OperandType _op_type)
-		: op_type(_op_type), value_id(0), scope_id(0) {}
+		: op_type(_op_type), voffset(), jmp_addr(0) {}
 
-	Operand(OperandType _op_type, size_t id)
-		: op_type(_op_type), value_id(id), scope_id(0) {}
-
-	Operand(OperandType _op_type, size_t id, size_t scope_id)
-		: op_type(_op_type), value_id(id), scope_id(scope_id) {}
-
+	Operand(OperandType op_type_, const ValueOffset& voffset_)
+		: op_type(op_type_), voffset(voffset_), jmp_addr(0) {}
+	Operand(OperandType op_type_, size_t jmp_addr_)
+		: op_type(op_type_), voffset(0,0), jmp_addr(jmp_addr_) {}
 };
 
 /// Intermediate representation

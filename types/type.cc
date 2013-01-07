@@ -7,6 +7,7 @@
 
 #include "types/type.h"
 #include "core/value.h"
+#include "core/vm.h"
 
 namespace clever {
 
@@ -20,6 +21,62 @@ Type::~Type()
 		// CLEVER_SAFE_DELREF((*it).second);
 		++it;
 	}
+}
+
+
+CLEVER_TYPE_OPERATOR(Type::add)
+{
+	CLEVER_THROW("Cannot use + operator with %S type", getName());
+}
+
+CLEVER_TYPE_OPERATOR(Type::sub)
+{
+	CLEVER_THROW("Cannot use - operator with %S type", getName());
+}
+
+CLEVER_TYPE_OPERATOR(Type::mul)
+{
+	CLEVER_THROW("Cannot use * operator with %S type", getName());
+}
+
+CLEVER_TYPE_OPERATOR(Type::div)
+{
+	CLEVER_THROW("Cannot use / operator with %S type", getName());
+}
+
+CLEVER_TYPE_OPERATOR(Type::mod)
+{
+	CLEVER_THROW("Cannot use % operator with %S type", getName());
+}
+
+CLEVER_TYPE_OPERATOR(Type::greater)
+{
+	CLEVER_THROW("Cannot use > operator with %S type", getName());
+}
+
+CLEVER_TYPE_OPERATOR(Type::greater_equal)
+{
+	CLEVER_THROW("Cannot use >= operator with %S type", getName());
+}
+
+CLEVER_TYPE_OPERATOR(Type::less)
+{
+	CLEVER_THROW("Cannot use < operator with %S type", getName());
+}
+
+CLEVER_TYPE_OPERATOR(Type::less_equal)
+{
+	CLEVER_THROW("Cannot use <= operator with %S type", getName());
+}
+
+CLEVER_TYPE_OPERATOR(Type::equal)
+{
+	CLEVER_THROW("Cannot use == operator with %S type", getName());
+}
+
+CLEVER_TYPE_OPERATOR(Type::not_equal)
+{
+	CLEVER_THROW("Cannot use != operator with %S type", getName());
 }
 
 } // clever
