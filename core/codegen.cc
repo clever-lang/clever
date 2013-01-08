@@ -567,6 +567,19 @@ void Codegen::visit(Throw* node)
 	_prepare_operand(m_ir.back().op1, node->getExpr());
 }
 
+void Codegen::visit(Array* node)
+{
+	if (node->hasArgs()) {
+		sendArgs(node->getArgs());
+	}
+
+	m_ir.push_back(IR(OP_ARRAY));
+
+	ValueOffset tmp_id = m_temp_env->pushValue(new Value());
+
+	m_ir.back().result = Operand(FETCH_TMP, tmp_id);
+
+	node->setVOffset(tmp_id);
+}
+
 }} // clever::ast
-
-

@@ -751,6 +751,9 @@ void VM::run()
 		m_try_stack.pop();
 		DISPATCH;
 
+	OP(OP_ARRAY):
+		DISPATCH;
+
 	OP(OP_HALT):
 		VM_EXIT();
 
