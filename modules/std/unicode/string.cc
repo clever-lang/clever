@@ -45,10 +45,10 @@ void* UString::allocData(CLEVER_TYPE_CTOR_ARGS) const {
 				return new CLEVER_USTR_OBJ(str);
 			}
 		} else {
-			/** UString.new expected exactly one argument of type String **/
+			/** UString.new expected exactly one parameter of type String **/
 		}
 	} else {
-		/** UString.new expected exactly one argument of type String **/
+		/** UString.new expected exactly one parameter of type String **/
 	}
 	return NULL;
 }
@@ -57,6 +57,8 @@ void UString::deallocData(void *data) {
 	delete CLEVER_USTR_CAST(data);
 }
 
+// UString.getLength()
+// Determine the length of this
 CLEVER_METHOD(UString::getLength)
 {
 	if (CLEVER_THIS()) {
@@ -69,21 +71,33 @@ CLEVER_METHOD(UString::getLength)
 	}
 }
 
+// UString.startsWith(string match, [int start, int length])
+// Determine if this starts with match
 CLEVER_METHOD(UString::startsWith) {
 	if (CLEVER_THIS()) {
 		CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
 		if (intern) {
 			switch (CLEVER_ARG_COUNT()) {
 				case 1: {
-					if (CLEVER_ARG_TYPE(0)==CLEVER_STR_TYPE) {
-						CLEVER_RETURN_INT(intern->startsWith(UnicodeString(CLEVER_ARG_PSTR(0))));
-					} else {
-						/** UString.startsWith expects exactly one parameter of type String **/
-					}
+					CLEVER_RETURN_INT(intern->startsWith(UnicodeString(CLEVER_ARG_PSTR(0))));
 				} break;
 
+				case 3: {
+					if ((CLEVER_ARG_TYPE(1) == CLEVER_INT_TYPE) && (CLEVER_ARG_TYPE(2) == CLEVER_INT_TYPE)) {
+						CLEVER_RETURN_INT(
+							intern->startsWith(
+								UnicodeString(CLEVER_ARG_PSTR(0)),
+								CLEVER_ARG_INT(1),
+								CLEVER_ARG_INT(2)
+							)
+						);
+					} else {
+						/** UString.startsWith expected the second and third parameter to be integral values **/
+					}
+				} break;
+				
 				default:
-					/** UString.startsWith expects exactly one parameter, got none **/
+					/** UString.startsWith expected one or three parameters **/
 				break;
 			}
 		}
@@ -92,6 +106,8 @@ CLEVER_METHOD(UString::startsWith) {
 	}
 }
 
+// UString.endsWith(string match, [int start, int length])
+// Determine if this ends with match
 CLEVER_METHOD(UString::endsWith)
 {
 	if (CLEVER_THIS()) {
@@ -99,35 +115,88 @@ CLEVER_METHOD(UString::endsWith)
 		if (intern) {
 			switch(CLEVER_ARG_COUNT()) {
 				case 1: {
-					if (CLEVER_ARG_TYPE(0) == CLEVER_STR_TYPE) {
-						CLEVER_RETURN_INT(intern->endsWith(UnicodeString(CLEVER_ARG_PSTR(0))));
+					CLEVER_RETURN_INT(intern->endsWith(UnicodeString(CLEVER_ARG_PSTR(0))));
+				} break;
+
+				case 3: {
+					if ((CLEVER_ARG_TYPE(1) == CLEVER_INT_TYPE) && (CLEVER_ARG_TYPE(2) == CLEVER_INT_TYPE)) {
+						CLEVER_RETURN_INT(
+							intern->endsWith(
+								UnicodeString(CLEVER_ARG_PSTR(0)),
+								CLEVER_ARG_INT(1),
+								CLEVER_ARG_INT(2)
+							)
+						);
 					} else {
-						/** UString.endsWith expects exactly one parameter of type String **/
+						/** UString.endsWith expected the second and third parameter to be integral values **/
 					}
 				} break;
+				
+				default:
+					/** UString.endsWith expected one or three parameters **/
+				break;
 			}
 		}
+	} else {
+		/** UString.endsWith cannot be called statically **/
 	}
 }
 
+// UString.indexOf(string of, [int start, [int length]])
+// Locates in this the first occurence of characters in text
 CLEVER_METHOD(UString::indexOf)
 {
 	if (CLEVER_THIS()) {
 		CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
 		if (intern) {
-			switch(CLEVER_ARG_COUNT()) {
-				case 1: {
-					if (CLEVER_ARG_TYPE(0) == CLEVER_STR_TYPE) {
+			if (CLEVER_ARG_TYPE(0) == CLEVER_STR_TYPE) {
+				switch(CLEVER_ARG_COUNT()) {
+					case 1: {
 						CLEVER_RETURN_INT(intern->indexOf(UnicodeString(CLEVER_ARG_PSTR(0))));
-					} else {
-						/** UString.indexOf expects exactly one parameter of type String **/
-					}
-				} break;
+					} break;
+
+					case 2: {
+						if ((CLEVER_ARG_TYPE(1) == CLEVER_INT_TYPE)) {
+							CLEVER_RETURN_INT(
+								intern->indexOf(
+									UnicodeString(CLEVER_ARG_PSTR(0)),
+									CLEVER_ARG_INT(1)
+								)
+							);
+						} else {
+							/** UString.indexOf expected the second parameter to be an integral value **/
+						}
+					} break;
+
+					case 3: {
+						if ((CLEVER_ARG_TYPE(1) == CLEVER_INT_TYPE) && (CLEVER_ARG_TYPE(2) == CLEVER_INT_TYPE)) {
+							CLEVER_RETURN_INT(
+								intern->indexOf(
+									UnicodeString(CLEVER_ARG_PSTR(0)),
+									CLEVER_ARG_INT(1),
+									CLEVER_ARG_INT(2)
+								)
+							);
+						} else {
+							/** UString.indexOf expected the second and third parameter to be integral values **/
+						}
+					} break;
+					
+					default:
+						/** UString.indexOf expected a maximum of three parameters **/
+					break;
+				}
+			} else {
+				/** UString.indexOf expected the first parameter to be a string **/
 			}
 		}
+	} else {
+		/** UString.indexOf cannot be called statically **/
 	}
 }
 
+// UString.lastIndexOf(string of, [int start, [int length]])
+// Locates in this the last occurence of characters in text
 CLEVER_METHOD(UString::lastIndexOf)
 {
 	if (CLEVER_THIS()) {
@@ -135,17 +204,48 @@ CLEVER_METHOD(UString::lastIndexOf)
 		if (intern) {
 			switch(CLEVER_ARG_COUNT()) {
 				case 1: {
-					if (CLEVER_ARG_TYPE(0) == CLEVER_STR_TYPE) {
-						CLEVER_RETURN_INT(intern->lastIndexOf(UnicodeString(CLEVER_ARG_PSTR(0))));
+					CLEVER_RETURN_INT(intern->lastIndexOf(UnicodeString(CLEVER_ARG_PSTR(0))));
+				} break;
+
+				case 2: {
+					if ((CLEVER_ARG_TYPE(1) == CLEVER_INT_TYPE)) {
+						CLEVER_RETURN_INT(
+							intern->lastIndexOf(
+								UnicodeString(CLEVER_ARG_PSTR(0)),
+								CLEVER_ARG_INT(1)
+							)
+						);
 					} else {
-						/** UString.lastIndexOf expects exactly one parameter of type String **/
+						/** UString.lastIndexOf expected the second parameter to be an integral value **/
 					}
 				} break;
+
+				case 3: {
+					if ((CLEVER_ARG_TYPE(1) == CLEVER_INT_TYPE) && (CLEVER_ARG_TYPE(2) == CLEVER_INT_TYPE)) {
+						CLEVER_RETURN_INT(
+							intern->lastIndexOf(
+								UnicodeString(CLEVER_ARG_PSTR(0)),
+								CLEVER_ARG_INT(1),
+								CLEVER_ARG_INT(2)
+							)
+						);
+					} else {
+						/** UString.lastIndexOf expected the second and third parameter to be integral values **/
+					}
+				} break;
+				
+				default:
+					/** UString.indexOf expected a maximum of three parameters **/
+				break;
 			}
 		}
+	} else {
+		/** UString.lastIndexOf cannot be called statically **/
 	}
 }
 
+// UString.toLower()
+// Convert this into lowercase characters
 CLEVER_METHOD(UString::toLower)
 {
 	if (CLEVER_THIS()) {
@@ -159,6 +259,8 @@ CLEVER_METHOD(UString::toLower)
 	CLEVER_RETURN_NULL();
 }
 
+// UString.toUpper()
+// Convert this into uppercase characters
 CLEVER_METHOD(UString::toUpper)
 {
 	if (CLEVER_THIS()) {
@@ -172,6 +274,8 @@ CLEVER_METHOD(UString::toUpper)
 	CLEVER_RETURN_NULL();
 }
 
+// UString.reverse()
+// Convert this into the reverse of itself
 CLEVER_METHOD(UString::reverse)
 {
 	if (CLEVER_THIS()) {
@@ -185,6 +289,8 @@ CLEVER_METHOD(UString::reverse)
 	CLEVER_RETURN_NULL();
 }
 
+// UString.trim()
+// Trim this
 CLEVER_METHOD(UString::trim)
 {
 	if (CLEVER_THIS()) {
@@ -198,6 +304,9 @@ CLEVER_METHOD(UString::trim)
 	CLEVER_RETURN_NULL();
 }
 
+
+// UString.truncate(int length)
+// Truncates this to length
 CLEVER_METHOD(UString::truncate)
 {
 	if (CLEVER_THIS()) {
