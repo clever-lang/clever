@@ -189,6 +189,8 @@ add_executable(clever
 	types/type.cc
 	types/function.h
 	types/function.cc
+	types/thread.h
+	types/thread.cc
 	types/bool.h
 	types/bool.cc
 	${EXTRA_CLEVER_FILES}

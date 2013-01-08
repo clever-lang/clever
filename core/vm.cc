@@ -177,7 +177,7 @@ void VM::wait()
 
 CLEVER_THREAD_FUNC(_thread_control)
 {
-	VM* vm_handler = static_cast<Thread*>(arg)->vm_handler;
+	VM* vm_handler = static_cast<VMThread*>(arg)->vm_handler;
 
 	vm_handler->nextPC();
 	vm_handler->run();
@@ -390,7 +390,7 @@ void VM::run()
 			}
 
 			for (size_t i = 0; i < n_threads; ++i) {
-				Thread* thread = new Thread;
+				VMThread* thread = new VMThread;
 
 				new_thread();
 
@@ -414,12 +414,12 @@ void VM::run()
 
 	OP(OP_WAIT):
 		{
-			std::vector<Thread*>& thread_list = m_thread_pool[getValue(OPCODE.op1)->getInt()];
+			std::vector<VMThread*>& thread_list = m_thread_pool[getValue(OPCODE.op1)->getInt()];
 
 			for (size_t i = 0, j = thread_list.size(); i < j; ++i) {
 				delete_thread();
 
-				Thread* t = thread_list.at(i);
+				VMThread* t = thread_list.at(i);
 				t->t_handler.wait();
 				delete t->vm_handler;
 				delete t;

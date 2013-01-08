@@ -9,7 +9,7 @@
 
 namespace clever {
 
-Mutex::Mutex()
+CMutex::CMutex()
 {
 #ifndef CLEVER_WIN32
 	pthread_mutex_init(&m_mut, NULL);
@@ -18,7 +18,7 @@ Mutex::Mutex()
 #endif
 }
 
-Mutex::~Mutex()
+CMutex::~CMutex()
 {
 #ifndef CLEVER_WIN32
 	pthread_mutex_destroy(&m_mut);
@@ -27,7 +27,7 @@ Mutex::~Mutex()
 #endif
 }
 
-void Mutex::lock()
+void CMutex::lock()
 {
 #ifndef CLEVER_WIN32
 	pthread_mutex_lock(&m_mut);
@@ -36,7 +36,7 @@ void Mutex::lock()
 #endif
 }
 
-void Mutex::unlock()
+void CMutex::unlock()
 {
 #ifndef CLEVER_WIN32
 	pthread_mutex_unlock(&m_mut);
