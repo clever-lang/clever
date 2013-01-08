@@ -139,10 +139,9 @@ void VM::copy(const VM* vm)
 	this->f_mutex = const_cast<VM*>(vm)->getMutex();
 	this->m_pc = vm->m_pc;
 
-
 	this->m_try_stack = vm->m_try_stack;
 
-	if (vm->m_temp_env != NULL) {
+	if (UNEXPECTED(vm->m_temp_env != NULL)) {
 		this->m_temp_env = new Environment(NULL);
 		this->m_temp_env->copy(vm->m_temp_env);
 	} else {
@@ -171,13 +170,10 @@ void VM::wait()
 			delete it->at(i)->vm_handler;
 			delete it->at(i);
 		}
-
 		++it;
 	}
 	m_thread_pool.clear();
 }
-
-
 
 CLEVER_THREAD_FUNC(_thread_control)
 {
@@ -188,7 +184,6 @@ CLEVER_THREAD_FUNC(_thread_control)
 
 	return NULL;
 }
-
 
 void VM::setException(const char* format, ...)
 {
@@ -413,8 +408,7 @@ void VM::run()
 
 				m_thread_pool[getValue(OPCODE.op2)->getInt()].push_back(thread);
 
-				thread->t_handler.create(_thread_control,
-										 static_cast<void*>(thread));
+				thread->t_handler.create(_thread_control, static_cast<void*>(thread));
 			}
 			getMutex()->unlock();
 
@@ -443,7 +437,6 @@ void VM::run()
 
 	OP(OP_ETHREAD):
 		if (this->isChild()) {
-
 			getMutex()->lock();
 			Environment* env = m_temp_env;
 			Environment* other = NULL;
@@ -691,7 +684,6 @@ void VM::run()
 
 	OP(OP_MCALL):
 		{
-
 			const Value* callee = getValue(OPCODE.op1);
 			const Value* method = getValue(OPCODE.op2);
 			const Type* type = callee->getType();
