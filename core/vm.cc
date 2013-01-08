@@ -101,7 +101,7 @@ CLEVER_FORCE_INLINE Value* VM::getValue(Operand& operand) const
 void VM::dumpOperand(Operand& op) const
 {
 	const char *type[] = {
-		"UNUSED", "FETCH_VAR", "FETCH_CONST", "FETCH_TYPE", "FETCH_TMP", "JMP_ADDR"
+		"UNUSED", "FETCH_VAR", "FETCH_CONST", "FETCH_TMP", "JMP_ADDR"
 	};
 
 	switch (op.op_type) {
@@ -112,9 +112,6 @@ void VM::dumpOperand(Operand& op) const
 			break;
 		case JMP_ADDR:
 			::printf("%7zu ", op.jmp_addr);
-			break;
-		case FETCH_TYPE:
-			::printf("%7zu ", op.voffset.first);
 			break;
 		case UNUSED:
 			::printf("        ");
@@ -254,8 +251,8 @@ void VM::run()
 		{
 			Value* var = getValue(OPCODE.op1);
 			const Value* value = getValue(OPCODE.op2);
-			
-			// Checks if this assignment is allowed (non-const variable or 
+
+			// Checks if this assignment is allowed (non-const variable or
 			// const variable declaration).
 			if (EXPECTED(var->isAssignable())) {
 				var->copy(value);
