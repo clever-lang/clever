@@ -204,10 +204,12 @@ next_token:
 
 
 	<INITIAL>'true' {
+		yylval->true_ = new ast::TrueLit(*yyloc);
 		RET(token::TRUE);
 	}
 
 	<INITIAL>'false' {
+		yylval->false_ = new ast::FalseLit(*yyloc);
 		RET(token::FALSE);
 	}
 

@@ -60,6 +60,8 @@ public:
 	void visit(Logic*);
 	void visit(Boolean*);
 	void visit(NullLit*);
+	void visit(TrueLit*);
+	void visit(FalseLit*);
 	void visit(Instantiation*);
 	void visit(Property*);
 	void visit(Try*);
