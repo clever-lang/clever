@@ -87,6 +87,8 @@ void TrueLit::accept(Visitor& visitor) { visitor.visit(this); }
 
 void FalseLit::accept(Visitor& visitor) { visitor.visit(this); }
 
+void Array::accept(Visitor& visitor) { visitor.visit(this); }
+
 // Transformers
 
 Node* Node::accept(Transformer& transformer) { return transformer.transform(this); }
@@ -157,5 +159,6 @@ Node* TrueLit::accept(Transformer& transformer) { return transformer.transform(t
 
 Node* FalseLit::accept(Transformer& transformer) { return transformer.transform(this); }
 
+Node* Array::accept(Transformer& transformer) { return transformer.transform(this); }
 
 }} // clever::ast

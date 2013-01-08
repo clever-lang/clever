@@ -59,6 +59,7 @@ class Value;
 	ast::Throw* throw_;
 	ast::TrueLit* true_;
 	ast::FalseLit* false_;
+	ast::Array* array;
 }
 
 %type <type> TYPE
@@ -96,6 +97,7 @@ class Value;
 %type <except> try_catch_finally
 %type <catch_> catch_impl
 %type <throw_> throw
+%type <array> array
 
 // The parsing context.
 %parse-param { Driver& driver }
@@ -266,11 +268,16 @@ rvalue:
 	|	instantiation
 	|	property_access
 	|	mcall
+	|	array
 	|	'(' rvalue ')' { $<node>$ = $<node>2; }
 ;
 
 lvalue:
 		IDENT
+;
+
+array:
+		'[' call_args ']' { $$ = new ast::Array($2, yyloc); }
 ;
 
 throw:

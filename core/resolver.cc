@@ -182,7 +182,7 @@ void Resolver::visit(FunctionDecl* node)
 
 		node->getArgs()->accept(*this);
 
-		func->setArgVars(m_scope);
+		func->setNumArgs(node->numArgs());
 	}
 
 	node->getBlock()->accept(*this);
