@@ -27,8 +27,10 @@ public:
 	void dump(const void* value, std::ostream& out) const { out << *(bool*)value; }
 
 	void increment(Value* value) const {}
-
 	void decrement(Value* value) const {}
+
+	CLEVER_TYPE_OPERATOR(equal);
+	CLEVER_TYPE_OPERATOR(not_equal);
 };
 
 } // clever
