@@ -219,17 +219,14 @@ void VM::run()
 
 	OPCODES;
 	OP(OP_RET):
-		if (m_call_stack.size()) {
-
+		if (EXPECTED(m_call_stack.size())) {
 			Environment* env = m_call_stack.top();
 			size_t ret_addr = env->getRetAddr();
 
-			if (OPCODE.op1.op_type != UNUSED) {
+			if (EXPECTED(OPCODE.op1.op_type != UNUSED)) {
 				Value* val = getValue(OPCODE.op1);
-
-				if (val) {
-					m_call_stack.top()->getRetVal()->copy(val);
-				}
+				clever_assert_not_null(val);
+				m_call_stack.top()->getRetVal()->copy(val);
 			}
 
 			env->clear();
