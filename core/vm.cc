@@ -487,7 +487,7 @@ void VM::run()
 			Value* value = getValue(OPCODE.op1);
 
 			if (EXPECTED(!value->isNull())) {
-				value->getType()->increment(value);
+				value->getType()->increment(value, this);
 				getValue(OPCODE.result)->copy(value);
 			} else {
 				error(VM_ERROR, "Cannot increment null value");
@@ -501,7 +501,7 @@ void VM::run()
 
 			if (EXPECTED(!value->isNull())) {
 				getValue(OPCODE.result)->copy(value);
-				value->getType()->increment(value);
+				value->getType()->increment(value, this);
 			} else {
 				error(VM_ERROR, "Cannot increment null value");
 			}
@@ -513,7 +513,7 @@ void VM::run()
 			Value* value = getValue(OPCODE.op1);
 
 			if (EXPECTED(!value->isNull())) {
-				value->getType()->decrement(value);
+				value->getType()->decrement(value, this);
 				getValue(OPCODE.result)->copy(value);
 			} else {
 				error(VM_ERROR, "Cannot decrement null value");
@@ -527,7 +527,7 @@ void VM::run()
 
 			if (EXPECTED(!value->isNull())) {
 				getValue(OPCODE.result)->copy(value);
-				value->getType()->decrement(value);
+				value->getType()->decrement(value, this);
 			} else {
 				error(VM_ERROR, "Cannot decrement null value");
 			}

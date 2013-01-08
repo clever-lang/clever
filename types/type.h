@@ -36,7 +36,7 @@ class VM;
 	void CLEVER_FASTCALL greater(CLEVER_TYPE_OPERATOR_ARGS)       const; \
 	void CLEVER_FASTCALL greater_equal(CLEVER_TYPE_OPERATOR_ARGS) const; \
 	void CLEVER_FASTCALL less(CLEVER_TYPE_OPERATOR_ARGS)          const; \
-	void CLEVER_FASTCALL less_equal(CLEVER_TYPE_OPERATOR_ARGS)    const
+	void CLEVER_FASTCALL less_equal(CLEVER_TYPE_OPERATOR_ARGS)    const;
 
 #define CLEVER_TYPE_OPERATOR(name) void CLEVER_FASTCALL name(CLEVER_TYPE_OPERATOR_ARGS) const
 
@@ -116,8 +116,8 @@ public:
 	virtual void CLEVER_FASTCALL greater_equal(CLEVER_TYPE_OPERATOR_ARGS) const;
 	virtual void CLEVER_FASTCALL less(CLEVER_TYPE_OPERATOR_ARGS)          const;
 	virtual void CLEVER_FASTCALL less_equal(CLEVER_TYPE_OPERATOR_ARGS)    const;
-	virtual void increment(Value*)                                        const {};
-	virtual void decrement(Value*)                                        const {};
+	virtual void increment(Value*, const VM*)                             const;
+	virtual void decrement(Value*, const VM*)                             const;
 
 	virtual void* allocData(CLEVER_TYPE_CTOR_ARGS) const { return NULL; }
 	virtual void deallocData(void* data) {}

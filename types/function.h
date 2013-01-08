@@ -91,10 +91,6 @@ public:
 	void* allocData(CLEVER_TYPE_CTOR_ARGS) const { return new Function; }
 
 	void deallocData(void* data) { if (data) { delete static_cast<Function*>(data); } }
-
-	void increment(Value* value) const {}
-
-	void decrement(Value* value) const {}
 };
 
 } // clever
