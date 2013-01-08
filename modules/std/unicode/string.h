@@ -46,6 +46,7 @@ public:
 	CLEVER_METHOD_D(reverse);
 	CLEVER_METHOD_D(trim);
 	CLEVER_METHOD_D(truncate);
+	CLEVER_METHOD_D(append);
 };
 
 }}} // clever::packages::std

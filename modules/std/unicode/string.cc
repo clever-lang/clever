@@ -343,6 +343,44 @@ CLEVER_METHOD(UString::truncate)
 	CLEVER_RETURN_NULL();
 }
 
+// UString.append(string next, [int start, int length])
+// Appends next to this, using optional start and length of next, returning the length of this
+CLEVER_METHOD(UString::append) {
+	if (CLEVER_THIS()) {
+		CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
+		if (intern) {
+			if (CLEVER_ARG_TYPE(0) == CLEVER_STR_TYPE) {
+				switch(CLEVER_ARG_COUNT()) {
+					case 1: {
+						intern->append(UnicodeString(CLEVER_ARG_PSTR(0)));
+					} break;
+
+					case 3: {
+						if ((CLEVER_ARG_TYPE(1) == CLEVER_INT_TYPE) && (CLEVER_ARG_TYPE(2) == CLEVER_INT_TYPE)) {
+							intern->append(
+								UnicodeString(CLEVER_ARG_PSTR(0)),
+								CLEVER_ARG_INT(1),
+								CLEVER_ARG_INT(2)
+							);
+						} else {
+							/** UString.append expected parameters one and three to be integral values **/
+						}
+					} break;
+
+					default:
+						/** UString.append expected exactly one or three arguments **/
+					break;
+				}
+			} else {
+				/** UString.append expected the first argument to be a string **/
+			}
+			CLEVER_RETURN_INT(intern->length());
+		}
+	} else {
+		/** UString.append cannot be called statically **/
+	}
+}
+
 CLEVER_TYPE_OPERATOR(UString::add) {}
 CLEVER_TYPE_OPERATOR(UString::sub) {}
 CLEVER_TYPE_OPERATOR(UString::mul) {}
@@ -367,6 +405,7 @@ CLEVER_TYPE_INIT(UString::init)
 	addMethod(CSTRING("reverse"),			(MethodPtr) &UString::reverse);
 	addMethod(CSTRING("trim"),				(MethodPtr) &UString::trim);
 	addMethod(CSTRING("truncate"),			(MethodPtr) &UString::truncate);
+	addMethod(CSTRING("append"),			(MethodPtr) &UString::append);
 }
 
 }}} // clever::packages::std
