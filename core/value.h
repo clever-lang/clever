@@ -34,11 +34,8 @@ extern Type* g_clever_bool_type;
 #define CLEVER_DOUBLE_TYPE g_clever_double_type
 #define CLEVER_STR_TYPE    g_clever_str_type
 #define CLEVER_FUNC_TYPE   g_clever_func_type
-<<<<<<< HEAD
 #define CLEVER_THREAD_TYPE g_clever_thread_type
-=======
 #define CLEVER_BOOL_TYPE   g_clever_bool_type
->>>>>>> origin/master
 
 class ValueObject : public RefCounted {
 public:
@@ -81,12 +78,9 @@ public:
 	Value(bool n)
 		: m_data(n), m_type(CLEVER_BOOL_TYPE), m_is_const(false) {}
 
-<<<<<<< HEAD
-=======
 	Value(long n)
 		: m_data(n), m_type(CLEVER_INT_TYPE), m_is_const(false) {}
 
->>>>>>> origin/master
 	Value(double n)
 		: m_data(n), m_type(CLEVER_DOUBLE_TYPE), m_is_const(false) {}
 

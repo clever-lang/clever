@@ -35,13 +35,13 @@ public:
 		: ValueObject(), m_name(name), m_type(UNDEF), m_local_vars(NULL), m_environment(NULL)
 		{ m_info.addr = addr; }
 
-	~Function() {}
+	~Thread() {}
 
 	void setName(std::string name) { m_name = name; }
 	const std::string& getName() const { return m_name; }
 
-	void setInternal() { m_type = INTERNAL_FUNC; }
-	void setUserDefined() { m_type = USER_FUNC; }
+	void setInternal() { m_type = INTERNAL_THREAD; }
+	void setUserDefined() { m_type = USER_THREAD; }
 
 	bool isUserDefined() const { return m_type == USER_THREAD; }
 	bool isInternal() const { return m_type == INTERNAL_THREAD; }
@@ -83,9 +83,9 @@ public:
 	void dump(const void* data) const { dump(data, std::cout); }
 	void dump(const void* data, std::ostream& out) const { out << "Thread() { }"; }
 
-	void* allocData(CLEVER_TYPE_CTOR_ARGS) const { return new Function; }
+	void* allocData(CLEVER_TYPE_CTOR_ARGS) const { return new Thread; }
 
-	void deallocData(void* data) { if (data) { delete static_cast<Function*>(data); } }
+	void deallocData(void* data) { if (data) { delete static_cast<Thread*>(data); } }
 
 	void increment(Value* value) const {}
 
