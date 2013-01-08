@@ -119,7 +119,6 @@ public:
 	virtual void increment(Value*)                                        const {};
 	virtual void decrement(Value*)                                        const {};
 
-
 	virtual void* allocData(CLEVER_TYPE_CTOR_ARGS) const { return NULL; }
 	virtual void deallocData(void* data) {}
 private:

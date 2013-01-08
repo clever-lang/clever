@@ -20,24 +20,30 @@ extern Type* g_clever_double_type;
 extern Type* g_clever_str_type;
 extern Type* g_clever_func_type;
 extern Type* g_clever_thread_type;
+extern Type* g_clever_bool_type;
 
 #define DECLARE_CLEVER_NATIVE_TYPES() \
 	Type* g_clever_int_type;          \
 	Type* g_clever_double_type;       \
 	Type* g_clever_str_type;          \
 	Type* g_clever_func_type;         \
-	Type* g_clever_thread_type;
+	Type* g_clever_thread_type;       \
+	Type* g_clever_bool_type;
 
 #define CLEVER_INT_TYPE    g_clever_int_type
 #define CLEVER_DOUBLE_TYPE g_clever_double_type
 #define CLEVER_STR_TYPE    g_clever_str_type
 #define CLEVER_FUNC_TYPE   g_clever_func_type
+<<<<<<< HEAD
 #define CLEVER_THREAD_TYPE g_clever_thread_type
+=======
+#define CLEVER_BOOL_TYPE   g_clever_bool_type
+>>>>>>> origin/master
 
 class ValueObject : public RefCounted {
 public:
-	ValueObject() :
-		RefCounted(1), m_obj(NULL), m_type(NULL) {}
+	ValueObject()
+		: RefCounted(1), m_obj(NULL), m_type(NULL) {}
 
 	ValueObject(void* obj, const Type* type)
 		: RefCounted(1), m_obj(obj), m_type(type) {}
@@ -57,12 +63,14 @@ private:
 class Value : public RefCounted {
 public:
 	union DataValue {
+		bool bval;
 		long lval;
 		double dval;
 		const CString* sval;
 		ValueObject* obj;
 
 		DataValue() : lval(0) {}
+		DataValue(bool value) : bval(value) {}
 		DataValue(long value) : lval(value) {}
 		DataValue(double value) : dval(value) {}
 		DataValue(const CString* value) : sval(value) {}
@@ -70,16 +78,23 @@ public:
 
 	Value() : m_data(), m_type(NULL), m_is_const(false) {}
 
-	Value(long n) : m_data(n), m_type(CLEVER_INT_TYPE), m_is_const(false) {}
+	Value(bool n)
+		: m_data(n), m_type(CLEVER_BOOL_TYPE), m_is_const(false) {}
 
+<<<<<<< HEAD
+=======
+	Value(long n)
+		: m_data(n), m_type(CLEVER_INT_TYPE), m_is_const(false) {}
+
+>>>>>>> origin/master
 	Value(double n)
 		: m_data(n), m_type(CLEVER_DOUBLE_TYPE), m_is_const(false) {}
 
 	Value(const CString* value)
 		: m_data(value), m_type(CLEVER_STR_TYPE), m_is_const(false) {}
 
-	Value(const Type* type) : m_data(), m_type(type), m_is_const(false) {}
-
+	Value(const Type* type)
+		: m_data(), m_type(type), m_is_const(false) {}
 
 	~Value() {
 		if (m_type && !m_type->isPrimitive()) {
@@ -115,6 +130,9 @@ public:
 	void setInt(long n) { m_data.lval = n; m_type = CLEVER_INT_TYPE; }
 	long getInt() const { return m_data.lval; }
 
+	void setBool(bool n) { m_data.bval = n; m_type = CLEVER_BOOL_TYPE; }
+	bool getBool() const { return m_data.bval; }
+
 	void setDouble(double n) { m_data.dval = n; m_type = CLEVER_DOUBLE_TYPE; }
 	double getDouble() const { return m_data.dval; }
 
@@ -144,6 +162,8 @@ public:
 				return m_data.dval != 0;
 			} else if (m_type == CLEVER_STR_TYPE) {
 				return m_data.sval != NULL;
+			} else if (m_type == CLEVER_BOOL_TYPE) {
+				return m_data.bval;
 			}
 		}
 		return true;
