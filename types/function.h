@@ -32,14 +32,14 @@ public:
 	enum FuncKind { UNDEF, USER_FUNC, INTERNAL_FUNC };
 
 	Function()
-		: ValueObject(), m_name(), m_type(UNDEF), m_arg_vars(NULL), m_local_vars(NULL), m_environment(NULL) {}
+		: ValueObject(), m_name(), m_type(UNDEF), m_num_args(0), m_environment(NULL) {}
 
 	Function(std::string name, FunctionPtr ptr)
-		: ValueObject(), m_name(name), m_type(UNDEF), m_arg_vars(NULL), m_local_vars(NULL), m_environment(NULL)
+		: ValueObject(), m_name(name), m_type(UNDEF), m_num_args(0), m_environment(NULL)
 		{ m_info.ptr = ptr; }
 
 	Function(std::string name, size_t addr)
-		: ValueObject(), m_name(name), m_type(UNDEF), m_arg_vars(NULL), m_local_vars(NULL), m_environment(NULL)
+		: ValueObject(), m_name(name), m_type(UNDEF), m_num_args(0), m_environment(NULL)
 		{ m_info.addr = addr; }
 
 	~Function() {}
@@ -59,13 +59,8 @@ public:
 	void setAddr(size_t addr) { m_info.addr = addr; }
 	void setPtr(FunctionPtr ptr) { m_info.ptr = ptr; }
 
-	Scope* getLocalVars() { return m_local_vars; }
-	Scope* getArgVars() { return m_arg_vars; }
-
-	bool hasArgs() const { return m_arg_vars != NULL; }
-
-	void setLocalVars(Scope* local_vars) { m_local_vars = local_vars; }
-	void setArgVars(Scope* arg_vars) { m_arg_vars = arg_vars; }
+	bool hasArgs() const { return m_num_args != 0; }
+	void setNumArgs(size_t n)  { m_num_args = n; }
 
 	Environment* getEnvironment() { return m_environment; }
 	void setEnvironment(Environment* e) {
@@ -78,12 +73,7 @@ private:
 		FunctionPtr ptr;
 		size_t addr;
 	} m_info;
-
-	/// Argument variables
-	Scope* m_arg_vars;
-
-	/// Local variables
-	Scope* m_local_vars;
+	size_t m_num_args;
 
 	Environment* m_environment;
 };
