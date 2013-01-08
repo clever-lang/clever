@@ -16,10 +16,10 @@
 #include <string>
 #include "types/function.h"
 
-#define CLEVER_MODULE_INIT(x) void x::init(int flags)
+#define CLEVER_MODULE_INIT(x) void x::init()
 
 #define CLEVER_MODULE_VIRTUAL_METHODS_DECLARATION \
-	void init(int flags);
+	void init();
 
 namespace clever {
 
@@ -56,7 +56,7 @@ public:
 	void setLoaded() { m_flags = LOADED; }
 	bool isLoaded() const { return m_flags == LOADED; }
 
-	virtual void init(int) = 0;
+	virtual void init() = 0;
 private:
 	std::string m_name;
 	ModuleStatus m_flags;

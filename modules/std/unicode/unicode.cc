@@ -22,11 +22,7 @@ namespace unicode {
 CLEVER_MODULE_INIT(UnicodeModule) {
 	using namespace unicode;
 
-	BEGIN_DECLARE_TYPE()
-
 	addType(CSTRING("UString"), new UString);
-
-	END_DECLARE()
 }
 
 }}} // clever::packages::std

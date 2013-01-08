@@ -77,13 +77,11 @@ static CLEVER_FUNCTION(abs) {
  */
 CLEVER_MODULE_INIT(Math) {
 	using namespace math;
-	
-	BEGIN_DECLARE_FUNCTION();
+
 	addFunction(new Function("round", &CLEVER_FUNC_NAME(round)));
-	addFunction(new Function("ceil", &CLEVER_FUNC_NAME(ceil)));
+	addFunction(new Function("ceil",  &CLEVER_FUNC_NAME(ceil)));
 	addFunction(new Function("floor", &CLEVER_FUNC_NAME(floor)));
-	addFunction(new Function("abs", &CLEVER_FUNC_NAME(abs)));
-	END_DECLARE();
+	addFunction(new Function("abs",   &CLEVER_FUNC_NAME(abs)));
 }
 
 }}} // clever::packages::std

@@ -28,18 +28,13 @@ static CLEVER_FUNCTION(get_type) {
 
 CLEVER_MODULE_INIT(Reflection)
 {
-	BEGIN_DECLARE_TYPE()
-
-	addType(CSTRING("ReflectionFunction"), new ReflectionFunction);
-
-	END_DECLARE()
-
-	BEGIN_DECLARE_FUNCTION()
 	using namespace reflection;
 
-	addFunction(new Function("get_type", &CLEVER_FUNC_NAME(get_type)));
+	// Types
+	addType(CSTRING("ReflectionFunction"), new ReflectionFunction);
 
-	END_DECLARE()
+	// Functions
+	addFunction(new Function("get_type", &CLEVER_FUNC_NAME(get_type)));
 }
 
 }}} // clever::packages::std

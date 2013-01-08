@@ -17,7 +17,6 @@ namespace clever {
 /// Adds the available packages to be imported
 void PkgManager::init()
 {
-
 	addPackage(CSTRING("std"), new packages::Std);
 }
 
@@ -54,7 +53,7 @@ void PkgManager::loadModule(Scope* scope, Environment* env, Module* module) cons
 	if (module->isLoaded()) {
 		return;
 	}
-	module->init(PKG_INIT_FUNC);
+	module->init();
 	module->setLoaded();
 
 	FunctionMap& funcs = module->getFunctions();
@@ -72,8 +71,6 @@ void PkgManager::loadModule(Scope* scope, Environment* env, Module* module) cons
 
 		++itf;
 	}
-
-	module->init(PKG_INIT_TYPE);
 
 	TypeMap& types = module->getTypes();
 	TypeMap::const_iterator itt(types.begin()), ite(types.end());

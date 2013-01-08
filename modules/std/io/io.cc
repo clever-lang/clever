@@ -67,16 +67,16 @@ static CLEVER_FUNCTION(println) {
 static CLEVER_FUNCTION(printf) {
 	if (CLEVER_ARG_COUNT() > 0) {
 		const CString* format = CLEVER_ARG_CSTR(0);
-		
+
 		if (format) {
 			const char* start = format->c_str();
-			
-			for(const char* point = start; point < (start + format->size());) 
+
+			for(const char* point = start; point < (start + format->size());)
 			{
 				if (*point && (*point == (char)'\\')) {
 					unsigned long arg;
 					char* skip;
-					
+
 					if ((arg=::std::strtoul(++point, &skip, 10))) {
 						if (CLEVER_ARG_COUNT() > arg) {
 							CLEVER_ARG_DUMP(arg);
@@ -101,12 +101,10 @@ static CLEVER_FUNCTION(printf) {
 CLEVER_MODULE_INIT(IOModule) {
 	using namespace io;
 
-	BEGIN_DECLARE_FUNCTION();
-	addFunction(new Function("print", &CLEVER_FUNC_NAME(print)));
+	addFunction(new Function("print",   &CLEVER_FUNC_NAME(print)));
 	addFunction(new Function("println", &CLEVER_FUNC_NAME(println)));
-	addFunction(new Function("printf", &CLEVER_FUNC_NAME(printf)));
-	addFunction(new Function("flush", &CLEVER_FUNC_NAME(flush)));
-	END_DECLARE();
+	addFunction(new Function("printf",  &CLEVER_FUNC_NAME(printf)));
+	addFunction(new Function("flush",   &CLEVER_FUNC_NAME(flush)));
 }
 
 }}} // clever::packages::std
