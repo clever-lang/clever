@@ -47,9 +47,10 @@ public:
 	bool isInternal() const { return m_type == INTERNAL_THREAD; }
 
 	size_t getAddr() const { return m_info.addr; }
+	size_t getID() const { return m_thread_id; }
 
 	void setAddr(size_t addr) { m_info.addr = addr; }
-
+	void setID(size_t ID) { m_thread_id = ID; }
 	Scope* getLocalVars() { return m_local_vars; }
 
 
@@ -62,6 +63,7 @@ public:
 private:
 	std::string m_name;
 	ThreadKind m_type;
+	size_t m_thread_id;
 
 	union {
 		size_t addr;
