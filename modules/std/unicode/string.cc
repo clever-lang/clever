@@ -15,11 +15,6 @@ namespace clever { namespace packages { namespace std {
 
 using namespace icu;
 
-#define CLEVER_USTR_TYPE UnicodeString*
-#define CLEVER_USTR_CAST(what) (CLEVER_USTR_TYPE) what
-#define CLEVER_USTR_THIS() CLEVER_USTR_CAST(CLEVER_THIS()->getObj())
-#define CLEVER_USTR_OBJ(from) UnicodeString(from->c_str(), from->size(), US_INV)
-
 void UString::dump(const void *data) const {
 	dump(data, ::std::cout);
 }
@@ -60,7 +55,7 @@ void UString::deallocData(void *data) {
 // UString.getLength()
 // Determine the length of this
 CLEVER_METHOD(UString::getLength)
-{
+{	
 	if (CLEVER_THIS()) {
 		CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
 		if (intern) {
@@ -77,32 +72,13 @@ CLEVER_METHOD(UString::startsWith) {
 	if (CLEVER_THIS()) {
 		CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
 		if (intern) {
-			if (CLEVER_ARG_TYPE(0) == CLEVER_STR_TYPE) {
+			if (CLEVER_VERIFY_ARGS("s") || CLEVER_VERIFY_ARGS("sii")) {
 				switch (CLEVER_ARG_COUNT()) {
-					case 1: {
-						CLEVER_RETURN_INT(intern->startsWith(UnicodeString(CLEVER_ARG_PSTR(0))));
-					} break;
-
-					case 3: {
-						if ((CLEVER_ARG_TYPE(1) == CLEVER_INT_TYPE) && (CLEVER_ARG_TYPE(2) == CLEVER_INT_TYPE)) {
-							CLEVER_RETURN_INT(
-								intern->startsWith(
-									UnicodeString(CLEVER_ARG_PSTR(0)),
-									CLEVER_ARG_INT(1),
-									CLEVER_ARG_INT(2)
-								)
-							);
-						} else {
-							/** UString.startsWith expected the second and third parameter to be integral values **/
-						}
-					} break;
-				
-					default:
-						/** UString.startsWith expected one or three parameters **/
-					break;
+					case 1: CLEVER_RETURN_INT(intern->startsWith(UnicodeString(CLEVER_ARG_PSTR(0)))); break;
+					case 3: CLEVER_RETURN_INT(intern->startsWith(UnicodeString(CLEVER_ARG_PSTR(0)), CLEVER_ARG_INT(1), CLEVER_ARG_INT(2))); break;
 				}
 			} else {
-				/** UString.startsWith expected the first parameter to be a string **/
+				/** UString.startsWith expected one, or three arguments exactly **/
 			}
 		}
 	} else {
@@ -117,32 +93,13 @@ CLEVER_METHOD(UString::endsWith)
 	if (CLEVER_THIS()) {
 		CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
 		if (intern) {
-			if (CLEVER_ARG_TYPE(0) == CLEVER_STR_TYPE) {
+			if (CLEVER_VERIFY_ARGS("s") || CLEVER_VERIFY_ARGS("sii")) {
 				switch (CLEVER_ARG_COUNT()) {
-					case 1: {
-						CLEVER_RETURN_INT(intern->endsWith(UnicodeString(CLEVER_ARG_PSTR(0))));
-					} break;
-
-					case 3: {
-						if ((CLEVER_ARG_TYPE(1) == CLEVER_INT_TYPE) && (CLEVER_ARG_TYPE(2) == CLEVER_INT_TYPE)) {
-							CLEVER_RETURN_INT(
-								intern->endsWith(
-									UnicodeString(CLEVER_ARG_PSTR(0)),
-									CLEVER_ARG_INT(1),
-									CLEVER_ARG_INT(2)
-								)
-							);
-						} else {
-							/** UString.endsWith expected the second and third parameter to be integral values **/
-						}
-					} break;
-				
-					default:
-						/** UString.endsWith expected one or three parameters **/
-					break;
+					case 1: CLEVER_RETURN_INT(intern->endsWith(UnicodeString(CLEVER_ARG_PSTR(0)))); break;
+					case 3: CLEVER_RETURN_INT(intern->endsWith(UnicodeString(CLEVER_ARG_PSTR(0)), CLEVER_ARG_INT(1), CLEVER_ARG_INT(2))); break;
 				}
 			} else {
-				/** UString.endsWith expected the first parameter to be a string **/
+				/** UString.endsWith expected one, or three arguments exactly **/
 			}
 		}
 	} else {
@@ -157,45 +114,14 @@ CLEVER_METHOD(UString::indexOf)
 	if (CLEVER_THIS()) {
 		CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
 		if (intern) {
-			if (CLEVER_ARG_TYPE(0) == CLEVER_STR_TYPE) {
+			if (CLEVER_VERIFY_ARGS("s") || CLEVER_VERIFY_ARGS("si") || CLEVER_VERIFY_ARGS("sii")) {
 				switch(CLEVER_ARG_COUNT()) {
-					case 1: {
-						CLEVER_RETURN_INT(intern->indexOf(UnicodeString(CLEVER_ARG_PSTR(0))));
-					} break;
-
-					case 2: {
-						if ((CLEVER_ARG_TYPE(1) == CLEVER_INT_TYPE)) {
-							CLEVER_RETURN_INT(
-								intern->indexOf(
-									UnicodeString(CLEVER_ARG_PSTR(0)),
-									CLEVER_ARG_INT(1)
-								)
-							);
-						} else {
-							/** UString.indexOf expected the second parameter to be an integral value **/
-						}
-					} break;
-
-					case 3: {
-						if ((CLEVER_ARG_TYPE(1) == CLEVER_INT_TYPE) && (CLEVER_ARG_TYPE(2) == CLEVER_INT_TYPE)) {
-							CLEVER_RETURN_INT(
-								intern->indexOf(
-									UnicodeString(CLEVER_ARG_PSTR(0)),
-									CLEVER_ARG_INT(1),
-									CLEVER_ARG_INT(2)
-								)
-							);
-						} else {
-							/** UString.indexOf expected the second and third parameter to be integral values **/
-						}
-					} break;
-					
-					default:
-						/** UString.indexOf expected a maximum of three parameters **/
-					break;
+					case 1: CLEVER_RETURN_INT(intern->indexOf(UnicodeString(CLEVER_ARG_PSTR(0)))); break;
+					case 2: CLEVER_RETURN_INT(intern->indexOf(UnicodeString(CLEVER_ARG_PSTR(0)), CLEVER_ARG_INT(1))); break;
+					case 3: CLEVER_RETURN_INT(intern->indexOf(UnicodeString(CLEVER_ARG_PSTR(0)), CLEVER_ARG_INT(1), CLEVER_ARG_INT(2))); break;
 				}
 			} else {
-				/** UString.indexOf expected the first parameter to be a string **/
+				/** UString.indexOf expected one, two, or three arguments exactly **/
 			}
 		}
 	} else {
@@ -210,42 +136,11 @@ CLEVER_METHOD(UString::lastIndexOf)
 	if (CLEVER_THIS()) {
 		CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
 		if (intern) {
-			if (CLEVER_ARG_TYPE(0) == CLEVER_STR_TYPE) {
+			if (CLEVER_VERIFY_ARGS("s") || CLEVER_VERIFY_ARGS("si") || CLEVER_VERIFY_ARGS("sii")) {
 				switch(CLEVER_ARG_COUNT()) {
-					case 1: {
-						CLEVER_RETURN_INT(intern->lastIndexOf(UnicodeString(CLEVER_ARG_PSTR(0))));
-					} break;
-
-					case 2: {
-						if ((CLEVER_ARG_TYPE(1) == CLEVER_INT_TYPE)) {
-							CLEVER_RETURN_INT(
-								intern->lastIndexOf(
-									UnicodeString(CLEVER_ARG_PSTR(0)),
-									CLEVER_ARG_INT(1)
-								)
-							);
-						} else {
-							/** UString.lastIndexOf expected the second parameter to be an integral value **/
-						}
-					} break;
-
-					case 3: {
-						if ((CLEVER_ARG_TYPE(1) == CLEVER_INT_TYPE) && (CLEVER_ARG_TYPE(2) == CLEVER_INT_TYPE)) {
-							CLEVER_RETURN_INT(
-								intern->lastIndexOf(
-									UnicodeString(CLEVER_ARG_PSTR(0)),
-									CLEVER_ARG_INT(1),
-									CLEVER_ARG_INT(2)
-								)
-							);
-						} else {
-							/** UString.lastIndexOf expected the second and third parameter to be integral values **/
-						}
-					} break;
-				
-					default:
-						/** UString.indexOf expected a maximum of three parameters **/
-					break;
+					case 1: CLEVER_RETURN_INT(intern->lastIndexOf(UnicodeString(CLEVER_ARG_PSTR(0)))); break;
+					case 2: CLEVER_RETURN_INT(intern->lastIndexOf(UnicodeString(CLEVER_ARG_PSTR(0)), CLEVER_ARG_INT(1))); break;
+					case 3: CLEVER_RETURN_INT(intern->lastIndexOf(UnicodeString(CLEVER_ARG_PSTR(0)), CLEVER_ARG_INT(1), CLEVER_ARG_INT(2))); break;
 				}
 			} else {
 				/** UString.lastIndexOf expected the first parameter to be a string **/
@@ -317,22 +212,15 @@ CLEVER_METHOD(UString::trim)
 }
 
 // UString.truncate(int length)
-// Truncates this to length
+// Truncates this to length, returning the new truncated length
 CLEVER_METHOD(UString::truncate)
 {
 	if (CLEVER_THIS()) {
 		CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
 		if (intern) {
-			if (CLEVER_ARG_TYPE(0) == CLEVER_INT_TYPE) {
-				switch (CLEVER_ARG_COUNT()) {
-					case 1: {
-						intern->truncate(CLEVER_ARG_INT(0));
-					} break;
-
-					default:
-						/** UString.truncate cannot be called statically */
-					break;
-				}	
+			if (CLEVER_VERIFY_ARGS("i")) {
+				intern->truncate(CLEVER_ARG_INT(0));
+				CLEVER_RETURN_INT(intern->length());
 			} else {
 				/** UString.truncate expected exactly on integral parameter **/
 			}
@@ -349,32 +237,15 @@ CLEVER_METHOD(UString::append) {
 	if (CLEVER_THIS()) {
 		CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
 		if (intern) {
-			if (CLEVER_ARG_TYPE(0) == CLEVER_STR_TYPE) {
+			if (CLEVER_VERIFY_ARGS("s")||CLEVER_VERIFY_ARGS("sii")) {
 				switch(CLEVER_ARG_COUNT()) {
-					case 1: {
-						intern->append(UnicodeString(CLEVER_ARG_PSTR(0)));
-					} break;
-
-					case 3: {
-						if ((CLEVER_ARG_TYPE(1) == CLEVER_INT_TYPE) && (CLEVER_ARG_TYPE(2) == CLEVER_INT_TYPE)) {
-							intern->append(
-								UnicodeString(CLEVER_ARG_PSTR(0)),
-								CLEVER_ARG_INT(1),
-								CLEVER_ARG_INT(2)
-							);
-						} else {
-							/** UString.append expected parameters one and three to be integral values **/
-						}
-					} break;
-
-					default:
-						/** UString.append expected exactly one or three arguments **/
-					break;
+					case 1: intern->append(UnicodeString(CLEVER_ARG_PSTR(0))); break;
+					case 3: intern->append(UnicodeString(CLEVER_ARG_PSTR(0)), CLEVER_ARG_INT(1), CLEVER_ARG_INT(2)); break;
 				}
+				CLEVER_RETURN_INT(intern->length());
 			} else {
 				/** UString.append expected the first argument to be a string **/
-			}
-			CLEVER_RETURN_INT(intern->length());
+			}			
 		}
 	} else {
 		/** UString.append cannot be called statically **/
@@ -388,18 +259,10 @@ CLEVER_METHOD(UString::replace)
 	if (CLEVER_THIS()) {
 		CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
 		if (intern) {
-			switch(CLEVER_ARG_COUNT()) {
-				case 2: {
-					if ((CLEVER_ARG_TYPE(0) == CLEVER_STR_TYPE) && (CLEVER_ARG_TYPE(1) == CLEVER_STR_TYPE)) {
-						intern->findAndReplace(UnicodeString(CLEVER_ARG_PSTR(0)), UnicodeString(CLEVER_ARG_PSTR(1)));
-					} else {
-						/** UString.replace expected exactly two parameters of type string **/
-					}
-				} break;
-
-				default:
-					/** UString.replace expected exactly two parameters **/
-				break;
+			if (CLEVER_VERIFY_ARGS("ss")) {
+				intern->findAndReplace(UnicodeString(CLEVER_ARG_PSTR(0)), UnicodeString(CLEVER_ARG_PSTR(1)));
+			} else {
+				/** UString.replace expected exactly two parameters of type string **/
 			}
 		}
 	} else {

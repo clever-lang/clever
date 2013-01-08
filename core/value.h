@@ -31,6 +31,8 @@ extern Type* g_clever_func_type;
 #define CLEVER_STR_TYPE    g_clever_str_type
 #define CLEVER_FUNC_TYPE   g_clever_func_type
 
+#define CLEVER_VERIFY_ARGS(spec) Value::verify(args, CSTRING(spec))
+
 class ValueObject : public RefCounted {
 public:
 	ValueObject() :
@@ -163,6 +165,53 @@ public:
 	void setConst(bool constness = true) {
 		m_is_const = constness;
 	}	
+	
+	// Verify a vector of Values conform to a specific set of types ( and implicit length )
+	// Typespec:
+	//  f - a function
+	//	s - a string
+	//	i - a integral number
+	//	d - a double precision number
+	//	n - numeric
+	//	* - any type
+	// Example:
+	//	Value::verify(args, "sii") - check that the first arg is string and the next two are integral
+	//	Value::verify(args, "sdi") - check that the first arg is a string, the second a double and the third an integer
+	//	Value::verify(args, "*si") - ignore the first arg, verify the second and third
+	// NOTE:
+	//	We could pass in another parameter to cause a fatality/throw exception on error here, for now fail gracefully
+	static bool verify(const ::std::vector<Value*>& args, const CString* typespec) {
+		size_t speclen = typespec->length();
+		size_t argslen = CLEVER_ARG_COUNT();
+
+		if (speclen == argslen) {
+			for(size_t arg=0; arg < speclen; arg++) {
+				if (arg < speclen && argslen > arg) {
+					switch(typespec->at(arg)){
+						case 'f': if (CLEVER_ARG_TYPE(arg) != CLEVER_FUNC_TYPE){ return false; } break;
+						case 's': if (CLEVER_ARG_TYPE(arg) != CLEVER_STR_TYPE){ return false; } break;
+						case 'i': if (CLEVER_ARG_TYPE(arg) != CLEVER_INT_TYPE){ return false; } break;
+						case 'd': if (CLEVER_ARG_TYPE(arg) != CLEVER_DOUBLE_TYPE){ return false; } break;
+						case 'n': if ((CLEVER_ARG_TYPE(arg) != CLEVER_DOUBLE_TYPE) && (CLEVER_ARG_TYPE(arg) != CLEVER_INT_TYPE)) { return false; } break;
+
+						case '*': { /** nothing to see here **/ } break;
+
+						default: {
+							/** Value::verify encountered an unexpected type specification @ arg **/
+						} break;
+					}
+				} else {
+					return false;
+				}
+			}
+		} else {
+			/** Value::verify has recieved an unexpected number of arguments **/
+			return false;
+		}
+		
+		return true;
+	}
+	
 private:
 	DataValue m_data;
 	const Type* m_type;

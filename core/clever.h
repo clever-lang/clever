@@ -191,6 +191,8 @@ void printfln(const char*, ...);
 #define CLEVER_ARG_TYPE(index)	args[index]->getType()
 #define CLEVER_ARG_DUMP(index) 	args[index]->dump()
 #define CLEVER_ARG_DUMPTO(index, stream) args[index]->dump(stream)
+#define CLEVER_ARG_ISSET(index)	args->size() > index
+#define CLEVER_ARG_ISTYPE(index, type) (args[index]->getType() == type)
 /* }}} */
 
 /* {{{ Return value setters */
