@@ -381,6 +381,32 @@ CLEVER_METHOD(UString::append) {
 	}
 }
 
+// UString.replace(string match, string replacement)
+// Replaces all occurences of match with replacement in this
+CLEVER_METHOD(UString::replace)
+{
+	if (CLEVER_THIS()) {
+		CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
+		if (intern) {
+			switch(CLEVER_ARG_COUNT()) {
+				case 2: {
+					if ((CLEVER_ARG_TYPE(0) == CLEVER_STR_TYPE) && (CLEVER_ARG_TYPE(1) == CLEVER_STR_TYPE)) {
+						intern->findAndReplace(UnicodeString(CLEVER_ARG_PSTR(0)), UnicodeString(CLEVER_ARG_PSTR(1)));
+					} else {
+						/** UString.replace expected exactly two parameters of type string **/
+					}
+				} break;
+
+				default:
+					/** UString.replace expected exactly two parameters **/
+				break;
+			}
+		}
+	} else {
+		/** UString.replace cannot be called statically **/
+	}
+}
+
 CLEVER_TYPE_OPERATOR(UString::add) {}
 CLEVER_TYPE_OPERATOR(UString::sub) {}
 CLEVER_TYPE_OPERATOR(UString::mul) {}
@@ -406,6 +432,7 @@ CLEVER_TYPE_INIT(UString::init)
 	addMethod(CSTRING("trim"),				(MethodPtr) &UString::trim);
 	addMethod(CSTRING("truncate"),			(MethodPtr) &UString::truncate);
 	addMethod(CSTRING("append"),			(MethodPtr) &UString::append);
+	addMethod(CSTRING("replace"),			(MethodPtr) &UString::replace);
 }
 
 }}} // clever::packages::std
