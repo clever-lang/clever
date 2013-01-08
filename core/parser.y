@@ -57,6 +57,8 @@ class Value;
 	ast::Try* except;
 	ast::Catch* catch_;
 	ast::Throw* throw_;
+	ast::TrueLit* true_;
+	ast::FalseLit* false_;
 }
 
 %type <type> TYPE
@@ -64,6 +66,8 @@ class Value;
 %type <strlit> STR
 %type <intlit> NUM_INTEGER
 %type <dbllit> NUM_DOUBLE
+%type <true_> TRUE
+%type <false_> FALSE
 %type <inst> instantiation
 %type <assignment> assignment
 %type <narray> variable_decl variable_decl_list non_empty_call_args call_args
@@ -250,6 +254,8 @@ rvalue:
 	|	NUM_INTEGER
 	|	NUM_DOUBLE
 	|	NIL
+	|	TRUE
+	|	FALSE
 	|	arithmetic
 	|	logic
 	|	bitwise

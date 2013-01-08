@@ -31,8 +31,10 @@ Codegen::Codegen(IRVector& ir, Compiler* compiler, Environment* init_glbenv)
 	m_const_env = new Environment(m_init_glbenv);
 	m_temp_env  = new Environment(m_init_glbenv);
 
-	// Add 'null' to the constant pool
+	// Add 'null', true and false to the constant pool
 	m_const_env->pushValue(new Value());
+	m_const_env->pushValue(new Value(true));
+	m_const_env->pushValue(new Value(false));
 }
 
 void Codegen::sendArgs(NodeArray* node)
@@ -56,6 +58,16 @@ void Codegen::visit(NullLit* node)
 	node->setVOffset(ValueOffset(0,0));
 }
 
+void Codegen::visit(TrueLit* node)
+{
+	node->setVOffset(ValueOffset(0,1));
+}
+
+void Codegen::visit(FalseLit* node)
+{
+	node->setVOffset(ValueOffset(0,2));
+}
+
 void Codegen::visit(IntLit* node)
 {
 	node->setVOffset(m_const_env->pushValue(new Value(node->getValue())));
@@ -73,7 +85,6 @@ void Codegen::visit(StringLit* node)
 
 void Codegen::visit(Ident* node)
 {
-
 }
 
 void Codegen::visit(Block* node)
@@ -83,7 +94,6 @@ void Codegen::visit(Block* node)
 
 void Codegen::visit(CriticalBlock* node)
 {
-
 	m_ir.push_back(IR(OP_LOCK));
 
 	node->getBlock()->accept(*this);
@@ -94,7 +104,6 @@ void Codegen::visit(CriticalBlock* node)
 
 void Codegen::visit(Wait* node)
 {
-
 	const Ident* id_thread = node->getName();
 	const CString* str = id_thread->getName();
 	size_t id = m_thread_ids[*str];
