@@ -112,7 +112,7 @@ if (UNIX)
 		if (MOD_STD_UNICODE)
 			set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -licuio -licuuc")
 		endif (MOD_STD_UNICODE)
-				
+
 		# Add "-lpcrecpp" to the end of the linker command line.
 		if (MOD_STD_REGEX)
 			set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -lpcrecpp")
@@ -189,6 +189,7 @@ add_executable(clever
 	types/type.cc
 	types/function.h
 	types/function.cc
+	types/bool.h
 	${EXTRA_CLEVER_FILES}
 )
 target_link_libraries(clever ${CLEVER_LIBRARIES})

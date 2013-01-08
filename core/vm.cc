@@ -472,12 +472,12 @@ void VM::run()
 
 			if (value->isNull() || !value->asBool()) {
 				if (OPCODE.result.op_type != UNUSED) {
-					getValue(OPCODE.result)->setNull(); // TODO: boolean
+					getValue(OPCODE.result)->setBool(false);
 				}
 				VM_GOTO(OPCODE.op2.jmp_addr);
 			}
 			if (OPCODE.result.op_type != UNUSED) {
-				getValue(OPCODE.result)->setInt(1); // TODO: boolean
+				getValue(OPCODE.result)->setBool(true);
 			}
 		}
 		DISPATCH;
@@ -540,12 +540,12 @@ void VM::run()
 
 			if (!value->isNull() || value->asBool()) {
 				if (OPCODE.result.op_type != UNUSED) {
-					getValue(OPCODE.result)->setInt(1); // TODO: boolean
+					getValue(OPCODE.result)->setBool(true);
 				}
 				VM_GOTO(OPCODE.op2.jmp_addr);
 			}
 			if (OPCODE.result.op_type != UNUSED) {
-				getValue(OPCODE.result)->setNull(); // TODO: boolean
+				getValue(OPCODE.result)->setBool(false);
 			}
 		}
 		DISPATCH;
@@ -581,8 +581,7 @@ void VM::run()
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
 				lhs->getType()->greater(getValue(OPCODE.result), lhs, rhs, this);
 			} else {
-				// TODO(Felipe): boolean false
-				getValue(OPCODE.result)->setInt(0);
+				getValue(OPCODE.result)->setBool(false);
 			}
 		}
 		DISPATCH;
@@ -595,8 +594,7 @@ void VM::run()
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
 				lhs->getType()->greater_equal(getValue(OPCODE.result), lhs, rhs, this);
 			} else {
-				// TODO(Felipe): boolean false
-				getValue(OPCODE.result)->setInt(0);
+				getValue(OPCODE.result)->setBool(false);
 			}
 		}
 		DISPATCH;
@@ -609,8 +607,7 @@ void VM::run()
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
 				lhs->getType()->less(getValue(OPCODE.result), lhs, rhs, this);
 			} else {
-				// TODO(Felipe): boolean false
-				getValue(OPCODE.result)->setInt(0);
+				getValue(OPCODE.result)->setBool(false);
 			}
 		}
 		DISPATCH;
@@ -623,8 +620,7 @@ void VM::run()
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
 				lhs->getType()->less_equal(getValue(OPCODE.result), lhs, rhs, this);
 			} else {
-				// TODO(Felipe): boolean false
-				getValue(OPCODE.result)->setInt(0);
+				getValue(OPCODE.result)->setBool(false);
 			}
 		}
 		DISPATCH;
@@ -637,8 +633,7 @@ void VM::run()
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
 				lhs->getType()->equal(getValue(OPCODE.result), lhs, rhs, this);
 			} else {
-				// TODO(Felipe): boolean false
-				getValue(OPCODE.result)->setInt(0);
+				getValue(OPCODE.result)->setBool(false);
 			}
 		}
 		DISPATCH;
@@ -651,8 +646,7 @@ void VM::run()
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
 				lhs->getType()->not_equal(getValue(OPCODE.result), lhs, rhs, this);
 			} else {
-				// TODO(Felipe): boolean false
-				getValue(OPCODE.result)->setInt(0);
+				getValue(OPCODE.result)->setBool(false);
 			}
 		}
 		DISPATCH;
