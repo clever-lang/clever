@@ -21,16 +21,6 @@ namespace clever {
 class Value;
 class Environment;
 
-const int PKG_INIT_FUNC  = 1 << 0;
-const int PKG_INIT_TYPE = 1 << 1;
-const int PKG_INIT_CONST = 1 << 2;
-const int PKG_INIT_ALL   = PKG_INIT_FUNC | PKG_INIT_TYPE | PKG_INIT_CONST;
-
-#define BEGIN_DECLARE_FUNCTION() if (flags & PKG_INIT_FUNC) {
-#define BEGIN_DECLARE_TYPE()     if (flags & PKG_INIT_TYPE) {
-#define BEGIN_DECLARE_CONSTANT() if (flags & PKG_INIT_CONST) {
-#define END_DECLARE() }
-
 typedef std::tr1::unordered_map<const CString*, Package*> PackageMap;
 typedef std::pair<const CString*, Package*> PackagePair;
 
