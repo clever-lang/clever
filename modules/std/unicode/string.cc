@@ -4,6 +4,7 @@
  *
  * This file is distributed under the MIT license. See LICENSE for details.
  */
+
 #include "types/type.h"
 #include "modules/std/unicode/string.h"
 #include "unicode/ustream.h"
@@ -101,7 +102,7 @@ CLEVER_METHOD(UString::endsWith)
 					if (CLEVER_ARG_TYPE(0) == CLEVER_STR_TYPE) {
 						CLEVER_RETURN_INT(intern->endsWith(UnicodeString(CLEVER_ARG_PSTR(0))));
 					} else {
-						/** UString.endsWith expects exactly one parameter of type String **/					
+						/** UString.endsWith expects exactly one parameter of type String **/
 					}
 				} break;
 			}
@@ -109,7 +110,7 @@ CLEVER_METHOD(UString::endsWith)
 	}
 }
 
-CLEVER_METHOD(UString::indexOf) 
+CLEVER_METHOD(UString::indexOf)
 {
 	if (CLEVER_THIS()) {
 		CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
@@ -119,7 +120,7 @@ CLEVER_METHOD(UString::indexOf)
 					if (CLEVER_ARG_TYPE(0) == CLEVER_STR_TYPE) {
 						CLEVER_RETURN_INT(intern->indexOf(UnicodeString(CLEVER_ARG_PSTR(0))));
 					} else {
-						/** UString.indexOf expects exactly one parameter of type String **/					
+						/** UString.indexOf expects exactly one parameter of type String **/
 					}
 				} break;
 			}
@@ -137,7 +138,7 @@ CLEVER_METHOD(UString::lastIndexOf)
 					if (CLEVER_ARG_TYPE(0) == CLEVER_STR_TYPE) {
 						CLEVER_RETURN_INT(intern->lastIndexOf(UnicodeString(CLEVER_ARG_PSTR(0))));
 					} else {
-						/** UString.lastIndexOf expects exactly one parameter of type String **/					
+						/** UString.lastIndexOf expects exactly one parameter of type String **/
 					}
 				} break;
 			}
@@ -206,7 +207,7 @@ CLEVER_METHOD(UString::truncate)
 				case 1: {
 					intern->truncate(CLEVER_ARG_INT(0));
 				} break;
-				
+
 				default:
 					/** UString.truncate cannot be called statically */
 				break;
@@ -231,7 +232,7 @@ CLEVER_TYPE_OPERATOR(UString::equal) {}
 CLEVER_TYPE_OPERATOR(UString::not_equal) {}
 
 CLEVER_TYPE_INIT(UString::init)
-{	
+{
 	addMethod(CSTRING("getLength"),			(MethodPtr) &UString::getLength);
 	addMethod(CSTRING("startsWith"),		(MethodPtr) &UString::startsWith);
 	addMethod(CSTRING("endsWith"),			(MethodPtr) &UString::endsWith);

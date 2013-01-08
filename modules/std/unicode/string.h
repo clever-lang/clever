@@ -4,6 +4,7 @@
  *
  * This file is distributed under the MIT license. See LICENSE for details.
  */
+
 #ifndef CLEVER_STD_UNICODE_STRING_H
 #define CLEVER_STD_UNICODE_STRING_H
 
@@ -34,7 +35,7 @@ public:
 	virtual void deallocData(void* data);
 
 	CLEVER_TYPE_VIRTUAL_METHOD_DECLARATIONS;
-	
+
 	CLEVER_METHOD_D(getLength);
 	CLEVER_METHOD_D(startsWith);
 	CLEVER_METHOD_D(endsWith);

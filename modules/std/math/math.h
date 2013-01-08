@@ -1,6 +1,6 @@
 /**
  * Clever programming language
- * Copyright (c) 2011-2012 Clever Team
+ * Copyright (c) Clever Team
  *
  * This file is distributed under the MIT license. See LICENSE for details.
  */
@@ -17,7 +17,7 @@ namespace clever { namespace packages { namespace std {
 class Math : public Module {
 public:
 	Math()
-		: Module("Math") { } 
+		: Module("Math") { }
 
 	~Math() { }
 
