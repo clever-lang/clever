@@ -16,6 +16,11 @@
 
 namespace clever { namespace packages { namespace std {
 
+#define CLEVER_USTR_TYPE UnicodeString*
+#define CLEVER_USTR_CAST(what) (CLEVER_USTR_TYPE) what
+#define CLEVER_USTR_THIS() CLEVER_USTR_CAST(CLEVER_THIS()->getObj())
+#define CLEVER_USTR_OBJ(from) UnicodeString(from->c_str(), from->size(), US_INV)
+
 class UString : public Type {
 public:
 	UString()
