@@ -83,6 +83,10 @@ void Catch::accept(Visitor& visitor) { visitor.visit(this); }
 
 void Throw::accept(Visitor& visitor) { visitor.visit(this); }
 
+void TrueLit::accept(Visitor& visitor) { visitor.visit(this); }
+
+void FalseLit::accept(Visitor& visitor) { visitor.visit(this); }
+
 // Transformers
 
 Node* Node::accept(Transformer& transformer) { return transformer.transform(this); }
@@ -148,5 +152,9 @@ Node* Try::accept(Transformer& transformer) { return transformer.transform(this)
 Node* Catch::accept(Transformer& transformer) { return transformer.transform(this); }
 
 Node* Throw::accept(Transformer& transformer) { return transformer.transform(this); }
+
+Node* TrueLit::accept(Transformer& transformer) { return transformer.transform(this); }
+
+Node* FalseLit::accept(Transformer& transformer) { return transformer.transform(this); }
 
 }} // clever::ast

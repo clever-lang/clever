@@ -8,16 +8,16 @@
 # Modules
 # ---------------------------------------------------------------------------
 clever_add_module(std_regex      ON  "enable the regex module"      "")
-clever_add_module(std_ffi        OFF  "enable the ffi module"        "")
+clever_add_module(std_ffi        OFF "enable the ffi module"        "")
 clever_add_module(std_rpc        ON  "enable the rpc module"        "")
 clever_add_module(std_net        ON  "enable the net module"        "")
-clever_add_module(web_request       OFF "enable the request module"        "")
-clever_add_module(web_session       OFF "enable the session module"        "")
+clever_add_module(std_unicode    ON  "enable the unicode module"    "")
+clever_add_module(web_request    OFF "enable the request module"    "")
+clever_add_module(web_session    OFF "enable the session module"    "")
 
 # Simple modules
 clever_add_simple_module(std_file       ON  "enable the file module"       "")
 clever_add_simple_module(std_io         ON  "enable the io module"         "")
-clever_add_simple_module(std_unicode    OFF  "enable the unicode module"    "")
 clever_add_simple_module(std_math       ON  "enable the math module"       "")
 clever_add_simple_module(std_reflection ON  "enable the reflection module" "")
 clever_add_simple_module(std_sys        ON  "enable the sys module"        "")

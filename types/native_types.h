@@ -12,5 +12,8 @@
 #include "types/double.h"
 #include "types/str.h"
 #include "types/function.h"
+#include "types/bool.h"
+#include "types/array.h"
+#include "types/thread.h"
 
 #endif // CLEVER_NATIVE_TYPES_H

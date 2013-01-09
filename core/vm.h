@@ -41,7 +41,7 @@ struct StackFrame {
 */
 class VM;
 
-struct Thread {
+struct VMThread {
 	VM* vm_handler;
 	CThread t_handler;
 };
@@ -54,7 +54,7 @@ public:
 		VM_WARNING
 	};
 
-	typedef std::vector<std::vector<Thread*> > ThreadPool;
+	typedef std::vector<std::vector<VMThread*> > ThreadPool;
 
 	VM(IRVector& inst)
 		: m_pc(0), m_is_main_thread(true), m_inst(inst),
@@ -94,7 +94,7 @@ public:
 	/// Helper to retrive a Value* from ValuePool
 	Value* getValue(Operand&) const;
 
-	Mutex* getMutex() {
+	CMutex* getMutex() {
 		return isChild() ? f_mutex : &m_mutex;
 	}
 	/// Start the VM execution
@@ -134,8 +134,8 @@ private:
 
 	ThreadPool m_thread_pool;
 
-	Mutex m_mutex;
-	Mutex* f_mutex;
+	CMutex m_mutex;
+	CMutex* f_mutex;
 
 	std::stack<std::pair<size_t, size_t> > m_try_stack;
 

@@ -57,6 +57,8 @@ class Value;
 	ast::Try* except;
 	ast::Catch* catch_;
 	ast::Throw* throw_;
+	ast::TrueLit* true_;
+	ast::FalseLit* false_;
 }
 
 %type <type> TYPE
@@ -64,7 +66,9 @@ class Value;
 %type <strlit> STR
 %type <intlit> NUM_INTEGER
 %type <dbllit> NUM_DOUBLE
-%type <inst> instantiation
+%type <true_> TRUE
+%type <false_> FALSE
+%type <inst> instantiation array
 %type <assignment> assignment
 %type <narray> variable_decl variable_decl_list non_empty_call_args call_args
 %type <narray> const_decl_list not_empty_catch catch
@@ -235,8 +239,7 @@ wait_block:
 ;
 
 thread_block:
-		THREAD block       { $$ = new ast::ThreadBlock($2, yyloc); }
-	|	THREAD IDENT block { $$ = new ast::ThreadBlock($3, $2, yyloc); }
+		THREAD IDENT block { $$ = new ast::ThreadBlock($3, $2, yyloc); }
 	|	THREAD IDENT '[' rvalue ']'  block { $$ = new ast::ThreadBlock($6, $2, $<node>4, yyloc); }
 ;
 
@@ -250,6 +253,8 @@ rvalue:
 	|	NUM_INTEGER
 	|	NUM_DOUBLE
 	|	NIL
+	|	TRUE
+	|	FALSE
 	|	arithmetic
 	|	logic
 	|	bitwise
@@ -261,11 +266,16 @@ rvalue:
 	|	instantiation
 	|	property_access
 	|	mcall
+	|	array
 	|	'(' rvalue ')' { $<node>$ = $<node>2; }
 ;
 
 lvalue:
 		IDENT
+;
+
+array:
+		'[' call_args ']'  { $$ = new ast::Instantiation(CSTRING("Array"), $2, yyloc); }
 ;
 
 throw:

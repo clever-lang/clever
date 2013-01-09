@@ -45,6 +45,7 @@ if (ICU_DIR)
 else (ICU_DIR)
 	find_path(ICU_INCLUDE_DIR unicode/uchar.h)
 	find_library(ICU_LIBS NAMES icuuc libicu)
+	set (ICU_FOUND FALSE)
 
 	if (ICU_INCLUDE_DIR AND ICU_LIBS)
 		list (APPEND ICU_INCLUDE_DIR ${ICU_INCLUDE_DIR})

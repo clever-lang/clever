@@ -18,13 +18,8 @@ public:
 	virtual void dump(const void*) const {}
 	virtual void dump(const void*, ::std::ostream& out) const {}
 
-	virtual void* allocData(CLEVER_TYPE_CTOR_ARGS) const;
+	virtual void* allocData(CLEVER_TYPE_CTOR_ARGS) const { return NULL; }
 	virtual void deallocData(void* data) {}
-
-	virtual void increment(Value*) const {}
-	virtual void decrement(Value*) const {}
-
-	CLEVER_TYPE_VIRTUAL_METHOD_DECLARATIONS;
 };
 
 }}} // clever::packages::std

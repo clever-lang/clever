@@ -23,6 +23,7 @@ void Visitor::visit(Block* node) {
 }
 
 void Visitor::visit(Wait* node) {
+	node->getName()->accept(*this);
 }
 
 void Visitor::visit(CriticalBlock* node) {
@@ -30,6 +31,7 @@ void Visitor::visit(CriticalBlock* node) {
 }
 
 void Visitor::visit(ThreadBlock* node) {
+	node->getName()->accept(*this);
 	if (node->getSize()) {
 		node->getSize()->accept(*this);
 	}

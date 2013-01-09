@@ -42,6 +42,9 @@ class NullLit;
 class MethodCall;
 class Property;
 class Try;
+class TrueLit;
+class FalseLit;
+class Array;
 
 typedef std::vector<Node*> NodeList;
 
@@ -333,6 +336,12 @@ private:
 
 class Instantiation: public Node {
 public:
+	Instantiation(const CString* type, NodeArray* args, const location& location)
+		: Node(location), m_type(new Type(type, location)), m_args(args) {
+		CLEVER_ADDREF(m_type);
+		CLEVER_SAFE_ADDREF(m_args);
+	}
+
 	Instantiation(Type* type, NodeArray* args, const location& location)
 		: Node(location), m_type(type), m_args(args) {
 		CLEVER_ADDREF(m_type);
@@ -387,9 +396,9 @@ private:
 
 class VariableDecl: public Node {
 public:
-	VariableDecl(Ident* ident, Assignment* assignment, bool is_const, 
+	VariableDecl(Ident* ident, Assignment* assignment, bool is_const,
 		const location& location)
-		: Node(location), m_ident(ident), m_assignment(assignment), 
+		: Node(location), m_ident(ident), m_assignment(assignment),
 		m_is_const(is_const) {
 		CLEVER_ADDREF(m_ident);
 		CLEVER_SAFE_ADDREF(m_assignment);
@@ -408,7 +417,7 @@ public:
 
 	Assignment* getAssignment() const { return m_assignment; }
 	bool hasAssignment() const { return m_assignment != NULL; }
-	
+
 	bool isConst() const { return m_is_const; }
 
 	virtual void accept(Visitor& visitor);
@@ -843,6 +852,28 @@ public:
 		: Literal(location) {}
 
 	~NullLit() {}
+
+	virtual void accept(Visitor& visitor);
+	virtual Node* accept(Transformer& transformer);
+};
+
+class TrueLit: public Literal {
+public:
+	TrueLit(const location& location)
+		: Literal(location) {}
+
+	~TrueLit() {}
+
+	virtual void accept(Visitor& visitor);
+	virtual Node* accept(Transformer& transformer);
+};
+
+class FalseLit: public Literal {
+public:
+	FalseLit(const location& location)
+		: Literal(location) {}
+
+	~FalseLit() {}
 
 	virtual void accept(Visitor& visitor);
 	virtual Node* accept(Transformer& transformer);

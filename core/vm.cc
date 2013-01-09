@@ -13,6 +13,7 @@
 #include "core/scope.h"
 #include "core/value.h"
 #include "types/function.h"
+#include "types/thread.h"
 #include "types/type.h"
 
 #define OPCODE m_inst[m_pc]
@@ -150,6 +151,8 @@ void VM::copy(const VM* vm)
 
 	this->m_global_env = vm->m_global_env;
 
+	this->m_call_stack = vm->m_call_stack;
+
 	this->m_const_env = vm->m_const_env;
 
 	if (vm->m_exception != NULL) {
@@ -177,7 +180,7 @@ void VM::wait()
 
 CLEVER_THREAD_FUNC(_thread_control)
 {
-	VM* vm_handler = static_cast<Thread*>(arg)->vm_handler;
+	VM* vm_handler = static_cast<VMThread*>(arg)->vm_handler;
 
 	vm_handler->nextPC();
 	vm_handler->run();
@@ -382,6 +385,10 @@ void VM::run()
 		{
 			getMutex()->lock();
 
+			const Value* tval = getValue(OPCODE.op2);
+			Thread* tdata = static_cast<Thread*>(tval->getObj());
+			clever_assert_not_null(tdata);
+
 			const Value* size = getValue(OPCODE.result);
 			size_t n_threads = 1;
 
@@ -390,7 +397,7 @@ void VM::run()
 			}
 
 			for (size_t i = 0; i < n_threads; ++i) {
-				Thread* thread = new Thread;
+				VMThread* thread = new VMThread;
 
 				new_thread();
 
@@ -399,11 +406,23 @@ void VM::run()
 
 				thread->vm_handler->setChild();
 
-				if (static_cast<long>(m_thread_pool.size()) <= getValue(OPCODE.op2)->getInt()) {
-					m_thread_pool.resize(getValue(OPCODE.op2)->getInt() + 1);
+				Environment* tenv;
+
+				if (thread->vm_handler->m_call_stack.top()->isActive()) {
+					tenv = tdata->getEnvironment()
+								->activate(thread->vm_handler->m_call_stack.top()->getOuter());
+				} else {
+					tenv = tdata->getEnvironment()
+								->activate(thread->vm_handler->m_call_stack.top());
+				}
+				thread->vm_handler->m_call_stack.push(tenv);
+
+
+				if (m_thread_pool.size() <= tdata->getID()) {
+					m_thread_pool.resize(tdata->getID() + 1);
 				}
 
-				m_thread_pool[getValue(OPCODE.op2)->getInt()].push_back(thread);
+				m_thread_pool[tdata->getID()].push_back(thread);
 
 				thread->t_handler.create(_thread_control, static_cast<void*>(thread));
 			}
@@ -414,12 +433,16 @@ void VM::run()
 
 	OP(OP_WAIT):
 		{
-			std::vector<Thread*>& thread_list = m_thread_pool[getValue(OPCODE.op1)->getInt()];
+
+			const Value* tval = getValue(OPCODE.op1);
+			Thread* tdata = static_cast<Thread*>(tval->getObj());
+
+			std::vector<VMThread*>& thread_list = m_thread_pool[tdata->getID()];
 
 			for (size_t i = 0, j = thread_list.size(); i < j; ++i) {
 				delete_thread();
 
-				Thread* t = thread_list.at(i);
+				VMThread* t = thread_list.at(i);
 				t->t_handler.wait();
 				delete t->vm_handler;
 				delete t;
@@ -435,6 +458,15 @@ void VM::run()
 	OP(OP_ETHREAD):
 		if (this->isChild()) {
 			getMutex()->lock();
+
+			if (EXPECTED(m_call_stack.size())) {
+				Environment* env = m_call_stack.top();
+
+				env->clear();
+				CLEVER_SAFE_DELREF(env);
+				m_call_stack.pop();
+			}
+
 			Environment* env = m_temp_env;
 			Environment* other = NULL;
 
@@ -472,12 +504,12 @@ void VM::run()
 
 			if (value->isNull() || !value->asBool()) {
 				if (OPCODE.result.op_type != UNUSED) {
-					getValue(OPCODE.result)->setNull(); // TODO: boolean
+					getValue(OPCODE.result)->setBool(false);
 				}
 				VM_GOTO(OPCODE.op2.jmp_addr);
 			}
 			if (OPCODE.result.op_type != UNUSED) {
-				getValue(OPCODE.result)->setInt(1); // TODO: boolean
+				getValue(OPCODE.result)->setBool(true);
 			}
 		}
 		DISPATCH;
@@ -487,7 +519,7 @@ void VM::run()
 			Value* value = getValue(OPCODE.op1);
 
 			if (EXPECTED(!value->isNull())) {
-				value->getType()->increment(value);
+				value->getType()->increment(value, this);
 				getValue(OPCODE.result)->copy(value);
 			} else {
 				error(VM_ERROR, "Cannot increment null value");
@@ -501,7 +533,7 @@ void VM::run()
 
 			if (EXPECTED(!value->isNull())) {
 				getValue(OPCODE.result)->copy(value);
-				value->getType()->increment(value);
+				value->getType()->increment(value, this);
 			} else {
 				error(VM_ERROR, "Cannot increment null value");
 			}
@@ -513,7 +545,7 @@ void VM::run()
 			Value* value = getValue(OPCODE.op1);
 
 			if (EXPECTED(!value->isNull())) {
-				value->getType()->decrement(value);
+				value->getType()->decrement(value, this);
 				getValue(OPCODE.result)->copy(value);
 			} else {
 				error(VM_ERROR, "Cannot decrement null value");
@@ -527,7 +559,7 @@ void VM::run()
 
 			if (EXPECTED(!value->isNull())) {
 				getValue(OPCODE.result)->copy(value);
-				value->getType()->decrement(value);
+				value->getType()->decrement(value, this);
 			} else {
 				error(VM_ERROR, "Cannot decrement null value");
 			}
@@ -540,12 +572,12 @@ void VM::run()
 
 			if (!value->isNull() || value->asBool()) {
 				if (OPCODE.result.op_type != UNUSED) {
-					getValue(OPCODE.result)->setInt(1); // TODO: boolean
+					getValue(OPCODE.result)->setBool(true);
 				}
 				VM_GOTO(OPCODE.op2.jmp_addr);
 			}
 			if (OPCODE.result.op_type != UNUSED) {
-				getValue(OPCODE.result)->setNull(); // TODO: boolean
+				getValue(OPCODE.result)->setBool(false);
 			}
 		}
 		DISPATCH;
@@ -581,8 +613,7 @@ void VM::run()
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
 				lhs->getType()->greater(getValue(OPCODE.result), lhs, rhs, this);
 			} else {
-				// TODO(Felipe): boolean false
-				getValue(OPCODE.result)->setInt(0);
+				getValue(OPCODE.result)->setBool(false);
 			}
 		}
 		DISPATCH;
@@ -595,8 +626,7 @@ void VM::run()
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
 				lhs->getType()->greater_equal(getValue(OPCODE.result), lhs, rhs, this);
 			} else {
-				// TODO(Felipe): boolean false
-				getValue(OPCODE.result)->setInt(0);
+				getValue(OPCODE.result)->setBool(false);
 			}
 		}
 		DISPATCH;
@@ -609,8 +639,7 @@ void VM::run()
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
 				lhs->getType()->less(getValue(OPCODE.result), lhs, rhs, this);
 			} else {
-				// TODO(Felipe): boolean false
-				getValue(OPCODE.result)->setInt(0);
+				getValue(OPCODE.result)->setBool(false);
 			}
 		}
 		DISPATCH;
@@ -623,8 +652,7 @@ void VM::run()
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
 				lhs->getType()->less_equal(getValue(OPCODE.result), lhs, rhs, this);
 			} else {
-				// TODO(Felipe): boolean false
-				getValue(OPCODE.result)->setInt(0);
+				getValue(OPCODE.result)->setBool(false);
 			}
 		}
 		DISPATCH;
@@ -637,8 +665,7 @@ void VM::run()
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
 				lhs->getType()->equal(getValue(OPCODE.result), lhs, rhs, this);
 			} else {
-				// TODO(Felipe): boolean false
-				getValue(OPCODE.result)->setInt(0);
+				getValue(OPCODE.result)->setBool(false);
 			}
 		}
 		DISPATCH;
@@ -651,8 +678,7 @@ void VM::run()
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
 				lhs->getType()->not_equal(getValue(OPCODE.result), lhs, rhs, this);
 			} else {
-				// TODO(Felipe): boolean false
-				getValue(OPCODE.result)->setInt(0);
+				getValue(OPCODE.result)->setBool(false);
 			}
 		}
 		DISPATCH;
@@ -670,7 +696,7 @@ void VM::run()
 			const Value* valtype = getValue(OPCODE.op1);
 			const Type* type = valtype->getType();
 
-			getValue(OPCODE.result)->setType(valtype->getType());
+			getValue(OPCODE.result)->setType(type);
 
 			if (EXPECTED(!type->isPrimitive())) {
 				getValue(OPCODE.result)->setObj(type->allocData(&m_call_args));

@@ -27,11 +27,11 @@ void disenable_threads();
 bool thread_is_enabled();
 
 
-class Mutex {
+class CMutex {
 public:
-	Mutex();
+	CMutex();
 
-	~Mutex();
+	~CMutex();
 
 	void lock();
 	void unlock();

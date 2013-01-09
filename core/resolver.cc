@@ -25,19 +25,29 @@ Resolver::Resolver(Compiler* compiler)
 	Value* strval = new Value(CLEVER_STR_TYPE    = new StrType);
 	Value* dblval = new Value(CLEVER_DOUBLE_TYPE = new DoubleType);
 	Value* fncval = new Value(CLEVER_FUNC_TYPE   = new FuncType);
+	Value* bolval = new Value(CLEVER_BOOL_TYPE   = new BoolType);
+	Value* arrval = new Value(CLEVER_ARRAY_TYPE  = new ArrayType);
+	Value* trdval = new Value(CLEVER_THREAD_TYPE = new ThreadType);
 
 	m_scope->pushValue(CSTRING("Int"),      intval);
 	m_scope->pushValue(CSTRING("String"),   strval);
 	m_scope->pushValue(CSTRING("Double"),   dblval);
 	m_scope->pushValue(CSTRING("Function"), fncval);
+	m_scope->pushValue(CSTRING("Thread"),    trdval);
+	m_scope->pushValue(CSTRING("Bool"),     bolval);
+	m_scope->pushValue(CSTRING("Array"),    arrval);
 
 	m_stack.top()->pushValue(intval);
 	m_stack.top()->pushValue(strval);
 	m_stack.top()->pushValue(dblval);
 	m_stack.top()->pushValue(fncval);
+	m_stack.top()->pushValue(trdval);
+	m_stack.top()->pushValue(bolval);
+	m_stack.top()->pushValue(arrval);
 
 	CLEVER_INT_TYPE->init();
 	CLEVER_STR_TYPE->init();
+	CLEVER_ARRAY_TYPE->init();
 }
 
 void Resolver::visit(Block* node)
@@ -72,8 +82,55 @@ void Resolver::visit(VariableDecl* node)
 	if (node->hasAssignment()) {
 		node->getAssignment()->accept(*this);
 	}
-	
+
 	val->setConst(node->isConst());
+}
+
+void Resolver::visit(ThreadBlock* node)
+{
+	const CString* name;
+
+	if (node->getSize() != NULL) {
+		node->getSize()->accept(*this);
+	}
+
+	name = node->getName()->getName();
+	clever_assert_not_null(name);
+
+	if (m_scope->getLocal(name)) {
+		Compiler::errorf(node->getLocation(),
+			"Cannot redeclare thread `%S'.", name);
+	}
+
+	Thread* thread = static_cast<Thread*>(CLEVER_THREAD_TYPE->allocData(NULL));
+
+	thread->setUserDefined();
+
+	Value* tval = new Value();
+	tval->setType(CLEVER_THREAD_TYPE);
+	tval->setObj(thread);
+
+	thread->setName(*name);
+	m_scope->pushValue(name, tval);
+
+	m_stack.top()->pushValue(tval);
+
+	node->getName()->accept(*this);
+
+	m_scope = m_scope->enter();
+
+	m_scope->setEnvironment(new Environment(m_stack.top()));
+	m_stack.push(m_scope->getEnvironment());
+	thread->setEnvironment(m_scope->getEnvironment());
+	m_scope->getEnvironment()->delRef();
+
+	node->setScope(m_scope);
+
+	node->getBlock()->accept(*this);
+
+	m_scope = m_scope->leave();
+
+	m_stack.pop();
 }
 
 void Resolver::visit(FunctionDecl* node)
@@ -129,7 +186,7 @@ void Resolver::visit(FunctionDecl* node)
 
 		node->getArgs()->accept(*this);
 
-		func->setArgVars(m_scope);
+		func->setNumArgs(node->numArgs());
 	}
 
 	node->getBlock()->accept(*this);

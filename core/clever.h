@@ -178,14 +178,22 @@ void printfln(const char*, ...);
 #define CLEVER_TYPE_OBJ		8
 #define CLEVER_TYPE_FUNC	16
 
+#define CLEVER_GET_OBJECT(t, n) static_cast<t>((n)->getObj())
+#define CLEVER_GET_TYPE(n) (n)->getType()
+#define CLEVER_GET_BOOL(n) (n)->getBool()
+
 /* {{{ Accessor Macros for Function Arguments */
 #define CLEVER_ARG_COUNT		 args.size
+
 /* {{{ CString */
-#define CLEVER_ARG_CSTR(index)	args[index]->getStr() /* }}} */
+#define CLEVER_ARG_CSTR(index)	args[index]->getStr()
+/* }}} */
+
 /* {{{ String Pointer */
 #define CLEVER_ARG_PSTR(index)	CLEVER_ARG_CSTR(index)->c_str() /* }}} */
 #define CLEVER_ARG_DBL(index)	args[index]->getDouble()
 #define CLEVER_ARG_INT(index)	args[index]->getInt()
+#define CLEVER_ARG_BOOL(index)	args[index]->getBool()
 #define CLEVER_ARG_OBJ(index)	args[index]->getObj()
 #define CLEVER_ARG_DATA(index)	args[index]->getData()
 #define CLEVER_ARG_TYPE(index)	args[index]->getType()
@@ -202,6 +210,7 @@ void printfln(const char*, ...);
 #define CLEVER_RETURN_OBJ(o)	result->setObj(o)
 #define CLEVER_RETURN_DATA(d)	result->setData(d)
 #define CLEVER_RETURN_NULL()	result->setNull()
+#define CLEVER_RETURN_BOOL(b)   result->setBool(b)
 /* }}} */
 
 } // clever
