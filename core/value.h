@@ -21,6 +21,7 @@ extern Type* g_clever_str_type;
 extern Type* g_clever_func_type;
 extern Type* g_clever_thread_type;
 extern Type* g_clever_bool_type;
+extern Type* g_clever_array_type;
 
 #define DECLARE_CLEVER_NATIVE_TYPES() \
 	Type* g_clever_int_type;          \
@@ -28,7 +29,8 @@ extern Type* g_clever_bool_type;
 	Type* g_clever_str_type;          \
 	Type* g_clever_func_type;         \
 	Type* g_clever_thread_type;       \
-	Type* g_clever_bool_type;
+	Type* g_clever_bool_type;         \
+	Type* g_clever_array_type;
 
 #define CLEVER_INT_TYPE    g_clever_int_type
 #define CLEVER_DOUBLE_TYPE g_clever_double_type
@@ -36,6 +38,7 @@ extern Type* g_clever_bool_type;
 #define CLEVER_FUNC_TYPE   g_clever_func_type
 #define CLEVER_THREAD_TYPE g_clever_thread_type
 #define CLEVER_BOOL_TYPE   g_clever_bool_type
+#define CLEVER_ARRAY_TYPE  g_clever_array_type
 
 class ValueObject : public RefCounted {
 public:

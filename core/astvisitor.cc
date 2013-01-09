@@ -77,12 +77,6 @@ void Visitor::visit(FunctionCall* node) {
 	}
 }
 
-void Visitor::visit(Array* node) {
-	if (node->hasArgs()) {
-		node->getArgs()->accept(*this);
-	}
-}
-
 void Visitor::visit(MethodCall* node) {
 	node->getCallee()->accept(*this);
 

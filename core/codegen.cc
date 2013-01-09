@@ -567,5 +567,3 @@ void Codegen::visit(Throw* node)
 }
 
 }} // clever::ast
-
-

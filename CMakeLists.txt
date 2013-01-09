@@ -193,6 +193,8 @@ add_executable(clever
 	types/thread.cc
 	types/bool.h
 	types/bool.cc
+	types/array.h
+	types/array.cc
 	${EXTRA_CLEVER_FILES}
 )
 target_link_libraries(clever ${CLEVER_LIBRARIES})

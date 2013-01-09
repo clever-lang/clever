@@ -59,7 +59,6 @@ class Value;
 	ast::Throw* throw_;
 	ast::TrueLit* true_;
 	ast::FalseLit* false_;
-	ast::Array* array;
 }
 
 %type <type> TYPE
@@ -69,7 +68,7 @@ class Value;
 %type <dbllit> NUM_DOUBLE
 %type <true_> TRUE
 %type <false_> FALSE
-%type <inst> instantiation
+%type <inst> instantiation array
 %type <assignment> assignment
 %type <narray> variable_decl variable_decl_list non_empty_call_args call_args
 %type <narray> const_decl_list not_empty_catch catch
@@ -97,7 +96,6 @@ class Value;
 %type <except> try_catch_finally
 %type <catch_> catch_impl
 %type <throw_> throw
-%type <array> array
 
 // The parsing context.
 %parse-param { Driver& driver }
@@ -277,7 +275,7 @@ lvalue:
 ;
 
 array:
-		'[' call_args ']' { $$ = new ast::Array($2, yyloc); }
+		'[' call_args ']'  { $$ = new ast::Instantiation(CSTRING("Array"), $2, yyloc); }
 ;
 
 throw:

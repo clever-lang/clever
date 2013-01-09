@@ -1,0 +1,9 @@
+Testing array
+==CODE==
+import std.io.*;
+
+var a = [1, 2, 2 + 2];
+
+println(a);
+==RESULT==
+\[1, 2, 4\]
