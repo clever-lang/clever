@@ -271,18 +271,6 @@ CLEVER_METHOD(UString::replace)
 	}
 }
 
-CLEVER_TYPE_OPERATOR(UString::add) {}
-CLEVER_TYPE_OPERATOR(UString::sub) {}
-CLEVER_TYPE_OPERATOR(UString::mul) {}
-CLEVER_TYPE_OPERATOR(UString::div) {}
-CLEVER_TYPE_OPERATOR(UString::mod) {}
-CLEVER_TYPE_OPERATOR(UString::greater) {}
-CLEVER_TYPE_OPERATOR(UString::greater_equal) {}
-CLEVER_TYPE_OPERATOR(UString::less) {}
-CLEVER_TYPE_OPERATOR(UString::less_equal) {}
-CLEVER_TYPE_OPERATOR(UString::equal) {}
-CLEVER_TYPE_OPERATOR(UString::not_equal) {}
-
 CLEVER_TYPE_INIT(UString::init)
 {
 	addMethod(CSTRING("getLength"),			(MethodPtr) &UString::getLength);
