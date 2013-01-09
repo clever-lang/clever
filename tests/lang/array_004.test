@@ -1,0 +1,7 @@
+Testing array's append method
+==CODE==
+import std.io.*;
+
+var a = [2]; a.append(3); println(a);
+==RESULT==
+\[2, 3\]

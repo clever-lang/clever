@@ -83,38 +83,22 @@ Symbol* Scope::getAny(const CString* name) {
 }
 
 ValueOffset Scope::getOffset(Symbol* sym) const {
-	ValueOffset offset(0, 0);
+	ValueOffset offset(0, sym->voffset.second);
 
 	const Scope* scope = this;
 	const Environment* last_env = m_environment;
-	bool count_values = false;
 
 	while (scope) {
-		SymbolMap::const_iterator it(scope->m_symbols.begin()), end(scope->m_symbols.end());
+		SymbolMap::const_iterator it(scope->m_symbols.begin()),
+			end(scope->m_symbols.end());
 
 		if (scope->m_environment != last_env) {
 			offset.first++;
-			offset.second = 0;
-		}
-
-		if (scope == sym->scope) {
-			count_values = true;
 		}
 
 		for (; it != end; ++it) {
 			if ((*it) == sym) {
-				Scope* parent = scope->m_parent;
-
-				while (parent && parent->m_environment == scope->m_environment) {
-					offset.second += parent->m_symbols.size();
-
-					parent = parent->m_parent;
-				}
 				goto finish;
-			}
-
-			if (count_values) {
-				offset.second++;
 			}
 		}
 

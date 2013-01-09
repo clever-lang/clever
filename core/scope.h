@@ -58,12 +58,14 @@ public:
 
 	~Scope();
 
-	size_t pushValue(const CString* name, Value* value) {
-		m_symbols.push_back(new Symbol(name, this));
+	Symbol* pushValue(const CString* name, Value* value) {
+		Symbol* sym = new Symbol(name, this);
+
+		m_symbols.push_back(sym);
 		m_symbol_table.insert(SymbolEntry(name, m_size++));
 		m_value_pool.push_back(value);
 
-		return m_value_id++;
+		return sym;
 	}
 
 	Value* getValue(const ValueOffset& offset) const { return m_environment->getValue(offset); }

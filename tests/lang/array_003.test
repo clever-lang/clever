@@ -1,0 +1,11 @@
+Testing array operation
+==CODE==
+import std.io.*;
+
+try {
+	println([2] + 1);
+} catch (e) {
+	printf("Caught: \1\n", e);
+}
+==RESULT==
+Caught: Cannot use \+ operator with Array type
