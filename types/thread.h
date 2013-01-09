@@ -89,9 +89,9 @@ public:
 
 	void deallocData(void* data) { if (data) { delete static_cast<Thread*>(data); } }
 
-	void increment(Value* value) const {}
+	void increment(Value* value, const VM* vm) const {}
 
-	void decrement(Value* value) const {}
+	void decrement(Value* value, const VM* vm) const {}
 };
 
 } // clever
