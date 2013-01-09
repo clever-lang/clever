@@ -193,6 +193,7 @@ public:
 	//	a - array
 	//	b - boolean
 	//	n - numeric
+	//	c - current object
 	//	* - any type
 	// Example:
 	//	clever_check_args("sii") - check that the first arg is string and the next two are integral
@@ -200,7 +201,7 @@ public:
 	//	clever_check_args("*si") - ignore the first arg, verify the second and third
 	// NOTE:
 	//	We could pass in another parameter to cause a fatality/throw exception on error here, for now fail gracefully
-	static bool check_args(const ::std::vector<Value*>& args, const CString* typespec) {
+	static bool check_args(const ::std::vector<Value*>& args, const CString* typespec, const Type* type) {
 		size_t speclen = typespec->length();
 		size_t argslen = CLEVER_ARG_COUNT();
 
@@ -215,7 +216,7 @@ public:
 						case 'a': if (CLEVER_ARG_TYPE(arg) != CLEVER_ARRAY_TYPE){ return false; } break;
 						case 'b': if (CLEVER_ARG_TYPE(arg) != CLEVER_BOOL_TYPE){ return false; } break;
 						case 'n': if ((CLEVER_ARG_TYPE(arg) != CLEVER_DOUBLE_TYPE) && (CLEVER_ARG_TYPE(arg) != CLEVER_INT_TYPE)) { return false; } break;
-
+						case 'c': if (CLEVER_ARG_TYPE(arg) != type) { return false; } break;
 						case '*': { /** nothing to see here **/ } break;
 
 						default: {
