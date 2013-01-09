@@ -47,6 +47,7 @@ Resolver::Resolver(Compiler* compiler)
 
 	CLEVER_INT_TYPE->init();
 	CLEVER_STR_TYPE->init();
+	CLEVER_ARRAY_TYPE->init();
 }
 
 void Resolver::visit(Block* node)

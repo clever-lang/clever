@@ -32,6 +32,8 @@ public:
 	ArrayType() : Type(CSTRING("Array")) {}
 	~ArrayType() {}
 
+	void init();
+
 	void* allocData(CLEVER_TYPE_CTOR_ARGS) const;
 	void deallocData(void*);
 
@@ -41,6 +43,8 @@ public:
 
 	void increment(Value* value) const {}
 	void decrement(Value* value) const {}
+
+	CLEVER_METHOD_D(append);
 };
 
 } // clever

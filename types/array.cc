@@ -49,4 +49,19 @@ void ArrayType::dump(const void* value, std::ostream& out) const
 	out << "]";
 }
 
+CLEVER_METHOD(ArrayType::append)
+{
+	ArrayObject* arr = CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS());
+
+	for (size_t i = 0, j = CLEVER_ARG_COUNT(); i < j; ++i) {
+		arr->getData().push_back(args[i]);
+		args[i]->addRef();
+	}
+}
+
+CLEVER_TYPE_INIT(ArrayType::init)
+{
+	addMethod(CSTRING("append"), (MethodPtr) &ArrayType::append);
+}
+
 } // clever

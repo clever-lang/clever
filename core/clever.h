@@ -178,6 +178,7 @@ void printfln(const char*, ...);
 #define CLEVER_TYPE_OBJ		8
 #define CLEVER_TYPE_FUNC	16
 
+#define CLEVER_GET_OBJECT(t, n) static_cast<t>((n)->getObj())
 #define CLEVER_GET_TYPE(n) (n)->getType()
 #define CLEVER_GET_BOOL(n) (n)->getBool()
 
