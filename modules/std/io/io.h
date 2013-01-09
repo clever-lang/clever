@@ -16,9 +16,9 @@ namespace clever { namespace packages { namespace std {
 class IOModule : public Module {
 public:
 	IOModule()
-		: Module("io") { }
+		: Module("io") {}
 
-	~IOModule() { }
+	~IOModule() {}
 
 	CLEVER_MODULE_VIRTUAL_METHODS_DECLARATION;
 private:

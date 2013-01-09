@@ -25,7 +25,7 @@ static CLEVER_FUNCTION(round) {
 	if (!check_args(args, "d")) {
 		return;
 	}
-	double value = CLEVER_ARG_DBL(0);
+	double value = args[0]->getDouble();
 
 #ifdef CLEVER_MSVC
 	CLEVER_RETURN_DBL((value > 0.0) ? ::floor(value + 0.5) : ::ceil(value - 0.5));
@@ -40,10 +40,10 @@ static CLEVER_FUNCTION(ceil) {
 		return;
 	}
 
-	if (CLEVER_ARG_TYPE(0) == CLEVER_INT_TYPE) {
-		CLEVER_RETURN_INT(::std::ceil(CLEVER_ARG_INT(0)));
-	} else if (CLEVER_ARG_TYPE(0) == CLEVER_DOUBLE_TYPE) {
-		CLEVER_RETURN_DBL(::std::ceil(CLEVER_ARG_DBL(0)));
+	if (args[0]->getType() == CLEVER_INT_TYPE) {
+		CLEVER_RETURN_INT(::std::ceil(args[0]->getInt()));
+	} else if (args[0]->getType() == CLEVER_DOUBLE_TYPE) {
+		CLEVER_RETURN_DBL(::std::ceil(args[0]->getDouble()));
 	}
 }
 
@@ -53,10 +53,10 @@ static CLEVER_FUNCTION(floor) {
 		return;
 	}
 
-	if (CLEVER_ARG_TYPE(0) == CLEVER_INT_TYPE) {
-		CLEVER_RETURN_INT(::std::floor(CLEVER_ARG_INT(0)));
-	} else if (CLEVER_ARG_TYPE(0) == CLEVER_DOUBLE_TYPE) {
-		CLEVER_RETURN_DBL(::std::floor(CLEVER_ARG_DBL(0)));
+	if (args[0]->getType() == CLEVER_INT_TYPE) {
+		CLEVER_RETURN_INT(::std::floor(args[0]->getInt()));
+	} else if (args[0]->getType() == CLEVER_DOUBLE_TYPE) {
+		CLEVER_RETURN_DBL(::std::floor(args[0]->getDouble()));
 	}
 }
 
@@ -66,10 +66,10 @@ static CLEVER_FUNCTION(abs) {
 		return;
 	}
 
-	if (CLEVER_ARG_TYPE(0) == CLEVER_INT_TYPE) {
-		CLEVER_RETURN_INT(::std::labs(CLEVER_ARG_INT(0)));
-	} else if (CLEVER_ARG_TYPE(0) == CLEVER_DOUBLE_TYPE) {
-		CLEVER_RETURN_DBL(::std::abs(CLEVER_ARG_DBL(0)));
+	if (args[0]->getType() == CLEVER_INT_TYPE) {
+		CLEVER_RETURN_INT(::std::labs(args[0]->getInt()));
+	} else if (args[0]->getType() == CLEVER_DOUBLE_TYPE) {
+		CLEVER_RETURN_DBL(::std::abs(args[0]->getDouble()));
 	}
 }
 
