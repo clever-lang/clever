@@ -418,7 +418,7 @@ void VM::run()
 				thread->vm_handler->m_call_stack.push(tenv);
 
 
-				if (static_cast<long>(m_thread_pool.size()) <= tdata->getID()) {
+				if (m_thread_pool.size() <= tdata->getID()) {
 					m_thread_pool.resize(tdata->getID() + 1);
 				}
 
