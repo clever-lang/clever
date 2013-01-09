@@ -151,7 +151,7 @@ void VM::copy(const VM* vm)
 
 	this->m_global_env = vm->m_global_env;
 
-	this->m_call_stack.push(this->m_global_env);
+	this->m_call_stack = vm->m_call_stack;
 
 	this->m_const_env = vm->m_const_env;
 
@@ -433,7 +433,11 @@ void VM::run()
 
 	OP(OP_WAIT):
 		{
-			std::vector<VMThread*>& thread_list = m_thread_pool[getValue(OPCODE.op1)->getInt()];
+
+			const Value* tval = getValue(OPCODE.op1);
+			Thread* tdata = static_cast<Thread*>(tval->getObj());
+
+			std::vector<VMThread*>& thread_list = m_thread_pool[tdata->getID()];
 
 			for (size_t i = 0, j = thread_list.size(); i < j; ++i) {
 				delete_thread();

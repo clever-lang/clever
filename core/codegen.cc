@@ -6,6 +6,7 @@
  */
 
 #include <iostream>
+#include <cstdio>
 
 #include "core/codegen.h"
 #include "core/compiler.h"
@@ -105,11 +106,9 @@ void Codegen::visit(CriticalBlock* node)
 
 void Codegen::visit(Wait* node)
 {
-	const Ident* id_thread = node->getName();
-	const CString* str = id_thread->getName();
-	size_t id = m_thread_ids[*str];
-
-	m_ir.push_back(IR(OP_WAIT, Operand(FETCH_CONST, id)));
+	m_ir.push_back(IR(OP_WAIT,
+					  Operand(FETCH_VAR, node->getName()->getVOffset())
+					  ));
 }
 
 void Codegen::visit(ThreadBlock* node)
@@ -125,13 +124,11 @@ void Codegen::visit(ThreadBlock* node)
 	Symbol* sym = node->getName()->getSymbol();
 	Value* threadval = sym->scope->getValue(node->getName()->getVOffset());
 	Thread* thread = static_cast<Thread*>(threadval->getObj());
-	thread->setAddr(bg + 1);
+	thread->setAddr(bg);
 
-	const Ident* id_thread = node->getName();
-	const CString* str = id_thread->getName();
 
 	size_t m_thread_id = m_thread_ids.size() + 1;
-	m_thread_ids[*str] = m_thread_id;
+	m_thread_ids[thread] = m_thread_id;
 	thread->setID(m_thread_id);
 
 	node->getName()->accept(*this);
