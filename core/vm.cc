@@ -13,6 +13,7 @@
 #include "core/scope.h"
 #include "core/value.h"
 #include "types/function.h"
+#include "types/thread.h"
 #include "types/type.h"
 
 #define OPCODE m_inst[m_pc]
@@ -149,6 +150,8 @@ void VM::copy(const VM* vm)
 	}
 
 	this->m_global_env = vm->m_global_env;
+
+	this->m_call_stack = vm->m_call_stack;
 
 	this->m_const_env = vm->m_const_env;
 
@@ -382,6 +385,10 @@ void VM::run()
 		{
 			getMutex()->lock();
 
+			const Value* tval = getValue(OPCODE.op2);
+			Thread* tdata = static_cast<Thread*>(tval->getObj());
+			clever_assert_not_null(tdata);
+
 			const Value* size = getValue(OPCODE.result);
 			size_t n_threads = 1;
 
@@ -399,11 +406,23 @@ void VM::run()
 
 				thread->vm_handler->setChild();
 
-				if (static_cast<long>(m_thread_pool.size()) <= getValue(OPCODE.op2)->getInt()) {
-					m_thread_pool.resize(getValue(OPCODE.op2)->getInt() + 1);
+				Environment* tenv;
+
+				if (thread->vm_handler->m_call_stack.top()->isActive()) {
+					tenv = tdata->getEnvironment()
+								->activate(thread->vm_handler->m_call_stack.top()->getOuter());
+				} else {
+					tenv = tdata->getEnvironment()
+								->activate(thread->vm_handler->m_call_stack.top());
+				}
+				thread->vm_handler->m_call_stack.push(tenv);
+
+
+				if (static_cast<long>(m_thread_pool.size()) <= tdata->getID()) {
+					m_thread_pool.resize(tdata->getID() + 1);
 				}
 
-				m_thread_pool[getValue(OPCODE.op2)->getInt()].push_back(thread);
+				m_thread_pool[tdata->getID()].push_back(thread);
 
 				thread->t_handler.create(_thread_control, static_cast<void*>(thread));
 			}
@@ -414,7 +433,11 @@ void VM::run()
 
 	OP(OP_WAIT):
 		{
-			std::vector<VMThread*>& thread_list = m_thread_pool[getValue(OPCODE.op1)->getInt()];
+
+			const Value* tval = getValue(OPCODE.op1);
+			Thread* tdata = static_cast<Thread*>(tval->getObj());
+
+			std::vector<VMThread*>& thread_list = m_thread_pool[tdata->getID()];
 
 			for (size_t i = 0, j = thread_list.size(); i < j; ++i) {
 				delete_thread();
@@ -435,6 +458,15 @@ void VM::run()
 	OP(OP_ETHREAD):
 		if (this->isChild()) {
 			getMutex()->lock();
+
+			if (EXPECTED(m_call_stack.size())) {
+				Environment* env = m_call_stack.top();
+
+				env->clear();
+				CLEVER_SAFE_DELREF(env);
+				m_call_stack.pop();
+			}
+
 			Environment* env = m_temp_env;
 			Environment* other = NULL;
 

@@ -13,6 +13,7 @@
 #include <map>
 #include "core/astvisitor.h"
 #include "core/ir.h"
+#include "types/thread.h"
 
 namespace clever {
 
@@ -74,7 +75,7 @@ private:
 	Environment* m_temp_env;
 	JmpList m_jmps;
 
-	std::map<CString, size_t> m_thread_ids;
+	std::map<Thread*, size_t> m_thread_ids;
 };
 
 }} // clever::ast

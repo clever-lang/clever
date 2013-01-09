@@ -6,10 +6,12 @@
  */
 
 #include <iostream>
+#include <cstdio>
 
 #include "core/codegen.h"
 #include "core/compiler.h"
 #include "core/cthread.h"
+#include "types/thread.h"
 
 namespace clever { namespace ast {
 
@@ -104,11 +106,9 @@ void Codegen::visit(CriticalBlock* node)
 
 void Codegen::visit(Wait* node)
 {
-	const Ident* id_thread = node->getName();
-	const CString* str = id_thread->getName();
-	size_t id = m_thread_ids[*str];
-
-	m_ir.push_back(IR(OP_WAIT, Operand(FETCH_CONST, id)));
+	m_ir.push_back(IR(OP_WAIT,
+					  Operand(FETCH_VAR, node->getName()->getVOffset())
+					  ));
 }
 
 void Codegen::visit(ThreadBlock* node)
@@ -121,22 +121,21 @@ void Codegen::visit(ThreadBlock* node)
 	}
 
 	size_t bg = m_ir.size();
+	Symbol* sym = node->getName()->getSymbol();
+	Value* threadval = sym->scope->getValue(node->getName()->getVOffset());
+	Thread* thread = static_cast<Thread*>(threadval->getObj());
+	thread->setAddr(bg);
 
-	if (node->getName() != NULL) {
-		const Ident* id_thread = node->getName();
-		const CString* str = id_thread->getName();
 
-		size_t m_thread_id = m_thread_ids.size() + 1;
-		m_thread_ids[*str] = m_thread_id;
+	size_t m_thread_id = m_thread_ids.size() + 1;
+	m_thread_ids[thread] = m_thread_id;
+	thread->setID(m_thread_id);
 
-		m_ir.push_back(IR(OP_BTHREAD,
-						  Operand(JMP_ADDR, bg),
-						  Operand(FETCH_CONST, m_thread_id)));
-	} else {
-		m_ir.push_back(IR(OP_BTHREAD,
-						  Operand(JMP_ADDR, bg),
-						  Operand(FETCH_CONST, 0)));
-	}
+	node->getName()->accept(*this);
+
+	m_ir.push_back(IR(OP_BTHREAD,
+					  Operand(JMP_ADDR, bg),
+					  Operand(FETCH_VAR, node->getName()->getVOffset())));
 
 	if (node->getSize() != NULL) {
 		Node* size = node->getSize();
