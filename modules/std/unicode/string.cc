@@ -72,7 +72,7 @@ CLEVER_METHOD(UString::startsWith) {
 	if (CLEVER_THIS()) {
 		CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
 		if (intern) {
-			if (CLEVER_VERIFY_ARGS("s") || CLEVER_VERIFY_ARGS("sii")) {
+			if (clever_check_args("s") || clever_check_args("sii")) {
 				switch (CLEVER_ARG_COUNT()) {
 					case 1: CLEVER_RETURN_INT(intern->startsWith(UnicodeString(CLEVER_ARG_PSTR(0)))); break;
 					case 3: CLEVER_RETURN_INT(intern->startsWith(UnicodeString(CLEVER_ARG_PSTR(0)), CLEVER_ARG_INT(1), CLEVER_ARG_INT(2))); break;
@@ -93,7 +93,7 @@ CLEVER_METHOD(UString::endsWith)
 	if (CLEVER_THIS()) {
 		CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
 		if (intern) {
-			if (CLEVER_VERIFY_ARGS("s") || CLEVER_VERIFY_ARGS("sii")) {
+			if (clever_check_args("s") || clever_check_args("sii")) {
 				switch (CLEVER_ARG_COUNT()) {
 					case 1: CLEVER_RETURN_INT(intern->endsWith(UnicodeString(CLEVER_ARG_PSTR(0)))); break;
 					case 3: CLEVER_RETURN_INT(intern->endsWith(UnicodeString(CLEVER_ARG_PSTR(0)), CLEVER_ARG_INT(1), CLEVER_ARG_INT(2))); break;
@@ -114,7 +114,7 @@ CLEVER_METHOD(UString::indexOf)
 	if (CLEVER_THIS()) {
 		CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
 		if (intern) {
-			if (CLEVER_VERIFY_ARGS("s") || CLEVER_VERIFY_ARGS("si") || CLEVER_VERIFY_ARGS("sii")) {
+			if (clever_check_args("s") || clever_check_args("si") || clever_check_args("sii")) {
 				switch(CLEVER_ARG_COUNT()) {
 					case 1: CLEVER_RETURN_INT(intern->indexOf(UnicodeString(CLEVER_ARG_PSTR(0)))); break;
 					case 2: CLEVER_RETURN_INT(intern->indexOf(UnicodeString(CLEVER_ARG_PSTR(0)), CLEVER_ARG_INT(1))); break;
@@ -136,7 +136,7 @@ CLEVER_METHOD(UString::lastIndexOf)
 	if (CLEVER_THIS()) {
 		CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
 		if (intern) {
-			if (CLEVER_VERIFY_ARGS("s") || CLEVER_VERIFY_ARGS("si") || CLEVER_VERIFY_ARGS("sii")) {
+			if (clever_check_args("s") || clever_check_args("si") || clever_check_args("sii")) {
 				switch(CLEVER_ARG_COUNT()) {
 					case 1: CLEVER_RETURN_INT(intern->lastIndexOf(UnicodeString(CLEVER_ARG_PSTR(0)))); break;
 					case 2: CLEVER_RETURN_INT(intern->lastIndexOf(UnicodeString(CLEVER_ARG_PSTR(0)), CLEVER_ARG_INT(1))); break;
@@ -218,7 +218,7 @@ CLEVER_METHOD(UString::truncate)
 	if (CLEVER_THIS()) {
 		CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
 		if (intern) {
-			if (CLEVER_VERIFY_ARGS("i")) {
+			if (clever_check_args("i")) {
 				intern->truncate(CLEVER_ARG_INT(0));
 				CLEVER_RETURN_INT(intern->length());
 			} else {
@@ -237,7 +237,7 @@ CLEVER_METHOD(UString::append) {
 	if (CLEVER_THIS()) {
 		CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
 		if (intern) {
-			if (CLEVER_VERIFY_ARGS("s")||CLEVER_VERIFY_ARGS("sii")) {
+			if (clever_check_args("s")||clever_check_args("sii")) {
 				switch(CLEVER_ARG_COUNT()) {
 					case 1: intern->append(UnicodeString(CLEVER_ARG_PSTR(0))); break;
 					case 3: intern->append(UnicodeString(CLEVER_ARG_PSTR(0)), CLEVER_ARG_INT(1), CLEVER_ARG_INT(2)); break;
@@ -259,7 +259,7 @@ CLEVER_METHOD(UString::replace)
 	if (CLEVER_THIS()) {
 		CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
 		if (intern) {
-			if (CLEVER_VERIFY_ARGS("ss")) {
+			if (clever_check_args("ss")) {
 				intern->findAndReplace(UnicodeString(CLEVER_ARG_PSTR(0)), UnicodeString(CLEVER_ARG_PSTR(1)));
 			} else {
 				/** UString.replace expected exactly two parameters of type string **/

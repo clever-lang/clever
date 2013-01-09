@@ -10,6 +10,7 @@
 #include <iostream>
 #include "core/clever.h"
 #include "core/cstring.h"
+#include "core/value.h"
 
 namespace clever {
 

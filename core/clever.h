@@ -172,6 +172,8 @@ void printf(const char*, ...);
 void vprintfln(const char*, va_list);
 void printfln(const char*, ...);
 
+#define clever_check_args(spec) Value::check_args(args, CSTRING(spec))
+
 #define CLEVER_TYPE_INT		1
 #define CLEVER_TYPE_DBL		2
 #define CLEVER_TYPE_STR		4

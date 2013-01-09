@@ -40,8 +40,6 @@ extern Type* g_clever_array_type;
 #define CLEVER_BOOL_TYPE   g_clever_bool_type
 #define CLEVER_ARRAY_TYPE  g_clever_array_type
 
-#define CLEVER_VERIFY_ARGS(spec) Value::verify(args, CSTRING(spec))
-
 class ValueObject : public RefCounted {
 public:
 	ValueObject()
@@ -197,12 +195,12 @@ public:
 	//	n - numeric
 	//	* - any type
 	// Example:
-	//	Value::verify(args, "sii") - check that the first arg is string and the next two are integral
-	//	Value::verify(args, "sdi") - check that the first arg is a string, the second a double and the third an integer
-	//	Value::verify(args, "*si") - ignore the first arg, verify the second and third
+	//	clever_check_args("sii") - check that the first arg is string and the next two are integral
+	//	clever_check_args("sdi") - check that the first arg is a string, the second a double and the third an integer
+	//	clever_check_args("*si") - ignore the first arg, verify the second and third
 	// NOTE:
 	//	We could pass in another parameter to cause a fatality/throw exception on error here, for now fail gracefully
-	static bool verify(const ::std::vector<Value*>& args, const CString* typespec) {
+	static bool check_args(const ::std::vector<Value*>& args, const CString* typespec) {
 		size_t speclen = typespec->length();
 		size_t argslen = CLEVER_ARG_COUNT();
 
@@ -232,7 +230,7 @@ public:
 			/** Value::verify has recieved an unexpected number of arguments **/
 			return false;
 		}
-		
+	
 		return true;
 	}
 
