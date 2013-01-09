@@ -11,8 +11,12 @@
 #include <sstream>
 #include <cstdarg>
 #include <setjmp.h>
+#include <vector>
 
 namespace clever {
+
+class Type;
+class Value;
 
 #define CLEVER_THROW(val, args...) const_cast<VM*>(vm)->setException(val, ##args)
 
@@ -172,7 +176,8 @@ void printf(const char*, ...);
 void vprintfln(const char*, va_list);
 void printfln(const char*, ...);
 
-#define clever_check_args(spec) Value::check_args(args, spec, this)
+#define clever_check_args(spec) clever::check_args(args, spec, this)
+bool check_args(const ::std::vector<Value*>&, const char*, const Type*);
 
 #define CLEVER_GET_OBJECT(t, n) static_cast<t>((n)->getObj())
 #define CLEVER_GET_TYPE(n) (n)->getType()

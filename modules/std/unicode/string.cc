@@ -10,6 +10,7 @@
 #include "unicode/ustream.h"
 #include "unicode/unistr.h"
 #include "core/value.h"
+#include "core/clever.h"
 
 namespace clever { namespace packages { namespace std {
 
@@ -55,7 +56,7 @@ void UString::deallocData(void *data) {
 // UString.getLength()
 // Determine the length of this
 CLEVER_METHOD(UString::getLength)
-{	
+{
 	if (CLEVER_THIS()) {
 		CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
 		if (intern) {
@@ -245,7 +246,7 @@ CLEVER_METHOD(UString::append) {
 				CLEVER_RETURN_INT(intern->length());
 			} else {
 				/** UString.append expected the first argument to be a string **/
-			}			
+			}
 		}
 	} else {
 		/** UString.append cannot be called statically **/
