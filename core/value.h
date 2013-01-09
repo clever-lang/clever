@@ -182,8 +182,8 @@ public:
 
 	void setConst(bool constness = true) {
 		m_is_const = constness;
-	}	
-	
+	}
+
 	// Verify a vector of Values conform to a specific set of types ( and implicit length )
 	// Typespec:
 	//  f - a function
@@ -201,37 +201,76 @@ public:
 	//	clever_check_args("*si") - ignore the first arg, verify the second and third
 	// NOTE:
 	//	We could pass in another parameter to cause a fatality/throw exception on error here, for now fail gracefully
-	static bool check_args(const ::std::vector<Value*>& args, const CString* typespec, const Type* type) {
-		size_t speclen = typespec->length();
+	static bool check_args(const ::std::vector<Value*>& args, const char* typespec, const Type* type) {
+		size_t speclen = ::strlen(typespec);
 		size_t argslen = CLEVER_ARG_COUNT();
 
-		if (speclen == argslen) {
-			for(size_t arg=0; arg < speclen; arg++) {
-				if (arg < speclen && argslen > arg) {
-					switch(typespec->at(arg)){
-						case 'f': if (CLEVER_ARG_TYPE(arg) != CLEVER_FUNC_TYPE){ return false; } break;
-						case 's': if (CLEVER_ARG_TYPE(arg) != CLEVER_STR_TYPE){ return false; } break;
-						case 'i': if (CLEVER_ARG_TYPE(arg) != CLEVER_INT_TYPE){ return false; } break;
-						case 'd': if (CLEVER_ARG_TYPE(arg) != CLEVER_DOUBLE_TYPE){ return false; } break;
-						case 'a': if (CLEVER_ARG_TYPE(arg) != CLEVER_ARRAY_TYPE){ return false; } break;
-						case 'b': if (CLEVER_ARG_TYPE(arg) != CLEVER_BOOL_TYPE){ return false; } break;
-						case 'n': if ((CLEVER_ARG_TYPE(arg) != CLEVER_DOUBLE_TYPE) && (CLEVER_ARG_TYPE(arg) != CLEVER_INT_TYPE)) { return false; } break;
-						case 'c': if (CLEVER_ARG_TYPE(arg) != type) { return false; } break;
-						case '*': { /** nothing to see here **/ } break;
-
-						default: {
-							/** Value::verify encountered an unexpected type specification @ arg **/
-						} break;
-					}
-				} else {
-					return false;
-				}
-			}
-		} else {
-			/** Value::verify has recieved an unexpected number of arguments **/
+		if (speclen != argslen) {
 			return false;
 		}
-	
+
+		for (size_t arg = 0; arg < speclen; ++arg) {
+			if (!(arg < speclen && argslen > arg)) {
+				return false;
+			}
+			switch (typespec[arg]) {
+				// Function
+				case 'f':
+					if (CLEVER_ARG_TYPE(arg) != CLEVER_FUNC_TYPE) {
+						return false;
+					}
+					break;
+				// String
+				case 's':
+					if (CLEVER_ARG_TYPE(arg) != CLEVER_STR_TYPE) {
+						return false;
+					}
+					break;
+				// Integer
+				case 'i':
+					if (CLEVER_ARG_TYPE(arg) != CLEVER_INT_TYPE) {
+						return false;
+					}
+					break;
+				// Double
+				case 'd':
+					if (CLEVER_ARG_TYPE(arg) != CLEVER_DOUBLE_TYPE) {
+						return false;
+					}
+					break;
+				// Array
+				case 'a':
+					if (CLEVER_ARG_TYPE(arg) != CLEVER_ARRAY_TYPE) {
+						return false;
+					}
+					break;
+				// Boolean
+				case 'b':
+					if (CLEVER_ARG_TYPE(arg) != CLEVER_BOOL_TYPE) {
+						return false;
+					}
+					break;
+				// Number
+				case 'n':
+					if ((CLEVER_ARG_TYPE(arg) != CLEVER_DOUBLE_TYPE)
+						&& (CLEVER_ARG_TYPE(arg) != CLEVER_INT_TYPE)) {
+						return false;
+					}
+					break;
+				// Current type
+				case 'c':
+					if (CLEVER_ARG_TYPE(arg) != type) {
+						return false;
+					}
+					break;
+				case '*':
+					break;
+
+				default:
+					/** Value::verify encountered an unexpected type specification @ arg **/
+					break;
+			}
+		}
 		return true;
 	}
 
