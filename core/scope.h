@@ -112,6 +112,7 @@ public:
 
 	std::pair<size_t, size_t> getOffset(Symbol* sym) const;
 
+	const ScopeVector& getChildren() const { return m_children; }
 private:
 	Scope* m_parent;
 	ScopeVector m_children;

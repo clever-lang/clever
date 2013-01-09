@@ -105,13 +105,8 @@ ValueOffset Scope::getOffset(Symbol* sym) const {
 			if ((*it) == sym) {
 				Scope* parent = scope->m_parent;
 
-				while (parent && /*parent->m_parent &&*/ parent->m_environment == scope->m_environment) {
-					it = parent->m_symbols.begin();
-					end = parent->m_symbols.end();
-
-					for (; it != end; ++it) {
-						offset.second++;
-					}
+				while (parent && parent->m_environment == scope->m_environment) {
+					offset.second += parent->m_symbols.size();
 
 					parent = parent->m_parent;
 				}
