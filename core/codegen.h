@@ -66,7 +66,6 @@ public:
 	void visit(Property*);
 	void visit(Try*);
 	void visit(Throw*);
-	void visit(Array*);
 private:
 	IRVector& m_ir;
 	Compiler* m_compiler;

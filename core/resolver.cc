@@ -26,18 +26,21 @@ Resolver::Resolver(Compiler* compiler)
 	Value* dblval = new Value(CLEVER_DOUBLE_TYPE = new DoubleType);
 	Value* fncval = new Value(CLEVER_FUNC_TYPE   = new FuncType);
 	Value* bolval = new Value(CLEVER_BOOL_TYPE   = new BoolType);
+	Value* arrval = new Value(CLEVER_ARRAY_TYPE  = new ArrayType);
 
 	m_scope->pushValue(CSTRING("Int"),      intval);
 	m_scope->pushValue(CSTRING("String"),   strval);
 	m_scope->pushValue(CSTRING("Double"),   dblval);
 	m_scope->pushValue(CSTRING("Function"), fncval);
 	m_scope->pushValue(CSTRING("Bool"),     bolval);
+	m_scope->pushValue(CSTRING("Array"),    arrval);
 
 	m_stack.top()->pushValue(intval);
 	m_stack.top()->pushValue(strval);
 	m_stack.top()->pushValue(dblval);
 	m_stack.top()->pushValue(fncval);
 	m_stack.top()->pushValue(bolval);
+	m_stack.top()->pushValue(arrval);
 
 	CLEVER_INT_TYPE->init();
 	CLEVER_STR_TYPE->init();

@@ -336,6 +336,12 @@ private:
 
 class Instantiation: public Node {
 public:
+	Instantiation(const CString* type, NodeArray* args, const location& location)
+		: Node(location), m_type(new Type(type, location)), m_args(args) {
+		CLEVER_ADDREF(m_type);
+		CLEVER_SAFE_ADDREF(m_args);
+	}
+
 	Instantiation(Type* type, NodeArray* args, const location& location)
 		: Node(location), m_type(type), m_args(args) {
 		CLEVER_ADDREF(m_type);
@@ -1017,42 +1023,6 @@ public:
 	virtual Node* accept(Transformer& transformer);
 private:
 	Node* m_expr;
-};
-
-class Array: public Node {
-public:
-	Array(NodeArray* args, const location& location)
-		: Node(location), m_args(args) {
-		CLEVER_SAFE_ADDREF(m_args);
-	}
-
-	~Array() {
-		CLEVER_SAFE_DELREF(m_args);
-	}
-
-	NodeArray* getArgs() { return m_args; }
-	bool hasArgs() const { return m_args != NULL && m_args->getSize() > 0; }
-
-	size_t numArgs() const { return m_args->getSize(); }
-
-	bool isEvaluable() const { return true; }
-
-	Node* getArg(size_t index) {
-		std::vector<Node*> array = m_args->getNodes();
-
-		clever_assert(index > 0 && index < array.size(), "Index %i out of bounds.", index);
-
-		if (array.empty())
-			return NULL;
-
-		return array.at(index);
-	}
-
-	virtual void accept(Visitor& visitor);
-	virtual Node* accept(Transformer& transformer);
-
-private:
-	NodeArray* m_args;
 };
 
 }} // clever::ast

@@ -664,7 +664,7 @@ void VM::run()
 			const Value* valtype = getValue(OPCODE.op1);
 			const Type* type = valtype->getType();
 
-			getValue(OPCODE.result)->setType(valtype->getType());
+			getValue(OPCODE.result)->setType(type);
 
 			if (EXPECTED(!type->isPrimitive())) {
 				getValue(OPCODE.result)->setObj(type->allocData(&m_call_args));
@@ -749,9 +749,6 @@ void VM::run()
 
 	OP(OP_ETRY):
 		m_try_stack.pop();
-		DISPATCH;
-
-	OP(OP_ARRAY):
 		DISPATCH;
 
 	OP(OP_HALT):

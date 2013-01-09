@@ -50,8 +50,7 @@ namespace clever {
 	&&OP_TRY,      \
 	&&OP_CATCH,    \
 	&&OP_THROW,    \
-	&&OP_ETRY,     \
-	&&OP_ARRAY
+	&&OP_ETRY
 #endif
 
 /// VM opcodes
@@ -95,7 +94,6 @@ enum Opcode {
 	OP_CATCH,      //       Used for catching exception
 	OP_THROW,      //       Used for throwing exception
 	OP_ETRY,       //       Used for end marker exception block
-	OP_ARRAY,      //       Used for creating array
 	NUM_OPCODES
 };
 

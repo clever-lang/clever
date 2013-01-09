@@ -54,7 +54,6 @@ const char* get_opcode_name(Opcode opnum)
 		CASE(OP_CATCH);
 		CASE(OP_THROW);
 		CASE(OP_ETRY);
-		CASE(OP_ARRAY);
 		EMPTY_SWITCH_DEFAULT_CASE();
 	}
 #undef CASE
