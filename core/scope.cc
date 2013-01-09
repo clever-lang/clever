@@ -102,10 +102,6 @@ ValueOffset Scope::getOffset(Symbol* sym) const {
 		}
 
 		for (; it != end; ++it) {
-			if ((*it)->isType()) {
-				continue;
-			}
-
 			if ((*it) == sym) {
 				Scope* parent = scope->m_parent;
 
@@ -114,9 +110,7 @@ ValueOffset Scope::getOffset(Symbol* sym) const {
 					end = parent->m_symbols.end();
 
 					for (; it != end; ++it) {
-						if ((*it)->isVar()) {
-							offset.second++;
-						}
+						offset.second++;
 					}
 
 					parent = parent->m_parent;

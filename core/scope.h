@@ -28,18 +28,13 @@ typedef std::vector<Value*> ValuePool;
 
 /// Symbol representation
 struct Symbol {
-	enum SymbolType { TYPE, VAR };
-
 	Symbol() {}
-	Symbol(SymbolType type, const CString *name_, Scope *scope_ = NULL)
-		: m_type(type), name(name_), scope(scope_) {}
+
+	Symbol(const CString *name_, Scope *scope_ = NULL)
+		: name(name_), scope(scope_) {}
 
 	~Symbol() {}
 
-	bool isType() const { return m_type == TYPE; }
-	bool isVar() const { return m_type == VAR; }
-
-	SymbolType m_type;
 	const CString* name;
 	ValueOffset voffset;
 	const Scope *scope;
@@ -64,7 +59,7 @@ public:
 	~Scope();
 
 	size_t pushValue(const CString* name, Value* value) {
-		m_symbols.push_back(new Symbol(Symbol::VAR, name, this));
+		m_symbols.push_back(new Symbol(name, this));
 		m_symbol_table.insert(SymbolEntry(name, m_size++));
 		m_value_pool.push_back(value);
 
