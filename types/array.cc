@@ -27,6 +27,8 @@ void ArrayType::deallocData(void* data)
 	for (size_t i = 0, j = vec.size(); i < j; ++i) {
 		vec[i]->delRef();
 	}
+
+	delete arr;
 }
 
 void ArrayType::dump(const void* value, std::ostream& out) const
