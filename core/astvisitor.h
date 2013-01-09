@@ -43,6 +43,7 @@ public:
 	virtual void visit(NullLit*) {}
 	virtual void visit(TrueLit*) {}
 	virtual void visit(FalseLit*) {}
+	virtual void visit(Array*) {}
 
 	virtual void visit(Return* node);
 	virtual void visit(Logic* node);
