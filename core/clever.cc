@@ -154,7 +154,7 @@ void printf(const char* format, ...) {
 	va_end(args);
 }
 
-// Verify a vector of Values conform to a specific set of types ( and implicit length )
+// Verify a vector of Values conform to a specific set of types (and implicit length)
 // Typespec:
 //  f - a function
 //	s - a string
@@ -173,7 +173,7 @@ void printf(const char* format, ...) {
 //	We could pass in another parameter to cause a fatality/throw exception on error here, for now fail gracefully
 bool check_args(const ::std::vector<Value*>& args, const char* typespec, const Type* type) {
 	size_t speclen = ::strlen(typespec);
-	size_t argslen = CLEVER_ARG_COUNT();
+	size_t argslen = args.size();
 
 	if (speclen != argslen) {
 		return false;
@@ -183,56 +183,59 @@ bool check_args(const ::std::vector<Value*>& args, const char* typespec, const T
 		if (!(arg < speclen && argslen > arg)) {
 			return false;
 		}
+		const Type* const arg_type = args[arg]->getType();
+
 		switch (typespec[arg]) {
 			// Function
 			case 'f':
-				if (CLEVER_ARG_TYPE(arg) != CLEVER_FUNC_TYPE) {
+				if (arg_type != CLEVER_FUNC_TYPE) {
 					return false;
 				}
 				break;
 			// String
 			case 's':
-				if (CLEVER_ARG_TYPE(arg) != CLEVER_STR_TYPE) {
+				if (arg_type != CLEVER_STR_TYPE) {
 					return false;
 				}
 				break;
 			// Integer
 			case 'i':
-				if (CLEVER_ARG_TYPE(arg) != CLEVER_INT_TYPE) {
+				if (arg_type != CLEVER_INT_TYPE) {
 					return false;
 				}
 				break;
 			// Double
 			case 'd':
-				if (CLEVER_ARG_TYPE(arg) != CLEVER_DOUBLE_TYPE) {
+				if (arg_type != CLEVER_DOUBLE_TYPE) {
 					return false;
 				}
 				break;
 			// Array
 			case 'a':
-				if (CLEVER_ARG_TYPE(arg) != CLEVER_ARRAY_TYPE) {
+				if (arg_type != CLEVER_ARRAY_TYPE) {
 					return false;
 				}
 				break;
 			// Boolean
 			case 'b':
-				if (CLEVER_ARG_TYPE(arg) != CLEVER_BOOL_TYPE) {
+				if (arg_type != CLEVER_BOOL_TYPE) {
 					return false;
 				}
 				break;
 			// Number
 			case 'n':
-				if ((CLEVER_ARG_TYPE(arg) != CLEVER_DOUBLE_TYPE)
-					&& (CLEVER_ARG_TYPE(arg) != CLEVER_INT_TYPE)) {
+				if ((arg_type != CLEVER_DOUBLE_TYPE)
+					&& (arg_type != CLEVER_INT_TYPE)) {
 					return false;
 				}
 				break;
 			// Current type
 			case 'c':
-				if (CLEVER_ARG_TYPE(arg) != type) {
+				if (arg_type != type) {
 					return false;
 				}
 				break;
+			// Any type
 			case '*':
 				break;
 
