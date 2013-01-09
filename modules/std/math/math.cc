@@ -20,57 +20,60 @@ namespace clever { namespace packages { namespace std {
 
 namespace math {
 
+// double round(double value)
 static CLEVER_FUNCTION(round) {
-	switch (CLEVER_ARG_COUNT()) {
-		case 1: {
-			if (CLEVER_ARG_TYPE(0) == CLEVER_DOUBLE_TYPE) {
-				if (CLEVER_ARG_DBL(0) > 0.0) {
-					CLEVER_RETURN_DBL(::std::floor(CLEVER_ARG_DBL(0)+0.5));
-				} else {
-					CLEVER_RETURN_DBL(::std::ceil(CLEVER_ARG_DBL(0)-0.5));
-				}
-			}
-		} break;
+	if (!check_args(args, "d")) {
+		return;
 	}
+	double value = CLEVER_ARG_DBL(0);
+
+#ifdef CLEVER_MSVC
+	CLEVER_RETURN_DBL((value > 0.0) ? ::floor(value + 0.5) : ::ceil(value - 0.5));
+#else
+	CLEVER_RETURN_DBL(::round(value));
+#endif
 }
 
+// number ceil(number value)
 static CLEVER_FUNCTION(ceil) {
-	switch (CLEVER_ARG_COUNT()) {
-		case 1: {
-			if (CLEVER_ARG_TYPE(0) == CLEVER_INT_TYPE) {
-				CLEVER_RETURN_INT(::std::ceil(CLEVER_ARG_INT(0)));
-			} else if (CLEVER_ARG_TYPE(0) == CLEVER_DOUBLE_TYPE) {
-				CLEVER_RETURN_DBL(::std::ceil(CLEVER_ARG_DBL(0)));
-			}
-		} break;
+	if (!check_args(args, "n")) {
+		return;
+	}
+
+	if (CLEVER_ARG_TYPE(0) == CLEVER_INT_TYPE) {
+		CLEVER_RETURN_INT(::std::ceil(CLEVER_ARG_INT(0)));
+	} else if (CLEVER_ARG_TYPE(0) == CLEVER_DOUBLE_TYPE) {
+		CLEVER_RETURN_DBL(::std::ceil(CLEVER_ARG_DBL(0)));
 	}
 }
 
+// double floor(number value)
 static CLEVER_FUNCTION(floor) {
-	switch (CLEVER_ARG_COUNT()) {
-		case 1: {
-			if (CLEVER_ARG_TYPE(0) == CLEVER_INT_TYPE) {
-				CLEVER_RETURN_INT(::std::floor(CLEVER_ARG_INT(0)));
-			} else if (CLEVER_ARG_TYPE(0) == CLEVER_DOUBLE_TYPE) {
-				CLEVER_RETURN_DBL(::std::floor(CLEVER_ARG_DBL(0)));
-			}
-		} break;
+	if (!check_args(args, "n")) {
+		return;
+	}
+
+	if (CLEVER_ARG_TYPE(0) == CLEVER_INT_TYPE) {
+		CLEVER_RETURN_INT(::std::floor(CLEVER_ARG_INT(0)));
+	} else if (CLEVER_ARG_TYPE(0) == CLEVER_DOUBLE_TYPE) {
+		CLEVER_RETURN_DBL(::std::floor(CLEVER_ARG_DBL(0)));
 	}
 }
 
+// number abs(number value)
 static CLEVER_FUNCTION(abs) {
-	switch (CLEVER_ARG_COUNT()) {
-		case 1: {
-			if (CLEVER_ARG_TYPE(0) == CLEVER_INT_TYPE) {
-				CLEVER_RETURN_INT(::std::labs(CLEVER_ARG_INT(0)));
-			} else if (CLEVER_ARG_TYPE(0) == CLEVER_DOUBLE_TYPE) {
-				CLEVER_RETURN_DBL(::std::abs(CLEVER_ARG_DBL(0)));
-			}
-		} break;
+	if (!check_args(args, "n")) {
+		return;
+	}
+
+	if (CLEVER_ARG_TYPE(0) == CLEVER_INT_TYPE) {
+		CLEVER_RETURN_INT(::std::labs(CLEVER_ARG_INT(0)));
+	} else if (CLEVER_ARG_TYPE(0) == CLEVER_DOUBLE_TYPE) {
+		CLEVER_RETURN_DBL(::std::abs(CLEVER_ARG_DBL(0)));
 	}
 }
 
-} // math
+} // clever::packages::std::math
 
 /**
  * Load module data

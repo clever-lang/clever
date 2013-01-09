@@ -177,7 +177,7 @@ void vprintfln(const char*, va_list);
 void printfln(const char*, ...);
 
 #define clever_check_args(spec) clever::check_args(args, spec, this)
-bool check_args(const ::std::vector<Value*>&, const char*, const Type*);
+bool check_args(const ::std::vector<Value*>&, const char*, const Type* = NULL);
 
 #define CLEVER_GET_OBJECT(t, n) static_cast<t>((n)->getObj())
 #define CLEVER_GET_TYPE(n) (n)->getType()
