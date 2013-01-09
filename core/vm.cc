@@ -408,13 +408,8 @@ void VM::run()
 
 				Environment* tenv;
 
-				if (thread->vm_handler->m_call_stack.top()->isActive()) {
-					tenv = tdata->getEnvironment()
-								->activate(thread->vm_handler->m_call_stack.top()->getOuter());
-				} else {
-					tenv = tdata->getEnvironment()
-								->activate(thread->vm_handler->m_call_stack.top());
-				}
+				tenv = tdata->getEnvironment()
+							->activate(m_call_stack.top());
 				thread->vm_handler->m_call_stack.push(tenv);
 
 
