@@ -28,7 +28,8 @@ static CLEVER_FORCE_INLINE void _prepare_operand(Operand& op, Node* node)
 
 Codegen::Codegen(IRVector& ir, Compiler* compiler, Environment* init_glbenv)
 	: m_ir(ir), m_compiler(compiler), m_init_glbenv(init_glbenv),
-	  m_thread_ids() {
+	  m_const_env(NULL), m_temp_env(NULL), m_jmps(), m_thread_ids()
+{
 
 	m_const_env = new Environment(m_init_glbenv);
 	m_temp_env  = new Environment(m_init_glbenv);
@@ -103,12 +104,9 @@ void Codegen::visit(CriticalBlock* node)
 	m_ir.push_back(IR(OP_UNLOCK));
 }
 
-
 void Codegen::visit(Wait* node)
 {
-	m_ir.push_back(IR(OP_WAIT,
-					  Operand(FETCH_VAR, node->getName()->getVOffset())
-					  ));
+	m_ir.push_back(IR(OP_WAIT, Operand(FETCH_VAR, node->getName()->getVOffset())));
 }
 
 void Codegen::visit(ThreadBlock* node)
@@ -171,7 +169,7 @@ void Codegen::visit(Assignment* node)
 			Operand(FETCH_VAR, node->getLhs()->getVOffset())));
 
 	if (!rhs) {
-		m_ir.back().op2 = Operand(FETCH_CONST, 0); // null
+		m_ir.back().op2 = Operand(FETCH_CONST, ValueOffset(0, 0)); // null
 	} else {
 		_prepare_operand(m_ir.back().op2, rhs);
 	}
@@ -222,9 +220,6 @@ void Codegen::visit(FunctionCall* node)
 		m_ir.push_back(IR(OP_FCALL));
 		_prepare_operand(m_ir.back().op1, node->getCallee());
 	} else {
-		Symbol* sym = static_cast<Ident*>(node->getCallee())->getSymbol();
-		clever_assert_not_null(sym);
-
 		if (node->hasArgs()) {
 			sendArgs(node->getArgs());
 		}

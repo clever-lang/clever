@@ -24,22 +24,22 @@ namespace io {
 // flush(void)
 // Flushes output buffer (forcefully)
 static CLEVER_FUNCTION(flush) {
-	fflush(stdout);
+	::fflush(stdout);
 }
 
 // print(object a, [ ...])
 // Prints the object values without trailing newline
 static CLEVER_FUNCTION(print) {
-	for (size_t i = 0, size = CLEVER_ARG_COUNT(); i < size; ++i) {
-		CLEVER_ARG_DUMP(i);
+	for (size_t i = 0, size = args.size(); i < size; ++i) {
+		args[i]->dump();
 	}
 }
 
 // println(object a, [ ...])
 // Prints the object values with trailing newline
 static CLEVER_FUNCTION(println) {
-	for (size_t i = 0, size = CLEVER_ARG_COUNT(); i < size; ++i) {
-		CLEVER_ARG_DUMP(i);
+	for (size_t i = 0, size = args.size(); i < size; ++i) {
+		args[i]->dump();
 		::std::cout << '\n';
 	}
 }
@@ -47,32 +47,31 @@ static CLEVER_FUNCTION(println) {
 // printf(string format, [...])
 // Prints and formats a string to standard output without trailing newline
 static CLEVER_FUNCTION(printf) {
-	if (CLEVER_ARG_COUNT() > 0) {
-		const CString* format = CLEVER_ARG_CSTR(0);
+	if (!args.size()) {
+		return;
+	}
+	// TODO(Felipe): add a way to use check_args with variadic functions
 
-		if (format) {
-			const char* start = format->c_str();
+	const CString* format = args[0]->getStr();
+	const char* start = format->c_str();
 
-			for(const char* point = start; point < (start + format->size());)
-			{
-				if (*point && (*point == (char)'\\')) {
-					unsigned long arg;
-					char* skip;
+	for (const char* point = start; point < (start + format->size());) {
+		if (*point && (*point == (char)'\\')) {
+			unsigned long arg;
+			char* skip;
 
-					if ((arg=::std::strtoul(++point, &skip, 10))) {
-						if (CLEVER_ARG_COUNT() > arg) {
-							CLEVER_ARG_DUMP(arg);
-						}
-						point = skip;
-					} else {
-						::std::cout << *(--point);
-						point++;
-					}
-				} else {
-					::std::cout << *point;
-					point++;
+			if ((arg=::std::strtoul(++point, &skip, 10))) {
+				if (CLEVER_ARG_COUNT() > arg) {
+					CLEVER_ARG_DUMP(arg);
 				}
+				point = skip;
+			} else {
+				::std::cout << *(--point);
+				point++;
 			}
+		} else {
+			::std::cout << *point;
+			point++;
 		}
 	}
 }

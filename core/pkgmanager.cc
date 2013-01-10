@@ -66,8 +66,7 @@ void PkgManager::loadModule(Scope* scope, Environment* env, Module* module) cons
 		fval->setType(CLEVER_FUNC_TYPE);
 		fval->setObj(itf->second);
 
-		scope->pushValue(itf->first, fval);
-		env->pushValue(fval);
+		scope->pushValue(itf->first, fval)->voffset = env->pushValue(fval);
 
 		++itf;
 	}
@@ -77,8 +76,7 @@ void PkgManager::loadModule(Scope* scope, Environment* env, Module* module) cons
 
 	while (EXPECTED(itt != ite)) {
 		Value* tmp = new Value(itt->second);
-		scope->pushValue(itt->first, tmp);
-		env->pushValue(tmp);
+		scope->pushValue(itt->first, tmp)->voffset = env->pushValue(tmp);
 
 		itt->second->init();
 		++itt;

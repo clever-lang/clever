@@ -29,9 +29,9 @@ public:
 
 	CLEVER_TYPE_VIRTUAL_METHOD_DECLARATIONS;
 
-	void increment(Value* value) const {}
+	void increment(Value* value, const VM* vm) const {}
 	
-	void decrement(Value* value) const {}
+	void decrement(Value* value, const VM* vm) const {}
 
 	CLEVER_METHOD_D(subString);
 	CLEVER_METHOD_D(find);

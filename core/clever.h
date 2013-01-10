@@ -11,10 +11,14 @@
 #include <sstream>
 #include <cstdarg>
 #include <setjmp.h>
+#include <vector>
 
 namespace clever {
 
-#define CLEVER_THROW(val, args...) const_cast<VM*>(vm)->setException(val, ##args)
+class Type;
+class Value;
+
+#define CLEVER_THROW(val, ...) const_cast<VM*>(vm)->setException(val, ##__VA_ARGS__)
 
 extern jmp_buf fatal_error;
 
@@ -172,11 +176,8 @@ void printf(const char*, ...);
 void vprintfln(const char*, va_list);
 void printfln(const char*, ...);
 
-#define CLEVER_TYPE_INT		1
-#define CLEVER_TYPE_DBL		2
-#define CLEVER_TYPE_STR		4
-#define CLEVER_TYPE_OBJ		8
-#define CLEVER_TYPE_FUNC	16
+#define clever_check_args(spec) clever::check_args(args, spec, this)
+bool check_args(const ::std::vector<Value*>&, const char*, const Type* = NULL);
 
 #define CLEVER_GET_OBJECT(t, n) static_cast<t>((n)->getObj())
 #define CLEVER_GET_TYPE(n) (n)->getType()
@@ -199,6 +200,8 @@ void printfln(const char*, ...);
 #define CLEVER_ARG_TYPE(index)	args[index]->getType()
 #define CLEVER_ARG_DUMP(index) 	args[index]->dump()
 #define CLEVER_ARG_DUMPTO(index, stream) args[index]->dump(stream)
+#define CLEVER_ARG_ISSET(index)	args->size() > index
+#define CLEVER_ARG_ISTYPE(index, type) (args[index]->getType() == type)
 /* }}} */
 
 /* {{{ Return value setters */

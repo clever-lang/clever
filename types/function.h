@@ -77,6 +77,8 @@ private:
 	} m_info;
 
 	Environment* m_environment;
+
+	DISALLOW_COPY_AND_ASSIGN(Function);
 };
 
 /// Function type

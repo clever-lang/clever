@@ -10,6 +10,7 @@
 #include <iostream>
 #include "core/clever.h"
 #include "core/cstring.h"
+#include "core/value.h"
 
 namespace clever {
 
@@ -151,6 +152,99 @@ void printf(const char* format, ...) {
 	std::cout << out.str();
 
 	va_end(args);
+}
+
+// Verify a vector of Values conform to a specific set of types (and implicit length)
+// Typespec:
+//  f - a function
+//	s - a string
+//	i - a integral number
+//	d - a double precision number
+//	a - array
+//	b - boolean
+//	n - numeric
+//	c - current object
+//	* - any type
+// Example:
+//	clever_check_args("sii") - check that the first arg is string and the next two are integral
+//	clever_check_args("sdi") - check that the first arg is a string, the second a double and the third an integer
+//	clever_check_args("*si") - ignore the first arg, verify the second and third
+// NOTE:
+//	We could pass in another parameter to cause a fatality/throw exception on error here, for now fail gracefully
+bool check_args(const ::std::vector<Value*>& args, const char* typespec, const Type* type) {
+	size_t speclen = ::strlen(typespec);
+	size_t argslen = args.size();
+
+	if (speclen != argslen) {
+		return false;
+	}
+
+	for (size_t arg = 0; arg < speclen; ++arg) {
+		if (!(arg < speclen && argslen > arg)) {
+			return false;
+		}
+		const Type* const arg_type = args[arg]->getType();
+
+		switch (typespec[arg]) {
+			// Function
+			case 'f':
+				if (arg_type != CLEVER_FUNC_TYPE) {
+					return false;
+				}
+				break;
+			// String
+			case 's':
+				if (arg_type != CLEVER_STR_TYPE) {
+					return false;
+				}
+				break;
+			// Integer
+			case 'i':
+				if (arg_type != CLEVER_INT_TYPE) {
+					return false;
+				}
+				break;
+			// Double
+			case 'd':
+				if (arg_type != CLEVER_DOUBLE_TYPE) {
+					return false;
+				}
+				break;
+			// Array
+			case 'a':
+				if (arg_type != CLEVER_ARRAY_TYPE) {
+					return false;
+				}
+				break;
+			// Boolean
+			case 'b':
+				if (arg_type != CLEVER_BOOL_TYPE) {
+					return false;
+				}
+				break;
+			// Number
+			case 'n':
+				if ((arg_type != CLEVER_DOUBLE_TYPE)
+					&& (arg_type != CLEVER_INT_TYPE)) {
+					return false;
+				}
+				break;
+			// Current type
+			case 'c':
+				if (arg_type != type) {
+					return false;
+				}
+				break;
+			// Any type
+			case '*':
+				break;
+
+			default:
+				/** Value::verify encountered an unexpected type specification @ arg **/
+				break;
+		}
+	}
+	return true;
 }
 
 } // clever

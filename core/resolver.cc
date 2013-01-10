@@ -29,21 +29,13 @@ Resolver::Resolver(Compiler* compiler)
 	Value* arrval = new Value(CLEVER_ARRAY_TYPE  = new ArrayType);
 	Value* trdval = new Value(CLEVER_THREAD_TYPE = new ThreadType);
 
-	m_scope->pushValue(CSTRING("Int"),      intval);
-	m_scope->pushValue(CSTRING("String"),   strval);
-	m_scope->pushValue(CSTRING("Double"),   dblval);
-	m_scope->pushValue(CSTRING("Function"), fncval);
-	m_scope->pushValue(CSTRING("Thread"),    trdval);
-	m_scope->pushValue(CSTRING("Bool"),     bolval);
-	m_scope->pushValue(CSTRING("Array"),    arrval);
-
-	m_stack.top()->pushValue(intval);
-	m_stack.top()->pushValue(strval);
-	m_stack.top()->pushValue(dblval);
-	m_stack.top()->pushValue(fncval);
-	m_stack.top()->pushValue(trdval);
-	m_stack.top()->pushValue(bolval);
-	m_stack.top()->pushValue(arrval);
+	m_scope->pushValue(CSTRING("Int"),      intval)->voffset = m_stack.top()->pushValue(intval);
+	m_scope->pushValue(CSTRING("String"),   strval)->voffset = m_stack.top()->pushValue(strval);
+	m_scope->pushValue(CSTRING("Double"),   dblval)->voffset = m_stack.top()->pushValue(dblval);
+	m_scope->pushValue(CSTRING("Function"), fncval)->voffset = m_stack.top()->pushValue(fncval);
+	m_scope->pushValue(CSTRING("Thread"),   trdval)->voffset = m_stack.top()->pushValue(trdval);
+	m_scope->pushValue(CSTRING("Bool"),     bolval)->voffset = m_stack.top()->pushValue(bolval);
+	m_scope->pushValue(CSTRING("Array"),    arrval)->voffset = m_stack.top()->pushValue(arrval);
 
 	CLEVER_INT_TYPE->init();
 	CLEVER_STR_TYPE->init();
@@ -72,10 +64,7 @@ void Resolver::visit(VariableDecl* node)
 	}
 
 	Value* val = new Value();
-	m_scope->pushValue(name, val);
-
-	m_stack.top()->pushValue(val);
-
+	m_scope->pushValue(name, val)->voffset = m_stack.top()->pushValue(val);
 
 	node->getIdent()->accept(*this);
 
@@ -106,14 +95,11 @@ void Resolver::visit(ThreadBlock* node)
 
 	thread->setUserDefined();
 
-	Value* tval = new Value();
-	tval->setType(CLEVER_THREAD_TYPE);
+	Value* tval = new Value(CLEVER_THREAD_TYPE);
 	tval->setObj(thread);
 
 	thread->setName(*name);
-	m_scope->pushValue(name, tval);
-
-	m_stack.top()->pushValue(tval);
+	m_scope->pushValue(name, tval)->voffset = m_stack.top()->pushValue(tval);
 
 	node->getName()->accept(*this);
 
@@ -159,14 +145,12 @@ void Resolver::visit(FunctionDecl* node)
 
 	func->setUserDefined();
 
-	Value* fval = new Value();
-	fval->setType(CLEVER_FUNC_TYPE);
+	Value* fval = new Value(CLEVER_FUNC_TYPE);
 	fval->setObj(func);
 
 	func->setName(*name);
-	m_scope->pushValue(name, fval);
 
-	m_stack.top()->pushValue(fval);
+	m_scope->pushValue(name, fval)->voffset = m_stack.top()->pushValue(fval);
 
 	node->getIdent()->accept(*this);
 
@@ -206,7 +190,6 @@ void Resolver::visit(Ident* node)
 	}
 
 	node->setVOffset(m_scope->getOffset(sym));
-	sym->voffset = node->getVOffset();
 
 	node->setSymbol(sym);
 	node->setScope(sym->scope);
@@ -246,9 +229,7 @@ void Resolver::visit(Catch* node)
 
 	Value* val = new Value();
 
-	m_scope->pushValue(node->getVar()->getName(), val);
-
-	m_stack.top()->pushValue(val);
+	m_scope->pushValue(node->getVar()->getName(), val)->voffset = m_stack.top()->pushValue(val);
 
 	node->getVar()->accept(*this);
 

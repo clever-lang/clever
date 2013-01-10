@@ -13,13 +13,13 @@
 
 namespace clever { namespace packages { namespace std {
 
-// Standard Math Module
+/// Standard Math Module
 class Math : public Module {
 public:
 	Math()
-		: Module("Math") { }
+		: Module("Math") {}
 
-	~Math() { }
+	~Math() {}
 
 	CLEVER_MODULE_VIRTUAL_METHODS_DECLARATION;
 private:

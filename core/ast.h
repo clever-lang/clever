@@ -54,7 +54,7 @@ class Transformer;
 class Node: public RefCounted {
 public:
 	Node(const location& location)
-		: RefCounted(0), m_location(location), m_scope(NULL) {}
+		: RefCounted(0), m_location(location), m_scope(NULL), m_voffset(0,0) {}
 
 	virtual ~Node() {}
 
@@ -81,12 +81,14 @@ private:
 	size_t m_value_id;
 	const Scope* m_scope;
 	ValueOffset m_voffset;
+
+	DISALLOW_COPY_AND_ASSIGN(Node);
 };
 
 class NodeArray: public Node {
 public:
 	NodeArray(const location& location)
-		: Node(location) {}
+		: Node(location), m_nodes() {}
 
 	virtual ~NodeArray() { clearNodes(); }
 
@@ -176,6 +178,8 @@ private:
 	ComparisonOperator m_op;
 	Node* m_lhs;
 	Node* m_rhs;
+
+	DISALLOW_COPY_AND_ASSIGN(Comparison);
 };
 
 class Assignment: public Node {
@@ -213,6 +217,8 @@ private:
 	bool m_conditional;
 	Node* m_lhs;
 	Node* m_rhs;
+
+	DISALLOW_COPY_AND_ASSIGN(Assignment);
 };
 
 class Ident: public Node {
@@ -233,6 +239,8 @@ public:
 private:
 	const CString* m_name;
 	Symbol* m_sym;
+
+	DISALLOW_COPY_AND_ASSIGN(Ident);
 };
 
 class ThreadBlock: public NodeArray {
@@ -275,6 +283,9 @@ protected:
 	Block* m_block;
 	Ident* m_name;
 	Node* m_size;
+
+private:
+	DISALLOW_COPY_AND_ASSIGN(ThreadBlock);
 };
 
 class Wait: public NodeArray {
@@ -295,6 +306,9 @@ public:
 
 protected:
 	Ident* m_name;
+
+private:
+	DISALLOW_COPY_AND_ASSIGN(Wait);
 };
 
 class CriticalBlock: public NodeArray {
@@ -314,6 +328,8 @@ public:
 	Block* getBlock() { return m_block; }
 protected:
 	Block* m_block;
+private:
+	DISALLOW_COPY_AND_ASSIGN(CriticalBlock);
 };
 
 class Type: public Node {
@@ -332,6 +348,8 @@ public:
 private:
 	const CString* m_name;
 	Symbol* m_sym;
+
+	DISALLOW_COPY_AND_ASSIGN(Type);
 };
 
 class Instantiation: public Node {
@@ -368,6 +386,8 @@ public:
 private:
 	Type* m_type;
 	NodeArray* m_args;
+
+	DISALLOW_COPY_AND_ASSIGN(Instantiation);
 };
 
 class Import: public Node {
@@ -392,6 +412,8 @@ public:
 private:
 	Ident* m_package;
 	Ident* m_module;
+
+	DISALLOW_COPY_AND_ASSIGN(Import);
 };
 
 class VariableDecl: public Node {
@@ -427,6 +449,8 @@ private:
 	Ident* m_ident;
 	Assignment* m_assignment;
 	const bool m_is_const;
+
+	DISALLOW_COPY_AND_ASSIGN(VariableDecl);
 };
 
 class Arithmetic: public Node {
@@ -463,6 +487,8 @@ private:
 	ArithOperator m_op;
 	Node* m_lhs;
 	Node* m_rhs;
+
+	DISALLOW_COPY_AND_ASSIGN(Arithmetic);
 };
 
 class Logic: public Node {
@@ -496,6 +522,8 @@ private:
 	LogicOperator m_op;
 	Node* m_lhs;
 	Node* m_rhs;
+
+	DISALLOW_COPY_AND_ASSIGN(Logic);
 };
 
 class Boolean: public Node {
@@ -528,6 +556,8 @@ private:
 	BooleanOperator m_op;
 	Node* m_lhs;
 	Node* m_rhs;
+
+	DISALLOW_COPY_AND_ASSIGN(Boolean);
 };
 
 class Bitwise: public Node {
@@ -564,6 +594,8 @@ private:
 	BitwiseOperator m_op;
 	Node* m_lhs;
 	Node* m_rhs;
+
+	DISALLOW_COPY_AND_ASSIGN(Bitwise);
 };
 
 class FunctionDecl: public Node {
@@ -615,6 +647,8 @@ private:
 	NodeArray* m_args;
 	Block* m_block;
 	bool m_is_anon;
+
+	DISALLOW_COPY_AND_ASSIGN(FunctionDecl);
 };
 
 class MethodCall: public Node {
@@ -670,6 +704,8 @@ private:
 	Ident* m_method;
 	NodeArray* m_args;
 	bool m_static;
+
+	DISALLOW_COPY_AND_ASSIGN(MethodCall);
 };
 
 class FunctionCall: public Node {
@@ -711,6 +747,8 @@ public:
 private:
 	Node* m_callee;
 	NodeArray* m_args;
+
+	DISALLOW_COPY_AND_ASSIGN(FunctionCall);
 };
 
 class While: public Node {
@@ -736,6 +774,8 @@ public:
 private:
 	Node *m_condition;
 	Node *m_block;
+
+	DISALLOW_COPY_AND_ASSIGN(While);
 };
 
 /// This class can handle both simple and complex (if + ifelse) if statements.
@@ -743,7 +783,7 @@ private:
 class If: public Node {
 public:
 	If(Node* cond_node, Node* then_node, const location& location)
-		: Node(location), m_else_node(NULL) {
+		: Node(location), m_else_node(NULL), m_conditionals() {
 
 		addConditional(cond_node, then_node);
 	}
@@ -786,6 +826,8 @@ public:
 private:
 	Node *m_else_node;
 	std::vector<std::pair<Node*, Node*> > m_conditionals;
+
+	DISALLOW_COPY_AND_ASSIGN(If);
 };
 
 class Literal: public Node {
@@ -844,6 +886,8 @@ public:
 
 private:
 	const CString* m_value;
+
+	DISALLOW_COPY_AND_ASSIGN(StringLit);
 };
 
 class NullLit: public Literal {
@@ -897,6 +941,8 @@ public:
 	virtual Node* accept(Transformer& transformer);
 private:
 	Node* m_value;
+
+	DISALLOW_COPY_AND_ASSIGN(Return);
 };
 
 class Property: public Node {
@@ -920,6 +966,8 @@ public:
 private:
 	Node* m_obj;
 	Ident* m_prop_name;
+
+	DISALLOW_COPY_AND_ASSIGN(Property);
 };
 
 class IncDec: public Node {
@@ -951,6 +999,8 @@ public:
 private:
 	IncDecOperator m_op;
 	Node* m_var;
+
+	DISALLOW_COPY_AND_ASSIGN(IncDec);
 };
 
 class Try: public Node {
@@ -980,6 +1030,8 @@ private:
 	Block* m_try;
 	NodeArray* m_catch;
 	Block* m_finally;
+
+	DISALLOW_COPY_AND_ASSIGN(Try);
 };
 
 class Catch: public Node {
@@ -1004,6 +1056,8 @@ public:
 private:
 	Ident* m_var;
 	Block* m_block;
+
+	DISALLOW_COPY_AND_ASSIGN(Catch);
 };
 
 class Throw: public Node {
@@ -1023,6 +1077,8 @@ public:
 	virtual Node* accept(Transformer& transformer);
 private:
 	Node* m_expr;
+
+	DISALLOW_COPY_AND_ASSIGN(Throw);
 };
 
 }} // clever::ast

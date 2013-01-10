@@ -64,7 +64,7 @@ typedef std::pair<const CString*, MethodPtr> MethodPair;
 
 class Type {
 public:
-	Type(const CString* name) : m_name(name) {}
+	Type(const CString* name) : m_name(name), m_methods(), m_properties() {}
 	virtual ~Type();
 
 	virtual void init(CLEVER_TYPE_INIT_ARGS) {}
@@ -125,6 +125,8 @@ private:
 	const CString* m_name;
 	MethodMap m_methods;
 	PropertyMap m_properties;
+
+	DISALLOW_COPY_AND_ASSIGN(Type);
 };
 
 }

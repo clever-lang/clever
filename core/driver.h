@@ -33,7 +33,8 @@ public:
 	typedef std::stack<ScannerState*> ScannerStack;
 
 	Driver()
-		: m_is_file(false), m_trace_parsing(false), m_file(NULL), m_cflags(0)
+		: m_is_file(false), m_trace_parsing(false), m_file(NULL), m_cflags(0),
+		  m_compiler(), m_scanners()
 #ifdef CLEVER_DEBUG
 			, m_dump_opcode(false)
 #endif
@@ -80,16 +81,17 @@ protected:
 	// Compiler flags
 	size_t m_cflags;
 
-#ifdef CLEVER_DEBUG
-	// Opcode dumping option
-	bool m_dump_opcode;
-#endif
-
 	// Compiler
 	Compiler m_compiler;
 
 	// Scanners stack
 	ScannerStack m_scanners;
+
+#ifdef CLEVER_DEBUG
+	// Opcode dumping option
+	bool m_dump_opcode;
+#endif
+
 private:
 	DISALLOW_COPY_AND_ASSIGN(Driver);
 };

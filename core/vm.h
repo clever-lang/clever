@@ -58,9 +58,10 @@ public:
 
 	VM(IRVector& inst)
 		: m_pc(0), m_is_main_thread(true), m_inst(inst),
-		  m_const_env(NULL), m_temp_env(NULL),
+		  m_const_env(NULL), m_temp_env(NULL), m_global_env(NULL),
 		  m_call_stack(), m_call_args(),
-		  m_thread_pool(), m_mutex(), f_mutex(NULL), m_exception(NULL) {}
+		  m_thread_pool(), m_mutex(), f_mutex(NULL), m_try_stack(),
+		  m_exception(NULL) {}
 	~VM() {
 		CLEVER_SAFE_DELETE(m_exception);
 	}

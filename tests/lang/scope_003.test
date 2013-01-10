@@ -1,0 +1,8 @@
+Testing static scope
+==CODE==
+import std.io.*;
+{ function a() { return 2; } println(a()); }
+{ function b() { return 3; } println(b()); }
+==RESULT==
+2
+3

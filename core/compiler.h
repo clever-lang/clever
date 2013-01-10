@@ -41,9 +41,9 @@ public:
 	};
 
 	Compiler()
-		: m_ir(), m_flags(0),
-			m_scope_pool(), m_const_env(),m_temp_env(),
-			m_scope_id(0), m_const_id(0), m_tmp_id(0) {}
+		: m_pkg(), m_ir(), m_flags(0),
+		  m_scope_pool(), m_const_env(),m_temp_env(), m_global_env(),
+		  m_scope_id(0), m_const_id(0), m_tmp_id(0) {}
 
 	~Compiler() {}
 

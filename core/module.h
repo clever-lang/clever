@@ -73,7 +73,7 @@ public:
 	enum PackageStatus { UNLOADED, LOADED };
 
 	Package(std::string name)
-		: m_name(name), m_flags(UNLOADED) {}
+		: m_name(name), m_flags(UNLOADED), m_modules() {}
 
 	virtual ~Package() {}
 
