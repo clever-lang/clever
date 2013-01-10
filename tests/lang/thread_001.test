@@ -30,7 +30,6 @@ while (i) {
 
 }
 
-wait threads;
 
 spawn thread {
 	var i = 10;
