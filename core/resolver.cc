@@ -95,8 +95,7 @@ void Resolver::visit(ThreadBlock* node)
 
 	thread->setUserDefined();
 
-	Value* tval = new Value();
-	tval->setType(CLEVER_THREAD_TYPE);
+	Value* tval = new Value(CLEVER_THREAD_TYPE);
 	tval->setObj(thread);
 
 	thread->setName(*name);
@@ -146,8 +145,7 @@ void Resolver::visit(FunctionDecl* node)
 
 	func->setUserDefined();
 
-	Value* fval = new Value();
-	fval->setType(CLEVER_FUNC_TYPE);
+	Value* fval = new Value(CLEVER_FUNC_TYPE);
 	fval->setObj(func);
 
 	func->setName(*name);
