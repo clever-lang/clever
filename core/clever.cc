@@ -161,6 +161,7 @@ void printf(const char* format, ...) {
 //	i - a integral number
 //	d - a double precision number
 //	a - array
+//  m - map
 //	b - boolean
 //	n - numeric
 //	c - current object
@@ -221,6 +222,12 @@ bool check_args(const ::std::vector<Value*>& args, const char* typespec, const T
 			// Array
 			case 'a':
 				if (arg_type != CLEVER_ARRAY_TYPE) {
+					return false;
+				}
+				break;
+			// Map
+			case 'm':
+				if (arg_type != CLEVER_MAP_TYPE) {
 					return false;
 				}
 				break;
