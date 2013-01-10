@@ -52,6 +52,7 @@ void Compiler::shutdown()
 	delete CLEVER_BOOL_TYPE;
 	delete CLEVER_ARRAY_TYPE;
 	delete CLEVER_THREAD_TYPE;
+	delete CLEVER_MAP_TYPE;
 
 	m_pkg.shutdown();
 }

@@ -5,32 +5,32 @@
  * This file is distributed under the MIT license. See LICENSE for details.
  */
 
-#ifndef CLEVER_ARRAY_H
-#define CLEVER_ARRAY_H
+#ifndef CLEVER_MAP_H
+#define CLEVER_MAP_H
 
-#include <iostream>
+#include <map>
 #include "core/cstring.h"
 #include "core/value.h"
 #include "types/type.h"
 
 namespace clever {
 
-class ArrayObject : public ValueObject {
+class MapObject : public ValueObject {
 public:
-	ArrayObject()
+	MapObject()
 		: ValueObject() {}
 
-	~ArrayObject() {}
+	~MapObject() {}
 
-	std::vector<Value*>& getData() { return m_data; }
+	std::map<std::string, Value*>& getData() { return m_data; }
 private:
-	std::vector<Value*> m_data;
+	std::map<std::string, Value*> m_data;
 };
 
-class ArrayType : public Type {
+class MapType : public Type {
 public:
-	ArrayType() : Type(CSTRING("Array")) {}
-	~ArrayType() {}
+	MapType() : Type(CSTRING("Map")) {}
+	~MapType() {}
 
 	void init();
 
@@ -44,10 +44,9 @@ public:
 	void increment(Value* value, const VM* vm) const {}
 	void decrement(Value* value, const VM* vm) const {}
 
-	CLEVER_METHOD_D(append);
-	CLEVER_METHOD_D(size);
+	CLEVER_METHOD(insert);
 };
 
 } // clever
 
-#endif // CLEVER_ARRAY_H
+#endif // CLEVER_MAP_H

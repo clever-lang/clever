@@ -1,0 +1,9 @@
+Testing map type
+==CODE==
+import std.io.*;
+
+var a = {"foo": 1, "bar": 3};
+
+a.insert("c", 2); println(a);
+==RESULT==
+{"bar": 3, "c": 2, "foo": 1}

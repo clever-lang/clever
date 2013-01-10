@@ -68,10 +68,10 @@ class Value;
 %type <dbllit> NUM_DOUBLE
 %type <true_> TRUE
 %type <false_> FALSE
-%type <inst> instantiation array
+%type <inst> instantiation array map
 %type <assignment> assignment
 %type <narray> variable_decl variable_decl_list non_empty_call_args call_args
-%type <narray> const_decl_list not_empty_catch catch
+%type <narray> const_decl_list not_empty_catch catch key_value_list non_empty_key_value_list
 %type <vardecl> variable_decl_impl
 %type <vardecl> const_decl_impl
 %type <block> statement_list block finally
@@ -111,6 +111,7 @@ class Value;
 
 %debug
 %error-verbose
+%expect 2
 
 %code {
 #include "core/driver.h"
@@ -267,6 +268,7 @@ rvalue:
 	|	property_access
 	|	mcall
 	|	array
+	|	map
 	|	'(' rvalue ')' { $<node>$ = $<node>2; }
 ;
 
@@ -276,6 +278,20 @@ lvalue:
 
 array:
 		'[' call_args ']'  { $$ = new ast::Instantiation(CSTRING("Array"), $2, yyloc); }
+;
+
+key_value_list:
+		non_empty_key_value_list
+;
+
+non_empty_key_value_list:
+		STR ':' rvalue                              { $$ = new ast::NodeArray(yyloc); $$->append($1); $$->append($<node>3); }
+	|	non_empty_key_value_list ',' STR ':' rvalue { $1->append($3); $1->append($<node>5);                                 }
+;
+
+map:
+		'{' '}'                 { $$ = new ast::Instantiation(CSTRING("Map"), NULL, yyloc); }
+	|	'{' key_value_list '}'  { $$ = new ast::Instantiation(CSTRING("Map"), $2, yyloc);   }
 ;
 
 throw:

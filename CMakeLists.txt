@@ -195,6 +195,8 @@ add_executable(clever
 	types/bool.cc
 	types/array.h
 	types/array.cc
+	types/map.h
+	types/map.cc
 	${EXTRA_CLEVER_FILES}
 )
 target_link_libraries(clever ${CLEVER_LIBRARIES})

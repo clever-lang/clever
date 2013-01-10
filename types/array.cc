@@ -56,19 +56,34 @@ void ArrayType::dump(const void* value, std::ostream& out) const
 	out << "]";
 }
 
+// void Array::append([arg, ... ])
 CLEVER_METHOD(ArrayType::append)
 {
 	ArrayObject* arr = CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS());
 
-	for (size_t i = 0, j = CLEVER_ARG_COUNT(); i < j; ++i) {
+	for (size_t i = 0, j = args.size(); i < j; ++i) {
 		arr->getData().push_back(args[i]);
 		args[i]->addRef();
 	}
 }
 
+// int Array::size()
+CLEVER_METHOD(ArrayType::size)
+{
+	if (!clever_check_no_args()) {
+		return;
+	}
+
+	ArrayObject* arr = CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS());
+
+	CLEVER_RETURN_INT(arr->getData().size());
+}
+
+// Type initialization
 CLEVER_TYPE_INIT(ArrayType::init)
 {
 	addMethod(CSTRING("append"), (MethodPtr) &ArrayType::append);
+	addMethod(CSTRING("size"),   (MethodPtr) &ArrayType::size);
 }
 
 } // clever

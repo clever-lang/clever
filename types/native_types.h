@@ -14,6 +14,7 @@
 #include "types/function.h"
 #include "types/bool.h"
 #include "types/array.h"
+#include "types/map.h"
 #include "types/thread.h"
 
 #endif // CLEVER_NATIVE_TYPES_H

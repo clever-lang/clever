@@ -172,8 +172,16 @@ void printf(const char* format, ...) {
 // NOTE:
 //	We could pass in another parameter to cause a fatality/throw exception on error here, for now fail gracefully
 bool check_args(const ::std::vector<Value*>& args, const char* typespec, const Type* type) {
-	size_t speclen = ::strlen(typespec);
 	size_t argslen = args.size();
+
+	// Void arguments checking
+	if (typespec == NULL) {
+		return argslen > 0;
+	}
+
+	clever_assert_not_null(typespec);
+
+	size_t speclen = ::strlen(typespec);
 
 	if (speclen != argslen) {
 		return false;

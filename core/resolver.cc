@@ -28,6 +28,7 @@ Resolver::Resolver(Compiler* compiler)
 	Value* bolval = new Value(CLEVER_BOOL_TYPE   = new BoolType);
 	Value* arrval = new Value(CLEVER_ARRAY_TYPE  = new ArrayType);
 	Value* trdval = new Value(CLEVER_THREAD_TYPE = new ThreadType);
+	Value* mapval = new Value(CLEVER_MAP_TYPE    = new MapType);
 
 	m_scope->pushValue(CSTRING("Int"),      intval)->voffset = m_stack.top()->pushValue(intval);
 	m_scope->pushValue(CSTRING("String"),   strval)->voffset = m_stack.top()->pushValue(strval);
@@ -36,10 +37,12 @@ Resolver::Resolver(Compiler* compiler)
 	m_scope->pushValue(CSTRING("Thread"),   trdval)->voffset = m_stack.top()->pushValue(trdval);
 	m_scope->pushValue(CSTRING("Bool"),     bolval)->voffset = m_stack.top()->pushValue(bolval);
 	m_scope->pushValue(CSTRING("Array"),    arrval)->voffset = m_stack.top()->pushValue(arrval);
+	m_scope->pushValue(CSTRING("Map"),      mapval)->voffset = m_stack.top()->pushValue(mapval);
 
 	CLEVER_INT_TYPE->init();
 	CLEVER_STR_TYPE->init();
 	CLEVER_ARRAY_TYPE->init();
+	CLEVER_MAP_TYPE->init();
 }
 
 void Resolver::visit(Block* node)

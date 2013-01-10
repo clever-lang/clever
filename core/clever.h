@@ -177,11 +177,10 @@ void vprintfln(const char*, va_list);
 void printfln(const char*, ...);
 
 #define clever_check_args(spec) clever::check_args(args, spec, this)
+#define clever_check_no_args()  clever_check_args(NULL)
 bool check_args(const ::std::vector<Value*>&, const char*, const Type* = NULL);
 
 #define CLEVER_GET_OBJECT(t, n) static_cast<t>((n)->getObj())
-#define CLEVER_GET_TYPE(n) (n)->getType()
-#define CLEVER_GET_BOOL(n) (n)->getBool()
 
 /* {{{ Accessor Macros for Function Arguments */
 #define CLEVER_ARG_COUNT		 args.size
