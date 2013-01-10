@@ -27,7 +27,8 @@ static CLEVER_FORCE_INLINE void _prepare_operand(Operand& op, Node* node)
 }
 
 Codegen::Codegen(IRVector& ir, Compiler* compiler, Environment* init_glbenv)
-	: m_ir(ir), m_compiler(compiler), m_init_glbenv(init_glbenv), m_thread_ids()
+	: m_ir(ir), m_compiler(compiler), m_init_glbenv(init_glbenv),
+	  m_const_env(NULL), m_temp_env(NULL), m_jmps(), m_thread_ids()
 {
 
 	m_const_env = new Environment(m_init_glbenv);

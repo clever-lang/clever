@@ -18,7 +18,7 @@ namespace clever {
 class ArrayObject : public ValueObject {
 public:
 	ArrayObject()
-		: ValueObject() {}
+		: ValueObject(), m_data() {}
 
 	~ArrayObject() {}
 

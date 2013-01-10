@@ -28,10 +28,10 @@ typedef std::vector<Value*> ValuePool;
 
 /// Symbol representation
 struct Symbol {
-	Symbol() {}
+	Symbol() : name(NULL), voffset(0,0), scope(NULL) {}
 
 	Symbol(const CString *name_, Scope *scope_ = NULL)
-		: name(name_), scope(scope_) {}
+		: name(name_), voffset(0,0), scope(scope_) {}
 
 	~Symbol() {}
 
@@ -52,12 +52,12 @@ public:
 	typedef SymbolTable::value_type SymbolEntry;
 
 	Scope()
-		: m_parent(NULL), m_children(), m_symbols(), m_size(0), m_id(0),
-		  m_value_id(0), m_value_pool(), m_environment(NULL) {}
+		: m_parent(NULL), m_children(), m_symbols(), m_symbol_table(), m_size(0),
+		  m_id(0), m_value_id(0), m_value_pool(), m_environment(NULL) {}
 
 	explicit Scope(Scope* parent)
-		: m_parent(parent), m_children(), m_symbols(), m_size(0), m_id(0),
-		  m_value_id(0), m_value_pool(), m_environment(NULL) {}
+		: m_parent(parent), m_children(), m_symbols(), m_symbol_table(),
+		  m_size(0), m_id(0), m_value_id(0), m_value_pool(), m_environment(NULL) {}
 
 	~Scope();
 

@@ -27,7 +27,7 @@ typedef std::pair<const CString*, Package*> PackagePair;
 /// Package manager
 class PkgManager {
 public:
-	PkgManager() {}
+	PkgManager() : m_pkgs() {}
 	~PkgManager() {}
 
 	/// Initialization routine

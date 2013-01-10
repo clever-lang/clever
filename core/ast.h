@@ -54,7 +54,7 @@ class Transformer;
 class Node: public RefCounted {
 public:
 	Node(const location& location)
-		: RefCounted(0), m_location(location), m_scope(NULL) {}
+		: RefCounted(0), m_location(location), m_scope(NULL), m_voffset(0,0) {}
 
 	virtual ~Node() {}
 
@@ -88,7 +88,7 @@ private:
 class NodeArray: public Node {
 public:
 	NodeArray(const location& location)
-		: Node(location) {}
+		: Node(location), m_nodes() {}
 
 	virtual ~NodeArray() { clearNodes(); }
 
@@ -783,7 +783,7 @@ private:
 class If: public Node {
 public:
 	If(Node* cond_node, Node* then_node, const location& location)
-		: Node(location), m_else_node(NULL) {
+		: Node(location), m_else_node(NULL), m_conditionals() {
 
 		addConditional(cond_node, then_node);
 	}
