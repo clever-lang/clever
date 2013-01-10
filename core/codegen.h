@@ -76,6 +76,8 @@ private:
 	JmpList m_jmps;
 
 	std::map<Thread*, size_t> m_thread_ids;
+
+	DISALLOW_COPY_AND_ASSIGN(Codegen);
 };
 
 }} // clever::ast

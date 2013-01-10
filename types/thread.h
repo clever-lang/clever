@@ -73,6 +73,8 @@ private:
 	Scope* m_local_vars;
 
 	Environment* m_environment;
+
+	DISALLOW_COPY_AND_ASSIGN(Thread);
 };
 
 

@@ -38,6 +38,9 @@ struct Symbol {
 	const CString* name;
 	ValueOffset voffset;
 	const Scope *scope;
+
+private:
+	DISALLOW_COPY_AND_ASSIGN(Symbol);
 };
 
 /// Scope representation

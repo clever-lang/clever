@@ -46,6 +46,8 @@ private:
 	Scope* m_symtable;
 	Scope* m_scope;
 	std::stack<Environment*> m_stack;
+
+	DISALLOW_COPY_AND_ASSIGN(Resolver);
 };
 
 }} // clever::ast

@@ -58,6 +58,8 @@ public:
 private:
 	void* m_obj;
 	const Type* m_type;
+
+	DISALLOW_COPY_AND_ASSIGN(ValueObject);
 };
 
 class Value : public RefCounted {
@@ -187,6 +189,8 @@ private:
 	DataValue m_data;
 	const Type* m_type;
 	bool m_is_const;
+
+	DISALLOW_COPY_AND_ASSIGN(Value);
 };
 
 } // clever

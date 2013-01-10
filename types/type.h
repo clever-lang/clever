@@ -125,6 +125,8 @@ private:
 	const CString* m_name;
 	MethodMap m_methods;
 	PropertyMap m_properties;
+
+	DISALLOW_COPY_AND_ASSIGN(Type);
 };
 
 }
