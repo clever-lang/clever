@@ -220,9 +220,6 @@ void Codegen::visit(FunctionCall* node)
 		m_ir.push_back(IR(OP_FCALL));
 		_prepare_operand(m_ir.back().op1, node->getCallee());
 	} else {
-		Symbol* sym = static_cast<Ident*>(node->getCallee())->getSymbol();
-		clever_assert_not_null(sym);
-
 		if (node->hasArgs()) {
 			sendArgs(node->getArgs());
 		}
