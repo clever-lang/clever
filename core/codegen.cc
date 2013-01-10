@@ -106,7 +106,9 @@ void Codegen::visit(CriticalBlock* node)
 
 void Codegen::visit(Wait* node)
 {
-	m_ir.push_back(IR(OP_WAIT, Operand(FETCH_VAR, node->getName()->getVOffset())));
+	if (node->getName() != NULL) {
+		m_ir.push_back(IR(OP_WAIT, Operand(FETCH_VAR, node->getName()->getVOffset())));
+	}
 }
 
 void Codegen::visit(ThreadBlock* node)
