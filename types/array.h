@@ -47,6 +47,7 @@ public:
 	CLEVER_METHOD_D(append);
 	CLEVER_METHOD_D(size);
 	CLEVER_METHOD_D(at);
+	CLEVER_METHOD_D(reserve);
 };
 
 } // clever

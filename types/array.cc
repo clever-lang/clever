@@ -91,12 +91,31 @@ CLEVER_METHOD(ArrayType::at)
 	result->copy(arr->getData().at(args[0]->getInt()));
 }
 
+// void Array::reserve(int size)
+CLEVER_METHOD(ArrayType::reserve)
+{
+	if (!clever_check_args("i")) {
+		return;
+	}
+
+	ArrayObject* arr = CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS());
+
+	result->setNull();
+
+	if (args[0]->getInt() < 0) {
+		return;
+	}
+
+	arr->getData().reserve(args[0]->getInt());
+}
+
 // Type initialization
 CLEVER_TYPE_INIT(ArrayType::init)
 {
-	addMethod(CSTRING("append"), (MethodPtr) &ArrayType::append);
-	addMethod(CSTRING("size"),   (MethodPtr) &ArrayType::size);
-	addMethod(CSTRING("at"),     (MethodPtr) &ArrayType::at);
+	addMethod(CSTRING("append"),  (MethodPtr) &ArrayType::append);
+	addMethod(CSTRING("size"),    (MethodPtr) &ArrayType::size);
+	addMethod(CSTRING("at"),      (MethodPtr) &ArrayType::at);
+	addMethod(CSTRING("reserve"), (MethodPtr) &ArrayType::reserve);
 }
 
 } // clever
