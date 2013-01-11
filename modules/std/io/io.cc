@@ -81,8 +81,6 @@ static CLEVER_FUNCTION(printf) {
 /// Initializes Standard module
 CLEVER_MODULE_INIT(IOModule)
 {
-	using namespace io;
-
 	addFunction(new Function("print",   &CLEVER_NS_FNAME(io, print)));
 	addFunction(new Function("println", &CLEVER_NS_FNAME(io, println)));
 	addFunction(new Function("printf",  &CLEVER_NS_FNAME(io, printf)));
