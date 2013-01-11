@@ -253,6 +253,10 @@ void VM::run()
 
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
 				lhs->getType()->sub(getValue(OPCODE.result), lhs, rhs, this);
+
+				if (UNEXPECTED(m_exception != NULL)) {
+					goto throw_exception;
+				}
 			} else {
 				error(VM_ERROR, "Operation cannot be executed on null value");
 			}
@@ -266,6 +270,10 @@ void VM::run()
 
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
 				lhs->getType()->mul(getValue(OPCODE.result), lhs, rhs, this);
+
+				if (UNEXPECTED(m_exception != NULL)) {
+					goto throw_exception;
+				}
 			} else {
 				error(VM_ERROR, "Operation cannot be executed on null value");
 			}
@@ -279,6 +287,10 @@ void VM::run()
 
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
 				lhs->getType()->div(getValue(OPCODE.result), lhs, rhs, this);
+
+				if (UNEXPECTED(m_exception != NULL)) {
+					goto throw_exception;
+				}
 			} else {
 				error(VM_ERROR, "Operation cannot be executed on null value");
 			}
@@ -292,6 +304,10 @@ void VM::run()
 
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
 				lhs->getType()->mod(getValue(OPCODE.result), lhs, rhs, this);
+
+				if (UNEXPECTED(m_exception != NULL)) {
+					goto throw_exception;
+				}
 			} else {
 				error(VM_ERROR, "Operation cannot be executed on null value");
 			}
@@ -486,6 +502,10 @@ void VM::run()
 			if (EXPECTED(!value->isNull())) {
 				value->getType()->increment(value, this);
 				getValue(OPCODE.result)->copy(value);
+
+				if (UNEXPECTED(m_exception != NULL)) {
+					goto throw_exception;
+				}
 			} else {
 				error(VM_ERROR, "Cannot increment null value");
 			}
@@ -499,6 +519,10 @@ void VM::run()
 			if (EXPECTED(!value->isNull())) {
 				getValue(OPCODE.result)->copy(value);
 				value->getType()->increment(value, this);
+
+				if (UNEXPECTED(m_exception != NULL)) {
+					goto throw_exception;
+				}
 			} else {
 				error(VM_ERROR, "Cannot increment null value");
 			}
@@ -512,6 +536,10 @@ void VM::run()
 			if (EXPECTED(!value->isNull())) {
 				value->getType()->decrement(value, this);
 				getValue(OPCODE.result)->copy(value);
+
+				if (UNEXPECTED(m_exception != NULL)) {
+					goto throw_exception;
+				}
 			} else {
 				error(VM_ERROR, "Cannot decrement null value");
 			}
@@ -525,6 +553,10 @@ void VM::run()
 			if (EXPECTED(!value->isNull())) {
 				getValue(OPCODE.result)->copy(value);
 				value->getType()->decrement(value, this);
+
+				if (UNEXPECTED(m_exception != NULL)) {
+					goto throw_exception;
+				}
 			} else {
 				error(VM_ERROR, "Cannot decrement null value");
 			}
@@ -577,6 +609,10 @@ void VM::run()
 
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
 				lhs->getType()->greater(getValue(OPCODE.result), lhs, rhs, this);
+
+				if (UNEXPECTED(m_exception != NULL)) {
+					goto throw_exception;
+				}
 			} else {
 				getValue(OPCODE.result)->setBool(false);
 			}
@@ -590,6 +626,10 @@ void VM::run()
 
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
 				lhs->getType()->greater_equal(getValue(OPCODE.result), lhs, rhs, this);
+
+				if (UNEXPECTED(m_exception != NULL)) {
+					goto throw_exception;
+				}
 			} else {
 				getValue(OPCODE.result)->setBool(false);
 			}
@@ -603,6 +643,10 @@ void VM::run()
 
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
 				lhs->getType()->less(getValue(OPCODE.result), lhs, rhs, this);
+
+				if (UNEXPECTED(m_exception != NULL)) {
+					goto throw_exception;
+				}
 			} else {
 				getValue(OPCODE.result)->setBool(false);
 			}
@@ -616,6 +660,10 @@ void VM::run()
 
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
 				lhs->getType()->less_equal(getValue(OPCODE.result), lhs, rhs, this);
+
+				if (UNEXPECTED(m_exception != NULL)) {
+					goto throw_exception;
+				}
 			} else {
 				getValue(OPCODE.result)->setBool(false);
 			}
@@ -629,6 +677,10 @@ void VM::run()
 
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
 				lhs->getType()->equal(getValue(OPCODE.result), lhs, rhs, this);
+
+				if (UNEXPECTED(m_exception != NULL)) {
+					goto throw_exception;
+				}
 			} else {
 				getValue(OPCODE.result)->setBool(false);
 			}
@@ -642,6 +694,10 @@ void VM::run()
 
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
 				lhs->getType()->not_equal(getValue(OPCODE.result), lhs, rhs, this);
+
+				if (UNEXPECTED(m_exception != NULL)) {
+					goto throw_exception;
+				}
 			} else {
 				getValue(OPCODE.result)->setBool(false);
 			}
@@ -725,7 +781,6 @@ void VM::run()
 
 			if (EXPECTED((prop_value = obj->getType()->getProperty(prop_name->getStr())))) {
 				getValue(OPCODE.result)->copy(prop_value);
-				m_call_args.clear();
 			} else {
 				error(VM_ERROR, "Property not found!");
 			}
