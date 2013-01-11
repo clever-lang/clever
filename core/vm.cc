@@ -20,7 +20,6 @@
 #define VM_EXIT() goto exit
 #define VM_EXIT_UNHANDLED_EXCEPTION() goto exit_exception
 
-
 #if CLEVER_GCC_VERSION > 0
 # define OP(name)    name
 # define OPCODES     const static void* labels[] = { OP_LABELS }; goto *labels[m_inst[m_pc].opcode]
@@ -34,35 +33,6 @@
 # define END_OPCODES EMPTY_SWITCH_DEFAULT_CASE(); } }
 # define VM_GOTO(n)  m_pc = n; break
 #endif
-
-#define THROW_EXCEPTION(val, internal)                     \
-	if (EXPECTED(m_try_stack.size())) {                    \
-		size_t catch_addr = m_try_stack.top().first;       \
-		if (m_try_stack.top().second > 1) {                \
-			m_try_stack.pop();                             \
-			if (m_try_stack.size()) {                      \
-				catch_addr = m_try_stack.top().first;      \
-			} else {                                       \
-				if (!internal) {                           \
-					m_exception = new Value();             \
-					m_exception->copy(val);                \
-				}                                          \
-				VM_EXIT_UNHANDLED_EXCEPTION();             \
-			}                                              \
-		}                                                  \
-		getValue(m_inst[catch_addr].op1)->copy(val);       \
-		if (internal) {                                    \
-			m_exception->delRef();                         \
-			m_exception = NULL;                            \
-		}                                                  \
-		VM_GOTO(catch_addr);                               \
-	} else {                                               \
-		if (!internal) {                                   \
-			m_exception = new Value();                     \
-			m_exception->copy(val);                        \
-		}                                                  \
-		VM_EXIT_UNHANDLED_EXCEPTION();                     \
-	}
 
 namespace clever {
 
@@ -268,7 +238,7 @@ void VM::run()
 				lhs->getType()->add(getValue(OPCODE.result), lhs, rhs, this);
 
 				if (UNEXPECTED(m_exception != NULL)) {
-					THROW_EXCEPTION(m_exception, 1);
+					goto throw_exception;
 				}
 			} else {
 				error(VM_ERROR, "Operation cannot be executed on null value");
@@ -375,7 +345,7 @@ void VM::run()
 				m_call_args.clear();
 
 				if (UNEXPECTED(m_exception != NULL)) {
-					THROW_EXCEPTION(m_exception, 1);
+					goto throw_exception;
 				}
 			}
 		}
@@ -717,7 +687,7 @@ void VM::run()
 				m_call_args.clear();
 
 				if (UNEXPECTED(m_exception != NULL)) {
-					THROW_EXCEPTION(m_exception, 1);
+					goto throw_exception;
 				}
 			} else {
 				error(VM_ERROR, "Method not found!");
@@ -739,7 +709,7 @@ void VM::run()
 				m_call_args.clear();
 
 				if (UNEXPECTED(m_exception != NULL)) {
-					THROW_EXCEPTION(m_exception, 1);
+					goto throw_exception;
 				}
 			} else {
 				error(VM_ERROR, "Method not found!");
@@ -771,8 +741,25 @@ void VM::run()
 		DISPATCH;
 
 	OP(OP_THROW):
-		THROW_EXCEPTION(getValue(OPCODE.op1), 0);
-		DISPATCH;
+		m_exception = getValue(OPCODE.op1)->clone();
+		goto throw_exception;
+
+throw_exception:
+		if (EXPECTED(m_try_stack.size())) {
+			size_t catch_addr = m_try_stack.top().first;
+			if (m_try_stack.top().second > 1) {
+				m_try_stack.pop();
+				if (!m_try_stack.size()) {
+					goto exit_exception;
+				}
+				catch_addr = m_try_stack.top().first;
+			}
+			getValue(m_inst[catch_addr].op1)->copy(m_exception);
+			m_exception->delRef();
+			m_exception = NULL;
+			VM_GOTO(catch_addr);
+		}
+		goto exit_exception;
 
 	OP(OP_ETRY):
 		m_try_stack.pop();
@@ -784,8 +771,8 @@ void VM::run()
 	END_OPCODES;
 
 exit_exception:
-	clever_fatal("Fatal error: Unhandled exception!\nMessage: %S",
-		m_exception->getStr());
+	clever_fatal("Fatal error: Unhandled exception!\nMessage: %v", m_exception);
+
 exit:
 	wait();
 }

@@ -104,10 +104,9 @@ void vsprintf(std::ostringstream& outstr, const char* format, va_list ap) {
 				outstr << va_arg(ap, const char*);
 				break;
 			/* Value* */
-			/*
 			case 'v':
-				outstr << va_arg(ap, Value*)->toString();
-				break;*/
+				va_arg(ap, Value*)->dump(outstr);
+				break;
 		}
 		++chr;
 	}

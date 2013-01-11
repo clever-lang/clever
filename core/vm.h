@@ -28,17 +28,6 @@ class Value;
 
 typedef std::vector<std::pair<size_t, Value*> > FuncVars;
 
-/*
-/// Stackframe representation
-struct StackFrame {
-	size_t ret_addr;     // Return address
-	Value* ret_val;      // Return value
-	Scope* arg_vars;     // Function arguments
-
-	StackFrame()
-		: ret_addr(0), ret_val(NULL), arg_vars(NULL) {}
-};
-*/
 class VM;
 
 struct VMThread {
