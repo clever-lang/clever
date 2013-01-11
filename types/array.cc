@@ -71,7 +71,7 @@ CLEVER_METHOD(ArrayType::size)
 
 	ArrayObject* arr = CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS());
 
-	CLEVER_RETURN_INT(arr->getData().size());
+	result->setInt(arr->getData().size());
 }
 
 // mixed Array::at(int position)
@@ -83,7 +83,8 @@ CLEVER_METHOD(ArrayType::at)
 
 	ArrayObject* arr = CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS());
 
-	if (args[0]->getInt() < 0 || arr->getData().size() <= size_t(args[0]->getInt())) {
+	if (args[0]->getInt() < 0
+		|| arr->getData().size() <= size_t(args[0]->getInt())) {
 		result->setNull();
 		return;
 	}
