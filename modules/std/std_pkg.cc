@@ -25,6 +25,9 @@ void Std::init() {
 #ifdef HAVE_MOD_STD_UNICODE
 	addModule(new std::UnicodeModule);
 #endif
+#ifdef HAVE_MOD_STD_FCGI
+	addModule(new std::FCGIModule);
+#endif
 /*
 #ifdef HAVE_MOD_STD_FILE
 	addModule(new std::File);
