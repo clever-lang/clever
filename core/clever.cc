@@ -177,7 +177,7 @@ bool check_args(const ::std::vector<Value*>& args, const char* typespec, const T
 
 	// Void arguments checking
 	if (typespec == NULL) {
-		return argslen > 0;
+		return argslen > 0 ? false : true;
 	}
 
 	clever_assert_not_null(typespec);
