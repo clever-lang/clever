@@ -74,11 +74,29 @@ CLEVER_METHOD(ArrayType::size)
 	CLEVER_RETURN_INT(arr->getData().size());
 }
 
+// mixed Array::at(int position)
+CLEVER_METHOD(ArrayType::at)
+{
+	if (!clever_check_args("i")) {
+		return;
+	}
+
+	ArrayObject* arr = CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS());
+
+	if (args[0]->getInt() < 0 || arr->getData().size() <= size_t(args[0]->getInt())) {
+		result->setNull();
+		return;
+	}
+
+	result->copy(arr->getData().at(args[0]->getInt()));
+}
+
 // Type initialization
 CLEVER_TYPE_INIT(ArrayType::init)
 {
 	addMethod(CSTRING("append"), (MethodPtr) &ArrayType::append);
 	addMethod(CSTRING("size"),   (MethodPtr) &ArrayType::size);
+	addMethod(CSTRING("at"),     (MethodPtr) &ArrayType::at);
 }
 
 } // clever
