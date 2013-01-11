@@ -8,6 +8,16 @@
 #ifndef CLEVER_STD_FCGI_REQUEST_H
 #define CLEVER_STD_FCGI_REQUEST_H
 
+#include <stdlib.h>
+#ifdef _WIN32
+#include <process.h>
+#else
+#include <unistd.h>
+extern char ** environ;
+#endif
+#include "fcgio.h"
+#include "fcgi_config.h"  // HAVE_IOSTREAM_WITHASSIGN_STREAMBUF
+
 #include <iostream>
 #include "core/cstring.h"
 #include "types/type.h"
@@ -20,8 +30,12 @@ namespace clever { namespace packages { namespace std {
 
 class Request : public Type {
 public:
+	::std::istream* in;
+	::std::ostream* out;
+	::std::ostream* err;
+
 	Request()
-		: Type(CSTRING("Request")) {}
+		: Type(CSTRING("Request")) { }
 
 	~Request() {}
 
@@ -38,6 +52,7 @@ public:
 
 	CLEVER_METHOD_D(accept);
 	CLEVER_METHOD_D(finish);
+	CLEVER_METHOD_D(print);
 };
 
 }}} // clever::packages::std
