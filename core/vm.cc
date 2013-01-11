@@ -343,7 +343,7 @@ void VM::run()
 				if (fdata->hasArgs()) {
 					ValueOffset argoff(0,0);
 
-					for (size_t i = 0, len = m_call_args.size(); i < len; i++) {
+					for (size_t i = 0, len = fdata->getNumArgs(); i < len; ++i) {
 						fenv->getValue(argoff)->copy(m_call_args[i]);
 						argoff.second++;
 					}

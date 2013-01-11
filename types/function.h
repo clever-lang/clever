@@ -60,6 +60,7 @@ public:
 	void setPtr(FunctionPtr ptr) { m_info.ptr = ptr; }
 
 	bool hasArgs() const { return m_num_args != 0; }
+	size_t getNumArgs() const { return m_num_args; }
 	void setNumArgs(size_t n)  { m_num_args = n; }
 
 	Environment* getEnvironment() { return m_environment; }
