@@ -16,11 +16,7 @@ void* ArrayType::allocData(CLEVER_TYPE_CTOR_ARGS) const
 	std::vector<Value*>& vec = arr->getData();
 
 	for (size_t i = 0, j = args->size(); i < j; ++i) {
-		Value* val = new Value();
-
-		val->copy(args->at(i));
-
-		vec.push_back(val);
+		vec.push_back(args->at(i)->clone());
 	}
 
 	return arr;
@@ -62,8 +58,7 @@ CLEVER_METHOD(ArrayType::append)
 	ArrayObject* arr = CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS());
 
 	for (size_t i = 0, j = args.size(); i < j; ++i) {
-		arr->getData().push_back(args[i]);
-		args[i]->addRef();
+		arr->getData().push_back(args[i]->clone());
 	}
 }
 
