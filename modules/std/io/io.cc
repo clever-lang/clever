@@ -79,13 +79,14 @@ static CLEVER_FUNCTION(printf) {
 } // clever::packages::std::io
 
 /// Initializes Standard module
-CLEVER_MODULE_INIT(IOModule) {
+CLEVER_MODULE_INIT(IOModule)
+{
 	using namespace io;
 
-	addFunction(new Function("print",   &CLEVER_FUNC_NAME(print)));
-	addFunction(new Function("println", &CLEVER_FUNC_NAME(println)));
-	addFunction(new Function("printf",  &CLEVER_FUNC_NAME(printf)));
-	addFunction(new Function("flush",   &CLEVER_FUNC_NAME(flush)));
+	addFunction(new Function("print",   &CLEVER_NS_FNAME(io, print)));
+	addFunction(new Function("println", &CLEVER_NS_FNAME(io, println)));
+	addFunction(new Function("printf",  &CLEVER_NS_FNAME(io, printf)));
+	addFunction(new Function("flush",   &CLEVER_NS_FNAME(io, flush)));
 }
 
 }}} // clever::packages::std

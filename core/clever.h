@@ -204,7 +204,7 @@ bool check_args(const ::std::vector<Value*>&, const char*, const Type* = NULL);
 /* }}} */
 
 /* {{{ Return value setters */
-#define CLEVER_RETURN_CSTR(c)	result->setStr(c)
+#define CLEVER_RETURN_STR(c)	result->setStr(c)
 #define CLEVER_RETURN_DBL(d)	result->setDouble(d)
 #define CLEVER_RETURN_INT(i)	result->setInt(i)
 #define CLEVER_RETURN_OBJ(o)	result->setObj(o)

@@ -74,12 +74,12 @@ CLEVER_METHOD(StrType::subString)
 		}
 		if (of && bounds[0] > -1) {
 			if (bounds[1] > -1) {
-				CLEVER_RETURN_CSTR(CSTRING(of->substr(bounds[0], bounds[1])));
+				result->setStr(CSTRING(of->substr(bounds[0], bounds[1])));
 			} else {
-				CLEVER_RETURN_CSTR(CSTRING(of->substr(bounds[0])));
+				result->setStr(CSTRING(of->substr(bounds[0])));
 			}
 		} else {
-			CLEVER_RETURN_NULL();
+			result->setNull();
 		}
 	} else {
 		Compiler::error("String.subString cannot be called statically");
@@ -130,7 +130,7 @@ CLEVER_METHOD(StrType::find)
 				CLEVER_RETURN_INT(haystack->find(needle));
 			}
 		} else {
-			CLEVER_RETURN_NULL();
+			result->setNull();
 		}
 	} else {
 		Compiler::error("String.find cannot be called statically");
@@ -169,7 +169,7 @@ CLEVER_METHOD(StrType::findFirst)
 			default:
 				Compiler::error("String.findFirst expected a maximum of 2 arguments");
 		}
-		
+
 		if (needle && haystack) {
 			if (bounds[0] > -1) {
 				if (bounds[1] > -1) {
@@ -181,13 +181,13 @@ CLEVER_METHOD(StrType::findFirst)
 				CLEVER_RETURN_INT(haystack->find_first_of(needle));
 			}
 		} else {
-			CLEVER_RETURN_NULL();
+			result->setNull();
 		}
 	} else {
 		Compiler::error("String.findFirst cannot be called statically");
 	}
 
-	
+
 }
 
 // String.findLast(string needle, [int position, [int count]])
@@ -211,7 +211,7 @@ CLEVER_METHOD(StrType::findLast)
 			case 2:
 				needle = CLEVER_ARG_PSTR(0);
 				if (CLEVER_ARG_TYPE(1) == CLEVER_INT_TYPE) {
-					bounds[0] = CLEVER_ARG_INT(1);			
+					bounds[0] = CLEVER_ARG_INT(1);
 				} else {
 					Compiler::error("String.findLast expected an integral argument");
 				}
@@ -238,7 +238,7 @@ CLEVER_METHOD(StrType::findLast)
 				CLEVER_RETURN_INT(haystack->find_last_of(needle));
 			}
 		} else {
-			CLEVER_RETURN_NULL();
+			result->setNull();
 		}
 	} else {
 		Compiler::error("String.findLast cannot be called statically");
@@ -292,9 +292,9 @@ CLEVER_METHOD(StrType::format)
 			}
 		}
 
-		CLEVER_RETURN_CSTR(CSTRING(stream.str()));
+		result->setStr(CSTRING(stream.str()));
 	} else {
-		CLEVER_RETURN_NULL();
+		result->setNull();
 	}
 }
 
@@ -312,7 +312,7 @@ CLEVER_METHOD(StrType::startsWith)
 				if (match && with) {
 					CLEVER_RETURN_INT(match->find(with) == 0);
 				} else {
-					CLEVER_RETURN_NULL();
+					result->setNull();
 				}
 			} else {
 				Compiler::error("String.startsWith expected exactly one integral argument");
@@ -324,7 +324,7 @@ CLEVER_METHOD(StrType::startsWith)
 		Compiler::error("String.startsWith cannot be called statically");
 	}
 
-	
+
 }
 
 // String.endsWith(string match)
@@ -341,7 +341,7 @@ CLEVER_METHOD(StrType::endsWith)
 				if (match && with) {
 					CLEVER_RETURN_INT(match->rfind(with->c_str()) == (match->size() - with->size()));
 				} else {
-					CLEVER_RETURN_NULL();
+					result->setNull();
 				}
 			} else {
 				Compiler::error("String.endsWith expected exactly one integral argument");
@@ -370,18 +370,18 @@ CLEVER_METHOD(StrType::charAt)
 					if (data->size() > (unsigned long) position) {
 						found[0] = data->at(position);
 						if (found[0]) {
-							CLEVER_RETURN_CSTR(CSTRING(found));
+							result->setStr(CSTRING(found));
 						} else {
-							CLEVER_RETURN_NULL();
+							result->setNull();
 						}
 					} else {
-						CLEVER_RETURN_NULL();
+						result->setNull();
 					}
 				} else {
 					Compiler::error("String.charAt expected a non-negative argument for position");
 				}
 			} else {
-				CLEVER_RETURN_NULL();
+				result->setNull();
 			}
 		} else {
 			Compiler::error("String.charAt expected exactly one argument");

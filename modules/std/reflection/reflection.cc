@@ -18,7 +18,7 @@ namespace reflection {
 // Returns the type name of the supplied parameter
 static CLEVER_FUNCTION(get_type) {
 	if (CLEVER_ARG_COUNT()) {
-		CLEVER_RETURN_CSTR(CLEVER_ARG_TYPE(0)->getName());
+		CLEVER_RETURN_STR(CLEVER_ARG_TYPE(0)->getName());
 	}
 	// TODO(Felipe): fix build when throwing exception
 	//CLEVER_THROW("Missing parameter to get_type()");
