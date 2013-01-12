@@ -26,10 +26,10 @@ void Std::init() {
 #ifdef HAVE_MOD_STD_SYS
 	addModule(new std::SYSModule);
 #endif
-/*
 #ifdef HAVE_MOD_STD_FILE
-	addModule(new std::File);
+	addModule(new std::FileModule);
 #endif
+/*
 #ifdef HAVE_MOD_STD_NET
 	addModule(new std::NetModule);
 #endif

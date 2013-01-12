@@ -20,10 +20,10 @@
 #ifdef HAVE_MOD_STD_SYS
 #include "modules/std/sys/sys.h"
 #endif
-#if 0
 #ifdef HAVE_MOD_STD_FILE
 #include "modules/std/file/file.h"
 #endif
+#if 0
 #ifdef HAVE_MOD_STD_NET
 #include "modules/std/net/net.h"
 #endif
