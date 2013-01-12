@@ -14,13 +14,13 @@ extern char ** environ;
 #include "fcgio.h"
 #include "fcgi_config.h"  // HAVE_IOSTREAM_WITHASSIGN_STREAMBUF
 
-#include <map>
 #include "types/type.h"
 #include "types/native_types.h"
-#include "modules/std/fcgi/request.h"
-#include "modules/std/fcgi/response.h"
 #include "core/value.h"
 #include "core/clever.h"
+#include "modules/std/fcgi/fcgi.h"
+#include "modules/std/fcgi/response.h"
+#include "modules/std/fcgi/request.h"
 
 namespace clever { namespace packages { namespace std {
 

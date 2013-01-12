@@ -21,16 +21,16 @@ namespace clever { namespace packages { namespace std {
 
 class Request : public Type {
 public:
-	::std::map< ::std::string, ::std::string>* env;
-	::std::map< ::std::string, ::std::string>* head;
-	::std::map< ::std::string, ::std::string>* cookie;
-	::std::map< ::std::string, ::std::string>* params;
+	CLEVER_FCGI_MAP* env;
+	CLEVER_FCGI_MAP* head;
+	CLEVER_FCGI_MAP* cookie;
+	CLEVER_FCGI_MAP* params;
 
 	Request() : Type(CSTRING("Request")) {
-		env = new ::std::map< ::std::string, ::std::string>();
-		head = new ::std::map< ::std::string, ::std::string>();
-		cookie = new ::std::map< ::std::string, ::std::string>();
-		params = new ::std::map< ::std::string, ::std::string>();
+		env = new CLEVER_FCGI_MAP();
+		head = new CLEVER_FCGI_MAP();
+		cookie = new CLEVER_FCGI_MAP();
+		params = new CLEVER_FCGI_MAP();
 	}
 
 	~Request() {

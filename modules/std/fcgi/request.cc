@@ -16,10 +16,10 @@ extern char ** environ;
 
 #include "types/type.h"
 #include "types/native_types.h"
-#include "modules/std/fcgi/fcgi.h"
-#include "modules/std/fcgi/request.h"
 #include "core/value.h"
 #include "core/clever.h"
+#include "modules/std/fcgi/fcgi.h"
+#include "modules/std/fcgi/request.h"
 
 /*
 Here is the basic structure of FCGI programs in clever

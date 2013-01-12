@@ -12,6 +12,7 @@
 #include <iostream>
 #include "core/cstring.h"
 #include "types/type.h"
+#include "modules/std/fcgi/fcgi.h"
 #include "modules/std/fcgi/request.h"
 
 namespace clever { namespace packages { namespace std {
@@ -19,15 +20,28 @@ namespace clever { namespace packages { namespace std {
 class Response : public Type {
 public:
 	Request* request;
-	::std::map< ::std::string, Value*>* headers;
-	::std::map< ::std::string, Value*>* cookies;
+	CLEVER_FCGI_MAP* head;
+	CLEVER_FCGI_MAP* cookie;
+	CLEVER_FCGI_MAP* body;
 	
-	Response()
-		: Type(CSTRING("Response")) {request = NULL; headers = NULL; cookies = NULL;}
-	Response(Request* from)
-		: Type(CSTRING("Response")) {request = from; headers = NULL; cookies = NULL;}
+	// It is only valid to create a response as a consequence of accepting a request
+	Response() : Type(CSTRING("Response")) { request = NULL; head = NULL; cookie = NULL; body = NULL; }
+	
+	Response(Request* from) : Type(CSTRING("Response")) {	
+		request = from; 
+		head = new CLEVER_FCGI_MAP(); 
+		cookie = new CLEVER_FCGI_MAP(); 
+		body = new CLEVER_FCGI_MAP();
+	}
 
-	~Response() {}
+	~Response() {
+		if (head)
+			delete head;
+		if (cookie)
+			delete cookie;
+		if (body)
+			delete cookie;
+	}
 
 	void dump(const void* data) const;
 	void dump(const void* data, ::std::ostream& out) const;
