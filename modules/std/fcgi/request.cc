@@ -41,37 +41,18 @@ void Request::dump(const void* data, ::std::ostream& out) const {
 	}
 }
 
-// @TODO spawn-fcgi is the only way to run right now DO NOT PASS arguments to constructor method
+// Request.new()
+// Setup the process for responding to FCGI requests by creating a new Request object
 void* Request::allocData(CLEVER_TYPE_CTOR_ARGS) const {
 	FCGX_Request* request = new FCGX_Request;
 	if (request) {
-		int socket = 0;
-
-		/* I KNOW THIS IS A BIT MESSY I AM WORKING ON IT */
-		::std::cout << "[FCGI SETUP]" << ::std::endl;
-		if (args->size()) {
-			FCGX_Init();
-			::std::cout << "[SOCKET SETUP]" << ::std::endl;
-			socket = FCGX_OpenSocket(
-				(args->at(0)->getType() == CLEVER_STR_TYPE) ? 
-					args->at(0)->getStr()->c_str() : CLEVER_FCGI_DEFAULT_SOCK,
-				(args->size() > 1 && args->at(1)->getType() == CLEVER_INT_TYPE) ? 
-					args->at(1)->getInt() : CLEVER_FCGI_DEFAULT_BACKLOG
-			);
-			if (socket) {
-				::std::cout << "[SOCKET OPENED (" << socket << ")]" << ::std::endl;
-			} else ::std::cout << "[SOCKET FAILED]" << ::std::endl;
-		}
-		
 		if (FCGX_InitRequest(
 				request, 
-				socket, 
+				0, 
 				0
 			) == 0) {
-			::std::cout << "[FCGI READY]" << ::std::endl;
 			return request;
-		} else ::std::cout << "[FCGI FAILED]" << ::std::endl;
-		
+		}
 		delete request;
 	}
 	return NULL;
@@ -85,7 +66,7 @@ void Request::deallocData(void *data) {
 // Accepts the next FCGI Request
 CLEVER_METHOD(Request::accept)
 {
-	CLEVER_FCGI_TYPE request = CLEVER_FCGI_THIS();
+	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
 	if (request) {
 		
 		env->clear();
@@ -150,7 +131,7 @@ CLEVER_METHOD(Request::accept)
 // Request.print(string text, [...])
 // Prints to the FCGI standard output
 CLEVER_METHOD(Request::print) {
-	CLEVER_FCGI_TYPE request = CLEVER_FCGI_THIS();
+	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
 	if (request) {
 		for (size_t arg = 0; arg < CLEVER_ARG_COUNT(); arg++) {
 			if (CLEVER_ARG_TYPE(arg) == CLEVER_STR_TYPE) {
@@ -163,7 +144,7 @@ CLEVER_METHOD(Request::print) {
 // Request.flush()
 // Flushes the FCGI standard output buffer
 CLEVER_METHOD(Request::flush) {
-	CLEVER_FCGI_TYPE request = CLEVER_FCGI_THIS();
+	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
 	if (request) {
 		CLEVER_RETURN_BOOL((FCGX_FFlush(request->out) == 0));
 	} else {
@@ -175,7 +156,7 @@ CLEVER_METHOD(Request::flush) {
 // Closes the FCGI standard output, disconnecting the client
 CLEVER_METHOD(Request::finish)
 {
-	CLEVER_FCGI_TYPE request = CLEVER_FCGI_THIS();
+	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
 	if (request) {
 		CLEVER_RETURN_BOOL((FCGX_FClose(request->out) == 0));
 	} else {
@@ -187,7 +168,7 @@ CLEVER_METHOD(Request::finish)
 // Fetches a server environment variable
 CLEVER_METHOD(Request::getServer)
 {
-	CLEVER_FCGI_TYPE request = CLEVER_FCGI_THIS();
+	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
 	if (request) {
 		if (clever_check_args("s")) {
 			if (env->size()) {
@@ -206,7 +187,7 @@ CLEVER_METHOD(Request::getServer)
 // Fetches a request parameter
 CLEVER_METHOD(Request::getParam)
 {
-	CLEVER_FCGI_TYPE request = CLEVER_FCGI_THIS();
+	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
 	if (request) {
 		if (clever_check_args("s")) {
 			if (params->size()) {
@@ -225,7 +206,7 @@ CLEVER_METHOD(Request::getParam)
 // Fetches a request header (all upper-case, eg HOST not host, CONTENT_TYPE not content-type)
 CLEVER_METHOD(Request::getHeader)
 {
-	CLEVER_FCGI_TYPE request = CLEVER_FCGI_THIS();
+	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
 	if (request) {
 		if (clever_check_args("s")) {
 			if (head->size()) {
@@ -244,7 +225,7 @@ CLEVER_METHOD(Request::getHeader)
 // Fetches a request cookie
 CLEVER_METHOD(Request::getCookie)
 {
-	CLEVER_FCGI_TYPE request = CLEVER_FCGI_THIS();
+	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
 	if (request) {
 		if (clever_check_args("s")) {
 			if (cookie->size()) {
@@ -263,7 +244,7 @@ CLEVER_METHOD(Request::getCookie)
 // Prints the request environment to the FCGI standard output
 CLEVER_METHOD(Request::debug)
 {
-	CLEVER_FCGI_TYPE request = CLEVER_FCGI_THIS();
+	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
 	if (request) {
 		const char* const * next = request->envp;
 		if (next) {
@@ -284,7 +265,7 @@ CLEVER_METHOD(Request::debug)
 // Will return a Map/Array of request parameters
 CLEVER_METHOD(Request::getParams)
 {
-	CLEVER_FCGI_TYPE request = CLEVER_FCGI_THIS();
+	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
 	if (request) {
 		
 	}
@@ -295,7 +276,7 @@ CLEVER_METHOD(Request::getParams)
 // Will return a Map/Array of request headers
 CLEVER_METHOD(Request::getHeaders)
 {
-	CLEVER_FCGI_TYPE request = CLEVER_FCGI_THIS();
+	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
 	if (request) {
 		
 	}
@@ -306,7 +287,7 @@ CLEVER_METHOD(Request::getHeaders)
 // Will return a Map/Array of request cookies
 CLEVER_METHOD(Request::getCookies)
 {
-	CLEVER_FCGI_TYPE request = CLEVER_FCGI_THIS();
+	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
 	if (request) {
 		
 	}
