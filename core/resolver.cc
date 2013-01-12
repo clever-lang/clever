@@ -167,8 +167,19 @@ void Resolver::visit(FunctionDecl* node)
 	node->setScope(m_scope);
 
 	if (node->hasArgs()) {
+		bool found_rhs = false;
+
 		for (size_t i = 0; i < node->numArgs(); ++i) {
-			static_cast<VariableDecl*>(node->getArg(i))->getAssignment()->setConditional(true);
+			Assignment* a = static_cast<VariableDecl*>(node->getArg(i))->getAssignment();
+
+			a->setConditional(true);
+
+			if (found_rhs && !a->getRhs()) {
+				Compiler::errorf(a->getLocation(),
+								 "Non-default argument found after the default argument list");
+			} else if (!found_rhs && a->getRhs()) {
+				found_rhs = a->getRhs();
+			}
 		}
 
 		node->getArgs()->accept(*this);
