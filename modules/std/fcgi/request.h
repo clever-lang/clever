@@ -16,7 +16,7 @@
 namespace clever { namespace packages { namespace std {
 
 #define CLEVER_FCGI_TYPE FCGX_Request*
-#define CLEVER_FCGI_CAST(what) (CLEVER_FCGI_TYPE) what
+#define CLEVER_FCGI_CAST(what) static_cast<CLEVER_FCGI_TYPE>(what)
 #define CLEVER_FCGI_THIS() CLEVER_FCGI_CAST(CLEVER_THIS()->getObj())
 
 class Request : public Type {

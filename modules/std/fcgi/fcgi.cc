@@ -26,8 +26,6 @@ namespace clever { namespace packages { namespace std {
 
 /// Initializes Standard FCGI module
 CLEVER_MODULE_INIT(FCGIModule) {
-	using namespace fcgi;
-	
 	addType(CSTRING("Request"), new Request);
 	addType(CSTRING("Response"), new Response);
 }
