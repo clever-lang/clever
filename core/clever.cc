@@ -201,42 +201,63 @@ bool check_args(const ::std::vector<Value*>& args, const char* typespec, CExcept
 			// Function
 			case 'f':
 				if (arg_type != CLEVER_FUNC_TYPE) {
+					exception->setException(
+						"Argument #%l expects a Function as argument, but %S was supplied",
+						arg+1, arg_type->getName());
 					return false;
 				}
 				break;
 			// String
 			case 's':
 				if (arg_type != CLEVER_STR_TYPE) {
+					exception->setException(
+						"Argument #%l expects a String as argument, but %S was supplied",
+						arg+1, arg_type->getName());
 					return false;
 				}
 				break;
 			// Integer
 			case 'i':
 				if (arg_type != CLEVER_INT_TYPE) {
+					exception->setException(
+						"Argument #%l expects an Integer as argument, but %S was supplied",
+						arg+1, arg_type->getName());
 					return false;
 				}
 				break;
 			// Double
 			case 'd':
 				if (arg_type != CLEVER_DOUBLE_TYPE) {
+					exception->setException(
+						"Argument #%l expects a Double as argument, but %S was supplied",
+						arg+1, arg_type->getName());
 					return false;
 				}
 				break;
 			// Array
 			case 'a':
 				if (arg_type != CLEVER_ARRAY_TYPE) {
+					exception->setException(
+						"Argument #%l expects an Array as argument, but %S was supplied",
+						arg+1, arg_type->getName());
 					return false;
 				}
 				break;
 			// Map
 			case 'm':
 				if (arg_type != CLEVER_MAP_TYPE) {
+					exception->setException(
+						"Argument #%l expects a Map as argument, but %S was supplied",
+						arg+1, arg_type->getName());
 					return false;
 				}
 				break;
 			// Boolean
 			case 'b':
 				if (arg_type != CLEVER_BOOL_TYPE) {
+					exception->setException(
+						"Argument #%l expects a Boolean as argument, but %S was supplied",
+						arg+1, arg_type->getName());
 					return false;
 				}
 				break;
@@ -244,12 +265,18 @@ bool check_args(const ::std::vector<Value*>& args, const char* typespec, CExcept
 			case 'n':
 				if ((arg_type != CLEVER_DOUBLE_TYPE)
 					&& (arg_type != CLEVER_INT_TYPE)) {
+					exception->setException(
+						"Argument #%l expects a Number as argument, but %S was supplied",
+						arg+1, arg_type->getName());
 					return false;
 				}
 				break;
 			// Current type
 			case 'c':
 				if (arg_type != type) {
+					exception->setException(
+						"Argument #%l expects a %S as argument, but %S was supplied",
+						arg+1, type->getName(), arg_type->getName());
 					return false;
 				}
 				break;
