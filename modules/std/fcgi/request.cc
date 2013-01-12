@@ -34,7 +34,7 @@ void Request::dump(const void *data) const {
 void Request::dump(const void* data, ::std::ostream& out) const {
 	Value::DataValue* dvalue = (Value::DataValue*)data;
 	if (dvalue) {
-		FCGX_Request* uvalue = (FCGX_Request*) dvalue->obj->getObj();
+		FCGX_Request* uvalue = CLEVER_GET_OBJECT(FCGX_Request*, dvalue->obj);
 		if (uvalue) {
 			/* do something here, the user has printed a request */
 		}
