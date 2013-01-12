@@ -422,8 +422,12 @@ fdecl:
 anonymous_fdecl:
 		FUNC '(' ')' block
 		{ $$ = new ast::FunctionDecl(NULL, NULL, $4, NULL, yyloc); }
+	|	FUNC '(' vararg ')' block
+		{ $$ = new ast::FunctionDecl(NULL, NULL, $5, $3, yyloc); }
 	|	FUNC '(' variable_decl_list ')' block
 		{ $$ = new ast::FunctionDecl(NULL, $3, $5, NULL, yyloc); }
+	|	FUNC '(' variable_decl_list ',' vararg ')' block
+		{ $$ = new ast::FunctionDecl(NULL, $3, $7, $5, yyloc); }
 ;
 
 call_args:
