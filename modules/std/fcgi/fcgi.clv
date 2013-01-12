@@ -1,0 +1,44 @@
+/*
+* This is the basic flow for FCGI apps in clever 
+*/
+import std.io.*;
+import std.fcgi.*;
+
+/*
+* @proto Request.new()
+*	use spawn-fcgi -p TCPPORT /path/to/clever/bin /path/to/this/script
+*	set your webserver to use TCPPORT, nginx for example 127.0.0.1:TCPPORT
+*/
+var fcgi = Request.new();
+
+while(fcgi.accept()) {
+	/*
+	* Clever :)
+	*/
+	fcgi.print("Content-Type: text/html\n");
+	fcgi.print("\n");
+	fcgi.print(String.format("Welcome to the clever demo on \1<br/>\n", fcgi.getHeader("HOST")));
+	fcgi.print(String.format("You are visiting from \1:\2<br/>\n", fcgi.getServer("REMOTE_ADDR"), fcgi.getServer("REMOTE_PORT")));
+	fcgi.print(String.format("We are serving you from \1:\2<br/>\n", fcgi.getServer("SERVER_ADDR"), fcgi.getServer("SERVER_PORT")));
+	fcgi.print(String.format("REQUEST[clever]: \1<br/>\n", fcgi.getParam("clever")));
+	fcgi.print(String.format("REQUEST[unknown]: \1<br/>\n", fcgi.getParam("unknown")));
+	/*
+	* @TODO Cleverer :)
+	*	var response = Response.new(request|fcgi);
+	*	...
+	*	response.setHeader(key, value);
+	*	response.setHeaders(map);
+	*	...
+	*	response.setCookie(key, value);
+	*	response.setCookies(map);
+	*	...
+	*	response.setBody(string|template|something clever);
+	*	...
+	*	response.send();
+	*/
+	fcgi.debug();
+	fcgi.finish();
+}
+
+/* @TODO */
+fcgi.finish();
