@@ -20,6 +20,9 @@ public:
 	ArrayObject()
 		: ValueObject() {}
 
+	ArrayObject(const std::vector<Value*>& vec)
+		: ValueObject(), m_data(vec) {}
+
 	~ArrayObject() {}
 
 	std::vector<Value*>& getData() { return m_data; }
