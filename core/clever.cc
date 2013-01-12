@@ -177,6 +177,9 @@ bool check_args(const ::std::vector<Value*>& args, const char* typespec, CExcept
 
 	// Void arguments checking
 	if (typespec == NULL) {
+		if (argslen) {
+			exception->setException("No argument is expected");
+		}
 		return argslen > 0 ? false : true;
 	}
 
