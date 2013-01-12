@@ -1,0 +1,12 @@
+Testing Array::each() using an user function
+==CODE==
+import std.io.*;
+function printall(x) { println(x); }
+
+var a = [5,3]; a.each(printall);
+
+println("end!");
+==RESULT==
+5
+3
+end!
