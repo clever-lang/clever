@@ -190,7 +190,11 @@ bool check_args(const ::std::vector<Value*>& args, const char* typespec,
 
 	size_t speclen = ::strlen(typespec);
 
-	if (speclen != argslen) {
+	// Check for different number of arguments for non-variadic function/method
+	if (speclen != argslen && memchr(typespec, '*', speclen) == NULL) {
+		exception->setException(
+			"Wrong number of parameter supplied, expected: %l parameter%s",
+			speclen, speclen > 1 ? "s": "");
 		return false;
 	}
 
