@@ -1,6 +1,6 @@
 #
 # Clever programming language
-# Copyright (c) 2011-2012 Clever Team
+# Copyright (c) Clever Team
 #
 # modules.cmake - Module options and other stuff
 #

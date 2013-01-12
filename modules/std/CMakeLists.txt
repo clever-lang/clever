@@ -13,9 +13,9 @@ set(CLEVER_MODULES)
 #	list(APPEND CLEVER_MODULES regex)
 #endif (MOD_STD_REGEX)
 
-#if (MOD_STD_FILE)
-#	list(APPEND CLEVER_MODULES file)
-#endif (MOD_STD_FILE)
+if (MOD_STD_FILE)
+	list(APPEND CLEVER_MODULES file)
+endif (MOD_STD_FILE)
 
 if (MOD_STD_IO)
 	list(APPEND CLEVER_MODULES io)

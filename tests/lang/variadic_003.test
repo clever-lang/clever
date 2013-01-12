@@ -1,0 +1,10 @@
+Testing variadic function
+==CODE==
+import std.io.*;
+
+function foo(a...) { println(a, a.size()); }
+
+foo(1, 2, 3, 4);
+==RESULT==
+\[1, 2, 3, 4\]
+4

@@ -72,7 +72,7 @@ class Value;
 %type <assignment> assignment
 %type <narray> variable_decl variable_decl_list non_empty_call_args call_args
 %type <narray> const_decl_list not_empty_catch catch key_value_list non_empty_key_value_list
-%type <vardecl> variable_decl_impl
+%type <vardecl> variable_decl_impl vararg
 %type <vardecl> const_decl_impl
 %type <block> statement_list block finally
 %type <threadblock> thread_block
@@ -404,18 +404,30 @@ import:
 	|	IMPORT IDENT '.' '*'           { $$ = new ast::Import($2, NULL, yyloc); }
 ;
 
+vararg:
+		IDENT '.' '.' '.' { $$ = new ast::VariableDecl($1, new ast::Assignment($1, NULL, yyloc), false, yyloc); }
+;
+
 fdecl:
 		FUNC IDENT '(' ')' block
-		{ $$ = new ast::FunctionDecl($2, NULL, $5, yyloc); }
+		{ $$ = new ast::FunctionDecl($2, NULL, $5, NULL, yyloc); }
+	|	FUNC IDENT '(' vararg ')' block
+		{ $$ = new ast::FunctionDecl($2, NULL, $6, $4, yyloc); }
 	|	FUNC IDENT '(' variable_decl_list ')' block
-		{ $$ = new ast::FunctionDecl($2, $4, $6, yyloc); }
+		{ $$ = new ast::FunctionDecl($2, $4, $6, NULL, yyloc); }
+	|	FUNC IDENT '(' variable_decl_list ',' vararg ')' block
+		{ $$ = new ast::FunctionDecl($2, $4, $8, $6, yyloc); }
 ;
 
 anonymous_fdecl:
 		FUNC '(' ')' block
-		{ $$ = new ast::FunctionDecl(NULL, NULL, $4, yyloc); }
+		{ $$ = new ast::FunctionDecl(NULL, NULL, $4, NULL, yyloc); }
+	|	FUNC '(' vararg ')' block
+		{ $$ = new ast::FunctionDecl(NULL, NULL, $5, $3, yyloc); }
 	|	FUNC '(' variable_decl_list ')' block
-		{ $$ = new ast::FunctionDecl(NULL, $3, $5, yyloc); }
+		{ $$ = new ast::FunctionDecl(NULL, $3, $5, NULL, yyloc); }
+	|	FUNC '(' variable_decl_list ',' vararg ')' block
+		{ $$ = new ast::FunctionDecl(NULL, $3, $7, $5, yyloc); }
 ;
 
 call_args:

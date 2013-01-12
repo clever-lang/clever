@@ -15,6 +15,7 @@
 #include "types/function.h"
 #include "types/thread.h"
 #include "types/type.h"
+#include "types/array.h"
 
 #define OPCODE m_inst[m_pc]
 #define VM_EXIT() goto exit
@@ -203,11 +204,8 @@ Value* VM::runFunction(Function* func, std::vector<Value*>* args)
 		}
 
 		size_t saved_pc = m_pc;
-
 		m_pc = func->getAddr() + (func->getNumArgs() * 3);
-
 		run();
-
 		m_pc = saved_pc;
 	}
 
@@ -352,11 +350,11 @@ void VM::run()
 
 	OP(OP_FCALL):
 		{
-			const Value* func = getValue(OPCODE.op1);
-			Function* fdata = static_cast<Function*>(func->getObj());
-			clever_assert_not_null(fdata);
+			const Value* fval = getValue(OPCODE.op1);
+			Function* func = static_cast<Function*>(fval->getObj());
+			clever_assert_not_null(func);
 
-			if (fdata->isUserDefined()) {
+			if (func->isUserDefined()) {
 				if (thread_is_enabled()) {
 					getMutex()->lock();
 				}
@@ -364,22 +362,39 @@ void VM::run()
 				Environment* fenv;
 
 				if (m_call_stack.top()->isActive()) {
-					fenv = fdata->getEnvironment()->activate(m_call_stack.top()->getOuter());
+					fenv = func->getEnvironment()->activate(m_call_stack.top()->getOuter());
 				} else {
-					fenv = fdata->getEnvironment()->activate(m_call_stack.top());
+					fenv = func->getEnvironment()->activate(m_call_stack.top());
 				}
 				m_call_stack.push(fenv);
 
 				fenv->setRetAddr(m_pc + 1);
 				fenv->setRetVal(getValue(OPCODE.result));
 
-				if (fdata->hasArgs()) {
+				size_t nargs = 0;
+
+				if (func->hasArgs()) {
 					ValueOffset argoff(0,0);
 
-					for (size_t i = 0, len = fdata->getNumArgs(); i < len; ++i) {
+					for (size_t i = 0, len = func->getNumArgs(); i < len; ++i) {
 						fenv->getValue(argoff)->copy(m_call_args[i]);
 						argoff.second++;
+						++nargs;
 					}
+				}
+
+				if (UNEXPECTED(func->isVariadic())) {
+					ArrayObject* arr = new ArrayObject;
+
+					if ((m_call_args.size() - nargs) > 0) {
+						for (size_t i = nargs, j = m_call_args.size(); i < j; ++i) {
+							arr->getData().push_back(m_call_args[i]->clone());
+						}
+					}
+
+					Value* vararg = fenv->getValue(ValueOffset(0, func->getNumArgs()));
+					vararg->setType(CLEVER_ARRAY_TYPE);
+					vararg->setObj(arr);
 				}
 
 				m_call_args.clear();
@@ -388,9 +403,9 @@ void VM::run()
 					getMutex()->unlock();
 				}
 
-				VM_GOTO(fdata->getAddr());
+				VM_GOTO(func->getAddr());
 			} else {
-				fdata->getPtr()(getValue(OPCODE.result), m_call_args, this);
+				func->getPtr()(getValue(OPCODE.result), m_call_args, this);
 				m_call_args.clear();
 
 				if (UNEXPECTED(m_exception != NULL)) {

@@ -32,14 +32,17 @@ public:
 	enum FuncKind { UNDEF, USER_FUNC, INTERNAL_FUNC };
 
 	Function()
-		: ValueObject(), m_name(), m_type(UNDEF), m_num_args(0), m_environment(NULL) {}
+		: ValueObject(), m_name(), m_type(UNDEF), m_num_args(0),
+		m_variadic(false), m_environment(NULL) {}
 
 	Function(std::string name, FunctionPtr ptr)
-		: ValueObject(), m_name(name), m_type(INTERNAL_FUNC), m_num_args(0), m_environment(NULL)
+		: ValueObject(), m_name(name), m_type(INTERNAL_FUNC), m_num_args(0),
+		m_variadic(false), m_environment(NULL)
 		{ m_info.ptr = ptr; }
 
 	Function(std::string name, size_t addr)
-		: ValueObject(), m_name(name), m_type(USER_FUNC), m_num_args(0), m_environment(NULL)
+		: ValueObject(), m_name(name), m_type(USER_FUNC), m_num_args(0),
+		m_variadic(false), m_environment(NULL)
 		{ m_info.addr = addr; }
 
 	~Function() {}
@@ -49,6 +52,9 @@ public:
 
 	void setInternal() { m_type = INTERNAL_FUNC; }
 	void setUserDefined() { m_type = USER_FUNC; }
+
+	void setVariadic() { m_variadic = true; }
+	bool isVariadic() const { return m_variadic; }
 
 	bool isUserDefined() const { return m_type == USER_FUNC; }
 	bool isInternal() const { return m_type == INTERNAL_FUNC; }
@@ -71,6 +77,7 @@ private:
 	std::string m_name;
 	FuncKind m_type;
 	size_t m_num_args;
+	bool m_variadic;
 
 	union {
 		FunctionPtr ptr;
