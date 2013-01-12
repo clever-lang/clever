@@ -24,10 +24,6 @@ extern char ** environ;
 
 namespace clever { namespace packages { namespace std {
 
-namespace fcgi {
-
-} // clever::packages::std::fcgi
-
 /// Initializes Standard FCGI module
 CLEVER_MODULE_INIT(FCGIModule) {
 	using namespace fcgi;
