@@ -199,9 +199,6 @@ bool check_args(const ::std::vector<Value*>& args, const char* typespec,
 	}
 
 	for (size_t arg = 0; arg < speclen; ++arg) {
-		if (!(arg < speclen && argslen > arg)) {
-			return false;
-		}
 		const Type* const arg_type = args[arg]->getType();
 
 		switch (typespec[arg]) {
