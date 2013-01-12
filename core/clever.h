@@ -18,7 +18,7 @@ namespace clever {
 class Type;
 class Value;
 
-#define CLEVER_THROW(val, ...) const_cast<VM*>(vm)->setException(val, ##__VA_ARGS__)
+#define CLEVER_THROW(val, ...) exception.setException(val, ##__VA_ARGS__)
 
 extern jmp_buf fatal_error;
 

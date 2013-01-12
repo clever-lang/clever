@@ -21,6 +21,7 @@
 #include "modules/std/sys/sys.h"
 #include "types/native_types.h"
 #include "core/pkgmanager.h"
+#include "core/cexception.h"
 
 #ifndef PATH_MAX
 # define PATH_MAX 1024

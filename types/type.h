@@ -19,9 +19,10 @@
 
 namespace clever {
 
+class CException;
 class VM;
 
-#define CLEVER_TYPE_OPERATOR_ARGS Value* result, const Value* lhs, const Value* rhs, const VM* vm
+#define CLEVER_TYPE_OPERATOR_ARGS Value* result, const Value* lhs, const Value* rhs, const VM* vm, CException& exception
 
 #define CLEVER_TYPE_VIRTUAL_METHOD_DECLARATIONS                          \
 	void CLEVER_FASTCALL add(CLEVER_TYPE_OPERATOR_ARGS)           const; \
@@ -43,7 +44,7 @@ class VM;
 #define CLEVER_TYPE_INIT_ARGS
 #define CLEVER_TYPE_INIT(name) void name(CLEVER_TYPE_INIT_ARGS)
 
-#define CLEVER_METHOD_ARGS Value* result, const Value* obj, const ::std::vector<Value*>& args, const VM* vm
+#define CLEVER_METHOD_ARGS Value* result, const Value* obj, const ::std::vector<Value*>& args, const VM* vm, CException& exception
 #define CLEVER_METHOD_D(name) void name(CLEVER_METHOD_ARGS) const
 #define CLEVER_METHOD(name) void name(CLEVER_METHOD_ARGS) const
 
@@ -114,8 +115,8 @@ public:
 	virtual void CLEVER_FASTCALL greater_equal(CLEVER_TYPE_OPERATOR_ARGS) const;
 	virtual void CLEVER_FASTCALL less(CLEVER_TYPE_OPERATOR_ARGS)          const;
 	virtual void CLEVER_FASTCALL less_equal(CLEVER_TYPE_OPERATOR_ARGS)    const;
-	virtual void increment(Value*, const VM*)                             const;
-	virtual void decrement(Value*, const VM*)                             const;
+	virtual void increment(Value*, const VM*, CException&)                const;
+	virtual void decrement(Value*, const VM*, CException&)                const;
 
 	virtual void* allocData(CLEVER_TYPE_CTOR_ARGS) const { return NULL; }
 	virtual void deallocData(void* data) {}

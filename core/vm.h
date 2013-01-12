@@ -11,10 +11,10 @@
 #include <map>
 #include <stack>
 #include <vector>
-
 #include "core/ir.h"
 #include "core/codegen.h"
 #include "core/cthread.h"
+#include "core/cexception.h"
 
 namespace clever {
 
@@ -50,11 +50,9 @@ public:
 		: m_pc(0), m_is_main_thread(true), m_inst(inst),
 		  m_const_env(NULL), m_temp_env(NULL), m_global_env(NULL),
 		  m_call_stack(), m_call_args(),
-		  m_thread_pool(), m_mutex(), f_mutex(NULL), m_try_stack(),
-		  m_exception(NULL) {}
-	~VM() {
-		CLEVER_SAFE_DELETE(m_exception);
-	}
+		  m_thread_pool(), m_mutex(), f_mutex(NULL), m_try_stack() {}
+
+	~VM() {}
 
 	void error(ErrorLevel, const char*) const;
 
@@ -77,10 +75,6 @@ public:
 	size_t getPC() const { return m_pc; }
 
 	void nextPC() { ++m_pc; }
-
-	/// Exception handling methods
-	void setException(Value*);
-	void setException(const char*, ...);
 
 	IRVector& getInst() const { return m_inst; }
 
@@ -133,7 +127,7 @@ private:
 
 	std::stack<std::pair<size_t, size_t> > m_try_stack;
 
-	Value* m_exception;
+	CException m_exception;
 
 	DISALLOW_COPY_AND_ASSIGN(VM);
 };
