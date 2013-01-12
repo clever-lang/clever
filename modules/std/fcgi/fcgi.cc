@@ -10,7 +10,7 @@
 #include <process.h>
 #else
 #include <unistd.h>
-extern char ** environ;
+extern char** environ;
 #endif
 #include "fcgio.h"
 #include "fcgi_config.h"  // HAVE_IOSTREAM_WITHASSIGN_STREAMBUF
