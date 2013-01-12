@@ -15,10 +15,11 @@
 
 namespace clever {
 
+class CException;
 class Type;
 class Value;
 
-#define CLEVER_THROW(val, ...) exception.setException(val, ##__VA_ARGS__)
+#define CLEVER_THROW(val, ...) exception->setException(val, ##__VA_ARGS__)
 
 extern jmp_buf fatal_error;
 
@@ -176,9 +177,12 @@ void printf(const char*, ...);
 void vprintfln(const char*, va_list);
 void printfln(const char*, ...);
 
-#define clever_check_args(spec) clever::check_args(args, spec, this)
+#define clever_check_args(spec) clever::check_args(args, spec, exception, this)
+#define clever_static_check_args(spec) clever::check_args(args, spec, exception)
 #define clever_check_no_args()  clever_check_args(NULL)
-bool check_args(const ::std::vector<Value*>&, const char*, const Type* = NULL);
+#define clever_static_check_no_args()  clever_static_check_args(NULL)
+
+bool check_args(const ::std::vector<Value*>&, const char*, CException*, const Type* = NULL);
 
 #define CLEVER_GET_OBJECT(t, n) static_cast<t>((n)->getObj())
 

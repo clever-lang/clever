@@ -159,7 +159,7 @@ Value* VM::runFunction(Function* func, std::vector<Value*>* args)
 	Value* result = new Value;
 
 	if (func->isInternal()) {
-		func->getPtr()(result, *args, this, m_exception);
+		func->getPtr()(result, *args, this, &m_exception);
 	} else {
 		Environment* fenv = func->getEnvironment()->activate(m_call_stack.top());
 		fenv->setRetVal(result);
@@ -237,7 +237,7 @@ void VM::run()
 			const Value* rhs = getValue(OPCODE.op2);
 
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
-				lhs->getType()->add(getValue(OPCODE.result), lhs, rhs, this, m_exception);
+				lhs->getType()->add(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
 
 				if (UNEXPECTED(m_exception.hasException())) {
 					goto throw_exception;
@@ -254,7 +254,7 @@ void VM::run()
 			const Value* rhs = getValue(OPCODE.op2);
 
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
-				lhs->getType()->sub(getValue(OPCODE.result), lhs, rhs, this, m_exception);
+				lhs->getType()->sub(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
 
 				if (UNEXPECTED(m_exception.hasException())) {
 					goto throw_exception;
@@ -271,7 +271,7 @@ void VM::run()
 			const Value* rhs = getValue(OPCODE.op2);
 
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
-				lhs->getType()->mul(getValue(OPCODE.result), lhs, rhs, this, m_exception);
+				lhs->getType()->mul(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
 
 				if (UNEXPECTED(m_exception.hasException())) {
 					goto throw_exception;
@@ -288,7 +288,7 @@ void VM::run()
 			const Value* rhs = getValue(OPCODE.op2);
 
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
-				lhs->getType()->div(getValue(OPCODE.result), lhs, rhs, this, m_exception);
+				lhs->getType()->div(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
 
 				if (UNEXPECTED(m_exception.hasException())) {
 					goto throw_exception;
@@ -305,7 +305,7 @@ void VM::run()
 			const Value* rhs = getValue(OPCODE.op2);
 
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
-				lhs->getType()->mod(getValue(OPCODE.result), lhs, rhs, this, m_exception);
+				lhs->getType()->mod(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
 
 				if (UNEXPECTED(m_exception.hasException())) {
 					goto throw_exception;
@@ -376,7 +376,7 @@ void VM::run()
 
 				VM_GOTO(func->getAddr());
 			} else {
-				func->getPtr()(getValue(OPCODE.result), m_call_args, this, m_exception);
+				func->getPtr()(getValue(OPCODE.result), m_call_args, this, &m_exception);
 				m_call_args.clear();
 
 				if (UNEXPECTED(m_exception.hasException())) {
@@ -519,7 +519,7 @@ void VM::run()
 			Value* value = getValue(OPCODE.op1);
 
 			if (EXPECTED(!value->isNull())) {
-				value->getType()->increment(value, this, m_exception);
+				value->getType()->increment(value, this, &m_exception);
 				getValue(OPCODE.result)->copy(value);
 
 				if (UNEXPECTED(m_exception.hasException())) {
@@ -537,7 +537,7 @@ void VM::run()
 
 			if (EXPECTED(!value->isNull())) {
 				getValue(OPCODE.result)->copy(value);
-				value->getType()->increment(value, this, m_exception);
+				value->getType()->increment(value, this, &m_exception);
 
 				if (UNEXPECTED(m_exception.hasException())) {
 					goto throw_exception;
@@ -553,7 +553,7 @@ void VM::run()
 			Value* value = getValue(OPCODE.op1);
 
 			if (EXPECTED(!value->isNull())) {
-				value->getType()->decrement(value, this, m_exception);
+				value->getType()->decrement(value, this, &m_exception);
 				getValue(OPCODE.result)->copy(value);
 
 				if (UNEXPECTED(m_exception.hasException())) {
@@ -571,7 +571,7 @@ void VM::run()
 
 			if (EXPECTED(!value->isNull())) {
 				getValue(OPCODE.result)->copy(value);
-				value->getType()->decrement(value, this, m_exception);
+				value->getType()->decrement(value, this, &m_exception);
 
 				if (UNEXPECTED(m_exception.hasException())) {
 					goto throw_exception;
@@ -627,7 +627,7 @@ void VM::run()
 			const Value* rhs = getValue(OPCODE.op2);
 
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
-				lhs->getType()->greater(getValue(OPCODE.result), lhs, rhs, this, m_exception);
+				lhs->getType()->greater(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
 
 				if (UNEXPECTED(m_exception.hasException())) {
 					goto throw_exception;
@@ -644,7 +644,7 @@ void VM::run()
 			const Value* rhs = getValue(OPCODE.op2);
 
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
-				lhs->getType()->greater_equal(getValue(OPCODE.result), lhs, rhs, this, m_exception);
+				lhs->getType()->greater_equal(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
 
 				if (UNEXPECTED(m_exception.hasException())) {
 					goto throw_exception;
@@ -661,7 +661,7 @@ void VM::run()
 			const Value* rhs = getValue(OPCODE.op2);
 
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
-				lhs->getType()->less(getValue(OPCODE.result), lhs, rhs, this, m_exception);
+				lhs->getType()->less(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
 
 				if (UNEXPECTED(m_exception.hasException())) {
 					goto throw_exception;
@@ -678,7 +678,7 @@ void VM::run()
 			const Value* rhs = getValue(OPCODE.op2);
 
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
-				lhs->getType()->less_equal(getValue(OPCODE.result), lhs, rhs, this, m_exception);
+				lhs->getType()->less_equal(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
 
 				if (UNEXPECTED(m_exception.hasException())) {
 					goto throw_exception;
@@ -695,7 +695,7 @@ void VM::run()
 			const Value* rhs = getValue(OPCODE.op2);
 
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
-				lhs->getType()->equal(getValue(OPCODE.result), lhs, rhs, this, m_exception);
+				lhs->getType()->equal(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
 
 				if (UNEXPECTED(m_exception.hasException())) {
 					goto throw_exception;
@@ -712,7 +712,7 @@ void VM::run()
 			const Value* rhs = getValue(OPCODE.op2);
 
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
-				lhs->getType()->not_equal(getValue(OPCODE.result), lhs, rhs, this, m_exception);
+				lhs->getType()->not_equal(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
 
 				if (UNEXPECTED(m_exception.hasException())) {
 					goto throw_exception;
@@ -757,7 +757,7 @@ void VM::run()
 			}
 
 			if (EXPECTED((ptr = type->getMethod(method->getStr())))) {
-				(type->*ptr)(getValue(OPCODE.result), callee, m_call_args, this, m_exception);
+				(type->*ptr)(getValue(OPCODE.result), callee, m_call_args, this, &m_exception);
 
 				m_call_args.clear();
 
@@ -779,7 +779,7 @@ void VM::run()
 			MethodPtr ptr;
 
 			if (EXPECTED((ptr = type->getMethod(method->getStr())))) {
-				(type->*ptr)(getValue(OPCODE.result), NULL, m_call_args, this, m_exception);
+				(type->*ptr)(getValue(OPCODE.result), NULL, m_call_args, this, &m_exception);
 
 				m_call_args.clear();
 

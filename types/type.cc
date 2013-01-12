@@ -79,12 +79,12 @@ CLEVER_TYPE_OPERATOR(Type::not_equal)
 	CLEVER_THROW("Cannot use != operator with %S type", getName());
 }
 
-void Type::increment(Value* value, const VM* vm, CException& exception) const
+void Type::increment(Value* value, const VM* vm, CException* exception) const
 {
 	CLEVER_THROW("Cannot use ++ operator with %S type", getName());
 }
 
-void Type::decrement(Value* value, const VM* vm, CException& exception) const
+void Type::decrement(Value* value, const VM* vm, CException* exception) const
 {
 	CLEVER_THROW("Cannot use -- operator with %S type", getName());
 }

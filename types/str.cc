@@ -11,6 +11,7 @@
 #include "types/str.h"
 #include "core/compiler.h"
 #include "core/vm.h"
+#include "core/clever.h"
 
 namespace clever {
 

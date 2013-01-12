@@ -22,7 +22,7 @@ namespace math {
 
 // double round(double value)
 static CLEVER_FUNCTION(round) {
-	if (!check_args(args, "d")) {
+	if (!clever_static_check_args("d")) {
 		return;
 	}
 	double value = args[0]->getDouble();
@@ -36,7 +36,7 @@ static CLEVER_FUNCTION(round) {
 
 // number ceil(number value)
 static CLEVER_FUNCTION(ceil) {
-	if (!check_args(args, "n")) {
+	if (!clever_static_check_args("n")) {
 		return;
 	}
 
@@ -49,7 +49,7 @@ static CLEVER_FUNCTION(ceil) {
 
 // double floor(number value)
 static CLEVER_FUNCTION(floor) {
-	if (!check_args(args, "n")) {
+	if (!clever_static_check_args("n")) {
 		return;
 	}
 
@@ -62,7 +62,7 @@ static CLEVER_FUNCTION(floor) {
 
 // number abs(number value)
 static CLEVER_FUNCTION(abs) {
-	if (!check_args(args, "n")) {
+	if (!clever_static_check_args("n")) {
 		return;
 	}
 

@@ -11,6 +11,7 @@
 #include "core/clever.h"
 #include "core/cstring.h"
 #include "core/value.h"
+#include "core/cexception.h"
 
 namespace clever {
 
@@ -171,7 +172,7 @@ void printf(const char* format, ...) {
 //	clever_check_args("*si") - ignore the first arg, verify the second and third
 // NOTE:
 //	We could pass in another parameter to cause a fatality/throw exception on error here, for now fail gracefully
-bool check_args(const ::std::vector<Value*>& args, const char* typespec, const Type* type) {
+bool check_args(const ::std::vector<Value*>& args, const char* typespec, CException* exception, const Type* type) {
 	size_t argslen = args.size();
 
 	// Void arguments checking
