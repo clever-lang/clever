@@ -1,233 +1,211 @@
 /**
  * Clever programming language
- * Copyright (c) 2012 Clever Team
+ * Copyright (c) Clever Team
  *
- * Permission is hereby granted, free of charge, to any person
- * obtaining a copy of this software and associated documentation
- * files (the "Software"), to deal in the Software without
- * restriction, including without limitation the rights to use,
- * copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following
- * conditions:
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- *
- *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
- * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
- * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
- * OTHER DEALINGS IN THE SOFTWARE.
+ * This file is distributed under the MIT license. See LICENSE for details.
  */
 
 #include <iostream>
 #include <fstream>
-#include "compiler/compiler.h"
-#include "compiler/cstring.h"
+#include "core/cstring.h"
 #include "modules/std/net/tcpsocket.h"
-#include "types/nativetypes.h"
+#include "types/native_types.h"
 
 namespace clever { namespace packages { namespace std { namespace net {
 
-CLEVER_METHOD(TcpSocket::constructor) {
-	SocketValue* sv = new SocketValue;
+void* TcpSocket::allocData(CLEVER_TYPE_CTOR_ARGS) const
+{
+	SocketObject* sv = new SocketObject;
 
 	if (args != NULL) {
-		if (CLEVER_NUM_ARGS() == 1) {
-			// Host only.
-			sv->getSocket()->setHost(CLEVER_ARG_STR(0).c_str());
-		} else if (CLEVER_NUM_ARGS() == 2) {
-			// Host and port.
-			sv->getSocket()->setHost(CLEVER_ARG_STR(0).c_str());
-			sv->getSocket()->setPort(CLEVER_ARG_INT(1));
+		switch (args->size()) {
+			case 1:
+				// Host only.
+				sv->getSocket().setHost(args->at(0)->getStr()->c_str());
+				break;
+			case 2:
+				// Host and port.
+				sv->getSocket().setHost(args->at(0)->getStr()->c_str());
+				sv->getSocket().setPort(args->at(1)->getInt());
+				break;
 		}
 	}
-
-	CLEVER_RETURN_DATA_VALUE(sv);
+	return sv;
 }
 
-CLEVER_METHOD(TcpSocket::setHost) {
-	SocketValue* sv = CLEVER_GET_VALUE(SocketValue*, value);
+void TcpSocket::deallocData(void* obj)
+{
+	SocketObject* sv = static_cast<SocketObject*>(obj);
 
-	sv->getSocket()->setHost(CLEVER_ARG_STR(0).c_str());
+	delete sv;
 }
 
-CLEVER_METHOD(TcpSocket::setPort) {
-	SocketValue* sv = CLEVER_GET_VALUE(SocketValue*, value);
+CLEVER_METHOD(TcpSocket::setHost)
+{
+	if (!clever_check_args("s")) {
+		return;
+	}
 
-	sv->getSocket()->setPort(CLEVER_ARG_INT(0));
+	SocketObject* sv = CLEVER_GET_OBJECT(SocketObject*, CLEVER_THIS());
+
+	sv->getSocket().setHost(args[0]->getStr()->c_str());
 }
 
-CLEVER_METHOD(TcpSocket::setTimeout) {
-	SocketValue* sv = CLEVER_GET_VALUE(SocketValue*, value);
+CLEVER_METHOD(TcpSocket::setPort)
+{
+	if (!clever_check_args("i")) {
+		return;
+	}
 
-	sv->getSocket()->setTimeout(CLEVER_ARG_INT(0));
+	SocketObject* sv = CLEVER_GET_OBJECT(SocketObject*, CLEVER_THIS());
+
+	sv->getSocket().setPort(args[0]->getInt());
 }
 
-CLEVER_METHOD(TcpSocket::connect) {
-	SocketValue* sv = CLEVER_GET_VALUE(SocketValue*, value);
+CLEVER_METHOD(TcpSocket::setTimeout)
+{
+	if (!clever_check_args("i")) {
+		return;
+	}
 
-	sv->getSocket()->connect();
+	SocketObject* sv = CLEVER_GET_OBJECT(SocketObject*, CLEVER_THIS());
+
+	sv->getSocket().setTimeout(args[0]->getInt());
 }
 
-CLEVER_METHOD(TcpSocket::close) {
-	SocketValue* sv = CLEVER_GET_VALUE(SocketValue*, value);
+CLEVER_METHOD(TcpSocket::connect)
+{
+	if (!clever_check_no_args()) {
+		return;
+	}
 
-	sv->getSocket()->close();
+	SocketObject* sv = CLEVER_GET_OBJECT(SocketObject*, CLEVER_THIS());
+
+	sv->getSocket().connect();
 }
 
-CLEVER_METHOD(TcpSocket::receive) {
-	SocketValue* sv = CLEVER_GET_VALUE(SocketValue*, value);
-	ValueVector* vv = new ValueVector;
+CLEVER_METHOD(TcpSocket::close)
+{
+	if (!clever_check_no_args()) {
+		return;
+	}
+
+	SocketObject* sv = CLEVER_GET_OBJECT(SocketObject*, CLEVER_THIS());
+
+	sv->getSocket().close();
+}
+
+CLEVER_METHOD(TcpSocket::receive)
+{
+	if (!clever_check_args("i")) {
+		return;
+	}
+
+	SocketObject* sv = CLEVER_GET_OBJECT(SocketObject*, CLEVER_THIS());
 	char *buffer;
-	int length;
-
-	length = CLEVER_ARG_INT(0);
+	long length = args[0]->getInt();
 
 	// Allocate the buffer.
 	buffer = new char[length];
 	memset(buffer, 0, length);
 
 	// Receive the data.
-	sv->getSocket()->receive(buffer, length);
+	sv->getSocket().receive(buffer, length);
 
-	for (int i = 0; i < length; ++i) {
-		Value *v = new Value();
-		v->setByte(buffer[i]);
-		vv->push_back(v);
+	result->setStr(CSTRING(buffer));
+
+	delete[] buffer;
+}
+
+CLEVER_METHOD(TcpSocket::send)
+{
+	if (!clever_check_args("s")) {
+		return;
 	}
 
-	// Free the buffer.
-	delete buffer;
+	SocketObject* sv = CLEVER_GET_OBJECT(SocketObject*, CLEVER_THIS());
 
-	retval->setTypePtr(CLEVER_TYPE("Array<Byte>"));
-	CLEVER_RETURN_ARRAY(vv);
+	const char* buffer = args[0]->getStr()->c_str();
+	size_t buffer_len = ::strlen(buffer);
+
+	sv->getSocket().send(buffer, buffer_len);
 }
 
-CLEVER_METHOD(TcpSocket::send) {
-	SocketValue* sv = CLEVER_GET_VALUE(SocketValue*, value);
-	ValueVector *vv = CLEVER_ARG_ARRAY(0);
-	char *buffer;
-	int bufferSize;
-
-	// Allocate a buffer and fill it with the bytes from the array.
-	buffer = new char[vv->size()];
-	for (size_t i = 0, j = vv->size(); i < j; ++i) {
-		buffer[i] = static_cast<char>(vv->at(i)->getByte());
+CLEVER_METHOD(TcpSocket::isOpen)
+{
+	if (!clever_check_no_args()) {
+		return;
 	}
-	bufferSize = vv->size();
 
-	// Send the data.
-	sv->getSocket()->send(buffer, bufferSize);
+	SocketObject* sv = CLEVER_GET_OBJECT(SocketObject*, CLEVER_THIS());
 
-	// Free the buffer.
-	delete buffer;
+	CLEVER_RETURN_BOOL(sv->getSocket().isOpen());
 }
 
-CLEVER_METHOD(TcpSocket::isOpen) {
-	SocketValue* sv = CLEVER_GET_VALUE(SocketValue*, value);
+CLEVER_METHOD(TcpSocket::poll)
+{
+	if (!clever_check_no_args()) {
+		return;
+	}
 
-	CLEVER_RETURN_BOOL(sv->getSocket()->isOpen());
+	SocketObject* sv = CLEVER_GET_OBJECT(SocketObject*, CLEVER_THIS());
+
+	CLEVER_RETURN_BOOL(sv->getSocket().poll());
 }
 
-CLEVER_METHOD(TcpSocket::poll) {
-	SocketValue* sv = CLEVER_GET_VALUE(SocketValue*, value);
+CLEVER_METHOD(TcpSocket::good)
+{
+	if (!clever_check_no_args()) {
+		return;
+	}
 
-	CLEVER_RETURN_BOOL(sv->getSocket()->poll());
+	SocketObject* sv = CLEVER_GET_OBJECT(SocketObject*, CLEVER_THIS());
+
+	CLEVER_RETURN_BOOL(sv->getSocket().getError() == NO_ERROR);
 }
 
-CLEVER_METHOD(TcpSocket::good) {
-	SocketValue* sv = CLEVER_GET_VALUE(SocketValue*, value);
+CLEVER_METHOD(TcpSocket::getError)
+{
+	if (!clever_check_no_args()) {
+		return;
+	}
 
-	CLEVER_RETURN_BOOL(sv->getSocket()->getError() == NO_ERROR);
+	SocketObject* sv = CLEVER_GET_OBJECT(SocketObject*, CLEVER_THIS());
+
+	result->setInt(sv->getSocket().getError());
 }
 
-CLEVER_METHOD(TcpSocket::getError) {
-	SocketValue* sv = CLEVER_GET_VALUE(SocketValue*, value);
+CLEVER_METHOD(TcpSocket::getErrorMessage)
+{
+	if (!clever_check_no_args()) {
+		return;
+	}
 
-	CLEVER_RETURN_INT(sv->getSocket()->getError());
+	SocketObject* sv = CLEVER_GET_OBJECT(SocketObject*, CLEVER_THIS());
+
+	result->setStr(CSTRING(sv->getSocket().getErrorString()));
 }
 
-CLEVER_METHOD(TcpSocket::getErrorMessage) {
-	SocketValue* sv = CLEVER_GET_VALUE(SocketValue*, value);
-
-	CLEVER_RETURN_STR(CSTRINGT(sv->getSocket()->getErrorString()));
+CLEVER_METHOD(TcpSocket::toString)
+{
+	result->setStr(CSTRING("TcpSocket class"));
 }
 
-CLEVER_METHOD(TcpSocket::toString) {
-	CLEVER_RETURN_STR(CSTRINGT("TcpSocket class"));
-}
-
-/**
- * Void TcpSocket::__assign__(TcpSocket)
- */
-CLEVER_METHOD(TcpSocket::do_assign) {
-	CLEVER_ARG(0)->getDataValue()->addRef();
-	CLEVER_THIS()->copy(CLEVER_ARG(0));
-}
-
-void TcpSocket::init() {
-	const Type* tcpsock = CLEVER_TYPE("TcpSocket");
-	const Type* arr_byte = CLEVER_GET_ARRAY_TEMPLATE->getTemplatedType(CLEVER_BYTE);
-
-	addMethod(
-		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&TcpSocket::do_assign, tcpsock))
-			->addArg("rvalue", tcpsock)
-	);
-
-	addMethod(new Method(CLEVER_CTOR_NAME, (MethodPtr)&TcpSocket::constructor, tcpsock));
-
-	addMethod(
-		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&TcpSocket::constructor, tcpsock))
-			->addArg("host", CLEVER_STR)
-	);
-
-	addMethod(
-		(new Method(CLEVER_CTOR_NAME, (MethodPtr)&TcpSocket::constructor, tcpsock))
-			->addArg("host", CLEVER_STR)
-			->addArg("port", CLEVER_INT)
-	);
-
-	addMethod(
-		(new Method("setHost", (MethodPtr)&TcpSocket::setHost, CLEVER_VOID))
-			->addArg("host", CLEVER_STR)
-	);
-
-	addMethod(
-		(new Method("setPort", (MethodPtr)&TcpSocket::setPort, CLEVER_VOID))
-			->addArg("port", CLEVER_INT)
-	);
-
-	addMethod(
-		(new Method("setTimeout", (MethodPtr)&TcpSocket::setTimeout, CLEVER_VOID))
-			->addArg("timeout", CLEVER_INT)
-	);
-
-	addMethod(new Method("connect", (MethodPtr)&TcpSocket::connect, tcpsock));
-	addMethod(new Method("close", (MethodPtr)&TcpSocket::close, tcpsock));
-
-
-	addMethod(
-		(new Method("receive", (MethodPtr)&TcpSocket::receive, arr_byte))
-			->addArg("length", CLEVER_INT)
-	);
-
-	addMethod(
-		(new Method("send", (MethodPtr)&TcpSocket::send, CLEVER_VOID))
-			->addArg("data", arr_byte)
-	);
-
-	addMethod(new Method("isOpen", (MethodPtr)&TcpSocket::isOpen, CLEVER_BOOL));
-	addMethod(new Method("poll", (MethodPtr)&TcpSocket::poll, CLEVER_BOOL));
-
-	addMethod(new Method("good", (MethodPtr)&TcpSocket::good, CLEVER_BOOL));
-	addMethod(new Method("getError", (MethodPtr)&TcpSocket::getError, CLEVER_INT));
-	addMethod(new Method("getErrorMessage", (MethodPtr)&TcpSocket::getErrorMessage, CLEVER_STR));
-
-	addMethod(new Method("toString", (MethodPtr)&TcpSocket::toString, CLEVER_STR));
+CLEVER_TYPE_INIT(TcpSocket::init)
+{
+	addMethod(CSTRING("setHost"),         (MethodPtr)&TcpSocket::setHost);
+	addMethod(CSTRING("setPort"),         (MethodPtr)&TcpSocket::setPort);
+	addMethod(CSTRING("setTimeout"),      (MethodPtr)&TcpSocket::setTimeout);
+	addMethod(CSTRING("connect"),         (MethodPtr)&TcpSocket::connect);
+	addMethod(CSTRING("close"),           (MethodPtr)&TcpSocket::close);
+	addMethod(CSTRING("receive"),         (MethodPtr)&TcpSocket::receive);
+	addMethod(CSTRING("send"),            (MethodPtr)&TcpSocket::send);
+	addMethod(CSTRING("isOpen"),          (MethodPtr)&TcpSocket::isOpen);
+	addMethod(CSTRING("poll"),            (MethodPtr)&TcpSocket::poll);
+	addMethod(CSTRING("good"),            (MethodPtr)&TcpSocket::good);
+	addMethod(CSTRING("getError"),        (MethodPtr)&TcpSocket::getError);
+	addMethod(CSTRING("toString"),        (MethodPtr)&TcpSocket::toString);
+	addMethod(CSTRING("getErrorMessage"), (MethodPtr)&TcpSocket::getErrorMessage);
 
 	// Windows socket initialization.
 #ifdef CLEVER_WIN32
@@ -237,16 +215,6 @@ void TcpSocket::init() {
 		::std::cerr << "WSAStartup() failed: " << res << ::std::endl;
 	}
 #endif
-}
-
-DataValue* TcpSocket::allocateValue() const {
-	return new SocketValue;
-}
-
-void TcpSocket::destructor(Value* value) const {
-	//SocketValue* sv = CLEVER_GET_VALUE(SocketValue*, value);
-
-	// @TODO: disconnect.
 }
 
 }}}} // clever::packages::std::net

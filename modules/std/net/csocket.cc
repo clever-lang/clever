@@ -1,26 +1,8 @@
 /**
  * Clever programming language
- * Copyright (c) 2012 Clever Team
+ * Copyright (c) Clever Team
  *
- * Permission is hereby granted, free of charge, to any person
- * obtaining a copy of this software and associated documentation
- * files (the "Software"), to deal in the Software without
- * restriction, including without limitation the rights to use,
- * copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following
- * conditions:
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- *
- *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
- * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
- * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
- * OTHER DEALINGS IN THE SOFTWARE.
+ * This file is distributed under the MIT license. See LICENSE for details.
  */
 
 #include <iostream>
@@ -37,19 +19,17 @@
 
 namespace clever {
 
-CSocket::CSocket() {
-
-}
-
 CSocket::~CSocket() {
 	close();
 }
 
-void CSocket::setHost(const char *addr) {
+void CSocket::setHost(const char *addr)
+{
 	m_host = std::string(addr);
 }
 
-void CSocket::setPort(const int port) {
+void CSocket::setPort(int port)
+{
 	std::stringstream portstr;
 
 	portstr << port;
@@ -57,12 +37,14 @@ void CSocket::setPort(const int port) {
 	m_port = portstr.str();
 }
 
-void CSocket::setTimeout(const int time) {
+void CSocket::setTimeout(int time)
+{
 	// Timeout value is in 'ms', and our timeout should be in 'us'.
 	m_timeout = time * 1000;
 }
 
-bool CSocket::connect() {
+bool CSocket::connect()
+{
 	struct addrinfo *ainfo;
 	struct addrinfo hints;
 
@@ -103,7 +85,8 @@ bool CSocket::connect() {
 	return true;
 }
 
-bool CSocket::close() {
+bool CSocket::close()
+{
 	int res;
 
 	resetError();
@@ -123,11 +106,12 @@ bool CSocket::close() {
 	}
 }
 
-bool CSocket::receive(const char *buffer, int length) {
+bool CSocket::receive(const char* buffer, int length)
+{
 	resetError();
 
 	// Receive data.
-	int res = ::recv(m_socket, (char *)buffer, length, 0);
+	int res = ::recv(m_socket, const_cast<char*>(buffer), length, 0);
 
 	if (res > 0) {
 		return true;
@@ -137,7 +121,8 @@ bool CSocket::receive(const char *buffer, int length) {
 	}
 }
 
-bool CSocket::send(const char *buffer, int length) {
+bool CSocket::send(const char *buffer, int length)
+{
 	int sent = 0;
 
 	resetError();
@@ -157,7 +142,8 @@ bool CSocket::send(const char *buffer, int length) {
 	return true;
 }
 
-bool CSocket::isOpen() {
+bool CSocket::isOpen()
+{
 	struct timeval timeout;
 	char buf;
 	fd_set readset;
@@ -165,7 +151,7 @@ bool CSocket::isOpen() {
 	resetError();
 
 	// @TODO: when the platform supports, use MSG_DONTWAIT.
-	
+
 	// Set the minimum interval.
 	if (m_timeout > 1000000) {
 		timeout.tv_sec = (m_timeout / 1000000);
@@ -174,7 +160,6 @@ bool CSocket::isOpen() {
 		timeout.tv_sec = 0;
 		timeout.tv_usec = m_timeout;
 	}
-
 
 	// We should perform a select() to make sure our recv() won't block.
 	FD_ZERO(&readset);
@@ -216,8 +201,9 @@ bool CSocket::isOpen() {
 	}
 }
 
-bool CSocket::poll() {
-	struct timeval timeout;
+bool CSocket::poll()
+{
+	struct timeval timeout = {0};
 	fd_set readset;
 	int res;
 
@@ -255,12 +241,14 @@ bool CSocket::poll() {
 	}
 }
 
-void CSocket::resetError() {
+void CSocket::resetError()
+{
 	m_error = NO_ERROR;
 	m_error_string = std::string("");
 }
 
-void CSocket::setError() {
+void CSocket::setError()
+{
 #ifdef CLEVER_WIN32
 	m_error = WSAGetLastError();
 	m_error_string = GetLastErrorStr(m_error);

@@ -33,6 +33,7 @@
 #ifdef HAVE_MOD_STD_NET
 #include "modules/std/net/net.h"
 #endif
+#if 0
 #ifdef HAVE_MOD_STD_REGEX
 # include "modules/std/regex/regex.h"
 #endif
