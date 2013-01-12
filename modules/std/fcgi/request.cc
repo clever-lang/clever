@@ -237,7 +237,7 @@ CLEVER_METHOD(Request::debug)
 		const char* const * next = request->envp;
 		if (next) {
 			FCGX_PutStr("<pre>\n", sizeof("<pre>\n"), request->out);
-			while(*next) {
+			while (*next) {
 				FCGX_PutStr(*next, strlen(*next), request->out);
 				FCGX_PutStr("\n", sizeof("\n"), request->out);
 				++next;
