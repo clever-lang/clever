@@ -138,7 +138,6 @@ CLEVER_METHOD(Request::accept)
 											if (split) {
 												::std::string l(chunk.substr(0, split));
 												::std::string r(chunk.substr(split+1, chunk.size()));
-												::std::cout << "l[" << l << "]=[" << r << "]" << ::std::endl;
 												params->insert(CLEVER_FCGI_PAIR(l, r));
 											} else {
 												params->insert(CLEVER_FCGI_NULL(chunk));
