@@ -170,15 +170,15 @@ void Resolver::visit(FunctionDecl* node)
 		bool found_rhs = false;
 
 		for (size_t i = 0; i < node->numArgs(); ++i) {
-			Assignment* a = static_cast<VariableDecl*>(node->getArg(i))->getAssignment();
+			Assignment* assign = static_cast<VariableDecl*>(node->getArg(i))->getAssignment();
 
-			a->setConditional(true);
+			assign->setConditional(true);
 
-			if (found_rhs && !a->getRhs()) {
-				Compiler::errorf(a->getLocation(),
-								 "Non-default argument found after the default argument list");
-			} else if (!found_rhs && a->getRhs()) {
-				found_rhs = a->getRhs();
+			if (found_rhs && !assign->getRhs()) {
+				Compiler::errorf(assign->getLocation(),
+					"Non-default argument found after the default argument list");
+			} else if (!found_rhs && assign->getRhs()) {
+				found_rhs = assign->getRhs();
 			}
 		}
 
