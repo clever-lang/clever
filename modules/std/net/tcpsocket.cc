@@ -98,13 +98,13 @@ CLEVER_METHOD(TcpSocket::close)
 
 CLEVER_METHOD(TcpSocket::receive)
 {
-	/*
-	SocketObject* sv = CLEVER_GET_OBJECT(SocketObject*, CLEVER_THIS());
-	ValueVector* vv = new ValueVector;
-	char *buffer;
-	int length;
+	if (!clever_check_args("i")) {
+		return;
+	}
 
-	length = CLEVER_ARG_INT(0);
+	SocketObject* sv = CLEVER_GET_OBJECT(SocketObject*, CLEVER_THIS());
+	char *buffer;
+	long length = args[0]->getInt();
 
 	// Allocate the buffer.
 	buffer = new char[length];
@@ -113,17 +113,7 @@ CLEVER_METHOD(TcpSocket::receive)
 	// Receive the data.
 	sv->getSocket().receive(buffer, length);
 
-	for (int i = 0; i < length; ++i) {
-		Value *v = new Value();
-		v->setByte(buffer[i]);
-		vv->push_back(v);
-	}
-
-	// Free the buffer.
-	delete buffer;
-
-	retval->setTypePtr(CLEVER_TYPE("Array<Byte>"));
-	CLEVER_RETURN_ARRAY(vv);*/
+	result->setStr(CSTRING(buffer));
 }
 
 CLEVER_METHOD(TcpSocket::send)
