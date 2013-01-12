@@ -184,16 +184,34 @@ void VM::setException(Value* exception)
 // Executes the supplied function
 Value* VM::runFunction(Function* func, std::vector<Value*>* args)
 {
+	Value* result = new Value;
+
 	if (func->isInternal()) {
-		Value* result = new Value;
-
 		func->getPtr()(result, *args, this);
-
-		return result;
 	} else {
-		// TODO(Felipe): user function call
-		return NULL;
+		Environment* fenv = func->getEnvironment()->activate(m_call_stack.top());
+		fenv->setRetVal(result);
+		fenv->setRetAddr(m_inst.size()-1);
+
+		m_call_stack.push(fenv);
+		m_call_args.clear();
+
+		if (EXPECTED(args != NULL)) {
+			for (size_t i = 0, j = args->size(); i < j; ++i) {
+				m_call_args.push_back(args->at(i));
+			}
+		}
+
+		size_t saved_pc = m_pc;
+
+		m_pc = func->getAddr() + (func->getNumArgs() * 3);
+
+		run();
+
+		m_pc = saved_pc;
 	}
+
+	return result;
 }
 
 // Executes the VM opcodes
