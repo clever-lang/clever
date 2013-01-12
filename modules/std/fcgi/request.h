@@ -8,16 +8,7 @@
 #ifndef CLEVER_STD_FCGI_REQUEST_H
 #define CLEVER_STD_FCGI_REQUEST_H
 
-#include <stdlib.h>
-#ifdef _WIN32
-#include <process.h>
-#else
-#include <unistd.h>
-extern char ** environ;
-#endif
-#include "fcgio.h"
-#include "fcgi_config.h"  // HAVE_IOSTREAM_WITHASSIGN_STREAMBUF
-
+#include <map>
 #include <iostream>
 #include "core/cstring.h"
 #include "types/type.h"
@@ -30,10 +21,24 @@ namespace clever { namespace packages { namespace std {
 
 class Request : public Type {
 public:
-	Request()
-		: Type(CSTRING("Request")) { }
+	::std::map< ::std::string, ::std::string>* env;
+	::std::map< ::std::string, ::std::string>* head;
+	::std::map< ::std::string, ::std::string>* cookie;
+	::std::map< ::std::string, ::std::string>* params;
 
-	~Request() {}
+	Request() : Type(CSTRING("Request")) {
+		env = new ::std::map< ::std::string, ::std::string>();
+		head = new ::std::map< ::std::string, ::std::string>();
+		cookie = new ::std::map< ::std::string, ::std::string>();
+		params = new ::std::map< ::std::string, ::std::string>();
+	}
+
+	~Request() {
+		delete env;
+		delete head;
+		delete cookie;
+		delete params;
+	}
 
 	void dump(const void* data) const;
 	void dump(const void* data, ::std::ostream& out) const;
@@ -51,8 +56,14 @@ public:
 	CLEVER_METHOD_D(print);
 	CLEVER_METHOD_D(flush);
 
+	CLEVER_METHOD_D(getServer);
 	CLEVER_METHOD_D(getParam);
+	CLEVER_METHOD_D(getHeader);
+	CLEVER_METHOD_D(getCookie);
+	
 	CLEVER_METHOD_D(getParams);
+	CLEVER_METHOD_D(getHeaders);
+	CLEVER_METHOD_D(getCookies);
 
 	CLEVER_METHOD_D(debug);
 };

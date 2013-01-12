@@ -16,6 +16,7 @@ extern char ** environ;
 
 #include "types/type.h"
 #include "types/native_types.h"
+#include "modules/std/fcgi/fcgi.h"
 #include "modules/std/fcgi/request.h"
 #include "core/value.h"
 #include "core/clever.h"
@@ -77,7 +78,7 @@ void* Request::allocData(CLEVER_TYPE_CTOR_ARGS) const {
 				::std::cout << "[SOCKET OPENED (" << socket << ")]" << ::std::endl;
 			} else ::std::cout << "[SOCKET FAILED]" << ::std::endl;
 		} else FCGX_Init();
-		
+
 		if (FCGX_InitRequest(
 				request, 
 				socket, 
@@ -101,7 +102,62 @@ CLEVER_METHOD(Request::accept)
 {
 	CLEVER_FCGI_TYPE request = CLEVER_FCGI_THIS();
 	if (request) {
-		CLEVER_RETURN_BOOL((FCGX_Accept(&request->in, &request->out, &request->err, &request->envp) == 0));
+		
+		env->clear();
+		head->clear();
+		params->clear();
+		cookie->clear();
+
+		if ((FCGX_Accept(&request->in, &request->out, &request->err, &request->envp) == 0)) {
+			{
+				const char* const * n = request->envp;
+				if (n) {
+					while(*n) {
+						::std::string l(*n);
+						::std::string k(l.substr(0, l.find_first_of("=")));
+						::std::string v(l.substr(k.length()+1));
+
+						switch (k.at(0)) {
+							case 'X':
+							case 'H': {
+								if ((k.find("HTTP_COOKIE") == 0)) {
+									/** process cookies **/
+									::std::cout << "COOKIE[" << v << "]" << ::std::endl;					
+								} else {
+									head->insert(CLEVER_FCGI_PAIR(k.substr(5), v));
+								}
+							} break;
+
+							default: {
+								if ((k.find("QUERY_STRING") == 0)) {
+									size_t last = 0, next = v.find("&");
+									if (next) do {
+										::std::string chunk(v.substr(last, next));
+										if (chunk.size()) {
+											size_t split = chunk.find("=");
+											if (split) {
+												::std::string l(chunk.substr(0, split));
+												::std::string r(chunk.substr(split+1, chunk.size()));
+												::std::cout << "l[" << l << "]=[" << r << "]" << ::std::endl;
+												params->insert(CLEVER_FCGI_PAIR(l, r));
+											} else {
+												params->insert(CLEVER_FCGI_NULL(chunk));
+											}
+										}
+									} while((last=(next+1)) && (next = v.find("&", next+1)));
+								} else {
+									env->insert(CLEVER_FCGI_PAIR(k, v));
+								}
+							} break;
+						}
+						++n;
+					}
+				}
+			}
+			CLEVER_RETURN_BOOL(true);
+		} else {
+			CLEVER_RETURN_BOOL(false);
+		}		
 	} else {
 		CLEVER_RETURN_BOOL(false);
 	}
@@ -143,15 +199,76 @@ CLEVER_METHOD(Request::finish)
 	}
 }
 
+// Request.getServer(string param)
+// Fetches a server environment variable
+CLEVER_METHOD(Request::getServer)
+{
+	CLEVER_FCGI_TYPE request = CLEVER_FCGI_THIS();
+	if (request) {
+		if (clever_check_args("s")) {
+			if (env->size()) {
+				CLEVER_FCGI_ITERATOR it = CLEVER_FCGI_FIND(env, CLEVER_ARG_PSTR(0));
+				if (it != CLEVER_FCGI_END(env)) {
+					CLEVER_RETURN_STR(CLEVER_FCGI_FETCH(it));
+				} else CLEVER_RETURN_NULL();
+			} else CLEVER_RETURN_NULL();
+		} else {
+			CLEVER_RETURN_NULL();
+		}
+	}
+}
+
 // Request.getParam(string param)
-// Fetches a FCGI parameter from the environment
-// @TODO params will correspect to get/post variables this is temporary
+// Fetches a request parameter
 CLEVER_METHOD(Request::getParam)
 {
 	CLEVER_FCGI_TYPE request = CLEVER_FCGI_THIS();
 	if (request) {
 		if (clever_check_args("s")) {
-			CLEVER_RETURN_STR(CSTRING(FCGX_GetParam(CLEVER_ARG_PSTR(0), request->envp)));
+			if (params->size()) {
+				CLEVER_FCGI_ITERATOR it = CLEVER_FCGI_FIND(params, CLEVER_ARG_PSTR(0));
+				if (it != CLEVER_FCGI_END(params)) {
+					CLEVER_RETURN_STR(CLEVER_FCGI_FETCH(it));
+				} else CLEVER_RETURN_NULL();
+			} else CLEVER_RETURN_NULL();
+		} else {
+			CLEVER_RETURN_NULL();
+		}
+	}
+}
+
+// Request.getParam(string param)
+// Fetches a request header (all upper-case, eg HOST not host, CONTENT_TYPE not content-type)
+CLEVER_METHOD(Request::getHeader)
+{
+	CLEVER_FCGI_TYPE request = CLEVER_FCGI_THIS();
+	if (request) {
+		if (clever_check_args("s")) {
+			if (head->size()) {
+				CLEVER_FCGI_ITERATOR it = CLEVER_FCGI_FIND(head, CLEVER_ARG_PSTR(0));
+				if (it != CLEVER_FCGI_END(head)) {
+					CLEVER_RETURN_STR(CLEVER_FCGI_FETCH(it));
+				} else CLEVER_RETURN_NULL();
+			} else CLEVER_RETURN_NULL();
+		} else {
+			CLEVER_RETURN_NULL();
+		}
+	}
+}
+
+// Request.getCookie(string param)
+// Fetches a request cookie
+CLEVER_METHOD(Request::getCookie)
+{
+	CLEVER_FCGI_TYPE request = CLEVER_FCGI_THIS();
+	if (request) {
+		if (clever_check_args("s")) {
+			if (cookie->size()) {
+				CLEVER_FCGI_ITERATOR it = CLEVER_FCGI_FIND(cookie, CLEVER_ARG_PSTR(0));
+				if ((it != CLEVER_FCGI_END(cookie))) {
+					CLEVER_RETURN_STR(CLEVER_FCGI_FETCH(it));
+				} else CLEVER_RETURN_NULL();
+			} else CLEVER_RETURN_NULL();
 		} else {
 			CLEVER_RETURN_NULL();
 		}
@@ -180,8 +297,30 @@ CLEVER_METHOD(Request::debug)
 }
 
 // Request.getParams()
-// Will return a Map/Array of parameters
+// Will return a Map/Array of request parameters
 CLEVER_METHOD(Request::getParams)
+{
+	CLEVER_FCGI_TYPE request = CLEVER_FCGI_THIS();
+	if (request) {
+		
+	}
+	CLEVER_RETURN_NULL();
+}
+
+// Request.getHeaders()
+// Will return a Map/Array of request headers
+CLEVER_METHOD(Request::getHeaders)
+{
+	CLEVER_FCGI_TYPE request = CLEVER_FCGI_THIS();
+	if (request) {
+		
+	}
+	CLEVER_RETURN_NULL();
+}
+
+// Request.getCookies()
+// Will return a Map/Array of request cookies
+CLEVER_METHOD(Request::getCookies)
 {
 	CLEVER_FCGI_TYPE request = CLEVER_FCGI_THIS();
 	if (request) {
@@ -199,8 +338,14 @@ CLEVER_TYPE_INIT(Request::init)
 	addMethod(CSTRING("finish"), (MethodPtr)&Request::finish);
 
 	/* Util */
+	addMethod(CSTRING("getServer"), (MethodPtr)&Request::getServer);
 	addMethod(CSTRING("getParam"), (MethodPtr)&Request::getParam);
+	addMethod(CSTRING("getHeader"), (MethodPtr)&Request::getHeader);
+	addMethod(CSTRING("getCookie"), (MethodPtr)&Request::getCookie);
+
 	addMethod(CSTRING("getParams"), (MethodPtr)&Request::getParams);
+	addMethod(CSTRING("getHeaders"), (MethodPtr)&Request::getHeaders);
+	addMethod(CSTRING("getCookies"), (MethodPtr)&Request::getCookies);
 	
 	/* Debug Environment */
 	addMethod(CSTRING("debug"),		(MethodPtr)&Request::debug);

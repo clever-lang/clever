@@ -4,7 +4,6 @@
  *
  * This file is distributed under the MIT license. See LICENSE for details.
  */
-
 #include <stdlib.h>
 #ifdef _WIN32
 #include <process.h>
@@ -15,25 +14,38 @@ extern char ** environ;
 #include "fcgio.h"
 #include "fcgi_config.h"  // HAVE_IOSTREAM_WITHASSIGN_STREAMBUF
 
-#include "core/value.h"
-#include "types/function.h"
-#include "core/pkgmanager.h"
-#include "modules/std/fcgi/fcgi.h"
+#include <map>
+#include "types/type.h"
+#include "types/native_types.h"
 #include "modules/std/fcgi/request.h"
 #include "modules/std/fcgi/response.h"
+#include "core/value.h"
+#include "core/clever.h"
 
 namespace clever { namespace packages { namespace std {
 
-namespace fcgi {
+void Response::dump(const void *data) const {
+	dump(data, ::std::cout);
+}
 
-} // clever::packages::std::fcgi
+void Response::dump(const void* data, ::std::ostream& out) const {
+	Value::DataValue* dvalue = (Value::DataValue*)data;
+	if (dvalue) {
+		
+	}
+}
 
-/// Initializes Standard FCGI module
-CLEVER_MODULE_INIT(FCGIModule) {
-	using namespace fcgi;
+void* Response::allocData(CLEVER_TYPE_CTOR_ARGS) const {
+	return NULL;
+}
+
+void Response::deallocData(void *data) {
+
+}
+
+CLEVER_TYPE_INIT(Response::init)
+{
 	
-	addType(CSTRING("Request"), new Request);
-	addType(CSTRING("Response"), new Response);
 }
 
 }}} // clever::packages::std

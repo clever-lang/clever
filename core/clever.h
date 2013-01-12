@@ -205,12 +205,15 @@ bool check_args(const ::std::vector<Value*>&, const char*, const Type* = NULL);
 
 /* {{{ Return value setters */
 #define CLEVER_RETURN_STR(c)	result->setStr(c)
+#define CLEVER_RETURN_CSTR(c)	result->setStr(CSTRING(c))
 #define CLEVER_RETURN_DBL(d)	result->setDouble(d)
 #define CLEVER_RETURN_INT(i)	result->setInt(i)
 #define CLEVER_RETURN_OBJ(o)	result->setObj(o)
 #define CLEVER_RETURN_DATA(d)	result->setData(d)
 #define CLEVER_RETURN_NULL()	result->setNull()
 #define CLEVER_RETURN_BOOL(b)   result->setBool(b)
+#define CLEVER_RETURN_MAP(m)	result->setObj(m)
+#define CLEVER_RETURN_ARRAY(m)	result->setObj(m)
 /* }}} */
 
 } // clever
