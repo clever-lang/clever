@@ -600,21 +600,21 @@ private:
 
 class FunctionDecl: public Node {
 public:
-	FunctionDecl(Ident* ident, NodeArray* args, Block* block, const location& location)
-		: Node(location), m_ident(ident), m_args(args), m_block(block), m_is_anon(false) {
+	FunctionDecl(Ident* ident, NodeArray* args, Block* block, VariableDecl* vararg, const location& location)
+		: Node(location), m_ident(ident), m_args(args), m_block(block), m_vararg(vararg), m_is_anon(false) {
 		CLEVER_SAFE_ADDREF(m_ident);
 		CLEVER_SAFE_ADDREF(m_args);
 		CLEVER_SAFE_ADDREF(m_block);
+		CLEVER_SAFE_ADDREF(m_vararg);
 
-		if (!ident) {
-			m_is_anon = true;
-		}
+		m_is_anon = (ident == NULL);
 	}
 
 	~FunctionDecl() {
 		CLEVER_SAFE_DELREF(m_ident);
 		CLEVER_SAFE_DELREF(m_args);
 		CLEVER_SAFE_DELREF(m_block);
+		CLEVER_SAFE_DELREF(m_vararg);
 	}
 
 	void setIdent(Ident* ident) {
@@ -637,6 +637,9 @@ public:
 		return m_args->getNode(index);
 	}
 
+	bool hasVarArg() const { return m_vararg != NULL; }
+	VariableDecl* getVarArg() { return m_vararg; }
+
 	Block* getBlock() { return m_block; }
 
 	virtual void accept(Visitor& visitor);
@@ -646,6 +649,7 @@ private:
 	Ident* m_ident;
 	NodeArray* m_args;
 	Block* m_block;
+	VariableDecl* m_vararg;
 	bool m_is_anon;
 
 	DISALLOW_COPY_AND_ASSIGN(FunctionDecl);

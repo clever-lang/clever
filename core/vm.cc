@@ -15,6 +15,7 @@
 #include "types/function.h"
 #include "types/thread.h"
 #include "types/type.h"
+#include "types/array.h"
 
 #define OPCODE m_inst[m_pc]
 #define VM_EXIT() goto exit
@@ -203,11 +204,8 @@ Value* VM::runFunction(Function* func, std::vector<Value*>* args)
 		}
 
 		size_t saved_pc = m_pc;
-
 		m_pc = func->getAddr() + (func->getNumArgs() * 3);
-
 		run();
-
 		m_pc = saved_pc;
 	}
 
@@ -373,13 +371,30 @@ void VM::run()
 				fenv->setRetAddr(m_pc + 1);
 				fenv->setRetVal(getValue(OPCODE.result));
 
+				size_t nargs = 0;
+
 				if (fdata->hasArgs()) {
 					ValueOffset argoff(0,0);
 
 					for (size_t i = 0, len = fdata->getNumArgs(); i < len; ++i) {
 						fenv->getValue(argoff)->copy(m_call_args[i]);
 						argoff.second++;
+						++nargs;
 					}
+				}
+
+				if (UNEXPECTED(fdata->isVariadic())) {
+					ArrayObject* arr = new ArrayObject;
+
+					if ((m_call_args.size() - nargs) > 0) {
+						for (size_t i = nargs, j = m_call_args.size(); i < j; ++i) {
+							arr->getData().push_back(m_call_args[i]->clone());
+						}
+					}
+
+					Value* vararg = fenv->getValue(ValueOffset(0, fdata->getNumArgs()));
+					vararg->setType(CLEVER_ARRAY_TYPE);
+					vararg->setObj(arr);
 				}
 
 				m_call_args.clear();

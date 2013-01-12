@@ -251,6 +251,9 @@ void Codegen::visit(FunctionDecl* node)
 	if (node->hasArgs()) {
 		node->getArgs()->accept(*this);
 	}
+	if (node->hasVarArg()) {
+		node->getVarArg()->accept(*this);
+	}
 
 	node->getBlock()->accept(*this);
 

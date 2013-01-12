@@ -187,6 +187,13 @@ void Resolver::visit(FunctionDecl* node)
 		func->setNumArgs(node->numArgs());
 	}
 
+	if (node->hasVarArg()) {
+		node->getVarArg()->getAssignment()->setConditional(true);
+		node->getVarArg()->accept(*this);
+
+		func->setVariadic();
+	}
+
 	node->getBlock()->accept(*this);
 
 	m_scope = m_scope->leave();
