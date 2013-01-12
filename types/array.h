@@ -20,6 +20,9 @@ public:
 	ArrayObject()
 		: ValueObject() {}
 
+	ArrayObject(const std::vector<Value*>& vec)
+		: ValueObject(), m_data(vec) {}
+
 	~ArrayObject() {}
 
 	std::vector<Value*>& getData() { return m_data; }
@@ -41,11 +44,11 @@ public:
 
 	void dump(const void* value, std::ostream& out) const;
 
-	void increment(Value* value, const VM* vm) const {}
-	void decrement(Value* value, const VM* vm) const {}
-
 	CLEVER_METHOD_D(append);
 	CLEVER_METHOD_D(size);
+	CLEVER_METHOD_D(at);
+	CLEVER_METHOD_D(reserve);
+	CLEVER_METHOD_D(each);
 };
 
 } // clever

@@ -151,7 +151,7 @@ CLEVER_METHOD(Request::getParam)
 	CLEVER_FCGI_TYPE request = CLEVER_FCGI_THIS();
 	if (request) {
 		if (clever_check_args("s")) {
-			CLEVER_RETURN_CSTR(CSTRING(FCGX_GetParam(CLEVER_ARG_PSTR(0), request->envp)));
+			CLEVER_RETURN_STR(CSTRING(FCGX_GetParam(CLEVER_ARG_PSTR(0), request->envp)));
 		} else {
 			CLEVER_RETURN_NULL();
 		}

@@ -1,0 +1,11 @@
+Testing Array::each with an internal function
+==CODE==
+import std.io.*;
+
+var arr = [1, 2, 3];
+
+arr.each(println);
+==RESULT==
+1
+2
+3

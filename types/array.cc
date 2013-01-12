@@ -6,7 +6,9 @@
  */
 
 #include "core/value.h"
+#include "core/vm.h"
 #include "types/array.h"
+#include "types/function.h"
 
 namespace clever {
 
@@ -16,11 +18,7 @@ void* ArrayType::allocData(CLEVER_TYPE_CTOR_ARGS) const
 	std::vector<Value*>& vec = arr->getData();
 
 	for (size_t i = 0, j = args->size(); i < j; ++i) {
-		Value* val = new Value();
-
-		val->copy(args->at(i));
-
-		vec.push_back(val);
+		vec.push_back(args->at(i)->clone());
 	}
 
 	return arr;
@@ -62,8 +60,7 @@ CLEVER_METHOD(ArrayType::append)
 	ArrayObject* arr = CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS());
 
 	for (size_t i = 0, j = args.size(); i < j; ++i) {
-		arr->getData().push_back(args[i]);
-		args[i]->addRef();
+		arr->getData().push_back(args[i]->clone());
 	}
 }
 
@@ -76,14 +73,75 @@ CLEVER_METHOD(ArrayType::size)
 
 	ArrayObject* arr = CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS());
 
-	CLEVER_RETURN_INT(arr->getData().size());
+	result->setInt(arr->getData().size());
+}
+
+// mixed Array::at(int position)
+CLEVER_METHOD(ArrayType::at)
+{
+	if (!clever_check_args("i")) {
+		return;
+	}
+
+	ArrayObject* arr = CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS());
+
+	if (args[0]->getInt() < 0
+		|| arr->getData().size() <= size_t(args[0]->getInt())) {
+		result->setNull();
+		return;
+	}
+
+	result->copy(arr->getData().at(args[0]->getInt()));
+}
+
+// void Array::reserve(int size)
+CLEVER_METHOD(ArrayType::reserve)
+{
+	if (!clever_check_args("i")) {
+		return;
+	}
+
+	ArrayObject* arr = CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS());
+
+	result->setNull();
+
+	if (args[0]->getInt() < 0) {
+		return;
+	}
+
+	arr->getData().reserve(args[0]->getInt());
+}
+
+// void Array::each(function)
+CLEVER_METHOD(ArrayType::each)
+{
+	if (!clever_check_args("f")) {
+		return;
+	}
+
+	ArrayObject* arr = CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS());
+	Function* func = static_cast<Function*>(args[0]->getObj());
+	std::vector<Value*>& vec = arr->getData();
+
+	for (size_t i = 0, j = arr->getData().size(); i < j; ++i) {
+		std::vector<Value*> tmp_args;
+
+		tmp_args.push_back(vec[i]);
+
+		Value* res = const_cast<VM*>(vm)->runFunction(func, &tmp_args);
+
+		res->delRef();
+	}
 }
 
 // Type initialization
 CLEVER_TYPE_INIT(ArrayType::init)
 {
-	addMethod(CSTRING("append"), (MethodPtr) &ArrayType::append);
-	addMethod(CSTRING("size"),   (MethodPtr) &ArrayType::size);
+	addMethod(CSTRING("append"),  (MethodPtr) &ArrayType::append);
+	addMethod(CSTRING("size"),    (MethodPtr) &ArrayType::size);
+	addMethod(CSTRING("at"),      (MethodPtr) &ArrayType::at);
+	addMethod(CSTRING("reserve"), (MethodPtr) &ArrayType::reserve);
+	addMethod(CSTRING("each"),    (MethodPtr) &ArrayType::each);
 }
 
 } // clever

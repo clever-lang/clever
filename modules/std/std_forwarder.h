@@ -6,19 +6,19 @@
  */
 
 #ifdef HAVE_MOD_STD_IO
-#include "modules/std/io/io.h"
+#	include "modules/std/io/io.h"
 #endif
 #ifdef HAVE_MOD_STD_REFLECTION
-#include "modules/std/reflection/reflection.h"
+#	include "modules/std/reflection/reflection.h"
 #endif
 #ifdef HAVE_MOD_STD_MATH
-#include "modules/std/math/math.h"
+#	include "modules/std/math/math.h"
 #endif
 #ifdef HAVE_MOD_STD_UNICODE
-#include "modules/std/unicode/unicode.h"
+#	include "modules/std/unicode/unicode.h"
 #endif
 #ifdef HAVE_MOD_STD_FCGI
-#include "modules/std/fcgi/fcgi.h"
+#	include "modules/std/fcgi/fcgi.h"
 #endif
 #if 0
 #ifdef HAVE_MOD_STD_FILE
@@ -26,6 +26,9 @@
 #endif
 #ifdef HAVE_MOD_STD_SYS
 #include "modules/std/sys/sys.h"
+#endif
+#ifdef HAVE_MOD_STD_FILE
+#include "modules/std/file/file.h"
 #endif
 #ifdef HAVE_MOD_STD_NET
 #include "modules/std/net/net.h"

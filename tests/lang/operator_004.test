@@ -1,0 +1,6 @@
+Testing increment operator on type which does not implement it
+==CODE==
+var a = [1, 2, 3]; a++;
+==RESULT==
+Fatal error: Unhandled exception!
+Message: Cannot use \+\+ operator with Array type

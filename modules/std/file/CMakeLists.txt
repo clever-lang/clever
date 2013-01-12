@@ -1,7 +1,5 @@
 
 add_library(modules_std_file STATIC
+	cfile.cc
 	file.cc
-	filestream.cc
-	glob.cc
-	globiterator.cc
 )

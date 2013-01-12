@@ -37,9 +37,9 @@ endif (MOD_STD_MATH)
 #	list(APPEND CLEVER_MODULES net)
 #endif (MOD_STD_NET)
 
-#if (MOD_STD_SYS)
-#	list(APPEND CLEVER_MODULES sys)
-#endif (MOD_STD_SYS)
+if (MOD_STD_SYS)
+	list(APPEND CLEVER_MODULES sys)
+endif (MOD_STD_SYS)
 
 if (MOD_STD_REFLECTION)
 	list(APPEND CLEVER_MODULES reflection)

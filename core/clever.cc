@@ -104,10 +104,9 @@ void vsprintf(std::ostringstream& outstr, const char* format, va_list ap) {
 				outstr << va_arg(ap, const char*);
 				break;
 			/* Value* */
-			/*
 			case 'v':
-				outstr << va_arg(ap, Value*)->toString();
-				break;*/
+				va_arg(ap, Value*)->dump(outstr);
+				break;
 		}
 		++chr;
 	}
@@ -177,7 +176,7 @@ bool check_args(const ::std::vector<Value*>& args, const char* typespec, const T
 
 	// Void arguments checking
 	if (typespec == NULL) {
-		return argslen > 0;
+		return argslen > 0 ? false : true;
 	}
 
 	clever_assert_not_null(typespec);

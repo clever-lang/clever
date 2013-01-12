@@ -154,6 +154,12 @@ public:
 		}
 	}
 
+	Value* clone() const {
+		Value* val = new Value;
+		val->copy(this);
+		return val;
+	}
+
 	bool asBool() const {
 		if (isNull()) {
 			return false;

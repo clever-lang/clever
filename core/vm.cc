@@ -20,7 +20,6 @@
 #define VM_EXIT() goto exit
 #define VM_EXIT_UNHANDLED_EXCEPTION() goto exit_exception
 
-
 #if CLEVER_GCC_VERSION > 0
 # define OP(name)    name
 # define OPCODES     const static void* labels[] = { OP_LABELS }; goto *labels[m_inst[m_pc].opcode]
@@ -34,35 +33,6 @@
 # define END_OPCODES EMPTY_SWITCH_DEFAULT_CASE(); } }
 # define VM_GOTO(n)  m_pc = n; break
 #endif
-
-#define THROW_EXCEPTION(val, internal)                     \
-	if (EXPECTED(m_try_stack.size())) {                    \
-		size_t catch_addr = m_try_stack.top().first;       \
-		if (m_try_stack.top().second > 1) {                \
-			m_try_stack.pop();                             \
-			if (m_try_stack.size()) {                      \
-				catch_addr = m_try_stack.top().first;      \
-			} else {                                       \
-				if (!internal) {                           \
-					m_exception = new Value();             \
-					m_exception->copy(val);                \
-				}                                          \
-				VM_EXIT_UNHANDLED_EXCEPTION();             \
-			}                                              \
-		}                                                  \
-		getValue(m_inst[catch_addr].op1)->copy(val);       \
-		if (internal) {                                    \
-			m_exception->delRef();                         \
-			m_exception = NULL;                            \
-		}                                                  \
-		VM_GOTO(catch_addr);                               \
-	} else {                                               \
-		if (!internal) {                                   \
-			m_exception = new Value();                     \
-			m_exception->copy(val);                        \
-		}                                                  \
-		VM_EXIT_UNHANDLED_EXCEPTION();                     \
-	}
 
 namespace clever {
 
@@ -211,6 +181,39 @@ void VM::setException(Value* exception)
 	m_exception->copy(exception);
 }
 
+// Executes the supplied function
+Value* VM::runFunction(Function* func, std::vector<Value*>* args)
+{
+	Value* result = new Value;
+
+	if (func->isInternal()) {
+		func->getPtr()(result, *args, this);
+	} else {
+		Environment* fenv = func->getEnvironment()->activate(m_call_stack.top());
+		fenv->setRetVal(result);
+		fenv->setRetAddr(m_inst.size()-1);
+
+		m_call_stack.push(fenv);
+		m_call_args.clear();
+
+		if (EXPECTED(args != NULL)) {
+			for (size_t i = 0, j = args->size(); i < j; ++i) {
+				m_call_args.push_back(args->at(i));
+			}
+		}
+
+		size_t saved_pc = m_pc;
+
+		m_pc = func->getAddr() + (func->getNumArgs() * 3);
+
+		run();
+
+		m_pc = saved_pc;
+	}
+
+	return result;
+}
+
 // Executes the VM opcodes
 // When building on GCC the code will use direct threading code, otherwise
 // the switch-based dispatching is used
@@ -268,7 +271,7 @@ void VM::run()
 				lhs->getType()->add(getValue(OPCODE.result), lhs, rhs, this);
 
 				if (UNEXPECTED(m_exception != NULL)) {
-					THROW_EXCEPTION(m_exception, 1);
+					goto throw_exception;
 				}
 			} else {
 				error(VM_ERROR, "Operation cannot be executed on null value");
@@ -283,6 +286,10 @@ void VM::run()
 
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
 				lhs->getType()->sub(getValue(OPCODE.result), lhs, rhs, this);
+
+				if (UNEXPECTED(m_exception != NULL)) {
+					goto throw_exception;
+				}
 			} else {
 				error(VM_ERROR, "Operation cannot be executed on null value");
 			}
@@ -296,6 +303,10 @@ void VM::run()
 
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
 				lhs->getType()->mul(getValue(OPCODE.result), lhs, rhs, this);
+
+				if (UNEXPECTED(m_exception != NULL)) {
+					goto throw_exception;
+				}
 			} else {
 				error(VM_ERROR, "Operation cannot be executed on null value");
 			}
@@ -309,6 +320,10 @@ void VM::run()
 
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
 				lhs->getType()->div(getValue(OPCODE.result), lhs, rhs, this);
+
+				if (UNEXPECTED(m_exception != NULL)) {
+					goto throw_exception;
+				}
 			} else {
 				error(VM_ERROR, "Operation cannot be executed on null value");
 			}
@@ -322,6 +337,10 @@ void VM::run()
 
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
 				lhs->getType()->mod(getValue(OPCODE.result), lhs, rhs, this);
+
+				if (UNEXPECTED(m_exception != NULL)) {
+					goto throw_exception;
+				}
 			} else {
 				error(VM_ERROR, "Operation cannot be executed on null value");
 			}
@@ -357,7 +376,7 @@ void VM::run()
 				if (fdata->hasArgs()) {
 					ValueOffset argoff(0,0);
 
-					for (size_t i = 0, len = m_call_args.size(); i < len; i++) {
+					for (size_t i = 0, len = fdata->getNumArgs(); i < len; ++i) {
 						fenv->getValue(argoff)->copy(m_call_args[i]);
 						argoff.second++;
 					}
@@ -375,7 +394,7 @@ void VM::run()
 				m_call_args.clear();
 
 				if (UNEXPECTED(m_exception != NULL)) {
-					THROW_EXCEPTION(m_exception, 1);
+					goto throw_exception;
 				}
 			}
 		}
@@ -516,6 +535,10 @@ void VM::run()
 			if (EXPECTED(!value->isNull())) {
 				value->getType()->increment(value, this);
 				getValue(OPCODE.result)->copy(value);
+
+				if (UNEXPECTED(m_exception != NULL)) {
+					goto throw_exception;
+				}
 			} else {
 				error(VM_ERROR, "Cannot increment null value");
 			}
@@ -529,6 +552,10 @@ void VM::run()
 			if (EXPECTED(!value->isNull())) {
 				getValue(OPCODE.result)->copy(value);
 				value->getType()->increment(value, this);
+
+				if (UNEXPECTED(m_exception != NULL)) {
+					goto throw_exception;
+				}
 			} else {
 				error(VM_ERROR, "Cannot increment null value");
 			}
@@ -542,6 +569,10 @@ void VM::run()
 			if (EXPECTED(!value->isNull())) {
 				value->getType()->decrement(value, this);
 				getValue(OPCODE.result)->copy(value);
+
+				if (UNEXPECTED(m_exception != NULL)) {
+					goto throw_exception;
+				}
 			} else {
 				error(VM_ERROR, "Cannot decrement null value");
 			}
@@ -555,6 +586,10 @@ void VM::run()
 			if (EXPECTED(!value->isNull())) {
 				getValue(OPCODE.result)->copy(value);
 				value->getType()->decrement(value, this);
+
+				if (UNEXPECTED(m_exception != NULL)) {
+					goto throw_exception;
+				}
 			} else {
 				error(VM_ERROR, "Cannot decrement null value");
 			}
@@ -607,6 +642,10 @@ void VM::run()
 
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
 				lhs->getType()->greater(getValue(OPCODE.result), lhs, rhs, this);
+
+				if (UNEXPECTED(m_exception != NULL)) {
+					goto throw_exception;
+				}
 			} else {
 				getValue(OPCODE.result)->setBool(false);
 			}
@@ -620,6 +659,10 @@ void VM::run()
 
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
 				lhs->getType()->greater_equal(getValue(OPCODE.result), lhs, rhs, this);
+
+				if (UNEXPECTED(m_exception != NULL)) {
+					goto throw_exception;
+				}
 			} else {
 				getValue(OPCODE.result)->setBool(false);
 			}
@@ -633,6 +676,10 @@ void VM::run()
 
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
 				lhs->getType()->less(getValue(OPCODE.result), lhs, rhs, this);
+
+				if (UNEXPECTED(m_exception != NULL)) {
+					goto throw_exception;
+				}
 			} else {
 				getValue(OPCODE.result)->setBool(false);
 			}
@@ -646,6 +693,10 @@ void VM::run()
 
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
 				lhs->getType()->less_equal(getValue(OPCODE.result), lhs, rhs, this);
+
+				if (UNEXPECTED(m_exception != NULL)) {
+					goto throw_exception;
+				}
 			} else {
 				getValue(OPCODE.result)->setBool(false);
 			}
@@ -659,6 +710,10 @@ void VM::run()
 
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
 				lhs->getType()->equal(getValue(OPCODE.result), lhs, rhs, this);
+
+				if (UNEXPECTED(m_exception != NULL)) {
+					goto throw_exception;
+				}
 			} else {
 				getValue(OPCODE.result)->setBool(false);
 			}
@@ -672,6 +727,10 @@ void VM::run()
 
 			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
 				lhs->getType()->not_equal(getValue(OPCODE.result), lhs, rhs, this);
+
+				if (UNEXPECTED(m_exception != NULL)) {
+					goto throw_exception;
+				}
 			} else {
 				getValue(OPCODE.result)->setBool(false);
 			}
@@ -717,7 +776,7 @@ void VM::run()
 				m_call_args.clear();
 
 				if (UNEXPECTED(m_exception != NULL)) {
-					THROW_EXCEPTION(m_exception, 1);
+					goto throw_exception;
 				}
 			} else {
 				error(VM_ERROR, "Method not found!");
@@ -739,7 +798,7 @@ void VM::run()
 				m_call_args.clear();
 
 				if (UNEXPECTED(m_exception != NULL)) {
-					THROW_EXCEPTION(m_exception, 1);
+					goto throw_exception;
 				}
 			} else {
 				error(VM_ERROR, "Method not found!");
@@ -755,7 +814,6 @@ void VM::run()
 
 			if (EXPECTED((prop_value = obj->getType()->getProperty(prop_name->getStr())))) {
 				getValue(OPCODE.result)->copy(prop_value);
-				m_call_args.clear();
 			} else {
 				error(VM_ERROR, "Property not found!");
 			}
@@ -771,8 +829,25 @@ void VM::run()
 		DISPATCH;
 
 	OP(OP_THROW):
-		THROW_EXCEPTION(getValue(OPCODE.op1), 0);
-		DISPATCH;
+		m_exception = getValue(OPCODE.op1)->clone();
+		goto throw_exception;
+
+throw_exception:
+		if (EXPECTED(m_try_stack.size())) {
+			size_t catch_addr = m_try_stack.top().first;
+			if (m_try_stack.top().second > 1) {
+				m_try_stack.pop();
+				if (!m_try_stack.size()) {
+					goto exit_exception;
+				}
+				catch_addr = m_try_stack.top().first;
+			}
+			getValue(m_inst[catch_addr].op1)->copy(m_exception);
+			m_exception->delRef();
+			m_exception = NULL;
+			VM_GOTO(catch_addr);
+		}
+		goto exit_exception;
 
 	OP(OP_ETRY):
 		m_try_stack.pop();
@@ -784,8 +859,8 @@ void VM::run()
 	END_OPCODES;
 
 exit_exception:
-	clever_fatal("Fatal error: Unhandled exception!\nMessage: %S",
-		m_exception->getStr());
+	clever_fatal("Fatal error: Unhandled exception!\nMessage: %v", m_exception);
+
 exit:
 	wait();
 }

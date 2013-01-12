@@ -25,20 +25,10 @@ namespace clever {
 
 class Scope;
 class Value;
+class Function;
 
 typedef std::vector<std::pair<size_t, Value*> > FuncVars;
 
-/*
-/// Stackframe representation
-struct StackFrame {
-	size_t ret_addr;     // Return address
-	Value* ret_val;      // Return value
-	Scope* arg_vars;     // Function arguments
-
-	StackFrame()
-		: ret_addr(0), ret_val(NULL), arg_vars(NULL) {}
-};
-*/
 class VM;
 
 struct VMThread {
@@ -82,6 +72,8 @@ public:
 
 	bool isMain() const { return m_is_main_thread; }
 
+	void setPC(size_t pc) { m_pc = pc; }
+
 	size_t getPC() const { return m_pc; }
 
 	void nextPC() { ++m_pc; }
@@ -100,6 +92,7 @@ public:
 	}
 	/// Start the VM execution
 	void run();
+	Value* runFunction(Function*, std::vector<Value*>*);
 
 	/// Wait threads
 	void wait();

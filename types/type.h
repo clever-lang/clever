@@ -21,8 +21,6 @@ namespace clever {
 
 class VM;
 
-#define CLEVER_TYPE_DEFAULT_OPERATOR_IMPL CLEVER_THROW("Operation not allowed in this type");
-
 #define CLEVER_TYPE_OPERATOR_ARGS Value* result, const Value* lhs, const Value* rhs, const VM* vm
 
 #define CLEVER_TYPE_VIRTUAL_METHOD_DECLARATIONS                          \

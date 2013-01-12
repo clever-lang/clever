@@ -9,9 +9,7 @@
 
 namespace clever { namespace packages {
 
-/**
- * Initializes Std package
- */
+// Initializes Std package
 void Std::init() {
 #ifdef HAVE_MOD_STD_IO
 	addModule(new std::IOModule);
@@ -34,6 +32,9 @@ void Std::init() {
 #endif
 #ifdef HAVE_MOD_STD_SYS
 	addModule(new std::SYSModule);
+#endif
+#ifdef HAVE_MOD_STD_FILE
+	addModule(new std::FileModule);
 #endif
 #ifdef HAVE_MOD_STD_NET
 	addModule(new std::NetModule);

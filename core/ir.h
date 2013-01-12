@@ -30,13 +30,15 @@ struct Operand {
 	ValueOffset voffset;
 	size_t jmp_addr;
 
-	Operand() : op_type(UNUSED), voffset(0,0), jmp_addr(0) {}
+	Operand()
+		: op_type(UNUSED), voffset(0,0), jmp_addr(0) {}
 
 	Operand(OperandType _op_type)
 		: op_type(_op_type), voffset(0,0), jmp_addr(0) {}
 
 	Operand(OperandType op_type_, const ValueOffset& voffset_)
 		: op_type(op_type_), voffset(voffset_), jmp_addr(0) {}
+
 	Operand(OperandType op_type_, size_t jmp_addr_)
 		: op_type(op_type_), voffset(0,0), jmp_addr(jmp_addr_) {}
 };

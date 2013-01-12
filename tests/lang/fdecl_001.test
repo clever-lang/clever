@@ -1,0 +1,6 @@
+Invalid default argument position
+==CODE==
+function f(a=1, b) {
+}
+==RESULT==
+Compile error: Non-default argument found after the default argument list on \S+ line \d+
