@@ -39,18 +39,18 @@ public:
 	virtual void* allocData(CLEVER_TYPE_CTOR_ARGS) const;
 	virtual void deallocData(void* data);
 
-	CLEVER_METHOD_D(getLength);
-	CLEVER_METHOD_D(startsWith);
-	CLEVER_METHOD_D(endsWith);
-	CLEVER_METHOD_D(indexOf);
-	CLEVER_METHOD_D(lastIndexOf);
-	CLEVER_METHOD_D(toLower);
-	CLEVER_METHOD_D(toUpper);
-	CLEVER_METHOD_D(reverse);
-	CLEVER_METHOD_D(trim);
-	CLEVER_METHOD_D(truncate);
-	CLEVER_METHOD_D(append);
-	CLEVER_METHOD_D(replace);
+	CLEVER_METHOD(getLength);
+	CLEVER_METHOD(startsWith);
+	CLEVER_METHOD(endsWith);
+	CLEVER_METHOD(indexOf);
+	CLEVER_METHOD(lastIndexOf);
+	CLEVER_METHOD(toLower);
+	CLEVER_METHOD(toUpper);
+	CLEVER_METHOD(reverse);
+	CLEVER_METHOD(trim);
+	CLEVER_METHOD(truncate);
+	CLEVER_METHOD(append);
+	CLEVER_METHOD(replace);
 };
 
 }}} // clever::packages::std

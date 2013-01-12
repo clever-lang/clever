@@ -45,7 +45,6 @@ class VM;
 #define CLEVER_TYPE_INIT(name) void name(CLEVER_TYPE_INIT_ARGS)
 
 #define CLEVER_METHOD_ARGS Value* result, const Value* obj, const ::std::vector<Value*>& args, const VM* vm, CException* exception
-#define CLEVER_METHOD_D(name) void name(CLEVER_METHOD_ARGS) const
 #define CLEVER_METHOD(name) void name(CLEVER_METHOD_ARGS) const
 
 #define CLEVER_TYPE_CTOR_ARGS const ::std::vector<Value*>* args

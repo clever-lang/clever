@@ -40,21 +40,20 @@ public:
 	void dump(const void* value, ::std::ostream& out) const { out << "TcpSocket"; }
 
 	// Type methods
-	CLEVER_METHOD_D(constructor);
-	CLEVER_METHOD_D(setHost);
-	CLEVER_METHOD_D(setPort);
-	CLEVER_METHOD_D(setTimeout);
-	CLEVER_METHOD_D(connect);
-	CLEVER_METHOD_D(close);
-	CLEVER_METHOD_D(receive);
-	CLEVER_METHOD_D(send);
-	CLEVER_METHOD_D(isOpen);
-	CLEVER_METHOD_D(poll);
-	CLEVER_METHOD_D(good);
-	CLEVER_METHOD_D(getError);
-	CLEVER_METHOD_D(getErrorMessage);
-	CLEVER_METHOD_D(toString);
-	CLEVER_METHOD_D(do_assign);
+	CLEVER_METHOD(setHost);
+	CLEVER_METHOD(setPort);
+	CLEVER_METHOD(setTimeout);
+	CLEVER_METHOD(connect);
+	CLEVER_METHOD(close);
+	CLEVER_METHOD(receive);
+	CLEVER_METHOD(send);
+	CLEVER_METHOD(isOpen);
+	CLEVER_METHOD(poll);
+	CLEVER_METHOD(good);
+	CLEVER_METHOD(getError);
+	CLEVER_METHOD(getErrorMessage);
+	CLEVER_METHOD(toString);
+	CLEVER_METHOD(do_assign);
 private:
 	DISALLOW_COPY_AND_ASSIGN(TcpSocket);
 };

@@ -30,12 +30,12 @@ public:
 	virtual void* allocData(CLEVER_TYPE_CTOR_ARGS) const;
 	virtual void deallocData(void* data);
 
-	CLEVER_METHOD_D(read);
-	CLEVER_METHOD_D(readLine);
-	CLEVER_METHOD_D(write);
-	CLEVER_METHOD_D(open);
-	CLEVER_METHOD_D(close);
-	CLEVER_METHOD_D(isOpen);
+	CLEVER_METHOD(read);
+	CLEVER_METHOD(readLine);
+	CLEVER_METHOD(write);
+	CLEVER_METHOD(open);
+	CLEVER_METHOD(close);
+	CLEVER_METHOD(isOpen);
 };
 
 }}} // clever::packages::std
