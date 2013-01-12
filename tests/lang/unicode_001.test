@@ -12,10 +12,9 @@ printf("UString.lastIndexOf(o)=\1\n", ustring.lastIndexOf("o"));
 ustring.toUpper();
 ustring.toLower();
 printf("UString: \1\n", ustring);
-println("");
 ==RESULT==
 UString: Hello World さくら
-UString.getLength(ustring)=21
-UString.indexOf(W)=6
-UString.lastIndexOf(o)=7
+UString.getLength\(ustring\)=21
+UString.indexOf\(W\)=6
+UString.lastIndexOf\(o\)=7
 UString: hello world さくら
