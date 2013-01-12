@@ -18,15 +18,13 @@ namespace clever { namespace packages { namespace std { namespace net {
 class SocketObject : public ValueObject {
 public:
 	SocketObject()
-		: ValueObject() { socket = new CSocket(); }
+		: ValueObject() {}
 
-	virtual ~SocketObject() { delete socket; }
+	virtual ~SocketObject() {}
 
-	bool valid() const { return socket != NULL; }
-
-	CSocket* getSocket() { return this->socket; }
+	CSocket& getSocket() { return m_socket; }
 private:
-	CSocket* socket;
+	CSocket m_socket;
 };
 
 class TcpSocket : public Type {
@@ -36,7 +34,7 @@ public:
 
 	void init();
 	void* allocData(CLEVER_TYPE_CTOR_ARGS) const;
-	void deallocData(void*) const;
+	void deallocData(void*);
 
 	void dump(const void* value) const { dump(value, ::std::cout); }
 	void dump(const void* value, ::std::ostream& out) const { out << "TcpSocket"; }
