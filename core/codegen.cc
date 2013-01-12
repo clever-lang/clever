@@ -295,7 +295,19 @@ void Codegen::visit(While* node)
 
 	_prepare_operand(m_ir.back().op1, cond);
 
+	m_brks.push(AddrVector());
+	m_brks.top().push_back(start_while);
+
 	node->getBlock()->accept(*this);
+
+	if (m_brks.top().size() > 1) {
+		// Set the break statements jmp address
+		for (size_t i = 0, j = m_brks.top().size(); i < j; ++i) {
+			m_ir[m_brks.top()[i]].op1.jmp_addr = m_ir.size() + 1;
+		}
+	}
+
+	m_brks.pop();
 
 	m_ir.push_back(IR(OP_JMP, Operand(JMP_ADDR, start_while)));
 
@@ -564,6 +576,17 @@ void Codegen::visit(Throw* node)
 	m_ir.push_back(IR(OP_THROW));
 
 	_prepare_operand(m_ir.back().op1, node->getExpr());
+}
+
+void Codegen::visit(Continue* node)
+{
+	m_ir.push_back(IR(OP_JMP, Operand(JMP_ADDR, m_brks.top().front())));
+}
+
+void Codegen::visit(Break* node)
+{
+	m_brks.top().push_back(m_ir.size());
+	m_ir.push_back(IR(OP_JMP, Operand(JMP_ADDR, 0)));
 }
 
 }} // clever::ast

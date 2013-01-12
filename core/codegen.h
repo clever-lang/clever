@@ -67,6 +67,8 @@ public:
 	void visit(Property*);
 	void visit(Try*);
 	void visit(Throw*);
+	void visit(Continue*);
+	void visit(Break*);
 private:
 	IRVector& m_ir;
 	Compiler* m_compiler;
@@ -74,6 +76,7 @@ private:
 	Environment* m_const_env;
 	Environment* m_temp_env;
 	JmpList m_jmps;
+	JmpList m_brks;
 
 	std::map<Thread*, size_t> m_thread_ids;
 

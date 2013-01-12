@@ -44,6 +44,8 @@ public:
 	virtual void visit(TrueLit*) {}
 	virtual void visit(FalseLit*) {}
 	virtual void visit(Array*) {}
+	virtual void visit(Break*) {}
+	virtual void visit(Continue*) {}
 
 	virtual void visit(Return* node);
 	virtual void visit(Logic* node);

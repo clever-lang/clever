@@ -59,6 +59,8 @@ class Value;
 	ast::Throw* throw_;
 	ast::TrueLit* true_;
 	ast::FalseLit* false_;
+	ast::Break* break_;
+	ast::Continue* continue_;
 }
 
 %type <type> TYPE
@@ -96,6 +98,8 @@ class Value;
 %type <except> try_catch_finally
 %type <catch_> catch_impl
 %type <throw_> throw
+%type <break_> break
+%type <continue_> continue
 
 // The parsing context.
 %parse-param { Driver& driver }
@@ -171,6 +175,7 @@ class Value;
 %token CATCH         "catch"
 %token TRY           "try"
 %token THROW         "throw"
+%token CONTINUE      "continue"
 
 %left ',';
 %left LOGICAL_OR;
@@ -223,6 +228,8 @@ statement:
 	|   critical_block
 	|	wait ';'
 	|	throw ';'
+	|	break ';'
+	|	continue ';'
 	|	try_catch_finally
 ;
 
@@ -233,6 +240,14 @@ block:
 instantiation:
 		TYPE '.' NEW                   { $$ = new ast::Instantiation($1, NULL, yyloc); }
 	|	TYPE '.' NEW '(' call_args ')' { $$ = new ast::Instantiation($1, $5,   yyloc); }
+;
+
+break:
+		BREAK { $$ = new ast::Break(yyloc); }
+;
+
+continue:
+		CONTINUE { $$ = new ast::Continue(yyloc); }
 ;
 
 wait:

@@ -45,6 +45,8 @@ class Try;
 class TrueLit;
 class FalseLit;
 class Array;
+class Break;
+class Continue;
 
 typedef std::vector<Node*> NodeList;
 
@@ -1083,6 +1085,32 @@ private:
 	Node* m_expr;
 
 	DISALLOW_COPY_AND_ASSIGN(Throw);
+};
+
+class Break: public Node {
+public:
+	Break(const location& location)
+		: Node(location) {}
+
+	~Break() {}
+
+	virtual void accept(Visitor& visitor);
+	virtual Node* accept(Transformer& transformer);
+private:
+	DISALLOW_COPY_AND_ASSIGN(Break);
+};
+
+class Continue: public Node {
+public:
+	Continue(const location& location)
+		: Node(location) {}
+
+	~Continue() {}
+
+	virtual void accept(Visitor& visitor);
+	virtual Node* accept(Transformer& transformer);
+private:
+	DISALLOW_COPY_AND_ASSIGN(Continue);
 };
 
 }} // clever::ast
