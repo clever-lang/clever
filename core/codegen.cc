@@ -249,18 +249,7 @@ void Codegen::visit(FunctionDecl* node)
 	func->setAddr(m_ir.size());
 
 	if (node->hasArgs()) {
-		bool found_rhs = false;
-		for (size_t i = 0; i < node->numArgs(); ++i) {
-			Assignment* a = static_cast<VariableDecl*>(node->getArg(i))->getAssignment();
-
-			if (found_rhs && !a->getRhs()) {
-				Compiler::error("Non-default argument found after the default argument list.");
-			} else if (!found_rhs && a->getRhs()) {
-				found_rhs = a->getRhs();
-			}
-
-			node->getArg(i)->accept(*this);
-		}
+		node->getArgs()->accept(*this);
 	}
 
 	node->getBlock()->accept(*this);
