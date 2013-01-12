@@ -165,14 +165,17 @@ void printf(const char* format, ...) {
 //	b - boolean
 //	n - numeric
 //	c - current object
-//	* - any type
+//  . - any type
+//	* - variadic
 // Example:
-//	clever_check_args("sii") - check that the first arg is string and the next two are integral
-//	clever_check_args("sdi") - check that the first arg is a string, the second a double and the third an integer
+//	clever_check_args("sii") - check that the first arg is string and the next
+//								two are integers
+//	clever_check_args("sdi") - check that the first arg is a string, the second
+//								a double and the third an integer
 //	clever_check_args("*si") - ignore the first arg, verify the second and third
-// NOTE:
-//	We could pass in another parameter to cause a fatality/throw exception on error here, for now fail gracefully
-bool check_args(const ::std::vector<Value*>& args, const char* typespec, CException* exception, const Type* type) {
+bool check_args(const ::std::vector<Value*>& args, const char* typespec,
+	CException* exception, const Type* type)
+{
 	size_t argslen = args.size();
 
 	// Void arguments checking
@@ -283,13 +286,12 @@ bool check_args(const ::std::vector<Value*>& args, const char* typespec, CExcept
 			// Any type
 			case '.':
 				break;
-
 			// Var arg
 			case '*':
 				goto done;
 
 			default:
-				/** Value::verify encountered an unexpected type specification @ arg **/
+				clever_fatal("Wrong type specifier found");
 				break;
 		}
 	}
