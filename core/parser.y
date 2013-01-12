@@ -28,7 +28,7 @@ class Value;
 	ast::Node* node;
 	ast::Block* block;
 	ast::ThreadBlock* threadblock;
-	ast::Wait* waitblock;
+	ast::Wait* wait;
 	ast::CriticalBlock* criticalblock;
 	ast::NodeArray* narray;
 	ast::Ident* ident;
@@ -76,7 +76,7 @@ class Value;
 %type <vardecl> const_decl_impl
 %type <block> statement_list block finally
 %type <threadblock> thread_block
-%type <waitblock> wait_block
+%type <wait> wait
 %type <criticalblock> critical_block
 %type <arithmetic> arithmetic
 %type <bitwise> bitwise
@@ -221,7 +221,7 @@ statement:
 	|	block
 	|	thread_block
 	|   critical_block
-	|	wait_block ';'
+	|	wait ';'
 	|	throw ';'
 	|	try_catch_finally
 ;
@@ -235,7 +235,7 @@ instantiation:
 	|	TYPE '.' NEW '(' call_args ')' { $$ = new ast::Instantiation($1, $5,   yyloc); }
 ;
 
-wait_block:
+wait:
 		WAIT IDENT { $$ = new ast::Wait($2, yyloc); }
 ;
 
