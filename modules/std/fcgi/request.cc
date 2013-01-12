@@ -21,23 +21,6 @@ extern char ** environ;
 #include "modules/std/fcgi/fcgi.h"
 #include "modules/std/fcgi/request.h"
 
-/*
-Here is the basic structure of FCGI programs in clever
-import std.io.*;
-import std.fcgi.*;
-
-var fcgi = Request.new([address, [backlog]]);
-
-while (fcgi.accept()) {
-	fcgi.print("Content-Type: text/html\r\n");
-	fcgi.print("\r\n");
-	fcgi.print("Hello World\n");
-	fcgi.debug();
-	fcgi.finish();
-}
-
-fcgi.finish();
-*/
 namespace clever { namespace packages { namespace std {
 
 #define CLEVER_FCGI_STDIN_MAX 1000000
@@ -67,6 +50,7 @@ void* Request::allocData(CLEVER_TYPE_CTOR_ARGS) const {
 		/* I KNOW THIS IS A BIT MESSY I AM WORKING ON IT */
 		::std::cout << "[FCGI SETUP]" << ::std::endl;
 		if (args->size()) {
+			FCGX_Init();
 			::std::cout << "[SOCKET SETUP]" << ::std::endl;
 			socket = FCGX_OpenSocket(
 				(args->at(0)->getType() == CLEVER_STR_TYPE) ? 
@@ -77,8 +61,8 @@ void* Request::allocData(CLEVER_TYPE_CTOR_ARGS) const {
 			if (socket) {
 				::std::cout << "[SOCKET OPENED (" << socket << ")]" << ::std::endl;
 			} else ::std::cout << "[SOCKET FAILED]" << ::std::endl;
-		} else FCGX_Init();
-
+		}
+		
 		if (FCGX_InitRequest(
 				request, 
 				socket, 
@@ -87,6 +71,7 @@ void* Request::allocData(CLEVER_TYPE_CTOR_ARGS) const {
 			::std::cout << "[FCGI READY]" << ::std::endl;
 			return request;
 		} else ::std::cout << "[FCGI FAILED]" << ::std::endl;
+		
 		delete request;
 	}
 	return NULL;
