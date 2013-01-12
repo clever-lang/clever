@@ -254,14 +254,19 @@ bool check_args(const ::std::vector<Value*>& args, const char* typespec, CExcept
 				}
 				break;
 			// Any type
-			case '*':
+			case '.':
 				break;
+
+			// Var arg
+			case '*':
+				goto done;
 
 			default:
 				/** Value::verify encountered an unexpected type specification @ arg **/
 				break;
 		}
 	}
+done:
 	return true;
 }
 
