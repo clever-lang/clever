@@ -29,10 +29,10 @@ void Std::init() {
 #ifdef HAVE_MOD_STD_FILE
 	addModule(new std::FileModule);
 #endif
-/*
 #ifdef HAVE_MOD_STD_NET
 	addModule(new std::NetModule);
 #endif
+/*
 #ifdef HAVE_MOD_STD_REGEX
 	addModule(new std::Regex);
 #endif

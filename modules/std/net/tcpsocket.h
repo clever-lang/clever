@@ -1,36 +1,33 @@
 /**
  * Clever programming language
- * Copyright (c) 2012 Clever Team
+ * Copyright (c) Clever Team
  *
- * Permission is hereby granted, free of charge, to any person
- * obtaining a copy of this software and associated documentation
- * files (the "Software"), to deal in the Software without
- * restriction, including without limitation the rights to use,
- * copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following
- * conditions:
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- *
- *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
- * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
- * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
- * OTHER DEALINGS IN THE SOFTWARE.
+ * This file is distributed under the MIT license. See LICENSE for details.
  */
 
 #ifndef CLEVER_TCPSOCKET_H
 #define CLEVER_TCPSOCKET_H
 
+#include <ostream>
 #include "types/type.h"
-#include "compiler/value.h"
+#include "core/value.h"
 #include "modules/std/net/socketvalue.h"
 
 namespace clever { namespace packages { namespace std { namespace net {
+
+class SocketObject : public ValueObject {
+public:
+	SocketObject()
+		: ValueObject() { socket = new CSocket(); }
+
+	virtual ~SocketObject() { delete socket; }
+
+	bool valid() const { return socket != NULL; }
+
+	CSocket* getSocket() { return this->socket; }
+private:
+	CSocket* socket;
+};
 
 class TcpSocket : public Type {
 public:
@@ -38,27 +35,28 @@ public:
 		Type(CSTRING("TcpSocket")) { }
 
 	void init();
-	DataValue* allocateValue() const;
-	void destructor(Value* value) const;
+	void* allocData(CLEVER_TYPE_CTOR_ARGS) const;
+	void deallocData(void*) const;
 
-	/**
-	 * Type methods
-	 */
-	static CLEVER_METHOD(constructor);
-	static CLEVER_METHOD(setHost);
-	static CLEVER_METHOD(setPort);
-	static CLEVER_METHOD(setTimeout);
-	static CLEVER_METHOD(connect);
-	static CLEVER_METHOD(close);
-	static CLEVER_METHOD(receive);
-	static CLEVER_METHOD(send);
-	static CLEVER_METHOD(isOpen);
-	static CLEVER_METHOD(poll);
-	static CLEVER_METHOD(good);
-	static CLEVER_METHOD(getError);
-	static CLEVER_METHOD(getErrorMessage);
-	static CLEVER_METHOD(toString);
-	static CLEVER_METHOD(do_assign);
+	void dump(const void* value) const { dump(value, ::std::cout); }
+	void dump(const void* value, ::std::ostream& out) const { out << "TcpSocket"; }
+
+	// Type methods
+	CLEVER_METHOD_D(constructor);
+	CLEVER_METHOD_D(setHost);
+	CLEVER_METHOD_D(setPort);
+	CLEVER_METHOD_D(setTimeout);
+	CLEVER_METHOD_D(connect);
+	CLEVER_METHOD_D(close);
+	CLEVER_METHOD_D(receive);
+	CLEVER_METHOD_D(send);
+	CLEVER_METHOD_D(isOpen);
+	CLEVER_METHOD_D(poll);
+	CLEVER_METHOD_D(good);
+	CLEVER_METHOD_D(getError);
+	CLEVER_METHOD_D(getErrorMessage);
+	CLEVER_METHOD_D(toString);
+	CLEVER_METHOD_D(do_assign);
 private:
 	DISALLOW_COPY_AND_ASSIGN(TcpSocket);
 };

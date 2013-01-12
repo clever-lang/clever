@@ -26,24 +26,12 @@
 #ifndef CLEVER_SOCKETVALUE_H
 #define CLEVER_SOCKETVALUE_H
 
-#include "compiler/datavalue.h"
+#include "core/value.h"
 #include "modules/std/net/csocket.h"
 
 namespace clever { namespace packages { namespace std { namespace net {
 
-class SocketValue : public DataValue {
-public:
-	SocketValue() { socket = new CSocket(); }
-	virtual ~SocketValue() { delete socket; }
-	
-	bool valid() const {
-		return socket != NULL;
-	}
-	
-	CSocket* getSocket() { return this->socket; }
-private:
-	CSocket* socket;
-};
+
 
 }}}} // clever::packages::std::net
 
