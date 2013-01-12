@@ -30,10 +30,6 @@ namespace clever { namespace packages { namespace std {
 
 class Request : public Type {
 public:
-	::std::istream* in;
-	::std::ostream* out;
-	::std::ostream* err;
-
 	Request()
 		: Type(CSTRING("Request")) { }
 
@@ -53,6 +49,12 @@ public:
 	CLEVER_METHOD_D(accept);
 	CLEVER_METHOD_D(finish);
 	CLEVER_METHOD_D(print);
+	CLEVER_METHOD_D(flush);
+
+	CLEVER_METHOD_D(getParam);
+	CLEVER_METHOD_D(getParams);
+
+	CLEVER_METHOD_D(debug);
 };
 
 }}} // clever::packages::std
