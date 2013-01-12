@@ -22,6 +22,20 @@ while(fcgi.accept()) {
 	fcgi.print(String.format("SERVER_NAME: \1<br/>\n", fcgi.getParam("SERVER_NAME")));
 	fcgi.print(String.format("QUERY_STRING: \1<br/>\n", fcgi.getParam("QUERY_STRING")));
 	fcgi.print(String.format("Got a total of \1 parameters<br/>\n", fcgi.getParams()));
+	/*
+	* @TODO Cleverer :)
+	*	var response = Response.new(request|fcgi);
+	*	...
+	*	response.setHeader(key, value);
+	*	response.setHeaders(map);
+	*	...
+	*	response.setCookie(key, value);
+	*	response.setCookies(map);
+	*	...
+	*	response.setBody(string|template|something clever);
+	*	...
+	*	response.send();
+	*/
 	fcgi.debug();
 	fcgi.finish();
 }
