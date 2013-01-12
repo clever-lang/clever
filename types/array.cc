@@ -6,7 +6,9 @@
  */
 
 #include "core/value.h"
+#include "core/vm.h"
 #include "types/array.h"
+#include "types/function.h"
 
 namespace clever {
 
@@ -110,6 +112,28 @@ CLEVER_METHOD(ArrayType::reserve)
 	arr->getData().reserve(args[0]->getInt());
 }
 
+// void Array::each(function)
+CLEVER_METHOD(ArrayType::each)
+{
+	if (!clever_check_args("f")) {
+		return;
+	}
+
+	ArrayObject* arr = CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS());
+	Function* func = static_cast<Function*>(args[0]->getObj());
+	std::vector<Value*>& vec = arr->getData();
+
+	for (size_t i = 0, j = arr->getData().size(); i < j; ++i) {
+		std::vector<Value*> tmp_args;
+
+		tmp_args.push_back(vec[i]);
+
+		Value* res = const_cast<VM*>(vm)->runFunction(func, &tmp_args);
+
+		res->delRef();
+	}
+}
+
 // Type initialization
 CLEVER_TYPE_INIT(ArrayType::init)
 {
@@ -117,6 +141,7 @@ CLEVER_TYPE_INIT(ArrayType::init)
 	addMethod(CSTRING("size"),    (MethodPtr) &ArrayType::size);
 	addMethod(CSTRING("at"),      (MethodPtr) &ArrayType::at);
 	addMethod(CSTRING("reserve"), (MethodPtr) &ArrayType::reserve);
+	addMethod(CSTRING("each"),    (MethodPtr) &ArrayType::each);
 }
 
 } // clever

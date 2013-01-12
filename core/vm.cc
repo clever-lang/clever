@@ -181,6 +181,21 @@ void VM::setException(Value* exception)
 	m_exception->copy(exception);
 }
 
+// Executes the supplied function
+Value* VM::runFunction(Function* func, std::vector<Value*>* args)
+{
+	if (func->isInternal()) {
+		Value* result = new Value;
+
+		func->getPtr()(result, *args, this);
+
+		return result;
+	} else {
+		// TODO(Felipe): user function call
+		return NULL;
+	}
+}
+
 // Executes the VM opcodes
 // When building on GCC the code will use direct threading code, otherwise
 // the switch-based dispatching is used

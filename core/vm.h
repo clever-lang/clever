@@ -25,6 +25,7 @@ namespace clever {
 
 class Scope;
 class Value;
+class Function;
 
 typedef std::vector<std::pair<size_t, Value*> > FuncVars;
 
@@ -71,6 +72,8 @@ public:
 
 	bool isMain() const { return m_is_main_thread; }
 
+	void setPC(size_t pc) { m_pc = pc; }
+
 	size_t getPC() const { return m_pc; }
 
 	void nextPC() { ++m_pc; }
@@ -89,6 +92,7 @@ public:
 	}
 	/// Start the VM execution
 	void run();
+	Value* runFunction(Function*, std::vector<Value*>*);
 
 	/// Wait threads
 	void wait();
