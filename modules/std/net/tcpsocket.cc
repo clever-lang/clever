@@ -7,7 +7,6 @@
 
 #include <iostream>
 #include <fstream>
-#include "core/compiler.h"
 #include "core/cstring.h"
 #include "modules/std/net/tcpsocket.h"
 #include "types/native_types.h"
@@ -114,6 +113,8 @@ CLEVER_METHOD(TcpSocket::receive)
 	sv->getSocket().receive(buffer, length);
 
 	result->setStr(CSTRING(buffer));
+
+	delete[] buffer;
 }
 
 CLEVER_METHOD(TcpSocket::send)

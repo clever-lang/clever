@@ -11,7 +11,7 @@
 #include <ostream>
 #include "types/type.h"
 #include "core/value.h"
-#include "modules/std/net/socketvalue.h"
+#include "modules/std/net/csocket.h"
 
 namespace clever { namespace packages { namespace std { namespace net {
 

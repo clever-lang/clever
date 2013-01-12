@@ -203,7 +203,7 @@ bool CSocket::isOpen()
 
 bool CSocket::poll()
 {
-	struct timeval timeout;
+	struct timeval timeout = {0};
 	fd_set readset;
 	int res;
 

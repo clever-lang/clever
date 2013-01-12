@@ -28,7 +28,8 @@ namespace clever {
 
 class CSocket {
 public:
-	CSocket() {}
+	CSocket()
+		: m_timeout(0) {}
 	~CSocket();
 
 	void setHost(const char *addr);
