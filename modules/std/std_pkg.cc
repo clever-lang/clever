@@ -23,6 +23,13 @@ void Std::init() {
 #ifdef HAVE_MOD_STD_UNICODE
 	addModule(new std::UnicodeModule);
 #endif
+#ifdef HAVE_MOD_STD_FCGI
+	addModule(new std::FCGIModule);
+#endif
+/*
+#ifdef HAVE_MOD_STD_FILE
+	addModule(new std::File);
+#endif
 #ifdef HAVE_MOD_STD_SYS
 	addModule(new std::SYSModule);
 #endif
@@ -32,7 +39,6 @@ void Std::init() {
 #ifdef HAVE_MOD_STD_NET
 	addModule(new std::NetModule);
 #endif
-/*
 #ifdef HAVE_MOD_STD_REGEX
 	addModule(new std::Regex);
 #endif

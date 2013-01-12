@@ -12,6 +12,7 @@ clever_add_module(std_ffi        OFF "enable the ffi module"        "")
 clever_add_module(std_rpc        ON  "enable the rpc module"        "")
 clever_add_module(std_net        ON  "enable the net module"        "")
 clever_add_module(std_unicode    ON  "enable the unicode module"    "")
+clever_add_module(std_fcgi    	 OFF  "enable the fcgi module"    "")
 clever_add_module(web_request    OFF "enable the request module"    "")
 clever_add_module(web_session    OFF "enable the session module"    "")
 
@@ -49,6 +50,20 @@ if (MOD_STD_UNICODE)
 endif (MOD_STD_UNICODE)
 
 clever_module_msg(std_unicode ${MOD_STD_UNICODE})
+
+# std.fcgi
+if (MOD_STD_FCGI)
+	if (FCGI_FOUND)
+		add_definitions(-DHAVE_MOD_STD_FCGI)
+		list(APPEND CLEVER_INCLUDE_DIRS ${FCGI_INCLUDE_DIRS})
+		list(APPEND CLEVER_LIBRARIES ${FCGI_LIBS})
+	else (FCGI_FOUND)
+		clever_module_msg(std_fcgi "libfcgi not found. disabling.")
+		set(MOD_STD_FCGI OFF)
+	endif (FCGI_FOUND)
+endif (MOD_STD_FCGI)
+
+clever_module_msg(std_fcgi ${MOD_STD_FCGI})
 
 # std.ffi
 if (MOD_STD_FFI)
