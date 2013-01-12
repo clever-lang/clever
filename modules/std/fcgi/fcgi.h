@@ -8,6 +8,16 @@
 #ifndef CLEVER_STD_FCGI_H
 #define CLEVER_STD_FCGI_H
 
+#include <stdlib.h>
+#ifdef _WIN32
+#include <process.h>
+#else
+#include <unistd.h>
+extern char ** environ;
+#endif
+#include "fcgio.h"
+#include "fcgi_config.h"  // HAVE_IOSTREAM_WITHASSIGN_STREAMBUF
+
 #include "core/module.h"
 
 #define CLEVER_FCGI_PAIR(k, v) ::std::pair< ::std::string, ::std::string>(k, v)

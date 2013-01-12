@@ -4,16 +4,6 @@
  *
  * This file is distributed under the MIT license. See LICENSE for details.
  */
-#include <stdlib.h>
-#ifdef _WIN32
-#include <process.h>
-#else
-#include <unistd.h>
-extern char ** environ;
-#endif
-#include "fcgio.h"
-#include "fcgi_config.h"  // HAVE_IOSTREAM_WITHASSIGN_STREAMBUF
-
 #include "types/type.h"
 #include "types/native_types.h"
 #include "core/value.h"
@@ -24,7 +14,7 @@ extern char ** environ;
 
 namespace clever { namespace packages { namespace std {
 
-void Response::dump(const void *data) const {
+void Response::dump(const void* data) const {
 	dump(data, ::std::cout);
 }
 
@@ -39,7 +29,7 @@ void* Response::allocData(CLEVER_TYPE_CTOR_ARGS) const {
 	return NULL;
 }
 
-void Response::deallocData(void *data) {
+void Response::deallocData(void* data) {
 
 }
 

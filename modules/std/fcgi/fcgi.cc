@@ -4,17 +4,6 @@
  *
  * This file is distributed under the MIT license. See LICENSE for details.
  */
-
-#include <stdlib.h>
-#ifdef _WIN32
-#include <process.h>
-#else
-#include <unistd.h>
-extern char** environ;
-#endif
-#include "fcgio.h"
-#include "fcgi_config.h"  // HAVE_IOSTREAM_WITHASSIGN_STREAMBUF
-
 #include "core/value.h"
 #include "types/function.h"
 #include "core/pkgmanager.h"

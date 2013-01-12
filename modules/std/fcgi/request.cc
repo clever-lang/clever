@@ -4,16 +4,6 @@
  *
  * This file is distributed under the MIT license. See LICENSE for details.
  */
-#include <stdlib.h>
-#ifdef _WIN32
-#include <process.h>
-#else
-#include <unistd.h>
-extern char ** environ;
-#endif
-#include "fcgio.h"
-#include "fcgi_config.h"  // HAVE_IOSTREAM_WITHASSIGN_STREAMBUF
-
 #include "types/type.h"
 #include "types/native_types.h"
 #include "core/value.h"
@@ -23,11 +13,9 @@ extern char ** environ;
 
 namespace clever { namespace packages { namespace std {
 
-#define CLEVER_FCGI_STDIN_MAX 1000000
-#define CLEVER_FCGI_DEFAULT_SOCK "/var/run/fcgi.sock"
-#define CLEVER_FCGI_DEFAULT_BACKLOG 0
+const size_t CLEVER_FCGI_STDIN_MAX = 1000000;
 
-void Request::dump(const void *data) const {
+void Request::dump(const void* data) const {
 	dump(data, ::std::cout);
 }
 
@@ -58,7 +46,7 @@ void* Request::allocData(CLEVER_TYPE_CTOR_ARGS) const {
 	return NULL;
 }
 
-void Request::deallocData(void *data) {
+void Request::deallocData(void* data) {
 	delete static_cast<FCGX_Request*>(data);
 }
 
@@ -76,9 +64,9 @@ CLEVER_METHOD(Request::accept)
 
 		if ((FCGX_Accept(&request->in, &request->out, &request->err, &request->envp) == 0)) {
 			{
-				const char* const * n = request->envp;
+				const char* const* n = request->envp;
 				if (n) {
-					while(*n) {
+					while (*n) {
 						::std::string l(*n);
 						::std::string k(l.substr(0, l.find_first_of("=")));
 						::std::string v(l.substr(k.length()+1));
