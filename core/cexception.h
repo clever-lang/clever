@@ -17,7 +17,9 @@ public:
 	CException()
 		: m_exception(NULL) {}
 
-	~CException() {}
+	~CException() {
+		CLEVER_SAFE_DELREF(m_exception);
+	}
 
 	void clear() { m_exception = NULL; }
 
@@ -25,8 +27,7 @@ public:
 
 	bool hasException() { return m_exception != NULL; }
 
-	void setException(const char* format, ...)
-	{
+	void setException(const char* format, ...) {
 		std::ostringstream out;
 		va_list args;
 
@@ -40,8 +41,7 @@ public:
 		m_exception->setStr(CSTRING(out.str()));
 	}
 
-	void setException(Value* exception)
-	{
+	void setException(Value* exception) {
 		if (UNEXPECTED(m_exception == NULL)) {
 			m_exception = new Value;
 		}

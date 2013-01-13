@@ -840,7 +840,7 @@ void VM::run()
 		DISPATCH;
 
 	OP(OP_THROW):
-		m_exception.setException(getValue(OPCODE.op1)->clone());
+		m_exception.setException(getValue(OPCODE.op1));
 		goto throw_exception;
 
 throw_exception:
