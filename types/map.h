@@ -45,6 +45,7 @@ public:
 	void decrement(Value* value, const VM* vm) const {}
 
 	CLEVER_METHOD(insert);
+	CLEVER_METHOD(each);
 };
 
 } // clever

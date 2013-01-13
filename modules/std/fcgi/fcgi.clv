@@ -21,16 +21,11 @@ while(server.accept()) {
 	var cookies = server.getCookies();
 	var env = server.getEnvironment();
 	
-	/*
-	* @TODO(krakjoe) 
-	*	The plan is to implement setCookie/setHeader in userland
-	*	We will assume that print() is writing the body
-	*	The first time the user calls print we will generate a header
-	*/
-	server.print("Set-Cookie: session=myid; path=/;\n");
-	server.print("Set-Cookie: other=text; path=/;\n");
-	server.print("Content-Type: text/html\n");
-	server.print("\n");
+	/**
+	* Set Headers and Cookies before printing ...
+	**/
+	
+	server.setHeader("Content-Type", "text/html");
 	server.print(
 		"<html>\n",
 		"<head>\n",

@@ -61,10 +61,8 @@ CLEVER_METHOD(Server::accept)
 		return;
 	}
 
-	env->clear();
-	head->clear();
-	params->clear();
-	cookie->clear();
+	in->clear();
+	out->clear();
 
 	if (FCGX_Accept(&request->in, &request->out, &request->err, &request->envp) != 0) {
 		CLEVER_RETURN_BOOL(false);
@@ -98,7 +96,7 @@ CLEVER_METHOD(Server::accept)
 							case ';': {
 								inv=false;
 								if (name.size() && data.size()) {
-									cookie->insert(CLEVER_FCGI_PAIR(name, data));
+									in->cookie->insert(CLEVER_FCGI_PAIR(name, data));
 								}
 								name.clear();
 								data.clear();
@@ -115,13 +113,13 @@ CLEVER_METHOD(Server::accept)
 					}
 					
 					if (name.size() && data.size()) {
-						cookie->insert(CLEVER_FCGI_PAIR(name, data));
+						in->cookie->insert(CLEVER_FCGI_PAIR(name, data));
 					}			
 				} else {
 					if (k.find("HTTP") == 0) {
-						head->insert(CLEVER_FCGI_PAIR(k.substr(5), v));
+						in->head->insert(CLEVER_FCGI_PAIR(k.substr(5), v));
 					} else {
-						head->insert(CLEVER_FCGI_PAIR(k, v));
+						in->head->insert(CLEVER_FCGI_PAIR(k, v));
 					}
 				}
 				break;
@@ -139,17 +137,17 @@ CLEVER_METHOD(Server::accept)
 								if (split) {
 									::std::string l(chunk.substr(0, split));
 									::std::string r(chunk.substr(split+1, chunk.size()));
-									params->insert(CLEVER_FCGI_PAIR(l, r));
+									in->params->insert(CLEVER_FCGI_PAIR(l, r));
 								} else {
-									params->insert(CLEVER_FCGI_NULL(chunk));
+									in->params->insert(CLEVER_FCGI_NULL(chunk));
 								}
 							}
 						} while((last=(next+1)) && (next = v.find("&", next+1)));
 					} else {
-						env->insert(CLEVER_FCGI_PAIR(k, v));
+						in->env->insert(CLEVER_FCGI_PAIR(k, v));
 					}
 				} else {
-					env->insert(CLEVER_FCGI_PAIR(k, v));
+					in->env->insert(CLEVER_FCGI_PAIR(k, v));
 				}
 				break;
 		}
@@ -165,6 +163,11 @@ CLEVER_METHOD(Server::print)
 	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
 
 	if (request) {
+		if (!out->inBody()) {
+			FCGX_PutStr("Content-Type: text/html\n\n", sizeof("Content-Type: text/html\n\n"), request->out);
+			out->setBody(true);
+		}
+
 		for (size_t arg = 0; arg < args.size(); arg++) {
 			if (CLEVER_ARG_TYPE(arg) == CLEVER_STR_TYPE) {
 				FCGX_PutStr(CLEVER_ARG_CSTR(arg)->c_str(),
@@ -213,9 +216,9 @@ CLEVER_METHOD(Server::getEnvironment)
 	}
 
 	if (args.size()) {
-		CLEVER_FCGI_ITERATOR it = CLEVER_FCGI_FIND(env, CLEVER_ARG_PSTR(0));
+		CLEVER_FCGI_ITERATOR it = CLEVER_FCGI_FIND(in->env, CLEVER_ARG_PSTR(0));
 
-		if (it != CLEVER_FCGI_END(env)) {
+		if (it != CLEVER_FCGI_END(in->env)) {
 			CLEVER_RETURN_STR(CLEVER_FCGI_FETCH(it));
 			return;
 		}
@@ -223,8 +226,8 @@ CLEVER_METHOD(Server::getEnvironment)
 	} else {
 		::std::vector<Value*> mapping;
 
-		CLEVER_FCGI_ITERATOR item(env->begin());
-		CLEVER_FCGI_ITERATOR last(env->end());
+		CLEVER_FCGI_ITERATOR item(in->env->begin());
+		CLEVER_FCGI_ITERATOR last(in->env->end());
 
 		while (item != last) {
 			mapping.push_back(new Value(CSTRING(item->first)));
@@ -251,10 +254,10 @@ CLEVER_METHOD(Server::getParam)
 		return;
 	}
 
-	if (params->size()) {
-		CLEVER_FCGI_ITERATOR it = CLEVER_FCGI_FIND(params, CLEVER_ARG_PSTR(0));
+	if (in->params->size()) {
+		CLEVER_FCGI_ITERATOR it = CLEVER_FCGI_FIND(in->params, CLEVER_ARG_PSTR(0));
 
-		if (it != CLEVER_FCGI_END(params)) {
+		if (it != CLEVER_FCGI_END(in->params)) {
 			CLEVER_RETURN_STR(CLEVER_FCGI_FETCH(it));
 			return;
 		}
@@ -277,9 +280,9 @@ CLEVER_METHOD(Server::getHeader)
 		return;
 	}
 
-	if (head->size()) {
-		CLEVER_FCGI_ITERATOR it = CLEVER_FCGI_FIND(head, CLEVER_ARG_PSTR(0));
-		if (it != CLEVER_FCGI_END(head)) {
+	if (in->head->size()) {
+		CLEVER_FCGI_ITERATOR it = CLEVER_FCGI_FIND(in->head, CLEVER_ARG_PSTR(0));
+		if (it != CLEVER_FCGI_END(in->head)) {
 			CLEVER_RETURN_STR(CLEVER_FCGI_FETCH(it));
 			return;
 		}
@@ -302,10 +305,10 @@ CLEVER_METHOD(Server::getCookie)
 		return;
 	}
 
-	if (cookie->size()) {
-		CLEVER_FCGI_ITERATOR it = CLEVER_FCGI_FIND(cookie, CLEVER_ARG_PSTR(0));
+	if (in->cookie->size()) {
+		CLEVER_FCGI_ITERATOR it = CLEVER_FCGI_FIND(in->cookie, CLEVER_ARG_PSTR(0));
 
-		if ((it != CLEVER_FCGI_END(cookie))) {
+		if ((it != CLEVER_FCGI_END(in->cookie))) {
 			CLEVER_RETURN_STR(CLEVER_FCGI_FETCH(it));
 			return;
 		}
@@ -350,8 +353,8 @@ CLEVER_METHOD(Server::getParams)
 
 	::std::vector<Value*> mapping;
 
-	CLEVER_FCGI_ITERATOR item(params->begin());
-	CLEVER_FCGI_ITERATOR last(params->end());
+	CLEVER_FCGI_ITERATOR item(in->params->begin());
+	CLEVER_FCGI_ITERATOR last(in->params->end());
 
 	while (item != last) {
 		mapping.push_back(new Value(CSTRING(item->first)));
@@ -375,8 +378,8 @@ CLEVER_METHOD(Server::getHeaders)
 
 	::std::vector<Value*> mapping;
 
-	CLEVER_FCGI_ITERATOR item(head->begin());
-	CLEVER_FCGI_ITERATOR last(head->end());
+	CLEVER_FCGI_ITERATOR item(in->head->begin());
+	CLEVER_FCGI_ITERATOR last(in->head->end());
 
 	while (item != last) {
 		mapping.push_back(new Value(CSTRING(item->first)));
@@ -400,8 +403,8 @@ CLEVER_METHOD(Server::getCookies)
 
 	::std::vector<Value*> mapping;
 
-	CLEVER_FCGI_ITERATOR item(cookie->begin());
-	CLEVER_FCGI_ITERATOR last(cookie->end());
+	CLEVER_FCGI_ITERATOR item(in->cookie->begin());
+	CLEVER_FCGI_ITERATOR last(in->cookie->end());
 
 	while (item != last) {
 		mapping.push_back(new Value(CSTRING(item->first)));
@@ -410,6 +413,28 @@ CLEVER_METHOD(Server::getCookies)
 	}
 
 	CLEVER_RETURN_MAP(CLEVER_MAP_TYPE->allocData(&mapping));
+}
+
+// Server.setHeader(string key, string value)
+// Sets a response header
+CLEVER_METHOD(Server::setHeader) 
+{
+	if (!clever_check_args("ss")) {
+		return;	
+	}
+	
+	out->head->insert(CLEVER_FCGI_PAIR(CLEVER_ARG_PSTR(0), CLEVER_ARG_PSTR(1)));
+}
+
+// Server.setCookie(string key, string value, [string path, [string expires]])
+// Sets a cookie to send with the response
+CLEVER_METHOD(Server::setCookie)
+{
+	if (!clever_check_args("ss")) {
+		return;
+	}
+
+	out->cookie->insert(CLEVER_FCGI_PAIR(CLEVER_ARG_PSTR(0), CLEVER_ARG_PSTR(1)));
 }
 
 CLEVER_TYPE_INIT(Server::init)
@@ -424,11 +449,14 @@ CLEVER_TYPE_INIT(Server::init)
 	addMethod(CSTRING("getEnvironment"), (MethodPtr)&Server::getEnvironment);
 	addMethod(CSTRING("getParam"),       (MethodPtr)&Server::getParam);
 	addMethod(CSTRING("getHeader"),      (MethodPtr)&Server::getHeader);
-	addMethod(CSTRING("getCookie"),      (MethodPtr)&Server::getCookie);
-
+	addMethod(CSTRING("getCookie"),      (MethodPtr)&Server::getCookie);	
+	
 	addMethod(CSTRING("getParams"),  (MethodPtr)&Server::getParams);
 	addMethod(CSTRING("getHeaders"), (MethodPtr)&Server::getHeaders);
 	addMethod(CSTRING("getCookies"), (MethodPtr)&Server::getCookies);
+
+	addMethod(CSTRING("setHeader"), (MethodPtr)&Server::setHeader);
+	addMethod(CSTRING("setCookie"), (MethodPtr)&Server::setCookie);
 
 	// Debug Environment
 	addMethod(CSTRING("debug"),		(MethodPtr)&Server::debug);
