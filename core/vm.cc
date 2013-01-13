@@ -400,15 +400,10 @@ void VM::run()
 
 				thread->vm_handler = new VM(this->m_inst);
 				thread->vm_handler->copy(this);
-
 				thread->vm_handler->setChild();
 
-				Environment* tenv;
-
-				tenv = tdata->getEnvironment()
-							->activate(m_call_stack.top());
+				Environment* tenv = tdata->getEnvironment()->activate(m_call_stack.top());
 				thread->vm_handler->m_call_stack.push(tenv);
-
 
 				if (m_thread_pool.size() <= tdata->getID()) {
 					m_thread_pool.resize(tdata->getID() + 1);
