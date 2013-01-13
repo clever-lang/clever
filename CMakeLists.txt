@@ -78,7 +78,7 @@ else (MSVC)
 	set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG} -fno-inline -ggdb -D_DEBUG -DCLEVER_DEBUG")
 	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2 -DNDEBUG")
 
-	set(CMAKE_CXX_FLAGS_DEVEL   "-Wall -Wextra -Wno-unused-parameter -O1 -gdwarf-4")
+	set(CMAKE_CXX_FLAGS_DEVEL   "-Wall -Wextra -Wno-unused-parameter -O1 -gdwarf-4 -D_DEBUG -DCLEVER_DEBUG")
 	set(CMAKE_CXX_FLAGS_DEVEL   "${CMAKE_CXX_FLAGS_DEVEL} -fno-exceptions -fvar-tracking-assignments")
 	set(CMAKE_CXX_FLAGS_DEVEL   "${CMAKE_CXX_FLAGS_DEVEL} -ftrapv -fverbose-asm -finstrument-functions")
 	set(CMAKE_CXX_FLAGS_DEVEL   "${CMAKE_CXX_FLAGS_DEVEL} -fno-delete-null-pointer-checks -fno-omit-frame-pointer")
