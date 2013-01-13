@@ -16,14 +16,17 @@ namespace clever { namespace packages { namespace std {
 
 using namespace icu;
 
-void UString::dump(const void *data) const {
+void UString::dump(const void* data) const
+{
 	dump(data, ::std::cout);
 }
 
-void UString::dump(const void* data, ::std::ostream& out) const {
-	Value::DataValue* dvalue = (Value::DataValue*)data;
+void UString::dump(const void* data, ::std::ostream& out) const
+{
+	Value::DataValue* dvalue = static_cast<Value::DataValue*>(const_cast<void*>(data));
 	if (dvalue) {
-		UnicodeString* uvalue = (UnicodeString*) dvalue->obj->getObj();
+		UnicodeString* uvalue = static_cast<UnicodeString*>(dvalue->obj->getObj());
+
 		if (uvalue) {
 			for(int32_t start=0; start < uvalue->length(); start++) {
 				out << static_cast<char>(uvalue->char32At(start));
@@ -32,24 +35,24 @@ void UString::dump(const void* data, ::std::ostream& out) const {
 	}
 }
 
-void* UString::allocData(CLEVER_TYPE_CTOR_ARGS) const {
+void* UString::allocData(CLEVER_TYPE_CTOR_ARGS) const
+{
 	if (args->size()) {
 		Value* from = args->at(0);
+
 		if (from && from->getType() == CLEVER_STR_TYPE) {
 			const CString* str = from->getStr();
+
 			if (str) {
 				return new CLEVER_USTR_OBJ(str);
 			}
-		} else {
-			/** UString.new expected exactly one parameter of type String **/
 		}
-	} else {
-		/** UString.new expected exactly one parameter of type String **/
 	}
 	return NULL;
 }
 
-void UString::deallocData(void *data) {
+void UString::deallocData(void *data)
+{
 	delete CLEVER_USTR_CAST(data);
 }
 
