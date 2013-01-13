@@ -37,11 +37,7 @@ void* Server::allocData(CLEVER_TYPE_CTOR_ARGS) const
 {
 	FCGX_Request* request = new FCGX_Request;
 	if (request) {
-		if (FCGX_InitRequest(
-				request,
-				0,
-				0
-			) == 0) {
+		if (FCGX_InitRequest(request, 0, 0) == 0) {
 			return request;
 		}
 		delete request;
@@ -58,121 +54,120 @@ void Server::deallocData(void* data)
 // Accepts the next FCGI Request
 CLEVER_METHOD(Server::accept)
 {
-	if (CLEVER_THIS()) {
-		FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
-		if (request) {
+	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
 
-			env->clear();
-			head->clear();
-			params->clear();
-			cookie->clear();
-
-			if ((FCGX_Accept(&request->in, &request->out, &request->err, &request->envp) == 0)) {
-				{
-					const char* const* n = request->envp;
-					if (n) {
-						while (*n) {
-							::std::string l(*n);
-							::std::string k(l.substr(0, l.find_first_of("=")));
-							::std::string v(l.substr(k.length()+1));
-
-							switch (k.at(0)) {
-								case 'X':
-								case 'H': {
-									if ((k.find("HTTP_COOKIE") == 0)) {
-										/** process cookies **/
-										::std::cout << "COOKIE[" << v << "]" << ::std::endl;
-										size_t last = 0, next = v.find(";");
-										if (next) do {
-											::std::string chunk(v.substr(last, next));
-											if (chunk.size()) {
-												size_t split = chunk.find("=", next);
-												if (split) {
-													::std::string l(chunk.substr(0, split));
-													::std::string r(chunk.substr(split+1, chunk.size()));
-													cookie->insert(CLEVER_FCGI_PAIR(l, r));
-												} else {
-													cookie->insert(CLEVER_FCGI_NULL(chunk));
-												}
-											}
-										} while((last=(next+1)) && (next = v.find(";", next+1)));
-									} else {
-										head->insert(CLEVER_FCGI_PAIR(k.substr(5), v));
-									}
-								} break;
-
-								default: {
-									if ((k.find("QUERY_STRING") == 0)) {
-										size_t next = v.find("&"), last = 0;
-										if (next) do {
-											::std::string chunk(v.substr(last, next));
-											if (chunk.size()) {
-												size_t split = chunk.find("=");
-												if (split) {
-													::std::string l(chunk.substr(0, split));
-													::std::string r(chunk.substr(split+1, chunk.size()));
-													params->insert(CLEVER_FCGI_PAIR(l, r));
-												} else {
-													params->insert(CLEVER_FCGI_NULL(chunk));
-												}
-											}
-										} while((last=(next+1)) && (next = v.find("&", next+1)));
-									} else {
-										env->insert(CLEVER_FCGI_PAIR(k, v));
-									}
-								} break;
-							}
-							++n;
-						}
-					}
-				}
-				CLEVER_RETURN_BOOL(true);
-			} else {
-				CLEVER_RETURN_BOOL(false);
-			}
-		} else {
-			CLEVER_RETURN_BOOL(false);
-		}
-	} else {
-		//CLEVER_THROW("Server.accept cannot be called statically");
+	if (!request) {
+		CLEVER_RETURN_BOOL(false);
 		return;
 	}
+
+	env->clear();
+	head->clear();
+	params->clear();
+	cookie->clear();
+
+	if (FCGX_Accept(&request->in, &request->out, &request->err, &request->envp) != 0) {
+		CLEVER_RETURN_BOOL(false);
+		return;
+	}
+
+	const char* const* n = request->envp;
+	if (!n) {
+		CLEVER_RETURN_BOOL(false);
+		return;
+	}
+
+	while (*n) {
+		::std::string l(*n);
+		::std::string k(l.substr(0, l.find_first_of("=")));
+		::std::string v(l.substr(k.length()+1));
+
+		switch (k.at(0)) {
+			case 'X':
+			case 'H':
+				if (k.find("HTTP_COOKIE") == 0) {
+					// Process cookies
+					::std::cout << "COOKIE[" << v << "]" << ::std::endl;
+					size_t last = 0, next = v.find(";");
+
+					if (next) {
+						do {
+							::std::string chunk(v.substr(last, next));
+							if (chunk.size()) {
+								size_t split = chunk.find("=", next);
+
+								if (split) {
+									::std::string l(chunk.substr(0, split));
+									::std::string r(chunk.substr(split+1, chunk.size()));
+									cookie->insert(CLEVER_FCGI_PAIR(l, r));
+								} else {
+									cookie->insert(CLEVER_FCGI_NULL(chunk));
+								}
+							}
+						} while((last = (next+1)) && (next = v.find(";", next+1)));
+					} else {
+						head->insert(CLEVER_FCGI_PAIR(k.substr(5), v));
+					}
+				}
+				break;
+
+			default:
+				if (k.find("QUERY_STRING") == 0) {
+					size_t next = v.find("&"), last = 0;
+
+					if (next) {
+						do {
+							::std::string chunk(v.substr(last, next));
+							if (chunk.size()) {
+								size_t split = chunk.find("=");
+
+								if (split) {
+									::std::string l(chunk.substr(0, split));
+									::std::string r(chunk.substr(split+1, chunk.size()));
+									params->insert(CLEVER_FCGI_PAIR(l, r));
+								} else {
+									params->insert(CLEVER_FCGI_NULL(chunk));
+								}
+							}
+						} while((last=(next+1)) && (next = v.find("&", next+1)));
+					} else {
+						env->insert(CLEVER_FCGI_PAIR(k, v));
+					}
+				}
+				break;
+		}
+		++n;
+	}
+	CLEVER_RETURN_BOOL(true);
 }
 
 // Server.print(string text, [...])
 // Prints to the FCGI standard output
 CLEVER_METHOD(Server::print)
 {
-	if (CLEVER_THIS()) {
-		FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
-		if (request) {
-			for (size_t arg = 0; arg < args.size(); arg++) {
-				if (CLEVER_ARG_TYPE(arg) == CLEVER_STR_TYPE) {
-					FCGX_PutStr(CLEVER_ARG_CSTR(arg)->c_str(), CLEVER_ARG_CSTR(arg)->size(), request->out);
-				}
+	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
+
+	if (request) {
+		for (size_t arg = 0; arg < args.size(); arg++) {
+			if (CLEVER_ARG_TYPE(arg) == CLEVER_STR_TYPE) {
+				FCGX_PutStr(CLEVER_ARG_CSTR(arg)->c_str(),
+					CLEVER_ARG_CSTR(arg)->size(), request->out);
 			}
 		}
-		CLEVER_RETURN_NULL();
-	} else {
-		//CLEVER_THROW("Server.print cannot be called statically");
-		return;
 	}
+	CLEVER_RETURN_NULL();
 }
 
 // Server.flush()
 // Flushes the FCGI standard output buffer
 CLEVER_METHOD(Server::flush)
 {
-	if (CLEVER_THIS()) {
-		FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
-		if (request) {
-			CLEVER_RETURN_BOOL((FCGX_FFlush(request->out) == 0));
-		} else {
-			CLEVER_RETURN_NULL();
-		}
+	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
+
+	if (request) {
+		CLEVER_RETURN_BOOL((FCGX_FFlush(request->out) == 0));
 	} else {
-		//CLEVER_THROW("Server.flush cannot be called statically");
-		return;
+		CLEVER_RETURN_NULL();
 	}
 }
 
@@ -180,16 +175,12 @@ CLEVER_METHOD(Server::flush)
 // Closes the FCGI standard output, disconnecting the client
 CLEVER_METHOD(Server::finish)
 {
-	if (CLEVER_THIS()) {
-		FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
-		if (request) {
-			CLEVER_RETURN_BOOL((FCGX_FClose(request->out) == 0));
-		} else {
-			CLEVER_RETURN_NULL();
-		}
+	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
+
+	if (request) {
+		CLEVER_RETURN_BOOL((FCGX_FClose(request->out) == 0));
 	} else {
-		//CLEVER_THROW("Server.finish cannot be called statically");
-		return;
+		CLEVER_RETURN_NULL();
 	}
 }
 
@@ -197,36 +188,38 @@ CLEVER_METHOD(Server::finish)
 // Fetches environment information, returns map when no param specified
 CLEVER_METHOD(Server::getEnvironment)
 {
-	if (CLEVER_THIS()) {
-		FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
-		if (request) {
-			if (clever_check_args("s")) {
-				if (env->size()) {
-					CLEVER_FCGI_ITERATOR it = CLEVER_FCGI_FIND(env, CLEVER_ARG_PSTR(0));
-					if (it != CLEVER_FCGI_END(env)) {
-						CLEVER_RETURN_STR(CLEVER_FCGI_FETCH(it));
-					} else CLEVER_RETURN_NULL();
-				} else CLEVER_RETURN_NULL();
-			} else {
-				::std::vector<Value*> mapping;
+	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
 
-				CLEVER_FCGI_ITERATOR item(env->begin());
-				CLEVER_FCGI_ITERATOR last(env->end());
-
-				while (item != last) {
-					mapping.push_back(new Value(CSTRING(item->first)));
-					mapping.push_back(new Value(CSTRING(item->second)));
-					++item;
-				}
-
-				CLEVER_RETURN_MAP(CLEVER_MAP_TYPE->allocData(&mapping));
-			}
-		} else {
-			CLEVER_RETURN_NULL();
-		}
-	} else {
-		//CLEVER_THROW("Server.getEnvironment cannot be called statically");
+	if (!request) {
+		CLEVER_RETURN_NULL();
 		return;
+	}
+
+	if (!clever_check_args("s")) {
+		return;
+	}
+
+	if (env->size()) {
+		CLEVER_FCGI_ITERATOR it = CLEVER_FCGI_FIND(env, CLEVER_ARG_PSTR(0));
+
+		if (it != CLEVER_FCGI_END(env)) {
+			CLEVER_RETURN_STR(CLEVER_FCGI_FETCH(it));
+			return;
+		}
+		CLEVER_RETURN_NULL();
+	} else {
+		::std::vector<Value*> mapping;
+
+		CLEVER_FCGI_ITERATOR item(env->begin());
+		CLEVER_FCGI_ITERATOR last(env->end());
+
+		while (item != last) {
+			mapping.push_back(new Value(CSTRING(item->first)));
+			mapping.push_back(new Value(CSTRING(item->second)));
+			++item;
+		}
+
+		CLEVER_RETURN_MAP(CLEVER_MAP_TYPE->allocData(&mapping));
 	}
 }
 
