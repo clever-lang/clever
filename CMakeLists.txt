@@ -88,13 +88,26 @@ endif (TCMALLOC)
 
 # Parser and Scanner
 # ---------------------------------------------------------------------------
-execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/core)
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
-BISON_TARGET(CleverParser core/parser.y ${CMAKE_CURRENT_BINARY_DIR}/core/parser.cc)
-RE2C_TARGET(CleverScanner core/scanner.re ${CMAKE_CURRENT_BINARY_DIR}/core/scanner.cc
-	COMPILE_FLAGS "--case-inverted -bc")
+set(re2c_opts)
+list(APPEND re2c_opts "-b")
 
-ADD_RE2C_BISON_DEPENDENCY(CleverScanner CleverParser)
+if (${RE2C_VERSION} VERSION_GREATER "0.13.0")
+	list(APPEND re2c_opts "-c")
+endif (${RE2C_VERSION} VERSION_GREATER "0.13.0")
+
+if (${RE2C_VERSION} VERSION_GREATER "0.13.2")
+	list(APPEND re2c_opts "--case-inverted")
+endif (${RE2C_VERSION} VERSION_GREATER "0.13.2")
+
+add_custom_command(
+	OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/core/parser.cc
+	COMMAND ${BISON_EXECUTABLE} -o ${CMAKE_CURRENT_SOURCE_DIR}/core/parser.cc ${CMAKE_CURRENT_SOURCE_DIR}/core/parser.y
+	DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/core/parser.y)
+
+add_custom_command(
+	OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/core/scanner.cc
+	COMMAND ${RE2C_EXECUTABLE} ${re2c_opts} -o ${CMAKE_CURRENT_SOURCE_DIR}/core/scanner.cc ${CMAKE_CURRENT_SOURCE_DIR}/core/scanner.re
+	DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/core/parser.cc ${CMAKE_CURRENT_SOURCE_DIR}/core/scanner.re)
 
 # Module options
 # ---------------------------------------------------------------------------
@@ -139,8 +152,6 @@ endif (UNIX)
 # Main executable
 # ---------------------------------------------------------------------------
 add_executable(clever
-	${RE2C_CleverScanner_OUTPUTS}
-	${BISON_CleverParser_OUTPUTS}
 	core/cexception.h
 	core/ast.h
 	core/ast.cc
@@ -168,11 +179,13 @@ add_executable(clever
 	core/module.h
 	core/opcode.cc
 	core/opcode.h
+	core/parser.cc
 	core/pkgmanager.cc
 	core/pkgmanager.h
 	core/refcounted.h
 	core/resolver.cc
 	core/resolver.cc
+	core/scanner.cc
 	core/scanner.h
 	core/scope.cc
 	core/scope.h
