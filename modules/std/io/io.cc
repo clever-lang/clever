@@ -20,13 +20,18 @@ namespace io {
 
 // flush(void)
 // Flushes output buffer (forcefully)
-static CLEVER_FUNCTION(flush) {
+static CLEVER_FUNCTION(flush)
+{
+	if (!clever_static_check_no_args()) {
+		return;
+	}
 	::fflush(stdout);
 }
 
 // print(object a, [ ...])
 // Prints the object values without trailing newline
-static CLEVER_FUNCTION(print) {
+static CLEVER_FUNCTION(print)
+{
 	for (size_t i = 0, size = args.size(); i < size; ++i) {
 		args[i]->dump();
 	}
@@ -34,7 +39,8 @@ static CLEVER_FUNCTION(print) {
 
 // println(object a, [ ...])
 // Prints the object values with trailing newline
-static CLEVER_FUNCTION(println) {
+static CLEVER_FUNCTION(println)
+{
 	for (size_t i = 0, size = args.size(); i < size; ++i) {
 		args[i]->dump();
 		::std::cout << '\n';
@@ -43,12 +49,8 @@ static CLEVER_FUNCTION(println) {
 
 // printf(string format, [...])
 // Prints and formats a string to standard output without trailing newline
-static CLEVER_FUNCTION(printf) {
-	if (!args.size()) {
-		return;
-	}
-	// TODO(Felipe): add a way to use check_args with variadic functions
-
+static CLEVER_FUNCTION(printf)
+{
 	const CString* format = args[0]->getStr();
 	const char* start = format->c_str();
 

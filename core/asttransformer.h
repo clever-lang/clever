@@ -60,6 +60,8 @@ public:
 	virtual Node* transform(Logic* node) { return node; }
 	virtual Node* transform(Bitwise* node) { return node; }
 	virtual Node* transform(Import* node) { return node; }
+	virtual Node* transform(Break* node) { return node; }
+	virtual Node* transform(Continue* node) { return node; }
 };
 
 }} // clever::ast

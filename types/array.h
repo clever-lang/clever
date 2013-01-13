@@ -44,11 +44,11 @@ public:
 
 	void dump(const void* value, std::ostream& out) const;
 
-	CLEVER_METHOD_D(append);
-	CLEVER_METHOD_D(size);
-	CLEVER_METHOD_D(at);
-	CLEVER_METHOD_D(reserve);
-	CLEVER_METHOD_D(each);
+	CLEVER_METHOD(append);
+	CLEVER_METHOD(size);
+	CLEVER_METHOD(at);
+	CLEVER_METHOD(reserve);
+	CLEVER_METHOD(each);
 };
 
 } // clever

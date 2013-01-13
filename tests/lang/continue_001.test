@@ -1,0 +1,20 @@
+Testing continue statement
+==CODE==
+import std.io.*;
+
+var i = 10;
+
+
+while (i--) {
+	if (i > 5) {
+		continue;
+	}
+	println(i);
+}
+==RESULT==
+5
+4
+3
+2
+1
+0

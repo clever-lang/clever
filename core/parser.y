@@ -28,7 +28,7 @@ class Value;
 	ast::Node* node;
 	ast::Block* block;
 	ast::ThreadBlock* threadblock;
-	ast::Wait* waitblock;
+	ast::Wait* wait;
 	ast::CriticalBlock* criticalblock;
 	ast::NodeArray* narray;
 	ast::Ident* ident;
@@ -59,6 +59,8 @@ class Value;
 	ast::Throw* throw_;
 	ast::TrueLit* true_;
 	ast::FalseLit* false_;
+	ast::Break* break_;
+	ast::Continue* continue_;
 }
 
 %type <type> TYPE
@@ -76,7 +78,7 @@ class Value;
 %type <vardecl> const_decl_impl
 %type <block> statement_list block finally
 %type <threadblock> thread_block
-%type <waitblock> wait_block
+%type <wait> wait
 %type <criticalblock> critical_block
 %type <arithmetic> arithmetic
 %type <bitwise> bitwise
@@ -96,6 +98,8 @@ class Value;
 %type <except> try_catch_finally
 %type <catch_> catch_impl
 %type <throw_> throw
+%type <break_> break
+%type <continue_> continue
 
 // The parsing context.
 %parse-param { Driver& driver }
@@ -171,6 +175,7 @@ class Value;
 %token CATCH         "catch"
 %token TRY           "try"
 %token THROW         "throw"
+%token CONTINUE      "continue"
 
 %left ',';
 %left LOGICAL_OR;
@@ -221,8 +226,10 @@ statement:
 	|	block
 	|	thread_block
 	|   critical_block
-	|	wait_block ';'
+	|	wait ';'
 	|	throw ';'
+	|	break ';'
+	|	continue ';'
 	|	try_catch_finally
 ;
 
@@ -235,7 +242,15 @@ instantiation:
 	|	TYPE '.' NEW '(' call_args ')' { $$ = new ast::Instantiation($1, $5,   yyloc); }
 ;
 
-wait_block:
+break:
+		BREAK { $$ = new ast::Break(yyloc); }
+;
+
+continue:
+		CONTINUE { $$ = new ast::Continue(yyloc); }
+;
+
+wait:
 		WAIT IDENT { $$ = new ast::Wait($2, yyloc); }
 ;
 

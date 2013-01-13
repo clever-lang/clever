@@ -30,15 +30,15 @@ public:
 
 	CLEVER_TYPE_VIRTUAL_METHOD_DECLARATIONS;
 
-	void increment(Value* value, const VM* vm) const {
+	void increment(Value* value, const VM* vm, CException* exception) const {
 		value->setInt(value->getInt()+1);
 	}
 
-	void decrement(Value* value, const VM* vm) const {
+	void decrement(Value* value, const VM* vm, CException* exception) const {
 		value->setInt(value->getInt()-1);
 	}
 
-	CLEVER_METHOD_D(toString);
+	CLEVER_METHOD(toString);
 };
 
 } // clever

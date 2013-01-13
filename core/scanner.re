@@ -61,6 +61,8 @@ next_token:
 		RET(token::NIL);
 	}
 
+	<INITIAL>'continue' { RET(token::CONTINUE); }
+
 	<INITIAL>'var' { RET(token::VAR); }
 
 	<INITIAL>'catch' { RET(token::CATCH); }

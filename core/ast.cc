@@ -87,6 +87,10 @@ void TrueLit::accept(Visitor& visitor) { visitor.visit(this); }
 
 void FalseLit::accept(Visitor& visitor) { visitor.visit(this); }
 
+void Break::accept(Visitor& visitor) { visitor.visit(this); }
+
+void Continue::accept(Visitor& visitor) { visitor.visit(this); }
+
 // Transformers
 
 Node* Node::accept(Transformer& transformer) { return transformer.transform(this); }
@@ -156,5 +160,9 @@ Node* Throw::accept(Transformer& transformer) { return transformer.transform(thi
 Node* TrueLit::accept(Transformer& transformer) { return transformer.transform(this); }
 
 Node* FalseLit::accept(Transformer& transformer) { return transformer.transform(this); }
+
+Node* Break::accept(Transformer& transformer) { return transformer.transform(this); }
+
+Node* Continue::accept(Transformer& transformer) { return transformer.transform(this); }
 
 }} // clever::ast

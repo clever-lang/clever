@@ -33,16 +33,17 @@ public:
 	
 	void decrement(Value* value, const VM* vm) const {}
 
-	CLEVER_METHOD_D(subString);
-	CLEVER_METHOD_D(find);
-	CLEVER_METHOD_D(findFirst);	
-	CLEVER_METHOD_D(findLast);
-	CLEVER_METHOD_D(getLength);
-	CLEVER_METHOD_D(format);
-	CLEVER_METHOD_D(startsWith);
-	CLEVER_METHOD_D(endsWith);
-	CLEVER_METHOD_D(charAt);
-	CLEVER_METHOD_D(split);
+	CLEVER_METHOD(subString);
+	CLEVER_METHOD(find);
+	CLEVER_METHOD(findFirst);	
+	CLEVER_METHOD(findLast);
+	CLEVER_METHOD(getLength);
+	CLEVER_METHOD(format);
+	CLEVER_METHOD(startsWith);
+	CLEVER_METHOD(endsWith);
+	CLEVER_METHOD(charAt);
+	CLEVER_METHOD(split);
+
 };
 
 } // clever

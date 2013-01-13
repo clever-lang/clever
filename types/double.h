@@ -27,11 +27,11 @@ public:
 
 	CLEVER_TYPE_VIRTUAL_METHOD_DECLARATIONS;
 
-	void increment(Value* value, const VM* vm) const {
+	void increment(Value* value, const VM* vm, CException& exception) const {
 		value->setInt(value->getDouble()+1);
 	}
 
-	void decrement(Value* value, const VM* vm) const {
+	void decrement(Value* value, const VM* vm, CException& exception) const {
 		value->setInt(value->getDouble()-1);
 	}
 };

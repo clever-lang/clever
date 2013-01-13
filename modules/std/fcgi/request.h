@@ -47,21 +47,21 @@ public:
 	virtual void* allocData(CLEVER_TYPE_CTOR_ARGS) const;
 	virtual void deallocData(void* data);
 
-	CLEVER_METHOD_D(accept);
-	CLEVER_METHOD_D(finish);
-	CLEVER_METHOD_D(print);
-	CLEVER_METHOD_D(flush);
+	CLEVER_METHOD(accept);
+	CLEVER_METHOD(finish);
+	CLEVER_METHOD(print);
+	CLEVER_METHOD(flush);
 
-	CLEVER_METHOD_D(getEnvironment);
-	CLEVER_METHOD_D(getParam);
-	CLEVER_METHOD_D(getHeader);
-	CLEVER_METHOD_D(getCookie);
+	CLEVER_METHOD(getEnvironment);
+	CLEVER_METHOD(getParam);
+	CLEVER_METHOD(getHeader);
+	CLEVER_METHOD(getCookie);
 	
-	CLEVER_METHOD_D(getParams);
-	CLEVER_METHOD_D(getHeaders);
-	CLEVER_METHOD_D(getCookies);
+	CLEVER_METHOD(getParams);
+	CLEVER_METHOD(getHeaders);
+	CLEVER_METHOD(getCookies);
 
-	CLEVER_METHOD_D(debug);
+	CLEVER_METHOD(debug);
 };
 
 }}} // clever::packages::std
