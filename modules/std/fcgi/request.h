@@ -52,11 +52,11 @@ public:
 	CLEVER_METHOD(print);
 	CLEVER_METHOD(flush);
 
-	CLEVER_METHOD(getServer);
+	CLEVER_METHOD(getEnvironment);
 	CLEVER_METHOD(getParam);
 	CLEVER_METHOD(getHeader);
 	CLEVER_METHOD(getCookie);
-
+	
 	CLEVER_METHOD(getParams);
 	CLEVER_METHOD(getHeaders);
 	CLEVER_METHOD(getCookies);
