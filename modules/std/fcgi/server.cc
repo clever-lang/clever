@@ -9,17 +9,17 @@
 #include "core/value.h"
 #include "core/clever.h"
 #include "modules/std/fcgi/fcgi.h"
-#include "modules/std/fcgi/request.h"
+#include "modules/std/fcgi/server.h"
 
 namespace clever { namespace packages { namespace std {
 
 const size_t CLEVER_FCGI_STDIN_MAX = 1000000;
 
-void Request::dump(const void* data) const {
+void Server::dump(const void* data) const {
 	dump(data, ::std::cout);
 }
 
-void Request::dump(const void* data, ::std::ostream& out) const {
+void Server::dump(const void* data, ::std::ostream& out) const {
 	Value::DataValue* dvalue = (Value::DataValue*)data;
 	if (dvalue) {
 		FCGX_Request* uvalue = CLEVER_GET_OBJECT(FCGX_Request*, dvalue->obj);
@@ -29,9 +29,9 @@ void Request::dump(const void* data, ::std::ostream& out) const {
 	}
 }
 
-// Request.new()
+// Server.new()
 // Setup the process for responding to FCGI requests by creating a new Request object
-void* Request::allocData(CLEVER_TYPE_CTOR_ARGS) const {
+void* Server::allocData(CLEVER_TYPE_CTOR_ARGS) const {
 	FCGX_Request* request = new FCGX_Request;
 	if (request) {
 		if (FCGX_InitRequest(
@@ -46,13 +46,13 @@ void* Request::allocData(CLEVER_TYPE_CTOR_ARGS) const {
 	return NULL;
 }
 
-void Request::deallocData(void* data) {
+void Server::deallocData(void* data) {
 	delete static_cast<FCGX_Request*>(data);
 }
 
-// Request.accept()
+// Server.accept()
 // Accepts the next FCGI Request
-CLEVER_METHOD(Request::accept)
+CLEVER_METHOD(Server::accept)
 {
 	if (CLEVER_THIS()) {
 		FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
@@ -130,14 +130,14 @@ CLEVER_METHOD(Request::accept)
 			CLEVER_RETURN_BOOL(false);
 		}
 	} else {
-		//CLEVER_THROW("Request.accept cannot be called statically");
+		//CLEVER_THROW("Server.accept cannot be called statically");
 		return;
 	}
 }
 
-// Request.print(string text, [...])
+// Server.print(string text, [...])
 // Prints to the FCGI standard output
-CLEVER_METHOD(Request::print) {
+CLEVER_METHOD(Server::print) {
 	if (CLEVER_THIS()) {
 		FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
 		if (request) {
@@ -149,14 +149,14 @@ CLEVER_METHOD(Request::print) {
 		}
 		CLEVER_RETURN_NULL();
 	} else {
-		//CLEVER_THROW("Request.print cannot be called statically");
+		//CLEVER_THROW("Server.print cannot be called statically");
 		return;
 	}
 }
 
-// Request.flush()
+// Server.flush()
 // Flushes the FCGI standard output buffer
-CLEVER_METHOD(Request::flush) {
+CLEVER_METHOD(Server::flush) {
 	if (CLEVER_THIS()) {
 		FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
 		if (request) {
@@ -165,14 +165,14 @@ CLEVER_METHOD(Request::flush) {
 			CLEVER_RETURN_NULL();
 		}
 	} else {
-		//CLEVER_THROW("Request.flush cannot be called statically");
+		//CLEVER_THROW("Server.flush cannot be called statically");
 		return;
 	}
 }
 
-// Request.finish()
+// Server.finish()
 // Closes the FCGI standard output, disconnecting the client
-CLEVER_METHOD(Request::finish)
+CLEVER_METHOD(Server::finish)
 {
 	if (CLEVER_THIS()) {
 		FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
@@ -182,14 +182,14 @@ CLEVER_METHOD(Request::finish)
 			CLEVER_RETURN_NULL();
 		}
 	} else {
-		//CLEVER_THROW("Request.finish cannot be called statically");
+		//CLEVER_THROW("Server.finish cannot be called statically");
 		return;
 	}
 }
 
-// Request.getEnvironment([string param])
+// Server.getEnvironment([string param])
 // Fetches environment information, returns map when no param specified
-CLEVER_METHOD(Request::getEnvironment)
+CLEVER_METHOD(Server::getEnvironment)
 {
 	if (CLEVER_THIS()) {
 		FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
@@ -219,14 +219,14 @@ CLEVER_METHOD(Request::getEnvironment)
 			CLEVER_RETURN_NULL();
 		}
 	} else {
-		//CLEVER_THROW("Request.getEnvironment cannot be called statically");
+		//CLEVER_THROW("Server.getEnvironment cannot be called statically");
 		return;
 	}
 }
 
-// Request.getParam(string param)
+// Server.getParam(string param)
 // Fetches a request parameter
-CLEVER_METHOD(Request::getParam)
+CLEVER_METHOD(Server::getParam)
 {
 	if (CLEVER_THIS()) {
 		FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
@@ -245,14 +245,14 @@ CLEVER_METHOD(Request::getParam)
 			CLEVER_RETURN_NULL();
 		}
 	} else {
-		//CLEVER_THROW("Request.getParam cannot be called statically");
+		//CLEVER_THROW("Server.getParam cannot be called statically");
 		return;
 	}
 }
 
-// Request.getParam(string param)
+// Server.getParam(string param)
 // Fetches a request header (all upper-case, eg HOST not host, CONTENT_TYPE not content-type)
-CLEVER_METHOD(Request::getHeader)
+CLEVER_METHOD(Server::getHeader)
 {
 	if (CLEVER_THIS()) {
 		FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
@@ -271,14 +271,14 @@ CLEVER_METHOD(Request::getHeader)
 			CLEVER_RETURN_NULL();
 		}
 	} else {
-		//CLEVER_THROW("Request.getHeader cannot be called statically");
+		//CLEVER_THROW("Server.getHeader cannot be called statically");
 		return;
 	}
 }
 
-// Request.getCookie(string param)
+// Server.getCookie(string param)
 // Fetches a request cookie
-CLEVER_METHOD(Request::getCookie)
+CLEVER_METHOD(Server::getCookie)
 {
 	if (CLEVER_THIS()) {
 		FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
@@ -297,14 +297,14 @@ CLEVER_METHOD(Request::getCookie)
 			CLEVER_RETURN_NULL();
 		}
 	} else {
-		//CLEVER_THROW("Request.getCookie cannot be called statically");
+		//CLEVER_THROW("Server.getCookie cannot be called statically");
 		return;
 	}
 }
 
-// Request.debug()
+// Server.debug()
 // Prints the request environment to the FCGI standard output
-CLEVER_METHOD(Request::debug)
+CLEVER_METHOD(Server::debug)
 {
 	if (CLEVER_THIS()) {
 		FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
@@ -323,14 +323,14 @@ CLEVER_METHOD(Request::debug)
 
 		CLEVER_RETURN_NULL();
 	} else {
-		//CLEVER_THROW("Request.debug cannot be called statically");
+		//CLEVER_THROW("Server.debug cannot be called statically");
 		return;
 	}
 }
 
-// Request.getParams()
+// Server.getParams()
 // Will return a Map/Array of request parameters
-CLEVER_METHOD(Request::getParams)
+CLEVER_METHOD(Server::getParams)
 {
 	if (CLEVER_THIS()) {
 		FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
@@ -351,14 +351,14 @@ CLEVER_METHOD(Request::getParams)
 			CLEVER_RETURN_NULL();
 		}
 	} else {
-		//CLEVER_THROW("Request.getParams cannot be called statically");
+		//CLEVER_THROW("Server.getParams cannot be called statically");
 		return;
 	}
 }
 
-// Request.getHeaders()
+// Server.getHeaders()
 // Will return a Map/Array of request headers
-CLEVER_METHOD(Request::getHeaders)
+CLEVER_METHOD(Server::getHeaders)
 {
 	if (CLEVER_THIS()) {
 		FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
@@ -379,14 +379,14 @@ CLEVER_METHOD(Request::getHeaders)
 			CLEVER_RETURN_NULL();
 		}
 	} else {
-		//CLEVER_THROW("Request.getHeaders cannot be called statically");
+		//CLEVER_THROW("Server.getHeaders cannot be called statically");
 		return;
 	}
 }
 
-// Request.getCookies()
+// Server.getCookies()
 // Will return a Map/Array of request cookies
-CLEVER_METHOD(Request::getCookies)
+CLEVER_METHOD(Server::getCookies)
 {
 	if (CLEVER_THIS()) {
 		FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
@@ -407,31 +407,31 @@ CLEVER_METHOD(Request::getCookies)
 			CLEVER_RETURN_NULL();
 		}
 	} else {
-		//CLEVER_THROW("Request.getCookies cannot be called statically");
+		//CLEVER_THROW("Server.getCookies cannot be called statically");
 		return;
 	}
 }
 
-CLEVER_TYPE_INIT(Request::init)
+CLEVER_TYPE_INIT(Server::init)
 {
 	/* IO */
-	addMethod(CSTRING("accept"), (MethodPtr)&Request::accept);
-	addMethod(CSTRING("print"), (MethodPtr)&Request::print);
-	addMethod(CSTRING("flush"), (MethodPtr)&Request::flush);
-	addMethod(CSTRING("finish"), (MethodPtr)&Request::finish);
+	addMethod(CSTRING("accept"), (MethodPtr)&Server::accept);
+	addMethod(CSTRING("print"), (MethodPtr)&Server::print);
+	addMethod(CSTRING("flush"), (MethodPtr)&Server::flush);
+	addMethod(CSTRING("finish"), (MethodPtr)&Server::finish);
 
 	/* Util */
-	addMethod(CSTRING("getEnvironment"), (MethodPtr)&Request::getEnvironment);
-	addMethod(CSTRING("getParam"), (MethodPtr)&Request::getParam);
-	addMethod(CSTRING("getHeader"), (MethodPtr)&Request::getHeader);
-	addMethod(CSTRING("getCookie"), (MethodPtr)&Request::getCookie);
+	addMethod(CSTRING("getEnvironment"), (MethodPtr)&Server::getEnvironment);
+	addMethod(CSTRING("getParam"), (MethodPtr)&Server::getParam);
+	addMethod(CSTRING("getHeader"), (MethodPtr)&Server::getHeader);
+	addMethod(CSTRING("getCookie"), (MethodPtr)&Server::getCookie);
 
-	addMethod(CSTRING("getParams"), (MethodPtr)&Request::getParams);
-	addMethod(CSTRING("getHeaders"), (MethodPtr)&Request::getHeaders);
-	addMethod(CSTRING("getCookies"), (MethodPtr)&Request::getCookies);
-
+	addMethod(CSTRING("getParams"), (MethodPtr)&Server::getParams);
+	addMethod(CSTRING("getHeaders"), (MethodPtr)&Server::getHeaders);
+	addMethod(CSTRING("getCookies"), (MethodPtr)&Server::getCookies);
+	
 	/* Debug Environment */
-	addMethod(CSTRING("debug"),		(MethodPtr)&Request::debug);
+	addMethod(CSTRING("debug"),		(MethodPtr)&Server::debug);
 }
 
 }}} // clever::packages::std

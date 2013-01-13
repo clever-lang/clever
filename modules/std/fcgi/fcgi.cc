@@ -8,15 +8,13 @@
 #include "types/function.h"
 #include "core/pkgmanager.h"
 #include "modules/std/fcgi/fcgi.h"
-#include "modules/std/fcgi/request.h"
-#include "modules/std/fcgi/response.h"
+#include "modules/std/fcgi/server.h"
 
 namespace clever { namespace packages { namespace std {
 
 /// Initializes Standard FCGI module
 CLEVER_MODULE_INIT(FCGIModule) {
-	addType(CSTRING("Request"), new Request);
-	addType(CSTRING("Response"), new Response);
+	addType(CSTRING("Server"), new Server);
 }
 
 }}} // clever::packages::std
