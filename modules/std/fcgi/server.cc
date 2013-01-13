@@ -234,52 +234,52 @@ CLEVER_METHOD(Server::getEnvironment)
 // Fetches a request parameter
 CLEVER_METHOD(Server::getParam)
 {
-	if (CLEVER_THIS()) {
-		FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
-		if (request) {
-			if (clever_check_args("s")) {
-				if (params->size()) {
-					CLEVER_FCGI_ITERATOR it = CLEVER_FCGI_FIND(params, CLEVER_ARG_PSTR(0));
-					if (it != CLEVER_FCGI_END(params)) {
-						CLEVER_RETURN_STR(CLEVER_FCGI_FETCH(it));
-					} else CLEVER_RETURN_NULL();
-				} else CLEVER_RETURN_NULL();
-			} else {
-				CLEVER_RETURN_NULL();
-			}
-		} else {
-			CLEVER_RETURN_NULL();
-		}
-	} else {
-		//CLEVER_THROW("Server.getParam cannot be called statically");
+	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
+
+	if (!request) {
+		CLEVER_RETURN_NULL();
 		return;
 	}
+
+	if (!clever_check_args("s")) {
+		return;
+	}
+
+	if (params->size()) {
+		CLEVER_FCGI_ITERATOR it = CLEVER_FCGI_FIND(params, CLEVER_ARG_PSTR(0));
+
+		if (it != CLEVER_FCGI_END(params)) {
+			CLEVER_RETURN_STR(CLEVER_FCGI_FETCH(it));
+			return;
+		}
+	}
+	CLEVER_RETURN_NULL();
 }
 
 // Server.getParam(string param)
 // Fetches a request header (all upper-case, eg HOST not host, CONTENT_TYPE not content-type)
 CLEVER_METHOD(Server::getHeader)
 {
-	if (CLEVER_THIS()) {
-		FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
-		if (request) {
-			if (clever_check_args("s")) {
-				if (head->size()) {
-					CLEVER_FCGI_ITERATOR it = CLEVER_FCGI_FIND(head, CLEVER_ARG_PSTR(0));
-					if (it != CLEVER_FCGI_END(head)) {
-						CLEVER_RETURN_STR(CLEVER_FCGI_FETCH(it));
-					} else CLEVER_RETURN_NULL();
-				} else CLEVER_RETURN_NULL();
-			} else {
-				CLEVER_RETURN_NULL();
-			}
-		} else {
-			CLEVER_RETURN_NULL();
-		}
-	} else {
-		//CLEVER_THROW("Server.getHeader cannot be called statically");
+	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
+
+	if (!request) {
+		CLEVER_RETURN_NULL();
 		return;
 	}
+
+	if (!clever_check_args("s")) {
+		return;
+	}
+
+	if (head->size()) {
+		CLEVER_FCGI_ITERATOR it = CLEVER_FCGI_FIND(head, CLEVER_ARG_PSTR(0));
+
+		if (it != CLEVER_FCGI_END(head)) {
+			CLEVER_RETURN_STR(CLEVER_FCGI_FETCH(it));
+			return;
+		}
+	}
+	CLEVER_RETURN_NULL();
 }
 
 // Server.getCookie(string param)
