@@ -167,6 +167,7 @@ void printf(const char* format, ...) {
 //	c - current object
 //  . - any type
 //	* - variadic
+//  | - optional argument marker
 // Example:
 //	clever_check_args("sii") - check that the first arg is string and the next
 //								two are integers
@@ -186,20 +187,37 @@ bool check_args(const ::std::vector<Value*>& args, const char* typespec,
 		return argslen > 0 ? false : true;
 	}
 
-	clever_assert_not_null(typespec);
-
 	size_t speclen = ::strlen(typespec);
 
-	// Check for different number of arguments for non-variadic function/method
-	if (speclen != argslen && memchr(typespec, '*', speclen) == NULL) {
-		exception->setException(
-			"Wrong number of parameter: %l parameter%s expected, %l given",
-			speclen, speclen > 1 ? "s": "", argslen);
-		return false;
+	// Check for different number of arguments for function/method
+	if (speclen != argslen) {
+		const char *spec;
+
+		if ((spec = strpbrk(typespec, "*|")) == NULL) {
+			exception->setException(
+				"Wrong number of parameter: %l parameter%s expected, %l given",
+				speclen, speclen > 1 ? "s": "", argslen);
+			return false;
+		} else {
+			size_t pos = spec - typespec;
+
+			if (argslen < pos) {
+				exception->setException(
+					"Wrong number of parameter: at least %l parameter%s expected, %l given",
+					pos, pos > 1 ? "s": "", argslen);
+				return false;
+			}
+		}
 	}
 
-	for (size_t arg = 0; arg < speclen; ++arg) {
-		const Type* const arg_type = args[arg]->getType();
+	for (size_t arg = 0, index = 0; arg < speclen; ++arg, ++index) {
+		// Check for optional argument
+		if (index >= argslen) {
+			return true;
+		}
+
+		const Type* const arg_type = args[index]->getType();
+		clever_assert_not_null(arg_type);
 
 		switch (typespec[arg]) {
 			// Function
@@ -207,7 +225,7 @@ bool check_args(const ::std::vector<Value*>& args, const char* typespec,
 				if (arg_type != CLEVER_FUNC_TYPE) {
 					exception->setException(
 						"Argument #%l expects a Function, but %S was supplied",
-						arg+1, arg_type->getName());
+						index+1, arg_type->getName());
 					return false;
 				}
 				break;
@@ -216,7 +234,7 @@ bool check_args(const ::std::vector<Value*>& args, const char* typespec,
 				if (arg_type != CLEVER_STR_TYPE) {
 					exception->setException(
 						"Argument #%l expects a String, but %S was supplied",
-						arg+1, arg_type->getName());
+						index+1, arg_type->getName());
 					return false;
 				}
 				break;
@@ -225,7 +243,7 @@ bool check_args(const ::std::vector<Value*>& args, const char* typespec,
 				if (arg_type != CLEVER_INT_TYPE) {
 					exception->setException(
 						"Argument #%l expects an Integer, but %S was supplied",
-						arg+1, arg_type->getName());
+						index+1, arg_type->getName());
 					return false;
 				}
 				break;
@@ -234,7 +252,7 @@ bool check_args(const ::std::vector<Value*>& args, const char* typespec,
 				if (arg_type != CLEVER_DOUBLE_TYPE) {
 					exception->setException(
 						"Argument #%l expects a Double, but %S was supplied",
-						arg+1, arg_type->getName());
+						index+1, arg_type->getName());
 					return false;
 				}
 				break;
@@ -243,7 +261,7 @@ bool check_args(const ::std::vector<Value*>& args, const char* typespec,
 				if (arg_type != CLEVER_ARRAY_TYPE) {
 					exception->setException(
 						"Argument #%l expects an Array, but %S was supplied",
-						arg+1, arg_type->getName());
+						index+1, arg_type->getName());
 					return false;
 				}
 				break;
@@ -252,7 +270,7 @@ bool check_args(const ::std::vector<Value*>& args, const char* typespec,
 				if (arg_type != CLEVER_MAP_TYPE) {
 					exception->setException(
 						"Argument #%l expects a Map, but %S was supplied",
-						arg+1, arg_type->getName());
+						index+1, arg_type->getName());
 					return false;
 				}
 				break;
@@ -261,7 +279,7 @@ bool check_args(const ::std::vector<Value*>& args, const char* typespec,
 				if (arg_type != CLEVER_BOOL_TYPE) {
 					exception->setException(
 						"Argument #%l expects a Boolean, but %S was supplied",
-						arg+1, arg_type->getName());
+						index+1, arg_type->getName());
 					return false;
 				}
 				break;
@@ -271,7 +289,7 @@ bool check_args(const ::std::vector<Value*>& args, const char* typespec,
 					&& (arg_type != CLEVER_INT_TYPE)) {
 					exception->setException(
 						"Argument #%l expects a Number, but %S was supplied",
-						arg+1, arg_type->getName());
+						index+1, arg_type->getName());
 					return false;
 				}
 				break;
@@ -280,7 +298,7 @@ bool check_args(const ::std::vector<Value*>& args, const char* typespec,
 				if (arg_type != type) {
 					exception->setException(
 						"Argument #%l expects a %S, but %S was supplied",
-						arg+1, type->getName(), arg_type->getName());
+						index+1, type->getName(), arg_type->getName());
 					return false;
 				}
 				break;
@@ -290,7 +308,10 @@ bool check_args(const ::std::vector<Value*>& args, const char* typespec,
 			// Var arg
 			case '*':
 				goto done;
-
+			// Optional argument marker
+			case '|':
+				--index;
+				break;
 			default:
 				clever_fatal("Wrong type specifier found");
 				break;
