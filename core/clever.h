@@ -216,8 +216,12 @@ bool check_args(const ::std::vector<Value*>&, const char*, CException*, const Ty
 #define CLEVER_RETURN_DATA(d)	result->setData(d)
 #define CLEVER_RETURN_NULL()	result->setNull()
 #define CLEVER_RETURN_BOOL(b)   result->setBool(b)
-#define CLEVER_RETURN_MAP(m)	result->setObj(m)
-#define CLEVER_RETURN_ARRAY(m)	result->setObj(m)
+#define CLEVER_RETURN_MAP(m)	\
+	result->setType(CLEVER_MAP_TYPE);\
+	result->setObj(m)
+#define CLEVER_RETURN_ARRAY(m)	\
+	result->setType(CLEVER_ARRAY_TYPE);\
+	result->setObj(m)
 /* }}} */
 
 } // clever

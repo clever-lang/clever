@@ -375,6 +375,56 @@ CLEVER_METHOD(StrType::getLength)
 	result->setInt((CLEVER_THIS()->getStr())->length());
 }
 
+// String.split(string delimiter, [int maximum])
+// Returns string split by delimiter as array
+CLEVER_METHOD(StrType::split)
+{
+	if (!CLEVER_THIS()) {
+		CLEVER_THROW("String.split cannot be called statically");
+		return;
+	}
+
+	if (clever_check_args("s") || clever_check_args("si")) {
+		unsigned long maximum = 0;		
+		if (CLEVER_ARG_COUNT() > 1) {
+			if (CLEVER_ARG_INT(1)) {
+				maximum = CLEVER_ARG_INT(1);
+			}
+		}
+
+		::std::vector<Value*> list;
+		{
+			const ::std::string* self = CLEVER_THIS()->getStr();
+			if (self && self->length()) {
+
+				const ::std::string* delimit = CLEVER_ARG_CSTR(0);
+				size_t offset = 0;
+				if (delimit && (offset=delimit->length())) {
+
+					::std::string buffer;
+					size_t last = 0;
+
+					for (size_t position = 0; position < self->length(); position++) {
+						if ((!maximum || (list.size() < maximum))) {
+							if ((last = self->find(delimit->c_str(), position)) == position) {	
+								list.push_back(new Value(CSTRING(buffer)));
+								position = last + (offset-1);
+								buffer.clear();
+								continue;
+							}
+						}
+						buffer += self->at(position);
+					}
+					list.push_back(new Value(CSTRING(buffer)));
+				} else list.push_back(new Value(self));
+			}
+		}
+		CLEVER_RETURN_ARRAY(CLEVER_ARRAY_TYPE->allocData(&list));
+	} else {
+		CLEVER_THROW("String.split expected a string for delimiter");
+	}
+}
+
 CLEVER_TYPE_INIT(StrType::init)
 {
 	addMethod(CSTRING("subString"),  	(MethodPtr) &StrType::subString);
@@ -386,6 +436,7 @@ CLEVER_TYPE_INIT(StrType::init)
 	addMethod(CSTRING("startsWith"),	(MethodPtr) &StrType::startsWith);
 	addMethod(CSTRING("endsWith"),		(MethodPtr) &StrType::endsWith);
 	addMethod(CSTRING("charAt"),		(MethodPtr) &StrType::charAt);
+	addMethod(CSTRING("split"),			(MethodPtr) &StrType::split);
 }
 
 CLEVER_TYPE_OPERATOR(StrType::greater)
