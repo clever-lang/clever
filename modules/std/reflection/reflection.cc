@@ -17,7 +17,7 @@ namespace reflection {
 // string get_type()
 // Returns the type name of the supplied parameter
 static CLEVER_FUNCTION(get_type) {
-	if (CLEVER_ARG_COUNT()) {
+	if (args.size()) {
 		CLEVER_RETURN_STR(CLEVER_ARG_TYPE(0)->getName());
 	}
 	// TODO(Felipe): fix build when throwing exception

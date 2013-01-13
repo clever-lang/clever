@@ -61,7 +61,7 @@ CLEVER_METHOD(StrType::subString)
 	const CString* of = CLEVER_THIS()->getStr();
 	int bounds[2] = {-1, -1};
 
-	switch(CLEVER_ARG_COUNT()) {
+	switch (args.size()) {
 		case 2:
 			bounds[0] = args[0]->getInt();
 			bounds[1] = args[1]->getInt();
@@ -98,7 +98,7 @@ CLEVER_METHOD(StrType::find)
 	const CString* haystack = CLEVER_THIS()->getStr();
 	int bounds[2] = {-1, -1};
 
-	switch (CLEVER_ARG_COUNT()) {
+	switch (args.size()) {
 		case 1:
 			needle = CLEVER_ARG_PSTR(0);
 		break;
@@ -147,7 +147,7 @@ CLEVER_METHOD(StrType::findFirst)
 	int bounds[2] = {-1, -1};
 
 	haystack = CLEVER_THIS()->getStr();
-	switch (CLEVER_ARG_COUNT()) {
+	switch (args.size()) {
 		case 1:
 			needle = CLEVER_ARG_PSTR(0);
 			break;
@@ -197,7 +197,7 @@ CLEVER_METHOD(StrType::findLast)
 
 	result->setNull();
 
-	switch (CLEVER_ARG_COUNT()) {
+	switch (args.size()) {
 		case 1:
 			needle = CLEVER_ARG_PSTR(0);
 			break;
@@ -248,7 +248,7 @@ CLEVER_METHOD(StrType::format)
 		format = CLEVER_THIS()->getStr();
 		offset = -1L;
 	} else {
-		if (CLEVER_ARG_COUNT()) {
+		if (args.size()) {
 			format = CLEVER_ARG_CSTR(0);
 		} else {
 			CLEVER_THROW("String.format expected at least one argument");
@@ -266,7 +266,7 @@ CLEVER_METHOD(StrType::format)
 				char* skip;
 
 				if ((arg=::std::strtoul(++point, &skip, 10))) {
-					if (CLEVER_ARG_COUNT() > (arg+offset)) {
+					if (args.size() > (arg+offset)) {
 						CLEVER_ARG_DUMPTO((arg+offset), stream);
 					}
 					point = skip;
@@ -389,7 +389,7 @@ CLEVER_METHOD(StrType::split)
 	}
 
 	unsigned long maximum = 0;
-	if (CLEVER_ARG_COUNT() > 1) {
+	if (args.size() > 1) {
 		if (CLEVER_ARG_INT(1)) {
 			maximum = CLEVER_ARG_INT(1);
 		}

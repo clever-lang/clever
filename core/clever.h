@@ -186,9 +186,6 @@ bool check_args(const ::std::vector<Value*>&, const char*, CException*, const Ty
 
 #define CLEVER_GET_OBJECT(t, n) static_cast<t>((n)->getObj())
 
-/* {{{ Accessor Macros for Function Arguments */
-#define CLEVER_ARG_COUNT		 args.size
-
 /* {{{ CString */
 #define CLEVER_ARG_CSTR(index)	args[index]->getStr()
 /* }}} */
