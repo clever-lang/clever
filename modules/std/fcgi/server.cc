@@ -286,51 +286,49 @@ CLEVER_METHOD(Server::getHeader)
 // Fetches a request cookie
 CLEVER_METHOD(Server::getCookie)
 {
-	if (CLEVER_THIS()) {
-		FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
-		if (request) {
-			if (clever_check_args("s")) {
-				if (cookie->size()) {
-					CLEVER_FCGI_ITERATOR it = CLEVER_FCGI_FIND(cookie, CLEVER_ARG_PSTR(0));
-					if ((it != CLEVER_FCGI_END(cookie))) {
-						CLEVER_RETURN_STR(CLEVER_FCGI_FETCH(it));
-					} else CLEVER_RETURN_NULL();
-				} else CLEVER_RETURN_NULL();
-			} else {
-				CLEVER_RETURN_NULL();
-			}
-		} else {
-			CLEVER_RETURN_NULL();
-		}
-	} else {
-		//CLEVER_THROW("Server.getCookie cannot be called statically");
+	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
+
+	if (!request) {
+		CLEVER_RETURN_NULL();
 		return;
 	}
+
+	if (!clever_check_args("s")) {
+		return;
+	}
+
+	if (cookie->size()) {
+		CLEVER_FCGI_ITERATOR it = CLEVER_FCGI_FIND(cookie, CLEVER_ARG_PSTR(0));
+
+		if ((it != CLEVER_FCGI_END(cookie))) {
+			CLEVER_RETURN_STR(CLEVER_FCGI_FETCH(it));
+			return;
+		}
+	}
+	CLEVER_RETURN_NULL();
 }
 
 // Server.debug()
 // Prints the request environment to the FCGI standard output
 CLEVER_METHOD(Server::debug)
 {
-	if (CLEVER_THIS()) {
-		FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
-		if (request) {
-			const char* const* next = request->envp;
-			if (next) {
-				FCGX_PutStr("<pre>\n", sizeof("<pre>\n"), request->out);
-				while (*next) {
-					FCGX_PutStr(*next, strlen(*next), request->out);
-					FCGX_PutStr("\n", sizeof("\n"), request->out);
-					++next;
-				}
-				FCGX_PutStr("</pre>\n", sizeof("</pre>\n"), request->out);
-			}
-		}
+	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
 
+	if (!request) {
 		CLEVER_RETURN_NULL();
-	} else {
-		//CLEVER_THROW("Server.debug cannot be called statically");
 		return;
+	}
+
+	const char* const* next = request->envp;
+
+	if (next) {
+		FCGX_PutStr("<pre>\n", sizeof("<pre>\n"), request->out);
+		while (*next) {
+			FCGX_PutStr(*next, strlen(*next), request->out);
+			FCGX_PutStr("\n", sizeof("\n"), request->out);
+			++next;
+		}
+		FCGX_PutStr("</pre>\n", sizeof("</pre>\n"), request->out);
 	}
 }
 
@@ -338,28 +336,25 @@ CLEVER_METHOD(Server::debug)
 // Will return a Map/Array of request parameters
 CLEVER_METHOD(Server::getParams)
 {
-	if (CLEVER_THIS()) {
-		FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
-		if (request) {
-			::std::vector<Value*> mapping;
+	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
 
-			CLEVER_FCGI_ITERATOR item(params->begin());
-			CLEVER_FCGI_ITERATOR last(params->end());
-
-			while (item != last) {
-				mapping.push_back(new Value(CSTRING(item->first)));
-				mapping.push_back(new Value(CSTRING(item->second)));
-				++item;
-			}
-
-			CLEVER_RETURN_MAP(CLEVER_MAP_TYPE->allocData(&mapping));
-		} else {
-			CLEVER_RETURN_NULL();
-		}
-	} else {
-		//CLEVER_THROW("Server.getParams cannot be called statically");
+	if (!request) {
+		CLEVER_RETURN_NULL();
 		return;
 	}
+
+	::std::vector<Value*> mapping;
+
+	CLEVER_FCGI_ITERATOR item(params->begin());
+	CLEVER_FCGI_ITERATOR last(params->end());
+
+	while (item != last) {
+		mapping.push_back(new Value(CSTRING(item->first)));
+		mapping.push_back(new Value(CSTRING(item->second)));
+		++item;
+	}
+
+	CLEVER_RETURN_MAP(CLEVER_MAP_TYPE->allocData(&mapping));
 }
 
 // Server.getHeaders()
