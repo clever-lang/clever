@@ -32,17 +32,17 @@ public:
 	enum FuncKind { UNDEF, USER_FUNC, INTERNAL_FUNC };
 
 	Function()
-		: ValueObject(), m_name(), m_type(UNDEF), m_num_args(0),
+		: ValueObject(), m_name(), m_type(UNDEF), m_num_rargs(0), m_num_args(0),
 		m_variadic(false), m_environment(NULL) {}
 
 	Function(std::string name, FunctionPtr ptr)
-		: ValueObject(), m_name(name), m_type(INTERNAL_FUNC), m_num_args(0),
-		m_variadic(false), m_environment(NULL)
+		: ValueObject(), m_name(name), m_type(INTERNAL_FUNC), m_num_rargs(0),
+		m_num_args(0), m_variadic(false), m_environment(NULL)
 		{ m_info.ptr = ptr; }
 
 	Function(std::string name, size_t addr)
-		: ValueObject(), m_name(name), m_type(USER_FUNC), m_num_args(0),
-		m_variadic(false), m_environment(NULL)
+		: ValueObject(), m_name(name), m_type(USER_FUNC), m_num_rargs(0),
+		m_num_args(0), m_variadic(false), m_environment(NULL)
 		{ m_info.addr = addr; }
 
 	~Function() {}
@@ -69,6 +69,9 @@ public:
 	size_t getNumArgs() const { return m_num_args; }
 	void setNumArgs(size_t n)  { m_num_args = n; }
 
+	size_t getNumRequiredArgs() const { return m_num_rargs; }
+	void setNumRequiredArgs(size_t num) { m_num_rargs = num; }
+
 	Environment* getEnvironment() { return m_environment; }
 	void setEnvironment(Environment* e) {
 		m_environment = e;
@@ -76,6 +79,7 @@ public:
 private:
 	std::string m_name;
 	FuncKind m_type;
+	size_t m_num_rargs;
 	size_t m_num_args;
 	bool m_variadic;
 
@@ -96,11 +100,11 @@ public:
 	~FuncType() {}
 
 	void dump(const void* data) const { dump(data, std::cout); }
-	void dump(const void* data, std::ostream& out) const { out << "function() { }"; }
+	void dump(const void* data, std::ostream& out) const { out << "function() {}"; }
 
 	void* allocData(CLEVER_TYPE_CTOR_ARGS) const { return new Function; }
 
-	void deallocData(void* data) { if (data) { delete static_cast<Function*>(data); } }
+	void deallocData(void* data) { delete static_cast<Function*>(data); }
 };
 
 } // clever

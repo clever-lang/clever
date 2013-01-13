@@ -334,12 +334,23 @@ void VM::run()
 				fenv->setRetAddr(m_pc + 1);
 				fenv->setRetVal(getValue(OPCODE.result));
 
+				if (m_call_args.size() < func->getNumRequiredArgs()
+					|| (m_call_args.size() > func->getNumArgs()
+						&& !func->isVariadic())) {
+					error(VM_ERROR, "Wrong number of parameters");
+				}
+
 				size_t nargs = 0;
 
 				if (func->hasArgs()) {
+					size_t num_args = m_call_args.size();
 					ValueOffset argoff(0,0);
 
-					for (size_t i = 0, len = func->getNumArgs(); i < len; ++i) {
+					if (num_args > func->getNumArgs()) {
+						num_args = func->getNumArgs();
+					}
+
+					for (size_t i = 0, len = num_args; i < len; ++i) {
 						fenv->getValue(argoff)->copy(m_call_args[i]);
 						argoff.second++;
 						++nargs;
