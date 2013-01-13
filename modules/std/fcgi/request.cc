@@ -82,7 +82,7 @@ CLEVER_METHOD(Request::accept)
 										if (next) do {
 											::std::string chunk(v.substr(last, next));
 											if (chunk.size()) {
-												size_t split = chunk.find("=");
+												size_t split = chunk.find("=", next);
 												if (split) {
 													::std::string l(chunk.substr(0, split));
 													::std::string r(chunk.substr(split+1, chunk.size()));
