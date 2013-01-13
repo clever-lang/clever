@@ -47,10 +47,22 @@ while(server.accept()) {
 	server.print(String.format("SERVER[\1]\n", env));
 	server.print("</pre>");
 	server.print(
+		"<form action=\"\" method=\"get\">",
+		String.format("<textarea style=\"width:100%\" name=\"get-test\">\1</textarea>", server.getParam("get-test")),
+		"<input type=\"submit\" value=\"GET TEST\"/>",
+		"</form>"
+	);
+	server.print("<hr />");
+	server.print(
+		"<form action=\"\" method=\"post\">",
+		String.format("<textarea style=\"width:100%\" name=\"post-test\">\1</textarea>", server.getParam("post-test")),
+		"<input type=\"submit\" value=\"POST TEST\"/>",
+		"</form>"
+	);
+	server.print(
 		"</body>\n",
 		"</html>\n"
 	);
-	server.debug();
 	server.finish();
 }
 
