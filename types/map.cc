@@ -90,7 +90,7 @@ CLEVER_METHOD(MapType::each)
 	Function* func = static_cast<Function*>(args[0]->getObj());
 
 	std::map< std::string, Value*>& map = arr->getData();
-	std::map< std::string, Value*>::iterator it(map.begin()), end(map.end());
+	std::map< std::string, Value*>::const_iterator it(map.begin()), end(map.end());
 	std::vector<Value*> results;
 	
 	while (it != end) {		
