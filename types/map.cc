@@ -117,10 +117,18 @@ CLEVER_METHOD(MapType::each)
 	CLEVER_RETURN_MAP(CLEVER_MAP_TYPE->allocData(&results));
 }
 
+// Map.size()
+// Returns the number of elements currently mapped
+CLEVER_METHOD(MapType::size)
+{
+	CLEVER_RETURN_INT((CLEVER_GET_OBJECT(MapObject*, CLEVER_THIS())->getData()).size());
+}
+
 CLEVER_TYPE_INIT(MapType::init)
 {
 	addMethod(CSTRING("insert"), (MethodPtr) &MapType::insert);
 	addMethod(CSTRING("each"),	 (MethodPtr) &MapType::each);
+	addMethod(CSTRING("size"),	 (MethodPtr) &MapType::size);
 }
 
 } // clever
