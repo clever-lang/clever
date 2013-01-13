@@ -15,11 +15,13 @@ namespace clever { namespace packages { namespace std {
 
 const size_t CLEVER_FCGI_STDIN_MAX = 1000000;
 
-void Server::dump(const void* data) const {
+void Server::dump(const void* data) const
+{
 	dump(data, ::std::cout);
 }
 
-void Server::dump(const void* data, ::std::ostream& out) const {
+void Server::dump(const void* data, ::std::ostream& out) const
+{
 	Value::DataValue* dvalue = (Value::DataValue*)data;
 	if (dvalue) {
 		FCGX_Request* uvalue = CLEVER_GET_OBJECT(FCGX_Request*, dvalue->obj);
@@ -31,7 +33,8 @@ void Server::dump(const void* data, ::std::ostream& out) const {
 
 // Server.new()
 // Setup the process for responding to FCGI requests by creating a new Request object
-void* Server::allocData(CLEVER_TYPE_CTOR_ARGS) const {
+void* Server::allocData(CLEVER_TYPE_CTOR_ARGS) const
+{
 	FCGX_Request* request = new FCGX_Request;
 	if (request) {
 		if (FCGX_InitRequest(
@@ -46,7 +49,8 @@ void* Server::allocData(CLEVER_TYPE_CTOR_ARGS) const {
 	return NULL;
 }
 
-void Server::deallocData(void* data) {
+void Server::deallocData(void* data)
+{
 	delete static_cast<FCGX_Request*>(data);
 }
 
@@ -137,7 +141,8 @@ CLEVER_METHOD(Server::accept)
 
 // Server.print(string text, [...])
 // Prints to the FCGI standard output
-CLEVER_METHOD(Server::print) {
+CLEVER_METHOD(Server::print)
+{
 	if (CLEVER_THIS()) {
 		FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
 		if (request) {
@@ -156,7 +161,8 @@ CLEVER_METHOD(Server::print) {
 
 // Server.flush()
 // Flushes the FCGI standard output buffer
-CLEVER_METHOD(Server::flush) {
+CLEVER_METHOD(Server::flush)
+{
 	if (CLEVER_THIS()) {
 		FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
 		if (request) {
@@ -360,77 +366,71 @@ CLEVER_METHOD(Server::getParams)
 // Will return a Map/Array of request headers
 CLEVER_METHOD(Server::getHeaders)
 {
-	if (CLEVER_THIS()) {
-		FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
-		if (request) {
-			::std::vector<Value*> mapping;
+	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
 
-			CLEVER_FCGI_ITERATOR item(head->begin());
-			CLEVER_FCGI_ITERATOR last(head->end());
-
-			while (item != last) {
-				mapping.push_back(new Value(CSTRING(item->first)));
-				mapping.push_back(new Value(CSTRING(item->second)));
-				++item;
-			}
-
-			CLEVER_RETURN_MAP(CLEVER_MAP_TYPE->allocData(&mapping));
-		} else {
-			CLEVER_RETURN_NULL();
-		}
-	} else {
-		//CLEVER_THROW("Server.getHeaders cannot be called statically");
+	if (!request) {
+		CLEVER_RETURN_NULL();
 		return;
 	}
+
+	::std::vector<Value*> mapping;
+
+	CLEVER_FCGI_ITERATOR item(head->begin());
+	CLEVER_FCGI_ITERATOR last(head->end());
+
+	while (item != last) {
+		mapping.push_back(new Value(CSTRING(item->first)));
+		mapping.push_back(new Value(CSTRING(item->second)));
+		++item;
+	}
+
+	CLEVER_RETURN_MAP(CLEVER_MAP_TYPE->allocData(&mapping));
 }
 
 // Server.getCookies()
 // Will return a Map/Array of request cookies
 CLEVER_METHOD(Server::getCookies)
 {
-	if (CLEVER_THIS()) {
-		FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
-		if (request) {
-			::std::vector<Value*> mapping;
+	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
 
-			CLEVER_FCGI_ITERATOR item(cookie->begin());
-			CLEVER_FCGI_ITERATOR last(cookie->end());
-
-			while (item != last) {
-				mapping.push_back(new Value(CSTRING(item->first)));
-				mapping.push_back(new Value(CSTRING(item->second)));
-				++item;
-			}
-
-			CLEVER_RETURN_MAP(CLEVER_MAP_TYPE->allocData(&mapping));
-		} else {
-			CLEVER_RETURN_NULL();
-		}
-	} else {
-		//CLEVER_THROW("Server.getCookies cannot be called statically");
+	if (!request) {
+		CLEVER_RETURN_NULL();
 		return;
 	}
+
+	::std::vector<Value*> mapping;
+
+	CLEVER_FCGI_ITERATOR item(cookie->begin());
+	CLEVER_FCGI_ITERATOR last(cookie->end());
+
+	while (item != last) {
+		mapping.push_back(new Value(CSTRING(item->first)));
+		mapping.push_back(new Value(CSTRING(item->second)));
+		++item;
+	}
+
+	CLEVER_RETURN_MAP(CLEVER_MAP_TYPE->allocData(&mapping));
 }
 
 CLEVER_TYPE_INIT(Server::init)
 {
-	/* IO */
+	// IO
 	addMethod(CSTRING("accept"), (MethodPtr)&Server::accept);
-	addMethod(CSTRING("print"), (MethodPtr)&Server::print);
-	addMethod(CSTRING("flush"), (MethodPtr)&Server::flush);
+	addMethod(CSTRING("print"),  (MethodPtr)&Server::print);
+	addMethod(CSTRING("flush"),  (MethodPtr)&Server::flush);
 	addMethod(CSTRING("finish"), (MethodPtr)&Server::finish);
 
-	/* Util */
+	// Util
 	addMethod(CSTRING("getEnvironment"), (MethodPtr)&Server::getEnvironment);
-	addMethod(CSTRING("getParam"), (MethodPtr)&Server::getParam);
-	addMethod(CSTRING("getHeader"), (MethodPtr)&Server::getHeader);
-	addMethod(CSTRING("getCookie"), (MethodPtr)&Server::getCookie);
+	addMethod(CSTRING("getParam"),       (MethodPtr)&Server::getParam);
+	addMethod(CSTRING("getHeader"),      (MethodPtr)&Server::getHeader);
+	addMethod(CSTRING("getCookie"),      (MethodPtr)&Server::getCookie);
 
-	addMethod(CSTRING("getParams"), (MethodPtr)&Server::getParams);
+	addMethod(CSTRING("getParams"),  (MethodPtr)&Server::getParams);
 	addMethod(CSTRING("getHeaders"), (MethodPtr)&Server::getHeaders);
 	addMethod(CSTRING("getCookies"), (MethodPtr)&Server::getCookies);
-	
-	/* Debug Environment */
+
+	// Debug Environment
 	addMethod(CSTRING("debug"),		(MethodPtr)&Server::debug);
 }
 
