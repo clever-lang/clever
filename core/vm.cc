@@ -121,9 +121,9 @@ void VM::copy(const VM* vm)
 
 void VM::wait()
 {
-	ThreadPool::iterator it = m_thread_pool.begin(), ed = m_thread_pool.end();
+	ThreadPool::iterator it(m_thread_pool.begin()), end(m_thread_pool.end());
 
-	while (it != ed) {
+	while (it != end) {
 		for (size_t i = 0, j = it->size(); i < j; ++i) {
 			it->at(i)->t_handler.wait();
 
