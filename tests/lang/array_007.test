@@ -1,0 +1,15 @@
+Testing array's each method
+==CODE==
+import std.io.*;
+
+function test(x...) {
+	println(x.at(0) * 2);
+}
+
+var z = [1, 2, 3];
+
+z.each(test);
+==RESULT==
+2
+4
+6
