@@ -86,27 +86,42 @@ CLEVER_METHOD(Server::accept)
 			case 'X':
 			case 'H':
 				if (k.find("HTTP_COOKIE") == 0) {
-					// Process cookies
-					::std::cout << "COOKIE[" << v << "]" << ::std::endl;
-					size_t last = 0, next = v.find(";");
+					::std::string name;
+					::std::string data;
+					bool inv = false;
+					
+					for (size_t position = 0; position < v.length(); position++) {
+						switch(v.at(position)){								
+							case '=': inv=true; break;
 
-					if (next) {
-						do {
-							::std::string chunk(v.substr(last, next));
-							if (chunk.size()) {
-								size_t split = chunk.find("=", next);
-
-								if (split) {
-									::std::string l(chunk.substr(0, split));
-									::std::string r(chunk.substr(split+1, chunk.size()));
-									cookie->insert(CLEVER_FCGI_PAIR(l, r));
-								} else {
-									cookie->insert(CLEVER_FCGI_NULL(chunk));
+							case ' ':
+							case ';': {
+								inv=false;
+								if (name.size() && data.size()) {
+									cookie->insert(CLEVER_FCGI_PAIR(name, data));
 								}
-							}
-						} while((last = (next+1)) && (next = v.find(";", next+1)));
-					} else {
+								name.clear();
+								data.clear();
+							} break;
+
+							default:
+								if(inv) {
+									data += v.at(position);									
+								} else {
+									name += v.at(position);
+								}
+							break;
+						}
+					}
+					
+					if (name.size() && data.size()) {
+						cookie->insert(CLEVER_FCGI_PAIR(name, data));
+					}			
+				} else {
+					if (k.find("HTTP") == 0) {
 						head->insert(CLEVER_FCGI_PAIR(k.substr(5), v));
+					} else {
+						head->insert(CLEVER_FCGI_PAIR(k, v));
 					}
 				}
 				break;
@@ -133,6 +148,8 @@ CLEVER_METHOD(Server::accept)
 					} else {
 						env->insert(CLEVER_FCGI_PAIR(k, v));
 					}
+				} else {
+					env->insert(CLEVER_FCGI_PAIR(k, v));
 				}
 				break;
 		}
@@ -195,11 +212,7 @@ CLEVER_METHOD(Server::getEnvironment)
 		return;
 	}
 
-	if (!clever_check_args("s")) {
-		return;
-	}
-
-	if (env->size()) {
+	if (args.size()) {
 		CLEVER_FCGI_ITERATOR it = CLEVER_FCGI_FIND(env, CLEVER_ARG_PSTR(0));
 
 		if (it != CLEVER_FCGI_END(env)) {
@@ -266,7 +279,6 @@ CLEVER_METHOD(Server::getHeader)
 
 	if (head->size()) {
 		CLEVER_FCGI_ITERATOR it = CLEVER_FCGI_FIND(head, CLEVER_ARG_PSTR(0));
-
 		if (it != CLEVER_FCGI_END(head)) {
 			CLEVER_RETURN_STR(CLEVER_FCGI_FETCH(it));
 			return;
