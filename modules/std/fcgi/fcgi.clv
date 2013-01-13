@@ -24,24 +24,51 @@ while(server.accept()) {
 	/**
 	* Set Headers and Cookies before printing ...
 	**/
-	
-	server.setHeader("Content-Type", "text/html");
 	server.print(
 		"<html>\n",
 		"<head>\n",
+		"<title>Clever FCGI :)</title>\n",
 		"</head>\n",
 		"<body>\n"
 	);
-	server.print(String.format("Welcome to the clever demo on \1<br/>\n", server.getHeader("HOST")));
-	server.print(String.format("You are visiting from \1:\2<br/>\n", server.getEnvironment("REMOTE_ADDR"), server.getEnvironment("REMOTE_PORT")));
-	server.print(String.format("We are serving you from \1:\2<br/>\n", server.getEnvironment("SERVER_ADDR"), server.getEnvironment("SERVER_PORT")));
 	
-	server.print("<pre>\n");
-	server.print(String.format("PARAMS[\1]\n", params));
-	server.print(String.format("HEADERS[\1]\n", headers));
-	server.print(String.format("COOKIES[\1]\n", cookies));
-	server.print(String.format("SERVER[\1]\n", env));
-	server.print("</pre>");
+	if (env.size()) {
+		server.print("<h1>Environment</h1>\n");
+		server.print("<ul>\n");
+		env.each(function(key, value){
+				server.print(String.format("<li><b>\1:</b>&nbsp;\2</li>\n", key, value));
+		});
+		server.print("</ul>");
+	}
+	
+	if (headers.size()) {
+		server.print("<h1>Headers</h1>\n");
+		server.print("<ul>\n");
+		headers.each(function(key, value){
+				server.print(String.format("<li><b>\1:</b>&nbsp;\2</li>\n", key, value));
+		});
+		server.print("</ul>");
+	}
+
+	if (cookies.size()) {
+		server.print("<h1>Cookies</h1>\n");
+		server.print("<ul>\n");
+		cookies.each(function(key, value){
+				server.print(String.format("<li><b>\1:</b>&nbsp;\2</li>\n", key, value));
+		});
+		server.print("</ul>");
+	}
+
+	if (params.size()) {
+		server.print("<h1>Request Variables</h1>\n");
+		server.print("<ul>\n");
+		params.each(function(key, value){
+				server.print(String.format("<li><b>\1:</b>&nbsp;\2</li>\n", key, value));
+		});
+		server.print("</ul>");
+	}
+	
+	server.print("<h2>Form Testing</h2>");
 	server.print(
 		"<form action=\"\" method=\"get\">",
 		String.format("<textarea style=\"width:100%\" name=\"get-test\">\1</textarea>", server.getParam("get-test")),
