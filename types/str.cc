@@ -384,45 +384,45 @@ CLEVER_METHOD(StrType::split)
 		return;
 	}
 
-	if (clever_check_args("s") || clever_check_args("si")) {
-		unsigned long maximum = 0;		
-		if (CLEVER_ARG_COUNT() > 1) {
-			if (CLEVER_ARG_INT(1)) {
-				maximum = CLEVER_ARG_INT(1);
-			}
-		}
-
-		::std::vector<Value*> list;
-		{
-			const ::std::string* self = CLEVER_THIS()->getStr();
-			if (self && self->length()) {
-
-				const ::std::string* delimit = CLEVER_ARG_CSTR(0);
-				size_t offset = 0;
-				if (delimit && (offset=delimit->length())) {
-
-					::std::string buffer;
-					size_t last = 0;
-
-					for (size_t position = 0; position < self->length(); position++) {
-						if ((!maximum || (list.size() < maximum))) {
-							if ((last = self->find(delimit->c_str(), position)) == position) {	
-								list.push_back(new Value(CSTRING(buffer)));
-								position = last + (offset-1);
-								buffer.clear();
-								continue;
-							}
-						}
-						buffer += self->at(position);
-					}
-					list.push_back(new Value(CSTRING(buffer)));
-				} else list.push_back(new Value(self));
-			}
-		}
-		CLEVER_RETURN_ARRAY(CLEVER_ARRAY_TYPE->allocData(&list));
-	} else {
-		CLEVER_THROW("String.split expected a string for delimiter");
+	if (!clever_check_args("s|i")) {
+		return;
 	}
+
+	unsigned long maximum = 0;
+	if (CLEVER_ARG_COUNT() > 1) {
+		if (CLEVER_ARG_INT(1)) {
+			maximum = CLEVER_ARG_INT(1);
+		}
+	}
+
+	::std::vector<Value*> list;
+	const ::std::string* self = CLEVER_THIS()->getStr();
+
+	if (self && self->length()) {
+		const ::std::string* delimit = CLEVER_ARG_CSTR(0);
+		size_t offset = 0;
+
+		if (delimit && (offset=delimit->length())) {
+			::std::string buffer;
+			size_t last = 0;
+
+			for (size_t position = 0; position < self->length(); position++) {
+				if ((!maximum || (list.size() < maximum))) {
+					if ((last = self->find(delimit->c_str(), position)) == position) {
+						list.push_back(new Value(CSTRING(buffer)));
+						position = last + (offset-1);
+						buffer.clear();
+						continue;
+					}
+				}
+				buffer += self->at(position);
+			}
+			list.push_back(new Value(CSTRING(buffer)));
+		} else {
+			list.push_back(new Value(self));
+		}
+	}
+	CLEVER_RETURN_ARRAY(CLEVER_ARRAY_TYPE->allocData(&list));
 }
 
 CLEVER_TYPE_INIT(StrType::init)
