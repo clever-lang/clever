@@ -52,7 +52,7 @@ public:
 	CLEVER_METHOD_D(print);
 	CLEVER_METHOD_D(flush);
 
-	CLEVER_METHOD_D(getServer);
+	CLEVER_METHOD_D(getEnvironment);
 	CLEVER_METHOD_D(getParam);
 	CLEVER_METHOD_D(getHeader);
 	CLEVER_METHOD_D(getCookie);

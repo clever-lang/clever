@@ -18,9 +18,6 @@ namespace clever { namespace packages { namespace std {
 
 namespace io {
 
-#define STDIO_DELIM "{}"
-#define STDIO_MAXBUF 8096
-
 // flush(void)
 // Flushes output buffer (forcefully)
 static CLEVER_FUNCTION(flush) {

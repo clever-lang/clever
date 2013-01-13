@@ -374,6 +374,30 @@ CLEVER_METHOD(StrType::getLength)
 	result->setInt((CLEVER_THIS()->getStr())->length());
 }
 
+// String.split(string delimiter, [int maximum])
+// Returns string split by delimiter as array
+CLEVER_METHOD(StrType::split)
+{
+	if (!CLEVER_THIS()) {
+		CLEVER_THROW("String.split cannot be called statically");
+		return;
+	}
+
+	//const CString* astring = CLEVER_THIS()->getStr();
+	if (clever_check_args("s") || clever_check_args("si")) {
+		//const CString* delimit = CLEVER_ARG_CSTR(0);
+		{
+			::std::vector<Value*> list;
+			{
+				// @TODO(krakjoe) finish the implementation of split
+			}
+			CLEVER_RETURN_ARRAY(CLEVER_ARRAY_TYPE->allocData(&list));
+		}
+	} else {
+		CLEVER_THROW("String.split expected a string for delimiter");
+	}
+}
+
 CLEVER_TYPE_INIT(StrType::init)
 {
 	addMethod(CSTRING("subString"),  	(MethodPtr) &StrType::subString);
@@ -385,6 +409,7 @@ CLEVER_TYPE_INIT(StrType::init)
 	addMethod(CSTRING("startsWith"),	(MethodPtr) &StrType::startsWith);
 	addMethod(CSTRING("endsWith"),		(MethodPtr) &StrType::endsWith);
 	addMethod(CSTRING("charAt"),		(MethodPtr) &StrType::charAt);
+	addMethod(CSTRING("split"),			(MethodPtr) &StrType::split);
 }
 
 CLEVER_TYPE_OPERATOR(StrType::greater)
