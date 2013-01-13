@@ -161,13 +161,40 @@ Value* VM::runFunction(Function* func, std::vector<Value*>* args)
 		m_call_args.clear();
 
 		if (EXPECTED(args != NULL)) {
-			for (size_t i = 0, j = args->size(); i < j; ++i) {
-				m_call_args.push_back(args->at(i));
+			size_t nargs = 0;
+
+			if (func->hasArgs()) {
+				size_t num_args = args->size();
+				ValueOffset argoff(0,0);
+
+				if (num_args > func->getNumArgs()) {
+					num_args = func->getNumArgs();
+				}
+
+				for (size_t i = 0, len = num_args; i < len; ++i) {
+					fenv->getValue(argoff)->copy(args->at(i));
+					argoff.second++;
+					++nargs;
+				}
+			}
+
+			if (UNEXPECTED(func->isVariadic())) {
+				ArrayObject* arr = new ArrayObject;
+
+				if ((args->size() - nargs) > 0) {
+					for (size_t i = nargs, j = args->size(); i < j; ++i) {
+						arr->getData().push_back(args->at(i)->clone());
+					}
+				}
+
+				Value* vararg = fenv->getValue(ValueOffset(0, func->getNumArgs()));
+				vararg->setType(CLEVER_ARRAY_TYPE);
+				vararg->setObj(arr);
 			}
 		}
 
 		size_t saved_pc = m_pc;
-		m_pc = func->getAddr() + (func->getNumArgs() * 3);
+		m_pc = func->getAddr() + (func->getNumArgs() * 2) + (func->isVariadic() ? 2 : 0);
 		run();
 		m_pc = saved_pc;
 	}
