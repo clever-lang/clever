@@ -35,8 +35,8 @@ void* Request::allocData(CLEVER_TYPE_CTOR_ARGS) const {
 	FCGX_Request* request = new FCGX_Request;
 	if (request) {
 		if (FCGX_InitRequest(
-				request, 
-				0, 
+				request,
+				0,
 				0
 			) == 0) {
 			return request;
@@ -57,7 +57,7 @@ CLEVER_METHOD(Request::accept)
 	if (CLEVER_THIS()) {
 		FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
 		if (request) {
-		
+
 			env->clear();
 			head->clear();
 			params->clear();
@@ -77,7 +77,7 @@ CLEVER_METHOD(Request::accept)
 								case 'H': {
 									if ((k.find("HTTP_COOKIE") == 0)) {
 										/** process cookies **/
-										::std::cout << "COOKIE[" << v << "]" << ::std::endl;	
+										::std::cout << "COOKIE[" << v << "]" << ::std::endl;
 										size_t last = 0, next = v.find(";");
 										if (next) do {
 											::std::string chunk(v.substr(last, next));
@@ -91,7 +91,7 @@ CLEVER_METHOD(Request::accept)
 													cookie->insert(CLEVER_FCGI_NULL(chunk));
 												}
 											}
-										} while((last=(next+1)) && (next = v.find(";", next+1)));				
+										} while((last=(next+1)) && (next = v.find(";", next+1)));
 									} else {
 										head->insert(CLEVER_FCGI_PAIR(k.substr(5), v));
 									}
@@ -112,7 +112,7 @@ CLEVER_METHOD(Request::accept)
 													params->insert(CLEVER_FCGI_NULL(chunk));
 												}
 											}
-										} while((last=(next+1)) && (next = v.find("&", next+1)));									
+										} while((last=(next+1)) && (next = v.find("&", next+1)));
 									} else {
 										env->insert(CLEVER_FCGI_PAIR(k, v));
 									}
@@ -125,7 +125,7 @@ CLEVER_METHOD(Request::accept)
 				CLEVER_RETURN_BOOL(true);
 			} else {
 				CLEVER_RETURN_BOOL(false);
-			}		
+			}
 		} else {
 			CLEVER_RETURN_BOOL(false);
 		}
@@ -141,12 +141,12 @@ CLEVER_METHOD(Request::print) {
 	if (CLEVER_THIS()) {
 		FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
 		if (request) {
-			for (size_t arg = 0; arg < CLEVER_ARG_COUNT(); arg++) {
+			for (size_t arg = 0; arg < args.size(); arg++) {
 				if (CLEVER_ARG_TYPE(arg) == CLEVER_STR_TYPE) {
 					FCGX_PutStr(CLEVER_ARG_CSTR(arg)->c_str(), CLEVER_ARG_CSTR(arg)->size(), request->out);
 				}
 			}
-		}	
+		}
 		CLEVER_RETURN_NULL();
 	} else {
 		//CLEVER_THROW("Request.print cannot be called statically");
@@ -167,7 +167,7 @@ CLEVER_METHOD(Request::flush) {
 	} else {
 		//CLEVER_THROW("Request.flush cannot be called statically");
 		return;
-	}	
+	}
 }
 
 // Request.finish()
@@ -206,7 +206,7 @@ CLEVER_METHOD(Request::getEnvironment)
 
 				CLEVER_FCGI_ITERATOR item(env->begin());
 				CLEVER_FCGI_ITERATOR last(env->end());
-		
+
 				while (item != last) {
 					mapping.push_back(new Value(CSTRING(item->first)));
 					mapping.push_back(new Value(CSTRING(item->second)));
@@ -339,7 +339,7 @@ CLEVER_METHOD(Request::getParams)
 
 			CLEVER_FCGI_ITERATOR item(params->begin());
 			CLEVER_FCGI_ITERATOR last(params->end());
-		
+
 			while (item != last) {
 				mapping.push_back(new Value(CSTRING(item->first)));
 				mapping.push_back(new Value(CSTRING(item->second)));
@@ -367,7 +367,7 @@ CLEVER_METHOD(Request::getHeaders)
 
 			CLEVER_FCGI_ITERATOR item(head->begin());
 			CLEVER_FCGI_ITERATOR last(head->end());
-		
+
 			while (item != last) {
 				mapping.push_back(new Value(CSTRING(item->first)));
 				mapping.push_back(new Value(CSTRING(item->second)));
@@ -395,7 +395,7 @@ CLEVER_METHOD(Request::getCookies)
 
 			CLEVER_FCGI_ITERATOR item(cookie->begin());
 			CLEVER_FCGI_ITERATOR last(cookie->end());
-		
+
 			while (item != last) {
 				mapping.push_back(new Value(CSTRING(item->first)));
 				mapping.push_back(new Value(CSTRING(item->second)));
@@ -429,7 +429,7 @@ CLEVER_TYPE_INIT(Request::init)
 	addMethod(CSTRING("getParams"), (MethodPtr)&Request::getParams);
 	addMethod(CSTRING("getHeaders"), (MethodPtr)&Request::getHeaders);
 	addMethod(CSTRING("getCookies"), (MethodPtr)&Request::getCookies);
-	
+
 	/* Debug Environment */
 	addMethod(CSTRING("debug"),		(MethodPtr)&Request::debug);
 }
