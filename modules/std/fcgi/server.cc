@@ -116,9 +116,13 @@ CLEVER_METHOD(Server::accept)
 					
 					if (name.size() && data.size()) {
 						cookie->insert(CLEVER_FCGI_PAIR(name, data));
-					}						
+					}			
 				} else {
-					head->insert(CLEVER_FCGI_PAIR(k, v));
+					if (k.find("HTTP") == 0) {
+						head->insert(CLEVER_FCGI_PAIR(k.substr(5), v));
+					} else {
+						head->insert(CLEVER_FCGI_PAIR(k, v));
+					}
 				}
 				break;
 
@@ -275,7 +279,6 @@ CLEVER_METHOD(Server::getHeader)
 
 	if (head->size()) {
 		CLEVER_FCGI_ITERATOR it = CLEVER_FCGI_FIND(head, CLEVER_ARG_PSTR(0));
-
 		if (it != CLEVER_FCGI_END(head)) {
 			CLEVER_RETURN_STR(CLEVER_FCGI_FETCH(it));
 			return;
