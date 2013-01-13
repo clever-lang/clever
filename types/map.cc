@@ -94,25 +94,22 @@ CLEVER_METHOD(MapType::each)
 	std::vector<Value*> results;
 	
 	while (it != end) {		
-		Value* call[3] = {NULL, NULL, NULL};
-
+		Value* call[3];
+		std::vector<Value*> fargs;
+		
 		call[0] = new Value(CSTRING(it->first));
 		call[1] = it->second;
 
-		{
-			std::vector<Value*> fargs;
-			
-			call[0]->addRef();
-			call[1]->addRef();
-			
-			fargs.push_back(call[0]);
-			fargs.push_back(call[1]);
+		call[0]->addRef();
+		call[1]->addRef();
+	
+		fargs.push_back(call[0]);
+		fargs.push_back(call[1]);
 
-			results.push_back(call[0]);
-			results.push_back(call[2]=const_cast<VM*>(vm)->runFunction(func, &fargs));
+		results.push_back(call[0]);
+		results.push_back(call[2]=const_cast<VM*>(vm)->runFunction(func, &fargs));
 
-			call[2]->addRef();
-		}
+		call[2]->addRef();
 
 		it++;
 	}
