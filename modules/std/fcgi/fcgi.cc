@@ -13,7 +13,8 @@
 namespace clever { namespace packages { namespace std {
 
 /// Initializes Standard FCGI module
-CLEVER_MODULE_INIT(FCGIModule) {
+CLEVER_MODULE_INIT(FCGIModule)
+{
 	addType(CSTRING("Server"), new Server);
 }
 
