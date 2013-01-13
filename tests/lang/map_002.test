@@ -2,6 +2,6 @@ Testing map eaching
 ==CODE==
 import std.io.*;
 
-println({"hello": "world", "we're": "clever"}.each(function(k, v){return value;}));
+println({"hello": "world", "we're": "clever"}.each(function(k, v){return v;}));
 ==RESULT==
 {"hello": world, "we're": clever}
