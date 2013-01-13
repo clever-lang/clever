@@ -17,9 +17,8 @@
 #include "types/type.h"
 #include "types/array.h"
 
-#define OPCODE m_inst[m_pc]
+#define OPCODE    m_inst[m_pc]
 #define VM_EXIT() goto exit
-#define VM_EXIT_UNHANDLED_EXCEPTION() goto exit_exception
 
 #if CLEVER_GCC_VERSION > 0
 # define OP(name)    name
