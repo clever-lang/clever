@@ -5,8 +5,8 @@
  * This file is distributed under the MIT license. See LICENSE for details.
  */
 
-#ifndef CLEVER_STD_FCGI_REQUEST_H
-#define CLEVER_STD_FCGI_REQUEST_H
+#ifndef CLEVER_STD_FCGI_SERVER_H
+#define CLEVER_STD_FCGI_SERVER_H
 
 #include <map>
 #include <iostream>
@@ -15,21 +15,21 @@
 
 namespace clever { namespace packages { namespace std {
 
-class Request : public Type {
+class Server : public Type {
 public:
 	CLEVER_FCGI_MAP* env;
 	CLEVER_FCGI_MAP* head;
 	CLEVER_FCGI_MAP* cookie;
 	CLEVER_FCGI_MAP* params;
 
-	Request() : Type(CSTRING("Request")) {
+	Server() : Type(CSTRING("Server")) {
 		env = new CLEVER_FCGI_MAP();
 		head = new CLEVER_FCGI_MAP();
 		cookie = new CLEVER_FCGI_MAP();
 		params = new CLEVER_FCGI_MAP();
 	}
 
-	~Request() {
+	~Server() {
 		delete env;
 		delete head;
 		delete cookie;
@@ -66,4 +66,4 @@ public:
 
 }}} // clever::packages::std
 
-#endif // CLEVER_STD_FCGI_REQUEST_H
+#endif // CLEVER_STD_FCGI_SERVER_H
