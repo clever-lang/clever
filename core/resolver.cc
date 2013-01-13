@@ -167,6 +167,7 @@ void Resolver::visit(FunctionDecl* node)
 	node->setScope(m_scope);
 
 	if (node->hasArgs()) {
+		size_t required_args = 0;
 		bool found_rhs = false;
 
 		for (size_t i = 0; i < node->numArgs(); ++i) {
@@ -179,12 +180,15 @@ void Resolver::visit(FunctionDecl* node)
 					"Non-default argument found after the default argument list");
 			} else if (!found_rhs && assign->getRhs()) {
 				found_rhs = assign->getRhs();
+			} else {
+				++required_args;
 			}
 		}
 
 		node->getArgs()->accept(*this);
 
 		func->setNumArgs(node->numArgs());
+		func->setNumRequiredArgs(required_args);
 	}
 
 	if (node->hasVarArg()) {

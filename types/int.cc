@@ -89,16 +89,11 @@ CLEVER_TYPE_OPERATOR(IntType::not_equal)
 
 CLEVER_METHOD(IntType::toString)
 {
-	if (CLEVER_THIS()) {
-		std::ostringstream str;
+	std::ostringstream str;
 
-		str << CLEVER_THIS()->getInt();
+	str << CLEVER_THIS()->getInt();
 
-		result->setStr(CSTRING(str.str()));
-	} else {
-		// TODO(Felipe): display an error/throw exception
-		std::cout << "Error: Cannot be called as static method!" << '\n';
-	}
+	result->setStr(CSTRING(str.str()));
 }
 
 CLEVER_TYPE_INIT(IntType::init)

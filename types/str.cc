@@ -53,8 +53,7 @@ CLEVER_TYPE_OPERATOR(StrType::mod)
 // Returns a substring of the argument or string object referenced using bounds provided
 CLEVER_METHOD(StrType::subString)
 {
-	if (!CLEVER_THIS()) {
-		CLEVER_THROW("String.subString cannot be called statically");
+	if (!clever_check_args("i|i")) {
 		return;
 	}
 
@@ -70,12 +69,10 @@ CLEVER_METHOD(StrType::subString)
 		case 1:
 			bounds[0] = args[0]->getInt();
 			break;
-
-		default:
-			CLEVER_THROW("String.subString expected at least one argument");
-			return;
 	}
+
 	result->setNull();
+
 	if (of && bounds[0] > -1) {
 		if (bounds[1] > -1) {
 			result->setStr(CSTRING(of->substr(bounds[0], bounds[1])));
@@ -89,14 +86,13 @@ CLEVER_METHOD(StrType::subString)
 // Finds a string in a string returning the position
 CLEVER_METHOD(StrType::find)
 {
-	if (!CLEVER_THIS()) {
-		CLEVER_THROW("String.find cannot be called statically");
-		return;
-	}
-
 	const char* needle = NULL;
 	const CString* haystack = CLEVER_THIS()->getStr();
 	int bounds[2] = {-1, -1};
+
+	if (!clever_check_args("s|ii")) {
+		return;
+	}
 
 	switch (args.size()) {
 		case 1:
@@ -113,13 +109,10 @@ CLEVER_METHOD(StrType::find)
 			bounds[0] = CLEVER_ARG_INT(1);
 			bounds[1] = CLEVER_ARG_INT(2);
 		break;
-
-		default:
-			CLEVER_THROW("String.find expected a maximum of 2 arguments");
-			return;
 	}
 
 	result->setNull();
+
 	if (needle && haystack) {
 		if (bounds[0] > -1) {
 			if (bounds[1] > -1) {
@@ -137,14 +130,13 @@ CLEVER_METHOD(StrType::find)
 // Finds the first occurence of a string in a string returning the position
 CLEVER_METHOD(StrType::findFirst)
 {
-	if (!CLEVER_THIS()) {
-		CLEVER_THROW("String.findFirst cannot be called statically");
-		return;
-	}
-
 	const char* needle = NULL;
 	const CString* haystack = NULL;
 	int bounds[2] = {-1, -1};
+
+	if (!clever_check_args("s|ii")) {
+		return;
+	}
 
 	haystack = CLEVER_THIS()->getStr();
 	switch (args.size()) {
@@ -162,10 +154,6 @@ CLEVER_METHOD(StrType::findFirst)
 			bounds[0] = CLEVER_ARG_INT(1);
 			bounds[1] = CLEVER_ARG_INT(2);
 			break;
-
-		default:
-			CLEVER_THROW("String.findFirst expected a maximum of 2 arguments");
-			return;
 	}
 	result->setNull();
 
@@ -186,14 +174,13 @@ CLEVER_METHOD(StrType::findFirst)
 // Finds the last occurence of a string in a string returning the position
 CLEVER_METHOD(StrType::findLast)
 {
-	if (!CLEVER_THIS()) {
-		CLEVER_THROW("String.findLast cannot be called statically");
-		return;
-	}
-
 	const char* needle = NULL;
 	const CString* haystack = CLEVER_THIS()->getStr();
 	int bounds[2] = {-1, -1};
+
+	if (!clever_check_args("s|ii")) {
+		return;
+	}
 
 	result->setNull();
 
@@ -204,12 +191,7 @@ CLEVER_METHOD(StrType::findLast)
 
 		case 2:
 			needle = CLEVER_ARG_PSTR(0);
-			if (CLEVER_ARG_TYPE(1) == CLEVER_INT_TYPE) {
-				bounds[0] = CLEVER_ARG_INT(1);
-			} else {
-				CLEVER_THROW("String.findLast expected an integral argument");
-				return;
-			}
+			bounds[0] = CLEVER_ARG_INT(1);
 			break;
 
 		case 3:
@@ -217,10 +199,6 @@ CLEVER_METHOD(StrType::findLast)
 			bounds[0] = CLEVER_ARG_INT(1);
 			bounds[1] = CLEVER_ARG_INT(2);
 			break;
-
-		default:
-			CLEVER_THROW("String.findLast expected a maximum of 2 arguments");
-			return;
 	}
 
 	if (needle && haystack) {
@@ -248,12 +226,11 @@ CLEVER_METHOD(StrType::format)
 		format = CLEVER_THIS()->getStr();
 		offset = -1L;
 	} else {
-		if (args.size()) {
-			format = CLEVER_ARG_CSTR(0);
-		} else {
-			CLEVER_THROW("String.format expected at least one argument");
+		if (!clever_check_args("s*")) {
 			return;
 		}
+
+		format = CLEVER_ARG_CSTR(0);
 	}
 
 	if (format) {
@@ -289,7 +266,6 @@ CLEVER_METHOD(StrType::format)
 CLEVER_METHOD(StrType::startsWith)
 {
 	if (!clever_check_args("s")) {
-		CLEVER_THROW("String.startsWith expected exactly one string argument");
 		return;
 	}
 
@@ -306,13 +282,7 @@ CLEVER_METHOD(StrType::startsWith)
 // String.endsWith(string match)
 CLEVER_METHOD(StrType::endsWith)
 {
-	if (!CLEVER_THIS()) {
-		CLEVER_THROW("String.endsWith cannot be called statically");
-		return;
-	}
-
 	if (!clever_check_args("s")) {
-		CLEVER_THROW("String.endsWith expected exactly one integral argument");
 		return;
 	}
 
@@ -329,12 +299,7 @@ CLEVER_METHOD(StrType::endsWith)
 // String.charAt(int position)
 CLEVER_METHOD(StrType::charAt)
 {
-	if (!CLEVER_THIS()) {
-		CLEVER_THROW("String.charAt cannot be called statically");
-		return;
-	}
 	if (!clever_check_args("s")) {
-		CLEVER_THROW("String.charAt expected exactly one argument");
 		return;
 	}
 
@@ -363,15 +328,13 @@ CLEVER_METHOD(StrType::charAt)
 	}
 }
 
-// String.getLength()
+// String.size()
 // Returns the length of the string
-CLEVER_METHOD(StrType::getLength)
+CLEVER_METHOD(StrType::size)
 {
-	if (!CLEVER_THIS()) {
-		CLEVER_THROW("String.getLength cannot be called statically");
+	if (!clever_check_no_args()) {
 		return;
 	}
-
 	result->setInt((CLEVER_THIS()->getStr())->length());
 }
 
@@ -379,11 +342,6 @@ CLEVER_METHOD(StrType::getLength)
 // Returns string split by delimiter as array
 CLEVER_METHOD(StrType::split)
 {
-	if (!CLEVER_THIS()) {
-		CLEVER_THROW("String.split cannot be called statically");
-		return;
-	}
-
 	if (!clever_check_args("s|i")) {
 		return;
 	}
@@ -431,7 +389,7 @@ CLEVER_TYPE_INIT(StrType::init)
 	addMethod(CSTRING("find"), 			(MethodPtr) &StrType::find);
 	addMethod(CSTRING("findFirst"), 	(MethodPtr) &StrType::findFirst);
 	addMethod(CSTRING("findLast"), 		(MethodPtr) &StrType::findLast);
-	addMethod(CSTRING("getLength"),		(MethodPtr) &StrType::getLength);
+	addMethod(CSTRING("size"),   		(MethodPtr) &StrType::size);
 	addMethod(CSTRING("format"),		(MethodPtr) &StrType::format);
 	addMethod(CSTRING("startsWith"),	(MethodPtr) &StrType::startsWith);
 	addMethod(CSTRING("endsWith"),		(MethodPtr) &StrType::endsWith);

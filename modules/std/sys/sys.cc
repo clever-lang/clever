@@ -31,27 +31,36 @@ namespace clever { namespace packages { namespace std {
 
 namespace sys {
 
-/**
- * Int system(String command)
- * Calls a command and returns the exit code.
- */
-static CLEVER_FUNCTION(system) {
+// Int system(String command)
+// Calls a command and returns the exit code
+static CLEVER_FUNCTION(system)
+{
+	if (!clever_static_check_args("s")) {
+		return;
+	}
+
 	result->setInt(::system(args[0]->getStr()->c_str()));
 }
 
-/**
- * Void putenv(String env)
- * Sets an environment variable
- */
-static CLEVER_FUNCTION(putenv) {
+// void putenv(String env)
+// Sets an environment variable
+static CLEVER_FUNCTION(putenv)
+{
+	if (!clever_static_check_args("s")) {
+		return;
+	}
+
     ::putenv(const_cast<char*>(args[0]->getStr()->c_str()));
 }
 
-/**
- * String getenv(String env)
- * Gets an environment variable
- */
-static CLEVER_FUNCTION(getenv) {
+// String getenv(String env)
+// Gets an environment variable
+static CLEVER_FUNCTION(getenv)
+{
+	if (!clever_static_check_args("s")) {
+		return;
+	}
+
 	const char* ret = ::getenv(const_cast<char*>(args[0]->getStr()->c_str()));
 
 	if (ret) {
@@ -61,22 +70,24 @@ static CLEVER_FUNCTION(getenv) {
 	}
 }
 
-/**
- * String getcwd()
- * Gets the current working directory
- */
-static CLEVER_FUNCTION(getcwd) {
+// String getcwd()
+// Gets the current working directory
+static CLEVER_FUNCTION(getcwd)
+{
+	if (!clever_static_check_no_args()) {
+		return;
+	}
+
 	char temp[PATH_MAX];
     const char* path = ::getcwd(temp, PATH_MAX);
 
 	result->setStr(CSTRING(path ? path : ""));
 }
 
-/**
- * String argv(Int n)
- * Get n-th argv value
- */
-static CLEVER_FUNCTION(argv) {
+// String argv(Int n)
+// Get n-th argv value
+static CLEVER_FUNCTION(argv)
+{
 /*
 	size_t i = static_cast<size_t>(CLEVER_ARG_INT(0));
 
@@ -88,19 +99,24 @@ static CLEVER_FUNCTION(argv) {
 */
 }
 
-/**
- * Int argc()
- * Get argc value
- */
-static CLEVER_FUNCTION(argc) {
+// Int argc()
+// Get argc value
+static CLEVER_FUNCTION(argc)
+{
+	if (!clever_static_check_no_args()) {
+		return;
+	}
 //	CLEVER_RETURN_INT(*g_clever_argc);
 }
 
-/**
- * Void sleep(Int time)
- * Sleep for 'time' milliseconds.
- */
-static CLEVER_FUNCTION(sleep) {
+// Void sleep(Int time)
+// Sleep for 'time' milliseconds
+static CLEVER_FUNCTION(sleep)
+{
+	if (!clever_static_check_args("i")) {
+		return;
+	}
+
 	int time = static_cast<int>(CLEVER_ARG_INT(0));
 
 #ifdef CLEVER_WIN32

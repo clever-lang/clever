@@ -30,14 +30,14 @@ public:
 	CLEVER_TYPE_VIRTUAL_METHOD_DECLARATIONS;
 
 	void increment(Value* value, const VM* vm) const {}
-	
+
 	void decrement(Value* value, const VM* vm) const {}
 
 	CLEVER_METHOD(subString);
 	CLEVER_METHOD(find);
-	CLEVER_METHOD(findFirst);	
+	CLEVER_METHOD(findFirst);
 	CLEVER_METHOD(findLast);
-	CLEVER_METHOD(getLength);
+	CLEVER_METHOD(size);
 	CLEVER_METHOD(format);
 	CLEVER_METHOD(startsWith);
 	CLEVER_METHOD(endsWith);

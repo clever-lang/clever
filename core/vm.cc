@@ -17,9 +17,8 @@
 #include "types/type.h"
 #include "types/array.h"
 
-#define OPCODE m_inst[m_pc]
+#define OPCODE    m_inst[m_pc]
 #define VM_EXIT() goto exit
-#define VM_EXIT_UNHANDLED_EXCEPTION() goto exit_exception
 
 #if CLEVER_GCC_VERSION > 0
 # define OP(name)    name
@@ -110,28 +109,21 @@ void VM::copy(const VM* vm)
 {
 	this->f_mutex = const_cast<VM*>(vm)->getMutex();
 	this->m_pc = vm->m_pc;
-
 	this->m_try_stack = vm->m_try_stack;
 
-	if (UNEXPECTED(vm->m_temp_env != NULL)) {
-		this->m_temp_env = new Environment(NULL);
-		this->m_temp_env->copy(vm->m_temp_env);
-	} else {
-		this->m_temp_env = NULL;
-	}
+	this->m_temp_env = new Environment(NULL);
+	this->m_temp_env->copy(vm->m_temp_env);
 
 	this->m_global_env = vm->m_global_env;
-
 	this->m_call_stack = vm->m_call_stack;
-
 	this->m_const_env = vm->m_const_env;
 }
 
 void VM::wait()
 {
-	ThreadPool::iterator it = m_thread_pool.begin(), ed = m_thread_pool.end();
+	ThreadPool::iterator it(m_thread_pool.begin()), end(m_thread_pool.end());
 
-	while (it != ed) {
+	while (it != end) {
 		for (size_t i = 0, j = it->size(); i < j; ++i) {
 			it->at(i)->t_handler.wait();
 
@@ -342,12 +334,23 @@ void VM::run()
 				fenv->setRetAddr(m_pc + 1);
 				fenv->setRetVal(getValue(OPCODE.result));
 
+				if (m_call_args.size() < func->getNumRequiredArgs()
+					|| (m_call_args.size() > func->getNumArgs()
+						&& !func->isVariadic())) {
+					error(VM_ERROR, "Wrong number of parameters");
+				}
+
 				size_t nargs = 0;
 
 				if (func->hasArgs()) {
+					size_t num_args = m_call_args.size();
 					ValueOffset argoff(0,0);
 
-					for (size_t i = 0, len = func->getNumArgs(); i < len; ++i) {
+					if (num_args > func->getNumArgs()) {
+						num_args = func->getNumArgs();
+					}
+
+					for (size_t i = 0, len = num_args; i < len; ++i) {
 						fenv->getValue(argoff)->copy(m_call_args[i]);
 						argoff.second++;
 						++nargs;
@@ -408,15 +411,10 @@ void VM::run()
 
 				thread->vm_handler = new VM(this->m_inst);
 				thread->vm_handler->copy(this);
-
 				thread->vm_handler->setChild();
 
-				Environment* tenv;
-
-				tenv = tdata->getEnvironment()
-							->activate(m_call_stack.top());
+				Environment* tenv = tdata->getEnvironment()->activate(m_call_stack.top());
 				thread->vm_handler->m_call_stack.push(tenv);
-
 
 				if (m_thread_pool.size() <= tdata->getID()) {
 					m_thread_pool.resize(tdata->getID() + 1);
