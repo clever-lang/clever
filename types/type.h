@@ -63,10 +63,10 @@ typedef std::pair<const CString*, Function*> MethodPair;
 
 class Type {
 public:
-	Type(const CString* name) : m_name(name), m_methods(), m_properties() {}
-	virtual ~Type();
+	Type(const CString* name)
+		: m_name(name), m_methods(), m_properties() {}
 
-	virtual void init(CLEVER_TYPE_INIT_ARGS) {}
+	virtual ~Type();
 
 	Function* addMethod(Function* func);
 
@@ -92,10 +92,12 @@ public:
 		return NULL;
 	}
 
-	virtual bool isPrimitive() const { return false; }
-
 	/// Method for retrieve the type name
 	const CString* getName() const { return m_name; }
+
+	virtual void init(CLEVER_TYPE_INIT_ARGS) {}
+
+	virtual bool isPrimitive() const { return false; }
 
 	/// Virtual method for debug purpose
 	virtual void dump(const void*) const = 0;
@@ -116,7 +118,10 @@ public:
 	virtual void increment(Value*, const VM*, CException*)                const;
 	virtual void decrement(Value*, const VM*, CException*)                const;
 
+	/// Type internal data constructor
 	virtual void* allocData(CLEVER_TYPE_CTOR_ARGS) const { return NULL; }
+
+	/// Type internal data destructor
 	virtual void deallocData(void* data) {}
 private:
 	const CString* m_name;
