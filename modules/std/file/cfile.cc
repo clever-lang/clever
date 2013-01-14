@@ -11,6 +11,7 @@
 #include "core/clever.h"
 #include "modules/std/file/cfile.h"
 #include "types/type.h"
+#include "types/function.h"
 
 // @TODO(muriloadriano): make this available and use in all Clever API
 #define CLEVER_CAST(Type, obj) (static_cast<Type*>(obj))
@@ -59,7 +60,7 @@ void* CFile::allocData(CLEVER_TYPE_CTOR_ARGS) const {
 	// @TODO(muriloadriano): allow object construction with a single argument
 	// and check the argument's type
 
-	return new fstream(args->at(0)->getStr()->c_str(), 
+	return new fstream(args->at(0)->getStr()->c_str(),
 		detail::convert_open_mode(*(args->at(1)->getStr())));
 }
 
@@ -122,7 +123,7 @@ CLEVER_METHOD(CFile::open)
 
 	fstream* file = CLEVER_GET_OBJECT(fstream*, CLEVER_THIS());
 
-	file->open(args[0]->getStr()->c_str(), 
+	file->open(args[0]->getStr()->c_str(),
 		detail::convert_open_mode(*(args[1]->getStr())));
 }
 
@@ -150,12 +151,12 @@ CLEVER_METHOD(CFile::isOpen)
 
 CLEVER_TYPE_INIT(CFile::init)
 {
-	addMethod(CSTRING("read"),		(MethodPtr)&CFile::read);
-	addMethod(CSTRING("readLine"),	(MethodPtr)&CFile::readLine);
-	addMethod(CSTRING("write"),		(MethodPtr)&CFile::write);
-	addMethod(CSTRING("open"),		(MethodPtr)&CFile::open);
-	addMethod(CSTRING("close"),		(MethodPtr)&CFile::close);
-	addMethod(CSTRING("isOpen"),	(MethodPtr)&CFile::isOpen);
+	addMethod(new Function("read",		(MethodPtr)&CFile::read));
+	addMethod(new Function("readLine",	(MethodPtr)&CFile::readLine));
+	addMethod(new Function("write",		(MethodPtr)&CFile::write));
+	addMethod(new Function("open",		(MethodPtr)&CFile::open));
+	addMethod(new Function("close",		(MethodPtr)&CFile::close));
+	addMethod(new Function("isOpen",	(MethodPtr)&CFile::isOpen));
 }
 
 }}} // clever::packages::std

@@ -131,9 +131,9 @@ CLEVER_METHOD(MapType::size)
 
 CLEVER_TYPE_INIT(MapType::init)
 {
-	addMethod(CSTRING("insert"), (MethodPtr) &MapType::insert);
-	addMethod(CSTRING("each"),	 (MethodPtr) &MapType::each);
-	addMethod(CSTRING("size"),	 (MethodPtr) &MapType::size);
+	addMethod(new Function("insert", (MethodPtr) &MapType::insert));
+	addMethod(new Function("each",	 (MethodPtr) &MapType::each));
+	addMethod(new Function("size",	 (MethodPtr) &MapType::size));
 }
 
 } // clever

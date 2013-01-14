@@ -53,16 +53,15 @@ void VM::error(ErrorLevel level, const char* msg) const
 /// Fetchs a Value ptr according to the operand type
 CLEVER_FORCE_INLINE Value* VM::getValue(Operand& operand) const
 {
-	Environment* source;
+	const Environment* source;
 
 	switch (operand.op_type) {
-	case FETCH_CONST: source = m_const_env; break;
-	case FETCH_VAR: source = m_call_stack.top(); break;
-	case FETCH_TMP: source = m_temp_env; break;
-	default:
-		return NULL;
+		case FETCH_CONST: source = m_const_env;        break;
+		case FETCH_VAR:   source = m_call_stack.top(); break;
+		case FETCH_TMP:   source = m_temp_env;         break;
+		default:
+			return NULL;
 	}
-
 	clever_assert_not_null(source);
 
 	return source->getValue(operand.voffset);
@@ -145,13 +144,49 @@ CLEVER_THREAD_FUNC(_thread_control)
 	return NULL;
 }
 
+// Function parameter binding
+static CLEVER_FORCE_INLINE void _param_binding(Function* func, Environment* fenv,
+	std::vector<Value*>* args)
+{
+	size_t nargs = 0;
+
+	if (EXPECTED(func->hasArgs() && args != NULL)) {
+		size_t num_args = args->size();
+		ValueOffset argoff(0,0);
+
+		if (UNEXPECTED(num_args > func->getNumArgs())) {
+			num_args = func->getNumArgs();
+		}
+
+		for (size_t i = 0, len = num_args; i < len; ++i) {
+			fenv->getValue(argoff)->copy(args->at(i));
+			argoff.second++;
+			++nargs;
+		}
+	}
+
+	if (UNEXPECTED(func->isVariadic())) {
+		ArrayObject* arr = new ArrayObject;
+
+		if (EXPECTED(args && (args->size() - nargs) > 0)) {
+			for (size_t i = nargs, j = args->size(); i < j; ++i) {
+				arr->getData().push_back(args->at(i)->clone());
+			}
+		}
+
+		Value* vararg = fenv->getValue(ValueOffset(0, func->getNumArgs()));
+		vararg->setType(CLEVER_ARRAY_TYPE);
+		vararg->setObj(arr);
+	}
+}
+
 // Executes the supplied function
 Value* VM::runFunction(Function* func, std::vector<Value*>* args)
 {
 	Value* result = new Value;
 
 	if (func->isInternal()) {
-		func->getPtr()(result, *args, this, &m_exception);
+		func->getFuncPtr()(result, *args, this, &m_exception);
 	} else {
 		Environment* fenv = func->getEnvironment()->activate(m_call_stack.top());
 		fenv->setRetVal(result);
@@ -160,38 +195,7 @@ Value* VM::runFunction(Function* func, std::vector<Value*>* args)
 		m_call_stack.push(fenv);
 		m_call_args.clear();
 
-		if (EXPECTED(args != NULL)) {
-			size_t nargs = 0;
-
-			if (func->hasArgs()) {
-				size_t num_args = args->size();
-				ValueOffset argoff(0,0);
-
-				if (num_args > func->getNumArgs()) {
-					num_args = func->getNumArgs();
-				}
-
-				for (size_t i = 0, len = num_args; i < len; ++i) {
-					fenv->getValue(argoff)->copy(args->at(i));
-					argoff.second++;
-					++nargs;
-				}
-			}
-
-			if (UNEXPECTED(func->isVariadic())) {
-				ArrayObject* arr = new ArrayObject;
-
-				if ((args->size() - nargs) > 0) {
-					for (size_t i = nargs, j = args->size(); i < j; ++i) {
-						arr->getData().push_back(args->at(i)->clone());
-					}
-				}
-
-				Value* vararg = fenv->getValue(ValueOffset(0, func->getNumArgs()));
-				vararg->setType(CLEVER_ARRAY_TYPE);
-				vararg->setObj(arr);
-			}
-		}
+		_param_binding(func, fenv, args);
 
 		size_t saved_pc = m_pc;
 		m_pc = func->getAddr();
@@ -367,36 +371,7 @@ void VM::run()
 					error(VM_ERROR, "Wrong number of parameters");
 				}
 
-				size_t nargs = 0;
-
-				if (func->hasArgs()) {
-					size_t num_args = m_call_args.size();
-					ValueOffset argoff(0,0);
-
-					if (num_args > func->getNumArgs()) {
-						num_args = func->getNumArgs();
-					}
-
-					for (size_t i = 0, len = num_args; i < len; ++i) {
-						fenv->getValue(argoff)->copy(m_call_args[i]);
-						argoff.second++;
-						++nargs;
-					}
-				}
-
-				if (UNEXPECTED(func->isVariadic())) {
-					ArrayObject* arr = new ArrayObject;
-
-					if ((m_call_args.size() - nargs) > 0) {
-						for (size_t i = nargs, j = m_call_args.size(); i < j; ++i) {
-							arr->getData().push_back(m_call_args[i]->clone());
-						}
-					}
-
-					Value* vararg = fenv->getValue(ValueOffset(0, func->getNumArgs()));
-					vararg->setType(CLEVER_ARRAY_TYPE);
-					vararg->setObj(arr);
-				}
+				_param_binding(func, fenv, &m_call_args);
 
 				m_call_args.clear();
 
@@ -406,7 +381,7 @@ void VM::run()
 
 				VM_GOTO(func->getAddr());
 			} else {
-				func->getPtr()(getValue(OPCODE.result), m_call_args, this, &m_exception);
+				func->getFuncPtr()(getValue(OPCODE.result), m_call_args, this, &m_exception);
 				m_call_args.clear();
 
 				if (UNEXPECTED(m_exception.hasException())) {
@@ -775,24 +750,28 @@ void VM::run()
 			const Value* callee = getValue(OPCODE.op1);
 			const Value* method = getValue(OPCODE.op2);
 			const Type* type = callee->getType();
-			MethodPtr ptr;
+			const Function* func;
 
 			if (UNEXPECTED(callee->isNull())) {
 				error(VM_ERROR, "Cannot call method from a null value");
 			}
 
-			if (EXPECTED((ptr = type->getMethod(method->getStr())))) {
-				(type->*ptr)(getValue(OPCODE.result), callee, m_call_args, this, &m_exception);
+			if (EXPECTED((func = type->getMethod(method->getStr())))) {
+				if (UNEXPECTED(func->isStatic())) {
+					error(VM_ERROR, "Method cannot be called non-statically");
+				} else {
+					(type->*func->getMethodPtr())(getValue(OPCODE.result),
+						callee, m_call_args, this, &m_exception);
 
-				m_call_args.clear();
+					m_call_args.clear();
 
-				if (UNEXPECTED(m_exception.hasException())) {
-					goto throw_exception;
+					if (UNEXPECTED(m_exception.hasException())) {
+						goto throw_exception;
+					}
 				}
 			} else {
 				error(VM_ERROR, "Method not found!");
 			}
-
 		}
 		DISPATCH;
 
@@ -801,15 +780,20 @@ void VM::run()
 			const Value* valtype = getValue(OPCODE.op1);
 			const Type* type = valtype->getType();
 			const Value* method = getValue(OPCODE.op2);
-			MethodPtr ptr;
+			const Function* func;
 
-			if (EXPECTED((ptr = type->getMethod(method->getStr())))) {
-				(type->*ptr)(getValue(OPCODE.result), NULL, m_call_args, this, &m_exception);
+			if (EXPECTED((func = type->getMethod(method->getStr())))) {
+				if (UNEXPECTED(!func->isStatic())) {
+					error(VM_ERROR, "Method cannot be called statically");
+				} else {
+					(type->*func->getMethodPtr())(getValue(OPCODE.result),
+						NULL, m_call_args, this, &m_exception);
 
-				m_call_args.clear();
+					m_call_args.clear();
 
-				if (UNEXPECTED(m_exception.hasException())) {
-					goto throw_exception;
+					if (UNEXPECTED(m_exception.hasException())) {
+						goto throw_exception;
+					}
 				}
 			} else {
 				error(VM_ERROR, "Method not found!");

@@ -10,7 +10,6 @@
 
 #include "core/value.h"
 #include <stack>
-#include <queue>
 
 namespace clever {
 
@@ -19,7 +18,6 @@ class Environment;
 /// @brief a pair specifying how many environments to `escape` and what value to fetch.
 typedef std::pair<size_t, size_t> ValueOffset;
 typedef std::stack<Environment*> CallStack;
-typedef std::queue<Environment*> CallQueue;
 
 /**
  * @brief the environment class.
@@ -27,7 +25,8 @@ typedef std::queue<Environment*> CallQueue;
 class Environment: public RefCounted {
 public:
 	explicit Environment(Environment* outer_)
-		: RefCounted(), m_outer(outer_), m_data(), m_ret_val(NULL), m_ret_addr(0), m_active(false) {
+		: RefCounted(), m_outer(outer_), m_data(), m_ret_val(NULL),
+		m_ret_addr(0), m_active(false) {
 		CLEVER_SAFE_ADDREF(m_outer);
 	}
 
@@ -36,7 +35,7 @@ public:
 	}
 
 	void clear() {
-		for (size_t i = 0, size = m_data.size(); i < size; i++) {
+		for (size_t i = 0, size = m_data.size(); i < size; ++i) {
 			CLEVER_SAFE_DELREF(m_data.at(i));
 		}
 	}
@@ -58,7 +57,7 @@ public:
 	 * @param offset
 	 * @return
 	 */
-	Value* getValue(const ValueOffset& offset);
+	Value* getValue(const ValueOffset& offset) const;
 
 	/**
 	 * @brief ativates the current environment.
@@ -78,9 +77,7 @@ public:
 	void setRetAddr(size_t ret_addr) { m_ret_addr = ret_addr; }
 
 	Value* getRetVal() const { return m_ret_val; }
-	void setRetVal(Value* ret_val) {
-		m_ret_val = ret_val;
-	}
+	void setRetVal(Value* ret_val) { m_ret_val = ret_val; }
 
 	void copy(const Environment*);
 
@@ -101,9 +98,8 @@ inline ValueOffset Environment::pushValue(Value* value) {
 	return ValueOffset(0, m_data.size()-1);
 }
 
-inline Value* Environment::getValue(const ValueOffset& offset) {
+inline Value* Environment::getValue(const ValueOffset& offset) const {
 	if (offset.first == 0) { // local
-
 		clever_assert(offset.second < m_data.size(),
 					  "`offset.second` must be within `m_data` limits.");
 
@@ -111,32 +107,32 @@ inline Value* Environment::getValue(const ValueOffset& offset) {
 	}
 
 	size_t depth = offset.first;
-	Environment* e = m_outer;
+	Environment* env = m_outer;
 
-	while (e && --depth) {
-		e = e->m_outer;
+	while (env && --depth) {
+		env = env->m_outer;
 	}
 
 	clever_assert(depth == 0,
 				  "`depth` must be zero, otherwise we failed to find the environment.");
-	clever_assert(offset.second < e->m_data.size(),
+	clever_assert(offset.second < env->m_data.size(),
 				  "`offset.second` must be within `m_data` bounds.");
-	clever_assert_not_null(e);
+	clever_assert_not_null(env);
 
-	return e->m_data.at(offset.second);
+	return env->m_data.at(offset.second);
 }
 
 inline Environment* Environment::activate(Environment* outer) const {
-	Environment* e = new Environment(outer);
-	e->m_active = true;
+	Environment* env = new Environment(outer);
+	env->m_active = true;
 
 	for (size_t i = 0, size = m_data.size(); i < size; i++) {
-		Value* v = new Value();
-		v->copy(m_data[i]);
-		e->pushValue(v);
+		Value* value = new Value();
+		value->copy(m_data[i]);
+		env->pushValue(value);
 	}
 
-	return e;
+	return env;
 }
 
 inline void Environment::copy(const Environment* _env) {
@@ -156,7 +152,7 @@ inline void Environment::copy(const Environment* _env) {
 			_this->m_ret_val = NULL;
 		}
 
-		for (size_t i = 0, size = env->m_data.size(); i < size; i++) {
+		for (size_t i = 0, size = env->m_data.size(); i < size; ++i) {
 			Value* v = new Value();
 			v->copy(env->m_data[i]);
 			_this->pushValue(v);

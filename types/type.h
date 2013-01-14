@@ -51,31 +51,30 @@ class VM;
 
 class Value;
 class Type;
+class Function;
 
 typedef void (Type::*MethodPtr)(CLEVER_METHOD_ARGS) const;
 
 typedef std::tr1::unordered_map<const CString*, Value*> PropertyMap;
 typedef std::pair<const CString*, Value*> PropertyPair;
 
-typedef std::tr1::unordered_map<const CString*, MethodPtr> MethodMap;
-typedef std::pair<const CString*, MethodPtr> MethodPair;
+typedef std::tr1::unordered_map<const CString*, Function*> MethodMap;
+typedef std::pair<const CString*, Function*> MethodPair;
 
 class Type {
 public:
-	Type(const CString* name) : m_name(name), m_methods(), m_properties() {}
+	Type(const CString* name)
+		: m_name(name), m_methods(), m_properties() {}
+
 	virtual ~Type();
 
-	virtual void init(CLEVER_TYPE_INIT_ARGS) {}
-
-	void addMethod(const CString* name, MethodPtr ptr) {
-		m_methods.insert(MethodPair(name, ptr));
-	}
+	Function* addMethod(Function* func);
 
 	void addProperty(const CString* name, Value* value) {
 		m_properties.insert(PropertyPair(name, value));
 	}
 
-	MethodPtr getMethod(const CString* name) const {
+	const Function* getMethod(const CString* name) const {
 		MethodMap::const_iterator it = m_methods.find(name);
 
 		if (EXPECTED(it != m_methods.end())) {
@@ -93,10 +92,12 @@ public:
 		return NULL;
 	}
 
-	virtual bool isPrimitive() const { return false; }
-
 	/// Method for retrieve the type name
 	const CString* getName() const { return m_name; }
+
+	virtual void init(CLEVER_TYPE_INIT_ARGS) {}
+
+	virtual bool isPrimitive() const { return false; }
 
 	/// Virtual method for debug purpose
 	virtual void dump(const void*) const = 0;
@@ -117,7 +118,10 @@ public:
 	virtual void increment(Value*, const VM*, CException*)                const;
 	virtual void decrement(Value*, const VM*, CException*)                const;
 
+	/// Type internal data constructor
 	virtual void* allocData(CLEVER_TYPE_CTOR_ARGS) const { return NULL; }
+
+	/// Type internal data destructor
 	virtual void deallocData(void* data) {}
 private:
 	const CString* m_name;

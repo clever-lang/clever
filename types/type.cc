@@ -8,6 +8,7 @@
 #include "types/type.h"
 #include "core/value.h"
 #include "core/cexception.h"
+#include "types/function.h"
 
 namespace clever {
 
@@ -21,8 +22,22 @@ Type::~Type()
 		// CLEVER_SAFE_DELREF((*it).second);
 		++it;
 	}
+
+	MethodMap::const_iterator it2(m_methods.begin()),
+		end2(m_methods.end());
+
+	while (it2 != end2) {
+		delete it2->second;
+		++it2;
+	}
 }
 
+Function* Type::addMethod(Function* func)
+{
+	m_methods.insert(MethodPair(CSTRING(func->getName()), func));
+
+	return func;
+}
 
 CLEVER_TYPE_OPERATOR(Type::add)
 {

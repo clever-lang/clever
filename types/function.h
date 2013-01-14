@@ -33,17 +33,22 @@ public:
 
 	Function()
 		: ValueObject(), m_name(), m_type(UNDEF), m_num_rargs(0), m_num_args(0),
-		m_variadic(false), m_environment(NULL) {}
+		m_variadic(false), m_static(false), m_environment(NULL) {}
 
 	Function(std::string name, FunctionPtr ptr)
 		: ValueObject(), m_name(name), m_type(INTERNAL_FUNC), m_num_rargs(0),
-		m_num_args(0), m_variadic(false), m_environment(NULL)
-		{ m_info.ptr = ptr; }
+		m_num_args(0), m_variadic(false), m_static(false), m_environment(NULL)
+		{ m_info.fptr = ptr; }
 
 	Function(std::string name, size_t addr)
 		: ValueObject(), m_name(name), m_type(USER_FUNC), m_num_rargs(0),
-		m_num_args(0), m_variadic(false), m_environment(NULL)
+		m_num_args(0), m_variadic(false), m_static(false), m_environment(NULL)
 		{ m_info.addr = addr; }
+
+	Function(std::string name, MethodPtr ptr)
+		: ValueObject(), m_name(name), m_type(INTERNAL_FUNC), m_num_rargs(0),
+		m_num_args(0), m_variadic(false), m_static(false), m_environment(NULL)
+		{ m_info.mptr = ptr; }
 
 	~Function() {}
 
@@ -53,17 +58,22 @@ public:
 	void setInternal() { m_type = INTERNAL_FUNC; }
 	void setUserDefined() { m_type = USER_FUNC; }
 
+	void setStatic() { m_static = true; }
+	bool isStatic() const { return m_static; }
+
 	void setVariadic() { m_variadic = true; }
 	bool isVariadic() const { return m_variadic; }
 
 	bool isUserDefined() const { return m_type == USER_FUNC; }
 	bool isInternal() const { return m_type == INTERNAL_FUNC; }
 
-	FunctionPtr getPtr() const { return m_info.ptr; }
+	MethodPtr getMethodPtr() const { return m_info.mptr; }
+	FunctionPtr getFuncPtr() const { return m_info.fptr; }
 	size_t getAddr() const { return m_info.addr; }
 
 	void setAddr(size_t addr) { m_info.addr = addr; }
-	void setPtr(FunctionPtr ptr) { m_info.ptr = ptr; }
+	void setPtr(FunctionPtr ptr) { m_info.fptr = ptr; }
+	void setPtr(MethodPtr ptr) { m_info.mptr = ptr; }
 
 	bool hasArgs() const { return m_num_args != 0; }
 	size_t getNumArgs() const { return m_num_args; }
@@ -82,13 +92,16 @@ private:
 	size_t m_num_rargs;
 	size_t m_num_args;
 	bool m_variadic;
+	bool m_static;
 
 	union {
-		FunctionPtr ptr;
+		FunctionPtr fptr;
+		MethodPtr mptr;
 		size_t addr;
 	} m_info;
 
 	Environment* m_environment;
+	const Type* m_context;
 
 	DISALLOW_COPY_AND_ASSIGN(Function);
 };

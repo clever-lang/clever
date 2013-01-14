@@ -193,19 +193,19 @@ CLEVER_METHOD(TcpSocket::toString)
 
 CLEVER_TYPE_INIT(TcpSocket::init)
 {
-	addMethod(CSTRING("setHost"),         (MethodPtr)&TcpSocket::setHost);
-	addMethod(CSTRING("setPort"),         (MethodPtr)&TcpSocket::setPort);
-	addMethod(CSTRING("setTimeout"),      (MethodPtr)&TcpSocket::setTimeout);
-	addMethod(CSTRING("connect"),         (MethodPtr)&TcpSocket::connect);
-	addMethod(CSTRING("close"),           (MethodPtr)&TcpSocket::close);
-	addMethod(CSTRING("receive"),         (MethodPtr)&TcpSocket::receive);
-	addMethod(CSTRING("send"),            (MethodPtr)&TcpSocket::send);
-	addMethod(CSTRING("isOpen"),          (MethodPtr)&TcpSocket::isOpen);
-	addMethod(CSTRING("poll"),            (MethodPtr)&TcpSocket::poll);
-	addMethod(CSTRING("good"),            (MethodPtr)&TcpSocket::good);
-	addMethod(CSTRING("getError"),        (MethodPtr)&TcpSocket::getError);
-	addMethod(CSTRING("toString"),        (MethodPtr)&TcpSocket::toString);
-	addMethod(CSTRING("getErrorMessage"), (MethodPtr)&TcpSocket::getErrorMessage);
+	addMethod(new Function("setHost",         (MethodPtr)&TcpSocket::setHost));
+	addMethod(new Function("setPort",         (MethodPtr)&TcpSocket::setPort));
+	addMethod(new Function("setTimeout",      (MethodPtr)&TcpSocket::setTimeout));
+	addMethod(new Function("connect",         (MethodPtr)&TcpSocket::connect));
+	addMethod(new Function("close",           (MethodPtr)&TcpSocket::close));
+	addMethod(new Function("receive",         (MethodPtr)&TcpSocket::receive));
+	addMethod(new Function("send",            (MethodPtr)&TcpSocket::send));
+	addMethod(new Function("isOpen",          (MethodPtr)&TcpSocket::isOpen));
+	addMethod(new Function("poll",            (MethodPtr)&TcpSocket::poll));
+	addMethod(new Function("good",            (MethodPtr)&TcpSocket::good));
+	addMethod(new Function("getError",        (MethodPtr)&TcpSocket::getError));
+	addMethod(new Function("toString",        (MethodPtr)&TcpSocket::toString));
+	addMethod(new Function("getErrorMessage", (MethodPtr)&TcpSocket::getErrorMessage));
 
 	// Windows socket initialization.
 #ifdef CLEVER_WIN32
