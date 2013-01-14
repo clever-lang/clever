@@ -139,8 +139,11 @@ CLEVER_METHOD(ArrayType::shift)
 		return;
 	}
 	
-	result->copy(vec[0]);	
-
+	result->copy(
+		vec[0]
+	);	
+	vec[0]->delRef();
+	
 	ValueVector(vec.begin()+1, vec.end()).swap(vec);
 }
 
@@ -155,8 +158,11 @@ CLEVER_METHOD(ArrayType::pop)
 		return;
 	}
 	
-	result->copy(vec[vec.size()-1]);	
-
+	result->copy(
+		vec[vec.size()-1]
+	);	
+	vec[vec.size()-1]->delRef();
+	
 	ValueVector(vec.begin(), vec.end()-1).swap(vec);
 }
 
