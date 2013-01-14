@@ -28,8 +28,7 @@ public:
 		: ValueObject(), m_name(), m_type(UNDEF), m_environment(NULL) {}
 
 	Thread(std::string name)
-		: ValueObject(), m_name(name), m_type(UNDEF), m_environment(NULL)
-		{ }
+		: ValueObject(), m_name(name), m_type(UNDEF), m_environment(NULL) {}
 
 	Thread(std::string name, size_t addr)
 		: ValueObject(), m_name(name), m_type(UNDEF), m_environment(NULL)
