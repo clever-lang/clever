@@ -48,6 +48,7 @@ public:
 	CLEVER_METHOD(size);
 	CLEVER_METHOD(at);
 	CLEVER_METHOD(reserve);
+	CLEVER_METHOD(reverse);
 	CLEVER_METHOD(each);
 };
 

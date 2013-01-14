@@ -341,7 +341,7 @@ CLEVER_METHOD(Server::debug)
 }
 
 // Server.getParams()
-// Will return a Map/Array of request parameters
+// Will return a Map of request parameters
 CLEVER_METHOD(Server::getParams)
 {
 	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
@@ -366,7 +366,7 @@ CLEVER_METHOD(Server::getParams)
 }
 
 // Server.getHeaders()
-// Will return a Map/Array of request headers
+// Will return a Map of request headers
 CLEVER_METHOD(Server::getHeaders)
 {
 	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
@@ -391,7 +391,7 @@ CLEVER_METHOD(Server::getHeaders)
 }
 
 // Server.getCookies()
-// Will return a Map/Array of request cookies
+// Will return a Map of request cookies
 CLEVER_METHOD(Server::getCookies)
 {
 	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
