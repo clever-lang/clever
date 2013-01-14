@@ -44,11 +44,11 @@
 
 
 /* Line 162 of location.cc  */
-#line 4 "/home/felipe/dev/clever/core/parser.y"
+#line 4 "/usr/src/clever/core/parser.y"
 namespace clever {
 
 /* Line 162 of location.cc  */
-#line 52 "/home/felipe/dev/clever/core/location.hh"
+#line 52 "/usr/src/clever/core/location.hh"
 
   /// Abstract a location.
   class location
@@ -159,10 +159,10 @@ namespace clever {
 
 
 /* Line 271 of location.cc  */
-#line 4 "/home/felipe/dev/clever/core/parser.y"
+#line 4 "/usr/src/clever/core/parser.y"
 } // clever
 
 /* Line 271 of location.cc  */
-#line 167 "/home/felipe/dev/clever/core/location.hh"
+#line 167 "/usr/src/clever/core/location.hh"
 
 #endif // not BISON_LOCATION_HH

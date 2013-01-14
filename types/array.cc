@@ -15,7 +15,7 @@ namespace clever {
 void* ArrayType::allocData(CLEVER_TYPE_CTOR_ARGS) const
 {
 	ArrayObject* arr = new ArrayObject();
-	std::vector<Value*>& vec = arr->getData();
+	ValueVector& vec = arr->getData();
 
 	for (size_t i = 0, j = args->size(); i < j; ++i) {
 		vec.push_back(args->at(i)->clone());
@@ -27,7 +27,7 @@ void* ArrayType::allocData(CLEVER_TYPE_CTOR_ARGS) const
 void ArrayType::deallocData(void* data)
 {
 	ArrayObject* arr = static_cast<ArrayObject*>(data);
-	std::vector<Value*>& vec = arr->getData();
+	ValueVector& vec = arr->getData();
 
 	for (size_t i = 0, j = vec.size(); i < j; ++i) {
 		vec[i]->delRef();
@@ -39,8 +39,7 @@ void ArrayType::deallocData(void* data)
 void ArrayType::dump(const void* value, std::ostream& out) const
 {
 	Value::DataValue* data = static_cast<Value::DataValue*>(const_cast<void*>(value));
-	ArrayObject* arr = static_cast<ArrayObject*>(data->obj->getObj());
-	std::vector<Value*>& vec = arr->getData();
+	ValueVector& vec = (static_cast<ArrayObject*>(data->obj->getObj()))->getData();
 
 	out << "[";
 
@@ -57,11 +56,14 @@ void ArrayType::dump(const void* value, std::ostream& out) const
 // void Array::append([arg, ... ])
 CLEVER_METHOD(ArrayType::append)
 {
-	ArrayObject* arr = CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS());
+	if (args.size()) {
+		ValueVector& vec = (CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS()))->getData();
 
-	for (size_t i = 0, j = args.size(); i < j; ++i) {
-		arr->getData().push_back(args[i]->clone());
+		for (size_t i = 0, j = args.size(); i < j; ++i) {
+			vec.push_back(args[i]->clone());
+		}
 	}
+	result->setNull();
 }
 
 // int Array::size()
@@ -71,9 +73,7 @@ CLEVER_METHOD(ArrayType::size)
 		return;
 	}
 
-	ArrayObject* arr = CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS());
-
-	result->setInt(arr->getData().size());
+	result->setInt((CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS()))->getData().size());
 }
 
 // mixed Array::at(int position)
@@ -83,15 +83,15 @@ CLEVER_METHOD(ArrayType::at)
 		return;
 	}
 
-	ArrayObject* arr = CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS());
+	ValueVector& arr = (CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS()))->getData();
 
 	if (args[0]->getInt() < 0
-		|| arr->getData().size() <= size_t(args[0]->getInt())) {
+		|| arr.size() <= size_t(args[0]->getInt())) {
 		result->setNull();
 		return;
 	}
 
-	result->copy(arr->getData().at(args[0]->getInt()));
+	result->copy(arr.at(args[0]->getInt()));
 }
 
 // void Array::reserve(int size)
@@ -116,10 +116,9 @@ CLEVER_METHOD(ArrayType::reserve)
 // Returns the reverse of this array
 CLEVER_METHOD(ArrayType::reverse)
 {
-	ArrayObject* arr = CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS());
-	std::vector<Value*>& vec = arr->getData();
-	std::vector<Value*>::reverse_iterator it(vec.rbegin()), end(vec.rend());
-	std::vector<Value*> rev;
+	ValueVector& vec = (CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS()))->getData();
+	ValueVector::reverse_iterator it(vec.rbegin()), end(vec.rend());
+	ValueVector rev;
 
 	while (it != end){
 		rev.push_back((*it));
@@ -133,8 +132,7 @@ CLEVER_METHOD(ArrayType::reverse)
 // Removes and returns the first element of the array
 CLEVER_METHOD(ArrayType::shift)
 {
-	ArrayObject *array = CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS());
-	std::vector<Value*>& vec = array->getData();
+	ValueVector& vec = (CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS()))->getData();
 	
 	if (!vec.size()) {
 		result->setNull();
@@ -143,15 +141,14 @@ CLEVER_METHOD(ArrayType::shift)
 	
 	result->copy(vec[0]);	
 
-	std::vector<Value*>(vec.begin()+1, vec.end()).swap(vec);
+	ValueVector(vec.begin()+1, vec.end()).swap(vec);
 }
 
 // mixed Array.pop()
 // Removes and returns the last element of the array
 CLEVER_METHOD(ArrayType::pop)
 {
-	ArrayObject *array = CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS());
-	std::vector<Value*>& vec = array->getData();
+	ValueVector& vec = (CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS()))->getData();
 	
 	if (!vec.size()) {
 		result->setNull();	
@@ -160,7 +157,7 @@ CLEVER_METHOD(ArrayType::pop)
 	
 	result->copy(vec[vec.size()-1]);	
 
-	std::vector<Value*>(vec.begin(), vec.end()-1).swap(vec);
+	ValueVector(vec.begin(), vec.end()-1).swap(vec);
 }
 
 // Array Array.range(int start, int end)
@@ -171,8 +168,7 @@ CLEVER_METHOD(ArrayType::range)
 		return;
 	}
 
-	ArrayObject* arr = CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS());
-	std::vector<Value*>& vec = arr->getData();
+	ValueVector& vec = (CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS()))->getData();
 
 	if (!vec.size()){
 		result->setNull();
@@ -180,7 +176,7 @@ CLEVER_METHOD(ArrayType::range)
 	}
 
 	long bounds[3] = {CLEVER_ARG_INT(0), CLEVER_ARG_INT(1), (long) vec.size()};
-	std::vector<Value*> ran;
+	ValueVector ran;
 
 	bool reverse = (bounds[0] > bounds[1]);
 	while((reverse ? (bounds[1] <= bounds[0]) : (bounds[0] <= bounds[1]))) {
@@ -200,19 +196,20 @@ CLEVER_METHOD(ArrayType::range)
 }
 
 // Array Array::each(function)
+// Calls function once for each element in the array, passing the element as the only parameter to function
+// The return values from function are returned in the same order as the array
 CLEVER_METHOD(ArrayType::each)
 {
 	if (!clever_check_args("f")) {
 		return;
 	}
 
-	ArrayObject* arr = CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS());
 	Function* func = static_cast<Function*>(args[0]->getObj());
-	std::vector<Value*>& vec = arr->getData();
-	std::vector<Value*> results;
+	ValueVector& vec = (CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS()))->getData();
+	ValueVector results;
 
-	for (size_t i = 0, j = vec.size(); i < j; ++i) {
-		std::vector<Value*> tmp_args;
+	for (size_t i = 0; i < vec.size(); i++) {
+		ValueVector tmp_args;
 
 		tmp_args.push_back(vec[i]);
 
@@ -223,6 +220,33 @@ CLEVER_METHOD(ArrayType::each)
 
 	for (size_t i = 0, j = results.size(); i < j; ++i) {
 		results[i]->delRef();
+	}
+}
+
+// mixed Array.erase(int position)
+// Removes from this array the element at position, returning the value
+CLEVER_METHOD(ArrayType::erase)
+{
+	if (!clever_check_args("i")) {
+		return;
+	}
+
+	size_t length;
+	ValueVector& vec = (CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS()))->getData();
+	
+	if (!(length = vec.size())) {
+		result->setNull();
+		return;
+	}
+
+	if ((args[0]->getInt()) >= 0 &&
+		(size_t(args[0]->getInt()) < length)) {	
+		
+		result->copy(vec[args[0]->getInt()]);
+		
+		vec[args[0]->getInt()]->delRef();
+
+		vec.erase(vec.begin()+args[0]->getInt());
 	}
 }
 
@@ -238,6 +262,7 @@ CLEVER_TYPE_INIT(ArrayType::init)
 	addMethod(new Function("shift",   (MethodPtr) &ArrayType::shift));
 	addMethod(new Function("pop",     (MethodPtr) &ArrayType::pop));
 	addMethod(new Function("range",   (MethodPtr) &ArrayType::range));
+	addMethod(new Function("erase",	  (MethodPtr) &ArrayType::erase));
 }
 
 } // clever

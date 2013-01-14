@@ -53,6 +53,7 @@ public:
 	CLEVER_METHOD(shift);
 	CLEVER_METHOD(pop);
 	CLEVER_METHOD(range);
+	CLEVER_METHOD(erase);
 };
 
 } // clever

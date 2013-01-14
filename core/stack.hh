@@ -37,11 +37,11 @@
 
 
 /* Line 1149 of lalr1.cc  */
-#line 4 "/home/felipe/dev/clever/core/parser.y"
+#line 4 "/usr/src/clever/core/parser.y"
 namespace clever {
 
 /* Line 1149 of lalr1.cc  */
-#line 45 "/home/felipe/dev/clever/core/stack.hh"
+#line 45 "/usr/src/clever/core/stack.hh"
   template <class T, class S = std::deque<T> >
   class stack
   {
@@ -129,11 +129,11 @@ namespace clever {
   };
 
 /* Line 1235 of lalr1.cc  */
-#line 4 "/home/felipe/dev/clever/core/parser.y"
+#line 4 "/usr/src/clever/core/parser.y"
 } // clever
 
 /* Line 1235 of lalr1.cc  */
-#line 137 "/home/felipe/dev/clever/core/stack.hh"
+#line 137 "/usr/src/clever/core/stack.hh"
 
 #endif // not BISON_STACK_HH[]dnl
 

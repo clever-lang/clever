@@ -38,7 +38,7 @@
 /* "%code requires" blocks.  */
 
 /* Line 35 of lalr1.cc  */
-#line 7 "/home/felipe/dev/clever/core/parser.y"
+#line 7 "/usr/src/clever/core/parser.y"
 
 /**
  * Clever programming language
@@ -61,7 +61,7 @@ class Value;
 
 
 /* Line 35 of lalr1.cc  */
-#line 65 "/home/felipe/dev/clever/core/parser.hh"
+#line 65 "/usr/src/clever/core/parser.hh"
 
 
 #include <string>
@@ -89,11 +89,11 @@ class Value;
 
 
 /* Line 35 of lalr1.cc  */
-#line 4 "/home/felipe/dev/clever/core/parser.y"
+#line 4 "/usr/src/clever/core/parser.y"
 namespace clever {
 
 /* Line 35 of lalr1.cc  */
-#line 97 "/home/felipe/dev/clever/core/parser.hh"
+#line 97 "/usr/src/clever/core/parser.hh"
 
   /// A Bison parser.
   class Parser
@@ -105,7 +105,7 @@ namespace clever {
     {
 
 /* Line 35 of lalr1.cc  */
-#line 27 "/home/felipe/dev/clever/core/parser.y"
+#line 27 "/usr/src/clever/core/parser.y"
 
 	ast::Node* node;
 	ast::Block* block;
@@ -147,7 +147,7 @@ namespace clever {
 
 
 /* Line 35 of lalr1.cc  */
-#line 151 "/home/felipe/dev/clever/core/parser.hh"
+#line 151 "/usr/src/clever/core/parser.hh"
     };
 #else
     typedef YYSTYPE semantic_type;
@@ -399,11 +399,11 @@ namespace clever {
   };
 
 /* Line 35 of lalr1.cc  */
-#line 4 "/home/felipe/dev/clever/core/parser.y"
+#line 4 "/usr/src/clever/core/parser.y"
 } // clever
 
 /* Line 35 of lalr1.cc  */
-#line 407 "/home/felipe/dev/clever/core/parser.hh"
+#line 407 "/usr/src/clever/core/parser.hh"
 
 
 
