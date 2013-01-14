@@ -222,44 +222,34 @@ CLEVER_METHOD(StrType::format)
 	const CString* format = NULL;
 	long offset = 0L;
 
-	if (CLEVER_THIS()) {
-		format = CLEVER_THIS()->getStr();
-		offset = -1L;
-	} else {
-		if (!clever_check_args("s*")) {
-			return;
-		}
-
-		format = CLEVER_ARG_CSTR(0);
+	if (!clever_check_args("s*")) {
+		return;
 	}
 
-	if (format) {
-		std::ostringstream stream;
-		const char* start = format->c_str();
+	format = CLEVER_ARG_CSTR(0);
+	std::ostringstream stream;
+	const char* start = format->c_str();
 
-		for(const char* point = start; point < (start + format->size());) {
-			if (*point && (*point == (char)'\\')) {
-				unsigned long arg;
-				char* skip;
+	for(const char* point = start; point < (start + format->size());) {
+		if (*point && (*point == (char)'\\')) {
+			unsigned long arg;
+			char* skip;
 
-				if ((arg=::std::strtoul(++point, &skip, 10))) {
-					if (args.size() > (arg+offset)) {
-						CLEVER_ARG_DUMPTO((arg+offset), stream);
-					}
-					point = skip;
-				} else {
-					stream << *(--point);
-					point++;
+			if ((arg=::std::strtoul(++point, &skip, 10))) {
+				if (args.size() > (arg+offset)) {
+					CLEVER_ARG_DUMPTO((arg+offset), stream);
 				}
+				point = skip;
 			} else {
-				stream << *point;
+				stream << *(--point);
 				point++;
 			}
+		} else {
+			stream << *point;
+			point++;
 		}
-		result->setStr(CSTRING(stream.str()));
-	} else {
-		result->setNull();
 	}
+	result->setStr(CSTRING(stream.str()));
 }
 
 // String.startsWith(string match)
@@ -390,11 +380,12 @@ CLEVER_TYPE_INIT(StrType::init)
 	addMethod(new Function("findFirst", 	(MethodPtr) &StrType::findFirst));
 	addMethod(new Function("findLast", 		(MethodPtr) &StrType::findLast));
 	addMethod(new Function("size",   		(MethodPtr) &StrType::size));
-	addMethod(new Function("format",		(MethodPtr) &StrType::format));
 	addMethod(new Function("startsWith",	(MethodPtr) &StrType::startsWith));
 	addMethod(new Function("endsWith",		(MethodPtr) &StrType::endsWith));
 	addMethod(new Function("charAt",		(MethodPtr) &StrType::charAt));
 	addMethod(new Function("split",			(MethodPtr) &StrType::split));
+	addMethod(new Function("format",		(MethodPtr) &StrType::format))
+		->setStatic();
 }
 
 CLEVER_TYPE_OPERATOR(StrType::greater)

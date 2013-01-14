@@ -68,7 +68,7 @@ public:
 
 	virtual void init(CLEVER_TYPE_INIT_ARGS) {}
 
-	void addMethod(Function* func);
+	Function* addMethod(Function* func);
 
 	void addProperty(const CString* name, Value* value) {
 		m_properties.insert(PropertyPair(name, value));

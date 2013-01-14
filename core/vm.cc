@@ -758,13 +758,17 @@ void VM::run()
 			}
 
 			if (EXPECTED((func = type->getMethod(method->getStr())))) {
-				(type->*func->getMethodPtr())(getValue(OPCODE.result),
-					callee, m_call_args, this, &m_exception);
+				if (UNEXPECTED(func->isStatic())) {
+					error(VM_ERROR, "Method cannot be called non-statically");
+				} else {
+					(type->*func->getMethodPtr())(getValue(OPCODE.result),
+						callee, m_call_args, this, &m_exception);
 
-				m_call_args.clear();
+					m_call_args.clear();
 
-				if (UNEXPECTED(m_exception.hasException())) {
-					goto throw_exception;
+					if (UNEXPECTED(m_exception.hasException())) {
+						goto throw_exception;
+					}
 				}
 			} else {
 				error(VM_ERROR, "Method not found!");
@@ -781,13 +785,17 @@ void VM::run()
 			const Function* func;
 
 			if (EXPECTED((func = type->getMethod(method->getStr())))) {
-				(type->*func->getMethodPtr())(getValue(OPCODE.result),
-					NULL, m_call_args, this, &m_exception);
+				if (UNEXPECTED(!func->isStatic())) {
+					error(VM_ERROR, "Method cannot be called statically");
+				} else {
+					(type->*func->getMethodPtr())(getValue(OPCODE.result),
+						NULL, m_call_args, this, &m_exception);
 
-				m_call_args.clear();
+					m_call_args.clear();
 
-				if (UNEXPECTED(m_exception.hasException())) {
-					goto throw_exception;
+					if (UNEXPECTED(m_exception.hasException())) {
+						goto throw_exception;
+					}
 				}
 			} else {
 				error(VM_ERROR, "Method not found!");

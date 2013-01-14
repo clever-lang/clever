@@ -11,12 +11,9 @@ println(String.format("One more test with \1 \2 \3 \4 \5 \6 \7 \8 \9 \10", 1, "t
 
 print("Print without new line");
 println("");
-var l = "Testing the String.format method: \1";
-println(l.format("String.format"));
 ==RESULT==
 Hello clever
 Testing the String.format function
 Testing the String.format function with two items
 One more test with 1 two 3 4 5 six 7 8 9 10
 Print without new line
-Testing the String.format method: String.format

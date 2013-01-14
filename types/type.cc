@@ -32,9 +32,11 @@ Type::~Type()
 	}
 }
 
-void Type::addMethod(Function* func)
+Function* Type::addMethod(Function* func)
 {
 	m_methods.insert(MethodPair(CSTRING(func->getName()), func));
+
+	return func;
 }
 
 CLEVER_TYPE_OPERATOR(Type::add)
