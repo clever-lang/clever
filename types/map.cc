@@ -92,35 +92,38 @@ CLEVER_METHOD(MapType::each)
 	std::map< std::string, Value*>& map = arr->getData();
 	std::map< std::string, Value*>::const_iterator it(map.begin()), end(map.end());
 	std::vector<Value*> results;
-	
-	while (it != end) {		
+
+	while (it != end) {
 		Value* call[3];
 		std::vector<Value*> fargs;
-		
+
 		call[0] = new Value(CSTRING(it->first));
 		call[1] = it->second;
 
-		call[0]->addRef();
-		call[1]->addRef();
-	
 		fargs.push_back(call[0]);
 		fargs.push_back(call[1]);
 
 		results.push_back(call[0]);
-		results.push_back(call[2]=const_cast<VM*>(vm)->runFunction(func, &fargs));
+		results.push_back(call[2] = const_cast<VM*>(vm)->runFunction(func, &fargs));
 
-		call[2]->addRef();
-
-		it++;
+		++it;
 	}
 
 	CLEVER_RETURN_MAP(CLEVER_MAP_TYPE->allocData(&results));
+
+	for (size_t i = 0, j = results.size(); i < j; ++i) {
+		results[i]->delRef();
+	}
 }
 
 // Map.size()
 // Returns the number of elements currently mapped
 CLEVER_METHOD(MapType::size)
 {
+	if (!clever_check_no_args()) {
+		return;
+	}
+
 	CLEVER_RETURN_INT((CLEVER_GET_OBJECT(MapObject*, CLEVER_THIS())->getData()).size());
 }
 
