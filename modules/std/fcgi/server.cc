@@ -175,7 +175,7 @@ CLEVER_METHOD(Server::print)
 			}
 		}
 	}
-	CLEVER_RETURN_NULL();
+	result->setNull();
 }
 
 // Server.flush()
@@ -187,7 +187,7 @@ CLEVER_METHOD(Server::flush)
 	if (request) {
 		CLEVER_RETURN_BOOL((FCGX_FFlush(request->out) == 0));
 	} else {
-		CLEVER_RETURN_NULL();
+		result->setNull();
 	}
 }
 
@@ -200,7 +200,7 @@ CLEVER_METHOD(Server::finish)
 	if (request) {
 		CLEVER_RETURN_BOOL((FCGX_FClose(request->out) == 0));
 	} else {
-		CLEVER_RETURN_NULL();
+		result->setNull();
 	}
 }
 
@@ -211,7 +211,7 @@ CLEVER_METHOD(Server::getEnvironment)
 	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
 
 	if (!request) {
-		CLEVER_RETURN_NULL();
+		result->setNull();
 		return;
 	}
 
@@ -222,7 +222,7 @@ CLEVER_METHOD(Server::getEnvironment)
 			CLEVER_RETURN_STR(CLEVER_FCGI_FETCH(it));
 			return;
 		}
-		CLEVER_RETURN_NULL();
+		result->setNull();
 	} else {
 		::std::vector<Value*> mapping;
 
@@ -246,7 +246,7 @@ CLEVER_METHOD(Server::getParam)
 	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
 
 	if (!request) {
-		CLEVER_RETURN_NULL();
+		result->setNull();
 		return;
 	}
 
@@ -262,7 +262,8 @@ CLEVER_METHOD(Server::getParam)
 			return;
 		}
 	}
-	CLEVER_RETURN_NULL();
+
+	result->setNull();
 }
 
 // Server.getParam(string param)
@@ -272,7 +273,7 @@ CLEVER_METHOD(Server::getHeader)
 	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
 
 	if (!request) {
-		CLEVER_RETURN_NULL();
+		result->setNull();
 		return;
 	}
 
@@ -287,7 +288,7 @@ CLEVER_METHOD(Server::getHeader)
 			return;
 		}
 	}
-	CLEVER_RETURN_NULL();
+	result->setNull();
 }
 
 // Server.getCookie(string param)
@@ -297,7 +298,7 @@ CLEVER_METHOD(Server::getCookie)
 	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
 
 	if (!request) {
-		CLEVER_RETURN_NULL();
+		result->setNull();
 		return;
 	}
 
@@ -313,7 +314,7 @@ CLEVER_METHOD(Server::getCookie)
 			return;
 		}
 	}
-	CLEVER_RETURN_NULL();
+	result->setNull();
 }
 
 // Server.debug()
@@ -323,7 +324,7 @@ CLEVER_METHOD(Server::debug)
 	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
 
 	if (!request) {
-		CLEVER_RETURN_NULL();
+		result->setNull();
 		return;
 	}
 
@@ -347,7 +348,7 @@ CLEVER_METHOD(Server::getParams)
 	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
 
 	if (!request) {
-		CLEVER_RETURN_NULL();
+		result->setNull();
 		return;
 	}
 
@@ -372,7 +373,7 @@ CLEVER_METHOD(Server::getHeaders)
 	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
 
 	if (!request) {
-		CLEVER_RETURN_NULL();
+		result->setNull();
 		return;
 	}
 
@@ -397,7 +398,7 @@ CLEVER_METHOD(Server::getCookies)
 	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
 
 	if (!request) {
-		CLEVER_RETURN_NULL();
+		result->setNull();
 		return;
 	}
 

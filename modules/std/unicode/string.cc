@@ -187,7 +187,7 @@ CLEVER_METHOD(UString::toLower)
 	if (intern) {
 		intern->toLower();
 	}
-	CLEVER_RETURN_NULL();
+	result->setNull();
 }
 
 // UString.toUpper()
@@ -199,7 +199,7 @@ CLEVER_METHOD(UString::toUpper)
 	if (intern) {
 		intern->toUpper();
 	}
-	CLEVER_RETURN_NULL();
+	result->setNull();
 }
 
 // UString.reverse()
@@ -211,7 +211,7 @@ CLEVER_METHOD(UString::reverse)
 	if (intern) {
 		intern->reverse();
 	}
-	CLEVER_RETURN_NULL();
+	result->setNull();
 }
 
 // UString.trim()
@@ -223,7 +223,7 @@ CLEVER_METHOD(UString::trim)
 	if (intern) {
 		intern->trim();
 	}
-	CLEVER_RETURN_NULL();
+	result->setNull();
 }
 
 // UString.truncate(int length)

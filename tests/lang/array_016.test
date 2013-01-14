@@ -1,0 +1,9 @@
+Testing array out of range
+==CODE==
+import std.io.*;
+
+var t = [1,2,3,4,5];
+var o = t.range(6, 1);
+println(o);
+==RESULT==
+\[\]

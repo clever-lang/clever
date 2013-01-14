@@ -113,12 +113,13 @@ CLEVER_METHOD(ArrayType::reserve)
 }
 
 // Array Array::reverse()
-// Reverses an array
+// Returns the reverse of this array
 CLEVER_METHOD(ArrayType::reverse)
 {
-	::std::vector<Value*> vec = (CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS()))->getData();
-	::std::vector<Value*>::reverse_iterator it(vec.rbegin()), end(vec.rend());
-	::std::vector<Value*> rev;
+	ArrayObject* arr = CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS());
+	std::vector<Value*>& vec = arr->getData();
+	std::vector<Value*>::reverse_iterator it(vec.rbegin()), end(vec.rend());
+	std::vector<Value*> rev;
 
 	while (it != end){
 		rev.push_back((*it));
@@ -128,7 +129,81 @@ CLEVER_METHOD(ArrayType::reverse)
 	CLEVER_RETURN_ARRAY(CLEVER_ARRAY_TYPE->allocData(&rev));
 }
 
-// void Array::each(function)
+// mixed Array.shift()
+// Removes and returns the first element of the array
+CLEVER_METHOD(ArrayType::shift)
+{
+	ArrayObject *array = CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS());
+	std::vector<Value*>& vec = array->getData();
+	
+	if (!vec.size()) {
+		result->setNull();
+		return;
+	}
+	
+	result->copy(vec[0]);	
+
+	std::vector<Value*>(vec.begin()+1, vec.end()).swap(vec);
+}
+
+// mixed Array.pop()
+// Removes and returns the last element of the array
+CLEVER_METHOD(ArrayType::pop)
+{
+	ArrayObject *array = CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS());
+	std::vector<Value*>& vec = array->getData();
+	
+	if (!vec.size()) {
+		result->setNull();	
+		return;
+	}
+	
+	result->copy(vec[vec.size()-1]);	
+
+	std::vector<Value*>(vec.begin(), vec.end()-1).swap(vec);
+}
+
+// Array Array.range(int start, int end)
+// Returns a range as a new array
+CLEVER_METHOD(ArrayType::range)
+{
+	if (!clever_check_args("ii")) {
+		return;
+	}
+
+	ArrayObject* arr = CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS());
+	std::vector<Value*>& vec = arr->getData();
+
+	if (!vec.size()){
+		result->setNull();
+		return;
+	}
+
+	long bounds[3] = {CLEVER_ARG_INT(0), CLEVER_ARG_INT(1), (long) vec.size()};
+	std::vector<Value*> ran;
+
+	bool reverse = (bounds[0] > bounds[1]);
+	while((reverse ? (bounds[1] <= bounds[0]) : (bounds[0] <= bounds[1]))) {
+		if ((bounds[0] < 0 || bounds[1] < 0) ||
+			(bounds[0] > bounds[2]) || (bounds[1] > bounds[2])) {
+			break;
+		}
+		
+		ran.push_back(vec[bounds[0]]);
+		
+		if (reverse) {
+			--bounds[0];
+		} else { ++bounds[0]; }
+	}
+	
+	CLEVER_RETURN_ARRAY(CLEVER_ARRAY_TYPE->allocData(&ran));
+
+	for (size_t i = 0, j = ran.size(); i < j; ++i) {
+		ran[i]->delRef();
+	}
+}
+
+// Array Array::each(function)
 CLEVER_METHOD(ArrayType::each)
 {
 	if (!clever_check_args("f")) {
@@ -164,6 +239,9 @@ CLEVER_TYPE_INIT(ArrayType::init)
 	addMethod(new Function("reserve", (MethodPtr) &ArrayType::reserve));
 	addMethod(new Function("reverse", (MethodPtr) &ArrayType::reverse));
 	addMethod(new Function("each",    (MethodPtr) &ArrayType::each));
+	addMethod(new Function("shift",   (MethodPtr) &ArrayType::shift));
+	addMethod(new Function("pop",     (MethodPtr) &ArrayType::pop));
+	addMethod(new Function("range",   (MethodPtr) &ArrayType::range));
 }
 
 } // clever

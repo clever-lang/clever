@@ -1,0 +1,9 @@
+Testing array range in reverse
+==CODE==
+import std.io.*;
+
+var t = [1,2,3,4,5];
+var o = t.range(4, 0);
+println(o);
+==RESULT==
+\[5, 4, 3, 2, 1\]
