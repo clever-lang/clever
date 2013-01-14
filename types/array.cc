@@ -112,6 +112,22 @@ CLEVER_METHOD(ArrayType::reserve)
 	arr->getData().reserve(args[0]->getInt());
 }
 
+// Array Array::reverse()
+// Reverses an array
+CLEVER_METHOD(ArrayType::reverse)
+{
+	::std::vector<Value*> vec = (CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS()))->getData();
+	::std::vector<Value*>::reverse_iterator it(vec.rbegin()), end(vec.rend());
+	::std::vector<Value*> rev;
+
+	while (it != end){
+		rev.push_back((*it));
+		it++;
+	}
+
+	CLEVER_RETURN_ARRAY(CLEVER_ARRAY_TYPE->allocData(&rev));
+}
+
 // void Array::each(function)
 CLEVER_METHOD(ArrayType::each)
 {
@@ -146,6 +162,7 @@ CLEVER_TYPE_INIT(ArrayType::init)
 	addMethod(CSTRING("size"),    (MethodPtr) &ArrayType::size);
 	addMethod(CSTRING("at"),      (MethodPtr) &ArrayType::at);
 	addMethod(CSTRING("reserve"), (MethodPtr) &ArrayType::reserve);
+	addMethod(CSTRING("reverse"), (MethodPtr) &ArrayType::reverse);
 	addMethod(CSTRING("each"),    (MethodPtr) &ArrayType::each);
 }
 
