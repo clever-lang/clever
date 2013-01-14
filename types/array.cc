@@ -197,10 +197,6 @@ CLEVER_METHOD(ArrayType::range)
 	}
 	
 	CLEVER_RETURN_ARRAY(CLEVER_ARRAY_TYPE->allocData(&ran));
-
-	for (size_t i = 0, j = ran.size(); i < j; ++i) {
-		ran[i]->delRef();
-	}
 }
 
 // Array Array::each(function)
