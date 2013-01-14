@@ -194,7 +194,7 @@ Value* VM::runFunction(Function* func, std::vector<Value*>* args)
 		}
 
 		size_t saved_pc = m_pc;
-		m_pc = func->getAddr() + (func->getNumArgs() * 2) + (func->isVariadic() ? 2 : 0);
+		m_pc = func->getAddr();
 		run();
 		m_pc = saved_pc;
 	}
@@ -840,7 +840,7 @@ void VM::run()
 		DISPATCH;
 
 	OP(OP_THROW):
-		m_exception.setException(getValue(OPCODE.op1)->clone());
+		m_exception.setException(getValue(OPCODE.op1));
 		goto throw_exception;
 
 throw_exception:

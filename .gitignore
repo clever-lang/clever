@@ -20,12 +20,6 @@ make-c++11.sh
 *.lib
 *.manifest
 gmon.out
-core/location.hh
-core/parser.cc
-core/parser.hh
-core/position.hh
-core/scanner.cc
-core/stack.hh
 testrunner
 CPackConfig.cmake
 CPackSourceConfig.cmake

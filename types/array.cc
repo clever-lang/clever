@@ -123,18 +123,20 @@ CLEVER_METHOD(ArrayType::each)
 	Function* func = static_cast<Function*>(args[0]->getObj());
 	std::vector<Value*>& vec = arr->getData();
 	std::vector<Value*> results;
-	
-	for (size_t i = 0; i < vec.size(); i++) {
+
+	for (size_t i = 0, j = vec.size(); i < j; ++i) {
 		std::vector<Value*> tmp_args;
 
 		tmp_args.push_back(vec[i]);
-		
-		results.push_back(
-			const_cast<VM*>(vm)->runFunction(func, &tmp_args)
-		);
+
+		results.push_back(const_cast<VM*>(vm)->runFunction(func, &tmp_args));
 	}
 
 	CLEVER_RETURN_ARRAY(CLEVER_ARRAY_TYPE->allocData(&results));
+
+	for (size_t i = 0, j = results.size(); i < j; ++i) {
+		results[i]->delRef();
+	}
 }
 
 // Type initialization
