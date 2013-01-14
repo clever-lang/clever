@@ -116,13 +116,17 @@ CLEVER_METHOD(ArrayType::reserve)
 // Returns the reverse of this array
 CLEVER_METHOD(ArrayType::reverse)
 {
+	if (!clever_check_no_args()) {
+		return;
+	}
+
 	ValueVector& vec = (CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS()))->getData();
 	ValueVector::reverse_iterator it(vec.rbegin()), end(vec.rend());
 	ValueVector rev;
 
 	while (it != end){
 		rev.push_back((*it));
-		it++;
+		++it;
 	}
 
 	CLEVER_RETURN_ARRAY(CLEVER_ARRAY_TYPE->allocData(&rev));
@@ -132,18 +136,20 @@ CLEVER_METHOD(ArrayType::reverse)
 // Removes and returns the first element of the array
 CLEVER_METHOD(ArrayType::shift)
 {
+	if (!clever_check_no_args()) {
+		return;
+	}
+
 	ValueVector& vec = (CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS()))->getData();
-	
+
 	if (!vec.size()) {
 		result->setNull();
 		return;
 	}
-	
-	result->copy(
-		vec[0]
-	);	
+
+	result->copy(vec[0]);
 	vec[0]->delRef();
-	
+
 	vec.erase(vec.begin());
 }
 
@@ -151,18 +157,20 @@ CLEVER_METHOD(ArrayType::shift)
 // Removes and returns the last element of the array
 CLEVER_METHOD(ArrayType::pop)
 {
-	ValueVector& vec = (CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS()))->getData();
-	
-	if (!vec.size()) {
-		result->setNull();	
+	if (!clever_check_no_args()) {
 		return;
 	}
-	
-	result->copy(
-		vec[vec.size()-1]
-	);	
+
+	ValueVector& vec = (CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS()))->getData();
+
+	if (!vec.size()) {
+		result->setNull();
+		return;
+	}
+
+	result->copy(vec[vec.size()-1]);
 	vec[vec.size()-1]->delRef();
-	
+
 	vec.erase(vec.end()-1);
 }
 
@@ -183,21 +191,23 @@ CLEVER_METHOD(ArrayType::range)
 
 	long bounds[3] = {CLEVER_ARG_INT(0), CLEVER_ARG_INT(1), (long) vec.size()};
 	ValueVector ran;
-
 	bool reverse = (bounds[0] > bounds[1]);
-	while((reverse ? (bounds[1] <= bounds[0]) : (bounds[0] <= bounds[1]))) {
+
+	while ((reverse ? (bounds[1] <= bounds[0]) : (bounds[0] <= bounds[1]))) {
 		if ((bounds[0] < 0 || bounds[1] < 0) ||
 			(bounds[0] > bounds[2]) || (bounds[1] > bounds[2])) {
 			break;
 		}
-		
+
 		ran.push_back(vec[bounds[0]]);
-		
+
 		if (reverse) {
 			--bounds[0];
-		} else { ++bounds[0]; }
+		} else {
+			++bounds[0];
+		}
 	}
-	
+
 	CLEVER_RETURN_ARRAY(CLEVER_ARRAY_TYPE->allocData(&ran));
 }
 
@@ -214,7 +224,7 @@ CLEVER_METHOD(ArrayType::each)
 	ValueVector& vec = (CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS()))->getData();
 	ValueVector results;
 
-	for (size_t i = 0; i < vec.size(); i++) {
+	for (size_t i = 0, j = vec.size(); i < j; ++i) {
 		ValueVector tmp_args;
 
 		tmp_args.push_back(vec[i]);
@@ -237,19 +247,16 @@ CLEVER_METHOD(ArrayType::erase)
 		return;
 	}
 
-	size_t length;
 	ValueVector& vec = (CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS()))->getData();
-	
-	if (!(length = vec.size())) {
-		result->setNull();
+	size_t length = vec.size();
+
+	if (!length) {
 		return;
 	}
 
-	if ((args[0]->getInt()) >= 0 &&
-		(size_t(args[0]->getInt()) < length)) {	
-		
+	if (args[0]->getInt() >= 0 && size_t(args[0]->getInt()) < length) {
 		result->copy(vec[args[0]->getInt()]);
-		
+
 		vec[args[0]->getInt()]->delRef();
 
 		vec.erase(vec.begin()+args[0]->getInt());
