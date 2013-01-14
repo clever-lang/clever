@@ -58,7 +58,7 @@ public:
 	 * @param offset
 	 * @return
 	 */
-	Value* getValue(const ValueOffset& offset);
+	Value* getValue(const ValueOffset& offset) const;
 
 	/**
 	 * @brief ativates the current environment.
@@ -101,7 +101,7 @@ inline ValueOffset Environment::pushValue(Value* value) {
 	return ValueOffset(0, m_data.size()-1);
 }
 
-inline Value* Environment::getValue(const ValueOffset& offset) {
+inline Value* Environment::getValue(const ValueOffset& offset) const {
 	if (offset.first == 0) { // local
 
 		clever_assert(offset.second < m_data.size(),

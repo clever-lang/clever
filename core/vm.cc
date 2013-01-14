@@ -53,16 +53,15 @@ void VM::error(ErrorLevel level, const char* msg) const
 /// Fetchs a Value ptr according to the operand type
 CLEVER_FORCE_INLINE Value* VM::getValue(Operand& operand) const
 {
-	Environment* source;
+	const Environment* source;
 
 	switch (operand.op_type) {
-	case FETCH_CONST: source = m_const_env; break;
-	case FETCH_VAR: source = m_call_stack.top(); break;
-	case FETCH_TMP: source = m_temp_env; break;
-	default:
-		return NULL;
+		case FETCH_CONST: source = m_const_env;        break;
+		case FETCH_VAR:   source = m_call_stack.top(); break;
+		case FETCH_TMP:   source = m_temp_env;         break;
+		default:
+			return NULL;
 	}
-
 	clever_assert_not_null(source);
 
 	return source->getValue(operand.voffset);
@@ -773,7 +772,6 @@ void VM::run()
 			} else {
 				error(VM_ERROR, "Method not found!");
 			}
-
 		}
 		DISPATCH;
 
