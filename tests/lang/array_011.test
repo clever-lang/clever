@@ -1,0 +1,12 @@
+Testing array shift
+==CODE==
+import std.io.*;
+
+var t = [1,2,3,4,5];
+
+var o = t.shift();
+println(o);
+println(t);
+==RESULT==
+1
+\[2, 3, 4, 5\]

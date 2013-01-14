@@ -1,0 +1,11 @@
+Testing array reversal
+==CODE==
+import std.io.*;
+
+var t = [1,2,3,4,5];
+var o = t.pop();
+println(o);
+println(t);
+==RESULT==
+5
+\[1, 2, 3, 4\]
