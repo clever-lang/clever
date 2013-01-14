@@ -43,6 +43,10 @@ extern Type* g_clever_map_type;
 #define CLEVER_ARRAY_TYPE  g_clever_array_type
 #define CLEVER_MAP_TYPE    g_clever_map_type
 
+typedef std::map     <std::string, Value*>  ValueMap;
+typedef std::pair    <std::string, Value*>  ValuePair;
+typedef std::vector  <Value*>               ValueVector;
+
 class ValueObject : public RefCounted {
 public:
 	ValueObject()
