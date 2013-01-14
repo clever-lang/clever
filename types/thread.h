@@ -25,14 +25,14 @@ public:
 	enum ThreadKind { UNDEF, USER_THREAD, INTERNAL_THREAD };
 
 	Thread()
-		: ValueObject(), m_name(), m_type(UNDEF), m_local_vars(NULL), m_environment(NULL) {}
+		: ValueObject(), m_name(), m_type(UNDEF), m_environment(NULL) {}
 
 	Thread(std::string name)
-		: ValueObject(), m_name(name), m_type(UNDEF), m_local_vars(NULL), m_environment(NULL)
+		: ValueObject(), m_name(name), m_type(UNDEF), m_environment(NULL)
 		{ }
 
 	Thread(std::string name, size_t addr)
-		: ValueObject(), m_name(name), m_type(UNDEF), m_local_vars(NULL), m_environment(NULL)
+		: ValueObject(), m_name(name), m_type(UNDEF), m_environment(NULL)
 		{ m_info.addr = addr; }
 
 	~Thread() {}
@@ -51,10 +51,6 @@ public:
 
 	void setAddr(size_t addr) { m_info.addr = addr; }
 	void setID(size_t ID) { m_thread_id = ID; }
-	Scope* getLocalVars() { return m_local_vars; }
-
-
-	void setLocalVars(Scope* local_vars) { m_local_vars = local_vars; }
 
 	Environment* getEnvironment() { return m_environment; }
 	void setEnvironment(Environment* e) {
@@ -69,9 +65,6 @@ private:
 		size_t addr;
 	} m_info;
 
-	/// Local variables
-	Scope* m_local_vars;
-
 	Environment* m_environment;
 
 	DISALLOW_COPY_AND_ASSIGN(Thread);
@@ -81,19 +74,17 @@ private:
 /// Thread type
 class ThreadType : public Type {
 public:
-	ThreadType() : Type(CSTRING("Thread")) {}
+	ThreadType()
+		: Type(CSTRING("Thread")) {}
+
 	~ThreadType() {}
 
 	void dump(const void* data) const { dump(data, std::cout); }
-	void dump(const void* data, std::ostream& out) const { out << "Thread() { }"; }
+	void dump(const void* data, std::ostream& out) const { out << "Thread() {}"; }
 
 	void* allocData(CLEVER_TYPE_CTOR_ARGS) const { return new Thread; }
 
-	void deallocData(void* data) { if (data) { delete static_cast<Thread*>(data); } }
-
-	void increment(Value* value, const VM* vm) const {}
-
-	void decrement(Value* value, const VM* vm) const {}
+	void deallocData(CLEVER_TYPE_DTOR_ARGS) { delete static_cast<Thread*>(data); }
 };
 
 } // clever

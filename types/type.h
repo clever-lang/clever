@@ -48,6 +48,7 @@ class VM;
 #define CLEVER_METHOD(name) void name(CLEVER_METHOD_ARGS) const
 
 #define CLEVER_TYPE_CTOR_ARGS const ::std::vector<Value*>* args
+#define CLEVER_TYPE_DTOR_ARGS void* data
 
 class Value;
 class Type;
@@ -122,7 +123,7 @@ public:
 	virtual void* allocData(CLEVER_TYPE_CTOR_ARGS) const { return NULL; }
 
 	/// Type internal data destructor
-	virtual void deallocData(void* data) {}
+	virtual void deallocData(CLEVER_TYPE_DTOR_ARGS) {}
 private:
 	const CString* m_name;
 	MethodMap m_methods;
