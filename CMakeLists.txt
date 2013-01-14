@@ -95,6 +95,7 @@ endif (TCMALLOC)
 # ---------------------------------------------------------------------------
 set(re2c_opts)
 list(APPEND re2c_opts "-b")
+list(APPEND re2c_opts "-i")
 list(APPEND re2c_opts "--no-generation-date")
 
 if (${RE2C_VERSION} VERSION_GREATER "0.13.0")
