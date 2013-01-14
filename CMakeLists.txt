@@ -107,7 +107,7 @@ endif (${RE2C_VERSION} VERSION_GREATER "0.13.2")
 
 add_custom_command(
 	OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/core/parser.cc
-	COMMAND ${BISON_EXECUTABLE} -o ${CMAKE_CURRENT_SOURCE_DIR}/core/parser.cc ${CMAKE_CURRENT_SOURCE_DIR}/core/parser.y
+	COMMAND ${BISON_EXECUTABLE} -l -o ${CMAKE_CURRENT_SOURCE_DIR}/core/parser.cc ${CMAKE_CURRENT_SOURCE_DIR}/core/parser.y
 	DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/core/parser.y)
 
 add_custom_command(

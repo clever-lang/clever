@@ -1,8 +1,10 @@
-/* A Bison parser, made by GNU Bison 2.5.  */
+
+/* A Bison parser, made by GNU Bison 2.4.1.  */
 
 /* Skeleton implementation for Bison LALR(1) parsers in C++
    
-      Copyright (C) 2002-2011 Free Software Foundation, Inc.
+      Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008 Free Software
+   Foundation, Inc.
    
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -34,8 +36,6 @@
 /* First part of user declarations.  */
 
 
-/* Line 293 of lalr1.cc  */
-#line 39 "/home/felipe/dev/clever/core/parser.cc"
 
 
 #include "parser.hh"
@@ -43,22 +43,16 @@
 /* User implementation prologue.  */
 
 
-/* Line 299 of lalr1.cc  */
-#line 48 "/home/felipe/dev/clever/core/parser.cc"
 /* Unqualified %code blocks.  */
 
-/* Line 300 of lalr1.cc  */
-#line 120 "/home/felipe/dev/clever/core/parser.y"
 
 #include "core/driver.h"
 
 
 
-/* Line 300 of lalr1.cc  */
-#line 59 "/home/felipe/dev/clever/core/parser.cc"
 
 #ifndef YY_
-# if defined YYENABLE_NLS && YYENABLE_NLS
+# if YYENABLE_NLS
 #  if ENABLE_NLS
 #   include <libintl.h> /* FIXME: INFRINGES ON USER NAME SPACE */
 #   define YY_(msgid) dgettext ("bison-runtime", msgid)
@@ -67,26 +61,6 @@
 # ifndef YY_
 #  define YY_(msgid) msgid
 # endif
-#endif
-
-/* YYLLOC_DEFAULT -- Set CURRENT to span from RHS[1] to RHS[N].
-   If N is 0, then set CURRENT to the empty location which ends
-   the previous symbol: RHS[0] (always defined).  */
-
-#define YYRHSLOC(Rhs, K) ((Rhs)[K])
-#ifndef YYLLOC_DEFAULT
-# define YYLLOC_DEFAULT(Current, Rhs, N)                               \
- do                                                                    \
-   if (N)                                                              \
-     {                                                                 \
-       (Current).begin = YYRHSLOC (Rhs, 1).begin;                      \
-       (Current).end   = YYRHSLOC (Rhs, N).end;                        \
-     }                                                                 \
-   else                                                                \
-     {                                                                 \
-       (Current).begin = (Current).end = YYRHSLOC (Rhs, 0).end;        \
-     }                                                                 \
- while (false)
 #endif
 
 /* Suppress unused-variable warnings by "using" E.  */
@@ -138,12 +112,9 @@ do {					\
 #define YYRECOVERING()  (!!yyerrstatus_)
 
 
-/* Line 382 of lalr1.cc  */
-#line 4 "/home/felipe/dev/clever/core/parser.y"
 namespace clever {
 
-/* Line 382 of lalr1.cc  */
-#line 147 "/home/felipe/dev/clever/core/parser.cc"
+#if YYERROR_VERBOSE
 
   /* Return YYSTR after stripping away unnecessary quotes and
      backslashes, so that it's suitable for yyerror.  The heuristic is
@@ -182,6 +153,7 @@ namespace clever {
     return yystr;
   }
 
+#endif
 
   /// Build a parser object.
   Parser::Parser (Driver& driver_yyarg, ScannerState& state_yyarg, Compiler& c_yyarg)
@@ -284,18 +256,6 @@ namespace clever {
   }
 #endif
 
-  inline bool
-  Parser::yy_pact_value_is_default_ (int yyvalue)
-  {
-    return yyvalue == yypact_ninf_;
-  }
-
-  inline bool
-  Parser::yy_table_value_is_error_ (int yyvalue)
-  {
-    return yyvalue == yytable_ninf_;
-  }
-
   int
   Parser::parse ()
   {
@@ -317,7 +277,7 @@ namespace clever {
     /// Location of the lookahead.
     location_type yylloc;
     /// The locations where the error started and ended.
-    location_type yyerror_range[3];
+    location_type yyerror_range[2];
 
     /// $$.
     semantic_type yyval;
@@ -331,14 +291,10 @@ namespace clever {
 
     /* User initialization code.  */
     
-/* Line 565 of lalr1.cc  */
-#line 112 "/home/felipe/dev/clever/core/parser.y"
 {
 yylloc.begin.filename = yylloc.end.filename = driver.getFile();
 }
 
-/* Line 565 of lalr1.cc  */
-#line 342 "/home/felipe/dev/clever/core/parser.cc"
 
     /* Initialize the stacks.  The initial state will be pushed in
        yynewstate, since the latter expects the semantical and the
@@ -366,7 +322,7 @@ yylloc.begin.filename = yylloc.end.filename = driver.getFile();
 
     /* Try to take a decision without lookahead.  */
     yyn = yypact_[yystate];
-    if (yy_pact_value_is_default_ (yyn))
+    if (yyn == yypact_ninf_)
       goto yydefault;
 
     /* Read a lookahead token.  */
@@ -399,8 +355,8 @@ yylloc.begin.filename = yylloc.end.filename = driver.getFile();
     yyn = yytable_[yyn];
     if (yyn <= 0)
       {
-	if (yy_table_value_is_error_ (yyn))
-	  goto yyerrlab;
+	if (yyn == 0 || yyn == yytable_ninf_)
+	goto yyerrlab;
 	yyn = -yyn;
 	goto yyreduce;
       }
@@ -456,652 +412,459 @@ yylloc.begin.filename = yylloc.end.filename = driver.getFile();
       {
 	  case 2:
 
-/* Line 690 of lalr1.cc  */
-#line 207 "/home/felipe/dev/clever/core/parser.y"
     { c.init(); }
     break;
 
   case 3:
 
-/* Line 690 of lalr1.cc  */
-#line 207 "/home/felipe/dev/clever/core/parser.y"
     { c.emitAST((yysemantic_stack_[(2) - (2)].block)); }
     break;
 
   case 4:
 
-/* Line 690 of lalr1.cc  */
-#line 211 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.block) = new ast::Block(yyloc); }
     break;
 
   case 5:
 
-/* Line 690 of lalr1.cc  */
-#line 212 "/home/felipe/dev/clever/core/parser.y"
     { (yysemantic_stack_[(2) - (1)].block)->append((yysemantic_stack_[(2) - (2)].node));       }
     break;
 
   case 24:
 
-/* Line 690 of lalr1.cc  */
-#line 237 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.block) = (yysemantic_stack_[(3) - (2)].block); }
     break;
 
   case 25:
 
-/* Line 690 of lalr1.cc  */
-#line 241 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.inst) = new ast::Instantiation((yysemantic_stack_[(3) - (1)].type), NULL, yyloc); }
     break;
 
   case 26:
 
-/* Line 690 of lalr1.cc  */
-#line 242 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.inst) = new ast::Instantiation((yysemantic_stack_[(6) - (1)].type), (yysemantic_stack_[(6) - (5)].narray),   yyloc); }
     break;
 
   case 27:
 
-/* Line 690 of lalr1.cc  */
-#line 246 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.break_) = new ast::Break(yyloc); }
     break;
 
   case 28:
 
-/* Line 690 of lalr1.cc  */
-#line 250 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.continue_) = new ast::Continue(yyloc); }
     break;
 
   case 29:
 
-/* Line 690 of lalr1.cc  */
-#line 254 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.wait) = new ast::Wait((yysemantic_stack_[(2) - (2)].ident), yyloc); }
     break;
 
   case 30:
 
-/* Line 690 of lalr1.cc  */
-#line 258 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.threadblock) = new ast::ThreadBlock((yysemantic_stack_[(3) - (3)].block), (yysemantic_stack_[(3) - (2)].ident), yyloc); }
     break;
 
   case 31:
 
-/* Line 690 of lalr1.cc  */
-#line 259 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.threadblock) = new ast::ThreadBlock((yysemantic_stack_[(6) - (6)].block), (yysemantic_stack_[(6) - (2)].ident), (yysemantic_stack_[(6) - (4)].node), yyloc); }
     break;
 
   case 32:
 
-/* Line 690 of lalr1.cc  */
-#line 263 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.criticalblock) = new ast::CriticalBlock((yysemantic_stack_[(2) - (2)].block), yyloc); }
     break;
 
   case 53:
 
-/* Line 690 of lalr1.cc  */
-#line 287 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.node) = (yysemantic_stack_[(3) - (2)].node); }
     break;
 
   case 55:
 
-/* Line 690 of lalr1.cc  */
-#line 295 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.inst) = new ast::Instantiation(CSTRING("Array"), (yysemantic_stack_[(3) - (2)].narray), yyloc); }
     break;
 
   case 57:
 
-/* Line 690 of lalr1.cc  */
-#line 303 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.narray) = new ast::NodeArray(yyloc); (yyval.narray)->append((yysemantic_stack_[(3) - (1)].strlit)); (yyval.narray)->append((yysemantic_stack_[(3) - (3)].node)); }
     break;
 
   case 58:
 
-/* Line 690 of lalr1.cc  */
-#line 304 "/home/felipe/dev/clever/core/parser.y"
     { (yysemantic_stack_[(5) - (1)].narray)->append((yysemantic_stack_[(5) - (3)].strlit)); (yysemantic_stack_[(5) - (1)].narray)->append((yysemantic_stack_[(5) - (5)].node));                                 }
     break;
 
   case 59:
 
-/* Line 690 of lalr1.cc  */
-#line 308 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.inst) = new ast::Instantiation(CSTRING("Map"), NULL, yyloc); }
     break;
 
   case 60:
 
-/* Line 690 of lalr1.cc  */
-#line 309 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.inst) = new ast::Instantiation(CSTRING("Map"), (yysemantic_stack_[(3) - (2)].narray), yyloc);   }
     break;
 
   case 61:
 
-/* Line 690 of lalr1.cc  */
-#line 313 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.throw_) = new ast::Throw((yysemantic_stack_[(2) - (2)].node), yyloc); }
     break;
 
   case 63:
 
-/* Line 690 of lalr1.cc  */
-#line 321 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.narray) = new ast::NodeArray(yyloc); (yyval.narray)->append((yysemantic_stack_[(1) - (1)].catch_)); }
     break;
 
   case 64:
 
-/* Line 690 of lalr1.cc  */
-#line 322 "/home/felipe/dev/clever/core/parser.y"
     { (yysemantic_stack_[(2) - (1)].narray)->append((yysemantic_stack_[(2) - (2)].catch_));                                 }
     break;
 
   case 65:
 
-/* Line 690 of lalr1.cc  */
-#line 326 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.catch_) = new ast::Catch((yysemantic_stack_[(5) - (3)].ident), (yysemantic_stack_[(5) - (5)].block), yyloc); }
     break;
 
   case 66:
 
-/* Line 690 of lalr1.cc  */
-#line 330 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.block) = NULL; }
     break;
 
   case 67:
 
-/* Line 690 of lalr1.cc  */
-#line 331 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.block) = (yysemantic_stack_[(2) - (2)].block);   }
     break;
 
   case 68:
 
-/* Line 690 of lalr1.cc  */
-#line 335 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.except) = new ast::Try((yysemantic_stack_[(4) - (2)].block), (yysemantic_stack_[(4) - (3)].narray), (yysemantic_stack_[(4) - (4)].block), yyloc); }
     break;
 
   case 69:
 
-/* Line 690 of lalr1.cc  */
-#line 339 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.property) = new ast::Property((yysemantic_stack_[(3) - (1)].node), (yysemantic_stack_[(3) - (3)].ident), yyloc); }
     break;
 
   case 70:
 
-/* Line 690 of lalr1.cc  */
-#line 343 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.mcall) = new ast::MethodCall((yysemantic_stack_[(6) - (1)].node), (yysemantic_stack_[(6) - (3)].ident), (yysemantic_stack_[(6) - (5)].narray), yyloc); }
     break;
 
   case 71:
 
-/* Line 690 of lalr1.cc  */
-#line 344 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.mcall) = new ast::MethodCall((yysemantic_stack_[(6) - (1)].type), (yysemantic_stack_[(6) - (3)].ident), (yysemantic_stack_[(6) - (5)].narray), yyloc); }
     break;
 
   case 72:
 
-/* Line 690 of lalr1.cc  */
-#line 348 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.inc_dec) = new ast::IncDec(ast::IncDec::POS_INC, (yysemantic_stack_[(2) - (1)].node), yyloc); }
     break;
 
   case 73:
 
-/* Line 690 of lalr1.cc  */
-#line 349 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.inc_dec) = new ast::IncDec(ast::IncDec::POS_DEC, (yysemantic_stack_[(2) - (1)].node), yyloc); }
     break;
 
   case 74:
 
-/* Line 690 of lalr1.cc  */
-#line 350 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.inc_dec) = new ast::IncDec(ast::IncDec::PRE_INC, (yysemantic_stack_[(2) - (2)].node), yyloc); }
     break;
 
   case 75:
 
-/* Line 690 of lalr1.cc  */
-#line 351 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.inc_dec) = new ast::IncDec(ast::IncDec::PRE_DEC, (yysemantic_stack_[(2) - (2)].node), yyloc); }
     break;
 
   case 76:
 
-/* Line 690 of lalr1.cc  */
-#line 355 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.comp) = new ast::Comparison(ast::Comparison::COP_EQUAL,   (yysemantic_stack_[(3) - (1)].node), (yysemantic_stack_[(3) - (3)].node), yyloc); }
     break;
 
   case 77:
 
-/* Line 690 of lalr1.cc  */
-#line 356 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.comp) = new ast::Comparison(ast::Comparison::COP_NEQUAL,  (yysemantic_stack_[(3) - (1)].node), (yysemantic_stack_[(3) - (3)].node), yyloc); }
     break;
 
   case 78:
 
-/* Line 690 of lalr1.cc  */
-#line 357 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.comp) = new ast::Comparison(ast::Comparison::COP_GREATER, (yysemantic_stack_[(3) - (1)].node), (yysemantic_stack_[(3) - (3)].node), yyloc); }
     break;
 
   case 79:
 
-/* Line 690 of lalr1.cc  */
-#line 358 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.comp) = new ast::Comparison(ast::Comparison::COP_GEQUAL,  (yysemantic_stack_[(3) - (1)].node), (yysemantic_stack_[(3) - (3)].node), yyloc); }
     break;
 
   case 80:
 
-/* Line 690 of lalr1.cc  */
-#line 359 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.comp) = new ast::Comparison(ast::Comparison::COP_LESS,    (yysemantic_stack_[(3) - (1)].node), (yysemantic_stack_[(3) - (3)].node), yyloc); }
     break;
 
   case 81:
 
-/* Line 690 of lalr1.cc  */
-#line 360 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.comp) = new ast::Comparison(ast::Comparison::COP_LEQUAL,  (yysemantic_stack_[(3) - (1)].node), (yysemantic_stack_[(3) - (3)].node), yyloc); }
     break;
 
   case 82:
 
-/* Line 690 of lalr1.cc  */
-#line 364 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.boolean) = new ast::Boolean(ast::Boolean::BOP_OR, (yysemantic_stack_[(3) - (1)].node), (yysemantic_stack_[(3) - (3)].node), yyloc);  }
     break;
 
   case 83:
 
-/* Line 690 of lalr1.cc  */
-#line 365 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.boolean) = new ast::Boolean(ast::Boolean::BOP_AND, (yysemantic_stack_[(3) - (1)].node), (yysemantic_stack_[(3) - (3)].node), yyloc); }
     break;
 
   case 84:
 
-/* Line 690 of lalr1.cc  */
-#line 369 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.logic) = new ast::Logic(ast::Logic::LOP_OR, (yysemantic_stack_[(3) - (1)].node), (yysemantic_stack_[(3) - (3)].node), yyloc);      }
     break;
 
   case 85:
 
-/* Line 690 of lalr1.cc  */
-#line 370 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.logic) = new ast::Logic(ast::Logic::LOP_AND, (yysemantic_stack_[(3) - (1)].node), (yysemantic_stack_[(3) - (3)].node), yyloc);     }
     break;
 
   case 86:
 
-/* Line 690 of lalr1.cc  */
-#line 374 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.arithmetic) = new ast::Arithmetic(ast::Arithmetic::MOP_ADD, (yysemantic_stack_[(3) - (1)].node), (yysemantic_stack_[(3) - (3)].node), yyloc); }
     break;
 
   case 87:
 
-/* Line 690 of lalr1.cc  */
-#line 375 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.arithmetic) = new ast::Arithmetic(ast::Arithmetic::MOP_SUB, (yysemantic_stack_[(3) - (1)].node), (yysemantic_stack_[(3) - (3)].node), yyloc); }
     break;
 
   case 88:
 
-/* Line 690 of lalr1.cc  */
-#line 376 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.arithmetic) = new ast::Arithmetic(ast::Arithmetic::MOP_MUL, (yysemantic_stack_[(3) - (1)].node), (yysemantic_stack_[(3) - (3)].node), yyloc); }
     break;
 
   case 89:
 
-/* Line 690 of lalr1.cc  */
-#line 377 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.arithmetic) = new ast::Arithmetic(ast::Arithmetic::MOP_DIV, (yysemantic_stack_[(3) - (1)].node), (yysemantic_stack_[(3) - (3)].node), yyloc); }
     break;
 
   case 90:
 
-/* Line 690 of lalr1.cc  */
-#line 378 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.arithmetic) = new ast::Arithmetic(ast::Arithmetic::MOP_MOD, (yysemantic_stack_[(3) - (1)].node), (yysemantic_stack_[(3) - (3)].node), yyloc); }
     break;
 
   case 91:
 
-/* Line 690 of lalr1.cc  */
-#line 382 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.bitwise) = new ast::Bitwise(ast::Bitwise::BOP_AND, (yysemantic_stack_[(3) - (1)].node), (yysemantic_stack_[(3) - (3)].node), yyloc);    }
     break;
 
   case 92:
 
-/* Line 690 of lalr1.cc  */
-#line 383 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.bitwise) = new ast::Bitwise(ast::Bitwise::BOP_OR, (yysemantic_stack_[(3) - (1)].node), (yysemantic_stack_[(3) - (3)].node), yyloc);     }
     break;
 
   case 93:
 
-/* Line 690 of lalr1.cc  */
-#line 384 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.bitwise) = new ast::Bitwise(ast::Bitwise::BOP_XOR, (yysemantic_stack_[(3) - (1)].node), (yysemantic_stack_[(3) - (3)].node), yyloc);    }
     break;
 
   case 94:
 
-/* Line 690 of lalr1.cc  */
-#line 385 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.bitwise) = new ast::Bitwise(ast::Bitwise::BOP_LSHIFT, (yysemantic_stack_[(3) - (1)].node), (yysemantic_stack_[(3) - (3)].node), yyloc); }
     break;
 
   case 95:
 
-/* Line 690 of lalr1.cc  */
-#line 386 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.bitwise) = new ast::Bitwise(ast::Bitwise::BOP_RSHIFT, (yysemantic_stack_[(3) - (1)].node), (yysemantic_stack_[(3) - (3)].node), yyloc); }
     break;
 
   case 96:
 
-/* Line 690 of lalr1.cc  */
-#line 390 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.narray) = (yysemantic_stack_[(2) - (2)].narray); }
     break;
 
   case 97:
 
-/* Line 690 of lalr1.cc  */
-#line 391 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.narray) = (yysemantic_stack_[(2) - (2)].narray); }
     break;
 
   case 98:
 
-/* Line 690 of lalr1.cc  */
-#line 395 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.narray) = new ast::NodeArray(yyloc); (yyval.narray)->append((yysemantic_stack_[(1) - (1)].vardecl)); }
     break;
 
   case 99:
 
-/* Line 690 of lalr1.cc  */
-#line 396 "/home/felipe/dev/clever/core/parser.y"
     { (yysemantic_stack_[(3) - (1)].narray)->append((yysemantic_stack_[(3) - (3)].vardecl)); }
     break;
 
   case 100:
 
-/* Line 690 of lalr1.cc  */
-#line 400 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.vardecl) = new ast::VariableDecl((yysemantic_stack_[(3) - (1)].ident), new ast::Assignment((yysemantic_stack_[(3) - (1)].ident), (yysemantic_stack_[(3) - (3)].node), yyloc), false, yyloc); }
     break;
 
   case 101:
 
-/* Line 690 of lalr1.cc  */
-#line 401 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.vardecl) = new ast::VariableDecl((yysemantic_stack_[(1) - (1)].ident), new ast::Assignment((yysemantic_stack_[(1) - (1)].ident), NULL, yyloc), false, yyloc); }
     break;
 
   case 102:
 
-/* Line 690 of lalr1.cc  */
-#line 405 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.narray) = new ast::NodeArray(yyloc); (yyval.narray)->append((yysemantic_stack_[(1) - (1)].vardecl)); }
     break;
 
   case 103:
 
-/* Line 690 of lalr1.cc  */
-#line 406 "/home/felipe/dev/clever/core/parser.y"
     { (yysemantic_stack_[(3) - (1)].narray)->append((yysemantic_stack_[(3) - (3)].vardecl)); }
     break;
 
   case 104:
 
-/* Line 690 of lalr1.cc  */
-#line 410 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.vardecl) = new ast::VariableDecl((yysemantic_stack_[(3) - (1)].ident), new ast::Assignment((yysemantic_stack_[(3) - (1)].ident), (yysemantic_stack_[(3) - (3)].node), yyloc), true, yyloc); }
     break;
 
   case 105:
 
-/* Line 690 of lalr1.cc  */
-#line 414 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.assignment) = new ast::Assignment((yysemantic_stack_[(3) - (1)].node), (yysemantic_stack_[(3) - (3)].node), yyloc); }
     break;
 
   case 106:
 
-/* Line 690 of lalr1.cc  */
-#line 418 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.import) = new ast::Import((yysemantic_stack_[(6) - (2)].ident), (yysemantic_stack_[(6) - (4)].ident), yyloc);   }
     break;
 
   case 107:
 
-/* Line 690 of lalr1.cc  */
-#line 419 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.import) = new ast::Import((yysemantic_stack_[(4) - (2)].ident), NULL, yyloc); }
     break;
 
   case 108:
 
-/* Line 690 of lalr1.cc  */
-#line 423 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.vardecl) = new ast::VariableDecl((yysemantic_stack_[(4) - (1)].ident), new ast::Assignment((yysemantic_stack_[(4) - (1)].ident), NULL, yyloc), false, yyloc); }
     break;
 
   case 109:
 
-/* Line 690 of lalr1.cc  */
-#line 428 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.fdecl) = new ast::FunctionDecl((yysemantic_stack_[(5) - (2)].ident), NULL, (yysemantic_stack_[(5) - (5)].block), NULL, yyloc); }
     break;
 
   case 110:
 
-/* Line 690 of lalr1.cc  */
-#line 430 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.fdecl) = new ast::FunctionDecl((yysemantic_stack_[(6) - (2)].ident), NULL, (yysemantic_stack_[(6) - (6)].block), (yysemantic_stack_[(6) - (4)].vardecl), yyloc); }
     break;
 
   case 111:
 
-/* Line 690 of lalr1.cc  */
-#line 432 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.fdecl) = new ast::FunctionDecl((yysemantic_stack_[(6) - (2)].ident), (yysemantic_stack_[(6) - (4)].narray), (yysemantic_stack_[(6) - (6)].block), NULL, yyloc); }
     break;
 
   case 112:
 
-/* Line 690 of lalr1.cc  */
-#line 434 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.fdecl) = new ast::FunctionDecl((yysemantic_stack_[(8) - (2)].ident), (yysemantic_stack_[(8) - (4)].narray), (yysemantic_stack_[(8) - (8)].block), (yysemantic_stack_[(8) - (6)].vardecl), yyloc); }
     break;
 
   case 113:
 
-/* Line 690 of lalr1.cc  */
-#line 439 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.fdecl) = new ast::FunctionDecl(NULL, NULL, (yysemantic_stack_[(4) - (4)].block), NULL, yyloc); }
     break;
 
   case 114:
 
-/* Line 690 of lalr1.cc  */
-#line 441 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.fdecl) = new ast::FunctionDecl(NULL, NULL, (yysemantic_stack_[(5) - (5)].block), (yysemantic_stack_[(5) - (3)].vardecl), yyloc); }
     break;
 
   case 115:
 
-/* Line 690 of lalr1.cc  */
-#line 443 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.fdecl) = new ast::FunctionDecl(NULL, (yysemantic_stack_[(5) - (3)].narray), (yysemantic_stack_[(5) - (5)].block), NULL, yyloc); }
     break;
 
   case 116:
 
-/* Line 690 of lalr1.cc  */
-#line 445 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.fdecl) = new ast::FunctionDecl(NULL, (yysemantic_stack_[(7) - (3)].narray), (yysemantic_stack_[(7) - (7)].block), (yysemantic_stack_[(7) - (5)].vardecl), yyloc); }
     break;
 
   case 117:
 
-/* Line 690 of lalr1.cc  */
-#line 449 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.narray) = NULL; }
     break;
 
   case 119:
 
-/* Line 690 of lalr1.cc  */
-#line 454 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.narray) = new ast::NodeArray(yyloc); (yyval.narray)->append((yysemantic_stack_[(1) - (1)].node)); }
     break;
 
   case 120:
 
-/* Line 690 of lalr1.cc  */
-#line 455 "/home/felipe/dev/clever/core/parser.y"
     { (yysemantic_stack_[(3) - (1)].narray)->append((yysemantic_stack_[(3) - (3)].node)); }
     break;
 
   case 121:
 
-/* Line 690 of lalr1.cc  */
-#line 459 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.fcall) = (yysemantic_stack_[(0) - (0)].fcall); }
     break;
 
   case 122:
 
-/* Line 690 of lalr1.cc  */
-#line 460 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.fcall) = new ast::FunctionCall((yysemantic_stack_[(4) - (1)].node), (yysemantic_stack_[(4) - (3)].narray), yyloc); }
     break;
 
   case 123:
 
-/* Line 690 of lalr1.cc  */
-#line 464 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.fcall) = new ast::FunctionCall((yysemantic_stack_[(4) - (1)].ident), (yysemantic_stack_[(4) - (3)].narray), yyloc); }
     break;
 
   case 124:
 
-/* Line 690 of lalr1.cc  */
-#line 464 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.fcall) = (yysemantic_stack_[(6) - (6)].fcall); }
     break;
 
   case 125:
 
-/* Line 690 of lalr1.cc  */
-#line 468 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.ret) = new ast::Return((yysemantic_stack_[(2) - (2)].node), yyloc); }
     break;
 
   case 126:
 
-/* Line 690 of lalr1.cc  */
-#line 469 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.ret) = new ast::Return(NULL, yyloc); }
     break;
 
   case 127:
 
-/* Line 690 of lalr1.cc  */
-#line 474 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.while_loop) = new ast::While((yysemantic_stack_[(5) - (3)].node), (yysemantic_stack_[(5) - (5)].block), yyloc); }
     break;
 
   case 129:
 
-/* Line 690 of lalr1.cc  */
-#line 480 "/home/felipe/dev/clever/core/parser.y"
     { (yysemantic_stack_[(6) - (0)].ifcond)->addConditional((yysemantic_stack_[(6) - (4)].node), (yysemantic_stack_[(6) - (6)].block)); }
     break;
 
   case 130:
 
-/* Line 690 of lalr1.cc  */
-#line 484 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.ifcond) = (yysemantic_stack_[(0) - (0)].ifcond); }
     break;
 
   case 131:
 
-/* Line 690 of lalr1.cc  */
-#line 485 "/home/felipe/dev/clever/core/parser.y"
     { (yysemantic_stack_[(2) - (0)].ifcond)->setElseNode((yysemantic_stack_[(2) - (2)].node)); (yyval.ifcond) = (yysemantic_stack_[(2) - (0)].ifcond); }
     break;
 
   case 132:
 
-/* Line 690 of lalr1.cc  */
-#line 489 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.ifcond) = new ast::If((yysemantic_stack_[(5) - (3)].node), (yysemantic_stack_[(5) - (5)].node), yyloc); }
     break;
 
   case 133:
 
-/* Line 690 of lalr1.cc  */
-#line 490 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.ifcond) = (yysemantic_stack_[(7) - (6)].ifcond); }
     break;
 
   case 134:
 
-/* Line 690 of lalr1.cc  */
-#line 490 "/home/felipe/dev/clever/core/parser.y"
     { (yyval.ifcond) = (yysemantic_stack_[(9) - (9)].ifcond); }
     break;
 
 
 
-/* Line 690 of lalr1.cc  */
-#line 1091 "/home/felipe/dev/clever/core/parser.cc"
 	default:
           break;
       }
-    /* User semantic actions sometimes alter yychar, and that requires
-       that yytoken be updated with the new translation.  We take the
-       approach of translating immediately before every use of yytoken.
-       One alternative is translating here after every semantic action,
-       but that translation would be missed if the semantic action
-       invokes YYABORT, YYACCEPT, or YYERROR immediately after altering
-       yychar.  In the case of YYABORT or YYACCEPT, an incorrect
-       destructor might then be invoked immediately.  In the case of
-       YYERROR, subsequent parser actions might lead to an incorrect
-       destructor call or verbose syntax error message before the
-       lookahead is translated.  */
     YY_SYMBOL_PRINT ("-> $$ =", yyr1_[yyn], &yyval, &yyloc);
 
     yypop_ (yylen);
@@ -1125,20 +888,14 @@ yylloc.begin.filename = yylloc.end.filename = driver.getFile();
   | yyerrlab -- here on detecting error |
   `------------------------------------*/
   yyerrlab:
-    /* Make sure we have latest lookahead translation.  See comments at
-       user semantic actions for why this is necessary.  */
-    yytoken = yytranslate_ (yychar);
-
     /* If not already recovering from an error, report this error.  */
     if (!yyerrstatus_)
       {
 	++yynerrs_;
-	if (yychar == yyempty_)
-	  yytoken = yyempty_;
 	error (yylloc, yysyntax_error_ (yystate, yytoken));
       }
 
-    yyerror_range[1] = yylloc;
+    yyerror_range[0] = yylloc;
     if (yyerrstatus_ == 3)
       {
 	/* If just tried and failed to reuse lookahead token after an
@@ -1173,7 +930,7 @@ yylloc.begin.filename = yylloc.end.filename = driver.getFile();
     if (false)
       goto yyerrorlab;
 
-    yyerror_range[1] = yylocation_stack_[yylen - 1];
+    yyerror_range[0] = yylocation_stack_[yylen - 1];
     /* Do not reclaim the symbols of the rule which action triggered
        this YYERROR.  */
     yypop_ (yylen);
@@ -1190,7 +947,7 @@ yylloc.begin.filename = yylloc.end.filename = driver.getFile();
     for (;;)
       {
 	yyn = yypact_[yystate];
-	if (!yy_pact_value_is_default_ (yyn))
+	if (yyn != yypact_ninf_)
 	{
 	  yyn += yyterror_;
 	  if (0 <= yyn && yyn <= yylast_ && yycheck_[yyn] == yyterror_)
@@ -1205,7 +962,7 @@ yylloc.begin.filename = yylloc.end.filename = driver.getFile();
 	if (yystate_stack_.height () == 1)
 	YYABORT;
 
-	yyerror_range[1] = yylocation_stack_[0];
+	yyerror_range[0] = yylocation_stack_[0];
 	yydestruct_ ("Error: popping",
 		     yystos_[yystate],
 		     &yysemantic_stack_[0], &yylocation_stack_[0]);
@@ -1214,10 +971,10 @@ yylloc.begin.filename = yylloc.end.filename = driver.getFile();
 	YY_STACK_PRINT ();
       }
 
-    yyerror_range[2] = yylloc;
+    yyerror_range[1] = yylloc;
     // Using YYLLOC is tempting, but would change the location of
     // the lookahead.  YYLOC is available though.
-    YYLLOC_DEFAULT (yyloc, yyerror_range, 2);
+    YYLLOC_DEFAULT (yyloc, (yyerror_range - 1), 2);
     yysemantic_stack_.push (yylval);
     yylocation_stack_.push (yyloc);
 
@@ -1240,13 +997,7 @@ yylloc.begin.filename = yylloc.end.filename = driver.getFile();
 
   yyreturn:
     if (yychar != yyempty_)
-      {
-        /* Make sure we have latest lookahead translation.  See comments
-           at user semantic actions for why this is necessary.  */
-        yytoken = yytranslate_ (yychar);
-        yydestruct_ ("Cleanup: discarding lookahead", yytoken, &yylval,
-                     &yylloc);
-      }
+      yydestruct_ ("Cleanup: discarding lookahead", yytoken, &yylval, &yylloc);
 
     /* Do not reclaim the symbols of the rule which action triggered
        this YYABORT or YYACCEPT.  */
@@ -1265,97 +1016,51 @@ yylloc.begin.filename = yylloc.end.filename = driver.getFile();
 
   // Generate an error message.
   std::string
-  Parser::yysyntax_error_ (int yystate, int yytoken)
+  Parser::yysyntax_error_ (int yystate, int tok)
   {
-    std::string yyres;
-    // Number of reported tokens (one for the "unexpected", one per
-    // "expected").
-    size_t yycount = 0;
-    // Its maximum.
-    enum { YYERROR_VERBOSE_ARGS_MAXIMUM = 5 };
-    // Arguments of yyformat.
-    char const *yyarg[YYERROR_VERBOSE_ARGS_MAXIMUM];
-
-    /* There are many possibilities here to consider:
-       - If this state is a consistent state with a default action, then
-         the only way this function was invoked is if the default action
-         is an error action.  In that case, don't check for expected
-         tokens because there are none.
-       - The only way there can be no lookahead present (in yytoken) is
-         if this state is a consistent state with a default action.
-         Thus, detecting the absence of a lookahead is sufficient to
-         determine that there is no unexpected or expected token to
-         report.  In that case, just report a simple "syntax error".
-       - Don't assume there isn't a lookahead just because this state is
-         a consistent state with a default action.  There might have
-         been a previous inconsistent state, consistent state with a
-         non-default action, or user semantic action that manipulated
-         yychar.
-       - Of course, the expected token list depends on states to have
-         correct lookahead information, and it depends on the parser not
-         to perform extra reductions after fetching a lookahead from the
-         scanner and before detecting a syntax error.  Thus, state
-         merging (from LALR or IELR) and default reductions corrupt the
-         expected token list.  However, the list is correct for
-         canonical LR with one exception: it will still contain any
-         token that will not be accepted due to an error action in a
-         later state.
-    */
-    if (yytoken != yyempty_)
+    std::string res;
+    YYUSE (yystate);
+#if YYERROR_VERBOSE
+    int yyn = yypact_[yystate];
+    if (yypact_ninf_ < yyn && yyn <= yylast_)
       {
-        yyarg[yycount++] = yytname_[yytoken];
-        int yyn = yypact_[yystate];
-        if (!yy_pact_value_is_default_ (yyn))
-          {
-            /* Start YYX at -YYN if negative to avoid negative indexes in
-               YYCHECK.  In other words, skip the first -YYN actions for
-               this state because they are default actions.  */
-            int yyxbegin = yyn < 0 ? -yyn : 0;
-            /* Stay within bounds of both yycheck and yytname.  */
-            int yychecklim = yylast_ - yyn + 1;
-            int yyxend = yychecklim < yyntokens_ ? yychecklim : yyntokens_;
-            for (int yyx = yyxbegin; yyx < yyxend; ++yyx)
-              if (yycheck_[yyx + yyn] == yyx && yyx != yyterror_
-                  && !yy_table_value_is_error_ (yytable_[yyx + yyn]))
-                {
-                  if (yycount == YYERROR_VERBOSE_ARGS_MAXIMUM)
-                    {
-                      yycount = 1;
-                      break;
-                    }
-                  else
-                    yyarg[yycount++] = yytname_[yyx];
-                }
-          }
-      }
+	/* Start YYX at -YYN if negative to avoid negative indexes in
+	   YYCHECK.  */
+	int yyxbegin = yyn < 0 ? -yyn : 0;
 
-    char const* yyformat = 0;
-    switch (yycount)
-      {
-#define YYCASE_(N, S)                         \
-        case N:                               \
-          yyformat = S;                       \
-        break
-        YYCASE_(0, YY_("syntax error"));
-        YYCASE_(1, YY_("syntax error, unexpected %s"));
-        YYCASE_(2, YY_("syntax error, unexpected %s, expecting %s"));
-        YYCASE_(3, YY_("syntax error, unexpected %s, expecting %s or %s"));
-        YYCASE_(4, YY_("syntax error, unexpected %s, expecting %s or %s or %s"));
-        YYCASE_(5, YY_("syntax error, unexpected %s, expecting %s or %s or %s or %s"));
-#undef YYCASE_
-      }
+	/* Stay within bounds of both yycheck and yytname.  */
+	int yychecklim = yylast_ - yyn + 1;
+	int yyxend = yychecklim < yyntokens_ ? yychecklim : yyntokens_;
+	int count = 0;
+	for (int x = yyxbegin; x < yyxend; ++x)
+	  if (yycheck_[x + yyn] == x && x != yyterror_)
+	    ++count;
 
-    // Argument number.
-    size_t yyi = 0;
-    for (char const* yyp = yyformat; *yyp; ++yyp)
-      if (yyp[0] == '%' && yyp[1] == 's' && yyi < yycount)
-        {
-          yyres += yytnamerr_ (yyarg[yyi++]);
-          ++yyp;
-        }
-      else
-        yyres += *yyp;
-    return yyres;
+	// FIXME: This method of building the message is not compatible
+	// with internationalization.  It should work like yacc.c does it.
+	// That is, first build a string that looks like this:
+	// "syntax error, unexpected %s or %s or %s"
+	// Then, invoke YY_ on this string.
+	// Finally, use the string as a format to output
+	// yytname_[tok], etc.
+	// Until this gets fixed, this message appears in English only.
+	res = "syntax error, unexpected ";
+	res += yytnamerr_ (yytname_[tok]);
+	if (count < 5)
+	  {
+	    count = 0;
+	    for (int x = yyxbegin; x < yyxend; ++x)
+	      if (yycheck_[x + yyn] == x && x != yyterror_)
+		{
+		  res += (!count++) ? ", expecting " : " or ";
+		  res += yytnamerr_ (yytname_[x]);
+		}
+	  }
+      }
+    else
+#endif
+      res = YY_("syntax error");
+    return res;
   }
 
 
@@ -1394,9 +1099,9 @@ yylloc.begin.filename = yylloc.end.filename = driver.getFile();
      442,  -131,   -14,  -131
   };
 
-  /* YYDEFACT[S] -- default reduction number in state S.  Performed when
-     YYTABLE doesn't specify something else to do.  Zero means the
-     default is an error.  */
+  /* YYDEFACT[S] -- default rule to reduce with in state S when YYTABLE
+     doesn't specify something else to do.  Zero means the default is an
+     error.  */
   const unsigned char
   Parser::yydefact_[] =
   {
@@ -1455,7 +1160,7 @@ yylloc.begin.filename = yylloc.end.filename = driver.getFile();
 
   /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
      positive, shift that token.  If negative, reduce the rule which
-     number is the opposite.  If YYTABLE_NINF_, syntax error.  */
+     number is the opposite.  If zero, do what YYDEFACT says.  */
   const signed char Parser::yytable_ninf_ = -55;
   const short int
   Parser::yytable_[] =
@@ -1926,16 +1631,10 @@ yylloc.begin.filename = yylloc.end.filename = driver.getFile();
   const Parser::token_number_type Parser::yyundef_token_ = 2;
 
 
-/* Line 1136 of lalr1.cc  */
-#line 4 "/home/felipe/dev/clever/core/parser.y"
 } // clever
 
-/* Line 1136 of lalr1.cc  */
-#line 1935 "/home/felipe/dev/clever/core/parser.cc"
 
 
-/* Line 1138 of lalr1.cc  */
-#line 492 "/home/felipe/dev/clever/core/parser.y"
 
 
 namespace clever {

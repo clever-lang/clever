@@ -1,8 +1,10 @@
-/* A Bison parser, made by GNU Bison 2.5.  */
+
+/* A Bison parser, made by GNU Bison 2.4.1.  */
 
 /* Stack handling for Bison parsers in C++
    
-      Copyright (C) 2002-2011 Free Software Foundation, Inc.
+      Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008 Free Software
+   Foundation, Inc.
    
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -36,12 +38,8 @@
 #include <deque>
 
 
-/* Line 1149 of lalr1.cc  */
-#line 4 "/home/felipe/dev/clever/core/parser.y"
 namespace clever {
 
-/* Line 1149 of lalr1.cc  */
-#line 45 "/home/felipe/dev/clever/core/stack.hh"
   template <class T, class S = std::deque<T> >
   class stack
   {
@@ -128,12 +126,8 @@ namespace clever {
     unsigned int range_;
   };
 
-/* Line 1235 of lalr1.cc  */
-#line 4 "/home/felipe/dev/clever/core/parser.y"
 } // clever
 
-/* Line 1235 of lalr1.cc  */
-#line 137 "/home/felipe/dev/clever/core/stack.hh"
 
 #endif // not BISON_STACK_HH[]dnl
 
