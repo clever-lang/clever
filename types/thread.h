@@ -25,14 +25,14 @@ public:
 	enum ThreadKind { UNDEF, USER_THREAD, INTERNAL_THREAD };
 
 	Thread()
-		: ValueObject(), m_name(), m_type(UNDEF), m_local_vars(NULL), m_environment(NULL) {}
+		: ValueObject(), m_name(), m_type(UNDEF), m_environment(NULL) {}
 
 	Thread(std::string name)
-		: ValueObject(), m_name(name), m_type(UNDEF), m_local_vars(NULL), m_environment(NULL)
+		: ValueObject(), m_name(name), m_type(UNDEF), m_environment(NULL)
 		{ }
 
 	Thread(std::string name, size_t addr)
-		: ValueObject(), m_name(name), m_type(UNDEF), m_local_vars(NULL), m_environment(NULL)
+		: ValueObject(), m_name(name), m_type(UNDEF), m_environment(NULL)
 		{ m_info.addr = addr; }
 
 	~Thread() {}
@@ -51,10 +51,6 @@ public:
 
 	void setAddr(size_t addr) { m_info.addr = addr; }
 	void setID(size_t ID) { m_thread_id = ID; }
-	Scope* getLocalVars() { return m_local_vars; }
-
-
-	void setLocalVars(Scope* local_vars) { m_local_vars = local_vars; }
 
 	Environment* getEnvironment() { return m_environment; }
 	void setEnvironment(Environment* e) {
@@ -68,9 +64,6 @@ private:
 	union {
 		size_t addr;
 	} m_info;
-
-	/// Local variables
-	Scope* m_local_vars;
 
 	Environment* m_environment;
 
