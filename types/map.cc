@@ -116,6 +116,8 @@ CLEVER_METHOD(MapType::each)
 	}
 }
 
+
+
 // Map.size()
 // Returns the number of elements currently mapped
 CLEVER_METHOD(MapType::size)

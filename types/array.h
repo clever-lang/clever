@@ -50,6 +50,9 @@ public:
 	CLEVER_METHOD(reserve);
 	CLEVER_METHOD(reverse);
 	CLEVER_METHOD(each);
+	CLEVER_METHOD(shift);
+	CLEVER_METHOD(pop);
+	CLEVER_METHOD(range);
 };
 
 } // clever
