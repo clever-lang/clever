@@ -145,6 +145,42 @@ CLEVER_THREAD_FUNC(_thread_control)
 	return NULL;
 }
 
+// Function parameter binding
+static CLEVER_FORCE_INLINE void _param_binding(Function* func, Environment* fenv,
+	std::vector<Value*>* args)
+{
+	size_t nargs = 0;
+
+	if (EXPECTED(func->hasArgs() && args != NULL)) {
+		size_t num_args = args->size();
+		ValueOffset argoff(0,0);
+
+		if (UNEXPECTED(num_args > func->getNumArgs())) {
+			num_args = func->getNumArgs();
+		}
+
+		for (size_t i = 0, len = num_args; i < len; ++i) {
+			fenv->getValue(argoff)->copy(args->at(i));
+			argoff.second++;
+			++nargs;
+		}
+	}
+
+	if (UNEXPECTED(func->isVariadic())) {
+		ArrayObject* arr = new ArrayObject;
+
+		if (EXPECTED(args && (args->size() - nargs) > 0)) {
+			for (size_t i = nargs, j = args->size(); i < j; ++i) {
+				arr->getData().push_back(args->at(i)->clone());
+			}
+		}
+
+		Value* vararg = fenv->getValue(ValueOffset(0, func->getNumArgs()));
+		vararg->setType(CLEVER_ARRAY_TYPE);
+		vararg->setObj(arr);
+	}
+}
+
 // Executes the supplied function
 Value* VM::runFunction(Function* func, std::vector<Value*>* args)
 {
@@ -160,38 +196,7 @@ Value* VM::runFunction(Function* func, std::vector<Value*>* args)
 		m_call_stack.push(fenv);
 		m_call_args.clear();
 
-		if (EXPECTED(args != NULL)) {
-			size_t nargs = 0;
-
-			if (func->hasArgs()) {
-				size_t num_args = args->size();
-				ValueOffset argoff(0,0);
-
-				if (num_args > func->getNumArgs()) {
-					num_args = func->getNumArgs();
-				}
-
-				for (size_t i = 0, len = num_args; i < len; ++i) {
-					fenv->getValue(argoff)->copy(args->at(i));
-					argoff.second++;
-					++nargs;
-				}
-			}
-
-			if (UNEXPECTED(func->isVariadic())) {
-				ArrayObject* arr = new ArrayObject;
-
-				if ((args->size() - nargs) > 0) {
-					for (size_t i = nargs, j = args->size(); i < j; ++i) {
-						arr->getData().push_back(args->at(i)->clone());
-					}
-				}
-
-				Value* vararg = fenv->getValue(ValueOffset(0, func->getNumArgs()));
-				vararg->setType(CLEVER_ARRAY_TYPE);
-				vararg->setObj(arr);
-			}
-		}
+		_param_binding(func, fenv, args);
 
 		size_t saved_pc = m_pc;
 		m_pc = func->getAddr();
@@ -367,36 +372,7 @@ void VM::run()
 					error(VM_ERROR, "Wrong number of parameters");
 				}
 
-				size_t nargs = 0;
-
-				if (func->hasArgs()) {
-					size_t num_args = m_call_args.size();
-					ValueOffset argoff(0,0);
-
-					if (num_args > func->getNumArgs()) {
-						num_args = func->getNumArgs();
-					}
-
-					for (size_t i = 0, len = num_args; i < len; ++i) {
-						fenv->getValue(argoff)->copy(m_call_args[i]);
-						argoff.second++;
-						++nargs;
-					}
-				}
-
-				if (UNEXPECTED(func->isVariadic())) {
-					ArrayObject* arr = new ArrayObject;
-
-					if ((m_call_args.size() - nargs) > 0) {
-						for (size_t i = nargs, j = m_call_args.size(); i < j; ++i) {
-							arr->getData().push_back(m_call_args[i]->clone());
-						}
-					}
-
-					Value* vararg = fenv->getValue(ValueOffset(0, func->getNumArgs()));
-					vararg->setType(CLEVER_ARRAY_TYPE);
-					vararg->setObj(arr);
-				}
+				_param_binding(func, fenv, &m_call_args);
 
 				m_call_args.clear();
 
