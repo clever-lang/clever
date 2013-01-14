@@ -1,0 +1,14 @@
+Testing array's each method
+==CODE==
+import std.io.*;
+
+function test(x, y = 2) {
+	return x*2;
+}
+
+var z = [1, 2, 3];
+
+println(z.each(test));
+
+==RESULT==
+\[2, 4, 6\]
