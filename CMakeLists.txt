@@ -93,27 +93,32 @@ endif (TCMALLOC)
 
 # Parser and Scanner
 # ---------------------------------------------------------------------------
-set(re2c_opts)
-list(APPEND re2c_opts "-b")
-list(APPEND re2c_opts "--no-generation-date")
+if (GEN_PARSER)
+	set(re2c_opts)
+	list(APPEND re2c_opts "-b")
+	list(APPEND re2c_opts "--no-generation-date")
 
-if (${RE2C_VERSION} VERSION_GREATER "0.13.0")
-	list(APPEND re2c_opts "-c")
-endif (${RE2C_VERSION} VERSION_GREATER "0.13.0")
+	if (${RE2C_VERSION} VERSION_GREATER "0.13.0")
+		list(APPEND re2c_opts "-c")
+	endif (${RE2C_VERSION} VERSION_GREATER "0.13.0")
 
-if (${RE2C_VERSION} VERSION_GREATER "0.13.2")
-	list(APPEND re2c_opts "--case-inverted")
-endif (${RE2C_VERSION} VERSION_GREATER "0.13.2")
+	if (${RE2C_VERSION} VERSION_GREATER "0.13.2")
+		list(APPEND re2c_opts "--case-inverted")
+	endif (${RE2C_VERSION} VERSION_GREATER "0.13.2")
 
-add_custom_command(
-	OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/core/parser.cc
-	COMMAND ${BISON_EXECUTABLE} -l -o ${CMAKE_CURRENT_SOURCE_DIR}/core/parser.cc ${CMAKE_CURRENT_SOURCE_DIR}/core/parser.y
-	DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/core/parser.y)
+	add_custom_command(
+		OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/core/parser.cc
+		COMMAND ${BISON_EXECUTABLE} -l -o ${CMAKE_CURRENT_SOURCE_DIR}/core/parser.cc
+			${CMAKE_CURRENT_SOURCE_DIR}/core/parser.y
+		DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/core/parser.y)
 
-add_custom_command(
-	OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/core/scanner.cc
-	COMMAND ${RE2C_EXECUTABLE} ${re2c_opts} -o ${CMAKE_CURRENT_SOURCE_DIR}/core/scanner.cc ${CMAKE_CURRENT_SOURCE_DIR}/core/scanner.re
-	DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/core/parser.cc ${CMAKE_CURRENT_SOURCE_DIR}/core/scanner.re)
+	add_custom_command(
+		OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/core/scanner.cc
+		COMMAND ${RE2C_EXECUTABLE} ${re2c_opts} -o ${CMAKE_CURRENT_SOURCE_DIR}/core/scanner.cc 
+			${CMAKE_CURRENT_SOURCE_DIR}/core/scanner.re
+		DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/core/parser.cc ${CMAKE_CURRENT_SOURCE_DIR}/core/scanner.re)
+
+endif (GEN_PARSER)
 
 # Module options
 # ---------------------------------------------------------------------------
