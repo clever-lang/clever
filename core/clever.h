@@ -12,6 +12,7 @@
 #include <cstdarg>
 #include <setjmp.h>
 #include <vector>
+#include <map>
 
 namespace clever {
 
