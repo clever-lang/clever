@@ -6,7 +6,7 @@
  */
 
 #include <cstdlib>
-#include <ctime>
+
 #ifdef CLEVER_WIN32
 # include <direct.h>
 # include <windows.h>
