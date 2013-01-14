@@ -1,0 +1,12 @@
+Testing array erase
+==CODE==
+import std.io.*;
+
+var t = [1,2,3,4,5];
+t.erase(0);
+println(t);
+t.erase(0);
+println(t);
+==RESULT==
+\[2, 3, 4, 5\]
+\[3, 4, 5\]

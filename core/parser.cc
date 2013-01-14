@@ -35,7 +35,7 @@
 
 
 /* Line 293 of lalr1.cc  */
-#line 39 "/home/felipe/dev/clever/core/parser.cc"
+#line 39 "/usr/src/clever/core/parser.cc"
 
 
 #include "parser.hh"
@@ -44,18 +44,18 @@
 
 
 /* Line 299 of lalr1.cc  */
-#line 48 "/home/felipe/dev/clever/core/parser.cc"
+#line 48 "/usr/src/clever/core/parser.cc"
 /* Unqualified %code blocks.  */
 
 /* Line 300 of lalr1.cc  */
-#line 120 "/home/felipe/dev/clever/core/parser.y"
+#line 120 "/usr/src/clever/core/parser.y"
 
 #include "core/driver.h"
 
 
 
 /* Line 300 of lalr1.cc  */
-#line 59 "/home/felipe/dev/clever/core/parser.cc"
+#line 59 "/usr/src/clever/core/parser.cc"
 
 #ifndef YY_
 # if defined YYENABLE_NLS && YYENABLE_NLS
@@ -139,11 +139,11 @@ do {					\
 
 
 /* Line 382 of lalr1.cc  */
-#line 4 "/home/felipe/dev/clever/core/parser.y"
+#line 4 "/usr/src/clever/core/parser.y"
 namespace clever {
 
 /* Line 382 of lalr1.cc  */
-#line 147 "/home/felipe/dev/clever/core/parser.cc"
+#line 147 "/usr/src/clever/core/parser.cc"
 
   /* Return YYSTR after stripping away unnecessary quotes and
      backslashes, so that it's suitable for yyerror.  The heuristic is
@@ -332,13 +332,13 @@ namespace clever {
     /* User initialization code.  */
     
 /* Line 565 of lalr1.cc  */
-#line 112 "/home/felipe/dev/clever/core/parser.y"
+#line 112 "/usr/src/clever/core/parser.y"
 {
 yylloc.begin.filename = yylloc.end.filename = driver.getFile();
 }
 
 /* Line 565 of lalr1.cc  */
-#line 342 "/home/felipe/dev/clever/core/parser.cc"
+#line 342 "/usr/src/clever/core/parser.cc"
 
     /* Initialize the stacks.  The initial state will be pushed in
        yynewstate, since the latter expects the semantical and the
@@ -457,637 +457,637 @@ yylloc.begin.filename = yylloc.end.filename = driver.getFile();
 	  case 2:
 
 /* Line 690 of lalr1.cc  */
-#line 207 "/home/felipe/dev/clever/core/parser.y"
+#line 207 "/usr/src/clever/core/parser.y"
     { c.init(); }
     break;
 
   case 3:
 
 /* Line 690 of lalr1.cc  */
-#line 207 "/home/felipe/dev/clever/core/parser.y"
+#line 207 "/usr/src/clever/core/parser.y"
     { c.emitAST((yysemantic_stack_[(2) - (2)].block)); }
     break;
 
   case 4:
 
 /* Line 690 of lalr1.cc  */
-#line 211 "/home/felipe/dev/clever/core/parser.y"
+#line 211 "/usr/src/clever/core/parser.y"
     { (yyval.block) = new ast::Block(yyloc); }
     break;
 
   case 5:
 
 /* Line 690 of lalr1.cc  */
-#line 212 "/home/felipe/dev/clever/core/parser.y"
+#line 212 "/usr/src/clever/core/parser.y"
     { (yysemantic_stack_[(2) - (1)].block)->append((yysemantic_stack_[(2) - (2)].node));       }
     break;
 
   case 24:
 
 /* Line 690 of lalr1.cc  */
-#line 237 "/home/felipe/dev/clever/core/parser.y"
+#line 237 "/usr/src/clever/core/parser.y"
     { (yyval.block) = (yysemantic_stack_[(3) - (2)].block); }
     break;
 
   case 25:
 
 /* Line 690 of lalr1.cc  */
-#line 241 "/home/felipe/dev/clever/core/parser.y"
+#line 241 "/usr/src/clever/core/parser.y"
     { (yyval.inst) = new ast::Instantiation((yysemantic_stack_[(3) - (1)].type), NULL, yyloc); }
     break;
 
   case 26:
 
 /* Line 690 of lalr1.cc  */
-#line 242 "/home/felipe/dev/clever/core/parser.y"
+#line 242 "/usr/src/clever/core/parser.y"
     { (yyval.inst) = new ast::Instantiation((yysemantic_stack_[(6) - (1)].type), (yysemantic_stack_[(6) - (5)].narray),   yyloc); }
     break;
 
   case 27:
 
 /* Line 690 of lalr1.cc  */
-#line 246 "/home/felipe/dev/clever/core/parser.y"
+#line 246 "/usr/src/clever/core/parser.y"
     { (yyval.break_) = new ast::Break(yyloc); }
     break;
 
   case 28:
 
 /* Line 690 of lalr1.cc  */
-#line 250 "/home/felipe/dev/clever/core/parser.y"
+#line 250 "/usr/src/clever/core/parser.y"
     { (yyval.continue_) = new ast::Continue(yyloc); }
     break;
 
   case 29:
 
 /* Line 690 of lalr1.cc  */
-#line 254 "/home/felipe/dev/clever/core/parser.y"
+#line 254 "/usr/src/clever/core/parser.y"
     { (yyval.wait) = new ast::Wait((yysemantic_stack_[(2) - (2)].ident), yyloc); }
     break;
 
   case 30:
 
 /* Line 690 of lalr1.cc  */
-#line 258 "/home/felipe/dev/clever/core/parser.y"
+#line 258 "/usr/src/clever/core/parser.y"
     { (yyval.threadblock) = new ast::ThreadBlock((yysemantic_stack_[(3) - (3)].block), (yysemantic_stack_[(3) - (2)].ident), yyloc); }
     break;
 
   case 31:
 
 /* Line 690 of lalr1.cc  */
-#line 259 "/home/felipe/dev/clever/core/parser.y"
+#line 259 "/usr/src/clever/core/parser.y"
     { (yyval.threadblock) = new ast::ThreadBlock((yysemantic_stack_[(6) - (6)].block), (yysemantic_stack_[(6) - (2)].ident), (yysemantic_stack_[(6) - (4)].node), yyloc); }
     break;
 
   case 32:
 
 /* Line 690 of lalr1.cc  */
-#line 263 "/home/felipe/dev/clever/core/parser.y"
+#line 263 "/usr/src/clever/core/parser.y"
     { (yyval.criticalblock) = new ast::CriticalBlock((yysemantic_stack_[(2) - (2)].block), yyloc); }
     break;
 
   case 53:
 
 /* Line 690 of lalr1.cc  */
-#line 287 "/home/felipe/dev/clever/core/parser.y"
+#line 287 "/usr/src/clever/core/parser.y"
     { (yyval.node) = (yysemantic_stack_[(3) - (2)].node); }
     break;
 
   case 55:
 
 /* Line 690 of lalr1.cc  */
-#line 295 "/home/felipe/dev/clever/core/parser.y"
+#line 295 "/usr/src/clever/core/parser.y"
     { (yyval.inst) = new ast::Instantiation(CSTRING("Array"), (yysemantic_stack_[(3) - (2)].narray), yyloc); }
     break;
 
   case 57:
 
 /* Line 690 of lalr1.cc  */
-#line 303 "/home/felipe/dev/clever/core/parser.y"
+#line 303 "/usr/src/clever/core/parser.y"
     { (yyval.narray) = new ast::NodeArray(yyloc); (yyval.narray)->append((yysemantic_stack_[(3) - (1)].strlit)); (yyval.narray)->append((yysemantic_stack_[(3) - (3)].node)); }
     break;
 
   case 58:
 
 /* Line 690 of lalr1.cc  */
-#line 304 "/home/felipe/dev/clever/core/parser.y"
+#line 304 "/usr/src/clever/core/parser.y"
     { (yysemantic_stack_[(5) - (1)].narray)->append((yysemantic_stack_[(5) - (3)].strlit)); (yysemantic_stack_[(5) - (1)].narray)->append((yysemantic_stack_[(5) - (5)].node));                                 }
     break;
 
   case 59:
 
 /* Line 690 of lalr1.cc  */
-#line 308 "/home/felipe/dev/clever/core/parser.y"
+#line 308 "/usr/src/clever/core/parser.y"
     { (yyval.inst) = new ast::Instantiation(CSTRING("Map"), NULL, yyloc); }
     break;
 
   case 60:
 
 /* Line 690 of lalr1.cc  */
-#line 309 "/home/felipe/dev/clever/core/parser.y"
+#line 309 "/usr/src/clever/core/parser.y"
     { (yyval.inst) = new ast::Instantiation(CSTRING("Map"), (yysemantic_stack_[(3) - (2)].narray), yyloc);   }
     break;
 
   case 61:
 
 /* Line 690 of lalr1.cc  */
-#line 313 "/home/felipe/dev/clever/core/parser.y"
+#line 313 "/usr/src/clever/core/parser.y"
     { (yyval.throw_) = new ast::Throw((yysemantic_stack_[(2) - (2)].node), yyloc); }
     break;
 
   case 63:
 
 /* Line 690 of lalr1.cc  */
-#line 321 "/home/felipe/dev/clever/core/parser.y"
+#line 321 "/usr/src/clever/core/parser.y"
     { (yyval.narray) = new ast::NodeArray(yyloc); (yyval.narray)->append((yysemantic_stack_[(1) - (1)].catch_)); }
     break;
 
   case 64:
 
 /* Line 690 of lalr1.cc  */
-#line 322 "/home/felipe/dev/clever/core/parser.y"
+#line 322 "/usr/src/clever/core/parser.y"
     { (yysemantic_stack_[(2) - (1)].narray)->append((yysemantic_stack_[(2) - (2)].catch_));                                 }
     break;
 
   case 65:
 
 /* Line 690 of lalr1.cc  */
-#line 326 "/home/felipe/dev/clever/core/parser.y"
+#line 326 "/usr/src/clever/core/parser.y"
     { (yyval.catch_) = new ast::Catch((yysemantic_stack_[(5) - (3)].ident), (yysemantic_stack_[(5) - (5)].block), yyloc); }
     break;
 
   case 66:
 
 /* Line 690 of lalr1.cc  */
-#line 330 "/home/felipe/dev/clever/core/parser.y"
+#line 330 "/usr/src/clever/core/parser.y"
     { (yyval.block) = NULL; }
     break;
 
   case 67:
 
 /* Line 690 of lalr1.cc  */
-#line 331 "/home/felipe/dev/clever/core/parser.y"
+#line 331 "/usr/src/clever/core/parser.y"
     { (yyval.block) = (yysemantic_stack_[(2) - (2)].block);   }
     break;
 
   case 68:
 
 /* Line 690 of lalr1.cc  */
-#line 335 "/home/felipe/dev/clever/core/parser.y"
+#line 335 "/usr/src/clever/core/parser.y"
     { (yyval.except) = new ast::Try((yysemantic_stack_[(4) - (2)].block), (yysemantic_stack_[(4) - (3)].narray), (yysemantic_stack_[(4) - (4)].block), yyloc); }
     break;
 
   case 69:
 
 /* Line 690 of lalr1.cc  */
-#line 339 "/home/felipe/dev/clever/core/parser.y"
+#line 339 "/usr/src/clever/core/parser.y"
     { (yyval.property) = new ast::Property((yysemantic_stack_[(3) - (1)].node), (yysemantic_stack_[(3) - (3)].ident), yyloc); }
     break;
 
   case 70:
 
 /* Line 690 of lalr1.cc  */
-#line 343 "/home/felipe/dev/clever/core/parser.y"
+#line 343 "/usr/src/clever/core/parser.y"
     { (yyval.mcall) = new ast::MethodCall((yysemantic_stack_[(6) - (1)].node), (yysemantic_stack_[(6) - (3)].ident), (yysemantic_stack_[(6) - (5)].narray), yyloc); }
     break;
 
   case 71:
 
 /* Line 690 of lalr1.cc  */
-#line 344 "/home/felipe/dev/clever/core/parser.y"
+#line 344 "/usr/src/clever/core/parser.y"
     { (yyval.mcall) = new ast::MethodCall((yysemantic_stack_[(6) - (1)].type), (yysemantic_stack_[(6) - (3)].ident), (yysemantic_stack_[(6) - (5)].narray), yyloc); }
     break;
 
   case 72:
 
 /* Line 690 of lalr1.cc  */
-#line 348 "/home/felipe/dev/clever/core/parser.y"
+#line 348 "/usr/src/clever/core/parser.y"
     { (yyval.inc_dec) = new ast::IncDec(ast::IncDec::POS_INC, (yysemantic_stack_[(2) - (1)].node), yyloc); }
     break;
 
   case 73:
 
 /* Line 690 of lalr1.cc  */
-#line 349 "/home/felipe/dev/clever/core/parser.y"
+#line 349 "/usr/src/clever/core/parser.y"
     { (yyval.inc_dec) = new ast::IncDec(ast::IncDec::POS_DEC, (yysemantic_stack_[(2) - (1)].node), yyloc); }
     break;
 
   case 74:
 
 /* Line 690 of lalr1.cc  */
-#line 350 "/home/felipe/dev/clever/core/parser.y"
+#line 350 "/usr/src/clever/core/parser.y"
     { (yyval.inc_dec) = new ast::IncDec(ast::IncDec::PRE_INC, (yysemantic_stack_[(2) - (2)].node), yyloc); }
     break;
 
   case 75:
 
 /* Line 690 of lalr1.cc  */
-#line 351 "/home/felipe/dev/clever/core/parser.y"
+#line 351 "/usr/src/clever/core/parser.y"
     { (yyval.inc_dec) = new ast::IncDec(ast::IncDec::PRE_DEC, (yysemantic_stack_[(2) - (2)].node), yyloc); }
     break;
 
   case 76:
 
 /* Line 690 of lalr1.cc  */
-#line 355 "/home/felipe/dev/clever/core/parser.y"
+#line 355 "/usr/src/clever/core/parser.y"
     { (yyval.comp) = new ast::Comparison(ast::Comparison::COP_EQUAL,   (yysemantic_stack_[(3) - (1)].node), (yysemantic_stack_[(3) - (3)].node), yyloc); }
     break;
 
   case 77:
 
 /* Line 690 of lalr1.cc  */
-#line 356 "/home/felipe/dev/clever/core/parser.y"
+#line 356 "/usr/src/clever/core/parser.y"
     { (yyval.comp) = new ast::Comparison(ast::Comparison::COP_NEQUAL,  (yysemantic_stack_[(3) - (1)].node), (yysemantic_stack_[(3) - (3)].node), yyloc); }
     break;
 
   case 78:
 
 /* Line 690 of lalr1.cc  */
-#line 357 "/home/felipe/dev/clever/core/parser.y"
+#line 357 "/usr/src/clever/core/parser.y"
     { (yyval.comp) = new ast::Comparison(ast::Comparison::COP_GREATER, (yysemantic_stack_[(3) - (1)].node), (yysemantic_stack_[(3) - (3)].node), yyloc); }
     break;
 
   case 79:
 
 /* Line 690 of lalr1.cc  */
-#line 358 "/home/felipe/dev/clever/core/parser.y"
+#line 358 "/usr/src/clever/core/parser.y"
     { (yyval.comp) = new ast::Comparison(ast::Comparison::COP_GEQUAL,  (yysemantic_stack_[(3) - (1)].node), (yysemantic_stack_[(3) - (3)].node), yyloc); }
     break;
 
   case 80:
 
 /* Line 690 of lalr1.cc  */
-#line 359 "/home/felipe/dev/clever/core/parser.y"
+#line 359 "/usr/src/clever/core/parser.y"
     { (yyval.comp) = new ast::Comparison(ast::Comparison::COP_LESS,    (yysemantic_stack_[(3) - (1)].node), (yysemantic_stack_[(3) - (3)].node), yyloc); }
     break;
 
   case 81:
 
 /* Line 690 of lalr1.cc  */
-#line 360 "/home/felipe/dev/clever/core/parser.y"
+#line 360 "/usr/src/clever/core/parser.y"
     { (yyval.comp) = new ast::Comparison(ast::Comparison::COP_LEQUAL,  (yysemantic_stack_[(3) - (1)].node), (yysemantic_stack_[(3) - (3)].node), yyloc); }
     break;
 
   case 82:
 
 /* Line 690 of lalr1.cc  */
-#line 364 "/home/felipe/dev/clever/core/parser.y"
+#line 364 "/usr/src/clever/core/parser.y"
     { (yyval.boolean) = new ast::Boolean(ast::Boolean::BOP_OR, (yysemantic_stack_[(3) - (1)].node), (yysemantic_stack_[(3) - (3)].node), yyloc);  }
     break;
 
   case 83:
 
 /* Line 690 of lalr1.cc  */
-#line 365 "/home/felipe/dev/clever/core/parser.y"
+#line 365 "/usr/src/clever/core/parser.y"
     { (yyval.boolean) = new ast::Boolean(ast::Boolean::BOP_AND, (yysemantic_stack_[(3) - (1)].node), (yysemantic_stack_[(3) - (3)].node), yyloc); }
     break;
 
   case 84:
 
 /* Line 690 of lalr1.cc  */
-#line 369 "/home/felipe/dev/clever/core/parser.y"
+#line 369 "/usr/src/clever/core/parser.y"
     { (yyval.logic) = new ast::Logic(ast::Logic::LOP_OR, (yysemantic_stack_[(3) - (1)].node), (yysemantic_stack_[(3) - (3)].node), yyloc);      }
     break;
 
   case 85:
 
 /* Line 690 of lalr1.cc  */
-#line 370 "/home/felipe/dev/clever/core/parser.y"
+#line 370 "/usr/src/clever/core/parser.y"
     { (yyval.logic) = new ast::Logic(ast::Logic::LOP_AND, (yysemantic_stack_[(3) - (1)].node), (yysemantic_stack_[(3) - (3)].node), yyloc);     }
     break;
 
   case 86:
 
 /* Line 690 of lalr1.cc  */
-#line 374 "/home/felipe/dev/clever/core/parser.y"
+#line 374 "/usr/src/clever/core/parser.y"
     { (yyval.arithmetic) = new ast::Arithmetic(ast::Arithmetic::MOP_ADD, (yysemantic_stack_[(3) - (1)].node), (yysemantic_stack_[(3) - (3)].node), yyloc); }
     break;
 
   case 87:
 
 /* Line 690 of lalr1.cc  */
-#line 375 "/home/felipe/dev/clever/core/parser.y"
+#line 375 "/usr/src/clever/core/parser.y"
     { (yyval.arithmetic) = new ast::Arithmetic(ast::Arithmetic::MOP_SUB, (yysemantic_stack_[(3) - (1)].node), (yysemantic_stack_[(3) - (3)].node), yyloc); }
     break;
 
   case 88:
 
 /* Line 690 of lalr1.cc  */
-#line 376 "/home/felipe/dev/clever/core/parser.y"
+#line 376 "/usr/src/clever/core/parser.y"
     { (yyval.arithmetic) = new ast::Arithmetic(ast::Arithmetic::MOP_MUL, (yysemantic_stack_[(3) - (1)].node), (yysemantic_stack_[(3) - (3)].node), yyloc); }
     break;
 
   case 89:
 
 /* Line 690 of lalr1.cc  */
-#line 377 "/home/felipe/dev/clever/core/parser.y"
+#line 377 "/usr/src/clever/core/parser.y"
     { (yyval.arithmetic) = new ast::Arithmetic(ast::Arithmetic::MOP_DIV, (yysemantic_stack_[(3) - (1)].node), (yysemantic_stack_[(3) - (3)].node), yyloc); }
     break;
 
   case 90:
 
 /* Line 690 of lalr1.cc  */
-#line 378 "/home/felipe/dev/clever/core/parser.y"
+#line 378 "/usr/src/clever/core/parser.y"
     { (yyval.arithmetic) = new ast::Arithmetic(ast::Arithmetic::MOP_MOD, (yysemantic_stack_[(3) - (1)].node), (yysemantic_stack_[(3) - (3)].node), yyloc); }
     break;
 
   case 91:
 
 /* Line 690 of lalr1.cc  */
-#line 382 "/home/felipe/dev/clever/core/parser.y"
+#line 382 "/usr/src/clever/core/parser.y"
     { (yyval.bitwise) = new ast::Bitwise(ast::Bitwise::BOP_AND, (yysemantic_stack_[(3) - (1)].node), (yysemantic_stack_[(3) - (3)].node), yyloc);    }
     break;
 
   case 92:
 
 /* Line 690 of lalr1.cc  */
-#line 383 "/home/felipe/dev/clever/core/parser.y"
+#line 383 "/usr/src/clever/core/parser.y"
     { (yyval.bitwise) = new ast::Bitwise(ast::Bitwise::BOP_OR, (yysemantic_stack_[(3) - (1)].node), (yysemantic_stack_[(3) - (3)].node), yyloc);     }
     break;
 
   case 93:
 
 /* Line 690 of lalr1.cc  */
-#line 384 "/home/felipe/dev/clever/core/parser.y"
+#line 384 "/usr/src/clever/core/parser.y"
     { (yyval.bitwise) = new ast::Bitwise(ast::Bitwise::BOP_XOR, (yysemantic_stack_[(3) - (1)].node), (yysemantic_stack_[(3) - (3)].node), yyloc);    }
     break;
 
   case 94:
 
 /* Line 690 of lalr1.cc  */
-#line 385 "/home/felipe/dev/clever/core/parser.y"
+#line 385 "/usr/src/clever/core/parser.y"
     { (yyval.bitwise) = new ast::Bitwise(ast::Bitwise::BOP_LSHIFT, (yysemantic_stack_[(3) - (1)].node), (yysemantic_stack_[(3) - (3)].node), yyloc); }
     break;
 
   case 95:
 
 /* Line 690 of lalr1.cc  */
-#line 386 "/home/felipe/dev/clever/core/parser.y"
+#line 386 "/usr/src/clever/core/parser.y"
     { (yyval.bitwise) = new ast::Bitwise(ast::Bitwise::BOP_RSHIFT, (yysemantic_stack_[(3) - (1)].node), (yysemantic_stack_[(3) - (3)].node), yyloc); }
     break;
 
   case 96:
 
 /* Line 690 of lalr1.cc  */
-#line 390 "/home/felipe/dev/clever/core/parser.y"
+#line 390 "/usr/src/clever/core/parser.y"
     { (yyval.narray) = (yysemantic_stack_[(2) - (2)].narray); }
     break;
 
   case 97:
 
 /* Line 690 of lalr1.cc  */
-#line 391 "/home/felipe/dev/clever/core/parser.y"
+#line 391 "/usr/src/clever/core/parser.y"
     { (yyval.narray) = (yysemantic_stack_[(2) - (2)].narray); }
     break;
 
   case 98:
 
 /* Line 690 of lalr1.cc  */
-#line 395 "/home/felipe/dev/clever/core/parser.y"
+#line 395 "/usr/src/clever/core/parser.y"
     { (yyval.narray) = new ast::NodeArray(yyloc); (yyval.narray)->append((yysemantic_stack_[(1) - (1)].vardecl)); }
     break;
 
   case 99:
 
 /* Line 690 of lalr1.cc  */
-#line 396 "/home/felipe/dev/clever/core/parser.y"
+#line 396 "/usr/src/clever/core/parser.y"
     { (yysemantic_stack_[(3) - (1)].narray)->append((yysemantic_stack_[(3) - (3)].vardecl)); }
     break;
 
   case 100:
 
 /* Line 690 of lalr1.cc  */
-#line 400 "/home/felipe/dev/clever/core/parser.y"
+#line 400 "/usr/src/clever/core/parser.y"
     { (yyval.vardecl) = new ast::VariableDecl((yysemantic_stack_[(3) - (1)].ident), new ast::Assignment((yysemantic_stack_[(3) - (1)].ident), (yysemantic_stack_[(3) - (3)].node), yyloc), false, yyloc); }
     break;
 
   case 101:
 
 /* Line 690 of lalr1.cc  */
-#line 401 "/home/felipe/dev/clever/core/parser.y"
+#line 401 "/usr/src/clever/core/parser.y"
     { (yyval.vardecl) = new ast::VariableDecl((yysemantic_stack_[(1) - (1)].ident), new ast::Assignment((yysemantic_stack_[(1) - (1)].ident), NULL, yyloc), false, yyloc); }
     break;
 
   case 102:
 
 /* Line 690 of lalr1.cc  */
-#line 405 "/home/felipe/dev/clever/core/parser.y"
+#line 405 "/usr/src/clever/core/parser.y"
     { (yyval.narray) = new ast::NodeArray(yyloc); (yyval.narray)->append((yysemantic_stack_[(1) - (1)].vardecl)); }
     break;
 
   case 103:
 
 /* Line 690 of lalr1.cc  */
-#line 406 "/home/felipe/dev/clever/core/parser.y"
+#line 406 "/usr/src/clever/core/parser.y"
     { (yysemantic_stack_[(3) - (1)].narray)->append((yysemantic_stack_[(3) - (3)].vardecl)); }
     break;
 
   case 104:
 
 /* Line 690 of lalr1.cc  */
-#line 410 "/home/felipe/dev/clever/core/parser.y"
+#line 410 "/usr/src/clever/core/parser.y"
     { (yyval.vardecl) = new ast::VariableDecl((yysemantic_stack_[(3) - (1)].ident), new ast::Assignment((yysemantic_stack_[(3) - (1)].ident), (yysemantic_stack_[(3) - (3)].node), yyloc), true, yyloc); }
     break;
 
   case 105:
 
 /* Line 690 of lalr1.cc  */
-#line 414 "/home/felipe/dev/clever/core/parser.y"
+#line 414 "/usr/src/clever/core/parser.y"
     { (yyval.assignment) = new ast::Assignment((yysemantic_stack_[(3) - (1)].node), (yysemantic_stack_[(3) - (3)].node), yyloc); }
     break;
 
   case 106:
 
 /* Line 690 of lalr1.cc  */
-#line 418 "/home/felipe/dev/clever/core/parser.y"
+#line 418 "/usr/src/clever/core/parser.y"
     { (yyval.import) = new ast::Import((yysemantic_stack_[(6) - (2)].ident), (yysemantic_stack_[(6) - (4)].ident), yyloc);   }
     break;
 
   case 107:
 
 /* Line 690 of lalr1.cc  */
-#line 419 "/home/felipe/dev/clever/core/parser.y"
+#line 419 "/usr/src/clever/core/parser.y"
     { (yyval.import) = new ast::Import((yysemantic_stack_[(4) - (2)].ident), NULL, yyloc); }
     break;
 
   case 108:
 
 /* Line 690 of lalr1.cc  */
-#line 423 "/home/felipe/dev/clever/core/parser.y"
+#line 423 "/usr/src/clever/core/parser.y"
     { (yyval.vardecl) = new ast::VariableDecl((yysemantic_stack_[(4) - (1)].ident), new ast::Assignment((yysemantic_stack_[(4) - (1)].ident), NULL, yyloc), false, yyloc); }
     break;
 
   case 109:
 
 /* Line 690 of lalr1.cc  */
-#line 428 "/home/felipe/dev/clever/core/parser.y"
+#line 428 "/usr/src/clever/core/parser.y"
     { (yyval.fdecl) = new ast::FunctionDecl((yysemantic_stack_[(5) - (2)].ident), NULL, (yysemantic_stack_[(5) - (5)].block), NULL, yyloc); }
     break;
 
   case 110:
 
 /* Line 690 of lalr1.cc  */
-#line 430 "/home/felipe/dev/clever/core/parser.y"
+#line 430 "/usr/src/clever/core/parser.y"
     { (yyval.fdecl) = new ast::FunctionDecl((yysemantic_stack_[(6) - (2)].ident), NULL, (yysemantic_stack_[(6) - (6)].block), (yysemantic_stack_[(6) - (4)].vardecl), yyloc); }
     break;
 
   case 111:
 
 /* Line 690 of lalr1.cc  */
-#line 432 "/home/felipe/dev/clever/core/parser.y"
+#line 432 "/usr/src/clever/core/parser.y"
     { (yyval.fdecl) = new ast::FunctionDecl((yysemantic_stack_[(6) - (2)].ident), (yysemantic_stack_[(6) - (4)].narray), (yysemantic_stack_[(6) - (6)].block), NULL, yyloc); }
     break;
 
   case 112:
 
 /* Line 690 of lalr1.cc  */
-#line 434 "/home/felipe/dev/clever/core/parser.y"
+#line 434 "/usr/src/clever/core/parser.y"
     { (yyval.fdecl) = new ast::FunctionDecl((yysemantic_stack_[(8) - (2)].ident), (yysemantic_stack_[(8) - (4)].narray), (yysemantic_stack_[(8) - (8)].block), (yysemantic_stack_[(8) - (6)].vardecl), yyloc); }
     break;
 
   case 113:
 
 /* Line 690 of lalr1.cc  */
-#line 439 "/home/felipe/dev/clever/core/parser.y"
+#line 439 "/usr/src/clever/core/parser.y"
     { (yyval.fdecl) = new ast::FunctionDecl(NULL, NULL, (yysemantic_stack_[(4) - (4)].block), NULL, yyloc); }
     break;
 
   case 114:
 
 /* Line 690 of lalr1.cc  */
-#line 441 "/home/felipe/dev/clever/core/parser.y"
+#line 441 "/usr/src/clever/core/parser.y"
     { (yyval.fdecl) = new ast::FunctionDecl(NULL, NULL, (yysemantic_stack_[(5) - (5)].block), (yysemantic_stack_[(5) - (3)].vardecl), yyloc); }
     break;
 
   case 115:
 
 /* Line 690 of lalr1.cc  */
-#line 443 "/home/felipe/dev/clever/core/parser.y"
+#line 443 "/usr/src/clever/core/parser.y"
     { (yyval.fdecl) = new ast::FunctionDecl(NULL, (yysemantic_stack_[(5) - (3)].narray), (yysemantic_stack_[(5) - (5)].block), NULL, yyloc); }
     break;
 
   case 116:
 
 /* Line 690 of lalr1.cc  */
-#line 445 "/home/felipe/dev/clever/core/parser.y"
+#line 445 "/usr/src/clever/core/parser.y"
     { (yyval.fdecl) = new ast::FunctionDecl(NULL, (yysemantic_stack_[(7) - (3)].narray), (yysemantic_stack_[(7) - (7)].block), (yysemantic_stack_[(7) - (5)].vardecl), yyloc); }
     break;
 
   case 117:
 
 /* Line 690 of lalr1.cc  */
-#line 449 "/home/felipe/dev/clever/core/parser.y"
+#line 449 "/usr/src/clever/core/parser.y"
     { (yyval.narray) = NULL; }
     break;
 
   case 119:
 
 /* Line 690 of lalr1.cc  */
-#line 454 "/home/felipe/dev/clever/core/parser.y"
+#line 454 "/usr/src/clever/core/parser.y"
     { (yyval.narray) = new ast::NodeArray(yyloc); (yyval.narray)->append((yysemantic_stack_[(1) - (1)].node)); }
     break;
 
   case 120:
 
 /* Line 690 of lalr1.cc  */
-#line 455 "/home/felipe/dev/clever/core/parser.y"
+#line 455 "/usr/src/clever/core/parser.y"
     { (yysemantic_stack_[(3) - (1)].narray)->append((yysemantic_stack_[(3) - (3)].node)); }
     break;
 
   case 121:
 
 /* Line 690 of lalr1.cc  */
-#line 459 "/home/felipe/dev/clever/core/parser.y"
+#line 459 "/usr/src/clever/core/parser.y"
     { (yyval.fcall) = (yysemantic_stack_[(0) - (0)].fcall); }
     break;
 
   case 122:
 
 /* Line 690 of lalr1.cc  */
-#line 460 "/home/felipe/dev/clever/core/parser.y"
+#line 460 "/usr/src/clever/core/parser.y"
     { (yyval.fcall) = new ast::FunctionCall((yysemantic_stack_[(4) - (1)].node), (yysemantic_stack_[(4) - (3)].narray), yyloc); }
     break;
 
   case 123:
 
 /* Line 690 of lalr1.cc  */
-#line 464 "/home/felipe/dev/clever/core/parser.y"
+#line 464 "/usr/src/clever/core/parser.y"
     { (yyval.fcall) = new ast::FunctionCall((yysemantic_stack_[(4) - (1)].ident), (yysemantic_stack_[(4) - (3)].narray), yyloc); }
     break;
 
   case 124:
 
 /* Line 690 of lalr1.cc  */
-#line 464 "/home/felipe/dev/clever/core/parser.y"
+#line 464 "/usr/src/clever/core/parser.y"
     { (yyval.fcall) = (yysemantic_stack_[(6) - (6)].fcall); }
     break;
 
   case 125:
 
 /* Line 690 of lalr1.cc  */
-#line 468 "/home/felipe/dev/clever/core/parser.y"
+#line 468 "/usr/src/clever/core/parser.y"
     { (yyval.ret) = new ast::Return((yysemantic_stack_[(2) - (2)].node), yyloc); }
     break;
 
   case 126:
 
 /* Line 690 of lalr1.cc  */
-#line 469 "/home/felipe/dev/clever/core/parser.y"
+#line 469 "/usr/src/clever/core/parser.y"
     { (yyval.ret) = new ast::Return(NULL, yyloc); }
     break;
 
   case 127:
 
 /* Line 690 of lalr1.cc  */
-#line 474 "/home/felipe/dev/clever/core/parser.y"
+#line 474 "/usr/src/clever/core/parser.y"
     { (yyval.while_loop) = new ast::While((yysemantic_stack_[(5) - (3)].node), (yysemantic_stack_[(5) - (5)].block), yyloc); }
     break;
 
   case 129:
 
 /* Line 690 of lalr1.cc  */
-#line 480 "/home/felipe/dev/clever/core/parser.y"
+#line 480 "/usr/src/clever/core/parser.y"
     { (yysemantic_stack_[(6) - (0)].ifcond)->addConditional((yysemantic_stack_[(6) - (4)].node), (yysemantic_stack_[(6) - (6)].block)); }
     break;
 
   case 130:
 
 /* Line 690 of lalr1.cc  */
-#line 484 "/home/felipe/dev/clever/core/parser.y"
+#line 484 "/usr/src/clever/core/parser.y"
     { (yyval.ifcond) = (yysemantic_stack_[(0) - (0)].ifcond); }
     break;
 
   case 131:
 
 /* Line 690 of lalr1.cc  */
-#line 485 "/home/felipe/dev/clever/core/parser.y"
+#line 485 "/usr/src/clever/core/parser.y"
     { (yysemantic_stack_[(2) - (0)].ifcond)->setElseNode((yysemantic_stack_[(2) - (2)].node)); (yyval.ifcond) = (yysemantic_stack_[(2) - (0)].ifcond); }
     break;
 
   case 132:
 
 /* Line 690 of lalr1.cc  */
-#line 489 "/home/felipe/dev/clever/core/parser.y"
+#line 489 "/usr/src/clever/core/parser.y"
     { (yyval.ifcond) = new ast::If((yysemantic_stack_[(5) - (3)].node), (yysemantic_stack_[(5) - (5)].node), yyloc); }
     break;
 
   case 133:
 
 /* Line 690 of lalr1.cc  */
-#line 490 "/home/felipe/dev/clever/core/parser.y"
+#line 490 "/usr/src/clever/core/parser.y"
     { (yyval.ifcond) = (yysemantic_stack_[(7) - (6)].ifcond); }
     break;
 
   case 134:
 
 /* Line 690 of lalr1.cc  */
-#line 490 "/home/felipe/dev/clever/core/parser.y"
+#line 490 "/usr/src/clever/core/parser.y"
     { (yyval.ifcond) = (yysemantic_stack_[(9) - (9)].ifcond); }
     break;
 
 
 
 /* Line 690 of lalr1.cc  */
-#line 1091 "/home/felipe/dev/clever/core/parser.cc"
+#line 1091 "/usr/src/clever/core/parser.cc"
 	default:
           break;
       }
@@ -1927,15 +1927,15 @@ yylloc.begin.filename = yylloc.end.filename = driver.getFile();
 
 
 /* Line 1136 of lalr1.cc  */
-#line 4 "/home/felipe/dev/clever/core/parser.y"
+#line 4 "/usr/src/clever/core/parser.y"
 } // clever
 
 /* Line 1136 of lalr1.cc  */
-#line 1935 "/home/felipe/dev/clever/core/parser.cc"
+#line 1935 "/usr/src/clever/core/parser.cc"
 
 
 /* Line 1138 of lalr1.cc  */
-#line 492 "/home/felipe/dev/clever/core/parser.y"
+#line 492 "/usr/src/clever/core/parser.y"
 
 
 namespace clever {
