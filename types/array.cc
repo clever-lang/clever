@@ -137,7 +137,8 @@ CLEVER_METHOD(ArrayType::shift)
 	std::vector<Value*>& vec = array->getData();
 	
 	if (!vec.size()) {
-		CLEVER_RETURN_NULL();
+		result->setNull();
+		return;
 	}
 	
 	result->copy(vec[0]);	
@@ -153,7 +154,8 @@ CLEVER_METHOD(ArrayType::pop)
 	std::vector<Value*>& vec = array->getData();
 	
 	if (!vec.size()) {
-		CLEVER_RETURN_NULL();
+		result->setNull();	
+		return;
 	}
 	
 	result->copy(vec[vec.size()-1]);	
@@ -161,7 +163,7 @@ CLEVER_METHOD(ArrayType::pop)
 	std::vector<Value*>(vec.begin(), vec.end()-1).swap(vec);
 }
 
-// mixed Array.range(int start, int end)
+// Array Array.range(int start, int end)
 // Returns a range as a new array
 CLEVER_METHOD(ArrayType::range)
 {
@@ -173,7 +175,8 @@ CLEVER_METHOD(ArrayType::range)
 	std::vector<Value*>& vec = arr->getData();
 
 	if (!vec.size()){
-		CLEVER_RETURN_NULL();
+		result->setNull();
+		return;
 	}
 
 	long bounds[3] = {CLEVER_ARG_INT(0), CLEVER_ARG_INT(1), (long) vec.size()};
@@ -196,7 +199,7 @@ CLEVER_METHOD(ArrayType::range)
 	CLEVER_RETURN_ARRAY(CLEVER_ARRAY_TYPE->allocData(&ran));
 }
 
-// void Array::each(function)
+// Array Array::each(function)
 CLEVER_METHOD(ArrayType::each)
 {
 	if (!clever_check_args("f")) {
