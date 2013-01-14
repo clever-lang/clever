@@ -144,7 +144,7 @@ CLEVER_METHOD(ArrayType::shift)
 	);	
 	vec[0]->delRef();
 	
-	ValueVector(vec.begin()+1, vec.end()).swap(vec);
+	vec.erase(vec.begin());
 }
 
 // mixed Array.pop()
@@ -163,7 +163,7 @@ CLEVER_METHOD(ArrayType::pop)
 	);	
 	vec[vec.size()-1]->delRef();
 	
-	ValueVector(vec.begin(), vec.end()-1).swap(vec);
+	vec.erase(vec.end()-1);
 }
 
 // Array Array.range(int start, int end)
