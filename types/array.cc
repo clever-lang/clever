@@ -139,9 +139,12 @@ CLEVER_METHOD(ArrayType::shift)
 		return;
 	}
 	
-	result->copy(vec[0]);	
-
-	ValueVector(vec.begin()+1, vec.end()).swap(vec);
+	result->copy(
+		vec[0]
+	);	
+	vec[0]->delRef();
+	
+	vec.erase(vec.begin());
 }
 
 // mixed Array.pop()
@@ -155,9 +158,12 @@ CLEVER_METHOD(ArrayType::pop)
 		return;
 	}
 	
-	result->copy(vec[vec.size()-1]);	
-
-	ValueVector(vec.begin(), vec.end()-1).swap(vec);
+	result->copy(
+		vec[vec.size()-1]
+	);	
+	vec[vec.size()-1]->delRef();
+	
+	vec.erase(vec.end()-1);
 }
 
 // Array Array.range(int start, int end)
