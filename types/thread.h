@@ -74,19 +74,17 @@ private:
 /// Thread type
 class ThreadType : public Type {
 public:
-	ThreadType() : Type(CSTRING("Thread")) {}
+	ThreadType()
+		: Type(CSTRING("Thread")) {}
+
 	~ThreadType() {}
 
 	void dump(const void* data) const { dump(data, std::cout); }
-	void dump(const void* data, std::ostream& out) const { out << "Thread() { }"; }
+	void dump(const void* data, std::ostream& out) const { out << "Thread() {}"; }
 
 	void* allocData(CLEVER_TYPE_CTOR_ARGS) const { return new Thread; }
 
-	void deallocData(void* data) { if (data) { delete static_cast<Thread*>(data); } }
-
-	void increment(Value* value, const VM* vm) const {}
-
-	void decrement(Value* value, const VM* vm) const {}
+	void deallocData(CLEVER_TYPE_DTOR_ARGS) { delete static_cast<Thread*>(data); }
 };
 
 } // clever
