@@ -385,16 +385,16 @@ CLEVER_METHOD(StrType::split)
 
 CLEVER_TYPE_INIT(StrType::init)
 {
-	addMethod(CSTRING("subString"),  	(MethodPtr) &StrType::subString);
-	addMethod(CSTRING("find"), 			(MethodPtr) &StrType::find);
-	addMethod(CSTRING("findFirst"), 	(MethodPtr) &StrType::findFirst);
-	addMethod(CSTRING("findLast"), 		(MethodPtr) &StrType::findLast);
-	addMethod(CSTRING("size"),   		(MethodPtr) &StrType::size);
-	addMethod(CSTRING("format"),		(MethodPtr) &StrType::format);
-	addMethod(CSTRING("startsWith"),	(MethodPtr) &StrType::startsWith);
-	addMethod(CSTRING("endsWith"),		(MethodPtr) &StrType::endsWith);
-	addMethod(CSTRING("charAt"),		(MethodPtr) &StrType::charAt);
-	addMethod(CSTRING("split"),			(MethodPtr) &StrType::split);
+	addMethod(new Function("subString",  	(MethodPtr) &StrType::subString));
+	addMethod(new Function("find", 			(MethodPtr) &StrType::find));
+	addMethod(new Function("findFirst", 	(MethodPtr) &StrType::findFirst));
+	addMethod(new Function("findLast", 		(MethodPtr) &StrType::findLast));
+	addMethod(new Function("size",   		(MethodPtr) &StrType::size));
+	addMethod(new Function("format",		(MethodPtr) &StrType::format));
+	addMethod(new Function("startsWith",	(MethodPtr) &StrType::startsWith));
+	addMethod(new Function("endsWith",		(MethodPtr) &StrType::endsWith));
+	addMethod(new Function("charAt",		(MethodPtr) &StrType::charAt));
+	addMethod(new Function("split",			(MethodPtr) &StrType::split));
 }
 
 CLEVER_TYPE_OPERATOR(StrType::greater)

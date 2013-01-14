@@ -7,6 +7,7 @@
 
 #include <sstream>
 #include "types/int.h"
+#include "types/function.h"
 
 namespace clever {
 
@@ -99,7 +100,7 @@ CLEVER_METHOD(IntType::toString)
 CLEVER_TYPE_INIT(IntType::init)
 {
 	// Methods
-	addMethod(CSTRING("toString"), (MethodPtr) &IntType::toString);
+	addMethod(new Function("toString", (MethodPtr) &IntType::toString));
 
 	// Properties
 	// addProperty(CSTRING("size"), new Value((long)sizeof(long)));

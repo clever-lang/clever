@@ -51,14 +51,15 @@ class VM;
 
 class Value;
 class Type;
+class Function;
 
 typedef void (Type::*MethodPtr)(CLEVER_METHOD_ARGS) const;
 
 typedef std::tr1::unordered_map<const CString*, Value*> PropertyMap;
 typedef std::pair<const CString*, Value*> PropertyPair;
 
-typedef std::tr1::unordered_map<const CString*, MethodPtr> MethodMap;
-typedef std::pair<const CString*, MethodPtr> MethodPair;
+typedef std::tr1::unordered_map<const CString*, Function*> MethodMap;
+typedef std::pair<const CString*, Function*> MethodPair;
 
 class Type {
 public:
@@ -67,15 +68,13 @@ public:
 
 	virtual void init(CLEVER_TYPE_INIT_ARGS) {}
 
-	void addMethod(const CString* name, MethodPtr ptr) {
-		m_methods.insert(MethodPair(name, ptr));
-	}
+	void addMethod(Function* func);
 
 	void addProperty(const CString* name, Value* value) {
 		m_properties.insert(PropertyPair(name, value));
 	}
 
-	MethodPtr getMethod(const CString* name) const {
+	const Function* getMethod(const CString* name) const {
 		MethodMap::const_iterator it = m_methods.find(name);
 
 		if (EXPECTED(it != m_methods.end())) {

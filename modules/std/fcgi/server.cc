@@ -87,9 +87,9 @@ CLEVER_METHOD(Server::accept)
 					::std::string name;
 					::std::string data;
 					bool inv = false;
-					
+
 					for (size_t position = 0; position < v.length(); position++) {
-						switch(v.at(position)){								
+						switch(v.at(position)){
 							case '=': inv=true; break;
 
 							case ' ':
@@ -104,17 +104,17 @@ CLEVER_METHOD(Server::accept)
 
 							default:
 								if(inv) {
-									data += v.at(position);									
+									data += v.at(position);
 								} else {
 									name += v.at(position);
 								}
 							break;
 						}
 					}
-					
+
 					if (name.size() && data.size()) {
 						in->cookie->insert(CLEVER_FCGI_PAIR(name, data));
-					}			
+					}
 				} else {
 					if (k.find("HTTP") == 0) {
 						in->head->insert(CLEVER_FCGI_PAIR(k.substr(5), v));
@@ -417,12 +417,12 @@ CLEVER_METHOD(Server::getCookies)
 
 // Server.setHeader(string key, string value)
 // Sets a response header
-CLEVER_METHOD(Server::setHeader) 
+CLEVER_METHOD(Server::setHeader)
 {
 	if (!clever_check_args("ss")) {
-		return;	
+		return;
 	}
-	
+
 	out->head->insert(CLEVER_FCGI_PAIR(CLEVER_ARG_PSTR(0), CLEVER_ARG_PSTR(1)));
 }
 
@@ -440,26 +440,26 @@ CLEVER_METHOD(Server::setCookie)
 CLEVER_TYPE_INIT(Server::init)
 {
 	// IO
-	addMethod(CSTRING("accept"), (MethodPtr)&Server::accept);
-	addMethod(CSTRING("print"),  (MethodPtr)&Server::print);
-	addMethod(CSTRING("flush"),  (MethodPtr)&Server::flush);
-	addMethod(CSTRING("finish"), (MethodPtr)&Server::finish);
+	addMethod(new Function("accept", (MethodPtr)&Server::accept));
+	addMethod(new Function("print",  (MethodPtr)&Server::print));
+	addMethod(new Function("flush",  (MethodPtr)&Server::flush));
+	addMethod(new Function("finish", (MethodPtr)&Server::finish));
 
 	// Util
-	addMethod(CSTRING("getEnvironment"), (MethodPtr)&Server::getEnvironment);
-	addMethod(CSTRING("getParam"),       (MethodPtr)&Server::getParam);
-	addMethod(CSTRING("getHeader"),      (MethodPtr)&Server::getHeader);
-	addMethod(CSTRING("getCookie"),      (MethodPtr)&Server::getCookie);	
-	
-	addMethod(CSTRING("getParams"),  (MethodPtr)&Server::getParams);
-	addMethod(CSTRING("getHeaders"), (MethodPtr)&Server::getHeaders);
-	addMethod(CSTRING("getCookies"), (MethodPtr)&Server::getCookies);
+	addMethod(new Function("getEnvironment", (MethodPtr)&Server::getEnvironment));
+	addMethod(new Function("getParam",       (MethodPtr)&Server::getParam));
+	addMethod(new Function("getHeader",      (MethodPtr)&Server::getHeader));
+	addMethod(new Function("getCookie",      (MethodPtr)&Server::getCookie));
 
-	addMethod(CSTRING("setHeader"), (MethodPtr)&Server::setHeader);
-	addMethod(CSTRING("setCookie"), (MethodPtr)&Server::setCookie);
+	addMethod(new Function("getParams",  (MethodPtr)&Server::getParams));
+	addMethod(new Function("getHeaders", (MethodPtr)&Server::getHeaders));
+	addMethod(new Function("getCookies", (MethodPtr)&Server::getCookies));
+
+	addMethod(new Function("setHeader", (MethodPtr)&Server::setHeader));
+	addMethod(new Function("setCookie", (MethodPtr)&Server::setCookie));
 
 	// Debug Environment
-	addMethod(CSTRING("debug"),		(MethodPtr)&Server::debug);
+	addMethod(new Function("debug",		(MethodPtr)&Server::debug));
 }
 
 }}} // clever::packages::std

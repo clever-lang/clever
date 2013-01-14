@@ -187,7 +187,7 @@ Value* VM::runFunction(Function* func, std::vector<Value*>* args)
 	Value* result = new Value;
 
 	if (func->isInternal()) {
-		func->getPtr()(result, *args, this, &m_exception);
+		func->getFuncPtr()(result, *args, this, &m_exception);
 	} else {
 		Environment* fenv = func->getEnvironment()->activate(m_call_stack.top());
 		fenv->setRetVal(result);
@@ -382,7 +382,7 @@ void VM::run()
 
 				VM_GOTO(func->getAddr());
 			} else {
-				func->getPtr()(getValue(OPCODE.result), m_call_args, this, &m_exception);
+				func->getFuncPtr()(getValue(OPCODE.result), m_call_args, this, &m_exception);
 				m_call_args.clear();
 
 				if (UNEXPECTED(m_exception.hasException())) {
@@ -751,14 +751,15 @@ void VM::run()
 			const Value* callee = getValue(OPCODE.op1);
 			const Value* method = getValue(OPCODE.op2);
 			const Type* type = callee->getType();
-			MethodPtr ptr;
+			const Function* func;
 
 			if (UNEXPECTED(callee->isNull())) {
 				error(VM_ERROR, "Cannot call method from a null value");
 			}
 
-			if (EXPECTED((ptr = type->getMethod(method->getStr())))) {
-				(type->*ptr)(getValue(OPCODE.result), callee, m_call_args, this, &m_exception);
+			if (EXPECTED((func = type->getMethod(method->getStr())))) {
+				(type->*func->getMethodPtr())(getValue(OPCODE.result),
+					callee, m_call_args, this, &m_exception);
 
 				m_call_args.clear();
 
@@ -777,10 +778,11 @@ void VM::run()
 			const Value* valtype = getValue(OPCODE.op1);
 			const Type* type = valtype->getType();
 			const Value* method = getValue(OPCODE.op2);
-			MethodPtr ptr;
+			const Function* func;
 
-			if (EXPECTED((ptr = type->getMethod(method->getStr())))) {
-				(type->*ptr)(getValue(OPCODE.result), NULL, m_call_args, this, &m_exception);
+			if (EXPECTED((func = type->getMethod(method->getStr())))) {
+				(type->*func->getMethodPtr())(getValue(OPCODE.result),
+					NULL, m_call_args, this, &m_exception);
 
 				m_call_args.clear();
 

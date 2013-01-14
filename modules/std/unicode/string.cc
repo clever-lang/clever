@@ -6,6 +6,7 @@
  */
 
 #include "types/type.h"
+#include "types/function.h"
 #include "modules/std/unicode/string.h"
 #include "unicode/ustream.h"
 #include "unicode/unistr.h"
@@ -285,18 +286,18 @@ CLEVER_METHOD(UString::replace)
 
 CLEVER_TYPE_INIT(UString::init)
 {
-	addMethod(CSTRING("getLength"),			(MethodPtr) &UString::getLength);
-	addMethod(CSTRING("startsWith"),		(MethodPtr) &UString::startsWith);
-	addMethod(CSTRING("endsWith"),			(MethodPtr) &UString::endsWith);
-	addMethod(CSTRING("indexOf"),			(MethodPtr) &UString::indexOf);
-	addMethod(CSTRING("lastIndexOf"),		(MethodPtr) &UString::lastIndexOf);
-	addMethod(CSTRING("toUpper"),			(MethodPtr) &UString::toUpper);
-	addMethod(CSTRING("toLower"),			(MethodPtr) &UString::toLower);
-	addMethod(CSTRING("reverse"),			(MethodPtr) &UString::reverse);
-	addMethod(CSTRING("trim"),				(MethodPtr) &UString::trim);
-	addMethod(CSTRING("truncate"),			(MethodPtr) &UString::truncate);
-	addMethod(CSTRING("append"),			(MethodPtr) &UString::append);
-	addMethod(CSTRING("replace"),			(MethodPtr) &UString::replace);
+	addMethod(new Function("getLength",		(MethodPtr) &UString::getLength));
+	addMethod(new Function("startsWith",	(MethodPtr) &UString::startsWith));
+	addMethod(new Function("endsWith",		(MethodPtr) &UString::endsWith));
+	addMethod(new Function("indexOf",		(MethodPtr) &UString::indexOf));
+	addMethod(new Function("lastIndexOf",	(MethodPtr) &UString::lastIndexOf));
+	addMethod(new Function("toUpper",		(MethodPtr) &UString::toUpper));
+	addMethod(new Function("toLower",		(MethodPtr) &UString::toLower));
+	addMethod(new Function("reverse",		(MethodPtr) &UString::reverse));
+	addMethod(new Function("trim",			(MethodPtr) &UString::trim));
+	addMethod(new Function("truncate",		(MethodPtr) &UString::truncate));
+	addMethod(new Function("append",		(MethodPtr) &UString::append));
+	addMethod(new Function("replace",		(MethodPtr) &UString::replace));
 }
 
 }}} // clever::packages::std

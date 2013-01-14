@@ -158,12 +158,12 @@ CLEVER_METHOD(ArrayType::each)
 // Type initialization
 CLEVER_TYPE_INIT(ArrayType::init)
 {
-	addMethod(CSTRING("append"),  (MethodPtr) &ArrayType::append);
-	addMethod(CSTRING("size"),    (MethodPtr) &ArrayType::size);
-	addMethod(CSTRING("at"),      (MethodPtr) &ArrayType::at);
-	addMethod(CSTRING("reserve"), (MethodPtr) &ArrayType::reserve);
-	addMethod(CSTRING("reverse"), (MethodPtr) &ArrayType::reverse);
-	addMethod(CSTRING("each"),    (MethodPtr) &ArrayType::each);
+	addMethod(new Function("append",  (MethodPtr) &ArrayType::append));
+	addMethod(new Function("size",    (MethodPtr) &ArrayType::size));
+	addMethod(new Function("at",      (MethodPtr) &ArrayType::at));
+	addMethod(new Function("reserve", (MethodPtr) &ArrayType::reserve));
+	addMethod(new Function("reverse", (MethodPtr) &ArrayType::reverse));
+	addMethod(new Function("each",    (MethodPtr) &ArrayType::each));
 }
 
 } // clever
