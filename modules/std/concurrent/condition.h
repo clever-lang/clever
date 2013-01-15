@@ -34,7 +34,7 @@ public:
 
 	CLEVER_METHOD(signal);
 	CLEVER_METHOD(broadcast);
-	CLEVER_METHOD(wait);
+	CLEVER_METHOD(waitFor);
 };
 
 }}} // clever::packages::std

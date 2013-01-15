@@ -45,6 +45,8 @@ void Condition::deallocData(void *data)
 	}
 }
 
+// bool Condition.signal()
+// Will signal to one thread waiting on this Condition
 CLEVER_METHOD(Condition::signal)
 {
 	pthread_cond_t* condition = CLEVER_GET_OBJECT(pthread_cond_t*, CLEVER_THIS());
@@ -57,6 +59,8 @@ CLEVER_METHOD(Condition::signal)
 	result->setBool((pthread_cond_signal(condition)==0));
 }
 
+// bool Condition.broadcast()
+// Will broadcast to every thread waiting on this Condition
 CLEVER_METHOD(Condition::broadcast)
 {
 	pthread_cond_t* condition = CLEVER_GET_OBJECT(pthread_cond_t*, CLEVER_THIS());
@@ -69,7 +73,12 @@ CLEVER_METHOD(Condition::broadcast)
 	result->setBool((pthread_cond_broadcast(condition)==0));
 }
 
-CLEVER_METHOD(Condition::wait)
+// @TODO(sisegv) can we use the "wait" keyword as a method name please, waitFor feels messy
+// bool Condition.wait(Mutex locked)
+// Will wait for another thread to signal or broadcast to this condition
+// You should have the Mutex locked at time of the call
+// When the call to Condition.wait returns the Mutex owner has not changed
+CLEVER_METHOD(Condition::waitFor)
 {
 	pthread_cond_t* condition = CLEVER_GET_OBJECT(pthread_cond_t*, CLEVER_THIS());
 
@@ -96,7 +105,7 @@ CLEVER_TYPE_INIT(Condition::init)
 {
 	addMethod(new Function("signal",		(MethodPtr) &Condition::signal));
 	addMethod(new Function("broadcast",		(MethodPtr) &Condition::broadcast));
-	addMethod(new Function("wait",			(MethodPtr) &Condition::wait));
+	addMethod(new Function("waitFor",			(MethodPtr) &Condition::waitFor));
 }
 
 }}} // clever::packages::std
