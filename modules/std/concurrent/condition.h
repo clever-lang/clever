@@ -5,8 +5,8 @@
  * This file is distributed under the MIT license. See LICENSE for details.
  */
 
-#ifndef CLEVER_STD_CONCURRENT_MUTEX_H
-#define CLEVER_STD_CONCURRENT_MUTEX_H
+#ifndef CLEVER_STD_CONCURRENT_CONDITION_H
+#define CLEVER_STD_CONCURRENT_CONDITION_H
 
 #include <iostream>
 #include "core/cstring.h"
@@ -14,12 +14,12 @@
 
 namespace clever { namespace packages { namespace std {
 
-class Mutex : public Type {
+class Condition : public Type {
 public:
-	Mutex()
-		: Type(CSTRING("Mutex")) {}
+	Condition()
+		: Type(CSTRING("Condition")) {}
 
-	~Mutex() {}
+	~Condition() {}
 
 	void dump(const void* data) const;
 	void dump(const void* data, ::std::ostream& out) const;
@@ -32,11 +32,11 @@ public:
 	virtual void* allocData(CLEVER_TYPE_CTOR_ARGS) const;
 	virtual void deallocData(void* data);
 
-	CLEVER_METHOD(lock);
-	CLEVER_METHOD(unlock);
-	CLEVER_METHOD(trylock);
+	CLEVER_METHOD(signal);
+	CLEVER_METHOD(broadcast);
+	CLEVER_METHOD(wait);
 };
 
 }}} // clever::packages::std
 
-#endif // CLEVER_STD_CONCURRENT_MUTEX_H
+#endif // CLEVER_STD_CONCURRENT_CONDITION_H
