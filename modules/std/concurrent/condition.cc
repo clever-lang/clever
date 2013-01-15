@@ -105,7 +105,7 @@ CLEVER_TYPE_INIT(Condition::init)
 {
 	addMethod(new Function("signal",		(MethodPtr) &Condition::signal));
 	addMethod(new Function("broadcast",		(MethodPtr) &Condition::broadcast));
-	addMethod(new Function("waitFor",			(MethodPtr) &Condition::waitFor));
+	addMethod(new Function("waitFor",		(MethodPtr) &Condition::waitFor));
 }
 
 }}} // clever::packages::std
