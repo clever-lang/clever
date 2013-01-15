@@ -55,6 +55,16 @@ CLEVER_METHOD(Mutex::lock)
 	result->setBool((pthread_mutex_lock(CLEVER_GET_OBJECT(pthread_mutex_t*, CLEVER_THIS()))==0));
 }
 
+CLEVER_METHOD(Mutex::trylock)
+{
+	pthread_mutex_t* mutex = CLEVER_GET_OBJECT(pthread_mutex_t*, CLEVER_THIS());
+	if (!mutex) {
+		//CLEVER_THROW(eventually);
+		return;
+	}
+	result->setBool((pthread_mutex_trylock(CLEVER_GET_OBJECT(pthread_mutex_t*, CLEVER_THIS()))==0));
+}
+
 CLEVER_METHOD(Mutex::unlock)
 {
 	pthread_mutex_t* mutex = CLEVER_GET_OBJECT(pthread_mutex_t*, CLEVER_THIS());
@@ -69,6 +79,7 @@ CLEVER_METHOD(Mutex::unlock)
 CLEVER_TYPE_INIT(Mutex::init)
 {
 	addMethod(new Function("lock",		(MethodPtr) &Mutex::lock));
+	addMethod(new Function("trylock",	(MethodPtr) &Mutex::trylock));
 	addMethod(new Function("unlock",	(MethodPtr) &Mutex::unlock));
 }
 

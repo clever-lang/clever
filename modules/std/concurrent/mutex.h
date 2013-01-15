@@ -35,6 +35,7 @@ public:
 
 	CLEVER_METHOD(lock);
 	CLEVER_METHOD(unlock);
+	CLEVER_METHOD(trylock);
 };
 
 }}} // clever::packages::std
