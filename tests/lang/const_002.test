@@ -7,4 +7,4 @@ a = 2;
 
 println(a);
 ==RESULT==
-Error: Cannot assign to a const variable!
+Fatal error: Cannot assign to a const variable!

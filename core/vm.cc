@@ -37,16 +37,23 @@
 namespace clever {
 
 /// Displays an error message
-void VM::error(ErrorLevel level, const char* msg) const
+void VM::error(ErrorLevel level, const char* format, ...) const
 {
+	std::ostringstream out;
+	va_list args;
+
+	va_start(args, format);
+
 	switch (level) {
-		case VM_WARNING:
-			std::cerr << "Warning: " << msg << std::endl;
-			break;
-		case VM_ERROR:
-			std::cerr << "Error: " << msg << std::endl;
-			CLEVER_EXIT_FATAL();
-			break;
+		case VM_WARNING: out << "Warning: ";     break;
+		case VM_ERROR:   out << "Fatal error: "; break;
+	}
+	vsprintf(out, format, args);
+
+	std::cerr << out.str() << std::endl;
+
+	if (level == VM_ERROR) {
+		CLEVER_EXIT_FATAL();
 	}
 }
 
@@ -753,12 +760,14 @@ void VM::run()
 			const Function* func;
 
 			if (UNEXPECTED(callee->isNull())) {
-				error(VM_ERROR, "Cannot call method from a null value");
+				error(VM_ERROR, "Cannot call method `%S' from a null value",
+					method->getStr());
 			}
 
 			if (EXPECTED((func = type->getMethod(method->getStr())))) {
 				if (UNEXPECTED(func->isStatic())) {
-					error(VM_ERROR, "Method cannot be called non-statically");
+					error(VM_ERROR, "Method `%S' cannot be called non-statically",
+						method->getStr());
 				} else {
 					(type->*func->getMethodPtr())(getValue(OPCODE.result),
 						callee, m_call_args, this, &m_exception);
@@ -770,7 +779,7 @@ void VM::run()
 					}
 				}
 			} else {
-				error(VM_ERROR, "Method not found!");
+				error(VM_ERROR, "Method `%S' not found!", method->getStr());
 			}
 		}
 		DISPATCH;
@@ -784,7 +793,8 @@ void VM::run()
 
 			if (EXPECTED((func = type->getMethod(method->getStr())))) {
 				if (UNEXPECTED(!func->isStatic())) {
-					error(VM_ERROR, "Method cannot be called statically");
+					error(VM_ERROR, "Method `%S' cannot be called statically",
+						method->getStr());
 				} else {
 					(type->*func->getMethodPtr())(getValue(OPCODE.result),
 						NULL, m_call_args, this, &m_exception);
@@ -796,7 +806,7 @@ void VM::run()
 					}
 				}
 			} else {
-				error(VM_ERROR, "Method not found!");
+				error(VM_ERROR, "Method `%S' not found!", method->getStr());
 			}
 		}
 		DISPATCH;
@@ -810,7 +820,7 @@ void VM::run()
 			if (EXPECTED((prop_value = obj->getType()->getProperty(prop_name->getStr())))) {
 				getValue(OPCODE.result)->copy(prop_value);
 			} else {
-				error(VM_ERROR, "Property not found!");
+				error(VM_ERROR, "Property `%S' not found!", prop_name->getStr());
 			}
 		}
 		DISPATCH;

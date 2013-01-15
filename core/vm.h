@@ -54,7 +54,7 @@ public:
 
 	~VM() {}
 
-	void error(ErrorLevel, const char*) const;
+	void error(ErrorLevel, const char*, ...) const;
 
 	void setGlobalEnv(Environment* globals) { m_global_env = globals; }
 
