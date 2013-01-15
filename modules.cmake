@@ -7,12 +7,13 @@
 
 # Modules
 # ---------------------------------------------------------------------------
+clever_add_module(std_concurrent ON  "enable the concurrent module" "")
 clever_add_module(std_regex      ON  "enable the regex module"      "")
 clever_add_module(std_ffi        OFF "enable the ffi module"        "")
 clever_add_module(std_rpc        ON  "enable the rpc module"        "")
 clever_add_module(std_net        ON  "enable the net module"        "")
 clever_add_module(std_unicode    ON  "enable the unicode module"    "")
-clever_add_module(std_fcgi    	 OFF  "enable the fcgi module"    "")
+clever_add_module(std_fcgi    	 OFF "enable the fcgi module"       "")
 clever_add_module(web_request    OFF "enable the request module"    "")
 clever_add_module(web_session    OFF "enable the session module"    "")
 
@@ -22,6 +23,19 @@ clever_add_simple_module(std_io         ON  "enable the io module"         "")
 clever_add_simple_module(std_math       ON  "enable the math module"       "")
 clever_add_simple_module(std_reflection ON  "enable the reflection module" "")
 clever_add_simple_module(std_sys        ON  "enable the sys module"        "")
+
+# std.concurrent
+if (MOD_STD_CONCURRENT)
+	if (HAVE_CONCURRENCY)
+		add_definitions(-DHAVE_MOD_STD_CONCURRENT)
+		list(APPEND CLEVER_INCLUDE_DIRS ${CONCURRENCY_INCLUDES})
+		list(APPEND CLEVER_LIBRARIES ${CONCURRENCY_LIBRARIES})
+	else (HAVE_CONCURRENCY)
+		clever_module_warn(std_concurrent, "Posix Threads are not present on this system")
+	endif (HAVE_CONCURRENCY)
+endif (MOD_STD_CONCURRENT)
+
+clever_module_msg(std_concurrent "${MOD_STD_CONCURRENT}")
 
 # std.regex
 if (MOD_STD_REGEX)
