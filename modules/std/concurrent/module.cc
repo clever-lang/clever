@@ -5,11 +5,11 @@
  * This file is distributed under the MIT license. See LICENSE for details.
  */
 #include "core/value.h"
-#include "types/function.h"
 #include "core/pkgmanager.h"
+#include "modules/std/concurrent/condition.h"
 #include "modules/std/concurrent/module.h"
 #include "modules/std/concurrent/mutex.h"
-#include "modules/std/concurrent/condition.h"
+#include "types/function.h"
 
 namespace clever { namespace packages { namespace std {
 

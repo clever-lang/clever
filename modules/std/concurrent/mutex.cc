@@ -5,11 +5,11 @@
  * This file is distributed under the MIT license. See LICENSE for details.
  */
 
-#include "types/type.h"
-#include "types/function.h"
-#include "core/value.h"
 #include "core/clever.h"
+#include "core/value.h"
 #include "modules/std/concurrent/mutex.h"
+#include "types/function.h"
+#include "types/type.h"
 
 namespace clever { namespace packages { namespace std {
 
@@ -20,9 +20,10 @@ void Mutex::dump(const void* data) const
 
 void Mutex::dump(const void* data, ::std::ostream& out) const
 {
-	Value::DataValue* dvalue = static_cast<Value::DataValue*>(const_cast<void*>(data));
+	Value::DataValue* dvalue =
+		static_cast<Value::DataValue*>(const_cast<void*>(data));
 	if (dvalue) {
-		
+
 	}
 }
 
@@ -36,7 +37,7 @@ void* Mutex::allocData(CLEVER_TYPE_CTOR_ARGS) const
 	return mutex;
 }
 
-void Mutex::deallocData(void *data)
+void Mutex::deallocData(void* data)
 {
 	pthread_mutex_t* mutex = static_cast<pthread_mutex_t*>(data);
 	if (mutex) {
@@ -52,7 +53,11 @@ CLEVER_METHOD(Mutex::lock)
 		//CLEVER_THROW(eventually);
 		return;
 	}
-	result->setBool((pthread_mutex_lock(CLEVER_GET_OBJECT(pthread_mutex_t*, CLEVER_THIS()))==0));
+
+	result->setBool((
+		pthread_mutex_lock(
+			CLEVER_GET_OBJECT(pthread_mutex_t*, CLEVER_THIS())) == 0)
+	);
 }
 
 CLEVER_METHOD(Mutex::trylock)
@@ -62,7 +67,11 @@ CLEVER_METHOD(Mutex::trylock)
 		//CLEVER_THROW(eventually);
 		return;
 	}
-	result->setBool((pthread_mutex_trylock(CLEVER_GET_OBJECT(pthread_mutex_t*, CLEVER_THIS()))==0));
+
+	result->setBool((
+		pthread_mutex_trylock(
+			CLEVER_GET_OBJECT(pthread_mutex_t*, CLEVER_THIS())) == 0)
+	);
 }
 
 CLEVER_METHOD(Mutex::unlock)
@@ -73,14 +82,17 @@ CLEVER_METHOD(Mutex::unlock)
 		//CLEVER_THROW(eventually);
 		return;
 	}
-	result->setBool((pthread_mutex_unlock(CLEVER_GET_OBJECT(pthread_mutex_t*, CLEVER_THIS()))==0));
+
+	result->setBool((
+		pthread_mutex_unlock(
+			CLEVER_GET_OBJECT(pthread_mutex_t*, CLEVER_THIS())) == 0));
 }
 
 CLEVER_TYPE_INIT(Mutex::init)
 {
-	addMethod(new Function("lock",		(MethodPtr) &Mutex::lock));
-	addMethod(new Function("trylock",	(MethodPtr) &Mutex::trylock));
-	addMethod(new Function("unlock",	(MethodPtr) &Mutex::unlock));
+	addMethod(new Function("lock",    (MethodPtr) &Mutex::lock));
+	addMethod(new Function("trylock", (MethodPtr) &Mutex::trylock));
+	addMethod(new Function("unlock",  (MethodPtr) &Mutex::unlock));
 }
 
 }}} // clever::packages::std

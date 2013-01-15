@@ -17,7 +17,7 @@ class ConcurrencyModule : public Module {
 public:
 	ConcurrencyModule()
 		: Module("concurrent") { }
-		
+
 	CLEVER_MODULE_VIRTUAL_METHODS_DECLARATION;
 private:
 	DISALLOW_COPY_AND_ASSIGN(ConcurrencyModule);
