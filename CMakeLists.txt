@@ -115,7 +115,7 @@ if (GEN_PARSER)
 
 	add_custom_command(
 		OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/core/scanner.cc
-		COMMAND ${RE2C_EXECUTABLE} ${re2c_opts} -o ${CMAKE_CURRENT_SOURCE_DIR}/core/scanner.cc 
+		COMMAND ${RE2C_EXECUTABLE} ${re2c_opts} -o ${CMAKE_CURRENT_SOURCE_DIR}/core/scanner.cc
 			${CMAKE_CURRENT_SOURCE_DIR}/core/scanner.re
 		DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/core/parser.cc ${CMAKE_CURRENT_SOURCE_DIR}/core/scanner.re)
 
@@ -214,9 +214,7 @@ add_executable(clever
 	types/type.h
 	types/type.cc
 	types/function.h
-	types/function.cc
 	types/thread.h
-	types/thread.cc
 	types/bool.h
 	types/bool.cc
 	types/array.h
