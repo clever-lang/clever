@@ -8,12 +8,13 @@
 #include "types/function.h"
 #include "core/pkgmanager.h"
 #include "modules/std/concurrent/module.h"
+#include "modules/std/concurrent/mutex.h"
 
 namespace clever { namespace packages { namespace std {
 
 /// Initializes Standard Concurrency module
 CLEVER_MODULE_INIT(ConcurrencyModule) {
-	
+	addType(CSTRING("Mutex"), new Mutex);
 }
 
 }}} // clever::packages::std
