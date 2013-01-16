@@ -85,10 +85,6 @@ void Visitor::visit(MethodCall* node) {
 	}
 }
 
-void Visitor::visit(AttributeAccess* node) {
-	node->getCallee()->accept(*this);
-}
-
 void Visitor::visit(While* node) {
 	node->getCondition()->accept(*this);
 	node->getBlock()->accept(*this);

@@ -69,7 +69,6 @@ public:
 	void visit(Throw*);
 	void visit(Continue*);
 	void visit(Break*);
-	void visit(AttributeAccess*);
 private:
 	IRVector& m_ir;
 	Compiler* m_compiler;

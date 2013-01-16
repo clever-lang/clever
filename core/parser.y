@@ -53,7 +53,6 @@ class Value;
 	ast::Type* type;
 	ast::Instantiation* inst;
 	ast::MethodCall* mcall;
-	ast::AttributeAccess* attributeaccess;
 	ast::Property* property;
 	ast::Try* except;
 	ast::Catch* catch_;
@@ -95,7 +94,6 @@ class Value;
 %type <nillit> NIL
 %type <comp> comparison
 %type <mcall> mcall
-%type <attributeaccess> attribute_access
 %type <property> property_access
 %type <except> try_catch_finally
 %type <catch_> catch_impl
@@ -220,7 +218,6 @@ statement:
 	|	assignment ';'
 	|	fcall ';'
 	|	mcall ';'
-	|	attribute_access ';'
 	|	fdecl
 	|	return_stmt ';'
 	|	if
@@ -287,7 +284,6 @@ rvalue:
 	|	mcall
 	|	array
 	|	map
-	|	attribute_access
 	|	'(' rvalue ')' { $<node>$ = $<node>2; }
 ;
 
@@ -348,10 +344,6 @@ mcall:
 		rvalue '.' IDENT '(' call_args ')' { $$ = new ast::MethodCall($<node>1, $3, $5, yyloc); }
 	|	TYPE '.' IDENT '(' call_args ')'   { $$ = new ast::MethodCall($1, $3, $5, yyloc); }
 ;
-
-attribute_access:
-		TYPE '.' IDENT   { $$ = new ast::AttributeAccess($1, $3, yyloc); }
-//	|	rvalue '.' IDENT {} @TODO(muriloadriano): allow non-static attribute access.
 
 inc_dec:
 		lvalue INC { $$ = new ast::IncDec(ast::IncDec::POS_INC, $<node>1, yyloc); }

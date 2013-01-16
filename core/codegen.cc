@@ -210,11 +210,6 @@ void Codegen::visit(MethodCall* node)
 	node->setVOffset(tmp_id);
 }
 
-void Codegen::visit(AttributeAccess* node)
-{
-	// @TODO(murilov): now WHAT?
-}
-
 void Codegen::visit(FunctionCall* node)
 {
 	if (node->getCallee()->isEvaluable()) {
