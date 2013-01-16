@@ -353,17 +353,15 @@ yy30:
 		{ RET(token::GREATER); }
 yy31:
 		++YYCURSOR;
-		if (yybm[256+(yych = *YYCURSOR)] & 128) {
-			goto yy175;
-		}
-		if (yych <= '`') goto yy32;
-		if (yych <= 'z') goto yy178;
+		yych = *YYCURSOR;
+		goto yy176;
 yy32:
 		{ yylen = cursor - s.yylex; }
 		{
-		yylval->type = new ast::Type(
+		yylval->ident = new ast::Ident(
 			CSTRING(std::string(reinterpret_cast<const char*>(s.yylex), yylen)), *yyloc);
-		RET(token::TYPE);
+
+		RET(token::CONSTANT);
 	}
 yy33:
 		yych = *++YYCURSOR;
@@ -888,37 +886,34 @@ yy173:
 yy175:
 		++YYCURSOR;
 		yych = *YYCURSOR;
+yy176:
 		if (yybm[256+yych] & 128) {
 			goto yy175;
 		}
-		if (yych <= '`') goto yy177;
-		if (yych <= 'z') goto yy178;
+		if (yych <= '`') goto yy32;
+		if (yych >= '{') goto yy32;
 yy177:
-		{ yylen = cursor - s.yylex; }
-		{
-		yylval->ident = new ast::Ident(
-			CSTRING(std::string(reinterpret_cast<const char*>(s.yylex), yylen)), *yyloc);
-
-		RET(token::CONSTANT);
-	}
-yy178:
 		++YYCURSOR;
 		yych = *YYCURSOR;
 		if (yych <= 'Z') {
-			if (yych <= '/') goto yy32;
-			if (yych <= '9') goto yy178;
-			if (yych <= '@') goto yy32;
-			goto yy178;
+			if (yych <= '/') goto yy179;
+			if (yych <= '9') goto yy177;
+			if (yych >= 'A') goto yy177;
 		} else {
 			if (yych <= '_') {
-				if (yych <= '^') goto yy32;
-				goto yy178;
+				if (yych >= '_') goto yy177;
 			} else {
-				if (yych <= '`') goto yy32;
-				if (yych <= 'z') goto yy178;
-				goto yy32;
+				if (yych <= '`') goto yy179;
+				if (yych <= 'z') goto yy177;
 			}
 		}
+yy179:
+		{ yylen = cursor - s.yylex; }
+		{
+		yylval->type = new ast::Type(
+			CSTRING(std::string(reinterpret_cast<const char*>(s.yylex), yylen)), *yyloc);
+		RET(token::TYPE);
+	}
 yy180:
 		++YYCURSOR;
 		if ((yych = *YYCURSOR) == '=') goto yy184;
