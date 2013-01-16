@@ -22,7 +22,7 @@ Scope::~Scope() {
         end = m_children.end();
 
     while (it != end) {
-        delete *it;
+		clever_delete(*it);
         ++it;
     }
 
@@ -30,7 +30,7 @@ Scope::~Scope() {
         ends = m_symbols.end();
 
     while (its != ends) {
-        delete *its;
+		clever_delete(*its);
         ++its;
     }
 

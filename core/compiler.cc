@@ -116,7 +116,7 @@ void Compiler::emitAST(ast::Node* tree)
 		m_ir.push_back(IR(OP_HALT));
 	}
 
-	delete tree;
+	clever_delete_var(tree);
 }
 
 } // clever

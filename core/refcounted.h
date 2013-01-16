@@ -31,7 +31,7 @@ public:
 	void delRef() {
 		clever_assert(m_reference > 0, "This object has been free'd before.");
 		if (--m_reference == 0) {
-			delete this;
+			clever_delete(this);
 		}
 	}
 private:

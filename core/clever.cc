@@ -38,6 +38,21 @@ void clever_assert_(const char* file, const char* function, long line, const cha
 		std::abort();
 	}
 }
+
+void clever_debug_(const char* file, long line, const char* format, ...) {
+	va_list vl;
+	std::ostringstream out;
+
+	va_start(vl, format);
+	out << "[DEBUG] " << file << ":" << line << ": ";
+
+	vsprintf(out, format, vl);
+
+	va_end(vl);
+
+	std::cerr << out.str() << std::endl;
+}
+
 #endif
 
 void clever_error(const char* format, ...) {
