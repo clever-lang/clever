@@ -31,10 +31,6 @@ void Std::init()
 #ifdef HAVE_MOD_STD_FCGI
 	addModule(new std::FCGIModule);
 #endif
-/*
-#ifdef HAVE_MOD_STD_FILE
-	addModule(new std::File);
-#endif
 #ifdef HAVE_MOD_STD_SYS
 	addModule(new std::SYSModule);
 #endif
@@ -44,6 +40,8 @@ void Std::init()
 #ifdef HAVE_MOD_STD_NET
 	addModule(new std::NetModule);
 #endif
+
+#if 0
 #ifdef HAVE_MOD_STD_REGEX
 	addModule(new std::Regex);
 #endif
@@ -53,7 +51,7 @@ void Std::init()
 #ifdef HAVE_MOD_STD_RPC
 	addModule(new std::RPCModule);
 #endif
-*/
+#endif
 }
 
 }} // clever::packages
