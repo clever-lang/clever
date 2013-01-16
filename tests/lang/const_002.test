@@ -2,9 +2,9 @@
 ==CODE==
 import std.io.*;
 
-const a = 1;
-a = 2;
+const MYCONSTANT = 1;
+MYCONSTANT = 2;
 
 println(a);
 ==RESULT==
-Fatal error: Cannot assign to a const variable!
+Error: syntax error, unexpected '=' in \S+ on line \d+
