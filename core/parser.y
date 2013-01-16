@@ -337,6 +337,7 @@ try_catch_finally:
 
 property_access:
 		rvalue '.' IDENT { $$ = new ast::Property($<node>1, $3, yyloc); }
+	|	TYPE '.' IDENT   { $$ = new ast::Property($1, $3, yyloc); }
 ;
 
 mcall:

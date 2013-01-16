@@ -953,25 +953,36 @@ private:
 
 class Property: public Node {
 public:
-	Property(Node* obj, Ident* prop_name, const location& location)
-		: Node(location), m_obj(obj), m_prop_name(prop_name) {
-		CLEVER_ADDREF(m_obj);
+	Property(Node* callee, Ident* prop_name, const location& location)
+		: Node(location), m_callee(callee), m_prop_name(prop_name),
+		m_static(false) {
+		CLEVER_ADDREF(m_callee);
+		CLEVER_ADDREF(m_prop_name);
+	}
+
+	Property(Type* callee, Ident* prop_name, const location& location)
+		: Node(location), m_callee(callee), m_prop_name(prop_name),
+		m_static(true) {
+		CLEVER_ADDREF(m_callee);
 		CLEVER_ADDREF(m_prop_name);
 	}
 
 	~Property() {
-		CLEVER_DELREF(m_obj);
+		CLEVER_DELREF(m_callee);
 		CLEVER_DELREF(m_prop_name);
 	}
 
-	Node* getObject() const { return m_obj; }
+	Node* getCallee() const { return m_callee; }
 	Ident* getProperty() const { return m_prop_name; }
+
+	bool isStatic() const { return m_static; }
 
 	virtual void accept(Visitor& visitor);
 	virtual Node* accept(Transformer& transformer);
 private:
-	Node* m_obj;
+	Node* m_callee;
 	Ident* m_prop_name;
+	bool m_static;
 
 	DISALLOW_COPY_AND_ASSIGN(Property);
 };

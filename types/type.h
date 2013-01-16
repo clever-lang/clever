@@ -54,10 +54,25 @@ class Value;
 class Type;
 class Function;
 
+/**
+ * POD property class
+ */
+struct Property {
+	enum Modifier {
+		PUBLIC =  1 << 1,
+		PRIVATE = 1 << 2,
+		PROTECTED = 1 << 3,
+		STATIC = 1 << 4
+	};
+
+	Value* value;
+	unsigned char modifiers;
+};
+
 typedef void (Type::*MethodPtr)(CLEVER_METHOD_ARGS) const;
 
-typedef std::tr1::unordered_map<const CString*, Value*> PropertyMap;
-typedef std::pair<const CString*, Value*> PropertyPair;
+typedef std::tr1::unordered_map<const CString*, Property> PropertyMap;
+typedef std::pair<const CString*, Property> PropertyPair;
 
 typedef std::tr1::unordered_map<const CString*, Function*> MethodMap;
 typedef std::pair<const CString*, Function*> MethodPair;
@@ -71,8 +86,11 @@ public:
 
 	Function* addMethod(Function* func);
 
-	void addProperty(const CString* name, Value* value) {
-		m_properties.insert(PropertyPair(name, value));
+	void addProperty(const CString* name, Value* value,
+		unsigned char modifiers = Property::PUBLIC) {
+
+		Property prop = {value, modifiers};
+		m_properties.insert(PropertyPair(name, prop));
 	}
 
 	const Function* getMethod(const CString* name) const {
@@ -88,7 +106,7 @@ public:
 		PropertyMap::const_iterator it = m_properties.find(name);
 
 		if (EXPECTED(it != m_properties.end())) {
-			return it->second;
+			return it->second.value;
 		}
 		return NULL;
 	}
