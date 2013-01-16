@@ -1,0 +1,7 @@
+Testing constant property access
+==CODE==
+import std.io.*;
+
+println(Int.SIZE);
+==RESULT==
+\d
