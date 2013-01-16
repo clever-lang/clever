@@ -21,6 +21,18 @@ typedef std::stack<Environment*> CallStack;
 
 /**
  * @brief the environment class.
+ *
+ * Environment instances are the *activation records* used on the VM's call
+ * stack. They are used to store local variables and return values/addresses of
+ * the current running function. Environments also hold pointers to their
+ * enclosing environment so as to allow access to values external to the
+ * environment.
+ *
+ * During the code compilation and interpretation stages, some non-activated
+ * environments are created to be used as blueprints for the virtual machine.
+ * The later takes those environments and *activate* them upon user function
+ * call or thread creation.
+ *
  */
 class Environment: public RefCounted {
 public:
@@ -34,6 +46,7 @@ public:
 		CLEVER_SAFE_DELREF(m_outer);
 	}
 
+	// XXX(heuripedes): isn't ~Environment() a better place for this?
 	void clear() {
 		for (size_t i = 0, size = m_data.size(); i < size; ++i) {
 			CLEVER_SAFE_DELREF(m_data.at(i));
@@ -50,9 +63,8 @@ public:
 	/**
 	 * @brief get the value specified by `offset`.
 	 *
-	 * @note
-	 * This function may introduce performance issues when searching for global
-	 * values due to the chain-like nature of environments.
+	 * @note This function may introduce performance issues when searching for
+	 *       global values due to the chain-like nature of environments.
 	 *
 	 * @param offset
 	 * @return
