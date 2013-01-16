@@ -13,7 +13,8 @@
 namespace clever { namespace packages { namespace std {
 
 /// Initializes Standard Concurrency module
-CLEVER_MODULE_INIT(ConcurrencyModule) {
+CLEVER_MODULE_INIT(ConcurrencyModule)
+{
 	addType(CSTRING("Mutex"), new Mutex);
 	addType(CSTRING("Condition"), new Condition);
 }
