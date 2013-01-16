@@ -44,7 +44,7 @@ spawn t[2] {
 	}
 
 }
-wait t;
+t.wait();
 
 printf ("\1\n", acc1 + acc2);
 ==RESULT==

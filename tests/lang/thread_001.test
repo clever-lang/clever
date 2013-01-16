@@ -26,7 +26,7 @@ while (i) {
 	} 
 
 	i--;
-	wait threads;
+	threads.wait();
 
 }
 
@@ -43,7 +43,7 @@ spawn thread {
 	}
 }
 
-wait thread;
+thread.wait();
 
 ==RESULT==
 5

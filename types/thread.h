@@ -84,6 +84,12 @@ public:
 	void* allocData(CLEVER_TYPE_CTOR_ARGS) const { return new Thread; }
 
 	void deallocData(CLEVER_TYPE_DTOR_ARGS) { delete static_cast<Thread*>(data); }
+
+
+	void init();
+
+	CLEVER_METHOD(wait);
+	CLEVER_METHOD(toString);
 };
 
 } // clever

@@ -221,6 +221,7 @@ add_executable(clever
 	types/type.cc
 	modules/std/core/function.h
 	types/thread.h
+	types/thread.cc
 	modules/std/core/bool.h
 	modules/std/core/bool.cc
 	modules/std/core/array.h

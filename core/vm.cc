@@ -438,30 +438,6 @@ void VM::run()
 			VM_GOTO(OPCODE.op1.jmp_addr);
 		}
 
-	OP(OP_WAIT):
-		{
-
-			const Value* tval = getValue(OPCODE.op1);
-			Thread* tdata = static_cast<Thread*>(tval->getObj());
-
-			std::vector<VMThread*>& thread_list = m_thread_pool[tdata->getID()];
-
-			for (size_t i = 0, j = thread_list.size(); i < j; ++i) {
-				delete_thread();
-
-				VMThread* t = thread_list.at(i);
-				t->t_handler.wait();
-				clever_delete_var(t->vm_handler);
-				clever_delete_var(t);
-			}
-
-			if (n_threads() == 0) {
-				disenable_threads();
-			}
-			thread_list.clear();
-		}
-		DISPATCH;
-
 	OP(OP_ETHREAD):
 		if (this->isChild()) {
 			getMutex()->lock();

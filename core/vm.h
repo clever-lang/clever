@@ -81,6 +81,10 @@ public:
 	/// Helper to retrive a Value* from ValuePool
 	Value* getValue(Operand&) const;
 
+	ThreadPool& getThreadPool() {
+		return this->m_thread_pool;
+	}
+
 	CMutex* getMutex() {
 		return isChild() ? f_mutex : &m_mutex;
 	}

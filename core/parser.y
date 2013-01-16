@@ -79,7 +79,6 @@ class Value;
 %type <vardecl> const_decl_impl
 %type <block> statement_list block finally
 %type <threadblock> thread_block
-%type <wait> wait
 %type <criticalblock> critical_block
 %type <arithmetic> arithmetic
 %type <bitwise> bitwise
@@ -166,7 +165,6 @@ class Value;
 %token PRINT         "print"
 %token FUNC          "function"
 %token THREAD        "spawn"
-%token WAIT          "wait"
 %token CRITICAL      "critical"
 %token INC           "++"
 %token DEC           "--"
@@ -228,7 +226,6 @@ statement:
 	|	block
 	|	thread_block
 	|   critical_block
-	|	wait ';'
 	|	throw ';'
 	|	break ';'
 	|	continue ';'
@@ -252,9 +249,6 @@ continue:
 		CONTINUE { $$ = new ast::Continue(yyloc); }
 ;
 
-wait:
-		WAIT IDENT { $$ = new ast::Wait($2, yyloc); }
-;
 
 thread_block:
 		THREAD IDENT block { $$ = new ast::ThreadBlock($3, $2, yyloc); }
