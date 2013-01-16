@@ -147,7 +147,7 @@ void Visitor::visit(Instantiation* node) {
 }
 
 void Visitor::visit(Property* node) {
-	node->getObject()->accept(*this);
+	node->getCallee()->accept(*this);
 }
 
 void Visitor::visit(Try* node) {

@@ -87,20 +87,20 @@ public:
 
 	Value() : m_data(), m_type(NULL), m_is_const(false) {}
 
-	Value(bool n)
-		: m_data(n), m_type(CLEVER_BOOL_TYPE), m_is_const(false) {}
+	Value(bool n, bool is_const = false)
+		: m_data(n), m_type(CLEVER_BOOL_TYPE), m_is_const(is_const) {}
 
-	Value(long n)
-		: m_data(n), m_type(CLEVER_INT_TYPE), m_is_const(false) {}
+	Value(long n, bool is_const = false)
+		: m_data(n), m_type(CLEVER_INT_TYPE), m_is_const(is_const) {}
 
-	Value(double n)
-		: m_data(n), m_type(CLEVER_DOUBLE_TYPE), m_is_const(false) {}
+	Value(double n, bool is_const = false)
+		: m_data(n), m_type(CLEVER_DOUBLE_TYPE), m_is_const(is_const) {}
 
-	Value(const CString* value)
-		: m_data(value), m_type(CLEVER_STR_TYPE), m_is_const(false) {}
+	Value(const CString* value, bool is_const = false)
+		: m_data(value), m_type(CLEVER_STR_TYPE), m_is_const(is_const) {}
 
-	Value(const Type* type)
-		: m_data(), m_type(type), m_is_const(false) {}
+	Value(const Type* type, bool is_const = false)
+		: m_data(), m_type(type), m_is_const(is_const) {}
 
 	~Value() {
 		if (m_type && !m_type->isPrimitive()) {

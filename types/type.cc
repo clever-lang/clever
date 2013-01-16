@@ -18,7 +18,7 @@ void Type::deallocMembers()
 		end(m_properties.end());
 
 	while (it != end) {
-		CLEVER_SAFE_DELREF((*it).second);
+		CLEVER_SAFE_DELREF((*it).second.value);
 		++it;
 	}
 
