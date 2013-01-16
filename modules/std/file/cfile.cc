@@ -6,7 +6,6 @@
  */
 
 #include <fstream>
-
 #include "core/value.h"
 #include "core/clever.h"
 #include "modules/std/file/cfile.h"
@@ -23,7 +22,8 @@ namespace clever { namespace packages { namespace std {
 namespace detail {
 
 // Given a mode string returns the according ios flag
-::std::ios::openmode convert_open_mode(const CString& mode) {
+::std::ios::openmode convert_open_mode(const CString& mode)
+{
 	// @TODO(muriloadriano): support binary modes.
 	if (mode == "r") {
 		return ::std::ios_base::in;
@@ -47,16 +47,19 @@ namespace detail {
 
 }
 
-void CFile::dump(const void* data) const {
+void CFile::dump(const void* data) const
+{
 	dump(data, ::std::cout);
 }
 
-void CFile::dump(const void* data, ::std::ostream& out) const {
+void CFile::dump(const void* data, ::std::ostream& out) const
+{
 	out << "File class (" << data << ")";
 }
 
 // File.new(string fileName, string openMode)
-void* CFile::allocData(CLEVER_TYPE_CTOR_ARGS) const {
+void* CFile::allocData(CLEVER_TYPE_CTOR_ARGS) const
+{
 	// @TODO(muriloadriano): allow object construction with a single argument
 	// and check the argument's type
 
@@ -64,7 +67,8 @@ void* CFile::allocData(CLEVER_TYPE_CTOR_ARGS) const {
 		detail::convert_open_mode(*(args->at(1)->getStr())));
 }
 
-void CFile::deallocData(void* data) {
+void CFile::deallocData(CLEVER_TYPE_DTOR_ARGS)
+{
 	delete CLEVER_CAST(fstream*, data);
 }
 
