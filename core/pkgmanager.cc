@@ -34,6 +34,7 @@ void PkgManager::shutdown()
 			TypeMap::const_iterator itt(types.begin()), ite(types.end());
 
 			while (itt != ite) {
+				itt->second->deallocMembers();
 				delete itt->second;
 				++itt;
 			}
@@ -118,11 +119,13 @@ void PkgManager::importPackage(Scope* scope, Environment* env, const CString* pa
 	if (it == m_pkgs.end()) {
 		std::cerr << "Package not found!" << std::endl;
 	}
-	if (it->second->isLoaded()) {
+	if (it->second->isFullyLoaded()) {
 		return;
 	}
-	it->second->init();
-	it->second->setLoaded();
+	if (!it->second->isLoaded()) {
+		it->second->init();
+	}
+	it->second->setFullyLoaded();
 
 	ModuleMap& mods = it->second->getModules();
 	ModuleMap::const_iterator itm = mods.begin(), endm = mods.end();

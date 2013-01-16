@@ -70,7 +70,7 @@ typedef std::pair<const CString*, Module*> ModulePair;
 /// Package representation
 class Package {
 public:
-	enum PackageStatus { UNLOADED, LOADED };
+	enum PackageStatus { UNLOADED, LOADED, FULLY_LOADED };
 
 	Package(std::string name)
 		: m_name(name), m_flags(UNLOADED), m_modules() {}
@@ -84,7 +84,10 @@ public:
 	ModuleMap& getModules() { return m_modules; }
 
 	void setLoaded() { m_flags = LOADED; }
-	bool isLoaded() const { return m_flags == LOADED; }
+	void setFullyLoaded() { m_flags = FULLY_LOADED; }
+
+	bool isLoaded() const { return m_flags == LOADED || m_flags == FULLY_LOADED; }
+	bool isFullyLoaded() const { return m_flags == FULLY_LOADED; }
 
 	virtual void init() = 0;
 	virtual const char* getVersion() const = 0;

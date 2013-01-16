@@ -17,9 +17,6 @@
 
 namespace clever {
 
-// Declaration of namespace global type ptrs for Clever native types
-DECLARE_CLEVER_NATIVE_TYPES();
-
 /// Compiler initialization phase
 void Compiler::init()
 {
@@ -44,15 +41,6 @@ void Compiler::shutdown()
 	if (m_scope_pool.size()) {
 		CLEVER_SAFE_DELETE(m_scope_pool[0]);
 	}
-
-	delete CLEVER_INT_TYPE;
-	delete CLEVER_STR_TYPE;
-	delete CLEVER_DOUBLE_TYPE;
-	delete CLEVER_FUNC_TYPE;
-	delete CLEVER_BOOL_TYPE;
-	delete CLEVER_ARRAY_TYPE;
-	delete CLEVER_THREAD_TYPE;
-	delete CLEVER_MAP_TYPE;
 
 	m_pkg.shutdown();
 }

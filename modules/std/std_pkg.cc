@@ -10,7 +10,9 @@
 namespace clever { namespace packages {
 
 // Initializes Std package
-void Std::init() {
+void Std::init()
+{
+	addModule(new std::CoreModule);
 #ifdef HAVE_MOD_STD_CONCURRENT
 	addModule(new std::ConcurrencyModule);
 #endif

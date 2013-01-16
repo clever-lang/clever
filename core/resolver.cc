@@ -20,29 +20,8 @@ Resolver::Resolver(Compiler* compiler)
 	m_stack.push(m_scope->getEnvironment());
 	m_scope->getEnvironment()->delRef();
 
-	// Native type allocation
-	Value* intval = new Value(CLEVER_INT_TYPE    = new IntType);
-	Value* strval = new Value(CLEVER_STR_TYPE    = new StrType);
-	Value* dblval = new Value(CLEVER_DOUBLE_TYPE = new DoubleType);
-	Value* fncval = new Value(CLEVER_FUNC_TYPE   = new FuncType);
-	Value* bolval = new Value(CLEVER_BOOL_TYPE   = new BoolType);
-	Value* arrval = new Value(CLEVER_ARRAY_TYPE  = new ArrayType);
-	Value* trdval = new Value(CLEVER_THREAD_TYPE = new ThreadType);
-	Value* mapval = new Value(CLEVER_MAP_TYPE    = new MapType);
-
-	m_scope->pushValue(CSTRING("Int"),      intval)->voffset = m_stack.top()->pushValue(intval);
-	m_scope->pushValue(CSTRING("String"),   strval)->voffset = m_stack.top()->pushValue(strval);
-	m_scope->pushValue(CSTRING("Double"),   dblval)->voffset = m_stack.top()->pushValue(dblval);
-	m_scope->pushValue(CSTRING("Function"), fncval)->voffset = m_stack.top()->pushValue(fncval);
-	m_scope->pushValue(CSTRING("Thread"),   trdval)->voffset = m_stack.top()->pushValue(trdval);
-	m_scope->pushValue(CSTRING("Bool"),     bolval)->voffset = m_stack.top()->pushValue(bolval);
-	m_scope->pushValue(CSTRING("Array"),    arrval)->voffset = m_stack.top()->pushValue(arrval);
-	m_scope->pushValue(CSTRING("Map"),      mapval)->voffset = m_stack.top()->pushValue(mapval);
-
-	CLEVER_INT_TYPE->init();
-	CLEVER_STR_TYPE->init();
-	CLEVER_ARRAY_TYPE->init();
-	CLEVER_MAP_TYPE->init();
+	m_compiler->getPkgManager().importModule(m_scope, m_stack.top(),
+		CSTRING("std"), CSTRING("core"));
 }
 
 void Resolver::visit(Block* node)

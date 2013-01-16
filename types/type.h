@@ -67,7 +67,9 @@ public:
 	Type(const CString* name)
 		: m_name(name), m_methods(), m_properties() {}
 
-	virtual ~Type();
+	virtual ~Type() {}
+
+	void deallocMembers();
 
 	Function* addMethod(Function* func);
 

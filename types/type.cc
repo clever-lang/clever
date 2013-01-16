@@ -12,14 +12,13 @@
 
 namespace clever {
 
-Type::~Type()
+void Type::deallocMembers()
 {
 	PropertyMap::const_iterator it(m_properties.begin()),
 		end(m_properties.end());
 
 	while (it != end) {
-		// TODO(Felipe): fix crash
-		// CLEVER_SAFE_DELREF((*it).second);
+		CLEVER_SAFE_DELREF((*it).second);
 		++it;
 	}
 

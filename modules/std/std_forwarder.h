@@ -5,6 +5,7 @@
  * This file is distributed under the MIT license. See LICENSE for details.
  */
 
+#include "modules/std/core/core.h"
 #ifdef HAVE_MOD_STD_CONCURRENT
 #	include "modules/std/concurrent/module.h"
 #endif
