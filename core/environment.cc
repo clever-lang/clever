@@ -9,6 +9,19 @@
 
 namespace clever {
 
+Environment* Environment::activate(Environment* outer) const {
+    Environment* env = new Environment(outer);
+    env->m_active = true;
+
+    for (size_t i = 0, size = m_data.size(); i < size; i++) {
+        Value* value = new Value();
+        value->copy(m_data[i]);
+        env->pushValue(value);
+    }
+
+    return env;
+}
+
 Value* Environment::getValue(const ValueOffset& offset) const {
     if (offset.first == 0) { // local
         clever_assert(offset.second < m_data.size(),

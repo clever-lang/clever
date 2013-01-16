@@ -110,19 +110,6 @@ inline ValueOffset Environment::pushValue(Value* value) {
 	return ValueOffset(0, m_data.size()-1);
 }
 
-inline Environment* Environment::activate(Environment* outer) const {
-	Environment* env = new Environment(outer);
-	env->m_active = true;
-
-	for (size_t i = 0, size = m_data.size(); i < size; i++) {
-		Value* value = new Value();
-		value->copy(m_data[i]);
-		env->pushValue(value);
-	}
-
-	return env;
-}
-
 } // clever
 
 #endif // CLEVER_ENVIRONMENT_H
