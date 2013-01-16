@@ -62,7 +62,6 @@ void* CFile::allocData(CLEVER_TYPE_CTOR_ARGS) const
 {
 	// @TODO(muriloadriano): allow object construction with a single argument
 	// and check the argument's type
-
 	return new fstream(args->at(0)->getStr()->c_str(),
 		detail::convert_open_mode(*(args->at(1)->getStr())));
 }
@@ -163,6 +162,7 @@ CLEVER_TYPE_INIT(CFile::init)
 	addMethod(new Function("isOpen",	(MethodPtr)&CFile::isOpen));
 
 	addProperty(CSTRING("in"), new Value(long(::std::ios_base::in), true));
+	addProperty(CSTRING("out"), new Value(long(::std::ios_base::out), true));
 }
 
 }}} // clever::packages::std

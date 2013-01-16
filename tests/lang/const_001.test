@@ -2,11 +2,11 @@ Testing const variables
 ==CODE==
 import std.io.*;
 
-const a = 1;
-var b = a;
+const MYCONSTANT = 1;
+var b = MYCONSTANT;
 b = 2;
 
-println(a, b, a + b);
+println(MYCONSTANT, b, MYCONSTANT + b);
 ==RESULT==
 1
 2

@@ -65,6 +65,7 @@ class Value;
 
 %type <type> TYPE
 %type <ident> IDENT
+%type <ident> CONSTANT
 %type <strlit> STR
 %type <intlit> NUM_INTEGER
 %type <dbllit> NUM_DOUBLE
@@ -176,6 +177,7 @@ class Value;
 %token TRY           "try"
 %token THROW         "throw"
 %token CONTINUE      "continue"
+%token CONSTANT      "constant identifier"
 
 %left ',';
 %left LOGICAL_OR;
@@ -265,6 +267,7 @@ critical_block:
 
 rvalue:
 		IDENT
+	|	CONSTANT
 	|	STR
 	|	NUM_INTEGER
 	|	NUM_DOUBLE
@@ -408,7 +411,7 @@ const_decl_list:
 ;
 
 const_decl_impl:
-		IDENT '=' rvalue { $$ = new ast::VariableDecl($1, new ast::Assignment($1, $<node>3, yyloc), true, yyloc); }
+		CONSTANT '=' rvalue { $$ = new ast::VariableDecl($1, new ast::Assignment($1, $<node>3, yyloc), true, yyloc); }
 ;
 
 assignment:
