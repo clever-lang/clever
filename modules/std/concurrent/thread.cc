@@ -14,8 +14,10 @@
 
 namespace clever { namespace packages { namespace std {
 
-static inline void ThreadHandler(void* ThreadArgument){
+static inline void* ThreadHandler(void* ThreadArgument){
+	::std::cout << "Hello From ThreadHandler" << ::std::endl;
 	
+	return NULL;
 }
 
 void Thread::dump(const void* data) const
@@ -47,6 +49,8 @@ void* Thread::allocData(CLEVER_TYPE_CTOR_ARGS) const
 		if (args->size()) {
 			if (args->at(0)->getType() == CLEVER_FUNC_TYPE) {
 				intern->entry = static_cast<Function*>(args->at(0)->getObj());
+			} else {
+				clever_error("Thread.new was expecting a Function");
 			}
 		}
 	}
@@ -78,8 +82,9 @@ CLEVER_METHOD(Thread::start)
 	}
 	
 	if (intern->entry) {
-		::std::cout << "GOT ENTRY POINT" << ::std::endl;
-	}
+		/** @TODO(krakjoe) pthread attributes **/
+		result->setBool((pthread_create(intern->thread, NULL, ThreadHandler, intern) == 0));
+	} else result->setBool(false);
 }
 
 CLEVER_TYPE_INIT(Thread::init)
