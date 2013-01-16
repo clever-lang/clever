@@ -222,6 +222,13 @@ next_token:
 		RET(token::IDENT);
 	}
 
+	<INITIAL>CONSTANT {
+		yylval->ident = new ast::Ident(
+			CSTRING(std::string(reinterpret_cast<const char*>(s.yylex), yylen)), *yyloc);
+
+		RET(token::CONSTANT);
+	}
+
 	<INITIAL>TYPE {
 		yylval->type = new ast::Type(
 			CSTRING(std::string(reinterpret_cast<const char*>(s.yylex), yylen)), *yyloc);

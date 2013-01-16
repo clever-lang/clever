@@ -202,12 +202,13 @@ namespace clever {
      TRY = 309,
      THROW = 310,
      CONTINUE = 311,
-     XOR_EQUAL = 312,
-     DEEPCOPY = 313,
-     COPY = 314,
-     DECREMENT = 315,
-     INCREMENT = 316,
-     UMINUS = 317
+     CONSTANT = 312,
+     XOR_EQUAL = 313,
+     DEEPCOPY = 314,
+     COPY = 315,
+     DECREMENT = 316,
+     INCREMENT = 317,
+     UMINUS = 318
    };
 
     };
