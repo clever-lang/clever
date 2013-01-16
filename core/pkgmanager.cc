@@ -23,6 +23,7 @@ void PkgManager::init()
 /// Performs shutdown operation
 void PkgManager::shutdown()
 {
+	std::vector<Type*> typevec;
 	PackageMap::const_iterator it = m_pkgs.begin(), end = m_pkgs.end();
 
 	while (it != end) {
@@ -34,8 +35,8 @@ void PkgManager::shutdown()
 			TypeMap::const_iterator itt(types.begin()), ite(types.end());
 
 			while (itt != ite) {
-				//itt->second->deallocMembers();
-				delete itt->second;
+				itt->second->deallocMembers();
+				typevec.push_back(itt->second);
 				++itt;
 			}
 
@@ -45,6 +46,10 @@ void PkgManager::shutdown()
 
 		delete it->second;
 		++it;
+	}
+
+	for (size_t i = 0, j = typevec.size(); i < j; ++i) {
+		delete typevec[i];
 	}
 }
 
