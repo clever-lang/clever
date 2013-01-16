@@ -12,10 +12,10 @@
 #include "core/vm.h"
 #include "core/scope.h"
 #include "core/value.h"
-#include "types/function.h"
+#include "modules/std/core/function.h"
+#include "modules/std/core/array.h"
 #include "types/thread.h"
 #include "types/type.h"
-#include "types/array.h"
 
 #define OPCODE    m_inst[m_pc]
 #define VM_EXIT() goto exit

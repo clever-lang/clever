@@ -6,7 +6,7 @@
  */
 
 #include "types/type.h"
-#include "types/function.h"
+#include "modules/std/core/function.h"
 #include "modules/std/unicode/string.h"
 #include "unicode/ustream.h"
 #include "unicode/unistr.h"

@@ -10,7 +10,7 @@
 #include "core/clever.h"
 #include "modules/std/file/cfile.h"
 #include "types/type.h"
-#include "types/function.h"
+#include "modules/std/core/function.h"
 
 // @TODO(muriloadriano): make this available and use in all Clever API
 #define CLEVER_CAST(Type, obj) (static_cast<Type*>(obj))

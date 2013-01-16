@@ -5,7 +5,7 @@
  * This file is distributed under the MIT license. See LICENSE for details.
  */
 #include "core/value.h"
-#include "types/function.h"
+#include "modules/std/core/function.h"
 #include "core/pkgmanager.h"
 #include "modules/std/fcgi/fcgi.h"
 #include "modules/std/fcgi/server.h"

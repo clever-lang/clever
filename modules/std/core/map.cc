@@ -8,8 +8,8 @@
 #include <map>
 #include "core/value.h"
 #include "core/vm.h"
-#include "types/map.h"
-#include "types/function.h"
+#include "modules/std/core/map.h"
+#include "modules/std/core/function.h"
 
 namespace clever {
 
@@ -74,7 +74,7 @@ CLEVER_METHOD(MapType::insert)
 	if (!clever_check_args("s*")) {
 		return;
 	}
-	
+
 	ValueMap& mapped = (CLEVER_GET_OBJECT(MapObject*, CLEVER_THIS()))->getData();
 	mapped.insert(ValuePair(*args[0]->getStr(), args[1]));
 	args[1]->addRef();

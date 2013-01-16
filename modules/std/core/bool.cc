@@ -5,7 +5,7 @@
  * This file is distributed under the MIT license. See LICENSE for details.
  */
 
-#include "types/bool.h"
+#include "modules/std/core/bool.h"
 
 namespace clever {
 

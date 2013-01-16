@@ -8,7 +8,7 @@
 #include <string>
 #include <sstream>
 #include <cstdio>
-#include "types/str.h"
+#include "modules/std/core/str.h"
 #include "core/compiler.h"
 #include "core/vm.h"
 #include "core/clever.h"

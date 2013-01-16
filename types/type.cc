@@ -8,7 +8,7 @@
 #include "types/type.h"
 #include "core/value.h"
 #include "core/cexception.h"
-#include "types/function.h"
+#include "modules/std/core/function.h"
 
 namespace clever {
 

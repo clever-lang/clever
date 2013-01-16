@@ -7,7 +7,7 @@
 
 #include "core/cthread.h"
 #include "core/value.h"
-#include "types/function.h"
+#include "modules/std/core/function.h"
 #include "core/pkgmanager.h"
 #include "modules/std/unicode/unicode.h"
 #include "modules/std/unicode/string.h"

@@ -6,8 +6,8 @@
  */
 
 #include <sstream>
-#include "types/int.h"
-#include "types/function.h"
+#include "modules/std/core/int.h"
+#include "modules/std/core/function.h"
 
 namespace clever {
 

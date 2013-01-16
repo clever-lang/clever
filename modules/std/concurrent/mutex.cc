@@ -8,7 +8,7 @@
 #include "core/clever.h"
 #include "core/value.h"
 #include "modules/std/concurrent/mutex.h"
-#include "types/function.h"
+#include "modules/std/core/function.h"
 #include "types/type.h"
 
 namespace clever { namespace packages { namespace std {
@@ -30,7 +30,7 @@ void Mutex::dump(const void* data, ::std::ostream& out) const
 void* Mutex::allocData(CLEVER_TYPE_CTOR_ARGS) const
 {
 	pthread_mutex_t* mutex = new pthread_mutex_t;
-	if (mutex) {	
+	if (mutex) {
 		// @TODO(krakjoe) mutex attributes
 		pthread_mutex_init(mutex, NULL);
 	}

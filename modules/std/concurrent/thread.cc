@@ -9,16 +9,16 @@
 #include "core/value.h"
 #include "modules/std/concurrent/module.h"
 #include "modules/std/concurrent/thread.h"
-#include "types/function.h"
+#include "modules/std/core/function.h"
 #include "types/type.h"
 
 namespace clever { namespace packages { namespace std {
 
 static inline void* ThreadHandler(void* ThreadArgument){
 	ThreadData* intern = static_cast<ThreadData*>(ThreadArgument);
-	
+
 	::std::cout << "Hello From ThreadHandler" << ::std::endl;
-	
+
 	return intern;
 }
 
@@ -32,7 +32,7 @@ void Thread::dump(const void* data, ::std::ostream& out) const
 	Value::DataValue* dvalue =
 		static_cast<Value::DataValue*>(const_cast<void*>(data));
 	if (dvalue) {
-		
+
 	}
 }
 
@@ -44,7 +44,7 @@ void* Thread::allocData(CLEVER_TYPE_CTOR_ARGS) const
 		intern->thread = new pthread_t;
 		intern->lock = new pthread_mutex_t;
 		intern->entry = NULL;
-		
+
 		if (intern->lock) {
 			if (pthread_mutex_init(intern->lock, NULL) != 0) {
 				clever_error("Thread.new failed to initialize a lock for the Thread");
@@ -80,7 +80,7 @@ void Thread::deallocData(void* data)
 
 			delete intern->lock;
 		}
-		
+
 		delete intern->thread;
 		delete intern;
 	}
@@ -89,12 +89,12 @@ void Thread::deallocData(void* data)
 CLEVER_METHOD(Thread::start)
 {
 	ThreadData* intern = CLEVER_GET_OBJECT(ThreadData*, CLEVER_THIS());
-	
+
 	if (!intern) {
 		//CLEVER_THROW(eventually)
 		return;
 	}
-	
+
 	if (intern->entry != NULL) {
 		/** @TODO(krakjoe) pthread attributes **/
 

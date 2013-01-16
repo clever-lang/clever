@@ -6,7 +6,7 @@
  */
 
 #include <math.h>
-#include "types/double.h"
+#include "modules/std/core/double.h"
 
 namespace clever {
 
