@@ -40,6 +40,7 @@ class Import;
 class Boolean;
 class NullLit;
 class MethodCall;
+class AttributeAccess;
 class Property;
 class Try;
 class TrueLit;
@@ -712,6 +713,36 @@ private:
 	bool m_static;
 
 	DISALLOW_COPY_AND_ASSIGN(MethodCall);
+};
+
+class AttributeAccess: public Node {
+public:
+	AttributeAccess(Type* callee, Ident* attribute, const location& location)
+		: Node(location), m_callee(callee), m_attribute(attribute),
+		m_static(true) {
+		CLEVER_ADDREF(m_callee);
+		CLEVER_ADDREF(m_attribute);
+	}
+
+	~AttributeAccess() {
+		CLEVER_DELREF(m_callee);
+		CLEVER_DELREF(m_attribute);
+	}
+
+	bool isStaticAccess() const { return m_static; }
+
+	Node* getCallee() const { return m_callee; }
+
+	Ident* getAttribute() const { return m_attribute; }
+
+	virtual void accept(Visitor& visitor);
+	virtual Node* accept(Transformer& transformer);
+private:
+	Node* m_callee;
+	Ident* m_attribute;
+	bool m_static;
+
+	DISALLOW_COPY_AND_ASSIGN(AttributeAccess);
 };
 
 class FunctionCall: public Node {

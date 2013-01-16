@@ -62,6 +62,7 @@ public:
 	virtual Node* transform(Import* node) { return node; }
 	virtual Node* transform(Break* node) { return node; }
 	virtual Node* transform(Continue* node) { return node; }
+	virtual Node* transform(AttributeAccess* node) { return node; }
 };
 
 }} // clever::ast
