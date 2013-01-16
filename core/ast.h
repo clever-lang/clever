@@ -115,7 +115,7 @@ public:
 
 	Node* append(Node* node) {
 		m_nodes.push_back(node);
-		CLEVER_ADDREF(node);
+		node->addRef();
 		return node;
 	}
 
@@ -128,7 +128,7 @@ public:
 		NodeList::iterator it = m_nodes.begin(), end = m_nodes.end();
 
 		while (it != end) {
-			CLEVER_DELREF((*it));
+			(*it)->delRef();
 			++it;
 		}
 	}
@@ -160,13 +160,13 @@ public:
 
 	Comparison(ComparisonOperator op, Node* lhs, Node* rhs, const location& location)
 		: Node(location), m_op(op), m_lhs(lhs), m_rhs(rhs) {
-		CLEVER_ADDREF(m_lhs);
-		CLEVER_ADDREF(m_rhs);
+		m_lhs->addRef();
+		m_rhs->addRef();
 	}
 
 	~Comparison() {
-		CLEVER_DELREF(m_lhs);
-		CLEVER_DELREF(m_rhs);
+		m_lhs->delRef();
+		m_rhs->delRef();
 	}
 
 	ComparisonOperator getOperator() const { return m_op; }
@@ -188,12 +188,12 @@ class Assignment: public Node {
 public:
 	Assignment(Node* lhs, Node* rhs, const location& location)
 		: Node(location), m_conditional(false), m_lhs(lhs), m_rhs(rhs) {
-		CLEVER_ADDREF(m_lhs);
+		m_lhs->addRef();
 		CLEVER_SAFE_ADDREF(m_rhs);
 	}
 
 	~Assignment() {
-		CLEVER_DELREF(m_lhs);
+		m_lhs->delRef();
 		CLEVER_SAFE_DELREF(m_rhs);
 	}
 
@@ -249,25 +249,25 @@ class ThreadBlock: public NodeArray {
 public:
 	ThreadBlock(Block* block, const location& location)
 		: NodeArray(location), m_block(block), m_name(NULL), m_size(NULL) {
-		CLEVER_ADDREF(m_block);
+		m_block->addRef();
 	}
 
 	ThreadBlock(Block* block, Ident* name, const location& location)
 		: NodeArray(location), m_block(block), m_name(name), m_size(NULL) {
-		CLEVER_ADDREF(m_block);
-		CLEVER_ADDREF(m_name);
+		m_block->addRef();
+		m_name->addRef();
 	}
 
 
 	ThreadBlock(Block* block, Ident* name, Node* size, const location& location)
 		: NodeArray(location), m_block(block), m_name(name), m_size(size) {
-		CLEVER_ADDREF(m_block);
-		CLEVER_ADDREF(m_name);
-		CLEVER_ADDREF(m_size);
+		m_block->addRef();
+		m_name->addRef();
+		m_size->addRef();
 	}
 
 	~ThreadBlock() {
-		CLEVER_DELREF(m_block);
+		m_block->delRef();
 		CLEVER_SAFE_DELREF(m_name);
 		CLEVER_SAFE_DELREF(m_size);
 	}
@@ -294,11 +294,11 @@ class Wait: public NodeArray {
 public:
 	Wait(Ident* name, const location& location)
 		: NodeArray(location), m_name(name) {
-		CLEVER_ADDREF(m_name);
+		m_name->addRef();
 	}
 
 	~Wait() {
-		CLEVER_DELREF(m_name);
+		m_name->delRef();
 	}
 
 	virtual void accept(Visitor& visitor);
@@ -317,11 +317,11 @@ class CriticalBlock: public NodeArray {
 public:
 	CriticalBlock(Block* block, const location& location)
 		: NodeArray(location), m_block(block) {
-		CLEVER_ADDREF(m_block);
+		m_block->addRef();
 	}
 
 	~CriticalBlock() {
-		CLEVER_DELREF(m_block);
+		m_block->delRef();
 	}
 
 	virtual void accept(Visitor& visitor);
@@ -358,17 +358,17 @@ class Instantiation: public Node {
 public:
 	Instantiation(const CString* type, NodeArray* args, const location& location)
 		: Node(location), m_type(new Type(type, location)), m_args(args) {
-		CLEVER_ADDREF(m_type);
+		m_type->addRef();
 		CLEVER_SAFE_ADDREF(m_args);
 	}
 
 	Instantiation(Type* type, NodeArray* args, const location& location)
 		: Node(location), m_type(type), m_args(args) {
-		CLEVER_ADDREF(m_type);
+		m_type->addRef();
 		CLEVER_SAFE_ADDREF(m_args);
 	}
 	~Instantiation() {
-		CLEVER_DELREF(m_type);
+		m_type->delRef();
 		CLEVER_SAFE_DELREF(m_args);
 	}
 
@@ -396,12 +396,12 @@ class Import: public Node {
 public:
 	Import(Ident* package, Ident* module, const location& location)
 		: Node(location), m_package(package), m_module(module) {
-		CLEVER_ADDREF(m_package);
+		m_package->addRef();
 		CLEVER_SAFE_ADDREF(m_module);
 	}
 
 	~Import() {
-		CLEVER_DELREF(m_package);
+		m_package->delRef();
 		CLEVER_SAFE_DELREF(m_module);
 	}
 
@@ -421,15 +421,15 @@ private:
 class VariableDecl: public Node {
 public:
 	VariableDecl(Ident* ident, Assignment* assignment, bool is_const,
-		const location& location)
+				 const location& location)
 		: Node(location), m_ident(ident), m_assignment(assignment),
-		m_is_const(is_const) {
-		CLEVER_ADDREF(m_ident);
+		  m_is_const(is_const) {
+		m_ident->addRef();
 		CLEVER_SAFE_ADDREF(m_assignment);
 	}
 
 	~VariableDecl() {
-		CLEVER_DELREF(m_ident);
+		m_ident->delRef();
 		CLEVER_SAFE_DELREF(m_assignment);
 	}
 
@@ -467,13 +467,13 @@ public:
 
 	Arithmetic(ArithOperator op, Node* lhs, Node* rhs, const location& location)
 		: Node(location), m_op(op), m_lhs(lhs), m_rhs(rhs) {
-		CLEVER_ADDREF(m_lhs);
-		CLEVER_ADDREF(m_rhs);
+		m_lhs->addRef();
+		m_rhs->addRef();
 	}
 
 	~Arithmetic() {
-		CLEVER_DELREF(m_lhs);
-		CLEVER_DELREF(m_rhs);
+		m_lhs->delRef();
+		m_rhs->delRef();
 	}
 
 	ArithOperator getOperator() const { return m_op; }
@@ -502,13 +502,13 @@ public:
 
 	Logic(LogicOperator op, Node* lhs, Node* rhs, const location& location)
 		: Node(location), m_op(op), m_lhs(lhs), m_rhs(rhs) {
-		CLEVER_ADDREF(m_lhs);
-		CLEVER_ADDREF(m_rhs);
+		m_lhs->addRef();
+		m_rhs->addRef();
 	}
 
 	~Logic() {
-		CLEVER_DELREF(m_lhs);
-		CLEVER_DELREF(m_rhs);
+		m_lhs->delRef();
+		m_rhs->delRef();
 	}
 
 	bool isEvaluable() const { return true; }
@@ -537,13 +537,13 @@ public:
 
 	Boolean(BooleanOperator op, Node* lhs, Node* rhs, const location& location)
 		: Node(location), m_op(op), m_lhs(lhs), m_rhs(rhs) {
-		CLEVER_ADDREF(m_lhs);
-		CLEVER_ADDREF(m_rhs);
+		m_lhs->addRef();
+		m_rhs->addRef();
 	}
 
 	~Boolean() {
-		CLEVER_DELREF(m_lhs);
-		CLEVER_DELREF(m_rhs);
+		m_lhs->delRef();
+		m_rhs->delRef();
 	}
 
 	BooleanOperator getOperator() const { return m_op; }
@@ -574,13 +574,13 @@ public:
 
 	Bitwise(BitwiseOperator op, Node* lhs, Node* rhs, const location& location)
 		: Node(location), m_op(op), m_lhs(lhs), m_rhs(rhs) {
-		CLEVER_ADDREF(m_lhs);
-		CLEVER_ADDREF(m_rhs);
+		m_lhs->addRef();
+		m_rhs->addRef();
 	}
 
 	~Bitwise() {
-		CLEVER_DELREF(m_lhs);
-		CLEVER_DELREF(m_rhs);
+		m_lhs->delRef();
+		m_rhs->delRef();
 	}
 
 	bool isEvaluable() const { return true; }
@@ -661,21 +661,21 @@ class MethodCall: public Node {
 public:
 	MethodCall(Node* callee, Ident* method, NodeArray* args, const location& location)
 		: Node(location), m_callee(callee), m_method(method), m_args(args), m_static(false) {
-		CLEVER_ADDREF(m_callee);
-		CLEVER_ADDREF(m_method);
+		m_callee->addRef();
+		m_method->addRef();
 		CLEVER_SAFE_ADDREF(m_args);
 	}
 
 	MethodCall(Type* callee, Ident* method, NodeArray* args, const location& location)
 		: Node(location), m_callee(callee), m_method(method), m_args(args), m_static(true) {
-		CLEVER_ADDREF(m_callee);
-		CLEVER_ADDREF(m_method);
+		m_callee->addRef();
+		m_method->addRef();
 		CLEVER_SAFE_ADDREF(m_args);
 	}
 
 	~MethodCall() {
-		CLEVER_DELREF(m_callee);
-		CLEVER_DELREF(m_method);
+		m_callee->delRef();
+		m_method->delRef();
 		CLEVER_SAFE_DELREF(m_args);
 	}
 
@@ -718,12 +718,12 @@ class FunctionCall: public Node {
 public:
 	FunctionCall(Node* callee, NodeArray* args, const location& location)
 		: Node(location), m_callee(callee), m_args(args) {
-		CLEVER_ADDREF(m_callee);
+		m_callee->addRef();
 		CLEVER_SAFE_ADDREF(m_args);
 	}
 
 	~FunctionCall() {
-		CLEVER_DELREF(m_callee);
+		m_callee->delRef();
 		CLEVER_SAFE_DELREF(m_args);
 	}
 
@@ -761,12 +761,12 @@ class While: public Node {
 public:
 	While(Node* condition, Node* block, const location& location)
 		: Node(location), m_condition(condition), m_block(block) {
-		CLEVER_ADDREF(m_condition);
+		m_condition->addRef();
 		CLEVER_SAFE_ADDREF(m_block);
 	}
 
 	~While() {
-		CLEVER_DELREF(m_condition);
+		m_condition->delRef();
 		CLEVER_SAFE_DELREF(m_block);
 	}
 
@@ -796,15 +796,15 @@ public:
 
 	~If() {
 		std::vector<std::pair<Node*, Node*> >::const_iterator it(m_conditionals.begin()),
-			end(m_conditionals.end());
+				end(m_conditionals.end());
 
 		while (it != end) {
-			CLEVER_DELREF((*it).first);
-			CLEVER_DELREF((*it).second);
+			(*it).first->delRef();
+			(*it).second->delRef();
 			++it;
 		}
 		if (m_else_node) {
-			CLEVER_DELREF(m_else_node);
+			m_else_node->delRef();
 		}
 	}
 
@@ -813,15 +813,15 @@ public:
 
 		m_conditionals.push_back(std::pair<Node*,Node*>(cond_node, then_node));
 
-		CLEVER_ADDREF(cond_node);
-		CLEVER_ADDREF(then_node);
+		cond_node->addRef();
+		then_node->addRef();
 	}
 
 	std::vector<std::pair<Node*, Node*> >& getConditionals() { return m_conditionals; }
 
 	void setElseNode(Node* else_node) {
 		m_else_node = else_node;
-		CLEVER_ADDREF(m_else_node);
+		m_else_node->addRef();
 	}
 
 	Node* getElseNode() { return m_else_node; }
@@ -955,21 +955,21 @@ class Property: public Node {
 public:
 	Property(Node* callee, Ident* prop_name, const location& location)
 		: Node(location), m_callee(callee), m_prop_name(prop_name),
-		m_static(false) {
-		CLEVER_ADDREF(m_callee);
-		CLEVER_ADDREF(m_prop_name);
+		  m_static(false) {
+		m_callee->addRef();
+		m_prop_name->addRef();
 	}
 
 	Property(Type* callee, Ident* prop_name, const location& location)
 		: Node(location), m_callee(callee), m_prop_name(prop_name),
-		m_static(true) {
-		CLEVER_ADDREF(m_callee);
-		CLEVER_ADDREF(m_prop_name);
+		  m_static(true) {
+		m_callee->addRef();
+		m_prop_name->addRef();
 	}
 
 	~Property() {
-		CLEVER_DELREF(m_callee);
-		CLEVER_DELREF(m_prop_name);
+		m_callee->delRef();
+		m_prop_name->delRef();
 	}
 
 	Node* getCallee() const { return m_callee; }
@@ -998,11 +998,11 @@ public:
 
 	IncDec(IncDecOperator op, Node* var, const location& location)
 		: Node(location), m_op(op), m_var(var) {
-		CLEVER_ADDREF(m_var);
+		m_var->addRef();
 	}
 
 	~IncDec() {
-		CLEVER_DELREF(m_var);
+		m_var->delRef();
 	}
 
 	bool isEvaluable() const { return true; }
@@ -1024,12 +1024,12 @@ class Try: public Node {
 public:
 	Try(Block* try_block, NodeArray* catches, Block* finally, const location& location)
 		: Node(location), m_try(try_block), m_catch(catches), m_finally(finally) {
-		CLEVER_ADDREF(m_try);
+		m_try->addRef();
 		CLEVER_SAFE_ADDREF(m_catch);
 		CLEVER_SAFE_ADDREF(m_finally);
 	}
 	~Try() {
-		CLEVER_DELREF(m_try);
+		m_try->delRef();
 		CLEVER_SAFE_DELREF(m_catch);
 		CLEVER_SAFE_DELREF(m_finally);
 	}
@@ -1055,13 +1055,13 @@ class Catch: public Node {
 public:
 	Catch(Ident* var, Block* block, const location& location)
 		: Node(location), m_var(var), m_block(block) {
-		CLEVER_ADDREF(m_var);
-		CLEVER_ADDREF(m_block);
+		m_var->addRef();
+		m_block->addRef();
 	}
 
 	~Catch() {
-		CLEVER_DELREF(m_var);
-		CLEVER_DELREF(m_block);
+		m_var->delRef();
+		m_block->delRef();
 	}
 
 	Ident* getVar() const { return m_var; }
@@ -1081,11 +1081,11 @@ class Throw: public Node {
 public:
 	Throw(Node* expr, const location& location)
 		: Node(location), m_expr(expr) {
-		CLEVER_ADDREF(m_expr);
+		m_expr->addRef();
 	}
 
 	~Throw() {
-		CLEVER_DELREF(m_expr);
+		m_expr->delRef();
 	}
 
 	Node* getExpr() const { return m_expr; }

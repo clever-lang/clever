@@ -99,6 +99,10 @@ if (GEN_PARSER)
 	list(APPEND re2c_opts "-i")
 	list(APPEND re2c_opts "--no-generation-date")
 
+	if (NOT ${BISON_VERSION} VERSION_LESS "2.7.0")
+		message(FATAL_ERROR "Clever parsers cannot be generated with Bison 2.7 yet.")
+	endif (NOT ${BISON_VERSION} VERSION_LESS "2.7.0")
+
 	if (${RE2C_VERSION} VERSION_GREATER "0.13.0")
 		list(APPEND re2c_opts "-c")
 	endif (${RE2C_VERSION} VERSION_GREATER "0.13.0")
@@ -185,6 +189,7 @@ add_executable(clever
 	core/driver.h
 	core/evaluator.cc
 	core/evaluator.h
+	core/environment.cc
 	core/environment.h
 	core/ir.h
 	core/main.cc
@@ -192,6 +197,7 @@ add_executable(clever
 	core/opcode.cc
 	core/opcode.h
 	core/parser.cc
+	core/platform.h
 	core/pkgmanager.cc
 	core/pkgmanager.h
 	core/refcounted.h
@@ -268,9 +274,9 @@ install(TARGETS clever RUNTIME DESTINATION bin)
 
 # Files to delete
 # ---------------------------------------------------------------------------
-set_directory_properties(PROPERTIES
-	ADDITIONAL_MAKE_CLEAN_FILES
-	"core/stack.hh;core/parser.cc;core/parser.hh;core/location.hh;core/position.hh;core/scanner.cc")
+#set_directory_properties(PROPERTIES
+#	ADDITIONAL_MAKE_CLEAN_FILES
+#	"")
 
 # Packaging
 # ---------------------------------------------------------------------------
