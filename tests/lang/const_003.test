@@ -1,4 +1,4 @@
-[FATAL] Testing const variables
+Testing const variables
 ==CODE==
 import std.io.*;
 
