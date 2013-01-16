@@ -6,7 +6,6 @@
  */
 
 #include "modules/std/core/core.h"
-#include "core/cthread.h"
 #include "core/pkgmanager.h"
 #include "core/value.h"
 #include "types/native_types.h"
