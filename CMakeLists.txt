@@ -274,9 +274,9 @@ install(TARGETS clever RUNTIME DESTINATION bin)
 
 # Files to delete
 # ---------------------------------------------------------------------------
-set_directory_properties(PROPERTIES
-	ADDITIONAL_MAKE_CLEAN_FILES
-	"core/stack.hh;core/parser.cc;core/parser.hh;core/location.hh;core/position.hh;core/scanner.cc")
+#set_directory_properties(PROPERTIES
+#	ADDITIONAL_MAKE_CLEAN_FILES
+#	"")
 
 # Packaging
 # ---------------------------------------------------------------------------
