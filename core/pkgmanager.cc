@@ -34,7 +34,7 @@ void PkgManager::shutdown()
 			TypeMap::const_iterator itt(types.begin()), ite(types.end());
 
 			while (itt != ite) {
-				itt->second->deallocMembers();
+				//itt->second->deallocMembers();
 				delete itt->second;
 				++itt;
 			}

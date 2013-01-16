@@ -26,7 +26,7 @@ void Compiler::init()
 /// Frees all resource used by the compiler
 void Compiler::shutdown()
 {
-	CLEVER_SAFE_DELETE(g_cstring_tbl);
+
 
 	if (m_const_env) {
 		m_const_env->clear();
@@ -43,6 +43,8 @@ void Compiler::shutdown()
 	}
 
 	m_pkg.shutdown();
+
+	CLEVER_SAFE_DELETE(g_cstring_tbl);
 }
 
 /// Displays an error message and exits
