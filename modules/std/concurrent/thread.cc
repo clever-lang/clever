@@ -35,13 +35,20 @@ void Thread::dump(const void* data, ::std::ostream& out) const
 void* Thread::allocData(CLEVER_TYPE_CTOR_ARGS) const
 {
 	ThreadData* intern = new ThreadData;
-	if (intern) {	
+	if (intern) {
+
+		intern->thread = new pthread_t;
+		intern->lock = new pthread_mutex_t;
+
+		if (intern->lock) {
+			pthread_mutex_init(intern->lock, NULL);
+		}
+
 		if (args->size()) {
 			if (args->at(0)->getType() == CLEVER_FUNC_TYPE) {
 				intern->entry = static_cast<Function*>(args->at(0)->getObj());
 			}
 		}
-		intern->thread = new pthread_t;
 	}
 	return intern;
 }
@@ -50,6 +57,12 @@ void Thread::deallocData(void* data)
 {
 	ThreadData* intern = static_cast<ThreadData*>(data);
 	if (intern) {
+
+		if (intern->lock) {
+			pthread_mutex_destroy(intern->lock);
+			delete intern->lock;
+		}
+		
 		delete intern->thread;
 		delete intern;
 	}
