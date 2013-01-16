@@ -70,7 +70,7 @@ public:
 		CStringTableBase::const_iterator it(m_map.begin()), end_table(m_map.end());
 
 		while (it != end_table) {
-			delete it->second;
+			clever_delete(it->second);
 			++it;
 		}
 	}

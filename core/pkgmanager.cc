@@ -40,16 +40,16 @@ void PkgManager::shutdown()
 				++itt;
 			}
 
-			delete itm->second;
+			clever_delete(itm->second);
 			++itm;
 		}
 
-		delete it->second;
+		clever_delete(it->second);
 		++it;
 	}
 
 	for (size_t i = 0, j = typevec.size(); i < j; ++i) {
-		delete typevec[i];
+		clever_delete(typevec[i]);
 	}
 }
 

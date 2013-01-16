@@ -133,8 +133,8 @@ void VM::wait()
 		for (size_t i = 0, j = it->size(); i < j; ++i) {
 			it->at(i)->t_handler.wait();
 
-			delete it->at(i)->vm_handler;
-			delete it->at(i);
+			clever_delete_var(it->at(i)->vm_handler);
+			clever_delete(it->at(i));
 		}
 		++it;
 	}
@@ -451,8 +451,8 @@ void VM::run()
 
 				VMThread* t = thread_list.at(i);
 				t->t_handler.wait();
-				delete t->vm_handler;
-				delete t;
+				clever_delete_var(t->vm_handler);
+				clever_delete_var(t);
 			}
 
 			if (n_threads() == 0) {
@@ -482,7 +482,7 @@ void VM::run()
 				env->clear();
 				env = other;
 			}
-			delete m_temp_env;
+			clever_delete_var(m_temp_env);
 
 			getMutex()->unlock();
 			VM_EXIT();
