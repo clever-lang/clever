@@ -37,6 +37,24 @@ extern jmp_buf fatal_error;
 
 // Utility functions and macros
 #ifdef CLEVER_DEBUG
+/**
+ * @brief makes an assertion about an expression and aborts the execution on failure
+ *
+ * @note This function is only available when clever is compiled in debug mode.
+ *
+ * @note You should use the clever_assert(), clever_assert_null() and clever_assert_not_null()
+ *       instead of this function.
+ *
+ * @param file file to report in the message
+ * @param function function to report in the message
+ * @param line line to report in the message
+ * @param expr expression in string form to report in the message
+ * @param hypothesis evaluated expression value (0 or non-0)
+ * @param format vsprintf format string
+ */
+void clever_assert_(const char* file, const char* function, long line, const char* expr,
+		int hypothesis, const char* format, ...);
+
 #define clever_assert(hypothesis, format, ...) \
 	clever::clever_assert_(__FILE__, CLEVER_CURRENT_FUNCTION, __LINE__, #hypothesis, (hypothesis), format)
 
@@ -46,12 +64,30 @@ extern jmp_buf fatal_error;
 #define clever_assert_not_null(hypothesis) \
 	clever::clever_assert_(__FILE__, CLEVER_CURRENT_FUNCTION, __LINE__, #hypothesis, (hypothesis) != NULL, #hypothesis " must not be NULL")
 
-void clever_assert_(const char* file, const char* function, long line, const char* expr,
-		int hypothesis, const char* format, ...);
+/**
+ *
+ * @brief displays a debug message with file and line information
+ *
+ * @note This function is only available when clever is compiled in debug mode.
+ *
+ * @note You should use the clever_debug() macro instead of this function.
+ *
+ * @code
+ *     clever_debug("My debug message.");
+ * @endcode
+ *
+ * @param file file to report in the message
+ * @param line the line to report in the message
+ * @param format vsprintf format string
+ */
+void clever_debug_(const char* file, long line, const char* format, ...);
+#define clever_debug(format, ...) clever::clever_debug_(__FILE__, __LINE__, format)
+
 #else
 #define clever_assert(hypothesis, format, ...)
 #define clever_assert_null(hypothesis)
 #define clever_assert_not_null(hypothesis)
+#define clever_debug(format, ...)
 #endif
 
 // Macros to safely increase or decrease the reference count of an object
@@ -90,13 +126,15 @@ inline void clever_delete_var(T*& ptr) {
 	ptr = NULL;
 }
 
+
+
 /**
  * @defgroup ErrorReporting Error reporting functions
  * @{
  */
 
 /**
- * @brief displays an error message and aborts the VM execution.
+ * @brief displays an error message.
  */
 void clever_error(const char* format, ...);
 
