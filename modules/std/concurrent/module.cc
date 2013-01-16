@@ -9,7 +9,6 @@
 #include "modules/std/concurrent/condition.h"
 #include "modules/std/concurrent/module.h"
 #include "modules/std/concurrent/mutex.h"
-#include "types/function.h"
 
 namespace clever { namespace packages { namespace std {
 

@@ -14,10 +14,6 @@
 
 namespace clever { namespace packages { namespace std {
 
-namespace unicode {
-
-} // clever::packages::std::unicode
-
 /// Initializes Standard Unicode module
 CLEVER_MODULE_INIT(UnicodeModule) {
 	using namespace unicode;
