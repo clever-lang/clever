@@ -137,6 +137,17 @@ static CLEVER_FUNCTION(time)
 	result->setInt(time(NULL));
 }
 
+// Int clock()
+// Returns the execution clock
+static CLEVER_FUNCTION(clock)
+{
+	if (!clever_static_check_no_args()) {
+		return;
+	}
+
+	result->setInt(clock());
+}
+
 } // clever::packages::std::os
 
 // Initializes Standard module
@@ -150,6 +161,7 @@ CLEVER_MODULE_INIT(SYSModule)
 	addFunction(new Function("argv",   &CLEVER_NS_FNAME(sys, argv)));
 	addFunction(new Function("sleep",  &CLEVER_NS_FNAME(sys, sleep)));
 	addFunction(new Function("time",  &CLEVER_NS_FNAME(sys, time)));
+	addFunction(new Function("clock", &CLEVER_NS_FNAME(sys, clock)));
 }
 
 }}} // clever::packages::std
