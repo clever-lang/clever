@@ -158,8 +158,7 @@ CLEVER_TYPE_INIT(CFile::init)
 	addMethod(new Function("close",		(MethodPtr)&CFile::close));
 	addMethod(new Function("isOpen",	(MethodPtr)&CFile::isOpen));
 
-	addProperty(CSTRING("in"), new Value(long(::std::ios_base::in), true),
-		Property::PUBLIC | Property::STATIC);
+	addProperty(CSTRING("in"), new Value(long(::std::ios_base::in), true));
 }
 
 }}} // clever::packages::std
