@@ -81,7 +81,7 @@ void clever_assert_(const char* file, const char* function, long line, const cha
  * @param format vsprintf format string
  */
 void clever_debug_(const char* file, long line, const char* format, ...);
-#define clever_debug(format, ...) clever::clever_debug_(__FILE__, __LINE__, format)
+#define clever_debug(format, ...) clever::clever_debug_(__FILE__, __LINE__, format, ##__VA_ARGS__)
 
 #else
 #define clever_assert(hypothesis, format, ...)
