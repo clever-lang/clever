@@ -185,6 +185,7 @@ add_executable(clever
 	core/driver.h
 	core/evaluator.cc
 	core/evaluator.h
+	core/environment.cc
 	core/environment.h
 	core/ir.h
 	core/main.cc
