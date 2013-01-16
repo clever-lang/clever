@@ -117,6 +117,10 @@ void vsprintf(std::ostringstream& outstr, const char* format, va_list ap) {
 			case 'v':
 				va_arg(ap, Value*)->dump(outstr);
 				break;
+			/* Address */
+			case '@':
+				outstr << std::hex << va_arg(ap, void*);
+				break;	
 		}
 		++chr;
 	}

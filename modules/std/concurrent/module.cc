@@ -9,6 +9,7 @@
 #include "modules/std/concurrent/condition.h"
 #include "modules/std/concurrent/module.h"
 #include "modules/std/concurrent/mutex.h"
+#include "modules/std/concurrent/thread.h"
 
 namespace clever { namespace packages { namespace std {
 
@@ -17,6 +18,7 @@ CLEVER_MODULE_INIT(ConcurrencyModule)
 {
 	addType(CSTRING("Mutex"), new Mutex);
 	addType(CSTRING("Condition"), new Condition);
+	addType(CSTRING("Thread"), new Thread);
 }
 
 }}} // clever::packages::std
