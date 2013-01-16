@@ -58,12 +58,14 @@ void clever_assert_(const char* file, const char* function, long line, const cha
 #define CLEVER_SAFE_ADDREF(x) do { if (x) { (x)->addRef(); } } while (0)
 #define CLEVER_SAFE_DELREF(x) do { if (x) { (x)->delRef(); } } while (0)
 
-/// @brief deletes non-null pointers
-///
-/// @note When clever is compiled in debug mode, this function will abort the
-///       execution with an assertion error if ptr is null.
-///
-/// @param ptr a pointer allocated with the new keyword/operator.
+/**
+ * @brief deletes non-null pointers
+ *
+ * @note When clever is compiled in debug mode, this function will abort the
+ *       execution with an assertion error if ptr is null.
+ *
+ * @param ptr a pointer allocated with the new keyword/operator.
+ */
 template<typename T>
 inline void clever_delete(T* ptr) {
 	clever_assert_not_null(ptr);
@@ -73,20 +75,34 @@ inline void clever_delete(T* ptr) {
 	}
 }
 
-/// @brief deletes non-null pointers and sets the variable to NULL
-///
-/// @note ptr must be an lvalue otherwise the build will fail
-///
-/// @param ptr a pointer allocated with the new keyword/operator.
-///
-/// @see clever_delete()
+/**
+ * @brief deletes non-null pointers and sets the variable to NULL
+ *
+ * @note ptr must be an lvalue otherwise the build will fail
+ *
+ * @param ptr a pointer allocated with the new keyword/operator.
+ *
+ * @see clever_delete()
+ */
 template<typename T>
 inline void clever_delete_var(T*& ptr) {
 	clever_delete(ptr);
 	ptr = NULL;
 }
 
+/**
+ * @defgroup ErrorReporting Error reporting functions
+ * @{
+ */
+
+/**
+ * @brief displays an error message and aborts the VM execution.
+ */
 void clever_error(const char* format, ...);
+
+/**
+ * @brief displays a fatal error message and aborts the VM execution.
+ */
 void clever_fatal(const char* format, ...) CLEVER_NO_RETURN;
 
 void vsprintf(std::ostringstream&, const char*, va_list);
@@ -94,6 +110,8 @@ void sprintf(std::ostringstream&, const char*, ...);
 void printf(const char*, ...);
 void vprintfln(const char*, va_list);
 void printfln(const char*, ...);
+
+/** @} */
 
 #define clever_check_args(spec) clever::check_args(args, spec, exception, this)
 #define clever_static_check_args(spec) clever::check_args(args, spec, exception)

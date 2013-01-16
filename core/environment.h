@@ -21,6 +21,18 @@ typedef std::stack<Environment*> CallStack;
 
 /**
  * @brief the environment class.
+ *
+ * Environment instances are the *activation records* used on the VM's call
+ * stack. They are used to store local variables and return values/addresses of
+ * the current running function. Environments also hold pointers to their
+ * enclosing environment so as to allow access to values external to the
+ * environment.
+ *
+ * During the code compilation and interpretation stages, some non-activated
+ * environments are created to be used as blueprints for the virtual machine.
+ * The later takes those environments and *activate* them upon user function
+ * call or thread creation.
+ *
  */
 class Environment: public RefCounted {
 public:
@@ -34,6 +46,7 @@ public:
 		CLEVER_SAFE_DELREF(m_outer);
 	}
 
+	// XXX(heuripedes): isn't ~Environment() a better place for this?
 	void clear() {
 		for (size_t i = 0, size = m_data.size(); i < size; ++i) {
 			CLEVER_SAFE_DELREF(m_data.at(i));
@@ -50,9 +63,8 @@ public:
 	/**
 	 * @brief get the value specified by `offset`.
 	 *
-	 * @note
-	 * This function may introduce performance issues when searching for global
-	 * values due to the chain-like nature of environments.
+	 * @note This function may introduce performance issues when searching for
+	 *       global values due to the chain-like nature of environments.
 	 *
 	 * @param offset
 	 * @return
@@ -98,30 +110,6 @@ inline ValueOffset Environment::pushValue(Value* value) {
 	return ValueOffset(0, m_data.size()-1);
 }
 
-inline Value* Environment::getValue(const ValueOffset& offset) const {
-	if (offset.first == 0) { // local
-		clever_assert(offset.second < m_data.size(),
-					  "`offset.second` must be within `m_data` limits.");
-
-		return m_data.at(offset.second);
-	}
-
-	size_t depth = offset.first;
-	Environment* env = m_outer;
-
-	while (env && --depth) {
-		env = env->m_outer;
-	}
-
-	clever_assert(depth == 0,
-				  "`depth` must be zero, otherwise we failed to find the environment.");
-	clever_assert(offset.second < env->m_data.size(),
-				  "`offset.second` must be within `m_data` bounds.");
-	clever_assert_not_null(env);
-
-	return env->m_data.at(offset.second);
-}
-
 inline Environment* Environment::activate(Environment* outer) const {
 	Environment* env = new Environment(outer);
 	env->m_active = true;
@@ -133,41 +121,6 @@ inline Environment* Environment::activate(Environment* outer) const {
 	}
 
 	return env;
-}
-
-inline void Environment::copy(const Environment* _env) {
-	Environment* _this = this;
-	while (_env != NULL) {
-		const Environment* env = _env;
-
-		_this->m_active = env->m_active;
-		_this->m_ret_addr = env->m_ret_addr;
-
-		if (env->m_ret_val != NULL) {
-			Value* v = new Value;
-			v->copy(env->m_ret_val);
-
-			_this->m_ret_val = v;
-		} else {
-			_this->m_ret_val = NULL;
-		}
-
-		for (size_t i = 0, size = env->m_data.size(); i < size; ++i) {
-			Value* v = new Value();
-			v->copy(env->m_data[i]);
-			_this->pushValue(v);
-		}
-
-		if (env->m_outer != NULL) {
-			//this->m_outer->copy(env->m_outer)
-			_this->m_outer = new Environment(NULL);
-			_env = env->m_outer;
-			_this = _this->m_outer;
-		} else {
-			_this->m_outer = NULL;
-			_env = NULL;
-		}
-	}
 }
 
 } // clever

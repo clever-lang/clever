@@ -185,6 +185,7 @@ add_executable(clever
 	core/driver.h
 	core/evaluator.cc
 	core/evaluator.h
+	core/environment.cc
 	core/environment.h
 	core/ir.h
 	core/main.cc
@@ -192,6 +193,7 @@ add_executable(clever
 	core/opcode.cc
 	core/opcode.h
 	core/parser.cc
+	core/platform.h
 	core/pkgmanager.cc
 	core/pkgmanager.h
 	core/refcounted.h
