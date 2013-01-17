@@ -112,7 +112,7 @@ CLEVER_METHOD(Thread::start)
 	if (intern->entry != NULL) {
 		/** @TODO(krakjoe) pthread attributes **/
 		if (pthread_mutex_lock(intern->lock) == 0) {
-			intern->vm = new VM(vm->getInst());	
+			intern->vm = new VM(vm->getInst());
 			intern->vm->copy(vm);
 			result->setBool(
 				(pthread_create(intern->thread, NULL, ThreadHandler, intern) == 0)
@@ -125,6 +125,20 @@ CLEVER_METHOD(Thread::start)
 	} else {
 		result->setBool(false);
 	}
+}
+
+// void Thread.wait()
+// Waits for this thread to finish executing
+CLEVER_METHOD(Thread::wait)
+{
+	ThreadData* intern = CLEVER_GET_OBJECT(ThreadData*, CLEVER_THIS());
+	
+	if (!intern) {
+		//CLEVER_THROW(eventually);
+		return;
+	}
+	
+	result->setBool((pthread_join(*intern->thread, NULL) == 0));
 }
 
 // Thread.new(function entry)
@@ -144,6 +158,7 @@ CLEVER_TYPE_INIT(Thread::init)
 	addMethod(ctor);
 
 	addMethod(new Function("start",    (MethodPtr)&Thread::start));
+	addMethod(new Function("wait",		(MethodPtr)&Thread::wait));
 }
 
 }}} // clever::packages::std
