@@ -33,7 +33,9 @@ void* Date::allocData(CLEVER_TYPE_CTOR_ARGS) const
 {
 	time_t* intern = new time_t;
 	if (intern) {
-		time(intern);
+		if (args->size()) {
+			*intern = static_cast<time_t>(args->at(0)->getInt());
+		} else { time(intern); }
 	}
 	return intern;
 }
@@ -81,9 +83,22 @@ CLEVER_METHOD(Date::format)
 		return;
 	}
 
-	char buffer[64];
-	if (strftime(buffer, 64, args[0]->getStr()->c_str(), localtime(intern))) {
-		result->setStr(CSTRING(buffer));
+	const char* format = args[0]->getStr()->c_str();
+	if (!format) {
+		//CLEVER_THROW(eventually);
+		return;
+	}
+
+	struct tm* local = localtime(intern);
+	size_t need = strftime(NULL, -1, format, local);
+
+	if (need) {
+		char buffer[need+1];
+		if (strftime(buffer, need+1, format, local)) {
+			result->setStr(CSTRING(buffer));
+		} else {
+			result->setNull();
+		}
 	} else {
 		result->setNull();
 	}
@@ -103,6 +118,8 @@ CLEVER_METHOD(Date::getTime)
 	result->setInt(static_cast<unsigned long>(*intern));
 }
 
+// Date Date.new([int time])
+// Constructs a new Date object, uses the current time if none is provided
 CLEVER_METHOD(Date::ctor)
 {
 	result->setType(this);
