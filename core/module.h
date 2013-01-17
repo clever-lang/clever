@@ -45,8 +45,9 @@ public:
 
 	TypeMap& getTypes() { return m_types; }
 
-	void addFunction(Function* func) {
+	Function* addFunction(Function* func) {
 		m_funcs.insert(FuncMapEntry(CSTRING(func->getName()), func));
+		return func;
 	}
 
 	FunctionMap& getFunctions() { return m_funcs; }

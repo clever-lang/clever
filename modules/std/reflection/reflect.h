@@ -56,6 +56,8 @@ public:
 	CLEVER_METHOD(isMap);
 	CLEVER_METHOD(isArray);
 	CLEVER_METHOD(isThread);
+
+	CLEVER_METHOD(isVariadic);
 };
 
 }}}} // clever

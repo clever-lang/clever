@@ -150,6 +150,24 @@ CLEVER_METHOD(ReflectType::isThread)
 	result->setBool(intern->getData()->isThread());
 }
 
+CLEVER_METHOD(ReflectType::isVariadic)
+{
+	if (!clever_check_no_args()) {
+		return;
+	}
+
+	ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
+	const Value* data = intern->getData();
+
+	if (!data->isFunction()) {
+		return;
+	}
+
+	const Function* func = static_cast<Function*>(data->getObj());
+
+	result->setBool(func->isVariadic());
+}
+
 // Reflect type initialization
 CLEVER_TYPE_INIT(ReflectType::init)
 {
@@ -158,6 +176,8 @@ CLEVER_TYPE_INIT(ReflectType::init)
 	setConstructor(ctor);
 	addMethod(ctor);
 	addMethod(new Function("getType",    (MethodPtr) &ReflectType::getType));
+
+	// Type checking
 	addMethod(new Function("isFunction", (MethodPtr) &ReflectType::isFunction));
 	addMethod(new Function("isBool",     (MethodPtr) &ReflectType::isBool));
 	addMethod(new Function("isString",   (MethodPtr) &ReflectType::isString));
@@ -166,6 +186,9 @@ CLEVER_TYPE_INIT(ReflectType::init)
 	addMethod(new Function("isArray",    (MethodPtr) &ReflectType::isArray));
 	addMethod(new Function("isMap",      (MethodPtr) &ReflectType::isMap));
 	addMethod(new Function("isThread",   (MethodPtr) &ReflectType::isThread));
+
+	// Function specific methods
+	addMethod(new Function("isVariadic", (MethodPtr) &ReflectType::isVariadic));
 }
 
 }}}} // clever::packages::std::reflection
