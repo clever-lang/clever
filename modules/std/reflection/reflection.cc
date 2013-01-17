@@ -14,14 +14,18 @@ namespace clever { namespace packages { namespace std {
 
 namespace reflection {
 
-// string get_type()
+// string type()
 // Returns the type name of the supplied parameter
-static CLEVER_FUNCTION(get_type) {
-	if (args.size()) {
-		CLEVER_RETURN_STR(CLEVER_ARG_TYPE(0)->getName());
+static CLEVER_FUNCTION(type)
+{
+	if (!clever_static_check_args(".")) {
+		return;
 	}
-	// TODO(Felipe): fix build when throwing exception
-	//CLEVER_THROW("Missing parameter to get_type()");
+
+	const Type* type = args[0]->getType();
+
+	result->setType(CLEVER_STR_TYPE);
+	result->setStr(type ? type->getName() : CSTRING("null"));
 }
 
 } // clever::packages::std::reflection
@@ -31,10 +35,10 @@ CLEVER_MODULE_INIT(Reflection)
 	using namespace reflection;
 
 	// Types
-	addType(CSTRING("ReflectionFunction"), new ReflectionFunction);
+	addType(CSTRING("Reflection"), new ReflectionFunction);
 
 	// Functions
-	addFunction(new Function("get_type", &CLEVER_FUNC_NAME(get_type)));
+	addFunction(new Function("type", &CLEVER_FUNC_NAME(type)));
 }
 
 }}} // clever::packages::std
