@@ -88,8 +88,20 @@ CLEVER_METHOD(Mutex::unlock)
 			CLEVER_GET_OBJECT(pthread_mutex_t*, CLEVER_THIS())) == 0));
 }
 
+CLEVER_METHOD(Mutex::ctor)
+{
+	result->setType(this);
+	result->setObj(allocData(&args));
+}
+
 CLEVER_TYPE_INIT(Mutex::init)
 {
+	Function* ctor = new Function("Mutex", (MethodPtr) &Mutex::ctor);
+
+	setConstructor(ctor);
+
+	addMethod(ctor);
+
 	addMethod(new Function("lock",    (MethodPtr) &Mutex::lock));
 	addMethod(new Function("trylock", (MethodPtr) &Mutex::trylock));
 	addMethod(new Function("unlock",  (MethodPtr) &Mutex::unlock));

@@ -36,9 +36,13 @@ extern Type* const g_clever_map_type;
 #ifdef MOD_STD_CONCURRENT
 # define SAFETY_CTOR() pthread_mutex_init(&m_mutex, NULL)
 # define SAFETY_DTOR() pthread_mutex_destroy(&m_mutex)
+# define SAFETY_LOCK() pthread_mutex_lock(&m_mutex)
+# define SAFETY_ULOCK() pthread_mutex_unlock(&m_mutex)
 #else
 # define SAFETY_CTOR()
 # define SAFETY_DTOR()
+# define SAFETY_LOCK()
+# define SAFETY_ULOCK()
 #endif
 
 typedef std::map     <std::string, Value*>  ValueMap;
@@ -109,10 +113,10 @@ public:
 		SAFETY_DTOR();
 	}
 
-	void setType(const Type* type) { m_type = type; }
+	void setType(const Type* type) { SAFETY_LOCK(); m_type = type; SAFETY_ULOCK(); }
 	const Type* getType() const { return m_type; }
 
-	void setNull() { m_type = NULL; }
+	void setNull() { SAFETY_LOCK(); m_type = NULL; SAFETY_ULOCK(); }
 	bool isNull() const { return m_type == NULL; }
 
 	void dump() const {
@@ -127,26 +131,29 @@ public:
 		}
 	}
 	void setObj(void* ptr) {
+		SAFETY_LOCK();
 		clever_assert_not_null(m_type);
 		m_data.obj = new ValueObject(ptr, m_type);
+		SAFETY_ULOCK();
 	}
 	void* getObj() const { return m_data.obj->getObj(); }
 
-	void setInt(long n) { m_data.lval = n; m_type = CLEVER_INT_TYPE; }
+	void setInt(long n) { SAFETY_LOCK(); m_data.lval = n; m_type = CLEVER_INT_TYPE; SAFETY_ULOCK(); }
 	long getInt() const { return m_data.lval; }
 
-	void setBool(bool n) { m_data.bval = n; m_type = CLEVER_BOOL_TYPE; }
+	void setBool(bool n) { SAFETY_LOCK(); m_data.bval = n; m_type = CLEVER_BOOL_TYPE; SAFETY_ULOCK(); }
 	bool getBool() const { return m_data.bval; }
 
-	void setDouble(double n) { m_data.dval = n; m_type = CLEVER_DOUBLE_TYPE; }
+	void setDouble(double n) { SAFETY_LOCK(); m_data.dval = n; m_type = CLEVER_DOUBLE_TYPE; SAFETY_ULOCK(); }
 	double getDouble() const { return m_data.dval; }
 
 	const DataValue* getData() const { return &m_data; }
 
-	void setStr(const CString* str) { m_data.sval = str; m_type = CLEVER_STR_TYPE; }
+	void setStr(const CString* str) { SAFETY_LOCK(); m_data.sval = str; m_type = CLEVER_STR_TYPE; SAFETY_ULOCK(); }
 	const CString* getStr() const { return m_data.sval; }
 
 	void copy(const Value* value) {
+		SAFETY_LOCK();
 		m_type = value->getType();
 		memcpy(&m_data, value->getData(), sizeof(DataValue));
 
@@ -155,6 +162,7 @@ public:
 				m_data.obj->addRef();
 			}
 		}
+		SAFETY_ULOCK();
 	}
 
 	Value* clone() const {
