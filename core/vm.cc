@@ -76,18 +76,7 @@ CLEVER_FORCE_INLINE Value* VM::getValue(Operand& operand) const
 
 Value* VM::getValueExt(Operand& operand)
 {
-	const Environment* source;
-
-	switch (operand.op_type) {
-		case FETCH_CONST: source = m_const_env;        break;
-		case FETCH_VAR:   source = m_call_stack.top(); break;
-		case FETCH_TMP:   source = m_temp_env;         break;
-		default:
-			return NULL;
-	}
-	clever_assert_not_null(source);
-
-	return source->getValue(operand.voffset);
+	return getValue(operand);
 }
 
 #ifdef CLEVER_DEBUG
