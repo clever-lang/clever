@@ -71,6 +71,8 @@ static inline void clever_date_format(const ::std::vector<Value*>* args, const V
 
 	size_t need = strftime(NULL, -1, format, local);
 	if (!need) {
+		//CLEVER_THROW(eventually);
+		//There shouldn't be a circumstance where this arises ??
 		return;
 	} else { 
 		need += 1; 
