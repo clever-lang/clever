@@ -49,6 +49,13 @@ CLEVER_TYPE_OPERATOR(StrType::mod)
 {
 }
 
+// String::String()
+CLEVER_METHOD(StrType::ctor)
+{
+	result->setType(this);
+	result->setStr(CSTRING(""));
+}
+
 // String.subString(int start, [int count])
 // Returns a substring of the argument or string object referenced using bounds provided
 CLEVER_METHOD(StrType::subString)
@@ -375,6 +382,11 @@ CLEVER_METHOD(StrType::split)
 
 CLEVER_TYPE_INIT(StrType::init)
 {
+	Function* ctor = new Function("String", (MethodPtr) &StrType::ctor);
+
+	setConstructor(ctor);
+
+	addMethod(ctor);
 	addMethod(new Function("subString",  	(MethodPtr) &StrType::subString));
 	addMethod(new Function("find", 			(MethodPtr) &StrType::find));
 	addMethod(new Function("findFirst", 	(MethodPtr) &StrType::findFirst));

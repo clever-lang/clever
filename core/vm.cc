@@ -742,13 +742,13 @@ void VM::run()
 		{
 			const Value* valtype = getValue(OPCODE.op1);
 			const Type* type = valtype->getType();
+			const Function* ctor = type->getConstructor();
 
-			getValue(OPCODE.result)->setType(type);
-
-			if (EXPECTED(!type->isPrimitive())) {
-				getValue(OPCODE.result)->setObj(type->allocData(&m_call_args));
-				m_call_args.clear();
+			if (EXPECTED(ctor != NULL)) {
+				(type->*ctor->getMethodPtr())(getValue(OPCODE.result),
+					NULL, m_call_args, this, &m_exception);
 			}
+			m_call_args.clear();
 		}
 		DISPATCH;
 

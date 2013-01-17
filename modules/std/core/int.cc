@@ -88,6 +88,14 @@ CLEVER_TYPE_OPERATOR(IntType::not_equal)
 	}
 }
 
+// Int::Int()
+CLEVER_METHOD(IntType::ctor)
+{
+	result->setType(this);
+	result->setInt(0);
+}
+
+// Int::toString()
 CLEVER_METHOD(IntType::toString)
 {
 	std::ostringstream str;
@@ -99,7 +107,12 @@ CLEVER_METHOD(IntType::toString)
 
 CLEVER_TYPE_INIT(IntType::init)
 {
+	Function* ctor = new Function("Int", (MethodPtr) &IntType::ctor);
+
+	setConstructor(ctor);
+
 	// Methods
+	addMethod(ctor);
 	addMethod(new Function("toString", (MethodPtr) &IntType::toString));
 
 	// Properties

@@ -38,6 +38,7 @@ public:
 		value->setInt(value->getInt()-1);
 	}
 
+	CLEVER_METHOD(ctor);
 	CLEVER_METHOD(toString);
 };
 

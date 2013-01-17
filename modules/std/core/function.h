@@ -109,13 +109,27 @@ private:
 /// Function type
 class FuncType : public Type {
 public:
-	FuncType() : Type(CSTRING("Function")) {}
+	FuncType()
+		: Type(CSTRING("Function")) {}
+
 	~FuncType() {}
+
+	void init(CLEVER_TYPE_INIT_ARGS) {
+		Function* ctor = new Function("Function", (MethodPtr) &FuncType::ctor);
+
+		setConstructor(ctor);
+		addMethod(ctor);
+	}
 
 	void dump(const void* data) const { dump(data, std::cout); }
 	void dump(const void* data, std::ostream& out) const { out << "function() {}"; }
 
-	void* allocData(CLEVER_TYPE_CTOR_ARGS) const { return new Function; }
+	void* allocData(CLEVER_TYPE_CTOR_ARGS) const { return new Function;  }
+
+	CLEVER_METHOD(ctor) {
+		result->setType(this);
+		result->setObj(allocData(NULL));
+	}
 
 	void deallocData(void* data) { delete static_cast<Function*>(data); }
 };

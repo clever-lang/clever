@@ -44,6 +44,7 @@ public:
 	void increment(Value* value, const VM* vm) const {}
 	void decrement(Value* value, const VM* vm) const {}
 
+	CLEVER_METHOD(ctor);
 	CLEVER_METHOD(insert);
 	CLEVER_METHOD(each);
 	CLEVER_METHOD(size);

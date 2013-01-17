@@ -57,6 +57,12 @@ void UString::deallocData(void *data)
 	delete CLEVER_USTR_CAST(data);
 }
 
+CLEVER_METHOD(UString::ctor)
+{
+	result->setType(this);
+	result->setObj(allocData(&args));
+}
+
 // UString.getLength()
 // Determine the length of this
 CLEVER_METHOD(UString::getLength)
@@ -286,6 +292,11 @@ CLEVER_METHOD(UString::replace)
 
 CLEVER_TYPE_INIT(UString::init)
 {
+	Function* ctor = new Function("UString", (MethodPtr) &UString::ctor);
+
+	setConstructor(ctor);
+
+	addMethod(ctor);
 	addMethod(new Function("getLength",		(MethodPtr) &UString::getLength));
 	addMethod(new Function("startsWith",	(MethodPtr) &UString::startsWith));
 	addMethod(new Function("endsWith",		(MethodPtr) &UString::endsWith));
