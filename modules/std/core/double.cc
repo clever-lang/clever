@@ -6,7 +6,8 @@
  */
 
 #include <math.h>
-#include "types/double.h"
+#include "modules/std/core/double.h"
+#include "modules/std/core/function.h"
 
 namespace clever {
 
@@ -48,43 +49,59 @@ CLEVER_TYPE_OPERATOR(DoubleType::mod)
 CLEVER_TYPE_OPERATOR(DoubleType::greater)
 {
 	if (EXPECTED(rhs->getType() == this)) {
-		result->setInt(lhs->getDouble() > rhs->getDouble());
+		result->setBool(lhs->getDouble() > rhs->getDouble());
 	}
 }
 
 CLEVER_TYPE_OPERATOR(DoubleType::greater_equal)
 {
 	if (EXPECTED(rhs->getType() == this)) {
-		result->setInt(lhs->getDouble() >= rhs->getDouble());
+		result->setBool(lhs->getDouble() >= rhs->getDouble());
 	}
 }
 
 CLEVER_TYPE_OPERATOR(DoubleType::less)
 {
 	if (EXPECTED(rhs->getType() == this)) {
-		result->setInt(lhs->getDouble() < rhs->getDouble());
+		result->setBool(lhs->getDouble() < rhs->getDouble());
 	}
 }
 
 CLEVER_TYPE_OPERATOR(DoubleType::less_equal)
 {
 	if (EXPECTED(rhs->getType() == this)) {
-		result->setInt(lhs->getDouble() <= rhs->getDouble());
+		result->setBool(lhs->getDouble() <= rhs->getDouble());
 	}
 }
 
 CLEVER_TYPE_OPERATOR(DoubleType::equal)
 {
 	if (EXPECTED(rhs->getType() == this)) {
-		result->setInt(lhs->getDouble() == rhs->getDouble());
+		result->setBool(lhs->getDouble() == rhs->getDouble());
 	}
 }
 
 CLEVER_TYPE_OPERATOR(DoubleType::not_equal)
 {
 	if (EXPECTED(rhs->getType() == this)) {
-		result->setInt(lhs->getDouble() != rhs->getDouble());
+		result->setBool(lhs->getDouble() != rhs->getDouble());
 	}
+}
+
+// Double::Double()
+CLEVER_METHOD(DoubleType::ctor)
+{
+	result->setType(this);
+	result->setDouble(0.0);
+}
+
+CLEVER_TYPE_INIT(DoubleType::init)
+{
+	Function* ctor = new Function("Double", (MethodPtr) &DoubleType::ctor);
+
+	setConstructor(ctor);
+
+	addMethod(ctor);
 }
 
 } // clever

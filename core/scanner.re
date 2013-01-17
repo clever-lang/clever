@@ -41,7 +41,7 @@ next_token:
 	STRING     = (["]([^\\"]*|"\\"["]?)*["]|[']([^\\']*|"\\"[']?)*[']);
 	SPECIAL    = [;(),{}&~^|=+*/-][];
 	TYPE       = [A-Z][a-zA-Z0-9_]*;
-	CONSTANT   = [A-Z][A-Z0-9_]+;
+	CONSTANT   = [A-Z][A-Z0-9_]*;
 	REGEX      = "/"[^*/]([a-zA-Z0-9]+|SPACE|['"+$^\|{}?)(*:<>.#\]\[-]|"\\"[^])*"/";
 
 	<!*> { yylen = cursor - s.yylex; }
@@ -158,10 +158,6 @@ next_token:
 
 	<INITIAL>'function' {
 		RET(token::FUNC);
-	}
-
-	<INITIAL>'wait' {
-		RET(token::WAIT);
 	}
 
 	<INITIAL>'spawn' {

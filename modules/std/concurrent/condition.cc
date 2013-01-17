@@ -8,7 +8,7 @@
 #include "core/clever.h"
 #include "core/value.h"
 #include "modules/std/concurrent/condition.h"
-#include "types/function.h"
+#include "modules/std/core/function.h"
 #include "types/type.h"
 
 namespace clever { namespace packages { namespace std {
@@ -29,7 +29,7 @@ void Condition::dump(const void* data, ::std::ostream& out) const
 void* Condition::allocData(CLEVER_TYPE_CTOR_ARGS) const
 {
 	pthread_cond_t* condition = new pthread_cond_t;
-	if (condition) {	
+	if (condition) {
 		// @TODO(krakjoe) condition attributes
 		pthread_cond_init(condition, NULL);
 	}
@@ -75,7 +75,7 @@ CLEVER_METHOD(Condition::broadcast)
 	result->setBool((pthread_cond_broadcast(condition) == 0));
 }
 
-// @TODO(krakjoe) @sigsegv, can we use the "wait" keyword as a method name 
+// @TODO(krakjoe) @sigsegv, can we use the "wait" keyword as a method name
 // please, waitFor feels messy
 // bool Condition.wait(Mutex locked)
 // Will wait for another thread to signal or broadcast to this condition

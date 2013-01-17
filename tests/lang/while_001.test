@@ -4,7 +4,7 @@ import std.io.*;
 
 var a = 10;
 
-while (a--) {
+while (a-- > 0) {
 	println(a);
 }
 

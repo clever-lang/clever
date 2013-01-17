@@ -8,7 +8,7 @@
 #include <string>
 #include <sstream>
 #include <cstdio>
-#include "types/str.h"
+#include "modules/std/core/str.h"
 #include "core/compiler.h"
 #include "core/vm.h"
 #include "core/clever.h"
@@ -47,6 +47,13 @@ CLEVER_TYPE_OPERATOR(StrType::div)
 
 CLEVER_TYPE_OPERATOR(StrType::mod)
 {
+}
+
+// String::String()
+CLEVER_METHOD(StrType::ctor)
+{
+	result->setType(this);
+	result->setStr(CSTRING(""));
 }
 
 // String.subString(int start, [int count])
@@ -375,6 +382,11 @@ CLEVER_METHOD(StrType::split)
 
 CLEVER_TYPE_INIT(StrType::init)
 {
+	Function* ctor = new Function("String", (MethodPtr) &StrType::ctor);
+
+	setConstructor(ctor);
+
+	addMethod(ctor);
 	addMethod(new Function("subString",  	(MethodPtr) &StrType::subString));
 	addMethod(new Function("find", 			(MethodPtr) &StrType::find));
 	addMethod(new Function("findFirst", 	(MethodPtr) &StrType::findFirst));
@@ -391,42 +403,42 @@ CLEVER_TYPE_INIT(StrType::init)
 CLEVER_TYPE_OPERATOR(StrType::greater)
 {
 	if (EXPECTED(rhs->getType() == this)) {
-		result->setInt(lhs->getStr() > rhs->getStr());
+		result->setBool(lhs->getStr() > rhs->getStr());
 	}
 }
 
 CLEVER_TYPE_OPERATOR(StrType::greater_equal)
 {
 	if (EXPECTED(rhs->getType() == this)) {
-		result->setInt(lhs->getStr() >= rhs->getStr());
+		result->setBool(lhs->getStr() >= rhs->getStr());
 	}
 }
 
 CLEVER_TYPE_OPERATOR(StrType::less)
 {
 	if (EXPECTED(rhs->getType() == this)) {
-		result->setInt(lhs->getStr() < rhs->getStr());
+		result->setBool(lhs->getStr() < rhs->getStr());
 	}
 }
 
 CLEVER_TYPE_OPERATOR(StrType::less_equal)
 {
 	if (EXPECTED(rhs->getType() == this)) {
-		result->setInt(lhs->getStr() <= rhs->getStr());
+		result->setBool(lhs->getStr() <= rhs->getStr());
 	}
 }
 
 CLEVER_TYPE_OPERATOR(StrType::equal)
 {
 	if (EXPECTED(rhs->getType() == this)) {
-		result->setInt(lhs->getStr() == rhs->getStr());
+		result->setBool(lhs->getStr() == rhs->getStr());
 	}
 }
 
 CLEVER_TYPE_OPERATOR(StrType::not_equal)
 {
 	if (EXPECTED(rhs->getType() == this)) {
-		result->setInt(lhs->getStr() != rhs->getStr());
+		result->setBool(lhs->getStr() != rhs->getStr());
 	}
 }
 

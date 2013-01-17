@@ -210,23 +210,24 @@ add_executable(clever
 	core/value.h
 	core/vm.cc
 	core/vm.h
-	types/double.h
-	types/double.cc
-	types/int.h
-	types/int.cc
-	types/str.h
-	types/str.cc
+	modules/std/core/double.h
+	modules/std/core/double.cc
+	modules/std/core/int.h
+	modules/std/core/int.cc
+	modules/std/core/str.h
+	modules/std/core/str.cc
 	types/native_types.h
 	types/type.h
 	types/type.cc
-	types/function.h
+	modules/std/core/function.h
 	types/thread.h
-	types/bool.h
-	types/bool.cc
-	types/array.h
-	types/array.cc
-	types/map.h
-	types/map.cc
+	types/thread.cc
+	modules/std/core/bool.h
+	modules/std/core/bool.cc
+	modules/std/core/array.h
+	modules/std/core/array.cc
+	modules/std/core/map.h
+	modules/std/core/map.cc
 	modules/std/core/core.h
 	modules/std/core/core.cc
 	${EXTRA_CLEVER_FILES}

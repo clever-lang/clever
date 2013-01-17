@@ -12,10 +12,10 @@
 #include "core/vm.h"
 #include "core/scope.h"
 #include "core/value.h"
-#include "types/function.h"
+#include "modules/std/core/function.h"
+#include "modules/std/core/array.h"
 #include "types/thread.h"
 #include "types/type.h"
-#include "types/array.h"
 
 #define OPCODE    m_inst[m_pc]
 #define VM_EXIT() goto exit
@@ -352,6 +352,12 @@ void VM::run()
 	OP(OP_FCALL):
 		{
 			const Value* fval = getValue(OPCODE.op1);
+
+			if (UNEXPECTED(fval->getType() != CLEVER_FUNC_TYPE)) {
+				error(VM_ERROR, "Cannot make a call from %S type",
+					fval->getType()->getName());
+			}
+
 			Function* func = static_cast<Function*>(fval->getObj());
 			clever_assert_not_null(func);
 
@@ -437,30 +443,6 @@ void VM::run()
 
 			VM_GOTO(OPCODE.op1.jmp_addr);
 		}
-
-	OP(OP_WAIT):
-		{
-
-			const Value* tval = getValue(OPCODE.op1);
-			Thread* tdata = static_cast<Thread*>(tval->getObj());
-
-			std::vector<VMThread*>& thread_list = m_thread_pool[tdata->getID()];
-
-			for (size_t i = 0, j = thread_list.size(); i < j; ++i) {
-				delete_thread();
-
-				VMThread* t = thread_list.at(i);
-				t->t_handler.wait();
-				clever_delete_var(t->vm_handler);
-				clever_delete_var(t);
-			}
-
-			if (n_threads() == 0) {
-				disenable_threads();
-			}
-			thread_list.clear();
-		}
-		DISPATCH;
 
 	OP(OP_ETHREAD):
 		if (this->isChild()) {
@@ -742,13 +724,13 @@ void VM::run()
 		{
 			const Value* valtype = getValue(OPCODE.op1);
 			const Type* type = valtype->getType();
+			const Function* ctor = type->getConstructor();
 
-			getValue(OPCODE.result)->setType(type);
-
-			if (EXPECTED(!type->isPrimitive())) {
-				getValue(OPCODE.result)->setObj(type->allocData(&m_call_args));
-				m_call_args.clear();
+			if (EXPECTED(ctor != NULL)) {
+				(type->*ctor->getMethodPtr())(getValue(OPCODE.result),
+					NULL, m_call_args, this, &m_exception);
 			}
+			m_call_args.clear();
 		}
 		DISPATCH;
 

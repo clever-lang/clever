@@ -6,7 +6,7 @@
  */
 
 #include "types/type.h"
-#include "types/function.h"
+#include "modules/std/core/function.h"
 #include "modules/std/unicode/string.h"
 #include "unicode/ustream.h"
 #include "unicode/unistr.h"
@@ -55,6 +55,12 @@ void* UString::allocData(CLEVER_TYPE_CTOR_ARGS) const
 void UString::deallocData(void *data)
 {
 	delete CLEVER_USTR_CAST(data);
+}
+
+CLEVER_METHOD(UString::ctor)
+{
+	result->setType(this);
+	result->setObj(allocData(&args));
 }
 
 // UString.getLength()
@@ -286,6 +292,11 @@ CLEVER_METHOD(UString::replace)
 
 CLEVER_TYPE_INIT(UString::init)
 {
+	Function* ctor = new Function("UString", (MethodPtr) &UString::ctor);
+
+	setConstructor(ctor);
+
+	addMethod(ctor);
 	addMethod(new Function("getLength",		(MethodPtr) &UString::getLength));
 	addMethod(new Function("startsWith",	(MethodPtr) &UString::startsWith));
 	addMethod(new Function("endsWith",		(MethodPtr) &UString::endsWith));

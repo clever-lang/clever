@@ -20,6 +20,8 @@ public:
 	BoolType() : Type(CSTRING("Bool")) {}
 	~BoolType() {}
 
+	void init();
+
 	bool isPrimitive() const { return true; }
 
 	void dump(const void* value) const { dump(value, std::cout); }
@@ -29,6 +31,7 @@ public:
 	void increment(Value* value, const VM* vm, CException& exception) const {}
 	void decrement(Value* value, const VM* vm, CException& exception) const {}
 
+	CLEVER_METHOD(ctor);
 	CLEVER_TYPE_OPERATOR(equal);
 	CLEVER_TYPE_OPERATOR(not_equal);
 };

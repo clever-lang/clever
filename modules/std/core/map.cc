@@ -8,8 +8,8 @@
 #include <map>
 #include "core/value.h"
 #include "core/vm.h"
-#include "types/map.h"
-#include "types/function.h"
+#include "modules/std/core/map.h"
+#include "modules/std/core/function.h"
 
 namespace clever {
 
@@ -67,6 +67,13 @@ void MapType::dump(const void* value, std::ostream& out) const
 	out << "}";
 }
 
+// Map::Map([arg, ...])
+CLEVER_METHOD(MapType::ctor)
+{
+	result->setType(this);
+	result->setObj(allocData(&args));
+}
+
 // void Map.insert(string key, mixed value)
 // Sets the key to value in this map
 CLEVER_METHOD(MapType::insert)
@@ -74,7 +81,7 @@ CLEVER_METHOD(MapType::insert)
 	if (!clever_check_args("s*")) {
 		return;
 	}
-	
+
 	ValueMap& mapped = (CLEVER_GET_OBJECT(MapObject*, CLEVER_THIS()))->getData();
 	mapped.insert(ValuePair(*args[0]->getStr(), args[1]));
 	args[1]->addRef();
@@ -131,6 +138,11 @@ CLEVER_METHOD(MapType::size)
 
 CLEVER_TYPE_INIT(MapType::init)
 {
+	Function* ctor = new Function("Map", (MethodPtr) &MapType::ctor);
+
+	setConstructor(ctor);
+
+	addMethod(ctor);
 	addMethod(new Function("insert", (MethodPtr) &MapType::insert));
 	addMethod(new Function("each",	 (MethodPtr) &MapType::each));
 	addMethod(new Function("size",	 (MethodPtr) &MapType::size));

@@ -3,6 +3,8 @@ Testing anonymous functions
 import std.io.*;
 var a = 0 or function() { return "clever"; };
 
+println(a);
 println(a());
 ==RESULT==
-clever
+0
+Fatal error: Cannot make a call from Int type

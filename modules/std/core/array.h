@@ -44,6 +44,7 @@ public:
 
 	void dump(const void* value, std::ostream& out) const;
 
+	CLEVER_METHOD(ctor);
 	CLEVER_METHOD(append);
 	CLEVER_METHOD(size);
 	CLEVER_METHOD(at);

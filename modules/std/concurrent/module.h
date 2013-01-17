@@ -12,6 +12,13 @@
 
 namespace clever { namespace packages { namespace std {
 
+struct ThreadData {
+	pthread_t*       thread;
+	pthread_mutex_t* lock;
+	Function*        entry;
+	Value*           result;
+};
+
 /// Standard Concurrency Module
 class ConcurrencyModule : public Module {
 public:

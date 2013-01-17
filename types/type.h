@@ -65,7 +65,7 @@ typedef std::pair<const CString*, Function*> MethodPair;
 class Type {
 public:
 	Type(const CString* name)
-		: m_name(name), m_methods(), m_properties() {}
+		: m_name(name), m_methods(), m_properties(), m_ctor(NULL), m_dtor(NULL) {}
 
 	virtual ~Type() {}
 
@@ -97,6 +97,12 @@ public:
 
 	/// Method for retrieve the type name
 	const CString* getName() const { return m_name; }
+
+	void setConstructor(Function* func) { m_ctor = func; }
+	void setDestructor(Function* func) { m_dtor = func; }
+
+	const Function* getConstructor() const { return m_ctor; }
+	const Function* getDestructor() const { return m_dtor; }
 
 	virtual void init(CLEVER_TYPE_INIT_ARGS) {}
 
@@ -130,6 +136,8 @@ private:
 	const CString* m_name;
 	MethodMap m_methods;
 	PropertyMap m_properties;
+	const Function* m_ctor;
+	const Function* m_dtor;
 
 	DISALLOW_COPY_AND_ASSIGN(Type);
 };

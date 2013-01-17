@@ -7,8 +7,8 @@
 
 #include "core/value.h"
 #include "core/vm.h"
-#include "types/array.h"
-#include "types/function.h"
+#include "modules/std/core/array.h"
+#include "modules/std/core/function.h"
 
 namespace clever {
 
@@ -51,6 +51,13 @@ void ArrayType::dump(const void* value, std::ostream& out) const
 	}
 
 	out << "]";
+}
+
+// Array::Array([arg, ...])
+CLEVER_METHOD(ArrayType::ctor)
+{
+	result->setType(this);
+	result->setObj(allocData(&args));
 }
 
 // void Array::append([arg, ... ])
@@ -266,6 +273,11 @@ CLEVER_METHOD(ArrayType::erase)
 // Type initialization
 CLEVER_TYPE_INIT(ArrayType::init)
 {
+	Function* ctor = new Function("Array", (MethodPtr) &ArrayType::ctor);
+
+	setConstructor(ctor);
+
+	addMethod(ctor);
 	addMethod(new Function("append",  (MethodPtr) &ArrayType::append));
 	addMethod(new Function("size",    (MethodPtr) &ArrayType::size));
 	addMethod(new Function("at",      (MethodPtr) &ArrayType::at));

@@ -104,13 +104,6 @@ void Codegen::visit(CriticalBlock* node)
 	m_ir.push_back(IR(OP_UNLOCK));
 }
 
-void Codegen::visit(Wait* node)
-{
-	if (node->getName() != NULL) {
-		m_ir.push_back(IR(OP_WAIT, Operand(FETCH_VAR, node->getName()->getVOffset())));
-	}
-}
-
 void Codegen::visit(ThreadBlock* node)
 {
 	enable_threads();

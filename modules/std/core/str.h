@@ -33,6 +33,7 @@ public:
 
 	void decrement(Value* value, const VM* vm) const {}
 
+	CLEVER_METHOD(ctor);
 	CLEVER_METHOD(subString);
 	CLEVER_METHOD(find);
 	CLEVER_METHOD(findFirst);

@@ -15,24 +15,14 @@
 
 namespace clever {
 
-extern Type* g_clever_int_type;
-extern Type* g_clever_double_type;
-extern Type* g_clever_str_type;
-extern Type* g_clever_func_type;
-extern Type* g_clever_thread_type;
-extern Type* g_clever_bool_type;
-extern Type* g_clever_array_type;
-extern Type* g_clever_map_type;
-
-#define DECLARE_CLEVER_NATIVE_TYPES() \
-	Type* g_clever_int_type;          \
-	Type* g_clever_double_type;       \
-	Type* g_clever_str_type;          \
-	Type* g_clever_func_type;         \
-	Type* g_clever_thread_type;       \
-	Type* g_clever_bool_type;         \
-	Type* g_clever_array_type;        \
-	Type* g_clever_map_type
+extern Type* const g_clever_int_type;
+extern Type* const g_clever_double_type;
+extern Type* const g_clever_str_type;
+extern Type* const g_clever_func_type;
+extern Type* const g_clever_thread_type;
+extern Type* const g_clever_bool_type;
+extern Type* const g_clever_array_type;
+extern Type* const g_clever_map_type;
 
 #define CLEVER_INT_TYPE    g_clever_int_type
 #define CLEVER_DOUBLE_TYPE g_clever_double_type
@@ -167,16 +157,8 @@ public:
 	bool asBool() const {
 		if (isNull()) {
 			return false;
-		} else if (m_type->isPrimitive()) {
-			if (m_type == CLEVER_INT_TYPE) {
-				return m_data.lval != 0;
-			} else if (m_type == CLEVER_DOUBLE_TYPE) {
-				return m_data.dval != 0;
-			} else if (m_type == CLEVER_STR_TYPE) {
-				return m_data.sval != NULL;
-			} else if (m_type == CLEVER_BOOL_TYPE) {
-				return m_data.bval;
-			}
+		} else if (m_type == CLEVER_BOOL_TYPE) {
+			return m_data.bval;
 		}
 		return true;
 	}

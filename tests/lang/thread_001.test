@@ -7,7 +7,7 @@ var memude = 555;
 function f(a,b=println)
 {
 	var i = 3;
-	while (i) {
+	while (i > 0) {
 		critical {
 			b(a);
 			memude = 666;
@@ -15,18 +15,18 @@ function f(a,b=println)
 
 		--i;
 	}
-} 
+}
 
 
 var i = 5;
-while (i) {
+while (i > 0) {
 	var a = i;
-	spawn threads { 
-		f(a, println); 
-	} 
+	spawn threads {
+		f(a, println);
+	}
 
 	i--;
-	wait threads;
+	threads.wait();
 
 }
 
@@ -34,7 +34,7 @@ while (i) {
 spawn thread {
 	var i = 10;
 
-	while (i) {
+	while (i > 0) {
 		critical {
 			println(memude);
 		}
@@ -43,7 +43,7 @@ spawn thread {
 	}
 }
 
-wait thread;
+thread.wait();
 
 ==RESULT==
 5

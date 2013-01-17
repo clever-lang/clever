@@ -1,0 +1,9 @@
+Testing const variables
+==CODE==
+import std.io.*;
+
+const E = 2.71;
+
+println(E);
+==RESULT==
+2.71

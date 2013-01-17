@@ -20,6 +20,8 @@ public:
 	DoubleType() : Type(CSTRING("Double")) {}
 	~DoubleType() {}
 
+	void init();
+
 	bool isPrimitive() const { return true; }
 
 	void dump(const void* value) const { dump(value, std::cout); }
@@ -34,6 +36,8 @@ public:
 	void decrement(Value* value, const VM* vm, CException& exception) const {
 		value->setInt(value->getDouble()-1);
 	}
+
+	CLEVER_METHOD(ctor);
 };
 
 } // clever

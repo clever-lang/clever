@@ -61,6 +61,10 @@ CLEVER_METHOD(Server::accept)
 		return;
 	}
 
+	if (!clever_check_no_args()) {
+		return;
+	}
+
 	in->clear();
 	out->clear();
 
@@ -184,6 +188,10 @@ CLEVER_METHOD(Server::flush)
 {
 	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
 
+	if (!clever_check_no_args()) {
+		return;
+	}
+
 	if (request) {
 		CLEVER_RETURN_BOOL((FCGX_FFlush(request->out) == 0));
 	} else {
@@ -196,6 +204,10 @@ CLEVER_METHOD(Server::flush)
 CLEVER_METHOD(Server::finish)
 {
 	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
+
+	if (!clever_check_no_args()) {
+		return;
+	}
 
 	if (request) {
 		CLEVER_RETURN_BOOL((FCGX_FClose(request->out) == 0));
@@ -211,7 +223,10 @@ CLEVER_METHOD(Server::getEnvironment)
 	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
 
 	if (!request) {
-		result->setNull();
+		return;
+	}
+
+	if (!clever_check_args("|s")) {
 		return;
 	}
 
@@ -298,7 +313,6 @@ CLEVER_METHOD(Server::getCookie)
 	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
 
 	if (!request) {
-		result->setNull();
 		return;
 	}
 
@@ -324,7 +338,10 @@ CLEVER_METHOD(Server::debug)
 	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
 
 	if (!request) {
-		result->setNull();
+		return;
+	}
+
+	if (!clever_check_no_args()) {
 		return;
 	}
 
@@ -348,7 +365,6 @@ CLEVER_METHOD(Server::getParams)
 	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
 
 	if (!request) {
-		result->setNull();
 		return;
 	}
 
@@ -373,7 +389,10 @@ CLEVER_METHOD(Server::getHeaders)
 	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
 
 	if (!request) {
-		result->setNull();
+		return;
+	}
+
+	if (!clever_check_no_args()) {
 		return;
 	}
 
@@ -398,7 +417,10 @@ CLEVER_METHOD(Server::getCookies)
 	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
 
 	if (!request) {
-		result->setNull();
+		return;
+	}
+
+	if (!clever_check_no_args()) {
 		return;
 	}
 
