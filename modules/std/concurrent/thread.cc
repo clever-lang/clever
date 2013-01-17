@@ -19,13 +19,13 @@ static inline void* ThreadHandler(void* ThreadArgument)
 	ThreadData* intern = static_cast<ThreadData*>(ThreadArgument);
 
 	if (intern->vm) {
-		//@TODO(krakjoe) get args from start(), addrefs and copy
 		::std::vector<Value*> args;
 
 		Value* result = intern->vm->runFunction(
 			intern->entry, &args
 		);
-		//@TODO(krakjoe) copy/move/assign intern->result to result
+
+		result->delRef();
 	}
 
 	return intern;
@@ -48,14 +48,13 @@ void Thread::dump(const void* data, ::std::ostream& out) const
 void* Thread::allocData(CLEVER_TYPE_CTOR_ARGS) const
 {
 	ThreadData* intern = new ThreadData;
-
+	
 	intern->thread = new pthread_t;
 	intern->lock = new pthread_mutex_t;
 	intern->entry = NULL;
 	intern->vm = NULL;
 	intern->joined = false;
-	intern->child = false;
-
+	
 	if (intern->lock) {
 		if (pthread_mutex_init(intern->lock, NULL) != 0) {
 			clever_error("Thread.new failed to initialize a lock for the Thread");
@@ -74,6 +73,7 @@ void* Thread::allocData(CLEVER_TYPE_CTOR_ARGS) const
 	} else {
 		clever_error("Thread.new was expecting a Function entry point and recieved no arguments");
 	}
+
 	return intern;
 }
 
@@ -85,21 +85,15 @@ void Thread::deallocData(void* data)
 		return;
 	}
 
-	if (!intern->joined) {
-		::std::cout << "NOT JOINED" << ::std::endl;
-	} else {
-		::std::cout << "JOINED" << ::std::endl;
-	}
-	
-	if (intern->vm) {
-		delete intern->vm;
-	}	
-
 	if (intern->lock) {
 		if (pthread_mutex_destroy(intern->lock) != 0) {
 			clever_error("Thread.delete experienced an error destroying the Thread's lock");
 		}
 		delete intern->lock;
+	}
+
+	if (intern->vm) {
+		delete intern->vm;	
 	}
 
 	delete intern->thread;
@@ -121,7 +115,7 @@ CLEVER_METHOD(Thread::start)
 		/** @TODO(krakjoe) pthread attributes **/
 		if (pthread_mutex_lock(intern->lock) == 0) {
 			intern->vm = new VM(vm->getInst());
-			intern->vm->copy(vm);
+			intern->vm->copy(vm, false);
 			result->setBool(
 				(pthread_create(intern->thread, NULL, ThreadHandler, intern) == 0)
 			);
@@ -155,6 +149,7 @@ CLEVER_METHOD(Thread::wait)
 		} else {
 			result->setNull();
 		}
+		pthread_mutex_unlock(intern->lock);
 	} else {
 		//CLEVER_THROW(eventually);
 		result->setNull();

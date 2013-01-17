@@ -111,18 +111,25 @@ void VM::dumpOpcodes() const
 #endif
 
 // Make a copy of VM instance
-void VM::copy(const VM* vm)
+void VM::copy(const VM* vm, bool deep)
 {
 	this->f_mutex = const_cast<VM*>(vm)->getMutex();
 	this->m_pc = vm->m_pc;
 	this->m_try_stack = vm->m_try_stack;
-
-	this->m_temp_env = new Environment(NULL);
-	this->m_temp_env->copy(vm->m_temp_env);
-
+	if (deep) {
+		this->m_temp_env = new Environment(NULL);
+		this->m_temp_env->copy(vm->m_temp_env);
+	} else {
+		this->m_temp_env = vm->m_temp_env;	
+	}
 	this->m_global_env = vm->m_global_env;
 	this->m_call_stack = vm->m_call_stack;
 	this->m_const_env = vm->m_const_env;
+}
+
+void VM::copy(const VM* vm)
+{
+	copy(vm, true);
 }
 
 void VM::wait()
@@ -362,10 +369,7 @@ void VM::run()
 			clever_assert_not_null(func);
 
 			if (func->isUserDefined()) {
-				if (thread_is_enabled()) {
-					getMutex()->lock();
-				}
-
+				
 				Environment* fenv;
 
 				if (m_call_stack.top()->isActive()) {
@@ -387,10 +391,6 @@ void VM::run()
 				_param_binding(func, fenv, &m_call_args);
 
 				m_call_args.clear();
-
-				if (thread_is_enabled()) {
-					getMutex()->unlock();
-				}
 
 				VM_GOTO(func->getAddr());
 			} else {

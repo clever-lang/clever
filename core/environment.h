@@ -47,6 +47,7 @@ public:
 	}
 
 	// XXX(heuripedes): isn't ~Environment() a better place for this?
+	// XXX(krakjoe): not so much, leave it here for now please
 	void clear() {
 		for (size_t i = 0, size = m_data.size(); i < size; ++i) {
 			CLEVER_SAFE_DELREF(m_data.at(i));

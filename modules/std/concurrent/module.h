@@ -17,12 +17,9 @@ struct ThreadData {
 	pthread_t*          thread;
 	pthread_mutex_t*    lock;
 	Function*           entry;
-	const ValueVector   args;
 	Value*              result;
-	const VM*		    parent;
 	VM*                 vm;
 	bool				joined;
-	bool				child;
 };
 
 /// Standard Concurrency Module

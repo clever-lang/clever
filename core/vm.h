@@ -63,6 +63,7 @@ public:
 	void setTempEnv(Environment* temps) { m_temp_env = temps; }
 
 	void copy(const VM*);
+	void copy(const VM*, bool deep);
 
 	void setChild() { m_is_main_thread = false; }
 
@@ -77,6 +78,8 @@ public:
 	void nextPC() { ++m_pc; }
 
 	IRVector& getInst() const { return m_inst; }
+
+	CallStack getStack() const { return m_call_stack; }
 
 	/// Helper to retrive a Value* from ValuePool
 	Value* getValue(Operand&) const;
