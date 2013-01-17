@@ -71,6 +71,16 @@ void CFile::deallocData(CLEVER_TYPE_DTOR_ARGS)
 	delete CLEVER_CAST(fstream*, data);
 }
 
+CLEVER_METHOD(CFile::ctor)
+{
+	if (!clever_check_args("ss")) {
+		return;
+	}
+
+	result->setType(this);
+	result->setObj(allocData(&args));
+}
+
 // string File.read()
 // Return the next token from the current stream
 CLEVER_METHOD(CFile::read)
@@ -154,6 +164,10 @@ CLEVER_METHOD(CFile::isOpen)
 
 CLEVER_TYPE_INIT(CFile::init)
 {
+	Function* ctor = new Function("File", (MethodPtr)&CFile::ctor);
+
+	setConstructor(ctor);
+	addMethod(ctor);
 	addMethod(new Function("read",		(MethodPtr)&CFile::read));
 	addMethod(new Function("readLine",	(MethodPtr)&CFile::readLine));
 	addMethod(new Function("write",		(MethodPtr)&CFile::write));
