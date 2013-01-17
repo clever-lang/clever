@@ -160,10 +160,6 @@ next_token:
 		RET(token::FUNC);
 	}
 
-	<INITIAL>'wait' {
-		RET(token::WAIT);
-	}
-
 	<INITIAL>'spawn' {
 		RET(token::THREAD);
 	}
