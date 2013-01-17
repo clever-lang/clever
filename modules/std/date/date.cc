@@ -115,7 +115,7 @@ CLEVER_METHOD(Date::getTime)
 		return;
 	}
 	
-	result->setInt(static_cast<unsigned long>(*intern));
+	result->setInt(*intern);
 }
 
 // Date Date.new([int time])
@@ -134,7 +134,7 @@ CLEVER_TYPE_INIT(Date::init)
 
 	addMethod(ctor);
 
-	addMethod(new Function("format",    (MethodPtr) &Date::format));
+	addMethod(new Function("format",     (MethodPtr) &Date::format));
 	addMethod(new Function("getTime",    (MethodPtr) &Date::getTime));
 }
 
