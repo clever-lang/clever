@@ -33,6 +33,7 @@ public:
 
 	CLEVER_METHOD(ctor);
 	CLEVER_METHOD(format);
+	CLEVER_METHOD(uformat);
 	CLEVER_METHOD(getTime);
 };
 

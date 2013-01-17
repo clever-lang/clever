@@ -48,8 +48,47 @@ void Date::deallocData(void *data)
 	}
 }
 
+static inline void clever_date_format(const ::std::vector<Value*>* args, const Value* obj, Value* result, bool utc) {
+	time_t* intern = CLEVER_GET_OBJECT(time_t*, CLEVER_THIS());
+	
+	if (!intern) {
+		//CLEVER_THROW(eventually)
+		return;
+	}
+	
+	if (args->size()) {
+		const char* format = args->at(0)->getStr()->c_str();
+		if (!format) {
+			//CLEVER_THROW(eventually);
+			return;
+		}
+
+		struct tm* local;
+		if (utc) {
+			local = gmtime(intern);		
+		} else {
+			local = localtime(intern);
+		}
+
+		size_t need = strftime(NULL, -1, format, local);
+		if (need) {
+			char buffer[need+1];
+			if (strftime(buffer, need+1, format, local)) {
+				result->setStr(CSTRING(buffer));
+			} else {
+				result->setNull();
+			}
+		} else {
+			result->setNull();
+		}
+	} else {
+		result->setNull();
+	}
+}
+
 /*
 String Date::format(string specstring)
+Formats this date object as a string:
 specifier	Replaced by								Example
 %a			Abbreviated weekday name				Thu
 %A			Full weekday name						Thursday
@@ -76,32 +115,15 @@ specifier	Replaced by								Example
 */
 CLEVER_METHOD(Date::format)
 {
-	time_t* intern = CLEVER_GET_OBJECT(time_t*, CLEVER_THIS());
-	
-	if (!intern) {
-		//CLEVER_THROW(eventually)
-		return;
-	}
+	clever_date_format(&args, CLEVER_THIS(), result, false);
+}
 
-	const char* format = args[0]->getStr()->c_str();
-	if (!format) {
-		//CLEVER_THROW(eventually);
-		return;
-	}
-
-	struct tm* local = localtime(intern);
-	size_t need = strftime(NULL, -1, format, local);
-
-	if (need) {
-		char buffer[need+1];
-		if (strftime(buffer, need+1, format, local)) {
-			result->setStr(CSTRING(buffer));
-		} else {
-			result->setNull();
-		}
-	} else {
-		result->setNull();
-	}
+// String Date.uformat([int date])
+// Formats this date as a string, using the same specifiers as Date.format
+// Treats the date as UTC
+CLEVER_METHOD(Date::uformat)
+{
+	clever_date_format(&args, CLEVER_THIS(), result, true);
 }
 
 // Int Date::getTime()
@@ -135,6 +157,7 @@ CLEVER_TYPE_INIT(Date::init)
 	addMethod(ctor);
 
 	addMethod(new Function("format",     (MethodPtr) &Date::format));
+	addMethod(new Function("uformat",    (MethodPtr) &Date::uformat));
 	addMethod(new Function("getTime",    (MethodPtr) &Date::getTime));
 }
 
