@@ -21,7 +21,7 @@ static inline void* ThreadHandler(void* ThreadArgument)
 	if (intern->vm) {
 		::std::vector<Value*> args;
 
-		Value* result = intern->vm->runFunction(
+		Value* result = (const_cast<VM*>(intern->vm))->runFunction(
 			intern->entry, &args
 		);
 
@@ -64,7 +64,6 @@ void* Thread::allocData(CLEVER_TYPE_CTOR_ARGS) const
 	if (args->size()) {
 		Value* point = args->at(0);
 
-		/** there's something very wrong here **/
 		if (point->getType() == CLEVER_FUNC_TYPE) {
 			intern->entry = static_cast<Function*>(point->getObj());
 		} else {
@@ -92,9 +91,6 @@ void Thread::deallocData(void* data)
 		delete intern->lock;
 	}
 
-	if (intern->vm) {
-		delete intern->vm;	
-	}
 
 	delete intern->thread;
 	delete intern;
@@ -114,8 +110,7 @@ CLEVER_METHOD(Thread::start)
 	if (intern->entry != NULL) {
 		/** @TODO(krakjoe) pthread attributes **/
 		if (pthread_mutex_lock(intern->lock) == 0) {
-			intern->vm = new VM(vm->getInst());
-			intern->vm->copy(vm, false);
+			intern->vm = vm;
 			result->setBool(
 				(pthread_create(intern->thread, NULL, ThreadHandler, intern) == 0)
 			);
