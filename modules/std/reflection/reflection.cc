@@ -8,7 +8,7 @@
 #include <iostream>
 #include "core/pkgmanager.h"
 #include "modules/std/reflection/reflection.h"
-#include "modules/std/reflection/reflectionfunction.h"
+#include "modules/std/reflection/reflect.h"
 
 namespace clever { namespace packages { namespace std {
 
@@ -32,13 +32,11 @@ static CLEVER_FUNCTION(type)
 
 CLEVER_MODULE_INIT(Reflection)
 {
-	using namespace reflection;
-
 	// Types
-	addType(CSTRING("Reflection"), new ReflectionFunction);
+	addType(CSTRING("Reflect"), new reflection::ReflectType);
 
 	// Functions
-	addFunction(new Function("type", &CLEVER_FUNC_NAME(type)));
+	addFunction(new Function("type", &CLEVER_NS_FNAME(reflection, type)));
 }
 
 }}} // clever::packages::std
