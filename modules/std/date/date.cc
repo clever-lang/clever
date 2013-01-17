@@ -56,31 +56,29 @@ static inline void clever_date_format(const ::std::vector<Value*>* args, const V
 		return;
 	}
 	
-	if (args->size()) {
-		const char* format = args->at(0)->getStr()->c_str();
-		if (!format) {
-			//CLEVER_THROW(eventually);
-			return;
-		}
+	const char* format = args->at(0)->getStr()->c_str();
+	if (!format) {
+		//CLEVER_THROW(eventually);
+		return;
+	}
 
-		struct tm* local;
-		if (utc) {
-			local = gmtime(intern);		
-		} else {
-			local = localtime(intern);
-		}
+	struct tm* local;
+	if (utc) {
+		local = gmtime(intern);		
+	} else {
+		local = localtime(intern);
+	}
 
-		size_t need = strftime(NULL, -1, format, local);
-		if (need) {
-			char buffer[need+1];
-			if (strftime(buffer, need+1, format, local)) {
-				result->setStr(CSTRING(buffer));
-			} else {
-				result->setNull();
-			}
-		} else {
-			result->setNull();
-		}
+	size_t need = strftime(NULL, -1, format, local);
+	if (!need) {
+		return;
+	} else { 
+		need += 1; 
+	}
+
+	char buffer[need];
+	if (strftime(buffer, need, format, local)) {
+		result->setStr(CSTRING(buffer));
 	} else {
 		result->setNull();
 	}
@@ -115,6 +113,10 @@ specifier	Replaced by								Example
 */
 CLEVER_METHOD(Date::format)
 {
+	if (!clever_check_args("s")) {
+		return;
+	}
+
 	clever_date_format(&args, CLEVER_THIS(), result, false);
 }
 
@@ -123,6 +125,10 @@ CLEVER_METHOD(Date::format)
 // Treats the date as UTC
 CLEVER_METHOD(Date::uformat)
 {
+	if (!clever_check_args("s")) {
+		return;
+	}
+
 	clever_date_format(&args, CLEVER_THIS(), result, true);
 }
 
