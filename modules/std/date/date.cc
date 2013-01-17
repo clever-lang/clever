@@ -122,7 +122,7 @@ CLEVER_METHOD(Date::format)
 	clever_date_format(&args, CLEVER_THIS(), result, false);
 }
 
-// String Date.uformat([int date])
+// String Date.uformat(string specstring)
 // Formats this date as a string, using the same specifiers as Date.format
 // Treats the date as UTC
 CLEVER_METHOD(Date::uformat)
