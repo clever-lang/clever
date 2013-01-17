@@ -18,7 +18,15 @@ static inline void* ThreadHandler(void* ThreadArgument)
 {
 	ThreadData* intern = static_cast<ThreadData*>(ThreadArgument);
 
-	::std::cout << "Hello From ThreadHandler" << ::std::endl;
+	if (intern->vm) {
+		//@TODO(krakjoe) get args from start(), addrefs and copy
+		::std::vector<Value*> args;
+
+		Value* result = intern->vm->runFunction(
+			intern->entry, &args
+		);
+		//@TODO(krakjoe) copy/move/assign intern->result to result
+	}
 
 	return intern;
 }
@@ -44,6 +52,7 @@ void* Thread::allocData(CLEVER_TYPE_CTOR_ARGS) const
 	intern->thread = new pthread_t;
 	intern->lock = new pthread_mutex_t;
 	intern->entry = NULL;
+	intern->vm = NULL;
 
 	if (intern->lock) {
 		if (pthread_mutex_init(intern->lock, NULL) != 0) {
@@ -74,6 +83,10 @@ void Thread::deallocData(void* data)
 		return;
 	}
 
+	if (intern->vm) {
+		delete intern->vm;
+	}	
+
 	if (intern->lock) {
 		if (pthread_mutex_destroy(intern->lock) != 0) {
 			clever_error("Thread.delete experienced an error destroying the Thread's lock");
@@ -98,8 +111,9 @@ CLEVER_METHOD(Thread::start)
 
 	if (intern->entry != NULL) {
 		/** @TODO(krakjoe) pthread attributes **/
-
 		if (pthread_mutex_lock(intern->lock) == 0) {
+			intern->vm = new VM(vm->getInst());	
+			intern->vm->copy(vm);
 			result->setBool(
 				(pthread_create(intern->thread, NULL, ThreadHandler, intern) == 0)
 			);
