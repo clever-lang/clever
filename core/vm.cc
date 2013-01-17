@@ -716,6 +716,10 @@ void VM::run()
 			if (EXPECTED(ctor != NULL)) {
 				(type->*ctor->getMethodPtr())(getValue(OPCODE.result),
 					NULL, m_call_args, this, &m_exception);
+
+				if (UNEXPECTED(m_exception.hasException())) {
+					goto throw_exception;
+				}
 			}
 			m_call_args.clear();
 		}
