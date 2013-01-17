@@ -33,6 +33,14 @@ extern Type* const g_clever_map_type;
 #define CLEVER_ARRAY_TYPE  g_clever_array_type
 #define CLEVER_MAP_TYPE    g_clever_map_type
 
+#ifdef MOD_STD_CONCURRENT
+# define SAFETY_CTOR() pthread_mutex_init(&m_mutex, NULL)
+# define SAFETY_DTOR() pthread_mutex_destroy(&m_mutex)
+#else
+# define SAFETY_CTOR()
+# define SAFETY_DTOR()
+#endif
+
 typedef std::map     <std::string, Value*>  ValueMap;
 typedef std::pair    <std::string, Value*>  ValuePair;
 typedef std::vector  <Value*>               ValueVector;
@@ -75,22 +83,22 @@ public:
 		DataValue(const CString* value) : sval(value) {}
 	};
 
-	Value() : m_data(), m_type(NULL), m_is_const(false) {}
+	Value() : m_data(), m_type(NULL), m_is_const(false) {SAFETY_CTOR();}
 
 	Value(bool n, bool is_const = false)
-		: m_data(n), m_type(CLEVER_BOOL_TYPE), m_is_const(is_const) {}
+		: m_data(n), m_type(CLEVER_BOOL_TYPE), m_is_const(is_const) {SAFETY_CTOR();}
 
 	Value(long n, bool is_const = false)
-		: m_data(n), m_type(CLEVER_INT_TYPE), m_is_const(is_const) {}
+		: m_data(n), m_type(CLEVER_INT_TYPE), m_is_const(is_const) {SAFETY_CTOR();}
 
 	Value(double n, bool is_const = false)
-		: m_data(n), m_type(CLEVER_DOUBLE_TYPE), m_is_const(is_const) {}
+		: m_data(n), m_type(CLEVER_DOUBLE_TYPE), m_is_const(is_const) {SAFETY_CTOR();}
 
 	Value(const CString* value, bool is_const = false)
-		: m_data(value), m_type(CLEVER_STR_TYPE), m_is_const(is_const) {}
+		: m_data(value), m_type(CLEVER_STR_TYPE), m_is_const(is_const) {SAFETY_CTOR();}
 
 	Value(const Type* type, bool is_const = false)
-		: m_data(), m_type(type), m_is_const(is_const) {}
+		: m_data(), m_type(type), m_is_const(is_const) {SAFETY_CTOR();}
 
 	~Value() {
 		if (m_type && !m_type->isPrimitive()) {
@@ -98,6 +106,7 @@ public:
 				m_data.obj->delRef();
 			}
 		}
+		SAFETY_DTOR();
 	}
 
 	void setType(const Type* type) { m_type = type; }
@@ -180,11 +189,14 @@ public:
 	void setConst(bool constness = true) {
 		m_is_const = constness;
 	}
+
 private:
 	DataValue m_data;
 	const Type* m_type;
 	bool m_is_const;
-
+#ifdef MOD_STD_CONCURRENT
+	pthread_mutex_t m_mutex;
+#endif
 	DISALLOW_COPY_AND_ASSIGN(Value);
 };
 
