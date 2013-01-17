@@ -24,7 +24,7 @@ void Date::dump(const void* data, ::std::ostream& out) const
 	if (dvalue) {
 		time_t* uvalue = static_cast<time_t*>(dvalue->obj->getObj());
 		if (uvalue) {
-			out << uvalue;
+			out << *uvalue;
 		}
 	}
 }
