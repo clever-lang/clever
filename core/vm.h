@@ -80,9 +80,14 @@ public:
 
 	/// Helper to retrive a Value* from ValuePool
 	Value* getValue(Operand&) const;
+	Value* getValueExt(Operand& operand);
 
 	ThreadPool& getThreadPool() {
 		return this->m_thread_pool;
+	}
+
+	CallStack& getCallStack() {
+		return this->m_call_stack;
 	}
 
 	CMutex* getMutex() {
@@ -135,6 +140,8 @@ private:
 
 	DISALLOW_COPY_AND_ASSIGN(VM);
 };
+
+CLEVER_THREAD_FUNC(_thread_control);
 
 } // clever
 

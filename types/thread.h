@@ -47,9 +47,11 @@ public:
 
 	size_t getAddr() const { return m_info.addr; }
 	size_t getID() const { return m_thread_id; }
+	size_t getNThreads() const { return m_n_threads; }
 
 	void setAddr(size_t addr) { m_info.addr = addr; }
 	void setID(size_t ID) { m_thread_id = ID; }
+	void setNThreads(size_t n) { m_n_threads = n; }
 
 	Environment* getEnvironment() { return m_environment; }
 	void setEnvironment(Environment* e) {
@@ -59,6 +61,7 @@ private:
 	std::string m_name;
 	ThreadKind m_type;
 	size_t m_thread_id;
+	size_t m_n_threads;
 
 	union {
 		size_t addr;
@@ -88,6 +91,7 @@ public:
 
 	void init();
 
+	CLEVER_METHOD(run);
 	CLEVER_METHOD(wait);
 	CLEVER_METHOD(toString);
 };
