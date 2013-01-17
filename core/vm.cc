@@ -437,26 +437,6 @@ void VM::run()
 
 			tdata->setNThreads(n_threads);
 
-			for (size_t i = 0; i < n_threads; ++i) {
-				VMThread* thread = new VMThread;
-
-				new_thread();
-
-				thread->vm_handler = new VM(this->m_inst);
-				thread->vm_handler->copy(this);
-				thread->vm_handler->setChild();
-
-				Environment* tenv = tdata->getEnvironment()->activate(m_call_stack.top());
-				thread->vm_handler->m_call_stack.push(tenv);
-
-				if (m_thread_pool.size() <= tdata->getID()) {
-					m_thread_pool.resize(tdata->getID() + 1);
-				}
-
-				m_thread_pool[tdata->getID()].push_back(thread);
-
-				thread->t_handler.create(_thread_control, static_cast<void*>(thread));
-			}
 			getMutex()->unlock();
 
 			VM_GOTO(OPCODE.op1.jmp_addr);
