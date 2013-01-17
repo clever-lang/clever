@@ -352,6 +352,12 @@ void VM::run()
 	OP(OP_FCALL):
 		{
 			const Value* fval = getValue(OPCODE.op1);
+
+			if (UNEXPECTED(fval->getType() != CLEVER_FUNC_TYPE)) {
+				error(VM_ERROR, "Cannot make a call from %S type",
+					fval->getType()->getName());
+			}
+
 			Function* func = static_cast<Function*>(fval->getObj());
 			clever_assert_not_null(func);
 

@@ -157,16 +157,8 @@ public:
 	bool asBool() const {
 		if (isNull()) {
 			return false;
-		} else if (m_type->isPrimitive()) {
-			if (m_type == CLEVER_INT_TYPE) {
-				return m_data.lval != 0;
-			} else if (m_type == CLEVER_DOUBLE_TYPE) {
-				return m_data.dval != 0;
-			} else if (m_type == CLEVER_STR_TYPE) {
-				return m_data.sval != NULL;
-			} else if (m_type == CLEVER_BOOL_TYPE) {
-				return m_data.bval;
-			}
+		} else if (m_type == CLEVER_BOOL_TYPE) {
+			return m_data.bval;
 		}
 		return true;
 	}

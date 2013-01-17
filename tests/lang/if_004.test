@@ -9,6 +9,6 @@ println(a and 1);
 a = 0;
 println(++a and 2);
 ==RESULT==
-null
+2
 null
 2

@@ -49,42 +49,42 @@ CLEVER_TYPE_OPERATOR(IntType::mod)
 CLEVER_TYPE_OPERATOR(IntType::greater)
 {
 	if (EXPECTED(rhs->getType() == this)) {
-		result->setInt(lhs->getInt() > rhs->getInt());
+		result->setBool(lhs->getInt() > rhs->getInt());
 	}
 }
 
 CLEVER_TYPE_OPERATOR(IntType::greater_equal)
 {
 	if (EXPECTED(rhs->getType() == this)) {
-		result->setInt(lhs->getInt() >= rhs->getInt());
+		result->setBool(lhs->getInt() >= rhs->getInt());
 	}
 }
 
 CLEVER_TYPE_OPERATOR(IntType::less)
 {
 	if (EXPECTED(rhs->getType() == this)) {
-		result->setInt(lhs->getInt() < rhs->getInt());
+		result->setBool(lhs->getInt() < rhs->getInt());
 	}
 }
 
 CLEVER_TYPE_OPERATOR(IntType::less_equal)
 {
 	if (EXPECTED(rhs->getType() == this)) {
-		result->setInt(lhs->getInt() <= rhs->getInt());
+		result->setBool(lhs->getInt() <= rhs->getInt());
 	}
 }
 
 CLEVER_TYPE_OPERATOR(IntType::equal)
 {
 	if (EXPECTED(rhs->getType() == this)) {
-		result->setInt(lhs->getInt() == rhs->getInt());
+		result->setBool(lhs->getInt() == rhs->getInt());
 	}
 }
 
 CLEVER_TYPE_OPERATOR(IntType::not_equal)
 {
 	if (EXPECTED(rhs->getType() == this)) {
-		result->setInt(lhs->getInt() != rhs->getInt());
+		result->setBool(lhs->getInt() != rhs->getInt());
 	}
 }
 
