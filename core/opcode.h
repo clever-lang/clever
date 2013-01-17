@@ -88,8 +88,8 @@ enum Opcode {
 	OP_MCALL,      //       Used for method call
 	OP_SMCALL,     //       Used for static method call
 	OP_PROP_ACC,   //       Used for property access
-	OP_TRY,        //  35 - Used for exception block
-	OP_CATCH,      //       Used for catching exception
+	OP_TRY,        //       Used for exception block
+	OP_CATCH,      //  35 - Used for catching exception
 	OP_THROW,      //       Used for throwing exception
 	OP_ETRY,       //       Used for end marker exception block
 	NUM_OPCODES
