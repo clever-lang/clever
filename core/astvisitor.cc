@@ -144,6 +144,10 @@ void Visitor::visit(IncDec* node) {
 
 void Visitor::visit(Instantiation* node) {
 	node->getType()->accept(*this);
+
+	if (node->hasArgs()) {
+		node->getArgs()->accept(*this);
+	}
 }
 
 void Visitor::visit(Property* node) {
