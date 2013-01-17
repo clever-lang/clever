@@ -85,6 +85,8 @@ void Thread::deallocData(void* data)
 	delete intern;
 }
 
+// Bool Thread.start()
+// Starts executing the Thread object
 CLEVER_METHOD(Thread::start)
 {
 	ThreadData* intern = CLEVER_GET_OBJECT(ThreadData*, CLEVER_THIS());
@@ -111,6 +113,8 @@ CLEVER_METHOD(Thread::start)
 	}
 }
 
+// Thread.new(function entry)
+// Constructs a new Thread object to execute the supplied function
 CLEVER_METHOD(Thread::ctor)
 {
 	result->setType(this);
