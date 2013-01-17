@@ -41,6 +41,10 @@ public:
 
 	void* allocData(CLEVER_TYPE_CTOR_ARGS) const;
 
+	void deallocData(CLEVER_TYPE_DTOR_ARGS) {
+		delete static_cast<ReflectObject*>(data);
+	}
+
 	CLEVER_METHOD(ctor);
 	CLEVER_METHOD(getType);
 
