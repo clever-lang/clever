@@ -55,7 +55,7 @@ CLEVER_METHOD(ReflectType::isFunction)
 
 	ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
 
-	result->setBool(intern->getData()->getType() == CLEVER_FUNC_TYPE);
+	result->setBool(intern->getData()->isFunction());
 }
 
 // ReflectType::isBool()
@@ -68,7 +68,7 @@ CLEVER_METHOD(ReflectType::isBool)
 
 	ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
 
-	result->setBool(intern->getData()->getType() == CLEVER_BOOL_TYPE);
+	result->setBool(intern->getData()->isBool());
 }
 
 // ReflectType::isString()
@@ -81,7 +81,7 @@ CLEVER_METHOD(ReflectType::isString)
 
 	ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
 
-	result->setBool(intern->getData()->getType() == CLEVER_STR_TYPE);
+	result->setBool(intern->getData()->isString());
 }
 
 // ReflectType::isInt()
@@ -94,7 +94,7 @@ CLEVER_METHOD(ReflectType::isInt)
 
 	ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
 
-	result->setBool(intern->getData()->getType() == CLEVER_INT_TYPE);
+	result->setBool(intern->getData()->isInt());
 }
 
 // ReflectType::isDouble()
@@ -107,7 +107,7 @@ CLEVER_METHOD(ReflectType::isDouble)
 
 	ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
 
-	result->setBool(intern->getData()->getType() == CLEVER_DOUBLE_TYPE);
+	result->setBool(intern->getData()->isDouble());
 }
 
 
@@ -121,7 +121,7 @@ CLEVER_METHOD(ReflectType::isArray)
 
 	ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
 
-	result->setBool(intern->getData()->getType() == CLEVER_ARRAY_TYPE);
+	result->setBool(intern->getData()->isArray());
 }
 
 // ReflectType::isMap()
@@ -134,7 +134,7 @@ CLEVER_METHOD(ReflectType::isMap)
 
 	ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
 
-	result->setBool(intern->getData()->getType() == CLEVER_MAP_TYPE);
+	result->setBool(intern->getData()->isMap());
 }
 
 // ReflectType::isThread()
@@ -147,7 +147,7 @@ CLEVER_METHOD(ReflectType::isThread)
 
 	ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
 
-	result->setBool(intern->getData()->getType() == CLEVER_THREAD_TYPE);
+	result->setBool(intern->getData()->isThread());
 }
 
 // Reflect type initialization

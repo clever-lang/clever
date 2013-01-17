@@ -119,10 +119,7 @@ public:
 	void setNull() { SAFETY_LOCK(); m_type = NULL; SAFETY_ULOCK(); }
 	bool isNull() const { return m_type == NULL; }
 
-	void dump() const {
-		dump(std::cout);
-	}
-
+	void dump() const {	dump(std::cout); }
 	void dump(std::ostream& out) const {
 		if (m_type) {
 			m_type->dump(&m_data, out);
@@ -130,6 +127,7 @@ public:
 			out << "null";
 		}
 	}
+
 	void setObj(void* ptr) {
 		SAFETY_LOCK();
 		clever_assert_not_null(m_type);
@@ -138,19 +136,48 @@ public:
 	}
 	void* getObj() const { return m_data.obj->getObj(); }
 
-	void setInt(long n) { SAFETY_LOCK(); m_data.lval = n; m_type = CLEVER_INT_TYPE; SAFETY_ULOCK(); }
+	void setInt(long n) {
+		SAFETY_LOCK();
+		m_data.lval = n;
+		m_type = CLEVER_INT_TYPE;
+		SAFETY_ULOCK();
+	}
 	long getInt() const { return m_data.lval; }
 
-	void setBool(bool n) { SAFETY_LOCK(); m_data.bval = n; m_type = CLEVER_BOOL_TYPE; SAFETY_ULOCK(); }
+	void setBool(bool n) {
+		SAFETY_LOCK();
+		m_data.bval = n;
+		m_type = CLEVER_BOOL_TYPE;
+		SAFETY_ULOCK();
+	}
 	bool getBool() const { return m_data.bval; }
 
-	void setDouble(double n) { SAFETY_LOCK(); m_data.dval = n; m_type = CLEVER_DOUBLE_TYPE; SAFETY_ULOCK(); }
+	void setDouble(double n) {
+		SAFETY_LOCK();
+		m_data.dval = n;
+		m_type = CLEVER_DOUBLE_TYPE;
+		SAFETY_ULOCK();
+	}
 	double getDouble() const { return m_data.dval; }
 
-	const DataValue* getData() const { return &m_data; }
-
-	void setStr(const CString* str) { SAFETY_LOCK(); m_data.sval = str; m_type = CLEVER_STR_TYPE; SAFETY_ULOCK(); }
+	void setStr(const CString* str) {
+		SAFETY_LOCK();
+		m_data.sval = str;
+		m_type = CLEVER_STR_TYPE;
+		SAFETY_ULOCK();
+	}
 	const CString* getStr() const { return m_data.sval; }
+
+	bool isInt()      const { return m_type == CLEVER_INT_TYPE;    }
+	bool isBool()     const { return m_type == CLEVER_BOOL_TYPE;   }
+	bool isDouble()   const { return m_type == CLEVER_DOUBLE_TYPE; }
+	bool isString()   const { return m_type == CLEVER_STR_TYPE;    }
+	bool isFunction() const { return m_type == CLEVER_FUNC_TYPE;   }
+	bool isMap()      const { return m_type == CLEVER_MAP_TYPE;    }
+	bool isArray()    const { return m_type == CLEVER_ARRAY_TYPE;  }
+	bool isThread()   const { return m_type == CLEVER_THREAD_TYPE; }
+
+	const DataValue* getData() const { return &m_data; }
 
 	void copy(const Value* value) {
 		SAFETY_LOCK();
