@@ -1,0 +1,19 @@
+Testing condition functionality
+==CODE==
+import std.io.*;
+import std.concurrent.*;
+
+var c = Condition.new();
+var m = Mutex.new();
+
+println(m.lock());
+
+spawn thread {
+	println(c.broadcast());
+}
+
+println(c.wait(m));
+==RESULT==
+1
+1
+1
