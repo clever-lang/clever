@@ -111,25 +111,18 @@ void VM::dumpOpcodes() const
 #endif
 
 // Make a copy of VM instance
-void VM::copy(const VM* vm, bool deep)
+void VM::copy(const VM* vm)
 {
 	this->f_mutex = const_cast<VM*>(vm)->getMutex();
 	this->m_pc = vm->m_pc;
 	this->m_try_stack = vm->m_try_stack;
-	if (deep) {
-		this->m_temp_env = new Environment(NULL);
-		this->m_temp_env->copy(vm->m_temp_env);
-	} else {
-		this->m_temp_env = vm->m_temp_env;	
-	}
+
+	this->m_temp_env = new Environment(NULL);
+	this->m_temp_env->copy(vm->m_temp_env);
+
 	this->m_global_env = vm->m_global_env;
 	this->m_call_stack = vm->m_call_stack;
 	this->m_const_env = vm->m_const_env;
-}
-
-void VM::copy(const VM* vm)
-{
-	copy(vm, true);
 }
 
 void VM::wait()
