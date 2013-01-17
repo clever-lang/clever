@@ -7,6 +7,7 @@
 
 # Modules
 # ---------------------------------------------------------------------------
+clever_add_module(std_date       ON  "enable the date module"       "")
 clever_add_module(std_concurrent ON  "enable the concurrent module" "")
 clever_add_module(std_regex      ON  "enable the regex module"      "")
 clever_add_module(std_ffi        OFF "enable the ffi module"        "")
@@ -23,6 +24,16 @@ clever_add_simple_module(std_io         ON  "enable the io module"         "")
 clever_add_simple_module(std_math       ON  "enable the math module"       "")
 clever_add_simple_module(std_reflection ON  "enable the reflection module" "")
 clever_add_simple_module(std_sys        ON  "enable the sys module"        "")
+
+# std.date
+if (MOD_STD_DATE)
+	add_definitions(-DHAVE_MOD_STD_DATE)
+	set(MOD_STD_DATE ON)
+else (MOD_STD_DATE)	
+	set(MOD_STD_DATE OFF)
+endif (MOD_STD_DATE)
+
+clever_module_msg(std_date "${MOD_STD_DATE}")
 
 # std.concurrent
 if (MOD_STD_CONCURRENT)
