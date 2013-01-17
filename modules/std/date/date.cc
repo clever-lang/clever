@@ -50,12 +50,12 @@ void Date::deallocData(void *data)
 
 static inline void clever_date_format(const ::std::vector<Value*>* args, const Value* obj, Value* result, bool utc) {
 	time_t* intern = CLEVER_GET_OBJECT(time_t*, CLEVER_THIS());
-	
+
 	if (!intern) {
 		//CLEVER_THROW(eventually)
 		return;
 	}
-	
+
 	const char* format = args->at(0)->getStr()->c_str();
 	if (!format) {
 		//CLEVER_THROW(eventually);
@@ -64,7 +64,7 @@ static inline void clever_date_format(const ::std::vector<Value*>* args, const V
 
 	struct tm* local;
 	if (utc) {
-		local = gmtime(intern);		
+		local = gmtime(intern);
 	} else {
 		local = localtime(intern);
 	}
@@ -74,8 +74,8 @@ static inline void clever_date_format(const ::std::vector<Value*>* args, const V
 		//CLEVER_THROW(eventually);
 		//There shouldn't be a circumstance where this arises ??
 		return;
-	} else { 
-		need += 1; 
+	} else {
+		need += 1;
 	}
 
 	char buffer[need];
@@ -139,12 +139,12 @@ CLEVER_METHOD(Date::uformat)
 CLEVER_METHOD(Date::getTime)
 {
 	time_t* intern = CLEVER_GET_OBJECT(time_t*, CLEVER_THIS());
-	
+
 	if (!intern) {
 		//CLEVER_THROW(eventually)
 		return;
 	}
-	
+
 	result->setInt(*intern);
 }
 
@@ -163,7 +163,6 @@ CLEVER_TYPE_INIT(Date::init)
 	setConstructor(ctor);
 
 	addMethod(ctor);
-
 	addMethod(new Function("format",     (MethodPtr) &Date::format));
 	addMethod(new Function("uformat",    (MethodPtr) &Date::uformat));
 	addMethod(new Function("getTime",    (MethodPtr) &Date::getTime));
