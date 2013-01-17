@@ -53,6 +53,8 @@ void* Thread::allocData(CLEVER_TYPE_CTOR_ARGS) const
 	intern->lock = new pthread_mutex_t;
 	intern->entry = NULL;
 	intern->vm = NULL;
+	intern->joined = false;
+	intern->child = false;
 
 	if (intern->lock) {
 		if (pthread_mutex_init(intern->lock, NULL) != 0) {
@@ -83,6 +85,12 @@ void Thread::deallocData(void* data)
 		return;
 	}
 
+	if (!intern->joined) {
+		::std::cout << "NOT JOINED" << ::std::endl;
+	} else {
+		::std::cout << "JOINED" << ::std::endl;
+	}
+	
 	if (intern->vm) {
 		delete intern->vm;
 	}	
@@ -138,7 +146,19 @@ CLEVER_METHOD(Thread::wait)
 		return;
 	}
 	
-	result->setBool((pthread_join(*intern->thread, NULL) == 0));
+	if (pthread_mutex_lock(intern->lock) == 0) {
+		if (!intern->joined) {
+			result->setBool(
+				(pthread_join(*intern->thread, NULL) == 0)
+			);
+			intern->joined = true;
+		} else {
+			result->setNull();
+		}
+	} else {
+		//CLEVER_THROW(eventually);
+		result->setNull();
+	}
 }
 
 // Thread.new(function entry)

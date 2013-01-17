@@ -21,6 +21,8 @@ struct ThreadData {
 	Value*              result;
 	const VM*		    parent;
 	VM*                 vm;
+	bool				joined;
+	bool				child;
 };
 
 /// Standard Concurrency Module
