@@ -28,8 +28,7 @@ CLEVER_METHOD(ReflectType::ctor)
 		return;
 	}
 
-	result->setType(this);
-	result->setObj(allocData(&args));
+	result->setObj(this, allocData(&args));
 }
 
 // Reflect::getType()

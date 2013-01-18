@@ -182,8 +182,7 @@ static CLEVER_FORCE_INLINE void _param_binding(Function* func, Environment* fenv
 		}
 
 		Value* vararg = fenv->getValue(ValueOffset(0, func->getNumArgs()));
-		vararg->setType(CLEVER_ARRAY_TYPE);
-		vararg->setObj(arr);
+		vararg->setObj(CLEVER_ARRAY_TYPE, arr);
 	}
 }
 

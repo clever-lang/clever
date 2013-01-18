@@ -59,8 +59,7 @@ void UString::deallocData(void *data)
 
 CLEVER_METHOD(UString::ctor)
 {
-	result->setType(this);
-	result->setObj(allocData(&args));
+	result->setObj(this, allocData(&args));
 }
 
 // UString.getLength()

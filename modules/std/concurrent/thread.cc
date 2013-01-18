@@ -117,8 +117,7 @@ CLEVER_METHOD(Thread::start)
 // Constructs a new Thread object to execute the supplied function
 CLEVER_METHOD(Thread::ctor)
 {
-	result->setType(this);
-	result->setObj(allocData(&args));
+	result->setObj(this, allocData(&args));
 }
 
 CLEVER_TYPE_INIT(Thread::init)

@@ -91,7 +91,6 @@ CLEVER_TYPE_OPERATOR(IntType::not_equal)
 // Int::Int()
 CLEVER_METHOD(IntType::ctor)
 {
-	result->setType(this);
 	result->setInt(0);
 }
 

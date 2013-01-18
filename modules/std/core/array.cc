@@ -56,8 +56,7 @@ void ArrayType::dump(const void* value, std::ostream& out) const
 // Array::Array([arg, ...])
 CLEVER_METHOD(ArrayType::ctor)
 {
-	result->setType(this);
-	result->setObj(allocData(&args));
+	result->setObj(this, allocData(&args));
 }
 
 // void Array::append([arg, ... ])
@@ -136,7 +135,7 @@ CLEVER_METHOD(ArrayType::reverse)
 		++it;
 	}
 
-	CLEVER_RETURN_ARRAY(CLEVER_ARRAY_TYPE->allocData(&rev));
+	result->setObj(this, allocData(&rev));
 }
 
 // mixed Array.shift()
@@ -215,7 +214,7 @@ CLEVER_METHOD(ArrayType::range)
 		}
 	}
 
-	CLEVER_RETURN_ARRAY(CLEVER_ARRAY_TYPE->allocData(&ran));
+	result->setObj(this, allocData(&ran));
 }
 
 // Array Array::each(function)
@@ -239,7 +238,7 @@ CLEVER_METHOD(ArrayType::each)
 		results.push_back(const_cast<VM*>(vm)->runFunction(func, &tmp_args));
 	}
 
-	CLEVER_RETURN_ARRAY(CLEVER_ARRAY_TYPE->allocData(&results));
+	result->setObj(this, allocData(&results));
 
 	for (size_t i = 0, j = results.size(); i < j; ++i) {
 		results[i]->delRef();

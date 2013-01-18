@@ -91,7 +91,6 @@ CLEVER_TYPE_OPERATOR(DoubleType::not_equal)
 // Double::Double()
 CLEVER_METHOD(DoubleType::ctor)
 {
-	result->setType(this);
 	result->setDouble(0.0);
 }
 

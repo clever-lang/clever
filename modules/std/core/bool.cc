@@ -27,7 +27,6 @@ CLEVER_TYPE_OPERATOR(BoolType::not_equal)
 // Bool::Bool()
 CLEVER_METHOD(BoolType::ctor)
 {
-	result->setType(this);
 	result->setBool(true);
 }
 

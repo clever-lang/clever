@@ -23,7 +23,7 @@ void Mutex::dump(const void* data, ::std::ostream& out) const
 	Value::DataValue* dvalue =
 		static_cast<Value::DataValue*>(const_cast<void*>(data));
 	if (dvalue) {
-		
+
 	}
 }
 
@@ -90,8 +90,7 @@ CLEVER_METHOD(Mutex::unlock)
 
 CLEVER_METHOD(Mutex::ctor)
 {
-	result->setType(this);
-	result->setObj(allocData(&args));
+	result->setObj(this, allocData(&args));
 }
 
 CLEVER_TYPE_INIT(Mutex::init)

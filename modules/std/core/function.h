@@ -127,8 +127,7 @@ public:
 	void* allocData(CLEVER_TYPE_CTOR_ARGS) const { return new Function;  }
 
 	CLEVER_METHOD(ctor) {
-		result->setType(this);
-		result->setObj(allocData(NULL));
+		result->setObj(this, allocData(NULL));
 	}
 
 	void deallocData(void* data) { delete static_cast<Function*>(data); }

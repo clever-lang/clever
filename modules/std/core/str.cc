@@ -52,7 +52,6 @@ CLEVER_TYPE_OPERATOR(StrType::mod)
 // String::String()
 CLEVER_METHOD(StrType::ctor)
 {
-	result->setType(this);
 	result->setStr(CSTRING(""));
 }
 
@@ -377,7 +376,7 @@ CLEVER_METHOD(StrType::split)
 			list.push_back(new Value(self));
 		}
 	}
-	CLEVER_RETURN_ARRAY(CLEVER_ARRAY_TYPE->allocData(&list));
+	result->setObj(CLEVER_ARRAY_TYPE, CLEVER_ARRAY_TYPE->allocData(&list));
 }
 
 CLEVER_TYPE_INIT(StrType::init)
