@@ -1,0 +1,15 @@
+Testing File operations
+==CODE==
+import std.io.*;
+import std.file.*;
+
+var f = File.new('foo.bar', File.OUT | File.TRUNC);
+f.write('clever lang'); 
+f.close();
+
+f = File.new('foo.bar', File.IN);
+println(f.readLine());
+f.close();
+
+==RESULT==
+clever lang
