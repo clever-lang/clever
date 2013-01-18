@@ -18,7 +18,7 @@ struct ThreadData {
 	pthread_mutex_t*    lock;
 	Function*           entry;
 	Value*              result;
-	VM*           		vm;
+	const VM*           vm;
 	bool				joined;
 };
 
