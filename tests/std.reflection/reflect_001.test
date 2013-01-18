@@ -1,0 +1,12 @@
+Testing Reflect constructor
+==CODE==
+import std.io.*;
+import std.reflection.*;
+
+var a = Reflect.new(print);
+
+a = Reflect.new(println);
+
+println("Done!");
+==RESULT==
+Done!
