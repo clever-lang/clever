@@ -170,6 +170,47 @@ CLEVER_METHOD(ReflectType::isVariadic)
 	result->setBool(func->isVariadic());
 }
 
+// Reflect::getNumArgs()
+// Returns the number of arguments (variadic is not in the count)
+CLEVER_METHOD(ReflectType::getNumArgs)
+{
+	if (!clever_check_no_args()) {
+		return;
+	}
+
+	const ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
+	const Value* data = intern->getData();
+
+	if (!data->isFunction()) {
+		return;
+	}
+
+	const Function* func = static_cast<Function*>(data->getObj());
+
+	result->setInt(func->getNumArgs());
+}
+
+// Reflect::getNumRegArgs()
+// Returns the number of required arguments (variadic is not in the count)
+CLEVER_METHOD(ReflectType::getNumReqArgs)
+{
+	if (!clever_check_no_args()) {
+		return;
+	}
+
+	const ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
+	const Value* data = intern->getData();
+
+	if (!data->isFunction()) {
+		return;
+	}
+
+	const Function* func = static_cast<Function*>(data->getObj());
+
+	result->setInt(func->getNumRequiredArgs());
+}
+
+
 // Reflect type initialization
 CLEVER_TYPE_INIT(ReflectType::init)
 {
@@ -190,7 +231,9 @@ CLEVER_TYPE_INIT(ReflectType::init)
 	addMethod(new Function("isThread",   (MethodPtr) &ReflectType::isThread));
 
 	// Function specific methods
-	addMethod(new Function("isVariadic", (MethodPtr) &ReflectType::isVariadic));
+	addMethod(new Function("isVariadic",    (MethodPtr) &ReflectType::isVariadic));
+	addMethod(new Function("getNumArgs",    (MethodPtr) &ReflectType::getNumArgs));
+	addMethod(new Function("getNumReqArgs", (MethodPtr) &ReflectType::getNumReqArgs));
 }
 
 }}}} // clever::packages::std::reflection

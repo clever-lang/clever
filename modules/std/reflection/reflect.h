@@ -58,6 +58,8 @@ public:
 	CLEVER_METHOD(isThread);
 
 	CLEVER_METHOD(isVariadic);
+	CLEVER_METHOD(getNumArgs);
+	CLEVER_METHOD(getNumReqArgs);
 };
 
 }}}} // clever
