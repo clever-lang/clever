@@ -21,11 +21,13 @@ static inline void* ThreadHandler(void* ThreadArgument)
 	if (intern->vm) {
 		::std::vector<Value*> args;
 
-		Value* result = (const_cast<VM*>(intern->vm))->runFunction(
+		Value* result = intern->vm->runFunction(
 			intern->entry, &args
 		);
 
 		result->delRef();
+
+		delete intern->vm;
 	}
 
 	return intern;
@@ -110,7 +112,8 @@ CLEVER_METHOD(Thread::start)
 	if (intern->entry != NULL) {
 		/** @TODO(krakjoe) pthread attributes **/
 		if (pthread_mutex_lock(intern->lock) == 0) {
-			intern->vm = vm;
+			intern->vm = new VM(vm->getInst());
+			intern->vm->copy(vm, false);
 			result->setBool(
 				(pthread_create(intern->thread, NULL, ThreadHandler, intern) == 0)
 			);
