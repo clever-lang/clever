@@ -70,8 +70,7 @@ void MapType::dump(const void* value, std::ostream& out) const
 // Map::Map([arg, ...])
 CLEVER_METHOD(MapType::ctor)
 {
-	result->setType(this);
-	result->setObj(allocData(&args));
+	result->setObj(this, allocData(&args));
 }
 
 // void Map.insert(string key, mixed value)
@@ -118,7 +117,7 @@ CLEVER_METHOD(MapType::each)
 		++it;
 	}
 
-	CLEVER_RETURN_MAP(CLEVER_MAP_TYPE->allocData(&results));
+	result->setObj(this, allocData(&results));
 
 	for (size_t i = 0, j = results.size(); i < j; ++i) {
 		results[i]->delRef();
@@ -133,7 +132,7 @@ CLEVER_METHOD(MapType::size)
 		return;
 	}
 
-	CLEVER_RETURN_INT((CLEVER_GET_OBJECT(MapObject*, CLEVER_THIS())->getData()).size());
+	result->setInt((CLEVER_GET_OBJECT(MapObject*, CLEVER_THIS())->getData()).size());
 }
 
 CLEVER_TYPE_INIT(MapType::init)

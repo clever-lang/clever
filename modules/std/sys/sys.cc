@@ -117,7 +117,7 @@ static CLEVER_FUNCTION(sleep)
 		return;
 	}
 
-	int time = static_cast<int>(CLEVER_ARG_INT(0));
+	int time = static_cast<int>(args[0]->getInt());
 
 #ifdef CLEVER_WIN32
 	SleepEx(time, false);

@@ -77,8 +77,7 @@ CLEVER_METHOD(CFile::ctor)
 		return;
 	}
 
-	result->setType(this);
-	result->setObj(allocData(&args));
+	result->setObj(this, allocData(&args));
 }
 
 // string File.read()

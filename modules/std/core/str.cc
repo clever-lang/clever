@@ -17,7 +17,7 @@ namespace clever {
 
 CLEVER_TYPE_OPERATOR(StrType::add)
 {
-	if (EXPECTED(rhs->getType() == this)) {
+	if (EXPECTED(rhs->isStr())) {
 		// TODO(Felipe): Do not require CString everywhere (because it stores the
 		// data in an string table)
 		result->setStr(CSTRING(*lhs->getStr() + *rhs->getStr()));
@@ -30,7 +30,7 @@ CLEVER_TYPE_OPERATOR(StrType::sub)
 
 CLEVER_TYPE_OPERATOR(StrType::mul)
 {
-	if (rhs->getType() == CLEVER_INT_TYPE) {
+	if (rhs->isInt()) {
 		std::ostringstream os;
 
 		for (long i = 0, j = rhs->getInt(); i < j; ++i) {
@@ -52,7 +52,6 @@ CLEVER_TYPE_OPERATOR(StrType::mod)
 // String::String()
 CLEVER_METHOD(StrType::ctor)
 {
-	result->setType(this);
 	result->setStr(CSTRING(""));
 }
 
@@ -103,18 +102,18 @@ CLEVER_METHOD(StrType::find)
 
 	switch (args.size()) {
 		case 1:
-			needle = CLEVER_ARG_PSTR(0);
+			needle = args[0]->getStr()->c_str();
 		break;
 
 		case 2:
-			needle = CLEVER_ARG_PSTR(0);
-			bounds[0] = CLEVER_ARG_INT(1);
+			needle = args[0]->getStr()->c_str();
+			bounds[0] = args[1]->getInt();
 		break;
 
 		case 3:
-			needle = CLEVER_ARG_PSTR(0);
-			bounds[0] = CLEVER_ARG_INT(1);
-			bounds[1] = CLEVER_ARG_INT(2);
+			needle = args[0]->getStr()->c_str();
+			bounds[0] = args[1]->getInt();
+			bounds[1] = args[2]->getInt();
 		break;
 	}
 
@@ -148,18 +147,18 @@ CLEVER_METHOD(StrType::findFirst)
 	haystack = CLEVER_THIS()->getStr();
 	switch (args.size()) {
 		case 1:
-			needle = CLEVER_ARG_PSTR(0);
+			needle = args[0]->getStr()->c_str();
 			break;
 
 		case 2:
-			needle = CLEVER_ARG_PSTR(0);
-			bounds[0] = CLEVER_ARG_INT(1);
+			needle = args[0]->getStr()->c_str();
+			bounds[0] = args[1]->getInt();
 			break;
 
 		case 3:
-			needle = CLEVER_ARG_PSTR(0);
-			bounds[0] = CLEVER_ARG_INT(1);
-			bounds[1] = CLEVER_ARG_INT(2);
+			needle = args[0]->getStr()->c_str();
+			bounds[0] = args[1]->getInt();
+			bounds[1] = args[2]->getInt();
 			break;
 	}
 	result->setNull();
@@ -193,18 +192,18 @@ CLEVER_METHOD(StrType::findLast)
 
 	switch (args.size()) {
 		case 1:
-			needle = CLEVER_ARG_PSTR(0);
+			needle = args[0]->getStr()->c_str();
 			break;
 
 		case 2:
-			needle = CLEVER_ARG_PSTR(0);
-			bounds[0] = CLEVER_ARG_INT(1);
+			needle = args[0]->getStr()->c_str();
+			bounds[0] = args[1]->getInt();
 			break;
 
 		case 3:
-			needle = CLEVER_ARG_PSTR(0);
-			bounds[0] = CLEVER_ARG_INT(1);
-			bounds[1] = CLEVER_ARG_INT(2);
+			needle = args[0]->getStr()->c_str();
+			bounds[0] = args[1]->getInt();
+			bounds[1] = args[2]->getInt();
 			break;
 	}
 
@@ -233,7 +232,7 @@ CLEVER_METHOD(StrType::format)
 		return;
 	}
 
-	format = CLEVER_ARG_CSTR(0);
+	format = args[0]->getStr();
 	std::ostringstream stream;
 	const char* start = format->c_str();
 
@@ -244,7 +243,7 @@ CLEVER_METHOD(StrType::format)
 
 			if ((arg=::std::strtoul(++point, &skip, 10))) {
 				if (args.size() > (arg+offset)) {
-					CLEVER_ARG_DUMPTO((arg+offset), stream);
+					args[arg+offset]->dump(stream);
 				}
 				point = skip;
 			} else {
@@ -345,8 +344,8 @@ CLEVER_METHOD(StrType::split)
 
 	unsigned long maximum = 0;
 	if (args.size() > 1) {
-		if (CLEVER_ARG_INT(1)) {
-			maximum = CLEVER_ARG_INT(1);
+		if (args[1]->getInt()) {
+			maximum = args[1]->getInt();
 		}
 	}
 
@@ -354,7 +353,7 @@ CLEVER_METHOD(StrType::split)
 	const ::std::string* self = CLEVER_THIS()->getStr();
 
 	if (self && self->length()) {
-		const ::std::string* delimit = CLEVER_ARG_CSTR(0);
+		const ::std::string* delimit = args[0]->getStr();
 		size_t offset = 0;
 
 		if (delimit && (offset=delimit->length())) {
@@ -377,7 +376,7 @@ CLEVER_METHOD(StrType::split)
 			list.push_back(new Value(self));
 		}
 	}
-	CLEVER_RETURN_ARRAY(CLEVER_ARRAY_TYPE->allocData(&list));
+	result->setObj(CLEVER_ARRAY_TYPE, CLEVER_ARRAY_TYPE->allocData(&list));
 }
 
 CLEVER_TYPE_INIT(StrType::init)
@@ -402,42 +401,42 @@ CLEVER_TYPE_INIT(StrType::init)
 
 CLEVER_TYPE_OPERATOR(StrType::greater)
 {
-	if (EXPECTED(rhs->getType() == this)) {
+	if (EXPECTED(rhs->isStr())) {
 		result->setBool(lhs->getStr() > rhs->getStr());
 	}
 }
 
 CLEVER_TYPE_OPERATOR(StrType::greater_equal)
 {
-	if (EXPECTED(rhs->getType() == this)) {
+	if (EXPECTED(rhs->isStr())) {
 		result->setBool(lhs->getStr() >= rhs->getStr());
 	}
 }
 
 CLEVER_TYPE_OPERATOR(StrType::less)
 {
-	if (EXPECTED(rhs->getType() == this)) {
+	if (EXPECTED(rhs->isStr())) {
 		result->setBool(lhs->getStr() < rhs->getStr());
 	}
 }
 
 CLEVER_TYPE_OPERATOR(StrType::less_equal)
 {
-	if (EXPECTED(rhs->getType() == this)) {
+	if (EXPECTED(rhs->isStr())) {
 		result->setBool(lhs->getStr() <= rhs->getStr());
 	}
 }
 
 CLEVER_TYPE_OPERATOR(StrType::equal)
 {
-	if (EXPECTED(rhs->getType() == this)) {
+	if (EXPECTED(rhs->isStr())) {
 		result->setBool(lhs->getStr() == rhs->getStr());
 	}
 }
 
 CLEVER_TYPE_OPERATOR(StrType::not_equal)
 {
-	if (EXPECTED(rhs->getType() == this)) {
+	if (EXPECTED(rhs->isStr())) {
 		result->setBool(lhs->getStr() != rhs->getStr());
 	}
 }

@@ -152,8 +152,7 @@ CLEVER_METHOD(Date::getTime)
 // Constructs a new Date object, uses the current time if none is provided
 CLEVER_METHOD(Date::ctor)
 {
-	result->setType(this);
-	result->setObj(allocData(&args));
+	result->setObj(this, allocData(&args));
 }
 
 CLEVER_TYPE_INIT(Date::init)

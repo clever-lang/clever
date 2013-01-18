@@ -139,7 +139,7 @@ CLEVER_METHOD(TcpSocket::isOpen)
 
 	SocketObject* sv = CLEVER_GET_OBJECT(SocketObject*, CLEVER_THIS());
 
-	CLEVER_RETURN_BOOL(sv->getSocket().isOpen());
+	result->setBool(sv->getSocket().isOpen());
 }
 
 CLEVER_METHOD(TcpSocket::poll)
@@ -150,7 +150,7 @@ CLEVER_METHOD(TcpSocket::poll)
 
 	SocketObject* sv = CLEVER_GET_OBJECT(SocketObject*, CLEVER_THIS());
 
-	CLEVER_RETURN_BOOL(sv->getSocket().poll());
+	result->setBool(sv->getSocket().poll());
 }
 
 CLEVER_METHOD(TcpSocket::good)
@@ -161,7 +161,7 @@ CLEVER_METHOD(TcpSocket::good)
 
 	SocketObject* sv = CLEVER_GET_OBJECT(SocketObject*, CLEVER_THIS());
 
-	CLEVER_RETURN_BOOL(sv->getSocket().getError() == NO_ERROR);
+	result->setBool(sv->getSocket().getError() == NO_ERROR);
 }
 
 CLEVER_METHOD(TcpSocket::getError)

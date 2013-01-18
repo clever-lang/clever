@@ -28,8 +28,7 @@ CLEVER_METHOD(ReflectType::ctor)
 		return;
 	}
 
-	result->setType(this);
-	result->setObj(allocData(&args));
+	result->setObj(this, allocData(&args));
 }
 
 // Reflect::getType()
@@ -81,7 +80,7 @@ CLEVER_METHOD(ReflectType::isString)
 
 	ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
 
-	result->setBool(intern->getData()->isString());
+	result->setBool(intern->getData()->isStr());
 }
 
 // Reflect::isInt()
