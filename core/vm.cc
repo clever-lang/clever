@@ -353,7 +353,7 @@ void VM::run()
 		{
 			const Value* fval = getValue(OPCODE.op1);
 
-			if (UNEXPECTED(fval->getType() != CLEVER_FUNC_TYPE)) {
+			if (UNEXPECTED(!fval->isFunction())) {
 				error(VM_ERROR, "Cannot make a call from %S type",
 					fval->getType()->getName());
 			}
