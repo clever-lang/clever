@@ -45,7 +45,7 @@ CLEVER_METHOD(ReflectType::getType)
 	result->setStr(type ? type->getName() : CSTRING("null"));
 }
 
-// ReflectType::isFunction()
+// Reflect::isFunction()
 // Check if the object is of function type
 CLEVER_METHOD(ReflectType::isFunction)
 {
@@ -58,7 +58,7 @@ CLEVER_METHOD(ReflectType::isFunction)
 	result->setBool(intern->getData()->isFunction());
 }
 
-// ReflectType::isBool()
+// Reflect::isBool()
 // Check if the object is of bool type
 CLEVER_METHOD(ReflectType::isBool)
 {
@@ -71,7 +71,7 @@ CLEVER_METHOD(ReflectType::isBool)
 	result->setBool(intern->getData()->isBool());
 }
 
-// ReflectType::isString()
+// Reflect::isString()
 // Check if the object is of string type
 CLEVER_METHOD(ReflectType::isString)
 {
@@ -84,7 +84,7 @@ CLEVER_METHOD(ReflectType::isString)
 	result->setBool(intern->getData()->isString());
 }
 
-// ReflectType::isInt()
+// Reflect::isInt()
 // Check if the object is of int type
 CLEVER_METHOD(ReflectType::isInt)
 {
@@ -97,7 +97,7 @@ CLEVER_METHOD(ReflectType::isInt)
 	result->setBool(intern->getData()->isInt());
 }
 
-// ReflectType::isDouble()
+// Reflect::isDouble()
 // Check if the object is of double type
 CLEVER_METHOD(ReflectType::isDouble)
 {
@@ -111,7 +111,7 @@ CLEVER_METHOD(ReflectType::isDouble)
 }
 
 
-// ReflectType::isArray()
+// Reflect::isArray()
 // Check if the object is of double type
 CLEVER_METHOD(ReflectType::isArray)
 {
@@ -124,7 +124,7 @@ CLEVER_METHOD(ReflectType::isArray)
 	result->setBool(intern->getData()->isArray());
 }
 
-// ReflectType::isMap()
+// Reflect::isMap()
 // Check if the object is of map type
 CLEVER_METHOD(ReflectType::isMap)
 {
@@ -137,7 +137,7 @@ CLEVER_METHOD(ReflectType::isMap)
 	result->setBool(intern->getData()->isMap());
 }
 
-// ReflectType::isThread()
+// Reflect::isThread()
 // Check if the object is of thread type
 CLEVER_METHOD(ReflectType::isThread)
 {
@@ -150,6 +150,8 @@ CLEVER_METHOD(ReflectType::isThread)
 	result->setBool(intern->getData()->isThread());
 }
 
+// Reflect::isVariadic()
+// Check if the object is a variadic function
 CLEVER_METHOD(ReflectType::isVariadic)
 {
 	if (!clever_check_no_args()) {
