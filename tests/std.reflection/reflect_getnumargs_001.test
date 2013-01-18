@@ -1,0 +1,13 @@
+Testing Reflect::getNumArgs() and Reflect::getNumReqArgs()
+==CODE==
+import std.io.*;
+import std.reflection.*;
+
+function a(x, y = 1, z...) {}
+
+var r = Reflect.new(a);
+
+println(r.getNumArgs());
+
+==RESULT==
+2

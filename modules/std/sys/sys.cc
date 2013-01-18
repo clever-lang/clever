@@ -117,24 +117,13 @@ static CLEVER_FUNCTION(sleep)
 		return;
 	}
 
-	int time = static_cast<int>(CLEVER_ARG_INT(0));
+	int time = static_cast<int>(args[0]->getInt());
 
 #ifdef CLEVER_WIN32
 	SleepEx(time, false);
 #else
 	usleep(time * 1000);
 #endif
-}
-
-// Int time()
-// Returns the number of seconds since Unix Epoch
-static CLEVER_FUNCTION(time)
-{
-	if (!clever_static_check_no_args()) {
-		return;
-	}
-
-	result->setInt(time(NULL));
 }
 
 // Int clock()
@@ -147,7 +136,6 @@ static CLEVER_FUNCTION(clock)
 
 	result->setInt(clock());
 }
-
 } // clever::packages::std::os
 
 // Initializes Standard module
@@ -160,7 +148,6 @@ CLEVER_MODULE_INIT(SYSModule)
 	addFunction(new Function("argc",   &CLEVER_NS_FNAME(sys, argc)));
 	addFunction(new Function("argv",   &CLEVER_NS_FNAME(sys, argv)));
 	addFunction(new Function("sleep",  &CLEVER_NS_FNAME(sys, sleep)));
-	addFunction(new Function("time",  &CLEVER_NS_FNAME(sys, time)));
 	addFunction(new Function("clock", &CLEVER_NS_FNAME(sys, clock)));
 }
 

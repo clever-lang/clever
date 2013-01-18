@@ -182,8 +182,7 @@ static CLEVER_FORCE_INLINE void _param_binding(Function* func, Environment* fenv
 		}
 
 		Value* vararg = fenv->getValue(ValueOffset(0, func->getNumArgs()));
-		vararg->setType(CLEVER_ARRAY_TYPE);
-		vararg->setObj(arr);
+		vararg->setObj(CLEVER_ARRAY_TYPE, arr);
 	}
 }
 
@@ -353,7 +352,7 @@ void VM::run()
 		{
 			const Value* fval = getValue(OPCODE.op1);
 
-			if (UNEXPECTED(fval->getType() != CLEVER_FUNC_TYPE)) {
+			if (UNEXPECTED(!fval->isFunction())) {
 				error(VM_ERROR, "Cannot make a call from %S type",
 					fval->getType()->getName());
 			}
@@ -419,33 +418,15 @@ void VM::run()
 				n_threads = size->getInt();
 			}
 
-			for (size_t i = 0; i < n_threads; ++i) {
-				VMThread* thread = new VMThread;
+			tdata->setNThreads(n_threads);
 
-				new_thread();
-
-				thread->vm_handler = new VM(this->m_inst);
-				thread->vm_handler->copy(this);
-				thread->vm_handler->setChild();
-
-				Environment* tenv = tdata->getEnvironment()->activate(m_call_stack.top());
-				thread->vm_handler->m_call_stack.push(tenv);
-
-				if (m_thread_pool.size() <= tdata->getID()) {
-					m_thread_pool.resize(tdata->getID() + 1);
-				}
-
-				m_thread_pool[tdata->getID()].push_back(thread);
-
-				thread->t_handler.create(_thread_control, static_cast<void*>(thread));
-			}
 			getMutex()->unlock();
 
 			VM_GOTO(OPCODE.op1.jmp_addr);
 		}
 
 	OP(OP_ETHREAD):
-		if (this->isChild()) {
+		if (EXPECTED(isChild())) {
 			getMutex()->lock();
 
 			if (EXPECTED(m_call_stack.size())) {
@@ -729,6 +710,10 @@ void VM::run()
 			if (EXPECTED(ctor != NULL)) {
 				(type->*ctor->getMethodPtr())(getValue(OPCODE.result),
 					NULL, m_call_args, this, &m_exception);
+
+				if (UNEXPECTED(m_exception.hasException())) {
+					goto throw_exception;
+				}
 			}
 			m_call_args.clear();
 		}

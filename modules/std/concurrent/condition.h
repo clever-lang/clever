@@ -33,9 +33,11 @@ public:
 	virtual void* allocData(CLEVER_TYPE_CTOR_ARGS) const;
 	virtual void deallocData(void* data);
 
+	CLEVER_METHOD(ctor);
+
 	CLEVER_METHOD(signal);
 	CLEVER_METHOD(broadcast);
-	CLEVER_METHOD(waitFor);
+	CLEVER_METHOD(wait);
 };
 
 }}} // clever::packages::std

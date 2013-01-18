@@ -41,7 +41,7 @@ void* UString::allocData(CLEVER_TYPE_CTOR_ARGS) const
 	if (args->size()) {
 		Value* from = args->at(0);
 
-		if (from && from->getType() == CLEVER_STR_TYPE) {
+		if (from && from->isStr()) {
 			const CString* str = from->getStr();
 
 			if (str) {
@@ -59,8 +59,7 @@ void UString::deallocData(void *data)
 
 CLEVER_METHOD(UString::ctor)
 {
-	result->setType(this);
-	result->setObj(allocData(&args));
+	result->setObj(this, allocData(&args));
 }
 
 // UString.getLength()
@@ -70,7 +69,7 @@ CLEVER_METHOD(UString::getLength)
 	CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
 
 	if (intern) {
-		CLEVER_RETURN_INT(intern->length());
+		result->setInt(intern->length());
 	}
 }
 
@@ -90,13 +89,13 @@ CLEVER_METHOD(UString::startsWith)
 
 	switch (args.size()) {
 		case 1:
-			CLEVER_RETURN_INT(intern->startsWith(
-				UnicodeString(CLEVER_ARG_PSTR(0))));
+			result->setInt(intern->startsWith(
+				UnicodeString(args[0]->getStr()->c_str())));
 			break;
 		case 3:
-			CLEVER_RETURN_INT(intern->startsWith(
-				UnicodeString(CLEVER_ARG_PSTR(0)), CLEVER_ARG_INT(1),
-					CLEVER_ARG_INT(2)));
+			result->setInt(intern->startsWith(
+				UnicodeString(args[0]->getStr()->c_str()), args[1]->getInt(),
+					args[2]->getInt()));
 			break;
 	}
 }
@@ -117,11 +116,11 @@ CLEVER_METHOD(UString::endsWith)
 
 	switch (args.size()) {
 		case 1:
-			CLEVER_RETURN_INT(intern->endsWith(UnicodeString(CLEVER_ARG_PSTR(0))));
+			result->setInt(intern->endsWith(UnicodeString(args[0]->getStr()->c_str())));
 			break;
 		case 3:
-			CLEVER_RETURN_INT(intern->endsWith(UnicodeString(CLEVER_ARG_PSTR(0)),
-					CLEVER_ARG_INT(1), CLEVER_ARG_INT(2)));
+			result->setInt(intern->endsWith(UnicodeString(args[0]->getStr()->c_str()),
+					args[1]->getInt(), args[2]->getInt()));
 			break;
 	}
 }
@@ -142,15 +141,15 @@ CLEVER_METHOD(UString::indexOf)
 
 	switch(args.size()) {
 		case 1:
-			CLEVER_RETURN_INT(intern->indexOf(UnicodeString(CLEVER_ARG_PSTR(0))));
+			result->setInt(intern->indexOf(UnicodeString(args[0]->getStr()->c_str())));
 			break;
 		case 2:
-			CLEVER_RETURN_INT(intern->indexOf(UnicodeString(CLEVER_ARG_PSTR(0)),
-				CLEVER_ARG_INT(1)));
+			result->setInt(intern->indexOf(UnicodeString(args[0]->getStr()->c_str()),
+				args[1]->getInt()));
 			break;
 		case 3:
-			CLEVER_RETURN_INT(intern->indexOf(UnicodeString(CLEVER_ARG_PSTR(0)),
-				CLEVER_ARG_INT(1), CLEVER_ARG_INT(2)));
+			result->setInt(intern->indexOf(UnicodeString(args[0]->getStr()->c_str()),
+				args[1]->getInt(), args[2]->getInt()));
 			break;
 	}
 }
@@ -171,15 +170,15 @@ CLEVER_METHOD(UString::lastIndexOf)
 
 	switch (args.size()) {
 		case 1:
-			CLEVER_RETURN_INT(intern->lastIndexOf(UnicodeString(CLEVER_ARG_PSTR(0))));
+			result->setInt(intern->lastIndexOf(UnicodeString(args[0]->getStr()->c_str())));
 			break;
 		case 2:
-			CLEVER_RETURN_INT(intern->lastIndexOf(UnicodeString(CLEVER_ARG_PSTR(0)),
-				CLEVER_ARG_INT(1)));
+			result->setInt(intern->lastIndexOf(UnicodeString(args[0]->getStr()->c_str()),
+				args[1]->getInt()));
 			break;
 		case 3:
-			CLEVER_RETURN_INT(intern->lastIndexOf(UnicodeString(CLEVER_ARG_PSTR(0)),
-				CLEVER_ARG_INT(1), CLEVER_ARG_INT(2)));
+			result->setInt(intern->lastIndexOf(UnicodeString(args[0]->getStr()->c_str()),
+				args[1]->getInt(), args[2]->getInt()));
 			break;
 	}
 }
@@ -244,8 +243,8 @@ CLEVER_METHOD(UString::truncate)
 	if (!clever_check_args("i")) {
 		return;
 	}
-	intern->truncate(CLEVER_ARG_INT(0));
-	CLEVER_RETURN_INT(intern->length());
+	intern->truncate(args[0]->getInt());
+	result->setInt(intern->length());
 }
 
 // UString.append(string next, [int start, int length])
@@ -264,14 +263,14 @@ CLEVER_METHOD(UString::append)
 
 	switch(args.size()) {
 		case 1:
-			intern->append(UnicodeString(CLEVER_ARG_PSTR(0)));
+			intern->append(UnicodeString(args[0]->getStr()->c_str()));
 			break;
 		case 3:
-			intern->append(UnicodeString(CLEVER_ARG_PSTR(0)),
-				CLEVER_ARG_INT(1), CLEVER_ARG_INT(2));
+			intern->append(UnicodeString(args[0]->getStr()->c_str()),
+				args[1]->getInt(), args[2]->getInt());
 			break;
 	}
-	CLEVER_RETURN_INT(intern->length());
+	result->setInt(intern->length());
 }
 
 // UString.replace(string match, string replacement)
@@ -286,8 +285,8 @@ CLEVER_METHOD(UString::replace)
 	if (!clever_check_args("ss")) {
 		return;
 	}
-	intern->findAndReplace(UnicodeString(CLEVER_ARG_PSTR(0)),
-		UnicodeString(CLEVER_ARG_PSTR(1)));
+	intern->findAndReplace(UnicodeString(args[0]->getStr()->c_str()),
+		UnicodeString(args[1]->getStr()->c_str()));
 }
 
 CLEVER_TYPE_INIT(UString::init)

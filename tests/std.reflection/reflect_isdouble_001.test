@@ -1,0 +1,13 @@
+Testing Reflect::isDouble() methods
+==CODE==
+import std.io.*;
+import std.reflection.*;
+
+var a = Reflect.new(1);
+println(a.isDouble());
+
+a = Reflect.new(1.2);
+println(a.isDouble());
+==RESULT==
+0
+1

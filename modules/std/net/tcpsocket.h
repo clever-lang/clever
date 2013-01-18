@@ -15,16 +15,17 @@
 
 namespace clever { namespace packages { namespace std { namespace net {
 
-class SocketObject : public ValueObject {
+class SocketObject {
 public:
-	SocketObject()
-		: ValueObject() {}
+	SocketObject() {}
 
-	virtual ~SocketObject() {}
+	~SocketObject() {}
 
 	CSocket& getSocket() { return m_socket; }
 private:
 	CSocket m_socket;
+
+	DISALLOW_COPY_AND_ASSIGN(SocketObject);
 };
 
 class TcpSocket : public Type {

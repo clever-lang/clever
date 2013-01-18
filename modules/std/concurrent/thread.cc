@@ -55,10 +55,10 @@ void* Thread::allocData(CLEVER_TYPE_CTOR_ARGS) const
 		Value* point = args->at(0);
 
 		/** there's something very wrong here **/
-		if (point->getType() == CLEVER_FUNC_TYPE) {
+		if (point->isFunction()) {
 			intern->entry = static_cast<Function*>(point->getObj());
 		} else {
-			clever_error("Thread.new was expecting a Function and got something else at %@", point);
+			clever_debug("Thread.new was expecting a Function and got something else at %@", point);
 		}
 	} else {
 		clever_error("Thread.new was expecting a Function entry point and recieved no arguments");
@@ -85,6 +85,8 @@ void Thread::deallocData(void* data)
 	delete intern;
 }
 
+// Bool Thread.start()
+// Starts executing the Thread object
 CLEVER_METHOD(Thread::start)
 {
 	ThreadData* intern = CLEVER_GET_OBJECT(ThreadData*, CLEVER_THIS());
@@ -111,8 +113,21 @@ CLEVER_METHOD(Thread::start)
 	}
 }
 
+// Thread.new(function entry)
+// Constructs a new Thread object to execute the supplied function
+CLEVER_METHOD(Thread::ctor)
+{
+	result->setObj(this, allocData(&args));
+}
+
 CLEVER_TYPE_INIT(Thread::init)
 {
+	Function* ctor = new Function("Thread", (MethodPtr) &Thread::ctor);
+
+	setConstructor(ctor);
+
+	addMethod(ctor);
+
 	addMethod(new Function("start",    (MethodPtr)&Thread::start));
 }
 

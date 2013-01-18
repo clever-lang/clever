@@ -160,7 +160,7 @@ next_token:
 		RET(token::FUNC);
 	}
 
-	<INITIAL>'spawn' {
+	<INITIAL>'process' {
 		RET(token::THREAD);
 	}
 

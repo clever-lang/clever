@@ -15,16 +15,17 @@
 
 namespace clever {
 
-class MapObject : public ValueObject {
+class MapObject {
 public:
-	MapObject()
-		: ValueObject() {}
+	MapObject() {}
 
 	~MapObject() {}
 
 	std::map<std::string, Value*>& getData() { return m_data; }
 private:
 	std::map<std::string, Value*> m_data;
+
+	DISALLOW_COPY_AND_ASSIGN(MapObject);
 };
 
 class MapType : public Type {
@@ -48,6 +49,8 @@ public:
 	CLEVER_METHOD(insert);
 	CLEVER_METHOD(each);
 	CLEVER_METHOD(size);
+private:
+	DISALLOW_COPY_AND_ASSIGN(MapType);
 };
 
 } // clever
