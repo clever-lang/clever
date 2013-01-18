@@ -31,7 +31,7 @@ namespace clever { namespace packages { namespace std {
 
 namespace sys {
 
-// Int system(String command)
+// system(string command)
 // Calls a command and returns the exit code
 static CLEVER_FUNCTION(system)
 {
@@ -42,7 +42,7 @@ static CLEVER_FUNCTION(system)
 	result->setInt(::system(args[0]->getStr()->c_str()));
 }
 
-// void putenv(String env)
+// putenv(string env)
 // Sets an environment variable
 static CLEVER_FUNCTION(putenv)
 {
@@ -53,7 +53,7 @@ static CLEVER_FUNCTION(putenv)
     ::putenv(const_cast<char*>(args[0]->getStr()->c_str()));
 }
 
-// String getenv(String env)
+// getenv(string env)
 // Gets an environment variable
 static CLEVER_FUNCTION(getenv)
 {
@@ -70,7 +70,7 @@ static CLEVER_FUNCTION(getenv)
 	}
 }
 
-// String getcwd()
+// getcwd()
 // Gets the current working directory
 static CLEVER_FUNCTION(getcwd)
 {
@@ -84,7 +84,7 @@ static CLEVER_FUNCTION(getcwd)
 	result->setStr(CSTRING(path ? path : ""));
 }
 
-// String argv(Int n)
+// argv(int n)
 // Get n-th argv value
 static CLEVER_FUNCTION(argv)
 {
@@ -99,7 +99,7 @@ static CLEVER_FUNCTION(argv)
 */
 }
 
-// Int argc()
+// argc()
 // Get argc value
 static CLEVER_FUNCTION(argc)
 {
@@ -109,7 +109,7 @@ static CLEVER_FUNCTION(argc)
 //	CLEVER_RETURN_INT(*g_clever_argc);
 }
 
-// Void sleep(Int time)
+// sleep(int time)
 // Sleep for 'time' milliseconds
 static CLEVER_FUNCTION(sleep)
 {
@@ -126,7 +126,7 @@ static CLEVER_FUNCTION(sleep)
 #endif
 }
 
-// Int clock()
+// clock()
 // Returns the execution clock
 static CLEVER_FUNCTION(clock)
 {
@@ -136,7 +136,8 @@ static CLEVER_FUNCTION(clock)
 
 	result->setInt(clock());
 }
-} // clever::packages::std::os
+
+} // clever::packages::std::sys
 
 // Initializes Standard module
 CLEVER_MODULE_INIT(SYSModule)
