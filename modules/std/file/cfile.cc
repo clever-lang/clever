@@ -73,7 +73,7 @@ void CFile::deallocData(CLEVER_TYPE_DTOR_ARGS)
 
 CLEVER_METHOD(CFile::ctor)
 {
-	if (!clever_check_args("ss")) {
+	if (!clever_check_args("si")) {
 		return;
 	}
 
