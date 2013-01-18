@@ -105,8 +105,7 @@ CLEVER_METHOD(Condition::wait)
 
 CLEVER_METHOD(Condition::ctor)
 {
-	result->setType(this);
-	result->setObj(allocData(&args));
+	result->setObj(this, allocData(&args));
 }
 
 CLEVER_TYPE_INIT(Condition::init)

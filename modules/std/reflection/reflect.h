@@ -41,6 +41,10 @@ public:
 
 	void* allocData(CLEVER_TYPE_CTOR_ARGS) const;
 
+	void deallocData(CLEVER_TYPE_DTOR_ARGS) {
+		delete static_cast<ReflectObject*>(data);
+	}
+
 	CLEVER_METHOD(ctor);
 	CLEVER_METHOD(getType);
 
@@ -52,6 +56,10 @@ public:
 	CLEVER_METHOD(isMap);
 	CLEVER_METHOD(isArray);
 	CLEVER_METHOD(isThread);
+
+	CLEVER_METHOD(isVariadic);
+	CLEVER_METHOD(getNumArgs);
+	CLEVER_METHOD(getNumReqArgs);
 };
 
 }}}} // clever

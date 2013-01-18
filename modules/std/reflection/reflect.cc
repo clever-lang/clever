@@ -28,8 +28,7 @@ CLEVER_METHOD(ReflectType::ctor)
 		return;
 	}
 
-	result->setType(this);
-	result->setObj(allocData(&args));
+	result->setObj(this, allocData(&args));
 }
 
 // Reflect::getType()
@@ -45,7 +44,7 @@ CLEVER_METHOD(ReflectType::getType)
 	result->setStr(type ? type->getName() : CSTRING("null"));
 }
 
-// ReflectType::isFunction()
+// Reflect::isFunction()
 // Check if the object is of function type
 CLEVER_METHOD(ReflectType::isFunction)
 {
@@ -58,7 +57,7 @@ CLEVER_METHOD(ReflectType::isFunction)
 	result->setBool(intern->getData()->isFunction());
 }
 
-// ReflectType::isBool()
+// Reflect::isBool()
 // Check if the object is of bool type
 CLEVER_METHOD(ReflectType::isBool)
 {
@@ -71,7 +70,7 @@ CLEVER_METHOD(ReflectType::isBool)
 	result->setBool(intern->getData()->isBool());
 }
 
-// ReflectType::isString()
+// Reflect::isString()
 // Check if the object is of string type
 CLEVER_METHOD(ReflectType::isString)
 {
@@ -81,10 +80,10 @@ CLEVER_METHOD(ReflectType::isString)
 
 	ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
 
-	result->setBool(intern->getData()->isString());
+	result->setBool(intern->getData()->isStr());
 }
 
-// ReflectType::isInt()
+// Reflect::isInt()
 // Check if the object is of int type
 CLEVER_METHOD(ReflectType::isInt)
 {
@@ -97,7 +96,7 @@ CLEVER_METHOD(ReflectType::isInt)
 	result->setBool(intern->getData()->isInt());
 }
 
-// ReflectType::isDouble()
+// Reflect::isDouble()
 // Check if the object is of double type
 CLEVER_METHOD(ReflectType::isDouble)
 {
@@ -111,7 +110,7 @@ CLEVER_METHOD(ReflectType::isDouble)
 }
 
 
-// ReflectType::isArray()
+// Reflect::isArray()
 // Check if the object is of double type
 CLEVER_METHOD(ReflectType::isArray)
 {
@@ -124,7 +123,7 @@ CLEVER_METHOD(ReflectType::isArray)
 	result->setBool(intern->getData()->isArray());
 }
 
-// ReflectType::isMap()
+// Reflect::isMap()
 // Check if the object is of map type
 CLEVER_METHOD(ReflectType::isMap)
 {
@@ -137,7 +136,7 @@ CLEVER_METHOD(ReflectType::isMap)
 	result->setBool(intern->getData()->isMap());
 }
 
-// ReflectType::isThread()
+// Reflect::isThread()
 // Check if the object is of thread type
 CLEVER_METHOD(ReflectType::isThread)
 {
@@ -150,6 +149,67 @@ CLEVER_METHOD(ReflectType::isThread)
 	result->setBool(intern->getData()->isThread());
 }
 
+// Reflect::isVariadic()
+// Check if the object is a variadic function
+CLEVER_METHOD(ReflectType::isVariadic)
+{
+	if (!clever_check_no_args()) {
+		return;
+	}
+
+	ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
+	const Value* data = intern->getData();
+
+	if (!data->isFunction()) {
+		return;
+	}
+
+	const Function* func = static_cast<Function*>(data->getObj());
+
+	result->setBool(func->isVariadic());
+}
+
+// Reflect::getNumArgs()
+// Returns the number of arguments (variadic is not in the count)
+CLEVER_METHOD(ReflectType::getNumArgs)
+{
+	if (!clever_check_no_args()) {
+		return;
+	}
+
+	const ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
+	const Value* data = intern->getData();
+
+	if (!data->isFunction()) {
+		return;
+	}
+
+	const Function* func = static_cast<Function*>(data->getObj());
+
+	result->setInt(func->getNumArgs());
+}
+
+// Reflect::getNumRegArgs()
+// Returns the number of required arguments (variadic is not in the count)
+CLEVER_METHOD(ReflectType::getNumReqArgs)
+{
+	if (!clever_check_no_args()) {
+		return;
+	}
+
+	const ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
+	const Value* data = intern->getData();
+
+	if (!data->isFunction()) {
+		return;
+	}
+
+	const Function* func = static_cast<Function*>(data->getObj());
+
+	result->setInt(func->getNumRequiredArgs());
+}
+
+
 // Reflect type initialization
 CLEVER_TYPE_INIT(ReflectType::init)
 {
@@ -158,6 +218,8 @@ CLEVER_TYPE_INIT(ReflectType::init)
 	setConstructor(ctor);
 	addMethod(ctor);
 	addMethod(new Function("getType",    (MethodPtr) &ReflectType::getType));
+
+	// Type checking
 	addMethod(new Function("isFunction", (MethodPtr) &ReflectType::isFunction));
 	addMethod(new Function("isBool",     (MethodPtr) &ReflectType::isBool));
 	addMethod(new Function("isString",   (MethodPtr) &ReflectType::isString));
@@ -166,6 +228,11 @@ CLEVER_TYPE_INIT(ReflectType::init)
 	addMethod(new Function("isArray",    (MethodPtr) &ReflectType::isArray));
 	addMethod(new Function("isMap",      (MethodPtr) &ReflectType::isMap));
 	addMethod(new Function("isThread",   (MethodPtr) &ReflectType::isThread));
+
+	// Function specific methods
+	addMethod(new Function("isVariadic",    (MethodPtr) &ReflectType::isVariadic));
+	addMethod(new Function("getNumArgs",    (MethodPtr) &ReflectType::getNumArgs));
+	addMethod(new Function("getNumReqArgs", (MethodPtr) &ReflectType::getNumReqArgs));
 }
 
 }}}} // clever::packages::std::reflection

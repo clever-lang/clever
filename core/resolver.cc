@@ -77,8 +77,8 @@ void Resolver::visit(ThreadBlock* node)
 
 	thread->setUserDefined();
 
-	Value* tval = new Value(CLEVER_THREAD_TYPE);
-	tval->setObj(thread);
+	Value* tval = new Value;
+	tval->setObj(CLEVER_THREAD_TYPE, thread);
 
 	thread->setName(*name);
 	m_scope->pushValue(name, tval)->voffset = m_stack.top()->pushValue(tval);
@@ -127,8 +127,8 @@ void Resolver::visit(FunctionDecl* node)
 
 	func->setUserDefined();
 
-	Value* fval = new Value(CLEVER_FUNC_TYPE);
-	fval->setObj(func);
+	Value* fval = new Value;
+	fval->setObj(CLEVER_FUNC_TYPE, func);
 
 	func->setName(*name);
 

@@ -13,18 +13,16 @@
 
 namespace clever {
 
-
 CLEVER_METHOD(ThreadType::toString)
 {
 	std::ostringstream str;
 
-	Thread* thread = (CLEVER_GET_OBJECT(Thread*, CLEVER_THIS()));
+	const Thread* thread = CLEVER_GET_OBJECT(Thread*, CLEVER_THIS());
 
 	str << thread->getID();
 
 	result->setStr(CSTRING(str.str()));
 }
-
 
 CLEVER_METHOD(ThreadType::wait)
 {
@@ -51,8 +49,6 @@ CLEVER_METHOD(ThreadType::wait)
 
 CLEVER_METHOD(ThreadType::run)
 {
-
-
 	Thread* tdata = (CLEVER_GET_OBJECT(Thread*, CLEVER_THIS()));
 
 	VM* m_vm = const_cast<VM*>(vm);
@@ -65,7 +61,6 @@ CLEVER_METHOD(ThreadType::run)
 	}
 
 	size_t thread_addr = tdata->getAddr();
-
 	size_t n_threads = tdata->getNThreads();
 
 	for (size_t i = 0; i < n_threads; ++i) {
@@ -94,8 +89,8 @@ CLEVER_TYPE_INIT(ThreadType::init)
 {
 	// Methods
 	addMethod(new Function("toString", (MethodPtr) &ThreadType::toString));
-	addMethod(new Function("wait", (MethodPtr) &ThreadType::wait));
-	addMethod(new Function("run", (MethodPtr) &ThreadType::run));
+	addMethod(new Function("wait",     (MethodPtr) &ThreadType::wait));
+	addMethod(new Function("run",      (MethodPtr) &ThreadType::run));
 }
 
 } // clever

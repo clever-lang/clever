@@ -160,40 +160,6 @@ bool check_args(const ::std::vector<Value*>&, const char*, CException*, const Ty
 
 #define CLEVER_GET_OBJECT(t, n) static_cast<t>((n)->getObj())
 
-/* {{{ CString */
-#define CLEVER_ARG_CSTR(index)	args[index]->getStr()
-/* }}} */
-
-/* {{{ String Pointer */
-#define CLEVER_ARG_PSTR(index)	CLEVER_ARG_CSTR(index)->c_str() /* }}} */
-#define CLEVER_ARG_DBL(index)	args[index]->getDouble()
-#define CLEVER_ARG_INT(index)	args[index]->getInt()
-#define CLEVER_ARG_BOOL(index)	args[index]->getBool()
-#define CLEVER_ARG_OBJ(index)	args[index]->getObj()
-#define CLEVER_ARG_DATA(index)	args[index]->getData()
-#define CLEVER_ARG_TYPE(index)	args[index]->getType()
-#define CLEVER_ARG_DUMP(index) 	args[index]->dump()
-#define CLEVER_ARG_DUMPTO(index, stream) args[index]->dump(stream)
-#define CLEVER_ARG_ISSET(index)	args->size() > index
-#define CLEVER_ARG_ISTYPE(index, type) (args[index]->getType() == type)
-/* }}} */
-
-/* {{{ Return value setters */
-#define CLEVER_RETURN_STR(c)	result->setStr(c)
-#define CLEVER_RETURN_CSTR(c)	result->setStr(CSTRING(c))
-#define CLEVER_RETURN_DBL(d)	result->setDouble(d)
-#define CLEVER_RETURN_INT(i)	result->setInt(i)
-#define CLEVER_RETURN_OBJ(o)	result->setObj(o)
-#define CLEVER_RETURN_DATA(d)	result->setData(d)
-#define CLEVER_RETURN_BOOL(b)   result->setBool(b)
-#define CLEVER_RETURN_MAP(m)	\
-	result->setType(CLEVER_MAP_TYPE);\
-	result->setObj(m)
-#define CLEVER_RETURN_ARRAY(m)	\
-	result->setType(CLEVER_ARRAY_TYPE);\
-	result->setObj(m)
-/* }}} */
-
 } // clever
 
 #endif // CLEVER_H

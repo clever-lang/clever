@@ -69,8 +69,7 @@ void PkgManager::loadModule(Scope* scope, Environment* env, Module* module) cons
 	while (EXPECTED(itf != endf)) {
 		Value* fval = new Value();
 
-		fval->setType(CLEVER_FUNC_TYPE);
-		fval->setObj(itf->second);
+		fval->setObj(CLEVER_FUNC_TYPE, itf->second);
 
 		scope->pushValue(itf->first, fval)->voffset = env->pushValue(fval);
 

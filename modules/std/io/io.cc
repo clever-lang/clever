@@ -61,7 +61,7 @@ static CLEVER_FUNCTION(printf)
 
 			if ((arg=::std::strtoul(++point, &skip, 10))) {
 				if (args.size() > arg) {
-					CLEVER_ARG_DUMP(arg);
+					args[arg]->dump();
 				}
 				point = skip;
 			} else {
@@ -80,9 +80,15 @@ static CLEVER_FUNCTION(printf)
 /// Initializes Standard module
 CLEVER_MODULE_INIT(IOModule)
 {
-	addFunction(new Function("print",   &CLEVER_NS_FNAME(io, print)));
-	addFunction(new Function("println", &CLEVER_NS_FNAME(io, println)));
-	addFunction(new Function("printf",  &CLEVER_NS_FNAME(io, printf)));
+	addFunction(new Function("print",   &CLEVER_NS_FNAME(io, print)))
+		->setVariadic();
+
+	addFunction(new Function("println", &CLEVER_NS_FNAME(io, println)))
+		->setVariadic();
+
+	addFunction(new Function("printf",  &CLEVER_NS_FNAME(io, printf)))
+		->setVariadic();
+
 	addFunction(new Function("flush",   &CLEVER_NS_FNAME(io, flush)));
 }
 

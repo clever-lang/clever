@@ -74,11 +74,6 @@ CLEVER_FORCE_INLINE Value* VM::getValue(Operand& operand) const
 	return source->getValue(operand.voffset);
 }
 
-Value* VM::getValueExt(Operand& operand)
-{
-	return getValue(operand);
-}
-
 #ifdef CLEVER_DEBUG
 void VM::dumpOperand(Operand& op) const
 {
@@ -187,8 +182,7 @@ static CLEVER_FORCE_INLINE void _param_binding(Function* func, Environment* fenv
 		}
 
 		Value* vararg = fenv->getValue(ValueOffset(0, func->getNumArgs()));
-		vararg->setType(CLEVER_ARRAY_TYPE);
-		vararg->setObj(arr);
+		vararg->setObj(CLEVER_ARRAY_TYPE, arr);
 	}
 }
 
@@ -358,7 +352,7 @@ void VM::run()
 		{
 			const Value* fval = getValue(OPCODE.op1);
 
-			if (UNEXPECTED(fval->getType() != CLEVER_FUNC_TYPE)) {
+			if (UNEXPECTED(!fval->isFunction())) {
 				error(VM_ERROR, "Cannot make a call from %S type",
 					fval->getType()->getName());
 			}
@@ -432,7 +426,7 @@ void VM::run()
 		}
 
 	OP(OP_ETHREAD):
-		if (this->isChild()) {
+		if (EXPECTED(isChild())) {
 			getMutex()->lock();
 
 			if (EXPECTED(m_call_stack.size())) {

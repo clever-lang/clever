@@ -113,7 +113,6 @@ public:
 		SAFETY_DTOR();
 	}
 
-	void setType(const Type* type) { SAFETY_LOCK(); m_type = type; SAFETY_ULOCK(); }
 	const Type* getType() const { return m_type; }
 
 	void setNull() { SAFETY_LOCK(); m_type = NULL; SAFETY_ULOCK(); }
@@ -128,10 +127,11 @@ public:
 		}
 	}
 
-	void setObj(void* ptr) {
+	void setObj(const Type* type, void* ptr) {
 		SAFETY_LOCK();
-		clever_assert_not_null(m_type);
-		m_data.obj = new ValueObject(ptr, m_type);
+		clever_assert_not_null(type);
+		m_type = type;
+		m_data.obj = new ValueObject(ptr, type);
 		SAFETY_ULOCK();
 	}
 	void* getObj() const { return m_data.obj->getObj(); }
@@ -171,7 +171,7 @@ public:
 	bool isInt()      const { return m_type == CLEVER_INT_TYPE;    }
 	bool isBool()     const { return m_type == CLEVER_BOOL_TYPE;   }
 	bool isDouble()   const { return m_type == CLEVER_DOUBLE_TYPE; }
-	bool isString()   const { return m_type == CLEVER_STR_TYPE;    }
+	bool isStr()   const { return m_type == CLEVER_STR_TYPE;    }
 	bool isFunction() const { return m_type == CLEVER_FUNC_TYPE;   }
 	bool isMap()      const { return m_type == CLEVER_MAP_TYPE;    }
 	bool isArray()    const { return m_type == CLEVER_ARRAY_TYPE;  }
@@ -181,6 +181,7 @@ public:
 
 	void copy(const Value* value) {
 		SAFETY_LOCK();
+		cleanUp();
 		m_type = value->getType();
 		memcpy(&m_data, value->getData(), sizeof(DataValue));
 
@@ -226,6 +227,12 @@ public:
 	}
 
 private:
+	void cleanUp() {
+		if (m_type && !m_type->isPrimitive()) {
+			m_data.obj->delRef();
+		}
+	}
+
 	DataValue m_data;
 	const Type* m_type;
 	bool m_is_const;
