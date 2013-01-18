@@ -64,28 +64,17 @@ CLEVER_METHOD(StrType::subString)
 	}
 
 	const CString* of = CLEVER_THIS()->getStr();
-	int bounds[2] = {-1, -1};
+	CString::size_type start, count;
 
-	switch (args.size()) {
-		case 2:
-			bounds[0] = args[0]->getInt();
-			bounds[1] = args[1]->getInt();
-			break;
+	start = args[0]->getInt();
 
-		case 1:
-			bounds[0] = args[0]->getInt();
-			break;
+	if (args.size() > 1) {
+		count = args[1]->getInt();
+	} else {
+		count = of->size();
 	}
 
-	result->setNull();
-
-	if (of && bounds[0] > -1) {
-		if (bounds[1] > -1) {
-			result->setStr(CSTRING(of->substr(bounds[0], bounds[1])));
-		} else {
-			result->setStr(CSTRING(of->substr(bounds[0])));
-		}
-	}
+	result->setStr(CSTRING(of->substr(start, count)));
 }
 
 // String.find(string needle, [int position, [int count]])
