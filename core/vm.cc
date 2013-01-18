@@ -74,11 +74,6 @@ CLEVER_FORCE_INLINE Value* VM::getValue(Operand& operand) const
 	return source->getValue(operand.voffset);
 }
 
-Value* VM::getValueExt(Operand& operand)
-{
-	return getValue(operand);
-}
-
 #ifdef CLEVER_DEBUG
 void VM::dumpOperand(Operand& op) const
 {
@@ -432,7 +427,7 @@ void VM::run()
 		}
 
 	OP(OP_ETHREAD):
-		if (this->isChild()) {
+		if (EXPECTED(isChild())) {
 			getMutex()->lock();
 
 			if (EXPECTED(m_call_stack.size())) {

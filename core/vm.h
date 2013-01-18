@@ -80,7 +80,7 @@ public:
 
 	/// Helper to retrive a Value* from ValuePool
 	Value* getValue(Operand&) const;
-	Value* getValueExt(Operand& operand);
+	Value* getValueExt(Operand& operand) const { return getValue(operand); }
 
 	ThreadPool& getThreadPool() {
 		return this->m_thread_pool;
