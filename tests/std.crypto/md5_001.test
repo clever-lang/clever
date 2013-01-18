@@ -1,0 +1,12 @@
+Testing md5() function
+==CODE==
+import std.io.*;
+import std.crypto.*;
+
+println(md5("foobar"));
+println(md5("f"));
+println(md5("F"));
+==TEST==
+3858f62230ac3c915f300c664312c63f
+8fa14cdd754f91cc6554c9e71929cce7
+800618943025315f869e4e1f09471012
