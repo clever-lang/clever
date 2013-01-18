@@ -12,15 +12,15 @@ namespace clever {
 
 CLEVER_TYPE_OPERATOR(BoolType::equal)
 {
-	if (rhs->getType() == this) {
-		CLEVER_RETURN_BOOL(lhs->getBool() == rhs->getBool());
+	if (rhs->isBool()) {
+		result->setBool(lhs->getBool() == rhs->getBool());
 	}
 }
 
 CLEVER_TYPE_OPERATOR(BoolType::not_equal)
 {
-	if (rhs->getType() == this) {
-		CLEVER_RETURN_BOOL(lhs->getBool() != rhs->getBool());
+	if (rhs->isBool()) {
+		result->setBool(lhs->getBool() != rhs->getBool());
 	}
 }
 

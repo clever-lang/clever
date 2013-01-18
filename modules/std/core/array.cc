@@ -195,7 +195,7 @@ CLEVER_METHOD(ArrayType::range)
 		return;
 	}
 
-	long bounds[3] = {CLEVER_ARG_INT(0), CLEVER_ARG_INT(1), (long) vec.size()};
+	long bounds[3] = {args[0]->getInt(), args[1]->getInt(), (long) vec.size()};
 	ValueVector ran;
 	bool reverse = (bounds[0] > bounds[1]);
 

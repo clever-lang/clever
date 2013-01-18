@@ -42,9 +42,9 @@ static CLEVER_FUNCTION(ceil)
 		return;
 	}
 
-	if (args[0]->getType() == CLEVER_INT_TYPE) {
+	if (args[0]->isInt()) {
 		result->setInt(::std::ceil(args[0]->getInt()));
-	} else if (args[0]->getType() == CLEVER_DOUBLE_TYPE) {
+	} else if (args[0]->isDouble()) {
 		result->setDouble(::std::ceil(args[0]->getDouble()));
 	}
 }
@@ -56,9 +56,9 @@ static CLEVER_FUNCTION(floor)
 		return;
 	}
 
-	if (args[0]->getType() == CLEVER_INT_TYPE) {
+	if (args[0]->isInt()) {
 		result->setInt(::std::floor(args[0]->getInt()));
-	} else if (args[0]->getType() == CLEVER_DOUBLE_TYPE) {
+	} else if (args[0]->isDouble()) {
 		result->setDouble(::std::floor(args[0]->getDouble()));
 	}
 }
@@ -70,9 +70,9 @@ static CLEVER_FUNCTION(abs)
 		return;
 	}
 
-	if (args[0]->getType() == CLEVER_INT_TYPE) {
+	if (args[0]->isInt()) {
 		result->setInt(::std::labs(args[0]->getInt()));
-	} else if (args[0]->getType() == CLEVER_DOUBLE_TYPE) {
+	} else if (args[0]->isDouble()) {
 		result->setDouble(::std::abs(args[0]->getDouble()));
 	}
 }
@@ -82,12 +82,10 @@ static CLEVER_FUNCTION(abs)
 // Load module data
 CLEVER_MODULE_INIT(Math)
 {
-	using namespace math;
-
-	addFunction(new Function("round", &CLEVER_FUNC_NAME(round)));
-	addFunction(new Function("ceil",  &CLEVER_FUNC_NAME(ceil)));
-	addFunction(new Function("floor", &CLEVER_FUNC_NAME(floor)));
-	addFunction(new Function("abs",   &CLEVER_FUNC_NAME(abs)));
+	addFunction(new Function("round", &CLEVER_NS_FNAME(math, round)));
+	addFunction(new Function("ceil",  &CLEVER_NS_FNAME(math, ceil)));
+	addFunction(new Function("floor", &CLEVER_NS_FNAME(math, floor)));
+	addFunction(new Function("abs",   &CLEVER_NS_FNAME(math, abs)));
 }
 
 }}} // clever::packages::std

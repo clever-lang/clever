@@ -80,7 +80,7 @@ CLEVER_METHOD(ReflectType::isString)
 
 	ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
 
-	result->setBool(intern->getData()->isString());
+	result->setBool(intern->getData()->isStr());
 }
 
 // Reflect::isInt()

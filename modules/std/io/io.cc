@@ -61,7 +61,7 @@ static CLEVER_FUNCTION(printf)
 
 			if ((arg=::std::strtoul(++point, &skip, 10))) {
 				if (args.size() > arg) {
-					CLEVER_ARG_DUMP(arg);
+					args[arg]->dump();
 				}
 				point = skip;
 			} else {

@@ -57,7 +57,7 @@ CLEVER_METHOD(Server::accept)
 	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
 
 	if (!request) {
-		CLEVER_RETURN_BOOL(false);
+		result->setBool(false);
 		return;
 	}
 
@@ -69,13 +69,13 @@ CLEVER_METHOD(Server::accept)
 	out->clear();
 
 	if (FCGX_Accept(&request->in, &request->out, &request->err, &request->envp) != 0) {
-		CLEVER_RETURN_BOOL(false);
+		result->setBool(false);
 		return;
 	}
 
 	const char* const* n = request->envp;
 	if (!n) {
-		CLEVER_RETURN_BOOL(false);
+		result->setBool(false);
 		return;
 	}
 
@@ -157,7 +157,7 @@ CLEVER_METHOD(Server::accept)
 		}
 		++n;
 	}
-	CLEVER_RETURN_BOOL(true);
+	result->setBool(true);
 }
 
 // Server.print(string text, [...])
@@ -173,9 +173,9 @@ CLEVER_METHOD(Server::print)
 		}
 
 		for (size_t arg = 0; arg < args.size(); arg++) {
-			if (CLEVER_ARG_TYPE(arg) == CLEVER_STR_TYPE) {
-				FCGX_PutStr(CLEVER_ARG_CSTR(arg)->c_str(),
-					CLEVER_ARG_CSTR(arg)->size(), request->out);
+			if (args[arg]->isStr()) {
+				FCGX_PutStr(args[arg]->getStr()->c_str(),
+					args[arg]->getStr()->size(), request->out);
 			}
 		}
 	}
@@ -193,7 +193,7 @@ CLEVER_METHOD(Server::flush)
 	}
 
 	if (request) {
-		CLEVER_RETURN_BOOL((FCGX_FFlush(request->out) == 0));
+		result->setBool((FCGX_FFlush(request->out) == 0));
 	} else {
 		result->setNull();
 	}
@@ -210,7 +210,7 @@ CLEVER_METHOD(Server::finish)
 	}
 
 	if (request) {
-		CLEVER_RETURN_BOOL((FCGX_FClose(request->out) == 0));
+		result->setBool((FCGX_FClose(request->out) == 0));
 	} else {
 		result->setNull();
 	}
@@ -231,10 +231,10 @@ CLEVER_METHOD(Server::getEnvironment)
 	}
 
 	if (args.size()) {
-		CLEVER_FCGI_ITERATOR it = CLEVER_FCGI_FIND(in->env, CLEVER_ARG_PSTR(0));
+		CLEVER_FCGI_ITERATOR it = CLEVER_FCGI_FIND(in->env, args[0]->getStr()->c_str());
 
 		if (it != CLEVER_FCGI_END(in->env)) {
-			CLEVER_RETURN_STR(CLEVER_FCGI_FETCH(it));
+			result->setStr(CLEVER_FCGI_FETCH(it));
 			return;
 		}
 		result->setNull();
@@ -250,7 +250,7 @@ CLEVER_METHOD(Server::getEnvironment)
 			++item;
 		}
 
-		CLEVER_RETURN_MAP(CLEVER_MAP_TYPE->allocData(&mapping));
+		result->setObj(CLEVER_MAP_TYPE, CLEVER_MAP_TYPE->allocData(&mapping));
 	}
 }
 
@@ -270,10 +270,10 @@ CLEVER_METHOD(Server::getParam)
 	}
 
 	if (in->params->size()) {
-		CLEVER_FCGI_ITERATOR it = CLEVER_FCGI_FIND(in->params, CLEVER_ARG_PSTR(0));
+		CLEVER_FCGI_ITERATOR it = CLEVER_FCGI_FIND(in->params, args[0]->getStr()->c_str());
 
 		if (it != CLEVER_FCGI_END(in->params)) {
-			CLEVER_RETURN_STR(CLEVER_FCGI_FETCH(it));
+			result->setStr(CLEVER_FCGI_FETCH(it));
 			return;
 		}
 	}
@@ -297,9 +297,9 @@ CLEVER_METHOD(Server::getHeader)
 	}
 
 	if (in->head->size()) {
-		CLEVER_FCGI_ITERATOR it = CLEVER_FCGI_FIND(in->head, CLEVER_ARG_PSTR(0));
+		CLEVER_FCGI_ITERATOR it = CLEVER_FCGI_FIND(in->head, args[0]->getStr()->c_str());
 		if (it != CLEVER_FCGI_END(in->head)) {
-			CLEVER_RETURN_STR(CLEVER_FCGI_FETCH(it));
+			result->setStr(CLEVER_FCGI_FETCH(it));
 			return;
 		}
 	}
@@ -321,10 +321,10 @@ CLEVER_METHOD(Server::getCookie)
 	}
 
 	if (in->cookie->size()) {
-		CLEVER_FCGI_ITERATOR it = CLEVER_FCGI_FIND(in->cookie, CLEVER_ARG_PSTR(0));
+		CLEVER_FCGI_ITERATOR it = CLEVER_FCGI_FIND(in->cookie, args[0]->getStr()->c_str());
 
 		if ((it != CLEVER_FCGI_END(in->cookie))) {
-			CLEVER_RETURN_STR(CLEVER_FCGI_FETCH(it));
+			result->setStr(CLEVER_FCGI_FETCH(it));
 			return;
 		}
 	}
@@ -379,7 +379,7 @@ CLEVER_METHOD(Server::getParams)
 		++item;
 	}
 
-	CLEVER_RETURN_MAP(CLEVER_MAP_TYPE->allocData(&mapping));
+	result->setObj(CLEVER_MAP_TYPE, CLEVER_MAP_TYPE->allocData(&mapping));
 }
 
 // Server.getHeaders()
@@ -407,7 +407,7 @@ CLEVER_METHOD(Server::getHeaders)
 		++item;
 	}
 
-	CLEVER_RETURN_MAP(CLEVER_MAP_TYPE->allocData(&mapping));
+	result->setObj(CLEVER_MAP_TYPE, CLEVER_MAP_TYPE->allocData(&mapping));
 }
 
 // Server.getCookies()
@@ -435,7 +435,7 @@ CLEVER_METHOD(Server::getCookies)
 		++item;
 	}
 
-	CLEVER_RETURN_MAP(CLEVER_MAP_TYPE->allocData(&mapping));
+	result->setObj(CLEVER_MAP_TYPE, CLEVER_MAP_TYPE->allocData(&mapping));
 }
 
 // Server.setHeader(string key, string value)
@@ -446,7 +446,7 @@ CLEVER_METHOD(Server::setHeader)
 		return;
 	}
 
-	out->head->insert(CLEVER_FCGI_PAIR(CLEVER_ARG_PSTR(0), CLEVER_ARG_PSTR(1)));
+	out->head->insert(CLEVER_FCGI_PAIR(args[0]->getStr()->c_str(), args[1]->getStr()->c_str()));
 }
 
 // Server.setCookie(string key, string value, [string path, [string expires]])
@@ -457,7 +457,7 @@ CLEVER_METHOD(Server::setCookie)
 		return;
 	}
 
-	out->cookie->insert(CLEVER_FCGI_PAIR(CLEVER_ARG_PSTR(0), CLEVER_ARG_PSTR(1)));
+	out->cookie->insert(CLEVER_FCGI_PAIR(args[0]->getStr()->c_str(), args[1]->getStr()->c_str()));
 }
 
 CLEVER_TYPE_INIT(Server::init)

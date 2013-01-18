@@ -55,7 +55,7 @@ void* Thread::allocData(CLEVER_TYPE_CTOR_ARGS) const
 		Value* point = args->at(0);
 
 		/** there's something very wrong here **/
-		if (point->getType() == CLEVER_FUNC_TYPE) {
+		if (point->isFunction()) {
 			intern->entry = static_cast<Function*>(point->getObj());
 		} else {
 			clever_debug("Thread.new was expecting a Function and got something else at %@", point);

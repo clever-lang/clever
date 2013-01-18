@@ -171,7 +171,7 @@ public:
 	bool isInt()      const { return m_type == CLEVER_INT_TYPE;    }
 	bool isBool()     const { return m_type == CLEVER_BOOL_TYPE;   }
 	bool isDouble()   const { return m_type == CLEVER_DOUBLE_TYPE; }
-	bool isString()   const { return m_type == CLEVER_STR_TYPE;    }
+	bool isStr()   const { return m_type == CLEVER_STR_TYPE;    }
 	bool isFunction() const { return m_type == CLEVER_FUNC_TYPE;   }
 	bool isMap()      const { return m_type == CLEVER_MAP_TYPE;    }
 	bool isArray()    const { return m_type == CLEVER_ARRAY_TYPE;  }
