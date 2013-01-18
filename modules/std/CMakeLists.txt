@@ -53,6 +53,10 @@ if (MOD_STD_REFLECTION)
 	list(APPEND CLEVER_MODULES reflection)
 endif (MOD_STD_REFLECTION)
 
+if (MOD_STD_CRYPTO)
+	list(APPEND CLEVER_MODULES crypto)
+endif (MOD_STD_CRYPTO)
+
 foreach (module ${CLEVER_MODULES})
 	add_subdirectory(${module})
 endforeach (module)

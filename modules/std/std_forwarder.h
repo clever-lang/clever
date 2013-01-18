@@ -36,6 +36,9 @@
 #ifdef HAVE_MOD_STD_FCGI
 #	include "modules/std/fcgi/fcgi.h"
 #endif
+#ifdef HAVE_MOD_STD_CRYPTO
+#	include "modules/std/crypto/crypto.h"
+#endif
 
 #if 0
 #ifdef HAVE_MOD_STD_REGEX
