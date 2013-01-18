@@ -30,4 +30,4 @@ CLEVER_MODULE_INIT(CryptoModule)
 	addFunction(new Function("md5", &CLEVER_NS_FNAME(crypto, md5)));
 }
 
-}}} // clever
+}}} // clever::packages::std
