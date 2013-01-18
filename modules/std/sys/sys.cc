@@ -137,19 +137,67 @@ static CLEVER_FUNCTION(clock)
 	result->setInt(clock());
 }
 
+// getpid()
+// Returns the current process id
+static CLEVER_FUNCTION(getpid)
+{
+	if (!clever_static_check_no_args()) {
+		return;
+	}
+
+	result->setInt(::getpid());
+}
+
+// getppid()
+// Returns the current process id
+static CLEVER_FUNCTION(getppid)
+{
+	if (!clever_static_check_no_args()) {
+		return;
+	}
+
+	result->setInt(::getppid());
+}
+
+// getuid
+// Returns the process user id
+static CLEVER_FUNCTION(getuid)
+{
+	if (!clever_static_check_no_args()) {
+		return;
+	}
+
+	result->setInt(::geteuid());
+}
+
+// getsid
+// Returns the process group id
+static CLEVER_FUNCTION(getsid)
+{
+	if (!clever_static_check_no_args()) {
+		return;
+	}
+
+	result->setInt(::getsid(0));
+}
+
 } // clever::packages::std::sys
 
 // Initializes Standard module
 CLEVER_MODULE_INIT(SYSModule)
 {
-	addFunction(new Function("system", &CLEVER_NS_FNAME(sys, system)));
-	addFunction(new Function("putenv", &CLEVER_NS_FNAME(sys, putenv)));
-	addFunction(new Function("getenv", &CLEVER_NS_FNAME(sys, getenv)));
-	addFunction(new Function("getcwd", &CLEVER_NS_FNAME(sys, getcwd)));
-	addFunction(new Function("argc",   &CLEVER_NS_FNAME(sys, argc)));
-	addFunction(new Function("argv",   &CLEVER_NS_FNAME(sys, argv)));
-	addFunction(new Function("sleep",  &CLEVER_NS_FNAME(sys, sleep)));
-	addFunction(new Function("clock", &CLEVER_NS_FNAME(sys, clock)));
+	addFunction(new Function("system",  &CLEVER_NS_FNAME(sys, system)));
+	addFunction(new Function("putenv",  &CLEVER_NS_FNAME(sys, putenv)));
+	addFunction(new Function("getenv",  &CLEVER_NS_FNAME(sys, getenv)));
+	addFunction(new Function("getcwd",  &CLEVER_NS_FNAME(sys, getcwd)));
+	addFunction(new Function("getpid",  &CLEVER_NS_FNAME(sys, getpid)));
+	addFunction(new Function("getppid", &CLEVER_NS_FNAME(sys, getppid)));
+	addFunction(new Function("getuid",  &CLEVER_NS_FNAME(sys, getuid)));
+	addFunction(new Function("getsid",  &CLEVER_NS_FNAME(sys, getsid)));
+	addFunction(new Function("argc",    &CLEVER_NS_FNAME(sys, argc)));
+	addFunction(new Function("argv",    &CLEVER_NS_FNAME(sys, argv)));
+	addFunction(new Function("sleep",   &CLEVER_NS_FNAME(sys, sleep)));
+	addFunction(new Function("clock",   &CLEVER_NS_FNAME(sys, clock)));
 }
 
 }}} // clever::packages::std
