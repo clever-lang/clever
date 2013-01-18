@@ -92,44 +92,34 @@ CLEVER_METHOD(StrType::subString)
 // Finds a string in a string returning the position
 CLEVER_METHOD(StrType::find)
 {
-	const char* needle = NULL;
-	const CString* haystack = CLEVER_THIS()->getStr();
-	int bounds[2] = {-1, -1};
-
 	if (!clever_check_args("s|ii")) {
 		return;
 	}
 
-	switch (args.size()) {
-		case 1:
-			needle = args[0]->getStr()->c_str();
-		break;
+	const CString* haystack = CLEVER_THIS()->getStr();
+	const char* needle = args[0]->getStr()->c_str();
+	CString::size_type pos, count;
 
-		case 2:
-			needle = args[0]->getStr()->c_str();
-			bounds[0] = args[1]->getInt();
-		break;
+	clever_assert_not_null(haystack);
 
-		case 3:
-			needle = args[0]->getStr()->c_str();
-			bounds[0] = args[1]->getInt();
-			bounds[1] = args[2]->getInt();
-		break;
+	// XXX(heuripedes): should a warning/error/exception be thrown? perhaps a runtime error?
+	if (!needle) {
+		return;
 	}
 
-	result->setNull();
-
-	if (needle && haystack) {
-		if (bounds[0] > -1) {
-			if (bounds[1] > -1) {
-				result->setInt(haystack->find(needle, bounds[0], bounds[1]));
-			} else {
-				result->setInt(haystack->find(needle, bounds[0]));
-			}
-		} else {
-			result->setInt(haystack->find(needle));
-		}
+	if (args.size() > 1) {
+		pos = args[1]->getInt();
+	} else {
+		pos = 0;
 	}
+
+	if (args.size() > 2) {
+		count = args[2]->getInt();
+	} else {
+		count = strlen(needle);
+	}
+
+	result->setInt(haystack->find(needle, pos, count));
 }
 
 // String.findFirst(string needle, [int position, [int count]])
