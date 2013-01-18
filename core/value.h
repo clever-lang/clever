@@ -181,6 +181,7 @@ public:
 
 	void copy(const Value* value) {
 		SAFETY_LOCK();
+		cleanUp();
 		m_type = value->getType();
 		memcpy(&m_data, value->getData(), sizeof(DataValue));
 
@@ -226,6 +227,12 @@ public:
 	}
 
 private:
+	void cleanUp() {
+		if (m_type && !m_type->isPrimitive()) {
+			m_data.obj->delRef();
+		}
+	}
+
 	DataValue m_data;
 	const Type* m_type;
 	bool m_is_const;
