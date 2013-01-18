@@ -15,7 +15,7 @@ namespace clever { namespace packages { namespace std {
 
 namespace reflection {
 
-// string type()
+// type(object)
 // Returns the type name of the supplied parameter
 static CLEVER_FUNCTION(type)
 {
@@ -28,6 +28,8 @@ static CLEVER_FUNCTION(type)
 	result->setStr(type ? type->getName() : CSTRING("null"));
 }
 
+// eval(string)
+// Executes the supplied string
 static CLEVER_FUNCTION(eval)
 {
 	if (!clever_static_check_args("s")) {

@@ -52,7 +52,7 @@ CLEVER_METHOD(ReflectType::isFunction)
 		return;
 	}
 
-	ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
+	const ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
 
 	result->setBool(intern->getData()->isFunction());
 }
@@ -65,7 +65,7 @@ CLEVER_METHOD(ReflectType::isBool)
 		return;
 	}
 
-	ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
+	const ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
 
 	result->setBool(intern->getData()->isBool());
 }
@@ -78,7 +78,7 @@ CLEVER_METHOD(ReflectType::isString)
 		return;
 	}
 
-	ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
+	const ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
 
 	result->setBool(intern->getData()->isStr());
 }
@@ -91,7 +91,7 @@ CLEVER_METHOD(ReflectType::isInt)
 		return;
 	}
 
-	ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
+	const ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
 
 	result->setBool(intern->getData()->isInt());
 }
@@ -104,7 +104,7 @@ CLEVER_METHOD(ReflectType::isDouble)
 		return;
 	}
 
-	ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
+	const ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
 
 	result->setBool(intern->getData()->isDouble());
 }
@@ -118,7 +118,7 @@ CLEVER_METHOD(ReflectType::isArray)
 		return;
 	}
 
-	ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
+	const ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
 
 	result->setBool(intern->getData()->isArray());
 }
@@ -131,7 +131,7 @@ CLEVER_METHOD(ReflectType::isMap)
 		return;
 	}
 
-	ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
+	const ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
 
 	result->setBool(intern->getData()->isMap());
 }
@@ -144,7 +144,7 @@ CLEVER_METHOD(ReflectType::isThread)
 		return;
 	}
 
-	ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
+	const ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
 
 	result->setBool(intern->getData()->isThread());
 }
@@ -157,7 +157,7 @@ CLEVER_METHOD(ReflectType::isVariadic)
 		return;
 	}
 
-	ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
+	const ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
 	const Value* data = intern->getData();
 
 	if (!data->isFunction()) {
