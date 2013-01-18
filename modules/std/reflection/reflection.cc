@@ -6,6 +6,7 @@
  */
 
 #include <iostream>
+#include "core/driver.h"
 #include "core/pkgmanager.h"
 #include "modules/std/reflection/reflection.h"
 #include "modules/std/reflection/reflect.h"
@@ -27,6 +28,21 @@ static CLEVER_FUNCTION(type)
 	result->setStr(type ? type->getName() : CSTRING("null"));
 }
 
+static CLEVER_FUNCTION(eval)
+{
+	if (!clever_static_check_args("s")) {
+		return;
+	}
+
+	Interpreter interp(0, NULL);
+
+	if (!interp.loadStr(*args[0]->getStr(), false)) {
+		interp.execute(false);
+		// @TODO(Felipe): must fix cstring freeing
+		// interp.shutdown();
+	}
+}
+
 } // clever::packages::std::reflection
 
 CLEVER_MODULE_INIT(Reflection)
@@ -36,6 +52,7 @@ CLEVER_MODULE_INIT(Reflection)
 
 	// Functions
 	addFunction(new Function("type", &CLEVER_NS_FNAME(reflection, type)));
+	addFunction(new Function("eval", &CLEVER_NS_FNAME(reflection, eval)));
 }
 
 }}} // clever::packages::std

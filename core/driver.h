@@ -99,7 +99,8 @@ private:
 /// Interpreter
 class Interpreter : public Driver {
 public:
-	Interpreter(int* argc, char*** argv);
+	Interpreter(int argc, char*** argv)
+		: Driver() {}
 
 #ifdef CLEVER_DEBUG
 	void setDebug() { m_dump_opcode = true; }

@@ -16,11 +16,6 @@
 
 namespace clever {
 
-/// Interpreter constructor
-Interpreter::Interpreter(int* argc, char*** argv) : Driver()
-{
-}
-
 /// Executes the script
 void Interpreter::execute(bool interactive)
 {
