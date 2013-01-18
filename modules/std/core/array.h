@@ -15,19 +15,20 @@
 
 namespace clever {
 
-class ArrayObject : public ValueObject {
+class ArrayObject {
 public:
-	ArrayObject()
-		: ValueObject() {}
+	ArrayObject() {}
 
 	ArrayObject(const std::vector<Value*>& vec)
-		: ValueObject(), m_data(vec) {}
+		: m_data(vec) {}
 
 	~ArrayObject() {}
 
 	std::vector<Value*>& getData() { return m_data; }
 private:
 	std::vector<Value*> m_data;
+
+	DISALLOW_COPY_AND_ASSIGN(ArrayObject);
 };
 
 class ArrayType : public Type {
@@ -55,6 +56,8 @@ public:
 	CLEVER_METHOD(pop);
 	CLEVER_METHOD(range);
 	CLEVER_METHOD(erase);
+private:
+	DISALLOW_COPY_AND_ASSIGN(ArrayType);
 };
 
 } // clever

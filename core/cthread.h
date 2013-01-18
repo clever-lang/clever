@@ -45,11 +45,11 @@ private:
 };
 
 #ifndef CLEVER_WIN32
-# define CLEVER_THREAD_FUNC(name) static void* name(void *arg)
+# define CLEVER_THREAD_FUNC(name) void* name(void *arg)
 typedef void* (*ThreadFunc)(void*);
 #else
 typedef DWORD (*ThreadFunc)(LPVOID);
-# define CLEVER_THREAD_FUNC(name) static DWORD name(void *arg)
+# define CLEVER_THREAD_FUNC(name) DWORD name(void *arg)
 #endif
 
 class CThread {

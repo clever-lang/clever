@@ -18,17 +18,8 @@
 
 namespace clever {
 
-// Helper macro for opcode handler declaration
-#define VM_HANDLER_ARG IR& op
-#define VM_HANDLER(name) CLEVER_FORCE_INLINE void VM::vm_##name(VM_HANDLER_ARG)
-#define VM_HANDLER_D(name) void vm_##name(VM_HANDLER_ARG)
-
-class Scope;
 class Value;
 class Function;
-
-typedef std::vector<std::pair<size_t, Value*> > FuncVars;
-
 class VM;
 
 struct VMThread {
@@ -47,10 +38,10 @@ public:
 	typedef std::vector<std::vector<VMThread*> > ThreadPool;
 
 	VM(IRVector& inst)
-		: m_pc(0), m_is_main_thread(true), m_inst(inst),
+		: m_pc(0), m_main(true), m_inst(inst),
 		  m_const_env(NULL), m_temp_env(NULL), m_global_env(NULL),
-		  m_call_stack(), m_call_args(),
-		  m_thread_pool(), m_mutex(), f_mutex(NULL), m_try_stack() {}
+		  m_call_stack(), m_call_args(), m_thread_pool(), m_mutex(),
+		  f_mutex(NULL), m_try_stack() {}
 
 	~VM() {}
 
@@ -65,11 +56,11 @@ public:
 	void copy(const VM*);
 	void copy(const VM*, bool deep);
 
-	void setChild() { m_is_main_thread = false; }
+	void setChild() { m_main = false; }
 
-	bool isChild() const { return !m_is_main_thread; }
+	bool isChild() const { return !m_main; }
 
-	bool isMain() const { return m_is_main_thread; }
+	bool isMain() const { return m_main; }
 
 	void setPC(size_t pc) { m_pc = pc; }
 
@@ -83,16 +74,18 @@ public:
 
 	/// Helper to retrive a Value* from ValuePool
 	Value* getValue(Operand&) const;
+	Value* getValueExt(Operand& operand) const { return getValue(operand); }
 
-	ThreadPool& getThreadPool() {
-		return this->m_thread_pool;
-	}
+	ThreadPool& getThreadPool() { return this->m_thread_pool; }
 
-	CMutex* getMutex() {
-		return isChild() ? f_mutex : &m_mutex;
-	}
+	CallStack& getCallStack() { return this->m_call_stack; }
+
+	CMutex* getMutex() { return isChild() ? f_mutex : &m_mutex; }
+
 	/// Start the VM execution
 	void run();
+
+	/// Executes an specific program unit
 	Value* runFunction(Function*, std::vector<Value*>*);
 
 	/// Wait threads
@@ -107,7 +100,7 @@ private:
 	/// VM program counter
 	size_t m_pc;
 
-	bool m_is_main_thread;
+	bool m_main;
 
 	/// Vector of instruction
 	IRVector& m_inst;
@@ -138,6 +131,8 @@ private:
 
 	DISALLOW_COPY_AND_ASSIGN(VM);
 };
+
+CLEVER_THREAD_FUNC(_thread_control);
 
 } // clever
 

@@ -27,26 +27,26 @@ class Scope;
 
 typedef void (CLEVER_FASTCALL *FunctionPtr)(CLEVER_FUNCTION_ARGS);
 
-class Function: public ValueObject {
+class Function {
 public:
 	enum FuncKind { UNDEF, USER_FUNC, INTERNAL_FUNC };
 
 	Function()
-		: ValueObject(), m_name(), m_type(UNDEF), m_num_rargs(0), m_num_args(0),
+		: m_name(), m_type(UNDEF), m_num_rargs(0), m_num_args(0),
 		m_variadic(false), m_static(false), m_environment(NULL) {}
 
 	Function(std::string name, FunctionPtr ptr)
-		: ValueObject(), m_name(name), m_type(INTERNAL_FUNC), m_num_rargs(0),
+		: m_name(name), m_type(INTERNAL_FUNC), m_num_rargs(0),
 		m_num_args(0), m_variadic(false), m_static(false), m_environment(NULL)
 		{ m_info.fptr = ptr; }
 
 	Function(std::string name, size_t addr)
-		: ValueObject(), m_name(name), m_type(USER_FUNC), m_num_rargs(0),
+		: m_name(name), m_type(USER_FUNC), m_num_rargs(0),
 		m_num_args(0), m_variadic(false), m_static(false), m_environment(NULL)
 		{ m_info.addr = addr; }
 
 	Function(std::string name, MethodPtr ptr)
-		: ValueObject(), m_name(name), m_type(INTERNAL_FUNC), m_num_rargs(0),
+		: m_name(name), m_type(INTERNAL_FUNC), m_num_rargs(0),
 		m_num_args(0), m_variadic(false), m_static(false), m_environment(NULL)
 		{ m_info.mptr = ptr; }
 

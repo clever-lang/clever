@@ -8,9 +8,11 @@ var m = Mutex.new();
 
 println(m.lock());
 
-spawn thread {
+process thread {
 	println(c.broadcast());
 }
+
+thread.run();
 
 println(c.wait(m));
 ==RESULT==

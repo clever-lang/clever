@@ -21,17 +21,18 @@ function f(a,b=println)
 var i = 5;
 while (i > 0) {
 	var a = i;
-	spawn threads {
+	process threads {
 		f(a, println);
 	}
 
+	threads.run();
 	i--;
 	threads.wait();
 
 }
 
 
-spawn thread {
+process thread {
 	var i = 10;
 
 	while (i > 0) {
@@ -42,7 +43,7 @@ spawn thread {
 		--i;
 	}
 }
-
+thread.run();
 thread.wait();
 
 ==RESULT==
