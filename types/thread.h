@@ -20,19 +20,18 @@ class Value;
 class VM;
 class Scope;
 
-class Thread: public ValueObject {
+class Thread {
 public:
 	enum ThreadKind { UNDEF, USER_THREAD, INTERNAL_THREAD };
 
 	Thread()
-		: ValueObject(), m_name(), m_type(UNDEF), m_environment(NULL) {}
+		: m_name(), m_type(UNDEF), m_environment(NULL) {}
 
 	Thread(std::string name)
-		: ValueObject(), m_name(name), m_type(UNDEF), m_environment(NULL) {}
+		: m_name(name), m_type(UNDEF), m_environment(NULL) {}
 
 	Thread(std::string name, size_t addr)
-		: ValueObject(), m_name(name), m_type(UNDEF), m_environment(NULL)
-		{ m_info.addr = addr; }
+		: m_name(name), m_type(UNDEF), m_environment(NULL) { m_info.addr = addr; }
 
 	~Thread() {}
 
