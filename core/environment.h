@@ -39,17 +39,17 @@ public:
 	explicit Environment(Environment* outer_)
 		: RefCounted(), m_outer(outer_), m_data(), m_ret_val(NULL),
 		m_ret_addr(0), m_active(false) {
-		CLEVER_SAFE_ADDREF(m_outer);
+		clever_addref(m_outer);
 	}
 
 	~Environment() {
-		CLEVER_SAFE_DELREF(m_outer);
+		clever_delref(m_outer);
 	}
 
 	// XXX(heuripedes): isn't ~Environment() a better place for this?
 	void clear() {
 		for (size_t i = 0, size = m_data.size(); i < size; ++i) {
-			CLEVER_SAFE_DELREF(m_data.at(i));
+			clever_delref(m_data.at(i));
 		}
 	}
 

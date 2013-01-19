@@ -10,31 +10,11 @@
 namespace clever {
 
 Scope::~Scope() {
-    ValuePool::const_iterator itv = m_value_pool.begin(),
-        endv = m_value_pool.end();
+	std::for_each(m_value_pool.begin(), m_value_pool.end(), clever_delref);
+	std::for_each(m_children.begin(), m_children.end(), clever_delete<Scope>);
+	std::for_each(m_symbols.begin(), m_symbols.end(), clever_delete<Symbol>);
 
-    while (itv != endv) {
-        CLEVER_SAFE_DELREF(*itv);
-        ++itv;
-    }
-
-    ScopeVector::const_iterator it = m_children.begin(),
-        end = m_children.end();
-
-    while (it != end) {
-		clever_delete(*it);
-        ++it;
-    }
-
-    SymbolMap::const_iterator its = m_symbols.begin(),
-        ends = m_symbols.end();
-
-    while (its != ends) {
-		clever_delete(*its);
-        ++its;
-    }
-
-    CLEVER_SAFE_DELREF(m_environment);
+    clever_delref(m_environment);
 }
 
 std::vector<Scope*> Scope::flatten() {

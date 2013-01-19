@@ -28,12 +28,12 @@ void Compiler::shutdown()
 {
 	if (m_const_env) {
 		m_const_env->clear();
-		CLEVER_SAFE_DELREF(m_const_env);
+		clever_delref(m_const_env);
 	}
 
 	if (m_temp_env) {
 		m_temp_env->clear();
-		CLEVER_SAFE_DELREF(m_temp_env);
+		clever_delref(m_temp_env);
 	}
 
 	if (m_scope_pool.size()) {
