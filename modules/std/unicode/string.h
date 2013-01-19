@@ -40,7 +40,7 @@ public:
 	virtual void deallocData(void* data);
 
 	CLEVER_METHOD(ctor);
-	CLEVER_METHOD(getLength);
+	CLEVER_METHOD(size);
 	CLEVER_METHOD(startsWith);
 	CLEVER_METHOD(endsWith);
 	CLEVER_METHOD(indexOf);
