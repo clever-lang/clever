@@ -28,8 +28,8 @@ public:
 
 	void dump(const void* value, std::ostream& out) const { out << *(bool*)value; }
 
-	void increment(Value* value, const VM* vm, CException& exception) const {}
-	void decrement(Value* value, const VM* vm, CException& exception) const {}
+	void increment(Value*, const VM*, CException*) const {}
+	void decrement(Value*, const VM*, CException*) const {}
 
 	CLEVER_METHOD(ctor);
 	CLEVER_TYPE_OPERATOR(equal);

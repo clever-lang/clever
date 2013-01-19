@@ -45,8 +45,8 @@ public:
 
 	void dump(const void* value, std::ostream& out) const;
 
-	void increment(Value* value, const VM* vm) const {}
-	void decrement(Value* value, const VM* vm) const {}
+	void increment(Value*, const VM*, CException*) const {}
+	void decrement(Value*, const VM*, CException*) const {}
 
 	CLEVER_METHOD(ctor);
 	CLEVER_METHOD(insert);
