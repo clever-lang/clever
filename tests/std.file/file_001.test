@@ -2,14 +2,16 @@ Testing File operations
 ==CODE==
 import std.io.*;
 import std.file.*;
+import std.sys.*;
 
 var f = File.new('foo.bar', File.OUT | File.TRUNC);
-f.write('clever lang'); 
+f.write('clever lang');
 f.close();
 
 f = File.new('foo.bar', File.IN);
 println(f.readLine());
 f.close();
 
+system("rm foo.bar");
 ==RESULT==
 clever lang
