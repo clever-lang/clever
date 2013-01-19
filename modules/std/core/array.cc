@@ -190,27 +190,29 @@ CLEVER_METHOD(ArrayType::range)
 
 	ValueVector& vec = (CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS()))->getData();
 
-	if (!vec.size()){
+	if (vec.empty()){
 		result->setNull();
 		return;
 	}
 
-	long bounds[3] = {args[0]->getInt(), args[1]->getInt(), (long) vec.size()};
-	ValueVector ran;
-	bool reverse = (bounds[0] > bounds[1]);
+	ValueVector::size_type start = args[0]->getInt(),
+			end = args[1]->getInt(),
+			size = vec.size();
 
-	while ((reverse ? (bounds[1] <= bounds[0]) : (bounds[0] <= bounds[1]))) {
-		if ((bounds[0] < 0 || bounds[1] < 0) ||
-			(bounds[0] > bounds[2]) || (bounds[1] > bounds[2])) {
+	ValueVector ran;
+	bool reverse = (start > end);
+
+	while ((reverse ? (end <= start) : (start <= end))) {
+		if (start > size || end > size) {
 			break;
 		}
 
-		ran.push_back(vec[bounds[0]]);
+		ran.push_back(vec[start]);
 
 		if (reverse) {
-			--bounds[0];
+			--start;
 		} else {
-			++bounds[0];
+			++start;
 		}
 	}
 
