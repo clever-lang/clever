@@ -15,6 +15,7 @@ namespace clever {
 class Compiler;
 class Scope;
 class Environment;
+class Type;
 }
 
 namespace clever { namespace ast {
@@ -43,12 +44,14 @@ public:
 	virtual void visit(Import*);
 	virtual void visit(Catch*);
 	virtual void visit(ClassDef*);
+	virtual void visit(AttrDecl*);
 private:
 	Compiler* m_compiler;
 	Scope* m_symtable;
 	Scope* m_scope;
 	std::stack<Environment*> m_stack;
 	Module* m_mod;
+	clever::Type* m_class;
 
 	DISALLOW_COPY_AND_ASSIGN(Resolver);
 };

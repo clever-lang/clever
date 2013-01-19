@@ -134,8 +134,6 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(Scope);
 };
 
-
-
 } // clever
 
 #endif // CLEVER_SCOPE_H
