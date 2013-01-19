@@ -105,6 +105,12 @@ void vsprintf(std::ostringstream& outstr, const char* format, va_list ap) {
 			case 'l':
 				outstr << va_arg(ap, int64_t);
 				break;
+			case 'T': {
+					const Type* type = va_arg(ap, const Type*);
+
+					outstr << type ? *type->getName() : "null";
+				}
+				break;
 			/* const CString* */
 			case 'S':
 				outstr << *va_arg(ap, const CString*);
@@ -120,7 +126,7 @@ void vsprintf(std::ostringstream& outstr, const char* format, va_list ap) {
 			/* Address */
 			case '@':
 				outstr << std::hex << va_arg(ap, void*);
-				break;	
+				break;
 		}
 		++chr;
 	}
@@ -230,15 +236,14 @@ bool check_args(const ::std::vector<Value*>& args, const char* typespec,
 		}
 
 		const Type* const arg_type = args[index]->getType();
-		clever_assert_not_null(arg_type);
 
 		switch (typespec[arg]) {
 			// Function
 			case 'f':
 				if (arg_type != CLEVER_FUNC_TYPE) {
 					exception->setException(
-						"Argument #%l expects a Function, but %S was supplied",
-						index+1, arg_type->getName());
+						"Argument #%l expects a Function, but %T was supplied",
+						index+1, arg_type);
 					return false;
 				}
 				break;
@@ -246,8 +251,8 @@ bool check_args(const ::std::vector<Value*>& args, const char* typespec,
 			case 's':
 				if (arg_type != CLEVER_STR_TYPE) {
 					exception->setException(
-						"Argument #%l expects a String, but %S was supplied",
-						index+1, arg_type->getName());
+						"Argument #%l expects a String, but %T was supplied",
+						index+1, arg_type);
 					return false;
 				}
 				break;
@@ -255,8 +260,8 @@ bool check_args(const ::std::vector<Value*>& args, const char* typespec,
 			case 'i':
 				if (arg_type != CLEVER_INT_TYPE) {
 					exception->setException(
-						"Argument #%l expects an Integer, but %S was supplied",
-						index+1, arg_type->getName());
+						"Argument #%l expects an Integer, but %T was supplied",
+						index+1, arg_type);
 					return false;
 				}
 				break;
@@ -264,8 +269,8 @@ bool check_args(const ::std::vector<Value*>& args, const char* typespec,
 			case 'd':
 				if (arg_type != CLEVER_DOUBLE_TYPE) {
 					exception->setException(
-						"Argument #%l expects a Double, but %S was supplied",
-						index+1, arg_type->getName());
+						"Argument #%l expects a Double, but %T was supplied",
+						index+1, arg_type);
 					return false;
 				}
 				break;
@@ -273,8 +278,8 @@ bool check_args(const ::std::vector<Value*>& args, const char* typespec,
 			case 'a':
 				if (arg_type != CLEVER_ARRAY_TYPE) {
 					exception->setException(
-						"Argument #%l expects an Array, but %S was supplied",
-						index+1, arg_type->getName());
+						"Argument #%l expects an Array, but %T was supplied",
+						index+1, arg_type);
 					return false;
 				}
 				break;
@@ -282,8 +287,8 @@ bool check_args(const ::std::vector<Value*>& args, const char* typespec,
 			case 'm':
 				if (arg_type != CLEVER_MAP_TYPE) {
 					exception->setException(
-						"Argument #%l expects a Map, but %S was supplied",
-						index+1, arg_type->getName());
+						"Argument #%l expects a Map, but %T was supplied",
+						index+1, arg_type);
 					return false;
 				}
 				break;
@@ -291,8 +296,8 @@ bool check_args(const ::std::vector<Value*>& args, const char* typespec,
 			case 'b':
 				if (arg_type != CLEVER_BOOL_TYPE) {
 					exception->setException(
-						"Argument #%l expects a Boolean, but %S was supplied",
-						index+1, arg_type->getName());
+						"Argument #%l expects a Boolean, but %T was supplied",
+						index+1, arg_type);
 					return false;
 				}
 				break;
@@ -301,8 +306,8 @@ bool check_args(const ::std::vector<Value*>& args, const char* typespec,
 				if ((arg_type != CLEVER_DOUBLE_TYPE)
 					&& (arg_type != CLEVER_INT_TYPE)) {
 					exception->setException(
-						"Argument #%l expects a Number, but %S was supplied",
-						index+1, arg_type->getName());
+						"Argument #%l expects a Number, but %T was supplied",
+						index+1, arg_type);
 					return false;
 				}
 				break;
@@ -310,13 +315,19 @@ bool check_args(const ::std::vector<Value*>& args, const char* typespec,
 			case 'c':
 				if (arg_type != type) {
 					exception->setException(
-						"Argument #%l expects a %S, but %S was supplied",
-						index+1, type->getName(), arg_type->getName());
+						"Argument #%l expects a %S, but %T was supplied",
+						index+1, type->getName(), arg_type);
 					return false;
 				}
 				break;
-			// Any type
+			// Any type (not null)
 			case '.':
+				if (arg_type == NULL) {
+					exception->setException(
+						"Argument #%l expects a non null value, but null was supplied",
+						index+1);
+					return false;
+				}
 				break;
 			// Var arg
 			case '*':
