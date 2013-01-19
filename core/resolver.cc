@@ -142,6 +142,14 @@ void Resolver::visit(FunctionDecl* node)
 
 	node->getIdent()->accept(*this);
 
+	// Check if it is a method
+	if (m_class) {
+		m_class->addMethod(func);
+
+		// @TODO(Felipe): fix method Function* ptr memleak
+		fval->addRef();
+	}
+
 	m_scope = m_scope->enter();
 
 	m_scope->setEnvironment(new Environment(m_stack.top()));
@@ -275,13 +283,17 @@ void Resolver::visit(ClassDef* node)
 	m_scope->setEnvironment(m_stack.top());
 	node->setScope(m_scope);
 
+	m_class = type;
+
 	if (node->hasAttrs()) {
-		m_class = type;
-
 		node->getAttrs()->accept(*this);
-
-		m_class = NULL;
 	}
+
+	if (node->hasMethods()) {
+		node->getMethods()->accept(*this);
+	}
+
+	m_class = NULL;
 
 	m_scope = m_scope->leave();
 }

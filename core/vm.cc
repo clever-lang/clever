@@ -724,14 +724,51 @@ void VM::run()
 			const Value* callee = getValue(OPCODE.op1);
 			const Value* method = getValue(OPCODE.op2);
 			const Type* type = callee->getType();
-			const Function* func;
 
 			if (UNEXPECTED(callee->isNull())) {
 				error(VM_ERROR, "Cannot call method `%S' from a null value",
 					method->getStr());
 			}
 
-			if (EXPECTED((func = type->getMethod(method->getStr())))) {
+			Function* func = const_cast<Function*>(type->getMethod(method->getStr()));
+
+			if (UNEXPECTED(func == NULL)) {
+				error(VM_ERROR, "Method `%S' not found!", method->getStr());
+			}
+
+			if (func->isUserDefined()) {
+				if (thread_is_enabled()) {
+					getMutex()->lock();
+				}
+
+				Environment* fenv;
+
+				if (m_call_stack.top()->isActive()) {
+					fenv = func->getEnvironment()->activate(m_call_stack.top()->getOuter());
+				} else {
+					fenv = func->getEnvironment()->activate(m_call_stack.top());
+				}
+				m_call_stack.push(fenv);
+
+				fenv->setRetAddr(m_pc + 1);
+				fenv->setRetVal(getValue(OPCODE.result));
+
+				if (m_call_args.size() < func->getNumRequiredArgs()
+					|| (m_call_args.size() > func->getNumArgs()
+						&& !func->isVariadic())) {
+					error(VM_ERROR, "Wrong number of parameters");
+				}
+
+				_param_binding(func, fenv, &m_call_args);
+
+				m_call_args.clear();
+
+				if (thread_is_enabled()) {
+					getMutex()->unlock();
+				}
+
+				VM_GOTO(func->getAddr());
+			} else {
 				if (UNEXPECTED(func->isStatic())) {
 					error(VM_ERROR, "Method `%S' cannot be called non-statically",
 						method->getStr());
@@ -745,8 +782,6 @@ void VM::run()
 						goto throw_exception;
 					}
 				}
-			} else {
-				error(VM_ERROR, "Method `%S' not found!", method->getStr());
 			}
 		}
 		DISPATCH;

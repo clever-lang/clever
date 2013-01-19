@@ -78,6 +78,7 @@ class Value;
 %type <narray> variable_decl variable_decl_list non_empty_call_args call_args
 %type <narray> const_decl_list not_empty_catch catch key_value_list non_empty_key_value_list
 %type <narray> class_attr_decl_list class_attr_const_decl_list class_attr_list class_attr_decl
+%type <narray> class_method_decl class_method_list
 %type <vardecl> variable_decl_impl vararg
 %type <vardecl> const_decl_impl
 %type <block> statement_list block finally
@@ -296,7 +297,7 @@ lvalue:
 ;
 
 class_def:
-		CLASS TYPE '{' class_attr_decl '}' { $$ = new ast::ClassDef($2, $4, yyloc); }
+		CLASS TYPE '{' class_attr_decl class_method_decl '}' { $$ = new ast::ClassDef($2, $4, $5, yyloc); }
 ;
 
 class_attr_decl:
@@ -342,6 +343,16 @@ class_attr_const_decl_list:
 
 class_attr_const_decl_impl:
 		IDENT '=' attr_rvalue { $$ = new ast::AttrDecl($1, $<node>3, true, yyloc);   }
+;
+
+class_method_decl:
+		/* empty */  { $$ = NULL; }
+	|	class_method_list
+;
+
+class_method_list:
+		fdecl    { $$ = new ast::NodeArray(yyloc); $$->append($1); }
+	|	class_method_list fdecl { $1->append($2); }
 ;
 
 array:

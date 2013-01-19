@@ -1,0 +1,17 @@
+Testing class methods
+==CODE==
+import std.io.*;
+
+class Foo {
+
+	function test() {
+		return "cool";
+	}
+
+}
+
+var foo = Foo.new;
+
+println(foo.test());
+==RESULT==
+cool

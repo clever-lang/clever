@@ -33,21 +33,21 @@ public:
 
 	Function()
 		: m_name(), m_type(UNDEF), m_num_rargs(0), m_num_args(0),
-		m_variadic(false), m_static(false), m_environment(NULL) {}
+		m_variadic(false), m_static(false), m_environment(NULL), m_context(NULL) {}
 
 	Function(std::string name, FunctionPtr ptr)
 		: m_name(name), m_type(INTERNAL_FUNC), m_num_rargs(0),
-		m_num_args(0), m_variadic(false), m_static(false), m_environment(NULL)
+		m_num_args(0), m_variadic(false), m_static(false), m_environment(NULL), m_context(NULL)
 		{ m_info.fptr = ptr; }
 
 	Function(std::string name, size_t addr)
 		: m_name(name), m_type(USER_FUNC), m_num_rargs(0),
-		m_num_args(0), m_variadic(false), m_static(false), m_environment(NULL)
+		m_num_args(0), m_variadic(false), m_static(false), m_environment(NULL), m_context(NULL)
 		{ m_info.addr = addr; }
 
 	Function(std::string name, MethodPtr ptr)
 		: m_name(name), m_type(INTERNAL_FUNC), m_num_rargs(0),
-		m_num_args(0), m_variadic(false), m_static(false), m_environment(NULL)
+		m_num_args(0), m_variadic(false), m_static(false), m_environment(NULL), m_context(NULL)
 		{ m_info.mptr = ptr; }
 
 	~Function() {}
@@ -86,6 +86,9 @@ public:
 	void setEnvironment(Environment* e) {
 		m_environment = e;
 	}
+
+	void setContext(const Type* type) { m_context = type; }
+	const Type* getContext() const { return m_context; }
 private:
 	std::string m_name;
 	FuncKind m_type;

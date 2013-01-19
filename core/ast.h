@@ -1176,20 +1176,24 @@ private:
 
 class ClassDef: public Node {
 public:
-	ClassDef(Type* name, NodeArray* attrs, const location& location)
-		: Node(location), m_type(name), m_attrs(attrs) {
+	ClassDef(Type* name, NodeArray* attrs, NodeArray* methods, const location& location)
+		: Node(location), m_type(name), m_attrs(attrs), m_methods(methods) {
 		m_type->addRef();
 		CLEVER_SAFE_ADDREF(m_attrs);
+		CLEVER_SAFE_ADDREF(m_methods);
 	}
 
 	~ClassDef() {
 		m_type->delRef();
 		CLEVER_SAFE_DELREF(m_attrs);
+		CLEVER_SAFE_DELREF(m_methods);
 	}
 
 	bool hasAttrs() const { return m_attrs != NULL; }
+	bool hasMethods() const { return m_methods != NULL; }
 
 	NodeArray* getAttrs() const { return m_attrs; }
+	NodeArray* getMethods() const { return m_methods; }
 
 	Type* getType() const { return m_type; }
 
@@ -1198,6 +1202,7 @@ public:
 private:
 	Type* m_type;
 	NodeArray* m_attrs;
+	NodeArray* m_methods;
 };
 
 }} // clever::ast
