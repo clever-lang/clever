@@ -15,7 +15,7 @@
 namespace clever { namespace ast {
 
 Resolver::Resolver(Compiler* compiler)
-	: Visitor(), m_compiler(compiler), m_mod(NULL)
+	: Visitor(), m_compiler(compiler), m_mod(NULL), m_class(NULL)
 {
 	// global environment and scope
 	m_symtable = m_scope = new Scope();
@@ -275,7 +275,41 @@ void Resolver::visit(ClassDef* node)
 	m_scope->setEnvironment(m_stack.top());
 	node->setScope(m_scope);
 
+	if (node->hasAttrs()) {
+		m_class = type;
+
+		node->getAttrs()->accept(*this);
+
+		m_class = NULL;
+	}
+
 	m_scope = m_scope->leave();
+}
+
+void Resolver::visit(AttrDecl* node)
+{
+	const CString* name = node->getIdent()->getName();
+
+	if (m_scope->getLocal(name)) {
+		Compiler::errorf(node->getLocation(),
+			"Cannot redeclare attribute `%S'.", name);
+	}
+
+	Value* val = new Value();
+	m_scope->pushValue(name, val)->voffset = m_stack.top()->pushValue(val);
+
+	val->setConst(node->isConst());
+
+	node->getIdent()->accept(*this);
+
+	if (node->hasValue()) {
+		node->getValue()->accept(*this);
+	}
+
+	m_class->addProperty(name, val);
+	val->addRef();
+
+	node->setScope(m_scope);
 }
 
 }} // clever::ast
