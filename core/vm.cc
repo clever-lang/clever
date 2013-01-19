@@ -186,6 +186,40 @@ static CLEVER_FORCE_INLINE void _param_binding(Function* func, Environment* fenv
 	}
 }
 
+// Prepares an user function/method call
+CLEVER_FORCE_INLINE void VM::prepareCall(Function* func)
+{
+	if (thread_is_enabled()) {
+		getMutex()->lock();
+	}
+
+	Environment* fenv;
+
+	if (m_call_stack.top()->isActive()) {
+		fenv = func->getEnvironment()->activate(m_call_stack.top()->getOuter());
+	} else {
+		fenv = func->getEnvironment()->activate(m_call_stack.top());
+	}
+	m_call_stack.push(fenv);
+
+	fenv->setRetAddr(m_pc + 1);
+	fenv->setRetVal(getValue(OPCODE.result));
+
+	if (m_call_args.size() < func->getNumRequiredArgs()
+		|| (m_call_args.size() > func->getNumArgs()
+			&& !func->isVariadic())) {
+		error(VM_ERROR, "Wrong number of parameters");
+	}
+
+	_param_binding(func, fenv, &m_call_args);
+
+	m_call_args.clear();
+
+	if (thread_is_enabled()) {
+		getMutex()->unlock();
+	}
+}
+
 // Executes the supplied function
 Value* VM::runFunction(Function* func, std::vector<Value*>* args)
 {
@@ -361,35 +395,7 @@ void VM::run()
 			clever_assert_not_null(func);
 
 			if (func->isUserDefined()) {
-				if (thread_is_enabled()) {
-					getMutex()->lock();
-				}
-
-				Environment* fenv;
-
-				if (m_call_stack.top()->isActive()) {
-					fenv = func->getEnvironment()->activate(m_call_stack.top()->getOuter());
-				} else {
-					fenv = func->getEnvironment()->activate(m_call_stack.top());
-				}
-				m_call_stack.push(fenv);
-
-				fenv->setRetAddr(m_pc + 1);
-				fenv->setRetVal(getValue(OPCODE.result));
-
-				if (m_call_args.size() < func->getNumRequiredArgs()
-					|| (m_call_args.size() > func->getNumArgs()
-						&& !func->isVariadic())) {
-					error(VM_ERROR, "Wrong number of parameters");
-				}
-
-				_param_binding(func, fenv, &m_call_args);
-
-				m_call_args.clear();
-
-				if (thread_is_enabled()) {
-					getMutex()->unlock();
-				}
+				prepareCall(func);
 
 				VM_GOTO(func->getAddr());
 			} else {
@@ -737,35 +743,7 @@ void VM::run()
 			}
 
 			if (func->isUserDefined()) {
-				if (thread_is_enabled()) {
-					getMutex()->lock();
-				}
-
-				Environment* fenv;
-
-				if (m_call_stack.top()->isActive()) {
-					fenv = func->getEnvironment()->activate(m_call_stack.top()->getOuter());
-				} else {
-					fenv = func->getEnvironment()->activate(m_call_stack.top());
-				}
-				m_call_stack.push(fenv);
-
-				fenv->setRetAddr(m_pc + 1);
-				fenv->setRetVal(getValue(OPCODE.result));
-
-				if (m_call_args.size() < func->getNumRequiredArgs()
-					|| (m_call_args.size() > func->getNumArgs()
-						&& !func->isVariadic())) {
-					error(VM_ERROR, "Wrong number of parameters");
-				}
-
-				_param_binding(func, fenv, &m_call_args);
-
-				m_call_args.clear();
-
-				if (thread_is_enabled()) {
-					getMutex()->unlock();
-				}
+				prepareCall(func);
 
 				VM_GOTO(func->getAddr());
 			} else {
