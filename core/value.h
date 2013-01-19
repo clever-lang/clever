@@ -12,6 +12,7 @@
 
 #include "core/cstring.h"
 #include "types/type.h"
+#include "modules/std/core/str.h"
 
 namespace clever {
 
@@ -77,14 +78,12 @@ public:
 		bool bval;
 		long lval;
 		double dval;
-		const CString* sval;
 		ValueObject* obj;
 
 		DataValue() : lval(0) {}
 		DataValue(bool value) : bval(value) {}
 		DataValue(long value) : lval(value) {}
 		DataValue(double value) : dval(value) {}
-		DataValue(const CString* value) : sval(value) {}
 	};
 
 	Value() : m_data(), m_type(NULL), m_is_const(false) {SAFETY_CTOR();}
@@ -99,7 +98,10 @@ public:
 		: m_data(n), m_type(CLEVER_DOUBLE_TYPE), m_is_const(is_const) {SAFETY_CTOR();}
 
 	Value(const CString* value, bool is_const = false)
-		: m_data(value), m_type(CLEVER_STR_TYPE), m_is_const(is_const) {SAFETY_CTOR();}
+		: m_data(value), m_type(CLEVER_STR_TYPE), m_is_const(is_const) {
+		SAFETY_CTOR();
+		setObj(m_type, new StrObject(value));
+	}
 
 	Value(const Type* type, bool is_const = false)
 		: m_data(), m_type(type), m_is_const(is_const) {SAFETY_CTOR();}
@@ -162,16 +164,24 @@ public:
 
 	void setStr(const CString* str) {
 		SAFETY_LOCK();
-		m_data.sval = str;
+		cleanUp();
 		m_type = CLEVER_STR_TYPE;
+		setObj(m_type, new StrObject(str));
 		SAFETY_ULOCK();
 	}
-	const CString* getStr() const { return m_data.sval; }
+	void setStr(StrObject* str) {
+		SAFETY_LOCK();
+		cleanUp();
+		m_type = CLEVER_STR_TYPE;
+		setObj(m_type, str);
+		SAFETY_ULOCK();
+	}
+	const CString* getStr() const { return static_cast<StrObject*>(getObj())->getStr(); }
 
 	bool isInt()      const { return m_type == CLEVER_INT_TYPE;    }
 	bool isBool()     const { return m_type == CLEVER_BOOL_TYPE;   }
 	bool isDouble()   const { return m_type == CLEVER_DOUBLE_TYPE; }
-	bool isStr()   const { return m_type == CLEVER_STR_TYPE;    }
+	bool isStr()      const { return m_type == CLEVER_STR_TYPE;    }
 	bool isFunction() const { return m_type == CLEVER_FUNC_TYPE;   }
 	bool isMap()      const { return m_type == CLEVER_MAP_TYPE;    }
 	bool isArray()    const { return m_type == CLEVER_ARRAY_TYPE;  }

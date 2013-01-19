@@ -15,6 +15,11 @@
 
 namespace clever {
 
+void StrType::dump(const void* value, std::ostream& out) const
+{
+	out << *static_cast<StrObject*>(static_cast<Value::DataValue*>(const_cast<void*>(value))->obj->getObj())->getStr();
+}
+
 CLEVER_TYPE_OPERATOR(StrType::add)
 {
 	if (EXPECTED(rhs->isStr())) {
@@ -37,7 +42,7 @@ CLEVER_TYPE_OPERATOR(StrType::mul)
 			os << *lhs->getStr();
 		}
 
-		result->setStr(CSTRING(os.str()));
+		result->setStr(new StrObject(os.str()));
 	}
 }
 
