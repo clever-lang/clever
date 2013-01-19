@@ -149,6 +149,46 @@ CLEVER_METHOD(ReflectType::isThread)
 	result->setBool(intern->getData()->isThread());
 }
 
+// Reflect::getName()
+// Returns the name of the function
+CLEVER_METHOD(ReflectType::getName)
+{
+	if (!clever_check_no_args()) {
+		return;
+	}
+
+	const ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
+	const Value* data = intern->getData();
+
+	if (!data->isFunction()) {
+		return;
+	}
+
+	const Function* func = static_cast<Function*>(data->getObj());
+
+	result->setStr(CSTRING(func->getName()));
+}
+
+// Reflect::isStatic()
+// Check if the object is an static function
+CLEVER_METHOD(ReflectType::isStatic)
+{
+	if (!clever_check_no_args()) {
+		return;
+	}
+
+	const ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
+	const Value* data = intern->getData();
+
+	if (!data->isFunction()) {
+		return;
+	}
+
+	const Function* func = static_cast<Function*>(data->getObj());
+
+	result->setBool(func->isStatic());
+}
+
 // Reflect::isVariadic()
 // Check if the object is a variadic function
 CLEVER_METHOD(ReflectType::isVariadic)
@@ -167,6 +207,46 @@ CLEVER_METHOD(ReflectType::isVariadic)
 	const Function* func = static_cast<Function*>(data->getObj());
 
 	result->setBool(func->isVariadic());
+}
+
+// Reflect::isUserDefined()
+// Check if the object is an user-defined function
+CLEVER_METHOD(ReflectType::isUserDefined)
+{
+	if (!clever_check_no_args()) {
+		return;
+	}
+
+	const ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
+	const Value* data = intern->getData();
+
+	if (!data->isFunction()) {
+		return;
+	}
+
+	const Function* func = static_cast<Function*>(data->getObj());
+
+	result->setBool(func->isUserDefined());
+}
+
+// Reflect::isInternal()
+// Check if the object is an internal function
+CLEVER_METHOD(ReflectType::isInternal)
+{
+	if (!clever_check_no_args()) {
+		return;
+	}
+
+	const ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
+	const Value* data = intern->getData();
+
+	if (!data->isFunction()) {
+		return;
+	}
+
+	const Function* func = static_cast<Function*>(data->getObj());
+
+	result->setBool(func->isInternal());
 }
 
 // Reflect::getNumArgs()
@@ -230,7 +310,11 @@ CLEVER_TYPE_INIT(ReflectType::init)
 	addMethod(new Function("isThread",   (MethodPtr) &ReflectType::isThread));
 
 	// Function specific methods
+	addMethod(new Function("getName",       (MethodPtr) &ReflectType::getName));
+	addMethod(new Function("isStatic",      (MethodPtr) &ReflectType::isStatic));
 	addMethod(new Function("isVariadic",    (MethodPtr) &ReflectType::isVariadic));
+	addMethod(new Function("isUserDefined", (MethodPtr) &ReflectType::isUserDefined));
+	addMethod(new Function("isInternal",    (MethodPtr) &ReflectType::isInternal));
 	addMethod(new Function("getNumArgs",    (MethodPtr) &ReflectType::getNumArgs));
 	addMethod(new Function("getNumReqArgs", (MethodPtr) &ReflectType::getNumReqArgs));
 }

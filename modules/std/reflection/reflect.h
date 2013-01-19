@@ -57,7 +57,11 @@ public:
 	CLEVER_METHOD(isArray);
 	CLEVER_METHOD(isThread);
 
+	CLEVER_METHOD(getName);
+	CLEVER_METHOD(isStatic);
 	CLEVER_METHOD(isVariadic);
+	CLEVER_METHOD(isUserDefined);
+	CLEVER_METHOD(isInternal);
 	CLEVER_METHOD(getNumArgs);
 	CLEVER_METHOD(getNumReqArgs);
 };
