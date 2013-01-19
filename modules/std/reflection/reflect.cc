@@ -294,7 +294,7 @@ CLEVER_METHOD(ReflectType::getNumReqArgs)
 }
 
 // Reflect::getMethods()
-// Returns an array with the type methods
+// Returns an array containing the type methods
 CLEVER_METHOD(ReflectType::getMethods)
 {
 	if (!clever_check_no_args()) {
@@ -318,7 +318,7 @@ CLEVER_METHOD(ReflectType::getMethods)
 }
 
 // Reflect::getProperties()
-// Returns the type properties
+// Returns a map containing the type properties
 CLEVER_METHOD(ReflectType::getProperties)
 {
 	if (!clever_check_no_args()) {
