@@ -25,7 +25,7 @@ CLEVER_TYPE_OPERATOR(StrType::add)
 	if (EXPECTED(rhs->isStr())) {
 		// TODO(Felipe): Do not require CString everywhere (because it stores the
 		// data in an string table)
-		result->setStr(CSTRING(*lhs->getStr() + *rhs->getStr()));
+		result->setStr(new StrObject(*lhs->getStr() + *rhs->getStr()));
 	}
 }
 
@@ -79,7 +79,7 @@ CLEVER_METHOD(StrType::subString)
 		count = of->size();
 	}
 
-	result->setStr(CSTRING(of->substr(start, count)));
+	result->setStr(new StrObject(of->substr(start, count)));
 }
 
 // String.find(string needle, [int position, [int count]])
@@ -219,7 +219,7 @@ CLEVER_METHOD(StrType::format)
 			point++;
 		}
 	}
-	result->setStr(CSTRING(stream.str()));
+	result->setStr(new StrObject(stream.str()));
 }
 
 // String.startsWith(string match)

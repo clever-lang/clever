@@ -108,7 +108,11 @@ void vsprintf(std::ostringstream& outstr, const char* format, va_list ap) {
 			case 'T': {
 					const Type* type = va_arg(ap, const Type*);
 
-					outstr << type ? *type->getName() : "null";
+					if (type) {
+						outstr << *type->getName();
+					} else {
+						outstr << "null";
+					}
 				}
 				break;
 			/* const CString* */

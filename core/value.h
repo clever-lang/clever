@@ -178,6 +178,7 @@ public:
 	}
 	const CString* getStr() const { return static_cast<StrObject*>(getObj())->getStr(); }
 
+
 	bool isInt()      const { return m_type == CLEVER_INT_TYPE;    }
 	bool isBool()     const { return m_type == CLEVER_BOOL_TYPE;   }
 	bool isDouble()   const { return m_type == CLEVER_DOUBLE_TYPE; }
