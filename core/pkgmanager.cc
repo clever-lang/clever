@@ -85,7 +85,7 @@ void PkgManager::loadModule(Scope* scope, Environment* env, Module* module,
 	module->init();
 	module->setLoaded();
 
-	if (kind == PkgManager::ALL) {
+	if (kind & PkgManager::FUNCTION) {
 		FunctionMap& funcs = module->getFunctions();
 		FunctionMap::const_iterator itf = funcs.begin(),
 			endf = funcs.end();
@@ -94,31 +94,13 @@ void PkgManager::loadModule(Scope* scope, Environment* env, Module* module,
 			loadFunction(scope, env, itf->first, itf->second);
 			++itf;
 		}
+	}
 
+	if (kind & PkgManager::TYPE) {
 		TypeMap& types = module->getTypes();
 		TypeMap::const_iterator itt(types.begin()), ite(types.end());
 
 		while (EXPECTED(itt != ite)) {
-			loadType(scope, env, itt->first, itt->second);
-			++itt;
-		}
-	} else if (kind == PkgManager::FUNCTION) {
-		clever_assert_not_null(name);
-
-		FunctionMap& funcs = module->getFunctions();
-		FunctionMap::const_iterator itf = funcs.find(name);
-
-		if (itf != funcs.end()) {
-			loadFunction(scope, env, itf->first, itf->second);
-			++itf;
-		}
-	} else if (kind == PkgManager::TYPE) {
-		clever_assert_not_null(name);
-
-		TypeMap& types = module->getTypes();
-		TypeMap::const_iterator itt = types.find(name);
-
-		if (itt != types.end()) {
 			loadType(scope, env, itt->first, itt->second);
 			++itt;
 		}

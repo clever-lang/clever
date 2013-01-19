@@ -28,9 +28,9 @@ typedef std::pair<const CString*, Package*> PackagePair;
 class PkgManager {
 public:
 	enum ImportKind {
-		ALL,
-		TYPE,
-		FUNCTION
+		TYPE     = 1<<0,
+		FUNCTION = 1<<1,
+		ALL      = TYPE | FUNCTION
 	};
 
 	PkgManager()
