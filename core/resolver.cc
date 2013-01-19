@@ -9,8 +9,7 @@
 #include "core/resolver.h"
 #include "types/native_types.h"
 #include "core/module.h"
-#include "modules/std/user/user.h"
-#include "modules/std/user/user_type.h"
+#include "core/user.h"
 
 namespace clever { namespace ast {
 
