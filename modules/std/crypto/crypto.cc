@@ -20,7 +20,7 @@ static CLEVER_FUNCTION(md5)
 		return;
 	}
 
-	result->setStr(CSTRING(md5(*args[0]->getStr())));
+	result->setStr(new StrObject(md5(*args[0]->getStr())));
 }
 
 } // clever::packages::std::crypto
