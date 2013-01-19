@@ -8,6 +8,7 @@
 #include "core/clever.h"
 #include "modules/std/core/function.h"
 #include "modules/std/reflection/reflect.h"
+#include "modules/std/core/array.h"
 
 namespace clever { namespace packages { namespace std { namespace reflection {
 
@@ -35,13 +36,15 @@ CLEVER_METHOD(ReflectType::ctor)
 // Returns the type name of the object
 CLEVER_METHOD(ReflectType::getType)
 {
-	if (!clever_check_args(".")) {
+	if (!clever_check_no_args()) {
 		return;
 	}
 
-	const Type* type = args[0]->getType();
+	const ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
 
-	result->setStr(type ? type->getName() : CSTRING("null"));
+	if (intern->getData()->getType()) {
+		result->setStr(intern->getData()->getType()->getName());
+	}
 }
 
 // Reflect::isFunction()
@@ -150,7 +153,7 @@ CLEVER_METHOD(ReflectType::isThread)
 }
 
 // Reflect::getName()
-// Returns the name of the function
+// Returns the name of the type or function
 CLEVER_METHOD(ReflectType::getName)
 {
 	if (!clever_check_no_args()) {
@@ -289,6 +292,29 @@ CLEVER_METHOD(ReflectType::getNumReqArgs)
 	result->setInt(func->getNumRequiredArgs());
 }
 
+// Reflect::getMethods()
+// Returns an array with the type methods
+CLEVER_METHOD(ReflectType::getMethods)
+{
+	if (!clever_check_no_args()) {
+		return;
+	}
+
+	const ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
+	const MethodMap& methods = intern->getData()->getType()->getMethods();
+	MethodMap::const_iterator it(methods.begin()), end(methods.end());
+
+	ArrayObject* arr = new ArrayObject;
+
+	while (it != end) {
+		Value* val = new Value;
+		val->setStr(CSTRING(it->second->getName()));
+		arr->getData().push_back(val);
+		++it;
+	}
+
+	result->setObj(CLEVER_ARRAY_TYPE, arr);
+}
 
 // Reflect type initialization
 CLEVER_TYPE_INIT(ReflectType::init)
@@ -317,6 +343,9 @@ CLEVER_TYPE_INIT(ReflectType::init)
 	addMethod(new Function("isInternal",    (MethodPtr) &ReflectType::isInternal));
 	addMethod(new Function("getNumArgs",    (MethodPtr) &ReflectType::getNumArgs));
 	addMethod(new Function("getNumReqArgs", (MethodPtr) &ReflectType::getNumReqArgs));
+
+	// Type specific methods
+	addMethod(new Function("getMethods", (MethodPtr) &ReflectType::getMethods));
 }
 
 }}}} // clever::packages::std::reflection

@@ -86,6 +86,8 @@ public:
 		return NULL;
 	}
 
+	const MethodMap& getMethods() const { return m_methods; }
+
 	Value* getProperty(const CString* name) const {
 		PropertyMap::const_iterator it = m_properties.find(name);
 
