@@ -57,6 +57,10 @@ public:
 		ImportKind = PkgManager::ALL, const CString* = NULL) const;
 
 	void loadModule(Scope*, Environment*, Module*, ImportKind, const CString*) const;
+
+	void loadFunction(Scope*, Environment*, const CString*, Function*) const;
+
+	void loadType(Scope*, Environment*, const CString*, Type*) const;
 private:
 	PackageMap m_pkgs;
 };

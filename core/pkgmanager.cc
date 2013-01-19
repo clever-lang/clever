@@ -53,15 +53,36 @@ void PkgManager::shutdown()
 	}
 }
 
+/// Loads an specific module type
+void PkgManager::loadType(Scope* scope, Environment* env, const CString* name,
+	Type* type) const
+{
+	Value* tmp = new Value(type);
+
+	scope->pushValue(name, tmp)->voffset = env->pushValue(tmp);
+
+	type->init();
+}
+
+/// Loads an specific module function
+void PkgManager::loadFunction(Scope* scope, Environment* env, const CString* name,
+	Function* func) const
+{
+	Value* fval = new Value();
+
+	fval->setObj(CLEVER_FUNC_TYPE, func);
+
+	scope->pushValue(name, fval)->voffset = env->pushValue(fval);
+}
+
 /// Loads a module if it is not already loaded
 void PkgManager::loadModule(Scope* scope, Environment* env, Module* module,
 	ImportKind kind, const CString* name) const
 {
-	if (module->isLoaded()) {
-		return;
+	if (!module->isLoaded()) {
+		module->init();
+		module->setLoaded();
 	}
-	module->init();
-	module->setLoaded();
 
 	if (kind == PkgManager::ALL) {
 		FunctionMap& funcs = module->getFunctions();
@@ -69,12 +90,7 @@ void PkgManager::loadModule(Scope* scope, Environment* env, Module* module,
 			endf = funcs.end();
 
 		while (EXPECTED(itf != endf)) {
-			Value* fval = new Value();
-
-			fval->setObj(CLEVER_FUNC_TYPE, itf->second);
-
-			scope->pushValue(itf->first, fval)->voffset = env->pushValue(fval);
-
+			loadFunction(scope, env, itf->first, itf->second);
 			++itf;
 		}
 
@@ -82,10 +98,7 @@ void PkgManager::loadModule(Scope* scope, Environment* env, Module* module,
 		TypeMap::const_iterator itt(types.begin()), ite(types.end());
 
 		while (EXPECTED(itt != ite)) {
-			Value* tmp = new Value(itt->second);
-			scope->pushValue(itt->first, tmp)->voffset = env->pushValue(tmp);
-
-			itt->second->init();
+			loadType(scope, env, itt->first, itt->second);
 			++itt;
 		}
 	} else if (kind == PkgManager::FUNCTION) {
@@ -95,11 +108,8 @@ void PkgManager::loadModule(Scope* scope, Environment* env, Module* module,
 		FunctionMap::const_iterator itf = funcs.find(name);
 
 		if (itf != funcs.end()) {
-			Value* fval = new Value();
-
-			fval->setObj(CLEVER_FUNC_TYPE, itf->second);
-
-			scope->pushValue(itf->first, fval)->voffset = env->pushValue(fval);
+			loadFunction(scope, env, itf->first, itf->second);
+			++itf;
 		}
 	} else if (kind == PkgManager::TYPE) {
 		clever_assert_not_null(name);
@@ -108,10 +118,8 @@ void PkgManager::loadModule(Scope* scope, Environment* env, Module* module,
 		TypeMap::const_iterator itt = types.find(name);
 
 		if (itt != types.end()) {
-			Value* tmp = new Value(itt->second);
-			scope->pushValue(itt->first, tmp)->voffset = env->pushValue(tmp);
-
-			itt->second->init();
+			loadType(scope, env, itt->first, itt->second);
+			++itt;
 		}
 	}
 }
