@@ -93,7 +93,7 @@ CLEVER_METHOD(CFile::read)
 	CString* token = new CString;
 	*file >> *token;
 
-	result->setStr(token);
+	result->setStr(new StrObject(token, false));
 }
 
 // string File.readLine()
@@ -109,7 +109,7 @@ CLEVER_METHOD(CFile::readLine)
 	CString* token = new CString;
 	::std::getline(*file, *token);
 
-	result->setStr(token);
+	result->setStr(new StrObject(token, false));
 }
 
 // void File.write(String)

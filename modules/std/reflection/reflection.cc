@@ -25,7 +25,7 @@ static CLEVER_FUNCTION(type)
 
 	const Type* type = args[0]->getType();
 
-	result->setStr(type ? type->getName() : CSTRING("null"));
+	result->setStr(new StrObject(type->getName()));
 }
 
 // eval(string)
