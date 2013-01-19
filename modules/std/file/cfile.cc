@@ -93,7 +93,7 @@ CLEVER_METHOD(CFile::read)
 	CString* token = new CString;
 	*file >> *token;
 
-	result->setStr(token);
+	result->setStr(new StrObject(token, false));
 }
 
 // string File.readLine()
@@ -109,7 +109,7 @@ CLEVER_METHOD(CFile::readLine)
 	CString* token = new CString;
 	::std::getline(*file, *token);
 
-	result->setStr(token);
+	result->setStr(new StrObject(token, false));
 }
 
 // void File.write(String)
@@ -174,13 +174,12 @@ CLEVER_TYPE_INIT(CFile::init)
 	addMethod(new Function("close",		(MethodPtr)&CFile::close));
 	addMethod(new Function("isOpen",	(MethodPtr)&CFile::isOpen));
 
-	addProperty(CSTRING("IN"), new Value(long(::std::ios_base::in), true));
-	addProperty(CSTRING("OUT"), new Value(long(::std::ios_base::out), true));
-	addProperty(CSTRING("TRUNC"),
-		new Value(long(::std::ios_base::trunc), true));
-	addProperty(CSTRING("APP"), new Value(long(::std::ios_base::app), true));
-	addProperty(CSTRING("ATE"), new Value(long(::std::ios_base::ate), true));
-	addProperty(CSTRING("BIN"), new Value(long(::std::ios_base::binary), true));
+	addProperty(CSTRING("IN"),    new Value(long(::std::ios_base::in),     true));
+	addProperty(CSTRING("OUT"),   new Value(long(::std::ios_base::out),    true));
+	addProperty(CSTRING("TRUNC"), new Value(long(::std::ios_base::trunc),  true));
+	addProperty(CSTRING("APP"),   new Value(long(::std::ios_base::app),    true));
+	addProperty(CSTRING("ATE"),   new Value(long(::std::ios_base::ate),    true));
+	addProperty(CSTRING("BIN"),   new Value(long(::std::ios_base::binary), true));
 }
 
 }}} // clever::packages::std

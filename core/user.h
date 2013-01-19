@@ -1,16 +1,23 @@
-#ifndef CLEVER_USER_TYPE_H
-#define CLEVER_USER_TYPE_H
+/**
+ * Clever programming language
+ * Copyright (c) Clever Team
+ *
+ * This file is distributed under the MIT license. See LICENSE for details.
+ */
 
-#include "types/type.h"
+#ifndef CLEVER_USER_H
+#define CLEVER_USER_H
 
 namespace clever {
 
+// User object representation
 class UserObject {
 public:
 	UserObject() {}
 	~UserObject() {}
 };
 
+// User type representation
 class UserType : public Type {
 public:
 	UserType(const CString* name)
@@ -36,6 +43,17 @@ public:
 	}
 };
 
+// User module representation
+class UserModule: public Module {
+public:
+	UserModule()
+		: Module("_user") {}
+
+	~UserModule() {}
+
+	void init() {}
+};
+
 } // clever
 
-#endif // CLEVER_USER_TYPE_H
+#endif // CLEVER_USER_H
