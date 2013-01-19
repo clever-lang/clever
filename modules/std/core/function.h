@@ -27,6 +27,9 @@ class Scope;
 
 typedef void (CLEVER_FASTCALL *FunctionPtr)(CLEVER_FUNCTION_ARGS);
 
+typedef std::tr1::unordered_map<const CString*, Function*> FunctionMap;
+typedef std::pair<const CString*, Function*> FunctionMapEntry;
+
 class Function {
 public:
 	enum FuncKind { UNDEF, USER_FUNC, INTERNAL_FUNC };

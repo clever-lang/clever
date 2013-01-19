@@ -56,48 +56,53 @@ class Function;
 
 typedef void (Type::*MethodPtr)(CLEVER_METHOD_ARGS) const;
 
+typedef std::tr1::unordered_map<const CString*, Value*> MemberMap;
+
 typedef std::tr1::unordered_map<const CString*, Value*> PropertyMap;
 typedef std::pair<const CString*, Value*> PropertyPair;
 
 typedef std::tr1::unordered_map<const CString*, Function*> MethodMap;
 typedef std::pair<const CString*, Function*> MethodPair;
 
+typedef std::tr1::unordered_map<const CString*, Type*> TypeMap;
+typedef std::pair<const CString*, Type*> TypeMapEntry;
+
 class Type {
 public:
 	Type(const CString* name)
-		: m_name(name), m_methods(), m_properties(), m_ctor(NULL), m_dtor(NULL) {}
+		: m_name(name), m_ctor(NULL), m_dtor(NULL) {}
 
 	virtual ~Type() {}
 
 	void deallocMembers();
 
+	void addMember(const CString* name, Value* value) {
+		m_members.insert(MemberMap::value_type(name, value));
+	}
+
+	Value* getMember(const CString* name) const {
+		MemberMap::const_iterator it = m_members.find(name);
+
+		if (it != m_members.end()) {
+			return it->second;
+		}
+
+		return NULL;
+	}
+
 	Function* addMethod(Function* func);
 
+	const Function* getMethod(const CString* name) const;
+
 	void addProperty(const CString* name, Value* value) {
-		m_properties.insert(PropertyPair(name, value));
+		addMember(name, value);
 	}
 
-	const Function* getMethod(const CString* name) const {
-		MethodMap::const_iterator it = m_methods.find(name);
+	Value* getProperty(const CString* name) const;
 
-		if (EXPECTED(it != m_methods.end())) {
-			return it->second;
-		}
-		return NULL;
-	}
+	MethodMap getMethods() const;
 
-	const MethodMap& getMethods() const { return m_methods; }
-
-	const PropertyMap& getProperties() const { return m_properties; }
-
-	Value* getProperty(const CString* name) const {
-		PropertyMap::const_iterator it = m_properties.find(name);
-
-		if (EXPECTED(it != m_properties.end())) {
-			return it->second;
-		}
-		return NULL;
-	}
+	PropertyMap getProperties() const;
 
 	/// Method for retrieve the type name
 	const CString* getName() const { return m_name; }
@@ -138,10 +143,10 @@ public:
 	virtual void deallocData(CLEVER_TYPE_DTOR_ARGS) {}
 private:
 	const CString* m_name;
-	MethodMap m_methods;
-	PropertyMap m_properties;
 	const Function* m_ctor;
 	const Function* m_dtor;
+
+	MemberMap m_members;
 
 	DISALLOW_COPY_AND_ASSIGN(Type);
 };
