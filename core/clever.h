@@ -90,10 +90,6 @@ void clever_debug_(const char* file, long line, const char* format, ...);
 #define clever_debug(format, ...)
 #endif
 
-// Macros to safely increase or decrease the reference count of an object
-#define CLEVER_SAFE_ADDREF(x) do { if (x) { (x)->addRef(); } } while (0)
-#define CLEVER_SAFE_DELREF(x) do { if (x) { (x)->delRef(); } } while (0)
-
 /**
  * @brief deletes non-null pointers
  *
@@ -125,8 +121,6 @@ inline void clever_delete_var(T*& ptr) {
 	clever_delete(ptr);
 	ptr = NULL;
 }
-
-
 
 /**
  * @defgroup ErrorReporting Error reporting functions

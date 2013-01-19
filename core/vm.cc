@@ -234,7 +234,7 @@ void VM::run()
 			}
 
 			env->clear();
-			CLEVER_SAFE_DELREF(env);
+			clever_delref(env);
 			m_call_stack.pop();
 
 			VM_GOTO(ret_addr);
@@ -433,7 +433,7 @@ void VM::run()
 				Environment* env = m_call_stack.top();
 
 				env->clear();
-				CLEVER_SAFE_DELREF(env);
+				clever_delref(env);
 				m_call_stack.pop();
 			}
 
@@ -458,7 +458,7 @@ void VM::run()
 			size_t ret_addr = env->getRetAddr();
 
 			env->clear();
-			CLEVER_SAFE_DELREF(env);
+			clever_delref(env);
 			m_call_stack.pop();
 
 			VM_GOTO(ret_addr);

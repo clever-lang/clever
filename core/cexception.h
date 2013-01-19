@@ -18,7 +18,7 @@ public:
 		: m_exception(NULL) {}
 
 	~CException() {
-		CLEVER_SAFE_DELREF(m_exception);
+		clever_delref(m_exception);
 	}
 
 	void clear() { m_exception = NULL; }

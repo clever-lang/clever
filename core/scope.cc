@@ -14,7 +14,7 @@ Scope::~Scope() {
         endv = m_value_pool.end();
 
     while (itv != endv) {
-        CLEVER_SAFE_DELREF(*itv);
+        clever_delref(*itv);
         ++itv;
     }
 
@@ -34,7 +34,7 @@ Scope::~Scope() {
         ++its;
     }
 
-    CLEVER_SAFE_DELREF(m_environment);
+    clever_delref(m_environment);
 }
 
 std::vector<Scope*> Scope::flatten() {

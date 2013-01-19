@@ -110,9 +110,9 @@ public:
 
 	Environment* getEnvironment() const { return m_environment; }
 	void setEnvironment(Environment* e) {
-		CLEVER_SAFE_DELREF(m_environment);
+        clever_delref(m_environment);
 		m_environment = e;
-		CLEVER_SAFE_ADDREF(m_environment);
+        clever_addref(m_environment);
 	}
 
 	std::pair<size_t, size_t> getOffset(Symbol* sym) const;
