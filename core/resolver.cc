@@ -216,9 +216,18 @@ void Resolver::visit(Type* node)
 
 void Resolver::visit(Import* node)
 {
+	PkgManager::ImportKind kind =  node->getFunction() ?
+		PkgManager::FUNCTION :
+			(node->getType() ? PkgManager::TYPE : PkgManager::ALL);
+
 	if (node->getModule()) {
+		const CString* name = kind == PkgManager::ALL ? NULL
+			: (kind == PkgManager::FUNCTION ?
+				node->getFunction()->getName() : node->getType()->getName());
+
 		m_compiler->getPkgManager().importModule(m_scope, m_stack.top(),
-			node->getPackage()->getName(), node->getModule()->getName());
+			node->getPackage()->getName(), node->getModule()->getName(),
+			kind, name);
 	} else {
 		m_compiler->getPkgManager().importPackage(m_scope, m_stack.top(),
 			node->getPackage()->getName());

@@ -415,8 +415,10 @@ assignment:
 ;
 
 import:
-		IMPORT IDENT '.' IDENT '.' '*' { $$ = new ast::Import($2, $4, yyloc);   }
-	|	IMPORT IDENT '.' '*'           { $$ = new ast::Import($2, NULL, yyloc); }
+		IMPORT IDENT '.' IDENT '.' '*'   { $$ = new ast::Import($2, $4, yyloc);     }
+	|	IMPORT IDENT '.' '*'             { $$ = new ast::Import($2, NULL, yyloc);   }
+	|	IMPORT IDENT '.' IDENT '.' IDENT { $$ = new ast::Import($2, $4, $6, yyloc); }
+	|	IMPORT IDENT '.' IDENT '.' TYPE  { $$ = new ast::Import($2, $4, $6, yyloc); }
 ;
 
 vararg:

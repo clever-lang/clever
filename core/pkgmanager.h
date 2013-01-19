@@ -27,7 +27,15 @@ typedef std::pair<const CString*, Package*> PackagePair;
 /// Package manager
 class PkgManager {
 public:
-	PkgManager() : m_pkgs() {}
+	enum ImportKind {
+		ALL,
+		TYPE,
+		FUNCTION
+	};
+
+	PkgManager()
+		: m_pkgs() {}
+
 	~PkgManager() {}
 
 	/// Initialization routine
@@ -45,8 +53,10 @@ public:
 	void importPackage(Scope*, Environment*, const CString*) const;
 
 	/// Imports the module to the current scope
-	void importModule(Scope*, Environment*, const CString*, const CString*) const;
-	void loadModule(Scope*, Environment*, Module*) const;
+	void importModule(Scope*, Environment*, const CString*, const CString*,
+		ImportKind = PkgManager::ALL, const CString* = NULL) const;
+
+	void loadModule(Scope*, Environment*, Module*, ImportKind, const CString*) const;
 private:
 	PackageMap m_pkgs;
 };

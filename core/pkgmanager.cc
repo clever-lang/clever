@@ -54,7 +54,8 @@ void PkgManager::shutdown()
 }
 
 /// Loads a module if it is not already loaded
-void PkgManager::loadModule(Scope* scope, Environment* env, Module* module) const
+void PkgManager::loadModule(Scope* scope, Environment* env, Module* module,
+	ImportKind kind, const CString* name) const
 {
 	if (module->isLoaded()) {
 		return;
@@ -62,35 +63,62 @@ void PkgManager::loadModule(Scope* scope, Environment* env, Module* module) cons
 	module->init();
 	module->setLoaded();
 
-	FunctionMap& funcs = module->getFunctions();
-	FunctionMap::const_iterator itf = funcs.begin(),
-		endf = funcs.end();
+	if (kind == PkgManager::ALL) {
+		FunctionMap& funcs = module->getFunctions();
+		FunctionMap::const_iterator itf = funcs.begin(),
+			endf = funcs.end();
 
-	while (EXPECTED(itf != endf)) {
-		Value* fval = new Value();
+		while (EXPECTED(itf != endf)) {
+			Value* fval = new Value();
 
-		fval->setObj(CLEVER_FUNC_TYPE, itf->second);
+			fval->setObj(CLEVER_FUNC_TYPE, itf->second);
 
-		scope->pushValue(itf->first, fval)->voffset = env->pushValue(fval);
+			scope->pushValue(itf->first, fval)->voffset = env->pushValue(fval);
 
-		++itf;
-	}
+			++itf;
+		}
 
-	TypeMap& types = module->getTypes();
-	TypeMap::const_iterator itt(types.begin()), ite(types.end());
+		TypeMap& types = module->getTypes();
+		TypeMap::const_iterator itt(types.begin()), ite(types.end());
 
-	while (EXPECTED(itt != ite)) {
-		Value* tmp = new Value(itt->second);
-		scope->pushValue(itt->first, tmp)->voffset = env->pushValue(tmp);
+		while (EXPECTED(itt != ite)) {
+			Value* tmp = new Value(itt->second);
+			scope->pushValue(itt->first, tmp)->voffset = env->pushValue(tmp);
 
-		itt->second->init();
-		++itt;
+			itt->second->init();
+			++itt;
+		}
+	} else if (kind == PkgManager::FUNCTION) {
+		clever_assert_not_null(name);
+
+		FunctionMap& funcs = module->getFunctions();
+		FunctionMap::const_iterator itf = funcs.find(name);
+
+		if (itf != funcs.end()) {
+			Value* fval = new Value();
+
+			fval->setObj(CLEVER_FUNC_TYPE, itf->second);
+
+			scope->pushValue(itf->first, fval)->voffset = env->pushValue(fval);
+		}
+	} else if (kind == PkgManager::TYPE) {
+		clever_assert_not_null(name);
+
+		TypeMap& types = module->getTypes();
+		TypeMap::const_iterator itt = types.find(name);
+
+		if (itt != types.end()) {
+			Value* tmp = new Value(itt->second);
+			scope->pushValue(itt->first, tmp)->voffset = env->pushValue(tmp);
+
+			itt->second->init();
+		}
 	}
 }
 
 /// Imports a module
 void PkgManager::importModule(Scope* scope, Environment* env, const CString* package,
-	const CString* module) const
+	const CString* module, ImportKind kind, const CString* name) const
 {
 	PackageMap::const_iterator it = m_pkgs.find(package);
 
@@ -112,7 +140,7 @@ void PkgManager::importModule(Scope* scope, Environment* env, const CString* pac
 		return;
 	}
 
-	loadModule(scope, env, itm->second);
+	loadModule(scope, env, itm->second, kind, name);
 }
 
 /// Imports a package
@@ -135,7 +163,7 @@ void PkgManager::importPackage(Scope* scope, Environment* env, const CString* pa
 	ModuleMap::const_iterator itm = mods.begin(), endm = mods.end();
 
 	while (EXPECTED(itm != endm)) {
-		loadModule(scope, env, itm->second);
+		loadModule(scope, env, itm->second, PkgManager::ALL, NULL);
 		++itm;
 	}
 }

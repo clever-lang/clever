@@ -395,16 +395,34 @@ private:
 class Import: public Node {
 public:
 	Import(Ident* package, Ident* module, const location& location)
-		: Node(location), m_package(package), m_module(module) {
+		: Node(location), m_package(package), m_module(module), m_func(NULL), m_type(NULL) {
 		m_package->addRef();
 		CLEVER_SAFE_ADDREF(m_module);
+	}
+
+	Import(Ident* package, Ident* module, Ident* func, const location& location)
+		: Node(location), m_package(package), m_module(module), m_func(func), m_type(NULL) {
+		m_package->addRef();
+		CLEVER_SAFE_ADDREF(m_module);
+		m_func->addRef();
+	}
+
+	Import(Ident* package, Ident* module, Type* type, const location& location)
+		: Node(location), m_package(package), m_module(module), m_func(NULL), m_type(type) {
+		m_package->addRef();
+		CLEVER_SAFE_ADDREF(m_module);
+		m_type->addRef();
 	}
 
 	~Import() {
 		m_package->delRef();
 		CLEVER_SAFE_DELREF(m_module);
+		CLEVER_SAFE_DELREF(m_func);
+		CLEVER_SAFE_DELREF(m_type);
 	}
 
+	Type* getType() const { return m_type; }
+	Ident* getFunction() const { return m_func; }
 	Ident* getPackage() const { return m_package; }
 	Ident* getModule() const { return m_module; }
 	bool hasModule() const { return m_module != NULL; }
@@ -414,6 +432,8 @@ public:
 private:
 	Ident* m_package;
 	Ident* m_module;
+	Ident* m_func;
+	Type* m_type;
 
 	DISALLOW_COPY_AND_ASSIGN(Import);
 };
