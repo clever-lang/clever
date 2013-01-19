@@ -8,11 +8,14 @@
 #include "core/compiler.h"
 #include "core/resolver.h"
 #include "types/native_types.h"
+#include "core/module.h"
+#include "modules/std/user/user.h"
+#include "modules/std/user/user_type.h"
 
 namespace clever { namespace ast {
 
 Resolver::Resolver(Compiler* compiler)
-	: Visitor(), m_compiler(compiler)
+	: Visitor(), m_compiler(compiler), m_mod(NULL)
 {
 	// global environment and scope
 	m_symtable = m_scope = new Scope();
@@ -22,6 +25,9 @@ Resolver::Resolver(Compiler* compiler)
 
 	m_compiler->getPkgManager().importModule(m_scope, m_stack.top(),
 		CSTRING("std"), CSTRING("core"));
+
+	Package* std = m_compiler->getPkgManager().getStdPackage();
+	std->addModule(m_mod = new UserModule);
 }
 
 void Resolver::visit(Block* node)
@@ -249,6 +255,25 @@ void Resolver::visit(Catch* node)
 	node->setScope(m_scope);
 
 	Visitor::visit(static_cast<NodeArray*>(node->getBlock()));
+
+	m_scope = m_scope->leave();
+}
+
+void Resolver::visit(ClassDef* node)
+{
+	const CString* name = node->getType()->getName();
+
+	UserType* type = new UserType(name);
+
+	m_mod->addType(name, type);
+	type->init();
+
+	Value* tmp = new Value(type);
+	m_scope->pushValue(name, tmp)->voffset = m_stack.top()->pushValue(tmp);
+
+	m_scope = m_scope->enter();
+	m_scope->setEnvironment(m_stack.top());
+	node->setScope(m_scope);
 
 	m_scope = m_scope->leave();
 }

@@ -9,6 +9,7 @@
 #define CLEVER_RESOLVER_H
 
 #include "core/astvisitor.h"
+#include "core/module.h"
 
 namespace clever {
 class Compiler;
@@ -41,11 +42,13 @@ public:
 	virtual void visit(Type*);
 	virtual void visit(Import*);
 	virtual void visit(Catch*);
+	virtual void visit(ClassDef*);
 private:
 	Compiler* m_compiler;
 	Scope* m_symtable;
 	Scope* m_scope;
 	std::stack<Environment*> m_stack;
+	Module* m_mod;
 
 	DISALLOW_COPY_AND_ASSIGN(Resolver);
 };

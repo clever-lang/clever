@@ -34,7 +34,7 @@ public:
 	};
 
 	PkgManager()
-		: m_pkgs(), m_user(NULL) {}
+		: m_pkgs(), m_std(NULL) {}
 
 	~PkgManager() {}
 
@@ -44,7 +44,7 @@ public:
 	/// Shutdown routine
 	void shutdown();
 
-	Package* getUserPackage() const { return m_user; }
+	Package* getStdPackage() const { return m_std; }
 
 	/// Adds a new package to the map
 	void addPackage(const CString* name, Package* package) {
@@ -65,7 +65,7 @@ public:
 	void loadType(Scope*, Environment*, const CString*, Type*) const;
 private:
 	PackageMap m_pkgs;
-	Package* m_user;
+	Package* m_std;
 };
 
 } // clever
