@@ -9,6 +9,10 @@
 
 namespace clever { namespace packages {
 
+void User::init()
+{
+}
+
 // Initializes Std package
 void Std::init()
 {

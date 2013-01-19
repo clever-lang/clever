@@ -14,12 +14,24 @@
 
 namespace clever { namespace packages {
 
+class User : public Package {
+public:
+	User()
+		: Package("_user") {}
+
+	~User() {}
+
+	void init();
+
+	const char* getVersion() const { return NULL; }
+};
+
 class Std : public Package {
 public:
 	Std()
-		: Package("std") { }
+		: Package("std") {}
 
-	~Std() { }
+	~Std() {}
 
 	void init();
 
