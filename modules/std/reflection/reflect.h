@@ -66,6 +66,7 @@ public:
 	CLEVER_METHOD(getNumReqArgs);
 
 	CLEVER_METHOD(getMethods);
+	CLEVER_METHOD(getProperties);
 };
 
 }}}} // clever

@@ -9,6 +9,7 @@
 #include "modules/std/core/function.h"
 #include "modules/std/reflection/reflect.h"
 #include "modules/std/core/array.h"
+#include "modules/std/core/map.h"
 
 namespace clever { namespace packages { namespace std { namespace reflection {
 
@@ -316,6 +317,29 @@ CLEVER_METHOD(ReflectType::getMethods)
 	result->setObj(CLEVER_ARRAY_TYPE, arr);
 }
 
+// Reflect::getProperties()
+// Returns the type properties
+CLEVER_METHOD(ReflectType::getProperties)
+{
+	if (!clever_check_no_args()) {
+		return;
+	}
+
+	const ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
+	const PropertyMap& props = intern->getData()->getType()->getProperties();
+	PropertyMap::const_iterator it(props.begin()), end(props.end());
+
+	MapObject* map = new MapObject;
+
+	while (it != end) {
+		map->getData().insert(MapObjectPair(*it->first, it->second));
+		it->second->addRef();
+		++it;
+	}
+
+	result->setObj(CLEVER_MAP_TYPE, map);
+}
+
 // Reflect type initialization
 CLEVER_TYPE_INIT(ReflectType::init)
 {
@@ -345,7 +369,8 @@ CLEVER_TYPE_INIT(ReflectType::init)
 	addMethod(new Function("getNumReqArgs", (MethodPtr) &ReflectType::getNumReqArgs));
 
 	// Type specific methods
-	addMethod(new Function("getMethods", (MethodPtr) &ReflectType::getMethods));
+	addMethod(new Function("getMethods",    (MethodPtr) &ReflectType::getMethods));
+	addMethod(new Function("getProperties", (MethodPtr) &ReflectType::getProperties));
 }
 
 }}}} // clever::packages::std::reflection
