@@ -10,13 +10,13 @@
 clever_add_module(std_date       ON  "enable the date module"       "")
 clever_add_module(std_concurrent ON  "enable the concurrent module" "")
 clever_add_module(std_regex      ON  "enable the regex module"      "")
-#clever_add_module(std_ffi        OFF "enable the ffi module"        "")
-#clever_add_module(std_rpc        ON  "enable the rpc module"        "")
+clever_add_module(std_ffi        OFF "enable the ffi module"        "")
+clever_add_module(std_rpc        OFF  "enable the rpc module"        "")
 clever_add_module(std_net        ON  "enable the net module"        "")
 clever_add_module(std_unicode    ON  "enable the unicode module"    "")
 clever_add_module(std_fcgi    	 OFF "enable the fcgi module"       "")
-#clever_add_module(web_request    OFF "enable the request module"    "")
-#clever_add_module(web_session    OFF "enable the session module"    "")
+clever_add_module(web_request    OFF "enable the request module"    "")
+clever_add_module(web_session    OFF "enable the session module"    "")
 
 # Simple modules
 clever_add_simple_module(std_file       ON  "enable the file module"       "")
