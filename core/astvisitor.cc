@@ -173,4 +173,18 @@ void Visitor::visit(Throw* node) {
 	node->getExpr()->accept(*this);
 }
 
+void Visitor::visit(AttrDecl* node) {
+	node->getIdent()->accept(*this);
+
+	if (node->hasValue()) {
+		node->getValue()->accept(*this);
+	}
+}
+
+void Visitor::visit(ClassDef* node) {
+	if (node->hasAttrs()) {
+		node->getAttrs()->accept(*this);
+	}
+}
+
 }} // clever::ast

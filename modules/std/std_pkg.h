@@ -17,9 +17,9 @@ namespace clever { namespace packages {
 class Std : public Package {
 public:
 	Std()
-		: Package("std") { }
+		: Package("std") {}
 
-	~Std() { }
+	~Std() {}
 
 	void init();
 

@@ -228,6 +228,8 @@ add_executable(clever
 	modules/std/core/map.cc
 	modules/std/core/core.h
 	modules/std/core/core.cc
+	modules/std/user/user.h
+	modules/std/user/user_type.h
 	${EXTRA_CLEVER_FILES}
 )
 target_link_libraries(clever ${CLEVER_LIBRARIES})

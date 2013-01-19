@@ -47,6 +47,7 @@ class FalseLit;
 class Array;
 class Break;
 class Continue;
+class AttrDecl;
 
 typedef std::vector<Node*> NodeList;
 
@@ -1142,6 +1143,61 @@ public:
 	virtual Node* accept(Transformer& transformer);
 private:
 	DISALLOW_COPY_AND_ASSIGN(Continue);
+};
+
+class AttrDecl: public Node {
+public:
+	AttrDecl(Ident* ident, Node* value, bool is_const, const location& location)
+		: Node(location), m_ident(ident), m_value(value), m_const(is_const) {
+		m_ident->addRef();
+		CLEVER_SAFE_ADDREF(m_value);
+	}
+
+	~AttrDecl() {
+		m_ident->delRef();
+		CLEVER_SAFE_DELREF(m_value);
+	}
+
+	Ident* getIdent() const { return m_ident; }
+
+	Node* getValue() const { return m_value; }
+
+	bool hasValue() const { return m_value != NULL; }
+
+	bool isConst() const { return m_const; }
+
+	virtual void accept(Visitor& visitor);
+	virtual Node* accept(Transformer& transformer);
+private:
+	Ident* m_ident;
+	Node* m_value;
+	bool m_const;
+};
+
+class ClassDef: public Node {
+public:
+	ClassDef(Type* name, NodeArray* attrs, const location& location)
+		: Node(location), m_type(name), m_attrs(attrs) {
+		m_type->addRef();
+		CLEVER_SAFE_ADDREF(m_attrs);
+	}
+
+	~ClassDef() {
+		m_type->delRef();
+		CLEVER_SAFE_DELREF(m_attrs);
+	}
+
+	bool hasAttrs() const { return m_attrs != NULL; }
+
+	NodeArray* getAttrs() const { return m_attrs; }
+
+	Type* getType() const { return m_type; }
+
+	virtual void accept(Visitor& visitor);
+	virtual Node* accept(Transformer& transformer);
+private:
+	Type* m_type;
+	NodeArray* m_attrs;
 };
 
 }} // clever::ast

@@ -61,6 +61,8 @@ class Value;
 	ast::FalseLit* false_;
 	ast::Break* break_;
 	ast::Continue* continue_;
+	ast::AttrDecl* attr;
+	ast::ClassDef* class_;
 }
 
 %type <type> TYPE
@@ -75,6 +77,7 @@ class Value;
 %type <assignment> assignment
 %type <narray> variable_decl variable_decl_list non_empty_call_args call_args
 %type <narray> const_decl_list not_empty_catch catch key_value_list non_empty_key_value_list
+%type <narray> class_attr_decl_list class_attr_const_decl_list class_attr_list class_attr_decl
 %type <vardecl> variable_decl_impl vararg
 %type <vardecl> const_decl_impl
 %type <block> statement_list block finally
@@ -100,6 +103,8 @@ class Value;
 %type <throw_> throw
 %type <break_> break
 %type <continue_> continue
+%type <class_> class_def
+%type <attr> class_attr_decl_impl class_attr_const_decl_impl
 
 // The parsing context.
 %parse-param { Driver& driver }
@@ -176,6 +181,7 @@ class Value;
 %token THROW         "throw"
 %token CONTINUE      "continue"
 %token CONSTANT      "constant identifier"
+%token CLASS         "class"
 
 %left ',';
 %left LOGICAL_OR;
@@ -230,6 +236,7 @@ statement:
 	|	break ';'
 	|	continue ';'
 	|	try_catch_finally
+	|	class_def
 ;
 
 block:
@@ -286,6 +293,55 @@ rvalue:
 
 lvalue:
 		IDENT
+;
+
+class_def:
+		CLASS TYPE '{' class_attr_decl '}' { $$ = new ast::ClassDef($2, $4, yyloc); }
+;
+
+class_attr_decl:
+		/* empty */      { $$ = NULL; }
+	|	class_attr_list
+;
+
+class_attr_list:
+		{ $<narray>$ = new ast::NodeArray(yyloc); } non_empty_class_attr_list ';' { $$ = $<narray>1; }
+	|	class_attr_list { $<narray>$ = $1; } non_empty_class_attr_list ';'
+;
+
+non_empty_class_attr_list:
+		VAR   { $<narray>$ = $<narray>0; } class_attr_decl_list
+	|	CONST { $<narray>$ = $<narray>0; } class_attr_const_decl_list
+;
+
+attr_rvalue:
+		IDENT
+	|	CONSTANT
+	|	STR
+	|	NUM_INTEGER
+	|	NUM_DOUBLE
+	|	NIL
+	|	TRUE
+	|	FALSE
+;
+
+class_attr_decl_list:
+		class_attr_decl_impl  { $<narray>0->append($1); }
+	|	class_attr_decl_list ',' class_attr_decl_impl { $<narray>0->append($3); }
+;
+
+class_attr_decl_impl:
+		IDENT '=' attr_rvalue { $$ = new ast::AttrDecl($1, $<node>3, false, yyloc); }
+	|	IDENT                 { $$ = new ast::AttrDecl($1, NULL, false, yyloc);     }
+;
+
+class_attr_const_decl_list:
+		class_attr_const_decl_impl { $$ = new ast::NodeArray(yyloc); $$->append($1); }
+	|	class_attr_const_decl_list ',' class_attr_const_decl_impl { $1->append($3); }
+;
+
+class_attr_const_decl_impl:
+		IDENT '=' attr_rvalue { $$ = new ast::AttrDecl($1, $<node>3, true, yyloc);   }
 ;
 
 array:

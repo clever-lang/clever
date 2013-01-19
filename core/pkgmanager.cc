@@ -17,7 +17,7 @@ namespace clever {
 /// Adds the available packages to be imported
 void PkgManager::init()
 {
-	addPackage(CSTRING("std"), new packages::Std);
+	addPackage(CSTRING("std"), m_std = new packages::Std);
 }
 
 /// Performs shutdown operation
@@ -79,10 +79,11 @@ void PkgManager::loadFunction(Scope* scope, Environment* env, const CString* nam
 void PkgManager::loadModule(Scope* scope, Environment* env, Module* module,
 	ImportKind kind, const CString* name) const
 {
-	if (!module->isLoaded()) {
-		module->init();
-		module->setLoaded();
+	if (module->isLoaded()) {
+		return;
 	}
+	module->init();
+	module->setLoaded();
 
 	if (kind == PkgManager::ALL) {
 		FunctionMap& funcs = module->getFunctions();
