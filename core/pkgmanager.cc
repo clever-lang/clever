@@ -82,13 +82,13 @@ void PkgManager::loadModule(Scope* scope, Environment* env, Module* module,
 	if (module->isLoaded()) {
 		return;
 	}
+
 	module->init();
 	module->setLoaded();
 
 	if (kind & PkgManager::FUNCTION) {
 		FunctionMap& funcs = module->getFunctions();
-		FunctionMap::const_iterator itf = funcs.begin(),
-			endf = funcs.end();
+		FunctionMap::const_iterator itf(funcs.begin()),	endf(funcs.end());
 
 		while (EXPECTED(itf != endf)) {
 			loadFunction(scope, env, itf->first, itf->second);

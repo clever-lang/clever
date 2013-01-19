@@ -143,9 +143,7 @@ void Resolver::visit(FunctionDecl* node)
 
 	// Check if it is a method
 	if (m_class) {
-		m_class->addMethod(func);
-
-		// @TODO(Felipe): fix method Function* ptr memleak
+		m_class->addMember(name, fval);
 		fval->addRef();
 	}
 
