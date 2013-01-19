@@ -25,8 +25,8 @@ Resolver::Resolver(Compiler* compiler)
 	m_compiler->getPkgManager().importModule(m_scope, m_stack.top(),
 		CSTRING("std"), CSTRING("core"));
 
-	Package* std = m_compiler->getPkgManager().getStdPackage();
-	std->addModule(m_mod = new UserModule);
+	m_compiler->getPkgManager().getStdPackage()
+		->addModule(m_mod = new UserModule);
 }
 
 void Resolver::visit(Block* node)
