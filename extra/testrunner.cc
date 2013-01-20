@@ -26,7 +26,7 @@ TestRunner::~TestRunner() {
 	}
 }
 
-void TestRunner::show_result(void) const {
+bool TestRunner::show_result(void) const {
 	clock_t end_time;
 	double duration;
 
@@ -49,6 +49,8 @@ void TestRunner::show_result(void) const {
 	std::cout << "-----------------------------------" << std::endl;
 	std::cout << "Time taken: " << duration << "ms" << std::endl;
 	std::cout << "-----------------------------------" << std::endl;
+
+	return fail == 0;
 }
 
 void TestRunner::find(char* dir) {
@@ -354,7 +356,6 @@ int main(int argc, char *argv[])
 		testrunner.find(argv[start_paths]);
 	}
 	testrunner.run();
-	testrunner.show_result();
 
-	return 0;
+	return !testrunner.show_result();
 }
