@@ -27,9 +27,6 @@ class Value;
 class location;
 class Scope;
 
-typedef std::vector<const CString*> ArgDeclList;
-typedef std::vector<std::pair<size_t, size_t> > ArgCallList;
-
 /// Compiler representation
 class Compiler {
 public:
@@ -41,16 +38,16 @@ public:
 	};
 
 	Compiler()
-		: m_pkg(), m_ir(), m_flags(0),
+		: m_pkg(), m_ir(),
 		  m_scope_pool(), m_const_env(),m_temp_env(), m_global_env(),
-		  m_scope_id(0), m_const_id(0), m_tmp_id(0) {}
+		  m_flags(0), m_scope_id(0), m_const_id(0), m_tmp_id(0) {}
 
 	~Compiler() {}
 
 	void init();
 	void shutdown();
 
-	void emitAST(ast::Node *tree);
+	void emitAST(ast::Node*);
 
 	void setFlags(size_t flags) { m_flags = flags; }
 
@@ -59,12 +56,8 @@ public:
 	ScopePool* getSymbolTable() { return &m_scope_pool; }
 
 	Environment* getGlobalEnv() const { return m_global_env; }
-
 	Environment* getConstEnv() const { return m_const_env; }
-
 	Environment* getTempEnv() const { return m_temp_env; }
-
-	const PkgManager& getPkgManager() const { return m_pkg; }
 
 	static void error(const char*) CLEVER_NO_RETURN;
 	static void error(const std::string&, const location&) CLEVER_NO_RETURN;
@@ -76,14 +69,14 @@ private:
 	// Vector of instructions to be passed to VM
 	IRVector m_ir;
 
-	// Compiler flag
-	size_t m_flags;
-
 	// Compiler pools, which got passed to VM after compiling
 	ScopePool m_scope_pool;
 	Environment* m_const_env;
 	Environment* m_temp_env;
 	Environment* m_global_env;
+
+	// Compiler flag
+	size_t m_flags;
 
 	// Indexes for pools
 	size_t m_scope_id;

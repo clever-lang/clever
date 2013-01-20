@@ -95,7 +95,7 @@ void Compiler::emitAST(ast::Node* tree)
 		tree->accept(astdump);
 	}
 
-	ast::Resolver resolver(this);
+	ast::Resolver resolver(m_pkg);
 	tree->accept(resolver);
 
 	if (!(m_flags & PARSER_ONLY)) {

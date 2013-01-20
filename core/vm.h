@@ -79,7 +79,7 @@ public:
 
 	CMutex* getMutex() { return isChild() ? f_mutex : &m_mutex; }
 
-	void prepareCall(Function* func);
+	void prepareCall(Function*);
 
 	/// Start the VM execution
 	void run();

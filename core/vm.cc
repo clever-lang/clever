@@ -198,7 +198,7 @@ CLEVER_FORCE_INLINE void VM::prepareCall(Function* func)
 	if (m_call_stack.top()->isActive()) {
 		fenv = func->getEnvironment()->activate(m_call_stack.top()->getOuter());
 	} else {
-		fenv = func->getEnvironment()->activate(m_call_stack.top());
+		fenv = func->getEnvironment()->activate(func->getEnvironment()->getOuter());
 	}
 	m_call_stack.push(fenv);
 
@@ -791,7 +791,7 @@ void VM::run()
 					}
 				}
 			} else {
-				error(VM_ERROR, "Method `%S' not found!", method->getStr());
+				error(VM_ERROR, "Method `%T::%S' not found!", type, method->getStr());
 			}
 		}
 		DISPATCH;
@@ -802,10 +802,15 @@ void VM::run()
 			const Value* prop_name = getValue(OPCODE.op2);
 			const Value* prop_value;
 
+			if (UNEXPECTED(obj->isNull())) {
+				error(VM_ERROR, "Cannot perform property access from null value");
+			}
+
 			if (EXPECTED((prop_value = obj->getType()->getProperty(prop_name->getStr())))) {
 				getValue(OPCODE.result)->copy(prop_value);
 			} else {
-				error(VM_ERROR, "Property `%S' not found!", prop_name->getStr());
+				error(VM_ERROR, "Property `%T::%S' not found!",
+					obj->getType(), prop_name->getStr());
 			}
 		}
 		DISPATCH;

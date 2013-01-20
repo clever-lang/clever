@@ -13,10 +13,8 @@ Environment* Environment::activate(Environment* outer) const {
     Environment* env = new Environment(outer);
     env->m_active = true;
 
-    for (size_t i = 0, size = m_data.size(); i < size; i++) {
-        Value* value = new Value();
-        value->copy(m_data[i]);
-        env->pushValue(value);
+    for (size_t i = 0, size = m_data.size(); i < size; ++i) {
+        env->pushValue(m_data[i]->clone());
     }
 
     return env;

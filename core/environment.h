@@ -8,8 +8,8 @@
 #ifndef CLEVER_ENVIRONMENT_H
 #define CLEVER_ENVIRONMENT_H
 
-#include "core/value.h"
 #include <stack>
+#include "core/value.h"
 
 namespace clever {
 
