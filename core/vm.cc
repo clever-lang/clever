@@ -386,9 +386,14 @@ void VM::run()
 		{
 			const Value* fval = getValue(OPCODE.op1);
 
+			clever_assert_not_null(fval);
+
+			if (UNEXPECTED(fval->isNull())) {
+				error(VM_ERROR, "Cannot make a call from null value");
+			}
+
 			if (UNEXPECTED(!fval->isFunction())) {
-				error(VM_ERROR, "Cannot make a call from %S type",
-					fval->getType()->getName());
+				error(VM_ERROR, "Cannot make a call from %T type", fval->getType());
 			}
 
 			Function* func = static_cast<Function*>(fval->getObj());
