@@ -227,14 +227,13 @@ void Resolver::visit(Type* node)
 
 void Resolver::visit(Import* node)
 {
-	PkgManager::ImportKind kind =  node->getFunction() ?
-		PkgManager::FUNCTION :
-			(node->getType() ? PkgManager::TYPE : PkgManager::ALL);
+	PkgManager::ImportKind kind = node->getFunction() ?
+		PkgManager::FUNCTION : (node->getType() ? PkgManager::TYPE : PkgManager::ALL);
 
 	if (node->getModule()) {
-		const CString* name = kind == PkgManager::ALL ? NULL
-			: (kind == PkgManager::FUNCTION ?
-				node->getFunction()->getName() : node->getType()->getName());
+		const CString* name = (kind == PkgManager::ALL) ? NULL
+			: (kind == PkgManager::FUNCTION ? node->getFunction()->getName()
+				: node->getType()->getName());
 
 		m_compiler->getPkgManager().importModule(m_scope, m_stack.top(),
 			node->getPackage()->getName(), node->getModule()->getName(),
@@ -248,16 +247,14 @@ void Resolver::visit(Import* node)
 void Resolver::visit(Catch* node)
 {
 	m_scope = m_scope->enter();
-
 	m_scope->setEnvironment(m_stack.top());
+	node->setScope(m_scope);
 
 	Value* val = new Value();
 
 	m_scope->pushValue(node->getVar()->getName(), val)->voffset = m_stack.top()->pushValue(val);
 
 	node->getVar()->accept(*this);
-
-	node->setScope(m_scope);
 
 	Visitor::visit(static_cast<NodeArray*>(node->getBlock()));
 
