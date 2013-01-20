@@ -17,7 +17,8 @@ namespace clever {
 
 void StrType::dump(const void* value, std::ostream& out) const
 {
-	out << *static_cast<StrObject*>(static_cast<Value::DataValue*>(const_cast<void*>(value))->obj->getObj())->getStr();
+	out << *static_cast<StrObject*>(static_cast<ValueObject*>(
+		const_cast<void*>(value))->getObj())->getStr();
 }
 
 CLEVER_TYPE_OPERATOR(StrType::add)

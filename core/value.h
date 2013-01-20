@@ -123,7 +123,11 @@ public:
 	void dump() const {	dump(std::cout); }
 	void dump(std::ostream& out) const {
 		if (m_type) {
-			m_type->dump(&m_data, out);
+			if (m_type->isPrimitive()) {
+				m_type->dump(&m_data, out);
+			} else {
+				m_type->dump(m_data.obj, out);
+			}
 		} else {
 			out << "null";
 		}

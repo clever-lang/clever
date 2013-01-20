@@ -30,8 +30,8 @@ void Thread::dump(const void* data) const
 
 void Thread::dump(const void* data, ::std::ostream& out) const
 {
-	Value::DataValue* dvalue =
-		static_cast<Value::DataValue*>(const_cast<void*>(data));
+	ValueObject* dvalue =
+		static_cast<ValueObject*>(const_cast<void*>(data));
 	if (dvalue) {
 
 	}

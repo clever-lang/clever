@@ -24,9 +24,9 @@ void UString::dump(const void* data) const
 
 void UString::dump(const void* data, ::std::ostream& out) const
 {
-	Value::DataValue* dvalue = static_cast<Value::DataValue*>(const_cast<void*>(data));
+	ValueObject* dvalue = static_cast<ValueObject*>(const_cast<void*>(data));
 	if (dvalue) {
-		UnicodeString* uvalue = static_cast<UnicodeString*>(dvalue->obj->getObj());
+		UnicodeString* uvalue = static_cast<UnicodeString*>(dvalue->getObj());
 
 		if (uvalue) {
 			for(int32_t start=0; start < uvalue->length(); start++) {
