@@ -22,7 +22,7 @@ namespace clever { namespace ast {
 
 class Resolver: public Visitor {
 public:
-	Resolver(const PkgManager& pkgmanager);
+	Resolver(const PkgManager&);
 
 	~Resolver() {}
 
