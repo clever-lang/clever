@@ -37,7 +37,7 @@ public:
 	std::string read_file(const char*) const;
 	void find(char* dir);
 	void run(void);
-	void show_result(void) const;
+	bool show_result(void) const;
 	void write_file(std::string&, std::string&);
 	void setFlags(unsigned int val) { flags |= val; }
 	unsigned int getFlags() const { return flags; }

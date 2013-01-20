@@ -32,25 +32,32 @@ typedef std::pair<const CString*, Function*> FunctionMapEntry;
 
 class Function {
 public:
-	enum FuncKind { UNDEF, USER_FUNC, INTERNAL_FUNC };
+	enum FunctionFlags {
+		FF_USER     = 0x00,
+		FF_INTERNAL = 0x01,
+		FF_STATIC   = 0x02,
+		FF_VARIADIC = 0x04,
+
+		FF_INVALID  = 0xFF
+	};
 
 	Function()
-		: m_name(), m_type(UNDEF), m_num_rargs(0), m_num_args(0),
-		m_variadic(false), m_static(false), m_environment(NULL) {}
+		: m_name(), m_num_rargs(0), m_num_args(0), m_flags(FF_INVALID),
+		  m_environment(NULL) {}
 
 	Function(std::string name, FunctionPtr ptr)
-		: m_name(name), m_type(INTERNAL_FUNC), m_num_rargs(0),
-		m_num_args(0), m_variadic(false), m_static(false), m_environment(NULL)
+		: m_name(name), m_num_rargs(0), m_num_args(0), m_flags(FF_INTERNAL),
+		  m_environment(NULL)
 		{ m_info.fptr = ptr; }
 
 	Function(std::string name, size_t addr)
-		: m_name(name), m_type(USER_FUNC), m_num_rargs(0),
-		m_num_args(0), m_variadic(false), m_static(false), m_environment(NULL)
+		: m_name(name), m_num_rargs(0), m_num_args(0), m_flags(FF_USER),
+		  m_environment(NULL)
 		{ m_info.addr = addr; }
 
 	Function(std::string name, MethodPtr ptr)
-		: m_name(name), m_type(INTERNAL_FUNC), m_num_rargs(0),
-		m_num_args(0), m_variadic(false), m_static(false), m_environment(NULL)
+		: m_name(name), m_num_rargs(0), m_num_args(0), m_flags(FF_INTERNAL),
+		  m_environment(NULL)
 		{ m_info.mptr = ptr; }
 
 	~Function() {}
@@ -58,17 +65,32 @@ public:
 	void setName(std::string name) { m_name = name; }
 	const std::string& getName() const { return m_name; }
 
-	void setInternal() { m_type = INTERNAL_FUNC; }
-	void setUserDefined() { m_type = USER_FUNC; }
+	bool isValid() const { return m_flags < FF_INVALID; }
 
-	void setStatic() { m_static = true; }
-	bool isStatic() const { return m_static; }
+	void setInternal() {
+		if (isValid()) {
+			m_flags |= FF_INTERNAL;
+		} else {
+			m_flags = FF_INTERNAL;
+		}
+	}
 
-	void setVariadic() { m_variadic = true; }
-	bool isVariadic() const { return m_variadic; }
+	bool isInternal() const { return m_flags & FF_INTERNAL; }
 
-	bool isUserDefined() const { return m_type == USER_FUNC; }
-	bool isInternal() const { return m_type == INTERNAL_FUNC; }
+	void setUserDefined() {
+		if (isValid()) {
+			m_flags &= ~FF_INTERNAL;
+		} else {
+			m_flags = FF_USER;
+		}
+	}
+	bool isUserDefined() const { return !isInternal(); }
+
+	void setStatic() { m_flags |= FF_STATIC; }
+	bool isStatic() const { return m_flags & FF_STATIC; }
+
+	void setVariadic() { m_flags |= FF_VARIADIC; }
+	bool isVariadic() const { return m_flags & FF_VARIADIC; }
 
 	MethodPtr getMethodPtr() const { return m_info.mptr; }
 	FunctionPtr getFuncPtr() const { return m_info.fptr; }
@@ -91,11 +113,10 @@ public:
 	}
 private:
 	std::string m_name;
-	FuncKind m_type;
 	size_t m_num_rargs;
 	size_t m_num_args;
-	bool m_variadic;
-	bool m_static;
+
+	long m_flags;
 
 	union {
 		FunctionPtr fptr;
