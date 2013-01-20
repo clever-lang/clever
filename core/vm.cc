@@ -107,6 +107,7 @@ void VM::dumpOpcodes() const
 		dumpOperand(ir.result);
 		::printf("\n");
 	}
+	std::cout << std::endl;
 }
 #endif
 
