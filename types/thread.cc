@@ -13,6 +13,7 @@
 
 namespace clever {
 
+// Thread.toString()
 CLEVER_METHOD(ThreadType::toString)
 {
 	std::ostringstream str;
@@ -24,9 +25,10 @@ CLEVER_METHOD(ThreadType::toString)
 	result->setStr(CSTRING(str.str()));
 }
 
+// Thread.wait()
 CLEVER_METHOD(ThreadType::wait)
 {
-	Thread* thread = (CLEVER_GET_OBJECT(Thread*, CLEVER_THIS()));
+	Thread* thread = CLEVER_GET_OBJECT(Thread*, CLEVER_THIS());
 
 	VM* m_vm = const_cast<VM*>(vm);
 	VM::ThreadPool& m_thread_pool = m_vm->getThreadPool();
@@ -47,9 +49,10 @@ CLEVER_METHOD(ThreadType::wait)
 	thread_list.clear();
 }
 
+// Thread.run()
 CLEVER_METHOD(ThreadType::run)
 {
-	Thread* tdata = (CLEVER_GET_OBJECT(Thread*, CLEVER_THIS()));
+	Thread* tdata = CLEVER_GET_OBJECT(Thread*, CLEVER_THIS());
 
 	VM* m_vm = const_cast<VM*>(vm);
 	VM::ThreadPool& m_thread_pool = m_vm->getThreadPool();

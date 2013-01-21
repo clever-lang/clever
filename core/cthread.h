@@ -13,12 +13,11 @@
 #else
 # include <win32/win32.h>
 #endif
+#include "core/clever.h"
 
 namespace clever {
 
-/*
-Functions to count and control thread creations
-*/
+// Functions to count and control thread creations
 void new_thread();
 void delete_thread();
 size_t n_threads();
@@ -42,6 +41,7 @@ private:
 #else
 	HANDLE m_mut;
 #endif
+	DISALLOW_COPY_AND_ASSIGN(CMutex);
 };
 
 #ifndef CLEVER_WIN32
@@ -58,7 +58,7 @@ public:
 
 	~CThread() {}
 
-	void create(ThreadFunc thread_func, void* args);
+	void create(ThreadFunc, void*);
 
 	int wait();
 
@@ -68,6 +68,7 @@ private:
 #else
 	HANDLE t_handler;
 #endif
+	DISALLOW_COPY_AND_ASSIGN(CThread);
 };
 
 } // clever
