@@ -1,0 +1,11 @@
+String.findLast()
+==CODE==
+import std.io.*;
+
+var s = "Hello Clever";
+println(s.findLast("e"));
+println(s.findLast("o"));
+
+==RESULT==
+10
+4

@@ -582,4 +582,11 @@ void Codegen::visit(Break* node)
 	m_ir.push_back(IR(OP_JMP, Operand(JMP_ADDR, 0)));
 }
 
+void Codegen::visit(ClassDef* node)
+{
+	if (node->hasMethods()) {
+		node->getMethods()->accept(*this);
+	}
+}
+
 }} // clever::ast

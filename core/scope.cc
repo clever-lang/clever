@@ -9,41 +9,23 @@
 
 namespace clever {
 
-Scope::~Scope() {
-    ValuePool::const_iterator itv = m_value_pool.begin(),
-        endv = m_value_pool.end();
+Scope::~Scope()
+{
+	std::for_each(m_value_pool.begin(), m_value_pool.end(), clever_delref);
+	std::for_each(m_children.begin(), m_children.end(), clever_delete<Scope>);
+	std::for_each(m_symbols.begin(), m_symbols.end(), clever_delete<Symbol>);
 
-    while (itv != endv) {
-        CLEVER_SAFE_DELREF(*itv);
-        ++itv;
-    }
-
-    ScopeVector::const_iterator it = m_children.begin(),
-        end = m_children.end();
-
-    while (it != end) {
-		clever_delete(*it);
-        ++it;
-    }
-
-    SymbolMap::const_iterator its = m_symbols.begin(),
-        ends = m_symbols.end();
-
-    while (its != ends) {
-		clever_delete(*its);
-        ++its;
-    }
-
-    CLEVER_SAFE_DELREF(m_environment);
+    clever_delref(m_environment);
 }
 
-std::vector<Scope*> Scope::flatten() {
+std::vector<Scope*> Scope::flatten()
+{
     std::vector<Scope*> scopes;
-    std::vector<Scope*>::iterator it(m_children.begin()), end(m_children.end());
+    std::vector<Scope*>::const_iterator it(m_children.begin()), end(m_children.end());
 
     scopes.push_back(this);
 
-    for (; it != end; it++) {
+    for (; it != end; ++it) {
         std::vector<Scope*> flattened = (*it)->flatten();
         scopes.insert(scopes.end(), flattened.begin(), flattened.end());
     }
@@ -51,8 +33,9 @@ std::vector<Scope*> Scope::flatten() {
     return scopes;
 }
 
-Symbol* Scope::getLocal(const CString* name) {
-    SymbolTable::iterator it = m_symbol_table.find(name);
+Symbol* Scope::getLocal(const CString* name)
+{
+    SymbolTable::const_iterator it = m_symbol_table.find(name);
 
     if (it == m_symbol_table.end()) {
         return NULL;
@@ -61,7 +44,8 @@ Symbol* Scope::getLocal(const CString* name) {
 }
 
 /// Resolve a symbol name recursively
-Symbol* Scope::getAny(const CString* name) {
+Symbol* Scope::getAny(const CString* name)
+{
     Symbol* sym = getLocal(name);
 
     if (sym != NULL) {
@@ -82,7 +66,8 @@ Symbol* Scope::getAny(const CString* name) {
     return sym;
 }
 
-ValueOffset Scope::getOffset(Symbol* sym) const {
+ValueOffset Scope::getOffset(Symbol* sym) const
+{
 	ValueOffset offset(0, sym->voffset.second);
 
 	const Scope* scope = this;

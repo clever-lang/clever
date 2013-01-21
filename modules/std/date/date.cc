@@ -48,7 +48,9 @@ void Date::deallocData(void *data)
 	}
 }
 
-static inline void clever_date_format(const ::std::vector<Value*>* args, const Value* obj, Value* result, bool utc) {
+static inline void clever_date_format(const ::std::vector<Value*>* args,
+	const Value* obj, Value* result, bool utc)
+{
 	time_t* intern = CLEVER_GET_OBJECT(time_t*, CLEVER_THIS());
 
 	if (!intern) {
@@ -80,7 +82,7 @@ static inline void clever_date_format(const ::std::vector<Value*>* args, const V
 
 	char buffer[need];
 	if (strftime(buffer, need, format, local)) {
-		result->setStr(CSTRING(buffer));
+		result->setStr(new StrObject(new CString(buffer), false));
 	} else {
 		result->setNull();
 	}

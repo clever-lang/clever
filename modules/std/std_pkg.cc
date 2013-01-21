@@ -43,6 +43,9 @@ void Std::init()
 #ifdef HAVE_MOD_STD_NET
 	addModule(new std::NetModule);
 #endif
+#ifdef HAVE_MOD_STD_CRYPTO
+	addModule(new std::CryptoModule);
+#endif
 
 #if 0
 #ifdef HAVE_MOD_STD_REGEX

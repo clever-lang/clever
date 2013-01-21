@@ -9,11 +9,14 @@
 #define CLEVER_MAP_H
 
 #include <map>
+#include <utility>
 #include "core/cstring.h"
 #include "core/value.h"
 #include "types/type.h"
 
 namespace clever {
+
+typedef std::pair<std::string, Value*> MapObjectPair;
 
 class MapObject {
 public:
@@ -42,8 +45,8 @@ public:
 
 	void dump(const void* value, std::ostream& out) const;
 
-	void increment(Value* value, const VM* vm) const {}
-	void decrement(Value* value, const VM* vm) const {}
+	void increment(Value*, const VM*, CException*) const {}
+	void decrement(Value*, const VM*, CException*) const {}
 
 	CLEVER_METHOD(ctor);
 	CLEVER_METHOD(insert);

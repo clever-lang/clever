@@ -61,9 +61,9 @@ void CFile::dump(const void* data, ::std::ostream& out) const
 void* CFile::allocData(CLEVER_TYPE_CTOR_ARGS) const
 {
 	// @TODO(muriloadriano): allow object construction with a single argument
-	// and check the argument's type
+	// and check the argument's type.
 	return new fstream(args->at(0)->getStr()->c_str(),
-		detail::convert_open_mode(*(args->at(1)->getStr())));
+		static_cast< ::std::ios_base::openmode>(args->at(1)->getInt()));
 }
 
 void CFile::deallocData(CLEVER_TYPE_DTOR_ARGS)
@@ -73,7 +73,7 @@ void CFile::deallocData(CLEVER_TYPE_DTOR_ARGS)
 
 CLEVER_METHOD(CFile::ctor)
 {
-	if (!clever_check_args("ss")) {
+	if (!clever_check_args("si")) {
 		return;
 	}
 
@@ -93,7 +93,7 @@ CLEVER_METHOD(CFile::read)
 	CString* token = new CString;
 	*file >> *token;
 
-	result->setStr(token);
+	result->setStr(new StrObject(token, false));
 }
 
 // string File.readLine()
@@ -109,7 +109,7 @@ CLEVER_METHOD(CFile::readLine)
 	CString* token = new CString;
 	::std::getline(*file, *token);
 
-	result->setStr(token);
+	result->setStr(new StrObject(token, false));
 }
 
 // void File.write(String)
@@ -126,17 +126,17 @@ CLEVER_METHOD(CFile::write)
 	*file << *(args[0]->getStr());
 }
 
-// void File.open(string fileName, string openMode)
+// void File.open(string fileName, Int openMode)
 CLEVER_METHOD(CFile::open)
 {
-	if (!clever_check_args("ss")) {
+	if (!clever_check_args("si")) {
 		return;
 	}
 
 	fstream* file = CLEVER_GET_OBJECT(fstream*, CLEVER_THIS());
 
 	file->open(args[0]->getStr()->c_str(),
-		detail::convert_open_mode(*(args[1]->getStr())));
+		static_cast< ::std::ios_base::openmode>(args[1]->getInt()));
 }
 
 // void File.close()
@@ -174,8 +174,12 @@ CLEVER_TYPE_INIT(CFile::init)
 	addMethod(new Function("close",		(MethodPtr)&CFile::close));
 	addMethod(new Function("isOpen",	(MethodPtr)&CFile::isOpen));
 
-	addProperty(CSTRING("in"), new Value(long(::std::ios_base::in), true));
-	addProperty(CSTRING("out"), new Value(long(::std::ios_base::out), true));
+	addProperty(CSTRING("IN"),    new Value(long(::std::ios_base::in),     true));
+	addProperty(CSTRING("OUT"),   new Value(long(::std::ios_base::out),    true));
+	addProperty(CSTRING("TRUNC"), new Value(long(::std::ios_base::trunc),  true));
+	addProperty(CSTRING("APP"),   new Value(long(::std::ios_base::app),    true));
+	addProperty(CSTRING("ATE"),   new Value(long(::std::ios_base::ate),    true));
+	addProperty(CSTRING("BIN"),   new Value(long(::std::ios_base::binary), true));
 }
 
 }}} // clever::packages::std

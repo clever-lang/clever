@@ -1,0 +1,14 @@
+Testing call from returned anonymous function
+==CODE==
+import std.io.*;
+
+var c = 123;
+var a = function (x = 1) {
+	return function () {
+		println(c);
+	};
+};
+
+a(10)();
+==RESULT==
+123

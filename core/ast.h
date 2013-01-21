@@ -47,6 +47,7 @@ class FalseLit;
 class Array;
 class Break;
 class Continue;
+class AttrDecl;
 
 typedef std::vector<Node*> NodeList;
 
@@ -189,17 +190,17 @@ public:
 	Assignment(Node* lhs, Node* rhs, const location& location)
 		: Node(location), m_conditional(false), m_lhs(lhs), m_rhs(rhs) {
 		m_lhs->addRef();
-		CLEVER_SAFE_ADDREF(m_rhs);
+		clever_addref(m_rhs);
 	}
 
 	~Assignment() {
 		m_lhs->delRef();
-		CLEVER_SAFE_DELREF(m_rhs);
+		clever_delref(m_rhs);
 	}
 
 	void setRhs(Node* rhs) {
 		m_rhs = rhs;
-		CLEVER_SAFE_ADDREF(m_rhs);
+		clever_addref(m_rhs);
 	}
 
 	Node* getLhs() { return m_lhs; }
@@ -268,8 +269,8 @@ public:
 
 	~ThreadBlock() {
 		m_block->delRef();
-		CLEVER_SAFE_DELREF(m_name);
-		CLEVER_SAFE_DELREF(m_size);
+		clever_delref(m_name);
+		clever_delref(m_size);
 	}
 
 	virtual void accept(Visitor& visitor);
@@ -359,17 +360,17 @@ public:
 	Instantiation(const CString* type, NodeArray* args, const location& location)
 		: Node(location), m_type(new Type(type, location)), m_args(args) {
 		m_type->addRef();
-		CLEVER_SAFE_ADDREF(m_args);
+		clever_addref(m_args);
 	}
 
 	Instantiation(Type* type, NodeArray* args, const location& location)
 		: Node(location), m_type(type), m_args(args) {
 		m_type->addRef();
-		CLEVER_SAFE_ADDREF(m_args);
+		clever_addref(m_args);
 	}
 	~Instantiation() {
 		m_type->delRef();
-		CLEVER_SAFE_DELREF(m_args);
+		clever_delref(m_args);
 	}
 
 	Type* getType() { return m_type; }
@@ -395,16 +396,34 @@ private:
 class Import: public Node {
 public:
 	Import(Ident* package, Ident* module, const location& location)
-		: Node(location), m_package(package), m_module(module) {
+		: Node(location), m_package(package), m_module(module), m_func(NULL), m_type(NULL) {
 		m_package->addRef();
-		CLEVER_SAFE_ADDREF(m_module);
+		clever_addref(m_module);
+	}
+
+	Import(Ident* package, Ident* module, Ident* func, const location& location)
+		: Node(location), m_package(package), m_module(module), m_func(func), m_type(NULL) {
+		m_package->addRef();
+		clever_addref(m_module);
+		m_func->addRef();
+	}
+
+	Import(Ident* package, Ident* module, Type* type, const location& location)
+		: Node(location), m_package(package), m_module(module), m_func(NULL), m_type(type) {
+		m_package->addRef();
+		clever_addref(m_module);
+		m_type->addRef();
 	}
 
 	~Import() {
 		m_package->delRef();
-		CLEVER_SAFE_DELREF(m_module);
+		clever_delref(m_module);
+		clever_delref(m_func);
+		clever_delref(m_type);
 	}
 
+	Type* getType() const { return m_type; }
+	Ident* getFunction() const { return m_func; }
 	Ident* getPackage() const { return m_package; }
 	Ident* getModule() const { return m_module; }
 	bool hasModule() const { return m_module != NULL; }
@@ -414,6 +433,8 @@ public:
 private:
 	Ident* m_package;
 	Ident* m_module;
+	Ident* m_func;
+	Type* m_type;
 
 	DISALLOW_COPY_AND_ASSIGN(Import);
 };
@@ -425,18 +446,18 @@ public:
 		: Node(location), m_ident(ident), m_assignment(assignment),
 		  m_is_const(is_const) {
 		m_ident->addRef();
-		CLEVER_SAFE_ADDREF(m_assignment);
+		clever_addref(m_assignment);
 	}
 
 	~VariableDecl() {
 		m_ident->delRef();
-		CLEVER_SAFE_DELREF(m_assignment);
+		clever_delref(m_assignment);
 	}
 
 	Ident* getIdent() const { return m_ident; }
 	void setAssignment(Assignment* assignment) {
 		m_assignment = assignment;
-		CLEVER_SAFE_ADDREF(m_assignment);
+		clever_addref(m_assignment);
 	}
 
 	Assignment* getAssignment() const { return m_assignment; }
@@ -604,25 +625,25 @@ class FunctionDecl: public Node {
 public:
 	FunctionDecl(Ident* ident, NodeArray* args, Block* block, VariableDecl* vararg, const location& location)
 		: Node(location), m_ident(ident), m_args(args), m_block(block), m_vararg(vararg), m_is_anon(false) {
-		CLEVER_SAFE_ADDREF(m_ident);
-		CLEVER_SAFE_ADDREF(m_args);
-		CLEVER_SAFE_ADDREF(m_block);
-		CLEVER_SAFE_ADDREF(m_vararg);
+		clever_addref(m_ident);
+		clever_addref(m_args);
+		clever_addref(m_block);
+		clever_addref(m_vararg);
 
 		m_is_anon = (ident == NULL);
 	}
 
 	~FunctionDecl() {
-		CLEVER_SAFE_DELREF(m_ident);
-		CLEVER_SAFE_DELREF(m_args);
-		CLEVER_SAFE_DELREF(m_block);
-		CLEVER_SAFE_DELREF(m_vararg);
+		clever_delref(m_ident);
+		clever_delref(m_args);
+		clever_delref(m_block);
+		clever_delref(m_vararg);
 	}
 
 	void setIdent(Ident* ident) {
-		CLEVER_SAFE_DELREF(m_ident);
+		clever_delref(m_ident);
 		m_ident = ident;
-		CLEVER_SAFE_ADDREF(m_ident);
+		clever_addref(m_ident);
 	}
 
 	bool isAnonymous() const { return m_is_anon; }
@@ -663,20 +684,20 @@ public:
 		: Node(location), m_callee(callee), m_method(method), m_args(args), m_static(false) {
 		m_callee->addRef();
 		m_method->addRef();
-		CLEVER_SAFE_ADDREF(m_args);
+		clever_addref(m_args);
 	}
 
 	MethodCall(Type* callee, Ident* method, NodeArray* args, const location& location)
 		: Node(location), m_callee(callee), m_method(method), m_args(args), m_static(true) {
 		m_callee->addRef();
 		m_method->addRef();
-		CLEVER_SAFE_ADDREF(m_args);
+		clever_addref(m_args);
 	}
 
 	~MethodCall() {
 		m_callee->delRef();
 		m_method->delRef();
-		CLEVER_SAFE_DELREF(m_args);
+		clever_delref(m_args);
 	}
 
 	bool isStaticCall() const { return m_static; }
@@ -719,12 +740,12 @@ public:
 	FunctionCall(Node* callee, NodeArray* args, const location& location)
 		: Node(location), m_callee(callee), m_args(args) {
 		m_callee->addRef();
-		CLEVER_SAFE_ADDREF(m_args);
+		clever_addref(m_args);
 	}
 
 	~FunctionCall() {
 		m_callee->delRef();
-		CLEVER_SAFE_DELREF(m_args);
+		clever_delref(m_args);
 	}
 
 	Node* getCallee() { return m_callee; }
@@ -762,12 +783,12 @@ public:
 	While(Node* condition, Node* block, const location& location)
 		: Node(location), m_condition(condition), m_block(block) {
 		m_condition->addRef();
-		CLEVER_SAFE_ADDREF(m_block);
+		clever_addref(m_block);
 	}
 
 	~While() {
 		m_condition->delRef();
-		CLEVER_SAFE_DELREF(m_block);
+		clever_delref(m_block);
 	}
 
 	Node* getCondition() { return m_condition; }
@@ -933,11 +954,11 @@ class Return: public Node {
 public:
 	Return(Node* value, const location& location)
 		: Node(location), m_value(value) {
-		CLEVER_SAFE_ADDREF(m_value);
+		clever_addref(m_value);
 	}
 
 	~Return() {
-		CLEVER_SAFE_DELREF(m_value);
+		clever_delref(m_value);
 	}
 
 	bool hasValue() const { return m_value != NULL; }
@@ -1025,13 +1046,13 @@ public:
 	Try(Block* try_block, NodeArray* catches, Block* finally, const location& location)
 		: Node(location), m_try(try_block), m_catch(catches), m_finally(finally) {
 		m_try->addRef();
-		CLEVER_SAFE_ADDREF(m_catch);
-		CLEVER_SAFE_ADDREF(m_finally);
+		clever_addref(m_catch);
+		clever_addref(m_finally);
 	}
 	~Try() {
 		m_try->delRef();
-		CLEVER_SAFE_DELREF(m_catch);
-		CLEVER_SAFE_DELREF(m_finally);
+		clever_delref(m_catch);
+		clever_delref(m_finally);
 	}
 
 	Block* getBlock() const { return m_try; }
@@ -1122,6 +1143,66 @@ public:
 	virtual Node* accept(Transformer& transformer);
 private:
 	DISALLOW_COPY_AND_ASSIGN(Continue);
+};
+
+class AttrDecl: public Node {
+public:
+	AttrDecl(Ident* ident, Node* value, bool is_const, const location& location)
+		: Node(location), m_ident(ident), m_value(value), m_const(is_const) {
+		m_ident->addRef();
+		clever_addref(m_value);
+	}
+
+	~AttrDecl() {
+		m_ident->delRef();
+		clever_delref(m_value);
+	}
+
+	Ident* getIdent() const { return m_ident; }
+
+	Node* getValue() const { return m_value; }
+
+	bool hasValue() const { return m_value != NULL; }
+
+	bool isConst() const { return m_const; }
+
+	virtual void accept(Visitor& visitor);
+	virtual Node* accept(Transformer& transformer);
+private:
+	Ident* m_ident;
+	Node* m_value;
+	bool m_const;
+};
+
+class ClassDef: public Node {
+public:
+	ClassDef(Type* name, NodeArray* attrs, NodeArray* methods, const location& location)
+		: Node(location), m_type(name), m_attrs(attrs), m_methods(methods) {
+		m_type->addRef();
+		clever_addref(m_attrs);
+		clever_addref(m_methods);
+	}
+
+	~ClassDef() {
+		m_type->delRef();
+		clever_delref(m_attrs);
+		clever_delref(m_methods);
+	}
+
+	bool hasAttrs() const { return m_attrs != NULL; }
+	bool hasMethods() const { return m_methods != NULL; }
+
+	NodeArray* getAttrs() const { return m_attrs; }
+	NodeArray* getMethods() const { return m_methods; }
+
+	Type* getType() const { return m_type; }
+
+	virtual void accept(Visitor& visitor);
+	virtual Node* accept(Transformer& transformer);
+private:
+	Type* m_type;
+	NodeArray* m_attrs;
+	NodeArray* m_methods;
 };
 
 }} // clever::ast

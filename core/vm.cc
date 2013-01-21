@@ -37,7 +37,7 @@
 namespace clever {
 
 /// Displays an error message
-void VM::error(ErrorLevel level, const char* format, ...) const
+void VM::error(ErrorLevel level, const char* format, ...)
 {
 	std::ostringstream out;
 	va_list args;
@@ -58,7 +58,7 @@ void VM::error(ErrorLevel level, const char* format, ...) const
 }
 
 /// Fetchs a Value ptr according to the operand type
-CLEVER_FORCE_INLINE Value* VM::getValue(Operand& operand) const
+CLEVER_FORCE_INLINE Value* VM::getValue(const Operand& operand) const
 {
 	const Environment* source;
 
@@ -75,7 +75,7 @@ CLEVER_FORCE_INLINE Value* VM::getValue(Operand& operand) const
 }
 
 #ifdef CLEVER_DEBUG
-void VM::dumpOperand(Operand& op) const
+void VM::dumpOperand(const Operand& op)
 {
 	const char *type[] = {
 		"UNUSED", "FETCH_VAR", "FETCH_CONST", "FETCH_TMP", "JMP_ADDR"
@@ -100,22 +100,23 @@ void VM::dumpOperand(Operand& op) const
 void VM::dumpOpcodes() const
 {
 	for (size_t i = 0, j = m_inst.size(); i < j; ++i) {
-		IR& ir = m_inst[i];
+		const IR& ir = m_inst[i];
 		::printf("[%03zu] %-12s |", i, get_opcode_name(ir.opcode));
 		dumpOperand(ir.op1);
 		dumpOperand(ir.op2);
 		dumpOperand(ir.result);
 		::printf("\n");
 	}
+	std::cout << std::endl;
 }
 #endif
 
 // Make a copy of VM instance
 void VM::copy(const VM* vm, bool deep)
 {
-	this->f_mutex = const_cast<VM*>(vm)->getMutex();
-	this->m_pc = vm->m_pc;
-	this->m_try_stack = vm->m_try_stack;
+	f_mutex = const_cast<VM*>(vm)->getMutex();
+	m_pc = vm->m_pc;
+	m_try_stack = vm->m_try_stack;
 
 	if (deep) {
 		this->m_temp_env = new Environment(NULL);
@@ -124,9 +125,9 @@ void VM::copy(const VM* vm, bool deep)
 		this->m_temp_env = vm->m_temp_env;	
 	}
 
-	this->m_global_env = vm->m_global_env;
-	this->m_call_stack = vm->m_call_stack;
-	this->m_const_env = vm->m_const_env;
+	m_global_env = vm->m_global_env;
+	m_call_stack = vm->m_call_stack;
+	m_const_env = vm->m_const_env;
 }
 
 void VM::wait()
@@ -190,6 +191,40 @@ static CLEVER_FORCE_INLINE void _param_binding(Function* func, Environment* fenv
 	}
 }
 
+// Prepares an user function/method call
+CLEVER_FORCE_INLINE void VM::prepareCall(Function* func)
+{
+	if (thread_is_enabled()) {
+		getMutex()->lock();
+	}
+
+	Environment* fenv;
+
+	if (m_call_stack.top()->isActive()) {
+		fenv = func->getEnvironment()->activate(m_call_stack.top()->getOuter());
+	} else {
+		fenv = func->getEnvironment()->activate(func->getEnvironment()->getOuter());
+	}
+	m_call_stack.push(fenv);
+
+	fenv->setRetAddr(m_pc + 1);
+	fenv->setRetVal(getValue(OPCODE.result));
+
+	if (m_call_args.size() < func->getNumRequiredArgs()
+		|| (m_call_args.size() > func->getNumArgs()
+			&& !func->isVariadic())) {
+		error(VM_ERROR, "Wrong number of parameters");
+	}
+
+	_param_binding(func, fenv, &m_call_args);
+
+	m_call_args.clear();
+
+	if (thread_is_enabled()) {
+		getMutex()->unlock();
+	}
+}
+
 // Executes the supplied function
 Value* VM::runFunction(Function* func, std::vector<Value*>* args)
 {
@@ -238,7 +273,7 @@ void VM::run()
 			}
 
 			env->clear();
-			CLEVER_SAFE_DELREF(env);
+			clever_delref(env);
 			m_call_stack.pop();
 
 			VM_GOTO(ret_addr);
@@ -356,16 +391,20 @@ void VM::run()
 		{
 			const Value* fval = getValue(OPCODE.op1);
 
+			clever_assert_not_null(fval);
+
+			if (UNEXPECTED(fval->isNull())) {
+				error(VM_ERROR, "Cannot make a call from null value");
+			}
+
 			if (UNEXPECTED(!fval->isFunction())) {
-				error(VM_ERROR, "Cannot make a call from %S type",
-					fval->getType()->getName());
+				error(VM_ERROR, "Cannot make a call from %T type", fval->getType());
 			}
 
 			Function* func = static_cast<Function*>(fval->getObj());
 			clever_assert_not_null(func);
 
-			if (func->isUserDefined()) {
-				
+			if (func->isUserDefined()) {			
 				Environment* fenv;
 
 				if (m_call_stack.top()->isActive()) {
@@ -387,6 +426,8 @@ void VM::run()
 				_param_binding(func, fenv, &m_call_args);
 
 				m_call_args.clear();
+
+				prepareCall(func);
 
 				VM_GOTO(func->getAddr());
 			} else {
@@ -430,7 +471,7 @@ void VM::run()
 				Environment* env = m_call_stack.top();
 
 				env->clear();
-				CLEVER_SAFE_DELREF(env);
+				clever_delref(env);
 				m_call_stack.pop();
 			}
 
@@ -455,7 +496,7 @@ void VM::run()
 			size_t ret_addr = env->getRetAddr();
 
 			env->clear();
-			CLEVER_SAFE_DELREF(env);
+			clever_delref(env);
 			m_call_stack.pop();
 
 			VM_GOTO(ret_addr);
@@ -721,14 +762,23 @@ void VM::run()
 			const Value* callee = getValue(OPCODE.op1);
 			const Value* method = getValue(OPCODE.op2);
 			const Type* type = callee->getType();
-			const Function* func;
 
 			if (UNEXPECTED(callee->isNull())) {
 				error(VM_ERROR, "Cannot call method `%S' from a null value",
 					method->getStr());
 			}
 
-			if (EXPECTED((func = type->getMethod(method->getStr())))) {
+			Function* func = const_cast<Function*>(type->getMethod(method->getStr()));
+
+			if (UNEXPECTED(func == NULL)) {
+				error(VM_ERROR, "Method `%S' not found!", method->getStr());
+			}
+
+			if (func->isUserDefined()) {
+				prepareCall(func);
+
+				VM_GOTO(func->getAddr());
+			} else {
 				if (UNEXPECTED(func->isStatic())) {
 					error(VM_ERROR, "Method `%S' cannot be called non-statically",
 						method->getStr());
@@ -742,8 +792,6 @@ void VM::run()
 						goto throw_exception;
 					}
 				}
-			} else {
-				error(VM_ERROR, "Method `%S' not found!", method->getStr());
 			}
 		}
 		DISPATCH;
@@ -770,7 +818,7 @@ void VM::run()
 					}
 				}
 			} else {
-				error(VM_ERROR, "Method `%S' not found!", method->getStr());
+				error(VM_ERROR, "Method `%T::%S' not found!", type, method->getStr());
 			}
 		}
 		DISPATCH;
@@ -781,10 +829,15 @@ void VM::run()
 			const Value* prop_name = getValue(OPCODE.op2);
 			const Value* prop_value;
 
+			if (UNEXPECTED(obj->isNull())) {
+				error(VM_ERROR, "Cannot perform property access from null value");
+			}
+
 			if (EXPECTED((prop_value = obj->getType()->getProperty(prop_name->getStr())))) {
 				getValue(OPCODE.result)->copy(prop_value);
 			} else {
-				error(VM_ERROR, "Property `%S' not found!", prop_name->getStr());
+				error(VM_ERROR, "Property `%T::%S' not found!",
+					obj->getType(), prop_name->getStr());
 			}
 		}
 		DISPATCH;

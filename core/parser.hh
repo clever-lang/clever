@@ -133,6 +133,8 @@ namespace clever {
 	ast::FalseLit* false_;
 	ast::Break* break_;
 	ast::Continue* continue_;
+	ast::AttrDecl* attr;
+	ast::ClassDef* class_;
 
 
 
@@ -202,12 +204,13 @@ namespace clever {
      THROW = 309,
      CONTINUE = 310,
      CONSTANT = 311,
-     XOR_EQUAL = 312,
-     DEEPCOPY = 313,
-     COPY = 314,
-     DECREMENT = 315,
-     INCREMENT = 316,
-     UMINUS = 317
+     CLASS = 312,
+     XOR_EQUAL = 313,
+     DEEPCOPY = 314,
+     COPY = 315,
+     DECREMENT = 316,
+     INCREMENT = 317,
+     UMINUS = 318
    };
 
     };

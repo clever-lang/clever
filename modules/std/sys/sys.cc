@@ -31,7 +31,7 @@ namespace clever { namespace packages { namespace std {
 
 namespace sys {
 
-// Int system(String command)
+// system(string command)
 // Calls a command and returns the exit code
 static CLEVER_FUNCTION(system)
 {
@@ -42,7 +42,7 @@ static CLEVER_FUNCTION(system)
 	result->setInt(::system(args[0]->getStr()->c_str()));
 }
 
-// void putenv(String env)
+// putenv(string env)
 // Sets an environment variable
 static CLEVER_FUNCTION(putenv)
 {
@@ -53,7 +53,7 @@ static CLEVER_FUNCTION(putenv)
     ::putenv(const_cast<char*>(args[0]->getStr()->c_str()));
 }
 
-// String getenv(String env)
+// getenv(string env)
 // Gets an environment variable
 static CLEVER_FUNCTION(getenv)
 {
@@ -70,7 +70,7 @@ static CLEVER_FUNCTION(getenv)
 	}
 }
 
-// String getcwd()
+// getcwd()
 // Gets the current working directory
 static CLEVER_FUNCTION(getcwd)
 {
@@ -84,7 +84,7 @@ static CLEVER_FUNCTION(getcwd)
 	result->setStr(CSTRING(path ? path : ""));
 }
 
-// String argv(Int n)
+// argv(int n)
 // Get n-th argv value
 static CLEVER_FUNCTION(argv)
 {
@@ -99,7 +99,7 @@ static CLEVER_FUNCTION(argv)
 */
 }
 
-// Int argc()
+// argc()
 // Get argc value
 static CLEVER_FUNCTION(argc)
 {
@@ -109,7 +109,7 @@ static CLEVER_FUNCTION(argc)
 //	CLEVER_RETURN_INT(*g_clever_argc);
 }
 
-// Void sleep(Int time)
+// sleep(int time)
 // Sleep for 'time' milliseconds
 static CLEVER_FUNCTION(sleep)
 {
@@ -126,7 +126,7 @@ static CLEVER_FUNCTION(sleep)
 #endif
 }
 
-// Int clock()
+// clock()
 // Returns the execution clock
 static CLEVER_FUNCTION(clock)
 {
@@ -136,19 +136,68 @@ static CLEVER_FUNCTION(clock)
 
 	result->setInt(clock());
 }
-} // clever::packages::std::os
+
+// getpid()
+// Returns the current process id
+static CLEVER_FUNCTION(getpid)
+{
+	if (!clever_static_check_no_args()) {
+		return;
+	}
+
+	result->setInt(::getpid());
+}
+
+// getppid()
+// Returns the current process id
+static CLEVER_FUNCTION(getppid)
+{
+	if (!clever_static_check_no_args()) {
+		return;
+	}
+
+	result->setInt(::getppid());
+}
+
+// getuid
+// Returns the process user id
+static CLEVER_FUNCTION(getuid)
+{
+	if (!clever_static_check_no_args()) {
+		return;
+	}
+
+	result->setInt(::geteuid());
+}
+
+// getsid
+// Returns the process group id
+static CLEVER_FUNCTION(getsid)
+{
+	if (!clever_static_check_no_args()) {
+		return;
+	}
+
+	result->setInt(::getsid(0));
+}
+
+} // clever::packages::std::sys
 
 // Initializes Standard module
 CLEVER_MODULE_INIT(SYSModule)
 {
-	addFunction(new Function("system", &CLEVER_NS_FNAME(sys, system)));
-	addFunction(new Function("putenv", &CLEVER_NS_FNAME(sys, putenv)));
-	addFunction(new Function("getenv", &CLEVER_NS_FNAME(sys, getenv)));
-	addFunction(new Function("getcwd", &CLEVER_NS_FNAME(sys, getcwd)));
-	addFunction(new Function("argc",   &CLEVER_NS_FNAME(sys, argc)));
-	addFunction(new Function("argv",   &CLEVER_NS_FNAME(sys, argv)));
-	addFunction(new Function("sleep",  &CLEVER_NS_FNAME(sys, sleep)));
-	addFunction(new Function("clock", &CLEVER_NS_FNAME(sys, clock)));
+	addFunction(new Function("system",  &CLEVER_NS_FNAME(sys, system)));
+	addFunction(new Function("putenv",  &CLEVER_NS_FNAME(sys, putenv)));
+	addFunction(new Function("getenv",  &CLEVER_NS_FNAME(sys, getenv)));
+	addFunction(new Function("getcwd",  &CLEVER_NS_FNAME(sys, getcwd)));
+	addFunction(new Function("getpid",  &CLEVER_NS_FNAME(sys, getpid)));
+	addFunction(new Function("getppid", &CLEVER_NS_FNAME(sys, getppid)));
+	addFunction(new Function("getuid",  &CLEVER_NS_FNAME(sys, getuid)));
+	addFunction(new Function("getsid",  &CLEVER_NS_FNAME(sys, getsid)));
+	addFunction(new Function("argc",    &CLEVER_NS_FNAME(sys, argc)));
+	addFunction(new Function("argv",    &CLEVER_NS_FNAME(sys, argv)));
+	addFunction(new Function("sleep",   &CLEVER_NS_FNAME(sys, sleep)));
+	addFunction(new Function("clock",   &CLEVER_NS_FNAME(sys, clock)));
 }
 
 }}} // clever::packages::std

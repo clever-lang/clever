@@ -152,6 +152,10 @@ next_token:
 
 	<ST_MULTILINE_COMMENT>"*" { SKIP(); }
 
+	<INITIAL>'class' {
+		RET(token::CLASS);
+	}
+
 	<INITIAL>'new' {
 		RET(token::NEW);
 	}

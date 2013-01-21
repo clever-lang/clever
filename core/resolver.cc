@@ -8,20 +8,24 @@
 #include "core/compiler.h"
 #include "core/resolver.h"
 #include "types/native_types.h"
+#include "core/module.h"
+#include "core/user.h"
 
 namespace clever { namespace ast {
 
-Resolver::Resolver(Compiler* compiler)
-	: Visitor(), m_compiler(compiler)
+Resolver::Resolver(const PkgManager& pkgmanager)
+	: Visitor(), m_pkgmanager(pkgmanager), m_mod(NULL), m_class(NULL)
 {
-	// global environment and scope
+	// Global environment and scope
 	m_symtable = m_scope = new Scope();
 	m_scope->setEnvironment(new Environment(NULL));
 	m_stack.push(m_scope->getEnvironment());
 	m_scope->getEnvironment()->delRef();
 
-	m_compiler->getPkgManager().importModule(m_scope, m_stack.top(),
+	m_pkgmanager.importModule(m_scope, m_stack.top(),
 		CSTRING("std"), CSTRING("core"));
+
+	m_pkgmanager.getStdPackage()->addModule(m_mod = new UserModule);
 }
 
 void Resolver::visit(Block* node)
@@ -59,13 +63,11 @@ void Resolver::visit(VariableDecl* node)
 
 void Resolver::visit(ThreadBlock* node)
 {
-	const CString* name;
-
 	if (node->getSize() != NULL) {
 		node->getSize()->accept(*this);
 	}
 
-	name = node->getName()->getName();
+	const CString* name = node->getName()->getName();
 	clever_assert_not_null(name);
 
 	if (m_scope->getLocal(name)) {
@@ -86,9 +88,9 @@ void Resolver::visit(ThreadBlock* node)
 	node->getName()->accept(*this);
 
 	m_scope = m_scope->enter();
-
 	m_scope->setEnvironment(new Environment(m_stack.top()));
 	m_stack.push(m_scope->getEnvironment());
+
 	thread->setEnvironment(m_scope->getEnvironment());
 	m_scope->getEnvironment()->delRef();
 
@@ -97,7 +99,6 @@ void Resolver::visit(ThreadBlock* node)
 	node->getBlock()->accept(*this);
 
 	m_scope = m_scope->leave();
-
 	m_stack.pop();
 }
 
@@ -136,6 +137,12 @@ void Resolver::visit(FunctionDecl* node)
 
 	node->getIdent()->accept(*this);
 
+	// Check if it is a method
+	if (m_class) {
+		m_class->addMember(name, fval);
+		fval->addRef();
+	}
+
 	m_scope = m_scope->enter();
 
 	m_scope->setEnvironment(new Environment(m_stack.top()));
@@ -149,7 +156,7 @@ void Resolver::visit(FunctionDecl* node)
 		size_t required_args = 0;
 		bool found_rhs = false;
 
-		for (size_t i = 0; i < node->numArgs(); ++i) {
+		for (size_t i = 0, n = node->numArgs(); i < n;  ++i) {
 			Assignment* assign = static_cast<VariableDecl*>(node->getArg(i))->getAssignment();
 
 			assign->setConditional(true);
@@ -180,7 +187,6 @@ void Resolver::visit(FunctionDecl* node)
 	node->getBlock()->accept(*this);
 
 	m_scope = m_scope->leave();
-
 	m_stack.pop();
 }
 
@@ -194,7 +200,6 @@ void Resolver::visit(Ident* node)
 	}
 
 	node->setVOffset(m_scope->getOffset(sym));
-
 	node->setSymbol(sym);
 	node->setScope(sym->scope);
 }
@@ -209,18 +214,25 @@ void Resolver::visit(Type* node)
 	}
 
 	node->setVOffset(m_scope->getOffset(sym));
-
 	node->setSymbol(sym);
 	node->setScope(sym->scope);
 }
 
 void Resolver::visit(Import* node)
 {
+	PkgManager::ImportKind kind = node->getFunction() ?
+		PkgManager::FUNCTION : (node->getType() ? PkgManager::TYPE : PkgManager::ALL);
+
 	if (node->getModule()) {
-		m_compiler->getPkgManager().importModule(m_scope, m_stack.top(),
-			node->getPackage()->getName(), node->getModule()->getName());
+		const CString* name = (kind == PkgManager::ALL) ? NULL
+			: (kind == PkgManager::FUNCTION ? node->getFunction()->getName()
+				: node->getType()->getName());
+
+		m_pkgmanager.importModule(m_scope, m_stack.top(),
+			node->getPackage()->getName(), node->getModule()->getName(),
+			kind, name);
 	} else {
-		m_compiler->getPkgManager().importPackage(m_scope, m_stack.top(),
+		m_pkgmanager.importPackage(m_scope, m_stack.top(),
 			node->getPackage()->getName());
 	}
 }
@@ -228,8 +240,8 @@ void Resolver::visit(Import* node)
 void Resolver::visit(Catch* node)
 {
 	m_scope = m_scope->enter();
-
 	m_scope->setEnvironment(m_stack.top());
+	node->setScope(m_scope);
 
 	Value* val = new Value();
 
@@ -237,11 +249,65 @@ void Resolver::visit(Catch* node)
 
 	node->getVar()->accept(*this);
 
-	node->setScope(m_scope);
-
 	Visitor::visit(static_cast<NodeArray*>(node->getBlock()));
 
 	m_scope = m_scope->leave();
+}
+
+void Resolver::visit(ClassDef* node)
+{
+	const CString* name = node->getType()->getName();
+
+	UserType* type = new UserType(name);
+
+	m_mod->addType(name, type);
+	type->init();
+
+	Value* tmp = new Value(type);
+	m_scope->pushValue(name, tmp)->voffset = m_stack.top()->pushValue(tmp);
+
+	m_scope = m_scope->enter();
+	m_scope->setEnvironment(m_stack.top());
+	node->setScope(m_scope);
+
+	m_class = type;
+
+	if (node->hasAttrs()) {
+		node->getAttrs()->accept(*this);
+	}
+
+	if (node->hasMethods()) {
+		node->getMethods()->accept(*this);
+	}
+
+	m_class = NULL;
+	m_scope = m_scope->leave();
+}
+
+void Resolver::visit(AttrDecl* node)
+{
+	const CString* name = node->getIdent()->getName();
+
+	if (m_scope->getLocal(name)) {
+		Compiler::errorf(node->getLocation(),
+			"Cannot redeclare attribute `%S'.", name);
+	}
+
+	Value* val = new Value();
+	m_scope->pushValue(name, val)->voffset = m_stack.top()->pushValue(val);
+
+	val->setConst(node->isConst());
+
+	node->getIdent()->accept(*this);
+
+	if (node->hasValue()) {
+		node->getValue()->accept(*this);
+	}
+
+	m_class->addProperty(name, val);
+	val->addRef();
+
+	node->setScope(m_scope);
 }
 
 }} // clever::ast

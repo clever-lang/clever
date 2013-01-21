@@ -1,0 +1,22 @@
+String.find()
+==CODE==
+import std.io.*;
+
+var s = "Hello Clever";
+println(s.find("Hello"));
+println(s.find("Hello", 0));
+println(s.find("Hello", 0, 4));
+println(s.find("Clever"));
+println(s.find("Clever", 6));
+println(s.find("Clever", 6, 6));
+println(s.find("Hello Clever", 5));
+println(s.find("Clever Hello"));
+==RESULT==
+0
+0
+0
+6
+6
+6
+-1
+-1

@@ -1,0 +1,17 @@
+Testing variadic method
+==CODE==
+import std.io.*;
+
+class Foo {
+
+	function test(args...) {
+		return args.at(0);
+	}
+
+}
+
+var foo = Foo.new;
+
+println(foo.test(2));
+==RESULT==
+2

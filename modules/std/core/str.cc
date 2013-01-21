@@ -15,12 +15,18 @@
 
 namespace clever {
 
+void StrType::dump(const void* value, std::ostream& out) const
+{
+	out << *static_cast<StrObject*>(static_cast<ValueObject*>(
+		const_cast<void*>(value))->getObj())->getStr();
+}
+
 CLEVER_TYPE_OPERATOR(StrType::add)
 {
 	if (EXPECTED(rhs->isStr())) {
 		// TODO(Felipe): Do not require CString everywhere (because it stores the
 		// data in an string table)
-		result->setStr(CSTRING(*lhs->getStr() + *rhs->getStr()));
+		result->setStr(new StrObject(*lhs->getStr() + *rhs->getStr()));
 	}
 }
 
@@ -37,7 +43,7 @@ CLEVER_TYPE_OPERATOR(StrType::mul)
 			os << *lhs->getStr();
 		}
 
-		result->setStr(CSTRING(os.str()));
+		result->setStr(new StrObject(os.str()));
 	}
 }
 
@@ -64,160 +70,119 @@ CLEVER_METHOD(StrType::subString)
 	}
 
 	const CString* of = CLEVER_THIS()->getStr();
-	int bounds[2] = {-1, -1};
+	CString::size_type start, count;
 
-	switch (args.size()) {
-		case 2:
-			bounds[0] = args[0]->getInt();
-			bounds[1] = args[1]->getInt();
-			break;
+	start = args[0]->getInt();
 
-		case 1:
-			bounds[0] = args[0]->getInt();
-			break;
+	if (args.size() > 1) {
+		count = args[1]->getInt();
+	} else {
+		count = of->size();
 	}
 
-	result->setNull();
-
-	if (of && bounds[0] > -1) {
-		if (bounds[1] > -1) {
-			result->setStr(CSTRING(of->substr(bounds[0], bounds[1])));
-		} else {
-			result->setStr(CSTRING(of->substr(bounds[0])));
-		}
-	}
+	result->setStr(new StrObject(of->substr(start, count)));
 }
 
 // String.find(string needle, [int position, [int count]])
 // Finds a string in a string returning the position
 CLEVER_METHOD(StrType::find)
 {
-	const char* needle = NULL;
-	const CString* haystack = CLEVER_THIS()->getStr();
-	int bounds[2] = {-1, -1};
-
 	if (!clever_check_args("s|ii")) {
 		return;
 	}
 
-	switch (args.size()) {
-		case 1:
-			needle = args[0]->getStr()->c_str();
-		break;
+	const CString* haystack = CLEVER_THIS()->getStr();
+	const char* needle = args[0]->getStr()->c_str();
+	CString::size_type pos, count;
 
-		case 2:
-			needle = args[0]->getStr()->c_str();
-			bounds[0] = args[1]->getInt();
-		break;
+	clever_assert_not_null(haystack);
 
-		case 3:
-			needle = args[0]->getStr()->c_str();
-			bounds[0] = args[1]->getInt();
-			bounds[1] = args[2]->getInt();
-		break;
+	// XXX(heuripedes): should a warning/error/exception be thrown? perhaps a runtime error?
+	if (!needle) {
+		return;
 	}
 
-	result->setNull();
-
-	if (needle && haystack) {
-		if (bounds[0] > -1) {
-			if (bounds[1] > -1) {
-				result->setInt(haystack->find(needle, bounds[0], bounds[1]));
-			} else {
-				result->setInt(haystack->find(needle, bounds[0]));
-			}
-		} else {
-			result->setInt(haystack->find(needle));
-		}
+	if (args.size() > 1) {
+		pos = args[1]->getInt();
+	} else {
+		pos = 0;
 	}
+
+	if (args.size() > 2) {
+		count = args[2]->getInt();
+	} else {
+		count = strlen(needle);
+	}
+
+	result->setInt(haystack->find(needle, pos, count));
 }
 
 // String.findFirst(string needle, [int position, [int count]])
 // Finds the first occurence of a string in a string returning the position
 CLEVER_METHOD(StrType::findFirst)
 {
-	const char* needle = NULL;
-	const CString* haystack = NULL;
-	int bounds[2] = {-1, -1};
-
 	if (!clever_check_args("s|ii")) {
 		return;
 	}
 
-	haystack = CLEVER_THIS()->getStr();
-	switch (args.size()) {
-		case 1:
-			needle = args[0]->getStr()->c_str();
-			break;
+	const char* needle = args[0]->getStr()->c_str();
+	const CString* haystack = CLEVER_THIS()->getStr();
+	CString::size_type pos, count;
 
-		case 2:
-			needle = args[0]->getStr()->c_str();
-			bounds[0] = args[1]->getInt();
-			break;
+	clever_assert_not_null(haystack);
 
-		case 3:
-			needle = args[0]->getStr()->c_str();
-			bounds[0] = args[1]->getInt();
-			bounds[1] = args[2]->getInt();
-			break;
+	// XXX(heuripedes): should a warning/error/exception be thrown? perhaps a runtime error?
+	if (!needle) {
+		return;
 	}
-	result->setNull();
 
-	if (needle && haystack) {
-		if (bounds[0] > -1) {
-			if (bounds[1] > -1) {
-				result->setInt(haystack->find_first_of(needle, bounds[0], bounds[1]));
-			} else {
-				result->setInt(haystack->find_first_of(needle, bounds[0]));
-			}
-		} else {
-			result->setInt(haystack->find_first_of(needle));
-		}
+	if (args.size() > 1) {
+		pos = args[1]->getInt();
+	} else {
+		pos = 0;
 	}
+
+	if (args.size() > 2) {
+		count = args[2]->getInt();
+	} else {
+		count = strlen(needle);
+	}
+
+	result->setInt(haystack->find_first_of(needle, pos, count));
 }
 
 // String.findLast(string needle, [int position, [int count]])
 // Finds the last occurence of a string in a string returning the position
 CLEVER_METHOD(StrType::findLast)
 {
-	const char* needle = NULL;
-	const CString* haystack = CLEVER_THIS()->getStr();
-	int bounds[2] = {-1, -1};
-
 	if (!clever_check_args("s|ii")) {
 		return;
 	}
 
-	result->setNull();
+	const char* needle = args[0]->getStr()->c_str();
+	const CString* haystack = CLEVER_THIS()->getStr();
+	CString::size_type pos, count;
 
-	switch (args.size()) {
-		case 1:
-			needle = args[0]->getStr()->c_str();
-			break;
+	clever_assert_not_null(haystack);
 
-		case 2:
-			needle = args[0]->getStr()->c_str();
-			bounds[0] = args[1]->getInt();
-			break;
-
-		case 3:
-			needle = args[0]->getStr()->c_str();
-			bounds[0] = args[1]->getInt();
-			bounds[1] = args[2]->getInt();
-			break;
+	// XXX(heuripedes): should a warning/error/exception be thrown? perhaps a runtime error?
+	if (!needle) {
+		return;
 	}
 
-	if (needle && haystack) {
-		if (bounds[0] > -1) {
-			if (bounds[1] > -1) {
-				result->setInt(haystack->find_last_of(needle, bounds[0], bounds[1]));
-			} else {
-				result->setInt(haystack->find_last_of(needle, bounds[0]));
-			}
-		} else {
-			result->setInt(haystack->find_last_of(needle));
-		}
+	if (args.size() > 1) {
+		pos = args[1]->getInt();
+	} else {
+		pos = haystack->size();
 	}
+
+	if (args.size() > 2) {
+		count = args[2]->getInt();
+	} else {
+		count = strlen(needle);
+	}
+
+	result->setInt(haystack->find_last_of(needle, pos, count));
 }
 
 // String.format(string str, ...)
@@ -255,7 +220,7 @@ CLEVER_METHOD(StrType::format)
 			point++;
 		}
 	}
-	result->setStr(CSTRING(stream.str()));
+	result->setStr(new StrObject(stream.str()));
 }
 
 // String.startsWith(string match)

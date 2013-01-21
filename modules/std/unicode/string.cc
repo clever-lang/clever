@@ -24,9 +24,9 @@ void UString::dump(const void* data) const
 
 void UString::dump(const void* data, ::std::ostream& out) const
 {
-	Value::DataValue* dvalue = static_cast<Value::DataValue*>(const_cast<void*>(data));
+	ValueObject* dvalue = static_cast<ValueObject*>(const_cast<void*>(data));
 	if (dvalue) {
-		UnicodeString* uvalue = static_cast<UnicodeString*>(dvalue->obj->getObj());
+		UnicodeString* uvalue = static_cast<UnicodeString*>(dvalue->getObj());
 
 		if (uvalue) {
 			for(int32_t start=0; start < uvalue->length(); start++) {
@@ -62,9 +62,9 @@ CLEVER_METHOD(UString::ctor)
 	result->setObj(this, allocData(&args));
 }
 
-// UString.getLength()
+// UString.size()
 // Determine the length of this
-CLEVER_METHOD(UString::getLength)
+CLEVER_METHOD(UString::size)
 {
 	CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
 
@@ -296,7 +296,7 @@ CLEVER_TYPE_INIT(UString::init)
 	setConstructor(ctor);
 
 	addMethod(ctor);
-	addMethod(new Function("getLength",		(MethodPtr) &UString::getLength));
+	addMethod(new Function("size",   		(MethodPtr) &UString::size));
 	addMethod(new Function("startsWith",	(MethodPtr) &UString::startsWith));
 	addMethod(new Function("endsWith",		(MethodPtr) &UString::endsWith));
 	addMethod(new Function("indexOf",		(MethodPtr) &UString::indexOf));

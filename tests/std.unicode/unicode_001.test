@@ -6,7 +6,7 @@ import std.unicode.*;
 var ustring = UString.new("Hello World さくら");
 
 printf("UString: \1\n", ustring);
-printf("UString.getLength(ustring)=\1\n", ustring.getLength());
+printf("UString.getLength(ustring)=\1\n", ustring.size());
 printf("UString.indexOf(W)=\1\n", ustring.indexOf("W"));
 printf("UString.lastIndexOf(o)=\1\n", ustring.lastIndexOf("o"));
 ustring.toUpper();

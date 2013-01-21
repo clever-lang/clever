@@ -9,24 +9,26 @@
 #define CLEVER_RESOLVER_H
 
 #include "core/astvisitor.h"
+#include "core/module.h"
 
 namespace clever {
-class Compiler;
+class PkgManager;
 class Scope;
 class Environment;
+class Type;
 }
 
 namespace clever { namespace ast {
 
 class Resolver: public Visitor {
 public:
-	Resolver(Compiler* compiler);
+	Resolver(const PkgManager&);
 
 	~Resolver() {}
 
-	Scope* getSymTable() { return m_symtable; }
+	Scope* getSymTable() const { return m_symtable; }
 
-	Environment* getGlobalEnv() {
+	Environment* getGlobalEnv() const {
 		clever_assert(m_stack.size() == 1,
 					  "There must be only one entry on the stack");
 
@@ -41,11 +43,15 @@ public:
 	virtual void visit(Type*);
 	virtual void visit(Import*);
 	virtual void visit(Catch*);
+	virtual void visit(ClassDef*);
+	virtual void visit(AttrDecl*);
 private:
-	Compiler* m_compiler;
+	const PkgManager& m_pkgmanager;
 	Scope* m_symtable;
 	Scope* m_scope;
 	std::stack<Environment*> m_stack;
+	Module* m_mod;
+	clever::Type* m_class;
 
 	DISALLOW_COPY_AND_ASSIGN(Resolver);
 };

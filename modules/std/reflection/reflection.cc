@@ -6,6 +6,7 @@
  */
 
 #include <iostream>
+#include "core/driver.h"
 #include "core/pkgmanager.h"
 #include "modules/std/reflection/reflection.h"
 #include "modules/std/reflection/reflect.h"
@@ -14,7 +15,7 @@ namespace clever { namespace packages { namespace std {
 
 namespace reflection {
 
-// string type()
+// type(object)
 // Returns the type name of the supplied parameter
 static CLEVER_FUNCTION(type)
 {
@@ -24,7 +25,24 @@ static CLEVER_FUNCTION(type)
 
 	const Type* type = args[0]->getType();
 
-	result->setStr(type ? type->getName() : CSTRING("null"));
+	result->setStr(new StrObject(type->getName()));
+}
+
+// eval(string)
+// Executes the supplied string
+static CLEVER_FUNCTION(eval)
+{
+	if (!clever_static_check_args("s")) {
+		return;
+	}
+
+	Interpreter interp(0, NULL);
+
+	if (!interp.loadStr(*args[0]->getStr(), false)) {
+		interp.execute(false);
+		// @TODO(Felipe): must fix cstring freeing
+		// interp.shutdown();
+	}
 }
 
 } // clever::packages::std::reflection
@@ -36,6 +54,7 @@ CLEVER_MODULE_INIT(Reflection)
 
 	// Functions
 	addFunction(new Function("type", &CLEVER_NS_FNAME(reflection, type)));
+	addFunction(new Function("eval", &CLEVER_NS_FNAME(reflection, eval)));
 }
 
 }}} // clever::packages::std

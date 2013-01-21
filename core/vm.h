@@ -46,15 +46,13 @@ public:
 
 	typedef std::vector<std::vector<VMThread*> > ThreadPool;
 
-	VM(IRVector& inst)
+	VM(const IRVector& inst)
 		: m_pc(0), m_is_main_thread(true), m_inst(inst),
 		  m_const_env(NULL), m_temp_env(NULL), m_global_env(NULL),
 		  m_call_stack(), m_call_args(),
 		  m_thread_pool(), m_mutex(), f_mutex(NULL), m_try_stack() {}
 
 	~VM() {}
-
-	void error(ErrorLevel, const char*, ...) const;
 
 	void setGlobalEnv(Environment* globals) { m_global_env = globals; }
 
@@ -77,20 +75,22 @@ public:
 
 	void nextPC() { ++m_pc; }
 
-	IRVector& getInst() const { return m_inst; }
+	const IRVector& getInst() const { return m_inst; }
 
 	CallStack getCallStack() const { return m_call_stack; }
 
 	/// Helper to retrive a Value* from ValuePool
-	Value* getValue(Operand&) const;
+	Value* getValue(const Operand&) const;
+	Value* getValueExt(const Operand& operand) const { return getValue(operand); }
 
-	ThreadPool& getThreadPool() {
-		return this->m_thread_pool;
-	}
+	ThreadPool& getThreadPool() { return m_thread_pool; }
 
-	CMutex* getMutex() {
-		return isChild() ? f_mutex : &m_mutex;
-	}
+	CallStack& getCallStack() { return m_call_stack; }
+
+	CMutex* getMutex() { return isChild() ? f_mutex : &m_mutex; }
+
+	void prepareCall(Function*);
+
 	/// Start the VM execution
 	void run();
 	Value* runFunction(Function*, std::vector<Value*>*);
@@ -100,9 +100,11 @@ public:
 
 	/// Methods for dumping opcodes
 #ifdef CLEVER_DEBUG
-	void dumpOperand(Operand&) const;
+	static void dumpOperand(const Operand&);
 	void dumpOpcodes() const;
 #endif
+
+	static void error(ErrorLevel, const char*, ...);
 private:
 	/// VM program counter
 	size_t m_pc;
@@ -110,7 +112,7 @@ private:
 	bool m_is_main_thread;
 
 	/// Vector of instruction
-	IRVector& m_inst;
+	const IRVector& m_inst;
 
 	/// Constant
 	Environment* m_const_env;
