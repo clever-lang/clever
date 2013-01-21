@@ -14,11 +14,11 @@
 namespace clever { namespace packages { namespace std {
 
 struct ThreadData {
-	pthread_t*          thread;
+	pthread_t          	thread;
 	pthread_mutex_t*    lock;
 	Function*           entry;
 	Value*              result;
-	const VM*           vm;
+	VM*           		vm;
 	bool				joined;
 };
 

@@ -21,11 +21,15 @@ static inline void* ThreadHandler(void* ThreadArgument)
 	if (intern->vm) {
 		::std::vector<Value*> args;
 
-		VM* vm = (const_cast<VM*>(intern->vm));
-		Value* result = vm->runFunction(
+		intern->vm->setChild();
+
+		Value* result = intern->vm->runFunction
+		(
 			intern->entry, &args
 		);
+		
 		result->delRef();
+		delete intern->vm;
 	}
 	
 	pthread_exit(NULL);
@@ -54,7 +58,6 @@ void* Thread::allocData(CLEVER_TYPE_CTOR_ARGS) const
 {
 	ThreadData* intern = new ThreadData;
 	
-	intern->thread = new pthread_t;
 	intern->lock = new pthread_mutex_t;
 
 	clever_debug("Thread.new allocated lock for thread at %@", intern->lock);	
@@ -92,10 +95,11 @@ void Thread::deallocData(void* data)
 	if (!intern) {
 		return;
 	}
+	clever_debug("Thread.dtor executing %@ ...", intern->thread);
 
 	if (!intern->joined) {
 		clever_debug("Thread.dtor calling pthread_join for %@", intern->thread);
-		if (pthread_join(*intern->thread, NULL) != 0) {
+		if (pthread_join(intern->thread, NULL) != 0) {
 			clever_debug("Thread.dtor failed to join with %@", intern->thread);
 		} else clever_debug("Thread.dtor joined with %@", intern->thread);
 	} else clever_debug("Thread.dtor skipping join for %@, previously joined", intern->thread);
@@ -107,7 +111,6 @@ void Thread::deallocData(void* data)
 		delete intern->lock;
 	}
 
-	delete intern->thread;
 	delete intern;
 }
 
@@ -126,9 +129,10 @@ CLEVER_METHOD(Thread::start)
 		/** @TODO(krakjoe) pthread attributes **/
 		if (pthread_mutex_lock(intern->lock) == 0) {
 			clever_debug("Thread.start set vm for thread to %@", vm);
-			intern->vm = vm;
+			intern->vm = new VM(vm->getInst());
+			intern->vm->copy(vm, false);
 			result->setBool(
-				(pthread_create(intern->thread, NULL, ThreadHandler, intern) == 0)
+				(pthread_create(&intern->thread, NULL, ThreadHandler, intern) == 0)
 			);
 			clever_debug("Thread.start created thread at %@", intern->thread);
 			pthread_mutex_unlock(intern->lock);
@@ -157,7 +161,7 @@ CLEVER_METHOD(Thread::wait)
 	if (pthread_mutex_lock(intern->lock) == 0) {
 		if (!intern->joined) {
 			result->setBool(
-				(pthread_join(*intern->thread, NULL) == 0)
+				(pthread_join(intern->thread, NULL) == 0)
 			);
 			intern->joined = true;
 		} else {
