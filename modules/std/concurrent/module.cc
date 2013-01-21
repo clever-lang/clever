@@ -16,9 +16,9 @@ namespace clever { namespace packages { namespace std {
 /// Initializes Standard Concurrency module
 CLEVER_MODULE_INIT(ConcurrencyModule)
 {
-	addType(CSTRING("Mutex"), new Mutex);
+	addType(CSTRING("Mutex"),     new Mutex);
 	addType(CSTRING("Condition"), new Condition);
-	addType(CSTRING("Thread"), new Thread);
+	addType(CSTRING("Thread"),    new Thread);
 }
 
 }}} // clever::packages::std
