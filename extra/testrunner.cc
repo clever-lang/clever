@@ -46,6 +46,9 @@ bool TestRunner::show_result() const
 	if (valgrind) {
 		std::cout << "Leaked tests: " << leak << std::endl;
 	}
+	if (helgrind) {
+		std::cout << "Race detecteds: " << races << std::endl;
+	}
 #endif
 
 	std::cout << "-----------------------------------" << std::endl;
@@ -64,7 +67,8 @@ void TestRunner::find(const char* dir)
 	// Ignore .log and .mem files
 	path = std::string(dir);
 	if ((path.size()-4 == path.rfind(".log"))
-		|| (path.size()-4 == path.rfind(".mem"))) {
+		|| (path.size()-4 == path.rfind(".mem"))
+		|| (path.size()-5 == path.rfind(".race"))) {
 		return;
 	}
 
@@ -130,11 +134,13 @@ void TestRunner::run()
 		if (valgrind) {
 			command = std::string("GLIBCXX_FORCE_NEW=yes valgrind -q --tool=memcheck --leak-check=yes --num-callers=30 --show-reachable=yes --track-origins=yes --log-file=") + file_name + std::string(".mem");
 			command = command + std::string(" ./clever ") + tmp_file + " 2>&1";
-			fp = popen(command.c_str(), "r");
+		} else if (helgrind) {
+			command = std::string("valgrind -q --tool=helgrind --num-callers=30 --log-file=") + file_name + std::string(".race");
+			command = command + std::string(" ./clever ") + tmp_file + " 2>&1";
 		} else {
 			command = std::string("./clever ") + tmp_file + " 2>&1";
-			fp = popen(command.c_str(), "r");
 		}
+		fp = popen(command.c_str(), "r");
 #else
 		command = std::string("clever.exe ") + tmp_file + " 2>&1";
 		fp = _popen(command.c_str(), "r");
@@ -163,6 +169,15 @@ void TestRunner::run()
 				leak++;
 				last_ok = false;
 			}
+		} else if (helgrind) {
+			filesize = fileSize(file_name + std::string(".race"));
+			if (filesize == 0) {
+				unlink(std::string(file_name + std::string(".race")).c_str());
+			} else {
+				std::cout << "[RACE] ";
+				races++;
+				last_ok = false;
+			}
 		}
 #endif
 		if (!valgrind) {
@@ -171,9 +186,15 @@ void TestRunner::run()
 				unlink(std::string(file_name + ".mem").c_str());
 			}
 		}
+		if (!helgrind) {
+			if (fileExists(file_name + ".race")) {
+				unlink(std::string(file_name + ".race").c_str());
+			}
+		}
 
 		if (pcrecpp::RE(expect).FullMatch(result)) {
-			if ((valgrind && filesize == 0) || !valgrind) {
+			if ((valgrind && filesize == 0) || (helgrind && filesize == 0)
+				|| !(valgrind || helgrind)) {
 				if (show_all_results) {
 					std::cout << "[OKAY] ";
 				}
@@ -250,7 +271,9 @@ void TestRunner::load_folder(const char* dir)
 			}
 			// Ignore .log files
 			file = std::string(dirp->d_name);
-			if ((file.size()-4 == file.rfind(".log")) || (file.size()-4 == file.rfind(".mem"))) {
+			if ((file.size()-4 == file.rfind(".log"))
+				|| (file.size()-4 == file.rfind(".mem"))
+				|| (file.size()-5 == file.rfind(".race"))) {
 				continue;
 			}
 			// Is this a folder or a file?
@@ -319,7 +342,8 @@ void usage(void)
 	std::cout << "Clever programming language - Testrunner" << std::endl;
 	std::cout << "Usage: testrunner [options] path-of-test-file/dir" << std::endl;
 #ifndef _WIN32
-	std::cout << "\t-m: run valgrind on each test" << std::endl;
+	std::cout << "\t-m: run memcheck on each test (requires Valgrind)" << std::endl;
+	std::cout << "\t-r: run helgrind on each test (requires Valgrind)" << std::endl;
 #endif
 	std::cout << "\t-q: only list failing tests" << std::endl;
 }
@@ -343,6 +367,8 @@ int main(int argc, char *argv[])
 #endif
 			} else if (std::string(argv[i]) == "-q") {
 				testrunner.setFlags(TestRunner::FAIL_ONLY);
+			} else if (std::string(argv[i]) == "-r") {
+				testrunner.helgrind = true;
 			} else {
 				start_paths = i;
 			}

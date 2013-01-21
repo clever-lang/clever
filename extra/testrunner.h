@@ -22,7 +22,7 @@ public:
 	enum { FAIL_ONLY = 1 };
 
 	TestRunner()
-		: valgrind(false), pass(0), fail(0), leak(0), flags(0)
+		: valgrind(false), helgrind(false), pass(0), fail(0), leak(0), flags(0), races(0)
 		{ start_time = clock(); }
 
 	~TestRunner();
@@ -36,8 +36,9 @@ public:
 	unsigned int getFlags() const { return flags; }
 
 	bool valgrind;
+	bool helgrind;
 private:
-	unsigned int pass, fail, leak, flags;
+	unsigned int pass, fail, leak, flags, races;
 	clock_t start_time;
 	std::vector<std::string> files;
 	std::vector<std::string> tmp_files;
