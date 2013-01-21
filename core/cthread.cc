@@ -60,6 +60,8 @@ void CThread::create(ThreadFunc thread_func, void* args)
 	t_handler = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)thread_func, args, 0, NULL);
 #endif
 #endif
+
+	m_is_running = true;
 }
 
 int CThread::wait()
@@ -74,7 +76,7 @@ int CThread::wait()
 	status = (status != WAIT_FAILED ? 0x0 : status);
 	CloseHandle(t_handler);
 #endif
-
+	m_is_running = false;
 	return status;
 #else
 	return 0;

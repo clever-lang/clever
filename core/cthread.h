@@ -45,15 +45,20 @@ typedef DWORD (*ThreadFunc)(LPVOID);
 
 class CThread {
 public:
-	CThread() {}
+	CThread() { m_is_running = false; }
 
-	~CThread() {}
+	~CThread() {
+		if (m_is_running) {
+			wait();
+		}
+	}
 
 	void create(ThreadFunc, void*);
 
 	int wait();
 
 private:
+	bool m_is_running;
 #ifndef CLEVER_WIN32
 	pthread_t t_handler;
 #else
