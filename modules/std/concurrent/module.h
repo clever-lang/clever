@@ -8,15 +8,18 @@
 #ifndef CLEVER_STD_CONCURRENT_H
 #define CLEVER_STD_CONCURRENT_H
 
+#include "core/vm.h"
 #include "core/module.h"
 
 namespace clever { namespace packages { namespace std {
 
 struct ThreadData {
-	pthread_t*       thread;
-	pthread_mutex_t* lock;
-	Function*        entry;
-	Value*           result;
+	pthread_t          	thread;
+	pthread_mutex_t*    lock;
+	Function*           entry;
+	Value*              result;
+	VM*           		vm;
+	bool				joined;
 };
 
 /// Standard Concurrency Module
