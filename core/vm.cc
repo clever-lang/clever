@@ -112,14 +112,18 @@ void VM::dumpOpcodes() const
 #endif
 
 // Make a copy of VM instance
-void VM::copy(const VM* vm)
+void VM::copy(const VM* vm, bool deep)
 {
 	f_mutex = const_cast<VM*>(vm)->getMutex();
 	m_pc = vm->m_pc;
 	m_try_stack = vm->m_try_stack;
 
-	m_temp_env = new Environment();
-	m_temp_env->copy(vm->m_temp_env);
+	if (deep) {
+		this->m_temp_env = new Environment(NULL);
+		this->m_temp_env->copy(vm->m_temp_env);
+	} else {
+		this->m_temp_env = vm->m_temp_env;	
+	}
 
 	m_global_env = vm->m_global_env;
 	m_call_stack = vm->m_call_stack;
@@ -400,7 +404,29 @@ void VM::run()
 			Function* func = static_cast<Function*>(fval->getObj());
 			clever_assert_not_null(func);
 
-			if (func->isUserDefined()) {
+			if (func->isUserDefined()) {			
+				Environment* fenv;
+
+				if (m_call_stack.top()->isActive()) {
+					fenv = func->getEnvironment()->activate(m_call_stack.top()->getOuter());
+				} else {
+					fenv = func->getEnvironment()->activate(m_call_stack.top());
+				}
+				m_call_stack.push(fenv);
+
+				fenv->setRetAddr(m_pc + 1);
+				fenv->setRetVal(getValue(OPCODE.result));
+
+				if (m_call_args.size() < func->getNumRequiredArgs()
+					|| (m_call_args.size() > func->getNumArgs()
+						&& !func->isVariadic())) {
+					error(VM_ERROR, "Wrong number of parameters");
+				}
+
+				_param_binding(func, fenv, &m_call_args);
+
+				m_call_args.clear();
+
 				prepareCall(func);
 
 				VM_GOTO(func->getAddr());

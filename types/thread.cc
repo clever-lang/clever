@@ -71,7 +71,7 @@ CLEVER_METHOD(ThreadType::run)
 		new_thread();
 
 		thread->vm_handler = new VM(m_vm->getInst());
-		thread->vm_handler->copy(m_vm);
+		thread->vm_handler->copy(m_vm, true);
 		thread->vm_handler->setChild();
 
 		Environment* tenv = tdata->getEnvironment()->activate(m_vm->getCallStack().top());
@@ -82,7 +82,7 @@ CLEVER_METHOD(ThreadType::run)
 		}
 		m_thread_pool[tdata->getID()].push_back(thread);
 		thread->vm_handler->setPC(thread_addr);
-		thread->t_handler.create(_thread_control, static_cast<void*>(thread));
+		//thread->t_handler.create(_thread_control, static_cast<void*>(thread));
 	}
 
 	m_vm->getMutex()->unlock();

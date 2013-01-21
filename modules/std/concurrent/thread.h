@@ -36,6 +36,7 @@ public:
 	CLEVER_METHOD(ctor);
 
 	CLEVER_METHOD(start);
+	CLEVER_METHOD(wait);
 };
 
 }}} // clever::packages::std

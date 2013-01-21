@@ -1,0 +1,18 @@
+Testing threads inside threads in std.concurrent [will fail in debug mode]
+==CODE==
+import std.io.*;
+import std.concurrent.*;
+
+var test = Thread.new(function(){
+	printf("Hello World\n");
+	var next = Thread.new(function(){
+		printf("Hello Again\n");
+	});
+	next.start();
+	next.wait();
+});
+
+test.start();
+test.wait();
+==RESULT==
+Hello World

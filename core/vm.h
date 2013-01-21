@@ -18,8 +18,17 @@
 
 namespace clever {
 
+// Helper macro for opcode handler declaration
+#define VM_HANDLER_ARG IR& op
+#define VM_HANDLER(name) CLEVER_FORCE_INLINE void VM::vm_##name(VM_HANDLER_ARG)
+#define VM_HANDLER_D(name) void vm_##name(VM_HANDLER_ARG)
+
+class Scope;
 class Value;
 class Function;
+
+typedef std::vector<std::pair<size_t, Value*> > FuncVars;
+
 class VM;
 
 struct VMThread {
@@ -38,10 +47,10 @@ public:
 	typedef std::vector<std::vector<VMThread*> > ThreadPool;
 
 	VM(const IRVector& inst)
-		: m_pc(0), m_main(true), m_inst(inst),
+		: m_pc(0), m_is_main_thread(true), m_inst(inst),
 		  m_const_env(NULL), m_temp_env(NULL), m_global_env(NULL),
-		  m_call_stack(), m_call_args(), m_thread_pool(), m_mutex(),
-		  f_mutex(NULL), m_try_stack() {}
+		  m_call_stack(), m_call_args(),
+		  m_thread_pool(), m_mutex(), f_mutex(NULL), m_try_stack() {}
 
 	~VM() {}
 
@@ -52,12 +61,13 @@ public:
 	void setTempEnv(Environment* temps) { m_temp_env = temps; }
 
 	void copy(const VM*);
+	void copy(const VM*, bool deep);
 
-	void setChild() { m_main = false; }
+	void setChild() { m_is_main_thread = false; }
 
-	bool isChild() const { return !m_main; }
+	bool isChild() const { return !m_is_main_thread; }
 
-	bool isMain() const { return m_main; }
+	bool isMain() const { return m_is_main_thread; }
 
 	void setPC(size_t pc) { m_pc = pc; }
 
@@ -66,6 +76,8 @@ public:
 	void nextPC() { ++m_pc; }
 
 	const IRVector& getInst() const { return m_inst; }
+
+	CallStack getCallStack() const { return m_call_stack; }
 
 	/// Helper to retrive a Value* from ValuePool
 	Value* getValue(const Operand&) const;
@@ -81,8 +93,6 @@ public:
 
 	/// Start the VM execution
 	void run();
-
-	/// Executes an specific program unit
 	Value* runFunction(Function*, std::vector<Value*>*);
 
 	/// Wait threads
@@ -99,7 +109,7 @@ private:
 	/// VM program counter
 	size_t m_pc;
 
-	bool m_main;
+	bool m_is_main_thread;
 
 	/// Vector of instruction
 	const IRVector& m_inst;
@@ -130,8 +140,6 @@ private:
 
 	DISALLOW_COPY_AND_ASSIGN(VM);
 };
-
-CLEVER_THREAD_FUNC(_thread_control);
 
 } // clever
 
