@@ -23,12 +23,12 @@ static inline void* ThreadHandler(void* ThreadArgument)
 
 		intern->vm->setChild();
 
-		Value* result = intern->vm->runFunction
-		(
+		Value* result = intern->vm->runFunction(
 			intern->entry, &args
 		);
 		
 		result->delRef();
+
 		delete intern->vm;
 	}
 	
