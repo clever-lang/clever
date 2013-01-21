@@ -37,7 +37,7 @@
 namespace clever {
 
 /// Displays an error message
-void VM::error(ErrorLevel level, const char* format, ...) const
+void VM::error(ErrorLevel level, const char* format, ...)
 {
 	std::ostringstream out;
 	va_list args;
@@ -58,7 +58,7 @@ void VM::error(ErrorLevel level, const char* format, ...) const
 }
 
 /// Fetchs a Value ptr according to the operand type
-CLEVER_FORCE_INLINE Value* VM::getValue(Operand& operand) const
+CLEVER_FORCE_INLINE Value* VM::getValue(const Operand& operand) const
 {
 	const Environment* source;
 
@@ -75,7 +75,7 @@ CLEVER_FORCE_INLINE Value* VM::getValue(Operand& operand) const
 }
 
 #ifdef CLEVER_DEBUG
-void VM::dumpOperand(Operand& op) const
+void VM::dumpOperand(const Operand& op) const
 {
 	const char *type[] = {
 		"UNUSED", "FETCH_VAR", "FETCH_CONST", "FETCH_TMP", "JMP_ADDR"
@@ -100,7 +100,7 @@ void VM::dumpOperand(Operand& op) const
 void VM::dumpOpcodes() const
 {
 	for (size_t i = 0, j = m_inst.size(); i < j; ++i) {
-		IR& ir = m_inst[i];
+		const IR& ir = m_inst[i];
 		::printf("[%03zu] %-12s |", i, get_opcode_name(ir.opcode));
 		dumpOperand(ir.op1);
 		dumpOperand(ir.op2);

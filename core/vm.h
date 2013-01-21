@@ -37,15 +37,13 @@ public:
 
 	typedef std::vector<std::vector<VMThread*> > ThreadPool;
 
-	VM(IRVector& inst)
+	VM(const IRVector& inst)
 		: m_pc(0), m_main(true), m_inst(inst),
 		  m_const_env(NULL), m_temp_env(NULL), m_global_env(NULL),
 		  m_call_stack(), m_call_args(), m_thread_pool(), m_mutex(),
 		  f_mutex(NULL), m_try_stack() {}
 
 	~VM() {}
-
-	void error(ErrorLevel, const char*, ...) const;
 
 	void setGlobalEnv(Environment* globals) { m_global_env = globals; }
 
@@ -67,11 +65,11 @@ public:
 
 	void nextPC() { ++m_pc; }
 
-	IRVector& getInst() const { return m_inst; }
+	const IRVector& getInst() const { return m_inst; }
 
 	/// Helper to retrive a Value* from ValuePool
-	Value* getValue(Operand&) const;
-	Value* getValueExt(Operand& operand) const { return getValue(operand); }
+	Value* getValue(const Operand&) const;
+	Value* getValueExt(const Operand& operand) const { return getValue(operand); }
 
 	ThreadPool& getThreadPool() { return this->m_thread_pool; }
 
@@ -92,9 +90,11 @@ public:
 
 	/// Methods for dumping opcodes
 #ifdef CLEVER_DEBUG
-	void dumpOperand(Operand&) const;
+	void dumpOperand(const Operand&) const;
 	void dumpOpcodes() const;
 #endif
+
+	static void error(ErrorLevel, const char*, ...);
 private:
 	/// VM program counter
 	size_t m_pc;
@@ -102,7 +102,7 @@ private:
 	bool m_main;
 
 	/// Vector of instruction
-	IRVector& m_inst;
+	const IRVector& m_inst;
 
 	/// Constant
 	Environment* m_const_env;

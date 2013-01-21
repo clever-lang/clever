@@ -25,7 +25,6 @@ void enable_threads();
 void disenable_threads();
 bool thread_is_enabled();
 
-
 class CMutex {
 public:
 	CMutex();
