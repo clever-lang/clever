@@ -90,7 +90,7 @@ public:
 
 	/// Methods for dumping opcodes
 #ifdef CLEVER_DEBUG
-	void dumpOperand(const Operand&) const;
+	static void dumpOperand(const Operand&);
 	void dumpOpcodes() const;
 #endif
 
