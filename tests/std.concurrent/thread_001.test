@@ -1,4 +1,4 @@
-Testing threads in concurrent package
+Testing threads in concurrent package [will fail in debug mode]
 ==CODE==
 import std.io.*;
 import std.concurrent.*;
