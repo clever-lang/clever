@@ -860,13 +860,11 @@ private:
 class Literal: public Node {
 public:
 	Literal(const location& location)
-		: Node(location), m_const_id(0) {}
+		: Node(location) {}
 
 	virtual ~Literal() {}
 
 	virtual bool isLiteral() const { return true; }
-private:
-	size_t m_const_id;
 };
 
 class IntLit: public Literal {
