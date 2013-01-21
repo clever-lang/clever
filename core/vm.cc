@@ -262,7 +262,7 @@ void VM::run()
 
 	OPCODES;
 	OP(OP_RET):
-		if (EXPECTED(m_call_stack.size())) {
+		if (EXPECTED(m_call_stack.size() > 1)) {
 			Environment* env = m_call_stack.top();
 			size_t ret_addr = env->getRetAddr();
 
