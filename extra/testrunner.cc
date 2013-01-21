@@ -18,7 +18,8 @@
 # include <unistd.h>
 #endif
 
-TestRunner::~TestRunner() {
+TestRunner::~TestRunner()
+{
 	std::vector<std::string>::iterator it;
 
 	for (it = tmp_files.begin(); it != tmp_files.end(); ++it) {
@@ -26,7 +27,8 @@ TestRunner::~TestRunner() {
 	}
 }
 
-bool TestRunner::show_result(void) const {
+bool TestRunner::show_result() const
+{
 	clock_t end_time;
 	double duration;
 
@@ -53,14 +55,16 @@ bool TestRunner::show_result(void) const {
 	return fail == 0;
 }
 
-void TestRunner::find(char* dir) {
+void TestRunner::find(const char* dir)
+{
 	DIR *dp;
 	std::fstream filep;
 	std::string path;
 
-	// Ignore .log files
+	// Ignore .log and .mem files
 	path = std::string(dir);
-	if ((path.size()-4 == path.rfind(".log")) || (path.size()-4 == path.rfind(".mem"))) {
+	if ((path.size()-4 == path.rfind(".log"))
+		|| (path.size()-4 == path.rfind(".mem"))) {
 		return;
 	}
 
@@ -83,7 +87,8 @@ void TestRunner::find(char* dir) {
 	}
 }
 
-void TestRunner::run(void) {
+void TestRunner::run()
+{
 	FILE *fp;
 	std::vector<std::string>::iterator it;
 	std::string file_name, tmp_file;
@@ -110,6 +115,11 @@ void TestRunner::run(void) {
 		tmp_file = file_name + ".tmp";
 
 		regex.FullMatch(read_file(file_name.c_str()), &title, &source, &expect);
+
+		if (!title.size()) {
+			std::cerr << "Test error: malformed test detected (" << file_name << ")" << std::endl;
+			exit(1);
+		}
 
 		write_file(tmp_file, source);
 
@@ -145,7 +155,7 @@ void TestRunner::run(void) {
 		// Valgrind log is empty?
 #ifndef _WIN32
 		if (valgrind) {
-			filesize = file_size(file_name + std::string(".mem"));
+			filesize = fileSize(file_name + std::string(".mem"));
 			if (filesize == 0) {
 				unlink(std::string(file_name + std::string(".mem")).c_str());
 			} else {
@@ -157,7 +167,7 @@ void TestRunner::run(void) {
 #endif
 		if (!valgrind) {
 			// If the mem log file exists, then remove it.
-			if (file_exists(file_name + ".mem")) {
+			if (fileExists(file_name + ".mem")) {
 				unlink(std::string(file_name + ".mem").c_str());
 			}
 		}
@@ -172,7 +182,7 @@ void TestRunner::run(void) {
 			pass++;
 
 			// If the log file exists, then remove it.
-			if (file_exists(file_name + ".log")) {
+			if (fileExists(file_name + ".log")) {
 				unlink(std::string(file_name + ".log").c_str());
 			}
 		} else {
@@ -182,7 +192,7 @@ void TestRunner::run(void) {
 			}
 			log_line = std::string("== Expected ==\n") + expect + std::string("\n");
 			log_line.append(std::string("== Got ==\n") + std::string(result));
-			write_log(file_name,log_line);
+			writeLog(file_name, log_line);
 			fail++;
 		}
 
@@ -192,7 +202,8 @@ void TestRunner::run(void) {
 	}
 }
 
-void TestRunner::write_file(std::string& name, std::string& source) {
+void TestRunner::write_file(std::string& name, std::string& source)
+{
 	std::ofstream file(name.c_str());
 
 	file << source;
@@ -201,7 +212,8 @@ void TestRunner::write_file(std::string& name, std::string& source) {
 	tmp_files.push_back(name);
 }
 
-std::string TestRunner::read_file(const char* name) const {
+std::string TestRunner::read_file(const char* name) const
+{
 	std::string source, line;
 	std::ifstream file;
 
@@ -221,7 +233,8 @@ std::string TestRunner::read_file(const char* name) const {
 	return source;
 }
 
-void TestRunner::load_folder(const char* dir) {
+void TestRunner::load_folder(const char* dir)
+{
 	DIR *dp, *dpr;
 	struct dirent *dirp;
 	std::string path,file;
@@ -258,31 +271,19 @@ void TestRunner::load_folder(const char* dir) {
 	}
 }
 
-std::string TestRunner::extract_folder(const char* file) const {
-	std::string path;
-	size_t found;
+void TestRunner::writeLog(const std::string& testname, const std::string& message)
+{
+	std::string filename = testname + ".log";
+	FILE *log = fopen(filename.c_str(),"w");
 
-	path = std::string(file);
-	found = path.rfind("/");
-	if (found != path.npos) {
-		path = path.substr(0,found+1);
-	}
-
-	return path;
-}
-
-void TestRunner::write_log(std::string testname, std::string message) {
-	FILE *log;
-
-	testname = testname + ".log";
-	log = fopen(testname.c_str(),"w");
 	if (log) {
-		fputs(message.c_str(),log);
+		fputs(message.c_str(), log);
 		fclose(log);
 	}
 }
 
-size_t TestRunner::file_size(std::string file) {
+size_t TestRunner::fileSize(const std::string& file)
+{
 	std::ifstream stream;
 	size_t length;
 
@@ -298,7 +299,8 @@ size_t TestRunner::file_size(std::string file) {
 	return 0;
 }
 
-bool TestRunner::file_exists(std::string file) {
+bool TestRunner::fileExists(const std::string& file)
+{
 	std::ifstream stream;
 
 	stream.open(file.c_str());
@@ -314,7 +316,7 @@ bool TestRunner::file_exists(std::string file) {
 
 void usage(void)
 {
-	std::cout << "Clever Language - Testrunner" << std::endl;
+	std::cout << "Clever programming language - Testrunner" << std::endl;
 	std::cout << "Usage: testrunner [options] path-of-test-file/dir" << std::endl;
 #ifndef _WIN32
 	std::cout << "\t-m: run valgrind on each test" << std::endl;
