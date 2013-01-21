@@ -37,7 +37,8 @@ typedef std::stack<Environment*> CallStack;
 class Environment: public RefCounted {
 public:
 	Environment()
-		: RefCounted() {}
+		: RefCounted(),  m_outer(NULL), m_data(), m_ret_val(NULL),
+		m_ret_addr(0), m_active(false) {}
 
 	explicit Environment(Environment* outer_)
 		: RefCounted(), m_outer(outer_), m_data(), m_ret_val(NULL),

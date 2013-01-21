@@ -71,9 +71,9 @@ public:
 	Value* getValue(const Operand&) const;
 	Value* getValueExt(const Operand& operand) const { return getValue(operand); }
 
-	ThreadPool& getThreadPool() { return this->m_thread_pool; }
+	ThreadPool& getThreadPool() { return m_thread_pool; }
 
-	CallStack& getCallStack() { return this->m_call_stack; }
+	CallStack& getCallStack() { return m_call_stack; }
 
 	CMutex* getMutex() { return isChild() ? f_mutex : &m_mutex; }
 
