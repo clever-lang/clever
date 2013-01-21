@@ -17,14 +17,14 @@ public:
 	RefCounted()
 		: m_reference(1) { }
 
-	explicit RefCounted(int reference)
+	explicit RefCounted(size_t reference)
 		: m_reference(reference) { }
 
 	virtual ~RefCounted() { }
 
-	void setReference(int reference) { m_reference = reference; }
+	void setReference(size_t reference) { m_reference = reference; }
 
-	int refCount() const { return m_reference; }
+	size_t refCount() const { return m_reference; }
 
 	void addRef() { ++m_reference; }
 
@@ -35,7 +35,7 @@ public:
 		}
 	}
 private:
-	int m_reference;
+	size_t m_reference;
 
 	DISALLOW_COPY_AND_ASSIGN(RefCounted);
 };
