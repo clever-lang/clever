@@ -75,19 +75,11 @@ public:
 
 	Symbol& at(size_t idx) const { return *m_symbols[idx]; }
 
-	void setId(size_t id) { m_id = id; }
-
-	size_t getId() const { return m_id; }
-
 	size_t size() const { return m_size; }
 
 	void copy(const Scope* s) {
-		for (size_t id = 0; id < s->m_value_pool.size(); ++id) {
-			const Value* u = s->m_value_pool[id];
-			Value* v = new Value;
-
-			m_value_pool.push_back(v);
-			v->copy(u);
+		for (size_t id = 0, n = s->m_value_pool.size(); id < n; ++id) {
+			m_value_pool.push_back(s->m_value_pool[id]->clone());
 		}
 	}
 
@@ -97,7 +89,7 @@ public:
 		return s;
 	}
 
-	Scope* leave() {
+	Scope* leave() const {
 		return m_parent;
 	}
 
