@@ -18,7 +18,6 @@
 #include "types/type.h"
 
 #define OPCODE    m_inst[m_pc]
-#define VM_EXIT() goto exit
 
 #if CLEVER_GCC_VERSION > 0
 # define OP(name)    name
@@ -278,7 +277,7 @@ void VM::run()
 
 			VM_GOTO(ret_addr);
 		} else {
-			VM_EXIT();
+			goto exit;
 		}
 		DISPATCH;
 
@@ -464,7 +463,7 @@ void VM::run()
 			clever_delete_var(m_temp_env);
 
 			getMutex()->unlock();
-			VM_EXIT();
+			goto exit;
 		}
 		DISPATCH;
 
@@ -854,7 +853,7 @@ throw_exception:
 		DISPATCH;
 
 	OP(OP_HALT):
-		VM_EXIT();
+		goto exit;
 
 	END_OPCODES;
 

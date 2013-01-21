@@ -20,9 +20,6 @@ namespace clever {
 
 class Value;
 class Function;
-
-typedef std::vector<std::pair<size_t, Value*> > FuncVars;
-
 class VM;
 
 struct VMThread {
