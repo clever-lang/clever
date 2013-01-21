@@ -145,16 +145,6 @@ void VM::wait()
 	m_thread_pool.clear();
 }
 
-CLEVER_THREAD_FUNC(_thread_control)
-{
-	VM* vm_handler = static_cast<VMThread*>(arg)->vm_handler;
-
-	vm_handler->nextPC();
-	vm_handler->run();
-
-	return NULL;
-}
-
 // Function parameter binding
 static CLEVER_FORCE_INLINE void _param_binding(Function* func, Environment* fenv,
 	std::vector<Value*>* args)

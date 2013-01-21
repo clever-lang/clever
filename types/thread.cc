@@ -8,10 +8,21 @@
 #include <sstream>
 #include "core/value.h"
 #include "core/vm.h"
+#include "core/cthread.h"
 #include "types/thread.h"
 #include "modules/std/core/function.h"
 
 namespace clever {
+
+static CLEVER_THREAD_FUNC(_thread_control)
+{
+	VM* vm_handler = static_cast<VMThread*>(arg)->vm_handler;
+
+	vm_handler->nextPC();
+	vm_handler->run();
+
+	return NULL;
+}
 
 // Thread.toString()
 CLEVER_METHOD(ThreadType::toString)
@@ -82,7 +93,7 @@ CLEVER_METHOD(ThreadType::run)
 		}
 		m_thread_pool[tdata->getID()].push_back(thread);
 		thread->vm_handler->setPC(thread_addr);
-		//thread->t_handler.create(_thread_control, static_cast<void*>(thread));
+		thread->t_handler.create(_thread_control, static_cast<void*>(thread));
 	}
 
 	m_vm->getMutex()->unlock();

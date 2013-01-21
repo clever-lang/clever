@@ -3,7 +3,7 @@ Testing threads
 import std.io.*;
 
 var memude = 555;
-return;
+
 function f(a,b=println)
 {
 	var i = 3;

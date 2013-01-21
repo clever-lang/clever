@@ -5,7 +5,6 @@ import std.io.*;
 var acc1 = 0;
 var acc2 = 0;
 var id = 0;
-return;
 
 process t[2] {
 	var a = 0;
