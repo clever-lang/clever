@@ -106,8 +106,6 @@ void Codegen::visit(CriticalBlock* node)
 
 void Codegen::visit(ThreadBlock* node)
 {
-	enable_threads();
-
 	if (node->getSize() != NULL) {
 		Node* size = node->getSize();
 		size->accept(*this);

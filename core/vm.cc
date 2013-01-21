@@ -183,10 +183,6 @@ static CLEVER_FORCE_INLINE void _param_binding(Function* func, Environment* fenv
 // Prepares an user function/method call
 CLEVER_FORCE_INLINE void VM::prepareCall(Function* func)
 {
-	if (thread_is_enabled()) {
-		getMutex()->lock();
-	}
-
 	Environment* fenv;
 
 	if (m_call_stack.top()->isActive()) {
@@ -208,10 +204,6 @@ CLEVER_FORCE_INLINE void VM::prepareCall(Function* func)
 	_param_binding(func, fenv, &m_call_args);
 
 	m_call_args.clear();
-
-	if (thread_is_enabled()) {
-		getMutex()->unlock();
-	}
 }
 
 // Executes the supplied function

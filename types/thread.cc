@@ -46,7 +46,7 @@ CLEVER_METHOD(ThreadType::wait)
 	std::vector<VMThread*>& thread_list = m_thread_pool.at(thread->getID());
 
 	for (size_t i = 0, j = thread_list.size(); i < j; ++i) {
-		delete_thread();
+		//delete_thread();
 
 		VMThread* t = thread_list.at(i);
 		t->t_handler.wait();
@@ -54,9 +54,9 @@ CLEVER_METHOD(ThreadType::wait)
 		clever_delete_var(t);
 	}
 
-	if (n_threads() == 0) {
-		disenable_threads();
-	}
+	//if (n_threads() == 0) {
+		//disenable_threads();
+	//}
 	thread_list.clear();
 }
 
@@ -79,7 +79,7 @@ CLEVER_METHOD(ThreadType::run)
 
 	for (size_t i = 0; i < n_threads; ++i) {
 		VMThread* thread = new VMThread;
-		new_thread();
+		//new_thread();
 
 		thread->vm_handler = new VM(m_vm->getInst());
 		thread->vm_handler->copy(m_vm, true);

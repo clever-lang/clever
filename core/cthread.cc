@@ -47,6 +47,7 @@ void CMutex::unlock()
 
 void CThread::create(ThreadFunc thread_func, void* args)
 {
+#ifndef NOTHREAD
 #ifndef CLEVER_WIN32
 	pthread_attr_t attr;
 	pthread_attr_init(&attr);
@@ -58,10 +59,12 @@ void CThread::create(ThreadFunc thread_func, void* args)
 #else
 	t_handler = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)thread_func, args, 0, NULL);
 #endif
+#endif
 }
 
 int CThread::wait()
 {
+#ifndef NOTHREAD
 	int status;
 
 #ifndef CLEVER_WIN32
@@ -73,41 +76,12 @@ int CThread::wait()
 #endif
 
 	return status;
+#else
+	return 0;
+#endif
+
 }
 
-
-bool g_thread_is_enabled = false;
-size_t g_n_threads = 0;
-
-void new_thread()
-{
-	++g_n_threads;
-}
-
-void delete_thread()
-{
-	--g_n_threads;
-}
-
-size_t n_threads()
-{
-	return g_n_threads;
-}
-
-void enable_threads()
-{
-	g_thread_is_enabled = true;
-}
-
-void disenable_threads()
-{
-	g_thread_is_enabled = false;
-}
-
-bool thread_is_enabled()
-{
-	return g_thread_is_enabled;
-}
 
 
 } // clever
