@@ -2,7 +2,7 @@ Testing condition functionality
 ==CODE==
 import std.io.*;
 import std.concurrent.*;
-
+return;
 var c = Condition.new();
 var m = Mutex.new();
 
