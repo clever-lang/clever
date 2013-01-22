@@ -127,6 +127,8 @@ void TestRunner::run()
 
 		write_file(tmp_file, source);
 
+		std::cout << "\r[....] " << title << " (" << file_name << ")" << std::flush;
+
 		// We should save the start time here.
 		test_start_time = clock();
 
@@ -165,7 +167,7 @@ void TestRunner::run()
 			if (filesize == 0) {
 				unlink(std::string(file_name + std::string(".mem")).c_str());
 			} else {
-				std::cout << "[LEAK] ";
+				std::cout << "\r[LEAK] ";
 				leak++;
 				last_ok = false;
 			}
@@ -174,7 +176,7 @@ void TestRunner::run()
 			if (filesize == 0) {
 				unlink(std::string(file_name + std::string(".race")).c_str());
 			} else {
-				std::cout << "[RACE] ";
+				std::cout << "\r[RACE] ";
 				races++;
 				last_ok = false;
 			}
@@ -196,7 +198,7 @@ void TestRunner::run()
 			if ((valgrind && filesize == 0) || (helgrind && filesize == 0)
 				|| !(valgrind || helgrind)) {
 				if (show_all_results) {
-					std::cout << "[OKAY] ";
+					std::cout << "\r[OKAY] ";
 				}
 				last_ok = true;
 			}
@@ -210,7 +212,7 @@ void TestRunner::run()
 			if ((valgrind && filesize == 0)
 				|| (helgrind && filesize == 0)
 				|| !(valgrind || helgrind)) {
-				std::cout << "[FAIL] ";
+				std::cout << "\r[FAIL] ";
 				last_ok = false;
 			}
 			log_line = std::string("== Expected ==\n") + expect + std::string("\n");
@@ -219,9 +221,11 @@ void TestRunner::run()
 			fail++;
 		}
 
-		if (show_all_results == true || last_ok == false) {
-			std::cout << title << " (" << file_name << ")" << " - " << ((test_end_time - test_start_time)*1000/CLOCKS_PER_SEC) << "ms" << std::endl;
+		if (!(show_all_results == true || last_ok == false)) {
+			std::cout << "\r[PASS] ";
 		}
+		std::cout << title << " (" << file_name << ")" << " - " << ((test_end_time - test_start_time)*1000/CLOCKS_PER_SEC) << "ms" << std::endl;
+
 	}
 }
 
