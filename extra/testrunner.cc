@@ -207,7 +207,9 @@ void TestRunner::run()
 				unlink(std::string(file_name + ".log").c_str());
 			}
 		} else {
-			if ((valgrind && filesize == 0) || !valgrind) {
+			if ((valgrind && filesize == 0)
+				|| (helgrind && filesize == 0)
+				|| !(valgrind || helgrind)) {
 				std::cout << "[FAIL] ";
 				last_ok = false;
 			}
@@ -271,9 +273,10 @@ void TestRunner::load_folder(const char* dir)
 			}
 			// Ignore .log files
 			file = std::string(dirp->d_name);
-			if ((file.size()-4 == file.rfind(".log"))
-				|| (file.size()-4 == file.rfind(".mem"))
-				|| (file.size()-5 == file.rfind(".race"))) {
+			if ((file.size() > 4 &&
+				(file.size()-4 == file.rfind(".log")
+				|| file.size()-4 == file.rfind(".mem")))
+				|| (file.size() > 5 && file.size()-5 == file.rfind(".race"))) {
 				continue;
 			}
 			// Is this a folder or a file?
