@@ -124,7 +124,7 @@ void PkgManager::importModule(Scope* scope, Environment* env, const CString* pac
 	}
 
 	ModuleMap& mods = it->second->getModules();
-	ModuleMap::const_iterator itm = mods.find(module);
+	ModuleMap::const_iterator itm = mods.find(*module);
 
 	if (itm == mods.end()) {
 		std::cerr << "Module not found!" << std::endl;

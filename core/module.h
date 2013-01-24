@@ -23,12 +23,17 @@
 
 namespace clever {
 
+class Type;
+
+typedef std::tr1::unordered_map<const CString*, Type*> TypeMap;
+typedef std::pair<const CString*, Type*> TypeMapEntry;
+
 /// Module representation
 class Module {
 public:
 	enum ModuleStatus { UNLOADED, LOADED };
 
-	Module(std::string name)
+	Module(const std::string& name)
 		: m_name(name), m_flags(UNLOADED), m_funcs(), m_types() {}
 
 	virtual ~Module() {}
@@ -46,7 +51,7 @@ public:
 
 	FunctionMap& getFunctions() { return m_funcs; }
 
-	std::string getName() { return m_name; }
+	const std::string& getName() { return m_name; }
 
 	void setLoaded() { m_flags = LOADED; }
 	bool isLoaded() const { return m_flags == LOADED; }
@@ -59,21 +64,21 @@ private:
 	TypeMap m_types;
 };
 
-typedef std::tr1::unordered_map<const CString*, Module*> ModuleMap;
-typedef std::pair<const CString*, Module*> ModulePair;
+typedef std::tr1::unordered_map<std::string, Module*> ModuleMap;
+typedef std::pair<std::string, Module*> ModulePair;
 
 /// Package representation
 class Package {
 public:
 	enum PackageStatus { UNLOADED, LOADED, FULLY_LOADED };
 
-	Package(std::string name)
+	Package(const std::string& name)
 		: m_name(name), m_flags(UNLOADED), m_modules() {}
 
 	virtual ~Package() {}
 
 	void addModule(Module* module) {
-		m_modules.insert(ModulePair(CSTRING(module->getName()), module));
+		m_modules.insert(ModulePair(module->getName(), module));
 	}
 
 	ModuleMap& getModules() { return m_modules; }

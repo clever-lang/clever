@@ -51,8 +51,7 @@ public:
 
 	void setTempEnv(Environment* temps) { m_temp_env = temps; }
 
-	void copy(const VM*);
-	void copy(const VM*, bool deep);
+	void copy(const VM*, bool);
 
 	void setChild() { m_main = false; }
 
@@ -80,11 +79,11 @@ public:
 
 	CMutex* getMutex() { return isChild() ? f_mutex : &m_mutex; }
 
-	void prepareCall(Function*);
+	void prepareCall(const Function*);
 
 	/// Start the VM execution
 	void run();
-	Value* runFunction(Function*, std::vector<Value*>*);
+	Value* runFunction(const Function*, std::vector<Value*>*);
 
 	/// Wait threads
 	void wait();

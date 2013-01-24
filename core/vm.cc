@@ -118,7 +118,7 @@ void VM::copy(const VM* vm, bool deep)
 	m_try_stack = vm->m_try_stack;
 
 	if (deep) {
-		this->m_temp_env = new Environment(NULL);
+		this->m_temp_env = new Environment();
 		this->m_temp_env->copy(vm->m_temp_env);
 	} else {
 		this->m_temp_env = vm->m_temp_env;
@@ -131,7 +131,7 @@ void VM::copy(const VM* vm, bool deep)
 
 void VM::wait()
 {
-	ThreadPool::iterator it(m_thread_pool.begin()), end(m_thread_pool.end());
+	ThreadPool::const_iterator it(m_thread_pool.begin()), end(m_thread_pool.end());
 
 	while (it != end) {
 		for (size_t i = 0, j = it->size(); i < j; ++i) {
@@ -142,11 +142,12 @@ void VM::wait()
 		}
 		++it;
 	}
+
 	m_thread_pool.clear();
 }
 
 // Function parameter binding
-static CLEVER_FORCE_INLINE void _param_binding(Function* func, Environment* fenv,
+static CLEVER_FORCE_INLINE void _param_binding(const Function* func, Environment* fenv,
 	std::vector<Value*>* args)
 {
 	size_t nargs = 0;
@@ -181,7 +182,7 @@ static CLEVER_FORCE_INLINE void _param_binding(Function* func, Environment* fenv
 }
 
 // Prepares an user function/method call
-CLEVER_FORCE_INLINE void VM::prepareCall(Function* func)
+CLEVER_FORCE_INLINE void VM::prepareCall(const Function* func)
 {
 	getMutex()->lock();
 	Environment* fenv;
@@ -209,7 +210,7 @@ CLEVER_FORCE_INLINE void VM::prepareCall(Function* func)
 }
 
 // Executes the supplied function
-Value* VM::runFunction(Function* func, std::vector<Value*>* args)
+Value* VM::runFunction(const Function* func, std::vector<Value*>* args)
 {
 	Value* result = new Value;
 
@@ -255,7 +256,6 @@ void VM::run()
 				m_call_stack.top()->getRetVal()->copy(val);
 			}
 
-			env->clear();
 			clever_delref(env);
 			m_call_stack.pop();
 
@@ -431,7 +431,6 @@ void VM::run()
 			if (EXPECTED(m_call_stack.size())) {
 				Environment* env = m_call_stack.top();
 
-				env->clear();
 				clever_delref(env);
 				m_call_stack.pop();
 			}
@@ -441,7 +440,6 @@ void VM::run()
 
 			while (env != NULL) {
 				other = env->getOuter();
-				env->clear();
 				env = other;
 			}
 			clever_delete_var(m_temp_env);
@@ -456,7 +454,6 @@ void VM::run()
 			Environment* env = m_call_stack.top();
 			size_t ret_addr = env->getRetAddr();
 
-			env->clear();
 			clever_delref(env);
 			m_call_stack.pop();
 
@@ -471,7 +468,7 @@ void VM::run()
 		{
 			const Value* value = getValue(OPCODE.op1);
 
-			if (value->isNull() || !value->asBool()) {
+			if (!value->asBool()) {
 				if (OPCODE.result.op_type != UNUSED) {
 					getValue(OPCODE.result)->setBool(false);
 				}
@@ -555,7 +552,7 @@ void VM::run()
 		{
 			const Value* value = getValue(OPCODE.op1);
 
-			if (!value->isNull() || value->asBool()) {
+			if (value->asBool()) {
 				if (OPCODE.result.op_type != UNUSED) {
 					getValue(OPCODE.result)->setBool(true);
 				}
@@ -722,14 +719,14 @@ void VM::run()
 		{
 			const Value* callee = getValue(OPCODE.op1);
 			const Value* method = getValue(OPCODE.op2);
-			const Type* type = callee->getType();
 
 			if (UNEXPECTED(callee->isNull())) {
 				error(VM_ERROR, "Cannot call method `%S' from a null value",
 					method->getStr());
 			}
 
-			Function* func = const_cast<Function*>(type->getMethod(method->getStr()));
+			const Type* type = callee->getType();
+			const Function* func = type->getMethod(method->getStr());
 
 			if (UNEXPECTED(func == NULL)) {
 				error(VM_ERROR, "Method `%S' not found!", method->getStr());
@@ -762,9 +759,9 @@ void VM::run()
 			const Value* valtype = getValue(OPCODE.op1);
 			const Type* type = valtype->getType();
 			const Value* method = getValue(OPCODE.op2);
-			const Function* func;
+			const Function* func = type->getMethod(method->getStr());
 
-			if (EXPECTED((func = type->getMethod(method->getStr())))) {
+			if (EXPECTED(func != NULL)) {
 				if (UNEXPECTED(!func->isStatic())) {
 					error(VM_ERROR, "Method `%S' cannot be called statically",
 						method->getStr());
@@ -787,18 +784,19 @@ void VM::run()
 	OP(OP_PROP_ACC):
 		{
 			const Value* obj = getValue(OPCODE.op1);
-			const Value* prop_name = getValue(OPCODE.op2);
-			const Value* prop_value;
+			const Value* name = getValue(OPCODE.op2);
 
 			if (UNEXPECTED(obj->isNull())) {
 				error(VM_ERROR, "Cannot perform property access from null value");
 			}
 
-			if (EXPECTED((prop_value = obj->getType()->getProperty(prop_name->getStr())))) {
-				getValue(OPCODE.result)->copy(prop_value);
+			const Value* value = obj->getType()->getProperty(name->getStr());
+
+			if (EXPECTED(value != NULL)) {
+				getValue(OPCODE.result)->copy(value);
 			} else {
 				error(VM_ERROR, "Property `%T::%S' not found!",
-					obj->getType(), prop_name->getStr());
+					obj->getType(), name->getStr());
 			}
 		}
 		DISPATCH;

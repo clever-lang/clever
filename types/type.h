@@ -21,6 +21,9 @@ namespace clever {
 
 class CException;
 class VM;
+class Value;
+class Type;
+class Function;
 
 #define CLEVER_TYPE_OPERATOR_ARGS Value* result, const Value* lhs, const Value* rhs, const VM* vm, CException* exception
 
@@ -50,22 +53,11 @@ class VM;
 #define CLEVER_TYPE_CTOR_ARGS const ::std::vector<Value*>* args
 #define CLEVER_TYPE_DTOR_ARGS void* data
 
-class Value;
-class Type;
-class Function;
-
 typedef void (Type::*MethodPtr)(CLEVER_METHOD_ARGS) const;
 
 typedef std::tr1::unordered_map<const CString*, Value*> MemberMap;
-
 typedef std::tr1::unordered_map<const CString*, Value*> PropertyMap;
-typedef std::pair<const CString*, Value*> PropertyPair;
-
 typedef std::tr1::unordered_map<const CString*, Function*> MethodMap;
-typedef std::pair<const CString*, Function*> MethodPair;
-
-typedef std::tr1::unordered_map<const CString*, Type*> TypeMap;
-typedef std::pair<const CString*, Type*> TypeMapEntry;
 
 class Type {
 public:
@@ -90,19 +82,19 @@ public:
 		return NULL;
 	}
 
-	Function* addMethod(Function* func);
+	Function* addMethod(Function*);
 
-	const Function* getMethod(const CString* name) const;
+	const Function* getMethod(const CString*) const;
 
 	void addProperty(const CString* name, Value* value) {
 		addMember(name, value);
 	}
 
-	Value* getProperty(const CString* name) const;
+	Value* getProperty(const CString*) const;
 
-	MethodMap getMethods() const;
+	const MethodMap getMethods() const;
 
-	PropertyMap getProperties() const;
+	const PropertyMap getProperties() const;
 
 	/// Method for retrieve the type name
 	const CString* getName() const { return m_name; }
@@ -118,8 +110,8 @@ public:
 	virtual bool isPrimitive() const { return false; }
 
 	/// Virtual method for debug purpose
-	virtual void dump(const void*) const = 0;
-	virtual void dump(const void*, std::ostream& out) const = 0;
+	virtual void dump(const void* data) const { dump(data, std::cout); }
+	virtual void dump(const void*, std::ostream&) const = 0;
 
 	/// Operator methods
 	virtual void CLEVER_FASTCALL add(CLEVER_TYPE_OPERATOR_ARGS)           const;

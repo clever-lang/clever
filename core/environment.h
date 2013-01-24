@@ -9,6 +9,7 @@
 #define CLEVER_ENVIRONMENT_H
 
 #include <stack>
+#include <algorithm>
 #include "core/value.h"
 
 namespace clever {
@@ -48,14 +49,7 @@ public:
 
 	~Environment() {
 		clever_delref(m_outer);
-	}
-
-	// XXX(heuripedes): isn't ~Environment() a better place for this?
-	// XXX(krakjoe): not so much, leave it here for now please
-	void clear() {
-		for (size_t i = 0, size = m_data.size(); i < size; ++i) {
-			clever_delref(m_data.at(i));
-		}
+		std::for_each(m_data.begin(), m_data.end(), clever_delref);
 	}
 
 	/**
@@ -63,7 +57,10 @@ public:
 	 * @param value
 	 * @return the index of the newly pushed value.
 	 */
-	ValueOffset pushValue(Value* value);
+	ValueOffset pushValue(Value* value) {
+		m_data.push_back(value);
+		return ValueOffset(0, m_data.size()-1);
+	}
 
 	/**
 	 * @brief get the value specified by `offset`.
@@ -74,7 +71,7 @@ public:
 	 * @param offset
 	 * @return
 	 */
-	Value* getValue(const ValueOffset& offset) const;
+	Value* getValue(const ValueOffset&) const;
 
 	/**
 	 * @brief ativates the current environment.
@@ -86,7 +83,7 @@ public:
 	 * @param outer the environment where the current instance is contained in
 	 * @return an "activated" copy of the current environment
 	 */
-	Environment* activate(Environment* outer) const;
+	Environment* activate(Environment*) const;
 
 	bool isActive() const { return m_active; }
 
@@ -109,11 +106,6 @@ private:
 
 	DISALLOW_COPY_AND_ASSIGN(Environment);
 };
-
-inline ValueOffset Environment::pushValue(Value* value) {
-	m_data.push_back(value);
-	return ValueOffset(0, m_data.size()-1);
-}
 
 } // clever
 

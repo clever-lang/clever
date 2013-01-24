@@ -12,7 +12,6 @@
 #include "core/value.h"
 #include "core/location.hh"
 #include "core/clever.h"
-
 #include "core/scope.h"
 
 namespace clever { namespace ast {
@@ -80,7 +79,7 @@ public:
 	ValueOffset& getVOffset() { return m_voffset; }
 
 private:
-	const location& m_location;
+	const location m_location;
 	size_t m_value_id;
 	const Scope* m_scope;
 	ValueOffset m_voffset;
@@ -108,8 +107,9 @@ public:
 	Node* getNode(size_t index) {
 		clever_assert(index < m_nodes.size(), "Index %i out of bounds.", index);
 
-		if (m_nodes.empty())
+		if (m_nodes.empty()) {
 			return NULL;
+		}
 
 		return m_nodes.at(index);
 	}
@@ -126,7 +126,7 @@ public:
 	virtual Node* accept(Transformer& transformer);
 
 	void clearNodes() {
-		NodeList::iterator it = m_nodes.begin(), end = m_nodes.end();
+		NodeList::iterator it(m_nodes.begin()), end(m_nodes.end());
 
 		while (it != end) {
 			(*it)->delRef();

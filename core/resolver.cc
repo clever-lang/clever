@@ -18,9 +18,8 @@ Resolver::Resolver(const PkgManager& pkgmanager)
 {
 	// Global environment and scope
 	m_symtable = m_scope = new Scope();
-	m_scope->setEnvironment(new Environment(NULL));
+	m_scope->setEnvironment(new Environment());
 	m_stack.push(m_scope->getEnvironment());
-	m_scope->getEnvironment()->delRef();
 
 	m_pkgmanager.importModule(m_scope, m_stack.top(),
 		CSTRING("std"), CSTRING("core"));
@@ -32,6 +31,7 @@ void Resolver::visit(Block* node)
 {
 	m_scope = m_scope->enter();
 	m_scope->setEnvironment(m_stack.top());
+	m_stack.top()->addRef();
 
 	node->setScope(m_scope);
 
@@ -92,7 +92,6 @@ void Resolver::visit(ThreadBlock* node)
 	m_stack.push(m_scope->getEnvironment());
 
 	thread->setEnvironment(m_scope->getEnvironment());
-	m_scope->getEnvironment()->delRef();
 
 	node->setScope(m_scope);
 
@@ -148,7 +147,6 @@ void Resolver::visit(FunctionDecl* node)
 	m_scope->setEnvironment(new Environment(m_stack.top()));
 	m_stack.push(m_scope->getEnvironment());
 	func->setEnvironment(m_scope->getEnvironment());
-	m_scope->getEnvironment()->delRef();
 
 	node->setScope(m_scope);
 
@@ -241,6 +239,7 @@ void Resolver::visit(Catch* node)
 {
 	m_scope = m_scope->enter();
 	m_scope->setEnvironment(m_stack.top());
+	m_stack.top()->addRef();
 	node->setScope(m_scope);
 
 	Value* val = new Value();
@@ -268,6 +267,7 @@ void Resolver::visit(ClassDef* node)
 
 	m_scope = m_scope->enter();
 	m_scope->setEnvironment(m_stack.top());
+	m_stack.top()->addRef();
 	node->setScope(m_scope);
 
 	m_class = type;

@@ -101,11 +101,7 @@ public:
 	Symbol* getAny(const CString*);
 
 	Environment* getEnvironment() const { return m_environment; }
-	void setEnvironment(Environment* e) {
-        clever_delref(m_environment);
-		m_environment = e;
-        clever_addref(m_environment);
-	}
+	void setEnvironment(Environment* env) {	m_environment = env; }
 
 	std::pair<size_t, size_t> getOffset(Symbol* sym) const;
 

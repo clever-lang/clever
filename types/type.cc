@@ -16,24 +16,6 @@ namespace clever {
 
 void Type::deallocMembers()
 {
-	/*
-	PropertyMap::const_iterator it(m_properties.begin()),
-		end(m_properties.end());
-
-	while (it != end) {
-        clever_delref((*it).second);
-		++it;
-	}
-
-	MethodMap::const_iterator it2(m_methods.begin()),
-		end2(m_methods.end());
-
-	while (it2 != end2) {
-		delete it2->second;
-		++it2;
-	}
-	*/
-
 	MemberMap::const_iterator it(m_members.begin()),
 		end(m_members.end());
 
@@ -55,7 +37,8 @@ Function* Type::addMethod(Function* func)
 	return func;
 }
 
-const Function* Type::getMethod(const CString* name) const {
+const Function* Type::getMethod(const CString* name) const
+{
 	Value* val = getMember(name);
 
 	if (val && val->isFunction()) {
@@ -65,7 +48,8 @@ const Function* Type::getMethod(const CString* name) const {
 	return NULL;
 }
 
-Value* Type::getProperty(const CString* name) const {
+Value* Type::getProperty(const CString* name) const
+{
 	Value* val = getMember(name);
 
 	if (val && !val->isFunction()) {
@@ -75,7 +59,8 @@ Value* Type::getProperty(const CString* name) const {
 	return NULL;
 }
 
-MethodMap Type::getMethods() const {
+const MethodMap Type::getMethods() const
+{
 	MemberMap::const_iterator it(m_members.begin()),
 		end(m_members.end());
 
@@ -83,7 +68,8 @@ MethodMap Type::getMethods() const {
 
 	while (it != end) {
 		if (it->second->isFunction()) {
-			mm.insert(MethodMap::value_type(it->first, static_cast<Function*>(it->second->getObj())));
+			mm.insert(MethodMap::value_type(
+				it->first, static_cast<Function*>(it->second->getObj())));
 		}
 		++it;
 	}
@@ -91,7 +77,8 @@ MethodMap Type::getMethods() const {
 	return mm;
 }
 
-PropertyMap Type::getProperties() const {
+const PropertyMap Type::getProperties() const
+{
 	MemberMap::const_iterator it(m_members.begin()),
 		end(m_members.end());
 

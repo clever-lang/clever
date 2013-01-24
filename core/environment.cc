@@ -9,7 +9,8 @@
 
 namespace clever {
 
-Environment* Environment::activate(Environment* outer) const {
+Environment* Environment::activate(Environment* outer) const
+{
     Environment* env = new Environment(outer);
     env->m_active = true;
 
@@ -20,7 +21,8 @@ Environment* Environment::activate(Environment* outer) const {
     return env;
 }
 
-Value* Environment::getValue(const ValueOffset& offset) const {
+Value* Environment::getValue(const ValueOffset& offset) const
+{
     if (offset.first == 0) { // local
         clever_assert(offset.second < m_data.size(),
                       "`offset.second` must be within `m_data` limits.");
@@ -44,8 +46,10 @@ Value* Environment::getValue(const ValueOffset& offset) const {
     return env->m_data.at(offset.second);
 }
 
-void Environment::copy(const Environment* _env) {
+void Environment::copy(const Environment* _env)
+{
     Environment* _this = this;
+
     while (_env != NULL) {
         const Environment* env = _env;
 
@@ -69,7 +73,7 @@ void Environment::copy(const Environment* _env) {
 
         if (env->m_outer != NULL) {
             //this->m_outer->copy(env->m_outer)
-            _this->m_outer = new Environment(NULL);
+            _this->m_outer = new Environment();
             _env = env->m_outer;
             _this = _this->m_outer;
         } else {
@@ -79,4 +83,4 @@ void Environment::copy(const Environment* _env) {
     }
 }
 
-}
+} // clever

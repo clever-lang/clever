@@ -12,6 +12,7 @@
 #include <vector>
 #include "core/opcode.h"
 #include "core/environment.h"
+#include "core/location.hh"
 
 namespace clever {
 
@@ -46,16 +47,17 @@ struct Operand {
 /// Intermediate representation
 struct IR {
 	IR(Opcode _op)
-		: opcode(_op), op1(), op2(), result() {}
+		: opcode(_op), op1(), op2(), result(), loc() {}
 
 	IR(Opcode _op, Operand _op1)
-		: opcode(_op), op1(_op1), op2(), result() {}
+		: opcode(_op), op1(_op1), op2(), result(), loc() {}
 
 	IR(Opcode _op, Operand _op1, Operand _op2)
-		: opcode(_op), op1(_op1), op2(_op2), result() {}
+		: opcode(_op), op1(_op1), op2(_op2), result(), loc() {}
 
 	Opcode opcode;
 	Operand op1, op2, result;
+	location loc;
 };
 
 // Vector of VM instructions

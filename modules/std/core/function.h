@@ -5,8 +5,8 @@
  * This file is distributed under the MIT license. See LICENSE for details.
  */
 
-#ifndef CLEVER_TYPES_FUNCTION_H
-#define CLEVER_TYPES_FUNCTION_H
+#ifndef CLEVER_FUNCTION_H
+#define CLEVER_FUNCTION_H
 
 #include <vector>
 #include "core/clever.h"
@@ -45,24 +45,24 @@ public:
 		: m_name(), m_num_rargs(0), m_num_args(0), m_flags(FF_INVALID),
 		  m_environment(NULL) {}
 
-	Function(std::string name, FunctionPtr ptr)
+	Function(const std::string& name, FunctionPtr ptr)
 		: m_name(name), m_num_rargs(0), m_num_args(0), m_flags(FF_INTERNAL),
 		  m_environment(NULL)
 		{ m_info.fptr = ptr; }
 
-	Function(std::string name, size_t addr)
+	Function(const std::string& name, size_t addr)
 		: m_name(name), m_num_rargs(0), m_num_args(0), m_flags(FF_USER),
 		  m_environment(NULL)
 		{ m_info.addr = addr; }
 
-	Function(std::string name, MethodPtr ptr)
+	Function(const std::string& name, MethodPtr ptr)
 		: m_name(name), m_num_rargs(0), m_num_args(0), m_flags(FF_INTERNAL),
 		  m_environment(NULL)
 		{ m_info.mptr = ptr; }
 
 	~Function() {}
 
-	void setName(std::string name) { m_name = name; }
+	void setName(const std::string& name) { m_name = name; }
 	const std::string& getName() const { return m_name; }
 
 	bool isValid() const { return m_flags < FF_INVALID; }
@@ -74,7 +74,6 @@ public:
 			m_flags = FF_INTERNAL;
 		}
 	}
-
 	bool isInternal() const { return m_flags & FF_INTERNAL; }
 
 	void setUserDefined() {
@@ -107,10 +106,8 @@ public:
 	size_t getNumRequiredArgs() const { return m_num_rargs; }
 	void setNumRequiredArgs(size_t num) { m_num_rargs = num; }
 
-	Environment* getEnvironment() { return m_environment; }
-	void setEnvironment(Environment* e) {
-		m_environment = e;
-	}
+	Environment* getEnvironment() const { return m_environment; }
+	void setEnvironment(Environment* env) { m_environment = env; }
 private:
 	std::string m_name;
 	size_t m_num_rargs;
@@ -148,14 +145,15 @@ public:
 	void dump(const void* data, std::ostream& out) const { out << "function() {}"; }
 
 	void* allocData(CLEVER_TYPE_CTOR_ARGS) const { return new Function;  }
+	void deallocData(CLEVER_TYPE_DTOR_ARGS) { delete static_cast<Function*>(data); }
 
 	CLEVER_METHOD(ctor) {
 		result->setObj(this, allocData(NULL));
 	}
-
-	void deallocData(void* data) { delete static_cast<Function*>(data); }
+private:
+	DISALLOW_COPY_AND_ASSIGN(FuncType);
 };
 
 } // clever
 
-#endif // CLEVER_TYPES_FUNCTION_H
+#endif // CLEVER_FUNCTION_H

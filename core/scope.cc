@@ -11,7 +11,7 @@ namespace clever {
 
 Scope::~Scope()
 {
-	std::for_each(m_value_pool.begin(), m_value_pool.end(), clever_delref);
+	//std::for_each(m_value_pool.begin(), m_value_pool.end(), clever_delref);
 	std::for_each(m_children.begin(), m_children.end(), clever_delete<Scope>);
 	std::for_each(m_symbols.begin(), m_symbols.end(), clever_delete<Symbol>);
 

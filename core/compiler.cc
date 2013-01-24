@@ -26,15 +26,8 @@ void Compiler::init()
 /// Frees all resource used by the compiler
 void Compiler::shutdown()
 {
-	if (m_const_env) {
-		m_const_env->clear();
-		clever_delref(m_const_env);
-	}
-
-	if (m_temp_env) {
-		m_temp_env->clear();
-		clever_delref(m_temp_env);
-	}
+	clever_delref(m_const_env);
+	clever_delref(m_temp_env);
 
 	if (m_scope_pool.size()) {
 		clever_delete_var(m_scope_pool[0]);
