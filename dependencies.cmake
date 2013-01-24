@@ -74,9 +74,9 @@ endif (ICU_DIR)
 # libfcgi
 if (FCGI_DIR)
 	find_path(FCGI_INCLUDE_DIR fcgi_config.h "${FCGI_DIR}/include")
-	find_library(FCGI_LIBS NAMES fcgi++ PATHS "${FCGI_DIR}/lib")	
+	find_library(FCGI_LIBS NAMES fcgi++ PATHS "${FCGI_DIR}/lib")
 	find_library(FCGI_LIBS NAMES fcgi PATHS "${FCGI_DIR}/lib")
-	
+
 	if (FCGI_INCLUDE_DIR AND FCGI_LIBS)
 		list (APPEND FCGI_INCLUDE_DIR ${FCGI_INCLUDE_DIR})
 		list (APPEND FCGI_LIBS ${FCGI_LIBS})
@@ -91,11 +91,11 @@ else (FCGI_DIR)
 		list (APPEND FCGI_INCLUDE_DIR ${FCGI_INCLUDE_DIR})
 		set (FCGI_FOUND TRUE)
 	endif (FCGI_INCLUDE_DIR)
-	
+
 	set (FCGI_LIB_FOUND FALSE)
-	
-	if (FCGI_FOUND)		
-		find_library(FCGI_LIB NAMES fcgi)		
+
+	if (FCGI_FOUND)
+		find_library(FCGI_LIB NAMES fcgi)
 		if (FCGI_LIB)
 			list (APPEND FCGI_LIBS ${FCGI_LIB})
 		set (FCGI_LIB_FOUND TRUE)
@@ -103,13 +103,13 @@ else (FCGI_DIR)
 	endif(FCGI_FOUND)
 
 	if (FCGI_LIB_FOUND)
-		find_library(FCGI_LIBPP NAMES fcgi++)		
+		find_library(FCGI_LIBPP NAMES fcgi++)
 		if (FCGI_LIBPP)
 			list (APPEND FCGI_LIBS ${FCGI_LIBPP})
 		set (FCGI_LIBPP_FOUND TRUE)
 		endif(FCGI_LIBPP)
 	endif(FCGI_LIB_FOUND)
-	
+
 endif (FCGI_DIR)
 
 # cgicc
