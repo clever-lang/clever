@@ -1,0 +1,22 @@
+Testing user class
+==CODE==
+import std.io.*;
+
+class Foo {
+	var a;
+
+	function setA(v) {
+		a = v;
+	}
+
+	function getA() {
+		return a;
+	}
+}
+
+var a = Foo.new;
+
+a.setA(123);
+println(a.getA());
+==RESULT==
+123
