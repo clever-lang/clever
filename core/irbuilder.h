@@ -23,6 +23,11 @@ public:
         m_const_env->pushValue(new Value(false));
     }
 
+    ~IRBuilder() {
+		clever_delref(m_const_env);
+		clever_delref(m_temp_env);
+	}
+
     /// @brief push an instruction to the IR vector
 	IR& push(const IR& ir) {
         m_ir.push_back(ir);

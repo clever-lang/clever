@@ -26,12 +26,6 @@ static CLEVER_FORCE_INLINE void _prepare_operand(Operand& op, Node* node)
 	}
 }
 
-Codegen::Codegen(Compiler* compiler, IRBuilder *builder)
-	: m_compiler(compiler), m_builder(builder),
-	  m_jmps(), m_thread_ids()
-{
-}
-
 void Codegen::sendArgs(NodeArray* node)
 {
 	NodeList& args = node->getNodes();

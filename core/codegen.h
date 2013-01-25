@@ -30,7 +30,9 @@ public:
 	typedef std::vector<size_t> AddrVector;
 	typedef std::stack<AddrVector> JmpList;
 
-	Codegen(Compiler* compiler, IRBuilder* builder);
+	Codegen(Compiler* compiler, IRBuilder* builder)
+		: m_compiler(compiler), m_builder(builder), m_jmps(), m_thread_ids() {}
+
 	~Codegen() {}
 
 	void sendArgs(NodeArray*);
