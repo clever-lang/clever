@@ -43,7 +43,7 @@ public:
 	void* allocData(CLEVER_TYPE_CTOR_ARGS) const;
 	void deallocData(void*);
 
-	void dump(const void* value, std::ostream& out) const;
+	void dump(const void*, std::ostream&) const;
 
 	CLEVER_METHOD(ctor);
 	CLEVER_METHOD(insert);

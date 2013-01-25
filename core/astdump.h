@@ -58,7 +58,6 @@ public:
 	}
 
 	void visit(StringLit* node) {
-
 		std::cout << m_ws << "StringLit (" << node->getValue()->substr(0, 7);
 
 		if (node->getValue()->length() > 7) {
@@ -134,9 +133,9 @@ public:
 		switch (node->getOperator()) {
 			case ast::Comparison::COP_EQUAL:   AST_DUMP_DISPLAY_LHS_RHS("=="); break;
 			case ast::Comparison::COP_NEQUAL:  AST_DUMP_DISPLAY_LHS_RHS("!="); break;
-			case ast::Comparison::COP_GREATER: AST_DUMP_DISPLAY_LHS_RHS(">"); break;
+			case ast::Comparison::COP_GREATER: AST_DUMP_DISPLAY_LHS_RHS(">");  break;
 			case ast::Comparison::COP_GEQUAL:  AST_DUMP_DISPLAY_LHS_RHS(">="); break;
-			case ast::Comparison::COP_LESS:    AST_DUMP_DISPLAY_LHS_RHS("<"); break;
+			case ast::Comparison::COP_LESS:    AST_DUMP_DISPLAY_LHS_RHS("<");  break;
 			case ast::Comparison::COP_LEQUAL:  AST_DUMP_DISPLAY_LHS_RHS("<="); break;
 		}
 	}
@@ -182,6 +181,8 @@ public:
 private:
 	size_t m_level;
 	std::string m_ws;
+
+	DISALLOW_COPY_AND_ASSIGN(Dumper);
 };
 
 }} // clever::ast

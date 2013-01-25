@@ -61,6 +61,8 @@ public:
 
 	virtual void visit(AttrDecl* node);
 	virtual void visit(ClassDef* node);
+private:
+	DISALLOW_COPY_AND_ASSIGN(Visitor);
 };
 
 }} // clever::ast

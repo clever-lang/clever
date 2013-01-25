@@ -61,7 +61,9 @@ typedef std::tr1::unordered_map<const CString*, Function*> MethodMap;
 
 class Type {
 public:
-	Type(const CString* name)
+	Type() {}
+
+	explicit Type(const CString* name)
 		: m_name(name), m_ctor(NULL), m_dtor(NULL) {}
 
 	virtual ~Type() {}
