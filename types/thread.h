@@ -66,7 +66,6 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(Thread);
 };
 
-
 /// Thread type
 class ThreadType : public Type {
 public:
@@ -87,6 +86,8 @@ public:
 	CLEVER_METHOD(run);
 	CLEVER_METHOD(wait);
 	CLEVER_METHOD(toString);
+private:
+	DISALLOW_COPY_AND_ASSIGN(ThreadType);
 };
 
 } // clever
