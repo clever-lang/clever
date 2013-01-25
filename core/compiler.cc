@@ -78,6 +78,7 @@ void Compiler::emitAST(ast::Node* tree)
 		ast::Evaluator evaluator;
 		tree = tree->accept(evaluator);
 	}
+
 	if (m_flags & DUMP_AST) {
 		ast::Dumper astdump;
 		tree->accept(astdump);
@@ -93,6 +94,8 @@ void Compiler::emitAST(ast::Node* tree)
 
 		ast::Codegen codegen(this, m_builder);
 		tree->accept(codegen);
+
+		m_builder->push(OP_HALT);
 	}
 
 	clever_delete_var(tree);
