@@ -19,35 +19,36 @@ public:
 	StrObject(const CString* str)
 		: m_str(str), m_interned(true) {}
 
-	StrObject(std::string str)
-		: m_str(new CString(str)), m_interned(false) {}
-
-	StrObject(std::string& str)
-		: m_str(new CString(str)), m_interned(false) {}
-
 	StrObject(const CString* str, bool interned)
 		: m_str(str), m_interned(interned) {}
+
+	StrObject(const std::string& str)
+		: m_str(new CString(str)), m_interned(false) {}
 
 	~StrObject() {
 		if (!m_interned) {
 			delete m_str;
 		}
 	}
+
 	const CString* getStr() const { return m_str; }
 private:
 	const CString* m_str;
 	bool m_interned;
+
+	DISALLOW_COPY_AND_ASSIGN(StrObject);
 };
 
 class StrType : public Type {
 public:
-	StrType() : Type(CSTRING("String")) {}
+	StrType()
+		: Type(CSTRING("String")) {}
+
 	~StrType() {}
 
 	void init();
 
-	void dump(const void* value) const { dump(value, std::cout); }
-	void dump(const void* value, std::ostream& out) const;
+	void dump(const void*, std::ostream&) const;
 
 	void* allocData(CLEVER_TYPE_CTOR_ARGS) const { return NULL; }
 	void deallocData(CLEVER_TYPE_DTOR_ARGS) { delete static_cast<StrObject*>(data); }
@@ -69,7 +70,8 @@ public:
 	CLEVER_METHOD(endsWith);
 	CLEVER_METHOD(charAt);
 	CLEVER_METHOD(split);
-
+private:
+	DISALLOW_COPY_AND_ASSIGN(StrType);
 };
 
 } // clever
