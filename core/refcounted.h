@@ -26,13 +26,26 @@ public:
 
 	size_t refCount() const { return m_reference; }
 
-	void addRef() { ++m_reference; }
+	void addRef() {
+#if CLEVER_GCC_VERSION >= 40100
+		__sync_add_and_fetch(&m_reference, 1);
+#else
+		++m_reference;
+#endif
+	}
 
 	void delRef() {
 		clever_assert(m_reference > 0, "This object has been free'd before.");
+
+#if CLEVER_GCC_VERSION >= 40100
+		if (__sync_sub_and_fetch(&m_reference, 1) == 0) {
+			clever_delete(this);
+		}
+#else
 		if (--m_reference == 0) {
 			clever_delete(this);
 		}
+#endif
 	}
 private:
 	size_t m_reference;
