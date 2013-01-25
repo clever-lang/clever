@@ -55,10 +55,6 @@ public:
 
 	CLEVER_TYPE_VIRTUAL_METHOD_DECLARATIONS;
 
-	void increment(Value*, const VM*, CException*) const {}
-
-	void decrement(Value*, const VM*, CException*) const {}
-
 	CLEVER_METHOD(ctor);
 	CLEVER_METHOD(subString);
 	CLEVER_METHOD(find);

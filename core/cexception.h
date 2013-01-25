@@ -48,6 +48,8 @@ public:
 	}
 private:
 	Value* m_exception;
+
+	DISALLOW_COPY_AND_ASSIGN(CException);
 };
 
 } // clever

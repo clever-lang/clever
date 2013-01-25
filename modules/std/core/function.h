@@ -141,7 +141,6 @@ public:
 		addMethod(ctor);
 	}
 
-	void dump(const void* data) const { dump(data, std::cout); }
 	void dump(const void* data, std::ostream& out) const { out << "function() {}"; }
 
 	void* allocData(CLEVER_TYPE_CTOR_ARGS) const { return new Function;  }

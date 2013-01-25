@@ -17,19 +17,16 @@ namespace clever {
 
 class BoolType : public Type {
 public:
-	BoolType() : Type(CSTRING("Bool")) {}
+	BoolType()
+		: Type(CSTRING("Bool")) {}
+
 	~BoolType() {}
 
 	void init();
 
 	bool isPrimitive() const { return true; }
 
-	void dump(const void* value) const { dump(value, std::cout); }
-
 	void dump(const void* value, std::ostream& out) const { out << *(bool*)value; }
-
-	void increment(Value*, const VM*, CException*) const {}
-	void decrement(Value*, const VM*, CException*) const {}
 
 	CLEVER_METHOD(ctor);
 	CLEVER_TYPE_OPERATOR(equal);

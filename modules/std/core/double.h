@@ -17,14 +17,15 @@ namespace clever {
 
 class DoubleType : public Type {
 public:
-	DoubleType() : Type(CSTRING("Double")) {}
+	DoubleType()
+		: Type(CSTRING("Double")) {}
+
 	~DoubleType() {}
 
 	void init();
 
 	bool isPrimitive() const { return true; }
 
-	void dump(const void* value) const { dump(value, std::cout); }
 	void dump(const void* value, std::ostream& out) const { out << *(double*)value; }
 
 	CLEVER_TYPE_VIRTUAL_METHOD_DECLARATIONS;

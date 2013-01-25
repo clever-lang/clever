@@ -33,7 +33,9 @@ private:
 
 class MapType : public Type {
 public:
-	MapType() : Type(CSTRING("Map")) {}
+	MapType()
+		: Type(CSTRING("Map")) {}
+
 	~MapType() {}
 
 	void init();
@@ -41,12 +43,7 @@ public:
 	void* allocData(CLEVER_TYPE_CTOR_ARGS) const;
 	void deallocData(void*);
 
-	void dump(const void* value) const { dump(value, std::cout); }
-
 	void dump(const void* value, std::ostream& out) const;
-
-	void increment(Value*, const VM*, CException*) const {}
-	void decrement(Value*, const VM*, CException*) const {}
 
 	CLEVER_METHOD(ctor);
 	CLEVER_METHOD(insert);

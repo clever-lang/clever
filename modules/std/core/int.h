@@ -17,14 +17,14 @@ namespace clever {
 
 class IntType : public Type {
 public:
-	IntType() : Type(CSTRING("Int")) {}
+	IntType()
+		: Type(CSTRING("Int")) {}
+
 	~IntType() {}
 
 	void init();
 
 	bool isPrimitive() const { return true; }
-
-	void dump(const void* value) const { dump(value, std::cout); }
 
 	void dump(const void* value, std::ostream& out) const { out << *(long*)value; }
 
