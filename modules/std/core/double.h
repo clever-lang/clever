@@ -39,6 +39,8 @@ public:
 	}
 
 	CLEVER_METHOD(ctor);
+private:
+	DISALLOW_COPY_AND_ASSIGN(DoubleType);
 };
 
 } // clever

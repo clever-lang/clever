@@ -40,6 +40,8 @@ public:
 
 	CLEVER_METHOD(ctor);
 	CLEVER_METHOD(toString);
+private:
+	DISALLOW_COPY_AND_ASSIGN(IntType);
 };
 
 } // clever

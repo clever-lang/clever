@@ -31,6 +31,8 @@ public:
 	CLEVER_METHOD(ctor);
 	CLEVER_TYPE_OPERATOR(equal);
 	CLEVER_TYPE_OPERATOR(not_equal);
+private:
+	DISALLOW_COPY_AND_ASSIGN(BoolType);
 };
 
 } // clever
