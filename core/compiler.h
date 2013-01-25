@@ -38,9 +38,8 @@ public:
 	};
 
 	Compiler()
-		: m_pkg(), m_ir(),
-		  m_scope_pool(), m_const_env(),m_temp_env(), m_global_env(),
-		  m_flags(0), m_scope_id(0), m_const_id(0), m_tmp_id(0) {}
+		: m_pkg(), m_builder(NULL), m_global_env(), m_flags(0),
+		  m_scope_id(0), m_const_id(0), m_tmp_id(0) {}
 
 	~Compiler() {}
 
@@ -51,28 +50,24 @@ public:
 
 	void setFlags(size_t flags) { m_flags = flags; }
 
-	IRVector& getIR() { return m_ir; }
-
-	ScopePool* getSymbolTable() { return &m_scope_pool; }
+	const IRVector& getIR() { return m_builder->getIR(); }
 
 	Environment* getGlobalEnv() const { return m_global_env; }
-	Environment* getConstEnv() const { return m_const_env; }
-	Environment* getTempEnv() const { return m_temp_env; }
+	Environment* getConstEnv() const { return m_builder->getConstEnv(); }
+	Environment* getTempEnv() const { return m_builder->getTempEnv(); }
 
 	static void error(const char*) CLEVER_NO_RETURN;
 	static void error(const std::string&, const location&) CLEVER_NO_RETURN;
 	static void errorf(const location&, const char*, ...) CLEVER_NO_RETURN;
+
 private:
 	// Package manager
 	PkgManager m_pkg;
 
 	// Vector of instructions to be passed to VM
-	IRVector m_ir;
+	IRBuilder* m_builder;
 
 	// Compiler pools, which got passed to VM after compiling
-	ScopePool m_scope_pool;
-	Environment* m_const_env;
-	Environment* m_temp_env;
 	Environment* m_global_env;
 
 	// Compiler flag

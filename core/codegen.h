@@ -12,7 +12,7 @@
 #include <stack>
 #include <map>
 #include "core/astvisitor.h"
-#include "core/ir.h"
+#include "core/irbuilder.h"
 #include "types/thread.h"
 
 namespace clever {
@@ -30,13 +30,13 @@ public:
 	typedef std::vector<size_t> AddrVector;
 	typedef std::stack<AddrVector> JmpList;
 
-	Codegen(IRVector& ir, Compiler* compiler, Environment* init_glbenv);
+	Codegen(Compiler* compiler, IRBuilder* builder);
 	~Codegen() {}
 
 	void sendArgs(NodeArray*);
 
-	Environment* getConstEnv() const { return m_const_env; }
-	Environment* getTempEnv() const { return m_temp_env; }
+	Environment* getConstEnv() const { return m_builder->getConstEnv(); }
+	Environment* getTempEnv() const { return m_builder->getTempEnv(); }
 
 	void visit(Block*);
 	void visit(CriticalBlock*);
@@ -70,11 +70,8 @@ public:
 	void visit(Break*);
 	void visit(ClassDef*);
 private:
-	IRVector& m_ir;
 	Compiler* m_compiler;
-	Environment* m_init_glbenv;
-	Environment* m_const_env;
-	Environment* m_temp_env;
+	IRBuilder* m_builder;
 	JmpList m_jmps;
 	JmpList m_brks;
 

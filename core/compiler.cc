@@ -26,12 +26,7 @@ void Compiler::init()
 /// Frees all resource used by the compiler
 void Compiler::shutdown()
 {
-	clever_delref(m_const_env);
-	clever_delref(m_temp_env);
-
-	if (m_scope_pool.size()) {
-		clever_delete_var(m_scope_pool[0]);
-	}
+	delete m_builder;
 
 	m_pkg.shutdown();
 
@@ -92,17 +87,12 @@ void Compiler::emitAST(ast::Node* tree)
 	tree->accept(resolver);
 
 	if (!(m_flags & PARSER_ONLY)) {
-		m_scope_pool = resolver.getSymTable()->flatten();
-
 		m_global_env = resolver.getGlobalEnv();
 
-		ast::Codegen codegen(m_ir, this, m_global_env);
+		m_builder = new IRBuilder(m_global_env);
+
+		ast::Codegen codegen(this, m_builder);
 		tree->accept(codegen);
-
-		m_const_env = codegen.getConstEnv();
-		m_temp_env  = codegen.getTempEnv();
-
-		m_ir.push_back(IR(OP_HALT));
 	}
 
 	clever_delete_var(tree);
