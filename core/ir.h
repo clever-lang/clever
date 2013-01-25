@@ -9,7 +9,6 @@
 #define CLEVER_IR_H
 
 #include <cstddef>
-#include <vector>
 #include "core/opcode.h"
 #include "core/environment.h"
 #include "core/location.hh"
@@ -61,7 +60,7 @@ struct IR {
 };
 
 // Vector of VM instructions
-typedef std::vector<IR> IRVector;
+typedef std::deque<IR> IRVector;
 
 } // clever
 
