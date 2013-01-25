@@ -24,24 +24,24 @@ public:
     }
 
     /// @brief push an instruction to the IR vector
-    IR& push(const IR& ir) {
+	IR& push(const IR& ir) {
         m_ir.push_back(ir);
         return m_ir.back();
     }
 
     /// @brief construct and push an instruction to the IR vector
     IR& push(const Opcode& op) {
-        return push(IR(op, getSize()));
+		return push(IR(op));
     }
 
     /// @brief construct and push an instruction to the IR vector
     IR& push(const Opcode& op, const Operand& a) {
-        return push(IR(op, a, getSize()));
+		return push(IR(op, a));
     }
 
     /// @brief construct and push an instruction to the IR vector
     IR& push(const Opcode& op, const Operand& a, const Operand& b) {
-        return push(IR(op, a, b, getSize()));
+		return push(IR(op, a, b));
     }
 
     Environment* getConstEnv() const { return m_const_env; }
@@ -55,18 +55,6 @@ public:
 
     IR& getAt(size_t index) {
         return m_ir.at(index);
-    }
-
-    IR getNext(const Opcode& op) const {
-        return IR(op, m_ir.size());
-    }
-
-    IR getNext(const Opcode& op, const Operand& a) {
-        return IR(op, a, m_ir.size());
-    }
-
-    IR getNext(const Opcode& op, const Operand& a, const Operand& b) {
-        return IR(op, a, b, m_ir.size());
     }
 
     /// @brief get a constant offset for the `c` value

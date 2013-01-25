@@ -46,20 +46,18 @@ struct Operand {
 
 /// Intermediate representation
 struct IR {
-	IR(Opcode _op, size_t idx)
-		: opcode(_op), op1(), op2(), result(), loc(), index(idx) {}
+	IR(Opcode _op)
+		: opcode(_op), op1(), op2(), result(), loc() {}
 
-	IR(Opcode _op, Operand _op1, size_t idx)
-		: opcode(_op), op1(_op1), op2(), result(), loc(), index(idx) {}
+	IR(Opcode _op, Operand _op1)
+		: opcode(_op), op1(_op1), op2(), result(), loc() {}
 
-	IR(Opcode _op, Operand _op1, Operand _op2, size_t idx)
-		: opcode(_op), op1(_op1), op2(_op2), result(), loc(), index(idx) {}
+	IR(Opcode _op, Operand _op1, Operand _op2)
+		: opcode(_op), op1(_op1), op2(_op2), result(), loc() {}
 
 	Opcode opcode;
 	Operand op1, op2, result;
 	location loc;
-
-	size_t index;
 };
 
 // Vector of VM instructions
