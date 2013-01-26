@@ -22,8 +22,6 @@
 
 namespace clever {
 
-class Type;
-class Value;
 class location;
 
 /// Compiler representation
