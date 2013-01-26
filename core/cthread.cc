@@ -84,6 +84,4 @@ int CThread::wait()
 
 }
 
-
-
 } // clever

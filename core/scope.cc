@@ -65,7 +65,7 @@ Symbol* Scope::getAny(const CString* name)
     return sym;
 }
 
-ValueOffset Scope::getOffset(Symbol* sym) const
+ValueOffset Scope::getOffset(const Symbol* sym) const
 {
 	ValueOffset offset(0, sym->voffset.second);
 

@@ -8,7 +8,6 @@
 #ifndef CLEVER_VM_H
 #define CLEVER_VM_H
 
-#include <map>
 #include <stack>
 #include <vector>
 #include "core/ir.h"

@@ -7,10 +7,9 @@
 
 #ifdef CLEVER_DEBUG
 #include <stdio.h>
-#include "core/opcode.h"
 #endif
+#include "core/opcode.h"
 #include "core/vm.h"
-#include "core/scope.h"
 #include "core/value.h"
 #include "modules/std/core/function.h"
 #include "modules/std/core/array.h"

@@ -45,7 +45,8 @@ typedef DWORD (*ThreadFunc)(LPVOID);
 
 class CThread {
 public:
-	CThread() { m_is_running = false; }
+	CThread()
+		: m_is_running(false) {}
 
 	~CThread() {
 		if (m_is_running) {

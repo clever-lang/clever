@@ -7,8 +7,6 @@
 
 #include "core/cstring.h"
 #include "core/compiler.h"
-#include "core/scope.h"
-#include "core/value.h"
 #include "core/location.hh"
 #include "core/astdump.h"
 #include "core/codegen.h"

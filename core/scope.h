@@ -28,7 +28,8 @@ typedef std::vector<Value*> ValuePool;
 
 /// Symbol representation
 struct Symbol {
-	Symbol() : name(NULL), voffset(0,0), scope(NULL) {}
+	Symbol()
+		: name(NULL), voffset(0,0), scope(NULL) {}
 
 	Symbol(const CString *name_, Scope *scope_ = NULL)
 		: name(name_), voffset(0,0), scope(scope_) {}
@@ -37,7 +38,7 @@ struct Symbol {
 
 	const CString* name;
 	ValueOffset voffset;
-	const Scope *scope;
+	const Scope* scope;
 
 private:
 	DISALLOW_COPY_AND_ASSIGN(Symbol);
@@ -75,8 +76,6 @@ public:
 
 	Symbol& at(size_t idx) const { return *m_symbols[idx]; }
 
-	size_t size() const { return m_size; }
-
 	void copy(const Scope* s) {
 		for (size_t id = 0, n = s->m_value_pool.size(); id < n; ++id) {
 			m_value_pool.push_back(s->m_value_pool[id]->clone());
@@ -89,9 +88,7 @@ public:
 		return s;
 	}
 
-	Scope* leave() const {
-		return m_parent;
-	}
+	Scope* leave() const { return m_parent; }
 
 	std::vector<Scope*> flatten();
 
@@ -103,7 +100,7 @@ public:
 	Environment* getEnvironment() const { return m_environment; }
 	void setEnvironment(Environment* env) {	m_environment = env; }
 
-	std::pair<size_t, size_t> getOffset(Symbol* sym) const;
+	std::pair<size_t, size_t> getOffset(const Symbol* sym) const;
 
 	const ScopeVector& getChildren() const { return m_children; }
 private:
