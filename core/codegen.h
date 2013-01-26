@@ -53,7 +53,7 @@ public:
 	void visit(IntLit*);
 	void visit(DoubleLit*);
 	void visit(StringLit*);
-	void visit(Ident*);
+	void visit(Ident*) {}
 	void visit(IncDec*);
 	void visit(Arithmetic*);
 	void visit(Comparison*);

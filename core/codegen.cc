@@ -71,10 +71,6 @@ void Codegen::visit(StringLit* node)
 	node->setVOffset(m_builder->getString(node->getValue()));
 }
 
-void Codegen::visit(Ident* node)
-{
-}
-
 void Codegen::visit(Block* node)
 {
 	Visitor::visit(static_cast<NodeArray*>(node));
