@@ -1,6 +1,14 @@
+/**
+ * Clever programming language
+ * Copyright (c) Clever Team
+ *
+ * This file is distributed under the MIT license. See LICENSE for details.
+ */
+
 #ifndef CLEVER_IRBUILDER_H
 #define CLEVER_IRBUILDER_H
 
+#include "core/scope.h"
 #include "core/environment.h"
 #include "core/ir.h"
 
@@ -12,7 +20,8 @@ namespace clever {
 class IRBuilder
 {
 public:
-    IRBuilder(Environment* init_glbenv) {
+    IRBuilder(Environment* init_glbenv, Scope* global_scope)
+		: m_global_scope(global_scope) {
 
         m_const_env = new Environment(init_glbenv);
         m_temp_env  = new Environment(init_glbenv);
@@ -26,6 +35,7 @@ public:
     ~IRBuilder() {
 		clever_delref(m_const_env);
 		clever_delref(m_temp_env);
+		clever_delete(m_global_scope);
 	}
 
     /// @brief push an instruction to the IR vector
@@ -98,13 +108,13 @@ public:
     }
 
 private:
+	Scope* m_global_scope;
+	Environment* m_const_env;
+	Environment* m_temp_env;
 
-    Environment* m_const_env;
-    Environment* m_temp_env;
-
-    IRVector m_ir;
+	IRVector m_ir;
 };
 
-}
+} // clever
 
 #endif // CLEVER_IRBUILDER_H

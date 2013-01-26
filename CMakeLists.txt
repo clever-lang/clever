@@ -190,8 +190,7 @@ add_executable(clever
 	core/environment.cc
 	core/environment.h
 	core/ir.h
-        core/irbuilder.cc
-        core/irbuilder.h
+	core/irbuilder.h
 	core/main.cc
 	core/module.h
 	core/opcode.cc

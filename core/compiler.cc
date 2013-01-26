@@ -90,7 +90,7 @@ void Compiler::emitAST(ast::Node* tree)
 	if (!(m_flags & PARSER_ONLY)) {
 		m_global_env = resolver.getGlobalEnv();
 
-		m_builder = new IRBuilder(m_global_env);
+		m_builder = new IRBuilder(m_global_env, resolver.getSymTable());
 
 		ast::Codegen codegen(this, m_builder);
 		tree->accept(codegen);
