@@ -18,14 +18,13 @@
 #include <sstream>
 #include "core/pkgmanager.h"
 #include "core/codegen.h"
-#include "core/scope.h"
+#include "core/irbuilder.h"
 
 namespace clever {
 
 class Type;
 class Value;
 class location;
-class Scope;
 
 /// Compiler representation
 class Compiler {
@@ -38,18 +37,16 @@ public:
 	};
 
 	Compiler()
-		: m_pkg(), m_builder(NULL), m_global_env(), m_flags(0),
-		  m_scope_id(0), m_const_id(0), m_tmp_id(0) {}
+		: m_pkg(), m_builder(NULL), m_global_env(), m_flags(0) {}
 
 	~Compiler() {}
 
 	void init();
 	void shutdown();
 
-	void emitAST(ast::Node*);
-
 	void setFlags(size_t flags) { m_flags = flags; }
 
+	void emitAST(ast::Node*);
 	const IRVector& getIR() { return m_builder->getIR(); }
 
 	Environment* getGlobalEnv() const { return m_global_env; }
@@ -72,11 +69,6 @@ private:
 
 	// Compiler flag
 	size_t m_flags;
-
-	// Indexes for pools
-	size_t m_scope_id;
-	size_t m_const_id;
-	size_t m_tmp_id;
 
 	DISALLOW_COPY_AND_ASSIGN(Compiler);
 };

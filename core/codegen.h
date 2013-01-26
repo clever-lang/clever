@@ -12,14 +12,12 @@
 #include <stack>
 #include <map>
 #include "core/astvisitor.h"
-#include "core/irbuilder.h"
-#include "types/thread.h"
 
 namespace clever {
 
-class Scope;
+class Thread;
 class Compiler;
-typedef std::vector<Scope*> ScopePool;
+class IRBuilder;
 
 } // clever
 
@@ -30,15 +28,12 @@ public:
 	typedef std::vector<size_t> AddrVector;
 	typedef std::stack<AddrVector> JmpList;
 
-	Codegen(Compiler* compiler, IRBuilder* builder)
-		: m_compiler(compiler), m_builder(builder), m_jmps(), m_thread_ids() {}
+	Codegen(IRBuilder* builder)
+		: m_builder(builder), m_jmps(), m_thread_ids() {}
 
 	~Codegen() {}
 
 	void sendArgs(NodeArray*);
-
-	Environment* getConstEnv() const { return m_builder->getConstEnv(); }
-	Environment* getTempEnv() const { return m_builder->getTempEnv(); }
 
 	void visit(Block*);
 	void visit(CriticalBlock*);
@@ -72,7 +67,6 @@ public:
 	void visit(Break*);
 	void visit(ClassDef*);
 private:
-	Compiler* m_compiler;
 	IRBuilder* m_builder;
 	JmpList m_jmps;
 	JmpList m_brks;

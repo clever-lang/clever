@@ -92,7 +92,7 @@ void Compiler::emitAST(ast::Node* tree)
 
 		m_builder = new IRBuilder(m_global_env, resolver.getSymTable());
 
-		ast::Codegen codegen(this, m_builder);
+		ast::Codegen codegen(m_builder);
 		tree->accept(codegen);
 
 		m_builder->push(OP_HALT);

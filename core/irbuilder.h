@@ -17,12 +17,10 @@ namespace clever {
 /**
  * @brief Covenience class to create CleverVM instructions.
  */
-class IRBuilder
-{
+class IRBuilder {
 public:
     IRBuilder(Environment* init_glbenv, Scope* global_scope)
 		: m_global_scope(global_scope) {
-
         m_const_env = new Environment(init_glbenv);
         m_temp_env  = new Environment(init_glbenv);
 
@@ -87,18 +85,18 @@ public:
         return m_const_env->pushValue(new Value(c, true));
     }
 
-    /// @brief get a constant offset for the `c` value
-    ValueOffset getNull() {
+    /// @brief get a constant offset for the `null` value
+    ValueOffset getNull() const {
         return ValueOffset(0, 0);
     }
 
-    /// @brief get a constant offset for the `c` value
-    ValueOffset getTrue() {
+    /// @brief get a constant offset for the `true` value
+    ValueOffset getTrue() const {
         return ValueOffset(0, 1);
     }
 
-    /// @brief get a constant offset for the `c` value
-    ValueOffset getFalse() {
+    /// @brief get a constant offset for the `false` value
+    ValueOffset getFalse() const {
         return ValueOffset(0, 2);
     }
 

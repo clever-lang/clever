@@ -9,9 +9,10 @@
 #include <cstdio>
 
 #include "core/codegen.h"
-#include "core/compiler.h"
 #include "core/cthread.h"
 #include "types/thread.h"
+#include "core/irbuilder.h"
+#include "modules/std/core/function.h"
 
 namespace clever { namespace ast {
 
