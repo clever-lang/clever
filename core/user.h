@@ -25,9 +25,12 @@ private:
 class UserType : public Type {
 public:
 	UserType(const CString* name)
-		: Type(name, USER_TYPE) {}
+		: Type(name, USER_TYPE), m_env(NULL) {}
 
 	~UserType() {}
+
+	void setEnvironment(Environment* env) { m_env = env; }
+	Environment* getEnvironment() const { return m_env; }
 
 	void* allocData(CLEVER_TYPE_CTOR_ARGS) const { return new UserObject; }
 
@@ -46,6 +49,8 @@ public:
 		result->setObj(this, allocData(&args));
 	}
 private:
+	Environment* m_env;
+
 	DISALLOW_COPY_AND_ASSIGN(UserType);
 };
 

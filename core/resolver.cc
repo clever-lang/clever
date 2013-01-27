@@ -266,9 +266,11 @@ void Resolver::visit(ClassDef* node)
 	m_scope->pushValue(name, tmp)->voffset = m_stack.top()->pushValue(tmp);
 
 	m_scope = m_scope->enter();
-	m_scope->setEnvironment(m_stack.top());
-	m_stack.top()->addRef();
+	m_scope->setEnvironment(new Environment(m_stack.top()));
+	m_stack.push(m_scope->getEnvironment());
 	node->setScope(m_scope);
+
+	type->setEnvironment(m_stack.top());
 
 	m_class = type;
 
@@ -282,6 +284,7 @@ void Resolver::visit(ClassDef* node)
 
 	m_class = NULL;
 	m_scope = m_scope->leave();
+	m_stack.pop();
 }
 
 void Resolver::visit(AttrDecl* node)
