@@ -125,10 +125,10 @@ void VM::copy(const VM* vm, bool deep)
 	m_try_stack = vm->m_try_stack;
 
 	if (deep) {
-		this->m_temp_env = new Environment();
-		this->m_temp_env->copy(vm->m_temp_env);
+		m_temp_env = new Environment(NULL, false);
+		m_temp_env->copy(vm->m_temp_env);
 	} else {
-		this->m_temp_env = vm->m_temp_env;
+		m_temp_env = vm->m_temp_env;
 	}
 
 	m_global_env = vm->m_global_env;

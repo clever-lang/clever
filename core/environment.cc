@@ -12,7 +12,7 @@ namespace clever {
 
 Environment* Environment::activate(Environment* outer) const
 {
-    Environment* env = new Environment(outer);
+    Environment* env = new Environment(outer, false);
     env->m_active = true;
 
     for (size_t i = 0, size = m_data.size(); i < size; ++i) {
@@ -72,7 +72,7 @@ void Environment::copy(const Environment* _env)
 
         if (env->m_outer != NULL) {
             //this->m_outer->copy(env->m_outer)
-            _this->m_outer = new Environment();
+            _this->m_outer = new Environment(NULL, false);
             _env = env->m_outer;
             _this = _this->m_outer;
         } else {

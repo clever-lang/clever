@@ -43,7 +43,6 @@ static CLEVER_FUNCTION(refcount)
 	}
 }
 
-
 // eval(string)
 // Executes the supplied string
 static CLEVER_FUNCTION(eval)

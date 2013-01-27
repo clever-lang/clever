@@ -21,8 +21,8 @@ class IRBuilder {
 public:
     IRBuilder(Environment* init_glbenv, Scope* global_scope)
 		: m_global_scope(global_scope) {
-        m_const_env = new Environment(init_glbenv);
-        m_temp_env  = new Environment(init_glbenv);
+        m_const_env = new Environment(init_glbenv, false);
+        m_temp_env  = new Environment(init_glbenv, false);
 
         // null, true and false
         m_const_env->pushValue(new Value());
