@@ -228,6 +228,7 @@ CLEVER_FORCE_INLINE void VM::createInstance(const Type* type, Value* instance) c
 	UserObject* obj = static_cast<UserObject*>(instance->getObj());
 
 	obj->setEnvironment(utype->getEnvironment()->activate(m_call_stack.top()));
+	obj->getEnvironment()->getValue(ValueOffset(0,0))->copy(instance);
 }
 
 // Executes the supplied function
