@@ -177,6 +177,7 @@ void Codegen::visit(MethodCall* node)
 	ValueOffset tmp_id = m_builder->getTemp();
 
 	m_builder->getLast().result = Operand(FETCH_TMP, tmp_id);
+	m_builder->getLast().loc = node->getLocation();
 
 	node->setVOffset(tmp_id);
 }
@@ -203,6 +204,7 @@ void Codegen::visit(FunctionCall* node)
 	ValueOffset tmp_id = m_builder->getTemp();
 
 	m_builder->getLast().result = Operand(FETCH_TMP, tmp_id);
+	m_builder->getLast().loc = node->getLocation();
 
 	node->setVOffset(tmp_id);
 }
@@ -296,6 +298,7 @@ void Codegen::visit(IncDec* node)
 	ValueOffset tmp_id = m_builder->getTemp();
 
 	incdec.result = Operand(FETCH_TMP, tmp_id);
+	incdec.loc = node->getLocation();
 
 	node->setVOffset(tmp_id);
 }
@@ -325,6 +328,7 @@ void Codegen::visit(Arithmetic* node)
 	ValueOffset tmp_id = m_builder->getTemp();
 
 	arith.result = Operand(FETCH_TMP, tmp_id);
+	arith.loc = node->getLocation();
 
 	node->setVOffset(tmp_id);
 }
@@ -355,6 +359,7 @@ void Codegen::visit(Comparison* node)
 	ValueOffset tmp_id = m_builder->getTemp();
 
 	comp.result = Operand(FETCH_TMP, tmp_id);
+	comp.loc = node->getLocation();
 
 	node->setVOffset(tmp_id);
 }
@@ -486,6 +491,7 @@ void Codegen::visit(Property* node)
 	ValueOffset tmp_id = m_builder->getTemp();
 
 	acc.result = Operand(FETCH_TMP, tmp_id);
+	acc.loc = node->getLocation();
 
 	node->setVOffset(tmp_id);
 }

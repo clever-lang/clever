@@ -7,4 +7,4 @@ println(a);
 println(a());
 ==RESULT==
 0
-Fatal error: Cannot make a call from Int type
+Fatal error: Cannot make a call from Int type on \S+ line 5

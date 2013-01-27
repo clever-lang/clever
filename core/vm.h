@@ -93,7 +93,7 @@ public:
 	void dumpOpcodes() const;
 #endif
 
-	static void error(ErrorLevel, const char*, ...);
+	static void error(ErrorLevel, const location&, const char*, ...);
 private:
 	/// VM program counter
 	size_t m_pc;

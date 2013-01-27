@@ -35,7 +35,7 @@
 namespace clever {
 
 /// Displays an error message
-void VM::error(ErrorLevel level, const char* format, ...)
+void VM::error(ErrorLevel level, const location& loc, const char* format, ...)
 {
 	std::ostringstream out;
 	va_list args;
@@ -48,7 +48,14 @@ void VM::error(ErrorLevel level, const char* format, ...)
 	}
 	vsprintf(out, format, args);
 
-	std::cerr << out.str() << std::endl;
+	std::cerr << out.str();
+
+	if (loc.begin.filename) {
+		std::cerr << " on " << *loc.begin.filename << " line " << loc.begin.line;
+	} else {
+		std::cerr << " on line " << loc.begin.line;
+	}
+	std::cerr << std::endl;
 
 	if (level == VM_ERROR) {
 		CLEVER_EXIT_FATAL();
@@ -199,7 +206,7 @@ CLEVER_FORCE_INLINE void VM::prepareCall(const Function* func)
 	if (m_call_args.size() < func->getNumRequiredArgs()
 		|| (m_call_args.size() > func->getNumArgs()
 			&& !func->isVariadic())) {
-		error(VM_ERROR, "Wrong number of parameters");
+		error(VM_ERROR, OPCODE.loc, "Wrong number of parameters");
 	}
 
 	_param_binding(func, fenv, &m_call_args);
@@ -276,7 +283,7 @@ void VM::run()
 			} else {
 				// TODO(muriloadriano): improve this message to show the symbol
 				// name and the line to the user.
-				error(VM_ERROR, "Cannot assign to a const variable!");
+				error(VM_ERROR, OPCODE.loc, "Cannot assign to a const variable!");
 			}
 		}
 		DISPATCH;
@@ -293,7 +300,7 @@ void VM::run()
 					goto throw_exception;
 				}
 			} else {
-				error(VM_ERROR, "Operation cannot be executed on null value");
+				error(VM_ERROR, OPCODE.loc, "Operation cannot be executed on null value");
 			}
 		}
 		DISPATCH;
@@ -310,7 +317,7 @@ void VM::run()
 					goto throw_exception;
 				}
 			} else {
-				error(VM_ERROR, "Operation cannot be executed on null value");
+				error(VM_ERROR, OPCODE.loc, "Operation cannot be executed on null value");
 			}
 		}
 		DISPATCH;
@@ -327,7 +334,7 @@ void VM::run()
 					goto throw_exception;
 				}
 			} else {
-				error(VM_ERROR, "Operation cannot be executed on null value");
+				error(VM_ERROR, OPCODE.loc, "Operation cannot be executed on null value");
 			}
 		}
 		DISPATCH;
@@ -344,7 +351,7 @@ void VM::run()
 					goto throw_exception;
 				}
 			} else {
-				error(VM_ERROR, "Operation cannot be executed on null value");
+				error(VM_ERROR, OPCODE.loc, "Operation cannot be executed on null value");
 			}
 		}
 		DISPATCH;
@@ -361,7 +368,7 @@ void VM::run()
 					goto throw_exception;
 				}
 			} else {
-				error(VM_ERROR, "Operation cannot be executed on null value");
+				error(VM_ERROR, OPCODE.loc, "Operation cannot be executed on null value");
 			}
 		}
 		DISPATCH;
@@ -376,11 +383,11 @@ void VM::run()
 			clever_assert_not_null(fval);
 
 			if (UNEXPECTED(fval->isNull())) {
-				error(VM_ERROR, "Cannot make a call from null value");
+				error(VM_ERROR, OPCODE.loc, "Cannot make a call from null value");
 			}
 
 			if (UNEXPECTED(!fval->isFunction())) {
-				error(VM_ERROR, "Cannot make a call from %T type", fval->getType());
+				error(VM_ERROR, OPCODE.loc, "Cannot make a call from %T type", fval->getType());
 			}
 
 			Function* func = static_cast<Function*>(fval->getObj());
@@ -491,7 +498,7 @@ void VM::run()
 					goto throw_exception;
 				}
 			} else {
-				error(VM_ERROR, "Cannot increment null value");
+				error(VM_ERROR, OPCODE.loc, "Cannot increment null value");
 			}
 		}
 		DISPATCH;
@@ -508,7 +515,7 @@ void VM::run()
 					goto throw_exception;
 				}
 			} else {
-				error(VM_ERROR, "Cannot increment null value");
+				error(VM_ERROR, OPCODE.loc, "Cannot increment null value");
 			}
 		}
 		DISPATCH;
@@ -525,7 +532,7 @@ void VM::run()
 					goto throw_exception;
 				}
 			} else {
-				error(VM_ERROR, "Cannot decrement null value");
+				error(VM_ERROR, OPCODE.loc, "Cannot decrement null value");
 			}
 		}
 		DISPATCH;
@@ -542,7 +549,7 @@ void VM::run()
 					goto throw_exception;
 				}
 			} else {
-				error(VM_ERROR, "Cannot decrement null value");
+				error(VM_ERROR, OPCODE.loc, "Cannot decrement null value");
 			}
 		}
 		DISPATCH;
@@ -720,15 +727,15 @@ void VM::run()
 			const Value* method = getValue(OPCODE.op2);
 
 			if (UNEXPECTED(callee->isNull())) {
-				error(VM_ERROR, "Cannot call method `%S' from a null value",
-					method->getStr());
+				error(VM_ERROR, OPCODE.loc,
+					"Cannot call method `%S' from a null value", method->getStr());
 			}
 
 			const Type* type = callee->getType();
 			const Function* func = type->getMethod(method->getStr());
 
 			if (UNEXPECTED(func == NULL)) {
-				error(VM_ERROR, "Method `%S' not found!", method->getStr());
+				error(VM_ERROR, OPCODE.loc, "Method `%S' not found!", method->getStr());
 			}
 
 			if (func->isUserDefined()) {
@@ -737,7 +744,8 @@ void VM::run()
 				VM_GOTO(func->getAddr());
 			} else {
 				if (UNEXPECTED(func->isStatic())) {
-					error(VM_ERROR, "Method `%T::%S' cannot be called non-statically",
+					error(VM_ERROR, OPCODE.loc,
+						"Method `%T::%S' cannot be called non-statically",
 						type, method->getStr());
 				} else {
 					(type->*func->getMethodPtr())(getValue(OPCODE.result),
@@ -762,7 +770,8 @@ void VM::run()
 
 			if (EXPECTED(func != NULL)) {
 				if (UNEXPECTED(!func->isStatic())) {
-					error(VM_ERROR, "Method `%T::%S' cannot be called statically",
+					error(VM_ERROR, OPCODE.loc,
+						"Method `%T::%S' cannot be called statically",
 						type, method->getStr());
 				} else {
 					(type->*func->getMethodPtr())(getValue(OPCODE.result),
@@ -775,7 +784,8 @@ void VM::run()
 					}
 				}
 			} else {
-				error(VM_ERROR, "Method `%T::%S' not found!", type, method->getStr());
+				error(VM_ERROR, OPCODE.loc,
+					"Method `%T::%S' not found!", type, method->getStr());
 			}
 		}
 		DISPATCH;
@@ -786,7 +796,8 @@ void VM::run()
 			const Value* name = getValue(OPCODE.op2);
 
 			if (UNEXPECTED(obj->isNull())) {
-				error(VM_ERROR, "Cannot perform property access from null value");
+				error(VM_ERROR, OPCODE.loc,
+					"Cannot perform property access from null value");
 			}
 
 			const Value* value = obj->getType()->getProperty(name->getStr());
@@ -794,7 +805,7 @@ void VM::run()
 			if (EXPECTED(value != NULL)) {
 				getValue(OPCODE.result)->copy(value);
 			} else {
-				error(VM_ERROR, "Property `%T::%S' not found!",
+				error(VM_ERROR, OPCODE.loc, "Property `%T::%S' not found!",
 					obj->getType(), name->getStr());
 			}
 		}
