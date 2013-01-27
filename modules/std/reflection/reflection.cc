@@ -28,6 +28,22 @@ static CLEVER_FUNCTION(type)
 	result->setStr(new StrObject(type->getName()));
 }
 
+// refcount(object)
+// Returns the number of reference for the object
+static CLEVER_FUNCTION(refcount)
+{
+	if (!clever_static_check_args(".")) {
+		return;
+	}
+
+	if (args[0]->getType()->isPrimitive()) {
+		result->setInt(args[0]->refCount());
+	} else {
+		result->setInt(args[0]->getData()->obj->refCount());
+	}
+}
+
+
 // eval(string)
 // Executes the supplied string
 static CLEVER_FUNCTION(eval)
@@ -53,8 +69,9 @@ CLEVER_MODULE_INIT(Reflection)
 	addType(CSTRING("Reflect"), new reflection::ReflectType);
 
 	// Functions
-	addFunction(new Function("type", &CLEVER_NS_FNAME(reflection, type)));
-	addFunction(new Function("eval", &CLEVER_NS_FNAME(reflection, eval)));
+	addFunction(new Function("type",     &CLEVER_NS_FNAME(reflection, type)));
+	addFunction(new Function("eval",     &CLEVER_NS_FNAME(reflection, eval)));
+	addFunction(new Function("refcount", &CLEVER_NS_FNAME(reflection, refcount)));
 }
 
 }}} // clever::packages::std
