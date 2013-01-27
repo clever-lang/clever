@@ -265,154 +265,521 @@ void VM::run()
 
 	OPCODES;
 	OP(OP_RET):
-		if (EXPECTED(m_call_stack.size() > 1)) {
-			Environment* env = m_call_stack.top();
-			size_t ret_addr = env->getRetAddr();
+	if (EXPECTED(m_call_stack.size() > 1)) {
+		Environment* env = m_call_stack.top();
+		size_t ret_addr = env->getRetAddr();
 
-			if (EXPECTED(OPCODE.op1.op_type != UNUSED)) {
-				Value* val = getValue(OPCODE.op1);
-				clever_assert_not_null(val);
-				m_call_stack.top()->getRetVal()->copy(val);
+		if (EXPECTED(OPCODE.op1.op_type != UNUSED)) {
+			Value* val = getValue(OPCODE.op1);
+			clever_assert_not_null(val);
+			m_call_stack.top()->getRetVal()->copy(val);
+		}
+
+		clever_delref(env);
+		m_call_stack.pop();
+
+		VM_GOTO(ret_addr);
+	} else {
+		goto exit;
+	}
+	DISPATCH;
+
+	OP(OP_ASSIGN):
+	{
+		Value* var = getValue(OPCODE.op1);
+		const Value* value = getValue(OPCODE.op2);
+
+		// Checks if this assignment is allowed (non-const variable or
+		// const variable declaration).
+		if (EXPECTED(var->isAssignable())) {
+			var->copy(value);
+		} else {
+			// TODO(muriloadriano): improve this message to show the symbol
+			// name and the line to the user.
+			error(VM_ERROR, OPCODE.loc, "Cannot assign to a const variable!");
+		}
+	}
+	DISPATCH;
+
+	OP(OP_ADD):
+	{
+		const Value* lhs = getValue(OPCODE.op1);
+		const Value* rhs = getValue(OPCODE.op2);
+
+		if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
+			lhs->getType()->add(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
+
+			if (UNEXPECTED(m_exception.hasException())) {
+				goto throw_exception;
 			}
+		} else {
+			error(VM_ERROR, OPCODE.loc, "Operation cannot be executed on null value");
+		}
+	}
+	DISPATCH;
+
+	OP(OP_SUB):
+	{
+		const Value* lhs = getValue(OPCODE.op1);
+		const Value* rhs = getValue(OPCODE.op2);
+
+		if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
+			lhs->getType()->sub(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
+
+			if (UNEXPECTED(m_exception.hasException())) {
+				goto throw_exception;
+			}
+		} else {
+			error(VM_ERROR, OPCODE.loc, "Operation cannot be executed on null value");
+		}
+	}
+	DISPATCH;
+
+	OP(OP_MUL):
+	{
+		const Value* lhs = getValue(OPCODE.op1);
+		const Value* rhs = getValue(OPCODE.op2);
+
+		if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
+			lhs->getType()->mul(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
+
+			if (UNEXPECTED(m_exception.hasException())) {
+				goto throw_exception;
+			}
+		} else {
+			error(VM_ERROR, OPCODE.loc, "Operation cannot be executed on null value");
+		}
+	}
+	DISPATCH;
+
+	OP(OP_DIV):
+	{
+		const Value* lhs = getValue(OPCODE.op1);
+		const Value* rhs = getValue(OPCODE.op2);
+
+		if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
+			lhs->getType()->div(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
+
+			if (UNEXPECTED(m_exception.hasException())) {
+				goto throw_exception;
+			}
+		} else {
+			error(VM_ERROR, OPCODE.loc, "Operation cannot be executed on null value");
+		}
+	}
+	DISPATCH;
+
+	OP(OP_MOD):
+	{
+		const Value* lhs = getValue(OPCODE.op1);
+		const Value* rhs = getValue(OPCODE.op2);
+
+		if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
+			lhs->getType()->mod(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
+
+			if (UNEXPECTED(m_exception.hasException())) {
+				goto throw_exception;
+			}
+		} else {
+			error(VM_ERROR, OPCODE.loc, "Operation cannot be executed on null value");
+		}
+	}
+	DISPATCH;
+
+	OP(OP_JMP):
+	VM_GOTO(OPCODE.op1.jmp_addr);
+
+	OP(OP_FCALL):
+	{
+		const Value* fval = getValue(OPCODE.op1);
+
+		clever_assert_not_null(fval);
+
+		if (UNEXPECTED(fval->isNull())) {
+			error(VM_ERROR, OPCODE.loc, "Cannot make a call from null value");
+		}
+
+		if (UNEXPECTED(!fval->isFunction())) {
+			error(VM_ERROR, OPCODE.loc,
+				"Cannot make a call from %T type", fval->getType());
+		}
+
+		Function* func = static_cast<Function*>(fval->getObj());
+		clever_assert_not_null(func);
+
+		if (func->isUserDefined()) {
+			prepareCall(func);
+
+			VM_GOTO(func->getAddr());
+		} else {
+			func->getFuncPtr()(getValue(OPCODE.result), m_call_args, this, &m_exception);
+			m_call_args.clear();
+
+			if (UNEXPECTED(m_exception.hasException())) {
+				goto throw_exception;
+			}
+		}
+	}
+	DISPATCH;
+
+	OP(OP_BTHREAD):
+	{
+		getMutex()->lock();
+
+		const Value* tval = getValue(OPCODE.op2);
+		Thread* tdata = static_cast<Thread*>(tval->getObj());
+		clever_assert_not_null(tdata);
+
+		const Value* size = getValue(OPCODE.result);
+		size_t n_threads = 1;
+
+		if (size != NULL) {
+			n_threads = size->getInt();
+		}
+
+		tdata->setNThreads(n_threads);
+
+		getMutex()->unlock();
+
+		VM_GOTO(OPCODE.op1.jmp_addr);
+	}
+
+	OP(OP_ETHREAD):
+	if (EXPECTED(isChild())) {
+		getMutex()->lock();
+
+		if (EXPECTED(m_call_stack.size())) {
+			Environment* env = m_call_stack.top();
 
 			clever_delref(env);
 			m_call_stack.pop();
+		}
 
-			VM_GOTO(ret_addr);
+		Environment* env = m_temp_env;
+		Environment* other = NULL;
+
+		while (env != NULL) {
+			other = env->getOuter();
+			env = other;
+		}
+		clever_delete_var(m_temp_env);
+
+		getMutex()->unlock();
+		goto exit;
+	}
+	DISPATCH;
+
+	OP(OP_LEAVE):
+	{
+		Environment* env = m_call_stack.top();
+		size_t ret_addr = env->getRetAddr();
+
+		clever_delref(env);
+		m_call_stack.pop();
+
+		VM_GOTO(ret_addr);
+	}
+
+	OP(OP_SEND_VAL):
+	m_call_args.push_back(getValue(OPCODE.op1));
+	DISPATCH;
+
+	OP(OP_JMPZ):
+	{
+		const Value* value = getValue(OPCODE.op1);
+
+		if (!value->asBool()) {
+			if (OPCODE.result.op_type != UNUSED) {
+				getValue(OPCODE.result)->setBool(false);
+			}
+			VM_GOTO(OPCODE.op2.jmp_addr);
+		}
+		if (OPCODE.result.op_type != UNUSED) {
+			getValue(OPCODE.result)->setBool(true);
+		}
+	}
+	DISPATCH;
+
+	OP(OP_PRE_INC):
+	{
+		Value* value = getValue(OPCODE.op1);
+
+		if (EXPECTED(!value->isNull())) {
+			value->getType()->increment(value, this, &m_exception);
+			getValue(OPCODE.result)->copy(value);
+
+			if (UNEXPECTED(m_exception.hasException())) {
+				goto throw_exception;
+			}
 		} else {
-			goto exit;
+			error(VM_ERROR, OPCODE.loc, "Cannot increment null value");
 		}
-		DISPATCH;
+	}
+	DISPATCH;
 
-	OP(OP_ASSIGN):
-		{
-			Value* var = getValue(OPCODE.op1);
-			const Value* value = getValue(OPCODE.op2);
+	OP(OP_POS_INC):
+	{
+		Value* value = getValue(OPCODE.op1);
 
-			// Checks if this assignment is allowed (non-const variable or
-			// const variable declaration).
-			if (EXPECTED(var->isAssignable())) {
-				var->copy(value);
-			} else {
-				// TODO(muriloadriano): improve this message to show the symbol
-				// name and the line to the user.
-				error(VM_ERROR, OPCODE.loc, "Cannot assign to a const variable!");
+		if (EXPECTED(!value->isNull())) {
+			getValue(OPCODE.result)->copy(value);
+			value->getType()->increment(value, this, &m_exception);
+
+			if (UNEXPECTED(m_exception.hasException())) {
+				goto throw_exception;
 			}
+		} else {
+			error(VM_ERROR, OPCODE.loc, "Cannot increment null value");
 		}
-		DISPATCH;
+	}
+	DISPATCH;
 
-	OP(OP_ADD):
-		{
-			const Value* lhs = getValue(OPCODE.op1);
-			const Value* rhs = getValue(OPCODE.op2);
+	OP(OP_PRE_DEC):
+	{
+		Value* value = getValue(OPCODE.op1);
 
-			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
-				lhs->getType()->add(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
+		if (EXPECTED(!value->isNull())) {
+			value->getType()->decrement(value, this, &m_exception);
+			getValue(OPCODE.result)->copy(value);
 
-				if (UNEXPECTED(m_exception.hasException())) {
-					goto throw_exception;
-				}
-			} else {
-				error(VM_ERROR, OPCODE.loc, "Operation cannot be executed on null value");
+			if (UNEXPECTED(m_exception.hasException())) {
+				goto throw_exception;
 			}
+		} else {
+			error(VM_ERROR, OPCODE.loc, "Cannot decrement null value");
 		}
-		DISPATCH;
+	}
+	DISPATCH;
 
-	OP(OP_SUB):
-		{
-			const Value* lhs = getValue(OPCODE.op1);
-			const Value* rhs = getValue(OPCODE.op2);
+	OP(OP_POS_DEC):
+	{
+		Value* value = getValue(OPCODE.op1);
 
-			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
-				lhs->getType()->sub(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
+		if (EXPECTED(!value->isNull())) {
+			getValue(OPCODE.result)->copy(value);
+			value->getType()->decrement(value, this, &m_exception);
 
-				if (UNEXPECTED(m_exception.hasException())) {
-					goto throw_exception;
-				}
-			} else {
-				error(VM_ERROR, OPCODE.loc, "Operation cannot be executed on null value");
+			if (UNEXPECTED(m_exception.hasException())) {
+				goto throw_exception;
 			}
+		} else {
+			error(VM_ERROR, OPCODE.loc, "Cannot decrement null value");
 		}
-		DISPATCH;
+	}
+	DISPATCH;
 
-	OP(OP_MUL):
-		{
-			const Value* lhs = getValue(OPCODE.op1);
-			const Value* rhs = getValue(OPCODE.op2);
+	OP(OP_JMPNZ):
+	{
+		const Value* value = getValue(OPCODE.op1);
 
-			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
-				lhs->getType()->mul(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
-
-				if (UNEXPECTED(m_exception.hasException())) {
-					goto throw_exception;
-				}
-			} else {
-				error(VM_ERROR, OPCODE.loc, "Operation cannot be executed on null value");
+		if (value->asBool()) {
+			if (OPCODE.result.op_type != UNUSED) {
+				getValue(OPCODE.result)->setBool(true);
 			}
+			VM_GOTO(OPCODE.op2.jmp_addr);
 		}
-		DISPATCH;
-
-	OP(OP_DIV):
-		{
-			const Value* lhs = getValue(OPCODE.op1);
-			const Value* rhs = getValue(OPCODE.op2);
-
-			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
-				lhs->getType()->div(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
-
-				if (UNEXPECTED(m_exception.hasException())) {
-					goto throw_exception;
-				}
-			} else {
-				error(VM_ERROR, OPCODE.loc, "Operation cannot be executed on null value");
-			}
+		if (OPCODE.result.op_type != UNUSED) {
+			getValue(OPCODE.result)->setBool(false);
 		}
-		DISPATCH;
+	}
+	DISPATCH;
 
-	OP(OP_MOD):
-		{
-			const Value* lhs = getValue(OPCODE.op1);
-			const Value* rhs = getValue(OPCODE.op2);
+	OP(OP_AND):
+	{
+		const Value* lhs = getValue(OPCODE.op1);
 
-			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
-				lhs->getType()->mod(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
-
-				if (UNEXPECTED(m_exception.hasException())) {
-					goto throw_exception;
-				}
-			} else {
-				error(VM_ERROR, OPCODE.loc, "Operation cannot be executed on null value");
-			}
+		if (!lhs->asBool()) {
+			getValue(OPCODE.result)->setNull();
+			VM_GOTO(OPCODE.op2.jmp_addr);
 		}
-		DISPATCH;
+		getValue(OPCODE.result)->copy(lhs);
+	}
+	DISPATCH;
 
-	OP(OP_JMP):
-		VM_GOTO(OPCODE.op1.jmp_addr);
+	OP(OP_OR):
+	{
+		const Value* lhs = getValue(OPCODE.op1);
 
-	OP(OP_FCALL):
-		{
-			const Value* fval = getValue(OPCODE.op1);
+		if (lhs->asBool()) {
+			getValue(OPCODE.result)->copy(lhs);
+			VM_GOTO(OPCODE.op2.jmp_addr);
+		}
+	}
+	DISPATCH;
 
-			clever_assert_not_null(fval);
+	OP(OP_GREATER):
+	{
+		const Value* lhs = getValue(OPCODE.op1);
+		const Value* rhs = getValue(OPCODE.op2);
 
-			if (UNEXPECTED(fval->isNull())) {
-				error(VM_ERROR, OPCODE.loc, "Cannot make a call from null value");
+		if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
+			lhs->getType()->greater(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
+
+			if (UNEXPECTED(m_exception.hasException())) {
+				goto throw_exception;
+			}
+		} else {
+			getValue(OPCODE.result)->setBool(false);
+		}
+	}
+	DISPATCH;
+
+	OP(OP_GEQUAL):
+	{
+		const Value* lhs = getValue(OPCODE.op1);
+		const Value* rhs = getValue(OPCODE.op2);
+
+		if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
+			lhs->getType()->greater_equal(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
+
+			if (UNEXPECTED(m_exception.hasException())) {
+				goto throw_exception;
+			}
+		} else {
+			getValue(OPCODE.result)->setBool(false);
+		}
+	}
+	DISPATCH;
+
+	OP(OP_LESS):
+	{
+		const Value* lhs = getValue(OPCODE.op1);
+		const Value* rhs = getValue(OPCODE.op2);
+
+		if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
+			lhs->getType()->less(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
+
+			if (UNEXPECTED(m_exception.hasException())) {
+				goto throw_exception;
+			}
+		} else {
+			getValue(OPCODE.result)->setBool(false);
+		}
+	}
+	DISPATCH;
+
+	OP(OP_LEQUAL):
+	{
+		const Value* lhs = getValue(OPCODE.op1);
+		const Value* rhs = getValue(OPCODE.op2);
+
+		if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
+			lhs->getType()->less_equal(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
+
+			if (UNEXPECTED(m_exception.hasException())) {
+				goto throw_exception;
+			}
+		} else {
+			getValue(OPCODE.result)->setBool(false);
+		}
+	}
+	DISPATCH;
+
+	OP(OP_EQUAL):
+	{
+		const Value* lhs = getValue(OPCODE.op1);
+		const Value* rhs = getValue(OPCODE.op2);
+
+		if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
+			lhs->getType()->equal(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
+
+			if (UNEXPECTED(m_exception.hasException())) {
+				goto throw_exception;
+			}
+		} else {
+			getValue(OPCODE.result)->setBool(false);
+		}
+	}
+	DISPATCH;
+
+	OP(OP_NEQUAL):
+	{
+		const Value* lhs = getValue(OPCODE.op1);
+		const Value* rhs = getValue(OPCODE.op2);
+
+		if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
+			lhs->getType()->not_equal(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
+
+			if (UNEXPECTED(m_exception.hasException())) {
+				goto throw_exception;
+			}
+		} else {
+			getValue(OPCODE.result)->setBool(false);
+		}
+	}
+	DISPATCH;
+
+	OP(OP_LOCK):
+	getMutex()->lock();
+	DISPATCH;
+
+	OP(OP_UNLOCK):
+	getMutex()->unlock();
+	DISPATCH;
+
+	OP(OP_NEW):
+	{
+		const Value* valtype = getValue(OPCODE.op1);
+		const Type* type = valtype->getType();
+		const Function* ctor = type->getConstructor();
+
+		if (EXPECTED(ctor != NULL)) {
+			Value* instance = getValue(OPCODE.result);
+
+			(type->*ctor->getMethodPtr())(instance,
+				NULL, m_call_args, this, &m_exception);
+
+			m_call_args.clear();
+
+			if (UNEXPECTED(m_exception.hasException())) {
+				goto throw_exception;
 			}
 
-			if (UNEXPECTED(!fval->isFunction())) {
+			if (UNEXPECTED(instance->isNull())) {
 				error(VM_ERROR, OPCODE.loc,
-					"Cannot make a call from %T type", fval->getType());
-			}
-
-			Function* func = static_cast<Function*>(fval->getObj());
-			clever_assert_not_null(func);
-
-			if (func->isUserDefined()) {
-				prepareCall(func);
-
-				VM_GOTO(func->getAddr());
+					"Cannot create object of type %T", type);
 			} else {
-				func->getFuncPtr()(getValue(OPCODE.result), m_call_args, this, &m_exception);
+				createInstance(type, instance);
+			}
+		} else {
+			error(VM_ERROR, OPCODE.loc,
+				"Constructor for %T not found", type);
+		}
+	}
+	DISPATCH;
+
+	OP(OP_MCALL):
+	{
+		const Value* callee = getValue(OPCODE.op1);
+		const Value* method = getValue(OPCODE.op2);
+
+		if (UNEXPECTED(callee->isNull())) {
+			error(VM_ERROR, OPCODE.loc,
+				"Cannot call method `%S' from a null value", method->getStr());
+		}
+
+		const Type* type = callee->getType();
+		const Function* func = type->getMethod(method->getStr());
+
+		if (UNEXPECTED(func == NULL)) {
+			error(VM_ERROR, OPCODE.loc, "Method `%T::%S' not found!",
+				type, method->getStr());
+		}
+
+		if (func->isUserDefined()) {
+			prepareCall(func,
+				static_cast<UserObject*>(callee->getObj())->getEnvironment());
+
+			VM_GOTO(func->getAddr());
+		} else {
+			if (UNEXPECTED(func->isStatic())) {
+				error(VM_ERROR, OPCODE.loc,
+					"Method `%T::%S' cannot be called non-statically",
+					type, method->getStr());
+			} else {
+				(type->*func->getMethodPtr())(getValue(OPCODE.result),
+					callee, m_call_args, this, &m_exception);
+
 				m_call_args.clear();
 
 				if (UNEXPECTED(m_exception.hasException())) {
@@ -420,313 +787,23 @@ void VM::run()
 				}
 			}
 		}
-		DISPATCH;
+	}
+	DISPATCH;
 
-	OP(OP_BTHREAD):
-		{
-			getMutex()->lock();
+	OP(OP_SMCALL):
+	{
+		const Value* valtype = getValue(OPCODE.op1);
+		const Type* type = valtype->getType();
+		const Value* method = getValue(OPCODE.op2);
+		const Function* func = type->getMethod(method->getStr());
 
-			const Value* tval = getValue(OPCODE.op2);
-			Thread* tdata = static_cast<Thread*>(tval->getObj());
-			clever_assert_not_null(tdata);
-
-			const Value* size = getValue(OPCODE.result);
-			size_t n_threads = 1;
-
-			if (size != NULL) {
-				n_threads = size->getInt();
-			}
-
-			tdata->setNThreads(n_threads);
-
-			getMutex()->unlock();
-
-			VM_GOTO(OPCODE.op1.jmp_addr);
-		}
-
-	OP(OP_ETHREAD):
-		if (EXPECTED(isChild())) {
-			getMutex()->lock();
-
-			if (EXPECTED(m_call_stack.size())) {
-				Environment* env = m_call_stack.top();
-
-				clever_delref(env);
-				m_call_stack.pop();
-			}
-
-			Environment* env = m_temp_env;
-			Environment* other = NULL;
-
-			while (env != NULL) {
-				other = env->getOuter();
-				env = other;
-			}
-			clever_delete_var(m_temp_env);
-
-			getMutex()->unlock();
-			goto exit;
-		}
-		DISPATCH;
-
-	OP(OP_LEAVE):
-		{
-			Environment* env = m_call_stack.top();
-			size_t ret_addr = env->getRetAddr();
-
-			clever_delref(env);
-			m_call_stack.pop();
-
-			VM_GOTO(ret_addr);
-		}
-
-	OP(OP_SEND_VAL):
-		m_call_args.push_back(getValue(OPCODE.op1));
-		DISPATCH;
-
-	OP(OP_JMPZ):
-		{
-			const Value* value = getValue(OPCODE.op1);
-
-			if (!value->asBool()) {
-				if (OPCODE.result.op_type != UNUSED) {
-					getValue(OPCODE.result)->setBool(false);
-				}
-				VM_GOTO(OPCODE.op2.jmp_addr);
-			}
-			if (OPCODE.result.op_type != UNUSED) {
-				getValue(OPCODE.result)->setBool(true);
-			}
-		}
-		DISPATCH;
-
-	OP(OP_PRE_INC):
-		{
-			Value* value = getValue(OPCODE.op1);
-
-			if (EXPECTED(!value->isNull())) {
-				value->getType()->increment(value, this, &m_exception);
-				getValue(OPCODE.result)->copy(value);
-
-				if (UNEXPECTED(m_exception.hasException())) {
-					goto throw_exception;
-				}
+		if (EXPECTED(func != NULL)) {
+			if (UNEXPECTED(!func->isStatic())) {
+				error(VM_ERROR, OPCODE.loc,
+					"Method `%T::%S' cannot be called statically",
+					type, method->getStr());
 			} else {
-				error(VM_ERROR, OPCODE.loc, "Cannot increment null value");
-			}
-		}
-		DISPATCH;
-
-	OP(OP_POS_INC):
-		{
-			Value* value = getValue(OPCODE.op1);
-
-			if (EXPECTED(!value->isNull())) {
-				getValue(OPCODE.result)->copy(value);
-				value->getType()->increment(value, this, &m_exception);
-
-				if (UNEXPECTED(m_exception.hasException())) {
-					goto throw_exception;
-				}
-			} else {
-				error(VM_ERROR, OPCODE.loc, "Cannot increment null value");
-			}
-		}
-		DISPATCH;
-
-	OP(OP_PRE_DEC):
-		{
-			Value* value = getValue(OPCODE.op1);
-
-			if (EXPECTED(!value->isNull())) {
-				value->getType()->decrement(value, this, &m_exception);
-				getValue(OPCODE.result)->copy(value);
-
-				if (UNEXPECTED(m_exception.hasException())) {
-					goto throw_exception;
-				}
-			} else {
-				error(VM_ERROR, OPCODE.loc, "Cannot decrement null value");
-			}
-		}
-		DISPATCH;
-
-	OP(OP_POS_DEC):
-		{
-			Value* value = getValue(OPCODE.op1);
-
-			if (EXPECTED(!value->isNull())) {
-				getValue(OPCODE.result)->copy(value);
-				value->getType()->decrement(value, this, &m_exception);
-
-				if (UNEXPECTED(m_exception.hasException())) {
-					goto throw_exception;
-				}
-			} else {
-				error(VM_ERROR, OPCODE.loc, "Cannot decrement null value");
-			}
-		}
-		DISPATCH;
-
-	OP(OP_JMPNZ):
-		{
-			const Value* value = getValue(OPCODE.op1);
-
-			if (value->asBool()) {
-				if (OPCODE.result.op_type != UNUSED) {
-					getValue(OPCODE.result)->setBool(true);
-				}
-				VM_GOTO(OPCODE.op2.jmp_addr);
-			}
-			if (OPCODE.result.op_type != UNUSED) {
-				getValue(OPCODE.result)->setBool(false);
-			}
-		}
-		DISPATCH;
-
-	OP(OP_AND):
-		{
-			const Value* lhs = getValue(OPCODE.op1);
-
-			if (!lhs->asBool()) {
-				getValue(OPCODE.result)->setNull();
-				VM_GOTO(OPCODE.op2.jmp_addr);
-			}
-			getValue(OPCODE.result)->copy(lhs);
-		}
-		DISPATCH;
-
-	OP(OP_OR):
-		{
-			const Value* lhs = getValue(OPCODE.op1);
-
-			if (lhs->asBool()) {
-				getValue(OPCODE.result)->copy(lhs);
-				VM_GOTO(OPCODE.op2.jmp_addr);
-			}
-		}
-		DISPATCH;
-
-	OP(OP_GREATER):
-		{
-			const Value* lhs = getValue(OPCODE.op1);
-			const Value* rhs = getValue(OPCODE.op2);
-
-			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
-				lhs->getType()->greater(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
-
-				if (UNEXPECTED(m_exception.hasException())) {
-					goto throw_exception;
-				}
-			} else {
-				getValue(OPCODE.result)->setBool(false);
-			}
-		}
-		DISPATCH;
-
-	OP(OP_GEQUAL):
-		{
-			const Value* lhs = getValue(OPCODE.op1);
-			const Value* rhs = getValue(OPCODE.op2);
-
-			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
-				lhs->getType()->greater_equal(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
-
-				if (UNEXPECTED(m_exception.hasException())) {
-					goto throw_exception;
-				}
-			} else {
-				getValue(OPCODE.result)->setBool(false);
-			}
-		}
-		DISPATCH;
-
-	OP(OP_LESS):
-		{
-			const Value* lhs = getValue(OPCODE.op1);
-			const Value* rhs = getValue(OPCODE.op2);
-
-			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
-				lhs->getType()->less(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
-
-				if (UNEXPECTED(m_exception.hasException())) {
-					goto throw_exception;
-				}
-			} else {
-				getValue(OPCODE.result)->setBool(false);
-			}
-		}
-		DISPATCH;
-
-	OP(OP_LEQUAL):
-		{
-			const Value* lhs = getValue(OPCODE.op1);
-			const Value* rhs = getValue(OPCODE.op2);
-
-			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
-				lhs->getType()->less_equal(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
-
-				if (UNEXPECTED(m_exception.hasException())) {
-					goto throw_exception;
-				}
-			} else {
-				getValue(OPCODE.result)->setBool(false);
-			}
-		}
-		DISPATCH;
-
-	OP(OP_EQUAL):
-		{
-			const Value* lhs = getValue(OPCODE.op1);
-			const Value* rhs = getValue(OPCODE.op2);
-
-			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
-				lhs->getType()->equal(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
-
-				if (UNEXPECTED(m_exception.hasException())) {
-					goto throw_exception;
-				}
-			} else {
-				getValue(OPCODE.result)->setBool(false);
-			}
-		}
-		DISPATCH;
-
-	OP(OP_NEQUAL):
-		{
-			const Value* lhs = getValue(OPCODE.op1);
-			const Value* rhs = getValue(OPCODE.op2);
-
-			if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
-				lhs->getType()->not_equal(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
-
-				if (UNEXPECTED(m_exception.hasException())) {
-					goto throw_exception;
-				}
-			} else {
-				getValue(OPCODE.result)->setBool(false);
-			}
-		}
-		DISPATCH;
-
-	OP(OP_LOCK):
-		getMutex()->lock();
-		DISPATCH;
-
-	OP(OP_UNLOCK):
-		getMutex()->unlock();
-		DISPATCH;
-
-	OP(OP_NEW):
-		{
-			const Value* valtype = getValue(OPCODE.op1);
-			const Type* type = valtype->getType();
-			const Function* ctor = type->getConstructor();
-
-			if (EXPECTED(ctor != NULL)) {
-				Value* instance = getValue(OPCODE.result);
-
-				(type->*ctor->getMethodPtr())(instance,
+				(type->*func->getMethodPtr())(getValue(OPCODE.result),
 					NULL, m_call_args, this, &m_exception);
 
 				m_call_args.clear();
@@ -734,147 +811,70 @@ void VM::run()
 				if (UNEXPECTED(m_exception.hasException())) {
 					goto throw_exception;
 				}
-
-				if (UNEXPECTED(instance->isNull())) {
-					error(VM_ERROR, OPCODE.loc,
-						"Cannot create object of type %T", type);
-				} else {
-					createInstance(type, instance);
-				}
-			} else {
-				error(VM_ERROR, OPCODE.loc,
-					"Constructor for %T not found", type);
 			}
+		} else {
+			error(VM_ERROR, OPCODE.loc,
+				"Method `%T::%S' not found!", type, method->getStr());
 		}
-		DISPATCH;
-
-	OP(OP_MCALL):
-		{
-			const Value* callee = getValue(OPCODE.op1);
-			const Value* method = getValue(OPCODE.op2);
-
-			if (UNEXPECTED(callee->isNull())) {
-				error(VM_ERROR, OPCODE.loc,
-					"Cannot call method `%S' from a null value", method->getStr());
-			}
-
-			const Type* type = callee->getType();
-			const Function* func = type->getMethod(method->getStr());
-
-			if (UNEXPECTED(func == NULL)) {
-				error(VM_ERROR, OPCODE.loc, "Method `%T::%S' not found!",
-					type, method->getStr());
-			}
-
-			if (func->isUserDefined()) {
-				prepareCall(func,
-					static_cast<UserObject*>(callee->getObj())->getEnvironment());
-
-				VM_GOTO(func->getAddr());
-			} else {
-				if (UNEXPECTED(func->isStatic())) {
-					error(VM_ERROR, OPCODE.loc,
-						"Method `%T::%S' cannot be called non-statically",
-						type, method->getStr());
-				} else {
-					(type->*func->getMethodPtr())(getValue(OPCODE.result),
-						callee, m_call_args, this, &m_exception);
-
-					m_call_args.clear();
-
-					if (UNEXPECTED(m_exception.hasException())) {
-						goto throw_exception;
-					}
-				}
-			}
-		}
-		DISPATCH;
-
-	OP(OP_SMCALL):
-		{
-			const Value* valtype = getValue(OPCODE.op1);
-			const Type* type = valtype->getType();
-			const Value* method = getValue(OPCODE.op2);
-			const Function* func = type->getMethod(method->getStr());
-
-			if (EXPECTED(func != NULL)) {
-				if (UNEXPECTED(!func->isStatic())) {
-					error(VM_ERROR, OPCODE.loc,
-						"Method `%T::%S' cannot be called statically",
-						type, method->getStr());
-				} else {
-					(type->*func->getMethodPtr())(getValue(OPCODE.result),
-						NULL, m_call_args, this, &m_exception);
-
-					m_call_args.clear();
-
-					if (UNEXPECTED(m_exception.hasException())) {
-						goto throw_exception;
-					}
-				}
-			} else {
-				error(VM_ERROR, OPCODE.loc,
-					"Method `%T::%S' not found!", type, method->getStr());
-			}
-		}
-		DISPATCH;
+	}
+	DISPATCH;
 
 	OP(OP_PROP_ACC):
-		{
-			const Value* obj = getValue(OPCODE.op1);
-			const Value* name = getValue(OPCODE.op2);
+	{
+		const Value* obj = getValue(OPCODE.op1);
+		const Value* name = getValue(OPCODE.op2);
 
-			if (UNEXPECTED(obj->isNull())) {
-				error(VM_ERROR, OPCODE.loc,
-					"Cannot perform property access from null value");
-			}
-
-			const Value* value = obj->getType()->getProperty(name->getStr());
-
-			if (EXPECTED(value != NULL)) {
-				getValue(OPCODE.result)->copy(value);
-			} else {
-				error(VM_ERROR, OPCODE.loc, "Property `%T::%S' not found!",
-					obj->getType(), name->getStr());
-			}
+		if (UNEXPECTED(obj->isNull())) {
+			error(VM_ERROR, OPCODE.loc,
+				"Cannot perform property access from null value");
 		}
-		DISPATCH;
+
+		const Value* value = obj->getType()->getProperty(name->getStr());
+
+		if (EXPECTED(value != NULL)) {
+			getValue(OPCODE.result)->copy(value);
+		} else {
+			error(VM_ERROR, OPCODE.loc, "Property `%T::%S' not found!",
+				obj->getType(), name->getStr());
+		}
+	}
+	DISPATCH;
 
 	OP(OP_TRY):
-		m_try_stack.push(std::pair<size_t, size_t>(OPCODE.op1.jmp_addr, 1));
-		DISPATCH;
+	m_try_stack.push(std::pair<size_t, size_t>(OPCODE.op1.jmp_addr, 1));
+	DISPATCH;
 
 	OP(OP_CATCH):
-		m_try_stack.top().second = 2;
-		DISPATCH;
+	m_try_stack.top().second = 2;
+	DISPATCH;
 
 	OP(OP_THROW):
-		m_exception.setException(getValue(OPCODE.op1));
-		goto throw_exception;
+	m_exception.setException(getValue(OPCODE.op1));
+	goto throw_exception;
 
 throw_exception:
-		if (EXPECTED(m_try_stack.size())) {
-			size_t catch_addr = m_try_stack.top().first;
-			if (m_try_stack.top().second > 1) {
-				m_try_stack.pop();
-				if (!m_try_stack.size()) {
-					goto exit_exception;
-				}
-				catch_addr = m_try_stack.top().first;
+	if (EXPECTED(m_try_stack.size())) {
+		size_t catch_addr = m_try_stack.top().first;
+		if (m_try_stack.top().second > 1) {
+			m_try_stack.pop();
+			if (!m_try_stack.size()) {
+				goto exit_exception;
 			}
-			getValue(m_inst[catch_addr].op1)->copy(m_exception.getException());
-			m_exception.getException()->delRef();
-			m_exception.clear();
-			VM_GOTO(catch_addr);
+			catch_addr = m_try_stack.top().first;
 		}
-		goto exit_exception;
+		getValue(m_inst[catch_addr].op1)->copy(m_exception.getException());
+		m_exception.getException()->delRef();
+		m_exception.clear();
+		VM_GOTO(catch_addr);
+	}
+	goto exit_exception;
 
 	OP(OP_ETRY):
-		m_try_stack.pop();
-		DISPATCH;
+	m_try_stack.pop();
+	DISPATCH;
 
 	OP(OP_HALT):
-		goto exit;
+	goto exit;
 
 	END_OPCODES;
 
