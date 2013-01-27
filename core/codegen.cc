@@ -474,6 +474,7 @@ void Codegen::visit(Instantiation* node)
 	ValueOffset tmp_id = m_builder->getTemp();
 
 	inst.result = Operand(FETCH_TMP, tmp_id);
+	inst.loc = node->getLocation();
 
 	node->setVOffset(tmp_id);
 }

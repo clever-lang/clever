@@ -79,6 +79,7 @@ public:
 	CMutex* getMutex() { return isChild() ? f_mutex : &m_mutex; }
 
 	void prepareCall(const Function*, Environment* = NULL);
+	void createInstance(const Type*, Value*) const;
 
 	/// Start the VM execution
 	void run();

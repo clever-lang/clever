@@ -218,6 +218,16 @@ CLEVER_FORCE_INLINE void VM::prepareCall(const Function* func, Environment* env)
 	getMutex()->unlock();
 }
 
+CLEVER_FORCE_INLINE void VM::createInstance(const Type* type, Value* instance) const
+{
+	if (type->isUserDefined()) {
+		const UserType* utype = static_cast<const UserType*>(type);
+		UserObject* obj = static_cast<UserObject*>(instance->getObj());
+
+		obj->setEnvironment(utype->getEnvironment()->activate(m_call_stack.top()));
+	}
+}
+
 // Executes the supplied function
 Value* VM::runFunction(const Function* func, std::vector<Value*>* args)
 {
@@ -722,11 +732,11 @@ void VM::run()
 					goto throw_exception;
 				}
 
-				if (type->isUserDefined()) {
-					const UserType* utype = static_cast<const UserType*>(type);
-					UserObject* obj = static_cast<UserObject*>(instance->getObj());
-
-					obj->setEnvironment(utype->getEnvironment()->activate(m_call_stack.top()));
+				if (UNEXPECTED(instance->isNull())) {
+					error(VM_ERROR, OPCODE.loc,
+						"Cannot create object of type %T", type);
+				} else {
+					createInstance(type, instance);
 				}
 			}
 			m_call_args.clear();
