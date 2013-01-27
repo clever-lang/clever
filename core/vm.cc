@@ -13,6 +13,7 @@
 #include "core/value.h"
 #include "modules/std/core/function.h"
 #include "modules/std/core/array.h"
+#include "core/user.h"
 #include "types/thread.h"
 #include "types/type.h"
 
@@ -188,12 +189,14 @@ static CLEVER_FORCE_INLINE void _param_binding(const Function* func, Environment
 }
 
 // Prepares an user function/method call
-CLEVER_FORCE_INLINE void VM::prepareCall(const Function* func)
+CLEVER_FORCE_INLINE void VM::prepareCall(const Function* func, Environment* env)
 {
 	getMutex()->lock();
 	Environment* fenv;
 
-	if (m_call_stack.top()->isActive()) {
+	if (env) {
+		fenv = func->getEnvironment()->activate(env);
+	} else if (m_call_stack.top()->isActive()) {
 		fenv = func->getEnvironment()->activate(m_call_stack.top()->getOuter());
 	} else {
 		fenv = func->getEnvironment()->activate(func->getEnvironment()->getOuter());
@@ -710,11 +713,20 @@ void VM::run()
 			const Function* ctor = type->getConstructor();
 
 			if (EXPECTED(ctor != NULL)) {
-				(type->*ctor->getMethodPtr())(getValue(OPCODE.result),
+				Value* instance = getValue(OPCODE.result);
+
+				(type->*ctor->getMethodPtr())(instance,
 					NULL, m_call_args, this, &m_exception);
 
 				if (UNEXPECTED(m_exception.hasException())) {
 					goto throw_exception;
+				}
+
+				if (type->isUserDefined()) {
+					const UserType* utype = static_cast<const UserType*>(type);
+					UserObject* obj = static_cast<UserObject*>(instance->getObj());
+
+					obj->setEnvironment(utype->getEnvironment()->activate(m_call_stack.top()));
 				}
 			}
 			m_call_args.clear();
@@ -739,7 +751,8 @@ void VM::run()
 			}
 
 			if (func->isUserDefined()) {
-				prepareCall(func);
+				prepareCall(func,
+					static_cast<UserObject*>(callee->getObj())->getEnvironment());
 
 				VM_GOTO(func->getAddr());
 			} else {

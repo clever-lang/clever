@@ -15,9 +15,18 @@ namespace clever {
 // User object representation
 class UserObject {
 public:
-	UserObject() {}
-	~UserObject() {}
+	UserObject()
+		: m_env(NULL) {}
+
+	~UserObject() {
+		clever_delref(m_env);
+	}
+
+	void setEnvironment(Environment* env) { m_env = env; }
+	Environment* getEnvironment() const { return m_env; }
 private:
+	Environment* m_env;
+
 	DISALLOW_COPY_AND_ASSIGN(UserObject);
 };
 
