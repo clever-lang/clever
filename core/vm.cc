@@ -400,7 +400,8 @@ void VM::run()
 			}
 
 			if (UNEXPECTED(!fval->isFunction())) {
-				error(VM_ERROR, OPCODE.loc, "Cannot make a call from %T type", fval->getType());
+				error(VM_ERROR, OPCODE.loc,
+					"Cannot make a call from %T type", fval->getType());
 			}
 
 			Function* func = static_cast<Function*>(fval->getObj());
@@ -728,6 +729,8 @@ void VM::run()
 				(type->*ctor->getMethodPtr())(instance,
 					NULL, m_call_args, this, &m_exception);
 
+				m_call_args.clear();
+
 				if (UNEXPECTED(m_exception.hasException())) {
 					goto throw_exception;
 				}
@@ -738,8 +741,10 @@ void VM::run()
 				} else {
 					createInstance(type, instance);
 				}
+			} else {
+				error(VM_ERROR, OPCODE.loc,
+					"Constructor for %T not found", type);
 			}
-			m_call_args.clear();
 		}
 		DISPATCH;
 
