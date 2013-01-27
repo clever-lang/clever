@@ -220,12 +220,14 @@ CLEVER_FORCE_INLINE void VM::prepareCall(const Function* func, Environment* env)
 
 CLEVER_FORCE_INLINE void VM::createInstance(const Type* type, Value* instance) const
 {
-	if (type->isUserDefined()) {
-		const UserType* utype = static_cast<const UserType*>(type);
-		UserObject* obj = static_cast<UserObject*>(instance->getObj());
-
-		obj->setEnvironment(utype->getEnvironment()->activate(m_call_stack.top()));
+	if (!type->isUserDefined()) {
+		return;
 	}
+
+	const UserType* utype = static_cast<const UserType*>(type);
+	UserObject* obj = static_cast<UserObject*>(instance->getObj());
+
+	obj->setEnvironment(utype->getEnvironment()->activate(m_call_stack.top()));
 }
 
 // Executes the supplied function
