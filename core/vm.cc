@@ -747,7 +747,8 @@ void VM::run()
 			const Function* func = type->getMethod(method->getStr());
 
 			if (UNEXPECTED(func == NULL)) {
-				error(VM_ERROR, OPCODE.loc, "Method `%S' not found!", method->getStr());
+				error(VM_ERROR, OPCODE.loc, "Method `%T::%S' not found!",
+					type, method->getStr());
 			}
 
 			if (func->isUserDefined()) {
