@@ -6,6 +6,7 @@
  */
 
 #include "core/environment.h"
+#include "core/value.h"
 
 namespace clever {
 
@@ -66,9 +67,7 @@ void Environment::copy(const Environment* _env)
         }
 
         for (size_t i = 0, size = env->m_data.size(); i < size; ++i) {
-            Value* v = new Value();
-            v->copy(env->m_data[i]);
-            _this->pushValue(v);
+            _this->pushValue(env->m_data[i]->clone());
         }
 
         if (env->m_outer != NULL) {

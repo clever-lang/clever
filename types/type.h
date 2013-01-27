@@ -61,14 +61,20 @@ typedef std::tr1::unordered_map<const CString*, Function*> MethodMap;
 
 class Type {
 public:
-	Type() {}
+	enum TypeFlag { INTERNAL_TYPE, USER_TYPE };
 
-	explicit Type(const CString* name)
-		: m_name(name), m_ctor(NULL), m_dtor(NULL) {}
+	Type()
+		: m_flags(INTERNAL_TYPE) {}
+
+	Type(const CString* name, TypeFlag flags = INTERNAL_TYPE)
+		: m_name(name), m_ctor(NULL), m_dtor(NULL), m_flags(flags) {}
 
 	virtual ~Type() {}
 
 	void deallocMembers();
+
+	bool isUserDefined() const { return m_flags == USER_TYPE; }
+	bool isInternal() const { return m_flags == INTERNAL_TYPE; }
 
 	void addMember(const CString* name, Value* value) {
 		m_members.insert(MemberMap::value_type(name, value));
@@ -141,6 +147,7 @@ private:
 	const Function* m_dtor;
 
 	MemberMap m_members;
+	TypeFlag m_flags;
 
 	DISALLOW_COPY_AND_ASSIGN(Type);
 };

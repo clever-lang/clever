@@ -10,10 +10,11 @@
 
 #include <stack>
 #include <algorithm>
-#include "core/value.h"
+#include "core/refcounted.h"
 
 namespace clever {
 
+class Value;
 class Environment;
 
 /// @brief a pair specifying how many environments to `escape` and what value to fetch.

@@ -8,6 +8,8 @@
 #ifndef CLEVER_USER_H
 #define CLEVER_USER_H
 
+#include "core/module.h"
+
 namespace clever {
 
 // User object representation
@@ -15,13 +17,15 @@ class UserObject {
 public:
 	UserObject() {}
 	~UserObject() {}
+private:
+	DISALLOW_COPY_AND_ASSIGN(UserObject);
 };
 
 // User type representation
 class UserType : public Type {
 public:
 	UserType(const CString* name)
-		: Type(name) {}
+		: Type(name, USER_TYPE) {}
 
 	~UserType() {}
 
@@ -41,6 +45,8 @@ public:
 	CLEVER_METHOD(ctor) {
 		result->setObj(this, allocData(&args));
 	}
+private:
+	DISALLOW_COPY_AND_ASSIGN(UserType);
 };
 
 // User module representation
@@ -52,6 +58,8 @@ public:
 	~UserModule() {}
 
 	void init() {}
+private:
+	DISALLOW_COPY_AND_ASSIGN(UserModule);
 };
 
 } // clever

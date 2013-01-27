@@ -15,12 +15,12 @@ namespace clever {
 class NO_INIT_VTABLE RefCounted {
 public:
 	RefCounted()
-		: m_reference(1) { }
+		: m_reference(1) {}
 
 	explicit RefCounted(size_t reference)
-		: m_reference(reference) { }
+		: m_reference(reference) {}
 
-	virtual ~RefCounted() { }
+	virtual ~RefCounted() {}
 
 	void setReference(size_t reference) { m_reference = reference; }
 
