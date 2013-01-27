@@ -737,8 +737,8 @@ void VM::run()
 				VM_GOTO(func->getAddr());
 			} else {
 				if (UNEXPECTED(func->isStatic())) {
-					error(VM_ERROR, "Method `%S' cannot be called non-statically",
-						method->getStr());
+					error(VM_ERROR, "Method `%T::%S' cannot be called non-statically",
+						type, method->getStr());
 				} else {
 					(type->*func->getMethodPtr())(getValue(OPCODE.result),
 						callee, m_call_args, this, &m_exception);
@@ -762,8 +762,8 @@ void VM::run()
 
 			if (EXPECTED(func != NULL)) {
 				if (UNEXPECTED(!func->isStatic())) {
-					error(VM_ERROR, "Method `%S' cannot be called statically",
-						method->getStr());
+					error(VM_ERROR, "Method `%T::%S' cannot be called statically",
+						type, method->getStr());
 				} else {
 					(type->*func->getMethodPtr())(getValue(OPCODE.result),
 						NULL, m_call_args, this, &m_exception);
