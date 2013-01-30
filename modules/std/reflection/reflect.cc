@@ -13,13 +13,22 @@
 
 namespace clever { namespace packages { namespace std { namespace reflection {
 
+// Allocates a Reflect object
 void* ReflectType::allocData(CLEVER_TYPE_CTOR_ARGS) const
 {
-	ReflectObject* obj = new ReflectObject;
+	return new ReflectObject(args->at(0));
+}
 
-	obj->setData(args->at(0));
+void ReflectType::dump(const void* data, ::std::ostream& out) const
+{
+	const ReflectObject* intern = static_cast<ReflectObject*>(
+		static_cast<ValueObject*>(const_cast<void*>(data))->getObj());
 
-	return obj;
+	Value* value = intern->getData();
+
+	out << "Reflect(";
+	out << *value->getType()->getName();
+	out << ")";
 }
 
 // Reflect::Reflect(object)
@@ -112,7 +121,6 @@ CLEVER_METHOD(ReflectType::isDouble)
 
 	result->setBool(intern->getData()->isDouble());
 }
-
 
 // Reflect::isArray()
 // Check if the object is of double type

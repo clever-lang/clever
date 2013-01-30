@@ -18,13 +18,17 @@ public:
 	ReflectObject()
 		: m_data(NULL) {}
 
+	explicit ReflectObject(Value* data)
+		: m_data(data) {}
+
 	~ReflectObject() {}
 
 	void setData(Value* value) { m_data = value; }
-
 	Value* getData() const { return m_data; }
 private:
 	Value* m_data;
+
+	DISALLOW_COPY_AND_ASSIGN(ReflectObject);
 };
 
 class ReflectType : public Type {
@@ -36,8 +40,7 @@ public:
 
 	void init(CLEVER_TYPE_INIT_ARGS);
 
-	virtual void dump(const void*) const {}
-	virtual void dump(const void*, ::std::ostream& out) const {}
+	virtual void dump(const void*, ::std::ostream& out) const;
 
 	void* allocData(CLEVER_TYPE_CTOR_ARGS) const;
 
@@ -67,6 +70,8 @@ public:
 
 	CLEVER_METHOD(getMethods);
 	CLEVER_METHOD(getProperties);
+private:
+	DISALLOW_COPY_AND_ASSIGN(ReflectType);
 };
 
 }}}} // clever

@@ -16,9 +16,9 @@ namespace clever { namespace packages { namespace std {
 class Reflection : public Module {
 public:
 	Reflection()
-		: Module("reflection") { }
+		: Module("reflection") {}
 
-	~Reflection() { }
+	~Reflection() {}
 
 	CLEVER_MODULE_VIRTUAL_METHODS_DECLARATION;
 private:
