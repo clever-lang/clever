@@ -276,7 +276,7 @@ void VM::run()
 			Value* val = getValue(OPCODE.op1);
 			clever_assert_not_null(val);
 
-			if (val->isFunction()) {
+			if (UNEXPECTED(val->isFunction())) {
 				const Function* func = static_cast<Function*>(val->getObj());
 
 				if (func->isUserDefined()) {
