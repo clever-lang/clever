@@ -275,9 +275,25 @@ void VM::run()
 		if (EXPECTED(OPCODE.op1.op_type != UNUSED)) {
 			Value* val = getValue(OPCODE.op1);
 			clever_assert_not_null(val);
+
+			if (val->isFunction()) {
+				const Function* func = static_cast<Function*>(val->getObj());
+
+				if (func->isUserDefined()) {
+					Function* closure = func->getClosure();
+
+					m_call_stack.top()->getRetVal()->setObj(CLEVER_FUNC_TYPE, closure);
+
+					closure->setEnvironment(
+						func->getEnvironment()->activate(m_call_stack.top()));
+
+					goto out;
+				}
+			}
+
 			m_call_stack.top()->getRetVal()->copy(val);
 		}
-
+out:
 		clever_delref(env);
 		m_call_stack.pop();
 

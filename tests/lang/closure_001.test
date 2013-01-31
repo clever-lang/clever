@@ -1,0 +1,17 @@
+Testing closure
+==CODE==
+import std.io.*;
+
+var f = function (x) {
+	return function () {
+		return x;
+	};
+};
+
+var a = f(123);
+var b = f(321);
+
+println(a(), b());
+==RESULT==
+123
+321

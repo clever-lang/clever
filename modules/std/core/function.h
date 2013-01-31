@@ -37,6 +37,7 @@ public:
 		FF_INTERNAL = 0x01,
 		FF_STATIC   = 0x02,
 		FF_VARIADIC = 0x04,
+		FF_CLOSURE  = 0x08,
 
 		FF_INVALID  = 0xFF
 	};
@@ -60,7 +61,11 @@ public:
 		  m_environment(NULL)
 		{ m_info.mptr = ptr; }
 
-	~Function() {}
+	~Function() {
+		if (m_flags & FF_CLOSURE) {
+			clever_delref(m_environment);
+		}
+	}
 
 	void setName(const std::string& name) { m_name = name; }
 	const std::string& getName() const { return m_name; }
@@ -108,6 +113,22 @@ public:
 
 	Environment* getEnvironment() const { return m_environment; }
 	void setEnvironment(Environment* env) { m_environment = env; }
+
+	void setClosure() { m_flags |= FF_CLOSURE; }
+	bool isClosure() const { return m_flags & FF_CLOSURE; }
+
+	Function* getClosure() const {
+		Function* func = new Function();
+
+		func->m_name = m_name;
+		func->m_num_rargs = m_num_rargs;
+		func->m_num_args = m_num_args;
+		func->m_flags = m_flags | FF_CLOSURE;
+		func->m_info = m_info;
+		func->m_environment = m_environment;
+
+		return func;
+	}
 private:
 	std::string m_name;
 	size_t m_num_rargs;
