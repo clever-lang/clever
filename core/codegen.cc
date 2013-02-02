@@ -99,9 +99,8 @@ void Codegen::visit(ThreadBlock* node)
 	thread->setAddr(bg);
 
 	Environment* save_temp = m_builder->getTempEnv();
-	Environment* env_temp  = new Environment(NULL, false);
+	Environment* env_temp  = m_builder->getNewTempEnv();
 
-	m_builder->setTempEnv(env_temp);
 	thread->getEnvironment()->setTempEnv(env_temp);
 
 	size_t m_thread_id = m_thread_ids.size() + 1;
@@ -225,10 +224,9 @@ void Codegen::visit(FunctionDecl* node)
 	func->setAddr(m_builder->getSize());
 
 	Environment* save_temp = m_builder->getTempEnv();
-	Environment* temp_env  = new Environment(NULL, false);
+	Environment* temp_env  = m_builder->getNewTempEnv();
 
 	func->getEnvironment()->setTempEnv(temp_env);
-	m_builder->setTempEnv(temp_env);
 
 	if (node->hasArgs()) {
 		node->getArgs()->accept(*this);
@@ -564,9 +562,16 @@ void Codegen::visit(Break* node)
 
 void Codegen::visit(ClassDef* node)
 {
+	Environment* save_temp = m_builder->getTempEnv();
+	Environment* temp_env = m_builder->getNewTempEnv();
+
+	node->getScope()->getEnvironment()->setTempEnv(temp_env);
+
 	if (node->hasMethods()) {
 		node->getMethods()->accept(*this);
 	}
+
+	m_builder->setTempEnv(save_temp);
 }
 
 }} // clever::ast

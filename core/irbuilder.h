@@ -108,6 +108,10 @@ public:
         return m_temp_env->pushValue(new Value());
     }
 
+    Environment* getNewTempEnv() {
+		return m_temp_env = new Environment(NULL, false);
+	}
+
 private:
 	Scope* m_global_scope;
 	Environment* m_const_env;
