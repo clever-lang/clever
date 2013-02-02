@@ -39,17 +39,18 @@ typedef std::stack<Environment*> CallStack;
 class Environment: public RefCounted {
 public:
 	Environment()
-		: RefCounted(), m_outer(NULL), m_data(), m_ret_val(NULL),
+		: RefCounted(), m_outer(NULL), m_temp(NULL), m_data(), m_ret_val(NULL),
 		m_ret_addr(0), m_active(false), m_scoped(true) {}
 
 	Environment(Environment* outer_, bool is_scoped = true)
-		: RefCounted(), m_outer(outer_), m_data(), m_ret_val(NULL),
+		: RefCounted(), m_outer(outer_), m_temp(NULL), m_data(), m_ret_val(NULL),
 		m_ret_addr(0), m_active(false), m_scoped(is_scoped) {
 		clever_addref(m_outer);
 	}
 
 	~Environment() {
 		clever_delref(m_outer);
+		clever_delref(m_temp);
 
 		if (!m_scoped) {
 			std::for_each(m_data.begin(), m_data.end(), clever_delref);
@@ -101,8 +102,12 @@ public:
 
 	Environment* getOuter() const { return m_outer; }
 
+	void setTempEnv(Environment* env) { m_temp = env; }
+	Environment* getTempEnv() const { return m_temp; }
+
 private:
 	Environment* m_outer;
+	Environment* m_temp;
 	std::vector<Value*> m_data;
 	Value* m_ret_val;
 	size_t m_ret_addr;

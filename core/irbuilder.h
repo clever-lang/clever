@@ -21,8 +21,10 @@ class IRBuilder {
 public:
     IRBuilder(Environment* init_glbenv, Scope* global_scope)
 		: m_global_scope(global_scope) {
-        m_const_env = new Environment(init_glbenv, false);
-        m_temp_env  = new Environment(init_glbenv, false);
+        m_const_env = new Environment(NULL, false);
+        m_temp_env  = new Environment(NULL, false);
+
+        init_glbenv->setTempEnv(m_temp_env);
 
         // null, true and false
         m_const_env->pushValue(new Value());
@@ -32,7 +34,6 @@ public:
 
     ~IRBuilder() {
 		clever_delref(m_const_env);
-		clever_delref(m_temp_env);
 		clever_delete(m_global_scope);
 	}
 
@@ -58,6 +59,8 @@ public:
     }
 
     Environment* getConstEnv() const { return m_const_env; }
+
+    void setTempEnv(Environment* env) { m_temp_env = env; }
     Environment* getTempEnv() const { return m_temp_env; }
 
     const IRVector& getIR() const { return m_ir; }

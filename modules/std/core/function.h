@@ -114,6 +114,8 @@ public:
 	Environment* getEnvironment() const { return m_environment; }
 	void setEnvironment(Environment* env) { m_environment = env; }
 
+	void setTempEnvironment(Environment* temp_env) { m_temp_env = temp_env; }
+
 	void setClosure() { m_flags |= FF_CLOSURE; }
 	bool isClosure() const { return m_flags & FF_CLOSURE; }
 
@@ -143,6 +145,7 @@ private:
 	} m_info;
 
 	Environment* m_environment;
+	Environment* m_temp_env;
 
 	DISALLOW_COPY_AND_ASSIGN(Function);
 };

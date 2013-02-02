@@ -98,6 +98,12 @@ void Codegen::visit(ThreadBlock* node)
 	Thread* thread = static_cast<Thread*>(threadval->getObj());
 	thread->setAddr(bg);
 
+	Environment* save_temp = m_builder->getTempEnv();
+	Environment* env_temp  = new Environment(NULL, false);
+
+	m_builder->setTempEnv(env_temp);
+	thread->getEnvironment()->setTempEnv(env_temp);
+
 	size_t m_thread_id = m_thread_ids.size() + 1;
 	m_thread_ids[thread] = m_thread_id;
 	thread->setID(m_thread_id);
@@ -116,8 +122,8 @@ void Codegen::visit(ThreadBlock* node)
 	node->getBlock()->accept(*this);
 
 	m_builder->push(OP_ETHREAD);
-
 	m_builder->getAt(bg).op1 = Operand(JMP_ADDR, m_builder->getSize());
+	m_builder->setTempEnv(save_temp);
 }
 
 void Codegen::visit(VariableDecl* node)
@@ -218,6 +224,12 @@ void Codegen::visit(FunctionDecl* node)
 	Function* func = static_cast<Function*>(funcval->getObj());
 	func->setAddr(m_builder->getSize());
 
+	Environment* save_temp = m_builder->getTempEnv();
+	Environment* temp_env  = new Environment(NULL, false);
+
+	func->getEnvironment()->setTempEnv(temp_env);
+	m_builder->setTempEnv(temp_env);
+
 	if (node->hasArgs()) {
 		node->getArgs()->accept(*this);
 	}
@@ -235,6 +247,8 @@ void Codegen::visit(FunctionDecl* node)
 		node->setVOffset(sym->voffset);
 		node->setScope(sym->scope);
 	}
+
+	m_builder->setTempEnv(save_temp);
 }
 
 void Codegen::visit(Return* node)

@@ -69,9 +69,9 @@ CLEVER_FORCE_INLINE Value* VM::getValue(const Operand& operand) const
 	const Environment* source;
 
 	switch (operand.op_type) {
-		case FETCH_CONST: source = m_const_env;        break;
-		case FETCH_VAR:   source = m_call_stack.top(); break;
-		case FETCH_TMP:   source = m_temp_env;         break;
+		case FETCH_CONST: source = m_const_env;                      break;
+		case FETCH_VAR:   source = m_call_stack.top();               break;
+		case FETCH_TMP:   source = m_call_stack.top()->getTempEnv(); break;
 		default:
 			return NULL;
 	}
@@ -201,10 +201,11 @@ CLEVER_FORCE_INLINE void VM::prepareCall(const Function* func, Environment* env)
 	} else {
 		fenv = func->getEnvironment()->activate(func->getEnvironment()->getOuter());
 	}
-	m_call_stack.push(fenv);
 
 	fenv->setRetAddr(m_pc + 1);
 	fenv->setRetVal(getValue(OPCODE.result));
+
+	m_call_stack.push(fenv);
 
 	if (m_call_args.size() < func->getNumRequiredArgs()
 		|| (m_call_args.size() > func->getNumArgs()
