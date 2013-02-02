@@ -38,8 +38,7 @@ public:
 
 	VM(const IRVector& inst)
 		: m_pc(0), m_main(true), m_inst(inst),
-		  m_const_env(NULL), m_temp_env(NULL), m_global_env(NULL),
-		  m_call_stack(), m_call_args(),
+		  m_const_env(NULL), m_global_env(NULL), m_call_stack(), m_call_args(),
 		  m_thread_pool(), m_mutex(), f_mutex(NULL), m_try_stack() {}
 
 	~VM() {}
@@ -47,8 +46,6 @@ public:
 	void setGlobalEnv(Environment* globals) { m_global_env = globals; }
 
 	void setConstEnv(Environment* consts) { m_const_env = consts; }
-
-	void setTempEnv(Environment* temps) { m_temp_env = temps; }
 
 	void copy(const VM*, bool);
 
@@ -106,9 +103,6 @@ private:
 
 	/// Constant
 	Environment* m_const_env;
-
-	/// Temporaries
-	Environment* m_temp_env;
 
 	/// Globals
 	Environment* m_global_env;

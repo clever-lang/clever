@@ -122,18 +122,11 @@ void VM::copy(const VM* vm, bool deep)
 {
 	f_mutex = const_cast<VM*>(vm)->getMutex();
 	m_pc = vm->m_pc;
-	m_try_stack = vm->m_try_stack;
 
-	if (deep) {
-		m_temp_env = new Environment(NULL, false);
-		m_temp_env->copy(vm->m_temp_env);
-	} else {
-		m_temp_env = vm->m_temp_env;
-	}
-
+	m_try_stack  = vm->m_try_stack;
 	m_global_env = vm->m_global_env;
 	m_call_stack = vm->m_call_stack;
-	m_const_env = vm->m_const_env;
+	m_const_env  = vm->m_const_env;
 }
 
 void VM::wait()
@@ -474,15 +467,6 @@ out:
 			clever_delref(env);
 			m_call_stack.pop();
 		}
-
-		Environment* env = m_temp_env;
-		Environment* other = NULL;
-
-		while (env != NULL) {
-			other = env->getOuter();
-			env = other;
-		}
-		clever_delete_var(m_temp_env);
 
 		getMutex()->unlock();
 		goto exit;

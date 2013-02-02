@@ -26,7 +26,6 @@ void Interpreter::execute(bool interactive)
 	VM vm(m_compiler.getIR());
 
 	vm.setConstEnv(m_compiler.getConstEnv());
-	vm.setTempEnv(m_compiler.getTempEnv());
 	vm.setGlobalEnv(m_compiler.getGlobalEnv());
 
 #ifdef CLEVER_DEBUG
