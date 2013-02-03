@@ -22,7 +22,7 @@ public:
     IRBuilder(Environment* init_glbenv, Scope* global_scope)
 		: m_global_scope(global_scope) {
         m_const_env = new Environment(NULL, false);
-        m_temp_env  = new Environment(NULL, false);
+        m_temp_env  = getNewTempEnv();
 
         init_glbenv->setTempEnv(m_temp_env);
 
@@ -33,6 +33,7 @@ public:
     }
 
     ~IRBuilder() {
+		std::for_each(m_temp_envs.begin(), m_temp_envs.end(), clever_delref);
 		clever_delref(m_const_env);
 		clever_delete(m_global_scope);
 	}
@@ -109,7 +110,9 @@ public:
     }
 
     Environment* getNewTempEnv() {
-		return m_temp_env = new Environment(NULL, false);
+		m_temp_envs.push_back(m_temp_env = new Environment(NULL, false));
+		
+		return m_temp_env;
 	}
 
 private:
@@ -118,6 +121,7 @@ private:
 	Environment* m_temp_env;
 
 	IRVector m_ir;
+	std::vector<Environment*> m_temp_envs;
 };
 
 } // clever

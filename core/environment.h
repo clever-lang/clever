@@ -38,24 +38,34 @@ typedef std::stack<Environment*> CallStack;
  */
 class Environment: public RefCounted {
 public:
+	enum EnvFlag {
+		NONE      = 0,
+		FREE_TEMP = 1<<0
+	};
+
 	Environment()
 		: RefCounted(), m_outer(NULL), m_temp(NULL), m_data(), m_ret_val(NULL),
-		m_ret_addr(0), m_active(false), m_scoped(true) {}
+		m_ret_addr(0), m_active(false), m_scoped(true), m_flags(NONE) {}
 
 	Environment(Environment* outer_, bool is_scoped = true)
 		: RefCounted(), m_outer(outer_), m_temp(NULL), m_data(), m_ret_val(NULL),
-		m_ret_addr(0), m_active(false), m_scoped(is_scoped) {
+		m_ret_addr(0), m_active(false), m_scoped(is_scoped), m_flags(NONE) {
 		clever_addref(m_outer);
 	}
 
 	~Environment() {
 		clever_delref(m_outer);
-		clever_delref(m_temp);
+		
+		if (m_flags & FREE_TEMP) {
+			clever_delref(m_temp);
+		}
 
 		if (!m_scoped) {
 			std::for_each(m_data.begin(), m_data.end(), clever_delref);
 		}
 	}
+	
+	void setFlag(EnvFlag flags) { m_flags = flags; }
 
 	/**
 	 * @brief pushes a value into the environment.
@@ -113,6 +123,7 @@ private:
 	size_t m_ret_addr;
 	bool m_active;
 	bool m_scoped;
+	EnvFlag m_flags;
 
 	DISALLOW_COPY_AND_ASSIGN(Environment);
 };

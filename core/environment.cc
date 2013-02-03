@@ -14,8 +14,9 @@ Environment* Environment::activate(Environment* outer) const
 {
 	Environment* env = new Environment(outer, false);
 	env->m_active = true;
-
+	
 	if (m_temp) {
+		env->setFlag(FREE_TEMP);
 		env->m_temp = m_temp->activate(NULL);
 	}
 
