@@ -14,9 +14,12 @@
 #include "core/codegen.h"
 #include "core/cthread.h"
 #include "core/cexception.h"
+#include "core/clever.h"
+#include "core/user.h"
 
 namespace clever {
 
+class ValueObject;
 class Value;
 class Function;
 class VM;
@@ -76,7 +79,7 @@ public:
 	CMutex* getMutex() { return isChild() ? f_mutex : &m_mutex; }
 
 	void prepareCall(const Function*, Environment* = NULL);
-	void createInstance(const Type*, Value*) const;
+	void createInstance(const Type*, Value*);
 
 	/// Start the VM execution
 	void run();
@@ -112,6 +115,7 @@ private:
 
 	/// Call arguments
 	std::vector<Value*> m_call_args;
+	std::vector<Environment*> m_obj_store;
 
 	ThreadPool m_thread_pool;
 

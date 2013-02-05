@@ -18,9 +18,7 @@ public:
 	UserObject()
 		: m_env(NULL) {}
 
-	~UserObject() {
-		clever_delref(m_env);
-	}
+	~UserObject() {}
 
 	void setEnvironment(Environment* env) { m_env = env; }
 	Environment* getEnvironment() const { return m_env; }

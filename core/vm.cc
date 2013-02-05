@@ -212,7 +212,7 @@ CLEVER_FORCE_INLINE void VM::prepareCall(const Function* func, Environment* env)
 	getMutex()->unlock();
 }
 
-CLEVER_FORCE_INLINE void VM::createInstance(const Type* type, Value* instance) const
+CLEVER_FORCE_INLINE void VM::createInstance(const Type* type, Value* instance)
 {
 	if (!type->isUserDefined()) {
 		return;
@@ -223,6 +223,8 @@ CLEVER_FORCE_INLINE void VM::createInstance(const Type* type, Value* instance) c
 
 	obj->setEnvironment(utype->getEnvironment()->activate(m_call_stack.top()));
 	obj->getEnvironment()->getValue(ValueOffset(0,0))->copy(instance);
+	
+	m_obj_store.push_back(obj->getEnvironment());
 }
 
 // Executes the supplied function
@@ -887,6 +889,8 @@ exit_exception:
 		m_exception.getException());
 
 exit:
+	std::for_each(m_obj_store.begin(), m_obj_store.end(), clever_delref);
+	
 	wait();
 }
 
