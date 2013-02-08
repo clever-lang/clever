@@ -14,16 +14,14 @@
 
 namespace clever { namespace packages {
 
-class Std : public Package {
+class Std : public Module {
 public:
 	Std()
-		: Package("std") {}
+		: Module("std") {}
 
 	~Std() {}
 
-	void init();
-
-	const char* getVersion() const { return NULL; }
+	CLEVER_MODULE_VIRTUAL_METHODS_DECLARATION;
 private:
 	DISALLOW_COPY_AND_ASSIGN(Std);
 };

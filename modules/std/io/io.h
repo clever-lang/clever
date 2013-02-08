@@ -16,7 +16,7 @@ namespace clever { namespace packages { namespace std {
 class IOModule : public Module {
 public:
 	IOModule()
-		: Module("io") {}
+		: Module("std.io") {}
 
 	~IOModule() {}
 

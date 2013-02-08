@@ -21,9 +21,6 @@ namespace clever {
 class Value;
 class Environment;
 
-typedef std::tr1::unordered_map<const CString*, Package*> PackageMap;
-typedef std::pair<const CString*, Package*> PackagePair;
-
 /// Package manager
 class PkgManager {
 public:
@@ -34,7 +31,7 @@ public:
 	};
 
 	PkgManager()
-		: m_pkgs(), m_std(NULL) {}
+		: m_mods(), m_user(NULL) {}
 
 	~PkgManager() {}
 
@@ -44,18 +41,13 @@ public:
 	/// Shutdown routine
 	void shutdown();
 
-	Package* getStdPackage() const { return m_std; }
+	Module* getUserModule() const { return m_user; }
 
 	/// Adds a new package to the map
-	void addPackage(const CString* name, Package* package) {
-		m_pkgs.insert(PackagePair(name, package));
-	}
-
-	/// Imports the package to the current scope
-	void importPackage(Scope*, Environment*, const CString*) const;
+	void addModule(const std::string&, Module*);
 
 	/// Imports the module to the current scope
-	void importModule(Scope*, Environment*, const CString*, const CString*,
+	void importModule(Scope*, Environment*, const std::string&,
 		ImportKind = PkgManager::ALL, const CString* = NULL) const;
 
 	void loadModule(Scope*, Environment*, Module*, ImportKind, const CString*) const;
@@ -64,8 +56,8 @@ public:
 
 	void loadType(Scope*, Environment*, const CString*, Type*) const;
 private:
-	PackageMap m_pkgs;
-	Package* m_std;
+	ModuleMap m_mods;
+	Module* m_user;
 };
 
 } // clever

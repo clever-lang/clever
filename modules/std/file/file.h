@@ -16,7 +16,7 @@ namespace clever { namespace packages { namespace std {
 class FileModule : public Module {
 public:
 	FileModule()
-		: Module("file") { }
+		: Module("std.file") { }
 
 	~FileModule() {
 	}

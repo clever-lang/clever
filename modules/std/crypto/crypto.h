@@ -15,7 +15,7 @@ namespace clever { namespace packages { namespace std {
 class CryptoModule : public Module {
 public:
 	CryptoModule()
-		: Module("crypto") {}
+		: Module("std.crypto") {}
 
 	~CryptoModule() {}
 

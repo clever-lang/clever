@@ -11,45 +11,65 @@
 #include "core/cstring.h"
 #include "core/scope.h"
 #include "modules/std/std_pkg.h"
+#include "core/user.h"
 
 namespace clever {
 
 /// Adds the available packages to be imported
 void PkgManager::init()
 {
-	addPackage(CSTRING("std"), m_std = new packages::Std);
+	addModule("std",   new packages::Std);
+	addModule("_user", m_user = new UserModule);
 }
 
 /// Performs shutdown operation
 void PkgManager::shutdown()
 {
 	std::vector<Type*> typevec;
-	PackageMap::const_iterator it = m_pkgs.begin(), end = m_pkgs.end();
+	ModuleMap::const_iterator itm = m_mods.begin(), endm = m_mods.end();
 
-	while (it != end) {
-		ModuleMap& mods = it->second->getModules();
-		ModuleMap::const_iterator itm = mods.begin(), endm = mods.end();
+	while (itm != endm) {
+		TypeMap& types = itm->second->getTypes();
+		TypeMap::const_iterator itt(types.begin()), ite(types.end());
 
-		while (itm != endm) {
-			TypeMap& types = itm->second->getTypes();
-			TypeMap::const_iterator itt(types.begin()), ite(types.end());
-
-			while (itt != ite) {
-				itt->second->deallocMembers();
-				typevec.push_back(itt->second);
-				++itt;
-			}
-
-			clever_delete(itm->second);
-			++itm;
+		while (itt != ite) {
+			itt->second->deallocMembers();
+			typevec.push_back(itt->second);
+			++itt;
 		}
 
-		clever_delete(it->second);
-		++it;
+		clever_delete(itm->second);
+		++itm;
 	}
 
 	for (size_t i = 0, j = typevec.size(); i < j; ++i) {
 		clever_delete(typevec[i]);
+	}
+}
+
+/// Adds a new module
+void PkgManager::addModule(const std::string& name, Module* module)
+{
+	if (m_mods.find(name) != m_mods.end()) {
+		std::cerr << "Module `" << name << "' already added!" << std::endl;
+		return;
+	}
+
+	m_mods.insert(ModulePair(name, module));
+	module->init();
+	module->setLoaded();
+
+	//std::cout << "init " << module->getName() << std::endl;
+
+	if (module->hasModules()) {
+		ModuleMap& mods = module->getModules();
+		ModuleMap::const_iterator it = mods.begin(), end = mods.end();
+
+		while (it != end) {
+			// @TODO(Felipe): recursivity
+			m_mods.insert(ModulePair(it->first, it->second));
+			++it;
+		}
 	}
 }
 
@@ -79,12 +99,24 @@ void PkgManager::loadFunction(Scope* scope, Environment* env, const CString* nam
 void PkgManager::loadModule(Scope* scope, Environment* env, Module* module,
 	ImportKind kind, const CString* name) const
 {
+	if (kind == PkgManager::ALL && module->hasModules()) {
+		ModuleMap& mods = module->getModules();
+		ModuleMap::const_iterator it = mods.begin(), end = mods.end();
+
+		while (it != end) {
+			loadModule(scope, env, it->second, kind, NULL);
+			++it;
+		}
+	}
+
 	if (module->isLoaded()) {
 		return;
 	}
 
 	module->init();
 	module->setLoaded();
+
+	//std::cout << "load " << module->getName() << std::endl;
 
 	if (kind & PkgManager::FUNCTION) {
 		FunctionMap& funcs = module->getFunctions();
@@ -108,55 +140,19 @@ void PkgManager::loadModule(Scope* scope, Environment* env, Module* module,
 }
 
 /// Imports a module
-void PkgManager::importModule(Scope* scope, Environment* env, const CString* package,
-	const CString* module, ImportKind kind, const CString* name) const
+void PkgManager::importModule(Scope* scope, Environment* env,
+	const std::string& module, ImportKind kind, const CString* name) const
 {
-	PackageMap::const_iterator it = m_pkgs.find(package);
+	ModuleMap::const_iterator it = m_mods.find(module);
 
-	if (it == m_pkgs.end()) {
-		std::cerr << "Package not found!" << std::endl;
+	//std::cout << "imp " << module << std::endl;
+
+	if (it == m_mods.end()) {
+		std::cerr << "Module `" << module << "` not found!" << std::endl;
 		return;
 	}
 
-	if (!it->second->isLoaded()) {
-		it->second->init();
-		it->second->setLoaded();
-	}
-
-	ModuleMap& mods = it->second->getModules();
-	ModuleMap::const_iterator itm = mods.find(*module);
-
-	if (itm == mods.end()) {
-		std::cerr << "Module not found!" << std::endl;
-		return;
-	}
-
-	loadModule(scope, env, itm->second, kind, name);
-}
-
-/// Imports a package
-void PkgManager::importPackage(Scope* scope, Environment* env, const CString* package) const
-{
-	PackageMap::const_iterator it = m_pkgs.find(package);
-
-	if (it == m_pkgs.end()) {
-		std::cerr << "Package not found!" << std::endl;
-	}
-	if (it->second->isFullyLoaded()) {
-		return;
-	}
-	if (!it->second->isLoaded()) {
-		it->second->init();
-	}
-	it->second->setFullyLoaded();
-
-	ModuleMap& mods = it->second->getModules();
-	ModuleMap::const_iterator itm = mods.begin(), endm = mods.end();
-
-	while (EXPECTED(itm != endm)) {
-		loadModule(scope, env, itm->second, PkgManager::ALL, NULL);
-		++itm;
-	}
+	loadModule(scope, env, it->second, kind, name);
 }
 
 } // clever

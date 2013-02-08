@@ -17,12 +17,12 @@ namespace clever { namespace packages { namespace std {
 class UnicodeModule : public Module {
 public:
 	UnicodeModule()
-		: Module("unicode") { }
+		: Module("std.unicode") { }
 
 	~UnicodeModule() {
 		u_cleanup();
 	}
-		
+
 	CLEVER_MODULE_VIRTUAL_METHODS_DECLARATION;
 private:
 	DISALLOW_COPY_AND_ASSIGN(UnicodeModule);

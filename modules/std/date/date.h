@@ -16,7 +16,7 @@ namespace clever { namespace packages { namespace std {
 class Date : public Type {
 public:
 	Date()
-		: Type(CSTRING("Date")) {}
+		: Type(CSTRING("std.date")) {}
 
 	~Date() {}
 

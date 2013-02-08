@@ -17,7 +17,7 @@ namespace clever { namespace packages { namespace std {
 class Math : public Module {
 public:
 	Math()
-		: Module("Math") {}
+		: Module("std.math") {}
 
 	~Math() {}
 

@@ -21,10 +21,8 @@ Resolver::Resolver(const PkgManager& pkgmanager)
 	m_scope->setEnvironment(new Environment());
 	m_stack.push(m_scope->getEnvironment());
 
-	m_pkgmanager.importModule(m_scope, m_stack.top(),
-		CSTRING("std"), CSTRING("core"));
-
-	m_pkgmanager.getStdPackage()->addModule(m_mod = new UserModule);
+	m_pkgmanager.importModule(m_scope, m_stack.top(), "std.core");
+	m_mod = m_pkgmanager.getUserModule();
 }
 
 void Resolver::visit(Block* node)
@@ -221,18 +219,12 @@ void Resolver::visit(Import* node)
 	PkgManager::ImportKind kind = node->getFunction() ?
 		PkgManager::FUNCTION : (node->getType() ? PkgManager::TYPE : PkgManager::ALL);
 
-	if (node->getModule()) {
-		const CString* name = (kind == PkgManager::ALL) ? NULL
-			: (kind == PkgManager::FUNCTION ? node->getFunction()->getName()
-				: node->getType()->getName());
+	const CString* name = (kind == PkgManager::ALL) ? NULL
+		: (kind == PkgManager::FUNCTION ? node->getFunction()->getName()
+			: node->getType()->getName());
 
-		m_pkgmanager.importModule(m_scope, m_stack.top(),
-			node->getPackage()->getName(), node->getModule()->getName(),
-			kind, name);
-	} else {
-		m_pkgmanager.importPackage(m_scope, m_stack.top(),
-			node->getPackage()->getName());
-	}
+	m_pkgmanager.importModule(m_scope, m_stack.top(),
+		*node->getModule()->getName(), kind, name);
 }
 
 void Resolver::visit(Catch* node)

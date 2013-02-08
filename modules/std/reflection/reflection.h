@@ -16,7 +16,7 @@ namespace clever { namespace packages { namespace std {
 class Reflection : public Module {
 public:
 	Reflection()
-		: Module("reflection") {}
+		: Module("std.reflection") {}
 
 	~Reflection() {}
 

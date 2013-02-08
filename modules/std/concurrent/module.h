@@ -26,7 +26,7 @@ struct ThreadData {
 class ConcurrencyModule : public Module {
 public:
 	ConcurrencyModule()
-		: Module("concurrent") { }
+		: Module("std.concurrent") { }
 
 	CLEVER_MODULE_VIRTUAL_METHODS_DECLARATION;
 private:

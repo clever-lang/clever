@@ -131,8 +131,6 @@ void Visitor::visit(Comparison* node) {
 }
 
 void Visitor::visit(Import* node) {
-	node->getPackage()->accept(*this);
-
 	if (node->hasModule()) {
 		node->getModule()->accept(*this);
 	}

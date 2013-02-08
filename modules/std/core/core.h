@@ -16,7 +16,7 @@ namespace clever { namespace packages { namespace std {
 class CoreModule : public Module {
 public:
 	CoreModule()
-		: Module("core") {}
+		: Module("std.core") {}
 
 	~CoreModule() {}
 

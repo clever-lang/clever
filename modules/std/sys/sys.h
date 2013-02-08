@@ -16,7 +16,7 @@ namespace clever { namespace packages { namespace std {
 class SYSModule : public Module {
 public:
 	SYSModule()
-		: Module("sys") { }
+		: Module("std.sys") { }
 
 	~SYSModule() { }
 
