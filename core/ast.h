@@ -241,7 +241,7 @@ public:
 
 	void append(char separator, Ident* ident) {
 		m_name = CSTRING(*m_name + '.' + *ident->getName());
-		clever_delref(ident);
+		clever_delete(ident);
 	}
 private:
 	const CString* m_name;
