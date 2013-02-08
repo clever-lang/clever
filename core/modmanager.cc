@@ -42,9 +42,7 @@ void ModManager::shutdown()
 		++itm;
 	}
 
-	for (size_t i = 0, j = typevec.size(); i < j; ++i) {
-		clever_delete(typevec[i]);
-	}
+	std::for_each(typevec.begin(), typevec.end(), clever_delete<Type>);
 }
 
 /// Adds a new module
