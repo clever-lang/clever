@@ -16,7 +16,7 @@ namespace clever { namespace packages { namespace std {
 class NetModule : public Module {
 public:
 	NetModule()
-		: Module("net") { }
+		: Module("std.net") { }
 
 	~NetModule() { }
 
