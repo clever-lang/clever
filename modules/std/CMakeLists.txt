@@ -5,9 +5,9 @@ set(CLEVER_MODULES)
 #	list(APPEND CLEVER_MODULES rpc)
 #endif (MOD_STD_RPC)
 
-#if (MOD_STD_FFI)
-#	list(APPEND CLEVER_MODULES ffi)
-#endif (MOD_STD_FFI)
+if (MOD_STD_FFI)
+	list(APPEND CLEVER_MODULES ffi)
+endif (MOD_STD_FFI)
 
 #if (MOD_STD_REGEX)
 #	list(APPEND CLEVER_MODULES regex)

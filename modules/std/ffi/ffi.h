@@ -27,8 +27,11 @@
 #ifndef CLEVER_STD_FFI_H
 #define CLEVER_STD_FFI_H
 
-#include "compiler/module.h"
-#include "compiler/value.h"
+
+#include <iostream>
+
+#include "core/cstring.h"
+#include "types/type.h"
 
 #include <string>
 #include <map>
@@ -39,19 +42,41 @@
 
 namespace clever { namespace packages { namespace std {
 
-typedef ::std::map< ::std::string, void*> ExtMap;
+typedef void* LibHandler;
 
-class FFI : public Module {
+struct FFIData {
+	CString m_lib_name;
+	LibHandler m_lib_handler;
+
+	FFIData()
+		: m_lib_name(""), m_lib_handler(NULL) {}
+};
+
+class FFI : public Type {
 public:
 	FFI()
-		: Module("ffi") { }
+		: Type(CSTRING("FFI")) {}
 
-	~FFI();
+	~FFI() {}
 
-	CLEVER_MODULE_VIRTUAL_METHODS_DECLARATION;
-private:
-	DISALLOW_COPY_AND_ASSIGN(FFI);
+	void dump(const void* data) const;
+	void dump(const void* data, ::std::ostream& out) const;
+
+	virtual void increment(Value*, const VM*, CException*) const {}
+	virtual void decrement(Value*, const VM*, CException*) const {}
+
+	void init();
+
+	virtual void* allocData(CLEVER_TYPE_CTOR_ARGS) const;
+	virtual void deallocData(void* data);
+
+	CLEVER_METHOD(ctor);
+
+	CLEVER_METHOD(call);
+	CLEVER_METHOD(load);
+	CLEVER_METHOD(unload);
 };
+
 
 }}} // clever::packages::std
 
