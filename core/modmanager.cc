@@ -16,14 +16,14 @@
 namespace clever {
 
 /// Adds the available packages to be imported
-void PkgManager::init()
+void ModManager::init()
 {
 	addModule("std",   new packages::Std);
 	addModule("_user", m_user = new UserModule);
 }
 
 /// Performs shutdown operation
-void PkgManager::shutdown()
+void ModManager::shutdown()
 {
 	std::vector<Type*> typevec;
 	ModuleMap::const_iterator itm = m_mods.begin(), endm = m_mods.end();
@@ -48,7 +48,7 @@ void PkgManager::shutdown()
 }
 
 /// Adds a new module
-void PkgManager::addModule(const std::string& name, Module* module)
+void ModManager::addModule(const std::string& name, Module* module)
 {
 	if (m_mods.find(name) != m_mods.end()) {
 		std::cerr << "Module `" << name << "' already added!" << std::endl;
@@ -74,7 +74,7 @@ void PkgManager::addModule(const std::string& name, Module* module)
 }
 
 /// Loads an specific module type
-void PkgManager::loadType(Scope* scope, Environment* env, const CString* name,
+void ModManager::loadType(Scope* scope, Environment* env, const CString* name,
 	Type* type) const
 {
 	Value* tmp = new Value(type);
@@ -85,7 +85,7 @@ void PkgManager::loadType(Scope* scope, Environment* env, const CString* name,
 }
 
 /// Loads an specific module function
-void PkgManager::loadFunction(Scope* scope, Environment* env, const CString* name,
+void ModManager::loadFunction(Scope* scope, Environment* env, const CString* name,
 	Function* func) const
 {
 	Value* fval = new Value();
@@ -96,10 +96,10 @@ void PkgManager::loadFunction(Scope* scope, Environment* env, const CString* nam
 }
 
 /// Loads a module if it is not already loaded
-void PkgManager::loadModule(Scope* scope, Environment* env, Module* module,
+void ModManager::loadModule(Scope* scope, Environment* env, Module* module,
 	ImportKind kind, const CString* name) const
 {
-	if (kind == PkgManager::ALL && module->hasModules()) {
+	if (kind == ModManager::ALL && module->hasModules()) {
 		ModuleMap& mods = module->getModules();
 		ModuleMap::const_iterator it = mods.begin(), end = mods.end();
 
@@ -118,7 +118,7 @@ void PkgManager::loadModule(Scope* scope, Environment* env, Module* module,
 
 	//std::cout << "load " << module->getName() << std::endl;
 
-	if (kind & PkgManager::FUNCTION) {
+	if (kind & ModManager::FUNCTION) {
 		FunctionMap& funcs = module->getFunctions();
 		FunctionMap::const_iterator itf(funcs.begin()),	endf(funcs.end());
 
@@ -128,7 +128,7 @@ void PkgManager::loadModule(Scope* scope, Environment* env, Module* module,
 		}
 	}
 
-	if (kind & PkgManager::TYPE) {
+	if (kind & ModManager::TYPE) {
 		TypeMap& types = module->getTypes();
 		TypeMap::const_iterator itt(types.begin()), ite(types.end());
 
@@ -140,7 +140,7 @@ void PkgManager::loadModule(Scope* scope, Environment* env, Module* module,
 }
 
 /// Imports a module
-void PkgManager::importModule(Scope* scope, Environment* env,
+void ModManager::importModule(Scope* scope, Environment* env,
 	const std::string& module, ImportKind kind, const CString* name) const
 {
 	ModuleMap::const_iterator it = m_mods.find(module);

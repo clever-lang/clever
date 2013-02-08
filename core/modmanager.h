@@ -5,8 +5,8 @@
  * This file is distributed under the MIT license. See LICENSE for details.
  */
 
-#ifndef CLEVER_PKGMANAGER_H
-#define CLEVER_PKGMANAGER_H
+#ifndef CLEVER_MODMANAGER_H
+#define CLEVER_MODMANAGER_H
 
 #ifdef CLEVER_MSVC
 #include <unordered_map>
@@ -22,7 +22,7 @@ class Value;
 class Environment;
 
 /// Package manager
-class PkgManager {
+class ModManager {
 public:
 	enum ImportKind {
 		TYPE     = 1<<0,
@@ -30,10 +30,10 @@ public:
 		ALL      = TYPE | FUNCTION
 	};
 
-	PkgManager()
+	ModManager()
 		: m_mods(), m_user(NULL) {}
 
-	~PkgManager() {}
+	~ModManager() {}
 
 	/// Initialization routine
 	void init();
@@ -48,7 +48,7 @@ public:
 
 	/// Imports the module to the current scope
 	void importModule(Scope*, Environment*, const std::string&,
-		ImportKind = PkgManager::ALL, const CString* = NULL) const;
+		ImportKind = ModManager::ALL, const CString* = NULL) const;
 
 	void loadModule(Scope*, Environment*, Module*, ImportKind, const CString*) const;
 
@@ -62,4 +62,4 @@ private:
 
 } // clever
 
-#endif // CLEVER_PKGMANAGER_H
+#endif // CLEVER_MODMANAGER_H

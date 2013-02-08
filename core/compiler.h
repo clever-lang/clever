@@ -56,8 +56,8 @@ public:
 	static void errorf(const location&, const char*, ...) CLEVER_NO_RETURN;
 
 private:
-	// Package manager
-	PkgManager m_pkg;
+	// Module manager
+	ModManager m_pkg;
 
 	// Vector of instructions to be passed to VM
 	IRBuilder* m_builder;
