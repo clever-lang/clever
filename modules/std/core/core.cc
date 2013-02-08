@@ -25,7 +25,7 @@ Type* g_clever_map_type;
 
 } // clever
 
-namespace clever { namespace packages { namespace std {
+namespace clever { namespace modules { namespace std {
 
 CLEVER_MODULE_INIT(CoreModule)
 {
@@ -40,4 +40,4 @@ CLEVER_MODULE_INIT(CoreModule)
 	addType(CSTRING("Thread"),   CLEVER_THREAD_TYPE = new ThreadType);
 }
 
-}}} // clever::packages::std
+}}} // clever::modules::std

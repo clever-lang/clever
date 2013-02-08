@@ -11,7 +11,7 @@
 #include <ostream>
 #include "types/type.h"
 
-namespace clever { namespace packages { namespace std { namespace reflection {
+namespace clever { namespace modules { namespace std { namespace reflection {
 
 class ReflectObject {
 public:
@@ -74,6 +74,6 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(ReflectType);
 };
 
-}}}} // clever
+}}}} // clever::modules::std::reflection
 
 #endif // CLEVER_REFLECT_H

@@ -12,7 +12,7 @@
 #include "modules/std/std_forwarder.h"
 #include "core/module.h"
 
-namespace clever { namespace packages {
+namespace clever { namespace modules {
 
 class Std : public Module {
 public:
@@ -26,6 +26,6 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(Std);
 };
 
-}} // clever::std_pkg
+}} // clever::modules
 
 #endif // CLEVER_STD_PACKAGE_H

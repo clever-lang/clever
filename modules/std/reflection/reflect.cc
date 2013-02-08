@@ -11,7 +11,7 @@
 #include "modules/std/core/array.h"
 #include "modules/std/core/map.h"
 
-namespace clever { namespace packages { namespace std { namespace reflection {
+namespace clever { namespace modules { namespace std { namespace reflection {
 
 // Allocates a Reflect object
 void* ReflectType::allocData(CLEVER_TYPE_CTOR_ARGS) const
@@ -381,4 +381,4 @@ CLEVER_TYPE_INIT(ReflectType::init)
 	addMethod(new Function("getProperties", (MethodPtr) &ReflectType::getProperties));
 }
 
-}}}} // clever::packages::std::reflection
+}}}} // clever::modules::std::reflection

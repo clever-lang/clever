@@ -11,7 +11,7 @@
 #include "modules/std/core/function.h"
 #include "types/type.h"
 
-namespace clever { namespace packages { namespace std {
+namespace clever { namespace modules { namespace std {
 
 void Mutex::dump(const void* data) const
 {
@@ -107,4 +107,4 @@ CLEVER_TYPE_INIT(Mutex::init)
 	addMethod(new Function("unlock",  (MethodPtr) &Mutex::unlock));
 }
 
-}}} // clever::packages::std
+}}} // clever::modules::std

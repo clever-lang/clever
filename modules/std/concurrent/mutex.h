@@ -13,7 +13,7 @@
 #include "core/cstring.h"
 #include "types/type.h"
 
-namespace clever { namespace packages { namespace std {
+namespace clever { namespace modules { namespace std {
 
 class Mutex : public Type {
 public:
@@ -40,6 +40,6 @@ public:
 	CLEVER_METHOD(trylock);
 };
 
-}}} // clever::packages::std
+}}} // clever::modules::std
 
 #endif // CLEVER_STD_CONCURRENT_MUTEX_H

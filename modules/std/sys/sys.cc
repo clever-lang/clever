@@ -27,7 +27,7 @@
 # define PATH_MAX 1024
 #endif
 
-namespace clever { namespace packages { namespace std {
+namespace clever { namespace modules { namespace std {
 
 namespace sys {
 
@@ -181,7 +181,7 @@ static CLEVER_FUNCTION(getsid)
 	result->setInt(::getsid(0));
 }
 
-} // clever::packages::std::sys
+} // clever::modules::std::sys
 
 // Initializes Standard module
 CLEVER_MODULE_INIT(SYSModule)
@@ -200,4 +200,4 @@ CLEVER_MODULE_INIT(SYSModule)
 	addFunction(new Function("clock",   &CLEVER_NS_FNAME(sys, clock)));
 }
 
-}}} // clever::packages::std
+}}} // clever::modules::std

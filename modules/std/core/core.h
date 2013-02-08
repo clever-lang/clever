@@ -10,7 +10,7 @@
 
 #include "core/module.h"
 
-namespace clever { namespace packages { namespace std {
+namespace clever { namespace modules { namespace std {
 
 /// Standard Core Module
 class CoreModule : public Module {
@@ -25,6 +25,6 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(CoreModule);
 };
 
-}}} // clever::packages::std
+}}} // clever::modules::std
 
 #endif // CLEVER_STD_CORE_H

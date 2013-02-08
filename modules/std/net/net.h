@@ -11,7 +11,7 @@
 #include "core/module.h"
 #include "core/value.h"
 
-namespace clever { namespace packages { namespace std {
+namespace clever { namespace modules { namespace std {
 
 class NetModule : public Module {
 public:
@@ -25,6 +25,6 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(NetModule);
 };
 
-}}} // clever::packages::std
+}}} // clever::modules::std
 
 #endif // CLEVER_STD_NET_H

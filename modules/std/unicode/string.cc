@@ -13,7 +13,7 @@
 #include "core/value.h"
 #include "core/clever.h"
 
-namespace clever { namespace packages { namespace std {
+namespace clever { namespace modules { namespace std {
 
 using namespace icu;
 
@@ -310,4 +310,4 @@ CLEVER_TYPE_INIT(UString::init)
 	addMethod(new Function("replace",		(MethodPtr) &UString::replace));
 }
 
-}}} // clever::packages::std
+}}} // clever::modules::std

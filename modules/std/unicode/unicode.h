@@ -11,7 +11,7 @@
 #include "core/module.h"
 #include "unicode/uclean.h"
 
-namespace clever { namespace packages { namespace std {
+namespace clever { namespace modules { namespace std {
 
 /// Standard Unicode Module
 class UnicodeModule : public Module {
@@ -28,6 +28,6 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(UnicodeModule);
 };
 
-}}} // clever::packages::std
+}}} // clever::modules::std
 
 #endif // CLEVER_STD_UNICODE_H

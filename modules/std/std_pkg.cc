@@ -7,7 +7,7 @@
 
 #include "modules/std/std_pkg.h"
 
-namespace clever { namespace packages {
+namespace clever { namespace modules {
 
 // Initializes Std package
 void Std::init()
@@ -60,4 +60,4 @@ void Std::init()
 #endif
 }
 
-}} // clever::packages
+}} // clever::modules

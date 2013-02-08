@@ -13,7 +13,7 @@
 #include "core/cstring.h"
 #include "types/type.h"
 
-namespace clever { namespace packages { namespace std {
+namespace clever { namespace modules { namespace std {
 
 class Thread : public Type {
 public:
@@ -32,13 +32,13 @@ public:
 
 	virtual void* allocData(CLEVER_TYPE_CTOR_ARGS) const;
 	virtual void deallocData(void* data);
-	
+
 	CLEVER_METHOD(ctor);
 
 	CLEVER_METHOD(start);
 	CLEVER_METHOD(wait);
 };
 
-}}} // clever::packages::std
+}}} // clever::modules::std
 
 #endif // CLEVER_STD_CONCURRENT_THREAD_H

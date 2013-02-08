@@ -16,7 +16,7 @@
 #define M_PI    3.14159265358979323846
 #endif
 
-namespace clever { namespace packages { namespace std {
+namespace clever { namespace modules { namespace std {
 
 namespace math {
 
@@ -256,7 +256,7 @@ static CLEVER_FUNCTION(exp)
 	}
 }
 
-} // clever::packages::std::math
+} // clever::modules::std::math
 
 // Load module data
 CLEVER_MODULE_INIT(Math)
@@ -279,4 +279,4 @@ CLEVER_MODULE_INIT(Math)
 	addFunction(new Function("log",   &CLEVER_NS_FNAME(math, log)));
 }
 
-}}} // clever::packages::std
+}}} // clever::modules::std

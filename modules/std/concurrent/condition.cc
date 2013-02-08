@@ -11,7 +11,7 @@
 #include "modules/std/core/function.h"
 #include "types/type.h"
 
-namespace clever { namespace packages { namespace std {
+namespace clever { namespace modules { namespace std {
 
 void Condition::dump(const void* data) const
 {
@@ -122,4 +122,4 @@ CLEVER_TYPE_INIT(Condition::init)
 	addMethod(new Function("wait",		(MethodPtr)&Condition::wait));
 }
 
-}}} // clever::packages::std
+}}} // clever::modules::std

@@ -11,7 +11,7 @@
 #include "modules/std/date/module.h"
 #include "modules/std/date/date.h"
 
-namespace clever { namespace packages { namespace std {
+namespace clever { namespace modules { namespace std {
 
 void Date::dump(const void* data) const
 {
@@ -169,4 +169,4 @@ CLEVER_TYPE_INIT(Date::init)
 	addMethod(new Function("getTime",    (MethodPtr) &Date::getTime));
 }
 
-}}} // clever::packages::std
+}}} // clever::modules::std

@@ -12,7 +12,7 @@
 #include "modules/std/core/function.h"
 #include "types/type.h"
 
-namespace clever { namespace packages { namespace std {
+namespace clever { namespace modules { namespace std {
 
 static inline void* ThreadHandler(void* ThreadArgument)
 {
@@ -26,12 +26,12 @@ static inline void* ThreadHandler(void* ThreadArgument)
 		Value* result = intern->vm->runFunction(
 			intern->entry, &args
 		);
-		
+
 		result->delRef();
 
 		delete intern->vm;
 	}
-	
+
 	pthread_exit(NULL);
 
 	/*
@@ -57,15 +57,15 @@ void Thread::dump(const void* data, ::std::ostream& out) const
 void* Thread::allocData(CLEVER_TYPE_CTOR_ARGS) const
 {
 	ThreadData* intern = new ThreadData;
-	
+
 	intern->lock = new pthread_mutex_t;
 
-	clever_debug("Thread.new allocated lock for thread at %@", intern->lock);	
-	
+	clever_debug("Thread.new allocated lock for thread at %@", intern->lock);
+
 	intern->entry = NULL;
 	intern->vm = NULL;
 	intern->joined = false;
-	
+
 	if (intern->lock) {
 		if (pthread_mutex_init(intern->lock, NULL) != 0) {
 			clever_error("Thread.new failed to initialize a lock for the thread at %@", intern->lock);
@@ -152,12 +152,12 @@ CLEVER_METHOD(Thread::start)
 CLEVER_METHOD(Thread::wait)
 {
 	ThreadData* intern = CLEVER_GET_OBJECT(ThreadData*, CLEVER_THIS());
-	
+
 	if (!intern) {
 		//CLEVER_THROW(eventually);
 		return;
 	}
-	
+
 	if (pthread_mutex_lock(intern->lock) == 0) {
 		if (!intern->joined) {
 			result->setBool(
@@ -193,4 +193,4 @@ CLEVER_TYPE_INIT(Thread::init)
 	addMethod(new Function("wait",		(MethodPtr)&Thread::wait));
 }
 
-}}} // clever::packages::std
+}}} // clever::modules::std

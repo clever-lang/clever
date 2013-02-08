@@ -11,7 +11,7 @@
 #include "core/cstring.h"
 #include "types/type.h"
 
-namespace clever { namespace packages { namespace std {
+namespace clever { namespace modules { namespace std {
 
 class Date : public Type {
 public:
@@ -37,6 +37,6 @@ public:
 	CLEVER_METHOD(getTime);
 };
 
-}}} // clever::packages::std
+}}} // clever::modules::std
 
 #endif // CLEVER_STD_DATE_DATE_H

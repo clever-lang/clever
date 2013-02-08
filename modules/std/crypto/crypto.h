@@ -10,7 +10,7 @@
 
 #include "core/module.h"
 
-namespace clever { namespace packages { namespace std {
+namespace clever { namespace modules { namespace std {
 
 class CryptoModule : public Module {
 public:
@@ -24,6 +24,6 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(CryptoModule);
 };
 
-}}} // clever::packages::std
+}}} // clever::modules::std
 
 #endif // CLEVER_CRYPTO_H

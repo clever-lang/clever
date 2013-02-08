@@ -18,7 +18,7 @@ namespace clever {
 /// Adds the available packages to be imported
 void ModManager::init()
 {
-	addModule("std",   new packages::Std);
+	addModule("std",   new modules::Std);
 	addModule("_user", m_user = new UserModule);
 }
 

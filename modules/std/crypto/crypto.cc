@@ -9,7 +9,7 @@
 #include "modules/std/crypto/md5.h"
 #include "modules/std/crypto/base64.h"
 
-namespace clever { namespace packages { namespace std {
+namespace clever { namespace modules { namespace std {
 
 namespace crypto {
 
@@ -42,7 +42,7 @@ static CLEVER_FUNCTION(base64_decode)
 	result->setStr(new StrObject(base64Decode(*args[0]->getStr())));
 }
 
-} // clever::packages::std::crypto
+} // clever::modules::std::crypto
 
 CLEVER_MODULE_INIT(CryptoModule)
 {
@@ -51,4 +51,4 @@ CLEVER_MODULE_INIT(CryptoModule)
 	addFunction(new Function("base64_decode", &CLEVER_NS_FNAME(crypto, base64_decode)));
 }
 
-}}} // clever::packages::std
+}}} // clever::modules::std

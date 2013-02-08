@@ -56,6 +56,8 @@
 #define S43 15
 #define S44 21
 
+namespace clever { namespace modules { namespace std { namespace crypto {
+
 ///////////////////////////////////////////////
 
 // F, G, H and I are basic MD5 functions.
@@ -109,7 +111,7 @@ inline void MD5::II(uint4 &a, uint4 b, uint4 c, uint4 d, uint4 x, uint4 s, uint4
 //////////////////////////////////////////////
 
 // nifty shortcut ctor, compute MD5 for string and finalize it right away
- MD5::MD5(const std::string &text)
+ MD5::MD5(const ::std::string &text)
 {
    init();
    update(text.c_str(), text.length());
@@ -333,7 +335,7 @@ void MD5::update(const char input[], size_type length)
 //////////////////////////////
 
 // return hex representation of digest as string
- std::string MD5::hexdigest() const
+ ::std::string MD5::hexdigest() const
 {
    if (!finalized)
      return "";
@@ -343,19 +345,21 @@ void MD5::update(const char input[], size_type length)
      sprintf(buf+i*2, "%02x", digest[i]);
    buf[32]=0;
 
-   return std::string(buf);
+   return ::std::string(buf);
 }
 
 //////////////////////////////
 
-std::ostream& operator<<(std::ostream& out, MD5 md5)
+::std::ostream& operator<<(::std::ostream& out, MD5 md5)
 {
    return out << md5.hexdigest();
 }
 
 //////////////////////////////
 
-std::string md5(const std::string& str)
+::std::string md5(const ::std::string& str)
 {
      return MD5(str).hexdigest();
 }
+
+}}}} // clever::modules::std::crypto

@@ -10,7 +10,7 @@
 
 #include "types/type.h"
 
-namespace clever { namespace packages { namespace std {
+namespace clever { namespace modules { namespace std {
 
 class CFile : public Type {
 public:
@@ -39,6 +39,6 @@ public:
 	CLEVER_METHOD(isOpen);
 };
 
-}}} // clever::packages::std
+}}} // clever::modules::std
 
 #endif // CLEVER_STD_CFILE_H
