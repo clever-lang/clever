@@ -20,6 +20,7 @@ namespace clever {
 
 class Value;
 class Environment;
+class Driver;
 
 /// Package manager
 class ModManager {
@@ -30,8 +31,8 @@ public:
 		ALL      = TYPE | FUNCTION
 	};
 
-	ModManager()
-		: m_mods(), m_user(NULL) {}
+	ModManager(Driver* driver)
+		: m_driver(driver), m_mods(), m_user(NULL) {}
 
 	~ModManager() {}
 
@@ -40,6 +41,8 @@ public:
 
 	/// Shutdown routine
 	void shutdown();
+
+	void setIncludePath(const std::string& path) { m_include_path = path; }
 
 	Module* getUserModule() const { return m_user; }
 
@@ -50,14 +53,19 @@ public:
 	void importModule(Scope*, Environment*, const std::string&,
 		ImportKind = ModManager::ALL, const CString* = NULL) const;
 
+	bool importFile(Scope*, Environment*, const std::string&,
+		ImportKind = ModManager::ALL, const CString* = NULL) const;
+
 	void loadModule(Scope*, Environment*, Module*, ImportKind, const CString*) const;
 
 	void loadFunction(Scope*, Environment*, const CString*, Function*) const;
 
 	void loadType(Scope*, Environment*, const CString*, Type*) const;
 private:
+	Driver* m_driver;
 	ModuleMap m_mods;
 	Module* m_user;
+	std::string m_include_path;
 };
 
 } // clever

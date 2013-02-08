@@ -210,7 +210,7 @@ class Value;
 %start program;
 
 program:
-		{ c.init(); } statement_list { c.emitAST($2); }
+		{ c.init(driver.getFile()); } statement_list { c.emitAST($2); }
 ;
 
 statement_list:

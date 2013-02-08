@@ -22,6 +22,7 @@
 
 namespace clever {
 
+class Driver;
 class location;
 
 /// Compiler representation
@@ -34,12 +35,12 @@ public:
 		INTERACTIVE    = 1 << 4
 	};
 
-	Compiler()
-		: m_pkg(), m_builder(NULL), m_global_env(), m_flags(0) {}
+	Compiler(Driver* driver)
+		: m_pkg(driver), m_builder(NULL), m_global_env(), m_flags(0) {}
 
 	~Compiler() {}
 
-	void init();
+	void init(const CString*);
 	void shutdown();
 
 	void setFlags(size_t flags) { m_flags = flags; }

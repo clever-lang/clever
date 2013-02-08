@@ -16,9 +16,17 @@
 namespace clever {
 
 /// Compiler initialization phase
-void Compiler::init()
+void Compiler::init(const CString* fname)
 {
 	m_pkg.init();
+
+	if (fname) {
+		std::string path(*fname);
+
+		path.erase(std::find(path.rbegin(), path.rend(), '/').base(), path.end());
+
+		m_pkg.setIncludePath(path);
+	}
 }
 
 /// Frees all resource used by the compiler

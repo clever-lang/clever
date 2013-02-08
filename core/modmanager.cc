@@ -6,6 +6,7 @@
  */
 
 #include <iostream>
+#include "core/driver.h"
 #include "core/modmanager.h"
 #include "core/value.h"
 #include "core/cstring.h"
@@ -49,7 +50,7 @@ void ModManager::shutdown()
 void ModManager::addModule(const std::string& name, Module* module)
 {
 	if (m_mods.find(name) != m_mods.end()) {
-		std::cerr << "Module `" << name << "' already added!" << std::endl;
+		//std::cerr << "Module `" << name << "' already added!" << std::endl;
 		return;
 	}
 
@@ -137,6 +138,19 @@ void ModManager::loadModule(Scope* scope, Environment* env, Module* module,
 	}
 }
 
+/// Imports a file
+bool ModManager::importFile(Scope* scope, Environment* env,
+	const std::string& module, ImportKind kind, const CString* name) const
+{
+	const std::string& fname = m_include_path + module + ".clv";
+
+	if (!m_driver->loadFile(fname)) {
+		std::cout << "Failed to load file" << std::endl;
+	}
+
+	return false;
+}
+
 /// Imports a module
 void ModManager::importModule(Scope* scope, Environment* env,
 	const std::string& module, ImportKind kind, const CString* name) const
@@ -146,8 +160,10 @@ void ModManager::importModule(Scope* scope, Environment* env,
 	//std::cout << "imp " << module << std::endl;
 
 	if (it == m_mods.end()) {
-		std::cerr << "Module `" << module << "` not found!" << std::endl;
-		return;
+		if (!importFile(scope, env, module, kind, name)) {
+			std::cerr << "Module `" << module << "' not found!" << std::endl;
+			return;
+		}
 	}
 
 	loadModule(scope, env, it->second, kind, name);

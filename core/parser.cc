@@ -440,7 +440,7 @@ yylloc.begin.filename = yylloc.end.filename = driver.getFile();
       {
 	  case 2:
 
-    { c.init(); }
+    { c.init(driver.getFile()); }
     break;
 
   case 3:
