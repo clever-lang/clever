@@ -76,41 +76,6 @@ private:
 	TypeMap m_types;
 };
 
-/*
-
-typedef std::tr1::unordered_map<std::string, Module*> ModuleMap;
-typedef std::pair<std::string, Module*> ModulePair;
-
-/// Package representation
-class Package {
-public:
-	enum PackageStatus { UNLOADED, LOADED, FULLY_LOADED };
-
-	Package(const std::string& name)
-		: m_name(name), m_flags(UNLOADED), m_modules() {}
-
-	virtual ~Package() {}
-
-	void addModule(Module* module) {
-		m_modules.insert(ModulePair(module->getName(), module));
-	}
-
-	ModuleMap& getModules() { return m_modules; }
-
-	void setLoaded() { m_flags = LOADED; }
-	void setFullyLoaded() { m_flags = FULLY_LOADED; }
-
-	bool isLoaded() const { return m_flags == LOADED || m_flags == FULLY_LOADED; }
-	bool isFullyLoaded() const { return m_flags == FULLY_LOADED; }
-
-	virtual void init() = 0;
-	virtual const char* getVersion() const = 0;
-private:
-	std::string m_name;
-	PackageStatus m_flags;
-	ModuleMap m_modules;
-};
-*/
 } // clever
 
 #endif // CLEVER_MODULE_H
