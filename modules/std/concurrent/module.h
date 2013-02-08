@@ -11,7 +11,7 @@
 #include "core/vm.h"
 #include "core/module.h"
 
-namespace clever { namespace packages { namespace std {
+namespace clever { namespace modules { namespace std {
 
 struct ThreadData {
 	pthread_t          	thread;
@@ -26,13 +26,13 @@ struct ThreadData {
 class ConcurrencyModule : public Module {
 public:
 	ConcurrencyModule()
-		: Module("concurrent") { }
+		: Module("std.concurrent") { }
 
 	CLEVER_MODULE_VIRTUAL_METHODS_DECLARATION;
 private:
 	DISALLOW_COPY_AND_ASSIGN(ConcurrencyModule);
 };
 
-}}} // clever::packages::std
+}}} // clever::modules::std
 
 #endif // CLEVER_STD_CONCURRENT_H

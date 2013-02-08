@@ -20,14 +20,14 @@
 #include "core/value.h"
 #include "modules/std/sys/sys.h"
 #include "types/native_types.h"
-#include "core/pkgmanager.h"
+#include "core/modmanager.h"
 #include "core/cexception.h"
 
 #ifndef PATH_MAX
 # define PATH_MAX 1024
 #endif
 
-namespace clever { namespace packages { namespace std {
+namespace clever { namespace modules { namespace std {
 
 namespace sys {
 
@@ -181,7 +181,7 @@ static CLEVER_FUNCTION(getsid)
 	result->setInt(::getsid(0));
 }
 
-} // clever::packages::std::sys
+} // clever::modules::std::sys
 
 // Initializes Standard module
 CLEVER_MODULE_INIT(SYSModule)
@@ -200,4 +200,4 @@ CLEVER_MODULE_INIT(SYSModule)
 	addFunction(new Function("clock",   &CLEVER_NS_FNAME(sys, clock)));
 }
 
-}}} // clever::packages::std
+}}} // clever::modules::std

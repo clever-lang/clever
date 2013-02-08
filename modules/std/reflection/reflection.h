@@ -10,13 +10,13 @@
 
 #include "core/module.h"
 
-namespace clever { namespace packages { namespace std {
+namespace clever { namespace modules { namespace std {
 
 /// Standard Reflection Module
 class Reflection : public Module {
 public:
 	Reflection()
-		: Module("reflection") {}
+		: Module("std.reflection") {}
 
 	~Reflection() {}
 
@@ -25,6 +25,6 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(Reflection);
 };
 
-}}} // clever::packages::std
+}}} // clever::modules::std
 
 #endif // CLEVER_STD_IO_H

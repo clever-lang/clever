@@ -10,22 +10,21 @@
 
 #include "core/module.h"
 
-namespace clever { namespace packages { namespace std {
+namespace clever { namespace modules { namespace std {
 
 /// Standard File Module
 class FileModule : public Module {
 public:
 	FileModule()
-		: Module("file") { }
+		: Module("std.file") {}
 
-	~FileModule() {
-	}
+	~FileModule() {}
 
 	CLEVER_MODULE_VIRTUAL_METHODS_DECLARATION;
 private:
 	DISALLOW_COPY_AND_ASSIGN(FileModule);
 };
 
-}}} // clever::packages::std
+}}} // clever::modules::std
 
 #endif // CLEVER_STD_FILE_H

@@ -14,7 +14,7 @@
 #include "unicode/unistr.h"
 #include "unicode/ustream.h"
 
-namespace clever { namespace packages { namespace std {
+namespace clever { namespace modules { namespace std {
 
 #define CLEVER_USTR_TYPE UnicodeString*
 #define CLEVER_USTR_CAST(what) (CLEVER_USTR_TYPE) what
@@ -54,6 +54,6 @@ public:
 	CLEVER_METHOD(replace);
 };
 
-}}} // clever::packages::std
+}}} // clever::modules::std
 
 #endif // CLEVER_STD_UNICODE_STRING_H

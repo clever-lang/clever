@@ -34,7 +34,7 @@ public:
 
 	Driver()
 		: m_is_file(false), m_trace_parsing(false), m_file(NULL), m_cflags(0),
-		  m_compiler(), m_scanners()
+		  m_compiler(this), m_scanners()
 #ifdef CLEVER_DEBUG
 			, m_dump_opcode(false)
 #endif

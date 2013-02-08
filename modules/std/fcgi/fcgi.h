@@ -35,7 +35,7 @@ namespace clever { namespace packages { namespace std {
 class FCGIModule : public Module {
 public:
 	FCGIModule()
-		: Module("fcgi") {}
+		: Module("std.fcgi") {}
 
 	~FCGIModule() {}
 

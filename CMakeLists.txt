@@ -197,8 +197,8 @@ add_executable(clever
 	core/opcode.h
 	core/parser.cc
 	core/platform.h
-	core/pkgmanager.cc
-	core/pkgmanager.h
+	core/modmanager.cc
+	core/modmanager.h
 	core/refcounted.h
 	core/resolver.cc
 	core/resolver.cc

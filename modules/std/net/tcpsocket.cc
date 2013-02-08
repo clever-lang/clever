@@ -11,7 +11,7 @@
 #include "modules/std/net/tcpsocket.h"
 #include "types/native_types.h"
 
-namespace clever { namespace packages { namespace std { namespace net {
+namespace clever { namespace modules { namespace std { namespace net {
 
 void* TcpSocket::allocData(CLEVER_TYPE_CTOR_ARGS) const
 {
@@ -217,4 +217,4 @@ CLEVER_TYPE_INIT(TcpSocket::init)
 #endif
 }
 
-}}}} // clever::packages::std::net
+}}}} // clever::modules::std::net

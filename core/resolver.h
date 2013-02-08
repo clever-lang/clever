@@ -12,7 +12,7 @@
 #include "core/module.h"
 
 namespace clever {
-class PkgManager;
+class ModManager;
 class Scope;
 class Environment;
 class Type;
@@ -22,7 +22,7 @@ namespace clever { namespace ast {
 
 class Resolver: public Visitor {
 public:
-	Resolver(const PkgManager&);
+	Resolver(const ModManager&);
 
 	~Resolver() {}
 
@@ -46,7 +46,7 @@ public:
 	virtual void visit(ClassDef*);
 	virtual void visit(AttrDecl*);
 private:
-	const PkgManager& m_pkgmanager;
+	const ModManager& m_modmanager;
 	Scope* m_symtable;
 	Scope* m_scope;
 	std::stack<Environment*> m_stack;

@@ -66,8 +66,7 @@ class Value;
 }
 
 %type <type> TYPE
-%type <ident> IDENT
-%type <ident> CONSTANT
+%type <ident> IDENT CONSTANT import_ident_list
 %type <strlit> STR
 %type <intlit> NUM_INTEGER
 %type <dbllit> NUM_DOUBLE
@@ -211,7 +210,7 @@ class Value;
 %start program;
 
 program:
-		{ c.init(); } statement_list { c.emitAST($2); }
+		{ c.init(driver.getFile()); } statement_list { c.emitAST($2); }
 ;
 
 statement_list:
@@ -481,11 +480,15 @@ assignment:
 		lvalue '=' rvalue { $$ = new ast::Assignment($<node>1, $<node>3, yyloc); }
 ;
 
+import_ident_list:
+		IDENT                        { $$ = $1; }
+	|	import_ident_list '.' IDENT  { $1->append('.', $3); $$ = $1; }
+;
+
 import:
-		IMPORT IDENT '.' IDENT '.' '*'   { $$ = new ast::Import($2, $4, yyloc);     }
-	|	IMPORT IDENT '.' '*'             { $$ = new ast::Import($2, NULL, yyloc);   }
-	|	IMPORT IDENT '.' IDENT '.' IDENT { $$ = new ast::Import($2, $4, $6, yyloc); }
-	|	IMPORT IDENT '.' IDENT '.' TYPE  { $$ = new ast::Import($2, $4, $6, yyloc); }
+		IMPORT import_ident_list '.' '*'   { $$ = new ast::Import($2, yyloc);     }
+	|	IMPORT import_ident_list '.' IDENT { $$ = new ast::Import($2, $4, yyloc); }
+	|	IMPORT import_ident_list '.' TYPE  { $$ = new ast::Import($2, $4, yyloc); }
 ;
 
 vararg:

@@ -239,6 +239,10 @@ public:
 	void setSymbol(Symbol* sym)	{ m_sym = sym; }
 	Symbol* getSymbol() { return m_sym; }
 
+	void append(char separator, Ident* ident) {
+		m_name = CSTRING(*m_name + '.' + *ident->getName());
+		clever_delete(ident);
+	}
 private:
 	const CString* m_name;
 	Symbol* m_sym;
@@ -395,28 +399,24 @@ private:
 
 class Import: public Node {
 public:
-	Import(Ident* package, Ident* module, const location& location)
-		: Node(location), m_package(package), m_module(module), m_func(NULL), m_type(NULL) {
-		m_package->addRef();
+	Import(Ident* name, const location& location)
+		: Node(location), m_module(name), m_func(NULL), m_type(NULL) {
 		clever_addref(m_module);
 	}
 
-	Import(Ident* package, Ident* module, Ident* func, const location& location)
-		: Node(location), m_package(package), m_module(module), m_func(func), m_type(NULL) {
-		m_package->addRef();
+	Import(Ident* name, Ident* func, const location& location)
+		: Node(location), m_module(name), m_func(func), m_type(NULL) {
 		clever_addref(m_module);
 		m_func->addRef();
 	}
 
-	Import(Ident* package, Ident* module, Type* type, const location& location)
-		: Node(location), m_package(package), m_module(module), m_func(NULL), m_type(type) {
-		m_package->addRef();
+	Import(Ident* module, Type* type, const location& location)
+		: Node(location), m_module(module), m_func(NULL), m_type(type) {
 		clever_addref(m_module);
 		m_type->addRef();
 	}
 
 	~Import() {
-		m_package->delRef();
 		clever_delref(m_module);
 		clever_delref(m_func);
 		clever_delref(m_type);
@@ -424,14 +424,12 @@ public:
 
 	Type* getType() const { return m_type; }
 	Ident* getFunction() const { return m_func; }
-	Ident* getPackage() const { return m_package; }
 	Ident* getModule() const { return m_module; }
 	bool hasModule() const { return m_module != NULL; }
 
 	virtual void accept(Visitor& visitor);
 	virtual Node* accept(Transformer& transformer);
 private:
-	Ident* m_package;
 	Ident* m_module;
 	Ident* m_func;
 	Type* m_type;

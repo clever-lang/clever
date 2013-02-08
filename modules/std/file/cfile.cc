@@ -17,7 +17,7 @@
 
 using ::std::fstream;
 
-namespace clever { namespace packages { namespace std {
+namespace clever { namespace modules { namespace std {
 
 namespace detail {
 
@@ -182,4 +182,4 @@ CLEVER_TYPE_INIT(CFile::init)
 	addProperty(CSTRING("BIN"),   new Value(long(::std::ios_base::binary), true));
 }
 
-}}} // clever::packages::std
+}}} // clever::modules::std

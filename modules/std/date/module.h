@@ -10,7 +10,7 @@
 
 #include "core/module.h"
 
-namespace clever { namespace packages { namespace std {
+namespace clever { namespace modules { namespace std {
 
 /// Standard Date Module
 class DateModule : public Module {
@@ -23,6 +23,6 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(DateModule);
 };
 
-}}} // clever::packages::std
+}}} // clever::modules::std
 
 #endif // CLEVER_STD_DATE_H

@@ -11,10 +11,10 @@
 #include "core/cthread.h"
 #include "core/value.h"
 #include "modules/std/core/function.h"
-#include "core/pkgmanager.h"
+#include "core/modmanager.h"
 #include "modules/std/io/io.h"
 
-namespace clever { namespace packages { namespace std {
+namespace clever { namespace modules { namespace std {
 
 namespace io {
 
@@ -75,7 +75,7 @@ static CLEVER_FUNCTION(printf)
 	}
 }
 
-} // clever::packages::std::io
+} // clever::modules::std::io
 
 /// Initializes Standard module
 CLEVER_MODULE_INIT(IOModule)
@@ -92,4 +92,4 @@ CLEVER_MODULE_INIT(IOModule)
 	addFunction(new Function("flush",   &CLEVER_NS_FNAME(io, flush)));
 }
 
-}}} // clever::packages::std
+}}} // clever::modules::std

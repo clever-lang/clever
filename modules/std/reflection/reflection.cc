@@ -7,11 +7,11 @@
 
 #include <iostream>
 #include "core/driver.h"
-#include "core/pkgmanager.h"
+#include "core/modmanager.h"
 #include "modules/std/reflection/reflection.h"
 #include "modules/std/reflection/reflect.h"
 
-namespace clever { namespace packages { namespace std {
+namespace clever { namespace modules { namespace std {
 
 namespace reflection {
 
@@ -60,7 +60,7 @@ static CLEVER_FUNCTION(eval)
 	}
 }
 
-} // clever::packages::std::reflection
+} // clever::modules::std::reflection
 
 CLEVER_MODULE_INIT(Reflection)
 {
@@ -73,5 +73,5 @@ CLEVER_MODULE_INIT(Reflection)
 	addFunction(new Function("refcount", &CLEVER_NS_FNAME(reflection, refcount)));
 }
 
-}}} // clever::packages::std
+}}} // clever::modules::std
 

@@ -13,7 +13,7 @@
 #include "core/value.h"
 #include "modules/std/net/csocket.h"
 
-namespace clever { namespace packages { namespace std { namespace net {
+namespace clever { namespace modules { namespace std { namespace net {
 
 class SocketObject {
 public:
@@ -59,6 +59,6 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(TcpSocket);
 };
 
-}}}} // clever::packages::std::net
+}}}} // clever::modules::std::net
 
 #endif // CLEVER_TCPSOCKET_H

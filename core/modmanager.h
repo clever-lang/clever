@@ -5,8 +5,8 @@
  * This file is distributed under the MIT license. See LICENSE for details.
  */
 
-#ifndef CLEVER_PKGMANAGER_H
-#define CLEVER_PKGMANAGER_H
+#ifndef CLEVER_MODMANAGER_H
+#define CLEVER_MODMANAGER_H
 
 #ifdef CLEVER_MSVC
 #include <unordered_map>
@@ -20,12 +20,10 @@ namespace clever {
 
 class Value;
 class Environment;
-
-typedef std::tr1::unordered_map<const CString*, Package*> PackageMap;
-typedef std::pair<const CString*, Package*> PackagePair;
+class Driver;
 
 /// Package manager
-class PkgManager {
+class ModManager {
 public:
 	enum ImportKind {
 		TYPE     = 1<<0,
@@ -33,10 +31,10 @@ public:
 		ALL      = TYPE | FUNCTION
 	};
 
-	PkgManager()
-		: m_pkgs(), m_std(NULL) {}
+	ModManager(Driver* driver)
+		: m_driver(driver), m_mods(), m_user(NULL) {}
 
-	~PkgManager() {}
+	~ModManager() {}
 
 	/// Initialization routine
 	void init();
@@ -44,19 +42,19 @@ public:
 	/// Shutdown routine
 	void shutdown();
 
-	Package* getStdPackage() const { return m_std; }
+	void setIncludePath(const std::string& path) { m_include_path = path; }
+
+	Module* getUserModule() const { return m_user; }
 
 	/// Adds a new package to the map
-	void addPackage(const CString* name, Package* package) {
-		m_pkgs.insert(PackagePair(name, package));
-	}
-
-	/// Imports the package to the current scope
-	void importPackage(Scope*, Environment*, const CString*) const;
+	void addModule(const std::string&, Module*);
 
 	/// Imports the module to the current scope
-	void importModule(Scope*, Environment*, const CString*, const CString*,
-		ImportKind = PkgManager::ALL, const CString* = NULL) const;
+	void importModule(Scope*, Environment*, const std::string&,
+		ImportKind = ModManager::ALL, const CString* = NULL) const;
+
+	bool importFile(Scope*, Environment*, const std::string&,
+		ImportKind = ModManager::ALL, const CString* = NULL) const;
 
 	void loadModule(Scope*, Environment*, Module*, ImportKind, const CString*) const;
 
@@ -64,10 +62,12 @@ public:
 
 	void loadType(Scope*, Environment*, const CString*, Type*) const;
 private:
-	PackageMap m_pkgs;
-	Package* m_std;
+	Driver* m_driver;
+	ModuleMap m_mods;
+	Module* m_user;
+	std::string m_include_path;
 };
 
 } // clever
 
-#endif // CLEVER_PKGMANAGER_H
+#endif // CLEVER_MODMANAGER_H

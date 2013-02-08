@@ -8,11 +8,11 @@
 #include "core/cthread.h"
 #include "core/value.h"
 #include "modules/std/core/function.h"
-#include "core/pkgmanager.h"
+#include "core/modmanager.h"
 #include "modules/std/unicode/unicode.h"
 #include "modules/std/unicode/string.h"
 
-namespace clever { namespace packages { namespace std {
+namespace clever { namespace modules { namespace std {
 
 /// Initializes Standard Unicode module
 CLEVER_MODULE_INIT(UnicodeModule)
@@ -20,4 +20,4 @@ CLEVER_MODULE_INIT(UnicodeModule)
 	addType(CSTRING("UString"), new UString);
 }
 
-}}} // clever::packages::std
+}}} // clever::modules::std
