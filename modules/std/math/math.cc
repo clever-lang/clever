@@ -9,7 +9,7 @@
 #include <cstdlib>
 #include "core/value.h"
 #include "types/native_types.h"
-#include "core/pkgmanager.h"
+#include "core/modmanager.h"
 #include "modules/std/math/math.h"
 
 #ifndef M_PI

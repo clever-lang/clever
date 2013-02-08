@@ -7,7 +7,7 @@
 
 #include <iostream>
 #include "core/driver.h"
-#include "core/pkgmanager.h"
+#include "core/modmanager.h"
 #include "modules/std/reflection/reflection.h"
 #include "modules/std/reflection/reflect.h"
 

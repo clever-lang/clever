@@ -6,7 +6,7 @@
  */
 
 #include <iostream>
-#include "core/pkgmanager.h"
+#include "core/modmanager.h"
 #include "core/value.h"
 #include "core/cstring.h"
 #include "core/scope.h"

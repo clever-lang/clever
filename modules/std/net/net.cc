@@ -8,7 +8,7 @@
 #include "core/value.h"
 #include "modules/std/net/net.h"
 #include "modules/std/net/tcpsocket.h"
-#include "core/pkgmanager.h"
+#include "core/modmanager.h"
 
 namespace clever { namespace packages { namespace std {
 

@@ -16,7 +16,7 @@
 #include <vector>
 #include <stack>
 #include <sstream>
-#include "core/pkgmanager.h"
+#include "core/modmanager.h"
 #include "core/codegen.h"
 #include "core/irbuilder.h"
 

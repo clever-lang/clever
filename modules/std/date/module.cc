@@ -5,7 +5,7 @@
  * This file is distributed under the MIT license. See LICENSE for details.
  */
 #include "core/value.h"
-#include "core/pkgmanager.h"
+#include "core/modmanager.h"
 #include "modules/std/date/module.h"
 #include "modules/std/date/date.h"
 
