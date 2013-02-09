@@ -33,6 +33,8 @@
 #include "core/cstring.h"
 #include "types/type.h"
 
+#include "core/module.h"
+
 #include <string>
 #include <map>
 
@@ -40,7 +42,7 @@
 # define MACOSX
 #endif
 
-namespace clever { namespace packages { namespace std {
+namespace clever { namespace modules { namespace std {
 
 typedef void* LibHandler;
 
@@ -75,6 +77,16 @@ public:
 	CLEVER_METHOD(call);
 	CLEVER_METHOD(load);
 	CLEVER_METHOD(unload);
+};
+
+class FFIModule : public Module {
+public:
+	FFIModule()
+		: Module("std.FFI") { }
+
+	CLEVER_MODULE_VIRTUAL_METHODS_DECLARATION;
+private:
+	DISALLOW_COPY_AND_ASSIGN(FFIModule);
 };
 
 

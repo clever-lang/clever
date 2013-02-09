@@ -47,12 +47,13 @@ void Std::init()
 	addModule(new std::CryptoModule);
 #endif
 
+#ifdef HAVE_MOD_STD_FFI
+	addModule(new std::FFIModule);
+#endif
+
 #if 0
 #ifdef HAVE_MOD_STD_REGEX
 	addModule(new std::Regex);
-#endif
-#ifdef HAVE_MOD_STD_FFI
-	addModule(new std::FFI);
 #endif
 #ifdef HAVE_MOD_STD_RPC
 	addModule(new std::RPCModule);

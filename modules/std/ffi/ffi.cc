@@ -52,7 +52,7 @@
 #include "core/value.h"
 #include "modules/std/ffi/ffi.h"
 
-namespace clever { namespace packages { namespace std {
+namespace clever { namespace modules { namespace std {
 extern "C" {
 	typedef void (*ffi_call_func)();
 }
@@ -331,5 +331,11 @@ CLEVER_TYPE_INIT(FFI::init)
 	addMethod(new Function("load",			(MethodPtr)&FFI::load));
 	addMethod(new Function("unload",		(MethodPtr)&FFI::unload));
 }
+
+CLEVER_MODULE_INIT(FFIModule)
+{
+	addType(CSTRING("FFI"),     new FFI);
+}
+
 
 }}} // clever::packages::std

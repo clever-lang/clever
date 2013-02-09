@@ -40,12 +40,13 @@
 #	include "modules/std/crypto/crypto.h"
 #endif
 
+#ifdef HAVE_MOD_STD_FFI
+#	include "modules/std/ffi/ffi.h"
+#endif
+
 #if 0
 #ifdef HAVE_MOD_STD_REGEX
 # include "modules/std/regex/regex.h"
-#endif
-#ifdef HAVE_MOD_STD_FFI
-# include "modules/std/ffi/ffi.h"
 #endif
 #ifdef HAVE_MOD_STD_RPC
 # include "modules/std/rpc/rpc.h"
