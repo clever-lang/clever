@@ -54,11 +54,11 @@ public:
 
 	Scope()
 		: m_parent(NULL), m_children(), m_symbols(), m_symbol_table(), m_size(0),
-		  m_id(0), m_value_id(0), m_value_pool(), m_environment(NULL) {}
+		  m_id(0), m_value_pool(), m_environment(NULL) {}
 
 	explicit Scope(Scope* parent)
 		: m_parent(parent), m_children(), m_symbols(), m_symbol_table(),
-		  m_size(0), m_id(0), m_value_id(0), m_value_pool(), m_environment(NULL) {}
+		  m_size(0), m_id(0), m_value_pool(), m_environment(NULL) {}
 
 	~Scope();
 
@@ -110,7 +110,6 @@ private:
 	SymbolTable m_symbol_table;
 	size_t m_size;
 	size_t m_id;
-	size_t m_value_id;
 
 	ValuePool m_value_pool;
 
