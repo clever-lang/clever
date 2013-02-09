@@ -119,8 +119,8 @@ void* FFI::allocData(CLEVER_TYPE_CTOR_ARGS) const
 	if (args->size() == 1) {
 		Value* v = args->at(0);
 		if (v->isStr()) {
-			if (_load_lib(data, v->getStr())) {
-				clever_error("Failed to open %@!", v);
+			if (!_load_lib(data, v->getStr())) {
+				clever_error("Failed to open %s!", v->getStr()->c_str());
 			}
 		} else {
 			clever_error("Argument 1 must to be a string!");
@@ -169,7 +169,7 @@ CLEVER_METHOD(FFI::call)
 
 	fpf = dlsym(handler->m_lib_handler, func->c_str());
 	if (fpf == NULL) {
-		clever_error("FFI::call: function %@ don't exist!", func);
+		clever_error("FFI::call: function %s doesn't exist!", func->c_str());
 		result->setBool(false);
 		return;
 	}

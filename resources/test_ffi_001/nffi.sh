@@ -2,8 +2,9 @@
 gcc -fPIC -O3 -shared -c nffi.c
 gcc -shared -Wl,-soname,nffi.so -o nffi.so nffi.o -lc -ldl
 
+LD_LIBRARY_PATH=.
 
-set LD_LIBRARY_PATH=.
+valgrind ../../clever  nffi.clv
 
-./clever  nffi.clv
 
+rm -f *.o *~ *.so
