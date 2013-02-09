@@ -337,7 +337,7 @@ CLEVER_METHOD(FFI::unload)
  */
 CLEVER_TYPE_INIT(FFI::init)
 {
-	Function* ctor = new Function("FFI", (MethodPtr) &FFI::ctor);
+	Function* ctor = new Function("FFILib", (MethodPtr) &FFI::ctor);
 
 	setConstructor(ctor);
 
@@ -350,7 +350,7 @@ CLEVER_TYPE_INIT(FFI::init)
 
 CLEVER_MODULE_INIT(FFIModule)
 {
-	addType(CSTRING("FFI"),     new FFI);
+	addType(CSTRING("FFILib"),     new FFI);
 }
 
 
