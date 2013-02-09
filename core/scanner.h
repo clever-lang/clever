@@ -37,7 +37,9 @@ enum YYCONDTYPE {
 
 class ScannerState {
 public:
-	ScannerState() : state(0) {}
+	ScannerState()
+		: state(0) {}
+
 	~ScannerState() {}
 
 	void set_cursor(const unsigned char* cursor) { cur = cursor; }
