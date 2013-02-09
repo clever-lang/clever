@@ -92,30 +92,13 @@ static bool _load_lib(FFIData* h, const CString* libname)
 	return h->m_lib_handler != NULL;
 }
 
-void FFI::dump(const void* data, ::std::ostream& out) const
-{
-	ValueObject* dvalue =
-		static_cast<ValueObject*>(const_cast<void*>(data));
-	if (dvalue) {
-
-	}
-}
-
 void* FFI::allocData(CLEVER_TYPE_CTOR_ARGS) const
 {
 	FFIData* data = new FFIData();
+	const CString* name = args->at(0)->getStr();
 
-	if (args->size() == 1) {
-		Value* v = args->at(0);
-		if (v->isStr()) {
-			if (_load_lib(data, v->getStr())) {
-				clever_error("Failed to open %@!", v);
-			}
-		} else {
-			clever_error("Argument 1 must to be a string!");
-		}
-	} else if (args->size() > 1) {
-		clever_error("FFI must to have one or zero arguments!");
+	if (_load_lib(data, name)) {
+		clever_error("Failed to open %S!", name);
 	}
 
 	return data;
@@ -124,6 +107,7 @@ void* FFI::allocData(CLEVER_TYPE_CTOR_ARGS) const
 void FFI::deallocData(void* value)
 {
 	FFIData* data = static_cast<FFIData*>(value);
+
 	if (data->m_lib_handler) {
 		dlclose(data->m_lib_handler);
 	}
@@ -321,9 +305,7 @@ CLEVER_METHOD(FFI::unload)
 	}
 }
 
-/**
- * Load module data
- */
+// FFI type initialization
 CLEVER_TYPE_INIT(FFI::init)
 {
 	Function* ctor = new Function("FFI", (MethodPtr) &FFI::ctor);
@@ -331,16 +313,15 @@ CLEVER_TYPE_INIT(FFI::init)
 	setConstructor(ctor);
 
 	addMethod(ctor);
-
 	addMethod(new Function("call",			(MethodPtr)&FFI::call));
 	addMethod(new Function("load",			(MethodPtr)&FFI::load));
 	addMethod(new Function("unload",		(MethodPtr)&FFI::unload));
 }
 
+// FFI module initialization
 CLEVER_MODULE_INIT(FFIModule)
 {
 	addType(CSTRING("FFI"),     new FFI);
 }
-
 
 }}} // clever::packages::std

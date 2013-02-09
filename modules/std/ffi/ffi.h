@@ -57,12 +57,12 @@ public:
 
 	~FFI() {}
 
-	void dump(const void* data, ::std::ostream& out) const;
+	void init();
+
+	void dump(const void* data, ::std::ostream& out) const {}
 
 	virtual void increment(Value*, const VM*, CException*) const {}
 	virtual void decrement(Value*, const VM*, CException*) const {}
-
-	void init();
 
 	virtual void* allocData(CLEVER_TYPE_CTOR_ARGS) const;
 	virtual void deallocData(void* data);
