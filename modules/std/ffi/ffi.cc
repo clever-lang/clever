@@ -307,15 +307,7 @@ CLEVER_METHOD(FFI::load)
 {
 	FFIData* data = CLEVER_GET_OBJECT(FFIData*, CLEVER_THIS());
 
-	if (args.size() != 1) {
-		clever_error("FFI::load must to have one or zero arguments!");
-		result->setBool(false);
-		return;
-	}
-
-	if (!args.at(0)->isStr()) {
-		clever_error("FFI::load argument must to be a string!");
-		result->setBool(false);
+	if (!clever_check_args("s")) {
 		return;
 	}
 
