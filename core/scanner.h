@@ -28,10 +28,6 @@ enum YYCONDTYPE {
 #define YYCURSOR     cursor
 #define YYLIMIT      s.yylimit
 
-#define SET_TYPE(t_ptr) \
-	yylval->type = t_ptr; \
-	yylval->data = NULL;
-
 #define SKIP() s.cur = s.yylex + 1; goto next_token;
 #define RET(i) s.cur = cursor; return i;
 
