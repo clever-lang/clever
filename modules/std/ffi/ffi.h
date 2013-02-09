@@ -57,7 +57,7 @@ struct FFIData {
 class FFI : public Type {
 public:
 	FFI()
-		: Type(CSTRING("FFI")) {}
+		: Type(CSTRING("FFILib")) {}
 
 	~FFI() {}
 
@@ -82,7 +82,7 @@ public:
 class FFIModule : public Module {
 public:
 	FFIModule()
-		: Module("std.FFI") { }
+		: Module("std.ffi") { }
 
 	CLEVER_MODULE_VIRTUAL_METHODS_DECLARATION;
 private:
