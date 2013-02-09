@@ -53,12 +53,12 @@ public:
 	typedef SymbolTable::value_type SymbolEntry;
 
 	Scope()
-		: m_parent(NULL), m_children(), m_symbols(), m_symbol_table(), m_size(0),
-		  m_id(0), m_value_pool(), m_environment(NULL) {}
+		: m_parent(NULL), m_children(), m_symbols(), m_symbol_table(),
+		  m_value_pool(), m_environment(NULL) {}
 
 	explicit Scope(Scope* parent)
 		: m_parent(parent), m_children(), m_symbols(), m_symbol_table(),
-		  m_size(0), m_id(0), m_value_pool(), m_environment(NULL) {}
+		  m_value_pool(), m_environment(NULL) {}
 
 	~Scope();
 
@@ -66,7 +66,7 @@ public:
 		Symbol* sym = new Symbol(name, this);
 
 		m_symbols.push_back(sym);
-		m_symbol_table.insert(SymbolEntry(name, m_size++));
+		m_symbol_table.insert(SymbolEntry(name, m_symbol_table.size()));
 		m_value_pool.push_back(value);
 
 		return sym;
@@ -108,8 +108,6 @@ private:
 	ScopeVector m_children;
 	SymbolMap m_symbols;
 	SymbolTable m_symbol_table;
-	size_t m_size;
-	size_t m_id;
 
 	ValuePool m_value_pool;
 
