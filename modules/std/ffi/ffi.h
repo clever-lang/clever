@@ -27,16 +27,12 @@
 #ifndef CLEVER_STD_FFI_H
 #define CLEVER_STD_FFI_H
 
-
 #include <iostream>
-
-#include "core/cstring.h"
-#include "types/type.h"
-
-#include "core/module.h"
-
 #include <string>
 #include <map>
+#include "core/cstring.h"
+#include "types/type.h"
+#include "core/module.h"
 
 #ifdef CLEVER_APPLE
 # define MACOSX
@@ -47,11 +43,11 @@ namespace clever { namespace modules { namespace std {
 typedef void* LibHandler;
 
 struct FFIData {
-	CString m_lib_name;
-	LibHandler m_lib_handler;
-
 	FFIData()
-		: m_lib_name(""), m_lib_handler(NULL) {}
+		: m_lib_handler(NULL) {}
+
+	::std::string m_lib_name;
+	LibHandler m_lib_handler;
 };
 
 class FFI : public Type {
@@ -61,13 +57,12 @@ public:
 
 	~FFI() {}
 
-	void dump(const void* data) const;
-	void dump(const void* data, ::std::ostream& out) const;
+	void init();
+
+	void dump(const void* data, ::std::ostream& out) const {}
 
 	virtual void increment(Value*, const VM*, CException*) const {}
 	virtual void decrement(Value*, const VM*, CException*) const {}
-
-	void init();
 
 	virtual void* allocData(CLEVER_TYPE_CTOR_ARGS) const;
 	virtual void deallocData(void* data);
@@ -82,7 +77,9 @@ public:
 class FFIModule : public Module {
 public:
 	FFIModule()
-		: Module("std.ffi") { }
+		: Module("std.ffi") {}
+
+	~FFIModule() {}
 
 	CLEVER_MODULE_VIRTUAL_METHODS_DECLARATION;
 private:
@@ -90,6 +87,6 @@ private:
 };
 
 
-}}} // clever::packages::std
+}}} // clever::modules::std
 
 #endif // CLEVER_STD_FFI_H

@@ -53,6 +53,7 @@
 #include "modules/std/ffi/ffi.h"
 
 namespace clever { namespace modules { namespace std {
+
 extern "C" {
 	typedef void (*ffi_call_func)();
 }
@@ -79,54 +80,25 @@ static ffi_type* _find_ffi_type(const char* tn) {
 	return NULL;
 }
 
-bool _load_lib(FFIData* h, const CString* libname)
+static bool _load_lib(FFIData* h, const CString* libname)
 {
 	if (h->m_lib_handler != NULL) {
 		dlclose(h->m_lib_handler);
 	}
 
-	h->m_lib_name = *libname;
-	h->m_lib_name += CLEVER_DYLIB_EXT;
+	h->m_lib_name = *libname + CLEVER_DYLIB_EXT;
 	h->m_lib_handler = dlopen(h->m_lib_name.c_str(), RTLD_LAZY);
 
-	if (h->m_lib_handler == NULL) {
-		return false;
-	}
-
-	return true;
-}
-
-
-
-void FFI::dump(const void* data) const
-{
-	dump(data, ::std::cout);
-}
-
-void FFI::dump(const void* data, ::std::ostream& out) const
-{
-	ValueObject* dvalue =
-		static_cast<ValueObject*>(const_cast<void*>(data));
-	if (dvalue) {
-
-	}
+	return h->m_lib_handler != NULL;
 }
 
 void* FFI::allocData(CLEVER_TYPE_CTOR_ARGS) const
 {
 	FFIData* data = new FFIData();
+	const CString* name = args->at(0)->getStr();
 
-	if (args->size() == 1) {
-		Value* v = args->at(0);
-		if (v->isStr()) {
-			if (!_load_lib(data, v->getStr())) {
-				clever_error("Failed to open %s!", v->getStr()->c_str());
-			}
-		} else {
-			clever_error("Argument 1 must to be a string!");
-		}
-	} else if (args->size() > 1) {
-		clever_error("FFI must to have one or zero arguments!");
+	if (!_load_lib(data, name)) {
+		clever_error("Failed to open %S!", name);
 	}
 
 	return data;
@@ -135,9 +107,12 @@ void* FFI::allocData(CLEVER_TYPE_CTOR_ARGS) const
 void FFI::deallocData(void* value)
 {
 	FFIData* data = static_cast<FFIData*>(value);
+
 	if (data->m_lib_handler) {
 		dlclose(data->m_lib_handler);
 	}
+
+	delete data;
 }
 
 CLEVER_METHOD(FFI::ctor)
@@ -157,11 +132,9 @@ CLEVER_METHOD(FFI::call)
 
 	FFIData* handler = CLEVER_GET_OBJECT(FFIData*, CLEVER_THIS());
 
-	size_t size = args.size();
-	size_t n_args = size - 2;
-
 	const CString* func = args.at(0)->getStr();
 	const CString* rt = args.at(1)->getStr();
+	size_t n_args = args.size() - 2;
 
 #ifndef CLEVER_WIN32
 	void* fpf;
@@ -169,61 +142,60 @@ CLEVER_METHOD(FFI::call)
 
 	fpf = dlsym(handler->m_lib_handler, func->c_str());
 	if (fpf == NULL) {
-		clever_error("FFI::call: function %s doesn't exist!", func->c_str());
-		result->setBool(false);
+
+		CLEVER_THROW("function `%S' don't exist!", func);
 		return;
 	}
 
 	pf = reinterpret_cast<ffi_call_func>(fpf);
 #endif
-	ffi_cif cif;
 
+	ffi_cif cif;
 	ffi_type* ffi_rt = _find_ffi_type(rt->c_str());
 	ffi_type** ffi_args = (ffi_type**) malloc(n_args*sizeof(ffi_type*));
 
 	void** ffi_values = (void**) malloc(n_args*sizeof(void*));
 
-	for (size_t i = 2; i < size; ++i) {
+	for (size_t i = 2; i < n_args; ++i) {
 		Value* v = args.at(i);
 
 		if (v->isInt()) {
-			ffi_args[i - 2] = &ffi_type_sint32;
+			ffi_args[i] = &ffi_type_sint32;
 
 			int* vi= (int*) malloc(sizeof(int));
 
 			*vi = v->getInt();
 
-			ffi_values[i - 2] =  vi;
+			ffi_values[i] =  vi;
 		} else if (v->isBool()) {
-			ffi_args[i - 2] = _find_ffi_type("b");
+			ffi_args[i] = _find_ffi_type("b");
 
 			char* b=(char*) malloc (sizeof(char));
 
 			*b = v->getBool();
 
-			ffi_values[i - 2] = b;
+			ffi_values[i] = b;
 		} else if (v->isStr()) {
 			const char* st = v->getStr()->c_str();
-
-			char** s= (char**) malloc (sizeof(char*));
+			char** s = (char**) malloc (sizeof(char*));
 			*s = (char*) malloc (sizeof(char)* (strlen(st)+1));
 
 			strcpy(*s,st);
 			(*s)[strlen(st)]='\0';
 
-			ffi_args[i - 2] = _find_ffi_type("s");
+			ffi_args[i] = _find_ffi_type("s");
 
-			ffi_values[i - 2] =  s;
-		}  else if (v->isDouble()) {
-			ffi_args[i - 2] = &ffi_type_double;
+			ffi_values[i] =  s;
+		} else if (v->isDouble()) {
+			ffi_args[i] = &ffi_type_double;
 
 			double* d = (double*)malloc(sizeof(double));
 
 			*d = v->getDouble();
 
-			ffi_values[i - 2] = d;
+			ffi_values[i] = d;
 		} else {
-			ffi_args[i - 2] = _find_ffi_type("p");
+			ffi_args[i] = _find_ffi_type("p");
 
 			//FFIObjectValue* obj = static_cast<FFIObjectValue*>(CLEVER_ARG_DATA_VALUE(i));
 
@@ -238,7 +210,6 @@ CLEVER_METHOD(FFI::call)
 
 
 #ifndef CLEVER_WIN32
-
 	if (rt->at(0) == 'i') {
 		int vi;
 
@@ -332,9 +303,7 @@ CLEVER_METHOD(FFI::unload)
 	}
 }
 
-/**
- * Load module data
- */
+// FFI type initialization
 CLEVER_TYPE_INIT(FFI::init)
 {
 	Function* ctor = new Function("FFILib", (MethodPtr) &FFI::ctor);
@@ -342,16 +311,15 @@ CLEVER_TYPE_INIT(FFI::init)
 	setConstructor(ctor);
 
 	addMethod(ctor);
-
-	addMethod(new Function("call",			(MethodPtr)&FFI::call));
-	addMethod(new Function("load",			(MethodPtr)&FFI::load));
-	addMethod(new Function("unload",		(MethodPtr)&FFI::unload));
+	addMethod(new Function("call",   (MethodPtr)&FFI::call));
+	addMethod(new Function("load",   (MethodPtr)&FFI::load));
+	addMethod(new Function("unload", (MethodPtr)&FFI::unload));
 }
 
+// FFI module initialization
 CLEVER_MODULE_INIT(FFIModule)
 {
-	addType(CSTRING("FFILib"),     new FFI);
+	addType(CSTRING("FFILib"), new FFI);
 }
-
 
 }}} // clever::packages::std
