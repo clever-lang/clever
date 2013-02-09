@@ -128,7 +128,6 @@ class Value;
 
 %token END  0        "end of file"
 %token VAR           "var"
-%token EXIT          "exit"
 %token TYPE          "type specification"
 %token IDENT         "identifier"
 %token NUM_INTEGER   "number"
@@ -167,7 +166,6 @@ class Value;
 %token TRUE          "true"
 %token FALSE         "false"
 %token CONST         "const"
-%token PRINT         "print"
 %token FUNC          "function"
 %token THREAD        "spawn"
 %token CRITICAL      "critical"
