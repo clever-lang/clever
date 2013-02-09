@@ -130,11 +130,9 @@ CLEVER_METHOD(FFI::call)
 
 	FFIData* handler = CLEVER_GET_OBJECT(FFIData*, CLEVER_THIS());
 
-	size_t size = args.size();
-	size_t n_args = size - 2;
-
 	const CString* func = args.at(0)->getStr();
 	const CString* rt = args.at(1)->getStr();
+	size_t n_args = args.size() - 2;
 
 #ifndef CLEVER_WIN32
 	void* fpf;
@@ -142,61 +140,59 @@ CLEVER_METHOD(FFI::call)
 
 	fpf = dlsym(handler->m_lib_handler, func->c_str());
 	if (fpf == NULL) {
-		clever_error("FFI::call: function %@ don't exist!", func);
-		result->setBool(false);
+		CLEVER_THROW("function `%S' don't exist!", func);
 		return;
 	}
 
 	pf = reinterpret_cast<ffi_call_func>(fpf);
 #endif
-	ffi_cif cif;
 
+	ffi_cif cif;
 	ffi_type* ffi_rt = _find_ffi_type(rt->c_str());
 	ffi_type** ffi_args = (ffi_type**) malloc(n_args*sizeof(ffi_type*));
 
 	void** ffi_values = (void**) malloc(n_args*sizeof(void*));
 
-	for (size_t i = 2; i < size; ++i) {
+	for (size_t i = 2; i < n_args; ++i) {
 		Value* v = args.at(i);
 
 		if (v->isInt()) {
-			ffi_args[i - 2] = &ffi_type_sint32;
+			ffi_args[i] = &ffi_type_sint32;
 
 			int* vi= (int*) malloc(sizeof(int));
 
 			*vi = v->getInt();
 
-			ffi_values[i - 2] =  vi;
+			ffi_values[i] =  vi;
 		} else if (v->isBool()) {
-			ffi_args[i - 2] = _find_ffi_type("b");
+			ffi_args[i] = _find_ffi_type("b");
 
 			char* b=(char*) malloc (sizeof(char));
 
 			*b = v->getBool();
 
-			ffi_values[i - 2] = b;
+			ffi_values[i] = b;
 		} else if (v->isStr()) {
 			const char* st = v->getStr()->c_str();
-
-			char** s= (char**) malloc (sizeof(char*));
+			char** s = (char**) malloc (sizeof(char*));
 			*s = (char*) malloc (sizeof(char)* (strlen(st)+1));
 
 			strcpy(*s,st);
 			(*s)[strlen(st)]='\0';
 
-			ffi_args[i - 2] = _find_ffi_type("s");
+			ffi_args[i] = _find_ffi_type("s");
 
-			ffi_values[i - 2] =  s;
-		}  else if (v->isDouble()) {
-			ffi_args[i - 2] = &ffi_type_double;
+			ffi_values[i] =  s;
+		} else if (v->isDouble()) {
+			ffi_args[i] = &ffi_type_double;
 
 			double* d = (double*)malloc(sizeof(double));
 
 			*d = v->getDouble();
 
-			ffi_values[i - 2] = d;
+			ffi_values[i] = d;
 		} else {
-			ffi_args[i - 2] = _find_ffi_type("p");
+			ffi_args[i] = _find_ffi_type("p");
 
 			//FFIObjectValue* obj = static_cast<FFIObjectValue*>(CLEVER_ARG_DATA_VALUE(i));
 
@@ -211,7 +207,6 @@ CLEVER_METHOD(FFI::call)
 
 
 #ifndef CLEVER_WIN32
-
 	if (rt->at(0) == 'i') {
 		int vi;
 
@@ -313,15 +308,15 @@ CLEVER_TYPE_INIT(FFI::init)
 	setConstructor(ctor);
 
 	addMethod(ctor);
-	addMethod(new Function("call",			(MethodPtr)&FFI::call));
-	addMethod(new Function("load",			(MethodPtr)&FFI::load));
-	addMethod(new Function("unload",		(MethodPtr)&FFI::unload));
+	addMethod(new Function("call",   (MethodPtr)&FFI::call));
+	addMethod(new Function("load",   (MethodPtr)&FFI::load));
+	addMethod(new Function("unload", (MethodPtr)&FFI::unload));
 }
 
 // FFI module initialization
 CLEVER_MODULE_INIT(FFIModule)
 {
-	addType(CSTRING("FFILib"),     new FFI);
+	addType(CSTRING("FFILib"), new FFI);
 }
 
 }}} // clever::packages::std
