@@ -156,8 +156,8 @@ CLEVER_METHOD(FFI::call)
 
 	void** ffi_values = (void**) malloc(n_args*sizeof(void*));
 
-	for (size_t i = 2; i < n_args; ++i) {
-		Value* v = args.at(i);
+	for (size_t i = 0; i < n_args; ++i) {
+		Value* v = args.at(i + 2);
 
 		if (v->isInt()) {
 			ffi_args[i] = &ffi_type_sint32;
