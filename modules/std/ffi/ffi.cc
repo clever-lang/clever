@@ -142,11 +142,19 @@ void FFI::deallocData(void* value)
 
 CLEVER_METHOD(FFI::ctor)
 {
+	if (!clever_check_args("s")) {
+		return;
+	}
+
 	result->setObj(this, allocData(&args));
 }
 
 CLEVER_METHOD(FFI::call)
 {
+	if (!clever_check_args("ss*")) {
+		return;
+	}
+
 	FFIData* handler = CLEVER_GET_OBJECT(FFIData*, CLEVER_THIS());
 
 	size_t size = args.size();
