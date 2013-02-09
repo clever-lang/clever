@@ -53,6 +53,7 @@
 #include "modules/std/ffi/ffi.h"
 
 namespace clever { namespace modules { namespace std {
+
 extern "C" {
 	typedef void (*ffi_call_func)();
 }
@@ -79,28 +80,16 @@ static ffi_type* _find_ffi_type(const char* tn) {
 	return NULL;
 }
 
-bool _load_lib(FFIData* h, const CString* libname)
+static bool _load_lib(FFIData* h, const CString* libname)
 {
 	if (h->m_lib_handler != NULL) {
 		dlclose(h->m_lib_handler);
 	}
 
-	h->m_lib_name = *libname;
-	h->m_lib_name += CLEVER_DYLIB_EXT;
+	h->m_lib_name = *libname + CLEVER_DYLIB_EXT;
 	h->m_lib_handler = dlopen(h->m_lib_name.c_str(), RTLD_LAZY);
 
-	if (h->m_lib_handler == NULL) {
-		return false;
-	}
-
-	return true;
-}
-
-
-
-void FFI::dump(const void* data) const
-{
-	dump(data, ::std::cout);
+	return h->m_lib_handler != NULL;
 }
 
 void FFI::dump(const void* data, ::std::ostream& out) const
