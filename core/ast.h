@@ -405,13 +405,13 @@ public:
 	}
 
 	Import(Ident* name, Ident* func, const location& location)
-		: Node(location), m_module(name), m_func(func), m_type(NULL) {
+		: Node(location), m_module(name), m_func(func), m_type(NULL), m_tree(NULL) {
 		clever_addref(m_module);
 		m_func->addRef();
 	}
 
 	Import(Ident* module, Type* type, const location& location)
-		: Node(location), m_module(module), m_func(NULL), m_type(type) {
+		: Node(location), m_module(module), m_func(NULL), m_type(type), m_tree(NULL) {
 		clever_addref(m_module);
 		m_type->addRef();
 	}
@@ -420,6 +420,7 @@ public:
 		clever_delref(m_module);
 		clever_delref(m_func);
 		clever_delref(m_type);
+		clever_delref(m_tree);
 	}
 
 	Type* getType() const { return m_type; }
@@ -427,12 +428,20 @@ public:
 	Ident* getModule() const { return m_module; }
 	bool hasModule() const { return m_module != NULL; }
 
+	bool hasModuleTree() const { return m_tree != NULL; }
+	void setModuleTree(Node* tree) {
+		m_tree = tree;
+		clever_addref(m_tree);
+	}
+	Node* getModuleTree() { return m_tree; }
+
 	virtual void accept(Visitor& visitor);
 	virtual Node* accept(Transformer& transformer);
 private:
 	Ident* m_module;
 	Ident* m_func;
 	Type* m_type;
+	Node* m_tree;
 
 	DISALLOW_COPY_AND_ASSIGN(Import);
 };

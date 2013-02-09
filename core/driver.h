@@ -66,6 +66,7 @@ public:
 
 	// Compiler flags
 	void setCompilerFlags(size_t flags) { m_cflags |= flags; }
+	Compiler& getCompiler() { return m_compiler; }
 
 	size_t getCompilerFlags() const { return m_cflags; }
 protected:

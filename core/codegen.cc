@@ -574,4 +574,11 @@ void Codegen::visit(ClassDef* node)
 	m_builder->setTempEnv(save_temp);
 }
 
+void Codegen::visit(Import* node)
+{
+	if (node->hasModuleTree()) {
+		Visitor::visit(static_cast<NodeArray*>(node->getModuleTree()));
+	}
+}
+
 }} // clever::ast

@@ -445,7 +445,7 @@ yylloc.begin.filename = yylloc.end.filename = driver.getFile();
 
   case 3:
 
-    { c.emitAST((yysemantic_stack_[(2) - (2)].block)); }
+    { c.setAST((yysemantic_stack_[(2) - (2)].block)); }
     break;
 
   case 4:

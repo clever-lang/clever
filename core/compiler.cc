@@ -18,6 +18,10 @@ namespace clever {
 /// Compiler initialization phase
 void Compiler::init(const CString* fname)
 {
+	if (m_flags & INITIALIZED) {
+		return;
+	}
+
 	m_pkg.init();
 
 	if (fname) {
@@ -27,6 +31,8 @@ void Compiler::init(const CString* fname)
 
 		m_pkg.setIncludePath(path);
 	}
+
+	m_flags |= INITIALIZED;
 }
 
 /// Frees all resource used by the compiler
@@ -74,15 +80,17 @@ void Compiler::errorf(const location& loc, const char* format, ...)
 	error(out.str(), loc);
 }
 
-void Compiler::emitAST(ast::Node* tree)
+void Compiler::genCode()
 {
-	if (!tree) {
+	if (!m_tree) {
 		return;
 	}
 
+	ast::Node* tree = m_tree;
+
 	if (m_flags & USE_OPTIMIZER) {
 		ast::Evaluator evaluator;
-		tree = tree->accept(evaluator);
+		tree = m_tree->accept(evaluator);
 	}
 
 	if (m_flags & DUMP_AST) {

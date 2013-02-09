@@ -223,8 +223,14 @@ void Resolver::visit(Import* node)
 		: (kind == ModManager::FUNCTION ? node->getFunction()->getName()
 			: node->getType()->getName());
 
-	m_modmanager.importModule(m_scope, m_stack.top(),
+	ast::Node* tree = m_modmanager.importModule(m_scope, m_stack.top(),
 		*node->getModule()->getName(), kind, name);
+
+	node->setModuleTree(tree);
+
+	if (tree) {
+		Visitor::visit(static_cast<NodeArray*>(tree));
+	}
 }
 
 void Resolver::visit(Catch* node)

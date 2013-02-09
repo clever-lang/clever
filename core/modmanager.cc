@@ -139,20 +139,20 @@ void ModManager::loadModule(Scope* scope, Environment* env, Module* module,
 }
 
 /// Imports a file
-bool ModManager::importFile(Scope* scope, Environment* env,
+ast::Node* ModManager::importFile(Scope* scope, Environment* env,
 	const std::string& module, ImportKind kind, const CString* name) const
 {
 	const std::string& fname = m_include_path + module + ".clv";
 
 	if (!m_driver->loadFile(fname)) {
-		std::cout << "Failed to load file" << std::endl;
+		return m_driver->getCompiler().getAST();
 	}
 
-	return false;
+	return NULL;
 }
 
 /// Imports a module
-void ModManager::importModule(Scope* scope, Environment* env,
+ast::Node* ModManager::importModule(Scope* scope, Environment* env,
 	const std::string& module, ImportKind kind, const CString* name) const
 {
 	ModuleMap::const_iterator it = m_mods.find(module);
@@ -160,13 +160,18 @@ void ModManager::importModule(Scope* scope, Environment* env,
 	//std::cout << "imp " << module << std::endl;
 
 	if (it == m_mods.end()) {
-		if (!importFile(scope, env, module, kind, name)) {
+		ast::Node* tree;
+
+		if ((tree = importFile(scope, env, module, kind, name)) == NULL) {
 			std::cerr << "Module `" << module << "' not found!" << std::endl;
-			return;
+			return NULL;
 		}
+		return tree;
 	}
 
 	loadModule(scope, env, it->second, kind, name);
+
+	return NULL;
 }
 
 } // clever

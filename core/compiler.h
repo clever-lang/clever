@@ -29,6 +29,8 @@ class location;
 class Compiler {
 public:
 	enum CompilerFlag {
+		NO_FLAGS       = 0,
+		INITIALIZED    = 1 << 0,
 		DUMP_AST       = 1 << 1,
 		USE_OPTIMIZER  = 1 << 2,
 		PARSER_ONLY    = 1 << 3,
@@ -36,16 +38,19 @@ public:
 	};
 
 	Compiler(Driver* driver)
-		: m_pkg(driver), m_builder(NULL), m_global_env(), m_flags(0) {}
+		: m_tree(NULL), m_pkg(driver), m_builder(NULL), m_global_env(), m_flags(0) {}
 
 	~Compiler() {}
 
 	void init(const CString*);
 	void shutdown();
 
-	void setFlags(size_t flags) { m_flags = flags; }
+	void setFlags(size_t flags) { m_flags |= flags; }
 
-	void emitAST(ast::Node*);
+	void setAST(ast::Node* tree) { m_tree = tree; }
+	ast::Node* getAST() { return m_tree; }
+
+	void genCode();
 	const IRVector& getIR() { return m_builder->getIR(); }
 
 	Environment* getGlobalEnv() const { return m_global_env; }
@@ -57,6 +62,9 @@ public:
 	static void errorf(const location&, const char*, ...) CLEVER_NO_RETURN;
 
 private:
+	// AST tree
+	ast::Node* m_tree;
+
 	// Module manager
 	ModManager m_pkg;
 

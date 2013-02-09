@@ -23,19 +23,21 @@ void Interpreter::execute(bool interactive)
 		return;
 	}
 
-	VM vm(m_compiler.getIR());
-
-	vm.setConstEnv(m_compiler.getConstEnv());
-	vm.setGlobalEnv(m_compiler.getGlobalEnv());
-
-#ifdef CLEVER_DEBUG
-	if (m_dump_opcode) {
-		vm.dumpOpcodes();
-	}
-#endif
 	int status = setjmp(fatal_error);
 
 	if (status == 0) {
+		m_compiler.genCode();
+
+		VM vm(m_compiler.getIR());
+
+		vm.setConstEnv(m_compiler.getConstEnv());
+		vm.setGlobalEnv(m_compiler.getGlobalEnv());
+
+#ifdef CLEVER_DEBUG
+		if (m_dump_opcode) {
+			vm.dumpOpcodes();
+		}
+#endif
 		vm.run();
 	}
 }

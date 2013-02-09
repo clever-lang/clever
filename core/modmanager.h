@@ -15,6 +15,7 @@
 #endif
 #include <vector>
 #include "core/module.h"
+#include "core/ast.h"
 
 namespace clever {
 
@@ -50,10 +51,10 @@ public:
 	void addModule(const std::string&, Module*);
 
 	/// Imports the module to the current scope
-	void importModule(Scope*, Environment*, const std::string&,
+	ast::Node* importModule(Scope*, Environment*, const std::string&,
 		ImportKind = ModManager::ALL, const CString* = NULL) const;
 
-	bool importFile(Scope*, Environment*, const std::string&,
+	ast::Node* importFile(Scope*, Environment*, const std::string&,
 		ImportKind = ModManager::ALL, const CString* = NULL) const;
 
 	void loadModule(Scope*, Environment*, Module*, ImportKind, const CString*) const;
