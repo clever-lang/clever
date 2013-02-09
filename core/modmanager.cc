@@ -119,21 +119,43 @@ void ModManager::loadModule(Scope* scope, Environment* env, Module* module,
 
 	if (kind & ModManager::FUNCTION) {
 		FunctionMap& funcs = module->getFunctions();
-		FunctionMap::const_iterator itf(funcs.begin()),	endf(funcs.end());
 
-		while (EXPECTED(itf != endf)) {
-			loadFunction(scope, env, itf->first, itf->second);
-			++itf;
+		if (name) {
+			FunctionMap::const_iterator it = funcs.find(name);
+
+			if (it == funcs.end()) {
+				std::cerr << "Function `" << *name << "' not found!" << std::endl;
+			} else {
+				loadFunction(scope, env, it->first, it->second);
+			}
+		} else {
+			FunctionMap::const_iterator itf(funcs.begin()),	endf(funcs.end());
+
+			while (EXPECTED(itf != endf)) {
+				loadFunction(scope, env, itf->first, itf->second);
+				++itf;
+			}
 		}
 	}
 
 	if (kind & ModManager::TYPE) {
 		TypeMap& types = module->getTypes();
-		TypeMap::const_iterator itt(types.begin()), ite(types.end());
 
-		while (EXPECTED(itt != ite)) {
-			loadType(scope, env, itt->first, itt->second);
-			++itt;
+		if (name) {
+			TypeMap::const_iterator it = types.find(name);
+
+			if (it == types.end()) {
+				std::cerr << "Type `" << *name << "' not found!" << std::endl;
+			} else {
+				loadType(scope, env, it->first, it->second);
+			}
+		} else {
+			TypeMap::const_iterator itt(types.begin()), ite(types.end());
+
+			while (EXPECTED(itt != ite)) {
+				loadType(scope, env, itt->first, itt->second);
+				++itt;
+			}
 		}
 	}
 }
