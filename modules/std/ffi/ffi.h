@@ -53,7 +53,7 @@ struct FFIData {
 class FFI : public Type {
 public:
 	FFI()
-		: Type(CSTRING("FFI")) {}
+		: Type(CSTRING("FFILib")) {}
 
 	~FFI() {}
 
