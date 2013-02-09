@@ -96,6 +96,22 @@ bool _load_lib(FFIData* h, const CString* libname)
 	return true;
 }
 
+
+
+void FFI::dump(const void* data) const
+{
+	dump(data, ::std::cout);
+}
+
+void FFI::dump(const void* data, ::std::ostream& out) const
+{
+	ValueObject* dvalue =
+		static_cast<ValueObject*>(const_cast<void*>(data));
+	if (dvalue) {
+
+	}
+}
+
 void* FFI::allocData(CLEVER_TYPE_CTOR_ARGS) const
 {
 	FFIData* data = new FFIData();
