@@ -254,7 +254,6 @@ continue:
 		CONTINUE { $$ = new ast::Continue(yyloc); }
 ;
 
-
 thread_block:
 		THREAD IDENT block { $$ = new ast::ThreadBlock($3, $2, yyloc); }
 	|	THREAD IDENT '[' rvalue ']'  block { $$ = new ast::ThreadBlock($6, $2, $<node>4, yyloc); }
@@ -295,7 +294,7 @@ rvalue:
 
 lvalue:
 		IDENT
-//	|	IDENT '.' IDENT
+	|	property_access
 ;
 
 class_def:
