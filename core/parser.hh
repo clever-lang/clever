@@ -204,9 +204,7 @@ namespace clever {
      CONSTANT = 309,
      CLASS = 310,
      XOR_EQUAL = 311,
-     DECREMENT = 312,
-     INCREMENT = 313,
-     UMINUS = 314
+     UMINUS = 312
    };
 
     };
