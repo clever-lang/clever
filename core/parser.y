@@ -197,7 +197,7 @@ class Value;
 %left '-' '+' '.';
 %left '*' '/' '%';
 %right '!';
-%right '~';
+%right '~' INC DEC;
 %right '[' '{' '}';
 %left ELSEIF;
 %left ELSE;
