@@ -294,7 +294,7 @@ rvalue:
 
 lvalue:
 		IDENT
-	|	property_access
+	|	property_access { $1->setWriteMode(); }
 ;
 
 class_def:

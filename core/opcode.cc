@@ -48,7 +48,8 @@ const char* get_opcode_name(Opcode opnum)
 		CASE(OP_NEW);
 		CASE(OP_MCALL);
 		CASE(OP_SMCALL);
-		CASE(OP_PROP_ACC);
+		CASE(OP_PROP_R);
+		CASE(OP_PROP_W);
 		CASE(OP_TRY);
 		CASE(OP_CATCH);
 		CASE(OP_THROW);

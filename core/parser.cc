@@ -503,6 +503,11 @@ yylloc.begin.filename = yylloc.end.filename = driver.getFile();
     { (yyval.node) = (yysemantic_stack_[(3) - (2)].node); }
     break;
 
+  case 56:
+
+    { (yysemantic_stack_[(1) - (1)].property)->setWriteMode(); }
+    break;
+
   case 57:
 
     { (yyval.class_) = new ast::ClassDef((yysemantic_stack_[(6) - (2)].type), (yysemantic_stack_[(6) - (4)].narray), (yysemantic_stack_[(6) - (5)].narray), yyloc); }

@@ -140,12 +140,15 @@ void Codegen::visit(Assignment* node)
 			Operand(JMP_ADDR, m_builder->getSize() + 2));
 	}
 
+	node->getLhs()->accept(*this);
+
 	if (rhs) {
 		rhs->accept(*this);
 	}
 
-	IR& assign = m_builder->push(OP_ASSIGN,
-		Operand(FETCH_VAR, node->getLhs()->getVOffset()));
+	IR& assign = m_builder->push(OP_ASSIGN);
+
+	_prepare_operand(assign.op1, node->getLhs());
 
 	if (!rhs) {
 		assign.op2 = Operand(FETCH_CONST, ValueOffset(0, 0)); // null
@@ -494,8 +497,8 @@ void Codegen::visit(Instantiation* node)
 void Codegen::visit(Property* node)
 {
 	node->getCallee()->accept(*this);
-
-	IR& acc = m_builder->push(OP_PROP_ACC);
+	const Opcode op = node->getMode() == Property::WRITE ? OP_PROP_W : OP_PROP_R;
+	IR& acc = m_builder->push(op);
 
 	_prepare_operand(acc.op1, node->getCallee());
 

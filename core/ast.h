@@ -979,16 +979,18 @@ private:
 
 class Property: public Node {
 public:
+	enum Flags { WRITE, READ };
+
 	Property(Node* callee, Ident* prop_name, const location& location)
 		: Node(location), m_callee(callee), m_prop_name(prop_name),
-		  m_static(false) {
+		  m_static(false), m_mode(READ) {
 		m_callee->addRef();
 		m_prop_name->addRef();
 	}
 
 	Property(Type* callee, Ident* prop_name, const location& location)
 		: Node(location), m_callee(callee), m_prop_name(prop_name),
-		  m_static(true) {
+		  m_static(true), m_mode(READ) {
 		m_callee->addRef();
 		m_prop_name->addRef();
 	}
@@ -1003,12 +1005,18 @@ public:
 
 	bool isStatic() const { return m_static; }
 
+	void setWriteMode() { m_mode = WRITE; }
+	void setReadMode() { m_mode = READ; }
+
+	Flags getMode() const { return m_mode; }
+
 	virtual void accept(Visitor& visitor);
 	virtual Node* accept(Transformer& transformer);
 private:
 	Node* m_callee;
 	Ident* m_prop_name;
 	bool m_static;
+	Flags m_mode;
 
 	DISALLOW_COPY_AND_ASSIGN(Property);
 };
