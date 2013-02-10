@@ -75,7 +75,7 @@ class Value;
 %type <inst> instantiation array map
 %type <assignment> assignment
 %type <narray> variable_decl variable_decl_list non_empty_call_args call_args
-%type <narray> const_decl_list not_empty_catch catch key_value_list non_empty_key_value_list
+%type <narray> const_decl_list not_empty_catch catch key_value_list
 %type <narray> class_attr_decl_list class_attr_const_decl_list class_attr_list class_attr_decl
 %type <narray> class_method_decl class_method_list
 %type <vardecl> variable_decl_impl vararg
@@ -198,7 +198,7 @@ class Value;
 %left '*' '/' '%';
 %right '!';
 %right '~' INCREMENT DECREMENT COPY DEEPCOPY;
-%right '[' '{';
+%right '[' '{' '}';
 %left ELSEIF;
 %left ELSE;
 %left UMINUS;
@@ -357,12 +357,8 @@ array:
 ;
 
 key_value_list:
-		non_empty_key_value_list
-;
-
-non_empty_key_value_list:
-		STR ':' rvalue                              { $$ = new ast::NodeArray(yyloc); $$->append($1); $$->append($<node>3); }
-	|	non_empty_key_value_list ',' STR ':' rvalue { $1->append($3); $1->append($<node>5);                                 }
+		STR ':' rvalue                    { $$ = new ast::NodeArray(yyloc); $$->append($1); $$->append($<node>3); }
+	|	key_value_list ',' STR ':' rvalue { $1->append($3); $1->append($<node>5);                                 }
 ;
 
 map:
