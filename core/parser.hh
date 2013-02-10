@@ -204,11 +204,9 @@ namespace clever {
      CONSTANT = 309,
      CLASS = 310,
      XOR_EQUAL = 311,
-     DEEPCOPY = 312,
-     COPY = 313,
-     DECREMENT = 314,
-     INCREMENT = 315,
-     UMINUS = 316
+     DECREMENT = 312,
+     INCREMENT = 313,
+     UMINUS = 314
    };
 
     };

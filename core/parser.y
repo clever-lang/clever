@@ -120,7 +120,7 @@ class Value;
 
 %debug
 %error-verbose
-%expect 2
+%expect 1   /* map rule */
 
 %code {
 #include "core/driver.h"
@@ -197,7 +197,7 @@ class Value;
 %left '-' '+' '.';
 %left '*' '/' '%';
 %right '!';
-%right '~' INCREMENT DECREMENT COPY DEEPCOPY;
+%right '~' INCREMENT DECREMENT;
 %right '[' '{' '}';
 %left ELSEIF;
 %left ELSE;
@@ -264,7 +264,7 @@ critical_block:
 		CRITICAL block { $$ = new ast::CriticalBlock($2, yyloc); }
 ;
 
-rvalue:
+object:
 		IDENT
 	|	CONSTANT
 	|	STR
@@ -273,6 +273,13 @@ rvalue:
 	|	NIL
 	|	TRUE
 	|	FALSE
+	|	map
+	|	array
+	|	'(' rvalue ')' { $<node>$ = $<node>2; }
+;
+
+rvalue:
+		object
 	|	arithmetic
 	|	logic
 	|	bitwise
@@ -284,13 +291,11 @@ rvalue:
 	|	instantiation
 	|	property_access
 	|	mcall
-	|	array
-	|	map
-	|	'(' rvalue ')' { $<node>$ = $<node>2; }
 ;
 
 lvalue:
 		IDENT
+//	|	IDENT '.' IDENT
 ;
 
 class_def:
@@ -362,7 +367,7 @@ key_value_list:
 ;
 
 map:
-		'{' '}'                 { $$ = new ast::Instantiation(CSTRING("Map"), NULL, yyloc); }
+		'{' ':' '}'             { $$ = new ast::Instantiation(CSTRING("Map"), NULL, yyloc); }
 	|	'{' key_value_list '}'  { $$ = new ast::Instantiation(CSTRING("Map"), $2, yyloc);   }
 ;
 
@@ -393,22 +398,22 @@ try_catch_finally:
 ;
 
 property_access:
-		rvalue '.' IDENT    { $$ = new ast::Property($<node>1, $3, yyloc); }
+		object '.' IDENT    { $$ = new ast::Property($<node>1, $3, yyloc); }
 	|	TYPE '.' IDENT      { $$ = new ast::Property($1, $3, yyloc); }
-	|	rvalue '.' CONSTANT { $$ = new ast::Property($<node>1, $3, yyloc); }
+	|	object '.' CONSTANT { $$ = new ast::Property($<node>1, $3, yyloc); }
 	|	TYPE '.' CONSTANT   { $$ = new ast::Property($1, $3, yyloc); }
 ;
 
 mcall:
-		rvalue '.' IDENT '(' call_args ')' { $$ = new ast::MethodCall($<node>1, $3, $5, yyloc); }
+		object '.' IDENT '(' call_args ')' { $$ = new ast::MethodCall($<node>1, $3, $5, yyloc); }
 	|	TYPE '.' IDENT '(' call_args ')'   { $$ = new ast::MethodCall($1, $3, $5, yyloc); }
 ;
 
 inc_dec:
-		lvalue INC { $$ = new ast::IncDec(ast::IncDec::POS_INC, $<node>1, yyloc); }
-	|	lvalue DEC { $$ = new ast::IncDec(ast::IncDec::POS_DEC, $<node>1, yyloc); }
-	|	INC lvalue { $$ = new ast::IncDec(ast::IncDec::PRE_INC, $<node>2, yyloc); }
-	|	DEC lvalue { $$ = new ast::IncDec(ast::IncDec::PRE_DEC, $<node>2, yyloc); }
+		object INC { $$ = new ast::IncDec(ast::IncDec::POS_INC, $<node>1, yyloc); }
+	|	object DEC { $$ = new ast::IncDec(ast::IncDec::POS_DEC, $<node>1, yyloc); }
+	|	INC object { $$ = new ast::IncDec(ast::IncDec::PRE_INC, $<node>2, yyloc); }
+	|	DEC object { $$ = new ast::IncDec(ast::IncDec::PRE_DEC, $<node>2, yyloc); }
 ;
 
 comparison:
