@@ -247,7 +247,7 @@ CLEVER_FORCE_INLINE void VM::createInstance(const Type* type, Value* instance)
 		PropertyMap::const_iterator it(members.begin()), end(members.end());
 
 		while (it != end) {
-			obj->addMember(it->first, it->second);
+			obj->addMember(it->first, it->second->clone());
 			++it;
 		}
 	}

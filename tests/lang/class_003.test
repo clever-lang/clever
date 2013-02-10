@@ -6,11 +6,11 @@ class Foo {
 	var a;
 
 	function setA(v) {
-		a = v;
+		this.a = v;
 	}
 
 	function getA() {
-		return a;
+		return this.a;
 	}
 }
 
