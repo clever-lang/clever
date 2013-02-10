@@ -70,6 +70,7 @@ public:
 	CLEVER_METHOD(ctor);
 
 	CLEVER_METHOD(call);
+	CLEVER_METHOD(exec);
 	CLEVER_METHOD(load);
 	CLEVER_METHOD(unload);
 };
