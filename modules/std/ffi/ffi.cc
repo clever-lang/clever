@@ -92,64 +92,10 @@ static bool _load_lib(FFIData* h, const CString* libname)
 	return h->m_lib_handler != NULL;
 }
 
-void* FFI::allocData(CLEVER_TYPE_CTOR_ARGS) const
+inline void _ffi_call(Value* result, ffi_call_func pf, size_t n_args,
+					  const CString* rt, const ::std::vector<Value*>& args,
+					  size_t offset)
 {
-	FFIData* data = new FFIData();
-	const CString* name = args->at(0)->getStr();
-
-	if (!_load_lib(data, name)) {
-		clever_error("Failed to open %S!", name);
-	}
-
-	return data;
-}
-
-void FFI::deallocData(void* value)
-{
-	FFIData* data = static_cast<FFIData*>(value);
-
-	if (data->m_lib_handler) {
-		dlclose(data->m_lib_handler);
-	}
-
-	delete data;
-}
-
-CLEVER_METHOD(FFI::ctor)
-{
-	if (!clever_check_args("s")) {
-		return;
-	}
-
-	result->setObj(this, allocData(&args));
-}
-
-CLEVER_METHOD(FFI::call)
-{
-	if (!clever_check_args("ss*")) {
-		return;
-	}
-
-	FFIData* handler = CLEVER_GET_OBJECT(FFIData*, CLEVER_THIS());
-
-	const CString* func = args.at(0)->getStr();
-	const CString* rt = args.at(1)->getStr();
-	size_t n_args = args.size() - 2;
-
-#ifndef CLEVER_WIN32
-	void* fpf;
-	ffi_call_func pf;
-
-	fpf = dlsym(handler->m_lib_handler, func->c_str());
-	if (fpf == NULL) {
-
-		CLEVER_THROW("function `%S' don't exist!", func);
-		return;
-	}
-
-	pf = reinterpret_cast<ffi_call_func>(fpf);
-#endif
-
 	ffi_cif cif;
 	ffi_type* ffi_rt = _find_ffi_type(rt->c_str());
 	ffi_type** ffi_args = (ffi_type**) malloc(n_args*sizeof(ffi_type*));
@@ -157,7 +103,7 @@ CLEVER_METHOD(FFI::call)
 	void** ffi_values = (void**) malloc(n_args*sizeof(void*));
 
 	for (size_t i = 0; i < n_args; ++i) {
-		Value* v = args.at(i + 2);
+		Value* v = args.at(i + offset);
 
 		if (v->isInt()) {
 			ffi_args[i] = &ffi_type_sint32;
@@ -262,7 +208,7 @@ CLEVER_METHOD(FFI::call)
 #endif
 
 	for (size_t i = 0; i < n_args; ++i) {
-		Value* v = args.at(i + 2);
+		Value* v = args.at(i + offset);
 
 		if (v->isInt()) {
 			free((int*)ffi_values[i]);
@@ -280,6 +226,97 @@ CLEVER_METHOD(FFI::call)
 
 	free(ffi_args);
 	free(ffi_values);
+}
+
+void* FFI::allocData(CLEVER_TYPE_CTOR_ARGS) const
+{
+	FFIData* data = new FFIData();
+	const CString* name = args->at(0)->getStr();
+
+	if (!_load_lib(data, name)) {
+		clever_error("Failed to open %S!", name);
+	}
+
+	return data;
+}
+
+void FFI::deallocData(void* value)
+{
+	FFIData* data = static_cast<FFIData*>(value);
+
+	if (data->m_lib_handler) {
+		dlclose(data->m_lib_handler);
+	}
+
+	delete data;
+}
+
+CLEVER_METHOD(FFI::ctor)
+{
+	if (!clever_check_args("s")) {
+		return;
+	}
+
+	result->setObj(this, allocData(&args));
+}
+
+CLEVER_METHOD(FFI::exec)
+{
+	if (!clever_check_args("sss*")) {
+		return;
+	}
+
+	const CString* lib = args.at(0)->getStr();
+	const CString* func = args.at(1)->getStr();
+	const CString* rt = args.at(2)->getStr();
+	size_t n_args = args.size() - 3;
+
+#ifndef CLEVER_WIN32
+	void* lib_handler =  dlopen((*lib + CLEVER_DYLIB_EXT).c_str(), RTLD_LAZY);
+	void* fpf;
+	ffi_call_func pf;
+
+	fpf = dlsym(lib_handler, func->c_str());
+	if (fpf == NULL) {
+
+		CLEVER_THROW("function `%S' don't exist!", func);
+		return;
+	}
+
+	pf = reinterpret_cast<ffi_call_func>(fpf);
+#endif
+
+	_ffi_call(result, pf, n_args, rt, args, 3);
+	dlclose(lib_handler);
+}
+
+CLEVER_METHOD(FFI::call)
+{
+	if (!clever_check_args("ss*")) {
+		return;
+	}
+
+	FFIData* handler = CLEVER_GET_OBJECT(FFIData*, CLEVER_THIS());
+
+	const CString* func = args.at(0)->getStr();
+	const CString* rt = args.at(1)->getStr();
+	size_t n_args = args.size() - 2;
+
+#ifndef CLEVER_WIN32
+	void* fpf;
+	ffi_call_func pf;
+
+	fpf = dlsym(handler->m_lib_handler, func->c_str());
+	if (fpf == NULL) {
+
+		CLEVER_THROW("function `%S' don't exist!", func);
+		return;
+	}
+
+	pf = reinterpret_cast<ffi_call_func>(fpf);
+#endif
+
+	_ffi_call(result, pf, n_args, rt, args, 2);
 }
 
 CLEVER_METHOD(FFI::load)
@@ -312,6 +349,8 @@ CLEVER_TYPE_INIT(FFI::init)
 
 	addMethod(ctor);
 	addMethod(new Function("call",   (MethodPtr)&FFI::call));
+	addMethod(new Function("exec",   (MethodPtr)&FFI::exec))
+			->setStatic();
 	addMethod(new Function("load",   (MethodPtr)&FFI::load));
 	addMethod(new Function("unload", (MethodPtr)&FFI::unload));
 }
