@@ -16,10 +16,21 @@
 
 namespace clever { namespace modules { namespace std {
 
-#define CLEVER_USTR_TYPE UnicodeString*
+#define CLEVER_USTR_TYPE UStringObject*
 #define CLEVER_USTR_CAST(what) (CLEVER_USTR_TYPE) what
 #define CLEVER_USTR_THIS() CLEVER_USTR_CAST(CLEVER_THIS()->getObj())
-#define CLEVER_USTR_OBJ(from) UnicodeString(from->c_str(), from->size(), US_INV)
+#define CLEVER_USTR_OBJ(from) UStringObject(from->c_str(), from->size())
+
+struct UStringObject : public TypeObject {
+	UStringObject(const char* str, size_t size)
+		: intern(new UnicodeString(str, size, US_INV)) {}
+
+	~UStringObject() {
+		delete intern;
+	}
+
+	UnicodeString* intern;
+};
 
 class UString : public Type {
 public:
@@ -36,7 +47,7 @@ public:
 
 	void init();
 
-	virtual void* allocData(CLEVER_TYPE_CTOR_ARGS) const;
+	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
 	virtual void deallocData(void* data);
 
 	CLEVER_METHOD(ctor);

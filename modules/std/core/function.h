@@ -30,7 +30,7 @@ typedef void (CLEVER_FASTCALL *FunctionPtr)(CLEVER_FUNCTION_ARGS);
 typedef std::tr1::unordered_map<const CString*, Function*> FunctionMap;
 typedef std::pair<const CString*, Function*> FunctionMapEntry;
 
-class Function {
+class Function : public TypeObject {
 public:
 	enum FunctionFlags {
 		FF_USER     = 0x00,
@@ -164,7 +164,7 @@ public:
 
 	void dump(const void* data, std::ostream& out) const { out << "function() {}"; }
 
-	void* allocData(CLEVER_TYPE_CTOR_ARGS) const { return new Function;  }
+	TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const { return new Function;  }
 	void deallocData(CLEVER_TYPE_DTOR_ARGS) { delete static_cast<Function*>(data); }
 
 	CLEVER_METHOD(ctor) {

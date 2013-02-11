@@ -1,0 +1,31 @@
+Testing user class constructor
+==CODE==
+import std.io.*;
+
+class Foo {
+	var a;
+
+	function Foo(a...) {
+		println(a);
+	}
+
+	function setA(n = 2) {
+		this.a = n;
+	}
+	function getA() {
+		return this.a;
+	}
+}
+
+var a = Foo.new(1,2,3),
+	b = Foo.new;
+
+a.setA(1);
+b.setA(3);
+
+println(a.getA(), b.getA());
+==RESULT==
+\[1, 2, 3\]
+\[\]
+1
+3

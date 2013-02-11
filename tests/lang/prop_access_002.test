@@ -1,0 +1,30 @@
+Testing property writing
+==CODE==
+import std.io.*;
+
+class Foo {
+	var a;
+
+	function setA(n = 2) {
+		this.a = n;
+	}
+	function getA() {
+		return this.a;
+	}
+}
+
+var c = Foo.new;
+
+c.setA();
+
+println(c.a);
+println(c.getA());
+
+c.setA(2000);
+println(c.a);
+println(c.getA());
+==RESULT==
+2
+2
+2000
+2000

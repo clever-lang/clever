@@ -15,7 +15,7 @@
 
 namespace clever { namespace modules { namespace std { namespace net {
 
-class SocketObject {
+class SocketObject : public TypeObject {
 public:
 	SocketObject() {}
 
@@ -34,7 +34,7 @@ public:
 		Type(CSTRING("TcpSocket")) { }
 
 	void init();
-	void* allocData(CLEVER_TYPE_CTOR_ARGS) const;
+	TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
 	void deallocData(void*);
 
 	void dump(const void* value) const { dump(value, ::std::cout); }

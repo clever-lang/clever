@@ -45,7 +45,10 @@ namespace clever {
 	&&OP_NEW,      \
 	&&OP_MCALL,    \
 	&&OP_SMCALL,   \
-	&&OP_PROP_ACC, \
+	&&OP_PROP_R,   \
+	&&OP_SPROP_R,  \
+	&&OP_PROP_W,   \
+	&&OP_SPROP_W,  \
 	&&OP_TRY,      \
 	&&OP_CATCH,    \
 	&&OP_THROW,    \
@@ -87,11 +90,14 @@ enum Opcode {
 	OP_NEW,        //  30 - Used for less than or equal comparison
 	OP_MCALL,      //       Used for method call
 	OP_SMCALL,     //       Used for static method call
-	OP_PROP_ACC,   //       Used for property access
+	OP_PROP_R,     //       Used for property access (read mode)
+	OP_SPROP_R,    //       Used for static property access (read mode)
+	OP_PROP_W,     //  35 - Used for property access (write mode)
+	OP_SPROP_W,    //       Used for static property access (write mode)
 	OP_TRY,        //       Used for exception block
-	OP_CATCH,      //  35 - Used for catching exception
+	OP_CATCH,      //       Used for catching exception
 	OP_THROW,      //       Used for throwing exception
-	OP_ETRY,       //       Used for end marker exception block
+	OP_ETRY,       //  40 - Used for end marker exception block
 	NUM_OPCODES
 };
 

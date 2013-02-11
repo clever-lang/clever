@@ -119,30 +119,56 @@ void ModManager::loadModule(Scope* scope, Environment* env, Module* module,
 
 	if (kind & ModManager::FUNCTION) {
 		FunctionMap& funcs = module->getFunctions();
-		FunctionMap::const_iterator itf(funcs.begin()),	endf(funcs.end());
 
-		while (EXPECTED(itf != endf)) {
-			loadFunction(scope, env, itf->first, itf->second);
-			++itf;
+		if (name) {
+			FunctionMap::const_iterator it = funcs.find(name);
+
+			if (it == funcs.end()) {
+				std::cerr << "Function `" << *name << "' not found!" << std::endl;
+			} else {
+				loadFunction(scope, env, it->first, it->second);
+			}
+		} else {
+			FunctionMap::const_iterator itf(funcs.begin()),	endf(funcs.end());
+
+			while (EXPECTED(itf != endf)) {
+				loadFunction(scope, env, itf->first, itf->second);
+				++itf;
+			}
 		}
 	}
 
 	if (kind & ModManager::TYPE) {
 		TypeMap& types = module->getTypes();
-		TypeMap::const_iterator itt(types.begin()), ite(types.end());
 
-		while (EXPECTED(itt != ite)) {
-			loadType(scope, env, itt->first, itt->second);
-			++itt;
+		if (name) {
+			TypeMap::const_iterator it = types.find(name);
+
+			if (it == types.end()) {
+				std::cerr << "Type `" << *name << "' not found!" << std::endl;
+			} else {
+				loadType(scope, env, it->first, it->second);
+			}
+		} else {
+			TypeMap::const_iterator itt(types.begin()), ite(types.end());
+
+			while (EXPECTED(itt != ite)) {
+				loadType(scope, env, itt->first, itt->second);
+				++itt;
+			}
 		}
 	}
 }
 
-/// Imports a file
+/// Imports an userland module
 ast::Node* ModManager::importFile(Scope* scope, Environment* env,
 	const std::string& module, ImportKind kind, const CString* name) const
 {
-	const std::string& fname = m_include_path + module + ".clv";
+	std::string mod_name = module;
+
+	std::replace(mod_name.begin(), mod_name.end(), '.', '/');
+
+	const std::string& fname = m_include_path + mod_name + ".clv";
 
 	if (!m_driver->loadFile(fname)) {
 		return m_driver->getCompiler().getAST();

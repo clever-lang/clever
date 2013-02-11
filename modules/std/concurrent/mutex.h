@@ -15,6 +15,15 @@
 
 namespace clever { namespace modules { namespace std {
 
+struct MutexObject : public TypeObject {
+	MutexObject()
+		: mutex(new pthread_mutex_t) {}
+
+	~MutexObject() {}
+
+	pthread_mutex_t *mutex;
+};
+
 class Mutex : public Type {
 public:
 	Mutex()
@@ -30,7 +39,7 @@ public:
 
 	void init();
 
-	virtual void* allocData(CLEVER_TYPE_CTOR_ARGS) const;
+	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
 	virtual void deallocData(void* data);
 
 	CLEVER_METHOD(ctor);

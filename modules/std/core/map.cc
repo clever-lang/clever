@@ -13,7 +13,7 @@
 
 namespace clever {
 
-void* MapType::allocData(CLEVER_TYPE_CTOR_ARGS) const
+TypeObject* MapType::allocData(CLEVER_TYPE_CTOR_ARGS) const
 {
 	MapObject* arr = new MapObject();
 	ValueMap& map = arr->getData();

@@ -15,7 +15,7 @@
 
 namespace clever {
 
-class ArrayObject {
+class ArrayObject : public TypeObject {
 public:
 	ArrayObject() {}
 
@@ -40,7 +40,7 @@ public:
 
 	void init();
 
-	void* allocData(CLEVER_TYPE_CTOR_ARGS) const;
+	TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
 	void deallocData(void*);
 
 	void dump(const void*, std::ostream&) const;

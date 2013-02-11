@@ -55,7 +55,7 @@ public:
 
 	~Environment() {
 		clever_delref(m_outer);
-		
+
 		if (m_flags & FREE_TEMP) {
 			clever_delref(m_temp);
 		}
@@ -64,7 +64,7 @@ public:
 			std::for_each(m_data.begin(), m_data.end(), clever_delref);
 		}
 	}
-	
+
 	void setFlag(EnvFlag flags) { m_flags = flags; }
 
 	/**
@@ -111,6 +111,7 @@ public:
 	void copy(const Environment*);
 
 	Environment* getOuter() const { return m_outer; }
+	void setData(size_t pos, Value* value) { m_data[pos] = value; }
 
 	void setTempEnv(Environment* env) { m_temp = env; }
 	Environment* getTempEnv() const { return m_temp; }

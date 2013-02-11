@@ -55,7 +55,7 @@ public:
 	ValueObject()
 		: RefCounted(1), m_obj(NULL), m_type(NULL) {}
 
-	ValueObject(void* obj, const Type* type)
+	ValueObject(TypeObject* obj, const Type* type)
 		: RefCounted(1), m_obj(obj), m_type(type) {}
 
 	virtual ~ValueObject() {
@@ -64,9 +64,10 @@ public:
 		}
 	}
 
-	void* getObj() { return m_obj; }
+	TypeObject* getObj() { return m_obj; }
+
 private:
-	void* m_obj;
+	TypeObject* m_obj;
 	const Type* m_type;
 
 	DISALLOW_COPY_AND_ASSIGN(ValueObject);
@@ -133,7 +134,7 @@ public:
 		}
 	}
 
-	void setObj(const Type* type, void* ptr) {
+	void setObj(const Type* type, TypeObject* ptr) {
 		SAFETY_LOCK();
 		clever_assert_not_null(type);
 		m_type = type;
@@ -157,6 +158,11 @@ public:
 		SAFETY_ULOCK();
 	}
 	bool getBool() const { return m_data.bval; }
+
+	void setData(void* data) {
+		m_type = NULL;
+		m_data = data;
+	}
 
 	void setDouble(double n) {
 		SAFETY_LOCK();

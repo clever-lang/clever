@@ -26,7 +26,8 @@ void UString::dump(const void* data, ::std::ostream& out) const
 {
 	ValueObject* dvalue = static_cast<ValueObject*>(const_cast<void*>(data));
 	if (dvalue) {
-		UnicodeString* uvalue = static_cast<UnicodeString*>(dvalue->getObj());
+		UStringObject* uobj = static_cast<UStringObject*>(dvalue->getObj());
+		UnicodeString* uvalue = uobj->intern;
 
 		if (uvalue) {
 			for(int32_t start=0; start < uvalue->length(); start++) {
@@ -36,7 +37,7 @@ void UString::dump(const void* data, ::std::ostream& out) const
 	}
 }
 
-void* UString::allocData(CLEVER_TYPE_CTOR_ARGS) const
+TypeObject* UString::allocData(CLEVER_TYPE_CTOR_ARGS) const
 {
 	if (args->size()) {
 		Value* from = args->at(0);
@@ -66,10 +67,10 @@ CLEVER_METHOD(UString::ctor)
 // Determine the length of this
 CLEVER_METHOD(UString::size)
 {
-	CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
+	CLEVER_USTR_TYPE ustr = CLEVER_USTR_THIS();
 
-	if (intern) {
-		result->setInt(intern->length());
+	if (ustr->intern) {
+		result->setInt(ustr->intern->length());
 	}
 }
 
@@ -77,9 +78,9 @@ CLEVER_METHOD(UString::size)
 // Determine if this starts with match
 CLEVER_METHOD(UString::startsWith)
 {
-	CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
+	CLEVER_USTR_TYPE ustr = CLEVER_USTR_THIS();
 
-	if (!intern) {
+	if (!ustr->intern) {
 		return;
 	}
 
@@ -89,11 +90,11 @@ CLEVER_METHOD(UString::startsWith)
 
 	switch (args.size()) {
 		case 1:
-			result->setInt(intern->startsWith(
+			result->setInt(ustr->intern->startsWith(
 				UnicodeString(args[0]->getStr()->c_str())));
 			break;
 		case 3:
-			result->setInt(intern->startsWith(
+			result->setInt(ustr->intern->startsWith(
 				UnicodeString(args[0]->getStr()->c_str()), args[1]->getInt(),
 					args[2]->getInt()));
 			break;
@@ -104,9 +105,9 @@ CLEVER_METHOD(UString::startsWith)
 // Determine if this ends with match
 CLEVER_METHOD(UString::endsWith)
 {
-	CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
+	CLEVER_USTR_TYPE ustr = CLEVER_USTR_THIS();
 
-	if (!intern) {
+	if (!ustr->intern) {
 		return;
 	}
 
@@ -116,10 +117,10 @@ CLEVER_METHOD(UString::endsWith)
 
 	switch (args.size()) {
 		case 1:
-			result->setInt(intern->endsWith(UnicodeString(args[0]->getStr()->c_str())));
+			result->setInt(ustr->intern->endsWith(UnicodeString(args[0]->getStr()->c_str())));
 			break;
 		case 3:
-			result->setInt(intern->endsWith(UnicodeString(args[0]->getStr()->c_str()),
+			result->setInt(ustr->intern->endsWith(UnicodeString(args[0]->getStr()->c_str()),
 					args[1]->getInt(), args[2]->getInt()));
 			break;
 	}
@@ -129,38 +130,9 @@ CLEVER_METHOD(UString::endsWith)
 // Locates in this the first occurence of characters in text
 CLEVER_METHOD(UString::indexOf)
 {
-	CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
+	CLEVER_USTR_TYPE ustr = CLEVER_USTR_THIS();
 
-	if (!intern) {
-		return;
-	}
-
-	if (!clever_check_args("s|ii")) {
-		return;
-	}
-
-	switch(args.size()) {
-		case 1:
-			result->setInt(intern->indexOf(UnicodeString(args[0]->getStr()->c_str())));
-			break;
-		case 2:
-			result->setInt(intern->indexOf(UnicodeString(args[0]->getStr()->c_str()),
-				args[1]->getInt()));
-			break;
-		case 3:
-			result->setInt(intern->indexOf(UnicodeString(args[0]->getStr()->c_str()),
-				args[1]->getInt(), args[2]->getInt()));
-			break;
-	}
-}
-
-// UString.lastIndexOf(string of, [int start, [int length]])
-// Locates in this the last occurence of characters in text
-CLEVER_METHOD(UString::lastIndexOf)
-{
-	CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
-
-	if (!intern) {
+	if (!ustr->intern) {
 		return;
 	}
 
@@ -170,14 +142,43 @@ CLEVER_METHOD(UString::lastIndexOf)
 
 	switch (args.size()) {
 		case 1:
-			result->setInt(intern->lastIndexOf(UnicodeString(args[0]->getStr()->c_str())));
+			result->setInt(ustr->intern->indexOf(UnicodeString(args[0]->getStr()->c_str())));
 			break;
 		case 2:
-			result->setInt(intern->lastIndexOf(UnicodeString(args[0]->getStr()->c_str()),
+			result->setInt(ustr->intern->indexOf(UnicodeString(args[0]->getStr()->c_str()),
 				args[1]->getInt()));
 			break;
 		case 3:
-			result->setInt(intern->lastIndexOf(UnicodeString(args[0]->getStr()->c_str()),
+			result->setInt(ustr->intern->indexOf(UnicodeString(args[0]->getStr()->c_str()),
+				args[1]->getInt(), args[2]->getInt()));
+			break;
+	}
+}
+
+// UString.lastIndexOf(string of, [int start, [int length]])
+// Locates in this the last occurence of characters in text
+CLEVER_METHOD(UString::lastIndexOf)
+{
+	CLEVER_USTR_TYPE ustr = CLEVER_USTR_THIS();
+
+	if (!ustr->intern) {
+		return;
+	}
+
+	if (!clever_check_args("s|ii")) {
+		return;
+	}
+
+	switch (args.size()) {
+		case 1:
+			result->setInt(ustr->intern->lastIndexOf(UnicodeString(args[0]->getStr()->c_str())));
+			break;
+		case 2:
+			result->setInt(ustr->intern->lastIndexOf(UnicodeString(args[0]->getStr()->c_str()),
+				args[1]->getInt()));
+			break;
+		case 3:
+			result->setInt(ustr->intern->lastIndexOf(UnicodeString(args[0]->getStr()->c_str()),
 				args[1]->getInt(), args[2]->getInt()));
 			break;
 	}
@@ -187,10 +188,10 @@ CLEVER_METHOD(UString::lastIndexOf)
 // Convert this into lowercase characters
 CLEVER_METHOD(UString::toLower)
 {
-	CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
+	CLEVER_USTR_TYPE ustr = CLEVER_USTR_THIS();
 
-	if (intern) {
-		intern->toLower();
+	if (ustr->intern) {
+		ustr->intern->toLower();
 	}
 	result->setNull();
 }
@@ -199,10 +200,10 @@ CLEVER_METHOD(UString::toLower)
 // Convert this into uppercase characters
 CLEVER_METHOD(UString::toUpper)
 {
-	CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
+	CLEVER_USTR_TYPE ustr = CLEVER_USTR_THIS();
 
-	if (intern) {
-		intern->toUpper();
+	if (ustr->intern) {
+		ustr->intern->toUpper();
 	}
 	result->setNull();
 }
@@ -211,10 +212,10 @@ CLEVER_METHOD(UString::toUpper)
 // Convert this into the reverse of itself
 CLEVER_METHOD(UString::reverse)
 {
-	CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
+	CLEVER_USTR_TYPE ustr = CLEVER_USTR_THIS();
 
-	if (intern) {
-		intern->reverse();
+	if (ustr->intern) {
+		ustr->intern->reverse();
 	}
 	result->setNull();
 }
@@ -223,10 +224,10 @@ CLEVER_METHOD(UString::reverse)
 // Trim this
 CLEVER_METHOD(UString::trim)
 {
-	CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
+	CLEVER_USTR_TYPE ustr = CLEVER_USTR_THIS();
 
-	if (intern) {
-		intern->trim();
+	if (ustr->intern) {
+		ustr->intern->trim();
 	}
 	result->setNull();
 }
@@ -235,16 +236,16 @@ CLEVER_METHOD(UString::trim)
 // Truncates this to length, returning the new truncated length
 CLEVER_METHOD(UString::truncate)
 {
-	CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
+	CLEVER_USTR_TYPE ustr = CLEVER_USTR_THIS();
 
-	if (!intern) {
+	if (!ustr->intern) {
 		return;
 	}
 	if (!clever_check_args("i")) {
 		return;
 	}
-	intern->truncate(args[0]->getInt());
-	result->setInt(intern->length());
+	ustr->intern->truncate(args[0]->getInt());
+	result->setInt(ustr->intern->length());
 }
 
 // UString.append(string next, [int start, int length])
@@ -252,40 +253,40 @@ CLEVER_METHOD(UString::truncate)
 // length of this
 CLEVER_METHOD(UString::append)
 {
-	CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
+	CLEVER_USTR_TYPE ustr = CLEVER_USTR_THIS();
 
-	if (!intern) {
+	if (!ustr->intern) {
 		return;
 	}
 	if (!clever_check_args("s|ii")) {
 		return;
 	}
 
-	switch(args.size()) {
+	switch (args.size()) {
 		case 1:
-			intern->append(UnicodeString(args[0]->getStr()->c_str()));
+			ustr->intern->append(UnicodeString(args[0]->getStr()->c_str()));
 			break;
 		case 3:
-			intern->append(UnicodeString(args[0]->getStr()->c_str()),
+			ustr->intern->append(UnicodeString(args[0]->getStr()->c_str()),
 				args[1]->getInt(), args[2]->getInt());
 			break;
 	}
-	result->setInt(intern->length());
+	result->setInt(ustr->intern->length());
 }
 
 // UString.replace(string match, string replacement)
 // Replaces all occurences of match with replacement in this
 CLEVER_METHOD(UString::replace)
 {
-	CLEVER_USTR_TYPE intern = CLEVER_USTR_THIS();
+	CLEVER_USTR_TYPE ustr = CLEVER_USTR_THIS();
 
-	if (!intern) {
+	if (!ustr->intern) {
 		return;
 	}
 	if (!clever_check_args("ss")) {
 		return;
 	}
-	intern->findAndReplace(UnicodeString(args[0]->getStr()->c_str()),
+	ustr->intern->findAndReplace(UnicodeString(args[0]->getStr()->c_str()),
 		UnicodeString(args[1]->getStr()->c_str()));
 }
 

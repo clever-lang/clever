@@ -106,15 +106,21 @@ void Resolver::visit(FunctionDecl* node)
 	const CString* name;
 
 	// Create an user-unusable symbol name for anonymous functions
-	if (!node->hasIdent()) {
+	if (!node->hasIdent() && !node->hasType()) {
 		std::stringstream buf;
 		buf << "<anonymous " << anon_fdecls++ << ">";
 		node->setIdent(new Ident(CSTRING(buf.str()),
 								 node->getLocation()));
 	}
 
-	name = node->getIdent()->getName();
+	if (node->hasType()) {
+		name = CSTRING("_"+*node->getType()->getName());
+		node->setType(new Type(name, node->getLocation()));
+	} else {
+		name = node->getIdent()->getName();
+	}
 	clever_assert_not_null(name);
+
 
 	if (m_scope->getLocal(name)) {
 		Compiler::errorf(node->getLocation(),
@@ -132,10 +138,18 @@ void Resolver::visit(FunctionDecl* node)
 
 	m_scope->pushValue(name, fval)->voffset = m_stack.top()->pushValue(fval);
 
-	node->getIdent()->accept(*this);
+	if (node->hasIdent()) {
+		node->getIdent()->accept(*this);
+	} else {
+		node->getType()->accept(*this);
+	}
 
 	// Check if it is a method
 	if (m_class) {
+		// Check if it's the constructor
+		if (node->hasType()) {
+			m_class->setUserConstructor(func);
+		}
 		m_class->addMember(name, fval);
 		fval->addRef();
 	}
@@ -298,18 +312,16 @@ void Resolver::visit(AttrDecl* node)
 	}
 
 	Value* val = new Value();
-	m_scope->pushValue(name, val)->voffset = m_stack.top()->pushValue(val);
-
 	val->setConst(node->isConst());
 
-	node->getIdent()->accept(*this);
+//	m_scope->pushValue(name, val)->voffset = m_stack.top()->pushValue(val);
+//	node->getIdent()->accept(*this);
 
 	if (node->hasValue()) {
 		node->getValue()->accept(*this);
 	}
 
 	m_class->addProperty(name, val);
-	val->addRef();
 
 	node->setScope(m_scope);
 }

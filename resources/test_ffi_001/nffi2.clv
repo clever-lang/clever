@@ -1,0 +1,6 @@
+import std.*;
+import std.ffi;
+
+
+FFILib.exec("nffi", "printExt", "v", "ola 2");
+

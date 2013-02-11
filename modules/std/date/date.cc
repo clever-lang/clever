@@ -22,27 +22,30 @@ void Date::dump(const void* data, ::std::ostream& out) const
 {
 	Value::DataValue* dvalue = static_cast<Value::DataValue*>(const_cast<void*>(data));
 	if (dvalue) {
-		time_t* uvalue = static_cast<time_t*>(dvalue->obj->getObj());
+		DateObject* uvalue = static_cast<DateObject*>(dvalue->obj->getObj());
+
 		if (uvalue) {
-			out << *uvalue;
+			out << *uvalue->intern;
 		}
 	}
 }
 
-void* Date::allocData(CLEVER_TYPE_CTOR_ARGS) const
+TypeObject* Date::allocData(CLEVER_TYPE_CTOR_ARGS) const
 {
-	time_t* intern = new time_t;
-	if (intern) {
+	DateObject* dobj = new DateObject();
+
+	if (dobj->intern) {
 		if (args->size()) {
-			*intern = static_cast<time_t>(args->at(0)->getInt());
-		} else { time(intern); }
+			*dobj->intern = static_cast<time_t>(args->at(0)->getInt());
+		} else { time(dobj->intern); }
 	}
-	return intern;
+	return dobj;
 }
 
 void Date::deallocData(void *data)
 {
-	time_t* intern = static_cast<time_t*>(data);
+	DateObject* intern = static_cast<DateObject*>(data);
+
 	if (intern) {
 		delete intern;
 	}

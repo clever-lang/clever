@@ -13,6 +13,17 @@
 
 namespace clever { namespace modules { namespace std {
 
+struct DateObject : public TypeObject {
+	DateObject()
+		: intern(new time_t) {}
+
+	~DateObject() {
+		delete intern;
+	}
+
+	time_t* intern;
+};
+
 class Date : public Type {
 public:
 	Date()
@@ -28,7 +39,7 @@ public:
 
 	void init();
 
-	virtual void* allocData(CLEVER_TYPE_CTOR_ARGS) const;
+	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
 	virtual void deallocData(void* data);
 
 	CLEVER_METHOD(ctor);

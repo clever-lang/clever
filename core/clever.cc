@@ -52,7 +52,6 @@ void clever_debug_(const char* file, long line, const char* format, ...) {
 
 	std::cerr << out.str() << std::endl;
 }
-
 #endif
 
 void clever_error(const char* format, ...) {

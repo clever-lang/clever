@@ -58,17 +58,17 @@ void CFile::dump(const void* data, ::std::ostream& out) const
 }
 
 // File.new(string fileName, string openMode)
-void* CFile::allocData(CLEVER_TYPE_CTOR_ARGS) const
+TypeObject* CFile::allocData(CLEVER_TYPE_CTOR_ARGS) const
 {
 	// @TODO(muriloadriano): allow object construction with a single argument
 	// and check the argument's type.
-	return new fstream(args->at(0)->getStr()->c_str(),
+	return new CFileStream(args->at(0)->getStr()->c_str(),
 		static_cast< ::std::ios_base::openmode>(args->at(1)->getInt()));
 }
 
 void CFile::deallocData(CLEVER_TYPE_DTOR_ARGS)
 {
-	delete CLEVER_CAST(fstream*, data);
+	delete CLEVER_CAST(CFileStream, data);
 }
 
 CLEVER_METHOD(CFile::ctor)
@@ -88,10 +88,10 @@ CLEVER_METHOD(CFile::read)
 		return;
 	}
 
-	fstream* file = CLEVER_GET_OBJECT(fstream*, CLEVER_THIS());
+	CFileStream* file = CLEVER_GET_OBJECT(CFileStream*, CLEVER_THIS());
 
 	CString* token = new CString;
-	*file >> *token;
+	file->getStream() >> *token;
 
 	result->setStr(new StrObject(token, false));
 }
@@ -104,10 +104,10 @@ CLEVER_METHOD(CFile::readLine)
 		return;
 	}
 
-	fstream* file = CLEVER_GET_OBJECT(fstream*, CLEVER_THIS());
+	CFileStream* file = CLEVER_GET_OBJECT(CFileStream*, CLEVER_THIS());
 
 	CString* token = new CString;
-	::std::getline(*file, *token);
+	::std::getline(file->getStream(), *token);
 
 	result->setStr(new StrObject(token, false));
 }
@@ -121,9 +121,9 @@ CLEVER_METHOD(CFile::write)
 		return;
 	}
 
-	fstream* file = CLEVER_GET_OBJECT(fstream*, CLEVER_THIS());
+	CFileStream* file = CLEVER_GET_OBJECT(CFileStream*, CLEVER_THIS());
 
-	*file << *(args[0]->getStr());
+	file->getStream() << *(args[0]->getStr());
 }
 
 // void File.open(string fileName, Int openMode)
@@ -133,9 +133,9 @@ CLEVER_METHOD(CFile::open)
 		return;
 	}
 
-	fstream* file = CLEVER_GET_OBJECT(fstream*, CLEVER_THIS());
+	CFileStream* file = CLEVER_GET_OBJECT(CFileStream*, CLEVER_THIS());
 
-	file->open(args[0]->getStr()->c_str(),
+	file->getStream().open(args[0]->getStr()->c_str(),
 		static_cast< ::std::ios_base::openmode>(args[1]->getInt()));
 }
 
@@ -146,8 +146,8 @@ CLEVER_METHOD(CFile::close)
 		return;
 	}
 
-	fstream* file = CLEVER_GET_OBJECT(fstream*, CLEVER_THIS());
-	file->close();
+	CFileStream* file = CLEVER_GET_OBJECT(CFileStream*, CLEVER_THIS());
+	file->getStream().close();
 }
 
 // bool File.isOpen()
@@ -157,8 +157,8 @@ CLEVER_METHOD(CFile::isOpen)
 		return;
 	}
 
-	fstream* file = CLEVER_GET_OBJECT(fstream*, CLEVER_THIS());
-	result->setBool(file->is_open());
+	CFileStream* file = CLEVER_GET_OBJECT(CFileStream*, CLEVER_THIS());
+	result->setBool(file->getStream().is_open());
 }
 
 CLEVER_TYPE_INIT(CFile::init)

@@ -630,18 +630,29 @@ private:
 
 class FunctionDecl: public Node {
 public:
-	FunctionDecl(Ident* ident, NodeArray* args, Block* block, VariableDecl* vararg, const location& location)
-		: Node(location), m_ident(ident), m_args(args), m_block(block), m_vararg(vararg), m_is_anon(false) {
+	FunctionDecl(Ident* ident, NodeArray* args, Block* block,
+		VariableDecl* vararg, bool is_anon, const location& location)
+		: Node(location), m_ident(ident), m_type(NULL), m_args(args), m_block(block),
+			m_vararg(vararg), m_is_anon(is_anon) {
 		clever_addref(m_ident);
 		clever_addref(m_args);
 		clever_addref(m_block);
 		clever_addref(m_vararg);
+	}
 
-		m_is_anon = (ident == NULL);
+	FunctionDecl(Type* type, NodeArray* args, Block* block, VariableDecl* vararg,
+		const location& location)
+		: Node(location), m_ident(NULL), m_type(type), m_args(args), m_block(block),
+			m_vararg(vararg), m_is_anon(false) {
+		clever_addref(m_type);
+		clever_addref(m_args);
+		clever_addref(m_block);
+		clever_addref(m_vararg);
 	}
 
 	~FunctionDecl() {
 		clever_delref(m_ident);
+		clever_delref(m_type);
 		clever_delref(m_args);
 		clever_delref(m_block);
 		clever_delref(m_vararg);
@@ -653,7 +664,16 @@ public:
 		clever_addref(m_ident);
 	}
 
+	void setType(Type* type) {
+		clever_delref(m_type);
+		m_type = type;
+		clever_addref(m_type);
+	}
+
 	bool isAnonymous() const { return m_is_anon; }
+
+	Type* getType() { return m_type; }
+	bool hasType() { return m_type != NULL; }
 
 	Ident* getIdent() { return m_ident; }
 	bool hasIdent() { return m_ident != NULL; }
@@ -677,6 +697,7 @@ public:
 
 private:
 	Ident* m_ident;
+	Type* m_type;
 	NodeArray* m_args;
 	Block* m_block;
 	VariableDecl* m_vararg;
@@ -979,16 +1000,18 @@ private:
 
 class Property: public Node {
 public:
+	enum Flags { WRITE, READ };
+
 	Property(Node* callee, Ident* prop_name, const location& location)
 		: Node(location), m_callee(callee), m_prop_name(prop_name),
-		  m_static(false) {
+		  m_static(false), m_mode(READ) {
 		m_callee->addRef();
 		m_prop_name->addRef();
 	}
 
 	Property(Type* callee, Ident* prop_name, const location& location)
 		: Node(location), m_callee(callee), m_prop_name(prop_name),
-		  m_static(true) {
+		  m_static(true), m_mode(READ) {
 		m_callee->addRef();
 		m_prop_name->addRef();
 	}
@@ -1003,12 +1026,18 @@ public:
 
 	bool isStatic() const { return m_static; }
 
+	void setWriteMode() { m_mode = WRITE; }
+	void setReadMode() { m_mode = READ; }
+
+	Flags getMode() const { return m_mode; }
+
 	virtual void accept(Visitor& visitor);
 	virtual Node* accept(Transformer& transformer);
 private:
 	Node* m_callee;
 	Ident* m_prop_name;
 	bool m_static;
+	Flags m_mode;
 
 	DISALLOW_COPY_AND_ASSIGN(Property);
 };

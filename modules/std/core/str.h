@@ -14,7 +14,7 @@
 
 namespace clever {
 
-class StrObject {
+class StrObject : public TypeObject {
 public:
 	StrObject(const CString* str)
 		: m_str(str), m_interned(true) {}
@@ -50,7 +50,7 @@ public:
 
 	void dump(const void*, std::ostream&) const;
 
-	void* allocData(CLEVER_TYPE_CTOR_ARGS) const { return NULL; }
+	TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const { return NULL; }
 	void deallocData(CLEVER_TYPE_DTOR_ARGS) { delete static_cast<StrObject*>(data); }
 
 	CLEVER_TYPE_VIRTUAL_METHOD_DECLARATIONS;

@@ -47,21 +47,16 @@ public:
 	~VM() {}
 
 	void setGlobalEnv(Environment* globals) { m_global_env = globals; }
-
 	void setConstEnv(Environment* consts) { m_const_env = consts; }
 
 	void copy(const VM*, bool);
 
 	void setChild() { m_main = false; }
-
 	bool isChild() const { return !m_main; }
-
 	bool isMain() const { return m_main; }
 
 	void setPC(size_t pc) { m_pc = pc; }
-
 	size_t getPC() const { return m_pc; }
-
 	void nextPC() { ++m_pc; }
 
 	const IRVector& getInst() const { return m_inst; }
@@ -71,6 +66,9 @@ public:
 	/// Helper to retrive a Value* from ValuePool
 	Value* getValue(const Operand&) const;
 	Value* getValueExt(const Operand& operand) const { return getValue(operand); }
+
+	/// Helper to change a temporary value pointer
+	Value* setTempValue(const Operand&, Value*) const;
 
 	ThreadPool& getThreadPool() { return m_thread_pool; }
 

@@ -7,4 +7,4 @@ MYCONSTANT = 2;
 
 println(a);
 ==RESULT==
-Error: syntax error, unexpected '=' in \S+ on line \d+
+Error: syntax error, unexpected '=', expecting \+\+ or -- or '\.' in \S+ on line \d+

@@ -95,12 +95,7 @@ int Driver::loadFile(const std::string& filename)
 	// Bison debug option
 	parser.set_debug_level(m_trace_parsing);
 
-	int status = setjmp(fatal_error);
-	int result = 1;
-
-	if (status == 0) {
-		result = parser.parse();
-	}
+	int result = parser.parse();
 
 	delete new_scanner;
 	m_scanners.pop();
@@ -133,12 +128,7 @@ int Driver::loadStr(const std::string& code, bool importStd)
 	// Bison debug option
 	parser.set_debug_level(m_trace_parsing);
 
-	int status = setjmp(fatal_error);
-	int result = 1;
-
-	if (status == 0) {
-		result = parser.parse();
-	}
+	int result = parser.parse();
 
 	delete new_scanner;
 	m_scanners.pop();

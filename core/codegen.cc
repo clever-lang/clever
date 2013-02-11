@@ -140,12 +140,15 @@ void Codegen::visit(Assignment* node)
 			Operand(JMP_ADDR, m_builder->getSize() + 2));
 	}
 
+	node->getLhs()->accept(*this);
+
 	if (rhs) {
 		rhs->accept(*this);
 	}
 
-	IR& assign = m_builder->push(OP_ASSIGN,
-		Operand(FETCH_VAR, node->getLhs()->getVOffset()));
+	IR& assign = m_builder->push(OP_ASSIGN);
+
+	_prepare_operand(assign.op1, node->getLhs());
 
 	if (!rhs) {
 		assign.op2 = Operand(FETCH_CONST, ValueOffset(0, 0)); // null
@@ -218,8 +221,13 @@ void Codegen::visit(FunctionDecl* node)
 {
 	IR& start_func = m_builder->push(OP_JMP, Operand(JMP_ADDR, 0));
 
-	Symbol* sym = node->getIdent()->getSymbol();
-	Value* funcval = sym->scope->getValue(node->getIdent()->getVOffset());
+	Symbol* sym = node->hasIdent() ? node->getIdent()->getSymbol()
+		: node->getType()->getSymbol();
+
+	const ValueOffset& offset = node->hasIdent() ? node->getIdent()->getVOffset()
+		: node->getType()->getVOffset();
+
+	Value* funcval = sym->scope->getValue(offset);
 	Function* func = static_cast<Function*>(funcval->getObj());
 	func->setAddr(m_builder->getSize());
 
@@ -494,8 +502,15 @@ void Codegen::visit(Instantiation* node)
 void Codegen::visit(Property* node)
 {
 	node->getCallee()->accept(*this);
+	Opcode op;
 
-	IR& acc = m_builder->push(OP_PROP_ACC);
+	if (node->isStatic()) {
+		op = node->getMode() == Property::WRITE ? OP_SPROP_W : OP_SPROP_R;
+	} else {
+		op = node->getMode() == Property::WRITE ? OP_PROP_W : OP_PROP_R;
+	}
+
+	IR& acc = m_builder->push(op);
 
 	_prepare_operand(acc.op1, node->getCallee());
 

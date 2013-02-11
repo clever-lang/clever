@@ -14,6 +14,7 @@
 #include <tr1/unordered_map>
 #endif
 #include <vector>
+#include "core/refcounted.h"
 #include "core/clever.h"
 #include "core/cstring.h"
 
@@ -48,6 +49,7 @@ class Function;
 #define CLEVER_TYPE_INIT(name) void name(CLEVER_TYPE_INIT_ARGS)
 
 #define CLEVER_METHOD_ARGS Value* result, const Value* obj, const ::std::vector<Value*>& args, const VM* vm, CException* exception
+#define CLEVER_METHOD_PASS_ARGS result, obj, args, vm, exception
 #define CLEVER_METHOD(name) void name(CLEVER_METHOD_ARGS) const
 
 #define CLEVER_TYPE_CTOR_ARGS const ::std::vector<Value*>* args
@@ -59,6 +61,32 @@ typedef std::tr1::unordered_map<const CString*, Value*> MemberMap;
 typedef std::tr1::unordered_map<const CString*, Value*> PropertyMap;
 typedef std::tr1::unordered_map<const CString*, Function*> MethodMap;
 
+class TypeObject {
+public:
+	TypeObject()
+		: m_properties() {}
+
+	virtual ~TypeObject();
+
+	void addProperty(const CString* name, Value* value) {
+		m_properties.insert(PropertyMap::value_type(name, value));
+	}
+
+	virtual Value* getProperty(const CString* name) const {
+		PropertyMap::const_iterator it = m_properties.find(name);
+
+		if (it != m_properties.end()) {
+			return it->second;
+		}
+
+		return NULL;
+	}
+private:
+	PropertyMap m_properties;
+
+	DISALLOW_COPY_AND_ASSIGN(TypeObject);
+};
+
 class Type {
 public:
 	enum TypeFlag { INTERNAL_TYPE, USER_TYPE };
@@ -67,7 +95,7 @@ public:
 		: m_flags(INTERNAL_TYPE) {}
 
 	Type(const CString* name, TypeFlag flags = INTERNAL_TYPE)
-		: m_name(name), m_ctor(NULL), m_dtor(NULL), m_flags(flags) {}
+		: m_name(name), m_ctor(NULL), m_user_ctor(NULL), m_dtor(NULL), m_flags(flags) {}
 
 	virtual ~Type() {}
 
@@ -113,6 +141,10 @@ public:
 	const Function* getConstructor() const { return m_ctor; }
 	const Function* getDestructor() const { return m_dtor; }
 
+	void setUserConstructor(Function* func) { m_user_ctor = func; }
+	const Function* getUserConstructor() const { return m_user_ctor; }
+	bool hasUserConstructor() const { return m_user_ctor != NULL; }
+
 	virtual void init(CLEVER_TYPE_INIT_ARGS) {}
 
 	virtual bool isPrimitive() const { return false; }
@@ -137,13 +169,14 @@ public:
 	virtual void decrement(Value*, const VM*, CException*)                const;
 
 	/// Type internal data constructor
-	virtual void* allocData(CLEVER_TYPE_CTOR_ARGS) const { return NULL; }
+	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const { return NULL; }
 
 	/// Type internal data destructor
 	virtual void deallocData(CLEVER_TYPE_DTOR_ARGS) {}
 private:
 	const CString* m_name;
 	const Function* m_ctor;
+	const Function* m_user_ctor;
 	const Function* m_dtor;
 
 	MemberMap m_members;

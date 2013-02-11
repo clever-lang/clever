@@ -80,6 +80,21 @@ CLEVER_FORCE_INLINE Value* VM::getValue(const Operand& operand) const
 	return source->getValue(operand.voffset);
 }
 
+/// Fetchs and change a Value pointer in the current temporary environment
+CLEVER_FORCE_INLINE Value* VM::setTempValue(const Operand& operand,
+	Value* value) const
+{
+	Environment* source = m_call_stack.top()->getTempEnv();
+	Value* current = source->getValue(operand.voffset);
+
+	clever_delref(current);
+
+	source->setData(operand.voffset.second, value);
+	clever_addref(value);
+
+	return value;
+}
+
 #ifdef CLEVER_DEBUG
 void VM::dumpOperand(const Operand& op)
 {
@@ -214,17 +229,33 @@ CLEVER_FORCE_INLINE void VM::prepareCall(const Function* func, Environment* env)
 
 CLEVER_FORCE_INLINE void VM::createInstance(const Type* type, Value* instance)
 {
+	if (type->isPrimitive()) {
+		return;
+	}
+
+	const PropertyMap& members = type->getProperties();
+	TypeObject* obj = static_cast<TypeObject*>(instance->getObj());
+
+	if (members.size() > 0) {
+		PropertyMap::const_iterator it(members.begin()), end(members.end());
+
+		while (it != end) {
+			obj->addProperty(it->first, it->second->clone());
+			++it;
+		}
+	}
+
 	if (!type->isUserDefined()) {
 		return;
 	}
 
 	const UserType* utype = static_cast<const UserType*>(type);
-	UserObject* obj = static_cast<UserObject*>(instance->getObj());
+	UserObject* uobj = static_cast<UserObject*>(obj);
 
-	obj->setEnvironment(utype->getEnvironment()->activate(m_call_stack.top()));
-	obj->getEnvironment()->getValue(ValueOffset(0,0))->copy(instance);
-	
-	m_obj_store.push_back(obj->getEnvironment());
+	uobj->setEnvironment(utype->getEnvironment()->activate(m_call_stack.top()));
+	uobj->getEnvironment()->getValue(ValueOffset(0,0))->copy(instance);
+
+	m_obj_store.push_back(uobj->getEnvironment());
 }
 
 // Executes the supplied function
@@ -735,8 +766,6 @@ out:
 			(type->*ctor->getMethodPtr())(instance,
 				NULL, m_call_args, this, &m_exception);
 
-			m_call_args.clear();
-
 			if (UNEXPECTED(m_exception.hasException())) {
 				goto throw_exception;
 			}
@@ -746,6 +775,14 @@ out:
 					"Cannot create object of type %T", type);
 			} else {
 				createInstance(type, instance);
+
+				if (type->hasUserConstructor()) {
+					prepareCall(type->getUserConstructor(),
+						static_cast<UserObject*>(instance->getObj())->getEnvironment());
+
+					VM_GOTO(type->getUserConstructor()->getAddr());
+				}
+				m_call_args.clear();
 			}
 		} else {
 			error(VM_ERROR, OPCODE.loc,
@@ -825,23 +862,98 @@ out:
 	}
 	DISPATCH;
 
-	OP(OP_PROP_ACC):
+	OP(OP_PROP_R):
 	{
 		const Value* obj = getValue(OPCODE.op1);
-		const Value* name = getValue(OPCODE.op2);
 
 		if (UNEXPECTED(obj->isNull())) {
 			error(VM_ERROR, OPCODE.loc,
 				"Cannot perform property access from null value");
 		}
+		const Value* name = getValue(OPCODE.op2);
+		const Type* type = obj->getType();
+		const Value* value = NULL;
 
-		const Value* value = obj->getType()->getProperty(name->getStr());
+		if (EXPECTED(type->isPrimitive() == false)) {
+			value = static_cast<TypeObject*>(obj->getObj())->getProperty(name->getStr());
+		} else {
+			value = type->getProperty(name->getStr());
+		}
 
 		if (EXPECTED(value != NULL)) {
 			getValue(OPCODE.result)->copy(value);
 		} else {
 			error(VM_ERROR, OPCODE.loc, "Property `%T::%S' not found!",
-				obj->getType(), name->getStr());
+				type, name->getStr());
+		}
+	}
+	DISPATCH;
+
+	OP(OP_SPROP_R):
+	{
+		const Value* obj = getValue(OPCODE.op1);
+
+		if (UNEXPECTED(obj->isNull())) {
+			error(VM_ERROR, OPCODE.loc,
+				"Cannot perform property access from null value");
+		}
+		const Value* name = getValue(OPCODE.op2);
+		const Type* type = obj->getType();
+		const Value* value = type->getProperty(name->getStr());
+
+		if (EXPECTED(value != NULL)) {
+			getValue(OPCODE.result)->copy(value);
+		} else {
+			error(VM_ERROR, OPCODE.loc, "Property `%T::%S' not found!",
+				type, name->getStr());
+		}
+	}
+	DISPATCH;
+
+	OP(OP_PROP_W):
+	{
+		const Value* obj = getValue(OPCODE.op1);
+
+		if (UNEXPECTED(obj->isNull())) {
+			error(VM_ERROR, OPCODE.loc,
+				"Cannot perform property access from null value");
+		}
+		const Value* name = getValue(OPCODE.op2);
+		const Type* type = obj->getType();
+		Value* value = NULL;
+
+		if (EXPECTED(type->isPrimitive() == false)) {
+			value = static_cast<TypeObject*>(obj->getObj())->getProperty(name->getStr());
+		} else {
+			value = type->getProperty(name->getStr());
+		}
+
+		if (EXPECTED(value != NULL)) {
+			setTempValue(OPCODE.result, value);
+		} else {
+			error(VM_ERROR, OPCODE.loc, "Property `%T::%S' not found!",
+				type, name->getStr());
+		}
+	}
+	DISPATCH;
+
+	OP(OP_SPROP_W):
+	{
+		const Value* obj = getValue(OPCODE.op1);
+
+		if (UNEXPECTED(obj->isNull())) {
+			error(VM_ERROR, OPCODE.loc,
+				"Cannot perform property access from null value");
+		}
+		const Value* name = getValue(OPCODE.op2);
+		const Type* type = obj->getType();
+		Value* value = type->getProperty(name->getStr());
+
+		if (EXPECTED(value != NULL)) {
+			setTempValue(OPCODE.result, value);
+		} else {
+			error(VM_ERROR, OPCODE.loc, "Property `%T::%S' not found!",
+				type, name->getStr());
 		}
 	}
 	DISPATCH;
@@ -890,7 +1002,7 @@ exit_exception:
 
 exit:
 	std::for_each(m_obj_store.begin(), m_obj_store.end(), clever_delref);
-	
+
 	wait();
 }
 

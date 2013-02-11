@@ -9,11 +9,15 @@
 #define CLEVER_USER_H
 
 #include "core/module.h"
+#include "types/type.h"
+#include "core/cstring.h"
 
 namespace clever {
 
+class Environment;
+
 // User object representation
-class UserObject {
+class UserObject : public TypeObject {
 public:
 	UserObject()
 		: m_env(NULL) {}
@@ -39,7 +43,7 @@ public:
 	void setEnvironment(Environment* env) { m_env = env; }
 	Environment* getEnvironment() const { return m_env; }
 
-	void* allocData(CLEVER_TYPE_CTOR_ARGS) const { return new UserObject; }
+	TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const { return new UserObject; }
 
 	void deallocData(CLEVER_TYPE_DTOR_ARGS) { delete static_cast<UserObject*>(data); }
 
