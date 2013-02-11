@@ -156,8 +156,6 @@ public:
 
 	virtual void init(CLEVER_TYPE_INIT_ARGS) {}
 
-	virtual bool isPrimitive() const { return false; }
-
 	/// Virtual method for debug purpose
 	virtual void dump(TypeObject* data) const { dump(data, std::cout); }
 	virtual void dump(TypeObject*, std::ostream&) const = 0;

@@ -793,12 +793,7 @@ out:
 		const Type* type = callee->getType();
 		const Function* func;
 
-		// TODO(Felipe): FIXME
-		if (type->isPrimitive() || callee->isStr() || callee->isThread()) {
-			func = type->getMethod(method->getStr());
-		} else {
-			func = static_cast<TypeObject*>(callee->getObj())->getMethod(method->getStr());
-		}
+		func = static_cast<TypeObject*>(callee->getObj())->getMethod(method->getStr());
 
 		if (UNEXPECTED(func == NULL)) {
 			error(VM_ERROR, OPCODE.loc, "Method `%T::%S' not found!",
@@ -868,13 +863,7 @@ out:
 		}
 		const Value* name = getValue(OPCODE.op2);
 		const Type* type = obj->getType();
-		const Value* value = NULL;
-
-		if (EXPECTED(type->isPrimitive() == false)) {
-			value = static_cast<TypeObject*>(obj->getObj())->getProperty(name->getStr());
-		} else {
-			value = type->getProperty(name->getStr());
-		}
+		const Value* value = static_cast<TypeObject*>(obj->getObj())->getProperty(name->getStr());
 
 		if (EXPECTED(value != NULL)) {
 			getValue(OPCODE.result)->copy(value);
@@ -916,13 +905,7 @@ out:
 		}
 		const Value* name = getValue(OPCODE.op2);
 		const Type* type = obj->getType();
-		Value* value = NULL;
-
-		if (EXPECTED(type->isPrimitive() == false)) {
-			value = static_cast<TypeObject*>(obj->getObj())->getProperty(name->getStr());
-		} else {
-			value = type->getProperty(name->getStr());
-		}
+		Value* value = static_cast<TypeObject*>(obj->getObj())->getProperty(name->getStr());
 
 		if (EXPECTED(value != NULL)) {
 			setTempValue(OPCODE.result, value);

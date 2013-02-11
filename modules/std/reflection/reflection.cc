@@ -36,11 +36,7 @@ static CLEVER_FUNCTION(refcount)
 		return;
 	}
 
-	if (args[0]->getType()->isPrimitive()) {
-		result->setInt(args[0]->refCount());
-	} else {
-		result->setInt(args[0]->getData()->refCount());
-	}
+	result->setInt(args[0]->getData()->refCount());
 }
 
 // eval(string)
