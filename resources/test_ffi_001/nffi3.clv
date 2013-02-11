@@ -51,3 +51,9 @@ println(s.z);
 println(s.w);
 println(s.w);
 
+printf("===================\n");
+println(h.getCX(FFITypes.INT, s));
+println(h.getCY(FFITypes.DOUBLE, s));
+println(h.getCZ(FFITypes.INT, s));
+println(h.getCW(FFITypes.DOUBLE, s));
+printf("===================\n");

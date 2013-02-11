@@ -26,10 +26,17 @@ namespace clever { namespace modules { namespace std {
 
 typedef void* LibHandler;
 
+typedef ::std::map<CString, Function*> FFIMethodsMap;
+typedef ::std::map<CString, bool> FFIMethodsStatus;
+
+
 struct FFIData : public TypeObject {
 	FFIData()
 		: m_lib_handler(NULL) {}
 
+	virtual const Function* getMethod(const CString* name) const;
+
+	::std::string m_func_name;
 	::std::string m_lib_name;
 	LibHandler m_lib_handler;
 };
@@ -57,6 +64,10 @@ public:
 	CLEVER_METHOD(exec);
 	CLEVER_METHOD(load);
 	CLEVER_METHOD(unload);
+	CLEVER_METHOD(callThisFunction);
+
+	static FFIMethodsMap m_methods_map;
+
 private:
 	DISALLOW_COPY_AND_ASSIGN(FFI);
 };

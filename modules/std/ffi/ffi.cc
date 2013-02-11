@@ -35,6 +35,9 @@
 
 namespace clever { namespace modules { namespace std {
 
+
+FFIMethodsMap FFI::m_methods_map;
+
 extern "C" {
 	typedef void (*ffi_call_func)();
 }
@@ -241,6 +244,44 @@ CLEVER_METHOD(FFI::ctor)
 	result->setObj(this, allocData(&args));
 }
 
+const Function* FFIData::getMethod(const CString* name) const
+{
+	const_cast<FFIData*>(this)->m_func_name = *name;
+
+	const Function* f = TypeObject::getMethod(name);
+
+	if (f == NULL) {
+		f = FFI::m_methods_map["callThisfunction"];
+	}
+
+	return f;
+}
+
+CLEVER_METHOD(FFI::callThisFunction)
+{
+	FFIData* handler = CLEVER_GET_OBJECT(FFIData*, CLEVER_THIS());
+
+	const CString func = handler->m_func_name;
+	FFIType rt = static_cast<FFIType>(args.at(0)->getInt());
+	size_t n_args = args.size() - 1;
+
+#ifndef CLEVER_WIN32
+	void* fpf;
+	ffi_call_func pf;
+
+	fpf = dlsym(handler->m_lib_handler, func.c_str());
+	if (fpf == NULL) {
+
+		CLEVER_THROW("function `%S' don't exist!", &func);
+		return;
+	}
+
+	pf = reinterpret_cast<ffi_call_func>(fpf);
+#endif
+
+	_ffi_call(result, pf, n_args, rt, args, 1);
+}
+
 CLEVER_METHOD(FFI::exec)
 {
 	if (!clever_check_args("ss*")) {
@@ -334,6 +375,10 @@ CLEVER_TYPE_INIT(FFI::init)
 			->setStatic();
 	addMethod(new Function("load",   (MethodPtr)&FFI::load));
 	addMethod(new Function("unload", (MethodPtr)&FFI::unload));
+
+	Function* ffi_func_call = new Function("callThisFunction", (MethodPtr)&FFI::callThisFunction);
+	addMethod(ffi_func_call);
+	m_methods_map["callThisfunction"] = ffi_func_call;
 }
 
 // FFI module initialization
