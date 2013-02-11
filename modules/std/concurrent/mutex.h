@@ -19,7 +19,9 @@ struct MutexObject : public TypeObject {
 	MutexObject()
 		: mutex(new pthread_mutex_t) {}
 
-	~MutexObject() {}
+	~MutexObject() {
+		delete mutex;
+	}
 
 	pthread_mutex_t *mutex;
 };

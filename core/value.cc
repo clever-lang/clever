@@ -81,6 +81,7 @@ const CString* Value::getStr() const {
 
 void Value::setBool(bool n) {
 	SAFETY_LOCK();
+	cleanUp();
 	m_type = CLEVER_BOOL_TYPE;
 	setObj(m_type, new BoolObject(n));
 	SAFETY_ULOCK();
