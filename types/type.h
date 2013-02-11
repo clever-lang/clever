@@ -64,11 +64,11 @@ typedef std::tr1::unordered_map<const CString*, Function*> MethodMap;
 class TypeObject {
 public:
 	TypeObject()
-		: m_properties() {}
+		: m_properties(), m_methods() {}
 
 	virtual ~TypeObject();
 
-	void copyMembers(const Type* );
+	void copyMembers(const Type*);
 
 	void addProperty(const CString* name, Value* value) {
 		m_properties.insert(PropertyMap::value_type(name, value));
