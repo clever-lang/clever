@@ -52,11 +52,21 @@ new offset = offset + padding = offset + (align - (offset mod align)) mod align
 	return (align - (offset % align)) % align;
 }
 
+
+class ExtStruct;
+typedef ::std::map<CString, ExtStruct*> ExtStructs;
+
 class ExtStruct {
 public:
 	ExtStruct() {}
-	void addMember(const CString& member_name, char member_type, const CString& struct_name = "") {
+	void addMember(const CString& member_name, char member_type,
+				   const CString& member_struct_name = "",
+				   const ExtStructs* struct_map = 0) {
 		size_t n = m_member_offset.size();
+
+		if (member_type == 'o') {
+			return;
+		}
 
 		size_t size_type = _get_offset_ext_type(member_type);
 		size_t offset = 0;
@@ -123,13 +133,13 @@ private:
 	ExtMemberOffset m_member_offset;
 	ExtMemberOffset m_member_size;
 	ExtMemberType m_member_type;
+	ExtMemberName m_member_struct_name;
 	ExtMemberName m_member_name;
 	ExtMemberMap m_member_map;
 
 	DISALLOW_COPY_AND_ASSIGN(ExtStruct);
 };
 
-typedef ::std::map<CString, ExtStruct*> ExtStructs;
 
 struct FFIStructData : public TypeObject {
 	void* data;
