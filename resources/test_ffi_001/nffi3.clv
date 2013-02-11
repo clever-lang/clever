@@ -32,7 +32,7 @@ var h =  FFILib.new("nffi");
 
 // FFI CALL
 
-h.call("setC", "v", s, 1111, 33.323123, 22, 283.123);
+//h.call("setC", "v", s, 1111, 33.323123, 22, 283.123);
 
 var x = h.call("getCX", "i", s);
 var y = h.call("getCY", "d", s);

@@ -66,7 +66,6 @@ public:
 			offset = getOffset(n - 1) + align;
 
 			padding = _get_padding_ext(offset, align);
-			m_member_padding.push_back(padding);
 		}
 
 		m_member_offset.push_back(offset + padding);
@@ -80,9 +79,6 @@ public:
 		return m_member_map[mn];
 	}
 
-	size_t getPadding(size_t i) {
-		return m_member_padding[i];
-	}
 
 	size_t getOffset(const CString& mn) {
 		return getOffset(getMember(mn));
@@ -122,7 +118,6 @@ public:
 private:
 	ExtMemberOffset m_member_offset;
 	ExtMemberOffset m_member_size;
-	ExtMemberOffset m_member_padding;
 	ExtMemberType m_member_type;
 	ExtMemberName m_member_name;
 	ExtMemberMap m_member_map;
