@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include <string>
+#include <cstdlib>
 #include <map>
 #include <vector>
 #include "core/cstring.h"
@@ -60,7 +61,8 @@ public:
 		return getOffset(getMember(mn));
 	}
 
-	size_t getOffset(size_t i) {
+	size_t getOffset(int i) {
+		if (i < 0) return 0;
 		return m_member_offset[i];
 	}
 
@@ -70,6 +72,18 @@ public:
 
 	CString& getMemberName(size_t i) {
 		return m_member_name[i];
+	}
+
+	size_t getNMembers() {
+		return m_member_type.size();
+	}
+
+	size_t getSize() {
+		size_t n = m_member_type.size();
+
+		if (n == 0) return 0;
+
+		return m_member_offset[n-1];
 	}
 
 private:
@@ -87,11 +101,21 @@ struct FFIStructData {
 	void* data;
 	ExtStruct* m_struct_type;
 
-	void setMember(ExtStructs& structs_map, size_t i, const Value* const v);
-	void setMember(ExtStructs& structs_map, const CString& member_name, const Value* const v);
+	FFIStructData() {
+		data = 0;
+	}
+	~FFIStructData() {
+		if (data != 0) {
+			::std::free(data);
+		}
+	}
 
-	Value* getMember(ExtStructs& structs_map, size_t i);
-	Value* getMember(ExtStructs& structs_map, const CString& member_name);
+	void setStruct(ExtStructs& structs_map, const CString& struct_type);
+	void setMember(int i, const Value* const v);
+	void setMember(const CString& member_name, const Value* const v);
+
+	void getMember(Value* result, int i);
+	void getMember(Value* result, const CString& member_name);
 };
 
 
@@ -100,7 +124,16 @@ public:
 	FFIStruct()
 		: Type(CSTRING("FFIStruct")) {}
 
-	~FFIStruct() {}
+	~FFIStruct() {
+		ExtStructs::iterator it = m_structs.begin(), end = m_structs.end();
+
+		while (it != end) {
+			if (it->second != 0) {
+				delete it->second;
+			}
+			++it;
+		}
+	}
 
 	void init();
 
@@ -115,6 +148,8 @@ public:
 	CLEVER_METHOD(ctor);
 	CLEVER_METHOD(addMember);
 	CLEVER_METHOD(addStruct);
+	CLEVER_METHOD(getMember);
+	CLEVER_METHOD(setMember);
 
 private:
 	ExtStructs m_structs;
