@@ -2,8 +2,15 @@ import std.*;
 
 // FFI STRUCTURES DECLARATION
 FFIStruct.addStruct("ExtS");
-FFIStruct.addMember("ExtS", "x", "i");
+
+FFIStruct.addMember("ExtS", "l1", "d");
+FFIStruct.addMember("ExtS", "l2", "i");
+FFIStruct.addMember("ExtS", "l3", "i");
+FFIStruct.addMember("ExtS", "l4", "d");
+
+
 FFIStruct.addMember("ExtS", "y", "d");
+FFIStruct.addMember("ExtS", "x", "i");
 FFIStruct.addMember("ExtS", "z", "i");
 FFIStruct.addMember("ExtS", "w", "d");
 

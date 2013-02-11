@@ -65,7 +65,7 @@ public:
 			size_t align = getSize(n - 1);
 			offset = getOffset(n - 1) + align;
 
-			padding = _get_padding_ext(offset, 8);
+			padding = _get_padding_ext(offset, align);
 			m_member_padding.push_back(padding);
 		}
 
@@ -115,7 +115,7 @@ public:
 
 		size_t t = m_member_offset[n-1] + m_member_size[n-1];
 
-		return t + _get_padding_ext(t, 8);
+		return t + _get_padding_ext(t, m_member_size[n-1]);
 	}
 
 private:
