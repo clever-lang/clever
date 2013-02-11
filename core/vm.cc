@@ -799,6 +799,7 @@ out:
 		const Type* type = callee->getType();
 		const Function* func;
 
+		// TODO(Felipe): FIXME
 		if (type->isPrimitive() || callee->isStr() || callee->isThread()) {
 			func = type->getMethod(method->getStr());
 		} else {
