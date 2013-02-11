@@ -116,6 +116,7 @@ public:
 		size_t t = m_member_offset[n-1] + m_member_size[n-1];
 
 		return t + _get_padding_ext(t, m_member_size[n-1]);
+
 	}
 
 private:
