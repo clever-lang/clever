@@ -5,8 +5,8 @@
 
 typedef struct{
 	int x;
+	double y;		
 	int z;
-	double y;
 	double w;
 } C;
 

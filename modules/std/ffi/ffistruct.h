@@ -42,18 +42,35 @@ inline size_t _get_offset_ext_type(char t) {
 	return 0;
 }
 
+inline size_t _get_padding_ext(size_t offset, size_t align) {
+	/*
+padding = (align - (offset mod align)) mod align
+new offset = offset + padding = offset + (align - (offset mod align)) mod align
+	*/
+
+	return (align - (offset % align)) % align;
+}
+
 class ExtStruct {
 public:
 	ExtStruct() {}
 	void addMember(const CString& member_name, char member_type) {
-		size_t acc = 0;
 		size_t n = m_member_offset.size();
 
+		size_t size_type = _get_offset_ext_type(member_type);
+		size_t offset = 0;
+		size_t padding = 0;
+
 		if (n > 0) {
-			acc = m_member_offset[n - 1];
+			size_t align = getSize(n - 1);
+			offset = getOffset(n - 1) + align;
+
+			padding = _get_padding_ext(offset, 8);
+			m_member_padding.push_back(padding);
 		}
 
-		m_member_offset.push_back(acc + _get_offset_ext_type(member_type));
+		m_member_offset.push_back(offset + padding);
+		m_member_size.push_back(size_type);
 		m_member_name.push_back(member_name);
 		m_member_type.push_back(member_type);
 		m_member_map[member_name] = n;
@@ -63,13 +80,20 @@ public:
 		return m_member_map[mn];
 	}
 
+	size_t getPadding(size_t i) {
+		return m_member_padding[i];
+	}
+
 	size_t getOffset(const CString& mn) {
 		return getOffset(getMember(mn));
 	}
 
-	size_t getOffset(int i) {
-		if (i < 0) return 0;
+	size_t getOffset(size_t i) {
 		return m_member_offset[i];
+	}
+
+	size_t getSize(size_t i) {
+		return m_member_size[i];
 	}
 
 	char getType(size_t i) {
@@ -89,11 +113,15 @@ public:
 
 		if (n == 0) return 0;
 
-		return m_member_offset[n-1];
+		size_t t = m_member_offset[n-1] + m_member_size[n-1];
+
+		return t + _get_padding_ext(t, 8);
 	}
 
 private:
 	ExtMemberOffset m_member_offset;
+	ExtMemberOffset m_member_size;
+	ExtMemberOffset m_member_padding;
 	ExtMemberType m_member_type;
 	ExtMemberName m_member_name;
 	ExtMemberMap m_member_map;
