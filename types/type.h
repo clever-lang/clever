@@ -72,7 +72,7 @@ public:
 		m_properties.insert(PropertyMap::value_type(name, value));
 	}
 
-	Value* getProperty(const CString* name) const {
+	virtual Value* getProperty(const CString* name) const {
 		PropertyMap::const_iterator it = m_properties.find(name);
 
 		if (it != m_properties.end()) {
