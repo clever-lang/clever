@@ -38,38 +38,72 @@ inline size_t _get_offset_ext_type(char t) {
 		case 'c': return sizeof(void*);
 		case 'v': return 0;
 		case 'p': return sizeof(void*);
+		case 'o': return -1;//is a structure...
 	}
 	return 0;
 }
 
+inline size_t _get_padding_ext(size_t offset, size_t align) {
+	/*
+padding = (align - (offset mod align)) mod align
+new offset = offset + padding = offset + (align - (offset mod align)) mod align
+	*/
+
+	return (align - (offset % align)) % align;
+}
+
+
+class ExtStruct;
+typedef ::std::map<CString, ExtStruct*> ExtStructs;
+
 class ExtStruct {
 public:
 	ExtStruct() {}
-	void addMember(const CString& member_name, char member_type) {
-		size_t acc = 0;
+	void addMember(const CString& member_name, char member_type,
+				   const CString& member_struct_name = "",
+				   const ExtStructs* struct_map = 0) {
 		size_t n = m_member_offset.size();
 
-		if (n > 0) {
-			acc = m_member_offset[n - 1];
+		if (member_type == 'o') {
+			return;
 		}
 
-		m_member_offset.push_back(acc + _get_offset_ext_type(member_type));
+		size_t size_type = _get_offset_ext_type(member_type);
+		size_t offset = 0;
+		size_t padding = 0;
+
+		if (n > 0) {
+			size_t align = getSize(n - 1);
+			offset = getOffset(n - 1) + align;
+
+			padding = _get_padding_ext(offset, align);
+		}
+
+		m_member_offset.push_back(offset + padding);
+		m_member_size.push_back(size_type);
 		m_member_name.push_back(member_name);
 		m_member_type.push_back(member_type);
-		m_member_map[member_name] = n;
+
+		if (m_member_map.find(member_name) == m_member_map.end()) {
+			m_member_map[member_name] = n;
+		}
 	}
 
 	size_t getMember(const CString& mn) {
 		return m_member_map[mn];
 	}
 
+
 	size_t getOffset(const CString& mn) {
 		return getOffset(getMember(mn));
 	}
 
-	size_t getOffset(int i) {
-		if (i < 0) return 0;
+	size_t getOffset(size_t i) {
 		return m_member_offset[i];
+	}
+
+	size_t getSize(size_t i) {
+		return m_member_size[i];
 	}
 
 	char getType(size_t i) {
@@ -89,19 +123,23 @@ public:
 
 		if (n == 0) return 0;
 
-		return m_member_offset[n-1];
+		size_t t = m_member_offset[n-1] + m_member_size[n-1];
+
+		return t + _get_padding_ext(t, m_member_size[n-1]);
+
 	}
 
 private:
 	ExtMemberOffset m_member_offset;
+	ExtMemberOffset m_member_size;
 	ExtMemberType m_member_type;
+	ExtMemberName m_member_struct_name;
 	ExtMemberName m_member_name;
 	ExtMemberMap m_member_map;
 
 	DISALLOW_COPY_AND_ASSIGN(ExtStruct);
 };
 
-typedef ::std::map<CString, ExtStruct*> ExtStructs;
 
 struct FFIStructData : public TypeObject {
 	void* data;

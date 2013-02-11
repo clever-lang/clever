@@ -4,9 +4,14 @@
 #include <stdlib.h>
 
 typedef struct{
+	double l1;
+	int l2;	
+	int l3;	
+	double l4;	
+
+	double y;		
 	int x;
 	int z;
-	double y;
 	double w;
 } C;
 

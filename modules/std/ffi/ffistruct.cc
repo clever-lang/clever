@@ -30,8 +30,8 @@ void FFIStructData::setStruct(ExtStructs& structs_map, const CString& struct_typ
 
 void FFIStructData::setMember(int i, const Value* const v)
 {
-	size_t offset = this->m_struct_type->getOffset(i - 1);
-	size_t size = this->m_struct_type->getOffset(i) - offset;
+	size_t offset = this->m_struct_type->getOffset(i);
+	size_t size = this->m_struct_type->getSize(i);
 	memcpy(static_cast<char*>(data) + offset, v->getData(), size);
 }
 
@@ -46,7 +46,7 @@ void FFIStructData::setMember(const CString& member_name, const Value* const v)
 void FFIStructData::getMember(Value* result,  int i)
 {
 	char type = this->m_struct_type->getType(i);
-	size_t offset = this->m_struct_type->getOffset(i - 1);
+	size_t offset = this->m_struct_type->getOffset(i);
 
 	void* value = (static_cast<char*>(data) + offset);
 
