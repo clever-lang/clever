@@ -221,8 +221,13 @@ void Codegen::visit(FunctionDecl* node)
 {
 	IR& start_func = m_builder->push(OP_JMP, Operand(JMP_ADDR, 0));
 
-	Symbol* sym = node->getIdent()->getSymbol();
-	Value* funcval = sym->scope->getValue(node->getIdent()->getVOffset());
+	Symbol* sym = node->hasIdent() ? node->getIdent()->getSymbol()
+		: node->getType()->getSymbol();
+
+	const ValueOffset& offset = node->hasIdent() ? node->getIdent()->getVOffset()
+		: node->getType()->getVOffset();
+
+	Value* funcval = sym->scope->getValue(offset);
 	Function* func = static_cast<Function*>(funcval->getObj());
 	func->setAddr(m_builder->getSize());
 

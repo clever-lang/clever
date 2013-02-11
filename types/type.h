@@ -49,6 +49,7 @@ class Function;
 #define CLEVER_TYPE_INIT(name) void name(CLEVER_TYPE_INIT_ARGS)
 
 #define CLEVER_METHOD_ARGS Value* result, const Value* obj, const ::std::vector<Value*>& args, const VM* vm, CException* exception
+#define CLEVER_METHOD_PASS_ARGS result, obj, args, vm, exception
 #define CLEVER_METHOD(name) void name(CLEVER_METHOD_ARGS) const
 
 #define CLEVER_TYPE_CTOR_ARGS const ::std::vector<Value*>* args
@@ -94,7 +95,7 @@ public:
 		: m_flags(INTERNAL_TYPE) {}
 
 	Type(const CString* name, TypeFlag flags = INTERNAL_TYPE)
-		: m_name(name), m_ctor(NULL), m_dtor(NULL), m_flags(flags) {}
+		: m_name(name), m_ctor(NULL), m_user_ctor(NULL), m_dtor(NULL), m_flags(flags) {}
 
 	virtual ~Type() {}
 
@@ -140,6 +141,10 @@ public:
 	const Function* getConstructor() const { return m_ctor; }
 	const Function* getDestructor() const { return m_dtor; }
 
+	void setUserConstructor(Function* func) { m_user_ctor = func; }
+	const Function* getUserConstructor() const { return m_user_ctor; }
+	bool hasUserConstructor() const { return m_user_ctor != NULL; }
+
 	virtual void init(CLEVER_TYPE_INIT_ARGS) {}
 
 	virtual bool isPrimitive() const { return false; }
@@ -171,6 +176,7 @@ public:
 private:
 	const CString* m_name;
 	const Function* m_ctor;
+	const Function* m_user_ctor;
 	const Function* m_dtor;
 
 	MemberMap m_members;

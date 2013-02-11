@@ -495,24 +495,32 @@ vararg:
 
 fdecl:
 		FUNC IDENT '(' ')' block
+		{ $$ = new ast::FunctionDecl($2, NULL, $5, NULL, false, yyloc); }
+	|	FUNC TYPE '(' ')' block
 		{ $$ = new ast::FunctionDecl($2, NULL, $5, NULL, yyloc); }
 	|	FUNC IDENT '(' vararg ')' block
+		{ $$ = new ast::FunctionDecl($2, NULL, $6, $4, false, yyloc); }
+	|	FUNC TYPE '(' vararg ')' block
 		{ $$ = new ast::FunctionDecl($2, NULL, $6, $4, yyloc); }
 	|	FUNC IDENT '(' variable_decl_list ')' block
+		{ $$ = new ast::FunctionDecl($2, $4, $6, NULL, false, yyloc); }
+	|	FUNC TYPE '(' variable_decl_list ')' block
 		{ $$ = new ast::FunctionDecl($2, $4, $6, NULL, yyloc); }
 	|	FUNC IDENT '(' variable_decl_list ',' vararg ')' block
+		{ $$ = new ast::FunctionDecl($2, $4, $8, $6, false, yyloc); }
+	|	FUNC TYPE '(' variable_decl_list ',' vararg ')' block
 		{ $$ = new ast::FunctionDecl($2, $4, $8, $6, yyloc); }
 ;
 
 anonymous_fdecl:
 		FUNC '(' ')' block
-		{ $$ = new ast::FunctionDecl(NULL, NULL, $4, NULL, yyloc); }
+		{ $$ = new ast::FunctionDecl(NULL, NULL, $4, NULL, true, yyloc); }
 	|	FUNC '(' vararg ')' block
-		{ $$ = new ast::FunctionDecl(NULL, NULL, $5, $3, yyloc); }
+		{ $$ = new ast::FunctionDecl(NULL, NULL, $5, $3, true, yyloc); }
 	|	FUNC '(' variable_decl_list ')' block
-		{ $$ = new ast::FunctionDecl(NULL, $3, $5, NULL, yyloc); }
+		{ $$ = new ast::FunctionDecl(NULL, $3, $5, NULL, true, yyloc); }
 	|	FUNC '(' variable_decl_list ',' vararg ')' block
-		{ $$ = new ast::FunctionDecl(NULL, $3, $7, $5, yyloc); }
+		{ $$ = new ast::FunctionDecl(NULL, $3, $7, $5, true, yyloc); }
 ;
 
 call_args:

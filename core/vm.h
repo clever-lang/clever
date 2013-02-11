@@ -81,7 +81,7 @@ public:
 
 	/// Start the VM execution
 	void run();
-	Value* runFunction(const Function*, std::vector<Value*>*);
+	Value* runFunction(const Function*, std::vector<Value*>*, Environment* = NULL);
 
 	/// Wait threads
 	void wait();
