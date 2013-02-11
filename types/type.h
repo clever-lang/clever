@@ -68,21 +68,30 @@ public:
 
 	virtual ~TypeObject();
 
+	void copyMembers(const Type* );
+
 	void addProperty(const CString* name, Value* value) {
 		m_properties.insert(PropertyMap::value_type(name, value));
 	}
 
 	virtual Value* getProperty(const CString* name) const {
-		PropertyMap::const_iterator it = m_properties.find(name);
+		PropertyMap::const_iterator it(m_properties.find(name));
 
-		if (it != m_properties.end()) {
-			return it->second;
-		}
+		return it != m_properties.end() ? it->second : NULL;
+	}
 
-		return NULL;
+	void addMethod(const CString* name, Function* func) {
+		m_methods.insert(MethodMap::value_type(name, func));
+	}
+
+	virtual const Function* getMethod(const CString* name) const {
+		MethodMap::const_iterator it(m_methods.find(name));
+
+		return it != m_methods.end() ? it->second : NULL;
 	}
 private:
 	PropertyMap m_properties;
+	MethodMap m_methods;
 
 	DISALLOW_COPY_AND_ASSIGN(TypeObject);
 };

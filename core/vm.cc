@@ -193,6 +193,8 @@ static CLEVER_FORCE_INLINE void _param_binding(const Function* func, Environment
 
 		Value* vararg = fenv->getValue(ValueOffset(0, func->getNumArgs()));
 		vararg->setObj(CLEVER_ARRAY_TYPE, arr);
+
+		arr->copyMembers(CLEVER_ARRAY_TYPE);
 	}
 }
 
@@ -233,17 +235,9 @@ CLEVER_FORCE_INLINE void VM::createInstance(const Type* type, Value* instance)
 		return;
 	}
 
-	const PropertyMap& members = type->getProperties();
 	TypeObject* obj = static_cast<TypeObject*>(instance->getObj());
 
-	if (members.size() > 0) {
-		PropertyMap::const_iterator it(members.begin()), end(members.end());
-
-		while (it != end) {
-			obj->addProperty(it->first, it->second->clone());
-			++it;
-		}
-	}
+	obj->copyMembers(type);
 
 	if (!type->isUserDefined()) {
 		return;
@@ -803,7 +797,13 @@ out:
 		}
 
 		const Type* type = callee->getType();
-		const Function* func = type->getMethod(method->getStr());
+		const Function* func;
+
+		if (type->isPrimitive() || callee->isStr() || callee->isThread()) {
+			func = type->getMethod(method->getStr());
+		} else {
+			func = static_cast<TypeObject*>(callee->getObj())->getMethod(method->getStr());
+		}
 
 		if (UNEXPECTED(func == NULL)) {
 			error(VM_ERROR, OPCODE.loc, "Method `%T::%S' not found!",
