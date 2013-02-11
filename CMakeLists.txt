@@ -74,7 +74,7 @@ if (MSVC)
 	set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG} /Zi /D_DEBUG /DCLEVER_DEBUG /MDd")
 	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /O2 /DNDEBUG /MD")
 else (MSVC)
-	set(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} -Wall -ansi -fno-rtti -fno-exceptions")
+	set(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} -fPIC -Wall -std=c++98 -fno-rtti -fno-exceptions")
 	set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG} -fno-inline -ggdb -D_DEBUG -DCLEVER_DEBUG")
 	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2 -DNDEBUG")
 
@@ -82,7 +82,7 @@ else (MSVC)
 	set(CMAKE_CXX_FLAGS_DEVEL   "${CMAKE_CXX_FLAGS_DEVEL} -fno-exceptions -fvar-tracking-assignments")
 	set(CMAKE_CXX_FLAGS_DEVEL   "${CMAKE_CXX_FLAGS_DEVEL} -ftrapv -fverbose-asm -finstrument-functions")
 	set(CMAKE_CXX_FLAGS_DEVEL   "${CMAKE_CXX_FLAGS_DEVEL} -fno-delete-null-pointer-checks -fno-omit-frame-pointer")
-	set(CMAKE_CXX_FLAGS_DEVEL   "${CMAKE_CXX_FLAGS_DEVEL} -fno-inline ")
+	set(CMAKE_CXX_FLAGS_DEVEL   "${CMAKE_CXX_FLAGS_DEVEL} -fno-inline -fPIC ")
 
 endif (MSVC)
 
@@ -165,7 +165,7 @@ endif (UNIX)
 
 # Main executable
 # ---------------------------------------------------------------------------
-add_executable(clever
+set(CORE_SOURCE
 	core/cexception.h
 	core/ast.h
 	core/ast.cc
@@ -191,7 +191,6 @@ add_executable(clever
 	core/environment.h
 	core/ir.h
 	core/irbuilder.h
-	core/main.cc
 	core/module.h
 	core/opcode.cc
 	core/opcode.h
@@ -230,19 +229,29 @@ add_executable(clever
 	modules/std/core/core.h
 	modules/std/core/core.cc
 	core/user.h
-	${EXTRA_CLEVER_FILES}
 )
-target_link_libraries(clever ${CLEVER_LIBRARIES})
-include_directories(${CLEVER_INCLUDE_DIRS})
+
+add_library(clever-static STATIC ${CORE_SOURCE}	${EXTRA_CLEVER_FILES})
+set_target_properties(clever-static PROPERTIES OUTPUT_NAME "clever")
+target_link_libraries(clever-static ${CLEVER_LIBRARIES})
+include_directories(${CLEVER_STATIC_INCLUDE_DIRS})
+
+add_library(clever-shared SHARED)
+set_target_properties(clever-shared PROPERTIES OUTPUT_NAME "clever")
+target_link_libraries(clever-shared clever-static)
+
+add_executable(clever-cli core/main.cc)
+set_target_properties(clever-cli PROPERTIES OUTPUT_NAME "clever")
+target_link_libraries(clever-cli clever-static)
 
 # Module trees
 # ---------------------------------------------------------------------------
 add_subdirectory(modules/std)
 #add_subdirectory(modules/web)
-add_dependencies(clever modules_std)
-#add_dependencies(clever modules_std modules_web)
-target_link_libraries(clever modules_std)
-#target_link_libraries(clever modules_std modules_web)
+add_dependencies(clever-static modules_std)
+#add_dependencies(clever-static modules_std modules_web)
+target_link_libraries(clever-static modules_std)
+#target_link_libraries(clever-static modules_std modules_web)
 
 # Test runner
 # ---------------------------------------------------------------------------
@@ -271,7 +280,11 @@ add_dependencies(run-mem-tests testrunner)
 
 # Files to install
 # ---------------------------------------------------------------------------
-install(TARGETS clever RUNTIME DESTINATION bin)
+install(TARGETS clever-cli RUNTIME DESTINATION bin)
+#install(TARGETS clever-static ARCHIVE DESTINATION lib)
+install(TARGETS clever-shared LIBRARY DESTINATION lib)
+install(DIRECTORY core/ modules/ types/ win32/
+	DESTINATION include/clever FILES_MATCHING PATTERN "*.h")
 
 # Files to delete
 # ---------------------------------------------------------------------------

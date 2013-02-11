@@ -48,15 +48,15 @@ static const char* CLEVER_DYLIB_EXT = ".dylib";
 static const char* CLEVER_DYLIB_EXT = ".so";
 #endif
 
-static ffi_type* _find_ffi_type(const char* tn) {
-	switch (tn[0]) {
-		case 'i': return &ffi_type_sint32;
-		case 'd': return &ffi_type_double;
-		case 'b': return &ffi_type_schar;
-		case 's': return &ffi_type_pointer;
-		case 'c': return &ffi_type_schar;
-		case 'v': return &ffi_type_void;
-		case 'p': return &ffi_type_pointer;
+static ffi_type* _find_ffi_type(FFIType tn) {
+	switch (tn) {
+		case FFIINT:		return &ffi_type_sint32;
+		case FFIDOUBLE:		return &ffi_type_double;
+		case FFIBOOL:		return &ffi_type_schar;
+		case FFIPOINTER:	return &ffi_type_pointer;
+		case FFIVOID:		return &ffi_type_void;
+		case FFISTRUCT:		return &ffi_type_pointer;
+		case FFISTRING:		return &ffi_type_pointer;
 	}
 	return NULL;
 }
@@ -74,11 +74,11 @@ static bool _load_lib(FFIData* h, const CString* libname)
 }
 
 inline void _ffi_call(Value* result, ffi_call_func pf, size_t n_args,
-					  const CString* rt, const ::std::vector<Value*>& args,
+					  FFIType rt, const ::std::vector<Value*>& args,
 					  size_t offset)
 {
 	ffi_cif cif;
-	ffi_type* ffi_rt = _find_ffi_type(rt->c_str());
+	ffi_type* ffi_rt = _find_ffi_type(rt);
 	ffi_type** ffi_args = (ffi_type**) malloc(n_args*sizeof(ffi_type*));
 
 	void** ffi_values = (void**) malloc(n_args*sizeof(void*));
@@ -87,7 +87,7 @@ inline void _ffi_call(Value* result, ffi_call_func pf, size_t n_args,
 		Value* v = args.at(i + offset);
 
 		if (v->isInt()) {
-			ffi_args[i] = &ffi_type_sint32;
+			ffi_args[i] = _find_ffi_type(FFIINT);
 
 			int* vi= (int*) malloc(sizeof(int));
 
@@ -95,7 +95,7 @@ inline void _ffi_call(Value* result, ffi_call_func pf, size_t n_args,
 
 			ffi_values[i] =  vi;
 		} else if (v->isBool()) {
-			ffi_args[i] = _find_ffi_type("b");
+			ffi_args[i] = _find_ffi_type(FFIBOOL);
 
 			char* b=(char*) malloc (sizeof(char));
 
@@ -110,11 +110,11 @@ inline void _ffi_call(Value* result, ffi_call_func pf, size_t n_args,
 			strcpy(*s,st);
 			(*s)[strlen(st)]='\0';
 
-			ffi_args[i] = _find_ffi_type("s");
+			ffi_args[i] = _find_ffi_type(FFISTRING);
 
 			ffi_values[i] =  s;
 		} else if (v->isDouble()) {
-			ffi_args[i] = &ffi_type_double;
+			ffi_args[i] = _find_ffi_type(FFIDOUBLE);;
 
 			double* d = (double*)malloc(sizeof(double));
 
@@ -122,7 +122,7 @@ inline void _ffi_call(Value* result, ffi_call_func pf, size_t n_args,
 
 			ffi_values[i] = d;
 		} else {
-			ffi_args[i] = _find_ffi_type("p");
+			ffi_args[i] = _find_ffi_type(FFIPOINTER);
 
 			FFIStructData* obj = static_cast<FFIStructData*>(v->getObj());
 
@@ -137,25 +137,25 @@ inline void _ffi_call(Value* result, ffi_call_func pf, size_t n_args,
 
 
 #ifndef CLEVER_WIN32
-	if (rt->at(0) == 'i') {
+	if (rt == FFIINT) {
 		int vi;
 
 		ffi_call(&cif, pf, &vi, ffi_values);
 
 		result->setInt(vi);
-	} else if (rt->at(0) == 'd') {
+	} else if (rt == FFIDOUBLE) {
 		double vd;
 
 		ffi_call(&cif, pf, &vd, ffi_values);
 
 		result->setDouble(vd);
-	} else if (rt->at(0) == 'b') {
+	} else if (rt == FFIBOOL) {
 		bool vb;
 
 		ffi_call(&cif, pf, &vb, ffi_values);
 
 		result->setBool(vb);
-	} else if (rt->at(0) == 's') {
+	} else if (rt == FFISTRING) {
 		char* vs[1];
 
 		ffi_call(&cif, pf, &vs, ffi_values);
@@ -163,18 +163,18 @@ inline void _ffi_call(Value* result, ffi_call_func pf, size_t n_args,
 		result->setStr(CSTRING(*vs));
 
 		free(vs[0]);
-	} else if (rt->at(0) == 'c') {
+	} else if (rt == FFIBOOL) {
 		char vc;
 
 		ffi_call(&cif, pf, &vc, ffi_values);
 
 		result->setBool(vc);
-	} else if (rt->at(0) == 'v') {
+	} else if (rt == FFIVOID) {
 
 		ffi_call(&cif, pf, NULL, ffi_values);
 
 		result->setBool(true);
-	} else if (rt->at(0) == 'p') {
+	} else if (rt == FFIPOINTER) {
 		//FFIObjectValue* x = static_cast<FFIObjectValue*> (retval->getDataValue());
 
 		//if ( x == NULL ) x = new FFIObjectValue();
@@ -243,13 +243,13 @@ CLEVER_METHOD(FFI::ctor)
 
 CLEVER_METHOD(FFI::exec)
 {
-	if (!clever_check_args("sss*")) {
+	if (!clever_check_args("ss*")) {
 		return;
 	}
 
 	const CString* lib = args.at(0)->getStr();
 	const CString* func = args.at(1)->getStr();
-	const CString* rt = args.at(2)->getStr();
+	FFIType rt = static_cast<FFIType>(args.at(2)->getInt());
 	size_t n_args = args.size() - 3;
 
 #ifndef CLEVER_WIN32
@@ -273,14 +273,14 @@ CLEVER_METHOD(FFI::exec)
 
 CLEVER_METHOD(FFI::call)
 {
-	if (!clever_check_args("ss*")) {
+	if (!clever_check_args("s*")) {
 		return;
 	}
 
 	FFIData* handler = CLEVER_GET_OBJECT(FFIData*, CLEVER_THIS());
 
 	const CString* func = args.at(0)->getStr();
-	const CString* rt = args.at(1)->getStr();
+	FFIType rt = static_cast<FFIType>(args.at(1)->getInt());
 	size_t n_args = args.size() - 2;
 
 #ifndef CLEVER_WIN32
@@ -339,8 +339,9 @@ CLEVER_TYPE_INIT(FFI::init)
 // FFI module initialization
 CLEVER_MODULE_INIT(FFIModule)
 {
-	addType(CSTRING("FFILib"), new FFI);
-	addType(CSTRING("FFIStruct"), new FFIStruct);
+	addType(CSTRING("FFILib"),		new FFI);
+	addType(CSTRING("FFIStruct"),	new FFIStruct);
+	addType(CSTRING("FFITypes"),	new FFITypes);
 }
 
 }}} // clever::packages::std

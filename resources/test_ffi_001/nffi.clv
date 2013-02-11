@@ -18,10 +18,10 @@ process t[2] {
 
 		critical {
 			if (mid == 0) {
-				h.call("printExt", "v", "ola");
+				h.call("printExt", FFITypes.VOID, "ola");
 			} else {
-				h.call("printExt", "v", "ola 2");
-				println(h.call("add", "i", 2, 3));
+				h.call("printExt", FFITypes.VOID, "ola 2");
+				println(h.call("add", FFITypes.INT, 2, 3));
 			}
 		}
 

@@ -24,34 +24,44 @@
 
 namespace clever { namespace modules { namespace std {
 
+
+enum FFIType {
+	FFIINT = 'i',
+	FFIDOUBLE = 'd',
+	FFIBOOL = 'b',
+	FFIVOID = 'v',
+	FFISTRING = 's',
+	FFIPOINTER = 'p',
+	FFISTRUCT = 'o'
+};
+
 typedef ::std::vector<size_t> ExtMemberOffset;
-typedef ::std::vector<char> ExtMemberType;
+typedef ::std::vector<FFIType> ExtMemberType;
 typedef ::std::vector<CString> ExtMemberName;
 typedef ::std::map<CString, size_t> ExtMemberMap;
+typedef ::std::map<CString, Value*> ExtMemberDataMap;
 
-inline size_t _get_offset_ext_type(char t) {
+
+inline size_t _get_offset_ext_type(FFIType t) {
 	switch (t) {
-		case 'i': return sizeof(int);
-		case 'd': return sizeof(double);
-		case 'b': return sizeof(char);
-		case 's': return sizeof(void*);
-		case 'c': return sizeof(void*);
-		case 'v': return 0;
-		case 'p': return sizeof(void*);
-		case 'o': return -1;//is a structure...
+		case FFIINT: return sizeof(int);
+		case FFIDOUBLE: return sizeof(double);
+		case FFIBOOL: return sizeof(char);
+		case FFISTRING: return sizeof(void*);
+		case FFIVOID: return 0;
+		case FFIPOINTER: return sizeof(void*);
+		case FFISTRUCT: return -1;//is a structure...
 	}
 	return 0;
 }
 
 inline size_t _get_padding_ext(size_t offset, size_t align) {
-	/*
-padding = (align - (offset mod align)) mod align
-new offset = offset + padding = offset + (align - (offset mod align)) mod align
-	*/
-
 	return (align - (offset % align)) % align;
 }
 
+/*
+FFISTRUCT
+*/
 
 class ExtStruct;
 typedef ::std::map<CString, ExtStruct*> ExtStructs;
@@ -59,12 +69,12 @@ typedef ::std::map<CString, ExtStruct*> ExtStructs;
 class ExtStruct {
 public:
 	ExtStruct() {}
-	void addMember(const CString& member_name, char member_type,
+	void addMember(const CString& member_name, FFIType member_type,
 				   const CString& member_struct_name = "",
 				   const ExtStructs* struct_map = 0) {
 		size_t n = m_member_offset.size();
 
-		if (member_type == 'o') {
+		if (member_type == FFISTRUCT) {
 			return;
 		}
 
@@ -106,7 +116,7 @@ public:
 		return m_member_size[i];
 	}
 
-	char getType(size_t i) {
+	FFIType getType(size_t i) {
 		return m_member_type[i];
 	}
 
@@ -144,6 +154,7 @@ private:
 struct FFIStructData : public TypeObject {
 	void* data;
 	ExtStruct* m_struct_type;
+	ExtMemberDataMap m_member_map;
 
 	FFIStructData() {
 		data = 0;
@@ -152,15 +163,29 @@ struct FFIStructData : public TypeObject {
 		if (data != 0) {
 			::std::free(data);
 		}
+
+		ExtMemberDataMap::iterator it = m_member_map.begin(),
+				end = m_member_map.end();
+
+		while (it != end) {
+			if (it->second) {
+				delete it->second;
+			}
+			++it;
+		}
 	}
 
+	virtual Value* getProperty(const CString* name) const;
+
 	void setStruct(ExtStructs& structs_map, const CString& struct_type);
+
 	void setMember(int i, const Value* const v);
 	void setMember(const CString& member_name, const Value* const v);
 
 	void getMember(Value* result, int i);
 	void getMember(Value* result, const CString& member_name);
 };
+
 
 
 class FFIStruct : public Type {
@@ -172,7 +197,56 @@ public:
 		ExtStructs::iterator it = m_structs.begin(), end = m_structs.end();
 
 		while (it != end) {
-			if (it->second != 0) {
+			if (it->second) {
+				delete it->second;
+			}
+			++it;
+		}
+	}
+
+	void init();
+
+	void dump(const void* data, ::std::ostream& out) const {}
+
+	virtual void increment(Value*, const VM*, CException*) const {}
+	virtual void decrement(Value*, const VM*, CException*) const {}
+
+	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
+	virtual void deallocData(void* data);
+
+	CLEVER_METHOD(ctor);
+	CLEVER_METHOD(getMember);
+	CLEVER_METHOD(setMember);
+
+private:
+	ExtStructs m_structs;
+
+	DISALLOW_COPY_AND_ASSIGN(FFIStruct);
+};
+
+/*
+FFITYPES
+*/
+
+class FFITypesBuilder : public TypeObject {
+public:
+	FFITypesBuilder(const CString& name = "")
+		: m_name(name) {}
+	CString& getName() { return m_name; }
+
+private:
+	CString m_name;
+};
+
+class FFITypes : public Type {
+public:
+	FFITypes()
+		: Type(CSTRING("FFITypes")) {}
+	~FFITypes() {
+		ExtStructs::iterator it = m_structs.begin(), end = m_structs.end();
+
+		while (it != end) {
+			if (it->second) {
 				delete it->second;
 			}
 			++it;
@@ -191,14 +265,12 @@ public:
 
 	CLEVER_METHOD(ctor);
 	CLEVER_METHOD(addMember);
-	CLEVER_METHOD(addStruct);
-	CLEVER_METHOD(getMember);
-	CLEVER_METHOD(setMember);
+
+	static ExtStructs m_structs;
 
 private:
-	ExtStructs m_structs;
 
-	DISALLOW_COPY_AND_ASSIGN(FFIStruct);
+	DISALLOW_COPY_AND_ASSIGN(FFITypes);
 };
 
 }}}
