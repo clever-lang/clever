@@ -43,10 +43,9 @@ void MapType::deallocData(void* data)
 	delete arr;
 }
 
-void MapType::dump(const void* value, std::ostream& out) const
+void MapType::dump(TypeObject* value, std::ostream& out) const
 {
-	ValueObject* data = static_cast<ValueObject*>(const_cast<void*>(value));
-	MapObject* arr = static_cast<MapObject*>(data->getObj());
+	MapObject* arr = static_cast<MapObject*>(value);
 	ValueMap& map = arr->getData();
 	ValueMap::const_iterator it(map.begin()), end(map.end());
 

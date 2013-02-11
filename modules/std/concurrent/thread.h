@@ -22,8 +22,8 @@ public:
 
 	~Thread() {}
 
-	void dump(const void* data) const;
-	void dump(const void* data, ::std::ostream& out) const;
+	void dump(TypeObject* data) const;
+	void dump(TypeObject* data, ::std::ostream& out) const;
 
 	virtual void increment(Value*, const VM*, CException*) const {}
 	virtual void decrement(Value*, const VM*, CException*) const {}

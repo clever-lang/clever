@@ -47,12 +47,7 @@ namespace detail {
 
 }
 
-void CFile::dump(const void* data) const
-{
-	dump(data, ::std::cout);
-}
-
-void CFile::dump(const void* data, ::std::ostream& out) const
+void CFile::dump(TypeObject* data, ::std::ostream& out) const
 {
 	out << "File class (" << data << ")";
 }

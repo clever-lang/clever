@@ -39,7 +39,7 @@ static CLEVER_FUNCTION(refcount)
 	if (args[0]->getType()->isPrimitive()) {
 		result->setInt(args[0]->refCount());
 	} else {
-		result->setInt(args[0]->getData()->obj->refCount());
+		result->setInt(args[0]->getData()->refCount());
 	}
 }
 

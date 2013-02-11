@@ -13,19 +13,13 @@
 
 namespace clever { namespace modules { namespace std {
 
-void Mutex::dump(const void* data) const
+void Mutex::dump(TypeObject* data) const
 {
 	dump(data, ::std::cout);
 }
 
-void Mutex::dump(const void* data, ::std::ostream& out) const
+void Mutex::dump(TypeObject* data, ::std::ostream& out) const
 {
-	ValueObject* dvalue =
-		static_cast<ValueObject*>(const_cast<void*>(data));
-
-	if (dvalue) {
-
-	}
 }
 
 TypeObject* Mutex::allocData(CLEVER_TYPE_CTOR_ARGS) const

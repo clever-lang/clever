@@ -47,8 +47,8 @@ public:
 
 	void deallocData(CLEVER_TYPE_DTOR_ARGS) { delete static_cast<UserObject*>(data); }
 
-	virtual void dump(const void*) const {}
-	virtual void dump(const void*, std::ostream& out) const { out << *getName(); }
+	virtual void dump(TypeObject*) const {}
+	virtual void dump(TypeObject*, std::ostream& out) const { out << *getName(); }
 
 	void init(CLEVER_TYPE_INIT_ARGS) {
 		Function* ctor = new Function(*getName(), (MethodPtr) &UserType::ctor);

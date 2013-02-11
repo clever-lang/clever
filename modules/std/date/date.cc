@@ -13,20 +13,17 @@
 
 namespace clever { namespace modules { namespace std {
 
-void Date::dump(const void* data) const
+void Date::dump(TypeObject* data) const
 {
 	dump(data, ::std::cout);
 }
 
-void Date::dump(const void* data, ::std::ostream& out) const
+void Date::dump(TypeObject* data, ::std::ostream& out) const
 {
-	Value::DataValue* dvalue = static_cast<Value::DataValue*>(const_cast<void*>(data));
-	if (dvalue) {
-		DateObject* uvalue = static_cast<DateObject*>(dvalue->obj->getObj());
+	const DateObject* uvalue = static_cast<const DateObject*>(data);
 
-		if (uvalue) {
-			out << *uvalue->intern;
-		}
+	if (uvalue) {
+		out << *uvalue->intern;
 	}
 }
 

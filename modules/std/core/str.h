@@ -48,7 +48,7 @@ public:
 
 	void init();
 
-	void dump(const void*, std::ostream&) const;
+	void dump(TypeObject*, std::ostream&) const;
 
 	TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const { return NULL; }
 	void deallocData(CLEVER_TYPE_DTOR_ARGS) { delete static_cast<StrObject*>(data); }

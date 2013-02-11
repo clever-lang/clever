@@ -40,7 +40,7 @@ public:
 
 	void init(CLEVER_TYPE_INIT_ARGS);
 
-	virtual void dump(const void*, ::std::ostream& out) const;
+	virtual void dump(TypeObject*, ::std::ostream& out) const;
 
 	TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
 

@@ -76,8 +76,7 @@ public:
 
 	void init();
 
-	void dump(const void* data) const { dump(data, std::cout); }
-	void dump(const void* data, std::ostream& out) const { out << "Thread() {}"; }
+	void dump(TypeObject* data, std::ostream& out) const { out << "Thread() {}"; }
 
 	TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const { return new Thread; }
 

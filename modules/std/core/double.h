@@ -15,6 +15,16 @@
 
 namespace clever {
 
+struct DoubleObject : public TypeObject {
+	DoubleObject()
+		: value() {}
+
+	DoubleObject(double n)
+		: value(n) {}
+
+	double value;
+};
+
 class DoubleType : public Type {
 public:
 	DoubleType()
@@ -24,9 +34,13 @@ public:
 
 	void init();
 
-	bool isPrimitive() const { return true; }
+	TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const { return new DoubleObject; }
 
-	void dump(const void* value, std::ostream& out) const { out << *(double*)value; }
+	void deallocData(CLEVER_TYPE_DTOR_ARGS) { delete static_cast<DoubleObject*>(data); }
+
+	void dump(TypeObject* value, std::ostream& out) const {
+		out << static_cast<DoubleObject*>(value)->value;
+	}
 
 	CLEVER_TYPE_VIRTUAL_METHOD_DECLARATIONS;
 

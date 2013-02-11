@@ -36,10 +36,9 @@ void ArrayType::deallocData(void* data)
 	delete arr;
 }
 
-void ArrayType::dump(const void* value, std::ostream& out) const
+void ArrayType::dump(TypeObject* value, std::ostream& out) const
 {
-	ArrayObject* arr = static_cast<ArrayObject*>(
-		static_cast<ValueObject*>(const_cast<void*>(value))->getObj());
+	ArrayObject* arr = static_cast<ArrayObject*>(value);
 	ValueVector& vec = arr->getData();
 
 	out << "[";

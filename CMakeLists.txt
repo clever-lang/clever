@@ -206,6 +206,7 @@ set(CORE_SOURCE
 	core/scope.cc
 	core/scope.h
 	core/value.h
+	core/value.cc
 	core/vm.cc
 	core/vm.h
 	modules/std/core/double.h

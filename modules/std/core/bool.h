@@ -15,6 +15,16 @@
 
 namespace clever {
 
+struct BoolObject : public TypeObject {
+	BoolObject()
+		: value() {}
+
+	BoolObject(bool n)
+		: value(n) {}
+
+	bool value;
+};
+
 class BoolType : public Type {
 public:
 	BoolType()
@@ -24,9 +34,13 @@ public:
 
 	void init();
 
-	bool isPrimitive() const { return true; }
+	TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const { return new BoolObject; }
 
-	void dump(const void* value, std::ostream& out) const { out << *(bool*)value; }
+	void deallocData(CLEVER_TYPE_DTOR_ARGS) { delete static_cast<BoolObject*>(data); }
+
+	void dump(TypeObject* value, std::ostream& out) const {
+		out << static_cast<BoolObject*>(value)->value;
+	}
 
 	CLEVER_METHOD(ctor);
 	CLEVER_TYPE_OPERATOR(equal);

@@ -159,8 +159,8 @@ public:
 	virtual bool isPrimitive() const { return false; }
 
 	/// Virtual method for debug purpose
-	virtual void dump(const void* data) const { dump(data, std::cout); }
-	virtual void dump(const void*, std::ostream&) const = 0;
+	virtual void dump(TypeObject* data) const { dump(data, std::cout); }
+	virtual void dump(TypeObject*, std::ostream&) const = 0;
 
 	/// Operator methods
 	virtual void CLEVER_FASTCALL add(CLEVER_TYPE_OPERATOR_ARGS)           const;

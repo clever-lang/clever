@@ -231,17 +231,11 @@ CLEVER_FORCE_INLINE void VM::prepareCall(const Function* func, Environment* env)
 
 CLEVER_FORCE_INLINE void VM::createInstance(const Type* type, Value* instance)
 {
-	if (type->isPrimitive()) {
+	if (!type->isUserDefined()) {
 		return;
 	}
 
 	TypeObject* obj = static_cast<TypeObject*>(instance->getObj());
-
-	obj->copyMembers(type);
-
-	if (!type->isUserDefined()) {
-		return;
-	}
 
 	const UserType* utype = static_cast<const UserType*>(type);
 	UserObject* uobj = static_cast<UserObject*>(obj);

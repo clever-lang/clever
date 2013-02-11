@@ -15,6 +15,18 @@
 
 namespace clever {
 
+struct IntObject : public TypeObject {
+	IntObject()
+		: value(0) {}
+
+	IntObject(long n)
+		: value(n) {}
+
+	~IntObject() {}
+
+	long value;
+};
+
 class IntType : public Type {
 public:
 	IntType()
@@ -24,9 +36,13 @@ public:
 
 	void init();
 
-	bool isPrimitive() const { return true; }
+	TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const { return new IntObject; }
 
-	void dump(const void* value, std::ostream& out) const { out << *(long*)value; }
+	void deallocData(CLEVER_TYPE_DTOR_ARGS) { delete static_cast<IntObject*>(data); }
+
+	void dump(TypeObject* value, std::ostream& out) const {
+		out << static_cast<IntObject*>(value)->value;
+	}
 
 	CLEVER_TYPE_VIRTUAL_METHOD_DECLARATIONS;
 

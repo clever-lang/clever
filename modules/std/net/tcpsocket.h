@@ -37,8 +37,7 @@ public:
 	TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
 	void deallocData(void*);
 
-	void dump(const void* value) const { dump(value, ::std::cout); }
-	void dump(const void* value, ::std::ostream& out) const { out << "TcpSocket"; }
+	void dump(TypeObject* value, ::std::ostream& out) const { out << "TcpSocket"; }
 
 	// Type methods
 	CLEVER_METHOD(setHost);

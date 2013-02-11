@@ -17,22 +17,14 @@ namespace clever { namespace modules { namespace std {
 
 using namespace icu;
 
-void UString::dump(const void* data) const
+void UString::dump(TypeObject* data, ::std::ostream& out) const
 {
-	dump(data, ::std::cout);
-}
+	UStringObject* uobj = static_cast<UStringObject*>(data);
+	UnicodeString* uvalue = uobj->intern;
 
-void UString::dump(const void* data, ::std::ostream& out) const
-{
-	ValueObject* dvalue = static_cast<ValueObject*>(const_cast<void*>(data));
-	if (dvalue) {
-		UStringObject* uobj = static_cast<UStringObject*>(dvalue->getObj());
-		UnicodeString* uvalue = uobj->intern;
-
-		if (uvalue) {
-			for(int32_t start=0; start < uvalue->length(); start++) {
-				out << static_cast<char>(uvalue->char32At(start));
-			}
+	if (uvalue) {
+		for(int32_t start=0; start < uvalue->length(); start++) {
+			out << static_cast<char>(uvalue->char32At(start));
 		}
 	}
 }

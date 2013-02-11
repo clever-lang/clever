@@ -14,18 +14,13 @@
 
 namespace clever { namespace modules { namespace std {
 
-void Condition::dump(const void* data) const
+void Condition::dump(TypeObject* data) const
 {
 	dump(data, ::std::cout);
 }
 
-void Condition::dump(const void* data, ::std::ostream& out) const
+void Condition::dump(TypeObject* data, ::std::ostream& out) const
 {
-	ValueObject* dvalue =
-		static_cast<ValueObject*>(const_cast<void*>(data));
-
-	if (dvalue) {
-	}
 }
 
 TypeObject* Condition::allocData(CLEVER_TYPE_CTOR_ARGS) const

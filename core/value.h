@@ -75,31 +75,29 @@ private:
 
 class Value : public RefCounted {
 public:
-	union DataValue {
-		bool bval;
-		long lval;
-		double dval;
-		ValueObject* obj;
-
-		DataValue() : lval(0) {}
-		DataValue(bool value) : bval(value) {}
-		DataValue(long value) : lval(value) {}
-		DataValue(double value) : dval(value) {}
-	};
-
-	Value() : m_data(), m_type(NULL), m_is_const(false) {SAFETY_CTOR();}
+	Value()
+		: m_data(NULL), m_type(NULL), m_is_const(false) {SAFETY_CTOR();}
 
 	Value(bool n, bool is_const = false)
-		: m_data(n), m_type(CLEVER_BOOL_TYPE), m_is_const(is_const) {SAFETY_CTOR();}
+		: m_data(NULL), m_type(CLEVER_BOOL_TYPE), m_is_const(is_const) {
+		SAFETY_CTOR();
+		setBool(n);
+	}
 
 	Value(long n, bool is_const = false)
-		: m_data(n), m_type(CLEVER_INT_TYPE), m_is_const(is_const) {SAFETY_CTOR();}
+		: m_data(NULL), m_type(CLEVER_INT_TYPE), m_is_const(is_const) {
+		SAFETY_CTOR();
+		setInt(n);
+	}
 
 	Value(double n, bool is_const = false)
-		: m_data(n), m_type(CLEVER_DOUBLE_TYPE), m_is_const(is_const) {SAFETY_CTOR();}
+		: m_data(NULL), m_type(CLEVER_DOUBLE_TYPE), m_is_const(is_const) {
+		SAFETY_CTOR();
+		setDouble(n);
+	}
 
 	Value(const CString* value, bool is_const = false)
-		: m_data(value), m_type(CLEVER_STR_TYPE), m_is_const(is_const) {
+		: m_data(NULL), m_type(CLEVER_STR_TYPE), m_is_const(is_const) {
 		SAFETY_CTOR();
 		setObj(m_type, new StrObject(value));
 	}
@@ -108,10 +106,8 @@ public:
 		: m_data(), m_type(type), m_is_const(is_const) {SAFETY_CTOR();}
 
 	~Value() {
-		if (m_type && !m_type->isPrimitive()) {
-			if (m_data.obj) {
-				m_data.obj->delRef();
-			}
+		if (m_type && m_data) {
+			m_data->delRef();
 		}
 		SAFETY_DTOR();
 	}
@@ -124,11 +120,7 @@ public:
 	void dump() const {	dump(std::cout); }
 	void dump(std::ostream& out) const {
 		if (m_type) {
-			if (m_type->isPrimitive()) {
-				m_type->dump(&m_data, out);
-			} else {
-				m_type->dump(m_data.obj, out);
-			}
+			m_type->dump(m_data->getObj(), out);
 		} else {
 			out << "null";
 		}
@@ -138,56 +130,29 @@ public:
 		SAFETY_LOCK();
 		clever_assert_not_null(type);
 		m_type = type;
-		m_data.obj = new ValueObject(ptr, type);
+		m_data = new ValueObject(ptr, type);
+		ptr->copyMembers(type);
 		SAFETY_ULOCK();
 	}
-	void* getObj() const { return m_data.obj->getObj(); }
+	void* getObj() const { return m_data->getObj(); }
 
-	void setInt(long n) {
-		SAFETY_LOCK();
-		m_data.lval = n;
-		m_type = CLEVER_INT_TYPE;
-		SAFETY_ULOCK();
-	}
-	long getInt() const { return m_data.lval; }
+	void setInt(long);
+	long getInt() const;
 
-	void setBool(bool n) {
-		SAFETY_LOCK();
-		m_data.bval = n;
-		m_type = CLEVER_BOOL_TYPE;
-		SAFETY_ULOCK();
-	}
-	bool getBool() const { return m_data.bval; }
+	void setBool(bool);
+	bool getBool() const;
 
-	void setData(void* data) {
+	void setDouble(double);
+	double getDouble() const;
+
+	void setStr(const CString*);
+	void setStr(StrObject*);
+	const CString* getStr() const;
+
+	void setData(ValueObject* data) {
 		m_type = NULL;
 		m_data = data;
 	}
-
-	void setDouble(double n) {
-		SAFETY_LOCK();
-		m_data.dval = n;
-		m_type = CLEVER_DOUBLE_TYPE;
-		SAFETY_ULOCK();
-	}
-	double getDouble() const { return m_data.dval; }
-
-	void setStr(const CString* str) {
-		SAFETY_LOCK();
-		cleanUp();
-		m_type = CLEVER_STR_TYPE;
-		setObj(m_type, new StrObject(str));
-		SAFETY_ULOCK();
-	}
-	void setStr(StrObject* str) {
-		SAFETY_LOCK();
-		cleanUp();
-		m_type = CLEVER_STR_TYPE;
-		setObj(m_type, str);
-		SAFETY_ULOCK();
-	}
-	const CString* getStr() const { return static_cast<StrObject*>(getObj())->getStr(); }
-
 
 	bool isInt()      const { return m_type == CLEVER_INT_TYPE;    }
 	bool isBool()     const { return m_type == CLEVER_BOOL_TYPE;   }
@@ -198,21 +163,9 @@ public:
 	bool isArray()    const { return m_type == CLEVER_ARRAY_TYPE;  }
 	bool isThread()   const { return m_type == CLEVER_THREAD_TYPE; }
 
-	const DataValue* getData() const { return &m_data; }
+	ValueObject* getData() const { return m_data; }
 
-	void copy(const Value* value) {
-		SAFETY_LOCK();
-		cleanUp();
-		m_type = value->getType();
-		memcpy(&m_data, value->getData(), sizeof(DataValue));
-
-		if (m_type && !m_type->isPrimitive()) {
-			if (m_data.obj) {
-				m_data.obj->addRef();
-			}
-		}
-		SAFETY_ULOCK();
-	}
+	void copy(const Value*);
 
 	Value* clone() const {
 		Value* val = new Value;
@@ -220,14 +173,7 @@ public:
 		return val;
 	}
 
-	bool asBool() const {
-		if (isNull()) {
-			return false;
-		} else if (m_type == CLEVER_BOOL_TYPE) {
-			return m_data.bval;
-		}
-		return true;
-	}
+	bool asBool() const;
 
 	// @TODO(muriloadriano): This is a workout to allow the assign on a const
 	// variable declaration. If the current data is null and it is const, the
@@ -249,12 +195,12 @@ public:
 
 private:
 	void cleanUp() {
-		if (m_type && !m_type->isPrimitive() && m_data.obj) {
-			m_data.obj->delRef();
+		if (m_type && m_data) {
+			m_data->delRef();
 		}
 	}
 
-	DataValue m_data;
+	ValueObject* m_data;
 	const Type* m_type;
 	bool m_is_const;
 #ifdef MOD_STD_CONCURRENT

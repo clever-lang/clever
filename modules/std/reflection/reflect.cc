@@ -19,10 +19,9 @@ TypeObject* ReflectType::allocData(CLEVER_TYPE_CTOR_ARGS) const
 	return new ReflectObject(args->at(0));
 }
 
-void ReflectType::dump(const void* data, ::std::ostream& out) const
+void ReflectType::dump(TypeObject* data, ::std::ostream& out) const
 {
-	const ReflectObject* intern = static_cast<ReflectObject*>(
-		static_cast<ValueObject*>(const_cast<void*>(data))->getObj());
+	const ReflectObject* intern = static_cast<ReflectObject*>(data);
 
 	Value* value = intern->getData();
 
