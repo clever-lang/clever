@@ -14,6 +14,7 @@
 #include <tr1/unordered_map>
 #endif
 #include <vector>
+#include "core/refcounted.h"
 #include "core/clever.h"
 #include "core/cstring.h"
 
@@ -58,6 +59,32 @@ typedef void (Type::*MethodPtr)(CLEVER_METHOD_ARGS) const;
 typedef std::tr1::unordered_map<const CString*, Value*> MemberMap;
 typedef std::tr1::unordered_map<const CString*, Value*> PropertyMap;
 typedef std::tr1::unordered_map<const CString*, Function*> MethodMap;
+
+class TypeObject {
+public:
+	TypeObject()
+		: m_properties() {}
+
+	virtual ~TypeObject();
+
+	void addProperty(const CString* name, Value* value) {
+		m_properties.insert(PropertyMap::value_type(name, value));
+	}
+
+	Value* getProperty(const CString* name) const {
+		PropertyMap::const_iterator it = m_properties.find(name);
+
+		if (it != m_properties.end()) {
+			return it->second;
+		}
+
+		return NULL;
+	}
+private:
+	PropertyMap m_properties;
+
+	DISALLOW_COPY_AND_ASSIGN(TypeObject);
+};
 
 class Type {
 public:
