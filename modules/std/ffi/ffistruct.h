@@ -28,6 +28,7 @@ typedef ::std::vector<size_t> ExtMemberOffset;
 typedef ::std::vector<char> ExtMemberType;
 typedef ::std::vector<CString> ExtMemberName;
 typedef ::std::map<CString, size_t> ExtMemberMap;
+typedef ::std::map<CString, Value*> ExtMemberDataMap;
 
 inline size_t _get_offset_ext_type(char t) {
 	switch (t) {
@@ -144,6 +145,7 @@ private:
 struct FFIStructData : public TypeObject {
 	void* data;
 	ExtStruct* m_struct_type;
+	ExtMemberDataMap m_member_map;
 
 	FFIStructData() {
 		data = 0;
@@ -152,7 +154,19 @@ struct FFIStructData : public TypeObject {
 		if (data != 0) {
 			::std::free(data);
 		}
+
+		ExtMemberDataMap::iterator it = m_member_map.begin(),
+				end = m_member_map.end();
+
+		while (it != end) {
+			if (it->second) {
+				delete it->second;
+			}
+			++it;
+		}
 	}
+
+	virtual Value* getProperty(const CString* name) const;
 
 	void setStruct(ExtStructs& structs_map, const CString& struct_type);
 	void setMember(int i, const Value* const v);
