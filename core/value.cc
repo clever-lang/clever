@@ -5,7 +5,7 @@
  * This file is distributed under the MIT license. See LICENSE for details.
  */
 
-#include "value.h"
+#include "core/value.h"
 #include "modules/std/core/int.h"
 #include "modules/std/core/double.h"
 #include "modules/std/core/bool.h"
