@@ -283,6 +283,8 @@ add_dependencies(run-mem-tests testrunner)
 install(TARGETS clever-cli RUNTIME DESTINATION bin)
 #install(TARGETS clever-static ARCHIVE DESTINATION lib)
 install(TARGETS clever-shared LIBRARY DESTINATION lib)
+install(DIRECTORY core/ modules/ types/ win32/
+	DESTINATION include/clever FILES_MATCHING PATTERN "*.h")
 
 # Files to delete
 # ---------------------------------------------------------------------------
