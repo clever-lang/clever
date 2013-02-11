@@ -38,6 +38,7 @@ inline size_t _get_offset_ext_type(char t) {
 		case 'c': return sizeof(void*);
 		case 'v': return 0;
 		case 'p': return sizeof(void*);
+		case 'o': return -1;//is a structure...
 	}
 	return 0;
 }
@@ -54,7 +55,7 @@ new offset = offset + padding = offset + (align - (offset mod align)) mod align
 class ExtStruct {
 public:
 	ExtStruct() {}
-	void addMember(const CString& member_name, char member_type) {
+	void addMember(const CString& member_name, char member_type, const CString& struct_name = "") {
 		size_t n = m_member_offset.size();
 
 		size_t size_type = _get_offset_ext_type(member_type);
