@@ -24,22 +24,33 @@
 
 namespace clever { namespace modules { namespace std {
 
+
+enum FFIType {
+	FFIINT = 'i',
+	FFIDOUBLE = 'd',
+	FFIBOOL = 'b',
+	FFIVOID = 'v',
+	FFISTRING = 's',
+	FFIPOINTER = 'p',
+	FFISTRUCT = 'o'
+};
+
 typedef ::std::vector<size_t> ExtMemberOffset;
-typedef ::std::vector<char> ExtMemberType;
+typedef ::std::vector<FFIType> ExtMemberType;
 typedef ::std::vector<CString> ExtMemberName;
 typedef ::std::map<CString, size_t> ExtMemberMap;
 typedef ::std::map<CString, Value*> ExtMemberDataMap;
 
-inline size_t _get_offset_ext_type(char t) {
+
+inline size_t _get_offset_ext_type(FFIType t) {
 	switch (t) {
-		case 'i': return sizeof(int);
-		case 'd': return sizeof(double);
-		case 'b': return sizeof(char);
-		case 's': return sizeof(void*);
-		case 'c': return sizeof(void*);
-		case 'v': return 0;
-		case 'p': return sizeof(void*);
-		case 'o': return -1;//is a structure...
+		case FFIINT: return sizeof(int);
+		case FFIDOUBLE: return sizeof(double);
+		case FFIBOOL: return sizeof(char);
+		case FFISTRING: return sizeof(void*);
+		case FFIVOID: return 0;
+		case FFIPOINTER: return sizeof(void*);
+		case FFISTRUCT: return -1;//is a structure...
 	}
 	return 0;
 }
@@ -60,12 +71,12 @@ typedef ::std::map<CString, ExtStruct*> ExtStructs;
 class ExtStruct {
 public:
 	ExtStruct() {}
-	void addMember(const CString& member_name, char member_type,
+	void addMember(const CString& member_name, FFIType member_type,
 				   const CString& member_struct_name = "",
 				   const ExtStructs* struct_map = 0) {
 		size_t n = m_member_offset.size();
 
-		if (member_type == 'o') {
+		if (member_type == FFISTRUCT) {
 			return;
 		}
 
@@ -107,7 +118,7 @@ public:
 		return m_member_size[i];
 	}
 
-	char getType(size_t i) {
+	FFIType getType(size_t i) {
 		return m_member_type[i];
 	}
 
@@ -176,6 +187,47 @@ struct FFIStructData : public TypeObject {
 	void getMember(Value* result, const CString& member_name);
 };
 
+class FFITypesBuilder : public TypeObject {
+public:
+	FFITypesBuilder(const CString& name = "")
+		: m_name(name) {}
+private:
+	CString m_name;
+};
+
+class FFITypes : public Type {
+public:
+	FFITypes()
+		: Type(CSTRING("FFITypes")) {}
+	~FFITypes() {
+		ExtStructs::iterator it = m_structs.begin(), end = m_structs.end();
+
+		while (it != end) {
+			if (it->second) {
+				delete it->second;
+			}
+			++it;
+		}
+	}
+
+	void init();
+
+	void dump(const void* data, ::std::ostream& out) const {}
+
+	virtual void increment(Value*, const VM*, CException*) const {}
+	virtual void decrement(Value*, const VM*, CException*) const {}
+
+	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const { return 0; }
+	virtual void deallocData(void* data) {}
+
+	CLEVER_METHOD(ctor);
+
+	static ExtStructs m_structs;
+
+private:
+
+	DISALLOW_COPY_AND_ASSIGN(FFITypes);
+};
 
 class FFIStruct : public Type {
 public:
@@ -186,7 +238,7 @@ public:
 		ExtStructs::iterator it = m_structs.begin(), end = m_structs.end();
 
 		while (it != end) {
-			if (it->second != 0) {
+			if (it->second) {
 				delete it->second;
 			}
 			++it;

@@ -3,16 +3,16 @@ import std.*;
 // FFI STRUCTURES DECLARATION
 FFIStruct.addStruct("ExtS");
 
-FFIStruct.addMember("ExtS", "l1", "d");
-FFIStruct.addMember("ExtS", "l2", "i");
-FFIStruct.addMember("ExtS", "l3", "i");
-FFIStruct.addMember("ExtS", "l4", "d");
+FFIStruct.addMember("ExtS", "l1", FFITypes.DOUBLE);
+FFIStruct.addMember("ExtS", "l2", FFITypes.INT);
+FFIStruct.addMember("ExtS", "l3", FFITypes.INT);
+FFIStruct.addMember("ExtS", "l4", FFITypes.DOUBLE);
 
 
-FFIStruct.addMember("ExtS", "y", "d");
-FFIStruct.addMember("ExtS", "x", "i");
-FFIStruct.addMember("ExtS", "z", "i");
-FFIStruct.addMember("ExtS", "w", "d");
+FFIStruct.addMember("ExtS", "y", FFITypes.DOUBLE);
+FFIStruct.addMember("ExtS", "x", FFITypes.INT);
+FFIStruct.addMember("ExtS", "z", FFITypes.INT);
+FFIStruct.addMember("ExtS", "w", FFITypes.DOUBLE);
 
 // FFI STRUCTURE CREATION
 var s = FFIStruct.new("ExtS");
@@ -32,12 +32,12 @@ var h =  FFILib.new("nffi");
 
 // FFI CALL
 
-h.call("setC", "v", s, 1111, 33.323123, 22, 283.123);
+h.call("setC", FFITypes.VOID, s, 1111, 33.323123, 22, 283.123);
 
-var x = h.call("getCX", "i", s);
-var y = h.call("getCY", "d", s);
-var z = h.call("getCZ", "i", s);
-var w = h.call("getCW", "d", s);
+var x = h.call("getCX", FFITypes.INT, s);
+var y = h.call("getCY", FFITypes.DOUBLE, s);
+var z = h.call("getCZ", FFITypes.INT, s);
+var w = h.call("getCW", FFITypes.DOUBLE, s);
 
 
 printf("===================\n");

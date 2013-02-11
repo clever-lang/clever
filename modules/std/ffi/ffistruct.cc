@@ -15,6 +15,8 @@
 
 namespace clever { namespace modules { namespace std {
 
+ExtStructs FFITypes::m_structs;
+
 void FFIStructData::setStruct(ExtStructs& structs_map, const CString& struct_type)
 {
 	this->m_struct_type = structs_map[struct_type];
@@ -45,26 +47,29 @@ void FFIStructData::setMember(const CString& member_name, const Value* const v)
 
 void FFIStructData::getMember(Value* result,  int i)
 {
-	char type = this->m_struct_type->getType(i);
+	FFIType type = this->m_struct_type->getType(i);
 	size_t offset = this->m_struct_type->getOffset(i);
 
 	void* value = (static_cast<char*>(data) + offset);
 
 	switch (type) {
-		case 'i':
+		case FFIINT:
 			result->setInt(*FFI_CONVERT(int, value));
 		break;
 
-		case 'd':
+		case FFIDOUBLE:
 			result->setDouble(*FFI_CONVERT(double, value));
 		break;
 
-		case 'b':
+		case FFIBOOL:
 			result->setBool(*FFI_CONVERT(bool, value));
 		break;
 
-		case 's': case 'c': case 'p':
+		case FFISTRING: case FFIPOINTER:
 			result->setData(value);
+		break;
+
+		default:
 		break;
 	}
 }
@@ -126,23 +131,26 @@ CLEVER_METHOD(FFIStruct::addStruct)
 
 CLEVER_METHOD(FFIStruct::addMember)
 {
-	if (!clever_check_args("sss")) {
+	if (!clever_check_args("ssi")) {
 		return;
 	}
 
 	const CString* s_name = args.at(0)->getStr();
 	const CString* s_member_name = args.at(1)->getStr();
-	const CString* s_member_type = args.at(2)->getStr();
+	FFIType s_member_type = static_cast<FFIType>(args.at(2)->getInt());
 
 	FFIStruct* handler = const_cast<FFIStruct*>(this);
 
 	ExtStruct* ext_struct = handler->m_structs[*s_name];
 
-	ext_struct->addMember(*s_member_name, s_member_type->at(0));
+	ext_struct->addMember(*s_member_name, s_member_type);
 }
 
 CLEVER_METHOD(FFIStruct::getMember)
 {
+	if (!clever_check_args("s")) {
+		return;
+	}
 	FFIStructData* data = CLEVER_GET_OBJECT(FFIStructData*, CLEVER_THIS());
 	const CString* member_name = args.at(0)->getStr();
 
@@ -151,6 +159,9 @@ CLEVER_METHOD(FFIStruct::getMember)
 
 CLEVER_METHOD(FFIStruct::setMember)
 {
+	if (!clever_check_args("s*")) {
+		return;
+	}
 	FFIStructData* data = CLEVER_GET_OBJECT(FFIStructData*, CLEVER_THIS());
 	const CString* member_name = args.at(0)->getStr();
 
@@ -171,5 +182,31 @@ CLEVER_TYPE_INIT(FFIStruct::init)
 			->setStatic();
 	addMethod(new Function("getMember",   (MethodPtr)&FFIStruct::getMember));
 	addMethod(new Function("setMember",   (MethodPtr)&FFIStruct::setMember));
+
+
 }
+
+CLEVER_METHOD(FFITypes::ctor)
+{
+
+}
+
+CLEVER_TYPE_INIT(FFITypes::init)
+{
+	Function* ctor = new Function("FFITypes", (MethodPtr) &FFITypes::ctor);
+
+	setConstructor(ctor);
+
+	addMethod(ctor);
+
+
+	addProperty(CSTRING("INT"),		new Value(long(FFIINT),			true));
+	addProperty(CSTRING("DOUBLE"),	new Value(long(FFIDOUBLE),		true));
+	addProperty(CSTRING("BOOL"),	new Value(long(FFIBOOL),		true));
+	addProperty(CSTRING("VOID"),	new Value(long(FFIVOID),		true));
+	addProperty(CSTRING("STRING"),	new Value(long(FFISTRING),		true));
+	addProperty(CSTRING("POINTER"),	new Value(long(FFIPOINTER),		true));
+	addProperty(CSTRING("STRUCT"),	new Value(long(FFISTRUCT),		true));
+}
+
 }}}
