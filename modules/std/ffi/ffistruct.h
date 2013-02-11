@@ -270,6 +270,7 @@ public:
 
 	CLEVER_METHOD(ctor);
 	CLEVER_METHOD(addMember);
+	CLEVER_METHOD(addFunction);
 
 	static ExtStructs m_structs;
 

@@ -207,6 +207,26 @@ CLEVER_METHOD(FFITypes::addMember)
 	ext_struct->addMember(*s_member_name, s_member_type);
 }
 
+CLEVER_METHOD(FFITypes::addFunction)
+{
+	if (!clever_check_args("s*")) {
+		return;
+	}
+
+	FFITypesBuilder* data = CLEVER_GET_OBJECT(FFITypesBuilder*, CLEVER_THIS());
+
+	const CString* s_func_name = args.at(0)->getStr();
+
+	ExtStruct* ext_struct = m_structs[data->getName()];
+	ExtMemberType ext_func_args;
+
+	for (size_t i = 1; i < args.size(); ++i) {
+		FFIType arg_type = static_cast<FFIType>(args.at(i)->getInt());
+		ext_func_args.push_back(arg_type);
+	}
+	ext_struct->addFunction(*s_func_name, ext_func_args);
+}
+
 CLEVER_TYPE_INIT(FFITypes::init)
 {
 	Function* ctor = new Function("FFITypes", (MethodPtr) &FFITypes::ctor);
@@ -216,7 +236,7 @@ CLEVER_TYPE_INIT(FFITypes::init)
 	addMethod(ctor);
 
 	addMethod(new Function("addMember",   (MethodPtr)&FFITypes::addMember));
-
+	addMethod(new Function("addFunction",   (MethodPtr)&FFITypes::addFunction));
 
 	addProperty(CSTRING("INT"),		new Value(long(FFIINT),			true));
 	addProperty(CSTRING("DOUBLE"),	new Value(long(FFIDOUBLE),		true));
