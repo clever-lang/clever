@@ -124,9 +124,9 @@ inline void _ffi_call(Value* result, ffi_call_func pf, size_t n_args,
 		} else {
 			ffi_args[i] = _find_ffi_type("p");
 
-			//FFIObjectValue* obj = static_cast<FFIObjectValue*>(CLEVER_ARG_DATA_VALUE(i));
+			FFIStructData* obj = static_cast<FFIStructData*>(v->getObj());
 
-			//ffi_values[i] = &(static_cast<FFIObjectValue*>(CLEVER_ARG_DATA_VALUE(i))->pointer);
+			ffi_values[i] = &(obj->data);
 		}
 	}
 
