@@ -254,6 +254,7 @@ CLEVER_FORCE_INLINE void VM::createInstance(const Type* type, Value* instance)
 
 	uobj->setEnvironment(utype->getEnvironment()->activate(m_call_stack.top()));
 	uobj->getEnvironment()->getValue(ValueOffset(0,0))->copy(instance);
+	uobj->getEnvironment()->getValue(ValueOffset(0,0))->setConst(true);
 
 	m_obj_store.push_back(uobj->getEnvironment());
 }

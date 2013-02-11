@@ -1,0 +1,15 @@
+[FATAL] Testing this variable overwrite
+==CODE==
+import std.io.*;
+
+class Foo {
+	var a;
+
+	function Foo() {
+		this = 2;
+	}
+}
+
+var a = Foo.new;
+==RESULT==
+Fatal error: Cannot assign to a const variable! on \S+ line \d+
