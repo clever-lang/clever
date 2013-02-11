@@ -56,14 +56,12 @@ inline size_t _get_offset_ext_type(FFIType t) {
 }
 
 inline size_t _get_padding_ext(size_t offset, size_t align) {
-	/*
-padding = (align - (offset mod align)) mod align
-new offset = offset + padding = offset + (align - (offset mod align)) mod align
-	*/
-
 	return (align - (offset % align)) % align;
 }
 
+/*
+FFISTRUCT
+*/
 
 class ExtStruct;
 typedef ::std::map<CString, ExtStruct*> ExtStructs;
@@ -188,6 +186,48 @@ struct FFIStructData : public TypeObject {
 	void getMember(Value* result, const CString& member_name);
 };
 
+
+
+class FFIStruct : public Type {
+public:
+	FFIStruct()
+		: Type(CSTRING("FFIStruct")) {}
+
+	~FFIStruct() {
+		ExtStructs::iterator it = m_structs.begin(), end = m_structs.end();
+
+		while (it != end) {
+			if (it->second) {
+				delete it->second;
+			}
+			++it;
+		}
+	}
+
+	void init();
+
+	void dump(const void* data, ::std::ostream& out) const {}
+
+	virtual void increment(Value*, const VM*, CException*) const {}
+	virtual void decrement(Value*, const VM*, CException*) const {}
+
+	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
+	virtual void deallocData(void* data);
+
+	CLEVER_METHOD(ctor);
+	CLEVER_METHOD(getMember);
+	CLEVER_METHOD(setMember);
+
+private:
+	ExtStructs m_structs;
+
+	DISALLOW_COPY_AND_ASSIGN(FFIStruct);
+};
+
+/*
+FFITYPES
+*/
+
 class FFITypesBuilder : public TypeObject {
 public:
 	FFITypesBuilder(const CString& name = "")
@@ -231,42 +271,6 @@ public:
 private:
 
 	DISALLOW_COPY_AND_ASSIGN(FFITypes);
-};
-
-class FFIStruct : public Type {
-public:
-	FFIStruct()
-		: Type(CSTRING("FFIStruct")) {}
-
-	~FFIStruct() {
-		ExtStructs::iterator it = m_structs.begin(), end = m_structs.end();
-
-		while (it != end) {
-			if (it->second) {
-				delete it->second;
-			}
-			++it;
-		}
-	}
-
-	void init();
-
-	void dump(const void* data, ::std::ostream& out) const {}
-
-	virtual void increment(Value*, const VM*, CException*) const {}
-	virtual void decrement(Value*, const VM*, CException*) const {}
-
-	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
-	virtual void deallocData(void* data);
-
-	CLEVER_METHOD(ctor);
-	CLEVER_METHOD(getMember);
-	CLEVER_METHOD(setMember);
-
-private:
-	ExtStructs m_structs;
-
-	DISALLOW_COPY_AND_ASSIGN(FFIStruct);
 };
 
 }}}

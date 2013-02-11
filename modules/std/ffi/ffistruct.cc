@@ -15,7 +15,9 @@
 
 namespace clever { namespace modules { namespace std {
 
-
+/*
+FFISTRUCT
+*/
 
 void FFIStructData::setStruct(ExtStructs& structs_map, const CString& struct_type)
 {
