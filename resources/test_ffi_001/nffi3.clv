@@ -5,7 +5,7 @@ FFIStruct.addStruct("ExtS");
 FFIStruct.addMember("ExtS", "x", "i");
 FFIStruct.addMember("ExtS", "z", "i");
 FFIStruct.addMember("ExtS", "y", "d");
-
+FFIStruct.addMember("ExtS", "w", "d");
 
 // FFI STRUCTURE CREATION
 var s = FFIStruct.new("ExtS");
@@ -14,30 +14,28 @@ var s = FFIStruct.new("ExtS");
 s.setMember("x", 1);
 s.setMember("y", 3.123);
 s.setMember("z", 2);
-
+s.setMember("w", 902.1231375);
 
 println(s.getMember("x"));
 println(s.getMember("y"));
 println(s.getMember("z"));
+println(s.getMember("w"));
 
 var h =  FFILib.new("nffi");
 
 // FFI CALL
 
-h.call("setC", "v", s, 1111, 33.323123, 22);
+h.call("setC", "v", s, 1111, 33.323123, 22, 283.123);
 
-
-println("1 =============");
 var x = h.call("getCX", "i", s);
-println("2 =============");
 var y = h.call("getCY", "d", s);
-println("3 =============");
 var z = h.call("getCZ", "i", s);
-println("4 =============");
-println(x, y, z);
-println("5 =============");
+var w = h.call("getCW", "i", s);
+
+println(x, y, z, w);
 
 println(s.getMember("x"));
 println(s.getMember("y"));
 println(s.getMember("z"));
+println(s.getMember("w"));
 
