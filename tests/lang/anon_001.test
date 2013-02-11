@@ -1,4 +1,4 @@
-Testing anonymous functions
+[FATAL] Testing anonymous functions
 ==CODE==
 import std.io.*;
 var a = 0 or function() { return "clever"; };
