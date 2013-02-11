@@ -40,7 +40,7 @@ typedef ::std::vector<FFIType> ExtMemberType;
 typedef ::std::vector<CString> ExtMemberName;
 typedef ::std::map<CString, size_t> ExtMemberMap;
 typedef ::std::map<CString, Value*> ExtMemberDataMap;
-
+typedef ::std::map<CString, ExtMemberType> ExtFuncMap;
 
 inline size_t _get_offset_ext_type(FFIType t) {
 	switch (t) {
@@ -99,6 +99,10 @@ public:
 		}
 	}
 
+	void addFunction(const CString& func_name, const ExtMemberType& args) {
+		m_func_map[func_name] = args;
+	}
+
 	size_t getMember(const CString& mn) {
 		return m_member_map[mn];
 	}
@@ -146,6 +150,7 @@ private:
 	ExtMemberName m_member_struct_name;
 	ExtMemberName m_member_name;
 	ExtMemberMap m_member_map;
+	ExtFuncMap m_func_map;
 
 	DISALLOW_COPY_AND_ASSIGN(ExtStruct);
 };
