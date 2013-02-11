@@ -14,7 +14,7 @@
 namespace clever { namespace modules { namespace std { namespace reflection {
 
 // Allocates a Reflect object
-void* ReflectType::allocData(CLEVER_TYPE_CTOR_ARGS) const
+TypeObject* ReflectType::allocData(CLEVER_TYPE_CTOR_ARGS) const
 {
 	return new ReflectObject(args->at(0));
 }

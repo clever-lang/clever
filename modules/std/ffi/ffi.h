@@ -26,7 +26,7 @@ namespace clever { namespace modules { namespace std {
 
 typedef void* LibHandler;
 
-struct FFIData {
+struct FFIData : public TypeObject {
 	FFIData()
 		: m_lib_handler(NULL) {}
 
@@ -48,7 +48,7 @@ public:
 	virtual void increment(Value*, const VM*, CException*) const {}
 	virtual void decrement(Value*, const VM*, CException*) const {}
 
-	virtual void* allocData(CLEVER_TYPE_CTOR_ARGS) const;
+	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
 	virtual void deallocData(void* data);
 
 	CLEVER_METHOD(ctor);

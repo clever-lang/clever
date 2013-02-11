@@ -164,7 +164,7 @@ public:
 	virtual void decrement(Value*, const VM*, CException*)                const;
 
 	/// Type internal data constructor
-	virtual void* allocData(CLEVER_TYPE_CTOR_ARGS) const { return NULL; }
+	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const { return NULL; }
 
 	/// Type internal data destructor
 	virtual void deallocData(CLEVER_TYPE_DTOR_ARGS) {}

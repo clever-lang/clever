@@ -15,6 +15,17 @@
 
 namespace clever { namespace modules { namespace std {
 
+struct ConditionObject : public TypeObject {
+	ConditionObject()
+		: condition(new pthread_cond_t) {}
+
+	~ConditionObject() {
+		delete condition;
+	}
+
+	pthread_cond_t* condition;
+};
+
 class Condition : public Type {
 public:
 	Condition()
@@ -30,7 +41,7 @@ public:
 
 	void init();
 
-	virtual void* allocData(CLEVER_TYPE_CTOR_ARGS) const;
+	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
 	virtual void deallocData(void* data);
 
 	CLEVER_METHOD(ctor);

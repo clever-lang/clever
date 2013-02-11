@@ -13,7 +13,7 @@
 
 namespace clever { namespace modules { namespace std { namespace net {
 
-void* TcpSocket::allocData(CLEVER_TYPE_CTOR_ARGS) const
+TypeObject* TcpSocket::allocData(CLEVER_TYPE_CTOR_ARGS) const
 {
 	SocketObject* sv = new SocketObject;
 

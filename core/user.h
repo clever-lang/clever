@@ -43,7 +43,7 @@ public:
 	void setEnvironment(Environment* env) { m_env = env; }
 	Environment* getEnvironment() const { return m_env; }
 
-	void* allocData(CLEVER_TYPE_CTOR_ARGS) const { return new UserObject; }
+	TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const { return new UserObject; }
 
 	void deallocData(CLEVER_TYPE_DTOR_ARGS) { delete static_cast<UserObject*>(data); }
 

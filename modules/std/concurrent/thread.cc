@@ -54,7 +54,7 @@ void Thread::dump(const void* data, ::std::ostream& out) const
 	}
 }
 
-void* Thread::allocData(CLEVER_TYPE_CTOR_ARGS) const
+TypeObject* Thread::allocData(CLEVER_TYPE_CTOR_ARGS) const
 {
 	ThreadData* intern = new ThreadData;
 

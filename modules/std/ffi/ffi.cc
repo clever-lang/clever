@@ -209,7 +209,7 @@ inline void _ffi_call(Value* result, ffi_call_func pf, size_t n_args,
 	free(ffi_values);
 }
 
-void* FFI::allocData(CLEVER_TYPE_CTOR_ARGS) const
+TypeObject* FFI::allocData(CLEVER_TYPE_CTOR_ARGS) const
 {
 	FFIData* data = new FFIData();
 	const CString* name = args->at(0)->getStr();

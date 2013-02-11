@@ -12,7 +12,7 @@
 
 namespace clever {
 
-void* ArrayType::allocData(CLEVER_TYPE_CTOR_ARGS) const
+TypeObject* ArrayType::allocData(CLEVER_TYPE_CTOR_ARGS) const
 {
 	ArrayObject* arr = new ArrayObject();
 	ValueVector& vec = arr->getData();

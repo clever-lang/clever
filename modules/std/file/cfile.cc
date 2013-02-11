@@ -58,7 +58,7 @@ void CFile::dump(const void* data, ::std::ostream& out) const
 }
 
 // File.new(string fileName, string openMode)
-void* CFile::allocData(CLEVER_TYPE_CTOR_ARGS) const
+TypeObject* CFile::allocData(CLEVER_TYPE_CTOR_ARGS) const
 {
 	// @TODO(muriloadriano): allow object construction with a single argument
 	// and check the argument's type.

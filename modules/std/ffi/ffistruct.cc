@@ -74,7 +74,7 @@ void FFIStructData::getMember(Value* result, const CString& member_name)
 	getMember(result, this->m_struct_type->getMember(member_name));
 }
 
-void* FFIStruct::allocData(CLEVER_TYPE_CTOR_ARGS) const
+TypeObject* FFIStruct::allocData(CLEVER_TYPE_CTOR_ARGS) const
 {
 	FFIStructData* data = new FFIStructData;
 	const CString* struct_type = args->at(0)->getStr();

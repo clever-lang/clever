@@ -13,7 +13,7 @@
 
 namespace clever { namespace modules { namespace std { namespace reflection {
 
-class ReflectObject {
+class ReflectObject : public TypeObject {
 public:
 	ReflectObject()
 		: m_data(NULL) {}
@@ -42,7 +42,7 @@ public:
 
 	virtual void dump(const void*, ::std::ostream& out) const;
 
-	void* allocData(CLEVER_TYPE_CTOR_ARGS) const;
+	TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
 
 	void deallocData(CLEVER_TYPE_DTOR_ARGS) {
 		delete static_cast<ReflectObject*>(data);

@@ -20,7 +20,7 @@ class Value;
 class VM;
 class Scope;
 
-class Thread {
+class Thread : public TypeObject {
 public:
 	enum ThreadKind { UNDEF, USER_THREAD, INTERNAL_THREAD };
 
@@ -79,7 +79,7 @@ public:
 	void dump(const void* data) const { dump(data, std::cout); }
 	void dump(const void* data, std::ostream& out) const { out << "Thread() {}"; }
 
-	void* allocData(CLEVER_TYPE_CTOR_ARGS) const { return new Thread; }
+	TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const { return new Thread; }
 
 	void deallocData(CLEVER_TYPE_DTOR_ARGS) { delete static_cast<Thread*>(data); }
 

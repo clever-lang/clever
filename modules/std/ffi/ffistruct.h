@@ -97,7 +97,7 @@ private:
 
 typedef ::std::map<CString, ExtStruct*> ExtStructs;
 
-struct FFIStructData {
+struct FFIStructData : public TypeObject {
 	void* data;
 	ExtStruct* m_struct_type;
 
@@ -142,7 +142,7 @@ public:
 	virtual void increment(Value*, const VM*, CException*) const {}
 	virtual void decrement(Value*, const VM*, CException*) const {}
 
-	virtual void* allocData(CLEVER_TYPE_CTOR_ARGS) const;
+	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
 	virtual void deallocData(void* data);
 
 	CLEVER_METHOD(ctor);

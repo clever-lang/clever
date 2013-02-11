@@ -42,7 +42,7 @@ public:
 
 	void init();
 
-	virtual void* allocData(CLEVER_TYPE_CTOR_ARGS) const;
+	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
 	virtual void deallocData(void* data);
 private:
 	CLEVER_METHOD(ctor);

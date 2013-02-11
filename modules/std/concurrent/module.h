@@ -13,7 +13,7 @@
 
 namespace clever { namespace modules { namespace std {
 
-struct ThreadData {
+struct ThreadData : public TypeObject {
 	pthread_t          	thread;
 	pthread_mutex_t*    lock;
 	Function*           entry;
