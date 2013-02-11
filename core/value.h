@@ -249,7 +249,7 @@ public:
 
 private:
 	void cleanUp() {
-		if (m_type && !m_type->isPrimitive()) {
+		if (m_type && !m_type->isPrimitive() && m_data.obj) {
 			m_data.obj->delRef();
 		}
 	}

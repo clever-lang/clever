@@ -282,7 +282,8 @@ void Resolver::visit(ClassDef* node)
 	m_stack.push(m_scope->getEnvironment());
 	node->setScope(m_scope);
 
-	Value* val = new Value();
+	Value* val = new Value(type, true);
+
 	m_scope->pushValue(CSTRING("this"), val)->voffset = m_stack.top()->pushValue(val);
 
 	type->setEnvironment(m_stack.top());

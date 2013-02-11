@@ -148,6 +148,8 @@ void Codegen::visit(Assignment* node)
 
 	IR& assign = m_builder->push(OP_ASSIGN);
 
+	assign.loc = node->getLocation();
+
 	_prepare_operand(assign.op1, node->getLhs());
 
 	if (!rhs) {
