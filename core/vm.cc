@@ -259,15 +259,14 @@ CLEVER_FORCE_INLINE void VM::createInstance(const Type* type, Value* instance)
 }
 
 // Executes the supplied function
-Value* VM::runFunction(const Function* func, std::vector<Value*>* args,
-	Environment* env)
+Value* VM::runFunction(const Function* func, std::vector<Value*>* args)
 {
 	Value* result = new Value;
 
 	if (func->isInternal()) {
 		func->getFuncPtr()(result, *args, this, &m_exception);
 	} else {
-		Environment* fenv = func->getEnvironment()->activate(env ? env : m_call_stack.top());
+		Environment* fenv = func->getEnvironment()->activate(m_call_stack.top());
 		fenv->setRetVal(result);
 		fenv->setRetAddr(m_inst.size()-1);
 
