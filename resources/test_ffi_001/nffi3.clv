@@ -3,8 +3,8 @@ import std.*;
 // FFI STRUCTURES DECLARATION
 FFIStruct.addStruct("ExtS");
 FFIStruct.addMember("ExtS", "x", "i");
-FFIStruct.addMember("ExtS", "y", "d");
 FFIStruct.addMember("ExtS", "z", "i");
+FFIStruct.addMember("ExtS", "y", "d");
 
 
 // FFI STRUCTURE CREATION
@@ -24,15 +24,20 @@ var h =  FFILib.new("nffi");
 
 // FFI CALL
 
-println("--++++++++++++--+++");
-
 h.call("setC", "v", s, 1111, 33.323123, 22);
 
-var x = h.call("getCX", "i", s);
-var y = h.call("getCY", "d", s);
-var z = h.call("getCZ", "i", s);
 
-println("=============");
+println("1 =============");
+var x = h.call("getCX", "i", s);
+println("2 =============");
+var y = h.call("getCY", "d", s);
+println("3 =============");
+var z = h.call("getCZ", "i", s);
+println("4 =============");
 println(x, y, z);
-println("=============");
+println("5 =============");
+
+println(s.getMember("x"));
+println(s.getMember("y"));
+println(s.getMember("z"));
 
