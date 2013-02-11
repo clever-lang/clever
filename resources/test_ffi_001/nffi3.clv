@@ -33,22 +33,12 @@ var h =  FFILib.new("nffi");
 
 // FFI CALL
 
-h.call("setC", FFITypes.VOID, s, 1111, 33.323123, 22, 283.123);
-
-var x = h.call("getCX", FFITypes.INT, s);
-var y = h.call("getCY", FFITypes.DOUBLE, s);
-var z = h.call("getCZ", FFITypes.INT, s);
-var w = h.call("getCW", FFITypes.DOUBLE, s);
-
-
-printf("===================\n");
-println(x, y, z, w);
+h.setC(FFITypes.VOID, s, 1111, 33.323123, 22, 283.123);
 
 printf("===================\n");
 println(s.x);
 println(s.y);
 println(s.z);
-println(s.w);
 println(s.w);
 
 printf("===================\n");
@@ -57,3 +47,4 @@ println(h.getCY(FFITypes.DOUBLE, s));
 println(h.getCZ(FFITypes.INT, s));
 println(h.getCW(FFITypes.DOUBLE, s));
 printf("===================\n");
+
