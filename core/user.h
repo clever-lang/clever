@@ -17,40 +17,17 @@ namespace clever {
 class Environment;
 
 // User object representation
-class UserObject {
+class UserObject : public TypeObject {
 public:
 	UserObject()
 		: m_env(NULL) {}
 
-	~UserObject() {
-		MemberMap::const_iterator it(m_members.begin()),
-			end(m_members.end());
-
-		while (it != end) {
-			clever_delref((*it).second);
-			++it;
-		}
-	}
+	~UserObject() {}
 
 	void setEnvironment(Environment* env) { m_env = env; }
 	Environment* getEnvironment() const { return m_env; }
-
-	void addMember(const CString* name, Value* value) {
-		m_members.insert(MemberMap::value_type(name, value));
-	}
-
-	Value* getMember(const CString* name) const {
-		MemberMap::const_iterator it = m_members.find(name);
-
-		if (it != m_members.end()) {
-			return it->second;
-		}
-
-		return NULL;
-	}
 private:
 	Environment* m_env;
-	MemberMap m_members;
 
 	DISALLOW_COPY_AND_ASSIGN(UserObject);
 };

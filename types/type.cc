@@ -14,6 +14,17 @@
 
 namespace clever {
 
+TypeObject::~TypeObject()
+{
+	PropertyMap::const_iterator it(m_properties.begin()),
+		end(m_properties.end());
+
+	while (it != end) {
+		clever_delref((*it).second);
+		++it;
+	}
+}
+
 void Type::deallocMembers()
 {
 	MemberMap::const_iterator it(m_members.begin()),

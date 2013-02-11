@@ -497,7 +497,14 @@ void Codegen::visit(Instantiation* node)
 void Codegen::visit(Property* node)
 {
 	node->getCallee()->accept(*this);
-	const Opcode op = node->getMode() == Property::WRITE ? OP_PROP_W : OP_PROP_R;
+	Opcode op;
+
+	if (node->isStatic()) {
+		op = node->getMode() == Property::WRITE ? OP_SPROP_W : OP_SPROP_R;
+	} else {
+		op = node->getMode() == Property::WRITE ? OP_PROP_W : OP_PROP_R;
+	}
+
 	IR& acc = m_builder->push(op);
 
 	_prepare_operand(acc.op1, node->getCallee());
