@@ -35,8 +35,7 @@
 
 namespace clever { namespace modules { namespace std {
 
-
-FFIMethodsMap FFI::m_methods_map;
+Function* FFI::m_generic_call;
 
 extern "C" {
 	typedef void (*ffi_call_func)();
@@ -251,7 +250,7 @@ const Function* FFIData::getMethod(const CString* name) const
 	const Function* f = TypeObject::getMethod(name);
 
 	if (f == NULL) {
-		f = FFI::m_methods_map["callThisfunction"];
+		f = FFI::m_generic_call;
 	}
 
 	return f;
@@ -378,7 +377,7 @@ CLEVER_TYPE_INIT(FFI::init)
 
 	Function* ffi_func_call = new Function("callThisFunction", (MethodPtr)&FFI::callThisFunction);
 	addMethod(ffi_func_call);
-	m_methods_map["callThisfunction"] = ffi_func_call;
+	m_generic_call = ffi_func_call;
 }
 
 // FFI module initialization

@@ -66,7 +66,7 @@ public:
 	CLEVER_METHOD(unload);
 	CLEVER_METHOD(callThisFunction);
 
-	static FFIMethodsMap m_methods_map;
+	static Function* m_generic_call;
 
 private:
 	DISALLOW_COPY_AND_ASSIGN(FFI);
