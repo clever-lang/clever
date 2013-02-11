@@ -1,18 +1,19 @@
 import std.*;
 
 // FFI STRUCTURES DECLARATION
-FFIStruct.addStruct("ExtS");
 
-FFIStruct.addMember("ExtS", "l1", FFITypes.DOUBLE);
-FFIStruct.addMember("ExtS", "l2", FFITypes.INT);
-FFIStruct.addMember("ExtS", "l3", FFITypes.INT);
-FFIStruct.addMember("ExtS", "l4", FFITypes.DOUBLE);
+var extS = FFITypes.new("ExtS");
+
+extS.addMember("l1", FFITypes.DOUBLE);
+extS.addMember("l2", FFITypes.INT);
+extS.addMember("l3", FFITypes.INT);
+extS.addMember("l4", FFITypes.DOUBLE);
 
 
-FFIStruct.addMember("ExtS", "y", FFITypes.DOUBLE);
-FFIStruct.addMember("ExtS", "x", FFITypes.INT);
-FFIStruct.addMember("ExtS", "z", FFITypes.INT);
-FFIStruct.addMember("ExtS", "w", FFITypes.DOUBLE);
+extS.addMember("y", FFITypes.DOUBLE);
+extS.addMember("x", FFITypes.INT);
+extS.addMember("z", FFITypes.INT);
+extS.addMember("w", FFITypes.DOUBLE);
 
 // FFI STRUCTURE CREATION
 var s = FFIStruct.new("ExtS");

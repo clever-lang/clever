@@ -15,7 +15,7 @@
 
 namespace clever { namespace modules { namespace std {
 
-ExtStructs FFITypes::m_structs;
+
 
 void FFIStructData::setStruct(ExtStructs& structs_map, const CString& struct_type)
 {
@@ -94,9 +94,8 @@ TypeObject* FFIStruct::allocData(CLEVER_TYPE_CTOR_ARGS) const
 {
 	FFIStructData* data = new FFIStructData;
 	const CString* struct_type = args->at(0)->getStr();
-	FFIStruct* handler = const_cast<FFIStruct*>(this);
 
-	data->setStruct(handler->m_structs, *struct_type);
+	data->setStruct(FFITypes::m_structs, *struct_type);
 
 	return data;
 }
@@ -116,35 +115,6 @@ CLEVER_METHOD(FFIStruct::ctor)
 	result->setObj(this, allocData(&args));
 }
 
-
-CLEVER_METHOD(FFIStruct::addStruct)
-{
-	if (!clever_check_args("s")) {
-		return;
-	}
-
-	const CString* s_name = args.at(0)->getStr();
-	FFIStruct* handler = const_cast<FFIStruct*>(this);
-
-	handler->m_structs[*s_name] = new ExtStruct;
-}
-
-CLEVER_METHOD(FFIStruct::addMember)
-{
-	if (!clever_check_args("ssi")) {
-		return;
-	}
-
-	const CString* s_name = args.at(0)->getStr();
-	const CString* s_member_name = args.at(1)->getStr();
-	FFIType s_member_type = static_cast<FFIType>(args.at(2)->getInt());
-
-	FFIStruct* handler = const_cast<FFIStruct*>(this);
-
-	ExtStruct* ext_struct = handler->m_structs[*s_name];
-
-	ext_struct->addMember(*s_member_name, s_member_type);
-}
 
 CLEVER_METHOD(FFIStruct::getMember)
 {
@@ -176,19 +146,62 @@ CLEVER_TYPE_INIT(FFIStruct::init)
 
 	addMethod(ctor);
 
-	addMethod(new Function("addStruct",   (MethodPtr)&FFIStruct::addStruct))
-			->setStatic();
-	addMethod(new Function("addMember",   (MethodPtr)&FFIStruct::addMember))
-			->setStatic();
 	addMethod(new Function("getMember",   (MethodPtr)&FFIStruct::getMember));
 	addMethod(new Function("setMember",   (MethodPtr)&FFIStruct::setMember));
-
-
 }
+
+
+/*
+FFITYPES
+*/
+
+ExtStructs FFITypes::m_structs;
+
 
 CLEVER_METHOD(FFITypes::ctor)
 {
+	if (!clever_check_args("s")) {
+		return;
+	}
 
+	result->setObj(this, allocData(&args));
+}
+
+TypeObject* FFITypes::allocData(CLEVER_TYPE_CTOR_ARGS) const
+{
+	const CString* struct_name = args->at(0)->getStr();
+
+	FFITypesBuilder* data = new FFITypesBuilder(*struct_name);
+
+	if (m_structs.find(*struct_name) == m_structs.end()) {
+		m_structs[*struct_name] = new ExtStruct;
+	}
+
+	return data;
+}
+
+void FFITypes::deallocData(void* value)
+{
+	FFITypesBuilder* data = static_cast<FFITypesBuilder*>(value);
+	delete data;
+}
+
+
+CLEVER_METHOD(FFITypes::addMember)
+{
+	if (!clever_check_args("si")) {
+		return;
+	}
+
+	FFITypesBuilder* data = CLEVER_GET_OBJECT(FFITypesBuilder*, CLEVER_THIS());
+
+	const CString* s_member_name = args.at(0)->getStr();
+	FFIType s_member_type = static_cast<FFIType>(args.at(1)->getInt());
+
+
+	ExtStruct* ext_struct = m_structs[data->getName()];
+
+	ext_struct->addMember(*s_member_name, s_member_type);
 }
 
 CLEVER_TYPE_INIT(FFITypes::init)
@@ -198,6 +211,8 @@ CLEVER_TYPE_INIT(FFITypes::init)
 	setConstructor(ctor);
 
 	addMethod(ctor);
+
+	addMethod(new Function("addMember",   (MethodPtr)&FFITypes::addMember));
 
 
 	addProperty(CSTRING("INT"),		new Value(long(FFIINT),			true));

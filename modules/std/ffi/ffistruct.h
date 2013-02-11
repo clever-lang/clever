@@ -180,6 +180,7 @@ struct FFIStructData : public TypeObject {
 	virtual Value* getProperty(const CString* name) const;
 
 	void setStruct(ExtStructs& structs_map, const CString& struct_type);
+
 	void setMember(int i, const Value* const v);
 	void setMember(const CString& member_name, const Value* const v);
 
@@ -191,6 +192,8 @@ class FFITypesBuilder : public TypeObject {
 public:
 	FFITypesBuilder(const CString& name = "")
 		: m_name(name) {}
+	CString& getName() { return m_name; }
+
 private:
 	CString m_name;
 };
@@ -217,10 +220,11 @@ public:
 	virtual void increment(Value*, const VM*, CException*) const {}
 	virtual void decrement(Value*, const VM*, CException*) const {}
 
-	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const { return 0; }
-	virtual void deallocData(void* data) {}
+	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
+	virtual void deallocData(void* data);
 
 	CLEVER_METHOD(ctor);
+	CLEVER_METHOD(addMember);
 
 	static ExtStructs m_structs;
 
@@ -256,8 +260,6 @@ public:
 	virtual void deallocData(void* data);
 
 	CLEVER_METHOD(ctor);
-	CLEVER_METHOD(addMember);
-	CLEVER_METHOD(addStruct);
 	CLEVER_METHOD(getMember);
 	CLEVER_METHOD(setMember);
 
