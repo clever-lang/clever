@@ -1,4 +1,4 @@
-Testing exception
+[FATAL] Testing exception
 ==CODE==
 import std.io.*;
 throw "ae";

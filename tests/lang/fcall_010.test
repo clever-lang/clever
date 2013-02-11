@@ -1,4 +1,4 @@
-Testing function call from null value
+[FATAL] Testing function call from null value
 ==CODE==
 var a;
 
