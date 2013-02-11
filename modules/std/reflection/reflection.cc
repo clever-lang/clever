@@ -60,6 +60,17 @@ static CLEVER_FUNCTION(eval)
 	}
 }
 
+// isconst(Object)
+// Returns a boolean indicating if the object is constant
+static CLEVER_FUNCTION(isconst)
+{
+	if (!clever_static_check_args(".")) {
+		return;
+	}
+
+	result->setBool(args[0]->isConst());
+}
+
 } // clever::modules::std::reflection
 
 CLEVER_MODULE_INIT(Reflection)
@@ -71,6 +82,7 @@ CLEVER_MODULE_INIT(Reflection)
 	addFunction(new Function("type",     &CLEVER_NS_FNAME(reflection, type)));
 	addFunction(new Function("eval",     &CLEVER_NS_FNAME(reflection, eval)));
 	addFunction(new Function("refcount", &CLEVER_NS_FNAME(reflection, refcount)));
+	addFunction(new Function("isconst",  &CLEVER_NS_FNAME(reflection, isconst)));
 }
 
 }}} // clever::modules::std
