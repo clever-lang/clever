@@ -5,8 +5,9 @@
 
 typedef struct{
 	int x;
-	double y;
 	int z;
+	double y;
+	double w;
 } C;
 
 void hello() {
@@ -26,10 +27,11 @@ int _sub(int a, int b){
 }
 
 
-void setC(C* s, int x, double y, int z) {
+void setC(C* s, int x, double y, int z, double w) {
 	s->x = x;
 	s->y = y;
 	s->z = z;
+	s->w = w;
 }
 
 int getCX(C* s) {
@@ -42,6 +44,10 @@ double getCY(C* s) {
 
 int getCZ(C* s) {
 	return s->z;
+}
+
+double getCW(C* s) {
+	return s->w;
 }
 
 

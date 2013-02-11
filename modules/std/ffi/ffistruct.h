@@ -16,6 +16,12 @@
 #include "types/type.h"
 #include "core/module.h"
 
+#ifndef __APPLE__
+# include <ffi.h>
+#else
+# include <ffi/ffi.h>
+#endif
+
 namespace clever { namespace modules { namespace std {
 
 typedef ::std::vector<size_t> ExtMemberOffset;
