@@ -67,8 +67,9 @@ void FFIStructData::getMember(Value* result,  int i)
 			result->setBool(*FFI_CONVERT(bool, value));
 		break;
 
-		case FFISTRING: case FFIPOINTER:
-			result->setData(value);
+		case FFISTRING:
+		case FFIPOINTER:
+			//result->setData(value);
 		break;
 
 		default:

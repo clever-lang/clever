@@ -211,7 +211,7 @@ public:
 
 	void init();
 
-	void dump(const void* data, ::std::ostream& out) const {}
+	void dump(TypeObject* data, ::std::ostream& out) const {}
 
 	virtual void increment(Value*, const VM*, CException*) const {}
 	virtual void decrement(Value*, const VM*, CException*) const {}
@@ -260,7 +260,7 @@ public:
 
 	void init();
 
-	void dump(const void* data, ::std::ostream& out) const {}
+	void dump(TypeObject* data, ::std::ostream& out) const {}
 
 	virtual void increment(Value*, const VM*, CException*) const {}
 	virtual void decrement(Value*, const VM*, CException*) const {}
