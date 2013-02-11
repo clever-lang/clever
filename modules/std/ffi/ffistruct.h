@@ -72,7 +72,10 @@ public:
 		m_member_size.push_back(size_type);
 		m_member_name.push_back(member_name);
 		m_member_type.push_back(member_type);
-		m_member_map[member_name] = n;
+
+		if (m_member_map.find(member_name) == m_member_map.end()) {
+			m_member_map[member_name] = n;
+		}
 	}
 
 	size_t getMember(const CString& mn) {
