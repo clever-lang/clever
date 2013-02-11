@@ -75,6 +75,18 @@ static bool _load_lib(FFIData* h, const CString* libname)
 	return h->m_lib_handler != NULL;
 }
 
+inline ffi_call_func _ffi_get_pf(void* lib_handler, const CString* func)
+{
+	void* fpf;
+
+	fpf = dlsym(lib_handler, func->c_str());
+	if (fpf == NULL) {
+		return 0;
+	}
+
+	return reinterpret_cast<ffi_call_func>(fpf);
+}
+
 inline void _ffi_call(Value* result, ffi_call_func pf, size_t n_args,
 					  FFIType rt, const ::std::vector<Value*>& args,
 					  size_t offset)
@@ -293,18 +305,13 @@ CLEVER_METHOD(FFI::exec)
 	size_t n_args = args.size() - 3;
 
 #ifndef CLEVER_WIN32
-	void* lib_handler =  dlopen((*lib + CLEVER_DYLIB_EXT).c_str(), RTLD_LAZY);
-	void* fpf;
-	ffi_call_func pf;
-
-	fpf = dlsym(lib_handler, func->c_str());
-	if (fpf == NULL) {
-
+	void* lib_handler = dlopen((*lib + CLEVER_DYLIB_EXT).c_str(), RTLD_LAZY);
+	ffi_call_func pf = _ffi_get_pf(lib_handler,
+								   func);
+	if (pf == 0) {
 		CLEVER_THROW("function `%S' don't exist!", func);
 		return;
 	}
-
-	pf = reinterpret_cast<ffi_call_func>(fpf);
 #endif
 
 	_ffi_call(result, pf, n_args, rt, args, 3);
@@ -324,17 +331,12 @@ CLEVER_METHOD(FFI::call)
 	size_t n_args = args.size() - 2;
 
 #ifndef CLEVER_WIN32
-	void* fpf;
-	ffi_call_func pf;
-
-	fpf = dlsym(handler->m_lib_handler, func->c_str());
-	if (fpf == NULL) {
-
+	ffi_call_func pf = _ffi_get_pf(handler->m_lib_handler,
+								   func);
+	if (pf == 0) {
 		CLEVER_THROW("function `%S' don't exist!", func);
 		return;
 	}
-
-	pf = reinterpret_cast<ffi_call_func>(fpf);
 #endif
 
 	_ffi_call(result, pf, n_args, rt, args, 2);
