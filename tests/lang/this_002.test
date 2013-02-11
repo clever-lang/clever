@@ -5,8 +5,8 @@ import std.io.*;
 class Foo {
 	var x;
 
-	function setX(n) { x = n; }
-	function getX() { return x; }
+	function setX(n) { this.x = n; }
+	function getX() { return this.x; }
 }
 
 var a = Foo.new,
@@ -16,9 +16,6 @@ a.setX(123);
 b.setX(321);
 
 println(a.getX(), b.getX());
-
-a = null;
-b = null;
 
 ==RESULT==
 123

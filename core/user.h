@@ -22,7 +22,15 @@ public:
 	UserObject()
 		: m_env(NULL) {}
 
-	~UserObject() {}
+	~UserObject() {
+		MemberMap::const_iterator it(m_members.begin()),
+			end(m_members.end());
+
+		while (it != end) {
+			clever_delref((*it).second);
+			++it;
+		}
+	}
 
 	void setEnvironment(Environment* env) { m_env = env; }
 	Environment* getEnvironment() const { return m_env; }

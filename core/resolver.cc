@@ -298,18 +298,16 @@ void Resolver::visit(AttrDecl* node)
 	}
 
 	Value* val = new Value();
-	m_scope->pushValue(name, val)->voffset = m_stack.top()->pushValue(val);
-
 	val->setConst(node->isConst());
 
-	node->getIdent()->accept(*this);
+//	m_scope->pushValue(name, val)->voffset = m_stack.top()->pushValue(val);
+//	node->getIdent()->accept(*this);
 
 	if (node->hasValue()) {
 		node->getValue()->accept(*this);
 	}
 
 	m_class->addProperty(name, val);
-	val->addRef();
 
 	node->setScope(m_scope);
 }
