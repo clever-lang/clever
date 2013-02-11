@@ -65,6 +65,7 @@ public:
 	}
 
 	void* getObj() { return m_obj; }
+
 private:
 	void* m_obj;
 	const Type* m_type;
@@ -157,6 +158,11 @@ public:
 		SAFETY_ULOCK();
 	}
 	bool getBool() const { return m_data.bval; }
+
+	void setData(void* data) {
+		m_type = NULL;
+		m_data = data;
+	}
 
 	void setDouble(double n) {
 		SAFETY_LOCK();

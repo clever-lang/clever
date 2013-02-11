@@ -6,6 +6,6 @@ LD_LIBRARY_PATH=.
 
 valgrind --tool=helgrind ../../clever  nffi.clv
 valgrind  ../../clever nffi2.clv
-
+valgrind  ../../clever nffi3.clv
 
 rm -f *.o *~ *.so
