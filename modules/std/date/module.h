@@ -16,7 +16,7 @@ namespace clever { namespace modules { namespace std {
 class DateModule : public Module {
 public:
 	DateModule()
-		: Module("date") { }
+		: Module("std.date") { }
 
 	CLEVER_MODULE_VIRTUAL_METHODS_DECLARATION;
 private:
