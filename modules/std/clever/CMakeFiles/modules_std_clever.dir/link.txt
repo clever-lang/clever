@@ -1,2 +1,0 @@
-/usr/bin/ar cr libmodules_std_clever.a  CMakeFiles/modules_std_clever.dir/module.cc.o CMakeFiles/modules_std_clever.dir/type.cc.o
-/usr/bin/ranlib libmodules_std_clever.a
