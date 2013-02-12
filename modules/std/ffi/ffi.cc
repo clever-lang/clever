@@ -73,7 +73,7 @@ static bool _load_lib(FFIData* h, const CString* libname)
 	return h->m_lib_handler != NULL;
 }
 
-inline ffi_call_func _ffi_get_pf(void* lib_handler, const CString* func)
+inline static ffi_call_func _ffi_get_pf(void* lib_handler, const CString* func)
 {
 	void* fpf = dlsym(lib_handler, func->c_str());
 
@@ -84,14 +84,12 @@ inline ffi_call_func _ffi_get_pf(void* lib_handler, const CString* func)
 	return reinterpret_cast<ffi_call_func>(fpf);
 }
 
-inline void _ffi_call(Value* result, ffi_call_func pf, size_t n_args,
-					  FFIType rt, const ::std::vector<Value*>& args,
-					  size_t offset)
+static void _ffi_call(Value* result, ffi_call_func pf, size_t n_args,
+	FFIType rt, const ::std::vector<Value*>& args, size_t offset)
 {
 	ffi_cif cif;
 	ffi_type* ffi_rt = _find_ffi_type(rt);
 	ffi_type** ffi_args = (ffi_type**) malloc(n_args * sizeof(ffi_type*));
-
 	void** ffi_values = (void**) malloc(n_args * sizeof(void*));
 
 	for (size_t i = 0; i < n_args; ++i) {
@@ -146,7 +144,6 @@ inline void _ffi_call(Value* result, ffi_call_func pf, size_t n_args,
 		result->setBool(false);
 		return;
 	}
-
 
 #ifndef CLEVER_WIN32
 	if (rt == FFIINT) {
