@@ -14,7 +14,7 @@ namespace clever { namespace modules { namespace std {
 /// Initializes Standard Date Module
 CLEVER_MODULE_INIT(DateModule)
 {
-	addType(CSTRING("Date"), new Date);
+	addType(new Date);
 }
 
 }}} // clever::modules::std
