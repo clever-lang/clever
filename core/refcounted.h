@@ -14,56 +14,68 @@
 namespace clever {
 
 class NO_INIT_VTABLE RefCounted {
-	CMutex m_mutex;
 public:
 	RefCounted()
-		:  m_mutex(), m_reference(1) {}
+		: m_reference(1) {}
 
 	explicit RefCounted(size_t reference)
-		:  m_mutex(), m_reference(reference) {}
+		: m_reference(reference) {}
 
 	virtual ~RefCounted() {}
 
 	void setReference(size_t reference) {
+#ifdef CLEVER_THREADS
 		m_mutex.lock();
 		m_reference = reference;
 		m_mutex.unlock();
+#else
+		m_reference = reference;
+#endif
 	}
 
-	size_t refCount() const {
-		const_cast<RefCounted*>(this)->m_mutex.lock();
-		size_t t = m_reference;
-		const_cast<RefCounted*>(this)->m_mutex.unlock();
-		return t;
-	}
+	size_t refCount() const { return m_reference; }
 
 	void addRef() {
-		m_mutex.lock();
 #if CLEVER_GCC_VERSION >= 40100
 		__sync_add_and_fetch(&m_reference, 1);
 #else
+# ifdef CLEVER_THREADS
+		m_mutex.lock();
 		++m_reference;
-#endif
 		m_mutex.unlock();
+# else
+		++m_reference;
+# endif
+#endif
 	}
 
 	void delRef() {
-		m_mutex.lock();
 		clever_assert(m_reference > 0, "This object has been free'd before.");
 #if CLEVER_GCC_VERSION >= 40100
 		if (__sync_sub_and_fetch(&m_reference, 1) == 0) {
-			m_mutex.unlock();
 			clever_delete(this);
-		} else m_mutex.unlock();
+		}
 #else
+# ifdef CLEVER_THREADS
+		m_mutex.lock();
 		if (--m_reference == 0) {
 			m_mutex.unlock();
 			clever_delete(this);
-		} else m_mutex.unlock();
+		} else {
+			m_mutex.unlock();
+		}
+# else
+		if (--m_reference == 0) {
+			clever_delete(this);
+		}
+# endif
 #endif
 	}
 private:
 	size_t m_reference;
+#ifdef CLEVER_THREADS
+	CMutex m_mutex;
+#endif
 	DISALLOW_COPY_AND_ASSIGN(RefCounted);
 };
 
