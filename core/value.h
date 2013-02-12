@@ -76,7 +76,7 @@ public:
 		}
 	}
 
-	TypeObject* getObj() { return m_obj; }
+	TypeObject* getObj() const { return m_obj; }
 
 private:
 	TypeObject* m_obj;
@@ -166,13 +166,6 @@ public:
 	void setStr(const CString*);
 	void setStr(StrObject*);
 	const CString* getStr() const;
-
-	void setData(ValueObject* data) {
-		SAFETY_LOCK();
-		m_type = NULL;
-		m_data = data;
-		SAFETY_ULOCK();
-	}
 
 	bool isInt()      const { return m_type == CLEVER_INT_TYPE;    }
 	bool isBool()     const { return m_type == CLEVER_BOOL_TYPE;   }
