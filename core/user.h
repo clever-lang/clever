@@ -36,9 +36,15 @@ private:
 class UserType : public Type {
 public:
 	UserType(const CString* name)
-		: Type(name, USER_TYPE), m_env(NULL) {}
+		: Type(*name, USER_TYPE), m_env(NULL) {}
 
 	~UserType() {}
+
+	void init(CLEVER_TYPE_INIT_ARGS) {
+		Function* ctor = new Function(getName(), (MethodPtr) &UserType::ctor);
+		setConstructor(ctor);
+		addMethod(ctor);
+	}
 
 	void setEnvironment(Environment* env) { m_env = env; }
 	Environment* getEnvironment() const { return m_env; }
@@ -47,14 +53,7 @@ public:
 
 	void deallocData(CLEVER_TYPE_DTOR_ARGS) { delete static_cast<UserObject*>(data); }
 
-	virtual void dump(TypeObject*) const {}
-	virtual void dump(TypeObject*, std::ostream& out) const { out << *getName(); }
-
-	void init(CLEVER_TYPE_INIT_ARGS) {
-		Function* ctor = new Function(*getName(), (MethodPtr) &UserType::ctor);
-		setConstructor(ctor);
-		addMethod(ctor);
-	}
+	virtual void dump(TypeObject*, std::ostream& out) const { out << getName(); }
 
 	CLEVER_METHOD(ctor) {
 		result->setObj(this, allocData(&args));

@@ -42,12 +42,11 @@ private:
 class StrType : public Type {
 public:
 	StrType()
-		: Type(CSTRING("String")) {}
+		: Type("String") {}
 
 	~StrType() {}
 
 	void init();
-
 	void dump(TypeObject*, std::ostream&) const;
 
 	TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const { return NULL; }

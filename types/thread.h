@@ -75,7 +75,7 @@ private:
 class ThreadType : public Type {
 public:
 	ThreadType()
-		: Type(CSTRING("Thread")) {}
+		: Type("Thread") {}
 
 	~ThreadType() {  }
 

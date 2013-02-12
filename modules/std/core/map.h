@@ -34,7 +34,7 @@ private:
 class MapType : public Type {
 public:
 	MapType()
-		: Type(CSTRING("Map")) {}
+		: Type("Map") {}
 
 	~MapType() {}
 

@@ -13,14 +13,9 @@
 
 namespace clever { namespace modules { namespace std {
 
-void Date::dump(TypeObject* data) const
-{
-	dump(data, ::std::cout);
-}
-
 void Date::dump(TypeObject* data, ::std::ostream& out) const
 {
-	const DateObject* uvalue = static_cast<const DateObject*>(data);
+	const DateObject* uvalue = static_cast<DateObject*>(data);
 
 	if (uvalue) {
 		out << *uvalue->intern;
@@ -34,17 +29,19 @@ TypeObject* Date::allocData(CLEVER_TYPE_CTOR_ARGS) const
 	if (dobj->intern) {
 		if (args->size()) {
 			*dobj->intern = static_cast<time_t>(args->at(0)->getInt());
-		} else { time(dobj->intern); }
+		} else {
+			time(dobj->intern);
+		}
 	}
 	return dobj;
 }
 
 void Date::deallocData(void *data)
 {
-	DateObject* intern = static_cast<DateObject*>(data);
+	DateObject* dobj = static_cast<DateObject*>(data);
 
-	if (intern) {
-		delete intern;
+	if (dobj) {
+		delete dobj;
 	}
 }
 
@@ -54,13 +51,13 @@ static inline void clever_date_format(const ::std::vector<Value*>* args,
 	DateObject* dobj = CLEVER_GET_OBJECT(DateObject*, CLEVER_THIS());
 
 	if (!dobj->intern) {
-		//CLEVER_THROW(eventually)
+		//clever_throw(eventually)
 		return;
 	}
 
 	const char* format = args->at(0)->getStr()->c_str();
 	if (!format) {
-		//CLEVER_THROW(eventually);
+		//clever_throw(eventually);
 		return;
 	}
 
@@ -68,7 +65,7 @@ static inline void clever_date_format(const ::std::vector<Value*>* args,
 	size_t need = strftime(NULL, -1, format, local);
 
 	if (!need) {
-		//CLEVER_THROW(eventually);
+		//clever_throw(eventually);
 		//There shouldn't be a circumstance where this arises ??
 		return;
 	} else {
@@ -138,7 +135,7 @@ CLEVER_METHOD(Date::getTime)
 	DateObject* dobj = CLEVER_GET_OBJECT(DateObject*, CLEVER_THIS());
 
 	if (!dobj->intern) {
-		//CLEVER_THROW(eventually)
+		//clever_throw(eventually)
 		return;
 	}
 

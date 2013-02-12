@@ -31,13 +31,13 @@ private:
 class TcpSocket : public Type {
 public:
 	TcpSocket() :
-		Type(CSTRING("TcpSocket")) { }
+		Type("TcpSocket") { }
 
 	void init();
+	void dump(TypeObject* value, ::std::ostream& out) const { out << "TcpSocket"; }
+
 	TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
 	void deallocData(void*);
-
-	void dump(TypeObject* value, ::std::ostream& out) const { out << "TcpSocket"; }
 
 	// Type methods
 	CLEVER_METHOD(setHost);

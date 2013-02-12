@@ -35,16 +35,12 @@ struct UStringObject : public TypeObject {
 class UString : public Type {
 public:
 	UString()
-		: Type(CSTRING("UString")) {}
+		: Type("UString") {}
 
 	~UString() {}
 
-	void dump(TypeObject* data, ::std::ostream& out) const;
-
-	virtual void increment(Value*, const VM*, CException*) const {}
-	virtual void decrement(Value*, const VM*, CException*) const {}
-
 	void init();
+	void dump(TypeObject* data, ::std::ostream& out) const;
 
 	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
 	virtual void deallocData(void* data);

@@ -108,7 +108,7 @@ void vsprintf(std::ostringstream& outstr, const char* format, va_list ap) {
 					const Type* type = va_arg(ap, const Type*);
 
 					if (type) {
-						outstr << *type->getName();
+						outstr << type->getName();
 					} else {
 						outstr << "null";
 					}
@@ -318,8 +318,8 @@ bool check_args(const ::std::vector<Value*>& args, const char* typespec,
 			case 'c':
 				if (arg_type != type) {
 					exception->setException(
-						"Argument #%l expects a %S, but %T was supplied",
-						index+1, type->getName(), arg_type);
+						"Argument #%l expects a %s, but %T was supplied",
+						index+1, &type->getName(), arg_type);
 					return false;
 				}
 				break;

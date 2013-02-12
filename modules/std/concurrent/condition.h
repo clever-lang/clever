@@ -29,7 +29,7 @@ struct ConditionObject : public TypeObject {
 class Condition : public Type {
 public:
 	Condition()
-		: Type(CSTRING("Condition")) {}
+		: Type("Condition") {}
 
 	~Condition() {}
 
