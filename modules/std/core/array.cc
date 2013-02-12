@@ -75,7 +75,7 @@ CLEVER_METHOD(ArrayType::ctor)
 CLEVER_METHOD(ArrayType::append)
 {
 	if (args.size()) {
-		ValueVector& vec = (CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS()))->getData();
+		ValueVector& vec = CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS())->getData();
 
 		for (size_t i = 0, j = args.size(); i < j; ++i) {
 			vec.push_back(args[i]->clone());
@@ -91,7 +91,7 @@ CLEVER_METHOD(ArrayType::size)
 		return;
 	}
 
-	result->setInt((CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS()))->getData().size());
+	result->setInt(CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS())->getData().size());
 }
 
 // mixed Array::at(int position)
@@ -101,7 +101,7 @@ CLEVER_METHOD(ArrayType::at)
 		return;
 	}
 
-	ValueVector& arr = (CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS()))->getData();
+	ValueVector& arr = CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS())->getData();
 
 	if (args[0]->getInt() < 0
 		|| arr.size() <= size_t(args[0]->getInt())) {
@@ -138,7 +138,7 @@ CLEVER_METHOD(ArrayType::reverse)
 		return;
 	}
 
-	ValueVector& vec = (CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS()))->getData();
+	ValueVector& vec = CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS())->getData();
 	ValueVector::reverse_iterator it(vec.rbegin()), end(vec.rend());
 	ValueVector rev;
 
@@ -179,7 +179,7 @@ CLEVER_METHOD(ArrayType::pop)
 		return;
 	}
 
-	ValueVector& vec = (CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS()))->getData();
+	ValueVector& vec = CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS())->getData();
 
 	if (!vec.size()) {
 		result->setNull();
@@ -200,7 +200,7 @@ CLEVER_METHOD(ArrayType::range)
 		return;
 	}
 
-	ValueVector& vec = (CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS()))->getData();
+	ValueVector& vec = CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS())->getData();
 
 	if (vec.empty()){
 		result->setNull();
@@ -241,7 +241,7 @@ CLEVER_METHOD(ArrayType::each)
 	}
 
 	Function* func = static_cast<Function*>(args[0]->getObj());
-	ValueVector& vec = (CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS()))->getData();
+	ValueVector& vec = CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS())->getData();
 	ValueVector results;
 
 	for (size_t i = 0, j = vec.size(); i < j; ++i) {
@@ -267,7 +267,7 @@ CLEVER_METHOD(ArrayType::erase)
 		return;
 	}
 
-	ValueVector& vec = (CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS()))->getData();
+	ValueVector& vec = CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS())->getData();
 	size_t length = vec.size();
 
 	if (!length) {
