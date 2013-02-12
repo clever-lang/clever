@@ -12,6 +12,8 @@
 
 namespace clever {
 
+#define clever_throw(val, ...) exception->setException(val, ##__VA_ARGS__)
+
 class CException {
 public:
 	CException()
