@@ -144,22 +144,6 @@ void VM::copy(const VM* vm, bool deep)
 	m_const_env  = vm->m_const_env;
 }
 
-void VM::wait()
-{
-	ThreadPool::const_iterator it(m_thread_pool.begin()), end(m_thread_pool.end());
-
-	while (it != end) {
-		for (size_t i = 0, j = it->size(); i < j; ++i) {
-			it->at(i)->t_handler.wait();
-
-			clever_delete_var(it->at(i)->vm_handler);
-			clever_delete(it->at(i));
-		}
-		++it;
-	}
-
-	m_thread_pool.clear();
-}
 
 // Function parameter binding
 static CLEVER_FORCE_INLINE void _param_binding(const Function* func, Environment* fenv,
@@ -981,8 +965,6 @@ exit_exception:
 
 exit:
 	std::for_each(m_obj_store.begin(), m_obj_store.end(), clever_delref);
-
-	wait();
 }
 
 } // clever

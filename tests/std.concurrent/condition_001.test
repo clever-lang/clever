@@ -13,6 +13,7 @@ process thread {
 }
 
 thread.run();
+thread.wait();
 
 println(c.wait(m));
 ==RESULT==

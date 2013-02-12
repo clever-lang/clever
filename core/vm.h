@@ -42,7 +42,7 @@ public:
 	VM(const IRVector& inst)
 		: m_pc(0), m_main(true), m_inst(inst),
 		  m_const_env(NULL), m_global_env(NULL), m_call_stack(), m_call_args(),
-		  m_thread_pool(), m_mutex(), f_mutex(NULL), m_try_stack() {}
+		  m_mutex(), f_mutex(NULL), m_try_stack() {}
 
 	~VM() {}
 
@@ -70,7 +70,6 @@ public:
 	/// Helper to change a temporary value pointer
 	Value* setTempValue(const Operand&, Value*) const;
 
-	ThreadPool& getThreadPool() { return m_thread_pool; }
 
 	CallStack& getCallStack() { return m_call_stack; }
 
@@ -83,8 +82,6 @@ public:
 	void run();
 	Value* runFunction(const Function*, std::vector<Value*>*);
 
-	/// Wait threads
-	void wait();
 
 	/// Methods for dumping opcodes
 #ifdef CLEVER_DEBUG
@@ -114,8 +111,6 @@ private:
 	/// Call arguments
 	std::vector<Value*> m_call_args;
 	std::vector<Environment*> m_obj_store;
-
-	ThreadPool m_thread_pool;
 
 	CMutex m_mutex;
 	CMutex* f_mutex;

@@ -13,12 +13,15 @@
 #include "core/value.h"
 #include "core/environment.h"
 #include "types/type.h"
+#include "core/vm.h"
 
 namespace clever {
 
 class Value;
 class VM;
 class Scope;
+
+typedef ::std::vector<VMThread*> VMThreads;
 
 class Thread : public TypeObject {
 public:
@@ -33,7 +36,7 @@ public:
 	Thread(std::string name, size_t addr)
 		: m_name(name), m_type(UNDEF), m_environment(NULL) { m_addr = addr; }
 
-	~Thread() {}
+	~Thread();
 
 	void setName(std::string name) { m_name = name; }
 	const std::string& getName() const { return m_name; }
@@ -51,15 +54,19 @@ public:
 	void setAddr(size_t addr) { m_addr = addr; }
 	void setID(size_t id) { m_thread_id = id; }
 	void setNThreads(size_t n) { m_n_threads = n; }
+	void wait();
 
 	Environment* getEnvironment() const { return m_environment; }
 	void setEnvironment(Environment* e) { m_environment = e; }
+
+	VMThreads& getThreadPool() { return m_threads; }
 private:
 	std::string m_name;
 	ThreadKind m_type;
 	size_t m_thread_id;
 	size_t m_n_threads;
 	size_t m_addr;
+	VMThreads m_threads;
 
 	Environment* m_environment;
 
@@ -78,9 +85,8 @@ public:
 
 	void dump(TypeObject* data, std::ostream& out) const { out << "Thread() {}"; }
 
-	TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const { return new Thread; }
-
-	void deallocData(CLEVER_TYPE_DTOR_ARGS) { delete static_cast<Thread*>(data); }
+	TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
+	void deallocData(CLEVER_TYPE_DTOR_ARGS);
 
 	CLEVER_METHOD(run);
 	CLEVER_METHOD(wait);
