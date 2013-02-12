@@ -39,7 +39,6 @@ include(environment.cmake)
 # ---------------------------------------------------------------------------
 include(dependencies.cmake)
 
-
 if (TCMALLOC)
 	set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -ltcmalloc")
 else (TCMALLOC)
@@ -58,6 +57,8 @@ if (GEN_PARSER)
 		message(FATAL_ERROR "Clever parsers cannot be generated with Bison 2.7 yet.")
 	endif (NOT ${BISON_VERSION} VERSION_LESS "2.7.0")
 
+	message(STATUS "Clever parsers will be generated again.")
+
 	if (${RE2C_VERSION} VERSION_GREATER "0.13.0")
 		list(APPEND re2c_opts "-c")
 	endif (${RE2C_VERSION} VERSION_GREATER "0.13.0")
@@ -66,17 +67,23 @@ if (GEN_PARSER)
 		list(APPEND re2c_opts "--case-inverted")
 	endif (${RE2C_VERSION} VERSION_GREATER "0.13.2")
 
-	add_custom_command(
-		OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/core/parser.cc
-		COMMAND ${BISON_EXECUTABLE} -l -o ${CMAKE_CURRENT_SOURCE_DIR}/core/parser.cc
-			${CMAKE_CURRENT_SOURCE_DIR}/core/parser.y
-		DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/core/parser.y)
+	set(core_dir ${CMAKE_CURRENT_SOURCE_DIR}/core)
 
 	add_custom_command(
-		OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/core/scanner.cc
-		COMMAND ${RE2C_EXECUTABLE} ${re2c_opts} -o ${CMAKE_CURRENT_SOURCE_DIR}/core/scanner.cc
-			${CMAKE_CURRENT_SOURCE_DIR}/core/scanner.re
-		DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/core/parser.cc ${CMAKE_CURRENT_SOURCE_DIR}/core/scanner.re)
+		OUTPUT ${core_dir}/parser.cc
+		COMMAND ${BISON_EXECUTABLE} -l -o ${core_dir}/parser.cc
+			${core_dir}/parser.y
+		DEPENDS ${core_dir}/parser.y
+		COMMENT "Generating parser from parser.y")
+
+	add_custom_command(
+		OUTPUT ${core_dir}/core/scanner.cc
+		COMMAND ${RE2C_EXECUTABLE} ${re2c_opts} -o ${core_dir}/scanner.cc
+			${core_dir}/scanner.re
+		DEPENDS ${core_dir}/parser.cc ${core_dir}/scanner.re
+		COMMENT "Generating scanner/lexer from scanner.re")
+
+	set(core_dir)
 
 endif (GEN_PARSER)
 
