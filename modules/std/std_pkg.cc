@@ -13,6 +13,9 @@ namespace clever { namespace modules {
 void Std::init()
 {
 	addModule(new std::CoreModule);
+#ifdef HAVE_MOD_STD_CLEVER
+	addModule(new std::CleverModule);
+#endif
 #ifdef HAVE_MOD_STD_CONCURRENT
 	addModule(new std::ConcurrencyModule);
 #endif

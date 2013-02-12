@@ -19,6 +19,7 @@ clever_add_module(web_request    OFF "enable the request module"    "")
 clever_add_module(web_session    OFF "enable the session module"    "")
 
 # Simple modules
+clever_add_simple_module(std_clever     ON  "enable the clever module"     "")
 clever_add_simple_module(std_file       ON  "enable the file module"       "")
 clever_add_simple_module(std_io         ON  "enable the io module"         "")
 clever_add_simple_module(std_math       ON  "enable the math module"       "")
