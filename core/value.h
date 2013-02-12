@@ -39,11 +39,23 @@ extern Type* g_clever_map_type;
 # define SAFETY_DTOR() pthread_mutex_destroy(&m_mutex)
 # define SAFETY_LOCK() pthread_mutex_lock(&m_mutex)
 # define SAFETY_ULOCK() pthread_mutex_unlock(&m_mutex)
+# define SAFETY_GET(A, B, C) A C;\
+pthread_mutex_lock(&m_mutex);\
+C = static_cast<B*>(getObj())->value;\
+pthread_mutex_unlock(&m_mutex);\
+return C;
+# define SAFETY_GET_STR(A, B, C) A C;\
+pthread_mutex_lock(&m_mutex);\
+C = static_cast<B*>(getObj())->getStr();\
+pthread_mutex_unlock(&m_mutex);\
+return C;
 #else
 # define SAFETY_CTOR()
 # define SAFETY_DTOR()
 # define SAFETY_LOCK()
 # define SAFETY_ULOCK()
+# define SAFETY_GET(A, B, C) return static_cast<B*>(getObj())->value;
+# define SAFETY_GET_STR(A, B, C) return static_cast<B*>(getObj())->getStr();
 #endif
 
 typedef std::map     <std::string, Value*>  ValueMap;

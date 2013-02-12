@@ -14,7 +14,7 @@
 
 namespace clever {
 
-static CLEVER_THREAD_FUNC(_thread_control)
+CLEVER_THREAD_FUNC(_thread_control)
 {
 	VM* vm_handler = static_cast<VMThread*>(arg)->vm_handler;
 
@@ -75,6 +75,7 @@ CLEVER_METHOD(ThreadType::run)
 
 	size_t thread_addr = tdata->getAddr();
 	size_t n_threads = tdata->getNThreads();
+
 
 	for (size_t i = 0; i < n_threads; ++i) {
 		VMThread* thread = new VMThread;

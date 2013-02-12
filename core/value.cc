@@ -46,7 +46,7 @@ void Value::setInt(long n)
 
 long Value::getInt() const
 {
-	return static_cast<IntObject*>(getObj())->value;
+	SAFETY_GET(long, IntObject, v);
 }
 
 void Value::setDouble(double n)
@@ -60,7 +60,7 @@ void Value::setDouble(double n)
 
 double Value::getDouble() const
 {
-	return static_cast<DoubleObject*>(getObj())->value;
+	SAFETY_GET(double, DoubleObject, v);
 }
 
 void Value::setStr(const CString* str)
@@ -82,7 +82,7 @@ void Value::setStr(StrObject* str) {
 
 const CString* Value::getStr() const
 {
-	return static_cast<StrObject*>(getObj())->getStr();
+	SAFETY_GET_STR(CString*, StrObject, v);
 }
 
 void Value::setBool(bool n)
@@ -96,7 +96,7 @@ void Value::setBool(bool n)
 
 bool Value::getBool() const
 {
-	return static_cast<BoolObject*>(getObj())->value;
+	SAFETY_GET(bool, BoolObject, v);
 }
 
 } // clever
