@@ -36,7 +36,7 @@ public:
 	Thread(std::string name, size_t addr)
 		: m_name(name), m_type(UNDEF), m_environment(NULL) { m_addr = addr; }
 
-	~Thread();
+	~Thread() { wait(); }
 
 	void setName(std::string name) { m_name = name; }
 	const std::string& getName() const { return m_name; }
@@ -85,8 +85,12 @@ public:
 
 	void dump(TypeObject* data, std::ostream& out) const { out << "Thread() {}"; }
 
-	TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
-	void deallocData(CLEVER_TYPE_DTOR_ARGS);
+	TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const { return new Thread; }
+
+	void deallocData(CLEVER_TYPE_DTOR_ARGS) {
+		static_cast<Thread*>(data)->wait();
+		delete static_cast<Thread*>(data);
+	}
 
 	CLEVER_METHOD(run);
 	CLEVER_METHOD(wait);

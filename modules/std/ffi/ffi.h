@@ -24,27 +24,28 @@
 
 namespace clever { namespace modules { namespace std {
 
+class FFI;
 typedef void* LibHandler;
 
 typedef ::std::map<CString, Function*> FFIMethodsMap;
 typedef ::std::map<CString, bool> FFIMethodsStatus;
 
-
 struct FFIData : public TypeObject {
-	FFIData()
-		: m_lib_handler(NULL) {}
+	FFIData(const FFI* type)
+		: m_lib_handler(NULL), m_ffi(type) {}
 
-	virtual const Function* getMethod(const CString* name) const;
+	virtual const Function* getMethod(const CString*) const;
 
 	::std::string m_func_name;
 	::std::string m_lib_name;
 	LibHandler m_lib_handler;
+	const FFI* m_ffi;
 };
 
 class FFI : public Type {
 public:
 	FFI()
-		: Type(CSTRING("FFILib")) {}
+		: Type(CSTRING("FFILib")), m_call_handler(NULL) {}
 
 	~FFI() {}
 
@@ -58,17 +59,17 @@ public:
 	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
 	virtual void deallocData(void* data);
 
-	CLEVER_METHOD(ctor);
+	const Function* getCallHandler() const { return m_call_handler; }
 
+	CLEVER_METHOD(ctor);
 	CLEVER_METHOD(call);
 	CLEVER_METHOD(exec);
 	CLEVER_METHOD(load);
 	CLEVER_METHOD(unload);
 	CLEVER_METHOD(callThisFunction);
-
-	static Function* m_generic_call;
-
 private:
+	const Function* m_call_handler;
+
 	DISALLOW_COPY_AND_ASSIGN(FFI);
 };
 

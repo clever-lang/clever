@@ -35,8 +35,6 @@
 
 namespace clever { namespace modules { namespace std {
 
-Function* FFI::m_generic_call;
-
 extern "C" {
 	typedef void (*ffi_call_func)();
 }
@@ -75,11 +73,10 @@ static bool _load_lib(FFIData* h, const CString* libname)
 	return h->m_lib_handler != NULL;
 }
 
-inline ffi_call_func _ffi_get_pf(void* lib_handler, const CString* func)
+inline static ffi_call_func _ffi_get_pf(void* lib_handler, const CString* func)
 {
-	void* fpf;
+	void* fpf = dlsym(lib_handler, func->c_str());
 
-	fpf = dlsym(lib_handler, func->c_str());
 	if (fpf == NULL) {
 		return 0;
 	}
@@ -87,15 +84,13 @@ inline ffi_call_func _ffi_get_pf(void* lib_handler, const CString* func)
 	return reinterpret_cast<ffi_call_func>(fpf);
 }
 
-inline void _ffi_call(Value* result, ffi_call_func pf, size_t n_args,
-					  FFIType rt, const ::std::vector<Value*>& args,
-					  size_t offset)
+static void _ffi_call(Value* result, ffi_call_func pf, size_t n_args,
+	FFIType rt, const ::std::vector<Value*>& args, size_t offset)
 {
 	ffi_cif cif;
 	ffi_type* ffi_rt = _find_ffi_type(rt);
-	ffi_type** ffi_args = (ffi_type**) malloc(n_args*sizeof(ffi_type*));
-
-	void** ffi_values = (void**) malloc(n_args*sizeof(void*));
+	ffi_type** ffi_args = (ffi_type**) malloc(n_args * sizeof(ffi_type*));
+	void** ffi_values = (void**) malloc(n_args * sizeof(void*));
 
 	for (size_t i = 0; i < n_args; ++i) {
 		Value* v = args.at(i + offset);
@@ -111,18 +106,19 @@ inline void _ffi_call(Value* result, ffi_call_func pf, size_t n_args,
 		} else if (v->isBool()) {
 			ffi_args[i] = _find_ffi_type(FFIBOOL);
 
-			char* b=(char*) malloc (sizeof(char));
+			char* b = (char*) malloc (sizeof(char));
 
 			*b = v->getBool();
 
 			ffi_values[i] = b;
 		} else if (v->isStr()) {
 			const char* st = v->getStr()->c_str();
-			char** s = (char**) malloc (sizeof(char*));
-			*s = (char*) malloc (sizeof(char)* (strlen(st)+1));
+			char** s = (char**) malloc(sizeof(char*));
 
-			strcpy(*s,st);
-			(*s)[strlen(st)]='\0';
+			*s = (char*) malloc (sizeof(char) * (strlen(st) + 1));
+
+			strcpy(*s, st);
+			(*s)[strlen(st)] = '\0';
 
 			ffi_args[i] = _find_ffi_type(FFISTRING);
 
@@ -130,7 +126,7 @@ inline void _ffi_call(Value* result, ffi_call_func pf, size_t n_args,
 		} else if (v->isDouble()) {
 			ffi_args[i] = _find_ffi_type(FFIDOUBLE);;
 
-			double* d = (double*)malloc(sizeof(double));
+			double* d = (double*) malloc(sizeof(double));
 
 			*d = v->getDouble();
 
@@ -145,10 +141,9 @@ inline void _ffi_call(Value* result, ffi_call_func pf, size_t n_args,
 	}
 
 	if (ffi_prep_cif(&cif, FFI_DEFAULT_ABI, n_args, ffi_rt, ffi_args) != FFI_OK) {
-		 result->setBool(false);
-		 return;
+		result->setBool(false);
+		return;
 	}
-
 
 #ifndef CLEVER_WIN32
 	if (rt == FFIINT) {
@@ -184,7 +179,6 @@ inline void _ffi_call(Value* result, ffi_call_func pf, size_t n_args,
 
 		result->setBool(vc);
 	} else if (rt == FFIVOID) {
-
 		ffi_call(&cif, pf, NULL, ffi_values);
 
 		result->setBool(true);
@@ -199,7 +193,6 @@ inline void _ffi_call(Value* result, ffi_call_func pf, size_t n_args,
 	} else {
 		result->setBool(true);
 	}
-
 #endif
 
 	for (size_t i = 0; i < n_args; ++i) {
@@ -210,7 +203,7 @@ inline void _ffi_call(Value* result, ffi_call_func pf, size_t n_args,
 		} else if (v->isBool()) {
 			free((char*)ffi_values[i]);
 		} else if (v->isStr()) {
-			char** v=(char**)ffi_values[i];
+			char** v= (char**)ffi_values[i];
 			free(v[0]);
 			free(v);
 		} else if (v->isDouble()) {
@@ -225,7 +218,7 @@ inline void _ffi_call(Value* result, ffi_call_func pf, size_t n_args,
 
 TypeObject* FFI::allocData(CLEVER_TYPE_CTOR_ARGS) const
 {
-	FFIData* data = new FFIData();
+	FFIData* data = new FFIData(this);
 	const CString* name = args->at(0)->getStr();
 
 	if (!_load_lib(data, name)) {
@@ -246,6 +239,7 @@ void FFI::deallocData(void* value)
 	delete data;
 }
 
+// FFILib constructor
 CLEVER_METHOD(FFI::ctor)
 {
 	if (!clever_check_args("s")) {
@@ -258,11 +252,10 @@ CLEVER_METHOD(FFI::ctor)
 const Function* FFIData::getMethod(const CString* name) const
 {
 	const_cast<FFIData*>(this)->m_func_name = *name;
-
 	const Function* f = TypeObject::getMethod(name);
 
 	if (f == NULL) {
-		f = FFI::m_generic_call;
+		f = m_ffi->getCallHandler();
 	}
 
 	return f;
@@ -271,7 +264,6 @@ const Function* FFIData::getMethod(const CString* name) const
 CLEVER_METHOD(FFI::callThisFunction)
 {
 	FFIData* handler = CLEVER_GET_OBJECT(FFIData*, CLEVER_THIS());
-
 	const CString func = handler->m_func_name;
 	FFIType rt = static_cast<FFIType>(args.at(0)->getInt());
 	size_t n_args = args.size() - 1;
@@ -293,6 +285,7 @@ CLEVER_METHOD(FFI::callThisFunction)
 	_ffi_call(result, pf, n_args, rt, args, 1);
 }
 
+// FFILib.exec()
 CLEVER_METHOD(FFI::exec)
 {
 	if (!clever_check_args("ss*")) {
@@ -318,6 +311,7 @@ CLEVER_METHOD(FFI::exec)
 	dlclose(lib_handler);
 }
 
+// FFILib.call()
 CLEVER_METHOD(FFI::call)
 {
 	if (!clever_check_args("s*")) {
@@ -342,6 +336,7 @@ CLEVER_METHOD(FFI::call)
 	_ffi_call(result, pf, n_args, rt, args, 2);
 }
 
+// FFILib.load()
 CLEVER_METHOD(FFI::load)
 {
 	FFIData* data = CLEVER_GET_OBJECT(FFIData*, CLEVER_THIS());
@@ -353,6 +348,7 @@ CLEVER_METHOD(FFI::load)
 	result->setBool(_load_lib(data, args.at(0)->getStr()));
 }
 
+// FFILib.unload()
 CLEVER_METHOD(FFI::unload)
 {
 	FFIData* data = CLEVER_GET_OBJECT(FFIData*, CLEVER_THIS());
@@ -366,20 +362,19 @@ CLEVER_METHOD(FFI::unload)
 // FFI type initialization
 CLEVER_TYPE_INIT(FFI::init)
 {
-	Function* ctor = new Function("FFILib", (MethodPtr) &FFI::ctor);
+	Function* ctor  = new Function("FFILib", (MethodPtr) &FFI::ctor);
+	Function* fcall = new Function("callThisFunction", (MethodPtr)&FFI::callThisFunction);
 
 	setConstructor(ctor);
 
 	addMethod(ctor);
+	addMethod(fcall);
 	addMethod(new Function("call",   (MethodPtr)&FFI::call));
-	addMethod(new Function("exec",   (MethodPtr)&FFI::exec))
-			->setStatic();
+	addMethod(new Function("exec",   (MethodPtr)&FFI::exec))->setStatic();
 	addMethod(new Function("load",   (MethodPtr)&FFI::load));
 	addMethod(new Function("unload", (MethodPtr)&FFI::unload));
 
-	Function* ffi_func_call = new Function("callThisFunction", (MethodPtr)&FFI::callThisFunction);
-	addMethod(ffi_func_call);
-	m_generic_call = ffi_func_call;
+	m_call_handler = fcall;
 }
 
 // FFI module initialization

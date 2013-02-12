@@ -24,22 +24,10 @@ CLEVER_THREAD_FUNC(_thread_control)
 	return NULL;
 }
 
-// Thread.toString()
-CLEVER_METHOD(ThreadType::toString)
-{
-	std::ostringstream str;
-
-	const Thread* thread = CLEVER_GET_OBJECT(Thread*, CLEVER_THIS());
-
-	str << thread->getID();
-
-	result->setStr(CSTRING(str.str()));
-}
-
 // Thread.wait()
 void Thread::wait()
 {
-	VMThreads& thread_list = this->getThreadPool();
+	VMThreads& thread_list = getThreadPool();
 
 	for (size_t i = 0, j = thread_list.size(); i < j; ++i) {
 		VMThread* t = thread_list.at(i);
@@ -51,16 +39,31 @@ void Thread::wait()
 	thread_list.clear();
 }
 
-Thread::~Thread()
+
+// Thread.toString()
+CLEVER_METHOD(ThreadType::toString)
 {
-	wait();
+	if (!clever_check_no_args()) {
+		return;
+	}
+
+	std::ostringstream str;
+
+	const Thread* thread = CLEVER_GET_OBJECT(Thread*, CLEVER_THIS());
+
+	str << thread->getID();
+
+	result->setStr(CSTRING(str.str()));
 }
 
+// Thread.wait()
 CLEVER_METHOD(ThreadType::wait)
 {
-	Thread* tdata = CLEVER_GET_OBJECT(Thread*, CLEVER_THIS());
+	if (!clever_check_no_args()) {
+		return;
+	}
 
-	tdata->wait();
+	CLEVER_GET_OBJECT(Thread*, CLEVER_THIS())->wait();
 }
 
 // Thread.run()
@@ -96,17 +99,7 @@ CLEVER_METHOD(ThreadType::run)
 	m_vm->getMutex()->unlock();
 }
 
-TypeObject* ThreadType::allocData(CLEVER_TYPE_CTOR_ARGS) const
-{
-	return new Thread;
-}
-
-void ThreadType::deallocData(CLEVER_TYPE_DTOR_ARGS)
-{
-	static_cast<Thread*>(data)->wait();
-	delete static_cast<Thread*>(data);
-}
-
+// Thread type initialization
 CLEVER_TYPE_INIT(ThreadType::init)
 {
 	// Methods
