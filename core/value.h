@@ -212,7 +212,6 @@ public:
 
 	void setConst(bool constness = true) {
 		m_is_const = constness;
-
 	}
 
 private:
