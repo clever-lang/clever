@@ -51,9 +51,9 @@ void Date::deallocData(void *data)
 static inline void clever_date_format(const ::std::vector<Value*>* args,
 	const Value* obj, Value* result, bool utc)
 {
-	time_t* intern = CLEVER_GET_OBJECT(time_t*, CLEVER_THIS());
+	DateObject* dobj = CLEVER_GET_OBJECT(DateObject*, CLEVER_THIS());
 
-	if (!intern) {
+	if (!dobj->intern) {
 		//CLEVER_THROW(eventually)
 		return;
 	}
@@ -64,14 +64,9 @@ static inline void clever_date_format(const ::std::vector<Value*>* args,
 		return;
 	}
 
-	struct tm* local;
-	if (utc) {
-		local = gmtime(intern);
-	} else {
-		local = localtime(intern);
-	}
-
+	struct tm* local = utc ? gmtime(dobj->intern) : localtime(dobj->intern);
 	size_t need = strftime(NULL, -1, format, local);
+
 	if (!need) {
 		//CLEVER_THROW(eventually);
 		//There shouldn't be a circumstance where this arises ??
@@ -140,14 +135,14 @@ CLEVER_METHOD(Date::uformat)
 // Returns the time represented by this Date object as a Unix timestamp
 CLEVER_METHOD(Date::getTime)
 {
-	time_t* intern = CLEVER_GET_OBJECT(time_t*, CLEVER_THIS());
+	DateObject* dobj = CLEVER_GET_OBJECT(DateObject*, CLEVER_THIS());
 
-	if (!intern) {
+	if (!dobj->intern) {
 		//CLEVER_THROW(eventually)
 		return;
 	}
 
-	result->setInt(*intern);
+	result->setInt(*dobj->intern);
 }
 
 // Date Date.new([int time])

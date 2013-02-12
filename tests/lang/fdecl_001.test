@@ -1,4 +1,4 @@
-Invalid default argument position
+[FATAL] Invalid default argument position
 ==CODE==
 function f(a=1, b) {
 }

@@ -1,4 +1,4 @@
-Testing increment operator on type which does not implement it
+[FATAL] Testing increment operator on type which does not implement it
 ==CODE==
 var a = [1, 2, 3]; a++;
 ==RESULT==

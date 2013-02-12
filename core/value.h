@@ -120,7 +120,7 @@ public:
 	void dump() const {	dump(std::cout); }
 	void dump(std::ostream& out) const {
 		if (m_type) {
-			m_type->dump(m_data->getObj(), out);
+			m_type->dump(getObj(), out);
 		} else {
 			out << "null";
 		}
@@ -134,7 +134,7 @@ public:
 		ptr->copyMembers(type);
 		SAFETY_ULOCK();
 	}
-	void* getObj() const { return m_data->getObj(); }
+	TypeObject* getObj() const { return m_data->getObj(); }
 
 	void setInt(long);
 	long getInt() const;
@@ -170,6 +170,7 @@ public:
 	Value* clone() const {
 		Value* val = new Value;
 		val->copy(this);
+		val->setConst(isConst());
 		return val;
 	}
 
