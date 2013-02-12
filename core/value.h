@@ -124,7 +124,12 @@ public:
 		SAFETY_DTOR();
 	}
 
-	const Type* getType() const { return m_type; }
+	const Type* getType() const {
+		SAFETY_LOCK();
+		const Type* t = m_type;
+		SAFETY_ULOCK();
+		return t;
+	}
 
 	void setNull() { SAFETY_LOCK(); m_type = NULL; SAFETY_ULOCK(); }
 	bool isNull() const { return m_type == NULL; }
@@ -139,10 +144,12 @@ public:
 	}
 
 	void setObj(const Type* type, TypeObject* ptr) {
+		SAFETY_LOCK();
 		clever_assert_not_null(type);
 		m_type = type;
 		m_data = new ValueObject(ptr, type);
 		ptr->copyMembers(type);
+		SAFETY_ULOCK();
 	}
 
 	TypeObject* getObj() const {
