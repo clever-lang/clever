@@ -165,7 +165,7 @@ if (UNIX)
 
 		# Add "-lmysql" to the end of the linker command line.
 		if (MOD_DB_MYSQL)
-			set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -lmysql")
+			set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -lmysqlclient")
 		endif (MOD_DB_MYSQL)
 
 	endif (${LSB_RELEASE} MATCHES "Ubuntu")

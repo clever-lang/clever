@@ -17,7 +17,7 @@ clever_add_module(std_unicode    ON  "enable the unicode module"    "")
 clever_add_module(std_fcgi       OFF "enable the fcgi module"       "")
 clever_add_module(web_request    OFF "enable the request module"    "")
 clever_add_module(web_session    OFF "enable the session module"    "")
-clever_add_module(db_mysql       OFF  "enable the mysql module"      "")
+clever_add_module(db_mysql       ON  "enable the mysql module"      "")
 
 # Simple modules
 clever_add_simple_module(std_clever     ON  "enable the clever module"     "")
