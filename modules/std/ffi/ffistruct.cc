@@ -36,7 +36,25 @@ void FFIStructData::setMember(int i, const Value* const v)
 {
 	size_t offset = this->m_struct_type->getOffset(i);
 	size_t size = this->m_struct_type->getSize(i);
-	memcpy(static_cast<char*>(data) + offset, v->getData(), size);
+	FFIType type = this->m_struct_type->getType(i);
+	switch (type) {
+		case FFIINT:
+			{
+				int w = v->getInt();
+				memcpy(static_cast<char*>(data) + offset, &w, size);
+			}
+		break;
+
+		case FFIDOUBLE:
+			{
+				double w = v->getDouble();
+				memcpy(static_cast<char*>(data) + offset, &w, size);
+			}
+		break;
+
+		default:
+		break;
+	}
 }
 
 void FFIStructData::setMember(const CString& member_name, const Value* const v)

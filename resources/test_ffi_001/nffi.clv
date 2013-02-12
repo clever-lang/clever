@@ -30,3 +30,4 @@ process t[2] {
 }
 
 t.run();
+t.wait();
