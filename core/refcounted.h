@@ -22,7 +22,7 @@ public:
 
 	virtual ~RefCounted() {}
 
-	void setReference(size_t reference) { m_reference = reference; }
+	void setReference(size_t reference) {  m_reference = reference;  }
 
 	size_t refCount() const { return m_reference; }
 
@@ -36,7 +36,6 @@ public:
 
 	void delRef() {
 		clever_assert(m_reference > 0, "This object has been free'd before.");
-
 #if CLEVER_GCC_VERSION >= 40100
 		if (__sync_sub_and_fetch(&m_reference, 1) == 0) {
 			clever_delete(this);
@@ -49,7 +48,6 @@ public:
 	}
 private:
 	size_t m_reference;
-
 	DISALLOW_COPY_AND_ASSIGN(RefCounted);
 };
 
