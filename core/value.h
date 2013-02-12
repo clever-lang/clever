@@ -170,6 +170,7 @@ public:
 	Value* clone() const {
 		Value* val = new Value;
 		val->copy(this);
+		val->setConst(isConst());
 		return val;
 	}
 
