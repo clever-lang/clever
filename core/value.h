@@ -124,12 +124,7 @@ public:
 		SAFETY_DTOR();
 	}
 
-	const Type* getType() const {
-		SAFETY_LOCK();
-		const Type* t = m_type;
-		SAFETY_ULOCK();
-		return t;
-	}
+	const Type* getType() const { return m_type; }
 
 	void setNull() { SAFETY_LOCK(); m_type = NULL; SAFETY_ULOCK(); }
 	bool isNull() const { return m_type == NULL; }
@@ -171,13 +166,6 @@ public:
 	void setStr(const CString*);
 	void setStr(StrObject*);
 	const CString* getStr() const;
-
-	void setData(ValueObject* data) {
-		//SAFETY_LOCK();
-		m_type = NULL;
-		m_data = data;
-		//SAFETY_ULOCK();
-	}
 
 	bool isInt()      const { return m_type == CLEVER_INT_TYPE;    }
 	bool isBool()     const { return m_type == CLEVER_BOOL_TYPE;   }
@@ -224,14 +212,7 @@ public:
 
 	void setConst(bool constness = true) {
 		m_is_const = constness;
-	}
 
-	void lock() {
-		SAFETY_LOCK();
-	}
-
-	void unlock() {
-		SAFETY_ULOCK();
 	}
 
 private:
