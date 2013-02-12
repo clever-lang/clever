@@ -146,7 +146,13 @@ public:
 		ptr->copyMembers(type);
 		SAFETY_ULOCK();
 	}
-	TypeObject* getObj() const { return m_data->getObj(); }
+
+	TypeObject* getObj() const {
+		SAFETY_LOCK();
+		TypeObject* t = m_data->getObj();
+		SAFETY_ULOCK();
+		return  t;
+	}
 
 	void setInt(long);
 	long getInt() const;
@@ -162,8 +168,10 @@ public:
 	const CString* getStr() const;
 
 	void setData(ValueObject* data) {
+		SAFETY_LOCK();
 		m_type = NULL;
 		m_data = data;
+		SAFETY_ULOCK();
 	}
 
 	bool isInt()      const { return m_type == CLEVER_INT_TYPE;    }
@@ -175,14 +183,21 @@ public:
 	bool isArray()    const { return m_type == CLEVER_ARRAY_TYPE;  }
 	bool isThread()   const { return m_type == CLEVER_THREAD_TYPE; }
 
-	ValueObject* getData() const { return m_data; }
+	ValueObject* getData() const {
+		SAFETY_LOCK();
+		ValueObject* t = m_data;
+		SAFETY_ULOCK();
+		return t;
+	}
 
 	void copy(const Value*);
 
 	Value* clone() const {
+		SAFETY_LOCK();
 		Value* val = new Value;
 		val->copy(this);
 		val->setConst(isConst());
+		SAFETY_ULOCK();
 		return val;
 	}
 
