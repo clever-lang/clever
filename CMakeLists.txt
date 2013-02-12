@@ -272,11 +272,13 @@ set(TEST_RUNNER_BIN ${CMAKE_BINARY_DIR}/testrunner${CMAKE_EXECUTABLE_SUFFIX})
 add_custom_target(run-tests
 	COMMAND ${TEST_RUNNER_BIN} -q;${CMAKE_CURRENT_SOURCE_DIR}/tests
 	COMMENT "Running tests")
+add_dependencies(run-tests clever-cli)
 add_dependencies(run-tests testrunner)
 
 add_custom_target(run-mem-tests
 	COMMAND ${TEST_RUNNER_BIN} -m;${CMAKE_CURRENT_SOURCE_DIR}/tests
 	COMMENT "Running memory leak tests")
+add_dependencies(run-tests clever-cli)
 add_dependencies(run-mem-tests testrunner)
 
 # Files to install
