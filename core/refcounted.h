@@ -9,6 +9,7 @@
 #define CLEVER_REFCOUNTED_H
 
 #include "core/clever.h"
+#include "core/cthread.h"
 
 namespace clever {
 
@@ -22,7 +23,15 @@ public:
 
 	virtual ~RefCounted() {}
 
-	void setReference(size_t reference) { m_reference = reference; }
+	void setReference(size_t reference) {
+#ifdef CLEVER_THREADS
+		m_mutex.lock();
+		m_reference = reference;
+		m_mutex.unlock();
+#else
+		m_reference = reference;
+#endif
+	}
 
 	size_t refCount() const { return m_reference; }
 
@@ -30,26 +39,43 @@ public:
 #if CLEVER_GCC_VERSION >= 40100
 		__sync_add_and_fetch(&m_reference, 1);
 #else
+# ifdef CLEVER_THREADS
+		m_mutex.lock();
 		++m_reference;
+		m_mutex.unlock();
+# else
+		++m_reference;
+# endif
 #endif
 	}
 
 	void delRef() {
 		clever_assert(m_reference > 0, "This object has been free'd before.");
-
 #if CLEVER_GCC_VERSION >= 40100
 		if (__sync_sub_and_fetch(&m_reference, 1) == 0) {
 			clever_delete(this);
 		}
 #else
+# ifdef CLEVER_THREADS
+		m_mutex.lock();
+		if (--m_reference == 0) {
+			m_mutex.unlock();
+			clever_delete(this);
+		} else {
+			m_mutex.unlock();
+		}
+# else
 		if (--m_reference == 0) {
 			clever_delete(this);
 		}
+# endif
 #endif
 	}
 private:
 	size_t m_reference;
-
+#ifdef CLEVER_THREADS
+	CMutex m_mutex;
+#endif
 	DISALLOW_COPY_AND_ASSIGN(RefCounted);
 };
 
@@ -87,7 +113,6 @@ inline void clever_delref_var(RefCounted*& ptr) {
 		}
 	}
 }
-
 
 } // clever
 

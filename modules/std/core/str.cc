@@ -17,7 +17,7 @@ namespace clever {
 
 void StrType::dump(TypeObject* value, std::ostream& out) const
 {
-	out << *static_cast<StrObject*>(value)->getStr();
+	out << *static_cast<StrObject*>(value)->value;
 }
 
 CLEVER_TYPE_OPERATOR(StrType::add)
@@ -403,6 +403,11 @@ CLEVER_TYPE_OPERATOR(StrType::not_equal)
 	if (EXPECTED(rhs->isStr())) {
 		result->setBool(lhs->getStr() != rhs->getStr());
 	}
+}
+
+CLEVER_TYPE_UNARY_OPERATOR(StrType::not_op)
+{
+	result->setBool(!lhs->asBool());
 }
 
 } // clever

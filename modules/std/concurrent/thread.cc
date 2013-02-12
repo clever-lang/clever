@@ -40,15 +40,6 @@ static inline void* ThreadHandler(void* ThreadArgument)
 	return intern;
 }
 
-void Thread::dump(TypeObject* data) const
-{
-	dump(data, ::std::cout);
-}
-
-void Thread::dump(TypeObject* data, ::std::ostream& out) const
-{
-}
-
 TypeObject* Thread::allocData(CLEVER_TYPE_CTOR_ARGS) const
 {
 	ThreadData* intern = new ThreadData;

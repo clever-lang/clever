@@ -34,7 +34,7 @@ private:
 class ArrayType : public Type {
 public:
 	ArrayType()
-		: Type(CSTRING("Array")) {}
+		: Type("Array") {}
 
 	~ArrayType() {}
 
@@ -56,6 +56,8 @@ public:
 	CLEVER_METHOD(pop);
 	CLEVER_METHOD(range);
 	CLEVER_METHOD(erase);
+
+	Value* CLEVER_FASTCALL at_op(CLEVER_TYPE_AT_OPERATOR_ARGS) const;
 private:
 	DISALLOW_COPY_AND_ASSIGN(ArrayType);
 };

@@ -151,7 +151,7 @@ private:
 class FuncType : public Type {
 public:
 	FuncType()
-		: Type(CSTRING("Function")) {}
+		: Type("Function") {}
 
 	~FuncType() {}
 

@@ -560,18 +560,24 @@ class Boolean: public Node {
 public:
 	enum BooleanOperator {
 		BOP_AND,
-		BOP_OR
+		BOP_OR,
+		BOP_NOT
 	};
 
 	Boolean(BooleanOperator op, Node* lhs, Node* rhs, const location& location)
 		: Node(location), m_op(op), m_lhs(lhs), m_rhs(rhs) {
-		m_lhs->addRef();
-		m_rhs->addRef();
+		clever_addref(m_lhs);
+		clever_addref(m_rhs);
+	}
+
+	Boolean(BooleanOperator op, Node* lhs, const location& location)
+		: Node(location), m_op(op), m_lhs(lhs), m_rhs(NULL) {
+		clever_addref(m_lhs);
 	}
 
 	~Boolean() {
-		m_lhs->delRef();
-		m_rhs->delRef();
+		clever_delref(m_lhs);
+		clever_delref(m_rhs);
 	}
 
 	BooleanOperator getOperator() const { return m_op; }
@@ -596,6 +602,7 @@ public:
 		BOP_AND,
 		BOP_OR,
 		BOP_XOR,
+		BOP_NOT,
 		BOP_LSHIFT,
 		BOP_RSHIFT
 	};
@@ -604,6 +611,11 @@ public:
 		: Node(location), m_op(op), m_lhs(lhs), m_rhs(rhs) {
 		m_lhs->addRef();
 		m_rhs->addRef();
+	}
+
+	Bitwise(BitwiseOperator op, Node* lhs, const location& location)
+		: Node(location), m_op(op), m_lhs(lhs), m_rhs(NULL) {
+		m_lhs->addRef();
 	}
 
 	~Bitwise() {
@@ -996,6 +1008,31 @@ private:
 	Node* m_value;
 
 	DISALLOW_COPY_AND_ASSIGN(Return);
+};
+
+class Subscript: public Node {
+public:
+	Subscript(Node* var, Node* index, const location& location)
+		: Node(location), m_var(var), m_index(index) {
+		clever_addref(m_var);
+		clever_addref(m_index);
+	}
+
+	~Subscript() {
+		clever_delref(m_var);
+		clever_delref(m_index);
+	}
+
+	Node* getVar() const { return m_var; }
+	Node* getIndex() const { return m_index; }
+
+	virtual void accept(Visitor& visitor);
+	virtual Node* accept(Transformer& transformer);
+private:
+	Node* m_var;
+	Node* m_index;
+
+	DISALLOW_COPY_AND_ASSIGN(Subscript);
 };
 
 class Property: public Node {

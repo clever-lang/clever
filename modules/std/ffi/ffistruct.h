@@ -196,7 +196,7 @@ struct FFIStructData : public TypeObject {
 class FFIStruct : public Type {
 public:
 	FFIStruct()
-		: Type(CSTRING("FFIStruct")) {}
+		: Type("FFIStruct") {}
 
 	~FFIStruct() {
 		ExtStructs::iterator it = m_structs.begin(), end = m_structs.end();
@@ -212,9 +212,6 @@ public:
 	void init();
 
 	void dump(TypeObject* data, ::std::ostream& out) const {}
-
-	virtual void increment(Value*, const VM*, CException*) const {}
-	virtual void decrement(Value*, const VM*, CException*) const {}
 
 	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
 	virtual void deallocData(void* data);
@@ -246,7 +243,7 @@ private:
 class FFITypes : public Type {
 public:
 	FFITypes()
-		: Type(CSTRING("FFITypes")) {}
+		: Type("FFITypes") {}
 	~FFITypes() {
 		ExtStructs::iterator it = m_structs.begin(), end = m_structs.end();
 
@@ -261,9 +258,6 @@ public:
 	void init();
 
 	void dump(TypeObject* data, ::std::ostream& out) const {}
-
-	virtual void increment(Value*, const VM*, CException*) const {}
-	virtual void decrement(Value*, const VM*, CException*) const {}
 
 	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
 	virtual void deallocData(void* data);

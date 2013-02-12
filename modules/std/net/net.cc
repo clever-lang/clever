@@ -15,7 +15,7 @@ namespace clever { namespace modules { namespace std {
 /// Initializes Standard module
 CLEVER_MODULE_INIT(NetModule)
 {
-	addType(CSTRING("TcpSocket"), new net::TcpSocket());
+	addType(new net::TcpSocket());
 }
 
 }}} // clever::modules::std

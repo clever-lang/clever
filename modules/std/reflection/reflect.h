@@ -34,7 +34,7 @@ private:
 class ReflectType : public Type {
 public:
 	ReflectType()
-		: Type(CSTRING("Reflect")) {}
+		: Type("Reflect") {}
 
 	~ReflectType() {}
 

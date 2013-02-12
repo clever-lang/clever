@@ -255,12 +255,30 @@ continue:
 ;
 
 thread_block:
-		THREAD IDENT block { $$ = new ast::ThreadBlock($3, $2, yyloc); }
-	|	THREAD IDENT '[' rvalue ']'  block { $$ = new ast::ThreadBlock($6, $2, $<node>4, yyloc); }
+		THREAD IDENT block {
+#ifndef CLEVER_THREADS
+		error(yyloc, "Cannot use process block syntax, threads is disabled!"); YYABORT;
+#else
+		$$ = new ast::ThreadBlock($3, $2, yyloc);
+#endif
+	}
+	|	THREAD IDENT '[' rvalue ']'  block {
+#ifndef CLEVER_THREADS
+		error(yyloc, "Cannot use process block syntax, threads is disabled!"); YYABORT;
+#else
+		$$ = new ast::ThreadBlock($6, $2, $<node>4, yyloc);
+#endif
+	}
 ;
 
 critical_block:
-		CRITICAL block { $$ = new ast::CriticalBlock($2, yyloc); }
+		CRITICAL block {
+#ifndef CLEVER_THREADS
+		error(yyloc, "Cannot use critical block syntax, threads is disabled!"); YYABORT;
+#else
+		$$ = new ast::CriticalBlock($2, yyloc);
+#endif
+	}
 ;
 
 object:
@@ -279,6 +297,7 @@ object:
 
 rvalue:
 		object
+	|	unary
 	|	arithmetic
 	|	logic
 	|	bitwise
@@ -290,11 +309,24 @@ rvalue:
 	|	instantiation
 	|	property_access
 	|	mcall
+	|	subscript
 ;
 
 lvalue:
 		IDENT
-	|	property_access { $1->setWriteMode(); }
+	|	property_access         { $1->setWriteMode(); }
+	|	subscript
+;
+
+subscript:
+		lvalue '[' rvalue ']'   { $<node>$ = new ast::Subscript($<node>1, $<node>3, yyloc); }
+;
+
+unary:
+		'-' rvalue %prec UMINUS { $<node>$ = new ast::Arithmetic(ast::Arithmetic::MOP_SUB, new ast::IntLit(0, yyloc), $<node>2, yyloc); }
+	|	'+' rvalue %prec UMINUS { $<node>$ = new ast::Arithmetic(ast::Arithmetic::MOP_ADD, new ast::IntLit(0, yyloc), $<node>2, yyloc); }
+	|	'!' rvalue              { $<node>$ = new ast::Boolean(ast::Boolean::BOP_NOT, $<node>2, yyloc);                                  }
+	|	'~' rvalue              { $<node>$ = new ast::Bitwise(ast::Bitwise::BOP_NOT, $<node>2, yyloc);                                  }
 ;
 
 class_def:

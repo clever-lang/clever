@@ -75,12 +75,12 @@ void ModManager::addModule(const std::string& name, Module* module)
 }
 
 /// Loads an specific module type
-void ModManager::loadType(Scope* scope, Environment* env, const CString* name,
+void ModManager::loadType(Scope* scope, Environment* env, const std::string& name,
 	Type* type) const
 {
 	Value* tmp = new Value(type);
 
-	scope->pushValue(name, tmp)->voffset = env->pushValue(tmp);
+	scope->pushValue(CSTRING(name), tmp)->voffset = env->pushValue(tmp);
 
 	type->init();
 }
@@ -144,7 +144,7 @@ void ModManager::loadModule(Scope* scope, Environment* env, Module* module,
 		TypeMap& types = module->getTypes();
 
 		if (name) {
-			TypeMap::const_iterator it = types.find(name);
+			TypeMap::const_iterator it = types.find(*name);
 
 			if (it == types.end()) {
 				std::cerr << "Type `" << *name << "' not found!" << std::endl;

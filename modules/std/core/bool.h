@@ -28,7 +28,7 @@ struct BoolObject : public TypeObject {
 class BoolType : public Type {
 public:
 	BoolType()
-		: Type(CSTRING("Bool")) {}
+		: Type("Bool") {}
 
 	~BoolType() {}
 

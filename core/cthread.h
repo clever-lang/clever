@@ -17,7 +17,7 @@
 
 namespace clever {
 
-class CMutex {
+class NO_INIT_VTABLE CMutex {
 public:
 	CMutex();
 

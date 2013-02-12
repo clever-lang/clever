@@ -18,39 +18,47 @@ namespace clever { namespace modules { namespace std {
 
 namespace io {
 
+CMutex g_io_mutex;
 // flush(void)
 // Flushes output buffer (forcefully)
 static CLEVER_FUNCTION(flush)
 {
+	g_io_mutex.lock();
 	if (!clever_static_check_no_args()) {
 		return;
 	}
 	::fflush(stdout);
+	g_io_mutex.unlock();
 }
 
 // print(object a, [ ...])
 // Prints the object values without trailing newline
 static CLEVER_FUNCTION(print)
 {
+	g_io_mutex.lock();
 	for (size_t i = 0, size = args.size(); i < size; ++i) {
 		args[i]->dump();
 	}
+	g_io_mutex.unlock();
 }
 
 // println(object a, [ ...])
 // Prints the object values with trailing newline
 static CLEVER_FUNCTION(println)
 {
+	g_io_mutex.lock();
 	for (size_t i = 0, size = args.size(); i < size; ++i) {
 		args[i]->dump();
 		::std::cout << '\n';
 	}
+	g_io_mutex.unlock();
 }
 
 // printf(string format, [...])
 // Prints and formats a string to standard output without trailing newline
 static CLEVER_FUNCTION(printf)
 {
+	g_io_mutex.lock();
 	const CString* format = args[0]->getStr();
 	const char* start = format->c_str();
 
@@ -73,6 +81,7 @@ static CLEVER_FUNCTION(printf)
 			point++;
 		}
 	}
+	g_io_mutex.unlock();
 }
 
 } // clever::modules::std::io

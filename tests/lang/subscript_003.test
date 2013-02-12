@@ -1,0 +1,15 @@
+Testing subscript operator with property
+==CODE==
+import std.io.*;
+
+class Foo {
+	var arr;
+
+	function Foo() {
+		this.arr = [10, 20];
+	}
+}
+
+println((Foo.new).arr[0]);
+==RESULT==
+10

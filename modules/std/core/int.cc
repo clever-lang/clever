@@ -88,6 +88,51 @@ CLEVER_TYPE_OPERATOR(IntType::not_equal)
 	}
 }
 
+CLEVER_TYPE_UNARY_OPERATOR(IntType::not_op)
+{
+	result->setBool(!lhs->asBool());
+}
+
+CLEVER_TYPE_OPERATOR(IntType::bw_and)
+{
+	if (EXPECTED(rhs->isInt())) {
+		result->setInt(lhs->getInt() & rhs->getInt());
+	}
+}
+
+CLEVER_TYPE_OPERATOR(IntType::bw_or)
+{
+	if (EXPECTED(rhs->isInt())) {
+		result->setInt(lhs->getInt() | rhs->getInt());
+	}
+}
+
+CLEVER_TYPE_OPERATOR(IntType::bw_xor)
+{
+	if (EXPECTED(rhs->isInt())) {
+		result->setInt(lhs->getInt() ^ rhs->getInt());
+	}
+}
+
+CLEVER_TYPE_UNARY_OPERATOR(IntType::bw_not)
+{
+	result->setInt(~lhs->getInt());
+}
+
+CLEVER_TYPE_OPERATOR(IntType::bw_ls)
+{
+	if (EXPECTED(rhs->isInt())) {
+		result->setInt(lhs->getInt() << rhs->getInt());
+	}
+}
+
+CLEVER_TYPE_OPERATOR(IntType::bw_rs)
+{
+	if (EXPECTED(rhs->isInt())) {
+		result->setInt(lhs->getInt() >> rhs->getInt());
+	}
+}
+
 // Int::Int()
 CLEVER_METHOD(IntType::ctor)
 {

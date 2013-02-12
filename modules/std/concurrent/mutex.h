@@ -29,7 +29,7 @@ struct MutexObject : public TypeObject {
 class Mutex : public Type {
 public:
 	Mutex()
-		: Type(CSTRING("Mutex")) {}
+		: Type("Mutex") {}
 
 	~Mutex() {}
 

@@ -14,6 +14,7 @@
 #include <tr1/unordered_map>
 #endif
 #include <string>
+#include "types/type.h"
 #include "modules/std/core/function.h"
 
 #define CLEVER_MODULE_INIT(x) void x::init()
@@ -26,8 +27,7 @@ namespace clever {
 class Module;
 class Type;
 
-typedef std::tr1::unordered_map<const CString*, Type*> TypeMap;
-typedef std::pair<const CString*, Type*> TypeMapEntry;
+typedef std::tr1::unordered_map<std::string, Type*> TypeMap;
 
 typedef std::tr1::unordered_map<std::string, Module*> ModuleMap;
 typedef std::pair<std::string, Module*> ModulePair;
@@ -49,8 +49,8 @@ public:
 	ModuleMap& getModules() { return m_mods; }
 	bool hasModules() const { return m_mods.size(); }
 
-	void addType(const CString* name, Type* type) {
-		m_types.insert(TypeMapEntry(name, type));
+	void addType(Type* type) {
+		m_types.insert(TypeMap::value_type(type->getName(), type));
 	}
 
 	TypeMap& getTypes() { return m_types; }

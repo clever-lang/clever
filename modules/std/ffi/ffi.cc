@@ -380,9 +380,9 @@ CLEVER_TYPE_INIT(FFI::init)
 // FFI module initialization
 CLEVER_MODULE_INIT(FFIModule)
 {
-	addType(CSTRING("FFILib"),		new FFI);
-	addType(CSTRING("FFIStruct"),	new FFIStruct);
-	addType(CSTRING("FFITypes"),	new FFITypes);
+	addType(new FFI);
+	addType(new FFIStruct);
+	addType(new FFITypes);
 }
 
 }}} // clever::packages::std

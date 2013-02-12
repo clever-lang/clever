@@ -56,6 +56,7 @@ public:
 	void visit(If*);
 	void visit(Logic*);
 	void visit(Boolean*);
+	void visit(Bitwise*);
 	void visit(NullLit*);
 	void visit(TrueLit*);
 	void visit(FalseLit*);
@@ -66,6 +67,7 @@ public:
 	void visit(Continue*);
 	void visit(Break*);
 	void visit(ClassDef*);
+	void visit(Subscript*);
 private:
 	IRBuilder* m_builder;
 	JmpList m_jmps;
