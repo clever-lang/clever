@@ -57,9 +57,21 @@ void ArrayType::dump(TypeObject* value, std::ostream& out) const
 CLEVER_TYPE_AT_OPERATOR(ArrayType::at_op)
 {
 	ValueVector& arr = CLEVER_GET_OBJECT(ArrayObject*, value)->getData();
+	long size = arr.size();
+
+	if (!index->isInt()) {
+		clever_throw("Invalid array index type");
+		return NULL;
+	}
+
+	if (index->getInt() < 0 || index->getInt() >= size) {
+		clever_throw("Array index out of bound!");
+		return NULL;
+	}
 
 	Value* result = arr.at(index->getInt());
 
+	// @TODO(Felipe): FIXME
 	result->setConst(false);
 
 	return result;
