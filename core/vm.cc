@@ -1088,7 +1088,9 @@ exit_exception:
 		m_exception.getException());
 
 exit:
+	getMutex()->lock();
 	std::for_each(m_obj_store.begin(), m_obj_store.end(), clever_delref);
+	getMutex()->unlock();
 }
 
 } // clever
