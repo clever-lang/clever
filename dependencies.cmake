@@ -14,11 +14,6 @@ clever_add_lib(CONCURRENCY
 	LIBS pthread
 	INCS pthread.h)
 
-# XXX(heuripedes): kill this
-if (CONCURRENCY_FOUND)
-	add_definitions(-DHAVE_CONCURRENCY)
-endif (CONCURRENCY_FOUND)
-
 # libpcrecpp
 clever_add_lib(PCRECPP
 	INCS pcrecpp.h
@@ -45,16 +40,13 @@ clever_add_lib(CGICC
 	LIBS cgicc
 	INCS cgicc/Cgicc.h)
 
-if (CGICC_FOUND)
-	add_definitions(-DHAVE_CGICC)
-endif (CGICC_FOUND)
-
 # libffi
 clever_add_lib(FFI
 	LIBS ffi
 	INCS ffi.h
 	PKGS libffi)
 
-if (FFI_FOUND)
-	add_definitions(-DHAVE_FFI)
-endif (FFI_FOUND)
+clever_add_lib(MYSQLC
+	LIBS mysqlclient
+	INC mysql/mysql.h)
+

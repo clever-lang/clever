@@ -167,7 +167,14 @@ clever_module_msg(std_net ${MOD_STD_NET})
 
 # db.mysql - TODO: Check if mysql is really available in the system
 if (MOD_DB_MYSQL)
-	add_definitions(-DHAVE_MOD_DB_MYSQL)
+	if (MYSQLC_FOUND)
+		add_definitions(-DHAVE_MOD_DB_MYSQL)
+		list(APPEND CLEVER_INCLUDE_DIRS ${MYSQLC_INCLUDE_DIRS})
+		list(APPEND CLEVER_LIBRARIES ${MYSQLC_LIBRARIES})
+	else (MYSQLC_FOUND)
+		clever_module_msg(db_mysql "libmysqlclient not found. disabling.")
+		set(MOD_DB_MYSQL OFF)
+	endif (MYSQLC_FOUND)
 endif (MOD_DB_MYSQL)
 
 clever_module_msg(db_mysql ${MOD_DB_MYSQL})
