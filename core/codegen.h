@@ -29,7 +29,7 @@ public:
 	typedef std::stack<AddrVector> JmpList;
 
 	Codegen(IRBuilder* builder)
-		: m_builder(builder), m_jmps(), m_thread_ids() {}
+		: m_builder(builder), m_jmps() {}
 
 	~Codegen() {}
 
@@ -70,8 +70,6 @@ private:
 	IRBuilder* m_builder;
 	JmpList m_jmps;
 	JmpList m_brks;
-
-	std::map<Thread*, size_t> m_thread_ids;
 
 	DISALLOW_COPY_AND_ASSIGN(Codegen);
 };

@@ -28,13 +28,13 @@ public:
 	enum ThreadKind { UNDEF, USER_THREAD, INTERNAL_THREAD };
 
 	Thread()
-		: m_name(), m_type(UNDEF), m_environment(NULL) {}
+		: m_name(), m_type(UNDEF), m_environment(NULL), m_threads() {}
 
 	Thread(std::string name)
-		: m_name(name), m_type(UNDEF), m_environment(NULL) {}
+		: m_name(name), m_type(UNDEF), m_environment(NULL), m_threads() {}
 
 	Thread(std::string name, size_t addr)
-		: m_name(name), m_type(UNDEF), m_environment(NULL) { m_addr = addr; }
+		: m_name(name), m_type(UNDEF), m_environment(NULL), m_threads() { m_addr = addr; }
 
 	~Thread() { }
 
@@ -48,11 +48,9 @@ public:
 	bool isInternal() const { return m_type == INTERNAL_THREAD; }
 
 	size_t getAddr() const { return m_addr; }
-	size_t getID() const { return m_thread_id; }
 	size_t getNThreads() const { return m_n_threads; }
 
 	void setAddr(size_t addr) { m_addr = addr; }
-	void setID(size_t id) { m_thread_id = id; }
 	void setNThreads(size_t n) { m_n_threads = n; }
 	void wait();
 
@@ -64,12 +62,11 @@ public:
 private:
 	std::string m_name;
 	ThreadKind m_type;
-	size_t m_thread_id;
 	size_t m_n_threads;
 	size_t m_addr;
-	VMThreads m_threads;
-
 	Environment* m_environment;
+
+	VMThreads m_threads;
 
 	DISALLOW_COPY_AND_ASSIGN(Thread);
 };

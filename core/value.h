@@ -41,7 +41,6 @@ extern Type* g_clever_map_type;
 # define SAFETY_ULOCK() pthread_mutex_unlock(&m_mutex)
 # define SAFETY_GET(A, B, C) return static_cast<B*>(getObj())->value;
 # define SAFETY_GET_STR(A, B, C) return static_cast<B*>(getObj())->getStr();
-return C;
 #else
 # define SAFETY_CTOR()
 # define SAFETY_DTOR()

@@ -52,9 +52,9 @@ CLEVER_METHOD(ThreadType::toString)
 
 	std::ostringstream str;
 
-	const Thread* thread = CLEVER_GET_OBJECT(Thread*, CLEVER_THIS());
+	//const Thread* thread = CLEVER_GET_OBJECT(Thread*, CLEVER_THIS());
 
-	str << thread->getID();
+	//str << thread->getID();
 
 	result->setStr(CSTRING(str.str()));
 }
