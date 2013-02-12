@@ -47,7 +47,7 @@ void Value::setInt(long n)
 
 long Value::getInt() const
 {
-	SAFETY_GET(long, IntObject, v);
+	SAFETY_GET(long, IntObject);
 }
 
 void Value::setDouble(double n)
@@ -61,7 +61,7 @@ void Value::setDouble(double n)
 
 double Value::getDouble() const
 {
-	SAFETY_GET(double, DoubleObject, v);
+	SAFETY_GET(double, DoubleObject);
 }
 
 void Value::setStr(const CString* str)
@@ -83,7 +83,7 @@ void Value::setStr(StrObject* str) {
 
 const CString* Value::getStr() const
 {
-	SAFETY_GET_STR(CString*, StrObject, v);
+	SAFETY_GET(const CString*, StrObject);
 }
 
 void Value::setBool(bool n)
@@ -97,7 +97,7 @@ void Value::setBool(bool n)
 
 bool Value::getBool() const
 {
-	SAFETY_GET(bool, BoolObject, v);
+	SAFETY_GET(bool, BoolObject);
 }
 
 } // clever
