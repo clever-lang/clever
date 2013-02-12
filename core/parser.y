@@ -257,14 +257,14 @@ continue:
 thread_block:
 		THREAD IDENT block {
 #ifndef CLEVER_THREADS
-		error(yyloc, "Cannot use process block syntax, pthreads is disabled!"); YYABORT;
+		error(yyloc, "Cannot use process block syntax, threads is disabled!"); YYABORT;
 #else
 		$$ = new ast::ThreadBlock($3, $2, yyloc);
 #endif
 	}
 	|	THREAD IDENT '[' rvalue ']'  block {
 #ifndef CLEVER_THREADS
-		error(yyloc, "Cannot use process block syntax, pthreads is disabled!"); YYABORT;
+		error(yyloc, "Cannot use process block syntax, threads is disabled!"); YYABORT;
 #else
 		$$ = new ast::ThreadBlock($6, $2, $<node>4, yyloc);
 #endif
@@ -272,7 +272,13 @@ thread_block:
 ;
 
 critical_block:
-		CRITICAL block { $$ = new ast::CriticalBlock($2, yyloc); }
+		CRITICAL block {
+#ifndef CLEVER_THREADS
+		error(yyloc, "Cannot use critical block syntax, threads is disabled!"); YYABORT;
+#else
+		$$ = new ast::CriticalBlock($2, yyloc);
+#endif
+	}
 ;
 
 object:

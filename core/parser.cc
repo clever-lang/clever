@@ -487,7 +487,7 @@ yylloc.begin.filename = yylloc.end.filename = driver.getFile();
 
     {
 #ifndef CLEVER_THREADS
-		error(yyloc, "Cannot use process block syntax, pthreads is disabled!"); YYABORT;
+		error(yyloc, "Cannot use process block syntax, threads is disabled!"); YYABORT;
 #else
 		(yyval.threadblock) = new ast::ThreadBlock((yysemantic_stack_[(3) - (3)].block), (yysemantic_stack_[(3) - (2)].ident), yyloc);
 #endif
@@ -498,7 +498,7 @@ yylloc.begin.filename = yylloc.end.filename = driver.getFile();
 
     {
 #ifndef CLEVER_THREADS
-		error(yyloc, "Cannot use process block syntax, pthreads is disabled!"); YYABORT;
+		error(yyloc, "Cannot use process block syntax, threads is disabled!"); YYABORT;
 #else
 		(yyval.threadblock) = new ast::ThreadBlock((yysemantic_stack_[(6) - (6)].block), (yysemantic_stack_[(6) - (2)].ident), (yysemantic_stack_[(6) - (4)].node), yyloc);
 #endif
@@ -507,7 +507,13 @@ yylloc.begin.filename = yylloc.end.filename = driver.getFile();
 
   case 31:
 
-    { (yyval.criticalblock) = new ast::CriticalBlock((yysemantic_stack_[(2) - (2)].block), yyloc); }
+    {
+#ifndef CLEVER_THREADS
+		error(yyloc, "Cannot use critical block syntax, threads is disabled!"); YYABORT;
+#else
+		(yyval.criticalblock) = new ast::CriticalBlock((yysemantic_stack_[(2) - (2)].block), yyloc);
+#endif
+	}
     break;
 
   case 42:
@@ -1865,22 +1871,22 @@ yylloc.begin.filename = yylloc.end.filename = driver.getFile();
          0,   211,   211,   211,   215,   216,   220,   221,   222,   223,
      224,   225,   226,   227,   228,   229,   230,   231,   232,   233,
      234,   235,   236,   237,   241,   245,   246,   250,   254,   258,
-     265,   275,   279,   280,   281,   282,   283,   284,   285,   286,
-     287,   288,   289,   293,   294,   295,   296,   297,   298,   299,
-     300,   301,   302,   303,   304,   305,   306,   310,   311,   312,
-     316,   320,   321,   322,   323,   327,   331,   332,   336,   336,
-     337,   337,   341,   341,   342,   342,   346,   347,   348,   349,
-     350,   351,   352,   353,   357,   358,   362,   363,   367,   368,
-     372,   376,   377,   381,   382,   386,   390,   391,   395,   396,
-     400,   404,   408,   409,   413,   417,   418,   422,   426,   427,
-     428,   429,   433,   434,   438,   439,   440,   441,   445,   446,
-     447,   448,   449,   450,   454,   455,   459,   460,   464,   465,
-     466,   467,   468,   472,   473,   474,   475,   476,   480,   481,
-     485,   486,   490,   491,   495,   496,   500,   504,   508,   509,
-     513,   514,   515,   519,   523,   525,   527,   529,   531,   533,
-     535,   537,   542,   544,   546,   548,   553,   554,   558,   559,
-     563,   564,   568,   568,   572,   573,   577,   581,   583,   588,
-     589,   593,   594,   593
+     265,   275,   285,   286,   287,   288,   289,   290,   291,   292,
+     293,   294,   295,   299,   300,   301,   302,   303,   304,   305,
+     306,   307,   308,   309,   310,   311,   312,   316,   317,   318,
+     322,   326,   327,   328,   329,   333,   337,   338,   342,   342,
+     343,   343,   347,   347,   348,   348,   352,   353,   354,   355,
+     356,   357,   358,   359,   363,   364,   368,   369,   373,   374,
+     378,   382,   383,   387,   388,   392,   396,   397,   401,   402,
+     406,   410,   414,   415,   419,   423,   424,   428,   432,   433,
+     434,   435,   439,   440,   444,   445,   446,   447,   451,   452,
+     453,   454,   455,   456,   460,   461,   465,   466,   470,   471,
+     472,   473,   474,   478,   479,   480,   481,   482,   486,   487,
+     491,   492,   496,   497,   501,   502,   506,   510,   514,   515,
+     519,   520,   521,   525,   529,   531,   533,   535,   537,   539,
+     541,   543,   548,   550,   552,   554,   559,   560,   564,   565,
+     569,   570,   574,   574,   578,   579,   583,   587,   589,   594,
+     595,   599,   600,   599
   };
 
   // Print the state stack on the debug stream.
