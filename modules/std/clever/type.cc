@@ -15,9 +15,9 @@ CLEVER_METHOD(CleverType::buildDate)
 	result->setStr(new StrObject(__DATE__ " " __TIME__));
 }
 
-// Bool Clever::useThreads()
+// Bool Clever::hasThreads()
 // Returns a boolean indicating if Clever has been built with threads support
-CLEVER_METHOD(CleverType::useThreads)
+CLEVER_METHOD(CleverType::hasThreads)
 {
 	if (!clever_static_check_no_args()) {
 		return;
@@ -58,7 +58,7 @@ void CleverType::init()
 	addMethod(new Function("buildDate", (MethodPtr) &CleverType::buildDate))
 		->setStatic();
 
-	addMethod(new Function("useThreads", (MethodPtr) &CleverType::useThreads))
+	addMethod(new Function("hasThreads", (MethodPtr) &CleverType::hasThreads))
 		->setStatic();
 
 	addMethod(new Function("getVersion", (MethodPtr) &CleverType::getVersion))

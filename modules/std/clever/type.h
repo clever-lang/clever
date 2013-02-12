@@ -16,7 +16,7 @@ public:
 	void init();
 
 	CLEVER_METHOD(buildDate);
-	CLEVER_METHOD(useThreads);
+	CLEVER_METHOD(hasThreads);
 	CLEVER_METHOD(getVersion);
 	CLEVER_METHOD(getStringVersion);
 };
