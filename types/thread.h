@@ -56,6 +56,7 @@ public:
 	void setNThreads(size_t n) { m_n_threads = n; }
 	void wait();
 
+
 	Environment* getEnvironment() const { return m_environment; }
 	void setEnvironment(Environment* e) { m_environment = e; }
 
@@ -79,7 +80,7 @@ public:
 	ThreadType()
 		: Type(CSTRING("Thread")) {}
 
-	~ThreadType() {}
+	~ThreadType() {  }
 
 	void init();
 
@@ -88,7 +89,6 @@ public:
 	TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const { return new Thread; }
 
 	void deallocData(CLEVER_TYPE_DTOR_ARGS) {
-		static_cast<Thread*>(data)->wait();
 		delete static_cast<Thread*>(data);
 	}
 

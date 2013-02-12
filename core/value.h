@@ -39,15 +39,8 @@ extern Type* g_clever_map_type;
 # define SAFETY_DTOR() pthread_mutex_destroy(&m_mutex)
 # define SAFETY_LOCK() pthread_mutex_lock(&m_mutex)
 # define SAFETY_ULOCK() pthread_mutex_unlock(&m_mutex)
-# define SAFETY_GET(A, B, C) A C;\
-pthread_mutex_lock(&m_mutex);\
-C = static_cast<B*>(getObj())->value;\
-pthread_mutex_unlock(&m_mutex);\
-return C;
-# define SAFETY_GET_STR(A, B, C) A C;\
-pthread_mutex_lock(&m_mutex);\
-C = static_cast<B*>(getObj())->getStr();\
-pthread_mutex_unlock(&m_mutex);\
+# define SAFETY_GET(A, B, C) return static_cast<B*>(getObj())->value;
+# define SAFETY_GET_STR(A, B, C) return static_cast<B*>(getObj())->getStr();
 return C;
 #else
 # define SAFETY_CTOR()
@@ -147,12 +140,7 @@ public:
 		SAFETY_ULOCK();
 	}
 
-	TypeObject* getObj() const {
-		SAFETY_LOCK();
-		TypeObject* t = m_data->getObj();
-		SAFETY_ULOCK();
-		return  t;
-	}
+	TypeObject* getObj() const { return  m_data->getObj(); }
 
 	void setInt(long);
 	long getInt() const;
@@ -176,12 +164,7 @@ public:
 	bool isArray()    const { return m_type == CLEVER_ARRAY_TYPE;  }
 	bool isThread()   const { return m_type == CLEVER_THREAD_TYPE; }
 
-	ValueObject* getData() const {
-		SAFETY_LOCK();
-		ValueObject* t = m_data;
-		SAFETY_ULOCK();
-		return t;
-	}
+	ValueObject* getData() const { return m_data; }
 
 	void copy(const Value*);
 

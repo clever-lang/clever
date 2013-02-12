@@ -31,9 +31,12 @@ void Thread::wait()
 
 	for (size_t i = 0, j = thread_list.size(); i < j; ++i) {
 		VMThread* t = thread_list.at(i);
-		t->t_handler.wait();
-		clever_delete_var(t->vm_handler);
-		clever_delete_var(t);
+		if (t != 0) {
+			t->t_handler.wait();
+			clever_delete_var(t->vm_handler);
+			clever_delete_var(t);
+			t = 0;
+		}
 	}
 
 	thread_list.clear();
@@ -77,9 +80,11 @@ CLEVER_METHOD(ThreadType::run)
 
 	size_t thread_addr = tdata->getAddr();
 	size_t n_threads = tdata->getNThreads();
+	size_t bg = m_thread_pool.size();
+	size_t size =  bg + n_threads;
 
-
-	for (size_t i = 0; i < n_threads; ++i) {
+	m_thread_pool.resize(size);
+	for (size_t i = bg; i < size; ++i) {
 		m_vm->getMutex()->lock();
 
 		VMThread* thread = new VMThread;
@@ -91,14 +96,13 @@ CLEVER_METHOD(ThreadType::run)
 		Environment* tenv = tdata->getEnvironment()->activate(m_vm->getCallStack().top());
 		thread->vm_handler->getCallStack().push(tenv);
 
-		m_thread_pool.push_back(thread);
+		m_thread_pool[i] = thread;
 
 		thread->vm_handler->setPC(thread_addr);
 		m_vm->getMutex()->unlock();
 
 		thread->t_handler.create(_thread_control, static_cast<void*>(thread));
 	}
-
 
 }
 
