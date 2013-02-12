@@ -13,20 +13,16 @@
 
 namespace clever {
 
-CMutex g_mutex_lock;
-
 void Value::copy(const Value* value)
 {
 	SAFETY_LOCK();
 	cleanUp();
-	g_mutex_lock.lock();
 	m_type = value->getType();
 	m_data = value->getData();
 
 	if (EXPECTED(m_type && m_data)) {
 		m_data->addRef();
 	}
-	g_mutex_lock.unlock();
 	SAFETY_ULOCK();
 }
 

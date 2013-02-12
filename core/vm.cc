@@ -261,9 +261,11 @@ Value* VM::runFunction(const Function* func, std::vector<Value*>* args)
 // the switch-based dispatching is used
 void VM::run()
 {
+	getMutex()->lock();
 	if (m_call_stack.empty()) {
 		m_call_stack.push(m_global_env);
 	}
+	getMutex()->unlock();
 
 	OPCODES;
 	OP(OP_RET):

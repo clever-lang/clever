@@ -198,9 +198,11 @@ public:
 
 private:
 	void cleanUp() {
+		SAFETY_LOCK();
 		if (m_type && m_data) {
 			m_data->delRef();
 		}
+		SAFETY_ULOCK();
 	}
 
 	ValueObject* m_data;
