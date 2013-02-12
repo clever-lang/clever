@@ -7,9 +7,7 @@
 
 #include "core/value.h"
 #include "types/native_types.h"
-#include "core/modmanager.h"
 #include "modules/db/mysql/mysql.h"
-#include "modules/std/io/io.h"
 
 namespace clever { namespace modules { namespace db {
 
