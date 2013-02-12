@@ -39,9 +39,11 @@
 #ifdef HAVE_MOD_STD_CRYPTO
 #	include "modules/std/crypto/crypto.h"
 #endif
-
 #ifdef HAVE_MOD_STD_FFI
 #	include "modules/std/ffi/ffi.h"
+#endif
+#ifdef HAVE_MOD_STD_CLEVER
+#	include "modules/std/clever/module.h"
 #endif
 
 #if 0

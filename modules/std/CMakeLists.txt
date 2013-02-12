@@ -13,6 +13,10 @@ endif (MOD_STD_FFI)
 #	list(APPEND CLEVER_MODULES regex)
 #endif (MOD_STD_REGEX)
 
+if (MOD_STD_CLEVER)
+	list(APPEND CLEVER_MODULES clever)
+endif (MOD_STD_CLEVER)
+
 if (MOD_STD_CONCURRENT)
 	list(APPEND CLEVER_MODULES concurrent)
 endif (MOD_STD_CONCURRENT)

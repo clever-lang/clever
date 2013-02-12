@@ -96,7 +96,7 @@ class Value;
 %type <boolean> boolean
 %type <nillit> NIL
 %type <comp> comparison
-%type <mcall> mcall
+%type <mcall> mcall mcall_chain
 %type <property> property_access
 %type <except> try_catch_finally
 %type <catch_> catch_impl
@@ -435,9 +435,14 @@ property_access:
 	|	TYPE '.' CONSTANT   { $$ = new ast::Property($1, $3, yyloc); }
 ;
 
+mcall_chain:
+		/* empty */                             { $$ = $<mcall>0; }
+	|	mcall_chain '.' IDENT '(' call_args ')' { $$ = new ast::MethodCall($<node>0, $3, $5, yyloc); }
+;
+
 mcall:
-		object '.' IDENT '(' call_args ')' { $$ = new ast::MethodCall($<node>1, $3, $5, yyloc); }
-	|	TYPE '.' IDENT '(' call_args ')'   { $$ = new ast::MethodCall($1, $3, $5, yyloc); }
+		object '.' IDENT '(' call_args ')' { $<mcall>$ = new ast::MethodCall($<node>1, $3, $5, yyloc); } mcall_chain { $$ = $8; }
+	|	TYPE '.' IDENT '(' call_args ')'   { $<mcall>$ = new ast::MethodCall($1, $3, $5, yyloc); }       mcall_chain { $$ = $8; }
 ;
 
 inc_dec:
