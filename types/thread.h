@@ -36,7 +36,7 @@ public:
 	Thread(std::string name, size_t addr)
 		: m_name(name), m_type(UNDEF), m_environment(NULL) { m_addr = addr; }
 
-	~Thread() { wait(); }
+	~Thread() { }
 
 	void setName(std::string name) { m_name = name; }
 	const std::string& getName() const { return m_name; }
