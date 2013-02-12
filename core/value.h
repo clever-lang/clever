@@ -34,7 +34,7 @@ extern Type* g_clever_map_type;
 #define CLEVER_ARRAY_TYPE  g_clever_array_type
 #define CLEVER_MAP_TYPE    g_clever_map_type
 
-#ifndef CLEVER_THREADS
+#ifdef CLEVER_THREADS
 # define SAFETY_CTOR() ,m_mutex()
 # define SAFETY_DTOR()
 # define SAFETY_LOCK()  m_mutex.lock();
