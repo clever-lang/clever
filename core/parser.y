@@ -291,11 +291,17 @@ rvalue:
 	|	instantiation
 	|	property_access
 	|	mcall
+	|	subscript
 ;
 
 lvalue:
 		IDENT
-	|	property_access { $1->setWriteMode(); }
+	|	property_access         { $1->setWriteMode(); }
+	|	subscript
+;
+
+subscript:
+		lvalue '[' rvalue ']'   { $<node>$ = new ast::Subscript($<node>1, $<node>3, yyloc); }
 ;
 
 unary:

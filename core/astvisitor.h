@@ -61,6 +61,7 @@ public:
 
 	virtual void visit(AttrDecl* node);
 	virtual void visit(ClassDef* node);
+	virtual void visit(Subscript* node);
 private:
 	DISALLOW_COPY_AND_ASSIGN(Visitor);
 };

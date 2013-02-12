@@ -1062,6 +1062,25 @@ throw_exception:
 	}
 	DISPATCH;
 
+	OP(OP_SUBSCRIPT):
+	{
+		const Value* var = getValue(OPCODE.op1);
+		const Value* index = getValue(OPCODE.op2);
+
+		if (EXPECTED(!var->isNull() && !index->isNull())) {
+			Value* result = var->getType()->at_op(var, index, this, &m_exception);
+
+			setTempValue(OPCODE.result, result);
+
+			if (UNEXPECTED(m_exception.hasException())) {
+				goto throw_exception;
+			}
+		} else {
+			error(VM_ERROR, OPCODE.loc, "Operation cannot be executed on null value");
+		}
+	}
+	DISPATCH;
+
 	END_OPCODES;
 
 exit_exception:

@@ -186,6 +186,12 @@ CLEVER_TYPE_OPERATOR(Type::not_equal)
 	clever_throw("Cannot use != operator with %s type", getName().c_str());
 }
 
+CLEVER_TYPE_AT_OPERATOR(Type::at_op)
+{
+	clever_throw("Cannot use [] operator with %s type", getName().c_str());
+	return NULL;
+}
+
 CLEVER_TYPE_UNARY_OPERATOR(Type::not_op)
 {
 	clever_throw("Cannot use ! operator with %s type", getName().c_str());

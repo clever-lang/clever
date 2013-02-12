@@ -53,6 +53,18 @@ void ArrayType::dump(TypeObject* value, std::ostream& out) const
 	out << "]";
 }
 
+// Subscript operator
+CLEVER_TYPE_AT_OPERATOR(ArrayType::at_op)
+{
+	ValueVector& arr = CLEVER_GET_OBJECT(ArrayObject*, value)->getData();
+
+	Value* result = arr.at(index->getInt());
+
+	result->setConst(false);
+
+	return result;
+}
+
 // Array::Array([arg, ...])
 CLEVER_METHOD(ArrayType::ctor)
 {

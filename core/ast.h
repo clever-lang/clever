@@ -1010,6 +1010,31 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(Return);
 };
 
+class Subscript: public Node {
+public:
+	Subscript(Node* var, Node* index, const location& location)
+		: Node(location), m_var(var), m_index(index) {
+		clever_addref(m_var);
+		clever_addref(m_index);
+	}
+
+	~Subscript() {
+		clever_delref(m_var);
+		clever_delref(m_index);
+	}
+
+	Node* getVar() const { return m_var; }
+	Node* getIndex() const { return m_index; }
+
+	virtual void accept(Visitor& visitor);
+	virtual Node* accept(Transformer& transformer);
+private:
+	Node* m_var;
+	Node* m_index;
+
+	DISALLOW_COPY_AND_ASSIGN(Subscript);
+};
+
 class Property: public Node {
 public:
 	enum Flags { WRITE, READ };

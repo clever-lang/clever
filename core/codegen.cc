@@ -634,4 +634,22 @@ void Codegen::visit(Import* node)
 	}
 }
 
+void Codegen::visit(Subscript* node)
+{
+	IR& subscript = m_builder->push(OP_SUBSCRIPT);
+
+	node->getVar()->accept(*this);
+	node->getIndex()->accept(*this);
+
+	_prepare_operand(subscript.op1, node->getVar());
+	_prepare_operand(subscript.op2, node->getIndex());
+
+	ValueOffset tmp_id = m_builder->getTemp();
+
+	subscript.result = Operand(FETCH_TMP, tmp_id);
+	subscript.loc = node->getLocation();
+
+	node->setVOffset(tmp_id);
+}
+
 }} // clever::ast

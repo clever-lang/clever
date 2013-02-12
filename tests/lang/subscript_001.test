@@ -1,0 +1,14 @@
+Testing subscript operator
+==CODE==
+import std.io.*;
+
+var a = [1,2];
+
+println(a[0]);
+
+a[1] = 1;
+
+println(a);
+==RESULT==
+1
+\[1, 1\]

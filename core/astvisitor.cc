@@ -187,4 +187,9 @@ void Visitor::visit(ClassDef* node) {
 	}
 }
 
+void Visitor::visit(Subscript* node) {
+	node->getVar()->accept(*this);
+	node->getIndex()->accept(*this);
+}
+
 }} // clever::ast
