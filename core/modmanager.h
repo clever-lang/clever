@@ -61,7 +61,7 @@ public:
 
 	void loadFunction(Scope*, Environment*, const CString*, Function*) const;
 
-	void loadType(Scope*, Environment*, const CString*, Type*) const;
+	void loadType(Scope*, Environment*, const std::string&, Type*) const;
 private:
 	Driver* m_driver;
 	ModuleMap m_mods;

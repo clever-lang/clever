@@ -72,7 +72,7 @@ static CLEVER_FUNCTION(isconst)
 CLEVER_MODULE_INIT(Reflection)
 {
 	// Types
-	addType(CSTRING("Reflect"), new reflection::ReflectType);
+	addType(new reflection::ReflectType);
 
 	// Functions
 	addFunction(new Function("type",     &CLEVER_NS_FNAME(reflection, type)));

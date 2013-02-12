@@ -13,7 +13,7 @@ namespace clever { namespace modules { namespace std {
 /// Initializes Standard File module
 CLEVER_MODULE_INIT(FileModule)
 {
-	addType(CSTRING("File"), new CFile);
+	addType(new CFile);
 }
 
 }}} // clever::modules::std

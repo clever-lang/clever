@@ -54,10 +54,8 @@ void Type::deallocMembers()
 		end(m_members.end());
 
 	while (it != end) {
-		if ((*it).second) {
-			clever_delref((*it).second);
-			(*it).second = 0;
-		}
+		clever_delref((*it).second);
+		(*it).second = 0;
 		++it;
 	}
 }

@@ -271,7 +271,7 @@ void Resolver::visit(ClassDef* node)
 
 	UserType* type = new UserType(name);
 
-	m_mod->addType(name, type);
+	m_mod->addType(type);
 	type->init();
 
 	Value* tmp = new Value(type);
