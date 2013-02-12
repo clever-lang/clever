@@ -56,6 +56,7 @@ public:
 	void visit(If*);
 	void visit(Logic*);
 	void visit(Boolean*);
+	void visit(Bitwise*);
 	void visit(NullLit*);
 	void visit(TrueLit*);
 	void visit(FalseLit*);

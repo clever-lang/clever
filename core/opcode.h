@@ -52,7 +52,14 @@ namespace clever {
 	&&OP_TRY,      \
 	&&OP_CATCH,    \
 	&&OP_THROW,    \
-	&&OP_ETRY
+	&&OP_ETRY,     \
+	&&OP_NOT,      \
+	&&OP_BW_AND,   \
+	&&OP_BW_OR,    \
+	&&OP_BW_XOR,   \
+	&&OP_BW_NOT,   \
+	&&OP_BW_LS,    \
+	&&OP_BW_RS
 #endif
 
 /// VM opcodes
@@ -98,6 +105,13 @@ enum Opcode {
 	OP_CATCH,      //       Used for catching exception
 	OP_THROW,      //       Used for throwing exception
 	OP_ETRY,       //  40 - Used for end marker exception block
+	OP_NOT,        //       Used for NOT boolean operation
+	OP_BW_AND,     //       Used for bitwise AND operation
+	OP_BW_OR,      //       Used for bitwise OR operation
+	OP_BW_XOR,     //       Used for bitwise XOR operation
+	OP_BW_NOT,     //  45 - Used for bitwise NOT operation
+	OP_BW_LS,      //       Used for bitwise left shift operation
+	OP_BW_RS,      //       Used for bitwise right shift operation
 	NUM_OPCODES
 };
 

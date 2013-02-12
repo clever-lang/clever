@@ -279,6 +279,7 @@ object:
 
 rvalue:
 		object
+	|	unary
 	|	arithmetic
 	|	logic
 	|	bitwise
@@ -295,6 +296,13 @@ rvalue:
 lvalue:
 		IDENT
 	|	property_access { $1->setWriteMode(); }
+;
+
+unary:
+		'-' rvalue %prec UMINUS { $<node>$ = new ast::Arithmetic(ast::Arithmetic::MOP_SUB, new ast::IntLit(0, yyloc), $<node>2, yyloc); }
+	|	'+' rvalue %prec UMINUS { $<node>$ = new ast::Arithmetic(ast::Arithmetic::MOP_ADD, new ast::IntLit(0, yyloc), $<node>2, yyloc); }
+	|	'!' rvalue              { $<node>$ = new ast::Boolean(ast::Boolean::BOP_NOT, $<node>2, yyloc);                                  }
+	|	'~' rvalue              { $<node>$ = new ast::Bitwise(ast::Bitwise::BOP_NOT, $<node>2, yyloc);                                  }
 ;
 
 class_def:

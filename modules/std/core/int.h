@@ -45,6 +45,7 @@ public:
 	}
 
 	CLEVER_TYPE_VIRTUAL_METHOD_DECLARATIONS;
+	CLEVER_TYPE_VIRTUAL_BITWISE_OPERATORS;
 
 	void increment(Value* value, const VM* vm, CException* exception) const {
 		value->setInt(value->getInt()+1);

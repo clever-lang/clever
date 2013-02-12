@@ -88,6 +88,11 @@ CLEVER_TYPE_OPERATOR(DoubleType::not_equal)
 	}
 }
 
+CLEVER_TYPE_UNARY_OPERATOR(DoubleType::not_op)
+{
+	result->setBool(!lhs->asBool());
+}
+
 // Double::Double()
 CLEVER_METHOD(DoubleType::ctor)
 {

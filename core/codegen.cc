@@ -322,6 +322,42 @@ void Codegen::visit(IncDec* node)
 	node->setVOffset(tmp_id);
 }
 
+void Codegen::visit(Bitwise* node)
+{
+	Node* lhs = node->getLhs();
+	Node* rhs = node->getRhs();
+	Opcode op = OP_ADD;
+
+	switch (node->getOperator()) {
+		case Bitwise::BOP_AND:    op = OP_BW_AND; break;
+		case Bitwise::BOP_OR:     op = OP_BW_OR;  break;
+		case Bitwise::BOP_XOR:    op = OP_BW_XOR; break;
+		case Bitwise::BOP_NOT:    op = OP_BW_NOT; break;
+		case Bitwise::BOP_LSHIFT: op = OP_BW_LS;  break;
+		case Bitwise::BOP_RSHIFT: op = OP_BW_RS;  break;
+	}
+
+	lhs->accept(*this);
+	if (rhs) {
+		rhs->accept(*this);
+	}
+
+	IR& arith = m_builder->push(op);
+
+	_prepare_operand(arith.op1, lhs);
+
+	if (rhs) {
+		_prepare_operand(arith.op2, rhs);
+	}
+
+	ValueOffset tmp_id = m_builder->getTemp();
+
+	arith.result = Operand(FETCH_TMP, tmp_id);
+	arith.loc = node->getLocation();
+
+	node->setVOffset(tmp_id);
+}
+
 void Codegen::visit(Arithmetic* node)
 {
 	Node* lhs = node->getLhs();
@@ -421,6 +457,7 @@ void Codegen::visit(Boolean* node)
 	switch (node->getOperator()) {
 		case Boolean::BOP_AND: op = OP_JMPZ;  break;
 		case Boolean::BOP_OR:  op = OP_JMPNZ; break;
+		case Boolean::BOP_NOT: op = OP_NOT;   break;
 	}
 
 	lhs->accept(*this);
@@ -433,12 +470,14 @@ void Codegen::visit(Boolean* node)
 	_prepare_operand(m_builder->push(op).op1, lhs);
 	m_builder->getLast().result = Operand(FETCH_TMP, res_id);
 
-	rhs->accept(*this);
+	if (rhs) {
+		rhs->accept(*this);
 
-	_prepare_operand(m_builder->push(op).op1, rhs);
-	m_builder->getLast().result = Operand(FETCH_TMP, res_id);
+		_prepare_operand(m_builder->push(op).op1, rhs);
+		m_builder->getLast().result = Operand(FETCH_TMP, res_id);
 
-	m_builder->getLast().op2 = m_builder->getAt(jmp_ir).op2 = Operand(JMP_ADDR, m_builder->getSize());
+		m_builder->getLast().op2 = m_builder->getAt(jmp_ir).op2 = Operand(JMP_ADDR, m_builder->getSize());
+	}
 }
 
 void Codegen::visit(If* node)

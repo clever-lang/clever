@@ -560,18 +560,24 @@ class Boolean: public Node {
 public:
 	enum BooleanOperator {
 		BOP_AND,
-		BOP_OR
+		BOP_OR,
+		BOP_NOT
 	};
 
 	Boolean(BooleanOperator op, Node* lhs, Node* rhs, const location& location)
 		: Node(location), m_op(op), m_lhs(lhs), m_rhs(rhs) {
-		m_lhs->addRef();
-		m_rhs->addRef();
+		clever_addref(m_lhs);
+		clever_addref(m_rhs);
+	}
+
+	Boolean(BooleanOperator op, Node* lhs, const location& location)
+		: Node(location), m_op(op), m_lhs(lhs), m_rhs(NULL) {
+		clever_addref(m_lhs);
 	}
 
 	~Boolean() {
-		m_lhs->delRef();
-		m_rhs->delRef();
+		clever_delref(m_lhs);
+		clever_delref(m_rhs);
 	}
 
 	BooleanOperator getOperator() const { return m_op; }
@@ -596,6 +602,7 @@ public:
 		BOP_AND,
 		BOP_OR,
 		BOP_XOR,
+		BOP_NOT,
 		BOP_LSHIFT,
 		BOP_RSHIFT
 	};
@@ -604,6 +611,11 @@ public:
 		: Node(location), m_op(op), m_lhs(lhs), m_rhs(rhs) {
 		m_lhs->addRef();
 		m_rhs->addRef();
+	}
+
+	Bitwise(BitwiseOperator op, Node* lhs, const location& location)
+		: Node(location), m_op(op), m_lhs(lhs), m_rhs(NULL) {
+		m_lhs->addRef();
 	}
 
 	~Bitwise() {

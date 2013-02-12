@@ -122,7 +122,9 @@ void Visitor::visit(Bitwise* node) {
 
 void Visitor::visit(Boolean* node) {
 	node->getLhs()->accept(*this);
-	node->getRhs()->accept(*this);
+	if (node->getRhs()) {
+		node->getRhs()->accept(*this);
+	}
 }
 
 void Visitor::visit(Comparison* node) {
