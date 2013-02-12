@@ -255,8 +255,20 @@ continue:
 ;
 
 thread_block:
-		THREAD IDENT block { $$ = new ast::ThreadBlock($3, $2, yyloc); }
-	|	THREAD IDENT '[' rvalue ']'  block { $$ = new ast::ThreadBlock($6, $2, $<node>4, yyloc); }
+		THREAD IDENT block {
+#ifndef CLEVER_THREADS
+		error(yyloc, "Cannot use process block syntax, pthreads is disabled!"); YYABORT;
+#else
+		$$ = new ast::ThreadBlock($3, $2, yyloc);
+#endif
+	}
+	|	THREAD IDENT '[' rvalue ']'  block {
+#ifndef CLEVER_THREADS
+		error(yyloc, "Cannot use process block syntax, pthreads is disabled!"); YYABORT;
+#else
+		$$ = new ast::ThreadBlock($6, $2, $<node>4, yyloc);
+#endif
+	}
 ;
 
 critical_block:
