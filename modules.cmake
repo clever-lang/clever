@@ -10,15 +10,17 @@
 clever_add_module(std_date       ON  "enable the date module"       "")
 clever_add_module(std_concurrent ON  "enable the concurrent module" "")
 clever_add_module(std_regex      ON  "enable the regex module"      "")
-clever_add_module(std_ffi        ON "enable the ffi module"        "")
-clever_add_module(std_rpc        OFF  "enable the rpc module"        "")
+clever_add_module(std_ffi        ON  "enable the ffi module"        "")
+clever_add_module(std_rpc        OFF "enable the rpc module"        "")
 clever_add_module(std_net        ON  "enable the net module"        "")
 clever_add_module(std_unicode    ON  "enable the unicode module"    "")
-clever_add_module(std_fcgi    	 OFF "enable the fcgi module"       "")
+clever_add_module(std_fcgi       OFF "enable the fcgi module"       "")
 clever_add_module(web_request    OFF "enable the request module"    "")
 clever_add_module(web_session    OFF "enable the session module"    "")
+clever_add_module(db_mysql       ON  "enable the mysql module"      "")
 
 # Simple modules
+clever_add_simple_module(std_clever     ON  "enable the clever module"     "")
 clever_add_simple_module(std_file       ON  "enable the file module"       "")
 clever_add_simple_module(std_io         ON  "enable the io module"         "")
 clever_add_simple_module(std_math       ON  "enable the math module"       "")
@@ -44,6 +46,7 @@ if (MOD_STD_CONCURRENT)
 		list(APPEND CLEVER_LIBRARIES ${CONCURRENCY_LIBRARIES})
 	else (CONCURRENCY_FOUND)
 		clever_module_msg(std_concurrent, "Posix Threads are not present on this system")
+		set(MOD_STD_CONCURRENT OFF)
 	endif (CONCURRENCY_FOUND)
 endif (MOD_STD_CONCURRENT)
 
@@ -162,3 +165,9 @@ endif (MOD_STD_NET)
 
 clever_module_msg(std_net ${MOD_STD_NET})
 
+# db.mysql - TODO: Check if mysql is really available in the system
+if (MOD_DB_MYSQL)
+	add_definitions(-DHAVE_MOD_DB_MYSQL)
+endif (MOD_DB_MYSQL)
+
+clever_module_msg(db_mysql ${MOD_DB_MYSQL})
