@@ -39,8 +39,16 @@ extern Type* g_clever_map_type;
 # define SAFETY_DTOR()
 # define SAFETY_LOCK()  m_mutex.lock();
 # define SAFETY_ULOCK() m_mutex.unlock();
-# define SAFETY_GET(A, B, C) return static_cast<B*>(getObj())->value;
-# define SAFETY_GET_STR(A, B, C) return static_cast<B*>(getObj())->getStr();
+# define SAFETY_GET(A, B, C) \
+SAFETY_LOCK() \
+B* t = static_cast<B*>(getObj())->value; \
+SAFETY_ULOCK() \
+return t;
+# define SAFETY_GET_STR(A, B, C) \
+SAFETY_LOCK() \
+B* t = static_cast<B*>(getObj())->getStr(); \
+SAFETY_ULOCK() \
+return t;
 #else
 # define SAFETY_CTOR()
 # define SAFETY_DTOR()
@@ -133,11 +141,13 @@ public:
 
 	void dump() const {	dump(std::cout); }
 	void dump(std::ostream& out) const {
+		SAFETY_LOCK();
 		if (m_type) {
 			m_type->dump(getObj(), out);
 		} else {
 			out << "null";
 		}
+		SAFETY_ULOCK();
 	}
 
 	void setObj(const Type* type, TypeObject* ptr) {
