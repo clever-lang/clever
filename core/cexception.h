@@ -8,7 +8,9 @@
 #ifndef CLEVER_CEXCEPTION_H
 #define CLEVER_CEXCEPTION_H
 
+#include <cstdarg>
 #include "core/value.h"
+#include "modules/std/core/str.h"
 
 namespace clever {
 
