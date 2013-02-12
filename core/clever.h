@@ -22,8 +22,6 @@ class CException;
 class Type;
 class Value;
 
-#define CLEVER_THROW(val, ...) exception->setException(val, ##__VA_ARGS__)
-
 extern jmp_buf fatal_error;
 
 // Version macros

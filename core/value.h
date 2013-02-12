@@ -76,7 +76,7 @@ public:
 		}
 	}
 
-	TypeObject* getObj() { return m_obj; }
+	TypeObject* getObj() const { return m_obj; }
 
 private:
 	TypeObject* m_obj;

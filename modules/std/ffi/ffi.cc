@@ -275,7 +275,7 @@ CLEVER_METHOD(FFI::callThisFunction)
 	fpf = dlsym(handler->m_lib_handler, func.c_str());
 	if (fpf == NULL) {
 
-		CLEVER_THROW("function `%S' don't exist!", &func);
+		clever_throw("function `%S' don't exist!", &func);
 		return;
 	}
 
@@ -302,7 +302,7 @@ CLEVER_METHOD(FFI::exec)
 	ffi_call_func pf = _ffi_get_pf(lib_handler,
 								   func);
 	if (pf == 0) {
-		CLEVER_THROW("function `%S' don't exist!", func);
+		clever_throw("function `%S' don't exist!", func);
 		return;
 	}
 #endif
@@ -328,7 +328,7 @@ CLEVER_METHOD(FFI::call)
 	ffi_call_func pf = _ffi_get_pf(handler->m_lib_handler,
 								   func);
 	if (pf == 0) {
-		CLEVER_THROW("function `%S' don't exist!", func);
+		clever_throw("function `%S' don't exist!", func);
 		return;
 	}
 #endif

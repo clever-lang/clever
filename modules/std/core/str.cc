@@ -284,7 +284,7 @@ CLEVER_METHOD(StrType::charAt)
 			result->setNull();
 		}
 	} else {
-		CLEVER_THROW("String.charAt expected a non-negative argument for position");
+		clever_throw("String.charAt expected a non-negative argument for position");
 	}
 }
 
