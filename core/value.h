@@ -34,24 +34,6 @@ extern Type* g_clever_map_type;
 #define CLEVER_ARRAY_TYPE  g_clever_array_type
 #define CLEVER_MAP_TYPE    g_clever_map_type
 
-#ifdef CLEVER_THREADS
-# define SAFETY_CTOR() ,m_mutex()
-# define SAFETY_DTOR()
-# define SAFETY_LOCK()  m_mutex.lock();
-# define SAFETY_ULOCK() m_mutex.unlock();
-# define SAFETY_GET(A, B)                    \
-	SAFETY_LOCK()                            \
-	B* t = static_cast<B*>(getObj())->value; \
-	SAFETY_ULOCK()                           \
-	return t;
-#else
-# define SAFETY_CTOR()
-# define SAFETY_DTOR()
-# define SAFETY_LOCK()
-# define SAFETY_ULOCK()
-# define SAFETY_GET(A, B) return static_cast<B*>(getObj())->value;
-#endif
-
 typedef std::map     <std::string, Value*>  ValueMap;
 typedef std::pair    <std::string, Value*>  ValuePair;
 typedef std::vector  <Value*>               ValueVector;
@@ -82,62 +64,58 @@ private:
 class Value : public RefCounted {
 public:
 	Value()
-		: m_data(NULL), m_type(NULL), m_is_const(false) SAFETY_CTOR() {}
+		: m_data(NULL), m_type(NULL), m_is_const(false) {}
 
 	Value(bool n, bool is_const = false)
-		: m_data(NULL), m_type(CLEVER_BOOL_TYPE), m_is_const(is_const) SAFETY_CTOR() {
+		: m_data(NULL), m_type(CLEVER_BOOL_TYPE), m_is_const(is_const) {
 		setBool(n);
 	}
 
 	Value(long n, bool is_const = false)
-		: m_data(NULL), m_type(CLEVER_INT_TYPE), m_is_const(is_const) SAFETY_CTOR() {
+		: m_data(NULL), m_type(CLEVER_INT_TYPE), m_is_const(is_const) {
 		setInt(n);
 	}
 
 	Value(double n, bool is_const = false)
-		: m_data(NULL), m_type(CLEVER_DOUBLE_TYPE), m_is_const(is_const) SAFETY_CTOR() {
+		: m_data(NULL), m_type(CLEVER_DOUBLE_TYPE), m_is_const(is_const) {
 		setDouble(n);
 	}
 
 	Value(const CString* value, bool is_const = false)
-		: m_data(NULL), m_type(CLEVER_STR_TYPE), m_is_const(is_const) SAFETY_CTOR() {
+		: m_data(NULL), m_type(CLEVER_STR_TYPE), m_is_const(is_const) {
 		setObj(m_type, new StrObject(value));
 	}
 
 	Value(const Type* type, bool is_const = false)
-		: m_data(), m_type(type), m_is_const(is_const) SAFETY_CTOR() {}
+		: m_data(), m_type(type), m_is_const(is_const) {}
 
 	~Value() {
 		if (m_type && m_data) {
 			m_data->delRef();
 		}
-		SAFETY_DTOR();
 	}
 
 	const Type* getType() const { return m_type; }
 
-	void setNull() { SAFETY_LOCK(); m_type = NULL; SAFETY_ULOCK(); }
+	void setNull() { m_type = NULL; }
 	bool isNull() const { return m_type == NULL; }
 
 	void dump() const {	dump(std::cout); }
 	void dump(std::ostream& out) const {
-		SAFETY_LOCK();
 		if (m_type) {
 			m_type->dump(getObj(), out);
 		} else {
 			out << "null";
 		}
-		SAFETY_ULOCK();
 	}
 
 	void setObj(const Type* type, TypeObject* ptr) {
-		SAFETY_LOCK();
 		clever_assert_not_null(type);
 		clever_assert_not_null(ptr);
+
 		m_type = type;
 		m_data = new ValueObject(ptr, type);
 		ptr->copyMembers(type);
-		SAFETY_ULOCK();
 	}
 	TypeObject* getObj() const { return  m_data->getObj(); }
 
@@ -167,12 +145,11 @@ public:
 
 	void copy(const Value*);
 
-	Value* clone() {
-		SAFETY_LOCK();
+	Value* clone() const {
 		Value* val = new Value;
+
 		val->copy(this);
 		val->setConst(isConst());
-		SAFETY_ULOCK();
 		return val;
 	}
 
@@ -197,20 +174,16 @@ public:
 	}
 
 private:
-	void cleanUp() {
-		SAFETY_LOCK();
+	void cleanUp() const {
 		if (m_type && m_data) {
 			m_data->delRef();
 		}
-		SAFETY_ULOCK();
 	}
 
 	ValueObject* m_data;
 	const Type* m_type;
 	bool m_is_const;
-#ifdef CLEVER_THREADS
-	CMutex m_mutex;
-#endif
+
 	DISALLOW_COPY_AND_ASSIGN(Value);
 };
 

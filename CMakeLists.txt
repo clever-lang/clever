@@ -123,6 +123,11 @@ if (UNIX)
 			set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -lffi -ldl")
 		endif (MOD_STD_FFI)
 
+		# Add "-lmysql" to the end of the linker command line.
+		if (MOD_DB_MYSQL)
+			set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -lmysql")
+		endif (MOD_DB_MYSQL)
+
 	endif (${LSB_RELEASE} MATCHES "Ubuntu")
 
 endif (UNIX)
@@ -196,7 +201,7 @@ set(CORE_SOURCE
 	core/user.h
 )
 
-add_library(clever-static STATIC ${CORE_SOURCE}	${EXTRA_CLEVER_FILES})
+add_library(clever-static STATIC ${CORE_SOURCE} ${EXTRA_CLEVER_FILES})
 set_target_properties(clever-static PROPERTIES OUTPUT_NAME "clever")
 target_link_libraries(clever-static ${CLEVER_LIBRARIES})
 include_directories(${CLEVER_STATIC_INCLUDE_DIRS})
@@ -212,10 +217,13 @@ target_link_libraries(clever-cli clever-static)
 # Module trees
 # ---------------------------------------------------------------------------
 add_subdirectory(modules/std)
+add_subdirectory(modules/db)
 #add_subdirectory(modules/web)
 add_dependencies(clever-static modules_std)
+add_dependencies(clever-static modules_db)
 #add_dependencies(clever-static modules_std modules_web)
 target_link_libraries(clever-static modules_std)
+target_link_libraries(clever-static modules_db)
 #target_link_libraries(clever-static modules_std modules_web)
 
 # Test runner
@@ -256,8 +264,8 @@ install(DIRECTORY core/ modules/ types/ win32/
 # Files to delete
 # ---------------------------------------------------------------------------
 #set_directory_properties(PROPERTIES
-#	ADDITIONAL_MAKE_CLEAN_FILES
-#	"")
+#   ADDITIONAL_MAKE_CLEAN_FILES
+#   "")
 
 # Packaging
 # ---------------------------------------------------------------------------
