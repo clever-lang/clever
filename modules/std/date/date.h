@@ -31,7 +31,6 @@ public:
 
 	~Date() {}
 
-	void dump(TypeObject* data) const;
 	void dump(TypeObject* data, ::std::ostream& out) const;
 
 	virtual void increment(Value*, const VM*, CException*) const {}
