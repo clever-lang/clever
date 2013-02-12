@@ -31,7 +31,7 @@ private:
 class Mysql : public Type {
 public:
 	Mysql()
-		: Type(CSTRING("Mysql")) {}
+		: Type("Mysql") {}
 
 	~Mysql() {}
 

@@ -13,7 +13,7 @@ namespace clever { namespace modules { namespace db {
 /// Initializes Mysql module
 CLEVER_MODULE_INIT(MysqlModule)
 {
-	addType(CSTRING("Mysql"), new Mysql);
+	addType(new Mysql);
 }
 
 }}} // clever::modules::db
