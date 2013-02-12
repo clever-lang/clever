@@ -13,9 +13,10 @@ process thread {
 }
 
 thread.run();
-thread.wait();
 
 println(c.wait(m));
+
+thread.wait();
 ==RESULT==
 1
 1
