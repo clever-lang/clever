@@ -14,7 +14,7 @@ Environment* Environment::activate(Environment* outer) const
 {
 	Environment* env = new Environment(outer, false);
 	env->m_active = true;
-	
+
 	if (m_temp) {
 		env->setFlag(FREE_TEMP);
 		env->m_temp = m_temp->activate(NULL);
@@ -39,9 +39,9 @@ Value* Environment::getValue(const ValueOffset& offset) const
 	size_t depth = offset.first;
 	Environment* env = m_outer;
 
-    while (env && --depth) {
-        env = env->m_outer;
-    }
+	while (env && --depth) {
+		env = env->m_outer;
+	}
 
 	clever_assert(depth == 0,
 			"`depth` must be zero, otherwise we failed to find the environment.");
