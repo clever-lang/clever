@@ -139,12 +139,10 @@ public:
 	}
 
 	void setObj(const Type* type, TypeObject* ptr) {
-		SAFETY_LOCK();
 		clever_assert_not_null(type);
 		m_type = type;
 		m_data = new ValueObject(ptr, type);
 		ptr->copyMembers(type);
-		SAFETY_ULOCK();
 	}
 
 	TypeObject* getObj() const {
@@ -168,10 +166,10 @@ public:
 	const CString* getStr() const;
 
 	void setData(ValueObject* data) {
-		SAFETY_LOCK();
+		//SAFETY_LOCK();
 		m_type = NULL;
 		m_data = data;
-		SAFETY_ULOCK();
+		//SAFETY_ULOCK();
 	}
 
 	bool isInt()      const { return m_type == CLEVER_INT_TYPE;    }
@@ -219,6 +217,14 @@ public:
 
 	void setConst(bool constness = true) {
 		m_is_const = constness;
+	}
+
+	void lock() {
+		SAFETY_LOCK();
+	}
+
+	void unlock() {
+		SAFETY_ULOCK();
 	}
 
 private:
