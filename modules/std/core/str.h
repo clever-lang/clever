@@ -14,27 +14,25 @@
 
 namespace clever {
 
-class StrObject : public TypeObject {
+struct StrObject : public TypeObject {
 public:
 	StrObject(const CString* str)
-		: m_str(str), m_interned(true) {}
+		: value(str), interned(true) {}
 
-	StrObject(const CString* str, bool interned)
-		: m_str(str), m_interned(interned) {}
+	StrObject(const CString* str, bool is_interned)
+		: value(str), interned(is_interned) {}
 
 	StrObject(const std::string& str)
-		: m_str(new CString(str)), m_interned(false) {}
+		: value(new CString(str)), interned(false) {}
 
 	~StrObject() {
-		if (!m_interned) {
-			delete m_str;
+		if (!interned) {
+			delete value;
 		}
 	}
 
-	const CString* getStr() const { return m_str; }
-private:
-	const CString* m_str;
-	bool m_interned;
+	const CString* value;
+	bool interned;
 
 	DISALLOW_COPY_AND_ASSIGN(StrObject);
 };
