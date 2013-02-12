@@ -19,7 +19,7 @@ void Value::copy(const Value* value)
 	m_type = value->getType();
 	m_data = value->getData();
 
-	if (m_type && m_data) {
+	if (EXPECTED(m_type && m_data)) {
 		m_data->addRef();
 	}
 	SAFETY_ULOCK();
@@ -29,13 +29,14 @@ bool Value::asBool() const
 {
 	if (isNull()) {
 		return false;
-	} else if (m_type == CLEVER_BOOL_TYPE) {
-		return static_cast<BoolObject*>(getObj())->value;
+	} else if (isBool()) {
+		return getBool();
 	}
 	return true;
 }
 
-void Value::setInt(long n) {
+void Value::setInt(long n)
+{
 	SAFETY_LOCK();
 	cleanUp();
 	m_type = CLEVER_INT_TYPE;
@@ -43,11 +44,13 @@ void Value::setInt(long n) {
 	SAFETY_ULOCK();
 }
 
-long Value::getInt() const {
+long Value::getInt() const
+{
 	return static_cast<IntObject*>(getObj())->value;
 }
 
-void Value::setDouble(double n) {
+void Value::setDouble(double n)
+{
 	SAFETY_LOCK();
 	cleanUp();
 	m_type = CLEVER_DOUBLE_TYPE;
@@ -55,11 +58,13 @@ void Value::setDouble(double n) {
 	SAFETY_ULOCK();
 }
 
-double Value::getDouble() const {
+double Value::getDouble() const
+{
 	return static_cast<DoubleObject*>(getObj())->value;
 }
 
-void Value::setStr(const CString* str) {
+void Value::setStr(const CString* str)
+{
 	SAFETY_LOCK();
 	cleanUp();
 	m_type = CLEVER_STR_TYPE;
@@ -75,11 +80,13 @@ void Value::setStr(StrObject* str) {
 	SAFETY_ULOCK();
 }
 
-const CString* Value::getStr() const {
+const CString* Value::getStr() const
+{
 	return static_cast<StrObject*>(getObj())->getStr();
 }
 
-void Value::setBool(bool n) {
+void Value::setBool(bool n)
+{
 	SAFETY_LOCK();
 	cleanUp();
 	m_type = CLEVER_BOOL_TYPE;
@@ -87,7 +94,8 @@ void Value::setBool(bool n) {
 	SAFETY_ULOCK();
 }
 
-bool Value::getBool() const {
+bool Value::getBool() const
+{
 	return static_cast<BoolObject*>(getObj())->value;
 }
 
