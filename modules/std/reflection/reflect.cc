@@ -26,7 +26,7 @@ void ReflectType::dump(TypeObject* data, ::std::ostream& out) const
 	Value* value = intern->getData();
 
 	out << "Reflect(";
-	out << *value->getType()->getName();
+	out << value->getType()->getName();
 	out << ")";
 }
 
@@ -52,7 +52,9 @@ CLEVER_METHOD(ReflectType::getType)
 	const ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
 
 	if (intern->getData()->getType()) {
-		result->setStr(intern->getData()->getType()->getName());
+		result->setStr(new StrObject(intern->getData()->getType()->getName()));
+	} else {
+		result->setNull();
 	}
 }
 

@@ -30,7 +30,7 @@ struct IntObject : public TypeObject {
 class IntType : public Type {
 public:
 	IntType()
-		: Type(CSTRING("Int")) {}
+		: Type("Int") {}
 
 	~IntType() {}
 

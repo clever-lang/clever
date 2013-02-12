@@ -45,16 +45,13 @@ struct FFIData : public TypeObject {
 class FFI : public Type {
 public:
 	FFI()
-		: Type(CSTRING("FFILib")), m_call_handler(NULL) {}
+		: Type("FFILib"), m_call_handler(NULL) {}
 
 	~FFI() {}
 
 	void init();
 
 	void dump(TypeObject* data, ::std::ostream& out) const {}
-
-	virtual void increment(Value*, const VM*, CException*) const {}
-	virtual void decrement(Value*, const VM*, CException*) const {}
 
 	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
 	virtual void deallocData(void* data);

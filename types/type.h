@@ -103,7 +103,7 @@ public:
 	Type()
 		: m_flags(INTERNAL_TYPE) {}
 
-	Type(const CString* name, TypeFlag flags = INTERNAL_TYPE)
+	Type(const std::string& name, TypeFlag flags = INTERNAL_TYPE)
 		: m_name(name), m_ctor(NULL), m_user_ctor(NULL), m_dtor(NULL), m_flags(flags) {}
 
 	virtual ~Type() {}
@@ -142,7 +142,7 @@ public:
 	const PropertyMap getProperties() const;
 
 	/// Method for retrieve the type name
-	const CString* getName() const { return m_name; }
+	const std::string& getName() const { return m_name; }
 
 	void setConstructor(Function* func) { m_ctor = func; }
 	void setDestructor(Function* func) { m_dtor = func; }
@@ -181,7 +181,7 @@ public:
 	/// Type internal data destructor
 	virtual void deallocData(CLEVER_TYPE_DTOR_ARGS) {}
 private:
-	const CString* m_name;
+	std::string m_name;
 	const Function* m_ctor;
 	const Function* m_user_ctor;
 	const Function* m_dtor;

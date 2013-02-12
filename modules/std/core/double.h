@@ -28,7 +28,7 @@ struct DoubleObject : public TypeObject {
 class DoubleType : public Type {
 public:
 	DoubleType()
-		: Type(CSTRING("Double")) {}
+		: Type("Double") {}
 
 	~DoubleType() {}
 

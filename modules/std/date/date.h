@@ -27,7 +27,7 @@ struct DateObject : public TypeObject {
 class Date : public Type {
 public:
 	Date()
-		: Type(CSTRING("std.date")) {}
+		: Type("std.date") {}
 
 	~Date() {}
 

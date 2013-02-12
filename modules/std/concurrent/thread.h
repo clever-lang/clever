@@ -18,17 +18,12 @@ namespace clever { namespace modules { namespace std {
 class Thread : public Type {
 public:
 	Thread()
-		: Type(CSTRING("Thread")) {}
+		: Type("Thread") {}
 
 	~Thread() {}
 
-	void dump(TypeObject* data) const;
-	void dump(TypeObject* data, ::std::ostream& out) const;
-
-	virtual void increment(Value*, const VM*, CException*) const {}
-	virtual void decrement(Value*, const VM*, CException*) const {}
-
 	void init();
+	void dump(TypeObject* data, ::std::ostream& out) const {}
 
 	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
 	virtual void deallocData(void* data);

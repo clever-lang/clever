@@ -34,7 +34,7 @@ private:
 class ArrayType : public Type {
 public:
 	ArrayType()
-		: Type(CSTRING("Array")) {}
+		: Type("Array") {}
 
 	~ArrayType() {}
 

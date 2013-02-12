@@ -133,67 +133,67 @@ const PropertyMap Type::getProperties() const
 
 CLEVER_TYPE_OPERATOR(Type::add)
 {
-	clever_throw("Cannot use + operator with %S type", getName());
+	clever_throw("Cannot use + operator with %s type", getName().c_str());
 }
 
 CLEVER_TYPE_OPERATOR(Type::sub)
 {
-	clever_throw("Cannot use - operator with %S type", getName());
+	clever_throw("Cannot use - operator with %s type", getName().c_str());
 }
 
 CLEVER_TYPE_OPERATOR(Type::mul)
 {
-	clever_throw("Cannot use * operator with %S type", getName());
+	clever_throw("Cannot use * operator with %s type", getName().c_str());
 }
 
 CLEVER_TYPE_OPERATOR(Type::div)
 {
-	clever_throw("Cannot use / operator with %S type", getName());
+	clever_throw("Cannot use / operator with %s type", getName().c_str());
 }
 
 CLEVER_TYPE_OPERATOR(Type::mod)
 {
-	clever_throw("Cannot use % operator with %S type", getName());
+	clever_throw("Cannot use % operator with %s type", getName().c_str());
 }
 
 CLEVER_TYPE_OPERATOR(Type::greater)
 {
-	clever_throw("Cannot use > operator with %S type", getName());
+	clever_throw("Cannot use > operator with %s type", getName().c_str());
 }
 
 CLEVER_TYPE_OPERATOR(Type::greater_equal)
 {
-	clever_throw("Cannot use >= operator with %S type", getName());
+	clever_throw("Cannot use >= operator with %s type", getName().c_str());
 }
 
 CLEVER_TYPE_OPERATOR(Type::less)
 {
-	clever_throw("Cannot use < operator with %S type", getName());
+	clever_throw("Cannot use < operator with %s type", getName().c_str());
 }
 
 CLEVER_TYPE_OPERATOR(Type::less_equal)
 {
-	clever_throw("Cannot use <= operator with %S type", getName());
+	clever_throw("Cannot use <= operator with %s type", getName().c_str());
 }
 
 CLEVER_TYPE_OPERATOR(Type::equal)
 {
-	clever_throw("Cannot use == operator with %S type", getName());
+	clever_throw("Cannot use == operator with %s type", getName().c_str());
 }
 
 CLEVER_TYPE_OPERATOR(Type::not_equal)
 {
-	clever_throw("Cannot use != operator with %S type", getName());
+	clever_throw("Cannot use != operator with %s type", getName().c_str());
 }
 
 void Type::increment(Value* value, const VM* vm, CException* exception) const
 {
-	clever_throw("Cannot use ++ operator with %S type", getName());
+	clever_throw("Cannot use ++ operator with %s type", getName().c_str());
 }
 
 void Type::decrement(Value* value, const VM* vm, CException* exception) const
 {
-	clever_throw("Cannot use -- operator with %S type", getName());
+	clever_throw("Cannot use -- operator with %s type", getName().c_str());
 }
 
 } // clever
