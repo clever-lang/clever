@@ -45,6 +45,10 @@ else (TCMALLOC)
 	message(STATUS "Using default allocator. Use -DTCMALLOC=1 to use tcmalloc")
 endif (TCMALLOC)
 
+if (USE_THREADS)
+	add_definitions(-DCLEVER_THREADS)
+endif (USE_THREADS)
+
 # Parser and Scanner
 # ---------------------------------------------------------------------------
 if (GEN_PARSER)

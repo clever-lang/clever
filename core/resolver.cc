@@ -75,7 +75,7 @@ void Resolver::visit(ThreadBlock* node)
 
 	Thread* thread = static_cast<Thread*>(CLEVER_THREAD_TYPE->allocData(NULL));
 
-	//thread->setUserDefined();
+	thread->setUserDefined();
 
 	Value* tval = new Value;
 	tval->setObj(CLEVER_THREAD_TYPE, thread);
@@ -271,7 +271,7 @@ void Resolver::visit(ClassDef* node)
 
 	UserType* type = new UserType(name);
 
-	m_mod->addType(name, type);
+	m_mod->addType(type);
 	type->init();
 
 	Value* tmp = new Value(type);

@@ -75,6 +75,9 @@ CLEVER_METHOD(ThreadType::run)
 	Thread* tdata = CLEVER_GET_OBJECT(Thread*, CLEVER_THIS());
 
 	VM* m_vm = const_cast<VM*>(vm);
+
+	m_vm->getMutex()->lock();
+
 	VMThreads& m_thread_pool = tdata->getThreadPool();
 
 
@@ -85,7 +88,6 @@ CLEVER_METHOD(ThreadType::run)
 
 	m_thread_pool.resize(size);
 	for (size_t i = bg; i < size; ++i) {
-		m_vm->getMutex()->lock();
 
 		VMThread* thread = new VMThread;
 
@@ -99,11 +101,9 @@ CLEVER_METHOD(ThreadType::run)
 		m_thread_pool[i] = thread;
 
 		thread->vm_handler->setPC(thread_addr);
-		m_vm->getMutex()->unlock();
-
 		thread->t_handler.create(_thread_control, static_cast<void*>(thread));
 	}
-
+	m_vm->getMutex()->unlock();
 }
 
 // Thread type initialization

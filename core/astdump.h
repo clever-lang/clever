@@ -146,6 +146,7 @@ public:
 			case ast::Bitwise::BOP_AND:	   AST_DUMP_DISPLAY_LHS_RHS('&');  break;
 			case ast::Bitwise::BOP_OR:     AST_DUMP_DISPLAY_LHS_RHS('|');  break;
 			case ast::Bitwise::BOP_XOR:    AST_DUMP_DISPLAY_LHS_RHS('^');  break;
+			case ast::Bitwise::BOP_NOT:    AST_DUMP_DISPLAY_LHS_RHS('~');  break;
 			case ast::Bitwise::BOP_LSHIFT: AST_DUMP_DISPLAY_LHS_RHS("<<"); break;
 			case ast::Bitwise::BOP_RSHIFT: AST_DUMP_DISPLAY_LHS_RHS(">>"); break;
 		}

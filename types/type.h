@@ -27,6 +27,12 @@ class Type;
 class Function;
 
 #define CLEVER_TYPE_OPERATOR_ARGS Value* result, const Value* lhs, const Value* rhs, const VM* vm, CException* exception
+#define CLEVER_TYPE_UNARY_OPERATOR_ARGS Value* result, const Value* lhs, const VM* vm, CException* exception
+#define CLEVER_TYPE_AT_OPERATOR_ARGS const Value* value, const Value* index, const VM* vm, CException* exception
+
+#define CLEVER_TYPE_OPERATOR(name)       void CLEVER_FASTCALL name(CLEVER_TYPE_OPERATOR_ARGS) const
+#define CLEVER_TYPE_UNARY_OPERATOR(name) void CLEVER_FASTCALL name(CLEVER_TYPE_UNARY_OPERATOR_ARGS) const
+#define CLEVER_TYPE_AT_OPERATOR(name)    Value* CLEVER_FASTCALL name(CLEVER_TYPE_AT_OPERATOR_ARGS) const
 
 #define CLEVER_TYPE_VIRTUAL_METHOD_DECLARATIONS                          \
 	void CLEVER_FASTCALL add(CLEVER_TYPE_OPERATOR_ARGS)           const; \
@@ -39,9 +45,16 @@ class Function;
 	void CLEVER_FASTCALL greater(CLEVER_TYPE_OPERATOR_ARGS)       const; \
 	void CLEVER_FASTCALL greater_equal(CLEVER_TYPE_OPERATOR_ARGS) const; \
 	void CLEVER_FASTCALL less(CLEVER_TYPE_OPERATOR_ARGS)          const; \
-	void CLEVER_FASTCALL less_equal(CLEVER_TYPE_OPERATOR_ARGS)    const;
+	void CLEVER_FASTCALL less_equal(CLEVER_TYPE_OPERATOR_ARGS)    const; \
+	void CLEVER_FASTCALL not_op(CLEVER_TYPE_UNARY_OPERATOR_ARGS)  const;
 
-#define CLEVER_TYPE_OPERATOR(name) void CLEVER_FASTCALL name(CLEVER_TYPE_OPERATOR_ARGS) const
+#define CLEVER_TYPE_VIRTUAL_BITWISE_OPERATORS                           \
+	void CLEVER_FASTCALL bw_and(CLEVER_TYPE_OPERATOR_ARGS)       const; \
+	void CLEVER_FASTCALL bw_or(CLEVER_TYPE_OPERATOR_ARGS)        const; \
+	void CLEVER_FASTCALL bw_xor(CLEVER_TYPE_OPERATOR_ARGS)       const; \
+	void CLEVER_FASTCALL bw_not(CLEVER_TYPE_UNARY_OPERATOR_ARGS) const; \
+	void CLEVER_FASTCALL bw_ls(CLEVER_TYPE_OPERATOR_ARGS)        const; \
+	void CLEVER_FASTCALL bw_rs(CLEVER_TYPE_OPERATOR_ARGS)        const;
 
 #define CLEVER_THIS() obj
 
@@ -168,10 +181,18 @@ public:
 	virtual void CLEVER_FASTCALL mod(CLEVER_TYPE_OPERATOR_ARGS)           const;
 	virtual void CLEVER_FASTCALL equal(CLEVER_TYPE_OPERATOR_ARGS)         const;
 	virtual void CLEVER_FASTCALL not_equal(CLEVER_TYPE_OPERATOR_ARGS)     const;
+	virtual void CLEVER_FASTCALL not_op(CLEVER_TYPE_UNARY_OPERATOR_ARGS)  const;
 	virtual void CLEVER_FASTCALL greater(CLEVER_TYPE_OPERATOR_ARGS)       const;
 	virtual void CLEVER_FASTCALL greater_equal(CLEVER_TYPE_OPERATOR_ARGS) const;
 	virtual void CLEVER_FASTCALL less(CLEVER_TYPE_OPERATOR_ARGS)          const;
 	virtual void CLEVER_FASTCALL less_equal(CLEVER_TYPE_OPERATOR_ARGS)    const;
+	virtual void CLEVER_FASTCALL bw_and(CLEVER_TYPE_OPERATOR_ARGS)        const;
+	virtual void CLEVER_FASTCALL bw_or(CLEVER_TYPE_OPERATOR_ARGS)         const;
+	virtual void CLEVER_FASTCALL bw_xor(CLEVER_TYPE_OPERATOR_ARGS)        const;
+	virtual void CLEVER_FASTCALL bw_ls(CLEVER_TYPE_OPERATOR_ARGS)         const;
+	virtual void CLEVER_FASTCALL bw_rs(CLEVER_TYPE_OPERATOR_ARGS)         const;
+	virtual void CLEVER_FASTCALL bw_not(CLEVER_TYPE_UNARY_OPERATOR_ARGS)  const;
+	virtual Value* CLEVER_FASTCALL at_op(CLEVER_TYPE_AT_OPERATOR_ARGS)    const;
 	virtual void increment(Value*, const VM*, CException*)                const;
 	virtual void decrement(Value*, const VM*, CException*)                const;
 

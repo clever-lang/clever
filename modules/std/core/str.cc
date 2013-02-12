@@ -405,4 +405,9 @@ CLEVER_TYPE_OPERATOR(StrType::not_equal)
 	}
 }
 
+CLEVER_TYPE_UNARY_OPERATOR(StrType::not_op)
+{
+	result->setBool(!lhs->asBool());
+}
+
 } // clever

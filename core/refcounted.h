@@ -9,47 +9,61 @@
 #define CLEVER_REFCOUNTED_H
 
 #include "core/clever.h"
+#include "core/cthread.h"
 
 namespace clever {
 
 class NO_INIT_VTABLE RefCounted {
+	CMutex m_mutex;
 public:
 	RefCounted()
-		: m_reference(1) {}
+		:  m_mutex(), m_reference(1) {}
 
 	explicit RefCounted(size_t reference)
-		: m_reference(reference) {}
+		:  m_mutex(), m_reference(reference) {}
 
 	virtual ~RefCounted() {}
 
-	void setReference(size_t reference) { m_reference = reference; }
+	void setReference(size_t reference) {
+		m_mutex.lock();
+		m_reference = reference;
+		m_mutex.unlock();
+	}
 
-	size_t refCount() const { return m_reference; }
+	size_t refCount() const {
+		const_cast<RefCounted*>(this)->m_mutex.lock();
+		size_t t = m_reference;
+		const_cast<RefCounted*>(this)->m_mutex.unlock();
+		return t;
+	}
 
 	void addRef() {
+		m_mutex.lock();
 #if CLEVER_GCC_VERSION >= 40100
 		__sync_add_and_fetch(&m_reference, 1);
 #else
 		++m_reference;
 #endif
+		m_mutex.unlock();
 	}
 
 	void delRef() {
+		m_mutex.lock();
 		clever_assert(m_reference > 0, "This object has been free'd before.");
-
 #if CLEVER_GCC_VERSION >= 40100
 		if (__sync_sub_and_fetch(&m_reference, 1) == 0) {
+			m_mutex.unlock();
 			clever_delete(this);
-		}
+		} else m_mutex.unlock();
 #else
 		if (--m_reference == 0) {
+			m_mutex.unlock();
 			clever_delete(this);
-		}
+		} else m_mutex.unlock();
 #endif
 	}
 private:
 	size_t m_reference;
-
 	DISALLOW_COPY_AND_ASSIGN(RefCounted);
 };
 
@@ -87,7 +101,6 @@ inline void clever_delref_var(RefCounted*& ptr) {
 		}
 	}
 }
-
 
 } // clever
 

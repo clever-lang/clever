@@ -30,14 +30,14 @@ namespace clever { namespace modules { namespace std {
 CLEVER_MODULE_INIT(CoreModule)
 {
 	// Native type allocation
-	addType(CSTRING("Function"), CLEVER_FUNC_TYPE   = new FuncType);
-	addType(CSTRING("String"),   CLEVER_STR_TYPE    = new StrType);
-	addType(CSTRING("Int"),      CLEVER_INT_TYPE    = new IntType);
-	addType(CSTRING("Double"),   CLEVER_DOUBLE_TYPE = new DoubleType);
-	addType(CSTRING("Bool"),     CLEVER_BOOL_TYPE   = new BoolType);
-	addType(CSTRING("Array"),    CLEVER_ARRAY_TYPE  = new ArrayType);
-	addType(CSTRING("Map"),      CLEVER_MAP_TYPE    = new MapType);
-	addType(CSTRING("Thread"),   CLEVER_THREAD_TYPE = new ThreadType);
+	addType(CLEVER_FUNC_TYPE   = new FuncType);
+	addType(CLEVER_STR_TYPE    = new StrType);
+	addType(CLEVER_INT_TYPE    = new IntType);
+	addType(CLEVER_DOUBLE_TYPE = new DoubleType);
+	addType(CLEVER_BOOL_TYPE   = new BoolType);
+	addType(CLEVER_ARRAY_TYPE  = new ArrayType);
+	addType(CLEVER_MAP_TYPE    = new MapType);
+	addType(CLEVER_THREAD_TYPE = new ThreadType);
 }
 
 }}} // clever::modules::std

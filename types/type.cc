@@ -54,10 +54,8 @@ void Type::deallocMembers()
 		end(m_members.end());
 
 	while (it != end) {
-		if ((*it).second) {
-			clever_delref((*it).second);
-			(*it).second = 0;
-		}
+		clever_delref((*it).second);
+		(*it).second = 0;
 		++it;
 	}
 }
@@ -184,6 +182,47 @@ CLEVER_TYPE_OPERATOR(Type::equal)
 CLEVER_TYPE_OPERATOR(Type::not_equal)
 {
 	clever_throw("Cannot use != operator with %s type", getName().c_str());
+}
+
+CLEVER_TYPE_AT_OPERATOR(Type::at_op)
+{
+	clever_throw("Cannot use [] operator with %s type", getName().c_str());
+	return NULL;
+}
+
+CLEVER_TYPE_UNARY_OPERATOR(Type::not_op)
+{
+	clever_throw("Cannot use ! operator with %s type", getName().c_str());
+}
+
+CLEVER_TYPE_OPERATOR(Type::bw_and)
+{
+	clever_throw("Cannot use & operator with %s type", getName().c_str());
+}
+
+CLEVER_TYPE_OPERATOR(Type::bw_or)
+{
+	clever_throw("Cannot use | operator with %s type", getName().c_str());
+}
+
+CLEVER_TYPE_OPERATOR(Type::bw_xor)
+{
+	clever_throw("Cannot use ^ operator with %s type", getName().c_str());
+}
+
+CLEVER_TYPE_UNARY_OPERATOR(Type::bw_not)
+{
+	clever_throw("Cannot use ~ operator with %s type", getName().c_str());
+}
+
+CLEVER_TYPE_OPERATOR(Type::bw_ls)
+{
+	clever_throw("Cannot use << operator with %s type", getName().c_str());
+}
+
+CLEVER_TYPE_OPERATOR(Type::bw_rs)
+{
+	clever_throw("Cannot use >> operator with %s type", getName().c_str());
 }
 
 void Type::increment(Value* value, const VM* vm, CException* exception) const

@@ -17,7 +17,7 @@ namespace clever { namespace modules { namespace std {
 /// Initializes Standard Unicode module
 CLEVER_MODULE_INIT(UnicodeModule)
 {
-	addType(CSTRING("UString"), new UString);
+	addType(new UString);
 }
 
 }}} // clever::modules::std

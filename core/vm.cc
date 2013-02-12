@@ -219,10 +219,8 @@ CLEVER_FORCE_INLINE void VM::createInstance(const Type* type, Value* instance)
 		return;
 	}
 
-	TypeObject* obj = static_cast<TypeObject*>(instance->getObj());
-
 	const UserType* utype = static_cast<const UserType*>(type);
-	UserObject* uobj = static_cast<UserObject*>(obj);
+	UserObject* uobj = static_cast<UserObject*>(instance->getObj());
 
 	uobj->setEnvironment(utype->getEnvironment()->activate(m_call_stack.top()));
 	uobj->getEnvironment()->getValue(ValueOffset(0,0))->copy(instance);
@@ -261,9 +259,11 @@ Value* VM::runFunction(const Function* func, std::vector<Value*>* args)
 // the switch-based dispatching is used
 void VM::run()
 {
+	getMutex()->lock();
 	if (m_call_stack.empty()) {
 		m_call_stack.push(m_global_env);
 	}
+	getMutex()->unlock();
 
 	OPCODES;
 	OP(OP_RET):
@@ -957,6 +957,130 @@ throw_exception:
 	OP(OP_HALT):
 	goto exit;
 
+	OP(OP_NOT):
+	getValue(OPCODE.result)->setBool(!getValue(OPCODE.op1)->asBool());
+	DISPATCH;
+
+	OP(OP_BW_AND):
+	{
+		const Value* lhs = getValue(OPCODE.op1);
+		const Value* rhs = getValue(OPCODE.op2);
+
+		if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
+			lhs->getType()->bw_and(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
+
+			if (UNEXPECTED(m_exception.hasException())) {
+				goto throw_exception;
+			}
+		} else {
+			error(VM_ERROR, OPCODE.loc, "Operation cannot be executed on null value");
+		}
+	}
+	DISPATCH;
+
+	OP(OP_BW_OR):
+	{
+		const Value* lhs = getValue(OPCODE.op1);
+		const Value* rhs = getValue(OPCODE.op2);
+
+		if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
+			lhs->getType()->bw_or(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
+
+			if (UNEXPECTED(m_exception.hasException())) {
+				goto throw_exception;
+			}
+		} else {
+			error(VM_ERROR, OPCODE.loc, "Operation cannot be executed on null value");
+		}
+	}
+	DISPATCH;
+
+	OP(OP_BW_XOR):
+	{
+		const Value* lhs = getValue(OPCODE.op1);
+		const Value* rhs = getValue(OPCODE.op2);
+
+		if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
+			lhs->getType()->bw_xor(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
+
+			if (UNEXPECTED(m_exception.hasException())) {
+				goto throw_exception;
+			}
+		} else {
+			error(VM_ERROR, OPCODE.loc, "Operation cannot be executed on null value");
+		}
+	}
+	DISPATCH;
+
+	OP(OP_BW_NOT):
+	{
+		const Value* lhs = getValue(OPCODE.op1);
+
+		if (EXPECTED(!lhs->isNull())) {
+			lhs->getType()->bw_not(getValue(OPCODE.result), lhs, this, &m_exception);
+
+			if (UNEXPECTED(m_exception.hasException())) {
+				goto throw_exception;
+			}
+		} else {
+			error(VM_ERROR, OPCODE.loc, "Operation cannot be executed on null value");
+		}
+	}
+	DISPATCH;
+
+	OP(OP_BW_LS):
+	{
+		const Value* lhs = getValue(OPCODE.op1);
+		const Value* rhs = getValue(OPCODE.op2);
+
+		if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
+			lhs->getType()->bw_ls(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
+
+			if (UNEXPECTED(m_exception.hasException())) {
+				goto throw_exception;
+			}
+		} else {
+			error(VM_ERROR, OPCODE.loc, "Operation cannot be executed on null value");
+		}
+	}
+	DISPATCH;
+
+	OP(OP_BW_RS):
+	{
+		const Value* lhs = getValue(OPCODE.op1);
+		const Value* rhs = getValue(OPCODE.op2);
+
+		if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
+			lhs->getType()->bw_rs(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
+
+			if (UNEXPECTED(m_exception.hasException())) {
+				goto throw_exception;
+			}
+		} else {
+			error(VM_ERROR, OPCODE.loc, "Operation cannot be executed on null value");
+		}
+	}
+	DISPATCH;
+
+	OP(OP_SUBSCRIPT):
+	{
+		const Value* var = getValue(OPCODE.op1);
+		const Value* index = getValue(OPCODE.op2);
+
+		if (EXPECTED(!var->isNull() && !index->isNull())) {
+			Value* result = var->getType()->at_op(var, index, this, &m_exception);
+
+			setTempValue(OPCODE.result, result);
+
+			if (UNEXPECTED(m_exception.hasException())) {
+				goto throw_exception;
+			}
+		} else {
+			error(VM_ERROR, OPCODE.loc, "Operation cannot be executed on null value");
+		}
+	}
+	DISPATCH;
+
 	END_OPCODES;
 
 exit_exception:
@@ -964,7 +1088,9 @@ exit_exception:
 		m_exception.getException());
 
 exit:
+	getMutex()->lock();
 	std::for_each(m_obj_store.begin(), m_obj_store.end(), clever_delref);
+	getMutex()->unlock();
 }
 
 } // clever
