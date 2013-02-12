@@ -34,7 +34,7 @@ extern Type* g_clever_map_type;
 #define CLEVER_ARRAY_TYPE  g_clever_array_type
 #define CLEVER_MAP_TYPE    g_clever_map_type
 
-#ifdef MOD_STD_CONCURRENT
+#ifndef CLEVER_THREADS
 # define SAFETY_CTOR() ,m_mutex()
 # define SAFETY_DTOR()
 # define SAFETY_LOCK()  m_mutex.lock();
@@ -188,7 +188,7 @@ public:
 
 	void copy(const Value*);
 
-	Value* clone() const {
+	Value* clone() {
 		SAFETY_LOCK();
 		Value* val = new Value;
 		val->copy(this);
@@ -229,7 +229,7 @@ private:
 	ValueObject* m_data;
 	const Type* m_type;
 	bool m_is_const;
-#ifdef MOD_STD_CONCURRENT
+#ifdef CLEVER_THREADS
 	CMutex m_mutex;
 #endif
 	DISALLOW_COPY_AND_ASSIGN(Value);

@@ -102,7 +102,6 @@ inline void clever_delref_var(RefCounted*& ptr) {
 	}
 }
 
-
 } // clever
 
 #endif /* CLEVER_REFCOUNTED_H */
