@@ -219,10 +219,8 @@ CLEVER_FORCE_INLINE void VM::createInstance(const Type* type, Value* instance)
 		return;
 	}
 
-	TypeObject* obj = static_cast<TypeObject*>(instance->getObj());
-
 	const UserType* utype = static_cast<const UserType*>(type);
-	UserObject* uobj = static_cast<UserObject*>(obj);
+	UserObject* uobj = static_cast<UserObject*>(instance->getObj());
 
 	uobj->setEnvironment(utype->getEnvironment()->activate(m_call_stack.top()));
 	uobj->getEnvironment()->getValue(ValueOffset(0,0))->copy(instance);
