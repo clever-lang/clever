@@ -1,6 +1,6 @@
 #
 # Clever programming language
-# Copyright (c) 2011-2012 Clever Team
+# Copyright (c) 2011-2013 Clever Team
 #
 # dependencies.cmake - 3rd-party library dependency
 #
