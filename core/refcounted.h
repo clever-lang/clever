@@ -79,12 +79,12 @@ inline void clever_delref(RefCounted* ptr) {
  */
 inline void clever_delref_var(RefCounted*& ptr) {
 	if (ptr) {
-        bool set_null = ptr->refCount() == 1;
+		bool set_null = ptr->refCount() == 1;
 		ptr->delRef();
 
-        if (set_null) {
-            ptr = NULL;
-        }
+		if (set_null) {
+			ptr = NULL;
+		}
 	}
 }
 

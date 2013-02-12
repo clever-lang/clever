@@ -75,7 +75,7 @@ void Resolver::visit(ThreadBlock* node)
 
 	Thread* thread = static_cast<Thread*>(CLEVER_THREAD_TYPE->allocData(NULL));
 
-	thread->setUserDefined();
+	//thread->setUserDefined();
 
 	Value* tval = new Value;
 	tval->setObj(CLEVER_THREAD_TYPE, thread);

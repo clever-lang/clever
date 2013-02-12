@@ -50,11 +50,14 @@ void TypeObject::copyMembers(const Type* type)
 
 void Type::deallocMembers()
 {
-	MemberMap::const_iterator it(m_members.begin()),
+	MemberMap::iterator it(m_members.begin()),
 		end(m_members.end());
 
 	while (it != end) {
-		clever_delref((*it).second);
+		if ((*it).second) {
+			clever_delref((*it).second);
+			(*it).second = 0;
+		}
 		++it;
 	}
 }

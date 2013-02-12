@@ -103,9 +103,6 @@ void Codegen::visit(ThreadBlock* node)
 
 	thread->getEnvironment()->setTempEnv(env_temp);
 
-	size_t m_thread_id = m_thread_ids.size() + 1;
-	m_thread_ids[thread] = m_thread_id;
-	thread->setID(m_thread_id);
 
 	node->getName()->accept(*this);
 

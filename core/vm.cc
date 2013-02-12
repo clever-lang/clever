@@ -470,6 +470,7 @@ out:
 			Environment* env = m_call_stack.top();
 
 			clever_delref(env);
+
 			m_call_stack.pop();
 		}
 

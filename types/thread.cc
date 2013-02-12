@@ -31,9 +31,12 @@ void Thread::wait()
 
 	for (size_t i = 0, j = thread_list.size(); i < j; ++i) {
 		VMThread* t = thread_list.at(i);
-		t->t_handler.wait();
-		clever_delete_var(t->vm_handler);
-		clever_delete_var(t);
+		if (t != 0) {
+			t->t_handler.wait();
+			clever_delete_var(t->vm_handler);
+			clever_delete_var(t);
+			t = 0;
+		}
 	}
 
 	thread_list.clear();
@@ -49,9 +52,9 @@ CLEVER_METHOD(ThreadType::toString)
 
 	std::ostringstream str;
 
-	const Thread* thread = CLEVER_GET_OBJECT(Thread*, CLEVER_THIS());
+	//const Thread* thread = CLEVER_GET_OBJECT(Thread*, CLEVER_THIS());
 
-	str << thread->getID();
+	//str << thread->getID();
 
 	result->setStr(CSTRING(str.str()));
 }
@@ -74,13 +77,16 @@ CLEVER_METHOD(ThreadType::run)
 	VM* m_vm = const_cast<VM*>(vm);
 	VMThreads& m_thread_pool = tdata->getThreadPool();
 
-	m_vm->getMutex()->lock();
 
 	size_t thread_addr = tdata->getAddr();
 	size_t n_threads = tdata->getNThreads();
+	size_t bg = m_thread_pool.size();
+	size_t size =  bg + n_threads;
 
+	m_thread_pool.resize(size);
+	for (size_t i = bg; i < size; ++i) {
+		m_vm->getMutex()->lock();
 
-	for (size_t i = 0; i < n_threads; ++i) {
 		VMThread* thread = new VMThread;
 
 		thread->vm_handler = new VM(m_vm->getInst());
@@ -90,13 +96,14 @@ CLEVER_METHOD(ThreadType::run)
 		Environment* tenv = tdata->getEnvironment()->activate(m_vm->getCallStack().top());
 		thread->vm_handler->getCallStack().push(tenv);
 
-		m_thread_pool.push_back(thread);
+		m_thread_pool[i] = thread;
 
 		thread->vm_handler->setPC(thread_addr);
+		m_vm->getMutex()->unlock();
+
 		thread->t_handler.create(_thread_control, static_cast<void*>(thread));
 	}
 
-	m_vm->getMutex()->unlock();
 }
 
 // Thread type initialization
