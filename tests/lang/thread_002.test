@@ -1,4 +1,8 @@
 Testing threads 2
+==CHECK==
+if (!Clever.hasThreads()) {
+	println("skip");
+}
 ==CODE==
 import std.io.*;
 

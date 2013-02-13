@@ -41,6 +41,7 @@ bool TestRunner::show_result() const
 	std::cout << "-----------------------------------" << std::endl;
 	std::cout << "Passed tests: " << pass << std::endl;
 	std::cout << "Failed tests: " << fail << std::endl;
+	std::cout << "Skipped tests: " << skip << std::endl;
 
 #ifndef _WIN32
 	if (valgrind) {
@@ -91,13 +92,29 @@ void TestRunner::find(const char* dir)
 	}
 }
 
+bool TestRunner::checkTest(const std::string& tmp_file)
+{
+	std::string command = std::string("./clever ") + tmp_file + " 2>&1";
+	FILE* fp = popen(command.c_str(), "r");
+	char result[300] = {0};
+
+	if (fread(result, 1, sizeof(result)-1, fp) == 0 && ferror(fp) != 0) {
+		std::cout << "Something went wrong reading the result." << std::endl;
+		exit(1);
+	}
+
+	pclose(fp);
+
+	return strstr(result, "skip") == NULL;
+}
+
 void TestRunner::run()
 {
 	FILE *fp;
 	std::vector<std::string>::iterator it;
-	std::string file_name, tmp_file;
+	std::string file_name, tmp_file, check_file;
 	bool show_all_results = true, last_ok = true;
-	pcrecpp::RE regex("((?s:.(?!==CODE==))+)\\s*==CODE==\\s*((?s:.(?!==RESULT==))+)\\s*==RESULT==\\s*((?s:.+))\\s+");
+	pcrecpp::RE regex("((?s:.(?!==(?:CODE|CHECK)==))+)\\s*(?:==CHECK==\\s*((?s:.(?!==CODE==))+))?\\s*==CODE==\\s*((?s:.(?!==RESULT==))+)\\s*==RESULT==\\s*((?s:.+))\\s+");
 
 	if (!files.size()) {
 		std::cout << "No files found.";
@@ -110,19 +127,35 @@ void TestRunner::run()
 
 	for (it = files.begin(); it != files.end(); ++it) {
 		char result[300] = {0};
-		std::string title, source, expect, log_line, command;
+		std::string title, check, source, expect, log_line, command;
 		size_t filesize = 0;
 		clock_t test_start_time, test_end_time;
 
 		file_name = *it;
 
 		tmp_file = file_name + ".tmp";
+		check_file = file_name + ".check.tmp";
 
-		regex.FullMatch(read_file(file_name.c_str()), &title, &source, &expect);
+		regex.FullMatch(read_file(file_name.c_str()), &title, &check, &source, &expect);
 
 		if (!title.size()) {
 			std::cerr << "Test error: malformed test detected (" << file_name << ")" << std::endl;
 			exit(1);
+		}
+
+		if (check.size()) {
+			check = "import std.*;\n" + check;
+
+			write_file(check_file, check);
+
+			bool ok = checkTest(check_file);
+
+			unlink(check_file.c_str());
+
+			if (!ok) {
+				++skip;
+				continue;
+			}
 		}
 
 		write_file(tmp_file, source);

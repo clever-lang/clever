@@ -24,6 +24,11 @@ CLEVER_TYPE_OPERATOR(BoolType::not_equal)
 	}
 }
 
+CLEVER_TYPE_UNARY_OPERATOR(BoolType::not_op)
+{
+	result->setBool(!lhs->getBool());
+}
+
 // Bool::Bool()
 CLEVER_METHOD(BoolType::ctor)
 {

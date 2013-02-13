@@ -45,6 +45,7 @@ public:
 	CLEVER_METHOD(ctor);
 	CLEVER_TYPE_OPERATOR(equal);
 	CLEVER_TYPE_OPERATOR(not_equal);
+	CLEVER_TYPE_UNARY_OPERATOR(not_op);
 private:
 	DISALLOW_COPY_AND_ASSIGN(BoolType);
 };

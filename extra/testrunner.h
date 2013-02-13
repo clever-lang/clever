@@ -22,7 +22,7 @@ public:
 	enum { FAIL_ONLY = 1 };
 
 	TestRunner()
-		: valgrind(false), helgrind(false), pass(0), fail(0), leak(0), flags(0), races(0)
+		: valgrind(false), helgrind(false), pass(0), fail(0), leak(0), flags(0), races(0), skip(0)
 		{ start_time = clock(); }
 
 	~TestRunner();
@@ -38,7 +38,7 @@ public:
 	bool valgrind;
 	bool helgrind;
 private:
-	unsigned int pass, fail, leak, flags, races;
+	unsigned int pass, fail, leak, flags, races, skip;
 	clock_t start_time;
 	std::vector<std::string> files;
 	std::vector<std::string> tmp_files;
@@ -48,6 +48,7 @@ private:
 	static bool fileExists(const std::string&);
 	static size_t fileSize(const std::string&);
 	static void writeLog(const std::string&, const std::string&);
+	static bool checkTest(const std::string&);
 };
 
 #endif // CLEVER_TESTRUNNER_H
