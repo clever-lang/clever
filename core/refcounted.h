@@ -24,13 +24,7 @@ public:
 	virtual ~RefCounted() {}
 
 	void setReference(size_t reference) {
-#ifdef CLEVER_THREADS
-		m_mutex.lock();
 		m_reference = reference;
-		m_mutex.unlock();
-#else
-		m_reference = reference;
-#endif
 	}
 
 	size_t refCount() const { return m_reference; }
@@ -51,7 +45,7 @@ public:
 
 	void delRef() {
 		clever_assert(m_reference > 0, "This object has been free'd before.");
-#if CLEVER_GCC_VERSION >= 4010
+#if CLEVER_GCC_VERSION >= 4010 || defined(__clang__)
 		if (__sync_sub_and_fetch(&m_reference, 1) == 0) {
 			clever_delete(this);
 		}
@@ -73,7 +67,7 @@ public:
 	}
 private:
 	size_t m_reference;
-#ifdef CLEVER_THREADS
+#if CLEVER_THREADS && !(CLEVER_GCC_VERSION >= 4010 || defined(__clang__))
 	CMutex m_mutex;
 #endif
 	DISALLOW_COPY_AND_ASSIGN(RefCounted);
