@@ -76,35 +76,27 @@ typedef std::tr1::unordered_map<const CString*, Function*> MethodMap;
 
 class TypeObject {
 public:
-	TypeObject()
-		: m_properties(), m_methods() {}
+	TypeObject() {}
 
 	virtual ~TypeObject();
 
 	void copyMembers(const Type*);
 
-	void addProperty(const CString* name, Value* value) {
-		m_properties.insert(PropertyMap::value_type(name, value));
+	void addMember(const CString* name, Value* value) {
+		m_members.insert(MemberMap::value_type(name, value));
 	}
 
-	virtual Value* getProperty(const CString* name) const {
-		PropertyMap::const_iterator it(m_properties.find(name));
+	virtual Value* getMember(const CString* name) const {
+		MemberMap::const_iterator it = m_members.find(name);
 
-		return it != m_properties.end() ? it->second : NULL;
-	}
+		if (it != m_members.end()) {
+			return it->second;
+		}
 
-	void addMethod(const CString* name, Function* func) {
-		m_methods.insert(MethodMap::value_type(name, func));
-	}
-
-	virtual const Function* getMethod(const CString* name) const {
-		MethodMap::const_iterator it(m_methods.find(name));
-
-		return it != m_methods.end() ? it->second : NULL;
+		return NULL;
 	}
 private:
-	PropertyMap m_properties;
-	MethodMap m_methods;
+	MemberMap m_members;
 
 	DISALLOW_COPY_AND_ASSIGN(TypeObject);
 };
@@ -140,6 +132,8 @@ public:
 		return NULL;
 	}
 
+	const MemberMap& getMembers() const { return m_members; }
+
 	Function* addMethod(Function*);
 
 	const Function* getMethod(const CString*) const;
@@ -158,7 +152,6 @@ public:
 	const std::string& getName() const { return m_name; }
 
 	void setConstructor(MethodPtr method);
-	
 	void setDestructor(MethodPtr method);
 
 	const Function* getConstructor() const { return m_ctor; }

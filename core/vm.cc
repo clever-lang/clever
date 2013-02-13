@@ -775,9 +775,14 @@ out:
 		}
 
 		const Type* type = callee->getType();
-		const Function* func;
+		const Value* fval = callee->getObj()->getMember(method->getStr());
 
-		func = static_cast<TypeObject*>(callee->getObj())->getMethod(method->getStr());
+		if (!fval->isFunction()) {
+			error(VM_ERROR, OPCODE.loc, "Member`%T::%S' is not callable!",
+				type, method->getStr());
+		}
+
+		const Function* func = static_cast<Function*>(fval->getObj());
 
 		if (UNEXPECTED(func == NULL)) {
 			error(VM_ERROR, OPCODE.loc, "Method `%T::%S' not found!",
@@ -847,7 +852,7 @@ out:
 		}
 		const Value* name = getValue(OPCODE.op2);
 		const Type* type = obj->getType();
-		const Value* value = static_cast<TypeObject*>(obj->getObj())->getProperty(name->getStr());
+		const Value* value = obj->getObj()->getMember(name->getStr());
 
 		if (EXPECTED(value != NULL)) {
 			getValue(OPCODE.result)->copy(value);
@@ -889,7 +894,7 @@ out:
 		}
 		const Value* name = getValue(OPCODE.op2);
 		const Type* type = obj->getType();
-		Value* value = static_cast<TypeObject*>(obj->getObj())->getProperty(name->getStr());
+		Value* value = obj->getObj()->getMember(name->getStr());
 
 		if (EXPECTED(value != NULL)) {
 			setTempValue(OPCODE.result, value);
