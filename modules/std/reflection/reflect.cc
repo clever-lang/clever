@@ -352,10 +352,7 @@ CLEVER_METHOD(ReflectType::getProperties)
 // Reflect type initialization
 CLEVER_TYPE_INIT(ReflectType::init)
 {
-	Function* ctor = new Function("Reflect", (MethodPtr) &ReflectType::ctor);
-
-	setConstructor(ctor);
-	addMethod(ctor);
+	setConstructor((MethodPtr) &ReflectType::ctor);
 	addMethod(new Function("getType",    (MethodPtr) &ReflectType::getType));
 
 	// Type checking

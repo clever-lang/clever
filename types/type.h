@@ -157,8 +157,9 @@ public:
 	/// Method for retrieve the type name
 	const std::string& getName() const { return m_name; }
 
-	void setConstructor(Function* func) { m_ctor = func; }
-	void setDestructor(Function* func) { m_dtor = func; }
+	void setConstructor(MethodPtr method);
+	
+	void setDestructor(MethodPtr method);
 
 	const Function* getConstructor() const { return m_ctor; }
 	const Function* getDestructor() const { return m_dtor; }

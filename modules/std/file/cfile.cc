@@ -158,10 +158,8 @@ CLEVER_METHOD(CFile::isOpen)
 
 CLEVER_TYPE_INIT(CFile::init)
 {
-	Function* ctor = new Function("File", (MethodPtr)&CFile::ctor);
-
-	setConstructor(ctor);
-	addMethod(ctor);
+	setConstructor((MethodPtr)&CFile::ctor);
+	
 	addMethod(new Function("read",		(MethodPtr)&CFile::read));
 	addMethod(new Function("readLine",	(MethodPtr)&CFile::readLine));
 	addMethod(new Function("write",		(MethodPtr)&CFile::write));

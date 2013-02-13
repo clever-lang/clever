@@ -92,11 +92,8 @@ CLEVER_METHOD(Mutex::ctor)
 
 CLEVER_TYPE_INIT(Mutex::init)
 {
-	Function* ctor = new Function("Mutex", (MethodPtr) &Mutex::ctor);
 
-	setConstructor(ctor);
-
-	addMethod(ctor);
+	setConstructor((MethodPtr) &Mutex::ctor);
 
 	addMethod(new Function("lock",    (MethodPtr) &Mutex::lock));
 	addMethod(new Function("trylock", (MethodPtr) &Mutex::trylock));
