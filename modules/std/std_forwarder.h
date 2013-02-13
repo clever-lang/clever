@@ -45,11 +45,11 @@
 #ifdef HAVE_MOD_STD_CLEVER
 #	include "modules/std/clever/module.h"
 #endif
-
-#if 0
 #ifdef HAVE_MOD_STD_REGEX
 # include "modules/std/regex/regex.h"
 #endif
+
+#if 0
 #ifdef HAVE_MOD_STD_RPC
 # include "modules/std/rpc/rpc.h"
 #endif

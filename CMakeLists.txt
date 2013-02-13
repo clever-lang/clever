@@ -102,7 +102,7 @@ if (UNIX)
 	execute_process(COMMAND lsb_release -s -i
 		OUTPUT_VARIABLE LSB_RELEASE OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-	if (${LSB_RELEASE} MATCHES "Ubuntu")
+	if ((${LSB_RELEASE} MATCHES "Ubuntu") OR (${LSB_RELEASE} MATCHES "LinuxMint"))
 		# Add "-licu" to the end of the linker command line
 		if (MOD_STD_UNICODE)
 			set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -licuio -licuuc")
@@ -125,10 +125,10 @@ if (UNIX)
 
 		# Add "-lmysql" to the end of the linker command line.
 		if (MOD_DB_MYSQL)
-			set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -lmysql")
+			set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -lmysqlclient")
 		endif (MOD_DB_MYSQL)
 
-	endif (${LSB_RELEASE} MATCHES "Ubuntu")
+	endif ((${LSB_RELEASE} MATCHES "Ubuntu") OR (${LSB_RELEASE} MATCHES "LinuxMint"))
 
 endif (UNIX)
 

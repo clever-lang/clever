@@ -54,10 +54,11 @@ void Std::init()
 	addModule(new std::FFIModule);
 #endif
 
-#if 0
 #ifdef HAVE_MOD_STD_REGEX
 	addModule(new std::Regex);
 #endif
+
+#if 0
 #ifdef HAVE_MOD_STD_RPC
 	addModule(new std::RPCModule);
 #endif

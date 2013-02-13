@@ -9,9 +9,9 @@ if (MOD_STD_FFI)
 	list(APPEND CLEVER_MODULES ffi)
 endif (MOD_STD_FFI)
 
-#if (MOD_STD_REGEX)
-#	list(APPEND CLEVER_MODULES regex)
-#endif (MOD_STD_REGEX)
+if (MOD_STD_REGEX)
+	list(APPEND CLEVER_MODULES regex)
+endif (MOD_STD_REGEX)
 
 if (MOD_STD_CLEVER)
 	list(APPEND CLEVER_MODULES clever)

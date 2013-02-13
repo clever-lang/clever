@@ -23,10 +23,10 @@ CMutex g_io_mutex;
 // Flushes output buffer (forcefully)
 static CLEVER_FUNCTION(flush)
 {
-	g_io_mutex.lock();
 	if (!clever_static_check_no_args()) {
 		return;
 	}
+	g_io_mutex.lock();
 	::fflush(stdout);
 	g_io_mutex.unlock();
 }

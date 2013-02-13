@@ -151,11 +151,8 @@ CLEVER_METHOD(Date::ctor)
 
 CLEVER_TYPE_INIT(Date::init)
 {
-	Function* ctor = new Function("Date", (MethodPtr) &Date::ctor);
+	setConstructor((MethodPtr) &Date::ctor);
 
-	setConstructor(ctor);
-
-	addMethod(ctor);
 	addMethod(new Function("format",     (MethodPtr) &Date::format));
 	addMethod(new Function("uformat",    (MethodPtr) &Date::uformat));
 	addMethod(new Function("getTime",    (MethodPtr) &Date::getTime));

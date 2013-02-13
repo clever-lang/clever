@@ -32,11 +32,7 @@ CLEVER_METHOD(BoolType::ctor)
 
 CLEVER_TYPE_INIT(BoolType::init)
 {
-	Function* ctor = new Function("Bool", (MethodPtr) &BoolType::ctor);
-
-	setConstructor(ctor);
-
-	addMethod(ctor);
+	setConstructor((MethodPtr) &BoolType::ctor);
 }
 
 } // clever

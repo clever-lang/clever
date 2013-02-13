@@ -284,11 +284,8 @@ CLEVER_METHOD(UString::replace)
 
 CLEVER_TYPE_INIT(UString::init)
 {
-	Function* ctor = new Function("UString", (MethodPtr) &UString::ctor);
+	setConstructor((MethodPtr) &UString::ctor);
 
-	setConstructor(ctor);
-
-	addMethod(ctor);
 	addMethod(new Function("size",   		(MethodPtr) &UString::size));
 	addMethod(new Function("startsWith",	(MethodPtr) &UString::startsWith));
 	addMethod(new Function("endsWith",		(MethodPtr) &UString::endsWith));
