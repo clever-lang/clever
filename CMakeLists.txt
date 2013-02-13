@@ -98,39 +98,10 @@ include(modules.cmake)
 
 # Issue #131 fix attempt.
 # ---------------------------------------------------------------------------
+# TODO(heuripedes): find a better (w/o workaround) way to support GNU gold
+#                   and ubuntu/debian default linker options.
 if (UNIX)
-	# Detect if this is Ubuntu.
-	execute_process(COMMAND lsb_release -s -i
-		OUTPUT_VARIABLE LSB_RELEASE OUTPUT_STRIP_TRAILING_WHITESPACE)
-
-	if (${LSB_RELEASE} MATCHES "Ubuntu")
-		# Add "-licu" to the end of the linker command line
-		if (MOD_STD_UNICODE)
-			set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -licuio -licuuc")
-		endif (MOD_STD_UNICODE)
-
-		# Add "-lpcrecpp" to the end of the linker command line.
-		if (MOD_STD_REGEX)
-			set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -lpcrecpp")
-		endif (MOD_STD_REGEX)
-
-		# Add "-lcgicc" to the end of the linker command line.
-		if (MOD_WEB_REQUEST OR MOD_WEB_SESSION)
-			set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -lcgicc")
-		endif (MOD_WEB_REQUEST OR MOD_WEB_SESSION)
-
-		# Add "-lffi -ld" to the end of the linker command line.
-		if (MOD_STD_FFI)
-			set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -lffi -ldl")
-		endif (MOD_STD_FFI)
-
-		# Add "-lmysql" to the end of the linker command line.
-		if (MOD_DB_MYSQL)
-			set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -lmysql")
-		endif (MOD_DB_MYSQL)
-
-	endif (${LSB_RELEASE} MATCHES "Ubuntu")
-
+	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--no-as-needed")
 endif (UNIX)
 
 # Main executable
