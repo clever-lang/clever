@@ -31,7 +31,6 @@ set(CLEVER_LDFLAGS)
 set(CLEVER_LIBRARIES)
 set(CLEVER_INCLUDE_DIRS)
 set(CLEVER_SOURCES)
-#set(EXTRA_CLEVER_FILES)
 
 # Platform checks
 include(environment.cmake)
@@ -106,7 +105,7 @@ endif (UNIX)
 
 # Main executable
 # ---------------------------------------------------------------------------
-set(CORE_SOURCE
+set(CLEVER_SOURCES ${CLEVER_SOURCES}
 	core/cexception.h
 	core/ast.h
 	core/ast.cc
@@ -173,7 +172,7 @@ set(CORE_SOURCE
 	core/user.h
 )
 
-add_library(clever-static STATIC ${CORE_SOURCE} ${EXTRA_CLEVER_FILES})
+add_library(clever-static STATIC ${CLEVER_SOURCES})
 set_target_properties(clever-static PROPERTIES OUTPUT_NAME "clever")
 target_link_libraries(clever-static ${CLEVER_LIBRARIES})
 include_directories(${CLEVER_STATIC_INCLUDE_DIRS})
