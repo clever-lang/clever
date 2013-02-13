@@ -109,11 +109,7 @@ CLEVER_METHOD(Condition::ctor)
 
 CLEVER_TYPE_INIT(Condition::init)
 {
-	Function* ctor = new Function("Condition", (MethodPtr) &Condition::ctor);
-
-	setConstructor(ctor);
-
-	addMethod(ctor);
+	setConstructor((MethodPtr) &Condition::ctor);
 
 	addMethod(new Function("signal",    (MethodPtr)&Condition::signal));
 	addMethod(new Function("broadcast", (MethodPtr)&Condition::broadcast));

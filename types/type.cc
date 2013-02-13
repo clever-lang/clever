@@ -235,4 +235,17 @@ void Type::decrement(Value* value, const VM* vm, CException* exception) const
 	clever_throw("Cannot use -- operator with %s type", getName().c_str());
 }
 
+void Type::setConstructor(MethodPtr method) {
+	Function* func = new Function(getName(), method);
+	m_ctor = func;
+	addMethod(func);
+}
+
+void Type::setDestructor(MethodPtr method) {
+	Function* func = new Function(getName(), method);
+	m_dtor = func;
+	addMethod(func);
+}
+
+
 } // clever

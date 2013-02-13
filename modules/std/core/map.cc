@@ -136,11 +136,8 @@ CLEVER_METHOD(MapType::size)
 
 CLEVER_TYPE_INIT(MapType::init)
 {
-	Function* ctor = new Function("Map", (MethodPtr) &MapType::ctor);
+	setConstructor((MethodPtr) &MapType::ctor);
 
-	setConstructor(ctor);
-
-	addMethod(ctor);
 	addMethod(new Function("insert", (MethodPtr) &MapType::insert));
 	addMethod(new Function("each",	 (MethodPtr) &MapType::each));
 	addMethod(new Function("size",	 (MethodPtr) &MapType::size));

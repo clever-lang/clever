@@ -169,11 +169,7 @@ CLEVER_METHOD(Thread::ctor)
 
 CLEVER_TYPE_INIT(Thread::init)
 {
-	Function* ctor = new Function("Thread", (MethodPtr) &Thread::ctor);
-
-	setConstructor(ctor);
-
-	addMethod(ctor);
+	setConstructor((MethodPtr) &Thread::ctor);
 
 	addMethod(new Function("start",    (MethodPtr)&Thread::start));
 	addMethod(new Function("wait",		(MethodPtr)&Thread::wait));

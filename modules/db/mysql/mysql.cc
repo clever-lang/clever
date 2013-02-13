@@ -51,11 +51,8 @@ CLEVER_METHOD(Mysql::connect)
 // Type initialization
 CLEVER_TYPE_INIT(Mysql::init)
 {
-	Function* ctor = new Function("Mysql", (MethodPtr) &Mysql::ctor);
+	setConstructor((MethodPtr) &Mysql::ctor);
 
-	setConstructor(ctor);
-
-	addMethod(ctor);
 	addMethod(new Function("connect",  (MethodPtr) &Mysql::connect));
 }
 

@@ -99,7 +99,7 @@ include(modules.cmake)
 # Issue #131 fix attempt.
 # ---------------------------------------------------------------------------
 # TODO(heuripedes): find a better (w/o workaround) way to support GNU gold
-#                   and ubuntu/debian default linker options.
+#                   and ubuntu/debian/mint default linker options.
 if (UNIX)
 	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--no-as-needed")
 endif (UNIX)
