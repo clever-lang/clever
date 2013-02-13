@@ -34,7 +34,7 @@ struct FFIData : public TypeObject {
 	FFIData(const FFI* type)
 		: m_lib_handler(NULL), m_ffi(type) {}
 
-	virtual const Function* getMethod(const CString*) const;
+	virtual Value* getMember(const CString*) const;
 
 	::std::string m_func_name;
 	::std::string m_lib_name;
@@ -47,7 +47,9 @@ public:
 	FFI()
 		: Type("FFILib"), m_call_handler(NULL) {}
 
-	~FFI() {}
+	~FFI() {
+		clever_delref(m_call_handler);
+	}
 
 	void init();
 
@@ -56,7 +58,7 @@ public:
 	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
 	virtual void deallocData(void* data);
 
-	const Function* getCallHandler() const { return m_call_handler; }
+	Value* getCallHandler() const { return m_call_handler; }
 
 	CLEVER_METHOD(ctor);
 	CLEVER_METHOD(call);
@@ -65,7 +67,7 @@ public:
 	CLEVER_METHOD(unload);
 	CLEVER_METHOD(callThisFunction);
 private:
-	const Function* m_call_handler;
+	Value* m_call_handler;
 
 	DISALLOW_COPY_AND_ASSIGN(FFI);
 };

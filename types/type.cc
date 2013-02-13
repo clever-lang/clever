@@ -16,8 +16,8 @@ namespace clever {
 
 TypeObject::~TypeObject()
 {
-	PropertyMap::const_iterator it(m_properties.begin()),
-		end(m_properties.end());
+	MemberMap::const_iterator it(m_members.begin()),
+		end(m_members.end());
 
 	while (it != end) {
 		clever_delref((*it).second);
@@ -27,6 +27,16 @@ TypeObject::~TypeObject()
 
 void TypeObject::copyMembers(const Type* type)
 {
+	const MemberMap& members = type->getMembers();
+
+	if (members.size() > 0) {
+		MemberMap::const_iterator it(members.begin()), end(members.end());
+
+		for (; it != end; ++it) {
+			addMember(it->first, it->second->clone());
+		}
+	}
+/*
 	const PropertyMap& props(type->getProperties());
 
 	if (props.size() > 0) {
@@ -46,12 +56,12 @@ void TypeObject::copyMembers(const Type* type)
 			addMethod(it->first, it->second);
 		}
 	}
+*/
 }
 
 void Type::deallocMembers()
 {
-	MemberMap::iterator it(m_members.begin()),
-		end(m_members.end());
+	MemberMap::iterator it(m_members.begin()), end(m_members.end());
 
 	while (it != end) {
 		clever_delref((*it).second);

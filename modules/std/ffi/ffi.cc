@@ -273,16 +273,16 @@ CLEVER_METHOD(FFI::ctor)
 	result->setObj(this, allocData(&args));
 }
 
-const Function* FFIData::getMethod(const CString* name) const
+Value* FFIData::getMember(const CString* name) const
 {
 	const_cast<FFIData*>(this)->m_func_name = *name;
-	const Function* f = TypeObject::getMethod(name);
+	Value* fvalue = TypeObject::getMember(name);
 
-	if (f == NULL) {
-		f = m_ffi->getCallHandler();
+	if (fvalue == NULL) {
+		return m_ffi->getCallHandler();
 	}
 
-	return f;
+	return fvalue;
 }
 
 CLEVER_METHOD(FFI::callThisFunction)
@@ -296,7 +296,6 @@ CLEVER_METHOD(FFI::callThisFunction)
 	pf = _ffi_dlsym(handler->m_lib_handler, func.c_str());
 
 	if (pf == NULL) {
-
 		clever_throw("function `%S' don't exist!", &func);
 		return;
 	}
@@ -381,17 +380,17 @@ CLEVER_METHOD(FFI::unload)
 // FFI type initialization
 CLEVER_TYPE_INIT(FFI::init)
 {
-	Function* fcall = new Function("callThisFunction", (MethodPtr)&FFI::callThisFunction);
-
 	setConstructor((MethodPtr) &FFI::ctor);
 
-	addMethod(fcall);
+	addMethod(new Function("callThisFunction", (MethodPtr)&FFI::callThisFunction));
 	addMethod(new Function("call",   (MethodPtr)&FFI::call));
 	addMethod(new Function("exec",   (MethodPtr)&FFI::exec))->setStatic();
 	addMethod(new Function("load",   (MethodPtr)&FFI::load));
 	addMethod(new Function("unload", (MethodPtr)&FFI::unload));
 
-	m_call_handler = fcall;
+	m_call_handler = new Value;
+	m_call_handler->setObj(CLEVER_FUNC_TYPE,
+		new Function("callThisFunction", (MethodPtr)&FFI::callThisFunction));
 }
 
 // FFI module initialization
