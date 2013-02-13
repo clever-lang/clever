@@ -20,83 +20,81 @@ FFISTRUCT
 
 void FFIStructData::setStruct(ExtStructs& structs_map, const CString& struct_type)
 {
-	this->m_struct_type = structs_map[struct_type];
+	m_struct_type = structs_map[struct_type];
 
-	if (this->data != 0) {
-		::std::free(this->data);
+	if (data) {
+		::std::free(data);
 	}
 
-	size_t size = this->m_struct_type->getSize();
-
-	this->data = malloc(size);
+	size_t size = m_struct_type->getSize();
+	data = malloc(size);
 }
 
 void FFIStructData::setMember(int i, const Value* const v)
 {
-	size_t offset = this->m_struct_type->getOffset(i);
-	size_t size = this->m_struct_type->getSize(i);
-	FFIType type = this->m_struct_type->getType(i);
+	size_t offset = m_struct_type->getOffset(i);
+	size_t size = m_struct_type->getSize(i);
+	FFIType type = m_struct_type->getType(i);
+
 	switch (type) {
 		case FFIINT:
 			{
 				int w = v->getInt();
 				memcpy(static_cast<char*>(data) + offset, &w, size);
 			}
-		break;
+			break;
 
 		case FFIDOUBLE:
 			{
 				double w = v->getDouble();
 				memcpy(static_cast<char*>(data) + offset, &w, size);
 			}
-		break;
+			break;
 
 		default:
-		break;
+			break;
 	}
 }
 
 void FFIStructData::setMember(const CString& member_name, const Value* const v)
 {
-	setMember(this->m_struct_type->getMember(member_name), v);
+	setMember(m_struct_type->getMember(member_name), v);
 }
-
 
 #define FFI_CONVERT(A, B) (static_cast<A*>(B))
 
 void FFIStructData::getMember(Value* result,  int i)
 {
-	FFIType type = this->m_struct_type->getType(i);
-	size_t offset = this->m_struct_type->getOffset(i);
-
-	void* value = (static_cast<char*>(data) + offset);
+	FFIType type = m_struct_type->getType(i);
+	size_t offset = m_struct_type->getOffset(i);
+	void* value = static_cast<char*>(data) + offset;
 
 	switch (type) {
 		case FFIINT:
 			result->setInt(*FFI_CONVERT(int, value));
-		break;
+			break;
 
 		case FFIDOUBLE:
 			result->setDouble(*FFI_CONVERT(double, value));
-		break;
+			break;
 
 		case FFIBOOL:
 			result->setBool(*FFI_CONVERT(bool, value));
-		break;
+			break;
 
 		case FFISTRING:
 		case FFIPOINTER:
 			//result->setData(value);
-		break;
+			break;
 
 		default:
-		break;
+			break;
 	}
 }
 
 void FFIStructData::getMember(Value* result, const CString& member_name)
 {
-	getMember(result, this->m_struct_type->getMember(member_name));
+	getMember(result, m_struct_type->getMember(member_name));
 }
 
 Value* FFIStructData::getMember(const CString* name) const
@@ -166,23 +164,18 @@ CLEVER_TYPE_INIT(FFIStruct::init)
 	addMethod(new Function("setMember",   (MethodPtr)&FFIStruct::setMember));
 }
 
-
-/*
-FFITYPES
-*/
+// FFITYPES
 
 ExtStructs FFITypes::m_structs;
 
-
-void ExtStruct::addMember(const CString& member_name, FFIType member_type,
-	const CString& member_struct_name, const ExtStructs* struct_map)
+void ExtStruct::addMember(const ::std::string& member_name, FFIType member_type,
+	const ::std::string& member_struct_name, const ExtStructs* struct_map)
 {
-	size_t n = m_member_offset.size();
-
 	if (member_type == FFISTRUCT) {
 		return;
 	}
 
+	size_t n = m_member_offset.size();
 	size_t size_type = _get_offset_ext_type(member_type);
 	size_t offset = 0;
 	size_t padding = 0;
@@ -190,7 +183,6 @@ void ExtStruct::addMember(const CString& member_name, FFIType member_type,
 	if (n > 0) {
 		size_t align = getSize(n - 1);
 		offset = getOffset(n - 1) + align;
-
 		padding = _get_padding_ext(offset, align);
 	}
 
@@ -263,9 +255,8 @@ CLEVER_METHOD(FFITypes::addFunction)
 	ExtStruct* ext_struct = m_structs[data->getName()];
 	ExtMemberType ext_func_args;
 
-	for (size_t i = 1; i < args.size(); ++i) {
-		FFIType arg_type = static_cast<FFIType>(args.at(i)->getInt());
-		ext_func_args.push_back(arg_type);
+	for (size_t i = 1, n = args.size(); i < n; ++i) {
+		ext_func_args.push_back(static_cast<FFIType>(args.at(i)->getInt()));
 	}
 	ext_struct->addFunction(*s_func_name, ext_func_args);
 }
@@ -275,15 +266,15 @@ CLEVER_TYPE_INIT(FFITypes::init)
 	setConstructor((MethodPtr) &FFITypes::ctor);
 
 	addMethod(new Function("addMember",   (MethodPtr)&FFITypes::addMember));
-	addMethod(new Function("addFunction",   (MethodPtr)&FFITypes::addFunction));
+	addMethod(new Function("addFunction", (MethodPtr)&FFITypes::addFunction));
 
-	addProperty(CSTRING("INT"),		new Value(long(FFIINT),			true));
-	addProperty(CSTRING("DOUBLE"),	new Value(long(FFIDOUBLE),		true));
-	addProperty(CSTRING("BOOL"),	new Value(long(FFIBOOL),		true));
-	addProperty(CSTRING("VOID"),	new Value(long(FFIVOID),		true));
-	addProperty(CSTRING("STRING"),	new Value(long(FFISTRING),		true));
-	addProperty(CSTRING("POINTER"),	new Value(long(FFIPOINTER),		true));
-	addProperty(CSTRING("STRUCT"),	new Value(long(FFISTRUCT),		true));
+	addProperty(CSTRING("INT"),		new Value(long(FFIINT),     true));
+	addProperty(CSTRING("DOUBLE"),	new Value(long(FFIDOUBLE),  true));
+	addProperty(CSTRING("BOOL"),	new Value(long(FFIBOOL),    true));
+	addProperty(CSTRING("VOID"),	new Value(long(FFIVOID),    true));
+	addProperty(CSTRING("STRING"),	new Value(long(FFISTRING),  true));
+	addProperty(CSTRING("POINTER"),	new Value(long(FFIPOINTER), true));
+	addProperty(CSTRING("STRUCT"),	new Value(long(FFISTRUCT),  true));
 }
 
-}}}
+}}} // clever::modules::std

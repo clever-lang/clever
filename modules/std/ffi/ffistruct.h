@@ -70,9 +70,9 @@ class ExtStruct {
 public:
 	ExtStruct() {}
 
-	void addMember(const CString& member_name, FFIType member_type,
-				   const CString& member_struct_name = "",
-				   const ExtStructs* struct_map = 0);
+	void addMember(const ::std::string& member_name, FFIType member_type,
+				   const ::std::string& member_struct_name = "",
+				   const ExtStructs* struct_map = NULL);
 
 	void addFunction(const CString& func_name, const ExtMemberType& args) {
 		m_func_map[func_name] = args;

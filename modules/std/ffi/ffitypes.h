@@ -8,18 +8,25 @@
 #ifndef CLEVER_STD_FFITYPES_H
 #define CLEVER_STD_FFITYPES_H
 
+#include <string>
+#include "types/type.h"
+
 namespace clever { namespace modules { namespace std {
 
 class FFITypesBuilder : public TypeObject {
 public:
-	FFITypesBuilder(const CString& name = "")
+	FFITypesBuilder() {}
+
+	FFITypesBuilder(const ::std::string& name)
 		: m_name(name) {}
 
 	~FFITypesBuilder() {}
 
 	const CString& getName() { return m_name; }
 private:
-	CString m_name;
+	::std::string m_name;
+
+	DISALLOW_COPY_AND_ASSIGN(FFITypesBuilder);
 };
 
 class FFITypes : public Type {
@@ -48,8 +55,8 @@ public:
 	CLEVER_METHOD(addFunction);
 
 	static ExtStructs m_structs;
-private:
 
+private:
 	DISALLOW_COPY_AND_ASSIGN(FFITypes);
 };
 
