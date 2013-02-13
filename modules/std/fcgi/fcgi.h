@@ -29,7 +29,7 @@ extern char** environ;
 #define CLEVER_FCGI_END(m)     m->end()
 #define CLEVER_FCGI_FETCH(f)   CSTRING(f->second)
 
-namespace clever { namespace packages { namespace std {
+namespace clever { namespace modules { namespace std {
 
 /// Standard FCGI Module
 class FCGIModule : public Module {
@@ -44,6 +44,6 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(FCGIModule);
 };
 
-}}} // clever::packages::std
+}}} // clever::modules::std
 
 #endif // CLEVER_STD_FCGI_H

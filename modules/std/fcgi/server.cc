@@ -11,50 +11,36 @@
 #include "modules/std/fcgi/fcgi.h"
 #include "modules/std/fcgi/server.h"
 
-namespace clever { namespace packages { namespace std {
+namespace clever { namespace modules { namespace std {
 
 const size_t CLEVER_FCGI_STDIN_MAX = 1000000;
 
-void Server::dump(const void* data) const
-{
-	dump(data, ::std::cout);
-}
-
-void Server::dump(const void* data, ::std::ostream& out) const
-{
-	Value::DataValue* dvalue = (Value::DataValue*)data;
-	if (dvalue) {
-		FCGX_Request* uvalue = CLEVER_GET_OBJECT(FCGX_Request*, dvalue->obj);
-		if (uvalue) {
-			/* do something here, the user has printed a request */
-		}
-	}
-}
-
 // Server.new()
 // Setup the process for responding to FCGI requests by creating a new Request object
-void* Server::allocData(CLEVER_TYPE_CTOR_ARGS) const
+TypeObject* Server::allocData(CLEVER_TYPE_CTOR_ARGS) const
 {
-	FCGX_Request* request = new FCGX_Request;
-	if (request) {
-		if (FCGX_InitRequest(request, 0, 0) == 0) {
-			return request;
+	ServerObject* server = new ServerObject;
+
+	if (server->request) {
+		if (FCGX_InitRequest(server->request, 0, 0) == 0) {
+			return server;
 		}
-		delete request;
+		delete server;
 	}
 	return NULL;
 }
 
 void Server::deallocData(void* data)
 {
-	delete static_cast<FCGX_Request*>(data);
+	delete static_cast<ServerObject*>(data);
 }
 
 // Server.accept()
 // Accepts the next FCGI Request
 CLEVER_METHOD(Server::accept)
 {
-	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
+	ServerObject* sobj = CLEVER_GET_OBJECT(ServerObject*, CLEVER_THIS());
+	FCGX_Request* request = sobj->request;
 
 	if (!request) {
 		result->setBool(false);
@@ -164,7 +150,8 @@ CLEVER_METHOD(Server::accept)
 // Prints to the FCGI standard output
 CLEVER_METHOD(Server::print)
 {
-	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
+	ServerObject* sobj = CLEVER_GET_OBJECT(ServerObject*, CLEVER_THIS());
+	FCGX_Request* request = sobj->request;
 
 	if (request) {
 		if (!out->inBody()) {
@@ -186,7 +173,8 @@ CLEVER_METHOD(Server::print)
 // Flushes the FCGI standard output buffer
 CLEVER_METHOD(Server::flush)
 {
-	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
+	ServerObject* sobj = CLEVER_GET_OBJECT(ServerObject*, CLEVER_THIS());
+	FCGX_Request* request = sobj->request;
 
 	if (!clever_check_no_args()) {
 		return;
@@ -203,7 +191,8 @@ CLEVER_METHOD(Server::flush)
 // Closes the FCGI standard output, disconnecting the client
 CLEVER_METHOD(Server::finish)
 {
-	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
+	ServerObject* sobj = CLEVER_GET_OBJECT(ServerObject*, CLEVER_THIS());
+	FCGX_Request* request = sobj->request;
 
 	if (!clever_check_no_args()) {
 		return;
@@ -220,7 +209,8 @@ CLEVER_METHOD(Server::finish)
 // Fetches environment information, returns map when no param specified
 CLEVER_METHOD(Server::getEnvironment)
 {
-	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
+	ServerObject* sobj = CLEVER_GET_OBJECT(ServerObject*, CLEVER_THIS());
+	FCGX_Request* request = sobj->request;
 
 	if (!request) {
 		return;
@@ -258,7 +248,8 @@ CLEVER_METHOD(Server::getEnvironment)
 // Fetches a request parameter
 CLEVER_METHOD(Server::getParam)
 {
-	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
+	ServerObject* sobj = CLEVER_GET_OBJECT(ServerObject*, CLEVER_THIS());
+	FCGX_Request* request = sobj->request;
 
 	if (!request) {
 		result->setNull();
@@ -285,7 +276,8 @@ CLEVER_METHOD(Server::getParam)
 // Fetches a request header (all upper-case, eg HOST not host, CONTENT_TYPE not content-type)
 CLEVER_METHOD(Server::getHeader)
 {
-	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
+	ServerObject* sobj = CLEVER_GET_OBJECT(ServerObject*, CLEVER_THIS());
+	FCGX_Request* request = sobj->request;
 
 	if (!request) {
 		result->setNull();
@@ -310,7 +302,8 @@ CLEVER_METHOD(Server::getHeader)
 // Fetches a request cookie
 CLEVER_METHOD(Server::getCookie)
 {
-	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
+	ServerObject* sobj = CLEVER_GET_OBJECT(ServerObject*, CLEVER_THIS());
+	FCGX_Request* request = sobj->request;
 
 	if (!request) {
 		return;
@@ -335,7 +328,8 @@ CLEVER_METHOD(Server::getCookie)
 // Prints the request environment to the FCGI standard output
 CLEVER_METHOD(Server::debug)
 {
-	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
+	ServerObject* sobj = CLEVER_GET_OBJECT(ServerObject*, CLEVER_THIS());
+	FCGX_Request* request = sobj->request;
 
 	if (!request) {
 		return;
@@ -362,7 +356,8 @@ CLEVER_METHOD(Server::debug)
 // Will return a Map of request parameters
 CLEVER_METHOD(Server::getParams)
 {
-	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
+	ServerObject* sobj = CLEVER_GET_OBJECT(ServerObject*, CLEVER_THIS());
+	FCGX_Request* request = sobj->request;
 
 	if (!request) {
 		return;
@@ -386,7 +381,8 @@ CLEVER_METHOD(Server::getParams)
 // Will return a Map of request headers
 CLEVER_METHOD(Server::getHeaders)
 {
-	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
+	ServerObject* sobj = CLEVER_GET_OBJECT(ServerObject*, CLEVER_THIS());
+	FCGX_Request* request = sobj->request;
 
 	if (!request) {
 		return;
@@ -414,7 +410,8 @@ CLEVER_METHOD(Server::getHeaders)
 // Will return a Map of request cookies
 CLEVER_METHOD(Server::getCookies)
 {
-	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
+	ServerObject* sobj = CLEVER_GET_OBJECT(ServerObject*, CLEVER_THIS());
+	FCGX_Request* request = sobj->request;
 
 	if (!request) {
 		return;
@@ -485,4 +482,4 @@ CLEVER_TYPE_INIT(Server::init)
 	addMethod(new Function("debug",		(MethodPtr)&Server::debug));
 }
 
-}}} // clever::packages::std
+}}} // clever::modules::std

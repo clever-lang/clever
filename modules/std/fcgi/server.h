@@ -13,7 +13,18 @@
 #include "core/cstring.h"
 #include "types/type.h"
 
-namespace clever { namespace packages { namespace std {
+namespace clever { namespace modules { namespace std {
+
+struct ServerObject : public TypeObject {
+	ServerObject()
+		: request(new FCGX_Request) {}
+
+	~ServerObject() {
+		delete request;
+	}
+
+	FCGX_Request* request;
+};
 
 class Server : public Type {
 public:
@@ -23,7 +34,7 @@ public:
 		CLEVER_FCGI_MAP* head;
 		CLEVER_FCGI_MAP* cookie;
 		CLEVER_FCGI_MAP* params;
-	
+
 		RequestData() {
 			env = new CLEVER_FCGI_MAP();
 			head = new CLEVER_FCGI_MAP();
@@ -37,7 +48,7 @@ public:
 			delete cookie;
 			delete params;
 		}
-		
+
 		void clear() {
 			env->clear();
 			head->clear();
@@ -50,8 +61,8 @@ public:
 	public:
 		CLEVER_FCGI_MAP* head;
 		CLEVER_FCGI_MAP* cookie;
-		bool body;		
-		
+		bool body;
+
 		ResponseData() {
 			head = new CLEVER_FCGI_MAP();
 			cookie = new CLEVER_FCGI_MAP();
@@ -73,29 +84,21 @@ public:
 		}
 	};
 
-	ResponseData* out;
 	RequestData* in;
-	
-	Server() : Type(CSTRING("Server")) {
-		in = new RequestData();
-		out = new ResponseData();
-	}
+	ResponseData* out;
+
+	Server()
+		: Type("Server"), in(new RequestData()), out(new ResponseData()) {}
 
 	~Server() {
 		delete in;
 		delete out;
 	}
 
-	void dump(const void* data) const;
-	void dump(const void* data, ::std::ostream& out) const;
-
-	virtual void increment(Value*) const {}
-	virtual void decrement(Value*) const {}
-
 	void init();
 
-	virtual void* allocData(CLEVER_TYPE_CTOR_ARGS) const;
-	virtual void deallocData(void* data);
+	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
+	virtual void deallocData(void*);
 
 	CLEVER_METHOD(accept);
 	CLEVER_METHOD(finish);
@@ -106,7 +109,7 @@ public:
 	CLEVER_METHOD(getParam);
 	CLEVER_METHOD(getHeader);
 	CLEVER_METHOD(getCookie);
-	
+
 	CLEVER_METHOD(getParams);
 	CLEVER_METHOD(getHeaders);
 	CLEVER_METHOD(getCookies);
@@ -117,6 +120,6 @@ public:
 	CLEVER_METHOD(debug);
 };
 
-}}} // clever::packages::std
+}}} // clever::modules::std
 
 #endif // CLEVER_STD_FCGI_SERVER_H
