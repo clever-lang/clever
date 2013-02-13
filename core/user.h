@@ -41,9 +41,7 @@ public:
 	~UserType() {}
 
 	void init(CLEVER_TYPE_INIT_ARGS) {
-		Function* ctor = new Function(getName(), (MethodPtr) &UserType::ctor);
-		setConstructor(ctor);
-		addMethod(ctor);
+		setConstructor((MethodPtr) &UserType::ctor);
 	}
 
 	void setEnvironment(Environment* env) { m_env = env; }

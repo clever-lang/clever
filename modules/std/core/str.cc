@@ -345,11 +345,8 @@ CLEVER_METHOD(StrType::split)
 
 CLEVER_TYPE_INIT(StrType::init)
 {
-	Function* ctor = new Function("String", (MethodPtr) &StrType::ctor);
+	setConstructor((MethodPtr) &StrType::ctor);
 
-	setConstructor(ctor);
-
-	addMethod(ctor);
 	addMethod(new Function("subString",  	(MethodPtr) &StrType::subString));
 	addMethod(new Function("find", 			(MethodPtr) &StrType::find));
 	addMethod(new Function("findFirst", 	(MethodPtr) &StrType::findFirst));

@@ -151,12 +151,9 @@ CLEVER_METHOD(IntType::toString)
 
 CLEVER_TYPE_INIT(IntType::init)
 {
-	Function* ctor = new Function("Int", (MethodPtr) &IntType::ctor);
-
-	setConstructor(ctor);
+	setConstructor((MethodPtr) &IntType::ctor);
 
 	// Methods
-	addMethod(ctor);
 	addMethod(new Function("toString", (MethodPtr) &IntType::toString));
 
 	// Properties

@@ -362,12 +362,10 @@ CLEVER_METHOD(FFI::unload)
 // FFI type initialization
 CLEVER_TYPE_INIT(FFI::init)
 {
-	Function* ctor  = new Function("FFILib", (MethodPtr) &FFI::ctor);
 	Function* fcall = new Function("callThisFunction", (MethodPtr)&FFI::callThisFunction);
 
-	setConstructor(ctor);
+	setConstructor((MethodPtr) &FFI::ctor);
 
-	addMethod(ctor);
 	addMethod(fcall);
 	addMethod(new Function("call",   (MethodPtr)&FFI::call));
 	addMethod(new Function("exec",   (MethodPtr)&FFI::exec))->setStatic();

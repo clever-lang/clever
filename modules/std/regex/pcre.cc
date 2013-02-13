@@ -134,11 +134,9 @@ CLEVER_METHOD(Pcre::quote)
 
 CLEVER_TYPE_INIT(Pcre::init)
 {
-	Function* ctor = new Function("Regex", (MethodPtr)&Pcre::constructor);
-
 	// Methods
-	setConstructor(ctor);
-	addMethod(ctor);
+	setConstructor((MethodPtr)&Pcre::constructor);
+
 	addMethod(new Function("matches",    (MethodPtr)&Pcre::matches));
 	addMethod(new Function("group",      (MethodPtr)&Pcre::group));
 	addMethod(new Function("replace",    (MethodPtr)&Pcre::replace));

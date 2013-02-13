@@ -156,10 +156,7 @@ public:
 	~FuncType() {}
 
 	void init(CLEVER_TYPE_INIT_ARGS) {
-		Function* ctor = new Function("Function", (MethodPtr) &FuncType::ctor);
-
-		setConstructor(ctor);
-		addMethod(ctor);
+		setConstructor((MethodPtr) &FuncType::ctor);
 	}
 
 	void dump(TypeObject* data, std::ostream& out) const { out << "function() {}"; }
