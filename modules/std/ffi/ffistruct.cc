@@ -99,7 +99,15 @@ void FFIStructData::getMember(Value* result, const CString& member_name)
 
 Value* FFIStructData::getMember(const CString* name) const
 {
-	Value* v = const_cast<FFIStructData*>(this)->m_member_map[*name];
+	Value* v = 0;
+
+	v = TypeObject::getMember(name);
+
+	if (v) {
+		return v;
+	}
+
+	v = const_cast<FFIStructData*>(this)->m_member_map[*name];
 	if (v == 0) {
 		v = new Value;
 		const_cast<FFIStructData*>(this)->m_member_map[*name] = v;
