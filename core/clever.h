@@ -51,10 +51,10 @@ extern jmp_buf fatal_error;
  * @param format vsprintf format string
  */
 void clever_assert_(const char* file, const char* function, long line, const char* expr,
-		int hypothesis, const char* format, ...);
+    int hypothesis, const char* format="", ...);
 
-#define clever_assert(hypothesis, format, ...) \
-	clever::clever_assert_(__FILE__, CLEVER_CURRENT_FUNCTION, __LINE__, #hypothesis, (hypothesis), format, ##__VA_ARGS__)
+#define clever_assert(hypothesis, ...) \
+    clever::clever_assert_(__FILE__, CLEVER_CURRENT_FUNCTION, __LINE__, #hypothesis, (hypothesis), __VA_ARGS__)
 
 #define clever_assert_null(hypothesis) \
 	clever::clever_assert_(__FILE__, CLEVER_CURRENT_FUNCTION, __LINE__, #hypothesis, (hypothesis) == NULL, #hypothesis " must be NULL")
@@ -79,7 +79,7 @@ void clever_assert_(const char* file, const char* function, long line, const cha
  * @param format vsprintf format string
  */
 void clever_debug_(const char* file, long line, const char* format, ...);
-#define clever_debug(format, ...) clever::clever_debug_(__FILE__, __LINE__, format, ##__VA_ARGS__)
+#define clever_debug(...) clever::clever_debug_(__FILE__, __LINE__, __VA_ARGS__)
 
 #else
 #define clever_assert(hypothesis, format, ...)

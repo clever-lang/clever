@@ -19,7 +19,7 @@
 
 #define OPCODE    m_inst[m_pc]
 
-#if CLEVER_GCC_VERSION > 0
+#if CLEVER_GCC_VERSION > 0 && !defined(CLEVER_NOGNU)
 # define OP(name)    name
 # define OPCODES     const static void* labels[] = { OP_LABELS }; goto *labels[m_inst[m_pc].opcode]
 # define DISPATCH    ++m_pc; goto *labels[m_inst[m_pc].opcode]

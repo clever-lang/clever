@@ -13,8 +13,8 @@
 #include "modules/std/core/str.h"
 
 namespace clever {
-
-#define clever_throw(val, ...) exception->setException(val, ##__VA_ARGS__)
+// make sure you supply at least one value
+#define clever_throw(...) exception->setException(__VA_ARGS__)
 
 class CException {
 public:

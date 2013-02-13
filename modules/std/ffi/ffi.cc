@@ -73,15 +73,39 @@ static bool _load_lib(FFIData* h, const CString* libname)
 	return h->m_lib_handler != NULL;
 }
 
-inline static ffi_call_func _ffi_get_pf(void* lib_handler, const CString* func)
+/* XXX(heuripedes): please use this function instead of directly calling dlsym
+ *                  so we don't have to maintain a zilion versions of the same code.
+ */
+static inline ffi_call_func _ffi_dlsym(void* handler, const char* name)
 {
-	void* fpf = dlsym(lib_handler, func->c_str());
+#ifdef CLEVER_WIN32
+#  error "Dynamic library symbol loading support is not yet available for windows. Please disable this module."
+#endif
+
+    /* XXX(heuripedes): iso c++ forbids casts between pointer-to-function and
+     *                  pointer-to-object as .code and .data pointers are not
+     *                  garanteed to be compatible in some platforms.
+     *                  THE CODE BELLOW IS A HACK TO SHUT THE COMPILER UP.
+     */
+    union {
+        void *p;
+        ffi_call_func fp;
+    } u;
+
+    u.p = dlsym(handler, name);
+
+    return u.fp;
+}
+
+static inline ffi_call_func _ffi_get_pf(void* lib_handler, const CString* func)
+{
+    ffi_call_func fpf = _ffi_dlsym(lib_handler, func->c_str());
 
 	if (fpf == NULL) {
 		return 0;
 	}
 
-	return reinterpret_cast<ffi_call_func>(fpf);
+    return fpf;
 }
 
 static void _ffi_call(Value* result, ffi_call_func pf, size_t n_args,
@@ -267,20 +291,15 @@ CLEVER_METHOD(FFI::callThisFunction)
 	const CString func = handler->m_func_name;
 	FFIType rt = static_cast<FFIType>(args.at(0)->getInt());
 	size_t n_args = args.size() - 1;
+    ffi_call_func pf;
 
-#ifndef CLEVER_WIN32
-	void* fpf;
-	ffi_call_func pf;
+    pf = _ffi_dlsym(handler->m_lib_handler, func.c_str());
 
-	fpf = dlsym(handler->m_lib_handler, func.c_str());
-	if (fpf == NULL) {
+    if (pf == NULL) {
 
 		clever_throw("function `%S' don't exist!", &func);
 		return;
 	}
-
-	pf = reinterpret_cast<ffi_call_func>(fpf);
-#endif
 
 	_ffi_call(result, pf, n_args, rt, args, 1);
 }

@@ -31,6 +31,10 @@ if (HAIKU)
 	add_definitions(-DCLEVER_HAIKU)
 endif (HAIKU)
 
+if ("${CMAKE_CXX_COMPILER}" MATCHES "clang(\\+\\+)?$")
+	set(CMAKE_COMPILER_IS_CLANGXX 1)
+endif ("${CMAKE_CXX_COMPILER}" MATCHES "clang(\\+\\+)?$")
+
 # Build environment
 # ---------------------------------------------------------------------------
 if (NOT CMAKE_BUILD_TYPE)
@@ -47,9 +51,13 @@ else (MSVC)
 	set(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} -fPIC -Wall -std=c++98 -fno-rtti -fno-exceptions")
 	set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG} -fno-inline -ggdb -D_DEBUG -DCLEVER_DEBUG")
 	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2 -DNDEBUG")
-	set(CMAKE_CXX_FLAGS_DEVEL   "${CMAKE_CXX_FLAGS_DEBUG} -O0 -Wextra -Wno-unused-parameter")
-	set(CMAKE_CXX_FLAGS_DEVEL   "${CMAKE_CXX_FLAGS_DEVEL} -fverbose-asm -finstrument-functions")
+	set(CMAKE_CXX_FLAGS_DEVEL   "${CMAKE_CXX_FLAGS_DEBUG} -O0 -Wextra -Wno-unused-parameter -Wno-variadic-macros")
+	set(CMAKE_CXX_FLAGS_DEVEL   "${CMAKE_CXX_FLAGS_DEVEL} -pedantic -fverbose-asm -finstrument-functions")
 	set(CMAKE_CXX_FLAGS_DEVEL   "${CMAKE_CXX_FLAGS_DEVEL} -fno-delete-null-pointer-checks -fno-omit-frame-pointer")
 	set(CMAKE_CXX_FLAGS_DEVEL   "${CMAKE_CXX_FLAGS_DEVEL} -fstack-check -fstack-protector")
+
+	if (CMAKE_COMPILER_IS_CLANGXX)
+		#set(CMAKE_CXX_FLAGS_DEVEL "${CMAKE_CXX_FLAGS_DEVEL} -Werror=gnu -DCLEVER_NOGNU")
+	endif (CMAKE_COMPILER_IS_CLANGXX)
 endif (MSVC)
 
