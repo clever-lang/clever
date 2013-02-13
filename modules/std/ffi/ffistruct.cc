@@ -100,7 +100,7 @@ void FFIStructData::getMember(Value* result, const CString& member_name)
 	getMember(result, this->m_struct_type->getMember(member_name));
 }
 
-Value* FFIStructData::getProperty(const CString* name) const
+Value* FFIStructData::getMember(const CString* name) const
 {
 	Value* v = const_cast<FFIStructData*>(this)->m_member_map[*name];
 	if (v == 0) {

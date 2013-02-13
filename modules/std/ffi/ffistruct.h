@@ -180,7 +180,7 @@ struct FFIStructData : public TypeObject {
 		}
 	}
 
-	virtual Value* getProperty(const CString* name) const;
+	virtual Value* getMember(const CString* name) const;
 
 	void setStruct(ExtStructs& structs_map, const CString& struct_type);
 
