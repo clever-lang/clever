@@ -255,7 +255,7 @@ CLEVER_FORCE_INLINE void VM::binOp(Opcode op, const IR& opcode)
 	const Value* rhs = getValue(opcode.op2);
 	const Type* type = lhs->getType();
 
-	if (EXPECTED(lhs->isNull() || rhs->isNull())) {
+	if (UNEXPECTED(lhs->isNull() || rhs->isNull())) {
 		error(VM_ERROR, OPCODE.loc, "Operation cannot be executed on null value");
 	}
 
