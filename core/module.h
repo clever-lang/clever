@@ -20,7 +20,7 @@
 #define CLEVER_MODULE_INIT(x) void x::init()
 
 #define CLEVER_MODULE_VIRTUAL_METHODS_DECLARATION \
-	void init();
+	void init()
 
 namespace clever {
 

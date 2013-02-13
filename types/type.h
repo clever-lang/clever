@@ -46,7 +46,7 @@ class Function;
 	void CLEVER_FASTCALL greater_equal(CLEVER_TYPE_OPERATOR_ARGS) const; \
 	void CLEVER_FASTCALL less(CLEVER_TYPE_OPERATOR_ARGS)          const; \
 	void CLEVER_FASTCALL less_equal(CLEVER_TYPE_OPERATOR_ARGS)    const; \
-	void CLEVER_FASTCALL not_op(CLEVER_TYPE_UNARY_OPERATOR_ARGS)  const;
+	void CLEVER_FASTCALL not_op(CLEVER_TYPE_UNARY_OPERATOR_ARGS)  const
 
 #define CLEVER_TYPE_VIRTUAL_BITWISE_OPERATORS                           \
 	void CLEVER_FASTCALL bw_and(CLEVER_TYPE_OPERATOR_ARGS)       const; \
@@ -54,7 +54,7 @@ class Function;
 	void CLEVER_FASTCALL bw_xor(CLEVER_TYPE_OPERATOR_ARGS)       const; \
 	void CLEVER_FASTCALL bw_not(CLEVER_TYPE_UNARY_OPERATOR_ARGS) const; \
 	void CLEVER_FASTCALL bw_ls(CLEVER_TYPE_OPERATOR_ARGS)        const; \
-	void CLEVER_FASTCALL bw_rs(CLEVER_TYPE_OPERATOR_ARGS)        const;
+	void CLEVER_FASTCALL bw_rs(CLEVER_TYPE_OPERATOR_ARGS)        const
 
 #define CLEVER_THIS() obj
 
