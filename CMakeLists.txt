@@ -97,8 +97,12 @@ include(modules.cmake)
 
 # Issue #131 fix attempt.
 # ---------------------------------------------------------------------------
-# TODO(heuripedes): find a better (w/o workaround) way to support GNU gold
-#                   and ubuntu/debian/mint default linker options.
+# TODO(heuripedes): find a better (w/o workaround) way to support ld.gold
+#                   and ubuntu/debian/mint/gentoo default ld.bfd options.
+#                   some sources on the issue:
+#                   http://www.gentoo.org/proj/en/qa/asneeded.xml
+#                   https://wiki.ubuntu.com/NattyNarwhal/ToolchainTransition
+#                   http://wiki.debian.org/ToolChain/DSOLinking
 if (UNIX)
 	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--no-as-needed")
 endif (UNIX)
