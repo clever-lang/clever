@@ -1,0 +1,10 @@
+Testing import with user module
+==CODE==
+import std.io.*;
+println(1);
+import import_001.*;
+println(2);
+==RESULT==
+1
+foobar!
+2
