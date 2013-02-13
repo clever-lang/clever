@@ -175,6 +175,36 @@ FFITYPES
 ExtStructs FFITypes::m_structs;
 
 
+void ExtStruct::addMember(const CString& member_name, FFIType member_type,
+	const CString& member_struct_name, const ExtStructs* struct_map)
+{
+	size_t n = m_member_offset.size();
+
+	if (member_type == FFISTRUCT) {
+		return;
+	}
+
+	size_t size_type = _get_offset_ext_type(member_type);
+	size_t offset = 0;
+	size_t padding = 0;
+
+	if (n > 0) {
+		size_t align = getSize(n - 1);
+		offset = getOffset(n - 1) + align;
+
+		padding = _get_padding_ext(offset, align);
+	}
+
+	m_member_offset.push_back(offset + padding);
+	m_member_size.push_back(size_type);
+	m_member_name.push_back(member_name);
+	m_member_type.push_back(member_type);
+
+	if (m_member_map.find(member_name) == m_member_map.end()) {
+		m_member_map[member_name] = n;
+	}
+}
+
 CLEVER_METHOD(FFITypes::ctor)
 {
 	if (!clever_check_args("s")) {

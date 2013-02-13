@@ -84,7 +84,6 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(FFIModule);
 };
 
-
 }}} // clever::modules::std
 
 #endif // CLEVER_STD_FFI_H
