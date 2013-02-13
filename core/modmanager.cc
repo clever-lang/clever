@@ -92,6 +92,7 @@ void ModManager::loadFunction(Scope* scope, Environment* env, const CString* nam
 	Value* fval = new Value();
 
 	fval->setObj(CLEVER_FUNC_TYPE, func);
+	fval->setConst(true);
 
 	scope->pushValue(name, fval)->voffset = env->pushValue(fval);
 }
