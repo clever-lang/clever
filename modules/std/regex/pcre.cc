@@ -11,22 +11,23 @@
 
 namespace clever { namespace modules { namespace std { namespace regex {
 
-// Regex.Regex(String pattern)
+// Regex.Regex(String pattern [, Int flags])
 CLEVER_METHOD(Pcre::constructor)
 {
 	if (!clever_check_args("s|i")) {
 		return;
 	}
-	PcreObject* self = static_cast<PcreObject*>(allocData(&args));
+
+	PcreObject* reobj = static_cast<PcreObject*>(allocData(&args));
 
 	if (args.size() == 2) {
-		self->re = new pcrecpp::RE(args.at(0)->getStr()->c_str(),
+		reobj->re = new pcrecpp::RE(args.at(0)->getStr()->c_str(),
 			pcrecpp::RE_Options(args.at(1)->getInt()));
 	} else {
-		self->re = new pcrecpp::RE(args.at(0)->getStr()->c_str());
+		reobj->re = new pcrecpp::RE(args.at(0)->getStr()->c_str());
 	}
 
-	result->setObj(this, self);
+	result->setObj(this, reobj);
 }
 
 // Bool Regex::matches(String haystack)
@@ -36,41 +37,41 @@ CLEVER_METHOD(Pcre::matches)
 		return;
 	}
 
-	PcreObject* self = CLEVER_GET_OBJECT(PcreObject*, CLEVER_THIS());
+	PcreObject* reobj = CLEVER_GET_OBJECT(PcreObject*, CLEVER_THIS());
 	const CString* haystack = args.at(0)->getStr();
-	int n;
+	int ngroups;
 
 	// Check if we are testing another input, if not we just go to the next
 	// matching
-	if (self->match.last_input != haystack) {
-		n = self->re->NumberOfCapturingGroups();
+	if (reobj->match.last_input != haystack) {
+		ngroups = reobj->re->NumberOfCapturingGroups();
 
 		// Non capturing subpattern uses the partial match method
-		if (n == 0) {
-			result->setBool(self->re->PartialMatch(haystack->c_str()));
+		if (ngroups == 0) {
+			result->setBool(reobj->re->PartialMatch(haystack->c_str()));
 			return;
-		} else if (n > 0 && self->match.groups == NULL) {
-			self->match.n_groups = n;
-			self->match.matches = new ::std::string[n];
-			self->match.groups = new pcrecpp::Arg*[n];
-			self->match.input = haystack->c_str();
-			self->match.last_input = haystack;
+		} else if (ngroups > 0 && reobj->match.groups == NULL) {
+			reobj->match.n_groups   = ngroups;
+			reobj->match.matches    = new ::std::string[ngroups];
+			reobj->match.groups     = new pcrecpp::Arg*[ngroups];
+			reobj->match.input      = haystack->c_str();
+			reobj->match.last_input = haystack;
 
-			for (int i = 0; i < n; ++i) {
-				self->match.groups[i] = new pcrecpp::Arg;
-				*self->match.groups[i] = &self->match.matches[i];
+			for (int i = 0; i < ngroups; ++i) {
+				reobj->match.groups[i]  = new pcrecpp::Arg;
+				*reobj->match.groups[i] = &reobj->match.matches[i];
 			}
 		}
 	} else {
-		n = self->match.n_groups;
+		ngroups = reobj->match.n_groups;
 	}
 
 	int consumed;
-	bool res = self->re->DoMatch(self->match.input,
-			pcrecpp::RE::UNANCHORED, &consumed, self->match.groups,	n);
+	bool res = reobj->re->DoMatch(reobj->match.input, pcrecpp::RE::UNANCHORED,
+		&consumed, reobj->match.groups, ngroups);
 
 	if (res) {
-		self->match.input.remove_prefix(consumed);
+		reobj->match.input.remove_prefix(consumed);
 	}
 
 	result->setBool(res);
@@ -83,12 +84,12 @@ CLEVER_METHOD(Pcre::group)
 		return;
 	}
 
-	PcreObject* self = CLEVER_GET_OBJECT(PcreObject*, CLEVER_THIS());
+	const PcreObject* reobj = CLEVER_GET_OBJECT(PcreObject*, CLEVER_THIS());
 
-	if (args.at(0)->getInt() >= self->match.n_groups) {
+	if (args.at(0)->getInt() >= reobj->match.n_groups) {
 		result->setStr(CSTRING(""));
 	} else {
-		result->setStr(new StrObject(self->match.matches[args.at(0)->getInt()]));
+		result->setStr(new StrObject(reobj->match.matches[args.at(0)->getInt()]));
 	}
 }
 
@@ -99,11 +100,11 @@ CLEVER_METHOD(Pcre::replace)
 		return;
 	}
 
-	PcreObject* self = CLEVER_GET_OBJECT(PcreObject*, CLEVER_THIS());
+	const PcreObject* reobj = CLEVER_GET_OBJECT(PcreObject*, CLEVER_THIS());
 
 	::std::string newstr(*args[1]->getStr());
 
-	self->re->Replace(args[0]->getStr()->c_str(), &newstr);
+	reobj->re->Replace(args[0]->getStr()->c_str(), &newstr);
 
 	result->setStr(new StrObject(newstr));
 }
@@ -115,10 +116,10 @@ CLEVER_METHOD(Pcre::replaceAll)
 		return;
 	}
 
-	PcreObject* self = CLEVER_GET_OBJECT(PcreObject*, CLEVER_THIS());
+	const PcreObject* reobj = CLEVER_GET_OBJECT(PcreObject*, CLEVER_THIS());
 	::std::string newstr(args[1]->getStr()->c_str());
 
-	self->re->GlobalReplace(args[0]->getStr()->c_str(), &newstr);
+	reobj->re->GlobalReplace(args[0]->getStr()->c_str(), &newstr);
 
 	result->setStr(new StrObject(newstr));
 }
