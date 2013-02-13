@@ -36,27 +36,6 @@ void TypeObject::copyMembers(const Type* type)
 			addMember(it->first, it->second->clone());
 		}
 	}
-/*
-	const PropertyMap& props(type->getProperties());
-
-	if (props.size() > 0) {
-		PropertyMap::const_iterator it(props.begin()), end(props.end());
-
-		for (; it != end; ++it) {
-			addProperty(it->first, it->second->clone());
-		}
-	}
-
-	const MethodMap& methods(type->getMethods());
-
-	if (methods.size() > 0) {
-		MethodMap::const_iterator it(methods.begin()), end(methods.end());
-
-		for (; it != end; ++it) {
-			addMethod(it->first, it->second);
-		}
-	}
-*/
 }
 
 void Type::deallocMembers()
