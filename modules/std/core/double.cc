@@ -101,11 +101,7 @@ CLEVER_METHOD(DoubleType::ctor)
 
 CLEVER_TYPE_INIT(DoubleType::init)
 {
-	Function* ctor = new Function("Double", (MethodPtr) &DoubleType::ctor);
-
-	setConstructor(ctor);
-
-	addMethod(ctor);
+	setConstructor((MethodPtr) &DoubleType::ctor);
 }
 
 } // clever

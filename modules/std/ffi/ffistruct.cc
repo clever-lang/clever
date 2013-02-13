@@ -161,11 +161,7 @@ CLEVER_METHOD(FFIStruct::setMember)
 
 CLEVER_TYPE_INIT(FFIStruct::init)
 {
-	Function* ctor = new Function("FFIStruct", (MethodPtr) &FFIStruct::ctor);
-
-	setConstructor(ctor);
-
-	addMethod(ctor);
+	setConstructor((MethodPtr) &FFIStruct::ctor);
 
 	addMethod(new Function("getMember",   (MethodPtr)&FFIStruct::getMember));
 	addMethod(new Function("setMember",   (MethodPtr)&FFIStruct::setMember));
@@ -247,11 +243,7 @@ CLEVER_METHOD(FFITypes::addFunction)
 
 CLEVER_TYPE_INIT(FFITypes::init)
 {
-	Function* ctor = new Function("FFITypes", (MethodPtr) &FFITypes::ctor);
-
-	setConstructor(ctor);
-
-	addMethod(ctor);
+	setConstructor((MethodPtr) &FFITypes::ctor);
 
 	addMethod(new Function("addMember",   (MethodPtr)&FFITypes::addMember));
 	addMethod(new Function("addFunction",   (MethodPtr)&FFITypes::addFunction));
