@@ -1,4 +1,8 @@
 Testing condition functionality
+==CHECK==
+if (!Clever.hasThreads()) {
+	println("skip");
+}
 ==CODE==
 import std.io.*;
 import std.concurrent.*;

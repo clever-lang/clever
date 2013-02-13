@@ -1,4 +1,8 @@
 Testing threads inside threads in std.concurrent [will fail in debug mode]
+==CHECK==
+if (!Clever.hasThreads()) {
+	println("skip");
+}
 ==CODE==
 import std.io.*;
 import std.concurrent.*;
