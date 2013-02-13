@@ -9,9 +9,8 @@
 #include "core/value.h"
 #include "modules/std/core/function.h"
 #include "types/type.h"
-
-#include "core/value.h"
 #include "modules/std/ffi/ffistruct.h"
+#include "modules/std/ffi/ffitypes.h"
 
 namespace clever { namespace modules { namespace std {
 

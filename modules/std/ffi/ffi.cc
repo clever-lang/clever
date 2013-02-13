@@ -11,34 +11,29 @@
 #include <cstdio>
 #include <map>
 #include <string>
-
 #ifndef __APPLE__
 # include <ffi.h>
 #else
 # include <ffi/ffi.h>
 #endif
-
 #ifdef CLEVER_WIN32
 # include <windows.h>
 #else
 # include <dlfcn.h>
 #endif
-
 #include "core/clever.h"
-#include "core/value.h"
 #include "modules/std/core/function.h"
 #include "types/type.h"
-
 #include "core/value.h"
 #include "modules/std/ffi/ffi.h"
 #include "modules/std/ffi/ffistruct.h"
+#include "modules/std/ffi/ffitypes.h"
 
 namespace clever { namespace modules { namespace std {
 
 extern "C" {
 typedef void (*ffi_call_func)();
 }
-
 
 #if defined(CLEVER_WIN32)
 static const char* CLEVER_DYLIB_EXT = ".dll";
@@ -48,15 +43,16 @@ static const char* CLEVER_DYLIB_EXT = ".dylib";
 static const char* CLEVER_DYLIB_EXT = ".so";
 #endif
 
-static ffi_type* _find_ffi_type(FFIType tn) {
-	switch (tn) {
-	case FFIINT:		return &ffi_type_sint32;
-	case FFIDOUBLE:		return &ffi_type_double;
-	case FFIBOOL:		return &ffi_type_schar;
-	case FFIPOINTER:	return &ffi_type_pointer;
-	case FFIVOID:		return &ffi_type_void;
-	case FFISTRUCT:		return &ffi_type_pointer;
-	case FFISTRING:		return &ffi_type_pointer;
+static ffi_type* _find_ffi_type(FFIType type)
+{
+	switch (type) {
+		case FFIINT:     return &ffi_type_sint32;
+		case FFIDOUBLE:  return &ffi_type_double;
+		case FFIBOOL:    return &ffi_type_schar;
+		case FFIPOINTER: return &ffi_type_pointer;
+		case FFIVOID:    return &ffi_type_void;
+		case FFISTRUCT:  return &ffi_type_pointer;
+		case FFISTRING:  return &ffi_type_pointer;
 	}
 	return NULL;
 }
@@ -401,4 +397,4 @@ CLEVER_MODULE_INIT(FFIModule)
 	addType(new FFITypes);
 }
 
-}}} // clever::packages::std
+}}} // clever::modules::std
