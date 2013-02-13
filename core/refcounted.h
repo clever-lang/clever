@@ -78,7 +78,7 @@ private:
  * @param ptr a RefCounted instance
  */
 inline void clever_addref(RefCounted* ptr) {
-	if (ptr) {
+	if (EXPECTED(ptr != NULL)) {
 		ptr->addRef();
 	}
 }
@@ -88,7 +88,7 @@ inline void clever_addref(RefCounted* ptr) {
  * @param ptr a RefCounted instance
  */
 inline void clever_delref(RefCounted* ptr) {
-	if (ptr) {
+	if (EXPECTED(ptr != NULL)) {
 		ptr->delRef();
 	}
 }
