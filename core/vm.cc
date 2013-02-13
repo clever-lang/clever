@@ -141,7 +141,6 @@ void VM::copy(const VM* vm, bool deep)
 	m_const_env  = vm->m_const_env;
 }
 
-
 // Function parameter binding
 static CLEVER_FORCE_INLINE void _param_binding(const Function* func, Environment* fenv,
 	std::vector<Value*>* args)
@@ -249,6 +248,37 @@ Value* VM::runFunction(const Function* func, std::vector<Value*>* args)
 	return result;
 }
 
+// Performs binary operation
+CLEVER_FORCE_INLINE void VM::binOp(Opcode op, const IR& opcode)
+{
+	const Value* lhs = getValue(opcode.op1);
+	const Value* rhs = getValue(opcode.op2);
+	const Type* type = lhs->getType();
+
+	if (EXPECTED(lhs->isNull() || rhs->isNull())) {
+		error(VM_ERROR, OPCODE.loc, "Operation cannot be executed on null value");
+	}
+
+	switch (op) {
+		case OP_ADD:
+			type->add(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
+			break;
+		case OP_SUB:
+			type->sub(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
+			break;
+		case OP_MUL:
+			type->mul(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
+			break;
+		case OP_DIV:
+			type->div(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
+			break;
+		case OP_MOD:
+			type->mod(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
+			break;
+		EMPTY_SWITCH_DEFAULT_CASE();
+	}
+}
+
 // Executes the VM opcodes
 // When building on GCC the code will use direct threading code, otherwise
 // the switch-based dispatching is used
@@ -315,87 +345,14 @@ out:
 	DISPATCH;
 
 	OP(OP_ADD):
-	{
-		const Value* lhs = getValue(OPCODE.op1);
-		const Value* rhs = getValue(OPCODE.op2);
-
-		if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
-			lhs->getType()->add(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
-
-			if (UNEXPECTED(m_exception.hasException())) {
-				goto throw_exception;
-			}
-		} else {
-			error(VM_ERROR, OPCODE.loc, "Operation cannot be executed on null value");
-		}
-	}
-	DISPATCH;
-
 	OP(OP_SUB):
-	{
-		const Value* lhs = getValue(OPCODE.op1);
-		const Value* rhs = getValue(OPCODE.op2);
-
-		if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
-			lhs->getType()->sub(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
-
-			if (UNEXPECTED(m_exception.hasException())) {
-				goto throw_exception;
-			}
-		} else {
-			error(VM_ERROR, OPCODE.loc, "Operation cannot be executed on null value");
-		}
-	}
-	DISPATCH;
-
 	OP(OP_MUL):
-	{
-		const Value* lhs = getValue(OPCODE.op1);
-		const Value* rhs = getValue(OPCODE.op2);
-
-		if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
-			lhs->getType()->mul(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
-
-			if (UNEXPECTED(m_exception.hasException())) {
-				goto throw_exception;
-			}
-		} else {
-			error(VM_ERROR, OPCODE.loc, "Operation cannot be executed on null value");
-		}
-	}
-	DISPATCH;
-
 	OP(OP_DIV):
-	{
-		const Value* lhs = getValue(OPCODE.op1);
-		const Value* rhs = getValue(OPCODE.op2);
-
-		if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
-			lhs->getType()->div(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
-
-			if (UNEXPECTED(m_exception.hasException())) {
-				goto throw_exception;
-			}
-		} else {
-			error(VM_ERROR, OPCODE.loc, "Operation cannot be executed on null value");
-		}
-	}
-	DISPATCH;
-
 	OP(OP_MOD):
-	{
-		const Value* lhs = getValue(OPCODE.op1);
-		const Value* rhs = getValue(OPCODE.op2);
+	binOp(OPCODE.opcode, OPCODE);
 
-		if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
-			lhs->getType()->mod(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
-
-			if (UNEXPECTED(m_exception.hasException())) {
-				goto throw_exception;
-			}
-		} else {
-			error(VM_ERROR, OPCODE.loc, "Operation cannot be executed on null value");
-		}
+	if (UNEXPECTED(m_exception.hasException())) {
+		goto throw_exception;
 	}
 	DISPATCH;
 
