@@ -1,0 +1,14 @@
+Testing Regex::matches() and Regex::group()
+==CODE==
+import std.io.*;
+import std.regex.*;
+
+var text = "test foo bar test";
+
+var re = Regex.new("(f\S+)");
+
+if (re.matches(text)) {
+	println(re.group(0));
+}
+==RESULT==
+foo
