@@ -33,8 +33,7 @@ struct VMThread {
 class VM {
 public:
 	enum ErrorLevel {
-		VM_ERROR,
-		VM_WARNING
+		VM_ERROR
 	};
 
 	typedef std::vector<std::vector<VMThread*> > ThreadPool;
@@ -89,7 +88,7 @@ public:
 	void dumpOpcodes() const;
 #endif
 
-	static void error(ErrorLevel, const location&, const char*, ...);
+	static void error(ErrorLevel, const location&, const char*, ...) CLEVER_NO_RETURN;
 private:
 	/// VM program counter
 	size_t m_pc;
