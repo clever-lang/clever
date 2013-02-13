@@ -87,7 +87,7 @@ public:
 	}
 
 	Value(const Type* type, bool is_const = false)
-		: m_data(), m_type(type), m_is_const(is_const) {}
+		: m_data(NULL), m_type(type), m_is_const(is_const) {}
 
 	~Value() {
 		if (m_type && m_data) {
