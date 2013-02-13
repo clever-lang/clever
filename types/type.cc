@@ -16,8 +16,7 @@ namespace clever {
 
 TypeObject::~TypeObject()
 {
-	MemberMap::const_iterator it(m_members.begin()),
-		end(m_members.end());
+	MemberMap::const_iterator it(m_members.begin()), end(m_members.end());
 
 	while (it != end) {
 		clever_delref((*it).second);
@@ -76,18 +75,12 @@ Value* Type::getProperty(const CString* name) const
 {
 	Value* val = getMember(name);
 
-	if (val && !val->isFunction()) {
-		return val;
-	}
-
-	return NULL;
+	return (val && !val->isFunction()) ? val : NULL;
 }
 
 const MethodMap Type::getMethods() const
 {
-	MemberMap::const_iterator it(m_members.begin()),
-		end(m_members.end());
-
+	MemberMap::const_iterator it(m_members.begin()), end(m_members.end());
 	MethodMap mm;
 
 	while (it != end) {
@@ -103,8 +96,7 @@ const MethodMap Type::getMethods() const
 
 const PropertyMap Type::getProperties() const
 {
-	MemberMap::const_iterator it(m_members.begin()),
-		end(m_members.end());
+	MemberMap::const_iterator it(m_members.begin()), end(m_members.end());
 
 	PropertyMap pm;
 
@@ -235,6 +227,5 @@ void Type::setDestructor(MethodPtr method) {
 	m_dtor = func;
 	addMethod(func);
 }
-
 
 } // clever
