@@ -1062,6 +1062,7 @@ public:
 	Ident* getProperty() const { return m_prop_name; }
 
 	bool isStatic() const { return m_static; }
+	void setStatic() { m_static = true; }
 
 	void setWriteMode() { m_mode = WRITE; }
 	void setReadMode() { m_mode = READ; }

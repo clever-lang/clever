@@ -1,0 +1,17 @@
+Testing property access on method chaining
+==CODE==
+import std.io.*;
+
+class Foo {
+    var x;
+    function self() {
+		this.x = 2;
+		return this;
+	}
+}
+
+var foo = Foo.new;
+println(foo.self().x);
+
+==RESULT==
+2
