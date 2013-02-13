@@ -19,50 +19,50 @@ Scope::~Scope()
 
 std::vector<Scope*> Scope::flatten()
 {
-    std::vector<Scope*> scopes;
-    std::vector<Scope*>::const_iterator it(m_children.begin()), end(m_children.end());
+	std::vector<Scope*> scopes;
+	std::vector<Scope*>::const_iterator it(m_children.begin()), end(m_children.end());
 
-    scopes.push_back(this);
+	scopes.push_back(this);
 
-    for (; it != end; ++it) {
-        std::vector<Scope*> flattened = (*it)->flatten();
-        scopes.insert(scopes.end(), flattened.begin(), flattened.end());
-    }
+	for (; it != end; ++it) {
+		std::vector<Scope*> flattened = (*it)->flatten();
+		scopes.insert(scopes.end(), flattened.begin(), flattened.end());
+	}
 
-    return scopes;
+	return scopes;
 }
 
 Symbol* Scope::getLocal(const CString* name)
 {
-    SymbolTable::const_iterator it = m_symbol_table.find(name);
+	SymbolTable::const_iterator it = m_symbol_table.find(name);
 
-    if (it == m_symbol_table.end()) {
-        return NULL;
-    }
-    return m_symbols[it->second];
+	if (it == m_symbol_table.end()) {
+		return NULL;
+	}
+	return m_symbols[it->second];
 }
 
 /// Resolve a symbol name recursively
 Symbol* Scope::getAny(const CString* name)
 {
-    Symbol* sym = getLocal(name);
+	Symbol* sym = getLocal(name);
 
-    if (sym != NULL) {
-        return sym;
-    }
+	if (sym != NULL) {
+		return sym;
+	}
 
-    Scope* v = m_parent;
-    while (v != NULL) {
-        sym = v->getLocal(name);
+	Scope* v = m_parent;
+	while (v != NULL) {
+		sym = v->getLocal(name);
 
-        if (sym != NULL) {
-            return sym;
-        }
+		if (sym != NULL) {
+			return sym;
+		}
 
-        v = v->m_parent;
-    }
+		v = v->m_parent;
+	}
 
-    return sym;
+	return sym;
 }
 
 ValueOffset Scope::getOffset(const Symbol* sym) const

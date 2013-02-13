@@ -278,7 +278,7 @@ next_token:
 			n = n * 10 + (nstr[i] - '0');
 		}
 
-        yylval->intlit = new ast::IntLit(n, *yyloc);
+		yylval->intlit = new ast::IntLit(n, *yyloc);
 
 		RET(token::NUM_INTEGER);
 	}
@@ -297,7 +297,7 @@ next_token:
 			}
 		}
 
-        yylval->intlit = new ast::IntLit(n, *yyloc);
+		yylval->intlit = new ast::IntLit(n, *yyloc);
 
 		RET(token::NUM_INTEGER);
 	}

@@ -36,7 +36,7 @@
 namespace clever { namespace modules { namespace std {
 
 extern "C" {
-	typedef void (*ffi_call_func)();
+typedef void (*ffi_call_func)();
 }
 
 
@@ -50,13 +50,13 @@ static const char* CLEVER_DYLIB_EXT = ".so";
 
 static ffi_type* _find_ffi_type(FFIType tn) {
 	switch (tn) {
-		case FFIINT:		return &ffi_type_sint32;
-		case FFIDOUBLE:		return &ffi_type_double;
-		case FFIBOOL:		return &ffi_type_schar;
-		case FFIPOINTER:	return &ffi_type_pointer;
-		case FFIVOID:		return &ffi_type_void;
-		case FFISTRUCT:		return &ffi_type_pointer;
-		case FFISTRING:		return &ffi_type_pointer;
+	case FFIINT:		return &ffi_type_sint32;
+	case FFIDOUBLE:		return &ffi_type_double;
+	case FFIBOOL:		return &ffi_type_schar;
+	case FFIPOINTER:	return &ffi_type_pointer;
+	case FFIVOID:		return &ffi_type_void;
+	case FFISTRUCT:		return &ffi_type_pointer;
+	case FFISTRING:		return &ffi_type_pointer;
 	}
 	return NULL;
 }
@@ -82,34 +82,34 @@ static inline ffi_call_func _ffi_dlsym(void* handler, const char* name)
 #  error "Dynamic library symbol loading support is not yet available for windows. Please disable this module."
 #endif
 
-    /* XXX(heuripedes): iso c++ forbids casts between pointer-to-function and
-     *                  pointer-to-object as .code and .data pointers are not
-     *                  garanteed to be compatible in some platforms.
-     *                  THE CODE BELLOW IS A HACK TO SHUT THE COMPILER UP.
-     */
-    union {
-        void *p;
-        ffi_call_func fp;
-    } u;
+	/* XXX(heuripedes): iso c++ forbids casts between pointer-to-function and
+	 *                  pointer-to-object as .code and .data pointers are not
+	 *                  garanteed to be compatible in some platforms.
+	 *                  THE CODE BELLOW IS A HACK TO SHUT THE COMPILER UP.
+	 */
+	union {
+		void *p;
+		ffi_call_func fp;
+	} u;
 
-    u.p = dlsym(handler, name);
+	u.p = dlsym(handler, name);
 
-    return u.fp;
+	return u.fp;
 }
 
 static inline ffi_call_func _ffi_get_pf(void* lib_handler, const CString* func)
 {
-    ffi_call_func fpf = _ffi_dlsym(lib_handler, func->c_str());
+	ffi_call_func fpf = _ffi_dlsym(lib_handler, func->c_str());
 
 	if (fpf == NULL) {
 		return 0;
 	}
 
-    return fpf;
+	return fpf;
 }
 
 static void _ffi_call(Value* result, ffi_call_func pf, size_t n_args,
-	FFIType rt, const ::std::vector<Value*>& args, size_t offset)
+					  FFIType rt, const ::std::vector<Value*>& args, size_t offset)
 {
 	ffi_cif cif;
 	ffi_type* ffi_rt = _find_ffi_type(rt);
@@ -291,11 +291,11 @@ CLEVER_METHOD(FFI::callThisFunction)
 	const CString func = handler->m_func_name;
 	FFIType rt = static_cast<FFIType>(args.at(0)->getInt());
 	size_t n_args = args.size() - 1;
-    ffi_call_func pf;
+	ffi_call_func pf;
 
-    pf = _ffi_dlsym(handler->m_lib_handler, func.c_str());
+	pf = _ffi_dlsym(handler->m_lib_handler, func.c_str());
 
-    if (pf == NULL) {
+	if (pf == NULL) {
 
 		clever_throw("function `%S' don't exist!", &func);
 		return;
