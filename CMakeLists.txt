@@ -189,13 +189,8 @@ target_link_libraries(clever-cli clever-static)
 # ---------------------------------------------------------------------------
 add_subdirectory(modules/std)
 add_subdirectory(modules/db)
-#add_subdirectory(modules/web)
-add_dependencies(clever-static modules_std)
-add_dependencies(clever-static modules_db)
-#add_dependencies(clever-static modules_std modules_web)
-target_link_libraries(clever-static modules_std)
-target_link_libraries(clever-static modules_db)
-#target_link_libraries(clever-static modules_std modules_web)
+add_dependencies(clever-static modules_std modules_db)
+target_link_libraries(clever-static modules_std modules_db)
 
 # Test runner
 # ---------------------------------------------------------------------------
