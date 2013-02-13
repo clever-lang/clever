@@ -76,7 +76,7 @@ public:
 
 	void prepareCall(const Function*, Environment* = NULL);
 	void createInstance(const Type*, Value*);
-	void binOp(Opcode, const IR&);
+	void binOp(const IR&);
 
 	/// Start the VM execution
 	void run();

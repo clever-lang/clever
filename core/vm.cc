@@ -249,17 +249,18 @@ Value* VM::runFunction(const Function* func, std::vector<Value*>* args)
 }
 
 // Performs binary operation
-CLEVER_FORCE_INLINE void VM::binOp(Opcode op, const IR& opcode)
+CLEVER_FORCE_INLINE void VM::binOp(const IR& opcode)
 {
 	const Value* lhs = getValue(opcode.op1);
 	const Value* rhs = getValue(opcode.op2);
 	const Type* type = lhs->getType();
 
-	if (UNEXPECTED(lhs->isNull() || rhs->isNull())) {
+	if (UNEXPECTED(lhs->isNull() || (OPCODE.op2.op_type != UNUSED && rhs->isNull()))) {
 		error(VM_ERROR, OPCODE.loc, "Operation cannot be executed on null value");
 	}
 
-	switch (op) {
+	switch (OPCODE.opcode) {
+		// Arithmetic
 		case OP_ADD:
 			type->add(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
 			break;
@@ -275,6 +276,24 @@ CLEVER_FORCE_INLINE void VM::binOp(Opcode op, const IR& opcode)
 		case OP_MOD:
 			type->mod(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
 			break;
+		// Bitwise
+		case OP_BW_AND:
+			type->bw_and(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
+			break;
+		case OP_BW_OR:
+			type->bw_or(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
+			break;
+		case OP_BW_XOR:
+			type->bw_xor(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
+			break;
+		// Unary
+		case OP_NOT:
+			type->not_op(getValue(OPCODE.result), lhs, this, &m_exception);
+			break;
+		case OP_BW_NOT:
+			type->bw_not(getValue(OPCODE.result), lhs, this, &m_exception);
+			break;
+
 		EMPTY_SWITCH_DEFAULT_CASE();
 	}
 }
@@ -349,15 +368,21 @@ out:
 	OP(OP_MUL):
 	OP(OP_DIV):
 	OP(OP_MOD):
-	binOp(OPCODE.opcode, OPCODE);
+	OP(OP_NOT):
+	OP(OP_BW_AND):
+	OP(OP_BW_OR):
+	OP(OP_BW_XOR):
+	OP(OP_BW_NOT):
+	OP(OP_BW_LS):
+	OP(OP_BW_RS):
+	binOp(OPCODE);
 
 	if (UNEXPECTED(m_exception.hasException())) {
 		goto throw_exception;
 	}
 	DISPATCH;
 
-	OP(OP_JMP):
-	VM_GOTO(OPCODE.op1.jmp_addr);
+	OP(OP_JMP): VM_GOTO(OPCODE.op1.jmp_addr);
 
 	OP(OP_FCALL):
 	{
@@ -442,9 +467,7 @@ out:
 		VM_GOTO(ret_addr);
 	}
 
-	OP(OP_SEND_VAL):
-	m_call_args.push_back(getValue(OPCODE.op1));
-	DISPATCH;
+	OP(OP_SEND_VAL): m_call_args.push_back(getValue(OPCODE.op1)); DISPATCH;
 
 	OP(OP_JMPZ):
 	{
@@ -671,13 +694,8 @@ out:
 	}
 	DISPATCH;
 
-	OP(OP_LOCK):
-	getMutex()->lock();
-	DISPATCH;
-
-	OP(OP_UNLOCK):
-	getMutex()->unlock();
-	DISPATCH;
+	OP(OP_LOCK):   getMutex()->lock();   DISPATCH;
+	OP(OP_UNLOCK): getMutex()->unlock(); DISPATCH;
 
 	OP(OP_NEW):
 	{
@@ -911,114 +929,6 @@ throw_exception:
 	m_try_stack.pop();
 	DISPATCH;
 
-	OP(OP_HALT):
-	goto exit;
-
-	OP(OP_NOT):
-	getValue(OPCODE.result)->setBool(!getValue(OPCODE.op1)->asBool());
-	DISPATCH;
-
-	OP(OP_BW_AND):
-	{
-		const Value* lhs = getValue(OPCODE.op1);
-		const Value* rhs = getValue(OPCODE.op2);
-
-		if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
-			lhs->getType()->bw_and(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
-
-			if (UNEXPECTED(m_exception.hasException())) {
-				goto throw_exception;
-			}
-		} else {
-			error(VM_ERROR, OPCODE.loc, "Operation cannot be executed on null value");
-		}
-	}
-	DISPATCH;
-
-	OP(OP_BW_OR):
-	{
-		const Value* lhs = getValue(OPCODE.op1);
-		const Value* rhs = getValue(OPCODE.op2);
-
-		if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
-			lhs->getType()->bw_or(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
-
-			if (UNEXPECTED(m_exception.hasException())) {
-				goto throw_exception;
-			}
-		} else {
-			error(VM_ERROR, OPCODE.loc, "Operation cannot be executed on null value");
-		}
-	}
-	DISPATCH;
-
-	OP(OP_BW_XOR):
-	{
-		const Value* lhs = getValue(OPCODE.op1);
-		const Value* rhs = getValue(OPCODE.op2);
-
-		if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
-			lhs->getType()->bw_xor(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
-
-			if (UNEXPECTED(m_exception.hasException())) {
-				goto throw_exception;
-			}
-		} else {
-			error(VM_ERROR, OPCODE.loc, "Operation cannot be executed on null value");
-		}
-	}
-	DISPATCH;
-
-	OP(OP_BW_NOT):
-	{
-		const Value* lhs = getValue(OPCODE.op1);
-
-		if (EXPECTED(!lhs->isNull())) {
-			lhs->getType()->bw_not(getValue(OPCODE.result), lhs, this, &m_exception);
-
-			if (UNEXPECTED(m_exception.hasException())) {
-				goto throw_exception;
-			}
-		} else {
-			error(VM_ERROR, OPCODE.loc, "Operation cannot be executed on null value");
-		}
-	}
-	DISPATCH;
-
-	OP(OP_BW_LS):
-	{
-		const Value* lhs = getValue(OPCODE.op1);
-		const Value* rhs = getValue(OPCODE.op2);
-
-		if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
-			lhs->getType()->bw_ls(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
-
-			if (UNEXPECTED(m_exception.hasException())) {
-				goto throw_exception;
-			}
-		} else {
-			error(VM_ERROR, OPCODE.loc, "Operation cannot be executed on null value");
-		}
-	}
-	DISPATCH;
-
-	OP(OP_BW_RS):
-	{
-		const Value* lhs = getValue(OPCODE.op1);
-		const Value* rhs = getValue(OPCODE.op2);
-
-		if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
-			lhs->getType()->bw_rs(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
-
-			if (UNEXPECTED(m_exception.hasException())) {
-				goto throw_exception;
-			}
-		} else {
-			error(VM_ERROR, OPCODE.loc, "Operation cannot be executed on null value");
-		}
-	}
-	DISPATCH;
-
 	OP(OP_SUBSCRIPT):
 	{
 		const Value* var = getValue(OPCODE.op1);
@@ -1037,6 +947,9 @@ throw_exception:
 		}
 	}
 	DISPATCH;
+
+	OP(OP_HALT):
+	goto exit;
 
 	END_OPCODES;
 
