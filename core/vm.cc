@@ -44,7 +44,6 @@ void VM::error(ErrorLevel level, const location& loc, const char* format, ...)
 	va_start(args, format);
 
 	switch (level) {
-		case VM_WARNING: out << "Warning: ";     break;
 		case VM_ERROR:   out << "Fatal error: "; break;
 	}
 	vsprintf(out, format, args);
@@ -58,9 +57,7 @@ void VM::error(ErrorLevel level, const location& loc, const char* format, ...)
 	}
 	std::cerr << std::endl;
 
-	if (level == VM_ERROR) {
-		CLEVER_EXIT_FATAL();
-	}
+	CLEVER_EXIT_FATAL();
 }
 
 /// Fetchs a Value ptr according to the operand type
@@ -177,8 +174,6 @@ static CLEVER_FORCE_INLINE void _param_binding(const Function* func, Environment
 
 		Value* vararg = fenv->getValue(ValueOffset(0, func->getNumArgs()));
 		vararg->setObj(CLEVER_ARRAY_TYPE, arr);
-
-		arr->copyMembers(CLEVER_ARRAY_TYPE);
 	}
 }
 
@@ -777,8 +772,8 @@ out:
 		const Type* type = callee->getType();
 		const Value* fval = callee->getObj()->getMember(method->getStr());
 
-		if (!fval->isFunction()) {
-			error(VM_ERROR, OPCODE.loc, "Member`%T::%S' is not callable!",
+		if (UNEXPECTED(fval == NULL || !fval->isFunction())) {
+			error(VM_ERROR, OPCODE.loc, "Member`%T::%S' not found or not callable!",
 				type, method->getStr());
 		}
 
@@ -899,7 +894,7 @@ out:
 		if (EXPECTED(value != NULL)) {
 			setTempValue(OPCODE.result, value);
 		} else {
-			error(VM_ERROR, OPCODE.loc, "Property `%T::%S' not found!",
+			error(VM_ERROR, OPCODE.loc, "Member `%T::%S' not found!",
 				type, name->getStr());
 		}
 	}
