@@ -92,6 +92,20 @@ void TestRunner::find(const char* dir)
 	}
 }
 
+void TestRunner::runSection(const std::string& tmp_file)
+{
+	std::string command = std::string("./clever ") + tmp_file + " 2>&1";
+	FILE* fp = popen(command.c_str(), "r");
+	char result[300] = {0};
+
+	if (fread(result, 1, sizeof(result)-1, fp) == 0 && ferror(fp) != 0) {
+		std::cout << "Something went wrong reading the result." << std::endl;
+		exit(1);
+	}
+
+	pclose(fp);
+}
+
 bool TestRunner::checkTest(const std::string& tmp_file)
 {
 	std::string command = std::string("./clever ") + tmp_file + " 2>&1";
@@ -112,9 +126,9 @@ void TestRunner::run()
 {
 	FILE *fp;
 	std::vector<std::string>::iterator it;
-	std::string file_name, tmp_file, check_file;
+	std::string file_name, tmp_file, check_file, startup_file;
 	bool show_all_results = true, last_ok = true;
-	pcrecpp::RE regex("((?s:.(?!==(?:CODE|CHECK)==))+)\\s*(?:==CHECK==\\s*((?s:.(?!==CODE==))+))?\\s*==CODE==\\s*((?s:.(?!==RESULT==))+)\\s*==RESULT==\\s*((?s:.+))\\s+");
+	pcrecpp::RE regex("((?s:.(?!==(?:CODE|CHECK|STARTUP|SHUTDOWN)==))+)\\s*(?:==CHECK==\\s*((?s:.(?!==(?:STARTUP|SHUTDOWN|CODE)==))+))?\\s*(?:==STARTUP==\\s*((?s:.(?!==(?:SHUTDOWN|CODE)==))+))?\\s*(?:==SHUTDOWN==\\s*((?s:.(?!==CODE==))+))?\\s*==CODE==\\s*((?s:.(?!==RESULT==))+)\\s*==RESULT==\\s*((?s:.+))\\s+");
 
 	if (!files.size()) {
 		std::cout << "No files found.";
@@ -127,7 +141,7 @@ void TestRunner::run()
 
 	for (it = files.begin(); it != files.end(); ++it) {
 		char result[300] = {0};
-		std::string title, check, source, expect, log_line, command;
+		std::string title, check, startup, shutdown, source, expect, log_line, command;
 		size_t filesize = 0;
 		clock_t test_start_time, test_end_time;
 
@@ -135,8 +149,9 @@ void TestRunner::run()
 
 		tmp_file = file_name + ".tmp";
 		check_file = file_name + ".check.tmp";
+		startup_file = file_name + ".setup.tmp";
 
-		regex.FullMatch(read_file(file_name.c_str()), &title, &check, &source, &expect);
+		regex.FullMatch(read_file(file_name.c_str()), &title, &check, &startup, &shutdown, &source, &expect);
 
 		if (!title.size()) {
 			std::cerr << "Test error: malformed test detected (" << file_name << ")" << std::endl;
@@ -156,6 +171,14 @@ void TestRunner::run()
 				++skip;
 				continue;
 			}
+		}
+
+		if (startup.size()) {
+			startup = "import std.*;\n" + startup;
+			write_file(startup_file, startup);
+			runSection(startup_file);
+			std::cout << startup << std::endl;
+			unlink(startup_file.c_str());
 		}
 
 		write_file(tmp_file, source);
@@ -259,6 +282,12 @@ void TestRunner::run()
 		}
 		std::cout << title << " (" << file_name << ")" << " - " << ((test_end_time - test_start_time)*1000/CLOCKS_PER_SEC) << "ms" << std::endl;
 
+		if (shutdown.size()) {
+			shutdown = "import std.*;\n" + shutdown;
+			write_file(startup_file, shutdown);
+			runSection(startup_file);
+			unlink(startup_file.c_str());
+		}
 	}
 }
 
