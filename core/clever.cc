@@ -184,10 +184,11 @@ void printf(const char* format, ...) {
 //	d - a double precision number
 //	a - array
 //  m - map
+//  p - any parameter
 //	b - boolean
 //	n - numeric
 //	c - current object
-//  . - any type
+//  . - any type (not null)
 //	* - variadic
 //  | - optional argument marker
 // Example:
@@ -331,6 +332,9 @@ bool check_args(const ::std::vector<Value*>& args, const char* typespec,
 						index+1);
 					return false;
 				}
+				break;
+			// Any parameter (including null)
+			case 'p':
 				break;
 			// Var arg
 			case '*':

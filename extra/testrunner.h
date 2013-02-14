@@ -49,6 +49,7 @@ private:
 	static size_t fileSize(const std::string&);
 	static void writeLog(const std::string&, const std::string&);
 	static bool checkTest(const std::string&);
+	static void runSection(const std::string&);
 };
 
 #endif // CLEVER_TESTRUNNER_H
