@@ -56,15 +56,114 @@ static CLEVER_FUNCTION(eval)
 	}
 }
 
-// isconst(Object)
+// Bool isnull(Object)
+// Returns a boolean indicating if the object is null
+static CLEVER_FUNCTION(isnull)
+{
+	if (!clever_static_check_args("p")) {
+		return;
+	}
+
+	result->setBool(args[0]->isNull());
+}
+
+// Bool isconst(Object)
 // Returns a boolean indicating if the object is constant
 static CLEVER_FUNCTION(isconst)
 {
-	if (!clever_static_check_args(".")) {
+	if (!clever_static_check_args("p")) {
 		return;
 	}
 
 	result->setBool(args[0]->isConst());
+}
+
+// Bool isint(Object)
+// Returns a boolean indicating if the object is an integer
+static CLEVER_FUNCTION(isint)
+{
+	if (!clever_static_check_args("p")) {
+		return;
+	}
+
+	result->setBool(args[0]->isInt());
+}
+
+// Bool isdouble(Object)
+// Returns a boolean indicating if the object is a double
+static CLEVER_FUNCTION(isdouble)
+{
+	if (!clever_static_check_args("p")) {
+		return;
+	}
+
+	result->setBool(args[0]->isDouble());
+}
+
+// Bool isnumber(Object)
+// Returns a boolean indicating if the object is an number
+static CLEVER_FUNCTION(isnumber)
+{
+	if (!clever_static_check_args("p")) {
+		return;
+	}
+
+	result->setBool(args[0]->isInt() || args[0]->isDouble());
+}
+
+// Bool isstr(Object)
+// Returns a boolean indicating if the object is an string
+static CLEVER_FUNCTION(isstr)
+{
+	if (!clever_static_check_args("p")) {
+		return;
+	}
+
+	result->setBool(args[0]->isStr());
+}
+
+// Bool isfunc(Object)
+// Returns a boolean indicating if the object is a function
+static CLEVER_FUNCTION(isfunc)
+{
+	if (!clever_static_check_args("p")) {
+		return;
+	}
+
+	result->setBool(args[0]->isFunction());
+}
+
+// Bool isarray(Object)
+// Returns a boolean indicating if the object is an array
+static CLEVER_FUNCTION(isarray)
+{
+	if (!clever_static_check_args("p")) {
+		return;
+	}
+
+	result->setBool(args[0]->isArray());
+}
+
+// Bool ismap(Object)
+// Returns a boolean indicating if the object is a map
+static CLEVER_FUNCTION(ismap)
+{
+	if (!clever_static_check_args("p")) {
+		return;
+	}
+
+	result->setBool(args[0]->isMap());
+}
+
+// Bool isthread(Object)
+// Returns a boolean indicating if the object is a thread
+static CLEVER_FUNCTION(isthread)
+{
+	if (!clever_static_check_args("p")) {
+		return;
+	}
+
+	result->setBool(args[0]->isThread());
 }
 
 } // clever::modules::std::reflection
@@ -78,7 +177,16 @@ CLEVER_MODULE_INIT(Reflection)
 	addFunction(new Function("type",     &CLEVER_NS_FNAME(reflection, type)));
 	addFunction(new Function("eval",     &CLEVER_NS_FNAME(reflection, eval)));
 	addFunction(new Function("refcount", &CLEVER_NS_FNAME(reflection, refcount)));
+	addFunction(new Function("isnull",   &CLEVER_NS_FNAME(reflection, isnull)));
 	addFunction(new Function("isconst",  &CLEVER_NS_FNAME(reflection, isconst)));
+	addFunction(new Function("isfunct",  &CLEVER_NS_FNAME(reflection, isfunc)));
+	addFunction(new Function("isint",    &CLEVER_NS_FNAME(reflection, isint)));
+	addFunction(new Function("isnumber", &CLEVER_NS_FNAME(reflection, isnumber)));
+	addFunction(new Function("isstr",    &CLEVER_NS_FNAME(reflection, isstr)));
+	addFunction(new Function("isdouble", &CLEVER_NS_FNAME(reflection, isdouble)));
+	addFunction(new Function("isarray",  &CLEVER_NS_FNAME(reflection, isarray)));
+	addFunction(new Function("ismap",    &CLEVER_NS_FNAME(reflection, ismap)));
+	addFunction(new Function("isthread", &CLEVER_NS_FNAME(reflection, isthread)));
 }
 
 }}} // clever::modules::std
