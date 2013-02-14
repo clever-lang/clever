@@ -1,3 +1,9 @@
+==STARTUP==
+system("gcc -fPIC -O3 -shared -c ffi_001.c");
+system("gcc -shared -Wl,-soname,ffi_001.so -o ffi_001.so ffi_001.o -lc -ldl");
+system("LD_LIBRARY_PATH=.");
+
+==CODE==
 import std.*;
 
 // FFI STRUCTURES DECLARATION
@@ -41,3 +47,19 @@ println(h.getCX(FFITypes.INT, s));
 println(h.getCY(FFITypes.DOUBLE, s));
 println(h.getCZ(FFITypes.INT, s));
 println(h.getCW(FFITypes.DOUBLE, s));
+==SHUTDOWN==
+system("rm -f *.o *~ *.so");
+
+==RESULT==
+1
+3.123
+2
+902.123
+1111
+33.3231
+22
+283.123
+1111
+33.3231
+22
+283.123
