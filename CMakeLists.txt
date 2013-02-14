@@ -103,9 +103,9 @@ include(modules.cmake)
 #                   http://www.gentoo.org/proj/en/qa/asneeded.xml
 #                   https://wiki.ubuntu.com/NattyNarwhal/ToolchainTransition
 #                   http://wiki.debian.org/ToolChain/DSOLinking
-if (UNIX)
+if (UNIX AND NOT APPLE)
 	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--no-as-needed")
-endif (UNIX)
+endif (UNIX AND NOT APPLE)
 
 # Main executable
 # ---------------------------------------------------------------------------
