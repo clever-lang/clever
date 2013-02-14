@@ -1,8 +1,7 @@
 ==STARTUP==
-system("gcc -fPIC -O3 -shared -c ffi_001.c");
-system("gcc -shared -Wl,-soname,ffi_001.so -o ffi_001.so ffi_001.o -lc -ldl");
-system("LD_LIBRARY_PATH=.");
-
+system("sh ffi_001.sh");
+==SHUTDOWN==
+system("ls");
 ==CODE==
 import std.*;
 
@@ -33,7 +32,7 @@ println(s.y);
 println(s.z);
 println(s.w);
 
-var h =  FFILib.new("nffi");
+var h =  FFILib.new("ffi_001");
 
 // FFI CALL
 h.setC(FFITypes.VOID, s, 1111, 33.323123, 22, 283.123);
@@ -47,9 +46,6 @@ println(h.getCX(FFITypes.INT, s));
 println(h.getCY(FFITypes.DOUBLE, s));
 println(h.getCZ(FFITypes.INT, s));
 println(h.getCW(FFITypes.DOUBLE, s));
-==SHUTDOWN==
-system("rm -f *.o *~ *.so");
-
 ==RESULT==
 1
 3.123
@@ -63,3 +59,4 @@ system("rm -f *.o *~ *.so");
 33.3231
 22
 283.123
+
