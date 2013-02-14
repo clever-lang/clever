@@ -30,6 +30,7 @@ set(CLEVER_CFLAGS)
 set(CLEVER_LDFLAGS)
 set(CLEVER_LIBRARIES)
 set(CLEVER_INCLUDE_DIRS)
+set(CLEVER_LINK_DIRECTORIES)
 set(CLEVER_SOURCES)
 
 # Platform checks
@@ -179,7 +180,8 @@ set(CLEVER_SOURCES ${CLEVER_SOURCES}
 add_library(clever-static STATIC ${CLEVER_SOURCES})
 set_target_properties(clever-static PROPERTIES OUTPUT_NAME "clever")
 target_link_libraries(clever-static ${CLEVER_LIBRARIES})
-include_directories(${CLEVER_STATIC_INCLUDE_DIRS})
+include_directories(${CLEVER_INCLUDE_DIRS})
+link_directories(${CLEVER_LINK_DIRECTORIES})
 
 add_library(clever-shared SHARED)
 set_target_properties(clever-shared PROPERTIES OUTPUT_NAME "clever")

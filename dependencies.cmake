@@ -48,5 +48,5 @@ clever_add_lib(FFI
 
 clever_add_lib(MYSQLC
 	LIBS mysqlclient
-	INC mysql/mysql.h)
+	INCS mysql/mysql.h)
 
