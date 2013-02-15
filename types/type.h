@@ -195,6 +195,9 @@ public:
 
 	/// Type internal data destructor
 	virtual void deallocData(CLEVER_TYPE_DTOR_ARGS) {}
+
+	virtual std::pair<size_t, TypeObject*> serialize(const Value*) const;
+	virtual Value* unserialize(const Type*, const std::pair<size_t, TypeObject*>&) const;
 private:
 	std::string m_name;
 	const Function* m_ctor;

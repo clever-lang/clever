@@ -53,6 +53,7 @@ public:
 	}
 
 	TypeObject* getObj() const { return m_obj; }
+	const Type* getType() const { return m_type; }
 
 private:
 	TypeObject* m_obj;

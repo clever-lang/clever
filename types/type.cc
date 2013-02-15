@@ -5,12 +5,12 @@
  * This file is distributed under the MIT license. See LICENSE for details.
  */
 
+#include <algorithm>
 #include "types/type.h"
 #include "core/value.h"
 #include "core/cexception.h"
 #include "modules/std/core/function.h"
-
-#include <algorithm>
+#include "types/native_types.h"
 
 namespace clever {
 
@@ -46,6 +46,49 @@ void Type::deallocMembers()
 		(*it).second = 0;
 		++it;
 	}
+}
+
+std::pair<size_t, TypeObject*> Type::serialize(const Value* value) const
+{
+	clever_assert_not_null(value);
+
+	const Type* type = value->getType();
+	size_t size;
+
+	if (type == CLEVER_INT_TYPE) {
+		size = sizeof(IntObject);
+	} else if (type == CLEVER_DOUBLE_TYPE) {
+		size = sizeof(DoubleObject);
+	} else if (type == CLEVER_BOOL_TYPE) {
+		size = sizeof(BoolObject);
+	} else if (type == CLEVER_STR_TYPE) {
+		size = sizeof(StrObject);
+	} else if (type == CLEVER_ARRAY_TYPE) {
+		size = sizeof(ArrayObject);
+	} else if (type == CLEVER_MAP_TYPE) {
+		size = sizeof(MapObject);
+	} else {
+		size = sizeof(TypeObject);
+	}
+
+	return std::pair<size_t, TypeObject*>(size, value->getObj());
+}
+
+Value* Type::unserialize(const Type* type, const std::pair<size_t, TypeObject*>& data) const
+{
+	Value* value = new Value;
+
+	if (type == CLEVER_INT_TYPE) {
+		value->setInt(static_cast<IntObject*>(data.second)->value);
+	} else if (type == CLEVER_DOUBLE_TYPE) {
+		value->setDouble(static_cast<DoubleObject*>(data.second)->value);
+	} else if (type == CLEVER_BOOL_TYPE) {
+		value->setBool(static_cast<BoolObject*>(data.second)->value);
+	} else if (type == CLEVER_STR_TYPE) {
+		value->setStr(static_cast<StrObject*>(data.second)->value);
+	}
+
+	return value;
 }
 
 Function* Type::addMethod(Function* func)
