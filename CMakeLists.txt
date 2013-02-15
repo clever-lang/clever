@@ -46,6 +46,7 @@ else (TCMALLOC)
 	message(STATUS "Using default allocator. Use -DTCMALLOC=1 to use tcmalloc")
 endif (TCMALLOC)
 
+
 if (NOT NO_THREADS)
 	add_definitions(-DCLEVER_THREADS)
 else (NOT NO_THREADS)
