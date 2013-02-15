@@ -48,6 +48,8 @@ endif (TCMALLOC)
 
 if (NOT NO_THREADS)
 	add_definitions(-DCLEVER_THREADS)
+else (NOT NO_THREADS)
+	message(STATUS "Use -DNO_THREADS=0 to enable threads")
 endif (NOT NO_THREADS)
 
 # Parser and Scanner
