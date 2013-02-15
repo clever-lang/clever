@@ -141,7 +141,7 @@ macro(clever_add_lib VarName)
 					set(_opts ${_opts} PATHS "${${_dir}}/include" NO_DEFAULT_PATH)
 				endif (${_dir})
 
-				find_file(_ipath${VarName} ${_opts})
+				find_path(_ipath${VarName} ${_opts})
 
 				if (_ipath${VarName})
 					list(APPEND ${VarName}_INCLUDE_DIRS "${_ipath${VarName}}")
