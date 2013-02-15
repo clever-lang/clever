@@ -84,21 +84,72 @@ static CLEVER_FUNCTION(printf)
 	g_io_mutex.unlock();
 }
 
+// read()
+// Reads the next string from the standard stream
+static CLEVER_FUNCTION(read)
+{
+	// TODO(murilov): Trigger error/exception
+	if (!clever_static_check_no_args()) {
+		return;
+	}
+
+	::std::string var;
+	::std::cin >> var;
+
+	result->setStr(new StrObject(var));
+}
+
+// readi()
+// Reads the next integer from the standard stream
+static CLEVER_FUNCTION(readi)
+{
+	// TODO(murilov): Trigger error/exception
+	if (!clever_static_check_no_args()) {
+		return;
+	}
+
+	long var;
+	::std::cin >> var;
+
+	result->setInt(var);
+}
+
+// readd()
+// Reads the next double from the standard stream
+static CLEVER_FUNCTION(readd)
+{
+	// TODO(murilov): Trigger error/exception
+	if (!clever_static_check_no_args()) {
+		return;
+	}
+
+	double var;
+	::std::cin >> var;
+
+	result->setDouble(var);
+}
+
 } // clever::modules::std::io
 
 /// Initializes Standard module
 CLEVER_MODULE_INIT(IOModule)
 {
-	addFunction(new Function("print",   &CLEVER_NS_FNAME(io, print)))
+	addFunction(new Function("print", &CLEVER_NS_FNAME(io, print)))
 		->setVariadic();
 
 	addFunction(new Function("println", &CLEVER_NS_FNAME(io, println)))
 		->setVariadic();
 
-	addFunction(new Function("printf",  &CLEVER_NS_FNAME(io, printf)))
+	addFunction(new Function("printf", &CLEVER_NS_FNAME(io, printf)))
 		->setVariadic();
 
-	addFunction(new Function("flush",   &CLEVER_NS_FNAME(io, flush)));
+	addFunction(new Function("flush", &CLEVER_NS_FNAME(io, flush)));
+
+	addFunction(new Function("read", &CLEVER_NS_FNAME(io, read)));
+
+	addFunction(new Function("readi", &CLEVER_NS_FNAME(io, readi)));
+
+	addFunction(new Function("readd", &CLEVER_NS_FNAME(io, readd)));
 }
 
 }}} // clever::modules::std
