@@ -13,6 +13,7 @@
 #include "modules/std/core/function.h"
 #include "core/modmanager.h"
 #include "modules/std/io/io.h"
+#include "modules/std/io/serializer.h"
 
 namespace clever { namespace modules { namespace std {
 
@@ -134,6 +135,8 @@ static CLEVER_FUNCTION(readd)
 /// Initializes Standard module
 CLEVER_MODULE_INIT(IOModule)
 {
+	addType(new Serializer);
+
 	addFunction(new Function("print", &CLEVER_NS_FNAME(io, print)))
 		->setVariadic();
 
