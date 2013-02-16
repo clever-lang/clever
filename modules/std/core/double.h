@@ -22,6 +22,8 @@ struct DoubleObject : public TypeObject {
 	DoubleObject(double n)
 		: value(n) {}
 
+	virtual TypeObject* clone() const { return new DoubleObject(value); }
+
 	double value;
 };
 

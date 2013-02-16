@@ -24,7 +24,7 @@ struct IntObject : public TypeObject {
 
 	~IntObject() {}
 
-	TypeObject* clone() const { return new IntObject(value); }
+	virtual TypeObject* clone() const { return new IntObject(value); }
 
 	long value;
 };
