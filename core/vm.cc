@@ -354,7 +354,7 @@ out:
 		// Checks if this assignment is allowed (non-const variable or
 		// const variable declaration).
 		if (EXPECTED(var->isAssignable())) {
-			var->copy(value);
+			var->deepCopy(value);
 		} else {
 			// TODO(muriloadriano): improve this message to show the symbol
 			// name and the line to the user.
