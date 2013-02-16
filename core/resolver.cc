@@ -13,8 +13,8 @@
 
 namespace clever { namespace ast {
 
-Resolver::Resolver(const ModManager& ModManager)
-	: Visitor(), m_modmanager(ModManager), m_mod(NULL), m_class(NULL)
+Resolver::Resolver(const ModManager& ModManager, const std::string& ns_name)
+	: Visitor(), m_modmanager(ModManager), m_ns_name(ns_name), m_mod(NULL), m_class(NULL)
 {
 	// Global environment and scope
 	m_symtable = m_scope = new Scope();
@@ -109,15 +109,19 @@ void Resolver::visit(FunctionDecl* node)
 	if (!node->hasIdent() && !node->hasType()) {
 		std::stringstream buf;
 		buf << "<anonymous " << anon_fdecls++ << ">";
-		node->setIdent(new Ident(CSTRING(buf.str()),
-								 node->getLocation()));
-	}
 
-	if (node->hasType()) {
+		name = CSTRING(buf.str());
+
+		node->setIdent(new Ident(name, node->getLocation()));
+	} else if (node->hasType()) {
 		name = CSTRING("_"+*node->getType()->getName());
 		node->setType(new Type(name, node->getLocation()));
 	} else {
 		name = node->getIdent()->getName();
+		/*
+		if (!m_ns_name.empty()) {
+			name = CSTRING(m_ns_name + ":" + *name);
+		}*/
 	}
 	clever_assert_not_null(name);
 

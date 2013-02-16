@@ -22,7 +22,7 @@ namespace clever { namespace ast {
 
 class Resolver: public Visitor {
 public:
-	Resolver(const ModManager&);
+	Resolver(const ModManager&, const std::string&);
 
 	~Resolver() {}
 
@@ -47,6 +47,7 @@ public:
 	virtual void visit(AttrDecl*);
 private:
 	const ModManager& m_modmanager;
+	const std::string& m_ns_name;
 	Scope* m_symtable;
 	Scope* m_scope;
 	std::stack<Environment*> m_stack;

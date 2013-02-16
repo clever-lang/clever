@@ -307,7 +307,7 @@ namespace clever {
     /// - if negative, reduce the rule which number is the opposite.
     /// - if zero, do what YYDEFACT says.
     static const short int yytable_[];
-    static const short int yytable_ninf_;
+    static const signed char yytable_ninf_;
 
     static const short int yycheck_[];
 

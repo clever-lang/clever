@@ -98,7 +98,7 @@ void Compiler::genCode()
 		tree->accept(astdump);
 	}
 
-	ast::Resolver resolver(m_pkg);
+	ast::Resolver resolver(m_pkg, getNamespace());
 	tree->accept(resolver);
 
 	if (!(m_flags & PARSER_ONLY)) {

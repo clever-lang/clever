@@ -52,7 +52,7 @@ public:
 
 	// Starts the parser and loads the Symbol table
 	int loadStr(const std::string&, bool importStd);
-	int loadFile(const std::string&);
+	int loadFile(const std::string&, const std::string& = "");
 
 	// Error handling
 	void error(const location&, const std::string&) const;

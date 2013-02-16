@@ -168,12 +168,14 @@ ast::Node* ModManager::importFile(Scope* scope, Environment* env,
 	const std::string& module, ImportKind kind, const CString* name) const
 {
 	std::string mod_name = module;
+	std::string ns_name  = module;
 
 	std::replace(mod_name.begin(), mod_name.end(), '.', '/');
+	std::replace(mod_name.begin(), mod_name.end(), '.', ':');
 
 	const std::string& fname = m_include_path + mod_name + ".clv";
 
-	if (!m_driver->loadFile(fname)) {
+	if (!m_driver->loadFile(fname, ns_name)) {
 		return m_driver->getCompiler().getAST();
 	}
 

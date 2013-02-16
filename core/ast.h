@@ -400,18 +400,21 @@ private:
 class Import: public Node {
 public:
 	Import(Ident* name, const location& location)
-		: Node(location), m_module(name), m_func(NULL), m_type(NULL) {
+		: Node(location), m_module(name), m_func(NULL), m_type(NULL),
+			m_namespaced(false) {
 		clever_addref(m_module);
 	}
 
 	Import(Ident* name, Ident* func, const location& location)
-		: Node(location), m_module(name), m_func(func), m_type(NULL), m_tree(NULL) {
+		: Node(location), m_module(name), m_func(func), m_type(NULL),
+			m_tree(NULL), m_namespaced(false) {
 		clever_addref(m_module);
 		m_func->addRef();
 	}
 
 	Import(Ident* module, Type* type, const location& location)
-		: Node(location), m_module(module), m_func(NULL), m_type(type), m_tree(NULL) {
+		: Node(location), m_module(module), m_func(NULL), m_type(type),
+			m_tree(NULL), m_namespaced(false) {
 		clever_addref(m_module);
 		m_type->addRef();
 	}
@@ -433,7 +436,10 @@ public:
 		m_tree = tree;
 		clever_addref(m_tree);
 	}
-	Node* getModuleTree() { return m_tree; }
+	Node* getModuleTree() const { return m_tree; }
+
+	void setNamespaced(bool val) { m_namespaced = val; }
+	bool isNamespaced() { return m_namespaced; }
 
 	virtual void accept(Visitor& visitor);
 	virtual Node* accept(Transformer& transformer);
@@ -442,6 +448,7 @@ private:
 	Ident* m_func;
 	Type* m_type;
 	Node* m_tree;
+	bool m_namespaced;
 
 	DISALLOW_COPY_AND_ASSIGN(Import);
 };

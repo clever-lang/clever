@@ -523,8 +523,10 @@ import_ident_list:
 
 import:
 		IMPORT import_ident_list '.' '*'   { $$ = new ast::Import($2, yyloc);     }
-	|	IMPORT import_ident_list '.' IDENT { $$ = new ast::Import($2, $4, yyloc); }
-	|	IMPORT import_ident_list '.' TYPE  { $$ = new ast::Import($2, $4, yyloc); }
+	|	IMPORT import_ident_list ':' '*'   { $$ = new ast::Import($2, yyloc);     }
+	|	IMPORT import_ident_list ':' IDENT { $$ = new ast::Import($2, $4, yyloc); }
+	|	IMPORT import_ident_list ':' TYPE  { $$ = new ast::Import($2, $4, yyloc); }
+	|	IMPORT import_ident_list           { $$ = new ast::Import($2, yyloc); $$->setNamespaced(true); }
 ;
 
 vararg:

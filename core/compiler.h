@@ -57,6 +57,9 @@ public:
 	Environment* getConstEnv() const { return m_builder->getConstEnv(); }
 	Environment* getTempEnv() const { return m_builder->getTempEnv(); }
 
+	void setNamespace(const std::string& ns_name) { m_ns_name = ns_name; }
+	const std::string& getNamespace() const { return m_ns_name; }
+
 	static void error(const char*) CLEVER_NO_RETURN;
 	static void error(const std::string&, const location&) CLEVER_NO_RETURN;
 	static void errorf(const location&, const char*, ...) CLEVER_NO_RETURN;
@@ -76,6 +79,8 @@ private:
 
 	// Compiler flag
 	size_t m_flags;
+
+	std::string m_ns_name;
 
 	DISALLOW_COPY_AND_ASSIGN(Compiler);
 };
