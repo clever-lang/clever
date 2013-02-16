@@ -74,8 +74,11 @@ public:
 
 	// Methods
 	CLEVER_METHOD(constructor);
-	CLEVER_METHOD(matches);
+	CLEVER_METHOD(test);
+	CLEVER_METHOD(match);
 	CLEVER_METHOD(group);
+	CLEVER_METHOD(getPattern);
+	CLEVER_METHOD(getError);
 	CLEVER_METHOD(replace);
 	CLEVER_METHOD(replaceAll);
 	CLEVER_METHOD(do_assign);

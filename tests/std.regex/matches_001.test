@@ -5,9 +5,9 @@ import std.regex.*;
 
 var text = "test foo bar test";
 
-var re = Regex.new("(f\S+)");
+var re = Regex.new("f\S+");
 
-if (re.matches(text)) {
+if (re.match(text)) {
 	println(re.group(0));
 }
 ==RESULT==

@@ -5,10 +5,10 @@ import std.regex.*;
 
 var text = "test foo bar test";
 
-var re  = Regex.new("(f\S+)");
-var re2 = Regex.new("(te\S+)");
+var re  = Regex.new("f\S+");
+var re2 = Regex.new("te\S+");
 
-if (re.matches(text) && re2.matches(text)) {
+if (re.match(text) && re2.match(text)) {
 	println(re.group(0), re2.group(0));
 }
 

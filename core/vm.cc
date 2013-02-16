@@ -710,6 +710,7 @@ out:
 				NULL, m_call_args, this, &m_exception);
 
 			if (UNEXPECTED(m_exception.hasException())) {
+				m_call_args.clear();
 				goto throw_exception;
 			}
 
