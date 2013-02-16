@@ -8,6 +8,8 @@
 #include "core/value.h"
 #include "types/native_types.h"
 #include "modules/db/mysql/mysql.h"
+#include "modules/db/mysql/cmysql.h"
+
 
 namespace clever { namespace modules { namespace db {
 
@@ -34,7 +36,7 @@ void Mysql::dump(TypeObject* data, ::std::ostream& out) const
 	const MysqlObject* uvalue = static_cast<const MysqlObject*>(data);
 
 	if (uvalue) {
-		out << "Dump for mysql object should go here Mysql::dump";
+		out << "Dump goes here";
 	}
 }
 
@@ -45,7 +47,30 @@ CLEVER_METHOD(Mysql::ctor)
 
 CLEVER_METHOD(Mysql::connect)
 {
-	::std::cout << "Called connect!";
+	bool ret = false;
+	MysqlObject* mo = CLEVER_GET_OBJECT(MysqlObject*, CLEVER_THIS());
+	CMysql& cmysql = mo->getMysql();
+
+	if(!clever_check_args("ssss|i")) {
+		return;
+	}
+
+	switch(args.size()) {
+		case 5:
+			cmysql.setPort(args[4]->getInt());
+		case 4:
+			cmysql.setHost(*args[0]->getStr());
+			cmysql.setUser(*args[1]->getStr());
+			cmysql.setPasswd(*args[2]->getStr());
+			cmysql.setDb(*args[3]->getStr());
+
+			ret = cmysql.connect();
+
+			break;
+	}
+
+	result->setBool(ret);
+
 }
 
 // Type initialization
