@@ -224,6 +224,31 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(Assignment);
 };
 
+class Type: public Node {
+public:
+	Type(const CString* name, const location& location)
+		: Node(location), m_name(name), m_sym(NULL) {}
+	~Type() {}
+
+	const CString* getName() const { return m_name; }
+
+	void setSymbol(Symbol* sym)	{ m_sym = sym; }
+	Symbol* getSymbol() { return m_sym; }
+
+	virtual void accept(Visitor& visitor);
+	virtual Node* accept(Transformer& transformer);
+
+	void append(char separator, ast::Type* ident) {
+		m_name = CSTRING(*m_name + separator + *ident->getName());
+		clever_delete(ident);
+	}
+private:
+	const CString* m_name;
+	Symbol* m_sym;
+
+	DISALLOW_COPY_AND_ASSIGN(Type);
+};
+
 class Ident: public Node {
 public:
 	Ident(const CString* name, const location& location)
@@ -240,7 +265,7 @@ public:
 	Symbol* getSymbol() { return m_sym; }
 
 	void append(char separator, Ident* ident) {
-		m_name = CSTRING(*m_name + '.' + *ident->getName());
+		m_name = CSTRING(*m_name + separator + *ident->getName());
 		clever_delete(ident);
 	}
 private:
@@ -337,26 +362,6 @@ protected:
 	Block* m_block;
 private:
 	DISALLOW_COPY_AND_ASSIGN(CriticalBlock);
-};
-
-class Type: public Node {
-public:
-	Type(const CString* name, const location& location)
-		: Node(location), m_name(name), m_sym(NULL) {}
-	~Type() {}
-
-	const CString* getName() const { return m_name; }
-
-	void setSymbol(Symbol* sym)	{ m_sym = sym; }
-	Symbol* getSymbol() { return m_sym; }
-
-	virtual void accept(Visitor& visitor);
-	virtual Node* accept(Transformer& transformer);
-private:
-	const CString* m_name;
-	Symbol* m_sym;
-
-	DISALLOW_COPY_AND_ASSIGN(Type);
 };
 
 class Instantiation: public Node {

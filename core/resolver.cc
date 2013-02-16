@@ -118,10 +118,11 @@ void Resolver::visit(FunctionDecl* node)
 		node->setType(new Type(name, node->getLocation()));
 	} else {
 		name = node->getIdent()->getName();
-		/*
+
 		if (!m_ns_name.empty()) {
 			name = CSTRING(m_ns_name + ":" + *name);
-		}*/
+			node->setIdent(new Ident(name, node->getLocation()));
+		}
 	}
 	clever_assert_not_null(name);
 
@@ -234,12 +235,16 @@ void Resolver::visit(Type* node)
 
 void Resolver::visit(Import* node)
 {
-	ModManager::ImportKind kind = node->getFunction() ?
-		ModManager::FUNCTION : (node->getType() ? ModManager::TYPE : ModManager::ALL);
+	size_t kind = node->getFunction() ? ModManager::FUNCTION
+		: (node->getType() ? ModManager::TYPE : ModManager::ALL);
 
 	const CString* name = (kind == ModManager::ALL) ? NULL
 		: (kind == ModManager::FUNCTION ? node->getFunction()->getName()
 			: node->getType()->getName());
+
+	if (node->isNamespaced()) {
+		kind |= ModManager::NAMESPACE;
+	}
 
 	ast::Node* tree = m_modmanager.importModule(m_scope, m_stack.top(),
 		*node->getModule()->getName(), kind, name);

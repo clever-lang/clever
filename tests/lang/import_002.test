@@ -1,0 +1,7 @@
+Testing namespaced import
+==CODE==
+import std;
+
+std:io:println(123);
+==RESULT==
+123

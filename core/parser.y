@@ -66,7 +66,7 @@ class Value;
 }
 
 %type <type> TYPE
-%type <ident> IDENT CONSTANT import_ident_list
+%type <ident> IDENT CONSTANT import_ident_list fully_qualified_name
 %type <strlit> STR
 %type <intlit> NUM_INTEGER
 %type <dbllit> NUM_DOUBLE
@@ -119,7 +119,7 @@ class Value;
 
 %debug
 %error-verbose
-%expect 1   /* map rule */
+%expect 1   /* map */
 
 %code {
 #include "core/driver.h"
@@ -578,8 +578,13 @@ fcall_chain:
 	|	fcall_chain '(' call_args ')' { $$ = new ast::FunctionCall($<node>1, $3, yyloc); }
 ;
 
+fully_qualified_name:
+		IDENT
+	|	fully_qualified_name ':' IDENT { $1->append(':', $3); $<ident>$ = $1; }
+;
+
 fcall:
-		IDENT '(' call_args ')' { $<fcall>$ = new ast::FunctionCall($1, $3, yyloc); } fcall_chain { $$ = $6; }
+		fully_qualified_name '(' call_args ')' { $<fcall>$ = new ast::FunctionCall($1, $3, yyloc); } fcall_chain { $$ = $6; }
 ;
 
 return_stmt:

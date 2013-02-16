@@ -99,9 +99,9 @@ void ModManager::loadFunction(Scope* scope, Environment* env, const CString* nam
 
 /// Loads a module if it is not already loaded
 void ModManager::loadModule(Scope* scope, Environment* env, Module* module,
-	ImportKind kind, const CString* name) const
+	size_t kind, const CString* name) const
 {
-	if (kind == ModManager::ALL && module->hasModules()) {
+	if (kind & ModManager::ALL && module->hasModules()) {
 		ModuleMap& mods = module->getModules();
 		ModuleMap::const_iterator it = mods.begin(), end = mods.end();
 
@@ -117,6 +117,16 @@ void ModManager::loadModule(Scope* scope, Environment* env, Module* module,
 
 	module->init();
 	module->setLoaded();
+
+	std::string ns_prefix = "";
+
+	if (kind & ModManager::NAMESPACE) {
+		std::string mod_name = module->getName() + ":";
+
+		std::replace(mod_name.begin(), mod_name.end(), '.', ':');
+
+		ns_prefix = mod_name;
+	}
 
 	//std::cout << "load " << module->getName() << std::endl;
 
@@ -135,7 +145,10 @@ void ModManager::loadModule(Scope* scope, Environment* env, Module* module,
 			FunctionMap::const_iterator itf(funcs.begin()),	endf(funcs.end());
 
 			while (EXPECTED(itf != endf)) {
-				loadFunction(scope, env, itf->first, itf->second);
+				const CString* fname = ns_prefix.empty() ?
+					itf->first : CSTRING(ns_prefix + *itf->first);
+
+				loadFunction(scope, env, fname, itf->second);
 				++itf;
 			}
 		}
@@ -165,7 +178,7 @@ void ModManager::loadModule(Scope* scope, Environment* env, Module* module,
 
 /// Imports an userland module
 ast::Node* ModManager::importFile(Scope* scope, Environment* env,
-	const std::string& module, ImportKind kind, const CString* name) const
+	const std::string& module, size_t kind, const CString* name) const
 {
 	std::string mod_name = module;
 	std::string ns_name  = module;
@@ -184,7 +197,7 @@ ast::Node* ModManager::importFile(Scope* scope, Environment* env,
 
 /// Imports a module
 ast::Node* ModManager::importModule(Scope* scope, Environment* env,
-	const std::string& module, ImportKind kind, const CString* name) const
+	const std::string& module, size_t kind, const CString* name) const
 {
 	ModuleMap::const_iterator it = m_mods.find(module);
 

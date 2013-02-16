@@ -27,9 +27,11 @@ class Driver;
 class ModManager {
 public:
 	enum ImportKind {
-		TYPE     = 1<<0,
-		FUNCTION = 1<<1,
-		ALL      = TYPE | FUNCTION
+		NONE      = 0,
+		TYPE      = 1<<0,
+		FUNCTION  = 1<<1,
+		ALL       = TYPE | FUNCTION,
+		NAMESPACE = 1<<2
 	};
 
 	ModManager(Driver* driver)
@@ -52,12 +54,12 @@ public:
 
 	/// Imports the module to the current scope
 	ast::Node* importModule(Scope*, Environment*, const std::string&,
-		ImportKind = ModManager::ALL, const CString* = NULL) const;
+		size_t = ModManager::ALL, const CString* = NULL) const;
 
 	ast::Node* importFile(Scope*, Environment*, const std::string&,
-		ImportKind = ModManager::ALL, const CString* = NULL) const;
+		size_t = ModManager::ALL, const CString* = NULL) const;
 
-	void loadModule(Scope*, Environment*, Module*, ImportKind, const CString*) const;
+	void loadModule(Scope*, Environment*, Module*, size_t, const CString*) const;
 
 	void loadFunction(Scope*, Environment*, const CString*, Function*) const;
 
