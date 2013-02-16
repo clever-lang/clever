@@ -24,6 +24,13 @@ void Value::copy(const Value* value)
 	}
 }
 
+void Value::deepCopy(const Value* value)
+{
+	cleanUp();
+	m_type = value->getType();
+	m_data = new ValueObject(value->getObj()->clone(), m_type);
+}
+
 bool Value::asBool() const
 {
 	if (isNull()) {

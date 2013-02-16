@@ -144,6 +144,7 @@ public:
 
 	ValueObject* getData() const { return m_data; }
 
+	void deepCopy(const Value*);
 	void copy(const Value*);
 
 	Value* clone() const {
