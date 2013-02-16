@@ -26,9 +26,18 @@ void Value::copy(const Value* value)
 
 void Value::deepCopy(const Value* value)
 {
-	cleanUp();
-	m_type = value->getType();
-	m_data = new ValueObject(value->getObj()->clone(), m_type);
+	clever_assert_not_null(value);
+
+	TypeObject* val = value->isNull() ? NULL : value->getObj()->clone();
+
+	if (val) {
+		cleanUp();
+		m_type = value->getType();
+		m_data = new ValueObject(val, m_type);
+		val->copyMembers(m_type);
+	} else {
+		copy(value);
+	}
 }
 
 bool Value::asBool() const
@@ -43,9 +52,14 @@ bool Value::asBool() const
 
 void Value::setInt(long n)
 {
-	cleanUp();
-	m_type = CLEVER_INT_TYPE;
-	setObj(m_type, new IntObject(n));
+	if (m_data && m_data->refCount() == 1 && isInt()) {
+		static_cast<IntObject*>(getObj())->value = n;
+	} else {
+		cleanUp();
+
+		m_type = CLEVER_INT_TYPE;
+		setObj(m_type, new IntObject(n));
+	}
 }
 
 long Value::getInt() const
