@@ -14,6 +14,8 @@
 
 namespace clever {
 
+size_t ThreadType::m_n_threads;
+
 CLEVER_THREAD_FUNC(_thread_control)
 {
 	VM* vm_handler = static_cast<VMThread*>(arg)->vm_handler;
@@ -33,6 +35,7 @@ void Thread::wait()
 		VMThread* t = thread_list.at(i);
 		if (t != 0) {
 			t->t_handler.wait();
+			--m_n_threads;
 			clever_delete_var(t->vm_handler);
 			clever_delete_var(t);
 			t = 0;
@@ -42,6 +45,11 @@ void Thread::wait()
 	thread_list.clear();
 }
 
+// Thread.nThreads
+CLEVER_METHOD(ThreadType::nThreads)
+{
+	result->setInt(m_n_threads);
+}
 
 // Thread.toString()
 CLEVER_METHOD(ThreadType::toString)
@@ -89,6 +97,8 @@ CLEVER_METHOD(ThreadType::run)
 	m_thread_pool.resize(size);
 	for (size_t i = bg; i < size; ++i) {
 
+		++m_n_threads;
+
 		VMThread* thread = new VMThread;
 
 		thread->vm_handler = new VM(m_vm->getInst());
@@ -110,9 +120,13 @@ CLEVER_METHOD(ThreadType::run)
 CLEVER_TYPE_INIT(ThreadType::init)
 {
 	// Methods
+	m_n_threads = 0;
+
 	addMethod(new Function("toString", (MethodPtr) &ThreadType::toString));
 	addMethod(new Function("wait",     (MethodPtr) &ThreadType::wait));
 	addMethod(new Function("run",      (MethodPtr) &ThreadType::run));
+	addMethod(new Function("nThreads", (MethodPtr) &ThreadType::nThreads))
+			->setStatic();
 }
 
 } // clever
