@@ -1,3 +1,4 @@
+#include <ostream>
 #include <vector>
 #include <utility>
 #include "core/cexception.h"
@@ -5,6 +6,13 @@
 #include "modules/std/io/serializer.h"
 
 namespace clever { namespace modules { namespace std {
+
+void Serializer::dump(TypeObject* obj, ::std::ostream& out) const
+{
+	SerializerData* sobj = static_cast<SerializerData*>(obj);
+
+	sobj->obj->getType()->dump(sobj->info.second, out);
+}
 
 // Serializer.serialize()
 CLEVER_METHOD(Serializer::serialize)
