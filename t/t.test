@@ -1,0 +1,11 @@
+==STARTUP==
+
+system("echo 1 > foobar");
+==CODE==
+import std.io.*;
+
+printf("ola!\n");
+==SHUTDOWN==
+system("echo 2 > foobar");
+==RESULT==
+ola!
