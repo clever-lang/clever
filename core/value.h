@@ -12,6 +12,7 @@
 
 #include "core/cstring.h"
 #include "types/type.h"
+#include "modules/std/core/str.h"
 
 namespace clever {
 
@@ -23,16 +24,6 @@ extern Type* g_clever_thread_type;
 extern Type* g_clever_bool_type;
 extern Type* g_clever_array_type;
 extern Type* g_clever_map_type;
-
-#define DECLARE_CLEVER_NATIVE_TYPES() \
-	Type* g_clever_int_type;          \
-	Type* g_clever_double_type;       \
-	Type* g_clever_str_type;          \
-	Type* g_clever_func_type;         \
-	Type* g_clever_thread_type;       \
-	Type* g_clever_bool_type;         \
-	Type* g_clever_array_type;        \
-	Type* g_clever_map_type
 
 #define CLEVER_INT_TYPE    g_clever_int_type
 #define CLEVER_DOUBLE_TYPE g_clever_double_type
@@ -52,7 +43,7 @@ public:
 	ValueObject()
 		: RefCounted(1), m_obj(NULL), m_type(NULL) {}
 
-	ValueObject(void* obj, const Type* type)
+	ValueObject(TypeObject* obj, const Type* type)
 		: RefCounted(1), m_obj(obj), m_type(type) {}
 
 	virtual ~ValueObject() {
@@ -61,9 +52,11 @@ public:
 		}
 	}
 
-	void* getObj() { return m_obj; }
+	TypeObject* getObj() const { return m_obj; }
+	const Type* getType() const { return m_type; }
+
 private:
-	void* m_obj;
+	TypeObject* m_obj;
 	const Type* m_type;
 
 	DISALLOW_COPY_AND_ASSIGN(ValueObject);
@@ -71,115 +64,97 @@ private:
 
 class Value : public RefCounted {
 public:
-	union DataValue {
-		bool bval;
-		long lval;
-		double dval;
-		const CString* sval;
-		ValueObject* obj;
-
-		DataValue() : lval(0) {}
-		DataValue(bool value) : bval(value) {}
-		DataValue(long value) : lval(value) {}
-		DataValue(double value) : dval(value) {}
-		DataValue(const CString* value) : sval(value) {}
-	};
-
-	Value() : m_data(), m_type(NULL), m_is_const(false) {}
+	Value()
+		: m_data(NULL), m_type(NULL), m_is_const(false) {}
 
 	Value(bool n, bool is_const = false)
-		: m_data(n), m_type(CLEVER_BOOL_TYPE), m_is_const(is_const) {}
+		: m_data(NULL), m_type(CLEVER_BOOL_TYPE), m_is_const(is_const) {
+		setBool(n);
+	}
 
 	Value(long n, bool is_const = false)
-		: m_data(n), m_type(CLEVER_INT_TYPE), m_is_const(is_const) {}
+		: m_data(NULL), m_type(CLEVER_INT_TYPE), m_is_const(is_const) {
+		setInt(n);
+	}
 
 	Value(double n, bool is_const = false)
-		: m_data(n), m_type(CLEVER_DOUBLE_TYPE), m_is_const(is_const) {}
+		: m_data(NULL), m_type(CLEVER_DOUBLE_TYPE), m_is_const(is_const) {
+		setDouble(n);
+	}
 
 	Value(const CString* value, bool is_const = false)
-		: m_data(value), m_type(CLEVER_STR_TYPE), m_is_const(is_const) {}
+		: m_data(NULL), m_type(CLEVER_STR_TYPE), m_is_const(is_const) {
+		setObj(m_type, new StrObject(value));
+	}
 
 	Value(const Type* type, bool is_const = false)
-		: m_data(), m_type(type), m_is_const(is_const) {}
+		: m_data(NULL), m_type(type), m_is_const(is_const) {}
 
 	~Value() {
-		if (m_type && !m_type->isPrimitive()) {
-			if (m_data.obj) {
-				m_data.obj->delRef();
-			}
+		if (m_type && m_data) {
+			m_data->delRef();
 		}
 	}
 
-	void setType(const Type* type) { m_type = type; }
 	const Type* getType() const { return m_type; }
 
 	void setNull() { m_type = NULL; }
 	bool isNull() const { return m_type == NULL; }
 
-	void dump() const {
-		dump(std::cout);
-	}
-
+	void dump() const {	dump(std::cout); }
 	void dump(std::ostream& out) const {
 		if (m_type) {
-			m_type->dump(&m_data, out);
+			m_type->dump(getObj(), out);
 		} else {
 			out << "null";
 		}
 	}
-	void setObj(void* ptr) {
-		clever_assert_not_null(m_type);
-		m_data.obj = new ValueObject(ptr, m_type);
+
+	void setObj(const Type* type, TypeObject* ptr) {
+		clever_assert_not_null(type);
+		clever_assert_not_null(ptr);
+
+		m_type = type;
+		m_data = new ValueObject(ptr, type);
+		ptr->copyMembers(type);
 	}
-	void* getObj() const { return m_data.obj->getObj(); }
+	TypeObject* getObj() const { return  m_data->getObj(); }
 
-	void setInt(long n) { m_data.lval = n; m_type = CLEVER_INT_TYPE; }
-	long getInt() const { return m_data.lval; }
+	void setInt(long);
+	long getInt() const;
 
-	void setBool(bool n) { m_data.bval = n; m_type = CLEVER_BOOL_TYPE; }
-	bool getBool() const { return m_data.bval; }
+	void setBool(bool);
+	bool getBool() const;
 
-	void setDouble(double n) { m_data.dval = n; m_type = CLEVER_DOUBLE_TYPE; }
-	double getDouble() const { return m_data.dval; }
+	void setDouble(double);
+	double getDouble() const;
 
-	const DataValue* getData() const { return &m_data; }
+	void setStr(const CString*);
+	void setStr(StrObject*);
+	const CString* getStr() const;
 
-	void setStr(const CString* str) { m_data.sval = str; m_type = CLEVER_STR_TYPE; }
-	const CString* getStr() const { return m_data.sval; }
+	bool isInt()      const { return m_type == CLEVER_INT_TYPE;    }
+	bool isBool()     const { return m_type == CLEVER_BOOL_TYPE;   }
+	bool isDouble()   const { return m_type == CLEVER_DOUBLE_TYPE; }
+	bool isStr()      const { return m_type == CLEVER_STR_TYPE;    }
+	bool isFunction() const { return m_type == CLEVER_FUNC_TYPE;   }
+	bool isMap()      const { return m_type == CLEVER_MAP_TYPE;    }
+	bool isArray()    const { return m_type == CLEVER_ARRAY_TYPE;  }
+	bool isThread()   const { return m_type == CLEVER_THREAD_TYPE; }
 
-	void copy(const Value* value) {
-		m_type = value->getType();
-		memcpy(&m_data, value->getData(), sizeof(DataValue));
+	ValueObject* getData() const { return m_data; }
 
-		if (m_type && !m_type->isPrimitive()) {
-			if (m_data.obj) {
-				m_data.obj->addRef();
-			}
-		}
-	}
+	void copy(const Value*);
 
 	Value* clone() const {
 		Value* val = new Value;
+
 		val->copy(this);
+		val->setConst(isConst());
 		return val;
 	}
 
-	bool asBool() const {
-		if (isNull()) {
-			return false;
-		} else if (m_type->isPrimitive()) {
-			if (m_type == CLEVER_INT_TYPE) {
-				return m_data.lval != 0;
-			} else if (m_type == CLEVER_DOUBLE_TYPE) {
-				return m_data.dval != 0;
-			} else if (m_type == CLEVER_STR_TYPE) {
-				return m_data.sval != NULL;
-			} else if (m_type == CLEVER_BOOL_TYPE) {
-				return m_data.bval;
-			}
-		}
-		return true;
-	}
+	bool asBool() const;
 
 	// @TODO(muriloadriano): This is a workout to allow the assign on a const
 	// variable declaration. If the current data is null and it is const, the
@@ -198,8 +173,15 @@ public:
 	void setConst(bool constness = true) {
 		m_is_const = constness;
 	}
+
 private:
-	DataValue m_data;
+	void cleanUp() const {
+		if (m_type && m_data) {
+			m_data->delRef();
+		}
+	}
+
+	ValueObject* m_data;
 	const Type* m_type;
 	bool m_is_const;
 

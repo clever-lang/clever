@@ -1,4 +1,8 @@
 Testing threads 2
+==CHECK==
+if (!Clever.hasThreads()) {
+	println("skip");
+}
 ==CODE==
 import std.io.*;
 
@@ -6,8 +10,7 @@ var acc1 = 0;
 var acc2 = 0;
 var id = 0;
 
-
-spawn t[2] {
+process t[2] {
 	var a = 0;
 
 	critical {
@@ -37,14 +40,16 @@ spawn t[2] {
 
 	if (a == 0) {
 		acc1 = acc;
-	} 
+	}
 
 	if (a == 1) {
 		acc2 = acc;
 	}
 
 }
-wait t;
+
+t.run();
+t.wait();
 
 printf ("\1\n", acc1 + acc2);
 ==RESULT==

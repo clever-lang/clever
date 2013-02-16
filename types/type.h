@@ -14,6 +14,7 @@
 #include <tr1/unordered_map>
 #endif
 #include <vector>
+#include "core/refcounted.h"
 #include "core/clever.h"
 #include "core/cstring.h"
 
@@ -21,8 +22,17 @@ namespace clever {
 
 class CException;
 class VM;
+class Value;
+class Type;
+class Function;
 
 #define CLEVER_TYPE_OPERATOR_ARGS Value* result, const Value* lhs, const Value* rhs, const VM* vm, CException* exception
+#define CLEVER_TYPE_UNARY_OPERATOR_ARGS Value* result, const Value* lhs, const VM* vm, CException* exception
+#define CLEVER_TYPE_AT_OPERATOR_ARGS const Value* value, const Value* index, const VM* vm, CException* exception
+
+#define CLEVER_TYPE_OPERATOR(name)       void CLEVER_FASTCALL name(CLEVER_TYPE_OPERATOR_ARGS) const
+#define CLEVER_TYPE_UNARY_OPERATOR(name) void CLEVER_FASTCALL name(CLEVER_TYPE_UNARY_OPERATOR_ARGS) const
+#define CLEVER_TYPE_AT_OPERATOR(name)    Value* CLEVER_FASTCALL name(CLEVER_TYPE_AT_OPERATOR_ARGS) const
 
 #define CLEVER_TYPE_VIRTUAL_METHOD_DECLARATIONS                          \
 	void CLEVER_FASTCALL add(CLEVER_TYPE_OPERATOR_ARGS)           const; \
@@ -35,9 +45,16 @@ class VM;
 	void CLEVER_FASTCALL greater(CLEVER_TYPE_OPERATOR_ARGS)       const; \
 	void CLEVER_FASTCALL greater_equal(CLEVER_TYPE_OPERATOR_ARGS) const; \
 	void CLEVER_FASTCALL less(CLEVER_TYPE_OPERATOR_ARGS)          const; \
-	void CLEVER_FASTCALL less_equal(CLEVER_TYPE_OPERATOR_ARGS)    const;
+	void CLEVER_FASTCALL less_equal(CLEVER_TYPE_OPERATOR_ARGS)    const; \
+	void CLEVER_FASTCALL not_op(CLEVER_TYPE_UNARY_OPERATOR_ARGS)  const
 
-#define CLEVER_TYPE_OPERATOR(name) void CLEVER_FASTCALL name(CLEVER_TYPE_OPERATOR_ARGS) const
+#define CLEVER_TYPE_VIRTUAL_BITWISE_OPERATORS                           \
+	void CLEVER_FASTCALL bw_and(CLEVER_TYPE_OPERATOR_ARGS)       const; \
+	void CLEVER_FASTCALL bw_or(CLEVER_TYPE_OPERATOR_ARGS)        const; \
+	void CLEVER_FASTCALL bw_xor(CLEVER_TYPE_OPERATOR_ARGS)       const; \
+	void CLEVER_FASTCALL bw_not(CLEVER_TYPE_UNARY_OPERATOR_ARGS) const; \
+	void CLEVER_FASTCALL bw_ls(CLEVER_TYPE_OPERATOR_ARGS)        const; \
+	void CLEVER_FASTCALL bw_rs(CLEVER_TYPE_OPERATOR_ARGS)        const
 
 #define CLEVER_THIS() obj
 
@@ -45,66 +62,110 @@ class VM;
 #define CLEVER_TYPE_INIT(name) void name(CLEVER_TYPE_INIT_ARGS)
 
 #define CLEVER_METHOD_ARGS Value* result, const Value* obj, const ::std::vector<Value*>& args, const VM* vm, CException* exception
+#define CLEVER_METHOD_PASS_ARGS result, obj, args, vm, exception
 #define CLEVER_METHOD(name) void name(CLEVER_METHOD_ARGS) const
 
 #define CLEVER_TYPE_CTOR_ARGS const ::std::vector<Value*>* args
 #define CLEVER_TYPE_DTOR_ARGS void* data
 
-class Value;
-class Type;
-class Function;
-
 typedef void (Type::*MethodPtr)(CLEVER_METHOD_ARGS) const;
 
+typedef std::tr1::unordered_map<const CString*, Value*> MemberMap;
 typedef std::tr1::unordered_map<const CString*, Value*> PropertyMap;
-typedef std::pair<const CString*, Value*> PropertyPair;
-
 typedef std::tr1::unordered_map<const CString*, Function*> MethodMap;
-typedef std::pair<const CString*, Function*> MethodPair;
+
+class TypeObject {
+public:
+	TypeObject() {}
+
+	virtual ~TypeObject();
+
+	void copyMembers(const Type*);
+
+	void addMember(const CString* name, Value* value) {
+		m_members.insert(MemberMap::value_type(name, value));
+	}
+
+	virtual Value* getMember(const CString* name) const {
+		MemberMap::const_iterator it = m_members.find(name);
+
+		if (it != m_members.end()) {
+			return it->second;
+		}
+
+		return NULL;
+	}
+private:
+	MemberMap m_members;
+
+	DISALLOW_COPY_AND_ASSIGN(TypeObject);
+};
 
 class Type {
 public:
-	Type(const CString* name)
-		: m_name(name), m_methods(), m_properties() {}
+	enum TypeFlag { INTERNAL_TYPE, USER_TYPE };
+
+	Type()
+		: m_flags(INTERNAL_TYPE) {}
+
+	Type(const std::string& name, TypeFlag flags = INTERNAL_TYPE)
+		: m_name(name), m_ctor(NULL), m_user_ctor(NULL), m_dtor(NULL), m_flags(flags) {}
 
 	virtual ~Type() {}
 
 	void deallocMembers();
 
-	Function* addMethod(Function* func);
+	bool isUserDefined() const { return m_flags == USER_TYPE; }
+	bool isInternal() const { return m_flags == INTERNAL_TYPE; }
+
+	void addMember(const CString* name, Value* value) {
+		m_members.insert(MemberMap::value_type(name, value));
+	}
+
+	Value* getMember(const CString* name) const {
+		MemberMap::const_iterator it = m_members.find(name);
+
+		if (it != m_members.end()) {
+			return it->second;
+		}
+
+		return NULL;
+	}
+
+	const MemberMap& getMembers() const { return m_members; }
+
+	Function* addMethod(Function*);
+
+	const Function* getMethod(const CString*) const;
 
 	void addProperty(const CString* name, Value* value) {
-		m_properties.insert(PropertyPair(name, value));
+		addMember(name, value);
 	}
 
-	const Function* getMethod(const CString* name) const {
-		MethodMap::const_iterator it = m_methods.find(name);
+	Value* getProperty(const CString*) const;
 
-		if (EXPECTED(it != m_methods.end())) {
-			return it->second;
-		}
-		return NULL;
-	}
+	const MethodMap getMethods() const;
 
-	Value* getProperty(const CString* name) const {
-		PropertyMap::const_iterator it = m_properties.find(name);
-
-		if (EXPECTED(it != m_properties.end())) {
-			return it->second;
-		}
-		return NULL;
-	}
+	const PropertyMap getProperties() const;
 
 	/// Method for retrieve the type name
-	const CString* getName() const { return m_name; }
+	const std::string& getName() const { return m_name; }
+
+	void setConstructor(MethodPtr method);
+	void setDestructor(MethodPtr method);
+
+	const Function* getConstructor() const { return m_ctor; }
+	const Function* getDestructor() const { return m_dtor; }
+
+	void setUserConstructor(Function* func) { m_user_ctor = func; }
+	const Function* getUserConstructor() const { return m_user_ctor; }
+	bool hasUserConstructor() const { return m_user_ctor != NULL; }
 
 	virtual void init(CLEVER_TYPE_INIT_ARGS) {}
 
-	virtual bool isPrimitive() const { return false; }
-
 	/// Virtual method for debug purpose
-	virtual void dump(const void*) const = 0;
-	virtual void dump(const void*, std::ostream& out) const = 0;
+	virtual void dump(TypeObject* data) const { dump(data, std::cout); }
+	virtual void dump(TypeObject*, std::ostream&) const {};
 
 	/// Operator methods
 	virtual void CLEVER_FASTCALL add(CLEVER_TYPE_OPERATOR_ARGS)           const;
@@ -114,22 +175,37 @@ public:
 	virtual void CLEVER_FASTCALL mod(CLEVER_TYPE_OPERATOR_ARGS)           const;
 	virtual void CLEVER_FASTCALL equal(CLEVER_TYPE_OPERATOR_ARGS)         const;
 	virtual void CLEVER_FASTCALL not_equal(CLEVER_TYPE_OPERATOR_ARGS)     const;
+	virtual void CLEVER_FASTCALL not_op(CLEVER_TYPE_UNARY_OPERATOR_ARGS)  const;
 	virtual void CLEVER_FASTCALL greater(CLEVER_TYPE_OPERATOR_ARGS)       const;
 	virtual void CLEVER_FASTCALL greater_equal(CLEVER_TYPE_OPERATOR_ARGS) const;
 	virtual void CLEVER_FASTCALL less(CLEVER_TYPE_OPERATOR_ARGS)          const;
 	virtual void CLEVER_FASTCALL less_equal(CLEVER_TYPE_OPERATOR_ARGS)    const;
+	virtual void CLEVER_FASTCALL bw_and(CLEVER_TYPE_OPERATOR_ARGS)        const;
+	virtual void CLEVER_FASTCALL bw_or(CLEVER_TYPE_OPERATOR_ARGS)         const;
+	virtual void CLEVER_FASTCALL bw_xor(CLEVER_TYPE_OPERATOR_ARGS)        const;
+	virtual void CLEVER_FASTCALL bw_ls(CLEVER_TYPE_OPERATOR_ARGS)         const;
+	virtual void CLEVER_FASTCALL bw_rs(CLEVER_TYPE_OPERATOR_ARGS)         const;
+	virtual void CLEVER_FASTCALL bw_not(CLEVER_TYPE_UNARY_OPERATOR_ARGS)  const;
+	virtual Value* CLEVER_FASTCALL at_op(CLEVER_TYPE_AT_OPERATOR_ARGS)    const;
 	virtual void increment(Value*, const VM*, CException*)                const;
 	virtual void decrement(Value*, const VM*, CException*)                const;
 
 	/// Type internal data constructor
-	virtual void* allocData(CLEVER_TYPE_CTOR_ARGS) const { return NULL; }
+	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const { return NULL; }
 
 	/// Type internal data destructor
 	virtual void deallocData(CLEVER_TYPE_DTOR_ARGS) {}
+
+	virtual std::pair<size_t, TypeObject*> serialize(const Value*) const;
+	virtual Value* unserialize(const Type*, const std::pair<size_t, TypeObject*>&) const;
 private:
-	const CString* m_name;
-	MethodMap m_methods;
-	PropertyMap m_properties;
+	std::string m_name;
+	const Function* m_ctor;
+	const Function* m_user_ctor;
+	const Function* m_dtor;
+
+	MemberMap m_members;
+	TypeFlag m_flags;
 
 	DISALLOW_COPY_AND_ASSIGN(Type);
 };

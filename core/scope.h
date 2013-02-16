@@ -28,7 +28,8 @@ typedef std::vector<Value*> ValuePool;
 
 /// Symbol representation
 struct Symbol {
-	Symbol() : name(NULL), voffset(0,0), scope(NULL) {}
+	Symbol()
+		: name(NULL), voffset(0,0), scope(NULL) {}
 
 	Symbol(const CString *name_, Scope *scope_ = NULL)
 		: name(name_), voffset(0,0), scope(scope_) {}
@@ -37,7 +38,7 @@ struct Symbol {
 
 	const CString* name;
 	ValueOffset voffset;
-	const Scope *scope;
+	const Scope* scope;
 
 private:
 	DISALLOW_COPY_AND_ASSIGN(Symbol);
@@ -52,12 +53,12 @@ public:
 	typedef SymbolTable::value_type SymbolEntry;
 
 	Scope()
-		: m_parent(NULL), m_children(), m_symbols(), m_symbol_table(), m_size(0),
-		  m_id(0), m_value_id(0), m_value_pool(), m_environment(NULL) {}
+		: m_parent(NULL), m_children(), m_symbols(), m_symbol_table(),
+		  m_value_pool(), m_environment(NULL) {}
 
 	explicit Scope(Scope* parent)
 		: m_parent(parent), m_children(), m_symbols(), m_symbol_table(),
-		  m_size(0), m_id(0), m_value_id(0), m_value_pool(), m_environment(NULL) {}
+		  m_value_pool(), m_environment(NULL) {}
 
 	~Scope();
 
@@ -65,7 +66,7 @@ public:
 		Symbol* sym = new Symbol(name, this);
 
 		m_symbols.push_back(sym);
-		m_symbol_table.insert(SymbolEntry(name, m_size++));
+		m_symbol_table.insert(SymbolEntry(name, m_symbol_table.size()));
 		m_value_pool.push_back(value);
 
 		return sym;
@@ -75,19 +76,9 @@ public:
 
 	Symbol& at(size_t idx) const { return *m_symbols[idx]; }
 
-	void setId(size_t id) { m_id = id; }
-
-	size_t getId() const { return m_id; }
-
-	size_t size() const { return m_size; }
-
 	void copy(const Scope* s) {
-		for (size_t id = 0; id < s->m_value_pool.size(); ++id) {
-			const Value* u = s->m_value_pool[id];
-			Value* v = new Value;
-
-			m_value_pool.push_back(v);
-			v->copy(u);
+		for (size_t id = 0, n = s->m_value_pool.size(); id < n; ++id) {
+			m_value_pool.push_back(s->m_value_pool[id]->clone());
 		}
 	}
 
@@ -97,9 +88,7 @@ public:
 		return s;
 	}
 
-	Scope* leave() {
-		return m_parent;
-	}
+	Scope* leave() const { return m_parent; }
 
 	std::vector<Scope*> flatten();
 
@@ -109,13 +98,9 @@ public:
 	Symbol* getAny(const CString*);
 
 	Environment* getEnvironment() const { return m_environment; }
-	void setEnvironment(Environment* e) {
-		CLEVER_SAFE_DELREF(m_environment);
-		m_environment = e;
-		CLEVER_SAFE_ADDREF(m_environment);
-	}
+	void setEnvironment(Environment* env) {	m_environment = env; }
 
-	std::pair<size_t, size_t> getOffset(Symbol* sym) const;
+	std::pair<size_t, size_t> getOffset(const Symbol* sym) const;
 
 	const ScopeVector& getChildren() const { return m_children; }
 private:
@@ -123,9 +108,6 @@ private:
 	ScopeVector m_children;
 	SymbolMap m_symbols;
 	SymbolTable m_symbol_table;
-	size_t m_size;
-	size_t m_id;
-	size_t m_value_id;
 
 	ValuePool m_value_pool;
 
@@ -133,8 +115,6 @@ private:
 
 	DISALLOW_COPY_AND_ASSIGN(Scope);
 };
-
-
 
 } // clever
 

@@ -44,13 +44,23 @@ namespace clever {
 	&&OP_LEQUAL,   \
 	&&OP_NEW,      \
 	&&OP_MCALL,    \
-	&&OP_WAIT,     \
 	&&OP_SMCALL,   \
-	&&OP_PROP_ACC, \
+	&&OP_PROP_R,   \
+	&&OP_SPROP_R,  \
+	&&OP_PROP_W,   \
+	&&OP_SPROP_W,  \
 	&&OP_TRY,      \
 	&&OP_CATCH,    \
 	&&OP_THROW,    \
-	&&OP_ETRY
+	&&OP_ETRY,     \
+	&&OP_NOT,      \
+	&&OP_BW_AND,   \
+	&&OP_BW_OR,    \
+	&&OP_BW_XOR,   \
+	&&OP_BW_NOT,   \
+	&&OP_BW_LS,    \
+	&&OP_BW_RS,    \
+	&&OP_SUBSCRIPT
 #endif
 
 /// VM opcodes
@@ -87,13 +97,23 @@ enum Opcode {
 	OP_LEQUAL,     //       Used for less than or equal comparison
 	OP_NEW,        //  30 - Used for less than or equal comparison
 	OP_MCALL,      //       Used for method call
-	OP_WAIT,       //       Wait thread termination
 	OP_SMCALL,     //       Used for static method call
-	OP_PROP_ACC,   //       Used for property access
-	OP_TRY,        //  35 - Used for exception block
+	OP_PROP_R,     //       Used for property access (read mode)
+	OP_SPROP_R,    //       Used for static property access (read mode)
+	OP_PROP_W,     //  35 - Used for property access (write mode)
+	OP_SPROP_W,    //       Used for static property access (write mode)
+	OP_TRY,        //       Used for exception block
 	OP_CATCH,      //       Used for catching exception
 	OP_THROW,      //       Used for throwing exception
-	OP_ETRY,       //       Used for end marker exception block
+	OP_ETRY,       //  40 - Used for end marker exception block
+	OP_NOT,        //       Used for NOT boolean operation
+	OP_BW_AND,     //       Used for bitwise AND operation
+	OP_BW_OR,      //       Used for bitwise OR operation
+	OP_BW_XOR,     //       Used for bitwise XOR operation
+	OP_BW_NOT,     //  45 - Used for bitwise NOT operation
+	OP_BW_LS,      //       Used for bitwise left shift operation
+	OP_BW_RS,      //       Used for bitwise right shift operation
+	OP_SUBSCRIPT,   //       Used for subscript operator
 	NUM_OPCODES
 };
 

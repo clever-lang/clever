@@ -1,0 +1,17 @@
+Testing Reflect::isMap() methods
+==CODE==
+import std.io.*;
+import std.reflection.*;
+
+var a = Reflect.new(1);
+println(a.isMap());
+
+a = Reflect.new(1.2);
+println(a.isMap());
+
+a = Reflect.new({"a": 1});
+println(a.isMap());
+==RESULT==
+0
+0
+1

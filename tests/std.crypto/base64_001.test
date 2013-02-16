@@ -1,0 +1,11 @@
+Testing base64
+==CODE==
+import std.io.*;
+import std.crypto.*;
+
+var v = base64_encode("foobar");
+
+println(v, base64_decode(v));
+==RESULT==
+Zm9vYmFy
+foobar

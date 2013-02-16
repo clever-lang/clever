@@ -58,6 +58,12 @@ public:
 	virtual void visit(Try* node);
 	virtual void visit(Catch* node);
 	virtual void visit(Throw* node);
+
+	virtual void visit(AttrDecl* node);
+	virtual void visit(ClassDef* node);
+	virtual void visit(Subscript* node);
+private:
+	DISALLOW_COPY_AND_ASSIGN(Visitor);
 };
 
 }} // clever::ast

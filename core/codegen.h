@@ -12,14 +12,12 @@
 #include <stack>
 #include <map>
 #include "core/astvisitor.h"
-#include "core/ir.h"
-#include "types/thread.h"
 
 namespace clever {
 
-class Scope;
+class Thread;
 class Compiler;
-typedef std::vector<Scope*> ScopePool;
+class IRBuilder;
 
 } // clever
 
@@ -30,17 +28,15 @@ public:
 	typedef std::vector<size_t> AddrVector;
 	typedef std::stack<AddrVector> JmpList;
 
-	Codegen(IRVector& ir, Compiler* compiler, Environment* init_glbenv);
+	Codegen(IRBuilder* builder)
+		: m_builder(builder), m_jmps() {}
+
 	~Codegen() {}
 
 	void sendArgs(NodeArray*);
 
-	Environment* getConstEnv() const { return m_const_env; }
-	Environment* getTempEnv() const { return m_temp_env; }
-
 	void visit(Block*);
 	void visit(CriticalBlock*);
-	void visit(Wait*);
 	void visit(ThreadBlock*);
 	void visit(VariableDecl*);
 	void visit(Assignment*);
@@ -52,14 +48,15 @@ public:
 	void visit(IntLit*);
 	void visit(DoubleLit*);
 	void visit(StringLit*);
-	void visit(Ident*);
+	void visit(Ident*) {}
 	void visit(IncDec*);
 	void visit(Arithmetic*);
 	void visit(Comparison*);
-	void visit(Import*) {}
+	void visit(Import*);
 	void visit(If*);
 	void visit(Logic*);
 	void visit(Boolean*);
+	void visit(Bitwise*);
 	void visit(NullLit*);
 	void visit(TrueLit*);
 	void visit(FalseLit*);
@@ -69,16 +66,12 @@ public:
 	void visit(Throw*);
 	void visit(Continue*);
 	void visit(Break*);
+	void visit(ClassDef*);
+	void visit(Subscript*);
 private:
-	IRVector& m_ir;
-	Compiler* m_compiler;
-	Environment* m_init_glbenv;
-	Environment* m_const_env;
-	Environment* m_temp_env;
+	IRBuilder* m_builder;
 	JmpList m_jmps;
 	JmpList m_brks;
-
-	std::map<Thread*, size_t> m_thread_ids;
 
 	DISALLOW_COPY_AND_ASSIGN(Codegen);
 };

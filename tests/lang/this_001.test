@@ -1,0 +1,18 @@
+Testing this variable
+==CODE==
+import std.io.*;
+
+class Foo {
+	var a;
+
+	function getA() { return this.getX(); }
+
+	function getX() { return 3; }
+}
+
+var foo = Foo.new;
+println(foo.getA());
+
+foo = null;
+==RESULT==
+3

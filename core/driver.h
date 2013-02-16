@@ -34,7 +34,7 @@ public:
 
 	Driver()
 		: m_is_file(false), m_trace_parsing(false), m_file(NULL), m_cflags(0),
-		  m_compiler(), m_scanners()
+		  m_compiler(this), m_scanners()
 #ifdef CLEVER_DEBUG
 			, m_dump_opcode(false)
 #endif
@@ -52,7 +52,7 @@ public:
 
 	// Starts the parser and loads the Symbol table
 	int loadStr(const std::string&, bool importStd);
-	int loadFile(const std::string&);
+	int loadFile(const std::string&, const std::string& = "");
 
 	// Error handling
 	void error(const location&, const std::string&) const;
@@ -66,6 +66,7 @@ public:
 
 	// Compiler flags
 	void setCompilerFlags(size_t flags) { m_cflags |= flags; }
+	Compiler& getCompiler() { return m_compiler; }
 
 	size_t getCompilerFlags() const { return m_cflags; }
 protected:
@@ -99,7 +100,8 @@ private:
 /// Interpreter
 class Interpreter : public Driver {
 public:
-	Interpreter(int* argc, char*** argv);
+	Interpreter(int argc, char*** argv)
+		: Driver() {}
 
 #ifdef CLEVER_DEBUG
 	void setDebug() { m_dump_opcode = true; }

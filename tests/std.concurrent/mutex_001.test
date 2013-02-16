@@ -1,0 +1,14 @@
+Testing mutex functionality
+==CODE==
+import std.io.*;
+import std.concurrent.*;
+
+var m = Mutex.new();
+
+println(m.lock());
+println(m.trylock());
+println(m.unlock());
+==RESULT==
+1
+0
+1

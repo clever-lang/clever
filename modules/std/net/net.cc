@@ -8,14 +8,14 @@
 #include "core/value.h"
 #include "modules/std/net/net.h"
 #include "modules/std/net/tcpsocket.h"
-#include "core/pkgmanager.h"
+#include "core/modmanager.h"
 
-namespace clever { namespace packages { namespace std {
+namespace clever { namespace modules { namespace std {
 
 /// Initializes Standard module
 CLEVER_MODULE_INIT(NetModule)
 {
-	addType(CSTRING("TcpSocket"), new net::TcpSocket());
+	addType(new net::TcpSocket());
 }
 
-}}} // clever::packages::std
+}}} // clever::modules::std

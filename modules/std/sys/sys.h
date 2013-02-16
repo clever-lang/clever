@@ -10,13 +10,13 @@
 
 #include "core/module.h"
 
-namespace clever { namespace packages { namespace std {
+namespace clever { namespace modules { namespace std {
 
 /// Standard SYS module
 class SYSModule : public Module {
 public:
 	SYSModule()
-		: Module("sys") { }
+		: Module("std.sys") { }
 
 	~SYSModule() { }
 
@@ -25,6 +25,6 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(SYSModule);
 };
 
-}}} // clever::packages::std
+}}} // clever::modules::std
 
 #endif // CLEVER_STD_SYS_H

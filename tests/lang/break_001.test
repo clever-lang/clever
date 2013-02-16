@@ -3,7 +3,7 @@ Testing break statement
 import std.io.*;
 var i = 10;
 
-while (i--) {
+while (i-- >= 0) {
 	println(i);
 
 	var b = i * 3;

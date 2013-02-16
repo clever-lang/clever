@@ -1,0 +1,13 @@
+Testing subscript operator out of bound
+==CODE==
+import std.io.*;
+
+var a = [];
+
+try {
+	a[1] = 2;
+} catch (e) {
+	println(e);
+}
+==RESULT==
+Array index out of bound!

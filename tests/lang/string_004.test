@@ -1,0 +1,13 @@
+String.findFirst()
+==CODE==
+import std.io.*;
+
+var s = "Hello Clever";
+println(s.findFirst("eo"));
+println(s.findFirst("eo", 6));
+println(s.findFirst("eo", 4, 2));
+
+==RESULT==
+1
+8
+4

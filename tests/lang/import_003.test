@@ -1,0 +1,7 @@
+Testing namespaced type access
+==CODE==
+import std;
+
+std:io:println(std:reflection:Reflect.new(1));
+==RESULT==
+Reflect\(Int\)

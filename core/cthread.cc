@@ -11,43 +11,52 @@ namespace clever {
 
 CMutex::CMutex()
 {
-#ifndef CLEVER_WIN32
+#ifdef CLEVER_THREADS
+# ifndef CLEVER_WIN32
 	pthread_mutex_init(&m_mut, NULL);
-#else
+# else
 	m_mut = CreateMutex(NULL, FALSE, NULL);
+# endif
 #endif
 }
 
 CMutex::~CMutex()
 {
-#ifndef CLEVER_WIN32
+#ifdef CLEVER_THREADS
+# ifndef CLEVER_WIN32
 	pthread_mutex_destroy(&m_mut);
-#else
+# else
 	CloseHandle(m_mut);
+# endif
 #endif
 }
 
 void CMutex::lock()
 {
-#ifndef CLEVER_WIN32
+#ifdef CLEVER_THREADS
+# ifndef CLEVER_WIN32
 	pthread_mutex_lock(&m_mut);
-#else
+# else
 	WaitForSingleObject(m_mut, INFINITE);
+# endif
 #endif
 }
 
 void CMutex::unlock()
 {
-#ifndef CLEVER_WIN32
+#ifdef CLEVER_THREADS
+# ifndef CLEVER_WIN32
 	pthread_mutex_unlock(&m_mut);
-#else
+# else
 	ReleaseMutex(m_mut);
+# endif
 #endif
 }
 
 void CThread::create(ThreadFunc thread_func, void* args)
 {
-#ifndef CLEVER_WIN32
+#ifdef CLEVER_THREADS
+# ifndef CLEVER_WIN32
 	pthread_attr_t attr;
 	pthread_attr_init(&attr);
 	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
@@ -55,13 +64,17 @@ void CThread::create(ThreadFunc thread_func, void* args)
 	pthread_create(&t_handler, &attr, thread_func, args);
 
 	pthread_attr_destroy(&attr);
-#else
+# else
 	t_handler = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)thread_func, args, 0, NULL);
+# endif
 #endif
+
+	m_is_running = true;
 }
 
 int CThread::wait()
 {
+#ifdef CLEVER_THREADS
 	int status;
 
 #ifndef CLEVER_WIN32
@@ -71,43 +84,12 @@ int CThread::wait()
 	status = (status != WAIT_FAILED ? 0x0 : status);
 	CloseHandle(t_handler);
 #endif
-
+	m_is_running = false;
 	return status;
+#else
+	return 0;
+#endif
+
 }
-
-
-bool g_thread_is_enabled = false;
-size_t g_n_threads = 0;
-
-void new_thread()
-{
-	++g_n_threads;
-}
-
-void delete_thread()
-{
-	--g_n_threads;
-}
-
-size_t n_threads()
-{
-	return g_n_threads;
-}
-
-void enable_threads()
-{
-	g_thread_is_enabled = true;
-}
-
-void disenable_threads()
-{
-	g_thread_is_enabled = false;
-}
-
-bool thread_is_enabled()
-{
-	return g_thread_is_enabled;
-}
-
 
 } // clever

@@ -1,6 +1,6 @@
 #
 # Clever programming language
-# Copyright (c) 2011-2012 Clever Team
+# Copyright (c) 2011-2013 Clever Team
 #
 # CMakeLists - CMake recipe
 #
@@ -17,10 +17,11 @@ include_directories(.)
 
 # Packages
 # ---------------------------------------------------------------------------
-set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 find_package(BISON)
 find_package(RE2C)
 find_package(PkgConfig)
+find_package(CMakeParseArguments)
 find_package(CLEVER)
 
 # Some variables
@@ -29,67 +30,27 @@ set(CLEVER_CFLAGS)
 set(CLEVER_LDFLAGS)
 set(CLEVER_LIBRARIES)
 set(CLEVER_INCLUDE_DIRS)
-set(EXTRA_CLEVER_FILES)
+set(CLEVER_LINK_DIRECTORIES)
+set(CLEVER_SOURCES)
+
+# Platform checks
+include(environment.cmake)
 
 # 3rd-party libraries
 # ---------------------------------------------------------------------------
 include(dependencies.cmake)
-
-# Environment checks
-# ---------------------------------------------------------------------------
-if (WIN32)
-	set(EXTRA_CLEVER_FILES win32/dirent.h win32/win32.cc win32/win32.h)
-	add_definitions(-DCLEVER_WIN32)
-endif (WIN32)
-
-if (APPLE)
-	add_definitions(-DCLEVER_APPLE)
-endif (APPLE)
-
-if (CYGWIN)
-	add_definitions(-DCLEVER_CYGWIN)
-endif (CYGWIN)
-
-if (MSVC)
-	add_definitions(-DCLEVER_MSVC)
-	add_definitions(-DCLEVER_MSVC_VERSION=${MSVC_VERSION})
-	add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-	add_definitions(-D_ITERATOR_DEBUG_LEVEL=0)
-endif (MSVC)
-
-if (HAIKU)
-	add_definitions(-DCLEVER_HAIKU)
-endif (HAIKU)
-
-# Build environment
-# ---------------------------------------------------------------------------
-if (NOT CMAKE_BUILD_TYPE)
-	set(CMAKE_BUILD_TYPE Debug)
-	message(STATUS "No build specified, defaulting to Debug. Use -DCMAKE_BUILD_TYPE=Release to change")
-endif (NOT CMAKE_BUILD_TYPE)
-
-if (MSVC)
-	set(CMAKE_CXX_FLAGS			"/DWIN32 /D_WINDOWS /Zm1000 /EHsc- /GR-")
-	set(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} /W1 /wd4503")
-	set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG} /Zi /D_DEBUG /DCLEVER_DEBUG /MDd")
-	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /O2 /DNDEBUG /MD")
-else (MSVC)
-	set(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} -Wall -ansi -fno-rtti -fno-exceptions")
-	set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG} -fno-inline -ggdb -D_DEBUG -DCLEVER_DEBUG")
-	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2 -DNDEBUG")
-
-	set(CMAKE_CXX_FLAGS_DEVEL   "-Wall -Wextra -Wno-unused-parameter -O1 -gdwarf-4 -D_DEBUG -DCLEVER_DEBUG")
-	set(CMAKE_CXX_FLAGS_DEVEL   "${CMAKE_CXX_FLAGS_DEVEL} -fno-exceptions -fvar-tracking-assignments")
-	set(CMAKE_CXX_FLAGS_DEVEL   "${CMAKE_CXX_FLAGS_DEVEL} -ftrapv -fverbose-asm -finstrument-functions")
-	set(CMAKE_CXX_FLAGS_DEVEL   "${CMAKE_CXX_FLAGS_DEVEL} -fno-delete-null-pointer-checks -fno-omit-frame-pointer")
-endif (MSVC)
-
 
 if (TCMALLOC)
 	set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -ltcmalloc")
 else (TCMALLOC)
 	message(STATUS "Using default allocator. Use -DTCMALLOC=1 to use tcmalloc")
 endif (TCMALLOC)
+
+
+if (NOT NO_THREADS)
+	add_definitions(-DCLEVER_THREADS)
+	message(STATUS "Use -DNO_THREADS to disable threads")
+endif (NOT NO_THREADS)
 
 # Parser and Scanner
 # ---------------------------------------------------------------------------
@@ -103,6 +64,8 @@ if (GEN_PARSER)
 		message(FATAL_ERROR "Clever parsers cannot be generated with Bison 2.7 yet.")
 	endif (NOT ${BISON_VERSION} VERSION_LESS "2.7.0")
 
+	message(STATUS "Clever parsers will be generated again.")
+
 	if (${RE2C_VERSION} VERSION_GREATER "0.13.0")
 		list(APPEND re2c_opts "-c")
 	endif (${RE2C_VERSION} VERSION_GREATER "0.13.0")
@@ -111,17 +74,23 @@ if (GEN_PARSER)
 		list(APPEND re2c_opts "--case-inverted")
 	endif (${RE2C_VERSION} VERSION_GREATER "0.13.2")
 
-	add_custom_command(
-		OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/core/parser.cc
-		COMMAND ${BISON_EXECUTABLE} -l -o ${CMAKE_CURRENT_SOURCE_DIR}/core/parser.cc
-			${CMAKE_CURRENT_SOURCE_DIR}/core/parser.y
-		DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/core/parser.y)
+	set(core_dir ${CMAKE_CURRENT_SOURCE_DIR}/core)
 
 	add_custom_command(
-		OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/core/scanner.cc
-		COMMAND ${RE2C_EXECUTABLE} ${re2c_opts} -o ${CMAKE_CURRENT_SOURCE_DIR}/core/scanner.cc
-			${CMAKE_CURRENT_SOURCE_DIR}/core/scanner.re
-		DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/core/parser.cc ${CMAKE_CURRENT_SOURCE_DIR}/core/scanner.re)
+		OUTPUT ${core_dir}/parser.cc
+		COMMAND ${BISON_EXECUTABLE} -l -o ${core_dir}/parser.cc
+			${core_dir}/parser.y
+		DEPENDS ${core_dir}/parser.y
+		COMMENT "Generating parser from parser.y")
+
+	add_custom_command(
+		OUTPUT ${core_dir}/core/scanner.cc
+		COMMAND ${RE2C_EXECUTABLE} ${re2c_opts} -o ${core_dir}/scanner.cc
+			${core_dir}/scanner.re
+		DEPENDS ${core_dir}/parser.cc ${core_dir}/scanner.re
+		COMMENT "Generating scanner/lexer from scanner.re")
+
+	set(core_dir)
 
 endif (GEN_PARSER)
 
@@ -131,43 +100,19 @@ include(modules.cmake)
 
 # Issue #131 fix attempt.
 # ---------------------------------------------------------------------------
-if (UNIX)
-	# Detect if this is Ubuntu.
-	execute_process(COMMAND lsb_release -s -i
-		OUTPUT_VARIABLE LSB_RELEASE OUTPUT_STRIP_TRAILING_WHITESPACE)
-
-	if (${LSB_RELEASE} MATCHES "Ubuntu")
-		# Add "-licu" to the end of the linker command line
-		if (MOD_STD_UNICODE)
-			set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -licuio -licuuc")
-		endif (MOD_STD_UNICODE)
-
-		# Add "-lpcrecpp" to the end of the linker command line.
-		if (MOD_STD_REGEX)
-			set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -lpcrecpp")
-		endif (MOD_STD_REGEX)
-
-		# Add "-lcgicc" to the end of the linker command line.
-		if (MOD_WEB_REQUEST OR MOD_WEB_SESSION)
-			set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -lcgicc")
-		endif (MOD_WEB_REQUEST OR MOD_WEB_SESSION)
-
-		# Add "-lffi -ld" to the end of the linker command line.
-		if (MOD_STD_FFI)
-			set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -lffi -ldl")
-		endif (MOD_STD_FFI)
-
-		if (LIBPTHREAD_FOUND)
-			set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} ${LIBPTHREAD_LIBRARIES}")
-		endif (LIBPTHREAD_FOUND)
-
-	endif (${LSB_RELEASE} MATCHES "Ubuntu")
-
-endif (UNIX)
+# TODO(heuripedes): find a better (w/o workaround) way to support ld.gold
+#                   and ubuntu/debian/mint/gentoo default ld.bfd options.
+#                   some sources on the issue:
+#                   http://www.gentoo.org/proj/en/qa/asneeded.xml
+#                   https://wiki.ubuntu.com/NattyNarwhal/ToolchainTransition
+#                   http://wiki.debian.org/ToolChain/DSOLinking
+if (UNIX AND NOT APPLE)
+	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--no-as-needed")
+endif (UNIX AND NOT APPLE)
 
 # Main executable
 # ---------------------------------------------------------------------------
-add_executable(clever
+set(CLEVER_SOURCES ${CLEVER_SOURCES}
 	core/cexception.h
 	core/ast.h
 	core/ast.cc
@@ -192,14 +137,14 @@ add_executable(clever
 	core/environment.cc
 	core/environment.h
 	core/ir.h
-	core/main.cc
+	core/irbuilder.h
 	core/module.h
 	core/opcode.cc
 	core/opcode.h
 	core/parser.cc
 	core/platform.h
-	core/pkgmanager.cc
-	core/pkgmanager.h
+	core/modmanager.cc
+	core/modmanager.h
 	core/refcounted.h
 	core/resolver.cc
 	core/resolver.cc
@@ -208,40 +153,52 @@ add_executable(clever
 	core/scope.cc
 	core/scope.h
 	core/value.h
+	core/value.cc
 	core/vm.cc
 	core/vm.h
-	types/double.h
-	types/double.cc
-	types/int.h
-	types/int.cc
-	types/str.h
-	types/str.cc
+	modules/std/core/double.h
+	modules/std/core/double.cc
+	modules/std/core/int.h
+	modules/std/core/int.cc
+	modules/std/core/str.h
+	modules/std/core/str.cc
 	types/native_types.h
 	types/type.h
 	types/type.cc
-	types/function.h
+	modules/std/core/function.h
 	types/thread.h
-	types/bool.h
-	types/bool.cc
-	types/array.h
-	types/array.cc
-	types/map.h
-	types/map.cc
+	types/thread.cc
+	modules/std/core/bool.h
+	modules/std/core/bool.cc
+	modules/std/core/array.h
+	modules/std/core/array.cc
+	modules/std/core/map.h
+	modules/std/core/map.cc
 	modules/std/core/core.h
 	modules/std/core/core.cc
-	${EXTRA_CLEVER_FILES}
+	core/user.h
 )
-target_link_libraries(clever ${CLEVER_LIBRARIES})
+
+add_library(clever-static STATIC ${CLEVER_SOURCES})
+set_target_properties(clever-static PROPERTIES OUTPUT_NAME "clever")
+target_link_libraries(clever-static ${CLEVER_LIBRARIES})
 include_directories(${CLEVER_INCLUDE_DIRS})
+link_directories(${CLEVER_LINK_DIRECTORIES})
+
+add_library(clever-shared SHARED)
+set_target_properties(clever-shared PROPERTIES OUTPUT_NAME "clever")
+target_link_libraries(clever-shared clever-static)
+
+add_executable(clever-cli core/main.cc)
+set_target_properties(clever-cli PROPERTIES OUTPUT_NAME "clever")
+target_link_libraries(clever-cli clever-static)
 
 # Module trees
 # ---------------------------------------------------------------------------
 add_subdirectory(modules/std)
-#add_subdirectory(modules/web)
-add_dependencies(clever modules_std)
-#add_dependencies(clever modules_std modules_web)
-target_link_libraries(clever modules_std)
-#target_link_libraries(clever modules_std modules_web)
+add_subdirectory(modules/db)
+add_dependencies(clever-static modules_std modules_db)
+target_link_libraries(clever-static modules_std modules_db)
 
 # Test runner
 # ---------------------------------------------------------------------------
@@ -261,22 +218,28 @@ set(TEST_RUNNER_BIN ${CMAKE_BINARY_DIR}/testrunner${CMAKE_EXECUTABLE_SUFFIX})
 add_custom_target(run-tests
 	COMMAND ${TEST_RUNNER_BIN} -q;${CMAKE_CURRENT_SOURCE_DIR}/tests
 	COMMENT "Running tests")
+add_dependencies(run-tests clever-cli)
 add_dependencies(run-tests testrunner)
 
 add_custom_target(run-mem-tests
 	COMMAND ${TEST_RUNNER_BIN} -m;${CMAKE_CURRENT_SOURCE_DIR}/tests
 	COMMENT "Running memory leak tests")
+add_dependencies(run-tests clever-cli)
 add_dependencies(run-mem-tests testrunner)
 
 # Files to install
 # ---------------------------------------------------------------------------
-install(TARGETS clever RUNTIME DESTINATION bin)
+install(TARGETS clever-cli RUNTIME DESTINATION bin)
+#install(TARGETS clever-static ARCHIVE DESTINATION lib)
+install(TARGETS clever-shared LIBRARY DESTINATION lib)
+install(DIRECTORY core/ modules/ types/ win32/
+	DESTINATION include/clever FILES_MATCHING PATTERN "*.h")
 
 # Files to delete
 # ---------------------------------------------------------------------------
 #set_directory_properties(PROPERTIES
-#	ADDITIONAL_MAKE_CLEAN_FILES
-#	"")
+#   ADDITIONAL_MAKE_CLEAN_FILES
+#   "")
 
 # Packaging
 # ---------------------------------------------------------------------------

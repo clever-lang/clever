@@ -152,6 +152,10 @@ next_token:
 
 	<ST_MULTILINE_COMMENT>"*" { SKIP(); }
 
+	<INITIAL>'class' {
+		RET(token::CLASS);
+	}
+
 	<INITIAL>'new' {
 		RET(token::NEW);
 	}
@@ -160,11 +164,7 @@ next_token:
 		RET(token::FUNC);
 	}
 
-	<INITIAL>'wait' {
-		RET(token::WAIT);
-	}
-
-	<INITIAL>'spawn' {
+	<INITIAL>'process' {
 		RET(token::THREAD);
 	}
 
@@ -278,7 +278,7 @@ next_token:
 			n = n * 10 + (nstr[i] - '0');
 		}
 
-        yylval->intlit = new ast::IntLit(n, *yyloc);
+		yylval->intlit = new ast::IntLit(n, *yyloc);
 
 		RET(token::NUM_INTEGER);
 	}
@@ -297,7 +297,7 @@ next_token:
 			}
 		}
 
-        yylval->intlit = new ast::IntLit(n, *yyloc);
+		yylval->intlit = new ast::IntLit(n, *yyloc);
 
 		RET(token::NUM_INTEGER);
 	}

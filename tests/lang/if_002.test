@@ -6,11 +6,11 @@ if (1 && 2) {
 	println(1);
 }
 
-if (0 && 2) {
+if ((0 && 2) == false) {
 	println(2);
 }
 
-if (0) {
+if (0 == false) {
 	println(3);
 }
 
@@ -19,7 +19,7 @@ if (a) {
 	println(4);
 }
 var b = 0;
-if (b) {
+if (b == false) {
 	println(5);
 }
 

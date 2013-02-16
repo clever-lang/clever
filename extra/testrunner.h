@@ -18,31 +18,38 @@
 #include <pcrecpp.h>
 
 class TestRunner {
-	unsigned int pass, fail, leak, flags;
-	clock_t start_time;
-	std::vector<std::string> files;
-	std::vector<std::string> tmp_files;
-
-	bool file_exists(std::string file);
-	std::string extract_folder(const char* file) const;
-	size_t file_size(std::string file);
-	void load_folder(const char* dir);
-	void write_log(std::string testname, std::string message);
 public:
 	enum { FAIL_ONLY = 1 };
 
-	TestRunner() : pass(0), fail(0), leak(0), flags(0), valgrind(false) { start_time = clock(); }
+	TestRunner()
+		: valgrind(false), helgrind(false), pass(0), fail(0), leak(0), flags(0), races(0), skip(0)
+		{ start_time = clock(); }
+
 	~TestRunner();
 
 	std::string read_file(const char*) const;
-	void find(char* dir);
+	void find(const char* dir);
 	void run(void);
-	void show_result(void) const;
+	bool show_result(void) const;
 	void write_file(std::string&, std::string&);
 	void setFlags(unsigned int val) { flags |= val; }
 	unsigned int getFlags() const { return flags; }
 
 	bool valgrind;
+	bool helgrind;
+private:
+	unsigned int pass, fail, leak, flags, races, skip;
+	clock_t start_time;
+	std::vector<std::string> files;
+	std::vector<std::string> tmp_files;
+
+	void load_folder(const char* dir);
+
+	static bool fileExists(const std::string&);
+	static size_t fileSize(const std::string&);
+	static void writeLog(const std::string&, const std::string&);
+	static bool checkTest(const std::string&);
+	static void runSection(const std::string&);
 };
 
 #endif // CLEVER_TESTRUNNER_H

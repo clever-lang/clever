@@ -1,0 +1,22 @@
+Testing object context
+==CODE==
+import std.io.*;
+
+class Foo {
+	var x;
+
+	function setX(n) { this.x = n; }
+	function getX() { return this.x; }
+}
+
+var a = Foo.new,
+	b = Foo.new;
+
+a.setX(123);
+b.setX(321);
+
+println(a.getX(), b.getX());
+
+==RESULT==
+123
+321

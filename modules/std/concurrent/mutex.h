@@ -13,31 +13,44 @@
 #include "core/cstring.h"
 #include "types/type.h"
 
-namespace clever { namespace packages { namespace std {
+namespace clever { namespace modules { namespace std {
+
+struct MutexObject : public TypeObject {
+	MutexObject()
+		: mutex(new pthread_mutex_t) {}
+
+	~MutexObject() {
+		delete mutex;
+	}
+
+	pthread_mutex_t *mutex;
+};
 
 class Mutex : public Type {
 public:
 	Mutex()
-		: Type(CSTRING("Mutex")) {}
+		: Type("Mutex") {}
 
 	~Mutex() {}
 
-	void dump(const void* data) const;
-	void dump(const void* data, ::std::ostream& out) const;
+	void dump(TypeObject* data) const;
+	void dump(TypeObject* data, ::std::ostream& out) const;
 
-	virtual void increment(Value*) const {}
-	virtual void decrement(Value*) const {}
+	virtual void increment(Value*, const VM*, CException*) const {}
+	virtual void decrement(Value*, const VM*, CException*) const {}
 
 	void init();
 
-	virtual void* allocData(CLEVER_TYPE_CTOR_ARGS) const;
+	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
 	virtual void deallocData(void* data);
+
+	CLEVER_METHOD(ctor);
 
 	CLEVER_METHOD(lock);
 	CLEVER_METHOD(unlock);
 	CLEVER_METHOD(trylock);
 };
 
-}}} // clever::packages::std
+}}} // clever::modules::std
 
 #endif // CLEVER_STD_CONCURRENT_MUTEX_H

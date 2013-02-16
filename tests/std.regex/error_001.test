@@ -1,0 +1,18 @@
+Testing invalid pattern
+==CODE==
+import std.*;
+
+var text = "foo.bar";
+
+try {
+	var re = Regex.new("[^.");
+
+	while (re.match(text)) {
+		println(re.group(0));
+	}
+} catch (e) {
+	println("Error: " + e);
+}
+
+==RESULT==
+Error: missing terminating \] for character class

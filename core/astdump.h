@@ -48,9 +48,25 @@ public:
 	}
 	void visit(MethodCall* node)   { std::cout << m_ws << "MethodCall" << std::endl;   }
 	void visit(If* node)           { std::cout << m_ws << "If" << std::endl;           }
-	void visit(IntLit* node)       { std::cout << m_ws << "IntLit" << std::endl;       }
-	void visit(DoubleLit* node)    { std::cout << m_ws << "DoubleLit" << std::endl;    }
-	void visit(StringLit* node)    { std::cout << m_ws << "StringLit" << std::endl;    }
+
+	void visit(IntLit* node) {
+		std::cout << m_ws << "IntLit (" << node->getValue() << ")" << std::endl;
+	}
+
+	void visit(DoubleLit* node) {
+		std::cout << m_ws << "DoubleLit (" << node->getValue() << ")" << std::endl;
+	}
+
+	void visit(StringLit* node) {
+		std::cout << m_ws << "StringLit (" << node->getValue()->substr(0, 7);
+
+		if (node->getValue()->length() > 7) {
+			std::cout << "...";
+		}
+
+		std::cout << ")" << std::endl;
+	}
+
 	void visit(Return* node)       { std::cout << m_ws << "Return" << std::endl;       }
 	void visit(Import* node)       { std::cout << m_ws << "Import" << std::endl;       }
 	void visit(Instantiation* node){ std::cout << m_ws << "Instantiation" << std::endl;}
@@ -117,9 +133,9 @@ public:
 		switch (node->getOperator()) {
 			case ast::Comparison::COP_EQUAL:   AST_DUMP_DISPLAY_LHS_RHS("=="); break;
 			case ast::Comparison::COP_NEQUAL:  AST_DUMP_DISPLAY_LHS_RHS("!="); break;
-			case ast::Comparison::COP_GREATER: AST_DUMP_DISPLAY_LHS_RHS(">"); break;
+			case ast::Comparison::COP_GREATER: AST_DUMP_DISPLAY_LHS_RHS(">");  break;
 			case ast::Comparison::COP_GEQUAL:  AST_DUMP_DISPLAY_LHS_RHS(">="); break;
-			case ast::Comparison::COP_LESS:    AST_DUMP_DISPLAY_LHS_RHS("<"); break;
+			case ast::Comparison::COP_LESS:    AST_DUMP_DISPLAY_LHS_RHS("<");  break;
 			case ast::Comparison::COP_LEQUAL:  AST_DUMP_DISPLAY_LHS_RHS("<="); break;
 		}
 	}
@@ -130,6 +146,7 @@ public:
 			case ast::Bitwise::BOP_AND:	   AST_DUMP_DISPLAY_LHS_RHS('&');  break;
 			case ast::Bitwise::BOP_OR:     AST_DUMP_DISPLAY_LHS_RHS('|');  break;
 			case ast::Bitwise::BOP_XOR:    AST_DUMP_DISPLAY_LHS_RHS('^');  break;
+			case ast::Bitwise::BOP_NOT:    AST_DUMP_DISPLAY_LHS_RHS('~');  break;
 			case ast::Bitwise::BOP_LSHIFT: AST_DUMP_DISPLAY_LHS_RHS("<<"); break;
 			case ast::Bitwise::BOP_RSHIFT: AST_DUMP_DISPLAY_LHS_RHS(">>"); break;
 		}
@@ -165,6 +182,8 @@ public:
 private:
 	size_t m_level;
 	std::string m_ws;
+
+	DISALLOW_COPY_AND_ASSIGN(Dumper);
 };
 
 }} // clever::ast

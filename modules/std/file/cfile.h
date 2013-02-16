@@ -8,36 +8,49 @@
 #ifndef CLEVER_STD_CFILE_H
 #define CLEVER_STD_CFILE_H
 
+#include <fstream>
 #include "types/type.h"
 
-namespace clever { namespace packages { namespace std {
+namespace clever { namespace modules { namespace std {
+
+class CFileStream : public TypeObject {
+public:
+	CFileStream(const char* src, ::std::ios_base::openmode mode)
+		: m_fstream(src, mode) {}
+
+	~CFileStream() {}
+
+	::std::fstream& getStream() { return m_fstream; }
+private:
+	::std::fstream m_fstream;
+
+	DISALLOW_COPY_AND_ASSIGN(CFileStream);
+};
 
 class CFile : public Type {
 public:
 	CFile()
-		: Type(CSTRING("File")) {}
+		: Type("File") {}
 
 	~CFile() {}
 
-	void dump(const void* data) const;
-	void dump(const void* data, ::std::ostream& out) const;
-
-	virtual void increment(Value*) const {}
-	virtual void decrement(Value*) const {}
-
 	void init();
+	void dump(TypeObject* data, ::std::ostream& out) const;
 
-	virtual void* allocData(CLEVER_TYPE_CTOR_ARGS) const;
+	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
 	virtual void deallocData(void* data);
-
+private:
+	CLEVER_METHOD(ctor);
 	CLEVER_METHOD(read);
 	CLEVER_METHOD(readLine);
 	CLEVER_METHOD(write);
 	CLEVER_METHOD(open);
 	CLEVER_METHOD(close);
 	CLEVER_METHOD(isOpen);
+
+	DISALLOW_COPY_AND_ASSIGN(CFile);
 };
 
-}}} // clever::packages::std
+}}} // clever::modules::std
 
 #endif // CLEVER_STD_CFILE_H

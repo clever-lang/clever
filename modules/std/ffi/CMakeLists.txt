@@ -1,7 +1,7 @@
 
 add_library(modules_std_ffi STATIC
 	ffi.cc
-	ffiobject.cc
+	ffistruct.cc
 )
 
 set_target_properties(modules_std_ffi

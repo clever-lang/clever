@@ -1,0 +1,27 @@
+Testing condition functionality
+==CHECK==
+if (!Clever.hasThreads()) {
+	println("skip");
+}
+==CODE==
+import std.io.*;
+import std.concurrent.*;
+
+var c = Condition.new();
+var m = Mutex.new();
+
+println(m.lock());
+
+process thread {
+	println(c.broadcast());
+}
+
+thread.run();
+
+println(c.wait(m));
+
+thread.wait();
+==RESULT==
+1
+1
+1

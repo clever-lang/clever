@@ -8,12 +8,12 @@
 #include "modules/std/file/file.h"
 #include "modules/std/file/cfile.h"
 
-namespace clever { namespace packages { namespace std {
+namespace clever { namespace modules { namespace std {
 
 /// Initializes Standard File module
 CLEVER_MODULE_INIT(FileModule)
 {
-	addType(CSTRING("File"), new CFile);
+	addType(new CFile);
 }
 
-}}} // clever::packages::std
+}}} // clever::modules::std

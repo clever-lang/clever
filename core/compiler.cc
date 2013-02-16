@@ -7,8 +7,6 @@
 
 #include "core/cstring.h"
 #include "core/compiler.h"
-#include "core/scope.h"
-#include "core/value.h"
 #include "core/location.hh"
 #include "core/astdump.h"
 #include "core/codegen.h"
@@ -18,27 +16,29 @@
 namespace clever {
 
 /// Compiler initialization phase
-void Compiler::init()
+void Compiler::init(const CString* fname)
 {
+	if (m_flags & INITIALIZED) {
+		return;
+	}
+
 	m_pkg.init();
+
+	if (fname) {
+		std::string path(*fname);
+
+		path.erase(std::find(path.rbegin(), path.rend(), '/').base(), path.end());
+
+		m_pkg.setIncludePath(path);
+	}
+
+	m_flags |= INITIALIZED;
 }
 
 /// Frees all resource used by the compiler
 void Compiler::shutdown()
 {
-	if (m_const_env) {
-		m_const_env->clear();
-		CLEVER_SAFE_DELREF(m_const_env);
-	}
-
-	if (m_temp_env) {
-		m_temp_env->clear();
-		CLEVER_SAFE_DELREF(m_temp_env);
-	}
-
-	if (m_scope_pool.size()) {
-		clever_delete_var(m_scope_pool[0]);
-	}
+	delete m_builder;
 
 	m_pkg.shutdown();
 
@@ -80,40 +80,36 @@ void Compiler::errorf(const location& loc, const char* format, ...)
 	error(out.str(), loc);
 }
 
-void Compiler::emitAST(ast::Node* tree)
+void Compiler::genCode()
 {
-	if (!tree) {
+	if (!m_tree) {
 		return;
 	}
 
+	ast::Node* tree = m_tree;
+
 	if (m_flags & USE_OPTIMIZER) {
 		ast::Evaluator evaluator;
-		tree = tree->accept(evaluator);
+		tree = m_tree->accept(evaluator);
 	}
+
 	if (m_flags & DUMP_AST) {
 		ast::Dumper astdump;
 		tree->accept(astdump);
 	}
 
-	ast::Resolver resolver(this);
+	ast::Resolver resolver(m_pkg, getNamespace());
 	tree->accept(resolver);
 
 	if (!(m_flags & PARSER_ONLY)) {
-		m_scope_pool = resolver.getSymTable()->flatten();
-
-		for (size_t i = 0; i < m_scope_pool.size(); i++) {
-			m_scope_pool[i]->setId(i);
-		}
-
 		m_global_env = resolver.getGlobalEnv();
 
-		ast::Codegen codegen(m_ir, this, m_global_env);
+		m_builder = new IRBuilder(m_global_env, resolver.getSymTable());
+
+		ast::Codegen codegen(m_builder);
 		tree->accept(codegen);
 
-		m_const_env = codegen.getConstEnv();
-		m_temp_env  = codegen.getTempEnv();
-
-		m_ir.push_back(IR(OP_HALT));
+		m_builder->push(OP_HALT);
 	}
 
 	clever_delete_var(tree);

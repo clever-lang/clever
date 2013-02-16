@@ -1,0 +1,17 @@
+Testing Reflect::isString() methods
+==CODE==
+import std.io.*;
+import std.reflection.*;
+
+var a = Reflect.new(1);
+println(a.isString());
+
+a = Reflect.new(1.2);
+println(a.isString());
+
+a = Reflect.new("foo");
+println(a.isString());
+==RESULT==
+0
+0
+1

@@ -11,53 +11,57 @@
 #include "modules/std/fcgi/fcgi.h"
 #include "modules/std/fcgi/server.h"
 
-namespace clever { namespace packages { namespace std {
+namespace clever { namespace modules { namespace std {
 
 const size_t CLEVER_FCGI_STDIN_MAX = 1000000;
 
-void Server::dump(const void* data) const
-{
-	dump(data, ::std::cout);
-}
-
-void Server::dump(const void* data, ::std::ostream& out) const
-{
-	Value::DataValue* dvalue = (Value::DataValue*)data;
-	if (dvalue) {
-		FCGX_Request* uvalue = CLEVER_GET_OBJECT(FCGX_Request*, dvalue->obj);
-		if (uvalue) {
-			/* do something here, the user has printed a request */
-		}
-	}
-}
-
 // Server.new()
 // Setup the process for responding to FCGI requests by creating a new Request object
-void* Server::allocData(CLEVER_TYPE_CTOR_ARGS) const
+TypeObject* Server::allocData(CLEVER_TYPE_CTOR_ARGS) const
 {
-	FCGX_Request* request = new FCGX_Request;
-	if (request) {
-		if (FCGX_InitRequest(request, 0, 0) == 0) {
-			return request;
+	ServerObject* server = new ServerObject;
+
+	if (server->request) {
+		if (FCGX_InitRequest(server->request, 0, 0) == 0) {
+			return server;
 		}
-		delete request;
+		delete server;
 	}
 	return NULL;
 }
 
 void Server::deallocData(void* data)
 {
-	delete static_cast<FCGX_Request*>(data);
+	delete static_cast<ServerObject*>(data);
+}
+
+// Server constructor
+CLEVER_METHOD(Server::ctor)
+{
+	if (!clever_check_no_args()) {
+		return;
+	}
+
+	result->setObj(this, allocData(&args));
 }
 
 // Server.accept()
 // Accepts the next FCGI Request
 CLEVER_METHOD(Server::accept)
 {
-	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
+	if (!clever_check_no_args()) {
+		return;
+	}
+
+	ServerObject* sobj = CLEVER_GET_OBJECT(ServerObject*, CLEVER_THIS());
+	FCGX_Request* request = sobj->request;
 
 	if (!request) {
-		CLEVER_RETURN_BOOL(false);
+		result->setBool(false);
+		return;
+	}
+
+	if (!clever_check_no_args()) {
 		return;
 	}
 
@@ -65,13 +69,13 @@ CLEVER_METHOD(Server::accept)
 	out->clear();
 
 	if (FCGX_Accept(&request->in, &request->out, &request->err, &request->envp) != 0) {
-		CLEVER_RETURN_BOOL(false);
+		result->setBool(false);
 		return;
 	}
 
 	const char* const* n = request->envp;
 	if (!n) {
-		CLEVER_RETURN_BOOL(false);
+		result->setBool(false);
 		return;
 	}
 
@@ -153,14 +157,19 @@ CLEVER_METHOD(Server::accept)
 		}
 		++n;
 	}
-	CLEVER_RETURN_BOOL(true);
+	result->setBool(true);
 }
 
 // Server.print(string text, [...])
 // Prints to the FCGI standard output
 CLEVER_METHOD(Server::print)
 {
-	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
+	if (!clever_check_args("s*")) {
+		return;
+	}
+
+	ServerObject* sobj = CLEVER_GET_OBJECT(ServerObject*, CLEVER_THIS());
+	FCGX_Request* request = sobj->request;
 
 	if (request) {
 		if (!out->inBody()) {
@@ -169,9 +178,9 @@ CLEVER_METHOD(Server::print)
 		}
 
 		for (size_t arg = 0; arg < args.size(); arg++) {
-			if (CLEVER_ARG_TYPE(arg) == CLEVER_STR_TYPE) {
-				FCGX_PutStr(CLEVER_ARG_CSTR(arg)->c_str(),
-					CLEVER_ARG_CSTR(arg)->size(), request->out);
+			if (args[arg]->isStr()) {
+				FCGX_PutStr(args[arg]->getStr()->c_str(),
+					args[arg]->getStr()->size(), request->out);
 			}
 		}
 	}
@@ -182,10 +191,19 @@ CLEVER_METHOD(Server::print)
 // Flushes the FCGI standard output buffer
 CLEVER_METHOD(Server::flush)
 {
-	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
+	if (!clever_check_no_args()) {
+		return;
+	}
+
+	ServerObject* sobj = CLEVER_GET_OBJECT(ServerObject*, CLEVER_THIS());
+	FCGX_Request* request = sobj->request;
+
+	if (!clever_check_no_args()) {
+		return;
+	}
 
 	if (request) {
-		CLEVER_RETURN_BOOL((FCGX_FFlush(request->out) == 0));
+		result->setBool((FCGX_FFlush(request->out) == 0));
 	} else {
 		result->setNull();
 	}
@@ -195,10 +213,19 @@ CLEVER_METHOD(Server::flush)
 // Closes the FCGI standard output, disconnecting the client
 CLEVER_METHOD(Server::finish)
 {
-	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
+	if (!clever_check_no_args()) {
+		return;
+	}
+
+	ServerObject* sobj = CLEVER_GET_OBJECT(ServerObject*, CLEVER_THIS());
+	FCGX_Request* request = sobj->request;
+
+	if (!clever_check_no_args()) {
+		return;
+	}
 
 	if (request) {
-		CLEVER_RETURN_BOOL((FCGX_FClose(request->out) == 0));
+		result->setBool((FCGX_FClose(request->out) == 0));
 	} else {
 		result->setNull();
 	}
@@ -208,18 +235,22 @@ CLEVER_METHOD(Server::finish)
 // Fetches environment information, returns map when no param specified
 CLEVER_METHOD(Server::getEnvironment)
 {
-	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
+	if (!clever_check_args("|s")) {
+		return;
+	}
+
+	ServerObject* sobj = CLEVER_GET_OBJECT(ServerObject*, CLEVER_THIS());
+	FCGX_Request* request = sobj->request;
 
 	if (!request) {
-		result->setNull();
 		return;
 	}
 
 	if (args.size()) {
-		CLEVER_FCGI_ITERATOR it = CLEVER_FCGI_FIND(in->env, CLEVER_ARG_PSTR(0));
+		CLEVER_FCGI_ITERATOR it = CLEVER_FCGI_FIND(in->env, args[0]->getStr()->c_str());
 
 		if (it != CLEVER_FCGI_END(in->env)) {
-			CLEVER_RETURN_STR(CLEVER_FCGI_FETCH(it));
+			result->setStr(CLEVER_FCGI_FETCH(it));
 			return;
 		}
 		result->setNull();
@@ -235,7 +266,7 @@ CLEVER_METHOD(Server::getEnvironment)
 			++item;
 		}
 
-		CLEVER_RETURN_MAP(CLEVER_MAP_TYPE->allocData(&mapping));
+		result->setObj(CLEVER_MAP_TYPE, CLEVER_MAP_TYPE->allocData(&mapping));
 	}
 }
 
@@ -243,22 +274,23 @@ CLEVER_METHOD(Server::getEnvironment)
 // Fetches a request parameter
 CLEVER_METHOD(Server::getParam)
 {
-	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
+	if (!clever_check_args("s")) {
+		return;
+	}
+
+	ServerObject* sobj = CLEVER_GET_OBJECT(ServerObject*, CLEVER_THIS());
+	FCGX_Request* request = sobj->request;
 
 	if (!request) {
 		result->setNull();
 		return;
 	}
 
-	if (!clever_check_args("s")) {
-		return;
-	}
-
 	if (in->params->size()) {
-		CLEVER_FCGI_ITERATOR it = CLEVER_FCGI_FIND(in->params, CLEVER_ARG_PSTR(0));
+		CLEVER_FCGI_ITERATOR it = CLEVER_FCGI_FIND(in->params, args[0]->getStr()->c_str());
 
 		if (it != CLEVER_FCGI_END(in->params)) {
-			CLEVER_RETURN_STR(CLEVER_FCGI_FETCH(it));
+			result->setStr(CLEVER_FCGI_FETCH(it));
 			return;
 		}
 	}
@@ -270,21 +302,22 @@ CLEVER_METHOD(Server::getParam)
 // Fetches a request header (all upper-case, eg HOST not host, CONTENT_TYPE not content-type)
 CLEVER_METHOD(Server::getHeader)
 {
-	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
+	if (!clever_check_args("s")) {
+		return;
+	}
+
+	ServerObject* sobj = CLEVER_GET_OBJECT(ServerObject*, CLEVER_THIS());
+	FCGX_Request* request = sobj->request;
 
 	if (!request) {
 		result->setNull();
 		return;
 	}
 
-	if (!clever_check_args("s")) {
-		return;
-	}
-
 	if (in->head->size()) {
-		CLEVER_FCGI_ITERATOR it = CLEVER_FCGI_FIND(in->head, CLEVER_ARG_PSTR(0));
+		CLEVER_FCGI_ITERATOR it = CLEVER_FCGI_FIND(in->head, args[0]->getStr()->c_str());
 		if (it != CLEVER_FCGI_END(in->head)) {
-			CLEVER_RETURN_STR(CLEVER_FCGI_FETCH(it));
+			result->setStr(CLEVER_FCGI_FETCH(it));
 			return;
 		}
 	}
@@ -295,22 +328,22 @@ CLEVER_METHOD(Server::getHeader)
 // Fetches a request cookie
 CLEVER_METHOD(Server::getCookie)
 {
-	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
-
-	if (!request) {
-		result->setNull();
-		return;
-	}
-
 	if (!clever_check_args("s")) {
 		return;
 	}
 
+	ServerObject* sobj = CLEVER_GET_OBJECT(ServerObject*, CLEVER_THIS());
+	FCGX_Request* request = sobj->request;
+
+	if (!request) {
+		return;
+	}
+
 	if (in->cookie->size()) {
-		CLEVER_FCGI_ITERATOR it = CLEVER_FCGI_FIND(in->cookie, CLEVER_ARG_PSTR(0));
+		CLEVER_FCGI_ITERATOR it = CLEVER_FCGI_FIND(in->cookie, args[0]->getStr()->c_str());
 
 		if ((it != CLEVER_FCGI_END(in->cookie))) {
-			CLEVER_RETURN_STR(CLEVER_FCGI_FETCH(it));
+			result->setStr(CLEVER_FCGI_FETCH(it));
 			return;
 		}
 	}
@@ -321,10 +354,14 @@ CLEVER_METHOD(Server::getCookie)
 // Prints the request environment to the FCGI standard output
 CLEVER_METHOD(Server::debug)
 {
-	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
+	if (!clever_check_no_args()) {
+		return;
+	}
+
+	ServerObject* sobj = CLEVER_GET_OBJECT(ServerObject*, CLEVER_THIS());
+	FCGX_Request* request = sobj->request;
 
 	if (!request) {
-		result->setNull();
 		return;
 	}
 
@@ -345,10 +382,14 @@ CLEVER_METHOD(Server::debug)
 // Will return a Map of request parameters
 CLEVER_METHOD(Server::getParams)
 {
-	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
+	if (!clever_check_no_args()) {
+		return;
+	}
+
+	ServerObject* sobj = CLEVER_GET_OBJECT(ServerObject*, CLEVER_THIS());
+	FCGX_Request* request = sobj->request;
 
 	if (!request) {
-		result->setNull();
 		return;
 	}
 
@@ -363,17 +404,21 @@ CLEVER_METHOD(Server::getParams)
 		++item;
 	}
 
-	CLEVER_RETURN_MAP(CLEVER_MAP_TYPE->allocData(&mapping));
+	result->setObj(CLEVER_MAP_TYPE, CLEVER_MAP_TYPE->allocData(&mapping));
 }
 
 // Server.getHeaders()
 // Will return a Map of request headers
 CLEVER_METHOD(Server::getHeaders)
 {
-	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
+	if (!clever_check_no_args()) {
+		return;
+	}
+
+	ServerObject* sobj = CLEVER_GET_OBJECT(ServerObject*, CLEVER_THIS());
+	FCGX_Request* request = sobj->request;
 
 	if (!request) {
-		result->setNull();
 		return;
 	}
 
@@ -388,17 +433,21 @@ CLEVER_METHOD(Server::getHeaders)
 		++item;
 	}
 
-	CLEVER_RETURN_MAP(CLEVER_MAP_TYPE->allocData(&mapping));
+	result->setObj(CLEVER_MAP_TYPE, CLEVER_MAP_TYPE->allocData(&mapping));
 }
 
 // Server.getCookies()
 // Will return a Map of request cookies
 CLEVER_METHOD(Server::getCookies)
 {
-	FCGX_Request* request = CLEVER_GET_OBJECT(FCGX_Request*, CLEVER_THIS());
+	if (!clever_check_no_args()) {
+		return;
+	}
+
+	ServerObject* sobj = CLEVER_GET_OBJECT(ServerObject*, CLEVER_THIS());
+	FCGX_Request* request = sobj->request;
 
 	if (!request) {
-		result->setNull();
 		return;
 	}
 
@@ -413,7 +462,7 @@ CLEVER_METHOD(Server::getCookies)
 		++item;
 	}
 
-	CLEVER_RETURN_MAP(CLEVER_MAP_TYPE->allocData(&mapping));
+	result->setObj(CLEVER_MAP_TYPE, CLEVER_MAP_TYPE->allocData(&mapping));
 }
 
 // Server.setHeader(string key, string value)
@@ -424,7 +473,7 @@ CLEVER_METHOD(Server::setHeader)
 		return;
 	}
 
-	out->head->insert(CLEVER_FCGI_PAIR(CLEVER_ARG_PSTR(0), CLEVER_ARG_PSTR(1)));
+	out->head->insert(CLEVER_FCGI_PAIR(args[0]->getStr()->c_str(), args[1]->getStr()->c_str()));
 }
 
 // Server.setCookie(string key, string value, [string path, [string expires]])
@@ -435,11 +484,13 @@ CLEVER_METHOD(Server::setCookie)
 		return;
 	}
 
-	out->cookie->insert(CLEVER_FCGI_PAIR(CLEVER_ARG_PSTR(0), CLEVER_ARG_PSTR(1)));
+	out->cookie->insert(CLEVER_FCGI_PAIR(args[0]->getStr()->c_str(), args[1]->getStr()->c_str()));
 }
 
 CLEVER_TYPE_INIT(Server::init)
 {
+	setConstructor((MethodPtr)&Server::ctor);
+
 	// IO
 	addMethod(new Function("accept", (MethodPtr)&Server::accept));
 	addMethod(new Function("print",  (MethodPtr)&Server::print));
@@ -463,4 +514,4 @@ CLEVER_TYPE_INIT(Server::init)
 	addMethod(new Function("debug",		(MethodPtr)&Server::debug));
 }
 
-}}} // clever::packages::std
+}}} // clever::modules::std

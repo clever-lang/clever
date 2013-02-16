@@ -8,13 +8,13 @@
 #ifndef CLEVER_NATIVE_TYPES_H
 #define CLEVER_NATIVE_TYPES_H
 
-#include "types/int.h"
-#include "types/double.h"
-#include "types/str.h"
-#include "types/function.h"
-#include "types/bool.h"
-#include "types/array.h"
-#include "types/map.h"
+#include "modules/std/core/int.h"
+#include "modules/std/core/double.h"
+#include "modules/std/core/str.h"
+#include "modules/std/core/function.h"
+#include "modules/std/core/bool.h"
+#include "modules/std/core/array.h"
+#include "modules/std/core/map.h"
 #include "types/thread.h"
 
 #endif // CLEVER_NATIVE_TYPES_H

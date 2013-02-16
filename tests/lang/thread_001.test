@@ -1,4 +1,8 @@
 Testing threads
+==CHECK==
+if (!Clever.hasThreads()) {
+	println("skip");
+}
 ==CODE==
 import std.io.*;
 
@@ -7,7 +11,7 @@ var memude = 555;
 function f(a,b=println)
 {
 	var i = 3;
-	while (i) {
+	while (i > 0) {
 		critical {
 			b(a);
 			memude = 666;
@@ -15,26 +19,27 @@ function f(a,b=println)
 
 		--i;
 	}
-} 
+}
 
 
 var i = 5;
-while (i) {
+while (i > 0) {
 	var a = i;
-	spawn threads { 
-		f(a, println); 
-	} 
+	process threads {
+		f(a, println);
+	}
 
+	threads.run();
 	i--;
-	wait threads;
+	threads.wait();
 
 }
 
 
-spawn thread {
+process thread {
 	var i = 10;
 
-	while (i) {
+	while (i > 0) {
 		critical {
 			println(memude);
 		}
@@ -42,8 +47,8 @@ spawn thread {
 		--i;
 	}
 }
-
-wait thread;
+thread.run();
+thread.wait();
 
 ==RESULT==
 5

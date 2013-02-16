@@ -16,11 +16,6 @@
 
 namespace clever {
 
-/// Interpreter constructor
-Interpreter::Interpreter(int* argc, char*** argv) : Driver()
-{
-}
-
 /// Executes the script
 void Interpreter::execute(bool interactive)
 {
@@ -28,20 +23,21 @@ void Interpreter::execute(bool interactive)
 		return;
 	}
 
-	VM vm(m_compiler.getIR());
-
-	vm.setConstEnv(m_compiler.getConstEnv());
-	vm.setTempEnv(m_compiler.getTempEnv());
-	vm.setGlobalEnv(m_compiler.getGlobalEnv());
-
-#ifdef CLEVER_DEBUG
-	if (m_dump_opcode) {
-		vm.dumpOpcodes();
-	}
-#endif
 	int status = setjmp(fatal_error);
 
 	if (status == 0) {
+		m_compiler.genCode();
+
+		VM vm(m_compiler.getIR());
+
+		vm.setConstEnv(m_compiler.getConstEnv());
+		vm.setGlobalEnv(m_compiler.getGlobalEnv());
+
+#ifdef CLEVER_DEBUG
+		if (m_dump_opcode) {
+			vm.dumpOpcodes();
+		}
+#endif
 		vm.run();
 	}
 }
@@ -76,9 +72,10 @@ void Driver::readFile(std::string& source) const
 
 /// Starts the parsing of the supplied file
 /// \returns -1 when a parser error happens, otherwise 0 is returned
-int Driver::loadFile(const std::string& filename)
+int Driver::loadFile(const std::string& filename, const std::string& ns_name)
 {
 	m_compiler.setFlags(m_cflags);
+	m_compiler.setNamespace(ns_name);
 
 	ScannerState* new_scanner = new ScannerState;
 	Parser parser(*this, *new_scanner, m_compiler);
@@ -99,12 +96,7 @@ int Driver::loadFile(const std::string& filename)
 	// Bison debug option
 	parser.set_debug_level(m_trace_parsing);
 
-	int status = setjmp(fatal_error);
-	int result = 1;
-
-	if (status == 0) {
-		result = parser.parse();
-	}
+	int result = parser.parse();
 
 	delete new_scanner;
 	m_scanners.pop();
@@ -137,12 +129,7 @@ int Driver::loadStr(const std::string& code, bool importStd)
 	// Bison debug option
 	parser.set_debug_level(m_trace_parsing);
 
-	int status = setjmp(fatal_error);
-	int result = 1;
-
-	if (status == 0) {
-		result = parser.parse();
-	}
+	int result = parser.parse();
 
 	delete new_scanner;
 	m_scanners.pop();

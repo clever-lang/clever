@@ -18,7 +18,8 @@
 # include <unistd.h>
 #endif
 
-TestRunner::~TestRunner() {
+TestRunner::~TestRunner()
+{
 	std::vector<std::string>::iterator it;
 
 	for (it = tmp_files.begin(); it != tmp_files.end(); ++it) {
@@ -26,7 +27,8 @@ TestRunner::~TestRunner() {
 	}
 }
 
-void TestRunner::show_result(void) const {
+bool TestRunner::show_result() const
+{
 	clock_t end_time;
 	double duration;
 
@@ -39,26 +41,35 @@ void TestRunner::show_result(void) const {
 	std::cout << "-----------------------------------" << std::endl;
 	std::cout << "Passed tests: " << pass << std::endl;
 	std::cout << "Failed tests: " << fail << std::endl;
+	std::cout << "Skipped tests: " << skip << std::endl;
 
 #ifndef _WIN32
 	if (valgrind) {
 		std::cout << "Leaked tests: " << leak << std::endl;
+	}
+	if (helgrind) {
+		std::cout << "Race detecteds: " << races << std::endl;
 	}
 #endif
 
 	std::cout << "-----------------------------------" << std::endl;
 	std::cout << "Time taken: " << duration << "ms" << std::endl;
 	std::cout << "-----------------------------------" << std::endl;
+
+	return fail == 0;
 }
 
-void TestRunner::find(char* dir) {
+void TestRunner::find(const char* dir)
+{
 	DIR *dp;
 	std::fstream filep;
 	std::string path;
 
-	// Ignore .log files
+	// Ignore .log and .mem files
 	path = std::string(dir);
-	if ((path.size()-4 == path.rfind(".log")) || (path.size()-4 == path.rfind(".mem"))) {
+	if ((path.size()-4 == path.rfind(".log"))
+		|| (path.size()-4 == path.rfind(".mem"))
+		|| (path.size()-5 == path.rfind(".race"))) {
 		return;
 	}
 
@@ -81,12 +92,43 @@ void TestRunner::find(char* dir) {
 	}
 }
 
-void TestRunner::run(void) {
+void TestRunner::runSection(const std::string& tmp_file)
+{
+	std::string command = std::string("./clever ") + tmp_file + " 2>&1";
+	FILE* fp = popen(command.c_str(), "r");
+	char result[300] = {0};
+
+	if (fread(result, 1, sizeof(result)-1, fp) == 0 && ferror(fp) != 0) {
+		std::cout << "Something went wrong reading the result." << std::endl;
+		exit(1);
+	}
+
+	pclose(fp);
+}
+
+bool TestRunner::checkTest(const std::string& tmp_file)
+{
+	std::string command = std::string("./clever ") + tmp_file + " 2>&1";
+	FILE* fp = popen(command.c_str(), "r");
+	char result[300] = {0};
+
+	if (fread(result, 1, sizeof(result)-1, fp) == 0 && ferror(fp) != 0) {
+		std::cout << "Something went wrong reading the result." << std::endl;
+		exit(1);
+	}
+
+	pclose(fp);
+
+	return strstr(result, "skip") == NULL;
+}
+
+void TestRunner::run()
+{
 	FILE *fp;
 	std::vector<std::string>::iterator it;
-	std::string file_name, tmp_file;
+	std::string file_name, tmp_file, check_file, startup_file;
 	bool show_all_results = true, last_ok = true;
-	pcrecpp::RE regex("((?s:.(?!==CODE==))+)\\s*==CODE==\\s*((?s:.(?!==RESULT==))+)\\s*==RESULT==\\s*((?s:.+))\\s+");
+	pcrecpp::RE regex("((?s:.(?!==(?:CODE|CHECK|STARTUP|SHUTDOWN)==))+)\\s*(?:==CHECK==\\s*((?s:.(?!==(?:STARTUP|SHUTDOWN|CODE)==))+))?\\s*(?:==STARTUP==\\s*((?s:.(?!==(?:SHUTDOWN|CODE)==))+))?\\s*(?:==SHUTDOWN==\\s*((?s:.(?!==CODE==))+))?\\s*==CODE==\\s*((?s:.(?!==RESULT==))+)\\s*==RESULT==\\s*((?s:.+))\\s+");
 
 	if (!files.size()) {
 		std::cout << "No files found.";
@@ -99,17 +141,49 @@ void TestRunner::run(void) {
 
 	for (it = files.begin(); it != files.end(); ++it) {
 		char result[300] = {0};
-		std::string title, source, expect, log_line, command;
+		std::string title, check, startup, shutdown, source, expect, log_line, command;
 		size_t filesize = 0;
 		clock_t test_start_time, test_end_time;
 
 		file_name = *it;
 
 		tmp_file = file_name + ".tmp";
+		check_file = file_name + ".check.tmp";
+		startup_file = file_name + ".setup.tmp";
 
-		regex.FullMatch(read_file(file_name.c_str()), &title, &source, &expect);
+		regex.FullMatch(read_file(file_name.c_str()), &title, &check, &startup, &shutdown, &source, &expect);
+
+		if (!title.size()) {
+			std::cerr << "Test error: malformed test detected (" << file_name << ")" << std::endl;
+			exit(1);
+		}
+
+		if (check.size()) {
+			check = "import std.*;\n" + check;
+
+			write_file(check_file, check);
+
+			bool ok = checkTest(check_file);
+
+			unlink(check_file.c_str());
+
+			if (!ok) {
+				++skip;
+				continue;
+			}
+		}
+
+		if (startup.size()) {
+			startup = "import std.*;\n" + startup;
+			write_file(startup_file, startup);
+			runSection(startup_file);
+			std::cout << startup << std::endl;
+			unlink(startup_file.c_str());
+		}
 
 		write_file(tmp_file, source);
+
+		std::cout << "\r[....] " << title << " (" << file_name << ")" << std::flush;
 
 		// We should save the start time here.
 		test_start_time = clock();
@@ -118,11 +192,13 @@ void TestRunner::run(void) {
 		if (valgrind) {
 			command = std::string("GLIBCXX_FORCE_NEW=yes valgrind -q --tool=memcheck --leak-check=yes --num-callers=30 --show-reachable=yes --track-origins=yes --log-file=") + file_name + std::string(".mem");
 			command = command + std::string(" ./clever ") + tmp_file + " 2>&1";
-			fp = popen(command.c_str(), "r");
+		} else if (helgrind) {
+			command = std::string("valgrind -q --tool=helgrind --num-callers=30 --log-file=") + file_name + std::string(".race");
+			command = command + std::string(" ./clever ") + tmp_file + " 2>&1";
 		} else {
 			command = std::string("./clever ") + tmp_file + " 2>&1";
-			fp = popen(command.c_str(), "r");
 		}
+		fp = popen(command.c_str(), "r");
 #else
 		command = std::string("clever.exe ") + tmp_file + " 2>&1";
 		fp = _popen(command.c_str(), "r");
@@ -143,54 +219,80 @@ void TestRunner::run(void) {
 		// Valgrind log is empty?
 #ifndef _WIN32
 		if (valgrind) {
-			filesize = file_size(file_name + std::string(".mem"));
+			filesize = fileSize(file_name + std::string(".mem"));
 			if (filesize == 0) {
 				unlink(std::string(file_name + std::string(".mem")).c_str());
 			} else {
-				std::cout << "[LEAK] ";
+				std::cout << "\r[LEAK] ";
 				leak++;
+				last_ok = false;
+			}
+		} else if (helgrind) {
+			filesize = fileSize(file_name + std::string(".race"));
+			if (filesize == 0) {
+				unlink(std::string(file_name + std::string(".race")).c_str());
+			} else {
+				std::cout << "\r[RACE] ";
+				races++;
 				last_ok = false;
 			}
 		}
 #endif
 		if (!valgrind) {
 			// If the mem log file exists, then remove it.
-			if (file_exists(file_name + ".mem")) {
+			if (fileExists(file_name + ".mem")) {
 				unlink(std::string(file_name + ".mem").c_str());
+			}
+		}
+		if (!helgrind) {
+			if (fileExists(file_name + ".race")) {
+				unlink(std::string(file_name + ".race").c_str());
 			}
 		}
 
 		if (pcrecpp::RE(expect).FullMatch(result)) {
-			if ((valgrind && filesize == 0) || !valgrind) {
+			if ((valgrind && filesize == 0) || (helgrind && filesize == 0)
+				|| !(valgrind || helgrind)) {
 				if (show_all_results) {
-					std::cout << "[OKAY] ";
+					std::cout << "\r[OKAY] ";
 				}
 				last_ok = true;
 			}
 			pass++;
 
 			// If the log file exists, then remove it.
-			if (file_exists(file_name + ".log")) {
+			if (fileExists(file_name + ".log")) {
 				unlink(std::string(file_name + ".log").c_str());
 			}
 		} else {
-			if ((valgrind && filesize == 0) || !valgrind) {
-				std::cout << "[FAIL] ";
+			if ((valgrind && filesize == 0)
+				|| (helgrind && filesize == 0)
+				|| !(valgrind || helgrind)) {
+				std::cout << "\r[FAIL] ";
 				last_ok = false;
 			}
 			log_line = std::string("== Expected ==\n") + expect + std::string("\n");
 			log_line.append(std::string("== Got ==\n") + std::string(result));
-			write_log(file_name,log_line);
+			writeLog(file_name, log_line);
 			fail++;
 		}
 
-		if (show_all_results == true || last_ok == false) {
-			std::cout << title << " (" << file_name << ")" << " - " << ((test_end_time - test_start_time)*1000/CLOCKS_PER_SEC) << "ms" << std::endl;
+		if (!(show_all_results == true || last_ok == false)) {
+			std::cout << "\r[PASS] ";
+		}
+		std::cout << title << " (" << file_name << ")" << " - " << ((test_end_time - test_start_time)*1000/CLOCKS_PER_SEC) << "ms" << std::endl;
+
+		if (shutdown.size()) {
+			shutdown = "import std.*;\n" + shutdown;
+			write_file(startup_file, shutdown);
+			runSection(startup_file);
+			unlink(startup_file.c_str());
 		}
 	}
 }
 
-void TestRunner::write_file(std::string& name, std::string& source) {
+void TestRunner::write_file(std::string& name, std::string& source)
+{
 	std::ofstream file(name.c_str());
 
 	file << source;
@@ -199,7 +301,8 @@ void TestRunner::write_file(std::string& name, std::string& source) {
 	tmp_files.push_back(name);
 }
 
-std::string TestRunner::read_file(const char* name) const {
+std::string TestRunner::read_file(const char* name) const
+{
 	std::string source, line;
 	std::ifstream file;
 
@@ -219,7 +322,8 @@ std::string TestRunner::read_file(const char* name) const {
 	return source;
 }
 
-void TestRunner::load_folder(const char* dir) {
+void TestRunner::load_folder(const char* dir)
+{
 	DIR *dp, *dpr;
 	struct dirent *dirp;
 	std::string path,file;
@@ -230,12 +334,15 @@ void TestRunner::load_folder(const char* dir) {
 				strcmp(dirp->d_name, "..") == 0 ||
 				strstr(dirp->d_name, ".tmp") ||
 				strstr(dirp->d_name, ".svn") ||
-                strstr(dirp->d_name, ".gitignore")) {
+				strstr(dirp->d_name, ".gitignore")) {
 				continue;
 			}
 			// Ignore .log files
 			file = std::string(dirp->d_name);
-			if ((file.size()-4 == file.rfind(".log")) || (file.size()-4 == file.rfind(".mem"))) {
+			if ((file.size() > 4 &&
+				(file.size()-4 == file.rfind(".log")
+				|| file.size()-4 == file.rfind(".mem")))
+				|| (file.size() > 5 && file.size()-5 == file.rfind(".race"))) {
 				continue;
 			}
 			// Is this a folder or a file?
@@ -256,31 +363,19 @@ void TestRunner::load_folder(const char* dir) {
 	}
 }
 
-std::string TestRunner::extract_folder(const char* file) const {
-	std::string path;
-	size_t found;
+void TestRunner::writeLog(const std::string& testname, const std::string& message)
+{
+	std::string filename = testname + ".log";
+	FILE *log = fopen(filename.c_str(),"w");
 
-	path = std::string(file);
-	found = path.rfind("/");
-	if (found != path.npos) {
-		path = path.substr(0,found+1);
-	}
-
-	return path;
-}
-
-void TestRunner::write_log(std::string testname, std::string message) {
-	FILE *log;
-
-	testname = testname + ".log";
-	log = fopen(testname.c_str(),"w");
 	if (log) {
-		fputs(message.c_str(),log);
+		fputs(message.c_str(), log);
 		fclose(log);
 	}
 }
 
-size_t TestRunner::file_size(std::string file) {
+size_t TestRunner::fileSize(const std::string& file)
+{
 	std::ifstream stream;
 	size_t length;
 
@@ -296,7 +391,8 @@ size_t TestRunner::file_size(std::string file) {
 	return 0;
 }
 
-bool TestRunner::file_exists(std::string file) {
+bool TestRunner::fileExists(const std::string& file)
+{
 	std::ifstream stream;
 
 	stream.open(file.c_str());
@@ -312,10 +408,11 @@ bool TestRunner::file_exists(std::string file) {
 
 void usage(void)
 {
-	std::cout << "Clever Language - Testrunner" << std::endl;
+	std::cout << "Clever programming language - Testrunner" << std::endl;
 	std::cout << "Usage: testrunner [options] path-of-test-file/dir" << std::endl;
 #ifndef _WIN32
-	std::cout << "\t-m: run valgrind on each test" << std::endl;
+	std::cout << "\t-m: run memcheck on each test (requires Valgrind)" << std::endl;
+	std::cout << "\t-r: run helgrind on each test (requires Valgrind)" << std::endl;
 #endif
 	std::cout << "\t-q: only list failing tests" << std::endl;
 }
@@ -339,6 +436,8 @@ int main(int argc, char *argv[])
 #endif
 			} else if (std::string(argv[i]) == "-q") {
 				testrunner.setFlags(TestRunner::FAIL_ONLY);
+			} else if (std::string(argv[i]) == "-r") {
+				testrunner.helgrind = true;
 			} else {
 				start_paths = i;
 			}
@@ -354,7 +453,6 @@ int main(int argc, char *argv[])
 		testrunner.find(argv[start_paths]);
 	}
 	testrunner.run();
-	testrunner.show_result();
 
-	return 0;
+	return !testrunner.show_result();
 }

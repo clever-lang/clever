@@ -11,13 +11,13 @@
 #include "core/module.h"
 #include "types/type.h"
 
-namespace clever { namespace packages { namespace std {
+namespace clever { namespace modules { namespace std {
 
 /// Standard Math Module
 class Math : public Module {
 public:
 	Math()
-		: Module("Math") {}
+		: Module("std.math") {}
 
 	~Math() {}
 
@@ -26,6 +26,6 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(Math);
 };
 
-}}} // clever::packages::std
+}}} // clever::modules::std
 
 #endif // CLEVER_STD_MATH_H

@@ -13,31 +13,31 @@
 #include "core/value.h"
 #include "modules/std/net/csocket.h"
 
-namespace clever { namespace packages { namespace std { namespace net {
+namespace clever { namespace modules { namespace std { namespace net {
 
-class SocketObject : public ValueObject {
+class SocketObject : public TypeObject {
 public:
-	SocketObject()
-		: ValueObject() {}
+	SocketObject() {}
 
-	virtual ~SocketObject() {}
+	~SocketObject() {}
 
 	CSocket& getSocket() { return m_socket; }
 private:
 	CSocket m_socket;
+
+	DISALLOW_COPY_AND_ASSIGN(SocketObject);
 };
 
 class TcpSocket : public Type {
 public:
 	TcpSocket() :
-		Type(CSTRING("TcpSocket")) { }
+		Type("TcpSocket") { }
 
 	void init();
-	void* allocData(CLEVER_TYPE_CTOR_ARGS) const;
-	void deallocData(void*);
+	void dump(TypeObject* value, ::std::ostream& out) const { out << "TcpSocket"; }
 
-	void dump(const void* value) const { dump(value, ::std::cout); }
-	void dump(const void* value, ::std::ostream& out) const { out << "TcpSocket"; }
+	TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
+	void deallocData(void*);
 
 	// Type methods
 	CLEVER_METHOD(setHost);
@@ -58,6 +58,6 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(TcpSocket);
 };
 
-}}}} // clever::packages::std::net
+}}}} // clever::modules::std::net
 
 #endif // CLEVER_TCPSOCKET_H

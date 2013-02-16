@@ -1,0 +1,17 @@
+Testing Reflect::isArray() methods
+==CODE==
+import std.io.*;
+import std.reflection.*;
+
+var a = Reflect.new(1);
+println(a.isArray());
+
+a = Reflect.new(1.2);
+println(a.isArray());
+
+a = Reflect.new([1, 2, 3]);
+println(a.isArray());
+==RESULT==
+0
+0
+1

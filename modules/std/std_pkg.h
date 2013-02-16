@@ -12,22 +12,20 @@
 #include "modules/std/std_forwarder.h"
 #include "core/module.h"
 
-namespace clever { namespace packages {
+namespace clever { namespace modules {
 
-class Std : public Package {
+class Std : public Module {
 public:
 	Std()
-		: Package("std") { }
+		: Module("std") {}
 
-	~Std() { }
+	~Std() {}
 
-	void init();
-
-	const char* getVersion() const { return NULL; }
+	CLEVER_MODULE_VIRTUAL_METHODS_DECLARATION;
 private:
 	DISALLOW_COPY_AND_ASSIGN(Std);
 };
 
-}} // clever::std_pkg
+}} // clever::modules
 
 #endif // CLEVER_STD_PACKAGE_H

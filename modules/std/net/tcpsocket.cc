@@ -11,9 +11,9 @@
 #include "modules/std/net/tcpsocket.h"
 #include "types/native_types.h"
 
-namespace clever { namespace packages { namespace std { namespace net {
+namespace clever { namespace modules { namespace std { namespace net {
 
-void* TcpSocket::allocData(CLEVER_TYPE_CTOR_ARGS) const
+TypeObject* TcpSocket::allocData(CLEVER_TYPE_CTOR_ARGS) const
 {
 	SocketObject* sv = new SocketObject;
 
@@ -139,7 +139,7 @@ CLEVER_METHOD(TcpSocket::isOpen)
 
 	SocketObject* sv = CLEVER_GET_OBJECT(SocketObject*, CLEVER_THIS());
 
-	CLEVER_RETURN_BOOL(sv->getSocket().isOpen());
+	result->setBool(sv->getSocket().isOpen());
 }
 
 CLEVER_METHOD(TcpSocket::poll)
@@ -150,7 +150,7 @@ CLEVER_METHOD(TcpSocket::poll)
 
 	SocketObject* sv = CLEVER_GET_OBJECT(SocketObject*, CLEVER_THIS());
 
-	CLEVER_RETURN_BOOL(sv->getSocket().poll());
+	result->setBool(sv->getSocket().poll());
 }
 
 CLEVER_METHOD(TcpSocket::good)
@@ -161,7 +161,7 @@ CLEVER_METHOD(TcpSocket::good)
 
 	SocketObject* sv = CLEVER_GET_OBJECT(SocketObject*, CLEVER_THIS());
 
-	CLEVER_RETURN_BOOL(sv->getSocket().getError() == NO_ERROR);
+	result->setBool(sv->getSocket().getError() == NO_ERROR);
 }
 
 CLEVER_METHOD(TcpSocket::getError)
@@ -217,4 +217,4 @@ CLEVER_TYPE_INIT(TcpSocket::init)
 #endif
 }
 
-}}}} // clever::packages::std::net
+}}}} // clever::modules::std::net

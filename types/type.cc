@@ -5,102 +5,270 @@
  * This file is distributed under the MIT license. See LICENSE for details.
  */
 
+#include <algorithm>
 #include "types/type.h"
 #include "core/value.h"
 #include "core/cexception.h"
-#include "types/function.h"
+#include "modules/std/core/function.h"
+#include "types/native_types.h"
 
 namespace clever {
 
-void Type::deallocMembers()
+TypeObject::~TypeObject()
 {
-	PropertyMap::const_iterator it(m_properties.begin()),
-		end(m_properties.end());
+	MemberMap::const_iterator it(m_members.begin()), end(m_members.end());
 
 	while (it != end) {
-		CLEVER_SAFE_DELREF((*it).second);
+		clever_delref((*it).second);
 		++it;
 	}
+}
 
-	MethodMap::const_iterator it2(m_methods.begin()),
-		end2(m_methods.end());
+void TypeObject::copyMembers(const Type* type)
+{
+	const MemberMap& members = type->getMembers();
 
-	while (it2 != end2) {
-		delete it2->second;
-		++it2;
+	if (members.size() > 0) {
+		MemberMap::const_iterator it(members.begin()), end(members.end());
+
+		for (; it != end; ++it) {
+			addMember(it->first, it->second->clone());
+		}
 	}
+}
+
+void Type::deallocMembers()
+{
+	MemberMap::iterator it(m_members.begin()), end(m_members.end());
+
+	while (it != end) {
+		clever_delref((*it).second);
+		(*it).second = 0;
+		++it;
+	}
+}
+
+std::pair<size_t, TypeObject*> Type::serialize(const Value* value) const
+{
+	clever_assert_not_null(value);
+
+	const Type* type = value->getType();
+	size_t size;
+
+	if (type == CLEVER_INT_TYPE) {
+		size = sizeof(IntObject);
+	} else if (type == CLEVER_DOUBLE_TYPE) {
+		size = sizeof(DoubleObject);
+	} else if (type == CLEVER_BOOL_TYPE) {
+		size = sizeof(BoolObject);
+	} else if (type == CLEVER_STR_TYPE) {
+		size = sizeof(StrObject);
+	} else if (type == CLEVER_ARRAY_TYPE) {
+		size = sizeof(ArrayObject);
+	} else if (type == CLEVER_MAP_TYPE) {
+		size = sizeof(MapObject);
+	} else {
+		size = sizeof(TypeObject);
+	}
+
+	return std::pair<size_t, TypeObject*>(size, value->getObj());
+}
+
+Value* Type::unserialize(const Type* type, const std::pair<size_t, TypeObject*>& data) const
+{
+	Value* value = new Value;
+
+	if (type == CLEVER_INT_TYPE) {
+		value->setInt(static_cast<IntObject*>(data.second)->value);
+	} else if (type == CLEVER_DOUBLE_TYPE) {
+		value->setDouble(static_cast<DoubleObject*>(data.second)->value);
+	} else if (type == CLEVER_BOOL_TYPE) {
+		value->setBool(static_cast<BoolObject*>(data.second)->value);
+	} else if (type == CLEVER_STR_TYPE) {
+		value->setStr(static_cast<StrObject*>(data.second)->value);
+	}
+
+	return value;
 }
 
 Function* Type::addMethod(Function* func)
 {
-	m_methods.insert(MethodPair(CSTRING(func->getName()), func));
+	Value* val = new Value;
+
+	clever_assert_not_null(func);
+
+	val->setObj(CLEVER_FUNC_TYPE, func);
+	addMember(CSTRING(func->getName()), val);
 
 	return func;
 }
 
+const Function* Type::getMethod(const CString* name) const
+{
+	Value* val = getMember(name);
+
+	if (val && val->isFunction()) {
+		return static_cast<Function*>(val->getObj());
+	}
+
+	return NULL;
+}
+
+Value* Type::getProperty(const CString* name) const
+{
+	Value* val = getMember(name);
+
+	return (val && !val->isFunction()) ? val : NULL;
+}
+
+const MethodMap Type::getMethods() const
+{
+	MemberMap::const_iterator it(m_members.begin()), end(m_members.end());
+	MethodMap mm;
+
+	while (it != end) {
+		if (it->second->isFunction()) {
+			mm.insert(MethodMap::value_type(
+				it->first, static_cast<Function*>(it->second->getObj())));
+		}
+		++it;
+	}
+
+	return mm;
+}
+
+const PropertyMap Type::getProperties() const
+{
+	MemberMap::const_iterator it(m_members.begin()), end(m_members.end());
+
+	PropertyMap pm;
+
+	while (it != end) {
+		if (!it->second->isFunction()) {
+			pm.insert(*it);
+		}
+		++it;
+	}
+
+	return pm;
+}
+
 CLEVER_TYPE_OPERATOR(Type::add)
 {
-	CLEVER_THROW("Cannot use + operator with %S type", getName());
+	clever_throw("Cannot use + operator with %s type", getName().c_str());
 }
 
 CLEVER_TYPE_OPERATOR(Type::sub)
 {
-	CLEVER_THROW("Cannot use - operator with %S type", getName());
+	clever_throw("Cannot use - operator with %s type", getName().c_str());
 }
 
 CLEVER_TYPE_OPERATOR(Type::mul)
 {
-	CLEVER_THROW("Cannot use * operator with %S type", getName());
+	clever_throw("Cannot use * operator with %s type", getName().c_str());
 }
 
 CLEVER_TYPE_OPERATOR(Type::div)
 {
-	CLEVER_THROW("Cannot use / operator with %S type", getName());
+	clever_throw("Cannot use / operator with %s type", getName().c_str());
 }
 
 CLEVER_TYPE_OPERATOR(Type::mod)
 {
-	CLEVER_THROW("Cannot use % operator with %S type", getName());
+	clever_throw("Cannot use % operator with %s type", getName().c_str());
 }
 
 CLEVER_TYPE_OPERATOR(Type::greater)
 {
-	CLEVER_THROW("Cannot use > operator with %S type", getName());
+	clever_throw("Cannot use > operator with %s type", getName().c_str());
 }
 
 CLEVER_TYPE_OPERATOR(Type::greater_equal)
 {
-	CLEVER_THROW("Cannot use >= operator with %S type", getName());
+	clever_throw("Cannot use >= operator with %s type", getName().c_str());
 }
 
 CLEVER_TYPE_OPERATOR(Type::less)
 {
-	CLEVER_THROW("Cannot use < operator with %S type", getName());
+	clever_throw("Cannot use < operator with %s type", getName().c_str());
 }
 
 CLEVER_TYPE_OPERATOR(Type::less_equal)
 {
-	CLEVER_THROW("Cannot use <= operator with %S type", getName());
+	clever_throw("Cannot use <= operator with %s type", getName().c_str());
 }
 
 CLEVER_TYPE_OPERATOR(Type::equal)
 {
-	CLEVER_THROW("Cannot use == operator with %S type", getName());
+	clever_throw("Cannot use == operator with %s type", getName().c_str());
 }
 
 CLEVER_TYPE_OPERATOR(Type::not_equal)
 {
-	CLEVER_THROW("Cannot use != operator with %S type", getName());
+	clever_throw("Cannot use != operator with %s type", getName().c_str());
+}
+
+CLEVER_TYPE_AT_OPERATOR(Type::at_op)
+{
+	clever_throw("Cannot use [] operator with %s type", getName().c_str());
+	return NULL;
+}
+
+CLEVER_TYPE_UNARY_OPERATOR(Type::not_op)
+{
+	clever_throw("Cannot use ! operator with %s type", getName().c_str());
+}
+
+CLEVER_TYPE_OPERATOR(Type::bw_and)
+{
+	clever_throw("Cannot use & operator with %s type", getName().c_str());
+}
+
+CLEVER_TYPE_OPERATOR(Type::bw_or)
+{
+	clever_throw("Cannot use | operator with %s type", getName().c_str());
+}
+
+CLEVER_TYPE_OPERATOR(Type::bw_xor)
+{
+	clever_throw("Cannot use ^ operator with %s type", getName().c_str());
+}
+
+CLEVER_TYPE_UNARY_OPERATOR(Type::bw_not)
+{
+	clever_throw("Cannot use ~ operator with %s type", getName().c_str());
+}
+
+CLEVER_TYPE_OPERATOR(Type::bw_ls)
+{
+	clever_throw("Cannot use << operator with %s type", getName().c_str());
+}
+
+CLEVER_TYPE_OPERATOR(Type::bw_rs)
+{
+	clever_throw("Cannot use >> operator with %s type", getName().c_str());
 }
 
 void Type::increment(Value* value, const VM* vm, CException* exception) const
 {
-	CLEVER_THROW("Cannot use ++ operator with %S type", getName());
+	clever_throw("Cannot use ++ operator with %s type", getName().c_str());
 }
 
 void Type::decrement(Value* value, const VM* vm, CException* exception) const
 {
-	CLEVER_THROW("Cannot use -- operator with %S type", getName());
+	clever_throw("Cannot use -- operator with %s type", getName().c_str());
+}
+
+void Type::setConstructor(MethodPtr method) {
+	Function* func = new Function(getName(), method);
+	m_ctor = func;
+	addMethod(func);
+}
+
+void Type::setDestructor(MethodPtr method) {
+	Function* func = new Function(getName(), method);
+	m_dtor = func;
+	addMethod(func);
 }
 
 } // clever

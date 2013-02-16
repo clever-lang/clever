@@ -1,0 +1,10 @@
+Testing Reflect::isVariadic()
+==CODE==
+import std.io.*;
+import std.reflection.*;
+
+var r = Reflect.new(println);
+
+println(r.isVariadic());
+==RESULT==
+1

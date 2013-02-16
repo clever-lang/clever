@@ -1,0 +1,17 @@
+Testing Reflect::isFunction() methods
+==CODE==
+import std.io.*;
+import std.reflection.*;
+
+var a = Reflect.new(1);
+println(a.isFunction());
+
+a = Reflect.new(1.2);
+println(a.isFunction());
+
+a = Reflect.new(println);
+println(a.isFunction());
+==RESULT==
+0
+0
+1

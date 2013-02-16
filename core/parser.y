@@ -61,11 +61,12 @@ class Value;
 	ast::FalseLit* false_;
 	ast::Break* break_;
 	ast::Continue* continue_;
+	ast::AttrDecl* attr;
+	ast::ClassDef* class_;
 }
 
 %type <type> TYPE
-%type <ident> IDENT
-%type <ident> CONSTANT
+%type <ident> IDENT CONSTANT import_ident_list fully_qualified_name
 %type <strlit> STR
 %type <intlit> NUM_INTEGER
 %type <dbllit> NUM_DOUBLE
@@ -74,12 +75,13 @@ class Value;
 %type <inst> instantiation array map
 %type <assignment> assignment
 %type <narray> variable_decl variable_decl_list non_empty_call_args call_args
-%type <narray> const_decl_list not_empty_catch catch key_value_list non_empty_key_value_list
+%type <narray> const_decl_list not_empty_catch catch key_value_list
+%type <narray> class_attr_decl_list class_attr_const_decl_list class_attr_list class_attr_decl
+%type <narray> class_method_decl class_method_list
 %type <vardecl> variable_decl_impl vararg
 %type <vardecl> const_decl_impl
 %type <block> statement_list block finally
 %type <threadblock> thread_block
-%type <wait> wait
 %type <criticalblock> critical_block
 %type <arithmetic> arithmetic
 %type <bitwise> bitwise
@@ -94,13 +96,14 @@ class Value;
 %type <boolean> boolean
 %type <nillit> NIL
 %type <comp> comparison
-%type <mcall> mcall
 %type <property> property_access
 %type <except> try_catch_finally
 %type <catch_> catch_impl
 %type <throw_> throw
 %type <break_> break
 %type <continue_> continue
+%type <class_> class_def
+%type <attr> class_attr_decl_impl class_attr_const_decl_impl
 
 // The parsing context.
 %parse-param { Driver& driver }
@@ -116,7 +119,7 @@ class Value;
 
 %debug
 %error-verbose
-%expect 2
+%expect 1   /* map */
 
 %code {
 #include "core/driver.h"
@@ -124,7 +127,6 @@ class Value;
 
 %token END  0        "end of file"
 %token VAR           "var"
-%token EXIT          "exit"
 %token TYPE          "type specification"
 %token IDENT         "identifier"
 %token NUM_INTEGER   "number"
@@ -163,10 +165,8 @@ class Value;
 %token TRUE          "true"
 %token FALSE         "false"
 %token CONST         "const"
-%token PRINT         "print"
 %token FUNC          "function"
 %token THREAD        "spawn"
-%token WAIT          "wait"
 %token CRITICAL      "critical"
 %token INC           "++"
 %token DEC           "--"
@@ -178,6 +178,7 @@ class Value;
 %token THROW         "throw"
 %token CONTINUE      "continue"
 %token CONSTANT      "constant identifier"
+%token CLASS         "class"
 
 %left ',';
 %left LOGICAL_OR;
@@ -195,8 +196,8 @@ class Value;
 %left '-' '+' '.';
 %left '*' '/' '%';
 %right '!';
-%right '~' INCREMENT DECREMENT COPY DEEPCOPY;
-%right '[' '{';
+%right '~' INC DEC;
+%right '[' '{' '}';
 %left ELSEIF;
 %left ELSE;
 %left UMINUS;
@@ -206,7 +207,7 @@ class Value;
 %start program;
 
 program:
-		{ c.init(); } statement_list { c.emitAST($2); }
+		{ c.init(driver.getFile()); } statement_list { c.setAST($2); }
 ;
 
 statement_list:
@@ -228,11 +229,12 @@ statement:
 	|	block
 	|	thread_block
 	|   critical_block
-	|	wait ';'
 	|	throw ';'
 	|	break ';'
 	|	continue ';'
 	|	try_catch_finally
+	|	class_def
+	|	fully_qualified_call ';'
 ;
 
 block:
@@ -252,20 +254,34 @@ continue:
 		CONTINUE { $$ = new ast::Continue(yyloc); }
 ;
 
-wait:
-		WAIT IDENT { $$ = new ast::Wait($2, yyloc); }
-;
-
 thread_block:
-		THREAD IDENT block { $$ = new ast::ThreadBlock($3, $2, yyloc); }
-	|	THREAD IDENT '[' rvalue ']'  block { $$ = new ast::ThreadBlock($6, $2, $<node>4, yyloc); }
+		THREAD IDENT block {
+#ifndef CLEVER_THREADS
+		error(yyloc, "Cannot use process block syntax, threads is disabled!"); YYABORT;
+#else
+		$$ = new ast::ThreadBlock($3, $2, yyloc);
+#endif
+	}
+	|	THREAD IDENT '[' rvalue ']'  block {
+#ifndef CLEVER_THREADS
+		error(yyloc, "Cannot use process block syntax, threads is disabled!"); YYABORT;
+#else
+		$$ = new ast::ThreadBlock($6, $2, $<node>4, yyloc);
+#endif
+	}
 ;
 
 critical_block:
-		CRITICAL block { $$ = new ast::CriticalBlock($2, yyloc); }
+		CRITICAL block {
+#ifndef CLEVER_THREADS
+		error(yyloc, "Cannot use critical block syntax, threads is disabled!"); YYABORT;
+#else
+		$$ = new ast::CriticalBlock($2, yyloc);
+#endif
+	}
 ;
 
-rvalue:
+object:
 		IDENT
 	|	CONSTANT
 	|	STR
@@ -274,6 +290,14 @@ rvalue:
 	|	NIL
 	|	TRUE
 	|	FALSE
+	|	map
+	|	array
+	|	'(' rvalue ')' { $<node>$ = $<node>2; }
+;
+
+rvalue:
+		object
+	|	unary
 	|	arithmetic
 	|	logic
 	|	bitwise
@@ -285,13 +309,84 @@ rvalue:
 	|	instantiation
 	|	property_access
 	|	mcall
-	|	array
-	|	map
-	|	'(' rvalue ')' { $<node>$ = $<node>2; }
+	|	subscript
+	|	fully_qualified_call
 ;
 
 lvalue:
 		IDENT
+	|	property_access         { $1->setWriteMode(); }
+	|	subscript
+;
+
+subscript:
+		lvalue '[' rvalue ']'   { $<node>$ = new ast::Subscript($<node>1, $<node>3, yyloc); }
+;
+
+unary:
+		'-' rvalue %prec UMINUS { $<node>$ = new ast::Arithmetic(ast::Arithmetic::MOP_SUB, new ast::IntLit(0, yyloc), $<node>2, yyloc); }
+	|	'+' rvalue %prec UMINUS { $<node>$ = new ast::Arithmetic(ast::Arithmetic::MOP_ADD, new ast::IntLit(0, yyloc), $<node>2, yyloc); }
+	|	'!' rvalue              { $<node>$ = new ast::Boolean(ast::Boolean::BOP_NOT, $<node>2, yyloc);                                  }
+	|	'~' rvalue              { $<node>$ = new ast::Bitwise(ast::Bitwise::BOP_NOT, $<node>2, yyloc);                                  }
+;
+
+class_def:
+		CLASS TYPE '{' class_attr_decl class_method_decl '}' { $$ = new ast::ClassDef($2, $4, $5, yyloc); }
+;
+
+class_attr_decl:
+		/* empty */      { $$ = NULL; }
+	|	class_attr_list
+;
+
+class_attr_list:
+		{ $<narray>$ = new ast::NodeArray(yyloc); } non_empty_class_attr_list ';' { $$ = $<narray>1; }
+	|	class_attr_list { $<narray>$ = $1; } non_empty_class_attr_list ';'
+;
+
+non_empty_class_attr_list:
+		VAR   { $<narray>$ = $<narray>0; } class_attr_decl_list
+	|	CONST { $<narray>$ = $<narray>0; } class_attr_const_decl_list
+;
+
+attr_rvalue:
+		IDENT
+	|	CONSTANT
+	|	STR
+	|	NUM_INTEGER
+	|	NUM_DOUBLE
+	|	NIL
+	|	TRUE
+	|	FALSE
+;
+
+class_attr_decl_list:
+		class_attr_decl_impl  { $<narray>0->append($1); }
+	|	class_attr_decl_list ',' class_attr_decl_impl { $<narray>0->append($3); }
+;
+
+class_attr_decl_impl:
+		IDENT '=' attr_rvalue { $$ = new ast::AttrDecl($1, $<node>3, false, yyloc); }
+	|	IDENT                 { $$ = new ast::AttrDecl($1, NULL, false, yyloc);     }
+;
+
+class_attr_const_decl_list:
+		class_attr_const_decl_impl { $$ = new ast::NodeArray(yyloc); $$->append($1); }
+	|	class_attr_const_decl_list ',' class_attr_const_decl_impl { $1->append($3); }
+;
+
+class_attr_const_decl_impl:
+		IDENT '=' attr_rvalue { $$ = new ast::AttrDecl($1, $<node>3, true, yyloc);   }
+;
+
+class_method_decl:
+		/* empty */  { $$ = NULL; }
+	|	class_method_list
+;
+
+class_method_list:
+		fdecl    { $$ = new ast::NodeArray(yyloc); $$->append($1); }
+	|	class_method_list fdecl { $1->append($2); }
 ;
 
 array:
@@ -299,16 +394,12 @@ array:
 ;
 
 key_value_list:
-		non_empty_key_value_list
-;
-
-non_empty_key_value_list:
-		STR ':' rvalue                              { $$ = new ast::NodeArray(yyloc); $$->append($1); $$->append($<node>3); }
-	|	non_empty_key_value_list ',' STR ':' rvalue { $1->append($3); $1->append($<node>5);                                 }
+		STR ':' rvalue                    { $$ = new ast::NodeArray(yyloc); $$->append($1); $$->append($<node>3); }
+	|	key_value_list ',' STR ':' rvalue { $1->append($3); $1->append($<node>5);                                 }
 ;
 
 map:
-		'{' '}'                 { $$ = new ast::Instantiation(CSTRING("Map"), NULL, yyloc); }
+		'{' ':' '}'             { $$ = new ast::Instantiation(CSTRING("Map"), NULL, yyloc); }
 	|	'{' key_value_list '}'  { $$ = new ast::Instantiation(CSTRING("Map"), $2, yyloc);   }
 ;
 
@@ -339,22 +430,29 @@ try_catch_finally:
 ;
 
 property_access:
-		rvalue '.' IDENT    { $$ = new ast::Property($<node>1, $3, yyloc); }
+		object '.' IDENT    { $$ = new ast::Property($<node>1, $3, yyloc); }
 	|	TYPE '.' IDENT      { $$ = new ast::Property($1, $3, yyloc); }
-	|	rvalue '.' CONSTANT { $$ = new ast::Property($<node>1, $3, yyloc); }
+	|	object '.' CONSTANT { $$ = new ast::Property($<node>1, $3, yyloc); }
 	|	TYPE '.' CONSTANT   { $$ = new ast::Property($1, $3, yyloc); }
 ;
 
+mcall_chain:
+		/* empty */                             { $<mcall>$ = $<mcall>0; }
+	|	mcall_chain '.' IDENT '(' call_args ')' { $<mcall>$ = new ast::MethodCall($<node>0, $3, $5, yyloc); }
+	|	mcall_chain '.' IDENT                   { $<property>$ = new ast::Property($<node>1, $3, yyloc); }
+	|	mcall_chain '.' CONSTANT                { $<property>$ = new ast::Property($<node>1, $3, yyloc); $<property>$->setStatic(); }
+;
+
 mcall:
-		rvalue '.' IDENT '(' call_args ')' { $$ = new ast::MethodCall($<node>1, $3, $5, yyloc); }
-	|	TYPE '.' IDENT '(' call_args ')'   { $$ = new ast::MethodCall($1, $3, $5, yyloc); }
+		object '.' IDENT '(' call_args ')' { $<node>$ = new ast::MethodCall($<node>1, $3, $5, yyloc); } mcall_chain { $<node>$ = $<node>8; }
+	|	TYPE '.' IDENT '(' call_args ')'   { $<node>$ = new ast::MethodCall($1, $3, $5, yyloc); }       mcall_chain { $<node>$ = $<node>8; }
 ;
 
 inc_dec:
-		lvalue INC { $$ = new ast::IncDec(ast::IncDec::POS_INC, $<node>1, yyloc); }
-	|	lvalue DEC { $$ = new ast::IncDec(ast::IncDec::POS_DEC, $<node>1, yyloc); }
-	|	INC lvalue { $$ = new ast::IncDec(ast::IncDec::PRE_INC, $<node>2, yyloc); }
-	|	DEC lvalue { $$ = new ast::IncDec(ast::IncDec::PRE_DEC, $<node>2, yyloc); }
+		object INC { $$ = new ast::IncDec(ast::IncDec::POS_INC, $<node>1, yyloc); }
+	|	object DEC { $$ = new ast::IncDec(ast::IncDec::POS_DEC, $<node>1, yyloc); }
+	|	INC object { $$ = new ast::IncDec(ast::IncDec::PRE_INC, $<node>2, yyloc); }
+	|	DEC object { $$ = new ast::IncDec(ast::IncDec::PRE_DEC, $<node>2, yyloc); }
 ;
 
 comparison:
@@ -420,9 +518,17 @@ assignment:
 		lvalue '=' rvalue { $$ = new ast::Assignment($<node>1, $<node>3, yyloc); }
 ;
 
+import_ident_list:
+		IDENT                        { $$ = $1; }
+	|	import_ident_list '.' IDENT  { $1->append('.', $3); $$ = $1; }
+;
+
 import:
-		IMPORT IDENT '.' IDENT '.' '*' { $$ = new ast::Import($2, $4, yyloc);   }
-	|	IMPORT IDENT '.' '*'           { $$ = new ast::Import($2, NULL, yyloc); }
+		IMPORT import_ident_list '.' '*'   { $$ = new ast::Import($2, yyloc);     }
+	|	IMPORT import_ident_list ':' '*'   { $$ = new ast::Import($2, yyloc);     }
+	|	IMPORT import_ident_list ':' IDENT { $$ = new ast::Import($2, $4, yyloc); }
+	|	IMPORT import_ident_list ':' TYPE  { $$ = new ast::Import($2, $4, yyloc); }
+	|	IMPORT import_ident_list           { $$ = new ast::Import($2, yyloc); $$->setNamespaced(true); }
 ;
 
 vararg:
@@ -431,24 +537,32 @@ vararg:
 
 fdecl:
 		FUNC IDENT '(' ')' block
+		{ $$ = new ast::FunctionDecl($2, NULL, $5, NULL, false, yyloc); }
+	|	FUNC TYPE '(' ')' block
 		{ $$ = new ast::FunctionDecl($2, NULL, $5, NULL, yyloc); }
 	|	FUNC IDENT '(' vararg ')' block
+		{ $$ = new ast::FunctionDecl($2, NULL, $6, $4, false, yyloc); }
+	|	FUNC TYPE '(' vararg ')' block
 		{ $$ = new ast::FunctionDecl($2, NULL, $6, $4, yyloc); }
 	|	FUNC IDENT '(' variable_decl_list ')' block
+		{ $$ = new ast::FunctionDecl($2, $4, $6, NULL, false, yyloc); }
+	|	FUNC TYPE '(' variable_decl_list ')' block
 		{ $$ = new ast::FunctionDecl($2, $4, $6, NULL, yyloc); }
 	|	FUNC IDENT '(' variable_decl_list ',' vararg ')' block
+		{ $$ = new ast::FunctionDecl($2, $4, $8, $6, false, yyloc); }
+	|	FUNC TYPE '(' variable_decl_list ',' vararg ')' block
 		{ $$ = new ast::FunctionDecl($2, $4, $8, $6, yyloc); }
 ;
 
 anonymous_fdecl:
 		FUNC '(' ')' block
-		{ $$ = new ast::FunctionDecl(NULL, NULL, $4, NULL, yyloc); }
+		{ $$ = new ast::FunctionDecl(NULL, NULL, $4, NULL, true, yyloc); }
 	|	FUNC '(' vararg ')' block
-		{ $$ = new ast::FunctionDecl(NULL, NULL, $5, $3, yyloc); }
+		{ $$ = new ast::FunctionDecl(NULL, NULL, $5, $3, true, yyloc); }
 	|	FUNC '(' variable_decl_list ')' block
-		{ $$ = new ast::FunctionDecl(NULL, $3, $5, NULL, yyloc); }
+		{ $$ = new ast::FunctionDecl(NULL, $3, $5, NULL, true, yyloc); }
 	|	FUNC '(' variable_decl_list ',' vararg ')' block
-		{ $$ = new ast::FunctionDecl(NULL, $3, $7, $5, yyloc); }
+		{ $$ = new ast::FunctionDecl(NULL, $3, $7, $5, true, yyloc); }
 ;
 
 call_args:
@@ -464,6 +578,17 @@ non_empty_call_args:
 fcall_chain:
 		/* empty */                   { $$ = $<fcall>0; }
 	|	fcall_chain '(' call_args ')' { $$ = new ast::FunctionCall($<node>1, $3, yyloc); }
+;
+
+fully_qualified_name:
+		IDENT
+	|	fully_qualified_name ':' IDENT { $1->append(':', $3); $<ident>$ = $1; }
+;
+
+fully_qualified_call:
+		fully_qualified_name ':' IDENT '(' call_args ')'        { $1->append(':', $3); $<fcall>$ = new ast::FunctionCall($1, $5, yyloc); } fcall_chain { $<fcall>$ = $8; }
+	|	fully_qualified_name ':' TYPE '.' NEW                   { $1->append(':', $3); $<inst>$ = new ast::Instantiation($1, NULL, yyloc); }
+	|	fully_qualified_name ':' TYPE '.' NEW '(' call_args ')' { $1->append(':', $3); $<inst>$ = new ast::Instantiation($1, $7,   yyloc); }
 ;
 
 fcall:

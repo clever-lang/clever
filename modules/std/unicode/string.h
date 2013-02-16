@@ -14,32 +14,39 @@
 #include "unicode/unistr.h"
 #include "unicode/ustream.h"
 
-namespace clever { namespace packages { namespace std {
+namespace clever { namespace modules { namespace std {
 
-#define CLEVER_USTR_TYPE UnicodeString*
+#define CLEVER_USTR_TYPE UStringObject*
 #define CLEVER_USTR_CAST(what) (CLEVER_USTR_TYPE) what
 #define CLEVER_USTR_THIS() CLEVER_USTR_CAST(CLEVER_THIS()->getObj())
-#define CLEVER_USTR_OBJ(from) UnicodeString(from->c_str(), from->size(), US_INV)
+#define CLEVER_USTR_OBJ(from) UStringObject(from->c_str(), from->size())
+
+struct UStringObject : public TypeObject {
+	UStringObject(const char* str, size_t size)
+		: intern(new UnicodeString(str, size, US_INV)) {}
+
+	~UStringObject() {
+		delete intern;
+	}
+
+	UnicodeString* intern;
+};
 
 class UString : public Type {
 public:
 	UString()
-		: Type(CSTRING("UString")) {}
+		: Type("UString") {}
 
 	~UString() {}
 
-	void dump(const void* data) const;
-	void dump(const void* data, ::std::ostream& out) const;
-
-	virtual void increment(Value*) const {}
-	virtual void decrement(Value*) const {}
-
 	void init();
+	void dump(TypeObject* data, ::std::ostream& out) const;
 
-	virtual void* allocData(CLEVER_TYPE_CTOR_ARGS) const;
+	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
 	virtual void deallocData(void* data);
 
-	CLEVER_METHOD(getLength);
+	CLEVER_METHOD(ctor);
+	CLEVER_METHOD(size);
 	CLEVER_METHOD(startsWith);
 	CLEVER_METHOD(endsWith);
 	CLEVER_METHOD(indexOf);
@@ -53,6 +60,6 @@ public:
 	CLEVER_METHOD(replace);
 };
 
-}}} // clever::packages::std
+}}} // clever::modules::std
 
 #endif // CLEVER_STD_UNICODE_STRING_H

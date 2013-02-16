@@ -1,0 +1,11 @@
+String.subString()
+==CODE==
+import std.io.*;
+
+var s = "Hello Clever";
+println(s.subString(0, 5));
+println(s.subString(6));
+
+==RESULT==
+Hello
+Clever

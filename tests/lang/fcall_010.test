@@ -1,0 +1,7 @@
+[FATAL] Testing function call from null value
+==CODE==
+var a;
+
+a(1);
+==RESULT==
+Fatal error: Cannot make a call from null value on \S+ line 3

@@ -122,7 +122,9 @@ void Visitor::visit(Bitwise* node) {
 
 void Visitor::visit(Boolean* node) {
 	node->getLhs()->accept(*this);
-	node->getRhs()->accept(*this);
+	if (node->getRhs()) {
+		node->getRhs()->accept(*this);
+	}
 }
 
 void Visitor::visit(Comparison* node) {
@@ -131,8 +133,6 @@ void Visitor::visit(Comparison* node) {
 }
 
 void Visitor::visit(Import* node) {
-	node->getPackage()->accept(*this);
-
 	if (node->hasModule()) {
 		node->getModule()->accept(*this);
 	}
@@ -144,6 +144,10 @@ void Visitor::visit(IncDec* node) {
 
 void Visitor::visit(Instantiation* node) {
 	node->getType()->accept(*this);
+
+	if (node->hasArgs()) {
+		node->getArgs()->accept(*this);
+	}
 }
 
 void Visitor::visit(Property* node) {
@@ -167,6 +171,25 @@ void Visitor::visit(Catch* node) {
 
 void Visitor::visit(Throw* node) {
 	node->getExpr()->accept(*this);
+}
+
+void Visitor::visit(AttrDecl* node) {
+	node->getIdent()->accept(*this);
+
+	if (node->hasValue()) {
+		node->getValue()->accept(*this);
+	}
+}
+
+void Visitor::visit(ClassDef* node) {
+	if (node->hasAttrs()) {
+		node->getAttrs()->accept(*this);
+	}
+}
+
+void Visitor::visit(Subscript* node) {
+	node->getVar()->accept(*this);
+	node->getIndex()->accept(*this);
 }
 
 }} // clever::ast

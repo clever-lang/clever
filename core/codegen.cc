@@ -9,9 +9,9 @@
 #include <cstdio>
 
 #include "core/codegen.h"
-#include "core/compiler.h"
-#include "core/cthread.h"
 #include "types/thread.h"
+#include "core/irbuilder.h"
+#include "modules/std/core/function.h"
 
 namespace clever { namespace ast {
 
@@ -26,20 +26,6 @@ static CLEVER_FORCE_INLINE void _prepare_operand(Operand& op, Node* node)
 	}
 }
 
-Codegen::Codegen(IRVector& ir, Compiler* compiler, Environment* init_glbenv)
-	: m_ir(ir), m_compiler(compiler), m_init_glbenv(init_glbenv),
-	  m_const_env(NULL), m_temp_env(NULL), m_jmps(), m_thread_ids()
-{
-
-	m_const_env = new Environment(m_init_glbenv);
-	m_temp_env  = new Environment(m_init_glbenv);
-
-	// Add 'null', true and false to the constant pool
-	m_const_env->pushValue(new Value());
-	m_const_env->pushValue(new Value(true));
-	m_const_env->pushValue(new Value(false));
-}
-
 void Codegen::sendArgs(NodeArray* node)
 {
 	NodeList& args = node->getNodes();
@@ -51,43 +37,38 @@ void Codegen::sendArgs(NodeArray* node)
 
 	// Then send them to the proper call
 	for (size_t i = 0, j = args.size(); i < j; ++i) {
-		m_ir.push_back(IR(OP_SEND_VAL));
-		_prepare_operand(m_ir.back().op1, args[i]);
+		_prepare_operand(m_builder->push(OP_SEND_VAL).op1, args[i]);
 	}
 }
 
 void Codegen::visit(NullLit* node)
 {
-	node->setVOffset(ValueOffset(0,0));
+	node->setVOffset(m_builder->getNull());
 }
 
 void Codegen::visit(TrueLit* node)
 {
-	node->setVOffset(ValueOffset(0,1));
+	node->setVOffset(m_builder->getTrue());
 }
 
 void Codegen::visit(FalseLit* node)
 {
-	node->setVOffset(ValueOffset(0,2));
+	node->setVOffset(m_builder->getFalse());
 }
 
 void Codegen::visit(IntLit* node)
 {
-	node->setVOffset(m_const_env->pushValue(new Value(node->getValue())));
+	node->setVOffset(m_builder->getInt(node->getValue()));
 }
 
 void Codegen::visit(DoubleLit* node)
 {
-	node->setVOffset(m_const_env->pushValue(new Value(node->getValue())));
+	node->setVOffset(m_builder->getDouble(node->getValue()));
 }
 
 void Codegen::visit(StringLit* node)
 {
-	node->setVOffset(m_const_env->pushValue(new Value(node->getValue())));
-}
-
-void Codegen::visit(Ident* node)
-{
+	node->setVOffset(m_builder->getString(node->getValue()));
 }
 
 void Codegen::visit(Block* node)
@@ -97,56 +78,48 @@ void Codegen::visit(Block* node)
 
 void Codegen::visit(CriticalBlock* node)
 {
-	m_ir.push_back(IR(OP_LOCK));
+	m_builder->push(OP_LOCK);
 
 	node->getBlock()->accept(*this);
 
-	m_ir.push_back(IR(OP_UNLOCK));
-}
-
-void Codegen::visit(Wait* node)
-{
-	if (node->getName() != NULL) {
-		m_ir.push_back(IR(OP_WAIT, Operand(FETCH_VAR, node->getName()->getVOffset())));
-	}
+	m_builder->push(OP_UNLOCK);
 }
 
 void Codegen::visit(ThreadBlock* node)
 {
-	enable_threads();
-
 	if (node->getSize() != NULL) {
 		Node* size = node->getSize();
 		size->accept(*this);
 	}
 
-	size_t bg = m_ir.size();
+	size_t bg = m_builder->getSize();
 	Symbol* sym = node->getName()->getSymbol();
 	Value* threadval = sym->scope->getValue(node->getName()->getVOffset());
 	Thread* thread = static_cast<Thread*>(threadval->getObj());
 	thread->setAddr(bg);
 
+	Environment* save_temp = m_builder->getTempEnv();
+	Environment* env_temp  = m_builder->getNewTempEnv();
 
-	size_t m_thread_id = m_thread_ids.size() + 1;
-	m_thread_ids[thread] = m_thread_id;
-	thread->setID(m_thread_id);
+	thread->getEnvironment()->setTempEnv(env_temp);
+
 
 	node->getName()->accept(*this);
 
-	m_ir.push_back(IR(OP_BTHREAD,
-					  Operand(JMP_ADDR, bg),
-					  Operand(FETCH_VAR, node->getName()->getVOffset())));
+	m_builder->push(OP_BTHREAD,
+		Operand(JMP_ADDR, bg),
+		Operand(FETCH_VAR, node->getName()->getVOffset()));
 
 	if (node->getSize() != NULL) {
 		Node* size = node->getSize();
-		_prepare_operand(m_ir[bg].result, size);
+		_prepare_operand(m_builder->getAt(bg).result, size);
 	}
 
 	node->getBlock()->accept(*this);
 
-	m_ir.push_back(IR(OP_ETHREAD));
-
-	m_ir[bg].op1 = Operand(JMP_ADDR, m_ir.size());
+	m_builder->push(OP_ETHREAD);
+	m_builder->getAt(bg).op1 = Operand(JMP_ADDR, m_builder->getSize());
+	m_builder->setTempEnv(save_temp);
 }
 
 void Codegen::visit(VariableDecl* node)
@@ -159,21 +132,27 @@ void Codegen::visit(Assignment* node)
 	Node* rhs = node->getRhs();
 
 	if (node->isConditional()) {
-		m_ir.push_back(IR(OP_JMPNZ,
+		m_builder->push(OP_JMPNZ,
 			Operand(FETCH_VAR, node->getLhs()->getVOffset()),
-			Operand(JMP_ADDR, m_ir.size() + 2)));
+			Operand(JMP_ADDR, m_builder->getSize() + 2));
 	}
+
+	node->getLhs()->accept(*this);
 
 	if (rhs) {
 		rhs->accept(*this);
 	}
-	m_ir.push_back(IR(OP_ASSIGN,
-			Operand(FETCH_VAR, node->getLhs()->getVOffset())));
+
+	IR& assign = m_builder->push(OP_ASSIGN);
+
+	assign.loc = node->getLocation();
+
+	_prepare_operand(assign.op1, node->getLhs());
 
 	if (!rhs) {
-		m_ir.back().op2 = Operand(FETCH_CONST, ValueOffset(0, 0)); // null
+		assign.op2 = Operand(FETCH_CONST, ValueOffset(0, 0)); // null
 	} else {
-		_prepare_operand(m_ir.back().op2, rhs);
+		_prepare_operand(assign.op2, rhs);
 	}
 }
 
@@ -184,10 +163,9 @@ void Codegen::visit(MethodCall* node)
 			sendArgs(node->getArgs());
 		}
 
-		m_ir.push_back(IR(OP_SMCALL,
-					Operand(FETCH_VAR, static_cast<Ident*>(node->getCallee())->getVOffset()),
-					Operand(FETCH_CONST,
-						 m_const_env->pushValue(new Value(node->getMethod()->getName())))));
+		m_builder->push(OP_SMCALL,
+			Operand(FETCH_VAR, static_cast<Ident*>(node->getCallee())->getVOffset()),
+			Operand(FETCH_CONST, m_builder->getString(node->getMethod()->getName())));
 	} else {
 		node->getCallee()->accept(*this);
 
@@ -195,17 +173,18 @@ void Codegen::visit(MethodCall* node)
 			sendArgs(node->getArgs());
 		}
 
-		m_ir.push_back(IR(OP_MCALL));
+		IR& mcall = m_builder->push(OP_MCALL);
 
-		_prepare_operand(m_ir.back().op1, node->getCallee());
+		_prepare_operand(mcall.op1, node->getCallee());
 
-		m_ir.back().op2 = Operand(FETCH_CONST,
-					m_const_env->pushValue(new Value(node->getMethod()->getName())));
+		mcall.op2 = Operand(FETCH_CONST,
+			m_builder->getString(node->getMethod()->getName()));
 	}
 
-	ValueOffset tmp_id = m_temp_env->pushValue(new Value());
+	ValueOffset tmp_id = m_builder->getTemp();
 
-	m_ir.back().result = Operand(FETCH_TMP, tmp_id);
+	m_builder->getLast().result = Operand(FETCH_TMP, tmp_id);
+	m_builder->getLast().loc = node->getLocation();
 
 	node->setVOffset(tmp_id);
 }
@@ -219,34 +198,42 @@ void Codegen::visit(FunctionCall* node)
 			sendArgs(node->getArgs());
 		}
 
-		m_ir.push_back(IR(OP_FCALL));
-		_prepare_operand(m_ir.back().op1, node->getCallee());
+		_prepare_operand(m_builder->push(OP_FCALL).op1, node->getCallee());
 	} else {
 		if (node->hasArgs()) {
 			sendArgs(node->getArgs());
 		}
 
-		m_ir.push_back(IR(OP_FCALL,
-			Operand(FETCH_VAR, node->getCallee()->getVOffset())));
+		m_builder->push(OP_FCALL,
+			Operand(FETCH_VAR, node->getCallee()->getVOffset()));
 	}
 
-	ValueOffset tmp_id = m_temp_env->pushValue(new Value());
+	ValueOffset tmp_id = m_builder->getTemp();
 
-	m_ir.back().result = Operand(FETCH_TMP, tmp_id);
+	m_builder->getLast().result = Operand(FETCH_TMP, tmp_id);
+	m_builder->getLast().loc = node->getLocation();
 
 	node->setVOffset(tmp_id);
 }
 
 void Codegen::visit(FunctionDecl* node)
 {
-	size_t start_func = m_ir.size();
+	IR& start_func = m_builder->push(OP_JMP, Operand(JMP_ADDR, 0));
 
-	m_ir.push_back(IR(OP_JMP, Operand(JMP_ADDR, 0)));
+	Symbol* sym = node->hasIdent() ? node->getIdent()->getSymbol()
+		: node->getType()->getSymbol();
 
-	Symbol* sym = node->getIdent()->getSymbol();
-	Value* funcval = sym->scope->getValue(node->getIdent()->getVOffset());
+	const ValueOffset& offset = node->hasIdent() ? node->getIdent()->getVOffset()
+		: node->getType()->getVOffset();
+
+	Value* funcval = sym->scope->getValue(offset);
 	Function* func = static_cast<Function*>(funcval->getObj());
-	func->setAddr(m_ir.size());
+	func->setAddr(m_builder->getSize());
+
+	Environment* save_temp = m_builder->getTempEnv();
+	Environment* temp_env  = m_builder->getNewTempEnv();
+
+	func->getEnvironment()->setTempEnv(temp_env);
 
 	if (node->hasArgs()) {
 		node->getArgs()->accept(*this);
@@ -257,14 +244,16 @@ void Codegen::visit(FunctionDecl* node)
 
 	node->getBlock()->accept(*this);
 
-	m_ir.push_back(IR(OP_LEAVE));
+	m_builder->push(OP_LEAVE);
 
-	m_ir[start_func].op1.jmp_addr = m_ir.size();
+	start_func.op1.jmp_addr = m_builder->getSize();
 
 	if (node->isAnonymous()) {
 		node->setVOffset(sym->voffset);
 		node->setScope(sym->scope);
 	}
+
+	m_builder->setTempEnv(save_temp);
 }
 
 void Codegen::visit(Return* node)
@@ -274,26 +263,22 @@ void Codegen::visit(Return* node)
 
 		value->accept(*this);
 
-		m_ir.push_back(IR(OP_RET));
-
-		_prepare_operand(m_ir.back().op1, value);
+		_prepare_operand(m_builder->push(OP_RET).op1, value);
 	} else {
-		m_ir.push_back(IR(OP_RET));
+		m_builder->push(OP_RET);
 	}
 }
 
 void Codegen::visit(While* node)
 {
 	Node* cond = node->getCondition();
-	size_t start_while = m_ir.size();
+	size_t start_while = m_builder->getSize();
 
 	cond->accept(*this);
 
-	size_t jmp_addr = m_ir.size();
+	IR& jmpz = m_builder->push(OP_JMPZ);
 
-	m_ir.push_back(IR(OP_JMPZ));
-
-	_prepare_operand(m_ir.back().op1, cond);
+	_prepare_operand(jmpz.op1, cond);
 
 	m_brks.push(AddrVector());
 	m_brks.top().push_back(start_while);
@@ -303,15 +288,15 @@ void Codegen::visit(While* node)
 	if (m_brks.top().size() > 1) {
 		// Set the break statements jmp address
 		for (size_t i = 0, j = m_brks.top().size(); i < j; ++i) {
-			m_ir[m_brks.top()[i]].op1.jmp_addr = m_ir.size() + 1;
+			m_builder->getAt(m_brks.top()[i]).op1.jmp_addr = m_builder->getSize() + 1;
 		}
 	}
 
 	m_brks.pop();
 
-	m_ir.push_back(IR(OP_JMP, Operand(JMP_ADDR, start_while)));
+	m_builder->push(OP_JMP, Operand(JMP_ADDR, start_while));
 
-	m_ir[jmp_addr].op2 = Operand(JMP_ADDR, m_ir.size());
+	jmpz.op2 = Operand(JMP_ADDR, m_builder->getSize());
 }
 
 void Codegen::visit(IncDec* node)
@@ -327,12 +312,48 @@ void Codegen::visit(IncDec* node)
 		case IncDec::POS_DEC: op = OP_POS_DEC; break;
 	}
 
-	m_ir.push_back(IR(op,
-		Operand(FETCH_VAR, node->getVar()->getVOffset())));
+	IR& incdec = m_builder->push(op, Operand(FETCH_VAR, node->getVar()->getVOffset()));
 
-	ValueOffset tmp_id = m_temp_env->pushValue(new Value());
+	ValueOffset tmp_id = m_builder->getTemp();
 
-	m_ir.back().result = Operand(FETCH_TMP, tmp_id);
+	incdec.result = Operand(FETCH_TMP, tmp_id);
+	incdec.loc = node->getLocation();
+
+	node->setVOffset(tmp_id);
+}
+
+void Codegen::visit(Bitwise* node)
+{
+	Node* lhs = node->getLhs();
+	Node* rhs = node->getRhs();
+	Opcode op = OP_ADD;
+
+	switch (node->getOperator()) {
+		case Bitwise::BOP_AND:    op = OP_BW_AND; break;
+		case Bitwise::BOP_OR:     op = OP_BW_OR;  break;
+		case Bitwise::BOP_XOR:    op = OP_BW_XOR; break;
+		case Bitwise::BOP_NOT:    op = OP_BW_NOT; break;
+		case Bitwise::BOP_LSHIFT: op = OP_BW_LS;  break;
+		case Bitwise::BOP_RSHIFT: op = OP_BW_RS;  break;
+	}
+
+	lhs->accept(*this);
+	if (rhs) {
+		rhs->accept(*this);
+	}
+
+	IR& arith = m_builder->push(op);
+
+	_prepare_operand(arith.op1, lhs);
+
+	if (rhs) {
+		_prepare_operand(arith.op2, rhs);
+	}
+
+	ValueOffset tmp_id = m_builder->getTemp();
+
+	arith.result = Operand(FETCH_TMP, tmp_id);
+	arith.loc = node->getLocation();
 
 	node->setVOffset(tmp_id);
 }
@@ -354,14 +375,15 @@ void Codegen::visit(Arithmetic* node)
 	lhs->accept(*this);
 	rhs->accept(*this);
 
-	m_ir.push_back(IR(op));
+	IR& arith = m_builder->push(op);
 
-	_prepare_operand(m_ir.back().op1, lhs);
-	_prepare_operand(m_ir.back().op2, rhs);
+	_prepare_operand(arith.op1, lhs);
+	_prepare_operand(arith.op2, rhs);
 
-	ValueOffset tmp_id = m_temp_env->pushValue(new Value());
+	ValueOffset tmp_id = m_builder->getTemp();
 
-	m_ir.back().result = Operand(FETCH_TMP, tmp_id);
+	arith.result = Operand(FETCH_TMP, tmp_id);
+	arith.loc = node->getLocation();
 
 	node->setVOffset(tmp_id);
 }
@@ -384,14 +406,15 @@ void Codegen::visit(Comparison* node)
 	lhs->accept(*this);
 	rhs->accept(*this);
 
-	m_ir.push_back(IR(op));
+	IR& comp = m_builder->push(op);
 
-	_prepare_operand(m_ir.back().op1, lhs);
-	_prepare_operand(m_ir.back().op2, rhs);
+	_prepare_operand(comp.op1, lhs);
+	_prepare_operand(comp.op2, rhs);
 
-	ValueOffset tmp_id = m_temp_env->pushValue(new Value());
+	ValueOffset tmp_id = m_builder->getTemp();
 
-	m_ir.back().result = Operand(FETCH_TMP, tmp_id);
+	comp.result = Operand(FETCH_TMP, tmp_id);
+	comp.loc = node->getLocation();
 
 	node->setVOffset(tmp_id);
 }
@@ -409,22 +432,20 @@ void Codegen::visit(Logic* node)
 
 	lhs->accept(*this);
 
-	size_t jmp_ir = m_ir.size();
-	ValueOffset res_id = m_temp_env->pushValue(new Value());
+	size_t jmp_ir = m_builder->getSize();
+	ValueOffset res_id = m_builder->getTemp();
 
 	node->setVOffset(res_id);
 
-	m_ir.push_back(IR(op));
-	_prepare_operand(m_ir.back().op1, lhs);
-	m_ir.back().result = Operand(FETCH_TMP, res_id);
+	_prepare_operand(m_builder->push(op).op1, lhs);
+	m_builder->getLast().result = Operand(FETCH_TMP, res_id);
 
 	rhs->accept(*this);
 
-	m_ir.push_back(IR(op));
-	_prepare_operand(m_ir.back().op1, rhs);
-	m_ir.back().result = Operand(FETCH_TMP, res_id);
+	_prepare_operand(m_builder->push(op).op1, rhs);
+	m_builder->getLast().result = Operand(FETCH_TMP, res_id);
 
-	m_ir.back().op2 = m_ir[jmp_ir].op2 = Operand(JMP_ADDR, m_ir.size());
+	m_builder->getLast().op2 = m_builder->getAt(jmp_ir).op2 = Operand(JMP_ADDR, m_builder->getSize());
 }
 
 void Codegen::visit(Boolean* node)
@@ -436,31 +457,32 @@ void Codegen::visit(Boolean* node)
 	switch (node->getOperator()) {
 		case Boolean::BOP_AND: op = OP_JMPZ;  break;
 		case Boolean::BOP_OR:  op = OP_JMPNZ; break;
+		case Boolean::BOP_NOT: op = OP_NOT;   break;
 	}
 
 	lhs->accept(*this);
 
-	size_t jmp_ir = m_ir.size();
-	ValueOffset res_id = m_temp_env->pushValue(new Value());
+	size_t jmp_ir = m_builder->getSize();
+	ValueOffset res_id = m_builder->getTemp();
 
 	node->setVOffset(res_id);
 
-	m_ir.push_back(IR(op));
-	_prepare_operand(m_ir.back().op1, lhs);
-	m_ir.back().result = Operand(FETCH_TMP, res_id);
+	_prepare_operand(m_builder->push(op).op1, lhs);
+	m_builder->getLast().result = Operand(FETCH_TMP, res_id);
 
-	rhs->accept(*this);
+	if (rhs) {
+		rhs->accept(*this);
 
-	m_ir.push_back(IR(op));
-	_prepare_operand(m_ir.back().op1, rhs);
-	m_ir.back().result = Operand(FETCH_TMP, res_id);
+		_prepare_operand(m_builder->push(op).op1, rhs);
+		m_builder->getLast().result = Operand(FETCH_TMP, res_id);
 
-	m_ir.back().op2 = m_ir[jmp_ir].op2 = Operand(JMP_ADDR, m_ir.size());
+		m_builder->getLast().op2 = m_builder->getAt(jmp_ir).op2 = Operand(JMP_ADDR, m_builder->getSize());
+	}
 }
 
 void Codegen::visit(If* node)
 {
-	size_t last_jmpz = 0;
+
 	std::vector<std::pair<Node*, Node*> >& branches = node->getConditionals();
 	std::vector<std::pair<Node*, Node*> >::const_iterator it(branches.begin()),
 		end(branches.end());
@@ -473,17 +495,16 @@ void Codegen::visit(If* node)
 
 		cond->accept(*this);
 
-		last_jmpz = m_ir.size();
-		m_ir.push_back(IR(OP_JMPZ));
+		IR& last_jmpz = m_builder->push(OP_JMPZ);
 
-		_prepare_operand(m_ir.back().op1, cond);
+		_prepare_operand(last_jmpz.op1, cond);
 
 		block->accept(*this);
 
-		m_jmps.top().push_back(m_ir.size());
-		m_ir.push_back(IR(OP_JMP)); // JMP to outside if-elseif-else
+		m_jmps.top().push_back(m_builder->getSize());
+		m_builder->push(OP_JMP); // JMP to outside if-elseif-else
 
-		m_ir[last_jmpz].op2 = Operand(JMP_ADDR, m_ir.size());
+		last_jmpz.op2 = Operand(JMP_ADDR, m_builder->getSize());
 
 		++it;
 	}
@@ -494,7 +515,7 @@ void Codegen::visit(If* node)
 
 	AddrVector& vec = m_jmps.top();
 	for (size_t i = 0, j = vec.size(); i < j; ++i) {
-		m_ir[vec[i]].op1 = Operand(JMP_ADDR, m_ir.size());
+		m_builder->getAt(vec[i]).op1 = Operand(JMP_ADDR, m_builder->getSize());
 	}
 
 	m_jmps.pop();
@@ -506,11 +527,12 @@ void Codegen::visit(Instantiation* node)
 		sendArgs(node->getArgs());
 	}
 
-	m_ir.push_back(IR(OP_NEW, Operand(FETCH_VAR, node->getType()->getVOffset())));
+	IR& inst = m_builder->push(OP_NEW, Operand(FETCH_VAR, node->getType()->getVOffset()));
 
-	ValueOffset tmp_id = m_temp_env->pushValue(new Value());
+	ValueOffset tmp_id = m_builder->getTemp();
 
-	m_ir.back().result = Operand(FETCH_TMP, tmp_id);
+	inst.result = Operand(FETCH_TMP, tmp_id);
+	inst.loc = node->getLocation();
 
 	node->setVOffset(tmp_id);
 }
@@ -518,75 +540,116 @@ void Codegen::visit(Instantiation* node)
 void Codegen::visit(Property* node)
 {
 	node->getCallee()->accept(*this);
+	Opcode op;
 
-	m_ir.push_back(IR(OP_PROP_ACC));
+	if (node->isStatic()) {
+		op = node->getMode() == Property::WRITE ? OP_SPROP_W : OP_SPROP_R;
+	} else {
+		op = node->getMode() == Property::WRITE ? OP_PROP_W : OP_PROP_R;
+	}
 
-	_prepare_operand(m_ir.back().op1, node->getCallee());
+	IR& acc = m_builder->push(op);
 
-	m_ir.back().op2 = Operand(FETCH_CONST,
-			m_const_env->pushValue(new Value(node->getProperty()->getName())));
+	_prepare_operand(acc.op1, node->getCallee());
 
-	ValueOffset tmp_id = m_temp_env->pushValue(new Value());
+	acc.op2 = Operand(FETCH_CONST, m_builder->getString(node->getProperty()->getName()));
 
-	m_ir.back().result = Operand(FETCH_TMP, tmp_id);
+	ValueOffset tmp_id = m_builder->getTemp();
+
+	acc.result = Operand(FETCH_TMP, tmp_id);
+	acc.loc = node->getLocation();
 
 	node->setVOffset(tmp_id);
 }
 
 void Codegen::visit(Try* node)
 {
-	size_t try_id = m_ir.size();
-	size_t try_jmp;
-
-	m_ir.push_back(OP_TRY);
+	IR& try_start = m_builder->push(OP_TRY);
 
 	node->getBlock()->accept(*this);
 
-	try_jmp = m_ir.size();
-	m_ir.push_back(OP_JMP); // It's all ok, jump to finally block
+	IR& try_jmp = m_builder->push(OP_JMP); // It's all ok, jump to finally block
 
 	NodeList& catches = node->getCatches()->getNodes();
 	NodeList::const_iterator it(catches.begin()), end(catches.end());
 
-	m_ir[try_id].op1 = Operand(JMP_ADDR, m_ir.size());
+	try_start.op1 = Operand(JMP_ADDR, m_builder->getSize());
 
 	while (it != end) {
-		size_t catch_id = m_ir.size();
-		m_ir.push_back(OP_CATCH);
+		IR& catch_start = m_builder->push(OP_CATCH);
 
 		(*it)->accept(*this);
 
-		_prepare_operand(m_ir[catch_id].op1, static_cast<Catch*>(*it)->getVar());
+		_prepare_operand(catch_start.op1, static_cast<Catch*>(*it)->getVar());
 		++it;
 	}
 
-	m_ir[try_jmp].op1 = Operand(JMP_ADDR, m_ir.size());
+	try_jmp.op1 = Operand(JMP_ADDR, m_builder->getSize());
 
 	if (node->hasFinally()) {
 		node->getFinally()->accept(*this);
 	}
 
-	m_ir.push_back(IR(OP_ETRY));
+	m_builder->push(OP_ETRY);
 }
 
 void Codegen::visit(Throw* node)
 {
 	node->getExpr()->accept(*this);
 
-	m_ir.push_back(IR(OP_THROW));
+	IR& thr = m_builder->push(OP_THROW);
 
-	_prepare_operand(m_ir.back().op1, node->getExpr());
+	_prepare_operand(thr.op1, node->getExpr());
 }
 
 void Codegen::visit(Continue* node)
 {
-	m_ir.push_back(IR(OP_JMP, Operand(JMP_ADDR, m_brks.top().front())));
+	m_builder->push(OP_JMP, Operand(JMP_ADDR, m_brks.top().front()));
 }
 
 void Codegen::visit(Break* node)
 {
-	m_brks.top().push_back(m_ir.size());
-	m_ir.push_back(IR(OP_JMP, Operand(JMP_ADDR, 0)));
+	m_brks.top().push_back(m_builder->getSize());
+	m_builder->push(OP_JMP, Operand(JMP_ADDR, 0));
+}
+
+void Codegen::visit(ClassDef* node)
+{
+	Environment* save_temp = m_builder->getTempEnv();
+	Environment* temp_env = m_builder->getNewTempEnv();
+
+	node->getScope()->getEnvironment()->setTempEnv(temp_env);
+
+	if (node->hasMethods()) {
+		node->getMethods()->accept(*this);
+	}
+
+	m_builder->setTempEnv(save_temp);
+}
+
+void Codegen::visit(Import* node)
+{
+	if (node->hasModuleTree()) {
+		Visitor::visit(static_cast<NodeArray*>(node->getModuleTree()));
+	}
+}
+
+void Codegen::visit(Subscript* node)
+{
+	node->getVar()->accept(*this);
+	node->getIndex()->accept(*this);
+
+	IR& subscript = m_builder->push(OP_SUBSCRIPT);
+
+	_prepare_operand(subscript.op1, node->getVar());
+	_prepare_operand(subscript.op2, node->getIndex());
+
+	ValueOffset tmp_id = m_builder->getTemp();
+
+	subscript.result = Operand(FETCH_TMP, tmp_id);
+	subscript.loc = node->getLocation();
+
+	node->setVOffset(tmp_id);
 }
 
 }} // clever::ast

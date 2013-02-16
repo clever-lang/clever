@@ -1,0 +1,16 @@
+Testing type() function
+==CODE==
+import std.io.*;
+import std.reflection.*;
+
+println(type(println));
+println(type(1));
+println(type(1.2));
+println(type(false));
+println(type("foo"));
+==RESULT==
+Function
+Int
+Double
+Bool
+String
