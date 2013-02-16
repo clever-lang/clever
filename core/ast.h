@@ -268,6 +268,11 @@ public:
 		m_name = CSTRING(*m_name + separator + *ident->getName());
 		clever_delete(ident);
 	}
+
+	void append(char separator, ast::Type* ident) {
+		m_name = CSTRING(*m_name + separator + *ident->getName());
+		clever_delete(ident);
+	}
 private:
 	const CString* m_name;
 	Symbol* m_sym;
@@ -372,11 +377,19 @@ public:
 		clever_addref(m_args);
 	}
 
+	Instantiation(Ident* type, NodeArray* args, const location& location)
+		: Node(location), m_type(new Type(type->getName(), location)), m_args(args) {
+		m_type->addRef();
+		clever_delete(type);
+		clever_addref(m_args);
+	}
+
 	Instantiation(Type* type, NodeArray* args, const location& location)
 		: Node(location), m_type(type), m_args(args) {
 		m_type->addRef();
 		clever_addref(m_args);
 	}
+
 	~Instantiation() {
 		m_type->delRef();
 		clever_delref(m_args);

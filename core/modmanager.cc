@@ -169,7 +169,10 @@ void ModManager::loadModule(Scope* scope, Environment* env, Module* module,
 			TypeMap::const_iterator itt(types.begin()), ite(types.end());
 
 			while (EXPECTED(itt != ite)) {
-				loadType(scope, env, itt->first, itt->second);
+				const std::string& tname = ns_prefix.empty() ?
+					itt->first : ns_prefix + itt->first;
+
+				loadType(scope, env, tname, itt->second);
 				++itt;
 			}
 		}

@@ -234,6 +234,7 @@ statement:
 	|	continue ';'
 	|	try_catch_finally
 	|	class_def
+	|	fully_qualified_call ';'
 ;
 
 block:
@@ -309,6 +310,7 @@ rvalue:
 	|	property_access
 	|	mcall
 	|	subscript
+	|	fully_qualified_call
 ;
 
 lvalue:
@@ -583,8 +585,14 @@ fully_qualified_name:
 	|	fully_qualified_name ':' IDENT { $1->append(':', $3); $<ident>$ = $1; }
 ;
 
+fully_qualified_call:
+		fully_qualified_name ':' IDENT '(' call_args ')'        { $1->append(':', $3); $<fcall>$ = new ast::FunctionCall($1, $5, yyloc); } fcall_chain { $<fcall>$ = $8; }
+	|	fully_qualified_name ':' TYPE '.' NEW                   { $1->append(':', $3); $<inst>$ = new ast::Instantiation($1, NULL, yyloc); }
+	|	fully_qualified_name ':' TYPE '.' NEW '(' call_args ')' { $1->append(':', $3); $<inst>$ = new ast::Instantiation($1, $7,   yyloc); }
+;
+
 fcall:
-		fully_qualified_name '(' call_args ')' { $<fcall>$ = new ast::FunctionCall($1, $3, yyloc); } fcall_chain { $$ = $6; }
+		IDENT '(' call_args ')' { $<fcall>$ = new ast::FunctionCall($1, $3, yyloc); } fcall_chain { $$ = $6; }
 ;
 
 return_stmt:
