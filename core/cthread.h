@@ -43,7 +43,7 @@ typedef DWORD (*ThreadFunc)(LPVOID);
 # define CLEVER_THREAD_FUNC(name) DWORD name(void *arg)
 #endif
 
-class CThread {
+class NO_INIT_VTABLE CThread {
 public:
 	CThread()
 		: m_is_running(false) {}
