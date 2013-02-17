@@ -64,6 +64,8 @@ public:
 
 	CLEVER_METHOD(getMethods);
 	CLEVER_METHOD(getProperties);
+	CLEVER_METHOD(getInternClassSizes);
+
 private:
 	DISALLOW_COPY_AND_ASSIGN(ReflectType);
 };

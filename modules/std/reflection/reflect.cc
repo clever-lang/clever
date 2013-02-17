@@ -349,6 +349,13 @@ CLEVER_METHOD(ReflectType::getProperties)
 	result->setObj(CLEVER_MAP_TYPE, map);
 }
 
+// Reflect::getInternClassSizes()
+// Returns the sizes of the Intern classes
+CLEVER_METHOD(ReflectType::getInternClassSizes)
+{
+	printf("class \"Value\" : %N \n", sizeof(Value));
+}
+
 // Reflect type initialization
 CLEVER_TYPE_INIT(ReflectType::init)
 {
@@ -377,6 +384,9 @@ CLEVER_TYPE_INIT(ReflectType::init)
 	// Type specific methods
 	addMethod(new Function("getMethods",    (MethodPtr) &ReflectType::getMethods));
 	addMethod(new Function("getProperties", (MethodPtr) &ReflectType::getProperties));
+
+	addMethod(new Function("getInternClassSizes", (MethodPtr) &ReflectType::getInternClassSizes))
+			->setStatic();
 }
 
 }}}} // clever::modules::std::reflection
