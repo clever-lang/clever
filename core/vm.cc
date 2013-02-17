@@ -152,7 +152,7 @@ static CLEVER_FORCE_INLINE void _param_binding(const Function* func,
 		}
 
 		for (size_t i = 0, len = num_args; i < len; ++i) {
-			fenv->getValue(argoff)->copy(args->at(i));
+			fenv->getValue(argoff)->copy((*args)[i]);
 			argoff.second++;
 			++nargs;
 		}
@@ -163,7 +163,7 @@ static CLEVER_FORCE_INLINE void _param_binding(const Function* func,
 
 		if (EXPECTED(args && (args->size() - nargs) > 0)) {
 			for (size_t i = nargs, j = args->size(); i < j; ++i) {
-				arr->getData().push_back(args->at(i)->clone());
+				arr->getData().push_back((*args)[i]->clone());
 			}
 		}
 

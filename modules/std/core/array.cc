@@ -74,7 +74,11 @@ CLEVER_METHOD(ArrayType::ctor)
 // void Array::append([arg, ... ])
 CLEVER_METHOD(ArrayType::append)
 {
-	if (args.size()) {
+	if (!clever_check_args("*")) {
+		return;
+	}
+
+	if (!args.empty()) {
 		ValueVector& vec = CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS())->getData();
 
 		for (size_t i = 0, j = args.size(); i < j; ++i) {
@@ -160,7 +164,7 @@ CLEVER_METHOD(ArrayType::shift)
 
 	ValueVector& vec = (CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS()))->getData();
 
-	if (!vec.size()) {
+	if (vec.empty()) {
 		result->setNull();
 		return;
 	}
@@ -181,7 +185,7 @@ CLEVER_METHOD(ArrayType::pop)
 
 	ValueVector& vec = CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS())->getData();
 
-	if (!vec.size()) {
+	if (vec.empty()) {
 		result->setNull();
 		return;
 	}
