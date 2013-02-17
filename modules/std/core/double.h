@@ -15,17 +15,7 @@
 
 namespace clever {
 
-struct DoubleObject : public TypeObject {
-	DoubleObject()
-		: value() {}
-
-	DoubleObject(double n)
-		: value(n) {}
-
-	virtual TypeObject* clone() const { return new DoubleObject(value); }
-
-	double value;
-};
+typedef SimpleTypeObject<double> DoubleObject;
 
 class DoubleType : public Type {
 public:

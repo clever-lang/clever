@@ -38,7 +38,7 @@ public:
 	};
 
 	Compiler(Driver* driver)
-		: m_tree(NULL), m_pkg(driver), m_builder(NULL), m_global_env(), m_flags(0) {}
+		: m_tree(NULL), m_pkg(driver), m_builder(NULL), m_global_env(NULL), m_flags(0) {}
 
 	~Compiler() {}
 
@@ -80,6 +80,7 @@ private:
 	// Compiler flag
 	size_t m_flags;
 
+	// Prefix namespace to be used in declaration
 	std::string m_ns_name;
 
 	DISALLOW_COPY_AND_ASSIGN(Compiler);

@@ -74,6 +74,7 @@ typedef std::tr1::unordered_map<const CString*, Value*> MemberMap;
 typedef std::tr1::unordered_map<const CString*, Value*> PropertyMap;
 typedef std::tr1::unordered_map<const CString*, Function*> MethodMap;
 
+// TODO(heuripedes): investigate the significance of this class.
 class TypeObject : public RefCounted {
 public:
 	TypeObject() {}
@@ -101,6 +102,21 @@ private:
 	MemberMap m_members;
 
 	DISALLOW_COPY_AND_ASSIGN(TypeObject);
+};
+
+/**
+ * @brief TypeObject specialization for simple/single data storage
+ */
+template <typename T>
+struct SimpleTypeObject : public TypeObject {
+	SimpleTypeObject()
+		: TypeObject() {}
+	explicit SimpleTypeObject(const T& v)
+		: TypeObject(), value(v) {}
+
+	virtual TypeObject* clone() const { return new SimpleTypeObject<T>(value); }
+
+	T value;
 };
 
 class Type {

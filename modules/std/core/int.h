@@ -15,19 +15,7 @@
 
 namespace clever {
 
-struct IntObject : public TypeObject {
-	IntObject()
-		: value(0) {}
-
-	IntObject(long n)
-		: value(n) {}
-
-	~IntObject() {}
-
-	virtual TypeObject* clone() const { return new IntObject(value); }
-
-	long value;
-};
+typedef SimpleTypeObject<long> IntObject;
 
 class IntType : public Type {
 public:

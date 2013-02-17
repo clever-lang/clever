@@ -28,7 +28,6 @@ class Module;
 class Type;
 
 typedef std::tr1::unordered_map<std::string, Type*> TypeMap;
-
 typedef std::tr1::unordered_map<std::string, Module*> ModuleMap;
 typedef std::pair<std::string, Module*> ModulePair;
 
@@ -38,7 +37,7 @@ public:
 	enum ModuleStatus { UNLOADED, LOADED };
 
 	Module(const std::string& name)
-		: m_name(name), m_flags(UNLOADED), m_funcs(), m_types() {}
+		: m_name(name), m_flags(UNLOADED) {}
 
 	virtual ~Module() {}
 
@@ -47,7 +46,7 @@ public:
 	}
 
 	ModuleMap& getModules() { return m_mods; }
-	bool hasModules() const { return m_mods.size(); }
+	bool hasModules() const { return !m_mods.empty(); }
 
 	void addType(Type* type) {
 		m_types.insert(TypeMap::value_type(type->getName(), type));

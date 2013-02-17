@@ -17,7 +17,7 @@
 
 namespace clever {
 
-class NO_INIT_VTABLE CMutex {
+class CMutex {
 public:
 	CMutex();
 
@@ -43,7 +43,7 @@ typedef DWORD (*ThreadFunc)(LPVOID);
 # define CLEVER_THREAD_FUNC(name) DWORD name(void *arg)
 #endif
 
-class NO_INIT_VTABLE CThread {
+class CThread {
 public:
 	CThread()
 		: m_is_running(false) {}

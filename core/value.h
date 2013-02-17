@@ -38,32 +38,6 @@ typedef std::map     <std::string, Value*>  ValueMap;
 typedef std::pair    <std::string, Value*>  ValuePair;
 typedef std::vector  <Value*>               ValueVector;
 
-/*
-class ValueObject : public RefCounted {
-public:
-	ValueObject()
-		: RefCounted(1), m_obj(NULL), m_type(NULL) {}
-
-	ValueObject(TypeObject* obj, const Type* type)
-		: RefCounted(1), m_obj(obj), m_type(type) {}
-
-	virtual ~ValueObject() {
-		if (m_type) {
-			const_cast<Type*>(m_type)->deallocData(m_obj);
-		}
-	}
-
-	TypeObject* getObj() const { return m_obj; }
-	const Type* getType() const { return m_type; }
-
-private:
-	TypeObject* m_obj;
-	const Type* m_type;
-
-	DISALLOW_COPY_AND_ASSIGN(ValueObject);
-};
-*/
-
 class Value : public RefCounted {
 public:
 	Value()

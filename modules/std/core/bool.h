@@ -15,17 +15,7 @@
 
 namespace clever {
 
-struct BoolObject : public TypeObject {
-	BoolObject()
-		: value() {}
-
-	BoolObject(bool n)
-		: value(n) {}
-
-	virtual TypeObject* clone() const { return new BoolObject(value); }
-
-	bool value;
-};
+typedef SimpleTypeObject<bool> BoolObject;
 
 class BoolType : public Type {
 public:

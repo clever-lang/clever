@@ -35,7 +35,7 @@ public:
 	};
 
 	ModManager(Driver* driver)
-		: m_driver(driver), m_mods(), m_user(NULL) {}
+		: m_driver(driver), m_user(NULL) {}
 
 	~ModManager() {}
 
@@ -60,9 +60,7 @@ public:
 		size_t = ModManager::ALL, const CString* = NULL) const;
 
 	void loadModule(Scope*, Environment*, Module*, size_t, const CString*) const;
-
 	void loadFunction(Scope*, Environment*, const CString*, Function*) const;
-
 	void loadType(Scope*, Environment*, const std::string&, Type*) const;
 private:
 	Driver* m_driver;
