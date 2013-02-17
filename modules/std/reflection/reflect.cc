@@ -10,6 +10,7 @@
 #include "modules/std/reflection/reflect.h"
 #include "modules/std/core/array.h"
 #include "modules/std/core/map.h"
+#include "core/vm.h"
 
 #include <string>
 
@@ -381,6 +382,18 @@ CLEVER_METHOD(ReflectType::getInternClassSizes)
 	printf("class \"std::string\" : %N\n", sizeof(::std::string));
 	printf("class \"Type\" : %N\n", sizeof(Type));
 	printf("class \"TypeObject\" : %N\n", sizeof(TypeObject));
+	printf("class \"CallStack\" : %N\n", sizeof(CallStack));
+	printf("class \"std::vector<Value*>\" : %N\n", sizeof(::std::vector<Value*>));
+	printf("class \"std::stack<std::pair<size_t, size_t> >\" : %N\n",
+		   sizeof(::std::stack< ::std::pair<size_t, size_t> >));
+	printf("class \"std::vector<Value*>\" : %N\n", sizeof(::std::vector<Value*>));
+	printf("class \"std::vector<IR>\" : %N\n",
+		   sizeof(::std::vector<IR>));
+	printf("class \"CException\" : %N\n", sizeof(CException));
+	printf("class \"VMThread\" : %N\n", sizeof(VMThread));
+	//printf("class \"ValueObject\" : %N\n", sizeof(ValueObject));
+	printf("class \"CThread\" : %N\n", sizeof(CThread));
+	printf("class \"VM\" : %N\n", sizeof(VM));
 }
 
 // Reflect type initialization
