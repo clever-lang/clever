@@ -42,7 +42,7 @@ if __name__ == '__main__':
 
 	print "Time elapsed multi-thread python: ", t3 - t2
 	print "Time elapsed single-thread python: ", t1 - t0
-	print "Relative time difference: ", (t3-t2 -t1+t0)/(t1-t0)
+	print "Relative time difference: ", 100 * (t1-t0 - t3+t2)/(t1-t0), "%" 
 	print "Result: ", acc1.get() + acc2.get()
 
 	
