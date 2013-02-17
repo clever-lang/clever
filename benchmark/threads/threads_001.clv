@@ -14,11 +14,8 @@ function proc(ini, fim)
 
 var thread = [Thread.new(proc, 0, L), Thread.new(proc, L + 1, 2 * L)];
 
-thread[0].start();
-thread[1].start();
-
-thread[0].wait();
-thread[1].wait();
+thread.each(function(z){z.start();});
+thread.each(function(z){z.wait();});
 
 var tfim = time();
 
