@@ -13,7 +13,8 @@
 #include "core/value.h"
 #include "types/type.h"
 
-#include <mysql/mysql.h>
+
+#include "modules/db/mysql/cmysql.h"
 
 namespace clever { namespace modules { namespace db {
 
@@ -23,7 +24,11 @@ public:
 
 	~MysqlObject() {}
 
+	CMysql& getMysql() { return m_mysql; }
+
 private:
+
+	CMysql m_mysql;
 
 	DISALLOW_COPY_AND_ASSIGN(MysqlObject);
 };
@@ -44,6 +49,8 @@ public:
 
 	CLEVER_METHOD(ctor);
 	CLEVER_METHOD(connect);
+	CLEVER_METHOD(query);
+	CLEVER_METHOD(fetchArray);
 
 private:
 	DISALLOW_COPY_AND_ASSIGN(Mysql);
