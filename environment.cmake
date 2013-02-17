@@ -49,6 +49,13 @@ if (MSVC)
 	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /O2 /DNDEBUG /MD")
 else (MSVC)
 	set(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} -fPIC -Wall -std=c++98 -fno-rtti -fno-exceptions")
+
+	if (ENABLE_WPADDED)
+		set(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} -Wpadded")
+	else (ENABLE_WPADDED)
+		message(STATUS "Use -DENABLE_WPADDED=1 to enable padding messages")
+	endif (ENABLE_WPADDED)
+
 	set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG} -fno-inline -ggdb -D_DEBUG -DCLEVER_DEBUG")
 	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2 -DNDEBUG")
 	set(CMAKE_CXX_FLAGS_DEVEL   "${CMAKE_CXX_FLAGS_DEBUG} -O0 -Wextra -Wno-unused-parameter -Wno-variadic-macros")
