@@ -12,6 +12,11 @@
 #include "modules/std/core/function.h"
 #include "types/type.h"
 
+#ifndef CLEVER_THREADS_BEBUG
+#undef clever_debug
+#define clever_debug(...)
+#endif
+
 namespace clever { namespace modules { namespace std {
 
 static inline void* ThreadHandler(void* ThreadArgument)
