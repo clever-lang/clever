@@ -120,6 +120,8 @@ CLEVER_TYPE_OPERATOR(IntType::bw_and)
 {
 	if (EXPECTED(rhs->isInt())) {
 		result->setInt(lhs->getInt() & rhs->getInt());
+	} else if (rhs->isDouble()) {
+		result->setInt(lhs->getInt() & long(rhs->getDouble()));
 	}
 }
 
@@ -127,6 +129,8 @@ CLEVER_TYPE_OPERATOR(IntType::bw_or)
 {
 	if (EXPECTED(rhs->isInt())) {
 		result->setInt(lhs->getInt() | rhs->getInt());
+	} else if (rhs->isDouble()) {
+		result->setInt(lhs->getInt() | long(rhs->getDouble()));
 	}
 }
 
@@ -134,6 +138,8 @@ CLEVER_TYPE_OPERATOR(IntType::bw_xor)
 {
 	if (EXPECTED(rhs->isInt())) {
 		result->setInt(lhs->getInt() ^ rhs->getInt());
+	} else if (rhs->isDouble()) {
+		result->setInt(lhs->getInt() ^ long(rhs->getDouble()));
 	}
 }
 
@@ -146,6 +152,8 @@ CLEVER_TYPE_OPERATOR(IntType::bw_ls)
 {
 	if (EXPECTED(rhs->isInt())) {
 		result->setInt(lhs->getInt() << rhs->getInt());
+	} else if (rhs->isDouble()) {
+		result->setInt(lhs->getInt() << long(rhs->getDouble()));
 	}
 }
 
@@ -153,6 +161,8 @@ CLEVER_TYPE_OPERATOR(IntType::bw_rs)
 {
 	if (EXPECTED(rhs->isInt())) {
 		result->setInt(lhs->getInt() >> rhs->getInt());
+	} else if (rhs->isDouble()) {
+		result->setInt(lhs->getInt() >> long(rhs->getDouble()));
 	}
 }
 
