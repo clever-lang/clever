@@ -14,9 +14,7 @@
 
 namespace clever { namespace modules { namespace std {
 
-/*
-FFISTRUCT
-*/
+// FFISTRUCT
 
 void FFIStructData::setStruct(ExtStructs& structs_map, const CString& struct_type)
 {
@@ -126,12 +124,6 @@ TypeObject* FFIStruct::allocData(CLEVER_TYPE_CTOR_ARGS) const
 	return data;
 }
 
-void FFIStruct::deallocData(void* value)
-{
-	FFIStructData* data = static_cast<FFIStructData*>(value);
-	delete data;
-}
-
 CLEVER_METHOD(FFIStruct::ctor)
 {
 	if (!clever_check_args("s")) {
@@ -140,7 +132,6 @@ CLEVER_METHOD(FFIStruct::ctor)
 
 	result->setObj(this, allocData(&args));
 }
-
 
 CLEVER_METHOD(FFIStruct::getMember)
 {
@@ -225,13 +216,6 @@ TypeObject* FFITypes::allocData(CLEVER_TYPE_CTOR_ARGS) const
 
 	return data;
 }
-
-void FFITypes::deallocData(void* value)
-{
-	FFITypesBuilder* data = static_cast<FFITypesBuilder*>(value);
-	delete data;
-}
-
 
 CLEVER_METHOD(FFITypes::addMember)
 {

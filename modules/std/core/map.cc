@@ -29,20 +29,6 @@ TypeObject* MapType::allocData(CLEVER_TYPE_CTOR_ARGS) const
 	return arr;
 }
 
-void MapType::deallocData(void* data)
-{
-	MapObject* arr = static_cast<MapObject*>(data);
-	ValueMap& map = arr->getData();
-	ValueMap::const_iterator it(map.begin()), end(map.end());
-
-	while (it != end) {
-		it->second->delRef();
-		++it;
-	}
-
-	delete arr;
-}
-
 void MapType::dump(TypeObject* value, std::ostream& out) const
 {
 	MapObject* arr = static_cast<MapObject*>(value);

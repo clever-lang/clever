@@ -19,13 +19,13 @@ void Value::deepCopy(const Value* value)
 
 	if (m_data && m_data->refCount() == 1) {
 		if (isInt() && value->isInt()) {
-			setInt(value->getInt());
+			static_cast<IntObject*>(m_data)->value = value->getInt();
 			return;
 		} else if (isDouble() && value->isDouble()) {
-			setDouble(value->getDouble());
+			static_cast<DoubleObject*>(m_data)->value = value->getDouble();
 			return;
 		} else if (isBool() && value->isBool()) {
-			setBool(value->getBool());
+			static_cast<BoolObject*>(m_data)->value = value->getBool();
 			return;
 		}
 	}
@@ -39,25 +39,13 @@ void Value::deepCopy(const Value* value)
 	}
 }
 
-bool Value::asBool() const
-{
-	if (isNull()) {
-		return false;
-	} else if (isBool()) {
-		return getBool();
-	}
-	return true;
-}
-
 void Value::setInt(long n)
 {
 	if (m_data && m_data->refCount() == 1 && isInt()) {
-		static_cast<IntObject*>(getObj())->value = n;
+		static_cast<IntObject*>(m_data)->value = n;
 	} else {
 		cleanUp();
-
-		m_type = CLEVER_INT_TYPE;
-		setObj(m_type, new IntObject(n));
+		setObj(CLEVER_INT_TYPE, new IntObject(n));
 	}
 }
 
@@ -69,52 +57,48 @@ long Value::getInt() const
 void Value::setDouble(double n)
 {
 	if (m_data && m_data->refCount() == 1 && isDouble()) {
-		static_cast<DoubleObject*>(getObj())->value = n;
+		static_cast<DoubleObject*>(m_data)->value = n;
 	} else {
 		cleanUp();
-		m_type = CLEVER_DOUBLE_TYPE;
-		setObj(m_type, new DoubleObject(n));
+		setObj(CLEVER_DOUBLE_TYPE, new DoubleObject(n));
 	}
 }
 
 double Value::getDouble() const
 {
-	return static_cast<DoubleObject*>(getObj())->value;
+	return static_cast<DoubleObject*>(m_data)->value;
 }
 
 void Value::setStr(const CString* str)
 {
 	cleanUp();
-	m_type = CLEVER_STR_TYPE;
-	setObj(m_type, new StrObject(str));
+	setObj(CLEVER_STR_TYPE, new StrObject(str));
 }
 
 void Value::setStr(StrObject* str)
 {
 	cleanUp();
-	m_type = CLEVER_STR_TYPE;
-	setObj(m_type, str);
+	setObj(CLEVER_STR_TYPE, str);
 }
 
 const CString* Value::getStr() const
 {
-	return static_cast<StrObject*>(getObj())->value;
+	return static_cast<StrObject*>(m_data)->value;
 }
 
 void Value::setBool(bool n)
 {
 	if (m_data && m_data->refCount() == 1 && isBool()) {
-		static_cast<BoolObject*>(getObj())->value = n;
+		static_cast<BoolObject*>(m_data)->value = n;
 	} else {
 		cleanUp();
-		m_type = CLEVER_BOOL_TYPE;
-		setObj(m_type, new BoolObject(n));
+		setObj(CLEVER_BOOL_TYPE, new BoolObject(n));
 	}
 }
 
 bool Value::getBool() const
 {
-	return static_cast<BoolObject*>(getObj())->value;
+	return static_cast<BoolObject*>(m_data)->value;
 }
 
 } // clever

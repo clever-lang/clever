@@ -22,7 +22,11 @@ public:
 	ArrayObject(const std::vector<Value*>& vec)
 		: m_data(vec) {}
 
-	~ArrayObject() {}
+	~ArrayObject() {
+		for (size_t i = 0, j = m_data.size(); i < j; ++i) {
+			clever_delref(m_data[i]);
+		}
+	}
 
 	std::vector<Value*>& getData() { return m_data; }
 private:
@@ -38,12 +42,9 @@ public:
 
 	~ArrayType() {}
 
-	void init();
-
-	TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
-	void deallocData(void*);
-
-	void dump(TypeObject*, std::ostream&) const;
+	virtual void init();
+	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
+	virtual void dump(TypeObject*, std::ostream&) const;
 
 	CLEVER_METHOD(ctor);
 	CLEVER_METHOD(append);

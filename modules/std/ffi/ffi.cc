@@ -248,17 +248,6 @@ TypeObject* FFI::allocData(CLEVER_TYPE_CTOR_ARGS) const
 	return data;
 }
 
-void FFI::deallocData(void* value)
-{
-	FFIData* data = static_cast<FFIData*>(value);
-
-	if (data->m_lib_handler) {
-		dlclose(data->m_lib_handler);
-	}
-
-	delete data;
-}
-
 // FFILib constructor
 CLEVER_METHOD(FFI::ctor)
 {
@@ -267,6 +256,13 @@ CLEVER_METHOD(FFI::ctor)
 	}
 
 	result->setObj(this, allocData(&args));
+}
+
+FFIData::~FFIData()
+{
+	if (m_lib_handler) {
+		dlclose(m_lib_handler);
+	}
 }
 
 Value* FFIData::getMember(const CString* name) const

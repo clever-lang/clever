@@ -45,11 +45,6 @@ TypeObject* UString::allocData(CLEVER_TYPE_CTOR_ARGS) const
 	return NULL;
 }
 
-void UString::deallocData(void *data)
-{
-	delete CLEVER_USTR_CAST(data);
-}
-
 CLEVER_METHOD(UString::ctor)
 {
 	result->setObj(this, allocData(&args));

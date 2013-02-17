@@ -19,15 +19,6 @@
 
 namespace clever { namespace modules { namespace std {
 
-void Condition::dump(TypeObject* data) const
-{
-	dump(data, ::std::cout);
-}
-
-void Condition::dump(TypeObject* data, ::std::ostream& out) const
-{
-}
-
 TypeObject* Condition::allocData(CLEVER_TYPE_CTOR_ARGS) const
 {
 	ConditionObject* cobj = new ConditionObject;
@@ -37,16 +28,6 @@ TypeObject* Condition::allocData(CLEVER_TYPE_CTOR_ARGS) const
 		pthread_cond_init(cobj->condition, NULL);
 	}
 	return cobj;
-}
-
-void Condition::deallocData(void* data)
-{
-	ConditionObject* cobj = static_cast<ConditionObject*>(data);
-
-	if (cobj->condition) {
-		pthread_cond_destroy(cobj->condition);
-		delete cobj;
-	}
 }
 
 // bool Condition.signal()

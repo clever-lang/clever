@@ -34,11 +34,9 @@ public:
 
 	~CFile() {}
 
-	void init();
-	void dump(TypeObject* data, ::std::ostream& out) const;
-
+	virtual void init(CLEVER_TYPE_INIT_ARGS);
+	virtual void dump(TypeObject* data, ::std::ostream& out) const;
 	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
-	virtual void deallocData(void* data);
 private:
 	CLEVER_METHOD(ctor);
 	CLEVER_METHOD(read);

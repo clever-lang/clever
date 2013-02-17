@@ -36,15 +36,6 @@ TypeObject* Date::allocData(CLEVER_TYPE_CTOR_ARGS) const
 	return dobj;
 }
 
-void Date::deallocData(void *data)
-{
-	DateObject* dobj = static_cast<DateObject*>(data);
-
-	if (dobj) {
-		delete dobj;
-	}
-}
-
 static inline void clever_date_format(const ::std::vector<Value*>* args,
 	const Value* obj, Value* result, bool utc)
 {

@@ -18,15 +18,6 @@
 
 namespace clever { namespace modules { namespace std {
 
-void Mutex::dump(TypeObject* data) const
-{
-	dump(data, ::std::cout);
-}
-
-void Mutex::dump(TypeObject* data, ::std::ostream& out) const
-{
-}
-
 TypeObject* Mutex::allocData(CLEVER_TYPE_CTOR_ARGS) const
 {
 	MutexObject* mobj = new MutexObject;
@@ -36,16 +27,6 @@ TypeObject* Mutex::allocData(CLEVER_TYPE_CTOR_ARGS) const
 		pthread_mutex_init(mobj->mutex, NULL);
 	}
 	return mobj;
-}
-
-void Mutex::deallocData(void* data)
-{
-	MutexObject* mobj = static_cast<MutexObject*>(data);
-
-	if (mobj->mutex) {
-		pthread_mutex_destroy(mobj->mutex);
-		delete mobj;
-	}
 }
 
 CLEVER_METHOD(Mutex::lock)

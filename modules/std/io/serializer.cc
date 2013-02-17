@@ -11,7 +11,7 @@ void Serializer::dump(TypeObject* obj, ::std::ostream& out) const
 {
 	SerializerData* sobj = static_cast<SerializerData*>(obj);
 
-	sobj->obj->getType()->dump(sobj->info.second, out);
+	sobj->type->dump(sobj->info.second, out);
 }
 
 // Serializer.serialize()
@@ -21,7 +21,7 @@ CLEVER_METHOD(Serializer::doSerialize)
 		return;
 	}
 
-	SerializerData* sobj = new SerializerData(args[0]->getData());
+	SerializerData* sobj = new SerializerData(args[0]->getType());
 
 	sobj->info = args[0]->getType()->serialize(args[0]);
 
@@ -40,7 +40,7 @@ CLEVER_METHOD(Serializer::doUnserialize)
 		return;
 	}
 	SerializerData* sobj = CLEVER_GET_OBJECT(SerializerData*, args[0]);
-	Value* res = args[0]->getType()->unserialize(sobj->obj->getType(), sobj->info);
+	Value* res = unserialize(sobj->type, sobj->info);
 
 	if (res) {
 		result->copy(res);

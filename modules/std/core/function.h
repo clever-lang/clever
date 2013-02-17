@@ -161,8 +161,7 @@ public:
 
 	void dump(TypeObject* data, std::ostream& out) const { out << "function() {}"; }
 
-	TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const { return new Function;  }
-	void deallocData(CLEVER_TYPE_DTOR_ARGS) { delete static_cast<Function*>(data); }
+	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const { return new Function;  }
 
 	CLEVER_METHOD(ctor) {
 		result->setObj(this, allocData(NULL));

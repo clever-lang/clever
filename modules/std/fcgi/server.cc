@@ -30,11 +30,6 @@ TypeObject* Server::allocData(CLEVER_TYPE_CTOR_ARGS) const
 	return NULL;
 }
 
-void Server::deallocData(void* data)
-{
-	delete static_cast<ServerObject*>(data);
-}
-
 // Server constructor
 CLEVER_METHOD(Server::ctor)
 {

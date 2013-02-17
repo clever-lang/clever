@@ -33,13 +33,6 @@ TypeObject* TcpSocket::allocData(CLEVER_TYPE_CTOR_ARGS) const
 	return sv;
 }
 
-void TcpSocket::deallocData(void* obj)
-{
-	SocketObject* sv = static_cast<SocketObject*>(obj);
-
-	delete sv;
-}
-
 CLEVER_METHOD(TcpSocket::setHost)
 {
 	if (!clever_check_args("s")) {

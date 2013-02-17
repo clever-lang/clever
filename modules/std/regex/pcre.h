@@ -64,13 +64,7 @@ public:
 
 	void init();
 
-	TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const { return new PcreObject; }
-
-	void deallocData(void* data) {
-		if (data) {
-			delete static_cast<PcreObject*>(data);
-		}
-	}
+	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const { return new PcreObject; }
 
 	// Methods
 	CLEVER_METHOD(constructor);

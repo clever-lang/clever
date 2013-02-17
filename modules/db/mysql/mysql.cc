@@ -21,15 +21,6 @@ TypeObject* Mysql::allocData(CLEVER_TYPE_CTOR_ARGS) const
 	return obj;
 }
 
-void Mysql::deallocData(void *data)
-{
-	MysqlObject* intern = static_cast<MysqlObject*>(data);
-
-	if (intern) {
-		delete intern;
-	}
-}
-
 void Mysql::dump(TypeObject* data, ::std::ostream& out) const
 {
 	MysqlObject* mo = static_cast<MysqlObject*>(data);

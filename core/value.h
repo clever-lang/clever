@@ -38,6 +38,7 @@ typedef std::map     <std::string, Value*>  ValueMap;
 typedef std::pair    <std::string, Value*>  ValuePair;
 typedef std::vector  <Value*>               ValueVector;
 
+/*
 class ValueObject : public RefCounted {
 public:
 	ValueObject()
@@ -61,39 +62,38 @@ private:
 
 	DISALLOW_COPY_AND_ASSIGN(ValueObject);
 };
+*/
 
 class Value : public RefCounted {
 public:
 	Value()
-		: m_data(NULL), m_type(NULL), m_is_const(false) {}
+		: m_type(NULL), m_data(NULL), m_is_const(false) {}
 
-	Value(bool n, bool is_const = false)
-		: m_data(NULL), m_type(CLEVER_BOOL_TYPE), m_is_const(is_const) {
+	explicit Value(bool n, bool is_const = false)
+		: m_type(CLEVER_BOOL_TYPE), m_data(NULL), m_is_const(is_const) {
 		setBool(n);
 	}
 
-	Value(long n, bool is_const = false)
-		: m_data(NULL), m_type(CLEVER_INT_TYPE), m_is_const(is_const) {
+	explicit Value(long n, bool is_const = false)
+		: m_type(CLEVER_INT_TYPE), m_data(NULL), m_is_const(is_const) {
 		setInt(n);
 	}
 
-	Value(double n, bool is_const = false)
-		: m_data(NULL), m_type(CLEVER_DOUBLE_TYPE), m_is_const(is_const) {
+	explicit Value(double n, bool is_const = false)
+		: m_type(CLEVER_DOUBLE_TYPE), m_data(NULL), m_is_const(is_const) {
 		setDouble(n);
 	}
 
-	Value(const CString* value, bool is_const = false)
-		: m_data(NULL), m_type(CLEVER_STR_TYPE), m_is_const(is_const) {
+	explicit Value(const CString* value, bool is_const = false)
+		: m_type(CLEVER_STR_TYPE), m_data(NULL), m_is_const(is_const) {
 		setObj(m_type, new StrObject(value));
 	}
 
-	Value(const Type* type, bool is_const = false)
-		: m_data(NULL), m_type(type), m_is_const(is_const) {}
+	explicit Value(const Type* type, bool is_const = false)
+		: m_type(type), m_data(NULL), m_is_const(is_const) {}
 
 	~Value() {
-		if (m_type && m_data) {
-			m_data->delRef();
-		}
+		clever_delref(m_data);
 	}
 
 	const Type* getType() const { return m_type; }
@@ -115,10 +115,10 @@ public:
 		clever_assert_not_null(ptr);
 
 		m_type = type;
-		m_data = new ValueObject(ptr, type);
+		m_data = ptr;
 		ptr->copyMembers(type);
 	}
-	TypeObject* getObj() const { return  m_data->getObj(); }
+	TypeObject* getObj() const { return  m_data; }
 
 	void setInt(long);
 	long getInt() const;
@@ -142,7 +142,7 @@ public:
 	bool isArray()    const { return m_type == CLEVER_ARRAY_TYPE;  }
 	bool isThread()   const { return m_type == CLEVER_THREAD_TYPE; }
 
-	ValueObject* getData() const { return m_data; }
+	TypeObject* getData() const { return m_data; }
 
 	void deepCopy(const Value*);
 
@@ -152,7 +152,7 @@ public:
 		m_data = value->getData();
 
 		if (EXPECTED(m_type && m_data)) {
-			m_data->addRef();
+			clever_addref(m_data);
 		}
 	}
 
@@ -164,7 +164,7 @@ public:
 		return val;
 	}
 
-	bool asBool() const;
+	bool asBool() const { return isBool() ? getBool() : (isNull() ? false : true); }
 
 	// @TODO(muriloadriano): This is a workout to allow the assign on a const
 	// variable declaration. If the current data is null and it is const, the
@@ -172,27 +172,17 @@ public:
 	// we cannot assign because it is trying to change its value. If it this
 	// value isn't const it is assignable too. Maybe this could be done in a
 	// clever way.
-	bool isAssignable() const {
-		return isNull() || !isConst();
-	}
+	bool isAssignable() const {	return isNull() || !isConst(); }
 
-	bool isConst() const {
-		return m_is_const;
-	}
+	bool isConst() const { return m_is_const; }
 
-	void setConst(bool constness = true) {
-		m_is_const = constness;
-	}
+	void setConst(bool constness = true) { m_is_const = constness; }
 
 private:
-	void cleanUp() const {
-		if (m_type && m_data) {
-			m_data->delRef();
-		}
-	}
+	void cleanUp() const { clever_delref(m_data); }
 
-	ValueObject* m_data;
 	const Type* m_type;
+	TypeObject* m_data;
 	bool m_is_const;
 
 	DISALLOW_COPY_AND_ASSIGN(Value);

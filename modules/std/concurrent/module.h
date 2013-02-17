@@ -21,6 +21,10 @@ struct ThreadData : public TypeObject {
 	VM*           		vm;
 	::std::vector<Value*> args;
 	bool				joined;
+
+	ThreadData() {}
+
+	~ThreadData();
 };
 
 /// Standard Concurrency Module

@@ -39,8 +39,7 @@ public:
 
 	void init();
 
-	TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
-	void deallocData(void*);
+	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
 
 	void dump(TypeObject*, std::ostream&) const;
 

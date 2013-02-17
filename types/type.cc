@@ -18,14 +18,17 @@ TypeObject::~TypeObject()
 {
 	MemberMap::const_iterator it(m_members.begin()), end(m_members.end());
 
-	while (it != end) {
+	for (; it != end; ++it) {
 		clever_delref((*it).second);
-		++it;
 	}
 }
 
 void TypeObject::copyMembers(const Type* type)
 {
+	if (!m_members.empty()) {
+		return;
+	}
+
 	const MemberMap& members = type->getMembers();
 
 	if (members.size() > 0) {

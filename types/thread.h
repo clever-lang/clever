@@ -30,13 +30,13 @@ public:
 	Thread()
 		: m_name(), m_type(UNDEF), m_environment(NULL), m_threads() {}
 
-	Thread(std::string name)
+	Thread(const std::string& name)
 		: m_name(name), m_type(UNDEF), m_environment(NULL), m_threads() {}
 
-	Thread(std::string name, size_t addr)
+	Thread(const std::string& name, size_t addr)
 		: m_name(name), m_type(UNDEF), m_environment(NULL), m_threads() { m_addr = addr; }
 
-	~Thread() { }
+	~Thread() {}
 
 	void setName(std::string name) { m_name = name; }
 	const std::string& getName() const { return m_name; }
@@ -53,7 +53,6 @@ public:
 	void setAddr(size_t addr) { m_addr = addr; }
 	void setNThreads(size_t n) { m_n_threads = n; }
 	void wait();
-
 
 	Environment* getEnvironment() const { return m_environment; }
 	void setEnvironment(Environment* e) { m_environment = e; }
@@ -79,15 +78,9 @@ public:
 
 	~ThreadType() {  }
 
-	void init();
-
-	void dump(TypeObject* data, std::ostream& out) const { out << "Process() {}"; }
-
-	TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const { return new Thread; }
-
-	void deallocData(CLEVER_TYPE_DTOR_ARGS) {
-		delete static_cast<Thread*>(data);
-	}
+	virtual void init();
+	virtual void dump(TypeObject* data, std::ostream& out) const { out << "Process() {}"; }
+	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const { return new Thread; }
 
 	static size_t getNThreads() { return m_n_threads; }
 

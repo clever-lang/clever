@@ -61,11 +61,6 @@ TypeObject* CFile::allocData(CLEVER_TYPE_CTOR_ARGS) const
 		static_cast< ::std::ios_base::openmode>(args->at(1)->getInt()));
 }
 
-void CFile::deallocData(CLEVER_TYPE_DTOR_ARGS)
-{
-	delete CLEVER_CAST(CFileStream, data);
-}
-
 CLEVER_METHOD(CFile::ctor)
 {
 	if (!clever_check_args("si")) {

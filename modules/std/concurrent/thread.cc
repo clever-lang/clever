@@ -76,33 +76,33 @@ TypeObject* Thread::allocData(CLEVER_TYPE_CTOR_ARGS) const
 	return intern;
 }
 
-void Thread::deallocData(void* data)
+ThreadData::~ThreadData()
 {
-	ThreadData* intern = static_cast<ThreadData*>(data);
+	clever_debug("Thread.dtor executing %@ ...", thread);
 
-	if (!intern) {
-		return;
-	}
-	clever_debug("Thread.dtor executing %@ ...", intern->thread);
-
-	if (!intern->joined) {
-		clever_debug("Thread.dtor calling pthread_join for %@", intern->thread);
-		if (pthread_join(intern->thread, NULL) != 0) {
-			clever_debug("Thread.dtor failed to join with %@", intern->thread);
-		} else clever_debug("Thread.dtor joined with %@", intern->thread);
-	} else clever_debug("Thread.dtor skipping join for %@, previously joined", intern->thread);
-
-	if (intern->lock) {
-		if (pthread_mutex_destroy(intern->lock) != 0) {
-			clever_debug("Thread.dtor experienced an error destroying the lock for %@", intern->thread);
-		} else clever_debug("Thread.dtor has destroyed the lock associated with %@", intern->thread);
-		delete intern->lock;
+	if (!joined) {
+		clever_debug("Thread.dtor calling pthread_join for %@", thread);
+		if (pthread_join(thread, NULL) != 0) {
+			clever_debug("Thread.dtor failed to join with %@", thread);
+		} else {
+			clever_debug("Thread.dtor joined with %@", thread);
+		}
+	} else {
+		clever_debug("Thread.dtor skipping join for %@, previously joined", thread);
 	}
 
-	if (intern->result) {
-		delete intern->result;
+	if (lock) {
+		if (pthread_mutex_destroy(lock) != 0) {
+			clever_debug("Thread.dtor experienced an error destroying the lock for %@", thread);
+		} else {
+			clever_debug("Thread.dtor has destroyed the lock associated with %@", thread);
+		}
+		delete lock;
 	}
-	delete intern;
+
+	if (result) {
+		delete result;
+	}
 }
 
 // Bool Thread.start()

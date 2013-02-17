@@ -20,7 +20,10 @@ struct MutexObject : public TypeObject {
 		: mutex(new pthread_mutex_t) {}
 
 	~MutexObject() {
-		delete mutex;
+		if (mutex) {
+			pthread_mutex_destroy(mutex);
+			delete mutex;
+		}
 	}
 
 	pthread_mutex_t *mutex;
@@ -33,19 +36,10 @@ public:
 
 	~Mutex() {}
 
-	void dump(TypeObject* data) const;
-	void dump(TypeObject* data, ::std::ostream& out) const;
-
-	virtual void increment(Value*, const VM*, CException*) const {}
-	virtual void decrement(Value*, const VM*, CException*) const {}
-
-	void init();
-
+	virtual void init(CLEVER_TYPE_INIT_ARGS);
 	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
-	virtual void deallocData(void* data);
 
 	CLEVER_METHOD(ctor);
-
 	CLEVER_METHOD(lock);
 	CLEVER_METHOD(unlock);
 	CLEVER_METHOD(trylock);

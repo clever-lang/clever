@@ -22,7 +22,13 @@ class MapObject : public TypeObject{
 public:
 	MapObject() {}
 
-	~MapObject() {}
+	~MapObject() {
+		ValueMap::const_iterator it(m_data.begin()), end(m_data.end());
+
+		for (; it != end; ++it) {
+			clever_delref(it->second);
+		}
+	}
 
 	std::map<std::string, Value*>& getData() { return m_data; }
 private:
@@ -40,8 +46,7 @@ public:
 
 	void init();
 
-	TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
-	void deallocData(void*);
+	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
 
 	void dump(TypeObject*, std::ostream&) const;
 

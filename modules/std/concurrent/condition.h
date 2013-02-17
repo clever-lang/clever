@@ -20,7 +20,10 @@ struct ConditionObject : public TypeObject {
 		: condition(new pthread_cond_t) {}
 
 	~ConditionObject() {
-		delete condition;
+		if (condition) {
+			pthread_cond_destroy(condition);
+			delete condition;
+		}
 	}
 
 	pthread_cond_t* condition;
@@ -33,19 +36,10 @@ public:
 
 	~Condition() {}
 
-	void dump(TypeObject* data) const;
-	void dump(TypeObject* data, ::std::ostream& out) const;
-
-	virtual void increment(Value*, const VM*, CException*) const {}
-	virtual void decrement(Value*, const VM*, CException*) const {}
-
-	void init();
-
+	virtual void init(CLEVER_TYPE_INIT_ARGS);
 	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
-	virtual void deallocData(void* data);
 
 	CLEVER_METHOD(ctor);
-
 	CLEVER_METHOD(signal);
 	CLEVER_METHOD(broadcast);
 	CLEVER_METHOD(wait);

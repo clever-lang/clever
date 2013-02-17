@@ -34,6 +34,8 @@ struct FFIData : public TypeObject {
 	FFIData(const FFI* type)
 		: m_lib_handler(NULL), m_ffi(type) {}
 
+	~FFIData();
+
 	virtual Value* getMember(const CString*) const;
 
 	::std::string m_func_name;
@@ -51,10 +53,8 @@ public:
 		clever_delref(m_call_handler);
 	}
 
-	void init();
-
+	virtual void init(CLEVER_TYPE_INIT_ARGS);
 	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
-	virtual void deallocData(void* data);
 
 	Value* getCallHandler() const { return m_call_handler; }
 

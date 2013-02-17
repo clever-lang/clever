@@ -38,9 +38,7 @@ public:
 
 	void init();
 
-	TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const { return new IntObject; }
-
-	void deallocData(CLEVER_TYPE_DTOR_ARGS) { delete static_cast<IntObject*>(data); }
+	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const { return new IntObject; }
 
 	void dump(TypeObject* value, std::ostream& out) const {
 		out << static_cast<IntObject*>(value)->value;

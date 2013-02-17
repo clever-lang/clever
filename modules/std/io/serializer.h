@@ -6,18 +6,16 @@
 namespace clever { namespace modules { namespace std {
 
 struct SerializerData : public TypeObject {
-	SerializerData(ValueObject* obj_)
-		: obj(obj_) {
-		clever_addref(obj);
-	}
+	SerializerData(const Type* type_)
+		: type(type_) {}
 
 	~SerializerData() {
-		if (obj) {
-			clever_delref(obj);
+		if (info.second) {
+			clever_delref(info.second);
 		}
 	}
 
-	ValueObject* obj;
+	const Type* type;
 	::std::pair<size_t, TypeObject*> info;
 };
 
@@ -28,15 +26,9 @@ public:
 
 	~Serializer() {}
 
-	void init(CLEVER_TYPE_INIT_ARGS);
-
+	virtual void init(CLEVER_TYPE_INIT_ARGS);
 	virtual void dump(TypeObject*, ::std::ostream&) const;
-
-	TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const { return NULL; }
-
-	void deallocData(CLEVER_TYPE_DTOR_ARGS) {
-		delete static_cast<SerializerData*>(data);
-	}
+	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const { return NULL; }
 
 	CLEVER_METHOD(doSerialize);
 	CLEVER_METHOD(doUnserialize);

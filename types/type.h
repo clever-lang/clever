@@ -74,7 +74,7 @@ typedef std::tr1::unordered_map<const CString*, Value*> MemberMap;
 typedef std::tr1::unordered_map<const CString*, Value*> PropertyMap;
 typedef std::tr1::unordered_map<const CString*, Function*> MethodMap;
 
-class TypeObject {
+class TypeObject : public RefCounted {
 public:
 	TypeObject() {}
 
@@ -194,9 +194,6 @@ public:
 
 	/// Type internal data constructor
 	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const { return NULL; }
-
-	/// Type internal data destructor
-	virtual void deallocData(CLEVER_TYPE_DTOR_ARGS) {}
 
 	virtual std::pair<size_t, TypeObject*> serialize(const Value*) const;
 	virtual Value* unserialize(const Type*, const std::pair<size_t, TypeObject*>&) const;

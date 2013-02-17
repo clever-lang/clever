@@ -24,18 +24,6 @@ TypeObject* ArrayType::allocData(CLEVER_TYPE_CTOR_ARGS) const
 	return arr;
 }
 
-void ArrayType::deallocData(void* data)
-{
-	ArrayObject* arr = static_cast<ArrayObject*>(data);
-	ValueVector& vec = arr->getData();
-
-	for (size_t i = 0, j = vec.size(); i < j; ++i) {
-		vec[i]->delRef();
-	}
-
-	delete arr;
-}
-
 void ArrayType::dump(TypeObject* value, std::ostream& out) const
 {
 	ArrayObject* arr = static_cast<ArrayObject*>(value);
