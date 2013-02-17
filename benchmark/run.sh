@@ -10,7 +10,7 @@ echo "threads/threads_001.py: [python version]"
 python threads/threads_001.py
 echo "[OK]"
 
-echo "threads/threads_001.lua: [lua  
+echo "threads/threads_001.lua: [lua version"
 lua threads/threads_001.lua
 echo "[OK]"
 
