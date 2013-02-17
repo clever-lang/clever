@@ -33,7 +33,7 @@ Value* Environment::getValue(const ValueOffset& offset) const
 		clever_assert(offset.second < m_data.size(),
 				"`offset.second` must be within `m_data` limits.");
 
-		return m_data.at(offset.second);
+		return m_data[offset.second];
 	}
 
 	size_t depth = offset.first;
@@ -49,7 +49,7 @@ Value* Environment::getValue(const ValueOffset& offset) const
 			"`offset.second` must be within `m_data` bounds.");
 	clever_assert_not_null(env);
 
-	return env->m_data.at(offset.second);
+	return env->m_data[offset.second];
 }
 
 void Environment::copy(const Environment* _env)
