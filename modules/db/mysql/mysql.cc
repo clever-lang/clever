@@ -10,7 +10,6 @@
 #include "modules/db/mysql/mysql.h"
 #include "modules/db/mysql/cmysql.h"
 
-
 namespace clever { namespace modules { namespace db {
 
 // Simple constructor for now

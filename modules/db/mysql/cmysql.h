@@ -1,4 +1,3 @@
-
 /**
  * Clever programming language
  * Copyright (c) Clever Team
@@ -41,7 +40,7 @@ private:
 
 	void init();
 
-	MYSQL *m_connection;
+	MYSQL* m_connection;
 
 	std::string m_host;
 	std::string m_user;
@@ -50,7 +49,7 @@ private:
 
 	int m_port;
 
-	ArrayObject *m_result_set;
+	ArrayObject* m_result_set;
 
 	DISALLOW_COPY_AND_ASSIGN(CMysql);
 };
