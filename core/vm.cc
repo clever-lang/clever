@@ -245,49 +245,84 @@ Value* VM::runFunction(const Function* func, std::vector<Value*>* args)
 }
 
 // Performs binary operation
-CLEVER_FORCE_INLINE void VM::binOp(const IR& opcode)
+CLEVER_FORCE_INLINE void VM::binOp(const IR& op)
 {
-	const Value* lhs = getValue(opcode.op1);
-	const Value* rhs = getValue(opcode.op2);
+	const Value* lhs = getValue(op.op1);
+	const Value* rhs = getValue(op.op2);
 	const Type* type = lhs->getType();
 
-	if (UNEXPECTED(lhs->isNull() || (OPCODE.op2.op_type != UNUSED && rhs->isNull()))) {
-		error(OPCODE.loc, "Operation cannot be executed on null value");
+	if (UNEXPECTED(lhs->isNull() || (op.op2.op_type != UNUSED && rhs->isNull()))) {
+		error(op.loc, "Operation cannot be executed on null value");
 	}
 
-	switch (OPCODE.opcode) {
+	switch (op.opcode) {
 		// Arithmetic
 		case OP_ADD:
-			type->add(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
+			type->add(getValue(op.result), lhs, rhs, this, &m_exception);
 			break;
 		case OP_SUB:
-			type->sub(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
+			type->sub(getValue(op.result), lhs, rhs, this, &m_exception);
 			break;
 		case OP_MUL:
-			type->mul(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
+			type->mul(getValue(op.result), lhs, rhs, this, &m_exception);
 			break;
 		case OP_DIV:
-			type->div(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
+			type->div(getValue(op.result), lhs, rhs, this, &m_exception);
 			break;
 		case OP_MOD:
-			type->mod(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
+			type->mod(getValue(op.result), lhs, rhs, this, &m_exception);
 			break;
 		// Bitwise
 		case OP_BW_AND:
-			type->bw_and(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
+			type->bw_and(getValue(op.result), lhs, rhs, this, &m_exception);
 			break;
 		case OP_BW_OR:
-			type->bw_or(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
+			type->bw_or(getValue(op.result), lhs, rhs, this, &m_exception);
 			break;
 		case OP_BW_XOR:
-			type->bw_xor(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
+			type->bw_xor(getValue(op.result), lhs, rhs, this, &m_exception);
 			break;
 		// Unary
 		case OP_NOT:
-			type->not_op(getValue(OPCODE.result), lhs, this, &m_exception);
+			type->not_op(getValue(op.result), lhs, this, &m_exception);
 			break;
 		case OP_BW_NOT:
-			type->bw_not(getValue(OPCODE.result), lhs, this, &m_exception);
+			type->bw_not(getValue(op.result), lhs, this, &m_exception);
+			break;
+		EMPTY_SWITCH_DEFAULT_CASE();
+	}
+}
+
+CLEVER_FORCE_INLINE void VM::logicOp(const IR& op)
+{
+	const Value* lhs = getValue(op.op1);
+	const Value* rhs = getValue(op.op2);
+
+	if (UNEXPECTED(lhs->isNull() || rhs->isNull())) {
+		getValue(op.result)->setBool(false);
+		return;
+	}
+
+	const Type* type = lhs->getType();
+
+	switch (op.opcode) {
+		case OP_GREATER:
+			type->greater(getValue(op.result), lhs, rhs, this, &m_exception);
+			break;
+		case OP_GEQUAL:
+			type->greater_equal(getValue(op.result), lhs, rhs, this, &m_exception);
+			break;
+		case OP_LESS:
+			type->less(getValue(op.result), lhs, rhs, this, &m_exception);
+			break;
+		case OP_LEQUAL:
+			type->less_equal(getValue(op.result), lhs, rhs, this, &m_exception);
+			break;
+		case OP_EQUAL:
+			type->equal(getValue(op.result), lhs, rhs, this, &m_exception);
+			break;
+		case OP_NEQUAL:
+			type->not_equal(getValue(op.result), lhs, rhs, this, &m_exception);
 			break;
 		EMPTY_SWITCH_DEFAULT_CASE();
 	}
@@ -306,7 +341,7 @@ void VM::run()
 
 	OPCODES;
 	OP(OP_RET):
-	if (EXPECTED(m_call_stack.size() > 1)) {
+	if (EXPECTED(!m_call_stack.empty())) {
 		Environment* env = m_call_stack.top();
 		size_t ret_addr = env->getRetAddr();
 
@@ -438,11 +473,8 @@ out:
 	if (EXPECTED(isChild())) {
 		getMutex()->lock();
 
-		if (EXPECTED(m_call_stack.size())) {
-			Environment* env = m_call_stack.top();
-
-			clever_delref(env);
-
+		if (EXPECTED(!m_call_stack.empty())) {
+			clever_delref(m_call_stack.top());
 			m_call_stack.pop();
 		}
 
@@ -588,104 +620,14 @@ out:
 	DISPATCH;
 
 	OP(OP_GREATER):
-	{
-		const Value* lhs = getValue(OPCODE.op1);
-		const Value* rhs = getValue(OPCODE.op2);
-
-		if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
-			lhs->getType()->greater(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
-
-			if (UNEXPECTED(m_exception.hasException())) {
-				goto throw_exception;
-			}
-		} else {
-			getValue(OPCODE.result)->setBool(false);
-		}
-	}
-	DISPATCH;
-
 	OP(OP_GEQUAL):
-	{
-		const Value* lhs = getValue(OPCODE.op1);
-		const Value* rhs = getValue(OPCODE.op2);
-
-		if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
-			lhs->getType()->greater_equal(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
-
-			if (UNEXPECTED(m_exception.hasException())) {
-				goto throw_exception;
-			}
-		} else {
-			getValue(OPCODE.result)->setBool(false);
-		}
-	}
-	DISPATCH;
-
-	OP(OP_LESS):
-	{
-		const Value* lhs = getValue(OPCODE.op1);
-		const Value* rhs = getValue(OPCODE.op2);
-
-		if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
-			lhs->getType()->less(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
-
-			if (UNEXPECTED(m_exception.hasException())) {
-				goto throw_exception;
-			}
-		} else {
-			getValue(OPCODE.result)->setBool(false);
-		}
-	}
-	DISPATCH;
-
 	OP(OP_LEQUAL):
-	{
-		const Value* lhs = getValue(OPCODE.op1);
-		const Value* rhs = getValue(OPCODE.op2);
-
-		if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
-			lhs->getType()->less_equal(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
-
-			if (UNEXPECTED(m_exception.hasException())) {
-				goto throw_exception;
-			}
-		} else {
-			getValue(OPCODE.result)->setBool(false);
-		}
-	}
-	DISPATCH;
-
+	OP(OP_LESS):
 	OP(OP_EQUAL):
-	{
-		const Value* lhs = getValue(OPCODE.op1);
-		const Value* rhs = getValue(OPCODE.op2);
-
-		if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
-			lhs->getType()->equal(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
-
-			if (UNEXPECTED(m_exception.hasException())) {
-				goto throw_exception;
-			}
-		} else {
-			getValue(OPCODE.result)->setBool(false);
-		}
-	}
-	DISPATCH;
-
 	OP(OP_NEQUAL):
-	{
-		const Value* lhs = getValue(OPCODE.op1);
-		const Value* rhs = getValue(OPCODE.op2);
-
-		if (EXPECTED(!lhs->isNull() && !rhs->isNull())) {
-			lhs->getType()->not_equal(getValue(OPCODE.result), lhs, rhs, this, &m_exception);
-
-			if (UNEXPECTED(m_exception.hasException())) {
-				goto throw_exception;
-			}
-		} else {
-			getValue(OPCODE.result)->setBool(false);
-		}
+	logicOp(OPCODE);
+	if (UNEXPECTED(m_exception.hasException())) {
+		goto throw_exception;
 	}
 	DISPATCH;
 
@@ -694,8 +636,7 @@ out:
 
 	OP(OP_NEW):
 	{
-		const Value* valtype = getValue(OPCODE.op1);
-		const Type* type = valtype->getType();
+		const Type* type = getValue(OPCODE.op1)->getType();
 		const Function* ctor = type->getConstructor();
 
 		if (EXPECTED(ctor != NULL)) {
@@ -817,14 +758,13 @@ out:
 				"Cannot perform property access from null value");
 		}
 		const Value* name = getValue(OPCODE.op2);
-		const Type* type = obj->getType();
 		const Value* value = obj->getObj()->getMember(name->getStr());
 
 		if (EXPECTED(value != NULL)) {
 			getValue(OPCODE.result)->copy(value);
 		} else {
 			error(OPCODE.loc, "Property `%T::%S' not found!",
-				type, name->getStr());
+				obj->getType(), name->getStr());
 		}
 	}
 	DISPATCH;
@@ -838,14 +778,13 @@ out:
 				"Cannot perform property access from null value");
 		}
 		const Value* name = getValue(OPCODE.op2);
-		const Type* type = obj->getType();
-		const Value* value = type->getProperty(name->getStr());
+		const Value* value = obj->getType()->getProperty(name->getStr());
 
 		if (EXPECTED(value != NULL)) {
 			getValue(OPCODE.result)->copy(value);
 		} else {
 			error(OPCODE.loc, "Property `%T::%S' not found!",
-				type, name->getStr());
+				obj->getType(), name->getStr());
 		}
 	}
 	DISPATCH;
@@ -859,14 +798,13 @@ out:
 				"Cannot perform property access from null value");
 		}
 		const Value* name = getValue(OPCODE.op2);
-		const Type* type = obj->getType();
 		Value* value = obj->getObj()->getMember(name->getStr());
 
 		if (EXPECTED(value != NULL)) {
 			setTempValue(OPCODE.result, value);
 		} else {
 			error(OPCODE.loc, "Member `%T::%S' not found!",
-				type, name->getStr());
+				obj->getType(), name->getStr());
 		}
 	}
 	DISPATCH;
@@ -880,42 +818,33 @@ out:
 				"Cannot perform property access from null value");
 		}
 		const Value* name = getValue(OPCODE.op2);
-		const Type* type = obj->getType();
-		Value* value = type->getProperty(name->getStr());
+		Value* value = obj->getType()->getProperty(name->getStr());
 
 		if (EXPECTED(value != NULL)) {
 			setTempValue(OPCODE.result, value);
 		} else {
 			error(OPCODE.loc, "Property `%T::%S' not found!",
-				type, name->getStr());
+				obj->getType(), name->getStr());
 		}
 	}
 	DISPATCH;
 
-	OP(OP_TRY):
-	m_try_stack.push(std::pair<size_t, size_t>(OPCODE.op1.jmp_addr, 1));
-	DISPATCH;
-
-	OP(OP_CATCH):
-	m_try_stack.top().second = 2;
-	DISPATCH;
-
-	OP(OP_THROW):
-	m_exception.setException(getValue(OPCODE.op1));
-	goto throw_exception;
+	OP(OP_TRY):   m_try_stack.push(std::pair<size_t, size_t>(OPCODE.op1.jmp_addr, 1)); DISPATCH;
+	OP(OP_CATCH): m_try_stack.top().second = 2; DISPATCH;
+	OP(OP_THROW): m_exception.setException(getValue(OPCODE.op1)); goto throw_exception;
 
 throw_exception:
-	if (EXPECTED(m_try_stack.size())) {
+	if (EXPECTED(!m_try_stack.empty())) {
 		size_t catch_addr = m_try_stack.top().first;
 		if (m_try_stack.top().second > 1) {
 			m_try_stack.pop();
-			if (!m_try_stack.size()) {
+			if (m_try_stack.empty()) {
 				goto exit_exception;
 			}
 			catch_addr = m_try_stack.top().first;
 		}
 		getValue(m_inst[catch_addr].op1)->copy(m_exception.getException());
-		m_exception.getException()->delRef();
+		clever_delref(m_exception.getException());
 		m_exception.clear();
 		VM_GOTO(catch_addr);
 	}
