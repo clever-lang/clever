@@ -11,6 +11,7 @@
 #include "modules/std/core/array.h"
 #include "modules/std/core/map.h"
 #include "core/vm.h"
+#include "core/scope.h"
 
 #include <string>
 
@@ -394,6 +395,7 @@ CLEVER_METHOD(ReflectType::getInternClassSizes)
 	//printf("class \"ValueObject\" : %N\n", sizeof(ValueObject));
 	printf("class \"CThread\" : %N\n", sizeof(CThread));
 	printf("class \"VM\" : %N\n", sizeof(VM));
+	printf("class \"Scope::ScopeVector\" : %N\n", sizeof(Scope::ScopeVector));
 }
 
 // Reflect type initialization
