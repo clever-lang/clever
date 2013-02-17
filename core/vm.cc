@@ -133,8 +133,8 @@ void VM::dumpOpcodes() const
 void VM::copy(const VM* vm, bool deep)
 {
 	f_mutex = const_cast<VM*>(vm)->getMutex();
-	m_pc = vm->m_pc;
-
+	m_pc         = vm->m_pc;
+	m_inst       = vm->m_inst;
 	m_try_stack  = vm->m_try_stack;
 	m_global_env = vm->m_global_env;
 	m_call_stack = vm->m_call_stack;

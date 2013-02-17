@@ -38,10 +38,18 @@ public:
 
 	typedef std::vector<std::vector<VMThread*> > ThreadPool;
 
-	VM(const IRVector& inst)
-		: m_pc(0), m_main(true), m_inst(inst),
+	VM()
+		: m_pc(0), m_main(true),
 		  m_const_env(NULL), m_global_env(NULL), m_call_stack(), m_call_args(),
 		  m_mutex(), f_mutex(NULL), m_try_stack() {}
+
+	VM(const IRVector& inst)
+		: m_pc(0), m_main(true),
+		  m_const_env(NULL), m_global_env(NULL), m_call_stack(), m_call_args(),
+		  m_mutex(), f_mutex(NULL), m_try_stack() {
+		m_inst.resize(inst.size());
+		std::copy(inst.begin(), inst.end(), m_inst.begin());
+	}
 
 	~VM() {}
 
@@ -58,7 +66,7 @@ public:
 	size_t getPC() const { return m_pc; }
 	void nextPC() { ++m_pc; }
 
-	const IRVector& getInst() const { return m_inst; }
+	const std::vector<IR>& getInst() const { return m_inst; }
 
 	CallStack getCallStack() const { return m_call_stack; }
 
@@ -97,7 +105,7 @@ private:
 	bool m_main;
 
 	/// Vector of instruction
-	const IRVector& m_inst;
+	std::vector<IR> m_inst;
 
 	/// Constant
 	Environment* m_const_env;

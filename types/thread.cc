@@ -101,7 +101,7 @@ CLEVER_METHOD(ThreadType::run)
 
 		VMThread* thread = new VMThread;
 
-		thread->vm_handler = new VM(m_vm->getInst());
+		thread->vm_handler = new VM();
 		thread->vm_handler->copy(m_vm, true);
 		thread->vm_handler->setChild();
 

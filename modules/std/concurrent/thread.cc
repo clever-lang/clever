@@ -120,7 +120,7 @@ CLEVER_METHOD(Thread::start)
 		/** @TODO(krakjoe) pthread attributes **/
 		if (pthread_mutex_lock(intern->lock) == 0) {
 			clever_debug("Thread.start set vm for thread to %@", vm);
-			intern->vm = new VM(vm->getInst());
+			intern->vm = new VM();
 			intern->vm->copy(vm, false);
 			result->setBool(
 				(pthread_create(&intern->thread, NULL, ThreadHandler, intern) == 0)
