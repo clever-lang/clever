@@ -214,12 +214,12 @@ public:
 	virtual std::pair<size_t, TypeObject*> serialize(const Value*) const;
 	virtual Value* unserialize(const Type*, const std::pair<size_t, TypeObject*>&) const;
 private:
+	MemberMap m_members;
 	std::string m_name;
 	const Function* m_ctor;
 	const Function* m_user_ctor;
 	const Function* m_dtor;
 
-	MemberMap m_members;
 	TypeFlag m_flags;
 
 	DISALLOW_COPY_AND_ASSIGN(Type);

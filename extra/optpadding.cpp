@@ -43,10 +43,10 @@ void doit(bool* mark, int* align, int* offset, int* sizes, int ini, int size)
 			offset[ini] = padding + offset[ini-1] + align[ini - 1];
 		}
 
-		if (solution == INF) fsolution = offset[ini]+align[ini-1];
+		if (solution == INF) fsolution = offset[ini];
 
-		if (offset[ini]+align[ini-1] < solution) {
-			solution = offset[ini]+align[ini-1];
+		if (offset[ini] < solution) {
+			solution = offset[ini];
 			for (int i = 0; i < size; ++i) {
 				vsolution[i] = temp[i];
 			}

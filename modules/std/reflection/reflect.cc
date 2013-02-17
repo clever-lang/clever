@@ -11,6 +11,8 @@
 #include "modules/std/core/array.h"
 #include "modules/std/core/map.h"
 
+#include <string>
+
 namespace clever { namespace modules { namespace std { namespace reflection {
 
 // Allocates a Reflect object
@@ -349,6 +351,38 @@ CLEVER_METHOD(ReflectType::getProperties)
 	result->setObj(CLEVER_MAP_TYPE, map);
 }
 
+// Reflect::getInternClassSizes()
+// Returns the sizes of the Intern classes
+CLEVER_METHOD(ReflectType::getInternClassSizes)
+{
+
+	printf("_______________________\n");
+	printf("Types\n");
+	printf("-----------------------\n");
+
+	printf("type bool : %N \n", sizeof(bool));
+	printf("type char : %N \n", sizeof(char));
+	printf("type size_t : %N \n", sizeof(size_t));
+	printf("type int : %N \n", sizeof(int));
+	printf("type long : %N \n", sizeof(long));
+	printf("type float : %N \n", sizeof(float));
+	printf("type double : %N \n", sizeof(double));
+	printf("type pointer : %N \n", sizeof(void*));
+
+	printf("_______________________\n");
+	printf("Classes\n");
+	printf("-----------------------\n");
+
+	printf("class \"RefCounted\" : %N \n", sizeof(RefCounted));
+	printf("class \"Value\" : %N \n", sizeof(Value));
+	printf("class \"CMutex\" : %N \n", sizeof(CMutex));
+	printf("class \"MemberMap\" : %N\n", sizeof(MemberMap));
+	printf("class \"TypeFlag\" : %N\n", sizeof(TypeFlag));
+	printf("class \"std::string\" : %N\n", sizeof(::std::string));
+	printf("class \"Type\" : %N\n", sizeof(Type));
+	printf("class \"TypeObject\" : %N\n", sizeof(TypeObject));
+}
+
 // Reflect type initialization
 CLEVER_TYPE_INIT(ReflectType::init)
 {
@@ -377,6 +411,9 @@ CLEVER_TYPE_INIT(ReflectType::init)
 	// Type specific methods
 	addMethod(new Function("getMethods",    (MethodPtr) &ReflectType::getMethods));
 	addMethod(new Function("getProperties", (MethodPtr) &ReflectType::getProperties));
+
+	addMethod(new Function("getInternClassSizes", (MethodPtr) &ReflectType::getInternClassSizes))
+			->setStatic();
 }
 
 }}}} // clever::modules::std::reflection
