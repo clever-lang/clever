@@ -62,8 +62,7 @@ void Driver::readFile(std::string& source) const
 
 	while (!filep.eof()) {
 		getline(filep, line);
-		source += line;
-		source += '\n';
+		source += line + '\n';
 	}
 
 	filep.clear();

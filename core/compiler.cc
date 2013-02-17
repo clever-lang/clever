@@ -72,9 +72,7 @@ void Compiler::errorf(const location& loc, const char* format, ...)
 	va_list args;
 
 	va_start(args, format);
-
 	vsprintf(out, format, args);
-
 	va_end(args);
 
 	error(out.str(), loc);
