@@ -11,6 +11,8 @@
 #include "modules/std/core/array.h"
 #include "modules/std/core/map.h"
 
+#include <string>
+
 namespace clever { namespace modules { namespace std { namespace reflection {
 
 // Allocates a Reflect object
@@ -374,7 +376,11 @@ CLEVER_METHOD(ReflectType::getInternClassSizes)
 	printf("class \"RefCounted\" : %N \n", sizeof(RefCounted));
 	printf("class \"Value\" : %N \n", sizeof(Value));
 	printf("class \"CMutex\" : %N \n", sizeof(CMutex));
-
+	printf("class \"MemberMap\" : %N\n", sizeof(MemberMap));
+	printf("class \"TypeFlag\" : %N\n", sizeof(TypeFlag));
+	printf("class \"std::string\" : %N\n", sizeof(::std::string));
+	printf("class \"Type\" : %N\n", sizeof(Type));
+	printf("class \"TypeObject\" : %N\n", sizeof(TypeObject));
 }
 
 // Reflect type initialization
