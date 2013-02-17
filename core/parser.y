@@ -293,6 +293,7 @@ object:
 	|	map
 	|	array
 	|	'(' rvalue ')' { $<node>$ = $<node>2; }
+	|	subscript
 ;
 
 rvalue:
@@ -309,7 +310,6 @@ rvalue:
 	|	instantiation
 	|	property_access
 	|	mcall
-	|	subscript
 	|	fully_qualified_call
 ;
 
