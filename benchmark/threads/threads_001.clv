@@ -74,8 +74,8 @@ printf("Time elapsed single-thread version clever: \1 \n", t2);
 printf("Time elapsed multi-thread version clever: \1 \n", t1);
 
 if (r2 == r1) {
-	printf("Relative time difference: \1 % \n", 100 * (t2-t1) / t2);
-	printf("Result: \1 \n", r1);
+	printf("Relative time difference: \1 %\n", 100 * (t2-t1) / t2);
+	printf("Result: \1\n", r1);
 } else {
 	printf("Test threads_001.clv failed!\n");
 }
