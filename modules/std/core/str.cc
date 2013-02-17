@@ -26,6 +26,16 @@ CLEVER_TYPE_OPERATOR(StrType::add)
 		// TODO(Felipe): Do not require CString everywhere (because it stores the
 		// data in an string table)
 		result->setStr(new StrObject(*lhs->getStr() + *rhs->getStr()));
+	} else if (rhs->isInt()) {
+		std::stringstream ss;
+
+		ss << rhs->getInt();
+		result->setStr(new StrObject(*lhs->getStr() + ss.str()));
+	} else if (rhs->isDouble()) {
+		std::stringstream ss;
+
+		ss << rhs->getDouble();
+		result->setStr(new StrObject(*lhs->getStr() + ss.str()));
 	}
 }
 
