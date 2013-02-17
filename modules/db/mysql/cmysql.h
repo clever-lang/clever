@@ -17,31 +17,26 @@
 
 #include <mysql/mysql.h>
 
-namespace clever { 
+namespace clever {
 
 
 class CMysql {
 public:
 	CMysql()
-		: m_connection(NULL),
-		  m_port(3306) { init(); }
+		: m_connection(NULL), m_port(3306), m_result_set(NULL) { init(); }
 
 	~CMysql() {}
 
-	void setHost(std::string host)     { m_host = host;     }
-	void setUser(std::string user)     { m_user = user;     }
-	void setPasswd(std::string passwd) { m_passwd = passwd; }
-	void setDb(std::string db)         { m_db = db;     }
-	void setPort(int port)             { m_port = port; }
+	void setHost(const std::string& host)     { m_host = host;     }
+	void setUser(const std::string& user)     { m_user = user;     }
+	void setPasswd(const std::string& passwd) { m_passwd = passwd; }
+	void setDb(const std::string& db)         { m_db = db;         }
+	void setPort(int port)                    { m_port = port;     }
 
 	bool connect();
 	int query(const char *stmt);
 	ArrayObject* fetchArray();
-
 	std::string dump();
-
-
-
 private:
 
 	void init();
@@ -55,7 +50,7 @@ private:
 
 	int m_port;
 
-	ArrayObject *m_resultSet;
+	ArrayObject *m_result_set;
 
 	DISALLOW_COPY_AND_ASSIGN(CMysql);
 };

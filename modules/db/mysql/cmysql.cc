@@ -3,7 +3,7 @@
 
 #include <mysql/mysql.h>
 
-namespace clever { 
+namespace clever {
 
 void CMysql::init()
 {
@@ -12,16 +12,15 @@ void CMysql::init()
 
 bool CMysql::connect()
 {
+	MYSQL *conn;
 
-	MYSQL *m;
-
-	m = mysql_real_connect(m_connection, m_host.c_str(), m_user.c_str(),
+	conn= mysql_real_connect(m_connection, m_host.c_str(), m_user.c_str(),
 		m_passwd.c_str(), m_db.c_str(), m_port, NULL, 0);
 
 	// Clean the password as we do not want to keep this in memory
 	m_passwd = "";
 
-	return m != NULL;
+	return conn != NULL;
 }
 
 int CMysql::query(const char *stmt)
@@ -31,7 +30,7 @@ int CMysql::query(const char *stmt)
 
 ArrayObject* CMysql::fetchArray()
 {
-	return m_resultSet;
+	return m_result_set;
 }
 
 
