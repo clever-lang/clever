@@ -36,16 +36,14 @@
 namespace clever {
 
 /// Displays an error message
-void VM::error(ErrorLevel level, const location& loc, const char* format, ...)
+void VM::error(const location& loc, const char* format, ...)
 {
 	std::ostringstream out;
 	va_list args;
 
-	va_start(args, format);
+	out << "Fatal error: ";
 
-	switch (level) {
-		case VM_ERROR:   out << "Fatal error: "; break;
-	}
+	va_start(args, format);
 	vsprintf(out, format, args);
 
 	std::cerr << out.str();
@@ -69,8 +67,7 @@ CLEVER_FORCE_INLINE Value* VM::getValue(const Operand& operand) const
 		case FETCH_CONST: source = m_const_env;                      break;
 		case FETCH_VAR:   source = m_call_stack.top();               break;
 		case FETCH_TMP:   source = m_call_stack.top()->getTempEnv(); break;
-		default:
-			return NULL;
+		default:  	      return NULL;
 	}
 	clever_assert_not_null(source);
 
@@ -85,7 +82,6 @@ CLEVER_FORCE_INLINE Value* VM::setTempValue(const Operand& operand,
 	Value* current = source->getValue(operand.voffset);
 
 	clever_delref(current);
-
 	source->setData(operand.voffset.second, value);
 	clever_addref(value);
 
@@ -132,7 +128,7 @@ void VM::dumpOpcodes() const
 // Make a copy of VM instance
 void VM::copy(const VM* vm, bool deep)
 {
-	f_mutex = const_cast<VM*>(vm)->getMutex();
+	f_mutex      = const_cast<VM*>(vm)->getMutex();
 	m_pc         = vm->m_pc;
 	m_inst       = vm->m_inst;
 	m_try_stack  = vm->m_try_stack;
@@ -142,8 +138,8 @@ void VM::copy(const VM* vm, bool deep)
 }
 
 // Function parameter binding
-static CLEVER_FORCE_INLINE void _param_binding(const Function* func, Environment* fenv,
-	std::vector<Value*>* args)
+static CLEVER_FORCE_INLINE void _param_binding(const Function* func,
+	Environment* fenv, std::vector<Value*>* args)
 {
 	size_t nargs = 0;
 
@@ -198,7 +194,7 @@ CLEVER_FORCE_INLINE void VM::prepareCall(const Function* func, Environment* env)
 	if (m_call_args.size() < func->getNumRequiredArgs()
 		|| (m_call_args.size() > func->getNumArgs()
 			&& !func->isVariadic())) {
-		error(VM_ERROR, OPCODE.loc, "Wrong number of parameters");
+		error(OPCODE.loc, "Wrong number of parameters");
 	}
 
 	_param_binding(func, fenv, &m_call_args);
@@ -256,7 +252,7 @@ CLEVER_FORCE_INLINE void VM::binOp(const IR& opcode)
 	const Type* type = lhs->getType();
 
 	if (UNEXPECTED(lhs->isNull() || (OPCODE.op2.op_type != UNUSED && rhs->isNull()))) {
-		error(VM_ERROR, OPCODE.loc, "Operation cannot be executed on null value");
+		error(OPCODE.loc, "Operation cannot be executed on null value");
 	}
 
 	switch (OPCODE.opcode) {
@@ -293,7 +289,6 @@ CLEVER_FORCE_INLINE void VM::binOp(const IR& opcode)
 		case OP_BW_NOT:
 			type->bw_not(getValue(OPCODE.result), lhs, this, &m_exception);
 			break;
-
 		EMPTY_SWITCH_DEFAULT_CASE();
 	}
 }
@@ -358,7 +353,7 @@ out:
 		} else {
 			// TODO(muriloadriano): improve this message to show the symbol
 			// name and the line to the user.
-			error(VM_ERROR, OPCODE.loc, "Cannot assign to a const variable!");
+			error(OPCODE.loc, "Cannot assign to a const variable!");
 		}
 	}
 	DISPATCH;
@@ -391,11 +386,11 @@ out:
 		clever_assert_not_null(fval);
 
 		if (UNEXPECTED(fval->isNull())) {
-			error(VM_ERROR, OPCODE.loc, "Cannot make a call from null value");
+			error(OPCODE.loc, "Cannot make a call from null value");
 		}
 
 		if (UNEXPECTED(!fval->isFunction())) {
-			error(VM_ERROR, OPCODE.loc,
+			error(OPCODE.loc,
 				"Cannot make a call from %T type", fval->getType());
 		}
 
@@ -497,7 +492,7 @@ out:
 				goto throw_exception;
 			}
 		} else {
-			error(VM_ERROR, OPCODE.loc, "Cannot increment null value");
+			error(OPCODE.loc, "Cannot increment null value");
 		}
 	}
 	DISPATCH;
@@ -514,7 +509,7 @@ out:
 				goto throw_exception;
 			}
 		} else {
-			error(VM_ERROR, OPCODE.loc, "Cannot increment null value");
+			error(OPCODE.loc, "Cannot increment null value");
 		}
 	}
 	DISPATCH;
@@ -531,7 +526,7 @@ out:
 				goto throw_exception;
 			}
 		} else {
-			error(VM_ERROR, OPCODE.loc, "Cannot decrement null value");
+			error(OPCODE.loc, "Cannot decrement null value");
 		}
 	}
 	DISPATCH;
@@ -548,7 +543,7 @@ out:
 				goto throw_exception;
 			}
 		} else {
-			error(VM_ERROR, OPCODE.loc, "Cannot decrement null value");
+			error(OPCODE.loc, "Cannot decrement null value");
 		}
 	}
 	DISPATCH;
@@ -715,7 +710,7 @@ out:
 			}
 
 			if (UNEXPECTED(instance->isNull())) {
-				error(VM_ERROR, OPCODE.loc,
+				error(OPCODE.loc,
 					"Cannot create object of type %T", type);
 			} else {
 				createInstance(type, instance);
@@ -729,7 +724,7 @@ out:
 				m_call_args.clear();
 			}
 		} else {
-			error(VM_ERROR, OPCODE.loc,
+			error(OPCODE.loc,
 				"Constructor for %T not found", type);
 		}
 	}
@@ -741,7 +736,7 @@ out:
 		const Value* method = getValue(OPCODE.op2);
 
 		if (UNEXPECTED(callee->isNull())) {
-			error(VM_ERROR, OPCODE.loc,
+			error(OPCODE.loc,
 				"Cannot call method `%S' from a null value", method->getStr());
 		}
 
@@ -749,14 +744,14 @@ out:
 		const Value* fval = callee->getObj()->getMember(method->getStr());
 
 		if (UNEXPECTED(fval == NULL || !fval->isFunction())) {
-			error(VM_ERROR, OPCODE.loc, "Member`%T::%S' not found or not callable!",
+			error(OPCODE.loc, "Member`%T::%S' not found or not callable!",
 				type, method->getStr());
 		}
 
 		const Function* func = static_cast<Function*>(fval->getObj());
 
 		if (UNEXPECTED(func == NULL)) {
-			error(VM_ERROR, OPCODE.loc, "Method `%T::%S' not found!",
+			error(OPCODE.loc, "Method `%T::%S' not found!",
 				type, method->getStr());
 		}
 
@@ -767,7 +762,7 @@ out:
 			VM_GOTO(func->getAddr());
 		} else {
 			if (UNEXPECTED(func->isStatic())) {
-				error(VM_ERROR, OPCODE.loc,
+				error(OPCODE.loc,
 					"Method `%T::%S' cannot be called non-statically",
 					type, method->getStr());
 			} else {
@@ -793,7 +788,7 @@ out:
 
 		if (EXPECTED(func != NULL)) {
 			if (UNEXPECTED(!func->isStatic())) {
-				error(VM_ERROR, OPCODE.loc,
+				error(OPCODE.loc,
 					"Method `%T::%S' cannot be called statically",
 					type, method->getStr());
 			} else {
@@ -807,7 +802,7 @@ out:
 				}
 			}
 		} else {
-			error(VM_ERROR, OPCODE.loc,
+			error(OPCODE.loc,
 				"Method `%T::%S' not found!", type, method->getStr());
 		}
 	}
@@ -818,7 +813,7 @@ out:
 		const Value* obj = getValue(OPCODE.op1);
 
 		if (UNEXPECTED(obj->isNull())) {
-			error(VM_ERROR, OPCODE.loc,
+			error(OPCODE.loc,
 				"Cannot perform property access from null value");
 		}
 		const Value* name = getValue(OPCODE.op2);
@@ -828,7 +823,7 @@ out:
 		if (EXPECTED(value != NULL)) {
 			getValue(OPCODE.result)->copy(value);
 		} else {
-			error(VM_ERROR, OPCODE.loc, "Property `%T::%S' not found!",
+			error(OPCODE.loc, "Property `%T::%S' not found!",
 				type, name->getStr());
 		}
 	}
@@ -839,7 +834,7 @@ out:
 		const Value* obj = getValue(OPCODE.op1);
 
 		if (UNEXPECTED(obj->isNull())) {
-			error(VM_ERROR, OPCODE.loc,
+			error(OPCODE.loc,
 				"Cannot perform property access from null value");
 		}
 		const Value* name = getValue(OPCODE.op2);
@@ -849,7 +844,7 @@ out:
 		if (EXPECTED(value != NULL)) {
 			getValue(OPCODE.result)->copy(value);
 		} else {
-			error(VM_ERROR, OPCODE.loc, "Property `%T::%S' not found!",
+			error(OPCODE.loc, "Property `%T::%S' not found!",
 				type, name->getStr());
 		}
 	}
@@ -860,7 +855,7 @@ out:
 		const Value* obj = getValue(OPCODE.op1);
 
 		if (UNEXPECTED(obj->isNull())) {
-			error(VM_ERROR, OPCODE.loc,
+			error(OPCODE.loc,
 				"Cannot perform property access from null value");
 		}
 		const Value* name = getValue(OPCODE.op2);
@@ -870,7 +865,7 @@ out:
 		if (EXPECTED(value != NULL)) {
 			setTempValue(OPCODE.result, value);
 		} else {
-			error(VM_ERROR, OPCODE.loc, "Member `%T::%S' not found!",
+			error(OPCODE.loc, "Member `%T::%S' not found!",
 				type, name->getStr());
 		}
 	}
@@ -881,7 +876,7 @@ out:
 		const Value* obj = getValue(OPCODE.op1);
 
 		if (UNEXPECTED(obj->isNull())) {
-			error(VM_ERROR, OPCODE.loc,
+			error(OPCODE.loc,
 				"Cannot perform property access from null value");
 		}
 		const Value* name = getValue(OPCODE.op2);
@@ -891,7 +886,7 @@ out:
 		if (EXPECTED(value != NULL)) {
 			setTempValue(OPCODE.result, value);
 		} else {
-			error(VM_ERROR, OPCODE.loc, "Property `%T::%S' not found!",
+			error(OPCODE.loc, "Property `%T::%S' not found!",
 				type, name->getStr());
 		}
 	}
@@ -926,9 +921,7 @@ throw_exception:
 	}
 	goto exit_exception;
 
-	OP(OP_ETRY):
-	m_try_stack.pop();
-	DISPATCH;
+	OP(OP_ETRY): m_try_stack.pop(); DISPATCH;
 
 	OP(OP_SUBSCRIPT):
 	{
@@ -944,14 +937,12 @@ throw_exception:
 				goto throw_exception;
 			}
 		} else {
-			error(VM_ERROR, OPCODE.loc, "Operation cannot be executed on null value");
+			error(OPCODE.loc, "Operation cannot be executed on null value");
 		}
 	}
 	DISPATCH;
 
-	OP(OP_HALT):
-	goto exit;
-
+	OP(OP_HALT): goto exit;
 	END_OPCODES;
 
 exit_exception:
