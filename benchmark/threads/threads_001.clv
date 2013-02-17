@@ -1,73 +1,35 @@
 import std.*;
 
-var acc1 = 0;
-var acc2 = 0;
-var id = 0;
+const L = 10000000;
 
 var tini = time();
-
-process t[2] 
+function proc(ini, fim) 
 {
-	var a = 0;
-
-	critical {
-		a = id;
-		++id;
+	var acc = 0, i = ini;
+	while (i <= fim) {
+		acc = acc + i++;
 	}
-
-	var i = 0;
-	var n = 0;
-
-	if (a == 0) {
-		i = 0;
-		n = 10000000;
-	}
-
-	if (a == 1) {
-		i = 10000001;
-		n = 20000000;
-	}
-
-	var acc = 0;
-
-	while (i <= n) {
-		acc = acc + (i++);
-	}
-
-	if (a == 0) {
-		acc1 = acc;
-	}
-
-	if (a == 1) {
-		acc2 = acc;
-	}
+	return acc;
 }
-t.run();
 
-var nthreads_ = Process.nThreads();
-t.wait();
+var thread1 = Thread.new(proc, 0, L);
+var thread2 = Thread.new(proc, L + 1, 2 * L);
 
+thread1.start();
+thread2.start();
+
+thread1.wait();
+thread2.wait();
 
 var tfim = time();
 
-var r1 = acc1 + acc2;
-var t1 = (tfim - tini) / nthreads_;
-
-
-var acc = 0;
-var i = 0;
-var nthreads = 2;
-var n = nthreads * 10000000;
+var r1 = thread1.result() + thread2.result();
+var t1 = (tfim - tini) / 2;
 
 tini = time();
-
-while (i <= n) {
-	acc = acc + i++;
-}
-
+var r2 = proc(0, 2 * L);
 tfim = time();
 
-var r2 = acc;
 var t2 = (tfim - tini);
 
 printf("Time elapsed single-thread version clever: \1 \n", t2);

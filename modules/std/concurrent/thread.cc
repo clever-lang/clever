@@ -175,7 +175,7 @@ CLEVER_METHOD(Thread::getResult)
 {
 	ThreadData* intern = CLEVER_GET_OBJECT(ThreadData*, CLEVER_THIS());
 
-	result->deepCopy(intern->result);
+	result->copy(intern->result);
 }
 
 // Thread.new(function entry)
