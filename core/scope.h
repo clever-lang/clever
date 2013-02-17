@@ -50,7 +50,6 @@ public:
 	typedef std::vector<Scope*> ScopeVector;
 	typedef std::vector<Symbol*> SymbolMap;
 	typedef std::tr1::unordered_map<const CString*, size_t> SymbolTable;
-	typedef SymbolTable::value_type SymbolEntry;
 
 	Scope()
 		: m_parent(NULL), m_children(), m_symbols(), m_symbol_table(),
@@ -66,21 +65,13 @@ public:
 		Symbol* sym = new Symbol(name, this);
 
 		m_symbols.push_back(sym);
-		m_symbol_table.insert(SymbolEntry(name, m_symbol_table.size()));
+		m_symbol_table.insert(SymbolTable::value_type(name, m_symbol_table.size()));
 		m_value_pool.push_back(value);
 
 		return sym;
 	}
 
 	Value* getValue(const ValueOffset& offset) const { return m_environment->getValue(offset); }
-
-	Symbol& at(size_t idx) const { return *m_symbols[idx]; }
-
-	void copy(const Scope* s) {
-		for (size_t id = 0, n = s->m_value_pool.size(); id < n; ++id) {
-			m_value_pool.push_back(s->m_value_pool[id]->clone());
-		}
-	}
 
 	Scope* enter() {
 		Scope* s = new Scope(this);
