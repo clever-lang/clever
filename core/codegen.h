@@ -29,7 +29,7 @@ public:
 	typedef std::stack<AddrVector> JmpList;
 
 	Codegen(IRBuilder* builder)
-		: m_builder(builder), m_jmps() {}
+		: m_builder(builder) {}
 
 	~Codegen() {}
 
