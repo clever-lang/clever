@@ -15,6 +15,8 @@ CLEVER_TYPE_OPERATOR(IntType::add)
 {
 	if (EXPECTED(rhs->isInt())) {
 		result->setInt(lhs->getInt() + rhs->getInt());
+	} else if (rhs->isDouble()) {
+		result->setInt(lhs->getInt() + rhs->getDouble());
 	}
 }
 
@@ -22,6 +24,8 @@ CLEVER_TYPE_OPERATOR(IntType::sub)
 {
 	if (EXPECTED(rhs->isInt())) {
 		result->setInt(lhs->getInt() - rhs->getInt());
+	} else if (rhs->isDouble()) {
+		result->setInt(lhs->getInt() - rhs->getDouble());
 	}
 }
 
@@ -29,6 +33,8 @@ CLEVER_TYPE_OPERATOR(IntType::mul)
 {
 	if (EXPECTED(rhs->isInt())) {
 		result->setInt(lhs->getInt() * rhs->getInt());
+	} else if (rhs->isDouble()) {
+		result->setInt(lhs->getInt() * rhs->getDouble());
 	}
 }
 
@@ -36,6 +42,8 @@ CLEVER_TYPE_OPERATOR(IntType::div)
 {
 	if (EXPECTED(rhs->isInt())) {
 		result->setInt(lhs->getInt() / rhs->getInt());
+	} else if (rhs->isDouble()) {
+		result->setInt(lhs->getInt() / rhs->getDouble());
 	}
 }
 
@@ -43,6 +51,8 @@ CLEVER_TYPE_OPERATOR(IntType::mod)
 {
 	if (EXPECTED(rhs->isInt())) {
 		result->setInt(lhs->getInt() % rhs->getInt());
+	} else if (rhs->isDouble()) {
+		result->setInt(lhs->getInt() % long(rhs->getDouble()));
 	}
 }
 
@@ -50,6 +60,10 @@ CLEVER_TYPE_OPERATOR(IntType::greater)
 {
 	if (EXPECTED(rhs->isInt())) {
 		result->setBool(lhs->getInt() > rhs->getInt());
+	} else if (rhs->isDouble()) {
+		result->setBool(lhs->getInt() > rhs->getDouble());
+	} else {
+		result->setBool(false);
 	}
 }
 
@@ -57,6 +71,10 @@ CLEVER_TYPE_OPERATOR(IntType::greater_equal)
 {
 	if (EXPECTED(rhs->isInt())) {
 		result->setBool(lhs->getInt() >= rhs->getInt());
+	} else if (rhs->isDouble()) {
+		result->setBool(lhs->getInt() >= rhs->getDouble());
+	} else {
+		result->setBool(false);
 	}
 }
 
@@ -64,6 +82,10 @@ CLEVER_TYPE_OPERATOR(IntType::less)
 {
 	if (EXPECTED(rhs->isInt())) {
 		result->setBool(lhs->getInt() < rhs->getInt());
+	} else if (rhs->isDouble()) {
+		result->setBool(lhs->getInt() < rhs->getDouble());
+	} else {
+		result->setBool(false);
 	}
 }
 
@@ -71,6 +93,10 @@ CLEVER_TYPE_OPERATOR(IntType::less_equal)
 {
 	if (EXPECTED(rhs->isInt())) {
 		result->setBool(lhs->getInt() <= rhs->getInt());
+	} else if (rhs->isDouble()) {
+		result->setBool(lhs->getInt() <= rhs->getDouble());
+	} else {
+		result->setBool(false);
 	}
 }
 
@@ -78,6 +104,10 @@ CLEVER_TYPE_OPERATOR(IntType::equal)
 {
 	if (EXPECTED(rhs->isInt())) {
 		result->setBool(lhs->getInt() == rhs->getInt());
+	} else if (rhs->isDouble()) {
+		result->setBool(lhs->getInt() == rhs->getDouble());
+	} else {
+		result->setBool(false);
 	}
 }
 
@@ -85,6 +115,10 @@ CLEVER_TYPE_OPERATOR(IntType::not_equal)
 {
 	if (EXPECTED(rhs->isInt())) {
 		result->setBool(lhs->getInt() != rhs->getInt());
+	} else if (rhs->isDouble()) {
+		result->setBool(lhs->getInt() != rhs->getDouble());
+	} else {
+		result->setBool(false);
 	}
 }
 
@@ -97,6 +131,8 @@ CLEVER_TYPE_OPERATOR(IntType::bw_and)
 {
 	if (EXPECTED(rhs->isInt())) {
 		result->setInt(lhs->getInt() & rhs->getInt());
+	} else if (rhs->isDouble()) {
+		result->setInt(lhs->getInt() & long(rhs->getDouble()));
 	}
 }
 
@@ -104,6 +140,8 @@ CLEVER_TYPE_OPERATOR(IntType::bw_or)
 {
 	if (EXPECTED(rhs->isInt())) {
 		result->setInt(lhs->getInt() | rhs->getInt());
+	} else if (rhs->isDouble()) {
+		result->setInt(lhs->getInt() | long(rhs->getDouble()));
 	}
 }
 
@@ -111,6 +149,8 @@ CLEVER_TYPE_OPERATOR(IntType::bw_xor)
 {
 	if (EXPECTED(rhs->isInt())) {
 		result->setInt(lhs->getInt() ^ rhs->getInt());
+	} else if (rhs->isDouble()) {
+		result->setInt(lhs->getInt() ^ long(rhs->getDouble()));
 	}
 }
 
@@ -123,6 +163,8 @@ CLEVER_TYPE_OPERATOR(IntType::bw_ls)
 {
 	if (EXPECTED(rhs->isInt())) {
 		result->setInt(lhs->getInt() << rhs->getInt());
+	} else if (rhs->isDouble()) {
+		result->setInt(lhs->getInt() << long(rhs->getDouble()));
 	}
 }
 
@@ -130,6 +172,8 @@ CLEVER_TYPE_OPERATOR(IntType::bw_rs)
 {
 	if (EXPECTED(rhs->isInt())) {
 		result->setInt(lhs->getInt() >> rhs->getInt());
+	} else if (rhs->isDouble()) {
+		result->setInt(lhs->getInt() >> long(rhs->getDouble()));
 	}
 }
 
