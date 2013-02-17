@@ -80,7 +80,7 @@ void doit(bool* mark, int* align, int* offset, int* sizes, int ini, int size)
 
 //4 8 4 8 8 4
 //4 4 8 8 8 4
-struct T {
+class T {
 	int l1;
 	double l2;
 	int l3;
@@ -89,7 +89,7 @@ struct T {
 	int l6;
 };
 
-struct T2 {
+class T2 {
 	int l1;
 	int l2;
 	double l3;

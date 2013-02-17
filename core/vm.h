@@ -25,18 +25,18 @@ class Function;
 class VM;
 
 struct VMThread {
-	VM* vm_handler;
 	CThread t_handler;
+	VM* vm_handler;
 };
 
 /// VM representation
 class VM {
 public:
 	VM()
-		: m_pc(0), m_main(true), m_const_env(NULL), m_global_env(NULL), f_mutex(NULL) {}
+		: m_pc(0), f_mutex(NULL), m_const_env(NULL), m_global_env(NULL), m_main(true) {}
 
 	VM(const IRVector& inst)
-		: m_pc(0), m_main(true), m_const_env(NULL), m_global_env(NULL), f_mutex(NULL) {
+		: m_pc(0), f_mutex(NULL), m_const_env(NULL), m_global_env(NULL), m_main(true) {
 		m_inst.resize(inst.size());
 		std::copy(inst.begin(), inst.end(), m_inst.begin());
 	}
@@ -88,11 +88,7 @@ public:
 private:
 	/// VM program counter
 	size_t m_pc;
-
-	bool m_main;
-
-	/// Vector of instruction
-	std::vector<IR> m_inst;
+	CMutex* f_mutex;
 
 	/// Constant
 	Environment* m_const_env;
@@ -100,20 +96,24 @@ private:
 	/// Globals
 	Environment* m_global_env;
 
+	CException m_exception;
+
+	CMutex m_mutex;
+
 	/// Stack frame
 	CallStack m_call_stack;
+
+	std::stack<std::pair<size_t, size_t> > m_try_stack;
+
+	/// Vector of instruction
+	std::vector<IR> m_inst;
 
 	/// Call arguments
 	std::vector<Value*> m_call_args;
 	std::vector<Environment*> m_obj_store;
 
-	CMutex m_mutex;
-	CMutex* f_mutex;
 
-	std::stack<std::pair<size_t, size_t> > m_try_stack;
-
-	CException m_exception;
-
+	bool m_main;
 	DISALLOW_COPY_AND_ASSIGN(VM);
 };
 
