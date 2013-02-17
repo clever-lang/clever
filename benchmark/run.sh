@@ -20,7 +20,7 @@ php threads_001.php
 echo "[OK]"
 
 echo "threads/threads_001.rb: [ruby version]"
-ruby threads/threads_001.rb
+ruby threads_001.rb
 echo "[OK]"
 
 echo "threads/threads_001.c: [C version]"
