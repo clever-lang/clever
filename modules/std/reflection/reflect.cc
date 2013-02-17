@@ -373,6 +373,8 @@ CLEVER_METHOD(ReflectType::getInternClassSizes)
 
 	printf("class \"RefCounted\" : %N \n", sizeof(RefCounted));
 	printf("class \"Value\" : %N \n", sizeof(Value));
+	printf("class \"CMutex\" : %N \n", sizeof(CMutex));
+
 }
 
 // Reflect type initialization
