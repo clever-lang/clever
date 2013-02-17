@@ -24,6 +24,9 @@ void Value::deepCopy(const Value* value)
 		} else if (isDouble() && value->isDouble()) {
 			setDouble(value->getDouble());
 			return;
+		} else if (isBool() && value->isBool()) {
+			setBool(value->getBool());
+			return;
 		}
 	}
 	TypeObject* val = value->isNull() ? NULL : value->getObj()->clone();
