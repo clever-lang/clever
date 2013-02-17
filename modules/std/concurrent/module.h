@@ -19,6 +19,7 @@ struct ThreadData : public TypeObject {
 	Function*           entry;
 	Value*              result;
 	VM*           		vm;
+	::std::vector<Value*> args;
 	bool				joined;
 };
 

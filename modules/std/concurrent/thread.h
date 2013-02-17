@@ -32,6 +32,7 @@ public:
 
 	CLEVER_METHOD(start);
 	CLEVER_METHOD(wait);
+	CLEVER_METHOD(getResult);
 };
 
 }}} // clever::modules::std

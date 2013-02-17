@@ -24,16 +24,9 @@ static inline void* ThreadHandler(void* ThreadArgument)
 	ThreadData* intern = static_cast<ThreadData*>(ThreadArgument);
 
 	if (intern->vm) {
-		::std::vector<Value*> args;
-
-		intern->vm->setChild();
-
-		Value* result = intern->vm->runFunction(
-			intern->entry, &args
+		intern->result = intern->vm->runFunction(
+			intern->entry, &intern->args
 		);
-
-		result->delRef();
-
 		delete intern->vm;
 	}
 
@@ -72,6 +65,10 @@ TypeObject* Thread::allocData(CLEVER_TYPE_CTOR_ARGS) const
 		} else {
 			clever_debug("Thread.new was expecting a Function and got something else at %@", point);
 		}
+
+		for (size_t i = 1; i < args->size(); ++i) {
+			intern->args.push_back(args->at(i));
+		}
 	} else {
 		clever_error("Thread.new was expecting a Function entry point and recieved no arguments");
 	}
@@ -102,6 +99,9 @@ void Thread::deallocData(void* data)
 		delete intern->lock;
 	}
 
+	if (intern->result) {
+		delete intern->result;
+	}
 	delete intern;
 }
 
@@ -121,7 +121,10 @@ CLEVER_METHOD(Thread::start)
 		if (pthread_mutex_lock(intern->lock) == 0) {
 			clever_debug("Thread.start set vm for thread to %@", vm);
 			intern->vm = new VM();
-			intern->vm->copy(vm, false);
+			intern->vm->copy(vm, true);
+			intern->vm->setChild();
+
+
 			result->setBool(
 				(pthread_create(&intern->thread, NULL, ThreadHandler, intern) == 0)
 			);
@@ -165,6 +168,16 @@ CLEVER_METHOD(Thread::wait)
 	}
 }
 
+// Thread.result()
+// get function result
+
+CLEVER_METHOD(Thread::getResult)
+{
+	ThreadData* intern = CLEVER_GET_OBJECT(ThreadData*, CLEVER_THIS());
+
+	result->deepCopy(intern->result);
+}
+
 // Thread.new(function entry)
 // Constructs a new Thread object to execute the supplied function
 CLEVER_METHOD(Thread::ctor)
@@ -177,7 +190,8 @@ CLEVER_TYPE_INIT(Thread::init)
 	setConstructor((MethodPtr) &Thread::ctor);
 
 	addMethod(new Function("start",    (MethodPtr)&Thread::start));
-	addMethod(new Function("wait",		(MethodPtr)&Thread::wait));
+	addMethod(new Function("wait",     (MethodPtr)&Thread::wait));
+	addMethod(new Function("result",   (MethodPtr)&Thread::getResult));
 }
 
 }}} // clever::modules::std
