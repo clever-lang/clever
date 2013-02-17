@@ -1,0 +1,23 @@
+Testing threads.result()
+==CODE==
+
+import std.*;
+
+function f(id) 
+{
+	return  3 * id;
+} 
+var t1 = Thread.new(f, 1); 
+var t2 = Thread.new(f, 2);
+ 
+t1.start(); 
+t2.start();
+
+t1.wait(); 
+t2.wait();
+
+printf("t1 = \1\n",t1.result());
+printf("t2 = \1\n",t2.result());
+==RESULT==
+t1 = 3
+t2 = 6
