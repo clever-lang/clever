@@ -10,7 +10,6 @@
 #include "modules/db/mysql/mysql.h"
 #include "modules/db/mysql/cmysql.h"
 
-
 namespace clever { namespace modules { namespace db {
 
 // Simple constructor for now
@@ -33,11 +32,10 @@ void Mysql::deallocData(void *data)
 
 void Mysql::dump(TypeObject* data, ::std::ostream& out) const
 {
-	MysqlObject* uvalue = static_cast<MysqlObject*>(data);
-	std::string str = uvalue->getMysql().dump();
+	MysqlObject* mo = static_cast<MysqlObject*>(data);
 
-	if (uvalue) {
-		out << str;
+	if (mo) {
+		out << mo->getMysql().dump();
 	}
 }
 
@@ -48,15 +46,15 @@ CLEVER_METHOD(Mysql::ctor)
 
 CLEVER_METHOD(Mysql::connect)
 {
+	if (!clever_check_args("ssss|i")) {
+		return;
+	}
+
 	bool ret = false;
 	MysqlObject* mo = CLEVER_GET_OBJECT(MysqlObject*, CLEVER_THIS());
 	CMysql& cmysql = mo->getMysql();
 
-	if(!clever_check_args("ssss|i")) {
-		return;
-	}
-
-	switch(args.size()) {
+	switch (args.size()) {
 		case 5:
 			cmysql.setPort(args[4]->getInt());
 		case 4:
@@ -66,35 +64,27 @@ CLEVER_METHOD(Mysql::connect)
 			cmysql.setDb(*args[3]->getStr());
 
 			ret = cmysql.connect();
-
 			break;
 	}
 
 	result->setBool(ret);
-
 }
 
 CLEVER_METHOD(Mysql::query)
 {
-
-	int ret;
+	if (!clever_check_args("s")) {
+		return;
+	}
 
 	MysqlObject* mo = CLEVER_GET_OBJECT(MysqlObject*, CLEVER_THIS());
 	CMysql& cmysql = mo->getMysql();
 
-	if(!clever_check_args("s")) {
-		return;
-	}
-
-
-	ret = cmysql.query(args[0]->getStr()->c_str());
-
-	result->setInt(ret);
+	result->setBool(cmysql.query(args[0]->getStr()->c_str()));
 }
 
 CLEVER_METHOD(Mysql::fetchArray)
 {
-	
+
 }
 
 // Type initialization

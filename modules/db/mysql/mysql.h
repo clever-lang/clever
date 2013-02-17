@@ -12,8 +12,6 @@
 #include "core/cstring.h"
 #include "core/value.h"
 #include "types/type.h"
-
-
 #include "modules/db/mysql/cmysql.h"
 
 namespace clever { namespace modules { namespace db {
@@ -27,7 +25,6 @@ public:
 	CMysql& getMysql() { return m_mysql; }
 
 private:
-
 	CMysql m_mysql;
 
 	DISALLOW_COPY_AND_ASSIGN(MysqlObject);
