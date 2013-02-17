@@ -341,7 +341,7 @@ void VM::run()
 
 	OPCODES;
 	OP(OP_RET):
-	if (EXPECTED(m_call_stack.size() > 1)) {
+	if (EXPECTED(!m_call_stack.empty())) {
 		Environment* env = m_call_stack.top();
 		size_t ret_addr = env->getRetAddr();
 
@@ -473,7 +473,7 @@ out:
 	if (EXPECTED(isChild())) {
 		getMutex()->lock();
 
-		if (EXPECTED(m_call_stack.size())) {
+		if (EXPECTED(!m_call_stack.empty())) {
 			clever_delref(m_call_stack.top());
 			m_call_stack.pop();
 		}
