@@ -6,6 +6,7 @@
  */
 
 #include <algorithm>
+#include "core/clever.h"
 #include "types/type.h"
 #include "core/value.h"
 #include "core/cexception.h"
@@ -25,9 +26,7 @@ TypeObject::~TypeObject()
 
 void TypeObject::copyMembers(const Type* type)
 {
-	if (!m_members.empty()) {
-		return;
-	}
+	clever_assert(m_members.empty(), "m_members must be empty");
 
 	const MemberMap& members = type->getMembers();
 
