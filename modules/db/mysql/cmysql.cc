@@ -14,7 +14,7 @@ bool CMysql::connect()
 {
 	MYSQL *conn;
 
-	conn= mysql_real_connect(m_connection, m_host.c_str(), m_user.c_str(),
+	conn = mysql_real_connect(m_connection, m_host.c_str(), m_user.c_str(),
 		m_passwd.c_str(), m_db.c_str(), m_port, NULL, 0);
 
 	// Clean the password as we do not want to keep this in memory
