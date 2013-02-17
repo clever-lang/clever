@@ -95,7 +95,7 @@ CLEVER_FORCE_INLINE Value* VM::setTempValue(const Operand& operand,
 #ifdef CLEVER_DEBUG
 void VM::dumpOperand(const Operand& op)
 {
-	const char *type[] = {
+	const char* type[] = {
 		"UNUSED", "FETCH_VAR", "FETCH_CONST", "FETCH_TMP", "JMP_ADDR"
 	};
 
