@@ -2,7 +2,6 @@ import std.*;
 
 const L = 10000000;
 
-var tini = time();
 function proc(ini, fim) 
 {
 	var acc = 0, i = ini;
@@ -12,18 +11,14 @@ function proc(ini, fim)
 	return acc;
 }
 
-var thread1 = Thread.new(proc, 0, L);
-var thread2 = Thread.new(proc, L + 1, 2 * L);
+var thread = [Thread.new(proc, 0, L), Thread.new(proc, L + 1, 2 * L)];
 
-thread1.start();
-thread2.start();
-
-thread1.wait();
-thread2.wait();
-
+var tini = time();
+thread.each(function(z){z.start();});
+thread.each(function(z){z.wait();});
 var tfim = time();
 
-var r1 = thread1.result() + thread2.result();
+var r1 = thread[0].result() + thread[1].result();
 var t1 = (tfim - tini) / 2;
 
 tini = time();
