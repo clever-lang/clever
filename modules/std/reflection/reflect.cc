@@ -353,6 +353,25 @@ CLEVER_METHOD(ReflectType::getProperties)
 // Returns the sizes of the Intern classes
 CLEVER_METHOD(ReflectType::getInternClassSizes)
 {
+
+	printf("_______________________\n");
+	printf("Types\n");
+	printf("-----------------------\n");
+
+	printf("type bool : %N \n", sizeof(bool));
+	printf("type char : %N \n", sizeof(char));
+	printf("type size_t : %N \n", sizeof(size_t));
+	printf("type int : %N \n", sizeof(int));
+	printf("type long : %N \n", sizeof(long));
+	printf("type float : %N \n", sizeof(float));
+	printf("type double : %N \n", sizeof(double));
+	printf("type pointer : %N \n", sizeof(void*));
+
+	printf("_______________________\n");
+	printf("Classes\n");
+	printf("-----------------------\n");
+
+	printf("class \"RefCounted\" : %N \n", sizeof(RefCounted));
 	printf("class \"Value\" : %N \n", sizeof(Value));
 }
 
