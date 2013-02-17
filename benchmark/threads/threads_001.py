@@ -24,9 +24,7 @@ if __name__ == '__main__':
 
 	t1 = timeit.default_timer()
 
-	print "Time elapsed single-thread python: ", t1 - t0
-	print "Result: ", acc.get()
-
+	
 
 	t2 = timeit.default_timer()
 
@@ -43,6 +41,7 @@ if __name__ == '__main__':
 	t3 = timeit.default_timer()
 
 	print "Time elapsed multi-thread python: ", t3 - t2
+	print "Time elapsed single-thread python: ", t1 - t0
 	print "Result: ", acc1.get() + acc2.get()
 
 	
