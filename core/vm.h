@@ -33,14 +33,10 @@ struct VMThread {
 class VM {
 public:
 	VM()
-		: m_pc(0), m_main(true),
-		  m_const_env(NULL), m_global_env(NULL), m_call_stack(), m_call_args(),
-		  m_mutex(), f_mutex(NULL), m_try_stack() {}
+		: m_pc(0), m_main(true), m_const_env(NULL), m_global_env(NULL), f_mutex(NULL) {}
 
 	VM(const IRVector& inst)
-		: m_pc(0), m_main(true),
-		  m_const_env(NULL), m_global_env(NULL), m_call_stack(), m_call_args(),
-		  m_mutex(), f_mutex(NULL), m_try_stack() {
+		: m_pc(0), m_main(true), m_const_env(NULL), m_global_env(NULL), f_mutex(NULL) {
 		m_inst.resize(inst.size());
 		std::copy(inst.begin(), inst.end(), m_inst.begin());
 	}
@@ -64,11 +60,9 @@ public:
 
 	/// Helper to retrive a Value* from ValuePool
 	Value* getValue(const Operand&) const;
-	Value* getValueExt(const Operand& operand) const { return getValue(operand); }
 
 	/// Helper to change a temporary value pointer
 	Value* setTempValue(const Operand&, Value*) const;
-
 
 	CallStack& getCallStack() { return m_call_stack; }
 
