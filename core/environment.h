@@ -44,11 +44,11 @@ public:
 	};
 
 	Environment()
-		: RefCounted(), m_outer(NULL), m_temp(NULL), m_data(), m_ret_val(NULL),
+		: RefCounted(), m_outer(NULL), m_temp(NULL), m_ret_val(NULL),
 		m_ret_addr(0), m_active(false), m_scoped(true), m_flags(NONE) {}
 
 	Environment(Environment* outer_, bool is_scoped = true)
-		: RefCounted(), m_outer(outer_), m_temp(NULL), m_data(), m_ret_val(NULL),
+		: RefCounted(), m_outer(outer_), m_temp(NULL), m_ret_val(NULL),
 		m_ret_addr(0), m_active(false), m_scoped(is_scoped), m_flags(NONE) {
 		clever_addref(m_outer);
 	}

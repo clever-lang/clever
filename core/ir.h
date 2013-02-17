@@ -46,23 +46,23 @@ struct Operand {
 /// Intermediate representation
 struct IR {
 	IR()
-		: opcode(OP_HALT), op1(), op2(), result(), loc() {}
+		: opcode(OP_HALT) {}
 
 	explicit IR(Opcode _op)
-		: opcode(_op), op1(), op2(), result(), loc() {}
+		: opcode(_op) {}
 
 	IR(Opcode _op, Operand _op1)
-		: opcode(_op), op1(_op1), op2(), result(), loc() {}
+		: opcode(_op), op1(_op1) {}
 
 	IR(Opcode _op, Operand _op1, Operand _op2)
-		: opcode(_op), op1(_op1), op2(_op2), result(), loc() {}
+		: opcode(_op), op1(_op1), op2(_op2) {}
 
 	Opcode opcode;
 	Operand op1, op2, result;
 	location loc;
 };
 
-// Vector of VM instructions
+// Deque of VM instructions
 typedef std::deque<IR> IRVector;
 
 } // clever
