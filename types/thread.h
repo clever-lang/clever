@@ -93,10 +93,13 @@ public:
 
 	CLEVER_METHOD(run);
 	CLEVER_METHOD(wait);
+	CLEVER_METHOD(nRunningThreads);
 	CLEVER_METHOD(nThreads);
 	CLEVER_METHOD(toString);
-private:
+
 	static size_t m_n_threads;
+
+private:
 
 	DISALLOW_COPY_AND_ASSIGN(ThreadType);
 };

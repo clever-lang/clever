@@ -1,0 +1,81 @@
+import std.*;
+
+var acc1 = 0;
+var acc2 = 0;
+var id = 0;
+
+var tini = time();
+
+process t[2] 
+{
+	var a = 0;
+
+	critical {
+		a = id;
+		++id;
+	}
+
+	var i = 0;
+	var n = 0;
+
+	if (a == 0) {
+		i = 0;
+		n = 10000000;
+	}
+
+	if (a == 1) {
+		i = 10000001;
+		n = 20000000;
+	}
+
+	var acc = 0;
+
+	while (i <= n) {
+		acc = acc + (i++);
+	}
+
+	if (a == 0) {
+		acc1 = acc;
+	}
+
+	if (a == 1) {
+		acc2 = acc;
+	}
+}
+t.run();
+
+var nthreads_ = Process.nThreads();
+t.wait();
+
+
+var tfim = time();
+
+var r1 = acc1 + acc2;
+var t1 = (tfim - tini) / nthreads_;
+
+
+var acc = 0;
+var i = 0;
+var nthreads = 2;
+var n = nthreads * 10000000;
+
+tini = time();
+
+while (i <= n) {
+	acc = acc + i++;
+}
+
+tfim = time();
+
+var r2 = acc;
+var t2 = (tfim - tini);
+
+printf("Time elapsed single-thread version: \1 \n", t2);
+printf("Time elapsed multi-thread version: \1 \n", t1);
+
+if (r2 == r1) {
+	printf("Relative time difference: \1 % \n", 100 * (t2-t1) / t2);
+} else {
+	printf("Test threads_001.clv failed!\n");
+}
+

@@ -35,7 +35,7 @@ void Thread::wait()
 		VMThread* t = thread_list.at(i);
 		if (t != 0) {
 			t->t_handler.wait();
-			--m_n_threads;
+			--ThreadType::m_n_threads;
 			clever_delete_var(t->vm_handler);
 			clever_delete_var(t);
 			t = 0;
@@ -116,6 +116,12 @@ CLEVER_METHOD(ThreadType::run)
 	m_vm->getMutex()->unlock();
 }
 
+CLEVER_METHOD(ThreadType::nRunningThreads)
+{
+	Thread* tdata = CLEVER_GET_OBJECT(Thread*, CLEVER_THIS());
+	result->setInt(tdata->getThreadPool().size());
+}
+
 // Thread type initialization
 CLEVER_TYPE_INIT(ThreadType::init)
 {
@@ -125,6 +131,7 @@ CLEVER_TYPE_INIT(ThreadType::init)
 	addMethod(new Function("toString", (MethodPtr) &ThreadType::toString));
 	addMethod(new Function("wait",     (MethodPtr) &ThreadType::wait));
 	addMethod(new Function("run",      (MethodPtr) &ThreadType::run));
+	addMethod(new Function("nRunningThreads", (MethodPtr) &ThreadType::nRunningThreads));
 	addMethod(new Function("nThreads", (MethodPtr) &ThreadType::nThreads))
 			->setStatic();
 }

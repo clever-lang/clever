@@ -6,6 +6,7 @@
  */
 
 #include <sstream>
+#include <cmath>
 #include "modules/std/core/int.h"
 #include "modules/std/core/function.h"
 
@@ -15,6 +16,8 @@ CLEVER_TYPE_OPERATOR(IntType::add)
 {
 	if (EXPECTED(rhs->isInt())) {
 		result->setInt(lhs->getInt() + rhs->getInt());
+	} else if (EXPECTED(rhs->isDouble())) {
+		result->setDouble(lhs->getInt() + rhs->getDouble());
 	}
 }
 
@@ -22,6 +25,8 @@ CLEVER_TYPE_OPERATOR(IntType::sub)
 {
 	if (EXPECTED(rhs->isInt())) {
 		result->setInt(lhs->getInt() - rhs->getInt());
+	} else if (EXPECTED(rhs->isDouble())) {
+		result->setDouble(lhs->getInt() - rhs->getDouble());
 	}
 }
 
@@ -29,6 +34,8 @@ CLEVER_TYPE_OPERATOR(IntType::mul)
 {
 	if (EXPECTED(rhs->isInt())) {
 		result->setInt(lhs->getInt() * rhs->getInt());
+	} else if (EXPECTED(rhs->isDouble())) {
+		result->setDouble(lhs->getInt() * rhs->getDouble());
 	}
 }
 
@@ -36,6 +43,8 @@ CLEVER_TYPE_OPERATOR(IntType::div)
 {
 	if (EXPECTED(rhs->isInt())) {
 		result->setInt(lhs->getInt() / rhs->getInt());
+	} else if (EXPECTED(rhs->isDouble())) {
+		result->setDouble(lhs->getInt() / rhs->getDouble());
 	}
 }
 
@@ -43,6 +52,8 @@ CLEVER_TYPE_OPERATOR(IntType::mod)
 {
 	if (EXPECTED(rhs->isInt())) {
 		result->setInt(lhs->getInt() % rhs->getInt());
+	} else if (EXPECTED(rhs->isDouble())) {
+		result->setDouble(fmod(lhs->getInt(), rhs->getDouble()));
 	}
 }
 
@@ -50,6 +61,8 @@ CLEVER_TYPE_OPERATOR(IntType::greater)
 {
 	if (EXPECTED(rhs->isInt())) {
 		result->setBool(lhs->getInt() > rhs->getInt());
+	} else if (EXPECTED(rhs->isDouble())) {
+		result->setDouble(lhs->getInt() > rhs->getDouble());
 	}
 }
 
@@ -57,6 +70,8 @@ CLEVER_TYPE_OPERATOR(IntType::greater_equal)
 {
 	if (EXPECTED(rhs->isInt())) {
 		result->setBool(lhs->getInt() >= rhs->getInt());
+	} else if (EXPECTED(rhs->isDouble())) {
+		result->setDouble(lhs->getInt() >= rhs->getDouble());
 	}
 }
 
@@ -64,6 +79,8 @@ CLEVER_TYPE_OPERATOR(IntType::less)
 {
 	if (EXPECTED(rhs->isInt())) {
 		result->setBool(lhs->getInt() < rhs->getInt());
+	}  else if (EXPECTED(rhs->isDouble())) {
+		result->setDouble(lhs->getInt() < rhs->getDouble());
 	}
 }
 
@@ -71,6 +88,8 @@ CLEVER_TYPE_OPERATOR(IntType::less_equal)
 {
 	if (EXPECTED(rhs->isInt())) {
 		result->setBool(lhs->getInt() <= rhs->getInt());
+	} else if (EXPECTED(rhs->isDouble())) {
+		result->setDouble(lhs->getInt() <= rhs->getDouble());
 	}
 }
 
@@ -78,6 +97,8 @@ CLEVER_TYPE_OPERATOR(IntType::equal)
 {
 	if (EXPECTED(rhs->isInt())) {
 		result->setBool(lhs->getInt() == rhs->getInt());
+	}  else if (EXPECTED(rhs->isDouble())) {
+		result->setDouble(lhs->getInt() == rhs->getDouble());
 	}
 }
 
@@ -85,6 +106,8 @@ CLEVER_TYPE_OPERATOR(IntType::not_equal)
 {
 	if (EXPECTED(rhs->isInt())) {
 		result->setBool(lhs->getInt() != rhs->getInt());
+	}  else if (EXPECTED(rhs->isDouble())) {
+		result->setDouble(lhs->getInt() != rhs->getDouble());
 	}
 }
 
