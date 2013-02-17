@@ -20,7 +20,7 @@ TypeObject::~TypeObject()
 	MemberMap::const_iterator it(m_members.begin()), end(m_members.end());
 
 	for (; it != end; ++it) {
-		clever_delref((*it).second);
+		clever_delref(it->second);
 	}
 }
 
@@ -30,7 +30,7 @@ void TypeObject::copyMembers(const Type* type)
 
 	const MemberMap& members = type->getMembers();
 
-	if (members.size() > 0) {
+	if (!members.empty()) {
 		MemberMap::const_iterator it(members.begin()), end(members.end());
 
 		for (; it != end; ++it) {
@@ -43,10 +43,8 @@ void Type::deallocMembers()
 {
 	MemberMap::iterator it(m_members.begin()), end(m_members.end());
 
-	while (it != end) {
-		clever_delref((*it).second);
-		(*it).second = 0;
-		++it;
+	for (; it != end; ++it) {
+		clever_delref(it->second);
 	}
 }
 
@@ -142,7 +140,6 @@ const MethodMap Type::getMethods() const
 const PropertyMap Type::getProperties() const
 {
 	MemberMap::const_iterator it(m_members.begin()), end(m_members.end());
-
 	PropertyMap pm;
 
 	while (it != end) {
@@ -261,16 +258,14 @@ void Type::decrement(Value* value, const VM* vm, CException* exception) const
 	clever_throw("Cannot use -- operator with %s type", getName().c_str());
 }
 
-void Type::setConstructor(MethodPtr method) {
-	Function* func = new Function(getName(), method);
-	m_ctor = func;
-	addMethod(func);
+void Type::setConstructor(MethodPtr method)
+{
+	m_ctor = addMethod(new Function(getName(), method));
 }
 
-void Type::setDestructor(MethodPtr method) {
-	Function* func = new Function(getName(), method);
-	m_dtor = func;
-	addMethod(func);
+void Type::setDestructor(MethodPtr method)
+{
+	m_dtor = addMethod(new Function(getName(), method));
 }
 
 } // clever
