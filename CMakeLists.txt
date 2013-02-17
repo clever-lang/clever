@@ -52,6 +52,12 @@ if (NOT NO_THREADS)
 	message(STATUS "Use -DNO_THREADS to disable threads")
 endif (NOT NO_THREADS)
 
+if (THREADS_DEBUG)
+	add_definitions(-DCLEVER_THREADS_BEBUG)
+else (THREADS_DEBUG)
+	message(STATUS "Use -DTHREADS_DEBUG to enable thread debug messages")
+endif (THREADS_DEBUG)
+
 # Parser and Scanner
 # ---------------------------------------------------------------------------
 if (GEN_PARSER)

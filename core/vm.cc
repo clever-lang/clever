@@ -354,7 +354,7 @@ out:
 		// Checks if this assignment is allowed (non-const variable or
 		// const variable declaration).
 		if (EXPECTED(var->isAssignable())) {
-			var->copy(value);
+			var->deepCopy(value);
 		} else {
 			// TODO(muriloadriano): improve this message to show the symbol
 			// name and the line to the user.
@@ -491,7 +491,7 @@ out:
 
 		if (EXPECTED(!value->isNull())) {
 			value->getType()->increment(value, this, &m_exception);
-			getValue(OPCODE.result)->copy(value);
+			getValue(OPCODE.result)->deepCopy(value);
 
 			if (UNEXPECTED(m_exception.hasException())) {
 				goto throw_exception;
@@ -507,7 +507,7 @@ out:
 		Value* value = getValue(OPCODE.op1);
 
 		if (EXPECTED(!value->isNull())) {
-			getValue(OPCODE.result)->copy(value);
+			getValue(OPCODE.result)->deepCopy(value);
 			value->getType()->increment(value, this, &m_exception);
 
 			if (UNEXPECTED(m_exception.hasException())) {
@@ -525,7 +525,7 @@ out:
 
 		if (EXPECTED(!value->isNull())) {
 			value->getType()->decrement(value, this, &m_exception);
-			getValue(OPCODE.result)->copy(value);
+			getValue(OPCODE.result)->deepCopy(value);
 
 			if (UNEXPECTED(m_exception.hasException())) {
 				goto throw_exception;
@@ -541,7 +541,7 @@ out:
 		Value* value = getValue(OPCODE.op1);
 
 		if (EXPECTED(!value->isNull())) {
-			getValue(OPCODE.result)->copy(value);
+			getValue(OPCODE.result)->deepCopy(value);
 			value->getType()->decrement(value, this, &m_exception);
 
 			if (UNEXPECTED(m_exception.hasException())) {

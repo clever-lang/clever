@@ -1,3 +1,4 @@
+#include <ostream>
 #include <vector>
 #include <utility>
 #include "core/cexception.h"
@@ -6,8 +7,15 @@
 
 namespace clever { namespace modules { namespace std {
 
+void Serializer::dump(TypeObject* obj, ::std::ostream& out) const
+{
+	SerializerData* sobj = static_cast<SerializerData*>(obj);
+
+	sobj->obj->getType()->dump(sobj->info.second, out);
+}
+
 // Serializer.serialize()
-CLEVER_METHOD(Serializer::serialize)
+CLEVER_METHOD(Serializer::doSerialize)
 {
 	if (!clever_static_check_args(".")) {
 		return;
@@ -21,7 +29,7 @@ CLEVER_METHOD(Serializer::serialize)
 }
 
 // Serializer.unserialize()
-CLEVER_METHOD(Serializer::unserialize)
+CLEVER_METHOD(Serializer::doUnserialize)
 {
 	if (!clever_static_check_args(".")) {
 		return;
@@ -43,10 +51,10 @@ CLEVER_METHOD(Serializer::unserialize)
 // Serializer type initialization
 CLEVER_TYPE_INIT(Serializer::init)
 {
-	addMethod(new Function("serialize", (MethodPtr)&Serializer::serialize))
+	addMethod(new Function("serialize", (MethodPtr)&Serializer::doSerialize))
 		->setStatic();
 
-	addMethod(new Function("unserialize", (MethodPtr)&Serializer::unserialize))
+	addMethod(new Function("unserialize", (MethodPtr)&Serializer::doUnserialize))
 		->setStatic();
 }
 

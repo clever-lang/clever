@@ -11,6 +11,11 @@
 #include "modules/std/concurrent/mutex.h"
 #include "modules/std/concurrent/thread.h"
 
+#ifndef CLEVER_THREADS_BEBUG
+#undef clever_debug
+#define clever_debug(...)
+#endif
+
 namespace clever { namespace modules { namespace std {
 
 /// Initializes Standard Concurrency module

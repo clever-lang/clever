@@ -924,8 +924,7 @@ private:
 
 class Literal: public Node {
 public:
-	Literal(const location& location)
-		: Node(location) {}
+	Literal(const location& location) : Node(location) {}
 
 	virtual ~Literal() {}
 

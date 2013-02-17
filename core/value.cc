@@ -13,14 +13,29 @@
 
 namespace clever {
 
-void Value::copy(const Value* value)
+void Value::deepCopy(const Value* value)
 {
-	cleanUp();
-	m_type = value->getType();
-	m_data = value->getData();
+	clever_assert_not_null(value);
 
-	if (EXPECTED(m_type && m_data)) {
-		m_data->addRef();
+	if (m_data && m_data->refCount() == 1) {
+		if (isInt() && value->isInt()) {
+			setInt(value->getInt());
+			return;
+		} else if (isDouble() && value->isDouble()) {
+			setDouble(value->getDouble());
+			return;
+		} else if (isBool() && value->isBool()) {
+			setBool(value->getBool());
+			return;
+		}
+	}
+	TypeObject* val = value->isNull() ? NULL : value->getObj()->clone();
+
+	if (val) {
+		cleanUp();
+		setObj(value->getType(),  val);
+	} else {
+		copy(value);
 	}
 }
 
@@ -36,9 +51,14 @@ bool Value::asBool() const
 
 void Value::setInt(long n)
 {
-	cleanUp();
-	m_type = CLEVER_INT_TYPE;
-	setObj(m_type, new IntObject(n));
+	if (m_data && m_data->refCount() == 1 && isInt()) {
+		static_cast<IntObject*>(getObj())->value = n;
+	} else {
+		cleanUp();
+
+		m_type = CLEVER_INT_TYPE;
+		setObj(m_type, new IntObject(n));
+	}
 }
 
 long Value::getInt() const
@@ -48,9 +68,13 @@ long Value::getInt() const
 
 void Value::setDouble(double n)
 {
-	cleanUp();
-	m_type = CLEVER_DOUBLE_TYPE;
-	setObj(m_type, new DoubleObject(n));
+	if (m_data && m_data->refCount() == 1 && isDouble()) {
+		static_cast<DoubleObject*>(getObj())->value = n;
+	} else {
+		cleanUp();
+		m_type = CLEVER_DOUBLE_TYPE;
+		setObj(m_type, new DoubleObject(n));
+	}
 }
 
 double Value::getDouble() const
@@ -79,9 +103,13 @@ const CString* Value::getStr() const
 
 void Value::setBool(bool n)
 {
-	cleanUp();
-	m_type = CLEVER_BOOL_TYPE;
-	setObj(m_type, new BoolObject(n));
+	if (m_data && m_data->refCount() == 1 && isBool()) {
+		static_cast<BoolObject*>(getObj())->value = n;
+	} else {
+		cleanUp();
+		m_type = CLEVER_BOOL_TYPE;
+		setObj(m_type, new BoolObject(n));
+	}
 }
 
 bool Value::getBool() const

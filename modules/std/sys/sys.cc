@@ -23,6 +23,8 @@
 #include "core/modmanager.h"
 #include "core/cexception.h"
 
+#include "types/thread.h"
+
 #ifndef PATH_MAX
 # define PATH_MAX 1024
 #endif
@@ -50,7 +52,7 @@ static CLEVER_FUNCTION(putenv)
 		return;
 	}
 
-    ::putenv(const_cast<char*>(args[0]->getStr()->c_str()));
+	::putenv(const_cast<char*>(args[0]->getStr()->c_str()));
 }
 
 // getenv(string env)
@@ -79,7 +81,7 @@ static CLEVER_FUNCTION(getcwd)
 	}
 
 	char temp[PATH_MAX];
-    const char* path = ::getcwd(temp, PATH_MAX);
+	const char* path = ::getcwd(temp, PATH_MAX);
 
 	result->setStr(CSTRING(path ? path : ""));
 }
@@ -135,6 +137,22 @@ static CLEVER_FUNCTION(clock)
 	}
 
 	result->setInt(clock());
+}
+
+// time()
+// Returns the execution time in sec
+static CLEVER_FUNCTION(time)
+{
+	if (!clever_static_check_no_args()) {
+		return;
+	}
+
+	size_t n_threads = ThreadType::getNThreads();
+	if ( n_threads == 0) {
+		result->setDouble(static_cast<double>(clock()) / CLOCKS_PER_SEC);
+	} else {
+		result->setDouble(static_cast<double>(clock()) / n_threads / CLOCKS_PER_SEC);
+	}
 }
 
 // getpid()
@@ -198,6 +216,7 @@ CLEVER_MODULE_INIT(SYSModule)
 	addFunction(new Function("argv",    &CLEVER_NS_FNAME(sys, argv)));
 	addFunction(new Function("sleep",   &CLEVER_NS_FNAME(sys, sleep)));
 	addFunction(new Function("clock",   &CLEVER_NS_FNAME(sys, clock)));
+	addFunction(new Function("time",    &CLEVER_NS_FNAME(sys, time)));
 }
 
 }}} // clever::modules::std

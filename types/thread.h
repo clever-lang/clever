@@ -75,13 +75,13 @@ private:
 class ThreadType : public Type {
 public:
 	ThreadType()
-		: Type("Thread") {}
+		: Type("Process") {}
 
 	~ThreadType() {  }
 
 	void init();
 
-	void dump(TypeObject* data, std::ostream& out) const { out << "Thread() {}"; }
+	void dump(TypeObject* data, std::ostream& out) const { out << "Process() {}"; }
 
 	TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const { return new Thread; }
 
@@ -89,10 +89,15 @@ public:
 		delete static_cast<Thread*>(data);
 	}
 
+	static size_t getNThreads() { return m_n_threads; }
+
 	CLEVER_METHOD(run);
 	CLEVER_METHOD(wait);
+	CLEVER_METHOD(nThreads);
 	CLEVER_METHOD(toString);
 private:
+	static size_t m_n_threads;
+
 	DISALLOW_COPY_AND_ASSIGN(ThreadType);
 };
 

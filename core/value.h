@@ -144,7 +144,17 @@ public:
 
 	ValueObject* getData() const { return m_data; }
 
-	void copy(const Value*);
+	void deepCopy(const Value*);
+
+	void copy(const Value* value) {
+		cleanUp();
+		m_type = value->getType();
+		m_data = value->getData();
+
+		if (EXPECTED(m_type && m_data)) {
+			m_data->addRef();
+		}
+	}
 
 	Value* clone() const {
 		Value* val = new Value;

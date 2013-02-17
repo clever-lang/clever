@@ -22,6 +22,8 @@ struct BoolObject : public TypeObject {
 	BoolObject(bool n)
 		: value(n) {}
 
+	virtual TypeObject* clone() const { return new BoolObject(value); }
+
 	bool value;
 };
 

@@ -1,0 +1,13 @@
+Testing threads in concurrent package [will fail in debug mode]
+==CODE==
+import std.io.*;
+import std.concurrent.*;
+
+var test = Thread.new(function(){
+	printf("Hello World\n");
+});
+
+test.start();
+test.wait();
+==RESULT==
+Hello World

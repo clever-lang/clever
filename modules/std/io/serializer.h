@@ -30,14 +30,16 @@ public:
 
 	void init(CLEVER_TYPE_INIT_ARGS);
 
+	virtual void dump(TypeObject*, ::std::ostream&) const;
+
 	TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const { return NULL; }
 
 	void deallocData(CLEVER_TYPE_DTOR_ARGS) {
 		delete static_cast<SerializerData*>(data);
 	}
 
-	CLEVER_METHOD(serialize);
-	CLEVER_METHOD(unserialize);
+	CLEVER_METHOD(doSerialize);
+	CLEVER_METHOD(doUnserialize);
 
 private:
 	DISALLOW_COPY_AND_ASSIGN(Serializer);
