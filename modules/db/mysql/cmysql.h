@@ -13,6 +13,7 @@
 #include "core/cstring.h"
 #include "core/value.h"
 #include "types/type.h"
+#include "modules/std/core/array.h"
 
 #include <mysql/mysql.h>
 
@@ -34,7 +35,12 @@ public:
 	void setPort(int port)             { m_port = port; }
 
 	bool connect();
+	int query(const char *stmt);
+	ArrayObject* fetchArray();
+
 	std::string dump();
+
+
 
 private:
 
@@ -48,6 +54,8 @@ private:
 	std::string m_db;
 
 	int m_port;
+
+	ArrayObject *m_resultSet;
 
 	DISALLOW_COPY_AND_ASSIGN(CMysql);
 };

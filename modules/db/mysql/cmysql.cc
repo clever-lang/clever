@@ -1,4 +1,5 @@
 #include "modules/db/mysql/cmysql.h"
+#include "modules/std/core/array.h"
 
 #include <mysql/mysql.h>
 
@@ -23,18 +24,30 @@ bool CMysql::connect()
 	return m != NULL;
 }
 
+int CMysql::query(const char *stmt)
+{
+	return mysql_query(m_connection, stmt);
+}
+
+ArrayObject* CMysql::fetchArray()
+{
+	return m_resultSet;
+}
+
+
 std::string CMysql::dump()
 {
 	std::stringstream strs;
 
-	strs <<  "Host: " << m_host
-		<<  "User: " << m_user
-		<<  "DB: "   << m_db
-		<<  "Port: " << m_port
-		<<  "\n";
+	strs <<  "Host: '" << m_host << "'; "
+		 <<  "User: '" << m_user << "'; "
+		 <<  "DB: '"   << m_db   << "'; "
+		 <<  "Port: '" << m_port << "'; "
+		 ;
 
 	return strs.str();
 }
+
 
 
 } // clever

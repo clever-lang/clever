@@ -33,10 +33,11 @@ void Mysql::deallocData(void *data)
 
 void Mysql::dump(TypeObject* data, ::std::ostream& out) const
 {
-	const MysqlObject* uvalue = static_cast<const MysqlObject*>(data);
+	MysqlObject* uvalue = static_cast<MysqlObject*>(data);
+	std::string str = uvalue->getMysql().dump();
 
 	if (uvalue) {
-		out << "Dump goes here";
+		out << str;
 	}
 }
 
@@ -73,12 +74,37 @@ CLEVER_METHOD(Mysql::connect)
 
 }
 
+CLEVER_METHOD(Mysql::query)
+{
+
+	int ret;
+
+	MysqlObject* mo = CLEVER_GET_OBJECT(MysqlObject*, CLEVER_THIS());
+	CMysql& cmysql = mo->getMysql();
+
+	if(!clever_check_args("s")) {
+		return;
+	}
+
+
+	ret = cmysql.query(args[0]->getStr()->c_str());
+
+	result->setInt(ret);
+}
+
+CLEVER_METHOD(Mysql::fetchArray)
+{
+	
+}
+
 // Type initialization
 CLEVER_TYPE_INIT(Mysql::init)
 {
 	setConstructor((MethodPtr) &Mysql::ctor);
 
-	addMethod(new Function("connect",  (MethodPtr) &Mysql::connect));
+	addMethod(new Function("connect",    (MethodPtr) &Mysql::connect));
+	addMethod(new Function("query",      (MethodPtr) &Mysql::query));
+	addMethod(new Function("fetchArray", (MethodPtr) &Mysql::fetchArray));
 }
 
 }}} // clever::modules::db
