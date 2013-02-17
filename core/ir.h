@@ -45,9 +45,10 @@ struct Operand {
 
 /// Intermediate representation
 struct IR {
-	IR() {}
+	IR()
+		: opcode(OP_HALT), op1(), op2(), result(), loc() {}
 
-	IR(Opcode _op)
+	explicit IR(Opcode _op)
 		: opcode(_op), op1(), op2(), result(), loc() {}
 
 	IR(Opcode _op, Operand _op1)

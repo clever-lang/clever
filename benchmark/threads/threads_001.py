@@ -39,9 +39,9 @@ if __name__ == '__main__':
 	p2.join()
 
 	t3 = timeit.default_timer()
-
-	print "Time elapsed multi-thread python: ", t3 - t2
+	
 	print "Time elapsed single-thread python: ", t1 - t0
+	print "Time elapsed multi-thread python: ", t3 - t2
 	print "Relative time difference: ", 100 * (t1-t0 - t3+t2)/(t1-t0), "%" 
 	print "Result: ", acc1.get() + acc2.get()
 
