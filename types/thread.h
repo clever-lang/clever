@@ -89,6 +89,8 @@ public:
 		delete static_cast<Thread*>(data);
 	}
 
+	static size_t getNThreads() { return m_n_threads; }
+
 	CLEVER_METHOD(run);
 	CLEVER_METHOD(wait);
 	CLEVER_METHOD(nThreads);

@@ -23,6 +23,8 @@
 #include "core/modmanager.h"
 #include "core/cexception.h"
 
+#include "types/thread.h"
+
 #ifndef PATH_MAX
 # define PATH_MAX 1024
 #endif
@@ -145,7 +147,12 @@ static CLEVER_FUNCTION(time)
 		return;
 	}
 
-	result->setDouble(static_cast<double>(clock()) / CLOCKS_PER_SEC);
+	size_t n_threads = ThreadType::getNThreads();
+	if ( n_threads == 0) {
+		result->setDouble(static_cast<double>(clock()) / CLOCKS_PER_SEC);
+	} else {
+		result->setDouble(static_cast<double>(clock()) / n_threads / CLOCKS_PER_SEC);
+	}
 }
 
 // getpid()
