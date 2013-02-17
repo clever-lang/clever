@@ -20,8 +20,12 @@ Environment* Environment::activate(Environment* outer) const
 		env->m_temp = m_temp->activate(NULL);
 	}
 
-	for (size_t i = 0, size = m_data.size(); i < size; ++i) {
-		env->pushValue(m_data[i]->clone());
+	if (!m_data.empty()) {
+		env->m_data.reserve(m_data.size());
+
+		for (size_t i = 0, size = m_data.size(); i < size; ++i) {
+			env->pushValue(m_data[i]->clone());
+		}
 	}
 
 	return env;
