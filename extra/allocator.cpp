@@ -8,7 +8,7 @@ struct FenwickTree {
 	int n;
 	
 	FenwickTree(int t)
-		: x(2*t, 0), n(t) {
+		: x(t, 0), n(t) {
 	}
 	
 	int sum(int i, int j) {
@@ -54,7 +54,7 @@ public:
 		m_next_block[0]->add(0, m_slice_size);
 	}
 
-	Object alloc(int n) {
+	void* alloc(int n) {
 		int m = heap.size();
 
 		if (n < m_slice_size) {
@@ -76,7 +76,7 @@ public:
 						m_size_block[i]->add(ip + last_size, last_size);
 						m_size_block[i]->add(new_next_block, -n);
 						
-						return Object(static_cast<char*>(slice) + ip, i, ip);
+						return new Object(static_cast<char*>(slice) + ip, i, ip);
 					}
 
 					if (next_block >= m_slice_size) break;
@@ -102,10 +102,12 @@ public:
 		m_size_block[m]->add(0, n);
 		m_size_block[m]->add(n, -n);
 
-		return Object(heap[m], m, 0);
+		return new Object(heap[m], m, 0);
 	}
 
-	void dealloc(Object* obj) {
+	void dealloc(void* _obj) {
+		Object* obj = static_cast<Object*>(_obj);
+
 		int n = obj->n;	
 		int ip = obj->pos;
 
@@ -119,6 +121,7 @@ public:
 
 		m_next_block[n]->add(ip, -last_next_block + next_block);
 		m_next_block[n]->add(last_next_block,  last_next_block - next_block);
+		delete obj;
 	}
 
 	~Allocator() {
@@ -140,23 +143,21 @@ private:
 
 int main() 
 {
-	int L = 100; //100000;
+	int L = 100000; //100000;
 	int M = 10000000; //1000000;
-	int S = 101; //1000000;
-	Object obj;
-
+	int S = 100001; //1000000;
+	
 	time_t t0 = clock();
 	Allocator* alloc = new Allocator(S);
 
 	alloc->init();
 
 	for (int i = 0; i < M; ++i) {
-		obj = alloc->alloc(L);
-		char* a = static_cast<char*>(obj.data);
+		char* a = static_cast<char*>(alloc->alloc(L));
 
-		//sprintf(a, "[special] teste teste\nteste teste\n");
+		sprintf(a, "[default] teste teste\nteste teste\n");
 		//printf("%s\n", a);
-		alloc->dealloc(&obj);
+		alloc->dealloc(a);
 	}
 
 	delete alloc;
@@ -167,7 +168,7 @@ int main()
 	time_t t2 = clock();
 	for (int i = 0; i < M; ++i) {
 		char* a = static_cast<char*>(malloc(L));
-		//sprintf(a, "[default] teste teste\nteste teste\n");
+		sprintf(a, "[default] teste teste\nteste teste\n");
 		//printf("%s\n", a);
 		free(a);
 	}
