@@ -19,6 +19,17 @@ extS.addMember("x", FFITypes.INT);
 extS.addMember("z", FFITypes.INT);
 extS.addMember("w", FFITypes.DOUBLE);
 
+
+var ffilib = FFITypes.new("tests/std.ffi/ffi_001");
+
+ffilib.addFunction("setC", FFITypes.VOID, 
+	FFITypes.POINTER, FFITypes.INT, FFITypes.DOUBLE, FFITypes.INT, FFITypes.DOUBLE);
+
+ffilib.addFunction("getCX", FFITypes.INT, FFITypes.POINTER);
+ffilib.addFunction("getCY", FFITypes.DOUBLE, FFITypes.POINTER);
+ffilib.addFunction("getCZ", FFITypes.INT, FFITypes.POINTER);
+ffilib.addFunction("getCW", FFITypes.DOUBLE, FFITypes.POINTER);
+
 // FFI STRUCTURE CREATION
 var s = FFIStruct.new("ExtS");
 
@@ -35,19 +46,21 @@ println(s.w);
 var h =  FFILib.new("tests/std.ffi/ffi_001");
 
 // FFI CALL
-h.setC(FFITypes.VOID, s, 1111, 33.323123, 22, 283.123);
+h.setC(s, 1111, 33.323123, 22, 283.123);
 
 println(s.x);
 println(s.y);
 println(s.z);
 println(s.w);
 
-println(h.getCX(FFITypes.INT, s));
-println(h.getCY(FFITypes.DOUBLE, s));
-println(h.getCZ(FFITypes.INT, s));
-println(h.getCW(FFITypes.DOUBLE, s));
+println(h.getCX(s));
+println(h.getCY(s));
+println(h.getCZ(s));
+println(h.getCW(s));
 
 system("rm -f *.so *.o");
+
+
 ==RESULT==
 1
 3.123

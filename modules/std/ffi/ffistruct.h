@@ -77,6 +77,10 @@ public:
 	void addFunction(const CString& func_name, const ExtMemberType& args) {
 		m_func_map[func_name] = args;
 	}
+	
+	ExtMemberType* getArgs(const CString& func_name) {
+		return &m_func_map[func_name];
+	}
 
 	size_t getOffset(const CString& mn) { return getOffset(getMember(mn)); }
 	size_t getOffset(size_t i) { return m_member_offset[i]; }

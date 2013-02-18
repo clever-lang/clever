@@ -236,7 +236,7 @@ CLEVER_METHOD(FFITypes::addMember)
 
 CLEVER_METHOD(FFITypes::addFunction)
 {
-	if (!clever_check_args("s*")) {
+	if (!clever_check_args("si*")) {
 		return;
 	}
 
@@ -251,6 +251,11 @@ CLEVER_METHOD(FFITypes::addFunction)
 		ext_func_args.push_back(static_cast<FFIType>(args.at(i)->getInt()));
 	}
 	ext_struct->addFunction(*s_func_name, ext_func_args);
+}
+
+ExtStruct* FFITypes::getStruct(const CString& name)
+{
+	return m_structs[name];
 }
 
 CLEVER_TYPE_INIT(FFITypes::init)

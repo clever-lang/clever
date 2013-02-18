@@ -63,9 +63,9 @@ static bool _load_lib(FFIData* h, const CString* libname)
 		dlclose(h->m_lib_handler);
 	}
 
-	h->m_lib_name = *libname + CLEVER_DYLIB_EXT;
-	h->m_lib_handler = dlopen(h->m_lib_name.c_str(), RTLD_LAZY);
-
+	h->m_lib_name = *libname;
+	h->m_lib_handler = dlopen((h->m_lib_name + CLEVER_DYLIB_EXT).c_str(), RTLD_LAZY);
+	
 	return h->m_lib_handler != NULL;
 }
 
@@ -105,7 +105,8 @@ static inline ffi_call_func _ffi_get_pf(void* lib_handler, const CString* func)
 }
 
 static void _ffi_call(Value* result, ffi_call_func pf, size_t n_args,
-					  FFIType rt, const ::std::vector<Value*>& args, size_t offset)
+					  FFIType rt, const ::std::vector<Value*>& args, size_t offset,
+					  ExtMemberType* ext_args_types = 0)
 {
 	ffi_cif cif;
 	ffi_type* ffi_rt = _find_ffi_type(rt);
@@ -114,49 +115,74 @@ static void _ffi_call(Value* result, ffi_call_func pf, size_t n_args,
 
 	for (size_t i = 0; i < n_args; ++i) {
 		Value* v = args.at(i + offset);
-
+		FFIType arg_type = FFIVOID;
+		
+		if (ext_args_types) {
+			arg_type = ext_args_types->at(i + 1);
+		}
+		
 		if (v->isInt()) {
-			ffi_args[i] = _find_ffi_type(FFIINT);
+			if (arg_type == FFIVOID or arg_type == FFIINT) {
+				ffi_args[i] = _find_ffi_type(FFIINT);
 
-			int* vi= (int*) malloc(sizeof(int));
+				int* vi= (int*) malloc(sizeof(int));
 
-			*vi = v->getInt();
+				*vi = v->getInt();
 
-			ffi_values[i] =  vi;
+				ffi_values[i] =  vi;
+			} else {
+				clever_error("Argument %N isn't a int!\n", i + 1);
+			} 
 		} else if (v->isBool()) {
-			ffi_args[i] = _find_ffi_type(FFIBOOL);
+			if (arg_type == FFIVOID or arg_type == FFIBOOL) {
+				ffi_args[i] = _find_ffi_type(FFIBOOL);
 
-			char* b = (char*) malloc (sizeof(char));
+				char* b = (char*) malloc (sizeof(char));
 
-			*b = v->getBool();
+				*b = v->getBool();
 
-			ffi_values[i] = b;
+				ffi_values[i] = b;
+			} else {
+				clever_error("Argument %N isn't a bool!\n", i + 1);
+			} 
 		} else if (v->isStr()) {
-			const char* st = v->getStr()->c_str();
-			char** s = (char**) malloc(sizeof(char*));
+			if (arg_type == FFIVOID or arg_type == FFISTRING) {
+				const char* st = v->getStr()->c_str();
+				char** s = (char**) malloc(sizeof(char*));
 
-			*s = (char*) malloc (sizeof(char) * (strlen(st) + 1));
+				*s = (char*) malloc (sizeof(char) * (strlen(st) + 1));
 
-			strcpy(*s, st);
-			(*s)[strlen(st)] = '\0';
+				strcpy(*s, st);
+				(*s)[strlen(st)] = '\0';
 
-			ffi_args[i] = _find_ffi_type(FFISTRING);
+				ffi_args[i] = _find_ffi_type(FFISTRING);
 
-			ffi_values[i] =  s;
+				ffi_values[i] =  s;
+			} else {
+				clever_error("Argument %N isn't a string!\n", i + 1);
+			} 
 		} else if (v->isDouble()) {
-			ffi_args[i] = _find_ffi_type(FFIDOUBLE);;
+			if (arg_type == FFIVOID or arg_type == FFIDOUBLE) {
+				ffi_args[i] = _find_ffi_type(FFIDOUBLE);;
 
-			double* d = (double*) malloc(sizeof(double));
+				double* d = (double*) malloc(sizeof(double));
 
-			*d = v->getDouble();
+				*d = v->getDouble();
 
-			ffi_values[i] = d;
+				ffi_values[i] = d;
+			} else {
+				clever_error("Argument %N isn't a double!\n", i + 1);
+			} 
 		} else {
-			ffi_args[i] = _find_ffi_type(FFIPOINTER);
+			if (arg_type == FFIVOID or arg_type == FFIPOINTER) {
+				ffi_args[i] = _find_ffi_type(FFIPOINTER);
 
-			FFIStructData* obj = static_cast<FFIStructData*>(v->getObj());
+				FFIStructData* obj = static_cast<FFIStructData*>(v->getObj());
 
-			ffi_values[i] = &(obj->data);
+				ffi_values[i] = &(obj->data);
+			} else {
+				clever_error("Argument %N isn't a pointer!\n", i + 1);
+			} 
 		}
 	}
 
@@ -281,8 +307,25 @@ CLEVER_METHOD(FFI::callThisFunction)
 {
 	FFIData* handler = CLEVER_GET_OBJECT(FFIData*, CLEVER_THIS());
 	const CString func = handler->m_func_name;
-	FFIType rt = static_cast<FFIType>(args.at(0)->getInt());
-	size_t n_args = args.size() - 1;
+	
+	ExtStruct* ext_struct = FFITypes::getStruct(handler->m_lib_name);
+	
+	FFIType rt = FFIVOID;
+	
+	size_t n_args = args.size();
+	size_t offset = 0;
+	ExtMemberType* args_types = 0;
+	
+	if (ext_struct) {
+		args_types = ext_struct->getArgs(func);
+		n_args = args_types->size() - 1;
+		rt = args_types->at(0);
+	} else {
+		n_args--;
+		offset = 1;
+		rt = static_cast<FFIType>(args.at(0)->getInt());
+	} 
+	
 	ffi_call_func pf;
 
 	pf = _ffi_dlsym(handler->m_lib_handler, func.c_str());
@@ -292,7 +335,7 @@ CLEVER_METHOD(FFI::callThisFunction)
 		return;
 	}
 
-	_ffi_call(result, pf, n_args, rt, args, 1);
+	_ffi_call(result, pf, n_args, rt, args, offset, args_types);
 }
 
 // FFILib.exec()

@@ -53,6 +53,8 @@ public:
 	CLEVER_METHOD(addMember);
 	CLEVER_METHOD(addFunction);
 
+	static ExtStruct* getStruct(const CString& name);
+	
 	static ExtStructs m_structs;
 
 private:
