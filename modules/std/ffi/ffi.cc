@@ -132,6 +132,7 @@ static void _ffi_call(Value* result, ffi_call_func pf, size_t n_args,
 				ffi_values[i] =  vi;
 			} else {
 				clever_error("Argument %N isn't a int!\n", i + 1);
+				return;
 			} 
 		} else if (v->isBool()) {
 			if (arg_type == FFIVOID or arg_type == FFIBOOL) {
@@ -144,6 +145,7 @@ static void _ffi_call(Value* result, ffi_call_func pf, size_t n_args,
 				ffi_values[i] = b;
 			} else {
 				clever_error("Argument %N isn't a bool!\n", i + 1);
+				return;
 			} 
 		} else if (v->isStr()) {
 			if (arg_type == FFIVOID or arg_type == FFISTRING) {
@@ -160,6 +162,7 @@ static void _ffi_call(Value* result, ffi_call_func pf, size_t n_args,
 				ffi_values[i] =  s;
 			} else {
 				clever_error("Argument %N isn't a string!\n", i + 1);
+				return;
 			} 
 		} else if (v->isDouble()) {
 			if (arg_type == FFIVOID or arg_type == FFIDOUBLE) {
@@ -172,6 +175,7 @@ static void _ffi_call(Value* result, ffi_call_func pf, size_t n_args,
 				ffi_values[i] = d;
 			} else {
 				clever_error("Argument %N isn't a double!\n", i + 1);
+				return;
 			} 
 		} else {
 			if (arg_type == FFIVOID or arg_type == FFIPOINTER) {
@@ -182,6 +186,7 @@ static void _ffi_call(Value* result, ffi_call_func pf, size_t n_args,
 				ffi_values[i] = &(obj->data);
 			} else {
 				clever_error("Argument %N isn't a pointer!\n", i + 1);
+				return;
 			} 
 		}
 	}
