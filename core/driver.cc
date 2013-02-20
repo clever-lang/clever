@@ -19,7 +19,8 @@ namespace clever {
 /// Executes the script
 void Interpreter::execute(bool interactive)
 {
-	if (getCompilerFlags() & clever::Compiler::PARSER_ONLY) {
+	if ((getCompilerFlags() & clever::Compiler::PARSER_ONLY)
+		|| m_loaded == false) {
 		return;
 	}
 
@@ -100,6 +101,10 @@ int Driver::loadFile(const std::string& filename, const std::string& ns_name)
 	delete new_scanner;
 	m_scanners.pop();
 
+	if (m_scanners.empty()) {
+		m_loaded |= result == 0;
+	}
+
 	return result;
 }
 
@@ -132,6 +137,10 @@ int Driver::loadStr(const std::string& code, bool importStd)
 
 	delete new_scanner;
 	m_scanners.pop();
+
+	if (m_scanners.empty()) {
+		m_loaded |= result == 0;
+	}
 
 	return result;
 }

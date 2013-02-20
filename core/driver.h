@@ -33,8 +33,8 @@ public:
 	typedef std::stack<ScannerState*> ScannerStack;
 
 	Driver()
-		: m_is_file(false), m_trace_parsing(false), m_file(NULL), m_cflags(0),
-		  m_compiler(this), m_scanners()
+		: m_is_file(false), m_trace_parsing(false), m_loaded(false),
+			m_file(NULL), m_cflags(0), m_compiler(this)
 #ifdef CLEVER_DEBUG
 			, m_dump_opcode(false)
 #endif
@@ -75,6 +75,9 @@ protected:
 
 	// Debug option
 	bool m_trace_parsing;
+
+	// Indicates if some file/string has been loaded to be executed
+	bool m_loaded;
 
 	// The file path -f
 	const CString* m_file;
