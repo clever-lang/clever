@@ -11,10 +11,9 @@ if (is_dir('README.rst') == false) {
 	println('Ops, its not a dir!');
 }
 
-is_dir('dfasdfadsfadfadfadsfdasf');
+println(is_dir('dfasdfadsfadfadfadsfdasf'));
 
 ==RESULT==
 Yep, its a dir!
 Ops, its not a dir!
-Fatal error: Unhandled exception!
-Message: Directory does not exists.
+0

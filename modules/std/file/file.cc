@@ -5,15 +5,15 @@
  * This file is distributed under the MIT license. See LICENSE for details.
  */
 
-#include "modules/std/file/file.h"
-#include "modules/std/file/cfile.h"
-#include "core/vm.h"
-#include "core/value.h"
-#include "core/clever.h"
-#include "types/type.h"
-#include "modules/std/core/function.h"
-#include <sys/stat.h>
 #include <cstdio>
+#include <sys/stat.h>
+#include "core/clever.h"
+#include "core/value.h"
+#include "core/vm.h"
+#include "modules/std/file/cfile.h"
+#include "modules/std/file/file.h"
+#include "modules/std/core/function.h"
+#include "types/type.h"
 
 
 namespace clever { namespace modules { namespace std {
@@ -79,8 +79,8 @@ static CLEVER_FUNCTION(is_dir)
 	struct stat info;
 	
 	if (stat(dir, &info) != 0) {
-		clever_throw("Directory does not exists.");
-		return;
+		result->setBool(false);
+        return;
 	}
 	
 	result->setBool((info.st_mode & S_IFMT) == S_IFDIR);
