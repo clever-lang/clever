@@ -36,30 +36,25 @@ static CLEVER_FUNCTION(flush)
 // Prints the object values without trailing newline
 static CLEVER_FUNCTION(print)
 {
-	g_io_mutex.lock();
 	for (size_t i = 0, size = args.size(); i < size; ++i) {
 		args[i]->dump();
 	}
-	g_io_mutex.unlock();
 }
 
 // println(object a, [ ...])
 // Prints the object values with trailing newline
 static CLEVER_FUNCTION(println)
 {
-	g_io_mutex.lock();
 	for (size_t i = 0, size = args.size(); i < size; ++i) {
 		args[i]->dump();
 		::std::cout << '\n';
 	}
-	g_io_mutex.unlock();
 }
 
 // printf(string format, [...])
 // Prints and formats a string to standard output without trailing newline
 static CLEVER_FUNCTION(printf)
 {
-	g_io_mutex.lock();
 	const CString* format = args[0]->getStr();
 	const char* start = format->c_str();
 
@@ -82,7 +77,6 @@ static CLEVER_FUNCTION(printf)
 			point++;
 		}
 	}
-	g_io_mutex.unlock();
 }
 
 // read()
@@ -137,22 +131,13 @@ CLEVER_MODULE_INIT(IOModule)
 {
 	addType(new Serializer);
 
-	addFunction(new Function("print", &CLEVER_NS_FNAME(io, print)))
-		->setVariadic();
-
-	addFunction(new Function("println", &CLEVER_NS_FNAME(io, println)))
-		->setVariadic();
-
-	addFunction(new Function("printf", &CLEVER_NS_FNAME(io, printf)))
-		->setVariadic();
-
-	addFunction(new Function("flush", &CLEVER_NS_FNAME(io, flush)));
-
-	addFunction(new Function("read", &CLEVER_NS_FNAME(io, read)));
-
-	addFunction(new Function("readi", &CLEVER_NS_FNAME(io, readi)));
-
-	addFunction(new Function("readd", &CLEVER_NS_FNAME(io, readd)));
+	addFunction(new Function("print",   &CLEVER_NS_FNAME(io, print)))->setVariadic();
+	addFunction(new Function("println", &CLEVER_NS_FNAME(io, println)))->setVariadic();
+	addFunction(new Function("printf",  &CLEVER_NS_FNAME(io, printf)))->setVariadic();
+	addFunction(new Function("flush",   &CLEVER_NS_FNAME(io, flush)));
+	addFunction(new Function("read",    &CLEVER_NS_FNAME(io, read)));
+	addFunction(new Function("readi",   &CLEVER_NS_FNAME(io, readi)));
+	addFunction(new Function("readd",   &CLEVER_NS_FNAME(io, readd)));
 }
 
 }}} // clever::modules::std
