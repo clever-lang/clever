@@ -1,0 +1,28 @@
+Testing File manipulations
+==CODE==
+import std.io.*;
+import std.file.*;
+import std.sys.*;
+
+if (file_exists('foo.bar')) {
+	println('File exists');
+} else {
+	println('File does not exists');
+}
+
+var f = File.new('foo.bar', File.OUT | File.TRUNC);
+f.write('clever lang');
+f.close();
+
+rename('foo.bar', 'bar.foo');
+
+if (file_exists('bar.foo')) {
+	println('File exists');
+} else {
+	println('File does not exists');
+}
+
+remove("bar.foo");
+==RESULT==
+File does not exists
+File exists
