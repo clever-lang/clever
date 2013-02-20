@@ -174,19 +174,19 @@ CLEVER_MODULE_INIT(Reflection)
 	addType(new reflection::ReflectType);
 
 	// Functions
-	addFunction(new Function("type",     &CLEVER_NS_FNAME(reflection, type)));
-	addFunction(new Function("eval",     &CLEVER_NS_FNAME(reflection, eval)));
-	addFunction(new Function("refcount", &CLEVER_NS_FNAME(reflection, refcount)));
-	addFunction(new Function("isnull",   &CLEVER_NS_FNAME(reflection, isnull)));
-	addFunction(new Function("isconst",  &CLEVER_NS_FNAME(reflection, isconst)));
-	addFunction(new Function("isfunct",  &CLEVER_NS_FNAME(reflection, isfunc)));
-	addFunction(new Function("isint",    &CLEVER_NS_FNAME(reflection, isint)));
-	addFunction(new Function("isnumber", &CLEVER_NS_FNAME(reflection, isnumber)));
-	addFunction(new Function("isstr",    &CLEVER_NS_FNAME(reflection, isstr)));
-	addFunction(new Function("isdouble", &CLEVER_NS_FNAME(reflection, isdouble)));
-	addFunction(new Function("isarray",  &CLEVER_NS_FNAME(reflection, isarray)));
-	addFunction(new Function("ismap",    &CLEVER_NS_FNAME(reflection, ismap)));
-	addFunction(new Function("isthread", &CLEVER_NS_FNAME(reflection, isthread)));
+	addFunction(new Function("type",      &CLEVER_NS_FNAME(reflection, type)));
+	addFunction(new Function("eval",      &CLEVER_NS_FNAME(reflection, eval)));
+	addFunction(new Function("refcount",  &CLEVER_NS_FNAME(reflection, refcount)));
+	addFunction(new Function("is_null",   &CLEVER_NS_FNAME(reflection, isnull)));
+	addFunction(new Function("is_const",  &CLEVER_NS_FNAME(reflection, isconst)));
+	addFunction(new Function("is_funct",  &CLEVER_NS_FNAME(reflection, isfunc)));
+	addFunction(new Function("is_int",    &CLEVER_NS_FNAME(reflection, isint)));
+	addFunction(new Function("is_number", &CLEVER_NS_FNAME(reflection, isnumber)));
+	addFunction(new Function("is_str",    &CLEVER_NS_FNAME(reflection, isstr)));
+	addFunction(new Function("is_double", &CLEVER_NS_FNAME(reflection, isdouble)));
+	addFunction(new Function("is_array",  &CLEVER_NS_FNAME(reflection, isarray)));
+	addFunction(new Function("is_map",    &CLEVER_NS_FNAME(reflection, ismap)));
+	addFunction(new Function("is_thread", &CLEVER_NS_FNAME(reflection, isthread)));
 }
 
 }}} // clever::modules::std

@@ -91,10 +91,10 @@ static CLEVER_FUNCTION(is_dir)
 /// Initializes Standard File module
 CLEVER_MODULE_INIT(FileModule)
 {
-	addFunction(new Function("rename",     &CLEVER_NS_FNAME(file, rename)));
-	addFunction(new Function("remove",     &CLEVER_NS_FNAME(file, remove)));
-	addFunction(new Function("fileexists", &CLEVER_NS_FNAME(file, file_exists)));
-	addFunction(new Function("isdir",      &CLEVER_NS_FNAME(file, is_dir)));
+	addFunction(new Function("rename",      &CLEVER_NS_FNAME(file, rename)));
+	addFunction(new Function("remove",      &CLEVER_NS_FNAME(file, remove)));
+	addFunction(new Function("file_exists", &CLEVER_NS_FNAME(file, file_exists)));
+	addFunction(new Function("is_dir",      &CLEVER_NS_FNAME(file, is_dir)));
 
 	addType(new CFile);
 }
