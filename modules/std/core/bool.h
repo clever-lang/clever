@@ -29,7 +29,11 @@ public:
 	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const { return new BoolObject; }
 
 	void dump(TypeObject* value, std::ostream& out) const {
-		out << static_cast<BoolObject*>(value)->value;
+		if (static_cast<BoolObject*>(value)->value) {
+			out << "true";
+		} else {
+			out << "false";
+		}
 	}
 
 	CLEVER_METHOD(ctor);

@@ -7,4 +7,4 @@ var r = Reflect.new(println);
 
 println(r.isVariadic());
 ==RESULT==
-1
+true

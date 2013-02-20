@@ -12,6 +12,6 @@ println(a.isFunction());
 a = Reflect.new(println);
 println(a.isFunction());
 ==RESULT==
-0
-0
-1
+false
+false
+true
