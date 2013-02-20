@@ -17,6 +17,12 @@ CLEVER_TYPE_OPERATOR(DoubleType::add)
 		result->setDouble(lhs->getDouble() + rhs->getDouble());
 	} else if (rhs->isInt()) {
 		result->setDouble(lhs->getDouble() + rhs->getInt());
+	} else if (rhs->isStr()) {
+		std::stringstream ss;
+
+		ss << lhs->getDouble();
+
+		result->setStr(new StrObject(ss.str() + *rhs->getStr()));
 	}
 }
 

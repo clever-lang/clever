@@ -16,8 +16,14 @@ CLEVER_TYPE_OPERATOR(IntType::add)
 {
 	if (EXPECTED(rhs->isInt())) {
 		result->setInt(lhs->getInt() + rhs->getInt());
-	} else if (EXPECTED(rhs->isDouble())) {
+	} else if (rhs->isDouble()) {
 		result->setDouble(lhs->getInt() + rhs->getDouble());
+	} else if (rhs->isStr()) {
+		std::stringstream ss;
+
+		ss << lhs->getInt();
+
+		result->setStr(new StrObject(ss.str() + *rhs->getStr()));
 	}
 }
 
