@@ -3,15 +3,15 @@ Testing Directories Manipulation
 import std.io.*;
 import std.file.*;
 
-if (isdir('tests')) {
+if (is_dir('tests')) {
 	println('Yep, its a dir!');
 }
 
-if (isdir('README.rst') == false) {
+if (is_dir('README.rst') == false) {
 	println('Ops, its not a dir!');
 }
 
-println(isdir('dfasdfadsfadfadfadsfdasf'));
+println(is_dir('dfasdfadsfadfadfadsfdasf'));
 
 ==RESULT==
 Yep, its a dir!
