@@ -235,6 +235,7 @@ statement:
 	|	try_catch_finally
 	|	class_def
 	|	fully_qualified_call ';'
+	|	instantiation ';'
 ;
 
 block:

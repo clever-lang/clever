@@ -1,0 +1,13 @@
+Testing object instantiation
+==CODE==
+import std.io.*;
+
+class Foo {
+    function Foo() {
+        println('Bar!');
+    }
+}
+
+Foo.new;
+==RESULT==
+Bar!
