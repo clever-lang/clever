@@ -19,7 +19,6 @@ namespace clever { namespace modules { namespace std {
 
 namespace io {
 
-CMutex g_io_mutex;
 // flush(void)
 // Flushes output buffer (forcefully)
 static CLEVER_FUNCTION(flush)
@@ -27,9 +26,8 @@ static CLEVER_FUNCTION(flush)
 	if (!clever_static_check_no_args()) {
 		return;
 	}
-	g_io_mutex.lock();
+
 	::fflush(stdout);
-	g_io_mutex.unlock();
 }
 
 // print(object a, [ ...])
