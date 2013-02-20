@@ -180,9 +180,7 @@ yyc_INITIAL:
 		case 'Y':
 		case 'Z':	goto yy31;
 		case '^':	goto yy33;
-		case 'a':	goto yy34;
-		case 'b':	goto yy36;
-		case 'c':	goto yy37;
+		case '_':
 		case 'd':
 		case 'g':
 		case 'h':
@@ -195,7 +193,10 @@ yyc_INITIAL:
 		case 'u':
 		case 'x':
 		case 'y':
-		case 'z':	goto yy38;
+		case 'z':	goto yy34;
+		case 'a':	goto yy36;
+		case 'b':	goto yy37;
+		case 'c':	goto yy38;
 		case 'e':	goto yy39;
 		case 'f':	goto yy40;
 		case 'i':	goto yy41;
@@ -323,7 +324,7 @@ yy24:
 			n = n * 10 + (nstr[i] - '0');
 		}
 
-        yylval->intlit = new ast::IntLit(n, *yyloc);
+		yylval->intlit = new ast::IntLit(n, *yyloc);
 
 		RET(token::NUM_INTEGER);
 	}
@@ -369,7 +370,7 @@ yy33:
 		goto yy15;
 yy34:
 		++YYCURSOR;
-		if ((yych = *YYCURSOR) == 'n') goto yy173;
+		yych = *YYCURSOR;
 		goto yy55;
 yy35:
 		{ yylen = cursor - s.yylex; }
@@ -381,9 +382,13 @@ yy35:
 	}
 yy36:
 		yych = *++YYCURSOR;
-		if (yych == 'r') goto yy168;
+		if (yych == 'n') goto yy173;
 		goto yy55;
 yy37:
+		yych = *++YYCURSOR;
+		if (yych == 'r') goto yy168;
+		goto yy55;
+yy38:
 		yych = *++YYCURSOR;
 		switch (yych) {
 		case 'a':	goto yy139;
@@ -392,9 +397,6 @@ yy37:
 		case 'r':	goto yy142;
 		default:	goto yy55;
 		}
-yy38:
-		yych = *++YYCURSOR;
-		goto yy55;
 yy39:
 		yych = *++YYCURSOR;
 		if (yych == 'l') goto yy128;
@@ -1058,7 +1060,7 @@ yy210:
 			}
 		}
 
-        yylval->intlit = new ast::IntLit(n, *yyloc);
+		yylval->intlit = new ast::IntLit(n, *yyloc);
 
 		RET(token::NUM_INTEGER);
 	}

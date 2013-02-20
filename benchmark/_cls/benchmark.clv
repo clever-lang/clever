@@ -10,20 +10,22 @@ class Language
 class Environment
 {
 	var langs;
-	
-	function Enviroment()
+
+	function Environment()
 	{
 		this.langs = [];
 		this.addLanguage('Clever', 'clever', 'clv');
 	}
-	
+
 	function addLanguage(name, command, extension)
 	{
 		var l = Language.new;
 		l.name = name;
 		l.command = command;
 		l.extension = extension;
-		
-		this.langs.push(l);
+
+		this.langs.append(l); // ERROR (don`t accept second dot);
+
+		return l;
 	}
 }

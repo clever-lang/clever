@@ -1,8 +1,9 @@
-/* A Bison parser, made by GNU Bison 2.6.  */
+
+/* A Bison parser, made by GNU Bison 2.4.1.  */
 
 /* Positions for Bison parsers in C++
    
-      Copyright (C) 2002-2007, 2009-2012 Free Software Foundation, Inc.
+      Copyright (C) 2002, 2003, 2004, 2005, 2006 Free Software Foundation, Inc.
    
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,24 +32,16 @@
    version 2.2 of Bison.  */
 
 /**
- ** \file /Users/murilo/Documents/programming/clever/core/position.hh
+ ** \file position.hh
  ** Define the clever::position class.
  */
 
-#ifndef YY_USERS_MURILO_DOCUMENTS_PROGRAMMING_CLEVER_CORE_POSITION_HH
-# define YY_USERS_MURILO_DOCUMENTS_PROGRAMMING_CLEVER_CORE_POSITION_HH
+#ifndef BISON_POSITION_HH
+# define BISON_POSITION_HH
 
-# include <algorithm> // std::max
-# include <iosfwd>
+# include <iostream>
 # include <string>
-
-# ifndef YY_NULL
-#  if defined __cplusplus && 201103L <= __cplusplus
-#   define YY_NULL nullptr
-#  else
-#   define YY_NULL 0
-#  endif
-# endif
+# include <algorithm>
 
 
 namespace clever {
@@ -59,42 +52,38 @@ namespace clever {
   public:
 
     /// Construct a position.
-    explicit position (std::string* f = YY_NULL,
-                       unsigned int l = 1u,
-                       unsigned int c = 1u)
-      : filename (f)
-      , line (l)
-      , column (c)
+    position ()
+      : filename (0), line (1), column (1)
     {
     }
 
 
     /// Initialization.
-    void initialize (std::string* fn = YY_NULL,
-                     unsigned int l = 1u,
-                     unsigned int c = 1u)
+    inline void initialize (std::string* fn)
     {
       filename = fn;
-      line = l;
-      column = c;
+      line = 1;
+      column = 1;
     }
 
     /** \name Line and Column related manipulators
      ** \{ */
+  public:
     /// (line related) Advance to the COUNT next lines.
-    void lines (int count = 1)
+    inline void lines (int count = 1)
     {
-      column = 1u;
+      column = 1;
       line += count;
     }
 
     /// (column related) Advance to the COUNT next columns.
-    void columns (int count = 1)
+    inline void columns (int count = 1)
     {
       column = std::max (1u, column + count);
     }
     /** \} */
 
+  public:
     /// File name to which this position refers.
     std::string* filename;
     /// Current line number.
@@ -137,11 +126,10 @@ namespace clever {
   inline bool
   operator== (const position& pos1, const position& pos2)
   {
-    return (pos1.line == pos2.line
-            && pos1.column == pos2.column
-            && (pos1.filename == pos2.filename
-                || (pos1.filename && pos2.filename
-                    && *pos1.filename == *pos2.filename)));
+    return
+      (pos1.filename == pos2.filename
+       || pos1.filename && pos2.filename && *pos1.filename == *pos2.filename)
+      && pos1.line == pos2.line && pos1.column == pos2.column;
   }
 
   /// Compare two position objects.
@@ -166,4 +154,4 @@ namespace clever {
 
 } // clever
 
-#endif /* !YY_USERS_MURILO_DOCUMENTS_PROGRAMMING_CLEVER_CORE_POSITION_HH  */
+#endif // not BISON_POSITION_HH

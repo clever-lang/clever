@@ -1,8 +1,9 @@
-/* A Bison parser, made by GNU Bison 2.6.  */
+
+/* A Bison parser, made by GNU Bison 2.4.1.  */
 
 /* Locations for Bison parsers in C++
    
-      Copyright (C) 2002-2007, 2009-2012 Free Software Foundation, Inc.
+      Copyright (C) 2002, 2003, 2004, 2005, 2006 Free Software Foundation, Inc.
    
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,12 +32,12 @@
    version 2.2 of Bison.  */
 
 /**
- ** \file /Users/murilo/Documents/programming/clever/core/location.hh
+ ** \file location.hh
  ** Define the clever::location class.
  */
 
-#ifndef YY_USERS_MURILO_DOCUMENTS_PROGRAMMING_CLEVER_CORE_LOCATION_HH
-# define YY_USERS_MURILO_DOCUMENTS_PROGRAMMING_CLEVER_CORE_LOCATION_HH
+#ifndef BISON_LOCATION_HH
+# define BISON_LOCATION_HH
 
 # include <iostream>
 # include <string>
@@ -51,36 +52,17 @@ namespace clever {
   {
   public:
 
-    /// Construct a location from \a b to \a e.
-    location (const position& b, const position& e)
-      : begin (b)
-      , end (e)
-    {
-    }
-
-    /// Construct a 0-width location in \a p.
-    explicit location (const position& p = position ())
-      : begin (p)
-      , end (p)
-    {
-    }
-
-    /// Construct a 0-width location in \a f, \a l, \a c.
-    explicit location (std::string* f,
-                       unsigned int l = 1u,
-                       unsigned int c = 1u)
-      : begin (f, l, c)
-      , end (f, l, c)
+    /// Construct a location.
+    location ()
+      : begin (), end ()
     {
     }
 
 
     /// Initialization.
-    void initialize (std::string* f = YY_NULL,
-                     unsigned int l = 1u,
-                     unsigned int c = 1u)
+    inline void initialize (std::string* fn)
     {
-      begin.initialize (f, l, c);
+      begin.initialize (fn);
       end = begin;
     }
 
@@ -88,19 +70,19 @@ namespace clever {
      ** \{ */
   public:
     /// Reset initial location to final location.
-    void step ()
+    inline void step ()
     {
       begin = end;
     }
 
     /// Extend the current location to the COUNT next columns.
-    void columns (unsigned int count = 1)
+    inline void columns (unsigned int count = 1)
     {
       end += count;
     }
 
     /// Extend the current location to the COUNT next lines.
-    void lines (unsigned int count = 1)
+    inline void lines (unsigned int count = 1)
     {
       end.lines (count);
     }
@@ -176,4 +158,4 @@ namespace clever {
 } // clever
 
 
-#endif /* !YY_USERS_MURILO_DOCUMENTS_PROGRAMMING_CLEVER_CORE_LOCATION_HH  */
+#endif // not BISON_LOCATION_HH

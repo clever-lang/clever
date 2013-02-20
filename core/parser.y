@@ -295,6 +295,7 @@ object:
 	|	array
 	|	'(' rvalue ')' { $<node>$ = $<node>2; }
 	|	subscript
+	|	property_access
 ;
 
 rvalue:
@@ -309,7 +310,6 @@ rvalue:
 	|	fcall
 	|	anonymous_fdecl
 	|	instantiation
-	|	property_access
 	|	mcall
 	|	fully_qualified_call
 ;

@@ -184,10 +184,9 @@ ast::Node* ModManager::importFile(Scope* scope, Environment* env,
 	const std::string& module, size_t kind, const CString* name) const
 {
 	std::string mod_name = module;
-	std::string ns_name  = module;
+	std::string ns_name  = kind & ModManager::NAMESPACE ? module : "";
 
 	std::replace(mod_name.begin(), mod_name.end(), '.', '/');
-	std::replace(mod_name.begin(), mod_name.end(), '.', ':');
 
 	const std::string& fname = m_include_path + mod_name + ".clv";
 

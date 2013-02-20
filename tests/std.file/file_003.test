@@ -4,7 +4,7 @@ import std.io.*;
 import std.file.*;
 import std.sys.*;
 
-if (file_exists('foo.bar')) {
+if (fileexists('foo.bar')) {
 	println('File exists');
 } else {
 	println('File does not exists');
@@ -16,7 +16,7 @@ f.close();
 
 rename('foo.bar', 'bar.foo');
 
-if (file_exists('bar.foo')) {
+if (fileexists('bar.foo')) {
 	println('File exists');
 } else {
 	println('File does not exists');

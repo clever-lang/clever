@@ -31,7 +31,7 @@ next_token:
 /*!re2c
 	re2c:yyfill:enable = 0;
 
-	IDENTIFIER = [a-z][a-zA-Z0-9_]*;
+	IDENTIFIER = [_a-z][a-zA-Z0-9_]*;
 	INTEGER    = [0-9]+;
 	DOUBLE     = [-]?([0-9]*"."[0-9]+)|[-]?([0-9]+"."[0-9]+);
 	EXP_DOUBLE = ((INTEGER|DOUBLE)[eE][+-]?INTEGER);

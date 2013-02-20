@@ -1,8 +1,10 @@
-/* A Bison parser, made by GNU Bison 2.6.  */
+
+/* A Bison parser, made by GNU Bison 2.4.1.  */
 
 /* Skeleton interface for Bison LALR(1) parsers in C++
    
-      Copyright (C) 2002-2012 Free Software Foundation, Inc.
+      Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008 Free Software
+   Foundation, Inc.
    
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,15 +32,10 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
-/**
- ** \file /Users/murilo/Documents/programming/clever/core/parser.hh
- ** Define the clever::parser class.
- */
-
 /* C++ LALR(1) parser skeleton written by Akim Demaille.  */
 
-#ifndef YY_USERS_MURILO_DOCUMENTS_PROGRAMMING_CLEVER_CORE_PARSER_HH
-# define YY_USERS_MURILO_DOCUMENTS_PROGRAMMING_CLEVER_CORE_PARSER_HH
+#ifndef PARSER_HEADER_H
+# define PARSER_HEADER_H
 
 /* "%code requires" blocks.  */
 
@@ -68,11 +65,53 @@ class Value;
 #include <string>
 #include <iostream>
 #include "stack.hh"
+
+
+namespace clever {
+
+  class position;
+  class location;
+
+} // clever
+
+
 #include "location.hh"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 1
+#endif
+
+/* Enabling verbose error messages.  */
+#ifdef YYERROR_VERBOSE
+# undef YYERROR_VERBOSE
+# define YYERROR_VERBOSE 1
+#else
+# define YYERROR_VERBOSE 1
+#endif
+
+/* Enabling the token table.  */
+#ifndef YYTOKEN_TABLE
+# define YYTOKEN_TABLE 0
+#endif
+
+/* YYLLOC_DEFAULT -- Set CURRENT to span from RHS[1] to RHS[N].
+   If N is 0, then set CURRENT to the empty location which ends
+   the previous symbol: RHS[0] (always defined).  */
+
+#ifndef YYLLOC_DEFAULT
+# define YYLLOC_DEFAULT(Current, Rhs, N)		\
+do {							\
+  if (N)						\
+    {							\
+      (Current).begin = (Rhs)[1].begin;			\
+      (Current).end   = (Rhs)[N].end;			\
+    }							\
+  else							\
+    {							\
+      (Current).begin = (Current).end = (Rhs)[0].end;	\
+    }							\
+} while (false)
 #endif
 
 
@@ -270,14 +309,6 @@ namespace clever {
     /// The location stack.
     location_stack_type yylocation_stack_;
 
-    /// Whether the given \c yypact_ value indicates a defaulted state.
-    /// \param yyvalue   the value to check
-    static bool yy_pact_value_is_default_ (int yyvalue);
-
-    /// Whether the given \c yytable_ value indicates a syntax error.
-    /// \param yyvalue   the value to check
-    static bool yy_table_value_is_error_ (int yyvalue);
-
     /// Internal symbol numbers.
     typedef unsigned char token_number_type;
     /* Tables.  */
@@ -285,7 +316,7 @@ namespace clever {
     static const short int yypact_[];
     static const short int yypact_ninf_;
 
-    /// For a state, default reduction number.
+    /// For a state, default rule to reduce.
     /// Unless\a  yytable_ specifies something else to do.
     /// Zero means the default is an error.
     static const unsigned char yydefact_[];
@@ -309,14 +340,18 @@ namespace clever {
     /// For a rule, its LHS.
     static const unsigned char yyr1_[];
     /// For a rule, its RHS length.
-    static const unsigned char yyr2_[]; 
+    static const unsigned char yyr2_[];
 
-    /// Convert the symbol name \a n to a form suitable for a diagnostic.
-    static std::string yytnamerr_ (const char *n);
-
-
+#if YYDEBUG || YYERROR_VERBOSE || YYTOKEN_TABLE
     /// For a symbol, its name in clear.
     static const char* const yytname_[];
+#endif
+
+#if YYERROR_VERBOSE
+    /// Convert the symbol name \a n to a form suitable for a diagnostic.
+    virtual std::string yytnamerr_ (const char *n);
+#endif
+
 #if YYDEBUG
     /// A type to store symbol numbers and -1.
     typedef short int rhs_number_type;
@@ -378,4 +413,4 @@ namespace clever {
 
 
 
-#endif /* !YY_USERS_MURILO_DOCUMENTS_PROGRAMMING_CLEVER_CORE_PARSER_HH  */
+#endif /* ! defined PARSER_HEADER_H */

@@ -1,8 +1,10 @@
-/* A Bison parser, made by GNU Bison 2.6.  */
+
+/* A Bison parser, made by GNU Bison 2.4.1.  */
 
 /* Stack handling for Bison parsers in C++
    
-      Copyright (C) 2002-2012 Free Software Foundation, Inc.
+      Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008 Free Software
+   Foundation, Inc.
    
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,15 +32,10 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
-/**
- ** \file /Users/murilo/Documents/programming/clever/core/stack.hh
- ** Define the clever::stack class.
- */
+#ifndef BISON_STACK_HH
+# define BISON_STACK_HH
 
-#ifndef YY_USERS_MURILO_DOCUMENTS_PROGRAMMING_CLEVER_CORE_STACK_HH
-# define YY_USERS_MURILO_DOCUMENTS_PROGRAMMING_CLEVER_CORE_STACK_HH
-
-# include <deque>
+#include <deque>
 
 
 namespace clever {
@@ -47,6 +44,7 @@ namespace clever {
   class stack
   {
   public:
+
     // Hide our reversed order.
     typedef typename S::reverse_iterator iterator;
     typedef typename S::const_reverse_iterator const_iterator;
@@ -85,7 +83,7 @@ namespace clever {
     pop (unsigned int n = 1)
     {
       for (; n; --n)
-        seq_.pop_front ();
+	seq_.pop_front ();
     }
 
     inline
@@ -99,6 +97,7 @@ namespace clever {
     inline const_iterator end () const { return seq_.rend (); }
 
   private:
+
     S seq_;
   };
 
@@ -107,9 +106,10 @@ namespace clever {
   class slice
   {
   public:
-    slice (const S& stack, unsigned int range)
-      : stack_ (stack)
-      , range_ (range)
+
+    slice (const S& stack,
+	   unsigned int range) : stack_ (stack),
+				 range_ (range)
     {
     }
 
@@ -121,6 +121,7 @@ namespace clever {
     }
 
   private:
+
     const S& stack_;
     unsigned int range_;
   };
@@ -128,4 +129,5 @@ namespace clever {
 } // clever
 
 
-#endif /* !YY_USERS_MURILO_DOCUMENTS_PROGRAMMING_CLEVER_CORE_STACK_HH  */
+#endif // not BISON_STACK_HH[]dnl
+

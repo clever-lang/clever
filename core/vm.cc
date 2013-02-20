@@ -235,6 +235,8 @@ Value* VM::runFunction(const Function* func, std::vector<Value*>* args)
 
 		_param_binding(func, fenv, args);
 
+		std::for_each(m_obj_store.begin(), m_obj_store.end(), clever_addref);
+
 		size_t saved_pc = m_pc;
 		m_pc = func->getAddr();
 		run();
