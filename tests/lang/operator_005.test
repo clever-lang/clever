@@ -1,0 +1,14 @@
+Testing + operator
+==CODE==
+import std.io.*;
+
+println(1 + "foo");
+println("foo" + 1);
+
+println(1.2 + "bar");
+println("bar" + 1.2);
+==RESULT==
+1foo
+foo1
+1\.2bar
+bar1\.2
