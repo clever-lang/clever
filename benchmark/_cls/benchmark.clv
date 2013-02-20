@@ -1,0 +1,29 @@
+import std.io.*;
+
+class Language
+{
+	var name;
+	var command;
+	var extension;
+}
+
+class Environment
+{
+	var langs;
+	
+	function Enviroment()
+	{
+		this.langs = [];
+		this.addLanguage('Clever', 'clever', 'clv');
+	}
+	
+	function addLanguage(name, command, extension)
+	{
+		var l = Language.new;
+		l.name = name;
+		l.command = command;
+		l.extension = extension;
+		
+		this.langs.push(l);
+	}
+}
