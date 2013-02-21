@@ -1,0 +1,22 @@
+Testing member chaining
+==CODE==
+import std.io.*;
+
+class Foo
+{
+    var x;
+
+    function Foo(y) {
+        if (y > 0) {
+			this.x = Foo.new(y - 1);
+        }
+    }
+}
+
+var x = Foo.new(3);
+
+println(x.x.x.x);
+println(x.x.x.x.x);
+==RESULT==
+Foo
+null
