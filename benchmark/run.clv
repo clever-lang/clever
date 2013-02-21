@@ -1,14 +1,22 @@
 import std.io.*;
 import std.sys.*;
-import _cls.benchmark.*;
+import _lib.benchmark.*;
 
 var env = Environment.new;
 
-env.addLanguage('Python', 'python', 'py');
-env.addLanguage('Lua', 'lua', 'lua');
-println(env.langs);
+env.addLanguage('Python', 'python %1', 'python -V', '^Python (.*)', 'py');
+env.addLanguage('Lua', 'lua %1', 'lua -v', '^Lua ([^ ]+)', 'lua');
+env.addLanguage('Java', 'javac %1 && java %2', 'java -version', '^java version "([^"]+)', 'java');
+env.addLanguage('PHP', 'php %1', 'phpss -v', '^PHP ([^ ]+)', 'php');
+env.addLanguage('Ruby', 'ruby %1', 'ruby -v', '^ruby ([^ ]+)', 'rb');
 
-var langs = env.langs;
-langs.each(function(l) {
-	println(l.name);
+
+env.validate();
+
+env.langs.each(function(l) {
+    if (l.is_ok == false) {
+        println(l.name + ' -- OFF');
+        return;
+    }
+	println(l.name + ' ('+ l.version+') -- OK');
 });
