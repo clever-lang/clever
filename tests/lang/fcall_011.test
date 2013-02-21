@@ -1,0 +1,14 @@
+Testing array dereferencing
+==CODE==
+import std.io.*;
+
+var arr = [1, 2];
+
+function getarr() {
+	return arr;
+}
+
+println(getarr()[0], getarr()[1]);
+==RESULT==
+1
+2
