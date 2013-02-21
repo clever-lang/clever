@@ -252,6 +252,7 @@ CLEVER_METHOD(ArrayType::each)
 		ValueVector tmp_args;
 
 		tmp_args.push_back(vec[i]);
+		tmp_args.push_back(new Value((long) i));
 
 		results.push_back(const_cast<VM*>(vm)->runFunction(func, &tmp_args));
 	}
