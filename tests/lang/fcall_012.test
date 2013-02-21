@@ -1,0 +1,11 @@
+Testing method call from function return
+==CODE==
+import std.io.*;
+
+function test() {
+	return "foobar";
+}
+
+println(test().size());
+==RESULT==
+6

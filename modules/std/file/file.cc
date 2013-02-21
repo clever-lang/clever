@@ -12,6 +12,7 @@
 #else
 #include <windows.h>
 #endif
+#include <libgen.h>
 #include "core/clever.h"
 #include "core/value.h"
 #include "core/vm.h"
@@ -148,6 +149,30 @@ static CLEVER_FUNCTION(glob)
 	}
 }
 
+// basename(String path)
+static CLEVER_FUNCTION(basename)
+{
+	if (!clever_static_check_args("s")) {
+		return;
+	}
+
+	const char* path = basename(const_cast<char*>(args[0]->getStr()->c_str()));
+
+	result->setStr(new StrObject(path));
+}
+
+// dirname(String path)
+static CLEVER_FUNCTION(dirname)
+{
+	if (!clever_static_check_args("s")) {
+		return;
+	}
+
+	const char* path = dirname(const_cast<char*>(args[0]->getStr()->c_str()));
+
+	result->setStr(new StrObject(path));
+}
+
 } // clever::modules::std::file
 
 /// Initializes Standard File module
@@ -158,6 +183,8 @@ CLEVER_MODULE_INIT(FileModule)
 	addFunction(new Function("file_exists", &CLEVER_NS_FNAME(file, file_exists)));
 	addFunction(new Function("is_dir",      &CLEVER_NS_FNAME(file, is_dir)));
 	addFunction(new Function("glob",        &CLEVER_NS_FNAME(file, glob)));
+	addFunction(new Function("basename",    &CLEVER_NS_FNAME(file, basename)));
+	addFunction(new Function("dirname",     &CLEVER_NS_FNAME(file, dirname)));
 
 	addType(new CFile);
 }

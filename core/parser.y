@@ -296,6 +296,7 @@ object:
 	|	'(' rvalue ')' { $<node>$ = $<node>2; }
 	|	subscript
 	|	property_access
+	|	fcall
 ;
 
 rvalue:
@@ -307,7 +308,6 @@ rvalue:
 	|	boolean
 	|	comparison
 	|	inc_dec
-	|	fcall
 	|	anonymous_fdecl
 	|	instantiation
 	|	mcall
@@ -579,6 +579,7 @@ non_empty_call_args:
 fcall_chain:
 		/* empty */                   { $$ = $<fcall>0; }
 	|	fcall_chain '(' call_args ')' { $$ = new ast::FunctionCall($<node>1, $3, yyloc); }
+	|	fcall_chain '[' rvalue ']'    { $<node>$ = new ast::Subscript($<node>1, $<node>3, yyloc); }
 ;
 
 fully_qualified_name:
