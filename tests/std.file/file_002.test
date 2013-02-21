@@ -16,4 +16,4 @@ println(is_dir('dfasdfadsfadfadfadsfdasf'));
 ==RESULT==
 Yep, its a dir!
 Ops, its not a dir!
-0
+false

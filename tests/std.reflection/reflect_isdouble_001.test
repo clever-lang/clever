@@ -9,5 +9,5 @@ println(a.isDouble());
 a = Reflect.new(1.2);
 println(a.isDouble());
 ==RESULT==
-0
-1
+false
+true

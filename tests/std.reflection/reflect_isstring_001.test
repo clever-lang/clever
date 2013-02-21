@@ -12,6 +12,6 @@ println(a.isString());
 a = Reflect.new("foo");
 println(a.isString());
 ==RESULT==
-0
-0
-1
+false
+false
+true

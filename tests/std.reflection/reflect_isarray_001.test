@@ -12,6 +12,6 @@ println(a.isArray());
 a = Reflect.new([1, 2, 3]);
 println(a.isArray());
 ==RESULT==
-0
-0
-1
+false
+false
+true

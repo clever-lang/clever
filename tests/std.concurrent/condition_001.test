@@ -22,6 +22,6 @@ println(c.wait(m));
 
 thread.wait();
 ==RESULT==
-1
-1
-1
+true
+true
+true

@@ -9,5 +9,5 @@ println(a.isInt());
 a = Reflect.new(1.2);
 println(a.isInt());
 ==RESULT==
-1
-0
+true
+false

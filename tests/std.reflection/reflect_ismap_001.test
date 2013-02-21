@@ -12,6 +12,6 @@ println(a.isMap());
 a = Reflect.new({"a": 1});
 println(a.isMap());
 ==RESULT==
-0
-0
-1
+false
+false
+true
