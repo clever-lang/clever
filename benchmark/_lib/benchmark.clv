@@ -61,7 +61,10 @@ class Language
         var f = File.new(output_file, File.IN);
         var version_str = '';
         while (!f.eof()) {
-            version_str = version_str + f.readLine() + "\n";
+            version_str = version_str + f.readLine();
+			if (!f.eof()) {
+				version_str = version_str + "\n";
+			}
         }
         f.close();
         remove(output_file);
@@ -78,13 +81,32 @@ class Language
     }
 }
 
+class GroupTest
+{
+	var path;
+	var info;
+	var env;
+	var files;
+	
+	function GroupTest(env, path, info)
+	{
+		this.env = env;
+		this.info = info;
+		this.path = path;
+	}
+}
+
 class Environment
 {
+	var basePath;
 	var langs;
+	var groups;
 
-	function Environment()
+	function Environment(base_path)
 	{
+		this.basePath = base_path;
 		this.langs = [];
+		this.groups = [];
 		this.addLanguage('Clever', '/Users/eu/src/cleverclever', '/Users/eu/src/clever/clever -v', '^Clever - (.*)', 'clv');
 	}
 
@@ -96,10 +118,50 @@ class Environment
 
 		return l;
 	}
+	
+	function bootstrap()
+	{
+		this.checkProgLangs();
+		this.loadGroupTests();
+	}
     
-    function validate() {
+    function checkProgLangs()
+	{
         this.langs.each(function(l) {
             l.check();
         });
     }
+	
+	function loadGroupTests()
+	{
+		var path = this.basePath + '/tests';
+		
+		glob(path + '/*').each(function(group_dir) {
+			var info_file = group_dir + "/info.txt";
+			
+			if (!file_exists(info_file)) {
+				return;
+			}
+			
+			var info = this._readFileContent(info_file);
+			var group = GroupTest.new(this, group_dir, info);
+			this.groups.append(group);
+		});
+	}
+	
+	function _readFileContent(file)
+	{
+	    var f = File.new(file, File.IN),
+	        buffer = '';
+    
+	    while (!f.eof()) {
+	        buffer = buffer + f.readLine();
+			if (!f.eof()) {
+				buffer = buffer + "\n";
+			}
+	    }
+	    f.close();
+		
+		return buffer;
+	}
 }
