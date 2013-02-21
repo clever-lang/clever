@@ -41,6 +41,7 @@ private:
 	CLEVER_METHOD(ctor);
 	CLEVER_METHOD(read);
 	CLEVER_METHOD(readLine);
+	CLEVER_METHOD(eof);
 	CLEVER_METHOD(write);
 	CLEVER_METHOD(open);
 	CLEVER_METHOD(close);

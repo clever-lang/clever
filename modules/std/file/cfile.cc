@@ -97,9 +97,27 @@ CLEVER_METHOD(CFile::readLine)
 	CFileStream* file = CLEVER_GET_OBJECT(CFileStream*, CLEVER_THIS());
 
 	CString* token = new CString;
+	
+    if (file->getStream().eof()) {
+        result->setBool(false);
+        return;
+    }
+	
 	::std::getline(file->getStream(), *token);
-
 	result->setStr(new StrObject(token, false));
+}
+
+// boolean File.eof()
+// Return true if EOF
+CLEVER_METHOD(CFile::eof)
+{
+	if (!clever_check_no_args()) {
+		return;
+	}
+
+	CFileStream* file = CLEVER_GET_OBJECT(CFileStream*, CLEVER_THIS());
+	
+	result->setBool(file->getStream().eof());
 }
 
 // void File.write(String)
@@ -157,6 +175,7 @@ CLEVER_TYPE_INIT(CFile::init)
 
 	addMethod(new Function("read",		(MethodPtr)&CFile::read));
 	addMethod(new Function("readLine",	(MethodPtr)&CFile::readLine));
+    addMethod(new Function("eof",		(MethodPtr)&CFile::eof));
 	addMethod(new Function("write",		(MethodPtr)&CFile::write));
 	addMethod(new Function("open",		(MethodPtr)&CFile::open));
 	addMethod(new Function("close",		(MethodPtr)&CFile::close));
