@@ -8,22 +8,22 @@ function _exec(command)
     var output_file = ".bench-output";
     var cmd = command + " > " + output_file + " 2>&1";
     var rs = system(cmd);
-        
+
     if (rs != 0) {
         remove(output_file);
         return false;
     }
-        
+
     var f = File.new(output_file, File.IN),
         buffer = '';
-    
+
     while (!f.eof()) {
         buffer = buffer + f.readLine() + "\n";
     }
     f.close();
-    
+
     remove(output_file);
-    
+
     return buffer;
 }
 
@@ -36,7 +36,7 @@ class Language
 	var extension;
     var version;
     var is_ok;
-    
+
     function Language(name, command, check_cmd, version_er, extension)
     {
 		this.name = name;
@@ -46,18 +46,18 @@ class Language
 		this.extension = extension;
         this.is_ok = false;
     }
-    
+
     function check() {
         //var version_str = _exec(this.check_cmd);
         var output_file = ".bench-output";
         var cmd = this.check_cmd + " > " + output_file + " 2>&1";
         var rs = system(cmd);
-        
+
         if (rs != 0) {
             remove(output_file);
             return false;
         }
-        
+
         var f = File.new(output_file, File.IN);
         var version_str = '';
         while (!f.eof()) {
@@ -65,15 +65,15 @@ class Language
         }
         f.close();
         remove(output_file);
-        
+
         var re = Regex.new(this.version_er);
         if (!re.match(version_str)) {
         	return false;
         }
-        
+
         this.version = re.group(1);
         this.is_ok = true;
-        
+
         return true;
     }
 }
@@ -96,7 +96,7 @@ class Environment
 
 		return l;
 	}
-    
+
     function validate() {
         this.langs.each(function(l) {
             l.check();

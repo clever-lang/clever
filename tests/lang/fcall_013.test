@@ -1,0 +1,19 @@
+Testing relative environment in callback
+==CODE==
+import std.io.*;
+
+function _exec() {
+	println(1);
+}
+
+class Environment {
+    function validate() {
+        [1].each(_exec);
+    }
+}
+
+var env = Environment.new;
+
+env.validate();
+==RESULT==
+1
