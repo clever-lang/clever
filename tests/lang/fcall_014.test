@@ -1,0 +1,26 @@
+Testing environment context
+==CODE==
+import std.io.*;
+
+function _exec(command) {
+	println(1);
+}
+
+class Language {
+    function check() {
+		_exec(1);
+    }
+}
+
+class Environment {
+    function validate() {
+        [Language.new].each(function(l) {
+            l.check();
+        });
+    }
+}
+
+var e = Environment.new;
+e.validate();
+==RESULT==
+1
