@@ -61,6 +61,10 @@ if (MOD_STD_CRYPTO)
 	list(APPEND CLEVER_MODULES crypto)
 endif (MOD_STD_CRYPTO)
 
+if (MOD_STD_JSON)
+	list(APPEND CLEVER_MODULES json)
+endif (MOD_STD_JSON)
+
 foreach (module ${CLEVER_MODULES})
 	add_subdirectory(${module})
 endforeach (module)
