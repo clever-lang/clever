@@ -180,8 +180,6 @@ CLEVER_FORCE_INLINE void VM::prepareCall(const Function* func, Environment* env)
 
 	if (env) {
 		fenv = func->getEnvironment()->activate(env);
-	} else if (m_call_stack.top()->isActive()) {
-		fenv = func->getEnvironment()->activate(m_call_stack.top()->getOuter());
 	} else {
 		fenv = func->getEnvironment()->activate(func->getEnvironment()->getOuter());
 	}

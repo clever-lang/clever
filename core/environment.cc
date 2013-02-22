@@ -13,7 +13,6 @@ namespace clever {
 Environment* Environment::activate(Environment* outer) const
 {
 	Environment* env = new Environment(outer, false);
-	env->m_active = true;
 
 	if (m_temp) {
 		env->setFlag(FREE_TEMP);
@@ -63,7 +62,6 @@ void Environment::copy(const Environment* _env)
 	while (_env != NULL) {
 		const Environment* env = _env;
 
-		_this->m_active = env->m_active;
 		_this->m_ret_addr = env->m_ret_addr;
 
 		if (env->m_ret_val != NULL) {
