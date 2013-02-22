@@ -23,7 +23,7 @@ function readFileContent(file)
 
 function _exec(command)
 {
-    var output_file = ".bench-output";
+    var output_file = ".bench-output-" + time();
     var cmd = command + " > " + output_file + " 2>&1";
     var rs = system(cmd);
 
@@ -72,13 +72,58 @@ class Language
     }
 }
 
+class Result
+{
+	var text;
+	var banner;
+	var value;
+	var tt;
+	
+	function Result(text, tt)
+	{
+		this.tt = tt;
+		this.text = text;
+		/*
+		var re = Regex.new("^(.*?)\r?\n(.*?)");
+		if (!re.match(text)) {
+			println('ERROR: invalid output');
+			return;
+		}
+		
+		this.banner = re.group(1);
+		this.value = re.group(2);
+		*/
+	}
+}
+
+class Test
+{
+	var file;
+	var lang;
+	
+	function Test(file, lang)
+	{
+		this.file = file;
+		this.lang = lang;
+	}
+	
+	function run()
+	{
+		var cmd = this.lang.command.replace('%1', this.file);
+		var tini = time();
+		var output = _exec(cmd);
+		var tfim = time();
+		
+		return Result.new(output, (tfim - tini));
+	}
+}
 
 class GroupTest
 {
 	var path;
 	var info;
 	var env;
-	var test_files;
+	var tests;
 	
 	function GroupTest(env, path, info)
 	{
@@ -91,32 +136,56 @@ class GroupTest
 	
 	function loadTests()
 	{
-		this.test_files = [];
+		this.tests = [];
 		
 		var files = glob(this.path + '/*');
 		
 		var i = 0;
-		files.each(this.checkFile);
+		while (i < files.size()) {
+			var file = files[i++];
+			this.checkFile(file);
+		}
 	}
 	
 	function checkFile(file)
 	{
-		if (basename(file) == 'info.txt') {
+		if (file.toLower().endsWith('info.txt') == 1) {
 			return;
 		}
 		
-		this.test_files.append(file);
+		var lang = this.getLanguage(file);
+		
+		if (lang) {
+			this.tests.append(Test.new(file, lang));
+		}
 	}
 	
 	function getExtension(file)
 	{
-		println(this);
         var re = Regex.new("\.(.*?)$");
         if (!re.match(file)) {
         	return false;
         }
 		
-		println(re.group(1));
+		return re.group(1);
+	}
+	
+	function getLanguage(file)
+	{
+		var ext = this.getExtension(file);
+		var i = 0;
+		while (i < this.env.langs.size()) {
+			var lang = this.env.langs[i++];
+			//println(lang.extension+'' == ext+''); --- BUG: string nao compara... sempre da false
+			var re = Regex.new(lang.extension);
+			if (re.match(ext)) {
+				if (!lang.is_ok) {
+					continue;
+				}
+				return lang;
+			}
+		}
+		return false;
 	}
 }
 
@@ -136,9 +205,7 @@ class Environment
 	function addLanguage(name, command, check_cmd, version_er, extension)
 	{
 		var l = Language.new(name, command, check_cmd, version_er, extension);
-
 		this.langs.append(l);
-
 		return l;
 	}
 	

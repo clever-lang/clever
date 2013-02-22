@@ -11,9 +11,6 @@ function process(ini, fim)
 	return acc;
 end
 
-local t0 = os.clock();
 local L = 10000000;
-print(string.format('Result : %d',process(0, 2 * L)));
-local t2 = os.clock();
-print(string.format('Time elapsed single-thread lua: %.2f', t2 - t0));
-
+print("Lua");
+print(string.format('%d',process(0, 2 * L)));

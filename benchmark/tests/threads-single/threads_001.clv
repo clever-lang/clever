@@ -1,4 +1,4 @@
-import std.*;
+import std.io.*;
 
 const L = 10000000;
 
@@ -11,29 +11,8 @@ function proc(ini, fim)
 	return acc;
 }
 
-var thread = [Thread.new(proc, 0, L), Thread.new(proc, L + 1, 2 * L)];
 
-var tini = time();
-thread.each(function(z){z.start();});
-thread.each(function(z){z.wait();});
-var tfim = time();
-
-var r1 = thread[0].result() + thread[1].result();
-var t1 = (tfim - tini) / 2;
-
-tini = time();
 var r2 = proc(0, 2 * L);
-tfim = time();
 
-var t2 = (tfim - tini);
-
-printf("Time elapsed single-thread version clever: \1 \n", t2);
-printf("Time elapsed multi-thread version clever: \1 \n", t1);
-
-if (r2 == r1) {
-	printf("Relative time difference: \1 %\n", 100 * (t2-t1) / t2);
-	printf("Result: \1\n", r1);
-} else {
-	printf("Test threads_001.clv failed!\n");
-}
-
+println("clever");
+println(r2);
