@@ -5,12 +5,12 @@ import _lib.benchmark.*;
 var base_path = 'benchmark';
 var env = Environment.new(base_path);
 
+env.addLanguage('Clever', 'cleverclever', 'clever -v', '^Clever - (.*)', 'clv');
 env.addLanguage('Python', 'python %1', 'python -V', '^Python (.*)', 'py');
 env.addLanguage('Lua', 'lua %1', 'lua -v', '^Lua ([^ ]+)', 'lua');
 env.addLanguage('Java', 'javac %1 && java %2', 'java -version', '^java version "([^"]+)', 'java');
 env.addLanguage('PHP', 'php %1', 'php -v', '^PHP ([^ ]+)', 'php');
 env.addLanguage('Ruby', 'ruby %1', 'ruby -v', '^ruby ([^ ]+)', 'rb');
-
 
 env.bootstrap();
 
@@ -22,12 +22,10 @@ env.langs.each(function(l) {
     }
 	println(l.name + ' ('+ l.version+') -- OK');
 });
-<<<<<<< HEAD
 
 println("");
 println("Tests");
+println(env.groups);
 env.groups.each(function(g) {
-   println("-- g.info"); 
+    println(g.info);
 });
-=======
->>>>>>> upstream/master

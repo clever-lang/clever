@@ -3,6 +3,24 @@ import std.regex.*;
 import std.file.*;
 import std.sys.*;
 
+//import classes.language.*; -- BUG, import dentro de import nao altera o basePath... dae nao acha o novo arquivo.
+
+function readFileContent(file)
+{
+	var f = File.new(file, File.IN);
+    var buffer = '';
+    
+    while (!f.eof()) {
+        buffer = buffer + f.readLine();
+		if (!f.eof()) {
+			buffer = buffer + "\n";
+		}
+    }
+    f.close();
+		
+	return buffer;
+}
+
 function _exec(command)
 {
     var output_file = ".bench-output";
@@ -14,14 +32,7 @@ function _exec(command)
         return false;
     }
 
-    var f = File.new(output_file, File.IN),
-        buffer = '';
-
-    while (!f.eof()) {
-        buffer = buffer + f.readLine() + "\n";
-    }
-    f.close();
-
+    var buffer = readFileContent(output_file);
     remove(output_file);
 
     return buffer;
@@ -48,27 +59,7 @@ class Language
     }
 
     function check() {
-        //var version_str = _exec(this.check_cmd);
-        var output_file = ".bench-output";
-        var cmd = this.check_cmd + " > " + output_file + " 2>&1";
-        var rs = system(cmd);
-
-        if (rs != 0) {
-            remove(output_file);
-            return false;
-        }
-
-        var f = File.new(output_file, File.IN);
-        var version_str = '';
-        while (!f.eof()) {
-            version_str = version_str + f.readLine();
-			if (!f.eof()) {
-				version_str = version_str + "\n";
-			}
-        }
-        f.close();
-        remove(output_file);
-
+        var version_str = _exec(this.check_cmd);
         var re = Regex.new(this.version_er);
         if (!re.match(version_str)) {
         	return false;
@@ -81,18 +72,51 @@ class Language
     }
 }
 
+
 class GroupTest
 {
 	var path;
 	var info;
 	var env;
-	var files;
+	var test_files;
 	
 	function GroupTest(env, path, info)
 	{
 		this.env = env;
 		this.info = info;
 		this.path = path;
+		
+		this.loadTests();
+	}
+	
+	function loadTests()
+	{
+		this.test_files = [];
+		
+		var files = glob(this.path + '/*');
+		
+		var i = 0;
+		files.each(this.checkFile);
+	}
+	
+	function checkFile(file)
+	{
+		if (basename(file) == 'info.txt') {
+			return;
+		}
+		
+		this.test_files.append(file);
+	}
+	
+	function getExtension(file)
+	{
+		println(this);
+        var re = Regex.new("\.(.*?)$");
+        if (!re.match(file)) {
+        	return false;
+        }
+		
+		println(re.group(1));
 	}
 }
 
@@ -107,7 +131,6 @@ class Environment
 		this.basePath = base_path;
 		this.langs = [];
 		this.groups = [];
-		this.addLanguage('Clever', '/Users/eu/src/cleverclever', '/Users/eu/src/clever/clever -v', '^Clever - (.*)', 'clv');
 	}
 
 	function addLanguage(name, command, check_cmd, version_er, extension)
@@ -134,34 +157,23 @@ class Environment
 	
 	function loadGroupTests()
 	{
-		var path = this.basePath + '/tests';
+		var path = this.basePath + '/tests',
+			tests_dir = glob(path + '/*'),
+			super = this;
 		
-		glob(path + '/*').each(function(group_dir) {
-			var info_file = group_dir + "/info.txt";
+		var i = 0;
+		while (i < tests_dir.size()) {
+			var group_dir = tests_dir[i],
+				info_file = group_dir + "/info.txt";
 			
+			i++;
 			if (!file_exists(info_file)) {
-				return;
+				continue;
 			}
 			
-			var info = this._readFileContent(info_file);
+			var info = readFileContent(info_file);
 			var group = GroupTest.new(this, group_dir, info);
 			this.groups.append(group);
-		});
-	}
-	
-	function _readFileContent(file)
-	{
-	    var f = File.new(file, File.IN),
-	        buffer = '';
-    
-	    while (!f.eof()) {
-	        buffer = buffer + f.readLine();
-			if (!f.eof()) {
-				buffer = buffer + "\n";
-			}
-	    }
-	    f.close();
-		
-		return buffer;
+		}
 	}
 }
