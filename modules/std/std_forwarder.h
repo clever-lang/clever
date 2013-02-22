@@ -45,8 +45,12 @@
 #ifdef HAVE_MOD_STD_CLEVER
 #	include "modules/std/clever/module.h"
 #endif
+#ifdef HAVE_MOD_STD_JSON
+# include "modules/std/json/json.h"
+#endif
 #ifdef HAVE_MOD_STD_REGEX
 # include "modules/std/regex/regex.h"
+
 #endif
 
 #if 0

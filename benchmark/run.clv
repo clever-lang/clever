@@ -22,9 +22,12 @@ env.langs.each(function(l) {
     }
 	println(l.name + ' ('+ l.version+') -- OK');
 });
+<<<<<<< HEAD
 
 println("");
 println("Tests");
 env.groups.each(function(g) {
    println("-- g.info"); 
 });
+=======
+>>>>>>> upstream/master

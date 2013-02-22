@@ -97,6 +97,10 @@ public:
 		return NULL;
 	}
 
+	const MemberMap& getMembers() const {
+		return m_members;
+	}
+
 	virtual TypeObject* clone() const { return NULL; }
 private:
 	MemberMap m_members;

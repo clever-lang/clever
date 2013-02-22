@@ -49,11 +49,12 @@ void Std::init()
 #ifdef HAVE_MOD_STD_CRYPTO
 	addModule(new std::CryptoModule);
 #endif
-
 #ifdef HAVE_MOD_STD_FFI
 	addModule(new std::FFIModule);
 #endif
-
+#ifdef HAVE_MOD_STD_JSON
+	addModule(new std::JsonModule);
+#endif
 #ifdef HAVE_MOD_STD_REGEX
 	addModule(new std::Regex);
 #endif

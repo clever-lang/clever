@@ -226,7 +226,7 @@ Value* VM::runFunction(const Function* func, std::vector<Value*>* args)
 	if (func->isInternal()) {
 		func->getFuncPtr()(result, *args, this, &m_exception);
 	} else {
-		Environment* fenv = func->getEnvironment()->activate(m_call_stack.top());
+		Environment* fenv = func->getEnvironment()->activate(func->getEnvironment()->getOuter());
 		fenv->setRetVal(result);
 		fenv->setRetAddr(m_inst.size()-1);
 
