@@ -45,11 +45,11 @@ public:
 
 	Environment()
 		: RefCounted(), m_outer(NULL), m_temp(NULL), m_ret_val(NULL),
-		m_ret_addr(0), m_active(false), m_scoped(true), m_flags(NONE) {}
+		m_ret_addr(0), m_scoped(true), m_flags(NONE) {}
 
 	Environment(Environment* outer_, bool is_scoped = true)
 		: RefCounted(), m_outer(outer_), m_temp(NULL), m_ret_val(NULL),
-		m_ret_addr(0), m_active(false), m_scoped(is_scoped), m_flags(NONE) {
+		m_ret_addr(0), m_scoped(is_scoped), m_flags(NONE) {
 		clever_addref(m_outer);
 	}
 
@@ -100,8 +100,6 @@ public:
 	 */
 	Environment* activate(Environment*) const;
 
-	bool isActive() const { return m_active; }
-
 	size_t getRetAddr() const { return m_ret_addr; }
 	void setRetAddr(size_t ret_addr) { m_ret_addr = ret_addr; }
 
@@ -122,7 +120,6 @@ private:
 	std::vector<Value*> m_data;
 	Value* m_ret_val;
 	size_t m_ret_addr;
-	bool m_active;
 	bool m_scoped;
 	EnvFlag m_flags;
 
