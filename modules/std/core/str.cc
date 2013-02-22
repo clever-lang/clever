@@ -353,6 +353,39 @@ CLEVER_METHOD(StrType::split)
 	result->setObj(CLEVER_ARRAY_TYPE, CLEVER_ARRAY_TYPE->allocData(&list));
 }
 
+CLEVER_METHOD(StrType::toUpper)
+{
+	const ::std::string* str = CLEVER_THIS()->getStr();
+	::std::string buffer = *str;
+	std::transform(buffer.begin(), buffer.end(),buffer.begin(), ::toupper);
+	result->setStr(new StrObject(buffer));
+}
+
+CLEVER_METHOD(StrType::toLower)
+{
+	const ::std::string* str = CLEVER_THIS()->getStr();
+	::std::string buffer = *str;
+	std::transform(buffer.begin(), buffer.end(),buffer.begin(), ::tolower);
+	result->setStr(new StrObject(buffer));
+}
+
+CLEVER_METHOD(StrType::replace)
+{
+	if (!clever_check_args("ss")) {
+		return;
+	}
+	
+	const CString* haystack = CLEVER_THIS()->getStr();
+	const char* needle = args[0]->getStr()->c_str();
+	const CString* replace = args[1]->getStr();
+	
+	::std::string buffer = *haystack;
+	
+	int pos = haystack->find(needle);
+	buffer.replace(pos, replace->length(), replace->c_str());
+	result->setStr(new StrObject(buffer));
+}
+
 CLEVER_TYPE_INIT(StrType::init)
 {
 	setConstructor((MethodPtr) &StrType::ctor);
@@ -366,6 +399,9 @@ CLEVER_TYPE_INIT(StrType::init)
 	addMethod(new Function("endsWith",		(MethodPtr) &StrType::endsWith));
 	addMethod(new Function("charAt",		(MethodPtr) &StrType::charAt));
 	addMethod(new Function("split",			(MethodPtr) &StrType::split));
+	addMethod(new Function("toUpper",		(MethodPtr) &StrType::toUpper));
+	addMethod(new Function("toLower",		(MethodPtr) &StrType::toLower));
+	addMethod(new Function("replace",		(MethodPtr) &StrType::replace));
 	addMethod(new Function("format",		(MethodPtr) &StrType::format))
 		->setStatic();
 }
