@@ -54,5 +54,5 @@ clever_add_lib(MYSQLC
 clever_add_lib(SQLITE3
 	LIBS sqlite3
 	INCS sqlite3.h
-	PKGS libsqlite3)
+	PKGS sqlite3)
 
