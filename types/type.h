@@ -28,7 +28,7 @@ class Function;
 
 #define CLEVER_TYPE_OPERATOR_ARGS Value* result, const Value* lhs, const Value* rhs, const VM* vm, CException* exception
 #define CLEVER_TYPE_UNARY_OPERATOR_ARGS Value* result, const Value* lhs, const VM* vm, CException* exception
-#define CLEVER_TYPE_AT_OPERATOR_ARGS const Value* value, const Value* index, const VM* vm, CException* exception
+#define CLEVER_TYPE_AT_OPERATOR_ARGS const Value* obj, const Value* index, const VM* vm, CException* exception
 
 #define CLEVER_TYPE_OPERATOR(name)       void CLEVER_FASTCALL name(CLEVER_TYPE_OPERATOR_ARGS) const
 #define CLEVER_TYPE_UNARY_OPERATOR(name) void CLEVER_FASTCALL name(CLEVER_TYPE_UNARY_OPERATOR_ARGS) const
@@ -187,7 +187,7 @@ public:
 
 	/// Virtual method for debug purpose
 	virtual void dump(TypeObject* data) const { dump(data, std::cout); }
-	virtual void dump(TypeObject*, std::ostream&) const {};
+	virtual void dump(TypeObject* data, std::ostream& out) const { out << getName(); };
 
 	/// Operator methods
 	virtual void CLEVER_FASTCALL add(CLEVER_TYPE_OPERATOR_ARGS)           const;

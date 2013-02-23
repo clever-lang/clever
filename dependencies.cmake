@@ -46,7 +46,14 @@ clever_add_lib(FFI
 	INCS ffi.h
 	PKGS libffi)
 
+# libmysqlclient
 clever_add_lib(MYSQLC
 	LIBS mysqlclient
 	INCS mysql/mysql.h)
+
+# libsqlite3
+clever_add_lib(SQLITE3
+	LIBS sqlite3
+	INCS sqlite3.h
+	PKGS libsqlite3)
 

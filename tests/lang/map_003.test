@@ -1,0 +1,9 @@
+Testing map key access
+==CODE==
+import std.io.*;
+
+var map = {'foo': 123};
+
+println(map['foo']);
+==RESULT==
+123
