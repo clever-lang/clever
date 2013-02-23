@@ -143,6 +143,17 @@ MapObject* CMysql::fetchRow()
 	return map;
 }
 
+unsigned int CMysql::errno()
+{
+	return mysql_errno(m_connection);
+}
+
+const char* CMysql::error()
+{
+
+	return mysql_error(m_connection);
+}
+
 std::string CMysql::dump()
 {
 	std::stringstream strs;

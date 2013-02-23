@@ -37,6 +37,9 @@ public:
 	bool connect();
 	bool query(const char *stmt);
 	MapObject* fetchRow();
+	unsigned int errno();
+	const char* error();
+
 	std::string dump();
 private:
 
