@@ -35,7 +35,7 @@ public:
 	void setPort(int port)                    { m_port = port;     }
 
 	bool connect();
-	int query(const char *stmt);
+	bool query(const char *stmt);
 	MapObject* fetchRow();
 	std::string dump();
 private:

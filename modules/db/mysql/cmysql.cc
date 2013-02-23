@@ -32,24 +32,24 @@ bool CMysql::connect()
 	return conn != NULL;
 }
 
-int CMysql::query(const char *stmt)
+bool CMysql::query(const char *stmt)
 {
 	
 	int ret = mysql_query(m_connection, stmt);
 
 	m_resultset = mysql_use_result(m_connection);
 	if(m_resultset == NULL) {
-		// TODO: What to do here?
 		
-		if(mysql_errno(m_connection) != 0) {
-			printf("Houston la casa callou!\n");
-		}
-
-		// Finished reading the data
-		return -1;
+		// TODO : Show warning message saying something is wrong
+		//        with the query?
+		return false;
 	}
 
-	return ret;
+	if(ret != 0) {
+		return false;
+	}
+
+	return true;
 }
 
 MapObject* CMysql::fetchRow()
