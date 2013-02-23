@@ -28,7 +28,7 @@ class Function;
 
 #define CLEVER_TYPE_OPERATOR_ARGS Value* result, const Value* lhs, const Value* rhs, const VM* vm, CException* exception
 #define CLEVER_TYPE_UNARY_OPERATOR_ARGS Value* result, const Value* lhs, const VM* vm, CException* exception
-#define CLEVER_TYPE_AT_OPERATOR_ARGS const Value* value, const Value* index, const VM* vm, CException* exception
+#define CLEVER_TYPE_AT_OPERATOR_ARGS const Value* obj, const Value* index, const VM* vm, CException* exception
 
 #define CLEVER_TYPE_OPERATOR(name)       void CLEVER_FASTCALL name(CLEVER_TYPE_OPERATOR_ARGS) const
 #define CLEVER_TYPE_UNARY_OPERATOR(name) void CLEVER_FASTCALL name(CLEVER_TYPE_UNARY_OPERATOR_ARGS) const

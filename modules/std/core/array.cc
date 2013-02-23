@@ -44,7 +44,7 @@ void ArrayType::dump(TypeObject* value, std::ostream& out) const
 // Subscript operator
 CLEVER_TYPE_AT_OPERATOR(ArrayType::at_op)
 {
-	ValueVector& arr = CLEVER_GET_OBJECT(ArrayObject*, value)->getData();
+	ValueVector& arr = CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS())->getData();
 	long size = arr.size();
 
 	if (!index->isInt()) {
