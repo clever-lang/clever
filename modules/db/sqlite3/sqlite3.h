@@ -36,10 +36,19 @@ struct SQLite3Conn : public TypeObject {
 		: fname(file), handle(NULL) {}
 
 	~SQLite3Conn() {
+		close();
+	}
+
+	int close() {
+		int result = SQLITE_OK;
+
 		if (handle) {
 			std::for_each(results.begin(), results.end(), clever_delref);
-			sqlite3_close(handle);
+			result = sqlite3_close(handle);
+			handle = NULL;
 		}
+
+		return result;
 	}
 
 	// File name
@@ -62,6 +71,7 @@ public:
 
 	// Methods
 	CLEVER_METHOD(fetch);
+	CLEVER_METHOD(finalize);
 };
 
 class SQLite3TypeStmt : public Type {
@@ -89,6 +99,8 @@ public:
 	CLEVER_METHOD(ctor);
 	CLEVER_METHOD(exec);
 	CLEVER_METHOD(query);
+	CLEVER_METHOD(getLastId);
+	CLEVER_METHOD(close);
 private:
 	SQLite3Module* m_module;
 };
