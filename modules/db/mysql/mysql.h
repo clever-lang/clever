@@ -46,7 +46,7 @@ public:
 	CLEVER_METHOD(ctor);
 	CLEVER_METHOD(connect);
 	CLEVER_METHOD(query);
-	CLEVER_METHOD(fetchArray);
+	CLEVER_METHOD(fetchRow);
 
 private:
 	DISALLOW_COPY_AND_ASSIGN(Mysql);

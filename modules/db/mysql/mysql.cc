@@ -73,9 +73,20 @@ CLEVER_METHOD(Mysql::query)
 	result->setBool(cmysql.query(args[0]->getStr()->c_str()));
 }
 
-CLEVER_METHOD(Mysql::fetchArray)
+CLEVER_METHOD(Mysql::fetchRow)
 {
 
+	MapObject* data;
+	MysqlObject* mo = CLEVER_GET_OBJECT(MysqlObject*, CLEVER_THIS());
+	CMysql& cmysql = mo->getMysql();
+
+	data = cmysql.fetchRow();
+
+	if(data != NULL) {
+		result->setObj(CLEVER_MAP_TYPE, data);
+	} else {
+		result->setNull();
+	}
 }
 
 // Type initialization
@@ -83,9 +94,9 @@ CLEVER_TYPE_INIT(Mysql::init)
 {
 	setConstructor((MethodPtr) &Mysql::ctor);
 
-	addMethod(new Function("connect",    (MethodPtr) &Mysql::connect));
-	addMethod(new Function("query",      (MethodPtr) &Mysql::query));
-	addMethod(new Function("fetchArray", (MethodPtr) &Mysql::fetchArray));
+	addMethod(new Function("connect",  (MethodPtr) &Mysql::connect));
+	addMethod(new Function("query",    (MethodPtr) &Mysql::query));
+	addMethod(new Function("fetchRow", (MethodPtr) &Mysql::fetchRow));
 }
 
 }}} // clever::modules::db

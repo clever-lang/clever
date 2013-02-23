@@ -9,12 +9,14 @@
 #define CLEVER_DB_CMYSQL_H
 
 #include <iostream>
+
+#include <mysql/mysql.h>
+
 #include "core/cstring.h"
 #include "core/value.h"
 #include "types/type.h"
-#include "modules/std/core/array.h"
+#include "modules/std/core/map.h"
 
-#include <mysql/mysql.h>
 
 namespace clever {
 
@@ -22,7 +24,7 @@ namespace clever {
 class CMysql {
 public:
 	CMysql()
-		: m_connection(NULL), m_port(3306), m_result_set(NULL) { init(); }
+		: m_connection(NULL), m_port(3306), m_resultset(NULL) { init(); }
 
 	~CMysql() {}
 
@@ -34,7 +36,7 @@ public:
 
 	bool connect();
 	int query(const char *stmt);
-	ArrayObject* fetchArray();
+	MapObject* fetchRow();
 	std::string dump();
 private:
 
@@ -49,7 +51,7 @@ private:
 
 	int m_port;
 
-	ArrayObject* m_result_set;
+	MYSQL_RES* m_resultset;
 
 	DISALLOW_COPY_AND_ASSIGN(CMysql);
 };
