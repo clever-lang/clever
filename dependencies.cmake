@@ -9,8 +9,7 @@
 # ---------------------------------------------------------------------------
 # TODO(heuripedes): minimize the scope of the add_definitions()
 # pthread
-# XXX(heuripedes): rename to pthread.
-clever_add_lib(CONCURRENCY
+clever_add_lib(PTHREAD
 	LIBS pthread
 	INCS pthread.h)
 

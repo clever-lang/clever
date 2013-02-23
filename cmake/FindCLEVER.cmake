@@ -212,3 +212,12 @@ macro(clever_add_lib VarName)
 
 endmacro(clever_add_lib)
 
+# clever_use_lib(Prefix)
+#
+# Prefix is the prefix of the variables that holds information about a library.
+macro(clever_use_lib Prefix)
+	list(APPEND CLEVER_INCLUDE_DIRS ${${Prefix}_INCLUDE_DIRS})
+	list(APPEND CLEVER_LIBRARIES ${${Prefix}_LIBRARIES})
+	list(APPEND CLEVER_LINK_DIRECTORIES ${${Prefix}_LINK_DIRECTORIES})
+endmacro(clever_use_lib)
+
