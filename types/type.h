@@ -187,7 +187,7 @@ public:
 
 	/// Virtual method for debug purpose
 	virtual void dump(TypeObject* data) const { dump(data, std::cout); }
-	virtual void dump(TypeObject*, std::ostream&) const {};
+	virtual void dump(TypeObject* data, std::ostream& out) const { out << getName(); };
 
 	/// Operator methods
 	virtual void CLEVER_FASTCALL add(CLEVER_TYPE_OPERATOR_ARGS)           const;
