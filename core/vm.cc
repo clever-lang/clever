@@ -385,6 +385,7 @@ out:
 		// const variable declaration).
 		if (EXPECTED(var->isAssignable())) {
 			var->deepCopy(value);
+			getValue(OPCODE.result)->copy(value);
 		} else {
 			// TODO(muriloadriano): improve this message to show the symbol
 			// name and the line to the user.

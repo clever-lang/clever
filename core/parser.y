@@ -307,6 +307,7 @@ rvalue:
 	|	bitwise
 	|	boolean
 	|	comparison
+	|	assignment
 	|	inc_dec
 	|	anonymous_fdecl
 	|	instantiation
