@@ -50,7 +50,10 @@ CLEVER_METHOD(SQLite3Type::exec)
 			errmsg);
 
 		sqlite3_free(errmsg);
+		return;
 	}
+
+	result->setBool(true);
 }
 
 // SQLite3::query(String query)
@@ -83,7 +86,13 @@ CLEVER_METHOD(SQLite3Type::query)
 			return;
 	}
 
-	result->setObj(m_module->getResultType(), new SQLite3Result(stmt));
+
+	SQLite3Result* res = new SQLite3Result(stmt);
+
+	conn->results.push_back(res);
+	clever_addref(res);
+
+	result->setObj(m_module->getResultType(), res);
 }
 
 static Value* _sqlite_to_value(sqlite3_stmt* stmt, int column)
@@ -117,9 +126,8 @@ CLEVER_METHOD(SQLite3TypeResult::fetch)
 	MapObject* map = new MapObject;
 
 	for (int i = 0, n = sqlite3_data_count(res->stmt); i < n; ++i) {
-		std::string name(sqlite3_column_name(res->stmt, i));
-
-		map->getData().insert(MapObjectPair(name, _sqlite_to_value(res->stmt, i)));
+		map->getData().insert(MapObjectPair(
+			sqlite3_column_name(res->stmt, i), _sqlite_to_value(res->stmt, i)));
 	}
 
 	result->setObj(CLEVER_MAP_TYPE, map);

@@ -8,6 +8,7 @@
 #ifndef CLEVER_DB_SQLITE3_H
 #define CLEVER_DB_SQLITE3_H
 
+#include <utility>
 #include <sqlite3.h>
 #include "types/type.h"
 #include "core/module.h"
@@ -36,6 +37,7 @@ struct SQLite3Conn : public TypeObject {
 
 	~SQLite3Conn() {
 		if (handle) {
+			std::for_each(results.begin(), results.end(), clever_delref);
 			sqlite3_close(handle);
 		}
 	}
@@ -44,6 +46,8 @@ struct SQLite3Conn : public TypeObject {
 	std::string fname;
 	// SQLite3 db handle
 	sqlite3* handle;
+	// Vector of results
+	std::vector<SQLite3Result*> results;
 };
 
 class SQLite3TypeResult : public Type {
