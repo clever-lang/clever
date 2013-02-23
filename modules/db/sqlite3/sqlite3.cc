@@ -111,6 +111,7 @@ CLEVER_METHOD(SQLite3TypeResult::fetch)
 
 	if (ret_code != SQLITE_ROW) {
 		result->setBool(false);
+		return;
 	}
 
 	MapObject* map = new MapObject;
