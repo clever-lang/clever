@@ -58,6 +58,26 @@ CLEVER_METHOD(MapType::ctor)
 	result->setObj(this, allocData(&args));
 }
 
+// Subscript operator
+CLEVER_TYPE_AT_OPERATOR(MapType::at_op)
+{
+	MapObject* mobj = CLEVER_GET_OBJECT(MapObject*, CLEVER_THIS());
+	std::map<std::string, Value*>& data = mobj->getData();
+
+	if (!index->isStr()) {
+		clever_throw("Invalid map index type");
+		return NULL;
+	}
+
+	std::map<std::string, Value*>::const_iterator it = data.find(*index->getStr());
+
+	if (it == data.end()) {
+		clever_throw("Map index not found!");
+		return NULL;
+	}
+	return it->second;
+}
+
 // void Map.insert(string key, mixed value)
 // Sets the key to value in this map
 CLEVER_METHOD(MapType::insert)

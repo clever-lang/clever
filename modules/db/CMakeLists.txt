@@ -5,6 +5,10 @@ if (MOD_DB_MYSQL)
 	list(APPEND CLEVER_MODULES mysql)
 endif (MOD_DB_MYSQL)
 
+if (MOD_DB_SQLITE3)
+	list(APPEND CLEVER_MODULES sqlite3)
+endif (MOD_DB_SQLITE3)
+
 foreach (module ${CLEVER_MODULES})
 	add_subdirectory(${module})
 endforeach (module)
