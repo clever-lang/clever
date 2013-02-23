@@ -164,7 +164,12 @@ CLEVER_METHOD(SQLite3Type::prepare)
 		return;
 	}
 
-	result->setObj(stmt_type, new SQLite3Stmt(stmt, conn));
+	SQLite3Stmt* stmt_obj = new SQLite3Stmt(stmt, conn);
+
+	conn->results.push_back(stmt_obj);
+	clever_addref(stmt_obj);
+
+	result->setObj(stmt_type, stmt_obj);
 }
 
 // SQLite3::close()

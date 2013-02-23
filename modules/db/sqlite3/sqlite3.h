@@ -81,7 +81,7 @@ struct SQLite3Conn : public TypeObject {
 	// SQLite3 db handle
 	sqlite3* handle;
 	// Vector of results
-	std::vector<SQLite3Result*> results;
+	std::vector<TypeObject*> results;
 };
 
 class SQLite3TypeResult : public Type {
