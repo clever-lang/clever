@@ -24,5 +24,9 @@
  */
 
 #ifdef HAVE_MOD_DB_MYSQL
-#include "modules/db/mysql/module.h"
+# include "modules/db/mysql/module.h"
+#endif
+
+#ifdef HAVE_MOD_DB_SQLITE3
+# include "modules/db/sqlite3/module.h"
 #endif
