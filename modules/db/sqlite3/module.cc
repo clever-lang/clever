@@ -12,9 +12,16 @@ namespace clever { namespace modules { namespace db {
 
 CLEVER_MODULE_INIT(SQLite3Module)
 {
-	addType(new SQLite3Type(this));
-	addType(m_stmt   = new SQLite3TypeStmt);
-	addType(m_result = new SQLite3TypeResult);
+	SQLite3Type* sqlite_type       = new SQLite3Type();
+	SQLite3TypeStmt* stmt_type     = new SQLite3TypeStmt(sqlite_type);
+	SQLite3TypeResult* result_type = new SQLite3TypeResult(sqlite_type);
+
+	addType(sqlite_type);
+	addType(stmt_type);
+	addType(result_type);
+
+	sqlite_type->result_type = result_type;
+	sqlite_type->stmt_type = stmt_type;
 }
 
 }}} // clever::modules::db
