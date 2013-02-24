@@ -188,7 +188,7 @@ private:
 class Assignment: public Node {
 public:
 	Assignment(Node* lhs, Node* rhs, const location& location)
-		: Node(location), m_conditional(false), m_lhs(lhs), m_rhs(rhs) {
+		: Node(location), m_conditional(false), m_result(false), m_lhs(lhs), m_rhs(rhs) {
 		m_lhs->addRef();
 		clever_addref(m_rhs);
 	}
@@ -214,10 +214,14 @@ public:
 		return m_conditional;
 	}
 
+	void setUseResult() { m_result = true; }
+	bool hasResult() const { return m_result; }
+
 	virtual void accept(Visitor& visitor);
 	virtual Node* accept(Transformer& transformer);
 private:
 	bool m_conditional;
+	bool m_result;
 	Node* m_lhs;
 	Node* m_rhs;
 
