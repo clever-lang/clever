@@ -1,0 +1,16 @@
+String Comparison
+==CODE==
+import std.io.*;
+
+var foo = "Clever";
+var bar = "Clever";
+
+println((foo == bar));
+
+if (foo == bar) {
+    println('ok');
+}
+
+==RESULT==
+true
+ok
