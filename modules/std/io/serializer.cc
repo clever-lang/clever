@@ -25,7 +25,7 @@ CLEVER_METHOD(Serializer::doSerialize)
 
 	sobj->info = args[0]->getType()->serialize(args[0]);
 
-	clever_addref(args[0]);
+	clever_addref(args[0]->getObj());
 
 	result->setObj(this, sobj);
 }
