@@ -1,0 +1,41 @@
+Testing events in event package
+==CODE==
+import std.events.*;
+import std.io.*;
+
+function foo1(x, y) {
+	printf("foo1 : \1 \2\n", x, y);
+}
+
+function foo2(x, y, z) {
+	printf("foo2 : \1 \2 \3\n", x, y, z);
+}
+
+function foo3(x, y) {
+	printf("foo3 : \1 \2\n", x, y);
+}
+
+
+
+var e = Events.new(1000);
+
+e.connect("click", foo1);
+e.connect("click", foo3);
+
+e.connect("click2", foo2);
+
+
+e.emmit("click", 1, 2);
+e.emmit("click2", 1, 2, 3);
+
+e.emmit("click", 1, 2);
+e.emmit("click2", 1, 2, 3);
+
+e.finalize();
+==RESULT==
+foo1 : 1 2
+foo3 : 1 2
+foo2 : 1 2 3
+foo1 : 1 2
+foo3 : 1 2
+foo2 : 1 2 3
