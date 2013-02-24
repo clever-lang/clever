@@ -19,6 +19,9 @@ void Std::init()
 #ifdef HAVE_MOD_STD_CONCURRENT
 	addModule(new std::ConcurrencyModule);
 #endif
+#ifdef HAVE_MOD_STD_EVENTS
+	addModule(new std::EventsModule);
+#endif
 #ifdef HAVE_MOD_STD_DATE
 	addModule(new std::DateModule);
 #endif

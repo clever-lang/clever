@@ -28,7 +28,7 @@ class Function;
 
 #define CLEVER_TYPE_OPERATOR_ARGS Value* result, const Value* lhs, const Value* rhs, const VM* vm, CException* exception
 #define CLEVER_TYPE_UNARY_OPERATOR_ARGS Value* result, const Value* lhs, const VM* vm, CException* exception
-#define CLEVER_TYPE_AT_OPERATOR_ARGS const Value* value, const Value* index, const VM* vm, CException* exception
+#define CLEVER_TYPE_AT_OPERATOR_ARGS const Value* obj, const Value* index, const VM* vm, CException* exception
 
 #define CLEVER_TYPE_OPERATOR(name)       void CLEVER_FASTCALL name(CLEVER_TYPE_OPERATOR_ARGS) const
 #define CLEVER_TYPE_UNARY_OPERATOR(name) void CLEVER_FASTCALL name(CLEVER_TYPE_UNARY_OPERATOR_ARGS) const
@@ -131,7 +131,8 @@ public:
 		: m_flags(INTERNAL_TYPE) {}
 
 	Type(const std::string& name, TypeFlag flags = INTERNAL_TYPE)
-		: m_name(name), m_ctor(NULL), m_user_ctor(NULL), m_dtor(NULL), m_flags(flags) {}
+		: m_name(name), m_ctor(NULL), m_dtor(NULL), m_user_ctor(NULL),
+			m_user_dtor(NULL), m_flags(flags) {}
 
 	virtual ~Type() {}
 
@@ -158,16 +159,14 @@ public:
 
 	Function* addMethod(Function*);
 
-	const Function* getMethod(const CString*) const;
-
 	void addProperty(const CString* name, Value* value) {
 		addMember(name, value);
 	}
 
 	Value* getProperty(const CString*) const;
+	const Function* getMethod(const CString*) const;
 
 	const MethodMap getMethods() const;
-
 	const PropertyMap getProperties() const;
 
 	/// Method for retrieve the type name
@@ -183,11 +182,13 @@ public:
 	const Function* getUserConstructor() const { return m_user_ctor; }
 	bool hasUserConstructor() const { return m_user_ctor != NULL; }
 
+	void setUserDestructor(Function* func) { m_user_dtor = func; }
+
 	virtual void init(CLEVER_TYPE_INIT_ARGS) {}
 
 	/// Virtual method for debug purpose
 	virtual void dump(TypeObject* data) const { dump(data, std::cout); }
-	virtual void dump(TypeObject*, std::ostream&) const {};
+	virtual void dump(TypeObject* data, std::ostream& out) const { out << getName(); };
 
 	/// Operator methods
 	virtual void CLEVER_FASTCALL add(CLEVER_TYPE_OPERATOR_ARGS)           const;
@@ -221,9 +222,9 @@ private:
 	MemberMap m_members;
 	std::string m_name;
 	const Function* m_ctor;
-	const Function* m_user_ctor;
 	const Function* m_dtor;
-
+	const Function* m_user_ctor;
+	const Function* m_user_dtor;
 	TypeFlag m_flags;
 
 	DISALLOW_COPY_AND_ASSIGN(Type);

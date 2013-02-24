@@ -1,0 +1,33 @@
+Testing SQLite3 module
+==CODE==
+import std.io.*;
+import db.sqlite3.*;
+import std.sys.*;
+
+system("rm test 2> /dev/null");
+
+var conn = SQLite3.new("test");
+
+conn.exec("CREATE TABLE IF NOT EXISTS test (id INTEGER, name TEXT)");
+conn.query("INSERT INTO test VALUES (1, 'Felipe')");
+println(conn.getLastId());
+
+conn.query("INSERT INTO test VALUES (2, 'Higor')");
+println(conn.getLastId());
+
+var row;
+var stmt = conn.query("SELECT * FROM test");
+
+while (row = stmt.fetch()) {
+	println(row);
+}
+
+stmt.finalize();
+conn.close();
+
+system("rm test 2> /dev/null");
+==RESULT==
+1
+2
+{"id": 1, "name": Felipe}
+{"id": 2, "name": Higor}

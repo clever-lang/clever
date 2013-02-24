@@ -113,8 +113,11 @@ void Resolver::visit(FunctionDecl* node)
 		name = CSTRING(buf.str());
 
 		node->setIdent(new Ident(name, node->getLocation()));
-	} else if (node->hasType()) {
-		name = CSTRING("_"+*node->getType()->getName());
+	} else if (node->isCtor()) {
+		name = CSTRING("Ctor#" + *node->getType()->getName());
+		node->setType(new Type(name, node->getLocation()));
+	} else if (node->isDtor()) {
+		name = CSTRING("Dtor#" + *node->getType()->getName());
 		node->setType(new Type(name, node->getLocation()));
 	} else {
 		name = node->getIdent()->getName();
@@ -125,7 +128,6 @@ void Resolver::visit(FunctionDecl* node)
 		}
 	}
 	clever_assert_not_null(name);
-
 
 	if (m_scope->getLocal(name)) {
 		Compiler::errorf(node->getLocation(),
@@ -152,8 +154,10 @@ void Resolver::visit(FunctionDecl* node)
 	// Check if it is a method
 	if (m_class) {
 		// Check if it's the constructor
-		if (node->hasType()) {
+		if (node->isCtor()) {
 			m_class->setUserConstructor(func);
+		} else if (node->isDtor()) {
+			m_class->setUserDestructor(func);
 		}
 		m_class->addMember(name, fval);
 		fval->addRef();

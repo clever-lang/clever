@@ -154,6 +154,12 @@ void Codegen::visit(Assignment* node)
 	} else {
 		_prepare_operand(assign.op2, rhs);
 	}
+
+	if (node->hasResult()) {
+		ValueOffset tmp_id = m_builder->getTemp();
+		assign.result = Operand(FETCH_TMP, tmp_id);
+		node->setVOffset(tmp_id);
+	}
 }
 
 void Codegen::visit(MethodCall* node)

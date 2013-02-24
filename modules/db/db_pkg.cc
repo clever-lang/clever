@@ -12,11 +12,13 @@ namespace clever { namespace modules {
 // Initializes Db package
 void Db::init()
 {
-
 #ifdef HAVE_MOD_DB_MYSQL
 	addModule(new db::MysqlModule);
 #endif
 
+#ifdef HAVE_MOD_DB_SQLITE3
+	addModule(new db::SQLite3Module);
+#endif
 }
 
 }} // clever::modules

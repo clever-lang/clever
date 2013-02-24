@@ -188,7 +188,7 @@ private:
 class Assignment: public Node {
 public:
 	Assignment(Node* lhs, Node* rhs, const location& location)
-		: Node(location), m_conditional(false), m_lhs(lhs), m_rhs(rhs) {
+		: Node(location), m_conditional(false), m_result(false), m_lhs(lhs), m_rhs(rhs) {
 		m_lhs->addRef();
 		clever_addref(m_rhs);
 	}
@@ -214,10 +214,14 @@ public:
 		return m_conditional;
 	}
 
+	void setUseResult() { m_result = true; }
+	bool hasResult() const { return m_result; }
+
 	virtual void accept(Visitor& visitor);
 	virtual Node* accept(Transformer& transformer);
 private:
 	bool m_conditional;
+	bool m_result;
 	Node* m_lhs;
 	Node* m_rhs;
 
@@ -670,7 +674,7 @@ public:
 	FunctionDecl(Ident* ident, NodeArray* args, Block* block,
 		VariableDecl* vararg, bool is_anon, const location& location)
 		: Node(location), m_ident(ident), m_type(NULL), m_args(args), m_block(block),
-			m_vararg(vararg), m_is_anon(is_anon) {
+			m_vararg(vararg), m_is_anon(is_anon), m_is_ctor(false), m_is_dtor(false) {
 		clever_addref(m_ident);
 		clever_addref(m_args);
 		clever_addref(m_block);
@@ -680,7 +684,7 @@ public:
 	FunctionDecl(Type* type, NodeArray* args, Block* block, VariableDecl* vararg,
 		const location& location)
 		: Node(location), m_ident(NULL), m_type(type), m_args(args), m_block(block),
-			m_vararg(vararg), m_is_anon(false) {
+			m_vararg(vararg), m_is_anon(false), m_is_ctor(false), m_is_dtor(false) {
 		clever_addref(m_type);
 		clever_addref(m_args);
 		clever_addref(m_block);
@@ -708,6 +712,11 @@ public:
 	}
 
 	bool isAnonymous() const { return m_is_anon; }
+	bool isCtor() const { return m_is_ctor; }
+	bool isDtor() const { return m_is_dtor; }
+
+	void setCtor() { m_is_ctor = true; }
+	void setDtor() { m_is_dtor = true; }
 
 	Type* getType() { return m_type; }
 	bool hasType() { return m_type != NULL; }
@@ -717,7 +726,6 @@ public:
 
 	NodeArray* getArgs() { return m_args; }
 	bool hasArgs() const { return m_args != NULL && m_args->getSize() > 0; }
-
 	size_t numArgs() const { return m_args->getSize(); }
 
 	Node* getArg(size_t index) {
@@ -739,6 +747,8 @@ private:
 	Block* m_block;
 	VariableDecl* m_vararg;
 	bool m_is_anon;
+	bool m_is_ctor;
+	bool m_is_dtor;
 
 	DISALLOW_COPY_AND_ASSIGN(FunctionDecl);
 };

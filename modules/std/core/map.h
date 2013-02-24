@@ -44,11 +44,11 @@ public:
 
 	~MapType() {}
 
-	void init();
-
+	virtual void init(CLEVER_TYPE_INIT_ARGS);
 	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
+	virtual void dump(TypeObject*, std::ostream&) const;
 
-	void dump(TypeObject*, std::ostream&) const;
+	virtual Value* CLEVER_FASTCALL at_op(CLEVER_TYPE_AT_OPERATOR_ARGS) const;
 
 	CLEVER_METHOD(ctor);
 	CLEVER_METHOD(insert);

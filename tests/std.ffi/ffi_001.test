@@ -1,7 +1,9 @@
 Testing FFI and FFIStructure module
 ==CODE==
 
-import std.*;
+import std.io.*;
+import std.ffi.*;
+import std.sys.*;
 
 system("sh tests/std.ffi/ffi_001.sh");
 
@@ -22,7 +24,7 @@ extS.addMember("w", FFITypes.DOUBLE);
 
 var ffilib = FFITypes.new("tests/std.ffi/ffi_001");
 
-ffilib.addFunction("setC", FFITypes.VOID, 
+ffilib.addFunction("setC", FFITypes.VOID,
 	FFITypes.POINTER, FFITypes.INT, FFITypes.DOUBLE, FFITypes.INT, FFITypes.DOUBLE);
 
 ffilib.addFunction("getCX", FFITypes.INT, FFITypes.POINTER);

@@ -277,6 +277,8 @@ CLEVER_MODULE_INIT(Math)
 	addFunction(new Function("tanh",  &CLEVER_NS_FNAME(math, tanh)));
 	addFunction(new Function("atan",  &CLEVER_NS_FNAME(math, atan)));
 	addFunction(new Function("log",   &CLEVER_NS_FNAME(math, log)));
+
+	addVariable("PI", new Value(M_PI, true));
 }
 
 }}} // clever::modules::std

@@ -307,6 +307,7 @@ rvalue:
 	|	bitwise
 	|	boolean
 	|	comparison
+	|	assignment    { $<assignment>1->setUseResult(); }
 	|	inc_dec
 	|	anonymous_fdecl
 	|	instantiation
@@ -540,19 +541,21 @@ fdecl:
 		FUNC IDENT '(' ')' block
 		{ $$ = new ast::FunctionDecl($2, NULL, $5, NULL, false, yyloc); }
 	|	FUNC TYPE '(' ')' block
-		{ $$ = new ast::FunctionDecl($2, NULL, $5, NULL, yyloc); }
+		{ $$ = new ast::FunctionDecl($2, NULL, $5, NULL, yyloc); $$->setCtor(); }
+	|	FUNC '~' TYPE '(' ')' block
+		{ $$ = new ast::FunctionDecl($3, NULL, $6, NULL, yyloc); $$->setDtor(); }
 	|	FUNC IDENT '(' vararg ')' block
 		{ $$ = new ast::FunctionDecl($2, NULL, $6, $4, false, yyloc); }
 	|	FUNC TYPE '(' vararg ')' block
-		{ $$ = new ast::FunctionDecl($2, NULL, $6, $4, yyloc); }
+		{ $$ = new ast::FunctionDecl($2, NULL, $6, $4, yyloc); $$->setCtor(); }
 	|	FUNC IDENT '(' variable_decl_list ')' block
 		{ $$ = new ast::FunctionDecl($2, $4, $6, NULL, false, yyloc); }
 	|	FUNC TYPE '(' variable_decl_list ')' block
-		{ $$ = new ast::FunctionDecl($2, $4, $6, NULL, yyloc); }
+		{ $$ = new ast::FunctionDecl($2, $4, $6, NULL, yyloc); $$->setCtor(); }
 	|	FUNC IDENT '(' variable_decl_list ',' vararg ')' block
 		{ $$ = new ast::FunctionDecl($2, $4, $8, $6, false, yyloc); }
 	|	FUNC TYPE '(' variable_decl_list ',' vararg ')' block
-		{ $$ = new ast::FunctionDecl($2, $4, $8, $6, yyloc); }
+		{ $$ = new ast::FunctionDecl($2, $4, $8, $6, yyloc); $$->setCtor(); }
 ;
 
 anonymous_fdecl:
@@ -588,9 +591,13 @@ fully_qualified_name:
 ;
 
 fully_qualified_call:
-		fully_qualified_name ':' IDENT '(' call_args ')'        { $1->append(':', $3); $<fcall>$ = new ast::FunctionCall($1, $5, yyloc); } fcall_chain { $<fcall>$ = $8; }
-	|	fully_qualified_name ':' TYPE '.' NEW                   { $1->append(':', $3); $<inst>$ = new ast::Instantiation($1, NULL, yyloc); }
-	|	fully_qualified_name ':' TYPE '.' NEW '(' call_args ')' { $1->append(':', $3); $<inst>$ = new ast::Instantiation($1, $7,   yyloc); }
+		fully_qualified_name ':' IDENT '(' call_args ')'          { $1->append(':', $3); $<fcall>$ = new ast::FunctionCall($1, $5, yyloc); } fcall_chain { $<fcall>$ = $8; }
+	|	fully_qualified_name ':' CONSTANT                         { $1->append(':', $3); }
+	|	fully_qualified_name ':' IDENT                            { $1->append(':', $3); }
+	|	fully_qualified_name ':' TYPE '.' CONSTANT                { $1->append(':', $3); $<property>$ = new ast::Property(new ast::Type($1->getName(), yyloc), $5, yyloc); clever_delete($1); }
+	|	fully_qualified_name ':' TYPE '.' NEW                     { $1->append(':', $3); $<inst>$ = new ast::Instantiation($1, NULL, yyloc); }
+	|	fully_qualified_name ':' TYPE '.' NEW '(' call_args ')'   { $1->append(':', $3); $<inst>$ = new ast::Instantiation($1, $7,   yyloc); }
+	|	fully_qualified_name ':' TYPE '.' IDENT '(' call_args ')' { $1->append(':', $3); $<mcall>$ = new ast::MethodCall(new ast::Type($1->getName(), yyloc), $5, $7, yyloc); clever_delete($1); } mcall_chain { $<node>$ = $<node>10; }
 ;
 
 fcall:

@@ -1,6 +1,7 @@
 Testing invalid pattern
 ==CODE==
-import std.*;
+import std.io.*;
+import std.regex.*;
 
 var text = "foo.bar";
 
