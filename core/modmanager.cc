@@ -100,6 +100,17 @@ void ModManager::loadFunction(Scope* scope, Environment* env, const CString* nam
 void ModManager::loadModuleContent(Scope* scope, Environment* env, Module* module,
 	size_t kind, const CString* name, const std::string& ns_prefix) const
 {
+	VarMap& vars = module->getVars();
+
+	if (!vars.empty()) {
+		VarMap::const_iterator it(vars.begin()), end(vars.end());
+
+		for (; it != end; ++it) {
+			const CString* vname = CSTRING(ns_prefix + it->first);
+			scope->pushValue(vname, it->second)->voffset = env->pushValue(it->second);
+		}
+	}
+
 	if (kind & ModManager::FUNCTION) {
 		FunctionMap& funcs = module->getFunctions();
 

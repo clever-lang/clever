@@ -29,7 +29,9 @@ class Type;
 
 typedef std::tr1::unordered_map<std::string, Type*> TypeMap;
 typedef std::tr1::unordered_map<std::string, Module*> ModuleMap;
+typedef std::tr1::unordered_map<std::string, Value*> VarMap;
 typedef std::pair<std::string, Module*> ModulePair;
+typedef std::pair<std::string, Value*> VarPair;
 
 /// Module representation
 class Module {
@@ -41,25 +43,29 @@ public:
 
 	virtual ~Module() {}
 
+	void addVariable(const std::string& name, Value* value) {
+		m_vars.insert(VarPair(name, value));
+	}
+
 	void addModule(Module* mod) {
 		m_mods.insert(ModulePair(mod->getName(), mod));
 	}
-
-	ModuleMap& getModules() { return m_mods; }
-	bool hasModules() const { return !m_mods.empty(); }
 
 	void addType(Type* type) {
 		m_types.insert(TypeMap::value_type(type->getName(), type));
 	}
 
+	ModuleMap& getModules() { return m_mods; }
 	TypeMap& getTypes() { return m_types; }
+	VarMap& getVars() { return m_vars; }
+	FunctionMap& getFunctions() { return m_funcs; }
+
+	bool hasModules() const { return !m_mods.empty(); }
 
 	Function* addFunction(Function* func) {
 		m_funcs.insert(FunctionMapEntry(CSTRING(func->getName()), func));
 		return func;
 	}
-
-	FunctionMap& getFunctions() { return m_funcs; }
 
 	const std::string& getName() { return m_name; }
 
@@ -68,8 +74,9 @@ public:
 
 	virtual void init() = 0;
 private:
-	ModuleMap m_mods;
 	std::string m_name;
+	ModuleMap m_mods;
+	VarMap m_vars;
 	ModuleStatus m_flags;
 	FunctionMap m_funcs;
 	TypeMap m_types;
