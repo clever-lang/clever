@@ -15,9 +15,12 @@
 # include <sys/time.h>
 #endif
 
+#include <cstdio>
+
 #include "core/clever.h"
 #include "core/value.h"
 #include "modules/std/events/events.h"
+#include "modules/std/core/map.h"
 #include "types/type.h"
 #include "core/vm.h"
 
@@ -43,6 +46,52 @@ CLEVER_THREAD_FUNC(_events_handler)
 			if (u.first == "exit") {
 				intern->mutex.unlock();
 				return NULL;
+			}
+
+			if (u.first == "set") {
+				/*Get current state of the requisitions*/
+				Requisitions& req = intern->m_requisitions;
+
+				/*Get current requisitions*/
+				RequisitionMap& reqm = intern->m_requisition_map;
+
+				/*Get name and args of the last requisition*/
+				CString ls = intern->m_sets_queue.front();
+				ActionArgs args = intern->m_args_queue.front();
+
+				intern->m_sets_queue.pop();
+				intern->m_args_queue.pop();
+
+				RequisitionMap::iterator it = reqm.find(ls);
+
+				if (it != reqm.end()) {
+					RequisitionSubMap& reqsm = it->second;
+					RequisitionSubMap::iterator it2 = reqsm.find(req[ls]);
+
+					if (it2 != reqsm.end()) {
+						RequisitionActionPairs& actions = it2->second;
+
+						for (size_t i = 0, j = actions.size(); i < j; ++i) {
+							RequisitionActionPair& tap = actions[i];
+							Requisitions& treq = tap.first;
+							Function* func = tap.second;
+							Requisitions::iterator it3 = treq.begin(), end = treq.end();
+							bool exec = true;
+
+							while (it3 != end) {
+								if (req[it3->first] != it3->second) {
+									exec = false;
+									break;
+								}
+								++it3;
+							}
+
+							if (exec) {
+								intern->m_vm->runFunction(func, &args)->delRef();
+							}
+						}
+					}
+				}
 			}
 		}
 
@@ -113,14 +162,39 @@ CLEVER_METHOD(Events::ctor)
 // Events.connect(String name, Function func)
 CLEVER_METHOD(Events::connect)
 {
-	if (!clever_check_args("sf")) {
+	if (!clever_check_args(".f")) {
 		return;
 	}
 
 	EventData* intern = CLEVER_GET_OBJECT(EventData*, CLEVER_THIS());
 
-	intern->m_event_map[*args.at(0)->getStr()]
+
+	Value* v = args.at(0);
+
+	if (v->isStr()) {
+		intern->m_event_map[*v->getStr()]
 			.push_back(static_cast<Function*>(args.at(1)->getObj()));
+	} else if (v->isMap()) {
+		ValueMap& map = static_cast<MapObject*>(v->getObj())->getData();
+		RequisitionActionPair action;
+		Requisitions& req = action.first;
+		ValueMap::const_iterator it(map.begin()), end(map.end());
+
+		while (it != end) {
+			req[it->first] = it->second->getInt();
+			++it;
+		}
+
+		action.second = static_cast<Function*>(args.at(1)->getObj());
+
+		it  = map.begin(); end = map.end();
+
+		RequisitionMap& rmap = intern->m_requisition_map;
+		while (it != end) {
+			rmap[it->first][it->second->getInt()].push_back(action);
+			++it;
+		}
+	}
 }
 
 // Events.emit(String name, ...)
@@ -178,15 +252,54 @@ CLEVER_METHOD(Events::finalize)
 	intern->handler.wait();
 }
 
+CLEVER_METHOD(Events::set)
+{
+	if (!clever_check_args("m*")) {
+		return;
+	}
+
+	EventData* intern = CLEVER_GET_OBJECT(EventData*, CLEVER_THIS());
+
+	Value* v = args.at(0);
+
+	ValueMap& map = static_cast<MapObject*>(v->getObj())->getData();
+	ValueMap::iterator it = map.begin(), end = map.end();
+
+	intern->mutex.lock();
+
+	while (it != end) {
+		intern->m_requisitions[it->first] = static_cast<int>(it->second->getInt());
+		++it;
+	}
+
+	Signal s;
+
+	s.first = "set";
+
+	ActionArgs _arg;
+
+	for (size_t i = 1, j = args.size(); i < j; ++i) {
+		_arg.push_back(args.at(i));
+	}
+
+	intern->m_event_queue.push(s);
+	intern->m_sets_queue.push(map.begin()->first);
+	intern->m_args_queue.push(_arg);
+
+	intern->mutex.unlock();
+
+}
+
 // Events type initialization
 CLEVER_TYPE_INIT(Events::init)
 {
 	setConstructor((MethodPtr)&Events::ctor);
 
 	addMethod(new Function("connect",    (MethodPtr)&Events::connect));
-	addMethod(new Function("emit",      (MethodPtr)&Events::emit));
+	addMethod(new Function("emit",       (MethodPtr)&Events::emit));
 	addMethod(new Function("wait",       (MethodPtr)&Events::wait));
 	addMethod(new Function("finalize",   (MethodPtr)&Events::finalize));
+	addMethod(new Function("set",        (MethodPtr)&Events::set));
 }
 
 // FFI module initialization
