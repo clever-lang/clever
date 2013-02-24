@@ -1,0 +1,35 @@
+import std.regex.*;
+
+class Language
+{
+	var name;
+	var command;
+    var check_cmd;
+    var version_er;
+	var extension;
+    var version;
+    var is_ok;
+
+    function Language(name, command, check_cmd, version_er, extension)
+    {
+		this.name = name;
+		this.command = command;
+        this.check_cmd = check_cmd;
+        this.version_er = version_er;
+		this.extension = extension;
+        this.is_ok = false;
+    }
+
+    function check() {
+        var version_str = _exec(this.check_cmd);
+        var re = Regex.new(this.version_er);
+        if (!re.match(version_str)) {
+        	return false;
+        }
+
+        this.version = re.group(1);
+        this.is_ok = true;
+
+        return true;
+    }
+}

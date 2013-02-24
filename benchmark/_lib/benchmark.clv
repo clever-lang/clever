@@ -3,103 +3,208 @@ import std.regex.*;
 import std.file.*;
 import std.sys.*;
 
-function _exec(command)
-{
-    var output_file = ".bench-output";
-    var cmd = command + " > " + output_file + " 2>&1";
-    var rs = system(cmd);
+//import classes.language.*; -- BUG
 
-    if (rs != 0) {
-        remove(output_file);
-        return false;
-    }
-
-    var f = File.new(output_file, File.IN),
-        buffer = '';
-
-    while (!f.eof()) {
-        buffer = buffer + f.readLine() + "\n";
-    }
-    f.close();
-
-    remove(output_file);
-
-    return buffer;
+function readFileContent(file) {
+	var f = File.new(file, File.IN);
+	var buffer = '';
+	
+	while (!f.eof()) {
+	 buffer = buffer + f.readLine();
+		if (!f.eof()) {
+			buffer = buffer + "\n";
+		}
+	}
+	f.close();
+	return buffer;
 }
 
-class Language
-{
+function _exec(command) {
+	var output_file = ".bench-output-" + time();
+	var cmd = command + " > " + output_file + " 2>&1";
+	var rs = system(cmd);
+	if (rs != 0) {
+		remove(output_file);
+		return false;
+	}
+	var buffer = readFileContent(output_file);
+	remove(output_file);
+	return buffer;
+}
+
+class Language {
 	var name;
 	var command;
-    var check_cmd;
-    var version_er;
+	var check_cmd;
+	var version_er;
 	var extension;
-    var version;
-    var is_ok;
-
-    function Language(name, command, check_cmd, version_er, extension)
-    {
+	var version;
+	var is_ok;
+	
+	function Language(name, command, check_cmd, version_er, extension) {
 		this.name = name;
 		this.command = command;
-        this.check_cmd = check_cmd;
-        this.version_er = version_er;
+		this.check_cmd = check_cmd;
+		this.version_er = version_er;
 		this.extension = extension;
-        this.is_ok = false;
-    }
-
-    function check() {
-        //var version_str = _exec(this.check_cmd);
-        var output_file = ".bench-output";
-        var cmd = this.check_cmd + " > " + output_file + " 2>&1";
-        var rs = system(cmd);
-
-        if (rs != 0) {
-            remove(output_file);
-            return false;
-        }
-
-        var f = File.new(output_file, File.IN);
-        var version_str = '';
-        while (!f.eof()) {
-            version_str = version_str + f.readLine() + "\n";
-        }
-        f.close();
-        remove(output_file);
-
-        var re = Regex.new(this.version_er);
-        if (!re.match(version_str)) {
-        	return false;
-        }
-
-        this.version = re.group(1);
-        this.is_ok = true;
-
-        return true;
-    }
+		this.is_ok = false;
+	}
+	
+	function check() {
+		var version_str = _exec(this.check_cmd);
+		var re = Regex.new(this.version_er);
+		
+		if (!re.match(version_str)) {
+			return false;
+		}
+		
+		this.version = re.group(1);
+		this.is_ok = true;
+		
+		return true;
+	}
 }
 
-class Environment
-{
-	var langs;
+class Result {
+	var text;
+	var banner;
+	var value;
+	var tt;
+	
+	function Result(text, tt) {
+		this.tt = tt;
+		this.text = text;
+		/*
+		var re = Regex.new("^(.*?)\r?\n(.*?)");
+		if (!re.match(text)) {
+			println('ERROR: invalid output');
+			return;
+		}
+		this.banner = re.group(1);
+		this.value = re.group(2);
+		*/
+	}
+}
 
-	function Environment()
-	{
+class Test {
+	var file;
+	var lang;
+	
+	function Test(file, lang) {
+		this.file = file;
+		this.lang = lang;
+	}
+	
+	function run() {
+		var cmd = this.lang.command.replace('%1', this.file);
+		var tini = time();
+		var output = _exec(cmd);
+		var tfim = time();
+		return Result.new(output, (tfim - tini));
+	}
+}
+
+class GroupTest {
+	var path;
+	var info;
+	var env;
+	var tests;
+	
+	function GroupTest(env, path, info) {
+		this.env = env;
+		this.info = info;
+		this.path = path;
+		this.loadTests();
+	}
+	
+	function loadTests() {
+		this.tests = [];
+		var files = glob(this.path + '/*');
+		var i = 0;
+		while (i < files.size()) {
+			var file = files[i++];
+			this.checkFile(file);
+		}
+	}
+	
+	function checkFile(file) {
+		if (file.toLower().endsWith('info.txt') == 1) {
+			return;
+		}
+		var lang = this.getLanguage(file);
+		if (lang) {
+			this.tests.append(Test.new(file, lang));
+		}
+	}
+	
+	function getExtension(file) {
+		var re = Regex.new("\.(.*?)$");
+		if (!re.match(file)) {
+			return false;
+		}
+		return re.group(1);
+	}
+	
+	function getLanguage(file) {
+		var ext = this.getExtension(file);
+		var i = 0;
+		while (i < this.env.langs.size()) {
+			var lang = this.env.langs[i++];
+			var re = Regex.new(lang.extension);
+			if (re.match(ext)) {
+				if (!lang.is_ok) {
+					continue;
+				}
+				return lang;
+			}
+		}
+		return false;
+	}
+}
+
+class Environment {
+	var basePath;
+	var langs;
+	var groups;
+
+	function Environment(base_path) {
+		this.basePath = base_path;
 		this.langs = [];
-		this.addLanguage('Clever', '../clever', '../clever -v', '^Clever - (.*)', 'clv');
+		this.groups = [];
 	}
 
-	function addLanguage(name, command, check_cmd, version_er, extension)
-	{
+	function addLanguage(name, command, check_cmd, version_er, extension) {
 		var l = Language.new(name, command, check_cmd, version_er, extension);
-
 		this.langs.append(l);
-
 		return l;
 	}
-
-    function validate() {
-        this.langs.each(function(l) {
-            l.check();
-        });
-    }
+	
+	function bootstrap() {
+		this.checkProgLangs();
+		this.loadGroupTests();
+	}
+	
+	function checkProgLangs() {
+		this.langs.each(function(l) {
+			l.check();
+		});
+	}
+	
+	function loadGroupTests() {
+		var path = this.basePath + '/tests',
+		tests_dir = glob(path + '/*'),
+		super = this;
+		var i = 0;
+		while (i < tests_dir.size()) {
+			var group_dir = tests_dir[i],
+			info_file = group_dir + "/info.txt";
+			i++;
+			if (!file_exists(info_file)) {
+				continue;
+			}
+			var info = readFileContent(info_file);
+			var group = GroupTest.new(this, group_dir, info);
+			this.groups.append(group);
+		}
+	}
 }
