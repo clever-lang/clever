@@ -5,8 +5,8 @@
  * This file is distributed under the MIT license. See LICENSE for details.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 
 #include <mysql/mysql.h>
 #include "modules/db/mysql/cmysql.h"
@@ -54,18 +54,7 @@ bool CMysql::query(const char *stmt)
 
 MapObject* CMysql::fetchRow()
 {
-
-	MapObject* map = new MapObject;
-	Value* value;
-
-	MYSQL_FIELD* fields;
-	MYSQL_ROW row;
-	
-	unsigned int cnt_cols;
-	unsigned long* lengths;
-	char* str;
-
-	row = mysql_fetch_row(m_resultset);
+	MYSQL_ROW row = mysql_fetch_row(m_resultset);
 
 	// No more data or no data at all!
 	if(row == NULL) {
@@ -73,12 +62,16 @@ MapObject* CMysql::fetchRow()
 		return NULL;
 	}
 
-	cnt_cols = mysql_num_fields(m_resultset);
-	lengths = mysql_fetch_lengths(m_resultset);
-	fields = mysql_fetch_fields(m_resultset);
+	unsigned int   cnt_cols = mysql_num_fields(m_resultset);
+	unsigned long* lengths  = mysql_fetch_lengths(m_resultset);
+	MYSQL_FIELD*   fields   = mysql_fetch_fields(m_resultset);
 	
-	for(unsigned int i = 0; i < cnt_cols; i++) {
+	MapObject* map = new MapObject;
+	char* str;
 
+	for (unsigned int i = 0; i < cnt_cols; i++) {
+
+		Value* value;
 		str = new char[lengths[i]+1];
 		snprintf(str, lengths[i]+1, "%.*s", (int)lengths[i], row[i]);
 
@@ -88,7 +81,7 @@ MapObject* CMysql::fetchRow()
 			case MYSQL_TYPE_LONG:
 			case MYSQL_TYPE_INT24:
 			case MYSQL_TYPE_TIMESTAMP:
-				value = new Value(long(strtol((char *)str, NULL, 10)), false);
+				value = new Value(long(strtol(str, NULL, 10)), false);
 				break;
 
 			case MYSQL_TYPE_DATE:
@@ -121,18 +114,15 @@ MapObject* CMysql::fetchRow()
 			case MYSQL_TYPE_BIT:
 				// handle as bool
 				break;
-
-			
 			
 			case MYSQL_TYPE_TINY_BLOB:
 			case MYSQL_TYPE_MEDIUM_BLOB:
 			case MYSQL_TYPE_LONG_BLOB:
 				// handle as byte array?
 				break;
-
 		}
 
-		if(value != NULL) {
+		if (value != NULL) {
 			map->getData().insert(MapObjectPair(fields[i].name, value));
 		}
 
@@ -150,7 +140,6 @@ unsigned int CMysql::errno()
 
 const char* CMysql::error()
 {
-
 	return mysql_error(m_connection);
 }
 

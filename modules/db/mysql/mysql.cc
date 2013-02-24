@@ -75,12 +75,14 @@ CLEVER_METHOD(Mysql::query)
 
 CLEVER_METHOD(Mysql::fetchRow)
 {
+	if (!clever_check_no_args()) {
+		return;
+	}
 
-	MapObject* data;
 	MysqlObject* mo = CLEVER_GET_OBJECT(MysqlObject*, CLEVER_THIS());
 	CMysql& cmysql = mo->getMysql();
 
-	data = cmysql.fetchRow();
+	MapObject* data = cmysql.fetchRow();
 
 	if(data != NULL) {
 		result->setObj(CLEVER_MAP_TYPE, data);
@@ -91,6 +93,9 @@ CLEVER_METHOD(Mysql::fetchRow)
 
 CLEVER_METHOD(Mysql::getErrorNumber)
 {
+	if (!clever_check_no_args()) {
+		return;
+	}
 
 	MysqlObject* mo = CLEVER_GET_OBJECT(MysqlObject*, CLEVER_THIS());
 	CMysql& cmysql = mo->getMysql();
@@ -100,6 +105,9 @@ CLEVER_METHOD(Mysql::getErrorNumber)
 
 CLEVER_METHOD(Mysql::getError)
 {
+	if (!clever_check_no_args()) {
+		return;
+	}
 
 	MysqlObject* mo = CLEVER_GET_OBJECT(MysqlObject*, CLEVER_THIS());
 	CMysql& cmysql = mo->getMysql();
@@ -112,11 +120,11 @@ CLEVER_TYPE_INIT(Mysql::init)
 {
 	setConstructor((MethodPtr) &Mysql::ctor);
 
-	addMethod(new Function("connect",  (MethodPtr) &Mysql::connect));
-	addMethod(new Function("query",    (MethodPtr) &Mysql::query));
-	addMethod(new Function("fetchRow", (MethodPtr) &Mysql::fetchRow));
+	addMethod(new Function("connect",        (MethodPtr) &Mysql::connect));
+	addMethod(new Function("query",          (MethodPtr) &Mysql::query));
+	addMethod(new Function("fetchRow",       (MethodPtr) &Mysql::fetchRow));
 	addMethod(new Function("getErrorNumber", (MethodPtr) &Mysql::getErrorNumber));
-	addMethod(new Function("getError", (MethodPtr) &Mysql::getError));
+	addMethod(new Function("getError",       (MethodPtr) &Mysql::getError));
 }
 
 }}} // clever::modules::db
