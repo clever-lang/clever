@@ -7,7 +7,7 @@ var env = Environment.new;
 env.addLanguage('Python', 'python %1', 'python -V', '^Python (.*)', 'py');
 env.addLanguage('Lua', 'lua %1', 'lua -v', '^Lua ([^ ]+)', 'lua');
 env.addLanguage('Java', 'javac %1 && java %2', 'java -version', '^java version "([^"]+)', 'java');
-env.addLanguage('PHP', 'php %1', 'phpss -v', '^PHP ([^ ]+)', 'php');
+env.addLanguage('PHP', 'php %1', 'php -v', '^PHP ([^ ]+)', 'php');
 env.addLanguage('Ruby', 'ruby %1', 'ruby -v', '^ruby ([^ ]+)', 'rb');
 
 

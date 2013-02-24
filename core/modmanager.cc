@@ -97,39 +97,9 @@ void ModManager::loadFunction(Scope* scope, Environment* env, const CString* nam
 	scope->pushValue(name, fval)->voffset = env->pushValue(fval);
 }
 
-/// Loads a module if it is not already loaded
-void ModManager::loadModule(Scope* scope, Environment* env, Module* module,
-	size_t kind, const CString* name) const
+void ModManager::loadModuleContent(Scope* scope, Environment* env, Module* module,
+	size_t kind, const CString* name, const std::string& ns_prefix) const
 {
-	if (kind & ModManager::ALL && module->hasModules()) {
-		ModuleMap& mods = module->getModules();
-		ModuleMap::const_iterator it = mods.begin(), end = mods.end();
-
-		while (it != end) {
-			loadModule(scope, env, it->second, kind, NULL);
-			++it;
-		}
-	}
-
-	if (module->isLoaded()) {
-		return;
-	}
-
-	module->init();
-	module->setLoaded();
-
-	std::string ns_prefix = "";
-
-	if (kind & ModManager::NAMESPACE) {
-		std::string mod_name = module->getName() + ":";
-
-		std::replace(mod_name.begin(), mod_name.end(), '.', ':');
-
-		ns_prefix = mod_name;
-	}
-
-	//std::cout << "load " << module->getName() << std::endl;
-
 	if (kind & ModManager::FUNCTION) {
 		FunctionMap& funcs = module->getFunctions();
 
@@ -177,6 +147,61 @@ void ModManager::loadModule(Scope* scope, Environment* env, Module* module,
 			}
 		}
 	}
+}
+
+/// Loads a module if it is not already loaded
+void ModManager::loadModule(Scope* scope, Environment* env, Module* module,
+	size_t kind, const CString* name) const
+{
+	// Imports the submodule
+	// e.g. import std;   => std:<submodule>:<name>
+	// e.g. import std.*; => <submodule>:<name>
+	if ((kind & ModManager::ALL)
+		&& module->hasModules()) {
+		ModuleMap& mods = module->getModules();
+		ModuleMap::const_iterator it = mods.begin(), end = mods.end();
+
+		while (it != end) {
+			if (it->second->isLoaded()) {
+				++it;
+				continue;
+			}
+			it->second->init();
+			it->second->setLoaded();
+
+			std::string prefix = it->second->getName() + ":";
+
+			if (kind & ModManager::NAMESPACE) {
+				std::replace(prefix.begin(), prefix.end(), '.', ':');
+			} else {
+				prefix = prefix.substr(prefix.find_last_of(".")+1);
+			}
+
+			loadModuleContent(scope, env, it->second, kind, NULL,  prefix);
+			++it;
+		}
+	}
+
+	if (module->isLoaded()) {
+		return;
+	}
+
+	module->init();
+	module->setLoaded();
+
+	std::string ns_prefix = "";
+
+	if (kind & ModManager::NAMESPACE) {
+		ns_prefix = module->getName();
+
+		size_t found = ns_prefix.find_last_of(".");
+
+		if (found != std::string::npos) {
+			ns_prefix = ns_prefix.substr(ns_prefix.find_last_of(".")+1) + ":";
+		}
+	}
+
+	loadModuleContent(scope, env, module, kind, name, ns_prefix);
 }
 
 /// Imports an userland module

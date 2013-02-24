@@ -85,7 +85,7 @@ class Environment
 	function Environment()
 	{
 		this.langs = [];
-		this.addLanguage('Clever', '/Users/eu/src/cleverclever', '/Users/eu/src/clever/clever -v', '^Clever - (.*)', 'clv');
+		this.addLanguage('Clever', '../clever', '../clever -v', '^Clever - (.*)', 'clv');
 	}
 
 	function addLanguage(name, command, check_cmd, version_er, extension)

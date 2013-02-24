@@ -282,6 +282,12 @@ CLEVER_FORCE_INLINE void VM::binOp(const IR& op)
 		case OP_BW_XOR:
 			type->bw_xor(getValue(op.result), lhs, rhs, this, &m_exception);
 			break;
+		case OP_BW_RS:
+			type->bw_rs(getValue(op.result), lhs, rhs, this, &m_exception);
+			break;
+		case OP_BW_LS:
+			type->bw_ls(getValue(op.result), lhs, rhs, this, &m_exception);
+			break;
 		// Unary
 		case OP_NOT:
 			type->not_op(getValue(op.result), lhs, this, &m_exception);
@@ -686,7 +692,7 @@ out:
 		const Value* fval = callee->getObj()->getMember(method->getStr());
 
 		if (UNEXPECTED(fval == NULL || !fval->isFunction())) {
-			error(OPCODE.loc, "Member`%T::%S' not found or not callable!",
+			error(OPCODE.loc, "Member `%T::%S' not found or not callable!",
 				type, method->getStr());
 		}
 
