@@ -62,6 +62,9 @@ public:
 	CLEVER_METHOD(endsWith);
 	CLEVER_METHOD(charAt);
 	CLEVER_METHOD(split);
+	CLEVER_METHOD(toUpper);
+	CLEVER_METHOD(toLower);
+	CLEVER_METHOD(replace);
 private:
 	DISALLOW_COPY_AND_ASSIGN(StrType);
 };
