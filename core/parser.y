@@ -25,6 +25,7 @@ class Value;
 }
 
 %union {
+	size_t flags;
 	ast::Node* node;
 	ast::Block* block;
 	ast::ThreadBlock* threadblock;
@@ -104,6 +105,7 @@ class Value;
 %type <continue_> continue
 %type <class_> class_def
 %type <attr> class_attr_decl_impl class_attr_const_decl_impl
+%type <flags> visibility
 
 // The parsing context.
 %parse-param { Driver& driver }
@@ -179,6 +181,8 @@ class Value;
 %token CONTINUE      "continue"
 %token CONSTANT      "constant identifier"
 %token CLASS         "class"
+%token PUBLIC        "public"
+%token PRIVATE       "private"
 
 %left ',';
 %left LOGICAL_OR;
@@ -386,9 +390,15 @@ class_method_decl:
 	|	class_method_list
 ;
 
+visibility:
+		/* empty */ { $$ = ast::PUBLIC;  }
+	|	PUBLIC      { $$ = ast::PUBLIC;  }
+	|	PRIVATE     { $$ = ast::PRIVATE; }
+;
+
 class_method_list:
-		fdecl    { $$ = new ast::NodeArray(yyloc); $$->append($1); }
-	|	class_method_list fdecl { $1->append($2); }
+		visibility fdecl                   { $$ = new ast::NodeArray(yyloc); $$->append($2); $2->setVisibility($1); }
+	|	class_method_list visibility fdecl { $1->append($3); $3->setVisibility($2); }
 ;
 
 array:

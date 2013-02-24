@@ -61,6 +61,10 @@ next_token:
 		RET(token::NIL);
 	}
 
+	<INITIAL>'public' { RET(token::PUBLIC); }
+
+	<INITIAL>'private' { RET(token::PRIVATE); }
+
 	<INITIAL>'continue' { RET(token::CONTINUE); }
 
 	<INITIAL>'var' { RET(token::VAR); }

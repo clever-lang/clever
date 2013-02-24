@@ -97,6 +97,7 @@ namespace clever {
     {
 
 
+	size_t flags;
 	ast::Node* node;
 	ast::Block* block;
 	ast::ThreadBlock* threadblock;
@@ -203,8 +204,10 @@ namespace clever {
      CONTINUE = 308,
      CONSTANT = 309,
      CLASS = 310,
-     XOR_EQUAL = 311,
-     UMINUS = 312
+     PUBLIC = 311,
+     PRIVATE = 312,
+     XOR_EQUAL = 313,
+     UMINUS = 314
    };
 
     };
