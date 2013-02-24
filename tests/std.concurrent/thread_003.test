@@ -1,19 +1,20 @@
 Testing threads.result()
 ==CODE==
 
-import std.*;
+import std.io.*;
+import std.concurrent.*;
 
-function f(id) 
+function f(id)
 {
 	return  3 * id;
-} 
-var t1 = Thread.new(f, 1); 
+}
+var t1 = Thread.new(f, 1);
 var t2 = Thread.new(f, 2);
- 
-t1.start(); 
+
+t1.start();
 t2.start();
 
-t1.wait(); 
+t1.wait();
 t2.wait();
 
 printf("t1 = \1\n",t1.result());
