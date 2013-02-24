@@ -1,0 +1,18 @@
+import std.io.*;
+
+const L = 10000000;
+
+function proc(ini, fim) 
+{
+	var acc = 0, i = ini;
+	while (i <= fim) {
+		acc = acc + i++;
+	}
+	return acc;
+}
+
+
+var r2 = proc(0, 2 * L);
+
+println("clever");
+println(r2);
