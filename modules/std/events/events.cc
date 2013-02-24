@@ -184,7 +184,7 @@ CLEVER_TYPE_INIT(Events::init)
 	setConstructor((MethodPtr)&Events::ctor);
 
 	addMethod(new Function("connect",    (MethodPtr)&Events::connect));
-	addMethod(new Function("emit",      (MethodPtr)&Events::emit));
+	addMethod(new Function("emit",       (MethodPtr)&Events::emit));
 	addMethod(new Function("wait",       (MethodPtr)&Events::wait));
 	addMethod(new Function("finalize",   (MethodPtr)&Events::finalize));
 }
