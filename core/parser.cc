@@ -521,6 +521,11 @@ yylloc.begin.filename = yylloc.end.filename = driver.getFile();
     { (yyval.node) = (yysemantic_stack_[(3) - (2)].node); }
     break;
 
+  case 55:
+
+    { (yysemantic_stack_[(1) - (1)].assignment)->setUseResult(); }
+    break;
+
   case 62:
 
     { (yysemantic_stack_[(1) - (1)].property)->setWriteMode(); }

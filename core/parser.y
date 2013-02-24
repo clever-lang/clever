@@ -307,7 +307,7 @@ rvalue:
 	|	bitwise
 	|	boolean
 	|	comparison
-	|	assignment
+	|	assignment    { $<assignment>1->setUseResult(); }
 	|	inc_dec
 	|	anonymous_fdecl
 	|	instantiation
