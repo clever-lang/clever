@@ -172,15 +172,29 @@ CLEVER_TYPE_OPERATOR(IntType::bw_rs)
 	}
 }
 
-// Int::Int()
+// Int::Int([Number value])
 CLEVER_METHOD(IntType::ctor)
 {
-	result->setInt(0);
+	if (!clever_check_args("|n")) {
+		return;
+	}
+
+	if (args.empty()) {
+		result->setInt(0);
+	} else if (args[0]->isInt()) {
+		result->setInt(args[0]->getInt());
+	} else {
+		result->setInt(long(args[0]->getDouble()));
+	}
 }
 
 // Int::toString()
 CLEVER_METHOD(IntType::toString)
 {
+	if (!clever_check_no_args()) {
+		return;
+	}
+
 	std::ostringstream str;
 
 	str << CLEVER_THIS()->getInt();
