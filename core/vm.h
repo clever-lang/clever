@@ -112,8 +112,8 @@ private:
 	std::vector<Value*> m_call_args;
 	std::vector<Environment*> m_obj_store;
 
-
 	bool m_main;
+
 	DISALLOW_COPY_AND_ASSIGN(VM);
 };
 
