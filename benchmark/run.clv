@@ -2,21 +2,39 @@ import std.io.*;
 import std.sys.*;
 import _lib.benchmark.*;
 
-var env = Environment.new;
+var base_path = 'benchmark';
+var env = Environment.new(base_path);
 
-env.addLanguage('Python', 'python %1', 'python -V', '^Python (.*)', 'py');
-env.addLanguage('Lua', 'lua %1', 'lua -v', '^Lua ([^ ]+)', 'lua');
-env.addLanguage('Java', 'javac %1 && java %2', 'java -version', '^java version "([^"]+)', 'java');
-env.addLanguage('PHP', 'php %1', 'php -v', '^PHP ([^ ]+)', 'php');
+//env.addLanguage('Clever', 'clever %1', 'clever -v', '^Clever - (.*)', 'clv');
+//env.addLanguage('Python', 'python %1', 'python -V', '^Python (.*)', 'py');
+//env.addLanguage('Lua', 'lua %1', 'lua -v', '^Lua ([^ ]+)', 'lua');
+//env.addLanguage('Java', 'javac %1 && java %2', 'java -version', '^java version "([^"]+)', 'java');
+//env.addLanguage('PHP', 'php %1', 'php -v', '^PHP ([^ ]+)', 'php');
 env.addLanguage('Ruby', 'ruby %1', 'ruby -v', '^ruby ([^ ]+)', 'rb');
 
+env.bootstrap();
 
-env.validate();
-
+println("=== Available Languages ===");
 env.langs.each(function(l) {
-    if (l.is_ok == false) {
-        println(l.name + ' -- OFF');
-        return;
-    }
+	if (l.is_ok == false) {
+		println(l.name + ' -- OFF');
+		return;
+	}
 	println(l.name + ' ('+ l.version+') -- OK');
+});
+
+println("");
+println("=== Tests ===");
+var i = 0;
+env.groups.each(function(g) {
+	print(++i + ') ');
+	println(g.info);
+	
+	g.tests.each(function(t) {
+		println('-- '+ t.lang.name + ': ');
+		var rs = t.run();
+		//println('**** '+ rs.banner + ' ('+rs.value+')');
+		//println('***** '+ rs.text);
+		println('     '+ rs.tt);
+	});
 });
