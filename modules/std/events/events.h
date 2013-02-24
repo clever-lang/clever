@@ -66,7 +66,7 @@ public:
 
 	CLEVER_METHOD(ctor);
 	CLEVER_METHOD(connect);
-	CLEVER_METHOD(emmit);
+	CLEVER_METHOD(emit);
 	CLEVER_METHOD(wait);
 	CLEVER_METHOD(finalize);
 };

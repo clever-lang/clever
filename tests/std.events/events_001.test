@@ -25,11 +25,11 @@ e.connect("click", foo3);
 e.connect("click2", foo2);
 
 
-e.emmit("click", 1, 2);
-e.emmit("click2", 1, 2, 3);
+e.emit("click", 1, 2);
+e.emit("click2", 1, 2, 3);
 
-e.emmit("click", 1, 2);
-e.emmit("click2", 1, 2, 3);
+e.emit("click", 1, 2);
+e.emit("click2", 1, 2, 3);
 
 e.finalize();
 ==RESULT==

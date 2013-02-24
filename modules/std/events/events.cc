@@ -127,7 +127,7 @@ CLEVER_METHOD(Events::connect)
 			.push_back(static_cast<Function*>(args.at(1)->getObj()));
 }
 
-CLEVER_METHOD(Events::emmit)
+CLEVER_METHOD(Events::emit)
 {
 	EventData* intern = CLEVER_GET_OBJECT(EventData*, CLEVER_THIS());
 
@@ -175,7 +175,7 @@ CLEVER_TYPE_INIT(Events::init)
 	setConstructor((MethodPtr) &Events::ctor);
 
 	addMethod(new Function("connect",    (MethodPtr)&Events::connect));
-	addMethod(new Function("emmit",      (MethodPtr)&Events::emmit));
+	addMethod(new Function("emit",      (MethodPtr)&Events::emit));
 	addMethod(new Function("wait",       (MethodPtr)&Events::wait));
 	addMethod(new Function("finalize",   (MethodPtr)&Events::finalize));
 }
