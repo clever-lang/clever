@@ -74,22 +74,22 @@ TypeObject* Events::allocData(CLEVER_TYPE_CTOR_ARGS) const
 
 EventData::~EventData()
 {
-	if (this->handler.isRunning()) {
-		this->mutex.lock();
+	if (handler.isRunning()) {
+		mutex.lock();
 
 		Signal s;
 
 		s.first = "exit";
 
-		this->m_event_queue.push(s);
+		m_event_queue.push(s);
 
-		this->mutex.unlock();
-		this->handler.wait();
+		mutex.unlock();
+		handler.wait();
 	}
 
-	if (this->m_vm) {
-		delete this->m_vm;
-		this->m_vm = 0;
+	if (m_vm) {
+		delete m_vm;
+		m_vm = 0;
 	}
 }
 
@@ -97,10 +97,8 @@ EventData::~EventData()
 // Constructs a new Events handler object to manage some events
 CLEVER_METHOD(Events::ctor)
 {
-	if (args.size() > 0) {
-		if (!clever_check_args("i")) {
-			return;
-		}
+	if (!clever_check_args("|i")) {
+		return;
 	}
 
 	EventData* intern = static_cast<EventData*>(allocData(&args));
@@ -125,9 +123,13 @@ CLEVER_METHOD(Events::connect)
 			.push_back(static_cast<Function*>(args.at(1)->getObj()));
 }
 
-// Events.emit(String name)
+// Events.emit(String name, ...)
 CLEVER_METHOD(Events::emit)
 {
+	if (!clever_check_args("s*")) {
+		return;
+	}
+
 	EventData* intern = CLEVER_GET_OBJECT(EventData*, CLEVER_THIS());
 
 	intern->mutex.lock();
