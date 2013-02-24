@@ -1,0 +1,35 @@
+Testing requisitions in event package
+==CODE==
+import std.events.*;
+import std.io.*;
+
+function foo1() {
+	printf("foo1\n");
+}
+
+function foo2() {
+	printf("foo2\n");
+}
+
+function foo3() {
+	printf("foo3\n");
+}
+
+
+var e = Events.new(1);
+
+e.connect({'a0' : 1  , 'b0' : 2  , 'c0' : 3   }, foo1);
+e.connect({'a1' : 10 , 'b1' : 20 , 'c1' : 30  }, foo2);
+e.connect({'a2' : 100, 'b2' : 200, 'c2' : 3000}, foo3);
+
+e.set({'a0' : 1  , 'b0' : 2  , 'c0' : 3   });
+e.set({'a1' : 10 , 'b1' : 20 , 'c1' : 30  });
+e.set({'a0' : 1  , 'b0' : 2  , 'c0' : 3   });
+e.set({'a2' : 100, 'b2' : 200, 'c2' : 3000});
+
+e.finalize();
+==RESULT==
+foo1
+foo2
+foo1
+foo3
