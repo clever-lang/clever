@@ -692,7 +692,7 @@ out:
 		const Value* fval = callee->getObj()->getMember(method->getStr());
 
 		if (UNEXPECTED(fval == NULL || !fval->isFunction())) {
-			error(OPCODE.loc, "Member`%T::%S' not found or not callable!",
+			error(OPCODE.loc, "Member `%T::%S' not found or not callable!",
 				type, method->getStr());
 		}
 
