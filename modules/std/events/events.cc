@@ -23,7 +23,6 @@
 
 namespace clever { namespace modules { namespace std {
 
-
 CLEVER_THREAD_FUNC(_events_handler)
 {
 	EventData* intern = static_cast<EventData*>(arg);
@@ -49,11 +48,11 @@ CLEVER_THREAD_FUNC(_events_handler)
 
 		intern->mutex.unlock();
 
-		#ifdef CLEVER_WIN32
+#ifdef CLEVER_WIN32
 			SleepEx(intern->m_sleep_time, false);
-		#else
+#else
 			usleep(intern->m_sleep_time * 1000);
-		#endif
+#endif
 	}
 
 	return NULL;
@@ -94,7 +93,7 @@ EventData::~EventData()
 	}
 }
 
-// Events.new()
+// Events.new([Int sleep_time])
 // Constructs a new Events handler object to manage some events
 CLEVER_METHOD(Events::ctor)
 {
@@ -113,8 +112,7 @@ CLEVER_METHOD(Events::ctor)
 	result->setObj(this, intern);
 }
 
-
-
+// Events.connect(String name, Function func)
 CLEVER_METHOD(Events::connect)
 {
 	if (!clever_check_args("sf")) {
@@ -127,6 +125,7 @@ CLEVER_METHOD(Events::connect)
 			.push_back(static_cast<Function*>(args.at(1)->getObj()));
 }
 
+// Events.emit(String name)
 CLEVER_METHOD(Events::emmit)
 {
 	EventData* intern = CLEVER_GET_OBJECT(EventData*, CLEVER_THIS());
@@ -145,16 +144,24 @@ CLEVER_METHOD(Events::emmit)
 	intern->mutex.unlock();
 }
 
+// Events.wait()
 CLEVER_METHOD(Events::wait)
 {
+	if (!clever_check_no_args()) {
+		return;
+	}
 	EventData* intern = CLEVER_GET_OBJECT(EventData*, CLEVER_THIS());
 
 	intern->handler.wait();
 }
 
-
+// Events.finalize()
 CLEVER_METHOD(Events::finalize)
 {
+	if (!clever_check_no_args()) {
+		return;
+	}
+
 	EventData* intern = CLEVER_GET_OBJECT(EventData*, CLEVER_THIS());
 
 	intern->mutex.lock();
@@ -169,10 +176,10 @@ CLEVER_METHOD(Events::finalize)
 	intern->handler.wait();
 }
 
-
+// Events type initialization
 CLEVER_TYPE_INIT(Events::init)
 {
-	setConstructor((MethodPtr) &Events::ctor);
+	setConstructor((MethodPtr)&Events::ctor);
 
 	addMethod(new Function("connect",    (MethodPtr)&Events::connect));
 	addMethod(new Function("emmit",      (MethodPtr)&Events::emmit));
@@ -185,6 +192,5 @@ CLEVER_MODULE_INIT(EventsModule)
 {
 	addType(new Events);
 }
-
 
 }}} // clever::modules::std
