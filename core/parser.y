@@ -594,6 +594,7 @@ fully_qualified_call:
 		fully_qualified_name ':' IDENT '(' call_args ')'          { $1->append(':', $3); $<fcall>$ = new ast::FunctionCall($1, $5, yyloc); } fcall_chain { $<fcall>$ = $8; }
 	|	fully_qualified_name ':' CONSTANT                         { $1->append(':', $3); }
 	|	fully_qualified_name ':' IDENT                            { $1->append(':', $3); }
+	|	fully_qualified_name ':' TYPE '.' CONSTANT                { $1->append(':', $3); $<property>$ = new ast::Property(new ast::Type($1->getName(), yyloc), $5, yyloc); clever_delete($1); }
 	|	fully_qualified_name ':' TYPE '.' NEW                     { $1->append(':', $3); $<inst>$ = new ast::Instantiation($1, NULL, yyloc); }
 	|	fully_qualified_name ':' TYPE '.' NEW '(' call_args ')'   { $1->append(':', $3); $<inst>$ = new ast::Instantiation($1, $7,   yyloc); }
 	|	fully_qualified_name ':' TYPE '.' IDENT '(' call_args ')' { $1->append(':', $3); $<mcall>$ = new ast::MethodCall(new ast::Type($1->getName(), yyloc), $5, $7, yyloc); clever_delete($1); } mcall_chain { $<node>$ = $<node>10; }
