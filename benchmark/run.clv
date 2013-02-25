@@ -29,7 +29,7 @@ var i = 0;
 env.groups.each(function(g) {
 	print(++i + ') ');
 	println(g.info);
-	
+
 	g.tests.each(function(t) {
 		println('-- '+ t.lang.name + ': ');
 		var rs = t.run();

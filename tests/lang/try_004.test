@@ -5,3 +5,5 @@ print(println+println);
 ==RESULT==
 Fatal error: Unhandled exception!
 Message: Cannot use \+ operator with Function type
+Stack trace:
+

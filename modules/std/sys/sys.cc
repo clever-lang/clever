@@ -18,6 +18,7 @@
 # include <sys/time.h>
 #endif
 #include "core/value.h"
+#include "core/driver.h"
 #include "modules/std/sys/sys.h"
 #include "types/native_types.h"
 #include "core/modmanager.h"
@@ -90,15 +91,15 @@ static CLEVER_FUNCTION(getcwd)
 // Get n-th argv value
 static CLEVER_FUNCTION(argv)
 {
-/*
-	size_t i = static_cast<size_t>(CLEVER_ARG_INT(0));
-
-	if (i >= (size_t)*g_clever_argc) {
-		CLEVER_RETURN_EMPTY_STR();
-	} else {
-		CLEVER_RETURN_STR(CSTRINGT((*g_clever_argv)[i]));
+	if (!clever_static_check_args("i")) {
+		return;
 	}
-*/
+
+	if (args[0]->getInt() >= *g_clever_argc) {
+		result->setBool(false);
+	} else {
+		result->setStr(new StrObject((*g_clever_argv)[args[0]->getInt()]));
+	}
 }
 
 // argc()
@@ -108,7 +109,8 @@ static CLEVER_FUNCTION(argc)
 	if (!clever_static_check_no_args()) {
 		return;
 	}
-//	CLEVER_RETURN_INT(*g_clever_argc);
+
+	result->setInt(*g_clever_argc);
 }
 
 // sleep(int time)

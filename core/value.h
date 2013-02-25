@@ -85,6 +85,7 @@ public:
 	}
 
 	void setObj(const Type* type, TypeObject* ptr) {
+		cleanUp();
 		clever_assert_not_null(type);
 		clever_assert_not_null(ptr);
 
