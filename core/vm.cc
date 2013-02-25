@@ -89,7 +89,7 @@ CLEVER_FORCE_INLINE Value* VM::getValue(const Operand& operand) const
 	const Environment* source;
 
 	switch (operand.op_type) {
-		case FETCH_CONST: source = m_const_env;                           break;
+		case FETCH_CONST: source = m_const_env;                          break;
 		case FETCH_VAR:   source = m_call_stack.top().env;               break;
 		case FETCH_TMP:   source = m_call_stack.top().env->getTempEnv(); break;
 		default:  	      return NULL;
