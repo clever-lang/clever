@@ -2,6 +2,7 @@ import std.io.*;
 import std.regex.*;
 import std.file.*;
 import std.sys.*;
+import std.crypto.*;
 
 //import classes.language.*; -- BUG
 
@@ -21,6 +22,7 @@ function readFileContent(file) {
 
 function _exec(command) {
 	var output_file = ".bench-output-" + time();
+	output_file = output_file + "-" + md5(command + output_file);
 	var cmd = command + " > " + output_file + " 2>&1";
 	var rs = system(cmd);
 	if (rs != 0) {
