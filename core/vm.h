@@ -16,6 +16,7 @@
 #include "core/cexception.h"
 #include "core/clever.h"
 #include "core/user.h"
+#include "core/location.hh"
 
 namespace clever {
 
@@ -28,6 +29,16 @@ struct VMThread {
 	CThread t_handler;
 	VM* vm_handler;
 };
+
+struct CallStackEntry {
+	Environment* env;
+	const location* loc;
+
+	explicit CallStackEntry(Environment* env_, const location* loc_ = NULL)
+		: env(env_), loc(loc_) {}
+};
+
+typedef std::stack<CallStackEntry> CallStack;
 
 /// VM representation
 class VM {
@@ -77,6 +88,8 @@ public:
 	void run();
 	Value* runFunction(const Function*, std::vector<Value*>*);
 
+	/// Dumps the stack trace
+	void dumpStackTrace(std::ostringstream&);
 
 	/// Methods for dumping opcodes
 #ifdef CLEVER_DEBUG

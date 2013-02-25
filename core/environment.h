@@ -19,7 +19,6 @@ class Environment;
 
 /// @brief a pair specifying how many environments to `escape` and what value to fetch.
 typedef std::pair<size_t, size_t> ValueOffset;
-typedef std::stack<Environment*> CallStack;
 
 /**
  * @brief the environment class.
