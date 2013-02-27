@@ -292,16 +292,16 @@ CLEVER_TYPE_INIT(ArrayType::init)
 {
 	setConstructor((MethodPtr) &ArrayType::ctor);
 
-	addMethod(new Function("append",  (MethodPtr) &ArrayType::append));
-	addMethod(new Function("size",    (MethodPtr) &ArrayType::size));
-	addMethod(new Function("at",      (MethodPtr) &ArrayType::at));
-	addMethod(new Function("reserve", (MethodPtr) &ArrayType::reserve));
-	addMethod(new Function("reverse", (MethodPtr) &ArrayType::reverse));
-	addMethod(new Function("each",    (MethodPtr) &ArrayType::each));
-	addMethod(new Function("shift",   (MethodPtr) &ArrayType::shift));
-	addMethod(new Function("pop",     (MethodPtr) &ArrayType::pop));
-	addMethod(new Function("range",   (MethodPtr) &ArrayType::range));
-	addMethod(new Function("erase",	  (MethodPtr) &ArrayType::erase));
+	addMethod(new Function("append",  (MethodPtr)&ArrayType::append));
+	addMethod(new Function("size",    (MethodPtr)&ArrayType::size));
+	addMethod(new Function("at",      (MethodPtr)&ArrayType::at));
+	addMethod(new Function("reserve", (MethodPtr)&ArrayType::reserve));
+	addMethod(new Function("reverse", (MethodPtr)&ArrayType::reverse));
+	addMethod(new Function("each",    (MethodPtr)&ArrayType::each));
+	addMethod(new Function("shift",   (MethodPtr)&ArrayType::shift));
+	addMethod(new Function("pop",     (MethodPtr)&ArrayType::pop));
+	addMethod(new Function("range",   (MethodPtr)&ArrayType::range));
+	addMethod(new Function("erase",	  (MethodPtr)&ArrayType::erase));
 }
 
 } // clever
