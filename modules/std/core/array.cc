@@ -272,18 +272,20 @@ CLEVER_METHOD(ArrayType::erase)
 	}
 
 	ValueVector& vec = CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS())->getData();
-	size_t length = vec.size();
 
-	if (!length) {
+	if (vec.empty()) {
 		return;
 	}
 
-	if (args[0]->getInt() >= 0 && size_t(args[0]->getInt()) < length) {
-		result->copy(vec[args[0]->getInt()]);
+	long num(args[0]->getInt());
+	size_t length(vec.size());
 
-		vec[args[0]->getInt()]->delRef();
+	if (num >= 0 && size_t(num) < length) {
+		result->copy(vec[num]);
 
-		vec.erase(vec.begin()+args[0]->getInt());
+		vec[num]->delRef();
+
+		vec.erase(vec.begin() + num);
 	}
 }
 
