@@ -9,6 +9,7 @@
 #define CLEVER_ARRAY_H
 
 #include <iostream>
+#include <algorithm>
 #include "core/cstring.h"
 #include "core/value.h"
 #include "types/type.h"
@@ -23,9 +24,7 @@ public:
 		: m_data(vec) {}
 
 	~ArrayObject() {
-		for (size_t i = 0, j = m_data.size(); i < j; ++i) {
-			clever_delref(m_data[i]);
-		}
+		std::for_each(m_data.begin(), m_data.end(), clever_delref);
 	}
 
 	std::vector<Value*>& getData() { return m_data; }
