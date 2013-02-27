@@ -290,7 +290,7 @@ CLEVER_METHOD(ArrayType::erase)
 // Type initialization
 CLEVER_TYPE_INIT(ArrayType::init)
 {
-	setConstructor((MethodPtr) &ArrayType::ctor);
+	setConstructor((MethodPtr)&ArrayType::ctor);
 
 	addMethod(new Function("append",  (MethodPtr)&ArrayType::append));
 	addMethod(new Function("size",    (MethodPtr)&ArrayType::size));
