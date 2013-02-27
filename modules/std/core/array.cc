@@ -107,16 +107,17 @@ CLEVER_METHOD(ArrayType::at)
 
 	ValueVector& arr = CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS())->getData();
 
-	if (args[0]->getInt() < 0
-		|| arr.size() <= size_t(args[0]->getInt())) {
+	long num = args[0]->getInt();
+
+	if (num < 0 || arr.size() <= size_t(num)) {
 		result->setNull();
 		return;
 	}
 
-	result->copy(arr.at(args[0]->getInt()));
+	result->copy(arr.at(num));
 }
 
-// void Array::reserve(int size)
+// void Array::reserve(Int size)
 CLEVER_METHOD(ArrayType::reserve)
 {
 	if (!clever_check_args("i")) {
@@ -196,7 +197,7 @@ CLEVER_METHOD(ArrayType::pop)
 	vec.erase(vec.end()-1);
 }
 
-// Array Array.range(int start, int end)
+// Array Array.range(Int start, Int end)
 // Returns a range as a new array
 CLEVER_METHOD(ArrayType::range)
 {
@@ -211,11 +212,10 @@ CLEVER_METHOD(ArrayType::range)
 		return;
 	}
 
-	ValueVector::size_type start = args[0]->getInt(),
-			end = args[1]->getInt(),
-			size = vec.size();
-
 	ValueVector ran;
+	ValueVector::size_type start = args[0]->getInt(),
+		end = args[1]->getInt(),
+		size = vec.size();
 	bool reverse = (start > end);
 
 	while ((reverse ? (end <= start) : (start <= end))) {
@@ -235,7 +235,7 @@ CLEVER_METHOD(ArrayType::range)
 	result->setObj(this, allocData(&ran));
 }
 
-// Array Array::each(function)
+// Array Array::each(Function callback)
 // Calls function once for each element in the array, passing the element as the only parameter to function
 // The return values from function are returned in the same order as the array
 CLEVER_METHOD(ArrayType::each)
@@ -258,12 +258,10 @@ CLEVER_METHOD(ArrayType::each)
 
 	result->setObj(this, allocData(&results));
 
-	for (size_t i = 0, j = results.size(); i < j; ++i) {
-		results[i]->delRef();
-	}
+	std::for_each(results.begin(), results.end(), clever_delref);
 }
 
-// mixed Array.erase(int position)
+// mixed Array.erase(Int position)
 // Removes from this array the element at position, returning the value
 CLEVER_METHOD(ArrayType::erase)
 {
@@ -272,36 +270,38 @@ CLEVER_METHOD(ArrayType::erase)
 	}
 
 	ValueVector& vec = CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS())->getData();
-	size_t length = vec.size();
 
-	if (!length) {
+	if (vec.empty()) {
 		return;
 	}
 
-	if (args[0]->getInt() >= 0 && size_t(args[0]->getInt()) < length) {
-		result->copy(vec[args[0]->getInt()]);
+	long num = args[0]->getInt();
+	size_t length = vec.size();
 
-		vec[args[0]->getInt()]->delRef();
+	if (num >= 0 && size_t(num) < length) {
+		result->copy(vec[num]);
 
-		vec.erase(vec.begin()+args[0]->getInt());
+		vec[num]->delRef();
+
+		vec.erase(vec.begin() + num);
 	}
 }
 
 // Type initialization
 CLEVER_TYPE_INIT(ArrayType::init)
 {
-	setConstructor((MethodPtr) &ArrayType::ctor);
+	setConstructor((MethodPtr)&ArrayType::ctor);
 
-	addMethod(new Function("append",  (MethodPtr) &ArrayType::append));
-	addMethod(new Function("size",    (MethodPtr) &ArrayType::size));
-	addMethod(new Function("at",      (MethodPtr) &ArrayType::at));
-	addMethod(new Function("reserve", (MethodPtr) &ArrayType::reserve));
-	addMethod(new Function("reverse", (MethodPtr) &ArrayType::reverse));
-	addMethod(new Function("each",    (MethodPtr) &ArrayType::each));
-	addMethod(new Function("shift",   (MethodPtr) &ArrayType::shift));
-	addMethod(new Function("pop",     (MethodPtr) &ArrayType::pop));
-	addMethod(new Function("range",   (MethodPtr) &ArrayType::range));
-	addMethod(new Function("erase",	  (MethodPtr) &ArrayType::erase));
+	addMethod(new Function("append",  (MethodPtr)&ArrayType::append));
+	addMethod(new Function("size",    (MethodPtr)&ArrayType::size));
+	addMethod(new Function("at",      (MethodPtr)&ArrayType::at));
+	addMethod(new Function("reserve", (MethodPtr)&ArrayType::reserve));
+	addMethod(new Function("reverse", (MethodPtr)&ArrayType::reverse));
+	addMethod(new Function("each",    (MethodPtr)&ArrayType::each));
+	addMethod(new Function("shift",   (MethodPtr)&ArrayType::shift));
+	addMethod(new Function("pop",     (MethodPtr)&ArrayType::pop));
+	addMethod(new Function("range",   (MethodPtr)&ArrayType::range));
+	addMethod(new Function("erase",	  (MethodPtr)&ArrayType::erase));
 }
 
 } // clever

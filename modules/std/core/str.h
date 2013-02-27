@@ -44,7 +44,7 @@ public:
 
 	~StrType() {}
 
-	void init();
+	void init(CLEVER_TYPE_INIT_ARGS);
 	void dump(TypeObject*, std::ostream&) const;
 
 	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const { return NULL; }

@@ -9,23 +9,23 @@
 #define CLEVER_ARRAY_H
 
 #include <iostream>
-#include "core/cstring.h"
-#include "core/value.h"
+#include <algorithm>
+#include <vector>
 #include "types/type.h"
 
 namespace clever {
+
+class Value;
 
 class ArrayObject : public TypeObject {
 public:
 	ArrayObject() {}
 
-	ArrayObject(const std::vector<Value*>& vec)
+	explicit ArrayObject(const std::vector<Value*>& vec)
 		: m_data(vec) {}
 
 	~ArrayObject() {
-		for (size_t i = 0, j = m_data.size(); i < j; ++i) {
-			clever_delref(m_data[i]);
-		}
+		std::for_each(m_data.begin(), m_data.end(), clever_delref);
 	}
 
 	std::vector<Value*>& getData() { return m_data; }
@@ -42,7 +42,7 @@ public:
 
 	~ArrayType() {}
 
-	virtual void init();
+	virtual void init(CLEVER_TYPE_INIT_ARGS);
 	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
 	virtual void dump(TypeObject*, std::ostream&) const;
 

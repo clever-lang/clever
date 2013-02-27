@@ -24,7 +24,7 @@ public:
 
 	~BoolType() {}
 
-	void init();
+	void init(CLEVER_TYPE_INIT_ARGS);
 
 	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const { return new BoolObject; }
 
