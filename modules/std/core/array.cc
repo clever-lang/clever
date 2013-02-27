@@ -116,7 +116,7 @@ CLEVER_METHOD(ArrayType::at)
 	result->copy(arr.at(args[0]->getInt()));
 }
 
-// void Array::reserve(int size)
+// void Array::reserve(Int size)
 CLEVER_METHOD(ArrayType::reserve)
 {
 	if (!clever_check_args("i")) {
@@ -196,7 +196,7 @@ CLEVER_METHOD(ArrayType::pop)
 	vec.erase(vec.end()-1);
 }
 
-// Array Array.range(int start, int end)
+// Array Array.range(Int start, Int end)
 // Returns a range as a new array
 CLEVER_METHOD(ArrayType::range)
 {
@@ -211,11 +211,10 @@ CLEVER_METHOD(ArrayType::range)
 		return;
 	}
 
-	ValueVector::size_type start = args[0]->getInt(),
-			end = args[1]->getInt(),
-			size = vec.size();
-
 	ValueVector ran;
+	ValueVector::size_type start(args[0]->getInt()),
+		end(args[1]->getInt()),
+		size(vec.size());
 	bool reverse = (start > end);
 
 	while ((reverse ? (end <= start) : (start <= end))) {
@@ -235,7 +234,7 @@ CLEVER_METHOD(ArrayType::range)
 	result->setObj(this, allocData(&ran));
 }
 
-// Array Array::each(function)
+// Array Array::each(Function callback)
 // Calls function once for each element in the array, passing the element as the only parameter to function
 // The return values from function are returned in the same order as the array
 CLEVER_METHOD(ArrayType::each)
@@ -258,12 +257,10 @@ CLEVER_METHOD(ArrayType::each)
 
 	result->setObj(this, allocData(&results));
 
-	for (size_t i = 0, j = results.size(); i < j; ++i) {
-		results[i]->delRef();
-	}
+	std::for_each(results.begin(), results.end(), clever_delref);
 }
 
-// mixed Array.erase(int position)
+// mixed Array.erase(Int position)
 // Removes from this array the element at position, returning the value
 CLEVER_METHOD(ArrayType::erase)
 {
