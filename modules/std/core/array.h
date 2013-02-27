@@ -10,17 +10,18 @@
 
 #include <iostream>
 #include <algorithm>
-#include "core/cstring.h"
-#include "core/value.h"
+#include <vector>
 #include "types/type.h"
 
 namespace clever {
+
+class Value;
 
 class ArrayObject : public TypeObject {
 public:
 	ArrayObject() {}
 
-	ArrayObject(const std::vector<Value*>& vec)
+	explicit ArrayObject(const std::vector<Value*>& vec)
 		: m_data(vec) {}
 
 	~ArrayObject() {
@@ -41,7 +42,7 @@ public:
 
 	~ArrayType() {}
 
-	virtual void init();
+	virtual void init(CLEVER_TYPE_INIT_ARGS);
 	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
 	virtual void dump(TypeObject*, std::ostream&) const;
 

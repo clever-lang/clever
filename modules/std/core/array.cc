@@ -107,13 +107,14 @@ CLEVER_METHOD(ArrayType::at)
 
 	ValueVector& arr = CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS())->getData();
 
-	if (args[0]->getInt() < 0
-		|| arr.size() <= size_t(args[0]->getInt())) {
+	long num = args[0]->getInt();
+
+	if (num < 0 || arr.size() <= size_t(num)) {
 		result->setNull();
 		return;
 	}
 
-	result->copy(arr.at(args[0]->getInt()));
+	result->copy(arr.at(num));
 }
 
 // void Array::reserve(Int size)
@@ -212,9 +213,9 @@ CLEVER_METHOD(ArrayType::range)
 	}
 
 	ValueVector ran;
-	ValueVector::size_type start(args[0]->getInt()),
-		end(args[1]->getInt()),
-		size(vec.size());
+	ValueVector::size_type start = args[0]->getInt(),
+		end = args[1]->getInt(),
+		size = vec.size();
 	bool reverse = (start > end);
 
 	while ((reverse ? (end <= start) : (start <= end))) {
@@ -274,8 +275,8 @@ CLEVER_METHOD(ArrayType::erase)
 		return;
 	}
 
-	long num(args[0]->getInt());
-	size_t length(vec.size());
+	long num = args[0]->getInt();
+	size_t length = vec.size();
 
 	if (num >= 0 && size_t(num) < length) {
 		result->copy(vec[num]);
