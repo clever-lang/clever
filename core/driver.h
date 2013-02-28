@@ -20,6 +20,9 @@ class ASTNode;
 
 namespace clever {
 
+extern int* g_clever_argc;
+extern char*** g_clever_argv;
+
 class ScannerState;
 
 // Lexer prototype
@@ -103,8 +106,7 @@ private:
 /// Interpreter
 class Interpreter : public Driver {
 public:
-	Interpreter(int argc, char*** argv)
-		: Driver() {}
+	Interpreter(int*, char***);
 
 #ifdef CLEVER_DEBUG
 	void setDebug() { m_dump_opcode = true; }

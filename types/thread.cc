@@ -105,8 +105,8 @@ CLEVER_METHOD(ThreadType::run)
 		thread->vm_handler->copy(m_vm, true);
 		thread->vm_handler->setChild();
 
-		Environment* tenv = tdata->getEnvironment()->activate(m_vm->getCallStack().top());
-		thread->vm_handler->getCallStack().push(tenv);
+		Environment* tenv = tdata->getEnvironment()->activate(m_vm->getCallStack().top().env);
+		thread->vm_handler->getCallStack().push(CallStackEntry(tenv));
 
 		m_thread_pool[i] = thread;
 

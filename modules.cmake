@@ -15,8 +15,11 @@ clever_add_module(std_rpc        OFF "enable the rpc module"        "")
 clever_add_module(std_net        ON  "enable the net module"        "")
 clever_add_module(std_unicode    ON  "enable the unicode module"    "")
 clever_add_module(std_fcgi       OFF "enable the fcgi module"       "")
+clever_add_module(std_events     ON "enable the event module"      "")
+
 clever_add_module(web_request    OFF "enable the request module"    "")
 clever_add_module(web_session    OFF "enable the session module"    "")
+
 clever_add_module(db_mysql       ON  "enable the mysql module"      "")
 clever_add_module(db_sqlite3     ON  "enable the sqlite3 module"    "")
 
@@ -52,6 +55,18 @@ if (MOD_STD_CONCURRENT)
 endif (MOD_STD_CONCURRENT)
 
 clever_module_msg(std_concurrent "${MOD_STD_CONCURRENT}")
+
+# std.events
+if (MOD_STD_EVENTS)
+	if (CONCURRENCY_FOUND)
+		add_definitions(-DHAVE_MOD_STD_EVENTS)
+	else (CONCURRENCY_FOUND)
+		clever_module_msg(std_events, "Posix Threads are not present on this system")
+		set(MOD_STD_EVENTS OFF)
+	endif (CONCURRENCY_FOUND)
+endif (MOD_STD_EVENTS)
+
+clever_module_msg(std_events "${MOD_STD_EVENTS}")
 
 # std.regex
 if (MOD_STD_REGEX)

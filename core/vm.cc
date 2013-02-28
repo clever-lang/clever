@@ -58,15 +58,40 @@ void VM::error(const location& loc, const char* format, ...)
 	CLEVER_EXIT_FATAL();
 }
 
+/// Dumps the current stack trace
+void VM::dumpStackTrace(std::ostringstream& out)
+{
+	if (m_call_stack.empty()) {
+		return;
+	}
+
+	out << std::endl << "Stack trace:" << std::endl;
+
+	do {
+		const CallStackEntry& entry = m_call_stack.top();
+
+		if (entry.loc) {
+			if (entry.loc->begin.filename) {
+				out << "# " << *entry.loc->begin.filename << ":";
+			} else {
+				out << "# <command line>:";
+			}
+			out << entry.loc->begin.line << std::endl;
+		}
+
+		m_call_stack.pop();
+	} while (!m_call_stack.empty());
+}
+
 /// Fetchs a Value ptr according to the operand type
 CLEVER_FORCE_INLINE Value* VM::getValue(const Operand& operand) const
 {
 	const Environment* source;
 
 	switch (operand.op_type) {
-		case FETCH_CONST: source = m_const_env;                      break;
-		case FETCH_VAR:   source = m_call_stack.top();               break;
-		case FETCH_TMP:   source = m_call_stack.top()->getTempEnv(); break;
+		case FETCH_CONST: source = m_const_env;                          break;
+		case FETCH_VAR:   source = m_call_stack.top().env;               break;
+		case FETCH_TMP:   source = m_call_stack.top().env->getTempEnv(); break;
 		default:  	      return NULL;
 	}
 	clever_assert_not_null(source);
@@ -78,7 +103,7 @@ CLEVER_FORCE_INLINE Value* VM::getValue(const Operand& operand) const
 CLEVER_FORCE_INLINE Value* VM::setTempValue(const Operand& operand,
 	Value* value) const
 {
-	Environment* source = m_call_stack.top()->getTempEnv();
+	Environment* source = m_call_stack.top().env->getTempEnv();
 	Value* current = source->getValue(operand.voffset);
 
 	clever_delref(current);
@@ -187,7 +212,7 @@ CLEVER_FORCE_INLINE void VM::prepareCall(const Function* func, Environment* env)
 	fenv->setRetAddr(m_pc + 1);
 	fenv->setRetVal(getValue(OPCODE.result));
 
-	m_call_stack.push(fenv);
+	m_call_stack.push(CallStackEntry(fenv, &OPCODE.loc));
 
 	if (m_call_args.size() < func->getNumRequiredArgs()
 		|| (m_call_args.size() > func->getNumArgs()
@@ -228,7 +253,7 @@ Value* VM::runFunction(const Function* func, std::vector<Value*>* args)
 		fenv->setRetVal(result);
 		fenv->setRetAddr(m_inst.size()-1);
 
-		m_call_stack.push(fenv);
+		m_call_stack.push(CallStackEntry(fenv, &OPCODE.loc));
 		m_call_args.clear();
 
 		_param_binding(func, fenv, args);
@@ -281,6 +306,12 @@ CLEVER_FORCE_INLINE void VM::binOp(const IR& op)
 			break;
 		case OP_BW_XOR:
 			type->bw_xor(getValue(op.result), lhs, rhs, this, &m_exception);
+			break;
+		case OP_BW_RS:
+			type->bw_rs(getValue(op.result), lhs, rhs, this, &m_exception);
+			break;
+		case OP_BW_LS:
+			type->bw_ls(getValue(op.result), lhs, rhs, this, &m_exception);
 			break;
 		// Unary
 		case OP_NOT:
@@ -335,14 +366,14 @@ void VM::run()
 {
 	getMutex()->lock();
 	if (m_call_stack.empty()) {
-		m_call_stack.push(m_global_env);
+		m_call_stack.push(CallStackEntry(m_global_env));
 	}
 	getMutex()->unlock();
 
 	OPCODES;
 	OP(OP_RET):
 	if (EXPECTED(!m_call_stack.empty())) {
-		Environment* env = m_call_stack.top();
+		Environment* env = m_call_stack.top().env;
 		size_t ret_addr = env->getRetAddr();
 
 		if (EXPECTED(OPCODE.op1.op_type != UNUSED)) {
@@ -355,16 +386,16 @@ void VM::run()
 				if (func->isUserDefined()) {
 					Function* closure = func->getClosure();
 
-					m_call_stack.top()->getRetVal()->setObj(CLEVER_FUNC_TYPE, closure);
+					m_call_stack.top().env->getRetVal()->setObj(CLEVER_FUNC_TYPE, closure);
 
 					closure->setEnvironment(
-						func->getEnvironment()->activate(m_call_stack.top()));
+						func->getEnvironment()->activate(m_call_stack.top().env));
 
 					goto out;
 				}
 			}
 
-			m_call_stack.top()->getRetVal()->copy(val);
+			m_call_stack.top().env->getRetVal()->copy(val);
 		}
 out:
 		clever_delref(env);
@@ -385,7 +416,9 @@ out:
 		// const variable declaration).
 		if (EXPECTED(var->isAssignable())) {
 			var->deepCopy(value);
-			getValue(OPCODE.result)->copy(value);
+			if (UNEXPECTED(OPCODE.result.op_type != UNUSED)) {
+				getValue(OPCODE.result)->copy(value);
+			}
 		} else {
 			// TODO(muriloadriano): improve this message to show the symbol
 			// name and the line to the user.
@@ -475,7 +508,7 @@ out:
 		getMutex()->lock();
 
 		if (EXPECTED(!m_call_stack.empty())) {
-			clever_delref(m_call_stack.top());
+			clever_delref(m_call_stack.top().env);
 			m_call_stack.pop();
 		}
 
@@ -486,7 +519,7 @@ out:
 
 	OP(OP_LEAVE):
 	{
-		Environment* env = m_call_stack.top();
+		Environment* env = m_call_stack.top().env;
 		size_t ret_addr = env->getRetAddr();
 
 		clever_delref(env);
@@ -686,7 +719,7 @@ out:
 		const Value* fval = callee->getObj()->getMember(method->getStr());
 
 		if (UNEXPECTED(fval == NULL || !fval->isFunction())) {
-			error(OPCODE.loc, "Member`%T::%S' not found or not callable!",
+			error(OPCODE.loc, "Member `%T::%S' not found or not callable!",
 				type, method->getStr());
 		}
 
@@ -876,9 +909,14 @@ throw_exception:
 	END_OPCODES;
 
 exit_exception:
-	clever_fatal("Fatal error: Unhandled exception!\nMessage: %v",
-		m_exception.getException());
+	{
+		std::ostringstream dump;
 
+		dumpStackTrace(dump);
+
+		clever_fatal("Fatal error: Unhandled exception!\nMessage: %v%s",
+			m_exception.getException(), dump.str().c_str());
+	}
 exit:
 	std::for_each(m_obj_store.begin(), m_obj_store.end(), clever_delref);
 }

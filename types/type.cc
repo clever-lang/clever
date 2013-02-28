@@ -260,12 +260,12 @@ void Type::decrement(Value* value, const VM* vm, CException* exception) const
 
 void Type::setConstructor(MethodPtr method)
 {
-	m_ctor = addMethod(new Function(getName(), method));
+	m_ctor = addMethod(new Function("Constructor#" + getName(), method));
 }
 
 void Type::setDestructor(MethodPtr method)
 {
-	m_dtor = addMethod(new Function(getName(), method));
+	m_dtor = addMethod(new Function("Destructor#" + getName(), method));
 }
 
 } // clever

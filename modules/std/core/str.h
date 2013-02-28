@@ -44,7 +44,7 @@ public:
 
 	~StrType() {}
 
-	void init();
+	void init(CLEVER_TYPE_INIT_ARGS);
 	void dump(TypeObject*, std::ostream&) const;
 
 	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const { return NULL; }
@@ -62,6 +62,9 @@ public:
 	CLEVER_METHOD(endsWith);
 	CLEVER_METHOD(charAt);
 	CLEVER_METHOD(split);
+	CLEVER_METHOD(toUpper);
+	CLEVER_METHOD(toLower);
+	CLEVER_METHOD(replace);
 private:
 	DISALLOW_COPY_AND_ASSIGN(StrType);
 };

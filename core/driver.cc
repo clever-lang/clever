@@ -16,6 +16,15 @@
 
 namespace clever {
 
+int* g_clever_argc;
+char*** g_clever_argv;
+
+Interpreter::Interpreter(int* argc, char*** argv)
+{
+	g_clever_argc = argc;
+	g_clever_argv = argv;
+}
+
 /// Executes the script
 void Interpreter::execute(bool interactive)
 {

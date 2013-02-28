@@ -124,16 +124,15 @@ CLEVER_METHOD(SQLite3Type::query)
 			return;
 	}
 
-
 	SQLite3Result* res = new SQLite3Result(stmt);
 
 	conn->results.push_back(res);
 	clever_addref(res);
 
-	result->setObj(m_module->getResultType(), res);
+	result->setObj(result_type, res);
 }
 
-// SQLite::getLastId()
+// SQLite3::getLastId()
 CLEVER_METHOD(SQLite3Type::getLastId)
 {
 	if (!clever_check_no_args()) {
@@ -145,7 +144,35 @@ CLEVER_METHOD(SQLite3Type::getLastId)
 	result->setInt(sqlite3_last_insert_rowid(conn->handle));
 }
 
-// SQLite::close()
+// SQLite3::prepare(String statement)
+CLEVER_METHOD(SQLite3Type::prepare)
+{
+	if (!clever_check_args("s")) {
+		return;
+	}
+
+	SQLite3Conn* conn = CLEVER_GET_OBJECT(SQLite3Conn*, CLEVER_THIS());
+	sqlite3_stmt* stmt;
+
+	if (sqlite3_prepare_v2(conn->handle,
+		args[0]->getStr()->c_str(),
+		args[0]->getStr()->size(),
+		&stmt,
+		NULL) != SQLITE_OK) {
+		clever_throw("An error occurred when preparing query: %s",
+			sqlite3_errmsg(conn->handle));
+		return;
+	}
+
+	SQLite3Stmt* stmt_obj = new SQLite3Stmt(stmt, conn);
+
+	conn->results.push_back(stmt_obj);
+	clever_addref(stmt_obj);
+
+	result->setObj(stmt_type, stmt_obj);
+}
+
+// SQLite3::close()
 CLEVER_METHOD(SQLite3Type::close)
 {
 	if (!clever_check_no_args()) {
@@ -155,6 +182,79 @@ CLEVER_METHOD(SQLite3Type::close)
 	SQLite3Conn* conn = CLEVER_GET_OBJECT(SQLite3Conn*, CLEVER_THIS());
 
 	result->setBool(conn->close() == SQLITE_OK);
+}
+
+// SQLite3Stmt::bindValue(Int num, Objet value)
+CLEVER_METHOD(SQLite3TypeStmt::bindValue)
+{
+	if (!clever_check_args("i.")) {
+		return;
+	}
+
+	SQLite3Stmt* stmt = CLEVER_GET_OBJECT(SQLite3Stmt*, CLEVER_THIS());
+
+	std::stringstream ss;
+
+	ss << ":" << args[0]->getInt();
+
+	int nparam = sqlite3_bind_parameter_index(stmt->stmt, ss.str().c_str());
+
+	stmt->bound_params.push_back(BoundParamPair(nparam, args[1]));
+
+	clever_addref(args[1]);
+}
+
+// SQLite3Stmt::execute()
+CLEVER_METHOD(SQLite3TypeStmt::execute)
+{
+	if (!clever_check_no_args()) {
+		return;
+	}
+
+	SQLite3Stmt* stmt = CLEVER_GET_OBJECT(SQLite3Stmt*, CLEVER_THIS());
+
+	std::vector<BoundParamPair>::const_iterator it(stmt->bound_params.begin()),
+		end(stmt->bound_params.end());
+
+	for (; it != end; ++it) {
+		if (it->second->isInt()) {
+			sqlite3_bind_int64(stmt->stmt, it->first, it->second->getInt());
+		} else if (it->second->isStr()) {
+			sqlite3_bind_text(stmt->stmt, it->first,
+				it->second->getStr()->c_str(),
+				it->second->getStr()->size(), SQLITE_STATIC);
+		} else if (it->second->isDouble()) {
+			sqlite3_bind_double(stmt->stmt, it->first, it->second->getDouble());
+		} else if (it->second->isNull()) {
+			sqlite3_bind_null(stmt->stmt, it->first);
+		} else {
+			clever_throw("Unknown parameter type `%T'",
+				it->second->getType());
+			return;
+		}
+	}
+
+	switch (sqlite3_step(stmt->stmt)) {
+		case SQLITE_ROW:
+		case SQLITE_DONE:
+			{
+				sqlite3_reset(stmt->stmt);
+				SQLite3Result* res = new SQLite3Result(stmt->stmt);
+
+				stmt->conn->results.push_back(res);
+				clever_addref(stmt);
+				clever_addref(res);
+
+				stmt->clear();
+
+				result->setObj(getParentType()->getResultType(), res);
+			}
+			break;
+		default:
+			sqlite3_reset(stmt->stmt);
+			result->setBool(false);
+			return;
+	}
 }
 
 // SQLite3Result::fetch()
@@ -201,6 +301,7 @@ CLEVER_TYPE_INIT(SQLite3Type::init)
 
 	addMethod(new Function("exec",      (MethodPtr)&SQLite3Type::exec));
 	addMethod(new Function("query",     (MethodPtr)&SQLite3Type::query));
+	addMethod(new Function("prepare",   (MethodPtr)&SQLite3Type::prepare));
 	addMethod(new Function("getLastId", (MethodPtr)&SQLite3Type::getLastId));
 	addMethod(new Function("close",     (MethodPtr)&SQLite3Type::close));
 }
@@ -208,6 +309,8 @@ CLEVER_TYPE_INIT(SQLite3Type::init)
 // SQLite3Stmt type initialization
 CLEVER_TYPE_INIT(SQLite3TypeStmt::init)
 {
+	addMethod(new Function("bindValue", (MethodPtr)&SQLite3TypeStmt::bindValue));
+	addMethod(new Function("execute",   (MethodPtr)&SQLite3TypeStmt::execute));
 }
 
 // SQLite3Stmt type initialization

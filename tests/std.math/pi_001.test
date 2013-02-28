@@ -1,0 +1,7 @@
+Testing module constant
+==CODE==
+import std.*;
+
+io:println(math:PI);
+==RESULT==
+3\.14159

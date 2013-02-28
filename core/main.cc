@@ -53,7 +53,7 @@ int main(int argc, char **argv)
 {
 	//std::ios::sync_with_stdio(false);
 
-	clever::Interpreter clever(argc, &argv);
+	clever::Interpreter clever(&argc, &argv);
 
 	if (argc == 1) {
 		std::cout << "Clever Programming Language" << std::endl;

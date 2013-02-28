@@ -5,3 +5,5 @@ throw "ae";
 ==RESULT==
 Fatal error: Unhandled exception!
 Message: ae
+Stack trace:
+

@@ -113,8 +113,11 @@ void Resolver::visit(FunctionDecl* node)
 		name = CSTRING(buf.str());
 
 		node->setIdent(new Ident(name, node->getLocation()));
-	} else if (node->hasType()) {
-		name = CSTRING("_"+*node->getType()->getName());
+	} else if (node->isCtor()) {
+		name = CSTRING("Constructo#" + *node->getType()->getName());
+		node->setType(new Type(name, node->getLocation()));
+	} else if (node->isDtor()) {
+		name = CSTRING("Destructor#" + *node->getType()->getName());
 		node->setType(new Type(name, node->getLocation()));
 	} else {
 		name = node->getIdent()->getName();
@@ -126,7 +129,6 @@ void Resolver::visit(FunctionDecl* node)
 	}
 	clever_assert_not_null(name);
 
-
 	if (m_scope->getLocal(name)) {
 		Compiler::errorf(node->getLocation(),
 			"Cannot redeclare function `%S'.", name);
@@ -135,11 +137,10 @@ void Resolver::visit(FunctionDecl* node)
 	Function* func = static_cast<Function*>(CLEVER_FUNC_TYPE->allocData(NULL));
 
 	func->setUserDefined();
+	func->setName(*name);
 
 	Value* fval = new Value;
 	fval->setObj(CLEVER_FUNC_TYPE, func);
-
-	func->setName(*name);
 
 	m_scope->pushValue(name, fval)->voffset = m_stack.top()->pushValue(fval);
 
@@ -149,14 +150,23 @@ void Resolver::visit(FunctionDecl* node)
 		node->getType()->accept(*this);
 	}
 
-	// Check if it is a method
 	if (m_class) {
-		// Check if it's the constructor
-		if (node->hasType()) {
+		// Class member
+		if (node->isCtor()) {
 			m_class->setUserConstructor(func);
+		} else if (node->isDtor()) {
+			m_class->setUserDestructor(func);
 		}
 		m_class->addMember(name, fval);
 		fval->addRef();
+
+		switch (node->getVisibility()) {
+			case ast::PUBLIC:  func->setPublic();  break;
+			case ast::PRIVATE: func->setPrivate(); break;
+		}
+	} else {
+		// Regular function
+		func->setPublic();
 	}
 
 	m_scope = m_scope->enter();
@@ -323,9 +333,6 @@ void Resolver::visit(AttrDecl* node)
 
 	Value* val = new Value();
 	val->setConst(node->isConst());
-
-//	m_scope->pushValue(name, val)->voffset = m_stack.top()->pushValue(val);
-//	node->getIdent()->accept(*this);
 
 	if (node->hasValue()) {
 		node->getValue()->accept(*this);

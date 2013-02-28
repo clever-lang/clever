@@ -32,7 +32,6 @@ void Value::deepCopy(const Value* value)
 	TypeObject* val = value->isNull() ? NULL : value->getObj()->clone();
 
 	if (val) {
-		cleanUp();
 		setObj(value->getType(),  val);
 	} else {
 		copy(value);
@@ -44,7 +43,6 @@ void Value::setInt(long n)
 	if (m_data && m_data->refCount() == 1 && isInt()) {
 		static_cast<IntObject*>(m_data)->value = n;
 	} else {
-		cleanUp();
 		setObj(CLEVER_INT_TYPE, new IntObject(n));
 	}
 }
@@ -59,7 +57,6 @@ void Value::setDouble(double n)
 	if (m_data && m_data->refCount() == 1 && isDouble()) {
 		static_cast<DoubleObject*>(m_data)->value = n;
 	} else {
-		cleanUp();
 		setObj(CLEVER_DOUBLE_TYPE, new DoubleObject(n));
 	}
 }
@@ -71,13 +68,11 @@ double Value::getDouble() const
 
 void Value::setStr(const CString* str)
 {
-	cleanUp();
 	setObj(CLEVER_STR_TYPE, new StrObject(str));
 }
 
 void Value::setStr(StrObject* str)
 {
-	cleanUp();
 	setObj(CLEVER_STR_TYPE, str);
 }
 
@@ -91,7 +86,6 @@ void Value::setBool(bool n)
 	if (m_data && m_data->refCount() == 1 && isBool()) {
 		static_cast<BoolObject*>(m_data)->value = n;
 	} else {
-		cleanUp();
 		setObj(CLEVER_BOOL_TYPE, new BoolObject(n));
 	}
 }

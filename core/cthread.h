@@ -56,6 +56,8 @@ public:
 
 	void create(ThreadFunc, void*);
 
+	bool isRunning() { return m_is_running; }
+
 	int wait();
 
 private:

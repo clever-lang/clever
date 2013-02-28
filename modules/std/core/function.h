@@ -34,11 +34,12 @@ class Function : public TypeObject {
 public:
 	enum FunctionFlags {
 		FF_USER     = 0x00,
-		FF_INTERNAL = 0x01,
-		FF_STATIC   = 0x02,
-		FF_VARIADIC = 0x04,
-		FF_CLOSURE  = 0x08,
-
+		FF_INTERNAL = 1<<0,
+		FF_STATIC   = 1<<1,
+		FF_VARIADIC = 1<<2,
+		FF_CLOSURE  = 1<<3,
+		FF_PUBLIC   = 1<<4,
+		FF_PRIVATE  = 1<<5,
 		FF_INVALID  = 0xFF
 	};
 
@@ -47,17 +48,17 @@ public:
 		  m_environment(NULL) {}
 
 	Function(const std::string& name, FunctionPtr ptr)
-		: m_name(name), m_num_rargs(0), m_num_args(0), m_flags(FF_INTERNAL),
+		: m_name(name), m_num_rargs(0), m_num_args(0), m_flags(FF_INTERNAL|FF_PUBLIC),
 		  m_environment(NULL)
 		{ m_info.fptr = ptr; }
 
 	Function(const std::string& name, size_t addr)
-		: m_name(name), m_num_rargs(0), m_num_args(0), m_flags(FF_USER),
+		: m_name(name), m_num_rargs(0), m_num_args(0), m_flags(FF_USER|FF_PUBLIC),
 		  m_environment(NULL)
 		{ m_info.addr = addr; }
 
 	Function(const std::string& name, MethodPtr ptr)
-		: m_name(name), m_num_rargs(0), m_num_args(0), m_flags(FF_INTERNAL),
+		: m_name(name), m_num_rargs(0), m_num_args(0), m_flags(FF_INTERNAL|FF_PUBLIC),
 		  m_environment(NULL)
 		{ m_info.mptr = ptr; }
 
@@ -89,6 +90,12 @@ public:
 		}
 	}
 	bool isUserDefined() const { return !isInternal(); }
+
+	bool isPublic() const { return m_flags & FF_PUBLIC; }
+	bool isPrivate() const { return m_flags & FF_PRIVATE; }
+
+	void setPublic() { m_flags &= ~FF_PRIVATE; m_flags |= FF_PUBLIC; }
+	void setPrivate() { m_flags &= ~FF_PUBLIC; m_flags |= FF_PRIVATE; }
 
 	void setStatic() { m_flags |= FF_STATIC; }
 	bool isStatic() const { return m_flags & FF_STATIC; }

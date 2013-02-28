@@ -9,6 +9,9 @@
 #ifdef HAVE_MOD_STD_CONCURRENT
 #	include "modules/std/concurrent/module.h"
 #endif
+#ifdef HAVE_MOD_STD_EVENTS
+#	include "modules/std/events/events.h"
+#endif
 #ifdef HAVE_MOD_STD_SYS
 #	include "modules/std/sys/sys.h"
 #endif
