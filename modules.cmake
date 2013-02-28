@@ -58,12 +58,13 @@ clever_module_msg(std_concurrent "${MOD_STD_CONCURRENT}")
 
 # std.events
 if (MOD_STD_EVENTS)
-	if (CONCURRENCY_FOUND)
+	if (PTHREAD_FOUND)
 		add_definitions(-DHAVE_MOD_STD_EVENTS)
+		clever_use_lib(PTHREAD)
 	else (CONCURRENCY_FOUND)
 		clever_module_msg(std_events "Posix Threads are not present on this system")
 		set(MOD_STD_EVENTS OFF)
-	endif (CONCURRENCY_FOUND)
+	endif (PTHREAD_FOUND)
 endif (MOD_STD_EVENTS)
 
 clever_module_msg(std_events "${MOD_STD_EVENTS}")
