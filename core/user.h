@@ -9,7 +9,7 @@
 #define CLEVER_USER_H
 
 #include "core/module.h"
-#include "types/type.h"
+#include "core/type.h"
 #include "core/cstring.h"
 
 namespace clever {

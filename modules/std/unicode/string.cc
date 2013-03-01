@@ -5,7 +5,7 @@
  * This file is distributed under the MIT license. See LICENSE for details.
  */
 
-#include "types/type.h"
+#include "core/type.h"
 #include "modules/std/core/function.h"
 #include "modules/std/unicode/string.h"
 #include "unicode/ustream.h"

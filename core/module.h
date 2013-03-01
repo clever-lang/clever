@@ -14,7 +14,7 @@
 #include <tr1/unordered_map>
 #endif
 #include <string>
-#include "types/type.h"
+#include "core/type.h"
 #include "modules/std/core/function.h"
 
 #define CLEVER_MODULE_INIT(x) void x::init()

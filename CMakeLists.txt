@@ -168,9 +168,9 @@ set(CLEVER_SOURCES ${CLEVER_SOURCES}
 	modules/std/core/int.cc
 	modules/std/core/str.h
 	modules/std/core/str.cc
-	types/native_types.h
-	types/type.h
-	types/type.cc
+	core/native_types.h
+	core/type.h
+	core/type.cc
 	modules/std/core/function.h
 	types/thread.h
 	types/thread.cc

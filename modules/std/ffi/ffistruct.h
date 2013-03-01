@@ -14,7 +14,7 @@
 #include <map>
 #include <vector>
 #include "core/cstring.h"
-#include "types/type.h"
+#include "core/type.h"
 #include "core/module.h"
 
 #ifndef __APPLE__
@@ -77,7 +77,7 @@ public:
 	void addFunction(const CString& func_name, const ExtMemberType& args) {
 		m_func_map[func_name] = args;
 	}
-	
+
 	ExtMemberType* getArgs(const CString& func_name) {
 		return &m_func_map[func_name];
 	}

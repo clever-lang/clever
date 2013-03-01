@@ -7,7 +7,7 @@
 
 #include "core/compiler.h"
 #include "core/resolver.h"
-#include "types/native_types.h"
+#include "core/native_types.h"
 #include "core/module.h"
 #include "core/user.h"
 

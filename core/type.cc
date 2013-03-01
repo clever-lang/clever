@@ -7,11 +7,10 @@
 
 #include <algorithm>
 #include "core/clever.h"
-#include "types/type.h"
+#include "core/type.h"
 #include "core/value.h"
 #include "core/cexception.h"
-#include "modules/std/core/function.h"
-#include "types/native_types.h"
+#include "core/native_types.h"
 
 namespace clever {
 

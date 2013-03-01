@@ -14,7 +14,7 @@
 #include "core/location.hh"
 #include "core/user.h"
 #include "types/thread.h"
-#include "types/type.h"
+#include "core/type.h"
 #include "modules/std/core/function.h"
 #include "modules/std/core/array.h"
 

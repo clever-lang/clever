@@ -21,7 +21,7 @@
 #include "core/value.h"
 #include "modules/std/events/events.h"
 #include "modules/std/core/map.h"
-#include "types/type.h"
+#include "core/type.h"
 #include "core/vm.h"
 
 namespace clever { namespace modules { namespace std {

@@ -16,7 +16,7 @@
 #include <queue>
 
 #include "core/cstring.h"
-#include "types/type.h"
+#include "core/type.h"
 #include "core/module.h"
 #include "core/cthread.h"
 #include "core/vm.h"

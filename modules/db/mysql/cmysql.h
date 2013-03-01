@@ -14,7 +14,7 @@
 
 #include "core/cstring.h"
 #include "core/value.h"
-#include "types/type.h"
+#include "core/type.h"
 #include "modules/std/core/map.h"
 
 
