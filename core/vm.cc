@@ -202,13 +202,7 @@ static CLEVER_FORCE_INLINE void _param_binding(const Function* func,
 CLEVER_FORCE_INLINE void VM::prepareCall(const Function* func, Environment* env)
 {
 	getMutex()->lock();
-	Environment* fenv;
-
-	if (env) {
-		fenv = func->getEnvironment()->activate(env);
-	} else {
-		fenv = func->getEnvironment()->activate(func->getEnvironment()->getOuter());
-	}
+	Environment* fenv = func->getEnvironment()->activate(env);
 
 	fenv->setRetAddr(m_pc + 1);
 	fenv->setRetVal(getValue(OPCODE.result));
@@ -227,6 +221,7 @@ CLEVER_FORCE_INLINE void VM::prepareCall(const Function* func, Environment* env)
 	getMutex()->unlock();
 }
 
+// Creates a new instance for user objects
 CLEVER_FORCE_INLINE void VM::createInstance(const Type* type, Value* instance)
 {
 	if (!type->isUserDefined()) {
@@ -236,7 +231,7 @@ CLEVER_FORCE_INLINE void VM::createInstance(const Type* type, Value* instance)
 	const UserType* utype = static_cast<const UserType*>(type);
 	UserObject* uobj = static_cast<UserObject*>(instance->getObj());
 
-	uobj->setEnvironment(utype->getEnvironment()->activate(utype->getEnvironment()->getOuter()));
+	uobj->setEnvironment(utype->getEnvironment()->activate());
 	uobj->getEnvironment()->getValue(ValueOffset(0,0))->copy(instance);
 
 	m_obj_store.push_back(uobj->getEnvironment());
@@ -250,7 +245,7 @@ Value* VM::runFunction(const Function* func, std::vector<Value*>* args)
 	if (func->isInternal()) {
 		func->getFuncPtr()(result, *args, this, &m_exception);
 	} else {
-		Environment* fenv = func->getEnvironment()->activate(func->getEnvironment()->getOuter());
+		Environment* fenv = func->getEnvironment()->activate();
 		fenv->setRetVal(result);
 		fenv->setRetAddr(m_inst.size()-1);
 
@@ -325,6 +320,7 @@ CLEVER_FORCE_INLINE void VM::binOp(const IR& op)
 	}
 }
 
+/// Performs logical operation
 CLEVER_FORCE_INLINE void VM::logicOp(const IR& op)
 {
 	const Value* lhs = getValue(op.op1);
