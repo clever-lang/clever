@@ -19,7 +19,7 @@ clever_add_lib(PCRECPP
 	LIBS pcre pcrecpp
 	PKGS libpcrecpp)
 
-if (PCRECPP_FOUND)
+if(PCRECPP_FOUND)
 	add_definitions(-DHAVE_PCRECPP)
 endif()
 

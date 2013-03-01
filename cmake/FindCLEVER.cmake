@@ -33,7 +33,7 @@ macro(clever_module_path Name Var)
 
 	set(_mod_path "${_mod_var}_PATH")
 
-	if (args_PATH)
+	if(args_PATH)
 		clever_module_set_prop(${Name} PATH "${args_PATH}")
 	else()
 		string(REPLACE "." "/" ${_mod_path} "${Name}")
@@ -97,7 +97,7 @@ endmacro()
 macro(clever_disable_module Name)
 	clever_module_var(${Name} _mod_var)
 	set(${_mod_var} OFF)
-	if (ARG2)
+	if(ARG2)
 		clever_module_msg(${Name} "disabled (${ARG2})")
 	else()
 		clever_module_msg(${Name} "disabled")
@@ -114,17 +114,17 @@ macro(clever_module_check Name)
 	set(_mod_checked "${_mod_var}_CHECKED")
 
 	# check only once
-	if (NOT ${_mod_checked})
+	if(NOT ${_mod_checked})
 
-		if (NOT ${_mod_var})
+		if(NOT ${_mod_var})
 			clever_disable_module(${Name})
 		endif()
 
 		# check libs
 		set(_mod_libs "${_mod_var}_LIB_DEPENDS")
-		if (${_mod_var} AND ${_mod_libs})
-			foreach (_name ${${_mod_libs}})
-				if (NOT ${_name}_FOUND)
+		if(${_mod_var} AND ${_mod_libs})
+			foreach(_name ${${_mod_libs}})
+				if(NOT ${_name}_FOUND)
 					clever_disable_module(${Name} "${_name} not found")
 					break()
 				endif()
@@ -133,24 +133,24 @@ macro(clever_module_check Name)
 
 		# check modules
 		set(_mod_mods "${_mod_var}_MOD_DEPENDS")
-		if (${_mod_var} AND ${_mod_mods})
-			foreach (_name ${${_mod_mods}})
+		if(${_mod_var} AND ${_mod_mods})
+			foreach(_name ${${_mod_mods}})
 				clever_module_var(${_name} _depname)
 
-				if (NOT ${_depname}_CHECKED)
+				if(NOT ${_depname}_CHECKED)
 					clever_module_check(${${_depname}_NAME})
 				endif()
 
-				if (NOT ${_depname})
+				if(NOT ${_depname})
 					clever_disable_module(${Name} "${${_depname}_NAME} not found")
 					break()
 				endif()
 			endforeach()
 		endif()
 
-		if (${_mod_var})
+		if(${_mod_var})
 			# use the libs
-			foreach (_name ${${_mod_libs}})
+			foreach(_name ${${_mod_libs}})
 				clever_use_lib(${_name})
 			endforeach()
 
@@ -190,35 +190,35 @@ macro(clever_add_lib VarName)
 
 	set(msg_level STATUS)
 
-	if (args_REQUIRED)
+	if(args_REQUIRED)
 		set(msg_level FATAL_ERROR)
 	endif()
 
 	# automated checking with pkg-config
-	if (NOT ${_dir})
-		if (PKG_CONFIG_FOUND AND args_PKGS)
+	if(NOT ${_dir})
+		if(PKG_CONFIG_FOUND AND args_PKGS)
 			pkg_check_modules(${VarName} ${args_PKGS})
 		endif()
 	endif()
 	
 	# fallback to manual checking
-	if (NOT ${_found})
+	if(NOT ${_found})
 		set(_found_incs 1)
 		set(_found_libs 1)
 
 		# check includes
-		if (args_INCS)
-			foreach (_name ${args_INCS})
+		if(args_INCS)
+			foreach(_name ${args_INCS})
 				set(_opts NAMES "${_name}")
 				set(_ipath${VarName})
 
-				if (${_dir})
+				if(${_dir})
 					set(_opts ${_opts} PATHS "${${_dir}}/include" NO_DEFAULT_PATH)
 				endif()
 
 				find_path(_ipath${VarName} ${_opts})
 
-				if (_ipath${VarName})
+				if(_ipath${VarName})
 					list(APPEND ${VarName}_INCLUDE_DIRS "${_ipath${VarName}}")
 				else()
 					message(${msg_level} "Failed to find include file(s) `${_name}`.")
@@ -228,18 +228,18 @@ macro(clever_add_lib VarName)
 		endif()
 
 		# check libraries
-		if (_found_incs AND args_LIBS)
-			foreach (_name ${args_LIBS})
+		if(_found_incs AND args_LIBS)
+			foreach(_name ${args_LIBS})
 				set(_opts NAMES "${_name}")
 				set(_lib${VarName})
 
-				if (${_dir})
+				if(${_dir})
 					set(_opts ${_opts} PATHS "${${_dir}}/lib" NO_DEFAULT_PATH)
 				endif()
 
 				find_library(_lib${VarName} ${_opts})
 
-				if (_lib${VarName})
+				if(_lib${VarName})
 					#list(APPEND ${VarName}_LIBRARIES ${_lib})
 					list(APPEND ${VarName}_LIBRARIES "${_name}")
 					get_filename_component(_path "${_lib${VarName}}" PATH)
@@ -251,21 +251,21 @@ macro(clever_add_lib VarName)
 			endforeach()
 		endif()
 
-		if (_found_incs AND _found_libs)
+		if(_found_incs AND _found_libs)
 			set(${_found} 1)
 		endif()
 	endif()
 	
-	if (${_found})
-		if (${VarName}_INCLUDE_DIR AND NOT ${VarName}_INCLUDE_DIRS)
+	if(${_found})
+		if(${VarName}_INCLUDE_DIR AND NOT ${VarName}_INCLUDE_DIRS)
 			set(${VarName}_INCLUDE_DIRS ${${VarName}_INCLUDE_DIR})
 		endif()
 
-		if (NOT ${VarName}_INCLUDE_DIRS)
+		if(NOT ${VarName}_INCLUDE_DIRS)
 			set(${VarName}_INCLUDE_DIRS)
 		endif()
 		
-		if (NOT ${VarName}_LINK_DIRECTORIES)
+		if(NOT ${VarName}_LINK_DIRECTORIES)
 			set(${VarName}_LINK_DIRECTORIES)
 		else()
 		endif()

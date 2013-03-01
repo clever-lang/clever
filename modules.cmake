@@ -56,7 +56,7 @@ clever_new_module(db.sqlite3 ON
 	LIBS SQLITE3)
 
 # std.concurrent
-if (STD_CONCURRENT AND UNIX)
+if(STD_CONCURRENT AND UNIX)
 	list(APPEND STD_CONCURRENT_LIB_DEPENDS PTHREAD)
 	clever_module_check(std.concurrent)
 
@@ -66,27 +66,27 @@ endif()
 
 # std.ffi
 clever_module_check(std.ffi)
-if (STD_FFI)
+if(STD_FFI)
 	add_definitions(-pthread)
 	list(APPEND CLEVER_LIBRARIES dl)
 endif()
 
 # std.rpc
 clever_module_check(std.rpc)
-if (STD_RPC)
+if(STD_RPC)
 	add_definitions(-pthread)
 	list(APPEND CLEVER_LIBRARIES dl)
 endif()
 
 # std.net
 clever_module_check(std.net)
-if (STD_NET AND MSVC)
+if(STD_NET AND MSVC)
 	list(APPEND CLEVER_LIBRARIES ws2_32)
 endif()
 
 
 # check the remaining modules
-foreach (_modname ${CLEVER_AVAILABLE_MODULES})
+foreach(_modname ${CLEVER_AVAILABLE_MODULES})
 	clever_module_check(${_modname})
 endforeach()
 
