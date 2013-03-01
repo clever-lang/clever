@@ -17,9 +17,6 @@ clever_add_module(std_unicode    ON  "enable the unicode module"    "")
 clever_add_module(std_fcgi       OFF "enable the fcgi module"       "")
 clever_add_module(std_events     ON "enable the event module"      "")
 
-clever_add_module(web_request    OFF "enable the request module"    "")
-clever_add_module(web_session    OFF "enable the session module"    "")
-
 clever_add_module(db_mysql       ON  "enable the mysql module"      "")
 clever_add_module(db_sqlite3     ON  "enable the sqlite3 module"    "")
 
@@ -140,33 +137,6 @@ if (MOD_STD_RPC)
 endif (MOD_STD_RPC)
 
 clever_module_msg(std_rpc ${MOD_STD_RPC})
-
-
-# web.request
-if (MOD_WEB_REQUEST)
-	if (CGICC_FOUND)
-		add_definitions(-DHAVE_MOD_WEB_REQUEST)
-		clever_use_lib(CGICC)
-	else (CGICC_FOUND)
-		clever_module_msg(web_request "libcgicc not found. disabling.")
-		set(MOD_WEB_REQUEST OFF)
-	endif (CGICC_FOUND)
-endif (MOD_WEB_REQUEST)
-
-clever_module_msg(web_request ${MOD_WEB_REQUEST})
-
-# web.session
-if (MOD_WEB_SESSION)
-	if (CGICC_FOUND)
-		add_definitions(-DHAVE_MOD_WEB_SESSION)
-		clever_use_lib(CGICC)
-	else (CGICC_FOUND)
-		clever_module_msg(web_session "libcgicc not found. disabling.")
-		set(MOD_WEB_SESSION OFF)
-	endif (CGICC_FOUND)
-endif (MOD_WEB_SESSION)
-
-clever_module_msg(web_session ${MOD_WEB_SESSION})
 
 # std.net
 if (MOD_STD_NET)
