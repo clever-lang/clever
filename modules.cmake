@@ -62,31 +62,31 @@ if (STD_CONCURRENT AND UNIX)
 
 	add_definitions(-pthread)
 	list(APPEND CLEVER_LIBRARIES dl)
-endif (STD_CONCURRENT AND UNIX)
+endif()
 
 # std.ffi
 clever_module_check(std.ffi)
 if (STD_FFI)
 	add_definitions(-pthread)
 	list(APPEND CLEVER_LIBRARIES dl)
-endif (STD_FFI)
+endif()
 
 # std.rpc
 clever_module_check(std.rpc)
 if (STD_RPC)
 	add_definitions(-pthread)
 	list(APPEND CLEVER_LIBRARIES dl)
-endif (STD_RPC)
+endif()
 
 # std.net
 clever_module_check(std.net)
 if (STD_NET AND MSVC)
 	list(APPEND CLEVER_LIBRARIES ws2_32)
-endif (STD_NET AND MSVC)
+endif()
 
 
 # check the remaining modules
 foreach (_modname ${CLEVER_AVAILABLE_MODULES})
 	clever_module_check(${_modname})
-endforeach (_modname ${CLEVER_AVAILABLE_MODULES})
+endforeach()
 

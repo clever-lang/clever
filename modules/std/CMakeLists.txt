@@ -3,75 +3,75 @@ set(CLEVER_MODULES)
 
 #if (STD_RPC)
 #	list(APPEND CLEVER_MODULES rpc)
-#endif (STD_RPC)
+#endif()
 
 if (STD_FFI)
 	list(APPEND CLEVER_MODULES ffi)
-endif (STD_FFI)
+endif()
 
 if (STD_REGEX)
 	list(APPEND CLEVER_MODULES regex)
-endif (STD_REGEX)
+endif()
 
 if (STD_CLEVER)
 	list(APPEND CLEVER_MODULES clever)
-endif (STD_CLEVER)
+endif()
 
 if (STD_CONCURRENT)
 	list(APPEND CLEVER_MODULES concurrent)
-endif (STD_CONCURRENT)
+endif()
 
 if (STD_EVENTS)
 	list(APPEND CLEVER_MODULES events)
-endif (STD_EVENTS)
+endif()
 
 if (STD_DATE)
 	list(APPEND CLEVER_MODULES date)
-endif (STD_DATE)
+endif()
 
 if (STD_FILE)
 	list(APPEND CLEVER_MODULES file)
-endif (STD_FILE)
+endif()
 
 if (STD_IO)
 	list(APPEND CLEVER_MODULES io)
-endif (STD_IO)
+endif()
 
 if (STD_UNICODE)
 	list(APPEND CLEVER_MODULES unicode)
-endif (STD_UNICODE)
+endif()
 
 if (STD_FCGI)
 	list(APPEND CLEVER_MODULES fcgi)
-endif (STD_FCGI)
+endif()
 
 if (STD_MATH)
 	list(APPEND CLEVER_MODULES math)
-endif (STD_MATH)
+endif()
 
 if (STD_NET)
 	list(APPEND CLEVER_MODULES net)
-endif (STD_NET)
+endif()
 
 if (STD_SYS)
 	list(APPEND CLEVER_MODULES sys)
-endif (STD_SYS)
+endif()
 
 if (STD_REFLECTION)
 	list(APPEND CLEVER_MODULES reflection)
-endif (STD_REFLECTION)
+endif()
 
 if (STD_CRYPTO)
 	list(APPEND CLEVER_MODULES crypto)
-endif (STD_CRYPTO)
+endif()
 
 if (STD_JSON)
 	list(APPEND CLEVER_MODULES json)
-endif (STD_JSON)
+endif()
 
 foreach (module ${CLEVER_MODULES})
 	add_subdirectory(${module})
-endforeach (module)
+endforeach()
 
 add_library(modules_std STATIC
 	std_pkg.cc
@@ -80,6 +80,6 @@ add_library(modules_std STATIC
 foreach (module ${CLEVER_MODULES})
 	add_dependencies(modules_std "modules_std_${module}")
 	target_link_libraries(modules_std "modules_std_${module}")
-endforeach (module)
+endforeach()
 
 
