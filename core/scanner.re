@@ -147,7 +147,7 @@ next_token:
 		SKIP();
 	}
 
-	<ST_MULTILINE_COMMENT>[^*]+ { SKIP(); }
+	<ST_MULTILINE_COMMENT>[^*\n]+ { SKIP(); }
 
 	<ST_MULTILINE_COMMENT>"*/" {
 		YYSETCONDITION(INITIAL);
