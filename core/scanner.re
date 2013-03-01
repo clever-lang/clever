@@ -10,7 +10,7 @@
 #include "core/parser.hh"
 #include "core/ast.h"
 #include "core/value.h"
-#include "types/native_types.h"
+#include "core/native_types.h"
 
 namespace clever {
 

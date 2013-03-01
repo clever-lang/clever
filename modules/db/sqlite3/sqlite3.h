@@ -11,7 +11,7 @@
 #include <utility>
 #include <string>
 #include <sqlite3.h>
-#include "types/type.h"
+#include "core/type.h"
 #include "core/module.h"
 #include "modules/db/sqlite3/module.h"
 

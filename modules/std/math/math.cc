@@ -8,7 +8,7 @@
 #include <cmath>
 #include <cstdlib>
 #include "core/value.h"
-#include "types/native_types.h"
+#include "core/native_types.h"
 #include "core/modmanager.h"
 #include "modules/std/math/math.h"
 

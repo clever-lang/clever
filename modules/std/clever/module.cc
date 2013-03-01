@@ -1,3 +1,10 @@
+/**
+ * Clever programming language
+ * Copyright (c) Clever Team
+ *
+ * This file is distributed under the MIT license. See LICENSE for details.
+ */
+
 #include "core/clever.h"
 #include "modules/std/clever/module.h"
 #include "modules/std/clever/type.h"

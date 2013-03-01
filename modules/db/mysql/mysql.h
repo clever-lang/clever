@@ -11,7 +11,7 @@
 #include <iostream>
 #include "core/cstring.h"
 #include "core/value.h"
-#include "types/type.h"
+#include "core/type.h"
 #include "modules/db/mysql/cmysql.h"
 
 namespace clever { namespace modules { namespace db {

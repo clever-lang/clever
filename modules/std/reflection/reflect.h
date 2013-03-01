@@ -9,7 +9,7 @@
 #define CLEVER_REFLECT_H
 
 #include <ostream>
-#include "types/type.h"
+#include "core/type.h"
 
 namespace clever { namespace modules { namespace std { namespace reflection {
 

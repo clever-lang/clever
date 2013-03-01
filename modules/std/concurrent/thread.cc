@@ -7,10 +7,10 @@
 
 #include "core/clever.h"
 #include "core/value.h"
+#include "core/type.h"
 #include "modules/std/concurrent/module.h"
 #include "modules/std/concurrent/thread.h"
 #include "modules/std/core/function.h"
-#include "types/type.h"
 
 #ifndef CLEVER_THREADS_BEBUG
 #undef clever_debug

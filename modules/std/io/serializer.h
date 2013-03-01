@@ -1,7 +1,14 @@
+/**
+ * Clever programming language
+ * Copyright (c) Clever Team
+ *
+ * This file is distributed under the MIT license. See LICENSE for details.
+ */
+
 #ifndef CLEVER_MOD_IO_SERIALIZER
 #define CLEVER_MOD_IO_SERIALIZER
 
-#include "types/type.h"
+#include "core/type.h"
 
 namespace clever { namespace modules { namespace std {
 

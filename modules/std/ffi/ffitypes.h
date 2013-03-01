@@ -9,7 +9,7 @@
 #define CLEVER_STD_FFITYPES_H
 
 #include <string>
-#include "types/type.h"
+#include "core/type.h"
 
 namespace clever { namespace modules { namespace std {
 
@@ -54,7 +54,7 @@ public:
 	CLEVER_METHOD(addFunction);
 
 	static ExtStruct* getStruct(const CString& name);
-	
+
 	static ExtStructs m_structs;
 
 private:

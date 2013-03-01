@@ -11,7 +11,7 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
-#include "types/type.h"
+#include "core/type.h"
 
 namespace clever {
 

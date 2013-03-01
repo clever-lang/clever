@@ -9,7 +9,7 @@
 #define CLEVER_STD_REGEX_PCRE_H
 
 #include <pcrecpp.h>
-#include "types/type.h"
+#include "core/type.h"
 
 namespace clever { namespace modules { namespace std { namespace regex {
 

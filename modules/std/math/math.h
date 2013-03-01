@@ -9,7 +9,7 @@
 #define CLEVER_STD_MATH_H
 
 #include "core/module.h"
-#include "types/type.h"
+#include "core/type.h"
 
 namespace clever { namespace modules { namespace std {
 

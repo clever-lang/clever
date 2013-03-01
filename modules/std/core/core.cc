@@ -8,8 +8,8 @@
 #include "modules/std/core/core.h"
 #include "core/modmanager.h"
 #include "core/value.h"
-#include "types/native_types.h"
-#include "types/type.h"
+#include "core/native_types.h"
+#include "core/type.h"
 
 namespace clever {
 
