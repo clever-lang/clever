@@ -47,14 +47,6 @@ clever_new_module(std.events ON
 	DOC	"enable the event module"
 	MODS std.concurrent)
 
-clever_new_module(web.request OFF
-	DOC	"enable the request module"
-	LIBS CGICC)
-
-clever_new_module(web.session OFF
-	DOC	"enable the session module"
-	LIBS CGICC)
-
 clever_new_module(db.mysql ON 
 	DOC	"enable the mysql module"
 	LIBS MYSQLC)
@@ -63,9 +55,19 @@ clever_new_module(db.sqlite3 ON
 	DOC	"enable the sqlite3 module"
 	LIBS SQLITE3)
 
+# std.concurrent
+if (STD_CONCURRENT AND UNIX)
+	list(APPEND STD_CONCURRENT_LIB_DEPENDS PTHREAD)
+	clever_module_check(std.concurrent)
+
+	add_definitions(-pthread)
+	list(APPEND CLEVER_LIBRARIES dl)
+endif (STD_CONCURRENT AND UNIX)
+
 # std.ffi
 clever_module_check(std.ffi)
 if (STD_FFI)
+	add_definitions(-pthread)
 	list(APPEND CLEVER_LIBRARIES dl)
 endif (STD_FFI)
 

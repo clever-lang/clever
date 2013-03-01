@@ -94,10 +94,10 @@ public:
 	 * machine. Usually, this method will be called on a Function's initial
 	 * environment.
 	 *
-	 * @param outer the environment where the current instance is contained in
+	 * @param optional outer the environment where the current instance is contained in
 	 * @return an "activated" copy of the current environment
 	 */
-	Environment* activate(Environment*) const;
+	Environment* activate(Environment* = NULL) const;
 
 	size_t getRetAddr() const { return m_ret_addr; }
 	void setRetAddr(size_t ret_addr) { m_ret_addr = ret_addr; }
