@@ -11,12 +11,9 @@
 #include <stack>
 #include <vector>
 #include "core/ir.h"
-#include "core/codegen.h"
 #include "core/cthread.h"
 #include "core/cexception.h"
 #include "core/clever.h"
-#include "core/user.h"
-#include "core/location.hh"
 
 namespace clever {
 
@@ -24,6 +21,8 @@ class ValueObject;
 class Value;
 class Function;
 class VM;
+class Environment;
+class location;
 
 struct VMThread {
 	CThread t_handler;

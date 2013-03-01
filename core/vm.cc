@@ -11,11 +11,12 @@
 #include "core/opcode.h"
 #include "core/vm.h"
 #include "core/value.h"
-#include "modules/std/core/function.h"
-#include "modules/std/core/array.h"
+#include "core/location.hh"
 #include "core/user.h"
 #include "types/thread.h"
 #include "types/type.h"
+#include "modules/std/core/function.h"
+#include "modules/std/core/array.h"
 
 #define OPCODE    m_inst[m_pc]
 
