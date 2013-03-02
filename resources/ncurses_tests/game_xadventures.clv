@@ -5,30 +5,38 @@ A mesh renderization test!
 */
 import gui.ncurses.*;
 
+
+function wait(mw, key) {
+	var ch;
+	while ((ch = mw.getKey()) != 113) {}
+}
+
 /* Build grid */
 var x0 = 5, y0 = 5;
 
-var grid = [  "######################",
-					    "#...o....*..o.....#..#",
-							"#...#...$.......#.#..#",						  
-							"#.....o.....#...o..*.#",
-							"#...#.o...*.#...o..*.#",
-							"#...o...#..........#.#",
-							"#.$..#...#.#.#.#...#.#",
-							"#....#..x...#....$...#",
-							"#...o#.......#..#....#",
-							"#.#..#...#..###...#..#",
-							"#...#...$.......#.#..#",
-							"#.$.....o..#...o.....#",
-						  "######################"];
+var grid = [  
+"######################",
+"#...o....*..o.....#..#",
+"#...#...$.......#.#..#",						  
+"#.....o.....#...o..*.#",
+"#...#.o...*.#...o..*.#",
+"#...o...#..........#.#",
+"#.$..#...#.#.#.#...#.#",
+"#....#..x...#....$...#",
+"#...o#.......#..#....#",
+"#.#..#...#..###...#..#",
+"#...#...$.......#.#..#",
+"#.$.....o..#...o.....#",
+"######################"];
 
 
-var n = grid.size();
-var m = grid[0].size();
+var n = grid.size(), m = grid[0].size();
 
 var i = 0;
+
 var px = -1;
 var py = -1;
+
 var n0o = 0;
 var nSo = 0;
 var nPo = 0;
@@ -37,7 +45,7 @@ var nPo = 0;
 while (i < n) {
 	var j = 0;
 	while (j < m) {
-		if (grid[i].charAt(j) == 'x') {
+		if (grid[i].charAt(j)== 'x') {
 			px = i;
 			py = j;
 		} else if (grid[i].charAt(j) == 'o') {
@@ -94,6 +102,7 @@ var score = 0;
 
 while (ch != 113 && moves > 0 && (n0o + nPo + nSo) != 0) {
 	grid[px] = grid[px].replace('x', '.');
+
 	if (ch == NCurses.KEY_LEFT) {
 		if (py > 0 && grid[px].charAt(py-1) != '#') {
 			--py;
@@ -147,37 +156,42 @@ while (ch != 113 && moves > 0 && (n0o + nPo + nSo) != 0) {
 		j = 0;
 		while (j < m) {
 			var c = grid[i].charAt(j);
+
 			mw.setColor(colors[c]);
-			mw.addStr(i + y0, j + x0, c);
+			mw.addStr(i + x0, j + y0, c);
+
 			++j;
 		}
 		++i;
 	}		
 
 	mw.setColor(7);
-	mw.addStr(n + y0 + 2, 2, "Press 'q' to quit.                         ");
-	mw.addStr(n + y0 + 3, 2, "Position player: (" + px + "," + py + ")   ");
 
-	mw.addStr(n + y0 + 4, 2, "---------------------------------------------");		
-	mw.addStr(n + y0 + 5, 2, "Moves: " + moves + "                         ");
+	mw.addStr(x0 - 1, 2, "Score: " + (score - 0.2 * nr) + "   ");
+
+	mw.addStr(n + x0 + 3, 2, "Position player: (" + px + "," + py + ")   ");
+
+	mw.addStr(n + x0 + 4, 2, "---------------------------------------------");		
+	mw.addStr(n + x0 + 5, 2, "Moves: " + moves + "                         ");
 	
-	mw.addStr(n + y0 + 6, 2, "o: " + no + "                                ");
-	mw.addStr(n + y0 + 7, 2, "$: " + nS + "                                ");
-	mw.addStr(n + y0 + 8, 2, "*: " + nP + "                                ");
+	mw.addStr(n + x0 + 6, 2, "o: " + no + "                                ");
+	mw.addStr(n + x0 + 7, 2, "$: " + nS + "                                ");
+	mw.addStr(n + x0 + 8, 2, "*: " + nP + "                                ");
 
-	mw.addStr(n + y0 + 10, 2, "Score: " + (score - 0.2 * nr) + "   ");
-
+	
 	mw.refresh();
 
 	ch = mw.getKey();
+
 	--moves;
 }
 
 mw.addStr(n + x0 + 11, 2, "GAME OVER!                                               ");
+mw.addStr(n + x0 + 12, 2, "Press 'q' to quit.                         ");
+mw.move(n + x0 + 13, m + y0 + 13);
 
+wait(mw, 113);
 
-while ((ch = mw.getKey()) != 113) {
-}
 
 
 

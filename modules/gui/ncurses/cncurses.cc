@@ -44,10 +44,10 @@ void CNCurses::deleteLine()
 
 void CNCurses::printStr(int x, int y, const char *str)
 {
-	if (m_father == NULL) {
-		mvprintw(x, y, str);
-	} else {
+	if (isChild()) {
 		mvwprintw(m_win, x, y, str);
+	} else {
+		mvprintw(x, y, str);
 	}
 }
 
@@ -112,16 +112,20 @@ CNCurses::CNCurses(int sleep_time, WINDOW* father, bool enable_colors,
 
 void CNCurses::addStr(int x, int y, const char* str)
 {
-	if (m_father == NULL) {
-		mvaddstr(x, y, str);
+	if (isChild()) {
+		mvwaddstr(m_win, x, y, str);
 	} else {
-		mvwaddstr(m_father, x, y, str);
+		mvaddstr(x, y, str);
 	}
 }
 
 void CNCurses::refresh()
 {
-	::refresh();
+	if (isChild()) {
+		::wrefresh(m_win);
+	} else {
+		::refresh();
+	}
 }
 
 void CNCurses::sleep()
@@ -144,14 +148,19 @@ void CNCurses::hide()
 
 void CNCurses::exit()
 {
-	endwin();
+	if (!isChild()) {
+		endwin();
+	}
+
 	m_is_closed = true;
 }
 
 void CNCurses::close()
 {
 	delwin(m_win);
-	endwin();
+	if (!isChild()) {
+		endwin();
+	}
 	refresh();
 	m_is_closed = true;
 }
