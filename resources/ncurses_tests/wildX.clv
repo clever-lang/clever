@@ -1,9 +1,8 @@
 #!../../clever 
 /*
-NCURSE TESTE 005
-
-A mesh renderization test!
+The Wild X Adventures
 */
+
 import gui.ncurses.*;
 
 /* Wait key 'q' */
@@ -11,7 +10,6 @@ function wait(mw, key) {
 	var ch;
 	while ((ch = mw.getKey()) != 113) {}
 }
-
 
 /* Print messages in the screen */
 function printScore(mw, colors, c, n, x, y, ct) {
@@ -45,6 +43,11 @@ var grid = [
 "#.$.....o..#...o.....#",
 "######################"];
 
+
+/* Class game controller */
+class Game {
+	var grid;	
+};
 
 var n = grid.size(), m = grid[0].size();
 
@@ -114,9 +117,7 @@ mw.enableKeyPad();
 /* Initial position */
 var px0 = px, py0 = py;
 
-var nr = 0;
-
-
+/* Game scores */
 var moves = 200;
 var no = 0;
 var nS = 0;
@@ -125,7 +126,7 @@ var score = 0;
 
 /* Print game name */
 mw.setColor(7);
-mw.addStr(0, 0, "The Adventures of the Wild X");
+mw.addStr(0, 0, "The Wild X adventures");
 
 mw.setColor(2);
 mw.addStr(n + x0 + 12, 2, "Press 'q' to quit.");
@@ -203,7 +204,7 @@ while (ch != 113 && moves > 0 && (n0o + nPo + nSo) != 0) {
 	}		
 
 	/*Print messages*/
-	printInfo(mw, "Score: ", (score - 0.2 * nr) + "  ", x0 - 2,  2, 12, 8);
+	printInfo(mw, "Score: ", score + "  ", x0 - 2,  2, 12, 8);
 
 	printInfo(mw, "Position player: ", "(" + px + ", " + py + ")   ", n + x0 + 3,  2, 12, 10);
 	printInfo(mw, "Moves: ", moves + "  ", n + x0 + 4,  2, 12, 10);
