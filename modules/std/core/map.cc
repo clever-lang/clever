@@ -76,10 +76,9 @@ CLEVER_TYPE_AT_OPERATOR(MapType::at_op)
 		return NULL;
 	}
 
-	Value* result = new Value;
-	result->copy(it->second);
+	clever_addref(it->second);
 
-	return result;
+	return it->second;
 }
 
 // void Map.insert(string key, mixed value)
