@@ -318,7 +318,9 @@ void Codegen::visit(IncDec* node)
 		case IncDec::POS_DEC: op = OP_POS_DEC; break;
 	}
 
-	IR& incdec = m_builder->push(op, Operand(FETCH_VAR, node->getVar()->getVOffset()));
+	IR& incdec = m_builder->push(op);
+
+	_prepare_operand(incdec.op1, node->getVar());
 
 	ValueOffset tmp_id = m_builder->getTemp();
 

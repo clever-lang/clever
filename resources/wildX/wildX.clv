@@ -1,4 +1,4 @@
-#!../../clever 
+#!../../clever
 
 /**
  * Clever programming language
@@ -19,10 +19,10 @@ import engine.game.*;
 
 /* The grid definition*/
 var x0 = 5, y0 = 5;
-var grid = [  
+var grid = [
 "###..#################",
 "....o....*..o.....#.#.@",
-"....#...$#.##.#####.#.@",						  
+"....#...$#.##.#####.#.@",
 "#...#.o..#..#...o..*..",
 "#.####o..#*##...o..*.#",
 "#...o#..##.........#.#",
@@ -49,12 +49,12 @@ var mw = NCurses.new(true, 10000);
 init_pallete(mw);
 
 /* Enable key reading */
-mw.noEcho(); 
+mw.noEcho();
 mw.enableKeyPad();
-	
+
 
 /* Print game name */
 game.start(mw, 200);
-game.run(mw, x0, y0);
+//game.run(mw, x0, y0);
 
 

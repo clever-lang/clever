@@ -187,6 +187,7 @@ class Value;
 %token PRIVATE       "private"
 %token SWITCH        "switch"
 %token CASE          "case"
+%token DEFAULT       "default"
 
 %left ',';
 %left LOGICAL_OR;
@@ -304,7 +305,6 @@ object:
 	|	array
 	|	'(' rvalue ')' { $<node>$ = $<node>2; }
 	|	subscript
-	|	property_access
 	|	fcall
 ;
 
@@ -322,6 +322,7 @@ rvalue:
 	|	instantiation
 	|	mcall
 	|	fully_qualified_call
+	|	property_access
 ;
 
 lvalue:
@@ -348,6 +349,7 @@ label:
 
 case_list:
 		CASE label ':' statement_list           { $<switch_>0->addCase($<node>2, $4); $$ = $<switch_>0; }
+	|	DEFAULT ':' statement_list              { $<switch_>0->addCase(NULL, $3); $$ = $<switch_>0;     }
 	|	case_list CASE label ':' statement_list { $<switch_>0->addCase($<node>3, $5); $$ = $<switch_>0; }
 ;
 
@@ -468,6 +470,8 @@ property_access:
 	|	TYPE '.' IDENT      { $$ = new ast::Property($1, $3, yyloc); }
 	|	object '.' CONSTANT { $$ = new ast::Property($<node>1, $3, yyloc); }
 	|	TYPE '.' CONSTANT   { $$ = new ast::Property($1, $3, yyloc); }
+	|	property_access '.' IDENT    { $$ = new ast::Property($<node>1, $3, yyloc); }
+	|	property_access '.' CONSTANT { $$ = new ast::Property($<node>1, $3, yyloc); }
 ;
 
 mcall_chain:
@@ -487,6 +491,10 @@ inc_dec:
 	|	object DEC { $$ = new ast::IncDec(ast::IncDec::POS_DEC, $<node>1, yyloc); }
 	|	INC object { $$ = new ast::IncDec(ast::IncDec::PRE_INC, $<node>2, yyloc); }
 	|	DEC object { $$ = new ast::IncDec(ast::IncDec::PRE_DEC, $<node>2, yyloc); }
+	|	property_access INC { $$ = new ast::IncDec(ast::IncDec::POS_INC, $<node>1, yyloc); $1->setWriteMode(); }
+	|	property_access DEC { $$ = new ast::IncDec(ast::IncDec::POS_DEC, $<node>1, yyloc); $1->setWriteMode(); }
+	|	INC property_access { $$ = new ast::IncDec(ast::IncDec::PRE_INC, $<node>2, yyloc); $2->setWriteMode(); }
+	|	DEC property_access { $$ = new ast::IncDec(ast::IncDec::PRE_DEC, $<node>2, yyloc); $2->setWriteMode(); }
 ;
 
 comparison:

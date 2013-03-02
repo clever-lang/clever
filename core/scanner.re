@@ -62,6 +62,8 @@ next_token:
 
 	<INITIAL>'switch' { RET(token::SWITCH); }
 
+	<INITIAL>'default' { RET(token::DEFAULT); }
+
 	<INITIAL>'case' { RET(token::CASE); }
 
 	<INITIAL>'public' { RET(token::PUBLIC); }
