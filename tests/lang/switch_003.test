@@ -1,0 +1,22 @@
+Testing swith-case
+==CODE==
+import std.io.*;
+
+var x = 4;
+
+switch (x) {
+	case 3:
+		println(3);
+		break;
+	case 1:
+		println(1);
+		break;
+	case 2:
+		println(2);
+		break;
+}
+
+println("Done!");
+
+==RESULT==
+Done!
