@@ -29,27 +29,28 @@ function printInfo(mw, a, b, x, y, c1, c2) {
 /* The grid definition*/
 var x0 = 5, y0 = 5;
 var grid = [  
-"######################",
-"#...o....*..o.....#..#",
-"#...#...$.......#.#..#",						  
-"#.....o.....#...o..*.#",
-"#...#.o...*.#...o..*.#",
-"#...o...#..........#.#",
-"#.$..#...#.#.#.#...#.#",
-"#....#..x...#....$...#",
+"###.##################",
+"....o....*..o.....#.#.@",
+"....#...$#.##.#####.#.@",						  
+"#...#.o..#..#...o..*..",
+"#.####o..#*##...o..*.#",
+"#...o#..##.........#.#",
+"#.$..#...#.###.##..###",
+"#....#..x....#..#$...#",
 "#...o#.......#..#....#",
-"#.#..#...#..###...#..#",
-"#...#...$.......#.#..#",
+"###..#.##########.####",
+"#...##..$..#....#.#..#",
 "#.$.....o..#...o.....#",
-"######################"];
+"###..#.....###########",
+"---@@-----------------"];
 
 
 /* Class game controller */
 class Game {
 	var grid;	
-};
+}
 
-var n = grid.size(), m = grid[0].size();
+var n = grid.size() - 1, m = grid[0].size();
 
 var i = 0;
 
@@ -95,6 +96,14 @@ mw.addColor(4,  NCurses.BLUE,    NCurses.WHITE);
 mw.addColor(5,  NCurses.MAGENTA, NCurses.WHITE);
 /*  Color: '.' */
 mw.addColor(6,  NCurses.BLACK,   NCurses.WHITE);
+/*  Color: '@' */
+mw.addColor(14,  NCurses.CYAN,   NCurses.WHITE);
+/*  Color: '-' */
+mw.addColor(15,  NCurses.BLACK,   NCurses.BLACK);
+/*  Color: '.' */
+mw.addColor(16,  NCurses.WHITE,   NCurses.WHITE);
+/*  Color: '#' */
+mw.addColor(17,  NCurses.MAGENTA,   NCurses.MAGENTA);
 
 /* Color messages */
 mw.addColor(7,  NCurses.RED,       NCurses.BLACK);
@@ -105,8 +114,8 @@ mw.addColor(11,  NCurses.MAGENTA,  NCurses.BLACK);
 mw.addColor(12,  NCurses.WHITE,    NCurses.BLACK);
 mw.addColor(13,  NCurses.CYAN,    NCurses.BLACK);
 
-var colors =  {'x' : 1, '*' : 2, '$' : 3, 'o' : 4, '#' : 6, '.' : 6};
-var colorst = {'x' : 7, '*' : 8, '$' : 10, 'o' : 9, '#' : 6, '.' : 6};
+var colors =  {'x' : 1, '*' : 2, '$' : 3, 'o' : 4,  '#' : 17, '.' : 16, '@': 14, '-': 15};
+var colorst = {'x' : 7, '*' : 8, '$' : 10, 'o' : 9, '#' : 17, '.' : 16, '@': 14, '-': 15};
 
 /* Enable key reading */
 mw.noEcho(); 
@@ -126,7 +135,7 @@ var score = 0;
 
 /* Print game name */
 mw.setColor(7);
-mw.addStr(0, 0, "The Wild X adventures");
+mw.addStr(0, 0, "The Wild X");
 
 mw.setColor(2);
 mw.addStr(n + x0 + 12, 2, "Press 'q' to quit.");
@@ -141,20 +150,20 @@ while (ch != 113 && moves > 0 && (n0o + nPo + nSo) != 0) {
 	grid[px] = grid[px].replace('x', '.');
 
 	if (ch == NCurses.KEY_LEFT) {
-		if (py > 0 && grid[px][py-1] != '#') {
-			--py;
+		if (grid[px][(m + py - 1) % m] != '#') {
+			py = (m - 1 + py) % m;
 		}
 	} else if (ch == NCurses.KEY_RIGHT) {
-		if (py < m && grid[px][py + 1] != '#') {
-			++py;
+		if (grid[px][(py + 1) % m] != '#') {
+			py = (py + 1) % m;
 		}
 	} else if (ch == NCurses.KEY_UP) {
-		if (px > 0 && grid[px - 1][py] != '#') {
-			--px;
+		if (grid[(n + px - 1) % n][py] != '#') {
+			px = (n - 1 + px) % n;			
 		}
 	} else if (ch == NCurses.KEY_DOWN) {
-		if (px < n && grid[px + 1][py] != '#') {
-			++px;
+		if (grid[(px + 1) % n][py] != '#') {
+			px = (px + 1) % n;
 		}
 	} else if (ch == NCurses.KEY_HOME) {
 		px = px0;
@@ -190,9 +199,9 @@ while (ch != 113 && moves > 0 && (n0o + nPo + nSo) != 0) {
 
 	var i = 0;
 
-	while (i < n) {
+	while (i < grid.size()) {
 		j = 0;
-		while (j < m) {
+		while (j < grid[i].size()) {
 			var c = grid[i][j];
 
 			mw.setColor(colors[c]);
