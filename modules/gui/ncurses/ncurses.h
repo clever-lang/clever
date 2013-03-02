@@ -47,6 +47,9 @@ public:
 	void dump(TypeObject*, std::ostream&) const;
 
 	CLEVER_METHOD(ctor);
+	CLEVER_METHOD(addStr);
+	CLEVER_METHOD(refresh);
+	CLEVER_METHOD(sleep);
 
 private:
 	DISALLOW_COPY_AND_ASSIGN(NCurses);

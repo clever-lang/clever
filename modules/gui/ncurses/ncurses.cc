@@ -74,10 +74,50 @@ CLEVER_METHOD(NCurses::ctor)
 	result->setObj(this, allocData(&args));
 }
 
+CLEVER_METHOD(NCurses::addStr)
+{
+	if (!clever_check_args("iis")) {
+		return;
+	}
+
+	NCursesObject* mo = CLEVER_GET_OBJECT(NCursesObject*, CLEVER_THIS());
+	CNCurses* o = mo->getData();
+
+	o->addStr(args.at(0)->getInt(), args.at(1)->getInt(), args.at(2)->getStr()->c_str());
+}
+
+CLEVER_METHOD(NCurses::refresh)
+{
+	if (!clever_check_no_args()) {
+		return;
+	}
+
+	NCursesObject* mo = CLEVER_GET_OBJECT(NCursesObject*, CLEVER_THIS());
+	CNCurses* o = mo->getData();
+
+	o->refresh();
+}
+
+CLEVER_METHOD(NCurses::sleep)
+{
+	if (!clever_check_no_args()) {
+		return;
+	}
+
+	NCursesObject* mo = CLEVER_GET_OBJECT(NCursesObject*, CLEVER_THIS());
+	CNCurses* o = mo->getData();
+
+	o->sleep();
+}
+
 // Type initialization
 CLEVER_TYPE_INIT(NCurses::init)
 {
 	setConstructor((MethodPtr) &NCurses::ctor);
+
+	addMethod(new Function("addStr",        (MethodPtr) &NCurses::addStr));
+	addMethod(new Function("refresh",       (MethodPtr) &NCurses::refresh));
+	addMethod(new Function("sleep",         (MethodPtr) &NCurses::sleep));
 }
 
 }}} // clever::modules::gui
