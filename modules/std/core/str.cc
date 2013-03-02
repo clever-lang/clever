@@ -108,6 +108,7 @@ CLEVER_TYPE_UNARY_OPERATOR(StrType::not_op)
 	result->setBool(!lhs->asBool());
 }
 
+// [] operator
 CLEVER_TYPE_AT_OPERATOR(StrType::at_op)
 {
 	const CString* data = obj->getStr();
