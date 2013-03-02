@@ -1,0 +1,243 @@
+#!../../clever 
+/*
+The Wild X Adventures
+*/
+
+import gui.ncurses.*;
+
+/* Wait key 'q' */
+function wait(mw, key) {
+	var ch;
+	while ((ch = mw.getKey()) != 113) {}
+}
+
+/* Print messages in the screen */
+function printScore(mw, colors, c, n, x, y, ct) {
+	mw.setColor(colors[c]);
+	mw.addStr(x, y, c); 
+	mw.setColor(ct);
+	mw.addStr(x, y + c.size() + 1,  n + "      ");
+}
+
+function printInfo(mw, a, b, x, y, c1, c2) {
+	mw.setColor(c1);
+	mw.addStr(x, y, a);
+	mw.setColor(c2);
+	mw.addStr(x, y + a.size(), b);
+}
+
+/* The grid definition*/
+var x0 = 5, y0 = 5;
+var grid = [  
+"###.##################",
+"....o....*..o.....#.#.@",
+"....#...$#.##.#####.#.@",						  
+"#...#.o..#..#...o..*..",
+"#.####o..#*##...o..*.#",
+"#...o#..##.........#.#",
+"#.$..#...#.###.##..###",
+"#....#..x....#..#$...#",
+"#...o#.......#..#....#",
+"###..#.##########.####",
+"#...##..$..#....#.#..#",
+"#.$.....o..#...o.....#",
+"###..#.....###########",
+"---@@-----------------"];
+
+
+/* Class game controller */
+class Game {
+	var grid;	
+}
+
+var n = grid.size() - 1, m = grid[0].size();
+
+var i = 0;
+
+/* Player position*/
+var px = -1, py = -1;
+
+/* Number of special objects */
+var n0o = 0, nSo = 0, nPo = 0;
+
+/* Find player */
+while (i < n) {
+	var j = 0;
+	while (j < m) {
+		if (grid[i][j]== 'x') {
+			px = i;
+			py = j;
+		} else if (grid[i][j] == 'o') {
+			++n0o;
+		} else if (grid[i][j] == '*') {
+			++nSo;
+		} else if (grid[i][j] == '$') {
+			++nPo;
+		}
+		++j;
+	}
+	++i;
+}
+
+/* Render game */
+var mw = NCurses.new(true, 10000);
+
+
+/* Pallete */
+
+/*  Color: 'x' */
+mw.addColor(1,  NCurses.RED,     NCurses.WHITE);
+/*  Color: '*' */
+mw.addColor(2,  NCurses.GREEN,   NCurses.WHITE);
+/*  Color: '$' */
+mw.addColor(3,  NCurses.YELLOW,  NCurses.WHITE);
+/*  Color: 'o' */
+mw.addColor(4,  NCurses.BLUE,    NCurses.WHITE);
+/*  Color: '@' */
+mw.addColor(14,  NCurses.CYAN,   NCurses.WHITE);
+/*  Color: '-' */
+mw.addColor(15,  NCurses.BLACK,   NCurses.BLACK);
+/*  Color: '.' */
+mw.addColor(16,  NCurses.WHITE,   NCurses.WHITE);
+/*  Color: '#' */
+mw.addColor(17,  NCurses.MAGENTA,   NCurses.MAGENTA);
+
+/* Color messages */
+mw.addColor(7,  NCurses.RED,       NCurses.BLACK);
+mw.addColor(8,  NCurses.GREEN,     NCurses.BLACK);
+mw.addColor(9,  NCurses.BLUE,      NCurses.BLACK);
+mw.addColor(10,  NCurses.YELLOW,   NCurses.BLACK);
+mw.addColor(11,  NCurses.MAGENTA,  NCurses.BLACK);
+mw.addColor(12,  NCurses.WHITE,    NCurses.BLACK);
+mw.addColor(13,  NCurses.CYAN,     NCurses.BLACK);
+
+mw.addColor(5,  NCurses.MAGENTA, NCurses.WHITE);
+mw.addColor(6,  NCurses.BLACK,   NCurses.WHITE);
+
+var colors =  {'x' : 1, '*' : 2, '$' : 3, 'o' : 4,  '#' : 17, '.' : 16, '@': 14, '-': 15};
+var colorst = {'x' : 7, '*' : 8, '$' : 10, 'o' : 9, '#' : 17, '.' : 16, '@': 14, '-': 15};
+
+/* Enable key reading */
+mw.noEcho(); 
+mw.enableKeyPad();
+	
+
+
+/* Initial position */
+var px0 = px, py0 = py;
+
+/* Game scores */
+var moves = 200;
+var no = 0;
+var nS = 0;
+var nP = 0;
+var score = 0;
+
+/* Print game name */
+mw.setColor(7);
+mw.addStr(0, 0, "The Wild X");
+
+mw.setColor(2);
+mw.addStr(n + x0 + 12, 2, "Press 'q' to quit.");
+
+
+/* The render loop */
+
+var ch = 0;
+while (ch != 113 && moves > 0 && (n0o + nPo + nSo) != 0) {
+	
+	/*Render player position*/	
+	grid[px] = grid[px].replace('x', '.');
+
+	if (ch == NCurses.KEY_LEFT) {
+		if (grid[px][(m + py - 1) % m] != '#') {
+			py = (m - 1 + py) % m;
+		}
+	} else if (ch == NCurses.KEY_RIGHT) {
+		if (grid[px][(py + 1) % m] != '#') {
+			py = (py + 1) % m;
+		}
+	} else if (ch == NCurses.KEY_UP) {
+		if (grid[(n + px - 1) % n][py] != '#') {
+			px = (n - 1 + px) % n;			
+		}
+	} else if (ch == NCurses.KEY_DOWN) {
+		if (grid[(px + 1) % n][py] != '#') {
+			px = (px + 1) % n;
+		}
+	} else if (ch == NCurses.KEY_HOME) {
+		px = px0;
+		py = py0;
+	}
+
+	/*Calculate player score*/
+	if (grid[px][py] == 'o') {
+		++no;
+		n0o--;
+	} else if (grid[px][py] == '$') {
+		++nS;
+		nSo--;
+	} else if (grid[px][py] == '*') {
+		++nP;
+		nPo--;
+	}
+	score = no + 2 * nS + 3 * nP;
+	 
+	var j = 0;
+
+	var l = "";
+
+	while (j < m) {
+		if (j == py) {
+			l = l + 'x';
+		} else {
+			l = l + grid[px][j];
+		}
+		++j;
+	}
+	grid[px] = l;
+
+	var i = 0;
+
+	while (i < grid.size()) {
+		j = 0;
+		while (j < grid[i].size()) {
+			var c = grid[i][j];
+
+			mw.setColor(colors[c]);
+			mw.addStr(i + x0, j + y0, c);
+
+			++j;
+		}
+		++i;
+	}		
+
+	/*Print messages*/
+	printInfo(mw, "Score: ", score + "  ", x0 - 2,  2, 12, 8);
+
+	printInfo(mw, "Position player: ", "(" + px + ", " + py + ")   ", n + x0 + 3,  2, 12, 10);
+	printInfo(mw, "Moves: ", moves + "  ", n + x0 + 4,  2, 12, 10);
+	
+	printScore(mw, colorst, 'o', no, x0 - 2, 15, 12);
+	printScore(mw, colorst, '$', nS, x0 - 2, 25, 12);
+	printScore(mw, colorst, '*', nP, x0 - 2, 35, 12);
+	
+	
+	/*Get a new key*/
+	ch = mw.getKey();
+
+	--moves;
+}
+
+
+mw.setColor(8);
+mw.addStr(x0 - 2, 2, "GAME OVER!");
+
+mw.setColor(2);
+mw.addStr(n + x0 + 12, 2, "Press 'q' to exit.");
+
+wait(mw, 113);
+
+
+
+
