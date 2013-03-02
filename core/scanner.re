@@ -42,7 +42,6 @@ next_token:
 	SPECIAL    = [;(),{}&~^|=+*/-][];
 	TYPE       = [A-Z][a-zA-Z0-9_]*;
 	CONSTANT   = [A-Z][A-Z0-9_]*;
-	REGEX      = "/"[^*/]([a-zA-Z0-9]+|SPACE|['"+$^\|{}?)(*:<>.#\]\[-]|"\\"[^])*"/";
 
 	<!*> { yylen = cursor - s.yylex; }
 
@@ -60,6 +59,10 @@ next_token:
 		yylval->nillit = new ast::NullLit(*yyloc);
 		RET(token::NIL);
 	}
+
+	<INITIAL>'switch' { RET(token::SWITCH); }
+
+	<INITIAL>'case' { RET(token::CASE); }
 
 	<INITIAL>'public' { RET(token::PUBLIC); }
 
@@ -102,10 +105,8 @@ next_token:
 	<INITIAL>"<<=" { RET(token::LSHIFT_EQUAL); }
 	<INITIAL>"<<" { RET(token::LSHIFT); }
 
-
 	<INITIAL>">>=" { RET(token::RSHIFT_EQUAL); }
 	<INITIAL>">>" { RET(token::RSHIFT); }
-
 
 	<INITIAL>"++" { RET(token::INC); }
 
@@ -207,7 +208,6 @@ next_token:
 	<INITIAL>'import' {
 		RET(token::IMPORT);
 	}
-
 
 	<INITIAL>'true' {
 		yylval->true_ = new ast::TrueLit(*yyloc);

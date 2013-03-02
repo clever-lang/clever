@@ -1322,6 +1322,42 @@ private:
 	NodeArray* m_methods;
 };
 
+class Switch: public Node {
+public:
+	Switch(Node* expr, const location& location)
+		: Node(location), m_expr(expr) {
+		clever_addref(m_expr);
+	}
+
+	~Switch() {
+		clever_delref(m_expr);
+
+		std::vector<std::pair<Node*, Node*> >::const_iterator it(m_cases.begin()),
+			end(m_cases.end());
+
+		for (; it != end; ++it) {
+			clever_delref(it->first);
+			clever_delref(it->second);
+		}
+	}
+
+	void addCase(Node* label, Node* block) {
+		m_cases.push_back(std::pair<Node*, Node*>(label, block));
+		clever_addref(label);
+		clever_addref(block);
+	}
+
+	std::vector<std::pair<Node*, Node*> >& getCases() { return m_cases; }
+
+	Node* getExpr() const { return m_expr; }
+
+	virtual void accept(Visitor& visitor);
+	virtual Node* accept(Transformer& transformer);
+private:
+	Node* m_expr;
+	std::vector<std::pair<Node*, Node*> > m_cases;
+};
+
 }} // clever::ast
 
 #endif // CLEVER_AST_H
