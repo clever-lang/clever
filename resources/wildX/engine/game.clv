@@ -232,7 +232,7 @@ class Game {
 
 			--this.player.score.moves;
 		}
-		finish(this.mw, x0, y0);
+		this.finish(x0, y0);
 	}
 }
 
