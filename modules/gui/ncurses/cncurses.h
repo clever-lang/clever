@@ -48,6 +48,8 @@ public:
 	void refresh();
 	void sleep();
 
+	WINDOW* getWindow() { return m_win; }
+
 private:
 
 	int m_sleep_time;

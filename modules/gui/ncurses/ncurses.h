@@ -18,12 +18,14 @@ namespace clever { namespace modules { namespace gui {
 
 class NCursesObject : public TypeObject {
 public:
-	NCursesObject() {}
+	NCursesObject(int m_sleep_time = 0, CNCurses* father = NULL, bool m_enable_colors = false,
+				  int w = 0, int h = 0, int x = 0, int y = 0)
+		: m_ncurses_obj(m_sleep_time, father->getWindow(), m_enable_colors, w, h, x, y) {}
 
 	~NCursesObject() {}
 
 private:
-	
+	CNCurses m_ncurses_obj;
 	DISALLOW_COPY_AND_ASSIGN(NCursesObject);
 };
 
