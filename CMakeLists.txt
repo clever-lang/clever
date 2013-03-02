@@ -40,45 +40,45 @@ include(environment.cmake)
 # ---------------------------------------------------------------------------
 include(dependencies.cmake)
 
-if (TCMALLOC)
+if(TCMALLOC)
 	set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -ltcmalloc")
-else (TCMALLOC)
+else()
 	message(STATUS "Using default allocator. Use -DTCMALLOC=1 to use tcmalloc")
-endif (TCMALLOC)
+endif()
 
 
-if (NOT NO_THREADS)
+if(NOT NO_THREADS)
 	add_definitions(-DCLEVER_THREADS)
 	message(STATUS "Use -DNO_THREADS to disable threads")
-endif (NOT NO_THREADS)
+endif()
 
-if (THREADS_DEBUG)
+if(THREADS_DEBUG)
 	add_definitions(-DCLEVER_THREADS_BEBUG)
-else (THREADS_DEBUG)
+else()
 	message(STATUS "Use -DTHREADS_DEBUG to enable thread debug messages")
-endif (THREADS_DEBUG)
+endif()
 
 # Parser and Scanner
 # ---------------------------------------------------------------------------
-if (GEN_PARSER)
+if(GEN_PARSER)
 	set(re2c_opts)
 	list(APPEND re2c_opts "-b")
 	list(APPEND re2c_opts "-i")
 	list(APPEND re2c_opts "--no-generation-date")
 
-	if (NOT ${BISON_VERSION} VERSION_LESS "2.7.0")
+	if(NOT ${BISON_VERSION} VERSION_LESS "2.7.0")
 		message(FATAL_ERROR "Clever parsers cannot be generated with Bison 2.7 yet.")
-	endif (NOT ${BISON_VERSION} VERSION_LESS "2.7.0")
+	endif()
 
 	message(STATUS "Clever parsers will be generated again.")
 
-	if (${RE2C_VERSION} VERSION_GREATER "0.13.0")
+	if(${RE2C_VERSION} VERSION_GREATER "0.13.0")
 		list(APPEND re2c_opts "-c")
-	endif (${RE2C_VERSION} VERSION_GREATER "0.13.0")
+	endif()
 
-	if (${RE2C_VERSION} VERSION_GREATER "0.13.2")
+	if(${RE2C_VERSION} VERSION_GREATER "0.13.2")
 		list(APPEND re2c_opts "--case-inverted")
-	endif (${RE2C_VERSION} VERSION_GREATER "0.13.2")
+	endif()
 
 	set(core_dir ${CMAKE_CURRENT_SOURCE_DIR}/core)
 
@@ -98,7 +98,7 @@ if (GEN_PARSER)
 
 	set(core_dir)
 
-endif (GEN_PARSER)
+endif()
 
 # Module options
 # ---------------------------------------------------------------------------
@@ -112,9 +112,9 @@ include(modules.cmake)
 #                   http://www.gentoo.org/proj/en/qa/asneeded.xml
 #                   https://wiki.ubuntu.com/NattyNarwhal/ToolchainTransition
 #                   http://wiki.debian.org/ToolChain/DSOLinking
-if (UNIX AND NOT APPLE)
+if(UNIX AND NOT APPLE)
 	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--no-as-needed")
-endif (UNIX AND NOT APPLE)
+endif()
 
 # Main executable
 # ---------------------------------------------------------------------------
@@ -215,9 +215,9 @@ if(PCRECPP_FOUND)
 	)
 	target_link_libraries(testrunner ${PCRECPP_LIBRARIES})
 	add_dependencies(testrunner clever)
-else(PCRECPP_FOUND)
+else()
 	message(WARNING "testrunner will not be compiled. reason: libpcrecpp missing")
-endif(PCRECPP_FOUND)
+endif()
 
 # Test runner
 # ---------------------------------------------------------------------------
