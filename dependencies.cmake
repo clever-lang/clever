@@ -56,3 +56,9 @@ clever_add_lib(SQLITE3
 	INCS sqlite3.h
 	PKGS sqlite3)
 
+# libncurses
+clever_add_lib(NCURSES
+	LIBS ncurses
+	INCS curses.h
+)
+

@@ -55,6 +55,11 @@ clever_new_module(db.sqlite3 ON
 	DOC	"enable the sqlite3 module"
 	LIBS SQLITE3)
 
+clever_new_module(gui.ncurses ON
+	DOC "enable the ncurses module"
+	LIBS NCURSES
+)
+
 # std.concurrent
 if (STD_CONCURRENT AND UNIX)
 	list(APPEND STD_CONCURRENT_LIB_DEPENDS PTHREAD)
