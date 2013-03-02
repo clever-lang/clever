@@ -482,8 +482,9 @@ mcall_chain:
 ;
 
 mcall:
-		object '.' IDENT '(' call_args ')' { $<node>$ = new ast::MethodCall($<node>1, $3, $5, yyloc); } mcall_chain { $<node>$ = $<node>8; }
-	|	TYPE '.' IDENT '(' call_args ')'   { $<node>$ = new ast::MethodCall($1, $3, $5, yyloc); }       mcall_chain { $<node>$ = $<node>8; }
+		object '.' IDENT '(' call_args ')'          { $<node>$ = new ast::MethodCall($<node>1, $3, $5, yyloc); } mcall_chain { $<node>$ = $<node>8; }
+	|	property_access '.' IDENT '(' call_args ')' { $<node>$ = new ast::MethodCall($<node>1, $3, $5, yyloc); } mcall_chain { $<node>$ = $<node>8; }
+	|	TYPE '.' IDENT '(' call_args ')'            { $<node>$ = new ast::MethodCall($1, $3, $5, yyloc); }       mcall_chain { $<node>$ = $<node>8; }
 ;
 
 inc_dec:
