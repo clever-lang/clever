@@ -291,7 +291,7 @@ void Codegen::visit(While* node)
 
 	node->getBlock()->accept(*this);
 
-	if (m_brks.top().size() > 1) {
+	if (!m_brks.top().empty()) {
 		// Set the break statements jmp address
 		for (size_t i = 0, j = m_brks.top().size(); i < j; ++i) {
 			m_builder->getAt(m_brks.top()[i]).op1.jmp_addr = m_builder->getSize() + 1;
