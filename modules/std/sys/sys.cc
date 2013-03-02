@@ -168,6 +168,7 @@ static CLEVER_FUNCTION(microtime)
 	}
 	if (gettimeofday(&tp, NULL)) {
 		result->setBool(false);
+		return;
 	}
 
 	result->setDouble(tp.tv_sec + tp.tv_usec / 1000000.00);
