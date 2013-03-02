@@ -82,7 +82,8 @@ while (i < n) {
 /* Render game */
 var mw = NCurses.new(true, 10000);
 
-/* Colors */
+
+/* Pallete */
 
 /*  Color: 'x' */
 mw.addColor(1,  NCurses.RED,     NCurses.WHITE);
@@ -92,10 +93,6 @@ mw.addColor(2,  NCurses.GREEN,   NCurses.WHITE);
 mw.addColor(3,  NCurses.YELLOW,  NCurses.WHITE);
 /*  Color: 'o' */
 mw.addColor(4,  NCurses.BLUE,    NCurses.WHITE);
-/*  Color: '#' */
-mw.addColor(5,  NCurses.MAGENTA, NCurses.WHITE);
-/*  Color: '.' */
-mw.addColor(6,  NCurses.BLACK,   NCurses.WHITE);
 /*  Color: '@' */
 mw.addColor(14,  NCurses.CYAN,   NCurses.WHITE);
 /*  Color: '-' */
@@ -112,7 +109,10 @@ mw.addColor(9,  NCurses.BLUE,      NCurses.BLACK);
 mw.addColor(10,  NCurses.YELLOW,   NCurses.BLACK);
 mw.addColor(11,  NCurses.MAGENTA,  NCurses.BLACK);
 mw.addColor(12,  NCurses.WHITE,    NCurses.BLACK);
-mw.addColor(13,  NCurses.CYAN,    NCurses.BLACK);
+mw.addColor(13,  NCurses.CYAN,     NCurses.BLACK);
+
+mw.addColor(5,  NCurses.MAGENTA, NCurses.WHITE);
+mw.addColor(6,  NCurses.BLACK,   NCurses.WHITE);
 
 var colors =  {'x' : 1, '*' : 2, '$' : 3, 'o' : 4,  '#' : 17, '.' : 16, '@': 14, '-': 15};
 var colorst = {'x' : 7, '*' : 8, '$' : 10, 'o' : 9, '#' : 17, '.' : 16, '@': 14, '-': 15};
