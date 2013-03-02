@@ -52,19 +52,19 @@ var mw = NCurses.new(true, 500);
 
 /* colors */
 /*  color: 'x' */
-mw.addColor(1,  NCurses.RED,     NCurses.BLACK);
+mw.addColor(1,  NCurses.RED,     NCurses.WHITE);
 /*  color: '%' */
-mw.addColor(2,  NCurses.GREEN,   NCurses.BLACK);
+mw.addColor(2,  NCurses.GREEN,   NCurses.WHITE);
 /*  color: '$' */
-mw.addColor(3,  NCurses.YELLOW,  NCurses.BLACK);
+mw.addColor(3,  NCurses.YELLOW,  NCurses.WHITE);
 /*  color: 'o' */
-mw.addColor(4,  NCurses.BLUE,    NCurses.BLACK);
+mw.addColor(4,  NCurses.BLUE,    NCurses.WHITE);
 /*  color: '#' */
-mw.addColor(5,  NCurses.MAGENTA, NCurses.BLACK);
+mw.addColor(5,  NCurses.MAGENTA, NCurses.WHITE);
 /*  color: '.' */
-mw.addColor(6,  NCurses.WHITE,   NCurses.BLACK);
+mw.addColor(6,  NCurses.BLACK,   NCurses.WHITE);
 
-mw.addColor(7,  NCurses.BLACK,    NCurses.WHITE);
+mw.addColor(7,  NCurses.RED,    NCurses.BLACK);
 
 var colors = {'x' : 1, '*' : 2, '$' : 3, 'o' : 4, '#' : 5, '.' : 6};
 
