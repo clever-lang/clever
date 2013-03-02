@@ -799,6 +799,7 @@ out:
 
 		if (EXPECTED(value != NULL)) {
 			setTempValue(OPCODE.result, value);
+			clever_addref(value);
 		} else {
 			error(OPCODE.loc, "Member `%T::%S' not found!",
 				obj->getType(), name->getStr());
@@ -819,6 +820,7 @@ out:
 
 		if (EXPECTED(value != NULL)) {
 			setTempValue(OPCODE.result, value);
+			clever_addref(value);
 		} else {
 			error(OPCODE.loc, "Property `%T::%S' not found!",
 				obj->getType(), name->getStr());
