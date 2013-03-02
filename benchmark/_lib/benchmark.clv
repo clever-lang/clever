@@ -97,9 +97,9 @@ class Test {
 
 	function run() {
 		var cmd = this.lang.command.replace('%1', this.file);
-		var tini = time();
+		var tini = microtime();
 		var output = _exec(cmd);
-		var tfim = time();
+		var tfim = microtime();
 		return Result.new(output, (tfim - tini));
 	}
 }
