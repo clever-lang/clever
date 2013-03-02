@@ -1,0 +1,60 @@
+#!../../clever 
+
+/**
+ * Clever programming language
+ * Copyright (c) Clever Team
+ *
+ * This file is distributed under the MIT license. See LICENSE for details.
+ */
+
+
+import engine.game.*;
+
+
+//	The Wild X Adventures
+//	by: Pericles Lopes Machado
+
+// MAIN SCRIPT
+
+
+/* The grid definition*/
+var x0 = 5, y0 = 5;
+var grid = [  
+"###..#################",
+"....o....*..o.....#.#.@",
+"....#...$#.##.#####.#.@",						  
+"#...#.o..#..#...o..*..",
+"#.####o..#*##...o..*.#",
+"#...o#..##.........#.#",
+"#.$..#...#.###.##..###",
+"#....#..x....#..#$...#",
+"#...o#.......#..#....#",
+"###..#.##########.####",
+"#...##..$..#....#.#..#",
+"#.$.....o..#...o.....#",
+"###..#.....###########",
+"---@@-----------------"];
+var n = grid.size() - 1, m = grid[0].size();
+
+/* Player position*/
+var px = -1, py = -1;
+
+/* Number of special objects */
+var n0o = 0, nSo = 0, nPo = 0;
+
+/* Init game engine */
+var game = Game.new(grid, n, m);
+var mw = NCurses.new(true, 10000);
+
+init_pallete(mw);
+
+/* Enable key reading */
+mw.noEcho(); 
+mw.enableKeyPad();
+	
+
+/* Print game name */
+game.start(mw, 200);
+game.run(mw, x0, y0);
+
+

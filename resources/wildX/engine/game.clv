@@ -1,0 +1,226 @@
+/**
+ * Clever programming language
+ * Copyright (c) Clever Team
+ *
+ * This file is distributed under the MIT license. See LICENSE for details.
+ */
+
+
+
+import engine.paint.*;
+
+
+//  The Wild X Adventures
+//  by: Pericles Lopes Machado
+
+// GAME CONTROL
+
+/* Class game controller */
+
+class Score {
+	/* 
+     score = no + 2 * nS + 3 * nP
+     no = Number of 'o'
+     nS = Number of '$'
+     nP = Number of '*'
+	*/
+	var moves, no, nS, nP, score;
+
+	function Score(moves_, no_, nS_, nP_, score_) {
+		this.moves = moves_;
+		this.no = no_;
+		this.nS = nS_;
+		this.nP = nP_;
+		this.score = score_;
+	}
+}
+
+class Point {
+	var x, y;
+
+	function Point(x_, y_) {
+		this.x = x_;
+		this.y = y_;
+	}
+}
+
+class Player {
+	var p, score;
+
+	function Player(p_, score_) {
+		this.p = p_;
+		this.score = score_;
+	}
+}
+
+class Game {
+	var grid, n, m;
+
+	/*colors */
+	var colors;
+	var colorst;
+
+	/* Number of special objects */
+	var n0o, nSo, nPo;
+
+	var player;
+
+	/* Initial position */
+	var p0;
+
+
+	function Game(grid_, n_, m_) {
+		this.grid = grid_;
+		this.n = n_;
+		this.m = m_;
+
+		this.colors =  {'x' : 1, '*' : 2, '$' : 3, 'o' : 4,  '#' : 17, '.' : 16, '@': 14, '-': 15};
+		this.colorst = {'x' : 7, '*' : 8, '$' : 10, 'o' : 9, '#' : 17, '.' : 16, '@': 14, '-': 15};
+	}
+
+	function start(mw, n_moves) {
+		var i = 0;
+		var px, py;
+
+		while (i < this.n) {
+			var j = 0;
+
+			while (j < this.m) {
+				if (this.grid[i][j]== 'x') {
+					px = i;
+					py = j;
+				} else if (this.grid[i][j] == 'o') {
+					++this.n0o;
+				} else if (this.grid[i][j] == '*') {
+					++this.nSo;
+				} else if (this.grid[i][j] == '$') {
+					++this.nPo;
+				}
+				++j;
+			}
+			++i;
+		}
+
+		this.p0 = Point.new(px, py);
+
+		this.player = Player.new(Point.new(this.p0.x, this.p0.y), Score.new(n_moves, 0, 0, 0, 0));
+	}
+
+	function finish(mw, x0, y0) {
+		mw.setColor(8);
+		mw.addStr(x0 - 3, 2, "GAME OVER!");
+
+		mw.setColor(2);
+		mw.addStr(this.n + x0 + 12, 2, "Press 'q' to exit.");
+
+		wait(mw, 113);
+	}
+
+	function run(mw, x0, y0) {
+
+		/* Print title*/
+		mw.setColor(7);
+		mw.addStr(0, 0, "The Wild X");
+
+		mw.setColor(2);
+		mw.addStr(this.n + x0 + 12, 2, "Press 'q' to quit.");
+
+		/* The render loop */
+		var ch = 0;
+
+		while (ch != 113 && this.player.score.moves > 0 &&
+			   (this.n0o + this.nPo + this.nSo) != 0) {
+
+			/* get player position*/				
+
+			var px = this.player.p.x;
+			var py = this.player.p.y;
+
+			this.grid[px] = this.grid[px].replace('x', '.');
+
+			if (ch == NCurses.KEY_LEFT) {
+				if (this.grid[px][(this.m + py - 1) % this.m] != '#') {
+					py = (this.m - 1 + py) % this.m;
+				}
+			} else if (ch == NCurses.KEY_RIGHT) {
+				if (this.grid[px][(py + 1) % this.m] != '#') {
+					py = (py + 1) % this.m;
+				}
+			} else if (ch == NCurses.KEY_UP) {
+				if (this.grid[(this.n + px - 1) % this.n][py] != '#') {
+					px = (this.n - 1 + px) % this.n;			
+				}
+			} else if (ch == NCurses.KEY_DOWN) {
+				if (this.grid[(px + 1) % this.n][py] != '#') {
+					px = (px + 1) % this.n;
+				}
+			} else if (ch == NCurses.KEY_HOME) {
+				px = this.p0.x;
+				py = this.p0.y;
+			}
+
+			/*Calculate player score*/
+			if (this.grid[px][py] == 'o') {
+				++this.player.score.no;
+				this.n0o--;
+			} else if (this.grid[px][py] == '$') {
+				++this.player.score.nS;
+				this.nSo--;
+			} else if (this.grid[px][py] == '*') {
+				++this.player.score.nP;
+				this.nPo--;
+			}
+
+			this.player.score.score = this.player.score.no + 
+			2 * this.player.score.nS + 3 * this.player.score.nP;
+			 
+			var j = 0;
+
+			var l = "";
+
+			while (j < this.m) {
+				if (j == py) {
+					l = l + 'x';
+				} else {
+					l = l + this.grid[px][j];
+				}
+				++j;
+			}
+			this.grid[px] = l;
+
+			var i = 0;
+
+			while (i < this.grid.size()) {
+				j = 0;
+				while (j < this.grid[i].size()) {
+					var c = this.grid[i][j];
+
+					mw.setColor(this.colors[c]);
+					mw.addStr(i + x0, j + y0, c);
+
+					++j;
+				}
+				++i;
+			}		
+
+			/*Print messages*/
+			print_info(mw, "Score: ", this.player.score.score + "  ", x0 - 2,  2, 12, 8);
+
+			print_info(mw, "Position player: ", "(" + px + ", " + py + ")   ", this.n + x0 + 3,  2, 12, 10);
+			print_info(mw, "Moves: ",  this.player.score.moves + "  ", this.n + x0 + 4,  2, 12, 10);
+	
+			print_score(mw, this.colorst, 'o', this.player.score.no, x0 - 2, 15, 12);
+			print_score(mw, this.colorst, '$', this.player.score.nS, x0 - 2, 25, 12);
+			print_score(mw, this.colorst, '*', this.player.score.nP, x0 - 2, 35, 12);
+	
+			this.player.p = Point.new(px, py);
+
+			/*Get a new key*/
+			ch = mw.getKey();
+
+			--this.player.score.moves;
+		}
+		finish(mw, x0, y0);
+	}
+}
+

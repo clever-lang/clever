@@ -1,0 +1,60 @@
+/**
+ * Clever programming language
+ * Copyright (c) Clever Team
+ *
+ * This file is distributed under the MIT license. See LICENSE for details.
+ */
+
+
+//	The Wild X Adventures
+//	by: Pericles Lopes Machado
+
+// PAINT FUNCTIONS
+
+import gui.ncurses.*;
+
+/* Wait key 'q' */
+function wait(mw, key) 
+{
+	var ch;
+	while ((ch = mw.getKey()) != 113) {}
+}
+
+/* Pallete functions */
+function init_pallete(mw) {
+	mw.addColor(1,   NCurses.RED,       NCurses.WHITE);
+	mw.addColor(2,   NCurses.GREEN,     NCurses.WHITE);
+	mw.addColor(3,   NCurses.YELLOW,    NCurses.WHITE);
+	mw.addColor(4,   NCurses.BLUE,      NCurses.WHITE);
+	mw.addColor(5,   NCurses.MAGENTA,   NCurses.WHITE);
+	mw.addColor(6,   NCurses.BLACK,     NCurses.WHITE);
+	mw.addColor(7,   NCurses.RED,       NCurses.BLACK);
+	mw.addColor(8,   NCurses.GREEN,     NCurses.BLACK);
+	mw.addColor(9,   NCurses.BLUE,      NCurses.BLACK);
+	mw.addColor(10,  NCurses.YELLOW,    NCurses.BLACK);
+	mw.addColor(11,  NCurses.MAGENTA,   NCurses.BLACK);
+	mw.addColor(12,  NCurses.WHITE,     NCurses.BLACK);
+	mw.addColor(13,  NCurses.CYAN,      NCurses.BLACK);
+	mw.addColor(14,  NCurses.CYAN,      NCurses.WHITE);
+	mw.addColor(15,  NCurses.BLACK,     NCurses.BLACK);
+	mw.addColor(16,  NCurses.WHITE,     NCurses.WHITE);
+	mw.addColor(17,  NCurses.MAGENTA,   NCurses.MAGENTA);
+}
+
+/* Print messages in the screen */
+function print_score(mw, colors, c, n, x, y, ct) 
+{
+	mw.setColor(colors[c]);
+	mw.addStr(x, y, c); 
+	mw.setColor(ct);
+	mw.addStr(x, y + c.size() + 1,  n + "      ");
+}
+
+function print_info(mw, a, b, x, y, c1, c2) 
+{
+	mw.setColor(c1);
+	mw.addStr(x, y, a);
+	mw.setColor(c2);
+	mw.addStr(x, y + a.size(), b);
+}
+
