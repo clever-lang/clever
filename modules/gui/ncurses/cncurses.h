@@ -29,6 +29,7 @@ public:
 
 	bool status();
 	bool hasColors();
+	void startColor() { ::start_color(); }
 	bool isPrintable(int ch);
 	bool isChild();
 

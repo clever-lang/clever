@@ -110,6 +110,62 @@ CLEVER_METHOD(NCurses::sleep)
 	o->sleep();
 }
 
+CLEVER_METHOD(NCurses::startColor)
+{
+	if (!clever_check_no_args()) {
+		return;
+	}
+
+	NCursesObject* mo = CLEVER_GET_OBJECT(NCursesObject*, CLEVER_THIS());
+	CNCurses* o = mo->getData();
+
+	o->startColor();
+}
+
+CLEVER_METHOD(NCurses::setColor)
+{
+	if (!clever_check_args("i")) {
+		return;
+	}
+
+	NCursesObject* mo = CLEVER_GET_OBJECT(NCursesObject*, CLEVER_THIS());
+	CNCurses* o = mo->getData();
+
+	o->setColor(args.at(0)->getInt(), NULL);
+}
+
+CLEVER_METHOD(NCurses::addColor)
+{
+	if (!clever_check_args("iii")) {
+		return;
+	}
+
+	NCursesObject* mo = CLEVER_GET_OBJECT(NCursesObject*, CLEVER_THIS());
+	CNCurses* o = mo->getData();
+
+	o->addColor(args.at(0)->getInt(), args.at(1)->getInt(), args.at(2)->getInt());
+}
+
+CLEVER_METHOD(NCurses::nColors)
+{
+	if (!clever_check_no_args()) {
+		return;
+	}
+	NCursesObject* mo = CLEVER_GET_OBJECT(NCursesObject*, CLEVER_THIS());
+	CNCurses* o = mo->getData();
+	result->setInt(o->nColors());
+}
+
+CLEVER_METHOD(NCurses::hasColors)
+{
+	if (!clever_check_no_args()) {
+		return;
+	}
+	NCursesObject* mo = CLEVER_GET_OBJECT(NCursesObject*, CLEVER_THIS());
+	CNCurses* o = mo->getData();
+	result->setBool(o->hasColors());
+}
+
 // Type initialization
 CLEVER_TYPE_INIT(NCurses::init)
 {
@@ -118,6 +174,23 @@ CLEVER_TYPE_INIT(NCurses::init)
 	addMethod(new Function("addStr",        (MethodPtr) &NCurses::addStr));
 	addMethod(new Function("refresh",       (MethodPtr) &NCurses::refresh));
 	addMethod(new Function("sleep",         (MethodPtr) &NCurses::sleep));
+
+	addMethod(new Function("addColor",     (MethodPtr) &NCurses::addColor));
+	addMethod(new Function("startColor",   (MethodPtr) &NCurses::startColor));
+	addMethod(new Function("setColor",     (MethodPtr) &NCurses::setColor));
+	addMethod(new Function("hasColors",    (MethodPtr) &NCurses::hasColors));
+	addMethod(new Function("nColors",      (MethodPtr) &NCurses::nColors));
+
+	/*COLORS*/
+
+	addProperty(CSTRING("RED"),        new Value(long(COLOR_RED),          true));
+	addProperty(CSTRING("BLACK"),      new Value(long(COLOR_BLACK),        true));
+	addProperty(CSTRING("GREEN"),      new Value(long(COLOR_GREEN),        true));
+	addProperty(CSTRING("YELLOW"),     new Value(long(COLOR_YELLOW),       true));
+	addProperty(CSTRING("BLUE"),       new Value(long(COLOR_BLUE),         true));
+	addProperty(CSTRING("MAGENTA"),    new Value(long(COLOR_MAGENTA),      true));
+	addProperty(CSTRING("CYAN"),       new Value(long(COLOR_CYAN),         true));
+	addProperty(CSTRING("WHITE"),      new Value(long(COLOR_WHITE),        true));
 }
 
 }}} // clever::modules::gui

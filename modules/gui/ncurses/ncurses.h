@@ -51,6 +51,11 @@ public:
 	CLEVER_METHOD(refresh);
 	CLEVER_METHOD(sleep);
 
+	CLEVER_METHOD(startColor);
+	CLEVER_METHOD(setColor);
+	CLEVER_METHOD(addColor);
+	CLEVER_METHOD(nColors);
+	CLEVER_METHOD(hasColors);
 private:
 	DISALLOW_COPY_AND_ASSIGN(NCurses);
 };
