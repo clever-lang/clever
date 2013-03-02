@@ -58,7 +58,7 @@ int CNCurses::setColor(short id, void *handler)
 	return color_set(id, handler);
 }
 
-bool isPrintable(int ch)
+bool CNCurses::isPrintable(int ch)
 {
 	return ::isprint(ch) && !(ch & KEY_CODE_YES);
 }
@@ -84,7 +84,7 @@ bool CNCurses::status()
 }
 
 CNCurses::CNCurses(int sleep_time, WINDOW* father, bool enable_colors,
-				   int w, int h, int x, int y)
+				   int w, int h, int x, int y, bool enable_keypad)
 	: m_sleep_time(sleep_time), m_enable_colors(enable_colors)
 {
 	m_father = father;
@@ -100,6 +100,10 @@ CNCurses::CNCurses(int sleep_time, WINDOW* father, bool enable_colors,
 		m_status = (m_win = initscr()) == NULL;
 	} else {
 		m_win = subwin(father, w, h, x, y);
+	}
+
+	if (enable_keypad) {
+		keypad(m_win, true);
 	}
 
 	if (enable_colors) {

@@ -9,6 +9,7 @@
 #define CLEVER_GUI_NCURSES_H
 
 #include <iostream>
+#include <map>
 #include "core/cstring.h"
 #include "core/value.h"
 #include "core/type.h"
@@ -48,6 +49,7 @@ public:
 
 	CLEVER_METHOD(ctor);
 	CLEVER_METHOD(addStr);
+	CLEVER_METHOD(printStr);
 	CLEVER_METHOD(refresh);
 	CLEVER_METHOD(sleep);
 
@@ -56,8 +58,17 @@ public:
 	CLEVER_METHOD(addColor);
 	CLEVER_METHOD(nColors);
 	CLEVER_METHOD(hasColors);
+
+	CLEVER_METHOD(enableKeyPad);
+	CLEVER_METHOD(noEcho);
+	CLEVER_METHOD(deleteLine);
+	CLEVER_METHOD(getKey);
+	CLEVER_METHOD(isPrintable);
+	CLEVER_METHOD(getKeyName);
+
 private:
 	DISALLOW_COPY_AND_ASSIGN(NCurses);
+	static ::std::map<int, CString> m_keys;
 };
 
 }}} // clever::modules::gui

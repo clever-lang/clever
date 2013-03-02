@@ -24,14 +24,16 @@ namespace clever {
 class CNCurses {
 public:
 	CNCurses(int m_sleep_time = 0, WINDOW* father = NULL, bool m_enable_colors = false,
-			 int w = 0, int h = 0, int x = 0, int y = 0);
+			 int w = 0, int h = 0, int x = 0, int y = 0, bool m_enable_keypad = false);
 	~CNCurses();
 
 	bool status();
 	bool hasColors();
 	void startColor() { ::start_color(); }
-	bool isPrintable(int ch);
+	static bool isPrintable(int ch);
 	bool isChild();
+
+	void noEcho() { ::noecho(); }
 
 	int nColors();
 	int setColor(short id, void* handler);
