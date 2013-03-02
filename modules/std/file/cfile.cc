@@ -8,8 +8,8 @@
 #include <fstream>
 #include "core/value.h"
 #include "core/clever.h"
+#include "core/type.h"
 #include "modules/std/file/cfile.h"
-#include "types/type.h"
 #include "modules/std/core/function.h"
 
 // @TODO(muriloadriano): make this available and use in all Clever API
@@ -97,12 +97,12 @@ CLEVER_METHOD(CFile::readLine)
 	CFileStream* file = CLEVER_GET_OBJECT(CFileStream*, CLEVER_THIS());
 
 	CString* token = new CString;
-	
+
     if (file->getStream().eof()) {
         result->setBool(false);
         return;
     }
-	
+
 	::std::getline(file->getStream(), *token);
 	result->setStr(new StrObject(token, false));
 }
@@ -116,7 +116,7 @@ CLEVER_METHOD(CFile::eof)
 	}
 
 	CFileStream* file = CLEVER_GET_OBJECT(CFileStream*, CLEVER_THIS());
-	
+
 	result->setBool(file->getStream().eof());
 }
 

@@ -12,7 +12,7 @@
 #include "core/clever.h"
 #include "core/value.h"
 #include "core/environment.h"
-#include "types/type.h"
+#include "core/type.h"
 
 namespace clever {
 

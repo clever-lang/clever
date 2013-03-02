@@ -7,8 +7,8 @@
 
 #include "core/clever.h"
 #include "core/value.h"
+#include "core/type.h"
 #include "modules/std/core/function.h"
-#include "types/type.h"
 #include "modules/std/ffi/ffistruct.h"
 #include "modules/std/ffi/ffitypes.h"
 

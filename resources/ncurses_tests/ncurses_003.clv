@@ -1,0 +1,23 @@
+/* We need a Character type!!! */
+import gui.ncurses.*;
+
+var mw = NCurses.new(3000);
+mw.noEcho();
+mw.enableKeyPad();
+
+mw.addStr(5, 10, "Press a key ('q' to quit)...");
+mw.printStr(7, 10, "You pressed: ");
+mw.refresh();
+
+var ch = 0;
+
+while ((ch = mw.getKey()) != 113) {
+	mw.deleteLine();
+	mw.printStr(7, 10, "You pressed: " + ch + " (" + 
+  NCurses.getKeyName(ch) + ")");
+  mw.refresh();
+}
+
+
+
+mw.sleep();

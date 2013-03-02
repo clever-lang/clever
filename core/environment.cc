@@ -12,7 +12,7 @@ namespace clever {
 
 Environment* Environment::activate(Environment* outer) const
 {
-	Environment* env = new Environment(outer, false);
+	Environment* env = new Environment(outer ? outer : m_outer, false);
 
 	if (m_temp) {
 		env->setFlag(FREE_TEMP);

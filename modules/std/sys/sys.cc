@@ -20,7 +20,7 @@
 #include "core/value.h"
 #include "core/driver.h"
 #include "modules/std/sys/sys.h"
-#include "types/native_types.h"
+#include "core/native_types.h"
 #include "core/modmanager.h"
 #include "core/cexception.h"
 

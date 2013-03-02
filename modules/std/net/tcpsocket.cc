@@ -8,8 +8,8 @@
 #include <iostream>
 #include <fstream>
 #include "core/cstring.h"
+#include "core/native_types.h"
 #include "modules/std/net/tcpsocket.h"
-#include "types/native_types.h"
 
 namespace clever { namespace modules { namespace std { namespace net {
 

@@ -9,8 +9,7 @@
 # ---------------------------------------------------------------------------
 # TODO(heuripedes): minimize the scope of the add_definitions()
 # pthread
-# XXX(heuripedes): rename to pthread.
-clever_add_lib(CONCURRENCY
+clever_add_lib(PTHREAD
 	LIBS pthread
 	INCS pthread.h)
 
@@ -20,9 +19,9 @@ clever_add_lib(PCRECPP
 	LIBS pcre pcrecpp
 	PKGS libpcrecpp)
 
-if (PCRECPP_FOUND)
+if(PCRECPP_FOUND)
 	add_definitions(-DHAVE_PCRECPP)
-endif (PCRECPP_FOUND)
+endif()
 
 # libicu
 clever_add_lib(ICU
@@ -55,5 +54,11 @@ clever_add_lib(MYSQLC
 clever_add_lib(SQLITE3
 	LIBS sqlite3
 	INCS sqlite3.h
-	PKGS libsqlite3)
+	PKGS sqlite3)
+
+# libncurses
+clever_add_lib(NCURSES
+	LIBS ncurses
+	INCS curses.h
+)
 

@@ -1,0 +1,32 @@
+import gui.ncurses.*;
+
+var mw = NCurses.new(true, 3000);
+
+mw.addStr(6, 32, "Hello, world!");
+
+if (mw.hasColors() && mw.nColors() >= 13) {
+	var i = 1;
+	mw.addColor(1,  NCurses.RED,     NCurses.BLACK);
+	mw.addColor(2,  NCurses.GREEN,   NCurses.BLACK);
+	mw.addColor(3,  NCurses.YELLOW,  NCurses.BLACK);
+	mw.addColor(4,  NCurses.BLUE,    NCurses.BLACK);
+	mw.addColor(5,  NCurses.MAGENTA, NCurses.BLACK);
+	mw.addColor(6,  NCurses.CYAN,    NCurses.BLACK);
+	mw.addColor(7,  NCurses.BLUE,    NCurses.WHITE);
+	mw.addColor(8,  NCurses.WHITE,   NCurses.RED);
+	mw.addColor(9,  NCurses.BLACK,   NCurses.GREEN);
+	mw.addColor(10, NCurses.BLUE,    NCurses.YELLOW);
+	mw.addColor(11, NCurses.WHITE,   NCurses.BLUE);
+	mw.addColor(12, NCurses.WHITE,   NCurses.MAGENTA);
+	mw.addColor(13, NCurses.BLACK,   NCurses.CYAN);
+
+	while (i <= 13) {
+		mw.setColor(i);
+		mw.addStr(6 + i, 32, "Hello, world!");
+		++i;
+	}
+}
+
+
+mw.refresh();
+mw.sleep();

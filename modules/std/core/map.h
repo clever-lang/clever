@@ -12,7 +12,7 @@
 #include <utility>
 #include "core/cstring.h"
 #include "core/value.h"
-#include "types/type.h"
+#include "core/type.h"
 
 namespace clever {
 

@@ -5,7 +5,7 @@
  * This file is distributed under the MIT license. See LICENSE for details.
  */
 
-#include "types/type.h"
+#include "core/type.h"
 #include "core/value.h"
 #include "core/clever.h"
 #include "modules/std/date/module.h"

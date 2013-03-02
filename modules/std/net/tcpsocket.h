@@ -9,7 +9,7 @@
 #define CLEVER_TCPSOCKET_H
 
 #include <ostream>
-#include "types/type.h"
+#include "core/type.h"
 #include "core/value.h"
 #include "modules/std/net/csocket.h"
 

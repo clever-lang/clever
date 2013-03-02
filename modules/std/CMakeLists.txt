@@ -1,85 +1,85 @@
 
 set(CLEVER_MODULES)
 
-#if (MOD_STD_RPC)
+#if(STD_RPC)
 #	list(APPEND CLEVER_MODULES rpc)
-#endif (MOD_STD_RPC)
+#endif()
 
-if (MOD_STD_FFI)
+if(STD_FFI)
 	list(APPEND CLEVER_MODULES ffi)
-endif (MOD_STD_FFI)
+endif()
 
-if (MOD_STD_REGEX)
+if(STD_REGEX)
 	list(APPEND CLEVER_MODULES regex)
-endif (MOD_STD_REGEX)
+endif()
 
-if (MOD_STD_CLEVER)
+if(STD_CLEVER)
 	list(APPEND CLEVER_MODULES clever)
-endif (MOD_STD_CLEVER)
+endif()
 
-if (MOD_STD_CONCURRENT)
+if(STD_CONCURRENT)
 	list(APPEND CLEVER_MODULES concurrent)
-endif (MOD_STD_CONCURRENT)
+endif()
 
-if (MOD_STD_EVENTS)
+if(STD_EVENTS)
 	list(APPEND CLEVER_MODULES events)
-endif (MOD_STD_EVENTS)
+endif()
 
-if (MOD_STD_DATE)
+if(STD_DATE)
 	list(APPEND CLEVER_MODULES date)
-endif (MOD_STD_DATE)
+endif()
 
-if (MOD_STD_FILE)
+if(STD_FILE)
 	list(APPEND CLEVER_MODULES file)
-endif (MOD_STD_FILE)
+endif()
 
-if (MOD_STD_IO)
+if(STD_IO)
 	list(APPEND CLEVER_MODULES io)
-endif (MOD_STD_IO)
+endif()
 
-if (MOD_STD_UNICODE)
+if(STD_UNICODE)
 	list(APPEND CLEVER_MODULES unicode)
-endif (MOD_STD_UNICODE)
+endif()
 
-if (MOD_STD_FCGI)
+if(STD_FCGI)
 	list(APPEND CLEVER_MODULES fcgi)
-endif (MOD_STD_FCGI)
+endif()
 
-if (MOD_STD_MATH)
+if(STD_MATH)
 	list(APPEND CLEVER_MODULES math)
-endif (MOD_STD_MATH)
+endif()
 
-if (MOD_STD_NET)
+if(STD_NET)
 	list(APPEND CLEVER_MODULES net)
-endif (MOD_STD_NET)
+endif()
 
-if (MOD_STD_SYS)
+if(STD_SYS)
 	list(APPEND CLEVER_MODULES sys)
-endif (MOD_STD_SYS)
+endif()
 
-if (MOD_STD_REFLECTION)
+if(STD_REFLECTION)
 	list(APPEND CLEVER_MODULES reflection)
-endif (MOD_STD_REFLECTION)
+endif()
 
-if (MOD_STD_CRYPTO)
+if(STD_CRYPTO)
 	list(APPEND CLEVER_MODULES crypto)
-endif (MOD_STD_CRYPTO)
+endif()
 
-if (MOD_STD_JSON)
+if(STD_JSON)
 	list(APPEND CLEVER_MODULES json)
-endif (MOD_STD_JSON)
+endif()
 
-foreach (module ${CLEVER_MODULES})
+foreach(module ${CLEVER_MODULES})
 	add_subdirectory(${module})
-endforeach (module)
+endforeach()
 
 add_library(modules_std STATIC
 	std_pkg.cc
 )
 
-foreach (module ${CLEVER_MODULES})
+foreach(module ${CLEVER_MODULES})
 	add_dependencies(modules_std "modules_std_${module}")
 	target_link_libraries(modules_std "modules_std_${module}")
-endforeach (module)
+endforeach()
 
 

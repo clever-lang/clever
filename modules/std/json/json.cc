@@ -7,9 +7,9 @@
 
 #include "core/clever.h"
 #include "core/value.h"
+#include "core/type.h"
 #include "modules/std/core/array.h"
 #include "modules/std/json/json.h"
-#include "types/type.h"
 
 namespace clever { namespace modules { namespace std {
 

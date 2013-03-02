@@ -11,7 +11,7 @@
 #include <cstring>
 
 #include "core/cstring.h"
-#include "types/type.h"
+#include "core/type.h"
 #include "modules/std/core/str.h"
 
 namespace clever {

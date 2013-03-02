@@ -13,6 +13,7 @@
 #include "core/scope.h"
 #include "modules/std/std_pkg.h"
 #include "modules/db/db_pkg.h"
+#include "modules/gui/gui_pkg.h"
 #include "core/user.h"
 
 namespace clever {
@@ -21,7 +22,8 @@ namespace clever {
 void ModManager::init()
 {
 	addModule("std",   new modules::Std);
-	addModule("db",	   new modules::Db);
+	addModule("db",    new modules::Db);
+	addModule("gui",   new modules::Gui);
 	addModule("_user", m_user = new UserModule);
 }
 

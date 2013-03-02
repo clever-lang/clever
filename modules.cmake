@@ -7,206 +7,91 @@
 
 # Modules
 # ---------------------------------------------------------------------------
-clever_add_module(std_date       ON  "enable the date module"       "")
-clever_add_module(std_concurrent ON  "enable the concurrent module" "")
-clever_add_module(std_regex      ON  "enable the regex module"      "")
-clever_add_module(std_ffi        ON  "enable the ffi module"        "")
-clever_add_module(std_rpc        OFF "enable the rpc module"        "")
-clever_add_module(std_net        ON  "enable the net module"        "")
-clever_add_module(std_unicode    ON  "enable the unicode module"    "")
-clever_add_module(std_fcgi       OFF "enable the fcgi module"       "")
-clever_add_module(std_events     ON "enable the event module"      "")
+# heuripedes: pay attention to the order in which you check the modules.
+#             keep in mind that the check is recursive.
 
-clever_add_module(web_request    OFF "enable the request module"    "")
-clever_add_module(web_session    OFF "enable the session module"    "")
+clever_new_module(std.date       ON DOC "enable the date module")
+clever_new_module(std.concurrent ON DOC "enable the concurrent module")
+clever_new_module(std.net        ON DOC "enable the net module")
+clever_new_module(std.clever     ON DOC "enable the clever module")
+clever_new_module(std.file       ON DOC "enable the file module")
+clever_new_module(std.io         ON DOC "enable the io module")
+clever_new_module(std.json       ON DOC "enable the json module")
+clever_new_module(std.math       ON DOC "enable the math module")
+clever_new_module(std.reflection ON DOC "enable the reflection module")
+clever_new_module(std.sys        ON DOC "enable the sys module")
+clever_new_module(std.crypto     ON DOC "enable the crypto module")
 
-clever_add_module(db_mysql       ON  "enable the mysql module"      "")
-clever_add_module(db_sqlite3     ON  "enable the sqlite3 module"    "")
+clever_new_module(std.regex ON  
+	DOC"enable the regex module"
+	LIBS PCRECPP)
 
-# Simple modules
-clever_add_simple_module(std_clever     ON  "enable the clever module"     "")
-clever_add_simple_module(std_file       ON  "enable the file module"       "")
-clever_add_simple_module(std_io         ON  "enable the io module"         "")
-clever_add_simple_module(std_json       ON  "enable the json module"       "")
-clever_add_simple_module(std_math       ON  "enable the math module"       "")
-clever_add_simple_module(std_reflection ON  "enable the reflection module" "")
-clever_add_simple_module(std_sys        ON  "enable the sys module"        "")
-clever_add_simple_module(std_crypto     ON  "enable the crypto module"     "")
+clever_new_module(std.ffi ON
+	DOC "enable the ffi module"
+	LIBS FFI)
 
-# std.date
-if (MOD_STD_DATE)
-	add_definitions(-DHAVE_MOD_STD_DATE)
-	set(MOD_STD_DATE ON)
-else (MOD_STD_DATE)
-	set(MOD_STD_DATE OFF)
-endif (MOD_STD_DATE)
+clever_new_module(std.rpc OFF
+	DOC "enable the rpc module"
+	LIBS PTHREAD FFI)
 
-clever_module_msg(std_date "${MOD_STD_DATE}")
+	
+clever_new_module(std.unicode ON 
+	DOC	"enable the unicode module"
+	LIBS ICU)
+
+clever_new_module(std.fcgi OFF
+	DOC	"enable the fcgi module"
+	LIBS FCGI)
+
+clever_new_module(std.events ON
+	DOC	"enable the event module"
+	MODS std.concurrent)
+
+clever_new_module(db.mysql ON 
+	DOC	"enable the mysql module"
+	LIBS MYSQLC)
+
+clever_new_module(db.sqlite3 ON 
+	DOC	"enable the sqlite3 module"
+	LIBS SQLITE3)
+
+clever_new_module(gui.ncurses ON
+	DOC "enable the ncurses module"
+	LIBS NCURSES
+)
 
 # std.concurrent
-if (MOD_STD_CONCURRENT)
-	if (CONCURRENCY_FOUND)
-		add_definitions(-DHAVE_MOD_STD_CONCURRENT)
-		list(APPEND CLEVER_INCLUDE_DIRS ${CONCURRENCY_INCLUDE_DIRS})
-		list(APPEND CLEVER_LIBRARIES ${CONCURRENCY_LIBRARIES})
-	else (CONCURRENCY_FOUND)
-		clever_module_msg(std_concurrent, "Posix Threads are not present on this system")
-		set(MOD_STD_CONCURRENT OFF)
-	endif (CONCURRENCY_FOUND)
-endif (MOD_STD_CONCURRENT)
+if(STD_CONCURRENT AND UNIX)
+	list(APPEND STD_CONCURRENT_LIB_DEPENDS PTHREAD)
+	clever_module_check(std.concurrent)
 
-clever_module_msg(std_concurrent "${MOD_STD_CONCURRENT}")
-
-# std.events
-if (MOD_STD_EVENTS)
-	if (CONCURRENCY_FOUND)
-		add_definitions(-DHAVE_MOD_STD_EVENTS)
-	else (CONCURRENCY_FOUND)
-		clever_module_msg(std_events, "Posix Threads are not present on this system")
-		set(MOD_STD_EVENTS OFF)
-	endif (CONCURRENCY_FOUND)
-endif (MOD_STD_EVENTS)
-
-clever_module_msg(std_events "${MOD_STD_EVENTS}")
-
-# std.regex
-if (MOD_STD_REGEX)
-	if (PCRECPP_FOUND)
-		add_definitions(-DHAVE_MOD_STD_REGEX)
-		list(APPEND CLEVER_INCLUDE_DIRS ${PCRECPP_INCLUDE_DIRS})
-		list(APPEND CLEVER_LIBRARIES ${PCRECPP_LIBRARIES})
-		list(APPEND CLEVER_LINK_DIRECTORIES ${PCRECPP_LINK_DIRECTORIES})
-	else (PCRECPP_FOUND)
-		clever_module_msg(std_regex "libpcrecpp not found. disabling.")
-		set(MOD_STD_REGEX OFF)
-	endif (PCRECPP_FOUND)
-endif (MOD_STD_REGEX)
-
-clever_module_msg(std_regex ${MOD_STD_REGEX})
-
-# std.unicode
-if (MOD_STD_UNICODE)
-	if (ICU_FOUND)
-		add_definitions(-DHAVE_MOD_STD_UNICODE)
-		list(APPEND CLEVER_INCLUDE_DIRS ${ICU_INCLUDE_DIRS})
-		list(APPEND CLEVER_LIBRARIES ${ICU_LIBRARIES})
-	else (ICU_FOUND)
-		clever_module_msg(std_unicode "libicu not found. disabling.")
-		set(MOD_STD_UNICODE OFF)
-	endif (ICU_FOUND)
-endif (MOD_STD_UNICODE)
-
-clever_module_msg(std_unicode ${MOD_STD_UNICODE})
-
-# std.fcgi
-if (MOD_STD_FCGI)
-	if (FCGI_FOUND)
-		add_definitions(-DHAVE_MOD_STD_FCGI)
-		list(APPEND CLEVER_INCLUDE_DIRS ${FCGI_INCLUDE_DIRS})
-		list(APPEND CLEVER_LIBRARIES ${FCGI_LIBRARIES})
-	else (FCGI_FOUND)
-		clever_module_msg(std_fcgi "libfcgi not found. disabling.")
-		set(MOD_STD_FCGI OFF)
-	endif (FCGI_FOUND)
-endif (MOD_STD_FCGI)
-
-clever_module_msg(std_fcgi ${MOD_STD_FCGI})
+	add_definitions(-pthread)
+	list(APPEND CLEVER_LIBRARIES dl)
+endif()
 
 # std.ffi
-if (MOD_STD_FFI)
-	if (FFI_FOUND)
-		add_definitions(-DHAVE_FFI)
-		add_definitions(-DHAVE_MOD_STD_FFI)
-		list(APPEND CLEVER_INCLUDE_DIRS ${FFI_INCLUDE_DIRS})
-		list(APPEND CLEVER_LIBRARIES ${FFI_LIBRARIES} dl)
-	else (FFI_FOUND)
-		clever_module_msg(std_ffi "libffi not found. disabling.")
-		set(MOD_STD_FFI OFF)
-	endif (FFI_FOUND)
-endif (MOD_STD_FFI)
-
-clever_module_msg(std_ffi ${MOD_STD_FFI})
+clever_module_check(std.ffi)
+if(STD_FFI)
+	add_definitions(-pthread)
+	list(APPEND CLEVER_LIBRARIES dl)
+endif()
 
 # std.rpc
-if (MOD_STD_RPC)
-	if (LIBPTHREAD_FOUND AND FFI_FOUND)
-		add_definitions(-DHAVE_LIBPTHREAD)
-		add_definitions(-pthread -DHAVE_FFI)
-		add_definitions(-DHAVE_MOD_STD_RPC)
-		list(APPEND CLEVER_INCLUDE_DIRS ${LIBPTHREAD_INCLUDE_DIRS} ${FFI_INCLUDE_DIRS})
-		list(APPEND CLEVER_LIBRARIES ${LIBPTHREAD_LIBRARIES} ${FFI_LIBRARIES} dl)
-	else (LIBPTHREAD_FOUND AND FFI_FOUND)
-		clever_module_msg(std_rpc "libpthread or libffi not found. disabling.")
-		set(MOD_STD_RPC OFF)
-	endif (LIBPTHREAD_FOUND AND FFI_FOUND)
-endif (MOD_STD_RPC)
-
-clever_module_msg(std_rpc ${MOD_STD_RPC})
-
-
-# web.request
-if (MOD_WEB_REQUEST)
-	if (CGICC_FOUND)
-		add_definitions(-DHAVE_MOD_WEB_REQUEST)
-		list(APPEND CLEVER_INCLUDE_DIRS ${CGICC_INCLUDE_DIRS})
-		list(APPEND CLEVER_LIBRARIES ${CGICC_LIBRARIES})
-	else (CGICC_FOUND)
-		clever_module_msg(web_request "libcgicc not found. disabling.")
-		set(MOD_WEB_REQUEST OFF)
-	endif (CGICC_FOUND)
-endif (MOD_WEB_REQUEST)
-
-clever_module_msg(web_request ${MOD_WEB_REQUEST})
-
-# web.session
-if (MOD_WEB_SESSION)
-	if (CGICC_FOUND)
-		add_definitions(-DHAVE_MOD_WEB_SESSION)
-		list(APPEND CLEVER_INCLUDE_DIRS ${CGICC_INCLUDE_DIRS})
-		list(APPEND CLEVER_LIBRARIES ${CGICC_LIBRARIES})
-	else (CGICC_FOUND)
-		clever_module_msg(web_session "libcgicc not found. disabling.")
-		set(MOD_WEB_SESSION OFF)
-	endif (CGICC_FOUND)
-endif (MOD_WEB_SESSION)
-
-clever_module_msg(web_session ${MOD_WEB_SESSION})
+clever_module_check(std.rpc)
+if(STD_RPC)
+	add_definitions(-pthread)
+	list(APPEND CLEVER_LIBRARIES dl)
+endif()
 
 # std.net
-if (MOD_STD_NET)
-	if (MSVC)
-		list(APPEND CLEVER_LIBRARIES ws2_32)
-	endif (MSVC)
+clever_module_check(std.net)
+if(STD_NET AND MSVC)
+	list(APPEND CLEVER_LIBRARIES ws2_32)
+endif()
 
-	add_definitions(-DHAVE_MOD_STD_NET)
-endif (MOD_STD_NET)
 
-clever_module_msg(std_net ${MOD_STD_NET})
+# check the remaining modules
+foreach(_modname ${CLEVER_AVAILABLE_MODULES})
+	clever_module_check(${_modname})
+endforeach()
 
-# db.mysql - TODO: Check if mysql is really available in the system
-if (MOD_DB_MYSQL)
-	if (MYSQLC_FOUND)
-		add_definitions(-DHAVE_MOD_DB_MYSQL)
-		list(APPEND CLEVER_INCLUDE_DIRS ${MYSQLC_INCLUDE_DIRS})
-		list(APPEND CLEVER_LIBRARIES ${MYSQLC_LIBRARIES})
-	else (MYSQLC_FOUND)
-		clever_module_msg(db_mysql "libmysqlclient not found. disabling.")
-		set(MOD_DB_MYSQL OFF)
-	endif (MYSQLC_FOUND)
-endif (MOD_DB_MYSQL)
-
-clever_module_msg(db_mysql ${MOD_DB_MYSQL})
-
-# db.sqlite3
-if (MOD_DB_SQLITE3)
-	if (SQLITE3_FOUND)
-		add_definitions(-DHAVE_MOD_DB_SQLITE3)
-		list(APPEND CLEVER_INCLUDE_DIRS ${SQLITE3_INCLUDE_DIRS})
-		list(APPEND CLEVER_LIBRARIES ${SQLITE3_LIBRARIES})
-	else (SQLITE3_FOUND)
-		clever_module_msg(db_sqlite3 "libsqlite3 not found. disabling.")
-		set(MOD_DB_SQLITE3 OFF)
-	endif (SQLITE3_FOUND)
-endif (MOD_DB_SQLITE3)
-
-clever_module_msg(db_sqlite3 ${MOD_DB_SQLITE3})

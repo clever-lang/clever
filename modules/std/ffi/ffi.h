@@ -13,8 +13,7 @@
 #include <string>
 #include <map>
 #include "core/cstring.h"
-#include "types/type.h"
-
+#include "core/type.h"
 #include "core/vm.h"
 #include "core/module.h"
 

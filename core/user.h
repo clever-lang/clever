@@ -9,7 +9,7 @@
 #define CLEVER_USER_H
 
 #include "core/module.h"
-#include "types/type.h"
+#include "core/type.h"
 #include "core/cstring.h"
 
 namespace clever {
@@ -41,7 +41,7 @@ public:
 	~UserType() {}
 
 	void init(CLEVER_TYPE_INIT_ARGS) {
-		setConstructor((MethodPtr) &UserType::ctor);
+		setConstructor((MethodPtr)&UserType::ctor);
 	}
 
 	void setEnvironment(Environment* env) { m_env = env; }

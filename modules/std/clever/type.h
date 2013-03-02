@@ -1,7 +1,14 @@
+/**
+ * Clever programming language
+ * Copyright (c) Clever Team
+ *
+ * This file is distributed under the MIT license. See LICENSE for details.
+ */
+
 #ifndef CLEVER_MOD_CLEVER_TYPE_H
 #define CLEVER_MOD_CLEVER_TYPE_H
 
-#include "types/type.h"
+#include "core/type.h"
 #include <iostream>
 
 namespace clever { namespace modules { namespace std {

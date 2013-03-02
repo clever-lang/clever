@@ -6,7 +6,7 @@
  */
 
 #include "core/value.h"
-#include "types/native_types.h"
+#include "core/native_types.h"
 #include "modules/db/mysql/mysql.h"
 #include "modules/db/mysql/cmysql.h"
 

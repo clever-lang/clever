@@ -16,12 +16,11 @@
 #include "core/clever.h"
 #include "core/value.h"
 #include "core/vm.h"
+#include "core/type.h"
 #include "modules/std/file/cfile.h"
 #include "modules/std/file/file.h"
 #include "modules/std/core/function.h"
 #include "modules/std/core/array.h"
-#include "types/type.h"
-
 
 namespace clever { namespace modules { namespace std {
 
