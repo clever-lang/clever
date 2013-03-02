@@ -109,7 +109,6 @@ CLEVER_FORCE_INLINE Value* VM::setTempValue(const Operand& operand,
 
 	clever_delref(current);
 	source->setData(operand.voffset.second, value);
-	clever_addref(value);
 
 	return value;
 }

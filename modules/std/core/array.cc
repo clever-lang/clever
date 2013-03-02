@@ -57,10 +57,9 @@ CLEVER_TYPE_AT_OPERATOR(ArrayType::at_op)
 		return NULL;
 	}
 
-	Value* result = arr.at(index->getInt());
+	Value* result = new Value;
 
-	// @TODO(Felipe): FIXME
-	result->setConst(false);
+	result->copy(arr.at(index->getInt()));
 
 	return result;
 }

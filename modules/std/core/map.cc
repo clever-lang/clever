@@ -75,7 +75,11 @@ CLEVER_TYPE_AT_OPERATOR(MapType::at_op)
 		clever_throw("Map index not found!");
 		return NULL;
 	}
-	return it->second;
+
+	Value* result = new Value;
+	result->copy(it->second);
+
+	return result;
 }
 
 // void Map.insert(string key, mixed value)
