@@ -160,7 +160,7 @@ while (ch != 113) {
 		mw.addStr(n + y0 + 7, 2, "$: " + nS + "                                ");
 		mw.addStr(n + y0 + 8, 2, "*: " + nP + "                                ");
 	
-		mw.addStr(n + y0 + 10, 2, "Pontuation: " + (pontuation - 0.2 * nr) + "   ");
+		mw.addStr(n + y0 + 10, 2, "Score: " + (pontuation - 0.2 * nr) + "   ");
 	
 		mw.refresh();
 	
@@ -169,8 +169,7 @@ while (ch != 113) {
 	}
 
 	mw.addStr(n + x0 + 11, 2, "GAME OVER!                                               ");
- 	mw.addStr(n + x0 + 11, 2, "Pontuação final : " + pontuation + "                     ");
-	mw.addStr(n + x0 + 11, 2, "Press 'q' to quit and other key to continue              ");
+ 	mw.addStr(n + x0 + 13, 2, "Press 'q' to quit and other key to continue              ");
 	mw.refresh();
 	++nr;
 }
