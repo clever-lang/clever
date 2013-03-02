@@ -29,6 +29,9 @@ var m = grid[0].size();
 var i = 0;
 var px = -1;
 var py = -1;
+var n0o = 0;
+var nSo = 0;
+var nPo = 0;
 
 /* Find player */
 while (i < n) {
@@ -37,18 +40,20 @@ while (i < n) {
 		if (grid[i].charAt(j) == 'x') {
 			px = i;
 			py = j;
-			break;
+		} else if (grid[i].charAt(j) == 'o') {
+			++n0o;
+		} else if (grid[i].charAt(j) == '*') {
+			++nSo;
+		} else if (grid[i].charAt(j) == '$') {
+			++nPo;
 		}
 		++j;
-	}
-	if (px > -1 || py > -1) {
-		break;
 	}
 	++i;
 }
 
 /* Render game */
-var mw = NCurses.new(true, 500);
+var mw = NCurses.new(true, 10000);
 
 /* colors */
 /*  color: 'x' */
@@ -87,7 +92,7 @@ var nS = 0;
 var nP = 0;
 var score = 0;
 
-while (ch != 113 && moves > 0) {
+while (ch != 113 && moves > 0 && (n0o + nPo + nSo) != 0) {
 	grid[px] = grid[px].replace('x', '.');
 	if (ch == NCurses.KEY_LEFT) {
 		if (py > 0 && grid[px].charAt(py-1) != '#') {
@@ -112,10 +117,13 @@ while (ch != 113 && moves > 0) {
 
 	if (grid[px].charAt(py) == 'o') {
 		++no;
+		n0o--;
 	} else if (grid[px].charAt(py) == '$') {
 		++nS;
+		nSo--;
 	} else if (grid[px].charAt(py) == '*') {
 		++nP;
+		nPo--;
 	}
 	score = no + 2 * nS + 3 * nP;
 	 
@@ -168,7 +176,8 @@ while (ch != 113 && moves > 0) {
 mw.addStr(n + x0 + 11, 2, "GAME OVER!                                               ");
 
 
-
+while ((ch = mw.getKey()) != 113) {
+}
 
 
 
