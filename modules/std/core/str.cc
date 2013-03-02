@@ -98,7 +98,7 @@ CLEVER_TYPE_OPERATOR(StrType::equal)
 CLEVER_TYPE_OPERATOR(StrType::not_equal)
 {
 	if (EXPECTED(rhs->isStr())) {
-		result->setBool(lhs->getStr() != rhs->getStr());
+		result->setBool(*lhs->getStr() != *rhs->getStr());
 	}
 }
 
