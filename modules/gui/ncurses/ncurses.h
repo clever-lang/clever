@@ -26,9 +26,9 @@ public:
 
 	}
 
-	CNCurses* getData() { return &m_ncurses_obj; }
 	~NCursesObject() {}
 
+	CNCurses* getData() { return &m_ncurses_obj; }
 private:
 	CNCurses m_ncurses_obj;
 	DISALLOW_COPY_AND_ASSIGN(NCursesObject);

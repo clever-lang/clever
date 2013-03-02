@@ -62,6 +62,8 @@ CLEVER_TYPE_AT_OPERATOR(ArrayType::at_op)
 	// @TODO(Felipe): FIXME
 	result->setConst(false);
 
+	clever_addref(result);
+
 	return result;
 }
 

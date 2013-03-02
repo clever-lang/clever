@@ -20,6 +20,7 @@ void StrType::dump(TypeObject* value, std::ostream& out) const
 	out << *static_cast<StrObject*>(value)->value;
 }
 
+// + operator
 CLEVER_TYPE_OPERATOR(StrType::add)
 {
 	if (EXPECTED(rhs->isStr())) {
@@ -39,10 +40,7 @@ CLEVER_TYPE_OPERATOR(StrType::add)
 	}
 }
 
-CLEVER_TYPE_OPERATOR(StrType::sub)
-{
-}
-
+// * operator
 CLEVER_TYPE_OPERATOR(StrType::mul)
 {
 	if (rhs->isInt()) {
@@ -56,18 +54,81 @@ CLEVER_TYPE_OPERATOR(StrType::mul)
 	}
 }
 
-CLEVER_TYPE_OPERATOR(StrType::div)
+// > operator
+CLEVER_TYPE_OPERATOR(StrType::greater)
 {
+	if (EXPECTED(rhs->isStr())) {
+		result->setBool(lhs->getStr() > rhs->getStr());
+	}
 }
 
-CLEVER_TYPE_OPERATOR(StrType::mod)
+// >= operator
+CLEVER_TYPE_OPERATOR(StrType::greater_equal)
 {
+	if (EXPECTED(rhs->isStr())) {
+		result->setBool(lhs->getStr() >= rhs->getStr());
+	}
+}
+
+// < operator
+CLEVER_TYPE_OPERATOR(StrType::less)
+{
+	if (EXPECTED(rhs->isStr())) {
+		result->setBool(lhs->getStr() < rhs->getStr());
+	}
+}
+
+// <= operator
+CLEVER_TYPE_OPERATOR(StrType::less_equal)
+{
+	if (EXPECTED(rhs->isStr())) {
+		result->setBool(lhs->getStr() <= rhs->getStr());
+	}
+}
+
+// == operator
+CLEVER_TYPE_OPERATOR(StrType::equal)
+{
+	if (EXPECTED(rhs->isStr())) {
+		result->setBool(lhs->getStr() == rhs->getStr());
+	}
+}
+
+// != operator
+CLEVER_TYPE_OPERATOR(StrType::not_equal)
+{
+	if (EXPECTED(rhs->isStr())) {
+		result->setBool(lhs->getStr() != rhs->getStr());
+	}
+}
+
+// ! operator
+CLEVER_TYPE_UNARY_OPERATOR(StrType::not_op)
+{
+	result->setBool(!lhs->asBool());
+}
+
+CLEVER_TYPE_AT_OPERATOR(StrType::at_op)
+{
+	const CString* data = obj->getStr();
+	Value* value = new Value(CLEVER_STR_TYPE);
+	char pos[2] = {0};
+
+	pos[0] = data->at(index->getInt());
+
+	value->setStr(new StrObject(std::string(pos)));
+
+	return value;
 }
 
 // String::String()
 CLEVER_METHOD(StrType::ctor)
 {
-	result->setStr(CSTRING(""));
+	if (!clever_check_args("|s")) {
+		return;
+	}
+
+	result->setStr(args.empty() ? CSTRING("") : args[0]->getStr());
 }
 
 // String.subString(int start, [int count])
@@ -419,53 +480,6 @@ CLEVER_TYPE_INIT(StrType::init)
 	addMethod(new Function("replace",		(MethodPtr) &StrType::replace));
 	addMethod(new Function("format",		(MethodPtr) &StrType::format))
 		->setStatic();
-}
-
-CLEVER_TYPE_OPERATOR(StrType::greater)
-{
-	if (EXPECTED(rhs->isStr())) {
-		result->setBool(lhs->getStr() > rhs->getStr());
-	}
-}
-
-CLEVER_TYPE_OPERATOR(StrType::greater_equal)
-{
-	if (EXPECTED(rhs->isStr())) {
-		result->setBool(lhs->getStr() >= rhs->getStr());
-	}
-}
-
-CLEVER_TYPE_OPERATOR(StrType::less)
-{
-	if (EXPECTED(rhs->isStr())) {
-		result->setBool(lhs->getStr() < rhs->getStr());
-	}
-}
-
-CLEVER_TYPE_OPERATOR(StrType::less_equal)
-{
-	if (EXPECTED(rhs->isStr())) {
-		result->setBool(lhs->getStr() <= rhs->getStr());
-	}
-}
-
-CLEVER_TYPE_OPERATOR(StrType::equal)
-{
-	if (EXPECTED(rhs->isStr())) {
-		result->setBool(lhs->getStr() == rhs->getStr());
-	}
-}
-
-CLEVER_TYPE_OPERATOR(StrType::not_equal)
-{
-	if (EXPECTED(rhs->isStr())) {
-		result->setBool(lhs->getStr() != rhs->getStr());
-	}
-}
-
-CLEVER_TYPE_UNARY_OPERATOR(StrType::not_op)
-{
-	result->setBool(!lhs->asBool());
 }
 
 } // clever

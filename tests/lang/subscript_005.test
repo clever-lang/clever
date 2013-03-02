@@ -1,0 +1,11 @@
+Testing map item change
+==CODE==
+import std.io.*;
+
+var arr = {'felipe': 1};
+
+arr['felipe'] = 2;
+
+println(arr);
+==RESULT==
+\{"felipe": 2\}
