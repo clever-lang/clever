@@ -115,6 +115,7 @@ template <typename T>
 struct SimpleTypeObject : public TypeObject {
 	SimpleTypeObject()
 		: TypeObject() {}
+
 	explicit SimpleTypeObject(const T& v)
 		: TypeObject(), value(v) {}
 

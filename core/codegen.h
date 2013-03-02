@@ -68,6 +68,7 @@ public:
 	void visit(Break*);
 	void visit(ClassDef*);
 	void visit(Subscript*);
+	void visit(Switch*);
 private:
 	IRBuilder* m_builder;
 	JmpList m_jmps;

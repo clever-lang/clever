@@ -1,7 +1,0 @@
-import gui.ncurses.*;
-
-var mw = NCurses.new(3000);
-
-mw.addStr(13, 33, "Hello, world!");
-mw.refresh();
-mw.sleep();

@@ -157,6 +157,23 @@ static CLEVER_FUNCTION(time)
 	}
 }
 
+// microtime()
+// Returns the unix timestamp with microseconds
+static CLEVER_FUNCTION(microtime)
+{
+	struct timeval tp = {0};
+
+	if (!clever_static_check_no_args()) {
+		return;
+	}
+	if (gettimeofday(&tp, NULL)) {
+		result->setBool(false);
+		return;
+	}
+
+	result->setDouble(tp.tv_sec + tp.tv_usec / 1000000.00);
+}
+
 // getpid()
 // Returns the current process id
 static CLEVER_FUNCTION(getpid)
@@ -179,7 +196,7 @@ static CLEVER_FUNCTION(getppid)
 	result->setInt(::getppid());
 }
 
-// getuid
+// getuid()
 // Returns the process user id
 static CLEVER_FUNCTION(getuid)
 {
@@ -190,7 +207,7 @@ static CLEVER_FUNCTION(getuid)
 	result->setInt(::geteuid());
 }
 
-// getsid
+// getsid()
 // Returns the process group id
 static CLEVER_FUNCTION(getsid)
 {
@@ -206,19 +223,20 @@ static CLEVER_FUNCTION(getsid)
 // Initializes Standard module
 CLEVER_MODULE_INIT(SYSModule)
 {
-	addFunction(new Function("system",  &CLEVER_NS_FNAME(sys, system)));
-	addFunction(new Function("putenv",  &CLEVER_NS_FNAME(sys, putenv)));
-	addFunction(new Function("getenv",  &CLEVER_NS_FNAME(sys, getenv)));
-	addFunction(new Function("getcwd",  &CLEVER_NS_FNAME(sys, getcwd)));
-	addFunction(new Function("getpid",  &CLEVER_NS_FNAME(sys, getpid)));
-	addFunction(new Function("getppid", &CLEVER_NS_FNAME(sys, getppid)));
-	addFunction(new Function("getuid",  &CLEVER_NS_FNAME(sys, getuid)));
-	addFunction(new Function("getsid",  &CLEVER_NS_FNAME(sys, getsid)));
-	addFunction(new Function("argc",    &CLEVER_NS_FNAME(sys, argc)));
-	addFunction(new Function("argv",    &CLEVER_NS_FNAME(sys, argv)));
-	addFunction(new Function("sleep",   &CLEVER_NS_FNAME(sys, sleep)));
-	addFunction(new Function("clock",   &CLEVER_NS_FNAME(sys, clock)));
-	addFunction(new Function("time",    &CLEVER_NS_FNAME(sys, time)));
+	addFunction(new Function("system",    &CLEVER_NS_FNAME(sys, system)));
+	addFunction(new Function("putenv",    &CLEVER_NS_FNAME(sys, putenv)));
+	addFunction(new Function("getenv",    &CLEVER_NS_FNAME(sys, getenv)));
+	addFunction(new Function("getcwd",    &CLEVER_NS_FNAME(sys, getcwd)));
+	addFunction(new Function("getpid",    &CLEVER_NS_FNAME(sys, getpid)));
+	addFunction(new Function("getppid",   &CLEVER_NS_FNAME(sys, getppid)));
+	addFunction(new Function("getuid",    &CLEVER_NS_FNAME(sys, getuid)));
+	addFunction(new Function("getsid",    &CLEVER_NS_FNAME(sys, getsid)));
+	addFunction(new Function("argc",      &CLEVER_NS_FNAME(sys, argc)));
+	addFunction(new Function("argv",      &CLEVER_NS_FNAME(sys, argv)));
+	addFunction(new Function("sleep",     &CLEVER_NS_FNAME(sys, sleep)));
+	addFunction(new Function("clock",     &CLEVER_NS_FNAME(sys, clock)));
+	addFunction(new Function("time",      &CLEVER_NS_FNAME(sys, time)));
+	addFunction(new Function("microtime", &CLEVER_NS_FNAME(sys, microtime)));
 }
 
 }}} // clever::modules::std

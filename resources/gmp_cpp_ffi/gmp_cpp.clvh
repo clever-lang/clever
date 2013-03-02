@@ -1,8 +1,0 @@
-extern gmp_cpp {
-	FFIObject init_bi() as "_Z7init_biv";
-	FFIObject add_bi(FFIObject res, FFIObject a, FFIObject b) as "_Z6add_biP12__mpz_structS0_S0_";
-	Void set_str_bi(FFIObject op, String str, Int base) as "_Z10set_str_biP12__mpz_structPci";
-	Void set_bi(FFIObject op1, FFIObject op2) as "_Z6set_biP12__mpz_structS0_";
-	Void  clear_bi(FFIObject x) as "_Z8clear_biPA1_12__mpz_struct";
-	String get_str_bi(FFIObject op, Int base) as "_Z10get_str_biP12__mpz_structi";
-}

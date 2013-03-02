@@ -75,6 +75,9 @@ CLEVER_TYPE_AT_OPERATOR(MapType::at_op)
 		clever_throw("Map index not found!");
 		return NULL;
 	}
+
+	clever_addref(it->second);
+
 	return it->second;
 }
 

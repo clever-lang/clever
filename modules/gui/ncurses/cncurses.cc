@@ -14,11 +14,9 @@
 # include <sys/resource.h>
 # include <sys/time.h>
 #endif
-
 #include "modules/gui/ncurses/cncurses.h"
 
 namespace clever {
-
 
 void csleep(int sleep_time)
 {
@@ -46,14 +44,14 @@ void CNCurses::deleteLine()
 
 void CNCurses::printStr(int x, int y, const char *str)
 {
-	if (m_father == NULL) {
-		mvprintw(x, y, str);
-	} else {
+	if (isChild()) {
 		mvwprintw(m_win, x, y, str);
+	} else {
+		mvprintw(x, y, str);
 	}
 }
 
-int CNCurses::setColor(short id, void *handler)
+int CNCurses::setColor(short id, void* handler)
 {
 	return color_set(id, handler);
 }
@@ -87,6 +85,7 @@ CNCurses::CNCurses(int sleep_time, WINDOW* father, bool enable_colors,
 				   int w, int h, int x, int y, bool enable_keypad)
 	: m_sleep_time(sleep_time), m_enable_colors(enable_colors)
 {
+	m_is_closed = false;
 	m_father = father;
 
 	width = w;
@@ -111,18 +110,22 @@ CNCurses::CNCurses(int sleep_time, WINDOW* father, bool enable_colors,
 	}
 }
 
-void CNCurses::addStr(int x, int y, const char *str)
+void CNCurses::addStr(int x, int y, const char* str)
 {
-	if (m_father == NULL) {
-		mvaddstr(x, y, str);
+	if (isChild()) {
+		mvwaddstr(m_win, x, y, str);
 	} else {
-		mvwaddstr(m_father, x, y, str);
+		mvaddstr(x, y, str);
 	}
 }
 
 void CNCurses::refresh()
 {
-	::refresh();
+	if (isChild()) {
+		::wrefresh(m_win);
+	} else {
+		::refresh();
+	}
 }
 
 void CNCurses::sleep()
@@ -132,9 +135,34 @@ void CNCurses::sleep()
 
 CNCurses::~CNCurses()
 {
+	if (!m_is_closed) {
+		close();
+	}
+}
+
+void CNCurses::hide()
+{
 	delwin(m_win);
-	endwin();
+	m_is_closed = true;
+}
+
+void CNCurses::exit()
+{
+	if (!isChild()) {
+		endwin();
+	}
+
+	m_is_closed = true;
+}
+
+void CNCurses::close()
+{
+	delwin(m_win);
+	if (!isChild()) {
+		endwin();
+	}
 	refresh();
+	m_is_closed = true;
 }
 
 bool CNCurses::isChild()

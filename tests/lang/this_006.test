@@ -1,0 +1,17 @@
+Testing property access on write mode
+==CODE==
+import std.io.*;
+
+class Cc {
+	var x;
+
+	function Cc(x) {this.x = x; }
+
+	function foo() { ++this.x; println(this.x); }
+}
+
+var c = Cc.new(2);
+c.foo();
+
+==RESULT==
+3

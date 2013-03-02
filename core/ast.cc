@@ -97,6 +97,8 @@ void AttrDecl::accept(Visitor& visitor) { visitor.visit(this); }
 
 void Subscript::accept(Visitor& visitor) { visitor.visit(this); }
 
+void Switch::accept(Visitor& visitor) { visitor.visit(this); }
+
 // Transformers
 
 Node* Node::accept(Transformer& transformer) { return transformer.transform(this); }
@@ -176,5 +178,7 @@ Node* ClassDef::accept(Transformer& transformer) { return transformer.transform(
 Node* AttrDecl::accept(Transformer& transformer) { return transformer.transform(this); }
 
 Node* Subscript::accept(Transformer& transformer) { return transformer.transform(this); }
+
+Node* Switch::accept(Transformer& transformer) { return transformer.transform(this); }
 
 }} // clever::ast

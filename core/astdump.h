@@ -75,6 +75,7 @@ public:
 	void visit(TrueLit* node)      { std::cout << m_ws << "TrueLit" << std::endl;      }
 	void visit(FalseLit* node)     { std::cout << m_ws << "FalseLit" << std::endl;     }
 	void visit(Array* node)        { std::cout << m_ws << "Array" << std::endl;        }
+	void visit(Switch* node)       { std::cout << m_ws << "Switch" << std::endl;       }
 
 	void visit(Try* node) {
 		std::cout << m_ws << "Try" << std::endl;

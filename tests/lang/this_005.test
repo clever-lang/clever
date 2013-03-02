@@ -1,0 +1,21 @@
+Testing object destruction
+==CODE==
+import std.io.*;
+
+class Bar { var z; }
+
+class Foo {
+	function bar() {
+		Bar.new;
+	}
+}
+
+var arr = [Foo.new];
+
+arr.each(function(t) {
+	t.bar();
+});
+
+println("Done!");
+==RESULT==
+Done!

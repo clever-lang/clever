@@ -1,7 +1,0 @@
-extern gmp {
-	FFIObject init_bi();
-	FFIObject add_bi(FFIObject res, FFIObject a, FFIObject b);
-	Void set_str_bi(FFIObject op, String str, Int base);
-	Void  clear_bi(FFIObject x);
-	String get_str_bi(FFIObject op, Int base);
-}

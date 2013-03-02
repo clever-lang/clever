@@ -1,0 +1,16 @@
+Testing subscript operator
+==CODE==
+import std.io.*;
+
+var str = "foo";
+println(str[0]);
+
+var arr = [1,2,3];
+println(arr[2]);
+
+var map = {'felipe': 123};
+println(map['felipe']);
+==RESULT==
+f
+3
+123

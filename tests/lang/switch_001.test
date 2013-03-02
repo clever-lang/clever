@@ -1,0 +1,20 @@
+Testing switch-case
+==CODE==
+import std.io.*;
+
+var x = 3;
+
+switch (x) {
+	case 3:
+		println(3);
+		break;
+	case 1:
+		println(1);
+		break;
+	case 2:
+		println(2);
+		break;
+}
+
+==RESULT==
+3
