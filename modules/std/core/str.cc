@@ -58,7 +58,7 @@ CLEVER_TYPE_OPERATOR(StrType::mul)
 CLEVER_TYPE_OPERATOR(StrType::greater)
 {
 	if (EXPECTED(rhs->isStr())) {
-		result->setBool(lhs->getStr() > rhs->getStr());
+		result->setBool(*lhs->getStr() > *rhs->getStr());
 	}
 }
 
@@ -66,7 +66,7 @@ CLEVER_TYPE_OPERATOR(StrType::greater)
 CLEVER_TYPE_OPERATOR(StrType::greater_equal)
 {
 	if (EXPECTED(rhs->isStr())) {
-		result->setBool(lhs->getStr() >= rhs->getStr());
+		result->setBool(*lhs->getStr() >= *rhs->getStr());
 	}
 }
 
@@ -74,7 +74,7 @@ CLEVER_TYPE_OPERATOR(StrType::greater_equal)
 CLEVER_TYPE_OPERATOR(StrType::less)
 {
 	if (EXPECTED(rhs->isStr())) {
-		result->setBool(lhs->getStr() < rhs->getStr());
+		result->setBool(*lhs->getStr() < *rhs->getStr());
 	}
 }
 
@@ -82,7 +82,7 @@ CLEVER_TYPE_OPERATOR(StrType::less)
 CLEVER_TYPE_OPERATOR(StrType::less_equal)
 {
 	if (EXPECTED(rhs->isStr())) {
-		result->setBool(lhs->getStr() <= rhs->getStr());
+		result->setBool(*lhs->getStr() <= *rhs->getStr());
 	}
 }
 
@@ -90,7 +90,7 @@ CLEVER_TYPE_OPERATOR(StrType::less_equal)
 CLEVER_TYPE_OPERATOR(StrType::equal)
 {
 	if (EXPECTED(rhs->isStr())) {
-		result->setBool(lhs->getStr() == rhs->getStr());
+		result->setBool(*lhs->getStr() == *rhs->getStr());
 	}
 }
 
