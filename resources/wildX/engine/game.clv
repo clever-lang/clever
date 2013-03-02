@@ -67,18 +67,32 @@ class Game {
 
 	/* Initial position */
 	var p0;
-
+	var mw;
 
 	function Game(grid_, n_, m_) {
 		this.grid = grid_;
 		this.n = n_;
 		this.m = m_;
 
+		this.n0o = 0; 
+		this.nSo = 0; 
+		this.nPo = 0;
+
+		this.mw = NCurses.new(true, 10000);
+
+		/* Enable key reading */
+		this.mw.noEcho(); 
+		this.mw.enableKeyPad();
+	
+
+		init_pallete(this.mw);
+
+
 		this.colors =  {'x' : 1, '*' : 2, '$' : 3, 'o' : 4,  '#' : 17, '.' : 16, '@': 14, '-': 15};
 		this.colorst = {'x' : 7, '*' : 8, '$' : 10, 'o' : 9, '#' : 17, '.' : 16, '@': 14, '-': 15};
 	}
 
-	function start(mw, n_moves) {
+	function start(n_moves) {
 		var i = 0;
 		var px, py;
 
@@ -106,24 +120,24 @@ class Game {
 		this.player = Player.new(Point.new(this.p0.x, this.p0.y), Score.new(n_moves, 0, 0, 0, 0));
 	}
 
-	function finish(mw, x0, y0) {
-		mw.setColor(8);
-		mw.addStr(x0 - 3, 2, "GAME OVER!");
+	function finish(x0, y0) {
+		this.mw.setColor(8);
+		this.mw.addStr(x0 - 3, 2, "GAME OVER!");
 
-		mw.setColor(2);
-		mw.addStr(this.n + x0 + 12, 2, "Press 'q' to exit.");
+		this.mw.setColor(2);
+		this.mw.addStr(this.n + x0 + 12, 2, "Press 'q' to exit.");
 
-		wait(mw, 113);
+		wait(this.mw, 113);
 	}
 
-	function run(mw, x0, y0) {
+	function run(x0, y0) {
 
 		/* Print title*/
-		mw.setColor(7);
-		mw.addStr(0, 0, "The Wild X");
+		this.mw.setColor(7);
+		this.mw.addStr(0, 0, "The Wild X");
 
-		mw.setColor(2);
-		mw.addStr(this.n + x0 + 12, 2, "Press 'q' to quit.");
+		this.mw.setColor(2);
+		this.mw.addStr(this.n + x0 + 12, 2, "Press 'q' to quit.");
 
 		/* The render loop */
 		var ch = 0;
@@ -195,8 +209,8 @@ class Game {
 				while (j < this.grid[i].size()) {
 					var c = this.grid[i][j];
 
-					mw.setColor(this.colors[c]);
-					mw.addStr(i + x0, j + y0, c);
+					this.mw.setColor(this.colors[c]);
+					this.mw.addStr(i + x0, j + y0, c);
 
 					++j;
 				}
@@ -204,23 +218,23 @@ class Game {
 			}		
 
 			/*Print messages*/
-			print_info(mw, "Score: ", this.player.score.score + "  ", x0 - 2,  2, 12, 8);
+			print_info(this.mw, "Score: ", this.player.score.score + "  ", x0 - 2,  2, 12, 8);
 
-			print_info(mw, "Position player: ", "(" + px + ", " + py + ")   ", this.n + x0 + 3,  2, 12, 10);
-			print_info(mw, "Moves: ",  this.player.score.moves + "  ", this.n + x0 + 4,  2, 12, 10);
+			print_info(this.mw, "Position player: ", "(" + px + ", " + py + ")   ", this.n + x0 + 3,  2, 12, 10);
+			print_info(this.mw, "Moves: ",  this.player.score.moves + "  ", this.n + x0 + 4,  2, 12, 10);
 	
-			print_score(mw, this.colorst, 'o', this.player.score.no, x0 - 2, 15, 12);
-			print_score(mw, this.colorst, '$', this.player.score.nS, x0 - 2, 25, 12);
-			print_score(mw, this.colorst, '*', this.player.score.nP, x0 - 2, 35, 12);
+			print_score(this.mw, this.colorst, 'o', this.player.score.no, x0 - 2, 15, 12);
+			print_score(this.mw, this.colorst, '$', this.player.score.nS, x0 - 2, 25, 12);
+			print_score(this.mw, this.colorst, '*', this.player.score.nP, x0 - 2, 35, 12);
 	
 			this.player.p = Point.new(px, py);
 
 			/*Get a new key*/
-			ch = mw.getKey();
+			ch = this.mw.getKey();
 
 			--this.player.score.moves;
 		}
-		finish(mw, x0, y0);
+		finish(this.mw, x0, y0);
 	}
 }
 
