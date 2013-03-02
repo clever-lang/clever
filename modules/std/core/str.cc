@@ -115,7 +115,19 @@ CLEVER_TYPE_AT_OPERATOR(StrType::at_op)
 	Value* value = new Value(CLEVER_STR_TYPE);
 	char pos[2] = {0};
 
-	pos[0] = data->at(index->getInt());
+	if (!index->isInt()) {
+		clever_throw("Invalid index type!");
+		return NULL;
+	}
+
+	long key = index->getInt();
+
+	if (key < 0 || size_t(key) > data->size()) {
+		clever_throw("String access out of bounds!");
+		return NULL;
+	}
+
+	pos[0] = data->at(key);
 
 	value->setStr(new StrObject(std::string(pos)));
 
