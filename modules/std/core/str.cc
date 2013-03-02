@@ -362,12 +362,10 @@ CLEVER_METHOD(StrType::charAt)
 			found[1] = '\0';
 			if (found[0]) {
 				result->setStr(CSTRING(found));
-			} else {
-				result->setNull();
+				return;
 			}
-		} else {
-			result->setNull();
 		}
+		result->setNull();
 	} else {
 		clever_throw("String.charAt expected a non-negative argument for position");
 	}
