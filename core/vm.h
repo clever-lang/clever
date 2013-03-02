@@ -122,7 +122,7 @@ private:
 
 	/// Call arguments
 	std::vector<Value*> m_call_args;
-	std::vector<Environment*> m_obj_store;
+	std::stack<std::vector<Environment*> > m_obj_store;
 
 	bool m_main;
 

@@ -234,7 +234,10 @@ CLEVER_FORCE_INLINE void VM::createInstance(const Type* type, Value* instance)
 	uobj->setEnvironment(utype->getEnvironment()->activate());
 	uobj->getEnvironment()->getValue(ValueOffset(0,0))->copy(instance);
 
-	m_obj_store.push_back(uobj->getEnvironment());
+	if (m_obj_store.empty()) {
+		m_obj_store.push(std::vector<Environment*>());
+	}
+	m_obj_store.top().push_back(uobj->getEnvironment());
 }
 
 // Executes the supplied function
@@ -254,7 +257,8 @@ Value* VM::runFunction(const Function* func, std::vector<Value*>* args)
 
 		_param_binding(func, fenv, args);
 
-		std::for_each(m_obj_store.begin(), m_obj_store.end(), clever_addref);
+		m_obj_store.push(std::vector<Environment*>());
+		//std::for_each(m_obj_store.begin(), m_obj_store.end(), clever_addref);
 
 		size_t saved_pc = m_pc;
 		m_pc = func->getAddr();
@@ -278,44 +282,20 @@ CLEVER_FORCE_INLINE void VM::binOp(const IR& op)
 
 	switch (op.opcode) {
 		// Arithmetic
-		case OP_ADD:
-			type->add(getValue(op.result), lhs, rhs, this, &m_exception);
-			break;
-		case OP_SUB:
-			type->sub(getValue(op.result), lhs, rhs, this, &m_exception);
-			break;
-		case OP_MUL:
-			type->mul(getValue(op.result), lhs, rhs, this, &m_exception);
-			break;
-		case OP_DIV:
-			type->div(getValue(op.result), lhs, rhs, this, &m_exception);
-			break;
-		case OP_MOD:
-			type->mod(getValue(op.result), lhs, rhs, this, &m_exception);
-			break;
+		case OP_ADD: type->add(getValue(op.result), lhs, rhs, this, &m_exception); break;
+		case OP_SUB: type->sub(getValue(op.result), lhs, rhs, this, &m_exception); break;
+		case OP_MUL: type->mul(getValue(op.result), lhs, rhs, this, &m_exception); break;
+		case OP_DIV: type->div(getValue(op.result), lhs, rhs, this, &m_exception); break;
+		case OP_MOD: type->mod(getValue(op.result), lhs, rhs, this, &m_exception); break;
 		// Bitwise
-		case OP_BW_AND:
-			type->bw_and(getValue(op.result), lhs, rhs, this, &m_exception);
-			break;
-		case OP_BW_OR:
-			type->bw_or(getValue(op.result), lhs, rhs, this, &m_exception);
-			break;
-		case OP_BW_XOR:
-			type->bw_xor(getValue(op.result), lhs, rhs, this, &m_exception);
-			break;
-		case OP_BW_RS:
-			type->bw_rs(getValue(op.result), lhs, rhs, this, &m_exception);
-			break;
-		case OP_BW_LS:
-			type->bw_ls(getValue(op.result), lhs, rhs, this, &m_exception);
-			break;
+		case OP_BW_AND: type->bw_and(getValue(op.result), lhs, rhs, this, &m_exception); break;
+		case OP_BW_OR: 	type->bw_or(getValue(op.result),  lhs, rhs, this, &m_exception); break;
+		case OP_BW_XOR:	type->bw_xor(getValue(op.result), lhs, rhs, this, &m_exception); break;
+		case OP_BW_RS:	type->bw_rs(getValue(op.result),  lhs, rhs, this, &m_exception); break;
+		case OP_BW_LS:	type->bw_ls(getValue(op.result),  lhs, rhs, this, &m_exception); break;
 		// Unary
-		case OP_NOT:
-			type->not_op(getValue(op.result), lhs, this, &m_exception);
-			break;
-		case OP_BW_NOT:
-			type->bw_not(getValue(op.result), lhs, this, &m_exception);
-			break;
+		case OP_NOT:    type->not_op(getValue(op.result), lhs, this, &m_exception); break;
+		case OP_BW_NOT:	type->bw_not(getValue(op.result), lhs, this, &m_exception);	break;
 		EMPTY_SWITCH_DEFAULT_CASE();
 	}
 }
@@ -334,24 +314,12 @@ CLEVER_FORCE_INLINE void VM::logicOp(const IR& op)
 	const Type* type = lhs->getType();
 
 	switch (op.opcode) {
-		case OP_GREATER:
-			type->greater(getValue(op.result), lhs, rhs, this, &m_exception);
-			break;
-		case OP_GEQUAL:
-			type->greater_equal(getValue(op.result), lhs, rhs, this, &m_exception);
-			break;
-		case OP_LESS:
-			type->less(getValue(op.result), lhs, rhs, this, &m_exception);
-			break;
-		case OP_LEQUAL:
-			type->less_equal(getValue(op.result), lhs, rhs, this, &m_exception);
-			break;
-		case OP_EQUAL:
-			type->equal(getValue(op.result), lhs, rhs, this, &m_exception);
-			break;
-		case OP_NEQUAL:
-			type->not_equal(getValue(op.result), lhs, rhs, this, &m_exception);
-			break;
+		case OP_GREATER: type->greater(getValue(op.result), lhs, rhs, this, &m_exception);       break;
+		case OP_GEQUAL:  type->greater_equal(getValue(op.result), lhs, rhs, this, &m_exception); break;
+		case OP_LESS:    type->less(getValue(op.result), lhs, rhs, this, &m_exception);          break;
+		case OP_LEQUAL:  type->less_equal(getValue(op.result), lhs, rhs, this, &m_exception);    break;
+		case OP_EQUAL:   type->equal(getValue(op.result), lhs, rhs, this, &m_exception);         break;
+		case OP_NEQUAL:  type->not_equal(getValue(op.result), lhs, rhs, this, &m_exception);     break;
 		EMPTY_SWITCH_DEFAULT_CASE();
 	}
 }
@@ -915,7 +883,10 @@ exit_exception:
 			m_exception.getException(), dump.str().c_str());
 	}
 exit:
-	std::for_each(m_obj_store.begin(), m_obj_store.end(), clever_delref);
+	if (!m_obj_store.empty()) {
+		std::for_each(m_obj_store.top().begin(), m_obj_store.top().end(), clever_delref);
+		m_obj_store.pop();
+	}
 }
 
 } // clever
