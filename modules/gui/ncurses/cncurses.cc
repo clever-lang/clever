@@ -110,7 +110,7 @@ CNCurses::CNCurses(int sleep_time, WINDOW* father, bool enable_colors,
 	}
 }
 
-void CNCurses::addStr(int x, int y, const char *str)
+void CNCurses::addStr(int x, int y, const char* str)
 {
 	if (m_father == NULL) {
 		mvaddstr(x, y, str);
