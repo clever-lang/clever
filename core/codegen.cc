@@ -658,4 +658,56 @@ void Codegen::visit(Subscript* node)
 	node->setVOffset(tmp_id);
 }
 
+void Codegen::visit(Switch* node)
+{
+	node->getExpr()->accept(*this);
+
+	std::vector<std::pair<Node*, Node*> >& cases = node->getCases();
+	std::vector<std::pair<Node*, Node*> >::const_iterator it(cases.begin()),
+		end(cases.end());
+
+	IR* last_jmp = NULL;
+
+	m_brks.push(AddrVector());
+
+	for (; it != end; ++it) {
+		it->first->accept(*this);
+
+		IR& kase = m_builder->push(OP_EQUAL);
+
+		kase.loc = it->first->getLocation();
+
+		_prepare_operand(kase.op1, node->getExpr());
+		_prepare_operand(kase.op2, it->first);
+
+		ValueOffset tmp_id = m_builder->getTemp();
+		kase.result = Operand(FETCH_TMP, tmp_id);
+
+		IR& jmpz = m_builder->push(OP_JMPZ);
+		jmpz.op1 = Operand(FETCH_TMP, tmp_id);
+
+		if (last_jmp) {
+			last_jmp->op1 = Operand(JMP_ADDR, m_builder->getSize());
+		}
+
+		it->second->accept(*this);
+
+		last_jmp = &m_builder->push(OP_JMP);
+
+		jmpz.op2 = Operand(JMP_ADDR, m_builder->getSize());
+	}
+	if (last_jmp) {
+		last_jmp->op1 = Operand(JMP_ADDR, m_builder->getSize());
+	}
+
+	if (!m_brks.top().empty()) {
+		// Set the break statements jmp address
+		for (size_t i = 0, j = m_brks.top().size(); i < j; ++i) {
+			m_builder->getAt(m_brks.top()[i]).op1.jmp_addr = m_builder->getSize() + 1;
+		}
+	}
+
+	m_brks.pop();
+}
+
 }} // clever::ast

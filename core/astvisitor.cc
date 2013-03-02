@@ -9,7 +9,8 @@
 
 namespace clever { namespace ast {
 
-void Visitor::visit(NodeArray* node) {
+void Visitor::visit(NodeArray* node)
+{
 	std::vector<Node*> nodes = node->getNodes();
 	std::vector<Node*>::const_iterator it = nodes.begin(), end = nodes.end();
 	while (it != end) {
@@ -18,19 +19,23 @@ void Visitor::visit(NodeArray* node) {
 	}
 }
 
-void Visitor::visit(Block* node) {
+void Visitor::visit(Block* node)
+{
 	Visitor::visit(static_cast<NodeArray*>(node));
 }
 
-void Visitor::visit(Wait* node) {
+void Visitor::visit(Wait* node)
+{
 	node->getName()->accept(*this);
 }
 
-void Visitor::visit(CriticalBlock* node) {
+void Visitor::visit(CriticalBlock* node)
+{
 	node->getBlock()->accept(*this);
 }
 
-void Visitor::visit(ThreadBlock* node) {
+void Visitor::visit(ThreadBlock* node)
+{
 	node->getName()->accept(*this);
 	if (node->getSize()) {
 		node->getSize()->accept(*this);
@@ -38,26 +43,30 @@ void Visitor::visit(ThreadBlock* node) {
 	node->getBlock()->accept(*this);
 }
 
-void Visitor::visit(Assignment* node) {
+void Visitor::visit(Assignment* node)
+{
 	node->getLhs()->accept(*this);
 	if (node->getRhs()) {
 		node->getRhs()->accept(*this);
 	}
 }
 
-void Visitor::visit(VariableDecl* node) {
+void Visitor::visit(VariableDecl* node)
+{
 	node->getIdent()->accept(*this);
 	if (node->hasAssignment()) {
 		node->getAssignment()->accept(*this);
 	}
 }
 
-void Visitor::visit(Arithmetic* node) {
+void Visitor::visit(Arithmetic* node)
+{
 	node->getLhs()->accept(*this);
 	node->getRhs()->accept(*this);
 }
 
-void Visitor::visit(FunctionDecl* node) {
+void Visitor::visit(FunctionDecl* node)
+{
 	if (node->hasIdent()) {
 		node->getIdent()->accept(*this);
 	}
@@ -69,7 +78,8 @@ void Visitor::visit(FunctionDecl* node) {
 	node->getBlock()->accept(*this);
 }
 
-void Visitor::visit(FunctionCall* node) {
+void Visitor::visit(FunctionCall* node)
+{
 	node->getCallee()->accept(*this);
 
 	if (node->hasArgs()) {
@@ -77,7 +87,8 @@ void Visitor::visit(FunctionCall* node) {
 	}
 }
 
-void Visitor::visit(MethodCall* node) {
+void Visitor::visit(MethodCall* node)
+{
 	node->getCallee()->accept(*this);
 
 	if (node->hasArgs()) {
@@ -85,12 +96,14 @@ void Visitor::visit(MethodCall* node) {
 	}
 }
 
-void Visitor::visit(While* node) {
+void Visitor::visit(While* node)
+{
 	node->getCondition()->accept(*this);
 	node->getBlock()->accept(*this);
 }
 
-void Visitor::visit(If* node) {
+void Visitor::visit(If* node)
+{
 	std::vector<std::pair<Node*, Node*> > cond = node->getConditionals();
 	std::vector<std::pair<Node*, Node*> >::iterator cur(cond.begin()), end(cond.end());
 
@@ -104,45 +117,53 @@ void Visitor::visit(If* node) {
 	}
 }
 
-void Visitor::visit(Return* node) {
+void Visitor::visit(Return* node)
+{
 	if (node->hasValue()) {
 		node->getValue()->accept(*this);
 	}
 }
 
-void Visitor::visit(Logic* node) {
+void Visitor::visit(Logic* node)
+{
 	node->getLhs()->accept(*this);
 	node->getRhs()->accept(*this);
 }
 
-void Visitor::visit(Bitwise* node) {
+void Visitor::visit(Bitwise* node)
+{
 	node->getLhs()->accept(*this);
 	node->getRhs()->accept(*this);
 }
 
-void Visitor::visit(Boolean* node) {
+void Visitor::visit(Boolean* node)
+{
 	node->getLhs()->accept(*this);
 	if (node->getRhs()) {
 		node->getRhs()->accept(*this);
 	}
 }
 
-void Visitor::visit(Comparison* node) {
+void Visitor::visit(Comparison* node)
+{
 	node->getLhs()->accept(*this);
 	node->getRhs()->accept(*this);
 }
 
-void Visitor::visit(Import* node) {
+void Visitor::visit(Import* node)
+{
 	if (node->hasModule()) {
 		node->getModule()->accept(*this);
 	}
 }
 
-void Visitor::visit(IncDec* node) {
+void Visitor::visit(IncDec* node)
+{
 	node->getVar()->accept(*this);
 }
 
-void Visitor::visit(Instantiation* node) {
+void Visitor::visit(Instantiation* node)
+{
 	node->getType()->accept(*this);
 
 	if (node->hasArgs()) {
@@ -150,11 +171,13 @@ void Visitor::visit(Instantiation* node) {
 	}
 }
 
-void Visitor::visit(Property* node) {
+void Visitor::visit(Property* node)
+{
 	node->getCallee()->accept(*this);
 }
 
-void Visitor::visit(Try* node) {
+void Visitor::visit(Try* node)
+{
 	node->getBlock()->accept(*this);
 
 	node->getCatches()->accept(*this);
@@ -169,11 +192,13 @@ void Visitor::visit(Catch* node) {
 	node->getBlock()->accept(*this);
 }
 
-void Visitor::visit(Throw* node) {
+void Visitor::visit(Throw* node)
+{
 	node->getExpr()->accept(*this);
 }
 
-void Visitor::visit(AttrDecl* node) {
+void Visitor::visit(AttrDecl* node)
+{
 	node->getIdent()->accept(*this);
 
 	if (node->hasValue()) {
@@ -181,15 +206,31 @@ void Visitor::visit(AttrDecl* node) {
 	}
 }
 
-void Visitor::visit(ClassDef* node) {
+void Visitor::visit(ClassDef* node)
+{
 	if (node->hasAttrs()) {
 		node->getAttrs()->accept(*this);
 	}
 }
 
-void Visitor::visit(Subscript* node) {
+void Visitor::visit(Subscript* node)
+{
 	node->getVar()->accept(*this);
 	node->getIndex()->accept(*this);
+}
+
+void Visitor::visit(Switch* node)
+{
+	node->getExpr()->accept(*this);
+
+	std::vector<std::pair<Node*, Node*> >& vec = node->getCases();
+	std::vector<std::pair<Node*, Node*> >::const_iterator it(vec.begin()),
+		end(vec.end());
+
+	for (; it != end; ++it) {
+		it->first->accept(*this);
+		it->second->accept(*this);
+	}
 }
 
 }} // clever::ast

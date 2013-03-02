@@ -64,6 +64,7 @@ class Value;
 	ast::Continue* continue_;
 	ast::AttrDecl* attr;
 	ast::ClassDef* class_;
+	ast::Switch* switch_;
 }
 
 %type <type> TYPE
@@ -106,6 +107,7 @@ class Value;
 %type <class_> class_def
 %type <attr> class_attr_decl_impl class_attr_const_decl_impl
 %type <flags> visibility
+%type <switch_> switch_expr case_list
 
 // The parsing context.
 %parse-param { Driver& driver }
@@ -183,6 +185,8 @@ class Value;
 %token CLASS         "class"
 %token PUBLIC        "public"
 %token PRIVATE       "private"
+%token SWITCH        "switch"
+%token CASE          "case"
 
 %left ',';
 %left LOGICAL_OR;
@@ -240,6 +244,7 @@ statement:
 	|	class_def
 	|	fully_qualified_call ';'
 	|	instantiation ';'
+	|	switch_expr
 ;
 
 block:
@@ -327,6 +332,23 @@ lvalue:
 
 subscript:
 		lvalue '[' rvalue ']'   { $<node>$ = new ast::Subscript($<node>1, $<node>3, yyloc); }
+;
+
+switch_expr:
+		SWITCH '(' rvalue ')' '{' { $<node>$ = new ast::Switch($<node>3, yyloc); } case_list '}' { $$ = $7; }
+;
+
+label:
+		IDENT
+	|	CONSTANT
+	|	STR
+	|	NUM_INTEGER
+	|	NUM_DOUBLE
+;
+
+case_list:
+		CASE label ':' statement_list           { $<switch_>0->addCase($<node>2, $4); $$ = $<switch_>0; }
+	|	case_list CASE label ':' statement_list { $<switch_>0->addCase($<node>3, $5); $$ = $<switch_>0; }
 ;
 
 unary:

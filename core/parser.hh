@@ -136,6 +136,7 @@ namespace clever {
 	ast::Continue* continue_;
 	ast::AttrDecl* attr;
 	ast::ClassDef* class_;
+	ast::Switch* switch_;
 
 
 
@@ -206,8 +207,10 @@ namespace clever {
      CLASS = 310,
      PUBLIC = 311,
      PRIVATE = 312,
-     XOR_EQUAL = 313,
-     UMINUS = 314
+     SWITCH = 313,
+     CASE = 314,
+     XOR_EQUAL = 315,
+     UMINUS = 316
    };
 
     };
