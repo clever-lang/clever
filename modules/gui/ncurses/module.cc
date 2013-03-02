@@ -7,6 +7,7 @@
 
 #include "modules/gui/ncurses/module.h"
 #include "modules/gui/ncurses/ncurses.h"
+
 namespace clever { namespace modules { namespace gui {
 
 /// Initializes ncurses module

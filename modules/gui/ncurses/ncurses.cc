@@ -351,15 +351,15 @@ CLEVER_TYPE_INIT(NCurses::init)
 {
 	setConstructor((MethodPtr) &NCurses::ctor);
 
-	addMethod(new Function("addStr",        (MethodPtr) &NCurses::addStr));
-	addMethod(new Function("printStr",      (MethodPtr) &NCurses::printStr));
+	addMethod(new Function("addStr",       (MethodPtr) &NCurses::addStr));
+	addMethod(new Function("printStr",     (MethodPtr) &NCurses::printStr));
 
-	addMethod(new Function("refresh",       (MethodPtr) &NCurses::refresh));
-	addMethod(new Function("sleep",         (MethodPtr) &NCurses::sleep));
+	addMethod(new Function("refresh",      (MethodPtr) &NCurses::refresh));
+	addMethod(new Function("sleep",        (MethodPtr) &NCurses::sleep));
 
-	addMethod(new Function("hide",          (MethodPtr) &NCurses::hide));
-	addMethod(new Function("close",         (MethodPtr) &NCurses::close));
-	addMethod(new Function("exit",          (MethodPtr) &NCurses::exit));
+	addMethod(new Function("hide",         (MethodPtr) &NCurses::hide));
+	addMethod(new Function("close",        (MethodPtr) &NCurses::close));
+	addMethod(new Function("exit",         (MethodPtr) &NCurses::exit));
 
 	addMethod(new Function("addColor",     (MethodPtr) &NCurses::addColor));
 	addMethod(new Function("startColor",   (MethodPtr) &NCurses::startColor));
@@ -367,26 +367,25 @@ CLEVER_TYPE_INIT(NCurses::init)
 	addMethod(new Function("hasColors",    (MethodPtr) &NCurses::hasColors));
 	addMethod(new Function("nColors",      (MethodPtr) &NCurses::nColors));
 
-	addMethod(new Function("enableKeyPad",      (MethodPtr) &NCurses::enableKeyPad));
-	addMethod(new Function("noEcho",            (MethodPtr) &NCurses::noEcho));
-	addMethod(new Function("deleteLine",        (MethodPtr) &NCurses::deleteLine));
-	addMethod(new Function("getKey",            (MethodPtr) &NCurses::getKey));
-	addMethod(new Function("isPrintable",       (MethodPtr) &NCurses::isPrintable))
+	addMethod(new Function("enableKeyPad", (MethodPtr) &NCurses::enableKeyPad));
+	addMethod(new Function("noEcho",       (MethodPtr) &NCurses::noEcho));
+	addMethod(new Function("deleteLine",   (MethodPtr) &NCurses::deleteLine));
+	addMethod(new Function("getKey",       (MethodPtr) &NCurses::getKey));
+	addMethod(new Function("isPrintable",  (MethodPtr) &NCurses::isPrintable))
 			->setStatic();
-	addMethod(new Function("getKeyName",        (MethodPtr) &NCurses::getKeyName))
+	addMethod(new Function("getKeyName",   (MethodPtr) &NCurses::getKeyName))
 			->setStatic();
 
-	addMethod(new Function("isChild",             (MethodPtr) &NCurses::isChild));
+	addMethod(new Function("isChild",      (MethodPtr) &NCurses::isChild));
 
-	addMethod(new Function("box",             (MethodPtr) &NCurses::box));
-	addMethod(new Function("move",            (MethodPtr) &NCurses::move));
-	addMethod(new Function("posX",            (MethodPtr) &NCurses::posX));
-	addMethod(new Function("posY",            (MethodPtr) &NCurses::posY));
-	addMethod(new Function("width",           (MethodPtr) &NCurses::width));
-	addMethod(new Function("height",          (MethodPtr) &NCurses::height));
+	addMethod(new Function("box",          (MethodPtr) &NCurses::box));
+	addMethod(new Function("move",         (MethodPtr) &NCurses::move));
+	addMethod(new Function("posX",         (MethodPtr) &NCurses::posX));
+	addMethod(new Function("posY",         (MethodPtr) &NCurses::posY));
+	addMethod(new Function("width",        (MethodPtr) &NCurses::width));
+	addMethod(new Function("height",       (MethodPtr) &NCurses::height));
 
-	/*COLORS*/
-
+	// COLORS
 	addProperty(CSTRING("RED"),        new Value(long(COLOR_RED),          true));
 	addProperty(CSTRING("BLACK"),      new Value(long(COLOR_BLACK),        true));
 	addProperty(CSTRING("GREEN"),      new Value(long(COLOR_GREEN),        true));
@@ -396,7 +395,7 @@ CLEVER_TYPE_INIT(NCurses::init)
 	addProperty(CSTRING("CYAN"),       new Value(long(COLOR_CYAN),         true));
 	addProperty(CSTRING("WHITE"),      new Value(long(COLOR_WHITE),        true));
 
-	/*KEYS*/
+	// KEYS
 	addProperty(CSTRING("KEY_UP"),        new Value(long(KEY_UP),          true));
 	addProperty(CSTRING("KEY_DOWN"),      new Value(long(KEY_DOWN),        true));
 	addProperty(CSTRING("KEY_LEFT"),      new Value(long(KEY_LEFT),        true));
@@ -420,7 +419,6 @@ CLEVER_TYPE_INIT(NCurses::init)
 	addProperty(CSTRING("KEY_F10"),       new Value(long(KEY_F(10)),       true));
 	addProperty(CSTRING("KEY_F11"),       new Value(long(KEY_F(11)),       true));
 	addProperty(CSTRING("KEY_F12"),       new Value(long(KEY_F(12)),       true));
-
 
 	m_keys[KEY_UP] =        "Up arrow";
 	m_keys[KEY_DOWN] =      "Down arrow";

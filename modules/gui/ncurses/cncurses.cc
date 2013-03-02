@@ -14,11 +14,9 @@
 # include <sys/resource.h>
 # include <sys/time.h>
 #endif
-
 #include "modules/gui/ncurses/cncurses.h"
 
 namespace clever {
-
 
 void csleep(int sleep_time)
 {
@@ -53,7 +51,7 @@ void CNCurses::printStr(int x, int y, const char *str)
 	}
 }
 
-int CNCurses::setColor(short id, void *handler)
+int CNCurses::setColor(short id, void* handler)
 {
 	return color_set(id, handler);
 }
@@ -138,17 +136,20 @@ CNCurses::~CNCurses()
 	}
 }
 
-void CNCurses::hide() {
+void CNCurses::hide()
+{
 	delwin(m_win);
 	m_is_closed = true;
 }
 
-void CNCurses::exit() {
+void CNCurses::exit()
+{
 	endwin();
 	m_is_closed = true;
 }
 
-void CNCurses::close() {
+void CNCurses::close()
+{
 	delwin(m_win);
 	endwin();
 	refresh();
