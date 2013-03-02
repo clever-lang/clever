@@ -122,6 +122,42 @@ CLEVER_METHOD(NCurses::sleep)
 	o->sleep();
 }
 
+CLEVER_METHOD(NCurses::hide)
+{
+	if (!clever_check_no_args()) {
+		return;
+	}
+
+	NCursesObject* mo = CLEVER_GET_OBJECT(NCursesObject*, CLEVER_THIS());
+	CNCurses* o = mo->getData();
+
+	o->hide();
+}
+
+CLEVER_METHOD(NCurses::close)
+{
+	if (!clever_check_no_args()) {
+		return;
+	}
+
+	NCursesObject* mo = CLEVER_GET_OBJECT(NCursesObject*, CLEVER_THIS());
+	CNCurses* o = mo->getData();
+
+	o->close();
+}
+
+CLEVER_METHOD(NCurses::exit)
+{
+	if (!clever_check_no_args()) {
+		return;
+	}
+
+	NCursesObject* mo = CLEVER_GET_OBJECT(NCursesObject*, CLEVER_THIS());
+	CNCurses* o = mo->getData();
+
+	o->exit();
+}
+
 CLEVER_METHOD(NCurses::startColor)
 {
 	if (!clever_check_no_args()) {
@@ -176,6 +212,16 @@ CLEVER_METHOD(NCurses::hasColors)
 	NCursesObject* mo = CLEVER_GET_OBJECT(NCursesObject*, CLEVER_THIS());
 	CNCurses* o = mo->getData();
 	result->setBool(o->hasColors());
+}
+
+CLEVER_METHOD(NCurses::isChild)
+{
+	if (!clever_check_no_args()) {
+		return;
+	}
+	NCursesObject* mo = CLEVER_GET_OBJECT(NCursesObject*, CLEVER_THIS());
+	CNCurses* o = mo->getData();
+	result->setBool(o->isChild());
 }
 
 CLEVER_METHOD(NCurses::enableKeyPad)
@@ -236,6 +282,70 @@ CLEVER_METHOD(NCurses::getKeyName)
 	result->setStr(&m_keys[args.at(0)->getInt()]);
 }
 
+CLEVER_METHOD(NCurses::box)
+{
+	if (!clever_check_args("ii")) {
+		return;
+	}
+
+	NCursesObject* mo = CLEVER_GET_OBJECT(NCursesObject*, CLEVER_THIS());
+	CNCurses* o = mo->getData();
+
+	o->box(args.at(0)->getInt(), args.at(1)->getInt());
+}
+
+CLEVER_METHOD(NCurses::move)
+{
+	if (!clever_check_args("ii")) {
+		return;
+	}
+
+	NCursesObject* mo = CLEVER_GET_OBJECT(NCursesObject*, CLEVER_THIS());
+	CNCurses* o = mo->getData();
+
+	o->move(args.at(0)->getInt(), args.at(1)->getInt());
+}
+
+CLEVER_METHOD(NCurses::posX)
+{
+	if (!clever_check_no_args()) {
+		return;
+	}
+	NCursesObject* mo = CLEVER_GET_OBJECT(NCursesObject*, CLEVER_THIS());
+	CNCurses* o = mo->getData();
+	result->setInt(o->getPosX());
+}
+
+CLEVER_METHOD(NCurses::posY)
+{
+	if (!clever_check_no_args()) {
+		return;
+	}
+	NCursesObject* mo = CLEVER_GET_OBJECT(NCursesObject*, CLEVER_THIS());
+	CNCurses* o = mo->getData();
+	result->setInt(o->getPosY());
+}
+
+CLEVER_METHOD(NCurses::width)
+{
+	if (!clever_check_no_args()) {
+		return;
+	}
+	NCursesObject* mo = CLEVER_GET_OBJECT(NCursesObject*, CLEVER_THIS());
+	CNCurses* o = mo->getData();
+	result->setInt(o->getWidth());
+}
+
+CLEVER_METHOD(NCurses::height)
+{
+	if (!clever_check_no_args()) {
+		return;
+	}
+	NCursesObject* mo = CLEVER_GET_OBJECT(NCursesObject*, CLEVER_THIS());
+	CNCurses* o = mo->getData();
+	result->setInt(o->getHeight());
+}
+
 // Type initialization
 CLEVER_TYPE_INIT(NCurses::init)
 {
@@ -246,6 +356,10 @@ CLEVER_TYPE_INIT(NCurses::init)
 
 	addMethod(new Function("refresh",       (MethodPtr) &NCurses::refresh));
 	addMethod(new Function("sleep",         (MethodPtr) &NCurses::sleep));
+
+	addMethod(new Function("hide",          (MethodPtr) &NCurses::hide));
+	addMethod(new Function("close",         (MethodPtr) &NCurses::close));
+	addMethod(new Function("exit",          (MethodPtr) &NCurses::exit));
 
 	addMethod(new Function("addColor",     (MethodPtr) &NCurses::addColor));
 	addMethod(new Function("startColor",   (MethodPtr) &NCurses::startColor));
@@ -261,6 +375,15 @@ CLEVER_TYPE_INIT(NCurses::init)
 			->setStatic();
 	addMethod(new Function("getKeyName",        (MethodPtr) &NCurses::getKeyName))
 			->setStatic();
+
+	addMethod(new Function("isChild",             (MethodPtr) &NCurses::isChild));
+
+	addMethod(new Function("box",             (MethodPtr) &NCurses::box));
+	addMethod(new Function("move",            (MethodPtr) &NCurses::move));
+	addMethod(new Function("posX",            (MethodPtr) &NCurses::posX));
+	addMethod(new Function("posY",            (MethodPtr) &NCurses::posY));
+	addMethod(new Function("width",           (MethodPtr) &NCurses::width));
+	addMethod(new Function("height",          (MethodPtr) &NCurses::height));
 
 	/*COLORS*/
 

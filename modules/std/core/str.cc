@@ -269,13 +269,13 @@ CLEVER_METHOD(StrType::endsWith)
 // String.charAt(int position)
 CLEVER_METHOD(StrType::charAt)
 {
-	if (!clever_check_args("s")) {
+	if (!clever_check_args("i")) {
 		return;
 	}
 
 	const CString* data = CLEVER_THIS()->getStr();
 	long position = args[0]->getInt();
-	char found[1];
+	char found[2];
 
 	if (!data) {
 		result->setNull();
@@ -285,6 +285,7 @@ CLEVER_METHOD(StrType::charAt)
 	if (position > -1L) {
 		if (data->size() > (unsigned long) position) {
 			found[0] = data->at(position);
+			found[1] = '\0';
 			if (found[0]) {
 				result->setStr(CSTRING(found));
 			} else {
@@ -360,7 +361,7 @@ CLEVER_METHOD(StrType::toUpper)
 	if (!clever_check_no_args()) {
 		return;
 	}
-	
+
 	const ::std::string* str = CLEVER_THIS()->getStr();
 	::std::string buffer = *str;
 	std::transform(buffer.begin(), buffer.end(),buffer.begin(), ::toupper);
@@ -374,7 +375,7 @@ CLEVER_METHOD(StrType::toLower)
 	if (!clever_check_no_args()) {
 		return;
 	}
-	
+
 	const ::std::string* str = CLEVER_THIS()->getStr();
 	::std::string buffer = *str;
 	std::transform(buffer.begin(), buffer.end(),buffer.begin(), ::tolower);
@@ -388,13 +389,13 @@ CLEVER_METHOD(StrType::replace)
 	if (!clever_check_args("ss")) {
 		return;
 	}
-	
+
 	const CString* haystack = CLEVER_THIS()->getStr();
 	const char* needle = args[0]->getStr()->c_str();
 	const CString* replace = args[1]->getStr();
-	
+
 	::std::string buffer = *haystack;
-	
+
 	int pos = haystack->find(needle);
 	buffer.replace(pos, replace->length(), replace->c_str());
 	result->setStr(new StrObject(buffer));

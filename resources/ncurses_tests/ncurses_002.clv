@@ -1,3 +1,10 @@
+/*
+NCURSE TESTE 002
+
+A simple hello world with colors!
+*/
+
+
 import gui.ncurses.*;
 
 var mw = NCurses.new(true, 3000);

@@ -1,3 +1,9 @@
+/*
+NCURSE TESTE 001
+
+A simple hello world!
+*/
+
 import gui.ncurses.*;
 
 var mw = NCurses.new(3000);

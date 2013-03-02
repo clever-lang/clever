@@ -27,6 +27,10 @@ public:
 			 int w = 0, int h = 0, int x = 0, int y = 0, bool m_enable_keypad = false);
 	~CNCurses();
 
+	void close();
+	void hide();
+	void exit();
+
 	bool status();
 	bool hasColors();
 	void startColor() { ::start_color(); }
@@ -53,8 +57,14 @@ public:
 
 	WINDOW* getWindow() { return m_win; }
 
-private:
+	int getPosX() { return pos_x; }
+	int getPosY() { return pos_y; }
 
+	int getWidth() { return width; }
+	int getHeight() { return height; }
+
+private:
+	bool m_is_closed;
 	int m_sleep_time;
 
 	bool m_enable_colors;

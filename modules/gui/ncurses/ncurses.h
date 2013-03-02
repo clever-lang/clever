@@ -48,8 +48,16 @@ public:
 	void dump(TypeObject*, std::ostream&) const;
 
 	CLEVER_METHOD(ctor);
+
+	CLEVER_METHOD(isChild);
+
 	CLEVER_METHOD(addStr);
 	CLEVER_METHOD(printStr);
+
+	CLEVER_METHOD(hide);
+	CLEVER_METHOD(close);
+	CLEVER_METHOD(exit);
+
 	CLEVER_METHOD(refresh);
 	CLEVER_METHOD(sleep);
 
@@ -65,6 +73,14 @@ public:
 	CLEVER_METHOD(getKey);
 	CLEVER_METHOD(isPrintable);
 	CLEVER_METHOD(getKeyName);
+
+	CLEVER_METHOD(box);
+	CLEVER_METHOD(move);
+
+	CLEVER_METHOD(posX);
+	CLEVER_METHOD(posY);
+	CLEVER_METHOD(width);
+	CLEVER_METHOD(height);
 
 private:
 	DISALLOW_COPY_AND_ASSIGN(NCurses);

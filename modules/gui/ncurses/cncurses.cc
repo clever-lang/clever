@@ -87,6 +87,7 @@ CNCurses::CNCurses(int sleep_time, WINDOW* father, bool enable_colors,
 				   int w, int h, int x, int y, bool enable_keypad)
 	: m_sleep_time(sleep_time), m_enable_colors(enable_colors)
 {
+	m_is_closed = false;
 	m_father = father;
 
 	width = w;
@@ -132,9 +133,26 @@ void CNCurses::sleep()
 
 CNCurses::~CNCurses()
 {
+	if (!m_is_closed) {
+		close();
+	}
+}
+
+void CNCurses::hide() {
+	delwin(m_win);
+	m_is_closed = true;
+}
+
+void CNCurses::exit() {
+	endwin();
+	m_is_closed = true;
+}
+
+void CNCurses::close() {
 	delwin(m_win);
 	endwin();
 	refresh();
+	m_is_closed = true;
 }
 
 bool CNCurses::isChild()
