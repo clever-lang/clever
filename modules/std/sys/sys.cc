@@ -196,7 +196,7 @@ static CLEVER_FUNCTION(getppid)
 	result->setInt(::getppid());
 }
 
-// getuid
+// getuid()
 // Returns the process user id
 static CLEVER_FUNCTION(getuid)
 {
@@ -207,7 +207,7 @@ static CLEVER_FUNCTION(getuid)
 	result->setInt(::geteuid());
 }
 
-// getsid
+// getsid()
 // Returns the process group id
 static CLEVER_FUNCTION(getsid)
 {
