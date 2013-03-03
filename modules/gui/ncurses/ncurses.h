@@ -17,6 +17,42 @@
 
 namespace clever { namespace modules { namespace gui {
 
+class KeyObject : public TypeObect {
+public:
+	KeyObject(int value = 0)
+		: value(value) {}
+
+	~KeyObject() { }
+
+	char getChar() { return static_cast<char>(value); }
+	int  getInt()  { return value; }
+
+private:
+	int value;
+};
+
+class Key : public Type {
+public:
+	Key()
+		: Type("Key") {}
+
+	~Key() {}
+
+	void init(){}
+
+	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const{}
+
+	void dump(TypeObject*, std::ostream&) const{}
+
+	CLEVER_METHOD(ctor){}
+
+	CLEVER_METHOD(getChar){}
+	CLEVER_METHOD(getInt) {}
+
+private:
+	DISALLOW_COPY_AND_ASSIGN(Key);
+};
+
 class NCursesObject : public TypeObject {
 public:
 	NCursesObject(CNCurses* father = NULL, bool m_enable_colors = false,
@@ -29,6 +65,7 @@ public:
 	~NCursesObject() {}
 
 	CNCurses* getData() { return &m_ncurses_obj; }
+
 private:
 	CNCurses m_ncurses_obj;
 	DISALLOW_COPY_AND_ASSIGN(NCursesObject);
@@ -83,8 +120,9 @@ public:
 	CLEVER_METHOD(height);
 
 private:
-	DISALLOW_COPY_AND_ASSIGN(NCurses);
 	static ::std::map<int, CString> m_keys;
+
+	DISALLOW_COPY_AND_ASSIGN(NCurses);
 };
 
 }}} // clever::modules::gui
