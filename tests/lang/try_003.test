@@ -3,7 +3,7 @@
 import std.io.*;
 throw "ae";
 ==RESULT==
-Fatal error: Unhandled exception! on line 1
+Fatal error: Unhandled exception! on \S+ line 2
 Message: ae
 Stack trace:
 
