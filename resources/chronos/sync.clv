@@ -21,24 +21,25 @@ import std.concurrent.*;
 import gui.ncurses.*;
 
 var x0 = 2, y0 = 2;
-var sleep_time = 200, n_threads = 160;
+var sleep_time = 1, n_threads = 30;
 
 function print_time(mw, x, y, t, sync)
 {
-	var t_start = t.startTime();
-	var id = sync.getId();
+	var t_start = t.startTime();	
+	var id = sync.nextID();
 	var px = id / 5;
 	var py = id % 5;
 
-	while (sync.ok()) {
-		if (id == sync.next_id) {
+	while (sync.status()) {
+		if (id == sync.getID()) {
 			var t_now = microtime();
 			mw.printStr(x + px, y + py * 30,
-							 "Time:   " + round(t_now - t_start) + 
-                              "   id: " + id + "                   ");
-			mw.refresh();			
-			sync.next_id = (sync.next_id + 1) % sync.n_ids;
+							"Time:   " + (t_now - t_start) + 
+                            "   id: " + id + "                   ");
+			mw.refresh();
 			mw.sleep();	
+
+			sync.nextID();			
 		}	
 	}
 }
@@ -51,7 +52,7 @@ function get_key(mw, sync)
 		
 	}
 
-	sync.nok();
+	sync.setStatus(false);
 }
 
 
@@ -62,50 +63,6 @@ class Time {
 
 	function startTime() {
 		return microtime() - this.delay;
-	}
-}
-
-
-class Sync {
-	var next_id;
-	var n_ids;
-	var _ok;
-	var id;
-	var mutex;
-
-	function ok() 
-	{
-		this.mutex.lock();
-		var v = this._ok;	
-		this.mutex.unlock();
-		return v;
-	}
-
-	function nok() 
-	{
-		this.mutex.lock();
-		this._ok = false;
-		this.mutex.unlock();
-	}
-
-	function getId()
-	{
-		
-		this.mutex.lock();
-		var _id;		
-		_id = this.id;
-		++this.id;
-		this.mutex.unlock();
-
-		return _id;
-	}
-	
-	function Sync(n_ids) {
-		this._ok = true;
-		this.mutex = Mutex.new();
-		this.next_id = 0;
-		this.id = 0;
-		this.n_ids = n_ids;
 	}
 }
 
@@ -127,6 +84,7 @@ class Clocks {
 		this.mw.enableKeyPad();
 		
 		this.mw.printStr(0, 0, "Press 'q' to quit...");
+
 		this.threads = [Thread.new(get_key, this.mw, this.sync)];
 
 		var i = 0;

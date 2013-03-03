@@ -10,6 +10,7 @@
 #include "modules/std/concurrent/module.h"
 #include "modules/std/concurrent/mutex.h"
 #include "modules/std/concurrent/thread.h"
+#include "modules/std/concurrent/sync.h"
 
 #ifndef CLEVER_THREADS_BEBUG
 #undef clever_debug
@@ -24,6 +25,7 @@ CLEVER_MODULE_INIT(ConcurrencyModule)
 	addType(new Mutex);
 	addType(new Condition);
 	addType(new Thread);
+	addType(new Sync);
 }
 
 }}} // clever::modules::std
