@@ -36,6 +36,7 @@ CLEVER_METHOD(CStack::push)
 	CStackObject* sobj = CLEVER_GET_OBJECT(CStackObject*, CLEVER_THIS());
 
 	sobj->stack.push(args[0]);
+	clever_addref(args[0]);
 }
 
 // Stack.pop()
@@ -47,7 +48,10 @@ CLEVER_METHOD(CStack::pop)
 
 	CStackObject* sobj = CLEVER_GET_OBJECT(CStackObject*, CLEVER_THIS());
 
-	sobj->stack.pop();
+	if (!sobj->stack.empty()) {
+		clever_delref(sobj->stack.top());
+		sobj->stack.pop();
+	}
 }
 
 // Stack.top()
@@ -57,9 +61,37 @@ CLEVER_METHOD(CStack::top)
 		return;
 	}
 
-	CStackObject* sobj = CLEVER_GET_OBJECT(CStackObject*, CLEVER_THIS());
+	const CStackObject* sobj = CLEVER_GET_OBJECT(CStackObject*, CLEVER_THIS());
 
-	result->copy(sobj->stack.top());
+	if (sobj->stack.empty()) {
+		result->setNull();
+	} else {
+		result->copy(sobj->stack.top());
+	}
+}
+
+// Stack.size()
+CLEVER_METHOD(CStack::size)
+{
+	if (!clever_check_no_args()) {
+		return;
+	}
+
+	const CStackObject* sobj = CLEVER_GET_OBJECT(CStackObject*, CLEVER_THIS());
+
+	result->setInt(sobj->stack.size());
+}
+
+// Stack.empty()
+CLEVER_METHOD(CStack::empty)
+{
+	if (!clever_check_no_args()) {
+		return;
+	}
+
+	const CStackObject* sobj = CLEVER_GET_OBJECT(CStackObject*, CLEVER_THIS());
+
+	result->setBool(sobj->stack.empty());
 }
 
 // Stack type initialization
@@ -67,9 +99,11 @@ CLEVER_TYPE_INIT(CStack::init)
 {
 	setConstructor((MethodPtr)&CStack::ctor);
 
-	addMethod(new Function("push", (MethodPtr)&CStack::push));
-	addMethod(new Function("pop",  (MethodPtr)&CStack::pop));
-	addMethod(new Function("top",  (MethodPtr)&CStack::top));
+	addMethod(new Function("push",  (MethodPtr)&CStack::push));
+	addMethod(new Function("pop",   (MethodPtr)&CStack::pop));
+	addMethod(new Function("top",   (MethodPtr)&CStack::top));
+	addMethod(new Function("size",  (MethodPtr)&CStack::size));
+	addMethod(new Function("empty", (MethodPtr)&CStack::empty));
 }
 
 }}} // clever::modules::std

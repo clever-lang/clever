@@ -29,6 +29,8 @@ public:
 	CLEVER_METHOD(push);
 	CLEVER_METHOD(pop);
 	CLEVER_METHOD(top);
+	CLEVER_METHOD(size);
+	CLEVER_METHOD(empty);
 };
 
 }}} // clever::modules::std
