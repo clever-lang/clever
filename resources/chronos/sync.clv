@@ -10,7 +10,7 @@
 /*
 Syncronization test using NCurses and Clever threads
 
-This teste create 30 threads running a clock and  one thread waiting user inputs.
+This teste create 160 threads running a clock and  one thread waiting user inputs.
 */
 
 import std.sys.*;
