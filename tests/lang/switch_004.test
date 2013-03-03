@@ -1,0 +1,15 @@
+Testing default case
+==CODE==
+import std.io.*;
+
+switch (1) {
+	default:
+		println(123);
+	case 3:
+		println(3);
+		break;
+}
+
+==RESULT==
+123
+3
