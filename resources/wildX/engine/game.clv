@@ -197,8 +197,8 @@ class Game {
 				var c = this.grid[i][j];
 
 				this.mw.setColor(this.colors[c]);
-				this.mw.addStr(i + this.x0, j + this.y0, c);
-
+				//this.mw.addStr(i + this.x0, j + this.y0, c);
+				this.mw.addChar(i + this.x0, j + this.y0, c);
 				++j;
 			}
 			++i;

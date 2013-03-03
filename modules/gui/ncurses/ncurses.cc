@@ -86,6 +86,19 @@ CLEVER_METHOD(NCurses::addStr)
 	o->addStr(args.at(0)->getInt(), args.at(1)->getInt(), args.at(2)->getStr()->c_str());
 }
 
+CLEVER_METHOD(NCurses::addChar)
+{
+	if (!clever_check_args("iis")) {
+		return;
+	}
+
+	NCursesObject* mo = CLEVER_GET_OBJECT(NCursesObject*, CLEVER_THIS());
+	CNCurses* o = mo->getData();
+
+	o->addChar(args.at(0)->getInt(), args.at(1)->getInt(), args.at(2)->getStr()->at(0));
+}
+
+
 CLEVER_METHOD(NCurses::printStr)
 {
 	if (!clever_check_args("iis")) {
@@ -352,6 +365,7 @@ CLEVER_TYPE_INIT(NCurses::init)
 	setConstructor((MethodPtr)&NCurses::ctor);
 
 	addMethod(new Function("addStr",       (MethodPtr)&NCurses::addStr));
+	addMethod(new Function("addChar",       (MethodPtr)&NCurses::addChar));
 	addMethod(new Function("printStr",     (MethodPtr)&NCurses::printStr));
 
 	addMethod(new Function("refresh",      (MethodPtr)&NCurses::refresh));

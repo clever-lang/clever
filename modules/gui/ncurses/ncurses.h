@@ -89,6 +89,7 @@ public:
 	CLEVER_METHOD(isChild);
 
 	CLEVER_METHOD(addStr);
+	CLEVER_METHOD(addChar);
 	CLEVER_METHOD(printStr);
 
 	CLEVER_METHOD(hide);
