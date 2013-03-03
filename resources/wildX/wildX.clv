@@ -7,18 +7,19 @@
  * This file is distributed under the MIT license. See LICENSE for details.
  */
 
-
-import engine.game.*;
-
-
 //	The Wild X Adventures
 //	by: Pericles Lopes Machado
 
 // MAIN SCRIPT
 
+/*=============================================================*/
+
+import engine.game.*;
+
+/* Grid position in screen*/
+var x0 = 5, y0 = 5;
 
 /* The grid definition*/
-var x0 = 5, y0 = 5;
 var grid = [
 "###..#################",
 "....o....*..o.....#.#.@",
@@ -36,11 +37,11 @@ var grid = [
 "---@@-----------------"];
 var n = grid.size() - 1, m = grid[0].size();
 
-
 /* Init game engine */
-var game = Game.new(grid, n, m);
+var game = Game.new(grid, n, m, x0, y0);
 
-
-/* Print game name */
+/* Run game */
 game.start(200);
-game.run(x0, y0);
+game.run();
+
+

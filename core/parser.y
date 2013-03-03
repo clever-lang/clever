@@ -345,6 +345,7 @@ label:
 	|	STR
 	|	NUM_INTEGER
 	|	NUM_DOUBLE
+	|	property_access
 ;
 
 case_list:

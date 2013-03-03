@@ -8,10 +8,10 @@ var env = Environment.new(base_path);
 env.addLanguage('Clever', 'clever %f', 'clever -v', '^Clever - (.*)', 'clv');
 env.addLanguage('Python', 'python %f', 'python -V', '^Python (.*)', 'py');
 env.addLanguage('Lua', 'lua %f', 'lua -v', '^Lua ([^ ]+)', 'lua');
-env.addLanguage('Java', ['javac %f', 'java -cp %d %o'], 'java -version', '^java version "([^"]+)', 'java');
+env.addLanguage('Java', ['javac %f', 'java -cp %d %o'], 'java -version', '^java version "([^"]+)', 'java', ['%d/%o.class']);
 env.addLanguage('PHP', 'php %f', 'php -v', '^PHP ([^ ]+)', 'php');
 env.addLanguage('Ruby', 'ruby %f', 'ruby -v', '^ruby ([^ ]+)', 'rb');
-env.addLanguage('C', ['gcc -02 -o %d/%o.exe %f', '%d/%o.exe'], 'gcc -v', '\ngcc version ([^ ]+) \(.*$', 'c');
+env.addLanguage('C', ['gcc -02 -o %d/%o.exe %f', '%d/%o.exe'], 'gcc -v', '\ngcc version ([^ ]+) \(.*$', 'c', ['%d/%o.exe']);
 
 env.bootstrap();
 

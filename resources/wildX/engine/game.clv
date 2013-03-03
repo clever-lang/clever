@@ -5,23 +5,24 @@
  * This file is distributed under the MIT license. See LICENSE for details.
  */
 
-import engine.paint.*;
-
-
 //  The Wild X Adventures
 //  by: Pericles Lopes Machado
 
 // GAME CONTROL
 
-/* Class game controller */
+/*=============================================================*/
+
+import gui.ncurses.*;
+import engine.paint.*;
+
+/* 
+ score = no + 2 * nS + 3 * nP
+ no = Number of 'o'
+ nS = Number of '$'
+ nP = Number of '*'
+*/
 
 class Score {
-	/* 
-     score = no + 2 * nS + 3 * nP
-     no = Number of 'o'
-     nS = Number of '$'
-     nP = Number of '*'
-	*/
 	var moves, no, nS, nP, score;
 
 	function Score(moves_, no_, nS_, nP_, score_) {
@@ -33,6 +34,8 @@ class Score {
 	}
 }
 
+
+/*=============================================================*/
 class Point {
 	var x, y;
 
@@ -42,6 +45,13 @@ class Point {
 	}
 }
 
+
+/*=============================================================*/
+/*
+Player class
+p is the player position in the grid
+score is the game score of this player
+*/
 class Player {
 	var p, score;
 
@@ -51,10 +61,17 @@ class Player {
 	}
 }
 
+/*=============================================================*/
+/*
+This class control a game instance
+*/
 class Game {
+	/* Grid */
 	var grid, n, m;
+	/* Grid position */
+	var x0, y0;
 
-	/*colors */
+	/* colors */
 	var colors;
 	var colorst;
 
@@ -65,31 +82,51 @@ class Game {
 
 	/* Initial position */
 	var p0;
+
+	/* "Graphical" engine handler */
 	var mw;
 
-	function Game(grid_, n_, m_) {
+	/* I/O data*/
+	var last_key;
+
+/****************************************************************************/
+	function Game(grid_, n_, m_, x0_, y0_) {
 		this.grid = grid_;
 		this.n = n_;
 		this.m = m_;
 
+		this.x0 = x0_;
+		this.y0 = y0_;
+	
 		this.n0o = 0; 
 		this.nSo = 0; 
 		this.nPo = 0;
 
+
+		/* This game use NCurses as graphical engine*/
 		this.mw = NCurses.new(true, 10000);
 
 		/* Enable key reading */
 		this.mw.noEcho(); 
 		this.mw.enableKeyPad();
 	
-
 		init_pallete(this.mw);
 
-
+		/* Object colors*/
 		this.colors =  {'x' : 1, '*' : 2, '$' : 3, 'o' : 4,  '#' : 17, '.' : 16, '@': 14, '-': 15};
 		this.colorst = {'x' : 7, '*' : 8, '$' : 10, 'o' : 9, '#' : 17, '.' : 16, '@': 14, '-': 15};
+
+		this.last_key = Key.new(0);
 	}
 
+/****************************************************************************/
+	/* Get user inputs*/
+	function getInputs() {
+		this.last_key = this.mw.getKey();
+	}
+
+/****************************************************************************/
+	/* Start game with n_moves */
 	function start(n_moves) {
 		var i = 0;
 		var px, py;
@@ -98,15 +135,23 @@ class Game {
 			var j = 0;
 
 			while (j < this.m) {
-				if (this.grid[i][j]== 'x') {
-					px = i;
-					py = j;
-				} else if (this.grid[i][j] == 'o') {
-					++this.n0o;
-				} else if (this.grid[i][j] == '*') {
-					++this.nSo;
-				} else if (this.grid[i][j] == '$') {
-					++this.nPo;
+				switch (this.grid[i][j]) {
+					case'x':
+						px = i;
+						py = j;
+					break;
+
+					case 'o':
+						++this.n0o;
+					break;
+
+					case '*':
+						++this.nSo;
+					break;
+					
+					case '$':
+						++this.nPo;
+					break;
 				}
 				++j;
 			}
@@ -118,121 +163,194 @@ class Game {
 		this.player = Player.new(Point.new(this.p0.x, this.p0.y), Score.new(n_moves, 0, 0, 0, 0));
 	}
 
-	function finish(x0, y0) {
+/****************************************************************************/
+	/* Finish game */
+	function finish() {
 		this.mw.setColor(8);
-		this.mw.addStr(x0 - 3, 2, "GAME OVER!");
+		this.mw.addStr(this.x0 - 3, 2, "GAME OVER!");
 
 		this.mw.setColor(2);
-		this.mw.addStr(this.n + x0 + 12, 2, "Press 'q' to exit.");
+		this.mw.addStr(this.n + this.x0 + 12, 2, "Press 'q' to exit.");
 
 		wait(this.mw, 113);
 	}
 
-	function run(x0, y0) {
-
-		/* Print title*/
+/****************************************************************************/
+	/* Print title*/
+	function title() {
 		this.mw.setColor(7);
 		this.mw.addStr(0, 0, "The Wild X");
 
 		this.mw.setColor(2);
-		this.mw.addStr(this.n + x0 + 12, 2, "Press 'q' to quit.");
+		this.mw.addStr(this.n + this.x0 + 12, 2, "Press 'q' to quit.");
+	}
 
-		/* The render loop */
-		var ch = 0;
+/****************************************************************************/
+	/* Paint game grid */
+	function paint() {
+		var i = 0;
 
-		while (ch != 113 && this.player.score.moves > 0 &&
-			   (this.n0o + this.nPo + this.nSo) != 0) {
+		while (i < this.grid.size()) {
+			var j = 0;
 
-			/* get player position*/				
+			while (j < this.grid[i].size()) {
+				var c = this.grid[i][j];
 
-			var px = this.player.p.x;
-			var py = this.player.p.y;
+				this.mw.setColor(this.colors[c]);
+				this.mw.addChar(i + this.x0, j + this.y0, c);
+				++j;
+			}
+			++i;
+		}		
+	}
 
-			this.grid[px] = this.grid[px].replace('x', '.');
+/****************************************************************************/
+	/* 
+		Check if game is running
+		Game stops if last_key is 'q' or if moves == 0 or
+		there aren't special objects in the grid
+	*/
+	function isRunning() {
+		return  this.last_key.getChar() != 'q' && 
+				this.player.score.moves > 0 &&
+			   (this.n0o + this.nPo + this.nSo) != 0;
+	}
 
-			if (ch == NCurses.KEY_LEFT) {
+/****************************************************************************/
+	/* Update player decision */
+	function updatePlayer() {
+		var px = this.player.p.x;
+		var py = this.player.p.y;
+
+		this.grid[px] = this.grid[px].replace('x', '.');
+
+		switch (this.last_key.getInt()) {
+			case NCurses.KEY_LEFT:
 				if (this.grid[px][(this.m + py - 1) % this.m] != '#') {
 					py = (this.m - 1 + py) % this.m;
 				}
-			} else if (ch == NCurses.KEY_RIGHT) {
+			break;
+
+			case NCurses.KEY_RIGHT:
 				if (this.grid[px][(py + 1) % this.m] != '#') {
 					py = (py + 1) % this.m;
 				}
-			} else if (ch == NCurses.KEY_UP) {
+			break;
+
+			case NCurses.KEY_UP:
 				if (this.grid[(this.n + px - 1) % this.n][py] != '#') {
 					px = (this.n - 1 + px) % this.n;			
 				}
-			} else if (ch == NCurses.KEY_DOWN) {
+			break;
+
+			case NCurses.KEY_DOWN:
 				if (this.grid[(px + 1) % this.n][py] != '#') {
 					px = (px + 1) % this.n;
 				}
-			} else if (ch == NCurses.KEY_HOME) {
+			break;
+
+			case NCurses.KEY_HOME:
 				px = this.p0.x;
 				py = this.p0.y;
-			}
+			break;
+		}
+		
+		--this.player.score.moves;
 
-			/*Calculate player score*/
-			if (this.grid[px][py] == 'o') {
+		this.player.p.x = px;
+		this.player.p.y = py;		
+	}
+
+
+/****************************************************************************/
+	/* Update player score*/
+	function updateScore() {
+		/* Update player decision */				
+		this.updatePlayer();
+
+		var px = this.player.p.x;
+		var py = this.player.p.y;
+
+		switch (this.grid[px][py]) {
+			case 'o':
 				++this.player.score.no;
 				this.n0o--;
-			} else if (this.grid[px][py] == '$') {
+			break;
+
+			case '$':
 				++this.player.score.nS;
 				this.nSo--;
-			} else if (this.grid[px][py] == '*') {
+			break;
+
+			case '*':
 				++this.player.score.nP;
 				this.nPo--;
-			}
+			break;
+		}
 
-			this.player.score.score = this.player.score.no + 
+		this.player.score.score = this.player.score.no + 
 			2 * this.player.score.nS + 3 * this.player.score.nP;
-			 
-			var j = 0;
+	}
 
-			var l = "";
+/****************************************************************************/
+	/* Draw grid */
+	function draw() {
+		var px = this.player.p.x;
+		var py = this.player.p.y;
+		var j = 0, l = "";
 
-			while (j < this.m) {
-				if (j == py) {
-					l = l + 'x';
-				} else {
-					l = l + this.grid[px][j];
-				}
-				++j;
+		while (j < this.m) {
+			if (j == py) {
+				l = l + 'x';
+			} else {
+				l = l + this.grid[px][j];
 			}
-			this.grid[px] = l;
+			++j;
+		}
+		this.grid[px] = l;
 
-			var i = 0;
+		print_info(this.mw, "Position player: ", "(" + px + ", " + py + ")   ", this.n + this.x0 + 3,  2, 12, 10);
+	}
 
-			while (i < this.grid.size()) {
-				j = 0;
-				while (j < this.grid[i].size()) {
-					var c = this.grid[i][j];
+/****************************************************************************/
+	/* Print infos */
+	function printInfos() {
+		print_info(this.mw, "Score: ", this.player.score.score + "  ", this.x0 - 2,  2, 12, 8);
 
-					this.mw.setColor(this.colors[c]);
-					this.mw.addStr(i + x0, j + y0, c);
+		print_info(this.mw, "Moves: ",  this.player.score.moves + "  ", this.n + this.x0 + 4,  2, 12, 10);
 
-					++j;
-				}
-				++i;
-			}		
+		print_score(this.mw, this.colorst, 'o', this.player.score.no, this.x0 - 2, 15, 12);
+		print_score(this.mw, this.colorst, '$', this.player.score.nS, this.x0 - 2, 25, 12);
+		print_score(this.mw, this.colorst, '*', this.player.score.nP, this.x0 - 2, 35, 12);
+	}
+
+/****************************************************************************/
+	/* Run game */
+	function run() {
+
+		/* Print title*/
+		this.title();
+
+		/* The render loop */
+		while (this.isRunning()) {
+			/* Update player score*/
+			this.updateScore();
+			
+			/* Draw grid */
+			this.draw();
+
+			/* Paint grid */
+			this.paint();
 
 			/*Print messages*/
-			print_info(this.mw, "Score: ", this.player.score.score + "  ", x0 - 2,  2, 12, 8);
-
-			print_info(this.mw, "Position player: ", "(" + px + ", " + py + ")   ", this.n + x0 + 3,  2, 12, 10);
-			print_info(this.mw, "Moves: ",  this.player.score.moves + "  ", this.n + x0 + 4,  2, 12, 10);
-	
-			print_score(this.mw, this.colorst, 'o', this.player.score.no, x0 - 2, 15, 12);
-			print_score(this.mw, this.colorst, '$', this.player.score.nS, x0 - 2, 25, 12);
-			print_score(this.mw, this.colorst, '*', this.player.score.nP, x0 - 2, 35, 12);
-	
-			this.player.p = Point.new(px, py);
-
+			this.printInfos();
+			
 			/*Get a new key*/
-			ch = this.mw.getKey();
-
-			--this.player.score.moves;
+			this.getInputs();
 		}
-		finish(this.mw, x0, y0);
+
+		/* Finish game*/
+		this.finish();
 	}
 }
 

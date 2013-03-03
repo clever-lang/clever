@@ -44,15 +44,17 @@ class Language {
 	var check_cmd;
 	var version_er;
 	var extension;
+	var tear_down;
 	var version;
 	var is_ok;
 
-	function Language(name, command, check_cmd, version_er, extension) {
+	function Language(name, command, check_cmd, version_er, extension, tear_down=null) {
 		this.name = name;
 		this.command = command;
 		this.check_cmd = check_cmd;
 		this.version_er = version_er;
 		this.extension = extension;
+		this.tear_down = tear_down;
 		this.is_ok = false;
 	}
 
@@ -130,6 +132,17 @@ class Test {
 		var tini = microtime();
 		var output = _exec(exec);
 		var tfim = microtime();
+		
+		//Tear Down files
+		if (this.lang.tear_down) {
+			var i=0,f='';
+			while (i < this.lang.tear_down.size()) {
+				f = this.rewrite(this.lang.tear_down.at(i));
+				remove(f);
+				i++;
+			}
+		}
+		
 		return Result.new(output, (tfim - tini));
 	}
 	
@@ -212,8 +225,8 @@ class Environment {
 		this.groups = [];
 	}
 
-	function addLanguage(name, command, check_cmd, version_er, extension) {
-		var l = Language.new(name, command, check_cmd, version_er, extension);
+	function addLanguage(name, command, check_cmd, version_er, extension, tear_down=null) {
+		var l = Language.new(name, command, check_cmd, version_er, extension, tear_down);
 		this.langs.append(l);
 		return l;
 	}
