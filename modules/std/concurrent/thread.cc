@@ -30,7 +30,9 @@ static inline void* ThreadHandler(void* ThreadArgument)
 		delete intern->vm;
 	}
 
+#ifndef CLEVER_WIN32
 	pthread_exit(NULL);
+#endif
 
 	/*
 	* MSVC will complain without it, also some posix implementations make gcc complain

@@ -12,21 +12,18 @@
 
 #include "core/cstring.h"
 #include "core/type.h"
+#include "core/cthread.h"
 
 namespace clever { namespace modules { namespace std {
 
 struct MutexObject : public TypeObject {
 	MutexObject()
-		: mutex(new pthread_mutex_t) {}
+		: mutex() {}
 
 	~MutexObject() {
-		if (mutex) {
-			pthread_mutex_destroy(mutex);
-			delete mutex;
-		}
 	}
 
-	pthread_mutex_t *mutex;
+	CMutex mutex;
 };
 
 class Mutex : public Type {

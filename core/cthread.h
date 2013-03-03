@@ -23,15 +23,18 @@ public:
 
 	~CMutex();
 
-	void lock();
-	void unlock();
+	bool lock();
+	bool unlock();
+	bool trylock();
 
-private:
+
 #ifndef CLEVER_WIN32
 	pthread_mutex_t m_mut;
 #else
 	HANDLE m_mut;
 #endif
+
+private:
 	DISALLOW_COPY_AND_ASSIGN(CMutex);
 };
 
@@ -68,6 +71,20 @@ private:
 	HANDLE t_handler;
 #endif
 	DISALLOW_COPY_AND_ASSIGN(CThread);
+};
+
+class CCondition {
+public:
+	CCondition();
+
+	~CCondition();
+
+	bool signal();
+	bool broadcast();
+	bool wait(CMutex&);
+
+private:
+	pthread_cond_t condition;
 };
 
 } // clever
