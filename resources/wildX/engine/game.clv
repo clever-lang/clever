@@ -12,6 +12,7 @@
 
 /*=============================================================*/
 
+import std.math.*;
 import gui.ncurses.*;
 import engine.paint.*;
 
@@ -142,16 +143,16 @@ class Game {
 		var dy = [-1,  0,  1, -1, 0, 1, -1, 0, 1];
 
 		var p = 1;
-		var r = this.r * this.r;
+		var r = this.r + 1;
 		
-		while (p <= this.r) {
+		while (p <= r) {
 			var i = 0;
 		
 			while (i < dx.size()) {
 				var px = ux + p * dx[i];
 				var py = uy + p * dy[i];
 
-				if (this.isValidPos(px, py) && (p * p * (dx[i] * dx[i] + dy[i] * dy[i])) <= r) {
+				if (this.isValidPos(px, py) && p * (abs(dx[i]) + abs(dy[i])) <= this.r) {
 					this.visited[px][py] = true;
 				}
 
