@@ -464,13 +464,11 @@ CLEVER_METHOD(StrType::replace)
 
 	const CString* haystack = CLEVER_THIS()->getStr();
 	const CString* needle = args[0]->getStr();
-	const CString* replace = args[1]->getStr();
-
 	::std::string buffer = *haystack;
-
 	size_t pos = haystack->find(needle->c_str());
+
 	if (pos != ::std::string::npos) {
-		buffer.replace(pos, needle->length(), replace->c_str());
+		buffer.replace(pos, needle->length(), args[1]->getStr()->c_str());
 	}
 	result->setStr(new StrObject(buffer));
 }
