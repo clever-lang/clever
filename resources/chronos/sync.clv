@@ -17,43 +17,24 @@ import std.concurrent.*;
 
 import gui.ncurses.*;
 
-var next_id = 0;
-var n_ids = 2;
-var _ok = true;
-var mutex = Mutex.new();
-
-function ok() 
-{
-	mutex.lock();
-	var v = _ok;	
-	mutex.unlock();
-	return v;
-}
-
-function nok() 
-{
-	mutex.lock();
-	_ok = false;
-	mutex.unlock();
-}
-
-function print_time(mw, x, y, t, id)
+function print_time(mw, x, y, t, sync)
 {
 	var t_start = t.startTime();
+	var id = sync.getId();
 
-	while (ok()) {
-		if (id == next_id) {
+	while (sync.ok()) {
+		if (id == sync.next_id) {
 			var t_now = microtime();
 			mw.printStr(x, y, "Time:   " + (t_now - t_start) + 
                               "   id: " + id + "                   ");
 			mw.refresh();			
-			next_id = (id + 1) % n_ids;
+			sync.next_id = (sync.next_id + 1) % sync.n_ids;
 			mw.sleep();	
 		}	
 	}
 }
 
-function get_key(mw) 
+function get_key(mw, sync) 
 {
 	var ch;
 
@@ -61,7 +42,7 @@ function get_key(mw)
 		
 	}
 
-	nok();
+	sync.nok();
 }
 
 
@@ -76,26 +57,74 @@ class Time {
 }
 
 
-class Clock {
+class Sync {
+	var next_id;
+	var n_ids;
+	var _ok;
+	var id;
+	var mutex;
 
+	function ok() 
+	{
+		this.mutex.lock();
+		var v = this._ok;	
+		this.mutex.unlock();
+		return v;
+	}
+
+	function nok() 
+	{
+		this.mutex.lock();
+		this._ok = false;
+		this.mutex.unlock();
+	}
+
+	function getId()
+	{
+		
+		this.mutex.lock();
+		var _id;		
+		_id = this.id;
+		++this.id;
+		this.mutex.unlock();
+
+		return _id;
+	}
+	
+	function Sync(n_ids) {
+		this._ok = true;
+		this.mutex = Mutex.new();
+		this.next_id = 0;
+		this.id = 0;
+		this.n_ids = n_ids;
+	}
+}
+
+
+class Clocks {
 	var mw;
 	var threads;
+	var sync;
 
 	function Clock(x, y, sleep_time) {		
 		this.mw = NCurses.new(sleep_time);
+		
+		this.sync = Sync.new(4);
 
 		this.mw.noEcho(); 
 		this.mw.enableKeyPad();
 		
 		this.mw.printStr(0, 0, "Press 'q' to quit...");
 		
-		this.threads = [Thread.new(print_time, this.mw, x, y, Time.new(0), 0),
+		this.threads = [Thread.new(print_time, this.mw, x, y, Time.new(0), this.sync),
  
-						Thread.new(print_time, this.mw, x + 1, y, Time.new(3), 1),
-						
-						Thread.new(get_key, this.mw)];
+						Thread.new(print_time, this.mw, x + 1, y, Time.new(3), this.sync),
 
-		
+						Thread.new(print_time, this.mw, x + 2, y, Time.new(6), this.sync),
+
+						Thread.new(print_time, this.mw, x + 3, y, Time.new(9), this.sync),
+						
+						Thread.new(get_key, this.mw, this.sync)];
 	}
 	
 	function run() {
@@ -115,8 +144,7 @@ class Clock {
 	}
 }
 
-
-var c = Clock.new(5, 5, 500);
+var c = Clocks.new(5, 5, 1000);
 
 c.run();
 c.wait();
