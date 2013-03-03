@@ -45,21 +45,21 @@ public:
 
 	Function()
 		: m_name(), m_num_rargs(0), m_num_args(0), m_flags(FF_INVALID),
-		  m_environment(NULL) {}
+		  m_environment(NULL), m_context(NULL) {}
 
 	Function(const std::string& name, FunctionPtr ptr)
 		: m_name(name), m_num_rargs(0), m_num_args(0), m_flags(FF_INTERNAL|FF_PUBLIC),
-		  m_environment(NULL)
+		  m_environment(NULL), m_context(NULL)
 		{ m_info.fptr = ptr; }
 
 	Function(const std::string& name, size_t addr)
 		: m_name(name), m_num_rargs(0), m_num_args(0), m_flags(FF_USER|FF_PUBLIC),
-		  m_environment(NULL)
+		  m_environment(NULL), m_context(NULL)
 		{ m_info.addr = addr; }
 
 	Function(const std::string& name, MethodPtr ptr)
 		: m_name(name), m_num_rargs(0), m_num_args(0), m_flags(FF_INTERNAL|FF_PUBLIC),
-		  m_environment(NULL)
+		  m_environment(NULL), m_context(NULL)
 		{ m_info.mptr = ptr; }
 
 	~Function() {
@@ -124,6 +124,10 @@ public:
 	void setClosure() { m_flags |= FF_CLOSURE; }
 	bool isClosure() const { return m_flags & FF_CLOSURE; }
 
+	void setContext(const Type* ctx) { m_context = ctx; }
+	const Type* getContext() const { return m_context; }
+	bool hasContext() const { return m_context != NULL; }
+
 	Function* getClosure() const {
 		Function* func = new Function();
 
@@ -150,6 +154,7 @@ private:
 	} m_info;
 
 	Environment* m_environment;
+	const Type* m_context;
 
 	DISALLOW_COPY_AND_ASSIGN(Function);
 };
