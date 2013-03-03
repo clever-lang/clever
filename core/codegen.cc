@@ -675,7 +675,7 @@ void Codegen::visit(Switch* node)
 	std::vector<std::pair<Node*, Node*> >::const_iterator it(cases.begin()),
 		end(cases.end());
 
-	size_t default_addr = 0;
+	size_t default_addr = 0, ncases = cases.size();
 	IR* last_jmp  = NULL;
 	IR* last_jmpz = NULL;
 
@@ -712,25 +712,29 @@ void Codegen::visit(Switch* node)
 				Compiler::errorf(node->getLocation(),
 					"Cannot have more than one default!");
 			}
-			IR& jmp = m_builder->push(OP_JMP);
+			if (ncases == 1) {
+				it->second->accept(*this);
+			} else {
+				IR& jmp = m_builder->push(OP_JMP);
 
-			default_addr = m_builder->getSize();
+				default_addr = m_builder->getSize();
 
-			if (last_jmp) {
-				last_jmp->op1 = Operand(JMP_ADDR, default_addr);
+				if (last_jmp) {
+					last_jmp->op1 = Operand(JMP_ADDR, default_addr);
+				}
+
+				it->second->accept(*this);
+
+				last_jmp = &m_builder->push(OP_JMP);
+
+				jmp.op1 = Operand(JMP_ADDR, m_builder->getSize());
 			}
-
-			it->second->accept(*this);
-
-			last_jmp = &m_builder->push(OP_JMP);
-
-			jmp.op1 = Operand(JMP_ADDR, m_builder->getSize());
 		}
 	}
 	if (last_jmp) {
-		last_jmp->op1 = Operand(JMP_ADDR, default_addr ? default_addr : m_builder->getSize());
+		last_jmp->op1 = Operand(JMP_ADDR, m_builder->getSize());
 	}
-	if (default_addr) {
+	if (default_addr && last_jmpz) {
 		last_jmpz->op2.jmp_addr = default_addr;
 	}
 

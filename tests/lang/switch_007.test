@@ -1,0 +1,11 @@
+Testing default case
+==CODE==
+import std.io.*;
+
+switch (1) {
+	default:
+		println(123);
+}
+
+==RESULT==
+123
