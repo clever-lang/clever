@@ -80,24 +80,18 @@ class Clock {
 
 	var mw;
 	var threads;
-	var t_obj;
-	var ids;
 
-	function Clock(x, y, sleep_time) {
-		
-		this.ids = [0, 1];
-
+	function Clock(x, y, sleep_time) {		
 		this.mw = NCurses.new(sleep_time);
+
 		this.mw.noEcho(); 
 		this.mw.enableKeyPad();
 		
 		this.mw.printStr(0, 0, "Press 'q' to quit...");
-
-		this.t_obj = [Time.new(0), Time.new(3)];
 		
-		this.threads = [Thread.new(print_time, this.mw, x, y, Time.new(0), this.ids[0]),
+		this.threads = [Thread.new(print_time, this.mw, x, y, Time.new(0), 0),
  
-						Thread.new(print_time, this.mw, x + 1, y, Time.new(3), this.ids[1]),
+						Thread.new(print_time, this.mw, x + 1, y, Time.new(3), 1),
 						
 						Thread.new(get_key, this.mw)];
 
