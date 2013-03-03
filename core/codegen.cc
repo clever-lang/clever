@@ -722,6 +722,8 @@ void Codegen::visit(Switch* node)
 
 			it->second->accept(*this);
 
+			last_jmp = &m_builder->push(OP_JMP);
+
 			jmp.op1 = Operand(JMP_ADDR, m_builder->getSize());
 		}
 	}
