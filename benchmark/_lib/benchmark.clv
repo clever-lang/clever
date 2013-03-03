@@ -2,6 +2,8 @@ import std.io.*;
 import std.regex.*;
 import std.file.*;
 import std.sys.*;
+import std.crypto.*;
+import std.reflection.*;
 
 //import classes.language.*; -- BUG
 
@@ -19,11 +21,15 @@ function readFileContent(file) {
 	return buffer;
 }
 
-function _exec(command) {
+function _exec(command, hide_error = false) {
 	var output_file = ".bench-output-" + time();
+	output_file = output_file + "-" + md5(command + output_file);
 	var cmd = command + " > " + output_file + " 2>&1";
 	var rs = system(cmd);
 	if (rs != 0) {
+		if (!hide_error) {
+			println('ERROR on command: ', command, readFileContent(output_file));
+		}
 		remove(output_file);
 		return false;
 	}
@@ -38,20 +44,27 @@ class Language {
 	var check_cmd;
 	var version_er;
 	var extension;
+	var tear_down;
 	var version;
 	var is_ok;
 
-	function Language(name, command, check_cmd, version_er, extension) {
+	function Language(name, command, check_cmd, version_er, extension, tear_down=null) {
 		this.name = name;
 		this.command = command;
 		this.check_cmd = check_cmd;
 		this.version_er = version_er;
 		this.extension = extension;
+		this.tear_down = tear_down;
 		this.is_ok = false;
 	}
 
 	function check() {
-		var version_str = _exec(this.check_cmd);
+		var version_str = _exec(this.check_cmd, true);
+		
+		if (version_str == false) {
+			return false;
+		}
+		
 		var re = Regex.new(this.version_er);
 
 		if (!re.match(version_str)) {
@@ -74,15 +87,14 @@ class Result {
 	function Result(text, tt) {
 		this.tt = tt;
 		this.text = text;
-		/*
-		var re = Regex.new("^(.*?)\r?\n(.*?)");
+		
+		var re = Regex.new("^(.*?)\r?\n(.*)\r?\n?");
 		if (!re.match(text)) {
-			println('ERROR: invalid output');
+			println('ERROR: invalid output.', text, '*******');
 			return;
 		}
 		this.banner = re.group(1);
 		this.value = re.group(2);
-		*/
 	}
 }
 
@@ -94,13 +106,54 @@ class Test {
 		this.file = file;
 		this.lang = lang;
 	}
+	
+	function rewrite(xcmd) {
+		xcmd = xcmd.replace('%f', this.file);
+		xcmd = xcmd.replace('%d', dirname(this.file));
+		
+		var re = Regex.new("^(.*)\.(.*?)$");
+		re.match(basename(this.file));
+		xcmd = xcmd.replace('%o', re.group(1));
+		
+		return xcmd;
+	}
 
 	function run() {
-		var cmd = this.lang.command.replace('%1', this.file);
+		var exec = '';
+		var cmd = this.lang.command;
+		var t = Reflect.new(cmd);
+		if (t.isArray()) {
+			exec = cmd.pop();
+			this.prepare(cmd);
+		}
+		else { exec = cmd; }
+		
+        exec = this.rewrite(exec);
 		var tini = microtime();
-		var output = _exec(cmd);
+		var output = _exec(exec);
 		var tfim = microtime();
+		
+		//Tear Down files
+		if (this.lang.tear_down) {
+			var i=0,f='';
+			while (i < this.lang.tear_down.size()) {
+				f = this.rewrite(this.lang.tear_down.at(i));
+				remove(f);
+				i++;
+			}
+		}
+		
 		return Result.new(output, (tfim - tini));
+	}
+	
+	function prepare(cmd) {
+		var i = 0, exec = '';
+		while (i < cmd.size()) {
+			exec = cmd.at(i);
+			exec = this.rewrite(exec);
+			_exec(exec);
+			i++;
+		}
 	}
 }
 
@@ -150,8 +203,7 @@ class GroupTest {
 		var i = 0;
 		while (i < this.env.langs.size()) {
 			var lang = this.env.langs[i++];
-			var re = Regex.new(lang.extension);
-			if (re.match(ext)) {
+			if (lang.extension == ext) {
 				if (!lang.is_ok) {
 					continue;
 				}
@@ -173,8 +225,8 @@ class Environment {
 		this.groups = [];
 	}
 
-	function addLanguage(name, command, check_cmd, version_er, extension) {
-		var l = Language.new(name, command, check_cmd, version_er, extension);
+	function addLanguage(name, command, check_cmd, version_er, extension, tear_down=null) {
+		var l = Language.new(name, command, check_cmd, version_er, extension, tear_down);
 		this.langs.append(l);
 		return l;
 	}

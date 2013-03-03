@@ -34,7 +34,9 @@ TypeObject* NCurses::allocData(CLEVER_TYPE_CTOR_ARGS) const
 	NCurses.new(enable_colors, sleep_time);
 	*/
 
-	if (n_args == 1) {
+	if (n_args == 0) {
+		m_enable_colors = false;
+	} else if (n_args == 1) {
 		Value* v = args->at(0);
 
 		if (v->isBool()) {

@@ -12,8 +12,8 @@
 
 /*=============================================================*/
 
+import gui.ncurses.*;
 import engine.paint.*;
-
 
 /* 
  score = no + 2 * nS + 3 * nP

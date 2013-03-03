@@ -1,0 +1,161 @@
+#!../../clever
+
+/**
+ * Clever programming language
+ * Copyright (c) Clever Team
+ *
+ * This file is distributed under the MIT license. See LICENSE for details.
+ */
+
+/*
+Syncronization test using NCurses and Clever threads
+
+This teste create 160 threads running a clock and  one thread waiting user inputs.
+*/
+
+import std.sys.*;
+import std.io.*;
+import std.math.*;
+import std.concurrent.*;
+
+import gui.ncurses.*;
+
+var x0 = 2, y0 = 2;
+var sleep_time = 200, n_threads = 160;
+
+function print_time(mw, x, y, t, sync)
+{
+	var t_start = t.startTime();
+	var id = sync.getId();
+	var px = id / 5;
+	var py = id % 5;
+
+	while (sync.ok()) {
+		if (id == sync.next_id) {
+			var t_now = microtime();
+			mw.printStr(x + px, y + py * 30,
+							 "Time:   " + round(t_now - t_start) + 
+                              "   id: " + id + "                   ");
+			mw.refresh();			
+			sync.next_id = (sync.next_id + 1) % sync.n_ids;
+			mw.sleep();	
+		}	
+	}
+}
+
+function get_key(mw, sync) 
+{
+	var ch;
+
+	while ((ch = mw.getKey().getChar()) != 'q') {
+		
+	}
+
+	sync.nok();
+}
+
+
+class Time {
+	var delay;
+
+	function Time(delay) { this.delay = delay; }
+
+	function startTime() {
+		return microtime() - this.delay;
+	}
+}
+
+
+class Sync {
+	var next_id;
+	var n_ids;
+	var _ok;
+	var id;
+	var mutex;
+
+	function ok() 
+	{
+		this.mutex.lock();
+		var v = this._ok;	
+		this.mutex.unlock();
+		return v;
+	}
+
+	function nok() 
+	{
+		this.mutex.lock();
+		this._ok = false;
+		this.mutex.unlock();
+	}
+
+	function getId()
+	{
+		
+		this.mutex.lock();
+		var _id;		
+		_id = this.id;
+		++this.id;
+		this.mutex.unlock();
+
+		return _id;
+	}
+	
+	function Sync(n_ids) {
+		this._ok = true;
+		this.mutex = Mutex.new();
+		this.next_id = 0;
+		this.id = 0;
+		this.n_ids = n_ids;
+	}
+}
+
+
+class Clocks {
+	var mw;
+	var threads;
+	var sync;
+	var n_threads;
+
+	function Clock(x, y, sleep_time, n_threads_) {		
+		this.mw = NCurses.new(sleep_time);
+
+		this.n_threads = n_threads_;
+
+		this.sync = Sync.new(n_threads_);
+
+		this.mw.noEcho(); 
+		this.mw.enableKeyPad();
+		
+		this.mw.printStr(0, 0, "Press 'q' to quit...");
+		this.threads = [Thread.new(get_key, this.mw, this.sync)];
+
+		var i = 0;
+		while (i < this.n_threads) {
+			this.threads.append(Thread.new(print_time, this.mw, x, y, Time.new(i), this.sync));
+			++i;
+		}
+	}
+	
+	function run() {
+		this.threads.each(
+			function(z) {
+				z.start();
+			}
+		);
+	}
+
+	function wait() {
+		this.threads.each(
+			function(z) {
+				z.wait();
+			}
+		);
+	}
+}
+
+var c = Clocks.new(x0, y0, sleep_time, n_threads);
+
+c.run();
+c.wait();
+
+
