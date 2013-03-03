@@ -468,7 +468,7 @@ CLEVER_METHOD(StrType::replace)
 
 	::std::string buffer = *haystack;
 
-	int pos = haystack->find(needle->c_str());
+	size_t pos = haystack->find(needle->c_str());
 	if (pos != ::std::string::npos) {
 		buffer.replace(pos, needle->length(), replace->c_str());
 	}
