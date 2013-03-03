@@ -23,10 +23,7 @@ TypeObject* Condition::allocData(CLEVER_TYPE_CTOR_ARGS) const
 {
 	ConditionObject* cobj = new ConditionObject;
 
-	if (cobj->condition) {
-		// @TODO(krakjoe) condition attributes
-		pthread_cond_init(cobj->condition, NULL);
-	}
+
 	return cobj;
 }
 
@@ -37,12 +34,7 @@ CLEVER_METHOD(Condition::signal)
 	ConditionObject* cobj =
 		CLEVER_GET_OBJECT(ConditionObject*, CLEVER_THIS());
 
-	if (!cobj->condition) {
-		//CLEVER_THROW(eventually)
-		return;
-	}
-
-	result->setBool((pthread_cond_signal(cobj->condition) == 0));
+	result->setBool(cobj->condition.signal());
 }
 
 // bool Condition.broadcast()
@@ -52,12 +44,8 @@ CLEVER_METHOD(Condition::broadcast)
 	ConditionObject* cobj =
 		CLEVER_GET_OBJECT(ConditionObject*, CLEVER_THIS());
 
-	if (!cobj->condition) {
-		//CLEVER_THROW(eventually)
-		return;
-	}
 
-	result->setBool((pthread_cond_broadcast(cobj->condition) == 0));
+	result->setBool(cobj->condition.broadcast());
 }
 
 // bool Condition.wait(Mutex locked)
@@ -69,10 +57,6 @@ CLEVER_METHOD(Condition::wait)
 	ConditionObject* cobj =
 		CLEVER_GET_OBJECT(ConditionObject*, CLEVER_THIS());
 
-	if (!cobj->condition) {
-		//CLEVER_THROW(eventually)
-		return;
-	}
 
 	if (!clever_check_args("*")) {
 		return;
@@ -80,12 +64,8 @@ CLEVER_METHOD(Condition::wait)
 
 	MutexObject* mobj = static_cast<MutexObject*>(args[0]->getObj());
 
-	if (!mobj->mutex) {
-		//CLEVER_THROW(eventually);
-		return;
-	}
 
-	result->setBool((pthread_cond_wait(cobj->condition, mobj->mutex) == 0));
+	result->setBool(cobj->condition.wait(mobj->mutex));
 }
 
 CLEVER_METHOD(Condition::ctor)

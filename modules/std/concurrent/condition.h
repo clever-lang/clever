@@ -12,21 +12,17 @@
 
 #include "core/cstring.h"
 #include "core/type.h"
+#include "core/cthread.h"
 
 namespace clever { namespace modules { namespace std {
 
 struct ConditionObject : public TypeObject {
 	ConditionObject()
-		: condition(new pthread_cond_t) {}
+		: condition() {}
 
-	~ConditionObject() {
-		if (condition) {
-			pthread_cond_destroy(condition);
-			delete condition;
-		}
-	}
+	~ConditionObject() {}
 
-	pthread_cond_t* condition;
+	CCondition condition;
 };
 
 class Condition : public Type {

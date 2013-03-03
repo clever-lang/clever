@@ -22,10 +22,6 @@ TypeObject* Mutex::allocData(CLEVER_TYPE_CTOR_ARGS) const
 {
 	MutexObject* mobj = new MutexObject;
 
-	if (mobj->mutex) {
-		// @TODO(krakjoe) mutex attributes
-		pthread_mutex_init(mobj->mutex, NULL);
-	}
 	return mobj;
 }
 
@@ -37,10 +33,7 @@ CLEVER_METHOD(Mutex::lock)
 		return;
 	}
 
-	result->setBool((
-		pthread_mutex_lock(
-			CLEVER_GET_OBJECT(MutexObject*, CLEVER_THIS())->mutex) == 0)
-	);
+	result->setBool(mutex->mutex.lock());
 }
 
 CLEVER_METHOD(Mutex::trylock)
@@ -51,10 +44,7 @@ CLEVER_METHOD(Mutex::trylock)
 		return;
 	}
 
-	result->setBool((
-		pthread_mutex_trylock(
-			CLEVER_GET_OBJECT(MutexObject*, CLEVER_THIS())->mutex) == 0)
-	);
+	result->setBool(mutex->mutex.trylock());
 }
 
 CLEVER_METHOD(Mutex::unlock)
@@ -66,9 +56,7 @@ CLEVER_METHOD(Mutex::unlock)
 		return;
 	}
 
-	result->setBool((
-		pthread_mutex_unlock(
-			CLEVER_GET_OBJECT(MutexObject*, CLEVER_THIS())->mutex) == 0));
+	result->setBool(mutex->mutex.unlock());
 }
 
 CLEVER_METHOD(Mutex::ctor)

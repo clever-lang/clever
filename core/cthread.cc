@@ -8,6 +8,30 @@
 #include "core/cthread.h"
 
 namespace clever {
+CCondition::CCondition()
+{
+	pthread_cond_init(&condition, NULL);
+}
+
+CCondition::~CCondition()
+{
+	pthread_cond_destroy(&condition);
+}
+
+bool CCondition::signal()
+{
+	return pthread_cond_signal(&condition) == 0;
+}
+
+bool CCondition::broadcast()
+{
+	return pthread_cond_broadcast(&condition) == 0;
+}
+
+bool CCondition::wait(CMutex& m)
+{
+	return pthread_cond_wait(&condition, &m.m_mut) == 0;
+}
 
 CMutex::CMutex()
 {
@@ -31,22 +55,27 @@ CMutex::~CMutex()
 #endif
 }
 
-void CMutex::lock()
+bool CMutex::lock()
 {
 #ifdef CLEVER_THREADS
 # ifndef CLEVER_WIN32
-	pthread_mutex_lock(&m_mut);
+	return pthread_mutex_lock(&m_mut) == 0;
 # else
 	WaitForSingleObject(m_mut, INFINITE);
 # endif
 #endif
 }
 
-void CMutex::unlock()
+bool CMutex::trylock()
+{
+	return pthread_mutex_trylock(&m_mut) == 0;
+}
+
+bool CMutex::unlock()
 {
 #ifdef CLEVER_THREADS
 # ifndef CLEVER_WIN32
-	pthread_mutex_unlock(&m_mut);
+	return pthread_mutex_unlock(&m_mut) == 0;
 # else
 	ReleaseMutex(m_mut);
 # endif
