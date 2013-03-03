@@ -612,6 +612,8 @@ void Codegen::visit(Throw* node)
 	IR& thr = m_builder->push(OP_THROW);
 
 	_prepare_operand(thr.op1, node->getExpr());
+
+	thr.loc = node->getLocation();
 }
 
 void Codegen::visit(Continue* node)
