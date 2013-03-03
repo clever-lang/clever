@@ -17,7 +17,7 @@
 
 namespace clever { namespace modules { namespace gui {
 
-class KeyObject : public TypeObect {
+class KeyObject : public TypeObject {
 public:
 	KeyObject(int value = 0)
 		: value(value) {}

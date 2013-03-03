@@ -254,6 +254,7 @@ class Game {
 		this.player.p.y = py;		
 	}
 
+
 /****************************************************************************/
 	/* Update player score*/
 	function updateScore() {
