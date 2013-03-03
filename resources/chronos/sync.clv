@@ -21,7 +21,7 @@ import std.concurrent.*;
 import gui.ncurses.*;
 
 var x0 = 2, y0 = 2;
-var sleep_time = 1, n_threads = 30;
+var sleep_time = 1, n_threads = 160;
 
 function print_time(mw, x, y, t, sync)
 {
