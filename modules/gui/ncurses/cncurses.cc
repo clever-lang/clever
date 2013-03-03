@@ -97,6 +97,7 @@ CNCurses::CNCurses(int sleep_time, WINDOW* father, bool enable_colors,
 	if (father == NULL) {
 		//IS MAIN WINDOW
 		m_status = (m_win = initscr()) == NULL;
+		clear();
 	} else {
 		m_win = subwin(father, w, h, x, y);
 	}
