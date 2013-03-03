@@ -11,8 +11,6 @@
 namespace clever { namespace modules { namespace std {
 
 struct CStackObject : public TypeObject {
-	::std::stack<Value*> stack;
-
 	CStackObject() {}
 
 	~CStackObject() {
@@ -21,6 +19,8 @@ struct CStackObject : public TypeObject {
 			stack.pop();
 		}
 	}
+
+	::std::stack<Value*> stack;
 };
 
 class CStack : public Type {
