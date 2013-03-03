@@ -10,12 +10,13 @@
 
 #include "core/vm.h"
 #include "core/module.h"
+#include "core/cthread.h"
 
 namespace clever { namespace modules { namespace std {
 
 struct ThreadData : public TypeObject {
-	pthread_t          	thread;
-	pthread_mutex_t*    lock;
+	CThread          	thread;
+	CMutex              lock;
 	Function*           entry;
 	Value*              result;
 	VM*           		vm;
