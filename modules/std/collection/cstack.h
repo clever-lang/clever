@@ -12,6 +12,15 @@ namespace clever { namespace modules { namespace std {
 
 struct CStackObject : public TypeObject {
 	::std::stack<Value*> stack;
+
+	CStackObject() {}
+
+	~CStackObject() {
+		while (!stack.empty()) {
+			clever_delref(stack.top());
+			stack.pop();
+		}
+	}
 };
 
 class CStack : public Type {
