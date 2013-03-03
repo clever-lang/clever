@@ -228,7 +228,9 @@ void Visitor::visit(Switch* node)
 		end(vec.end());
 
 	for (; it != end; ++it) {
-		it->first->accept(*this);
+		if (it->first) {
+			it->first->accept(*this);
+		}
 		it->second->accept(*this);
 	}
 }
