@@ -21,8 +21,9 @@ clever_new_module(std.math       ON DOC "enable the math module")
 clever_new_module(std.reflection ON DOC "enable the reflection module")
 clever_new_module(std.sys        ON DOC "enable the sys module")
 clever_new_module(std.crypto     ON DOC "enable the crypto module")
+clever_new_module(std.collection ON DOC "enable the collection module")
 
-clever_new_module(std.regex ON  
+clever_new_module(std.regex ON
 	DOC"enable the regex module"
 	LIBS PCRECPP)
 
@@ -34,8 +35,8 @@ clever_new_module(std.rpc OFF
 	DOC "enable the rpc module"
 	LIBS PTHREAD FFI)
 
-	
-clever_new_module(std.unicode ON 
+
+clever_new_module(std.unicode ON
 	DOC	"enable the unicode module"
 	LIBS ICU)
 
@@ -47,11 +48,11 @@ clever_new_module(std.events ON
 	DOC	"enable the event module"
 	MODS std.concurrent)
 
-clever_new_module(db.mysql ON 
+clever_new_module(db.mysql ON
 	DOC	"enable the mysql module"
 	LIBS MYSQLC)
 
-clever_new_module(db.sqlite3 ON 
+clever_new_module(db.sqlite3 ON
 	DOC	"enable the sqlite3 module"
 	LIBS SQLITE3)
 

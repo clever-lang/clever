@@ -61,6 +61,9 @@ void Std::init()
 #ifdef HAVE_MOD_STD_REGEX
 	addModule(new std::Regex);
 #endif
+#ifdef HAVE_MOD_STD_COLLECTION
+	addModule(new std::CollectionModule);
+#endif
 
 #if 0
 #ifdef HAVE_MOD_STD_RPC
