@@ -153,6 +153,10 @@ void Resolver::visit(FunctionDecl* node)
 		} else if (node->isDtor()) {
 			m_class->setUserDestructor(func);
 		}
+		if (m_class->hasMember(name)) {
+			Compiler::errorf(node->getLocation(),
+				"Cannot redeclare member `%S'", name);
+		}
 		m_class->addMember(name, fval);
 
 		switch (node->getVisibility()) {
@@ -328,7 +332,7 @@ void Resolver::visit(AttrDecl* node)
 {
 	const CString* name = node->getIdent()->getName();
 
-	if (m_scope->getLocal(name)) {
+	if (m_class->hasMember(name)) {
 		Compiler::errorf(node->getLocation(),
 			"Cannot redeclare attribute `%S'.", name);
 	}
