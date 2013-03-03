@@ -135,15 +135,23 @@ class Game {
 			var j = 0;
 
 			while (j < this.m) {
-				if (this.grid[i][j]== 'x') {
-					px = i;
-					py = j;
-				} else if (this.grid[i][j] == 'o') {
-					++this.n0o;
-				} else if (this.grid[i][j] == '*') {
-					++this.nSo;
-				} else if (this.grid[i][j] == '$') {
-					++this.nPo;
+				switch (this.grid[i][j]) {
+					case'x':
+						px = i;
+						py = j;
+					break;
+
+					case 'o':
+						++this.n0o;
+					break;
+
+					case '*':
+						++this.nSo;
+					break;
+					
+					case '$':
+						++this.nPo;
+					break;
 				}
 				++j;
 			}
