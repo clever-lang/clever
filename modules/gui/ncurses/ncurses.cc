@@ -485,7 +485,7 @@ void Key::dump(TypeObject*, std::ostream&) const
 
 CLEVER_METHOD(Key::ctor)
 {
-	if (!clever_check_args("|i")) {
+	if (!clever_check_args("i")) {
 		return;
 	}
 

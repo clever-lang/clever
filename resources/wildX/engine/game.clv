@@ -116,7 +116,7 @@ class Game {
 		this.colors =  {'x' : 1, '*' : 2, '$' : 3, 'o' : 4,  '#' : 17, '.' : 16, '@': 14, '-': 15};
 		this.colorst = {'x' : 7, '*' : 8, '$' : 10, 'o' : 9, '#' : 17, '.' : 16, '@': 14, '-': 15};
 
-		this.last_key = 0;
+		this.last_key = Key.new(0);
 	}
 
 /****************************************************************************/
@@ -135,7 +135,7 @@ class Game {
 			var j = 0;
 
 			while (j < this.m) {
-				switch (this.grid[i][j].getChar()) {
+				switch (this.grid[i][j]) {
 					case'x':
 						px = i;
 						py = j;
@@ -271,7 +271,7 @@ class Game {
 		var px = this.player.p.x;
 		var py = this.player.p.y;
 
-		switch (this.grid[px][py].getChar()) {
+		switch (this.grid[px][py]) {
 			case 'o':
 				++this.player.score.no;
 				this.n0o--;
