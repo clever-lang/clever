@@ -312,12 +312,12 @@ CLEVER_FORCE_INLINE void VM::logicOp(const IR& op)
 	const Type* type = lhs->getType();
 
 	switch (op.opcode) {
-		case OP_GREATER: type->greater(getValue(op.result), lhs, rhs, this, &m_exception);       break;
+		case OP_GREATER: type->greater(getValue(op.result),       lhs, rhs, this, &m_exception); break;
 		case OP_GEQUAL:  type->greater_equal(getValue(op.result), lhs, rhs, this, &m_exception); break;
-		case OP_LESS:    type->less(getValue(op.result), lhs, rhs, this, &m_exception);          break;
-		case OP_LEQUAL:  type->less_equal(getValue(op.result), lhs, rhs, this, &m_exception);    break;
-		case OP_EQUAL:   type->equal(getValue(op.result), lhs, rhs, this, &m_exception);         break;
-		case OP_NEQUAL:  type->not_equal(getValue(op.result), lhs, rhs, this, &m_exception);     break;
+		case OP_LESS:    type->less(getValue(op.result),          lhs, rhs, this, &m_exception); break;
+		case OP_LEQUAL:  type->less_equal(getValue(op.result),    lhs, rhs, this, &m_exception); break;
+		case OP_EQUAL:   type->equal(getValue(op.result),         lhs, rhs, this, &m_exception); break;
+		case OP_NEQUAL:  type->not_equal(getValue(op.result),     lhs, rhs, this, &m_exception); break;
 		EMPTY_SWITCH_DEFAULT_CASE();
 	}
 }
