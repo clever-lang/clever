@@ -10,7 +10,7 @@
 /*
 Syncronization test using NCurses and Clever threads
 
-This teste create 160 threads running a clock and  one thread waiting user inputs.
+This teste create n_threads threads running a clock and  one thread waiting user inputs.
 */
 
 import std.sys.*;
@@ -21,7 +21,7 @@ import std.concurrent.*;
 import gui.ncurses.*;
 
 var x0 = 2, y0 = 2;
-var sleep_time = 1, n_threads = 30;
+var sleep_time = 1, n_threads = 160;
 
 function print_time(mw, x, y, t, sync)
 {
@@ -33,9 +33,9 @@ function print_time(mw, x, y, t, sync)
 	while (sync.status()) {
 		if (id == sync.getID()) {
 			var t_now = microtime();
-			mw.printStr(x + px, y + py * 30,
-							"Time:   " + (t_now - t_start) + 
-                            "   id: " + id + "                   ");
+			mw.printStr(x + px, y + py * 40,
+							"Time:   " + (t_now - t_start) + "      "); 
+            mw.printStr(x + px, y + py * 40 + 20, "id: " + id + "                   ");
 			mw.refresh();
 			mw.sleep();	
 

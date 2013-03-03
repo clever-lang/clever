@@ -309,7 +309,7 @@ class Game {
 		}
 		this.grid[px] = l;
 
-		print_info(this.mw, "Position player: ", "(" + px + ", " + py + ")   ", this.n + this.x0 + 3,  2, 12, 10);
+		print_info(this.mw, "Position player: ", "(" + py + ", " + px + ")   ", this.n + this.x0 + 3,  2, 12, 10);
 	}
 
 /****************************************************************************/
