@@ -2,7 +2,7 @@
 ==CODE==
 var a = [1, 2, 3]; a++;
 ==RESULT==
-Fatal error: Unhandled exception!
+Fatal error: Unhandled exception! on \S+ line \d+
 Message: Cannot use \+\+ operator with Array type
 Stack trace:
 

@@ -31,10 +31,12 @@ struct VMThread {
 
 struct CallStackEntry {
 	Environment* env;
+	const Function* func;
 	const location* loc;
 
-	explicit CallStackEntry(Environment* env_, const location* loc_ = NULL)
-		: env(env_), loc(loc_) {}
+	explicit CallStackEntry(Environment* env_, const Function* func_ = NULL,
+		const location* loc_ = NULL)
+		: env(env_), func(func_), loc(loc_) {}
 };
 
 typedef std::stack<CallStackEntry> CallStack;
@@ -72,7 +74,7 @@ public:
 	Value* getValue(const Operand&) const;
 
 	/// Helper to change a temporary value pointer
-	Value* setTempValue(const Operand&, Value*) const;
+	void setTempValue(const Operand&, Value*) const;
 
 	CallStack& getCallStack() { return m_call_stack; }
 
@@ -89,6 +91,7 @@ public:
 
 	/// Dumps the stack trace
 	void dumpStackTrace(std::ostringstream&);
+	void throwException(const IR&) CLEVER_NO_RETURN;
 
 	/// Methods for dumping opcodes
 #ifdef CLEVER_DEBUG
