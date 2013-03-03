@@ -1,0 +1,22 @@
+Testing stack
+==CODE==
+import std.io.*;
+import std.collection.*;
+
+var arr = [3, 2, 1];
+var stack = Stack.new;
+
+arr.each(function(n) { stack.push(n); });
+
+println("Size: " + stack.size());
+
+while (!stack.empty()) {
+	println(stack.top());
+	stack.pop();
+}
+
+==RESULT==
+Size: 3
+1
+2
+3
