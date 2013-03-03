@@ -42,28 +42,27 @@ TypeObject* Thread::allocData(CLEVER_TYPE_CTOR_ARGS) const
 {
 	ThreadData* intern = new ThreadData;
 
-	intern->lock = new pthread_mutex_t;
 
-	clever_debug("Thread.new allocated lock for thread at %@", intern->lock);
+	//clever_debug("Thread.new allocated lock for thread at %@", intern->lock);
 
 	intern->entry = NULL;
 	intern->vm = NULL;
 	intern->joined = false;
 
-	if (intern->lock) {
-		if (pthread_mutex_init(intern->lock, NULL) != 0) {
-			clever_error("Thread.new failed to initialize a lock for the thread at %@", intern->lock);
-		} else clever_debug("Thread.new has initialized a lock for the thread at %@", intern->lock);
-	}
+	//if (intern->lock) {
+		//if (pthread_mutex_init(intern->lock, NULL) != 0) {
+			//clever_error("Thread.new failed to initialize a lock for the thread at %@", intern->lock);
+		//} else clever_debug("Thread.new has initialized a lock for the thread at %@", intern->lock);
+	//}
 
 	if (args->size()) {
 		Value* point = args->at(0);
 
 		if (point->isFunction()) {
 			intern->entry = static_cast<Function*>(point->getObj());
-			clever_debug("Thread.new has set entry point for thread to %@", intern->entry);
+			//clever_debug("Thread.new has set entry point for thread to %@", intern->entry);
 		} else {
-			clever_debug("Thread.new was expecting a Function and got something else at %@", point);
+			//clever_debug("Thread.new was expecting a Function and got something else at %@", point);
 		}
 
 		for (size_t i = 1; i < args->size(); ++i) {
@@ -79,27 +78,28 @@ TypeObject* Thread::allocData(CLEVER_TYPE_CTOR_ARGS) const
 
 ThreadData::~ThreadData()
 {
-	clever_debug("Thread.dtor executing %@ ...", thread);
+	//clever_debug("Thread.dtor executing %@ ...", thread);
 
 	if (!joined) {
-		clever_debug("Thread.dtor calling pthread_join for %@", thread);
-		if (pthread_join(thread, NULL) != 0) {
-			clever_debug("Thread.dtor failed to join with %@", thread);
-		} else {
-			clever_debug("Thread.dtor joined with %@", thread);
-		}
+		//clever_debug("Thread.dtor calling pthread_join for %@", thread);
+		this->thread.wait();
+		//if (pthread_join(thread, NULL) != 0) {
+			//clever_debug("Thread.dtor failed to join with %@", thread);
+		//} else {
+			//clever_debug("Thread.dtor joined with %@", thread);
+		//}
 	} else {
-		clever_debug("Thread.dtor skipping join for %@, previously joined", thread);
+		//clever_debug("Thread.dtor skipping join for %@, previously joined", thread);
 	}
 
-	if (lock) {
-		if (pthread_mutex_destroy(lock) != 0) {
-			clever_debug("Thread.dtor experienced an error destroying the lock for %@", thread);
-		} else {
-			clever_debug("Thread.dtor has destroyed the lock associated with %@", thread);
-		}
-		delete lock;
-	}
+	//if (lock) {
+		//if (pthread_mutex_destroy(lock) != 0) {
+			//clever_debug("Thread.dtor experienced an error destroying the lock for %@", thread);
+		//} else {
+			//clever_debug("Thread.dtor has destroyed the lock associated with %@", thread);
+		//}
+		//delete lock;
+	//}
 
 	for (size_t i = 0; i < this->args.size(); ++i) {
 		delete this->args.at(i);
@@ -123,25 +123,21 @@ CLEVER_METHOD(Thread::start)
 
 	if (intern->entry != NULL) {
 		/** @TODO(krakjoe) pthread attributes **/
-		if (pthread_mutex_lock(intern->lock) == 0) {
-			clever_debug("Thread.start set vm for thread to %@", vm);
-			intern->vm = new VM();
-			intern->vm->copy(vm, true);
-			intern->vm->setChild();
+		intern->lock.lock();
+
+		//clever_debug("Thread.start set vm for thread to %@", vm);
+
+		intern->vm = new VM();
+		intern->vm->copy(vm, true);
+		intern->vm->setChild();
 
 
-			result->setBool(
-				(pthread_create(&intern->thread, NULL, ThreadHandler, intern) == 0)
-			);
-			clever_debug("Thread.start created thread at %@", intern->thread);
-			pthread_mutex_unlock(intern->lock);
-		} else {
-			clever_debug("Thread.start failed to lock mutex at %@", intern->lock);
-			/* report fatality */
-			result->setBool(false);
-		}
+		intern->thread.create(ThreadHandler, intern);
+
+		//clever_debug("Thread.start created thread at %@", intern->thread);
+		intern->lock.unlock();
 	} else {
-		clever_debug("Thread.start lost it's entry point at %@", intern);
+		//clever_debug("Thread.start lost it's entry point at %@", intern);
 		result->setBool(false);
 	}
 }
@@ -157,20 +153,12 @@ CLEVER_METHOD(Thread::wait)
 		return;
 	}
 
-	if (pthread_mutex_lock(intern->lock) == 0) {
-		if (!intern->joined) {
-			result->setBool(
-				(pthread_join(intern->thread, NULL) == 0)
-			);
-			intern->joined = true;
-		} else {
-			result->setNull();
-		}
-		pthread_mutex_unlock(intern->lock);
-	} else {
-		//CLEVER_THROW(eventually);
-		result->setNull();
+	intern->lock.lock();
+	if (!intern->joined) {
+		intern->thread.wait();
+		intern->joined = true;
 	}
+	intern->lock.unlock();
 }
 
 // Thread.result()
