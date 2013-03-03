@@ -31,9 +31,10 @@ struct SyncObject : public TypeObject {
 
 	size_t nextID() {
 		mutex.lock();
+		size_t v = next_id;
 		next_id = (next_id + 1) % n_ids;
 		mutex.unlock();
-		return next_id;
+		return v;
 	}
 
 	void setID(size_t v) {
