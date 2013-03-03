@@ -5,14 +5,17 @@
  * This file is distributed under the MIT license. See LICENSE for details.
  */
 
-
 //	The Wild X Adventures
 //	by: Pericles Lopes Machado
 
 // PAINT FUNCTIONS
 
+/*=============================================================*/
+
 import gui.ncurses.*;
 
+
+/****************************************************************************/
 /* Wait key 'q' */
 function wait(mw, key) 
 {
@@ -20,6 +23,8 @@ function wait(mw, key)
 	while ((ch = mw.getKey()) != 113) {}
 }
 
+
+/****************************************************************************/
 /* Pallete functions */
 function init_pallete(mw) {
 	mw.addColor(1,   NCurses.RED,       NCurses.WHITE);
@@ -41,7 +46,9 @@ function init_pallete(mw) {
 	mw.addColor(17,  NCurses.MAGENTA,   NCurses.MAGENTA);
 }
 
-/* Print messages in the screen */
+
+/****************************************************************************/
+/* Print scores in the screen */
 function print_score(mw, colors, c, n, x, y, ct) 
 {
 	mw.setColor(colors[c]);
@@ -50,6 +57,9 @@ function print_score(mw, colors, c, n, x, y, ct)
 	mw.addStr(x, y + c.size() + 1,  n + "      ");
 }
 
+
+/****************************************************************************/
+/* Print informations in the screen */
 function print_info(mw, a, b, x, y, c1, c2) 
 {
 	mw.setColor(c1);
