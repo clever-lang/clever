@@ -325,6 +325,7 @@ CLEVER_FORCE_INLINE void VM::logicOp(const IR& op)
 	}
 }
 
+/// Throws uncaught exception
 void VM::throwException(const IR& op)
 {
 	std::ostringstream msg;
@@ -334,6 +335,7 @@ void VM::throwException(const IR& op)
 	if (op.loc.begin.filename) {
 		msg << *op.loc.begin.filename << " ";
 	}
+
 	msg << "line " << op.loc.begin.line << "\nMessage: %v";
 
 	dumpStackTrace(msg);
