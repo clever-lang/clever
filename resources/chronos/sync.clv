@@ -1,0 +1,130 @@
+#!../../clever
+
+/**
+ * Clever programming language
+ * Copyright (c) Clever Team
+ *
+ * This file is distributed under the MIT license. See LICENSE for details.
+ */
+
+/*
+Syncronization test using NCurses and Clever threads
+*/
+
+import std.sys.*;
+import std.io.*;
+import std.concurrent.*;
+
+import gui.ncurses.*;
+
+var next_id = 0;
+var n_ids = 2;
+var _ok = true;
+var mutex = Mutex.new();
+
+function ok() 
+{
+	mutex.lock();
+	var v = _ok;	
+	mutex.unlock();
+	return v;
+}
+
+function nok() 
+{
+	mutex.lock();
+	_ok = false;
+	mutex.unlock();
+}
+
+function print_time(mw, x, y, t, id)
+{
+	var t_start = t.startTime();
+
+	while (ok()) {
+		if (id == next_id) {
+			var t_now = microtime();
+			mw.printStr(x, y, "Time:   " + (t_now - t_start) + 
+                              "   id: " + id + "                   ");
+			mw.refresh();			
+			next_id = (id + 1) % n_ids;
+			mw.sleep();	
+		}	
+	}
+}
+
+function get_key(mw) 
+{
+	var ch;
+
+	while ((ch = mw.getKey().getChar()) != 'q') {
+		
+	}
+
+	nok();
+}
+
+
+class Time {
+	var delay;
+
+	function Time(delay) { this.delay = delay; }
+
+	function startTime() {
+		return microtime() - this.delay;
+	}
+}
+
+
+class Clock {
+
+	var mw;
+	var threads;
+	var t_obj;
+	var ids;
+
+	function Clock(x, y, sleep_time) {
+		
+		this.ids = [0, 1];
+
+		this.mw = NCurses.new(sleep_time);
+		this.mw.noEcho(); 
+		this.mw.enableKeyPad();
+		
+		this.mw.printStr(0, 0, "Press 'q' to quit...");
+
+		this.t_obj = [Time.new(0), Time.new(3)];
+		
+		this.threads = [Thread.new(print_time, this.mw, x, y, Time.new(0), this.ids[0]),
+ 
+						Thread.new(print_time, this.mw, x + 1, y, Time.new(3), this.ids[1]),
+						
+						Thread.new(get_key, this.mw)];
+
+		
+	}
+	
+	function run() {
+		this.threads.each(
+			function(z) {
+				z.start();
+			}
+		);
+	}
+
+	function wait() {
+		this.threads.each(
+			function(z) {
+				z.wait();
+			}
+		);
+	}
+}
+
+
+var c = Clock.new(5, 5, 500);
+
+c.run();
+c.wait();
+
+

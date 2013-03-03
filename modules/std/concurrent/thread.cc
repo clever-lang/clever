@@ -67,7 +67,8 @@ TypeObject* Thread::allocData(CLEVER_TYPE_CTOR_ARGS) const
 		}
 
 		for (size_t i = 1; i < args->size(); ++i) {
-			intern->args.push_back(args->at(i));
+			Value* v = args->at(i);
+			intern->args.push_back(v->clone());
 		}
 	} else {
 		clever_error("Thread.new was expecting a Function entry point and recieved no arguments");
@@ -101,6 +102,9 @@ ThreadData::~ThreadData()
 	}
 
 	if (result) {
+		for (size_t i = 0; i < this->args.size(); ++i) {
+			delete this->args.at(i);
+		}
 		delete result;
 	}
 }
