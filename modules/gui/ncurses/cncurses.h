@@ -51,6 +51,7 @@ public:
 	void deleteLine();
 	void addColor(short id, short color_1, short color_2);
 	void addStr(int x, int y, const char* str);
+	void addChar(int x, int y, int v);
 	void printStr(int x, int y, const char* str);
 	void refresh();
 	void sleep();

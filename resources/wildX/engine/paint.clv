@@ -20,7 +20,7 @@ import gui.ncurses.*;
 function wait(mw, key) 
 {
 	var ch;
-	while ((ch = mw.getKey()) != 113) {}
+	while ((ch = mw.getKey().getChar()) != 'q') {}
 }
 
 

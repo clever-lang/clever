@@ -116,7 +116,7 @@ class Game {
 		this.colors =  {'x' : 1, '*' : 2, '$' : 3, 'o' : 4,  '#' : 17, '.' : 16, '@': 14, '-': 15};
 		this.colorst = {'x' : 7, '*' : 8, '$' : 10, 'o' : 9, '#' : 17, '.' : 16, '@': 14, '-': 15};
 
-		this.last_key = 0;
+		this.last_key = Key.new(0);
 	}
 
 /****************************************************************************/
@@ -135,15 +135,23 @@ class Game {
 			var j = 0;
 
 			while (j < this.m) {
-				if (this.grid[i][j]== 'x') {
-					px = i;
-					py = j;
-				} else if (this.grid[i][j] == 'o') {
-					++this.n0o;
-				} else if (this.grid[i][j] == '*') {
-					++this.nSo;
-				} else if (this.grid[i][j] == '$') {
-					++this.nPo;
+				switch (this.grid[i][j]) {
+					case'x':
+						px = i;
+						py = j;
+					break;
+
+					case 'o':
+						++this.n0o;
+					break;
+
+					case '*':
+						++this.nSo;
+					break;
+					
+					case '$':
+						++this.nPo;
+					break;
 				}
 				++j;
 			}
@@ -189,8 +197,7 @@ class Game {
 				var c = this.grid[i][j];
 
 				this.mw.setColor(this.colors[c]);
-				this.mw.addStr(i + this.x0, j + this.y0, c);
-
+				this.mw.addChar(i + this.x0, j + this.y0, c);
 				++j;
 			}
 			++i;
@@ -204,7 +211,7 @@ class Game {
 		there aren't special objects in the grid
 	*/
 	function isRunning() {
-		return  this.last_key != 113 && 
+		return  this.last_key.getChar() != 'q' && 
 				this.player.score.moves > 0 &&
 			   (this.n0o + this.nPo + this.nSo) != 0;
 	}
@@ -212,31 +219,40 @@ class Game {
 /****************************************************************************/
 	/* Update player decision */
 	function updatePlayer() {
-		var ch = this.last_key;
 		var px = this.player.p.x;
 		var py = this.player.p.y;
 
 		this.grid[px] = this.grid[px].replace('x', '.');
 
-		if (ch == NCurses.KEY_LEFT) {
-			if (this.grid[px][(this.m + py - 1) % this.m] != '#') {
-				py = (this.m - 1 + py) % this.m;
-			}
-		} else if (ch == NCurses.KEY_RIGHT) {
-			if (this.grid[px][(py + 1) % this.m] != '#') {
-				py = (py + 1) % this.m;
-			}
-		} else if (ch == NCurses.KEY_UP) {
-			if (this.grid[(this.n + px - 1) % this.n][py] != '#') {
-				px = (this.n - 1 + px) % this.n;			
-			}
-		} else if (ch == NCurses.KEY_DOWN) {
-			if (this.grid[(px + 1) % this.n][py] != '#') {
-				px = (px + 1) % this.n;
-			}
-		} else if (ch == NCurses.KEY_HOME) {
-			px = this.p0.x;
-			py = this.p0.y;
+		switch (this.last_key.getInt()) {
+			case NCurses.KEY_LEFT:
+				if (this.grid[px][(this.m + py - 1) % this.m] != '#') {
+					py = (this.m - 1 + py) % this.m;
+				}
+			break;
+
+			case NCurses.KEY_RIGHT:
+				if (this.grid[px][(py + 1) % this.m] != '#') {
+					py = (py + 1) % this.m;
+				}
+			break;
+
+			case NCurses.KEY_UP:
+				if (this.grid[(this.n + px - 1) % this.n][py] != '#') {
+					px = (this.n - 1 + px) % this.n;			
+				}
+			break;
+
+			case NCurses.KEY_DOWN:
+				if (this.grid[(px + 1) % this.n][py] != '#') {
+					px = (px + 1) % this.n;
+				}
+			break;
+
+			case NCurses.KEY_HOME:
+				px = this.p0.x;
+				py = this.p0.y;
+			break;
 		}
 		
 		--this.player.score.moves;
@@ -244,6 +260,7 @@ class Game {
 		this.player.p.x = px;
 		this.player.p.y = py;		
 	}
+
 
 /****************************************************************************/
 	/* Update player score*/
@@ -254,15 +271,21 @@ class Game {
 		var px = this.player.p.x;
 		var py = this.player.p.y;
 
-		if (this.grid[px][py] == 'o') {
-			++this.player.score.no;
-			this.n0o--;
-		} else if (this.grid[px][py] == '$') {
-			++this.player.score.nS;
-			this.nSo--;
-		} else if (this.grid[px][py] == '*') {
-			++this.player.score.nP;
-			this.nPo--;
+		switch (this.grid[px][py]) {
+			case 'o':
+				++this.player.score.no;
+				this.n0o--;
+			break;
+
+			case '$':
+				++this.player.score.nS;
+				this.nSo--;
+			break;
+
+			case '*':
+				++this.player.score.nP;
+				this.nPo--;
+			break;
 		}
 
 		this.player.score.score = this.player.score.no + 

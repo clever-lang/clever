@@ -119,6 +119,15 @@ void CNCurses::addStr(int x, int y, const char* str)
 	}
 }
 
+void CNCurses::addChar(int x, int y, int v)
+{
+	if (isChild()) {
+		mvwaddch(m_win, x, y, v);
+	} else {
+		mvaddch(x, y, v);
+	}
+}
+
 void CNCurses::refresh()
 {
 	if (isChild()) {
