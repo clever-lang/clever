@@ -9,6 +9,8 @@
 
 /*
 Syncronization test using NCurses and Clever threads
+
+This teste create 30 threads running a clock and  one thread waiting user inputs.
 */
 
 import std.sys.*;
@@ -16,6 +18,9 @@ import std.io.*;
 import std.concurrent.*;
 
 import gui.ncurses.*;
+
+var x0 = 2, y0 = 2;
+var sleep_time = 200, n_threads = 31;
 
 function print_time(mw, x, y, t, sync)
 {
@@ -105,26 +110,26 @@ class Clocks {
 	var mw;
 	var threads;
 	var sync;
+	var n_threads;
 
-	function Clock(x, y, sleep_time) {		
+	function Clock(x, y, sleep_time, n_threads_) {		
 		this.mw = NCurses.new(sleep_time);
-		
-		this.sync = Sync.new(4);
+
+		this.n_threads = n_threads_;
+
+		this.sync = Sync.new(n_threads_);
 
 		this.mw.noEcho(); 
 		this.mw.enableKeyPad();
 		
 		this.mw.printStr(0, 0, "Press 'q' to quit...");
-		
-		this.threads = [Thread.new(print_time, this.mw, x, y, Time.new(0), this.sync),
- 
-						Thread.new(print_time, this.mw, x + 1, y, Time.new(3), this.sync),
+		this.threads = [Thread.new(get_key, this.mw, this.sync)];
 
-						Thread.new(print_time, this.mw, x + 2, y, Time.new(6), this.sync),
-
-						Thread.new(print_time, this.mw, x + 3, y, Time.new(9), this.sync),
-						
-						Thread.new(get_key, this.mw, this.sync)];
+		var i = 0;
+		while (i < this.n_threads) {
+			this.threads.append(Thread.new(print_time, this.mw, x + i, y, Time.new(i * 3), this.sync));
+			++i;
+		}
 	}
 	
 	function run() {
@@ -144,7 +149,7 @@ class Clocks {
 	}
 }
 
-var c = Clocks.new(5, 5, 1000);
+var c = Clocks.new(x0, y0, sleep_time, n_threads);
 
 c.run();
 c.wait();
