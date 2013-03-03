@@ -11,9 +11,13 @@
 namespace clever { namespace modules { namespace gui {
 
 /// Initializes ncurses module
+
+Type* g_key_type_ref;
+
 CLEVER_MODULE_INIT(NCursesModule)
 {
 	addType(new NCurses);
+	addType(g_key_type_ref = new Key);
 }
 
 }}} // clever::modules::gui

@@ -38,16 +38,16 @@ public:
 
 	~Key() {}
 
-	void init(){}
+	void init();
 
-	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const{}
+	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
 
-	void dump(TypeObject*, std::ostream&) const{}
+	void dump(TypeObject*, std::ostream&) const;
 
-	CLEVER_METHOD(ctor){}
+	CLEVER_METHOD(ctor);
 
-	CLEVER_METHOD(getChar){}
-	CLEVER_METHOD(getInt) {}
+	CLEVER_METHOD(getChar);
+	CLEVER_METHOD(getInt);
 
 private:
 	DISALLOW_COPY_AND_ASSIGN(Key);
@@ -125,6 +125,8 @@ private:
 
 	DISALLOW_COPY_AND_ASSIGN(NCurses);
 };
+
+extern Type* g_key_type_ref;
 
 }}} // clever::modules::gui
 

@@ -274,7 +274,9 @@ CLEVER_METHOD(NCurses::getKey)
 	}
 	NCursesObject* mo = CLEVER_GET_OBJECT(NCursesObject*, CLEVER_THIS());
 	CNCurses* o = mo->getData();
-	result->setInt(o->getKey());
+	KeyObject* ko = new KeyObject(o->getKey());
+
+	result->setObj(g_key_type_ref, ko);
 }
 
 CLEVER_METHOD(NCurses::isPrintable)
@@ -458,6 +460,59 @@ CLEVER_TYPE_INIT(NCurses::init)
 	m_keys[KEY_F(11)] =     "Function key 11";
 	m_keys[KEY_F(12)] =     "Function key 12";
 	m_keys[-1       ] =     "<unsupported>";
+}
+
+
+
+void Key::init()
+{
+	setConstructor((MethodPtr)&Key::ctor);
+
+	addMethod(new Function("getInt",        (MethodPtr)&Key::getInt));
+	addMethod(new Function("getChar",       (MethodPtr)&Key::getChar));
+}
+
+TypeObject* Key::allocData(CLEVER_TYPE_CTOR_ARGS) const
+{
+	KeyObject* o = new KeyObject(args->at(0)->getInt());
+	return static_cast<TypeObject*>(o);
+}
+
+void Key::dump(TypeObject*, std::ostream&) const
+{
+
+}
+
+CLEVER_METHOD(Key::ctor)
+{
+	if (!clever_check_args("|i")) {
+		return;
+	}
+
+	KeyObject* o = static_cast<KeyObject*>(allocData(&args));
+	result->setObj(this, o);
+}
+
+CLEVER_METHOD(Key::getChar)
+{
+	if (!clever_check_no_args()) {
+		return;
+	}
+	KeyObject* mo = CLEVER_GET_OBJECT(KeyObject*, CLEVER_THIS());
+	char f[2];
+	f[0] = mo->getChar();
+	f[1] = '\0';
+
+	result->setStr(CSTRING(f));
+}
+
+CLEVER_METHOD(Key::getInt)
+{
+	if (!clever_check_no_args()) {
+		return;
+	}
+	KeyObject* mo = CLEVER_GET_OBJECT(KeyObject*, CLEVER_THIS());
+	result->setInt(mo->getInt());
 }
 
 }}} // clever::modules::gui

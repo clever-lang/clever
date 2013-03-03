@@ -135,7 +135,7 @@ class Game {
 			var j = 0;
 
 			while (j < this.m) {
-				switch (this.grid[i][j]) {
+				switch (this.grid[i][j].getChar()) {
 					case'x':
 						px = i;
 						py = j;
@@ -197,7 +197,6 @@ class Game {
 				var c = this.grid[i][j];
 
 				this.mw.setColor(this.colors[c]);
-				//this.mw.addStr(i + this.x0, j + this.y0, c);
 				this.mw.addChar(i + this.x0, j + this.y0, c);
 				++j;
 			}
@@ -212,7 +211,7 @@ class Game {
 		there aren't special objects in the grid
 	*/
 	function isRunning() {
-		return  this.last_key != 113 && 
+		return  this.last_key.getChar() != 'q' && 
 				this.player.score.moves > 0 &&
 			   (this.n0o + this.nPo + this.nSo) != 0;
 	}
@@ -225,7 +224,7 @@ class Game {
 
 		this.grid[px] = this.grid[px].replace('x', '.');
 
-		switch (this.last_key) {
+		switch (this.last_key.getInt()) {
 			case NCurses.KEY_LEFT:
 				if (this.grid[px][(this.m + py - 1) % this.m] != '#') {
 					py = (this.m - 1 + py) % this.m;
@@ -272,7 +271,7 @@ class Game {
 		var px = this.player.p.x;
 		var py = this.player.p.y;
 
-		switch (this.grid[px][py]) {
+		switch (this.grid[px][py].getChar()) {
 			case 'o':
 				++this.player.score.no;
 				this.n0o--;
