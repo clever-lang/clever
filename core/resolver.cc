@@ -142,29 +142,35 @@ void Resolver::visit(FunctionDecl* node)
 	Value* fval = new Value;
 	fval->setObj(CLEVER_FUNC_TYPE, func);
 
-	m_scope->pushValue(name, fval)->voffset = m_stack.top()->pushValue(fval);
+	if (m_class && !node->isAnonymous()) {
+		func->setContext(m_class);
 
-	if (node->hasIdent()) {
-		node->getIdent()->accept(*this);
-	} else {
-		node->getType()->accept(*this);
-	}
+		node->setMethod(func);
 
-	if (m_class) {
 		// Class member
 		if (node->isCtor()) {
 			m_class->setUserConstructor(func);
 		} else if (node->isDtor()) {
 			m_class->setUserDestructor(func);
 		}
+		if (m_class->hasMember(name)) {
+			Compiler::errorf(node->getLocation(),
+				"Cannot redeclare member `%S'", name);
+		}
 		m_class->addMember(name, fval);
-		fval->addRef();
 
 		switch (node->getVisibility()) {
 			case ast::PUBLIC:  func->setPublic();  break;
 			case ast::PRIVATE: func->setPrivate(); break;
 		}
 	} else {
+		m_scope->pushValue(name, fval)->voffset = m_stack.top()->pushValue(fval);
+
+		if (node->hasIdent()) {
+			node->getIdent()->accept(*this);
+		} else {
+			node->getType()->accept(*this);
+		}
 		// Regular function
 		func->setPublic();
 	}
@@ -326,7 +332,7 @@ void Resolver::visit(AttrDecl* node)
 {
 	const CString* name = node->getIdent()->getName();
 
-	if (m_scope->getLocal(name)) {
+	if (m_class->hasMember(name)) {
 		Compiler::errorf(node->getLocation(),
 			"Cannot redeclare attribute `%S'.", name);
 	}

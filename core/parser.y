@@ -352,6 +352,7 @@ case_list:
 		CASE label ':' statement_list           { $<switch_>0->addCase($<node>2, $4); $$ = $<switch_>0; }
 	|	DEFAULT ':' statement_list              { $<switch_>0->addCase(NULL, $3); $$ = $<switch_>0;     }
 	|	case_list CASE label ':' statement_list { $<switch_>0->addCase($<node>3, $5); $$ = $<switch_>0; }
+	|	case_list DEFAULT ':' statement_list    { $<switch_>0->addCase(NULL, $4); $$ = $<switch_>0;     }
 ;
 
 unary:

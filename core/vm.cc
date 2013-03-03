@@ -72,10 +72,16 @@ void VM::dumpStackTrace(std::ostringstream& out)
 		const CallStackEntry& entry = m_call_stack.top();
 
 		if (entry.loc) {
-			if (entry.loc->begin.filename) {
-				out << "# " << *entry.loc->begin.filename << ":";
+			if (entry.func) {
+				out << "# " << entry.func->getName() << "()";
 			} else {
-				out << "# <command line>:";
+				out << "# <main>";
+			}
+
+			if (entry.loc->begin.filename) {
+				out << " at " << *entry.loc->begin.filename << ":";
+			} else {
+				out << " at <command line>:";
 			}
 			out << entry.loc->begin.line << std::endl;
 		}
@@ -101,16 +107,13 @@ CLEVER_FORCE_INLINE Value* VM::getValue(const Operand& operand) const
 }
 
 /// Fetchs and change a Value pointer in the current temporary environment
-CLEVER_FORCE_INLINE Value* VM::setTempValue(const Operand& operand,
+void CLEVER_FORCE_INLINE VM::setTempValue(const Operand& operand,
 	Value* value) const
 {
 	Environment* source = m_call_stack.top().env->getTempEnv();
-	Value* current = source->getValue(operand.voffset);
 
-	clever_delref(current);
+	clever_delref(source->getValue(operand.voffset));
 	source->setData(operand.voffset.second, value);
-
-	return value;
 }
 
 #ifdef CLEVER_DEBUG
@@ -206,7 +209,7 @@ CLEVER_FORCE_INLINE void VM::prepareCall(const Function* func, Environment* env)
 	fenv->setRetAddr(m_pc + 1);
 	fenv->setRetVal(getValue(OPCODE.result));
 
-	m_call_stack.push(CallStackEntry(fenv, &OPCODE.loc));
+	m_call_stack.push(CallStackEntry(fenv, func, &OPCODE.loc));
 
 	if (m_call_args.size() < func->getNumRequiredArgs()
 		|| (m_call_args.size() > func->getNumArgs()
@@ -251,7 +254,7 @@ Value* VM::runFunction(const Function* func, std::vector<Value*>* args)
 		fenv->setRetVal(result);
 		fenv->setRetAddr(m_inst.size()-1);
 
-		m_call_stack.push(CallStackEntry(fenv, &OPCODE.loc));
+		m_call_stack.push(CallStackEntry(fenv, func, &OPCODE.loc));
 		m_call_args.clear();
 
 		_param_binding(func, fenv, args);
@@ -312,14 +315,32 @@ CLEVER_FORCE_INLINE void VM::logicOp(const IR& op)
 	const Type* type = lhs->getType();
 
 	switch (op.opcode) {
-		case OP_GREATER: type->greater(getValue(op.result), lhs, rhs, this, &m_exception);       break;
+		case OP_GREATER: type->greater(getValue(op.result),       lhs, rhs, this, &m_exception); break;
 		case OP_GEQUAL:  type->greater_equal(getValue(op.result), lhs, rhs, this, &m_exception); break;
-		case OP_LESS:    type->less(getValue(op.result), lhs, rhs, this, &m_exception);          break;
-		case OP_LEQUAL:  type->less_equal(getValue(op.result), lhs, rhs, this, &m_exception);    break;
-		case OP_EQUAL:   type->equal(getValue(op.result), lhs, rhs, this, &m_exception);         break;
-		case OP_NEQUAL:  type->not_equal(getValue(op.result), lhs, rhs, this, &m_exception);     break;
+		case OP_LESS:    type->less(getValue(op.result),          lhs, rhs, this, &m_exception); break;
+		case OP_LEQUAL:  type->less_equal(getValue(op.result),    lhs, rhs, this, &m_exception); break;
+		case OP_EQUAL:   type->equal(getValue(op.result),         lhs, rhs, this, &m_exception); break;
+		case OP_NEQUAL:  type->not_equal(getValue(op.result),     lhs, rhs, this, &m_exception); break;
 		EMPTY_SWITCH_DEFAULT_CASE();
 	}
+}
+
+/// Throws uncaught exception
+void VM::throwException(const IR& op)
+{
+	std::ostringstream msg;
+
+	msg << "Fatal error: Unhandled exception! on ";
+
+	if (op.loc.begin.filename) {
+		msg << *op.loc.begin.filename << " ";
+	}
+
+	msg << "line " << op.loc.begin.line << "\nMessage: %v";
+
+	dumpStackTrace(msg);
+
+	clever_fatal(msg.str().c_str(),	m_exception.getException());
 }
 
 // Executes the VM opcodes
@@ -874,14 +895,7 @@ throw_exception:
 	END_OPCODES;
 
 exit_exception:
-	{
-		std::ostringstream dump;
-
-		dumpStackTrace(dump);
-
-		clever_fatal("Fatal error: Unhandled exception!\nMessage: %v%s",
-			m_exception.getException(), dump.str().c_str());
-	}
+	throwException(OPCODE);
 exit:
 	if (!m_obj_store.empty()) {
 		std::for_each(m_obj_store.top().begin(), m_obj_store.top().end(), clever_delref);

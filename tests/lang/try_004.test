@@ -3,7 +3,7 @@
 import std.io.*;
 print(println+println);
 ==RESULT==
-Fatal error: Unhandled exception!
+Fatal error: Unhandled exception! on \S+ line 2
 Message: Cannot use \+ operator with Function type
 Stack trace:
 

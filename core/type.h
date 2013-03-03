@@ -156,6 +156,10 @@ public:
 		return NULL;
 	}
 
+	bool hasMember(const CString* name) const {
+		return getMember(name) != NULL;
+	}
+
 	const MemberMap& getMembers() const { return m_members; }
 
 	Function* addMethod(Function*);

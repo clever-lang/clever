@@ -463,33 +463,33 @@ CLEVER_METHOD(StrType::replace)
 	}
 
 	const CString* haystack = CLEVER_THIS()->getStr();
-	const char* needle = args[0]->getStr()->c_str();
-	const CString* replace = args[1]->getStr();
-
+	const CString* needle = args[0]->getStr();
 	::std::string buffer = *haystack;
+	size_t pos = haystack->find(needle->c_str());
 
-	int pos = haystack->find(needle);
-	buffer.replace(pos, replace->length(), replace->c_str());
+	if (pos != ::std::string::npos) {
+		buffer.replace(pos, needle->length(), args[1]->getStr()->c_str());
+	}
 	result->setStr(new StrObject(buffer));
 }
 
 CLEVER_TYPE_INIT(StrType::init)
 {
-	setConstructor((MethodPtr) &StrType::ctor);
+	setConstructor((MethodPtr)&StrType::ctor);
 
-	addMethod(new Function("subString",		(MethodPtr) &StrType::subString));
-	addMethod(new Function("find",			(MethodPtr) &StrType::find));
-	addMethod(new Function("findFirst",		(MethodPtr) &StrType::findFirst));
-	addMethod(new Function("findLast",		(MethodPtr) &StrType::findLast));
-	addMethod(new Function("size",			(MethodPtr) &StrType::size));
-	addMethod(new Function("startsWith",	(MethodPtr) &StrType::startsWith));
-	addMethod(new Function("endsWith",		(MethodPtr) &StrType::endsWith));
-	addMethod(new Function("charAt",		(MethodPtr) &StrType::charAt));
-	addMethod(new Function("split",			(MethodPtr) &StrType::split));
-	addMethod(new Function("toUpper",		(MethodPtr) &StrType::toUpper));
-	addMethod(new Function("toLower",		(MethodPtr) &StrType::toLower));
-	addMethod(new Function("replace",		(MethodPtr) &StrType::replace));
-	addMethod(new Function("format",		(MethodPtr) &StrType::format))
+	addMethod(new Function("subString",		(MethodPtr)&StrType::subString));
+	addMethod(new Function("find",			(MethodPtr)&StrType::find));
+	addMethod(new Function("findFirst",		(MethodPtr)&StrType::findFirst));
+	addMethod(new Function("findLast",		(MethodPtr)&StrType::findLast));
+	addMethod(new Function("size",			(MethodPtr)&StrType::size));
+	addMethod(new Function("startsWith",	(MethodPtr)&StrType::startsWith));
+	addMethod(new Function("endsWith",		(MethodPtr)&StrType::endsWith));
+	addMethod(new Function("charAt",		(MethodPtr)&StrType::charAt));
+	addMethod(new Function("split",			(MethodPtr)&StrType::split));
+	addMethod(new Function("toUpper",		(MethodPtr)&StrType::toUpper));
+	addMethod(new Function("toLower",		(MethodPtr)&StrType::toLower));
+	addMethod(new Function("replace",		(MethodPtr)&StrType::replace));
+	addMethod(new Function("format",		(MethodPtr)&StrType::format))
 		->setStatic();
 }
 

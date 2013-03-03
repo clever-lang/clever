@@ -225,15 +225,19 @@ void Codegen::visit(FunctionCall* node)
 void Codegen::visit(FunctionDecl* node)
 {
 	IR& start_func = m_builder->push(OP_JMP, Operand(JMP_ADDR, 0));
+	Symbol* sym;
+	Function* func;
 
-	Symbol* sym = node->hasIdent() ? node->getIdent()->getSymbol()
-		: node->getType()->getSymbol();
+	if (node->isMethod()) {
+		func = node->getMethod();
+	} else {
+		sym = node->getIdent()->getSymbol();
 
-	const ValueOffset& offset = node->hasIdent() ? node->getIdent()->getVOffset()
-		: node->getType()->getVOffset();
+		const ValueOffset& offset = node->getIdent()->getVOffset();
 
-	Value* funcval = sym->scope->getValue(offset);
-	Function* func = static_cast<Function*>(funcval->getObj());
+		Value* funcval = sym->scope->getValue(offset);
+		func = static_cast<Function*>(funcval->getObj());
+	}
 	func->setAddr(m_builder->getSize());
 
 	Environment* save_temp = m_builder->getTempEnv();
@@ -608,6 +612,8 @@ void Codegen::visit(Throw* node)
 	IR& thr = m_builder->push(OP_THROW);
 
 	_prepare_operand(thr.op1, node->getExpr());
+
+	thr.loc = node->getLocation();
 }
 
 void Codegen::visit(Continue* node)
