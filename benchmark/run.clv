@@ -5,12 +5,13 @@ import _lib.benchmark.*;
 var base_path = 'benchmark';
 var env = Environment.new(base_path);
 
-env.addLanguage('Clever', 'clever %1', 'clever -v', '^Clever - (.*)', 'clv');
-env.addLanguage('Python', 'python %1', 'python -V', '^Python (.*)', 'py');
-env.addLanguage('Lua', 'lua %1', 'lua -v', '^Lua ([^ ]+)', 'lua');
-env.addLanguage('Java', 'javac %1 && java %2', 'java -version', '^java version "([^"]+)', 'java');
-env.addLanguage('PHP', 'php %1', 'php -v', '^PHP ([^ ]+)', 'php');
-env.addLanguage('Ruby', 'ruby %1', 'ruby -v', '^ruby ([^ ]+)', 'rb');
+env.addLanguage('Clever', 'clever %f', 'clever -v', '^Clever - (.*)', 'clv');
+env.addLanguage('Python', 'python %f', 'python -V', '^Python (.*)', 'py');
+env.addLanguage('Lua', 'lua %f', 'lua -v', '^Lua ([^ ]+)', 'lua');
+env.addLanguage('Java', ['javac %f', 'java -cp %d %o'], 'java -version', '^java version "([^"]+)', 'java', ['%d/%o.class']);
+env.addLanguage('PHP', 'php %f', 'php -v', '^PHP ([^ ]+)', 'php');
+env.addLanguage('Ruby', 'ruby %f', 'ruby -v', '^ruby ([^ ]+)', 'rb');
+env.addLanguage('C', ['gcc -02 -o %d/%o.exe %f', '%d/%o.exe'], 'gcc -v', '\ngcc version ([^ ]+) \(.*$', 'c', ['%d/%o.exe']);
 
 env.bootstrap();
 
@@ -33,8 +34,8 @@ env.groups.each(function(g) {
 	g.tests.each(function(t) {
 		println('-- '+ t.lang.name + ': ');
 		var rs = t.run();
-		//println('**** '+ rs.banner + ' ('+rs.value+')');
+		println('**** '+ rs.banner + ' ('+rs.value+')');
 		//println('***** '+ rs.text);
-		println('     '+ rs.tt);
+		println('  Total time: '+ rs.tt + ' s');
 	});
 });

@@ -14,8 +14,8 @@ int main()
 	
 	time_t t1 = clock();
 
-	printf("Time elapsed single-thread C: %.2lf\n", (float)(t1 - t0) / CLOCKS_PER_SEC);
-	printf("Result : %lld\n", acc);
+	printf("C\n");
+	printf("%lld\n", acc);
 	return 0;
 }
 
