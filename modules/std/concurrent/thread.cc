@@ -101,10 +101,11 @@ ThreadData::~ThreadData()
 		delete lock;
 	}
 
+	for (size_t i = 0; i < this->args.size(); ++i) {
+		delete this->args.at(i);
+	}
+
 	if (result) {
-		for (size_t i = 0; i < this->args.size(); ++i) {
-			delete this->args.at(i);
-		}
 		delete result;
 	}
 }
