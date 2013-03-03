@@ -475,21 +475,21 @@ CLEVER_METHOD(StrType::replace)
 
 CLEVER_TYPE_INIT(StrType::init)
 {
-	setConstructor((MethodPtr) &StrType::ctor);
+	setConstructor((MethodPtr)&StrType::ctor);
 
-	addMethod(new Function("subString",		(MethodPtr) &StrType::subString));
-	addMethod(new Function("find",			(MethodPtr) &StrType::find));
-	addMethod(new Function("findFirst",		(MethodPtr) &StrType::findFirst));
-	addMethod(new Function("findLast",		(MethodPtr) &StrType::findLast));
-	addMethod(new Function("size",			(MethodPtr) &StrType::size));
-	addMethod(new Function("startsWith",	(MethodPtr) &StrType::startsWith));
-	addMethod(new Function("endsWith",		(MethodPtr) &StrType::endsWith));
-	addMethod(new Function("charAt",		(MethodPtr) &StrType::charAt));
-	addMethod(new Function("split",			(MethodPtr) &StrType::split));
-	addMethod(new Function("toUpper",		(MethodPtr) &StrType::toUpper));
-	addMethod(new Function("toLower",		(MethodPtr) &StrType::toLower));
-	addMethod(new Function("replace",		(MethodPtr) &StrType::replace));
-	addMethod(new Function("format",		(MethodPtr) &StrType::format))
+	addMethod(new Function("subString",		(MethodPtr)&StrType::subString));
+	addMethod(new Function("find",			(MethodPtr)&StrType::find));
+	addMethod(new Function("findFirst",		(MethodPtr)&StrType::findFirst));
+	addMethod(new Function("findLast",		(MethodPtr)&StrType::findLast));
+	addMethod(new Function("size",			(MethodPtr)&StrType::size));
+	addMethod(new Function("startsWith",	(MethodPtr)&StrType::startsWith));
+	addMethod(new Function("endsWith",		(MethodPtr)&StrType::endsWith));
+	addMethod(new Function("charAt",		(MethodPtr)&StrType::charAt));
+	addMethod(new Function("split",			(MethodPtr)&StrType::split));
+	addMethod(new Function("toUpper",		(MethodPtr)&StrType::toUpper));
+	addMethod(new Function("toLower",		(MethodPtr)&StrType::toLower));
+	addMethod(new Function("replace",		(MethodPtr)&StrType::replace));
+	addMethod(new Function("format",		(MethodPtr)&StrType::format))
 		->setStatic();
 }
 
