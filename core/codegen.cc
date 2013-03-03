@@ -8,6 +8,7 @@
 #include <iostream>
 #include <cstdio>
 
+#include "core/compiler.h"
 #include "core/codegen.h"
 #include "types/thread.h"
 #include "core/irbuilder.h"
@@ -225,7 +226,7 @@ void Codegen::visit(FunctionCall* node)
 void Codegen::visit(FunctionDecl* node)
 {
 	IR& start_func = m_builder->push(OP_JMP, Operand(JMP_ADDR, 0));
-	Symbol* sym;
+	Symbol* sym = NULL;
 	Function* func;
 
 	if (node->isMethod()) {
@@ -258,7 +259,7 @@ void Codegen::visit(FunctionDecl* node)
 
 	start_func.op1.jmp_addr = m_builder->getSize();
 
-	if (node->isAnonymous()) {
+	if (sym && node->isAnonymous()) {
 		node->setVOffset(sym->voffset);
 		node->setScope(sym->scope);
 	}
@@ -674,38 +675,61 @@ void Codegen::visit(Switch* node)
 	std::vector<std::pair<Node*, Node*> >::const_iterator it(cases.begin()),
 		end(cases.end());
 
-	IR* last_jmp = NULL;
+	size_t default_addr = 0;
+	IR* last_jmp  = NULL;
+	IR* last_jmpz = NULL;
 
 	m_brks.push(AddrVector());
 
 	for (; it != end; ++it) {
-		it->first->accept(*this);
+		if (it->first) {
+			it->first->accept(*this);
 
-		IR& kase = m_builder->push(OP_EQUAL);
+			IR& kase = m_builder->push(OP_EQUAL);
 
-		kase.loc = it->first->getLocation();
+			_prepare_operand(kase.op1, node->getExpr());
+			_prepare_operand(kase.op2, it->first);
 
-		_prepare_operand(kase.op1, node->getExpr());
-		_prepare_operand(kase.op2, it->first);
+			kase.loc = it->first->getLocation();
 
-		ValueOffset tmp_id = m_builder->getTemp();
-		kase.result = Operand(FETCH_TMP, tmp_id);
+			ValueOffset tmp_id = m_builder->getTemp();
+			kase.result = Operand(FETCH_TMP, tmp_id);
 
-		IR& jmpz = m_builder->push(OP_JMPZ);
-		jmpz.op1 = Operand(FETCH_TMP, tmp_id);
+			last_jmpz = &m_builder->push(OP_JMPZ);
+			last_jmpz->op1 = Operand(FETCH_TMP, tmp_id);
 
-		if (last_jmp) {
-			last_jmp->op1 = Operand(JMP_ADDR, m_builder->getSize());
+			if (last_jmp) {
+				last_jmp->op1 = Operand(JMP_ADDR, m_builder->getSize());
+			}
+
+			it->second->accept(*this);
+
+			last_jmp = &m_builder->push(OP_JMP);
+
+			last_jmpz->op2 = Operand(JMP_ADDR, m_builder->getSize());
+		} else {
+			if (default_addr) {
+				Compiler::errorf(node->getLocation(),
+					"Cannot have more than one default!");
+			}
+			IR& jmp = m_builder->push(OP_JMP);
+
+			default_addr = m_builder->getSize();
+
+			if (last_jmp) {
+				last_jmp->op1 = Operand(JMP_ADDR, default_addr);
+			}
+
+			it->second->accept(*this);
+
+			jmp.op1 = Operand(JMP_ADDR, m_builder->getSize());
 		}
-
-		it->second->accept(*this);
-
-		last_jmp = &m_builder->push(OP_JMP);
-
-		jmpz.op2 = Operand(JMP_ADDR, m_builder->getSize());
 	}
 	if (last_jmp) {
-		last_jmp->op1 = Operand(JMP_ADDR, m_builder->getSize());
+		last_jmp->op1 = Operand(JMP_ADDR, default_addr ? default_addr : m_builder->getSize());
+	}
+	if (default_addr) {
+		last_jmpz->op2.jmp_addr = default_addr;
 	}
 
 	if (!m_brks.top().empty()) {
