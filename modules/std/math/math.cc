@@ -269,6 +269,16 @@ static CLEVER_FUNCTION(rand)
 	result->setDouble(static_cast<double>(::std::rand()) / RAND_MAX);
 }
 
+// srand()
+// generate a seed to random number generator
+static CLEVER_FUNCTION(srand)
+{
+	if (!clever_static_check_args("i")) {
+		return;
+	}
+	::std::srand(args[0]->getInt());
+}
+
 } // clever::modules::std::math
 
 // Load module data
@@ -293,6 +303,7 @@ CLEVER_MODULE_INIT(Math)
 	addFunction(new Function("atan",  &CLEVER_NS_FNAME(math, atan)));
 	addFunction(new Function("log",   &CLEVER_NS_FNAME(math, log)));
 	addFunction(new Function("rand",  &CLEVER_NS_FNAME(math, rand)));
+	addFunction(new Function("srand",  &CLEVER_NS_FNAME(math, srand)));
 
 	addVariable("PI",       new Value(M_PI, true));
 }
