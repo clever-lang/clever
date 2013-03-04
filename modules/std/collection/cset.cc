@@ -95,6 +95,37 @@ CLEVER_METHOD(CSet::size)
 	result->setInt(cobj->set.size());
 }
 
+// Set.empty()
+CLEVER_METHOD(CSet::empty)
+{
+	if (!clever_check_no_args()) {
+		return;
+	}
+
+	const CSetObject* cobj = CLEVER_GET_OBJECT(CSetObject*, CLEVER_THIS());
+
+	result->setBool(cobj->set.empty());
+}
+
+// Set.find(Object value)
+CLEVER_METHOD(CSet::find)
+{
+	if (!clever_check_args(".")) {
+		return;
+	}
+
+	const CSetObject* cobj = CLEVER_GET_OBJECT(CSetObject*, CLEVER_THIS());
+
+	::std::set<CSetValue, CSetObjectCompare>::const_iterator it(
+		cobj->set.find(CSetValue(args[0], cobj->comp, vm)));
+
+	if (it != cobj->set.end()) {
+		result->copy(it->element);
+	} else {
+		result->setBool(false);
+	}
+}
+
 // Set type initialization
 CLEVER_TYPE_INIT(CSet::init)
 {
@@ -102,6 +133,8 @@ CLEVER_TYPE_INIT(CSet::init)
 
 	addMethod(new Function("insert", (MethodPtr)&CSet::insert));
 	addMethod(new Function("size",   (MethodPtr)&CSet::size));
+	addMethod(new Function("empty",  (MethodPtr)&CSet::empty));
+	addMethod(new Function("find",   (MethodPtr)&CSet::find));
 }
 
 }}} // clever::modules::std
