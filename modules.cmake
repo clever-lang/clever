@@ -31,11 +31,6 @@ clever_new_module(std.ffi ON
 	DOC "enable the ffi module"
 	LIBS FFI)
 
-clever_new_module(std.rpc OFF
-	DOC "enable the rpc module"
-	LIBS PTHREAD FFI)
-
-
 clever_new_module(std.unicode ON
 	DOC	"enable the unicode module"
 	LIBS ICU)
@@ -73,13 +68,6 @@ endif()
 # std.ffi
 clever_module_check(std.ffi)
 if(STD_FFI)
-	add_definitions(-pthread)
-	list(APPEND CLEVER_LIBRARIES dl)
-endif()
-
-# std.rpc
-clever_module_check(std.rpc)
-if(STD_RPC)
 	add_definitions(-pthread)
 	list(APPEND CLEVER_LIBRARIES dl)
 endif()
