@@ -645,15 +645,17 @@ for_expr_1:
 	  { $$ = $<node>1; }
 	| variable_decl
 	  { $$ = $<node>1; }
+	| { $$ = new ast::Block(yyloc); }
 ;
 
 for_expr_2:
-	 rvalue
-	 { $$ = $<node>1; }
+	  rvalue
+	  { $$ = $<node>1; }
+	| { $$ = new ast::TrueLit(yyloc); }
 ;
 
 for_expr_3:
-	 rvalue
+	  rvalue
 	  { $$ = $<node>1; }
 	| { $$ = new ast::Block(yyloc); }
 ;
