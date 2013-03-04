@@ -1,4 +1,4 @@
-Testing set
+Testing Set.find()
 ==CODE==
 import std.io.*;
 import std.collection.*;
@@ -12,9 +12,6 @@ var set = Set.new(comp);
 
 arr.each(function(n) { set.insert(n); });
 
-println("Size: " + set.size());
-println(set);
-
+println(set.find(2));
 ==RESULT==
-Size: 3
-Set<1, 2, 3>
+2
