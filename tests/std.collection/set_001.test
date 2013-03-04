@@ -1,0 +1,21 @@
+Testing set
+==CODE==
+import std.io.*;
+import std.collection.*;
+
+var arr = [3, 2, 1];
+
+
+function comp(a, b) {
+	return a < b;
+}
+var set = Set.new(comp);
+
+arr.each(function(n) { set.insert(n); });
+
+println("Size: " + set.size());
+println(set);
+
+==RESULT==
+Size: 3
+Set<1, 2, 3>
