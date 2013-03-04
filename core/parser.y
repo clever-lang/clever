@@ -641,11 +641,10 @@ while:
 ;
 
 for_expr_1:
-	  rvalue
+	  variable_decl
 	  { $$ = $<node>1; }
-	| variable_decl
-	  { $$ = $<node>1; }
-	| { $$ = new ast::Block(yyloc); }
+	| call_args
+      { $$ = $<node>1; }
 ;
 
 for_expr_2:
@@ -655,9 +654,8 @@ for_expr_2:
 ;
 
 for_expr_3:
-	  rvalue
-	  { $$ = $<node>1; }
-	| { $$ = new ast::Block(yyloc); }
+	  call_args
+      { $$ = $<node>1; }
 ;
 
 for:
