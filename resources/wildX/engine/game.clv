@@ -139,26 +139,22 @@ class Game {
 
 /****************************************************************************/
 	function updateVisited(ux, uy) {
-		var dx = [-1, -1, -1,  0, 0, 0,  1, 1, 1];
-		var dy = [-1,  0,  1, -1, 0, 1, -1, 0, 1];
+		var i = -this.r;
 
-		var p = 1;
-		var r = this.r + 1;
+		while (i <= this.r) {
+			var j = -this.r;
 		
-		while (p <= r) {
-			var i = 0;
-		
-			while (i < dx.size()) {
-				var px = ux + p * dx[i];
-				var py = uy + p * dy[i];
+			while (j <= this.r) {
+				var px = ux + i;
+				var py = uy + j;
 
-				if (this.isValidPos(px, py) && p * (abs(dx[i]) + abs(dy[i])) <= this.r) {
+				if (this.isValidPos(px, py) && (i * i + j * j) <= this.r * this.r) {
 					this.visited[px][py] = true;
 				}
 
-				++i;
+				++j;
 			}
-			++p;
+			++i;
 		}
 	}
 
