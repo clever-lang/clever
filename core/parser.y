@@ -651,7 +651,7 @@ for_expr_1:
 for_expr_2:
 	  rvalue
 	  { $$ = $<node>1; }
-	| { $$ = new ast::TrueLit(yyloc); }
+	| { $$ = new ast::TrueLit(yyloc);  }
 ;
 
 for_expr_3:
