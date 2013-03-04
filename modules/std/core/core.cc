@@ -18,7 +18,6 @@ Type* g_clever_int_type;
 Type* g_clever_double_type;
 Type* g_clever_str_type;
 Type* g_clever_func_type;
-Type* g_clever_thread_type;
 Type* g_clever_bool_type;
 Type* g_clever_array_type;
 Type* g_clever_map_type;
@@ -37,7 +36,6 @@ CLEVER_MODULE_INIT(CoreModule)
 	addType(CLEVER_BOOL_TYPE   = new BoolType);
 	addType(CLEVER_ARRAY_TYPE  = new ArrayType);
 	addType(CLEVER_MAP_TYPE    = new MapType);
-	addType(CLEVER_THREAD_TYPE = new ThreadType);
 }
 
 }}} // clever::modules::std

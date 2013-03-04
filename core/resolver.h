@@ -38,7 +38,6 @@ public:
 	virtual void visit(Block*);
 	virtual void visit(VariableDecl*);
 	virtual void visit(FunctionDecl*);
-	virtual void visit(ThreadBlock*);
 	virtual void visit(Ident*);
 	virtual void visit(Type*);
 	virtual void visit(Import*);

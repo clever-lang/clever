@@ -153,18 +153,6 @@ CLEVER_METHOD(ReflectType::isMap)
 	result->setBool(intern->getData()->isMap());
 }
 
-// Reflect::isThread()
-// Check if the object is of thread type
-CLEVER_METHOD(ReflectType::isThread)
-{
-	if (!clever_check_no_args()) {
-		return;
-	}
-
-	const ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
-
-	result->setBool(intern->getData()->isThread());
-}
 
 // Reflect::getName()
 // Returns the name of the type or function
@@ -391,7 +379,6 @@ CLEVER_METHOD(ReflectType::getInternClassSizes)
 	printf("class \"std::vector<IR>\" : %N\n",
 		   sizeof(::std::vector<IR>));
 	printf("class \"CException\" : %N\n", sizeof(CException));
-	printf("class \"VMThread\" : %N\n", sizeof(VMThread));
 	//printf("class \"ValueObject\" : %N\n", sizeof(ValueObject));
 	printf("class \"CThread\" : %N\n", sizeof(CThread));
 	printf("class \"VM\" : %N\n", sizeof(VM));
@@ -412,7 +399,6 @@ CLEVER_TYPE_INIT(ReflectType::init)
 	addMethod(new Function("isDouble",   (MethodPtr) &ReflectType::isDouble));
 	addMethod(new Function("isArray",    (MethodPtr) &ReflectType::isArray));
 	addMethod(new Function("isMap",      (MethodPtr) &ReflectType::isMap));
-	addMethod(new Function("isThread",   (MethodPtr) &ReflectType::isThread));
 
 	// Function specific methods
 	addMethod(new Function("getName",       (MethodPtr) &ReflectType::getName));

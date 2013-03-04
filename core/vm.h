@@ -24,10 +24,6 @@ class VM;
 class Environment;
 class location;
 
-struct VMThread {
-	CThread t_handler;
-	VM* vm_handler;
-};
 
 struct CallStackEntry {
 	Environment* env;

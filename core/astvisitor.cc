@@ -24,24 +24,13 @@ void Visitor::visit(Block* node)
 	Visitor::visit(static_cast<NodeArray*>(node));
 }
 
-void Visitor::visit(Wait* node)
-{
-	node->getName()->accept(*this);
-}
+
 
 void Visitor::visit(CriticalBlock* node)
 {
 	node->getBlock()->accept(*this);
 }
 
-void Visitor::visit(ThreadBlock* node)
-{
-	node->getName()->accept(*this);
-	if (node->getSize()) {
-		node->getSize()->accept(*this);
-	}
-	node->getBlock()->accept(*this);
-}
 
 void Visitor::visit(Assignment* node)
 {

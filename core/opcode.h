@@ -21,8 +21,6 @@ namespace clever {
 	&&OP_MOD,      \
 	&&OP_JMP,      \
 	&&OP_FCALL,    \
-	&&OP_BTHREAD,  \
-	&&OP_ETHREAD,  \
 	&&OP_LEAVE,    \
 	&&OP_SEND_VAL, \
 	&&OP_JMPZ,     \
@@ -74,8 +72,6 @@ enum Opcode {
 	OP_MOD,        //       Used for math modulus operation
 	OP_JMP,        //       Used for jumping to other instructions
 	OP_FCALL,      //       Used for function call
-	OP_BTHREAD,    //       Used for begin thread marker
-	OP_ETHREAD,    //  10 - Used for end thread marker
 	OP_LEAVE,      //       Used for leaving from a function call
 	OP_SEND_VAL,   //       Used for send Value* to argument values,
 	OP_JMPZ,       //       Used for jumping if zero

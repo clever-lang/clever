@@ -155,16 +155,7 @@ static CLEVER_FUNCTION(ismap)
 	result->setBool(args[0]->isMap());
 }
 
-// Bool isthread(Object)
-// Returns a boolean indicating if the object is a thread
-static CLEVER_FUNCTION(isthread)
-{
-	if (!clever_static_check_args("p")) {
-		return;
-	}
 
-	result->setBool(args[0]->isThread());
-}
 
 } // clever::modules::std::reflection
 
@@ -186,7 +177,6 @@ CLEVER_MODULE_INIT(Reflection)
 	addFunction(new Function("is_double", &CLEVER_NS_FNAME(reflection, isdouble)));
 	addFunction(new Function("is_array",  &CLEVER_NS_FNAME(reflection, isarray)));
 	addFunction(new Function("is_map",    &CLEVER_NS_FNAME(reflection, ismap)));
-	addFunction(new Function("is_thread", &CLEVER_NS_FNAME(reflection, isthread)));
 }
 
 }}} // clever::modules::std

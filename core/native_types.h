@@ -15,6 +15,5 @@
 #include "modules/std/core/bool.h"
 #include "modules/std/core/array.h"
 #include "modules/std/core/map.h"
-#include "types/thread.h"
 
 #endif // CLEVER_NATIVE_TYPES_H

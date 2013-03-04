@@ -59,46 +59,6 @@ void Resolver::visit(VariableDecl* node)
 	val->setConst(node->isConst());
 }
 
-void Resolver::visit(ThreadBlock* node)
-{
-	if (node->getSize() != NULL) {
-		node->getSize()->accept(*this);
-	}
-
-	const CString* name = node->getName()->getName();
-	clever_assert_not_null(name);
-
-	if (m_scope->getLocal(name)) {
-		Compiler::errorf(node->getLocation(),
-			"Cannot redeclare thread `%S'.", name);
-	}
-
-	Thread* thread = static_cast<Thread*>(CLEVER_THREAD_TYPE->allocData(NULL));
-
-	thread->setUserDefined();
-
-	Value* tval = new Value;
-	tval->setObj(CLEVER_THREAD_TYPE, thread);
-
-	thread->setName(*name);
-	m_scope->pushValue(name, tval)->voffset = m_stack.top()->pushValue(tval);
-
-	node->getName()->accept(*this);
-
-	m_scope = m_scope->enter();
-	m_scope->setEnvironment(new Environment(m_stack.top()));
-	m_stack.push(m_scope->getEnvironment());
-
-	thread->setEnvironment(m_scope->getEnvironment());
-
-	node->setScope(m_scope);
-
-	node->getBlock()->accept(*this);
-
-	m_scope = m_scope->leave();
-	m_stack.pop();
-}
-
 void Resolver::visit(FunctionDecl* node)
 {
 	static size_t anon_fdecls = 0;

@@ -10,7 +10,6 @@
 
 #include "core/compiler.h"
 #include "core/codegen.h"
-#include "types/thread.h"
 #include "core/irbuilder.h"
 #include "modules/std/core/function.h"
 
@@ -84,43 +83,6 @@ void Codegen::visit(CriticalBlock* node)
 	node->getBlock()->accept(*this);
 
 	m_builder->push(OP_UNLOCK);
-}
-
-void Codegen::visit(ThreadBlock* node)
-{
-	if (node->getSize() != NULL) {
-		Node* size = node->getSize();
-		size->accept(*this);
-	}
-
-	size_t bg = m_builder->getSize();
-	Symbol* sym = node->getName()->getSymbol();
-	Value* threadval = sym->scope->getValue(node->getName()->getVOffset());
-	Thread* thread = static_cast<Thread*>(threadval->getObj());
-	thread->setAddr(bg);
-
-	Environment* save_temp = m_builder->getTempEnv();
-	Environment* env_temp  = m_builder->getNewTempEnv();
-
-	thread->getEnvironment()->setTempEnv(env_temp);
-
-
-	node->getName()->accept(*this);
-
-	m_builder->push(OP_BTHREAD,
-		Operand(JMP_ADDR, bg),
-		Operand(FETCH_VAR, node->getName()->getVOffset()));
-
-	if (node->getSize() != NULL) {
-		Node* size = node->getSize();
-		_prepare_operand(m_builder->getAt(bg).result, size);
-	}
-
-	node->getBlock()->accept(*this);
-
-	m_builder->push(OP_ETHREAD);
-	m_builder->getAt(bg).op1 = Operand(JMP_ADDR, m_builder->getSize());
-	m_builder->setTempEnv(save_temp);
 }
 
 void Codegen::visit(VariableDecl* node)

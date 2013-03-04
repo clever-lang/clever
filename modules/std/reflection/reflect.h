@@ -52,7 +52,6 @@ public:
 	CLEVER_METHOD(isBool);
 	CLEVER_METHOD(isMap);
 	CLEVER_METHOD(isArray);
-	CLEVER_METHOD(isThread);
 
 	CLEVER_METHOD(getName);
 	CLEVER_METHOD(isStatic);

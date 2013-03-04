@@ -19,7 +19,6 @@ namespace clever { namespace ast {
 class Node;
 class NodeArray;
 class Block;
-class ThreadBlock;
 class CriticalBlock;
 class Assignment;
 class VariableDecl;
@@ -282,74 +281,6 @@ private:
 	Symbol* m_sym;
 
 	DISALLOW_COPY_AND_ASSIGN(Ident);
-};
-
-class ThreadBlock: public NodeArray {
-public:
-	ThreadBlock(Block* block, const location& location)
-		: NodeArray(location), m_block(block), m_name(NULL), m_size(NULL) {
-		m_block->addRef();
-	}
-
-	ThreadBlock(Block* block, Ident* name, const location& location)
-		: NodeArray(location), m_block(block), m_name(name), m_size(NULL) {
-		m_block->addRef();
-		m_name->addRef();
-	}
-
-
-	ThreadBlock(Block* block, Ident* name, Node* size, const location& location)
-		: NodeArray(location), m_block(block), m_name(name), m_size(size) {
-		m_block->addRef();
-		m_name->addRef();
-		m_size->addRef();
-	}
-
-	~ThreadBlock() {
-		m_block->delRef();
-		clever_delref(m_name);
-		clever_delref(m_size);
-	}
-
-	virtual void accept(Visitor& visitor);
-	virtual Node* accept(Transformer& transformer);
-
-	Ident* getName() { return m_name; }
-
-	Block* getBlock() { return m_block; }
-
-	Node* getSize() { return m_size; }
-
-protected:
-	Block* m_block;
-	Ident* m_name;
-	Node* m_size;
-
-private:
-	DISALLOW_COPY_AND_ASSIGN(ThreadBlock);
-};
-
-class Wait: public NodeArray {
-public:
-	Wait(Ident* name, const location& location)
-		: NodeArray(location), m_name(name) {
-		m_name->addRef();
-	}
-
-	~Wait() {
-		m_name->delRef();
-	}
-
-	virtual void accept(Visitor& visitor);
-	virtual Node* accept(Transformer& transformer);
-
-	Ident* getName() { return m_name; }
-
-protected:
-	Ident* m_name;
-
-private:
-	DISALLOW_COPY_AND_ASSIGN(Wait);
 };
 
 class CriticalBlock: public NodeArray {

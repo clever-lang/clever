@@ -13,7 +13,6 @@
 #include "core/value.h"
 #include "core/location.hh"
 #include "core/user.h"
-#include "types/thread.h"
 #include "core/type.h"
 #include "modules/std/core/function.h"
 #include "modules/std/core/array.h"
@@ -464,41 +463,6 @@ out:
 	}
 	DISPATCH;
 
-	OP(OP_BTHREAD):
-	{
-		getMutex()->lock();
-
-		const Value* tval = getValue(OPCODE.op2);
-		Thread* tdata = static_cast<Thread*>(tval->getObj());
-		clever_assert_not_null(tdata);
-
-		const Value* size = getValue(OPCODE.result);
-		size_t n_threads = 1;
-
-		if (size != NULL) {
-			n_threads = size->getInt();
-		}
-
-		tdata->setNThreads(n_threads);
-
-		getMutex()->unlock();
-
-		VM_GOTO(OPCODE.op1.jmp_addr);
-	}
-
-	OP(OP_ETHREAD):
-	if (EXPECTED(isChild())) {
-		getMutex()->lock();
-
-		if (EXPECTED(!m_call_stack.empty())) {
-			clever_delref(m_call_stack.top().env);
-			m_call_stack.pop();
-		}
-
-		getMutex()->unlock();
-		goto exit;
-	}
-	DISPATCH;
 
 	OP(OP_LEAVE):
 	{

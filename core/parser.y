@@ -28,8 +28,6 @@ class Value;
 	size_t flags;
 	ast::Node* node;
 	ast::Block* block;
-	ast::ThreadBlock* threadblock;
-	ast::Wait* wait;
 	ast::CriticalBlock* criticalblock;
 	ast::NodeArray* narray;
 	ast::Ident* ident;
@@ -83,7 +81,6 @@ class Value;
 %type <vardecl> variable_decl_impl vararg
 %type <vardecl> const_decl_impl
 %type <block> statement_list block finally
-%type <threadblock> thread_block
 %type <criticalblock> critical_block
 %type <arithmetic> arithmetic
 %type <bitwise> bitwise
@@ -170,7 +167,6 @@ class Value;
 %token FALSE         "false"
 %token CONST         "const"
 %token FUNC          "function"
-%token THREAD        "spawn"
 %token CRITICAL      "critical"
 %token INC           "++"
 %token DEC           "--"
@@ -236,7 +232,6 @@ statement:
 	|	while
 	|	inc_dec ';'
 	|	block
-	|	thread_block
 	|   critical_block
 	|	throw ';'
 	|	break ';'
@@ -265,22 +260,6 @@ continue:
 		CONTINUE { $$ = new ast::Continue(yyloc); }
 ;
 
-thread_block:
-		THREAD IDENT block {
-#ifndef CLEVER_THREADS
-		error(yyloc, "Cannot use process block syntax, threads is disabled!"); YYABORT;
-#else
-		$$ = new ast::ThreadBlock($3, $2, yyloc);
-#endif
-	}
-	|	THREAD IDENT '[' rvalue ']'  block {
-#ifndef CLEVER_THREADS
-		error(yyloc, "Cannot use process block syntax, threads is disabled!"); YYABORT;
-#else
-		$$ = new ast::ThreadBlock($6, $2, $<node>4, yyloc);
-#endif
-	}
-;
 
 critical_block:
 		CRITICAL block {

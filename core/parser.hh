@@ -100,8 +100,6 @@ namespace clever {
 	size_t flags;
 	ast::Node* node;
 	ast::Block* block;
-	ast::ThreadBlock* threadblock;
-	ast::Wait* wait;
 	ast::CriticalBlock* criticalblock;
 	ast::NodeArray* narray;
 	ast::Ident* ident;
@@ -192,26 +190,25 @@ namespace clever {
      FALSE = 295,
      CONST = 296,
      FUNC = 297,
-     THREAD = 298,
-     CRITICAL = 299,
-     INC = 300,
-     DEC = 301,
-     NIL = 302,
-     NEW = 303,
-     FINALLY = 304,
-     CATCH = 305,
-     TRY = 306,
-     THROW = 307,
-     CONTINUE = 308,
-     CONSTANT = 309,
-     CLASS = 310,
-     PUBLIC = 311,
-     PRIVATE = 312,
-     SWITCH = 313,
-     CASE = 314,
-     DEFAULT = 315,
-     XOR_EQUAL = 316,
-     UMINUS = 317
+     CRITICAL = 298,
+     INC = 299,
+     DEC = 300,
+     NIL = 301,
+     NEW = 302,
+     FINALLY = 303,
+     CATCH = 304,
+     TRY = 305,
+     THROW = 306,
+     CONTINUE = 307,
+     CONSTANT = 308,
+     CLASS = 309,
+     PUBLIC = 310,
+     PRIVATE = 311,
+     SWITCH = 312,
+     CASE = 313,
+     DEFAULT = 314,
+     XOR_EQUAL = 315,
+     UMINUS = 316
    };
 
     };

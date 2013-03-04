@@ -12,11 +12,11 @@ var m = Mutex.new();
 
 println(m.lock());
 
-process thread {
+var thread = Thread.new(function(){
 	println(c.broadcast());
-}
+});
 
-thread.run();
+thread.start();
 
 println(c.wait(m));
 
