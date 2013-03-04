@@ -443,8 +443,7 @@ out:
 		}
 
 		if (UNEXPECTED(!fval->isFunction())) {
-			error(OPCODE.loc,
-				"Cannot make a call from %T type", fval->getType());
+			error(OPCODE.loc, "Cannot make a call from %T type", fval->getType());
 		}
 
 		Function* func = static_cast<Function*>(fval->getObj());
@@ -669,8 +668,7 @@ out:
 			}
 
 			if (UNEXPECTED(instance->isNull())) {
-				error(OPCODE.loc,
-					"Cannot create object of type %T", type);
+				error(OPCODE.loc, "Cannot create object of type %T", type);
 			} else {
 				createInstance(type, instance);
 
@@ -683,8 +681,7 @@ out:
 				m_call_args.clear();
 			}
 		} else {
-			error(OPCODE.loc,
-				"Constructor for %T not found", type);
+			error(OPCODE.loc, "Constructor for %T not found", type);
 		}
 	}
 	DISPATCH;
@@ -710,8 +707,7 @@ out:
 		const Function* func = static_cast<Function*>(fval->getObj());
 
 		if (UNEXPECTED(func == NULL)) {
-			error(OPCODE.loc, "Method `%T::%S' not found!",
-				type, method->getStr());
+			error(OPCODE.loc, "Method `%T::%S' not found!", type, method->getStr());
 		}
 
 		if (func->isUserDefined()) {
@@ -747,8 +743,7 @@ out:
 
 		if (EXPECTED(func != NULL)) {
 			if (UNEXPECTED(!func->isStatic())) {
-				error(OPCODE.loc,
-					"Method `%T::%S' cannot be called statically",
+				error(OPCODE.loc, "Method `%T::%S' cannot be called statically",
 					type, method->getStr());
 			} else {
 				(type->*func->getMethodPtr())(getValue(OPCODE.result),
@@ -761,8 +756,7 @@ out:
 				}
 			}
 		} else {
-			error(OPCODE.loc,
-				"Method `%T::%S' not found!", type, method->getStr());
+			error(OPCODE.loc, "Method `%T::%S' not found!", type, method->getStr());
 		}
 	}
 	DISPATCH;
@@ -772,8 +766,7 @@ out:
 		const Value* obj = getValue(OPCODE.op1);
 
 		if (UNEXPECTED(obj->isNull())) {
-			error(OPCODE.loc,
-				"Cannot perform property access from null value");
+			error(OPCODE.loc, "Cannot perform property access from null value");
 		}
 		const Value* name = getValue(OPCODE.op2);
 		const Value* value = obj->getObj()->getMember(name->getStr());
@@ -792,8 +785,7 @@ out:
 		const Value* obj = getValue(OPCODE.op1);
 
 		if (UNEXPECTED(obj->isNull())) {
-			error(OPCODE.loc,
-				"Cannot perform property access from null value");
+			error(OPCODE.loc, "Cannot perform property access from null value");
 		}
 		const Value* name = getValue(OPCODE.op2);
 		const Value* value = obj->getType()->getProperty(name->getStr());
@@ -812,8 +804,7 @@ out:
 		const Value* obj = getValue(OPCODE.op1);
 
 		if (UNEXPECTED(obj->isNull())) {
-			error(OPCODE.loc,
-				"Cannot perform property access from null value");
+			error(OPCODE.loc, "Cannot perform property access from null value");
 		}
 		const Value* name = getValue(OPCODE.op2);
 		Value* value = obj->getObj()->getMember(name->getStr());
@@ -833,8 +824,7 @@ out:
 		const Value* obj = getValue(OPCODE.op1);
 
 		if (UNEXPECTED(obj->isNull())) {
-			error(OPCODE.loc,
-				"Cannot perform property access from null value");
+			error(OPCODE.loc, "Cannot perform property access from null value");
 		}
 		const Value* name = getValue(OPCODE.op2);
 		Value* value = obj->getType()->getProperty(name->getStr());
