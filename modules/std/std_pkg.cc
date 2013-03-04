@@ -64,12 +64,6 @@ void Std::init()
 #ifdef HAVE_MOD_STD_COLLECTION
 	addModule(new std::CollectionModule);
 #endif
-
-#if 0
-#ifdef HAVE_MOD_STD_RPC
-	addModule(new std::RPCModule);
-#endif
-#endif
 }
 
 }} // clever::modules
