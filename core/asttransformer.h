@@ -48,6 +48,7 @@ public:
 	virtual Node* transform(FunctionDecl* node) { return node; }
 	virtual Node* transform(FunctionCall* node) { return node; }
 	virtual Node* transform(While* node) { return node; }
+	virtual Node* transform(For* node) { return node; }
 	virtual Node* transform(If* node) { return node; }
 	virtual Node* transform(IntLit* node) { return node; }
 	virtual Node* transform(DoubleLit* node) { return node; }

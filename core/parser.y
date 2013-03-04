@@ -44,6 +44,7 @@ class Value;
 	ast::FunctionDecl* fdecl;
 	ast::Return* ret;
 	ast::While* while_loop;
+	ast::For* for_loop;
 	ast::IncDec* inc_dec;
 	ast::If* ifcond;
 	ast::Boolean* boolean;
@@ -90,6 +91,7 @@ class Value;
 %type <fdecl> fdecl anonymous_fdecl
 %type <ret> return_stmt
 %type <while_loop> while
+%type <block> for
 %type <inc_dec> inc_dec
 %type <ifcond> if else
 %type <boolean> boolean
@@ -230,6 +232,7 @@ statement:
 	|	return_stmt ';'
 	|	if
 	|	while
+	|   for
 	|	inc_dec ';'
 	|	block
 	|   critical_block
@@ -634,6 +637,20 @@ return_stmt:
 while:
 		WHILE '(' rvalue ')' block
 		{ $$ = new ast::While($<node>3, $5, yyloc); }
+;
+
+for:
+		  FOR '(' rvalue ';' rvalue ';' rvalue ')' block
+		{ $$ = new ast::Block(yyloc); 
+		  $$->append($<node>3); 
+		  $9->append($<node>7);
+		  $$->append(new ast::For($<node>5, $9, yyloc)); }
+		| FOR '(' variable_decl ';' rvalue ';' rvalue ')' block
+		{ $$ = new ast::Block(yyloc); 
+		  $$->append($<node>3); 
+		  $9->append($<node>7);
+		  $$->append(new ast::For($<node>5, $9, yyloc)); }		
+
 ;
 
 elseif:

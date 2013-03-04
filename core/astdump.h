@@ -101,6 +101,12 @@ public:
 		AST_DUMP_DISPLAY_BLOCK;
 	}
 
+	void visit(For* node) {
+		std::cout << m_ws << "For" << std::endl;
+
+		AST_DUMP_DISPLAY_BLOCK;
+	}
+
 	void visit(FunctionDecl* node) {
 		std::cout << m_ws << "FunctionDecl" << std::endl;
 
