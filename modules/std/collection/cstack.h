@@ -5,6 +5,9 @@
  * This file is distributed under the MIT license. See LICENSE for details.
  */
 
+#ifndef CLEVER_STD_CSTACK_H
+#define CLEVER_STD_CSTACK_H
+
 #include <stack>
 #include "core/type.h"
 
@@ -40,6 +43,10 @@ public:
 	CLEVER_METHOD(top);
 	CLEVER_METHOD(size);
 	CLEVER_METHOD(empty);
+private:
+	DISALLOW_COPY_AND_ASSIGN(CStack);
 };
 
 }}} // clever::modules::std
+
+#endif // CLEVER_STD_CSTACK_H

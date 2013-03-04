@@ -1,0 +1,21 @@
+Testing queue
+==CODE==
+import std.io.*;
+import std.collection.*;
+
+var arr = [3, 2, 1];
+var queue = Queue.new;
+
+arr.each(function(n) { queue.push(n); });
+
+println("Size: " + queue.size());
+
+while (!queue.empty()) {
+	println(queue.front());
+	queue.pop();
+}
+==RESULT==
+Size: 3
+3
+2
+1
