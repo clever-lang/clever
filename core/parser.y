@@ -644,7 +644,11 @@ for_expr_1:
 	  variable_decl
 	  { $$ = $<node>1; }
 	| call_args
-      { $$ = $<node>1; }
+      { if ($1) { 
+			$$ = $<node>1;
+		} else { 
+			$$ = new ast::Block(yyloc);
+		} }
 ;
 
 for_expr_2:
@@ -655,7 +659,11 @@ for_expr_2:
 
 for_expr_3:
 	  call_args
-      { $$ = $<node>1; }
+      {	if ($1) { 
+			$$ = $<node>1;
+		} else { 
+			$$ = new ast::Block(yyloc);
+		} }
 ;
 
 for:
