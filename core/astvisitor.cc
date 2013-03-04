@@ -91,6 +91,12 @@ void Visitor::visit(While* node)
 	node->getBlock()->accept(*this);
 }
 
+void Visitor::visit(For* node)
+{
+	node->getCondition()->accept(*this);
+	node->getBlock()->accept(*this);
+}
+
 void Visitor::visit(If* node)
 {
 	std::vector<std::pair<Node*, Node*> > cond = node->getConditionals();

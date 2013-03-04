@@ -116,6 +116,7 @@ namespace clever {
 	ast::FunctionDecl* fdecl;
 	ast::Return* ret;
 	ast::While* while_loop;
+	ast::For* for_loop;
 	ast::IncDec* inc_dec;
 	ast::If* ifcond;
 	ast::Boolean* boolean;

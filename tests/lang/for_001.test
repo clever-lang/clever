@@ -1,0 +1,19 @@
+Testing for loop
+==CODE==
+import std.io.*;
+
+for (var a = 9; a >= 0; a--) {
+	println(a);
+}
+
+==RESULT==
+9
+8
+7
+6
+5
+4
+3
+2
+1
+0
