@@ -1211,7 +1211,11 @@ yylloc.begin.filename = yylloc.end.filename = driver.getFile();
 
   case 225:
 
-    { (yyval.node) = (yysemantic_stack_[(1) - (1)].node); }
+    { if ((yysemantic_stack_[(1) - (1)].narray)) { 
+			(yyval.node) = (yysemantic_stack_[(1) - (1)].node);
+		} else { 
+			(yyval.node) = new ast::Block(yyloc);
+		} }
     break;
 
   case 226:
@@ -1226,7 +1230,11 @@ yylloc.begin.filename = yylloc.end.filename = driver.getFile();
 
   case 228:
 
-    { (yyval.node) = (yysemantic_stack_[(1) - (1)].node); }
+    {	if ((yysemantic_stack_[(1) - (1)].narray)) { 
+			(yyval.node) = (yysemantic_stack_[(1) - (1)].node);
+		} else { 
+			(yyval.node) = new ast::Block(yyloc);
+		} }
     break;
 
   case 229:
@@ -2229,8 +2237,8 @@ yylloc.begin.filename = yylloc.end.filename = driver.getFile();
      571,   573,   575,   577,   579,   581,   583,   588,   590,   592,
      594,   599,   600,   604,   605,   609,   610,   611,   615,   616,
      620,   620,   621,   622,   623,   624,   625,   626,   626,   630,
-     630,   634,   635,   639,   644,   646,   651,   653,   657,   662,
-     669,   671,   676,   677,   681,   682,   681
+     630,   634,   635,   639,   644,   646,   655,   657,   661,   670,
+     677,   679,   684,   685,   689,   690,   689
   };
 
   // Print the state stack on the debug stream.
