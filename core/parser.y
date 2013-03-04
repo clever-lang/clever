@@ -92,6 +92,7 @@ class Value;
 %type <ret> return_stmt
 %type <while_loop> while
 %type <block> for
+%type <node> for_expr_1 for_expr_2 for_expr_3
 %type <inc_dec> inc_dec
 %type <ifcond> if else
 %type <boolean> boolean
@@ -639,18 +640,30 @@ while:
 		{ $$ = new ast::While($<node>3, $5, yyloc); }
 ;
 
+for_expr_1:
+	  rvalue
+	  { $$ = $<node>1; }
+	| variable_decl
+	  { $$ = $<node>1; }
+;
+
+for_expr_2:
+	 rvalue
+	 { $$ = $<node>1; }
+;
+
+for_expr_3:
+	 rvalue
+	  { $$ = $<node>1; }
+	| { $$ = new ast::Block(yyloc); }
+;
+
 for:
-		  FOR '(' rvalue ';' rvalue ';' rvalue ')' block
+		  FOR '(' for_expr_1 ';' for_expr_2 ';' for_expr_3 ')' block
 		{ $$ = new ast::Block(yyloc); 
 		  $$->append($<node>3); 
 		  $9->append($<node>7);
 		  $$->append(new ast::For($<node>5, $9, yyloc)); }
-		| FOR '(' variable_decl ';' rvalue ';' rvalue ')' block
-		{ $$ = new ast::Block(yyloc); 
-		  $$->append($<node>3); 
-		  $9->append($<node>7);
-		  $$->append(new ast::For($<node>5, $9, yyloc)); }		
-
 ;
 
 elseif:
