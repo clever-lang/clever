@@ -7,6 +7,8 @@
 
 #include <cmath>
 #include <cstdlib>
+#include <ctime>
+
 #include "core/value.h"
 #include "core/native_types.h"
 #include "core/modmanager.h"
@@ -256,11 +258,24 @@ static CLEVER_FUNCTION(exp)
 	}
 }
 
+// rand()
+// generate a random number betwen 0 and 1
+static CLEVER_FUNCTION(rand)
+{
+	if (!clever_static_check_no_args()) {
+		return;
+	}
+
+	result->setDouble(static_cast<double>(::std::rand()) / RAND_MAX);
+}
+
 } // clever::modules::std::math
 
 // Load module data
 CLEVER_MODULE_INIT(Math)
 {
+	::std::srand(::std::time(NULL));
+
 	addFunction(new Function("round", &CLEVER_NS_FNAME(math, round)));
 	addFunction(new Function("ceil",  &CLEVER_NS_FNAME(math, ceil)));
 	addFunction(new Function("sqrt",  &CLEVER_NS_FNAME(math, sqrt)));
@@ -277,8 +292,9 @@ CLEVER_MODULE_INIT(Math)
 	addFunction(new Function("tanh",  &CLEVER_NS_FNAME(math, tanh)));
 	addFunction(new Function("atan",  &CLEVER_NS_FNAME(math, atan)));
 	addFunction(new Function("log",   &CLEVER_NS_FNAME(math, log)));
+	addFunction(new Function("rand",  &CLEVER_NS_FNAME(math, rand)));
 
-	addVariable("PI", new Value(M_PI, true));
+	addVariable("PI",       new Value(M_PI, true));
 }
 
 }}} // clever::modules::std
