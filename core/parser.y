@@ -636,48 +636,31 @@ return_stmt:
 ;
 
 while:
-		WHILE '(' rvalue ')' block
-		{ $$ = new ast::While($<node>3, $5, yyloc); }
+		WHILE '(' rvalue ')' block { $$ = new ast::While($<node>3, $5, yyloc); }
 ;
 
 for_expr_1:
-	  variable_decl
-	  { $$ = $<node>1; }
-	| call_args
-      { if ($1) { 
-			$$ = $<node>1;
-		} else { 
-			$$ = new ast::Block(yyloc);
-		} }
+		variable_decl { $$ = $<node>1; }
+	|	call_args     { if ($1) { $$ = $<node>1; } else { $$ = new ast::Block(yyloc); } }
 ;
 
 for_expr_2:
-	  rvalue
-	  { $$ = $<node>1; }
-	| { $$ = new ast::TrueLit(yyloc);  }
+		/* empty */ { $$ = new ast::TrueLit(yyloc); }
+	|	rvalue      { $$ = $<node>1; }
 ;
 
 for_expr_3:
-	  call_args
-      {	if ($1) { 
-			$$ = $<node>1;
-		} else { 
-			$$ = new ast::Block(yyloc);
-		} }
+		call_args { if ($1) { $$ = $<node>1; } else { $$ = new ast::Block(yyloc); } }
 ;
 
 for:
-		  FOR '(' for_expr_1 ';' for_expr_2 ';' for_expr_3 ')' block
-		{ $$ = new ast::Block(yyloc); 
-		  $$->append($<node>3); 
-		  $9->append($<node>7);
-		  $$->append(new ast::For($<node>5, $9, yyloc)); }
+		FOR '(' for_expr_1 ';' for_expr_2 ';' for_expr_3 ')' block
+		{ $$ = new ast::Block(yyloc); $$->append($<node>3); $9->append($<node>7); $$->append(new ast::For($<node>5, $9, yyloc)); }
 ;
 
 elseif:
 		/* empty */
-	|	elseif ELSEIF '(' rvalue ')' block
-		{ $<ifcond>0->addConditional($<node>4, $6); }
+	|	elseif ELSEIF '(' rvalue ')' block { $<ifcond>0->addConditional($<node>4, $6); }
 ;
 
 else:

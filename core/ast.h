@@ -146,8 +146,6 @@ public:
 	virtual Node* accept(Transformer& transformer);
 };
 
-
-
 class Comparison: public Node {
 public:
 	enum ComparisonOperator {
@@ -172,8 +170,8 @@ public:
 
 	ComparisonOperator getOperator() const { return m_op; }
 
-	Node* getLhs() { return m_lhs; }
-	Node* getRhs() { return m_rhs; }
+	Node* getLhs() const { return m_lhs; }
+	Node* getRhs() const { return m_rhs; }
 
 	virtual void accept(Visitor& visitor);
 	virtual Node* accept(Transformer& transformer);
@@ -203,8 +201,8 @@ public:
 		clever_addref(m_rhs);
 	}
 
-	Node* getLhs() { return m_lhs; }
-	Node* getRhs() { return m_rhs; }
+	Node* getLhs() const { return m_lhs; }
+	Node* getRhs() const { return m_rhs; }
 
 	void setConditional(bool conditional) {
 		m_conditional = conditional;
@@ -262,9 +260,6 @@ public:
 
 	const CString* getName() const { return m_name; }
 
-	virtual void accept(Visitor& visitor);
-	virtual Node* accept(Transformer& transformer);
-
 	void setSymbol(Symbol* sym)	{ m_sym = sym; }
 	Symbol* getSymbol() { return m_sym; }
 
@@ -277,6 +272,9 @@ public:
 		m_name = CSTRING(*m_name + separator + *ident->getName());
 		clever_delete(ident);
 	}
+
+	virtual void accept(Visitor& visitor);
+	virtual Node* accept(Transformer& transformer);
 private:
 	const CString* m_name;
 	Symbol* m_sym;
@@ -331,9 +329,9 @@ public:
 		clever_delref(m_args);
 	}
 
-	Type* getType() { return m_type; }
+	Type* getType() const { return m_type; }
 
-	NodeArray* getArgs() { return m_args; }
+	NodeArray* getArgs() const { return m_args; }
 	bool hasArgs() const { return m_args != NULL && m_args->getSize() > 0; }
 
 	size_t numArgs() const { return m_args->getSize(); }
@@ -466,8 +464,8 @@ public:
 	}
 
 	ArithOperator getOperator() const { return m_op; }
-	Node* getLhs() { return m_lhs; }
-	Node* getRhs() { return m_rhs; }
+	Node* getLhs() const { return m_lhs; }
+	Node* getRhs() const { return m_rhs; }
 
 	bool isEvaluable() const { return true; }
 
@@ -503,8 +501,8 @@ public:
 	bool isEvaluable() const { return true; }
 
 	LogicOperator getOperator() const { return m_op; }
-	Node* getLhs() { return m_lhs; }
-	Node* getRhs() { return m_rhs; }
+	Node* getLhs() const { return m_lhs; }
+	Node* getRhs() const { return m_rhs; }
 
 	virtual void accept(Visitor& visitor);
 	virtual Node* accept(Transformer& transformer);
@@ -542,8 +540,8 @@ public:
 	}
 
 	BooleanOperator getOperator() const { return m_op; }
-	Node* getLhs() { return m_lhs; }
-	Node* getRhs() { return m_rhs; }
+	Node* getLhs() const { return m_lhs; }
+	Node* getRhs() const { return m_rhs; }
 
 	bool isEvaluable() const { return true; }
 
@@ -587,8 +585,8 @@ public:
 	bool isEvaluable() const { return true; }
 
 	BitwiseOperator getOperator() const { return m_op; }
-	Node* getLhs() { return m_lhs; }
-	Node* getRhs() { return m_rhs; }
+	Node* getLhs() const { return m_lhs; }
+	Node* getRhs() const { return m_rhs; }
 
 	virtual void accept(Visitor& visitor);
 	virtual Node* accept(Transformer& transformer);
@@ -662,14 +660,14 @@ public:
 	void setDtor() { m_is_dtor = true; }
 	void setMethod(Function* func) { m_func = func; }
 
-	Type* getType() { return m_type; }
-	bool hasType() { return m_type != NULL; }
+	Type* getType() const { return m_type; }
+	bool hasType() const { return m_type != NULL; }
 	Function* getMethod() const { return m_func; }
 
-	Ident* getIdent() { return m_ident; }
-	bool hasIdent() { return m_ident != NULL; }
+	Ident* getIdent() const { return m_ident; }
+	bool hasIdent() const { return m_ident != NULL; }
 
-	NodeArray* getArgs() { return m_args; }
+	NodeArray* getArgs() const { return m_args; }
 	bool hasArgs() const { return m_args != NULL && m_args->getSize() > 0; }
 	size_t numArgs() const { return m_args->getSize(); }
 
@@ -678,7 +676,7 @@ public:
 	}
 
 	bool hasVarArg() const { return m_vararg != NULL; }
-	VariableDecl* getVarArg() { return m_vararg; }
+	VariableDecl* getVarArg() const { return m_vararg; }
 
 	Block* getBlock() { return m_block; }
 
@@ -723,11 +721,9 @@ public:
 	}
 
 	bool isStaticCall() const { return m_static; }
-
 	bool isEvaluable() const { return true; }
 
 	Node* getCallee() const { return m_callee; }
-
 	Ident* getMethod() const { return m_method; }
 
 	NodeArray* getArgs() const { return m_args; }
@@ -770,11 +766,10 @@ public:
 		clever_delref(m_args);
 	}
 
-	Node* getCallee() { return m_callee; }
+	Node* getCallee() const { return m_callee; }
 
-	NodeArray* getArgs() { return m_args; }
+	NodeArray* getArgs() const { return m_args; }
 	bool hasArgs() const { return m_args != NULL && m_args->getSize() > 0; }
-
 	size_t numArgs() const { return m_args->getSize(); }
 
 	bool isEvaluable() const { return true; }
@@ -813,9 +808,9 @@ public:
 		clever_delref(m_block);
 	}
 
-	Node* getCondition() { return m_condition; }
+	Node* getCondition() const { return m_condition; }
 
-	Node* getBlock() { return m_block; }
+	Node* getBlock() const { return m_block; }
 
 	virtual void accept(Visitor& visitor);
 	virtual Node* accept(Transformer& transformer);
@@ -840,16 +835,16 @@ public:
 		clever_delref(m_block);
 	}
 
-	Node* getCondition() { return m_condition; }
+	Node* getCondition() const { return m_condition; }
 
-	Node* getBlock() { return m_block; }
+	Node* getBlock() const { return m_block; }
 
 	virtual void accept(Visitor& visitor);
 	virtual Node* accept(Transformer& transformer);
 
 private:
-	Node *m_condition;
-	Node *m_block;
+	Node* m_condition;
+	Node* m_block;
 
 	DISALLOW_COPY_AND_ASSIGN(For);
 };
@@ -895,13 +890,13 @@ public:
 		m_else_node->addRef();
 	}
 
-	Node* getElseNode() { return m_else_node; }
+	Node* getElseNode() const { return m_else_node; }
 
 	virtual void accept(Visitor& visitor);
 	virtual Node* accept(Transformer& transformer);
 
 private:
-	Node *m_else_node;
+	Node* m_else_node;
 	std::vector<std::pair<Node*, Node*> > m_conditionals;
 
 	DISALLOW_COPY_AND_ASSIGN(If);
@@ -1242,7 +1237,6 @@ public:
 	Ident* getIdent() const { return m_ident; }
 
 	Node* getValue() const { return m_value; }
-
 	bool hasValue() const { return m_value != NULL; }
 
 	bool isConst() const { return m_const; }
