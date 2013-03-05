@@ -1211,38 +1211,27 @@ yylloc.begin.filename = yylloc.end.filename = driver.getFile();
 
   case 225:
 
-    { if ((yysemantic_stack_[(1) - (1)].narray)) { 
-			(yyval.node) = (yysemantic_stack_[(1) - (1)].node);
-		} else { 
-			(yyval.node) = new ast::Block(yyloc);
-		} }
+    { if ((yysemantic_stack_[(1) - (1)].narray)) { (yyval.node) = (yysemantic_stack_[(1) - (1)].node); } else { (yyval.node) = new ast::Block(yyloc); } }
     break;
 
   case 226:
 
-    { (yyval.node) = (yysemantic_stack_[(1) - (1)].node); }
+    { (yyval.node) = new ast::TrueLit(yyloc); }
     break;
 
   case 227:
 
-    { (yyval.node) = new ast::TrueLit(yyloc);  }
+    { (yyval.node) = (yysemantic_stack_[(1) - (1)].node); }
     break;
 
   case 228:
 
-    {	if ((yysemantic_stack_[(1) - (1)].narray)) { 
-			(yyval.node) = (yysemantic_stack_[(1) - (1)].node);
-		} else { 
-			(yyval.node) = new ast::Block(yyloc);
-		} }
+    { if ((yysemantic_stack_[(1) - (1)].narray)) { (yyval.node) = (yysemantic_stack_[(1) - (1)].node); } else { (yyval.node) = new ast::Block(yyloc); } }
     break;
 
   case 229:
 
-    { (yyval.block) = new ast::Block(yyloc); 
-		  (yyval.block)->append((yysemantic_stack_[(9) - (3)].node)); 
-		  (yysemantic_stack_[(9) - (9)].block)->append((yysemantic_stack_[(9) - (7)].node));
-		  (yyval.block)->append(new ast::For((yysemantic_stack_[(9) - (5)].node), (yysemantic_stack_[(9) - (9)].block), yyloc)); }
+    { (yyval.block) = new ast::Block(yyloc); (yyval.block)->append((yysemantic_stack_[(9) - (3)].node)); (yysemantic_stack_[(9) - (9)].block)->append((yysemantic_stack_[(9) - (7)].node)); (yyval.block)->append(new ast::For((yysemantic_stack_[(9) - (5)].node), (yysemantic_stack_[(9) - (9)].block), yyloc)); }
     break;
 
   case 231:
@@ -1628,14 +1617,14 @@ yylloc.begin.filename = yylloc.end.filename = driver.getFile();
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
      123,   119,   120,    81,     0,   113,     0,     0,   116,    27,
        0,   117,    43,   126,   128,   179,     0,   130,   131,     0,
-     213,   212,   174,   173,   201,   201,   219,   227,     0,     0,
+     213,   212,   174,   173,   201,   201,   219,   226,     0,     0,
      185,   184,   183,   181,   182,   175,     0,     0,     0,   155,
      153,   154,   152,   169,   168,   150,   151,   156,   158,   157,
      159,   166,   167,   165,   161,   160,   162,   163,   164,   178,
      177,     0,     0,     0,     0,     0,     0,     0,   127,   126,
      130,     0,     0,   125,   121,   106,    82,     0,     0,   204,
      114,     0,   201,    63,   201,     0,   201,     0,     0,   205,
-     226,     0,   223,   234,     0,   197,     0,     0,     0,   189,
+     227,     0,   223,   234,     0,   197,     0,     0,     0,   189,
        0,     0,     0,   188,     0,     0,     0,     0,     0,   124,
      109,   110,     0,     0,   107,     0,    87,    89,     0,    64,
        0,     0,     0,     0,   215,   214,     0,   140,    29,   220,
@@ -2047,7 +2036,7 @@ yylloc.begin.filename = yylloc.end.filename = driver.getFile();
        6,     6,     6,     6,     6,     8,     8,     4,     5,     5,
        7,     0,     1,     1,     3,     0,     4,     4,     1,     3,
        0,     8,     3,     3,     5,     5,     8,     0,    10,     0,
-       6,     2,     1,     5,     1,     1,     1,     0,     1,     9,
+       6,     2,     1,     5,     1,     1,     0,     1,     1,     9,
        0,     6,     0,     2,     0,     0,     9
   };
 
@@ -2173,8 +2162,8 @@ yylloc.begin.filename = yylloc.end.filename = driver.getFile();
       80,   150,    81,    -1,    -1,   153,    63,     4,    69,     5,
       80,   150,    81,   156,   128,    -1,    -1,     5,    80,   150,
       81,   158,   152,    -1,    38,    94,    -1,    38,    -1,    10,
-      80,    94,    81,    88,    -1,   139,    -1,   150,    -1,    94,
-      -1,    -1,   150,    -1,     9,    80,   161,    79,   162,    79,
+      80,    94,    81,    88,    -1,   139,    -1,   150,    -1,    -1,
+      94,    -1,   150,    -1,     9,    80,   161,    79,   162,    79,
      163,    81,    88,    -1,    -1,   165,    13,    80,    94,    81,
       88,    -1,    -1,    12,    88,    -1,    -1,    -1,    11,    80,
       94,    81,    88,   168,   165,   169,   166,    -1
@@ -2207,7 +2196,7 @@ yylloc.begin.filename = yylloc.end.filename = driver.getFile();
      591,   598,   605,   612,   619,   626,   635,   644,   649,   655,
      661,   669,   670,   672,   674,   678,   679,   684,   689,   691,
      695,   696,   705,   709,   713,   719,   725,   734,   735,   746,
-     747,   754,   757,   759,   765,   767,   769,   771,   772,   774,
+     747,   754,   757,   759,   765,   767,   769,   770,   772,   774,
      784,   785,   792,   793,   796,   797,   798
   };
 
@@ -2237,8 +2226,8 @@ yylloc.begin.filename = yylloc.end.filename = driver.getFile();
      571,   573,   575,   577,   579,   581,   583,   588,   590,   592,
      594,   599,   600,   604,   605,   609,   610,   611,   615,   616,
      620,   620,   621,   622,   623,   624,   625,   626,   626,   630,
-     630,   634,   635,   639,   644,   646,   655,   657,   661,   670,
-     677,   679,   684,   685,   689,   690,   689
+     630,   634,   635,   639,   643,   644,   648,   649,   653,   657,
+     661,   663,   667,   668,   672,   673,   672
   };
 
   // Print the state stack on the debug stream.
