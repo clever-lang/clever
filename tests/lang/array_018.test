@@ -1,0 +1,32 @@
+Testing array each with variable scopes
+==CODE==
+import std.io.*;
+
+var t = [1,2,3];
+var t2 = [4,5,6];
+var foo = 'clever';
+
+t.each(function(i) {
+	println("i val: " + i + " -- foo val: " + foo);
+	var bar = 'my clever';
+	
+	t2.each(function(j) {
+		println("i val: " + i + " -- foo val: " + foo + " -- j val: " + j + " -- bar val: " + bar);
+	});
+});
+
+println(foo);
+==RESULT==
+i val: 1 -- foo val: clever
+i val: 1 -- foo val: clever -- j val: 4 -- bar val: my clever
+i val: 1 -- foo val: clever -- j val: 5 -- bar val: my clever
+i val: 1 -- foo val: clever -- j val: 6 -- bar val: my clever
+i val: 2 -- foo val: clever
+i val: 2 -- foo val: clever -- j val: 4 -- bar val: my clever
+i val: 2 -- foo val: clever -- j val: 5 -- bar val: my clever
+i val: 2 -- foo val: clever -- j val: 6 -- bar val: my clever
+i val: 3 -- foo val: clever
+i val: 3 -- foo val: clever -- j val: 4 -- bar val: my clever
+i val: 3 -- foo val: clever -- j val: 5 -- bar val: my clever
+i val: 3 -- foo val: clever -- j val: 6 -- bar val: my clever
+clever

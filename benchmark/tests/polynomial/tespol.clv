@@ -1,0 +1,29 @@
+import std.io.*;
+
+function dopoly(x) {
+	var pol = [];
+	var mu = 10.0;
+	var s = 0.0;
+	
+	for (var j = 0; j<100; j++) {
+		mu = (mu + 2.0) / 2.0;
+		pol.append(mu);
+	}
+	
+	for (var j=0; j<100; j++) {
+	    s = x*s + pol[j];
+	}
+	
+	return s;
+}
+
+var n = 100000;
+var x = 0.2;
+var pu = 0.0;
+
+for(var i=0; i<n; i++) {
+	pu = pu + dopoly(x);
+}
+
+println("Clever");
+println(pu);

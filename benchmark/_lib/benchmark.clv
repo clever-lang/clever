@@ -79,22 +79,24 @@ class Language {
 }
 
 class Result {
-	var text;
-	var banner;
-	var value;
+	var output;
 	var tt;
+	var test;
+	//var banner;
+	//var value;
 
-	function Result(text, tt) {
+	function Result(output, tt, test) {
 		this.tt = tt;
-		this.text = text;
-		
-		var re = Regex.new("^(.*?)\r?\n(.*)\r?\n?");
-		if (!re.match(text)) {
-			println('ERROR: invalid output.', text, '*******');
+		this.output = output;
+		this.test = test;
+		/*var re = Regex.new("^(.*?)\r?\n(.*)\r?\n?");
+		if (!re.match(output)) {
+			println('ERROR: invalid output.', output, '*******');
 			return;
 		}
 		this.banner = re.group(1);
 		this.value = re.group(2);
+		*/
 	}
 }
 
@@ -121,38 +123,34 @@ class Test {
 	function run() {
 		var exec = '';
 		var cmd = this.lang.command;
-		var t = Reflect.new(cmd);
-		if (t.isArray()) {
+		if (is_array(cmd)) {
 			exec = cmd.pop();
 			this.prepare(cmd);
 		}
 		else { exec = cmd; }
 		
-        exec = this.rewrite(exec);
+		exec = this.rewrite(exec);
 		var tini = microtime();
 		var output = _exec(exec);
 		var tfim = microtime();
 		
 		//Tear Down files
 		if (this.lang.tear_down) {
-			var i=0,f='';
-			while (i < this.lang.tear_down.size()) {
-				f = this.rewrite(this.lang.tear_down.at(i));
+			for (var i = 0; i < this.lang.tear_down.size(); i++) {
+				var f = this.rewrite(this.lang.tear_down.at(i));
 				remove(f);
-				i++;
 			}
 		}
 		
-		return Result.new(output, (tfim - tini));
+		return Result.new(output, (tfim - tini), this);
 	}
 	
 	function prepare(cmd) {
-		var i = 0, exec = '';
-		while (i < cmd.size()) {
+		var exec = '';
+		for (var i = 0; i < cmd.size(); i++) {
 			exec = cmd.at(i);
 			exec = this.rewrite(exec);
 			_exec(exec);
-			i++;
 		}
 	}
 }
@@ -173,10 +171,8 @@ class GroupTest {
 	function loadTests() {
 		this.tests = [];
 		var files = glob(this.path + '/*');
-		var i = 0;
-		while (i < files.size()) {
-			var file = files[i++];
-			this.checkFile(file);
+		for (var i = 0; i < files.size(); i++) {
+			this.checkFile(files[i]);
 		}
 	}
 
@@ -200,9 +196,8 @@ class GroupTest {
 
 	function getLanguage(file) {
 		var ext = this.getExtension(file);
-		var i = 0;
-		while (i < this.env.langs.size()) {
-			var lang = this.env.langs[i++];
+		for (var i = 0; i < this.env.langs.size(); i++) {
+			var lang = this.env.langs[i];
 			if (lang.extension == ext) {
 				if (!lang.is_ok) {
 					continue;
@@ -211,6 +206,19 @@ class GroupTest {
 			}
 		}
 		return false;
+	}
+	
+	function runTests(cb_before_test=null) {
+		var results = [];
+		
+		for (var i = 0; i < this.tests.size(); i++) {
+			if (!is_null(cb_before_test)) {
+				cb_before_test(this.tests[i]);
+			}
+			results.append(this.tests[i].run());
+		}
+		
+		return results;
 	}
 }
 
@@ -244,13 +252,11 @@ class Environment {
 
 	function loadGroupTests() {
 		var path = this.basePath + '/tests',
-		tests_dir = glob(path + '/*'),
-		super = this;
-		var i = 0;
-		while (i < tests_dir.size()) {
+		tests_dir = glob(path + '/*');
+		
+		for (var i = 0; i < tests_dir.size(); i++) {
 			var group_dir = tests_dir[i],
 			info_file = group_dir + "/info.txt";
-			i++;
 			if (!file_exists(info_file)) {
 				continue;
 			}

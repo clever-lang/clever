@@ -1,0 +1,2 @@
+Computes the same 100-term polynomial 100,000 times inside a single function body
+ref: http://dan.corlan.net/bench.html
