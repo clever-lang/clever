@@ -31,6 +31,7 @@ public:
 	virtual void visit(IncDec* node);
 
 	virtual void visit(While* node);
+	virtual void visit(For* node);
 	virtual void visit(If* node);
 
 	virtual void visit(IntLit* node) {}

@@ -26,6 +26,7 @@ class Arithmetic;
 class FunctionDecl;
 class FunctionCall;
 class While;
+class For;
 class If;
 class IntLit;
 class DoubleLit;
@@ -825,6 +826,34 @@ private:
 
 	DISALLOW_COPY_AND_ASSIGN(While);
 };
+
+class For: public Node {
+public:
+	For(Node* condition, Node* block, const location& location)
+		: Node(location), m_condition(condition), m_block(block) {
+		m_condition->addRef();
+		clever_addref(m_block);
+	}
+
+	~For() {
+		m_condition->delRef();
+		clever_delref(m_block);
+	}
+
+	Node* getCondition() { return m_condition; }
+
+	Node* getBlock() { return m_block; }
+
+	virtual void accept(Visitor& visitor);
+	virtual Node* accept(Transformer& transformer);
+
+private:
+	Node *m_condition;
+	Node *m_block;
+
+	DISALLOW_COPY_AND_ASSIGN(For);
+};
+
 
 /// This class can handle both simple and complex (if + ifelse) if statements.
 /// If you want to add a new conditional block, use the addConditional method.
