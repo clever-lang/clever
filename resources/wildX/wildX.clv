@@ -16,8 +16,10 @@
 
 import engine.game.*;
 
+
 /* Grid position in screen*/
 var x0 = 5, y0 = 5;
+
 
 /* The grid definition*/
 var grid = [

@@ -87,10 +87,8 @@ class Clocks {
 
 		this.threads = [Thread.new(get_key, this.mw, this.sync)];
 
-		var i = 0;
-		while (i < this.n_threads) {
+		for (var i = 0; i < this.n_threads; ++i) {
 			this.threads.append(Thread.new(print_time, this.mw, x, y, Time.new(i), this.sync));
-			++i;
 		}
 	}
 	
