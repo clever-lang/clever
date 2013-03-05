@@ -102,8 +102,6 @@ class Game {
 
 /****************************************************************************/
 	function initVisited() {
-		var i = 0;
-
 		this.visited = [];
 
 		for (var i = 0; i < this.n; ++i) {
@@ -363,7 +361,7 @@ class Game {
 		var l = "";
 
 		for (var i = 0; i < this.m; ++i) {
-			if (j == py) {
+			if (i == py) {
 				l = l + 'x';
 			} else {
 				l = l + this.grid[px][i];

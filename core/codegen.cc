@@ -17,13 +17,9 @@ namespace clever { namespace ast {
 
 static CLEVER_FORCE_INLINE void _prepare_operand(Operand& op, Node* node)
 {
-	if (node->isLiteral()) {
-		op = Operand(FETCH_CONST, node->getVOffset());
-	} else if (node->getScope()) {
-		op = Operand(FETCH_VAR, node->getVOffset());
-	} else {
-		op = Operand(FETCH_TMP, node->getVOffset());
-	}
+	op = Operand(node->isLiteral() ? FETCH_CONST :
+		(node->getScope() ? FETCH_VAR : FETCH_TMP),
+		node->getVOffset());
 }
 
 void Codegen::sendArgs(NodeArray* node)
@@ -253,6 +249,7 @@ void Codegen::visit(For* node)
 
 	_prepare_operand(jmpz.op1, cond);
 
+	m_cont.push(AddrVector());
 	m_brks.push(AddrVector());
 	m_brks.top().push_back(start_while);
 
@@ -265,6 +262,14 @@ void Codegen::visit(For* node)
 		}
 	}
 
+	if (!m_cont.top().empty()) {
+		// Set the continue statements jmp address
+		for (size_t i = 0, j = m_cont.top().size(); i < j; ++i) {
+			m_builder->getAt(m_cont.top()[i]).op1.jmp_addr = m_builder->getSize() - node->getOffset();
+		}
+	}
+
+	m_cont.pop();
 	m_brks.pop();
 
 	m_builder->push(OP_JMP, Operand(JMP_ADDR, start_while));
@@ -283,6 +288,7 @@ void Codegen::visit(While* node)
 
 	_prepare_operand(jmpz.op1, cond);
 
+	m_cont.push(AddrVector());
 	m_brks.push(AddrVector());
 	m_brks.top().push_back(start_while);
 
@@ -295,6 +301,7 @@ void Codegen::visit(While* node)
 		}
 	}
 
+	m_cont.pop();
 	m_brks.pop();
 
 	m_builder->push(OP_JMP, Operand(JMP_ADDR, start_while));
@@ -611,6 +618,7 @@ void Codegen::visit(Throw* node)
 
 void Codegen::visit(Continue* node)
 {
+	m_cont.top().push_back(m_builder->getSize());
 	m_builder->push(OP_JMP, Operand(JMP_ADDR, m_brks.top().front()));
 }
 

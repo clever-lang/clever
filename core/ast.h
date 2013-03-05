@@ -824,8 +824,8 @@ private:
 
 class For: public Node {
 public:
-	For(Node* condition, Node* block, const location& location)
-		: Node(location), m_condition(condition), m_block(block) {
+	For(Node* condition, Node* block, const location& location, size_t offset = 0)
+		: Node(location), m_condition(condition), m_block(block), m_offset(offset) {
 		m_condition->addRef();
 		clever_addref(m_block);
 	}
@@ -839,12 +839,14 @@ public:
 
 	Node* getBlock() const { return m_block; }
 
+	size_t getOffset() const { return m_offset; }
 	virtual void accept(Visitor& visitor);
 	virtual Node* accept(Transformer& transformer);
 
 private:
 	Node* m_condition;
 	Node* m_block;
+	size_t m_offset;
 
 	DISALLOW_COPY_AND_ASSIGN(For);
 };

@@ -73,6 +73,7 @@ private:
 	IRBuilder* m_builder;
 	JmpList m_jmps;
 	JmpList m_brks;
+	JmpList m_cont;
 
 	DISALLOW_COPY_AND_ASSIGN(Codegen);
 };
