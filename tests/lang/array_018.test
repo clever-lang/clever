@@ -11,11 +11,22 @@ t.each(function(i) {
 	var bar = 'my clever';
 	
 	t2.each(function(j) {
-		println(" -- j val: " + j + " -- bar val: " + bar);
+		println("i val: " + i + " -- foo val: " + foo + " -- j val: " + j + " -- bar val: " + bar);
 	});
 });
 
 println(foo);
 ==RESULT==
-\[2, 3, 4, 5\]
-\[3, 4, 5\]
+i val: 1 -- foo val: clever
+i val: 1 -- foo val: clever -- j val: 4 -- bar val: my clever
+i val: 1 -- foo val: clever -- j val: 5 -- bar val: my clever
+i val: 1 -- foo val: clever -- j val: 6 -- bar val: my clever
+i val: 2 -- foo val: clever
+i val: 2 -- foo val: clever -- j val: 4 -- bar val: my clever
+i val: 2 -- foo val: clever -- j val: 5 -- bar val: my clever
+i val: 2 -- foo val: clever -- j val: 6 -- bar val: my clever
+i val: 3 -- foo val: clever
+i val: 3 -- foo val: clever -- j val: 4 -- bar val: my clever
+i val: 3 -- foo val: clever -- j val: 5 -- bar val: my clever
+i val: 3 -- foo val: clever -- j val: 6 -- bar val: my clever
+clever
