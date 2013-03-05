@@ -106,16 +106,12 @@ class Game {
 
 		this.visited = [];
 
-		while (i < this.n) {
-			var j = 0;
-
+		for (var i = 0; i < this.n; ++i) {
 			this.visited.append([]);
 
-			while (j < this.m) {
+			for (var j = 0; j < this.m; ++j) {
 				this.visited[i].append(false);
-				++j;
 			}
-			++i;
 		}
 	}
 
@@ -139,22 +135,15 @@ class Game {
 
 /****************************************************************************/
 	function updateVisited(ux, uy) {
-		var i = -this.r;
-
-		while (i <= this.r) {
-			var j = -this.r;
-		
-			while (j <= this.r) {
+		for (var i = -this.r; i <= this.r; ++i) {
+			for (var j = -this.r; j <= this.r; ++j) {
 				var px = ux + i;
 				var py = uy + j;
 
 				if (this.isValidPos(px, py) && (i * i + j * j) <= this.r * this.r) {
 					this.visited[px][py] = true;
 				}
-
-				++j;
 			}
-			++i;
 		}
 	}
 
@@ -201,13 +190,10 @@ class Game {
 /****************************************************************************/
 	/* Start game with n_moves */
 	function start(n_moves) {
-		var i = 0;
 		var px, py;
 
-		while (i < this.n) {
-			var j = 0;
-
-			while (j < this.m) {
+		for (var i = 0; i < this.n; ++i) {
+			for (var j = 0; j < this.m; ++j) {
 				switch (this.grid[i][j]) {
 					case'x':
 						px = i;
@@ -230,9 +216,7 @@ class Game {
 						++this.nAo;
 					break;
 				}
-				++j;
 			}
-			++i;
 		}
 
 		this.p0 = Point.new(px, py);
@@ -266,21 +250,15 @@ class Game {
 /****************************************************************************/
 	/* Paint game grid */
 	function paint() {
-		var i = 0;
-
-		while (i < this.grid.size()) {
-			var j = 0;
-
-			while (j < this.grid[i].size()) {
+		for (var i = 0; i < this.grid.size(); ++i) {
+			for (var j = 0; j < this.grid[i].size(); ++j) {
 				var c = this.grid[i][j];
 
 				if (this.isVisited(i, j)) {
 					this.mw.setColor(this.colors[c]);
 					this.mw.addChar(i + this.x0, j + this.y0, c);
 				} 
-				++j;
 			}
-			++i;
 		}
 	}
 
@@ -382,15 +360,14 @@ class Game {
 	function draw() {
 		var px = this.player.p.x;
 		var py = this.player.p.y;
-		var j = 0, l = "";
+		var l = "";
 
-		while (j < this.m) {
+		for (var i = 0; i < this.m; ++i) {
 			if (j == py) {
 				l = l + 'x';
 			} else {
-				l = l + this.grid[px][j];
+				l = l + this.grid[px][i];
 			}
-			++j;
 		}
 		this.grid[px] = l;
 
@@ -437,6 +414,7 @@ class Game {
 
 		/* Finish game*/
 		this.finish();
+
 	}
 }
 
