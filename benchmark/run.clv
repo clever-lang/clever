@@ -1,5 +1,6 @@
 import std.io.*;
 import std.sys.*;
+import std.collection.*;
 import _lib.benchmark.*;
 
 var base_path = 'benchmark';
@@ -8,10 +9,10 @@ var env = Environment.new(base_path);
 env.addLanguage('Clever', 'clever %f', 'clever -v', '^Clever - (.*)', 'clv');
 env.addLanguage('Python', 'python %f', 'python -V', '^Python (.*)', 'py');
 env.addLanguage('Lua', 'lua %f', 'lua -v', '^Lua ([^ ]+)', 'lua');
-//env.addLanguage('Java', ['javac %f', 'java -cp %d %o'], 'java -version', '^java version "([^"]+)', 'java', ['%d/%o.class']);
+env.addLanguage('Java', ['javac %f', 'java -cp %d %o'], 'java -version', '^java version "([^"]+)', 'java', ['%d/%o.class']);
 env.addLanguage('PHP', 'php %f', 'php -v', '^PHP ([^ ]+)', 'php');
 env.addLanguage('Ruby', 'ruby %f', 'ruby -v', '^ruby ([^ ]+)', 'rb');
-//env.addLanguage('C', ['gcc -O2 -o %d/%o.exe %f', '%d/%o.exe'], 'gcc -v', '\ngcc version ([^ ]+) \(.*$', 'c', ['%d/%o.exe']);
+env.addLanguage('C', ['gcc -O2 -o %d/%o.exe %f', '%d/%o.exe'], 'gcc -v', '\ngcc version ([^ ]+) \(.*$', 'c', ['%d/%o.exe']);
 
 env.bootstrap();
 
@@ -27,10 +28,37 @@ env.langs.each(function(l) {
 println("");
 println("=== Tests ===");
 var i = 0;
+
+
 env.groups.each(function(g) {
 	print(++i + ') ');
 	println(g.info);
+	
+	print('running tests ');
+	flush();
+	var results = g.runTests(function (test) {
+		print('.');
+		flush();
+	});
+	println('');
+	
+	// Sorting Results by total execution time
+	/*var set = Set.new(function (a, b) { return a.tt < b.tt; });
+	for (var i = 0; i < rs.size(); i++) { set.insert(rs[i]); }
 
+	for (i = 0; i < set.size(); i++) {
+		var r = set.find(i);
+		
+		//println("-- "+ r.test.lang.name + ": " + r.tt);
+		println(r);
+	}
+	*/
+	
+	for (var i = 0; i < results.size(); i++) {
+		println("-- "+ results[i].test.lang.name + ": " + results[i].tt);
+	}
+	
+	/*
 	g.tests.each(function(t) {
 		println('-- '+ t.lang.name + ': ');
 		var rs = t.run();
@@ -38,4 +66,5 @@ env.groups.each(function(g) {
 		//println('***** '+ rs.text);
 		println('  Total time: '+ rs.tt + ' s');
 	});
+	*/
 });
