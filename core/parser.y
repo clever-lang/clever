@@ -650,12 +650,12 @@ for_expr_2:
 ;
 
 for_expr_3:
-		call_args { if ($1) { $$ = $<node>1; } else { $$ = new ast::Block(yyloc); } }
+		call_args { if ($1) { $$ = $<node>1; } else { $$ = NULL; } }
 ;
 
 for:
 		FOR '(' for_expr_1 ';' for_expr_2 ';' for_expr_3 ')' block
-		{ $$ = new ast::Block(yyloc); $$->append($<node>3); $9->append($<node>7); $$->append(new ast::For($<node>5, $9, yyloc)); }
+		{ $$ = new ast::Block(yyloc); $$->append($<node>3); size_t offset = 0; if ($7) { $9->append($<node>7); offset = $<narray>7->getSize(); } $$->append(new ast::For($<node>5, $9, yyloc, offset)); }
 ;
 
 elseif:

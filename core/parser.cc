@@ -1226,12 +1226,12 @@ yylloc.begin.filename = yylloc.end.filename = driver.getFile();
 
   case 228:
 
-    { if ((yysemantic_stack_[(1) - (1)].narray)) { (yyval.node) = (yysemantic_stack_[(1) - (1)].node); } else { (yyval.node) = new ast::Block(yyloc); } }
+    { if ((yysemantic_stack_[(1) - (1)].narray)) { (yyval.node) = (yysemantic_stack_[(1) - (1)].node); } else { (yyval.node) = NULL; } }
     break;
 
   case 229:
 
-    { (yyval.block) = new ast::Block(yyloc); (yyval.block)->append((yysemantic_stack_[(9) - (3)].node)); (yysemantic_stack_[(9) - (9)].block)->append((yysemantic_stack_[(9) - (7)].node)); (yyval.block)->append(new ast::For((yysemantic_stack_[(9) - (5)].node), (yysemantic_stack_[(9) - (9)].block), yyloc)); }
+    { (yyval.block) = new ast::Block(yyloc); (yyval.block)->append((yysemantic_stack_[(9) - (3)].node)); size_t offset = 0; if ((yysemantic_stack_[(9) - (7)].node)) { (yysemantic_stack_[(9) - (9)].block)->append((yysemantic_stack_[(9) - (7)].node)); offset = (yysemantic_stack_[(9) - (7)].narray)->getSize(); } (yyval.block)->append(new ast::For((yysemantic_stack_[(9) - (5)].node), (yysemantic_stack_[(9) - (9)].block), yyloc, offset)); }
     break;
 
   case 231:
