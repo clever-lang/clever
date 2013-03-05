@@ -17,13 +17,9 @@ namespace clever { namespace ast {
 
 static CLEVER_FORCE_INLINE void _prepare_operand(Operand& op, Node* node)
 {
-	if (node->isLiteral()) {
-		op = Operand(FETCH_CONST, node->getVOffset());
-	} else if (node->getScope()) {
-		op = Operand(FETCH_VAR, node->getVOffset());
-	} else {
-		op = Operand(FETCH_TMP, node->getVOffset());
-	}
+	op = Operand(node->isLiteral() ? FETCH_CONST :
+		(node->getScope() ? FETCH_VAR : FETCH_TMP),
+		node->getVOffset());
 }
 
 void Codegen::sendArgs(NodeArray* node)
