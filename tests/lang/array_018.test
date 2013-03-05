@@ -1,0 +1,21 @@
+Testing array each with variable scopes
+==CODE==
+import std.io.*;
+
+var t = [1,2,3];
+var t2 = [4,5,6];
+var foo = 'clever';
+
+t.each(function(i) {
+	println("i val: " + i + " -- foo val: " + foo);
+	var bar = 'my clever';
+	
+	t2.each(function(j) {
+		println(" -- j val: " + j + " -- bar val: " + bar);
+	});
+});
+
+println(foo);
+==RESULT==
+\[2, 3, 4, 5\]
+\[3, 4, 5\]
