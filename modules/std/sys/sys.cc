@@ -6,12 +6,12 @@
  */
 
 #include <cstdlib>
-
 #ifdef CLEVER_WIN32
 # include <direct.h>
 # include <windows.h>
 # define PATH_MAX MAX_PATH
 #else
+# include <sys/utsname.h>
 # include <dirent.h>
 # include <unistd.h>
 # include <sys/resource.h>
@@ -217,6 +217,21 @@ static CLEVER_FUNCTION(getsid)
 	result->setInt(::getsid(0));
 }
 
+// Returns a Value ptr containing the OS name
+static Value* _get_os()
+{
+	Value* val = new Value(CLEVER_STR_TYPE, true);
+
+#ifndef CLEVER_WIN32
+	struct utsname name;
+
+	if (!uname(&name)) {
+		val->setStr(new StrObject(name.sysname));
+	}
+#endif
+	return val;
+}
+
 } // clever::modules::std::sys
 
 // Initializes Standard module
@@ -236,6 +251,8 @@ CLEVER_MODULE_INIT(SYSModule)
 	addFunction(new Function("clock",     &CLEVER_NS_FNAME(sys, clock)));
 	addFunction(new Function("time",      &CLEVER_NS_FNAME(sys, time)));
 	addFunction(new Function("microtime", &CLEVER_NS_FNAME(sys, microtime)));
+
+	addVariable("OS", sys::_get_os());
 }
 
 }}} // clever::modules::std
