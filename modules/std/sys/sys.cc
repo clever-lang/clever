@@ -6,6 +6,8 @@
  */
 
 #include <cstdlib>
+#include <sstream>
+
 #ifdef CLEVER_WIN32
 # include <direct.h>
 # include <windows.h>
@@ -13,17 +15,17 @@
 #else
 # include <sys/utsname.h>
 # include <dirent.h>
-# include <unistd.h>
 # include <sys/resource.h>
 # include <sys/time.h>
+# include <unistd.h>
 #endif
+#include "core/clever.h"
 #include "core/value.h"
 #include "core/driver.h"
-#include "modules/std/sys/sys.h"
 #include "core/native_types.h"
 #include "core/modmanager.h"
 #include "core/cexception.h"
-
+#include "modules/std/sys/sys.h"
 
 #ifndef PATH_MAX
 # define PATH_MAX 1024
@@ -217,6 +219,49 @@ static CLEVER_FUNCTION(getsid)
 	result->setInt(::getsid(0));
 }
 
+// info()
+// Returns information about the build and environment
+static CLEVER_FUNCTION(info)
+{
+	if (!clever_static_check_no_args()) {
+		return;
+	}
+
+	::std::ostringstream oss;
+	oss << "Version: " << CLEVER_VERSION_STRING << "\n";
+	oss << "Debug Mode: ";
+#ifdef CLEVER_DEBUG
+	oss << "Yes\n";
+#else
+	oss << "No\n";
+#endif
+
+	oss << "OS: ";
+#ifdef CLEVER_WIN32
+	oss << "Windows";
+# ifdef CLEVER_CYGWIN
+	oss << " (Cygwin)";
+# elif CLEVER_MSVC
+	oss << " (MSVC)";
+# endif
+#elif CLEVER_APPLE
+	oss << "Mac OSX";
+#elif CLEVER_HAIKU
+	oss << "Haiku";
+#else
+	oss << "Unknown";
+#endif
+	oss << "\n\n";
+
+	oss << "Integer Size: " << sizeof(long) * 8 << " bits (" << sizeof(long)
+		<< " bytes)";
+
+	// TODO(muriloadriano): Add more and more detailed information about the
+	// environment and the enabled modules.
+
+	return result->setStr(new StrObject(oss.str()));
+}
+
 // Returns a Value ptr containing the OS name
 static Value* _get_os()
 {
@@ -251,6 +296,7 @@ CLEVER_MODULE_INIT(SYSModule)
 	addFunction(new Function("clock",     &CLEVER_NS_FNAME(sys, clock)));
 	addFunction(new Function("time",      &CLEVER_NS_FNAME(sys, time)));
 	addFunction(new Function("microtime", &CLEVER_NS_FNAME(sys, microtime)));
+	addFunction(new Function("info",      &CLEVER_NS_FNAME(sys, info)));
 
 	addVariable("OS", sys::_get_os());
 }
