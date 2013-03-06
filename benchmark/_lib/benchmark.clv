@@ -60,11 +60,11 @@ class Language {
 
 	function check() {
 		var version_str = _exec(this.check_cmd, true);
-		
+
 		if (version_str == false) {
 			return false;
 		}
-		
+
 		var re = Regex.new(this.version_er);
 
 		if (!re.match(version_str)) {
@@ -108,15 +108,15 @@ class Test {
 		this.file = file;
 		this.lang = lang;
 	}
-	
+
 	function rewrite(xcmd) {
 		xcmd = xcmd.replace('%f', this.file);
 		xcmd = xcmd.replace('%d', dirname(this.file));
-		
+
 		var re = Regex.new("^(.*)\.(.*?)$");
 		re.match(basename(this.file));
 		xcmd = xcmd.replace('%o', re.group(1));
-		
+
 		return xcmd;
 	}
 
@@ -128,23 +128,25 @@ class Test {
 			this.prepare(cmd);
 		}
 		else { exec = cmd; }
-		
+
 		exec = this.rewrite(exec);
 		var tini = microtime();
 		var output = _exec(exec);
 		var tfim = microtime();
-		
+
 		//Tear Down files
 		if (this.lang.tear_down) {
 			for (var i = 0; i < this.lang.tear_down.size(); i++) {
 				var f = this.rewrite(this.lang.tear_down.at(i));
-				remove(f);
+				if (file_exists(f)) {
+					remove(f);
+				}
 			}
 		}
-		
+
 		return Result.new(output, (tfim - tini), this);
 	}
-	
+
 	function prepare(cmd) {
 		var exec = '';
 		for (var i = 0; i < cmd.size(); i++) {
@@ -207,17 +209,17 @@ class GroupTest {
 		}
 		return false;
 	}
-	
+
 	function runTests(cb_before_test=null) {
 		var results = [];
-		
+
 		for (var i = 0; i < this.tests.size(); i++) {
 			if (!is_null(cb_before_test)) {
 				cb_before_test(this.tests[i]);
 			}
 			results.append(this.tests[i].run());
 		}
-		
+
 		return results;
 	}
 }
@@ -253,7 +255,7 @@ class Environment {
 	function loadGroupTests() {
 		var path = this.basePath + '/tests',
 		tests_dir = glob(path + '/*');
-		
+
 		for (var i = 0; i < tests_dir.size(); i++) {
 			var group_dir = tests_dir[i],
 			info_file = group_dir + "/info.txt";
