@@ -16,6 +16,7 @@ make-c++11.sh
 *.so
 *.dll
 *.a
+*.class
 *.exe
 *.lib
 *.manifest
