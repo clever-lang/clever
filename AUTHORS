@@ -10,6 +10,11 @@ the Clever project.
   - Murilo Adriano Vasconcelos  - murilo at clever-lang.org
   - Péricles Lopes Machado      - pericles at clever-lang.org
 
-+ Windows port
++ Windows and Haiku port
   - Ricardo Gomes da Silva      - ricardo at clever-lang.org
 
++ Benchmark script, testing and module improvements
+  - Pedro Faria
+
++ MySQL module
+  - Henrique M. Decaria
