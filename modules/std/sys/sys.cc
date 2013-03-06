@@ -228,7 +228,13 @@ static CLEVER_FUNCTION(info)
 
 	::std::ostringstream oss;
 	oss << "Version: " << CLEVER_VERSION_STRING << "\n";
-	oss << "Debug Mode: " << (CLEVER_DEBUG ? "Yes" : "No") << "\n";
+	oss << "Debug Mode: ";
+#ifdef CLEVER_DEBUG
+	oss << "Yes\n";
+#else
+	oss << "No";
+#endif
+
 	oss << "OS: ";
 #ifdef CLEVER_WIN32
 	oss << "Windows";
