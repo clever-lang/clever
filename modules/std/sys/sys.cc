@@ -244,7 +244,10 @@ static CLEVER_FUNCTION(info)
 #else
 	oss << "Unknown";
 #endif
-	oss << "\n";
+	oss << "\n\n";
+
+	oss << "Integer Size: " << sizeof(long) * 8 << " bits (" << sizeof(long)
+		<< " bytes)";
 
 	// TODO(muriloadriano): Add more and more detailed information about the
 	// environment and the enabled modules.
