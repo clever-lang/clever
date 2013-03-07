@@ -91,8 +91,9 @@ class Value;
 %type <fdecl> fdecl anonymous_fdecl
 %type <ret> return_stmt
 %type <while_loop> while
-%type <block> for
-%type <node> for_expr_1 for_expr_2 for_expr_3
+%type <for_loop> for
+%type <narray> for_expr_1 for_expr_3
+%type <node> for_expr_2
 %type <inc_dec> inc_dec
 %type <ifcond> if else
 %type <boolean> boolean
@@ -640,22 +641,22 @@ while:
 ;
 
 for_expr_1:
-		variable_decl { $$ = $<node>1; }
-	|	call_args     { if ($1) { $$ = $<node>1; } else { $$ = new ast::Block(yyloc); } }
+		/* empty */         { $$ = NULL; }
+	|	variable_decl
+	|	non_empty_call_args
 ;
 
 for_expr_2:
-		/* empty */ { $$ = new ast::TrueLit(yyloc); }
-	|	rvalue      { $$ = $<node>1; }
+		/* empty */     { $$ = NULL;     }
+	|	rvalue          { $$ = $<node>1; }
 ;
 
 for_expr_3:
-		call_args { if ($1) { $$ = $<node>1; } else { $$ = NULL; } }
+		call_args
 ;
 
 for:
-		FOR '(' for_expr_1 ';' for_expr_2 ';' for_expr_3 ')' block
-		{ $$ = new ast::Block(yyloc); $$->append($<node>3); size_t offset = 0; if ($7) { $9->append($<node>7); offset = $<narray>7->getSize(); } $$->append(new ast::For($<node>5, $9, yyloc, offset)); }
+		FOR '(' for_expr_1 ';' for_expr_2 ';' for_expr_3 ')' block { $$ = new ast::For($3, $5, $7, $9, yyloc); }
 ;
 
 elseif:

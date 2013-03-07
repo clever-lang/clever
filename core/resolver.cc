@@ -309,4 +309,31 @@ void Resolver::visit(AttrDecl* node)
 	node->setScope(m_scope);
 }
 
+void Resolver::visit(For* node)
+{
+	if (node->hasInitializer()) {
+		m_scope = m_scope->enter();
+		m_scope->setEnvironment(m_stack.top());
+		m_stack.top()->addRef();
+
+		Visitor::visit(static_cast<NodeArray*>(node->getInitializer()));
+	}
+
+	node->setScope(m_scope);
+
+	if (node->hasCondition()) {
+		node->getCondition()->accept(*this);
+	}
+
+	node->getBlock()->accept(*this);
+
+	if (node->hasUpdate()) {
+		Visitor::visit(static_cast<NodeArray*>(node->getUpdate()));
+	}
+
+	if (node->hasInitializer()) {
+		m_scope = m_scope->leave();
+	}
+}
+
 }} // clever::ast

@@ -93,8 +93,16 @@ void Visitor::visit(While* node)
 
 void Visitor::visit(For* node)
 {
-	node->getCondition()->accept(*this);
+	if (node->hasInitializer()) {
+		node->getInitializer()->accept(*this);
+	}
+	if (node->hasCondition()) {
+		node->getCondition()->accept(*this);
+	}
 	node->getBlock()->accept(*this);
+	if (node->hasUpdate()) {
+		node->getUpdate()->accept(*this);
+	}
 }
 
 void Visitor::visit(If* node)

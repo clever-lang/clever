@@ -824,29 +824,38 @@ private:
 
 class For: public Node {
 public:
-	For(Node* condition, Node* block, const location& location, size_t offset = 0)
-		: Node(location), m_condition(condition), m_block(block), m_offset(offset) {
-		m_condition->addRef();
+	For(NodeArray* initlist, Node* cond, NodeArray* update, Node* block, const location& location)
+		: Node(location),  m_init(initlist), m_condition(cond), m_update(update), m_block(block) {
+		clever_addref(m_init);
+		clever_addref(m_condition);
+		clever_addref(m_update);
 		clever_addref(m_block);
 	}
 
 	~For() {
-		m_condition->delRef();
+		clever_delref(m_init);
+		clever_delref(m_condition);
+		clever_delref(m_update);
 		clever_delref(m_block);
 	}
 
+	bool hasInitializer() const { return m_init != NULL; }
+	bool hasCondition() const { return m_condition != NULL; }
+	bool hasUpdate() const { return m_update != NULL; }
+
+	NodeArray* getInitializer() const { return m_init; }
 	Node* getCondition() const { return m_condition; }
+	NodeArray* getUpdate() const { return m_update; }
 
 	Node* getBlock() const { return m_block; }
 
-	size_t getOffset() const { return m_offset; }
 	virtual void accept(Visitor& visitor);
 	virtual Node* accept(Transformer& transformer);
-
 private:
+	NodeArray* m_init;
 	Node* m_condition;
+	NodeArray* m_update;
 	Node* m_block;
-	size_t m_offset;
 
 	DISALLOW_COPY_AND_ASSIGN(For);
 };

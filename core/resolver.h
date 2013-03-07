@@ -44,6 +44,7 @@ public:
 	virtual void visit(Catch*);
 	virtual void visit(ClassDef*);
 	virtual void visit(AttrDecl*);
+	virtual void visit(For*);
 private:
 	const ModManager& m_modmanager;
 	const std::string& m_ns_name;
