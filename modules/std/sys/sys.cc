@@ -46,9 +46,9 @@ static CLEVER_FUNCTION(system)
 	result->setInt(::system(args[0]->getStr()->c_str()));
 }
 
-// putenv(string env)
+// put_env(string env)
 // Sets an environment variable
-static CLEVER_FUNCTION(putenv)
+static CLEVER_FUNCTION(put_env)
 {
 	if (!clever_static_check_args("s")) {
 		return;
@@ -57,9 +57,9 @@ static CLEVER_FUNCTION(putenv)
 	::putenv(const_cast<char*>(args[0]->getStr()->c_str()));
 }
 
-// getenv(string env)
+// get_env(string env)
 // Gets an environment variable
-static CLEVER_FUNCTION(getenv)
+static CLEVER_FUNCTION(get_env)
 {
 	if (!clever_static_check_args("s")) {
 		return;
@@ -74,9 +74,9 @@ static CLEVER_FUNCTION(getenv)
 	}
 }
 
-// getcwd()
+// get_cwd()
 // Gets the current working directory
-static CLEVER_FUNCTION(getcwd)
+static CLEVER_FUNCTION(get_cwd)
 {
 	if (!clever_static_check_no_args()) {
 		return;
@@ -175,9 +175,9 @@ static CLEVER_FUNCTION(microtime)
 	result->setDouble(tp.tv_sec + tp.tv_usec / 1000000.00);
 }
 
-// getpid()
+// get_pid()
 // Returns the current process id
-static CLEVER_FUNCTION(getpid)
+static CLEVER_FUNCTION(get_pid)
 {
 	if (!clever_static_check_no_args()) {
 		return;
@@ -186,9 +186,9 @@ static CLEVER_FUNCTION(getpid)
 	result->setInt(::getpid());
 }
 
-// getppid()
+// get_ppid()
 // Returns the current process id
-static CLEVER_FUNCTION(getppid)
+static CLEVER_FUNCTION(get_ppid)
 {
 	if (!clever_static_check_no_args()) {
 		return;
@@ -197,9 +197,9 @@ static CLEVER_FUNCTION(getppid)
 	result->setInt(::getppid());
 }
 
-// getuid()
+// get_uid()
 // Returns the process user id
-static CLEVER_FUNCTION(getuid)
+static CLEVER_FUNCTION(get_uid)
 {
 	if (!clever_static_check_no_args()) {
 		return;
@@ -208,9 +208,9 @@ static CLEVER_FUNCTION(getuid)
 	result->setInt(::geteuid());
 }
 
-// getsid()
+// get_sid()
 // Returns the process group id
-static CLEVER_FUNCTION(getsid)
+static CLEVER_FUNCTION(get_sid)
 {
 	if (!clever_static_check_no_args()) {
 		return;
@@ -283,13 +283,13 @@ static Value* _get_os()
 CLEVER_MODULE_INIT(SYSModule)
 {
 	addFunction(new Function("system",    &CLEVER_NS_FNAME(sys, system)));
-	addFunction(new Function("putenv",    &CLEVER_NS_FNAME(sys, putenv)));
-	addFunction(new Function("getenv",    &CLEVER_NS_FNAME(sys, getenv)));
-	addFunction(new Function("getcwd",    &CLEVER_NS_FNAME(sys, getcwd)));
-	addFunction(new Function("getpid",    &CLEVER_NS_FNAME(sys, getpid)));
-	addFunction(new Function("getppid",   &CLEVER_NS_FNAME(sys, getppid)));
-	addFunction(new Function("getuid",    &CLEVER_NS_FNAME(sys, getuid)));
-	addFunction(new Function("getsid",    &CLEVER_NS_FNAME(sys, getsid)));
+	addFunction(new Function("put_env",   &CLEVER_NS_FNAME(sys, put_env)));
+	addFunction(new Function("get_env",   &CLEVER_NS_FNAME(sys, get_env)));
+	addFunction(new Function("get_cwd",   &CLEVER_NS_FNAME(sys, get_cwd)));
+	addFunction(new Function("get_pid",   &CLEVER_NS_FNAME(sys, get_pid)));
+	addFunction(new Function("get_ppid",  &CLEVER_NS_FNAME(sys, get_ppid)));
+	addFunction(new Function("get_uid",   &CLEVER_NS_FNAME(sys, get_uid)));
+	addFunction(new Function("get_sid",   &CLEVER_NS_FNAME(sys, get_sid)));
 	addFunction(new Function("argc",      &CLEVER_NS_FNAME(sys, argc)));
 	addFunction(new Function("argv",      &CLEVER_NS_FNAME(sys, argv)));
 	addFunction(new Function("sleep",     &CLEVER_NS_FNAME(sys, sleep)));
