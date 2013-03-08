@@ -165,7 +165,7 @@ CLEVER_METHOD(ArrayType::shift)
 		return;
 	}
 
-	ValueVector& vec = (CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS()))->getData();
+	ValueVector& vec = CLEVER_GET_OBJECT(ArrayObject*, CLEVER_THIS())->getData();
 
 	if (vec.empty()) {
 		result->setNull();
