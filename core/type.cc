@@ -29,10 +29,13 @@ void TypeObject::copyMembers(const Type* type)
 
 	const MemberMap& members = type->getMembers();
 
-	if (!members.empty()) {
-		MemberMap::const_iterator it(members.begin()), end(members.end());
+	MemberMap::const_iterator it(members.begin()), end(members.end());
 
-		for (; it != end; ++it) {
+	for (; it != end; ++it) {
+		if (it->second->isConst()) {
+			addMember(it->first, it->second);
+			clever_addref(it->second);
+		} else {
 			addMember(it->first, it->second->clone());
 		}
 	}
@@ -97,6 +100,7 @@ Function* Type::addMethod(Function* func)
 	clever_assert_not_null(func);
 
 	val->setObj(CLEVER_FUNC_TYPE, func);
+	val->setConst(true);
 	addMember(CSTRING(func->getName()), val);
 
 	return func;

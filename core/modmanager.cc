@@ -31,7 +31,7 @@ void ModManager::init()
 void ModManager::shutdown()
 {
 	std::vector<Type*> typevec;
-	ModuleMap::const_iterator itm = m_mods.begin(), endm = m_mods.end();
+	ModuleMap::const_iterator itm(m_mods.begin()), endm(m_mods.end());
 
 	while (itm != endm) {
 		TypeMap& types = itm->second->getTypes();
