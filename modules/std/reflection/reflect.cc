@@ -5,6 +5,7 @@
  * This file is distributed under the MIT license. See LICENSE for details.
  */
 
+#include <string>
 #include "core/clever.h"
 #include "modules/std/core/function.h"
 #include "modules/std/reflection/reflect.h"
@@ -12,8 +13,6 @@
 #include "modules/std/core/map.h"
 #include "core/vm.h"
 #include "core/scope.h"
-
-#include <string>
 
 namespace clever { namespace modules { namespace std { namespace reflection {
 
