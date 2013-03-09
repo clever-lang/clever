@@ -450,7 +450,7 @@ CLEVER_METHOD(StrType::toLower)
 
 	const ::std::string* str = clever_this()->getStr();
 	::std::string buffer = *str;
-	std::transform(buffer.begin(), buffer.end(),buffer.begin(), ::tolower);
+	std::transform(buffer.begin(), buffer.end(), buffer.begin(), ::tolower);
 	result->setStr(new StrObject(buffer));
 }
 
