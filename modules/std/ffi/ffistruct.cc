@@ -260,18 +260,18 @@ ExtStruct* FFITypes::getStruct(const CString& name)
 
 CLEVER_TYPE_INIT(FFITypes::init)
 {
-	setConstructor((MethodPtr) &FFITypes::ctor);
+	setConstructor((MethodPtr)&FFITypes::ctor);
 
 	addMethod(new Function("addMember",   (MethodPtr)&FFITypes::addMember));
 	addMethod(new Function("addFunction", (MethodPtr)&FFITypes::addFunction));
 
-	addProperty(CSTRING("INT"),		new Value(long(FFIINT),     true));
-	addProperty(CSTRING("DOUBLE"),	new Value(long(FFIDOUBLE),  true));
-	addProperty(CSTRING("BOOL"),	new Value(long(FFIBOOL),    true));
-	addProperty(CSTRING("VOID"),	new Value(long(FFIVOID),    true));
-	addProperty(CSTRING("STRING"),	new Value(long(FFISTRING),  true));
-	addProperty(CSTRING("POINTER"),	new Value(long(FFIPOINTER), true));
-	addProperty(CSTRING("STRUCT"),	new Value(long(FFISTRUCT),  true));
+	addProperty("INT",      new Value(long(FFIINT),     true));
+	addProperty("DOUBLE",   new Value(long(FFIDOUBLE),  true));
+	addProperty("BOOL",     new Value(long(FFIBOOL),    true));
+	addProperty("VOID",     new Value(long(FFIVOID),    true));
+	addProperty("STRING",   new Value(long(FFISTRING),  true));
+	addProperty("POINTER",  new Value(long(FFIPOINTER), true));
+	addProperty("STRUCT",   new Value(long(FFISTRUCT),  true));
 }
 
 }}} // clever::modules::std

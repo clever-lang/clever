@@ -404,39 +404,39 @@ CLEVER_TYPE_INIT(NCurses::init)
 	addMethod(new Function("height",       (MethodPtr)&NCurses::height));
 
 	// COLORS
-	addProperty(CSTRING("RED"),        new Value(long(COLOR_RED),        true));
-	addProperty(CSTRING("BLACK"),      new Value(long(COLOR_BLACK),      true));
-	addProperty(CSTRING("GREEN"),      new Value(long(COLOR_GREEN),      true));
-	addProperty(CSTRING("YELLOW"),     new Value(long(COLOR_YELLOW),     true));
-	addProperty(CSTRING("BLUE"),       new Value(long(COLOR_BLUE),       true));
-	addProperty(CSTRING("MAGENTA"),    new Value(long(COLOR_MAGENTA),    true));
-	addProperty(CSTRING("CYAN"),       new Value(long(COLOR_CYAN),       true));
-	addProperty(CSTRING("WHITE"),      new Value(long(COLOR_WHITE),      true));
+	addProperty("RED",        new Value(long(COLOR_RED),        true));
+	addProperty("BLACK",      new Value(long(COLOR_BLACK),      true));
+	addProperty("GREEN",      new Value(long(COLOR_GREEN),      true));
+	addProperty("YELLOW",     new Value(long(COLOR_YELLOW),     true));
+	addProperty("BLUE",       new Value(long(COLOR_BLUE),       true));
+	addProperty("MAGENTA",    new Value(long(COLOR_MAGENTA),    true));
+	addProperty("CYAN",       new Value(long(COLOR_CYAN),       true));
+	addProperty("WHITE",      new Value(long(COLOR_WHITE),      true));
 
 	// KEYS
-	addProperty(CSTRING("KEY_UP"),        new Value(long(KEY_UP),        true));
-	addProperty(CSTRING("KEY_DOWN"),      new Value(long(KEY_DOWN),      true));
-	addProperty(CSTRING("KEY_LEFT"),      new Value(long(KEY_LEFT),      true));
-	addProperty(CSTRING("KEY_RIGHT"),     new Value(long(KEY_RIGHT),     true));
-	addProperty(CSTRING("KEY_HOME"),      new Value(long(KEY_HOME),      true));
-	addProperty(CSTRING("KEY_END"),       new Value(long(KEY_END),       true));
-	addProperty(CSTRING("KEY_BACKSPACE"), new Value(long(KEY_BACKSPACE), true));
-	addProperty(CSTRING("KEY_IC"),        new Value(long(KEY_IC),        true));
-	addProperty(CSTRING("KEY_DC"),        new Value(long(KEY_DC),        true));
-	addProperty(CSTRING("KEY_NPAGE"),     new Value(long(KEY_NPAGE),     true));
-	addProperty(CSTRING("KEY_PPAGE"),     new Value(long(KEY_PPAGE),     true));
-	addProperty(CSTRING("KEY_F1"),        new Value(long(KEY_F(1)),      true));
-	addProperty(CSTRING("KEY_F2"),        new Value(long(KEY_F(2)),      true));
-	addProperty(CSTRING("KEY_F3"),        new Value(long(KEY_F(3)),      true));
-	addProperty(CSTRING("KEY_F4"),        new Value(long(KEY_F(4)),      true));
-	addProperty(CSTRING("KEY_F5"),        new Value(long(KEY_F(5)),      true));
-	addProperty(CSTRING("KEY_F6"),        new Value(long(KEY_F(6)),      true));
-	addProperty(CSTRING("KEY_F7"),        new Value(long(KEY_F(7)),      true));
-	addProperty(CSTRING("KEY_F8"),        new Value(long(KEY_F(8)),      true));
-	addProperty(CSTRING("KEY_F9"),        new Value(long(KEY_F(9)),      true));
-	addProperty(CSTRING("KEY_F10"),       new Value(long(KEY_F(10)),     true));
-	addProperty(CSTRING("KEY_F11"),       new Value(long(KEY_F(11)),     true));
-	addProperty(CSTRING("KEY_F12"),       new Value(long(KEY_F(12)),     true));
+	addProperty("KEY_UP",        new Value(long(KEY_UP),        true));
+	addProperty("KEY_DOWN",      new Value(long(KEY_DOWN),      true));
+	addProperty("KEY_LEFT",      new Value(long(KEY_LEFT),      true));
+	addProperty("KEY_RIGHT",     new Value(long(KEY_RIGHT),     true));
+	addProperty("KEY_HOME",      new Value(long(KEY_HOME),      true));
+	addProperty("KEY_END",       new Value(long(KEY_END),       true));
+	addProperty("KEY_BACKSPACE", new Value(long(KEY_BACKSPACE), true));
+	addProperty("KEY_IC",        new Value(long(KEY_IC),        true));
+	addProperty("KEY_DC",        new Value(long(KEY_DC),        true));
+	addProperty("KEY_NPAGE",     new Value(long(KEY_NPAGE),     true));
+	addProperty("KEY_PPAGE",     new Value(long(KEY_PPAGE),     true));
+	addProperty("KEY_F1",        new Value(long(KEY_F(1)),      true));
+	addProperty("KEY_F2",        new Value(long(KEY_F(2)),      true));
+	addProperty("KEY_F3",        new Value(long(KEY_F(3)),      true));
+	addProperty("KEY_F4",        new Value(long(KEY_F(4)),      true));
+	addProperty("KEY_F5",        new Value(long(KEY_F(5)),      true));
+	addProperty("KEY_F6",        new Value(long(KEY_F(6)),      true));
+	addProperty("KEY_F7",        new Value(long(KEY_F(7)),      true));
+	addProperty("KEY_F8",        new Value(long(KEY_F(8)),      true));
+	addProperty("KEY_F9",        new Value(long(KEY_F(9)),      true));
+	addProperty("KEY_F10",       new Value(long(KEY_F(10)),     true));
+	addProperty("KEY_F11",       new Value(long(KEY_F(11)),     true));
+	addProperty("KEY_F12",       new Value(long(KEY_F(12)),     true));
 
 	m_keys[KEY_UP] =        "Up arrow";
 	m_keys[KEY_DOWN] =      "Down arrow";
@@ -464,14 +464,12 @@ CLEVER_TYPE_INIT(NCurses::init)
 	m_keys[-1       ] =     "<unsupported>";
 }
 
-
-
 void Key::init()
 {
 	setConstructor((MethodPtr)&Key::ctor);
 
-	addMethod(new Function("getInt",        (MethodPtr)&Key::getInt));
-	addMethod(new Function("getChar",       (MethodPtr)&Key::getChar));
+	addMethod(new Function("getInt",  (MethodPtr)&Key::getInt));
+	addMethod(new Function("getChar", (MethodPtr)&Key::getChar));
 }
 
 TypeObject* Key::allocData(CLEVER_TYPE_CTOR_ARGS) const

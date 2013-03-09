@@ -229,7 +229,7 @@ CLEVER_TYPE_INIT(IntType::init)
 	addMethod(new Function("toString", (MethodPtr) &IntType::toString));
 
 	// Properties
-	addProperty(CSTRING("SIZE"), new Value((long)sizeof(long), true));
+	addProperty("SIZE", new Value((long)sizeof(long), true));
 }
 
 } // clever

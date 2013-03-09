@@ -181,12 +181,12 @@ CLEVER_TYPE_INIT(CFile::init)
 	addMethod(new Function("close",		(MethodPtr)&CFile::close));
 	addMethod(new Function("isOpen",	(MethodPtr)&CFile::isOpen));
 
-	addProperty(CSTRING("IN"),    new Value(long(::std::ios_base::in),     true));
-	addProperty(CSTRING("OUT"),   new Value(long(::std::ios_base::out),    true));
-	addProperty(CSTRING("TRUNC"), new Value(long(::std::ios_base::trunc),  true));
-	addProperty(CSTRING("APP"),   new Value(long(::std::ios_base::app),    true));
-	addProperty(CSTRING("ATE"),   new Value(long(::std::ios_base::ate),    true));
-	addProperty(CSTRING("BIN"),   new Value(long(::std::ios_base::binary), true));
+	addProperty("IN",    new Value(long(::std::ios_base::in),     true));
+	addProperty("OUT",   new Value(long(::std::ios_base::out),    true));
+	addProperty("TRUNC", new Value(long(::std::ios_base::trunc),  true));
+	addProperty("APP",   new Value(long(::std::ios_base::app),    true));
+	addProperty("ATE",   new Value(long(::std::ios_base::ate),    true));
+	addProperty("BIN",   new Value(long(::std::ios_base::binary), true));
 }
 
 }}} // clever::modules::std

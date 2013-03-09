@@ -164,6 +164,10 @@ public:
 
 	Function* addMethod(Function*);
 
+	void addProperty(const std::string& name, Value* value) {
+		addProperty(CSTRING(name), value);
+	}
+
 	void addProperty(const CString* name, Value* value) {
 		addMember(name, value);
 	}

@@ -193,12 +193,12 @@ CLEVER_TYPE_INIT(Pcre::init)
 	addMethod(new Function("quote",      (MethodPtr)&Pcre::quote))->setStatic();
 
 	// Constants
-	addProperty(CSTRING("DOTALL"),    new Value(long(PCRE_DOTALL),    true));
-	addProperty(CSTRING("MULTILINE"), new Value(long(PCRE_MULTILINE), true));
-	addProperty(CSTRING("CASELESS"),  new Value(long(PCRE_CASELESS),  true));
-	addProperty(CSTRING("UTF8"),      new Value(long(PCRE_UTF8),      true));
-	addProperty(CSTRING("UNGREEDY"),  new Value(long(PCRE_UNGREEDY),  true));
-	addProperty(CSTRING("EXTENDED"),  new Value(long(PCRE_EXTENDED),  true));
+	addProperty("DOTALL",    new Value(long(PCRE_DOTALL),    true));
+	addProperty("MULTILINE", new Value(long(PCRE_MULTILINE), true));
+	addProperty("CASELESS",  new Value(long(PCRE_CASELESS),  true));
+	addProperty("UTF8",      new Value(long(PCRE_UTF8),      true));
+	addProperty("UNGREEDY",  new Value(long(PCRE_UNGREEDY),  true));
+	addProperty("EXTENDED",  new Value(long(PCRE_EXTENDED),  true));
 }
 
 }}}} // clever::modules:std::regex
