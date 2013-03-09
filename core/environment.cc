@@ -15,8 +15,13 @@ Environment* Environment::activate(Environment* outer) const
 	Environment* env = new Environment(outer ? outer : m_outer, false);
 
 	if (m_temp) {
-		env->setFlag(FREE_TEMP);
-		env->m_temp = m_temp->activate(NULL);
+		env->m_temp = new Environment(NULL, false);
+
+		env->m_temp->m_data.reserve(m_temp->m_data.size());
+
+		for (size_t i = 0, size = m_temp->m_data.size(); i < size; ++i) {
+			env->m_temp->m_data.push_back(m_temp->m_data[i]->clone());
+		}
 	}
 
 	if (!m_data.empty()) {

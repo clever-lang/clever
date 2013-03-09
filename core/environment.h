@@ -37,34 +37,25 @@ typedef std::pair<size_t, size_t> ValueOffset;
  */
 class Environment: public RefCounted {
 public:
-	enum EnvFlag {
-		NONE      = 0,
-		FREE_TEMP = 1<<0
-	};
-
 	Environment()
 		: RefCounted(), m_outer(NULL), m_temp(NULL), m_ret_val(NULL),
-		m_ret_addr(0), m_scoped(true), m_flags(NONE) {}
+		m_ret_addr(0), m_scoped(true) {}
 
 	Environment(Environment* outer_, bool is_scoped = true)
 		: RefCounted(), m_outer(outer_), m_temp(NULL), m_ret_val(NULL),
-		m_ret_addr(0), m_scoped(is_scoped), m_flags(NONE) {
+		m_ret_addr(0), m_scoped(is_scoped) {
 		clever_addref(m_outer);
 	}
 
 	~Environment() {
 		clever_delref(m_outer);
 
-		if (m_flags & FREE_TEMP) {
-			clever_delref(m_temp);
-		}
-
 		if (!m_scoped) {
+			clever_delref(m_temp);
+
 			std::for_each(m_data.begin(), m_data.end(), clever_delref);
 		}
 	}
-
-	void setFlag(EnvFlag flags) { m_flags = flags; }
 
 	/**
 	 * @brief pushes a value into the environment.
@@ -120,7 +111,6 @@ private:
 	Value* m_ret_val;
 	size_t m_ret_addr;
 	bool m_scoped;
-	EnvFlag m_flags;
 
 	DISALLOW_COPY_AND_ASSIGN(Environment);
 };
