@@ -40,21 +40,15 @@ public:
 
 	~UserType() {}
 
-	void init(CLEVER_TYPE_INIT_ARGS) {
+	virtual void init() {
 		setConstructor((MethodPtr)&UserType::ctor);
 	}
 
 	void setEnvironment(Environment* env) { m_env = env; }
 	Environment* getEnvironment() const { return m_env; }
 
-	TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const { return new UserObject; }
-
-	void deallocData(CLEVER_TYPE_DTOR_ARGS) { delete static_cast<UserObject*>(data); }
-
-	virtual void dump(TypeObject*, std::ostream& out) const { out << getName(); }
-
 	CLEVER_METHOD(ctor) {
-		result->setObj(this, allocData(&args));
+		result->setObj(this, new UserObject);
 	}
 private:
 	Environment* m_env;

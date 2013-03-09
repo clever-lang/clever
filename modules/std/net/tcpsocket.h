@@ -33,11 +33,10 @@ public:
 	TcpSocket() :
 		Type("TcpSocket") { }
 
-	virtual void init(CLEVER_TYPE_INIT_ARGS);
-	virtual void dump(TypeObject* value, ::std::ostream& out) const { out << "TcpSocket"; }
-	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
+	virtual void init();
 
 	// Type methods
+	CLEVER_METHOD(ctor);
 	CLEVER_METHOD(setHost);
 	CLEVER_METHOD(setPort);
 	CLEVER_METHOD(setTimeout);

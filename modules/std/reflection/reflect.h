@@ -38,9 +38,8 @@ public:
 
 	~ReflectType() {}
 
-	virtual void init(CLEVER_TYPE_INIT_ARGS);
-	virtual void dump(TypeObject*, ::std::ostream& out) const;
-	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
+	virtual void init();
+	virtual ::std::string toString(TypeObject*) const;
 
 	CLEVER_METHOD(ctor);
 	CLEVER_METHOD(getType);

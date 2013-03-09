@@ -267,18 +267,6 @@ static void _ffi_call(Value* result, ffi_call_func pf, size_t n_args,
 	free(ffi_values);
 }
 
-TypeObject* FFI::allocData(CLEVER_TYPE_CTOR_ARGS) const
-{
-	FFIData* data = new FFIData(this);
-	const CString* name = args->at(0)->getStr();
-
-	if (!_load_lib(data, name)) {
-		clever_error("Failed to open %S!", name);
-	}
-
-	return data;
-}
-
 // FFILib constructor
 CLEVER_METHOD(FFI::ctor)
 {
@@ -286,7 +274,14 @@ CLEVER_METHOD(FFI::ctor)
 		return;
 	}
 
-	result->setObj(this, allocData(&args));
+	FFIData* data = new FFIData(this);
+	const CString* name = args[0]->getStr();
+
+	if (!_load_lib(data, name)) {
+		clever_throw("Failed to open %S!", name);
+	}
+
+	result->setObj(this, data);
 }
 
 FFIData::~FFIData()

@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <vector>
 #include "core/type.h"
+#include "core/value.h"
 
 namespace clever {
 
@@ -21,8 +22,12 @@ class ArrayObject : public TypeObject {
 public:
 	ArrayObject() {}
 
-	explicit ArrayObject(const std::vector<Value*>& vec)
-		: m_data(vec) {}
+	explicit ArrayObject(const std::vector<Value*>& args) {
+		for (size_t i = 0, n = args.size(); i < n; ++i) {
+			m_data.push_back(args[i]->clone());
+			m_data.back()->setConst(false);
+		}
+	}
 
 	~ArrayObject() {
 		std::for_each(m_data.begin(), m_data.end(), clever_delref);
@@ -42,9 +47,8 @@ public:
 
 	~ArrayType() {}
 
-	virtual void init(CLEVER_TYPE_INIT_ARGS);
-	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
-	virtual void dump(TypeObject*, std::ostream&) const;
+	virtual void init();
+	virtual std::string toString(TypeObject*) const;
 
 	CLEVER_METHOD(ctor);
 	CLEVER_METHOD(append);

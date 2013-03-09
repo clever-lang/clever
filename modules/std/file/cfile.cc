@@ -47,27 +47,14 @@ namespace detail {
 
 }
 
-void CFile::dump(TypeObject* data, ::std::ostream& out) const
-{
-	out << "File class (" << data << ")";
-}
-
-// File.new(string fileName, string openMode)
-TypeObject* CFile::allocData(CLEVER_TYPE_CTOR_ARGS) const
-{
-	// @TODO(muriloadriano): allow object construction with a single argument
-	// and check the argument's type.
-	return new CFileStream(args->at(0)->getStr()->c_str(),
-		static_cast< ::std::ios_base::openmode>(args->at(1)->getInt()));
-}
-
 CLEVER_METHOD(CFile::ctor)
 {
 	if (!clever_check_args("si")) {
 		return;
 	}
 
-	result->setObj(this, allocData(&args));
+	result->setObj(this, new CFileStream(args[0]->getStr()->c_str(),
+		static_cast< ::std::ios_base::openmode>(args[1]->getInt())));
 }
 
 // string File.read()

@@ -13,27 +13,12 @@
 
 namespace clever {
 
-TypeObject* MapType::allocData(CLEVER_TYPE_CTOR_ARGS) const
-{
-	MapObject* arr = new MapObject();
-	ValueMap& map = arr->getData();
-
-	for (size_t i = 0, j = args->size(); i < j; i += 2) {
-		Value* val = new Value();
-
-		val->copy(args->at(i+1));
-
-		map.insert(ValuePair(*args->at(i)->getStr(), val));
-	}
-
-	return arr;
-}
-
-void MapType::dump(TypeObject* value, std::ostream& out) const
+std::string MapType::toString(TypeObject* value) const
 {
 	MapObject* arr = static_cast<MapObject*>(value);
 	ValueMap& map = arr->getData();
 	ValueMap::const_iterator it(map.begin()), end(map.end());
+	std::ostringstream out;
 
 	out << "{";
 
@@ -50,12 +35,14 @@ void MapType::dump(TypeObject* value, std::ostream& out) const
 	}
 
 	out << "}";
+
+	return out.str();
 }
 
 // Map::Map([arg, ...])
 CLEVER_METHOD(MapType::ctor)
 {
-	result->setObj(this, allocData(&args));
+	result->setObj(this, new MapObject(args));
 }
 
 // Subscript operator
@@ -125,7 +112,7 @@ CLEVER_METHOD(MapType::each)
 		++it;
 	}
 
-	result->setObj(this, allocData(&results));
+	result->setObj(this, new MapObject(results));
 
 	for (size_t i = 0, j = results.size(); i < j; ++i) {
 		results[i]->delRef();

@@ -33,9 +33,8 @@ public:
 
 	~Serializer() {}
 
-	virtual void init(CLEVER_TYPE_INIT_ARGS);
-	virtual void dump(TypeObject*, ::std::ostream&) const;
-	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const { return NULL; }
+	virtual void init();
+	virtual ::std::string toString(TypeObject*) const;
 
 	CLEVER_METHOD(doSerialize);
 	CLEVER_METHOD(doUnserialize);

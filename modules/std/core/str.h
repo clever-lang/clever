@@ -44,10 +44,11 @@ public:
 
 	~StrType() {}
 
-	void init(CLEVER_TYPE_INIT_ARGS);
-	void dump(TypeObject*, std::ostream&) const;
+	virtual void init();
 
-	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const { return NULL; }
+	virtual std::string toString(TypeObject* data) const {
+		return *static_cast<StrObject*>(data)->value;
+	}
 
 	virtual void CLEVER_FASTCALL add(CLEVER_TYPE_OPERATOR_ARGS)           const;
 	virtual void CLEVER_FASTCALL mul(CLEVER_TYPE_OPERATOR_ARGS)           const;

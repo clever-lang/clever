@@ -9,16 +9,12 @@
 #include <sstream>
 #include <cstdio>
 #include "modules/std/core/str.h"
+#include "modules/std/core/array.h"
 #include "core/compiler.h"
 #include "core/vm.h"
 #include "core/clever.h"
 
 namespace clever {
-
-void StrType::dump(TypeObject* value, std::ostream& out) const
-{
-	out << *static_cast<StrObject*>(value)->value;
-}
 
 // + operator
 CLEVER_TYPE_OPERATOR(StrType::add)
@@ -423,7 +419,7 @@ CLEVER_METHOD(StrType::split)
 			list.push_back(new Value(self));
 		}
 	}
-	result->setObj(CLEVER_ARRAY_TYPE, CLEVER_ARRAY_TYPE->allocData(&list));
+	result->setObj(CLEVER_ARRAY_TYPE, new ArrayObject(list));
 }
 
 // String.toUpper()

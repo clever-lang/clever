@@ -13,24 +13,29 @@
 
 namespace clever { namespace modules { namespace std { namespace net {
 
-TypeObject* TcpSocket::allocData(CLEVER_TYPE_CTOR_ARGS) const
+CLEVER_METHOD(TcpSocket::ctor)
 {
+	if (!clever_check_args("|si")) {
+		return;
+	}
+
 	SocketObject* sv = new SocketObject;
 
-	if (args != NULL) {
-		switch (args->size()) {
+	if (!args.empty()) {
+		switch (args.size()) {
 			case 1:
 				// Host only.
-				sv->getSocket().setHost(args->at(0)->getStr()->c_str());
+				sv->getSocket().setHost(args[0]->getStr()->c_str());
 				break;
 			case 2:
 				// Host and port.
-				sv->getSocket().setHost(args->at(0)->getStr()->c_str());
-				sv->getSocket().setPort(args->at(1)->getInt());
+				sv->getSocket().setHost(args[0]->getStr()->c_str());
+				sv->getSocket().setPort(args[1]->getInt());
 				break;
 		}
 	}
-	return sv;
+
+	result->setObj(this, sv);
 }
 
 CLEVER_METHOD(TcpSocket::setHost)
@@ -186,6 +191,8 @@ CLEVER_METHOD(TcpSocket::toString)
 
 CLEVER_TYPE_INIT(TcpSocket::init)
 {
+	setConstructor((MethodPtr)&TcpSocket::ctor);
+
 	addMethod(new Function("setHost",         (MethodPtr)&TcpSocket::setHost));
 	addMethod(new Function("setPort",         (MethodPtr)&TcpSocket::setPort));
 	addMethod(new Function("setTimeout",      (MethodPtr)&TcpSocket::setTimeout));

@@ -13,7 +13,7 @@
 namespace clever { namespace modules { namespace gui {
 
 // Simple constructor for now
-TypeObject* NCurses::allocData(CLEVER_TYPE_CTOR_ARGS) const
+TypeObject* NCurses::allocData(const ::std::vector<Value*>* args) const
 {
 	size_t n_args = args->size();
 
@@ -60,15 +60,6 @@ TypeObject* NCurses::allocData(CLEVER_TYPE_CTOR_ARGS) const
 
 	return new NCursesObject(father, m_enable_colors,
 							 w, h, x, y, m_sleep_time);
-}
-
-void NCurses::dump(TypeObject* data, ::std::ostream& out) const
-{
-	NCursesObject* mo = static_cast<NCursesObject*>(data);
-
-	if (mo) {
-		//out << mo->getObj().dump();
-	}
 }
 
 CLEVER_METHOD(NCurses::ctor)
@@ -472,25 +463,13 @@ void Key::init()
 	addMethod(new Function("getChar", (MethodPtr)&Key::getChar));
 }
 
-TypeObject* Key::allocData(CLEVER_TYPE_CTOR_ARGS) const
-{
-	KeyObject* o = new KeyObject(args->at(0)->getInt());
-	return static_cast<TypeObject*>(o);
-}
-
-void Key::dump(TypeObject*, std::ostream&) const
-{
-
-}
-
 CLEVER_METHOD(Key::ctor)
 {
 	if (!clever_check_args("i")) {
 		return;
 	}
 
-	KeyObject* o = static_cast<KeyObject*>(allocData(&args));
-	result->setObj(this, o);
+	result->setObj(this, new KeyObject(args[0]->getInt()));
 }
 
 CLEVER_METHOD(Key::getChar)

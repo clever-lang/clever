@@ -82,6 +82,8 @@ public:
 		}
 	}
 
+	std::string toString() const { return m_type ? m_type->toString(m_data) : "null"; }
+
 	void setObj(const Type* type, TypeObject* ptr) {
 		cleanUp();
 		clever_assert_not_null(type);

@@ -67,8 +67,7 @@ public:
 
 	~Events() {}
 
-	virtual void init(CLEVER_TYPE_INIT_ARGS);
-	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
+	virtual void init();
 
 	CLEVER_METHOD(ctor);
 	CLEVER_METHOD(connect);

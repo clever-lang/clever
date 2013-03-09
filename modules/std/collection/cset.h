@@ -52,9 +52,8 @@ public:
 
 	~CSet() {}
 
-	virtual void init(CLEVER_TYPE_INIT_ARGS);
-	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
-	virtual void dump(TypeObject*, ::std::ostream&) const;
+	virtual void init();
+	virtual ::std::string toString(TypeObject*) const;
 
 	// Methods
 	CLEVER_METHOD(ctor);

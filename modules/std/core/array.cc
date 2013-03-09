@@ -12,23 +12,11 @@
 
 namespace clever {
 
-TypeObject* ArrayType::allocData(CLEVER_TYPE_CTOR_ARGS) const
-{
-	ArrayObject* arr = new ArrayObject();
-	ValueVector& vec = arr->getData();
-
-	for (size_t i = 0, j = args->size(); i < j; ++i) {
-		vec.push_back(args->at(i)->clone());
-		vec.back()->setConst(false);
-	}
-
-	return arr;
-}
-
-void ArrayType::dump(TypeObject* value, std::ostream& out) const
+::std::string ArrayType::toString(TypeObject* value) const
 {
 	ArrayObject* arr = static_cast<ArrayObject*>(value);
 	ValueVector& vec = arr->getData();
+	::std::ostringstream out;
 
 	out << "[";
 
@@ -40,6 +28,8 @@ void ArrayType::dump(TypeObject* value, std::ostream& out) const
 	}
 
 	out << "]";
+
+	return out.str();
 }
 
 // Subscript operator
@@ -68,7 +58,7 @@ CLEVER_TYPE_AT_OPERATOR(ArrayType::at_op)
 // Array::Array([arg, ...])
 CLEVER_METHOD(ArrayType::ctor)
 {
-	result->setObj(this, allocData(&args));
+	result->setObj(this, new ArrayObject(args));
 }
 
 // void Array::append([arg, ... ])
@@ -153,7 +143,7 @@ CLEVER_METHOD(ArrayType::reverse)
 		++it;
 	}
 
-	result->setObj(this, allocData(&rev));
+	result->setObj(this, new ArrayObject(rev));
 }
 
 // mixed Array.shift()
@@ -233,7 +223,7 @@ CLEVER_METHOD(ArrayType::range)
 		}
 	}
 
-	result->setObj(this, allocData(&ran));
+	result->setObj(this, new ArrayObject(ran));
 }
 
 // Array Array::each(Function callback)
@@ -257,7 +247,7 @@ CLEVER_METHOD(ArrayType::each)
 		results.push_back(const_cast<VM*>(vm)->runFunction(func, &tmp_args));
 	}
 
-	result->setObj(this, allocData(&results));
+	result->setObj(this, new ArrayObject(results));
 
 	std::for_each(results.begin(), results.end(), clever_delref);
 }

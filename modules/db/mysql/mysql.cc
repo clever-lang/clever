@@ -12,27 +12,9 @@
 
 namespace clever { namespace modules { namespace db {
 
-// Simple constructor for now
-// TODO: Build a constructor that can accept the host, port, user and password
-TypeObject* Mysql::allocData(CLEVER_TYPE_CTOR_ARGS) const
-{
-	MysqlObject* obj = new MysqlObject();
-
-	return obj;
-}
-
-void Mysql::dump(TypeObject* data, ::std::ostream& out) const
-{
-	MysqlObject* mo = static_cast<MysqlObject*>(data);
-
-	if (mo) {
-		out << mo->getMysql().dump();
-	}
-}
-
 CLEVER_METHOD(Mysql::ctor)
 {
-	result->setObj(this, allocData(&args));
+	result->setObj(this, new MysqlObject);
 }
 
 CLEVER_METHOD(Mysql::connect)

@@ -18,12 +18,6 @@
 
 namespace clever { namespace modules { namespace std {
 
-TypeObject* Sync::allocData(CLEVER_TYPE_CTOR_ARGS) const
-{
-	SyncObject* mobj = new SyncObject(args->at(0)->getInt());
-	return mobj;
-}
-
 CLEVER_METHOD(Sync::status)
 {
 	if (!clever_check_no_args()) {
@@ -88,7 +82,7 @@ CLEVER_METHOD(Sync::ctor)
 	if (!clever_check_args("i")) {
 		return;
 	}
-	result->setObj(this, allocData(&args));
+	result->setObj(this, new SyncObject(args[0]->getInt()));
 }
 
 CLEVER_TYPE_INIT(Sync::init)

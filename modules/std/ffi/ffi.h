@@ -52,8 +52,7 @@ public:
 		clever_delref(m_call_handler);
 	}
 
-	virtual void init(CLEVER_TYPE_INIT_ARGS);
-	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
+	virtual void init();
 
 	Value* getCallHandler() const { return m_call_handler; }
 

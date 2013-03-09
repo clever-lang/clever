@@ -41,7 +41,6 @@ public:
 
 	virtual void init();
 	virtual void dump(TypeObject*, ::std::ostream&) const;
-	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
 
 	CLEVER_METHOD(ctor);
 	CLEVER_METHOD(size);

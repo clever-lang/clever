@@ -19,14 +19,6 @@
 
 namespace clever { namespace modules { namespace std {
 
-TypeObject* Condition::allocData(CLEVER_TYPE_CTOR_ARGS) const
-{
-	ConditionObject* cobj = new ConditionObject;
-
-
-	return cobj;
-}
-
 // bool Condition.signal()
 // Will signal to one thread waiting on this Condition
 CLEVER_METHOD(Condition::signal)
@@ -70,7 +62,11 @@ CLEVER_METHOD(Condition::wait)
 
 CLEVER_METHOD(Condition::ctor)
 {
-	result->setObj(this, allocData(&args));
+	if (!clever_check_no_args()) {
+		return;
+	}
+
+	result->setObj(this, new ConditionObject);
 }
 
 CLEVER_TYPE_INIT(Condition::init)

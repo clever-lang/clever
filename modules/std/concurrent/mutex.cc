@@ -18,13 +18,6 @@
 
 namespace clever { namespace modules { namespace std {
 
-TypeObject* Mutex::allocData(CLEVER_TYPE_CTOR_ARGS) const
-{
-	MutexObject* mobj = new MutexObject;
-
-	return mobj;
-}
-
 CLEVER_METHOD(Mutex::lock)
 {
 	MutexObject* mutex = clever_get_this(MutexObject*);
@@ -61,7 +54,7 @@ CLEVER_METHOD(Mutex::unlock)
 
 CLEVER_METHOD(Mutex::ctor)
 {
-	result->setObj(this, allocData(&args));
+	result->setObj(this, new MutexObject);
 }
 
 CLEVER_TYPE_INIT(Mutex::init)

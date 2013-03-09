@@ -37,11 +37,7 @@ public:
 
 	~Mysql() {}
 
-	void init();
-
-	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
-
-	void dump(TypeObject*, std::ostream&) const;
+	virtual void init();
 
 	CLEVER_METHOD(ctor);
 	CLEVER_METHOD(connect);

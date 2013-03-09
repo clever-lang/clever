@@ -114,23 +114,18 @@ Value* FFIStructData::getMember(const CString* name) const
 	return v;
 }
 
-TypeObject* FFIStruct::allocData(CLEVER_TYPE_CTOR_ARGS) const
-{
-	FFIStructData* data = new FFIStructData;
-	const CString* struct_type = args->at(0)->getStr();
-
-	data->setStruct(FFITypes::m_structs, *struct_type);
-
-	return data;
-}
-
 CLEVER_METHOD(FFIStruct::ctor)
 {
 	if (!clever_check_args("s")) {
 		return;
 	}
 
-	result->setObj(this, allocData(&args));
+	FFIStructData* data = new FFIStructData;
+	const CString* struct_type = args[0]->getStr();
+
+	data->setStruct(FFITypes::m_structs, *struct_type);
+
+	result->setObj(this, data);
 }
 
 CLEVER_METHOD(FFIStruct::getMember)
@@ -201,12 +196,7 @@ CLEVER_METHOD(FFITypes::ctor)
 		return;
 	}
 
-	result->setObj(this, allocData(&args));
-}
-
-TypeObject* FFITypes::allocData(CLEVER_TYPE_CTOR_ARGS) const
-{
-	const CString* struct_name = args->at(0)->getStr();
+	const CString* struct_name = args[0]->getStr();
 
 	FFITypesBuilder* data = new FFITypesBuilder(*struct_name);
 
@@ -214,7 +204,7 @@ TypeObject* FFITypes::allocData(CLEVER_TYPE_CTOR_ARGS) const
 		m_structs[*struct_name] = new ExtStruct;
 	}
 
-	return data;
+	result->setObj(this, data);
 }
 
 CLEVER_METHOD(FFITypes::addMember)

@@ -19,7 +19,7 @@ CLEVER_METHOD(Pcre::constructor)
 		return;
 	}
 
-	PcreObject* reobj = static_cast<PcreObject*>(allocData(&args));
+	PcreObject* reobj = new PcreObject;
 
 	const ::std::string pattern = "(" + *args.at(0)->getStr() + ")";
 

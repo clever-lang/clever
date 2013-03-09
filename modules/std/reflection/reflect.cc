@@ -16,21 +16,16 @@
 
 namespace clever { namespace modules { namespace std { namespace reflection {
 
-// Allocates a Reflect object
-TypeObject* ReflectType::allocData(CLEVER_TYPE_CTOR_ARGS) const
-{
-	return new ReflectObject(args->at(0));
-}
-
-void ReflectType::dump(TypeObject* data, ::std::ostream& out) const
+::std::string ReflectType::toString(TypeObject* data) const
 {
 	const ReflectObject* intern = static_cast<ReflectObject*>(data);
-
-	Value* value = intern->getData();
+	::std::ostringstream out;
 
 	out << "Reflect(";
-	out << value->getType()->getName();
+	out << intern->getData()->getType()->getName();
 	out << ")";
+
+	return out.str();
 }
 
 // Reflect::Reflect(object)
@@ -41,7 +36,7 @@ CLEVER_METHOD(ReflectType::ctor)
 		return;
 	}
 
-	result->setObj(this, allocData(&args));
+	result->setObj(this, new ReflectObject(args[0]));
 }
 
 // Reflect::getType()

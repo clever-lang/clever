@@ -62,9 +62,7 @@ public:
 	Pcre()
 		: Type("Regex") {}
 
-	void init();
-
-	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const { return new PcreObject; }
+	virtual void init();
 
 	// Methods
 	CLEVER_METHOD(constructor);

@@ -167,16 +167,16 @@ public:
 
 	~FuncType() {}
 
-	void init(CLEVER_TYPE_INIT_ARGS) {
-		setConstructor((MethodPtr) &FuncType::ctor);
+	virtual void init() {
+		setConstructor((MethodPtr)&FuncType::ctor);
 	}
 
-	void dump(TypeObject* data, std::ostream& out) const { out << "function() {}"; }
-
-	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const { return new Function;  }
+	virtual std::string toString(TypeObject* data) const {
+		return std::string("function () {}");
+	}
 
 	CLEVER_METHOD(ctor) {
-		result->setObj(this, allocData(NULL));
+		result->setObj(this, new Function);
 	}
 private:
 	DISALLOW_COPY_AND_ASSIGN(FuncType);

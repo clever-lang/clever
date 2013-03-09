@@ -91,8 +91,7 @@ public:
 
 	~SQLite3TypeResult() {}
 
-	virtual void init(CLEVER_TYPE_INIT_ARGS);
-	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const { return NULL; }
+	virtual void init();
 
 	const SQLite3Type* getParentType() const { return m_sqlite3_type; }
 
@@ -110,8 +109,7 @@ public:
 
 	~SQLite3TypeStmt() {}
 
-	virtual void init(CLEVER_TYPE_INIT_ARGS);
-	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const { return NULL; }
+	virtual void init();
 
 	const SQLite3Type* getParentType() const { return m_sqlite3_type; }
 
@@ -129,8 +127,7 @@ public:
 
 	~SQLite3Type() {}
 
-	virtual void init(CLEVER_TYPE_INIT_ARGS);
-	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
+	virtual void init();
 
 	SQLite3TypeResult* result_type;
 	SQLite3TypeStmt* stmt_type;

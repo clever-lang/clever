@@ -14,11 +14,11 @@
 
 namespace clever { namespace modules { namespace std {
 
-void Serializer::dump(TypeObject* obj, ::std::ostream& out) const
+::std::string Serializer::toString(TypeObject* obj) const
 {
 	SerializerData* sobj = static_cast<SerializerData*>(obj);
 
-	sobj->type->dump(sobj->info.second, out);
+	return sobj->type->toString(sobj->info.second);
 }
 
 // Serializer.serialize()

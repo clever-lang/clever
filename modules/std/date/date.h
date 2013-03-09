@@ -31,10 +31,8 @@ public:
 
 	~Date() {}
 
-	void init();
-	void dump(TypeObject* data, ::std::ostream& out) const;
-
-	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
+	virtual void init();
+	virtual ::std::string toString(TypeObject*) const;
 
 	CLEVER_METHOD(ctor);
 	CLEVER_METHOD(format);

@@ -24,15 +24,13 @@ public:
 
 	~BoolType() {}
 
-	void init(CLEVER_TYPE_INIT_ARGS);
+	virtual void init();
 
-	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const { return new BoolObject; }
-
-	void dump(TypeObject* value, std::ostream& out) const {
+	std::string toString(TypeObject* value) const {
 		if (static_cast<BoolObject*>(value)->value) {
-			out << "true";
+			return "true";
 		} else {
-			out << "false";
+			return "false";
 		}
 	}
 

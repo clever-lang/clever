@@ -107,20 +107,6 @@ CLEVER_THREAD_FUNC(_events_handler)
 	return NULL;
 }
 
-TypeObject* Events::allocData(CLEVER_TYPE_CTOR_ARGS) const
-{
-	EventData* intern = new EventData;
-
-	if (args->size() > 0) {
-		intern->m_sleep_time = static_cast<int>(args->at(0)->getInt());
-	} else {
-		intern->m_sleep_time = 500;
-	}
-
-	intern->handler.create(_events_handler, intern);
-	return intern;
-}
-
 EventData::~EventData()
 {
 	if (handler.isRunning()) {
@@ -150,7 +136,15 @@ CLEVER_METHOD(Events::ctor)
 		return;
 	}
 
-	EventData* intern = static_cast<EventData*>(allocData(&args));
+	EventData* intern = new EventData;
+
+	if (args.empty()) {
+		intern->m_sleep_time = 500;
+	} else {
+		intern->m_sleep_time = static_cast<int>(args[0]->getInt());
+	}
+
+	intern->handler.create(_events_handler, intern);
 
 	intern->m_vm = new VM();
 	intern->m_vm->copy(vm, true);

@@ -29,25 +29,18 @@ void UString::dump(TypeObject* data, ::std::ostream& out) const
 	}
 }
 
-TypeObject* UString::allocData(CLEVER_TYPE_CTOR_ARGS) const
-{
-	if (args->size()) {
-		Value* from = args->at(0);
-
-		if (from && from->isStr()) {
-			const CString* str = from->getStr();
-
-			if (str) {
-				return new CLEVER_USTR_OBJ(str);
-			}
-		}
-	}
-	return NULL;
-}
-
 CLEVER_METHOD(UString::ctor)
 {
-	result->setObj(this, allocData(&args));
+	if (!clever_check_args("s")) {
+		return;
+	}
+
+	Value* from = args[0];
+
+	if (from && from->isStr()) {
+		const CString* str = from->getStr();
+		result->setObj(this, new CLEVER_USTR_OBJ(str));
+	}
 }
 
 // UString.size()

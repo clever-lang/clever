@@ -40,44 +40,6 @@ static inline void* ThreadHandler(void* ThreadArgument)
 	return intern;
 }
 
-TypeObject* Thread::allocData(CLEVER_TYPE_CTOR_ARGS) const
-{
-	ThreadData* intern = new ThreadData;
-
-
-	//clever_debug("Thread.new allocated lock for thread at %@", intern->lock);
-
-	intern->entry = NULL;
-	intern->vm = NULL;
-	intern->joined = false;
-
-	//if (intern->lock) {
-		//if (pthread_mutex_init(intern->lock, NULL) != 0) {
-			//clever_error("Thread.new failed to initialize a lock for the thread at %@", intern->lock);
-		//} else clever_debug("Thread.new has initialized a lock for the thread at %@", intern->lock);
-	//}
-
-	if (args->size()) {
-		Value* point = args->at(0);
-
-		if (point->isFunction()) {
-			intern->entry = static_cast<Function*>(point->getObj());
-			//clever_debug("Thread.new has set entry point for thread to %@", intern->entry);
-		} else {
-			//clever_debug("Thread.new was expecting a Function and got something else at %@", point);
-		}
-
-		for (size_t i = 1; i < args->size(); ++i) {
-			Value* v = args->at(i);
-			intern->args.push_back(v->clone());
-		}
-	} else {
-		clever_error("Thread.new was expecting a Function entry point and recieved no arguments");
-	}
-
-	return intern;
-}
-
 ThreadData::~ThreadData()
 {
 	//clever_debug("Thread.dtor executing %@ ...", thread);
@@ -177,7 +139,38 @@ CLEVER_METHOD(Thread::getResult)
 // Constructs a new Thread object to execute the supplied function
 CLEVER_METHOD(Thread::ctor)
 {
-	result->setObj(this, allocData(&args));
+	ThreadData* intern = new ThreadData;
+
+	//clever_debug("Thread.new allocated lock for thread at %@", intern->lock);
+
+	intern->entry = NULL;
+	intern->vm = NULL;
+	intern->joined = false;
+
+	//if (intern->lock) {
+		//if (pthread_mutex_init(intern->lock, NULL) != 0) {
+			//clever_error("Thread.new failed to initialize a lock for the thread at %@", intern->lock);
+		//} else clever_debug("Thread.new has initialized a lock for the thread at %@", intern->lock);
+	//}
+
+	if (args.size()) {
+		Value* point = args[0];
+
+		if (point->isFunction()) {
+			intern->entry = static_cast<Function*>(point->getObj());
+			//clever_debug("Thread.new has set entry point for thread to %@", intern->entry);
+		} else {
+			//clever_debug("Thread.new was expecting a Function and got something else at %@", point);
+		}
+
+		for (size_t i = 1, n = args.size(); i < n; ++i) {
+			intern->args.push_back(args[i]->clone());
+		}
+	} else {
+		clever_error("Thread.new was expecting a Function entry point and recieved no arguments");
+	}
+
+	result->setObj(this, intern);
 }
 
 CLEVER_TYPE_INIT(Thread::init)

@@ -11,11 +11,6 @@
 
 namespace clever { namespace modules { namespace std {
 
-TypeObject* CStack::allocData(CLEVER_TYPE_CTOR_ARGS) const
-{
-	return new CStackObject;
-}
-
 // Stack.Stack()
 CLEVER_METHOD(CStack::ctor)
 {
@@ -23,7 +18,7 @@ CLEVER_METHOD(CStack::ctor)
 		return;
 	}
 
-	result->setObj(this, allocData(&args));
+	result->setObj(this, new CStackObject);
 }
 
 // Stack.push()

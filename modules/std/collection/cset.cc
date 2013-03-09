@@ -14,10 +14,11 @@
 
 namespace clever { namespace modules { namespace std {
 
-void CSet::dump(TypeObject* value, ::std::ostream& out) const
+::std::string CSet::toString(TypeObject* value) const
 {
 	CSetObject* cobj = static_cast<CSetObject*>(value);
 	::std::set<CSetValue>::const_iterator it(cobj->set.begin()), end(cobj->set.end());
+	::std::ostringstream out;
 
 	out << "Set<";
 
@@ -30,11 +31,8 @@ void CSet::dump(TypeObject* value, ::std::ostream& out) const
 	}
 
 	out << ">";
-}
 
-TypeObject* CSet::allocData(CLEVER_TYPE_CTOR_ARGS) const
-{
-	return new CSetObject(static_cast<Function*>(args->at(0)->getObj()));
+	return out.str();
 }
 
 bool CSetObjectCompare::operator()(const CSetValue& a, const CSetValue& b) const
@@ -67,7 +65,8 @@ CLEVER_METHOD(CSet::ctor)
 		return;
 	}
 
-	result->setObj(this, allocData(&args));
+	result->setObj(this,
+		new CSetObject(static_cast<Function*>(args[0]->getObj())));
 }
 
 // Set.insert(Object element)

@@ -11,11 +11,6 @@
 
 namespace clever { namespace modules { namespace std {
 
-TypeObject* CQueue::allocData(CLEVER_TYPE_CTOR_ARGS) const
-{
-	return new CQueueObject;
-}
-
 // Queue.Queue()
 CLEVER_METHOD(CQueue::ctor)
 {
@@ -23,7 +18,7 @@ CLEVER_METHOD(CQueue::ctor)
 		return;
 	}
 
-	result->setObj(this, allocData(&args));
+	result->setObj(this, new CQueueObject);
 }
 
 // Queue.empty()

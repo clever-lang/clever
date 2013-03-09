@@ -38,14 +38,10 @@ public:
 
 	~Key() {}
 
-	void init();
+	virtual void init();
 
-	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
-
-	void dump(TypeObject*, std::ostream&) const;
-
+	// Methods
 	CLEVER_METHOD(ctor);
-
 	CLEVER_METHOD(getChar);
 	CLEVER_METHOD(getInt);
 
@@ -78,11 +74,9 @@ public:
 
 	~NCurses() {}
 
-	void init();
+	virtual void init();
 
-	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
-
-	void dump(TypeObject*, std::ostream&) const;
+	TypeObject* allocData(const ::std::vector<Value*>*) const;
 
 	CLEVER_METHOD(ctor);
 

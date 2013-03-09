@@ -42,11 +42,6 @@ static Value* _sqlite_to_value(sqlite3_stmt* stmt, int column)
 	return value;
 }
 
-TypeObject* SQLite3Type::allocData(CLEVER_TYPE_CTOR_ARGS) const
-{
-	return new SQLite3Conn(*(*args)[0]->getStr());
-}
-
 // SQLite3 constructor
 CLEVER_METHOD(SQLite3Type::ctor)
 {
@@ -54,7 +49,7 @@ CLEVER_METHOD(SQLite3Type::ctor)
 		return;
 	}
 
-	SQLite3Conn* conn = static_cast<SQLite3Conn*>(allocData(&args));
+	SQLite3Conn* conn = new SQLite3Conn(*args[0]->getStr());
 
 	if (sqlite3_open(args[0]->getStr()->c_str(), &conn->handle) != SQLITE_OK) {
 		clever_throw("An error occurred when opening database: %s",

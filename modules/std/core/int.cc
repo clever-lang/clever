@@ -213,11 +213,7 @@ CLEVER_METHOD(IntType::toString)
 		return;
 	}
 
-	std::ostringstream str;
-
-	str << clever_this()->getInt();
-
-	result->setStr(CSTRING(str.str()));
+	result->setStr(new StrObject(clever_this()->toString()));
 }
 
 // Int type initialization

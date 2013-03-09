@@ -13,27 +13,14 @@
 
 namespace clever { namespace modules { namespace std {
 
-void Date::dump(TypeObject* data, ::std::ostream& out) const
+::std::string Date::toString(TypeObject* data) const
 {
 	const DateObject* uvalue = static_cast<DateObject*>(data);
+	::std::ostringstream out;
 
-	if (uvalue) {
-		out << *uvalue->intern;
-	}
-}
+	out << *uvalue->intern;
 
-TypeObject* Date::allocData(CLEVER_TYPE_CTOR_ARGS) const
-{
-	DateObject* dobj = new DateObject();
-
-	if (dobj->intern) {
-		if (args->size()) {
-			*dobj->intern = static_cast<time_t>(args->at(0)->getInt());
-		} else {
-			time(dobj->intern);
-		}
-	}
-	return dobj;
+	return out.str();
 }
 
 static inline void clever_date_format(const ::std::vector<Value*>* args,
@@ -137,7 +124,19 @@ CLEVER_METHOD(Date::getTime)
 // Constructs a new Date object, uses the current time if none is provided
 CLEVER_METHOD(Date::ctor)
 {
-	result->setObj(this, allocData(&args));
+	if (!clever_check_args("|i")) {
+		return;
+	}
+
+	DateObject* dobj = new DateObject();
+
+	if (args.empty()) {
+		time(dobj->intern);
+	} else {
+		*dobj->intern = static_cast<time_t>(args[0]->getInt());
+	}
+
+	result->setObj(this, dobj);
 }
 
 CLEVER_TYPE_INIT(Date::init)

@@ -35,7 +35,7 @@ static CLEVER_FUNCTION(flush)
 static CLEVER_FUNCTION(print)
 {
 	for (size_t i = 0, size = args.size(); i < size; ++i) {
-		args[i]->dump();
+		::std::cout << args[i]->toString();
 	}
 }
 
@@ -44,8 +44,7 @@ static CLEVER_FUNCTION(print)
 static CLEVER_FUNCTION(println)
 {
 	for (size_t i = 0, size = args.size(); i < size; ++i) {
-		args[i]->dump();
-		::std::cout << '\n';
+		::std::cout << args[i]->toString() << '\n';
 	}
 }
 

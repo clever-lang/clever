@@ -22,6 +22,16 @@ class MapObject : public TypeObject{
 public:
 	MapObject() {}
 
+	MapObject(const ::std::vector<Value*>& args) {
+		for (size_t i = 0, j = args.size(); i < j; i += 2) {
+			Value* val = new Value();
+
+			val->copy(args[i+1]);
+
+			m_data.insert(ValuePair(*args[i]->getStr(), val));
+		}
+	}
+
 	~MapObject() {
 		ValueMap::const_iterator it(m_data.begin()), end(m_data.end());
 
@@ -44,9 +54,8 @@ public:
 
 	~MapType() {}
 
-	virtual void init(CLEVER_TYPE_INIT_ARGS);
-	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
-	virtual void dump(TypeObject*, std::ostream&) const;
+	virtual void init();
+	virtual std::string toString(TypeObject*) const;
 
 	virtual Value* CLEVER_FASTCALL at_op(CLEVER_TYPE_AT_OPERATOR_ARGS) const;
 

@@ -24,12 +24,12 @@ public:
 
 	~DoubleType() {}
 
-	void init(CLEVER_TYPE_INIT_ARGS);
+	virtual void init();
 
-	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const { return new DoubleObject; }
-
-	void dump(TypeObject* value, std::ostream& out) const {
-		out << static_cast<DoubleObject*>(value)->value;
+	virtual std::string toString(TypeObject* data) const {
+		std::ostringstream str;
+		str << static_cast<DoubleObject*>(data)->value;
+		return str.str();
 	}
 
 	CLEVER_TYPE_VIRTUAL_METHOD_DECLARATIONS;

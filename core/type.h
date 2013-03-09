@@ -56,15 +56,11 @@ class Function;
 	void CLEVER_FASTCALL bw_ls(CLEVER_TYPE_OPERATOR_ARGS)        const; \
 	void CLEVER_FASTCALL bw_rs(CLEVER_TYPE_OPERATOR_ARGS)        const
 
-#define CLEVER_TYPE_INIT_ARGS
-#define CLEVER_TYPE_INIT(name) void name(CLEVER_TYPE_INIT_ARGS)
+#define CLEVER_TYPE_INIT(name) void name()
 
 #define CLEVER_METHOD_ARGS Value* result, const Value* obj, const ::std::vector<Value*>& args, const VM* vm, CException* exception
 #define CLEVER_METHOD_PASS_ARGS result, obj, args, vm, exception
 #define CLEVER_METHOD(name) void name(CLEVER_METHOD_ARGS) const
-
-#define CLEVER_TYPE_CTOR_ARGS const ::std::vector<Value*>* args
-#define CLEVER_TYPE_DTOR_ARGS void* data
 
 typedef void (Type::*MethodPtr)(CLEVER_METHOD_ARGS) const;
 
@@ -191,11 +187,13 @@ public:
 
 	void setUserDestructor(Function* func) { m_user_dtor = func; }
 
-	virtual void init(CLEVER_TYPE_INIT_ARGS) {}
+	virtual void init() {}
 
 	/// Virtual method for debug purpose
 	virtual void dump(TypeObject* data) const { dump(data, std::cout); }
-	virtual void dump(TypeObject* data, std::ostream& out) const { out << getName(); };
+	virtual void dump(TypeObject* data, std::ostream& out) const { out << toString(data); };
+
+	virtual std::string toString(TypeObject*) const { return getName(); }
 
 	/// Operator methods
 	virtual void CLEVER_FASTCALL add(CLEVER_TYPE_OPERATOR_ARGS)           const;
@@ -219,9 +217,6 @@ public:
 	virtual Value* CLEVER_FASTCALL at_op(CLEVER_TYPE_AT_OPERATOR_ARGS)    const;
 	virtual void increment(Value*, const VM*, CException*)                const;
 	virtual void decrement(Value*, const VM*, CException*)                const;
-
-	/// Type internal data constructor
-	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const { return NULL; }
 
 	virtual std::pair<size_t, TypeObject*> serialize(const Value*) const;
 	virtual Value* unserialize(const Type*, const std::pair<size_t, TypeObject*>&) const;
