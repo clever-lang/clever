@@ -29,6 +29,7 @@ void Value::deepCopy(const Value* value)
 			return;
 		}
 	}
+
 	TypeObject* val = value->isNull() ? NULL : value->getObj()->clone();
 
 	if (val) {

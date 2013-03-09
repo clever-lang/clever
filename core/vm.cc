@@ -174,7 +174,7 @@ static CLEVER_FORCE_INLINE void _param_binding(const Function* func,
 		size_t num_args = args->size();
 		ValueOffset argoff(0,0);
 
-		if (UNEXPECTED(num_args > func->getNumArgs())) {
+		if (num_args > func->getNumArgs()) {
 			num_args = func->getNumArgs();
 		}
 
