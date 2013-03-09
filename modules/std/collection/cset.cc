@@ -77,7 +77,7 @@ CLEVER_METHOD(CSet::insert)
 		return;
 	}
 
-	CSetObject* cobj = CLEVER_GET_OBJECT(CSetObject*, CLEVER_THIS());
+	CSetObject* cobj = clever_get_this(CSetObject*);
 
 	cobj->set.insert(CSetValue(args[0], cobj->comp, vm));
 	clever_addref(args[0]);
@@ -90,7 +90,7 @@ CLEVER_METHOD(CSet::size)
 		return;
 	}
 
-	const CSetObject* cobj = CLEVER_GET_OBJECT(CSetObject*, CLEVER_THIS());
+	const CSetObject* cobj = clever_get_this(CSetObject*);
 
 	result->setInt(cobj->set.size());
 }
@@ -102,7 +102,7 @@ CLEVER_METHOD(CSet::empty)
 		return;
 	}
 
-	const CSetObject* cobj = CLEVER_GET_OBJECT(CSetObject*, CLEVER_THIS());
+	const CSetObject* cobj = clever_get_this(CSetObject*);
 
 	result->setBool(cobj->set.empty());
 }
@@ -114,7 +114,7 @@ CLEVER_METHOD(CSet::find)
 		return;
 	}
 
-	const CSetObject* cobj = CLEVER_GET_OBJECT(CSetObject*, CLEVER_THIS());
+	const CSetObject* cobj = clever_get_this(CSetObject*);
 
 	::std::set<CSetValue, CSetObjectCompare>::const_iterator it(
 		cobj->set.find(CSetValue(args[0], cobj->comp, vm)));

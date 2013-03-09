@@ -116,7 +116,7 @@ ThreadData::~ThreadData()
 // Starts executing the Thread object
 CLEVER_METHOD(Thread::start)
 {
-	ThreadData* intern = CLEVER_GET_OBJECT(ThreadData*, CLEVER_THIS());
+	ThreadData* intern = clever_get_this(ThreadData*);
 
 	if (!intern) {
 		//CLEVER_THROW(eventually)
@@ -148,7 +148,7 @@ CLEVER_METHOD(Thread::start)
 // Waits for this thread to finish executing
 CLEVER_METHOD(Thread::wait)
 {
-	ThreadData* intern = CLEVER_GET_OBJECT(ThreadData*, CLEVER_THIS());
+	ThreadData* intern = clever_get_this(ThreadData*);
 
 	if (!intern) {
 		//CLEVER_THROW(eventually);
@@ -168,7 +168,7 @@ CLEVER_METHOD(Thread::wait)
 
 CLEVER_METHOD(Thread::getResult)
 {
-	ThreadData* intern = CLEVER_GET_OBJECT(ThreadData*, CLEVER_THIS());
+	ThreadData* intern = clever_get_this(ThreadData*);
 
 	result->copy(intern->result);
 }

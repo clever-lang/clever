@@ -74,7 +74,7 @@ CLEVER_METHOD(SQLite3Type::exec)
 		return;
 	}
 
-	SQLite3Conn* conn = CLEVER_GET_OBJECT(SQLite3Conn*, CLEVER_THIS());
+	SQLite3Conn* conn = clever_get_this(SQLite3Conn*);
 	char* errmsg = NULL;
 
 	sqlite3_exec(conn->handle,
@@ -101,7 +101,7 @@ CLEVER_METHOD(SQLite3Type::query)
 		return;
 	}
 
-	SQLite3Conn* conn = CLEVER_GET_OBJECT(SQLite3Conn*, CLEVER_THIS());
+	SQLite3Conn* conn = clever_get_this(SQLite3Conn*);
 	sqlite3_stmt* stmt;
 
 	if (sqlite3_prepare_v2(conn->handle,
@@ -139,7 +139,7 @@ CLEVER_METHOD(SQLite3Type::getLastId)
 		return;
 	}
 
-	SQLite3Conn* conn = CLEVER_GET_OBJECT(SQLite3Conn*, CLEVER_THIS());
+	SQLite3Conn* conn = clever_get_this(SQLite3Conn*);
 
 	result->setInt(sqlite3_last_insert_rowid(conn->handle));
 }
@@ -151,7 +151,7 @@ CLEVER_METHOD(SQLite3Type::prepare)
 		return;
 	}
 
-	SQLite3Conn* conn = CLEVER_GET_OBJECT(SQLite3Conn*, CLEVER_THIS());
+	SQLite3Conn* conn = clever_get_this(SQLite3Conn*);
 	sqlite3_stmt* stmt;
 
 	if (sqlite3_prepare_v2(conn->handle,
@@ -179,7 +179,7 @@ CLEVER_METHOD(SQLite3Type::close)
 		return;
 	}
 
-	SQLite3Conn* conn = CLEVER_GET_OBJECT(SQLite3Conn*, CLEVER_THIS());
+	SQLite3Conn* conn = clever_get_this(SQLite3Conn*);
 
 	result->setBool(conn->close() == SQLITE_OK);
 }
@@ -191,7 +191,7 @@ CLEVER_METHOD(SQLite3TypeStmt::bindValue)
 		return;
 	}
 
-	SQLite3Stmt* stmt = CLEVER_GET_OBJECT(SQLite3Stmt*, CLEVER_THIS());
+	SQLite3Stmt* stmt = clever_get_this(SQLite3Stmt*);
 
 	std::stringstream ss;
 
@@ -211,7 +211,7 @@ CLEVER_METHOD(SQLite3TypeStmt::execute)
 		return;
 	}
 
-	SQLite3Stmt* stmt = CLEVER_GET_OBJECT(SQLite3Stmt*, CLEVER_THIS());
+	SQLite3Stmt* stmt = clever_get_this(SQLite3Stmt*);
 
 	std::vector<BoundParamPair>::const_iterator it(stmt->bound_params.begin()),
 		end(stmt->bound_params.end());
@@ -264,7 +264,7 @@ CLEVER_METHOD(SQLite3TypeResult::fetch)
 		return;
 	}
 
-	SQLite3Result* res = CLEVER_GET_OBJECT(SQLite3Result*, CLEVER_THIS());
+	SQLite3Result* res = clever_get_this(SQLite3Result*);
 	int ret_code = sqlite3_step(res->stmt);
 
 	if (ret_code != SQLITE_ROW) {
@@ -289,7 +289,7 @@ CLEVER_METHOD(SQLite3TypeResult::finalize)
 		return;
 	}
 
-	SQLite3Result* res = CLEVER_GET_OBJECT(SQLite3Result*, CLEVER_THIS());
+	SQLite3Result* res = clever_get_this(SQLite3Result*);
 
 	sqlite3_reset(res->stmt);
 }

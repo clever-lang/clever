@@ -29,7 +29,7 @@ CLEVER_METHOD(Sync::status)
 	if (!clever_check_no_args()) {
 		return;
 	}
-	SyncObject* sync = CLEVER_GET_OBJECT(SyncObject*, CLEVER_THIS());
+	SyncObject* sync = clever_get_this(SyncObject*);
 
 	result->setBool(sync->status());
 }
@@ -39,7 +39,7 @@ CLEVER_METHOD(Sync::getID)
 	if (!clever_check_no_args()) {
 		return;
 	}
-	SyncObject* sync = CLEVER_GET_OBJECT(SyncObject*, CLEVER_THIS());
+	SyncObject* sync = clever_get_this(SyncObject*);
 
 	result->setInt(sync->getID());
 }
@@ -49,7 +49,7 @@ CLEVER_METHOD(Sync::getNIDs)
 	if (!clever_check_no_args()) {
 		return;
 	}
-	SyncObject* sync = CLEVER_GET_OBJECT(SyncObject*, CLEVER_THIS());
+	SyncObject* sync = clever_get_this(SyncObject*);
 
 	result->setInt(sync->getNIDs());
 }
@@ -59,7 +59,7 @@ CLEVER_METHOD(Sync::setStatus)
 	if (!clever_check_args("b")) {
 		return;
 	}
-	SyncObject* sync = CLEVER_GET_OBJECT(SyncObject*, CLEVER_THIS());
+	SyncObject* sync = clever_get_this(SyncObject*);
 	Value* v = args.at(0);
 	sync->setStatus(v->getBool());
 }
@@ -69,7 +69,7 @@ CLEVER_METHOD(Sync::nextID)
 	if (!clever_check_no_args()) {
 		return;
 	}
-	SyncObject* sync = CLEVER_GET_OBJECT(SyncObject*, CLEVER_THIS());
+	SyncObject* sync = clever_get_this(SyncObject*);
 	result->setInt(sync->nextID());
 }
 
@@ -78,7 +78,7 @@ CLEVER_METHOD(Sync::setID)
 	if (!clever_check_args("i")) {
 		return;
 	}
-	SyncObject* sync = CLEVER_GET_OBJECT(SyncObject*, CLEVER_THIS());
+	SyncObject* sync = clever_get_this(SyncObject*);
 	sync->setID(args.at(0)->getInt());
 }
 

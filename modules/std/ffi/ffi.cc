@@ -310,7 +310,7 @@ Value* FFIData::getMember(const CString* name) const
 
 CLEVER_METHOD(FFI::callThisFunction)
 {
-	FFIData* handler = CLEVER_GET_OBJECT(FFIData*, CLEVER_THIS());
+	FFIData* handler = clever_get_this(FFIData*);
 	const CString func = handler->m_func_name;
 
 	ExtStruct* ext_struct = FFITypes::getStruct(handler->m_lib_name);
@@ -376,7 +376,7 @@ CLEVER_METHOD(FFI::call)
 		return;
 	}
 
-	FFIData* handler = CLEVER_GET_OBJECT(FFIData*, CLEVER_THIS());
+	FFIData* handler = clever_get_this(FFIData*);
 
 	const CString* func = args.at(0)->getStr();
 	FFIType rt = static_cast<FFIType>(args.at(1)->getInt());
@@ -397,7 +397,7 @@ CLEVER_METHOD(FFI::call)
 // FFILib.load()
 CLEVER_METHOD(FFI::load)
 {
-	FFIData* data = CLEVER_GET_OBJECT(FFIData*, CLEVER_THIS());
+	FFIData* data = clever_get_this(FFIData*);
 
 	if (!clever_check_args("s")) {
 		return;
@@ -409,7 +409,7 @@ CLEVER_METHOD(FFI::load)
 // FFILib.unload()
 CLEVER_METHOD(FFI::unload)
 {
-	FFIData* data = CLEVER_GET_OBJECT(FFIData*, CLEVER_THIS());
+	FFIData* data = clever_get_this(FFIData*);
 
 	if (data->m_lib_handler != NULL) {
 		dlclose(data->m_lib_handler);

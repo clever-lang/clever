@@ -215,7 +215,7 @@ CLEVER_METHOD(IntType::toString)
 
 	std::ostringstream str;
 
-	str << CLEVER_THIS()->getInt();
+	str << clever_this()->getInt();
 
 	result->setStr(CSTRING(str.str()));
 }

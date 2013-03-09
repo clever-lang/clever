@@ -48,7 +48,7 @@ CLEVER_METHOD(Serializer::doUnserialize)
 		clever_throw("Parameter must be of SerializerData type");
 		return;
 	}
-	SerializerData* sobj = CLEVER_GET_OBJECT(SerializerData*, args[0]);
+	SerializerData* sobj = clever_get_object(SerializerData*, args[0]);
 	Value* res = unserialize(sobj->type, sobj->info);
 
 	if (res) {

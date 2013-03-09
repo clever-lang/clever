@@ -138,7 +138,7 @@ CLEVER_METHOD(FFIStruct::getMember)
 	if (!clever_check_args("s")) {
 		return;
 	}
-	FFIStructData* data = CLEVER_GET_OBJECT(FFIStructData*, CLEVER_THIS());
+	FFIStructData* data = clever_get_this(FFIStructData*);
 	const CString* member_name = args.at(0)->getStr();
 
 	data->getMember(result, *member_name);
@@ -149,7 +149,7 @@ CLEVER_METHOD(FFIStruct::setMember)
 	if (!clever_check_args("s*")) {
 		return;
 	}
-	FFIStructData* data = CLEVER_GET_OBJECT(FFIStructData*, CLEVER_THIS());
+	FFIStructData* data = clever_get_this(FFIStructData*);
 	const CString* member_name = args.at(0)->getStr();
 
 	data->setMember(*member_name, args.at(1));
@@ -223,7 +223,7 @@ CLEVER_METHOD(FFITypes::addMember)
 		return;
 	}
 
-	FFITypesBuilder* data = CLEVER_GET_OBJECT(FFITypesBuilder*, CLEVER_THIS());
+	FFITypesBuilder* data = clever_get_this(FFITypesBuilder*);
 
 	const CString* s_member_name = args.at(0)->getStr();
 	FFIType s_member_type = static_cast<FFIType>(args.at(1)->getInt());
@@ -240,7 +240,7 @@ CLEVER_METHOD(FFITypes::addFunction)
 		return;
 	}
 
-	FFITypesBuilder* data = CLEVER_GET_OBJECT(FFITypesBuilder*, CLEVER_THIS());
+	FFITypesBuilder* data = clever_get_this(FFITypesBuilder*);
 
 	const CString* s_func_name = args.at(0)->getStr();
 

@@ -33,7 +33,7 @@ CLEVER_METHOD(CQueue::empty)
 		return;
 	}
 
-	const CQueueObject* cobj = CLEVER_GET_OBJECT(CQueueObject*, CLEVER_THIS());
+	const CQueueObject* cobj = clever_get_this(CQueueObject*);
 
 	result->setBool(cobj->queue.empty());
 }
@@ -45,7 +45,7 @@ CLEVER_METHOD(CQueue::size)
 		return;
 	}
 
-	const CQueueObject* cobj = CLEVER_GET_OBJECT(CQueueObject*, CLEVER_THIS());
+	const CQueueObject* cobj = clever_get_this(CQueueObject*);
 
 	result->setInt(cobj->queue.size());
 }
@@ -57,7 +57,7 @@ CLEVER_METHOD(CQueue::push)
 		return;
 	}
 
-	CQueueObject* cobj = CLEVER_GET_OBJECT(CQueueObject*, CLEVER_THIS());
+	CQueueObject* cobj = clever_get_this(CQueueObject*);
 
 	cobj->queue.push(args[0]);
 	clever_addref(args[0]);
@@ -70,7 +70,7 @@ CLEVER_METHOD(CQueue::pop)
 		return;
 	}
 
-	CQueueObject* cobj = CLEVER_GET_OBJECT(CQueueObject*, CLEVER_THIS());
+	CQueueObject* cobj = clever_get_this(CQueueObject*);
 
 	if (!cobj->queue.empty()) {
 		clever_delref(cobj->queue.front());
@@ -85,7 +85,7 @@ CLEVER_METHOD(CQueue::front)
 		return;
 	}
 
-	CQueueObject* cobj = CLEVER_GET_OBJECT(CQueueObject*, CLEVER_THIS());
+	CQueueObject* cobj = clever_get_this(CQueueObject*);
 
 	result->setNull();
 
@@ -101,7 +101,7 @@ CLEVER_METHOD(CQueue::back)
 		return;
 	}
 
-	CQueueObject* cobj = CLEVER_GET_OBJECT(CQueueObject*, CLEVER_THIS());
+	CQueueObject* cobj = clever_get_this(CQueueObject*);
 
 	result->setNull();
 

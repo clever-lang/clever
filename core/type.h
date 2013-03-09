@@ -56,8 +56,6 @@ class Function;
 	void CLEVER_FASTCALL bw_ls(CLEVER_TYPE_OPERATOR_ARGS)        const; \
 	void CLEVER_FASTCALL bw_rs(CLEVER_TYPE_OPERATOR_ARGS)        const
 
-#define CLEVER_THIS() obj
-
 #define CLEVER_TYPE_INIT_ARGS
 #define CLEVER_TYPE_INIT(name) void name(CLEVER_TYPE_INIT_ARGS)
 

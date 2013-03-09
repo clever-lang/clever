@@ -52,7 +52,7 @@ CLEVER_METHOD(ReflectType::getType)
 		return;
 	}
 
-	const ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
+	const ReflectObject* intern = clever_get_this(ReflectObject*);
 
 	if (intern->getData()->getType()) {
 		result->setStr(new StrObject(intern->getData()->getType()->getName()));
@@ -69,7 +69,7 @@ CLEVER_METHOD(ReflectType::isFunction)
 		return;
 	}
 
-	const ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
+	const ReflectObject* intern = clever_get_this(ReflectObject*);
 
 	result->setBool(intern->getData()->isFunction());
 }
@@ -82,7 +82,7 @@ CLEVER_METHOD(ReflectType::isBool)
 		return;
 	}
 
-	const ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
+	const ReflectObject* intern = clever_get_this(ReflectObject*);
 
 	result->setBool(intern->getData()->isBool());
 }
@@ -95,7 +95,7 @@ CLEVER_METHOD(ReflectType::isString)
 		return;
 	}
 
-	const ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
+	const ReflectObject* intern = clever_get_this(ReflectObject*);
 
 	result->setBool(intern->getData()->isStr());
 }
@@ -108,7 +108,7 @@ CLEVER_METHOD(ReflectType::isInt)
 		return;
 	}
 
-	const ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
+	const ReflectObject* intern = clever_get_this(ReflectObject*);
 
 	result->setBool(intern->getData()->isInt());
 }
@@ -121,7 +121,7 @@ CLEVER_METHOD(ReflectType::isDouble)
 		return;
 	}
 
-	const ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
+	const ReflectObject* intern = clever_get_this(ReflectObject*);
 
 	result->setBool(intern->getData()->isDouble());
 }
@@ -134,7 +134,7 @@ CLEVER_METHOD(ReflectType::isArray)
 		return;
 	}
 
-	const ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
+	const ReflectObject* intern = clever_get_this(ReflectObject*);
 
 	result->setBool(intern->getData()->isArray());
 }
@@ -147,7 +147,7 @@ CLEVER_METHOD(ReflectType::isMap)
 		return;
 	}
 
-	const ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
+	const ReflectObject* intern = clever_get_this(ReflectObject*);
 
 	result->setBool(intern->getData()->isMap());
 }
@@ -161,7 +161,7 @@ CLEVER_METHOD(ReflectType::getName)
 		return;
 	}
 
-	const ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
+	const ReflectObject* intern = clever_get_this(ReflectObject*);
 	const Value* data = intern->getData();
 
 	if (!data->isFunction()) {
@@ -181,7 +181,7 @@ CLEVER_METHOD(ReflectType::isStatic)
 		return;
 	}
 
-	const ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
+	const ReflectObject* intern = clever_get_this(ReflectObject*);
 	const Value* data = intern->getData();
 
 	if (!data->isFunction()) {
@@ -201,7 +201,7 @@ CLEVER_METHOD(ReflectType::isVariadic)
 		return;
 	}
 
-	const ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
+	const ReflectObject* intern = clever_get_this(ReflectObject*);
 	const Value* data = intern->getData();
 
 	if (!data->isFunction()) {
@@ -221,7 +221,7 @@ CLEVER_METHOD(ReflectType::isUserDefined)
 		return;
 	}
 
-	const ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
+	const ReflectObject* intern = clever_get_this(ReflectObject*);
 	const Value* data = intern->getData();
 
 	if (!data->isFunction()) {
@@ -241,7 +241,7 @@ CLEVER_METHOD(ReflectType::isInternal)
 		return;
 	}
 
-	const ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
+	const ReflectObject* intern = clever_get_this(ReflectObject*);
 	const Value* data = intern->getData();
 
 	if (!data->isFunction()) {
@@ -261,7 +261,7 @@ CLEVER_METHOD(ReflectType::getNumArgs)
 		return;
 	}
 
-	const ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
+	const ReflectObject* intern = clever_get_this(ReflectObject*);
 	const Value* data = intern->getData();
 
 	if (!data->isFunction()) {
@@ -281,7 +281,7 @@ CLEVER_METHOD(ReflectType::getNumReqArgs)
 		return;
 	}
 
-	const ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
+	const ReflectObject* intern = clever_get_this(ReflectObject*);
 	const Value* data = intern->getData();
 
 	if (!data->isFunction()) {
@@ -301,7 +301,7 @@ CLEVER_METHOD(ReflectType::getMethods)
 		return;
 	}
 
-	const ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
+	const ReflectObject* intern = clever_get_this(ReflectObject*);
 	const MethodMap& methods = intern->getData()->getType()->getMethods();
 	MethodMap::const_iterator it(methods.begin()), end(methods.end());
 
@@ -325,7 +325,7 @@ CLEVER_METHOD(ReflectType::getProperties)
 		return;
 	}
 
-	const ReflectObject* intern = CLEVER_GET_OBJECT(ReflectObject*, CLEVER_THIS());
+	const ReflectObject* intern = clever_get_this(ReflectObject*);
 	const PropertyMap& props = intern->getData()->getType()->getProperties();
 	PropertyMap::const_iterator it(props.begin()), end(props.end());
 

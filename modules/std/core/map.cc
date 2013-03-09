@@ -61,7 +61,7 @@ CLEVER_METHOD(MapType::ctor)
 // Subscript operator
 CLEVER_TYPE_AT_OPERATOR(MapType::at_op)
 {
-	MapObject* mobj = CLEVER_GET_OBJECT(MapObject*, CLEVER_THIS());
+	MapObject* mobj = clever_get_this(MapObject*);
 	std::map<std::string, Value*>& data = mobj->getData();
 
 	if (!index->isStr()) {
@@ -89,7 +89,7 @@ CLEVER_METHOD(MapType::insert)
 		return;
 	}
 
-	ValueMap& mapped = (CLEVER_GET_OBJECT(MapObject*, CLEVER_THIS()))->getData();
+	ValueMap& mapped = (clever_get_this(MapObject*))->getData();
 	mapped.insert(ValuePair(*args[0]->getStr(), args[1]));
 	args[1]->addRef();
 	result->setNull();
@@ -105,7 +105,7 @@ CLEVER_METHOD(MapType::each)
 	}
 
 	Function* func = static_cast<Function*>(args[0]->getObj());
-	ValueMap& map = (CLEVER_GET_OBJECT(MapObject*, CLEVER_THIS()))->getData();
+	ValueMap& map = (clever_get_this(MapObject*))->getData();
 	ValueMap::const_iterator it(map.begin()), end(map.end());
 	ValueVector results;
 
@@ -140,7 +140,7 @@ CLEVER_METHOD(MapType::size)
 		return;
 	}
 
-	result->setInt((CLEVER_GET_OBJECT(MapObject*, CLEVER_THIS())->getData()).size());
+	result->setInt((clever_get_this(MapObject*)->getData()).size());
 }
 
 CLEVER_TYPE_INIT(MapType::init)

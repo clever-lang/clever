@@ -39,7 +39,7 @@ TypeObject* Date::allocData(CLEVER_TYPE_CTOR_ARGS) const
 static inline void clever_date_format(const ::std::vector<Value*>* args,
 	const Value* obj, Value* result, bool utc)
 {
-	DateObject* dobj = CLEVER_GET_OBJECT(DateObject*, CLEVER_THIS());
+	DateObject* dobj = clever_get_this(DateObject*);
 
 	if (!dobj->intern) {
 		//clever_throw(eventually)
@@ -104,7 +104,7 @@ CLEVER_METHOD(Date::format)
 		return;
 	}
 
-	clever_date_format(&args, CLEVER_THIS(), result, false);
+	clever_date_format(&args, clever_this(), result, false);
 }
 
 // String Date.uformat(string specstring)
@@ -116,14 +116,14 @@ CLEVER_METHOD(Date::uformat)
 		return;
 	}
 
-	clever_date_format(&args, CLEVER_THIS(), result, true);
+	clever_date_format(&args, clever_this(), result, true);
 }
 
 // Int Date::getTime()
 // Returns the time represented by this Date object as a Unix timestamp
 CLEVER_METHOD(Date::getTime)
 {
-	DateObject* dobj = CLEVER_GET_OBJECT(DateObject*, CLEVER_THIS());
+	DateObject* dobj = clever_get_this(DateObject*);
 
 	if (!dobj->intern) {
 		//clever_throw(eventually)

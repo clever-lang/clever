@@ -32,7 +32,7 @@ TypeObject* Condition::allocData(CLEVER_TYPE_CTOR_ARGS) const
 CLEVER_METHOD(Condition::signal)
 {
 	ConditionObject* cobj =
-		CLEVER_GET_OBJECT(ConditionObject*, CLEVER_THIS());
+		clever_get_this(ConditionObject*);
 
 	result->setBool(cobj->condition.signal());
 }
@@ -42,7 +42,7 @@ CLEVER_METHOD(Condition::signal)
 CLEVER_METHOD(Condition::broadcast)
 {
 	ConditionObject* cobj =
-		CLEVER_GET_OBJECT(ConditionObject*, CLEVER_THIS());
+		clever_get_this(ConditionObject*);
 
 
 	result->setBool(cobj->condition.broadcast());
@@ -55,7 +55,7 @@ CLEVER_METHOD(Condition::broadcast)
 CLEVER_METHOD(Condition::wait)
 {
 	ConditionObject* cobj =
-		CLEVER_GET_OBJECT(ConditionObject*, CLEVER_THIS());
+		clever_get_this(ConditionObject*);
 
 
 	if (!clever_check_args("*")) {

@@ -78,7 +78,7 @@ CLEVER_METHOD(CFile::read)
 		return;
 	}
 
-	CFileStream* file = CLEVER_GET_OBJECT(CFileStream*, CLEVER_THIS());
+	CFileStream* file = clever_get_this(CFileStream*);
 
 	CString* token = new CString;
 	file->getStream() >> *token;
@@ -94,7 +94,7 @@ CLEVER_METHOD(CFile::readLine)
 		return;
 	}
 
-	CFileStream* file = CLEVER_GET_OBJECT(CFileStream*, CLEVER_THIS());
+	CFileStream* file = clever_get_this(CFileStream*);
 
 	CString* token = new CString;
 
@@ -115,7 +115,7 @@ CLEVER_METHOD(CFile::eof)
 		return;
 	}
 
-	CFileStream* file = CLEVER_GET_OBJECT(CFileStream*, CLEVER_THIS());
+	CFileStream* file = clever_get_this(CFileStream*);
 
 	result->setBool(file->getStream().eof());
 }
@@ -129,7 +129,7 @@ CLEVER_METHOD(CFile::write)
 		return;
 	}
 
-	CFileStream* file = CLEVER_GET_OBJECT(CFileStream*, CLEVER_THIS());
+	CFileStream* file = clever_get_this(CFileStream*);
 
 	file->getStream() << *(args[0]->getStr());
 }
@@ -141,7 +141,7 @@ CLEVER_METHOD(CFile::open)
 		return;
 	}
 
-	CFileStream* file = CLEVER_GET_OBJECT(CFileStream*, CLEVER_THIS());
+	CFileStream* file = clever_get_this(CFileStream*);
 
 	file->getStream().open(args[0]->getStr()->c_str(),
 		static_cast< ::std::ios_base::openmode>(args[1]->getInt()));
@@ -154,7 +154,7 @@ CLEVER_METHOD(CFile::close)
 		return;
 	}
 
-	CFileStream* file = CLEVER_GET_OBJECT(CFileStream*, CLEVER_THIS());
+	CFileStream* file = clever_get_this(CFileStream*);
 	file->getStream().close();
 }
 
@@ -165,7 +165,7 @@ CLEVER_METHOD(CFile::isOpen)
 		return;
 	}
 
-	CFileStream* file = CLEVER_GET_OBJECT(CFileStream*, CLEVER_THIS());
+	CFileStream* file = clever_get_this(CFileStream*);
 	result->setBool(file->getStream().is_open());
 }
 

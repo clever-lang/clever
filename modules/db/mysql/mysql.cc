@@ -42,7 +42,7 @@ CLEVER_METHOD(Mysql::connect)
 	}
 
 	bool ret = false;
-	MysqlObject* mo = CLEVER_GET_OBJECT(MysqlObject*, CLEVER_THIS());
+	MysqlObject* mo = clever_get_this(MysqlObject*);
 	CMysql& cmysql = mo->getMysql();
 
 	switch (args.size()) {
@@ -67,7 +67,7 @@ CLEVER_METHOD(Mysql::query)
 		return;
 	}
 
-	MysqlObject* mo = CLEVER_GET_OBJECT(MysqlObject*, CLEVER_THIS());
+	MysqlObject* mo = clever_get_this(MysqlObject*);
 	CMysql& cmysql = mo->getMysql();
 
 	result->setBool(cmysql.query(args[0]->getStr()->c_str()));
@@ -79,7 +79,7 @@ CLEVER_METHOD(Mysql::fetchRow)
 		return;
 	}
 
-	MysqlObject* mo = CLEVER_GET_OBJECT(MysqlObject*, CLEVER_THIS());
+	MysqlObject* mo = clever_get_this(MysqlObject*);
 	CMysql& cmysql = mo->getMysql();
 
 	MapObject* data = cmysql.fetchRow();
@@ -97,7 +97,7 @@ CLEVER_METHOD(Mysql::getErrorNumber)
 		return;
 	}
 
-	MysqlObject* mo = CLEVER_GET_OBJECT(MysqlObject*, CLEVER_THIS());
+	MysqlObject* mo = clever_get_this(MysqlObject*);
 	CMysql& cmysql = mo->getMysql();
 
 	result->setInt(cmysql.errno());
@@ -109,7 +109,7 @@ CLEVER_METHOD(Mysql::getError)
 		return;
 	}
 
-	MysqlObject* mo = CLEVER_GET_OBJECT(MysqlObject*, CLEVER_THIS());
+	MysqlObject* mo = clever_get_this(MysqlObject*);
 	CMysql& cmysql = mo->getMysql();
 
 	result->setStr(CSTRING(cmysql.error()));

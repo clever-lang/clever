@@ -61,7 +61,7 @@ void to_json_impl(::std::ostringstream& oss, const Value* object) {
 }
 
 void array_to_json(::std::ostringstream& oss, const Value* array) {
-	ValueVector& arr = CLEVER_GET_OBJECT(ArrayObject*, array)->getData();
+	ValueVector& arr = clever_get_object(ArrayObject*, array)->getData();
 	bool first = true;
 	for (int i = 0, sz = arr.size(); i < sz; ++i) {
 		if (!arr[i]->isFunction()) {

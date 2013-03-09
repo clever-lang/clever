@@ -48,7 +48,7 @@ CLEVER_METHOD(Server::accept)
 		return;
 	}
 
-	ServerObject* sobj = CLEVER_GET_OBJECT(ServerObject*, CLEVER_THIS());
+	ServerObject* sobj = clever_get_this(ServerObject*);
 	FCGX_Request* request = sobj->request;
 
 	if (!request) {
@@ -163,7 +163,7 @@ CLEVER_METHOD(Server::print)
 		return;
 	}
 
-	ServerObject* sobj = CLEVER_GET_OBJECT(ServerObject*, CLEVER_THIS());
+	ServerObject* sobj = clever_get_this(ServerObject*);
 	FCGX_Request* request = sobj->request;
 
 	if (request) {
@@ -190,7 +190,7 @@ CLEVER_METHOD(Server::flush)
 		return;
 	}
 
-	ServerObject* sobj = CLEVER_GET_OBJECT(ServerObject*, CLEVER_THIS());
+	ServerObject* sobj = clever_get_this(ServerObject*);
 	FCGX_Request* request = sobj->request;
 
 	if (!clever_check_no_args()) {
@@ -212,7 +212,7 @@ CLEVER_METHOD(Server::finish)
 		return;
 	}
 
-	ServerObject* sobj = CLEVER_GET_OBJECT(ServerObject*, CLEVER_THIS());
+	ServerObject* sobj = clever_get_this(ServerObject*);
 	FCGX_Request* request = sobj->request;
 
 	if (!clever_check_no_args()) {
@@ -234,7 +234,7 @@ CLEVER_METHOD(Server::getEnvironment)
 		return;
 	}
 
-	ServerObject* sobj = CLEVER_GET_OBJECT(ServerObject*, CLEVER_THIS());
+	ServerObject* sobj = clever_get_this(ServerObject*);
 	FCGX_Request* request = sobj->request;
 
 	if (!request) {
@@ -273,7 +273,7 @@ CLEVER_METHOD(Server::getParam)
 		return;
 	}
 
-	ServerObject* sobj = CLEVER_GET_OBJECT(ServerObject*, CLEVER_THIS());
+	ServerObject* sobj = clever_get_this(ServerObject*);
 	FCGX_Request* request = sobj->request;
 
 	if (!request) {
@@ -301,7 +301,7 @@ CLEVER_METHOD(Server::getHeader)
 		return;
 	}
 
-	ServerObject* sobj = CLEVER_GET_OBJECT(ServerObject*, CLEVER_THIS());
+	ServerObject* sobj = clever_get_this(ServerObject*);
 	FCGX_Request* request = sobj->request;
 
 	if (!request) {
@@ -327,7 +327,7 @@ CLEVER_METHOD(Server::getCookie)
 		return;
 	}
 
-	ServerObject* sobj = CLEVER_GET_OBJECT(ServerObject*, CLEVER_THIS());
+	ServerObject* sobj = clever_get_this(ServerObject*);
 	FCGX_Request* request = sobj->request;
 
 	if (!request) {
@@ -353,7 +353,7 @@ CLEVER_METHOD(Server::debug)
 		return;
 	}
 
-	ServerObject* sobj = CLEVER_GET_OBJECT(ServerObject*, CLEVER_THIS());
+	ServerObject* sobj = clever_get_this(ServerObject*);
 	FCGX_Request* request = sobj->request;
 
 	if (!request) {
@@ -381,7 +381,7 @@ CLEVER_METHOD(Server::getParams)
 		return;
 	}
 
-	ServerObject* sobj = CLEVER_GET_OBJECT(ServerObject*, CLEVER_THIS());
+	ServerObject* sobj = clever_get_this(ServerObject*);
 	FCGX_Request* request = sobj->request;
 
 	if (!request) {
@@ -410,7 +410,7 @@ CLEVER_METHOD(Server::getHeaders)
 		return;
 	}
 
-	ServerObject* sobj = CLEVER_GET_OBJECT(ServerObject*, CLEVER_THIS());
+	ServerObject* sobj = clever_get_this(ServerObject*);
 	FCGX_Request* request = sobj->request;
 
 	if (!request) {
@@ -439,7 +439,7 @@ CLEVER_METHOD(Server::getCookies)
 		return;
 	}
 
-	ServerObject* sobj = CLEVER_GET_OBJECT(ServerObject*, CLEVER_THIS());
+	ServerObject* sobj = clever_get_this(ServerObject*);
 	FCGX_Request* request = sobj->request;
 
 	if (!request) {

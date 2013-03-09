@@ -150,7 +150,9 @@ void printfln(const char*, ...);
 
 bool check_args(const ::std::vector<Value*>&, const char*, CException*, const Type* = NULL);
 
-#define CLEVER_GET_OBJECT(t, n) static_cast<t>((n)->getObj())
+#define clever_this()           obj
+#define clever_get_object(t, n) static_cast<t>((n)->getObj())
+#define clever_get_this(t)      clever_get_object(t, clever_this())
 
 } // clever
 

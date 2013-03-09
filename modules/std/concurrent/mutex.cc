@@ -27,7 +27,7 @@ TypeObject* Mutex::allocData(CLEVER_TYPE_CTOR_ARGS) const
 
 CLEVER_METHOD(Mutex::lock)
 {
-	MutexObject* mutex = CLEVER_GET_OBJECT(MutexObject*, CLEVER_THIS());
+	MutexObject* mutex = clever_get_this(MutexObject*);
 	if (!mutex) {
 		//CLEVER_THROW(eventually);
 		return;
@@ -38,7 +38,7 @@ CLEVER_METHOD(Mutex::lock)
 
 CLEVER_METHOD(Mutex::trylock)
 {
-	MutexObject* mutex = CLEVER_GET_OBJECT(MutexObject*, CLEVER_THIS());
+	MutexObject* mutex = clever_get_this(MutexObject*);
 	if (!mutex) {
 		//CLEVER_THROW(eventually);
 		return;
@@ -49,7 +49,7 @@ CLEVER_METHOD(Mutex::trylock)
 
 CLEVER_METHOD(Mutex::unlock)
 {
-	MutexObject* mutex = CLEVER_GET_OBJECT(MutexObject*, CLEVER_THIS());
+	MutexObject* mutex = clever_get_this(MutexObject*);
 
 	if (!mutex) {
 		//CLEVER_THROW(eventually);

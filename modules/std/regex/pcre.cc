@@ -48,7 +48,7 @@ CLEVER_METHOD(Pcre::test)
 		return;
 	}
 
-	PcreObject* reobj = CLEVER_GET_OBJECT(PcreObject*, CLEVER_THIS());
+	PcreObject* reobj = clever_get_this(PcreObject*);
 
 	result->setBool(reobj->re->PartialMatch(args.at(0)->getStr()->c_str()));
 }
@@ -60,7 +60,7 @@ CLEVER_METHOD(Pcre::match)
 		return;
 	}
 
-	PcreObject* reobj = CLEVER_GET_OBJECT(PcreObject*, CLEVER_THIS());
+	PcreObject* reobj = clever_get_this(PcreObject*);
 	const CString* haystack = args.at(0)->getStr();
 	int ngroups;
 
@@ -103,7 +103,7 @@ CLEVER_METHOD(Pcre::group)
 		return;
 	}
 
-	const PcreObject* reobj = CLEVER_GET_OBJECT(PcreObject*, CLEVER_THIS());
+	const PcreObject* reobj = clever_get_this(PcreObject*);
 
 	if (args.at(0)->getInt() >= reobj->match.n_groups) {
 		result->setStr(CSTRING(""));
@@ -119,7 +119,7 @@ CLEVER_METHOD(Pcre::replace)
 		return;
 	}
 
-	const PcreObject* reobj = CLEVER_GET_OBJECT(PcreObject*, CLEVER_THIS());
+	const PcreObject* reobj = clever_get_this(PcreObject*);
 
 	::std::string newstr(*args[1]->getStr());
 
@@ -135,7 +135,7 @@ CLEVER_METHOD(Pcre::replaceAll)
 		return;
 	}
 
-	const PcreObject* reobj = CLEVER_GET_OBJECT(PcreObject*, CLEVER_THIS());
+	const PcreObject* reobj = clever_get_this(PcreObject*);
 	::std::string newstr(args[1]->getStr()->c_str());
 
 	reobj->re->GlobalReplace(args[0]->getStr()->c_str(), &newstr);
@@ -150,7 +150,7 @@ CLEVER_METHOD(Pcre::getPattern)
 		return;
 	}
 
-	const PcreObject* reobj = CLEVER_GET_OBJECT(PcreObject*, CLEVER_THIS());
+	const PcreObject* reobj = clever_get_this(PcreObject*);
 
 	result->setStr(new StrObject(reobj->re->pattern()));
 }
@@ -162,7 +162,7 @@ CLEVER_METHOD(Pcre::getError)
 		return;
 	}
 
-	const PcreObject* reobj = CLEVER_GET_OBJECT(PcreObject*, CLEVER_THIS());
+	const PcreObject* reobj = clever_get_this(PcreObject*);
 
 	result->setStr(new StrObject(reobj->re->error()));
 }

@@ -18,7 +18,7 @@ namespace clever { namespace modules { namespace std {
 
 #define CLEVER_USTR_TYPE UStringObject*
 #define CLEVER_USTR_CAST(what) (CLEVER_USTR_TYPE) what
-#define CLEVER_USTR_THIS() CLEVER_USTR_CAST(CLEVER_THIS()->getObj())
+#define CLEVER_USTR_THIS() CLEVER_USTR_CAST(clever_this()->getObj())
 #define CLEVER_USTR_OBJ(from) UStringObject(from->c_str(), from->size())
 
 struct UStringObject : public TypeObject {
@@ -39,9 +39,8 @@ public:
 
 	~UString() {}
 
-	void init();
-	void dump(TypeObject* data, ::std::ostream& out) const;
-
+	virtual void init();
+	virtual void dump(TypeObject*, ::std::ostream&) const;
 	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
 
 	CLEVER_METHOD(ctor);

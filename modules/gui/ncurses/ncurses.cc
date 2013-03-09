@@ -82,7 +82,7 @@ CLEVER_METHOD(NCurses::addStr)
 		return;
 	}
 
-	NCursesObject* mo = CLEVER_GET_OBJECT(NCursesObject*, CLEVER_THIS());
+	NCursesObject* mo = clever_get_this(NCursesObject*);
 	CNCurses* o = mo->getData();
 
 	o->addStr(args.at(0)->getInt(), args.at(1)->getInt(), args.at(2)->getStr()->c_str());
@@ -94,7 +94,7 @@ CLEVER_METHOD(NCurses::addChar)
 		return;
 	}
 
-	NCursesObject* mo = CLEVER_GET_OBJECT(NCursesObject*, CLEVER_THIS());
+	NCursesObject* mo = clever_get_this(NCursesObject*);
 	CNCurses* o = mo->getData();
 
 	o->addChar(args.at(0)->getInt(), args.at(1)->getInt(), args.at(2)->getStr()->at(0));
@@ -107,7 +107,7 @@ CLEVER_METHOD(NCurses::printStr)
 		return;
 	}
 
-	NCursesObject* mo = CLEVER_GET_OBJECT(NCursesObject*, CLEVER_THIS());
+	NCursesObject* mo = clever_get_this(NCursesObject*);
 	CNCurses* o = mo->getData();
 
 	o->printStr(args.at(0)->getInt(), args.at(1)->getInt(), args.at(2)->getStr()->c_str());
@@ -119,7 +119,7 @@ CLEVER_METHOD(NCurses::refresh)
 		return;
 	}
 
-	NCursesObject* mo = CLEVER_GET_OBJECT(NCursesObject*, CLEVER_THIS());
+	NCursesObject* mo = clever_get_this(NCursesObject*);
 	CNCurses* o = mo->getData();
 
 	o->refresh();
@@ -131,7 +131,7 @@ CLEVER_METHOD(NCurses::sleep)
 		return;
 	}
 
-	NCursesObject* mo = CLEVER_GET_OBJECT(NCursesObject*, CLEVER_THIS());
+	NCursesObject* mo = clever_get_this(NCursesObject*);
 	CNCurses* o = mo->getData();
 
 	o->sleep();
@@ -143,7 +143,7 @@ CLEVER_METHOD(NCurses::hide)
 		return;
 	}
 
-	NCursesObject* mo = CLEVER_GET_OBJECT(NCursesObject*, CLEVER_THIS());
+	NCursesObject* mo = clever_get_this(NCursesObject*);
 	CNCurses* o = mo->getData();
 
 	o->hide();
@@ -155,7 +155,7 @@ CLEVER_METHOD(NCurses::close)
 		return;
 	}
 
-	NCursesObject* mo = CLEVER_GET_OBJECT(NCursesObject*, CLEVER_THIS());
+	NCursesObject* mo = clever_get_this(NCursesObject*);
 	CNCurses* o = mo->getData();
 
 	o->close();
@@ -167,7 +167,7 @@ CLEVER_METHOD(NCurses::exit)
 		return;
 	}
 
-	NCursesObject* mo = CLEVER_GET_OBJECT(NCursesObject*, CLEVER_THIS());
+	NCursesObject* mo = clever_get_this(NCursesObject*);
 	CNCurses* o = mo->getData();
 
 	o->exit();
@@ -179,7 +179,7 @@ CLEVER_METHOD(NCurses::startColor)
 		return;
 	}
 
-	NCursesObject* mo = CLEVER_GET_OBJECT(NCursesObject*, CLEVER_THIS());
+	NCursesObject* mo = clever_get_this(NCursesObject*);
 	CNCurses* o = mo->getData();
 
 	o->startColor();
@@ -191,7 +191,7 @@ CLEVER_METHOD(NCurses::setColor)
 		return;
 	}
 
-	NCursesObject* mo = CLEVER_GET_OBJECT(NCursesObject*, CLEVER_THIS());
+	NCursesObject* mo = clever_get_this(NCursesObject*);
 	CNCurses* o = mo->getData();
 
 	o->setColor(args.at(0)->getInt(), NULL);
@@ -203,7 +203,7 @@ CLEVER_METHOD(NCurses::addColor)
 		return;
 	}
 
-	NCursesObject* mo = CLEVER_GET_OBJECT(NCursesObject*, CLEVER_THIS());
+	NCursesObject* mo = clever_get_this(NCursesObject*);
 	CNCurses* o = mo->getData();
 
 	o->addColor(args.at(0)->getInt(), args.at(1)->getInt(), args.at(2)->getInt());
@@ -214,7 +214,7 @@ CLEVER_METHOD(NCurses::nColors)
 	if (!clever_check_no_args()) {
 		return;
 	}
-	NCursesObject* mo = CLEVER_GET_OBJECT(NCursesObject*, CLEVER_THIS());
+	NCursesObject* mo = clever_get_this(NCursesObject*);
 	CNCurses* o = mo->getData();
 	result->setInt(o->nColors());
 }
@@ -224,7 +224,7 @@ CLEVER_METHOD(NCurses::hasColors)
 	if (!clever_check_no_args()) {
 		return;
 	}
-	NCursesObject* mo = CLEVER_GET_OBJECT(NCursesObject*, CLEVER_THIS());
+	NCursesObject* mo = clever_get_this(NCursesObject*);
 	CNCurses* o = mo->getData();
 	result->setBool(o->hasColors());
 }
@@ -234,7 +234,7 @@ CLEVER_METHOD(NCurses::isChild)
 	if (!clever_check_no_args()) {
 		return;
 	}
-	NCursesObject* mo = CLEVER_GET_OBJECT(NCursesObject*, CLEVER_THIS());
+	NCursesObject* mo = clever_get_this(NCursesObject*);
 	CNCurses* o = mo->getData();
 	result->setBool(o->isChild());
 }
@@ -244,7 +244,7 @@ CLEVER_METHOD(NCurses::enableKeyPad)
 	if (!clever_check_no_args()) {
 		return;
 	}
-	NCursesObject* mo = CLEVER_GET_OBJECT(NCursesObject*, CLEVER_THIS());
+	NCursesObject* mo = clever_get_this(NCursesObject*);
 	CNCurses* o = mo->getData();
 	o->enableKeyPad();
 }
@@ -254,7 +254,7 @@ CLEVER_METHOD(NCurses::noEcho)
 	if (!clever_check_no_args()) {
 		return;
 	}
-	NCursesObject* mo = CLEVER_GET_OBJECT(NCursesObject*, CLEVER_THIS());
+	NCursesObject* mo = clever_get_this(NCursesObject*);
 	CNCurses* o = mo->getData();
 	o->noEcho();
 }
@@ -264,7 +264,7 @@ CLEVER_METHOD(NCurses::deleteLine)
 	if (!clever_check_no_args()) {
 		return;
 	}
-	NCursesObject* mo = CLEVER_GET_OBJECT(NCursesObject*, CLEVER_THIS());
+	NCursesObject* mo = clever_get_this(NCursesObject*);
 	CNCurses* o = mo->getData();
 	o->deleteLine();
 }
@@ -274,7 +274,7 @@ CLEVER_METHOD(NCurses::getKey)
 	if (!clever_check_no_args()) {
 		return;
 	}
-	NCursesObject* mo = CLEVER_GET_OBJECT(NCursesObject*, CLEVER_THIS());
+	NCursesObject* mo = clever_get_this(NCursesObject*);
 	CNCurses* o = mo->getData();
 	KeyObject* ko = new KeyObject(o->getKey());
 
@@ -305,7 +305,7 @@ CLEVER_METHOD(NCurses::box)
 		return;
 	}
 
-	NCursesObject* mo = CLEVER_GET_OBJECT(NCursesObject*, CLEVER_THIS());
+	NCursesObject* mo = clever_get_this(NCursesObject*);
 	CNCurses* o = mo->getData();
 
 	o->box(args.at(0)->getInt(), args.at(1)->getInt());
@@ -317,7 +317,7 @@ CLEVER_METHOD(NCurses::move)
 		return;
 	}
 
-	NCursesObject* mo = CLEVER_GET_OBJECT(NCursesObject*, CLEVER_THIS());
+	NCursesObject* mo = clever_get_this(NCursesObject*);
 	CNCurses* o = mo->getData();
 
 	o->move(args.at(0)->getInt(), args.at(1)->getInt());
@@ -328,7 +328,7 @@ CLEVER_METHOD(NCurses::posX)
 	if (!clever_check_no_args()) {
 		return;
 	}
-	NCursesObject* mo = CLEVER_GET_OBJECT(NCursesObject*, CLEVER_THIS());
+	NCursesObject* mo = clever_get_this(NCursesObject*);
 	CNCurses* o = mo->getData();
 	result->setInt(o->getPosX());
 }
@@ -338,7 +338,7 @@ CLEVER_METHOD(NCurses::posY)
 	if (!clever_check_no_args()) {
 		return;
 	}
-	NCursesObject* mo = CLEVER_GET_OBJECT(NCursesObject*, CLEVER_THIS());
+	NCursesObject* mo = clever_get_this(NCursesObject*);
 	CNCurses* o = mo->getData();
 	result->setInt(o->getPosY());
 }
@@ -348,7 +348,7 @@ CLEVER_METHOD(NCurses::width)
 	if (!clever_check_no_args()) {
 		return;
 	}
-	NCursesObject* mo = CLEVER_GET_OBJECT(NCursesObject*, CLEVER_THIS());
+	NCursesObject* mo = clever_get_this(NCursesObject*);
 	CNCurses* o = mo->getData();
 	result->setInt(o->getWidth());
 }
@@ -358,7 +358,7 @@ CLEVER_METHOD(NCurses::height)
 	if (!clever_check_no_args()) {
 		return;
 	}
-	NCursesObject* mo = CLEVER_GET_OBJECT(NCursesObject*, CLEVER_THIS());
+	NCursesObject* mo = clever_get_this(NCursesObject*);
 	CNCurses* o = mo->getData();
 	result->setInt(o->getHeight());
 }
@@ -498,7 +498,7 @@ CLEVER_METHOD(Key::getChar)
 	if (!clever_check_no_args()) {
 		return;
 	}
-	KeyObject* mo = CLEVER_GET_OBJECT(KeyObject*, CLEVER_THIS());
+	KeyObject* mo = clever_get_this(KeyObject*);
 	char f[2];
 	f[0] = mo->getChar();
 	f[1] = '\0';
@@ -511,7 +511,7 @@ CLEVER_METHOD(Key::getInt)
 	if (!clever_check_no_args()) {
 		return;
 	}
-	KeyObject* mo = CLEVER_GET_OBJECT(KeyObject*, CLEVER_THIS());
+	KeyObject* mo = clever_get_this(KeyObject*);
 	result->setInt(mo->getInt());
 }
 

@@ -33,7 +33,7 @@ CLEVER_METHOD(CStack::push)
 		return;
 	}
 
-	CStackObject* sobj = CLEVER_GET_OBJECT(CStackObject*, CLEVER_THIS());
+	CStackObject* sobj = clever_get_this(CStackObject*);
 
 	sobj->stack.push(args[0]);
 	clever_addref(args[0]);
@@ -46,7 +46,7 @@ CLEVER_METHOD(CStack::pop)
 		return;
 	}
 
-	CStackObject* sobj = CLEVER_GET_OBJECT(CStackObject*, CLEVER_THIS());
+	CStackObject* sobj = clever_get_this(CStackObject*);
 
 	if (!sobj->stack.empty()) {
 		clever_delref(sobj->stack.top());
@@ -61,7 +61,7 @@ CLEVER_METHOD(CStack::top)
 		return;
 	}
 
-	const CStackObject* sobj = CLEVER_GET_OBJECT(CStackObject*, CLEVER_THIS());
+	const CStackObject* sobj = clever_get_this(CStackObject*);
 
 	if (sobj->stack.empty()) {
 		result->setNull();
@@ -77,7 +77,7 @@ CLEVER_METHOD(CStack::size)
 		return;
 	}
 
-	const CStackObject* sobj = CLEVER_GET_OBJECT(CStackObject*, CLEVER_THIS());
+	const CStackObject* sobj = clever_get_this(CStackObject*);
 
 	result->setInt(sobj->stack.size());
 }
@@ -89,7 +89,7 @@ CLEVER_METHOD(CStack::empty)
 		return;
 	}
 
-	const CStackObject* sobj = CLEVER_GET_OBJECT(CStackObject*, CLEVER_THIS());
+	const CStackObject* sobj = clever_get_this(CStackObject*);
 
 	result->setBool(sobj->stack.empty());
 }

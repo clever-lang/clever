@@ -152,7 +152,7 @@ CLEVER_METHOD(StrType::subString)
 		return;
 	}
 
-	const CString* of = CLEVER_THIS()->getStr();
+	const CString* of = clever_this()->getStr();
 	CString::size_type start, count;
 
 	start = args[0]->getInt();
@@ -174,7 +174,7 @@ CLEVER_METHOD(StrType::find)
 		return;
 	}
 
-	const CString* haystack = CLEVER_THIS()->getStr();
+	const CString* haystack = clever_this()->getStr();
 	const char* needle = args[0]->getStr()->c_str();
 	CString::size_type pos, count;
 
@@ -209,7 +209,7 @@ CLEVER_METHOD(StrType::findFirst)
 	}
 
 	const char* needle = args[0]->getStr()->c_str();
-	const CString* haystack = CLEVER_THIS()->getStr();
+	const CString* haystack = clever_this()->getStr();
 	CString::size_type pos, count;
 
 	clever_assert_not_null(haystack);
@@ -243,7 +243,7 @@ CLEVER_METHOD(StrType::findLast)
 	}
 
 	const char* needle = args[0]->getStr()->c_str();
-	const CString* haystack = CLEVER_THIS()->getStr();
+	const CString* haystack = clever_this()->getStr();
 	CString::size_type pos, count;
 
 	clever_assert_not_null(haystack);
@@ -313,7 +313,7 @@ CLEVER_METHOD(StrType::startsWith)
 		return;
 	}
 
-	const CString* match = CLEVER_THIS()->getStr();
+	const CString* match = clever_this()->getStr();
 	const char* with = args[0]->getStr()->c_str();
 
 	if (match && with) {
@@ -330,7 +330,7 @@ CLEVER_METHOD(StrType::endsWith)
 		return;
 	}
 
-	const CString* match = CLEVER_THIS()->getStr();
+	const CString* match = clever_this()->getStr();
 	const CString* with = args[0]->getStr();
 
 	if (match && with) {
@@ -347,7 +347,7 @@ CLEVER_METHOD(StrType::charAt)
 		return;
 	}
 
-	const CString* data = CLEVER_THIS()->getStr();
+	const CString* data = clever_this()->getStr();
 	long position = args[0]->getInt();
 	char found[2];
 
@@ -378,7 +378,7 @@ CLEVER_METHOD(StrType::size)
 	if (!clever_check_no_args()) {
 		return;
 	}
-	result->setInt((CLEVER_THIS()->getStr())->length());
+	result->setInt((clever_this()->getStr())->length());
 }
 
 // String.split(string delimiter, [int maximum])
@@ -397,7 +397,7 @@ CLEVER_METHOD(StrType::split)
 	}
 
 	::std::vector<Value*> list;
-	const ::std::string* self = CLEVER_THIS()->getStr();
+	const ::std::string* self = clever_this()->getStr();
 
 	if (self && self->length()) {
 		const ::std::string* delimit = args[0]->getStr();
@@ -434,7 +434,7 @@ CLEVER_METHOD(StrType::toUpper)
 		return;
 	}
 
-	const ::std::string* str = CLEVER_THIS()->getStr();
+	const ::std::string* str = clever_this()->getStr();
 	::std::string buffer = *str;
 	std::transform(buffer.begin(), buffer.end(),buffer.begin(), ::toupper);
 	result->setStr(new StrObject(buffer));
@@ -448,7 +448,7 @@ CLEVER_METHOD(StrType::toLower)
 		return;
 	}
 
-	const ::std::string* str = CLEVER_THIS()->getStr();
+	const ::std::string* str = clever_this()->getStr();
 	::std::string buffer = *str;
 	std::transform(buffer.begin(), buffer.end(),buffer.begin(), ::tolower);
 	result->setStr(new StrObject(buffer));
@@ -462,7 +462,7 @@ CLEVER_METHOD(StrType::replace)
 		return;
 	}
 
-	const CString* haystack = CLEVER_THIS()->getStr();
+	const CString* haystack = clever_this()->getStr();
 	const CString* needle = args[0]->getStr();
 	::std::string buffer = *haystack;
 	size_t pos = haystack->find(needle->c_str());

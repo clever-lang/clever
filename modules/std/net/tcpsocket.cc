@@ -39,7 +39,7 @@ CLEVER_METHOD(TcpSocket::setHost)
 		return;
 	}
 
-	SocketObject* sv = CLEVER_GET_OBJECT(SocketObject*, CLEVER_THIS());
+	SocketObject* sv = clever_get_this(SocketObject*);
 
 	sv->getSocket().setHost(args[0]->getStr()->c_str());
 }
@@ -50,7 +50,7 @@ CLEVER_METHOD(TcpSocket::setPort)
 		return;
 	}
 
-	SocketObject* sv = CLEVER_GET_OBJECT(SocketObject*, CLEVER_THIS());
+	SocketObject* sv = clever_get_this(SocketObject*);
 
 	sv->getSocket().setPort(args[0]->getInt());
 }
@@ -61,7 +61,7 @@ CLEVER_METHOD(TcpSocket::setTimeout)
 		return;
 	}
 
-	SocketObject* sv = CLEVER_GET_OBJECT(SocketObject*, CLEVER_THIS());
+	SocketObject* sv = clever_get_this(SocketObject*);
 
 	sv->getSocket().setTimeout(args[0]->getInt());
 }
@@ -72,7 +72,7 @@ CLEVER_METHOD(TcpSocket::connect)
 		return;
 	}
 
-	SocketObject* sv = CLEVER_GET_OBJECT(SocketObject*, CLEVER_THIS());
+	SocketObject* sv = clever_get_this(SocketObject*);
 
 	sv->getSocket().connect();
 }
@@ -83,7 +83,7 @@ CLEVER_METHOD(TcpSocket::close)
 		return;
 	}
 
-	SocketObject* sv = CLEVER_GET_OBJECT(SocketObject*, CLEVER_THIS());
+	SocketObject* sv = clever_get_this(SocketObject*);
 
 	sv->getSocket().close();
 }
@@ -94,7 +94,7 @@ CLEVER_METHOD(TcpSocket::receive)
 		return;
 	}
 
-	SocketObject* sv = CLEVER_GET_OBJECT(SocketObject*, CLEVER_THIS());
+	SocketObject* sv = clever_get_this(SocketObject*);
 	char *buffer;
 	long length = args[0]->getInt();
 
@@ -116,7 +116,7 @@ CLEVER_METHOD(TcpSocket::send)
 		return;
 	}
 
-	SocketObject* sv = CLEVER_GET_OBJECT(SocketObject*, CLEVER_THIS());
+	SocketObject* sv = clever_get_this(SocketObject*);
 
 	const char* buffer = args[0]->getStr()->c_str();
 	size_t buffer_len = ::strlen(buffer);
@@ -130,7 +130,7 @@ CLEVER_METHOD(TcpSocket::isOpen)
 		return;
 	}
 
-	SocketObject* sv = CLEVER_GET_OBJECT(SocketObject*, CLEVER_THIS());
+	SocketObject* sv = clever_get_this(SocketObject*);
 
 	result->setBool(sv->getSocket().isOpen());
 }
@@ -141,7 +141,7 @@ CLEVER_METHOD(TcpSocket::poll)
 		return;
 	}
 
-	SocketObject* sv = CLEVER_GET_OBJECT(SocketObject*, CLEVER_THIS());
+	SocketObject* sv = clever_get_this(SocketObject*);
 
 	result->setBool(sv->getSocket().poll());
 }
@@ -152,7 +152,7 @@ CLEVER_METHOD(TcpSocket::good)
 		return;
 	}
 
-	SocketObject* sv = CLEVER_GET_OBJECT(SocketObject*, CLEVER_THIS());
+	SocketObject* sv = clever_get_this(SocketObject*);
 
 	result->setBool(sv->getSocket().getError() == NO_ERROR);
 }
@@ -163,7 +163,7 @@ CLEVER_METHOD(TcpSocket::getError)
 		return;
 	}
 
-	SocketObject* sv = CLEVER_GET_OBJECT(SocketObject*, CLEVER_THIS());
+	SocketObject* sv = clever_get_this(SocketObject*);
 
 	result->setInt(sv->getSocket().getError());
 }
@@ -174,7 +174,7 @@ CLEVER_METHOD(TcpSocket::getErrorMessage)
 		return;
 	}
 
-	SocketObject* sv = CLEVER_GET_OBJECT(SocketObject*, CLEVER_THIS());
+	SocketObject* sv = clever_get_this(SocketObject*);
 
 	result->setStr(CSTRING(sv->getSocket().getErrorString()));
 }

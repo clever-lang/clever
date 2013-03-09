@@ -166,7 +166,7 @@ CLEVER_METHOD(Events::connect)
 		return;
 	}
 
-	EventData* intern = CLEVER_GET_OBJECT(EventData*, CLEVER_THIS());
+	EventData* intern = clever_get_this(EventData*);
 
 
 	Value* v = args.at(0);
@@ -204,7 +204,7 @@ CLEVER_METHOD(Events::emit)
 		return;
 	}
 
-	EventData* intern = CLEVER_GET_OBJECT(EventData*, CLEVER_THIS());
+	EventData* intern = clever_get_this(EventData*);
 
 	intern->mutex.lock();
 
@@ -226,7 +226,7 @@ CLEVER_METHOD(Events::wait)
 	if (!clever_check_no_args()) {
 		return;
 	}
-	EventData* intern = CLEVER_GET_OBJECT(EventData*, CLEVER_THIS());
+	EventData* intern = clever_get_this(EventData*);
 
 	intern->handler.wait();
 }
@@ -238,7 +238,7 @@ CLEVER_METHOD(Events::finalize)
 		return;
 	}
 
-	EventData* intern = CLEVER_GET_OBJECT(EventData*, CLEVER_THIS());
+	EventData* intern = clever_get_this(EventData*);
 
 	intern->mutex.lock();
 
@@ -258,7 +258,7 @@ CLEVER_METHOD(Events::set)
 		return;
 	}
 
-	EventData* intern = CLEVER_GET_OBJECT(EventData*, CLEVER_THIS());
+	EventData* intern = clever_get_this(EventData*);
 
 	Value* v = args.at(0);
 
