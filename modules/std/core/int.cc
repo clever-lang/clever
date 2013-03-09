@@ -223,10 +223,10 @@ CLEVER_METHOD(IntType::toString)
 // Int type initialization
 CLEVER_TYPE_INIT(IntType::init)
 {
-	setConstructor((MethodPtr) &IntType::ctor);
+	setConstructor((MethodPtr)&IntType::ctor);
 
 	// Methods
-	addMethod(new Function("toString", (MethodPtr) &IntType::toString));
+	addMethod(new Function("toString", (MethodPtr)&IntType::toString));
 
 	// Properties
 	addProperty("SIZE", new Value((long)sizeof(long), true));
