@@ -388,32 +388,32 @@ CLEVER_METHOD(ReflectType::getInternClassSizes)
 // Reflect type initialization
 CLEVER_TYPE_INIT(ReflectType::init)
 {
-	setConstructor((MethodPtr) &ReflectType::ctor);
-	addMethod(new Function("getType",    (MethodPtr) &ReflectType::getType));
+	setConstructor((MethodPtr)&ReflectType::ctor);
+	addMethod(new Function("getType",    (MethodPtr)&ReflectType::getType));
 
 	// Type checking
-	addMethod(new Function("isFunction", (MethodPtr) &ReflectType::isFunction));
-	addMethod(new Function("isBool",     (MethodPtr) &ReflectType::isBool));
-	addMethod(new Function("isString",   (MethodPtr) &ReflectType::isString));
-	addMethod(new Function("isInt",      (MethodPtr) &ReflectType::isInt));
-	addMethod(new Function("isDouble",   (MethodPtr) &ReflectType::isDouble));
-	addMethod(new Function("isArray",    (MethodPtr) &ReflectType::isArray));
-	addMethod(new Function("isMap",      (MethodPtr) &ReflectType::isMap));
+	addMethod(new Function("isFunction", (MethodPtr)&ReflectType::isFunction));
+	addMethod(new Function("isBool",     (MethodPtr)&ReflectType::isBool));
+	addMethod(new Function("isString",   (MethodPtr)&ReflectType::isString));
+	addMethod(new Function("isInt",      (MethodPtr)&ReflectType::isInt));
+	addMethod(new Function("isDouble",   (MethodPtr)&ReflectType::isDouble));
+	addMethod(new Function("isArray",    (MethodPtr)&ReflectType::isArray));
+	addMethod(new Function("isMap",      (MethodPtr)&ReflectType::isMap));
 
 	// Function specific methods
-	addMethod(new Function("getName",       (MethodPtr) &ReflectType::getName));
-	addMethod(new Function("isStatic",      (MethodPtr) &ReflectType::isStatic));
-	addMethod(new Function("isVariadic",    (MethodPtr) &ReflectType::isVariadic));
-	addMethod(new Function("isUserDefined", (MethodPtr) &ReflectType::isUserDefined));
-	addMethod(new Function("isInternal",    (MethodPtr) &ReflectType::isInternal));
-	addMethod(new Function("getNumArgs",    (MethodPtr) &ReflectType::getNumArgs));
-	addMethod(new Function("getNumReqArgs", (MethodPtr) &ReflectType::getNumReqArgs));
+	addMethod(new Function("getName",       (MethodPtr)&ReflectType::getName));
+	addMethod(new Function("isStatic",      (MethodPtr)&ReflectType::isStatic));
+	addMethod(new Function("isVariadic",    (MethodPtr)&ReflectType::isVariadic));
+	addMethod(new Function("isUserDefined", (MethodPtr)&ReflectType::isUserDefined));
+	addMethod(new Function("isInternal",    (MethodPtr)&ReflectType::isInternal));
+	addMethod(new Function("getNumArgs",    (MethodPtr)&ReflectType::getNumArgs));
+	addMethod(new Function("getNumReqArgs", (MethodPtr)&ReflectType::getNumReqArgs));
 
 	// Type specific methods
-	addMethod(new Function("getMethods",    (MethodPtr) &ReflectType::getMethods));
-	addMethod(new Function("getProperties", (MethodPtr) &ReflectType::getProperties));
+	addMethod(new Function("getMethods",    (MethodPtr)&ReflectType::getMethods));
+	addMethod(new Function("getProperties", (MethodPtr)&ReflectType::getProperties));
 
-	addMethod(new Function("getInternClassSizes", (MethodPtr) &ReflectType::getInternClassSizes))
+	addMethod(new Function("getInternClassSizes", (MethodPtr)&ReflectType::getInternClassSizes))
 			->setStatic();
 }
 
