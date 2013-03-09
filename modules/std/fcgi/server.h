@@ -11,7 +11,7 @@
 #include <map>
 #include <iostream>
 #include "core/cstring.h"
-#include "types/type.h"
+#include "core/type.h"
 
 namespace clever { namespace modules { namespace std {
 
@@ -95,9 +95,7 @@ public:
 		delete out;
 	}
 
-	void init();
-
-	virtual TypeObject* allocData(CLEVER_TYPE_CTOR_ARGS) const;
+	virtual void init();
 
 	CLEVER_METHOD(ctor);
 	CLEVER_METHOD(accept);

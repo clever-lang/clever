@@ -4,31 +4,17 @@
  *
  * This file is distributed under the MIT license. See LICENSE for details.
  */
-#include "types/type.h"
-#include "types/native_types.h"
+#include "core/type.h"
+#include "core/native_types.h"
 #include "core/value.h"
 #include "core/clever.h"
+#include "core/cexception.h"
 #include "modules/std/fcgi/fcgi.h"
 #include "modules/std/fcgi/server.h"
 
 namespace clever { namespace modules { namespace std {
 
 const size_t CLEVER_FCGI_STDIN_MAX = 1000000;
-
-// Server.new()
-// Setup the process for responding to FCGI requests by creating a new Request object
-TypeObject* Server::allocData(CLEVER_TYPE_CTOR_ARGS) const
-{
-	ServerObject* server = new ServerObject;
-
-	if (server->request) {
-		if (FCGX_InitRequest(server->request, 0, 0) == 0) {
-			return server;
-		}
-		delete server;
-	}
-	return NULL;
-}
 
 // Server constructor
 CLEVER_METHOD(Server::ctor)
@@ -37,7 +23,16 @@ CLEVER_METHOD(Server::ctor)
 		return;
 	}
 
-	result->setObj(this, allocData(&args));
+	ServerObject* server = new ServerObject;
+
+	if (server->request) {
+		if (FCGX_InitRequest(server->request, 0, 0) == 0) {
+			result->setObj(this, server);
+			return;
+		}
+		delete server;
+	}
+	clever_throw("Cannot start server!");
 }
 
 // Server.accept()
@@ -261,7 +256,9 @@ CLEVER_METHOD(Server::getEnvironment)
 			++item;
 		}
 
-		result->setObj(CLEVER_MAP_TYPE, CLEVER_MAP_TYPE->allocData(&mapping));
+		result->setObj(CLEVER_MAP_TYPE, new MapObject(mapping));
+
+		::std::for_each(mapping.begin(), mapping.end(), clever_delref);
 	}
 }
 
@@ -399,7 +396,9 @@ CLEVER_METHOD(Server::getParams)
 		++item;
 	}
 
-	result->setObj(CLEVER_MAP_TYPE, CLEVER_MAP_TYPE->allocData(&mapping));
+	result->setObj(CLEVER_MAP_TYPE, new MapObject(mapping));
+
+	::std::for_each(mapping.begin(), mapping.end(), clever_delref);
 }
 
 // Server.getHeaders()
@@ -428,7 +427,9 @@ CLEVER_METHOD(Server::getHeaders)
 		++item;
 	}
 
-	result->setObj(CLEVER_MAP_TYPE, CLEVER_MAP_TYPE->allocData(&mapping));
+	result->setObj(CLEVER_MAP_TYPE, new MapObject(mapping));
+
+	::std::for_each(mapping.begin(), mapping.end(), clever_delref);
 }
 
 // Server.getCookies()
@@ -457,7 +458,9 @@ CLEVER_METHOD(Server::getCookies)
 		++item;
 	}
 
-	result->setObj(CLEVER_MAP_TYPE, CLEVER_MAP_TYPE->allocData(&mapping));
+	result->setObj(CLEVER_MAP_TYPE, new MapObject(mapping));
+
+	::std::for_each(mapping.begin(), mapping.end(), clever_delref);
 }
 
 // Server.setHeader(string key, string value)
