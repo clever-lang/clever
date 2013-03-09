@@ -19,6 +19,7 @@ TypeObject* ArrayType::allocData(CLEVER_TYPE_CTOR_ARGS) const
 
 	for (size_t i = 0, j = args->size(); i < j; ++i) {
 		vec.push_back(args->at(i)->clone());
+		vec.back()->setConst(false);
 	}
 
 	return arr;
@@ -59,9 +60,6 @@ CLEVER_TYPE_AT_OPERATOR(ArrayType::at_op)
 
 	Value* result = arr.at(index->getInt());
 
-	// @TODO(Felipe): FIXME
-	result->setConst(false);
-
 	clever_addref(result);
 
 	return result;
@@ -85,6 +83,7 @@ CLEVER_METHOD(ArrayType::append)
 
 		for (size_t i = 0, j = args.size(); i < j; ++i) {
 			vec.push_back(args[i]->clone());
+			vec.back()->setConst(false);
 		}
 	}
 	result->setNull();
