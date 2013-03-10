@@ -62,7 +62,7 @@ public:
 	void loadVar(Scope*, Environment*, const CString*, Value*) const;
 	void loadModule(Scope*, Environment*, Module*, size_t, const CString*) const;
 	void loadModuleContent(Scope*, Environment*, Module*, size_t, const CString*, const std::string&) const;
-	void loadFunction(Scope*, Environment*, const CString*, Function*) const;
+	void loadFunction(Scope*, Environment*, const std::string&, Function*) const;
 	void loadType(Scope*, Environment*, const std::string&, Type*) const;
 private:
 	Driver* m_driver;

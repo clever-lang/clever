@@ -20,15 +20,12 @@ class Value;
 class VM;
 class Scope;
 
-#define CLEVER_FUNCTION_ARGS      Value* result, const ::std::vector<Value*>& args, const VM* vm, CException* exception
+#define CLEVER_FUNCTION_ARGS      Value* result, const ValueVector& args, const VM* vm, CException* exception
 #define CLEVER_FUNC_NAME(name)    clv_f_##name
 #define CLEVER_NS_FNAME(ns, name) ns::CLEVER_FUNC_NAME(name)
 #define CLEVER_FUNCTION(name)     void CLEVER_FASTCALL CLEVER_FUNC_NAME(name)(CLEVER_FUNCTION_ARGS)
 
 typedef void (CLEVER_FASTCALL *FunctionPtr)(CLEVER_FUNCTION_ARGS);
-
-typedef std::tr1::unordered_map<const CString*, Function*> FunctionMap;
-typedef std::pair<const CString*, Function*> FunctionMapEntry;
 
 class Function : public TypeObject {
 public:
