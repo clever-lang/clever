@@ -9,7 +9,6 @@
 #include "modules/std/core/int.h"
 #include "modules/std/core/double.h"
 #include "modules/std/core/bool.h"
-#include "core/cthread.h"
 
 namespace clever {
 
