@@ -23,14 +23,18 @@ public:
 	ArrayObject() {}
 
 	explicit ArrayObject(const std::vector<Value*>& args) {
-		for (size_t i = 0, n = args.size(); i < n; ++i) {
-			m_data.push_back(args[i]->clone());
-			m_data.back()->setConst(false);
-		}
+		append(args);
 	}
 
 	~ArrayObject() {
 		std::for_each(m_data.begin(), m_data.end(), clever_delref);
+	}
+
+	void append(const std::vector<Value*>& args) {
+		for (size_t i = 0, n = args.size(); i < n; ++i) {
+			m_data.push_back(args[i]->clone());
+			m_data.back()->setConst(false);
+		}
 	}
 
 	std::vector<Value*>& getData() { return m_data; }
@@ -50,6 +54,7 @@ public:
 	virtual void init();
 	virtual std::string toString(TypeObject*) const;
 
+	// Methods
 	CLEVER_METHOD(ctor);
 	CLEVER_METHOD(append);
 	CLEVER_METHOD(size);
@@ -62,7 +67,10 @@ public:
 	CLEVER_METHOD(range);
 	CLEVER_METHOD(erase);
 
+	// Operators
 	Value* CLEVER_FASTCALL at_op(CLEVER_TYPE_AT_OPERATOR_ARGS) const;
+
+	CLEVER_TYPE_OPERATOR(add);
 private:
 	DISALLOW_COPY_AND_ASSIGN(ArrayType);
 };

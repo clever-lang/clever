@@ -55,6 +55,21 @@ CLEVER_TYPE_AT_OPERATOR(ArrayType::at_op)
 	return result;
 }
 
+// + operator
+CLEVER_TYPE_OPERATOR(ArrayType::add)
+{
+	if (rhs->isArray()) {
+		ArrayObject* arr  = clever_get_object(ArrayObject*, lhs);
+		ArrayObject* arr2 = clever_get_object(ArrayObject*, rhs);
+
+		ArrayObject* new_obj = new ArrayObject(arr->getData());
+
+		new_obj->append(arr2->getData());
+
+		result->setObj(this, new_obj);
+	}
+}
+
 // Array::Array([arg, ...])
 CLEVER_METHOD(ArrayType::ctor)
 {

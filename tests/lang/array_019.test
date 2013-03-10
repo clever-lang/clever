@@ -1,0 +1,7 @@
+Testing array merge
+==CODE==
+import std.io.*;
+
+println([1] + [2]);
+==RESULT==
+\[1, 2\]
