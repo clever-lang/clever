@@ -126,13 +126,11 @@ public:
 	bool hasContext() const { return m_context != NULL; }
 
 	Function* getClosure() const {
-		Function* func = new Function();
+		Function* func = new Function(m_name, m_info.addr);
 
-		func->m_name = m_name;
 		func->m_num_rargs = m_num_rargs;
 		func->m_num_args = m_num_args;
 		func->m_flags = m_flags | FF_CLOSURE;
-		func->m_info = m_info;
 		func->m_environment = m_environment;
 
 		return func;
