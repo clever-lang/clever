@@ -92,7 +92,7 @@ void VM::dumpStackTrace(std::ostringstream& out)
 /// Fetchs a Value ptr according to the operand type
 CLEVER_FORCE_INLINE Value* VM::getValue(const Operand& operand) const
 {
-	const Environment* source;
+	const Environment* source = NULL;
 
 	switch (operand.op_type) {
 		case FETCH_CONST: source = m_const_env;                          break;
@@ -437,12 +437,9 @@ out:
 
 		clever_assert_not_null(fval);
 
-		if (UNEXPECTED(fval->isNull())) {
-			error(OPCODE.loc, "Cannot make a call from null value");
-		}
-
 		if (UNEXPECTED(!fval->isFunction())) {
-			error(OPCODE.loc, "Cannot make a call from %T type", fval->getType());
+			error(OPCODE.loc, "Cannot make a call from %T %s",
+				fval->getType(), fval->isNull() ? "value" : "type");
 		}
 
 		Function* func = static_cast<Function*>(fval->getObj());
@@ -655,6 +652,9 @@ out:
 		const Value* callee = getValue(OPCODE.op1);
 		const Value* method = getValue(OPCODE.op2);
 
+		clever_assert_not_null(callee);
+		clever_assert_not_null(method);
+
 		if (UNEXPECTED(callee->isNull())) {
 			error(OPCODE.loc,
 				"Cannot call method `%S' from a null value", method->getStr());
@@ -663,16 +663,14 @@ out:
 		const Type* type = callee->getType();
 		const Value* fval = callee->getObj()->getMember(method->getStr());
 
-		if (UNEXPECTED(fval == NULL || !fval->isFunction())) {
+		if (UNEXPECTED(!fval->isFunction())) {
 			error(OPCODE.loc, "Member `%T::%S' not found or not callable!",
 				type, method->getStr());
 		}
 
 		const Function* func = static_cast<Function*>(fval->getObj());
 
-		if (UNEXPECTED(func == NULL)) {
-			error(OPCODE.loc, "Method `%T::%S' not found!", type, method->getStr());
-		}
+		clever_assert_not_null(func);
 
 		if (func->isUserDefined()) {
 			prepareCall(func,
