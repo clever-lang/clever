@@ -169,27 +169,28 @@ static CLEVER_FORCE_INLINE void _param_binding(const Function* func,
 	const Environment* fenv, const ValueVector& args)
 {
 	size_t nargs = 0;
+	size_t args_count = args.size();
 
-	if (func->hasArgs() && !args.empty()) {
-		size_t num_args = args.size();
+	if (func->hasArgs() && args_count) {
 		ValueOffset argoff(0,0);
+		size_t num_args = args_count;
 
-		if (num_args > func->getNumArgs()) {
+		if (args_count > func->getNumArgs()) {
 			num_args = func->getNumArgs();
 		}
+		nargs += num_args;
 
-		for (size_t i = 0, len = num_args; i < len; ++i) {
+		for (size_t i = 0; i < num_args; ++i) {
 			fenv->getValue(argoff)->copy(args[i]);
 			argoff.second++;
-			++nargs;
 		}
 	}
 
 	if (func->isVariadic()) {
 		ArrayObject* arr = new ArrayObject;
 
-		if (EXPECTED(!args.empty() && (args.size() - nargs) > 0)) {
-			for (size_t i = nargs, j = args.size(); i < j; ++i) {
+		if ((args_count - nargs) > 0) {
+			for (size_t i = nargs; i < args_count; ++i) {
 				arr->getData().push_back(args[i]->clone());
 			}
 		}
