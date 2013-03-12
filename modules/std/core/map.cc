@@ -107,7 +107,7 @@ CLEVER_METHOD(MapType::each)
 		fargs.push_back(call[1]);
 
 		results.push_back(call[0]);
-		results.push_back(call[2] = const_cast<VM*>(vm)->runFunction(func, &fargs));
+		results.push_back(call[2] = const_cast<VM*>(vm)->runFunction(func, fargs));
 
 		++it;
 	}
