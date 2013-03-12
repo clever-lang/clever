@@ -1,0 +1,48 @@
+import std.*;
+
+class Person {
+	var name;
+	var email;
+
+	function Person(name, email) {
+		this.name = name;
+		this.email = email;
+	}
+}
+
+class Language {
+	var name;
+	var version;
+	var modules;
+	var contributors;
+	var links;
+
+	function Language(name, version, modules, contributors, links) {
+		this.name = name;
+		this.version = version;
+		this.modules = modules;
+		this.contributors = contributors;
+		this.links = links;
+	}
+}
+
+var clever = Language.new('Clever Programming Language', '0.0.1a',
+	[
+		'db',
+		'gui',
+		'std'
+	],
+	[
+		Person.new('Higor', 'heuripedes@clever-lang.org'),
+		Person.new('Felipe', 'felipe@clever-lang.org'),
+		Person.new('Murilo', 'murilo@clever-lang.org'),
+		Person.new('Pericles', 'pmachado@clever-lang.org')
+	],
+	{
+		'docs': 'http://clever-lang.org/doc/',
+		'repo': 'https://github.com/clever-lang/clever',
+		'home': 'http://clever-lang.org/'
+	}
+);
+
+io:println(json:to_json(clever));

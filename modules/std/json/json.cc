@@ -17,6 +17,52 @@ namespace json {
 
 namespace detail {
 
+::std::string escape(const ::std::string& str) {
+	::std::ostringstream oss;
+
+	for (int i = 0, sz = str.size(); i < sz; ++i) {
+		switch (str[i]) {
+			case '\b': {
+				oss << "\\b";
+				break;
+			}
+			case '\f': {
+				oss << "\\f";
+				break;
+			}
+			case '\n': {
+				oss << "\\n";
+				break;
+			}
+			case '\r': {
+				oss << "\\r";
+				break;
+			}
+			case '\t': {
+				oss << "\\t";
+				break;
+			}
+			case '\'': {
+				oss << "\\'";
+				break;
+			}
+			case '"': {
+				oss << "\\\"";
+				break;
+			}
+			case '\\': {
+				oss << "\\\\";
+				break;
+			}
+			default: {
+				oss << str[i];
+			}
+		}
+	}
+
+	return oss.str();
+}
+
 void array_to_json(::std::ostringstream& oss, const Value* array);
 
 void to_json_impl(::std::ostringstream& oss, const Value* object) {
@@ -41,9 +87,7 @@ void to_json_impl(::std::ostringstream& oss, const Value* object) {
 			oss << *key << ": ";
 			if (value->isInt() || value->isStr() || value->isDouble()
 				|| value->isBool() || value->isMap()) {
-				oss << "\"";
-				value->dump(oss);
-				oss << "\"";
+				oss << "\"" << detail::escape(value->toString()) << "\"";
 			}
 			else if (value->isArray()) {
 				oss << "[";
@@ -70,9 +114,7 @@ void array_to_json(::std::ostringstream& oss, const Value* array) {
 			}
 			if (arr[i]->isInt() || arr[i]->isStr() || arr[i]->isDouble()
 				|| arr[i]->isBool() || arr[i]->isMap()) {
-				oss << "\"";
-				arr[i]->dump(oss);
-				oss << "\"";
+				oss << "\"" << detail::escape(arr[i]->toString()) << "\"";
 			}
 			else if (arr[i]->isArray()) {
 				oss << "[";
