@@ -14,16 +14,14 @@
 #include "core/cthread.h"
 #include "core/cexception.h"
 #include "core/clever.h"
+#include "core/value.h"
 
 namespace clever {
 
-class ValueObject;
-class Value;
 class Function;
 class VM;
 class Environment;
 class location;
-
 
 struct CallStackEntry {
 	Environment* env;
@@ -83,7 +81,7 @@ public:
 
 	/// Start the VM execution
 	void run();
-	Value* runFunction(const Function*, std::vector<Value*>*);
+	Value* runFunction(const Function*, const ValueVector&);
 
 	/// Dumps the stack trace
 	void dumpStackTrace(std::ostringstream&);
@@ -120,7 +118,7 @@ private:
 	std::vector<IR> m_inst;
 
 	/// Call arguments
-	std::vector<Value*> m_call_args;
+	ValueVector m_call_args;
 	std::stack<std::vector<Environment*> > m_obj_store;
 
 	bool m_main;

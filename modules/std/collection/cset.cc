@@ -42,7 +42,7 @@ bool CSetObjectCompare::operator()(const CSetValue& a, const CSetValue& b) const
 	args.push_back(a.element);
 	args.push_back(b.element);
 
-	Value* result = const_cast<VM*>(a.vm)->runFunction(a.comp, &args);
+	Value* result = const_cast<VM*>(a.vm)->runFunction(a.comp, args);
 
 	bool ret = result ? result->asBool() : false;
 

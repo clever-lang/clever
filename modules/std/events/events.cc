@@ -40,7 +40,7 @@ CLEVER_THREAD_FUNC(_events_handler)
 			Actions& a = intern->m_event_map[u.first];
 
 			for (Actions::iterator it = a.begin(); it != a.end(); ++it) {
-				intern->m_vm->runFunction(*it, &u.second)->delRef();
+				intern->m_vm->runFunction(*it, u.second)->delRef();
 			}
 
 			if (u.first == "exit") {
@@ -87,7 +87,7 @@ CLEVER_THREAD_FUNC(_events_handler)
 							}
 
 							if (exec) {
-								intern->m_vm->runFunction(func, &args)->delRef();
+								intern->m_vm->runFunction(func, args)->delRef();
 							}
 						}
 					}

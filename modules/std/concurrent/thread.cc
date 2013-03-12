@@ -24,9 +24,7 @@ static inline void* ThreadHandler(void* ThreadArgument)
 	ThreadData* intern = static_cast<ThreadData*>(ThreadArgument);
 
 	if (intern->vm) {
-		intern->result = intern->vm->runFunction(
-			intern->entry, &intern->args
-		);
+		intern->result = intern->vm->runFunction(intern->entry, intern->args);
 		delete intern->vm;
 	}
 

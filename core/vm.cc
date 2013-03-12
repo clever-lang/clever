@@ -166,31 +166,32 @@ void VM::copy(const VM* vm, bool deep)
 
 // Function parameter binding
 static CLEVER_FORCE_INLINE void _param_binding(const Function* func,
-	Environment* fenv, std::vector<Value*>* args)
+	const Environment* fenv, const ValueVector& args)
 {
 	size_t nargs = 0;
+	size_t args_count = args.size();
 
-	if (EXPECTED(func->hasArgs() && args != NULL)) {
-		size_t num_args = args->size();
+	if (func->hasArgs() && args_count) {
 		ValueOffset argoff(0,0);
+		size_t num_args = args_count;
 
-		if (num_args > func->getNumArgs()) {
+		if (args_count > func->getNumArgs()) {
 			num_args = func->getNumArgs();
 		}
+		nargs += num_args;
 
-		for (size_t i = 0, len = num_args; i < len; ++i) {
-			fenv->getValue(argoff)->copy((*args)[i]);
+		for (size_t i = 0; i < num_args; ++i) {
+			fenv->getValue(argoff)->copy(args[i]);
 			argoff.second++;
-			++nargs;
 		}
 	}
 
-	if (UNEXPECTED(func->isVariadic())) {
+	if (func->isVariadic()) {
 		ArrayObject* arr = new ArrayObject;
 
-		if (EXPECTED(args && (args->size() - nargs) > 0)) {
-			for (size_t i = nargs, j = args->size(); i < j; ++i) {
-				arr->getData().push_back((*args)[i]->clone());
+		if ((args_count - nargs) > 0) {
+			for (size_t i = nargs; i < args_count; ++i) {
+				arr->getData().push_back(args[i]->clone());
 			}
 		}
 
@@ -210,13 +211,14 @@ CLEVER_FORCE_INLINE void VM::prepareCall(const Function* func, Environment* env)
 
 	m_call_stack.push(CallStackEntry(fenv, func, &OPCODE.loc));
 
-	if (m_call_args.size() < func->getNumRequiredArgs()
-		|| (m_call_args.size() > func->getNumArgs()
-			&& !func->isVariadic())) {
+	size_t args_count = m_call_args.size();
+
+	if (args_count < func->getNumRequiredArgs()
+		|| (args_count > func->getNumArgs()	&& !func->isVariadic())) {
 		error(OPCODE.loc, "Wrong number of parameters");
 	}
 
-	_param_binding(func, fenv, &m_call_args);
+	_param_binding(func, fenv, m_call_args);
 
 	m_call_args.clear();
 	getMutex()->unlock();
@@ -242,12 +244,12 @@ CLEVER_FORCE_INLINE void VM::createInstance(const Type* type, Value* instance)
 }
 
 // Executes the supplied function
-Value* VM::runFunction(const Function* func, std::vector<Value*>* args)
+Value* VM::runFunction(const Function* func, const ValueVector& args)
 {
 	Value* result = new Value;
 
-	if (func->isInternal()) {
-		func->getFuncPtr()(result, *args, this, &m_exception);
+	if (UNEXPECTED(func->isInternal())) {
+		func->getFuncPtr()(result, args, this, &m_exception);
 	} else {
 		Environment* fenv = func->getEnvironment()->activate();
 		fenv->setRetVal(result);
