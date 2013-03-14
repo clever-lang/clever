@@ -8,8 +8,8 @@
 #ifndef CLEVER_ENVIRONMENT_H
 #define CLEVER_ENVIRONMENT_H
 
-#include <stack>
 #include <algorithm>
+#include <vector>
 #include "core/refcounted.h"
 
 namespace clever {
