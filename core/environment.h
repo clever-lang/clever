@@ -38,11 +38,11 @@ typedef std::pair<size_t, size_t> ValueOffset;
 class Environment: public RefCounted {
 public:
 	Environment()
-		: RefCounted(), m_outer(NULL), m_temp(NULL), m_ret_val(NULL),
+		: m_outer(NULL), m_temp(NULL), m_ret_val(NULL),
 		m_ret_addr(0), m_scoped(true) {}
 
 	explicit Environment(Environment* outer_, bool is_scoped = true)
-		: RefCounted(), m_outer(outer_), m_temp(NULL), m_ret_val(NULL),
+		: m_outer(outer_), m_temp(NULL), m_ret_val(NULL),
 		m_ret_addr(0), m_scoped(is_scoped) {
 		clever_addref(m_outer);
 	}
