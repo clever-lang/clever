@@ -60,34 +60,4 @@ Value* Environment::getValue(const ValueOffset& offset) const
 	return env->m_data[offset.second];
 }
 
-void Environment::copy(const Environment* _env)
-{
-	Environment* _this = this;
-
-	while (_env != NULL) {
-		const Environment* env = _env;
-
-		_this->m_ret_addr = env->m_ret_addr;
-
-		if (env->m_ret_val != NULL) {
-			_this->m_ret_val = env->m_ret_val->clone();
-		} else {
-			_this->m_ret_val = NULL;
-		}
-
-		for (size_t i = 0, size = env->m_data.size(); i < size; ++i) {
-			_this->pushValue(env->m_data[i]->clone());
-		}
-
-		if (env->m_outer != NULL) {
-			_this->m_outer = new Environment(NULL, false);
-			_env = env->m_outer;
-			_this = _this->m_outer;
-		} else {
-			_this->m_outer = NULL;
-			_env = NULL;
-		}
-	}
-}
-
 } // clever

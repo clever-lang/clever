@@ -41,7 +41,7 @@ public:
 		: RefCounted(), m_outer(NULL), m_temp(NULL), m_ret_val(NULL),
 		m_ret_addr(0), m_scoped(true) {}
 
-	Environment(Environment* outer_, bool is_scoped = true)
+	explicit Environment(Environment* outer_, bool is_scoped = true)
 		: RefCounted(), m_outer(outer_), m_temp(NULL), m_ret_val(NULL),
 		m_ret_addr(0), m_scoped(is_scoped) {
 		clever_addref(m_outer);
@@ -95,8 +95,6 @@ public:
 
 	Value* getRetVal() const { return m_ret_val; }
 	void setRetVal(Value* ret_val) { m_ret_val = ret_val; }
-
-	void copy(const Environment*);
 
 	Environment* getOuter() const { return m_outer; }
 	void setData(size_t pos, Value* value) { m_data[pos] = value; }
