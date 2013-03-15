@@ -327,7 +327,7 @@ CLEVER_FORCE_INLINE void VM::logicOp(const IR& op)
 }
 
 /// Throws uncaught exception
-void VM::throwException(const IR& op)
+void VM::throwUncaughtException(const IR& op)
 {
 	std::ostringstream msg;
 
@@ -849,7 +849,7 @@ throw_exception:
 	END_OPCODES;
 
 exit_exception:
-	throwException(OPCODE);
+	throwUncaughtException(OPCODE);
 exit:
 	if (!m_obj_store.empty()) {
 		std::for_each(m_obj_store.top().begin(), m_obj_store.top().end(), clever_delref);

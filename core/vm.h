@@ -39,10 +39,10 @@ typedef std::stack<CallStackEntry> CallStack;
 class VM {
 public:
 	VM()
-		: m_pc(0), f_mutex(NULL), m_const_env(NULL), m_global_env(NULL), m_main(true) {}
+		: m_pc(0), m_const_env(NULL), m_global_env(NULL), f_mutex(NULL), m_main(true) {}
 
 	VM(const IRVector& inst)
-		: m_pc(0), f_mutex(NULL), m_const_env(NULL), m_global_env(NULL), m_main(true) {
+		: m_pc(0), m_const_env(NULL), m_global_env(NULL), f_mutex(NULL), m_main(true) {
 		m_inst.resize(inst.size());
 		std::copy(inst.begin(), inst.end(), m_inst.begin());
 	}
@@ -62,7 +62,16 @@ public:
 	size_t getPC() const { return m_pc; }
 	void nextPC() { ++m_pc; }
 
-	CallStack getCallStack() const { return m_call_stack; }
+	CMutex* getMutex() { return isChild() ? f_mutex : &m_mutex; }
+
+	/// Start the VM execution
+	void run();
+
+	/// Executes an specific function
+	Value* runFunction(const Function*, const ValueVector&);
+
+private:
+	CallStack& getCallStack() { return m_call_stack; }
 
 	/// Helper to retrive a Value* from ValuePool
 	Value* getValue(const Operand&) const;
@@ -70,22 +79,15 @@ public:
 	/// Helper to change a temporary value pointer
 	void setTempValue(const Operand&, Value*) const;
 
-	CallStack& getCallStack() { return m_call_stack; }
-
-	CMutex* getMutex() { return isChild() ? f_mutex : &m_mutex; }
-
+	/// Helper to prepare a function/method call
 	void prepareCall(const Function*, Environment* = NULL);
+
+	/// Helper to create a new instance
 	void createInstance(const Type*, Value*);
+
+	/// Helper for common operations
 	void binOp(const IR&);
 	void logicOp(const IR&);
-
-	/// Start the VM execution
-	void run();
-	Value* runFunction(const Function*, const ValueVector&);
-
-	/// Dumps the stack trace
-	void dumpStackTrace(std::ostringstream&);
-	void throwException(const IR&) CLEVER_NO_RETURN;
 
 	/// Methods for dumping opcodes
 #ifdef CLEVER_DEBUG
@@ -93,11 +95,15 @@ public:
 	void dumpOpcodes() const;
 #endif
 
+	/// Dumps the stack trace
+	void dumpStackTrace(std::ostringstream&);
+
+	/// Error reporting
+	void throwUncaughtException(const IR&) CLEVER_NO_RETURN;
 	static void error(const location&, const char*, ...) CLEVER_NO_RETURN;
-private:
+
 	/// VM program counter
 	size_t m_pc;
-	CMutex* f_mutex;
 
 	/// Constant
 	Environment* m_const_env;
@@ -105,21 +111,26 @@ private:
 	/// Globals
 	Environment* m_global_env;
 
-	CException m_exception;
+	/// Call arguments
+	ValueVector m_call_args;
 
-	CMutex m_mutex;
+	/// Exception handling
+	CException m_exception;
 
 	/// Stack frame
 	CallStack m_call_stack;
 
+	/// Try-catch block tracking
 	std::stack<std::pair<size_t, size_t> > m_try_stack;
+
+	/// User object instance vector
+	std::stack<std::vector<Environment*> > m_obj_store;
 
 	/// Vector of instruction
 	std::vector<IR> m_inst;
 
-	/// Call arguments
-	ValueVector m_call_args;
-	std::stack<std::vector<Environment*> > m_obj_store;
+	CMutex* f_mutex;
+	CMutex m_mutex;
 
 	bool m_main;
 
