@@ -207,7 +207,7 @@ CLEVER_METHOD(IntType::ctor)
 }
 
 // Int::toString()
-CLEVER_METHOD(IntType::toString)
+CLEVER_METHOD(IntType::to_String)
 {
 	if (!clever_check_no_args()) {
 		return;
@@ -222,7 +222,7 @@ CLEVER_TYPE_INIT(IntType::init)
 	setConstructor((MethodPtr)&IntType::ctor);
 
 	// Methods
-	addMethod(new Function("toString", (MethodPtr)&IntType::toString));
+	addMethod(new Function("toString", (MethodPtr)&IntType::to_String));
 
 	// Properties
 	addProperty("SIZE", new Value((long)sizeof(long), true));
