@@ -407,6 +407,9 @@ void Codegen::visit(Arithmetic* node)
 
 	if (node->isAugmented()) {
 		_prepare_operand(arith.result, lhs);
+
+		node->setVOffset(lhs->getVOffset());
+		node->setScope(lhs->getScope());
 	} else {
 		ValueOffset tmp_id = m_builder->getTemp();
 
