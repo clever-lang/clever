@@ -664,8 +664,8 @@ void Codegen::visit(ClassDef* node)
 
 	node->getScope()->getEnvironment()->setTempEnv(temp_env);
 
-	if (node->hasMethods()) {
-		node->getMethods()->accept(*this);
+	if (node->hasMembers()) {
+		node->getMembers()->accept(*this);
 	}
 
 	m_builder->setTempEnv(save_temp);

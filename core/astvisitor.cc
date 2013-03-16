@@ -211,8 +211,8 @@ void Visitor::visit(AttrDecl* node)
 
 void Visitor::visit(ClassDef* node)
 {
-	if (node->hasAttrs()) {
-		node->getAttrs()->accept(*this);
+	if (node->hasMembers()) {
+		node->getMembers()->accept(*this);
 	}
 }
 

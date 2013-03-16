@@ -77,8 +77,8 @@ class Value;
 %type <assignment> assignment
 %type <narray> variable_decl variable_decl_list non_empty_call_args call_args
 %type <narray> const_decl_list not_empty_catch catch key_value_list
-%type <narray> class_attr_decl_list class_attr_const_decl_list class_attr_list class_attr_decl
-%type <narray> class_method_decl class_method_list
+%type <narray> class_attr_decl_list class_attr_const_decl_list
+%type <narray> class_member_decl class_member_list
 %type <vardecl> variable_decl_impl vararg
 %type <vardecl> const_decl_impl
 %type <block> statement_list block finally
@@ -349,22 +349,7 @@ unary:
 ;
 
 class_def:
-		CLASS TYPE '{' class_attr_decl class_method_decl '}' { $$ = new ast::ClassDef($2, $4, $5, yyloc); }
-;
-
-class_attr_decl:
-		/* empty */      { $$ = NULL; }
-	|	class_attr_list
-;
-
-class_attr_list:
-		{ $<narray>$ = new ast::NodeArray(yyloc); } non_empty_class_attr_list ';' { $$ = $<narray>1; }
-	|	class_attr_list { $<narray>$ = $1; } non_empty_class_attr_list ';'
-;
-
-non_empty_class_attr_list:
-		VAR   { $<narray>$ = $<narray>0; } class_attr_decl_list
-	|	CONST { $<narray>$ = $<narray>0; } class_attr_const_decl_list
+		CLASS TYPE '{' class_member_decl '}' { $$ = new ast::ClassDef($2, $4, yyloc); }
 ;
 
 attr_rvalue:
@@ -379,7 +364,7 @@ attr_rvalue:
 ;
 
 class_attr_decl_list:
-		class_attr_decl_impl  { $<narray>0->append($1); }
+		class_attr_decl_impl  { $<narray>0->append($1); $$ = $<narray>0; }
 	|	class_attr_decl_list ',' class_attr_decl_impl { $<narray>0->append($3); }
 ;
 
@@ -389,7 +374,7 @@ class_attr_decl_impl:
 ;
 
 class_attr_const_decl_list:
-		class_attr_const_decl_impl { $$ = new ast::NodeArray(yyloc); $$->append($1); }
+		class_attr_const_decl_impl { $<narray>0->append($1); $$ = $<narray>0; }
 	|	class_attr_const_decl_list ',' class_attr_const_decl_impl { $1->append($3); }
 ;
 
@@ -397,9 +382,9 @@ class_attr_const_decl_impl:
 		IDENT '=' attr_rvalue { $$ = new ast::AttrDecl($1, $<node>3, true, yyloc);   }
 ;
 
-class_method_decl:
+class_member_decl:
 		/* empty */  { $$ = NULL; }
-	|	class_method_list
+	|	class_member_list
 ;
 
 visibility:
@@ -408,9 +393,13 @@ visibility:
 	|	PRIVATE     { $$ = ast::PRIVATE; }
 ;
 
-class_method_list:
-		visibility fdecl                   { $$ = new ast::NodeArray(yyloc); $$->append($2); $2->setVisibility($1); }
-	|	class_method_list visibility fdecl { $1->append($3); $3->setVisibility($2); }
+class_member_list:
+		visibility fdecl { $<narray>$ = new ast::NodeArray(yyloc); $$->append($2); $2->setVisibility($1); }
+	|	visibility VAR   { $<narray>$ = new ast::NodeArray(yyloc); } class_attr_decl_list ';'       { $$ = $4; }
+	|	visibility CONST { $<narray>$ = new ast::NodeArray(yyloc); } class_attr_const_decl_list ';' { $$ = $4; }
+	|	class_member_list visibility fdecl { $1->append($3); $3->setVisibility($2); }
+	|	class_member_list visibility VAR   { $<narray>$ = $1; } class_attr_decl_list ';'       { $$ = $5; }
+	|	class_member_list visibility CONST { $<narray>$ = $1; } class_attr_const_decl_list ';' { $$ = $5; }
 ;
 
 array:

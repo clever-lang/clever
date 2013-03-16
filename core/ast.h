@@ -1266,24 +1266,20 @@ private:
 
 class ClassDef: public Node {
 public:
-	ClassDef(Type* name, NodeArray* attrs, NodeArray* methods, const location& location)
-		: Node(location), m_type(name), m_attrs(attrs), m_methods(methods) {
+	ClassDef(Type* name, NodeArray* members, const location& location)
+		: Node(location), m_type(name), m_members(members) {
 		m_type->addRef();
-		clever_addref(m_attrs);
-		clever_addref(m_methods);
+		clever_addref(m_members);
 	}
 
 	~ClassDef() {
 		m_type->delRef();
-		clever_delref(m_attrs);
-		clever_delref(m_methods);
+		clever_delref(m_members);
 	}
 
-	bool hasAttrs() const { return m_attrs != NULL; }
-	bool hasMethods() const { return m_methods != NULL; }
+	bool hasMembers() const { return m_members != NULL; }
 
-	NodeArray* getAttrs() const { return m_attrs; }
-	NodeArray* getMethods() const { return m_methods; }
+	NodeArray* getMembers() const { return m_members; }
 
 	Type* getType() const { return m_type; }
 
@@ -1291,8 +1287,7 @@ public:
 	virtual Node* accept(Transformer& transformer);
 private:
 	Type* m_type;
-	NodeArray* m_attrs;
-	NodeArray* m_methods;
+	NodeArray* m_members;
 };
 
 class Switch: public Node {

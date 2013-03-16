@@ -275,12 +275,8 @@ void Resolver::visit(ClassDef* node)
 
 	m_class = type;
 
-	if (node->hasAttrs()) {
-		node->getAttrs()->accept(*this);
-	}
-
-	if (node->hasMethods()) {
-		node->getMethods()->accept(*this);
+	if (node->hasMembers()) {
+		node->getMembers()->accept(*this);
 	}
 
 	m_class = NULL;
