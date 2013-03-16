@@ -117,7 +117,7 @@ void Resolver::visit(FunctionDecl* node)
 			Compiler::errorf(node->getLocation(),
 				"Cannot redeclare member `%S'", name);
 		}
-		m_class->addMember(name, fval);
+		m_class->addMember(name, MemberData(fval, node->getVisibility()));
 
 		switch (node->getVisibility()) {
 			case ast::PUBLIC:  func->setPublic();  break;

@@ -64,7 +64,17 @@ class Function;
 
 typedef void (Type::*MethodPtr)(CLEVER_METHOD_ARGS) const;
 
-typedef std::tr1::unordered_map<const CString*, Value*> MemberMap;
+struct MemberData {
+	enum { PUBLIC, PRIVATE };
+
+	Value* value;
+	size_t flags;
+
+	MemberData(Value* value_, size_t flags_)
+		: value(value_), flags(flags_) {}
+};
+
+typedef std::tr1::unordered_map<const CString*, MemberData> MemberMap;
 typedef std::tr1::unordered_map<const CString*, Value*> PropertyMap;
 typedef std::tr1::unordered_map<const CString*, Function*> MethodMap;
 
@@ -77,15 +87,15 @@ public:
 
 	void copyMembers(const Type*);
 
-	void addMember(const CString* name, Value* value) {
-		m_members.insert(MemberMap::value_type(name, value));
+	void addMember(const CString* name, MemberData data) {
+		m_members.insert(MemberMap::value_type(name, MemberData(data)));
 	}
 
 	virtual Value* getMember(const CString* name) const {
 		MemberMap::const_iterator it = m_members.find(name);
 
 		if (it != m_members.end()) {
-			return it->second;
+			return it->second.value;
 		}
 
 		return NULL;
@@ -136,15 +146,15 @@ public:
 	bool isUserDefined() const { return m_flags == USER_TYPE; }
 	bool isInternal() const { return m_flags == INTERNAL_TYPE; }
 
-	void addMember(const CString* name, Value* value) {
-		m_members.insert(MemberMap::value_type(name, value));
+	void addMember(const CString* name, MemberData data) {
+		m_members.insert(MemberMap::value_type(name, data));
 	}
 
 	Value* getMember(const CString* name) const {
 		MemberMap::const_iterator it = m_members.find(name);
 
 		if (it != m_members.end()) {
-			return it->second;
+			return it->second.value;
 		}
 
 		return NULL;
@@ -156,14 +166,14 @@ public:
 
 	const MemberMap& getMembers() const { return m_members; }
 
-	Function* addMethod(Function*);
+	Function* addMethod(Function*, size_t = MemberData::PUBLIC);
 
-	void addProperty(const std::string& name, Value* value) {
-		addProperty(CSTRING(name), value);
+	void addProperty(const std::string& name, Value* value, size_t flags = MemberData::PUBLIC) {
+		addProperty(CSTRING(name), value, flags);
 	}
 
-	void addProperty(const CString* name, Value* value) {
-		addMember(name, value);
+	void addProperty(const CString* name, Value* value, size_t flags = MemberData::PUBLIC) {
+		addMember(name, MemberData(value, flags));
 	}
 
 	Value* getProperty(const CString*) const;

@@ -77,7 +77,7 @@ void to_json_impl(::std::ostringstream& oss, const Value* object) {
 	bool first = true;
 	while (it != end) {
 		key = it->first;
-		value = it->second;
+		value = it->second.value;
 		if (!value->isFunction()) {
 			if (!first) {
 				oss << ", ";

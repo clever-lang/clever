@@ -19,7 +19,7 @@ TypeObject::~TypeObject()
 	MemberMap::const_iterator it(m_members.begin()), end(m_members.end());
 
 	for (; it != end; ++it) {
-		clever_delref(it->second);
+		clever_delref(it->second.value);
 	}
 }
 
@@ -32,11 +32,11 @@ void TypeObject::copyMembers(const Type* type)
 	MemberMap::const_iterator it(members.begin()), end(members.end());
 
 	for (; it != end; ++it) {
-		if (it->second->isConst()) {
+		if (it->second.value->isConst()) {
 			addMember(it->first, it->second);
-			clever_addref(it->second);
+			clever_addref(it->second.value);
 		} else {
-			addMember(it->first, it->second->clone());
+			addMember(it->first, MemberData(it->second.value->clone(), it->second.flags));
 		}
 	}
 }
@@ -46,7 +46,7 @@ void Type::deallocMembers()
 	MemberMap::iterator it(m_members.begin()), end(m_members.end());
 
 	for (; it != end; ++it) {
-		clever_delref(it->second);
+		clever_delref(it->second.value);
 	}
 }
 
@@ -93,7 +93,7 @@ Value* Type::unserialize(const Type* type, const std::pair<size_t, TypeObject*>&
 	return value;
 }
 
-Function* Type::addMethod(Function* func)
+Function* Type::addMethod(Function* func, size_t flags)
 {
 	Value* val = new Value;
 
@@ -101,7 +101,7 @@ Function* Type::addMethod(Function* func)
 
 	val->setObj(CLEVER_FUNC_TYPE, func);
 	val->setConst(true);
-	addMember(CSTRING(func->getName()), val);
+	addMember(CSTRING(func->getName()), MemberData(val, flags));
 
 	return func;
 }
@@ -130,9 +130,9 @@ const MethodMap Type::getMethods() const
 	MethodMap mm;
 
 	while (it != end) {
-		if (it->second->isFunction()) {
+		if (it->second.value->isFunction()) {
 			mm.insert(MethodMap::value_type(
-				it->first, static_cast<Function*>(it->second->getObj())));
+				it->first, static_cast<Function*>(it->second.value->getObj())));
 		}
 		++it;
 	}
@@ -145,11 +145,10 @@ const PropertyMap Type::getProperties() const
 	MemberMap::const_iterator it(m_members.begin()), end(m_members.end());
 	PropertyMap pm;
 
-	while (it != end) {
-		if (!it->second->isFunction()) {
-			pm.insert(*it);
+	for (; it != end; ++it) {
+		if (!it->second.value->isFunction()) {
+			pm.insert(PropertyMap::value_type(it->first, it->second.value));
 		}
-		++it;
 	}
 
 	return pm;
