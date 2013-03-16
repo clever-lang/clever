@@ -1239,7 +1239,7 @@ private:
 class AttrDecl: public Node {
 public:
 	AttrDecl(Ident* ident, Node* value, bool is_const, const location& location)
-		: Node(location), m_ident(ident), m_value(value), m_const(is_const) {
+		: Node(location), m_ident(ident), m_value(value), m_const(is_const), m_visibility(0) {
 		m_ident->addRef();
 		clever_addref(m_value);
 	}
@@ -1256,12 +1256,15 @@ public:
 
 	bool isConst() const { return m_const; }
 
+	void setVisibility(size_t flags) { m_visibility = flags; }
+
 	virtual void accept(Visitor& visitor);
 	virtual Node* accept(Transformer& transformer);
 private:
 	Ident* m_ident;
 	Node* m_value;
 	bool m_const;
+	size_t m_visibility;
 };
 
 class ClassDef: public Node {
