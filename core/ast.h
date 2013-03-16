@@ -18,6 +18,7 @@ namespace clever { namespace ast {
 
 class Node;
 class NodeArray;
+class AttrArray;
 class Block;
 class CriticalBlock;
 class Assignment;
@@ -1265,6 +1266,28 @@ private:
 	Node* m_value;
 	bool m_const;
 	size_t m_visibility;
+};
+
+class AttrArray: public NodeArray {
+public:
+	AttrArray(const location& location)
+		: NodeArray(location) {}
+
+	~AttrArray() {}
+
+	void setVisibility(size_t flag) {
+		NodeList::const_iterator it(m_nodes.begin()), end(m_nodes.end());
+
+		for (; it != end; ++it) {
+			static_cast<AttrDecl*>(*it)->setVisibility(flag);
+		}
+	}
+
+	virtual void accept(Visitor& visitor);
+	virtual Node* accept(Transformer& transformer);
+private:
+
+	DISALLOW_COPY_AND_ASSIGN(AttrArray);
 };
 
 class ClassDef: public Node {

@@ -136,6 +136,7 @@ namespace clever {
 	ast::AttrDecl* attr;
 	ast::ClassDef* class_;
 	ast::Switch* switch_;
+	ast::AttrArray* attrarray;
 
 
 

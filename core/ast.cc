@@ -25,6 +25,8 @@ void NodeArray::accept(Visitor& visitor) {
 
 void Block::accept(Visitor& visitor) { visitor.visit(this); }
 
+void AttrArray::accept(Visitor& visitor) { visitor.visit(this); }
+
 void CriticalBlock::accept(Visitor& visitor) { visitor.visit(this); }
 
 void Assignment::accept(Visitor& visitor) { visitor.visit(this); }
@@ -104,6 +106,8 @@ Node* Node::accept(Transformer& transformer) { return transformer.transform(this
 Node* NodeArray::accept(Transformer& transformer) { return transformer.transform(this); }
 
 Node* Block::accept(Transformer& transformer) { return transformer.transform(this); }
+
+Node* AttrArray::accept(Transformer& transformer) { return transformer.transform(this); }
 
 Node* CriticalBlock::accept(Transformer& transformer) { return transformer.transform(this); }
 

@@ -34,6 +34,7 @@ public:
 
 	void visit(Node* node)         { std::cout << m_ws << "Node" << std::endl;         }
 	void visit(NodeArray* node)    { std::cout << m_ws << "NodeArray" << std::endl;    }
+	void visit(AttrArray* node)    { std::cout << m_ws << "AttrArray" << std::endl;    }
 	void visit(FunctionCall* node) {
 		std::cout << m_ws << "FunctionCall" << std::endl;
 		m_ws = std::string(++m_level, ' ');

@@ -58,6 +58,7 @@ public:
 	virtual void visit(Catch* node);
 	virtual void visit(Throw* node);
 
+	virtual void visit(AttrArray* node);
 	virtual void visit(AttrDecl* node);
 	virtual void visit(ClassDef* node);
 	virtual void visit(Subscript* node);

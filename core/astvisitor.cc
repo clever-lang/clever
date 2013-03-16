@@ -24,13 +24,15 @@ void Visitor::visit(Block* node)
 	Visitor::visit(static_cast<NodeArray*>(node));
 }
 
-
+void Visitor::visit(AttrArray* node)
+{
+	Visitor::visit(static_cast<NodeArray*>(node));
+}
 
 void Visitor::visit(CriticalBlock* node)
 {
 	node->getBlock()->accept(*this);
 }
-
 
 void Visitor::visit(Assignment* node)
 {
