@@ -70,6 +70,11 @@ public:
 	/// Executes an specific function
 	Value* runFunction(const Function*, const ValueVector&);
 
+	/// Methods for dumping opcodes
+#ifdef CLEVER_DEBUG
+	static void dumpOperand(const Operand&);
+	void dumpOpcodes() const;
+#endif
 private:
 	CallStack& getCallStack() { return m_call_stack; }
 
@@ -88,12 +93,6 @@ private:
 	/// Helper for common operations
 	void binOp(const IR&);
 	void logicOp(const IR&);
-
-	/// Methods for dumping opcodes
-#ifdef CLEVER_DEBUG
-	static void dumpOperand(const Operand&);
-	void dumpOpcodes() const;
-#endif
 
 	/// Dumps the stack trace
 	void dumpStackTrace(std::ostringstream&);
