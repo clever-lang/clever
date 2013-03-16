@@ -88,17 +88,17 @@ public:
 	void copyMembers(const Type*);
 
 	void addMember(const CString* name, MemberData data) {
-		m_members.insert(MemberMap::value_type(name, MemberData(data)));
+		m_members.insert(MemberMap::value_type(name, data));
 	}
 
-	virtual Value* getMember(const CString* name) const {
+	virtual MemberData getMember(const CString* name) const {
 		MemberMap::const_iterator it = m_members.find(name);
 
 		if (it != m_members.end()) {
-			return it->second.value;
+			return it->second;
 		}
 
-		return NULL;
+		return MemberData(NULL, 0);
 	}
 
 	const MemberMap& getMembers() const {

@@ -95,14 +95,13 @@ void FFIStructData::getMember(Value* result, const CString& member_name)
 	getMember(result, m_struct_type->getMember(member_name));
 }
 
-Value* FFIStructData::getMember(const CString* name) const
+MemberData FFIStructData::getMember(const CString* name) const
 {
-	Value* v = 0;
-
-	v = TypeObject::getMember(name);
+	MemberData mdata = TypeObject::getMember(name);
+	Value* v = mdata.value;
 
 	if (v) {
-		return v;
+		return mdata;
 	}
 
 	v = const_cast<FFIStructData*>(this)->m_member_map[*name];
@@ -111,7 +110,8 @@ Value* FFIStructData::getMember(const CString* name) const
 		const_cast<FFIStructData*>(this)->m_member_map[*name] = v;
 	}
 	const_cast<FFIStructData*>(this)->getMember(v, *name);
-	return v;
+
+	return MemberData(v, MemberData::PUBLIC);
 }
 
 CLEVER_METHOD(FFIStruct::ctor)

@@ -35,7 +35,7 @@ struct FFIData : public TypeObject {
 
 	~FFIData();
 
-	virtual Value* getMember(const CString*) const;
+	virtual MemberData getMember(const CString*) const;
 
 	::std::string m_func_name;
 	::std::string m_lib_name;
@@ -54,7 +54,7 @@ public:
 
 	virtual void init();
 
-	Value* getCallHandler() const { return m_call_handler; }
+	MemberData getCallHandler() const { return MemberData(m_call_handler, MemberData::PUBLIC); }
 
 	CLEVER_METHOD(ctor);
 	CLEVER_METHOD(call);

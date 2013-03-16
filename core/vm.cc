@@ -663,9 +663,10 @@ out:
 		}
 
 		const Type* type = callee->getType();
-		const Value* fval = callee->getObj()->getMember(method->getStr());
+		MemberData mdata = callee->getObj()->getMember(method->getStr());
+		const Value* fval = mdata.value;
 
-		if (UNEXPECTED(!fval->isFunction())) {
+		if (UNEXPECTED(!fval || !fval->isFunction())) {
 			error(OPCODE.loc, "Member `%T::%S' not found or not callable!",
 				type, method->getStr());
 		}
@@ -733,7 +734,8 @@ out:
 			error(OPCODE.loc, "Cannot perform property access from null value");
 		}
 		const Value* name = getValue(OPCODE.op2);
-		const Value* value = obj->getObj()->getMember(name->getStr());
+		MemberData mdata = obj->getObj()->getMember(name->getStr());
+		const Value* value = mdata.value;
 
 		if (EXPECTED(value != NULL)) {
 			getValue(OPCODE.result)->copy(value);
@@ -771,7 +773,8 @@ out:
 			error(OPCODE.loc, "Cannot perform property access from null value");
 		}
 		const Value* name = getValue(OPCODE.op2);
-		Value* value = obj->getObj()->getMember(name->getStr());
+		MemberData mdata = obj->getObj()->getMember(name->getStr());
+		Value* value = mdata.value;
 
 		if (EXPECTED(value != NULL)) {
 			setTempValue(OPCODE.result, value);

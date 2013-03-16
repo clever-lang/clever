@@ -291,16 +291,16 @@ FFIData::~FFIData()
 	}
 }
 
-Value* FFIData::getMember(const CString* name) const
+MemberData FFIData::getMember(const CString* name) const
 {
 	const_cast<FFIData*>(this)->m_func_name = *name;
-	Value* fvalue = TypeObject::getMember(name);
+	MemberData mdata = TypeObject::getMember(name);
 
-	if (fvalue == NULL) {
+	if (!mdata.value) {
 		return m_ffi->getCallHandler();
 	}
 
-	return fvalue;
+	return mdata;
 }
 
 CLEVER_METHOD(FFI::callThisFunction)

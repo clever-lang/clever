@@ -140,7 +140,7 @@ struct FFIStructData : public TypeObject {
 		}
 	}
 
-	virtual Value* getMember(const CString*) const;
+	virtual MemberData getMember(const CString*) const;
 
 	void setStruct(ExtStructs&, const CString&);
 
