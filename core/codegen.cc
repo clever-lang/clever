@@ -405,12 +405,16 @@ void Codegen::visit(Arithmetic* node)
 	_prepare_operand(arith.op1, lhs);
 	_prepare_operand(arith.op2, rhs);
 
-	ValueOffset tmp_id = m_builder->getTemp();
+	if (node->isAugmented()) {
+		_prepare_operand(arith.result, lhs);
+	} else {
+		ValueOffset tmp_id = m_builder->getTemp();
 
-	arith.result = Operand(FETCH_TMP, tmp_id);
-	arith.loc = node->getLocation();
+		arith.result = Operand(FETCH_TMP, tmp_id);
+		arith.loc = node->getLocation();
 
-	node->setVOffset(tmp_id);
+		node->setVOffset(tmp_id);
+	}
 }
 
 void Codegen::visit(Comparison* node)

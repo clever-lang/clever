@@ -452,8 +452,8 @@ public:
 		MOP_MOD = '%'
 	};
 
-	Arithmetic(ArithOperator op, Node* lhs, Node* rhs, const location& location)
-		: Node(location), m_op(op), m_lhs(lhs), m_rhs(rhs) {
+	Arithmetic(ArithOperator op, Node* lhs, Node* rhs, const location& location, bool is_augmented = false)
+		: Node(location), m_op(op), m_lhs(lhs), m_rhs(rhs), m_is_augmented(is_augmented) {
 		m_lhs->addRef();
 		m_rhs->addRef();
 	}
@@ -468,6 +468,7 @@ public:
 	Node* getRhs() const { return m_rhs; }
 
 	bool isEvaluable() const { return true; }
+	bool isAugmented() const { return m_is_augmented; }
 
 	virtual void accept(Visitor& visitor);
 	virtual Node* accept(Transformer& transformer);
@@ -476,6 +477,7 @@ private:
 	ArithOperator m_op;
 	Node* m_lhs;
 	Node* m_rhs;
+	bool m_is_augmented;
 
 	DISALLOW_COPY_AND_ASSIGN(Arithmetic);
 };

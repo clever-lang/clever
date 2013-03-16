@@ -246,6 +246,7 @@ statement:
 	|	fully_qualified_call ';'
 	|	instantiation ';'
 	|	switch_expr
+	|	arithmetic ';'
 ;
 
 block:
@@ -504,11 +505,16 @@ logic:
 ;
 
 arithmetic:
-		rvalue '+' rvalue { $$ = new ast::Arithmetic(ast::Arithmetic::MOP_ADD, $<node>1, $<node>3, yyloc); }
-	|	rvalue '-' rvalue { $$ = new ast::Arithmetic(ast::Arithmetic::MOP_SUB, $<node>1, $<node>3, yyloc); }
-	|	rvalue '*' rvalue { $$ = new ast::Arithmetic(ast::Arithmetic::MOP_MUL, $<node>1, $<node>3, yyloc); }
-	|	rvalue '/' rvalue { $$ = new ast::Arithmetic(ast::Arithmetic::MOP_DIV, $<node>1, $<node>3, yyloc); }
-	|	rvalue '%' rvalue { $$ = new ast::Arithmetic(ast::Arithmetic::MOP_MOD, $<node>1, $<node>3, yyloc); }
+		rvalue '+' rvalue         { $$ = new ast::Arithmetic(ast::Arithmetic::MOP_ADD, $<node>1, $<node>3, yyloc); }
+	|	rvalue '-' rvalue         { $$ = new ast::Arithmetic(ast::Arithmetic::MOP_SUB, $<node>1, $<node>3, yyloc); }
+	|	rvalue '*' rvalue         { $$ = new ast::Arithmetic(ast::Arithmetic::MOP_MUL, $<node>1, $<node>3, yyloc); }
+	|	rvalue '/' rvalue         { $$ = new ast::Arithmetic(ast::Arithmetic::MOP_DIV, $<node>1, $<node>3, yyloc); }
+	|	rvalue '%' rvalue         { $$ = new ast::Arithmetic(ast::Arithmetic::MOP_MOD, $<node>1, $<node>3, yyloc); }
+	|	lvalue PLUS_EQUAL  rvalue { $$ = new ast::Arithmetic(ast::Arithmetic::MOP_ADD, $<node>1, $<node>3, yyloc, true); }
+	|	lvalue MINUS_EQUAL rvalue { $$ = new ast::Arithmetic(ast::Arithmetic::MOP_SUB, $<node>1, $<node>3, yyloc, true); }
+	|	lvalue MULT_EQUAL  rvalue { $$ = new ast::Arithmetic(ast::Arithmetic::MOP_MUL, $<node>1, $<node>3, yyloc, true); }
+	|	lvalue DIV_EQUAL   rvalue { $$ = new ast::Arithmetic(ast::Arithmetic::MOP_DIV, $<node>1, $<node>3, yyloc, true); }
+	|	lvalue MOD_EQUAL   rvalue { $$ = new ast::Arithmetic(ast::Arithmetic::MOP_MOD, $<node>1, $<node>3, yyloc, true); }
 ;
 
 bitwise:
