@@ -1,0 +1,11 @@
+Testing augmented assignment
+==CODE==
+import std.io.*;
+
+var a = [1];
+
+println(a[0] <<= 3);
+println(a[0]);
+==RESULT==
+8
+8

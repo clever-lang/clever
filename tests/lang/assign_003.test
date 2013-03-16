@@ -1,0 +1,16 @@
+Testing augmented assignment
+==CODE==
+import std.io.*;
+
+var a = 10;
+
+println(a += 12);
+println(a);
+
+var b = a -= 10;
+println(b, a);
+==RESULT==
+22
+22
+12
+12

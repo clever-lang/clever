@@ -568,14 +568,14 @@ public:
 		BOP_RSHIFT
 	};
 
-	Bitwise(BitwiseOperator op, Node* lhs, Node* rhs, const location& location)
-		: Node(location), m_op(op), m_lhs(lhs), m_rhs(rhs) {
+	Bitwise(BitwiseOperator op, Node* lhs, Node* rhs, const location& location, bool is_augmented = false)
+		: Node(location), m_op(op), m_lhs(lhs), m_rhs(rhs), m_is_augmented(is_augmented) {
 		m_lhs->addRef();
 		m_rhs->addRef();
 	}
 
 	Bitwise(BitwiseOperator op, Node* lhs, const location& location)
-		: Node(location), m_op(op), m_lhs(lhs), m_rhs(NULL) {
+		: Node(location), m_op(op), m_lhs(lhs), m_rhs(NULL), m_is_augmented(false) {
 		m_lhs->addRef();
 	}
 
@@ -585,6 +585,7 @@ public:
 	}
 
 	bool isEvaluable() const { return true; }
+	bool isAugmented() const { return m_is_augmented; }
 
 	BitwiseOperator getOperator() const { return m_op; }
 	Node* getLhs() const { return m_lhs; }
@@ -597,6 +598,7 @@ private:
 	BitwiseOperator m_op;
 	Node* m_lhs;
 	Node* m_rhs;
+	bool m_is_augmented;
 
 	DISALLOW_COPY_AND_ASSIGN(Bitwise);
 };

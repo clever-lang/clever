@@ -373,6 +373,15 @@ void Codegen::visit(Bitwise* node)
 
 	if (rhs) {
 		_prepare_operand(arith.op2, rhs);
+
+		if (node->isAugmented()) {
+			_prepare_operand(arith.result, lhs);
+
+			node->setVOffset(lhs->getVOffset());
+			node->setScope(lhs->getScope());
+
+			return;
+		}
 	}
 
 	ValueOffset tmp_id = m_builder->getTemp();

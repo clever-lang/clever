@@ -192,7 +192,7 @@ class Value;
 %left ',';
 %left LOGICAL_OR;
 %left LOGICAL_AND;
-%right '=' PLUS_EQUAL MINUS_EQUAL DIV_EQUAL MULT_EQUAL MOD_EQUAL BW_OR_EQUAL XOR_EQUAL BW_AND_EQUAL  RSHIFT_EQUAL LSHIFT_EQUAL;
+%right '=' PLUS_EQUAL MINUS_EQUAL DIV_EQUAL MULT_EQUAL MOD_EQUAL BW_OR_EQUAL XOR_EQUAL BW_XOR_EQUAL BW_AND_EQUAL RSHIFT_EQUAL LSHIFT_EQUAL;
 %left ':';
 %left BOOLEAN_OR;
 %left BOOLEAN_AND;
@@ -247,6 +247,7 @@ statement:
 	|	instantiation ';'
 	|	switch_expr
 	|	arithmetic ';'
+	|	bitwise ';'
 ;
 
 block:
@@ -343,8 +344,8 @@ case_list:
 unary:
 		'-' rvalue %prec UMINUS { $<node>$ = new ast::Arithmetic(ast::Arithmetic::MOP_SUB, new ast::IntLit(0, yyloc), $<node>2, yyloc); }
 	|	'+' rvalue %prec UMINUS { $<node>$ = new ast::Arithmetic(ast::Arithmetic::MOP_ADD, new ast::IntLit(0, yyloc), $<node>2, yyloc); }
-	|	'!' rvalue              { $<node>$ = new ast::Boolean(ast::Boolean::BOP_NOT, $<node>2, yyloc);                                  }
-	|	'~' rvalue              { $<node>$ = new ast::Bitwise(ast::Bitwise::BOP_NOT, $<node>2, yyloc);                                  }
+	|	'!' rvalue              { $<node>$ = new ast::Boolean(ast::Boolean::BOP_NOT, $<node>2, yyloc); }
+	|	'~' rvalue              { $<node>$ = new ast::Bitwise(ast::Bitwise::BOP_NOT, $<node>2, yyloc); }
 ;
 
 class_def:
@@ -505,11 +506,11 @@ logic:
 ;
 
 arithmetic:
-		rvalue '+' rvalue         { $$ = new ast::Arithmetic(ast::Arithmetic::MOP_ADD, $<node>1, $<node>3, yyloc); }
-	|	rvalue '-' rvalue         { $$ = new ast::Arithmetic(ast::Arithmetic::MOP_SUB, $<node>1, $<node>3, yyloc); }
-	|	rvalue '*' rvalue         { $$ = new ast::Arithmetic(ast::Arithmetic::MOP_MUL, $<node>1, $<node>3, yyloc); }
-	|	rvalue '/' rvalue         { $$ = new ast::Arithmetic(ast::Arithmetic::MOP_DIV, $<node>1, $<node>3, yyloc); }
-	|	rvalue '%' rvalue         { $$ = new ast::Arithmetic(ast::Arithmetic::MOP_MOD, $<node>1, $<node>3, yyloc); }
+		rvalue '+' rvalue { $$ = new ast::Arithmetic(ast::Arithmetic::MOP_ADD, $<node>1, $<node>3, yyloc); }
+	|	rvalue '-' rvalue { $$ = new ast::Arithmetic(ast::Arithmetic::MOP_SUB, $<node>1, $<node>3, yyloc); }
+	|	rvalue '*' rvalue { $$ = new ast::Arithmetic(ast::Arithmetic::MOP_MUL, $<node>1, $<node>3, yyloc); }
+	|	rvalue '/' rvalue { $$ = new ast::Arithmetic(ast::Arithmetic::MOP_DIV, $<node>1, $<node>3, yyloc); }
+	|	rvalue '%' rvalue { $$ = new ast::Arithmetic(ast::Arithmetic::MOP_MOD, $<node>1, $<node>3, yyloc); }
 	|	lvalue PLUS_EQUAL  rvalue { $$ = new ast::Arithmetic(ast::Arithmetic::MOP_ADD, $<node>1, $<node>3, yyloc, true); }
 	|	lvalue MINUS_EQUAL rvalue { $$ = new ast::Arithmetic(ast::Arithmetic::MOP_SUB, $<node>1, $<node>3, yyloc, true); }
 	|	lvalue MULT_EQUAL  rvalue { $$ = new ast::Arithmetic(ast::Arithmetic::MOP_MUL, $<node>1, $<node>3, yyloc, true); }
@@ -518,11 +519,16 @@ arithmetic:
 ;
 
 bitwise:
-		rvalue '&' rvalue    { $$ = new ast::Bitwise(ast::Bitwise::BOP_AND, $<node>1, $<node>3, yyloc);    }
-	|	rvalue '|' rvalue    { $$ = new ast::Bitwise(ast::Bitwise::BOP_OR, $<node>1, $<node>3, yyloc);     }
-	|	rvalue '^' rvalue    { $$ = new ast::Bitwise(ast::Bitwise::BOP_XOR, $<node>1, $<node>3, yyloc);    }
+		rvalue '&' rvalue    { $$ = new ast::Bitwise(ast::Bitwise::BOP_AND,    $<node>1, $<node>3, yyloc); }
+	|	rvalue '|' rvalue    { $$ = new ast::Bitwise(ast::Bitwise::BOP_OR,     $<node>1, $<node>3, yyloc); }
+	|	rvalue '^' rvalue    { $$ = new ast::Bitwise(ast::Bitwise::BOP_XOR,    $<node>1, $<node>3, yyloc); }
 	|	rvalue LSHIFT rvalue { $$ = new ast::Bitwise(ast::Bitwise::BOP_LSHIFT, $<node>1, $<node>3, yyloc); }
 	|	rvalue RSHIFT rvalue { $$ = new ast::Bitwise(ast::Bitwise::BOP_RSHIFT, $<node>1, $<node>3, yyloc); }
+	|	lvalue BW_AND_EQUAL rvalue { $$ = new ast::Bitwise(ast::Bitwise::BOP_AND,    $<node>1, $<node>3, yyloc, true); }
+	|	lvalue BW_OR_EQUAL  rvalue { $$ = new ast::Bitwise(ast::Bitwise::BOP_OR,     $<node>1, $<node>3, yyloc, true); }
+	|	lvalue BW_XOR_EQUAL rvalue { $$ = new ast::Bitwise(ast::Bitwise::BOP_XOR,    $<node>1, $<node>3, yyloc, true); }
+	|	lvalue LSHIFT_EQUAL rvalue { $$ = new ast::Bitwise(ast::Bitwise::BOP_LSHIFT, $<node>1, $<node>3, yyloc, true); }
+	|	lvalue RSHIFT_EQUAL rvalue { $$ = new ast::Bitwise(ast::Bitwise::BOP_RSHIFT, $<node>1, $<node>3, yyloc, true); }
 ;
 
 variable_decl:
