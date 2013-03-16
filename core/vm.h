@@ -87,6 +87,9 @@ private:
 	/// Helper to prepare a function/method call
 	void prepareCall(const Function*, Environment* = NULL);
 
+	/// Helper to check member context access
+	bool checkContext(const MemberData&) const;
+
 	/// Helper to create a new instance
 	void createInstance(const Type*, Value*);
 

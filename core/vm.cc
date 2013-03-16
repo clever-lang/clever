@@ -344,6 +344,21 @@ void VM::throwUncaughtException(const IR& op)
 	clever_fatal(msg.str().c_str(),	m_exception.getException());
 }
 
+/// Performs class member context checking
+bool VM::checkContext(const MemberData& mdata) const
+{
+	const Function* curr_func =  m_call_stack.top().func;
+
+	if (curr_func) {
+		const Type* curr_context = curr_func->getContext();
+
+		return curr_context != mdata.value->getType();
+	} else {
+		return mdata.flags == MemberData::PUBLIC;
+	}
+	return true;
+}
+
 // Executes the VM opcodes
 // When building on GCC the code will use direct threading code, otherwise
 // the switch-based dispatching is used
@@ -665,6 +680,11 @@ out:
 		const Type* type = callee->getType();
 		MemberData mdata = callee->getObj()->getMember(method->getStr());
 		const Value* fval = mdata.value;
+
+		if (!checkContext(mdata)) {
+			error(OPCODE.loc, "Cannot call `%T::%S' from context",
+				type, method->getStr());
+		}
 
 		if (UNEXPECTED(!fval || !fval->isFunction())) {
 			error(OPCODE.loc, "Member `%T::%S' not found or not callable!",
