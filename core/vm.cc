@@ -164,18 +164,6 @@ void VM::dumpOpcodes() const
 }
 #endif
 
-// Make a copy of VM instance
-void VM::copy(const VM* vm, bool deep)
-{
-	f_mutex      = const_cast<VM*>(vm)->getMutex();
-	m_pc         = vm->m_pc;
-	m_inst       = vm->m_inst;
-	m_try_stack  = vm->m_try_stack;
-	m_global_env = vm->m_global_env;
-	m_call_stack = vm->m_call_stack;
-	m_const_env  = vm->m_const_env;
-}
-
 // Function parameter binding
 static CLEVER_FORCE_INLINE void _param_binding(const Function* func,
 	const Environment* fenv, const ValueVector& args)

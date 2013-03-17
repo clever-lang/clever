@@ -39,20 +39,33 @@ typedef std::stack<CallStackEntry> CallStack;
 class VM {
 public:
 	VM()
-		: m_pc(0), m_const_env(NULL), m_global_env(NULL), f_mutex(NULL), m_main(true) {}
+		: m_pc(0), m_const_env(NULL), m_global_env(NULL), m_mutex(NULL), m_main(true) {}
 
-	VM(const IRVector& inst)
-		: m_pc(0), m_const_env(NULL), m_global_env(NULL), f_mutex(NULL), m_main(true) {
+	explicit VM(const IRVector& inst)
+		: m_pc(0), m_const_env(NULL), m_global_env(NULL), m_mutex(NULL), m_main(true) {
 		m_inst.resize(inst.size());
 		std::copy(inst.begin(), inst.end(), m_inst.begin());
 	}
 
-	~VM() {}
+	VM(const VM& vm) {
+		m_mutex      = vm.m_mutex;
+		m_main       = !vm.m_main;
+		m_pc         = vm.m_pc;
+		m_inst       = vm.m_inst;
+		m_try_stack  = vm.m_try_stack;
+		m_global_env = vm.m_global_env;
+		m_call_stack = vm.m_call_stack;
+		m_const_env  = vm.m_const_env;
+	}
+
+	~VM() {
+		if (m_main && m_mutex) {
+			delete m_mutex;
+		}
+	}
 
 	void setGlobalEnv(Environment* globals) { m_global_env = globals; }
 	void setConstEnv(Environment* consts) { m_const_env = consts; }
-
-	void copy(const VM*, bool);
 
 	void setChild() { m_main = false; }
 	bool isChild() const { return !m_main; }
@@ -62,7 +75,12 @@ public:
 	size_t getPC() const { return m_pc; }
 	void nextPC() { ++m_pc; }
 
-	CMutex* getMutex() { return isChild() ? f_mutex : &m_mutex; }
+	CMutex* getMutex() {
+		if (!m_mutex) {
+			m_mutex = new CMutex;
+		}
+		return m_mutex;
+	}
 
 	/// Start the VM execution
 	void run();
@@ -133,12 +151,9 @@ private:
 	/// Vector of instruction
 	std::vector<IR> m_inst;
 
-	CMutex* f_mutex;
-	CMutex m_mutex;
+	CMutex* m_mutex;
 
 	bool m_main;
-
-	DISALLOW_COPY_AND_ASSIGN(VM);
 };
 
 } // clever

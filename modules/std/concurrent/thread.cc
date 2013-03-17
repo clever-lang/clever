@@ -89,11 +89,7 @@ CLEVER_METHOD(Thread::start)
 
 		//clever_debug("Thread.start set vm for thread to %@", vm);
 
-		intern->vm = new VM();
-		intern->vm->copy(vm, true);
-		intern->vm->setChild();
-
-
+		intern->vm = new VM(*vm);
 		intern->thread.create(ThreadHandler, intern);
 
 		//clever_debug("Thread.start created thread at %@", intern->thread);
