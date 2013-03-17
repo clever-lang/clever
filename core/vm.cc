@@ -755,6 +755,12 @@ out:
 		}
 		const Value* name = getValue(OPCODE.op2);
 		MemberData mdata = obj->getObj()->getMember(name->getStr());
+
+		if (!checkContext(mdata)) {
+			error(OPCODE.loc, "Cannot access member `%T::%S' from context",
+				obj->getType(), name->getStr());
+		}
+
 		const Value* value = mdata.value;
 
 		if (EXPECTED(value != NULL)) {
@@ -794,6 +800,12 @@ out:
 		}
 		const Value* name = getValue(OPCODE.op2);
 		MemberData mdata = obj->getObj()->getMember(name->getStr());
+
+		if (!checkContext(mdata)) {
+			error(OPCODE.loc, "Cannot access member `%T::%S' from context",
+				obj->getType(), name->getStr());
+		}
+
 		Value* value = mdata.value;
 
 		if (EXPECTED(value != NULL)) {

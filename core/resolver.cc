@@ -300,7 +300,7 @@ void Resolver::visit(AttrDecl* node)
 		node->getValue()->accept(*this);
 	}
 
-	m_class->addProperty(name, val);
+	m_class->addProperty(name, val, node->getVisibility());
 
 	node->setScope(m_scope);
 }

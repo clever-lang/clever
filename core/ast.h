@@ -1258,6 +1258,7 @@ public:
 	bool isConst() const { return m_const; }
 
 	void setVisibility(size_t flags) { m_visibility = flags; }
+	size_t getVisibility() const { return m_visibility; }
 
 	virtual void accept(Visitor& visitor);
 	virtual Node* accept(Transformer& transformer);
@@ -1266,6 +1267,8 @@ private:
 	Node* m_value;
 	bool m_const;
 	size_t m_visibility;
+
+	DISALLOW_COPY_AND_ASSIGN(AttrDecl);
 };
 
 class AttrArray: public NodeArray {
