@@ -49,7 +49,7 @@ public:
 
 	VM(const VM& vm) {
 		m_mutex      = vm.m_mutex;
-		m_main       = !vm.m_main;
+		m_main       = false;
 		m_pc         = vm.m_pc;
 		m_inst       = vm.m_inst;
 		m_try_stack  = vm.m_try_stack;
