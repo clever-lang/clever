@@ -701,7 +701,7 @@ out:
 
 		if (func->isUserDefined()) {
 			prepareCall(func,
-				static_cast<UserObject*>(callee->getObj())->getEnvironment());
+				static_cast<UserObject*>(intern)->getEnvironment());
 
 			VM_GOTO(func->getAddr());
 		} else {
