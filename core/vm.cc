@@ -678,7 +678,11 @@ out:
 		}
 
 		const Type* type = callee->getType();
-		MemberData mdata = callee->getObj()->getMember(method->getStr());
+		TypeObject* intern = callee->getObj();
+
+		intern->initialize(type);
+
+		MemberData mdata = intern->getMember(method->getStr());
 		const Value* fval = mdata.value;
 
 		if (!checkContext(mdata)) {
@@ -760,6 +764,11 @@ out:
 		if (UNEXPECTED(obj->isNull())) {
 			error(OPCODE.loc, "Cannot perform property access from null value");
 		}
+
+		TypeObject* intern = obj->getObj();
+
+		intern->initialize(obj->getType());
+
 		const Value* name = getValue(OPCODE.op2);
 		MemberData mdata = obj->getObj()->getMember(name->getStr());
 
@@ -813,7 +822,11 @@ out:
 			error(OPCODE.loc, "Cannot perform property access from null value");
 		}
 		const Value* name = getValue(OPCODE.op2);
-		MemberData mdata = obj->getObj()->getMember(name->getStr());
+		TypeObject* intern = obj->getObj();
+
+		intern->initialize(obj->getType());
+
+		MemberData mdata = intern->getMember(name->getStr());
 
 		if (!checkContext(mdata)) {
 			error(OPCODE.loc, "Cannot access member `%T::%S' from context",

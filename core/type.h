@@ -81,7 +81,8 @@ typedef std::tr1::unordered_map<const CString*, Function*> MethodMap;
 // TODO(heuripedes): investigate the significance of this class.
 class TypeObject : public RefCounted {
 public:
-	TypeObject() {}
+	TypeObject()
+		: m_initialized(false) {}
 
 	virtual ~TypeObject();
 
@@ -104,8 +105,17 @@ public:
 	const MemberMap& getMembers() const { return m_members; }
 
 	virtual TypeObject* clone() const { return NULL; }
+
+	void initialize(const Type* type) {
+		if (!m_initialized) {
+			copyMembers(type);
+		}
+	}
 private:
 	MemberMap m_members;
+
+	/// Flag to indicate if the members were loaded into the instance
+	bool m_initialized;
 
 	DISALLOW_COPY_AND_ASSIGN(TypeObject);
 };
@@ -162,6 +172,7 @@ public:
 		return getMember(name).value != NULL;
 	}
 
+	bool hasMembers() const { return !m_members.empty(); }
 	const MemberMap& getMembers() const { return m_members; }
 
 	Function* addMethod(Function*, size_t = MemberData::PUBLIC);

@@ -91,7 +91,6 @@ public:
 
 		m_type = type;
 		m_data = ptr;
-		ptr->copyMembers(type);
 	}
 	TypeObject* getObj() const { return  m_data; }
 

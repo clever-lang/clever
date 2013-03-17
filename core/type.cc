@@ -40,6 +40,8 @@ void TypeObject::copyMembers(const Type* type)
 			addMember(it->first, MemberData(it->second.value->clone(), it->second.flags));
 		}
 	}
+
+	m_initialized = 1;
 }
 
 /// Deallocs memory used by type members
