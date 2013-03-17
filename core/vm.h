@@ -83,9 +83,8 @@ private:
 
 	Environment* getCurrentEnvironment(OperandType) const;
 
-	/// Helper to change a temporary value pointer
-	void setTempValue(const Operand&, Value*) const;
-	void setValue(const Operand&, Value*, Value*) const;
+	/// Helper to change a value pointer on environment
+	void setValue(const Operand&, Value*) const;
 
 	/// Helper to prepare a function/method call
 	void prepareCall(const Function*, Environment* = NULL);

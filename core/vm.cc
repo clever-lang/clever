@@ -110,24 +110,20 @@ CLEVER_FORCE_INLINE Value* VM::getValue(const Operand& operand) const
 	return source->getValue(operand.voffset);
 }
 
-/// Fetchs and change a Value pointer in the current temporary environment
-CLEVER_FORCE_INLINE void VM::setTempValue(const Operand& operand, Value* value) const
+CLEVER_FORCE_INLINE void VM::setValue(const Operand& operand, Value* value) const
 {
-	Environment* source = m_call_stack.top().env->getTempEnv();
+	Environment* source = getCurrentEnvironment(operand.op_type);
+	Value* current_value = source->getValue(operand.voffset);
 
-	clever_delref(source->getValue(operand.voffset));
-	source->setData(operand.voffset.second, value);
-}
-
-CLEVER_FORCE_INLINE void VM::setValue(const Operand& operand, Value* var,
-	Value* value) const
-{
-	if (var->refCount() > 1) {
-		Environment* source = getCurrentEnvironment(operand.op_type);
-
+	if (operand.op_type == FETCH_TMP) {
+		clever_delref(current_value);
 		source->setData(operand.voffset.second, value);
 	} else {
-		var->copy(value);
+		if (current_value->refCount() > 1) {
+			source->setData(operand.voffset.second, value);
+		} else {
+			current_value->deepCopy(value);
+		}
 	}
 }
 
@@ -853,7 +849,7 @@ out:
 		Value* value = mdata.value;
 
 		if (EXPECTED(value != NULL)) {
-			setTempValue(OPCODE.result, value);
+			setValue(OPCODE.result, value);
 			clever_addref(value);
 		} else {
 			error(OPCODE.loc, "Member `%T::%S' not found!",
@@ -880,7 +876,7 @@ out:
 		Value* value = mdata.value;
 
 		if (EXPECTED(value != NULL)) {
-			setTempValue(OPCODE.result, value);
+			setValue(OPCODE.result, value);
 			clever_addref(value);
 		} else {
 			error(OPCODE.loc, "Property `%T::%S' not found!",
@@ -920,7 +916,7 @@ throw_exception:
 		if (EXPECTED(!var->isNull() && !index->isNull())) {
 			Value* result = var->getType()->at_op(var, index, this, &m_exception);
 
-			setTempValue(OPCODE.result, result);
+			setValue(OPCODE.result, result);
 
 			if (UNEXPECTED(m_exception.hasException())) {
 				goto throw_exception;
