@@ -770,7 +770,7 @@ out:
 		intern->initialize(obj->getType());
 
 		const Value* name = getValue(OPCODE.op2);
-		MemberData mdata = obj->getObj()->getMember(name->getStr());
+		MemberData mdata = intern->getMember(name->getStr());
 
 		if (!checkContext(mdata)) {
 			error(OPCODE.loc, "Cannot access member `%T::%S' from context",
