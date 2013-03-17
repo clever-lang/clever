@@ -81,8 +81,11 @@ private:
 	/// Helper to retrive a Value* from ValuePool
 	Value* getValue(const Operand&) const;
 
+	Environment* getCurrentEnvironment(OperandType) const;
+
 	/// Helper to change a temporary value pointer
 	void setTempValue(const Operand&, Value*) const;
+	void setValue(const Operand&, Value*, Value*) const;
 
 	/// Helper to prepare a function/method call
 	void prepareCall(const Function*, Environment* = NULL);

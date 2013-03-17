@@ -89,30 +89,46 @@ void VM::dumpStackTrace(std::ostringstream& out)
 	} while (!m_call_stack.empty());
 }
 
+/// Fetchs the Environment according to the supplied operand type
+CLEVER_FORCE_INLINE Environment* VM::getCurrentEnvironment(OperandType type) const
+{
+	switch (type) {
+		case FETCH_CONST: return m_const_env;
+		case FETCH_VAR:   return m_call_stack.top().env;
+		case FETCH_TMP:   return m_call_stack.top().env->getTempEnv();
+		default:  	      return NULL;
+	}
+}
+
 /// Fetchs a Value ptr according to the operand type
 CLEVER_FORCE_INLINE Value* VM::getValue(const Operand& operand) const
 {
-	const Environment* source = NULL;
+	const Environment* source = getCurrentEnvironment(operand.op_type);
 
-	switch (operand.op_type) {
-		case FETCH_CONST: source = m_const_env;                          break;
-		case FETCH_VAR:   source = m_call_stack.top().env;               break;
-		case FETCH_TMP:   source = m_call_stack.top().env->getTempEnv(); break;
-		default:  	      return NULL;
-	}
 	clever_assert_not_null(source);
 
 	return source->getValue(operand.voffset);
 }
 
 /// Fetchs and change a Value pointer in the current temporary environment
-void CLEVER_FORCE_INLINE VM::setTempValue(const Operand& operand,
-	Value* value) const
+CLEVER_FORCE_INLINE void VM::setTempValue(const Operand& operand, Value* value) const
 {
 	Environment* source = m_call_stack.top().env->getTempEnv();
 
 	clever_delref(source->getValue(operand.voffset));
 	source->setData(operand.voffset.second, value);
+}
+
+CLEVER_FORCE_INLINE void VM::setValue(const Operand& operand, Value* var,
+	Value* value) const
+{
+	if (var->refCount() > 1) {
+		Environment* source = getCurrentEnvironment(operand.op_type);
+
+		source->setData(operand.voffset.second, value);
+	} else {
+		var->copy(value);
+	}
 }
 
 #ifdef CLEVER_DEBUG
@@ -275,7 +291,7 @@ Value* VM::runFunction(const Function* func, const ValueVector& args)
 CLEVER_FORCE_INLINE void VM::binOp(const IR& op)
 {
 	const Value* lhs = getValue(op.op1);
-	const Value* rhs = getValue(op.op2);
+	const Value* rhs = op.op2.op_type != UNUSED ? getValue(op.op2) : NULL;
 	const Type* type = lhs->getType();
 
 	if (UNEXPECTED(lhs->isNull() || (op.op2.op_type != UNUSED && rhs->isNull()))) {
@@ -415,6 +431,7 @@ out:
 		// Checks if this assignment is allowed (non-const variable or
 		// const variable declaration).
 		if (EXPECTED(var->isAssignable())) {
+			//setValue(OPCODE.op1, var, value);
 			var->deepCopy(value);
 			if (UNEXPECTED(OPCODE.result.op_type != UNUSED)) {
 				getValue(OPCODE.result)->copy(value);
