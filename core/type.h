@@ -26,9 +26,9 @@ class Value;
 class Type;
 class Function;
 
-#define CLEVER_TYPE_OPERATOR_ARGS Value* result, const Value* lhs, const Value* rhs, const VM* vm, CException* exception
+#define CLEVER_TYPE_OPERATOR_ARGS       Value* result, const Value* lhs, const Value* rhs, const VM* vm, CException* exception
 #define CLEVER_TYPE_UNARY_OPERATOR_ARGS Value* result, const Value* lhs, const VM* vm, CException* exception
-#define CLEVER_TYPE_AT_OPERATOR_ARGS const Value* obj, const Value* index, const VM* vm, CException* exception
+#define CLEVER_TYPE_AT_OPERATOR_ARGS    const Value* obj, const Value* index, const VM* vm, CException* exception
 
 #define CLEVER_TYPE_OPERATOR(name)       void CLEVER_FASTCALL name(CLEVER_TYPE_OPERATOR_ARGS) const
 #define CLEVER_TYPE_UNARY_OPERATOR(name) void CLEVER_FASTCALL name(CLEVER_TYPE_UNARY_OPERATOR_ARGS) const
@@ -75,7 +75,7 @@ struct MemberData {
 };
 
 typedef std::tr1::unordered_map<const CString*, MemberData> MemberMap;
-typedef std::tr1::unordered_map<const CString*, Value*> PropertyMap;
+typedef std::tr1::unordered_map<const CString*, MemberData> PropertyMap;
 typedef std::tr1::unordered_map<const CString*, Function*> MethodMap;
 
 // TODO(heuripedes): investigate the significance of this class.
@@ -101,9 +101,7 @@ public:
 		return MemberData(NULL, 0);
 	}
 
-	const MemberMap& getMembers() const {
-		return m_members;
-	}
+	const MemberMap& getMembers() const { return m_members; }
 
 	virtual TypeObject* clone() const { return NULL; }
 private:
@@ -150,18 +148,18 @@ public:
 		m_members.insert(MemberMap::value_type(name, data));
 	}
 
-	Value* getMember(const CString* name) const {
+	MemberData getMember(const CString* name) const {
 		MemberMap::const_iterator it = m_members.find(name);
 
 		if (it != m_members.end()) {
-			return it->second.value;
+			return it->second;
 		}
 
-		return NULL;
+		return MemberData(NULL, 0);
 	}
 
 	bool hasMember(const CString* name) const {
-		return getMember(name) != NULL;
+		return getMember(name).value != NULL;
 	}
 
 	const MemberMap& getMembers() const { return m_members; }
@@ -176,8 +174,8 @@ public:
 		addMember(name, MemberData(value, flags));
 	}
 
-	Value* getProperty(const CString*) const;
-	const Function* getMethod(const CString*) const;
+	MemberData getProperty(const CString*) const;
+	MemberData getMethod(const CString*) const;
 
 	const MethodMap getMethods() const;
 	const PropertyMap getProperties() const;
@@ -203,6 +201,7 @@ public:
 	virtual void dump(TypeObject* data) const { dump(data, std::cout); }
 	virtual void dump(TypeObject* data, std::ostream& out) const { out << toString(data); };
 
+	/// Virtual method for stringify object
 	virtual std::string toString(TypeObject*) const { return getName(); }
 
 	/// Operator methods
@@ -228,6 +227,7 @@ public:
 	virtual void increment(Value*, const VM*, CException*)                const;
 	virtual void decrement(Value*, const VM*, CException*)                const;
 
+	/// Virtual methods for serialization interface
 	virtual std::pair<size_t, TypeObject*> serialize(const Value*) const;
 	virtual Value* unserialize(const Type*, const std::pair<size_t, TypeObject*>&) const;
 private:

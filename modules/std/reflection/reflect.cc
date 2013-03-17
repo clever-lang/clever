@@ -327,8 +327,8 @@ CLEVER_METHOD(ReflectType::getProperties)
 	MapObject* map = new MapObject;
 
 	while (it != end) {
-		map->getData().insert(MapObjectPair(*it->first, it->second));
-		it->second->addRef();
+		map->getData().insert(MapObjectPair(*it->first, it->second.value));
+		clever_addref(it->second.value);
 		++it;
 	}
 

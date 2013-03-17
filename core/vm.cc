@@ -724,9 +724,16 @@ out:
 		const Value* valtype = getValue(OPCODE.op1);
 		const Type* type = valtype->getType();
 		const Value* method = getValue(OPCODE.op2);
-		const Function* func = type->getMethod(method->getStr());
+		MemberData mdata = type->getMethod(method->getStr());
 
-		if (EXPECTED(func != NULL)) {
+		if (!checkContext(mdata)) {
+			error(OPCODE.loc, "Cannot access member `%T::%S' from context",
+				type, method->getStr());
+		}
+
+		if (EXPECTED(mdata.value && mdata.value->isFunction())) {
+			const Function* func = static_cast<Function*>(mdata.value->getObj());
+
 			if (UNEXPECTED(!func->isStatic())) {
 				error(OPCODE.loc, "Method `%T::%S' cannot be called statically",
 					type, method->getStr());
@@ -780,7 +787,14 @@ out:
 			error(OPCODE.loc, "Cannot perform property access from null value");
 		}
 		const Value* name = getValue(OPCODE.op2);
-		const Value* value = obj->getType()->getProperty(name->getStr());
+		MemberData mdata = obj->getType()->getProperty(name->getStr());
+
+		if (!checkContext(mdata)) {
+			error(OPCODE.loc, "Cannot access member `%T::%S' from context",
+				obj->getType(), name->getStr());
+		}
+
+		const Value* value = mdata.value;
 
 		if (EXPECTED(value != NULL)) {
 			getValue(OPCODE.result)->copy(value);
@@ -826,7 +840,14 @@ out:
 			error(OPCODE.loc, "Cannot perform property access from null value");
 		}
 		const Value* name = getValue(OPCODE.op2);
-		Value* value = obj->getType()->getProperty(name->getStr());
+		MemberData mdata = obj->getType()->getProperty(name->getStr());
+
+		if (!checkContext(mdata)) {
+			error(OPCODE.loc, "Cannot access member `%T::%S' from context",
+				obj->getType(), name->getStr());
+		}
+
+		Value* value = mdata.value;
 
 		if (EXPECTED(value != NULL)) {
 			setTempValue(OPCODE.result, value);

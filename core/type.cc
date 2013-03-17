@@ -106,22 +106,18 @@ Function* Type::addMethod(Function* func, size_t flags)
 	return func;
 }
 
-const Function* Type::getMethod(const CString* name) const
+MemberData Type::getMethod(const CString* name) const
 {
-	Value* val = getMember(name);
+	MemberData mdata = getMember(name);
 
-	if (val && val->isFunction()) {
-		return static_cast<Function*>(val->getObj());
-	}
-
-	return NULL;
+	return mdata.value && mdata.value->isFunction() ? mdata : MemberData(NULL, 0);
 }
 
-Value* Type::getProperty(const CString* name) const
+MemberData Type::getProperty(const CString* name) const
 {
-	Value* val = getMember(name);
+	MemberData mdata = getMember(name);
 
-	return (val && !val->isFunction()) ? val : NULL;
+	return mdata.value && !mdata.value->isFunction() ? mdata : MemberData(NULL, 0);
 }
 
 const MethodMap Type::getMethods() const
@@ -147,7 +143,7 @@ const PropertyMap Type::getProperties() const
 
 	for (; it != end; ++it) {
 		if (!it->second.value->isFunction()) {
-			pm.insert(PropertyMap::value_type(it->first, it->second.value));
+			pm.insert(PropertyMap::value_type(it->first, it->second));
 		}
 	}
 
