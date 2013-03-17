@@ -66,15 +66,12 @@ namespace detail {
 void array_to_json(::std::ostringstream& oss, const Value* array);
 
 void to_json_impl(::std::ostringstream& oss, const Value* object) {
-	const MemberMap& members = object->getData()->getMembers();
-
-	MemberMap::const_iterator it = members.begin();
-	MemberMap::const_iterator end = members.end();
-
+	const MemberMap& members = object->getObj()->getMembers();
+	MemberMap::const_iterator it(members.begin()), end(members.end());
 	const Value* value;
 	const CString* key;
-
 	bool first = true;
+
 	while (it != end) {
 		key = it->first;
 		value = it->second.value;
@@ -107,6 +104,7 @@ void to_json_impl(::std::ostringstream& oss, const Value* object) {
 void array_to_json(::std::ostringstream& oss, const Value* array) {
 	ValueVector& arr = clever_get_object(ArrayObject*, array)->getData();
 	bool first = true;
+
 	for (int i = 0, sz = arr.size(); i < sz; ++i) {
 		if (!arr[i]->isFunction()) {
 			if (!first) {
@@ -115,13 +113,11 @@ void array_to_json(::std::ostringstream& oss, const Value* array) {
 			if (arr[i]->isInt() || arr[i]->isStr() || arr[i]->isDouble()
 				|| arr[i]->isBool() || arr[i]->isMap()) {
 				oss << "\"" << detail::escape(arr[i]->toString()) << "\"";
-			}
-			else if (arr[i]->isArray()) {
+			} else if (arr[i]->isArray()) {
 				oss << "[";
 				array_to_json(oss, arr[i]);
 				oss << "]";
-			}
-			else {
+			} else {
 				oss << "{";
 				to_json_impl(oss, arr[i]);
 				oss << "}";
@@ -131,7 +127,7 @@ void array_to_json(::std::ostringstream& oss, const Value* array) {
 	}
 }
 
-}
+} // clever::modules::std::json::detail
 
 // to_json(Object object)
 static CLEVER_FUNCTION(to_json)

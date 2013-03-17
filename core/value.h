@@ -116,14 +116,12 @@ public:
 	bool isMap()      const { return m_type == CLEVER_MAP_TYPE;    }
 	bool isArray()    const { return m_type == CLEVER_ARRAY_TYPE;  }
 
-	TypeObject* getData() const { return m_data; }
-
 	void deepCopy(const Value*);
 
 	void copy(const Value* value) {
 		cleanUp();
 		m_type = value->getType();
-		m_data = value->getData();
+		m_data = value->getObj();
 
 		if (EXPECTED(m_type && m_data)) {
 			clever_addref(m_data);
