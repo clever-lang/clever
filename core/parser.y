@@ -252,7 +252,7 @@ statement:
 ;
 
 block:
-		'{' statement_list '}'  { $$ = $2; }
+		'{' statement_list '}' { $$ = $2; }
 ;
 
 instantiation:
@@ -267,7 +267,6 @@ break:
 continue:
 		CONTINUE { $$ = new ast::Continue(yyloc); }
 ;
-
 
 critical_block:
 		CRITICAL block {
@@ -293,6 +292,7 @@ object:
 	|	'(' rvalue ')' { $<node>$ = $<node>2; }
 	|	subscript
 	|	fcall
+	|	instantiation
 ;
 
 rvalue:
@@ -303,10 +303,9 @@ rvalue:
 	|	bitwise
 	|	boolean
 	|	comparison
-	|	assignment    { $<assignment>1->setUseResult(); }
+	|	assignment { $<assignment>1->setUseResult(); }
 	|	inc_dec
 	|	anonymous_fdecl
-	|	instantiation
 	|	mcall
 	|	fully_qualified_call
 	|	property_access
@@ -314,7 +313,7 @@ rvalue:
 
 lvalue:
 		IDENT
-	|	property_access         { $1->setWriteMode(); }
+	|	property_access { $1->setWriteMode(); }
 	|	subscript
 ;
 
@@ -445,8 +444,8 @@ try_catch_finally:
 
 property_access:
 		object '.' IDENT    { $$ = new ast::Property($<node>1, $3, yyloc); }
-	|	TYPE '.' IDENT      { $$ = new ast::Property($1, $3, yyloc); }
 	|	object '.' CONSTANT { $$ = new ast::Property($<node>1, $3, yyloc); }
+	|	TYPE '.' IDENT      { $$ = new ast::Property($1, $3, yyloc); }
 	|	TYPE '.' CONSTANT   { $$ = new ast::Property($1, $3, yyloc); }
 	|	property_access '.' IDENT    { $$ = new ast::Property($<node>1, $3, yyloc); }
 	|	property_access '.' CONSTANT { $$ = new ast::Property($<node>1, $3, yyloc); }
@@ -491,8 +490,8 @@ boolean:
 ;
 
 logic:
-		rvalue LOGICAL_OR rvalue  { $$ = new ast::Logic(ast::Logic::LOP_OR, $<node>1, $<node>3, yyloc);      }
-	|	rvalue LOGICAL_AND rvalue { $$ = new ast::Logic(ast::Logic::LOP_AND, $<node>1, $<node>3, yyloc);     }
+		rvalue LOGICAL_OR rvalue  { $$ = new ast::Logic(ast::Logic::LOP_OR, $<node>1, $<node>3, yyloc);  }
+	|	rvalue LOGICAL_AND rvalue { $$ = new ast::Logic(ast::Logic::LOP_AND, $<node>1, $<node>3, yyloc); }
 ;
 
 arithmetic:
@@ -672,8 +671,8 @@ else:
 ;
 
 if:
-		IF '(' rvalue ')' block { $<ifcond>$ = new ast::If($<node>3, $<node>5, yyloc); }
-		elseif { $<ifcond>$ = $<ifcond>6; } else { $$ = $9; }
+		IF '(' rvalue ')' block { $<ifcond>$ = new ast::If($<node>3, $<node>5, yyloc); } elseif { $<ifcond>$ = $<ifcond>6; } else { $$ = $9; }
+;
 
 %%
 

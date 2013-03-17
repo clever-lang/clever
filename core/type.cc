@@ -23,6 +23,7 @@ TypeObject::~TypeObject()
 	}
 }
 
+/// Copy the type members to the object instance
 void TypeObject::copyMembers(const Type* type)
 {
 	clever_assert(m_members.empty(), "m_members must be empty");
@@ -41,6 +42,7 @@ void TypeObject::copyMembers(const Type* type)
 	}
 }
 
+/// Deallocs memory used by type members
 void Type::deallocMembers()
 {
 	MemberMap::iterator it(m_members.begin()), end(m_members.end());
@@ -50,24 +52,24 @@ void Type::deallocMembers()
 	}
 }
 
+/// Serialization interface
 std::pair<size_t, TypeObject*> Type::serialize(const Value* value) const
 {
 	clever_assert_not_null(value);
 
-	const Type* type = value->getType();
 	size_t size;
 
-	if (type == CLEVER_INT_TYPE) {
+	if (value->isInt()) {
 		size = sizeof(IntObject);
-	} else if (type == CLEVER_DOUBLE_TYPE) {
+	} else if (value->isDouble()) {
 		size = sizeof(DoubleObject);
-	} else if (type == CLEVER_BOOL_TYPE) {
+	} else if (value->isBool()) {
 		size = sizeof(BoolObject);
-	} else if (type == CLEVER_STR_TYPE) {
+	} else if (value->isStr()) {
 		size = sizeof(StrObject);
-	} else if (type == CLEVER_ARRAY_TYPE) {
+	} else if (value->isArray()) {
 		size = sizeof(ArrayObject);
-	} else if (type == CLEVER_MAP_TYPE) {
+	} else if (value->isMap()) {
 		size = sizeof(MapObject);
 	} else {
 		size = sizeof(TypeObject);
@@ -76,6 +78,7 @@ std::pair<size_t, TypeObject*> Type::serialize(const Value* value) const
 	return std::pair<size_t, TypeObject*>(size, value->getObj());
 }
 
+/// Unserialization interface
 Value* Type::unserialize(const Type* type, const std::pair<size_t, TypeObject*>& data) const
 {
 	Value* value = new Value;
@@ -93,6 +96,7 @@ Value* Type::unserialize(const Type* type, const std::pair<size_t, TypeObject*>&
 	return value;
 }
 
+/// Add a new method to the type
 Function* Type::addMethod(Function* func, size_t flags)
 {
 	Value* val = new Value;
@@ -106,6 +110,7 @@ Function* Type::addMethod(Function* func, size_t flags)
 	return func;
 }
 
+/// Fetchs a method by name
 MemberData Type::getMethod(const CString* name) const
 {
 	MemberData mdata = getMember(name);
@@ -113,6 +118,7 @@ MemberData Type::getMethod(const CString* name) const
 	return mdata.value && mdata.value->isFunction() ? mdata : MemberData(NULL, 0);
 }
 
+/// Fetchs a property by name
 MemberData Type::getProperty(const CString* name) const
 {
 	MemberData mdata = getMember(name);
@@ -120,6 +126,7 @@ MemberData Type::getProperty(const CString* name) const
 	return mdata.value && !mdata.value->isFunction() ? mdata : MemberData(NULL, 0);
 }
 
+/// Returns all the type methods
 const MethodMap Type::getMethods() const
 {
 	MemberMap::const_iterator it(m_members.begin()), end(m_members.end());
@@ -136,6 +143,7 @@ const MethodMap Type::getMethods() const
 	return mm;
 }
 
+/// Returns all the type properties
 const PropertyMap Type::getProperties() const
 {
 	MemberMap::const_iterator it(m_members.begin()), end(m_members.end());
@@ -150,120 +158,143 @@ const PropertyMap Type::getProperties() const
 	return pm;
 }
 
-CLEVER_TYPE_OPERATOR(Type::add)
-{
-	clever_throw("Cannot use + operator with %s type", getName().c_str());
-}
-
-CLEVER_TYPE_OPERATOR(Type::sub)
-{
-	clever_throw("Cannot use - operator with %s type", getName().c_str());
-}
-
-CLEVER_TYPE_OPERATOR(Type::mul)
-{
-	clever_throw("Cannot use * operator with %s type", getName().c_str());
-}
-
-CLEVER_TYPE_OPERATOR(Type::div)
-{
-	clever_throw("Cannot use / operator with %s type", getName().c_str());
-}
-
-CLEVER_TYPE_OPERATOR(Type::mod)
-{
-	clever_throw("Cannot use % operator with %s type", getName().c_str());
-}
-
-CLEVER_TYPE_OPERATOR(Type::greater)
-{
-	clever_throw("Cannot use > operator with %s type", getName().c_str());
-}
-
-CLEVER_TYPE_OPERATOR(Type::greater_equal)
-{
-	clever_throw("Cannot use >= operator with %s type", getName().c_str());
-}
-
-CLEVER_TYPE_OPERATOR(Type::less)
-{
-	clever_throw("Cannot use < operator with %s type", getName().c_str());
-}
-
-CLEVER_TYPE_OPERATOR(Type::less_equal)
-{
-	clever_throw("Cannot use <= operator with %s type", getName().c_str());
-}
-
-CLEVER_TYPE_OPERATOR(Type::equal)
-{
-	clever_throw("Cannot use == operator with %s type", getName().c_str());
-}
-
-CLEVER_TYPE_OPERATOR(Type::not_equal)
-{
-	clever_throw("Cannot use != operator with %s type", getName().c_str());
-}
-
-CLEVER_TYPE_AT_OPERATOR(Type::at_op)
-{
-	clever_throw("Cannot use [] operator with %s type", getName().c_str());
-	return NULL;
-}
-
-CLEVER_TYPE_UNARY_OPERATOR(Type::not_op)
-{
-	clever_throw("Cannot use ! operator with %s type", getName().c_str());
-}
-
-CLEVER_TYPE_OPERATOR(Type::bw_and)
-{
-	clever_throw("Cannot use & operator with %s type", getName().c_str());
-}
-
-CLEVER_TYPE_OPERATOR(Type::bw_or)
-{
-	clever_throw("Cannot use | operator with %s type", getName().c_str());
-}
-
-CLEVER_TYPE_OPERATOR(Type::bw_xor)
-{
-	clever_throw("Cannot use ^ operator with %s type", getName().c_str());
-}
-
-CLEVER_TYPE_UNARY_OPERATOR(Type::bw_not)
-{
-	clever_throw("Cannot use ~ operator with %s type", getName().c_str());
-}
-
-CLEVER_TYPE_OPERATOR(Type::bw_ls)
-{
-	clever_throw("Cannot use << operator with %s type", getName().c_str());
-}
-
-CLEVER_TYPE_OPERATOR(Type::bw_rs)
-{
-	clever_throw("Cannot use >> operator with %s type", getName().c_str());
-}
-
-void Type::increment(Value* value, const VM* vm, CException* exception) const
-{
-	clever_throw("Cannot use ++ operator with %s type", getName().c_str());
-}
-
-void Type::decrement(Value* value, const VM* vm, CException* exception) const
-{
-	clever_throw("Cannot use -- operator with %s type", getName().c_str());
-}
-
+/// Sets the type constructor
 void Type::setConstructor(MethodPtr method)
 {
 	m_ctor = addMethod(new Function("Constructor#" + getName(), method));
 }
 
+/// Sets the type destructor
 void Type::setDestructor(MethodPtr method)
 {
 	m_dtor = addMethod(new Function("Destructor#" + getName(), method));
+}
+
+/// Default + operator implementation
+CLEVER_TYPE_OPERATOR(Type::add)
+{
+	clever_throw("Cannot use + operator with %T type", this);
+}
+
+/// Default - operator implementation
+CLEVER_TYPE_OPERATOR(Type::sub)
+{
+	clever_throw("Cannot use - operator with %T type", this);
+}
+
+/// Default * operator implementation
+CLEVER_TYPE_OPERATOR(Type::mul)
+{
+	clever_throw("Cannot use * operator with %T type", this);
+}
+
+/// Default / operator implementation
+CLEVER_TYPE_OPERATOR(Type::div)
+{
+	clever_throw("Cannot use / operator with %T type", this);
+}
+
+/// Default % operator implementation
+CLEVER_TYPE_OPERATOR(Type::mod)
+{
+	clever_throw("Cannot use % operator with %T type", this);
+}
+
+/// Default > operator implementation
+CLEVER_TYPE_OPERATOR(Type::greater)
+{
+	clever_throw("Cannot use > operator with %T type", this);
+}
+
+/// Default >= operator implementation
+CLEVER_TYPE_OPERATOR(Type::greater_equal)
+{
+	clever_throw("Cannot use >= operator with %T type", this);
+}
+
+/// Default < operator implementation
+CLEVER_TYPE_OPERATOR(Type::less)
+{
+	clever_throw("Cannot use < operator with %T type", this);
+}
+
+/// Default <= operator implementation
+CLEVER_TYPE_OPERATOR(Type::less_equal)
+{
+	clever_throw("Cannot use <= operator with %T type", this);
+}
+
+/// Default = operator implementation
+CLEVER_TYPE_OPERATOR(Type::equal)
+{
+	clever_throw("Cannot use == operator with %T type", this);
+}
+
+/// Default != operator implementation
+CLEVER_TYPE_OPERATOR(Type::not_equal)
+{
+	clever_throw("Cannot use != operator with %T type",  this);
+}
+
+/// Default [] operator implementation
+CLEVER_TYPE_AT_OPERATOR(Type::at_op)
+{
+	clever_throw("Cannot use [] operator with %T type", this);
+	return NULL;
+}
+
+/// Default ! operator implementation
+CLEVER_TYPE_UNARY_OPERATOR(Type::not_op)
+{
+	clever_throw("Cannot use ! operator with %T type", this);
+}
+
+/// Default & operator implementation
+CLEVER_TYPE_OPERATOR(Type::bw_and)
+{
+	clever_throw("Cannot use & operator with %T type", this);
+}
+
+/// Default | operator implementation
+CLEVER_TYPE_OPERATOR(Type::bw_or)
+{
+	clever_throw("Cannot use | operator with %T type", this);
+}
+
+/// Default ^ operator implementation
+CLEVER_TYPE_OPERATOR(Type::bw_xor)
+{
+	clever_throw("Cannot use ^ operator with %T type", this);
+}
+
+/// Default ~ operator implementation
+CLEVER_TYPE_UNARY_OPERATOR(Type::bw_not)
+{
+	clever_throw("Cannot use ~ operator with %T type", this);
+}
+
+/// Default << operator implementation
+CLEVER_TYPE_OPERATOR(Type::bw_ls)
+{
+	clever_throw("Cannot use << operator with %T type", this);
+}
+
+/// Default >> operator implementation
+CLEVER_TYPE_OPERATOR(Type::bw_rs)
+{
+	clever_throw("Cannot use >> operator with %T type", this);
+}
+
+/// Default ++ operator implementation
+void Type::increment(Value* value, const VM* vm, CException* exception) const
+{
+	clever_throw("Cannot use ++ operator with %T type", this);
+}
+
+/// Default -- operator implementation
+void Type::decrement(Value* value, const VM* vm, CException* exception) const
+{
+	clever_throw("Cannot use -- operator with %T type", this);
 }
 
 } // clever
