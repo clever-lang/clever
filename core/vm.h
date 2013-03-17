@@ -28,8 +28,8 @@ struct CallStackEntry {
 	const Function* func;
 	const location* loc;
 
-	explicit CallStackEntry(Environment* env_, const Function* func_ = NULL,
-		const location* loc_ = NULL)
+	explicit CallStackEntry(Environment* env_,
+		const Function* func_ = NULL, const location* loc_ = NULL)
 		: env(env_), func(func_), loc(loc_) {}
 };
 
@@ -96,10 +96,11 @@ public:
 private:
 	CallStack& getCallStack() { return m_call_stack; }
 
-	/// Helper to retrive a Value* from ValuePool
-	Value* getValue(const Operand&) const;
-
+	/// Helper to fetch the current environment according to the operand type
 	Environment* getCurrentEnvironment(OperandType) const;
+
+	/// Helper to retrive a Value* from environment
+	Value* getValue(const Operand&) const;
 
 	/// Helper to change a value pointer on environment
 	void setValue(const Operand&, Value*) const;
@@ -127,6 +128,9 @@ private:
 	/// VM program counter
 	size_t m_pc;
 
+	/// Vector of instruction
+	std::vector<IR> m_inst;
+
 	/// Constant
 	Environment* m_const_env;
 
@@ -147,9 +151,6 @@ private:
 
 	/// User object instance vector
 	std::stack<std::vector<Environment*> > m_obj_store;
-
-	/// Vector of instruction
-	std::vector<IR> m_inst;
 
 	CMutex* m_mutex;
 
