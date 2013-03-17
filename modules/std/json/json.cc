@@ -22,41 +22,15 @@ namespace detail {
 
 	for (int i = 0, sz = str.size(); i < sz; ++i) {
 		switch (str[i]) {
-			case '\b': {
-				oss << "\\b";
-				break;
-			}
-			case '\f': {
-				oss << "\\f";
-				break;
-			}
-			case '\n': {
-				oss << "\\n";
-				break;
-			}
-			case '\r': {
-				oss << "\\r";
-				break;
-			}
-			case '\t': {
-				oss << "\\t";
-				break;
-			}
-			case '\'': {
-				oss << "\\'";
-				break;
-			}
-			case '"': {
-				oss << "\\\"";
-				break;
-			}
-			case '\\': {
-				oss << "\\\\";
-				break;
-			}
-			default: {
-				oss << str[i];
-			}
+			case '\b': oss << "\\b";  break;
+			case '\f': oss << "\\f";  break;
+			case '\n': oss << "\\n";  break;
+			case '\r': oss << "\\r";  break;
+			case '\t': oss << "\\t";  break;
+			case '\'': oss << "\\'";  break;
+			case '"':  oss << "\\\""; break;
+			case '\\': oss << "\\\\"; break;
+			default:   oss << str[i];
 		}
 	}
 
@@ -85,13 +59,11 @@ void to_json_impl(::std::ostringstream& oss, const Value* object) {
 			if (value->isInt() || value->isStr() || value->isDouble()
 				|| value->isBool() || value->isMap()) {
 				oss << "\"" << detail::escape(value->toString()) << "\"";
-			}
-			else if (value->isArray()) {
+			} else if (value->isArray()) {
 				oss << "[";
 				array_to_json(oss, value);
 				oss << "]";
-			}
-			else {
+			} else {
 				oss << "{";
 				to_json_impl(oss, value);
 				oss << "}";
