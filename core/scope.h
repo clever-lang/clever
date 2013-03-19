@@ -20,11 +20,7 @@
 
 namespace clever {
 
-class Value;
 class Scope;
-
-typedef std::vector<Type*> TypePool;
-typedef std::vector<Value*> ValuePool;
 
 /// Symbol representation
 struct Symbol {
@@ -52,26 +48,28 @@ public:
 	typedef std::tr1::unordered_map<const CString*, size_t> SymbolTable;
 
 	Scope()
-		: m_parent(NULL), m_children(), m_symbols(), m_symbol_table(),
-		  m_value_pool(), m_environment(NULL) {}
+		: m_parent(NULL), m_environment(NULL) {}
 
 	explicit Scope(Scope* parent)
-		: m_parent(parent), m_children(), m_symbols(), m_symbol_table(),
-		  m_value_pool(), m_environment(NULL) {}
+		: m_parent(parent), m_environment(NULL) {}
 
 	~Scope();
 
-	Symbol* pushValue(const CString* name, Value* value) {
+	void pushValue(const CString* name, Value* value) {
 		Symbol* sym = new Symbol(name, this);
 
 		m_symbols.push_back(sym);
 		m_symbol_table.insert(SymbolTable::value_type(name, m_symbol_table.size()));
 		m_value_pool.push_back(value);
 
-		return sym;
+		clever_assert_not_null(m_environment);
+
+		sym->voffset = m_environment->pushValue(value);
 	}
 
-	Value* getValue(const ValueOffset& offset) const { return m_environment->getValue(offset); }
+	Value* getValue(const ValueOffset& offset) const {
+		return m_environment->getValue(offset);
+	}
 
 	Scope* enter() {
 		Scope* s = new Scope(this);
@@ -100,7 +98,7 @@ private:
 	SymbolMap m_symbols;
 	SymbolTable m_symbol_table;
 
-	ValuePool m_value_pool;
+	ValueVector m_value_pool;
 
 	Environment* m_environment;
 

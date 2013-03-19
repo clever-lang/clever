@@ -21,7 +21,7 @@ Resolver::Resolver(const ModManager& ModManager, const std::string& ns_name)
 	m_scope->setEnvironment(new Environment());
 	m_stack.push(m_scope->getEnvironment());
 
-	m_modmanager.importModule(m_scope, m_stack.top(), "std.core");
+	m_modmanager.importModule(m_scope, "std.core");
 	m_mod = m_modmanager.getUserModule();
 }
 
@@ -48,7 +48,7 @@ void Resolver::visit(VariableDecl* node)
 	}
 
 	Value* val = new Value();
-	m_scope->pushValue(name, val)->voffset = m_stack.top()->pushValue(val);
+	m_scope->pushValue(name, val);
 
 	node->getIdent()->accept(*this);
 
@@ -124,7 +124,7 @@ void Resolver::visit(FunctionDecl* node)
 			case ast::PRIVATE: func->setPrivate(); break;
 		}
 	} else {
-		m_scope->pushValue(name, fval)->voffset = m_stack.top()->pushValue(fval);
+		m_scope->pushValue(name, fval);
 
 		if (node->hasIdent()) {
 			node->getIdent()->accept(*this);
@@ -222,7 +222,7 @@ void Resolver::visit(Import* node)
 		kind |= ModManager::NAMESPACE;
 	}
 
-	ast::Node* tree = m_modmanager.importModule(m_scope, m_stack.top(),
+	ast::Node* tree = m_modmanager.importModule(m_scope,
 		*node->getModule()->getName(), kind, name);
 
 	node->setModuleTree(tree);
@@ -241,7 +241,7 @@ void Resolver::visit(Catch* node)
 
 	Value* val = new Value();
 
-	m_scope->pushValue(node->getVar()->getName(), val)->voffset = m_stack.top()->pushValue(val);
+	m_scope->pushValue(node->getVar()->getName(), val);
 
 	node->getVar()->accept(*this);
 
@@ -260,7 +260,7 @@ void Resolver::visit(ClassDef* node)
 	type->init();
 
 	Value* tmp = new Value(type);
-	m_scope->pushValue(name, tmp)->voffset = m_stack.top()->pushValue(tmp);
+	m_scope->pushValue(name, tmp);
 
 	m_scope = m_scope->enter();
 	m_scope->setEnvironment(new Environment(m_stack.top()));
@@ -269,7 +269,7 @@ void Resolver::visit(ClassDef* node)
 
 	Value* val = new Value(type, true);
 
-	m_scope->pushValue(CSTRING("this"), val)->voffset = m_stack.top()->pushValue(val);
+	m_scope->pushValue(CSTRING("this"), val);
 
 	type->setEnvironment(m_stack.top());
 

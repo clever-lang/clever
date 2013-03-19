@@ -73,29 +73,27 @@ void ModManager::addModule(const std::string& name, Module* module)
 }
 
 /// Loads an specific module type
-void ModManager::loadType(Scope* scope, Environment* env, const std::string& name,
-	Type* type) const
+void ModManager::loadType(Scope* scope, const std::string& name, Type* type) const
 {
 	Value* tmp = new Value(type, true);
 
-	scope->pushValue(CSTRING(name), tmp)->voffset = env->pushValue(tmp);
+	scope->pushValue(CSTRING(name), tmp);
 
 	type->init();
 }
 
 /// Loads an specific module function
-void ModManager::loadFunction(Scope* scope, Environment* env,
-	const std::string& name, Function* func) const
+void ModManager::loadFunction(Scope* scope, const std::string& name, Function* func) const
 {
 	Value* fval = new Value();
 
 	fval->setObj(CLEVER_FUNC_TYPE, func);
 	fval->setConst(true);
 
-	scope->pushValue(CSTRING(name), fval)->voffset = env->pushValue(fval);
+	scope->pushValue(CSTRING(name), fval);
 }
 
-void ModManager::loadModuleContent(Scope* scope, Environment* env, Module* module,
+void ModManager::loadModuleContent(Scope* scope, Module* module,
 	size_t kind, const CString* name, const std::string& ns_prefix) const
 {
 	if (!name) {
@@ -106,8 +104,7 @@ void ModManager::loadModuleContent(Scope* scope, Environment* env, Module* modul
 
 			for (; it != end; ++it) {
 				const CString* vname = CSTRING(ns_prefix + it->first);
-				scope->pushValue(vname, it->second)->voffset =
-					env->pushValue(it->second);
+				scope->pushValue(vname, it->second);
 			}
 		}
 	}
@@ -121,7 +118,7 @@ void ModManager::loadModuleContent(Scope* scope, Environment* env, Module* modul
 			if (it == funcs.end()) {
 				std::cerr << "Function `" << *name << "' not found!" << std::endl;
 			} else {
-				loadFunction(scope, env, it->first, it->second);
+				loadFunction(scope, it->first, it->second);
 			}
 		} else {
 			FunctionMap::const_iterator itf(funcs.begin()),	endf(funcs.end());
@@ -130,7 +127,7 @@ void ModManager::loadModuleContent(Scope* scope, Environment* env, Module* modul
 				const std::string& fname = ns_prefix.empty() ?
 					itf->first : ns_prefix + itf->first;
 
-				loadFunction(scope, env, fname, itf->second);
+				loadFunction(scope, fname, itf->second);
 				++itf;
 			}
 		}
@@ -145,7 +142,7 @@ void ModManager::loadModuleContent(Scope* scope, Environment* env, Module* modul
 			if (it == types.end()) {
 				std::cerr << "Type `" << *name << "' not found!" << std::endl;
 			} else {
-				loadType(scope, env, it->first, it->second);
+				loadType(scope, it->first, it->second);
 			}
 		} else {
 			TypeMap::const_iterator itt(types.begin()), ite(types.end());
@@ -154,7 +151,7 @@ void ModManager::loadModuleContent(Scope* scope, Environment* env, Module* modul
 				const std::string& tname = ns_prefix.empty() ?
 					itt->first : ns_prefix + itt->first;
 
-				loadType(scope, env, tname, itt->second);
+				loadType(scope, tname, itt->second);
 				++itt;
 			}
 		}
@@ -162,7 +159,7 @@ void ModManager::loadModuleContent(Scope* scope, Environment* env, Module* modul
 }
 
 /// Loads a module if it is not already loaded
-void ModManager::loadModule(Scope* scope, Environment* env, Module* module,
+void ModManager::loadModule(Scope* scope, Module* module,
 	size_t kind, const CString* name) const
 {
 	// Imports the submodule
@@ -189,7 +186,7 @@ void ModManager::loadModule(Scope* scope, Environment* env, Module* module,
 				prefix = prefix.substr(prefix.find_last_of(".")+1);
 			}
 
-			loadModuleContent(scope, env, it->second, kind, NULL,  prefix);
+			loadModuleContent(scope, it->second, kind, NULL,  prefix);
 			++it;
 		}
 	}
@@ -213,11 +210,11 @@ void ModManager::loadModule(Scope* scope, Environment* env, Module* module,
 		}
 	}
 
-	loadModuleContent(scope, env, module, kind, name, ns_prefix);
+	loadModuleContent(scope, module, kind, name, ns_prefix);
 }
 
 /// Imports an userland module
-ast::Node* ModManager::importFile(Scope* scope, Environment* env,
+ast::Node* ModManager::importFile(Scope* scope,
 	const std::string& module, size_t kind, const CString* name) const
 {
 	std::string mod_name = module;
@@ -235,7 +232,7 @@ ast::Node* ModManager::importFile(Scope* scope, Environment* env,
 }
 
 /// Imports a module
-ast::Node* ModManager::importModule(Scope* scope, Environment* env,
+ast::Node* ModManager::importModule(Scope* scope,
 	const std::string& module, size_t kind, const CString* name) const
 {
 	ModuleMap::const_iterator it(m_mods.find(module));
@@ -245,14 +242,14 @@ ast::Node* ModManager::importModule(Scope* scope, Environment* env,
 	if (it == m_mods.end()) {
 		ast::Node* tree;
 
-		if ((tree = importFile(scope, env, module, kind, name)) == NULL) {
+		if ((tree = importFile(scope, module, kind, name)) == NULL) {
 			std::cerr << "Module `" << module << "' not found!" << std::endl;
 			return NULL;
 		}
 		return tree;
 	}
 
-	loadModule(scope, env, it->second, kind, name);
+	loadModule(scope, it->second, kind, name);
 
 	return NULL;
 }

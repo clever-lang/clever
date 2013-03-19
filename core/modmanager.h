@@ -53,17 +53,17 @@ public:
 	void addModule(const std::string&, Module*);
 
 	/// Imports the module to the current scope
-	ast::Node* importModule(Scope*, Environment*, const std::string&,
+	ast::Node* importModule(Scope*, const std::string&,
 		size_t = ModManager::ALL, const CString* = NULL) const;
 
-	ast::Node* importFile(Scope*, Environment*, const std::string&,
+	ast::Node* importFile(Scope*, const std::string&,
 		size_t = ModManager::ALL, const CString* = NULL) const;
 
-	void loadVar(Scope*, Environment*, const CString*, Value*) const;
-	void loadModule(Scope*, Environment*, Module*, size_t, const CString*) const;
-	void loadModuleContent(Scope*, Environment*, Module*, size_t, const CString*, const std::string&) const;
-	void loadFunction(Scope*, Environment*, const std::string&, Function*) const;
-	void loadType(Scope*, Environment*, const std::string&, Type*) const;
+	void loadVar(Scope*, const CString*, Value*) const;
+	void loadModule(Scope*, Module*, size_t, const CString*) const;
+	void loadModuleContent(Scope*, Module*, size_t, const CString*, const std::string&) const;
+	void loadFunction(Scope*, const std::string&, Function*) const;
+	void loadType(Scope*, const std::string&, Type*) const;
 private:
 	Driver* m_driver;
 	ModuleMap m_mods;
