@@ -15,12 +15,13 @@
 #endif
 #include <vector>
 #include <algorithm>
-#include "core/value.h"
 #include "core/environment.h"
+#include "core/cstring.h"
 
 namespace clever {
 
 class Scope;
+class Value;
 
 /// Symbol representation
 struct Symbol {
@@ -60,7 +61,6 @@ public:
 
 		m_symbols.push_back(sym);
 		m_symbol_table.insert(SymbolTable::value_type(name, m_symbol_table.size()));
-		m_value_pool.push_back(value);
 
 		clever_assert_not_null(m_environment);
 
@@ -97,8 +97,6 @@ private:
 	ScopeVector m_children;
 	SymbolMap m_symbols;
 	SymbolTable m_symbol_table;
-
-	ValueVector m_value_pool;
 
 	Environment* m_environment;
 

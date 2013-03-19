@@ -52,9 +52,9 @@ public:
 
 		if (!m_scoped) {
 			clever_delref(m_temp);
-
-			std::for_each(m_data.begin(), m_data.end(), clever_delref);
 		}
+
+		std::for_each(m_data.begin(), m_data.end(), clever_delref);
 	}
 
 	/**
