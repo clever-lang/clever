@@ -46,9 +46,7 @@ CLEVER_THREAD_FUNC(_events_handler)
 			if (u.first == "exit") {
 				intern->mutex.unlock();
 				return NULL;
-			}
-
-			if (u.first == "set") {
+			} else if (u.first == "set") {
 				/*Get current state of the requisitions*/
 				Requisitions& req = intern->m_requisitions;
 
