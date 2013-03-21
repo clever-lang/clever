@@ -391,6 +391,12 @@ void VM::run()
 					closure->setEnvironment(
 						func->getEnvironment()->activate(m_call_stack.top().env));
 
+					if (m_obj_store.empty()) {
+						m_obj_store.push(std::vector<Environment*>());
+					}
+
+					m_obj_store.top().push_back(closure->getEnvironment());
+
 					goto out;
 				}
 			}

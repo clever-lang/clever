@@ -59,11 +59,7 @@ public:
 		  m_environment(NULL), m_context(NULL)
 		{ m_info.mptr = ptr; }
 
-	~Function() {
-		if (m_flags & FF_CLOSURE) {
-			clever_delref(m_environment);
-		}
-	}
+	~Function() {}
 
 	void setName(const std::string& name) { m_name = name; }
 	const std::string& getName() const { return m_name; }
