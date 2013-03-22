@@ -110,14 +110,18 @@ CLEVER_FORCE_INLINE Value* VM::getValue(const Operand& operand) const
 	return source->getValue(operand.voffset);
 }
 
-CLEVER_FORCE_INLINE void VM::setValue(const Operand& operand, Value* value) const
+CLEVER_FORCE_INLINE void VM::setValue(const Operand& operand, Value* value, bool change) const
 {
 	Environment* source = getCurrentEnvironment(operand.op_type);
 	Value* current_value = source->getValue(operand.voffset);
 
 	if (operand.op_type == FETCH_TMP) {
-		clever_delref(current_value);
-		source->setData(operand.voffset.second, value);
+		if (change) {
+			clever_delref(current_value);
+			source->setData(operand.voffset.second, value);
+		} else {
+			current_value->copy(value);
+		}
 	} else {
 		if (current_value->refCount() > 1) {
 			source->setData(operand.voffset.second, value);
@@ -416,13 +420,13 @@ out:
 	OP(OP_ASSIGN):
 	{
 		Value* var = getValue(OPCODE.op1);
-		const Value* value = getValue(OPCODE.op2);
+		Value* value = getValue(OPCODE.op2);
 
 		// Checks if this assignment is allowed (non-const variable or
 		// const variable declaration).
 		if (EXPECTED(var->isAssignable())) {
-			//setValue(OPCODE.op1, var, value);
-			var->deepCopy(value);
+			setValue(OPCODE.op1, value, false);
+
 			if (UNEXPECTED(OPCODE.result.op_type != UNUSED)) {
 				getValue(OPCODE.result)->copy(value);
 			}

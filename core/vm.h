@@ -103,7 +103,7 @@ private:
 	Value* getValue(const Operand&) const;
 
 	/// Helper to change a value pointer on environment
-	void setValue(const Operand&, Value*) const;
+	void setValue(const Operand&, Value*, bool = true) const;
 
 	/// Helper to prepare a function/method call
 	void prepareCall(const Function*, Environment* = NULL);
