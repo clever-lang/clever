@@ -37,6 +37,11 @@ public:
 		}
 	}
 
+	void push_value(Value* value) {
+		m_data.push_back(value);
+		clever_addref(value);
+	}
+
 	std::vector<Value*>& getData() { return m_data; }
 private:
 	std::vector<Value*> m_data;

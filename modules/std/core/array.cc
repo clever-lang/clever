@@ -84,11 +84,10 @@ CLEVER_METHOD(ArrayType::append)
 	}
 
 	if (!args.empty()) {
-		ValueVector& vec = clever_get_this(ArrayObject*)->getData();
+		ArrayObject* arrobj = clever_get_this(ArrayObject*);
 
 		for (size_t i = 0, j = args.size(); i < j; ++i) {
-			vec.push_back(args[i]->clone());
-			vec.back()->setConst(false);
+			arrobj->push_value(args[i]);
 		}
 	}
 	result->setNull();

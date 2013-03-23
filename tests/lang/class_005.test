@@ -1,0 +1,48 @@
+Testing array on class member
+==CODE==
+import std.io.*;
+
+class Bar {
+	var name;
+
+	function Bar(s) {
+		this.name = s;
+	}
+
+	function run() {
+		return this.name;
+	}
+}
+
+class Foo {
+	var arr;
+
+	function Foo() {
+		this.arr = [];
+	}
+
+	function append(s) {
+		this.arr.append(Bar.new(s));
+	}
+
+	function getItems() {
+		var items = [];
+
+		for (var i = 0; i < this.arr.size(); ++i) {
+			items.append(this.arr[i].run());
+		}
+
+		return items;
+	}
+}
+
+var f = Foo.new;
+
+f.append('felipe');
+f.append('pericles');
+
+var results = f.getItems();
+
+println(results);
+==RESULT==
+\[felipe, pericles\]

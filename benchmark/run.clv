@@ -33,7 +33,7 @@ var i = 0;
 env.groups.each(function(g) {
 	print(++i + ') ');
 	println(g.info);
-	
+
 	print('running tests ');
 	flush();
 	var results = g.runTests(function (test) {
@@ -41,23 +41,23 @@ env.groups.each(function(g) {
 		flush();
 	});
 	println('');
-	
+
 	// Sorting Results by total execution time
 	/*var set = Set.new(function (a, b) { return a.tt < b.tt; });
 	for (var i = 0; i < rs.size(); i++) { set.insert(rs[i]); }
 
 	for (i = 0; i < set.size(); i++) {
 		var r = set.find(i);
-		
+
 		//println("-- "+ r.test.lang.name + ": " + r.tt);
 		println(r);
 	}
 	*/
-	
+
 	for (var i = 0; i < results.size(); i++) {
 		println("-- "+ results[i].test.lang.name + ": " + results[i].tt);
 	}
-	
+
 	/*
 	g.tests.each(function(t) {
 		println('-- '+ t.lang.name + ': ');

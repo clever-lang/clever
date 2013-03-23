@@ -196,7 +196,7 @@ CLEVER_FORCE_INLINE void VM::paramBinding(const Function* func,
 
 		if ((args_count - nargs) > 0) {
 			for (size_t i = nargs; i < args_count; ++i) {
-				arr->getData().push_back(args[i]->clone());
+				arr->push_value(args[i]);
 			}
 		}
 
@@ -212,7 +212,14 @@ CLEVER_FORCE_INLINE void VM::prepareCall(const Function* func, Environment* env)
 	Environment* fenv = func->getEnvironment()->activate(env);
 
 	fenv->setRetAddr(m_pc + 1);
-	fenv->setRetVal(getValue(OPCODE.result));
+
+	Value* retval = getValue(OPCODE.result);
+
+	if (retval->refCount() > 1) {
+		retval = retval->clone();
+		setValue(OPCODE.result, retval, true);
+	}
+	fenv->setRetVal(retval);
 
 	m_call_stack.push(CallStackEntry(fenv, func, &OPCODE.loc));
 
