@@ -71,7 +71,7 @@ MapObject* CMysql::fetchRow()
 
 	for (unsigned int i = 0; i < cnt_cols; i++) {
 
-		Value* value;
+        Value* value = NULL;
 		str = new char[lengths[i]+1];
 		snprintf(str, lengths[i]+1, "%.*s", (int)lengths[i], row[i]);
 
