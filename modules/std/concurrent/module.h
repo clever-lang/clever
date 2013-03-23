@@ -10,23 +10,8 @@
 
 #include "core/vm.h"
 #include "core/module.h"
-#include "core/cthread.h"
 
 namespace clever { namespace modules { namespace std {
-
-struct ThreadData : public TypeObject {
-	CThread          	thread;
-	CMutex              lock;
-	Function*           entry;
-	Value*              result;
-	VM*           		vm;
-	::std::vector<Value*> args;
-	bool				joined;
-
-	ThreadData() {}
-
-	~ThreadData();
-};
 
 /// Standard Concurrency Module
 class ConcurrencyModule : public Module {

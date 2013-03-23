@@ -12,8 +12,24 @@
 
 #include "core/cstring.h"
 #include "core/type.h"
+#include "core/cthread.h"
 
 namespace clever { namespace modules { namespace std {
+
+struct ThreadData : public TypeObject {
+	ThreadData()
+		: entry(NULL), result(NULL), vm(NULL) {}
+
+	~ThreadData();
+
+	CThread thread;
+	CMutex lock;
+	const Function* entry;
+	Value* result;
+	VM* vm;
+	::std::vector<Value*> args;
+	bool joined;
+};
 
 class Thread : public Type {
 public:
