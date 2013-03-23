@@ -44,7 +44,7 @@ ThreadData::~ThreadData()
 
 	if (!joined) {
 		//clever_debug("Thread.dtor calling pthread_join for %@", thread);
-		this->thread.wait();
+		thread.wait();
 		//if (pthread_join(thread, NULL) != 0) {
 			//clever_debug("Thread.dtor failed to join with %@", thread);
 		//} else {
@@ -63,8 +63,8 @@ ThreadData::~ThreadData()
 		//delete lock;
 	//}
 
-	for (size_t i = 0; i < this->args.size(); ++i) {
-		delete this->args.at(i);
+	for (size_t i = 0; i < args.size(); ++i) {
+		delete args.at(i);
 	}
 
 	if (result) {
