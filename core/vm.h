@@ -94,6 +94,9 @@ public:
 	void dumpOpcodes() const;
 #endif
 private:
+	/// Helper to bind function/method parameter
+	static void paramBinding(const Function*, const Environment*, const ValueVector&);
+
 	CallStack& getCallStack() { return m_call_stack; }
 
 	/// Helper to fetch the current environment according to the operand type

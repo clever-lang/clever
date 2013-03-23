@@ -124,8 +124,8 @@ CLEVER_FORCE_INLINE void VM::setValue(const Operand& operand, Value* value, bool
 		}
 	} else {
 		if (current_value->refCount() > 1) {
-			source->setData(operand.voffset.second, value->clone());
 			clever_delref(current_value);
+			source->setData(operand.voffset.second, value->clone());
 		} else {
 			current_value->deepCopy(value);
 		}
@@ -170,7 +170,7 @@ void VM::dumpOpcodes() const
 #endif
 
 // Function parameter binding
-static CLEVER_FORCE_INLINE void _param_binding(const Function* func,
+CLEVER_FORCE_INLINE void VM::paramBinding(const Function* func,
 	const Environment* fenv, const ValueVector& args)
 {
 	size_t nargs = 0;
@@ -223,7 +223,7 @@ CLEVER_FORCE_INLINE void VM::prepareCall(const Function* func, Environment* env)
 		error(OPCODE.loc, "Wrong number of parameters");
 	}
 
-	_param_binding(func, fenv, m_call_args);
+	paramBinding(func, fenv, m_call_args);
 
 	m_call_args.clear();
 	getMutex()->unlock();
@@ -263,7 +263,7 @@ Value* VM::runFunction(const Function* func, const ValueVector& args)
 		m_call_stack.push(CallStackEntry(fenv, func, &OPCODE.loc));
 		m_call_args.clear();
 
-		_param_binding(func, fenv, args);
+		paramBinding(func, fenv, args);
 
 		m_obj_store.push(std::vector<Environment*>());
 
@@ -355,9 +355,7 @@ bool VM::checkContext(const MemberData& mdata) const
 	const Function* curr_func =  m_call_stack.top().func;
 
 	if (curr_func) {
-		const Type* curr_context = curr_func->getContext();
-
-		return curr_context != mdata.value->getType();
+		return curr_func->getContext() != mdata.value->getType();
 	} else {
 		return mdata.flags == MemberData::PUBLIC;
 	}
