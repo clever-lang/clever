@@ -87,8 +87,8 @@ CLEVER_METHOD(ArrayType::append)
 		ValueVector& vec = clever_get_this(ArrayObject*)->getData();
 
 		for (size_t i = 0, j = args.size(); i < j; ++i) {
-			vec.push_back(args[i]->clone());
-			vec.back()->setConst(false);
+			vec.push_back(args[i]);
+			clever_addref(args[i]);
 		}
 	}
 	result->setNull();

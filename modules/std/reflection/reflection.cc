@@ -36,7 +36,7 @@ static CLEVER_FUNCTION(refcount)
 		return;
 	}
 
-	result->setInt(args[0]->getObj()->refCount());
+	result->setInt(args[0]->refCount());
 }
 
 // eval(string)

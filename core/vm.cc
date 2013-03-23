@@ -124,7 +124,8 @@ CLEVER_FORCE_INLINE void VM::setValue(const Operand& operand, Value* value, bool
 		}
 	} else {
 		if (current_value->refCount() > 1) {
-			source->setData(operand.voffset.second, value);
+			source->setData(operand.voffset.second, value->clone());
+			clever_delref(current_value);
 		} else {
 			current_value->deepCopy(value);
 		}
