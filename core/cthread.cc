@@ -8,6 +8,7 @@
 #include "core/cthread.h"
 
 namespace clever {
+
 CCondition::CCondition()
 {
 	pthread_cond_init(&condition, NULL);
@@ -97,7 +98,6 @@ void CThread::create(ThreadFunc thread_func, void* args)
 	t_handler = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)thread_func, args, 0, NULL);
 # endif
 #endif
-
 	m_is_running = true;
 }
 
@@ -118,7 +118,6 @@ int CThread::wait()
 #else
 	return 0;
 #endif
-
 }
 
 } // clever
