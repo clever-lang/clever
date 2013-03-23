@@ -184,11 +184,6 @@ CLEVER_METHOD(TcpSocket::getErrorMessage)
 	result->setStr(CSTRING(sv->getSocket().getErrorString()));
 }
 
-CLEVER_METHOD(TcpSocket::toString)
-{
-	result->setStr(CSTRING("TcpSocket class"));
-}
-
 CLEVER_TYPE_INIT(TcpSocket::init)
 {
 	setConstructor((MethodPtr)&TcpSocket::ctor);

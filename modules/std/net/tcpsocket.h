@@ -49,7 +49,6 @@ public:
 	CLEVER_METHOD(good);
 	CLEVER_METHOD(getError);
 	CLEVER_METHOD(getErrorMessage);
-	CLEVER_METHOD(toString);
 	CLEVER_METHOD(do_assign);
 private:
 	DISALLOW_COPY_AND_ASSIGN(TcpSocket);
