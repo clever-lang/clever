@@ -210,7 +210,7 @@ public:
 
 	/// Virtual method for debug purpose
 	virtual void dump(TypeObject* data) const { dump(data, std::cout); }
-	virtual void dump(TypeObject* data, std::ostream& out) const { out << toString(data); };
+	virtual void dump(TypeObject* data, std::ostream& out) const { out << toString(data); }
 
 	/// Virtual method for stringify object
 	virtual std::string toString(TypeObject*) const { return getName(); }
