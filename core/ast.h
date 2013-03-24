@@ -864,7 +864,7 @@ public:
 	Node* getCondition() const { return m_condition; }
 	NodeArray* getUpdate() const { return m_update; }
 	VariableDecl* getVar() const { return m_var; }
-
+	Node* getExpr() const { return m_expr; }
 	Node* getBlock() const { return m_block; }
 
 	virtual void accept(Visitor& visitor);

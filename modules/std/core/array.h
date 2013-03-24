@@ -16,8 +16,6 @@
 
 namespace clever {
 
-class Value;
-
 class ArrayObject : public TypeObject {
 public:
 	ArrayObject() {}
@@ -57,6 +55,7 @@ public:
 
 	virtual void init();
 	virtual std::string toString(TypeObject*) const;
+	virtual TypeIterator* getIterator(TypeObject*) const;
 
 	// Methods
 	CLEVER_METHOD(ctor);
@@ -71,12 +70,30 @@ public:
 	CLEVER_METHOD(range);
 	CLEVER_METHOD(erase);
 
+	CLEVER_METHOD(current);
+	CLEVER_METHOD(valid);
+	CLEVER_METHOD(next);
+
 	// Operators
 	Value* CLEVER_FASTCALL at_op(CLEVER_TYPE_AT_OPERATOR_ARGS) const;
 
 	CLEVER_TYPE_OPERATOR(add);
 private:
+
 	DISALLOW_COPY_AND_ASSIGN(ArrayType);
+};
+
+class ArrayIterator : public TypeIterator {
+public:
+	ArrayIterator(TypeObject* obj)
+		: TypeIterator(obj) {
+
+		setCurrentHandler((MethodPtr)&ArrayType::current);
+		setNextHandler((MethodPtr)&ArrayType::next);
+		setValidHandler((MethodPtr)&ArrayType::valid);
+	}
+
+	~ArrayIterator() {}
 };
 
 } // clever

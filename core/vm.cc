@@ -927,6 +927,40 @@ throw_exception:
 	}
 	DISPATCH;
 
+	OP(OP_GETITER):
+	{
+		Value* expr = getValue(OPCODE.op1);
+		TypeIterator* iter = expr->getType()->getIterator(expr->getObj());
+
+		getValue(OPCODE.result)->setObj(expr->getType(), iter);
+	}
+	DISPATCH;
+
+	OP(OP_VALIDITER):
+	{
+		const TypeIterator* iter = static_cast<TypeIterator*>(getValue(OPCODE.op1)->getObj());
+		const Function* valid = iter->getValidHandler();
+
+		valid = valid;
+	}
+	DISPATCH;
+
+	OP(OP_NEXTITER):
+	{
+		const TypeIterator* iter = static_cast<TypeIterator*>(getValue(OPCODE.op1)->getObj());
+		const Function* next = iter->getNextHandler();
+		next = next;
+	}
+	DISPATCH;
+
+	OP(OP_CURRITER):
+	{
+		const TypeIterator* iter = static_cast<TypeIterator*>(getValue(OPCODE.op1)->getObj());
+		const Function* current = iter->getCurrentHandler();
+		current = current;
+	}
+	DISPATCH;
+
 	OP(OP_HALT): goto exit;
 	END_OPCODES;
 
