@@ -1,0 +1,19 @@
+Testing continue statement in foor loop
+==CODE==
+import std.io.*;
+for (var i = 0, j = 0; i < 4; ++i, ++j) { 
+	if (i==1) { continue;} 
+	println(i); 
+	println(j); 
+	println("here");
+}
+==RESULT==
+0
+0
+here
+2
+2
+here
+3
+3
+here
