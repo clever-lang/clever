@@ -1266,7 +1266,7 @@ yylloc.begin.filename = yylloc.end.filename = driver.getFile();
 
   case 237:
 
-    { (yyval.for_loop) = new ast::For((yysemantic_stack_[(7) - (3)].ident), (yysemantic_stack_[(7) - (5)].node), (yysemantic_stack_[(7) - (7)].block), yyloc); }
+    { (yyval.for_loop) = new ast::For(new ast::VariableDecl((yysemantic_stack_[(7) - (3)].ident), new ast::Assignment((yysemantic_stack_[(7) - (3)].ident), NULL, yyloc), false, yyloc), (yysemantic_stack_[(7) - (5)].node), (yysemantic_stack_[(7) - (7)].block), yyloc); }
     break;
 
   case 239:

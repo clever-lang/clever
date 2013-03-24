@@ -659,7 +659,7 @@ for_expr_3:
 
 for:
 		FOR '(' for_expr_1 ';' for_expr_2 ';' for_expr_3 ')' block { $$ = new ast::For($3, $5, $7, $9, yyloc); }
-	|	FOR '(' IDENT IN rvalue ')' block { $$ = new ast::For($3, $<node>5, $7, yyloc); }
+	|	FOR '(' IDENT IN rvalue ')' block { $$ = new ast::For(new ast::VariableDecl($3, new ast::Assignment($3, NULL, yyloc), false, yyloc), $<node>5, $7, yyloc); }
 ;
 
 elseif:

@@ -838,11 +838,12 @@ public:
 		clever_addref(m_block);
 	}
 
-	For(Ident* var, Node* expr, Node* block, const location& location)
+	For(VariableDecl* var, Node* expr, Node* block, const location& location)
 		: Node(location), m_init(NULL), m_condition(NULL), m_update(NULL),
 			m_block(block), m_var(var), m_expr(expr) {
 		clever_addref(m_var);
 		clever_addref(m_expr);
+		clever_addref(m_block);
 	}
 
 	~For() {
@@ -854,6 +855,7 @@ public:
 		clever_delref(m_expr);
 	}
 
+	bool hasVar() const { return m_var != NULL; }
 	bool hasInitializer() const { return m_init != NULL; }
 	bool hasCondition() const { return m_condition != NULL; }
 	bool hasUpdate() const { return m_update != NULL; }
@@ -861,6 +863,7 @@ public:
 	NodeArray* getInitializer() const { return m_init; }
 	Node* getCondition() const { return m_condition; }
 	NodeArray* getUpdate() const { return m_update; }
+	VariableDecl* getVar() const { return m_var; }
 
 	Node* getBlock() const { return m_block; }
 
@@ -871,7 +874,7 @@ private:
 	Node* m_condition;
 	NodeArray* m_update;
 	Node* m_block;
-	Ident* m_var;
+	VariableDecl* m_var;
 	Node* m_expr;
 
 	DISALLOW_COPY_AND_ASSIGN(For);

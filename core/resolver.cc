@@ -307,12 +307,16 @@ void Resolver::visit(AttrDecl* node)
 
 void Resolver::visit(For* node)
 {
-	if (node->hasInitializer()) {
+	if (node->hasInitializer() || node->hasVar()) {
 		m_scope = m_scope->enter();
 		m_scope->setEnvironment(m_stack.top());
 		m_stack.top()->addRef();
 
-		Visitor::visit(static_cast<NodeArray*>(node->getInitializer()));
+		if (node->hasInitializer()) {
+			Visitor::visit(static_cast<NodeArray*>(node->getInitializer()));
+		} else {
+			node->getVar()->accept(*this);
+		}
 	}
 
 	node->setScope(m_scope);
@@ -327,7 +331,7 @@ void Resolver::visit(For* node)
 		Visitor::visit(static_cast<NodeArray*>(node->getUpdate()));
 	}
 
-	if (node->hasInitializer()) {
+	if (node->hasInitializer() || node->hasVar()) {
 		m_scope = m_scope->leave();
 	}
 }
