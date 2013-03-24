@@ -125,7 +125,7 @@ class Value;
 
 %debug
 %error-verbose
-%expect 1   /* map, for */
+%expect 1   /* map */
 
 %code {
 #include "core/driver.h"
