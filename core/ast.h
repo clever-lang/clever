@@ -830,11 +830,19 @@ private:
 class For: public Node {
 public:
 	For(NodeArray* initlist, Node* cond, NodeArray* update, Node* block, const location& location)
-		: Node(location),  m_init(initlist), m_condition(cond), m_update(update), m_block(block) {
+		: Node(location),  m_init(initlist), m_condition(cond), m_update(update),
+			m_block(block), m_var(NULL), m_expr(NULL) {
 		clever_addref(m_init);
 		clever_addref(m_condition);
 		clever_addref(m_update);
 		clever_addref(m_block);
+	}
+
+	For(Ident* var, Node* expr, Node* block, const location& location)
+		: Node(location), m_init(NULL), m_condition(NULL), m_update(NULL),
+			m_block(block), m_var(var), m_expr(expr) {
+		clever_addref(m_var);
+		clever_addref(m_expr);
 	}
 
 	~For() {
@@ -842,6 +850,8 @@ public:
 		clever_delref(m_condition);
 		clever_delref(m_update);
 		clever_delref(m_block);
+		clever_delref(m_var);
+		clever_delref(m_expr);
 	}
 
 	bool hasInitializer() const { return m_init != NULL; }
@@ -861,6 +871,8 @@ private:
 	Node* m_condition;
 	NodeArray* m_update;
 	Node* m_block;
+	Ident* m_var;
+	Node* m_expr;
 
 	DISALLOW_COPY_AND_ASSIGN(For);
 };

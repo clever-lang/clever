@@ -125,7 +125,7 @@ class Value;
 
 %debug
 %error-verbose
-%expect 1   /* map */
+%expect 1   /* map, for */
 
 %code {
 #include "core/driver.h"
@@ -189,6 +189,7 @@ class Value;
 %token SWITCH        "switch"
 %token CASE          "case"
 %token DEFAULT       "default"
+%token IN            "in"
 
 %left ',';
 %left LOGICAL_OR;
@@ -200,7 +201,7 @@ class Value;
 %left '|';
 %left '^';
 %left '&';
-%nonassoc EQUAL NOT_EQUAL;
+%nonassoc EQUAL NOT_EQUAL IN;
 %nonassoc LESS LESS_EQUAL GREATER GREATER_EQUAL;
 %left LSHIFT RSHIFT;
 %left '-' '+' '.';
@@ -658,6 +659,7 @@ for_expr_3:
 
 for:
 		FOR '(' for_expr_1 ';' for_expr_2 ';' for_expr_3 ')' block { $$ = new ast::For($3, $5, $7, $9, yyloc); }
+	|	FOR '(' IDENT IN rvalue ')' block { $$ = new ast::For($3, $<node>5, $7, yyloc); }
 ;
 
 elseif:

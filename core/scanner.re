@@ -60,6 +60,8 @@ next_token:
 		RET(token::NIL);
 	}
 
+	<INITIAL>'in' { RET(token::IN); }
+
 	<INITIAL>'switch' { RET(token::SWITCH); }
 
 	<INITIAL>'default' { RET(token::DEFAULT); }
