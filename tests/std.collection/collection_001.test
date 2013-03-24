@@ -1,0 +1,96 @@
+Testing Array, Set, Stack, PriorityQueue and Queue
+==CODE==
+import std.collection.*;
+import std.io.*;
+
+var i = 0, j = 0;
+
+
+/*Queue*/
+var q = Queue.new();
+for (i = 0; i < 5; ++i) {
+	q.push(i);	
+}
+
+while (!q.empty()) {
+	printf("q \1\n", q.front());
+	q.pop();
+}
+
+/*Stack*/
+q = Stack.new();
+for (i = 0; i < 5; ++i) {
+	q.push(i);	
+}
+
+while (!q.empty()) {
+	printf("s \1\n", q.top());
+	q.pop();
+}
+
+
+/*PriorityQueue*/
+
+function cmp(a, b) {
+	return a < b;
+}
+
+q = PriorityQueue.new(cmp);
+for (i = -5; i < 5; ++i) {
+	j = i * i;
+	q.push(j);
+}
+
+
+while (!q.empty()) {
+	printf("pq \1\n", q.top());
+	q.pop();
+}
+
+/*Array*/
+q = Array.new();
+for (i = 0; i < 5; ++i) {
+	q.append(i);	
+}
+
+for (i = 0; i < 5; ++i) {
+	printf("a \1\n", q[i]);
+}
+
+/*Set*/
+q = Set.new(cmp);
+for (i = 0; i < 5; ++i) {
+	q.insert(i);	
+}
+printf("s ");
+println(q);
+
+
+
+==RESULT==
+q 0
+q 1
+q 2
+q 3
+q 4
+s 4
+s 3
+s 2
+s 1
+s 0
+pq 25
+pq 16
+pq 16
+pq 9
+pq 9
+pq 4
+pq 4
+pq 1
+pq 1
+pq 0
+a 0
+a 1
+a 2
+a 3
+a 4
+s Set<0, 1, 2, 3, 4>

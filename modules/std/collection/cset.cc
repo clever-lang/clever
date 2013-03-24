@@ -78,8 +78,7 @@ CLEVER_METHOD(CSet::insert)
 
 	CSetObject* cobj = clever_get_this(CSetObject*);
 
-	cobj->set.insert(CSetValue(args[0], cobj->comp, vm));
-	clever_addref(args[0]);
+	cobj->set.insert(CSetValue(args[0]->clone(), cobj->comp, vm));
 }
 
 // Set.size()
