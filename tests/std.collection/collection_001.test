@@ -1,4 +1,4 @@
-Testing Stack, PriorityQueue and Queue
+Testing Array, Set, Stack, PriorityQueue and Queue
 ==CODE==
 import std.collection.*;
 import std.io.*;
@@ -46,6 +46,27 @@ while (!q.empty()) {
 	printf("pq \1\n", q.top());
 	q.pop();
 }
+
+/*Array*/
+q = Array.new();
+for (i = 0; i < 5; ++i) {
+	q.append(i);	
+}
+
+for (i = 0; i < 5; ++i) {
+	printf("a \1\n", q[i]);
+}
+
+/*Set*/
+q = Set.new(cmp);
+for (i = 0; i < 5; ++i) {
+	q.insert(i);	
+}
+printf("s ");
+println(q);
+
+
+
 ==RESULT==
 q 0
 q 1
@@ -67,3 +88,9 @@ pq 4
 pq 1
 pq 1
 pq 0
+a 0
+a 1
+a 2
+a 3
+a 4
+s Set<0, 1, 2, 3, 4>
