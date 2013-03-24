@@ -34,7 +34,7 @@ struct CPQObject : public TypeObject {
 
 	~CPQObject() {
 		while (!pq.empty()) {
-			clever_delref(pq.top().element);
+			delete pq.top().element;
 			pq.pop();
 		}
 
