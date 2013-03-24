@@ -1,0 +1,30 @@
+Testing PriorityQueue
+==CODE==
+import std.collection.*;
+import std.io.*;
+
+
+function cmp(a, b) {
+	return a < b;
+}
+
+var q = PriorityQueue.new(cmp);
+
+q.push(1);
+q.push(4);
+q.push(5);
+q.push(3);
+q.push(4);
+q.push(2);
+
+while (!q.empty()) {
+	printf("\1\n", q.top());
+	q.pop();
+}
+==RESULT==
+5
+4
+4
+3
+2
+1

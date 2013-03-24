@@ -16,6 +16,7 @@ CLEVER_MODULE_INIT(CollectionModule)
 {
 	addType(new CStack);
 	addType(new CQueue);
+	addType(new CPQueue);
 	addType(new CSet);
 }
 
