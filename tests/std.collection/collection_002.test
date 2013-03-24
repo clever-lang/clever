@@ -1,0 +1,118 @@
+Testing Collection using Dijkstra's algorithm
+==CODE==
+import std.collection.*;
+import std.io.*;
+
+const INF = 1 << 20;
+
+function cmp(a, b) {
+	return a.d > b.d;
+}
+
+function get_route(pi, nodes, u) {
+	if (pi[u] != -1) {
+		get_route(pi, nodes, pi[u]);
+	}
+	nodes += [u];
+}
+
+class Route {
+	var d;
+	var nodes;
+
+	function Route(d, pi, t) {
+		this.d = d;
+		this.nodes = [];
+
+		get_route(pi, this.nodes, t);
+	}
+
+	function print() {
+		for (var i = 0; i < this.nodes.size(); ++i) {
+			printf("\1 ", this.nodes[i]);
+		}
+		printf("\n");
+	}
+}
+
+class Node {
+	var v;
+	var d;
+
+	function Node(v, d) {
+		this.v = v;
+		this.d = d;
+	}
+}
+
+class Graph {
+	var nodes;
+	var n;
+
+	function Graph(n) {
+		this.n = n;
+
+		this.nodes = [];
+		for (var i = 0; i < this.n; ++i) {
+			this.nodes += [[]];
+		}
+	}
+
+	function addNode(u, adj) {
+		this.nodes[u] = adj;		
+	} 
+
+	function dijkstra(s, t) {
+		var pq = PriorityQueue.new(cmp);
+		var d = [];
+		var pi = [];
+
+		for (var i = 0; i < this.n; ++i) {
+			d += [INF];
+			pi += [-1];
+		}
+
+		d[s] = 0;
+		pq.push(Node.new(s, 0));
+
+		while (!pq.empty()) {
+			var u = pq.top().v;	
+			pq.pop();
+
+			if (u == t) { break; }
+			
+			var adj = this.nodes[u];
+
+			for (var i = 0; i < adj.size(); ++i) {
+				var v = adj[i].v, duv = d[u] + adj[i].d;
+				if (d[v] > duv) {
+					pq.push(Node.new(v, d[v] = duv));
+					pi[v] = u;
+				}
+			}
+
+		}
+
+		return Route.new(d[t], pi, t);
+	}
+}
+
+
+var g = Graph.new(5);
+
+g.addNode(0, [Node.new(1, 3), Node.new(2, 4), Node.new(3, 5)]);
+g.addNode(1, [Node.new(4, 2), Node.new(2, 3), Node.new(3, 1)]);
+g.addNode(2, [Node.new(0, 4), Node.new(1, 3)]);
+g.addNode(3, [Node.new(3, 3), Node.new(1, 7), Node.new(4, 4)]);
+g.addNode(4, [Node.new(1, 3), Node.new(2, 6), Node.new(3, 5)]);
+
+var route = g.dijkstra(0, 4);
+
+printf("Distance : \1\n", route.d);
+printf("Route:\n");
+route.print();
+
+==RESULT==
+Distance : 5
+Route:
+0 1 4 
