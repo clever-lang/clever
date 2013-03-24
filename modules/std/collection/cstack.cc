@@ -30,8 +30,7 @@ CLEVER_METHOD(CStack::push)
 
 	CStackObject* sobj = clever_get_this(CStackObject*);
 
-	sobj->stack.push(args[0]);
-	clever_addref(args[0]);
+	sobj->stack.push(args[0]->clone());
 }
 
 // Stack.pop()

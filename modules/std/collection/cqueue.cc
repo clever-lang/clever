@@ -56,8 +56,7 @@ CLEVER_METHOD(CQueue::push)
 
 	CQueueObject* cobj = clever_get_this(CQueueObject*);
 
-	cobj->queue.push(args[0]);
-	clever_addref(args[0]);
+	cobj->queue.push(args[0]->clone());
 }
 
 // Queue.pop()
