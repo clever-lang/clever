@@ -32,14 +32,13 @@ public:
 
 	void append(const std::vector<Value*>& args) {
 		for (size_t i = 0, n = args.size(); i < n; ++i) {
-			m_data.push_back(args[i]->clone());
-			m_data.back()->setConst(false);
+			push_value(args[i]);
 		}
 	}
 
 	void push_value(Value* value) {
-		m_data.push_back(value);
-		clever_addref(value);
+		m_data.push_back(value->clone());
+		m_data.back()->setConst(false);
 	}
 
 	std::vector<Value*>& getData() { return m_data; }

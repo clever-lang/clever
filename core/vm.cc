@@ -122,13 +122,13 @@ CLEVER_FORCE_INLINE void VM::setValue(const Operand& operand, Value* value, bool
 		} else {
 			current_value->copy(value);
 		}
-	} else {
+	} else {/*
 		if (current_value->refCount() > 1) {
 			clever_delref(current_value);
 			source->setData(operand.voffset.second, value->clone());
-		} else {
+		} else {*/
 			current_value->deepCopy(value);
-		}
+		//}
 	}
 }
 
@@ -212,14 +212,7 @@ CLEVER_FORCE_INLINE void VM::prepareCall(const Function* func, Environment* env)
 	Environment* fenv = func->getEnvironment()->activate(env);
 
 	fenv->setRetAddr(m_pc + 1);
-
-	Value* retval = getValue(OPCODE.result);
-
-	if (retval->refCount() > 1) {
-		retval = retval->clone();
-		setValue(OPCODE.result, retval, true);
-	}
-	fenv->setRetVal(retval);
+	fenv->setRetVal(getValue(OPCODE.result));
 
 	m_call_stack.push(CallStackEntry(fenv, func, &OPCODE.loc));
 
