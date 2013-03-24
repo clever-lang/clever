@@ -359,14 +359,17 @@ void VM::throwUncaughtException(const IR& op)
 /// Performs class member context checking
 bool VM::checkContext(const MemberData& mdata) const
 {
-	const Function* curr_func =  m_call_stack.top().func;
-
-	if (curr_func) {
-		return curr_func->getContext() != mdata.value->getType();
+	if (mdata.flags == MemberData::PUBLIC) {
+		return true;
 	} else {
-		return mdata.flags == MemberData::PUBLIC;
+		const Function* curr_func =  m_call_stack.top().func;
+
+		if (curr_func) {
+			return curr_func->getContext() != mdata.value->getType();
+		} else {
+			return false;
+		}
 	}
-	return true;
 }
 
 // Executes the VM opcodes

@@ -63,12 +63,10 @@ ThreadData::~ThreadData()
 		//delete lock;
 	//}
 
-	for (size_t i = 0; i < args.size(); ++i) {
-		delete args.at(i);
-	}
+	::std::for_each(args.begin(), args.end(), clever_delref);
 
 	if (result) {
-		delete result;
+		clever_delref(result);
 	}
 }
 

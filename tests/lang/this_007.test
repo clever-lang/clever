@@ -1,0 +1,41 @@
+Testing member visibility
+==CHECK==
+if (!Clever.hasThreads()) {
+	println("skip");
+}
+==CODE==
+import std.io.*;
+import std.concurrent.*;
+
+function abc(x) { x.a = 1; }
+
+class Foo {
+	var arr;
+	var a;
+
+	function Foo() {
+		this.arr = [];
+		this.arr.append(Thread.new(abc, this, 2, 3, 4));
+	}
+
+	function run() {
+		this.arr.each(function(l) {
+			l.start();
+		});
+	}
+
+	function end() {
+		this.arr.each(function(l) {
+			l.wait();
+		});
+	}
+}
+
+var f = Foo.new;
+
+f.run();
+f.end();
+
+println(f.a);
+==RESULT==
+1
