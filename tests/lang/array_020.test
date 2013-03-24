@@ -1,0 +1,16 @@
+Testing append operation using += operator
+==CODE==
+import std.io.*;
+
+var arr = [];
+
+function f(a, n) {
+	a += [n];
+}
+
+f(arr, 1);
+f(arr, 2);
+
+println(arr);
+==RESULT==
+\[1, 2\]
