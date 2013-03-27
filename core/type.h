@@ -143,8 +143,6 @@ public:
 
 	virtual ~TypeIterator() {}
 
-	virtual bool isIterator() const { return true; }
-
 	void setNextHandler(const Function* handler) { m_next_handler = handler; }
 	void setCurrentHandler(const Function* handler) { m_curr_handler = handler; }
 	void setValidHandler(const Function* handler) { m_valid_handler = handler; }

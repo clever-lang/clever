@@ -12,11 +12,6 @@
 
 namespace clever {
 
-TypeIterator* ArrayType::getIterator(TypeObject* obj) const
-{
-	return new ArrayIterator(obj);
-}
-
 ::std::string ArrayType::toString(TypeObject* value) const
 {
 	ArrayObject* arr = static_cast<ArrayObject*>(value);
@@ -299,6 +294,11 @@ CLEVER_METHOD(ArrayType::erase)
 
 		vec.erase(vec.begin() + num);
 	}
+}
+
+TypeIterator* ArrayType::getIterator(TypeObject* obj) const
+{
+	return new ArrayIterator(obj);
 }
 
 CLEVER_METHOD(ArrayType::next)

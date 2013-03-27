@@ -251,20 +251,7 @@ void Codegen::visit(For* node)
 
 		_prepare_operand(iter.op1, node->getExpr());
 
-		IR& valid = m_builder->push(OP_VALIDITER, iter.result);
-		valid.result = Operand(FETCH_TMP, m_builder->getTemp());
-
-		IR& currval = m_builder->push(OP_CURRITER, iter.result);
-		currval.result = Operand(FETCH_TMP, m_builder->getTemp());
-
-		IR& assign = m_builder->push(OP_ASSIGN);
-
-		_prepare_operand(assign.op1, node->getVar()->getIdent());
-		assign.op2 = currval.result;
-
 		node->getBlock()->accept(*this);
-
-		m_builder->push(OP_NEXTITER, iter.result);
 	} else {
 		if (node->hasInitializer()) {
 			node->getInitializer()->accept(*this);
