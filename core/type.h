@@ -136,33 +136,6 @@ struct SimpleTypeObject : public TypeObject {
 	T value;
 };
 
-class TypeIterator : public TypeObject {
-public:
-	TypeIterator(TypeObject* obj)
-		: m_obj(obj), m_next_handler(NULL), m_curr_handler(NULL), m_valid_handler(NULL) {}
-
-	virtual ~TypeIterator() {}
-
-	void setNextHandler(const Function* handler) { m_next_handler = handler; }
-	void setCurrentHandler(const Function* handler) { m_curr_handler = handler; }
-	void setValidHandler(const Function* handler) { m_valid_handler = handler; }
-
-	void setNextHandler(MethodPtr);
-	void setCurrentHandler(MethodPtr);
-	void setValidHandler(MethodPtr);
-
-	const Function* getNextHandler() const { return m_next_handler; }
-	const Function* getCurrentHandler() const { return m_curr_handler; }
-	const Function* getValidHandler() const { return m_valid_handler; }
-private:
-	TypeObject* m_obj;
-	const Function* m_next_handler;
-	const Function* m_curr_handler;
-	const Function* m_valid_handler;
-
-	DISALLOW_COPY_AND_ASSIGN(TypeIterator);
-};
-
 class Type {
 public:
 	enum TypeFlag { INTERNAL_TYPE, USER_TYPE };
@@ -237,7 +210,7 @@ public:
 	virtual void init() {}
 
 	/// Virtual method for getting an iterator
-	virtual TypeIterator* getIterator(TypeObject*) const { return NULL; }
+	virtual TypeObject* getIterator(TypeObject*) const { return NULL; }
 
 	/// Virtual method for debug purpose
 	virtual void dump(TypeObject* data) const { dump(data, std::cout); }

@@ -245,12 +245,6 @@ void Codegen::visit(For* node)
 	if (is_foreach) {
 		node->getVar()->accept(*this);
 		node->getExpr()->accept(*this);
-
-		IR& iter = m_builder->push(OP_GETITER);
-		iter.result = Operand(FETCH_TMP, m_builder->getTemp());
-
-		_prepare_operand(iter.op1, node->getExpr());
-
 		node->getBlock()->accept(*this);
 	} else {
 		if (node->hasInitializer()) {

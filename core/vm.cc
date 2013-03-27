@@ -927,15 +927,6 @@ throw_exception:
 	}
 	DISPATCH;
 
-	OP(OP_GETITER):
-	{
-		Value* expr = getValue(OPCODE.op1);
-		TypeIterator* iter = expr->getType()->getIterator(expr->getObj());
-
-		getValue(OPCODE.result)->setObj(expr->getType(), iter);
-	}
-	DISPATCH;
-
 	OP(OP_HALT): goto exit;
 	END_OPCODES;
 

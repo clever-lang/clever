@@ -62,7 +62,6 @@ const char* get_opcode_name(Opcode opnum)
 		CASE(OP_BW_LS);
 		CASE(OP_BW_RS);
 		CASE(OP_SUBSCRIPT);
-		CASE(OP_GETITER);
 		EMPTY_SWITCH_DEFAULT_CASE();
 	}
 #undef CASE

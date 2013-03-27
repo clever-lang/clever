@@ -46,6 +46,16 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(ArrayObject);
 };
 
+class ArrayObjectIterator : public TypeObject {
+public:
+	ArrayObjectIterator(TypeObject* obj)
+		: m_container(obj) {}
+
+	~ArrayObjectIterator() {}
+private:
+	TypeObject* m_container;
+};
+
 class ArrayType : public Type {
 public:
 	ArrayType()
@@ -55,7 +65,7 @@ public:
 
 	virtual void init();
 	virtual std::string toString(TypeObject*) const;
-	virtual TypeIterator* getIterator(TypeObject*) const;
+	virtual TypeObject* getIterator(TypeObject*) const;
 
 	// Methods
 	CLEVER_METHOD(ctor);
@@ -81,19 +91,6 @@ public:
 private:
 
 	DISALLOW_COPY_AND_ASSIGN(ArrayType);
-};
-
-class ArrayIterator : public TypeIterator {
-public:
-	ArrayIterator(TypeObject* obj)
-		: TypeIterator(obj) {
-
-		setCurrentHandler((MethodPtr)&ArrayType::current);
-		setNextHandler((MethodPtr)&ArrayType::next);
-		setValidHandler((MethodPtr)&ArrayType::valid);
-	}
-
-	~ArrayIterator() {}
 };
 
 } // clever

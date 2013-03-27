@@ -172,21 +172,6 @@ void Type::setDestructor(MethodPtr method)
 	m_dtor = addMethod(new Function("Destructor#" + getName(), method));
 }
 
-void TypeIterator::setNextHandler(MethodPtr method)
-{
-	m_next_handler = new Function("next", method);
-}
-
-void TypeIterator::setCurrentHandler(MethodPtr method)
-{
-	m_curr_handler = new Function("current", method);
-}
-
-void TypeIterator::setValidHandler(MethodPtr method)
-{
-	m_valid_handler = new Function("valid", method);
-}
-
 /// Default + operator implementation
 CLEVER_TYPE_OPERATOR(Type::add)
 {

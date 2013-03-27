@@ -296,9 +296,9 @@ CLEVER_METHOD(ArrayType::erase)
 	}
 }
 
-TypeIterator* ArrayType::getIterator(TypeObject* obj) const
+TypeObject* ArrayType::getIterator(TypeObject* obj) const
 {
-	return new ArrayIterator(obj);
+	return new ArrayObjectIterator(obj);
 }
 
 CLEVER_METHOD(ArrayType::next)
@@ -328,7 +328,6 @@ CLEVER_TYPE_INIT(ArrayType::init)
 	addMethod(new Function("pop",     (MethodPtr)&ArrayType::pop));
 	addMethod(new Function("range",   (MethodPtr)&ArrayType::range));
 	addMethod(new Function("erase",	  (MethodPtr)&ArrayType::erase));
-
 }
 
 } // clever
