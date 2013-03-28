@@ -77,8 +77,7 @@ CLEVER_METHOD(MapType::insert)
 	}
 
 	ValueMap& mapped = (clever_get_this(MapObject*))->getData();
-	mapped.insert(ValuePair(*args[0]->getStr(), args[1]));
-	args[1]->addRef();
+	mapped.insert(ValuePair(*args[0]->getStr(), args[1]->clone()));
 	result->setNull();
 }
 

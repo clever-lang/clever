@@ -315,9 +315,9 @@ CLEVER_FORCE_INLINE void VM::logicOp(const IR& op)
 
 	if (UNEXPECTED(lhs->isNull() || rhs->isNull())) {
 		if (op.opcode == OP_EQUAL) {
-			getValue(op.result)->setBool(lhs == rhs);
+			getValue(op.result)->setBool(lhs->isNull() == rhs->isNull());
 		} else if (op.opcode == OP_NEQUAL) {
-			getValue(op.result)->setBool(lhs != rhs);
+			getValue(op.result)->setBool(lhs->isNull() != rhs->isNull());
 		} else {
 			getValue(op.result)->setBool(false);
 		}

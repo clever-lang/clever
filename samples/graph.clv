@@ -1,0 +1,121 @@
+/**
+ * Clever programming language
+ * Copyright (c) Clever Team
+ *
+ * This file is distributed under the MIT license. See LICENSE for details.
+ */
+
+ /**
+ * Example of implementation of an user-defined iterator type.
+ * -- muriloadriano
+ */
+
+import std.*;
+
+class GraphBfsIterator {
+	var queue;
+	var graph;
+	var visited;
+
+	// Initialize the iterator passing a stance of Graph
+	function GraphBfsIterator(graph) {
+		this.graph = graph;
+		this.queue = collection:Queue.new;
+		this.queue.push(0);
+		this.visited = collection:Set.new(function(a, b) { return a < b; });
+		this.visited.insert(0);
+	}
+
+	// Gets the current vertex (which is at the front of the queue)
+	function get() {
+		if (this.queue.size() > 0) {
+			return this.graph.labels[this.queue.front()];
+		}
+
+		return null;
+	}
+
+	// Performs a step of BFS algorithm. Returns null if there is no more
+	// elements to be visited (== Graph.end())
+	function next() {
+		var curr = this.queue.front();
+
+		if (!curr) {
+			return null;
+		}
+
+		this.queue.pop();
+		var vertex = 0;
+		for (iter in this.graph.distanceMatrix[curr]) {
+			if (iter.get() != null) {
+				if (!this.visited.find(vertex)) {
+					this.queue.push(vertex);
+					this.visited.insert(vertex);
+				}
+			}
+			vertex++;
+		}
+
+		if (this.queue.size() > 0) {
+			return this;
+		}
+
+		return null;
+	}
+}
+
+class Graph {
+	var distanceMatrix; // Adjacency matrix
+	var map;			// Maps a name to a vertex number (Map)
+	var labels;			// Maps a vertex number to a name (Array)
+
+	function Graph(labels) {
+		this.map = {:};
+		this.labels = labels;
+
+		var idx = 0;
+		for (label in labels) {
+			this.map.insert(label.get(), idx++);
+		}
+
+		this.distanceMatrix = [];
+		for (var i = 0; i < labels.size(); i++) {
+			var tmp = [];
+			for (var j = 0; j < labels.size(); ++j) {
+				tmp.append(null);
+			}
+			this.distanceMatrix.append(tmp);
+		}
+	}
+
+	function changeEdge(labelFrom, labelTo, weight) {
+		this.distanceMatrix[this.map[labelFrom]][this.map[labelTo]] = weight;
+	}
+
+	function changeUndirected(labelFrom, labelTo, weight) {
+		this.changeEdge(labelFrom, labelTo, weight);
+		this.changeEdge(labelTo, labelFrom, weight);
+	}
+
+	// Returns a new iterator
+	function begin() {
+		return GraphBfsIterator.new(this);
+	}
+
+	// The end here is simply the null value
+	function end() {
+		return null;
+	}
+}
+
+// Create a new graph and add a few edges
+var cities = Graph.new(['Goiania', 'Brasilia', 'Rio', 'Sao Paulo']);
+cities.changeUndirected('Goiania', 'Brasilia', 209);
+cities.changeUndirected('Rio', 'Sao Paulo', 357);
+cities.changeUndirected('Goiania', 'Sao Paulo', 810);
+cities.changeUndirected('Rio', 'Brasilia', 1148);
+
+// for each city in the graph
+for (city in cities) {
+	io:println(city.get());
+}
