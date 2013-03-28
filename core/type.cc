@@ -229,13 +229,27 @@ CLEVER_TYPE_OPERATOR(Type::less_equal)
 /// Default = operator implementation
 CLEVER_TYPE_OPERATOR(Type::equal)
 {
-	clever_throw("Cannot use == operator with %T type", this);
+	//clever_throw("Cannot use == operator with %T type", this);
+	if (lhs->isNull()) {
+		result->setBool(rhs->isNull());
+	} else if (rhs->isNull()) {
+		result->setBool(false);
+	} else {
+		result->setBool(lhs->getObj() == rhs->getObj());
+	}
 }
 
 /// Default != operator implementation
 CLEVER_TYPE_OPERATOR(Type::not_equal)
 {
-	clever_throw("Cannot use != operator with %T type",  this);
+	//clever_throw("Cannot use != operator with %T type",  this);
+	if (lhs->isNull()) {
+		result->setBool(!rhs->isNull());
+	} else if (rhs->isNull()) {
+		result->setBool(true);
+	} else {
+		result->setBool(lhs->getObj() != rhs->getObj());
+	}
 }
 
 /// Default [] operator implementation

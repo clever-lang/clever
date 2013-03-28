@@ -1,0 +1,39 @@
+Testing == and != for user-defined types
+==CODE==
+import std.*;
+
+class Foo {}
+
+var a = Foo.new;
+var b = a;
+var c = Foo.new;
+
+if (a == a) {
+	io:println('ok');
+}
+
+if (a != a) {
+	io:println('FAIL');
+}
+
+if (a == b) {
+	io:println('ok');
+}
+
+if (a != b) {
+	io:println('FAIL');
+}
+
+
+if (a != c) {
+	io:println('ok');
+}
+
+if (a == c) {
+	io:println('FAIL');
+}
+
+==RESULT==
+ok
+ok
+ok
