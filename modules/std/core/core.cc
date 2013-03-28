@@ -22,6 +22,9 @@ Type* g_clever_bool_type;
 Type* g_clever_array_type;
 Type* g_clever_map_type;
 
+// Iterators
+Type* g_clever_arrayiterator_type;
+
 } // clever
 
 namespace clever { namespace modules { namespace std {
@@ -36,6 +39,9 @@ CLEVER_MODULE_INIT(CoreModule)
 	addType(CLEVER_BOOL_TYPE   = new BoolType);
 	addType(CLEVER_ARRAY_TYPE  = new ArrayType);
 	addType(CLEVER_MAP_TYPE    = new MapType);
+
+	// Iterators
+	addType(CLEVER_ARRAYITER_TYPE = new ArrayIterator);
 }
 
 }}} // clever::modules::std

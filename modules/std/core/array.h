@@ -46,14 +46,66 @@ private:
 	DISALLOW_COPY_AND_ASSIGN(ArrayObject);
 };
 
-class ArrayObjectIterator : public TypeObject {
+class ArrayIteratorObject : public TypeObject {
 public:
-	ArrayObjectIterator(TypeObject* obj)
-		: m_container(obj) {}
 
-	~ArrayObjectIterator() {}
+	typedef std::vector<Value*>::iterator InternalIteratorType;
+
+	ArrayIteratorObject(ArrayObject* array)
+		: m_array(array), m_iterator(array->getData().begin()) {
+		clever_addref(m_array);
+	}
+
+	ArrayIteratorObject(ArrayObject* array, const InternalIteratorType& iter)
+		: m_array(array), m_iterator(iter) {
+		clever_addref(m_array);
+	}
+
+	InternalIteratorType& getIterator() {
+		return m_iterator;
+	}
+
+	InternalIteratorType getNext() {
+		InternalIteratorType it = m_iterator;
+		return ++it;
+	}
+
+	bool isValid() const {
+		return m_iterator != m_array->getData().end();
+	}
+
+	ArrayObject* getArray() const {
+		return m_array;
+	}
+
+	~ArrayIteratorObject() {
+		clever_delref(m_array);
+	}
 private:
-	TypeObject* m_container;
+	ArrayObject* m_array;
+	InternalIteratorType m_iterator;
+	DISALLOW_COPY_AND_ASSIGN(ArrayIteratorObject);
+};
+
+class ArrayIterator : public Type {
+public:
+	ArrayIterator() : Type("ArrayIterator") {}
+	~ArrayIterator() {}
+
+	virtual void init();
+	virtual std::string toString(TypeObject*) const;
+
+	// Methods
+	CLEVER_METHOD(ctor);
+	CLEVER_METHOD(next);
+	CLEVER_METHOD(get);
+
+	// Operators
+	virtual void CLEVER_FASTCALL equal(CLEVER_TYPE_OPERATOR_ARGS)         const;
+	virtual void CLEVER_FASTCALL not_equal(CLEVER_TYPE_OPERATOR_ARGS)     const;
+
+private:
+	DISALLOW_COPY_AND_ASSIGN(ArrayIterator);
 };
 
 class ArrayType : public Type {
@@ -80,9 +132,8 @@ public:
 	CLEVER_METHOD(range);
 	CLEVER_METHOD(erase);
 
-	CLEVER_METHOD(current);
-	CLEVER_METHOD(valid);
-	CLEVER_METHOD(next);
+	CLEVER_METHOD(begin);
+	CLEVER_METHOD(end);
 
 	// Operators
 	Value* CLEVER_FASTCALL at_op(CLEVER_TYPE_AT_OPERATOR_ARGS) const;

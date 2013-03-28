@@ -23,14 +23,16 @@ extern Type* g_clever_func_type;
 extern Type* g_clever_bool_type;
 extern Type* g_clever_array_type;
 extern Type* g_clever_map_type;
+extern Type* g_clever_arrayiterator_type;
 
-#define CLEVER_INT_TYPE    g_clever_int_type
-#define CLEVER_DOUBLE_TYPE g_clever_double_type
-#define CLEVER_STR_TYPE    g_clever_str_type
-#define CLEVER_FUNC_TYPE   g_clever_func_type
-#define CLEVER_BOOL_TYPE   g_clever_bool_type
-#define CLEVER_ARRAY_TYPE  g_clever_array_type
-#define CLEVER_MAP_TYPE    g_clever_map_type
+#define CLEVER_INT_TYPE        g_clever_int_type
+#define CLEVER_DOUBLE_TYPE     g_clever_double_type
+#define CLEVER_STR_TYPE        g_clever_str_type
+#define CLEVER_FUNC_TYPE       g_clever_func_type
+#define CLEVER_BOOL_TYPE       g_clever_bool_type
+#define CLEVER_ARRAY_TYPE      g_clever_array_type
+#define CLEVER_MAP_TYPE        g_clever_map_type
+#define CLEVER_ARRAYITER_TYPE  g_clever_arrayiterator_type
 
 typedef std::map     <std::string, Value*>  ValueMap;
 typedef std::pair    <std::string, Value*>  ValuePair;

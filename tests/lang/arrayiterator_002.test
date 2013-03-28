@@ -1,0 +1,17 @@
+Testing ArrayIterator with an empty array
+==CODE==
+import std.*;
+
+var a = [];
+
+var beg = a.begin(), end = a.end();
+
+io:println('Start testing');
+while (beg != end) {
+	io:println(beg.get());
+	beg = beg.next();
+}
+io:println('Done');
+==RESULT==
+Start testing
+Done

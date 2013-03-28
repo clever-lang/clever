@@ -1,0 +1,22 @@
+Testing ArrayIterator
+==CODE==
+import std.*;
+
+var a = [2, 3, 5, 7, 11, 13, 17, 19, 23];
+
+var beg = a.begin(), end = a.end();
+
+while (beg != end) {
+	io:println(beg.get());
+	beg = beg.next();
+}
+==RESULT==
+2
+3
+5
+7
+11
+13
+17
+19
+23

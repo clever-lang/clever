@@ -298,19 +298,29 @@ CLEVER_METHOD(ArrayType::erase)
 
 TypeObject* ArrayType::getIterator(TypeObject* obj) const
 {
-	return new ArrayObjectIterator(obj);
+	return new ArrayIteratorObject(static_cast<ArrayObject*>(obj));
 }
 
-CLEVER_METHOD(ArrayType::next)
+CLEVER_METHOD(ArrayType::begin)
 {
+	if (!clever_check_no_args()) {
+		return;
+	}
+
+	result->setObj(CLEVER_ARRAYITER_TYPE,
+		new ArrayIteratorObject(clever_get_this(ArrayObject*)));
 }
 
-CLEVER_METHOD(ArrayType::current)
+CLEVER_METHOD(ArrayType::end)
 {
-}
+	if (!clever_check_no_args()) {
+		return;
+	}
 
-CLEVER_METHOD(ArrayType::valid)
-{
+	ArrayObject* arr = clever_get_this(ArrayObject*);
+
+	result->setObj(CLEVER_ARRAYITER_TYPE,
+		new ArrayIteratorObject(arr, arr->getData().end()));
 }
 
 // Type initialization
@@ -328,6 +338,107 @@ CLEVER_TYPE_INIT(ArrayType::init)
 	addMethod(new Function("pop",     (MethodPtr)&ArrayType::pop));
 	addMethod(new Function("range",   (MethodPtr)&ArrayType::range));
 	addMethod(new Function("erase",	  (MethodPtr)&ArrayType::erase));
+
+	addMethod(new Function("begin",	  (MethodPtr)&ArrayType::begin));
+	addMethod(new Function("end",	  (MethodPtr)&ArrayType::end));
+}
+
+// ArrayIterator methods ///////////////////////////////////////////////////////
+
+// ArrayIterator::ArrayIterator(Array arg)
+// Initializes an iterator to arg.begin()
+CLEVER_METHOD(ArrayIterator::ctor)
+{
+	if (!clever_check_args("a")) {
+		return;
+	}
+
+	ArrayObject* arr_obj = static_cast<ArrayObject*>(args[0]->getObj());
+	result->setObj(this, new ArrayIteratorObject(arr_obj));
+}
+
+// Gets the object associated with the current iterator
+CLEVER_METHOD(ArrayIterator::get)
+{
+	if (!clever_check_no_args()) {
+		return;
+	}
+
+	ArrayIteratorObject* iter_obj = clever_get_this(ArrayIteratorObject*);
+
+	if (!iter_obj->isValid()) {
+		result->setNull();
+		return;
+	}
+
+	result->copy(*(iter_obj->getIterator()));
+}
+
+// Returns an iterator for the next position on the array
+CLEVER_METHOD(ArrayIterator::next)
+{
+	if (!clever_check_no_args()) {
+		return;
+	}
+
+	ArrayIteratorObject* iter_obj = clever_get_this(ArrayIteratorObject*);
+	ArrayIteratorObject::InternalIteratorType it = iter_obj->getNext();
+
+	result->setObj(this, new ArrayIteratorObject(iter_obj->getArray(), it));
+}
+
+// Operators
+
+// == operator
+CLEVER_TYPE_OPERATOR(ArrayIterator::equal)
+{
+	if (EXPECTED(rhs->getType() == this)) {
+		ArrayIteratorObject* l_iter =
+			static_cast<ArrayIteratorObject*>(lhs->getObj());
+		ArrayIteratorObject* r_iter =
+			static_cast<ArrayIteratorObject*>(rhs->getObj());
+
+		result->setBool(l_iter->getIterator() == r_iter->getIterator());
+	}
+}
+
+// != operator
+CLEVER_TYPE_OPERATOR(ArrayIterator::not_equal)
+{
+	if (EXPECTED(rhs->getType() == this)) {
+		ArrayIteratorObject* l_iter =
+			static_cast<ArrayIteratorObject*>(lhs->getObj());
+		ArrayIteratorObject* r_iter =
+			static_cast<ArrayIteratorObject*>(rhs->getObj());
+
+		result->setBool(l_iter->getIterator() != r_iter->getIterator());
+	}
+}
+
+// Type initialization
+CLEVER_TYPE_INIT(ArrayIterator::init)
+{
+	setConstructor((MethodPtr)&ArrayIterator::ctor);
+
+	addMethod(new Function("get",  (MethodPtr)&ArrayIterator::get));
+	addMethod(new Function("next",    (MethodPtr)&ArrayIterator::next));
+}
+
+::std::string ArrayIterator::toString(TypeObject* value) const
+{
+	ArrayIteratorObject* iter = static_cast<ArrayIteratorObject*>(value);
+	::std::ostringstream out;
+
+	out << "<ArrayIterator: ";
+	if (iter->isValid()) {
+		out << (*(iter->getIterator()))->getType()->toString(
+			(*(iter->getIterator()))->getObj());
+	} else {
+		out << "NULL";
+	}
+	out << ">";
+
+	return out.str();
 }
 
 } // clever
