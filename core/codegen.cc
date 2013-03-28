@@ -240,62 +240,54 @@ void Codegen::visit(Return* node)
 
 void Codegen::visit(For* node)
 {
-	bool is_foreach = node->hasVar();
-
-	if (is_foreach) {
-		node->getVar()->accept(*this);
-		node->getExpr()->accept(*this);
-		node->getBlock()->accept(*this);
-	} else {
-		if (node->hasInitializer()) {
-			node->getInitializer()->accept(*this);
-		}
-
-		size_t start_while = m_builder->getSize();
-
-		Node* condition = node->getCondition();
-		IR* jmpz = NULL;
-
-		if (condition) {
-			condition->accept(*this);
-
-			jmpz = &m_builder->push(OP_JMPZ);
-
-			_prepare_operand(jmpz->op1, condition);
-		}
-
-		m_cont.push(AddrVector());
-		m_brks.push(AddrVector());
-		m_brks.top().push_back(start_while);
-
-		node->getBlock()->accept(*this);
-
-		if (!m_cont.top().empty()) {
-			// Set the continue statements jmp address
-			for (size_t i = 0, j = m_cont.top().size(); i < j; ++i) {
-				m_builder->getAt(m_cont.top()[i]).op1.jmp_addr = m_builder->getSize();
-			}
-		}
-		m_cont.pop();
-
-		if (node->hasUpdate()) {
-			node->getUpdate()->accept(*this);
-		}
-
-		m_builder->push(OP_JMP, Operand(JMP_ADDR, start_while));
-
-		if (condition) {
-			jmpz->op2 = Operand(JMP_ADDR, m_builder->getSize());
-		}
-
-		if (!m_brks.top().empty()) {
-			// Set the break statements jmp address
-			for (size_t i = 0, j = m_brks.top().size(); i < j; ++i) {
-				m_builder->getAt(m_brks.top()[i]).op1.jmp_addr = m_builder->getSize();
-			}
-		}
-		m_brks.pop();
+	if (node->hasInitializer()) {
+		node->getInitializer()->accept(*this);
 	}
+
+	size_t start_while = m_builder->getSize();
+
+	Node* condition = node->getCondition();
+	IR* jmpz = NULL;
+
+	if (condition) {
+		condition->accept(*this);
+
+		jmpz = &m_builder->push(OP_JMPZ);
+
+		_prepare_operand(jmpz->op1, condition);
+	}
+
+	m_cont.push(AddrVector());
+	m_brks.push(AddrVector());
+	m_brks.top().push_back(start_while);
+
+	node->getBlock()->accept(*this);
+
+	if (!m_cont.top().empty()) {
+		// Set the continue statements jmp address
+		for (size_t i = 0, j = m_cont.top().size(); i < j; ++i) {
+			m_builder->getAt(m_cont.top()[i]).op1.jmp_addr = m_builder->getSize();
+		}
+	}
+	m_cont.pop();
+
+	if (node->hasUpdate()) {
+		node->getUpdate()->accept(*this);
+	}
+
+	m_builder->push(OP_JMP, Operand(JMP_ADDR, start_while));
+
+	if (condition) {
+		jmpz->op2 = Operand(JMP_ADDR, m_builder->getSize());
+	}
+
+	if (!m_brks.top().empty()) {
+		// Set the break statements jmp address
+		for (size_t i = 0, j = m_brks.top().size(); i < j; ++i) {
+			m_builder->getAt(m_brks.top()[i]).op1.jmp_addr = m_builder->getSize();
+		}
+	}
+	m_brks.pop();
 }
 
 void Codegen::visit(While* node)

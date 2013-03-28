@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 2.5.  */
+/* A Bison parser, made by GNU Bison 2.6.  */
 
 /* Skeleton implementation for Bison LALR(1) parsers in C++
    
-      Copyright (C) 2002-2011 Free Software Foundation, Inc.
+      Copyright (C) 2002-2012 Free Software Foundation, Inc.
    
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -49,6 +49,15 @@
 
 
 
+
+# ifndef YY_NULL
+#  if defined __cplusplus && 201103L <= __cplusplus
+#   define YY_NULL nullptr
+#  else
+#   define YY_NULL 0
+#  endif
+# endif
+
 #ifndef YY_
 # if defined YYENABLE_NLS && YYENABLE_NLS
 #  if ENABLE_NLS
@@ -61,25 +70,26 @@
 # endif
 #endif
 
+#define YYRHSLOC(Rhs, K) ((Rhs)[K])
 /* YYLLOC_DEFAULT -- Set CURRENT to span from RHS[1] to RHS[N].
    If N is 0, then set CURRENT to the empty location which ends
    the previous symbol: RHS[0] (always defined).  */
 
-#define YYRHSLOC(Rhs, K) ((Rhs)[K])
-#ifndef YYLLOC_DEFAULT
-# define YYLLOC_DEFAULT(Current, Rhs, N)                               \
- do                                                                    \
-   if (N)                                                              \
-     {                                                                 \
-       (Current).begin = YYRHSLOC (Rhs, 1).begin;                      \
-       (Current).end   = YYRHSLOC (Rhs, N).end;                        \
-     }                                                                 \
-   else                                                                \
-     {                                                                 \
-       (Current).begin = (Current).end = YYRHSLOC (Rhs, 0).end;        \
-     }                                                                 \
- while (false)
-#endif
+# ifndef YYLLOC_DEFAULT
+#  define YYLLOC_DEFAULT(Current, Rhs, N)                               \
+    do                                                                  \
+      if (N)                                                            \
+        {                                                               \
+          (Current).begin  = YYRHSLOC (Rhs, 1).begin;                   \
+          (Current).end    = YYRHSLOC (Rhs, N).end;                     \
+        }                                                               \
+      else                                                              \
+        {                                                               \
+          (Current).begin = (Current).end = YYRHSLOC (Rhs, 0).end;      \
+        }                                                               \
+    while (/*CONSTCOND*/ false)
+# endif
+
 
 /* Suppress unused-variable warnings by "using" E.  */
 #define YYUSE(e) ((void) (e))
@@ -199,6 +209,9 @@ namespace clever {
   {
     YYUSE (yylocationp);
     YYUSE (yyvaluep);
+    std::ostream& yyo = debug_stream ();
+    std::ostream& yyoutput = yyo;
+    YYUSE (yyoutput);
     switch (yytype)
       {
          default:
@@ -1266,7 +1279,28 @@ yylloc.begin.filename = yylloc.end.filename = driver.getFile();
 
   case 237:
 
-    { (yyval.for_loop) = new ast::For(new ast::VariableDecl((yysemantic_stack_[(7) - (3)].ident), new ast::Assignment((yysemantic_stack_[(7) - (3)].ident), NULL, yyloc), false, yyloc), (yysemantic_stack_[(7) - (5)].node), (yysemantic_stack_[(7) - (7)].block), yyloc); }
+    {
+			/* Calls rvalue.begin() */
+			ast::MethodCall* tmp = new ast::MethodCall((yysemantic_stack_[(7) - (5)].node), new ast::Ident(new CString("begin"), yyloc), NULL, yyloc);
+			/* var IDENT = rvalue.begin() */
+			ast::VariableDecl* init = new ast::VariableDecl((yysemantic_stack_[(7) - (3)].ident), new ast::Assignment((yysemantic_stack_[(7) - (3)].ident), tmp, yyloc), false, yyloc);
+			/* Calls rvalue.end() */
+			tmp = new ast::MethodCall((yysemantic_stack_[(7) - (5)].node), new ast::Ident(new CString("end"), yyloc), NULL, yyloc);
+			/* Compares IDENT != rvalue.end() */
+			ast::Comparison* comp = new ast::Comparison(ast::Comparison::COP_NEQUAL, (yysemantic_stack_[(7) - (3)].ident), tmp, yyloc);
+			/* Gets the iterator for the next value (IDENT.next()) */
+			tmp = new ast::MethodCall((yysemantic_stack_[(7) - (3)].ident), new ast::Ident(new CString("next"), yyloc), NULL, yyloc);
+			/* Assigns (IDENT = IDENT.next()) */
+			ast::Assignment* assign = new ast::Assignment((yysemantic_stack_[(7) - (3)].ident), tmp, yyloc);
+
+			ast::NodeArray* init_list = new ast::NodeArray(yyloc);
+			init_list->append(init);
+
+			ast::NodeArray* assign_list = new ast::NodeArray(yyloc);
+			assign_list->append(assign);
+
+			(yyval.for_loop) = new ast::For(init_list, comp, assign_list, (yysemantic_stack_[(7) - (7)].block), yyloc);
+		}
     break;
 
   case 239:
@@ -1542,7 +1576,7 @@ yylloc.begin.filename = yylloc.end.filename = driver.getFile();
           }
       }
 
-    char const* yyformat = 0;
+    char const* yyformat = YY_NULL;
     switch (yycount)
       {
 #define YYCASE_(N, S)                         \
@@ -2121,7 +2155,7 @@ yylloc.begin.filename = yylloc.end.filename = driver.getFile();
        0,     2,     0,     0,     9
   };
 
-#if YYDEBUG || YYERROR_VERBOSE || YYTOKEN_TABLE
+
   /* YYTNAME[SYMBOL-NUM] -- String name of the symbol SYMBOL-NUM.
      First, the terminals, then, starting at \a yyntokens_, nonterminals.  */
   const char*
@@ -2157,9 +2191,8 @@ yylloc.begin.filename = yylloc.end.filename = driver.getFile();
   "non_empty_call_args", "fcall_chain", "fully_qualified_name",
   "fully_qualified_call", "@6", "@7", "fcall", "@8", "return_stmt",
   "while", "for_expr_1", "for_expr_2", "for_expr_3", "for", "elseif",
-  "else", "if", "@9", "@10", 0
+  "else", "if", "@9", "@10", YY_NULL
   };
-#endif
 
 #if YYDEBUG
   /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
@@ -2313,8 +2346,8 @@ yylloc.begin.filename = yylloc.end.filename = driver.getFile();
      582,   584,   586,   591,   593,   595,   597,   602,   603,   607,
      608,   612,   613,   614,   618,   619,   623,   623,   624,   625,
      626,   627,   628,   629,   629,   633,   633,   637,   638,   642,
-     646,   647,   648,   652,   653,   657,   661,   662,   665,   667,
-     671,   672,   676,   676,   676
+     646,   647,   648,   652,   653,   657,   661,   662,   686,   688,
+     692,   693,   697,   697,   697
   };
 
   // Print the state stack on the debug stream.
@@ -2407,7 +2440,6 @@ yylloc.begin.filename = yylloc.end.filename = driver.getFile();
 
 
 } // clever
-
 
 
 

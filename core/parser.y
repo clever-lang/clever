@@ -659,7 +659,28 @@ for_expr_3:
 
 for:
 		FOR '(' for_expr_1 ';' for_expr_2 ';' for_expr_3 ')' block { $$ = new ast::For($3, $5, $7, $9, yyloc); }
-	|	FOR '(' IDENT IN rvalue ')' block { $$ = new ast::For(new ast::VariableDecl($3, new ast::Assignment($3, NULL, yyloc), false, yyloc), $<node>5, $7, yyloc); }
+	|	FOR '(' IDENT IN rvalue ')' block {
+			/* Calls rvalue.begin() */
+			ast::MethodCall* tmp = new ast::MethodCall($<node>5, new ast::Ident(new CString("begin"), yyloc), NULL, yyloc);
+			/* var IDENT = rvalue.begin() */
+			ast::VariableDecl* init = new ast::VariableDecl($3, new ast::Assignment($3, tmp, yyloc), false, yyloc);
+			/* Calls rvalue.end() */
+			tmp = new ast::MethodCall($<node>5, new ast::Ident(new CString("end"), yyloc), NULL, yyloc);
+			/* Compares IDENT != rvalue.end() */
+			ast::Comparison* comp = new ast::Comparison(ast::Comparison::COP_NEQUAL, $3, tmp, yyloc);
+			/* Gets the iterator for the next value (IDENT.next()) */
+			tmp = new ast::MethodCall($3, new ast::Ident(new CString("next"), yyloc), NULL, yyloc);
+			/* Assigns (IDENT = IDENT.next()) */
+			ast::Assignment* assign = new ast::Assignment($3, tmp, yyloc);
+
+			ast::NodeArray* init_list = new ast::NodeArray(yyloc);
+			init_list->append(init);
+
+			ast::NodeArray* assign_list = new ast::NodeArray(yyloc);
+			assign_list->append(assign);
+
+			$$ = new ast::For(init_list, comp, assign_list, $7, yyloc);
+		}
 ;
 
 elseif:
