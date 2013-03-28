@@ -19,7 +19,7 @@ class GraphBfsIterator {
 	var graph;
 	var visited;
 
-	// Initialize the iterator passing a stance of Graph
+	// Initialize the iterator passing an instance of a Graph
 	function GraphBfsIterator(graph) {
 		this.graph = graph;
 		this.queue = collection:Queue.new;
@@ -28,7 +28,7 @@ class GraphBfsIterator {
 		this.visited.insert(0);
 	}
 
-	// Gets the current vertex (which is at the front of the queue)
+	// Gets the current vertex
 	function get() {
 		if (this.queue.size() > 0) {
 			return this.graph.labels[this.queue.front()];

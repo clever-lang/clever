@@ -17,7 +17,7 @@ class GraphBfsIterator {
 	var graph;
 	var visited;
 
-	// Initialize the iterator passing a stance of Graph
+	// Initialize the iterator passing an instance of a Graph
 	function GraphBfsIterator(graph) {
 		this.graph = graph;
 		this.queue = collection:Queue.new;
