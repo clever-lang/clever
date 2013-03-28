@@ -209,9 +209,6 @@ public:
 	/// Virtual method for type initialization
 	virtual void init() {}
 
-	/// Virtual method for getting an iterator
-	virtual TypeObject* getIterator(TypeObject*) const { return NULL; }
-
 	/// Virtual method for debug purpose
 	virtual void dump(TypeObject* data) const { dump(data, std::cout); }
 	virtual void dump(TypeObject* data, std::ostream& out) const { out << toString(data); }

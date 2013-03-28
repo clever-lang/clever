@@ -421,7 +421,7 @@ CLEVER_TYPE_INIT(ArrayIterator::init)
 	setConstructor((MethodPtr)&ArrayIterator::ctor);
 
 	addMethod(new Function("get",  (MethodPtr)&ArrayIterator::get));
-	addMethod(new Function("next",    (MethodPtr)&ArrayIterator::next));
+	addMethod(new Function("next", (MethodPtr)&ArrayIterator::next));
 }
 
 ::std::string ArrayIterator::toString(TypeObject* value) const

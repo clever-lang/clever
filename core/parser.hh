@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 2.6.  */
+/* A Bison parser, made by GNU Bison 2.5.  */
 
 /* Skeleton interface for Bison LALR(1) parsers in C++
    
-      Copyright (C) 2002-2012 Free Software Foundation, Inc.
+      Copyright (C) 2002-2011 Free Software Foundation, Inc.
    
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,15 +30,10 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
-/**
- ** \file /Users/murilo/Documents/programming/clever/core/parser.hh
- ** Define the clever::parser class.
- */
-
 /* C++ LALR(1) parser skeleton written by Akim Demaille.  */
 
-#ifndef YY_USERS_MURILO_DOCUMENTS_PROGRAMMING_CLEVER_CORE_PARSER_HH
-# define YY_USERS_MURILO_DOCUMENTS_PROGRAMMING_CLEVER_CORE_PARSER_HH
+#ifndef PARSER_HEADER_H
+# define PARSER_HEADER_H
 
 /* "%code requires" blocks.  */
 
@@ -73,6 +68,19 @@ class Value;
 /* Enabling traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 1
+#endif
+
+/* Enabling verbose error messages.  */
+#ifdef YYERROR_VERBOSE
+# undef YYERROR_VERBOSE
+# define YYERROR_VERBOSE 1
+#else
+# define YYERROR_VERBOSE 1
+#endif
+
+/* Enabling the token table.  */
+#ifndef YYTOKEN_TABLE
+# define YYTOKEN_TABLE 0
 #endif
 
 
@@ -316,14 +324,16 @@ namespace clever {
     /// For a rule, its LHS.
     static const unsigned char yyr1_[];
     /// For a rule, its RHS length.
-    static const unsigned char yyr2_[]; 
+    static const unsigned char yyr2_[];
+
+#if YYDEBUG || YYERROR_VERBOSE || YYTOKEN_TABLE
+    /// For a symbol, its name in clear.
+    static const char* const yytname_[];
+#endif
 
     /// Convert the symbol name \a n to a form suitable for a diagnostic.
     static std::string yytnamerr_ (const char *n);
 
-
-    /// For a symbol, its name in clear.
-    static const char* const yytname_[];
 #if YYDEBUG
     /// A type to store symbol numbers and -1.
     typedef short int rhs_number_type;
@@ -385,4 +395,4 @@ namespace clever {
 
 
 
-#endif /* !YY_USERS_MURILO_DOCUMENTS_PROGRAMMING_CLEVER_CORE_PARSER_HH  */
+#endif /* ! defined PARSER_HEADER_H */
