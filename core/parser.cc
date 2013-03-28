@@ -1281,15 +1281,15 @@ yylloc.begin.filename = yylloc.end.filename = driver.getFile();
 
     {
 			/* Calls rvalue.begin() */
-			ast::MethodCall* tmp = new ast::MethodCall((yysemantic_stack_[(7) - (5)].node), new ast::Ident(new CString("begin"), yyloc), NULL, yyloc);
+			ast::MethodCall* tmp = new ast::MethodCall((yysemantic_stack_[(7) - (5)].node), new ast::Ident(CSTRING("begin"), yyloc), NULL, yyloc);
 			/* var IDENT = rvalue.begin() */
 			ast::VariableDecl* init = new ast::VariableDecl((yysemantic_stack_[(7) - (3)].ident), new ast::Assignment((yysemantic_stack_[(7) - (3)].ident), tmp, yyloc), false, yyloc);
 			/* Calls rvalue.end() */
-			tmp = new ast::MethodCall((yysemantic_stack_[(7) - (5)].node), new ast::Ident(new CString("end"), yyloc), NULL, yyloc);
+			tmp = new ast::MethodCall((yysemantic_stack_[(7) - (5)].node), new ast::Ident(CSTRING("end"), yyloc), NULL, yyloc);
 			/* Compares IDENT != rvalue.end() */
 			ast::Comparison* comp = new ast::Comparison(ast::Comparison::COP_NEQUAL, (yysemantic_stack_[(7) - (3)].ident), tmp, yyloc);
 			/* Gets the iterator for the next value (IDENT.next()) */
-			tmp = new ast::MethodCall((yysemantic_stack_[(7) - (3)].ident), new ast::Ident(new CString("next"), yyloc), NULL, yyloc);
+			tmp = new ast::MethodCall((yysemantic_stack_[(7) - (3)].ident), new ast::Ident(CSTRING("next"), yyloc), NULL, yyloc);
 			/* Assigns (IDENT = IDENT.next()) */
 			ast::Assignment* assign = new ast::Assignment((yysemantic_stack_[(7) - (3)].ident), tmp, yyloc);
 
