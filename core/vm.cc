@@ -313,6 +313,17 @@ CLEVER_FORCE_INLINE void VM::logicOp(const IR& op)
 	const Value* lhs = getValue(op.op1);
 	const Value* rhs = getValue(op.op2);
 
+	if (UNEXPECTED(lhs->isNull() || rhs->isNull())) {
+		if (op.opcode == OP_EQUAL) {
+			getValue(op.result)->setBool(lhs == rhs);
+		} else if (op.opcode == OP_NEQUAL) {
+			getValue(op.result)->setBool(lhs != rhs);
+		} else {
+			getValue(op.result)->setBool(false);
+		}
+		return;
+	}
+
 	const Type* type = lhs->getType();
 
 	switch (op.opcode) {
