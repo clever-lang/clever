@@ -296,11 +296,6 @@ CLEVER_METHOD(ArrayType::erase)
 	}
 }
 
-TypeObject* ArrayType::getIterator(TypeObject* obj) const
-{
-	return new ArrayIteratorObject(static_cast<ArrayObject*>(obj));
-}
-
 CLEVER_METHOD(ArrayType::begin)
 {
 	if (!clever_check_no_args()) {

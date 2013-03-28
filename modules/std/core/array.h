@@ -117,7 +117,6 @@ public:
 
 	virtual void init();
 	virtual std::string toString(TypeObject*) const;
-	virtual TypeObject* getIterator(TypeObject*) const;
 
 	// Methods
 	CLEVER_METHOD(ctor);
