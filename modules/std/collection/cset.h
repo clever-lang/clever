@@ -64,6 +64,7 @@ public:
 
 	// Operators
 	CLEVER_TYPE_OPERATOR(add);
+	CLEVER_TYPE_OPERATOR(mul);
 private:
 	DISALLOW_COPY_AND_ASSIGN(CSet);
 };

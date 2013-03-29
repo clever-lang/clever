@@ -94,6 +94,25 @@ CLEVER_TYPE_OPERATOR(CSet::add)
 	result->setObj(this, c);
 }
 
+CLEVER_TYPE_OPERATOR(CSet::mul)
+{
+	CSetObject* a = clever_get_object(CSetObject*, lhs);
+	CSetObject* b = clever_get_object(CSetObject*, rhs);
+	CSetObject* c = new CSetObject(a->comp);
+
+	::std::set<CSetValue, CSetObjectCompare>::iterator
+			it = a->set.begin(), end = a->set.end();
+
+	while (it != end) {
+		if (b->set.find(CSetValue(it->element, it->comp, it->vm)) != b->set.end()) {
+			c->set.insert(CSetValue(it->element->clone(), it->comp, it->vm));
+		}
+		++it;
+	}
+
+	result->setObj(this, c);
+}
+
 // Set.Set(Function compare)
 CLEVER_METHOD(CSet::ctor)
 {
