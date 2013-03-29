@@ -68,6 +68,7 @@ bool operator<(const CSetValue& a, const CSetValue& b)
 	return ret;
 }
 
+// Set.union(a, b)
 CLEVER_TYPE_OPERATOR(CSet::add)
 {
 	CSetObject* a = clever_get_object(CSetObject*, lhs);
@@ -94,6 +95,7 @@ CLEVER_TYPE_OPERATOR(CSet::add)
 	result->setObj(this, c);
 }
 
+// Set.intersection(a, b)
 CLEVER_TYPE_OPERATOR(CSet::mul)
 {
 	CSetObject* a = clever_get_object(CSetObject*, lhs);
@@ -113,6 +115,7 @@ CLEVER_TYPE_OPERATOR(CSet::mul)
 	result->setObj(this, c);
 }
 
+// Set.diference(a, b)
 CLEVER_TYPE_OPERATOR(CSet::sub)
 {
 	CSetObject* a = clever_get_object(CSetObject*, lhs);
@@ -132,6 +135,7 @@ CLEVER_TYPE_OPERATOR(CSet::sub)
 	result->setObj(this, c);
 }
 
+// Set.symetrical_diference(a, b) [(a-b) U (b-a)]
 CLEVER_TYPE_OPERATOR(CSet::div)
 {
 	CSetObject* a = clever_get_object(CSetObject*, lhs);
