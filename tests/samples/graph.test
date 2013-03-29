@@ -48,7 +48,7 @@ class GraphBfsIterator {
 
 		this.queue.pop();
 		var vertex = 0;
-		for (iter in this.graph.distanceMatrix[curr]) {
+		for (var iter in this.graph.distanceMatrix[curr]) {
 			if (iter != null) {
 				if (!this.visited.find(vertex)) {
 					this.queue.push(vertex);
@@ -76,7 +76,7 @@ class Graph {
 		this.labels = labels;
 
 		var idx = 0;
-		for (label in labels) {
+		for (var label in labels) {
 			this.map.insert(label, idx++);
 		}
 
@@ -118,7 +118,7 @@ cities.changeUndirected('Goiania', 'Sao Paulo', 810);
 cities.changeUndirected('Rio', 'Brasilia', 1148);
 
 // for each city in the graph
-for (city in cities) {
+for (var city in cities) {
 	io:println(city);
 }
 
