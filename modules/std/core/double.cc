@@ -139,9 +139,20 @@ CLEVER_METHOD(DoubleType::ctor)
 	result->setDouble(0.0);
 }
 
+// Double::to_String()
+CLEVER_METHOD(DoubleType::to_String)
+{
+	if (!clever_check_no_args()) {
+		return;
+	}
+
+	result->setStr(new StrObject(clever_this()->toString()));
+}
+
 CLEVER_TYPE_INIT(DoubleType::init)
 {
 	setConstructor((MethodPtr)&DoubleType::ctor);
+	addMethod(new Function("toString", (MethodPtr)&DoubleType::to_String));
 }
 
 } // clever

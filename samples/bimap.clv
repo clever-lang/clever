@@ -1,0 +1,51 @@
+/**
+ * Clever programming language
+ * Copyright (c) Clever Team
+ *
+ * This file is distributed under the MIT license. See LICENSE for details.
+ */
+
+ /**
+ * Example of implementation of BiMap wich is a map which maps in the both
+ * directions (key => value) and (value => key).
+ * -- muriloadriano
+ */
+
+import std.*;
+
+class BiMap {
+	var _map;
+
+	function CustomMap() {
+		this._map = {:};
+	}
+
+	function insert(key, value) {
+		this._map[key.toString()] = value;
+		this._map[value.toString()] = key;
+	}
+
+	function get(key) {
+		return this._map[key.toString()];
+	}
+
+	function size() {
+		return this._map.size();
+	}
+}
+
+// Example of use
+
+var map = BiMap.new;
+map.insert('pi', math:PI);
+map.insert(2.71828, 'e');
+map.insert(1.61803, 'phi');
+
+io:println(map.get('pi') + ' is ' + map.get(map.get('pi')));
+io:println(map.get('phi') + ' is ' + map.get(map.get('phi')));
+io:println(map.get('e') + ' is ' + map.get(2.71828));
+
+// Expected output
+// 3.14159 is pi
+// 1.61803 is phi
+// 2.71828 is e
