@@ -96,6 +96,12 @@ public:
 		AST_DUMP_DISPLAY_BLOCK;
 	}
 
+	void visit(DoWhile* node) {
+		AST_DUMP_DISPLAY_BLOCK;
+
+		std::cout << m_ws << "DoWhile" << std::endl;
+	}
+
 	void visit(While* node) {
 		std::cout << m_ws << "While" << std::endl;
 
@@ -104,6 +110,12 @@ public:
 
 	void visit(For* node) {
 		std::cout << m_ws << "For" << std::endl;
+
+		AST_DUMP_DISPLAY_BLOCK;
+	}
+
+	void visit(ForEach* node) {
+		std::cout << m_ws << "ForEach" << std::endl;
 
 		AST_DUMP_DISPLAY_BLOCK;
 	}

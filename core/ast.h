@@ -804,27 +804,50 @@ class While: public Node {
 public:
 	While(Node* condition, Node* block, const location& location)
 		: Node(location), m_condition(condition), m_block(block) {
-		m_condition->addRef();
+		clever_addref(m_condition);
 		clever_addref(m_block);
 	}
 
 	~While() {
-		m_condition->delRef();
+		clever_delref(m_condition);
 		clever_delref(m_block);
 	}
 
 	Node* getCondition() const { return m_condition; }
-
 	Node* getBlock() const { return m_block; }
 
 	virtual void accept(Visitor& visitor);
 	virtual Node* accept(Transformer& transformer);
-
 private:
-	Node *m_condition;
-	Node *m_block;
+	Node* m_condition;
+	Node* m_block;
 
 	DISALLOW_COPY_AND_ASSIGN(While);
+};
+
+class DoWhile: public Node {
+public:
+	DoWhile(Node* condition, Node* block, const location& location)
+		: Node(location), m_condition(condition), m_block(block) {
+		clever_addref(m_condition);
+		clever_addref(m_block);
+	}
+
+	~DoWhile() {
+		clever_delref(m_condition);
+		clever_delref(m_block);
+	}
+
+	Node* getCondition() const { return m_condition; }
+	Node* getBlock() const { return m_block; }
+
+	virtual void accept(Visitor& visitor);
+	virtual Node* accept(Transformer& transformer);
+private:
+	Node* m_condition;
+	Node* m_block;
+
+	DISALLOW_COPY_AND_ASSIGN(DoWhile);
 };
 
 class For: public Node {

@@ -93,6 +93,13 @@ void Visitor::visit(While* node)
 	node->getBlock()->accept(*this);
 }
 
+void Visitor::visit(DoWhile* node)
+{
+	node->getBlock()->accept(*this);
+	node->getCondition()->accept(*this);
+}
+
+
 void Visitor::visit(For* node)
 {
 	if (node->hasInitializer()) {
