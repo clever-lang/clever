@@ -1,0 +1,11 @@
+Testing array writing and reading
+==CODE==
+import std.io;
+
+var arr = [];
+
+arr[0] = 2; io:println(arr);
+arr[0] = 3; io:println(arr);
+==RESULT==
+\[2\]
+\[3\]

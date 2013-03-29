@@ -744,7 +744,8 @@ void Codegen::visit(Subscript* node)
 	node->getVar()->accept(*this);
 	node->getIndex()->accept(*this);
 
-	IR& subscript = m_builder->push(OP_SUBSCRIPT);
+	IR& subscript = m_builder->push(
+		node->isWriteMode() ? OP_SUBSCRIPT_W : OP_SUBSCRIPT_R);
 
 	_prepare_operand(subscript.op1, node->getVar());
 	_prepare_operand(subscript.op2, node->getIndex());

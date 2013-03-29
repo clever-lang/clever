@@ -101,8 +101,8 @@ public:
 	CLEVER_METHOD(get);
 
 	// Operators
-	virtual void CLEVER_FASTCALL equal(CLEVER_TYPE_OPERATOR_ARGS)         const;
-	virtual void CLEVER_FASTCALL not_equal(CLEVER_TYPE_OPERATOR_ARGS)     const;
+	virtual void CLEVER_FASTCALL equal(CLEVER_TYPE_OPERATOR_ARGS)     const;
+	virtual void CLEVER_FASTCALL not_equal(CLEVER_TYPE_OPERATOR_ARGS) const;
 
 private:
 	DISALLOW_COPY_AND_ASSIGN(ArrayIterator);

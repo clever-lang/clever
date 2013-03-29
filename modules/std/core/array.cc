@@ -21,7 +21,13 @@ namespace clever {
 	out << "[";
 
 	for (size_t i = 0, j = vec.size(); i < j; ++i) {
-		vec.at(i)->dump(out);
+		Value* val = vec.at(i);
+
+		if (val) {
+			val->dump(out);
+		} else {
+			out << "null";
+		}
 		if (i < j-1) {
 			out << ", ";
 		}
@@ -43,9 +49,18 @@ CLEVER_TYPE_AT_OPERATOR(ArrayType::at_op)
 		return NULL;
 	}
 
-	if (index->getInt() < 0 || index->getInt() >= size) {
-		clever_throw("Array index out of bound!");
-		return NULL;
+	if (is_write) {
+		if (index->getInt() == size) {
+			arr.push_back(new Value);
+		} else if (size < index->getInt()) {
+			arr.resize(index->getInt() + 1);
+			arr[index->getInt()] = new Value;
+		}
+	} else {
+		if (index->getInt() < 0 || index->getInt() >= size) {
+			clever_throw("Array index out of bound!");
+			return NULL;
+		}
 	}
 
 	Value* result = arr.at(index->getInt());

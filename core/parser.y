@@ -66,6 +66,7 @@ class Value;
 	ast::ClassDef* class_;
 	ast::Switch* switch_;
 	ast::AttrArray* attrarray;
+	ast::Subscript* subscript;
 }
 
 %type <type> TYPE
@@ -110,6 +111,7 @@ class Value;
 %type <attr> class_attr_decl_impl class_attr_const_decl_impl
 %type <flags> visibility
 %type <switch_> switch_expr case_list
+%type <subscript> subscript
 
 // The parsing context.
 %parse-param { Driver& driver }
@@ -291,13 +293,13 @@ object:
 	|	map
 	|	array
 	|	'(' rvalue ')' { $<node>$ = $<node>2; }
-	|	subscript
 	|	fcall
 	|	instantiation
 ;
 
 rvalue:
 		object
+	|	subscript
 	|	unary
 	|	arithmetic
 	|	logic
@@ -315,7 +317,7 @@ rvalue:
 lvalue:
 		IDENT
 	|	property_access { $1->setWriteMode(); }
-	|	subscript
+	|	subscript       { $1->setWriteMode(); }
 ;
 
 subscript:
@@ -450,6 +452,8 @@ property_access:
 	|	TYPE '.' CONSTANT   { $$ = new ast::Property($1, $3, yyloc); }
 	|	property_access '.' IDENT    { $$ = new ast::Property($<node>1, $3, yyloc); }
 	|	property_access '.' CONSTANT { $$ = new ast::Property($<node>1, $3, yyloc); }
+	|	subscript '.' IDENT          { $$ = new ast::Property($<node>1, $3, yyloc); }
+	|	subscript '.' CONSTANT       { $$ = new ast::Property($<node>1, $3, yyloc); }
 ;
 
 mcall_chain:
@@ -463,6 +467,7 @@ mcall:
 		object '.' IDENT '(' call_args ')'          { $<node>$ = new ast::MethodCall($<node>1, $3, $5, yyloc); } mcall_chain { $<node>$ = $<node>8; }
 	|	property_access '.' IDENT '(' call_args ')' { $<node>$ = new ast::MethodCall($<node>1, $3, $5, yyloc); } mcall_chain { $<node>$ = $<node>8; }
 	|	TYPE '.' IDENT '(' call_args ')'            { $<node>$ = new ast::MethodCall($1, $3, $5, yyloc); }       mcall_chain { $<node>$ = $<node>8; }
+	|	subscript '.' IDENT '(' call_args ')'       { $<node>$ = new ast::MethodCall($<node>1, $3, $5, yyloc); } mcall_chain { $<node>$ = $<node>8; }
 ;
 
 inc_dec:
@@ -474,6 +479,10 @@ inc_dec:
 	|	property_access DEC { $$ = new ast::IncDec(ast::IncDec::POS_DEC, $<node>1, yyloc); $1->setWriteMode(); }
 	|	INC property_access { $$ = new ast::IncDec(ast::IncDec::PRE_INC, $<node>2, yyloc); $2->setWriteMode(); }
 	|	DEC property_access { $$ = new ast::IncDec(ast::IncDec::PRE_DEC, $<node>2, yyloc); $2->setWriteMode(); }
+	|	subscript INC { $$ = new ast::IncDec(ast::IncDec::POS_INC, $<node>1, yyloc); $1->setWriteMode(); }
+	|	subscript DEC { $$ = new ast::IncDec(ast::IncDec::POS_DEC, $<node>1, yyloc); $1->setWriteMode(); }
+	|	INC subscript { $$ = new ast::IncDec(ast::IncDec::PRE_INC, $<node>2, yyloc); $2->setWriteMode(); }
+	|	DEC subscript { $$ = new ast::IncDec(ast::IncDec::PRE_DEC, $<node>2, yyloc); $2->setWriteMode(); }
 ;
 
 comparison:

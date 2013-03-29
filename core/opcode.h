@@ -58,7 +58,8 @@ namespace clever {
 	&&OP_BW_NOT,   \
 	&&OP_BW_LS,    \
 	&&OP_BW_RS,    \
-	&&OP_SUBSCRIPT
+	&&OP_SUBSCRIPT_W,\
+	&&OP_SUBSCRIPT_R
 #endif
 
 /// VM opcodes
@@ -109,7 +110,8 @@ enum Opcode {
 	OP_BW_NOT,     //       Used for bitwise NOT operation
 	OP_BW_LS,      //       Used for bitwise left shift operation
 	OP_BW_RS,      //  45 - Used for bitwise right shift operation
-	OP_SUBSCRIPT,  //       Used for subscript operator
+	OP_SUBSCRIPT_W,//       Used for subscript operator (write mode)
+	OP_SUBSCRIPT_R,//       Used for subscript operator (read mode)
 	NUM_OPCODES
 };
 

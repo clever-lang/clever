@@ -159,7 +159,7 @@ void VM::dumpOpcodes() const
 {
 	for (size_t i = 0, j = m_inst.size(); i < j; ++i) {
 		const IR& ir = m_inst[i];
-		::printf("[%03zu] %-12s |", i, get_opcode_name(ir.opcode));
+		::printf("[%03zu] %-15s |", i, get_opcode_name(ir.opcode));
 		dumpOperand(ir.op1);
 		dumpOperand(ir.op2);
 		dumpOperand(ir.result);
@@ -914,13 +914,32 @@ throw_exception:
 
 	OP(OP_ETRY): m_try_stack.pop(); DISPATCH;
 
-	OP(OP_SUBSCRIPT):
+	OP(OP_SUBSCRIPT_W):
 	{
 		const Value* var = getValue(OPCODE.op1);
 		const Value* index = getValue(OPCODE.op2);
 
 		if (EXPECTED(!var->isNull() && !index->isNull())) {
-			Value* result = var->getType()->at_op(var, index, this, &m_exception);
+			Value* result = var->getType()->at_op(var, index, true, this, &m_exception);
+
+			setValue(OPCODE.result, result);
+
+			if (UNEXPECTED(m_exception.hasException())) {
+				goto throw_exception;
+			}
+		} else {
+			error(OPCODE.loc, "Operation cannot be executed on null value");
+		}
+	}
+	DISPATCH;
+
+	OP(OP_SUBSCRIPT_R):
+	{
+		const Value* var = getValue(OPCODE.op1);
+		const Value* index = getValue(OPCODE.op2);
+
+		if (EXPECTED(!var->isNull() && !index->isNull())) {
+			Value* result = var->getType()->at_op(var, index, false, this, &m_exception);
 
 			setValue(OPCODE.result, result);
 

@@ -5,7 +5,7 @@ import std.io.*;
 var a = [];
 
 try {
-	a[1] = 2;
+	println(a[1]);
 } catch (e) {
 	println(e);
 }
