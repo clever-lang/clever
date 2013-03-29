@@ -60,8 +60,9 @@ public:
 	virtual Value* CLEVER_FASTCALL at_op(CLEVER_TYPE_AT_OPERATOR_ARGS) const;
 
 	CLEVER_METHOD(ctor);
-	CLEVER_METHOD(insert);
 	CLEVER_METHOD(each);
+	CLEVER_METHOD(exists);
+	CLEVER_METHOD(insert);
 	CLEVER_METHOD(size);
 private:
 	DISALLOW_COPY_AND_ASSIGN(MapType);

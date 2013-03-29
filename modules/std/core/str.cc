@@ -469,6 +469,18 @@ CLEVER_METHOD(StrType::replace)
 	result->setStr(new StrObject(buffer));
 }
 
+// String.toString
+// Just for convenience
+CLEVER_METHOD(StrType::toString)
+{
+	if (!clever_check_no_args()) {
+		return;
+	}
+
+	const ::std::string* str = clever_this()->getStr();
+	result->setStr(new StrObject(str));
+}
+
 CLEVER_TYPE_INIT(StrType::init)
 {
 	setConstructor((MethodPtr)&StrType::ctor);
@@ -485,6 +497,7 @@ CLEVER_TYPE_INIT(StrType::init)
 	addMethod(new Function("toUpper",		(MethodPtr)&StrType::toUpper));
 	addMethod(new Function("toLower",		(MethodPtr)&StrType::toLower));
 	addMethod(new Function("replace",		(MethodPtr)&StrType::replace));
+	addMethod(new Function("toString",		(MethodPtr)&StrType::toString));
 	addMethod(new Function("format",		(MethodPtr)&StrType::format))
 		->setStatic();
 }

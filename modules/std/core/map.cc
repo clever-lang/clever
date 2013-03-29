@@ -91,6 +91,18 @@ CLEVER_METHOD(MapType::insert)
 	result->setNull();
 }
 
+// void Map.exists(string key)
+// Checks if a key exists in this map
+CLEVER_METHOD(MapType::exists)
+{
+	if (!clever_check_args("s")) {
+		return;
+	}
+
+	ValueMap& mapped = (clever_get_this(MapObject*))->getData();
+	result->setBool(mapped.find(*args[0]->getStr()) != mapped.end());
+}
+
 // Map.each(function callback)
 // Calls the callback with the following prototype: callback(k, v)
 // Results returned in a new map
@@ -143,9 +155,10 @@ CLEVER_TYPE_INIT(MapType::init)
 {
 	setConstructor((MethodPtr) &MapType::ctor);
 
+	addMethod(new Function("each",   (MethodPtr) &MapType::each));
 	addMethod(new Function("insert", (MethodPtr) &MapType::insert));
-	addMethod(new Function("each",	 (MethodPtr) &MapType::each));
-	addMethod(new Function("size",	 (MethodPtr) &MapType::size));
+	addMethod(new Function("exists", (MethodPtr) &MapType::exists));
+	addMethod(new Function("size",   (MethodPtr) &MapType::size));
 }
 
 } // clever

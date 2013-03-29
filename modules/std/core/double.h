@@ -43,6 +43,7 @@ public:
 	}
 
 	CLEVER_METHOD(ctor);
+	CLEVER_METHOD(to_String);
 private:
 	DISALLOW_COPY_AND_ASSIGN(DoubleType);
 };
