@@ -332,4 +332,19 @@ void Resolver::visit(For* node)
 	}
 }
 
+void Resolver::visit(ForEach* node)
+{
+	m_scope = m_scope->enter();
+	m_scope->setEnvironment(m_stack.top());
+	m_stack.top()->addRef();
+
+	node->getVarDecl()->accept(*this);
+
+	node->getExpr()->accept(*this);
+
+	node->getBlock()->accept(*this);
+
+	m_scope = m_scope->leave();
+}
+
 }} // clever::ast

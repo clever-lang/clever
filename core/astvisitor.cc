@@ -107,6 +107,13 @@ void Visitor::visit(For* node)
 	}
 }
 
+void Visitor::visit(ForEach* node)
+{
+	node->getVarDecl()->accept(*this);
+	node->getExpr()->accept(*this);
+	node->getBlock()->accept(*this);
+}
+
 void Visitor::visit(If* node)
 {
 	std::vector<std::pair<Node*, Node*> > cond = node->getConditionals();

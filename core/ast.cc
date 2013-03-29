@@ -43,6 +43,8 @@ void While::accept(Visitor& visitor) { visitor.visit(this); }
 
 void For::accept(Visitor& visitor) { visitor.visit(this); }
 
+void ForEach::accept(Visitor& visitor) { visitor.visit(this); }
+
 void If::accept(Visitor& visitor) { visitor.visit(this); }
 
 void IntLit::accept(Visitor& visitor) { visitor.visit(this); }
@@ -124,6 +126,8 @@ Node* FunctionCall::accept(Transformer& transformer) { return transformer.transf
 Node* While::accept(Transformer& transformer) { return transformer.transform(this); }
 
 Node* For::accept(Transformer& transformer) { return transformer.transform(this); }
+
+Node* ForEach::accept(Transformer& transformer) { return transformer.transform(this); }
 
 Node* If::accept(Transformer& transformer) { return transformer.transform(this); }
 

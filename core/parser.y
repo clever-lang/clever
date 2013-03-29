@@ -45,6 +45,7 @@ class Value;
 	ast::Return* ret;
 	ast::While* while_loop;
 	ast::For* for_loop;
+	ast::ForEach* foreach_loop;
 	ast::IncDec* inc_dec;
 	ast::If* ifcond;
 	ast::Boolean* boolean;
@@ -92,7 +93,6 @@ class Value;
 %type <fdecl> fdecl anonymous_fdecl
 %type <ret> return_stmt
 %type <while_loop> while
-%type <for_loop> for
 %type <narray> for_expr_1 for_expr_3
 %type <node> for_expr_2
 %type <inc_dec> inc_dec
@@ -658,29 +658,8 @@ for_expr_3:
 ;
 
 for:
-		FOR '(' for_expr_1 ';' for_expr_2 ';' for_expr_3 ')' block { $$ = new ast::For($3, $5, $7, $9, yyloc); }
-	|	FOR '(' IDENT IN rvalue ')' block {
-			/* Calls rvalue.begin() */
-			ast::MethodCall* tmp = new ast::MethodCall($<node>5, new ast::Ident(CSTRING("begin"), yyloc), NULL, yyloc);
-			/* var IDENT = rvalue.begin() */
-			ast::VariableDecl* init = new ast::VariableDecl($3, new ast::Assignment($3, tmp, yyloc), false, yyloc);
-			/* Calls rvalue.end() */
-			tmp = new ast::MethodCall($<node>5, new ast::Ident(CSTRING("end"), yyloc), NULL, yyloc);
-			/* Compares IDENT != rvalue.end() */
-			ast::Comparison* comp = new ast::Comparison(ast::Comparison::COP_NEQUAL, $3, tmp, yyloc);
-			/* Gets the iterator for the next value (IDENT.next()) */
-			tmp = new ast::MethodCall($3, new ast::Ident(CSTRING("next"), yyloc), NULL, yyloc);
-			/* Assigns (IDENT = IDENT.next()) */
-			ast::Assignment* assign = new ast::Assignment($3, tmp, yyloc);
-
-			ast::NodeArray* init_list = new ast::NodeArray(yyloc);
-			init_list->append(init);
-
-			ast::NodeArray* assign_list = new ast::NodeArray(yyloc);
-			assign_list->append(assign);
-
-			$$ = new ast::For(init_list, comp, assign_list, $7, yyloc);
-		}
+		FOR '(' for_expr_1 ';' for_expr_2 ';' for_expr_3 ')' block { $<for_loop>$ = new ast::For($3, $5, $7, $9, yyloc); }
+	|	FOR '(' IDENT IN rvalue ')' block {	$<foreach_loop>$ = new ast::ForEach(new ast::VariableDecl($3, new ast::Assignment($3, NULL, yyloc), false, yyloc), $<node>5, $7, yyloc); }
 ;
 
 elseif:

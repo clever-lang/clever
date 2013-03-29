@@ -45,6 +45,7 @@ public:
 	void visit(Return*);
 	void visit(While*);
 	void visit(For*);
+	void visit(ForEach*);
 	void visit(IntLit*);
 	void visit(DoubleLit*);
 	void visit(StringLit*);

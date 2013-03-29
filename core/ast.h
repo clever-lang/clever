@@ -830,8 +830,7 @@ private:
 class For: public Node {
 public:
 	For(NodeArray* initlist, Node* cond, NodeArray* update, Node* block, const location& location)
-		: Node(location),  m_init(initlist), m_condition(cond), m_update(update),
-			m_block(block) {
+		: Node(location),  m_init(initlist), m_condition(cond), m_update(update), m_block(block) {
 		clever_addref(m_init);
 		clever_addref(m_condition);
 		clever_addref(m_update);
@@ -863,6 +862,35 @@ private:
 	Node* m_block;
 
 	DISALLOW_COPY_AND_ASSIGN(For);
+};
+
+class ForEach: public Node {
+public:
+	ForEach(VariableDecl* var, Node* expr, Node* block, const location& location)
+		: Node(location), m_var(var), m_expr(expr), m_block(block) {
+		clever_addref(m_var);
+		clever_addref(m_expr);
+		clever_addref(m_block);
+	}
+
+	~ForEach() {
+		clever_delref(m_var);
+		clever_delref(m_expr);
+		clever_delref(m_block);
+	}
+
+	VariableDecl* getVarDecl() const { return m_var; }
+	Node* getExpr() const { return m_expr; }
+	Node* getBlock() const { return m_block; }
+
+	virtual void accept(Visitor& visitor);
+	virtual Node* accept(Transformer& transformer);
+private:
+	VariableDecl* m_var;
+	Node* m_expr;
+	Node* m_block;
+
+	DISALLOW_COPY_AND_ASSIGN(ForEach);
 };
 
 
