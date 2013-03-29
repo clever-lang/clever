@@ -57,15 +57,25 @@ CLEVER_TYPE_AT_OPERATOR(MapType::at_op)
 	}
 
 	std::map<std::string, Value*>::const_iterator it = data.find(*index->getStr());
+	Value* item = NULL;
 
-	if (it == data.end()) {
-		clever_throw("Map index not found!");
-		return NULL;
+	if (is_write) {
+		if (it == data.end()) {
+			item = data[*index->getStr()] = new Value;
+		} else {
+			item = it->second;
+		}
+	} else {
+		if (it == data.end()) {
+			clever_throw("Map index not found!");
+			return NULL;
+		}
+		item = it->second;
 	}
 
-	clever_addref(it->second);
+	clever_addref(item);
 
-	return it->second;
+	return item;
 }
 
 // void Map.insert(string key, mixed value)

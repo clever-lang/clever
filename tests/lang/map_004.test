@@ -1,0 +1,11 @@
+Testing writing and reading on map
+==CODE==
+import std.io;
+
+var map = {:};
+
+map["felipe"] = 123;
+
+io:println(map["felipe"]);
+==RESULT==
+123
