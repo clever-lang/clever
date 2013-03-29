@@ -309,7 +309,7 @@ void Codegen::visit(ForEach* node)
 
 	// rvalue.end()
 	IR& mcall_end = m_builder->push(OP_MCALL);
-	_prepare_operand(mcall_end.op1, node->getExpr());
+	mcall_end.op1 = mcall_begin.op1;
 	mcall_end.op2 = Operand(FETCH_CONST, m_builder->getString(CSTRING("end")));
 	mcall_end.result = Operand(FETCH_TMP, m_builder->getTemp());
 
@@ -331,13 +331,13 @@ void Codegen::visit(ForEach* node)
 
 	// var.next()
 	IR& mcall_next = m_builder->push(OP_MCALL);
-	_prepare_operand(mcall_next.op1, node->getVarDecl()->getIdent());
+	mcall_next.op1 = assign.op1;
 	mcall_next.op2 = Operand(FETCH_CONST, m_builder->getString(CSTRING("next")));
 	mcall_next.result = Operand(FETCH_TMP, m_builder->getTemp());
 
 	// var = var.next()
 	IR& assign_next = m_builder->push(OP_ASSIGN);
-	_prepare_operand(assign_next.op1, node->getVarDecl()->getIdent());
+	assign_next.op1 = assign.op1;
 	assign_next.op2 = mcall_next.result;
 
 	m_builder->push(OP_JMP, Operand(JMP_ADDR, start_cond));
