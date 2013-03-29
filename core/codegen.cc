@@ -302,11 +302,6 @@ void Codegen::visit(ForEach* node)
 	mcall_begin.op2 = Operand(FETCH_CONST, m_builder->getString(CSTRING("begin")));
 	mcall_begin.result = Operand(FETCH_TMP, m_builder->getTemp());
 
-	// var = rvalue.begin()
-	IR& assign = m_builder->push(OP_ASSIGN);
-	_prepare_operand(assign.op1, node->getVarDecl()->getIdent());
-	assign.op2 = mcall_begin.result;
-
 	// rvalue.end()
 	IR& mcall_end = m_builder->push(OP_MCALL);
 	mcall_end.op1 = mcall_begin.op1;
@@ -315,10 +310,10 @@ void Codegen::visit(ForEach* node)
 
 	size_t start_cond = m_builder->getSize();
 
-	// var != rvalue.end()
+	// rvalue.begin() != rvalue.end()
 	IR& cmp = m_builder->push(OP_NEQUAL);
 	cmp.op1 = mcall_end.result;
-	cmp.op2 = assign.op1;
+	cmp.op2 = mcall_begin.result;
 	cmp.result = Operand(FETCH_TMP, m_builder->getTemp());
 
 	IR& jmpz = m_builder->push(OP_JMPZ, cmp.result);
@@ -327,17 +322,28 @@ void Codegen::visit(ForEach* node)
 	m_brks.push(AddrVector());
 	m_brks.top().push_back(start_cond);
 
+	// rvalue.get()
+	IR& mcall_get = m_builder->push(OP_MCALL);
+	mcall_get.op1 = mcall_begin.result;
+	mcall_get.op2 = Operand(FETCH_CONST, m_builder->getString(CSTRING("get")));
+	mcall_get.result = Operand(FETCH_TMP, m_builder->getTemp());
+
+	// var = rvalue.get()
+	IR& assign = m_builder->push(OP_ASSIGN);
+	_prepare_operand(assign.op1, node->getVarDecl()->getIdent());
+	assign.op2 = mcall_get.result;
+
 	node->getBlock()->accept(*this);
 
 	// var.next()
 	IR& mcall_next = m_builder->push(OP_MCALL);
-	mcall_next.op1 = assign.op1;
+	mcall_next.op1 = mcall_begin.result;
 	mcall_next.op2 = Operand(FETCH_CONST, m_builder->getString(CSTRING("next")));
 	mcall_next.result = Operand(FETCH_TMP, m_builder->getTemp());
 
-	// var = var.next()
+	// assign var.next() to iterator got on rvalue.begin() call
 	IR& assign_next = m_builder->push(OP_ASSIGN);
-	assign_next.op1 = assign.op1;
+	assign_next.op1 = mcall_begin.result;
 	assign_next.op2 = mcall_next.result;
 
 	m_builder->push(OP_JMP, Operand(JMP_ADDR, start_cond));
