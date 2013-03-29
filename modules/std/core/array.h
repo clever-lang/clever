@@ -35,8 +35,12 @@ public:
 	}
 
 	void push_value(Value* value) {
-		m_data.push_back(value->clone());
-		m_data.back()->setConst(false);
+		if (value) {
+			m_data.push_back(value->clone());
+			m_data.back()->setConst(false);
+		} else {
+			m_data.push_back(NULL);
+		}
 	}
 
 	std::vector<Value*>& getData() { return m_data; }
@@ -123,6 +127,7 @@ public:
 	CLEVER_METHOD(append);
 	CLEVER_METHOD(size);
 	CLEVER_METHOD(at);
+	CLEVER_METHOD(resize);
 	CLEVER_METHOD(reserve);
 	CLEVER_METHOD(reverse);
 	CLEVER_METHOD(each);
