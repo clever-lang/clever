@@ -1,0 +1,27 @@
+Testing set symmetrical diference
+==CODE==
+import std.io.*;
+import std.collection.*;
+
+var arr = [3, 2, 1, 5, 6, 7];
+var arr2 = [3, 2, 5, 9, 10];
+
+function comp(a, b) {
+	return a < b;
+}
+
+var set = Set.new(comp);
+var set2 = Set.new(comp);
+
+arr.each(function(n) { set.insert(n); });
+arr2.each(function(n) { set2.insert(n); });
+
+var set3 = set / set2;
+
+println("Size: " + (set / set2).size());
+println(set / set2);
+println(set3);
+==RESULT==
+Size: 5
+Set<1, 6, 7, 9, 10>
+Set<1, 6, 7, 9, 10>

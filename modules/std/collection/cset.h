@@ -61,6 +61,13 @@ public:
 	CLEVER_METHOD(size);
 	CLEVER_METHOD(empty);
 	CLEVER_METHOD(find);
+
+	// Operators
+	CLEVER_TYPE_OPERATOR(add);
+	CLEVER_TYPE_OPERATOR(mul);
+	CLEVER_TYPE_OPERATOR(sub);
+	CLEVER_TYPE_OPERATOR(div);
+
 private:
 	DISALLOW_COPY_AND_ASSIGN(CSet);
 };
