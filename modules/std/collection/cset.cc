@@ -7,6 +7,7 @@
 
 #include <ostream>
 #include <vector>
+#include <algorithm>
 #include "core/vm.h"
 #include "core/cexception.h"
 #include "modules/std/core/function.h"
@@ -49,6 +50,48 @@ bool CSetObjectCompare::operator()(const CSetValue& a, const CSetValue& b) const
 	clever_delref(result);
 
 	return ret;
+}
+
+bool operator<(const CSetValue& a, const CSetValue& b)
+{
+	::std::vector<Value*> args;
+
+	args.push_back(a.element);
+	args.push_back(b.element);
+
+	Value* result = const_cast<VM*>(a.vm)->runFunction(a.comp, args);
+
+	bool ret = result ? result->asBool() : false;
+
+	clever_delref(result);
+
+	return ret;
+}
+
+CLEVER_TYPE_OPERATOR(CSet::add)
+{
+	CSetObject* a = clever_get_object(CSetObject*, lhs);
+	CSetObject* b = clever_get_object(CSetObject*, rhs);
+	CSetObject* c = new CSetObject(a->comp);
+
+	::std::set<CSetValue, CSetObjectCompare>::iterator
+			it = a->set.begin(), end = a->set.end();
+
+	while (it != end) {
+		c->set.insert(CSetValue(it->element->clone(), it->comp, it->vm));
+		++it;
+	}
+
+	it = b->set.begin(), end = b->set.end();
+
+	while (it != end) {
+		if (c->set.find(CSetValue(it->element, it->comp, it->vm)) == c->set.end()) {
+			c->set.insert(CSetValue(it->element->clone(), it->comp, it->vm));
+		}
+		++it;
+	}
+
+	result->setObj(this, c);
 }
 
 // Set.Set(Function compare)
