@@ -138,6 +138,7 @@ namespace clever {
 	ast::ClassDef* class_;
 	ast::Switch* switch_;
 	ast::AttrArray* attrarray;
+	ast::Subscript* subscript;
 
 
 

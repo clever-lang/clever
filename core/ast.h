@@ -1061,7 +1061,7 @@ private:
 class Subscript: public Node {
 public:
 	Subscript(Node* var, Node* index, const location& location)
-		: Node(location), m_var(var), m_index(index) {
+		: Node(location), m_var(var), m_index(index), m_write(false) {
 		clever_addref(m_var);
 		clever_addref(m_index);
 	}
@@ -1071,6 +1071,9 @@ public:
 		clever_delref(m_index);
 	}
 
+	bool isWriteMode() const { return m_write; }
+	void setWriteMode() { m_write = true; }
+
 	Node* getVar() const { return m_var; }
 	Node* getIndex() const { return m_index; }
 
@@ -1079,6 +1082,7 @@ public:
 private:
 	Node* m_var;
 	Node* m_index;
+	bool m_write;
 
 	DISALLOW_COPY_AND_ASSIGN(Subscript);
 };
