@@ -4,6 +4,8 @@ import std.io;
 
 var arr = [];
 
+arr.resize(1);
+
 arr[0] = 2; io:println(arr);
 arr[0] = 3; io:println(arr);
 ==RESULT==

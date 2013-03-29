@@ -49,17 +49,14 @@ CLEVER_TYPE_AT_OPERATOR(ArrayType::at_op)
 		return NULL;
 	}
 
+	if (index->getInt() < 0 || index->getInt() >= size) {
+		clever_throw("Array index out of bound!");
+		return NULL;
+	}
+
 	if (is_write) {
-		if (index->getInt() == size) {
-			arr.push_back(new Value);
-		} else if (size < index->getInt()) {
-			arr.resize(index->getInt() + 1);
+		if (!arr[index->getInt()]) {
 			arr[index->getInt()] = new Value;
-		}
-	} else {
-		if (index->getInt() < 0 || index->getInt() >= size) {
-			clever_throw("Array index out of bound!");
-			return NULL;
 		}
 	}
 
@@ -139,6 +136,25 @@ CLEVER_METHOD(ArrayType::at)
 	}
 
 	result->copy(arr.at(num));
+}
+
+// void Array::resize(Int size)
+CLEVER_METHOD(ArrayType::resize)
+{
+	if (!clever_check_args("i")) {
+		return;
+	}
+
+	ArrayObject* arr = clever_get_this(ArrayObject*);
+
+	result->setNull();
+
+	if (args[0]->getInt() < 0
+		|| arr->getData().size() > size_t(args[0]->getInt())) {
+		return;
+	}
+
+	arr->getData().resize(args[0]->getInt());
 }
 
 // void Array::reserve(Int size)
@@ -341,6 +357,7 @@ CLEVER_TYPE_INIT(ArrayType::init)
 	addMethod(new Function("append",  (MethodPtr)&ArrayType::append));
 	addMethod(new Function("size",    (MethodPtr)&ArrayType::size));
 	addMethod(new Function("at",      (MethodPtr)&ArrayType::at));
+	addMethod(new Function("resize",  (MethodPtr)&ArrayType::resize));
 	addMethod(new Function("reserve", (MethodPtr)&ArrayType::reserve));
 	addMethod(new Function("reverse", (MethodPtr)&ArrayType::reverse));
 	addMethod(new Function("each",    (MethodPtr)&ArrayType::each));
