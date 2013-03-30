@@ -11,7 +11,21 @@ function readfile(file) {
 		str += fs.readLine() + "\n";
 	}
 
+	fs.close();
+
 	return str;
+}
+
+function runcode(file, code) {
+	var tmp = file:File.new(file, file:File.OUT);
+
+	tmp.write(code);
+
+	tmp.close();
+
+	sys:system("./clever " + file + " > " + file + ".out 2>&1");
+
+	return readfile(file + ".out");
 }
 
 function runtest(file) {
@@ -19,17 +33,29 @@ function runtest(file) {
 	var title_re = regex:Regex.new("[^\r\n]+");
 
 	if (title_re.match(content)) {
-		var title = title_re.group(0);
-		var ts1   = sys:microtime();
+		var title = title_re.group(0) + " (" + file + ") ";
+		var code_re = regex:Regex.new("==CODE==((?s:(?!==RESULT==).)+)");
 
 		io:print("\r[....] " + title);
 		io:flush();
 
-		sys:sleep(30);
+		if (code_re.match(content)) {
+			var ts1 = sys:microtime();
+			var result = runcode(file + ".tmp", code_re.group(1));
+			var ts2 = sys:microtime();
+			var result_re = regex:Regex.new("==RESULT==((?s:.*))");
 
-		var ts2 = sys:microtime();
+			result_re.match(content);
 
-		io:print("\r[PASS] " + title + " - " + (ts2 - ts1) + " ms");
+			var rtrim = regex:Regex.new("^\s*|\s*$");
+			var result_re2 = regex:Regex.new(rtrim.replaceAll('', result_re.group(1)));
+
+			if (result_re2.test(rtrim.replaceAll('', result))) {
+				io:print("\r[PASS] " + title + " - " + (ts2 - ts1) + " ms");
+			} else {
+				io:print("\r[FAIL] " + title + " - " + (ts2 - ts1) + " ms");
+			}
+		}
 	}
 	io:println("");
 }
