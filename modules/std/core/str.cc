@@ -196,6 +196,24 @@ CLEVER_METHOD(StrType::find)
 	result->setInt(haystack->find(needle, pos, count));
 }
 
+// String.trim()
+// Returns a trimmed version of the string
+CLEVER_METHOD(StrType::trim)
+{
+	if (!clever_check_no_args()) {
+		return;
+	}
+
+	const CString* str = clever_this()->getStr();
+	std::string newstr = *str;
+
+	::std::stringstream trimmer;
+	trimmer << newstr;
+	trimmer >> newstr;
+
+	result->setStr(new StrObject(newstr));
+}
+
 // String.findFirst(string needle, [int position, [int count]])
 // Finds the first occurence of a string in a string returning the position
 CLEVER_METHOD(StrType::findFirst)
@@ -497,6 +515,7 @@ CLEVER_TYPE_INIT(StrType::init)
 	addMethod(new Function("toUpper",		(MethodPtr)&StrType::toUpper));
 	addMethod(new Function("toLower",		(MethodPtr)&StrType::toLower));
 	addMethod(new Function("replace",		(MethodPtr)&StrType::replace));
+	addMethod(new Function("trim",          (MethodPtr)&StrType::trim));
 	addMethod(new Function("toString",		(MethodPtr)&StrType::toString));
 	addMethod(new Function("format",		(MethodPtr)&StrType::format))
 		->setStatic();

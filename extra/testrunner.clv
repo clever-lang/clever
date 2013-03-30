@@ -44,16 +44,15 @@ function runtest(file) {
 		if (code_re.match(content)) {
 			var status;
 			var ts1 = sys:microtime();
-			var result = runcode(file + ".tmp", code_re.group(1));
+			var result = runcode(file + ".tmp", code_re.group(1)).trim();
 			var ts2 = sys:microtime();
 			var result_re = regex:Regex.new("==RESULT==((?s:.*))");
 
 			result_re.match(content);
 
-			var rtrim = regex:Regex.new("^\s*|\s*$");
-			var result_re2 = regex:Regex.new(rtrim.replaceAll('', result_re.group(1)));
+			var result_re2 = regex:Regex.new(result_re.group(1).trim());
 
-			if (result_re2.test(rtrim.replaceAll('', result))) {
+			if (result_re2.test(result)) {
 				status = "PASS";
 				++passed;
 			} else {
