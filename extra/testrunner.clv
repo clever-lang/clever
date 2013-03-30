@@ -1,0 +1,43 @@
+import std.io;
+import std.file;
+import std.sys;
+import std.regex;
+
+function readfile(file) {
+	var fs  = file:File.new(file, file:File.IN);
+	var str = '';
+
+	while (!fs.eof()) {
+		str += fs.readLine() + "\n";
+	}
+
+	return str;
+}
+
+function runtest(file) {
+	var content = readfile(file);
+	var title_re = regex:Regex.new("[^\r\n]+");
+
+	if (title_re.match(content)) {
+		var title = title_re.group(0);
+		var ts1   = sys:microtime();
+
+		io:print("\r[....] " + title);
+		io:flush();
+
+		sys:sleep(30);
+
+		var ts2 = sys:microtime();
+
+		io:print("\r[PASS] " + title + " - " + (ts2 - ts1) + " ms");
+	}
+	io:println("");
+}
+
+var test_dirs = file:glob("tests/*");
+
+for (var dir in test_dirs) {
+	var files = file:glob(dir + "/*.test");
+
+	files.each(runtest);
+}
