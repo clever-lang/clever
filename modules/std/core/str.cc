@@ -207,9 +207,8 @@ CLEVER_METHOD(StrType::trim)
 	const CString* str = clever_this()->getStr();
 	std::string newstr = *str;
 
-	::std::stringstream trimmer;
-	trimmer << newstr;
-	trimmer >> newstr;
+	newstr.erase(0, newstr.find_first_not_of(" \n\r\t"));
+	newstr.erase(newstr.find_last_not_of(" \n\r\t")+1);
 
 	result->setStr(new StrObject(newstr));
 }
