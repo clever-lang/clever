@@ -286,26 +286,26 @@ CLEVER_MODULE_INIT(Math)
 {
 	::std::srand(::std::time(NULL));
 
-	addFunction(new Function("round", &CLEVER_NS_FNAME(math, round)));
-	addFunction(new Function("ceil",  &CLEVER_NS_FNAME(math, ceil)));
-	addFunction(new Function("sqrt",  &CLEVER_NS_FNAME(math, sqrt)));
-	addFunction(new Function("floor", &CLEVER_NS_FNAME(math, floor)));
-	addFunction(new Function("exp",   &CLEVER_NS_FNAME(math, exp)));
-	addFunction(new Function("abs",   &CLEVER_NS_FNAME(math, abs)));
-	addFunction(new Function("cos",   &CLEVER_NS_FNAME(math, cos)));
-	addFunction(new Function("acos",  &CLEVER_NS_FNAME(math, acos)));
-	addFunction(new Function("cosh",  &CLEVER_NS_FNAME(math, cosh)));
-	addFunction(new Function("sin",   &CLEVER_NS_FNAME(math, sin)));
-	addFunction(new Function("sinh",  &CLEVER_NS_FNAME(math, sinh)));
-	addFunction(new Function("asin",  &CLEVER_NS_FNAME(math, asin)));
-	addFunction(new Function("tan",   &CLEVER_NS_FNAME(math, tan)));
-	addFunction(new Function("tanh",  &CLEVER_NS_FNAME(math, tanh)));
-	addFunction(new Function("atan",  &CLEVER_NS_FNAME(math, atan)));
-	addFunction(new Function("log",   &CLEVER_NS_FNAME(math, log)));
-	addFunction(new Function("rand",  &CLEVER_NS_FNAME(math, rand)));
+	addFunction(new Function("round",  &CLEVER_NS_FNAME(math, round)));
+	addFunction(new Function("ceil",   &CLEVER_NS_FNAME(math, ceil)));
+	addFunction(new Function("sqrt",   &CLEVER_NS_FNAME(math, sqrt)));
+	addFunction(new Function("floor",  &CLEVER_NS_FNAME(math, floor)));
+	addFunction(new Function("exp",    &CLEVER_NS_FNAME(math, exp)));
+	addFunction(new Function("abs",    &CLEVER_NS_FNAME(math, abs)));
+	addFunction(new Function("cos",    &CLEVER_NS_FNAME(math, cos)));
+	addFunction(new Function("acos",   &CLEVER_NS_FNAME(math, acos)));
+	addFunction(new Function("cosh",   &CLEVER_NS_FNAME(math, cosh)));
+	addFunction(new Function("sin",    &CLEVER_NS_FNAME(math, sin)));
+	addFunction(new Function("sinh",   &CLEVER_NS_FNAME(math, sinh)));
+	addFunction(new Function("asin",   &CLEVER_NS_FNAME(math, asin)));
+	addFunction(new Function("tan",    &CLEVER_NS_FNAME(math, tan)));
+	addFunction(new Function("tanh",   &CLEVER_NS_FNAME(math, tanh)));
+	addFunction(new Function("atan",   &CLEVER_NS_FNAME(math, atan)));
+	addFunction(new Function("log",    &CLEVER_NS_FNAME(math, log)));
+	addFunction(new Function("rand",   &CLEVER_NS_FNAME(math, rand)));
 	addFunction(new Function("srand",  &CLEVER_NS_FNAME(math, srand)));
 
-	addVariable("PI",       new Value(M_PI, true));
+	addVariable("PI", new Value(M_PI, true));
 }
 
 }}} // clever::modules::std
