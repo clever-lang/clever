@@ -15,12 +15,18 @@
 import std.math.*;
 import gui.ncurses.*;
 import engine.paint.*;
+import std.io.*;
+import std.concurrent.*;
+import std.sys.*;
 
 /* 
  score = no + 2 * nS + 3 * nP
  no = Number of 'o'
  nS = Number of '$'
  nP = Number of '*'
+
+ nM = Number of '+'
+monsters '+'
 */
 
 class Score {
@@ -71,6 +77,28 @@ class Player {
 /*
 This class control a game instance
 */
+
+function monster_control(gh, monster)
+{
+	var st = 500;
+	var id = gh.sync.nextID();
+	var tini = microtime();
+
+	st = gh.sleep_time;
+
+	while (gh.sync.status()) {
+		if (id == gh.sync.getID()) {
+			var tfim = microtime();
+			if (tfim - tini > st) {
+				tini = tfim;
+			} 
+
+			gh.sync.nextID();
+			sleep(50);
+		}
+	}
+}
+
 class Game {
 	/* Grid */
 	var grid, n, m;
@@ -99,6 +127,13 @@ class Game {
 
 	/* I/O data*/
 	var last_key;
+
+	/* Monsters */
+	var nM;
+	var monsters;
+	var monsters_control;
+	var sleep_time;
+	var sync;
 
 /****************************************************************************/
 	function initVisited() {
@@ -146,7 +181,22 @@ class Game {
 	}
 
 /****************************************************************************/
-	function Game(grid_, n_, m_, x0_, y0_, r_) {
+	function initMonsters() {
+		this.monsters = [];
+		this.monsters_control = [];
+
+		for (var i = 0; i < this.n; ++i) {
+			for (var j = 0; j < this.m; ++j) {
+				if (this.grid[i][j] == '+') {
+					this.monsters.append([[i, j]]);
+					this.monsters_control.append(Thread.new(monster_control, this, [i, j]));
+				}
+			}
+		}
+	}
+
+/****************************************************************************/
+	function Game(grid_, n_, m_, x0_, y0_, r_, sleep_time_) {
 		this.grid = grid_;
 		this.n = n_;
 		this.m = m_;
@@ -154,6 +204,10 @@ class Game {
 		this.r = r_;
 
 		this.initVisited();
+
+		this.sleep_time = sleep_time_;
+		this.initMonsters();
+		this.sync = Sync.new(1 + this.monsters.size());
 
 		this.x0 = x0_;
 		this.y0 = y0_;
@@ -173,8 +227,8 @@ class Game {
 		init_pallete(this.mw);
 
 		/* Object colors*/
-		this.colors =  {'x' : 1, '*' : 2, '$' : 3, 'o' : 4,  '#' : 17, '.' : 16, '@': 14, '-': 15};
-		this.colorst = {'x' : 7, '*' : 8, '$' : 10, 'o' : 9, '#' : 17, '.' : 16, '@': 13, '-': 15};
+		this.colors =  {'x' : 1, '*' : 2, '$' : 3, 'o' : 4,  '#' : 17, '.' : 16, '@': 14, '-': 15, '+' : 1};
+		this.colorst = {'x' : 7, '*' : 8, '$' : 10, 'o' : 9, '#' : 17, '.' : 16, '@': 13, '-': 15, '+' : 7};
 
 		this.last_key = Key.new(0);
 	}
@@ -313,9 +367,13 @@ class Game {
 		
 		--this.player.score.moves;
 
-		this.player.p.x = px;
-		this.player.p.y = py;
-		this.updateVisited(px, py);		
+		if (this.grid[px][py] == '+') {
+			this.player.score.moves = 0;
+		} else {
+			this.player.p.x = px;
+			this.player.p.y = py;
+			this.updateVisited(px, py);
+		}		
 	}
 
 
@@ -387,32 +445,57 @@ class Game {
 
 /****************************************************************************/
 	/* Run game */
+	var m_id;
+
 	function run() {
 
 		/* Print title*/
 		this.title();
 
-		/* The render loop */
-		while (this.isRunning()) {
-			/* Update player score*/
-			this.updateScore();
-			
-			/* Draw grid */
-			this.draw();
+		/* The render loop */		
+		var id = this.sync.nextID();
+		this.m_id = id;
 
-			/* Paint grid */
-			this.paint();
+		this.monsters_control.each(
+			function(z) {
+				z.start();
+			}
+		);
 
-			/*Print messages*/
-			this.printInfos();
-			
-			/*Get a new key*/
-			this.getInputs();
+		while (this.sync.status()) {
+			if (id == this.sync.getID()) {
+				/* Update player score*/
+				this.updateScore();
+		
+				/* Draw grid */
+				this.draw();
+
+				/* Paint grid */
+				this.paint();
+
+				/*Print messages*/
+				this.printInfos();
+		
+				/*Get a new key*/	
+				this.getInputs();
+				
+				var ok = this.isRunning();
+
+				this.sync.setStatus(ok);
+				this.sync.nextID();
+			}
 		}
 
 		/* Finish game*/
 		this.finish();
 
+		this.monsters_control.each(
+			function(z) {
+				z.wait();
+			}
+		);
+
+		this.mw.exit();
 	}
 }
 
