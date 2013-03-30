@@ -3,6 +3,8 @@ import std.file;
 import std.sys;
 import std.regex;
 
+var passed = 0, failed = 0, time_taken = 0;
+
 function readfile(file) {
 	var fs  = file:File.new(file, file:File.IN);
 	var str = '';
@@ -34,12 +36,13 @@ function runtest(file) {
 
 	if (title_re.match(content)) {
 		var title = title_re.group(0) + " (" + file + ") ";
-		var code_re = regex:Regex.new("==CODE==((?s:(?!==RESULT==).)+)");
+		var code_re = regex:Regex.new("==CODE==\s*((?s:(?!==RESULT==).)+)");
 
 		io:print("\r[....] " + title);
 		io:flush();
 
 		if (code_re.match(content)) {
+			var status;
 			var ts1 = sys:microtime();
 			var result = runcode(file + ".tmp", code_re.group(1));
 			var ts2 = sys:microtime();
@@ -51,10 +54,16 @@ function runtest(file) {
 			var result_re2 = regex:Regex.new(rtrim.replaceAll('', result_re.group(1)));
 
 			if (result_re2.test(rtrim.replaceAll('', result))) {
-				io:print("\r[PASS] " + title + " - " + (ts2 - ts1) + " ms");
+				status = "PASS";
+				++passed;
 			} else {
-				io:print("\r[FAIL] " + title + " - " + (ts2 - ts1) + " ms");
+				status = "FAIL";
+				++failed;
 			}
+
+			time_taken += (ts2 - ts1);
+
+			io:print("\r[" + status + "] " + title + " - " + (ts2 - ts1) + " ms");
 		}
 	}
 	io:println("");
@@ -66,4 +75,13 @@ for (var dir in test_dirs) {
 	var files = file:glob(dir + "/*.test");
 
 	files.each(runtest);
+}
+
+if (passed > 0 || failed > 0) {
+	io:println("-----------------------------------");
+	io:println("Passed tests: " + passed);
+	io:println("Failed tests: " + failed);
+	io:println("-----------------------------------");
+	io:println("Time taken: " + time_taken);
+	io:println("-----------------------------------");
 }
