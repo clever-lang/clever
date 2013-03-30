@@ -107,6 +107,7 @@ public:
 
 	void setStr(const CString*);
 	void setStr(StrObject*);
+	void setStr(const std::string&);
 	const CString* getStr() const;
 
 	bool isInt()      const { return m_type == CLEVER_INT_TYPE;    }

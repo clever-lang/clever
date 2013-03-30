@@ -76,6 +76,16 @@ void Value::setStr(StrObject* str)
 	setObj(CLEVER_STR_TYPE, str);
 }
 
+void Value::setStr(const std::string& str)
+{
+	if (m_data && isStr() && m_data->refCount() == 1
+		&& static_cast<StrObject*>(m_data)->interned == false) {
+		*const_cast<CString*>(static_cast<StrObject*>(m_data)->value) = str;
+	} else {
+		setObj(CLEVER_STR_TYPE, new StrObject(str));
+	}
+}
+
 const CString* Value::getStr() const
 {
 	return static_cast<StrObject*>(m_data)->value;
