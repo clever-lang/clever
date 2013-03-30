@@ -41,6 +41,8 @@ void FunctionCall::accept(Visitor& visitor) { visitor.visit(this); }
 
 void While::accept(Visitor& visitor) { visitor.visit(this); }
 
+void DoWhile::accept(Visitor& visitor) { visitor.visit(this); }
+
 void For::accept(Visitor& visitor) { visitor.visit(this); }
 
 void ForEach::accept(Visitor& visitor) { visitor.visit(this); }
@@ -122,6 +124,8 @@ Node* Arithmetic::accept(Transformer& transformer) { return transformer.transfor
 Node* FunctionDecl::accept(Transformer& transformer) { return transformer.transform(this); }
 
 Node* FunctionCall::accept(Transformer& transformer) { return transformer.transform(this); }
+
+Node* DoWhile::accept(Transformer& transformer) { return transformer.transform(this); }
 
 Node* While::accept(Transformer& transformer) { return transformer.transform(this); }
 

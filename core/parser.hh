@@ -212,8 +212,9 @@ namespace clever {
      CASE = 313,
      DEFAULT = 314,
      IN = 315,
-     XOR_EQUAL = 316,
-     UMINUS = 317
+     DO = 316,
+     XOR_EQUAL = 317,
+     UMINUS = 318
    };
 
     };

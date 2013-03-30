@@ -161,6 +161,10 @@ next_token:
 
 	<ST_MULTILINE_COMMENT>"*" { SKIP(); }
 
+	<INITIAL>'do' {
+		RET(token::DO);
+	}
+
 	<INITIAL>'class' {
 		RET(token::CLASS);
 	}

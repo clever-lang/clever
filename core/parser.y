@@ -93,7 +93,6 @@ class Value;
 %type <fcall> fcall fcall_chain
 %type <fdecl> fdecl anonymous_fdecl
 %type <ret> return_stmt
-%type <while_loop> while
 %type <narray> for_expr_1 for_expr_3
 %type <node> for_expr_2
 %type <inc_dec> inc_dec
@@ -192,6 +191,7 @@ class Value;
 %token CASE          "case"
 %token DEFAULT       "default"
 %token IN            "in"
+%token DO            "do"
 
 %left ',';
 %left LOGICAL_OR;
@@ -648,7 +648,8 @@ return_stmt:
 ;
 
 while:
-		WHILE '(' rvalue ')' block { $$ = new ast::While($<node>3, $5, yyloc); }
+		WHILE '(' rvalue ')' block        { $<node>$ = new ast::While($<node>3, $5, yyloc);   }
+	|	DO block WHILE '(' rvalue ')' ';' { $<node>$ = new ast::DoWhile($<node>5, $2, yyloc); }
 ;
 
 for_expr_1:

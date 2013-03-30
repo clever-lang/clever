@@ -30,6 +30,7 @@ public:
 	virtual void visit(MethodCall* node);
 	virtual void visit(IncDec* node);
 
+	virtual void visit(DoWhile* node);
 	virtual void visit(While* node);
 	virtual void visit(For* node);
 	virtual void visit(ForEach* node);
