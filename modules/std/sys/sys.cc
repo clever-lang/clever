@@ -219,6 +219,17 @@ static CLEVER_FUNCTION(get_sid)
 	result->setInt(::getsid(0));
 }
 
+// exit()
+// Exits the execution
+static CLEVER_FUNCTION(exit)
+{
+	if (!clever_static_check_args("i")) {
+		return;
+	}
+
+	::exit(args[0]->getInt());
+}
+
 // info()
 // Returns information about the build and environment
 static CLEVER_FUNCTION(info)
@@ -297,6 +308,7 @@ CLEVER_MODULE_INIT(SYSModule)
 	addFunction(new Function("time",      &CLEVER_NS_FNAME(sys, time)));
 	addFunction(new Function("microtime", &CLEVER_NS_FNAME(sys, microtime)));
 	addFunction(new Function("info",      &CLEVER_NS_FNAME(sys, info)));
+	addFunction(new Function("exit",      &CLEVER_NS_FNAME(sys, exit)));
 
 	addVariable("OS", sys::_get_os());
 }
