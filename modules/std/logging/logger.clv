@@ -1,0 +1,118 @@
+/**
+ * Clever programming language
+ * Copyright (c) Clever Team
+ *
+ * This file is distributed under the MIT license. See LICENSE for details.
+ */
+
+ /**
+ * Logging module.
+ *
+ * Provides functions and classes to do logging stuff.
+ */
+
+import std.*;
+
+// Level constants
+const DEBUG = (1 << 0);
+const INFO = (1 << 1);
+const WARNING = (1 << 2);
+const ERROR = (1 << 3);
+const FATAL = (1 << 4);
+const ALL = (DEBUG | INFO | WARNING | FATAL);
+
+// Internal variables. Do not change them.
+var __internal_logger_map = {:};
+var __internal_level_names = {
+	'1': 'DEBUG',
+	'2': 'INFO',
+	'4': 'WARNING',
+	'8': 'ERROR',
+	'16': 'FATAL'
+};
+
+// Class Logger. Do not explicitly instantiate it, instead, call getLogger()
+// function.
+class Logger {
+	private var name;
+	private var enabled_levels;
+	private var writer;
+	private var format;
+	private var date_format;
+
+	function Logger(name) {
+		this.name = name;
+		this.enabled_levels = ALL;
+		this.writer = io:println;
+		this.format = '%{date} (%{level}): %{message}';
+		this.date_format = '%Y-%m-%d %H:%M:%S';
+	}
+
+	// Logs a message with the given level.
+	function log(level, message) {
+		if ((this.enabled_levels & level) == 0) {
+			return false;
+		}
+
+		var date = (date:Date.new).format(this.date_format);
+
+		// @TODO(muriloadriano): chaining is causing a weird behavior here
+		var log_str = this.format.replace('%{date}', date)
+			.replace('%{level}', __internal_level_names[level.toString()])
+			.replace('%{message}', message);
+
+		// @TODO(muriloadriano): fix this...
+		// this.writer(log_str);
+		io:println(log_str);
+
+		return true;
+	}
+
+	function debug(message) {
+		this.log(DEBUG, message);
+	}
+
+	function info(message) {
+		this.log(INFO, message);
+	}
+
+	function warning(message) {
+		this.log(WARNING, message);
+	}
+
+	function error(message) {
+		this.log(ERROR, message);
+	}
+
+	function fatal(message) {
+		this.log(FATAL, message);
+	}
+
+	function setWriter(writer_function) {
+		this.writer = writer_function;
+	}
+
+	// Sets the enabled logging levels. Disabled levels won't be logged.
+	function setEnabledLevels(level_mask) {
+		if (level_mask > 0 && level_mask < (1 << (FATAL + 1))) {
+			this.enabled_levels = level_mask;
+		}
+		else {
+			throw('Invalid level mask.');
+		}
+	}
+
+	function getName() {
+		return this.name;
+	}
+}
+
+// Use this functions to get a Logger.
+function getLogger(name) {
+	if (__internal_logger_map.exists(name)) {
+		return __internal_logger_map[name];
+	}
+
+	__internal_logger_map[name] = Logger.new(name);
+	return __internal_logger_map[name];
+}
