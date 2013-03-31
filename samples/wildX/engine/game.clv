@@ -132,7 +132,7 @@ function render(gh)
 			ok = gh.isRunning();		
 			
 			if (!ok) { gh.sync.setStatus(false); }
-			gh.mw.sleep();
+			sleep(30);
 			gh.sync.nextID();			
 		}
 	}
@@ -141,7 +141,7 @@ function render(gh)
 function make_moves(gh)
 {
 	var ok = true;
-	var st = 0.5;
+	var st = 0.3;
 	var tini = microtime();
 
 	while (gh.sync.status()) {
@@ -163,7 +163,7 @@ function make_moves(gh)
 
 				tini = tfim;
 			}
-			gh.mw.sleep();
+			sleep(15);
 			gh.sync.nextID();
 		}
 	}
@@ -334,9 +334,11 @@ class Game {
 	function finish() {
 		this.mw.setColor(8);
 		this.mw.addStr(this.x0 - 3, 2, "GAME OVER!");
+		this.mw.refresh();
 
 		this.mw.setColor(2);
 		this.mw.addStr(this.n + this.x0 + 1, 2, "Press 'ctrl+C' to exit.");
+		this.mw.refresh();
 
 		wait(this.mw, 113);
 	}
@@ -346,9 +348,11 @@ class Game {
 	function title() {
 		this.mw.setColor(7);
 		this.mw.addStr(0, 0, "The Wild X");
+		this.mw.refresh();
 
 		this.mw.setColor(2);
 		this.mw.addStr(this.n + this.x0 + 1, 2, "Press 'ctrl+C' to quit.");
+		this.mw.refresh();
 	}
 
 /****************************************************************************/
@@ -360,6 +364,7 @@ class Game {
 
 				this.mw.setColor(this.colors[c]);
 				this.mw.addChar(i + this.x0, j + this.y0, c); 
+				this.mw.refresh();
 			}
 		}
 	}
@@ -389,6 +394,7 @@ class Game {
 
 		this.mw.setColor(this.colors['.']);
 		this.mw.addChar(px + this.x0, py + this.y0, '.');
+		this.mw.refresh();
 
 		this.mutex.lock();
 		var kk = this.last_key.getInt();
@@ -483,6 +489,7 @@ class Game {
 		this.mw.refresh();
 
 		print_info(this.mw, "Position player: ", "(" + py + ", " + px + ")   ", this.n + this.x0 + 3,  2, 12, 10);
+		this.mw.refresh();
 	}
 
 /****************************************************************************/
@@ -496,6 +503,7 @@ class Game {
 		print_score(this.mw, this.colorst, '$', this.player.score.nS, this.x0 - 2, 25, 12);
 		print_score(this.mw, this.colorst, '*', this.player.score.nP, this.x0 - 2, 35, 12);
 		print_score(this.mw, this.colorst, '@', this.player.score.nA, this.x0 - 2, 45, 12);
+		this.mw.refresh();
 	}
 
 /****************************************************************************/
