@@ -461,7 +461,7 @@ property_access:
 
 mcall_chain:
 		/* empty */                             { $<mcall>$ = $<mcall>0; }
-	|	mcall_chain '.' IDENT '(' call_args ')' { $<mcall>$ = new ast::MethodCall($<node>0, $3, $5, yyloc); }
+	|	mcall_chain '.' IDENT '(' call_args ')' { $<mcall>$ = new ast::MethodCall($<node>1, $3, $5, yyloc); }
 	|	mcall_chain '.' IDENT                   { $<property>$ = new ast::Property($<node>1, $3, yyloc); }
 	|	mcall_chain '.' CONSTANT                { $<property>$ = new ast::Property($<node>1, $3, yyloc); $<property>$->setStatic(); }
 ;
