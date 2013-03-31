@@ -18,6 +18,7 @@ import engine.paint.*;
 import std.io.*;
 import std.concurrent.*;
 import std.sys.*;
+import std.collection.*;
 
 /* 
  score = no + 2 * nS + 3 * nP
@@ -78,31 +79,105 @@ class Player {
 This class control a game instance
 */
 
-function monster_control(gh, monster)
-{
-	var st = 500;
-	var id = gh.sync.nextID();
-	var tini = microtime();
+class Pair {
+	var x, y;
+	var d;
 
-	st = gh.sleep_time;
-
-	while (gh.sync.status()) {
-		if (id == gh.sync.getID()) {
-			var tfim = microtime();
-			if (tfim - tini > st) {
-				tini = tfim;
-			} 
-
-			gh.sync.nextID();
-			sleep(50);
-		}
+	function Pair(px_, py_, d_) {
+		this.x = px_;
+		this.y = py_;
+		this.d = d_;
 	}
 }
+
+function pair_cmp(a, b) 
+{
+	if (a.d == b.d) {
+		if (a.x == b.x) {
+			return a.y > b.y;
+		}
+		return a.x > b.x;
+	}
+	return a.d > b.d;
+}
+
+function dist(a, b) 
+{
+	return abs(a.x - b.x) + abs(a.y - b.y);
+}
+
+const INF  = 1 << 20;
+
+function read_keys(gh)
+{
+	var ok = true;
+	while (ok) {
+		gh.readInputs();
+	}
+}
+
+function render(gh)
+{
+	var ok = true;
+	var id = gh.sync.nextID();
+
+	while (gh.sync.status()) {
+		if (gh.sync.getID() == id) {
+			if (!gh.keyQ.empty()) {
+				gh.getInputs();
+				gh.render();
+				
+				ok = gh.isRunning();		
+			}
+			
+			if (!ok) { gh.sync.setStatus(false); }
+	
+			gh.sync.nextID();
+		}
+		sleep(100);	
+	}
+}
+
+function make_moves(gh)
+{
+	var ok = true;
+	var id = gh.sync.nextID();
+
+	while (gh.sync.status()) {
+		if (gh.sync.getID() == id) {
+			var i = 0;
+
+			for (var v in gh.monsters) {
+				gh.monster_control(i);
+
+				ok = gh.isRunning();
+				
+				if (!ok) { gh.sync.setStatus(false); break; }
+			
+				++i;
+			}
+
+			/* Draw grid */
+			gh.draw();
+
+			/* Paint grid */
+			gh.paint();
+
+			/*Print messages*/
+			gh.printInfos();
+			
+			gh.sync.nextID();
+		}
+		sleep(500);
+	}
+}
+
 
 class Game {
 	/* Grid */
 	var grid, n, m;
 	var visited;
+	var keyQ;
 
 	/* Grid position */
 	var x0, y0;
@@ -127,6 +202,7 @@ class Game {
 
 	/* I/O data*/
 	var last_key;
+	var mutex;
 
 	/* Monsters */
 	var nM;
@@ -150,6 +226,7 @@ class Game {
 
 /****************************************************************************/
 	function isVisited(i, j) {
+		return true;
 		if (i < this.n && i >= 0 && j < this.m && j >= 0) {
 			return this.visited[i][j];
 		} else {
@@ -188,8 +265,7 @@ class Game {
 		for (var i = 0; i < this.n; ++i) {
 			for (var j = 0; j < this.m; ++j) {
 				if (this.grid[i][j] == '+') {
-					this.monsters.append([[i, j]]);
-					this.monsters_control.append(Thread.new(monster_control, this, [i, j]));
+					this.monsters.append([i, j]);
 				}
 			}
 		}
@@ -200,6 +276,8 @@ class Game {
 		this.grid = grid_;
 		this.n = n_;
 		this.m = m_;
+		this.keyQ = Queue.new();
+		this.mutex = Mutex.new();
 
 		this.r = r_;
 
@@ -207,7 +285,7 @@ class Game {
 
 		this.sleep_time = sleep_time_;
 		this.initMonsters();
-		this.sync = Sync.new(1 + this.monsters.size());
+		this.sync = Sync.new(2);
 
 		this.x0 = x0_;
 		this.y0 = y0_;
@@ -236,7 +314,18 @@ class Game {
 /****************************************************************************/
 	/* Get user inputs*/
 	function getInputs() {
-		this.last_key = this.mw.getKey();
+		this.mutex.lock();
+		this.last_key = this.keyQ.front(); 
+		this.keyQ.pop();
+		this.mutex.unlock();
+	}
+
+	function readInputs() {
+		var k = this.mw.getKey();
+
+		this.mutex.lock();
+		this.keyQ.push(k);
+		this.mutex.unlock();
 	}
 
 /****************************************************************************/
@@ -321,9 +410,12 @@ class Game {
 		there aren't special objects in the grid
 	*/
 	function isRunning() {
-		return  this.last_key.getChar() != 'q' && 
+		this.mutex.lock();
+		var status = this.last_key.getChar() != 'q' && 
 				this.player.score.moves > 0 &&
 			   (this.n0o + this.nPo + this.nSo) != 0;
+		this.mutex.unlock();
+		return status;
 	}
 
 /****************************************************************************/
@@ -334,7 +426,11 @@ class Game {
 
 		this.grid[px] = this.grid[px].replace('x', '.');
 
-		switch (this.last_key.getInt()) {
+		this.mutex.lock();
+		var kk = this.last_key.getInt();
+		this.mutex.unlock();
+
+		switch (kk) {
 			case NCurses.KEY_LEFT:
 				if (this.grid[px][(this.m + py - 1) % this.m] != '#') {
 					py = (this.m - 1 + py) % this.m;
@@ -420,9 +516,9 @@ class Game {
 
 		for (var i = 0; i < this.m; ++i) {
 			if (i == py) {
-				l = l + 'x';
+				l += 'x';
 			} else {
-				l = l + this.grid[px][i];
+				l += this.grid[px][i];
 			}
 		}
 		this.grid[px] = l;
@@ -446,55 +542,157 @@ class Game {
 /****************************************************************************/
 	/* Run game */
 	var m_id;
+	function render() {
+		/* Update player score*/
+		/*Get a new key*/
+		this.updateScore();
 
+		/* Draw grid */
+		this.draw();
+
+		/* Paint grid */
+		this.paint();
+
+		/*Print messages*/
+		this.printInfos();
+	}
+
+	function monster_control(ii)
+	{
+		var monster = this.monsters[ii];
+		var dx = [-1, 1,  0, 0];
+		var dy = [ 0, 0, -1, 1];
+		var px = monster[0], py = monster[1];
+
+		var ppx = this.player.p.x;
+		var ppy = this.player.p.y;
+
+		for (var i = 0; i < this.n; ++i) {
+			for (var j = 0; j < this.m; ++j) {
+				this.d[i][j] = INF;
+				this.pi[i][j] = Point.new(-1, -1);
+			}
+		}
+
+		this.d[px][py] = 0;
+
+		var q = PriorityQueue.new(pair_cmp);
+		var s = Point.new(px, py);
+		var t = Point.new(ppx, ppy);
+		var r = Point.new(-1, -1);
+
+		q.push(Pair.new(px, py, this.d[px][py] + dist(s, t)));
+
+		while (!q.empty()) {
+			var ux = q.top().x;
+			var uy = q.top().y; 
+			var u = Point.new(ux, uy);			
+			q.pop();
+
+			if (ux == t.x && uy == t.y) {
+				break;
+			}
+
+
+			for (var i = 0; i < 4; ++i) {
+				var vx = (this.n + ux + dx[i]) % this.n;
+				var vy = (this.m + uy + dy[i]) % this.m;
+				var v = Point.new(vx, vy);
+
+				if (this.d[vx][vy] > this.d[ux][uy] + 1 && 
+					this.grid[vx][vy] != '#' && 
+					this.grid[vx][vy] != '+') {
+					q.push(Pair.new(vx, vy, this.d[ux][uy] + 1  + dist(v, t)));
+					this.d[vx][vy] = this.d[ux][uy] + 1;
+					this.pi[vx][vy] = Point.new(ux, uy);
+				}
+			}
+		}
+
+		var pip = Point.new(t.x, t.y);
+
+		while (pip.x != -1) {
+			var pipn = this.pi[pip.x][pip.y];
+
+		
+			if (pipn.x == s.x && pipn.y == s.y) {
+				r.x = pip.x; r.y = pip.y;
+				break;
+			}
+			pip = pipn;
+		}
+	
+
+		var l = "";
+		var l2 = "";
+
+		
+		for (var i = 0; i < this.m; ++i) {
+			if (i == py) {
+				l += ".";
+			} else {
+				l += this.grid[px][i];
+			}
+		}
+		this.grid[px] = l;
+	
+		
+		for (var i = 0; i < this.m; ++i) {
+			if (i == r.y) {
+				l2 += "+";
+			} else {
+				l2 += this.grid[r.x][i];
+			}
+		}
+		this.grid[r.x] = l2;
+	
+		px = r.x;
+		py = r.y;
+
+		if (px == t.x && py == t.y) {
+			this.player.score.moves = 0;
+		}
+
+		this.monsters[ii] = [px, py];
+		this.mw.addStr(ii + 5, this.m + 5, px + ", " + px);
+	}
+
+	var d, pi;
+
+	//n, m, grid, p0, monster, player, sync, d, pi, mw,
 	function run() {
+
+		/*Init distance matrix and pi-code matrix*/
+		this.d = [];
+		this.pi = [];
+
+		for (var i = 0; i < this.n; ++i) {
+			this.d.append([]);
+			this.pi.append([]);
+			for (var j = 0; j < this.m; ++j) {
+				this.d[i].append(INF);
+				this.pi[i].append(Point.new(-1, -1));
+			}
+		}
 
 		/* Print title*/
 		this.title();
 
-		/* The render loop */		
-		var id = this.sync.nextID();
-		this.m_id = id;
+		/* The render loop */
+		var ai_ = Thread.new(make_moves, this);
+		var keys_ = Thread.new(read_keys, this);
+		var render_ = Thread.new(render, this);
 
-		this.monsters_control.each(
-			function(z) {
-				z.start();
-			}
-		);
+		ai_.start();
+		render_.start();
+		keys_.start();
 
-		while (this.sync.status()) {
-			if (id == this.sync.getID()) {
-				/* Update player score*/
-				this.updateScore();
-		
-				/* Draw grid */
-				this.draw();
-
-				/* Paint grid */
-				this.paint();
-
-				/*Print messages*/
-				this.printInfos();
-		
-				/*Get a new key*/	
-				this.getInputs();
-				
-				var ok = this.isRunning();
-
-				this.sync.setStatus(ok);
-				this.sync.nextID();
-			}
-		}
+		ai_.wait();
+		render_.wait();
+		keys_.wait();
 
 		/* Finish game*/
 		this.finish();
-
-		this.monsters_control.each(
-			function(z) {
-				z.wait();
-			}
-		);
-
 		this.mw.exit();
 	}
 }

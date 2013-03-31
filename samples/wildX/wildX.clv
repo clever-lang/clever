@@ -59,7 +59,7 @@ var view_ratio = 6;
 var game = Game.new(grid, n, m, x0, y0, view_ratio, sleep_time_monster);
 
 /* Run game */
-game.start(2000);
+game.start(20000);
 game.run();
 
 
