@@ -226,6 +226,8 @@ ast::Node* ModManager::importFile(Scope* scope,
 
 	if (!m_driver->loadFile(fname, ns_name)) {
 		return m_driver->getCompiler().getAST();
+	} else {
+		CLEVER_EXIT_FATAL();
 	}
 
 	return NULL;

@@ -101,6 +101,7 @@ void Resolver::visit(FunctionDecl* node)
 
 	Value* fval = new Value;
 	fval->setObj(CLEVER_FUNC_TYPE, func);
+	fval->setConst(true);
 
 	if (m_class && !node->isAnonymous()) {
 		func->setContext(m_class);

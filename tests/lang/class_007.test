@@ -1,0 +1,14 @@
+[FATAL] Testing member overwrite
+==CODE==
+import std.io;
+
+class Test {
+    function method() {
+        io:println('aa');
+    }
+}
+
+var w = Test.new;
+w.method = 'aaa';
+==RESULT==
+Fatal error: Cannot assign to a const variable! on \S+ line 10
