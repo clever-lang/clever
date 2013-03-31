@@ -113,24 +113,29 @@ function read_keys(gh)
 	var ok = true;
 	while (gh.sync.status()) {
 		gh.readInputs();
+		gh.mw.sleep();
 	}
 }
 
 function render(gh)
 {
 	var ok = true;
-	var id = gh.sync.nextID();
 	
 	while (gh.sync.status()) {
 		
-		if (gh.sync.getID() == id) {
+		if (gh.sync.getID() == 0) {
 			gh.getInputs();
-			gh.render();
+
+			
+			/*Print messages*/
+			gh.updateScore();
+			gh.draw();
+			gh.printInfos();
+			gh.paint();
+			
 			ok = gh.isRunning();		
 			
 			if (!ok) { gh.sync.setStatus(false); }
-			gh.mw.sleep();
-				
 			gh.sync.nextID();
 		}
 	}
@@ -139,37 +144,31 @@ function render(gh)
 function make_moves(gh)
 {
 	var ok = true;
-	var id = gh.sync.nextID();
 	var st = 0.5;
 	var tini = microtime();
 
 	while (gh.sync.status()) {
-		if (gh.sync.getID() == id) {
+		if (gh.sync.getID() == 1) {
 			var tfim = microtime();
 			if (tfim - tini > st) {
 				var i = 0;
 
 				for (var v in gh.monsters) {
+					
 					gh.monster_control(i);
-					/* Draw grid */
-					gh.draw();
 
 					/* Paint grid */
 					gh.paint();
-
-					/*Print messages*/
-					gh.printInfos();
-
+					
 					ok = gh.isRunning();
 				
 					if (!ok) { gh.sync.setStatus(false); break; }
 			
 					++i;
 				}
-				tini = tfim;
-				
-			}
 
+				tini = tfim;
+			}
 			gh.sync.nextID();
 		}
 	}
@@ -299,7 +298,7 @@ class Game {
 		this.nAo = 0;
 
 		/* This game use NCurses as graphical engine*/
-		this.mw = NCurses.new(true, 50);
+		this.mw = NCurses.new(true, 10);
 
 		/* Enable key reading */
 		this.mw.noEcho(); 
