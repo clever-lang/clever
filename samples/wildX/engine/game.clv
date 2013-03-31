@@ -111,7 +111,7 @@ const INF  = 1 << 20;
 function read_keys(gh)
 {
 	var ok = true;
-	while (ok) {
+	while (gh.sync.status()) {
 		gh.readInputs();
 	}
 }
@@ -120,21 +120,19 @@ function render(gh)
 {
 	var ok = true;
 	var id = gh.sync.nextID();
-
+	
 	while (gh.sync.status()) {
+		
 		if (gh.sync.getID() == id) {
-			if (!gh.keyQ.empty()) {
-				gh.getInputs();
-				gh.render();
-				
-				ok = gh.isRunning();		
-			}
+			gh.getInputs();
+			gh.render();
+			ok = gh.isRunning();		
 			
 			if (!ok) { gh.sync.setStatus(false); }
-	
+			gh.mw.sleep();
+				
 			gh.sync.nextID();
 		}
-		sleep(100);	
 	}
 }
 
@@ -142,33 +140,38 @@ function make_moves(gh)
 {
 	var ok = true;
 	var id = gh.sync.nextID();
+	var st = 0.5;
+	var tini = microtime();
 
 	while (gh.sync.status()) {
 		if (gh.sync.getID() == id) {
-			var i = 0;
+			var tfim = microtime();
+			if (tfim - tini > st) {
+				var i = 0;
 
-			for (var v in gh.monsters) {
-				gh.monster_control(i);
+				for (var v in gh.monsters) {
+					gh.monster_control(i);
+					/* Draw grid */
+					gh.draw();
 
-				ok = gh.isRunning();
+					/* Paint grid */
+					gh.paint();
+
+					/*Print messages*/
+					gh.printInfos();
+
+					ok = gh.isRunning();
 				
-				if (!ok) { gh.sync.setStatus(false); break; }
+					if (!ok) { gh.sync.setStatus(false); break; }
 			
-				++i;
+					++i;
+				}
+				tini = tfim;
+				
 			}
 
-			/* Draw grid */
-			gh.draw();
-
-			/* Paint grid */
-			gh.paint();
-
-			/*Print messages*/
-			gh.printInfos();
-			
 			gh.sync.nextID();
 		}
-		sleep(500);
 	}
 }
 
@@ -296,7 +299,7 @@ class Game {
 		this.nAo = 0;
 
 		/* This game use NCurses as graphical engine*/
-		this.mw = NCurses.new(true, 10000);
+		this.mw = NCurses.new(true, 50);
 
 		/* Enable key reading */
 		this.mw.noEcho(); 
@@ -315,8 +318,11 @@ class Game {
 	/* Get user inputs*/
 	function getInputs() {
 		this.mutex.lock();
-		this.last_key = this.keyQ.front(); 
-		this.keyQ.pop();
+		if (this.keyQ.empty()) {
+			this.last_key = Key.new(0);
+		} else {
+			this.keyQ.pop();
+		}
 		this.mutex.unlock();
 	}
 
@@ -324,7 +330,10 @@ class Game {
 		var k = this.mw.getKey();
 
 		this.mutex.lock();
-		this.keyQ.push(k);
+		this.last_key = k;
+		if (this.keyQ.empty()) {
+			this.keyQ.push(k);
+		}
 		this.mutex.unlock();
 	}
 
@@ -373,7 +382,7 @@ class Game {
 		this.mw.addStr(this.x0 - 3, 2, "GAME OVER!");
 
 		this.mw.setColor(2);
-		this.mw.addStr(this.n + this.x0 + 1, 2, "Press 'q' to exit.");
+		this.mw.addStr(this.n + this.x0 + 1, 2, "Press 'ctrl+C' to exit.");
 
 		wait(this.mw, 113);
 	}
@@ -385,7 +394,7 @@ class Game {
 		this.mw.addStr(0, 0, "The Wild X");
 
 		this.mw.setColor(2);
-		this.mw.addStr(this.n + this.x0 + 1, 2, "Press 'q' to quit.");
+		this.mw.addStr(this.n + this.x0 + 1, 2, "Press 'ctrl+C' to quit.");
 	}
 
 /****************************************************************************/
