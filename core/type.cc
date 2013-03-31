@@ -107,6 +107,7 @@ Function* Type::addMethod(Function* func, size_t flags)
 
 	val->setObj(CLEVER_FUNC_TYPE, func);
 	val->setConst(true);
+	func->setContext(this);
 	addMember(CSTRING(func->getName()), MemberData(val, flags));
 
 	return func;

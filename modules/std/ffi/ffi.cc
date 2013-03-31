@@ -425,7 +425,7 @@ CLEVER_TYPE_INIT(FFI::init)
 
 	m_call_handler = new Value;
 	m_call_handler->setObj(CLEVER_FUNC_TYPE,
-		new Function("callThisFunction", (MethodPtr)&FFI::callThisFunction));
+		new Function("callThisFunction", (MethodPtr)&FFI::callThisFunction, this));
 }
 
 // FFI module initialization

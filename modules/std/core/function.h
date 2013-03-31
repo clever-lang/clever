@@ -54,9 +54,9 @@ public:
 		  m_environment(NULL), m_context(NULL)
 		{ m_info.addr = addr; }
 
-	Function(const std::string& name, MethodPtr ptr)
+	Function(const std::string& name, MethodPtr ptr, const Type* context = NULL)
 		: m_name(name), m_num_rargs(0), m_num_args(0), m_flags(FF_INTERNAL|FF_PUBLIC),
-		  m_environment(NULL), m_context(NULL)
+		  m_environment(NULL), m_context(context)
 		{ m_info.mptr = ptr; }
 
 	~Function() {}
