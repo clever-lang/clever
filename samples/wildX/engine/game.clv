@@ -254,7 +254,7 @@ class Game {
 		this.nAo = 0;
 
 		/* This game use NCurses as graphical engine*/
-		this.mw = NCurses.new(true, 2);
+		this.mw = NCurses.new(true, 30);
 
 		/* Enable key reading */
 		this.mw.noEcho(); 
@@ -480,6 +480,7 @@ class Game {
 
 		this.mw.setColor(this.colors['x']);
 		this.mw.addChar(px + this.x0, py + this.y0, 'x');
+		this.mw.refresh();
 
 		print_info(this.mw, "Position player: ", "(" + py + ", " + px + ")   ", this.n + this.x0 + 3,  2, 12, 10);
 	}
@@ -583,9 +584,11 @@ class Game {
 
 			this.mw.setColor(this.colors['.']);
 			this.mw.addChar(px + this.x0, py + this.y0, '.');
+			this.mw.refresh();
 
 			this.mw.setColor(this.colors['+']);
 			this.mw.addChar(r.x + this.x0, r.y + this.y0, '+');
+			this.mw.refresh();
 		}
 	
 		px = r.x;
