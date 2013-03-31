@@ -395,7 +395,7 @@ CLEVER_METHOD(StrType::setChar)
 	const CString* str = args[1]->getStr();
 	long position = args[0]->getInt();
 
-	for (size_t i = position, j = 0; j < str->size() and i < data->size(); ++i, ++j) {
+	for (size_t i = position, j = 0; j < str->size() && i < data->size(); ++i, ++j) {
 		data->at(i) = str->at(j);
 	}
 }

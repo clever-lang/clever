@@ -113,7 +113,6 @@ function read_keys(gh)
 	var ok = true;
 	while (gh.sync.status()) {
 		gh.readInputs();
-		gh.mw.sleep();
 	}
 }
 
@@ -121,22 +120,20 @@ function render(gh)
 {
 	var ok = true;
 	
-	while (gh.sync.status()) {
-		
+	while (gh.sync.status()) {		
 		if (gh.sync.getID() == 0) {
 			gh.getInputs();
 
-			
 			/*Print messages*/
 			gh.updateScore();
 			gh.draw();
-			gh.printInfos();
-			gh.paint();
+			gh.printInfos();				
 			
 			ok = gh.isRunning();		
 			
 			if (!ok) { gh.sync.setStatus(false); }
-			gh.sync.nextID();
+			gh.mw.sleep();
+			gh.sync.nextID();			
 		}
 	}
 }
@@ -157,9 +154,6 @@ function make_moves(gh)
 					
 					gh.monster_control(i);
 
-					/* Paint grid */
-					gh.paint();
-					
 					ok = gh.isRunning();
 				
 					if (!ok) { gh.sync.setStatus(false); break; }
@@ -169,6 +163,7 @@ function make_moves(gh)
 
 				tini = tfim;
 			}
+			gh.mw.sleep();
 			gh.sync.nextID();
 		}
 	}
@@ -178,7 +173,6 @@ function make_moves(gh)
 class Game {
 	/* Grid */
 	var grid, n, m;
-	var visited;
 	var keyQ;
 
 	/* Grid position */
@@ -213,28 +207,6 @@ class Game {
 	var sleep_time;
 	var sync;
 
-/****************************************************************************/
-	function initVisited() {
-		this.visited = [];
-
-		for (var i = 0; i < this.n; ++i) {
-			this.visited.append([]);
-
-			for (var j = 0; j < this.m; ++j) {
-				this.visited[i].append(false);
-			}
-		}
-	}
-
-/****************************************************************************/
-	function isVisited(i, j) {
-		return true;
-		if (i < this.n && i >= 0 && j < this.m && j >= 0) {
-			return this.visited[i][j];
-		} else {
-			return false;
-		}
-	}
 
 /****************************************************************************/
 	function isValidPos(i, j) {
@@ -242,20 +214,6 @@ class Game {
 			return true;
 		} else {
 			return false;
-		}
-	}
-
-/****************************************************************************/
-	function updateVisited(ux, uy) {
-		for (var i = -this.r; i <= this.r; ++i) {
-			for (var j = -this.r; j <= this.r; ++j) {
-				var px = ux + i;
-				var py = uy + j;
-
-				if (this.isValidPos(px, py) && (i * i + j * j) <= this.r * this.r) {
-					this.visited[px][py] = true;
-				}
-			}
 		}
 	}
 
@@ -283,8 +241,6 @@ class Game {
 
 		this.r = r_;
 
-		this.initVisited();
-
 		this.sleep_time = sleep_time_;
 		this.initMonsters();
 		this.sync = Sync.new(2);
@@ -298,7 +254,7 @@ class Game {
 		this.nAo = 0;
 
 		/* This game use NCurses as graphical engine*/
-		this.mw = NCurses.new(true, 10);
+		this.mw = NCurses.new(true, 2);
 
 		/* Enable key reading */
 		this.mw.noEcho(); 
@@ -371,7 +327,6 @@ class Game {
 		this.p0 = Point.new(px, py);
 
 		this.player = Player.new(Point.new(this.p0.x, this.p0.y), Score.new(n_moves, 0, 0, 0, 0, 0));
-		this.updateVisited(px, py);
 	}
 
 /****************************************************************************/
@@ -403,10 +358,8 @@ class Game {
 			for (var j = 0; j < this.grid[i].size(); ++j) {
 				var c = this.grid[i][j];
 
-				if (this.isVisited(i, j)) {
-					this.mw.setColor(this.colors[c]);
-					this.mw.addChar(i + this.x0, j + this.y0, c);
-				} 
+				this.mw.setColor(this.colors[c]);
+				this.mw.addChar(i + this.x0, j + this.y0, c); 
 			}
 		}
 	}
@@ -432,7 +385,10 @@ class Game {
 		var px = this.player.p.x;
 		var py = this.player.p.y;
 
-		this.grid[px] = this.grid[px].replace('x', '.');
+		this.grid[px].setChar(py, '.');
+
+		this.mw.setColor(this.colors['.']);
+		this.mw.addChar(px + this.x0, py + this.y0, '.');
 
 		this.mutex.lock();
 		var kk = this.last_key.getInt();
@@ -476,7 +432,6 @@ class Game {
 		} else {
 			this.player.p.x = px;
 			this.player.p.y = py;
-			this.updateVisited(px, py);
 		}		
 	}
 
@@ -520,16 +475,11 @@ class Game {
 	function draw() {
 		var px = this.player.p.x;
 		var py = this.player.p.y;
-		var l = "";
 
-		for (var i = 0; i < this.m; ++i) {
-			if (i == py) {
-				l += 'x';
-			} else {
-				l += this.grid[px][i];
-			}
-		}
-		this.grid[px] = l;
+		this.grid[px].setChar(py, 'x');
+
+		this.mw.setColor(this.colors['x']);
+		this.mw.addChar(px + this.x0, py + this.y0, 'x');
 
 		print_info(this.mw, "Position player: ", "(" + py + ", " + px + ")   ", this.n + this.x0 + 3,  2, 12, 10);
 	}
@@ -551,15 +501,9 @@ class Game {
 	/* Run game */
 	var m_id;
 	function render() {
-		/* Update player score*/
-		/*Get a new key*/
-		this.updateScore();
-
-		/* Draw grid */
-		this.draw();
-
 		/* Paint grid */
 		this.paint();
+		this.draw();
 
 		/*Print messages*/
 		this.printInfos();
@@ -581,6 +525,8 @@ class Game {
 				this.pi[i][j] = Point.new(-1, -1);
 			}
 		}
+
+		if (px < 0 || py < 0) { return; }
 
 		this.d[px][py] = 0;
 
@@ -630,29 +576,17 @@ class Game {
 			pip = pipn;
 		}
 	
+		if (px > -1 && px < this.n && py > -1 && py < this.m &&
+			r.x > -1 && r.x < this.n && r.y > -1 && r.y < this.m) {
+			this.grid[px].setChar(py, '.');
+			this.grid[r.x].setChar(r.y, '+');
 
-		var l = "";
-		var l2 = "";
+			this.mw.setColor(this.colors['.']);
+			this.mw.addChar(px + this.x0, py + this.y0, '.');
 
-		
-		for (var i = 0; i < this.m; ++i) {
-			if (i == py) {
-				l += ".";
-			} else {
-				l += this.grid[px][i];
-			}
+			this.mw.setColor(this.colors['+']);
+			this.mw.addChar(r.x + this.x0, r.y + this.y0, '+');
 		}
-		this.grid[px] = l;
-	
-		
-		for (var i = 0; i < this.m; ++i) {
-			if (i == r.y) {
-				l2 += "+";
-			} else {
-				l2 += this.grid[r.x][i];
-			}
-		}
-		this.grid[r.x] = l2;
 	
 		px = r.x;
 		py = r.y;
@@ -692,6 +626,7 @@ class Game {
 		var render_ = Thread.new(render, this);
 
 		this.render();
+
 		ai_.start();
 		render_.start();
 		keys_.start();
