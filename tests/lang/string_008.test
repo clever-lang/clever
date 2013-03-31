@@ -1,0 +1,12 @@
+String Comparison
+==CODE==
+import std.io.*;
+var a = "abc"; 
+
+println(a); 
+a.setChar(1, "cs"); 
+println(a);
+
+==RESULT==
+abc
+acs
