@@ -13,7 +13,6 @@
 
 namespace clever { namespace modules { namespace std {
 
-/*PriorityQueue*/
 struct CPQValue {
 	CPQValue(Value* elem, const Function* func_, const VM* vm_)
 		: element(elem), comp(func_), vm(vm_) {}
@@ -34,10 +33,9 @@ struct CPQObject : public TypeObject {
 
 	~CPQObject() {
 		while (!pq.empty()) {
-			delete pq.top().element;
+			clever_delref(pq.top().element);
 			pq.pop();
 		}
-
 	}
 
 	::std::priority_queue<CPQValue> pq;

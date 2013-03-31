@@ -119,7 +119,6 @@ CLEVER_TYPE_INIT(CQueue::init)
 	addMethod(new Function("back",  (MethodPtr)&CQueue::back));
 }
 
-/*PriorityQueue*/
 bool operator<(const CPQValue& a, const CPQValue& b)
 {
 	::std::vector<Value*> args;

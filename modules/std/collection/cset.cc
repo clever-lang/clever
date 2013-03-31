@@ -178,8 +178,7 @@ CLEVER_METHOD(CSet::ctor)
 		return;
 	}
 
-	result->setObj(this,
-		new CSetObject(static_cast<Function*>(args[0]->getObj())));
+	result->setObj(this, new CSetObject(comp));
 }
 
 // Set.insert(Object element)
