@@ -45,9 +45,6 @@ function runtest(file) {
 		var title = title_re.group(0) + " (" + file + ")";
 		var code_re = regex:Regex.new("==CODE==\s*((?s:(?!==RESULT==).)+)");
 
-		io:print("\r[....] " + title);
-		io:flush();
-
 		if (code_re.match(content)) {
 			var status;
 			var ts1 = sys:microtime();
@@ -60,7 +57,6 @@ function runtest(file) {
 			var result_re2 = regex:Regex.new(result_re.group(1).trim());
 
 			if (result_re2.test(result)) {
-				status = "PASS";
 				++passed;
 
 				file:remove(file + ".tmp");
@@ -68,11 +64,11 @@ function runtest(file) {
 			} else {
 				status = "FAIL";
 				++failed;
+				
+				io:println("\r[" + status + "] " + title + " - " + (ts2 - ts1) + " ms");
 			}
 
 			time_taken += (ts2 - ts1);
-
-			io:println("\r[" + status + "] " + title + " - " + (ts2 - ts1) + " ms");
 		} else {
 			io:println("Error: malformed test detected!");
 			sys:exit(1);
@@ -99,6 +95,6 @@ if (passed > 0 || failed > 0) {
 	io:println("Passed tests: " + passed);
 	io:println("Failed tests: " + failed);
 	io:println("-----------------------------------");
-	io:println("Time taken: " + time_taken);
+	io:println("Time taken: " + time_taken + " ms");
 	io:println("-----------------------------------");
 }

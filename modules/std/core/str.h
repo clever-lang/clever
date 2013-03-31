@@ -75,7 +75,9 @@ public:
 	CLEVER_METHOD(toUpper);
 	CLEVER_METHOD(toLower);
 	CLEVER_METHOD(replace);
+	CLEVER_METHOD(ltrim);
 	CLEVER_METHOD(trim);
+	CLEVER_METHOD(rtrim);
 	CLEVER_METHOD(toString);
 private:
 	DISALLOW_COPY_AND_ASSIGN(StrType);

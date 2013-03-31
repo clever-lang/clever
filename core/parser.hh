@@ -213,8 +213,9 @@ namespace clever {
      DEFAULT = 314,
      IN = 315,
      DO = 316,
-     XOR_EQUAL = 317,
-     UMINUS = 318
+     STATIC = 317,
+     XOR_EQUAL = 318,
+     UMINUS = 319
    };
 
     };

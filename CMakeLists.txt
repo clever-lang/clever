@@ -219,9 +219,9 @@ endif()
 
 # Test runner
 # ---------------------------------------------------------------------------
-set(TEST_RUNNER_BIN ${CMAKE_BINARY_DIR}/testrunner${CMAKE_EXECUTABLE_SUFFIX})
+set(TEST_RUNNER_BIN ${CMAKE_BINARY_DIR}/clever extra/testrunner.clv)
 add_custom_target(run-tests
-	COMMAND ${TEST_RUNNER_BIN} -q;${CMAKE_CURRENT_SOURCE_DIR}/tests
+	COMMAND ${TEST_RUNNER_BIN}
 	COMMENT "Running tests")
 add_dependencies(run-tests clever-cli)
 add_dependencies(run-tests testrunner)

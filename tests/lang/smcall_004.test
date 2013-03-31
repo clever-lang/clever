@@ -1,0 +1,17 @@
+[FATAL] Testing static method call
+==CODE==
+import std.io.*;
+
+class Foo {
+	static private function z(w) {
+		println(w);
+	}
+	
+	static private function w() {
+		Foo.z(123);
+	}
+}
+
+Foo.w();
+==RESULT==
+Fatal error: Cannot access member `Foo::w' from context on \S+ line 13

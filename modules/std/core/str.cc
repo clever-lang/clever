@@ -20,19 +20,17 @@ namespace clever {
 CLEVER_TYPE_OPERATOR(StrType::add)
 {
 	if (EXPECTED(rhs->isStr())) {
-		// TODO(Felipe): Do not require CString everywhere (because it stores the
-		// data in an string table)
-		result->setStr(new StrObject(*lhs->getStr() + *rhs->getStr()));
+		result->setStr(*lhs->getStr() + *rhs->getStr());
 	} else if (rhs->isInt()) {
 		std::stringstream ss;
 
 		ss << rhs->getInt();
-		result->setStr(new StrObject(*lhs->getStr() + ss.str()));
+		result->setStr(*lhs->getStr() + ss.str());
 	} else if (rhs->isDouble()) {
 		std::stringstream ss;
 
 		ss << rhs->getDouble();
-		result->setStr(new StrObject(*lhs->getStr() + ss.str()));
+		result->setStr(*lhs->getStr() + ss.str());
 	}
 }
 
@@ -46,7 +44,7 @@ CLEVER_TYPE_OPERATOR(StrType::mul)
 			os << *lhs->getStr();
 		}
 
-		result->setStr(new StrObject(os.str()));
+		result->setStr(os.str());
 	}
 }
 
@@ -125,7 +123,7 @@ CLEVER_TYPE_AT_OPERATOR(StrType::at_op)
 
 	pos[0] = data->at(key);
 
-	value->setStr(new StrObject(std::string(pos)));
+	value->setStr(std::string(pos));
 
 	return value;
 }
@@ -159,7 +157,7 @@ CLEVER_METHOD(StrType::subString)
 		count = of->size();
 	}
 
-	result->setStr(new StrObject(of->substr(start, count)));
+	result->setStr(of->substr(start, count));
 }
 
 // String.find(string needle, [int position, [int count]])
@@ -196,6 +194,23 @@ CLEVER_METHOD(StrType::find)
 	result->setInt(haystack->find(needle, pos, count));
 }
 
+// String.ltrim()
+// Returns a trimmed version of the string
+CLEVER_METHOD(StrType::ltrim)
+{
+	if (!clever_check_no_args()) {
+		return;
+	}
+
+	const CString* str = clever_this()->getStr();
+	std::string newstr = *str;
+
+	newstr.erase(0, newstr.find_first_not_of(" \n\r\t"));
+
+	result->setStr(newstr);
+}
+
+
 // String.trim()
 // Returns a trimmed version of the string
 CLEVER_METHOD(StrType::trim)
@@ -210,7 +225,24 @@ CLEVER_METHOD(StrType::trim)
 	newstr.erase(0, newstr.find_first_not_of(" \n\r\t"));
 	newstr.erase(newstr.find_last_not_of(" \n\r\t")+1);
 
-	result->setStr(new StrObject(newstr));
+	result->setStr(newstr);
+}
+
+
+// String.rtrim()
+// Returns a trimmed version of the string
+CLEVER_METHOD(StrType::rtrim)
+{
+	if (!clever_check_no_args()) {
+		return;
+	}
+
+	const CString* str = clever_this()->getStr();
+	std::string newstr = *str;
+
+	newstr.erase(newstr.find_last_not_of(" \n\r\t")+1);
+
+	result->setStr(newstr);
 }
 
 // String.findFirst(string needle, [int position, [int count]])
@@ -316,7 +348,7 @@ CLEVER_METHOD(StrType::format)
 			point++;
 		}
 	}
-	result->setStr(new StrObject(stream.str()));
+	result->setStr(stream.str());
 }
 
 // String.startsWith(string match)
@@ -374,7 +406,7 @@ CLEVER_METHOD(StrType::charAt)
 			found[0] = data->at(position);
 			found[1] = '\0';
 			if (found[0]) {
-				result->setStr(CSTRING(found));
+				result->setStr(found);
 				return;
 			}
 		}
@@ -449,8 +481,10 @@ CLEVER_METHOD(StrType::toUpper)
 
 	const ::std::string* str = clever_this()->getStr();
 	::std::string buffer = *str;
+	
 	std::transform(buffer.begin(), buffer.end(),buffer.begin(), ::toupper);
-	result->setStr(new StrObject(buffer));
+	
+	result->setStr(buffer);
 }
 
 // String.toLower
@@ -463,8 +497,10 @@ CLEVER_METHOD(StrType::toLower)
 
 	const ::std::string* str = clever_this()->getStr();
 	::std::string buffer = *str;
+	
 	std::transform(buffer.begin(), buffer.end(), buffer.begin(), ::tolower);
-	result->setStr(new StrObject(buffer));
+	
+	result->setStr(buffer);
 }
 
 // String.replace(needle, replace)
@@ -483,7 +519,7 @@ CLEVER_METHOD(StrType::replace)
 	if (pos != ::std::string::npos) {
 		buffer.replace(pos, needle->length(), args[1]->getStr()->c_str());
 	}
-	result->setStr(new StrObject(buffer));
+	result->setStr(buffer);
 }
 
 // String.toString
@@ -494,8 +530,7 @@ CLEVER_METHOD(StrType::toString)
 		return;
 	}
 
-	const ::std::string* str = clever_this()->getStr();
-	result->setStr(new StrObject(str));
+	result->setStr(new StrObject(clever_this()->getStr()));
 }
 
 CLEVER_TYPE_INIT(StrType::init)
@@ -514,7 +549,9 @@ CLEVER_TYPE_INIT(StrType::init)
 	addMethod(new Function("toUpper",		(MethodPtr)&StrType::toUpper));
 	addMethod(new Function("toLower",		(MethodPtr)&StrType::toLower));
 	addMethod(new Function("replace",		(MethodPtr)&StrType::replace));
+	addMethod(new Function("ltrim",         (MethodPtr)&StrType::ltrim));
 	addMethod(new Function("trim",          (MethodPtr)&StrType::trim));
+	addMethod(new Function("rtrim",         (MethodPtr)&StrType::rtrim));
 	addMethod(new Function("toString",		(MethodPtr)&StrType::toString));
 	addMethod(new Function("format",		(MethodPtr)&StrType::format))
 		->setStatic();
