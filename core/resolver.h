@@ -54,6 +54,7 @@ private:
 	std::stack<Environment*> m_stack;
 	Module* m_mod;
 	clever::Type* m_class;
+	const Function* m_func;
 
 	DISALLOW_COPY_AND_ASSIGN(Resolver);
 };

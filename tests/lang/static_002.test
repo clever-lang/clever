@@ -1,0 +1,13 @@
+[FATAL] Testing `this` variable access on static method
+==CODE==
+import std.io;
+
+class Foo {
+	static function abc() {
+		io:println(this.a);
+	}
+}
+
+Foo.abc();
+==RESULT==
+Compile error: Cannot use `this' variable on static method on \S+ line 5

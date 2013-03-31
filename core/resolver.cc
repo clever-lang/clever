@@ -14,7 +14,8 @@
 namespace clever { namespace ast {
 
 Resolver::Resolver(const ModManager& ModManager, const std::string& ns_name)
-	: Visitor(), m_modmanager(ModManager), m_ns_name(ns_name), m_mod(NULL), m_class(NULL)
+	: Visitor(), m_modmanager(ModManager), m_ns_name(ns_name), m_mod(NULL),
+		m_class(NULL), m_func(NULL)
 {
 	// Global environment and scope
 	m_symtable = m_scope = new Scope();
@@ -180,7 +181,11 @@ void Resolver::visit(FunctionDecl* node)
 		func->setVariadic();
 	}
 
+	m_func = func;
+
 	node->getBlock()->accept(*this);
+
+	m_func = NULL;
 
 	m_scope = m_scope->leave();
 	m_stack.pop();
@@ -193,6 +198,11 @@ void Resolver::visit(Ident* node)
 	if (!sym) {
 		Compiler::errorf(node->getLocation(),
 			"Identifier `%S' not found.", node->getName());
+	} else {
+		if (m_func && m_func->isStatic() && *node->getName() == "this") {
+			Compiler::errorf(node->getLocation(),
+				"Cannot use `this' variable on static method");
+		}
 	}
 
 	node->setVOffset(m_scope->getOffset(sym));
