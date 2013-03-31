@@ -691,6 +691,7 @@ class Game {
 		var keys_ = Thread.new(read_keys, this);
 		var render_ = Thread.new(render, this);
 
+		this.render();
 		ai_.start();
 		render_.start();
 		keys_.start();
