@@ -585,6 +585,7 @@ class Game {
 			pip = pipn;
 		}
 	
+
 		if (px > -1 && px < this.n && py > -1 && py < this.m &&
 			r.x > -1 && r.x < this.n && r.y > -1 && r.y < this.m) {
 			this.grid[px].setChar(py, '.');
