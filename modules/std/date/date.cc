@@ -40,22 +40,23 @@ static inline void clever_date_format(const ::std::vector<Value*>* args,
 	}
 
 	struct tm* local = utc ? gmtime(dobj->intern) : localtime(dobj->intern);
-	size_t need = strftime(NULL, -1, format, local);
+	size_t size = 50;
+	// Number of times we try to double the array size to see if the string
+	// fits in this size.
+	int tries = 5;
 
-	if (!need) {
-		//clever_throw(eventually);
-		//There shouldn't be a circumstance where this arises ??
-		return;
-	} else {
-		need += 1;
-	}
+	do {
+		char buffer[size];
 
-	char buffer[need];
-	if (strftime(buffer, need, format, local)) {
-		result->setStr(new StrObject(new CString(buffer), false));
-	} else {
-		result->setNull();
-	}
+		if (strftime(buffer, size, format, local)) {
+			result->setStr(new StrObject(new CString(buffer), false));
+			return;
+		}
+
+		size <<= 1;
+	} while (tries--);
+
+	result->setNull();
 }
 
 /*
