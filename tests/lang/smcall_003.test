@@ -1,0 +1,17 @@
+Testing static method call
+==CODE==
+import std.io.*;
+
+class Foo {
+	static private function z(w) {
+		println(w);
+	}
+	
+	static function w() {
+		Foo.z(123);
+	}
+}
+
+Foo.w();
+==RESULT==
+123

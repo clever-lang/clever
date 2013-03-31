@@ -123,6 +123,10 @@ void Resolver::visit(FunctionDecl* node)
 			case ast::PUBLIC:  func->setPublic();  break;
 			case ast::PRIVATE: func->setPrivate(); break;
 		}
+		
+		if (node->isStatic()) {
+			func->setStatic();
+		}
 	} else {
 		m_scope->pushValue(name, fval);
 

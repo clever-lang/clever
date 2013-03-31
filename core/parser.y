@@ -192,6 +192,7 @@ class Value;
 %token DEFAULT       "default"
 %token IN            "in"
 %token DO            "do"
+%token STATIC        "static"
 
 %left ',';
 %left LOGICAL_OR;
@@ -398,9 +399,11 @@ visibility:
 
 class_member_list:
 		visibility fdecl                                { $$ = new ast::NodeArray(yyloc); $$->append($2); $2->setVisibility($1); }
+	|	STATIC visibility fdecl                         { $$ = new ast::NodeArray(yyloc); $$->append($3); $3->setVisibility($2); $3->setStatic(); }
 	|	visibility VAR   class_attr_decl_list ';'       { $$ = new ast::NodeArray(yyloc); $$->append($3); $3->setVisibility($1); }
 	|	visibility CONST class_attr_const_decl_list ';' { $$ = new ast::NodeArray(yyloc); $$->append($3); $3->setVisibility($1); }
 	|	class_member_list visibility fdecl                                { $1->append($3); $3->setVisibility($2); }
+	|	class_member_list STATIC visibility fdecl                         { $1->append($4); $4->setVisibility($3); $4->setStatic(); }
 	|	class_member_list visibility VAR   class_attr_decl_list ';'       { $1->append($4); $4->setVisibility($2); }
 	|	class_member_list visibility CONST class_attr_const_decl_list ';' { $1->append($4); $4->setVisibility($2); }
 ;

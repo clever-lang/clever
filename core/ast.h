@@ -615,7 +615,7 @@ public:
 		VariableDecl* vararg, bool is_anon, const location& location)
 		: Node(location), m_ident(ident), m_type(NULL), m_args(args), m_block(block),
 			m_vararg(vararg), m_is_anon(is_anon), m_is_ctor(false), m_is_dtor(false),
-			m_visibility(0), m_func(NULL) {
+			m_is_static(false), m_visibility(0), m_func(NULL) {
 		clever_addref(m_ident);
 		clever_addref(m_args);
 		clever_addref(m_block);
@@ -626,7 +626,7 @@ public:
 		const location& location)
 		: Node(location), m_ident(NULL), m_type(type), m_args(args), m_block(block),
 			m_vararg(vararg), m_is_anon(false), m_is_ctor(false), m_is_dtor(false),
-			m_visibility(0), m_func(NULL) {
+			m_is_static(false), m_visibility(0), m_func(NULL) {
 		clever_addref(m_type);
 		clever_addref(m_args);
 		clever_addref(m_block);
@@ -659,10 +659,12 @@ public:
 	bool isAnonymous() const { return m_is_anon; }
 	bool isCtor() const { return m_is_ctor; }
 	bool isDtor() const { return m_is_dtor; }
+	bool isStatic() const { return m_is_static; }
 	bool isMethod() const { return m_func != NULL; }
 
 	void setCtor() { m_is_ctor = true; }
 	void setDtor() { m_is_dtor = true; }
+	void setStatic() { m_is_static = true; }
 	void setMethod(Function* func) { m_func = func; }
 
 	Type* getType() const { return m_type; }
@@ -697,6 +699,7 @@ private:
 	bool m_is_anon;
 	bool m_is_ctor;
 	bool m_is_dtor;
+	bool m_is_static;
 	size_t m_visibility;
 	Function* m_func;
 

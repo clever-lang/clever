@@ -1,0 +1,15 @@
+[FATAL] Testing static methods
+==CODE==
+import std.io.*;
+
+class Foo {
+	static function z(w) {
+		println(w);
+	}
+}
+
+var f = Foo.new;
+f.z(123);
+
+==RESULT==
+Fatal error: Method `Foo::z' cannot be called non-statically on \S+ line 10

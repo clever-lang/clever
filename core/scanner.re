@@ -59,6 +59,8 @@ next_token:
 		yylval->nillit = new ast::NullLit(*yyloc);
 		RET(token::NIL);
 	}
+	
+	<INITIAL>'static' { RET(token::STATIC); }
 
 	<INITIAL>'in' { RET(token::IN); }
 
