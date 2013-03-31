@@ -71,6 +71,7 @@ public:
 	CLEVER_METHOD(startsWith);
 	CLEVER_METHOD(endsWith);
 	CLEVER_METHOD(charAt);
+	CLEVER_METHOD(setChar);
 	CLEVER_METHOD(split);
 	CLEVER_METHOD(toUpper);
 	CLEVER_METHOD(toLower);

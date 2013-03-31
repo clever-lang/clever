@@ -384,6 +384,21 @@ CLEVER_METHOD(StrType::endsWith)
 		result->setNull();
 	}
 }
+// String.setChar(int position, string s)
+CLEVER_METHOD(StrType::setChar)
+{
+	if (!clever_check_args("is")) {
+		return;
+	}
+
+	CString* data = const_cast<CString*>(clever_this()->getStr());
+	const CString* str = args[1]->getStr();
+	long position = args[0]->getInt();
+
+	for (size_t i = position, j = 0; j < str->size() and i < data->size(); ++i, ++j) {
+		data->at(i) = str->at(j);
+	}
+}
 
 // String.charAt(int position)
 CLEVER_METHOD(StrType::charAt)
@@ -481,9 +496,9 @@ CLEVER_METHOD(StrType::toUpper)
 
 	const ::std::string* str = clever_this()->getStr();
 	::std::string buffer = *str;
-	
+
 	std::transform(buffer.begin(), buffer.end(),buffer.begin(), ::toupper);
-	
+
 	result->setStr(buffer);
 }
 
@@ -497,9 +512,9 @@ CLEVER_METHOD(StrType::toLower)
 
 	const ::std::string* str = clever_this()->getStr();
 	::std::string buffer = *str;
-	
+
 	std::transform(buffer.begin(), buffer.end(), buffer.begin(), ::tolower);
-	
+
 	result->setStr(buffer);
 }
 
@@ -545,6 +560,7 @@ CLEVER_TYPE_INIT(StrType::init)
 	addMethod(new Function("startsWith",	(MethodPtr)&StrType::startsWith));
 	addMethod(new Function("endsWith",		(MethodPtr)&StrType::endsWith));
 	addMethod(new Function("charAt",		(MethodPtr)&StrType::charAt));
+	addMethod(new Function("setChar",		(MethodPtr)&StrType::setChar));
 	addMethod(new Function("split",			(MethodPtr)&StrType::split));
 	addMethod(new Function("toUpper",		(MethodPtr)&StrType::toUpper));
 	addMethod(new Function("toLower",		(MethodPtr)&StrType::toLower));
