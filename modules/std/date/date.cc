@@ -142,11 +142,11 @@ CLEVER_METHOD(Date::ctor)
 
 CLEVER_TYPE_INIT(Date::init)
 {
-	setConstructor((MethodPtr) &Date::ctor);
+	setConstructor((MethodPtr)&Date::ctor);
 
-	addMethod(new Function("format",     (MethodPtr) &Date::format));
-	addMethod(new Function("uformat",    (MethodPtr) &Date::uformat));
-	addMethod(new Function("getTime",    (MethodPtr) &Date::getTime));
+	addMethod(new Function("format",  (MethodPtr)&Date::format));
+	addMethod(new Function("uformat", (MethodPtr)&Date::uformat));
+	addMethod(new Function("getTime", (MethodPtr)&Date::getTime));
 }
 
 }}} // clever::modules::std
