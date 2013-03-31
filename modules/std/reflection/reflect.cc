@@ -339,7 +339,6 @@ CLEVER_METHOD(ReflectType::getProperties)
 // Returns the sizes of the Intern classes
 CLEVER_METHOD(ReflectType::getInternClassSizes)
 {
-
 	printf("_______________________\n");
 	printf("Types\n");
 	printf("-----------------------\n");
