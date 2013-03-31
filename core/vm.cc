@@ -725,8 +725,14 @@ out:
 		}
 
 		if (func->isUserDefined()) {
-			prepareCall(func,
-				static_cast<UserObject*>(intern)->getEnvironment());
+			// For real method call
+			if (func->hasContext()) {
+				prepareCall(func,
+					static_cast<UserObject*>(intern)->getEnvironment());
+			} else {
+				// For function call through class member
+				prepareCall(func);
+			}
 
 			VM_GOTO(func->getAddr());
 		} else {

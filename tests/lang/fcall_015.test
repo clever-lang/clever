@@ -1,0 +1,24 @@
+Testing function call through class member
+==CODE==
+import std.io;
+
+function ww(x) {
+    io:println(x);
+}
+
+class Writer {
+    var writer;
+
+    function Writer(writer) {
+        this.writer = writer;
+    }
+
+    function write(msg) {
+        this.writer(msg);
+    }
+}
+
+var w = Writer.new(ww);
+w.write('hello world!');
+==RESULT==
+hello world!
