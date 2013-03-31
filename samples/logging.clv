@@ -1,0 +1,21 @@
+/**
+ * Clever programming language
+ * Copyright (c) Clever Team
+ *
+ * This file is distributed under the MIT license. See LICENSE for details.
+ */
+
+ /**
+ * Example of std.logging module.
+ */
+
+import std.*;
+import modules.std.logging.logger.*;
+
+var logger = getLogger('test');
+logger.warning('Sample warning!');
+
+// Disabling waring reports
+logger.setEnabledLevels(ALL ^ WARNING);
+logger.warning('Do not print this warning!');
+logger.info('This is an info!');

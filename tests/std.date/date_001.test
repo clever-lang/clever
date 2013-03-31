@@ -1,0 +1,13 @@
+Testing events in event package
+==CODE==
+import std.*;
+
+
+var my_date = date:Date.new(1364710352);
+
+io:println(my_date.format('%Y:%m:%d'));
+io:println(my_date.format('%H:%M:%S'));
+
+==RESULT==
+2013:03:31
+03:12:32
