@@ -50,7 +50,7 @@ CLEVER_METHOD(ReflectType::getType)
 	const ReflectObject* intern = clever_get_this(ReflectObject*);
 
 	if (intern->getData()->getType()) {
-		result->setStr(new StrObject(intern->getData()->getType()->getName()));
+		result->setStr(intern->getData()->getType()->getName());
 	} else {
 		result->setNull();
 	}
@@ -165,7 +165,7 @@ CLEVER_METHOD(ReflectType::getName)
 
 	const Function* func = static_cast<Function*>(data->getObj());
 
-	result->setStr(CSTRING(func->getName()));
+	result->setStr(func->getName());
 }
 
 // Reflect::isStatic()

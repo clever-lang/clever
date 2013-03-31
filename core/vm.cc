@@ -717,7 +717,7 @@ out:
 		const Function* func = static_cast<Function*>(fval->getObj());
 
 		clever_assert_not_null(func);
-		
+
 		if (func->isStatic()) {
 			error(OPCODE.loc,
 				"Method `%T::%S' cannot be called non-statically",
@@ -736,8 +736,12 @@ out:
 
 			VM_GOTO(func->getAddr());
 		} else {
-			(type->*func->getMethodPtr())(getValue(OPCODE.result),
-				callee, m_call_args, this, &m_exception);
+			if (func->hasContext()) {
+				(type->*func->getMethodPtr())(getValue(OPCODE.result),
+					callee, m_call_args, this, &m_exception);
+			} else {
+				func->getFuncPtr()(getValue(OPCODE.result), m_call_args, this, &m_exception);
+			}
 
 			m_call_args.clear();
 			if (UNEXPECTED(m_exception.hasException())) {
@@ -766,7 +770,7 @@ out:
 				error(OPCODE.loc, "Method `%T::%S' cannot be called statically",
 					type, method->getStr());
 			}
-			
+
 			if (func->isUserDefined()) {
 				prepareCall(func);
 
