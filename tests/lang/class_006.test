@@ -1,0 +1,15 @@
+Testing default argument in user class constructor
+==CODE==
+import std.*;
+
+const NUM = 10;
+
+class Aa {
+    function Aa(a, c = io:println, b = NUM) {
+		c(b);
+    }
+}
+
+var a = Aa.new(1);
+==RESULT==
+10

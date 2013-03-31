@@ -155,11 +155,11 @@ void Resolver::visit(FunctionDecl* node)
 			Assignment* assign = static_cast<VariableDecl*>(node->getArg(i))->getAssignment();
 
 			assign->setConditional(true);
-
+			
 			if (found_rhs && !assign->getRhs()) {
 				Compiler::errorf(assign->getLocation(),
 					"Non-default argument found after the default argument list");
-			} else if (!found_rhs && assign->getRhs()) {
+			} else if (assign->getRhs()) {
 				found_rhs = assign->getRhs();
 			} else {
 				++required_args;
