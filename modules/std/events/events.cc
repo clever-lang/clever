@@ -144,7 +144,7 @@ CLEVER_METHOD(Events::ctor)
 
 	intern->handler.create(_events_handler, intern);
 
-	intern->m_vm = new VM(*vm);
+	intern->m_vm = new VM(*clever->vm);
 
 	result->setObj(this, intern);
 }

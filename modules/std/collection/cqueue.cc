@@ -175,7 +175,7 @@ CLEVER_METHOD(CPQueue::push)
 
 	CPQObject* cobj = clever_get_this(CPQObject*);
 
-	cobj->pq.push(CPQValue(args[0]->clone(), cobj->comp, vm));
+	cobj->pq.push(CPQValue(args[0]->clone(), cobj->comp, clever->vm));
 }
 
 // PriorityQueue.pop()

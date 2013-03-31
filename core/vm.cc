@@ -254,7 +254,7 @@ Value* VM::runFunction(const Function* func, const ValueVector& args)
 	Value* result = new Value;
 
 	if (UNEXPECTED(func->isInternal())) {
-		func->getFuncPtr()(result, args, this, &m_exception);
+		func->getFuncPtr()(result, args, &m_clever);
 	} else {
 		Environment* fenv = func->getEnvironment()->activate();
 		fenv->setRetVal(result);
@@ -289,20 +289,20 @@ CLEVER_FORCE_INLINE void VM::binOp(const IR& op)
 
 	switch (op.opcode) {
 		// Arithmetic
-		case OP_ADD: type->add(getValue(op.result), lhs, rhs, this, &m_exception); break;
-		case OP_SUB: type->sub(getValue(op.result), lhs, rhs, this, &m_exception); break;
-		case OP_MUL: type->mul(getValue(op.result), lhs, rhs, this, &m_exception); break;
-		case OP_DIV: type->div(getValue(op.result), lhs, rhs, this, &m_exception); break;
-		case OP_MOD: type->mod(getValue(op.result), lhs, rhs, this, &m_exception); break;
+		case OP_ADD: type->add(getValue(op.result), lhs, rhs, &m_clever); break;
+		case OP_SUB: type->sub(getValue(op.result), lhs, rhs, &m_clever); break;
+		case OP_MUL: type->mul(getValue(op.result), lhs, rhs, &m_clever); break;
+		case OP_DIV: type->div(getValue(op.result), lhs, rhs, &m_clever); break;
+		case OP_MOD: type->mod(getValue(op.result), lhs, rhs, &m_clever); break;
 		// Bitwise
-		case OP_BW_AND: type->bw_and(getValue(op.result), lhs, rhs, this, &m_exception); break;
-		case OP_BW_OR: 	type->bw_or(getValue(op.result),  lhs, rhs, this, &m_exception); break;
-		case OP_BW_XOR:	type->bw_xor(getValue(op.result), lhs, rhs, this, &m_exception); break;
-		case OP_BW_RS:	type->bw_rs(getValue(op.result),  lhs, rhs, this, &m_exception); break;
-		case OP_BW_LS:	type->bw_ls(getValue(op.result),  lhs, rhs, this, &m_exception); break;
+		case OP_BW_AND: type->bw_and(getValue(op.result), lhs, rhs, &m_clever); break;
+		case OP_BW_OR: 	type->bw_or(getValue(op.result),  lhs, rhs, &m_clever); break;
+		case OP_BW_XOR:	type->bw_xor(getValue(op.result), lhs, rhs, &m_clever); break;
+		case OP_BW_RS:	type->bw_rs(getValue(op.result),  lhs, rhs, &m_clever); break;
+		case OP_BW_LS:	type->bw_ls(getValue(op.result),  lhs, rhs, &m_clever); break;
 		// Unary
-		case OP_NOT:    type->not_op(getValue(op.result), lhs, this, &m_exception); break;
-		case OP_BW_NOT:	type->bw_not(getValue(op.result), lhs, this, &m_exception);	break;
+		case OP_NOT:    type->not_op(getValue(op.result), lhs, &m_clever); break;
+		case OP_BW_NOT:	type->bw_not(getValue(op.result), lhs, &m_clever);	break;
 		EMPTY_SWITCH_DEFAULT_CASE();
 	}
 }
@@ -327,12 +327,12 @@ CLEVER_FORCE_INLINE void VM::logicOp(const IR& op)
 	const Type* type = lhs->getType();
 
 	switch (op.opcode) {
-		case OP_GREATER: type->greater(getValue(op.result),       lhs, rhs, this, &m_exception); break;
-		case OP_GEQUAL:  type->greater_equal(getValue(op.result), lhs, rhs, this, &m_exception); break;
-		case OP_LESS:    type->less(getValue(op.result),          lhs, rhs, this, &m_exception); break;
-		case OP_LEQUAL:  type->less_equal(getValue(op.result),    lhs, rhs, this, &m_exception); break;
-		case OP_EQUAL:   type->equal(getValue(op.result),         lhs, rhs, this, &m_exception); break;
-		case OP_NEQUAL:  type->not_equal(getValue(op.result),     lhs, rhs, this, &m_exception); break;
+		case OP_GREATER: type->greater(getValue(op.result),       lhs, rhs, &m_clever); break;
+		case OP_GEQUAL:  type->greater_equal(getValue(op.result), lhs, rhs, &m_clever); break;
+		case OP_LESS:    type->less(getValue(op.result),          lhs, rhs, &m_clever); break;
+		case OP_LEQUAL:  type->less_equal(getValue(op.result),    lhs, rhs, &m_clever); break;
+		case OP_EQUAL:   type->equal(getValue(op.result),         lhs, rhs, &m_clever); break;
+		case OP_NEQUAL:  type->not_equal(getValue(op.result),     lhs, rhs, &m_clever); break;
 		EMPTY_SWITCH_DEFAULT_CASE();
 	}
 }
@@ -486,7 +486,7 @@ out:
 
 			VM_GOTO(func->getAddr());
 		} else {
-			func->getFuncPtr()(getValue(OPCODE.result), m_call_args, this, &m_exception);
+			func->getFuncPtr()(getValue(OPCODE.result), m_call_args, &m_clever);
 			m_call_args.clear();
 
 			if (UNEXPECTED(m_exception.hasException())) {
@@ -531,7 +531,7 @@ out:
 		Value* value = getValue(OPCODE.op1);
 
 		if (EXPECTED(!value->isNull())) {
-			value->getType()->increment(value, this, &m_exception);
+			value->getType()->increment(value, &m_clever);
 			getValue(OPCODE.result)->deepCopy(value);
 
 			if (UNEXPECTED(m_exception.hasException())) {
@@ -549,7 +549,7 @@ out:
 
 		if (EXPECTED(!value->isNull())) {
 			getValue(OPCODE.result)->deepCopy(value);
-			value->getType()->increment(value, this, &m_exception);
+			value->getType()->increment(value, &m_clever);
 
 			if (UNEXPECTED(m_exception.hasException())) {
 				goto throw_exception;
@@ -565,7 +565,7 @@ out:
 		Value* value = getValue(OPCODE.op1);
 
 		if (EXPECTED(!value->isNull())) {
-			value->getType()->decrement(value, this, &m_exception);
+			value->getType()->decrement(value, &m_clever);
 			getValue(OPCODE.result)->deepCopy(value);
 
 			if (UNEXPECTED(m_exception.hasException())) {
@@ -583,7 +583,7 @@ out:
 
 		if (EXPECTED(!value->isNull())) {
 			getValue(OPCODE.result)->deepCopy(value);
-			value->getType()->decrement(value, this, &m_exception);
+			value->getType()->decrement(value, &m_clever);
 
 			if (UNEXPECTED(m_exception.hasException())) {
 				goto throw_exception;
@@ -657,7 +657,7 @@ out:
 			Value* instance = getValue(OPCODE.result);
 
 			(type->*ctor->getMethodPtr())(instance,
-				NULL, m_call_args, this, &m_exception);
+				NULL, m_call_args, &m_clever);
 
 			if (UNEXPECTED(m_exception.hasException())) {
 				m_call_args.clear();
@@ -738,9 +738,9 @@ out:
 		} else {
 			if (func->hasContext()) {
 				(type->*func->getMethodPtr())(getValue(OPCODE.result),
-					callee, m_call_args, this, &m_exception);
+					callee, m_call_args, &m_clever);
 			} else {
-				func->getFuncPtr()(getValue(OPCODE.result), m_call_args, this, &m_exception);
+				func->getFuncPtr()(getValue(OPCODE.result), m_call_args, &m_clever);
 			}
 
 			m_call_args.clear();
@@ -777,7 +777,7 @@ out:
 				VM_GOTO(func->getAddr());
 			} else {
 				(type->*func->getMethodPtr())(getValue(OPCODE.result),
-					NULL, m_call_args, this, &m_exception);
+					NULL, m_call_args, &m_clever);
 
 				m_call_args.clear();
 
@@ -935,7 +935,7 @@ throw_exception:
 		const Value* index = getValue(OPCODE.op2);
 
 		if (EXPECTED(!var->isNull() && !index->isNull())) {
-			Value* result = var->getType()->at_op(var, index, true, this, &m_exception);
+			Value* result = var->getType()->at_op(var, index, true, &m_clever);
 
 			setValue(OPCODE.result, result);
 
@@ -954,7 +954,7 @@ throw_exception:
 		const Value* index = getValue(OPCODE.op2);
 
 		if (EXPECTED(!var->isNull() && !index->isNull())) {
-			Value* result = var->getType()->at_op(var, index, false, this, &m_exception);
+			Value* result = var->getType()->at_op(var, index, false, &m_clever);
 
 			setValue(OPCODE.result, result);
 

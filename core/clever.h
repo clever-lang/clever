@@ -21,8 +21,18 @@ namespace clever {
 class CException;
 class Type;
 class Value;
+class VM;
 
 extern jmp_buf fatal_error;
+
+
+struct Clever {
+	const VM* vm;
+	CException* exception;
+
+	Clever(const VM* vm_, CException* exception_)
+		: vm(vm_), exception(exception_) {}
+};
 
 // Version macros
 #define CLEVER_VERSION 100    // 0.1.0
@@ -143,8 +153,8 @@ void printfln(const char*, ...);
 
 /** @} */
 
-#define clever_check_args(spec) clever::check_args(args, spec, exception, this)
-#define clever_static_check_args(spec) clever::check_args(args, spec, exception)
+#define clever_check_args(spec) clever::check_args(args, spec, clever->exception, this)
+#define clever_static_check_args(spec) clever::check_args(args, spec, clever->exception)
 #define clever_check_no_args()  clever_check_args(NULL)
 #define clever_static_check_no_args()  clever_static_check_args(NULL)
 

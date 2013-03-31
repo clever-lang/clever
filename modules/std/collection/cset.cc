@@ -191,7 +191,7 @@ CLEVER_METHOD(CSet::insert)
 
 	CSetObject* cobj = clever_get_this(CSetObject*);
 
-	cobj->set.insert(CSetValue(args[0]->clone(), cobj->comp, vm));
+	cobj->set.insert(CSetValue(args[0]->clone(), cobj->comp, clever->vm));
 }
 
 // Set.size()
@@ -228,7 +228,7 @@ CLEVER_METHOD(CSet::find)
 	const CSetObject* cobj = clever_get_this(CSetObject*);
 
 	::std::set<CSetValue, CSetObjectCompare>::const_iterator it(
-		cobj->set.find(CSetValue(args[0], cobj->comp, vm)));
+		cobj->set.find(CSetValue(args[0], cobj->comp, clever->vm)));
 
 	if (it != cobj->set.end()) {
 		result->copy(it->element);

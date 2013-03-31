@@ -20,15 +20,13 @@
 
 namespace clever {
 
-class CException;
-class VM;
 class Value;
 class Type;
 class Function;
 
-#define CLEVER_TYPE_OPERATOR_ARGS       Value* result, const Value* lhs, const Value* rhs, const VM* vm, CException* exception
-#define CLEVER_TYPE_UNARY_OPERATOR_ARGS Value* result, const Value* lhs, const VM* vm, CException* exception
-#define CLEVER_TYPE_AT_OPERATOR_ARGS    const Value* obj, const Value* index, bool is_write, const VM* vm, CException* exception
+#define CLEVER_TYPE_OPERATOR_ARGS       Value* result, const Value* lhs, const Value* rhs, Clever* clever
+#define CLEVER_TYPE_UNARY_OPERATOR_ARGS Value* result, const Value* lhs, Clever* clever
+#define CLEVER_TYPE_AT_OPERATOR_ARGS    const Value* obj, const Value* index, bool is_write, Clever* clever
 
 #define CLEVER_TYPE_OPERATOR(name)       void CLEVER_FASTCALL name(CLEVER_TYPE_OPERATOR_ARGS) const
 #define CLEVER_TYPE_UNARY_OPERATOR(name) void CLEVER_FASTCALL name(CLEVER_TYPE_UNARY_OPERATOR_ARGS) const
@@ -58,8 +56,8 @@ class Function;
 
 #define CLEVER_TYPE_INIT(name) void name()
 
-#define CLEVER_METHOD_ARGS Value* result, const Value* obj, const ::std::vector<Value*>& args, const VM* vm, CException* exception
-#define CLEVER_METHOD_PASS_ARGS result, obj, args, vm, exception
+#define CLEVER_METHOD_ARGS Value* result, const Value* obj, const ::std::vector<Value*>& args, Clever* clever
+#define CLEVER_METHOD_PASS_ARGS result, obj, args, clever
 #define CLEVER_METHOD(name) void name(CLEVER_METHOD_ARGS) const
 
 typedef void (Type::*MethodPtr)(CLEVER_METHOD_ARGS) const;
@@ -236,8 +234,8 @@ public:
 	virtual void CLEVER_FASTCALL bw_rs(CLEVER_TYPE_OPERATOR_ARGS)         const;
 	virtual void CLEVER_FASTCALL bw_not(CLEVER_TYPE_UNARY_OPERATOR_ARGS)  const;
 	virtual Value* CLEVER_FASTCALL at_op(CLEVER_TYPE_AT_OPERATOR_ARGS)    const;
-	virtual void increment(Value*, const VM*, CException*)                const;
-	virtual void decrement(Value*, const VM*, CException*)                const;
+	virtual void increment(Value*, Clever*) const;
+	virtual void decrement(Value*, Clever*) const;
 
 	/// Virtual methods for serialization interface
 	virtual std::pair<size_t, TypeObject*> serialize(const Value*) const;

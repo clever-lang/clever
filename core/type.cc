@@ -291,13 +291,13 @@ CLEVER_TYPE_OPERATOR(Type::bw_rs)
 }
 
 /// Default ++ operator implementation
-void Type::increment(Value* value, const VM* vm, CException* exception) const
+void Type::increment(Value* value, Clever* clever) const
 {
 	clever_throw("Cannot use ++ operator with %T type", this);
 }
 
 /// Default -- operator implementation
-void Type::decrement(Value* value, const VM* vm, CException* exception) const
+void Type::decrement(Value* value, Clever* clever) const
 {
 	clever_throw("Cannot use -- operator with %T type", this);
 }

@@ -35,11 +35,11 @@ public:
 	CLEVER_TYPE_VIRTUAL_METHOD_DECLARATIONS;
 	CLEVER_TYPE_VIRTUAL_BITWISE_OPERATORS;
 
-	void increment(Value* value, const VM* vm, CException* exception) const {
+	virtual void increment(Value* value, Clever* clever) const {
 		value->setInt(value->getInt()+1);
 	}
 
-	void decrement(Value* value, const VM* vm, CException* exception) const {
+	virtual void decrement(Value* value, Clever* clever) const {
 		value->setInt(value->getInt()-1);
 	}
 

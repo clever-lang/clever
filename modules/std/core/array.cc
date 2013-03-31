@@ -293,7 +293,7 @@ CLEVER_METHOD(ArrayType::each)
 
 		tmp_args.push_back(vec[i]);
 
-		results.push_back(const_cast<VM*>(vm)->runFunction(func, tmp_args));
+		results.push_back(const_cast<VM*>(clever->vm)->runFunction(func, tmp_args));
 	}
 
 	result->setObj(this, new ArrayObject(results));

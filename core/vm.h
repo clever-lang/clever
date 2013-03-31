@@ -39,15 +39,18 @@ typedef std::stack<CallStackEntry> CallStack;
 class VM {
 public:
 	VM()
-		: m_pc(0), m_const_env(NULL), m_global_env(NULL), m_mutex(NULL), m_main(true) {}
+		: m_pc(0), m_const_env(NULL), m_global_env(NULL), m_mutex(NULL), m_main(true),
+			m_clever(this, &m_exception) {}
 
 	explicit VM(const IRVector& inst)
-		: m_pc(0), m_const_env(NULL), m_global_env(NULL), m_mutex(NULL), m_main(true) {
+		: m_pc(0), m_const_env(NULL), m_global_env(NULL), m_mutex(NULL), m_main(true),
+			m_clever(this, &m_exception) {
 		m_inst.resize(inst.size());
 		std::copy(inst.begin(), inst.end(), m_inst.begin());
 	}
 
-	VM(const VM& vm) {
+	VM(const VM& vm)
+		: m_clever(this, &m_exception) {
 		m_mutex      = vm.m_mutex;
 		m_main       = false;
 		m_pc         = vm.m_pc;
@@ -158,6 +161,8 @@ private:
 	CMutex* m_mutex;
 
 	bool m_main;
+
+	Clever m_clever;
 };
 
 } // clever
