@@ -136,7 +136,7 @@ CLEVER_FORCE_INLINE void VM::setValue(const Operand& operand, Value* value, bool
 void VM::dumpOperand(const Operand& op)
 {
 	const char* type[] = {
-		"UNUSED", "FETCH_VAR", "FETCH_CONST", "FETCH_TMP", "JMP_ADDR"
+		"UNUSED", "VAR", "CONST", "TEMP", "ADDR"
 	};
 
 	switch (op.op_type) {
@@ -152,7 +152,7 @@ void VM::dumpOperand(const Operand& op)
 			::printf("        ");
 			break;
 	}
-	::printf(" (%-11s) | ", type[op.op_type]);
+	::printf(" (%-6s) | ", type[op.op_type]);
 }
 
 void VM::dumpOpcodes() const
