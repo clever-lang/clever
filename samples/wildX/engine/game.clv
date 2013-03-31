@@ -608,6 +608,7 @@ class Game {
 
 		this.monsters[ii] = [px, py];
 		this.mw.addStr(ii + 5, this.m + 5, px + ", " + px);
+		this.mw.refresh();
 	}
 
 	var d, pi;
