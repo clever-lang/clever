@@ -4,11 +4,18 @@ Clever Team
   In this file we'll try to log the name of everyone who have contributed to
 the Clever project.
 
+--------------------------------------------------------------------------------
+Core
+--------------------------------------------------------------------------------
+
 + Language Design and Implementation
   - Felipe Pena                 - felipe at clever-lang.org
   - Higor Eurípedes             - higor at clever-lang.org
   - Murilo Adriano Vasconcelos  - murilo at clever-lang.org
   - Péricles Lopes Machado      - pericles at clever-lang.org
+
++ Build system
+  - Higor Eurípedes             - higor at clever-lang.org
 
 + Windows and Haiku port
   - Ricardo Gomes da Silva      - ricardo at clever-lang.org
@@ -16,5 +23,60 @@ the Clever project.
 + Benchmark script, testing and module improvements
   - Pedro Faria
 
+--------------------------------------------------------------------------------
+Modules
+--------------------------------------------------------------------------------
+
++ Collection module
+  - Felipe Pena, Péricles Lopes Machado
+
++ Concurrent module
+  - Joe Watkins, Péricles Lopes Machado
+
++ Crypto module
+  - Felipe Pena
+
++ Date module
+  - Joe Watkins
+
++ Events module
+  - Péricles Lopes Machado
+
++ FastCGI module
+  - Joe Watkins
+
++ File module
+  - Murilo Adriano Vasconcelos
+
++ FFI module
+  - Péricles Lopes Machado
+
++ JSON module
+  - Murilo Adriano Vasconcelos
+
++ Math module
+  - Felipe Pena
+
 + MySQL module
   - Henrique M. Decaria
+
++ NCurses
+  - Péricles Lopes Machado
+
++ Net module
+  - Ricardo Gomes da Silva, Felipe Pena
+
++ Reflection module
+  - Felipe Pena
+
++ Regex module
+  - Felipe Pena
+
++ SQLite3 module
+  - Felipe Pena
+
++ Sys module
+  - Felipe Pena
+
++ Unicode module
+  - Joe Watkins
