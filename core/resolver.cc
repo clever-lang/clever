@@ -123,7 +123,7 @@ void Resolver::visit(FunctionDecl* node)
 			case ast::PUBLIC:  func->setPublic();  break;
 			case ast::PRIVATE: func->setPrivate(); break;
 		}
-		
+
 		if (node->isStatic()) {
 			func->setStatic();
 		}
@@ -155,7 +155,7 @@ void Resolver::visit(FunctionDecl* node)
 			Assignment* assign = static_cast<VariableDecl*>(node->getArg(i))->getAssignment();
 
 			assign->setConditional(true);
-			
+
 			if (found_rhs && !assign->getRhs()) {
 				Compiler::errorf(assign->getLocation(),
 					"Non-default argument found after the default argument list");
