@@ -86,7 +86,7 @@ CLEVER_METHOD(MapType::insert)
 		return;
 	}
 
-	ValueMap& mapped = (clever_get_this(MapObject*))->getData();
+	ValueMap& mapped = clever_get_this(MapObject*)->getData();
 	mapped.insert(ValuePair(*args[0]->getStr(), args[1]->clone()));
 	result->setNull();
 }
@@ -99,7 +99,7 @@ CLEVER_METHOD(MapType::exists)
 		return;
 	}
 
-	ValueMap& mapped = (clever_get_this(MapObject*))->getData();
+	ValueMap& mapped = clever_get_this(MapObject*)->getData();
 	result->setBool(mapped.find(*args[0]->getStr()) != mapped.end());
 }
 
@@ -113,7 +113,7 @@ CLEVER_METHOD(MapType::each)
 	}
 
 	Function* func = static_cast<Function*>(args[0]->getObj());
-	ValueMap& map = (clever_get_this(MapObject*))->getData();
+	ValueMap& map = clever_get_this(MapObject*)->getData();
 	ValueMap::const_iterator it(map.begin()), end(map.end());
 	ValueVector results;
 
@@ -148,17 +148,17 @@ CLEVER_METHOD(MapType::size)
 		return;
 	}
 
-	result->setInt((clever_get_this(MapObject*)->getData()).size());
+	result->setInt(clever_get_this(MapObject*)->getData().size());
 }
 
 CLEVER_TYPE_INIT(MapType::init)
 {
-	setConstructor((MethodPtr) &MapType::ctor);
+	setConstructor((MethodPtr)&MapType::ctor);
 
-	addMethod(new Function("each",   (MethodPtr) &MapType::each));
-	addMethod(new Function("insert", (MethodPtr) &MapType::insert));
-	addMethod(new Function("exists", (MethodPtr) &MapType::exists));
-	addMethod(new Function("size",   (MethodPtr) &MapType::size));
+	addMethod(new Function("each",   (MethodPtr)&MapType::each));
+	addMethod(new Function("insert", (MethodPtr)&MapType::insert));
+	addMethod(new Function("exists", (MethodPtr)&MapType::exists));
+	addMethod(new Function("size",   (MethodPtr)&MapType::size));
 }
 
 } // clever

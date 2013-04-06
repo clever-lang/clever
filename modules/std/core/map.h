@@ -28,7 +28,7 @@ public:
 
 			val->copy(args[i+1]);
 
-			m_data.insert(ValuePair(*args[i]->getStr(), val));
+			insertValue(*args[i]->getStr(), val);
 		}
 	}
 
@@ -38,6 +38,10 @@ public:
 		for (; it != end; ++it) {
 			clever_delref(it->second);
 		}
+	}
+
+	void insertValue(const ::std::string& str, Value* val) {
+		m_data.insert(ValuePair(str, val));
 	}
 
 	std::map<std::string, Value*>& getData() { return m_data; }
