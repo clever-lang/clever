@@ -266,7 +266,8 @@ static Value* get_os()
 static Value* get_argv()
 {
 	Value* argv = new Value();
-	::std::vector<Value*> args;
+	ArrayObject* arr = new ArrayObject();
+	::std::vector<Value*>& args = arr->getData();
 
 	for (int i = 0; i < *g_clever_argc; ++i) {
 		args.push_back(new Value());
@@ -274,7 +275,6 @@ static Value* get_argv()
 		args.back()->setConst(true);
 	}
 
-	ArrayObject* arr = new ArrayObject(args);
 	argv->setConst(true);
 	argv->setObj(CLEVER_ARRAY_TYPE, arr);
 
