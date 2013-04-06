@@ -13,7 +13,9 @@ namespace getopt {
 
 static CLEVER_FUNCTION(getopt)
 {
-
+	if (!clever_static_check_args("as|a")) {
+		return;
+	}
 }
 
 } // clever::modules::std::getopt

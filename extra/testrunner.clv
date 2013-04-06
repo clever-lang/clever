@@ -64,7 +64,7 @@ function runtest(file) {
 			} else {
 				status = "FAIL";
 				++failed;
-				
+
 				io:println("\r[" + status + "] " + title + " - " + (ts2 - ts1) + " ms");
 			}
 
@@ -76,7 +76,7 @@ function runtest(file) {
 	}
 }
 
-if (sys:argc() == 1) {
+if (sys:argc == 1) {
 	var test_dirs = file:glob("tests/*");
 
 	for (var dir in test_dirs) {
@@ -85,9 +85,9 @@ if (sys:argc() == 1) {
 		files.each(runtest);
 	}
 } else {
-	var test_file = sys:argv(1);
+	var test_file = sys:argv;
 
-	runtest(test_file);
+	runtest(test_file[1]);
 }
 
 if (passed > 0 || failed > 0) {

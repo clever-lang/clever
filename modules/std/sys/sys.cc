@@ -88,32 +88,6 @@ static CLEVER_FUNCTION(get_cwd)
 	result->setStr(CSTRING(path ? path : ""));
 }
 
-// argv(int n)
-// Get n-th argv value
-static CLEVER_FUNCTION(argv)
-{
-	if (!clever_static_check_args("i")) {
-		return;
-	}
-
-	if (args[0]->getInt() >= *g_clever_argc) {
-		result->setBool(false);
-	} else {
-		result->setStr(new StrObject((*g_clever_argv)[args[0]->getInt()]));
-	}
-}
-
-// argc()
-// Get argc value
-static CLEVER_FUNCTION(argc)
-{
-	if (!clever_static_check_no_args()) {
-		return;
-	}
-
-	result->setInt(*g_clever_argc);
-}
-
 // sleep(int time)
 // Sleep for 'time' milliseconds
 static CLEVER_FUNCTION(sleep)
@@ -274,7 +248,7 @@ static CLEVER_FUNCTION(info)
 }
 
 // Returns a Value ptr containing the OS name
-static Value* _get_os()
+static Value* get_os()
 {
 	Value* val = new Value(CLEVER_STR_TYPE, true);
 
@@ -286,6 +260,25 @@ static Value* _get_os()
 	}
 #endif
 	return val;
+}
+
+// Returns a constant array containing the argv
+static Value* get_argv()
+{
+	Value* argv = new Value();
+	::std::vector<Value*> args;
+
+	for (int i = 0; i < *g_clever_argc; ++i) {
+		args.push_back(new Value());
+		args.back()->setStr((*g_clever_argv)[i]);
+		args.back()->setConst(true);
+	}
+
+	ArrayObject* arr = new ArrayObject(args);
+	argv->setConst(true);
+	argv->setObj(CLEVER_ARRAY_TYPE, arr);
+
+	return argv;
 }
 
 } // clever::modules::std::sys
@@ -301,8 +294,6 @@ CLEVER_MODULE_INIT(SYSModule)
 	addFunction(new Function("get_ppid",  &CLEVER_NS_FNAME(sys, get_ppid)));
 	addFunction(new Function("get_uid",   &CLEVER_NS_FNAME(sys, get_uid)));
 	addFunction(new Function("get_sid",   &CLEVER_NS_FNAME(sys, get_sid)));
-	addFunction(new Function("argc",      &CLEVER_NS_FNAME(sys, argc)));
-	addFunction(new Function("argv",      &CLEVER_NS_FNAME(sys, argv)));
 	addFunction(new Function("sleep",     &CLEVER_NS_FNAME(sys, sleep)));
 	addFunction(new Function("clock",     &CLEVER_NS_FNAME(sys, clock)));
 	addFunction(new Function("time",      &CLEVER_NS_FNAME(sys, time)));
@@ -310,7 +301,9 @@ CLEVER_MODULE_INIT(SYSModule)
 	addFunction(new Function("info",      &CLEVER_NS_FNAME(sys, info)));
 	addFunction(new Function("exit",      &CLEVER_NS_FNAME(sys, exit)));
 
-	addVariable("OS", sys::_get_os());
+	addVariable("OS",   sys::get_os());
+	addVariable("argc", new Value(long(*g_clever_argc), true));
+	addVariable("argv", sys::get_argv());
 }
 
 }}} // clever::modules::std
