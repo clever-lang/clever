@@ -57,3 +57,6 @@
 #ifdef HAVE_MOD_STD_COLLECTION
 # include "modules/std/collection/module.h"
 #endif
+#ifdef HAVE_MOD_STD_GETOPT
+# include "modules/std/getopt/module.h"
+#endif

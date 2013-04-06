@@ -64,6 +64,9 @@ void Std::init()
 #ifdef HAVE_MOD_STD_COLLECTION
 	addModule(new std::CollectionModule);
 #endif
+#ifdef HAVE_MOD_STD_GETOPT
+	addModule(new std::GetoptModule);
+#endif
 }
 
 }} // clever::modules

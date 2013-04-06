@@ -22,6 +22,7 @@ clever_new_module(std.reflection ON DOC "enable the reflection module")
 clever_new_module(std.sys        ON DOC "enable the sys module")
 clever_new_module(std.crypto     ON DOC "enable the crypto module")
 clever_new_module(std.collection ON DOC "enable the collection module")
+clever_new_module(std.getopt     ON DOC "enable the getopt module")
 
 clever_new_module(std.regex ON
 	DOC"enable the regex module"

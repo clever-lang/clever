@@ -69,6 +69,10 @@ if(STD_COLLECTION)
 	list(APPEND CLEVER_MODULES collection)
 endif()
 
+if(STD_GETOPT)
+	list(APPEND CLEVER_MODULES getopt)
+endif()
+
 foreach(module ${CLEVER_MODULES})
 	add_subdirectory(${module})
 endforeach()
