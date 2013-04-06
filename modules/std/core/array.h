@@ -30,11 +30,11 @@ public:
 
 	void append(const std::vector<Value*>& args) {
 		for (size_t i = 0, n = args.size(); i < n; ++i) {
-			push_value(args[i]);
+			pushValue(args[i]);
 		}
 	}
 
-	void push_value(Value* value) {
+	void pushValue(Value* value) {
 		if (value) {
 			m_data.push_back(value->clone());
 			m_data.back()->setConst(false);

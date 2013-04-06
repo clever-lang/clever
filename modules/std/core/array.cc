@@ -103,7 +103,7 @@ CLEVER_METHOD(ArrayType::append)
 		ArrayObject* arrobj = clever_get_this(ArrayObject*);
 
 		for (size_t i = 0, j = args.size(); i < j; ++i) {
-			arrobj->push_value(args[i]);
+			arrobj->pushValue(args[i]);
 		}
 	}
 	result->setNull();

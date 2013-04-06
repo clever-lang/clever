@@ -196,7 +196,7 @@ CLEVER_FORCE_INLINE void VM::paramBinding(const Function* func,
 
 		if ((args_count - nargs) > 0) {
 			for (size_t i = nargs; i < args_count; ++i) {
-				arr->push_value(args[i]);
+				arr->pushValue(args[i]);
 			}
 		}
 
