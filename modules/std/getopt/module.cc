@@ -37,20 +37,22 @@ static CLEVER_FUNCTION(getopt)
 	for (size_t i = 0; i < nargs; ++i) {
 		const char* arg = argv->getData()[i]->getStr()->c_str();
 
-		if (arg[0] == '-' && arg[1] != '\0') {
-			if (arg[1] == '-' && has_long_opts) {
-				for (size_t j = 0; j < nlongopts; ++j) {
-					if (::std::string(arg+2) == *arr_opts->getData()[j]->getStr()) {
-						map->insertValue(::std::string(arg+2),
-							new Value(true, true));
-					}
+		if (arg[0] != '-' || arg[1] == '\0') {
+			continue;
+		}
+
+		if (arg[1] == '-' && has_long_opts) {
+			for (size_t j = 0; j < nlongopts; ++j) {
+				if (::std::string(arg+2) == *arr_opts->getData()[j]->getStr()) {
+					map->insertValue(::std::string(arg+2),
+						new Value(true, true));
 				}
-			} else {
-				for (size_t j = 0; j < nspec; ++j) {
-					if (spec[j] == arg[1]) {
-						map->insertValue(::std::string(&spec[j], 1),
-							new Value(true, true));
-					}
+			}
+		} else {
+			for (size_t j = 0; j < nspec; ++j) {
+				if (spec[j] == arg[1]) {
+					map->insertValue(::std::string(&spec[j], 1),
+						new Value(true, true));
 				}
 			}
 		}
