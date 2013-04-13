@@ -72,7 +72,7 @@ public:
 
 	const Type* getType() const { return m_type; }
 
-	void setNull() { m_type = NULL; }
+	void setNull() { cleanUp(); m_type = NULL; m_data = NULL; }
 	bool isNull() const { return m_type == NULL; }
 
 	void dump() const {	dump(std::cout); }
