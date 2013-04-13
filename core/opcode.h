@@ -59,7 +59,9 @@ namespace clever {
 	&&OP_BW_LS,    \
 	&&OP_BW_RS,    \
 	&&OP_SUBSCRIPT_W,\
-	&&OP_SUBSCRIPT_R
+	&&OP_SUBSCRIPT_R,\
+	&&OP_SBLOCK,     \
+	&&OP_EBLOCK
 #endif
 
 /// VM opcodes
@@ -112,6 +114,8 @@ enum Opcode {
 	OP_BW_RS,      //  45 - Used for bitwise right shift operation
 	OP_SUBSCRIPT_W,//       Used for subscript operator (write mode)
 	OP_SUBSCRIPT_R,//       Used for subscript operator (read mode)
+	OP_SBLOCK,     //       Used for start block marker
+	OP_EBLOCK,     //       Used for end block marker
 	NUM_OPCODES
 };
 

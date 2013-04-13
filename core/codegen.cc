@@ -69,7 +69,11 @@ void Codegen::visit(StringLit* node)
 
 void Codegen::visit(Block* node)
 {
+	m_builder->push(OP_SBLOCK);
+	
 	Visitor::visit(static_cast<NodeArray*>(node));
+	
+	m_builder->push(OP_EBLOCK);
 }
 
 void Codegen::visit(CriticalBlock* node)
