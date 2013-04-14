@@ -966,12 +966,6 @@ throw_exception:
 		}
 	}
 	DISPATCH;
-	
-	OP(OP_SBLOCK):
-	DISPATCH;
-	
-	OP(OP_EBLOCK):
-	DISPATCH;
 
 	OP(OP_HALT): goto exit;
 	END_OPCODES;
