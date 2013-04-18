@@ -28,7 +28,7 @@ public:
 		clever_addref(m_function);
 	}
 
-	bool operator()(Value* lhs, Value* rhs);
+	bool operator()(Value* lhs, Value* rhs) const;
 
 	~ComparisonFunctor() {
 		clever_delref(m_function);

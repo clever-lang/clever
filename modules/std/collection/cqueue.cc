@@ -121,7 +121,7 @@ CLEVER_TYPE_INIT(CQueue::init)
 
 /**************************PriorityQueue***************************************/
 
-bool ComparisonFunctor::operator()(Value* lhs, Value* rhs)
+bool ComparisonFunctor::operator()(Value* lhs, Value* rhs) const
 {
 	clever_addref(lhs);
 	clever_addref(rhs);
