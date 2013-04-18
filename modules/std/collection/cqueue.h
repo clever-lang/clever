@@ -13,33 +13,49 @@
 
 namespace clever { namespace modules { namespace std {
 
-struct CPQValue {
-	CPQValue(Value* elem, const Function* func_, const VM* vm_)
-		: element(elem), comp(func_), vm(vm_) {}
-
-	~CPQValue() {}
-
-	Value* element;
-	const Function* comp;
-	const VM* vm;
-};
-
-
-bool operator<(const CPQValue& a, const CPQValue& b);
-
-struct CPQObject : public TypeObject {
-	CPQObject(const Function* func)
-		: comp(func) {}
-
-	~CPQObject() {
-		while (!pq.empty()) {
-			clever_delref(pq.top().element);
-			pq.pop();
-		}
+/**
+ * This class is used by the PQ to perform comparisons its between elements.
+ */
+struct ComparisonFunctor {
+public:
+	ComparisonFunctor(Function* function, const VM* vm)
+	: m_function(function), m_vm(vm) {
+		clever_addref(m_function);
 	}
 
-	::std::priority_queue<CPQValue> pq;
-	const Function* comp;
+	ComparisonFunctor(const ComparisonFunctor& other)
+	: m_function(other.m_function), m_vm(other.m_vm) {
+		clever_addref(m_function);
+	}
+
+	bool operator()(Value* lhs, Value* rhs);
+
+	~ComparisonFunctor() {
+		clever_delref(m_function);
+	}
+private:
+	Function* m_function;
+	const VM* m_vm;
+};
+
+struct CPQObject : public TypeObject {
+	typedef ::std::priority_queue<Value*, ::std::vector<Value*>,
+		ComparisonFunctor> PQType;
+
+	CPQObject(Function* func, const VM* vm)
+	: m_pq(ComparisonFunctor(func, vm)) {}
+
+	~CPQObject() {
+		// TODO(muriloadriano): investigate why this causes SIGSEGV
+		//while (!m_pq.empty()) {
+		//  clever_delref(m_pq.top());
+		//	m_pq.pop();
+		//}
+	}
+
+	PQType m_pq;
+private:
+	DISALLOW_COPY_AND_ASSIGN(CPQObject);
 };
 
 

@@ -11,7 +11,7 @@
  * Provides functions and classes to do logging stuff.
  */
 
-import std.*;
+import std.io;
 
 // Level constants
 const DEBUG = (1 << 0);
@@ -56,14 +56,11 @@ class Logger {
 
 		var date = (date:Date.new).format(this.date_format);
 
-		// @TODO(muriloadriano): chaining is causing a weird behavior here
 		var log_str = this.format.replace('%{date}', date)
 			.replace('%{level}', __internal_level_names[level.toString()])
 			.replace('%{message}', message);
 
-		// @TODO(muriloadriano): fix this...
-		// this.writer(log_str);
-		io:println(log_str);
+		this.writer(log_str);
 
 		return true;
 	}

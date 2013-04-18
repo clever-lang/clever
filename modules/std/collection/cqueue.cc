@@ -13,7 +13,7 @@
 
 namespace clever { namespace modules { namespace std {
 
-// Queue.Queue()
+// Queue.new()
 CLEVER_METHOD(CQueue::ctor)
 {
 	if (!clever_check_no_args()) {
@@ -119,23 +119,31 @@ CLEVER_TYPE_INIT(CQueue::init)
 	addMethod(new Function("back",  (MethodPtr)&CQueue::back));
 }
 
-bool operator<(const CPQValue& a, const CPQValue& b)
+/**************************PriorityQueue***************************************/
+
+bool ComparisonFunctor::operator()(Value* lhs, Value* rhs)
 {
+	clever_addref(lhs);
+	clever_addref(rhs);
+
+	// Prepares the function call
 	::std::vector<Value*> args;
+	args.push_back(lhs);
+	args.push_back(rhs);
 
-	args.push_back(a.element);
-	args.push_back(b.element);
-
-	Value* result = const_cast<VM*>(a.vm)->runFunction(a.comp, args);
-
+	// Makes the function call and store its return value
+	Value* result = const_cast<VM*>(m_vm)->runFunction(m_function, args);
 	bool ret = result ? result->asBool() : false;
 
+	// result isn't needed anymore
 	clever_delref(result);
+	clever_delref(lhs);
+	clever_delref(rhs);
 
 	return ret;
 }
 
-// PriorityQueue.PriorityQueue()
+// PriorityQueue.new()
 CLEVER_METHOD(CPQueue::ctor)
 {
 	if (!clever_check_args("f")) {
@@ -150,7 +158,7 @@ CLEVER_METHOD(CPQueue::ctor)
 	}
 
 	result->setObj(this,
-		new CPQObject(static_cast<Function*>(args[0]->getObj())));
+		new CPQObject(static_cast<Function*>(args[0]->getObj()), clever->vm));
 }
 
 // PriorityQueue.empty()
@@ -161,8 +169,7 @@ CLEVER_METHOD(CPQueue::empty)
 	}
 
 	const CPQObject* cobj = clever_get_this(CPQObject*);
-
-	result->setBool(cobj->pq.empty());
+	result->setBool(cobj->m_pq.empty());
 }
 
 // PriorityQueue.push(Object element)
@@ -173,8 +180,7 @@ CLEVER_METHOD(CPQueue::push)
 	}
 
 	CPQObject* cobj = clever_get_this(CPQObject*);
-
-	cobj->pq.push(CPQValue(args[0]->clone(), cobj->comp, clever->vm));
+	cobj->m_pq.push(args[0]->clone());
 }
 
 // PriorityQueue.pop()
@@ -186,9 +192,9 @@ CLEVER_METHOD(CPQueue::pop)
 
 	CPQObject* cobj = clever_get_this(CPQObject*);
 
-	if (!cobj->pq.empty()) {
-		clever_delref(cobj->pq.top().element);
-		cobj->pq.pop();
+	if (!cobj->m_pq.empty()) {
+		clever_delref(cobj->m_pq.top());
+		cobj->m_pq.pop();
 	}
 }
 
@@ -203,8 +209,8 @@ CLEVER_METHOD(CPQueue::top)
 
 	result->setNull();
 
-	if (!cobj->pq.empty()) {
-		result->copy(cobj->pq.top().element);
+	if (!cobj->m_pq.empty()) {
+		result->copy(cobj->m_pq.top());
 	}
 }
 
