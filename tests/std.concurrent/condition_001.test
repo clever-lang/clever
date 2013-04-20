@@ -13,15 +13,22 @@ var m = Mutex.new();
 println(m.lock());
 
 var thread = Thread.new(function(){
+    println(m.lock());
 	println(c.broadcast());
+	println(m.unlock());
 });
 
 thread.start();
 
 println(c.wait(m));
 
+println(m.unlock());
+
 thread.wait();
 ==RESULT==
+true
+true
+true
 true
 true
 true
