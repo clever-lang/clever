@@ -11,6 +11,7 @@
 #include <string>
 #ifndef _WIN32
 #include <sys/socket.h>
+#include <sys/select.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
