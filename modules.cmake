@@ -11,7 +11,11 @@
 #             keep in mind that the check is recursive.
 
 clever_new_module(std.date       ON DOC "enable the date module")
-clever_new_module(std.concurrent ON DOC "enable the concurrent module")
+
+clever_new_module(std.concurrent ON
+	DOC "enable the concurrent module"
+	LIBS PTHREAD)
+
 clever_new_module(std.net        ON DOC "enable the net module")
 clever_new_module(std.clever     ON DOC "enable the clever module")
 clever_new_module(std.file       ON DOC "enable the file module")
@@ -25,7 +29,7 @@ clever_new_module(std.collection ON DOC "enable the collection module")
 clever_new_module(std.getopt     ON DOC "enable the getopt module")
 
 clever_new_module(std.regex ON
-	DOC"enable the regex module"
+	DOC "enable the regex module"
 	LIBS PCRECPP)
 
 clever_new_module(std.ffi ON
@@ -58,6 +62,7 @@ clever_new_module(gui.ncurses ON
 )
 
 # std.concurrent
+clever_module_check(std.concurrent)
 if(STD_CONCURRENT AND UNIX)
 	list(APPEND STD_CONCURRENT_LIB_DEPENDS PTHREAD)
 	clever_module_check(std.concurrent)
@@ -75,8 +80,12 @@ endif()
 
 # std.net
 clever_module_check(std.net)
-if(STD_NET AND MSVC)
-	list(APPEND CLEVER_LIBRARIES ws2_32)
+if(STD_NET)
+	if (MSVC)
+		list(APPEND CLEVER_LIBRARIES ws2_32)
+	elseif(HAIKU)
+		list(APPEND CLEVER_LIBRARIES network)
+	endif()
 endif()
 
 
