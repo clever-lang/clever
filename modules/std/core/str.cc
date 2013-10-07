@@ -568,7 +568,6 @@ CLEVER_TYPE_INIT(StrType::init)
 	addMethod(new Function("ltrim",         (MethodPtr)&StrType::ltrim));
 	addMethod(new Function("trim",          (MethodPtr)&StrType::trim));
 	addMethod(new Function("rtrim",         (MethodPtr)&StrType::rtrim));
-	addMethod(new Function("toString",		(MethodPtr)&StrType::toString));
 	addMethod(new Function("format",		(MethodPtr)&StrType::format))
 		->setStatic();
 }
