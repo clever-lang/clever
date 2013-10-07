@@ -88,7 +88,7 @@ public:
 	 * @param optional outer the environment where the current instance is contained in
 	 * @return an "activated" copy of the current environment
 	 */
-	Environment* activate(Environment* = NULL) const;
+	Environment* activate(Environment* = NULL);
 
 	size_t getRetAddr() const { return m_ret_addr; }
 	void setRetAddr(size_t ret_addr) { m_ret_addr = ret_addr; }
@@ -109,6 +109,8 @@ private:
 	Value* m_ret_val;
 	size_t m_ret_addr;
 	bool m_scoped;
+
+	Environment* clone();
 
 	DISALLOW_COPY_AND_ASSIGN(Environment);
 };

@@ -10,26 +10,32 @@
 
 namespace clever {
 
-Environment* Environment::activate(Environment* outer) const
+Environment* Environment::clone()
 {
-	Environment* env = new Environment(outer ? outer : m_outer, false);
+	Environment* env = new Environment(m_outer, false);
 
-	if (m_temp) {
-		env->m_temp = new Environment(NULL, false);
+	env->m_ret_val = m_ret_val;
+	env->m_ret_addr = m_ret_addr;
 
-		env->m_temp->m_data.reserve(m_temp->m_data.size());
+	if (m_temp)
+		env->m_temp = m_temp->clone();
 
-		for (size_t i = 0, size = m_temp->m_data.size(); i < size; ++i) {
-			env->m_temp->m_data.push_back(m_temp->m_data[i]->clone());
-		}
-	}
+	env->m_data.reserve(m_data.size());
 
-	if (!m_data.empty()) {
-		env->m_data.reserve(m_data.size());
+	for (size_t i = 0, size = m_data.size(); i < size; ++i)
+		env->pushValue(m_data[i]->clone());
 
-		for (size_t i = 0, size = m_data.size(); i < size; ++i) {
-			env->pushValue(m_data[i]->clone());
-		}
+	return env;
+}
+
+Environment* Environment::activate(Environment* outer)
+{
+	Environment* env = clone();
+
+	if (outer) {
+		clever_delref(env->m_outer);
+		env->m_outer = outer;
+		clever_addref(env->m_outer);
 	}
 
 	return env;
