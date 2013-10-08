@@ -97,6 +97,12 @@ public:
 	void setRetVal(Value* ret_val) { m_ret_val = ret_val; }
 
 	Environment* getOuter() const { return m_outer; }
+	void setOuter(Environment* outer) {
+		clever_delref(m_outer);
+		m_outer = outer;
+		clever_addref(outer);
+	}
+
 	void setData(size_t pos, Value* value) { m_data[pos] = value; }
 
 	void setTempEnv(Environment* env) { m_temp = env; }

@@ -971,6 +971,18 @@ throw_exception:
 	}
 	DISPATCH;
 
+	OP(OP_BIND):
+	{
+		const Value* fval = getValue(OPCODE.op1);
+		Function* func = static_cast<Function*>(fval->getObj());
+		Environment* fenv = func->getEnvironment();
+
+		if (fenv->getOuter()) {
+			fenv->setOuter(m_call_stack.top().env);
+		}
+	}
+	DISPATCH;
+
 	OP(OP_HALT): goto exit;
 	END_OPCODES;
 

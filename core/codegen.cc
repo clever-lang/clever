@@ -68,7 +68,7 @@ void Codegen::visit(StringLit* node)
 }
 
 void Codegen::visit(Block* node)
-{	
+{
 	Visitor::visit(static_cast<NodeArray*>(node));
 }
 
@@ -183,6 +183,12 @@ void Codegen::visit(FunctionCall* node)
 
 void Codegen::visit(FunctionDecl* node)
 {
+	IR* runtime_bind = NULL;
+
+	if (node->isAnonymous()) {
+		runtime_bind = &m_builder->push(OP_BIND);
+	}
+
 	IR& start_func = m_builder->push(OP_JMP, Operand(JMP_ADDR, 0));
 	Symbol* sym = NULL;
 	Function* func;
@@ -220,6 +226,8 @@ void Codegen::visit(FunctionDecl* node)
 	if (sym && node->isAnonymous()) {
 		node->setVOffset(sym->voffset);
 		node->setScope(sym->scope);
+
+		_prepare_operand(runtime_bind->op1, node);
 	}
 
 	m_builder->setTempEnv(save_temp);
