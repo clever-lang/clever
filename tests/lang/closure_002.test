@@ -1,0 +1,17 @@
+Testing closure
+==CODE==
+import std.io.*;
+
+var a = function() {
+    var w = 2;
+
+    var b = function() {
+        println(w);
+    };
+
+    b();
+};
+
+a();
+==RESULT==
+2
