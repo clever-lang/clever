@@ -135,33 +135,37 @@ CLEVER_FORCE_INLINE void VM::setValue(const Operand& operand, Value* value, bool
 #ifdef CLEVER_DEBUG
 void VM::dumpOperand(const Operand& op)
 {
-	const char* type[] = {
-		"UNUSED", "VAR", "CONST", "TEMP", "ADDR"
-	};
-
 	switch (op.op_type) {
 		case FETCH_CONST:
+			::printf(" %zu(~%zu)", op.voffset.first, op.voffset.second);
+			break;
 		case FETCH_TMP:
+			::printf(" %zu(#%zu)", op.voffset.first, op.voffset.second);
+			break;
 		case FETCH_VAR:
-			::printf("%3zu:%3zu ", op.voffset.first, op.voffset.second);
+			::printf(" %zu($%zu)", op.voffset.first, op.voffset.second);
 			break;
 		case JMP_ADDR:
-			::printf("%7zu ", op.jmp_addr);
+			::printf(" %#zx", op.jmp_addr);
 			break;
 		case UNUSED:
-			::printf("        ");
 			break;
 	}
-	::printf(" (%-6s) | ", type[op.op_type]);
 }
 
 void VM::dumpOpcodes() const
 {
 	for (size_t i = 0, j = m_inst.size(); i < j; ++i) {
 		const IR& ir = m_inst[i];
-		::printf("[%03zu] %-15s |", i, get_opcode_name(ir.opcode));
+		::printf("0x%04zx: %s", i, get_opcode_name(ir.opcode));
 		dumpOperand(ir.op1);
+		if (ir.op2.op_type != UNUSED) {
+			::printf(",");
+		}
 		dumpOperand(ir.op2);
+		if (ir.result.op_type != UNUSED) {
+			::printf(" ->");
+		}
 		dumpOperand(ir.result);
 		::printf("\n");
 	}
