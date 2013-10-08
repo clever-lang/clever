@@ -12,7 +12,7 @@ namespace clever {
 
 Environment* Environment::clone()
 {
-	Environment* env = new Environment(m_outer, false);
+	Environment* env = new Environment(m_outer, m_scoped);
 
 	env->m_ret_val = m_ret_val;
 	env->m_ret_addr = m_ret_addr;
@@ -37,6 +37,8 @@ Environment* Environment::activate(Environment* outer)
 		env->m_outer = outer;
 		clever_addref(env->m_outer);
 	}
+
+	env->m_scoped = false;
 
 	return env;
 }
