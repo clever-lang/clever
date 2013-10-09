@@ -983,6 +983,12 @@ throw_exception:
 	}
 	DISPATCH;
 
+	OP(OP_BSCOPE):
+	DISPATCH;
+
+	OP(OP_ESCOPE):
+	DISPATCH;
+
 	OP(OP_HALT): goto exit;
 	END_OPCODES;
 

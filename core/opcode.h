@@ -60,7 +60,9 @@ namespace clever {
 	&&OP_BW_RS,    \
 	&&OP_SUBSCRIPT_W,\
 	&&OP_SUBSCRIPT_R,\
-	&&OP_BIND
+	&&OP_BIND,     \
+	&&OP_BSCOPE,   \
+	&&OP_ESCOPE
 #endif
 
 /// VM opcodes
@@ -114,6 +116,8 @@ enum Opcode {
 	OP_SUBSCRIPT_W,//       Used for subscript operator (write mode)
 	OP_SUBSCRIPT_R,//       Used for subscript operator (read mode)
 	OP_BIND,       //       Used for runtime binding
+	OP_BSCOPE,     //       Used for begin scope marker
+	OP_ESCOPE,     //  50 - Used for end scope marker
 	NUM_OPCODES
 };
 

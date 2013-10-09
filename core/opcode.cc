@@ -63,6 +63,8 @@ const char* get_opcode_name(Opcode opnum)
 	case OP_SUBSCRIPT_W: return "subsw";
 	case OP_SUBSCRIPT_R: return "subsr";
 	case OP_BIND:        return "bind";
+	case OP_BSCOPE:      return "bscope";
+	case OP_ESCOPE:      return "escope";
 	EMPTY_SWITCH_DEFAULT_CASE();
 	}
 #undef CASE
