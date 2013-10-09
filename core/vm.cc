@@ -977,7 +977,7 @@ throw_exception:
 		Function* func = static_cast<Function*>(fval->getObj());
 		Environment* fenv = func->getEnvironment();
 
-		if (fenv->getOuter()) {
+		if (EXPECTED(fenv->getOuter())) {
 			fenv->setOuter(m_call_stack.top().env);
 		}
 	}
