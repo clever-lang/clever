@@ -5,9 +5,9 @@ import std.*;
 
 var my_date = date:Date.new(1364710352);
 
-io:println(my_date.format('%Y:%m:%d'));
-io:println(my_date.format('%H:%M:%S'));
+io:println(my_date.uformat('%Y:%m:%d'));
+io:println(my_date.uformat('%H:%M:%S'));
 
 ==RESULT==
 2013:03:31
-03:12:32
+06:12:32
