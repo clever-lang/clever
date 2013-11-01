@@ -34,12 +34,12 @@ bool CMysql::connect()
 
 bool CMysql::query(const char *stmt)
 {
-	
+
 	int ret = mysql_query(m_connection, stmt);
 
 	m_resultset = mysql_use_result(m_connection);
 	if(m_resultset == NULL) {
-		
+
 		// TODO : Show warning message saying something is wrong
 		//        with the query?
 		return false;
@@ -65,12 +65,11 @@ MapObject* CMysql::fetchRow()
 	unsigned int   cnt_cols = mysql_num_fields(m_resultset);
 	unsigned long* lengths  = mysql_fetch_lengths(m_resultset);
 	MYSQL_FIELD*   fields   = mysql_fetch_fields(m_resultset);
-	
+
 	MapObject* map = new MapObject;
 	char* str;
 
 	for (unsigned int i = 0; i < cnt_cols; i++) {
-
 		Value* value = NULL;
 		str = new char[lengths[i]+1];
 		snprintf(str, lengths[i]+1, "%.*s", (int)lengths[i], row[i]);
@@ -114,7 +113,7 @@ MapObject* CMysql::fetchRow()
 			case MYSQL_TYPE_BIT:
 				// handle as bool
 				break;
-			
+
 			case MYSQL_TYPE_TINY_BLOB:
 			case MYSQL_TYPE_MEDIUM_BLOB:
 			case MYSQL_TYPE_LONG_BLOB:
@@ -127,7 +126,7 @@ MapObject* CMysql::fetchRow()
 		}
 
 		value = NULL;
-		delete str;
+		delete [] str;
 	}
 
 	return map;

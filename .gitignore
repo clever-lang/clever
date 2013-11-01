@@ -8,6 +8,7 @@ clever
 test.txt
 update.sh
 make-c++11.sh
+tests/*/*.out
 *.tmp
 *.dSYM
 *~

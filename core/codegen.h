@@ -18,6 +18,7 @@ namespace clever {
 class Thread;
 class Compiler;
 class IRBuilder;
+struct Operand;
 
 } // clever
 
@@ -32,6 +33,8 @@ public:
 		: m_builder(builder) {}
 
 	~Codegen() {}
+
+	Operand createOp(Node*) const;
 
 	void sendArgs(NodeArray*);
 
