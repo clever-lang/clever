@@ -56,14 +56,21 @@ private:
 		s_heap = new std::list<GCObject*>();
 	}
 
-	static VM* s_vm;
-	static GC* s_instance;
-	static std::list<GCObject*>* s_heap;
-	static int cont_alloc;
+	static VM* s_vm; // Pointer to the VM, so we can get the roots
+	static GC* s_instance; // Singleton
+	
+	/**
+	 * Memory heap: all memory allocated for GCObjects are stored here.
+	 */
+	static std::list<GCObject*>* s_heap; 
+	static int cont_alloc; // @TODO(muriloadriano): temporary
 }; // class GC
 
 class GCObject {
 public:
+	/**
+	 * Flags used by the GC algorithm;
+	 */
 	unsigned char m_flags;
 
 	GCObject() : m_flags(0) {}
@@ -81,6 +88,10 @@ public:
 		return GC::alloc(size);
 	}
 
+	/**
+	 *	When delete is called, we just mark the variable so the garbage collector knows 
+	 * 	that it is trash.
+	 */
 	void operator delete(void* ptr) {
 		GCObject* gco = static_cast<GCObject*>(ptr);
 		gco->m_flags = GC::MANUAL_DELETE;
