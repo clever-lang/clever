@@ -47,20 +47,20 @@ public:
 		clever_assert(m_reference > 0, "This object has been free'd before.");
 #if CLEVER_GCC_VERSION >= 4010 || defined(__clang__)
 		if (__sync_sub_and_fetch(&m_reference, 1) == 0) {
-			clever_delete(this);
+			//clever_delete(this);
 		}
 #else
 # ifdef CLEVER_THREADS
 		m_mutex.lock();
 		if (--m_reference == 0) {
 			m_mutex.unlock();
-			clever_delete(this);
+			//clever_delete(this);
 		} else {
 			m_mutex.unlock();
 		}
 # else
 		if (--m_reference == 0) {
-			clever_delete(this);
+			//clever_delete(this);
 		}
 # endif
 #endif

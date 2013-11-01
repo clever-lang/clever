@@ -54,6 +54,10 @@ void GC::collect() {
 
 			it = s_heap->erase(it);
 		}
+		else {
+			// Unmark again for the next collection
+			(*it)->m_flags = GC::UNMARKED;
+		}
 	}
 }
 
