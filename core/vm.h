@@ -91,6 +91,8 @@ public:
 	/// Executes an specific function
 	Value* runFunction(const Function*, const ValueVector&);
 
+	CallStack& getCallStack() { return m_call_stack; }
+
 	/// Methods for dumping opcodes
 #ifdef CLEVER_DEBUG
 	static void dumpOperand(const Operand&);
@@ -99,8 +101,6 @@ public:
 private:
 	/// Helper to bind function/method parameter
 	static void paramBinding(const Function*, const Environment*, const ValueVector&);
-
-	CallStack& getCallStack() { return m_call_stack; }
 
 	/// Helper to fetch the current environment according to the operand type
 	Environment* getCurrentEnvironment(OperandType) const;

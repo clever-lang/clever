@@ -13,16 +13,18 @@
 #else
 #include <tr1/unordered_map>
 #endif
+#include <list>
 #include <vector>
-#include "core/refcounted.h"
 #include "core/clever.h"
 #include "core/cstring.h"
+#include "core/refcounted.h"
 
 namespace clever {
 
 class Value;
 class Type;
 class Function;
+class GCObject;
 
 #define CLEVER_TYPE_OPERATOR_ARGS       Value* result, const Value* lhs, const Value* rhs, Clever* clever
 #define CLEVER_TYPE_UNARY_OPERATOR_ARGS Value* result, const Value* lhs, Clever* clever
@@ -108,6 +110,11 @@ public:
 		if (!m_initialized) {
 			copyMembers(type);
 		}
+	}
+
+	// Used by the Garbage Collector
+	virtual std::list<GCObject*> getReferred() const {
+		return std::list<GCObject*>();
 	}
 private:
 	MemberMap m_members;

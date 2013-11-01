@@ -11,6 +11,7 @@
 #include <cstring>
 
 #include "core/cstring.h"
+#include "core/gc.h"
 #include "core/type.h"
 #include "modules/std/core/str.h"
 
@@ -38,7 +39,7 @@ typedef std::map     <std::string, Value*>  ValueMap;
 typedef std::pair    <std::string, Value*>  ValuePair;
 typedef std::vector  <Value*>               ValueVector;
 
-class Value : public RefCounted {
+class Value : public GCObject, public RefCounted {
 public:
 	Value()
 		: m_type(NULL), m_data(NULL), m_is_const(false) {}
@@ -151,6 +152,8 @@ public:
 	bool isConst() const { return m_is_const; }
 
 	void setConst(bool constness = true) { m_is_const = constness; }
+
+	virtual std::list<GCObject*> getReferred() const;
 
 private:
 	void cleanUp() const { clever_delref(m_data); }

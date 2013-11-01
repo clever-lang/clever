@@ -105,4 +105,12 @@ bool Value::getBool() const
 	return static_cast<BoolObject*>(m_data)->value;
 }
 
+std::list<GCObject*> Value::getReferred() const {
+	if (getObj()) {
+		return getObj()->getReferred();
+	}
+
+	return std::list<GCObject*>();
+}
+
 } // clever

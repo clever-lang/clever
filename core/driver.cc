@@ -9,6 +9,7 @@
 #include <setjmp.h>
 #include "core/cstring.h"
 #include "core/driver.h"
+#include "core/gc.h"
 #include "core/parser.hh"
 #include "core/position.hh"
 #include "core/vm.h"
@@ -39,6 +40,7 @@ void Interpreter::execute(bool interactive)
 		m_compiler.genCode();
 
 		VM vm(m_compiler.getIR());
+		GC::instance(&vm);
 
 		vm.setConstEnv(m_compiler.getConstEnv());
 		vm.setGlobalEnv(m_compiler.getGlobalEnv());

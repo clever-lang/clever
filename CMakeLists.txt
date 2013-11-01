@@ -142,6 +142,8 @@ set(CLEVER_SOURCES ${CLEVER_SOURCES}
 	core/evaluator.h
 	core/environment.cc
 	core/environment.h
+	core/gc.h
+	core/gc.cc
 	core/ir.h
 	core/irbuilder.h
 	core/module.h

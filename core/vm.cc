@@ -805,6 +805,10 @@ out:
 
 		TypeObject* intern = obj->getObj();
 
+		if (UNEXPECTED(!intern)) {
+			error(OPCODE.loc, "Malformed member access");
+		}
+
 		intern->initialize(obj->getType());
 
 		const Value* name = getValue(OPCODE.op2);

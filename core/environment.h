@@ -105,6 +105,8 @@ public:
 
 	void setData(size_t pos, Value* value) { m_data[pos] = value; }
 
+	std::vector<Value*>& getData() { return m_data; }
+
 	void setTempEnv(Environment* env) { m_temp = env; }
 	Environment* getTempEnv() const { return m_temp; }
 

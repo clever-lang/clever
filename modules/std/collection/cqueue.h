@@ -47,10 +47,10 @@ struct CPQObject : public TypeObject {
 
 	~CPQObject() {
 		// TODO(muriloadriano): investigate why this causes SIGSEGV
-		//while (!m_pq.empty()) {
-		//  clever_delref(m_pq.top());
-		//	m_pq.pop();
-		//}
+		while (!m_pq.empty()) {
+			//clever_delref(m_pq.top());
+			m_pq.pop();
+		}
 	}
 
 	PQType m_pq;

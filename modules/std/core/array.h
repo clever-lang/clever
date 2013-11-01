@@ -43,6 +43,10 @@ public:
 		}
 	}
 
+	std::list<GCObject*> getReferred() const {
+		return std::list<GCObject*>(m_data.begin(), m_data.end());
+	}
+
 	std::vector<Value*>& getData() { return m_data; }
 private:
 	std::vector<Value*> m_data;
