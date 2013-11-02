@@ -81,7 +81,6 @@ public:
 
 private:
 	const location m_location;
-	size_t m_value_id;
 	const Scope* m_scope;
 	ValueOffset m_voffset;
 
