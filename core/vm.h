@@ -34,6 +34,7 @@ struct CallStackEntry {
 };
 
 typedef std::stack<CallStackEntry> CallStack;
+typedef std::vector<Environment*> EnvVector;
 
 /// VM representation
 class VM {
@@ -130,6 +131,11 @@ private:
 	/// Error reporting
 	void throwUncaughtException(const IR&) CLEVER_NO_RETURN;
 	static void error(const location&, const char*, ...) CLEVER_NO_RETURN;
+
+	/// Collect unreferred objects
+	void collect(Environment*);
+	/// Collect active environments
+	void collectObjects();
 
 	/// VM program counter
 	size_t m_pc;

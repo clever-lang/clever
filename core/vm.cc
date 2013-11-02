@@ -35,6 +35,49 @@
 
 namespace clever {
 
+void VM::collect(Environment* env)
+{
+	clever_assert_not_null(env);
+
+	if (env->refCount() > 1) {
+		clever_delref(env);
+		return;
+	}
+
+	std::vector<Value*>& env_vars = env->getData();
+	std::vector<Value*>::const_iterator it(env_vars.begin());
+	std::vector<Value*>::const_iterator end(env_vars.end());
+
+	while (it != end) {
+		Value* val = *it;
+
+		if (!val->isNull() && val->refCount() == 1) {
+			const Type* type = val->getType();
+
+			if (type->hasUserDestructor()) {
+				clever_delref(runFunction(type->getUserDestructor(), m_call_args));
+			} else if (type->hasDestructor()) {
+				const Function* dtor = type->getDestructor();
+
+				(type->*dtor->getMethodPtr())(NULL,	val, m_call_args, &m_clever);
+			}
+		}
+		++it;
+	}
+	clever_delref(env);
+}
+
+void VM::collectObjects()
+{
+	EnvVector::const_iterator it(m_obj_store.top().begin()),
+		end(m_obj_store.top().end());
+
+	while (it != end) {
+		collect(*it);
+		++it;
+	}
+}
+
 /// Displays an error message
 void VM::error(const location& loc, const char* format, ...)
 {
@@ -503,7 +546,7 @@ out:
 		Environment* env = m_call_stack.top().env;
 		size_t ret_addr = env->getRetAddr();
 
-		clever_delref(env);
+		collect(env);
 		m_call_stack.pop();
 
 		VM_GOTO(ret_addr);
@@ -985,7 +1028,7 @@ throw_exception:
 	DISPATCH;
 
 	OP(OP_ESCOPE):
-	std::for_each(m_obj_store.top().begin(), m_obj_store.top().end(), clever_delref);
+	collectObjects();
 	m_obj_store.pop();
 	DISPATCH;
 

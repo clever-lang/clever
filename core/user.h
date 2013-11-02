@@ -42,6 +42,7 @@ public:
 
 	virtual void init() {
 		setConstructor((MethodPtr)&UserType::ctor);
+		setDestructor((MethodPtr)&UserType::dtor);
 	}
 
 	void setEnvironment(Environment* env) { m_env = env; }
@@ -50,6 +51,8 @@ public:
 	CLEVER_METHOD(ctor) {
 		result->setObj(this, new UserObject);
 	}
+
+	CLEVER_METHOD(dtor) {}
 private:
 	Environment* m_env;
 

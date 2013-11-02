@@ -196,13 +196,18 @@ public:
 	void setDestructor(MethodPtr method);
 
 	const Function* getConstructor() const { return m_ctor; }
+	bool hasConstructor() const { return m_ctor != NULL; }
+
 	const Function* getDestructor() const { return m_dtor; }
+	bool hasDestructor() const { return m_dtor != NULL; }
 
 	void setUserConstructor(Function* func) { m_user_ctor = func; }
 	const Function* getUserConstructor() const { return m_user_ctor; }
 	bool hasUserConstructor() const { return m_user_ctor != NULL; }
 
 	void setUserDestructor(Function* func) { m_user_dtor = func; }
+	const Function* getUserDestructor() const  { return m_user_dtor; }
+	bool hasUserDestructor() const { return m_user_dtor != NULL; }
 
 	/// Virtual method for type initialization
 	virtual void init() {}
