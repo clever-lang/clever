@@ -506,7 +506,7 @@ out:
 		Environment* env = m_call_stack.top().env;
 		size_t ret_addr = env->getRetAddr();
 
-		clever_delref(env);
+		//clever_delref(env);
 		m_call_stack.pop();
 
 		VM_GOTO(ret_addr);
