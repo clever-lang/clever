@@ -309,8 +309,6 @@ Value* VM::runFunction(const Function* func, const ValueVector& args)
 
 		paramBinding(func, fenv, args);
 
-		/*m_obj_store.push(std::vector<Environment*>());*/
-
 		size_t saved_pc = m_pc;
 		m_pc = func->getAddr();
 		run();
@@ -447,10 +445,6 @@ void VM::run()
 					closure->setEnvironment(
 						func->getEnvironment()->activate(m_call_stack.top().env));
 
-					/*if (m_obj_store.empty()) {
-						m_obj_store.push(std::vector<Environment*>());
-					}*/
-
 					m_obj_store.top().push_back(closure->getEnvironment());
 
 					goto out;
@@ -460,7 +454,7 @@ void VM::run()
 			m_call_stack.top().env->getRetVal()->copy(val);
 		}
 out:
-		clever_delref(env);
+		collect(env);
 		m_call_stack.pop();
 
 		VM_GOTO(ret_addr);
@@ -1024,7 +1018,7 @@ throw_exception:
 	DISPATCH;
 
 	OP(OP_BSCOPE):
-	m_obj_store.push(std::vector<Environment*>());
+	m_obj_store.push(EnvVector());
 	DISPATCH;
 
 	OP(OP_ESCOPE):
