@@ -455,7 +455,9 @@ void VM::run()
 		}
 out:
 		collect(env);
+		collectObjects();
 		m_call_stack.pop();
+		m_obj_store.pop();
 
 		VM_GOTO(ret_addr);
 	} else {
