@@ -246,9 +246,6 @@ CLEVER_FORCE_INLINE void VM::createInstance(const Type* type, Value* instance)
 	uobj->setEnvironment(utype->getEnvironment()->activate());
 	uobj->getEnvironment()->getValue(ValueOffset(0,0))->copy(instance);
 
-	/*if (m_obj_store.empty()) {
-		m_obj_store.push(std::vector<Environment*>());
-	}*/
 	m_obj_store.top().push_back(uobj->getEnvironment());
 }
 
@@ -306,7 +303,7 @@ CLEVER_FORCE_INLINE void VM::binOp(const IR& op)
 		case OP_BW_LS:	type->bw_ls(getValue(op.result),  lhs, rhs, &m_clever); break;
 		// Unary
 		case OP_NOT:    type->not_op(getValue(op.result), lhs, &m_clever); break;
-		case OP_BW_NOT:	type->bw_not(getValue(op.result), lhs, &m_clever);	break;
+		case OP_BW_NOT:	type->bw_not(getValue(op.result), lhs, &m_clever); break;
 		EMPTY_SWITCH_DEFAULT_CASE();
 	}
 }
@@ -506,7 +503,7 @@ out:
 		Environment* env = m_call_stack.top().env;
 		size_t ret_addr = env->getRetAddr();
 
-		//clever_delref(env);
+		clever_delref(env);
 		m_call_stack.pop();
 
 		VM_GOTO(ret_addr);
