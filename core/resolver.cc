@@ -75,10 +75,10 @@ void Resolver::visit(FunctionDecl* node)
 
 		node->setIdent(new Ident(name, node->getLocation()));
 	} else if (node->isCtor()) {
-		name = CSTRING("Constructo#" + *node->getType()->getName());
+		name = CSTRING("Constructor!" + *node->getType()->getName());
 		node->setType(new Type(name, node->getLocation()));
 	} else if (node->isDtor()) {
-		name = CSTRING("Destructor~" + *node->getType()->getName());
+		name = CSTRING("Destructor!" + *node->getType()->getName());
 		node->setType(new Type(name, node->getLocation()));
 	} else {
 		name = node->getIdent()->getName();

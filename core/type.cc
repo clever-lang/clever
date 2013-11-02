@@ -170,7 +170,7 @@ void Type::setConstructor(MethodPtr method)
 /// Sets the type destructor
 void Type::setDestructor(MethodPtr method)
 {
-	m_dtor = addMethod(new Function("Destructor!" + getName(), method));
+	m_dtor = addMethod(new Function("Destructor#" + getName(), method));
 }
 
 /// Default + operator implementation
