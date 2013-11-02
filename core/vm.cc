@@ -246,9 +246,9 @@ CLEVER_FORCE_INLINE void VM::createInstance(const Type* type, Value* instance)
 	uobj->setEnvironment(utype->getEnvironment()->activate());
 	uobj->getEnvironment()->getValue(ValueOffset(0,0))->copy(instance);
 
-	if (m_obj_store.empty()) {
+	/*if (m_obj_store.empty()) {
 		m_obj_store.push(std::vector<Environment*>());
-	}
+	}*/
 	m_obj_store.top().push_back(uobj->getEnvironment());
 }
 
@@ -269,7 +269,7 @@ Value* VM::runFunction(const Function* func, const ValueVector& args)
 
 		paramBinding(func, fenv, args);
 
-		m_obj_store.push(std::vector<Environment*>());
+		/*m_obj_store.push(std::vector<Environment*>());*/
 
 		size_t saved_pc = m_pc;
 		m_pc = func->getAddr();
@@ -407,9 +407,9 @@ void VM::run()
 					closure->setEnvironment(
 						func->getEnvironment()->activate(m_call_stack.top().env));
 
-					if (m_obj_store.empty()) {
+					/*if (m_obj_store.empty()) {
 						m_obj_store.push(std::vector<Environment*>());
-					}
+					}*/
 
 					m_obj_store.top().push_back(closure->getEnvironment());
 
@@ -984,9 +984,12 @@ throw_exception:
 	DISPATCH;
 
 	OP(OP_BSCOPE):
+	m_obj_store.push(std::vector<Environment*>());
 	DISPATCH;
 
 	OP(OP_ESCOPE):
+	std::for_each(m_obj_store.top().begin(), m_obj_store.top().end(), clever_delref);
+	m_obj_store.pop();
 	DISPATCH;
 
 	OP(OP_HALT): goto exit;
@@ -995,10 +998,7 @@ throw_exception:
 exit_exception:
 	throwUncaughtException(OPCODE);
 exit:
-	if (!m_obj_store.empty()) {
-		std::for_each(m_obj_store.top().begin(), m_obj_store.top().end(), clever_delref);
-		m_obj_store.pop();
-	}
+	return;
 }
 
 } // clever
