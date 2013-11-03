@@ -399,7 +399,7 @@ void VM::run()
 			if (UNEXPECTED(val->isFunction())) {
 				const Function* func = static_cast<Function*>(val->getObj());
 
-				if (func->isUserDefined()) {
+				if (func->isClosure()) {
 					Function* closure = func->getClosure();
 
 					m_call_stack.top().env->getRetVal()->setObj(CLEVER_FUNC_TYPE, closure);
