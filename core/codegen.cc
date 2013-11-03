@@ -5,9 +5,6 @@
  * This file is distributed under the MIT license. See LICENSE for details.
  */
 
-#include <iostream>
-#include <cstdio>
-
 #include "core/compiler.h"
 #include "core/codegen.h"
 #include "core/irbuilder.h"
