@@ -34,7 +34,8 @@ struct CallStackEntry {
 };
 
 typedef std::stack<CallStackEntry> CallStack;
-typedef std::vector<Environment*> EnvVector;
+typedef std::pair<TypeObject*, Environment*> ObjStorePair;
+typedef std::vector<ObjStorePair> EnvVector;
 
 /// VM representation
 class VM {
@@ -162,7 +163,7 @@ private:
 	std::stack<std::pair<size_t, size_t> > m_try_stack;
 
 	/// User object instance vector
-	std::stack<std::vector<Environment*> > m_obj_store;
+	std::stack<EnvVector> m_obj_store;
 
 	CMutex* m_mutex;
 

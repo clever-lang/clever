@@ -49,19 +49,22 @@ void VM::collect(Environment* env)
 	std::vector<Value*>::const_iterator end(env_vars.end());
 
 	while (it != end) {
-		Value* val = *it;
+		TypeObject* tobj = (*it)->getObj();
+		const Type* type = (*it)->getType();
 
-		if (!val->isNull() && val->refCount() == 1) {
-			const Type* type = val->getType();
+		if (!tobj)
+			goto next;
 
-			if (type->hasUserDestructor()) {
+		if (tobj->refCount() == 2) {
+			if (type->isUserDefined() && type->hasUserDestructor()) {
 				clever_delref(runFunction(type->getUserDestructor(), m_call_args));
 			} else if (type->hasDestructor()) {
 				const Function* dtor = type->getDestructor();
 
-				(type->*dtor->getMethodPtr())(NULL,	val, m_call_args, &m_clever);
+				(type->*dtor->getMethodPtr())(NULL, *it, m_call_args, &m_clever);
 			}
 		}
+next:
 		++it;
 	}
 	clever_delref(env);
@@ -73,7 +76,11 @@ void VM::collectObjects()
 		end(m_obj_store.top().end());
 
 	while (it != end) {
-		collect(*it);
+		if ((*it).first->refCount() == 2) {
+			collect((*it).second);
+		} else {
+			clever_delref((*it).first);
+		}
 		++it;
 	}
 }
@@ -289,7 +296,7 @@ CLEVER_FORCE_INLINE void VM::createInstance(const Type* type, Value* instance)
 	uobj->setEnvironment(utype->getEnvironment()->activate());
 	uobj->getEnvironment()->getValue(ValueOffset(0,0))->copy(instance);
 
-	m_obj_store.top().push_back(uobj->getEnvironment());
+	m_obj_store.top().push_back(ObjStorePair(uobj, uobj->getEnvironment()));
 }
 
 // Executes the supplied function
@@ -426,7 +433,9 @@ void VM::run()
 	OP(OP_RET):
 	if (EXPECTED(m_call_stack.top().env != m_global_env)) {
 		Environment* env = m_call_stack.top().env;
+		TypeObject* closure_obj = NULL;
 		Environment* closure_env = NULL;
+
 		size_t ret_addr = env->getRetAddr();
 
 		if (EXPECTED(OPCODE.op1.op_type != UNUSED)) {
@@ -434,7 +443,7 @@ void VM::run()
 			clever_assert_not_null(val);
 
 			if (UNEXPECTED(val->isFunction())) {
-				const Function* func = static_cast<Function*>(val->getObj());
+				Function* func = static_cast<Function*>(val->getObj());
 
 				if (func->isClosure()) {
 					Function* closure = func->getClosure();
@@ -446,6 +455,7 @@ void VM::run()
 
 					//m_obj_store.top().push_back(closure->getEnvironment());
 					closure_env = closure->getEnvironment();
+					closure_obj = func;
 
 					goto out;
 				}
@@ -459,7 +469,7 @@ out:
 		m_call_stack.pop();
 		m_obj_store.pop();
 		if (closure_env) {
-			m_obj_store.top().push_back(closure_env);
+			m_obj_store.top().push_back(ObjStorePair(closure_obj, closure_env));
 		}
 
 		VM_GOTO(ret_addr);
