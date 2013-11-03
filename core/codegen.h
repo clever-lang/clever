@@ -35,6 +35,7 @@ public:
 	~Codegen() {}
 
 	Operand createOp(Node*) const;
+	void setTempResult(Node*, Operand&) const;
 
 	void sendArgs(NodeArray*);
 

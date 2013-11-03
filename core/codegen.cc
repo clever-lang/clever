@@ -22,6 +22,15 @@ inline Operand Codegen::createOp(Node* node) const
 		node->getVOffset());
 }
 
+inline void Codegen::setTempResult(Node* node, Operand& op) const
+{
+	ValueOffset tmp_id = m_builder->getTemp();
+
+	op = Operand(FETCH_TMP, tmp_id);
+
+	node->setVOffset(tmp_id);
+}
+
 void Codegen::sendArgs(NodeArray* node)
 {
 	NodeList& args = node->getNodes();
@@ -119,9 +128,7 @@ void Codegen::visit(Assignment* node)
 	}
 
 	if (node->hasResult()) {
-		ValueOffset tmp_id = m_builder->getTemp();
-		assign.result = Operand(FETCH_TMP, tmp_id);
-		node->setVOffset(tmp_id);
+		setTempResult(node, assign.result);
 	}
 }
 
@@ -149,12 +156,9 @@ void Codegen::visit(MethodCall* node)
 			m_builder->getString(node->getMethod()->getName()));
 	}
 
-	ValueOffset tmp_id = m_builder->getTemp();
+	setTempResult(node, m_builder->getLast().result);
 
-	m_builder->getLast().result = Operand(FETCH_TMP, tmp_id);
 	m_builder->getLast().loc = node->getLocation();
-
-	node->setVOffset(tmp_id);
 }
 
 void Codegen::visit(FunctionCall* node)
@@ -176,12 +180,9 @@ void Codegen::visit(FunctionCall* node)
 			Operand(FETCH_VAR, node->getCallee()->getVOffset()));
 	}
 
-	ValueOffset tmp_id = m_builder->getTemp();
+	setTempResult(node, m_builder->getLast().result);
 
-	m_builder->getLast().result = Operand(FETCH_TMP, tmp_id);
 	m_builder->getLast().loc = node->getLocation();
-
-	node->setVOffset(tmp_id);
 }
 
 void Codegen::visit(FunctionDecl* node)
@@ -439,12 +440,9 @@ void Codegen::visit(IncDec* node)
 
 	incdec.op1 = createOp(node->getVar());
 
-	ValueOffset tmp_id = m_builder->getTemp();
+	setTempResult(node, incdec.result);
 
-	incdec.result = Operand(FETCH_TMP, tmp_id);
 	incdec.loc = node->getLocation();
-
-	node->setVOffset(tmp_id);
 }
 
 void Codegen::visit(Bitwise* node)
@@ -484,12 +482,9 @@ void Codegen::visit(Bitwise* node)
 		}
 	}
 
-	ValueOffset tmp_id = m_builder->getTemp();
+	setTempResult(node, arith.result);
 
-	arith.result = Operand(FETCH_TMP, tmp_id);
 	arith.loc = node->getLocation();
-
-	node->setVOffset(tmp_id);
 }
 
 void Codegen::visit(Arithmetic* node)
@@ -520,12 +515,9 @@ void Codegen::visit(Arithmetic* node)
 		node->setVOffset(lhs->getVOffset());
 		node->setScope(lhs->getScope());
 	} else {
-		ValueOffset tmp_id = m_builder->getTemp();
+		setTempResult(node, arith.result);
 
-		arith.result = Operand(FETCH_TMP, tmp_id);
 		arith.loc = node->getLocation();
-
-		node->setVOffset(tmp_id);
 	}
 }
 
@@ -552,12 +544,9 @@ void Codegen::visit(Comparison* node)
 	comp.op1 = createOp(lhs);
 	comp.op2 = createOp(rhs);
 
-	ValueOffset tmp_id = m_builder->getTemp();
+	setTempResult(node, comp.result);
 
-	comp.result = Operand(FETCH_TMP, tmp_id);
 	comp.loc = node->getLocation();
-
-	node->setVOffset(tmp_id);
 }
 
 void Codegen::visit(Logic* node)
@@ -670,12 +659,9 @@ void Codegen::visit(Instantiation* node)
 
 	IR& inst = m_builder->push(OP_NEW, Operand(FETCH_VAR, node->getType()->getVOffset()));
 
-	ValueOffset tmp_id = m_builder->getTemp();
+	setTempResult(node, inst.result);
 
-	inst.result = Operand(FETCH_TMP, tmp_id);
 	inst.loc = node->getLocation();
-
-	node->setVOffset(tmp_id);
 }
 
 void Codegen::visit(Property* node)
@@ -694,12 +680,9 @@ void Codegen::visit(Property* node)
 	acc.op1 = createOp(node->getCallee());
 	acc.op2 = Operand(FETCH_CONST, m_builder->getString(node->getProperty()->getName()));
 
-	ValueOffset tmp_id = m_builder->getTemp();
+	setTempResult(node, acc.result);
 
-	acc.result = Operand(FETCH_TMP, tmp_id);
 	acc.loc = node->getLocation();
-
-	node->setVOffset(tmp_id);
 }
 
 void Codegen::visit(Try* node)
@@ -787,12 +770,9 @@ void Codegen::visit(Subscript* node)
 	subscript.op1 = createOp(node->getVar());
 	subscript.op2 = createOp(node->getIndex());
 
-	ValueOffset tmp_id = m_builder->getTemp();
+	setTempResult(node, subscript.result);
 
-	subscript.result = Operand(FETCH_TMP, tmp_id);
 	subscript.loc = node->getLocation();
-
-	node->setVOffset(tmp_id);
 }
 
 void Codegen::visit(Switch* node)
