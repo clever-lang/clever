@@ -428,6 +428,7 @@ void VM::run()
 	OP(OP_RET):
 	if (EXPECTED(m_call_stack.top().env != m_global_env)) {
 		Environment* env = m_call_stack.top().env;
+		Environment* closure_env = NULL;
 		size_t ret_addr = env->getRetAddr();
 
 		if (EXPECTED(OPCODE.op1.op_type != UNUSED)) {
@@ -445,7 +446,8 @@ void VM::run()
 					closure->setEnvironment(
 						func->getEnvironment()->activate(m_call_stack.top().env));
 
-					m_obj_store.top().push_back(closure->getEnvironment());
+					//m_obj_store.top().push_back(closure->getEnvironment());
+					closure_env = closure->getEnvironment();
 
 					goto out;
 				}
@@ -454,10 +456,13 @@ void VM::run()
 			m_call_stack.top().env->getRetVal()->copy(val);
 		}
 out:
-		collect(env);
 		collectObjects();
+		collect(env);
 		m_call_stack.pop();
 		m_obj_store.pop();
+		if (closure_env) {
+			m_obj_store.top().push_back(closure_env);
+		}
 
 		VM_GOTO(ret_addr);
 	} else {
