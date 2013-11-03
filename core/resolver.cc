@@ -139,6 +139,10 @@ void Resolver::visit(FunctionDecl* node)
 		}
 		// Regular function
 		func->setPublic();
+
+		if (node->isAnonymous()) {
+			func->setClosure();
+		}
 	}
 
 	m_scope = m_scope->enter();
