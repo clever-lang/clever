@@ -26,6 +26,8 @@ public:
 
 	~Resolver() {}
 
+	void initGlobalScope();
+
 	Scope* getSymTable() const { return m_symtable; }
 
 	Environment* getGlobalEnv() const {

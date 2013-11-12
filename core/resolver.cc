@@ -14,10 +14,14 @@
 namespace clever { namespace ast {
 
 Resolver::Resolver(const ModManager& ModManager, const std::string& ns_name)
-	: Visitor(), m_modmanager(ModManager), m_ns_name(ns_name), m_mod(NULL),
-		m_class(NULL), m_func(NULL)
+	: Visitor(), m_modmanager(ModManager), m_ns_name(ns_name), m_symtable(NULL),
+	  m_scope(NULL), m_mod(NULL), m_class(NULL), m_func(NULL)
 {
-	// Global environment and scope
+
+}
+
+void Resolver::initGlobalScope()
+{
 	m_symtable = m_scope = new Scope();
 	m_scope->setEnvironment(new Environment());
 	m_stack.push(m_scope->getEnvironment());
@@ -28,15 +32,22 @@ Resolver::Resolver(const ModManager& ModManager, const std::string& ns_name)
 
 void Resolver::visit(Block* node)
 {
-	m_scope = m_scope->enter();
-	m_scope->setEnvironment(m_stack.top());
-	m_stack.top()->addRef();
+	bool had_outer = m_scope != NULL;
+
+	if (had_outer) {
+		m_scope = m_scope->enter();
+		m_scope->setEnvironment(m_stack.top());
+		m_stack.top()->addRef();
+	} else {
+		initGlobalScope();
+	}
 
 	node->setScope(m_scope);
 
 	Visitor::visit(static_cast<NodeArray*>(node));
 
-	m_scope = m_scope->leave();
+	if (had_outer)
+		m_scope = m_scope->leave();
 }
 
 void Resolver::visit(VariableDecl* node)
