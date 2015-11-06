@@ -1,6 +1,10 @@
 Make you code more clever!
 ==========================
 
+.. image:: https://badges.gitter.im/Join%20Chat.svg
+   :alt: Join the chat at https://gitter.im/clever-lang/clever
+   :target: https://gitter.im/clever-lang/clever?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
+
 Clever is a general purpose programming language written in C++. It aims to
 have a small footprint and supply an useful set of features, many seen in
 other languages.
